@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>결제·정산 정책 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>결제·정산</div>
+        <h1>결제 · 정산 정책</h1>
+        <p class="lede">
+          포인트 충전, 결제, 환불, 호스트 정산금, 모임 정산, 클럽 기금을
+          서로 구분해 사용자·운영자가 돈의 상태를 오해하지 않게 한다.
+          한 줄로 요약하면 “돈의 흐름을 절대 섞지 말 것”.
+        </p>
+      </header>
+
+      <section>
+        <h2>돈의 6개 흐름</h2>
+        <p class="subtitle">서로 섞이면 안 되는 거래 종류. 각자 별개 거래 타입과 별개 상태 모델을 가진다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>흐름</th><th>주체</th><th>의미</th></tr></thead>
+            <tbody>
+              <tr><td><strong>포인트 충전</strong></td><td>사용자 → 지갑</td><td>외부 PG 결제로 잔액 증가</td></tr>
+              <tr><td><strong>포인트 결제</strong></td><td>지갑 → 서비스</td><td>이벤트·플랜·구독 등 비용 지불</td></tr>
+              <tr><td><strong>환불</strong></td><td>서비스 → 지갑·원수단</td><td>기존 결제 취소 또는 보상</td></tr>
+              <tr><td><strong>모임 정산</strong></td><td>참가자 → 호스트</td><td>모임 비용 분담</td></tr>
+              <tr><td><strong>호스트 정산금</strong></td><td>플랫폼 → 호스트</td><td>수익 지급</td></tr>
+              <tr><td><strong>클럽 기금</strong></td><td>멤버·운영 → 클럽</td><td>공동 자금</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>결제 실패 처리 표준</h2>
+        <p>사용자는 “돈이 빠졌는지 안 빠졌는지”를 가장 먼저 알고 싶어 한다. 실패 사유를 정확히 구분해서 보여준다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>상황</th><th>사용자 안내</th></tr></thead>
+            <tbody>
+              <tr><td>잔액 부족</td><td>충전 또는 자동충전 안내</td></tr>
+              <tr><td>결제수단 없음</td><td>결제수단 등록 화면으로 진입</td></tr>
+              <tr><td>PG 실패</td><td>결제가 완료되지 않았고 재시도 가능함을 명시</td></tr>
+              <tr><td>콜백 지연</td><td>“처리중” 상태와 재조회 동선 제공</td></tr>
+              <tr><td>중복 클릭</td><td>한 번의 결제만 유효하도록 멱등 처리</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>유료 승인제 이벤트 결제 정책</h2>
+        <p>유료 이벤트와 승인제 이벤트는 동시에 존재할 수 있다. 이 조합은 <strong>결제와 참석 확정이 분리</strong>되므로 별도 상태 계약을 둔다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["참가자 신청"] --> B["Application=PENDING"]
+    B --> C{"호스트 심사"}
+    C -->|"거절"| D["REJECTED<br/>결제 없음"]
+    C -->|"승인"| E["APPROVED_PENDING_PAYMENT<br/>결제 필요"]
+    E --> F{"기한 내 결제?"}
+    F -->|"성공"| G["EVENT_PAYMENT 거래"]
+    G --> H["Attendance=ATTENDING"]
+    F -->|"실패·만료"| I["PAYMENT_EXPIRED<br/>예약 정원 해제"]
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>정책</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><strong>승인 전 결제 금지</strong></td><td>승인되지 않은 사용자의 돈을 먼저 받지 않는다.</td></tr>
+              <tr><td><strong>승인 후 결제 필요</strong></td><td>호스트 승인은 “결제 권한 부여”이지 참석 확정이 아니다.</td></tr>
+              <tr><td><strong>결제 전 참석 권한 제한</strong></td><td>체크인·위치 공유·리뷰 자격은 결제 성공 후 열린다.</td></tr>
+              <tr><td><strong>기한 만료 처리</strong></td><td>결제 대기 상태에는 기한이 있고, 만료 시 예약 정원을 반환한다.</td></tr>
+              <tr><td><strong>서버 검증</strong></td><td><code>WalletService.pay</code>는 승인 대기 상태·기한·중복 결제를 검증해야 한다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout danger">
+          <span class="label">서버 보강 필요</span>
+          <p>현재 서버에는 <code>APPROVED_PENDING_PAYMENT</code>·<code>PAYMENT_EXPIRED</code> 상태와
+          “결제 후 attendance 생성” 계약이 없다. 따라서 이 조합은 구현 보강 대상이며,
+          임시로 결제를 승인 전에 받거나 승인 즉시 ATTENDING으로 만드는 방식은 정책 위반이다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>모임 정산 vs 호스트 정산금 vs 클럽 기금</h2>
+        <p>세 가지가 같은 “정산”이라는 단어로 묶여 헷갈리기 쉽다. 흐름·주체·상태가 모두 다르다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>모임 정산</th><th>호스트 정산금</th><th>클럽 기금</th></tr></thead>
+            <tbody>
+              <tr><td><strong>주체</strong></td><td>참가자 → 호스트</td><td>플랫폼 → 호스트</td><td>멤버 → 클럽</td></tr>
+              <tr><td><strong>트리거</strong></td><td>호스트가 정산 생성·활성화</td><td>유료 이벤트 종료·플랜 판매</td><td>멤버 기부·이벤트 정산 반영</td></tr>
+              <tr><td><strong>상태</strong></td><td>DRAFT → ACTIVE → COMPLETED</td><td>PENDING → APPROVED → PAYING → PAID</td><td>잔액 + 거래 이력</td></tr>
+              <tr><td><strong>책임 도메인</strong></td><td><a href="../domains/07-settlement.html">07 모임 정산</a></td><td><a href="../domains/06-payment.html">06 결제·지갑</a></td><td><a href="../domains/04-club.html">04 클럽</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준</h2>
+        <ul>
+          <li>결제 성공과 기능 성공이 분리되는 경우 <strong>처리중·재조회 상태</strong>가 있어야 한다.</li>
+          <li>환불은 원거래·환불 금액·환불 상태가 추적 가능해야 한다.</li>
+          <li>DRAFT 정산은 참가자에게 납부 요청으로 노출되지 않는다.</li>
+          <li>계좌이체 납부는 호스트 확인 전까지 “완료”로 오해하지 않게 표시한다.</li>
+          <li>유료 승인제 이벤트는 <strong>승인 전 결제·결제 전 참석 확정·기한 만료 후 결제</strong>가 모두 차단된다.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

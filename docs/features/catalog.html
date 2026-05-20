@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>117개 기능 카탈로그 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>기능 인벤토리<span>›</span>117개 기능 카탈로그</div>
+        <h1>117개 기능 카탈로그</h1>
+        <p class="lede">
+          전 기능을 한 화면에서 검색·필터링한다. 키워드는 ID·이름·주 사용자·검산 포인트 전부에서 찾는다.
+          영향 영역(알림·돈·캘린더·위치·신뢰)으로도 좁힐 수 있어 “돈이 움직이는 기능만”과 같은 질문에 즉시 답할 수 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">총 기능</div><div class="value" id="metric-total">117</div></div>
+          <div class="metric"><div class="label">총 시나리오</div><div class="value" id="metric-scenarios">987</div></div>
+          <div class="metric"><div class="label">총 도식</div><div class="value" id="metric-diagrams">508</div></div>
+          <div class="metric"><div class="label">현재 표시</div><div class="value" id="metric-shown">117</div><div class="hint" id="metric-shown-hint">전체 표시 중</div></div>
+        </div>
+
+        <div class="toolbar">
+          <input id="search" type="search" placeholder="ID·이름·사용자·검산 포인트 검색">
+          <select id="domain-filter" aria-label="도메인 필터">
+            <option value="">전체 도메인</option>
+          </select>
+          <label class="chip"><input type="checkbox" data-impact="notification">알림</label>
+          <label class="chip"><input type="checkbox" data-impact="money">돈</label>
+          <label class="chip"><input type="checkbox" data-impact="calendar">캘린더</label>
+          <label class="chip"><input type="checkbox" data-impact="location">위치</label>
+          <label class="chip"><input type="checkbox" data-impact="review">신뢰</label>
+        </div>
+        <p style="margin:0 0 12px; color:var(--muted); font-size:12.5px">전환 상태와 Trace/Risk 후보 수는 <a href="../qa/migration-status.html">전환 상태표</a>에서 확인한다.</p>
+        <p class="feature-count" id="feature-count">불러오는 중…</p>
+
+        <div class="table-wrap">
+          <table id="feature-table">
+            <thead>
+              <tr>
+                <th style="width:78px">ID</th>
+                <th style="width:130px">도메인</th>
+                <th>기능명·검산 포인트</th>
+                <th style="width:130px">주 사용자</th>
+                <th style="width:150px">영향</th>
+                <th style="width:78px">상태</th>
+                <th style="width:78px;text-align:right">시나리오</th>
+              </tr>
+            </thead>
+            <tbody id="feature-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>읽는 법</h2>
+        <ul>
+          <li><strong>ID</strong> — <code>F도메인번호-순번</code> 형식. 다른 문서·이슈에서 이 ID로 참조한다.</li>
+          <li><strong>검산 포인트</strong> — 시나리오 작성 시 절대 빠뜨리면 안 되는 조건 키워드.</li>
+          <li><strong>영향</strong> — 이 기능이 변경되면 같이 바뀌는 횡단 영역. 회귀 검토의 기준.</li>
+          <li><strong>시나리오 수</strong> — 정상·예외·복구 케이스 합계. 많을수록 QA 비용이 큰 기능.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script>
+    const IMPACT_LABELS = { notification: '알림', money: '돈', calendar: '캘린더', location: '위치', review: '신뢰' };
+    const IMPACT_CLASSES = { notification: 'info', money: 'money', calendar: 'brand', location: 'violet', review: 'danger' };
+    let FEATURES = [];
+
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function domainSlug(domain) {
+      const map = {
+        '인증 & 온보딩': '01-auth', '홈 피드': '02-home', '이벤트': '03-event',
+        '클럽': '04-club', '검색': '05-search', '결제 & 지갑': '06-payment',
+        '모임 정산': '07-settlement', '플랜 마켓': '08-plan-market',
+        '프라이빗 데이팅': '09-dating', '캘린더': '10-calendar',
+        '리뷰 & 신고': '11-review', '알림': '12-notification',
+        '프로필 & 설정': '13-profile', '위치 & 길찾기': '14-location',
+      };
+      return map[domain] || '';
+    }
+
+    function render() {
+      const q = document.querySelector('#search').value.trim().toLowerCase();
+      const domain = document.querySelector('#domain-filter').value;
+      const impacts = [...document.querySelectorAll('.toolbar input[type="checkbox"]')]
+        .filter(el => el.checked).map(el => el.dataset.impact);
+      const filtered = FEATURES.filter(f => {
+        if (domain && f.domain !== domain) return false;
+        if (impacts.length && !impacts.every(k => f.impacts[k])) return false;
+        if (!q) return true;
+        const hay = [f.id, f.domain, f.name, f.actor, f.checks].join(' ').toLowerCase();
+        return hay.includes(q);
+      });
+      const tbody = document.querySelector('#feature-rows');
+      tbody.innerHTML = filtered.map(f => {
+        const slug = domainSlug(f.domain);
+        const impactChips = Object.entries(f.impacts)
+          .filter(([, v]) => v)
+          .map(([k]) => `<span class="pill ${IMPACT_CLASSES[k]}">${IMPACT_LABELS[k]}</span>`)
+          .join(' ') || '<span class="pill">직접 영향 없음</span>';
+        const statusBadge = f.status === 'Golden sample'
+          ? '<span class="pill brand">Golden</span>'
+          : f.status === '전환 완료'
+            ? '<span class="pill info">전환</span>'
+            : '<span class="pill">—</span>';
+        return `<tr>
+          <td><code>${esc(f.id)}</code></td>
+          <td>${slug ? `<a href="../domains/${slug}.html">${esc(f.domain)}</a>` : esc(f.domain)}</td>
+          <td><strong>${esc(f.name)}</strong><br><span style="color:var(--muted); font-size:12.5px">${esc(f.checks)}</span></td>
+          <td>${esc(f.actor)}</td>
+          <td><div style="display:flex; flex-wrap:wrap; gap:4px">${impactChips}</div></td>
+          <td>${statusBadge}</td>
+          <td style="text-align:right">${f.scenarios}</td>
+        </tr>`;
+      }).join('');
+      const cnt = document.querySelector('#feature-count');
+      cnt.textContent = filtered.length + '개 표시 / 전체 ' + FEATURES.length + '개';
+      document.querySelector('#metric-shown').textContent = filtered.length;
+      document.querySelector('#metric-shown-hint').textContent =
+        filtered.length === FEATURES.length ? '전체 표시 중' : '필터링됨';
+    }
+
+    function init() {
+      const data = window.PRD_FEATURES || [];
+      FEATURES = data;
+      const domains = [...new Set(data.map(f => f.domain))];
+      const sel = document.querySelector('#domain-filter');
+      domains.forEach(d => {
+        const o = document.createElement('option'); o.value = d; o.textContent = d; sel.appendChild(o);
+      });
+      document.querySelector('#metric-total').textContent = data.length;
+      document.querySelector('#metric-scenarios').textContent = data.reduce((s, f) => s + f.scenarios, 0);
+      document.querySelector('#metric-diagrams').textContent = data.reduce((s, f) => s + f.diagrams, 0);
+      document.querySelector('#search').addEventListener('input', render);
+      document.querySelector('#domain-filter').addEventListener('change', render);
+      document.querySelectorAll('.toolbar input[type="checkbox"]')
+        .forEach(el => el.addEventListener('change', render));
+      render();
+    }
+  </script>
+  <script src="../assets/features.js"></script>
+  <script>init();</script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

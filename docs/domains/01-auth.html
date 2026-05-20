@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>01 인증·온보딩 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>01 인증·온보딩</div>
+        <h1>01. 인증 · 온보딩</h1>
+        <p class="lede">
+          가입·로그인·이메일 인증·온보딩·관심사 설정으로 사용자를
+          “추천 알고리즘이 무엇을 보여줄지 결정할 수 있는 상태”까지 끌어올린다.
+          모든 다른 도메인의 진입 조건이라, 여기서 깨지면 다른 모든 기능이 보이지 않는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">8</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">82</div><div class="hint">기능당 평균 10.3개</div></div>
+          <div class="metric"><div class="label">주 사용자</div><div class="value">3</div><div class="hint">게스트·신규·기존 로그인</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">높음</div><div class="hint">계정 잠김 위험</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">왜 이 도메인이 중요한가</span>
+          <p>인증·온보딩은 사용자 입장에서 “1회만 거치는 화면”이라 가벼워 보이지만,
+          실제로는 가장 회귀 위험이 크다. 토큰 만료 처리 한 줄을 잘못 건드리면 전체 사용자가
+          갑자기 로그아웃되고, 마지막 로그인 수단 보호 로직이 빠지면 계정 잠김이 발생한다.
+          “성공 흐름이 짧아도 실패 시나리오가 길다”는 게 이 도메인의 핵심 특성이다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>8개 기능과 각자의 역할</h2>
+        <p class="subtitle">기능 ID는 다른 문서·이슈에서 그대로 참조한다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">F01-01</div>
+            <h3>이메일 회원가입 · 로그인</h3>
+            <p>이메일+비밀번호로 가입·로그인한다. 미성년자 차단, 중복 이메일, 비밀번호 정책, 이미 차단·탈퇴된 계정 처리가 핵심.</p>
+            <div class="meta"><span class="pill">10 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-02</div>
+            <h3>소셜 로그인</h3>
+            <p>Apple·Google·Kakao·Naver로 진입. 신규 가입자에게는 추가 정보, 소셜 앱 모듈 취소, 연동 제공자 오류, 차단 사용자 케이스를 분기.</p>
+            <div class="meta"><span class="pill">8 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-03</div>
+            <h3>이메일 인증</h3>
+            <p>가입 후 이메일 토큰 검증. 재발송 제한(스팸 방지), 만료·위조 토큰, 이미 인증된 사용자의 재진입 처리.</p>
+            <div class="meta"><span class="pill">10 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-04</div>
+            <h3>비밀번호 재설정</h3>
+            <p>비로그인 상태에서 진행. 미가입 이메일에도 같은 응답을 보내는 보안 응답 패턴, 토큰 만료·재사용, 약한 비밀번호 차단.</p>
+            <div class="meta"><span class="pill">10 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-05</div>
+            <h3>토큰 갱신 · 로그아웃</h3>
+            <p>가장 자주 깨지는 기능. 동시 401, refresh 만료, 로그아웃 실패 시 로컬 토큰만이라도 비워야 함. 계정 상태 변화 시 강제 로그아웃 동기화 필요.</p>
+            <div class="meta"><span class="pill warn">15 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-06</div>
+            <h3>온보딩</h3>
+            <p>첫 로그인 사용자가 거치는 4–5단계 흐름. 건너뛰기, 중간 재개, 사진·태그·위치 실패 시에도 “추천 가능 상태”까지 도달해야 한다.</p>
+            <div class="meta"><span class="pill">11 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-07</div>
+            <h3>관심사 태그 관리</h3>
+            <p>온보딩 후에도 수정 가능. 태그 한도, 중복, 가중치, 추천 품질에 미치는 영향.</p>
+            <div class="meta"><span class="pill">10 시나리오</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">F01-08</div>
+            <h3>소셜 계정 연결 해제</h3>
+            <p>다중 소셜 연동 환경에서 “마지막 로그인 수단”은 절대 해제할 수 없다. 미연동 제공자 해제 시도, 멀티 디바이스 처리.</p>
+            <div class="meta"><span class="pill danger">계정 잠김 위험</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인 안 흐름</h2>
+        <p class="subtitle">상단은 가입·로그인의 다섯 갈래, 하단은 로그인 이후의 온보딩·태그·연결 해제.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    Start(["사용자 진입"]) --> A{"가입 상태?"}
+    A -->|"신규"| B["F01-01 이메일 가입<br/>또는 F01-02 소셜 가입"]
+    A -->|"기존"| C["F01-01·02 로그인"]
+    B --> D["F01-03 이메일 인증"]
+    D --> E["F01-06 온보딩"]
+    E --> F["F01-07 관심사 태그"]
+    C --> G{"비밀번호 잊음?"}
+    G -->|"예"| H["F01-04 비밀번호 재설정"]
+    G -->|"아니오"| I["세션 시작"]
+    F --> I
+    I --> J["F01-05 토큰 갱신·로그아웃"]
+    I --> K["F01-08 소셜 연결 해제"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 도메인의 부수효과</h2>
+        <p class="subtitle">인증·온보딩은 다른 도메인 데이터의 진입 권한을 결정한다. 잘못 건드리면 다른 도메인이 같이 깨진다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>알림</td><td><span class="pill">간접</span></td><td>가입·로그인 자체로 알림은 적지만, 푸시 디바이스 토큰 등록은 여기서 시작된다.</td></tr>
+              <tr><td>결제·정산</td><td><span class="pill">간접</span></td><td>로그인되지 않으면 결제 불가. 차단·탈퇴 계정의 결제 차단 정책이 여기로 수렴.</td></tr>
+              <tr><td>위치</td><td><span class="pill brand">있음</span></td><td>온보딩에서 위치 권한과 기본 주소를 받는다. 거부 시에도 추천이 동작해야 함.</td></tr>
+              <tr><td>리뷰·신뢰</td><td><span class="pill brand">있음</span></td><td>회원가입·소셜 로그인 케이스에서 차단·탈퇴 사용자의 재진입을 막아야 신뢰 시스템이 유지된다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>이메일 인증의 구체 정책 (F01-03)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>값</th></tr></thead>
+            <tbody>
+              <tr><td>토큰 만료</td><td><strong>24시간</strong></td></tr>
+              <tr><td>재발송 쿨다운</td><td><strong>60초</strong> (<code>_cooldownSeconds = 60</code>) — 카운트다운 표시</td></tr>
+              <tr><td>발송 엔드포인트</td><td><code>POST /api/v1/auth/send-verification-email</code></td></tr>
+              <tr><td>검증 엔드포인트</td><td><code>GET /api/v1/auth/verify-email</code> (Deep Link), <code>POST /api/v1/users/me/email/verify/confirm</code> (POST 버전)</td></tr>
+              <tr><td>미러링</td><td><code>/auth/*</code>와 <code>/users/me/email/verify/*</code> 두 컨트롤러에 미러링 — 클라는 발송에 auth, 확인에 auth/verify-email 사용</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <span class="label">두 모드</span>
+          <p><strong>모드 A</strong> (안내 + 재발송): 메일을 받지 못한 사용자가 다시 보내달라고 요청. 60초 쿨다운 적용.<br/>
+          <strong>모드 B</strong> (토큰 자동 인증): 메일 안의 Deep Link로 토큰이 자동 전달돼 즉시 검증.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 시나리오</h2>
+        <div class="callout warn">
+          <span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>마지막 로그인 수단 제거</strong> — F01-08에서 마지막 남은 소셜 또는 이메일 인증을 해제하면 계정 잠김. 반드시 사전 차단.</li>
+            <li><strong>미인증 사용자 홈 진입</strong> — F01-03 이메일 인증 전인데 다른 화면이 정상 동작하는 경우. 진입 가드가 일관돼야 한다.</li>
+            <li><strong>토큰 갱신 무한 루프</strong> — refresh 토큰까지 만료된 상태에서 401이 반복되며 사용자가 무한히 로딩만 보는 케이스.</li>
+            <li><strong>소셜 가입 후 추가정보 미입력 이탈</strong> — 가입은 됐지만 닉네임·동의가 비어 있어 추천 불가능 상태. 진입 가드 분기 필요.</li>
+            <li><strong>이메일 인증 메일 재발송 제한 미안내</strong> — 사용자가 “안 와요”라며 계속 누르는 케이스. 대기 안내·횟수 제한 표시 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·문서</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/state.html">
+            <div class="eyebrow">정책</div><h3>계정 삭제·비활성화 상태</h3>
+            <p>탈퇴 예약·즉시 비활성화의 상태 모델은 상태 정책에서 본다.</p>
+          </a>
+          <a class="card" href="../policies/permission.html">
+            <div class="eyebrow">정책</div><h3>역할별 진입 가드</h3>
+            <p>비로그인·로그인·관계자·관리자의 권한 매트릭스.</p>
+          </a>
+          <a class="card" href="../qa/exceptions.html">
+            <div class="eyebrow">QA</div><h3>가입·인증 빠뜨리기 쉬운 시나리오</h3>
+            <p>토큰·메일·소셜 모듈·계정 상태 관련 케이스 모음.</p>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

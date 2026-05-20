@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>05 검색 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>05 검색</div>
+        <h1>05. 검색</h1>
+        <p class="lede">
+          이벤트·클럽·플랜을 한 입력창으로 찾는다. 입력 전·입력 중·결과의 세 상태 각각이 별개 화면이며,
+          “결과 없음”과 “필터 너무 강함”을 사용자가 구분할 수 있어야 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">41</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">낮음</div><div class="hint">돈·안전 영향 없음</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>5개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F05-01</div><h3>키워드 검색</h3><p>이벤트·클럽·플랜 영역별 결과, 정렬, 무한스크롤, 결과 없음 상태.</p><div class="meta"><span class="pill">8 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F05-02</div><h3>자동완성 서제스트</h3><p>입력 전(최근/트렌딩) · 입력 중(디바운스) 결과 분리.</p><div class="meta"><span class="pill">7 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F05-03</div><h3>검색 필터</h3><p>필터 칩, 미리보기 카운트, GPS 권한 처리.</p><div class="meta"><span class="pill">8 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F05-04</div><h3>최근 검색어</h3><p>개별·전체 삭제, 재검색.</p><div class="meta"><span class="pill">9 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F05-05</div><h3>저장된 검색</h3><p>저장·수정·삭제, 알림 연동(새 결과 알림), 중복 저장 처리.</p><div class="meta"><span class="pill">9 시나리오</span></div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>검색의 세 상태</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["검색창 진입"] --> B["입력 전<br/>최근/트렌딩"]
+    B --> C["입력 중<br/>자동완성 서제스트"]
+    C --> D["결과 화면<br/>영역별·필터·정렬"]
+    D --> E["빈 결과"]
+    D --> F["저장된 검색으로 등록"]
+          </div>
+        </div>
+        <p>입력 전·입력 중·결과 화면은 같은 페이지 안의 다른 상태다. 같은 검색창에서 사용자 입력의 길이에 따라 자동으로 전환된다.
+        디바운스 누락 시 모든 키 입력마다 API가 호출되는 회귀가 자주 발생한다.</p>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout warn">
+          <ul>
+            <li><strong>저장된 검색의 알림 연동</strong> — 사용자가 “저장”했으니 새 결과 알림이 자동으로 켜진다고 오해할 수 있다. 별도 토글 노출 필요.</li>
+            <li><strong>GPS 권한이 필요한 필터</strong> — “내 주변” 필터를 GPS 거부 상태에서 적용하면 결과가 0이 되는 케이스.</li>
+            <li><strong>비로그인 검색</strong> — 비로그인 사용자에게는 “저장된 검색·최근 검색어”가 보이면 안 된다.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>개인정보·안전 정책 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>개인정보·안전</div>
+        <h1>개인정보 · 안전 정책</h1>
+        <p class="lede">
+          위치·데이팅·신고·차단·데이터 내보내기·계정 삭제처럼 <strong>사용자 피해가 큰 기능</strong>은
+          명시적 동의·중지 동선·복구 가능성을 다른 정책보다 우선한다.
+        </p>
+      </header>
+
+      <section>
+        <h2>민감 기능과 핵심 원칙</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>기능</th><th>핵심 원칙</th></tr></thead>
+            <tbody>
+              <tr><td><strong>위치 공유</strong></td><td>opt-in이 기본, 즉시 opt-out, 공유 상태 항상 시각화</td></tr>
+              <tr><td><strong>데이팅 인증</strong></td><td>미인증 사용자의 핵심 기능 접근 제한</td></tr>
+              <tr><td><strong>차단</strong></td><td>후보자·매칭·채팅 전 영역에 cascade 즉시 반영</td></tr>
+              <tr><td><strong>신고</strong></td><td>자기 신고·중복 신고 방지, 결과 인지 동선 제공</td></tr>
+              <tr><td><strong>데이터 내보내기</strong></td><td>처리중·완료·실패·만료 상태 명확화 (비동기 처리)</td></tr>
+              <tr><td><strong>계정 삭제</strong></td><td>30일 유예와 취소 동선 제공</td></tr>
+              <tr><td><strong>계정 비활성화</strong></td><td>사전 점검(미정산 차단)과 강제 로그아웃 명확화</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>설계 시 4가지 질문</h2>
+        <p class="subtitle">민감 기능을 추가·수정할 때 매번 묻는다.</p>
+        <ol>
+          <li><strong>동의가 명확한가</strong> — “설정에 들어가서 켰다”가 아니라 사용자가 결과를 알고 동의했는가.</li>
+          <li><strong>끄는 방법이 명확한가</strong> — opt-out 경로가 1탭 거리에 있는가.</li>
+          <li><strong>지금 켜져 있다는 사실이 보이는가</strong> — 현재 상태가 본인 화면에서 보이는가.</li>
+          <li><strong>실수로 켜졌을 때 되돌릴 수 있는가</strong> — 신고·차단·삭제의 잘못 누름을 복구할 동선이 있는가.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>수용 기준</h2>
+        <ul>
+          <li>사용자가 민감 기능을 켜고 끄는 방법을 모두 이해할 수 있어야 한다.</li>
+          <li>타인에게 노출되는 정보와 본인에게만 보이는 정보가 분리되어야 한다.</li>
+          <li>삭제·차단·신고·위치 공유 중지는 즉시 화면 상태에 반영된다.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

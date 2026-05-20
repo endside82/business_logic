@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>릴리즈 체크리스트 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>릴리즈 체크리스트</div>
+        <h1>릴리즈 준비 체크리스트</h1>
+        <p class="lede">
+          릴리즈 직전 한 번 더 보는 17개 항목.
+          모두 “예”라고 답할 수 있어야 릴리즈 승인. 한 줄이라도 “모르겠다”가 나오면 발견된 시점이 가장 싸다.
+        </p>
+      </header>
+
+      <section>
+        <h2>1. 기능 범위</h2>
+        <ul>
+          <li>이번 릴리즈에 포함되는 기능 ID를 117개 인벤토리 기준으로 표시했다</li>
+          <li>제외되는 기능과 이유를 명시했다</li>
+          <li>P0/P1/P2 우선순위를 정했다</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>2. 사용자 흐름</h2>
+        <ul>
+          <li>신규 사용자 가입·온보딩 흐름이 깨지지 않는다</li>
+          <li>홈·검색에서 핵심 콘텐츠로 진입할 수 있다</li>
+          <li>이벤트 신청·클럽 가입·플랜 구매·데이팅 매칭 중 릴리즈 대상 흐름이 QA됐다</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. 상태와 권한</h2>
+        <ul>
+          <li>권한 없는 사용자의 버튼 노출·비활성·에러 정책이 정해졌다</li>
+          <li>취소·만료·삭제·차단 상태의 fallback이 정해졌다</li>
+          <li>멀티 디바이스·중복 클릭 케이스가 QA됐다</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>4. 돈과 알림</h2>
+        <ul>
+          <li>결제 성공·실패·환불·거래내역이 일관된다</li>
+          <li>정산 DRAFT·ACTIVE·COMPLETED·CANCELLED 상태가 분리되어 보인다</li>
+          <li>알림 수신자·딥링크·카테고리 설정·방해금지 정책이 QA됐다</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>5. 개인정보와 안전</h2>
+        <ul>
+          <li>위치 공유 opt-in/out이 명확하다</li>
+          <li>데이팅 차단·신고가 관련 화면에 즉시 반영된다</li>
+          <li>데이터 내보내기·계정 삭제·비활성화 문구가 검토됐다</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>릴리즈 차단 조건</h2>
+        <div class="callout danger">
+          <span class="label">아래 한 줄이라도 해당되면 릴리즈 보류</span>
+          <ul>
+            <li>돈이 빠진 뒤 기능 성공/실패가 사용자에게 불명확함</li>
+            <li>DRAFT 정산이 참가자에게 노출됨</li>
+            <li>opt-out 후 위치 마커가 남음</li>
+            <li>차단된 사용자가 채팅·게시판에서 여전히 보임</li>
+            <li>마지막 로그인 수단 해제가 가능함 (계정 잠김)</li>
+            <li>비로그인 사용자가 결제 직전 화면까지 진입함</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>11 리뷰·신고 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>11 리뷰·신고</div>
+        <h1>11. 리뷰 · 신고</h1>
+        <p class="lede">
+          활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다.
+          “누가 작성할 자격이 있는가”와 “중복은 어떻게 막는가”가 모든 흐름의 골격이다.
+          신뢰점수는 다른 도메인의 노출·추천에도 영향을 준다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">6</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">39</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>6개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F11-01</div><h3>이벤트 리뷰 작성</h3><p>참석자 자격 검증, 중복 방지, 부적절 콘텐츠 차단.</p></div>
+          <div class="card"><div class="eyebrow">F11-02</div><h3>리뷰 목록 조회</h3><p>이벤트별·사용자별, 평균·분포, 신고 진입.</p></div>
+          <div class="card"><div class="eyebrow">F11-03</div><h3>리뷰 수정·삭제</h3><p>수정 한도, 타인 리뷰 차단, 삭제 후 점수 재계산.</p></div>
+          <div class="card"><div class="eyebrow">F11-04</div><h3>신고</h3><p>대상 유형, 자기 신고·중복 신고 차단, 운영 접수.</p></div>
+          <div class="card"><div class="eyebrow">F11-05</div><h3>신뢰점수·변동 이력</h3><p>본인·타인 노출 차이, 등급 임계, 이력.</p></div>
+          <div class="card"><div class="eyebrow">F11-06</div><h3>취향 평가·취향 프로필</h3><p>비공개 평가, 태그 가중치, 데이터 부족 빈 상태.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>리뷰와 취향 평가의 차이</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>리뷰</th><th>취향 평가</th></tr></thead>
+            <tbody>
+              <tr><td><strong>공개 여부</strong></td><td>공개 — 다른 사용자에게 보임</td><td>비공개 — 추천 시스템만 사용</td></tr>
+              <tr><td><strong>대상</strong></td><td>이벤트·플랜</td><td>참석한 사람·콘텐츠 태그</td></tr>
+              <tr><td><strong>영향</strong></td><td>이벤트 평점·호스트 신뢰도</td><td>본인 추천 품질</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>신뢰점수 산정식 — 활동·인증·패널티</h2>
+        <p class="subtitle">
+          F11-05의 핵심. 점수는 호출 시점에 즉시 계산해서 응답하고,
+          외부 도메인이 <code>TrustScoreService.recalculate(userId)</code>를 호출하면
+          변동치 ≥ 1.0인 경우에만 <code>ScoreSnapshot</code>이 추가된다.
+          서버 소스 기준 식이며, 절대값은 클라이언트에서 다시 그리지 않는다.
+        </p>
+
+        <pre><code>activity   = 0.4·attended + 0.3·hosted + 0.15·50 + 0.15·50    (0~100)
+verification = email30 + phone30 + profile20(image10+bio5+name5) + social10|20
+penalty    = min(100, confirmedReports × 20)   ← RESOLVED + ESCALATED만 카운트
+
+total      = clamp([0,100], 0.5·activity + 0.25·verification − 0.25·penalty)
+grade      = 90+ DIAMOND  /  75+ PLATINUM  /  60+ GOLD  /  40+ SILVER  /  else BRONZE</code></pre>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:130px">컴포넌트</th><th>가중치</th><th>입력 신호</th><th>책임</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Activity</strong></td>
+                <td><span class="pill brand">+0.50</span></td>
+                <td>참석 수·주최 수 (클럽/연속 점수는 현재 50점 고정)</td>
+                <td><code>ActivityScoreCalculator</code></td>
+              </tr>
+              <tr>
+                <td><strong>Verification</strong></td>
+                <td><span class="pill info">+0.25</span></td>
+                <td>이메일 인증, 전화번호, 프로필(사진·자기소개·실명), 소셜 연동 수</td>
+                <td><code>VerificationScoreCalculator</code></td>
+              </tr>
+              <tr>
+                <td><strong>Penalty</strong></td>
+                <td><span class="pill danger">−0.25</span></td>
+                <td>RESOLVED·ESCALATED 상태 신고 1건당 20점, 최대 100점</td>
+                <td><code>PenaltyScoreCalculator</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>TrustScore 엔티티 필드</h3>
+        <p>점수는 호출 시 즉시 산정하지만, 누적 수치는 <code>TrustScore</code> 엔티티에 저장된다.</p>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead><tr><th>필드</th><th>의미</th></tr></thead>
+            <tbody>
+              <tr><td><code>activityScore</code> / <code>verificationScore</code> / <code>penaltyScore</code></td><td>3개 컴포넌트 점수 스냅샷</td></tr>
+              <tr><td><code>totalScore</code> (default 50.0)</td><td>가중합 결과. 신규 사용자는 50에서 시작.</td></tr>
+              <tr><td><code>grade</code> (default <code>BRONZE</code>)</td><td>등급 문자열. enum이 아닌 String 상수.</td></tr>
+              <tr><td><code>reviewCount</code></td><td>받은 리뷰 수 (soft delete 제외)</td></tr>
+              <tr><td><code>eventCount</code></td><td>ATTENDING 참석 수</td></tr>
+              <tr><td><code>noShowCount</code></td><td>노쇼 카운트 누적</td></tr>
+              <tr><td><code>reportCount</code></td><td>확정 신고 누적</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>패널티는 어떻게 쌓이는가</h2>
+        <p>패널티 점수는 신고 도메인(F11-04)이 만들어내는 결과 데이터에 의해 결정된다. 사용자 액션 자체가 직접 점수를 깎지 않는다 — <strong>운영자 처리 결과만</strong> 반영된다.</p>
+
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["다른 사용자가 신고 접수<br/>POST /api/v1/reports"] --> B["Report: PENDING"]
+    B --> C{"운영자 처리"}
+    C -->|"승인"| D["RESOLVED"]
+    C -->|"심각·이관"| E["ESCALATED"]
+    C -->|"기각"| F["DISMISSED"]
+    C -->|"검토중"| G["IN_REVIEW"]
+    D --> H["PenaltyScoreCalculator<br/>+20점 누적"]
+    E --> H
+    H --> I["TrustScoreService.recalculate(userId)"]
+    I --> J{"diff ≥ 1.0?"}
+    J -->|"예"| K["ScoreSnapshot INSERT"]
+    J -->|"아니오"| L["스킵 (노이즈 방지)"]
+          </div>
+        </div>
+
+        <div class="callout">
+          <span class="label">읽는 법</span>
+          <ul>
+            <li>신고 접수(<code>POST /api/v1/reports</code>) <strong>자체로는 점수가 깎이지 않는다</strong>. 운영자가 <code>RESOLVED</code> 또는 <code>ESCALATED</code>로 처리해야 카운트.</li>
+            <li>그래서 신뢰점수에는 “접수 즉시 반영”이 없다. 운영 SLA가 곧 패널티 반영 속도가 된다.</li>
+            <li>변동치가 1.0 미만이면 스냅샷이 쌓이지 않는다. 잦은 미세 변동이 이력 그래프를 어지럽히지 않도록 한 장치.</li>
+          </ul>
+        </div>
+
+        <h3>신고 사유 7종 (F11-04 enum)</h3>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead><tr><th style="width:120px">코드</th><th>라벨</th></tr></thead>
+            <tbody>
+              <tr><td><code>HARASSMENT</code></td><td>괴롭힘·협박</td></tr>
+              <tr><td><code>INAPPROPRIATE</code></td><td>부적절한 콘텐츠</td></tr>
+              <tr><td><code>NO_SHOW</code></td><td>노쇼</td></tr>
+              <tr><td><code>FRAUD</code></td><td>사기·사칭</td></tr>
+              <tr><td><code>LATE</code></td><td>지각</td></tr>
+              <tr><td><code>BAD_MANNER</code></td><td>나쁜 매너</td></tr>
+              <tr><td><code>OTHER</code></td><td>기타</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>대상 유형은 <code>EVENT</code> / <code>USER</code> / <code>REVIEW</code> 3가지. <strong><code>CLUB</code>은 클라이언트 UI에는 표시되지만 서버 enum에 없다</strong> — 알려진 Gap이며 <code>targetType="CLUB"</code> 전송 시 <code>REPORT_INVALID_TARGET</code>으로 거절된다.</p>
+      </section>
+
+      <section>
+        <h2>등급 임계 — 서버·클라이언트 불일치 (알려진 Gap)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>서버 (정답)</th><th>클라이언트 (현재)</th></tr></thead>
+            <tbody>
+              <tr><td>SILVER 도달</td><td>40+</td><td>40+</td></tr>
+              <tr><td>GOLD 도달</td><td><strong>60+</strong></td><td>60+</td></tr>
+              <tr><td>PLATINUM 도달</td><td><strong>75+</strong></td><td><strong>80+</strong></td></tr>
+              <tr><td>DIAMOND 도달</td><td><strong>90+</strong></td><td>없음 (PLATINUM이 최대)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">UI 보강 필요</span>
+          <p>클라이언트가 “다음 등급까지 N점” 문구를 그릴 때 서버 임계와 어긋난다.
+          서버 응답의 <code>grade</code>를 신뢰하되, 다음 등급 임계는 <code>SILVER 40 / GOLD 60 / PLATINUM 75 / DIAMOND 90</code>으로 맞춰야 정확하다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>다른 도메인이 패널티에 영향을 주는 지점</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>트리거</th><th>발생 도메인</th><th>패널티 영향 경로</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>리뷰 작성·수정·삭제</td>
+                <td><a href="11-review.html">11 리뷰·신고</a> (F11-01/03)</td>
+                <td><code>recalculate(revieweeId)</code> 직접 호출 → activity·review 갱신</td>
+              </tr>
+              <tr>
+                <td>신고 처리 (운영)</td>
+                <td>F11-04 (admin 흐름)</td>
+                <td>RESOLVED·ESCALATED 시 <code>PenaltyScoreCalculator</code>가 즉시 반영</td>
+              </tr>
+              <tr>
+                <td>이벤트 참석·노쇼</td>
+                <td><a href="03-event.html">03 이벤트</a></td>
+                <td>참석 카운트는 activity, 노쇼는 <code>noShowCount</code> 누적 (현재는 패널티 컴포넌트 자체는 신고에서만 산정)</td>
+              </tr>
+              <tr>
+                <td>인증 추가</td>
+                <td><a href="01-auth.html">01 인증</a> · <a href="13-profile.html">13 프로필</a></td>
+                <td>이메일·전화·프로필·소셜 인증이 verification 점수에 직접 반영</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="color:var(--muted); font-size:13px">참고: <code>noShowCount</code> 필드는 <code>TrustScore</code> 엔티티에 존재하지만, 현재 <code>PenaltyScoreCalculator</code> 식에서는 신고 카운트(<code>RESOLVED + ESCALATED</code>)만 반영한다. 노쇼 자체로 직접 점수가 깎이려면 패널티 식 보강이 필요하다 — 보강 후보 Gap.</p>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <ul>
+            <li><strong>미참석자의 리뷰 작성</strong> — 평판 조작을 막아야 한다. 참석 확정자만 리뷰 자격.</li>
+            <li><strong>중복 리뷰·중복 신고</strong> — 운영 큐와 점수 왜곡 방지.</li>
+            <li><strong>본인 신고</strong> — 악용·오류 방지.</li>
+            <li><strong>리뷰 삭제 후 신뢰점수 재계산 누락</strong> — 점수가 언제 재계산되는지 명확해야 한다.</li>
+            <li><strong>데이터 부족한 취향 프로필</strong> — 빈 차트보다 “더 모일 때까지” 설명하는 빈 상태 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·도메인</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/privacy.html"><div class="eyebrow">정책</div><h3>개인정보·안전 정책</h3><p>신고·차단·신뢰점수의 노출 원칙.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>참석 확정이 리뷰 자격의 출발점.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

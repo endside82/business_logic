@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시나리오 커버리지 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>시나리오 커버리지</div>
+        <h1>시나리오 커버리지 기준</h1>
+        <p class="lede">
+          전체 시나리오는 987개. 다 외울 수는 없다.
+          대신 모든 기능 카드가 같은 <strong>8개 범주</strong>를 점검하면 누락을 막을 수 있다.
+          이 페이지는 그 8개 범주의 정의와 도메인별 적용 표다.
+        </p>
+      </header>
+
+      <section>
+        <h2>모든 기능에 적용하는 8개 범주</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>범주</th><th>질문</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr><td><strong>정상 흐름</strong></td><td>사용자가 기대한 대로 성공하는가</td><td>회원가입 완료, 이벤트 신청 성공, 정산 납부 완료</td></tr>
+              <tr><td><strong>진입·복귀</strong></td><td>어디서 들어오고 어디로 돌아가는가</td><td>홈 카드·알림 딥링크·백버튼 복귀</td></tr>
+              <tr><td><strong>빈 상태</strong></td><td>데이터가 없을 때 자연스러운가</td><td>리뷰 없음, 검색 결과 없음, 등록 기기 없음</td></tr>
+              <tr><td><strong>권한·역할</strong></td><td>이 사용자가 이 액션을 할 수 있는가</td><td>비호스트 정산 생성 차단, 타인 리뷰 수정 차단</td></tr>
+              <tr><td><strong>상태 불일치</strong></td><td>화면을 보는 사이 상태가 바뀌면?</td><td>정원 마감, 이미 취소된 이벤트, 만료된 토큰</td></tr>
+              <tr><td><strong>입력 검증</strong></td><td>값이 부족하거나 잘못되면?</td><td>비밀번호 약함, 금액 범위 초과, 시간 역전</td></tr>
+              <tr><td><strong>실패·복구</strong></td><td>네트워크·외부 시스템 실패 시</td><td>PG 실패, SMTP 실패, 지도 시스템 연동 장애</td></tr>
+              <tr><td><strong>중복·동시성</strong></td><td>같은 액션을 반복하거나 여러 기기에서 하면?</td><td>중복 신청, 토큰 동시 갱신, 일괄 승인 충돌</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>시나리오 검산 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["기능 하나 선택"] --> B["정상 흐름 작성"]
+    B --> C["진입점·복귀 지점 확인"]
+    C --> D["빈 상태·로딩 상태 확인"]
+    D --> E["역할·권한별 CTA 확인"]
+    E --> F["상태가 바뀐 경우 확인"]
+    F --> G["입력 검증 확인"]
+    G --> H["외부 실패·네트워크 실패 확인"]
+    H --> I["중복 클릭·멀티 디바이스 확인"]
+    I --> J["알림·결제·위치·리뷰 부수효과 확인"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인별 시나리오 분포</h2>
+        <p class="subtitle">기능당 평균이 높을수록 카드가 무겁다. 04 클럽이 가장 무겁고, 13 프로필이 가장 가볍다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">시나리오</th><th style="text-align:right">기능당 평균</th><th>우선 확인할 시나리오</th></tr></thead>
+            <tbody>
+              <tr><td>01 인증·온보딩</td><td style="text-align:right">8</td><td style="text-align:right">82</td><td style="text-align:right">10.3</td><td>토큰, 메일, 소셜 앱 연동, 계정 상태</td></tr>
+              <tr><td>02 홈 피드</td><td style="text-align:right">5</td><td style="text-align:right">38</td><td style="text-align:right">7.6</td><td>부분 실패, 캐시, 비로그인, 카드 라우팅</td></tr>
+              <tr><td>03 이벤트</td><td style="text-align:right">12</td><td style="text-align:right">111</td><td style="text-align:right">9.3</td><td>정원, 승인, 유료 승인제, 결제, 대기열, 체크인</td></tr>
+              <tr><td>04 클럽</td><td style="text-align:right">16</td><td style="text-align:right">189</td><td style="text-align:right">11.8</td><td>권한, 멤버십, 게시판, 기금, 구독</td></tr>
+              <tr><td>05 검색</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td style="text-align:right">8.2</td><td>입력 전·중·결과, 필터, 기록</td></tr>
+              <tr><td>06 결제·지갑</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td style="text-align:right">7.1</td><td>PG 실패, 잔액 부족, 유료 승인제, 환불, 자동충전</td></tr>
+              <tr><td>07 모임 정산</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td style="text-align:right">8.4</td><td>작성중·진행중, 납부, 이체 확인, 이의</td></tr>
+              <tr><td>08 플랜 마켓</td><td style="text-align:right">13</td><td style="text-align:right">107</td><td style="text-align:right">8.2</td><td>초안·발행, 구매 중복, 컬렉션, 리뷰</td></tr>
+              <tr><td>09 프라이빗 데이팅</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td style="text-align:right">8.8</td><td>인증, 매칭, 채팅, 만남, 차단</td></tr>
+              <tr><td>10 캘린더</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td style="text-align:right">8.0</td><td>라우팅, 반복, 충돌, 공개 범위</td></tr>
+              <tr><td>11 리뷰·신고</td><td style="text-align:right">6</td><td style="text-align:right">39</td><td style="text-align:right">6.5</td><td>작성 자격, 중복, 자기 신고, 신뢰점수</td></tr>
+              <tr><td>12 알림</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td style="text-align:right">6.3</td><td>권한, 카테고리, 방해금지, 토큰</td></tr>
+              <tr><td>13 프로필·설정</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td style="text-align:right">5.0</td><td>데이터 내보내기, 삭제·비활성화, 주소</td></tr>
+              <tr><td>14 위치·길찾기</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td style="text-align:right">7.0</td><td>opt-in/out, 위치 권한, 외부 지도</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인별 8개 범주 적용 여부</h2>
+        <p class="subtitle">모든 도메인은 모든 범주를 적용해야 한다. 입력 검증이 빈 칸인 경우는 “입력이 거의 없는” 영역(홈 피드)뿐.</p>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>영역</th><th>정상</th><th>빈</th><th>권한</th><th>상태</th><th>검증</th><th>실패</th><th>중복</th><th>부수효과</th></tr></thead>
+            <tbody>
+              <tr><td style="text-align:left">01 인증·온보딩</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">02 홈 피드</td><td>O</td><td>O</td><td>O</td><td>O</td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">03 이벤트</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">04 클럽</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">05 검색</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">06 결제·지갑</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">07 모임 정산</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">08 플랜 마켓</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">09 데이팅</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">10 캘린더</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">11 리뷰·신고</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">12 알림</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">13 프로필·설정</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td style="text-align:left">14 위치·길찾기</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>기능 카드 작성 전 체크리스트</h2>
+        <div class="callout">
+          <ul>
+            <li>정상 성공 흐름이 있다</li>
+            <li>사용자가 들어오는 진입점이 2개 이상이면 모두 적었다</li>
+            <li>빈 상태·로딩·전체 실패·부분 실패를 구분했다</li>
+            <li>비로그인·로그인·소유자·관리자·대상자 권한이 구분됐다</li>
+            <li>상태가 화면 진입 후 바뀌는 경우를 적었다</li>
+            <li>입력값 범위와 필수값을 적었다</li>
+            <li>외부 시스템 실패를 적었다</li>
+            <li>중복 클릭·재시도·멀티 디바이스를 적었다</li>
+            <li>돈·알림·캘린더·위치·신뢰 영향이 있는지 확인했다</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

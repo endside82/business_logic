@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>community PRD — 서비스 개관</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body data-base="./">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">community 제품 문서</div>
+        <h1>community PRD 문서 허브</h1>
+        <p class="lede">
+          이 문서 묶음은 community 플랫폼이 무엇을 풀고 있는지, 어떤 사용자가
+          어떤 흐름을 거치는지, 어디서 돈·알림·위치·신뢰가 움직이는지를 한 자리에서
+          파악하기 위해 만들었다. 새로 합류한 기획자가 코드와 화면을 보기 전에
+          여기서부터 시작하면 된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">업무 도메인</div><div class="value">14</div><div class="hint">가입부터 위치까지 책임이 분리된 영역</div></div>
+          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">117</div><div class="hint">Golden 1 · 전환 완료 116</div></div>
+          <div class="metric"><div class="label">검증 시나리오</div><div class="value">987</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
+          <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">2026-05-20 갱신 — 운영 모델 변경 반영</span>
+          <p>원문 PRD가 <strong>source-first 모델</strong>로 전환됐다. 기능 PRD는 이제 “시나리오 나열”이 아니라
+          실제 서버·Flutter 소스를 직접 대조한 판단 문서로 운영된다. 자세한 골자는
+          <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 117개 기능의 전환 상태와 Trace/Risk 후보 수는
+          <a href="qa/migration-status.html">전환 상태표</a>에서 확인한다. 시각화 변경 내역은
+          <a href="overview/changelog.html">변경 기록</a> 페이지에 있다.</p>
+        </div>
+
+        <div class="callout">
+          <span class="label">이 허브를 보는 법</span>
+          <p>왼쪽 사이드바는 “이해 → 도메인 → 기능 → 정책 → QA” 순서로 정렬돼 있다.
+          처음이라면 <a href="overview/service.html">서비스 정의</a> → <a href="overview/architecture.html">정보구조</a> →
+          <a href="overview/journeys.html">7대 여정</a>을 차례로 읽고, 담당 영역 도메인 페이지로 내려가는 흐름을 권장한다.
+          담당 기능을 직접 다루려면 <a href="overview/operating-model.html">운영 모델</a> →
+          <a href="qa/migration-status.html">전환 상태표</a> → 해당 기능 PRD 순서로 본다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>community는 어떤 제품인가</h2>
+        <p class="subtitle">한 줄 정의와 큰 흐름만 빠르게 확인한다. 자세한 정의는 <a href="overview/service.html">서비스 정의</a> 페이지에 있다.</p>
+        <p>
+          community는 관심사 기반의 <strong>오프라인 활동을 찾고, 참여하고, 운영하고, 정산하고, 다시 이어가는</strong>
+          전 과정을 하나의 앱에서 처리하는 커뮤니티 플랫폼이다. 발견·참여만 다루는 SNS와 달리,
+          결제·정산·환불 같은 돈의 흐름과 리뷰·신고·차단 같은 신뢰 관리가 같은 비중으로 들어간다.
+        </p>
+
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["가입·온보딩"] --> B["탐색<br/>(홈·검색·플랜마켓)"]
+    B --> C{"참여 대상 선택"}
+    C --> D["이벤트 참여"]
+    C --> E["클럽 가입"]
+    C --> F["플랜 구매"]
+    C --> G["데이팅 매칭"]
+    D --> H["결제·정산"]
+    E --> H
+    F --> H
+    G --> I["만남 조율"]
+    H --> J["캘린더·알림·위치"]
+    I --> J
+    J --> K["리뷰·신뢰점수"]
+    K --> B
+          </div>
+          <div class="diagram-caption">탐색 → 참여 → 돈 처리 → 재연결 → 신뢰 형성이 다시 탐색으로 돌아오는 닫힌 루프</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>어디부터 읽어야 할까</h2>
+        <p class="subtitle">목적별로 묶었다. 본인이 어떤 일을 하려고 왔는지 골라 들어가면 된다.</p>
+
+        <div class="hub-grid">
+          <a class="card" href="overview/service.html">
+            <div class="eyebrow">제품 이해</div>
+            <h3>community가 푸는 문제</h3>
+            <p>제품의 한 줄 정의, 풀고 있는 문제 5가지, 전체 플로우, 그리고 우리 문서로는 결정하지 않는 영역(KPI·법무·SLA 등)을 분리한다.</p>
+            <div class="meta"><span class="pill brand">개관</span></div>
+          </a>
+          <a class="card" href="overview/personas.html">
+            <div class="eyebrow">제품 이해</div>
+            <h3>사용자 9개 역할</h3>
+            <p>참가자·호스트·클럽 운영자·크리에이터·데이팅 사용자 등 9개 역할의 목적과 기대 경험. 권한·CTA를 결정할 때 첫 참고서다.</p>
+            <div class="meta"><span class="pill brand">사용자</span></div>
+          </a>
+          <a class="card" href="overview/architecture.html">
+            <div class="eyebrow">제품 이해</div>
+            <h3>14개 도메인의 책임</h3>
+            <p>“이 기능은 어느 영역에 둘 것인가?”를 판단할 때 본다. 도메인별 기능 수, 시나리오 수, 의존 관계가 함께 정리돼 있다.</p>
+            <div class="meta"><span class="pill brand">정보구조</span></div>
+          </a>
+          <a class="card" href="overview/journeys.html">
+            <div class="eyebrow">제품 이해</div>
+            <h3>7대 사용자 여정</h3>
+            <p>“기능 목록”이 아니라 “사용자가 실제로 무엇을 하는가”로 흐름을 본다. 발견→참여→정산→리뷰까지의 골든 패스가 7개로 묶여 있다.</p>
+            <div class="meta"><span class="pill brand">여정</span></div>
+          </a>
+          <a class="card" href="overview/operating-model.html">
+            <div class="eyebrow">신규</div>
+            <h3>PRD 운영 모델 (source-first)</h3>
+            <p>2026-05-18부터 적용된 새 PRD 표준. Fact·Derived·Gap·Risk·Decision Needed로 사실과 판단을 분리한다.</p>
+            <div class="meta"><span class="pill warn">필독</span></div>
+          </a>
+          <a class="card" href="qa/migration-status.html">
+            <div class="eyebrow">신규</div>
+            <h3>117개 PRD 전환 상태표</h3>
+            <p>Golden sample 1 · 전환 완료 116. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
+            <div class="meta"><span class="pill info">QA</span></div>
+          </a>
+          <a class="card" href="features/catalog.html">
+            <div class="eyebrow">기능</div>
+            <h3>117개 기능 카탈로그</h3>
+            <p>전 기능을 한 화면에서 검색·필터·정렬한다. 영향 영역(알림/돈/캘린더/위치/신뢰)으로도 좁힐 수 있다.</p>
+            <div class="meta"><span class="pill brand">전수</span><span class="pill">검색</span></div>
+          </a>
+          <a class="card" href="reference/numbers.html">
+            <div class="eyebrow">신규</div>
+            <h3>비즈니스 수치 레퍼런스</h3>
+            <p>환불률 24h=100%·12h=50%·0%, 클럽 구독 FREE 10,000원/월·BUSINESS 30,000원/월, 인출 수수료 5%+원천징수 3.3%, 30일 유예, 30초 갱신 등 정책 상수 모음.</p>
+            <div class="meta"><span class="pill money">돈</span><span class="pill">상수</span></div>
+          </a>
+          <a class="card" href="features/impact.html">
+            <div class="eyebrow">기능</div>
+            <h3>부수효과 매트릭스</h3>
+            <p>한 기능을 바꿀 때 같이 흔들리는 영역(알림·돈·캘린더·위치·신뢰)을 본다. 회귀 검토와 정책 PRD 갱신의 출발점.</p>
+            <div class="meta"><span class="pill warn">회귀</span></div>
+          </a>
+          <a class="card" href="policies/state.html">
+            <div class="eyebrow">횡단 정책</div>
+            <h3>상태 정책</h3>
+            <p>이벤트·정산·플랜·계정·위치의 상태 전이도와 각 상태에서 허용·금지되는 액션을 모았다. 버튼·문구·알림 결정의 기준.</p>
+            <div class="meta"><span class="pill violet">정책</span></div>
+          </a>
+          <a class="card" href="policies/permission.html">
+            <div class="eyebrow">횡단 정책</div>
+            <h3>권한·역할 매트릭스</h3>
+            <p>“이 사용자는 이 액션을 할 수 있는가?”를 일관되게 결정한다. 이벤트·클럽·결제·데이팅·위치별 액션 가능 여부 표.</p>
+            <div class="meta"><span class="pill violet">정책</span></div>
+          </a>
+          <a class="card" href="policies/payment.html">
+            <div class="eyebrow">횡단 정책</div>
+            <h3>결제·정산 정책</h3>
+            <p>충전·결제·환불·호스트 정산·모임 정산·클럽 기금이 서로 섞이지 않도록 흐름을 분리한다. 유료 승인제 결제 정책 포함.</p>
+            <div class="meta"><span class="pill money">돈</span></div>
+          </a>
+          <a class="card" href="qa/acceptance.html">
+            <div class="eyebrow">QA & 릴리즈</div>
+            <h3>QA 수용 기준</h3>
+            <p>개발 착수·릴리즈 승인 전 점검표. 사용자/시작·종료 상태/빈 상태/돈/알림/안전/외부 실패/동시성까지 10단계로 검산한다.</p>
+            <div class="meta"><span class="pill info">QA</span></div>
+          </a>
+          <a class="card" href="qa/coverage.html">
+            <div class="eyebrow">QA & 릴리즈</div>
+            <h3>시나리오 커버리지</h3>
+            <p>987개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
+            <div class="meta"><span class="pill info">QA</span></div>
+          </a>
+          <a class="card" href="qa/release.html">
+            <div class="eyebrow">QA & 릴리즈</div>
+            <h3>릴리즈 체크리스트</h3>
+            <p>릴리즈 전 마지막 점검: 기능 범위, 핵심 흐름 회귀, 권한·상태, 돈·알림, 개인정보·안전.</p>
+            <div class="meta"><span class="pill info">릴리즈</span></div>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <h2>왜 이 문서가 필요한가</h2>
+        <p>
+          117개 기능이 한 데 모이면, 한 기능을 바꿀 때 어디가 같이 바뀌는지 잊어버리기 쉽다.
+          예를 들어 “이벤트 신청” 한 줄을 고치면 알림, 결제 흐름, 캘린더 동기화,
+          호스트 정산, 리뷰 자격이 동시에 영향받는다. 이 문서들은 그 연결을
+          머릿속이 아니라 종이로 남겨두기 위해 있다.
+        </p>
+        <p>
+          반대로, 이 문서로 결정하지 않는 영역이 있다. <strong>사업 KPI, 출시 우선순위,
+          법무 최종 문구, 운영 SLA, UX 카피</strong>는 별도 의사결정이 필요한 사안이다.
+          여기서는 “기능이 동작하기 위한 정의”와 “QA가 검증할 수용 기준”까지만 다룬다.
+        </p>
+      </section>
+
+      <footer class="page-foot">
+        모든 문서는 사이드바에서 바로 열 수 있다. 정적 HTML이라서 파일을 직접 더블클릭해도 동작한다.
+      </footer>
+    </main>
+  </div>
+  <script src="assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

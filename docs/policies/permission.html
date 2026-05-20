@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>권한 정책 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>권한·역할</div>
+        <h1>권한 · 역할 매트릭스</h1>
+        <p class="lede">
+          “기능을 빠뜨리지 않는 것”만큼 중요한 게 “누가 할 수 있는가”다.
+          같은 화면이라도 비로그인·일반 사용자·참가자·호스트·클럽 관리자·크리에이터에게 보이는 버튼과
+          허용 액션이 다르다. 이 페이지는 그 차이를 통일된 표로 정리한다.
+        </p>
+      </header>
+
+      <section>
+        <h2>12개 역할</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:20%">역할</th><th>설명</th><th>대표 진입</th></tr></thead>
+            <tbody>
+              <tr><td><strong>게스트</strong></td><td>로그인하지 않은 사용자</td><td>홈·검색·일부 상세 공유 링크</td></tr>
+              <tr><td><strong>로그인 사용자</strong></td><td>인증은 됐지만 특정 콘텐츠와 관계 없음</td><td>홈·검색·프로필·지갑</td></tr>
+              <tr><td><strong>참가자</strong></td><td>이벤트에 신청·참석·대기 중</td><td>이벤트 상세·체크인·리뷰·정산</td></tr>
+              <tr><td><strong>호스트</strong></td><td>이벤트를 만든 사용자</td><td>이벤트 생성·신청 승인·정산</td></tr>
+              <tr><td><strong>클럽 비회원</strong></td><td>클럽에 아직 속하지 않음</td><td>클럽 발견·상세</td></tr>
+              <tr><td><strong>클럽 멤버</strong></td><td>클럽에 가입함</td><td>게시판·댓글·사진첩·클럽 이벤트</td></tr>
+              <tr><td><strong>클럽 관리자</strong></td><td>멤버 관리 권한 보유</td><td>멤버·공지·게시판 관리</td></tr>
+              <tr><td><strong>클럽 소유자</strong></td><td>클럽의 최상위 책임자</td><td>삭제·소유권 이전·기금 인출</td></tr>
+              <tr><td><strong>플랜 크리에이터</strong></td><td>플랜 작성·판매</td><td>플랜 에디터·마켓 아이템</td></tr>
+              <tr><td><strong>플랜 구매자</strong></td><td>플랜 구매·보유</td><td>컬렉션·미리보기·이벤트 생성</td></tr>
+              <tr><td><strong>데이팅 사용자</strong></td><td>본인 인증 후 데이팅 이용</td><td>후보자·매칭·채팅·만남</td></tr>
+              <tr><td><strong>신고자</strong></td><td>부적절 대상에 신고 접수</td><td>리뷰·프로필·콘텐츠의 신고 액션</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>권한 판단 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["사용자 액션"] --> B{"로그인 필요?"}
+    B -->|"예 + 비로그인"| C["로그인 유도"]
+    B -->|"아니오 또는 로그인됨"| D{"콘텐츠와 관계 있음?"}
+    D -->|"없음"| E{"공개 액션인가?"}
+    E -->|"예"| F["조회·탐색 허용"]
+    E -->|"아니오"| G["권한 없음 안내"]
+    D -->|"있음"| H{"역할이 충분한가?"}
+    H -->|"예"| I["액션 실행"]
+    H -->|"아니오"| G
+    I --> J{"상태 조건 만족?"}
+    J -->|"예"| K["성공 상태 반영"]
+    J -->|"아니오"| L["상태 변경 안내"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>영역별 권한 요약</h2>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead><tr><th>영역</th><th>게스트</th><th>로그인 사용자</th><th>관계자/소유자</th><th>관리자급</th></tr></thead>
+            <tbody>
+              <tr><td>인증·온보딩</td><td>가입·로그인</td><td>온보딩·태그·로그아웃</td><td>본인 계정 관리</td><td>—</td></tr>
+              <tr><td>홈 피드</td><td>일부 조회</td><td>추천·카드 진입</td><td>동일</td><td>—</td></tr>
+              <tr><td>이벤트</td><td>목록·상세 일부</td><td>신청·위시</td><td>참가자 체크인, 호스트 관리</td><td>—</td></tr>
+              <tr><td>클럽</td><td>발견·상세 일부</td><td>가입 신청</td><td>멤버 활동</td><td>관리자·소유자 운영</td></tr>
+              <tr><td>검색</td><td>일부 검색</td><td>기록·저장 검색</td><td>동일</td><td>—</td></tr>
+              <tr><td>결제·지갑</td><td>불가</td><td>본인 지갑·결제</td><td>호스트 수익</td><td>—</td></tr>
+              <tr><td>모임 정산</td><td>불가</td><td>본인 관련 조회</td><td>참가자 납부, 호스트 생성·확인</td><td>—</td></tr>
+              <tr><td>플랜 마켓</td><td>탐색 일부</td><td>구매·컬렉션</td><td>크리에이터 작성·판매</td><td>—</td></tr>
+              <tr><td>데이팅</td><td>불가</td><td>인증 전 제한</td><td>매칭·채팅·차단</td><td>—</td></tr>
+              <tr><td>캘린더</td><td>제한적 공개 조회</td><td>본인 일정</td><td>타인 공개 가용성</td><td>—</td></tr>
+              <tr><td>리뷰·신고</td><td>일부 조회</td><td>작성·신고</td><td>본인 리뷰 수정·삭제</td><td>운영 검토는 별도</td></tr>
+              <tr><td>알림</td><td>불가</td><td>본인 알림·설정</td><td>동일</td><td>—</td></tr>
+              <tr><td>프로필·설정</td><td>불가</td><td>본인 데이터 관리</td><td>동일</td><td>—</td></tr>
+              <tr><td>위치·길찾기</td><td>제한적</td><td>길찾기 일부</td><td>참석자 위치 공유</td><td>호스트 이벤트 단위 제어</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>이벤트 권한 매트릭스</h2>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>액션</th><th>게스트</th><th>로그인</th><th>신청자</th><th>참석자</th><th>대기자</th><th>호스트</th></tr></thead>
+            <tbody>
+              <tr><td>목록·공개 상세 보기</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>비공개·작성중 상세</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+              <tr><td>참석 신청</td><td></td><td>O</td><td></td><td></td><td></td><td></td></tr>
+              <tr><td>신청 취소</td><td></td><td></td><td>O</td><td></td><td></td><td></td></tr>
+              <tr><td>참석 취소</td><td></td><td></td><td></td><td>O</td><td>O</td><td></td></tr>
+              <tr><td>신청 승인·거절</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+              <tr><td>정원·대기열 관리</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+              <tr><td>QR 토큰 표시</td><td></td><td></td><td></td><td>O</td><td></td><td></td></tr>
+              <tr><td>QR 스캔·수동 체크인</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+              <tr><td>사진 업로드</td><td></td><td></td><td></td><td>O</td><td></td><td>O</td></tr>
+              <tr><td>이벤트 수정·취소·공지</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+              <tr><td>리뷰 작성</td><td></td><td></td><td></td><td>O</td><td></td><td>조건부</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>클럽 권한 매트릭스</h2>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>액션</th><th>게스트</th><th>비회원</th><th>대기자·초대자</th><th>멤버</th><th>관리자</th><th>소유자</th></tr></thead>
+            <tbody>
+              <tr><td>클럽 발견·공개 상세</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>가입 신청</td><td></td><td>O</td><td></td><td></td><td></td><td></td></tr>
+              <tr><td>초대 수락·거절</td><td></td><td></td><td>O</td><td></td><td></td><td></td></tr>
+              <tr><td>게시글·댓글 작성</td><td></td><td></td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>자기 글·댓글 수정·삭제</td><td></td><td></td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>게시판·공지 관리</td><td></td><td></td><td></td><td></td><td>O</td><td>O</td></tr>
+              <tr><td>멤버 역할 변경·추방</td><td></td><td></td><td></td><td></td><td>O</td><td>O</td></tr>
+              <tr><td>차단 관리</td><td></td><td></td><td></td><td></td><td>O</td><td>O</td></tr>
+              <tr><td>클럽 수정</td><td></td><td></td><td></td><td></td><td>O</td><td>O</td></tr>
+              <tr><td>클럽 삭제·소유권 이전</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+              <tr><td>기금 조회</td><td></td><td></td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>기금 인출</td><td></td><td></td><td></td><td></td><td></td><td>O</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>결제·정산 권한 매트릭스</h2>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>액션</th><th>일반 사용자</th><th>이벤트 참가자</th><th>호스트</th><th>클럽 소유자</th></tr></thead>
+            <tbody>
+              <tr><td>본인 지갑 조회</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>포인트 충전·결제수단 관리</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>이벤트 참가비 결제</td><td>조건부</td><td>O</td><td>조건부</td><td></td></tr>
+              <tr><td>환불 요청·결과 확인</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>모임 정산 생성</td><td></td><td></td><td>O</td><td></td></tr>
+              <tr><td>정산 항목 편집</td><td></td><td></td><td>O</td><td></td></tr>
+              <tr><td>분담금 납부</td><td></td><td>O</td><td>조건부</td><td></td></tr>
+              <tr><td>계좌이체 확인·상각</td><td></td><td></td><td>O</td><td></td></tr>
+              <tr><td>미납자 리마인드</td><td></td><td></td><td>O</td><td></td></tr>
+              <tr><td>정산 이의제기</td><td></td><td>O</td><td>O</td><td></td></tr>
+              <tr><td>클럽 기금 인출</td><td></td><td></td><td></td><td>O</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">유료 승인제 결제 조건</span>
+          <p>유료 승인제 이벤트에서 일반 사용자의 참가비 결제는 “호스트 승인 후 결제 대기 상태”일 때만 허용한다.
+          <strong>승인 전 결제·거절 후 결제·결제 기한 만료 후 결제는 모두 차단</strong>해야 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>플랜 마켓 권한</h2>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>액션</th><th>게스트</th><th>로그인</th><th>크리에이터</th><th>구매자</th></tr></thead>
+            <tbody>
+              <tr><td>마켓 탐색</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>아이템 상세 보기</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>플랜 작성·편집</td><td></td><td>O</td><td>O</td><td></td></tr>
+              <tr><td>플랜 발행</td><td></td><td></td><td>O</td><td></td></tr>
+              <tr><td>마켓 상품 등록·수정·중지</td><td></td><td></td><td>O</td><td></td></tr>
+              <tr><td>아이템·번들 구매</td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>컬렉션 보기</td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>구매 플랜으로 이벤트 생성</td><td></td><td></td><td>조건부</td><td>O</td></tr>
+              <tr><td>구매 후 리뷰 작성</td><td></td><td></td><td>조건부</td><td>O</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>데이팅 권한</h2>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>액션</th><th>비로그인</th><th>로그인·미인증</th><th>인증 완료</th><th>매칭 사용자</th><th>차단 관계</th></tr></thead>
+            <tbody>
+              <tr><td>데이팅 진입</td><td></td><td>제한</td><td>O</td><td>O</td><td>제한</td></tr>
+              <tr><td>프로필 작성</td><td></td><td></td><td>O</td><td>O</td><td>제한</td></tr>
+              <tr><td>후보자 보기</td><td></td><td></td><td>O</td><td>O</td><td>제외</td></tr>
+              <tr><td>좋아요·패스</td><td></td><td></td><td>O</td><td>O</td><td></td></tr>
+              <tr><td>매칭 목록</td><td></td><td></td><td>O</td><td>O</td><td>제한</td></tr>
+              <tr><td>채팅</td><td></td><td></td><td></td><td>O</td><td>차단</td></tr>
+              <tr><td>만남 제안</td><td></td><td></td><td></td><td>O</td><td>차단</td></tr>
+              <tr><td>차단·해제</td><td></td><td></td><td>O</td><td>O</td><td>O</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>위치 권한</h2>
+        <div class="table-wrap">
+          <table class="compact center">
+            <thead><tr><th>액션</th><th>비참석자</th><th>참석자</th><th>호스트</th><th>OS 위치 권한 없음</th></tr></thead>
+            <tbody>
+              <tr><td>이벤트 장소 보기</td><td>조건부</td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>길찾기</td><td>조건부</td><td>O</td><td>O</td><td>저장 주소만 가능</td></tr>
+              <tr><td>위치 공유 켜기</td><td></td><td>O</td><td>조건부</td><td>불가</td></tr>
+              <tr><td>위치 공유 중지</td><td></td><td>O</td><td>O</td><td>O</td></tr>
+              <tr><td>참석자 위치 조회</td><td></td><td>O</td><td>O</td><td>제한</td></tr>
+              <tr><td>이벤트 단위 위치 공유 비활성화</td><td></td><td></td><td>O</td><td>O</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>권한 검토 체크리스트</h2>
+        <div class="callout">
+          <ul>
+            <li>비로그인 사용자가 이 화면을 볼 수 있는가</li>
+            <li>로그인했지만 관계 없는 사용자가 할 수 있는 액션은 무엇인가</li>
+            <li>소유자·작성자·호스트 본인이 대상일 때 금지해야 할 액션이 있는가</li>
+            <li>관리자급 권한과 소유자 권한을 구분했는가</li>
+            <li>차단·탈퇴·삭제·비활성 사용자 상태를 고려했는가</li>
+            <li>한 사용자가 여러 역할을 동시에 가질 때 우선순위가 있는가</li>
+            <li>화면 진입 후 권한이 바뀌면 어떻게 갱신하는가</li>
+            <li>권한 없음은 버튼 숨김·비활성·에러 중 무엇으로 표현하는가</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준</h2>
+        <ul>
+          <li>모든 주요 액션은 비로그인·로그인·관계자·소유자/관리자 역할별 결과가 정의된다.</li>
+          <li>권한 없음은 숨김·비활성·로그인 유도·접근 불가 안내 중 하나로 <strong>일관되게</strong> 표현된다.</li>
+          <li>여러 역할을 동시에 가진 사용자의 우선순위를 정한다.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+# F06-06. 포인트 결제·환불 PRD
+
+<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/06_payment/F06-06_point-pay-refund -->
+
+> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-06_point-pay-refund`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+
+## 1. 결론
+
+이벤트 참여비 등을 보유 포인트(유료 우선 차감)로 즉시 결제하고, 환불 정책에 따라 결제를 취소·환불받는다. 결제는 중복 차단(`existsByUserIdAndReferenceTypeAndReferenceId`) + 서버 가격 검증(클라 amount vs `event.price`) 후 잔액 차감 → `point_transactions(type=PAY)` + `payment_records(COMPLETED)` + FIFO `charge_lots` 차감 + 회계 분개. 환불은 `RefundPolicyService`가 시간 기반 비율(24h=100%/12h=50%/0%)을 산출 후 진행. 결제 흐름에서 잔액 부족 시 자동 충전(F06-05) 트리거. 본 단위에 포함된 추가 엔드포인트로 `GET /refund/policy`(정책 안내).
+
+프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+
+본 기능은 자체 화면이 없다. 결제·환불 호출은 다른 도메인 화면에서 일어나고, 본 단위 화면은 **거래 상세(F06-03 SCR-PM-004)** + **환불 정책 안내 모달**만을 다룬다.
+
+- 결제 호출 진입점:
+  - 이벤트 상세(Unit 03) ▶ "참여하기" CTA → 결제 확인 모달 → `POST /api/v1/wallet/pay`
+  - 유료 승인제 이벤트(Unit 03) ▶ 호스트 승인 알림/상세 CTA "결제하고 참석 확정" → `POST /api/v1/wallet/pay`
+  - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletService.deductPaidOnly` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
+  - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletService.deductFromWallet`
+- 환불 호출 진입점:
+  - 이벤트 상세(Unit 03)/내 신청 화면 ▶ "참여 취소" → 환불 정책 안내 모달 → `POST /api/v1/wallet/refund`
+- 환불 정책 안내(`GET /refund/policy`) 모달:
+  - 결제 직전 "환불 규정 보기" 링크
+  - 거래 상세에서 환불 거래 진입 시 PG sub-status 카드 보강 (F06-03)
+
+현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+
+## 2. 실사 근거
+
+| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
+|---|---|---|---|
+| Backend | [backend.md](../../../units/06_payment/F06-06_point-pay-refund/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
+| Frontend | [frontend.md](../../../units/06_payment/F06-06_point-pay-refund/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
+| Scenario | [scenarios.md](../../../units/06_payment/F06-06_point-pay-refund/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
+| Diagram | [diagrams.md](../../../units/06_payment/F06-06_point-pay-refund/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+
+### 확인된 소스 trace
+
+| 소스 trace | 파일 존재 |
+|---|---|
+| `community_api/src/main/java/com/endside/community/payment/controller/WalletController.java:142` | 확인됨 |
+| `community_api/src/main/java/com/endside/community/payment/controller/WalletController.java:154` | 확인됨 |
+| `community_api/src/main/java/com/endside/community/payment/controller/WalletController.java:190` | 확인됨 |
+
+## 3. 전체 동작 흐름
+
+아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
+
+1. 결제: 도메인별 화면 ▶ `WalletRepository.pay(PaymentParam)` ▶ `POST /api/v1/wallet/pay`
+2. 환불: `WalletRepository.refund(RefundParam)` ▶ `POST /api/v1/wallet/refund`
+3. 정책 조회: `refundPolicyNotifierProvider` ▶ `WalletRepository.getRefundPolicy()` ▶ `GET /api/v1/wallet/refund/policy`
+4. 결제/환불 후 `walletNotifierProvider`, `transactionListNotifierProvider` invalidate로 잔액·내역 갱신
+5. 잔액 부족 응답 처리: `ApiError`에 `PaymentFailureVo` payload가 들어오면 충전 화면 prefill 라우팅
+6. 유료 승인제 결제 후에는 `eventDetailNotifierProvider`, `applicationListNotifierProvider`, `walletNotifierProvider`, `transactionListNotifierProvider`를 모두 invalidate해 신청 상태/참석 상태/잔액/거래 내역을 동기화
+
+## 4. 서버 계약
+
+### 개요
+
+이벤트 참여비 등을 보유 포인트(유료 우선 차감)로 즉시 결제하고, 환불 정책에 따라 결제를 취소·환불받는다. 결제는 중복 차단(`existsByUserIdAndReferenceTypeAndReferenceId`) + 서버 가격 검증(클라 amount vs `event.price`) 후 잔액 차감 → `point_transactions(type=PAY)` + `payment_records(COMPLETED)` + FIFO `charge_lots` 차감 + 회계 분개. 환불은 `RefundPolicyService`가 시간 기반 비율(24h=100%/12h=50%/0%)을 산출 후 진행. 결제 흐름에서 잔액 부족 시 자동 충전(F06-05) 트리거. 본 단위에 포함된 추가 엔드포인트로 `GET /refund/policy`(정책 안내).
+
+### 엔드포인트 요약
+
+| Method | Path | Controller#Method | 인증 | 핵심 동작 |
+|---|---|---|---|---|
+| POST | /api/v1/wallet/pay | WalletController#pay | required | 이벤트 참여비를 포인트로 결제 |
+| POST | /api/v1/wallet/refund | WalletController#refund | required | 이벤트 환불 (정책 기반 부분/전액) |
+| GET | /api/v1/wallet/refund/policy | WalletController#getRefundPolicy | required | 환불 규정(24h/12h/12h-) 안내 |
+
+### 도메인 모델 / Enum (이 기능 관련)
+
+- **Enum** `TransactionType`: `PAY`(1), `REFUND`(2) (referenceType=`EVENT_PAYMENT` / `EVENT_PAYMENT_REFUND`)
+- **Enum** `PointTransactionStatus`: `COMPLETED`(결제/환불 즉시 완료), `FAILED` 가능
+- **Enum** `RefundPgStatus` (응답 보강용): `PENDING`, `PROCESSING`, `SUCCESS`, `FAILED`, `CANCELLED`, `MANUAL_REQUIRED` (정확 값은 `payment/constants/RefundPgStatus.java` 참조)
+- 핵심 도메인 객체:
+  - `PaymentRecord` — userId, amount, status, pointTransactionId, pgPaymentKey?, pgOrderId?
+  - `RefundRequest` — refundPointTransactionId, pgStatus, processedAt, retry 정보
+  - `ChargeLot` — FIFO 환불 단위
+  - `AccountingLedger` — `USER_WALLET`, `CREATOR_PAYABLE`, `PLATFORM_FEE_REVENUE`, `PG_RECEIVABLE` 등 (account codes는 `payment/constants/AccountCode.java`)
+
+### 의존 단위 / 외부 시스템
+
+- **외부 PG (🟠 Toss)**: 환불 시 비동기 `cancelPayment` 호출 (RefundRequestWorker)
+- 다른 Unit:
+  - **Event Unit (03)**: `event.price`로 가격 검증 + `event.hostUserId`로 호스트 식별. 결제 후 이벤트 신청 확정은 Event Unit에서 처리.
+  - **F03-05/F03-06 유료 승인제**: 승인 후 결제 대기 상태에서만 결제를 허용해야 한다. 현재 서버에는 이 상태가 없어 보강 필요.
+  - **F06-05 자동 충전**: 잔액 부족 시 즉시 트리거
+  - **F06-09 수익 대시보드**, **F06-10 정산**: 결제가 호스트의 정산/수익에 누적 (별도 SettlementBatchService가 주기적 집계)
+- 알림: `PAYMENT_COMPLETED`, `REFUND_COMPLETED` (NotificationType + `PaymentNotificationData(eventId, amount)`)
+
+## 5. 프론트 계약
+
+### 진입 경로
+
+본 기능은 자체 화면이 없다. 결제·환불 호출은 다른 도메인 화면에서 일어나고, 본 단위 화면은 **거래 상세(F06-03 SCR-PM-004)** + **환불 정책 안내 모달**만을 다룬다.
+
+- 결제 호출 진입점:
+  - 이벤트 상세(Unit 03) ▶ "참여하기" CTA → 결제 확인 모달 → `POST /api/v1/wallet/pay`
+  - 유료 승인제 이벤트(Unit 03) ▶ 호스트 승인 알림/상세 CTA "결제하고 참석 확정" → `POST /api/v1/wallet/pay`
+  - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletService.deductPaidOnly` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
+  - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletService.deductFromWallet`
+- 환불 호출 진입점:
+  - 이벤트 상세(Unit 03)/내 신청 화면 ▶ "참여 취소" → 환불 정책 안내 모달 → `POST /api/v1/wallet/refund`
+- 환불 정책 안내(`GET /refund/policy`) 모달:
+  - 결제 직전 "환불 규정 보기" 링크
+  - 거래 상세에서 환불 거래 진입 시 PG sub-status 카드 보강 (F06-03)
+
+### 사용 라우트 & 화면 파일
+
+| 라우트 | Screen 파일 | 역할 |
+|---|---|---|
+| `/profile/wallet/transactions/:transactionId` | `payment/screens/transaction_detail_screen.dart` | (F06-03과 공유) 결제·환불 거래의 결과 표시. 환불 거래에서 PG sub-status 카드 노출 |
+| (모달) | 이벤트/티켓/구독 화면이 띄우는 결제 확인 모달 | 결제 직전 잔액 비교 + 정책 안내 + 확인 |
+
+### 화면별 구성 요소 & 액션
+
+### 결제 확인 모달 (Event/Plan/Hosting Ticket 화면 내부)
+
+- **사용자가 보는 것**: 이벤트명/플랜명, 결제 금액 (예: "8,000P"), 현재 잔액, 결제 후 잔액, "환불 규정 보기" 링크, "결제 확인 / 취소" 버튼
+- **사용자가 할 수 있는 액션**:
+  - "결제 확인" ▶ `POST /wallet/pay { eventId, amount }` (이벤트 결제) 또는 도메인별 전용 엔드포인트
+  - 승인제 유료 이벤트에서는 승인 전 결제 버튼을 노출하지 않고, 승인 후 결제 대기 상태에서만 결제 버튼을 노출
+  - 잔액 부족 응답 → 자동 충전 OFF면 충전 화면으로 prefill 분기
+  - "환불 규정 보기" ▶ `GET /wallet/refund/policy` 응답을 별도 BottomSheet로 표시
+- **상태 분기**: 결제 중 로딩 / 성공 토스트 + 갱신 / 실패 → ErrorDialog or Toast
+
+### 환불 정책 안내 (`GET /wallet/refund/policy`)
+
+- 본 응답을 클라가 단순 표 형태(시간 / 환불률)로 노출. 별도 화면 없음. 모달 또는 BottomSheet.
+
+### 거래 상세 — 환불 거래 (F06-03와 공유)
+
+- `pgStatus`가 채워진 환불 거래는 `PgSubStatusRowWidget`로 6개 sub-status 분기 표기 (예: "환불 진행 중", "환불 완료", "관리자 확인 중")
+- 무료 포인트 환불 부분(`freeAmount > 0`)은 즉시 wallet에 복원되었음을 별도 카드로 보여줌
+
+### API 호출 순서 (Provider/Repository 관점)
+
+1. 결제: 도메인별 화면 ▶ `WalletRepository.pay(PaymentParam)` ▶ `POST /api/v1/wallet/pay`
+2. 환불: `WalletRepository.refund(RefundParam)` ▶ `POST /api/v1/wallet/refund`
+3. 정책 조회: `refundPolicyNotifierProvider` ▶ `WalletRepository.getRefundPolicy()` ▶ `GET /api/v1/wallet/refund/policy`
+4. 결제/환불 후 `walletNotifierProvider`, `transactionListNotifierProvider` invalidate로 잔액·내역 갱신
+5. 잔액 부족 응답 처리: `ApiError`에 `PaymentFailureVo` payload가 들어오면 충전 화면 prefill 라우팅
+6. 유료 승인제 결제 후에는 `eventDetailNotifierProvider`, `applicationListNotifierProvider`, `walletNotifierProvider`, `transactionListNotifierProvider`를 모두 invalidate해 신청 상태/참석 상태/잔액/거래 내역을 동기화
+
+## 6. 상태/권한/시나리오 매트릭스
+
+| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
+|---|---|---|---|
+| S1 | 이벤트 참여비 결제 (Happy Path) | 이벤트 상세 화면, 잔액 충분 | 잔액 42,000P, 거래 내역 1행 추가, 호스트는 정산 대상으로 `Settlement.grossAmount`에 누적될 예정. |
+| S2 | 잔액 부족 + 자동 충전 ON → 자동 충전 후 결제 성공 | 잔액 4,500P, 8,000원 결제, 자동충전 활성(임계 5,000 / 충전 30,000) | 사용자가 충전 화면을 거치지 않고 결제 성공. 거래 내역에 `자동 충전 +30,000P` + `결제 -8,000P` 두 행. |
+| S3 | 잔액 부족 + 자동 충전 OFF → 충전 화면 prefill 분기 | 잔액 4,500P, 8,000원 결제, 자동 충전 OFF | 충전 1건 + 결제 1건. 사용자 명시적 결정으로 진행. |
+| S4 | 24시간 전 환불 (전액) | 결제 거래 1건 존재 | 사용자 잔액 즉시 복구, PG 카드 환불은 영업일 기준 진행 |
+| S5 | 12시간 전 환불 (50%) | 모임 시작 18시간 전 취소 | 부분 환불 완료. 거래 내역에 환불 1건 + 잔액 부분 복구. |
+| S6 | 12시간 미만 환불 시도 → 거절 | 모임 1시간 전 취소 | 잔액 변동 없음. 사용자가 모임 참여 또는 노쇼 결정. |
+| S7 | 이중 결제 시도 (이미 결제한 이벤트 재결제) | 결제 직후 푸시 지연으로 다시 탭한 사용자 | 이중 차감 없음. 사용자 화면이 정확한 상태로 정렬. |
+| S8 | 가격 조작 시도 (클라 amount=1) | 비정상 클라이언트가 8,000원 이벤트를 1원으로 결제 시도 | 가격 조작 차단. 이벤트는 결제되지 않음. |
+| S9 | PG 측 카드 환불 실패 → 수동 대사 | 카드 환불 시도가 PG 측에서 실패 | 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시. |
+| S10 | 유료 승인제 이벤트 — 승인 후 결제 확정 | `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. | alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (EVENT_PAYMENT 1302). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 DUPLICATE_PAYMENT 409). |
+
+## 7. 정합성 판단
+
+| 항목 | 확인 기준 | 현재 판단 |
+|---|---|---|
+| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
+| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
+| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
+| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
+
+## 8. Gap / Risk
+
+| 분류 | 근거 | 내용 | 다음 조치 |
+|---|---|---|---|
+| 후보 | backend.md:48 | #### 유료 승인제 결제 검증 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | backend.md:117 | - **Enum** `RefundPgStatus` (응답 보강용): `PENDING`, `PROCESSING`, `SUCCESS`, `FAILED`, `CANCELLED`, `MANUAL_REQUIRED` (정확 값은 `payment/constants/RefundPgStatus.java` 참조) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | backend.md:129 | - **F03-05/F03-06 유료 승인제**: 승인 후 결제 대기 상태에서만 결제를 허용해야 한다. 현재 서버에는 이 상태가 없어 보강 필요. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | frontend.md:16 | - 거래 상세에서 환불 거래 진입 시 PG sub-status 카드 보강 (F06-03) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:136 | **현재 구현 갭**: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:143 | - 결제 실패 시 `EventAttendance`가 생성되면 실패로 본다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:149 | 12차-A 라운드에서 PG WebView mock 패턴 평가 후 일단 미작성으로 보류했던 P70 매트릭스를, 15차-B `PG_WEBVIEW_MOCK_PATTERN.md` §5 가 권장한 1단계(§4-1/§4-2 무관 — F06-06 의 잔액 결제·환불 5 모드) 로 도입. 15차-B 라운드에서 `integration_test/seed_payment_refund_test.dart` + `scripts/e2e/run_p70_payment_refund_matrix.sh` 신설. 17차-A 라운드에서 happy refund 3 모드(`refund_full_happy` / `refund_partial_happy` / `refund_partial_30_happy`) 보강. 17차-C 라운드에서 S2 자동충전 happy path 1 모드(`auto_charge_success`) 보강 — 별도 P71 분리 대신 P70 확장 (단일 mode 추가이므로 매트릭스 분할 비용 과함). 18차-B 라운드에서 S7 이중 결제 가드 1 모드(`duplicate_payment_guard`) 보강 — `WalletService.pay` 의 중복 가드(`existsByUserIdAndReferenceTypeAndReferenceId`)가 가격 검증/wallet row lock 이전에 DUPLICATE_PAYMENT 409 throw → 클라 ErrorInterceptor 가 ApiError.conflict 로 매핑하는 end-to-end 경로 검증 (멱등 — 시드 EVENT_PAYMENT 9003 잔존 의존, 재실행 안전). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:252 | 4. 만약 시드 보강으로 startTime 이 미래로 조정된 경우엔: RefundPolicyService 통과 → alreadyRefunded false → `findByUserIdAndReferenceTypeAndReferenceId(3, EVENT_PAYMENT, 1303)` Optional.empty() → throw RestException(TRANSACTION_NOT_FOUND) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:272 | **감사 / 검증 시 가정**: 본 정책은 **현재 코드의 사실** 명시 — 본 라운드(19차-B) 에서는 정책 변경/추가 검증 도입 없음. Codex 외부 감사 등이 "host/co-host 결제 시 차단되어야 함" 으로 가정하는 경우 본 절을 근거로 가정 오류로 분류. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:276 | - ~~**happy refund mutation**(100% / 50% / 30% / 환불 후 잔액 복구)~~ — **17차-A 라운드에서 해소.** sample_data.sql 에 미래 이벤트 1304/1305/1306 + alice EVENT_PAYMENT 시드(9016/9018/9020) 추가 + seed_local.sh 에 NOW() 기반 동적 startTime 갱신 도입. P70 매트릭스에 `refund_full_happy` / `refund_partial_happy` / `refund_partial_30_happy` 3 modes 보강 — RefundPolicyService 의 STANDARD 100%(≥24h) / STANDARD 50%(12-24h) / STRICT 30%(24-48h) happy 분기를 실서버 round-trip 으로 검증. 환불 후 wallet.balance 복구액 (paidAmount × refundPercent/100) 도 함께 확정. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:277 | - ~~**자동 충전 happy path**(S2)~~ — **17차-C 라운드에서 해소.** alice auto_charge_config 활성 상태(enabled=1, chargeAmount=50,000, paymentMethodId=901)를 활용해 P70 에 `auto_charge_success` mode 보강. setup 단계에서 event 1303 (price 8,000P) 결제로 alice 잔액을 17,200→9,200P 로 사전 소진한 뒤, event 1312 (price 12,000P) 결제 시도 → `ChargeService.tryAutoCharge` 의 non-prod 분기(`pgPaymentKey="SIM_AUTO_..."`)가 발동하여 wallet 에 50,000P 충전 + 12,000P 차감 → 최종 47,200P. PAY TransactionVo 의 `balanceBefore=59,200` 검증으로 auto-charge 발동을 결정적으로 확인. (한계: 시드 한계로 Repository.refund 자동 cleanup 불가 — 모든 시드 event startTime 과거이므로 REFUND_NOT_ALLOWED 거절. 재실행 전 sample_data.sql 재초기화 필요. 서버 dev/staging profile 필수 — prod profile 기동 시 tossPaymentService.billingPayment 실제 호출.) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:278 | - ~~**이중 결제 가드**(S7 — 본 매트릭스의 pay_with_balance 재실행 시 DUPLICATE_PAYMENT 로 자연 검증되지만 명시적 모드 미정의)~~ — **18차-B 라운드에서 해소.** alice 가 시드 결제 EVENT_PAYMENT 9003 을 이미 보유한 event 1301 (price 15,000P) 에 동일 가격으로 재결제 시도 → 서버 `WalletService.pay` 진입 직후의 중복 가드(`existsByUserIdAndReferenceTypeAndReferenceId(userId, EVENT_PAYMENT, eventId)`) 가 가격 검증/wallet row lock 이전에 throw `DUPLICATE_PAYMENT` (ErrorCode.java:109 — 409 / 600014). 클라 dio ErrorInterceptor(`error_interceptor.dart:39`) 가 409 → `ApiError.conflict(errorCode='DUPLICATE_PAYMENT')` 로 매핑. P70 매트릭스에 `duplicate_payment_guard` 1 mode 보강 — errorCode 추출 + ApiError union conflict 분기 + wallet 잔액/totalSpent 무변동(가드는 wallet lock 이전 throw)을 end-to-end 검증. (멱등 — 시드 9003 은 어떤 매트릭스 mutation 도 삭제하지 않으므로 재실행 안전.) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:291 | - **C 확정**: 본 흐름은 D-02 v2 dormant infra ("v3에서 paid 환불 정책 결정 후 실제 가동", `RefundRequestWorker.java:31`) 로 명시된 **architectural placeholder** 영역. 현재 코드 사실 상 E2E mutation 으로 도달 불가능한 dead branch 검증을 매트릭스에 강제하면 false-green 위험만 도입. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:294 | 2. (1) 충족 후 P70 매트릭스에 `refund_async_worker_success` / `refund_pg_failure_retry` 2 mode 보강 — 단, mutation 전제이므로 `pg_payment_key` / `charge_lot.pg_refundable=true` 시드 보강 + sample_data 재초기화 의존성 명시 필요. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:301 | > 17차-A 라운드 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:304 | **시작 상태**: 로그인 완료(seed alice). walletRepository.getWallet() → balance=17,200, totalSpent=48,300 (17차-A 보강 후). PointTransaction 9016 (EVENT_PAYMENT, 1304, 5000) 존재. EVENT_REFUND 거래 부재. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:322 | 출처: `community_api/src/main/java/com/endside/community/payment/service/RefundService.java:60-87,99-180` (refund + doRefund), `community_api/src/main/java/com/endside/community/payment/service/RefundPolicyService.java:48-71,157-167` (STANDARD ≥24h → 100%), `community_api/docs/sql/sample_data.sql` (17차-A 보강 event 1304 + PointTransaction 9016), `community_api/docs/sql/seed_local.sh` (NOW()+35d 동적 startTime 갱신). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:366 | > 17차-C 라운드 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:369 | **시작 상태**: 로그인 완료(seed `alice@community.local`). walletRepository.getWallet() → `balance=17,200, totalCharged=65,500, totalSpent=48,300` (17차-A 보강 후 합계 — 9015~9020 충전/결제 시드로 17,200 그대로 유지). event 1303 (host=user 6, price 8,000P, alice 미결제) + event 1312 (host=user 2, price 12,000P, club 1201 co-host 3331 — co-host 라도 결제 허용, alice 미결제) 시드 상태. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:399 | > 18차-B 라운드 보강 — F06-06 S7 해소 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:402 | **시작 상태**: 로그인 완료(seed `alice@community.local`). walletRepository.getWallet() → balance=17,200, totalSpent=48,300 (17차-A 보강 후 — 9015~9020 충전/결제 시드 누적 반영). PointTransaction 9003 (EVENT_PAYMENT, referenceId=1301, amount=15,000, COMPLETED) 존재. 매트릭스 사이클 동안 어떤 mutation 도 9003 을 삭제하지 않음 (refund_full 은 startTime 과거로 REFUND_NOT_ALLOWED 거절 → EVENT_REFUND 행조차 추가 없음 → 결과적으로 9003 잔존). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+
+## 9. 수용 기준
+
+- **AC-01. 이벤트 참여비 결제 (Happy Path)**: Given 이벤트 상세 화면, 잔액 충분 When 사용자가 해당 흐름을 실행하면 Then 잔액 42,000P, 거래 내역 1행 추가, 호스트는 정산 대상으로 `Settlement.grossAmount`에 누적될 예정.
+- **AC-02. 잔액 부족 + 자동 충전 ON → 자동 충전 후 결제 성공**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 충전 화면을 거치지 않고 결제 성공. 거래 내역에 `자동 충전 +30,000P` + `결제 -8,000P` 두 행.
+- **AC-03. 잔액 부족 + 자동 충전 OFF → 충전 화면 prefill 분기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 충전 1건 + 결제 1건. 사용자 명시적 결정으로 진행.
+- **AC-04. 24시간 전 환불 (전액)**: Given 결제 거래 1건 존재 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 즉시 복구, PG 카드 환불은 영업일 기준 진행
+- **AC-05. 12시간 전 환불 (50%)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 부분 환불 완료. 거래 내역에 환불 1건 + 잔액 부분 복구.
+- **AC-06. 12시간 미만 환불 시도 → 거절**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 잔액 변동 없음. 사용자가 모임 참여 또는 노쇼 결정.
+- **AC-07. 이중 결제 시도 (이미 결제한 이벤트 재결제)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 이중 차감 없음. 사용자 화면이 정확한 상태로 정렬.
+- **AC-08. 가격 조작 시도 (클라 amount=1)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가격 조작 차단. 이벤트는 결제되지 않음.
+- **AC-09. PG 측 카드 환불 실패 → 수동 대사**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시.
+- **AC-10. 유료 승인제 이벤트 — 승인 후 결제 확정**: Given `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. When 사용자가 해당 흐름을 실행하면 Then alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (EVENT_PAYMENT 1302). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 DUPLICATE_PAYMENT 409).
+
+## 10. 미결정 / 후속
+
+- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
+- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
+- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

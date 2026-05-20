@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>13 프로필·설정 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>13 프로필·설정</div>
+        <h1>13. 프로필 · 설정</h1>
+        <p class="lede">
+          내 프로필·주소·선호 태그를 관리하고, 데이터 내보내기·계정 삭제·비활성화 같은
+          “계정의 마지막 동선”까지 책임진다. 사용자가 떠나는 흐름이 깔끔해야 신뢰가 유지된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">7</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">35</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>7개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F13-01</div><h3>내 프로필 조회</h3><p>요약 카드, 삭제 배너, 하위 메뉴.</p></div>
+          <div class="card"><div class="eyebrow">F13-02</div><h3>프로필 수정</h3><p>닉네임·사진, 변경사항 이탈 가드, 중복 닉네임.</p></div>
+          <div class="card"><div class="eyebrow">F13-03</div><h3>다중 주소 관리</h3><p>기본 주소, 주소 한도, 중복 라벨.</p></div>
+          <div class="card"><div class="eyebrow">F13-04</div><h3>선호 태그 관리</h3><p>추천 태그, 삭제, 20개 한도.</p></div>
+          <div class="card"><div class="eyebrow">F13-05</div><h3>데이터 내보내기</h3><p>처리중·완료·실패·만료, 다운로드.</p></div>
+          <div class="card"><div class="eyebrow">F13-06</div><h3>계정 삭제 요청</h3><p>30일 유예, 배너, 취소 동선, 스케줄러.</p></div>
+          <div class="card"><div class="eyebrow">F13-07</div><h3>계정 즉시 비활성화</h3><p>사전 점검, 미정산 차단, 강제 로그아웃.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>계정 삭제의 구체 정책 (F13-06)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>값</th></tr></thead>
+            <tbody>
+              <tr><td>유예 기간</td><td><strong>30일</strong> — <code>scheduledAt = now + 30일</code></td></tr>
+              <tr><td>저장 위치</td><td><code>data_deletion_request</code> 테이블, status는 <code>PENDING</code>으로 시작</td></tr>
+              <tr><td>실제 처리</td><td>스케줄러가 <strong>매일 새벽 04:00</strong>에 만료된 요청을 실행</td></tr>
+              <tr><td>삭제 후 계정 상태</td><td><code>EXIT</code></td></tr>
+              <tr><td>유예 중 취소 동선</td><td>화면에 “유예 기간 중 로그인하면 삭제 요청이 취소됩니다” 안내. <strong>단, 서버 자동 취소 로직은 미확인(Gap)</strong></td></tr>
+              <tr><td>요청 엔드포인트</td><td><code>POST /api/v1/users/me/data-deletion</code></td></tr>
+              <tr><td>UI 스펙 vs 서버</td><td>UI 스펙은 비밀번호 재확인 body를 요구하지만 실제 컨트롤러·Param에서 확인되지 않음 — Gap</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>“떠나는 동선”의 두 종류</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>계정 삭제 요청 (F13-06)</th><th>즉시 비활성화 (F13-07)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>의도</strong></td><td>“30일 후 영구 삭제하고 싶다”</td><td>“지금 당장 비공개로 만들고 싶다”</td></tr>
+              <tr><td><strong>유예</strong></td><td>30일 — 그 안에 취소 가능</td><td>없음 — 즉시 반영</td></tr>
+              <tr><td><strong>로그인</strong></td><td>가능 (취소 동선 노출)</td><td>강제 로그아웃</td></tr>
+              <tr><td><strong>정산 미완료</strong></td><td>유예 기간 동안 처리 가능</td><td>차단 — 정산 정리 먼저</td></tr>
+              <tr><td><strong>복구</strong></td><td>유예 기간 내 취소</td><td>다시 활성화 가능</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout warn">
+          <ul>
+            <li><strong>삭제 예약과 즉시 비활성화 문구 혼동</strong> — 사용자가 “지웠다”와 “감췄다”를 헷갈리지 않게 분명히 안내.</li>
+            <li><strong>데이터 내보내기를 즉시 다운로드라고 오해</strong> — 비동기 처리임을 명시.</li>
+            <li><strong>주소 한도 초과 시 명확한 안내 없음</strong> — “더 이상 추가할 수 없다”라고 정확히 알림.</li>
+            <li><strong>즉시 비활성화 시 미정산 처리 누락</strong> — 호스트가 정산 중인데 비활성화하면 참가자 환불·납부 차단.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>계정 상태 모델</h3><p>NONE·PENDING·APPROVED·COMPLETED 흐름.</p></a>
+          <a class="card" href="../policies/privacy.html"><div class="eyebrow">정책</div><h3>개인정보·안전 정책</h3><p>내보내기·삭제의 사용자 통제권.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

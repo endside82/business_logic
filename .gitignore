@@ -1,0 +1,10 @@
+.DS_Store
+**/.DS_Store
+
+# Ignore every root-level directory by default.
+/*/
+
+# Keep these documentation/product folders trackable.
+!/docs/
+!/planner_onboarding/
+!/prd/

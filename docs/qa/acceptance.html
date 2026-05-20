@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA 수용 기준 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>수용 기준</div>
+        <h1>QA 전체 수용 기준</h1>
+        <p class="lede">
+          개발 착수 전 합의하고, 릴리즈 승인 전 다시 확인한다.
+          “기능이 동작한다”에서 한 걸음 더 들어가, 사용자가 결과를 이해하고 다음 행동을 할 수 있는지를 본다.
+        </p>
+      </header>
+
+      <section>
+        <h2>5가지 공통 수용 기준</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:24%">범주</th><th>수용 기준</th></tr></thead>
+            <tbody>
+              <tr><td><strong>기능 커버리지</strong></td><td>117개 기능이 모두 PRD·QA 대상에 포함된다.</td></tr>
+              <tr><td><strong>시나리오 커버리지</strong></td><td>정상·빈 상태·권한·상태 변화·입력 검증·외부 실패·중복/동시성·부수효과를 검토한다.</td></tr>
+              <tr><td><strong>역할 커버리지</strong></td><td>게스트·로그인 사용자·관계자·소유자/관리자 역할별 CTA가 정의된다.</td></tr>
+              <tr><td><strong>상태 커버리지</strong></td><td>생성·진행·완료·취소·만료·삭제·차단 상태가 분리된다.</td></tr>
+              <tr><td><strong>회귀 방지</strong></td><td>홈·검색 진입·알림 딥링크·결제·환불·위치 권한 흐름이 깨지지 않는다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인별 기능 시나리오 인덱스</h2>
+        <p class="subtitle">기능 카드 상세화 진행 시 이 표를 체크박스로 복사해서 쓴다. 시나리오·도식 수를 한 줄로 보면 카드화 우선순위가 정해진다.</p>
+
+        <h3>01 인증 & 온보딩 — 8 기능 · 82 시나리오</h3>
+        <div class="table-wrap"><table class="compact"><thead><tr><th>기능</th><th style="text-align:right">시나리오</th><th style="text-align:right">도식</th></tr></thead><tbody>
+          <tr><td>F01-01 이메일 회원가입·로그인</td><td style="text-align:right">10</td><td style="text-align:right">4</td></tr>
+          <tr><td>F01-02 소셜 로그인</td><td style="text-align:right">8</td><td style="text-align:right">4</td></tr>
+          <tr><td>F01-03 이메일 인증</td><td style="text-align:right">10</td><td style="text-align:right">4</td></tr>
+          <tr><td>F01-04 비밀번호 재설정</td><td style="text-align:right">10</td><td style="text-align:right">5</td></tr>
+          <tr><td>F01-05 토큰 갱신·로그아웃</td><td style="text-align:right">15</td><td style="text-align:right">5</td></tr>
+          <tr><td>F01-06 온보딩</td><td style="text-align:right">11</td><td style="text-align:right">4</td></tr>
+          <tr><td>F01-07 관심사 태그 관리</td><td style="text-align:right">10</td><td style="text-align:right">4</td></tr>
+          <tr><td>F01-08 소셜 계정 연결 해제</td><td style="text-align:right">8</td><td style="text-align:right">4</td></tr>
+        </tbody></table></div>
+
+        <h3>03 이벤트 — 12 기능 · 111 시나리오</h3>
+        <div class="table-wrap"><table class="compact"><thead><tr><th>기능</th><th style="text-align:right">시나리오</th><th style="text-align:right">도식</th></tr></thead><tbody>
+          <tr><td>F03-01 발견·탐색</td><td style="text-align:right">7</td><td style="text-align:right">3</td></tr>
+          <tr><td>F03-02 상세 조회</td><td style="text-align:right">8</td><td style="text-align:right">3</td></tr>
+          <tr><td>F03-03 생성</td><td style="text-align:right">10</td><td style="text-align:right">4</td></tr>
+          <tr><td>F03-04 수정·생명주기</td><td style="text-align:right">11</td><td style="text-align:right">4</td></tr>
+          <tr><td>F03-05 신청·참석</td><td style="text-align:right">13</td><td style="text-align:right">6</td></tr>
+          <tr><td>F03-06 승인·거절</td><td style="text-align:right">11</td><td style="text-align:right">6</td></tr>
+          <tr><td>F03-07 정원·대기열</td><td style="text-align:right">7</td><td style="text-align:right">5</td></tr>
+          <tr><td>F03-08 QR 체크인</td><td style="text-align:right">9</td><td style="text-align:right">5</td></tr>
+          <tr><td>F03-09 사진첩</td><td style="text-align:right">9</td><td style="text-align:right">5</td></tr>
+          <tr><td>F03-10 이벤트-플랜 연결</td><td style="text-align:right">8</td><td style="text-align:right">4</td></tr>
+          <tr><td>F03-11 위시리스트</td><td style="text-align:right">9</td><td style="text-align:right">5</td></tr>
+          <tr><td>F03-12 내 이벤트·참석 로그</td><td style="text-align:right">9</td><td style="text-align:right">5</td></tr>
+        </tbody></table></div>
+
+        <h3>04 클럽 — 16 기능 · 189 시나리오</h3>
+        <div class="table-wrap"><table class="compact"><thead><tr><th>기능</th><th style="text-align:right">시나리오</th><th style="text-align:right">도식</th></tr></thead><tbody>
+          <tr><td>F04-01 발견·탐색</td><td style="text-align:right">8</td><td style="text-align:right">3</td></tr>
+          <tr><td>F04-02 상세·가입 액션</td><td style="text-align:right">7</td><td style="text-align:right">3</td></tr>
+          <tr><td>F04-03 생성·수정·삭제·소유권 이전</td><td style="text-align:right">13</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-04 멤버 관리</td><td style="text-align:right">12</td><td style="text-align:right">3</td></tr>
+          <tr><td>F04-05 가입 대기열·초대</td><td style="text-align:right">13</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-06 차단 관리</td><td style="text-align:right">12</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-07 내 클럽·통계</td><td style="text-align:right">11</td><td style="text-align:right">3</td></tr>
+          <tr><td>F04-08 게시판</td><td style="text-align:right">17</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-09 댓글·대댓글</td><td style="text-align:right">12</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-10 공지사항</td><td style="text-align:right">11</td><td style="text-align:right">3</td></tr>
+          <tr><td>F04-11 사진첩</td><td style="text-align:right">11</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-12 클럽 이벤트·캘린더</td><td style="text-align:right">13</td><td style="text-align:right">5</td></tr>
+          <tr><td>F04-13 기금 현황·거래 차트</td><td style="text-align:right">10</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-14 기부하기·기부 내역</td><td style="text-align:right">16</td><td style="text-align:right">4</td></tr>
+          <tr><td>F04-15 기금 인출 요청</td><td style="text-align:right">10</td><td style="text-align:right">5</td></tr>
+          <tr><td>F04-16 클럽 구독</td><td style="text-align:right">13</td><td style="text-align:right">5</td></tr>
+        </tbody></table></div>
+
+        <p style="margin-top:24px">나머지 도메인은 <a href="../features/catalog.html">기능 카탈로그</a>에서 필터링해서 본다. 카탈로그는 전체 117개를 한 화면에서 검색·정렬할 수 있다.</p>
+      </section>
+
+      <section>
+        <h2>카드화 우선순위</h2>
+        <p>기능 카드 상세화는 모든 기능을 한 번에 하지 말고, 사용자 피해와 전환 영향이 큰 것부터 진행한다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>우선순위</th><th>기준</th><th>해당 예시</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill danger">P0</span></td><td>돈·안전·계정 삭제·위치 공유처럼 사용자 피해가 큰 기능</td><td>결제·환불, 모임 정산, 데이팅 차단, 위치 opt-in/out, 계정 삭제</td></tr>
+              <tr><td><span class="pill warn">P1</span></td><td>주요 전환율과 직접 연결되는 기능</td><td>이벤트 신청, 클럽 가입, 플랜 구매, 온보딩</td></tr>
+              <tr><td><span class="pill info">P2</span></td><td>운영·CS 문의가 많이 생길 기능</td><td>알림 설정, 데이터 내보내기, 리뷰·신고, 대기열</td></tr>
+              <tr><td><span class="pill">P3</span></td><td>조회 중심이거나 실패 영향이 작은 기능</td><td>목록 조회, 통계, 단순 상세</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

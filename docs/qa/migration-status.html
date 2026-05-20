@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRD 전환 상태 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>전환 상태</div>
+        <h1>117개 기능 PRD 전환 상태</h1>
+        <p class="lede">
+          <code>business_logic/prd/PRD_MIGRATION_STATUS.md</code>의 데이터를 그대로 가져왔다.
+          기준일은 <strong>2026-05-18</strong>. Golden sample은 1건, 나머지 116건은
+          <code>units/*</code>의 실사 자료를 PRD 구조로 재배치한 baseline이다.
+          Trace 수와 Risk 후보 수가 이 표의 핵심 신호다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">전체 기능</div><div class="value" id="m-total">117</div></div>
+          <div class="metric"><div class="label">Golden sample</div><div class="value" id="m-golden">1</div><div class="hint">실사 + 직접 대조 완료</div></div>
+          <div class="metric"><div class="label">전환 완료</div><div class="value" id="m-converted">116</div><div class="hint">Baseline. 착수 전 trace 재확인</div></div>
+          <div class="metric"><div class="label">Risk 후보 합계</div><div class="value" id="m-risk">0</div><div class="hint">우선 검토 가중치</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">읽는 법</span>
+          <ul>
+            <li><strong>Trace 수</strong> — 원천 units 문서에 남아 있는 <code>&lt;!-- traces: ... --&gt;</code> 소스 참조 수. 클수록 PRD가 실제 소스와 묶여 있을 가능성이 높다.</li>
+            <li><strong>Risk 후보 수</strong> — 원천 문서에 Gap/Risk/주의/보강으로 표시된 판단 후보. 클수록 사용자 피해 가능성이 큰 영역.</li>
+            <li>Risk 후보가 많다고 “위험”이라는 뜻이 아니라 <strong>“검토해야 할 항목이 많다”</strong>는 뜻이다. F03-05(이벤트 신청)와 F06-06(포인트 결제·환불)이 특히 무겁다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인별 Risk 후보 분포</h2>
+        <p class="subtitle">색이 진할수록 그 도메인의 검토 항목 누적이 크다. Risk 후보 합계 기준 정렬.</p>
+        <div class="table-wrap"><table class="compact center" id="domain-summary"><thead>
+          <tr><th>도메인</th><th>기능</th><th>Trace 합계</th><th>Risk 후보 합계</th></tr>
+        </thead><tbody></tbody></table></div>
+      </section>
+
+      <section>
+        <h2>Risk 후보 상위 10개 기능</h2>
+        <p class="subtitle">먼저 source comparison으로 승격해야 할 후보. Golden sample(F03-02) 수준으로 끌어올리는 우선순위.</p>
+        <div class="table-wrap"><table class="compact" id="top-risk"><thead>
+          <tr><th style="width:78px">ID</th><th>기능</th><th style="width:120px">도메인</th><th style="width:90px;text-align:right">Trace</th><th style="width:90px;text-align:right">Risk 후보</th></tr>
+        </thead><tbody></tbody></table></div>
+      </section>
+
+      <section>
+        <h2>전체 117개 기능</h2>
+        <div class="toolbar">
+          <input id="search" type="search" placeholder="ID·기능명·도메인 검색">
+          <select id="domain-filter"><option value="">전체 도메인</option></select>
+          <select id="status-filter">
+            <option value="">전체 상태</option>
+            <option value="Golden sample">Golden sample만</option>
+            <option value="전환 완료">전환 완료만</option>
+          </select>
+          <label class="chip"><input type="checkbox" id="risk-only">Risk 후보 ≥ 5만 보기</label>
+        </div>
+        <p class="feature-count" id="feature-count"></p>
+        <div class="table-wrap">
+          <table class="compact" id="full-table">
+            <thead>
+              <tr>
+                <th style="width:78px">ID</th>
+                <th style="width:130px">도메인</th>
+                <th>기능</th>
+                <th style="width:130px">상태</th>
+                <th style="width:80px;text-align:right;cursor:pointer" data-sort="trace">Trace ▾</th>
+                <th style="width:90px;text-align:right;cursor:pointer" data-sort="risk">Risk 후보 ▾</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>다음 단계</h2>
+        <ul>
+          <li><strong>Risk 후보가 큰 기능부터</strong> 골든 샘플(F03-02) 수준의 직접 source comparison으로 승격한다. 결제·정산·데이팅·위치·계정 삭제가 우선 후보.</li>
+          <li><strong>Trace가 0인 기능</strong>은 units 자료 갱신 또는 신규 trace 작성이 필요. PRD가 source와 연결돼 있지 않을 가능성.</li>
+          <li><strong>구현 착수 전</strong>에는 baseline PRD라도 trace 경로의 실제 소스를 다시 열어 확인한다.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script>
+    function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+    function statusPill(s){
+      if(s==='Golden sample') return '<span class="pill brand">Golden</span>';
+      if(s==='전환 완료') return '<span class="pill info">전환</span>';
+      return '<span class="pill">'+esc(s||'미정')+'</span>';
+    }
+    let SORT_KEY='risk';
+    let DATA=[];
+
+    function renderDomainSummary(){
+      const byD={};
+      DATA.forEach(f=>{
+        const d=byD[f.domain]||(byD[f.domain]={d:f.domain,count:0,trace:0,risk:0});
+        d.count++; d.trace+=f.trace||0; d.risk+=f.risk||0;
+      });
+      const rows=Object.values(byD).sort((a,b)=>b.risk-a.risk);
+      const maxRisk=Math.max(...rows.map(r=>r.risk),1);
+      const heatLevel=v=>Math.ceil((v/maxRisk)*4);
+      document.querySelector('#domain-summary tbody').innerHTML=rows.map(r=>`
+        <tr>
+          <td style="text-align:left">${esc(r.d)}</td>
+          <td>${r.count}</td>
+          <td>${r.trace}</td>
+          <td><span class="heat heat-${heatLevel(r.risk)}">${r.risk}</span></td>
+        </tr>`).join('');
+    }
+
+    function renderTopRisk(){
+      const top=[...DATA].sort((a,b)=>(b.risk-a.risk)||(b.trace-a.trace)).slice(0,10);
+      document.querySelector('#top-risk tbody').innerHTML=top.map(f=>`
+        <tr>
+          <td><code>${esc(f.id)}</code></td>
+          <td>${esc(f.name)}</td>
+          <td>${esc(f.domain)}</td>
+          <td style="text-align:right">${f.trace}</td>
+          <td style="text-align:right"><strong>${f.risk}</strong></td>
+        </tr>`).join('');
+    }
+
+    function renderFull(){
+      const q=document.querySelector('#search').value.trim().toLowerCase();
+      const dom=document.querySelector('#domain-filter').value;
+      const st=document.querySelector('#status-filter').value;
+      const riskOnly=document.querySelector('#risk-only').checked;
+      let rows=DATA.filter(f=>{
+        if(dom&&f.domain!==dom)return false;
+        if(st&&f.status!==st)return false;
+        if(riskOnly&&(f.risk||0)<5)return false;
+        if(!q)return true;
+        return (f.id+' '+f.name+' '+f.domain).toLowerCase().includes(q);
+      });
+      rows.sort((a,b)=>{
+        if(SORT_KEY==='trace')return (b.trace||0)-(a.trace||0);
+        return (b.risk||0)-(a.risk||0);
+      });
+      document.querySelector('#full-table tbody').innerHTML=rows.map(f=>`
+        <tr>
+          <td><code>${esc(f.id)}</code></td>
+          <td>${esc(f.domain)}</td>
+          <td>${esc(f.name)}</td>
+          <td>${statusPill(f.status)}</td>
+          <td style="text-align:right">${f.trace||0}</td>
+          <td style="text-align:right">${(f.risk||0)>=5?'<strong>'+f.risk+'</strong>':(f.risk||0)}</td>
+        </tr>`).join('');
+      document.querySelector('#feature-count').textContent=rows.length+'개 / 전체 '+DATA.length+'개';
+    }
+
+    function init(){
+      DATA=window.PRD_FEATURES||[];
+      document.querySelector('#m-total').textContent=DATA.length;
+      document.querySelector('#m-golden').textContent=DATA.filter(f=>f.status==='Golden sample').length;
+      document.querySelector('#m-converted').textContent=DATA.filter(f=>f.status==='전환 완료').length;
+      document.querySelector('#m-risk').textContent=DATA.reduce((s,f)=>s+(f.risk||0),0);
+      const sel=document.querySelector('#domain-filter');
+      [...new Set(DATA.map(f=>f.domain))].forEach(d=>{
+        const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);
+      });
+      document.querySelector('#search').addEventListener('input',renderFull);
+      document.querySelector('#domain-filter').addEventListener('change',renderFull);
+      document.querySelector('#status-filter').addEventListener('change',renderFull);
+      document.querySelector('#risk-only').addEventListener('change',renderFull);
+      document.querySelectorAll('[data-sort]').forEach(th=>th.addEventListener('click',()=>{
+        SORT_KEY=th.dataset.sort; renderFull();
+      }));
+      renderDomainSummary(); renderTopRisk(); renderFull();
+    }
+  </script>
+  <script src="../assets/features.js"></script>
+  <script>init();</script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

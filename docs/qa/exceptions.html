@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>예외·엣지 케이스 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>예외·엣지 케이스</div>
+        <h1>핵심 여정별 빠뜨리기 쉬운 시나리오</h1>
+        <p class="lede">
+          정상 흐름은 다들 잡는다. 망가지는 건 항상 “이 케이스를 빠뜨렸다”는 곳이다.
+          이 페이지는 도메인이 아니라 <strong>여정</strong> 단위로 모은 “자주 빠뜨리는 시나리오 모음”이다.
+          PRD나 QA 케이스를 작성할 때 이 표를 옆에 두고 본다.
+        </p>
+      </header>
+
+      <section>
+        <h2>여정 1. 가입·인증</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:36%">시나리오</th><th>왜 중요한가</th></tr></thead>
+            <tbody>
+              <tr><td>이메일 인증 전 로그인 시도</td><td>사용자는 가입했다고 생각하지만 서비스 진입이 막힐 수 있음</td></tr>
+              <tr><td>인증 메일 재발송 제한</td><td>스팸·남용 방지와 UX 대기 안내가 함께 필요</td></tr>
+              <tr><td>소셜 가입 후 추가정보 미입력 이탈</td><td>가입은 됐지만 추천 불가능 상태가 됨</td></tr>
+              <tr><td>토큰 만료 중 여러 요청 동시 발생</td><td>사용자가 갑자기 로그아웃되는 것처럼 보일 수 있음</td></tr>
+              <tr><td>마지막 로그인 수단 해제 시도</td><td>계정 잠김을 막아야 함</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>여정 2. 이벤트·클럽 참여</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:36%">시나리오</th><th>왜 중요한가</th></tr></thead>
+            <tbody>
+              <tr><td>정원이 찬 직후 신청</td><td>리스트에서는 가능해 보였지만 상세에서 실패</td></tr>
+              <tr><td>대기열 자동 승격</td><td>사용자 행동 없이 상태가 바뀌므로 알림·CTA 갱신 필요</td></tr>
+              <tr><td>호스트가 자기 이벤트에 신청</td><td>권한상 차단해야 하며 메시지가 명확해야 함</td></tr>
+              <tr><td>이벤트 취소 후 유료 참가자 환불</td><td>돈과 알림이 동시에 움직임</td></tr>
+              <tr><td>유료 승인제 이벤트의 승인 후 결제</td><td>승인·정원 예약·결제·참석 확정이 분리됨</td></tr>
+              <tr><td>클럽 멤버 추방·차단</td><td>게시글·이벤트·구독·환불까지 영향</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>여정 3. 결제·정산</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:36%">시나리오</th><th>왜 중요한가</th></tr></thead>
+            <tbody>
+              <tr><td>결제수단 등록 후 PG 콜백 실패</td><td>사용자는 완료했다고 생각할 수 있음</td></tr>
+              <tr><td>자동충전 실패 후 원래 결제 실패</td><td>실패 원인을 두 단계로 설명해야 함</td></tr>
+              <tr><td>승인제 유료 이벤트에서 미승인 사용자가 결제 시도</td><td>돈을 먼저 받으면 거절·환불 리스크</td></tr>
+              <tr><td>정산 활성화 전 항목 부족</td><td>참가자에게 잘못된 납부 요청을 보내면 안 됨</td></tr>
+              <tr><td>계좌이체 후 호스트 미확인</td><td>참가자는 냈다고 생각하지만 시스템은 미완료</td></tr>
+              <tr><td>이의제기 수락·기각</td><td>금액·상태·알림·감사로그가 함께 바뀜</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>여정 4. 데이팅·위치·안전</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:36%">시나리오</th><th>왜 중요한가</th></tr></thead>
+            <tbody>
+              <tr><td>미인증 사용자의 데이팅 진입</td><td>안전 신뢰의 출발점</td></tr>
+              <tr><td>상호 좋아요 직후 한쪽이 차단</td><td>매칭·채팅 상태 cascade가 필요</td></tr>
+              <tr><td>만남 제안 후 일정·장소 변경</td><td>캘린더·위치 안내에 영향</td></tr>
+              <tr><td>위치 권한 영구 거부</td><td>앱 안 CTA만으로 해결 불가, OS 설정 필요</td></tr>
+              <tr><td>위치 공유 자동 만료</td><td>사용자가 계속 보인다고 오해하지 않게 해야 함</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>여정 5. 리뷰·신고·신뢰</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:36%">시나리오</th><th>왜 중요한가</th></tr></thead>
+            <tbody>
+              <tr><td>미참석자의 리뷰 작성</td><td>평판 조작을 막아야 함</td></tr>
+              <tr><td>중복 리뷰·중복 신고</td><td>운영 큐와 점수 왜곡 방지</td></tr>
+              <tr><td>본인 신고</td><td>악용·오류 방지</td></tr>
+              <tr><td>리뷰 수정·삭제 후 신뢰점수</td><td>점수가 언제 재계산되는지 명확해야 함</td></tr>
+              <tr><td>데이터 부족한 취향 프로필</td><td>빈 차트보다 설명 있는 빈 상태가 필요</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>공통 예외 6분류</h2>
+        <p>여정과 무관하게 모든 기능 카드가 다음 6가지를 확인한다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:18%">분류</th><th>확인 질문</th></tr></thead>
+            <tbody>
+              <tr><td><strong>권한 없음</strong></td><td>사용자가 왜 할 수 없는지 이해하는가</td></tr>
+              <tr><td><strong>상태 변경</strong></td><td>방금 전 가능했던 액션이 지금도 가능한가</td></tr>
+              <tr><td><strong>빈 상태</strong></td><td>데이터가 없을 때 다음 행동이 있는가</td></tr>
+              <tr><td><strong>중복 실행</strong></td><td>빠르게 두 번 누르면 결과가 하나로 유지되는가</td></tr>
+              <tr><td><strong>외부 실패</strong></td><td>결제·메일·지도·푸시 실패 시 복구 가능한가</td></tr>
+              <tr><td><strong>민감 정보</strong></td><td>위치·데이팅·신고·차단 정보가 과노출되지 않는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

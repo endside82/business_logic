@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>12 알림 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>12 알림</div>
+        <h1>12. 알림</h1>
+        <p class="lede">
+          알림은 “기능”이 아니라, 다른 도메인의 상태 변화를 사용자에게 전달하는 보조 흐름이다.
+          그래서 알림 도메인의 책임은 “알림 화면을 잘 그리는 것”보다 “수신자·트리거·딥링크·설정을 일관되게 적용하는 것”에 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">6</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">38</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>6개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F12-01</div><h3>알림 목록·읽음 관리</h3><p>딥링크, 모두 읽음, 삭제, 무한스크롤.</p></div>
+          <div class="card"><div class="eyebrow">F12-02</div><h3>알림 그룹·미읽음 배지</h3><p>그룹 토글, 배지 감소, 빈 인박스.</p></div>
+          <div class="card"><div class="eyebrow">F12-03</div><h3>카테고리별 알림 설정</h3><p>카테고리·내부 타입 매핑, 실패 원복.</p></div>
+          <div class="card"><div class="eyebrow">F12-04</div><h3>방해금지 시간</h3><p>자정 넘김, 요일, 카테고리 설정과 중첩.</p></div>
+          <div class="card"><div class="eyebrow">F12-05</div><h3>푸시 기기 관리</h3><p>다중 기기, 토큰 갱신, 로그아웃 시 해제.</p></div>
+          <div class="card"><div class="eyebrow">F12-06</div><h3>알림 권한 안내 배너</h3><p>OS 권한 거부 시 설정 진입, lifecycle 재확인.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>방해금지 시간의 구체 정책 (F12-04)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>값</th></tr></thead>
+            <tbody>
+              <tr><td>시간 형식</td><td><strong>자정 넘김 지원</strong> — 예: <code>22:00 ~ 07:00</code> (END &lt; START 처리)</td></tr>
+              <tr><td>요일 형식</td><td>정수 리스트 <code>1=월요일 ~ 7=일요일</code></td></tr>
+              <tr><td>차단 범위</td><td><strong>FCM 푸시만 차단</strong> — 인박스(<code>notification</code> 테이블)에는 정상 적재. 사용자가 나중에 인지 가능</td></tr>
+              <tr><td>카테고리 설정과 관계</td><td>독립적 — 카테고리 OFF + 방해금지 OFF여도 양쪽이 모두 통과해야 푸시 발송</td></tr>
+              <tr><td>화면 경로</td><td><code>/notifications/settings/quiet-hours</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>알림 발송 판단</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["상태 변화 발생"] --> B{"수신자 존재?"}
+    B -->|"없음"| C["종료"]
+    B -->|"있음"| D{"카테고리 수신 허용?"}
+    D -->|"아니오"| E["푸시 미발송"]
+    D -->|"예"| F{"방해금지 시간?"}
+    F -->|"예"| G["보류·무음 정책"]
+    F -->|"아니오"| H["푸시 발송"]
+    H --> I["알림함 적재"]
+    G --> I
+    E --> I
+          </div>
+        </div>
+        <div class="callout">
+          <span class="label">알림 기획 순서</span>
+          <p>알림 기획은 화면이 아니라 “어떤 사건이 발생했을 때 누구에게 어떤 문구로 알릴 것인가”로 시작한다.
+          알림 화면 디자인은 그 다음 단계다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <ul>
+            <li><strong>OS 푸시 권한이 없는데 앱 내 알림함도 비어 있는 것처럼 보임</strong> — 인박스는 동작해야 한다.</li>
+            <li><strong>딥링크 대상이 만료·삭제·권한 없음</strong> — fallback 화면 필요.</li>
+            <li><strong>방해금지 시간 자정 넘김 케이스</strong> — 23:00–07:00 같은 범위 처리 누락.</li>
+            <li><strong>로그아웃 후에도 푸시 토큰 남아 있음</strong> — 다른 사용자가 같은 기기를 사용하면 잘못된 사람에게 알림.</li>
+            <li><strong>설정 변경이 즉시 반영되지 않음</strong> — 변경 후 다음 알림부터 적용된다는 안내 또는 즉시 반영 보장.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/notification.html"><div class="eyebrow">정책</div><h3>알림 정책</h3><p>트리거·수신자·딥링크 규칙.</p></a>
+          <a class="card" href="../features/impact.html"><div class="eyebrow">분석</div><h3>부수효과 매트릭스</h3><p>어떤 도메인이 알림을 발생시키는가.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

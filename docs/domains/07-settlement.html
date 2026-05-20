@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>07 모임 정산 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>07 모임 정산</div>
+        <h1>07. 모임 정산</h1>
+        <p class="lede">
+          모임이 끝난 뒤 비용을 참가자에게 나눠 받는 흐름.
+          핵심은 “돈을 어떻게 나누는가”가 아니라 <strong>“상태가 어떻게 흘러가는가”</strong>다.
+          DRAFT 상태에서 알림이 새어 나가면 사용자가 “모르는 청구서”를 받는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">10</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">84</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">매우 높음</div><div class="hint">사용자 분쟁 영역</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>10개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F07-01</div><h3>정산 생성</h3><p>중복 정산 방지, 복제, 참가자 선택, Quick-add.</p></div>
+          <div class="card"><div class="eyebrow">F07-02</div><h3>항목 관리</h3><p>작성중 편집, 항목·분담금, 최근 항목, 영수증 첨부.</p></div>
+          <div class="card"><div class="eyebrow">F07-03</div><h3>활성화·취소</h3><p>DRAFT → ACTIVE 전이 시점 납부 알림, 취소·환불.</p></div>
+          <div class="card"><div class="eyebrow">F07-04</div><h3>현황·요약·영수증</h3><p>요약 카드, 참여자 상태, 영수증 권한.</p></div>
+          <div class="card"><div class="eyebrow">F07-05</div><h3>분담금 납부</h3><p>포인트·계좌이체·혼합 결제, 재발행·환불.</p></div>
+          <div class="card"><div class="eyebrow">F07-06</div><h3>이체 확인·일괄 확인·상각</h3><p>수동 확인, 일괄 처리, 완료 전이, 회수불가 상각.</p></div>
+          <div class="card"><div class="eyebrow">F07-07</div><h3>리마인드·마감 연장</h3><p>독촉 대상, 연장 제한, 이력.</p></div>
+          <div class="card"><div class="eyebrow">F07-08</div><h3>이의제기·처리·감사로그</h3><p>이의 상태, 처리 권한, 감사로그.</p></div>
+          <div class="card"><div class="eyebrow">F07-09</div><h3>선입금·환불·환불규정</h3><p>사전 결제, 확인, 환불률, 결제 상태 알림.</p></div>
+          <div class="card"><div class="eyebrow">F07-10</div><h3>정산 계좌·이력·신뢰도</h3><p>기본 계좌, 월별 요약, 신뢰도 노출.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>4개 상태가 모든 것을 결정한다</h2>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> DRAFT: 호스트가 정산 생성
+    DRAFT --> ACTIVE: 납부 요청 시작
+    ACTIVE --> COMPLETED: 모든 납부·확인 완료
+    ACTIVE --> CANCELLED: 호스트가 취소
+    COMPLETED --> [*]
+    CANCELLED --> [*]
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>상태</th><th>의미</th><th>호스트 액션</th><th>참가자 액션</th></tr></thead>
+            <tbody>
+              <tr><td><code>DRAFT</code></td><td>아직 참가자에게 요청하지 않은 정산</td><td>항목 편집, 참여자 조정, 활성화</td><td>노출 없음</td></tr>
+              <tr><td><code>ACTIVE</code></td><td>납부 진행중</td><td>독촉, 마감 연장, 이체 확인, 취소</td><td>분담금 확인, 납부, 이의제기</td></tr>
+              <tr><td><code>COMPLETED</code></td><td>정산 완료</td><td>내역 조회</td><td>내역 조회</td></tr>
+              <tr><td><code>CANCELLED</code></td><td>정산 취소</td><td>내역 조회</td><td>환불·취소 안내 확인</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout danger">
+          <span class="label">절대 위반 금지</span>
+          <p><strong>DRAFT 상태에서는 참가자에게 어떤 알림도 가서는 안 된다.</strong>
+          정산 생성 자체로 “돈 내라”라는 신호가 사용자에게 전달되면 분쟁이 시작된다.
+          알림은 DRAFT → ACTIVE 전이 시점에 한 번만 보낸다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>흐름 시퀀스</h2>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor H as 호스트
+    actor P as 참가자
+    participant S as 정산 화면
+    participant W as 지갑·계좌
+    participant N as 알림
+
+    H->>S: 종료된 모임에서 정산 생성 (DRAFT)
+    H->>S: 항목·참여자 선택
+    H->>S: 정산 활성화 (DRAFT → ACTIVE)
+    S->>N: 참가자에게 납부 알림 (이때 최초 발송)
+    P->>S: 내 분담금 확인
+    P->>W: 포인트 또는 계좌이체로 납부
+    W-->>S: 납부 상태 반영
+    H->>S: 계좌이체 건 수동 확인
+    S->>N: 완료 또는 미납 알림
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>호스트 정의 환불 규칙 (F07-09)</h2>
+        <p class="subtitle">모임마다 호스트가 직접 설정한다. 시스템 기본값(F06-06의 STANDARD)과 별개로 작동한다.</p>
+        <ul>
+          <li><strong>입력 단위</strong>: <code>hoursBeforeStart</code>(이벤트 시작 N시간 전) × <code>refundPercentage</code>(0~100, <strong>5% 단위 권장</strong>)</li>
+          <li><strong>참가자 결제 방식</strong>: <code>POINT</code> 또는 <code>BANK_TRANSFER</code></li>
+          <li><strong><code>BANK_TRANSFER</code></strong>는 호스트가 수동 확인. 가상계좌 자동 입금은 PG webhook(<strong>현재 stub 401</strong>)으로 처리 예정</li>
+          <li>화면 표시 예: “이벤트 3일 전 / 환불률: 50% / 환불금액: 5,000원” — 정책별 환불 금액을 항상 즉시 표시</li>
+          <li><strong>0% 룰</strong>일 때는 “환불 불가” 안내 명시</li>
+          <li>UI: <code>RefundTimelineWidget</code>으로 시간 흐름에 따른 환불률 그래프 시각화</li>
+        </ul>
+        <div class="callout">
+          <span class="label">F06-06과의 관계</span>
+          <p>F06-06의 시스템 STANDARD(24h=100%/12h=50%/0%)는 “이벤트 참가비 일반 결제”에 적용되고,
+          F07-09의 호스트 정의 규칙은 “선입금 모임의 정산 환불”에 적용된다. 두 흐름이 같은 모임에서 동시에 일어나지 않도록 PRD가 분리되어 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <ul>
+            <li><strong>DRAFT인데 참가자에게 노출</strong> — 정책상 가장 큰 사고. 노출 가드와 알림 가드를 이중으로 둔다.</li>
+            <li><strong>계좌이체 후 호스트 미확인</strong> — 참가자는 “냈다”라고 생각하지만 시스템은 미완료. 자동 확인이 불가능하므로 호스트 액션이 필요함을 명시.</li>
+            <li><strong>포인트 vs 계좌이체 즉시성 차이 미안내</strong> — 포인트는 즉시 반영, 계좌이체는 수동 확인. UI에서 분리.</li>
+            <li><strong>이의제기 수락/기각 시 금액·상태·알림·감사로그 동시 변경 누락</strong>.</li>
+            <li><strong>활성화 전 항목이 비어 있는데 활성화 시도</strong> — 0원 청구는 차단해야 함.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·도메인</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>상태 정책</h3><p>정산 상태 전이도와 알림 정책.</p></a>
+          <a class="card" href="../policies/payment.html"><div class="eyebrow">정책</div><h3>결제·정산 정책</h3><p>모임 정산이 호스트 정산금·클럽 기금과 섞이지 않게 하는 규칙.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련</div><h3>06 결제·지갑</h3><p>참가자의 포인트 결제는 지갑 거래로 기록.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>이벤트 종료가 정산 생성의 트리거.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

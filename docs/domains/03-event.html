@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>03 이벤트 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>03 이벤트</div>
+        <h1>03. 이벤트</h1>
+        <p class="lede">
+          오프라인 모임의 전 사이클을 책임진다. 발견·생성·신청·승인·정원·대기열·체크인·리뷰까지,
+          승인 정책과 결제 흐름이 가장 복잡하게 얽히는 도메인.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">12</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">111</div></div>
+          <div class="metric"><div class="label">주 사용자</div><div class="value">3</div><div class="hint">참가자·호스트·게스트</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">매우 높음</div><div class="hint">돈·일정·알림 모두 영향</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">이 도메인의 핵심 난점</span>
+          <p>이벤트는 “신청 심사”와 “참석 확정/대기”가 동시에 존재한다.
+          <strong>유료 + 승인제 이벤트</strong>의 경우, 호스트 승인은 결제 권한 부여이지 참석 확정이 아니다.
+          승인 → 결제 대기 → 결제 성공 → 참석 확정의 4단계를 모두 분리해서 보여줘야 한다.
+          이 흐름이 한 버튼에 섞이면 환불 분쟁이 시작된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>12개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F03-01</div><h3>이벤트 발견·탐색</h3><p>목록 화면. 비로그인 노출, 무한스크롤, 결과 없음 상태.</p><div class="meta"><span class="pill">7 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-02</div><h3>이벤트 상세 조회</h3><p>호스트·참가자·게스트별 CTA 차이. 작성중·종료·취소·비공개 상태 분기.</p><div class="meta"><span class="pill">8 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-03</div><h3>이벤트 생성</h3><p>4단계 입력. 초안/발행, 유료·사전결제·반복·프라이빗 옵션.</p><div class="meta"><span class="pill">10 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-04</div><h3>수정·생명주기 관리</h3><p>일정 변경, 취소→환불 트리거, 공지 throttle, 삭제 제한.</p><div class="meta"><span class="pill">11 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-05</div><h3>신청·참석</h3><p>승인제·유료·유료 승인제·정원·대기열·취소·자동 승격을 모두 분기. 13개 시나리오로 도메인 최대.</p><div class="meta"><span class="pill danger">13 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-06</div><h3>신청서 승인·거절</h3><p>정원 초과 승인, 유료 승인제 결제 대기, 일괄 승인, 거절 사유, 알림.</p><div class="meta"><span class="pill">11 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-07</div><h3>정원·대기열 관리</h3><p>정원 변경, 수동 승격, 강제 제거, 모집 마감/재개.</p><div class="meta"><span class="pill">7 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-08</div><h3>QR 체크인</h3><p>QR 발급, 단축코드, 수동 체크인, 시간 게이트.</p><div class="meta"><span class="pill">9 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-09</div><h3>이벤트 사진첩</h3><p>업로드·삭제 권한, 앨범 상태, 파일 실패 복구.</p><div class="meta"><span class="pill">9 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-10</div><h3>이벤트-플랜 연결</h3><p>플랜 추가·순서·활성화. 플랜 마켓과의 다리.</p><div class="meta"><span class="pill">8 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-11</div><h3>위시리스트</h3><p>낙관적 토글, 비로그인 분기, 숨김·삭제 이벤트 처리.</p><div class="meta"><span class="pill">9 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F03-12</div><h3>내 이벤트·참석 로그</h3><p>주최/참석/지난 탭. 페이지네이션, 상태별 카드 노출.</p><div class="meta"><span class="pill">9 시나리오</span></div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>핵심 흐름 — 유료 승인제 이벤트의 신청·결제·참석 확정</h2>
+        <p>이 도메인에서 가장 자주 오해받는 흐름. 승인과 결제, 결제와 참석 확정이 모두 다른 단계라는 점이 핵심이다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["참가자 신청"] --> B["Application=PENDING"]
+    B --> C{"호스트 심사"}
+    C -->|"거절"| D["REJECTED<br/>결제 없음"]
+    C -->|"승인"| E["APPROVED_PENDING_PAYMENT<br/>결제 권한 부여"]
+    E --> F{"기한 내 결제?"}
+    F -->|"성공"| G["EVENT_PAYMENT 거래 기록"]
+    G --> H["Attendance=ATTENDING"]
+    F -->|"실패/만료"| I["PAYMENT_EXPIRED<br/>예약 정원 반환"]
+    H --> J["체크인·위치·리뷰 자격 열림"]
+          </div>
+        </div>
+        <div class="callout danger">
+          <span class="label">서버 보강 필요</span>
+          <p>현재 서버 enum에는 <code>APPROVED_PENDING_PAYMENT</code>와 <code>PAYMENT_EXPIRED</code>가 없다.
+          이 상태가 생기기 전까지는 “승인 즉시 ATTENDING으로 만드는” 임시 처리는
+          돈 분쟁을 만든다. 자세한 정책은 <a href="../policies/payment.html">결제·정산 정책</a>에서 본다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>일반 신청·참석 상태 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["참석 신청 버튼"] --> B{"승인 필요?"}
+    B -->|"예"| C["PENDING"]
+    C -->|"승인"| D["ATTENDING"]
+    C -->|"거절"| E["REJECTED"]
+    C -->|"사용자 취소"| F["CANCELED"]
+    B -->|"아니오"| G{"정원 여유?"}
+    G -->|"예"| D
+    G -->|"대기열 가능"| H["WAITING"]
+    G -->|"대기열도 가득"| I["신청 실패"]
+    H -->|"자리 발생"| D
+    D -->|"사용자 취소"| J["CANCELLED"]
+          </div>
+        </div>
+        <div class="callout">
+          <span class="label">CANCELED와 CANCELLED를 구분한다</span>
+          <p>신청서 상태는 <code>CANCELED</code>(L 1개), 참석 상태는 <code>CANCELLED</code>(L 2개). 같은 글자로 보이지만
+          서버 enum이 다르다. 코드 리뷰·QA에서 자주 헷갈리는 부분이라 명시한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>QR 체크인의 구체 정책 (F03-08)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>값</th></tr></thead>
+            <tbody>
+              <tr><td>QR 토큰</td><td><strong>JWT 기반</strong>, 응답에 <code>qrToken</code>·<code>shortCode</code>·<code>expiresAt</code> 포함</td></tr>
+              <tr><td>발급 엔드포인트</td><td><code>GET /api/v1/events/{id}/check-in/qr</code> → <code>QrTokenVo</code></td></tr>
+              <tr><td>새 QR 발급 시</td><td><strong>이전 단축코드 즉시 무효화</strong> — 같은 이벤트에 두 코드가 공존하지 않음</td></tr>
+              <tr><td>만료 화면</td><td>호스트 화면에 “새 QR 코드 받기” 텍스트 + <code>screenEventCheckinQrRefresh</code> semantics 버튼 노출. <strong>자동 재발급은 안 함</strong> — 사용자 액션 필요</td></tr>
+              <tr><td>참가자 표시</td><td>참석 확정자에게 <code>QrCodeView</code> + 만료 카운트다운</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 도메인의 부수효과</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>알림</td><td><span class="pill brand">강함</span></td><td>승인·거절·대기 승격·취소·정원 변경마다 알림이 발생. 수신자가 호스트·참가자 양쪽이라 룰이 복잡.</td></tr>
+              <tr><td>결제·정산</td><td><span class="pill brand">강함</span></td><td>유료 이벤트의 결제·환불, 호스트 수익 정산, 클럽 이벤트의 기금 차감.</td></tr>
+              <tr><td>캘린더</td><td><span class="pill brand">있음</span></td><td>참석 확정 시 자동 등록, 일정 변경 시 자동 갱신.</td></tr>
+              <tr><td>위치</td><td><span class="pill">조건부</span></td><td>위치 공유 이벤트일 때만 위치 도메인이 활성화.</td></tr>
+              <tr><td>리뷰·신뢰</td><td><span class="pill brand">있음</span></td><td>참석 확정 + 종료 후 리뷰 자격이 생긴다. 노쇼는 신뢰점수에 반영.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">실제 분쟁 사례 모음</span>
+          <ul>
+            <li><strong>정원·대기열·승인·결제가 한 버튼에 섞이는 경우</strong> — 사용자가 자신이 어느 단계에 있는지 모르게 된다.</li>
+            <li><strong>호스트가 자기 이벤트에 신청 시도</strong> — 권한상 차단해야 하고, 메시지가 명확해야 한다.</li>
+            <li><strong>정원 마지막 자리 동시 신청</strong> — 둘 다 “정원 여유” 화면을 봤지만 한 명만 성공한다. 실패자에게 “방금 마감됐다”라는 정확한 안내가 필요.</li>
+            <li><strong>대기열 자동 승격</strong> — 사용자 행동 없이 상태가 바뀐다. 알림·CTA 갱신이 필수.</li>
+            <li><strong>이벤트 취소 후 유료 참가자 환불</strong> — 환불·알림·정산금이 동시에 움직이는 케이스.</li>
+            <li><strong>유료 승인제 미승인 사용자가 결제 시도</strong> — 돈을 먼저 받으면 거절 후 환불해야 한다. 승인 후 결제만 허용.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·다른 도메인</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/payment.html"><div class="eyebrow">정책</div><h3>결제·정산 정책</h3><p>유료 승인제 결제 흐름과 정산금 상태.</p></a>
+          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>상태 정책</h3><p>이벤트·신청·참석 상태 전이도 전체.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 도메인</div><h3>07 모임 정산</h3><p>이벤트 종료 후 분담금 정산.</p></a>
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련 도메인</div><h3>11 리뷰·신고</h3><p>참석 확정자만 리뷰 자격.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

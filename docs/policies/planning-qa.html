@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>기획 QA 정책 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>기획 QA 정책</div>
+        <h1>기획 QA 정책</h1>
+        <p class="lede">
+          새 화면·새 정책·기존 기능 변경을 검토할 때 사용하는 마지막 점검표.
+          기능이 많을수록 “주 흐름”은 외우기 쉬워도 상태·돈·알림·권한·개인정보·외부 실패를 빠뜨리기 쉽다.
+          그 누락을 막기 위한 10단계 검산이다.
+        </p>
+      </header>
+
+      <section>
+        <h2>전체 점검 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["기능·화면 변경안"] --> B["사용자와 역할 확인"]
+    B --> C["시작 상태와 종료 상태 확인"]
+    C --> D["주요 성공 흐름 확인"]
+    D --> E["예외·빈 상태·실패 확인"]
+    E --> F["돈·알림·위치·리뷰 부수효과 확인"]
+    F --> G["개인정보·안전·운영 리스크 확인"]
+    G --> H["QA 케이스와 로그·추적 포인트 확인"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>1. 사용자와 역할</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>체크</th><th>질문</th></tr></thead>
+            <tbody>
+              <tr><td>주 사용자</td><td>이 기능을 가장 자주 쓰는 사람은 누구인가</td></tr>
+              <tr><td>보조 사용자</td><td>같은 기능의 결과를 받는 사람은 누구인가</td></tr>
+              <tr><td>금지 사용자</td><td>버튼을 보거나 실행하면 안 되는 사람은 누구인가</td></tr>
+              <tr><td>복합 역할</td><td>호스트이면서 참가자, 클럽 관리자이면서 일반 멤버 같은 경우가 있는가</td></tr>
+              <tr><td>비정상 계정</td><td>차단·탈퇴 예약·비활성·미인증 상태 사용자는 어떻게 되는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>2. 시작 상태와 종료 상태</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>체크</th><th>질문</th></tr></thead>
+            <tbody>
+              <tr><td>시작 상태</td><td>이 화면에 들어오기 전 반드시 만족해야 하는 조건은 무엇인가</td></tr>
+              <tr><td>성공 종료</td><td>성공 후 어떤 상태·화면·데이터가 바뀌는가</td></tr>
+              <tr><td>실패 종료</td><td>실패 후 사용자가 다시 시도할 수 있는가</td></tr>
+              <tr><td>중간 이탈</td><td>입력 중 뒤로가기·앱 종료·네트워크 끊김 후 재진입은 어떻게 되는가</td></tr>
+              <tr><td>상태 갱신</td><td>다른 기기·다른 사용자의 액션으로 상태가 바뀌면 어떻게 반영하는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. 빈 상태와 에러 상태</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>화면 상태</th><th>반드시 정해야 할 것</th></tr></thead>
+            <tbody>
+              <tr><td>최초 로딩</td><td>스켈레톤·스피너·빈 화면 중 무엇을 쓰는가</td></tr>
+              <tr><td>데이터 없음</td><td>사용자가 다음에 할 수 있는 액션이 있는가</td></tr>
+              <tr><td>일부 실패</td><td>다른 섹션은 보여줄 수 있는가</td></tr>
+              <tr><td>전체 실패</td><td>재시도 버튼이 있는가</td></tr>
+              <tr><td>권한 없음</td><td>로그인 유도·접근 불가·이전 화면 복귀 중 무엇인가</td></tr>
+              <tr><td>만료·삭제</td><td>대상이 사라졌거나 만료되었을 때 문구는 무엇인가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. 돈이 움직이는 기능</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>체크</th><th>질문</th></tr></thead>
+            <tbody>
+              <tr><td>잔액 부족</td><td>충전 또는 자동충전 중 무엇으로 보낼 것인가</td></tr>
+              <tr><td>결제수단 없음</td><td>결제수단 등록 화면으로 보낼 것인가</td></tr>
+              <tr><td>결제 성공</td><td>거래내역·잔액·기능 상태가 모두 갱신되는가</td></tr>
+              <tr><td>결제 실패</td><td>PG 실패인지 잔액 부족인지 구분해서 보이는가</td></tr>
+              <tr><td>환불</td><td>환불 조건·시점·금액·원거래 연결이 명확한가</td></tr>
+              <tr><td>중복 결제</td><td>버튼 연타·콜백 중복 시에도 안전한가</td></tr>
+              <tr><td>정산</td><td>호스트 돈·참가자 돈·클럽 기금이 섞이지 않는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>5. 알림이 나가는 기능</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>체크</th><th>질문</th></tr></thead>
+            <tbody>
+              <tr><td>수신자</td><td>누가 받아야 하는가</td></tr>
+              <tr><td>제외자</td><td>본인에게도 보내는가</td></tr>
+              <tr><td>트리거</td><td>어떤 상태 전이에 알림이 나가는가</td></tr>
+              <tr><td>문구</td><td>다음 행동을 바로 이해할 수 있는가</td></tr>
+              <tr><td>설정 반영</td><td>카테고리 꺼짐·방해금지에 걸리면 어떻게 되는가</td></tr>
+              <tr><td>딥링크</td><td>알림 탭 시 어디로 가는가</td></tr>
+              <tr><td>실패</td><td>푸시 실패해도 앱 내 알림함에는 남는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>6. 위치와 개인정보</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>체크</th><th>질문</th></tr></thead>
+            <tbody>
+              <tr><td>명시적 동의</td><td>위치·프로필·데이터 내보내기·삭제는 사용자가 명확히 동의했는가</td></tr>
+              <tr><td>중지 동선</td><td>위치 공유·알림·노출·구독을 끄는 경로가 있는가</td></tr>
+              <tr><td>보관 기간</td><td>위치·데이터 추출 파일은 언제까지 보관되는가</td></tr>
+              <tr><td>노출 범위</td><td>타인에게 보이는 정보와 본인에게만 보이는 정보가 구분되는가</td></tr>
+              <tr><td>민감 상태</td><td>차단·신고·신뢰점수·데이팅 인증 상태가 과노출되지 않는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>7. 리뷰·신고·신뢰점수</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>체크</th><th>질문</th></tr></thead>
+            <tbody>
+              <tr><td>작성 자격</td><td>실제 참석자·구매자·매칭 사용자 등 자격을 확인했는가</td></tr>
+              <tr><td>중복 방지</td><td>같은 대상에 여러 번 리뷰·신고할 수 있는가</td></tr>
+              <tr><td>수정·삭제</td><td>작성자가 바꿀 수 있는 범위와 횟수는 무엇인가</td></tr>
+              <tr><td>운영 접수</td><td>신고 후 사용자가 결과를 어떻게 인지하는가</td></tr>
+              <tr><td>신뢰 영향</td><td>리뷰·노쇼·신고·차단이 점수에 반영되는가</td></tr>
+              <tr><td>공개·비공개</td><td>공개 리뷰와 비공개 취향 평가를 구분했는가</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>8. 외부 시스템 의존</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>외부 시스템</th><th>실패 시 확인할 것</th></tr></thead>
+            <tbody>
+              <tr><td>소셜 로그인 앱 연동 모듈</td><td>사용자 취소·토큰 검증 실패·연동 제공자 오류</td></tr>
+              <tr><td>이메일 발송</td><td>발송 실패·만료 링크·재발송 제한</td></tr>
+              <tr><td>PG·결제</td><td>결제 중 이탈·콜백 지연·중복 콜백·승인 실패</td></tr>
+              <tr><td>푸시 알림</td><td>OS 권한 거부·토큰 만료·다중 기기</td></tr>
+              <tr><td>지도·지오코딩</td><td>권한 거부·시스템 연동 장애·주소 없음·외부 지도 앱 미설치</td></tr>
+              <tr><td>파일 업로드</td><td>업로드용 임시 주소 실패·업로드 실패·삭제 실패</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>9. 중복·동시성·멀티 디바이스</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>상황</th><th>예시</th><th>검토 포인트</th></tr></thead>
+            <tbody>
+              <tr><td>중복 클릭</td><td>신청 버튼 연타, 결제 연타</td><td>버튼 잠금·멱등 처리·실패 복구</td></tr>
+              <tr><td>동시 상태 변경</td><td>정원 마지막 자리, 대기열 승격</td><td>최신 상태 재조회·안내</td></tr>
+              <tr><td>멀티 디바이스</td><td>한 기기 로그아웃, 다른 기기 호출</td><td>토큰·세션 동기화</td></tr>
+              <tr><td>관리자·사용자 동시 액션</td><td>호스트 취소 중 참가자 결제</td><td>우선순위·환불·알림</td></tr>
+              <tr><td>외부 콜백 지연</td><td>PG 성공 후 앱 복귀 전 서버 처리 지연</td><td>pending 화면·재조회</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>10. 도메인별 레드 플래그</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영역</th><th>레드 플래그</th></tr></thead>
+            <tbody>
+              <tr><td>인증</td><td>마지막 로그인 수단 제거, 미인증 사용자 홈 진입, 토큰 갱신 무한 루프</td></tr>
+              <tr><td>홈·검색</td><td>비로그인과 로그인 결과 차이, 부분 실패, 캐시로 오래된 CTA 노출</td></tr>
+              <tr><td>이벤트</td><td>정원·대기열·승인·결제가 한 버튼에 섞임</td></tr>
+              <tr><td>클럽</td><td>관리자와 소유자 권한 혼동, 차단 시 환불·멤버십 정리 누락</td></tr>
+              <tr><td>결제</td><td>결제 성공과 기능 성공이 분리되는 경우</td></tr>
+              <tr><td>정산</td><td>작성중인데 참가자에게 납부 요청 노출</td></tr>
+              <tr><td>플랜</td><td>작성물·판매상품·구매 보유물이 섞임</td></tr>
+              <tr><td>데이팅</td><td>차단 후 채팅·매칭이 남아 있음</td></tr>
+              <tr><td>캘린더</td><td>반복 일정 일부 삭제 UI가 있으나 서버 정책은 단일 삭제</td></tr>
+              <tr><td>리뷰</td><td>미참석자 리뷰·자기 신고·중복 신고</td></tr>
+              <tr><td>알림</td><td>푸시 권한 없는데 앱 내 알림도 없는 것처럼 보임</td></tr>
+              <tr><td>프로필</td><td>삭제 예약과 즉시 비활성화 문구 혼동</td></tr>
+              <tr><td>위치</td><td>opt-in 없이 위치 노출, opt-out 후 마커 잔존</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>PRD 작성 전 최종 10가지 질문</h2>
+        <div class="callout">
+          <ol>
+            <li>이 기능은 14개 업무 영역 중 어디에 속하는가</li>
+            <li>117개 기능 중 기존 기능의 확장인가, 신규 기능인가</li>
+            <li>주 사용자와 금지 사용자는 누구인가</li>
+            <li>시작 상태와 성공 종료 상태는 무엇인가</li>
+            <li>실패했을 때 사용자는 다음에 무엇을 할 수 있는가</li>
+            <li>돈·알림·위치·캘린더·리뷰·신뢰 중 움직이는 것이 있는가</li>
+            <li>빈 상태와 권한 없음 상태를 정의했는가</li>
+            <li>외부 시스템 실패를 정의했는가</li>
+            <li>중복 클릭과 멀티 디바이스를 정의했는가</li>
+            <li>QA가 바로 테스트할 수 있는 시나리오 이름을 5개 이상 썼는가</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

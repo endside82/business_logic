@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>정보구조 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 14도메인</div>
+        <h1>14개 도메인의 책임</h1>
+        <p class="lede">
+          제품을 “어디에 어떤 기능이 사는가”로 나눠 둔 지도다. 이 지도가 흔들리면
+          기능 추가의 책임 소재가 흔들리기 때문에, 새 기능이 도착했을 때
+          “어느 도메인에 둘 것인가”를 가장 먼저 묻는다.
+        </p>
+      </header>
+
+      <section>
+        <h2>다섯 축으로 묶은 14개 도메인</h2>
+        <p class="subtitle">14개를 일렬로 보면 외우기 어렵다. 행동 축 다섯 개로 묶어서 본다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["community"] --> B["가입·계정"]
+    A --> C["탐색"]
+    A --> D["참여·운영"]
+    A --> E["돈"]
+    A --> F["관계·신뢰"]
+    A --> G["개인정보·설정"]
+    B --> B1["01 인증·온보딩"]
+    C --> C1["02 홈 피드"]
+    C --> C2["05 검색"]
+    C --> C3["08 플랜 마켓"]
+    D --> D1["03 이벤트"]
+    D --> D2["04 클럽"]
+    D --> D3["10 캘린더"]
+    D --> D4["14 위치·길찾기"]
+    E --> E1["06 결제·지갑"]
+    E --> E2["07 모임 정산"]
+    F --> F1["09 프라이빗 데이팅"]
+    F --> F2["11 리뷰·신고"]
+    F --> F3["12 알림"]
+    G --> G1["13 프로필·설정"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인별 책임·기능 수·시나리오 수</h2>
+        <p class="subtitle">시나리오 수가 많은 도메인일수록 QA 비용과 운영 부담이 크다. 04 클럽이 가장 큰 영역.</p>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead>
+              <tr>
+                <th style="width:38px">#</th>
+                <th>도메인</th>
+                <th>책임</th>
+                <th style="text-align:right">기능</th>
+                <th style="text-align:right">시나리오</th>
+                <th style="width:60px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>01</td><td><strong>인증 · 온보딩</strong></td><td>가입·인증·온보딩·관심사 설정으로 사용자를 “추천 가능한 상태”까지 끌어올린다.</td><td style="text-align:right">8</td><td style="text-align:right">82</td><td><a href="../domains/01-auth.html">열기</a></td></tr>
+              <tr><td>02</td><td><strong>홈 피드</strong></td><td>로그인 직후 첫 화면. 추천 콘텐츠와 주요 진입점을 제공한다.</td><td style="text-align:right">5</td><td style="text-align:right">38</td><td><a href="../domains/02-home.html">열기</a></td></tr>
+              <tr><td>03</td><td><strong>이벤트</strong></td><td>오프라인 모임의 발견·생성·신청·참석·체크인·리뷰 풀 사이클.</td><td style="text-align:right">12</td><td style="text-align:right">111</td><td><a href="../domains/03-event.html">열기</a></td></tr>
+              <tr><td>04</td><td><strong>클럽</strong></td><td>장기 커뮤니티. 가입·운영·게시판·이벤트·기금까지 가장 무거운 영역.</td><td style="text-align:right">16</td><td style="text-align:right">189</td><td><a href="../domains/04-club.html">열기</a></td></tr>
+              <tr><td>05</td><td><strong>검색</strong></td><td>이벤트·클럽·플랜을 키워드·필터로 탐색한다. 자동완성·저장된 검색 포함.</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td><a href="../domains/05-search.html">열기</a></td></tr>
+              <tr><td>06</td><td><strong>결제 · 지갑</strong></td><td>포인트 잔액·충전·결제수단·자동충전·거래내역·구독·호스트 수익.</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td><a href="../domains/06-payment.html">열기</a></td></tr>
+              <tr><td>07</td><td><strong>모임 정산</strong></td><td>모임 후 비용을 나누고 납부·확인·이의제기·환불 규정을 처리.</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td><a href="../domains/07-settlement.html">열기</a></td></tr>
+              <tr><td>08</td><td><strong>플랜 마켓</strong></td><td>코스·모임 플랜을 작성·발행·구매·보관·활용·리뷰한다.</td><td style="text-align:right">13</td><td style="text-align:right">107</td><td><a href="../domains/08-plan-market.html">열기</a></td></tr>
+              <tr><td>09</td><td><strong>프라이빗 데이팅</strong></td><td>본인 인증 기반 매칭·채팅·만남 제안·차단·안전 흐름. 민감 영역.</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td><a href="../domains/09-dating.html">열기</a></td></tr>
+              <tr><td>10</td><td><strong>캘린더</strong></td><td>이벤트·가용시간·데이팅 만남을 시간축으로 통합한다.</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td><a href="../domains/10-calendar.html">열기</a></td></tr>
+              <tr><td>11</td><td><strong>리뷰 · 신고</strong></td><td>활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다.</td><td style="text-align:right">6</td><td style="text-align:right">39</td><td><a href="../domains/11-review.html">열기</a></td></tr>
+              <tr><td>12</td><td><strong>알림</strong></td><td>상태 변화를 푸시·알림함으로 전달하고 수신 설정을 제공한다.</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td><a href="../domains/12-notification.html">열기</a></td></tr>
+              <tr><td>13</td><td><strong>프로필 · 설정</strong></td><td>내 프로필·주소·선호태그·데이터 내보내기·계정 삭제/비활성화.</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td><a href="../domains/13-profile.html">열기</a></td></tr>
+              <tr><td>14</td><td><strong>위치 · 길찾기</strong></td><td>장소·경로 안내·참석자 위치 공유와 프라이버시 통제.</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td><a href="../domains/14-location.html">열기</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>도메인 간 의존 관계</h2>
+        <p class="subtitle">화살표 방향은 “이 도메인이 동작하려면 저 도메인이 먼저 준비돼야 한다”는 뜻이다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["01 인증·온보딩"] --> B["02 홈 피드"]
+    B --> C["05 검색"]
+    C --> D["03 이벤트"]
+    C --> E["04 클럽"]
+    C --> F["08 플랜 마켓"]
+    D --> G["06 결제·지갑"]
+    E --> G
+    F --> G
+    D --> H["07 모임 정산"]
+    D --> I["10 캘린더"]
+    D --> J["14 위치·길찾기"]
+    E --> I
+    K["09 프라이빗 데이팅"] --> I
+    K --> J
+    D --> L["11 리뷰·신고"]
+    K --> L
+    M["12 알림"] --> B
+    N["13 프로필·설정"] --> A
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>구조 해석 기준</h2>
+        <ul>
+          <li><strong>인증·프로필은 모든 기능의 진입 조건</strong>이다. 무엇을 만들든 비로그인 동작과 비교한다.</li>
+          <li><strong>홈·검색·플랜 마켓</strong>은 발견·탐색의 축이다. 추천 알고리즘과 콘텐츠 가시성을 책임진다.</li>
+          <li><strong>이벤트와 클럽</strong>은 오프라인 활동의 핵심 실행 단위다. 무거운 상태 머신이 여기 있다.</li>
+          <li><strong>결제·지갑·정산</strong>은 돈의 상태를 다루는 별도 축이다. 다른 도메인이 직접 잔액을 만지지 않는다.</li>
+          <li><strong>알림·캘린더·위치</strong>는 다른 기능의 “결과”를 사용자에게 다시 연결한다. 단독 기능이 아니다.</li>
+          <li><strong>리뷰·신고·차단·신뢰점수</strong>는 플랫폼 안전의 기반이다. 운영 흐름과 사용자 흐름이 같은 데이터를 본다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>새 기능을 둘 곳을 정하는 법</h2>
+        <div class="callout">
+          <span class="label">결정 순서</span>
+          <ol>
+            <li>이 기능이 풀려는 사용자 문제가 위 5축 중 어디에 있는가</li>
+            <li>그 축 안에서 책임을 가지는 도메인은 어디인가</li>
+            <li>다른 도메인 데이터를 “쓰기”로 만지는가 — 그렇다면 정책 PRD가 먼저 갱신돼야 한다</li>
+            <li>기존 도메인에 들어가면 그 도메인 PRD의 기능 목록에 추가, 들어가지 않으면 새 도메인 후보로 보류</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

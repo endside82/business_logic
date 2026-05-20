@@ -1,0 +1,1888 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>community 서비스 매력 소개 덱</title>
+  <style>
+    :root {
+      --ink: #121923;
+      --sub: #465365;
+      --muted: #7a8494;
+      --paper: #f7f5ef;
+      --white: #fffdf8;
+      --line: #d7d2c7;
+      --teal: #00877d;
+      --red: #e24b3f;
+      --amber: #d79b16;
+      --blue: #4058c9;
+      --green: #2f7d50;
+      --violet: #7252b8;
+      --soft-teal: #d7efeb;
+      --soft-red: #f9d7d3;
+      --soft-amber: #f5e2ad;
+      --soft-blue: #dee5ff;
+      --soft-green: #dbead9;
+      --soft-violet: #e8ddf5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--ink);
+      background: #181d24;
+      font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+      letter-spacing: 0;
+      word-break: keep-all;
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      min-height: 720px;
+      overflow: hidden;
+      background: #181d24;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      min-height: 720px;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(18, 25, 35, 0.052) 1px, transparent 1px) 0 0 / 80px 80px,
+        linear-gradient(0deg, rgba(18, 25, 35, 0.052) 1px, transparent 1px) 0 0 / 80px 80px;
+      opacity: 0.46;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      right: -12vw;
+      top: -18vh;
+      width: 48vw;
+      height: 52vh;
+      pointer-events: none;
+      background: rgba(0, 135, 125, 0.11);
+      border-left: 1px solid rgba(18, 25, 35, 0.08);
+      transform: rotate(-8deg);
+    }
+
+    .slide:nth-child(3n)::after {
+      background: rgba(226, 75, 63, 0.1);
+    }
+
+    .slide:nth-child(3n + 1)::after {
+      background: rgba(215, 155, 22, 0.12);
+    }
+
+    .slide:nth-child(3n + 2)::after {
+      background: rgba(64, 88, 201, 0.1);
+    }
+
+    .slide.dark {
+      color: var(--white);
+      background: #151b22;
+    }
+
+    .slide.dark::before {
+      background:
+        linear-gradient(90deg, rgba(255, 253, 248, 0.06) 1px, transparent 1px) 0 0 / 80px 80px,
+        linear-gradient(0deg, rgba(255, 253, 248, 0.06) 1px, transparent 1px) 0 0 / 80px 80px;
+    }
+
+    .slide.dark::after {
+      background: rgba(102, 216, 205, 0.08);
+      border-left: 1px solid rgba(255, 253, 248, 0.08);
+    }
+
+    .slide.dark .meta,
+    .slide.dark .note,
+    .slide.dark .minor,
+    .slide.dark .small {
+      color: rgba(255, 253, 248, 0.72);
+    }
+
+    .slide.dark .rule {
+      background: rgba(255, 253, 248, 0.22);
+    }
+
+    .canvas {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      padding: 46px 58px 42px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 26px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 28px;
+      min-height: 38px;
+    }
+
+    .kicker {
+      color: var(--teal);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .slide.dark .kicker {
+      color: #66d8cd;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 760;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    h1 {
+      max-width: 930px;
+      font-size: clamp(54px, 6.4vw, 96px);
+      line-height: 0.94;
+      font-weight: 920;
+    }
+
+    h2 {
+      max-width: 900px;
+      font-size: clamp(34px, 4.1vw, 58px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    h3 {
+      font-size: 19px;
+      line-height: 1.18;
+      font-weight: 860;
+    }
+
+    .lead {
+      max-width: 760px;
+      color: var(--sub);
+      font-size: 22px;
+      line-height: 1.5;
+      font-weight: 610;
+    }
+
+    .slide.dark .lead {
+      color: rgba(255, 253, 248, 0.82);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 740;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+    }
+
+    .page {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 840;
+    }
+
+    .slide.dark .page {
+      color: rgba(255, 253, 248, 0.62);
+    }
+
+    .rule {
+      height: 1px;
+      background: rgba(18, 25, 35, 0.18);
+    }
+
+    .accent-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 12px;
+      background: var(--teal);
+    }
+
+    .accent-bar.red { background: var(--red); }
+    .accent-bar.amber { background: var(--amber); }
+    .accent-bar.blue { background: var(--blue); }
+    .accent-bar.green { background: var(--green); }
+    .accent-bar.violet { background: var(--violet); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 42px;
+      align-items: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid rgba(18, 25, 35, 0.18);
+      border-bottom: 1px solid rgba(18, 25, 35, 0.18);
+      margin-top: 34px;
+    }
+
+    .stat {
+      padding: 18px 20px 18px 0;
+      border-right: 1px solid rgba(18, 25, 35, 0.14);
+    }
+
+    .stat:last-child {
+      border-right: 0;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 45px;
+      line-height: 1;
+      font-weight: 920;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 830;
+    }
+
+    .os-map {
+      position: relative;
+      height: min(58vh, 500px);
+      min-height: 390px;
+    }
+
+    .os-core {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 194px;
+      height: 194px;
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      border: 2px solid rgba(255, 253, 248, 0.26);
+      background: var(--ink);
+      color: var(--white);
+      font-size: 25px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .os-node {
+      position: absolute;
+      width: 156px;
+      min-height: 76px;
+      display: grid;
+      align-content: center;
+      padding: 14px;
+      border: 1px solid rgba(18, 25, 35, 0.16);
+      background: var(--white);
+      box-shadow: 0 22px 40px rgba(18, 25, 35, 0.1);
+      font-size: 14px;
+      line-height: 1.25;
+      font-weight: 850;
+    }
+
+    .os-node span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 760;
+    }
+
+    .os-node.a { left: 6%; top: 8%; border-top: 7px solid var(--teal); }
+    .os-node.b { right: 6%; top: 12%; border-top: 7px solid var(--red); }
+    .os-node.c { right: 2%; bottom: 28%; border-top: 7px solid var(--amber); }
+    .os-node.d { right: 24%; bottom: 2%; border-top: 7px solid var(--blue); }
+    .os-node.e { left: 8%; bottom: 10%; border-top: 7px solid var(--green); }
+    .os-node.f { left: 0; top: 44%; border-top: 7px solid var(--violet); }
+
+    .os-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: rgba(18, 25, 35, 0.18);
+      transform-origin: left center;
+    }
+
+    .os-line.l1 { transform: rotate(-142deg); }
+    .os-line.l2 { transform: rotate(-38deg); }
+    .os-line.l3 { transform: rotate(8deg); }
+    .os-line.l4 { transform: rotate(72deg); }
+    .os-line.l5 { transform: rotate(138deg); }
+    .os-line.l6 { transform: rotate(182deg); }
+
+    .module-map {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-self: center;
+    }
+
+    .module-head {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 104px;
+      padding: 24px 26px;
+      color: var(--ink);
+      background: var(--white);
+      border-left: 12px solid var(--teal);
+      box-shadow: 0 28px 50px rgba(0, 0, 0, 0.22);
+    }
+
+    .module-head strong {
+      display: block;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 930;
+    }
+
+    .module-head span {
+      display: block;
+      max-width: 210px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 750;
+      text-align: right;
+    }
+
+    .module-tile {
+      min-height: 118px;
+      padding: 18px 18px 16px;
+      color: var(--ink);
+      background: var(--white);
+      border-top: 9px solid var(--teal);
+      box-shadow: 0 20px 36px rgba(0, 0, 0, 0.16);
+    }
+
+    .module-tile b {
+      display: block;
+      font-size: 25px;
+      line-height: 1.05;
+      font-weight: 920;
+    }
+
+    .module-tile span {
+      display: block;
+      margin-top: 12px;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 720;
+    }
+
+    .module-tile.red { border-top-color: var(--red); }
+    .module-tile.amber { border-top-color: var(--amber); }
+    .module-tile.blue { border-top-color: var(--blue); }
+    .module-tile.green { border-top-color: var(--green); }
+    .module-tile.violet { border-top-color: var(--violet); }
+
+    .fracture {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .fracture-item {
+      min-height: 188px;
+      padding: 20px 16px;
+      border-right: 1px solid var(--line);
+    }
+
+    .fracture-item:last-child {
+      border-right: 0;
+    }
+
+    .fracture-item b {
+      display: block;
+      font-size: 18px;
+      font-weight: 890;
+    }
+
+    .fracture-item span {
+      display: block;
+      margin-top: 12px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.42;
+      font-weight: 620;
+    }
+
+    .fracture-mark {
+      height: 8px;
+      margin-bottom: 20px;
+      background: var(--teal);
+    }
+
+    .fracture-item:nth-child(2) .fracture-mark { background: var(--red); }
+    .fracture-item:nth-child(3) .fracture-mark { background: var(--amber); }
+    .fracture-item:nth-child(4) .fracture-mark { background: var(--blue); }
+    .fracture-item:nth-child(5) .fracture-mark { background: var(--green); }
+    .fracture-item:nth-child(6) .fracture-mark { background: var(--violet); }
+
+    .axis-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .axis {
+      min-height: 160px;
+      padding: 22px;
+      border: 0;
+      background: var(--white);
+    }
+
+    .axis .num {
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .axis h3 {
+      margin-top: 20px;
+    }
+
+    .axis p {
+      margin-top: 10px;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 610;
+    }
+
+    .loop-wrap {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .loop {
+      position: relative;
+      width: min(44vw, 520px);
+      height: min(44vw, 520px);
+      min-width: 390px;
+      min-height: 390px;
+      border: 2px solid rgba(18, 25, 35, 0.28);
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+
+    .loop::before {
+      content: "";
+      position: absolute;
+      inset: 22%;
+      border: 1px solid rgba(18, 25, 35, 0.16);
+      border-radius: 50%;
+    }
+
+    .loop-title {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 170px;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 25px;
+      line-height: 1.1;
+      font-weight: 920;
+    }
+
+    .loop-step {
+      position: absolute;
+      width: 138px;
+      min-height: 70px;
+      padding: 12px;
+      display: grid;
+      align-content: center;
+      background: var(--white);
+      border: 1px solid rgba(18, 25, 35, 0.16);
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 840;
+      text-align: center;
+      box-shadow: 0 14px 26px rgba(18, 25, 35, 0.08);
+    }
+
+    .loop-step.s1 { left: 50%; top: -28px; transform: translateX(-50%); border-top: 7px solid var(--teal); }
+    .loop-step.s2 { right: -28px; top: 18%; border-top: 7px solid var(--red); }
+    .loop-step.s3 { right: -20px; bottom: 18%; border-top: 7px solid var(--amber); }
+    .loop-step.s4 { left: 50%; bottom: -28px; transform: translateX(-50%); border-top: 7px solid var(--blue); }
+    .loop-step.s5 { left: -26px; bottom: 18%; border-top: 7px solid var(--green); }
+    .loop-step.s6 { left: -30px; top: 18%; border-top: 7px solid var(--violet); }
+
+    .proof-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .proof {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .proof:last-child {
+      border-bottom: 0;
+    }
+
+    .proof b {
+      font-size: 16px;
+      font-weight: 890;
+    }
+
+    .proof span {
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 610;
+    }
+
+    .state-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .state {
+      min-height: 150px;
+      padding: 20px;
+      border-right: 1px solid var(--line);
+    }
+
+    .state:last-child {
+      border-right: 0;
+    }
+
+    .state b {
+      display: block;
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .state span {
+      display: block;
+      margin-top: 14px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.42;
+      font-weight: 620;
+    }
+
+    .state::before {
+      content: "";
+      display: block;
+      width: 42px;
+      height: 7px;
+      margin-bottom: 28px;
+      background: var(--teal);
+    }
+
+    .state:nth-child(2)::before { background: var(--red); }
+    .state:nth-child(3)::before { background: var(--amber); }
+    .state:nth-child(4)::before { background: var(--blue); }
+    .state:nth-child(5)::before { background: var(--green); }
+
+    .stack {
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 24px;
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stack-row:last-child {
+      border-bottom: 0;
+    }
+
+    .stack-row b {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .stack-row span {
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 610;
+    }
+
+    .money {
+      display: grid;
+      gap: 14px;
+    }
+
+    .money-row {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1.2fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .money-row > div {
+      min-height: 108px;
+      padding: 18px 20px;
+      border-right: 1px solid var(--line);
+    }
+
+    .money-row > div:last-child {
+      border-right: 0;
+    }
+
+    .money-row b {
+      display: block;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .money-row span {
+      display: block;
+      margin-top: 8px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 620;
+    }
+
+    .mini-panels {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .mini {
+      min-height: 152px;
+      padding: 20px;
+      border-right: 1px solid var(--line);
+    }
+
+    .mini:last-child {
+      border-right: 0;
+    }
+
+    .mini h3 {
+      margin-top: 22px;
+    }
+
+    .mini p {
+      margin-top: 10px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.42;
+      font-weight: 610;
+    }
+
+    .mini::before {
+      content: "";
+      display: block;
+      width: 46px;
+      height: 7px;
+      background: var(--teal);
+    }
+
+    .mini:nth-child(2)::before { background: var(--red); }
+    .mini:nth-child(3)::before { background: var(--amber); }
+    .mini:nth-child(4)::before { background: var(--blue); }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border: 1px solid var(--line);
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 13px 14px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.34;
+    }
+
+    .matrix th {
+      color: var(--ink);
+      background: #ebe6dc;
+      font-weight: 900;
+    }
+
+    .matrix td {
+      color: var(--sub);
+      font-weight: 630;
+    }
+
+    .matrix tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .matrix th:last-child,
+    .matrix td:last-child {
+      border-right: 0;
+    }
+
+    .matrix .win {
+      color: var(--ink);
+      background: var(--soft-amber);
+      font-weight: 850;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 0.95fr 1.2fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .score-legend {
+      display: grid;
+      align-content: space-between;
+      min-height: 385px;
+      padding: 28px;
+      color: var(--white);
+      background: var(--ink);
+    }
+
+    .score-legend h3 {
+      max-width: 330px;
+      font-size: 34px;
+      line-height: 1.05;
+    }
+
+    .score-legend p {
+      margin-top: 18px;
+      color: rgba(255, 253, 248, 0.72);
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 620;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .score-row {
+      display: contents;
+    }
+
+    .score-row > div {
+      min-height: 76px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .score-row:last-child > div {
+      border-bottom: 0;
+    }
+
+    .score-row > div:first-child {
+      border-right: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .score-row > div:last-child {
+      color: var(--ink);
+      background: linear-gradient(90deg, rgba(245, 226, 173, 0.72), rgba(255, 253, 248, 0.96));
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 850;
+    }
+
+    .risk {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .risk-item {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .risk-item b {
+      display: block;
+      padding: 18px;
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.3;
+      font-weight: 900;
+      border-right: 1px solid var(--line);
+      background: #ebe6dc;
+    }
+
+    .risk-item span {
+      display: block;
+      padding: 18px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.42;
+      font-weight: 630;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: 0.9fr 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .phase {
+      min-height: 350px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+    }
+
+    .phase:last-child {
+      border-right: 0;
+    }
+
+    .phase .label {
+      display: inline-flex;
+      padding: 8px 11px;
+      color: var(--white);
+      background: var(--ink);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .phase h3 {
+      margin-top: 28px;
+      font-size: 28px;
+    }
+
+    .phase p {
+      margin-top: 14px;
+      color: var(--sub);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 630;
+    }
+
+    .phase ul,
+    .plain-list {
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 680;
+    }
+
+    .phase li,
+    .plain-list li {
+      padding: 8px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .launch-map {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    .launch-thesis {
+      padding: 30px;
+      color: var(--white);
+      background: var(--blue);
+    }
+
+    .launch-thesis h3 {
+      max-width: 360px;
+      font-size: 40px;
+      line-height: 1.02;
+    }
+
+    .launch-thesis p {
+      margin-top: 22px;
+      color: rgba(255, 253, 248, 0.82);
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: 620;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-step {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      min-height: 116px;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .timeline-step b {
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: var(--ink);
+      font-size: 18px;
+      font-weight: 920;
+    }
+
+    .timeline-step:nth-child(2) b {
+      background: var(--teal);
+    }
+
+    .timeline-step:nth-child(3) b {
+      background: var(--amber);
+    }
+
+    .timeline-step div {
+      padding: 18px 20px;
+    }
+
+    .timeline-step h3 {
+      font-size: 23px;
+    }
+
+    .timeline-step p {
+      margin-top: 8px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.42;
+      font-weight: 630;
+    }
+
+    .timeline-step span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 820;
+    }
+
+    .quote {
+      max-width: 1000px;
+      font-size: clamp(44px, 5.2vw, 76px);
+      line-height: 1.02;
+      font-weight: 920;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .chip {
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 253, 248, 0.22);
+      color: rgba(255, 253, 248, 0.84);
+      font-size: 12px;
+      font-weight: 840;
+    }
+
+    .controls {
+      position: fixed;
+      z-index: 100;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid rgba(255, 253, 248, 0.12);
+      background: rgba(18, 25, 35, 0.84);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+
+    .controls:hover,
+    .controls:focus-within {
+      opacity: 1;
+    }
+
+    .controls button {
+      width: 38px;
+      height: 32px;
+      border: 1px solid rgba(255, 253, 248, 0.14);
+      background: rgba(255, 253, 248, 0.08);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .controls .counter {
+      min-width: 78px;
+      color: rgba(255, 253, 248, 0.74);
+      font-size: 12px;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      body {
+        overflow: auto;
+      }
+
+      .deck {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+      }
+
+      .slide,
+      .slide.active {
+        position: relative;
+        display: block;
+        min-height: 100vh;
+        height: auto;
+      }
+
+      .canvas {
+        padding: 34px 26px 92px;
+      }
+
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .loop-wrap,
+      .axis-grid,
+      .fracture,
+      .state-flow,
+      .mini-panels,
+      .money-row,
+      .risk,
+      .roadmap {
+        grid-template-columns: 1fr;
+      }
+
+      .os-map,
+      .loop {
+        display: none;
+      }
+
+      .axis,
+      .fracture-item,
+      .state,
+      .mini,
+      .phase,
+      .money-row > div {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .axis:last-child,
+      .fracture-item:last-child,
+      .state:last-child,
+      .mini:last-child,
+      .phase:last-child,
+      .money-row > div:last-child {
+        border-bottom: 0;
+      }
+
+      .axis-grid .axis {
+        border: 0;
+      }
+    }
+
+    @page {
+      size: 16in 9in;
+      margin: 0;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      html,
+      body {
+        width: 16in;
+        height: auto;
+        background: #fff;
+        overflow: visible;
+      }
+
+      .deck {
+        width: 16in;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+      }
+
+      .slide,
+      .slide.active {
+        position: relative;
+        display: block;
+        width: 16in;
+        height: 9in;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .canvas {
+        height: 100%;
+        padding: 46px 58px 42px;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        gap: 26px;
+      }
+
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .loop-wrap {
+        grid-template-columns: 0.95fr 1.05fr;
+      }
+
+      .axis-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .fracture {
+        grid-template-columns: repeat(6, 1fr);
+      }
+
+      .state-flow {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .mini-panels {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .money-row {
+        grid-template-columns: 1fr 1.1fr 1.2fr;
+      }
+
+      .risk {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .roadmap {
+        grid-template-columns: 0.9fr 1fr 1fr;
+      }
+
+      .os-map,
+      .loop {
+        display: block;
+      }
+
+      .axis {
+        border: 0;
+      }
+
+      .fracture-item,
+      .state,
+      .mini,
+      .phase,
+      .money-row > div {
+        border-right: 1px solid var(--line);
+        border-bottom: 0;
+      }
+
+      .fracture-item:last-child,
+      .state:last-child,
+      .mini:last-child,
+      .phase:last-child,
+      .money-row > div:last-child {
+        border-right: 0;
+      }
+
+      .controls {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="community 서비스 매력 소개 HTML 프레젠테이션">
+    <section class="slide active dark" id="slide-1">
+      <div class="accent-bar"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">서비스 소개</p>
+          <p class="meta">소비자·투자자 관점<br />2026.05 기준</p>
+        </header>
+        <div class="grid-2">
+          <div>
+            <h1>한 번의 모임을,<br />반복되는 관계로.</h1>
+            <p class="lead" style="margin-top: 30px;">community는 사용자가 “가도 괜찮다”고 느끼게 만들고, 운영자가 모임을 계속 열 수 있게 만들며, 그 반복 속에서 결제·구독·마켓 수익이 생기는 구조를 만든다.</p>
+            <div class="stat-strip">
+              <div class="stat"><strong>발견</strong><span>취향에 맞는 모임</span></div>
+              <div class="stat"><strong>참여</strong><span>믿고 나가는 과정</span></div>
+              <div class="stat"><strong>관계</strong><span>다시 만나는 이유와 수익</span></div>
+            </div>
+          </div>
+          <div class="module-map" aria-label="community 구성 요소">
+            <div class="module-head">
+              <strong>community</strong>
+              <span>사용자 신뢰와 반복 참여를 만드는 모임 운영망</span>
+            </div>
+            <div class="module-tile">
+              <b>매력</b>
+              <span>내 취향에 맞는 모임 발견</span>
+            </div>
+            <div class="module-tile red">
+              <b>확신</b>
+              <span>신청 · 대기 · 결제 상태 확인</span>
+            </div>
+            <div class="module-tile amber">
+              <b>신뢰</b>
+              <span>돈 흐름과 분쟁 기록</span>
+            </div>
+            <div class="module-tile blue">
+              <b>현장</b>
+              <span>일정 · 길찾기 · 참석 확인</span>
+            </div>
+            <div class="module-tile green">
+              <b>관계</b>
+              <span>사진 · 후기 · 클럽 연결</span>
+            </div>
+            <div class="module-tile violet">
+              <b>수익</b>
+              <span>결제 · 구독 · 마켓</span>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">발견, 참여, 관계가 하나의 흐름으로 이어진다.</p>
+          <p class="page">01 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-2">
+      <div class="accent-bar red"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">문제</p>
+          <p class="meta">흩어진 모임 경험</p>
+        </header>
+        <div>
+          <h2>모임이 부족한 게 아니라,<br />확신이 부족하다.</h2>
+          <p class="lead" style="margin-top: 20px;">소비자는 취향, 사람, 돈, 장소, 일정이 불확실하면 신청을 망설인다. 운영자는 이 불확실성을 매번 수동으로 설명하다가 지친다.</p>
+          <div class="fracture" style="margin-top: 34px;">
+            <div class="fracture-item"><div class="fracture-mark"></div><b>내 취향인가</b><span>검색 결과가 많아도 정말 나와 맞는 모임인지 판단하기 어렵다.</span></div>
+            <div class="fracture-item"><div class="fracture-mark"></div><b>갈 수 있나</b><span>자리, 승인, 대기, 결제 상태가 분명하지 않으면 신청을 미룬다.</span></div>
+            <div class="fracture-item"><div class="fracture-mark"></div><b>놓치지 않을까</b><span>일정 변경, 장소 안내, 납부 요청이 흩어지면 실제 참석으로 이어지지 않는다.</span></div>
+            <div class="fracture-item"><div class="fracture-mark"></div><b>돈은 안전한가</b><span>결제, 환불, 정산 근거가 약하면 유료 모임을 신뢰하기 어렵다.</span></div>
+            <div class="fracture-item"><div class="fracture-mark"></div><b>사람은 믿을 만한가</b><span>후기와 신고가 약하면 낯선 사람과 오프라인에서 만나기 부담스럽다.</span></div>
+            <div class="fracture-item"><div class="fracture-mark"></div><b>다음이 있는가</b><span>사진, 후기, 클럽 연결이 없으면 한 번 만난 뒤 관계가 끊긴다.</span></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">망설임을 줄이는 순간, 참여가 시작된다.</p>
+          <p class="page">02 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-3">
+      <div class="accent-bar"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">제품 방향</p>
+          <p class="meta">서비스가 맡는 일</p>
+        </header>
+        <div>
+          <h2>가도 괜찮다는 확신이<br />신청을 만든다.</h2>
+          <div class="axis-grid" style="margin-top: 34px;">
+            <div class="axis"><span class="num">01</span><h3>취향 발견</h3><p>관심사와 위치를 바탕으로 사용자가 가보고 싶은 모임을 빨리 찾게 한다.</p></div>
+            <div class="axis"><span class="num">02</span><h3>참여 확신</h3><p>신청 가능 여부, 승인, 대기, 결제 상태를 분명하게 보여 망설임을 줄인다.</p></div>
+            <div class="axis"><span class="num">03</span><h3>현장 안심</h3><p>일정, 장소, 알림, 참석 확인이 현장 참석까지 이어지게 한다.</p></div>
+            <div class="axis"><span class="num">04</span><h3>관계 지속</h3><p>사진, 후기, 클럽 활동이 한 번의 만남을 다음 약속으로 바꾼다.</p></div>
+            <div class="axis"><span class="num">05</span><h3>돈의 투명성</h3><p>결제, 환불, 정산, 이의제기를 기록으로 남겨 유료화의 불안을 줄인다.</p></div>
+            <div class="axis"><span class="num">06</span><h3>안전한 경계</h3><p>후기, 신고, 차단, 위치 선택, 데이터 삭제로 낯선 만남의 부담을 낮춘다.</p></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">소비자는 확신을, 운영자는 안정성을, 투자자는 반복을 본다.</p>
+          <p class="page">03 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-4">
+      <div class="accent-bar green"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">재방문 흐름</p>
+          <p class="meta">다시 돌아오는 이유</p>
+        </header>
+        <div class="loop-wrap">
+          <div class="loop" aria-label="사용자 재참여 흐름">
+            <div class="loop-title">만남이<br />자산이 되는 길</div>
+            <div class="loop-step s1">취향 맞는<br />모임 발견</div>
+            <div class="loop-step s2">신청할<br />확신</div>
+            <div class="loop-step s3">돈과 일정<br />안심</div>
+            <div class="loop-step s4">현장 참석<br />경험</div>
+            <div class="loop-step s5">사진과<br />후기</div>
+            <div class="loop-step s6">클럽과<br />다음 약속</div>
+          </div>
+          <div>
+            <h2>만족한 만남은<br />다음 약속을 부른다.</h2>
+            <div class="proof-list" style="margin-top: 34px;">
+              <div class="proof"><b>소비자 매력</b><span>괜찮은 사람들과 안전하게 만날 수 있다는 느낌이 재방문 이유가 된다.</span></div>
+              <div class="proof"><b>운영자 매력</b><span>신청, 대기, 결제, 공지, 참석 확인을 덜 헷갈리게 관리할 수 있다.</span></div>
+              <div class="proof"><b>사업 매력</b><span>반복 참여가 쌓이면 결제, 구독, 클럽, 마켓으로 수익 접점이 늘어난다.</span></div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">발견보다 중요한 것은 다시 만나게 하는 힘이다.</p>
+          <p class="page">04 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-5">
+      <div class="accent-bar red"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">소비자 가치</p>
+          <p class="meta">좋은 공급이 생기는 이유</p>
+        </header>
+        <div>
+            <h2>호스트가 편해야<br />좋은 모임이 늘어난다.</h2>
+          <div class="state-flow" style="margin-top: 34px;">
+            <div class="state"><b>모임 매력 만들기</b><span>가격, 반복 여부, 공개 범위, 참가 조건을 모임 성격에 맞게 정한다.</span></div>
+            <div class="state"><b>좋은 참가자 받기</b><span>바로 참가, 승인제, 질문 응답을 선택해 모임의 질을 지킨다.</span></div>
+            <div class="state"><b>빈자리 손실 줄이기</b><span>정원이 차도 대기자를 받고, 자리가 나면 다시 참여로 연결한다.</span></div>
+            <div class="state"><b>결제 확정하기</b><span>승인된 사람만 결제하게 해 노쇼와 미납 불안을 줄인다.</span></div>
+            <div class="state"><b>참석 증명하기</b><span>현장 참석 확인이 후기 신뢰와 다음 추천의 근거가 된다.</span></div>
+          </div>
+          <div class="mini-panels" style="margin-top: 24px;">
+            <div class="mini"><h3>모임 품질</h3><p>누구를 받을지 정할 수 있어 낯선 참가자의 불안을 줄인다.</p></div>
+            <div class="mini"><h3>운영 피로</h3><p>마감, 대기, 결제 상태를 매번 따로 설명하지 않아도 된다.</p></div>
+            <div class="mini"><h3>참석 전환</h3><p>일정 변경과 장소 안내가 실제 참석까지 밀어준다.</p></div>
+            <div class="mini"><h3>신뢰 축적</h3><p>참석 기록과 후기가 다음 참가자의 판단 기준이 된다.</p></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">좋은 공급은 좋은 운영 경험에서 나온다.</p>
+          <p class="page">05 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-6">
+      <div class="accent-bar green"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">반복 구조</p>
+          <p class="meta">장기 커뮤니티</p>
+        </header>
+        <div class="grid-2">
+          <div>
+            <h2>클럽은 모임을<br />관계로 바꾼다.</h2>
+            <p class="lead" style="margin-top: 24px;">좋은 만남이 한 번으로 끝나지 않고, 사람이 남고, 소식이 오가고, 다음 일정과 구독으로 이어진다.</p>
+          </div>
+          <div class="stack">
+            <div class="stack-row"><b>소속감</b><span>가입 방식과 멤버 역할을 통해 아무나 모인 방이 아니라 커뮤니티가 된다.</span></div>
+            <div class="stack-row"><b>반복 접점</b><span>게시판, 공지, 댓글, 사진첩이 모임 없는 날에도 다시 열어볼 이유가 된다.</span></div>
+            <div class="stack-row"><b>운영 지속성</b><span>운영자와 관리자가 역할을 나눠 클럽을 오래 유지할 수 있다.</span></div>
+            <div class="stack-row"><b>수익 가능성</b><span>후원, 구독, 기금 운영이 단발성 참가비와 다른 수익 흐름을 만든다.</span></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">소속감은 가장 강한 재방문 이유다.</p>
+          <p class="page">06 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-7">
+      <div class="accent-bar amber"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">수익 신뢰</p>
+          <p class="meta">결제와 정산</p>
+        </header>
+        <div>
+          <h2>돈이 명확해야<br />유료 모임도 열린다.</h2>
+          <div class="money" style="margin-top: 34px;">
+            <div class="money-row">
+              <div><b>결제 준비</b><span>얼마를 내고, 언제 환불되고, 무엇이 포함되는지 미리 알게 한다.</span></div>
+              <div><b>결제 확인</b><span>중간에 끊기거나 중복 시도돼도 결과를 다시 확인하게 한다.</span></div>
+              <div><b>결제 이후</b><span>영수증, 거래내역, 참가 신청 상태가 한곳에 남는다.</span></div>
+            </div>
+            <div class="money-row">
+              <div><b>정산 신뢰</b><span>항목, 참가자, 금액이 정리된 뒤에만 납부 요청을 보낸다.</span></div>
+              <div><b>납부 전환</b><span>포인트 납부, 계좌이체 확인, 미납 알림을 한 흐름으로 본다.</span></div>
+              <div><b>분쟁 방어</b><span>금액이 이상하면 이유와 처리 결과가 서비스 기록으로 남는다.</span></div>
+            </div>
+            <div class="money-row">
+              <div><b>출금 신뢰</b><span>승인, 재시도, 한도, 위험 신호까지 운영 기록으로 추적한다.</span></div>
+              <div><b>실패 대응</b><span>지급이나 환불이 실패하면 재시도와 운영 확인 상태를 구분한다.</span></div>
+              <div><b>사업 방어력</b><span>서비스 장부와 외부 지급 내역이 맞는지 매일 확인하는 구조를 둔다.</span></div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">결제보다 중요한 것은 결제를 믿게 만드는 일이다.</p>
+          <p class="page">07 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-8">
+      <div class="accent-bar blue"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">공급 확장</p>
+          <p class="meta">모임 계획 마켓</p>
+        </header>
+        <div class="grid-2">
+          <div>
+            <h2>좋은 모임 노하우도<br />상품이 된다.</h2>
+            <p class="lead" style="margin-top: 24px;">소비자는 검증된 코스를 빠르게 고르고, 기획자는 자신의 운영 노하우를 팔고, 플랫폼은 새로운 모임 공급을 확보한다.</p>
+          </div>
+          <div class="state-flow" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="state"><b>경험 포장</b><span>코스, 장소, 일정, 준비물을 재사용 가능한 모임 상품으로 만든다.</span></div>
+            <div class="state"><b>노하우 판매</b><span>좋은 계획을 마켓에 올려 다른 사람이 구매할 수 있게 한다.</span></div>
+            <div class="state"><b>공급 확장</b><span>구매한 계획으로 실제 모임을 열 수 있어 새로운 모임 공급이 늘어난다.</span></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">좋은 모임은 직접 만들 수도, 마켓에서 가져올 수도 있다.</p>
+          <p class="page">08 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-9">
+      <div class="accent-bar violet"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">관계 확장</p>
+          <p class="meta">개인 만남의 안전 장치</p>
+        </header>
+        <div>
+          <h2>안전해야,<br />낯선 만남도 시작된다.</h2>
+          <div class="mini-panels" style="margin-top: 34px;">
+            <div class="mini"><h3>확인된 상대</h3><p>본인 확인과 기본 프로필로 처음 만나는 부담을 낮춘다.</p></div>
+            <div class="mini"><h3>상호 관심</h3><p>서로 관심이 맞은 뒤에만 대화가 열려 불필요한 노출을 줄인다.</p></div>
+            <div class="mini"><h3>약속 전환</h3><p>대화가 일정과 장소로 이어져 실제 오프라인 만남이 된다.</p></div>
+            <div class="mini"><h3>안전하게 멈추기</h3><p>불편한 상대는 차단하고, 대화와 노출도 함께 정리한다.</p></div>
+          </div>
+          <p class="lead" style="margin-top: 30px;">소비자에게는 “안전하게 만나볼 수 있다”는 매력이고, 투자자에게는 관심사 모임에서 개인 관계로 확장되는 사용 시나리오다.</p>
+        </div>
+        <footer class="footer">
+          <p class="note">관심사 모임은 더 넓은 관계의 출발점이다.</p>
+          <p class="page">09 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-10">
+      <div class="accent-bar green"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">신뢰와 안전</p>
+          <p class="meta">좋은 모임을 고르는 기준</p>
+        </header>
+        <div class="grid-2">
+          <div>
+          <h2>신뢰가 쌓이면<br />선택이 쉬워진다.</h2>
+            <p class="lead" style="margin-top: 24px;">소비자는 낯선 모임에 나가기 전 “누가 다녀왔고, 문제가 있었는지”를 보고 싶어 한다. 신뢰 정보는 참여 전환을 만드는 자산이다.</p>
+          </div>
+          <div class="stack">
+            <div class="stack-row"><b>참석자 후기</b><span>실제로 참여한 사람의 경험만 남겨 평판 조작을 줄인다.</span></div>
+            <div class="stack-row"><b>문제 신호</b><span>신고와 반복 이슈가 쌓이면 다음 사용자의 판단을 돕는다.</span></div>
+            <div class="stack-row"><b>신뢰 변화</b><span>후기 수정이나 삭제가 있으면 신뢰 정보도 함께 바뀐다.</span></div>
+            <div class="stack-row"><b>선택 보조</b><span>정보가 부족할 때도 왜 부족한지 알려줘 막연한 불안을 줄인다.</span></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">목록보다 중요한 것은 믿고 고를 근거다.</p>
+          <p class="page">10 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-11">
+      <div class="accent-bar blue"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">시간·알림·위치</p>
+          <p class="meta">실제 행동으로 이어지는 안내</p>
+        </header>
+        <div>
+          <h2>모임은 신청이 아니라,<br />참석에서 완성된다.</h2>
+          <table class="matrix" style="margin-top: 34px;">
+            <thead>
+              <tr><th>필요한 안내</th><th>일반 모임</th><th>클럽</th><th>개인 만남</th><th>사용자 선택</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>일정</td><td>내가 신청한 모임을 달력에서 확인</td><td>클럽 안의 다음 모임 확인</td><td>서로 가능한 시간 확인</td><td>가능한 시간 설정</td></tr>
+              <tr><td>알림</td><td>승인/거절, 대기자 승격, 납부 요청</td><td>공지, 댓글, 가입 승인</td><td>매칭, 대화, 만남 제안</td><td>방해금지 시간 설정</td></tr>
+              <tr><td>위치</td><td>모임 장소와 길찾기</td><td>클럽 활동 장소</td><td>만남 장소 안내</td><td>위치 공유 켜고 끄기</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <footer class="footer">
+          <p class="note">알림과 위치 안내는 신청자를 참석자로 바꾸는 장치다.</p>
+          <p class="page">11 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-12">
+      <div class="accent-bar"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">차별점</p>
+          <p class="meta">일반 모임 서비스와 다른 점</p>
+        </header>
+        <div>
+          <h2>모임을 보여주는 데서<br />끝나지 않는다.</h2>
+          <div class="scoreboard" style="margin-top: 30px;">
+            <div class="score-legend">
+              <div>
+                <h3>차별점은 기능 수가 아니라 사용자가 다시 만날 이유를 만드는 데 있다.</h3>
+                <p>발견, 신청, 결제, 참석, 후기, 클럽이 하나의 반복 흐름으로 묶인다.</p>
+              </div>
+              <p class="minor">특정 경쟁사 실명 대신 사용자 경험 기준으로 비교</p>
+            </div>
+            <div class="score-grid">
+              <div class="score-row"><div>재방문</div><div>저장 검색과 관심 모임이 “다음에 볼 이유”를 만든다.</div></div>
+              <div class="score-row"><div>참석</div><div>대기, 결제, 알림, 체크인이 실제 현장 참석까지 밀어준다.</div></div>
+              <div class="score-row"><div>신뢰</div><div>돈 흐름과 후기·신고 기록이 낯선 모임의 불안을 낮춘다.</div></div>
+              <div class="score-row"><div>확장</div><div>클럽과 개인 만남이 일회성 모임을 관계망으로 넓힌다.</div></div>
+              <div class="score-row"><div>공급</div><div>모임 계획 마켓이 좋은 운영 노하우를 반복 가능한 상품으로 만든다.</div></div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">반복 사용과 공급 확장이 차별점이다.</p>
+          <p class="page">12 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-13">
+      <div class="accent-bar amber"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">사업 강점</p>
+          <p class="meta">수익이 생기는 순간</p>
+        </header>
+        <div class="grid-2">
+          <div>
+          <h2>하나의 흐름,<br />여러 수익원.</h2>
+            <ul class="plain-list">
+              <li>참가자는 가고 싶은 모임에 돈을 낸다.</li>
+              <li>호스트는 더 편하게 운영하기 위해 서비스를 계속 쓴다.</li>
+              <li>클럽은 멤버십과 후원으로 관계를 수익화한다.</li>
+              <li>기획자는 좋은 코스와 운영 노하우를 판매한다.</li>
+              <li>개인 만남 사용자는 안전한 관계 확장에 가치를 느낀다.</li>
+            </ul>
+          </div>
+          <table class="matrix">
+            <thead>
+              <tr><th>수익이 나는 지점</th><th>매력으로 이어지는 흐름</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>모임 결제</td><td>취향 기반 탐색이 유료 참가로 이어진다</td></tr>
+              <tr><td>지갑/포인트</td><td>반복 결제와 환불 경험을 서비스 안에 묶는다</td></tr>
+              <tr><td>클럽 후원/구독</td><td>일회성 참가자를 장기 멤버로 바꾼다</td></tr>
+              <tr><td>모임 계획 거래</td><td>좋은 코스와 운영 노하우가 판매 상품이 된다</td></tr>
+              <tr><td>개인 구독</td><td>검증과 안전 장치가 있는 관계 확장에 붙는다</td></tr>
+              <tr><td>운영 편의</td><td>호스트의 반복 운영 비용을 줄여 공급을 붙잡는다</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <footer class="footer">
+          <p class="note">수익원은 흩어져 있지 않고, 같은 경험 안에서 이어진다.</p>
+          <p class="page">13 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-14">
+      <div class="accent-bar green"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">운영 경쟁력</p>
+          <p class="meta">따라 만들기 어려운 이유</p>
+        </header>
+        <div class="grid-2">
+          <div>
+          <h2>따라 만들기 어려운 건,<br />운영 신뢰다.</h2>
+          <p class="lead" style="margin-top: 24px;">모임 서비스는 즐거운 순간보다 애매한 순간에서 평가받는다. 마감, 환불, 신고, 위치 공유 같은 상황을 어떻게 안내하느냐가 브랜드 신뢰를 만든다.</p>
+          </div>
+          <div class="mini-panels" style="grid-template-columns: 1fr;">
+            <div class="mini"><h3>불안 해소</h3><p>버튼이 막히거나 빈 화면이 나와도 사용자가 이유와 다음 행동을 안다.</p></div>
+            <div class="mini"><h3>돈 문제의 예측 가능성</h3><p>결제, 환불, 정산, 송금 상태를 단계별로 보여줘 분쟁을 줄인다.</p></div>
+            <div class="mini"><h3>운영 기준 축적</h3><p>신고, 환불, 심사, 기금, 위치 안전 문구가 정책과 기록으로 쌓인다.</p></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">운영 신뢰가 쌓일수록 서비스의 방어력도 커진다.</p>
+          <p class="page">14 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-15">
+      <div class="accent-bar red"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">리스크와 대응</p>
+          <p class="meta">미리 정해야 할 것</p>
+        </header>
+        <div>
+          <h2>남은 건 기능 추가가 아니라,<br />신뢰 점검이다.</h2>
+          <div class="risk" style="margin-top: 32px;">
+            <div class="risk-item"><b>은행 송금</b><span>은행 송금은 계약, 정산 증빙, 장애 대응 기준이 갖춰진 뒤 열 수 있다.</span></div>
+            <div class="risk-item"><b>외부 연동</b><span>푸시, 메일, 지도, 문자, 결제대행은 운영 계정과 장애 대응 확인이 남아 있다.</span></div>
+            <div class="risk-item"><b>결정 사유</b><span>승인, 거절, 신고 처리 결과가 남지 않으면 사용자는 공정하다고 느끼기 어렵다.</span></div>
+            <div class="risk-item"><b>주최자 할 일</b><span>문의, 신청, 정산 이의를 놓치지 않는 화면이 공급자 만족도를 좌우한다.</span></div>
+            <div class="risk-item"><b>환불 문의</b><span>결제 실패와 환불 지연을 기록으로 남길 문의 흐름이 아직 과제다.</span></div>
+            <div class="risk-item"><b>초기 품질</b><span>처음에는 좋은 모임, 믿을 만한 호스트, 대표 클럽을 선별해 신뢰를 만든다.</span></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">남은 과제는 출시 전 신뢰 체크리스트다.</p>
+          <p class="page">15 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-16">
+      <div class="accent-bar blue"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">소개 순서</p>
+          <p class="meta">무엇을 먼저 말할 것인가</p>
+        </header>
+        <div>
+          <h2>기능보다,<br />매력의 순서로.</h2>
+          <div class="launch-map" style="margin-top: 32px;">
+            <div class="launch-thesis">
+              <h3>먼저 설득할 것은<br />기능 수가 아니라<br />반복되는 이유다.</h3>
+              <p>사용자가 왜 신청하고, 왜 실제로 나가고, 왜 다시 들어오는지가 보여야 투자 매력이 생긴다.</p>
+            </div>
+            <div class="timeline">
+              <div class="timeline-step">
+                <b>1</b>
+                <div>
+                  <h3>소비자 매력</h3>
+                  <p>취향에 맞는 모임을 찾고, 믿고 신청하고, 실제로 참석할 수 있다.</p>
+                  <span>사용자가 처음 끌리는 이유</span>
+                </div>
+              </div>
+              <div class="timeline-step">
+                <b>2</b>
+                <div>
+                  <h3>반복 구조</h3>
+                  <p>체크인, 사진첩, 저장 검색, 클럽, 개인 만남 대화가 다음 약속을 만든다.</p>
+                  <span>재방문과 관계 확장의 이유</span>
+                </div>
+              </div>
+              <div class="timeline-step">
+                <b>3</b>
+                <div>
+                  <h3>사업성</h3>
+                  <p>결제, 구독, 클럽, 마켓이 같은 경험 안에 붙어 수익 접점이 분산된다.</p>
+                  <span>투자자가 봐야 할 확장성</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">소비자 가치, 반복 구조, 수익 구조 순서로 말한다.</p>
+          <p class="page">16 / 17</p>
+        </footer>
+      </div>
+    </section>
+
+    <section class="slide dark" id="slide-17">
+      <div class="accent-bar"></div>
+      <div class="canvas">
+        <header class="topline">
+          <p class="kicker">마무리</p>
+          <p class="meta">핵심 메시지</p>
+        </header>
+        <div>
+          <p class="quote">찾고, 믿고,<br />다시 만나다.</p>
+          <p class="lead" style="margin-top: 34px; max-width: 900px;">소비자에게는 안심하고 나갈 이유, 운영자에게는 모임을 지속할 도구, 투자자에게는 반복 사용과 여러 수익 접점이 있는 오프라인 관계 플랫폼이다.</p>
+          <div class="chips">
+            <span class="chip">취향 발견</span>
+            <span class="chip">참여 확신</span>
+            <span class="chip">신뢰</span>
+            <span class="chip">결제</span>
+            <span class="chip">커뮤니티</span>
+            <span class="chip">수익 확장</span>
+          </div>
+        </div>
+        <footer class="footer">
+          <p class="note">모임을 관계로, 관계를 반복으로, 반복을 사업으로.</p>
+          <p class="page">17 / 17</p>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <nav class="controls" aria-label="슬라이드 이동">
+    <button id="prevBtn" type="button" aria-label="이전 슬라이드">‹</button>
+    <span id="counter" class="counter">1 / 17</span>
+    <button id="nextBtn" type="button" aria-label="다음 슬라이드">›</button>
+    <button id="printBtn" type="button" aria-label="인쇄 또는 PDF 저장">PDF</button>
+  </nav>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const counter = document.getElementById("counter");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const printBtn = document.getElementById("printBtn");
+    let index = 0;
+
+    function clamp(value) {
+      return Math.max(0, Math.min(slides.length - 1, value));
+    }
+
+    function show(nextIndex) {
+      index = clamp(nextIndex);
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      history.replaceState(null, "", `#slide-${index + 1}`);
+    }
+
+    prevBtn.addEventListener("click", () => show(index - 1));
+    nextBtn.addEventListener("click", () => show(index + 1));
+    printBtn.addEventListener("click", () => window.print());
+
+    window.addEventListener("keydown", event => {
+      if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(event.key)) {
+        event.preventDefault();
+        show(index + 1);
+      }
+      if (["ArrowLeft", "ArrowUp", "PageUp"].includes(event.key)) {
+        event.preventDefault();
+        show(index - 1);
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        show(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        show(slides.length - 1);
+      }
+    });
+
+    const hash = window.location.hash.match(/slide-(\d+)/);
+    show(hash ? Number(hash[1]) - 1 : 0);
+  </script>
+</body>
+</html>

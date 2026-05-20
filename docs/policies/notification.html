@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>알림 정책 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>알림 정책</div>
+        <h1>알림 정책</h1>
+        <p class="lede">
+          알림은 도메인 이벤트의 “결과”를 사용자에게 전달하는 보조 흐름이다.
+          알림 기획 시 화면보다 먼저 정해야 할 것은
+          <strong>“누가, 언제, 왜 받아야 하는가”</strong>다.
+        </p>
+      </header>
+
+      <section>
+        <h2>알림 트리거 유형</h2>
+        <p class="subtitle">새 알림이 추가될 때 어느 유형에 속하는지 분류하고, 분류별 정책에 맞춰 설계한다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>트리거 유형</th><th>예시</th><th>검토 기준</th></tr></thead>
+            <tbody>
+              <tr><td><strong>참여 상태 변경</strong></td><td>이벤트 승인·거절, 대기열 승격</td><td>대상자와 호스트 모두 받아야 하는지 확인</td></tr>
+              <tr><td><strong>돈 상태 변경</strong></td><td>결제 성공·실패, 환불, 정산 독촉</td><td>중요 알림으로 분류 (꺼도 발송 가능)</td></tr>
+              <tr><td><strong>커뮤니티 활동</strong></td><td>클럽 공지·댓글·초대</td><td>그룹핑과 배지 정책 확인</td></tr>
+              <tr><td><strong>데이팅·안전</strong></td><td>매칭·채팅·만남 제안·차단</td><td>민감 정보 노출 최소화</td></tr>
+              <tr><td><strong>계정·설정</strong></td><td>데이터 내보내기 완료, 권한 회복</td><td>사용자가 다음 행동을 할 수 있어야 함</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>발송 판단 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["상태 변화 발생"] --> B{"수신자 존재?"}
+    B -->|"없음"| C["종료"]
+    B -->|"있음"| D{"카테고리 수신 허용?"}
+    D -->|"아니오"| E["푸시 미발송"]
+    D -->|"예"| F{"방해금지 시간?"}
+    F -->|"예"| G["보류·무음 정책"]
+    F -->|"아니오"| H["푸시 발송"]
+    H --> I["알림함 반영"]
+    G --> I
+    E --> I
+          </div>
+        </div>
+        <p>
+          푸시 발송 여부와 알림함 반영 여부는 <strong>독립적인 결정</strong>이다.
+          예를 들어 푸시는 꺼져 있어도 인앱 알림함에는 남겨야 사용자가 나중에 확인할 수 있다.
+        </p>
+      </section>
+
+      <section>
+        <h2>수용 기준</h2>
+        <ul>
+          <li>모든 알림에는 사용자가 “다음에 할 수 있는 행동”이 명확해야 한다.</li>
+          <li>알림 딥링크의 대상이 삭제·만료·권한 없음 상태일 때의 fallback이 있어야 한다.</li>
+          <li>OS 권한 거부 상태에서도 앱 내 알림함은 정상 동작해야 한다.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

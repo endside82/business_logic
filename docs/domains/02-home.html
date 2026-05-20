@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>02 홈 피드 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>14개 도메인<span>›</span>02 홈 피드</div>
+        <h1>02. 홈 피드</h1>
+        <p class="lede">
+          로그인 직후 첫 화면이자, 사용자가 가장 자주 돌아오는 곳이다.
+          추천 콘텐츠와 다른 도메인으로의 진입점을 함께 보여준다.
+          기능은 적지만 “부분 실패에도 살아남는다”라는 요구가 가장 강한 도메인.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">38</div></div>
+          <div class="metric"><div class="label">주 사용자</div><div class="value">2</div><div class="hint">게스트·로그인 사용자</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">중간</div><div class="hint">전환율과 직결</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">왜 부분 실패가 중요한가</span>
+          <p>홈 피드는 여러 섹션(추천 이벤트·인기 클럽·진행중 정산·읽지 않은 알림 등)을
+          한 화면에서 합쳐 보여준다. 한 섹션의 API가 실패해도 다른 섹션은 보여야 사용자가
+          그대로 진입할 수 있다. “전체 화면 실패”로 떨어지면 다음 액션이 없어지므로,
+          기획 초기부터 섹션별 빈 상태·부분 실패를 분리해서 정의한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>5개 기능</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">F02-01</div><h3>홈 메인 조회</h3><p>섹션별 부분 실패에도 화면이 유지된다. 캐시 정책, 빈 섹션, 비로그인 노출 분리.</p><div class="meta"><span class="pill">8 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F02-02</div><h3>새로고침</h3><p>당겨 새로고침과 자동 새로고침. 네트워크 실패 시 스크롤 위치 복구.</p><div class="meta"><span class="pill">6 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F02-03</div><h3>섹션 카드 진입</h3><p>카드별 라우팅. 잘못된 ID, 백버튼 복귀, 진입 후 상태 변경 처리.</p><div class="meta"><span class="pill">7 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F02-04</div><h3>추천 이벤트 더보기</h3><p>필터·무한스크롤. 필터 초기화, 마지막 페이지, 빈 결과, 추천 배지 노출 규칙.</p><div class="meta"><span class="pill">11 시나리오</span></div></div>
+          <div class="card"><div class="eyebrow">F02-05</div><h3>검색·알림 진입점</h3><p>상단 검색 아이콘과 알림 진입. 비로그인 가드, 미읽음 배지, 탭 복귀 시 동기화.</p><div class="meta"><span class="pill">6 시나리오</span></div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>섹션 구성 원칙</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["홈 진입"] --> B{"로그인 상태"}
+    B -->|"게스트"| C["공개 추천 + 가입 유도"]
+    B -->|"로그인"| D["관심사·위치 기반 추천"]
+    D --> E["진행중 정산 알림"]
+    D --> F["내 클럽 최근 활동"]
+    D --> G["참여 예정 이벤트"]
+    D --> H["추천 이벤트 카드"]
+    D --> I["플랜 마켓 신상"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout warn">
+          <span class="label">자주 깨지는 케이스</span>
+          <ul>
+            <li><strong>비로그인과 로그인 결과 차이</strong> — 같은 카드가 게스트에게는 “자세히 보기”, 로그인 사용자에게는 “신청”으로 달라져야 한다. 잘못된 CTA는 가입 전환을 떨어뜨린다.</li>
+            <li><strong>부분 실패가 전체 화면 실패로 떨어짐</strong> — “정산 알림” API 하나 죽었다고 “추천 이벤트”까지 못 보여주면 안 된다.</li>
+            <li><strong>캐시로 오래된 CTA 노출</strong> — 이미 신청한 이벤트에 “신청하기” 버튼이 남아 있는 경우. 진입 시 재조회 정책 필요.</li>
+            <li><strong>비로그인 알림 진입</strong> — 로그인 가드를 빠뜨리면 401 화이트스크린.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/05-search.html"><div class="eyebrow">관련</div><h3>05 검색</h3><p>홈의 상단 검색 진입점이 검색 도메인으로 연결된다.</p></a>
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">관련</div><h3>12 알림</h3><p>홈 상단의 미읽음 배지·딥링크.</p></a>
+          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>상태 정책</h3><p>카드의 “모집중·마감·취소” 상태별 CTA.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
