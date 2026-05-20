@@ -96,7 +96,7 @@
             <tbody>
               <tr><td>임계값 <code>thresholdAmount</code></td><td>1,000 ~ 100,000원 사이 입력 (<code>AutoChargeConstants.validateThreshold</code>)</td></tr>
               <tr><td>충전 금액 <code>chargeAmount</code></td><td><code>GET /api/v1/wallet/charge/presets</code>의 프리셋 칩 선택</td></tr>
-              <tr><td>월간 한도 <code>monthlyLimit</code></td><td>D-03 결정으로 추가. 누적 자동충전이 한도를 넘으면 skip. <code>chargeAmount</code>보다 작은 값 거절</td></tr>
+              <tr><td>월간 한도 <code>monthlyLimit</code></td><td>D-03 결정으로 추가. 그 달에 자동충전된 누계가 한도를 넘으면 더 이상 충전하지 않는다. 한도가 한 번 충전 금액보다 작으면 저장 단계에서 거절된다.</td></tr>
               <tr><td>PG 연동</td><td>prod: Toss <code>billingPayment(billingKey, orderId, amount)</code>. non-prod은 시뮬레이션 키 <code>SIM_AUTO_*</code></td></tr>
               <tr><td>발동 위치</td><td><code>WalletService.pay</code> 안의 <code>ChargeService.tryAutoCharge</code></td></tr>
             </tbody>

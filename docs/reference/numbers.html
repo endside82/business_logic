@@ -58,7 +58,7 @@
             <tbody>
               <tr><td>자동충전 임계값(<code>thresholdAmount</code>) 범위</td><td>1,000 ~ 100,000원 (<code>AutoChargeConstants.validateThreshold</code>)</td></tr>
               <tr><td>자동충전 금액(<code>chargeAmount</code>)</td><td>프리셋 칩 선택 (서버 <code>GET /api/v1/wallet/charge/presets</code>)</td></tr>
-              <tr><td>월간 자동충전 한도(<code>monthlyLimit</code>)</td><td>D-03 결정으로 추가. 누적이 한도 넘으면 skip. <code>chargeAmount</code>보다 작은 값은 거절</td></tr>
+              <tr><td>월간 자동충전 한도(<code>monthlyLimit</code>)</td><td>D-03 결정으로 추가. 그 달 자동충전 누계가 한도를 넘으면 더 충전하지 않는다. 한도가 1회 충전 금액보다 작으면 저장 거절.</td></tr>
               <tr><td>외부 PG</td><td>Toss <code>billingPayment(billingKey, orderId, amount)</code> (prod). non-prod은 시뮬레이션 키 <code>SIM_AUTO_*</code></td></tr>
               <tr><td>FIFO 차감 단위</td><td><code>ChargeLot</code> (충전 시 생성, 결제 시 오래된 것부터 차감, 환불 시 lot 단위 무효화)</td></tr>
               <tr><td>중복 결제 가드</td><td><code>existsByUserIdAndReferenceTypeAndReferenceId</code> → <code>DUPLICATE_PAYMENT 409</code></td></tr>

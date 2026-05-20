@@ -116,7 +116,7 @@ grade      = 90+ DIAMOND  /  75+ PLATINUM  /  60+ GOLD  /  40+ SILVER  /  else B
 
       <section>
         <h2>패널티는 어떻게 쌓이는가</h2>
-        <p>패널티 점수는 신고 도메인(F11-04)이 만들어내는 결과 데이터에 의해 결정된다. 사용자 액션 자체가 직접 점수를 깎지 않는다 — <strong>운영자 처리 결과만</strong> 반영된다.</p>
+        <p>패널티 점수는 신고 자체가 아니라 <strong>운영자가 신고를 어떻게 처리했는지</strong>로 정해진다. 신고가 들어와도 PENDING 상태에서는 점수가 깎이지 않고, 운영자가 RESOLVED 또는 ESCALATED로 결론을 내려야 그때 점수에 반영된다.</p>
 
         <div class="diagram">
           <div class="mermaid">
@@ -212,7 +212,7 @@ flowchart LR
             </tbody>
           </table>
         </div>
-        <p style="color:var(--muted); font-size:13px">참고: <code>noShowCount</code> 필드는 <code>TrustScore</code> 엔티티에 존재하지만, 현재 <code>PenaltyScoreCalculator</code> 식에서는 신고 카운트(<code>RESOLVED + ESCALATED</code>)만 반영한다. 노쇼 자체로 직접 점수가 깎이려면 패널티 식 보강이 필요하다 — 보강 후보 Gap.</p>
+        <p style="color:var(--muted); font-size:13px">참고: <code>noShowCount</code>는 신뢰점수 안에 자리는 있지만, 지금 패널티 계산식에는 들어가지 않는다 — 확정 신고 수만 본다. 노쇼 그 자체로 점수를 깎으려면 식을 한 줄 더 늘려야 한다(보강 후보).</p>
       </section>
 
       <section>
@@ -222,7 +222,7 @@ flowchart LR
             <li><strong>미참석자의 리뷰 작성</strong> — 평판 조작을 막아야 한다. 참석 확정자만 리뷰 자격.</li>
             <li><strong>중복 리뷰·중복 신고</strong> — 운영 큐와 점수 왜곡 방지.</li>
             <li><strong>본인 신고</strong> — 악용·오류 방지.</li>
-            <li><strong>리뷰 삭제 후 신뢰점수 재계산 누락</strong> — 점수가 언제 재계산되는지 명확해야 한다.</li>
+            <li><strong>리뷰 삭제 후 신뢰점수 재계산 누락</strong> — “언제 다시 계산되는가”를 사용자가 모르면 점수가 잘못 보인다고 오해한다. 삭제 즉시 재계산하고 변동 이력에도 한 줄 남긴다.</li>
             <li><strong>데이터 부족한 취향 프로필</strong> — 빈 차트보다 “더 모일 때까지” 설명하는 빈 상태 필요.</li>
           </ul>
         </div>
