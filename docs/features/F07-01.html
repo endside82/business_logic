@@ -1,36 +1,274 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F07-01 정산 생성 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>F07-01 정산 생성</div>
-<h1>F07-01. 모임 정산 생성</h1>
-<p class="lede">종료된 이벤트의 비용을 호스트가 정산 단위로 생성한다. 모드(호스트 일괄 수금/멤버 각자 부담), 총액, 참가자 선택 후 DRAFT로 만들어진다. 활성화는 F07-03에서.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>정산 생성 폼</h3><p>모드·총액·참가자 선택.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>첫 항목 자동 등록</h3><p>EQUAL 분할로 share 자동 생성.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>이전 정산 복제</h3><p>같은 멤버 정기 모임 빠르게.</p></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>처음 생성</h3><ol><li>DRAFT INSERT + item INSERT + share N건</li><li>audit SETTLEMENT_CREATED · ITEM_CREATED</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>정기 모임 복제</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>비호스트 시도</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>이벤트 종료 전 시도</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/items</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
-<a class="card" href="F07-02.html"><div class="eyebrow">다음</div><h3>F07-02 항목 관리</h3></a>
-<a class="card" href="F07-03.html"><div class="eyebrow">다음</div><h3>F07-03 활성화</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/07_meeting_settlement/F07-01_create-settlement/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F07-01 모임 정산 생성 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
+          F07-01 정산 생성
+        </div>
+        <h1>F07-01. 모임 정산 생성</h1>
+        <p class="lede">
+          모임이 끝난 뒤 호스트가 비용을 어떻게 나눌지를 처음으로 선언하는 단위.
+          한 이벤트에는 단 하나의 정산만 만들 수 있고, 이 단위는 그 정산을 <strong>작성 중(임시)</strong> 상태로
+          꺼내는 데까지만 책임을 진다. 호스트가 한 화면에서 정산 모드, 총액, 참여자만 정하면
+          곧장 항목 입력 화면으로 떠밀려 들어가도록 동선이 짜여 있다 — 정산을 만들어 두고 활성화하지 않아
+          참가자가 영영 청구를 받지 못하는 사고를 막기 위한 의도된 설계다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">이벤트당 정산</div><div class="value">1개</div><div class="hint">두 번째 생성은 차단</div></div>
+          <div class="metric"><div class="label">최소 참여자</div><div class="value">2명</div><div class="hint">본인 혼자는 정산 의미 없음</div></div>
+          <div class="metric"><div class="label">생성 직후 상태</div><div class="value">작성 중</div><div class="hint">참가자에게 알림 가지 않음</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 호스트가 한 번에 결정해야 할 것을 한 화면에 모은다</span>
+          <p>모임 정산은 "누구에게 얼마를 청구할지"를 호스트가 정하는 첫 행동이다.
+            정산 모드(호스트가 일괄 수금할지, 참가자끼리 직접 송금할지), 총액, 참여자 — 이 세 가지가
+            한 화면에 같이 보이지 않으면 호스트는 결정을 미루게 되고, 결국 정산이 만들어진 채로 며칠씩 방치된다.
+            그래서 본 단위는 스텝 위저드가 아닌 <strong>단일 스크롤 페이지</strong>로 모든 입력을 한 번에 노출하고,
+            "정산 생성" 버튼을 누르는 순간 즉시 항목 입력 화면으로 넘긴다. "생성만 하고 활성화 안 하는"
+            죽은 정산이 만들어지지 않게 하는 안전 장치다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 다루는 세 가지 동작</h2>
+        <p class="subtitle">한 카드 = 호스트가 의식적으로 누르는 결정 한 번.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">신규 생성</div>
+            <h3>모드·총액·참여자를 한 번에 정한다</h3>
+            <p>"정산 생성" 버튼을 누르는 순간 정산 본체가 작성 중 상태로 만들어지고,
+              곧이어 첫 항목 한 건이 균등 분할로 자동 등록된다. 호스트 본인은 기본으로 체크되어 있고,
+              체크박스를 풀거나 더하면 1인당 금액이 즉시 다시 계산된다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">과거 정산 복제</div>
+            <h3>매주 같은 멤버 모임을 위한 단축 동작</h3>
+            <p>정기 모임 호스트가 가장 많이 누르는 버튼. 우측 상단 "복제"를 누르면 과거 정산 카드가 떠오르고,
+              항목·분담 구조를 통째로 가져온다. 결제 이력은 모두 초기화돼서 지난 주에 누가 냈는지가 따라오지 않는다.
+              지난 정산의 사적 메모가 새 모임에 따라가지 않도록 메모 복사는 기본 꺼짐.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">참여자 추천</div>
+            <h3>실제 참석을 확정한 사람만 후보로</h3>
+            <p>참여자 선택 영역의 기본 목록은 호스트 + 실제 참석을 확정한 사용자로 채워진다.
+              환불·취소·노쇼로 처리된 사람은 후보에서 빠진다. 호스트가 직접 떠올리지 않고도
+              "이 사람이 정말 왔던가"를 시스템이 한 번 걸러 주는 것.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>생성 요청이 거치는 세 가지 검사</h2>
+        <p class="subtitle">한 번의 "정산 생성" 탭이 통과해야 하는 관문. 어디서 막혀도 데이터는 만들어지지 않는다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["호스트: 정산 생성 탭"] --> B{"이벤트가 존재하는가"}
+    B -->|"아니오"| E1["이벤트를 찾을 수 없음 안내"]
+    B -->|"예"| C{"요청자가 이 모임의 호스트인가"}
+    C -->|"아니오"| E2["권한 없음 안내"]
+    C -->|"예"| D{"같은 모임에 이미 정산이 있는가"}
+    D -->|"예"| E3["이미 정산이 만들어졌습니다 안내"]
+    D -->|"아니오"| F["정산 본체 만들기 (작성 중)"]
+    F --> G["첫 항목 균등 분할로 자동 등록"]
+    G --> H["항목 입력 화면으로 자동 이동"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 번의 "정산 생성"이 만드는 두 동작</h2>
+        <p class="subtitle">호스트가 보기에는 버튼 한 번이지만, 시스템은 정산 본체 만들기 + 첫 항목 만들기 두 동작을
+          연속으로 처리한 뒤에야 항목 화면으로 보낸다. 둘 다 성공해야 사용자가 다음 화면을 본다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor 호스트
+    participant 화면 as 정산 생성 화면
+    participant 서비스 as 정산 서비스
+
+    호스트->>화면: 모드·총액·참여자 입력 후 "정산 생성" 탭
+    화면->>서비스: 정산 본체 만들기 요청
+    서비스->>서비스: 호스트 본인 확인 / 동일 모임 중복 확인
+    서비스-->>화면: 정산 본체(작성 중)
+    화면->>서비스: 첫 항목 등록 (균등 분할, 선택된 참여자)
+    서비스->>서비스: 항목 + 1인당 분담 자동 계산
+    서비스-->>화면: 첫 항목 완료
+    화면-->>호스트: "정산이 생성되었습니다" + 항목 입력 화면 자동 이동
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 신규 생성</div>
+            <h3>토요일 등산모임의 식대를 일요일 아침에 정산</h3>
+            <p>호스트가 어제 식대 12만원을 본인 카드로 결제했다. 일요일 아침 이벤트 상세에서 "모임 정산 만들기"를 누른다.
+              정산 모드는 기본값 "호스트 일괄 수금"을 그대로 두고, 12만원을 입력하니 천단위 콤마가 자동으로 붙는다.
+              본인 포함 6명을 체크하면 화면 하단에 "1인당 20,000원"이 즉시 표시된다.
+              "정산 생성"을 누르는 순간 정산 본체가 만들어지고 첫 항목이 균등 분할로 등록되며, 항목 입력 화면으로 자동으로 넘어간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 한 번의 의사결정으로 정산을 시작할 수 있어야 다음 단계로 미루지 않는다.
+              여기서 단계가 늘어나면 정산이 그 자리에서 멈춘다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 복제</div>
+            <h3>매주 풋살모임 정산을 지난 주에서 그대로 복제</h3>
+            <p>매주 토요일 8명 고정 멤버의 정기 풋살 호스트가 새 정산 화면에서 "복제"를 누른다.
+              지난 주 정산 카드를 고르고, 메모 복사 토글은 끈 채로 확정. 항목 구조와 분담은 그대로 가져오되
+              결제 이력은 깨끗하게 초기화돼서 "이미 낸 사람" 같은 사고가 없다.
+              항목 화면에서 이번 주 실제 금액만 수정하면 끝.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정기 모임 호스트의 반복 작업을 줄여, 매주의 정산을 빠뜨리지 않게 한다.
+              호스트의 운영 부담이 누적되면 정기 모임 자체가 깨진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 중복</div>
+            <h3>이미 정산이 있는 모임을 또 만들려 한다</h3>
+            <p>정산을 만들고 뒤로가기로 빠져나갔다가 다시 같은 화면으로 들어온 호스트가 "정산 생성"을 또 누른다.
+              한 모임당 정산은 한 개만 허용되므로 즉시 거절되고 "정산 생성에 실패했습니다" 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 같은 모임에 정산이 두 개 생기면 청구가 두 번 나가고 환불이 꼬인다.
+              두 번째 진입은 정산 현황 화면으로 라우팅되도록 진입 분기를 두는 것이 다음 개선점.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 권한</div>
+            <h3>일반 참석자가 정산 생성 주소로 직접 접근</h3>
+            <p>호스트가 아닌 참석자가 우연히 정산 생성 화면으로 들어와서 "정산 생성"을 누른다.
+              호스트가 아니라는 이유로 즉시 거절되고 데이터는 만들어지지 않는다.
+              참석자에게는 정산 현황 화면만 열려 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정산을 만드는 권한은 한 명(호스트)에게만 있어야 분쟁이 일어나지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">검증 · 인원</div>
+            <h3>본인 한 명만 체크하고 생성 시도</h3>
+            <p>호스트가 실수로 본인만 체크한 채 "정산 생성"을 누르려 한다.
+              체크된 사람이 한 명일 때는 버튼 자체가 비활성화돼서 눌리지 않는다.
+              두 명 이상을 골라야 활성화된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 본인 1명짜리 정산은 정산이 아니라 메모다. 시작도 못 하게 화면에서 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빠른 추가</div>
+            <h3>카드사 결제 알림을 공유해 정산 항목까지 한 번에</h3>
+            <p>모임 도중 호스트가 카드로 결제하면 카드사 푸시가 뜬다. 그 푸시를 "공유"로 community 앱에 넘기면
+              호스트가 진행 중인 모임 목록이 뜬다. 모임이 딱 한 개면 항목 입력 다이얼로그가
+              제목·금액이 미리 채워진 상태로 자동 열린다. 참여자만 골라 저장하면 정산이 없으면 새로 만들고
+              있으면 항목만 추가된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 카드 결제 직후가 가장 정확한 정산 입력 시점이다.
+              모임이 끝나고 며칠 뒤 떠올려서 정산하는 것보다 분쟁이 적다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <p class="subtitle">단일 스크롤 한 페이지. 호스트가 한 화면을 위에서 아래로 읽으면서 결정이 끝난다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">화면 요소</th><th>호스트가 보는 것</th><th style="width:34%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>상단 앱바 + 복제</strong></td>
+                <td>좌측 "정산 생성" 제목, 우측 "복제" 텍스트 버튼.</td>
+                <td>복제는 정기 모임 호스트에게 가장 자주 필요한 단축 동작이라 시작 화면 상단에 항상 노출.</td>
+              </tr>
+              <tr>
+                <td><strong>모드 라디오</strong></td>
+                <td>"호스트 일괄 수금" / "참가자끼리 직접 송금" 두 옵션 중 하나.</td>
+                <td>이 선택이 활성화 직후 만들어지는 송금 구조 전체를 바꾼다 — 작성 첫 단계에서 한 번에 결정.</td>
+              </tr>
+              <tr>
+                <td><strong>총액 입력</strong></td>
+                <td>천단위 콤마가 자동으로 붙는 금액 칸.</td>
+                <td>큰 금액일수록 콤마 없이 0의 개수를 잘못 세기 쉽다 — 입력하는 동안 시각적으로 검산하게.</td>
+              </tr>
+              <tr>
+                <td><strong>참여자 체크리스트</strong></td>
+                <td>호스트를 가장 위에 두고, 참석 확정한 사용자가 사진·이름과 함께 나열. 호스트 본인은 기본 체크.</td>
+                <td>호스트가 본인 분담을 빠뜨리는 사고가 잦다 — 기본 체크로 막는다. 호스트 우선 정렬로 한눈에 확인.</td>
+              </tr>
+              <tr>
+                <td><strong>1인당 금액 실시간 표시</strong></td>
+                <td>총액과 체크된 인원에 따라 1인당 금액이 바뀌면서 그 자리에 같이 노출.</td>
+                <td>총액·인원을 바꾸기 전후 사용자에게 분담의 의미가 바로 보여야 후회 없는 결정이 가능하다.</td>
+              </tr>
+              <tr>
+                <td><strong>"정산 생성" 버튼</strong></td>
+                <td>화면 하단 고정. 2명 미만이면 회색으로 비활성화.</td>
+                <td>본 단위의 종착 동작. 누르면 즉시 항목 화면으로 넘어가도록 동선을 끊지 않는다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">정산 첫 단계에서 흐트러지면 뒤따르는 모든 단계가 무너진다</span>
+          <ul>
+            <li><strong>"정산 본체 생성"과 "첫 항목 등록"은 한 동작으로 묶여 있다.</strong>
+              둘 중 하나가 실패해 항목 없는 정산이 남으면 호스트가 활성화도 못 하고 화면도 못 보는 죽은 정산이 된다 —
+              운영 모니터링에서 "본체는 있지만 항목 0건"인 정산이 잡히면 즉시 조사.</li>
+            <li><strong>한 모임당 정산 한 개 제약은 절대 풀지 않는다.</strong>
+              같은 모임에 정산이 두 개 생기면 청구가 두 번 나가고 환불 정합이 깨진다.
+              두 번째 진입 시 정산 현황 화면으로 자동 분기시키는 것이 다음 개선 목표.</li>
+            <li><strong>복제 시 결제 이력은 반드시 초기화한다.</strong>
+              완료 표시·포인트·이체 금액을 깜빡 두면 새 모임에 "이미 낸 사람"이 따라온다 — 이건 호스트가 발견하기 전까지
+              계속 잘못된 데이터로 흘러간다.</li>
+            <li><strong>복제 시 메모 복사는 기본 꺼짐 상태로 둔다.</strong>
+              지난 정산에 사적 메모(예: 특정 멤버 관련 코멘트)가 적혀 있는 경우가 많다 — 기본 켜짐으로 바꾸면 사고가 난다.</li>
+            <li><strong>호스트만 정산을 만들 수 있다.</strong>
+              참석자가 정산 생성 주소로 들어와도 차단되지만, 화면 진입 단계에서 권한 분기를 하지 않으면 거절 화면을
+              일반 사용자가 보게 된다 — 라우터 단계에서 호스트 여부를 먼저 확인.</li>
+            <li><strong>본인만 체크된 채로 통과하지 못하게 한다.</strong>
+              화면에서 버튼이 비활성화되더라도 우회 호출이 들어올 수 있다 — 다음 단계인 활성화에서
+              "항목 없음/빈 분담"으로 한 번 더 막힌다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 도메인</div><h3>07 모임 정산</h3></a>
+          <a class="card" href="F07-02.html"><div class="eyebrow">바로 다음</div><h3>F07-02 항목 관리</h3><p>생성된 정산에 영수증·항목을 추가하는 흐름.</p></a>
+          <a class="card" href="F07-03.html"><div class="eyebrow">상태 전이</div><h3>F07-03 활성화·취소</h3><p>작성 중 정산을 참가자에게 보이게 하는 단계.</p></a>
+          <a class="card" href="F07-04.html"><div class="eyebrow">관련</div><h3>F07-04 현황·요약</h3><p>생성된 정산을 멤버가 보는 화면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/07_meeting_settlement/F07-01_create-settlement/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

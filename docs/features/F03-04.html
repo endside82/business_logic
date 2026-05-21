@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F03-04 이벤트 수정·생명주기 — community PRD</title>
+  <title>F03-04 이벤트 생명주기 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,131 +15,236 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-04 수정·생명주기
+          F03-04 생명주기 관리
         </div>
-        <h1>F03-04. 이벤트 수정 · 생명주기 관리 (호스트)</h1>
+        <h1>F03-04. 이벤트 생명주기 관리 (호스트)</h1>
         <p class="lede">
-          이벤트의 “이후 모든 운영”을 책임진다. DRAFT 수정·발행, OPEN 일정 변경(전원 알림), 취소(자동 환불),
-          공지 발송(throttle), 삭제(DRAFT만), 종료 후 회고까지. 사용자 환불·알림 같은 다른 단위와 가장 많이 얽혀 있어
-          상태 전이의 단방향성(DRAFT→OPEN→CLOSED/CANCELED)을 깨면 시스템 전체가 흔들린다.
+          발행된 이벤트를 호스트가 운영하는 동안 일어나는 모든 동작 — 발행, 일정 변경, 종료, 취소, 삭제,
+          공지 발송, 위치 공유 정책 — 의 자리. 사용자 데이터를 크게 흔드는 동작(취소·환불·일정 변경)이 본 단위에서
+          시작되므로, 무엇이 같은 동작 안에서 함께 일어나는지(취소와 환불, 일정 변경과 알림)가 본 단위의
+          핵심 결정.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">생명주기 액션</div><div class="value">6</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">11</div></div>
-          <div class="metric"><div class="label">상태</div><div class="value">DRAFT/OPEN/CLOSED/CANCELED</div></div>
+          <div class="metric"><div class="label">상태 전이</div><div class="value">5단계</div><div class="hint">임시저장→모집→종료/취소</div></div>
+          <div class="metric"><div class="label">취소 시 처리</div><div class="value">동시</div><div class="hint">상태 변경·환불·알림이 한 동작</div></div>
+          <div class="metric"><div class="label">공지 발송 한도</div><div class="value">분당 3건</div><div class="hint">스팸 방지 한도</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">상태 전이 일방향</span>
-          <p>DRAFT → OPEN → (CLOSED 또는 CANCELED). 한 번 떠난 상태로는 절대 돌아오지 않는다.
-          publish 재시도, 종료된 이벤트 재발행 같은 회귀는 모두 상태 전이 가드에서 차단되어야 한다.</p>
+        <div class="callout">
+          <span class="label">설계 의도 — 데이터를 크게 흔드는 동작은 분리될 수 없는 한 동작으로</span>
+          <p>유료 이벤트를 취소하는 한 번의 동작 안에 (1) 이벤트 상태를 취소로 바꾸기, (2) 참가자별로 환불 처리,
+            (3) 환불 결과에 따라 다른 알림을 발송하기, (4) 환불 실패가 있다면 호스트에게 별도 알림을 보내기까지가
+            모두 일어난다. 이 다섯 가지가 따로 처리되거나 누락되면 "이벤트는 취소됐는데 환불이 안 됐다",
+            "환불은 됐는데 알림이 안 왔다" 같은 분쟁이 즉시 발생한다. 데이터를 크게 흔드는 동작은
+            분리될 수 없는 한 동작으로 처리하는 것이 본 단위의 안전 기준선.</p>
         </div>
       </section>
 
       <section>
-        <h2>상태 전이</h2>
-        <div class="diagram"><div class="mermaid">
+        <h2>이 단위가 책임지는 동작</h2>
+        <p class="subtitle">호스트가 자기 이벤트에 가하는 7가지 운영 행동.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>발행 (임시저장 → 모집)</h3>
+            <p>임시저장 상태의 이벤트를 외부 사용자에게 공개. 한 번 발행한 뒤에는 다시 임시저장으로 되돌릴 수 없다 —
+              "공개됐다"는 사실은 사용자 인지에 영향을 주기 때문.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>메타 수정 (임시저장에 한해)</h3>
+            <p>제목·설명·카테고리·썸네일·정원·가격 같은 정보를 자유롭게 수정. 발행 이후에는 일정 변경을 제외한
+              메타 수정은 막힌다 — 신청자가 본 정보가 사후에 바뀌면 분쟁의 시작.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>일정 변경 (모집 중)</h3>
+            <p>새 시작·종료 시각, 변경 사유 입력. 참석 확정자와 대기자 전원에게 즉시 알림. 사유는 필수 — 알림에 함께
+              포함되어 사용자가 변경을 납득하게 한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>종료</h3>
+            <p>모집 중 → 종료. 더 이상 신청을 받지 않지만 사진첩·리뷰는 살아 있다. 한 번 종료한 뒤에는
+              모집으로 되돌릴 수 없다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>취소 + 환불</h3>
+            <p>모집 중 → 취소. 유료 이벤트라면 참가자별 환불이 같은 동작 안에서 처리된다. 환불 성공자에게는 "취소됐고
+              환불 완료" 알림, 실패자에게는 "고객센터 처리 예정" 알림, 호스트에게는 환불 실패 건수 별도 알림.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 6</div>
+            <h3>삭제 (임시저장에 한해)</h3>
+            <p>임시저장 상태의 이벤트만 삭제 가능. 발행된 이벤트는 삭제할 수 없고 "취소" 또는 "종료"를 사용해야
+              한다 — 신청자 기록을 보존하기 위해.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 7</div>
+            <h3>공지 발송</h3>
+            <p>참석 확정자 전원에게 푸시 알림을 보낸다. 호스트 본인은 발송 대상에서 제외. 분당 3건 한도로
+              스팸을 방지하고, 한 공지에 외부 링크는 최대 2개까지 허용.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이벤트 상태가 거치는 길</h2>
+        <p class="subtitle">한 이벤트가 거치는 다섯 상태. 임시저장과 모집으로의 되돌림은 허용하지 않는다.</p>
+        <div class="diagram">
+          <div class="mermaid">
 stateDiagram-v2
-    [*] --> DRAFT: 생성
-    DRAFT --> OPEN: publish
-    DRAFT --> [*]: 삭제 (DRAFT만 가능)
-    OPEN --> OPEN: 일정 변경 (alert fanout)
-    OPEN --> CLOSED: 종료
-    OPEN --> CANCELED: 취소 (자동 환불 + alert)
-    CLOSED --> [*]: 리뷰·사진첩 진입점
-    CANCELED --> [*]: 조회만
-        </div></div>
+    [*] --> 임시저장: 호스트 폼 작성
+    임시저장 --> 모집중: 발행
+    임시저장 --> [*]: 삭제
+    모집중 --> 종료: 종료
+    모집중 --> 취소: 취소 (+ 환불)
+    종료 --> [*]
+    취소 --> [*]
+
+    note right of 모집중
+      메타 수정은 막힘
+      일정 변경만 허용 (+ 참석자 알림)
+    end note
+    note right of 취소
+      환불·알림 같은 동작 안에서
+      환불 실패는 호스트에게 별도 알림
+    end note
+          </div>
+        </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>수정 (DRAFT)</h3><p>모든 필드 수정 가능. OPEN 이후에는 일정·정원이 lock.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>발행</h3><p>DRAFT → OPEN. publishedAt 기록.</p></div>
-          <div class="card"><div class="eyebrow">동작 3</div><h3>일정 변경 (OPEN)</h3><p>ATTENDING+WAITING 모두에게 EVENT_UPDATED 알림 fanout.</p></div>
-          <div class="card"><div class="eyebrow">동작 4</div><h3>취소 (OPEN)</h3><p>ATTENDING은 자동 환불, 실패는 failed_refund + 호스트 알림.</p></div>
-          <div class="card"><div class="eyebrow">동작 5</div><h3>공지 발송</h3><p>참석자 fanout. 1분당 한도(throttle).</p></div>
-          <div class="card"><div class="eyebrow">동작 6</div><h3>삭제</h3><p>DRAFT만 삭제. OPEN 이후는 취소/종료를 사용.</p></div>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>임시저장 이벤트를 수정 후 발행</h3>
+            <p>호스트가 임시저장 이벤트를 열어 수정 화면 진입 → 시작 시각·정원·가격 수정 → 저장 → 상세 복귀 →
+              "발행" 버튼 → 확인 다이얼로그 → 발행 완료. 발행과 동시에 일반 사용자 노출 시작.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 발행 전 최종 검토 동선. 발행 즉시 외부 노출이 시작되므로
+              한 번 더 확인할 단계가 본 동선의 핵심.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">참석자 영향</div>
+            <h3>일정을 1시간 연기 + 참석자 알림</h3>
+            <p>장소 사정으로 시작을 1시간 미룬다. 새 시각과 변경 사유("장소 사정으로 연기")를 입력하면
+              참석 확정자와 대기자 전원에게 푸시 알림이 발송된다. 알림 본문에 변경 전/후 시각과 사유가 함께
+              포함된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 변경 사유는 필수. 사용자가 변경의 의도를 모르면
+              "왜 갑자기"라는 의심이 누적된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소·환불</div>
+            <h3>유료 이벤트를 취소</h3>
+            <p>호스트가 모집 중 이벤트를 취소. 확인 다이얼로그에 "참가자 N명에게 X원이 자동 환불됩니다" 안내가
+              먼저 보인다. 확인하면 한 동작 안에서 상태 변경·환불·알림이 모두 일어나고, 환불 성공자에게는
+              "취소됐고 환불 완료", 환불 실패자에게는 "고객센터 처리 예정", 호스트에게는 환불 실패 건수
+              요약 알림이 도달한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 비즈니스 분쟁이 가장 자주 발생하는 동작.
+              환불·알림이 같은 동작 안에서 처리되지 않으면 "환불은 됐는데 알림이 안 왔다", "취소됐는데 환불이 없다"는
+              분쟁이 즉시 일어난다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">공지</div>
+            <h3>참석자 전원에게 준비물 안내</h3>
+            <p>호스트가 더보기 → "공지 보내기" → 제목·본문 입력 → 발송. 호스트 본인을 제외한 참석 확정자
+              전원에게 푸시 알림. 한 공지에 외부 링크 최대 2개까지.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 운영 진입로. 별도 채팅 없이도 참석자에게 닿을 수
+              있어 호스트의 운영 비용이 낮다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">스팸 방지</div>
+            <h3>1분 안에 4번째 공지 발송 시도</h3>
+            <p>분당 한도 초과 → "공지 발송 한도를 초과했습니다. 잠시 후 다시 시도해주세요" 안내.
+              한도가 풀린 뒤 재시도 가능.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 흥분 상태에서 같은 정보를 여러 번 보내는 사고를 방지.
+              사용자 인지에 부담을 주지 않는 운영 한도.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">삭제 제한</div>
+            <h3>발행된 이벤트를 삭제 시도</h3>
+            <p>임시저장이 아닌 이벤트는 "삭제" 버튼이 노출되지 않는다. 우회해도 "발행된 이벤트는 삭제할 수
+              없습니다. 취소 또는 종료를 사용해주세요" 안내. 신청자 기록을 보존하기 위해 발행 이후에는
+              삭제하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한</div>
+            <h3>일반 사용자가 수정 화면 진입 시도</h3>
+            <p>일반 사용자가 수정 화면 URL로 진입해도 "접근 권한이 없습니다" 안내만 뜨고 폼은 열리지 않는다.
+              우회 호출은 서버에서 차단된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">반복 이벤트</div>
+            <h3>반복 그룹의 미래 회차 일괄 취소</h3>
+            <p>호스트가 반복 그룹 화면에서 "미래 이벤트 취소"를 누르면 오늘 이후 자식 이벤트들이 한 번에 취소된다.
+              각 자식 이벤트의 참석자·환불·알림도 자식별로 같이 처리된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">종료된 이벤트</div>
+            <h3>종료·취소된 이벤트의 수정 시도</h3>
+            <p>이미 종료되거나 취소된 이벤트는 수정 화면 자체가 열리지 않는다. "종료되었거나 취소된 이벤트는
+              수정할 수 없습니다" 안내만 보이고, 호스트는 회고·리뷰 같은 다른 동선으로 이동.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 11개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>DRAFT 수정 후 발행</h3>
-            <ol><li>수정 화면 진입 → 기존값 prefill</li><li>변경한 필드만 PATCH 전송</li><li>상세 복귀 → “발행” 다이얼로그 → publish</li><li>액션바가 “일정변경/종료/취소”로 교체</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S2 · 알림 fanout</div><h3>OPEN 일정 변경</h3>
-            <ol><li>일정 변경 다이얼로그에 새 시각 + 사유 입력</li><li>서버: 시간 검증 → UPDATE → ATTENDING/WAITING 전원에게 EVENT_UPDATED 알림</li><li>참석자가 푸시로 새 시각 확인</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S3 · 자동 환불</div><h3>유료 이벤트 취소</h3>
-            <ol><li>취소 다이얼로그에 환불 금액 안내</li><li>서버: status=CANCELED, ATTENDING 각각 환불 시도</li><li>실패는 failed_refund + 호스트 알림</li><li>참석자/대기자 모두에게 EVENT_CANCELLED 알림</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S4 · 공지</div><h3>참석자 전체 공지</h3>
-            <ol><li>공지 다이얼로그에 제목·본문</li><li>호스트 제외 참석자 fanout</li><li>발송 알림 카운트 갱신</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S5 · throttle</div><h3>공지 한도 초과</h3>
-            <ol><li>1분 내 4번째 공지 시도</li><li>429 RATE_LIMIT_EXCEEDED</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S6 · 삭제</div><h3>DRAFT 삭제</h3>
-            <ol><li>“삭제” 확인 다이얼로그 → 204</li><li>마이 이벤트 목록 갱신</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S7 · 삭제 차단</div><h3>발행된 이벤트 삭제 시도</h3>
-            <ol><li>UI에서는 버튼 숨김</li><li>우회 시 400 EVENT_INVALID_STATUS_TRANSITION</li><li>“취소/종료를 사용해주세요” 안내</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S8 · 권한</div><h3>비호스트의 수정 시도</h3>
-            <ol><li>수정 화면 진입 시 권한 가드 → “접근 권한이 없습니다”</li><li>우회 시 403 EVENT_NOT_OWNER</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S9 · 검증</div><h3>일정 변경 시간 검증 실패</h3>
-            <ol><li>새 시각을 과거로 입력</li><li>클라이언트 picker가 미래만 허용</li><li>우회 시 400</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S10 · 종료/취소 수정 차단</div><h3>CLOSED/CANCELED 수정 시도</h3>
-            <ol><li>수정 화면 진입 시 “종료되었거나 취소된 이벤트는 수정할 수 없습니다” + 돌아가기</li><li>수정 폼은 마운트되지 않음</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S11 · 위치 정책</div><h3>호스트 위치 공유 안내 화면</h3>
-            <ol><li>오프라인 이벤트 호스트가 위치 공유 정책을 확인</li><li>“참석 확정자에게만 위치 공유” 라벨 표시</li><li>토글 OFF 시 PATCH로 갱신</li></ol>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-            <tbody>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/events/{id}</code></td><td>수정(DRAFT 전 필드, OPEN은 일부만)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/publish</code></td><td>DRAFT → OPEN</td></tr>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/events/{id}/reschedule</code></td><td>일정 변경 + 참석자 알림</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/cancel</code></td><td>취소 + 자동 환불 + 알림</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/announce</code></td><td>공지 발송(throttle)</td></tr>
-              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}</code></td><td>DRAFT만 삭제</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="callout warn"><span class="label">에러 코드</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">생명주기 관리의 결정점</span>
           <ul>
-            <li><strong>400 EVENT_INVALID_STATUS_TRANSITION</strong> — DRAFT가 아닌데 삭제, OPEN이 아닌데 일정 변경 등</li>
-            <li><strong>403 EVENT_NOT_OWNER</strong> — 비호스트 운영 액션</li>
-            <li><strong>429 RATE_LIMIT_EXCEEDED</strong> — 공지 throttle 초과</li>
-            <li><strong>400 INVALID_INPUT</strong> — 시각 검증 실패</li>
+            <li><strong>유료 이벤트 취소 시 상태 변경·환불·알림은 같은 동작 안에서 처리된다.</strong>
+              세 가지가 분리되거나 일부가 누락되면 즉시 분쟁이 발생한다. 환불 실패는 별도 큐에 기록되어
+              고객센터가 수동 처리하고, 호스트에게도 별도 알림이 간다.</li>
+            <li><strong>발행 이후 메타 수정은 일정 변경을 제외하고 차단된다.</strong>
+              신청자가 본 정보가 사후에 바뀌면 분쟁의 시작. 정원·가격·환불 정책 변경이 필요하면 호스트는
+              취소 후 새 이벤트 생성으로 안내해야 한다.</li>
+            <li><strong>공지 발송은 분당 3건 한도.</strong> 호스트가 흥분 상태에서 같은 내용을 여러 번 보내는
+              사고 방지. 한도를 풀려면 정책 변경이 필요하다.</li>
+            <li><strong>한 공지에 외부 링크 최대 2개.</strong> 스팸·피싱 방지 정책. 더 많은 링크가 필요하면
+              호스트는 별도 채널을 사용해야 한다.</li>
+            <li><strong>발행된 이벤트는 삭제하지 않는다.</strong> 신청 기록·결제 기록을 보존해야 정산·환불 후속
+              처리가 가능. 호스트의 "지운 모임이 사라진 모임"으로 인지되지 않도록 "취소" 동작과 명확히
+              구분한다.</li>
+            <li><strong>반복 그룹의 일괄 동작은 자식 단위의 환불·알림을 모두 발생시킨다.</strong>
+              호스트가 "1년치 일괄 취소"를 누르면 그만큼의 환불·알림이 한 번에 발생할 수 있어, 운영 측에서
+              부하 모니터링 필요.</li>
+            <li><strong>일정 변경 시 변경 사유는 필수.</strong> 알림 본문에 함께 포함되어 사용자가 변경 의도를
+              납득하게 한다. 사유 없는 일정 변경이 가능해지면 "왜 갑자기"라는 의심이 즉시 누적.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">생명주기 관리가 정상이라고 부르려면</span>
           <ul>
-            <li><strong>일정 변경 후 알림 fanout 누락</strong> — 참석자가 옛 시각으로 이동.</li>
-            <li><strong>취소 시 환불 실패가 침묵</strong> — failed_refund + 호스트 알림이 필수.</li>
-            <li><strong>발행된 이벤트 삭제 우회 허용</strong> — 결제·정산 일관성 붕괴.</li>
-            <li><strong>일정 변경 사유 입력 없이 알림 발송</strong> — 참석자가 무슨 변경인지 모름.</li>
-            <li><strong>공지 throttle 미적용</strong> — 사용자 푸시 폭주, 차단 위험.</li>
+            <li><strong>유료 이벤트 취소 시 환불 성공률</strong> — 100%가 정상. 1건이라도 실패하면 환불 실패 큐에
+              들어가고, 고객센터의 수동 처리가 필요한 시점.</li>
+            <li><strong>일정 변경 → 참석자 알림 도달률</strong> — 알림 발송 실패가 누적되면 사용자가 "변경됐는데 안 알려줬다"는
+              분쟁을 제기한다. 푸시 알림 도달 실패는 운영 모니터링 필수 항목.</li>
+            <li><strong>공지 발송 한도 초과 발생률</strong> — 한도 초과가 자주 일어나는 호스트가 있다면
+              운영 측에서 사용 패턴을 확인할 신호.</li>
+            <li><strong>발행 후 24시간 내 취소 비율</strong> — 호스트가 "발행 직후 후회"하는 비율. 너무 높으면
+              발행 전 미리보기 단계가 불충분하다는 신호.</li>
+            <li><strong>반복 그룹의 일괄 취소 빈도</strong> — 빈도가 높으면 반복 설정 UI가 호스트 의도와 어긋난다는
+              신호. 반복 그룹 운영 도구의 직접 측정.</li>
           </ul>
         </div>
       </section>
@@ -147,13 +252,18 @@ stateDiagram-v2
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">연동</div><h3>06 결제·지갑</h3><p>환불 처리.</p></a>
-          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">연동</div><h3>12 알림</h3><p>fanout·throttle.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">트리거 면</div><h3>F03-02 이벤트 상세</h3><p>호스트 액션바와 더보기가 본 단위로 들어오는 진입점.</p></a>
+          <a class="card" href="F03-03.html"><div class="eyebrow">앞 단위</div><h3>F03-03 이벤트 생성</h3><p>임시저장 → 발행의 출발점.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>취소 시 환불 처리의 실제 동작.</p></a>
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">관련 도메인</div><h3>12 알림</h3><p>일정 변경·취소·공지 발송의 전달 경로.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-04_event-lifecycle/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-04_event-lifecycle/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

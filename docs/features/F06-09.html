@@ -1,34 +1,161 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F06-09 수익 대시보드 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-09 수익 대시보드</div>
-<h1>F06-09. 수익 대시보드 (호스트)</h1>
-<p class="lede">호스트의 누적 수익·이번달 수익·정산 대기·월별 차트·평균 객단가·최근 정산을 한 화면에 모은다.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>요약 카드</h3><p>누적·이번달·대기 정산</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>월별 차트(12개월)</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>최근 정산 리스트</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>이벤트 Top 수익</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>활동 호스트 수익 확인</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>빈 상태(신규)</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>차트 기간 전환</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>정산 상세 진입</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/wallet/earnings/dashboard</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
-<a class="card" href="F06-10.html"><div class="eyebrow">관련</div><h3>F06-10 정산</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/06_payment/F06-09_earnings-dashboard/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-09 수익 대시보드 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-09 수익 대시보드
+        </div>
+        <h1>F06-09. 수익 대시보드</h1>
+        <p class="lede">
+          호스트로서 발생한 누적 수익과 이번 달 수익을 차트와 최근 정산 리스트로 한눈에 보여 주는 화면.
+          이벤트별로 얼마가 나왔는지, 어느 모임이 가장 잘됐는지를 한 자리에서 파악한다.
+          정산 상세나 이벤트 상세로 자연스럽게 이어진다 — 본 화면은 "둘러보기" 자리이고, 깊은 정산 확인은 정산 화면(F06-10)이 맡는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="callout">
+          <span class="label">설계 의도 — 호스트가 자기 활동을 한 화면에서 직관적으로 본다</span>
+          <p>호스트는 자기 활동의 결과가 숫자로 보일 때 다음 모임을 결정한다.
+            본 화면은 누적 수익, 이번 달 수익, 월별 추이, 최근 정산을 한 화면에 모아 호스트가 "지난달 대비 어떤 모임이 잘됐는지"를 한눈에 파악할 수 있게 한다.
+            깊은 추적(정산 상태, 이의 제기)은 본 화면에서 끝내지 않고 정산 화면(F06-10)으로 자연스럽게 이어 준다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>활동 중인 호스트가 누적 수익을 확인</h3>
+            <p>매주 모임을 하나씩 여는 호스트가 지갑에서 "수익" 바로가기를 누른다.
+              이번 달 수익 카드 + 월별 추이 차트 + 최근 정산 리스트가 한 화면에.
+              "지난달보다 많이 벌었나"를 위쪽 카드와 차트로 빠르게 비교한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 자기 활동의 결과를 정기적으로 확인할 수 있는 자리 — 다음 모임을 결정하는 동기 부여.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 상태</div>
+            <h3>아직 호스트 활동이 없는 사용자</h3>
+            <p>모임을 한 번도 안 연 사용자에게는 "아직 수익이 없습니다 / 이벤트를 주최하면 수익이 여기에 표시됩니다" 안내가 보인다.
+              안내 옆에 "이벤트 만들기" 같은 동선이 같이 떠 있어 사용자가 호스트 활동을 시작할 수 있게.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">실시간 갱신</div>
+            <h3>정산이 막 완료됐다는 알림을 받고 들어온다</h3>
+            <p>정산 한 건이 "지급 진행 중"에서 "완료"로 막 바뀐 사용자.
+              화면을 한 번 당겨 갱신하면 누적 수익이 올라가고 보류 금액이 줄어 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">특정 월 확인</div>
+            <h3>"지난 4월에 얼마였지" 차트에서 확인</h3>
+            <p>차트의 4월 막대를 누르면 그 달의 합계가 팝오버로 떠오른다.
+              다른 월도 같은 방식으로 비교 가능.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">출처 추적</div>
+            <h3>한 정산 카드를 눌러 그 이벤트로 간다</h3>
+            <p>"이 정산이 어느 모임이었지" 궁금한 호스트가 최근 정산 리스트의 한 항목을 누른다.
+              해당 이벤트 상세로 이동해 모임 정보를 확인.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">깊은 추적</div>
+            <h3>전체 정산 내역으로 넘어간다</h3>
+            <p>리스트 상단의 "전체 수익 내역 보기 →"를 누르면 정산 화면(F06-10)으로 이동.
+              상태별 필터, 정산 상세, 이의 제기 같은 깊은 동작은 거기서 한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>이번 달 수익 카드</strong></td>
+                <td>화면 상단의 큰 카드. 이번 달 누적 수익.</td>
+                <td>호스트가 가장 자주 보는 숫자. 한 달 단위가 활동 결정의 기본 호흡.</td>
+              </tr>
+              <tr>
+                <td><strong>월별 추이 차트</strong></td>
+                <td>최근 12개월 라인/막대 차트. 특정 월 탭은 그 달 합계 팝오버.</td>
+                <td>"지난달 대비 어떤지"를 한눈에 — 단월 숫자보다 추세가 호스트 의사결정에 더 큰 영향을 준다.</td>
+              </tr>
+              <tr>
+                <td><strong>평균 객단가 박스</strong></td>
+                <td>"평균 객단가 / N원" + 지난달 대비 증감 비율.</td>
+                <td>"내가 진행하는 모임의 회당 수익이 얼마인지"를 보여 줘, 호스트가 모임 가격·규모 결정의 단서로 삼게.</td>
+              </tr>
+              <tr>
+                <td><strong>최근 정산 리스트</strong></td>
+                <td>최근 정산 몇 건. 이벤트명, 참여자 수, 수익 금액.</td>
+                <td>본 화면에서 정산의 깊은 추적까지 가지 않게 — 가장 최근 항목만 미리보기로 두고, 전체는 정산 화면으로 이어 준다.</td>
+              </tr>
+              <tr>
+                <td><strong>전체 수익 내역 보기</strong></td>
+                <td>리스트 상단의 작은 링크.</td>
+                <td>본 화면이 "둘러보기" 자리라는 정책을 명확히. 깊은 추적은 정산 화면이 맡는다는 분리.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">수익 대시보드의 한계와 보강 영역</span>
+          <ul>
+            <li><strong>"지난달 대비 +N%" 표기는 현재 정해진 값으로 표시된다.</strong>
+              실제 호스트별 증감률 계산이 시스템 측에 보강되어야 본 영역이 실제 데이터를 반영한다 — 향후 보강 영역.</li>
+            <li><strong>본 화면은 "Top 10 모임" 표기를 약속하고 있지만 현재는 최근 정산 몇 건만 보여 준다.</strong>
+              호스트가 "내 모임 중 가장 잘된 것"을 알 수 있는 정확한 집계가 시스템 측에 보강되면 본 화면이 충실해진다.</li>
+            <li><strong>본 화면이 보여 주는 누적 수익은 "정산 완료된 금액 + 진행 중 금액"의 합산이다.</strong>
+              실제 호스트 계좌에 들어온 금액과 본 화면의 표기 사이에 시점 차이가 있을 수 있다 — 정산 화면(F06-10)에서 상태별로 분리해 보면 차이를 인지할 수 있다.</li>
+            <li><strong>호스트 활동이 없는 사용자에게도 본 메뉴는 노출된다.</strong>
+              빈 상태 안내가 "이벤트 만들기" 동선을 명확히 보여 줘야 신규 호스트 진입의 진입로로 작동한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위 도메인</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-01.html"><div class="eyebrow">진입</div><h3>F06-01 지갑 메인</h3><p>수익 바로가기의 출발 자리.</p></a>
+          <a class="card" href="F06-10.html"><div class="eyebrow">깊은 추적</div><h3>F06-10 정산 조회·이의</h3><p>본 화면이 이어 주는 정산 화면.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">출처</div><h3>03 이벤트</h3><p>최근 정산 카드의 도착지.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/06_payment/F06-09_earnings-dashboard/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

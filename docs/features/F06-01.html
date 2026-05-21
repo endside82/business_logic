@@ -1,41 +1,193 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F06-01 지갑 메인 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-01 지갑 메인</div>
-<h1>F06-01. 지갑 메인 조회</h1>
-<p class="lede">사용자의 포인트 잔액(유료/무료 구분)을 보여주고, 충전·결제수단·자동충전·구독·정산 같은 다른 기능의 진입점을 모은다. 최초 진입 시 지갑 레코드가 자동 생성된다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">시나리오</div><div class="value">6+</div></div>
-<div class="metric"><div class="label">잔액 표시</div><div class="value">유료 + 무료</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>잔액 조회 (auto-create)</h3><p>레코드 없으면 0원으로 INSERT.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>최근 거래 위젯</h3><p>최근 3건 미리보기.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>잔액 숨김 토글</h3><p>“****” 마스킹.</p></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>바로가기 그리드</h3><p>충전·결제수단·자동충전·구독·거래내역.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 6개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>첫 진입</h3><ol><li>레코드 자동 INSERT (0원)</li><li>충전 CTA로 다음 단계 유도</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>충전 후 복귀</h3><ol><li>지갑 invalidate → 새 잔액 즉시 반영</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>잔액 숨김</h3><ol><li>마스킹 ON/OFF</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>최근 거래 진입</h3><ol><li>F06-03 거래 내역으로 이동</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>풀투리프레시</h3><ol><li>지갑 + 최근 거래 동시 재호출</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>구독·정산 진입점</h3><ol><li>바로가기 카드에서 F06-08/F06-10 이동</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/wallet</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
-<a class="card" href="F06-02.html"><div class="eyebrow">관련</div><h3>F06-02 충전</h3></a>
-<a class="card" href="F06-03.html"><div class="eyebrow">관련</div><h3>F06-03 거래 내역</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/06_payment/F06-01_wallet-main/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-01 지갑 메인 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-01 지갑 메인 조회
+        </div>
+        <h1>F06-01. 지갑 메인 조회</h1>
+        <p class="lede">
+          사용자가 자신의 포인트 잔액과 최근 거래를 한 화면에서 확인하는 결제 도메인의 첫 화면.
+          한 번의 조회로 잔액과 최근 활동을 함께 보여 주고, 충전·결제수단·자동충전·수익·정산·구독 같은 다음 기능 모두로 여기서 갈라진다.
+          본 화면 자체는 잔액을 바꾸지 않는다 — 충전(F06-02), 결제·환불(F06-06) 같은 별도 단위가 잔액을 움직이고, 본 화면은 그 결과를 사용자에게 가장 먼저 보여 주는 자리다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">최근 거래 미리보기</div><div class="value">3건</div><div class="hint">상세는 거래내역에서</div></div>
+          <div class="metric"><div class="label">바로가기 진입점</div><div class="value">4개</div><div class="hint">거래내역 · 결제수단 · 수익 · 정산</div></div>
+          <div class="metric"><div class="label">잔액 숨김</div><div class="value">탭 한 번</div><div class="hint">서버 저장 없이 화면에서만 가림</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 결제 도메인의 모든 동선이 여기서 시작된다</span>
+          <p>지갑은 사용자가 "내가 지금 얼마를 쓸 수 있는지"와 "방금 어떤 거래가 있었는지"를
+            두 번 탭하지 않고 한 화면에서 확인하는 자리다. 충전·결제수단·자동충전·수익·정산·구독 — 결제 도메인의 모든 후속 기능이 본 화면을 거쳐 들어가도록
+            바로가기로 모여 있어, 사용자가 결제 관련 작업을 시작할 때 메뉴를 헤매지 않는다.
+            처음 진입한 사용자는 이 시점에 지갑이 자동으로 0원으로 만들어진다 — 첫 사용자에게도 화면이 깨지지 않도록 보장하는 안전 장치.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 화면 안에 들어가는 네 가지</h2>
+        <p class="subtitle">잔액 카드 · 바로가기 4개 · 멤버십 진입 · 최근 거래 3건.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">잔액 카드</div>
+            <h3>지금 쓸 수 있는 금액</h3>
+            <p>유료 포인트와 무료 포인트를 합산한 잔액을 크게 보여 준다.
+              "충전하기" 버튼이 카드 안에 함께 있어 잔액을 본 직후의 충전 의도를 한 번에 받아 낸다.
+              눈 아이콘을 한 번 누르면 잔액이 가려진다 — 카페·대중교통 같이 화면이 곁눈에 노출되는 상황을 위한 빠른 가림.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">바로가기 4개</div>
+            <h3>결제 도메인의 모든 후속 동선</h3>
+            <p>거래내역(F06-03), 결제수단(F06-04), 수익(F06-09), 정산(F06-10) 네 진입점.
+              이 네 칸이 항상 같은 자리에 있어, 사용자가 "결제 관련해서 뭐 하려면 일단 지갑"이라는 인지를 만든다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">멤버십 카드</div>
+            <h3>커뮤니티 멤버십(개인 구독) 진입</h3>
+            <p>구독(F06-08)으로 이어지는 카드를 별도 영역에 둔다.
+              구독은 잔액과 동작 방식이 다른 결제 흐름이므로 바로가기 4개와 같은 자리에 두지 않고 독립적으로 노출한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">최근 거래 3건</div>
+            <h3>방금 일어난 일</h3>
+            <p>충전·결제·환불·정산 중 가장 최근 세 건의 미리보기.
+              "내가 방금 한 충전이 잔액에 들어왔나"를 거래내역까지 가지 않고 한눈에 확인하게 한다.
+              항목을 누르면 거래 상세로 직진하고, 전체보기는 거래내역으로 간다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>첫 진입 — 잔액 0원으로 시작</h3>
+            <p>가입을 막 마친 사용자가 처음으로 지갑에 들어온다. 잔액 0원이 그대로 보이고 빈 안내를 따로 띄우지 않는다 — "지금 0원"이라는 사실 자체를 사용자가 명확히 보아야 충전 결정으로 이어진다.
+              이 시점에 백엔드 측에서 지갑이 자동으로 만들어져 다음 진입부터 정상 동작.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 첫 사용자에게도 화면이 빈 채로 보이지 않게 만드는 안전 장치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">갱신</div>
+            <h3>충전 후 잔액이 즉시 반영</h3>
+            <p>충전 화면(F06-02)에서 50,000원 충전을 마치고 돌아오면, 지갑의 잔액 카드가 깜빡임 없이 새 금액으로 갱신되고
+              최근 거래 첫 행이 "충전 +50,000원"으로 바뀐다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "내가 방금 한 충전이 진짜 들어왔는가"를 별도 화면 없이 확인하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">프라이버시</div>
+            <h3>카페에서 잔액 가리기</h3>
+            <p>옆자리에 화면이 보일 수 있는 상황에서 눈 아이콘을 누른다.
+              잔액 자리에 별표 마스킹이 들어가고, 다시 누르면 원래 숫자가 돌아온다.
+              서버에 별도로 저장하지 않으므로 다른 기기에서는 마스킹이 유지되지 않는다 — 이 동작은 "지금 이 자리"의 시각적 가림에만 쓴다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">통신 끊김</div>
+            <h3>지하철에서 진입 — 다시 시도</h3>
+            <p>네트워크가 일시적으로 끊긴 상태에서 지갑에 들어오면 "지갑 정보를 불러올 수 없습니다" 안내와 "다시 시도" 버튼이 보인다.
+              사용자가 신호를 회복한 뒤 직접 다시 시도한다 — 자동 재시도는 하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">캠페인 보상</div>
+            <h3>운영자가 지급한 무료 포인트가 보임</h3>
+            <p>지난번에 잔액 0원으로 비웠던 사용자가 어느 날 다시 지갑에 들어오면 5,000원이 채워져 있다 — 운영팀이 캠페인 보상으로 무료 포인트를 지급한 결과.
+              잔액 카드는 합산만 보여 주지만, 거래내역으로 들어가면 어떻게 들어온 포인트인지 추적 가능하다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 운영자가 외부에서 지갑에 영향을 줄 수 있다는 사실. 사용자에게는 진입 시점에 자연스럽게 결과가 보인다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>잔액 카드</strong></td>
+                <td>유료 + 무료를 합산한 큰 숫자, 옆에 눈 아이콘. 카드 안에 "충전하기" 버튼.</td>
+                <td>잔액을 본 직후의 충전 의도를 다른 화면으로 옮기지 않고 같은 카드에서 받아낸다. 가림 아이콘은 화면이 곁눈에 노출되는 상황을 위한 즉시 가드.</td>
+              </tr>
+              <tr>
+                <td><strong>바로가기 그리드</strong></td>
+                <td>거래내역 · 결제수단 · 수익 · 정산 네 칸 아이콘.</td>
+                <td>결제 도메인의 모든 후속 동선을 한 자리에 모아 "결제 관련은 일단 지갑부터"라는 인지를 만든다. 네 칸 모두 같은 크기로 두어 사용자 의도의 차등 없이 동등하게 노출.</td>
+              </tr>
+              <tr>
+                <td><strong>멤버십 진입 카드</strong></td>
+                <td>커뮤니티 멤버십 안내 카드. 별도 강조 색.</td>
+                <td>구독은 잔액과 동작이 다른 결제 흐름이라 바로가기 그리드와 분리해 별도 영역에 둔다 — 사용자가 "이건 일회성 결제와 다르다"는 점을 시각적으로 인지.</td>
+              </tr>
+              <tr>
+                <td><strong>최근 거래 3건</strong></td>
+                <td>거래 유형(충전·결제·환불·정산) 아이콘 + 금액 + 시각. 항목 탭은 거래 상세로 직진.</td>
+                <td>거래내역까지 가지 않고도 방금 일어난 일을 확인할 수 있게 — 충전 직후의 사용자가 가장 먼저 보고 싶어 하는 정보.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">지갑이 결제 도메인 전체의 진입로라는 사실</span>
+          <ul>
+            <li><strong>본 화면은 잔액을 바꾸지 않는다.</strong>
+              잔액이 어긋난다는 사용자 신고가 들어오면 본 화면이 아니라 충전(F06-02)·결제·환불(F06-06)·자동충전(F06-05) 중 어느 흐름에서 어긋났는지를 찾아야 한다.</li>
+            <li><strong>처음 진입한 사용자는 잔액 0원으로 보인다 — 이 시점에 지갑 데이터가 만들어진다.</strong>
+              만약 첫 진입에서 오류 화면이 보였다는 신고가 들어오면 지갑 생성 동작 자체가 막힌 회귀를 의심해야 한다.</li>
+            <li><strong>잔액 숨김은 화면에서만 동작한다.</strong>
+              다른 기기에서 같은 사용자가 지갑을 열면 마스킹이 적용되지 않는다 — 이 동작은 "지금 이 자리"의 시각적 가림 이상의 의미가 없다는 것을 사용자에게도 명시하지 않지만, 운영팀은 알고 있어야 한다.</li>
+            <li><strong>최근 거래 미리보기는 본 화면이 직접 갱신하지 않는다.</strong>
+              충전·결제·환불 후 사용자가 지갑으로 돌아왔을 때 갱신이 안 됐다는 신고가 들어오면 다른 화면이 트리거하는 갱신 신호가 누락된 회귀를 의심.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위 도메인</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-02.html"><div class="eyebrow">충전</div><h3>F06-02 포인트 충전</h3><p>잔액을 채우는 진입로.</p></a>
+          <a class="card" href="F06-03.html"><div class="eyebrow">상세 추적</div><h3>F06-03 거래 내역</h3><p>최근 거래 3건의 전체 보기.</p></a>
+          <a class="card" href="F06-04.html"><div class="eyebrow">결제 준비</div><h3>F06-04 결제 수단</h3><p>충전에 쓰는 카드 관리.</p></a>
+          <a class="card" href="F06-08.html"><div class="eyebrow">구독</div><h3>F06-08 개인 구독</h3><p>멤버십 카드의 도착지.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/06_payment/F06-01_wallet-main/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

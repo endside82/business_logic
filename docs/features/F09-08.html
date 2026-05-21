@@ -1,30 +1,143 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F09-08 프로필 조회 이력 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>F09-08 프로필 조회 이력</div>
-<h1>F09-08. 내 프로필 조회 이력</h1>
-<p class="lede">최근 24시간 안에 내 프로필을 본 사용자 목록. 매칭 동기 부여.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>조회자 목록 (24h)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>상대시간 표시</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>방문자 5명 보기</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>빈 상태</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>같은 사용자 다회 조회 dedup</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/date/profile/views?page=&size=</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/09_private_date/F09-08_profile_views/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F09-08 프로필 조회 이력 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
+          F09-08 프로필 조회 이력
+        </div>
+        <h1>F09-08. 내 프로필 조회 이력</h1>
+        <p class="lede">
+          내 데이팅 프로필을 누가 봤는지를 시간 순으로 보여 주는 부가 동기 부여 화면.
+          사용자가 매칭 결정 외에도 "누가 나에게 관심을 보였는지"를 인지하게 만들어 데이팅 사용 빈도를 높이는 자리다.
+          조회 이력은 별도 동작 없이 다른 사용자가 본인의 프로필을 봤을 때 자동으로 누적되며,
+          같은 사람이 하루에 여러 번 봐도 한 번만 기록된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">한 페이지</div><div class="value">20명</div><div class="hint">스크롤하면 다음 페이지 자동 로드</div></div>
+          <div class="metric"><div class="label">중복 제거</div><div class="value">24시간</div><div class="hint">같은 사람의 반복 조회는 한 번만 기록</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "나에게 관심을 보이는 사람이 있다"는 감각을 만든다</span>
+          <p>데이팅 사용자는 후보 카드와 매칭 목록만으로는 충분한 동기를 유지하기 어렵다.
+            "내가 누군가에게 관심을 받고 있다"는 감각은 데이팅을 다시 켜고, 프로필을 보강하고, 활성 토글을 유지하게 만드는 강한 신호다.
+            본 단위는 그 신호를 사용자에게 직접 돌려주는 자리다.
+            누가 언제 봤는지를 시간 순으로 보여 주되, 같은 사람의 반복 조회를 24시간 단위로 압축해 "10명에게 관심받았다"는 인지를 "10번 봤다"는 노이즈로 깨지 않도록 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>방문자가 있는지 확인</h3>
+            <p>데이팅 프로필 화면 우상단 👁 아이콘을 누른다.
+              방문자 목록이 시간 역순으로 펼쳐진다 — 가장 최근 본 사람이 맨 위.
+              각 항목은 아바타·표시 이름·상대 시간("방금", "30분 전", "어제", "5/8")으로 한 줄에 자리한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 "내 프로필이 노출되고 있다"는 사실을 자기 눈으로 확인. 비활성으로 두려던 사용자를 다시 활성화로 유도하는 동기.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 정리</div>
+            <h3>같은 사람이 하루에 여러 번 봐도 한 번만</h3>
+            <p>관심 있는 사람이 본인의 프로필을 하루에 여러 번 다시 본다.
+              화면에는 그 사람이 한 번만 자리한다 — 가장 최근 시각으로.
+              24시간이 지나면 다시 봤을 때 새 기록이 추가된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 같은 사람이 같은 자리에 여러 번 등장하지 않게 한다. "10명에게 관심받았다"는 인지가 "한 사람이 10번 봤다"는 노이즈로 깨지지 않게.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">무한 스크롤</div>
+            <h3>방문자가 많을 때</h3>
+            <p>방문자가 누적된 사용자가 리스트를 스크롤한다.
+              끝 가까이 가면 다음 페이지가 자동으로 로드된다.
+              사용자는 매 페이지 로드를 느끼지 못하고 자연스럽게 과거 방문자까지 둘러볼 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 데이팅에서 인기 있는 사용자에게도 이 화면이 답답하지 않게. 페이지 단위 로딩이 자연스럽게 흐른다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">새로고침</div>
+            <h3>새 방문자가 있나 다시 확인</h3>
+            <p>화면을 열어 둔 채로 위에서 아래로 당겨 새로고침한다.
+              첫 페이지가 다시 불러와지고, 그 사이 새로 본 사람이 가장 위에 나타난다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 직접 확인하고 싶을 때의 갱신 동작. 자동 갱신 없이 사용자가 통제.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 상태</div>
+            <h3>아직 방문자가 없다</h3>
+            <p>가입 직후이거나 비활성 토글로 둔 사용자는 빈 상태를 본다.
+              "👁 아직 방문자가 없습니다" 라는 회색 텍스트가 자리할 뿐, 별도 액션 버튼은 없다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 빈 상태에서 사용자에게 "프로필 보강"이나 "활성 토글 켜기" 같은 다음 행동을 제안하는 자리를 두면 사용자 재진입을 끌어올릴 여지가 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">프로필 없을 때</div>
+            <h3>프로필을 만들지 않은 상태로 진입</h3>
+            <p>어떤 경로로 본 화면에 진입했지만 데이팅 프로필 자체가 없는 사용자.
+              화면은 에러 상태로 떨어지고, 다시 시도 버튼을 통해 사용자를 정상 흐름(프로필 작성)으로 보낸다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 본 화면이 단독으로는 의미가 없다는 사실을 자연스럽게 인지하게. 프로필 작성 흐름이 선행되어야 한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 단위의 운영 결정점과 한계</span>
+          <ul>
+            <li><strong>조회 이력은 별도 동작이 아니라 다른 사용자의 프로필 조회 흐름에서 자동으로 누적된다.</strong>
+              본 단위는 그 결과를 보여 주는 면일 뿐이다. 후보 카드 상세 보기 같은 자리에서 조회 이력이 만들어진다.</li>
+            <li><strong>24시간 중복 제거 정책은 사용자 인지를 깨끗하게 유지하는 핵심이다.</strong>
+              한 사람이 하루에 여러 번 봐도 한 번만 기록된다 — 이 정책이 풀리면 화면이 한 사람의 반복 조회로 채워져 의미가 사라진다.</li>
+            <li><strong>현 구현은 방문자의 프로필 활성 상태를 확인하지 않는다.</strong>
+              방문자가 비활성으로 돌렸거나 공개 범위를 비공개로 둔 경우에도 그 사람의 이름과 사진이 그대로 보일 수 있다.
+              운영상 보완 여지가 있는 자리 — 방문자가 본인을 숨기고 싶어할 수 있다.</li>
+            <li><strong>차단된 사용자도 과거 조회 row가 남아 있을 수 있다.</strong>
+              내가 차단한 사용자가 차단 전에 내 프로필을 본 적이 있으면 이 화면에 그 사람이 그대로 등장한다.
+              사용자가 보고 싶지 않을 가능성 — 차단된 사용자 마스킹 정책 검토 여지.</li>
+            <li><strong>방문자 카드를 눌러도 별도 동작이 없다.</strong>
+              현재는 단순 목록 표시. 방문자의 프로필 상세 진입이나 호감 표시 같은 후속 동작을 연결하면 본 화면의 가치가 더 커진다.</li>
+            <li><strong>방문자가 프로필을 만들지 않았으면 "익명"으로 표기된다.</strong>
+              계정은 있지만 데이팅 프로필이 없는 사용자가 어떤 경로로 본 프로필 조회 흐름을 거친 경우. 운영상 드문 케이스.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위 도메인</div><h3>09 프라이빗 데이팅</h3><p>본 단위가 보조하는 데이팅 도메인의 사용자 재진입 동기 자리.</p></a>
+          <a class="card" href="F09-02.html"><div class="eyebrow">진입 자리</div><h3>F09-02 데이팅 프로필</h3><p>본 화면 진입의 유일한 출발점.</p></a>
+          <a class="card" href="F09-03.html"><div class="eyebrow">입력 자리</div><h3>F09-03 매칭 액션</h3><p>방문자 데이터가 만들어지는 자리.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/09_private_date/F09-08_profile_views/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

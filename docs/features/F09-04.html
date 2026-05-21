@@ -1,32 +1,174 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F09-04 매칭 목록 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>F09-04 매칭 목록</div>
-<h1>F09-04. 매칭 목록 조회</h1>
-<p class="lede">새 매칭과 진행 중 대화를 시간순으로 모아 본다. PENDING 매치는 만료까지 남은 시간 표시.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>새 매칭 가로 스크롤</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>대화중 카드</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>PENDING 만료 카운트다운</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>새 매칭 직후</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>PENDING 남은시간</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>매치 종료 사라짐</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/date/matches</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
-<a class="card" href="F09-05.html"><div class="eyebrow">다음</div><h3>F09-05 채팅</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/09_private_date/F09-04_match_list/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F09-04 매칭 목록 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
+          F09-04 매칭 목록
+        </div>
+        <h1>F09-04. 매칭 목록</h1>
+        <p class="lede">
+          내가 가진 모든 데이팅 관계를 한눈에 모아 보는 화면.
+          새로 매칭된 사람, 대화가 이어지고 있는 사람, 한쪽만 호감을 표시한 채 응답을 기다리는 사람, 만료된 관계까지
+          하나의 면에 모아 사용자가 자기 관계의 진척을 한 번에 확인할 수 있다.
+          후보 카드(F09-03)가 만든 결과가 시간 순으로 쌓이는 자리이자, 채팅과 만남 제안으로 들어가는 출발점이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">한 번에 받아오는 매칭</div><div class="value">20건</div><div class="hint">한 페이지 단위</div></div>
+          <div class="metric"><div class="label">한쪽 호감 보류</div><div class="value">7일</div><div class="hint">잔여 시간 배너로 즉시 인지</div></div>
+          <div class="metric"><div class="label">탭 구성</div><div class="value">3개</div><div class="hint">전체 · 새매칭 · 대화중</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "내 관계가 지금 어디까지 와 있는지"를 한 번에 보여 준다</span>
+          <p>데이팅 사용자는 매칭이 성사됐다는 사실만 알려주는 면으로는 만족하지 못한다.
+            "누구와 매칭이 됐고, 대화는 시작했는지, 상대가 응답을 보내올지 아직 모르는지" — 이 세 가지가 한 자리에서 보여야 사용자가 다음 행동을 정할 수 있다.
+            본 단위는 그래서 새 매칭(가로 스크롤 아바타), 대화중(세로 카드), 응답 대기 중(배너) 세 가지 정보를 같은 화면에 함께 두고,
+            상대의 마지막 메시지·미읽음 개수까지 카드에 함께 보여 매칭 목록만으로도 진척이 즉시 인지되게 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 카드 안에 들어가는 정보</h2>
+        <p class="subtitle">매칭 한 건이 사용자에게 어떻게 보이는지.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">사람</div>
+            <h3>상대 프로필</h3>
+            <p>아바타와 표시 이름. 사용자가 "누구"인지 즉시 식별하는 자리.
+              표시 이름이 비어 있는 경우(드뭄)에는 임시 식별 표기가 자리한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">대화</div>
+            <h3>마지막 메시지와 미읽음</h3>
+            <p>가장 최근에 주고받은 메시지 한 줄과 시각. 내가 읽지 않은 메시지가 있으면 분홍색 원 안에 개수가 보인다.
+              99건이 넘으면 "99+"로 표기.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">시간</div>
+            <h3>응답 대기 중 잔여 시간</h3>
+            <p>한쪽만 호감을 표시해 보류 상태인 매칭은 카드 위에 "응답 대기 중 · {잔여시간}" 배너가 자리한다.
+              6시간 이내면 빨간색, 그 전에는 노란색으로 색만 다르다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">상태</div>
+            <h3>만료된 매칭</h3>
+            <p>7일이 지나도록 상대 응답이 없었던 보류 매칭은 회색톤 카드 + "만료됨" 배지로 자리에 남는다.
+              사용자가 "이 관계는 끝났다"는 사실을 시각으로 확인하고 다음으로 넘어갈 수 있게.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>매칭 직후 진입</h3>
+            <p>5분 전에 새로 매칭이 성사된 사용자가 매칭 탭을 누른다.
+              "새로운 매칭 💕" 가로 스크롤에 방금 매칭된 상대의 아바타가 가장 앞에 있고,
+              아래 "대화중" 섹션의 같은 항목 카드를 누르면 채팅 화면으로 진입한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 매칭 성사 직후 사용자가 가장 먼저 확인하고 싶은 정보가 한 자리에 모인다. 후보 카드 → 매칭 → 채팅의 가장 자연스러운 동선.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기다리는 시간</div>
+            <h3>응답 대기 중인 매칭 인지</h3>
+            <p>5일 전에 호감을 표시했지만 상대가 아직 응답하지 않은 매칭이 "전체" 탭에 보인다.
+              카드 위에 노란 배너로 "응답 대기 중 · 2일 남음" 이 떠 있다.
+              남은 시간이 6시간 이내로 줄면 같은 자리에 빨간 배너로 색만 바뀐다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자기가 보낸 호감의 운명을 잊지 않게 한다. 7일 정책의 인지를 색과 텍스트로 자연스럽게 전달.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비활성 상태</div>
+            <h3>프로필을 비활성으로 둔 사용자</h3>
+            <p>본인 프로필을 잠시 꺼 둔 사용자가 매칭 탭에 들어오면,
+              상단에 노란 띠가 "프로필이 비활성화 상태입니다. 새로운 매칭은 프로필 활성화 후 받을 수 있어요." 라고 한 줄로 안내한다.
+              기존 매칭 카드 자체는 정상 노출되어 대화는 그대로 이어 갈 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "왜 새 매칭이 안 오지?" 라는 의문에 미리 답한다. 기존 관계는 보존되고 노출만 멈춘 상태임을 사용자가 인지하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">관계 정리</div>
+            <h3>만료된 매칭의 흔적</h3>
+            <p>7일이 지나도록 상대가 응답하지 않은 보류 매칭이 "만료됨" 배지로 회색 카드가 되어 자리에 남는다.
+              사용자가 누르더라도 의미 있는 행동은 없다 — 새 매칭을 만들려면 후보 카드로 돌아가야 한다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 만료된 매칭 카드를 누른 사용자에게 어떤 안내·전환이 적절한지 정책이 명확하지 않다. 사용자 혼란 신호가 들어오면 후보 카드로의 안내 전환을 검토할 여지.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">즉시 이탈</div>
+            <h3>카드에서 차단</h3>
+            <p>매칭 카드 우측 더보기 → 시트 → "차단"을 누른다.
+              사유 입력 시트가 떠오르고, 사유를 적어 확정하면 그 매칭은 차단 처리되고 함께 열려 있던 채팅방도 닫힌다.
+              매칭 목록을 새로고침하면 차단된 매칭은 더 이상 활성 상태로 보이지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 어디서든(후보 카드·매칭 목록·채팅) 즉시 차단할 수 있다는 안전 통제감. 본 화면에서의 차단은 가장 흔하게 발동되는 자리.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">새로고침</div>
+            <h3>새 메시지가 왔는지 다시 확인</h3>
+            <p>화면을 잠시 떠 있던 사용자가 위에서 아래로 당겨 새로고침한다.
+              짧은 로딩이 돈 뒤 카드의 마지막 메시지와 미읽음 개수가 최신으로 바뀐다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 자동 갱신이 아니라 사용자가 직접 확인하고 싶을 때의 통제 경로. 데이팅 채팅은 실시간 푸시도 있지만, 사용자가 "지금 다시 보자"라고 의사 표시하는 자리도 보장.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">매칭 목록 운영 결정점</span>
+          <ul>
+            <li><strong>"새매칭"과 "대화중" 탭은 현재 동일한 매칭 결과를 클라이언트가 분리해서 보여준다.</strong>
+              아바타 가로 스크롤은 매칭이 성사된 시각이 있는 항목 최대 5개, 세로 카드는 전체 매칭. 분리 기준을 더 정교하게 잡으면 사용자의 진척 인지가 명확해질 여지가 있다.</li>
+            <li><strong>마지막 메시지는 암호화 저장에서 즉시 풀어 카드에 보여 준다.</strong>
+              메시지 본문은 안전 정책상 평문으로 저장되지 않는다 — 매번 카드를 그릴 때 짧게 풀어 한 줄만 노출. 운영상 메시지 미리보기 누락 신호가 들어오면 저장·복호화 흐름을 점검한다.</li>
+            <li><strong>차단된 매칭은 목록에서 자동으로 사라지지 않는다.</strong>
+              상태만 차단으로 바뀌어 그대로 응답에 포함된다. 사용자 화면에서 별도 분기 없이 그대로 보이는 한계가 있어, 차단 직후 매칭 목록 새로고침 시점에 사용자가 혼란을 느낄 수 있다.</li>
+            <li><strong>현재 매칭 카드를 눌러도 채팅방 식별자가 함께 전달되지 않는 경우가 있다.</strong>
+              결과적으로 어느 채팅방으로 진입할지 모호한 사고로 이어질 수 있다 — 카드 탭에서 채팅 진입 시 식별자 전달 보장 필요.</li>
+            <li><strong>스크롤 끝까지 가도 추가 페이지를 불러오지 않는다(현 화면 한계).</strong>
+              매칭이 20건을 넘기는 사용자는 일부 매칭이 화면에 보이지 않을 수 있다. 사용자 누적이 늘면 무한 스크롤 연결 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위 도메인</div><h3>09 프라이빗 데이팅</h3><p>매칭 목록이 모으는 모든 결과의 출발지.</p></a>
+          <a class="card" href="F09-03.html"><div class="eyebrow">앞 단위</div><h3>F09-03 매칭 액션</h3><p>본 목록에 들어오는 관계가 만들어지는 자리.</p></a>
+          <a class="card" href="F09-05.html"><div class="eyebrow">다음</div><h3>F09-05 데이팅 채팅</h3><p>매칭 카드를 눌렀을 때 들어가는 대화 화면.</p></a>
+          <a class="card" href="F09-07.html"><div class="eyebrow">관련</div><h3>F09-07 사용자 차단</h3><p>본 목록에서 가장 흔하게 발동되는 안전 액션.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/09_private_date/F09-04_match_list/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

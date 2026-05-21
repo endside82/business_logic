@@ -1,36 +1,273 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F08-13 플랜 이벤트·리뷰 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>F08-13 이벤트·리뷰</div>
-<h1>F08-13. 구매 플랜 이벤트 생성 · 리뷰 작성</h1>
-<p class="lede">구매한 플랜으로 이벤트를 만들거나(F03 연동) 리뷰를 쓴다. 플랜 메타가 이벤트 생성 폼에 자동 prefill.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>플랜 → 이벤트 생성(prefill)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>리뷰 작성 + 별점</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>본인 리뷰 수정·삭제</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>이벤트 생성 prefill</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>구매자만 리뷰 작성</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>리뷰 수정/삭제</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>크리에이터 평점 영향</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/plans/{planId}/create-event</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/market/items/{id}/reviews</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
-<a class="card" href="../domains/03-event.html"><div class="eyebrow">연동</div><h3>03 이벤트</h3></a>
-<a class="card" href="../domains/11-review.html"><div class="eyebrow">연동</div><h3>11 리뷰</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/08_plan_market/F08-13_plan-event-and-review/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-13 이벤트 만들기 · 리뷰 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-13 이벤트 만들기 · 리뷰
+        </div>
+        <h1>F08-13. 구매 플랜으로 이벤트 만들기 · 리뷰</h1>
+        <p class="lede">
+          구매한 콘텐츠가 실제 사용으로 이어지는 두 갈래의 길을 한 단위가 다룬다.
+          하나는 산 플랜을 토대로 진짜 모임 이벤트를 만드는 길 — 일시·인원·가격·장소를 정해 다른 사용자에게 공개할 수 있게 된다.
+          다른 하나는 사용 후 별점과 한 줄의 평가를 남기는 길 — 다른 구매 결정자들에게 신호로 전달된다.
+          마켓의 한 사이클이 닫히는 자리이자, 다음 사이클의 결정 단서가 만들어지는 자리.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">이벤트 진입 권한</div><div class="value">구매자 또는 작성자</div><div class="hint">본인 플랜은 구매 없이 가능</div></div>
+          <div class="metric"><div class="label">리뷰 작성 권한</div><div class="value">구매자만</div><div class="hint">1인 1리뷰</div></div>
+          <div class="metric"><div class="label">반복 이벤트</div><div class="value">3종</div><div class="hint">매주 · 격주 · 매월</div></div>
+          <div class="metric"><div class="label">별점 범위</div><div class="value">1~5</div><div class="hint">본문은 최대 500자</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 콘텐츠를 사고 끝나는 게 아니라 활용까지 이어진다</span>
+          <p>다른 마켓들과 달리 본 마켓은 "샀으니 끝"이 아니다. 산 플랜은 실제 모임으로 옮겨 가서 다른 사용자를 모으는 출발점이 되고,
+            사용 후의 별점은 다음 구매자에게 신호가 된다. 두 동작을 같은 단위로 묶어 둔 이유는 — 한 번의 구매가 만들어 내는 가치가
+            구매 그 자체에 머물지 않고 다음 사이클로 이어지는 것이 본 도메인의 핵심 가설이기 때문이다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>두 갈래 — 활용과 평가</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">갈래 1</div>
+            <h3>이 플랜으로 이벤트 만들기</h3>
+            <p>플랜의 내용·인원·가격·주소가 새 이벤트의 기본값으로 자동 채워진다. 사용자는 일시·공개 범위·반복 여부만 정하면 된다.
+              만든 이벤트는 작성 중 상태로 시작 — 그 다음 단계(모집 공개, 모집 마감 등)는 이벤트 도메인이 받아 처리한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">갈래 2</div>
+            <h3>리뷰 작성 · 수정 · 삭제</h3>
+            <p>마켓 아이템 상세에서 별 1~5점과 500자 이내 본문으로 리뷰를 남긴다. 한 사용자가 한 아이템에 한 리뷰만 가능하며,
+              본인 리뷰는 같은 화면에서 수정·삭제할 수 있다. 수정한 리뷰에는 "(수정됨)" 배지가 붙는다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이벤트 생성이 통과하는 가드</h2>
+        <p class="subtitle">한 번의 "이벤트 생성" 탭은 권한 확인 · 입력 가드 · 이벤트 도메인 적재 세 단계를 거친다. 권한이 없는 사용자는 호출 단계에서 막힌다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    Start["사용자: 이벤트 생성 탭"] --> Date{"일시 선택됨?"}
+    Date -->|"아니오"| BlockDate["일시를 선택해 주세요"]
+    Date -->|"예"| Auth{"본인 플랜 또는 구매자?"}
+    Auth -->|"아니오"| BlockAuth["권한 없음"]
+    Auth -->|"예"| Build["이벤트 정보 빌드"]
+    Build --> Recurring{"반복 이벤트?"}
+    Recurring -->|"예"| RecBuild["반복 규칙 작성 + 종료일"]
+    Recurring -->|"아니오"| Single["단일 이벤트"]
+    RecBuild --> Save
+    Single --> Save["새 이벤트 저장(작성 중 상태)"]
+    Save --> Done["이벤트 상세로 이동"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 — 이벤트 생성</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">단일 이벤트</div>
+            <h3>이번 주말에 친구들과 가려고 만든다</h3>
+            <p>구매한 "한강 피크닉 코스" 플랜의 상세에서 "이 플랜으로 이벤트 만들기"를 누른다. 풀스크린 모달이 열리고,
+              플랜 정보가 이미 채워져 있다 — 인원 4명, 가격 20,000P, 주소가 자동으로 들어간 상태. 사용자는 일시(토요일 오후 2시)만 정하고 "이벤트 생성"을 누른다.
+              새 이벤트가 작성 중 상태로 만들어지고 이벤트 상세 화면으로 이동한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 구매가 실제 모임으로 옮겨 가는 가장 짧은 길. 플랜 정보를 다시 옮겨 적지 않아도 되는 흐름.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">반복 이벤트</div>
+            <h3>매주 같은 코스를 운영한다</h3>
+            <p>호스팅 경험이 있는 사용자가 반복 이벤트 토글을 켠다. 주기를 "매주"로 두고 종료일을 6주 뒤로 정한 뒤 "이벤트 생성"을 누른다.
+              반복 규칙이 함께 저장되어 — 같은 코스가 매주 진행되는 시리즈가 시작된다.
+              실제 자식 이벤트들의 생성은 이벤트 도메인이 별도로 처리한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 모임이 아니라 시리즈로 코스를 운영하려는 호스트 행동을 지원한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">작성자 본인</div>
+            <h3>크리에이터가 자기 플랜으로 직접 모임을 만든다</h3>
+            <p>플랜을 만든 본인이 그 플랜으로 이벤트를 만든다. 구매 기록은 없지만 작성자라 진입이 허용된다.
+              가격을 무료로 두고 친구들 대상으로 작은 모임을 연다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 차단</div>
+            <h3>안 산 사용자가 이벤트 만들기를 시도</h3>
+            <p>구매하지 않은 사용자가 어떤 경로로 이벤트 생성 호출을 보낸다. 서버는 작성자도 구매자도 아니라는 이유로 거절한다.
+              UI상으로는 이 버튼이 노출되지 않아야 하지만, 직접 호출이 들어와도 권한 가드가 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">입력 가드</div>
+            <h3>일시를 안 정한 채 제출</h3>
+            <p>달력을 건드리지 않은 채 "이벤트 생성"을 누른다. "일시를 선택해 주세요" 안내만 뜨고 호출은 일어나지 않는다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 — 리뷰</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">첫 리뷰</div>
+            <h3>구매자가 사용 후 별 네 개를 남긴다</h3>
+            <p>며칠 전 구매·활성화해 사용해 본 사용자가 마켓 상세의 리뷰 섹션에서 "리뷰 작성"을 누른다.
+              별 5개가 채워진 다이얼로그가 떠 있고, 네 번째 별을 눌러 4점으로 내리고 한 줄을 적는다.
+              "등록"을 누르면 "리뷰가 등록되었습니다" 안내가 뜨고 리뷰 리스트 최상단에 들어간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 다음 구매자에게 가장 강한 신호. 별점 평균이 한 번에 갱신되어 마켓 카드에 반영된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수정</div>
+            <h3>예전 리뷰를 다시 손본다</h3>
+            <p>본인 리뷰 우측 점 세 개 메뉴에서 "수정"을 누른다. 기존 별점·본문이 미리 채워진 다이얼로그가 떠 있고 손본 뒤 "수정"을 누르면 즉시 반영된다.
+              카드에 "(수정됨)" 배지가 추가되어 다른 사용자가 인지할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용 경험이 시간이 지나면서 달라질 수 있다. 수정 흔적을 남기는 것이 다른 구매자에 대한 신뢰의 표시.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">삭제</div>
+            <h3>본인 리뷰를 정리한다</h3>
+            <p>점 세 개 메뉴에서 "삭제" → 확인 다이얼로그를 거치면 리뷰가 사라진다.
+              이후 다른 사용자에게는 보이지 않지만 데이터 자체는 남는다(자기 삭제 기록).</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>이미 리뷰를 쓴 사람이 다시 시도</h3>
+            <p>한 번 리뷰를 쓴 사용자가 다시 "리뷰 작성" 버튼을 누른다. 서버가 1인 1리뷰 규칙으로 거절한다.
+              UI상으로는 본인 리뷰가 있으면 작성 버튼 대신 자기 리뷰 카드의 점 세 개 메뉴로 진입하는 게 정상 경로다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">구매 가드</div>
+            <h3>안 산 사용자가 리뷰를 시도한다</h3>
+            <p>비구매자가 리뷰 작성을 시도한다. 서버는 구매 기록이 있는 사람만 리뷰를 받기 때문에 거절한다.
+              사용자에게는 "구매한 후에만 리뷰를 작성할 수 있습니다" 안내가 뜬다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">남의 리뷰</div>
+            <h3>다른 사용자의 리뷰를 손대려 한다</h3>
+            <p>비정상 경로로 다른 사람의 리뷰 식별자에 수정·삭제 호출이 도달한다. 서버는 본인 검사로 거절한다.
+              UI상 점 세 개 메뉴는 본인 리뷰에만 노출되므로 정상 흐름에서는 발생하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">길이 가드</div>
+            <h3>500자를 넘기는 본문 입력</h3>
+            <p>본문이 500자를 넘으면 입력칸이 더 이상 받지 않는다(클라이언트 가드).
+              그래도 어떤 경로로 긴 본문이 전달되면 서버가 거절한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>보이는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>이벤트 생성 — 기반 플랜 카드</strong></td>
+                <td>화면 상단에 "기반 플랜" 라벨 + 플랜 제목 + 두 줄짜리 설명.</td>
+                <td>지금 만드는 이벤트가 어떤 플랜에서 나온 것인지 항상 시야에 둬서, 사용자가 헛갈리지 않게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>일시 · 인원 · 가격</strong></td>
+                <td>일시는 달력+시간 선택, 인원·가격은 숫자 입력. 인원·가격은 플랜 값으로 미리 채워져 있음.</td>
+                <td>플랜에서 자동으로 가져온 값을 시작점으로 두고, 사용자는 일시만 정하면 거의 끝난다. 모임 만들기의 진입 비용을 가장 낮춘 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>반복 이벤트 토글</strong></td>
+                <td>토글 + 주기 선택(매주/격주/매월) + 종료일.</td>
+                <td>시리즈로 운영하는 호스트를 위한 자리. 단발 모임 사용자에게는 토글이 꺼져 있어 부담이 없다.</td>
+              </tr>
+              <tr>
+                <td><strong>공개 범위 · 장소 유형</strong></td>
+                <td>"전체 공개 / 비공개" + "오프라인 / 온라인" 두 선택.</td>
+                <td>같은 플랜이라도 친구들끼리 비공개로 할지, 마켓에 공개해서 모집할지 자유롭게 정하는 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>리뷰 다이얼로그</strong></td>
+                <td>별 5개 + 500자 본문 입력. "취소 / 등록" 두 버튼.</td>
+                <td>리뷰는 가벼운 행동이라 풀스크린이 아니라 다이얼로그로 충분하다. 다른 동선이 끊기지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>리뷰 카드</strong></td>
+                <td>별 5개 + 작성일 + (수정됨) 배지 + 본문. 본인이면 우측에 점 세 개 메뉴.</td>
+                <td>다른 사람의 평가가 한 카드 안에 모두 보인다. (수정됨) 배지는 신뢰의 단서를 잃지 않게 한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">한 사이클을 닫고 다음 사이클을 여는 자리</span>
+          <ul>
+            <li><strong>이벤트는 작성 중 상태로 만들어진다.</strong> 본 단위는 모임 만들기의 진입까지만 책임지고, 그 다음(모집 공개, 모집 마감, 정산 등)은 이벤트 도메인이 받는다.
+              두 도메인 사이의 데이터 컨텍스트가 끊기면 사용자는 "왜 내 이벤트가 보이지 않지" 류 혼란을 겪는다.</li>
+            <li><strong>반복 이벤트는 템플릿만 저장한다.</strong> 자식 이벤트들은 별도 흐름에서 생성된다.
+              사용자가 "내가 만든 시리즈가 어디 있지" 라고 찾을 때, 시리즈와 자식의 관계가 화면에 분명히 드러나지 않으면 운영 부담이 커진다.</li>
+            <li><strong>리뷰는 구매자만 쓸 수 있고 1인 1리뷰가 원칙이다.</strong> 같은 사람이 여러 리뷰로 평점을 흔드는 행동을 차단하는 정책.
+              운영자가 리뷰 신뢰성을 측정할 때 이 두 규칙이 항상 작동하고 있어야 한다.</li>
+            <li><strong>리뷰 평균 별점 갱신은 즉시 일어나지만, 캐시 무효화 정책은 명확하지 않다.</strong>
+              마켓 상세를 다시 들어왔을 때 별점이 갱신돼 보이는지 운영 모니터링 필요.</li>
+            <li><strong>구매 가드가 화면이 아니라 서버에 있다.</strong> 사용자에게는 로그인이면 "리뷰 작성" 버튼이 보인다 — 진짜 차단은 서버에서 일어난다.
+              UI상 가드를 추가하면 안 산 사용자가 시도조차 못 하게 막을 수 있지만, 현재 정책은 서버에 일관성을 두는 쪽.</li>
+            <li><strong>리뷰 신고 흐름은 본 단위에 없다.</strong> 부적절한 리뷰 신고는 11 리뷰·신고 도메인으로 위임된다 —
+              두 도메인 사이의 컨텍스트가 사용자 화면에서 끊기지 않게 출구를 분명히 둬야 한다.</li>
+            <li><strong>이벤트 도메인의 정책 변경이 본 단위에 그대로 영향을 준다.</strong> 이벤트 종류·공개 범위·장소 유형 같은 분류 체계가 바뀌면
+              본 화면의 입력 필드도 함께 정렬해야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-12.html"><div class="eyebrow">앞 단위</div><h3>F08-12 내 컬렉션</h3><p>이벤트 만들기의 출발점.</p></a>
+          <a class="card" href="F08-10.html"><div class="eyebrow">리뷰 자리</div><h3>F08-10 마켓 아이템 상세</h3><p>리뷰 작성·수정·삭제가 일어나는 화면.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">위임</div><h3>03 이벤트</h3><p>만들어진 이벤트의 다음 단계(공개·모집·정산)가 일어나는 도메인.</p></a>
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련</div><h3>11 리뷰·신고</h3><p>부적절한 리뷰 신고 경로.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음)
+  - business_logic/units/08_plan_market/F08-13_plan-event-and-review/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

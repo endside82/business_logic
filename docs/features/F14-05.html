@@ -1,34 +1,247 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F14-05 이벤트 길찾기 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>F14-05 길찾기</div>
-<h1>F14-05. 이벤트 길찾기 (경로 + 참석자 거리)</h1>
-<p class="lead">현재 위치 또는 등록 주소에서 이벤트 장소까지 경로·이동 시간·교통수단 안내. 외부 지도 앱 연동.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>현재 위치 기반</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>등록 주소 기반</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>참석자 거리 표시</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>외부 지도 앱 열기</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>현재 위치 → 모임 장소</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>등록 주소 선택</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>외부 지도 앱(카카오/네이버 지도)</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>권한 거부</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/directions?fromLat=&fromLng=</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/14-location.html"><div class="eyebrow">상위</div><h3>14 위치·길찾기</h3></a>
-<a class="card" href="F14-06.html"><div class="eyebrow">관련</div><h3>F14-06 역지오코딩</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/14_location_directions/F14-05_event-directions/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F14-05 이벤트 길찾기 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
+          F14-05 이벤트 길찾기
+        </div>
+        <h1>F14-05. 이벤트 길찾기</h1>
+        <p class="lede">
+          모임 장소까지의 거리·예상 소요 시간·간단 경로 안내를 앱 안에서 미리 보여주고,
+          실제 안내가 필요하면 사용자가 평소 쓰는 외부 지도 앱(카카오맵/네이버지도/구글맵/애플맵)으로 한 번에 인계한다.
+          본 단위는 "이 모임이 갈 만한 거리인가, 어떻게 가야 하나"라는 결정을 모임을 신청한 직후 한 화면에서 끝내게 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">출발지 선택지</div><div class="value">현재 위치 + 등록 주소 최대 3개</div><div class="hint">현재 위치는 디폴트 자동 선택</div></div>
+          <div class="metric"><div class="label">외부 지도 앱</div><div class="value">4종</div><div class="hint">카카오·네이버·구글·애플</div></div>
+          <div class="metric"><div class="label">제공 정보</div><div class="value">거리·시간·경로 3단계</div><div class="hint">대략 안내 + 외부 앱이 본 안내 담당</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 본 앱 안에서는 결정을 빠르게, 본 안내는 잘하는 앱으로</span>
+          <p>길찾기를 본 서비스가 자체적으로 끝까지 안내하려면 카카오·네이버 수준의 라우팅 데이터·실시간 교통 정보가 필요하다.
+            그래서 본 단위는 "이 모임을 갈 것인가"의 결정을 도울 정보(거리·예상 시간·대략 경로)만 앱 안에서 빠르게 보여주고,
+            실제 출발 안내는 사용자가 평소 쓰는 외부 지도 앱으로 인계한다.
+            사용자에게는 "본 앱 안에서 진입과 결정, 외부 앱에서 안내"의 단순한 분담이 된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>출발지 선택과 그 의미</h2>
+        <p class="subtitle">사용자가 어디에서 출발하느냐에 따라 거리·시간 안내가 달라진다. 화면은 세 가지 선택지를 칩으로 나란히 둔다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">디폴트</div>
+            <h3>현재 위치</h3>
+            <p>화면에 들어오면 운영체제 위치 권한을 한 번 요청하고, 허용을 받으면 자동으로 현재 위치를 출발지로 잡는다.
+              사용자가 별도 동작 없이도 "지금 여기서 모임까지 얼마나 걸리나"가 즉시 보인다.
+              권한 거부나 좌표 획득 실패 시에는 다른 출발지를 사용자가 직접 선택해야 한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">저장 주소</div>
+            <h3>집 / 회사 등 등록된 주소</h3>
+            <p>사용자가 미리 등록한 주소(집, 회사 등)가 칩으로 노출된다. 최대 3개까지 보이고, "집"·"회사"는 한국어 라벨로 자동 매핑된다.
+              "지금 회사에 있는데 퇴근하고 가면 얼마나 걸리지?" 같은 가상의 출발지 계산이 가능하다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">자동 fallback</div>
+            <h3>아무 선택 없이 호출했을 때</h3>
+            <p>사용자가 출발지를 명시하지 않으면 기본 주소(보통 집)가 자동으로 출발지로 잡힌다.
+              기본 주소도 없으면 "주소를 찾을 수 없습니다" 에러 상태가 노출되어 사용자가 주소를 등록하거나 위치 권한을 허용하도록 안내된다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>길찾기 화면이 보여주는 정보 단계</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TB
+    A["사용자가 출발지 칩 선택"] --> B["거리·예상 시간 계산<br/>(직선 거리 기반 빠른 근사)"]
+    B --> C["도착지 카드: 모임 제목 + 주소"]
+    C --> D["거리 카드: 'N km / 약 N분'"]
+    D --> E["경로 3단계: 출발 → 이동 → 도착"]
+    E --> F["외부 지도 앱 4종 버튼"]
+    F --> G["사용자가 평소 쓰는 앱 선택"]
+    G --> H["외부 앱 실행 — 본 앱은 여기서 빠진다"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>외부 지도 앱 인계</h2>
+        <p class="subtitle">화면 하단에는 카카오맵·네이버지도·구글맵·애플맵 네 개 버튼이 있다. 사용자가 평소 쓰는 앱을 한 번 누르면 출발지·도착지가 자동으로 입력된 상태로 그 앱이 열린다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">설치되어 있을 때</div>
+            <h3>버튼 한 번에 외부 앱으로 인계</h3>
+            <p>버튼을 누르면 운영체제 단위의 앱 전환이 일어난다. 그 앱이 본 앱의 출발지·도착지를 인수받아 평소 익숙한 인터페이스로 안내를 시작한다.
+              본 앱은 이 시점에 사용자 화면에서 빠진다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">설치되어 있지 않을 때</div>
+            <h3>"앱을 열 수 없습니다"</h3>
+            <p>해당 외부 지도 앱이 설치되어 있지 않으면 토스트로 알리고, 사용자는 다른 지도 앱 버튼을 누르거나 웹 버전으로 열 수 있는 구글맵·애플맵 같은 대안을 선택할 수 있다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>모임 1시간 전 길찾기를 연다</h3>
+            <p>러닝 모임 1시간 전, 사용자가 이벤트 상세에서 "길찾기"를 누른다. 화면이 열리는 즉시 위치 권한을 한 번 묻고
+              현재 위치에서 모임 장소까지의 거리·예상 시간이 자동으로 표시된다 — "2.6km / 약 5분".
+              사용자가 평소 쓰는 카카오맵 버튼을 누르면 카카오맵 앱이 열리며 출발지·도착지가 이미 입력되어 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 이벤트 신청 → 가는 방법 확인 → 출발 안내까지의 흐름이 한 번의 버튼 누름으로 이어진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">저장 주소</div>
+            <h3>"퇴근하고 가면 얼마나 걸리지?"</h3>
+            <p>지금은 다른 곳에 있지만 모임에는 회사에서 곧장 출발할 사용자가 "회사" 칩을 누른다.
+              회사 주소가 출발지로 잡혀 새 거리·시간이 표시된다. 사용자는 미리 모임에 늦지 않을지 가늠할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가상의 출발지로 사전에 계획을 세울 수 있다는 가치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 거부</div>
+            <h3>위치 권한이 없고 등록 주소도 없다</h3>
+            <p>위치 권한을 거부했고 미리 저장한 주소도 없는 사용자가 화면에 들어오면 자동으로 위치를 잡을 수 없고
+              누를 수 있는 출발지 칩도 없는 상태가 된다.
+              "출발지를 선택하면 경로를 안내합니다" 안내만 남는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 권한 또는 주소 등록이 본 단위의 전제임을 사용자가 시각으로 인지하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">온라인 모임</div>
+            <h3>화상 모임에 길찾기를 시도</h3>
+            <p>줌으로 진행되는 온라인 모임에는 좌표가 없다. 사용자가 길찾기 화면을 열어도 "이 모임은 길찾기를 제공하지 않습니다" 류의 안내가 노출되어
+              온라인 모임에는 본 기능이 적용되지 않음을 보여준다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 모임 형태(오프라인/온라인/혼합)에 따른 도메인 경계를 사용자가 인지한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">외부 앱 미설치</div>
+            <h3>카카오맵이 없는 사용자</h3>
+            <p>카카오맵 버튼을 눌렀는데 앱이 설치되어 있지 않다. 토스트로 "카카오맵 앱을 열 수 없습니다" 안내가 뜨고
+              사용자는 구글맵이나 애플맵 같은 웹/시스템 기본 앱으로 대신 열어볼 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 앱 의존이 사용자를 막아 세우지 않게 4종 선택지를 함께 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트</div>
+            <h3>호스트가 일행이 어디쯤 오고 있는지 본다</h3>
+            <p>모임 호스트가 위치 화면(F14-01)에 들어가면 시트 안에 각 참석자의 모임 장소까지의 거리와 예상 시간이 한 줄씩 보인다.
+              이 데이터는 본 단위의 보조 호출로 제공된다 — 일반 참석자가 호출해도 응답이 비어 있어 닉네임/거리가 보이지 않고,
+              호스트만 사용 가능한 정보.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 일행을 안내할 때 필요한 정보를 호스트에게만 한정 공급. 일반 참석자가 다른 사람 도착 시점을 추적하지 못하게 한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 보는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:150px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>출발지 칩 그룹</strong></td>
+                <td>"현재 위치"가 첫 번째, 그 다음 "집"·"회사" 같은 등록 주소 최대 3개. 선택된 칩은 색이 들어간 테두리.</td>
+                <td>가장 자주 쓰는 "현재 위치"를 첫 자리에 둬 디폴트 동작이 되도록. 다른 출발지는 옆에 함께 둬 한 번의 비교가 가능.</td>
+              </tr>
+              <tr>
+                <td><strong>도착지 카드</strong></td>
+                <td>모임 제목 큰 글씨 + 모임 주소 작은 글씨.</td>
+                <td>"어디로 가는가"가 화면 위쪽에서 즉시 확인되어야 사용자가 출발지 선택의 의미를 이해한다.</td>
+              </tr>
+              <tr>
+                <td><strong>거리·시간 카드</strong></td>
+                <td>"2.6 km / 거리" + "약 5분 / 소요시간"의 두 칸. 색을 입힌 강조 카드.</td>
+                <td>사용자가 "갈 만한가"를 가장 빨리 결정하는 두 숫자. 한 시선 안에 들어와야 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>경로 3단계</strong></td>
+                <td>타임라인 아이콘으로 "출발지에서 출발" → "이동" → "도착지 도착" 세 줄.</td>
+                <td>본 앱이 책임지는 안내의 깊이는 여기까지. 실제 턴바이턴은 외부 앱이 한다는 신호를 시각으로 전달.</td>
+              </tr>
+              <tr>
+                <td><strong>외부 지도 앱 4개 버튼</strong></td>
+                <td>카카오맵·네이버지도·구글맵·애플맵 버튼이 한 줄로.</td>
+                <td>사용자가 평소 쓰는 앱이 어느 것이든 있도록 한국·해외 주요 4종을 모두 제공. 의존을 분산해 한 앱 장애가 사용자 흐름을 막지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>참석자 거리 리스트(호스트 전용, 위치 화면에 결합)</strong></td>
+                <td>호스트가 F14-01 위치 화면을 볼 때 일행 리스트에 거리·예상 시간이 한 줄씩 함께 표시.</td>
+                <td>호스트가 일행을 안내할 책임이 있는 자리에 필요한 정보. 일반 참석자에게는 같은 데이터가 노출되지 않는다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">길찾기 정책 결정점</span>
+          <ul>
+            <li><strong>거리·시간은 직선 거리 기반의 빠른 근사값이다.</strong>
+              실제 도로·교통 상황을 반영하지 않으므로 본 단위의 숫자는 "갈 만한가"의 사전 판단용. 실제 안내는 외부 지도 앱이 책임진다는 분담이 정책의 핵심.</li>
+            <li><strong>외부 지도·라우팅 서비스 호출은 본 단위에서 일어나지 않는다.</strong>
+              본 단위가 자체 데이터로 빠르게 계산하므로 외부 서비스 호출 비용·장애·속도 영향을 받지 않는다 — 화면이 빠르게 떠야 사용자가 결정을 빠르게 한다.</li>
+            <li><strong>외부 지도 앱 4종 중 사용자 평소 앱이 한 개라도 있어야 흐름이 자연스럽다.</strong>
+              한국 사용자는 보통 카카오맵·네이버지도, 해외 사용자는 구글맵·애플맵을 쓴다. 한 앱을 빼면 그 사용자층의 흐름이 끊긴다.</li>
+            <li><strong>온라인·하이브리드 모임에는 길찾기가 제공되지 않는다.</strong>
+              좌표가 없는 모임에 길찾기를 제공하면 "엉뚱한 곳으로 가게 된다"는 사고가 발생한다. 도메인 경계로 명확히 차단되어 있다.</li>
+            <li><strong>참석자 거리 리스트는 호스트·공동 호스트·클럽 관리자만 볼 수 있다.</strong>
+              일반 참석자가 호출하면 응답이 비어 있어 일행 닉네임/거리가 노출되지 않는다.
+              호스트가 일행을 추적·안내할 책임이 있는 자리에 한정 공급되는 정보.</li>
+            <li><strong>현재 위치 좌표 획득에 최대 10초까지 기다린다.</strong>
+              실내에서 GPS 신호가 약한 경우 사용자에게 빨리 "안 됨"이라고 알려주고 다른 출발지를 선택하게 안내한다. 무한 로딩은 정책상 허용하지 않는다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위 도메인</div><h3>14 위치·길찾기</h3></a>
+          <a class="card" href="F14-01.html"><div class="eyebrow">관련</div><h3>F14-01 참석자 위치 공유</h3><p>호스트가 보는 일행 거리 데이터를 본 단위가 제공.</p></a>
+          <a class="card" href="F14-06.html"><div class="eyebrow">옆 단위</div><h3>F14-06 역지오코딩</h3><p>좌표를 주소로 변환하는 보조 인프라.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">도착</div><h3>03 이벤트</h3><p>모임 정보·좌표가 본 단위의 입력.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/14_location_directions/F14-05_event-directions/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

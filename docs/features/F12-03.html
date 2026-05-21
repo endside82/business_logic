@@ -1,34 +1,219 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F12-03 카테고리 설정 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/12-notification.html">12 알림</a><span>›</span>F12-03 카테고리 설정</div>
-<h1>F12-03. 카테고리별 알림 설정</h1>
-<p class="lede">카테고리(이벤트·클럽·결제·리뷰·마케팅 등) 토글로 여러 알림 type을 한꺼번에 ON/OFF. 카테고리 OFF 시 매핑된 모든 type을 일괄 PATCH.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>카테고리별 마스터 토글</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>type별 세부 토글</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>일괄 PATCH</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>마케팅 OFF</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>세부 type만 OFF</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>일부 실패 처리</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/notifications/settings</code></td></tr>
-<tr><td><code>PATCH</code></td><td><code>/api/v1/notifications/settings/{type}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위</div><h3>12 알림</h3></a>
-<a class="card" href="F12-04.html"><div class="eyebrow">다음</div><h3>F12-04 방해금지</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/12_notification/F12-03_category-settings/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F12-03 카테고리별 알림 설정 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/12-notification.html">12 알림</a><span>›</span>
+          F12-03 카테고리별 알림 설정
+        </div>
+        <h1>F12-03. 카테고리별 알림 설정</h1>
+        <p class="lede">
+          사용자가 받고 싶은 알림 종류만 골라 받을 수 있게 5개 카테고리(이벤트·클럽·결제·데이팅·마케팅) 단위로 푸시 수신 여부를 토글한다.
+          서비스 내부에는 60종이 넘는 세부 알림 유형이 있지만, 사용자에게는 의미 단위 5개로만 묶어 보여 준다 — 한 카테고리를 끄면 그 안의 모든 세부 유형의 푸시가 일괄로 차단된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">노출 카테고리</div><div class="value">5개</div><div class="hint">이벤트·클럽·결제·데이팅·마케팅</div></div>
+          <div class="metric"><div class="label">기본 상태</div><div class="value">모두 ON</div><div class="hint">사용자가 명시적으로 꺼야 차단</div></div>
+          <div class="metric"><div class="label">반영 범위</div><div class="value">이후 발생 알림</div><div class="hint">이미 받은 인박스에는 영향 없음</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 통제권은 주되, 결정의 부담은 줄인다</span>
+          <p>알림은 받는 사용자에게 통제권이 있어야 한다 — 그러지 않으면 푸시 권한 자체를 끄게 된다.
+            그래서 사용자가 켤지 끌지 결정할 수 있는 자리가 필요하다.
+            동시에 "60종 알림을 하나씩 결정하세요"는 사용자에게는 결정이 아니라 노동이다.
+            그래서 본 화면은 의미 단위 5개로 묶어 보여 준다 — 사용자의 머릿속에 있는 "이벤트 관련"·"클럽 관련"·"결제 관련" 같은 분류와 일치하도록.
+            정밀 제어가 필요한 사용자는 거의 없다 — 있다면 운영팀에 문의가 들어올 신호.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>5개 카테고리</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">카테고리</th><th>사용자가 받는 알림</th><th style="width:24%">묶음 의도</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>이벤트 알림</strong></td>
+                <td>참석 확정, 일정 리마인더, 호스트 공지, 신청 결과, 위치 공유 만료, 리뷰 권유.</td>
+                <td>"내가 신청한 모임에서 일어나는 일" — 빠지면 사용자가 모임을 못 가는 위험.</td>
+              </tr>
+              <tr>
+                <td><strong>클럽 알림</strong></td>
+                <td>클럽 모임 공지, 새 일정, 일정 변경.</td>
+                <td>"내가 속한 클럽에서 일어나는 일" — 사용자가 클럽 단위로 관리하고 싶은 알림 묶음.</td>
+              </tr>
+              <tr>
+                <td><strong>결제 알림</strong></td>
+                <td>결제 완료·실패, 환불, 정산 결과, 모임 정산 리마인더, 포인트 만료.</td>
+                <td>"내 돈이 움직이는 일" — 끄면 사용자에게 직접 손해. 디폴트 ON 강력 권장.</td>
+              </tr>
+              <tr>
+                <td><strong>데이팅 알림</strong></td>
+                <td>매칭 결과, 새 채팅 메시지.</td>
+                <td>"감정적·실시간성이 가장 높은 알림" — 끄고 싶은 사용자가 분명히 있다.</td>
+              </tr>
+              <tr>
+                <td><strong>마케팅 알림</strong></td>
+                <td>이벤트 추천, 프로모션, 리뷰 도착, 신고 처리 결과 등 부가 알림.</td>
+                <td>"받지 않아도 사용자에게 손해가 없는 알림" — 가장 먼저 꺼지는 카테고리.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>토글 한 번이 만드는 변화</h2>
+        <p class="subtitle">사용자에게는 토글 한 번이지만, 내부적으로는 그 카테고리에 묶인 세부 유형 전체를 함께 바꾼다. 이 변화는 이후 발생하는 알림에만 적용되고, 이미 받은 인박스 알림은 그대로 남는다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 카테고리 토글 OFF"] --> B["카테고리에 묶인 세부 유형 N개"]
+    B --> C["각각의 푸시 수신 설정을 OFF로 변경"]
+    C --> D{"이후 새 알림 발생 시"}
+    D -->|"앱 내 인박스"| E["정상 적재(앱 안에서는 그대로 보임)"]
+    D -->|"푸시"| F["발송 보류"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>마케팅 알림이 피곤해 끈다</h3>
+            <p>프로모션과 추천 알림이 너무 자주 와서 정리하고 싶은 사용자가 알림 화면 → 설정 진입.
+              "마케팅 알림" 토글을 OFF로 내린다. 내부적으로 6개 세부 유형의 푸시가 함께 차단된다.
+              결제·이벤트 같은 중요 카테고리는 그대로 유지된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 푸시 채널 전체를 끄는 대신 한 카테고리만 끄게 한다.
+              사용자가 가장 자주 하는 절충안 — 중요 알림은 받고, 광고성은 차단.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">의미 단위 변경</div>
+            <h3>데이팅을 시작하면서 데이팅 알림을 다시 켠다</h3>
+            <p>데이팅 도메인에 신규 진입한 사용자가 매칭과 채팅 메시지를 놓치지 않으려 한다.
+              "데이팅 알림" 토글을 ON으로 — 내부적으로 단 하나의 세부 유형(채팅 메시지)이 활성화된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 새 도메인을 시작할 때 알림 설정도 함께 정리하는 자연스러운 동선.
+              데이팅 도메인의 핵심 신호인 매칭/채팅이 자동으로 살아난다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">부분 비일관</div>
+            <h3>네트워크가 잠시 끊겨 일부만 반영된다</h3>
+            <p>이벤트 알림을 OFF로 토글하는데 묶인 세부 유형 10개 중 7개만 변경에 성공하고 3개가 실패한다.
+              화면에서는 잠깐 토글이 OFF로 보이다가 "설정 변경에 실패했습니다" 토스트가 뜨고 토글이 다시 ON으로 돌아간다.
+              사용자가 다시 시도하면 그때부터는 7개 → 모두 일관된 OFF 상태로 정착한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 부분 실패를 사용자에게 그대로 노출하지 않고, "전체 일관"을 만족하기 전까지 안전한 상태(이전 상태)로 보여 준다.
+              "왜 일부만 꺼졌지" 같은 혼란을 미연에 방지.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">과거 알림과의 분리</div>
+            <h3>OFF로 바꿔도 이미 받은 알림은 사라지지 않는다</h3>
+            <p>마케팅 알림을 끈 뒤 알림 인박스로 돌아온 사용자는, 이미 받은 프로모션 알림이 그대로 남아 있는 것을 본다.
+              새 프로모션 알림부터 푸시는 막히고 인박스에도 적재되지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 설정 변경은 "앞으로 받을 알림"에 대한 결정이지 "받은 알림 삭제"가 아니다.
+              사용자가 직접 인박스를 정리하는 행위와 분리된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">분기</div>
+            <h3>방해금지 시간 설정으로 빠진다</h3>
+            <p>카테고리 설정 화면 하단의 "방해금지 시간" 카드를 탭하면 별도 화면으로 이동한다.
+              "특정 카테고리는 받되 야간만 차단" 같은 시간 기반 정책은 거기서 결정한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>카테고리 5줄</strong></td>
+                <td>카테고리명 + 한 줄 부연 설명 + 우측 토글 스위치.</td>
+                <td>"내가 무엇을 끄려는지"를 토글 옆에서 즉시 확인하게 한다. 라벨만 있으면 사용자가 결정을 망설인다.</td>
+              </tr>
+              <tr>
+                <td><strong>토글 상태</strong></td>
+                <td>내부 세부 유형이 모두 ON일 때만 토글이 ON. 하나라도 OFF면 토글이 OFF로 표시된다.</td>
+                <td>"부분 ON" 상태를 사용자에게 노출하지 않는다 — 카테고리 단위 추상화의 일관성을 지킨다.</td>
+              </tr>
+              <tr>
+                <td><strong>방해금지 진입 카드</strong></td>
+                <td>화면 하단의 "방해금지 시간" 카드 — 아이콘, 제목, 한 줄 설명, 우측 화살표.</td>
+                <td>카테고리 차단과 다른 차원(시간대 차단)으로 가는 진입을 따로 둔다. 두 개념이 한 화면에 섞이지 않게.</td>
+              </tr>
+              <tr>
+                <td><strong>실패 토스트</strong></td>
+                <td>일부 또는 전체 반영 실패 시 "설정 변경에 실패했습니다" 한 줄.</td>
+                <td>사용자에게 "왜 토글이 원복됐는지"를 명확히 알려 준다 — 무음 실패는 가장 큰 불신의 원인.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">카테고리 설정의 정책 결정점</span>
+          <ul>
+            <li><strong>5개 카테고리는 의도된 추상화다.</strong>
+              내부 세부 유형은 60종이 넘지만, 사용자에게 그 단위로 노출하지 않는다.
+              어떤 알림이 어떤 카테고리에 들어가는지의 매핑이 사용자 경험을 결정한다 — 신규 알림 유형 추가 시 매핑 결정을 반드시 명시.</li>
+            <li><strong>카테고리 OFF는 푸시만 차단하고 인박스 적재는 그대로 둔다 — 마케팅 카테고리만 예외.</strong>
+              결제·이벤트·클럽·데이팅은 OFF여도 앱 안에서는 확인 가능하다. 마케팅은 푸시는 물론 인박스 적재 자체도 차단된다.
+              사용자에게 "받지 않겠다"의 의미가 카테고리마다 다른 강도로 작용한다는 점.</li>
+            <li><strong>설정 변경은 이후 발생 알림에만 적용된다.</strong>
+              과거 알림 인박스 청소와 미래 알림 수신 정책이 분리되어 있다는 사실을 사용자에게 자연스럽게 인지시키는 것이 운영 측 안내 포인트.</li>
+            <li><strong>마케팅 카테고리 OFF 비율이 빠르게 올라가면 알림 카피·빈도 정책 신호다.</strong>
+              본 화면은 사용자가 "끄기로 한 선택"의 집계 데이터를 만들어 준다 — 어떤 카테고리가 가장 먼저 꺼지는가의 분석은 다음 알림 전략의 직접 입력값.</li>
+            <li><strong>이메일 토글과 인박스 토글은 현재 본 화면에서 제공하지 않는다.</strong>
+              지금은 푸시 토글만이 사용자에게 의미 있는 통제권 — 다른 채널(이메일·인박스)을 사용자에게 노출할지의 결정은 데이터에서 사용자 불만이 누적되면 재검토.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위 도메인</div><h3>12 알림</h3></a>
+          <a class="card" href="F12-04.html"><div class="eyebrow">분기</div><h3>F12-04 방해금지 시간</h3><p>본 화면 하단 카드에서 이어지는 시간대 단위 차단 정책.</p></a>
+          <a class="card" href="F12-01.html"><div class="eyebrow">진입처</div><h3>F12-01 알림 목록 · 읽음 관리</h3><p>본 화면으로 들어오는 설정 아이콘이 있는 화면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/12_notification/F12-03_category-settings/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

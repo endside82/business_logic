@@ -15,69 +15,86 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-10 이벤트-플랜 연결
+          F03-10 플랜 연결
         </div>
-        <h1>F03-10. 이벤트 ↔ 플랜 연결</h1>
+        <h1>F03-10. 이벤트-플랜 연결 (호스트)</h1>
         <p class="lede">
-          호스트가 이벤트에 자신의 플랜(F08)을 묶어 “이 모임은 이 플랜대로 진행됩니다”를 보여준다.
-          순서 변경·활성/비활성 토글·삭제까지 본 단위가 책임지고, 일반 참가자에게는 활성 항목만 가로 스크롤로 노출된다.
+          호스트가 자기 이벤트에 진행 자료(플랜)를 붙이는 면. 강사 호스트가 매주 같은 진행 시나리오를 쓰거나,
+          모임에서 사용할 자료를 미리 정해 둘 때 쓰는 도구. 한 이벤트에 여러 플랜을 붙이고 순서를 정할 수 있고,
+          특정 회차에만 비활성화하는 것도 가능.
         </p>
       </header>
 
       <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">하위 동작</div><div class="value">4</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
+        <div class="callout">
+          <span class="label">설계 의도 — 플랜과 모임을 별도로 두되, 본 단위에서 연결</span>
+          <p>플랜은 플랜 마켓 도메인의 자료이고, 이벤트는 모임이다. 둘은 별도로 존재해야 호스트가 한 플랜을
+            여러 모임에서 재사용할 수 있다. 본 단위는 그 연결을 호스트가 한 화면에서 관리할 수 있도록 책임진다.
+            연결된 플랜은 이벤트 상세(F03-02)의 본문에 활성 항목만 미리보기로 노출되어, 참가자가 "이 모임에서
+            무엇을 할지" 신청 전에 확인할 수 있다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>플랜 연결</h3><p>본인 플랜 검색 후 추가.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>순서 변경(드래그)</h3><p>sortOrder swap.</p></div>
-          <div class="card"><div class="eyebrow">동작 3</div><h3>활성/비활성 토글</h3><p>플랜은 유지하되 이번 회차 노출 제외.</p></div>
-          <div class="card"><div class="eyebrow">동작 4</div><h3>매핑 삭제</h3><p>해제. 플랜 자체는 삭제 안 함.</p></div>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>호스트가 본인 플랜을 첫 연결</h3>
+            <p>플랜 연결 화면 → "플랜 연결하기" → 플랜 검색 시트 → 본인 플랜 선택. 연결 후 카드 한 장이 화면에 추가된다.
+              이벤트 상세에 가면 본문에 그 플랜 미리보기가 보인다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">순서·활성</div>
+            <h3>플랜 여러 개의 순서를 바꾸고, 한 회차만 비활성</h3>
+            <p>두 번째 플랜을 드래그해서 첫 번째로 옮긴다. 이번 회차에는 두 번째 플랜을 진행하지 않을 예정이라
+              활성 토글을 OFF로 둔다. 이벤트 상세에서는 활성 항목만 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 회차마다 진행 순서를 바꾸거나 일부 자료를 빼고 가는
+              유연성. 매주 같은 시나리오를 쓰면서도 한 회차만 다르게 운영할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">삭제</div>
+            <h3>연결 해제</h3>
+            <p>카드의 휴지통 아이콘 → 연결 해제. 플랜 자체는 삭제되지 않고, 이 이벤트와의 연결만 끊어진다.
+              플랜은 플랜 마켓에 그대로 남아 다른 이벤트에서 재사용 가능.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">참가자 시점</div>
+            <h3>일반 참가자가 이벤트 상세에서 플랜 미리보기</h3>
+            <p>본 화면에 들어오지 않는다. 이벤트 상세(F03-02) 본문에서 활성 플랜의 미리보기 카드만 본다.
+              본 단위는 호스트 관리용이고, 참가자 노출은 이벤트 상세가 담당.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한</div>
+            <h3>일반 참가자가 본 화면 진입</h3>
+            <p>호스트와 공동호스트가 아닌 사용자가 URL로 진입해도 이벤트 상세로 리다이렉트된다.
+              우회 호출은 서버에서 차단.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">삭제된 플랜</div>
+            <h3>이전에 연결한 플랜이 플랜 마켓에서 삭제됨</h3>
+            <p>플랜 자체는 사라졌지만 연결 자체는 남는다. 화면에는 "삭제된 플랜"으로 표시되고, 호스트가 연결을 풀 수 있다.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 8개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1</div><h3>첫 플랜 연결</h3><ol><li>플랜 검색 시트 → 본인 플랜 선택</li><li>sortOrder=0으로 INSERT</li></ol></article>
-          <article class="card"><div class="eyebrow">S2</div><h3>두 번째 플랜 + 순서 변경</h3><ol><li>추가 → 드래그로 순서 변경 → sortOrder swap</li></ol></article>
-          <article class="card"><div class="eyebrow">S3</div><h3>비활성 토글</h3><ol><li>활성 스위치 OFF → 카드 흐릿 + 참가자 미노출 후보</li></ol></article>
-          <article class="card"><div class="eyebrow">S4</div><h3>매핑 삭제</h3><ol><li>휴지통 → 삭제 → 카드 사라짐(남은 sortOrder는 hole 가능)</li></ol></article>
-          <article class="card"><div class="eyebrow">S5</div><h3>중복 매핑 시도</h3><ol><li>같은 플랜 재추가 → 409 EVENT_PLAN_MAP_ALREADY_EXISTS</li></ol></article>
-          <article class="card"><div class="eyebrow">S6</div><h3>플랜 삭제된 후 조회</h3><ol><li>planTitle이 null로 응답 → UI는 “삭제된 플랜”으로 표기 권장</li></ol></article>
-          <article class="card"><div class="eyebrow">S7</div><h3>권한 없음 직접 호출</h3><ol><li>403 EVENT_NOT_OWNER, 클라이언트는 라우터로 사전 차단</li></ol></article>
-          <article class="card"><div class="eyebrow">S8</div><h3>일반 참가자 미리보기</h3><ol><li>이벤트 상세 응답에 매핑 목록 포함</li><li>활성만 가로 스크롤로 노출</li></ol></article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-            <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/plans</code></td><td>매핑 목록</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/plans</code></td><td>매핑 추가</td></tr>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/plans/{mapId}</code></td><td>순서 변경</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/plans/{mapId}/toggle-active</code></td><td>활성 토글</td></tr>
-              <tr><td><code>DELETE</code></td><td><code>/api/v1/plans/{mapId}</code></td><td>매핑 삭제</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">플랜 연결의 결정점</span>
           <ul>
-            <li><strong>플랜 삭제된 후 null 처리 누락</strong> — 카드 깨짐.</li>
-            <li><strong>참가자 화면에 비활성 항목 노출</strong> — UI 필터 누락.</li>
-            <li><strong>sortOrder hole 후 정렬 깨짐</strong> — 삭제 후 reorder 권장.</li>
+            <li><strong>플랜은 별도 도메인의 자산.</strong> 본 단위는 연결만 책임지고, 플랜 자체의 생성·수정은
+              플랜 마켓에서 일어난다.</li>
+            <li><strong>비활성 플랜은 호스트만 본다.</strong> 참가자에게는 활성 항목만 노출. 호스트가 "한 회차만
+              빼고 진행"하는 운영 패턴의 도구.</li>
+            <li><strong>플랜 마켓에서 플랜이 삭제돼도 연결은 남는다.</strong> "삭제된 플랜"으로 표시되어 호스트가
+              인지하게 한다. 자동 해제는 일부러 안 한다 — 호스트가 의도적으로 정리하게 둔다.</li>
           </ul>
         </div>
       </section>
@@ -85,12 +102,16 @@
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">연동</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">노출 면</div><h3>F03-02 이벤트 상세</h3><p>연결된 플랜이 참가자에게 노출되는 자리.</p></a>
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">관련 도메인</div><h3>08 플랜 마켓</h3><p>플랜 자체의 생성·수정.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-10_event-plan-link/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-10_event-plan-link/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

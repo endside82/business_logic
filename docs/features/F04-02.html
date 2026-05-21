@@ -1,59 +1,220 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-02 클럽 상세·가입 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-02 상세·가입</div>
-<h1>F04-02. 클럽 상세 · 가입 · 탈퇴</h1>
-<p class="lede">클럽 한 곳의 정보·CTA를 한 화면에 모은다. 가입 유형(자유/승인)과 클럽 유형(무료/유료)의 조합으로 가입 흐름이 분기하고, OWNER에게는 운영 진입점이, 비멤버에게는 가입 CTA가 노출된다. 탈퇴는 시점에 따라 가입비 환불(7일 내) 분기까지 책임진다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">가입 유형</div><div class="value">2</div><div class="hint">자유·승인</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
-<div class="metric"><div class="label">상태</div><div class="value">ACTIVE/SUSPENDED</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>상세 조회 + 역할별 CTA</h3><p>비로그인/비멤버/멤버/관리자/OWNER로 분기.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>자유 가입</h3><p>즉시 MEMBER, BUSINESS는 가입비 결제.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>승인 가입 신청</h3><p>메시지 입력 → PENDING → 관리자 알림.</p></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>탈퇴</h3><p>OWNER 차단, 7일 내 가입비 환불 분기.</p></div>
-</div></section>
-<section><h2>가입 분기</h2><div class="diagram"><div class="mermaid">
-flowchart TD
-A["가입하기"] --> B{"가입 유형"}
-B -->|"자유 + 무료"| C["즉시 MEMBER"]
-B -->|"자유 + 유료"| D["MEMBER + 가입비 결제"]
-B -->|"승인"| E["PENDING + 관리자 알림"]
-B -->|"BAN 상태"| F["CLUB_BANNED 차단"]
-</div></div></section>
-<section><h2>사용자 시나리오 7개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>자유가입 즉시 가입</h3><ol><li>“가입하기” → 즉시 MEMBER</li><li>CTA가 “클럽 홈”으로 교체</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>승인가입 신청</h3><ol><li>메시지 입력 → PENDING</li><li>관리자에게 CLUB_JOIN_REQUEST 푸시</li></ol></article>
-<article class="card"><div class="eyebrow">S3 · 중복</div><h3>이미 가입/신청/차단</h3><ol><li>각각 CLUB_ALREADY_MEMBER/APPLIED/BANNED 토스트</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>탈퇴(30일 경과)</h3><ol><li>환불 미해당, DELETE + memberCount--</li><li>OWNER에게 CLUB_MEMBER_LEFT 알림</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>OWNER 탈퇴 시도</h3><ol><li>UI에서 항목 제거</li><li>우회 시 CLUB_CANNOT_LEAVE_AS_OWNER</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>BUSINESS 가입(가입비 결제)</h3><ol><li>가입 + 지갑 차감 + ClubFund 적립 + 분개</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>SUSPENDED 클럽</h3><ol><li>전체 컨텐츠 차단 + 안내</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}</code></td><td>상세 + viewer 컨텍스트</td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/join</code></td><td>가입(자유/승인 분기)</td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/clubs/{id}/leave</code></td><td>탈퇴</td></tr>
-</tbody></table></div></section>
-<section><h2>자주 빠뜨리는 케이스</h2><div class="callout warn"><span class="label">레드 플래그</span><ul>
-<li><strong>OWNER 탈퇴 차단 누락</strong> — 소유권 이전 없이 사라지면 클럽 좀비화.</li>
-<li><strong>가입비 결제와 멤버 등록 트랜잭션 분리</strong> — 한쪽만 성공 시 불일치.</li>
-<li><strong>승인 신청 시 관리자 알림 누락</strong> — 처리 지연.</li>
-</ul></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-05.html"><div class="eyebrow">관련</div><h3>F04-05 대기열·초대</h3></a>
-<a class="card" href="F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-02_club-detail-join/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-02 클럽 상세·가입 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-02 클럽 상세·가입
+        </div>
+        <h1>F04-02. 클럽 상세·가입·탈퇴</h1>
+        <p class="lede">
+          클럽 도메인에서 사용자 전환이 일어나는 결정점. 사용자가 클럽 카드를 누르고 도착하는 면이며,
+          여기서 본 정보로 "가입하겠다 / 안 하겠다"가 결정된다.
+          한 화면 안에 가입 신청·즉시 가입·이미 멤버·승인 대기·차단됨·소유자 진입 같은 여섯 가지 다른 사용자 컨텍스트가 같은 자리(하단 버튼)에서 다른 모습으로 나타난다.
+          유료 클럽은 가입과 동시에 가입비가 지갑에서 빠지고, 클럽 폐쇄·차단 시 환불의 기준점이 되는 단위이기도 하다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하단 버튼의 분기</div><div class="value">6가지</div><div class="hint">사용자 상태별로 다른 라벨</div></div>
+          <div class="metric"><div class="label">가입 방식</div><div class="value">2가지</div><div class="hint">자유 가입 · 승인 가입</div></div>
+          <div class="metric"><div class="label">자발 탈퇴 환불</div><div class="value">7일 이내</div><div class="hint">유료 클럽의 가입비 환불 기준</div></div>
+          <div class="metric"><div class="label">소유자 탈퇴</div><div class="value">불가</div><div class="hint">소유권 이전이 선행되어야 함</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 한 화면이 사용자의 여섯 가지 컨텍스트에 같은 자리에서 다르게 답한다</span>
+          <p>클럽 상세 하단 버튼은 사용자 한 명에게는 항상 한 가지 행동만 노출되지만,
+            전체 사용자 집단을 보면 "가입하기 / 가입 신청 / 승인 대기 중 / 클럽 홈 / 가입할 수 없습니다 / (소유자에게는 미노출)" 여섯 분기가 존재한다.
+            이 여섯 가지가 모두 같은 자리에서 결정되어야 하는 이유는,
+            사용자가 자신이 "이 클럽과 어떤 관계인지"를 한 화면에서 한 번에 인지하고 다음 행동으로 이어 가야 하기 때문이다.
+            여러 화면에 분산되어 있으면 같은 클럽을 두 번 거쳐서 봐야 자기 상태를 알 수 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>가입의 두 갈래 — 자유 가입과 승인 가입</h2>
+        <p class="subtitle">클럽 운영자가 클럽을 만들 때 정해 둔 가입 방식에 따라, 같은 "가입하기" 버튼을 누르더라도 도착하는 상태가 다르다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 가입하기 탭"] --> B{"이 클럽의 가입 방식?"}
+    B -->|"자유 가입"| C["즉시 멤버로 등록"]
+    B -->|"승인 가입"| D["가입 메시지 입력"]
+    D --> E["대기열에 신청 등록"]
+    C --> F{"유료 클럽?"}
+    F -->|"예"| G["가입비를 지갑에서 차감"]
+    F -->|"아니오"| H["가입 완료"]
+    G --> H
+    E --> I["관리자 승인을 기다림"]
+    I --> J["승인되면 멤버, 거절되면 대기 해제"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">자유 가입 (즉시 멤버)</div>
+            <h3>"가입하기"를 누르자마자 클럽 홈으로</h3>
+            <p>자유 가입 클럽 상세에서 "가입하기"를 누른다. 그 자리에서 멤버로 등록되고
+              하단 버튼이 "클럽 홈"으로 바뀐다. 사용자는 다음 동작으로 곧장 커뮤니티에 들어갈 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입 결정과 첫 활동 진입 사이의 시간이 짧을수록 클럽 잔류율이 높아진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">승인 가입 (신청)</div>
+            <h3>"가입 신청"을 누르고 메시지를 적는다</h3>
+            <p>승인 가입 클럽이면 "가입 신청"을 누른 뒤 가입 메시지 입력창이 떠오른다.
+              "러닝에 관심이 많아요" 한 줄을 적고 신청을 보내면, 관리자에게 알림이 가고 사용자에게는 "승인 대기 중" 비활성 버튼이 남는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입 메시지는 관리자의 승인 결정 데이터인 동시에, 신청자에게 "내가 진심으로 신청했다"는 자기 확인의 면.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">유료 클럽 가입</div>
+            <h3>가입과 동시에 가입비가 지갑에서 빠진다</h3>
+            <p>유료 클럽(가입비 5,000원)에서 "가입하기"를 누르면 즉시 멤버 등록과 함께 지갑에서 5,000원이 차감되고
+              클럽 기금으로 입금된다. 가입 후 7일 이내에 자발 탈퇴하면 가입비가 환불되며, 그 이후에는 환불되지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입과 결제를 한 동작으로 묶어 사용자가 결제 화면을 따로 거치지 않게 한다. 다만 7일 환불 기준은 화면에 분명히 안내되어야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">소유자 탈퇴 시도</div>
+            <h3>클럽 소유자가 자기 클럽을 떠나려 한다</h3>
+            <p>소유자에게는 더보기 메뉴에 "탈퇴" 자체가 보이지 않는다. 외부에서 강제로 탈퇴를 호출해도
+              "클럽 소유자는 탈퇴할 수 없습니다. 소유권을 이전해 주세요" 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 소유자가 사라진 클럽은 운영이 멈추는 사고. 소유권 이전(F04-03)을 거치게 강제하는 가드.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단된 사용자</div>
+            <h3>차단된 사용자가 그 클럽 상세에 들어온다</h3>
+            <p>이미 차단된 사용자가 그 클럽 카드를 누르면 상세 화면은 보이지만 하단 버튼은 "가입할 수 없습니다" 비활성 상태로 떠 있다.
+              가입 시도를 강제로 호출해도 서버가 차단 가드로 막는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 차단의 의미는 "다시 그 사람을 클럽에 들이지 않는다"는 약속. 이 가드가 한 번이라도 풀리면 차단 기능 자체의 신뢰가 무너진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">탈퇴</div>
+            <h3>가입 한 달 뒤 조용히 탈퇴한다</h3>
+            <p>멤버가 더보기 메뉴 → "탈퇴" → 확인 다이얼로그를 거쳐 클럽에서 나간다.
+              유료 클럽이라도 7일이 지났으면 가입비는 환불되지 않는다. 클럽 소유자에게는 멤버 한 명이 떠났다는 알림이 간다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">운영 중지된 클럽</div>
+            <h3>이미 운영이 중지된 클럽에 진입</h3>
+            <p>운영이 중지된 클럽 상세에 진입하면 본문이 전부 가려지고 "이 클럽은 운영이 중지되었습니다" 안내가 뜬다.
+              가입 시도 자체가 불가능하다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 신청</div>
+            <h3>승인 대기 중에 다시 가입을 시도</h3>
+            <p>이미 신청 중인 클럽 상세에 다시 들어오면 하단 버튼이 "승인 대기 중" 비활성으로 떠 있다.
+              누를 수 없으므로 같은 클럽에 두 건의 신청이 만들어지지 않는다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:30%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>커버 이미지 + 클럽명</strong></td>
+                <td>상단 240dp 커버 이미지, 그 아래 클럽명·카테고리·지역·"멤버 N명 · 이벤트 N개".</td>
+                <td>가입 결정의 1차 단서. 이미지와 한 줄 메타 정보가 사용자에게 "이 클럽이 어떤 분위기인가"를 즉시 전달한다.</td>
+              </tr>
+              <tr>
+                <td><strong>소개·규칙</strong></td>
+                <td>클럽 소개 본문 + 3줄 이상이면 "더보기"로 접힘.</td>
+                <td>둘러보는 사용자에게는 길게 보일 필요 없고, 진지하게 검토하는 사용자에게는 펼칠 수 있어야 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>예정 이벤트 미리보기</strong></td>
+                <td>최대 3개 카드 + "전체 이벤트 보기 →".</td>
+                <td>"이 클럽이 실제로 활동하고 있는가"는 가입 결정에서 가장 중요한 신호. 정적인 소개만으로는 활동성이 보이지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>멤버 미리보기</strong></td>
+                <td>아바타 5개 + "멤버 전체 보기 →".</td>
+                <td>"어떤 사람들이 모여 있는가"의 1차 단서. 가입하면 함께 어울릴 사람들이 누구인지 가벼운 인지.</td>
+              </tr>
+              <tr>
+                <td><strong>하단 고정 버튼</strong></td>
+                <td>사용자 상태에 따라 라벨이 달라지는 하나의 큰 버튼.</td>
+                <td>의사결정 자리를 화면 한 곳에 고정해서, 본문을 어디까지 읽었든 같은 자리에서 다음 행동으로 이어 가게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>설정 톱니 (소유자·관리자)</strong></td>
+                <td>우상단 톱니 아이콘. 소유자·관리자에게만 노출.</td>
+                <td>운영자는 같은 화면에서 운영 진입로를 보고 있어야 한다. 별도 화면을 만들면 운영자 시점이 분산된다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">본 단위가 흔들리면 클럽 도메인 전환 자체가 무너진다</span>
+          <ul>
+            <li><strong>가입과 가입비 결제는 분리될 수 없는 한 동작이어야 한다.</strong>
+              "가입은 됐는데 결제가 실패했다"가 한 번이라도 발생하면 사용자는 자기가 멤버인지 아닌지 모른 채로 떠난다.
+              두 동작 중 하나가 실패하면 양쪽 모두 롤백되어야 한다.</li>
+            <li><strong>승인 가입 클럽의 가입 메시지 입력은 클라이언트가 강제한다.</strong>
+              가입 메시지 없이 신청이 들어오면 관리자에게는 결정 단서가 없는 신청이 쌓인다.
+              메시지 입력 다이얼로그를 거치지 않고 신청 호출이 가능해지면 승인 화면의 효용이 떨어진다.</li>
+            <li><strong>차단된 사용자의 가입 가드는 카드·상세·서버 세 곳에서 모두 작동한다.</strong>
+              한 곳이라도 빠지면 차단의 의미 자체가 무너진다.
+              상세 화면의 "가입할 수 없습니다" 비활성 버튼은 사용자에게 보내는 신호이고, 서버 가드는 마지막 안전망이다.</li>
+            <li><strong>소유자 탈퇴 차단은 화면과 서버 양쪽에서 작동해야 한다.</strong>
+              화면이 더보기에서 "탈퇴" 항목을 숨기고, 서버는 호출이 들어와도 거절한다.
+              둘 중 하나라도 풀리면 소유자 없는 클럽이 만들어진다.</li>
+            <li><strong>가입 후 7일 환불 기준은 화면에 분명히 표시되어야 한다.</strong>
+              유료 클럽 가입 시 환불 기간을 안내하지 않으면 8일째 탈퇴자가 "환불 안 됨" 사실을 사후에 알게 되어 분쟁이 발생한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-01.html"><div class="eyebrow">앞 단위</div><h3>F04-01 클럽 발견·탐색</h3><p>이 화면으로 들어오는 카드가 있는 곳.</p></a>
+          <a class="card" href="F04-03.html"><div class="eyebrow">관련</div><h3>F04-03 클럽 생성·소유권 이전</h3><p>소유자가 클럽을 떠나려면 거쳐야 하는 단위.</p></a>
+          <a class="card" href="F04-05.html"><div class="eyebrow">관련</div><h3>F04-05 가입 대기열·초대</h3><p>승인 가입 신청이 처리되는 곳.</p></a>
+          <a class="card" href="F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3><p>차단된 사용자의 가입이 막히는 정책의 출처.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-02_club-detail-join/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

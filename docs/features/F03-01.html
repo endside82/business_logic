@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F03-01 이벤트 발견·탐색 — community PRD</title>
+  <title>F03-01 이벤트 탐색 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,135 +15,148 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-01 이벤트 발견·탐색
+          F03-01 이벤트 탐색
         </div>
-        <h1>F03-01. 이벤트 발견 · 탐색</h1>
+        <h1>F03-01. 이벤트 탐색</h1>
         <p class="lede">
-          전체 이벤트 목록을 키워드·카테고리·정렬로 탐색한다. 비로그인 사용자도 같은 화면을 볼 수 있고
-          액션 시점에 로그인이 유도된다. 무한 스크롤·풀투리프레시·빈 결과·유사 이벤트 추천까지를 단일 단위가 책임진다.
+          앱에서 오프라인 모임을 찾는 첫 면. 키워드 검색, 카테고리 좁힘, 시간·거리 정렬, 무한 스크롤을
+          한 화면에 모아 사용자가 "내가 갈 만한 모임이 있는지"를 빠르게 확인하도록 한다.
+          로그인 없이도 둘러볼 수 있고, 신청·찜 같은 행동을 누른 순간에만 로그인을 묻는다.
+          가입 전 사용자가 서비스를 평가하는 핵심 면이다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">하위 동작</div><div class="value">5</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
-          <div class="metric"><div class="label">페이지 크기</div><div class="value">20</div></div>
-          <div class="metric"><div class="label">게스트</div><div class="value">허용</div></div>
+          <div class="metric"><div class="label">한 번에 받는 카드</div><div class="value">20장</div><div class="hint">스크롤하면 다음 묶음</div></div>
+          <div class="metric"><div class="label">정렬 옵션</div><div class="value">3개</div><div class="hint">최신순·인기순·가까운순</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">신청·찜 시점에만 로그인</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 가입을 결정하기 전에도 카탈로그를 둘러볼 수 있어야 한다</span>
+          <p>이벤트 목록은 사용자가 서비스의 가치를 판단하는 가장 큰 면이다.
+            "이 앱에 내가 갈 만한 모임이 있는지"를 가입 전에 확인하지 못하면 가입 의사 자체가 만들어지지
+            않는다. 그래서 본 단위는 비로그인에도 카드와 정렬·필터가 모두 동작한다. 로그인 유도는
+            신청·찜 같은 행동을 누르는 시점에만 들어간다 — 그 전까지는 자유로운 둘러보기다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>키워드 검색</h3><p>검색바 입력 시 0페이지부터 재조회.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>카테고리 필터</h3><p>칩 다중 선택. “전체”는 필터 해제.</p></div>
-          <div class="card"><div class="eyebrow">동작 3</div><h3>정렬</h3><p>최신순·가까운순. “가까운순”은 위치 권한 필요.</p></div>
-          <div class="card"><div class="eyebrow">동작 4</div><h3>무한 스크롤 + 풀투리프레시</h3><p>20건씩 누적. 위로 당기면 0페이지 재조회.</p></div>
-          <div class="card"><div class="eyebrow">동작 5</div><h3>유사 이벤트 진입</h3><p>상세 하단 “유사 이벤트 더보기” 진입점.</p></div>
-        </div>
-      </section>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>"보드게임"으로 주말 모임 찾기</h3>
+            <p>키워드 입력 후 결과를 카테고리 칩으로 좁히고, "가까운 순"으로 다시 정렬해
+              마음에 드는 카드의 하트를 누른 뒤 상세로 진입한다. 위치 권한이 있어야 가까운 순이 동작한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 신청 전에 사용자가 가장 길게 머무르는 면이라,
+              탐색 행동 데이터가 추천 품질 개선의 핵심 입력값이 된다.</p>
+          </article>
 
-      <section>
-        <h2>탐색 흐름</h2>
-        <div class="diagram"><div class="mermaid">
-flowchart TD
-    A["이벤트 탭 진입"] --> B["1페이지 호출 (최신순)"]
-    B --> C{"사용자 액션"}
-    C -->|"키워드 입력"| D["0페이지 재조회"]
-    C -->|"카테고리 칩"| D
-    C -->|"정렬 변경"| D
-    C -->|"스크롤 끝"| E["다음 페이지 누적"]
-    C -->|"위로 당김"| F["풀투리프레시 → 0페이지"]
-    C -->|"카드 탭"| G["F03-02 상세"]
-    C -->|"하트 탭"| H["F03-11 위시리스트 토글"]
-    D --> C
-    E --> C
-    F --> C
-        </div></div>
-      </section>
+          <article class="card">
+            <div class="eyebrow">가입 전</div>
+            <h3>비로그인 사용자가 둘러봄</h3>
+            <p>카드와 상세는 모두 보인다. 단, 카드의 본인 상태 배지(찜·신청)는 보이지 않고,
+              하단 "이벤트 생성" 진입점도 숨겨진다. 카드를 눌러 상세에 가서 "참석 신청"을 누르는
+              순간에 비로소 로그인 화면이 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "가입하고 둘러봐" 대신 "둘러보고 마음 들면 가입" 패턴.
+              가입 전환의 결정적 진입 경로.</p>
+          </article>
 
-      <section>
-        <h2>사용자 시나리오 7개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>키워드 검색 → 필터 → 정렬 → 상세 진입</h3>
-            <ol>
-              <li>이벤트 탭 진입 → 1페이지 20건</li>
-              <li>“보드게임” 검색 → 12건</li>
-              <li>SOCIAL 칩 → 7건</li>
-              <li>“가까운순” 정렬</li>
-              <li>하트 탭(낙관적 채워짐) + 카드 탭 → 상세 진입</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">무한 스크롤</div>
+            <h3>20장 보고 더 둘러봄</h3>
+            <p>리스트 끝에 다다르면 다음 20장이 자연스럽게 이어 붙는다. 끝까지 가면 추가 로딩 표시가
+              사라진다. 위로 당기면 첫 페이지부터 다시 받아 온다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S2 · 게스트</div><h3>비로그인 탐색</h3>
-            <ol>
-              <li>publicRoute로 진입 허용</li>
-              <li>카드의 viewer context(참석 상태·위시리스트)는 모두 null/false</li>
-              <li>FAB(이벤트 생성) 숨김</li>
-              <li>상세 진입은 가능, “참석 신청”은 로그인 유도</li>
-            </ol>
+
+          <article class="card">
+            <div class="eyebrow">결과 없음</div>
+            <h3>찾는 단어가 카탈로그에 없을 때</h3>
+            <p>결과가 0건이면 "조건에 맞는 이벤트가 없습니다" 안내. 카테고리 칩을 "전체"로 풀거나
+              검색어를 비우면 다시 일반 목록으로 복귀한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 결과 없음을 "오류"로 인지하지 않게 한다.
+              초기 카탈로그가 비어 보이는 인상은 가입 직후 이탈로 이어진다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S3 · 페이징</div><h3>무한 스크롤 + 풀투리프레시</h3>
-            <ol>
-              <li>스크롤 끝 200px 도달 → 다음 페이지</li>
-              <li>마지막 페이지에서 스피너 사라짐</li>
-              <li>위로 당김 → 0페이지부터 재조회</li>
-            </ol>
+
+          <article class="card">
+            <div class="eyebrow">네트워크 단절</div>
+            <h3>지하철에서 다음 페이지가 안 옴</h3>
+            <p>이미 받은 카드는 그대로 보이고 하단 로딩만 사라진다. 화면 전체가 오류로 깜빡이지
+              않는다. 첫 페이지부터 실패면 "오류가 발생했습니다 + 다시 시도" 버튼이 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 네트워크 실패가 둘러보기 흐름을 깨뜨리지
+              않게 한다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S4 · 빈 결과</div><h3>검색 0건</h3>
-            <ol><li>키워드 “도자기수업” 검색 → 0건</li><li>빈 상태 일러스트 + 안내</li><li>“전체” 칩으로 복구</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S5 · 유사 이벤트</div><h3>상세 → 더보기</h3>
-            <ol><li>상세 하단 “유사 이벤트” 가로 스크롤</li><li>“더보기” → 유사 이벤트 화면</li><li>카드 탭으로 다른 상세 이동</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S6 · 네트워크</div><h3>지하철에서 추가 페이지 실패</h3>
-            <ol><li>추가 페이지 호출 실패 → 하단 로더만 사라짐(기존 유지)</li><li>첫 페이지부터 실패면 전체 화면 에러 + “다시 시도”</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S7 · 유사 빈 결과</div><h3>유사 풀이 비어있는 경우</h3>
-            <ol><li>유사 이벤트 응답이 빈 배열</li><li>“이런 이벤트는 어떠세요?” 헤더 유지 + 빈 카피 “유사한 이벤트가 없습니다”</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">유사 이벤트</div>
+            <h3>상세에서 "이런 이벤트는 어떠세요?"</h3>
+            <p>이벤트 상세 하단의 유사 추천을 펼친다. 최대 5장이 보이고, 더 이상 비슷한 카드가
+              없으면 "유사한 이벤트가 없습니다" 안내만 뜬다 — 빈 상태에서도 헤더는 유지해
+              "추천이 사라진" 인상은 주지 않는다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events?page=&size=20&keyword=&sortType=&categories=</code></td><td>이벤트 목록</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/similar?limit=5</code></td><td>유사 이벤트</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/wishlist</code></td><td>하트(F03-11)</td></tr>
+              <tr>
+                <td><strong>검색바</strong></td>
+                <td>상단 고정. 입력 후 제출 시점에만 검색 — 타이핑 중 자동 호출 없음.</td>
+                <td>입력 중 매 글자마다 결과가 흔들리면 사용자가 자기 의도를 잃는다. "제출했을 때"로 검색을 묶어 의사결정 단위와 맞춘다.</td>
+              </tr>
+              <tr>
+                <td><strong>카테고리 칩</strong></td>
+                <td>전체 + 8개 칩. 한 번에 하나만 선택. 다시 누르면 전체로 복귀.</td>
+                <td>9개 모두를 가로 한 줄에 두어 둘러보기 흐름을 끊지 않는다. 다중 선택은 결정을 늘리지만, 첫 둘러보기에서는 단일 선택이 더 빠르다.</td>
+              </tr>
+              <tr>
+                <td><strong>정렬 드롭다운</strong></td>
+                <td>"총 N개 이벤트" + 정렬 옵션 선택. "가까운 순"은 위치 권한이 없으면 비활성.</td>
+                <td>"몇 개나 있는지"를 먼저 보여 줘 사용자가 검색이 너무 좁혀지지 않았는지 자가 확인.</td>
+              </tr>
+              <tr>
+                <td><strong>이벤트 카드</strong></td>
+                <td>썸네일, 제목, 시작 시각, 주소, 정원, 가격, 본인 상태 배지(로그인 시), 하트.</td>
+                <td>신청 결정에 필요한 핵심 단서를 카드 한 장 안에 모아, 상세까지 들어가지 않아도 1차 판단이 가능하게.</td>
+              </tr>
+              <tr>
+                <td><strong>이벤트 생성 진입점</strong></td>
+                <td>우하단 + 버튼. 로그인 사용자에게만 노출.</td>
+                <td>비로그인 사용자가 누르면 어차피 가입을 유도해야 하므로, 가입 후에만 노출해 진입 동선을 깔끔하게 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>마감·취소 카드</strong></td>
+                <td>흐릿한 오버레이 + 상태 라벨("종료"/"취소").</td>
+                <td>이미 끝난 모임을 클릭 가능 상태로 두면 사용자가 잘못 진입한 뒤 답답함이 누적된다. 상태를 카드 단계에서 분명히.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>로그인 사용자</td><td>탐색 → 상세</td><td>위시리스트·정렬 모두 동작</td></tr>
-              <tr><td>AC-02</td><td>게스트</td><td>탭 진입</td><td>FAB 숨김, viewer context null</td></tr>
-              <tr><td>AC-03</td><td>20건 누적</td><td>스크롤 끝</td><td>다음 페이지 추가</td></tr>
-              <tr><td>AC-04</td><td>키워드</td><td>0건 응답</td><td>빈 상태 안내</td></tr>
-              <tr><td>AC-05</td><td>상세</td><td>유사 더보기</td><td>전용 화면 진입</td></tr>
-              <tr><td>AC-06</td><td>추가 페이지 실패</td><td>스크롤</td><td>기존 유지, 재시도 가능</td></tr>
-              <tr><td>AC-07</td><td>유사 빈 결과</td><td>화면 빌드</td><td>헤더 유지 + 빈 카피</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">탐색 화면의 결정점</span>
           <ul>
-            <li><strong>게스트에게 FAB 노출</strong> — 권한 없는 행동 유도.</li>
-            <li><strong>위치 권한 없음에서 “가까운순” 활성</strong> — 의도된 disabled 처리 누락.</li>
-            <li><strong>유사 빈 결과를 에러로 표시</strong> — 헤더 유지 + 빈 카피로 구분.</li>
+            <li><strong>비로그인 사용자에게도 카탈로그를 보여 주는 게 본 단위의 핵심 정책.</strong>
+              "가입해야 둘러볼 수 있다"로 정책이 바뀌면 가입 전환율 자체가 떨어진다.</li>
+            <li><strong>9개 카테고리 칩은 화면 한 줄에 들어가는 최대치.</strong>
+              늘리면 가로 스크롤이 필요해지고, "전체 카테고리가 있다"는 인상이 약해진다.</li>
+            <li><strong>위치 권한이 없으면 가까운 순 정렬이 비활성된다.</strong>
+              사용자에게 권한을 다시 묻거나, "위치 권한이 필요해요" 안내를 함께 보여 주는 정책이 필요.</li>
+            <li><strong>다음 페이지 로딩 실패는 사용자에게 명시적 오류로 보이지 않는다.</strong>
+              "더 안 늘어나네" 인상이 누적되지 않도록 페이지 실패율을 운영 모니터링에 포함.</li>
+            <li><strong>마감·취소 카드는 흐릿하게라도 보여 준다.</strong> 카드를 화면에서 빼면 사용자가
+              "어제 본 모임이 사라졌다"는 혼란을 겪는다 — 상태를 보여 주는 게 안전한 정책.</li>
           </ul>
         </div>
       </section>
@@ -151,13 +164,17 @@ flowchart TD
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="F03-02.html"><div class="eyebrow">다음</div><h3>F03-02 상세</h3></a>
-          <a class="card" href="F03-11.html"><div class="eyebrow">관련</div><h3>F03-11 위시리스트</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">진입</div><h3>F03-02 이벤트 상세</h3><p>카드를 누른 사용자가 도착하는 면.</p></a>
+          <a class="card" href="F03-03.html"><div class="eyebrow">호스트 진입</div><h3>F03-03 이벤트 생성</h3><p>우하단 + 버튼이 가는 곳.</p></a>
+          <a class="card" href="F03-11.html"><div class="eyebrow">관련</div><h3>F03-11 위시리스트</h3><p>카드 하트의 결과가 모이는 면.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-01_event-discovery/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-01_event-discovery/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

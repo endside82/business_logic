@@ -1,33 +1,182 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F11-06 취향 프로필 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>F11-06 취향 프로필</div>
-<h1>F11-06. 취향 평가 · 취향 프로필</h1>
-<p class="lede">참가자가 다른 참가자에게 비공개 태그 평가. 가중치 누적으로 본인의 취향 프로필을 형성. 추천 알고리즘 입력.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>비공개 태그 평가</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>가중치 누적</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>본인 취향 프로필 조회</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>이벤트 후 비공개 평가</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>가중치 5개 누적</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>본인 취향 프로필</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/taste/evaluations</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/taste/profile</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/11-review.html"><div class="eyebrow">상위</div><h3>11 리뷰·신고</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/11_review_report/F11-06_taste-profile/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F11-06 취향 평가·취향 프로필 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
+          F11-06 취향 평가·취향 프로필
+        </div>
+        <h1>F11-06. 취향 평가 · 취향 프로필</h1>
+        <p class="lede">
+          본인만 보는 비공개 평가 데이터를 모으고, 그 누적치를 자신의 추천·매칭 입력값으로 통제하는 면이다.
+          모임에 함께한 사람에 대해 별점·태그·메모를 남기면(공개되지 않음) 긍정·부정 태그 가중치가 자동으로 다시 계산되고,
+          여기에 사용자가 직접 고른 선호 카테고리·시간대·그룹 크기가 더해져 추천 알고리즘의 입력값이 된다.
+          <strong>공개 리뷰(F11-01)와는 다른 라인의 데이터</strong>이며, 누구에게도 그 사람이 받은 평가는 보이지 않는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">공개 여부</div><div class="value">비공개</div><div class="hint">본인과 추천 알고리즘만 사용</div></div>
+          <div class="metric"><div class="label">중복 평가</div><div class="value">같은 모임당 1회</div><div class="hint">같은 사람·같은 모임에 한 번만</div></div>
+          <div class="metric"><div class="label">레이더 차트</div><div class="value">태그 3개 이상</div><div class="hint">데이터 부족 시 비표시</div></div>
+          <div class="metric"><div class="label">평점 기록</div><div class="value">20건씩</div><div class="hint">더 보기로 누적 로딩</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 누구의 평가를 위한 화면도 아니고, 본인의 추천 품질을 본인이 통제하는 면</span>
+          <p>공개 리뷰(F11-01)는 다음 사용자의 의사결정을 위한 데이터다 — 평판으로 작동한다.
+            취향 평가는 정반대 방향이다 — 평가받는 쪽에게는 보이지 않고, 평가한 본인의 다음 추천·매칭 품질을 만든다.
+            평가가 쌓일수록 긍정 태그 가중치(상대를 어떻게 느꼈는가)와 부정 태그 가중치가 자동으로 누적되고,
+            여기에 사용자가 직접 고른 선호(카테고리·시간대·그룹 크기)가 더해져
+            "이 사용자가 좋아할 만한 사람·모임은 어느 쪽인가"의 입력이 만들어진다.
+            데이터가 적을 때는 차트를 비우는 대신 "더 모일 때까지" 안내를 띄운다 — 빈 차트는 잘못된 추천보다 나쁘다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>두 종류의 데이터가 같은 화면에 모인다</h2>
+        <p class="subtitle">한쪽은 자동으로 누적되고, 한쪽은 사용자가 직접 고른다. 둘 모두 추천 알고리즘의 입력이 된다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:170px">데이터 종류</th><th>어떻게 만들어지는가</th><th style="width:30%">화면에서 어디에 보이는가</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>자동 누적 — 태그 가중치</strong></td>
+                <td>모임 후 다른 참가자에 대한 비공개 평가에서 사용자가 고른 태그(긍정 10개 / 부정 4개)가 자동 집계.
+                  평가가 등록될 때마다 본인의 누적 가중치가 다시 계산된다.</td>
+                <td>"취향 요약" 레이더 차트, "상위 관심사" 칩, "긍정적 인상" / "개선 포인트" 막대 그래프.</td>
+              </tr>
+              <tr>
+                <td><strong>수동 입력 — 선호도</strong></td>
+                <td>화면의 "선호도 설정" 시트에서 카테고리(8개) · 시간대(4개) · 그룹 크기(3개)를 직접 선택해 저장.</td>
+                <td>저장된 항목이 화면 아래쪽 영역에 반영. 비어 있어도 자동 누적 데이터가 작동한다.</td>
+              </tr>
+              <tr>
+                <td><strong>평점 기록 리스트</strong></td>
+                <td>본인이 그동안 남긴 비공개 평가 카드 — 누가 받았는지가 아니라 본인이 누구에게 어떻게 줬는지를 본인 기록으로 본다.</td>
+                <td>화면 아래쪽 평점 기록 영역. 20건씩 페이지로 노출되고 "더 보기"로 누적 로딩.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>평가가 쌓인 사용자가 취향 프로필을 본다</h3>
+            <p>비공개 평가를 5건 이상 남긴 사용자가 마이페이지에서 "취향 프로필"로 진입한다.
+              화면 상단에 레이더 차트가 그려지고, 상위 관심사 칩 4개, "긍정적 인상" 막대(Funny 4.0 / Reliable 3.0 / Warm 2.0…),
+              개선 포인트 막대(Late 1.0) 순서로 보인다. 그 아래에 본인 평점 기록이 깔린다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 "내가 어떤 사람을 좋아했는가"를 패턴으로 확인. 자신도 모르게 누적된 호불호를 사용자가 알아차리고, 다음 모임 선택 기준이 분명해진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">데이터 부족</div>
+            <h3>가입 직후라 평가가 한 건도 없다</h3>
+            <p>새로 가입한 사용자가 화면에 들어온다. 태그 데이터가 3개 미만이라 레이더 차트는 그려지지 않고
+              "아직 취향 데이터가 부족합니다" 안내만 뜬다. 평점 기록 영역도 "아직 남긴 평점이 없습니다 — 이벤트 참석 후 참가자에게 평점을 남겨보세요" 안내.
+              "선호도 설정"은 그대로 사용 가능.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 부정확한 차트로 사용자를 오해시키지 않는다. 동시에 "선호도 설정"을 통한 수동 입력 경로는 열어 두어 신규 사용자가 추천 품질에 즉시 영향을 줄 수 있게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">선호도 설정</div>
+            <h3>선호 카테고리·시간대·그룹 크기 저장</h3>
+            <p>"선호도 설정" 시트가 열린다. 카테고리에서 "음식/맛집", "문화/예술"을 토글하고, 시간대에서 "저녁(18-21)", 그룹 크기에서 "중규모(6-15명)"를 선택한 뒤 "저장"을 누른다.
+              토스트가 뜨고 시트가 닫히면 추천 도메인이 다음 호출부터 이 값을 입력으로 사용한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 추천 알고리즘에 자기 의사를 직접 전달할 수 있다는 통제감. 자동 누적 데이터에만 의존하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">평가 생성</div>
+            <h3>모임 종료 후 함께한 참가자에게 별점·태그·메모</h3>
+            <p>모임이 끝나고 별도 화면에서 함께한 참가자에게 비공개 평가를 남긴다.
+              별점 4, 태그 "FUNNY"와 "GOOD_LISTENER" 선택, 짧은 메모. 등록되면 본인의 태그 가중치가 자동으로 재계산되고,
+              본 화면을 다시 열면 변동이 반영되어 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 평가 한 건이 자동으로 추천 입력에 반영. 사용자가 따로 "프로필 갱신" 같은 행동을 하지 않아도 시스템이 알아서 다음 추천을 다듬는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자기 평가 차단</div>
+            <h3>실수로 자기 자신을 평가하려 함</h3>
+            <p>잘못된 호출 또는 외부 링크로 자기 자신에 대한 평가가 시도된다. 자기 평가는 받지 않는다는 안내가 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 본인이 자기 추천 입력을 직접 조작하는 우회 경로를 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>같은 사람을 같은 모임에서 두 번 평가</h3>
+            <p>같은 모임에서 만난 같은 사람에 대해 두 번째 평가가 시도된다. 한 모임당 같은 상대에게 한 번이라는 규칙으로 거절된다.
+              다음 모임에서 같은 사람을 다시 만나면 그때는 새 평가를 남길 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 평가 한 번이 그 모임에서 본 인상의 무게를 가진다. 같은 모임에서 마음이 바뀌어도 평가는 한 번으로 잡힌다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">긍정·부정 분류</div>
+            <h3>한 평가에 긍정·부정 태그가 섞임</h3>
+            <p>한 사람에 대해 "PUNCTUAL"(시간 잘 지킴)과 "NEGATIVE_LATE"(지각함) 같이 모순된 태그가 들어왔다.
+              시스템은 부정 태그(NEGATIVE_ 접두)만 따로 분류해 "개선 포인트" 막대에 누적한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 사람을 단일 인상으로 가두지 않고, 긍정·부정이 같은 평가 안에 공존할 수 있게 한다. 사용자의 진짜 인상을 더 풍부하게 모은다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">취향 데이터가 다른 도메인에 닿는 자리</span>
+          <ul>
+            <li><strong>이 데이터는 평가받은 사람에게 노출되지 않는다.</strong>
+              공개 리뷰(F11-01)는 평판이고, 본 단위는 본인의 추천 품질이다 — 두 데이터가 한 화면에 섞이면 사용자가 "내가 받은 평가"를 다른 사용자가 본다고 오해한다.
+              본인 외 노출 가드는 어떤 회귀에서도 풀려서는 안 된다.</li>
+            <li><strong>평가 한 건이 등록될 때마다 본인의 태그 가중치가 다시 계산되고, 협업 필터링 이웃도 함께 재구축된다.</strong>
+              본 단위는 트리거만 책임지고 알고리즘은 추천 도메인이 처리하지만, 본 단위에서 평가 생성이 막히면 추천 품질도 동시에 정지한다.</li>
+            <li><strong>레이더 차트는 태그 3개 미만이면 비표시한다.</strong>
+              데이터가 적을 때 부정확한 차트로 사용자를 오해시키지 않으려는 결정 — "더 모일 때까지" 안내가 빈 차트보다 정직하다.</li>
+            <li><strong>선호도(카테고리·시간대·그룹 크기)는 빈 리스트로 저장할 수 없다.</strong>
+              시트에서 아무 것도 고르지 않고 "저장"을 누르면 그 필드는 갱신되지 않는다 — 사용자가 의도적으로 "초기화"하고 싶다면 별도 경로가 필요하다(현재는 미지원).</li>
+            <li><strong>본인 평점 기록은 페이지 단위로만 받는다(20건씩).</strong>
+              누적이 많은 사용자는 "더 보기"로 추가 로딩 — 한 번에 모든 평가를 보여 주면 화면 부하가 즉시 커진다.</li>
+            <li><strong>"활동 패턴 히트맵", "월별 차트" 같은 UI 스펙 항목은 현재 미구현이다.</strong>
+              서버 응답에 해당 필드가 없고 화면도 그리지 않는다. 운영·기획에서 필요해지면 데이터 갈래와 노출 위치를 동시에 결정해야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">상위 도메인</div><h3>11 리뷰·신고</h3></a>
+          <a class="card" href="F11-01.html"><div class="eyebrow">대조</div><h3>F11-01 공개 리뷰</h3><p>평판으로 작동하는 다른 라인의 데이터.</p></a>
+          <a class="card" href="F11-05.html"><div class="eyebrow">관련</div><h3>F11-05 신뢰점수</h3><p>본인 활동 신호의 또 다른 누적 결과.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/11_review_report/F11-06_taste-profile/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

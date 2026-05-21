@@ -1,35 +1,186 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F08-04 블록 재정렬 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>F08-04 블록 재정렬</div>
-<h1>F08-04. 블록 드래그 재정렬 · 계층 이동</h1>
-<p class="lede">트리 평탄화 후 드래그앤드롭으로 순서 변경. 부모 변경된 블록만 별도 move 호출, 같은 부모 안의 순서 변경은 reorder 한 번으로.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>로컬 평탄화</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>드래그 인터랙션</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>부모 변경 → move</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>순서 변경 → reorder</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>같은 부모 순서 변경</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>다른 부모로 이동</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>저장 실패 롤백</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>PUT</code></td><td><code>/api/v1/plans/{id}/blocks/reorder</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/plans/{id}/blocks/{blockId}/move</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
-<a class="card" href="F08-03.html"><div class="eyebrow">관련</div><h3>F08-03 블록 에디터</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/08_plan_market/F08-04_block-reorder/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-04 블록 재정렬 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-04 블록 재정렬
+        </div>
+        <h1>F08-04. 블록 재정렬 · 계층 이동</h1>
+        <p class="lede">
+          이미 만들어진 블록의 순서를 한 번에 바꾸거나, 한 블록을 다른 블록의 자식으로 들여 넣는 화면이다.
+          블록 에디터(F08-03)와 별도 화면으로 두어 — 같은 화면에서 입력과 드래그를 동시에 하지 않도록 분리했다.
+          드래그·들여쓰기·내어쓰기는 모두 화면 안에서만 일어나고, "완료"를 누른 순간에 비로소 서버에 한 번에 반영된다.
+          취소하면 처음 본 상태가 그대로다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">계층 깊이 한도</div><div class="value">3</div><div class="hint">손자까지만 허용</div></div>
+          <div class="metric"><div class="label">서버 반영 시점</div><div class="value">"완료" 한 번</div><div class="hint">로컬 작업 후 일괄</div></div>
+          <div class="metric"><div class="label">취소</div><div class="value">즉시 폐기</div><div class="hint">로컬 변경만 사라짐</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 작성과 재정렬을 한 화면에 두지 않는다</span>
+          <p>블록 에디터에서 글을 쓰면서 동시에 드래그까지 받으면 사용자가 의도하지 않은 이동이 빈번하게 발생한다.
+            그래서 재정렬은 별도 화면에서, 사용자가 명시적으로 들어와서, "완료"를 눌러야 비로소 반영된다.
+            잘못 옮긴 블록이 그대로 서버에 저장되지 않게 하는 안전선이다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 화면이 다루는 두 가지</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>형제 사이 순서 바꾸기</h3>
+            <p>같은 부모 아래의 블록들을 길게 눌러 드래그해서 위·아래로 옮긴다.
+              부모는 그대로고 순서만 바뀐다 — 가장 흔한 정리 동작.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>들여쓰기 / 내어쓰기로 계층 바꾸기</h3>
+            <p>각 카드의 우측 화살표로 한 칸 들여쓰면 직전 형제의 자식이 되고, 내어쓰면 한 단계 위로 올라간다.
+              계층은 손자(깊이 3)까지만 허용된다. 부모가 바뀐 블록은 좌측에 푸른 띠가 표시되어 사용자가 한눈에 알 수 있다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>"완료" 한 번이 일어나는 흐름</h2>
+        <p class="subtitle">드래그·들여쓰기는 모두 로컬에만 머물러 있다가, 사용자가 완료를 누르는 순간 부모가 바뀐 블록 → 형제 그룹 순서 두 단계로 서버에 반영된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant 화면 as 재정렬 화면
+    participant 서버 as 플랜 블록 서비스
+
+    U->>화면: 드래그 / 들여쓰기 / 내어쓰기
+    화면-->>화면: 로컬 모델만 갱신
+    U->>화면: "완료" 탭
+    화면->>서버: 부모가 바뀐 블록 각각 이동 요청
+    alt 깊이 한도 초과
+        서버-->>화면: 거절(계층 한도)
+        화면-->>U: 일부 변경 실패 안내
+    else 통과
+        화면->>서버: 부모 그룹별 순서 일괄 갱신
+        서버-->>화면: 새 트리
+        화면-->>U: 완료 안내 + 에디터로 복귀
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>코스 순서를 다시 짠다</h3>
+            <p>다섯 개의 코스 블록이 짜놓은 순서와 안 맞다. 재정렬 화면에서 세 번째 블록을 첫 번째 자리로 드래그하고
+              "완료"를 누른다. 에디터로 돌아오면 새 순서가 반영되어 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 잘 작성된 본문을 처음부터 다시 쓰지 않고 손쉽게 다듬는 흐름. 작성에 대한 부담이 줄어든다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">계층 만들기</div>
+            <h3>토글 아래로 두 블록을 끼워 넣는다</h3>
+            <p>토글 블록 바로 아래에 평블록 두 개를 자식으로 두고 싶다. 그 두 블록의 들여쓰기 화살표를 한 번씩 누르면
+              각각 토글의 자식이 되고 좌측에 푸른 띠가 표시된다. "완료"를 누르면 부모 이동과 순서 갱신이 한 번에 일어난다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소</div>
+            <h3>이리저리 옮겨 보다 그만둔다</h3>
+            <p>이것저것 시도해 본 사용자가 마음에 안 들어 "취소"를 누른다. 로컬 변경이 모두 사라지고 에디터로 돌아간다.
+              서버에는 어떤 변경도 가지 않았다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 작성자가 안심하고 실험할 수 있는 자리. 망쳐도 처음으로 돌아갈 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">계층 한도</div>
+            <h3>이미 손자인 블록을 더 들여쓴다</h3>
+            <p>깊이 3에 도달한 블록의 들여쓰기를 한 번 더 누른다. 화면에는 깊이 4로 표시되지만 "완료"를 누르면
+              서버가 그 한 블록의 이동을 거절한다. 다른 변경(다른 그룹의 순서 등)은 그대로 반영되고,
+              "일부 변경에 실패했습니다" 안내가 뜨면서 화면에 머무른다. 사용자는 그 블록만 내어쓰기로 되돌린 뒤 다시 완료를 누른다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">동시 편집 위험</div>
+            <h3>두 디바이스에서 동시에 편집했다</h3>
+            <p>한쪽에서 재정렬을 시작한 동안 다른 쪽에서 새 블록을 추가했다. 재정렬 화면이 "완료"를 누를 때
+              자기가 알고 있던 블록만 일괄 순서를 잡기 때문에, 그 사이 추가된 새 블록은 화면에 보이지 않는 자리에 남는다.
+              결과적으로 새 블록의 위치가 의도와 다를 수 있다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 사용자에게는 이 상황이 명시적으로 보이지 않는다. 동일 사용자의 다중 디바이스 동시 편집 비율이 높아진다면 화면 진입 시 최신 트리를 다시 가져와 비교하는 보정이 필요한 시점.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 트리</div>
+            <h3>블록이 한 개도 없는 플랜에 들어왔다</h3>
+            <p>아직 본문이 비어 있는 플랜에서 재정렬을 누르면 "블록이 없습니다" 안내만 뜬다.
+              사용자는 취소하고 돌아가 에디터에서 블록을 먼저 만들어야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>발행 중 플랜의 재정렬은 차단된다</h3>
+            <p>발행 중 플랜의 편집 URL에 직접 들어와 재정렬을 시도하면 "완료" 단계에서 서버가 거절한다.
+              이미 산 사람들이 보는 본문이 작성자에 의해 무심코 바뀌는 사고를 막는 같은 가드가 여기에도 걸려 있다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">잘 정돈된 본문이 재정렬에서 잘못 흔들리지 않게</span>
+          <ul>
+            <li><strong>"완료" 누르기 전까지는 어떤 변경도 서버에 가지 않는다.</strong> 사용자가 실험적으로 옮긴 자리가
+              그대로 마켓에 노출되지 않는 안전선.</li>
+            <li><strong>계층 깊이 3은 본문 가독성의 한계점이다.</strong> 더 깊어지면 들여쓰기로 인지하기 어렵고
+              마켓 미리보기에서도 잘려 보이지 않게 된다. 이 한도가 풀리면 "왜 내 블록이 안 보이지" 류 문의가 늘어난다.</li>
+            <li><strong>부분 실패가 일어날 수 있다.</strong> 한 블록의 이동이 깊이 한도로 거절돼도, 다른 그룹의 순서 갱신은 진행될 수 있다.
+              사용자에게는 "일부 변경에 실패했습니다" 안내만 뜨므로, 어떤 변경이 적용됐는지 분명하지 않은 회색 지대가 있다.</li>
+            <li><strong>같은 사용자가 두 디바이스에서 동시에 편집하면 새 블록이 의도하지 않은 자리에 갈 수 있다.</strong>
+              화면 진입 시 최신 트리를 다시 받아오는 보정은 들어가 있지 않으니, 동시 편집 비율이 높아질수록 안내가 필요해진다.</li>
+            <li><strong>들여쓰기로 자식 만드는 동작이 이 화면에만 있다.</strong> 에디터(F08-03)에는 자식 추가 동작이 없어서,
+              사용자가 "자식을 어떻게 만들지?"라고 막힐 때 재정렬 화면을 가리키는 안내가 필요할 수 있다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-03.html"><div class="eyebrow">앞 단위</div><h3>F08-03 블록 에디터</h3><p>이 화면의 진입처. 작성 중 플랜의 본문 편집 메인.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음)
+  - business_logic/units/08_plan_market/F08-04_block-reorder/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

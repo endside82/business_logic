@@ -17,117 +17,280 @@
           <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
           F03-02 이벤트 상세
         </div>
-        <h1>F03-02. 이벤트 상세 조회</h1>
+        <h1>F03-02. 이벤트 상세</h1>
         <p class="lede">
-          한 이벤트에 대한 정보·CTA·진입점을 한 화면에 모은다.
-          사용자 역할(호스트·참가자·게스트·클럽 비멤버)과 이벤트 상태(DRAFT/OPEN/CLOSED/CANCELED)의 조합이
-          모든 액션 노출을 결정한다. 잘못된 CTA가 노출되면 전환율과 신뢰가 동시에 깨지는 단위.
+          한 이벤트의 모든 정보를 모아 보여 주는 면이며, 신청 결정이 일어나는 마지막 화면이다.
+          같은 화면이 사용자 역할(호스트/공동호스트/참가자/비로그인)과 이벤트 상태(임시저장/모집/종료/취소/비공개)에
+          따라 완전히 다른 의미가 된다. 본 단위는 그 분기를 한 응답 안에서 처리하고, 사용자가 다음 동작
+          (신청·취소·발행·취소·환불·리뷰)으로 끊김 없이 이어 갈 수 있도록 자리한다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">역할 분기</div><div class="value">4</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-          <div class="metric"><div class="label">상태 분기</div><div class="value">4</div></div>
+          <div class="metric"><div class="label">한 화면에 모이는 정보</div><div class="value">10+영역</div><div class="hint">호스트·일정·정원·가격·환불·플랜·유사 추천</div></div>
+          <div class="metric"><div class="label">사용자 역할 분기</div><div class="value">4종</div><div class="hint">호스트·공동호스트·참가자·비로그인</div></div>
+          <div class="metric"><div class="label">상태 분기</div><div class="value">5종</div><div class="hint">임시저장·모집·종료·취소·비공개</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">행동 시점에만 로그인</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">CTA 매트릭스의 두 축</span>
-          <p>가로축은 이벤트 상태(DRAFT/OPEN/CLOSED/CANCELED), 세로축은 사용자 역할(호스트/참가자/일반 사용자/게스트/클럽 비멤버).
-          이 매트릭스가 모든 액션바·메뉴·배너의 노출을 결정한다.</p>
+          <span class="label">설계 의도 — "같은 이벤트"이지만 보는 사람에 따라 의미가 다른 화면</span>
+          <p>이벤트 상세는 신청을 받는 면이자 호스트가 운영하는 면이고, 종료된 모임의 회고 자리이며,
+            취소된 모임의 환불 안내 진입점이다. 한 사용자에게는 "신청하기" 버튼이고, 호스트에게는
+            "수정·종료·취소" 버튼이며, 종료된 사용자에게는 "리뷰 작성·사진첩" 진입점이다.
+            이 분기를 한 응답 안에서 처리하기 위해 서버는 사용자별 맥락(본인의 참석 상태,
+            신청 상태, 멤버십, 찜 여부)을 응답에 함께 넣어 보낸다. 클라이언트는 그 맥락에 따라
+            액션바와 더보기 메뉴를 다르게 구성한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>역할 × 상태 매트릭스</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>역할 / 상태</th><th>DRAFT</th><th>OPEN</th><th>CLOSED</th><th>CANCELED</th></tr></thead>
-            <tbody>
-              <tr><td>호스트</td><td>발행·수정·삭제 · 운영 메뉴(신청서·정원·참석자·대기열)</td><td>일정 변경·취소·종료 · 공지 발송 · 운영 메뉴</td><td>리뷰·사진첩 진입 · 운영 회고</td><td>조회만</td></tr>
-              <tr><td>참가자(ATTENDING)</td><td>—</td><td>“참석 취소” · QR 체크인 · .ics 내보내기</td><td>“리뷰 작성” · 사진첩</td><td>환불 안내 표시</td></tr>
-              <tr><td>일반 사용자</td><td>404 마스킹</td><td>“참석 신청” → F03-05</td><td>흐림 + “종료된 이벤트”</td><td>흐림 + 빨간 배지</td></tr>
-              <tr><td>게스트</td><td>404</td><td>로그인 유도</td><td>흐림 + 로그인 유도</td><td>흐림</td></tr>
-              <tr><td>클럽 비멤버</td><td>404</td><td>설명/플랜 가림 + “클럽 가입” CTA</td><td>가림</td><td>가림</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <h2>이 화면이 책임지는 4가지 결정</h2>
+        <p class="subtitle">상세 화면 한 장이 동시에 결정해야 하는 것들.</p>
 
-      <section>
-        <h2>화면 렌더 분기</h2>
-        <div class="diagram"><div class="mermaid">
-flowchart TD
-    A["GET /events/{id}"] --> B{"응답"}
-    B -->|"404"| C["이벤트를 찾을 수 없습니다"]
-    B -->|"200"| D{"event.status"}
-    D -->|"DRAFT"| E{"호스트?"}
-    E -->|"예"| F["DRAFT 액션바 (발행/수정/삭제)"]
-    E -->|"아니오"| C
-    D -->|"OPEN"| G{"역할"}
-    G -->|"호스트"| H["호스트 운영 메뉴 + 일정변경/취소/종료"]
-    G -->|"참가자"| I["참석 취소 / QR / .ics"]
-    G -->|"일반"| J["참석 신청 (F03-05)"]
-    G -->|"게스트"| K["로그인 유도"]
-    G -->|"클럽 비멤버"| L["가림 + 클럽 가입 CTA"]
-    D -->|"CLOSED"| M["흐림 + 리뷰/사진첩"]
-    D -->|"CANCELED"| N["빨간 배지 + 조회만"]
-        </div></div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오 8개</h2>
         <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>일반 사용자가 OPEN 상세 진입</h3>
-            <ol><li>카드 탭 → 상세 응답 200</li><li>Hero·정보·호스트·설명·유사 이벤트 렌더</li><li>최근 본 이벤트 기록 + 조회 카운트 INCR</li><li>“참석 신청” 활성 → F03-05 진입</li></ol>
+          <div class="card">
+            <div class="eyebrow">결정 1</div>
+            <h3>지금 사용자가 어떤 행동을 할 수 있는가</h3>
+            <p>본인이 호스트인지, 이미 신청했는지, 정원에 여유가 있는지, 승인이 필요한지에 따라
+              하단 액션바의 버튼이 결정된다. "참석 신청" / "대기열 등록" / "신청서 작성" /
+              "참석 취소" / "마감" / "수정·종료·취소"(호스트) — 같은 위치 다른 의미.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">결정 2</div>
+            <h3>어떤 정보를 가리고 어떤 정보를 보여 줄지</h3>
+            <p>비공개 클럽 이벤트라면 비멤버에게는 본문·플랜·사진첩을 가린다. 임시저장 이벤트라면
+              호스트와 공동호스트만 화면에 들어올 수 있다. 정보 공개의 경계가 본 화면에서 정해진다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">결정 3</div>
+            <h3>다음 단위로 어떻게 이어지는가</h3>
+            <p>신청은 F03-05로, 호스트 액션은 F03-04로, 사진첩은 F03-09로, 플랜은 F03-10으로,
+              리뷰는 11 리뷰 도메인으로 분기된다. 본 화면은 각 단위의 진입점만 책임지고
+              실제 동작은 위임한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">결정 4</div>
+            <h3>외부 캘린더로 어떻게 내보낼지</h3>
+            <p>더보기 메뉴의 "캘린더 추가"와 ".ics 다운로드"는 사용자가 직접 자기 캘린더 앱에
+              일정을 옮길 수 있게 한다. 일정 변경이 일어나면 푸시 알림이 가지만, 사용자가
+              한 번 외부로 내보낸 일정의 자동 동기화는 제공하지 않는다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>역할·상태에 따라 화면이 달라지는 흐름</h2>
+        <p class="subtitle">한 응답이 들어왔을 때 화면이 어떻게 구성되는지.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["상세 진입"] --> B{"사용자 역할?"}
+    B -->|"호스트·공동호스트"| H["호스트 화면<br/>수정·종료·취소·발행·공지·복제"]
+    B -->|"참가자(로그인)"| P{"본인 상태?"}
+    B -->|"비로그인"| G["일반 정보만 표시<br/>행동 시 로그인 유도"]
+
+    P -->|"신청 전"| P1{"이벤트 상태?"}
+    P1 -->|"모집 중·정원 여유"| Q1["참석 신청"]
+    P1 -->|"모집 중·정원 초과·대기열 ON"| Q2["대기열 등록"]
+    P1 -->|"모집 중·승인 필요"| Q3["신청서 작성"]
+    P1 -->|"마감·종료·취소"| Q4["신청 불가 / 리뷰·사진첩"]
+
+    P -->|"참석 중"| P2["참석 취소"]
+    P -->|"대기 중"| P3["대기 취소 (N번째)"]
+    P -->|"심사 중"| P4["심사 중 표시 / 신청 취소"]
+    P -->|"승인됨·결제 대기(유료 승인제)"| P5["결제하고 참석 확정"]
+
+    H --> EXIT["F03-04로 위임"]
+    Q1 --> EXIT2["F03-05로 위임"]
+    Q2 --> EXIT2
+    Q3 --> EXIT2
+    P2 --> EXIT2
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>일반 사용자가 모집 중 이벤트 상세에 진입</h3>
+            <p>탐색·홈에서 카드를 누르면 썸네일·일정·정원·가격·호스트 카드·설명·연결 플랜·유사 이벤트가
+              한 화면에 모인다. 하단 액션바에 "참석 신청"이 활성된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 신청 결정 직전 사용자가 가장 길게 머무르는 면.
+              상세에서의 이탈률이 추천 카드 품질의 직접적 신호.</p>
           </article>
-          <article class="card"><div class="eyebrow">S2 · 호스트</div><h3>자기 이벤트 진입</h3>
-            <ol><li>DRAFT도 호스트는 통과</li><li>액션바가 “발행/수정/삭제”로 교체</li><li>운영 메뉴 카드 + “주최자 화면입니다” 배너 노출</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">호스트 진입</div>
+            <h3>호스트가 자기 이벤트 상세에 들어옴</h3>
+            <p>같은 화면이지만 액션바가 "발행·수정·삭제" 또는 "수정 안내·종료·취소"로 교체되고,
+              상단에 "주최자 화면입니다" 배너가 뜬다. 더보기 메뉴에 "공지 보내기"와
+              "이 이벤트로 새로 만들기"가 추가된다. 호스트 운영 메뉴 카드(신청서 관리·정원
+              설정·참석자·대기열) 진입점이 본문에 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 자기 이벤트를 운영하는 모든 진입로가
+              이 한 화면에 모인다. 호스트는 별도 관리 화면 없이 사용자 시점과 같은 면에서 운영.</p>
           </article>
-          <article class="card"><div class="eyebrow">S3 · 공유 링크</div><h3>비로그인 사용자의 딥 링크 진입</h3>
-            <ol><li>OPEN 이벤트라면 비로그인도 조회 가능</li><li>viewer context는 null/false</li><li>액션 탭 시 로그인 유도</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">가입 전</div>
+            <h3>비로그인 사용자가 공유 링크로 진입</h3>
+            <p>카카오 공유 등의 외부 링크를 누른 비로그인 사용자가 도착한다. 일반 정보는 모두 보이지만,
+              "참석 신청"과 "찜"을 누르는 순간 로그인 화면으로 이동한다. 로그인 후 같은 이벤트로
+              자동 복귀한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 공유 링크의 가치가 가입 전환으로 이어지는 핵심 경로.</p>
           </article>
-          <article class="card"><div class="eyebrow">S4 · DRAFT 비호스트</div><h3>일반 사용자가 DRAFT 접근</h3>
-            <ol><li>서버가 EVENT_NOT_FOUND로 마스킹</li><li>“이벤트를 찾을 수 없습니다” + 돌아가기</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">임시저장</div>
+            <h3>일반 사용자가 임시저장 이벤트의 식별자로 진입</h3>
+            <p>호스트와 공동호스트가 아니면 임시저장 이벤트는 "이벤트를 찾을 수 없습니다"로 처리된다.
+              모집 시작 전 이벤트의 존재 자체를 외부에 노출하지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 폼을 완성하기 전에 외부 노출되는 일을
+              막아 "초안인데 신청자가 들어왔다"는 사고를 방지.</p>
           </article>
-          <article class="card"><div class="eyebrow">S5 · CLOSED</div><h3>종료된 이벤트</h3>
-            <ol><li>흐릿한 오버레이 + “종료된 이벤트” 라벨</li><li>“리뷰 작성”(F11) · 사진첩(F03-09) 진입 가능</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">종료 후</div>
+            <h3>참석했던 모임이 종료됨</h3>
+            <p>흐릿한 오버레이와 "종료된 이벤트" 라벨. 액션바의 "참석 신청"은 비활성. 대신
+              "리뷰 작성" 진입점과 사진첩이 살아난다 — 본인이 참석 확정 상태였던 사용자에 한해.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 모임이 끝난 뒤에도 사용자가 다시 들어오게 만드는
+              두 가지 가치(후기·사진첩)의 진입로.</p>
           </article>
-          <article class="card"><div class="eyebrow">S6 · CANCELED</div><h3>취소된 이벤트</h3>
-            <ol><li>빨간 배지 + 흐림</li><li>액션 모두 비활성</li><li>환불 정보는 알림에서 안내(F06)</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">취소 후</div>
+            <h3>호스트가 취소한 이벤트</h3>
+            <p>빨간 배지 + 흐릿한 오버레이. 모든 액션 비활성. 유료 이벤트였다면 환불 안내는 별도
+              알림으로 사용자에게 도달했고, 본 화면은 단순 조회만 가능.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 환불은 알림·결제 도메인 책임. 본 화면은 "이 이벤트가
+              취소됐다"는 사실의 시각적 확인 자리.</p>
           </article>
-          <article class="card"><div class="eyebrow">S7 · .ics</div><h3>캘린더 내보내기</h3>
-            <ol><li>더보기 → “.ics 다운로드”</li><li>파일 저장 후 시스템 공유 시트</li><li>외부 캘린더 앱에 등록</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">비공개 클럽</div>
+            <h3>비멤버가 클럽 비공개 이벤트로 진입</h3>
+            <p>제목·시간은 보이지만 본문·연결 플랜·사진첩은 가려진다. 그 자리에 "이 이벤트는 클럽
+              멤버만 볼 수 있습니다 + 클럽 가입" 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 클럽 전용 콘텐츠의 가치를 보호하면서, 가입 전환의
+              여지(클럽 가입 CTA)를 같은 화면 안에 둔다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S8 · 클럽 비멤버</div><h3>비공개 클럽 이벤트 진입</h3>
-            <ol><li>설명·플랜·사진첩이 가려짐</li><li>“클럽 멤버만 볼 수 있습니다” + 클럽 가입 CTA</li></ol>
+
+          <article class="card">
+            <div class="eyebrow">캘린더 내보내기</div>
+            <h3>참석 예정자가 .ics 파일을 내보냄</h3>
+            <p>더보기 메뉴 → ".ics 다운로드"를 누르면 시스템 공유 시트가 뜨고, 사용자가 캘린더 앱이나
+              메일로 보낼 수 있다. 일정 변경 시 별도 알림이 가지만, 외부 캘린더의 자동 갱신은 제공
+              안 함 — 사용자가 직접 한 번 더 내보내야 한다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:30%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}</code></td><td>이벤트 상세 (역할 기반 viewer context 포함)</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/calendar</code></td><td>.ics 다운로드</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/similar</code></td><td>유사 이벤트</td></tr>
+              <tr>
+                <td><strong>썸네일 + 상태 배지</strong></td>
+                <td>큰 이미지. 좌상단 뒤로가기, 우상단 더보기·찜 하트. 상태 배지(모집/종료/취소/임시저장)가 제목 위.</td>
+                <td>이벤트의 현재 상태를 먼저 인지하지 못하면 사용자가 "신청 가능한 것"으로 오해한 채 액션바를 누른다.</td>
+              </tr>
+              <tr>
+                <td><strong>일정·장소·정원·가격</strong></td>
+                <td>시작/종료 시각, 주소(또는 온라인 URL), 정원(현재/전체), 가격.</td>
+                <td>신청 결정의 4대 단서. 카드 단계에서 본 정보를 상세에서 한 번 더 확인하게 해, 진입한 사용자가 즉시 다음 단계로 갈 수 있도록.</td>
+              </tr>
+              <tr>
+                <td><strong>호스트 카드</strong></td>
+                <td>호스트 닉네임 + 신뢰점수. 공동호스트가 있으면 함께 표시.</td>
+                <td>모임의 신뢰는 호스트의 신뢰. 누가 운영하는지 보이지 않으면 신청 결정의 마지막 한 걸음이 안 떨어진다.</td>
+              </tr>
+              <tr>
+                <td><strong>설명</strong></td>
+                <td>3줄 미리보기 + "더보기". 비공개 클럽 + 비멤버일 때는 가림.</td>
+                <td>모임의 결정적 단서는 호스트 본인이 쓴 텍스트인 경우가 많다. 너무 길면 사용자 결정이 지연되므로 우선 3줄.</td>
+              </tr>
+              <tr>
+                <td><strong>환불 정책 안내</strong></td>
+                <td>유료 + 사전결제 이벤트일 때만 노출. 환불 가능 기한과 환불율을 한 문단으로.</td>
+                <td>환불 조건을 신청 전에 사용자가 알지 못하면 취소 시점에 분쟁이 발생한다. 본 화면이 "사전 공지"의 책임 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>연결 플랜</strong></td>
+                <td>가로 스크롤 카드. 호스트가 연결한 진행 자료. 활성 항목만 표시.</td>
+                <td>"이 모임에서 무엇을 하는가"를 시각화. 결정 단서로 작동.</td>
+              </tr>
+              <tr>
+                <td><strong>유사 이벤트</strong></td>
+                <td>최대 5장 미리보기 + "더보기". 0건이면 빈 상태 안내만.</td>
+                <td>이 모임이 마음에 안 들어도 비슷한 다른 모임으로 사용자를 잡아 두는 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>하단 액션바</strong></td>
+                <td>역할·상태에 따라 라벨이 다른 큰 버튼. "참석 신청"/"대기열 등록"/"신청서 작성"/"참석 취소"/"수정·종료·취소"/"결제하고 참석 확정".</td>
+                <td>같은 화면 같은 위치에 한 가지 다음 동작만 보여 줘, 사용자가 결정을 미루지 않게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>호스트 운영 메뉴</strong></td>
+                <td>호스트만 보임. "신청서 관리·정원 설정·참석자·대기열" 카드. "주최자 화면입니다" 상단 배너.</td>
+                <td>호스트가 운영 동선을 한 자리에서 시작할 수 있게. 별도 호스트 화면을 두지 않고 사용자 시점과 같은 면에서 분기.</td>
+              </tr>
+              <tr>
+                <td><strong>자동 승급 강조</strong></td>
+                <td>대기열에서 자동으로 참석 확정된 사용자에게 1회성 "참석 확정!" 강조.</td>
+                <td>자동 상태 전환은 사용자가 인지하기 어렵다. 한 번이라도 명확히 보여 줘야 "내가 뭘 했더라"의 혼란을 막는다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">상세 화면이 만드는 비즈니스 결정점</span>
           <ul>
-            <li><strong>DRAFT를 비호스트에게 노출</strong> — 미공개 정보 유출. 404 마스킹 필수.</li>
-            <li><strong>이미 신청한 사용자에게 “신청하기”가 남음</strong> — viewer context 갱신 누락.</li>
-            <li><strong>CANCELED에 “참석 신청” 활성</strong> — 상태별 CTA 매트릭스 깨짐.</li>
-            <li><strong>클럽 비멤버에게 설명 노출</strong> — 가림 처리 누락은 클럽 정책 위반.</li>
+            <li><strong>역할·상태별 액션바 분기가 풀리면 신청·환불 분쟁이 즉시 발생한다.</strong>
+              본인 상태(참석/대기/심사/승인 후 결제 대기)와 이벤트 상태(모집/종료/취소)의 조합이
+              모두 분기되어 있는지가 본 화면의 안전 기준선.</li>
+            <li><strong>임시저장 이벤트는 호스트/공동호스트가 아닌 사용자에게 보이지 않는다.</strong>
+              초안 이벤트의 식별자가 외부로 새 나가도 비호스트는 "찾을 수 없습니다"로 처리된다.</li>
+            <li><strong>비공개 클럽 이벤트에서 비멤버에게 본문·플랜·사진첩을 가리는 가드가 본 화면의 책임.</strong>
+              가드가 풀리면 클럽 전용 콘텐츠가 노출되어 가입 가치가 사라진다.</li>
+            <li><strong>유료 승인제 이벤트의 액션바 라벨</strong>은 "심사 중 → 결제 필요 → 참석 확정"의
+                세 단계가 분명히 구분되어야 한다. 승인 즉시 결제로 넘어가는 회귀가 일어나면 환불 분쟁이
+                발생한다. (자세한 흐름은 <a href="F03-05.html">F03-05</a>·<a href="F03-06.html">F03-06</a>로 위임.)</li>
+            <li><strong>외부 캘린더 내보내기는 자동 동기화하지 않는다.</strong>
+              일정 변경 시 푸시는 가지만, 사용자가 한 번 .ics를 내보낸 뒤의 자동 갱신은 제공 안 함 —
+              운영 측이 이 한계를 사용자 안내에 반영해야 한다.</li>
+            <li><strong>호스트 더보기의 "이 이벤트로 새로 만들기"는 정기 호스트의 회수 동작의 핵심.</strong>
+              일정만 비우고 나머지를 그대로 복제하는 패턴이라, 호스트의 반복 모임 운영 비용을 크게 낮춘다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">상세 화면이 정상이라고 부르려면</span>
+          <ul>
+            <li><strong>상세 진입 → 신청 전환율</strong> — 카드 품질이 아니라 상세의 정보 조합이 결정에
+              어떻게 작용하는지의 지표.</li>
+            <li><strong>비로그인 → 상세 진입 → 로그인 전환율</strong> — 가입 전 사용자의 신청 의사가 본 화면에서
+              실제 가입으로 이어지는 비율.</li>
+            <li><strong>비공개 클럽 이벤트의 비멤버 진입 → 클럽 가입 전환율</strong> — 본 화면의 클럽 가입
+              안내 카피가 실제 가입 의사를 만드는지 측정.</li>
+            <li><strong>호스트의 "이 이벤트로 새로 만들기" 사용 빈도</strong> — 정기 호스트가 도구를 실제로
+              활용하는지의 신호. 낮으면 진입점 노출 위치 점검 필요.</li>
+            <li><strong>승인 후 결제 대기 상태에서 결제 미완료 비율</strong> — 유료 승인제 이벤트의 가장 중요한
+              누수 지점. 결제 기한·결제 안내의 적합성을 직접 측정.</li>
           </ul>
         </div>
       </section>
@@ -135,14 +298,18 @@ flowchart TD
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="F03-05.html"><div class="eyebrow">다음</div><h3>F03-05 신청·참석</h3></a>
-          <a class="card" href="F03-04.html"><div class="eyebrow">호스트</div><h3>F03-04 수정·생명주기</h3></a>
-          <a class="card" href="F03-08.html"><div class="eyebrow">관련</div><h3>F03-08 QR 체크인</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-04.html"><div class="eyebrow">호스트 액션</div><h3>F03-04 생명주기 관리</h3><p>수정·종료·취소·발행·공지의 실제 동작.</p></a>
+          <a class="card" href="F03-05.html"><div class="eyebrow">신청 동작</div><h3>F03-05 신청·참석</h3><p>액션바 "참석 신청"이 가는 곳.</p></a>
+          <a class="card" href="F03-09.html"><div class="eyebrow">종료 후</div><h3>F03-09 이벤트 사진첩</h3><p>참석 확정자가 도착하는 면.</p></a>
+          <a class="card" href="F03-10.html"><div class="eyebrow">관련</div><h3>F03-10 플랜 연결</h3><p>본문에 노출되는 진행 자료의 출처.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-02_event-detail/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-02_event-detail/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

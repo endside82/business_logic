@@ -19,65 +19,122 @@
         </div>
         <h1>F03-11. 위시리스트 (찜)</h1>
         <p class="lede">
-          하트 탭 한 번으로 추가·해제되는 가장 가벼운 사용자 액션. 낙관적 토글로 즉시 시각 피드백을 주고,
-          실패하면 자연스럽게 롤백된다. 이벤트 상태(종료·취소·PRIVATE)와 멤버십 가드가 서버에서 추가로 검증된다.
+          마음에 드는 이벤트를 가벼운 한 번의 탭으로 모아 두는 면. 카드와 상세의 하트 토글은 즉시 반응해
+          사용자가 망설임 없이 찜할 수 있고, 프로필 탭의 "찜한 이벤트"에서 한 곳에서 다시 둘러볼 수 있다.
+          신청 결정 직전의 1차 후보 모음 자리.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">동작</div><div class="value">3</div><div class="hint">추가·해제·목록</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
-          <div class="metric"><div class="label">멱등</div><div class="value">서버 보장</div></div>
+          <div class="metric"><div class="label">목록 페이지 사이즈</div><div class="value">20장</div></div>
+          <div class="metric"><div class="label">하트 토글 반응</div><div class="value">즉시</div><div class="hint">서버 응답을 기다리지 않음</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 망설이지 않게, 그러나 안전하게</span>
+          <p>찜은 사용자가 가장 가벼운 마음으로 누르는 동작이다. 하트를 누른 순간 화면이 즉시 채워져야
+            사용자가 망설임을 느끼지 않는다. 동시에 서버에서 거절(종료된 이벤트, 비공개 클럽 이벤트의 비멤버 등)이
+            일어나면 자연스럽게 원래 상태로 돌아간다 — 사용자에게는 시각적으로 자연스러운 롤백.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>낙관적 토글</h3><p>탭 즉시 UI 변경 + 서버 호출. 실패 시 캐시 재조회로 자연 롤백.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>위시리스트 목록</h3><p>페이징 + 풀투리프레시. 낙관적 제거.</p></div>
-          <div class="card"><div class="eyebrow">동작 3</div><h3>상세 캐시 동기화</h3><p>토글 시 detail provider invalidate로 두 화면 일관성 유지.</p></div>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>탐색 결과에서 하트 토글</h3>
+            <p>카드의 회색 하트를 누른다. 같은 순간에 하트가 빨갛게 채워지고 "찜했어요" 토스트. 서버 응답이
+              실패하면 자연스럽게 회색으로 돌아가고 "잠시 후 다시 시도해주세요" 안내.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 화면 반응이 즉시 일어나야 사용자가 망설임 없이 다음 카드로
+              이어 갈 수 있다. 본 단위의 응답 속도가 탐색 행동 자체의 흐름을 결정.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">목록</div>
+            <h3>"찜한 이벤트"에서 정리</h3>
+            <p>프로필 탭 → "찜한 이벤트" → 한 번에 20장씩 카드 표시. 스크롤하면 다음 묶음. 마음에 안 드는 카드는
+              하트를 다시 눌러 목록에서 즉시 사라진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">종료된 이벤트</div>
+            <h3>이미 끝난 이벤트에 찜 시도</h3>
+            <p>다른 화면에서 봤던 카드가 그 사이 종료된 경우, 하트를 누르면 서버 거절. 화면은 자연스럽게 회색으로
+              돌아가고 "잠시 후 다시 시도해주세요" 안내. 종료된 이벤트가 찜 목록에 쌓이는 사고는 발생 안 함.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비공개 클럽</div>
+            <h3>비멤버가 클럽 비공개 이벤트 찜 시도</h3>
+            <p>비공개 클럽 이벤트는 클럽 멤버만 찜 가능. 비멤버가 누르면 서버 거절. 화면이 회색으로 돌아간다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 동작</div>
+            <h3>두 화면에서 같은 이벤트 찜</h3>
+            <p>검색 결과와 상세 화면에서 같은 이벤트를 빠르게 두 번 찜. 한 번만 찜 처리되고 두 번째 호출은
+              자연스럽게 같은 결과를 반환. 중복으로 저장되지 않음.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비로그인</div>
+            <h3>비로그인 사용자가 하트 탭</h3>
+            <p>탐색 카드에서 하트를 누른 비로그인 사용자는 로그인 화면으로 이동. 로그인 후 같은 이벤트로 자동 복귀해
+              다시 찜 가능.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">네트워크 단절</div>
+            <h3>토글 도중 네트워크 끊김</h3>
+            <p>화면은 잠시 빨갛게 채워지지만, 서버 응답이 안 오면 회색으로 자연스럽게 돌아가고 안내가 뜬다.
+              사용자가 "내가 뭘 잘못했나" 혼란을 겪지 않게.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 9개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1</div><h3>검색 결과에서 첫 찜</h3><ol><li>회색 하트 탭 → 즉시 빨강</li><li>서버 INSERT → 토스트 “찜했어요”</li></ol></article>
-          <article class="card"><div class="eyebrow">S2</div><h3>위시리스트 화면에서 해제</h3><ol><li>하트 탭 → 즉시 리스트에서 제거</li><li>서버 DELETE → 토스트 “찜 해제했어요”</li></ol></article>
-          <article class="card"><div class="eyebrow">S3</div><h3>종료된 이벤트 찜 시도</h3><ol><li>낙관 patch 후 서버 400 EVENT_ALREADY_CLOSED</li><li>detail 재조회로 롤백 + 토스트</li></ol></article>
-          <article class="card"><div class="eyebrow">S4</div><h3>PRIVATE 이벤트 비멤버 시도</h3><ol><li>서버 403 → 낙관 롤백 + 토스트</li></ol></article>
-          <article class="card"><div class="eyebrow">S5</div><h3>PRIVATE 멤버 통과</h3><ol><li>멤버십 통과 → INSERT 성공</li></ol></article>
-          <article class="card"><div class="eyebrow">S6</div><h3>이미 찜한 이벤트 재요청</h3><ol><li>서버 idempotent: 204 동일</li><li>중복 행 없음</li></ol></article>
-          <article class="card"><div class="eyebrow">S7</div><h3>무한 스크롤</h3><ol><li>20건씩 누적, last=true 시 추가 호출 차단</li></ol></article>
-          <article class="card"><div class="eyebrow">S8</div><h3>풀투리프레시</h3><ol><li>0페이지부터 재로드 → 다른 디바이스 변경 반영</li></ol></article>
-          <article class="card"><div class="eyebrow">S9</div><h3>네트워크 단절 중 토글</h3><ol><li>낙관 patch → 서버 실패 → 캐시 재조회로 자연 롤백</li><li>토스트로 안내</li></ol></article>
-        </div>
-      </section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
 
-      <section>
-        <h2>서버 계약</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:30%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/wishlist</code></td><td>추가(idempotent)</td></tr>
-              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}/wishlist</code></td><td>해제(idempotent)</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/users/me/wishlist?page=&size=20</code></td><td>본인 위시리스트 목록</td></tr>
+              <tr>
+                <td><strong>하트 아이콘</strong></td>
+                <td>찜 안 됨 = 회색 외곽선, 찜 = 빨간 채움. 토글 즉시 색 변화.</td>
+                <td>한 번의 시각적 변화로 결과를 알게. 결제·결제 후 같은 무게의 결정이 아니므로 망설임 없이 누르도록.</td>
+              </tr>
+              <tr>
+                <td><strong>찜 목록</strong></td>
+                <td>프로필 탭의 "찜한 이벤트". 일반 이벤트 카드와 같은 형태로 정렬. 빈 상태에 안내 카피.</td>
+                <td>찜은 사용자의 신청 결정 직전의 1차 후보. 한 곳에서 다시 비교할 수 있어야 결정으로 이어진다.</td>
+              </tr>
+              <tr>
+                <td><strong>토스트 안내</strong></td>
+                <td>찜 추가 시 "찜했어요", 해제 시 "찜 해제했어요", 실패 시 "잠시 후 다시 시도해주세요".</td>
+                <td>실패를 분명히 알려야 사용자가 "왜 안 됐지" 혼란을 겪지 않는다. 단, 종료/비공개 같은 구체 이유는 현재 일반 메시지로 통합 — 추후 분기 가능.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">위시리스트의 결정점</span>
           <ul>
-            <li><strong>낙관 patch만 하고 실패 시 롤백 안 함</strong> — 실제 상태와 어긋남.</li>
-            <li><strong>두 화면(상세/목록) 불일치</strong> — invalidate 누락.</li>
-            <li><strong>서버에서 멱등 보장 안 함</strong> — 중복 행 생성.</li>
-            <li><strong>PRIVATE 가드 누락</strong> — 비멤버가 찜 가능해지면 가시성 정책 위반.</li>
+            <li><strong>화면 즉시 반응이 본 단위의 핵심 UX.</strong> 서버 응답을 기다린 뒤 화면을 바꾸면 사용자가
+              누른 결과를 인지하지 못한 채 다음 카드로 이어 가는 사고가 발생.</li>
+            <li><strong>실패 시 자연스러운 롤백.</strong> 종료된 이벤트나 비공개 클럽 비멤버 등의 거절은 시각적으로
+              자연스럽게 원상복귀되어야 한다.</li>
+            <li><strong>실패 메시지가 현재 일반화되어 있다.</strong> "종료된 이벤트는 찜할 수 없습니다" 같은 구체 메시지가
+              필요한 경우는 운영 분석에서 거절 빈도가 큰 거절 사유부터 우선 분리.</li>
+            <li><strong>찜은 사용자의 1차 후보 신호.</strong> 찜 → 신청 전환율은 추천 품질의 직접 신호.
+              찜이 많이 일어나는데 신청이 적으면 카드의 결정 단서가 부족하다는 의미.</li>
           </ul>
         </div>
       </section>
@@ -85,13 +142,17 @@
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="F03-01.html"><div class="eyebrow">진입</div><h3>F03-01 발견·탐색</h3></a>
-          <a class="card" href="F03-02.html"><div class="eyebrow">관련</div><h3>F03-02 상세</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-01.html"><div class="eyebrow">진입처</div><h3>F03-01 이벤트 탐색</h3><p>카드 하트의 출발 자리.</p></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">진입처</div><h3>F03-02 이벤트 상세</h3><p>상세의 하트 진입.</p></a>
+          <a class="card" href="F03-12.html"><div class="eyebrow">관련</div><h3>F03-12 내 이벤트</h3><p>같이 프로필에서 진입하는 옆 단위.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-11_wishlist/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-11_wishlist/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

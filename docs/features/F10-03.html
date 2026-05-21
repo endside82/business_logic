@@ -1,36 +1,259 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F10-03 단일 가용성 CRUD — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/10-calendar.html">10 캘린더</a><span>›</span>F10-03 단일 가용성</div>
-<h1>F10-03. 단일 가용 시간 CRUD</h1>
-<p class="lede">하루 단위로 “이 시간에 비어있다”를 공개. PUBLIC/PRIVATE 설정. 다른 사용자가 이벤트 제안에 활용 가능.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>등록(시작/종료/공개)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>수정·삭제</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>겹침 검증</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>점심시간 가용 등록</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>시간 변경</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>다른 일정과 겹침</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>삭제</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/availability</code></td></tr>
-<tr><td><code>PATCH</code></td><td><code>/api/v1/availability/{id}</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/availability/{id}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/10-calendar.html"><div class="eyebrow">상위</div><h3>10 캘린더</h3></a>
-<a class="card" href="F10-04.html"><div class="eyebrow">관련</div><h3>F10-04 반복 가용성</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/10_calendar/F10-03_single-availability-crud/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F10-03 단일 가용 시간 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/10-calendar.html">10 캘린더</a><span>›</span>
+          F10-03 단일 가용 시간
+        </div>
+        <h1>F10-03. 단일 가용 시간 등록·수정·삭제</h1>
+        <p class="lede">
+          본인이 비어 있는 시간 슬롯을 캘린더에 명시적으로 표시한다. 공개로 설정하면 다른 사용자가
+          그 슬롯을 보고 이벤트나 만남을 제안할 수 있고, 비공개로 두면 본인 일정 관리 용도로만 쓰인다.
+          한 슬롯의 시작·종료 시각·공개 범위를 등록하고, 잘못 만든 슬롯을 수정하거나 삭제한다.
+          삭제할 때 그 시간대에 잡혀 있는 이벤트가 있으면 한 단계를 더 거쳐 확인을 받는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">슬롯 최소 길이</div><div class="value">30분</div><div class="hint">30분 단위로 최대 8시간까지</div></div>
+          <div class="metric"><div class="label">공개 범위</div><div class="value">3단계</div><div class="hint">공개 · 친구 · 비공개 (현재 화면 토글은 2단계)</div></div>
+          <div class="metric"><div class="label">시간 겹침 정책</div><div class="value">금지</div><div class="hint">같은 사용자의 기존 가용 시간과 겹치면 등록 거부</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 빈 시간을 명시적인 데이터로 만든다</span>
+          <p>"비어 있다"는 사실은 일반 캘린더에서는 그냥 "일정이 없다"로 표현된다. 본 서비스는 그 빈 시간을 한 단계 더 끌어올려
+            "이 시간에 무언가 들어와도 좋다"는 의사 표시로 데이터화한다. 그래야 다른 사용자가 이벤트나 만남을 제안할 때 출발 신호가 된다.
+            그래서 가용 시간은 "비어 있는 시간"이 아니라 "사용자가 의식적으로 비워 둔 시간 슬롯"이다 — 길이·공개 범위가 모두 사용자의 선택이며,
+            잘못 만든 슬롯을 사용자가 직접 삭제할 수 있어야 그 의사 표시의 통제권이 사용자에게 머무른다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 하는 세 가지 동작</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">등록</div>
+            <h3>새 슬롯 만들기</h3>
+            <p>날짜·시작·종료·공개 범위를 정해 새 슬롯을 등록한다. 본인의 기존 슬롯과 시간이 겹치면 등록을 막고
+              "선택한 시간이 기존 가용 시간과 겹칩니다" 경고 배너를 띄운다. 길이가 30분 미만이거나 30분 단위가 아니면 저장 자체가 비활성.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">수정</div>
+            <h3>이미 만든 슬롯 바꾸기</h3>
+            <p>같은 화면이 편집 모드로 열리며 기존 값이 채워져 있다. 시간·공개 범위를 바꾸고 저장하면 갱신된다.
+              자기 자신을 제외한 다른 슬롯과 겹치는지 다시 검사한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">삭제</div>
+            <h3>슬롯 지우기 (충돌 확인)</h3>
+            <p>편집 화면 우상단의 "삭제"를 누르면 두 단계로 진행. 1단계는 단순 확인,
+              그 시간대에 본인이 호스팅 중인 이벤트가 있으면 2단계로 "겹치는 이벤트가 N건 있습니다. 그래도 삭제하시겠습니까?"가 떠오른다.
+              "예"를 한 번 더 누르면 가용 시간만 사라지고 이벤트는 그대로 유지된다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>저장 한 번에 일어나는 일</h2>
+        <p class="subtitle">사용자가 "저장"을 누른 한 순간에 시간 형식 검증·과거 시각 차단·시간 겹침 검사·DB 저장이 한 동작으로 진행된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 저장 탭"] --> B{"종료 - 시작 ≥ 30분?"}
+    B -->|"아니오"| 안내1["저장 버튼 비활성 + 안내 텍스트"]
+    B -->|"예"| C{"30분 단위 + 8시간 이하?"}
+    C -->|"아니오"| 안내2["입력 오류 안내"]
+    C -->|"예"| D{"시작이 과거 시각?"}
+    D -->|"예"| 안내3["오류 안내"]
+    D -->|"아니오"| E{"기존 가용 시간과 겹침?"}
+    E -->|"예"| 안내4["충돌 경고 배너 노출"]
+    E -->|"아니오"| F["슬롯 저장"]
+    F --> G["등록 토스트 + 캘린더 복귀"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>삭제할 때 거치는 두 단계</h2>
+        <p class="subtitle">한 번에 지우는 위험을 피하기 위해 1차 확인 + 충돌 시 2차 확인. 충돌이 없으면 1차 확인만으로 종료된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant 화면 as 편집 화면
+    participant 서버 as 가용 시간 서비스
+
+    U->>화면: "삭제" 탭
+    화면-->>U: 1차 확인 다이얼로그
+    U->>화면: "삭제"
+    화면->>서버: 삭제 시도 (강제 아님)
+    서버->>서버: 같은 시간대 본인 이벤트 검사
+    alt 충돌 없음
+        서버-->>화면: 삭제 완료
+        화면-->>U: "가용 시간이 삭제되었습니다" 토스트 + 캘린더 복귀
+    else 충돌 있음
+        서버-->>화면: 미삭제 + 충돌 건수 N
+        화면-->>U: 2차 확인 "겹치는 이벤트가 N건 있습니다. 그래도 삭제?"
+        U->>화면: "삭제"
+        화면->>서버: 강제 삭제
+        서버-->>화면: 삭제 완료
+        화면-->>U: 토스트 + 복귀
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>점심시간을 비워 두고 싶다</h3>
+            <p>일간 캘린더 5월 12일에 들어가 FAB을 누른다. 폼 기본값은 09:00-10:00. 시간을 12:00-13:30으로 바꾸고
+              제목 "점심시간 가용", 공개 범위는 그대로 공개로 두고 저장. 등록 토스트와 함께 캘린더로 돌아오면
+              해당 일자에 초록 마커가 새로 생긴다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 본인이 의식적으로 비워 둔 시간이 다른 사용자에게 "여기 제안해도 좋다"는 신호로 나타난다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">시간 겹침</div>
+            <h3>같은 시간에 또 비워 두려 할 때</h3>
+            <p>이미 5/12 12:00-13:00 슬롯이 있는 상태에서 12:30-14:00을 새로 등록하려 한다. 저장 순간 노란 배너 "선택한 시간이 기존 가용 시간과 겹칩니다"가 떠오른다.
+              사용자가 시간을 조정해 다시 저장하면 정상 진행.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 같은 사용자의 가용 시간이 한 시각에 두 번 있을 수 없다는 정책. 다른 사용자가 어떤 슬롯에 제안해야 하는지 모호해지는 상황을 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">짧은 길이</div>
+            <h3>15분만 비워 두려 할 때</h3>
+            <p>14:00-14:15로 입력하면 시간 박스 아래에 빨간 안내 "최소 30분 이상의 가용 시간을 설정해주세요"가 즉시 표시되고 저장 버튼이 비활성화된다.
+              서버에 도달하지도 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "한 슬롯이 너무 짧으면 다른 사용자가 의미 있는 제안을 못 한다"는 정책을 화면에서 미리 차단.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수정</div>
+            <h3>등록한 슬롯의 시간 바꾸기</h3>
+            <p>캘린더에서 그 가용 시간 블록을 탭하면 편집 화면이 열리고 기존 값이 채워져 있다. 시간을 11:30-13:00으로 조정하고 저장하면
+              "가용 시간이 수정되었습니다" 토스트.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">충돌 없는 삭제</div>
+            <h3>그 시간대에 다른 이벤트가 없다</h3>
+            <p>편집 화면 우상단 "삭제" → 1차 확인 → "삭제". 같은 시간대에 본인 이벤트가 없으면 한 번에 사라진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">충돌 있는 삭제</div>
+            <h3>그 시간에 본인 호스팅 이벤트가 잡혀 있다</h3>
+            <p>5/12 12:00-13:30 슬롯을 지우려는데, 같은 시간에 본인이 만든 모집 중 이벤트가 1건 있다.
+              1차 확인 후 자동으로 2차 다이얼로그 "이 가용 시간과 겹치는 이벤트가 1건 있습니다. 그래도 삭제하시겠습니까?"가 떠오른다.
+              "예"를 누르면 가용 시간만 사라지고 이벤트는 그대로 유지된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가용 시간과 이벤트는 별도 데이터지만, 사용자가 "비워둔 시간"을 지웠을 때 그 시간에 잡혀 있던 이벤트의 존재를 의식하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">실패</div>
+            <h3>네트워크가 끊긴 상태에서 삭제</h3>
+            <p>1차 확인 후 통신이 실패하면 "삭제에 실패했습니다" 토스트. 슬롯은 그대로 남고 사용자가 다시 시도할 수 있다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>상단 타이틀·삭제 액션</strong></td>
+                <td>신규는 "가용 시간 설정", 편집은 "가용 시간 수정". 편집 모드에서 우상단에 빨간 "삭제" 텍스트.</td>
+                <td>화면 모드를 한눈에 구분하고, 삭제 액션은 편집 모드에서만 노출해 신규 등록 중에 잘못 누르는 사고를 막는다.</td>
+              </tr>
+              <tr>
+                <td><strong>날짜·시간 필드</strong></td>
+                <td>날짜는 오늘 이후로만 선택 가능. 시작·종료 시간은 30분 단위. 가운데에 "~" 표시.</td>
+                <td>과거 시각에 가용 시간을 등록하는 의미 없는 흐름을 화면에서 미리 막는다.</td>
+              </tr>
+              <tr>
+                <td><strong>지속시간 라벨</strong></td>
+                <td>정상이면 옅은 초록 배경에 "⏱️ X시간 Y분", 30분 미만이면 같은 자리에 빨간 안내 텍스트.</td>
+                <td>사용자가 시간을 만질 때마다 그 결과가 즉시 보여, 저장 시점에야 거부당하지 않게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>충돌 경고 배너</strong></td>
+                <td>저장 시도 후 기존 슬롯과 겹쳤을 때만 떠오르는 노란 배너. "선택한 시간이 기존 가용 시간과 겹칩니다. 시간을 조정해주세요."</td>
+                <td>겹침 검사는 서버에서만 가능한 정책이므로 저장 후에 안내된다. 사용자가 시간을 조정할 때까지 화면에 남는다.</td>
+              </tr>
+              <tr>
+                <td><strong>공개 토글</strong></td>
+                <td>"공개"/"비공개" 두 단계 스위치. 친구 한정 공개는 화면에서 직접 선택할 수 없다.</td>
+                <td>현재는 두 단계로 단순화. 친구 공개 슬롯이 필요한 사용자는 다른 경로로 설정해야 한다는 한계가 있다.</td>
+              </tr>
+              <tr>
+                <td><strong>반복 설정 스위치</strong></td>
+                <td>신규 모드에서만 노출. 켜면 요일 선택 칩이 인라인으로 노출된다.</td>
+                <td>"매주 반복"이 자연스러운 흐름에서 한 화면에서 끝낼 수 있게. 반복 규칙의 전체 흐름은 F10-04에서 다룬다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">가용 시간은 다른 사용자가 보는 데이터다 — 정책의 일관성이 중요하다</span>
+          <ul>
+            <li><strong>같은 시간에 두 가용 시간을 만들 수 없다.</strong> 다른 사용자가 어떤 슬롯에 제안해야 하는지 모호해지면 가용 시간 기능 자체가 신뢰를 잃는다.
+              겹침 검사는 등록·수정 둘 다 동일하게 동작한다.</li>
+            <li><strong>최소 30분, 30분 단위, 최대 8시간.</strong> 너무 짧은 슬롯은 의미 있는 제안이 들어오지 않고, 너무 긴 슬롯은 가용 시간이라기보다 그냥 "오늘은 한가하다"에 가까워진다 — 그래서 8시간 상한.</li>
+            <li><strong>삭제 시 같은 시간대 이벤트가 있으면 한 단계 더 거친다.</strong> 가용 시간과 이벤트는 별도 데이터지만, 사용자가 보기에는 한 시간대를 정리하는 동작이라는 점을 인지시키는 장치.
+              "그래도 삭제"를 선택하면 이벤트는 그대로 남는다 — 가용 시간만 정리.</li>
+            <li><strong>친구 한정 공개는 화면 토글에서 빠져 있다.</strong> 데이터 모델은 친구 공개를 지원하지만 화면 노출이 두 단계로 축소되어 있어, 운영 정책상 친구 공개 슬롯이 활용되는 사례가 드물 가능성이 높다 — 필요해지면 토글 확장을 검토할 시점.</li>
+            <li><strong>다른 사람의 가용 시간을 임의로 편집할 수 없다.</strong> 편집 화면을 URL로 강제 진입해도 본인 슬롯이 아니면 서버가 거부한다 — 단, 사용자에게 명확한 안내가 가지 않는 경계가 있어 운영 모니터링 포인트.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/10-calendar.html"><div class="eyebrow">상위 도메인</div><h3>10 캘린더</h3></a>
+          <a class="card" href="F10-01.html"><div class="eyebrow">앞 단위</div><h3>F10-01 통합 캘린더 조회</h3><p>등록된 가용 시간이 마커·블록으로 나타나는 면.</p></a>
+          <a class="card" href="F10-02.html"><div class="eyebrow">진입처</div><h3>F10-02 일정 항목 라우팅</h3><p>가용 시간 블록 탭이 이 화면 편집 모드로 보내는 동선.</p></a>
+          <a class="card" href="F10-04.html"><div class="eyebrow">관련</div><h3>F10-04 반복 가용 시간</h3><p>매주/격주/매월 같은 주기적 슬롯을 한 번에 묶는 규칙.</p></a>
+          <a class="card" href="F10-05.html"><div class="eyebrow">데이터 소비</div><h3>F10-05 타 사용자 가용성</h3><p>여기서 등록한 공개 슬롯이 다른 사용자에게 노출되는 면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/10_calendar/F10-03_single-availability-crud/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

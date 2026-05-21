@@ -1,33 +1,275 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F08-02 플랜 상세 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>F08-02 플랜 상세</div>
-<h1>F08-02. 플랜 상세 · 작성자 미리보기</h1>
-<p class="lede">한 플랜의 모든 블록을 순서대로 본다. 역할(작성자/구매자/외부)과 상태(DRAFT/PUBLISHED/UNPUBLISHED)에 따라 액션 분기.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>블록 렌더</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>작성자 액션(편집/발행/복제/판매중지)</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>구매자 액션(이벤트 만들기/리뷰)</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>DRAFT 작성자</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>PUBLISHED 통계</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>구매자 진입</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>외부 비구매자</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/plans/{id}</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
-<a class="card" href="F08-05.html"><div class="eyebrow">다음</div><h3>F08-05 발행</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/08_plan_market/F08-02_plan-detail/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-02 플랜 상세 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-02 플랜 상세
+        </div>
+        <h1>F08-02. 플랜 상세 · 작성자용 미리보기</h1>
+        <p class="lede">
+          한 플랜의 메타데이터(제목·설명·상태·구매수)와 본문 블록을, 보는 사람의 위치에 따라 다르게 보여 주는 화면이다.
+          작성자에게는 편집·발행·복제·판매 중지·삭제 같은 라이프사이클 액션이 함께 놓이고,
+          구매한 사용자에게는 본문을 읽고 "이 플랜으로 이벤트 만들기"로 넘어갈 진입점이 놓인다.
+          비공개로 돌려놓은 플랜은 작성자 본인에게는 그대로 보이지만 외부에는 흐림 처리로 본문을 가린다.
+          한 플랜의 일생에서 "지금 누구의 손에 있는가"가 가장 명확히 갈리는 화면이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">상태</div><div class="value">4</div><div class="hint">작성 중 · 발행 중 · 숨김 · 삭제</div></div>
+          <div class="metric"><div class="label">보는 사람 분기</div><div class="value">3</div><div class="hint">작성자 · 구매자 · 그 외</div></div>
+          <div class="metric"><div class="label">미리보기 샘플 블록</div><div class="value">3</div><div class="hint">비구매자에게만 노출</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 같은 플랜이라도 보는 사람에 따라 다른 화면이다</span>
+          <p>작성자에게는 자기 작품의 통제권이 모인 면이어야 하고, 구매자에게는 "내가 산 것"의 본문을 그대로 보여 주어야 하고,
+            그 외 사람에게는 구매를 결정할 수 있을 만큼만 보여 주어야 한다. 같은 플랜 식별자에 도달한 세 사람이
+            서로 다른 화면을 보는 것이 이 단위의 핵심이다. 그래서 본문 블록을 통째로 내려 주는 경로와
+            샘플 블록 세 개만 내려 주는 경로가 별도로 갈라져 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>플랜의 라이프사이클</h2>
+        <p class="subtitle">한 플랜이 거치는 네 상태 — 작성 중에서 발행 중으로 가고, 숨김으로 잠시 내렸다가 다시 발행할 수 있다. 삭제는 카운트에서만 빠지는 표시 변경이다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 작성중: 새 플랜 생성
+    작성중 --> 발행중: 발행
+    발행중 --> 숨김: 판매 중지
+    숨김 --> 발행중: 재발행
+    작성중 --> 삭제: 삭제(표시 변경)
+    발행중 --> 삭제: 삭제
+    숨김 --> 삭제: 삭제
+
+    note right of 발행중
+      마켓 노출 대상
+      구매·이벤트 생성 가능
+    end note
+    note right of 숨김
+      마켓에서 사라짐
+      작성자만 본문 조회
+      외부에는 흐림 처리
+    end note
+    note right of 삭제
+      데이터는 남고 한도에서만 빠짐
+    end note
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 화면이 다루는 라이프사이클 액션</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">작성자 — 작성 중·숨김</div>
+            <h3>편집 · 발행하기 · 삭제</h3>
+            <p>편집은 블록 에디터(F08-03)로 가고, 발행하기는 체크리스트가 있는 발행 화면(F08-05)으로 보낸다.
+              우측 상단의 휴지통 아이콘은 작성 중·숨김 상태에서만 나타나 — 발행 중인 플랜은 한 번 숨김으로 내렸다가 삭제하는 흐름이다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">작성자 — 발행 중</div>
+            <h3>편집 · 판매 중지 · 복제</h3>
+            <p>판매 중지는 발행 중 플랜을 숨김 상태로 내리고, 마켓에서 보이지 않게 한다.
+              복제는 블록까지 모두 깊은 복사한 새 플랜을 작성 중 상태로 만든다(원본은 그대로). 한도 검사도 다시 통과해야 한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">구매자</div>
+            <h3>이 플랜으로 이벤트 만들기</h3>
+            <p>구매한 본인에게는 본문이 그대로 보이고, 하단에는 "이 플랜으로 이벤트 만들기" 한 버튼이 있다.
+              한 번의 구매가 "참고용 콘텐츠"에 머물지 않고 실제 모임으로 이어지는 출구다(F08-13).</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">그 외 · 숨김 플랜</div>
+            <h3>본문은 흐림 처리</h3>
+            <p>딥링크나 캐시로 숨김 상태 플랜에 도달한 외부 사용자에게는 본문이 흐림 처리된 채로
+              "비공개 플랜입니다" 안내만 보인다. 작성자 본인은 본문을 그대로 본다 — 숨김은 외부에 대한 차단이지 작성자에 대한 잠금이 아니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>보는 사람에 따라 화면이 갈리는 흐름</h2>
+        <p class="subtitle">한 플랜 식별자로 들어오면 우선 플랜 정보를 가져오고, 그 안에 함께 실린 "내가 작성자인가 / 구매자인가" 두 신호로 화면이 갈린다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    Start["상세 진입"] --> Fetch["플랜 정보 조회"]
+    Fetch --> Branch{"보는 사람?"}
+    Branch -->|"작성자 본인"| Owner{"플랜 상태?"}
+    Branch -->|"구매자"| Buyer["본문 + 이벤트 만들기 버튼"]
+    Branch -->|"그 외, 발행 중"| Public["본문(요약형) + 구매 안내"]
+    Branch -->|"그 외, 숨김"| Hidden["흐림 처리 + 비공개 안내"]
+    Owner -->|"작성 중"| OwnerDraft["편집 · 발행하기 · 삭제"]
+    Owner -->|"발행 중"| OwnerPub["편집 · 판매 중지 · 복제"]
+    Owner -->|"숨김"| OwnerHidden["편집 · 발행하기(재발행) · 삭제"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">작성자 — 발행 전 검토</div>
+            <h3>작성 중 플랜을 다시 보고 발행 화면으로 보낸다</h3>
+            <p>막 블록 작성을 끝낸 크리에이터가 상세에 들어온다. 상단에 "작성 중" 배지와 "수정 5분 전" 표시가 보인다.
+              하단에는 "편집"과 "발행하기" 두 버튼, 그리고 그 사이에 "초안 저장됨" 안내. "발행하기"를 누르면 발행 체크리스트 화면으로 넘어간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 자기가 만든 것을 한 번 더 통째로 확인하고 마켓에 풀게 하는 마지막 검토 자리다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">작성자 — 발행 중 복제</div>
+            <h3>비슷한 코스로 두 번째 플랜을 만든다</h3>
+            <p>이미 발행해서 12회 팔린 플랜의 블록 구조를 살리고 싶다. "복제"를 누르면 새 작성 중 플랜이 만들어지고
+              블록까지 모두 복사된다. 제목은 "원본 (복사본)"으로 시작하고, 화면이 그 새 플랜의 상세로 이동한다.
+              한도가 가득 찬 상태에서는 복제가 거절된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 잘 팔리는 플랜을 변주해서 시리즈로 만드는 크리에이터 행동을 직접 지원한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">작성자 — 발행 중 내림</div>
+            <h3>일정 변경으로 잠시 판매를 멈춘다</h3>
+            <p>이번 분기에 운영이 어려운 코스라 잠시 마켓에서 내린다. "판매 중지"를 누르면 위험 동작 확인 다이얼로그가 뜨고,
+              확인하면 상태가 "숨김"으로 바뀐다. 마켓 검색·인기 목록에서 사라지지만, 작성자에게는 본문이 그대로 보이고
+              다시 "발행하기"로 재발행할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 마켓 진열에서 내리는 행위와 영구 삭제가 분리되어 있어, 잠시 빼고 싶은 운영 의도를 안전하게 지원한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">외부 — 숨김 플랜 도달</div>
+            <h3>딥링크로 비공개 플랜에 닿았다</h3>
+            <p>마켓 캐시나 외부 공유 링크로 다른 사용자가 "/plan/123"에 들어온다. 작성자는 그 사이에 판매 중지를 해 두었다.
+              본문 위에 흐림 처리가 덮이고 가운데에 "비공개 플랜 / 이 플랜은 현재 공개되지 않았습니다" 안내만 보인다.
+              하단 액션은 비어 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 같은 식별자가 살아 있어도 외부에는 본문이 노출되지 않는 안전 경계.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">작성자 — 삭제</div>
+            <h3>작성 중 플랜을 정리한다</h3>
+            <p>완성도가 떨어진 작성 중 플랜을 정리한다. 우측 상단 휴지통을 누르면 "플랜을 삭제하시겠습니까? / 삭제된 플랜은 복구할 수 없습니다" 다이얼로그.
+              취소를 누르면 데이터·화면 그대로 유지(시드 회귀 테스트로 확인하는 안전 경로).
+              확인하면 상태가 "삭제됨"으로 바뀌고 목록으로 돌아간다. 한도 카운트가 회복된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 발행해서 팔린 플랜은 휴지통 자리에서 보이지 않게 둬서, 통계가 사라지는 사고를 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">구매자 — 본문 열람</div>
+            <h3>산 플랜을 다시 펼쳐 본다</h3>
+            <p>마켓에서 산 플랜을 컬렉션을 통해 다시 들어와 미리보기로 본다. 작성자 닉네임과 활동 카드가 상단에 보이고,
+              본문 블록이 읽기 전용으로 펼쳐진다. 하단 한 버튼은 "이 플랜으로 이벤트 만들기".</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 구매가 사용으로 이어지는 가장 짧은 경로. 컬렉션과 이벤트 도메인을 잇는 자리.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비구매자 — 결정 단계</div>
+            <h3>마켓 상세에서 미리보기를 펼친다</h3>
+            <p>마켓에서 발견한 플랜의 미리보기에 들어온다. 작성자 정보와 함께 본문 중에 짧은 텍스트·제목 형식 블록 최대 세 개만
+              샘플로 보이고 그 아래는 잘려 있다. 구매 결정의 마지막 신호로만 본문이 노출된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">잘못된 상태 전이</div>
+            <h3>이미 작성 중인 플랜에 "판매 중지"가 닿았다</h3>
+            <p>화면 캐시가 어긋난 상태로 작성 중 플랜에 판매 중지 호출이 도달한다. 서버는 발행 중에서만 숨김으로 갈 수 있다는 규칙으로 거절하고,
+              사용자에게는 "판매 중지에 실패했습니다" 안내가 뜬다. 상태 변경 없음.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성 — 보는 사람별</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">보는 사람</th><th>보이는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>작성자 — 발행 중</strong></td>
+                <td>상단에 발행 중 배지 + 마지막 수정 시각. 본인 한정 통계 카드("구매 N회 · 판매 중") 한 줄. 본문 블록. 하단 "편집 · 판매 중지 · 복제" 세 버튼.</td>
+                <td>발행 후 운영 단계의 작성자에게는 결과 숫자가 가장 먼저 눈에 들어와야 한다 — 자기 작품이 잘 작동하는지의 답.</td>
+              </tr>
+              <tr>
+                <td><strong>작성자 — 작성 중</strong></td>
+                <td>작성 중 배지 + "초안 저장됨" 안내. 본문. 하단 "편집 · 발행하기" 두 버튼. 우측 상단 휴지통.</td>
+                <td>다음 행동은 "마저 채워서 발행"이거나 "그만 두기" 둘 중 하나라, 그 두 길만 또렷이 노출한다.</td>
+              </tr>
+              <tr>
+                <td><strong>구매자 본인</strong></td>
+                <td>작성자 닉네임·플랜 수·총 판매 수가 모인 작은 카드. 본문 블록 전체. 하단 "이 플랜으로 이벤트 만들기" 한 버튼.</td>
+                <td>"이 콘텐츠로 무엇을 할 것인가"에 답하는 한 버튼만 둔다. 구매 자산을 다시 활용 흐름으로 보내는 출구.</td>
+              </tr>
+              <tr>
+                <td><strong>그 외 — 발행 중</strong></td>
+                <td>같은 본문이지만 비구매자용 미리보기 화면 경로로 진입. 본문 중 텍스트·제목 형식 블록 최대 세 개만 샘플로 노출.</td>
+                <td>전체 본문 노출은 구매의 가치를 사라지게 한다. 구매 결정의 마지막 신호로만 본문을 잠깐 보여 준다.</td>
+              </tr>
+              <tr>
+                <td><strong>그 외 — 숨김</strong></td>
+                <td>본문 위에 흐림 처리 오버레이. 가운데에 "비공개 플랜 / 이 플랜은 현재 공개되지 않았습니다" 안내. 하단 액션 없음.</td>
+                <td>딥링크나 외부 캐시로 도달한 사용자에게도 비공개 상태가 즉시 인지되게 한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">이 화면이 무너지면 작성자 통제와 외부 차단이 동시에 무너진다</span>
+          <ul>
+            <li><strong>"작성자인가 / 구매자인가"는 같은 호출이 함께 내려 보내는 두 신호다.</strong>
+              둘 중 하나가 누락되면 작성자 액션이 외부 사용자에게 노출되거나 구매자에게 본문이 잠기는 회귀가 발생한다.</li>
+            <li><strong>숨김은 외부 차단이지 작성자 잠금이 아니다.</strong> 작성자 본인에게는 본문이 그대로 보이고 편집·재발행도 가능하다.
+              만약 작성자에게도 흐림 처리가 적용되는 회귀가 일어나면 자기가 만든 플랜에 접근하지 못하게 된다.</li>
+            <li><strong>발행 중 상태에서는 휴지통이 보이지 않는다.</strong> 발행해서 팔린 플랜이 한 번에 사라지는 사고를 막는 보호선.
+              발행 중 플랜을 정리하고 싶으면 판매 중지 → 삭제 두 단계를 거치도록 둔다.</li>
+            <li><strong>복제는 한도를 다시 검사한다.</strong> 한도가 꽉 찬 상태에서 복제를 누르면 새 플랜이 만들어지지 않는다.
+              인기 플랜을 변주하려는 크리에이터의 행동을 막는 자주 들리는 막힘 지점.</li>
+            <li><strong>삭제는 데이터를 보존한다.</strong> 발행해서 팔린 플랜의 통계와 구매자 보유함은 그대로 유지된다.
+              "삭제 후 복구가 안 된다"는 화면 카피는 사용자 인지에 맞춘 표현이지 실제로는 표시 변경이다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-01.html"><div class="eyebrow">앞 단위</div><h3>F08-01 내 플랜 목록</h3></a>
+          <a class="card" href="F08-03.html"><div class="eyebrow">편집</div><h3>F08-03 블록 에디터</h3><p>"편집" 버튼의 도착지.</p></a>
+          <a class="card" href="F08-05.html"><div class="eyebrow">발행</div><h3>F08-05 플랜 발행</h3><p>"발행하기"의 체크리스트 화면.</p></a>
+          <a class="card" href="F08-13.html"><div class="eyebrow">활용</div><h3>F08-13 이벤트 만들기 · 리뷰</h3><p>구매자의 "이 플랜으로 이벤트 만들기" 도착지.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음)
+  - business_logic/units/08_plan_market/F08-02_plan-detail/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

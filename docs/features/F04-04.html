@@ -1,53 +1,189 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-04 멤버 관리 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-04 멤버 관리</div>
-<h1>F04-04. 멤버 관리</h1>
-<p class="lede">클럽 멤버의 역할 변경과 추방을 다룬다. OWNER는 ADMIN을 임명·해임할 수 있고, ADMIN은 일반 MEMBER만 추방할 수 있다. OWNER 본인은 어떤 경로로도 추방·변경되지 않는다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">역할</div><div class="value">3</div><div class="hint">OWNER·ADMIN·MEMBER</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
-</div></section>
-<section><h2>권한 매트릭스</h2><div class="table-wrap"><table>
-<thead><tr><th>실행자\\대상</th><th>OWNER</th><th>ADMIN</th><th>MEMBER</th></tr></thead>
-<tbody>
-<tr><td>OWNER</td><td>—(이전만 가능)</td><td>역할 변경·추방 가능</td><td>역할 변경·추방 가능</td></tr>
-<tr><td>ADMIN</td><td>차단</td><td>차단</td><td>추방 가능(역할 변경 불가)</td></tr>
-<tr><td>MEMBER</td><td>차단</td><td>차단</td><td>차단</td></tr>
-</tbody></table></div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>멤버 목록 + 역할 필터</h3><p>탭: 전체/관리자/멤버. 페이징.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>역할 변경(OWNER 전용)</h3><p>ADMIN ↔ MEMBER 토글. OWNER는 옵션 자체 없음.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>추방</h3><p>BUSINESS는 가입비 항상 환불(KICKED 환불 규칙).</p></div>
-</div></section>
-<section><h2>사용자 시나리오 9개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>OWNER가 ADMIN 승격</h3><ol><li>역할 변경 시트 → ADMIN → 저장</li><li>대상에게 권한 부여</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>ADMIN의 역할 변경 시도</h3><ol><li>UI 항목 숨김, 우회 시 403</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>OWNER 역할 변경 차단</h3><ol><li>UI에 OWNER 옵션 없음</li><li>우회 시 CLUB_CANNOT_CHANGE_OWNER_ROLE</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>ADMIN이 MEMBER 추방</h3><ol><li>가입비 환불 + DELETE + memberCount--</li><li>대상에게 CLUB_MEMBER_KICKED 알림</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>ADMIN→ADMIN 추방 시도</h3><ol><li>UI 항목 없음, 우회 시 403 CLUB_NO_PERMISSION</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>OWNER→ADMIN 추방</h3><ol><li>OWNER는 모든 ADMIN 추방 가능</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>OWNER 자기 추방 시도</h3><ol><li>본인 카드에 ⋮ 미표시</li><li>우회 시 403</li></ol></article>
-<article class="card"><div class="eyebrow">S8</div><h3>역할 필터</h3><ol><li>“관리자” 탭 → role=ADMIN 쿼리</li></ol></article>
-<article class="card"><div class="eyebrow">S9</div><h3>비멤버 진입</h3><ol><li>라우터 차단</li><li>우회 시 401/403</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/members?role=&page=&size=</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/members/{userId}/role</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/clubs/{id}/members/{userId}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3></a>
-<a class="card" href="F04-03.html"><div class="eyebrow">관련</div><h3>F04-03 소유권 이전</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-04_member-management/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-04 멤버 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-04 멤버 관리
+        </div>
+        <h1>F04-04. 멤버 관리</h1>
+        <p class="lede">
+          소유자와 관리자가 클럽 멤버를 들여다보고, 누구에게 운영 권한을 더 줄지 누구를 내보낼지 결정하는 면.
+          멤버 목록과 역할 변경·추방이 한 화면에서 이루어지며, 권한 단계 사이에 보호 장치가 들어 있어서
+          "관리자가 다른 관리자를 추방"이나 "소유자를 추방" 같은 사고가 일어나지 않는다.
+          역할 변경은 소유자만, 추방은 소유자와 관리자가 할 수 있되 자기 위 단계는 다룰 수 없다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">권한 단계</div><div class="value">3</div><div class="hint">멤버 · 관리자 · 소유자</div></div>
+          <div class="metric"><div class="label">역할 변경</div><div class="value">소유자만</div><div class="hint">관리자는 권한 위임 불가</div></div>
+          <div class="metric"><div class="label">유료 클럽 추방</div><div class="value">항상 환불</div><div class="hint">7일 기준 무관, 가입비 전액</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 권한 단계 사이의 보호가 사고를 막는다</span>
+          <p>관리자는 멤버를 다룰 수 있지만, 다른 관리자를 다룰 수는 없다. 소유자만이 관리자에게 손을 댈 수 있다.
+            이 단계가 깔리지 않으면 "한 관리자가 다른 관리자를 추방하고 자기 사람만 남기는" 권력 다툼이 클럽 안에서 일어난다.
+            그래서 권한 매트릭스는 한 사람의 결정이 자기 아래 단계까지만 닿게 막혀 있고,
+            화면 위에서는 액션 메뉴 자체가 권한 가능한 대상에게만 보인다.
+            서버 가드는 화면 가드가 풀렸을 때의 최후 안전망.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>누가 누구에게 무엇을 할 수 있는가</h2>
+        <p class="subtitle">이 매트릭스를 흘리면 클럽 운영의 안전성이 즉시 무너진다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상 / 행위자</th><th>일반 멤버에게</th><th>관리자에게</th><th>소유자에게</th></tr></thead>
+            <tbody>
+              <tr><td><strong>관리자</strong></td><td>추방·차단 가능 / 역할 변경 불가</td><td>아무것도 불가</td><td>아무것도 불가</td></tr>
+              <tr><td><strong>소유자</strong></td><td>역할 변경(관리자로 승격) · 추방 · 차단</td><td>역할 변경(일반으로 강등) · 추방 · 차단</td><td>아무것도 불가 (자기 자신)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>소유자에서 다른 사람으로 직접 변경하는 동작(소유권 이전)은 본 단위가 아닌 별도 단위(F04-03)에서 처리된다.
+          소유자 권한은 멤버 카드의 역할 변경 메뉴에서 만들어지지 않는다.</p>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">권한 위임</div>
+            <h3>소유자가 활발한 멤버 한 명을 관리자로 승격</h3>
+            <p>멤버 목록에서 그 사용자 카드의 더보기 메뉴 → "역할 변경" → 관리자 선택 → 변경.
+              그 자리에서 역할이 바뀌고 사용자는 게시판·멤버·이벤트·공지 관리 권한을 갖게 된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 클럽이 일정 규모를 넘으면 소유자 혼자 운영하기 어렵다. 권한 위임 경로가 살아 있어야 클럽이 커진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>관리자가 다른 관리자를 추방하려 한다</h3>
+            <p>관리자에게는 다른 관리자 카드의 더보기 메뉴에 "추방"·"차단" 항목 자체가 보이지 않는다.
+              외부에서 강제로 호출해도 "권한이 없습니다" 안내가 떠오른다. 관리자끼리의 권력 다툼이 생기지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">유료 클럽 추방</div>
+            <h3>유료 클럽 멤버를 부적절한 행동으로 추방한다</h3>
+            <p>관리자가 멤버 한 명을 추방하면 그 사용자의 가입비가 즉시 환불된다.
+              자발 탈퇴와 달리 추방은 7일 기준과 무관하게 가입비 전액이 클럽 기금에서 빠져 멤버 지갑으로 돌아간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 운영자에 의한 강제 종료는 사용자 책임이 아니므로 환불을 보장한다. 이 정책이 분명해야 추방이 분쟁으로 이어지지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">소유자 보호</div>
+            <h3>관리자가 소유자를 추방하려 한다</h3>
+            <p>관리자에게는 소유자 카드에 더보기 메뉴 자체가 보이지 않는다.
+              관리자가 자기보다 위 단계인 소유자를 다룰 수 있게 되면 클럽이 한순간에 운영자를 잃는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">역할별 보기</div>
+            <h3>"관리자만 보기"로 클럽 운영진 한눈에</h3>
+            <p>역할 탭에서 "관리자(3)" 탭을 누르면 관리자 세 명만 추려서 보여 준다.
+              누구에게 어떤 권한이 위임되어 있는지 한 화면에서 점검할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자기 보호</div>
+            <h3>소유자가 자기 자신 카드를 본다</h3>
+            <p>소유자에게도 본인 카드는 보이지만 더보기 메뉴가 비어 있다.
+              "자기 자신을 추방한다" 같은 사고 자체가 화면에서 일어나지 않게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>비멤버가 멤버 목록 화면에 직접 들어오려 한다</h3>
+            <p>비멤버에게는 멤버 목록 화면 자체가 노출되지 않는다. 라우터 단계에서 클럽 상세 화면으로 되돌아가고,
+              직접 호출이 들어와도 서버가 거절한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:30%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>역할 필터 탭</strong></td>
+                <td>"전체 / 관리자 / 일반 / 초대" 4개 탭.</td>
+                <td>운영자 시점에서 자주 보는 분리("운영진은 누구인가") + 진행 중 초대를 별도 면으로 잡아서 화면 이동 없이 점검 가능.</td>
+              </tr>
+              <tr>
+                <td><strong>멤버 카드</strong></td>
+                <td>아바타, 닉네임, 역할 배지(소유자/관리자/멤버), 가입일.</td>
+                <td>한 줄에 "이 사람이 클럽에서 어떤 위치인가"가 보여야 운영자가 빠르게 결정할 수 있다.</td>
+              </tr>
+              <tr>
+                <td><strong>카드의 더보기 메뉴</strong></td>
+                <td>현재 사용자가 그 대상에 대해 할 수 있는 액션만 추려서 노출.</td>
+                <td>"권한 없음" 메뉴를 노출하고 거절하는 대신, 처음부터 보이지 않게 해서 운영자의 인지 부담을 줄인다.</td>
+              </tr>
+              <tr>
+                <td><strong>역할 변경 시트</strong></td>
+                <td>일반·관리자 두 라디오 옵션. 소유자 옵션은 없음.</td>
+                <td>소유권 이전은 별도 단위로 분리되어 있다는 사실을 화면에서 분명히 표시.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">권한 매트릭스가 풀리면 클럽이 갈라진다</span>
+          <ul>
+            <li><strong>관리자가 관리자를 다룰 수 있게 되면 운영진끼리의 권력 다툼이 일어난다.</strong>
+              이 가드는 화면·서버 두 단계에서 모두 작동해야 한다. 한 곳이라도 풀리면 사고가 즉시 발생한다.</li>
+            <li><strong>추방 시 유료 클럽의 가입비 환불은 자동이어야 한다.</strong>
+              "추방됐는데 돈은 안 돌아왔다"가 한 번이라도 발생하면 환불 분쟁이 운영팀으로 쏟아진다.
+              추방은 사용자 책임이 아니므로 7일 기준과 무관하게 환불.</li>
+            <li><strong>역할 변경에서 소유자 옵션을 노출하면 소유권 이전이 잘못 일어난다.</strong>
+              역할 변경 시트에는 일반·관리자만 노출되어야 하며, 소유권 이전은 별도 단위(F04-03)에서만 가능.</li>
+            <li><strong>자기 자신에 대한 액션은 화면에서 미리 차단한다.</strong>
+              "자기를 추방한다", "자기 역할을 변경한다" 같은 동작은 의미가 없거나 위험하므로 본인 카드의 더보기 메뉴를 비워 둔다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-05.html"><div class="eyebrow">관련</div><h3>F04-05 가입 대기열·초대</h3><p>"초대" 탭의 도착지.</p></a>
+          <a class="card" href="F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3><p>"차단" 액션이 만들어 내는 결과의 정리.</p></a>
+          <a class="card" href="F04-03.html"><div class="eyebrow">관련</div><h3>F04-03 소유권 이전</h3><p>소유자 변경은 별도 경로로.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-04_member-management/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

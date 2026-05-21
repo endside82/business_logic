@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F02-02 홈 피드 새로고침 — community PRD</title>
+  <title>F02-02 홈 새로고침 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,107 +15,69 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/02-home.html">02 홈 피드</a><span>›</span>
-          F02-02 새로고침
+          F02-02 홈 새로고침
         </div>
-        <h1>F02-02. 홈 피드 새로고침</h1>
+        <h1>F02-02. 홈 새로고침</h1>
         <p class="lede">
-          사용자가 명시적으로 “최신 상태”를 원할 때 캐시를 우회해 4섹션을 모두 다시 가져온다.
-          5분 캐시가 살아있어도 사용자가 풀투리프레시를 하면 무조건 새로 가져오는 게 본 단위의 단호한 정책.
-          새 데이터로 갱신 후에도 스크롤 위치는 유지되도록 설계된다.
+          홈 화면을 아래로 당기면 일어나는 동작을 정의한다. 사용자가 "지금 이 화면이 진짜 최신인가"를
+          스스로 한 번 더 확인하고 싶을 때 누르는 경로다. 본 단위는 메인 조회(F02-01)와 같은 네 영역을
+          다시 불러오되, 캐시는 무시하고 항상 최신을 받아 온다.
         </p>
       </header>
 
       <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">하위 동작</div><div class="value">2</div><div class="hint">풀투리프레시 · 재시도</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">6</div></div>
-          <div class="metric"><div class="label">throttle</div><div class="value">없음</div><div class="hint">사용자 의지대로</div></div>
-          <div class="metric"><div class="label">캐시</div><div class="value">강제 무효</div></div>
-        </div>
-
         <div class="callout">
-          <span class="label">설계 의도</span>
-          <p>새로고침은 사용자가 “정말 최신을 보고 싶다”는 신호다. 클라이언트 캐시는 우회하지만,
-          중복 트리거는 RefreshIndicator 자체가 막아준다(진행 중에는 추가 트리거 무시).
-          실패 시 사용자에게 명확한 재시도 경로를 제공.</p>
+          <span class="label">설계 의도 — 사용자의 의심을 한 동작으로 해소</span>
+          <p>홈은 5분 캐시로 동작하기 때문에 "다른 사용자에게는 새 카드가 있을 수도 있다"는 의심이 자연스럽게 생긴다.
+            새로고침은 사용자가 "지금 진짜로 비교해 보고 싶다"고 표시하는 동작이며, 캐시 만료 여부와 상관없이
+            <strong>네 영역을 모두 다시 불러와</strong> 최신 상태를 한 번에 보여준다.
+            다시 시도(부분 실패 복구)와는 다르다 — 새로고침은 "내가 보고 싶다"는 의지의 표시고,
+            다시 시도는 "방금 실패한 걸 한 번 더"의 의미다. 결과는 같지만 사용자 맥락이 다르다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>풀투리프레시</h3><p>화면 상단에서 아래로 당기면 spinner 후 4섹션 강제 재호출.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>에러 화면 재시도</h3><p>전체 실패 또는 섹션 실패에서 “다시 시도” 버튼을 통한 재호출. 풀투리프레시와 동일한 경로.</p></div>
-        </div>
-      </section>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>점심시간에 새 모임이 올라왔나 확인</h3>
+            <p>홈을 띄운 지 7분 정도 지났다. 사용자가 화면 위쪽을 당기면 짧은 진행 표시가 돌고, 새로 올라온 카드가 추천 자리 맨 앞에 들어와 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "내가 직접 갱신했다"는 통제감. 자동 갱신과 본질적으로 다른 사용자 만족.</p>
+          </article>
 
-      <section>
-        <h2>새로고침 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["풀투리프레시 트리거"] --> B{"진행 중?"}
-    B -->|"예"| C["추가 트리거 무시"]
-    B -->|"아니오"| D["4섹션 강제 호출 (캐시 우회)"]
-    D --> E["성공한 섹션만 캐시 갱신"]
-    E --> F{"4섹션 모두 실패?"}
-    F -->|"예"| G["전체 화면 에러"]
-    F -->|"아니오"| H["섹션 단위 렌더 + 스크롤 위치 유지"]
-          </div>
-        </div>
-      </section>
+          <article class="card">
+            <div class="eyebrow">아주 짧은 간격</div>
+            <h3>방금 본 화면을 또 새로고침</h3>
+            <p>1분 전에 들어왔지만 한 번 더 당긴다. 화면은 같은 카드를 다시 보여 줄 가능성이 높지만, "방금 확인했다"는 감각을 사용자에게 남긴다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 빈번한 새로고침을 막지 않는 것이 정책. 의사 표시를 차단하면 답답함이 누적된다.</p>
+          </article>
 
-      <section>
-        <h2>사용자 시나리오 6개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>풀투리프레시로 새 콘텐츠 확인</h3>
-            <ol><li>홈 진입 후 7분 경과(캐시 만료)</li><li>아래로 당김 → spinner 등장</li><li>4섹션 병렬 재호출 → 200</li><li>새 카드 1개가 추천 섹션 맨 앞에 추가</li><li>spinner 종료, 캐시 시각 갱신</li></ol>
+          <article class="card">
+            <div class="eyebrow">실패 분기</div>
+            <h3>지하철 진입 직전에 새로고침</h3>
+            <p>네트워크가 끊긴 채 당기면 네 영역이 모두 비고, "피드를 불러올 수 없어요" 풀스크린 안내가 뜬다.
+              자동 재시도는 하지 않는다. 사용자가 신호를 회복한 뒤 직접 다시 시도한다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S2 · 캐시 hit 우회</div><h3>1분 만에 강제 새로고침</h3>
-            <ol><li>1분 전 진입(캐시 유효)</li><li>풀투리프레시 → 캐시 검사 우회</li><li>4섹션 호출 → DB 변화 없으면 동일 데이터 다시 렌더</li><li>“최신 상태” 시각적 확인</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S3 · 전체 실패</div><h3>네트워크 끊김 중 새로고침</h3>
-            <ol><li>풀투리프레시 → 4섹션 모두 네트워크 오류</li><li>전체 화면 “피드를 불러올 수 없습니다” + “다시 시도”</li><li>네트워크 복구 후 사용자가 재시도</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S4 · 부분 실패</div><h3>인기 클럽만 실패</h3>
-            <ol><li>4섹션 호출 중 1개만 500</li><li>3섹션은 새 데이터로 갱신, 1섹션만 재시도 UI</li><li>실패 섹션의 캐시는 비워둠(이전 데이터 표시 안 함)</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S5 · 위치 유지</div><h3>스크롤한 상태에서 새로고침</h3>
-            <ol><li>4번째 섹션까지 스크롤한 상태에서 위로 올라가 풀투리프레시</li><li>새 데이터로 갱신 → 항목 수 같으면 스크롤 위치 유지</li></ol>
-            <p><strong>참고:</strong> 별도 reset 코드 없이 sliver rebuild 특성으로 자연스럽게 유지됨.</p>
-          </article>
-          <article class="card"><div class="eyebrow">S6 · 반복 트리거</div><h3>짧은 시간 반복 풀투리프레시</h3>
-            <ol><li>1차 풀투리프레시 진행 중에 다시 당김 → 무시</li><li>1차 완료 후 즉시 다시 당기면 2차 실행</li><li>throttle 없음 → 사용자 의지대로 호출 가능</li></ol>
-            <p><strong>향후 검토:</strong> 클라이언트 최소 간격(throttle) 도입 여부.</p>
+
+          <article class="card">
+            <div class="eyebrow">부분 분기</div>
+            <h3>새로고침 도중 한 영역만 실패</h3>
+            <p>인기 클럽만 응답이 안 오면, 다른 세 영역은 새 데이터로 갱신되고 인기 클럽 자리만 "다시 시도" 카드로 바뀐다.
+              직전에 보던 클럽 카드를 그대로 두지는 않는다 — 새로고침은 "이전 상태를 의식적으로 버리는 행위"이기 때문에.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>캐시 만료</td><td>풀투리프레시</td><td>4섹션 재호출 + 새 데이터</td></tr>
-              <tr><td>AC-02</td><td>캐시 유효</td><td>풀투리프레시</td><td>캐시 우회, 무조건 재호출</td></tr>
-              <tr><td>AC-03</td><td>전체 네트워크 오류</td><td>새로고침</td><td>전체 화면 에러</td></tr>
-              <tr><td>AC-04</td><td>1섹션만 5xx</td><td>새로고침</td><td>3섹션 갱신, 1섹션 재시도</td></tr>
-              <tr><td>AC-05</td><td>스크롤된 상태</td><td>새로고침 성공</td><td>스크롤 위치 유지</td></tr>
-              <tr><td>AC-06</td><td>새로고침 진행 중</td><td>다시 당김</td><td>추가 트리거 무시</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">새로고침 정책 결정점</span>
           <ul>
-            <li><strong>새로고침이 캐시 hit으로 떨어지는 회귀</strong> — “새로고침해도 같은 데이터”라는 사용자 불신 발생.</li>
-            <li><strong>실패 섹션에 이전 캐시를 그대로 두는 회귀</strong> — “재시도했는데 옛 데이터”라는 혼란.</li>
-            <li><strong>스크롤 위치 0으로 reset되는 회귀</strong> — 사용자가 봤던 위치를 잃는다.</li>
-            <li><strong>중복 트리거가 동시에 4섹션을 두 번 호출</strong> — RefreshIndicator의 자체 보호가 필요.</li>
+            <li><strong>최소 간격 제한을 두지 않는다.</strong> 사용자가 의도적으로 당기는 동작을 막으면 "데이터가 진짜인가" 불신만 커진다.
+              필요해지면 서버 부하 기반으로 클라이언트 측에 한도를 두는 것을 검토할 여지가 있다.</li>
+            <li><strong>새로고침 후 스크롤 위치는 그대로 둔다.</strong> 새 데이터를 받았다고 사용자를 맨 위로 끌어올리지 않는다 — 사용자가 보던 자리를 잃는다.</li>
+            <li><strong>당겨서 새로고침 동작 영역은 화면 최상단으로 제한된다.</strong> 모바일 운영체제의 표준 동작과 충돌하지 않게 두는 것이 원칙.</li>
           </ul>
         </div>
       </section>
@@ -124,11 +86,14 @@ flowchart TD
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/02-home.html"><div class="eyebrow">상위 도메인</div><h3>02 홈 피드</h3></a>
-          <a class="card" href="F02-01.html"><div class="eyebrow">관련</div><h3>F02-01 홈 메인</h3><p>새로고침이 호출하는 4섹션 정의.</p></a>
+          <a class="card" href="F02-01.html"><div class="eyebrow">앞 단위</div><h3>F02-01 홈 메인 조회</h3><p>새로고침이 다시 호출하는 4영역 본체.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/02_home_feed/F02-02_home-feed-refresh/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/02_home_feed/F02-02_home-feed-refresh/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

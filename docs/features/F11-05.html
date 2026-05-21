@@ -1,32 +1,307 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F11-05 신뢰점수 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>F11-05 신뢰점수</div>
-<h1>F11-05. 신뢰점수 · 변동 이력</h1>
-<p class="lede">활동 점수 + 검증 점수 + 페널티 점수로 합산. 노출 위치에 따라 본인/타인 표시 차이.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>본인 점수 + 변동 이력</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>타인 공개 점수(요약)</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>본인 첫 조회</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>변동 이력 30일</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>타인 페이지 노출</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/users/me/trust-score</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/users/{userId}/trust-score</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/11-review.html"><div class="eyebrow">상위</div><h3>11 리뷰·신고</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/11_review_report/F11-05_trust-score/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F11-05 신뢰점수·변동 이력 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
+          F11-05 신뢰점수·변동 이력
+        </div>
+        <h1>F11-05. 신뢰점수 · 변동 이력</h1>
+        <p class="lede">
+          사용자가 그동안 한 활동(참석·주최·인증·확정된 신고)을 0~100점 신뢰점수와 다섯 등급(DIAMOND·PLATINUM·GOLD·SILVER·BRONZE)으로 환산해 보여 주는 면이다.
+          본인 화면에서는 변동 이력까지 펼쳐 볼 수 있고, 다른 사용자 화면에서는 점수와 등급, 구성 비율만 보인다.
+          이 점수는 추천·매칭의 노출 가중치로도 쓰이기 때문에 한 번이라도 식이 어긋나면 다른 도메인이 동시에 잘못된 결정을 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">점수 범위</div><div class="value">0~100</div><div class="hint">신규 사용자는 50에서 시작</div></div>
+          <div class="metric"><div class="label">등급</div><div class="value">5단계</div><div class="hint">서버: 40·60·75·90이 임계</div></div>
+          <div class="metric"><div class="label">변동 이력 적재</div><div class="value">1점 이상</div><div class="hint">미세 변동은 이력에서 제외</div></div>
+          <div class="metric"><div class="label">기간 셀렉터</div><div class="value">7·30·90일</div><div class="hint">서버는 1~365일 받지만 화면은 3개만 노출</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 점수는 한 줄 식이고, 영향은 사방으로 흩어진다</span>
+          <p>신뢰점수는 본인에게는 "내 활동의 결과"이고, 다른 사용자에게는 "이 사람이 어떤 사람인지"의 첫 단서다.
+            추천·매칭 도메인은 이 점수를 노출 순서의 가중치로 직접 가져간다 — 같은 모임을 검색해도 신뢰점수가 다른 사용자가 만든 모임은 다른 순위에 뜬다.
+            그래서 산정식은 단순해야 한다("활동 절반, 인증 1/4, 패널티 -1/4").
+            동시에 사용자가 "내 점수가 왜 이렇게 됐는지" 추적할 수 있어야 한다 — 본인 한정 변동 이력이 그 자리다.
+            남에게는 변동 과정을 노출하지 않는다 — 점수의 결과만 보이게 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 다른 도메인의 결정을 움직인다</h2>
+        <div class="callout">
+          <span class="label">신뢰점수가 바뀌면 그 사용자에 관한 여러 면이 같이 흔들린다</span>
+          <ul>
+            <li><strong>추천·매칭의 노출 가중치.</strong>
+              검색·홈 추천·데이팅 후보 카드 노출에 신뢰점수가 가중치로 반영된다 — 점수가 한 번이라도 잘못 잡히면 사용자가 보는 풍경 전체가 어긋난다.</li>
+            <li><strong>호스트의 다음 모임 신청 결정.</strong>
+              다른 사용자가 모임을 신청할 때 호스트의 점수·등급이 신뢰의 첫 단서. 평균 별점과는 다른 차원의 누적 평가다.</li>
+            <li><strong>데이팅 도메인의 카드 노출.</strong>
+              인증·활동·패널티가 모두 반영된 점수가 매칭 후보 순서에 영향을 준다 — 인증이 약한 사용자는 노출에서 자연스럽게 내려간다.</li>
+            <li><strong>운영 측의 다음 결정.</strong>
+              패널티가 빠르게 누적되는 사용자는 운영 모니터링 대상에 올라간다 — 신고 한 건 한 건이 아니라 점수의 변동 패턴이 관찰 신호.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>점수가 만들어지는 세 갈래</h2>
+        <p class="subtitle">점수는 활동·인증·패널티 세 갈래의 가중합이고, 0~100 범위로 잘린다.
+          식 자체는 한 줄이지만 각 갈래에 들어가는 입력 신호는 여러 도메인에서 모인다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:130px">갈래</th><th>가중치</th><th>들어가는 신호</th><th style="width:30%">어디서 오는가</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>활동</strong></td>
+                <td><span class="pill brand">+50%</span></td>
+                <td>참석한 모임 수, 주최한 모임 수 (클럽·연속 활동은 현재 기본값 고정).</td>
+                <td>이벤트·참석 도메인. 모임에 정상 참석하면 자동으로 누적된다.</td>
+              </tr>
+              <tr>
+                <td><strong>인증</strong></td>
+                <td><span class="pill info">+25%</span></td>
+                <td>이메일(30) · 전화(30) · 프로필 사진(10) · 자기소개(5) · 실명(5) · 소셜 연동(10~20).</td>
+                <td>인증·프로필 도메인. 인증 한 단계가 더해질 때마다 점수가 즉시 오른다.</td>
+              </tr>
+              <tr>
+                <td><strong>패널티</strong></td>
+                <td><span class="pill danger">−25%</span></td>
+                <td>운영자가 승인·이관 처리한 신고 1건당 20점, 최대 100.</td>
+                <td>신고 도메인(F11-04). 접수만으로는 안 깎이고, 운영자 결론이 난 뒤에 잡힌다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="subtitle" style="margin-top:1rem">최종 점수는 활동·인증·패널티를 가중합한 뒤 0~100으로 잘라 소수 첫째까지 반올림한다.
+          신규 사용자는 활동이 0이라 인증·기본값으로 결정되며, 보통 50점 근처에서 시작한다.</p>
+      </section>
+
+      <section>
+        <h2>등급 임계 — 점수가 어디서 갈리는가</h2>
+        <p class="subtitle">점수는 다섯 등급으로 나뉘어 카드·프로필에 배지로 노출된다.
+          임계는 서버 정책이 기준이며, 클라이언트 화면이 다음 등급까지 남은 점수를 계산할 때 같은 임계를 써야 정확하다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">등급</th><th>도달 점수</th><th>의미</th></tr></thead>
+            <tbody>
+              <tr><td><strong>DIAMOND</strong></td><td>90점 이상</td><td>활동·인증이 모두 누적된 최상위 — 호스트 추천 노출의 최상단.</td></tr>
+              <tr><td><strong>PLATINUM</strong></td><td>75점 이상</td><td>꾸준한 활동과 인증을 모두 갖춘 사용자.</td></tr>
+              <tr><td><strong>GOLD</strong></td><td>60점 이상</td><td>활동이 어느 정도 누적된 단계 — 매칭·추천에서 일반 사용자보다 노출 우위.</td></tr>
+              <tr><td><strong>SILVER</strong></td><td>40점 이상</td><td>인증을 마치고 첫 활동을 시작한 단계.</td></tr>
+              <tr><td><strong>BRONZE</strong></td><td>40점 미만</td><td>신규 사용자 또는 패널티가 누적된 사용자.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn" style="margin-top:1rem">
+          <span class="label">알려진 격차 — 클라이언트 임계가 서버와 어긋난다</span>
+          <p>현재 화면이 "다음 등급까지 N점"을 표시할 때 PLATINUM 도달을 80점으로 잡고 DIAMOND를 미노출하고 있다.
+            서버 정답은 PLATINUM 75 · DIAMOND 90이므로 화면 표기와 어긋난다.
+            사용자가 "다음 등급까지 남은 점수"를 보고 결정하는 행동(예: 추가 인증)이 어긋난 임계로 안내되고 있다 — 화면 임계를 서버 기준으로 맞춰야 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>변동 이력은 본인에게만, 미세 변동은 이력에서 제외</h2>
+        <p class="subtitle">사용자가 본인 점수를 가장 자주 보는 자리. "왜 내 점수가 어제와 다른가"를 추적할 수 있어야 한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["다른 도메인이 점수 재계산을 요청<br/>(리뷰 추가·신고 처리·인증 추가 등)"] --> B["새 점수 산정"]
+    B --> C{"직전 스냅샷과의 차이가 1점 이상?"}
+    C -->|"예"| D["변동 이력에 한 줄 추가"]
+    C -->|"아니오"| E["점수만 갱신, 이력은 생략"]
+    D --> F["본인 화면의 변동 이력 리스트에 노출"]
+    E --> G["사용자에게는 점수만 갱신되어 보임"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">본인 첫 조회</div>
+            <h3>마이페이지에서 "신뢰점수"로 진입</h3>
+            <p>가입 두어 달 된 사용자가 본인 신뢰점수를 본다. 화면 중앙에 원형 게이지로 점수가 그려지고,
+              등급 배지("BRONZE")와 "다음 등급까지 N점" 안내가 따라 붙는다.
+              아래에 활동·인증·패널티 세 갈래의 구성이 카드로 깔리고, 그 아래에 7일 기준 변동 이력 리스트가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 "내 활동이 어떻게 점수로 환산됐는지"가 한 화면에서 보인다. 추가 인증이나 활동의 동기 부여로 이어진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기간 전환</div>
+            <h3>7일 → 1개월 → 3개월</h3>
+            <p>변동 이력 위의 기간 셀렉터에서 "1개월"을 누르면 30일치 스냅샷이 다시 들어와 채워진다.
+              한 번 더 "3개월"을 누르면 90일치까지 펼쳐진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자신의 활동 누적 추세를 본인이 정한 기간으로 본다. 추세선을 따라가다 보면 "최근 활동이 줄었구나"를 스스로 인지하는 동기 회복의 자리.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">타인 조회</div>
+            <h3>호스트의 신뢰점수를 가늠</h3>
+            <p>모임 신청 전에 호스트의 점수가 궁금한 사용자가 프로필에서 "신뢰점수"로 들어온다.
+              점수·등급·구성 비율은 보이지만 변동 이력 섹션은 노출되지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 다른 사용자에게는 결과만 보이고, "어떻게 그 점수에 도달했는지"의 과정은 본인 외에는 접근할 수 없다 — 점수 변화에서 일상이 추론되는 일을 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">간접 변동</div>
+            <h3>방금 새 리뷰를 받은 호스트가 점수 화면을 열었을 때</h3>
+            <p>다른 사용자가 후기를 남기면 호스트의 점수가 다시 계산되고, 변동이 1점 이상이면 그날의 변동 이력에 한 줄이 추가된다.
+              호스트가 점수 화면을 열어 보면 새 스냅샷이 리스트 끝에 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 도메인의 행동(리뷰)이 본 단위의 화면에 즉시 반영된다는 일관성. 점수가 사용자 활동과 함께 살아 있다는 인지.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">미세 변동</div>
+            <h3>작은 활동이라 이력에는 잡히지 않음</h3>
+            <p>신청 취소 같은 작은 변동이 일어나 점수가 0.4점만 움직였다. 점수 자체는 갱신되지만 변동 이력 리스트는 그대로다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 잦은 미세 변동이 이력 그래프를 어지럽혀 "큰 변화"가 묻히는 것을 막는다. 1점이라는 임계가 노이즈와 신호를 가른다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">패널티 누적</div>
+            <h3>승인된 신고가 한 건 추가됐을 때</h3>
+            <p>다른 사용자의 신고가 운영자에 의해 승인 처리됐다. 그 시점에 대상자의 패널티가 20점 누적되고,
+              본인의 다음 화면 진입에서 점수가 떨어진 모습이 보인다. 변동 이력에 한 줄이 추가된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 접수 시점이 아닌 운영자 결론 시점에 점수가 움직인다는 정책이 사용자에게 화면으로 일관되게 보인다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 상태</div>
+            <h3>가입 직후라 변동 이력이 비어 있다</h3>
+            <p>신규 사용자가 본인 점수를 본다. 점수는 50점 근처(인증·기본값) 등급은 BRONZE, 변동 이력은 "변동 이력이 없습니다" 안내만.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 신규 사용자에게 "이 자리가 앞으로 채워질 곳"이라는 인지를 만든다. 빈 상태가 오류로 인지되지 않게.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <p class="subtitle">실제로 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>원형 게이지</strong></td>
+                <td>화면 상단 중앙에 큰 원형 그래프. 중앙에 숫자(소수 첫째), 그 아래 "/100" 보조 글자.</td>
+                <td>점수의 "절대 위치"보다 "100점 중에서 어디쯤"이 사용자의 직관에 가깝다 — 원형이 좌우의 여유를 시각화한다.</td>
+              </tr>
+              <tr>
+                <td><strong>등급 배지</strong></td>
+                <td>게이지 아래에 캡슐 모양 배지. 등급별 다른 색상과 아이콘(다이아·왕관·메달).</td>
+                <td>점수 숫자만으로 의미를 짐작하기 어렵다 — 등급 라벨이 의미를 한 단어로 잡아 준다.</td>
+              </tr>
+              <tr>
+                <td><strong>"다음 등급까지 N점"</strong></td>
+                <td>배지 아래 한 줄 안내. 최고 등급에서는 노출되지 않는다.</td>
+                <td>다음 단계로 갈 동기를 만든다 — "조금만 더 활동하면" 신호. 단, 현재 화면 임계는 서버와 어긋나 있어(위 격차) 정정 필요.</td>
+              </tr>
+              <tr>
+                <td><strong>점수 구성 카드 리스트</strong></td>
+                <td>활동·인증·패널티 갈래의 점수와 가중치가 카드 형태로 깔린다. 양수는 파란 계열, 음수는 빨간 계열.</td>
+                <td>"내 점수가 어디서 만들어졌는가"를 사용자가 추적할 수 있게 한다. 패널티가 빨간색으로 표시되는 자리에 사용자의 시선이 가장 먼저 간다.</td>
+              </tr>
+              <tr>
+                <td><strong>기간 셀렉터(본인 모드)</strong></td>
+                <td>"7일 / 1개월 / 3개월" 세 탭. 현재 선택된 탭만 강조.</td>
+                <td>사용자가 자기 활동 호흡에 맞춰 기간을 선택. 3개월보다 긴 기간은 화면에서 직접 노출하지 않는다 — 사용자의 일상에서 의미 있는 호흡 범위.</td>
+              </tr>
+              <tr>
+                <td><strong>변동 이력 리스트(본인 모드)</strong></td>
+                <td>날짜(MM-DD) + 변동 사유 + 그날의 총점.</td>
+                <td>점수가 어느 날, 왜 움직였는지를 한 줄로 보여 줘 사용자가 자기 활동을 추적할 수 있게 한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 정상이라고 부르려면 이 다섯 가지가 추적되어야 한다</span>
+          <ul>
+            <li><strong>등급별 사용자 분포.</strong>
+              한 등급에 사용자가 쏠리면 등급의 변별력이 사라진다. 임계 조정 여부의 첫 신호.</li>
+            <li><strong>인증 단계별 점수 기여도.</strong>
+              어떤 인증이 점수에 가장 크게 기여하는지 추적해 사용자에게 어떤 인증부터 권하는 것이 효율적인지 결정.</li>
+            <li><strong>패널티 평균과 최댓값.</strong>
+              누적 패널티가 한 사용자에게 빠르게 쌓이는 패턴이 관찰되면 그 사용자의 다음 활동(이벤트 호스팅·매칭 노출)을 운영 측이 미리 통제할 결정 시점.</li>
+            <li><strong>변동 이력 적재 비율.</strong>
+              호출당 이력 INSERT 비율이 너무 낮으면 1점 임계가 너무 높다는 신호, 너무 높으면 임계를 더 올릴 수 있다.</li>
+            <li><strong>본인 화면 진입과 추가 활동 사이의 상관.</strong>
+              점수 화면이 사용자의 추가 인증·참석을 유도하는지 측정 — 화면이 정말 동기 부여로 작동하는지의 핵심 신호.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 무너지면 도메인 전체가 같이 흔들린다</span>
+          <ul>
+            <li><strong>점수 산정식 한 줄이 추천·매칭·검색의 노출 가중치를 동시에 결정한다.</strong>
+              식의 어느 한 갈래가 잘못 계산되면 사용자가 보는 모든 노출 결과가 어긋난다 — 본 단위의 모니터링이 가장 우선.</li>
+            <li><strong>등급 임계 격차(클라이언트 PLATINUM 80 vs 서버 75)는 사용자 안내가 잘못 나가게 한다.</strong>
+              "다음 등급까지 N점" 카피를 보고 인증을 추가한 사용자가 예상보다 일찍 등급이 오르거나 늦게 오르는 혼란이 발생.
+              화면 임계를 서버 정답(40·60·75·90)으로 맞춰야 한다.</li>
+            <li><strong>본인 한정 변동 이력 정책이 흔들리면 사생활이 노출된다.</strong>
+              점수 변동 사유에는 운영자 결론(신고 승인) 같은 민감 정보가 섞일 수 있어 다른 사용자가 보면 안 된다.
+              본인 외 노출 가드는 어떤 회귀에서도 풀려서는 안 된다.</li>
+            <li><strong>"승인된 신고만 패널티에 반영" 정책이 무너지면 평판이 무기가 된다.</strong>
+              접수 시점에 점수가 깎이는 회귀가 들어가면 사용자 간 보복 신고가 발생, 무고한 사용자가 즉시 노출에서 밀린다.</li>
+            <li><strong>노쇼 카운트는 점수 안에 자리는 있지만 현재 패널티 식에 들어가지 않는다(보강 후보).</strong>
+              "노쇼한 사용자가 평판에서 손해 본다"는 운영 기대와 어긋난다 — 노쇼 카운트를 패널티에 포함시킬지 정책 결정이 필요.</li>
+            <li><strong>1점 미만 변동을 이력에서 제외하는 정책은 노이즈를 막지만, 누적된 미세 변동이 이력에서 사라진다.</strong>
+              사용자가 "내 점수가 어느 날 슬그머니 변했다"고 느끼는 시점이 오면 임계를 0.5 같은 더 작은 값으로 조정할지 검토.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위 · 관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">상위 도메인</div><h3>11 리뷰·신고</h3></a>
+          <a class="card" href="F11-01.html"><div class="eyebrow">입력</div><h3>F11-01 리뷰 작성</h3><p>호스트 점수의 활동 갈래에 영향.</p></a>
+          <a class="card" href="F11-04.html"><div class="eyebrow">입력</div><h3>F11-04 신고</h3><p>운영자 결론이 패널티에 누적되는 경로.</p></a>
+          <a class="card" href="../domains/01-auth.html"><div class="eyebrow">입력</div><h3>01 인증</h3><p>인증 단계가 인증 갈래에 직접 반영.</p></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">관련</div><h3>13 프로필</h3><p>프로필 충실도가 인증 점수에 영향.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/11_review_report/F11-05_trust-score/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

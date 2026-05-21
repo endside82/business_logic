@@ -1,38 +1,188 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F06-05 자동 충전 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-05 자동 충전</div>
-<h1>F06-05. 자동 충전 설정</h1>
-<p class="lede">잔액이 임계값 이하로 떨어지면 등록된 카드로 자동 충전한다. 월간 한도, 임계·충전 금액, 결제수단 ID를 함께 관리.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>설정 폼 (임계·충전·한도·카드)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>결제 시 자동 트리거</h3><p>잔액 부족 시 서버가 try 후 진행.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>월간 한도 도달 차단</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>실패 시 안내 + 알림</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>처음 활성화</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>결제 시 자동 트리거</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>월 한도 도달</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>카드 삭제로 비활성</h3></article>
-<article class="card"><div class="eyebrow">S5</div><h3>결제 실패 알림</h3></article>
-<article class="card"><div class="eyebrow">S6</div><h3>설정 OFF</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/wallet/auto-charge</code></td></tr>
-<tr><td><code>PUT</code></td><td><code>/api/v1/wallet/auto-charge</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
-<a class="card" href="F06-04.html"><div class="eyebrow">관련</div><h3>F06-04 결제수단</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/06_payment/F06-05_auto-charge/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-05 자동 충전 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-05 자동 충전 설정
+        </div>
+        <h1>F06-05. 자동 충전 설정</h1>
+        <p class="lede">
+          잔액이 정해 둔 금액 아래로 떨어졌을 때, 사용자가 충전 화면을 거치지 않고 미리 등록한 카드로 자동으로 포인트가 채워지게 하는 설정.
+          이벤트 결제·티켓 구매 직전에 잔액 부족으로 막히는 경험 자체를 없애는 것이 본 단위의 목적이다.
+          사용자가 활성하면 결제 시점에 시스템이 자동으로 카드를 청구하고, 그 결과는 거래 내역에 한 줄로 남는다.
+          월 한도를 둘 수 있어 의도치 않은 자동 결제 누적을 사용자 스스로 제한한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">잔액 임계</div><div class="value">1,000원 ~ 100,000원</div><div class="hint">이 아래로 떨어지면 자동 충전</div></div>
+          <div class="metric"><div class="label">한 회 충전 금액</div><div class="value">5,000원 ~ 500,000원</div><div class="hint">자동 충전 한 번에 채울 금액</div></div>
+          <div class="metric"><div class="label">월 한도</div><div class="value">선택</div><div class="hint">비워 두면 한도 없음</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 잔액 부족 경험 자체를 사라지게 한다</span>
+          <p>결제 직전에 잔액이 부족해 충전 화면으로 옮겨지는 경험은 사용자의 결제 의도를 한 번 깬다.
+            자주 결제하는 사용자에게는 이 흐름을 아예 사라지게 할 수 있는 선택지를 둔다.
+            사용자가 임계 잔액(예: 5,000원)과 한 회 충전 금액(예: 30,000원)을 미리 정해 두면, 결제 시점에 잔액이 임계 아래로 떨어진 순간 시스템이 카드를 청구해 잔액을 채운 다음 원래 결제를 마무리한다.
+            의도치 않은 카드 청구 누적을 사용자 스스로 통제할 수 있게 월 한도를 둔다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>자주 결제하는 사용자가 자동 충전을 켠다</h3>
+            <p>이벤트 신청에서 잔액 부족을 자주 겪는 사용자가 충전 화면 하단의 "자동충전 설정 →"을 누른다.
+              토글을 켜고 임계 5,000원 · 충전 30,000원 · 월 한도 100,000원으로 설정 후 저장.
+              이때부터는 결제 시점에 잔액이 5,000원 아래로 떨어지면 30,000원이 자동으로 채워진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 잔액 부족 진입(F06-02 자동 진입)을 거의 사라지게 한다 — 결제 의도가 끊기지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">동작</div>
+            <h3>결제 시점에 자동 충전이 발동</h3>
+            <p>잔액 4,500원인 사용자가 8,000원 티켓 구매를 시도한다.
+              시스템이 임계 아래임을 감지하고 자동으로 30,000원을 카드에서 충전한 다음 결제 8,000원을 차감한다 — 최종 잔액 26,500원.
+              사용자에게는 "결제 완료" 안내가 한 번 보이고, 거래 내역에는 "자동 충전 +30,000" 한 줄과 "결제 -8,000" 한 줄이 함께 쌓인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 잔액 부족이 보이지 않는다 — 두 번의 동작이 한 번의 결제로 느껴진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한도 보호</div>
+            <h3>이달 자동 충전이 한도에 닿음</h3>
+            <p>월 한도 100,000원을 설정한 사용자가 이달 누적 90,000원의 자동 충전을 이미 썼다.
+              이 상태에서 새 결제가 들어오면 자동 충전이 동작하지 않고, 사용자는 일반적인 잔액 부족 흐름으로 돌아간다 — 충전 화면이 자동으로 떠오르고 사용자가 명시적으로 충전을 결정한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 정한 한도가 지켜진다는 통제감. 의도치 않은 누적 결제를 사용자 스스로 막을 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">해제</div>
+            <h3>자동 충전이 부담스러워졌을 때 끈다</h3>
+            <p>한동안 결제 빈도가 줄어든 사용자가 자동 충전을 끄려고 한다.
+              토글을 OFF로 바꾸면 "해제하시겠습니까" 확인이 한 번 뜨고, 확정하면 그 이후 결제부터 자동 충전이 동작하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">묶인 카드 사라짐</div>
+            <h3>자동 충전이 가리키던 카드를 결제수단에서 지움</h3>
+            <p>자동 충전이 카드 A를 가리키고 있는데 사용자가 결제수단 화면에서 A를 삭제한다.
+              다음 결제 시점에 자동 충전이 동작하지 않고, 사용자는 일반 잔액 부족 흐름으로 돌아간다.
+              자동 충전 설정에 다시 들어가면 "카드 다시 지정" 동선이 표시된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 카드를 정리한 그 순간 시스템이 사용자 몰래 결제수단을 옮기지 않는다 — 명시적 결정으로만 자동 충전이 재개된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">카드 측 실패</div>
+            <h3>카드 한도 초과로 자동 충전 자체가 실패</h3>
+            <p>자동 충전이 동작했지만 카드가 한도 초과로 거절됐다. 잔액이 채워지지 않은 채로 원래 결제는 잔액 부족으로 거절되고,
+              사용자는 일반 충전 화면으로 안내된다 — "자동 충전이 안 됐으니 직접 충전하세요" 흐름.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">결제수단 없음</div>
+            <h3>카드 없이 자동 충전을 켜려 함</h3>
+            <p>결제수단이 한 장도 등록되지 않은 사용자에게는 카드 선택 자리에 "결제 수단을 먼저 등록해 주세요" 안내가 보인다.
+              저장 시도 시 결제수단 화면(F06-04)으로 안내한다 — 두 화면의 순서를 사용자에게 자연스럽게 강제.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>토글</strong></td>
+                <td>화면 상단 "자동 충전" 헤딩 옆의 스위치.</td>
+                <td>활성/비활성을 한 번에 결정하는 명확한 신호. 토글이 켜져 있을 때만 아래 입력 필드가 보인다 — 사용자가 "지금 자동 충전이 켜져 있는지"를 시각적으로 확인.</td>
+              </tr>
+              <tr>
+                <td><strong>임계 잔액 입력</strong></td>
+                <td>"최소 잔액 임계값" + 천 단위 콤마 입력칸 (1,000~100,000원).</td>
+                <td>"잔액이 어디까지 떨어지면 채워 줄지"를 사용자가 직접 정함. 자동 결제의 트리거 조건을 사용자 통제 아래에 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>충전 금액 칩</strong></td>
+                <td>10,000 · 30,000 · 50,000 같은 프리셋 칩.</td>
+                <td>한 번 자동 충전될 때 채울 금액을 빠르게 결정. 너무 작으면 자동 충전이 자주 발동되고, 너무 크면 의도치 않은 큰 결제가 발생.</td>
+              </tr>
+              <tr>
+                <td><strong>월 한도 입력</strong></td>
+                <td>"월간 한도 (선택)" + 입력칸. 비워 두면 한도 없음.</td>
+                <td>의도치 않은 누적 자동 결제를 사용자 스스로 제한하는 안전장치. 비워 두는 선택을 명시적으로 두어, 사용자가 한도를 잊고 막힐 위험을 줄임.</td>
+              </tr>
+              <tr>
+                <td><strong>결제수단 드롭다운</strong></td>
+                <td>등록된 카드 중 한 장을 선택. 비어 있으면 결제수단 등록 안내.</td>
+                <td>자동 결제가 어느 카드로 청구될지를 사용자가 명시적으로 결정 — 결제수단의 기본 카드와 자동 충전의 카드가 다를 수 있다.</td>
+              </tr>
+              <tr>
+                <td><strong>해제 확인</strong></td>
+                <td>토글 OFF 시도 시 "자동 충전을 해제하시겠습니까" 확인.</td>
+                <td>실수 토글로 자동 충전이 풀려 다음 결제에서 잔액 부족을 만나는 사고를 막는 한 번의 확인.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">자동 충전이 매출과 신뢰 사이의 균형점</span>
+          <ul>
+            <li><strong>자동 충전 활성 비중은 결제 도메인의 핵심 신호다.</strong>
+              활성 사용자는 잔액 부족으로 결제가 끊기는 경험을 거의 하지 않는다 — 본 단위의 가입 비율이 결제 전환의 직접 신호.</li>
+            <li><strong>월 한도는 사용자 보호 장치이지 매출 한도가 아니다.</strong>
+              운영 측에서 한도 상한을 손대지 않고 사용자 스스로 결정하게 두는 것이 신뢰 정책 — "사용자 몰래 카드가 무한히 청구된다"는 인상을 주지 않는다.</li>
+            <li><strong>자동 충전의 결과는 거래 내역에 별도 표시가 있어야 한다.</strong>
+              사용자가 거래 내역을 봤을 때 "이 충전은 내가 직접 한 게 아니라 자동이었구나"를 구분할 수 있어야 의도치 않은 결제 신고를 줄일 수 있다.</li>
+            <li><strong>자동 충전이 가리키는 카드는 결제수단 화면에서 삭제될 수 있다.</strong>
+              그 경우 다음 결제 시점에 자동 충전이 조용히 동작하지 않는다 — 사용자가 자동 충전이 풀린 사실을 결제 실패로 인지하게 된다. 카드 삭제 시점에 자동 충전 영향을 안내하는 보강 여부는 사용자 경험 결정점.</li>
+            <li><strong>카드 측 실패가 누적되는 사용자는 운영 모니터링이 필요하다.</strong>
+              한 사용자에게 자동 충전 카드 결제 실패가 반복되면 그 사용자는 잔액 부족 경험을 매번 한다 — 자동 충전이 사실상 꺼진 상태와 같다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위 도메인</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-04.html"><div class="eyebrow">사전 조건</div><h3>F06-04 결제 수단</h3><p>자동 충전이 묶이는 카드 등록 자리.</p></a>
+          <a class="card" href="F06-02.html"><div class="eyebrow">대체 경로</div><h3>F06-02 포인트 충전</h3><p>자동 충전이 동작하지 않을 때의 대체 동선.</p></a>
+          <a class="card" href="F06-06.html"><div class="eyebrow">트리거</div><h3>F06-06 포인트 결제·환불</h3><p>자동 충전이 발동되는 시점.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/06_payment/F06-05_auto-charge/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

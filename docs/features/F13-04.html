@@ -1,28 +1,149 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F13-04 선호 태그 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>F13-04 선호 태그</div>
-<h1>F13-04. 선호 태그 관리</h1>
-<p class="lede">F01-07 등록 API를 외부 화면에서 호출. 최대 20개, 중복·범위 검증.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>현재 태그 조회</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>추천 태그 + 검색 추가</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>삭제·가중치 변경</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>추천 태그 추가</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>중복 방지</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>한도 초과</h3></article>
-</div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위</div><h3>13 프로필·설정</h3></a>
-<a class="card" href="F01-07.html"><div class="eyebrow">백엔드</div><h3>F01-07 관심사 태그</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/13_profile_settings/F13-04_preference-tags/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F13-04 선호 태그 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>
+          F13-04 선호 태그
+        </div>
+        <h1>F13-04. 선호 태그 관리</h1>
+        <p class="lede">
+          사용자가 자기 관심사를 직접 칩 형태로 추가·삭제하는 화면. 운동·문화·라이프스타일·소셜 네 카테고리에서
+          앱이 제안하는 추천 태그를 누르면 즉시 내 태그에 합류하고, 내 태그 옆 X를 누르면 즉시 삭제된다.
+          추천·검색 도메인이 본 단위가 만든 태그 묶음을 보고 사용자에게 어떤 콘텐츠를 먼저 보여 줄지 결정한다.
+          저장 버튼 없이 한 번 누른 게 바로 반영되는 화면이라 한도(최대 20개)를 두어 무제한 추가를 막는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">최대 태그</div><div class="value">20개</div><div class="hint">초과 시 추가 차단</div></div>
+          <div class="metric"><div class="label">추천 카테고리</div><div class="value">4개</div><div class="hint">운동·문화·라이프스타일·소셜</div></div>
+          <div class="metric"><div class="label">저장 동작</div><div class="value">즉시</div><div class="hint">탭 한 번이 곧 반영</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "내가 누른 게 바로 반영"의 흐름</span>
+          <p>저장 버튼을 거치지 않는 즉시 반영 정책이다. 사용자가 칩을 누른 직후 추천 결과에 영향을 주는 게 가치를 만든다 —
+            "저장 누르고 다음 화면 가서 추천이 바뀐 걸 확인한다"는 흐름은 사용자에게 인지 부담이 너무 크다.
+            대신 한 번 잘못 눌러도 X로 즉시 되돌릴 수 있다는 가역성이 보호 장치 역할을 한다.
+            한도 20개는 "사용자가 자기 관심사를 의식적으로 정리하는 단계"를 강제하는 장치 —
+            한도 없이 두면 사용자가 모든 추천 칩을 다 눌러 추천 품질이 오히려 떨어진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>추천 칩을 눌러 내 태그에 추가</h3>
+            <p>"요가"를 누른다. 추천 영역의 "요가" 칩이 흐려지면서 내 태그 영역에 새 "요가" 칩이 추가된다.
+              "내 태그 (N/20)" 카운터도 같이 올라간다. 별도 저장 버튼은 없다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 관심사를 "지금 바로 한 번 누르면 끝"으로 체감하는 게 본 화면의 가치.
+              한 번이라도 저장 단계가 끼면 추가율이 급격히 떨어진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">정리</div>
+            <h3>관심 잃은 태그를 X로 즉시 제거</h3>
+            <p>내 태그 영역의 "캠핑" 칩 X를 누르면 칩이 사라진다. 추천 영역에서는 다시 "캠핑" 칩이 살아나
+              필요하면 다시 누를 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>이미 선택한 추천 태그는 다시 안 눌린다</h3>
+            <p>내가 이미 가지고 있는 추천 태그는 회색 비활성으로 표시되고 탭 자체가 동작하지 않는다.
+              같은 태그를 두 번 추가하는 사고가 사용자 손에서 미리 막힌다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한도</div>
+            <h3>20개에 도달한 사용자가 더 추가하려 함</h3>
+            <p>내 태그가 20개인 상태에서 추천 칩을 누르면 즉시 "최대 20개까지 선택 가능합니다" 안내가 뜨고
+              서버 호출은 일어나지 않는다. 사용자는 기존 태그 중 일부를 X로 정리해야 새로 추가할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">다른 기기와 어긋남</div>
+            <h3>다른 기기에서 이미 삭제된 태그를 누름</h3>
+            <p>한 기기에서 삭제한 태그를 다른 기기에서 다시 보고 X를 누르면 서버가 "이미 없는 태그"라고 거절한다.
+              화면이 어떻게 동기화되는지는 운영 관찰 포인트(현재 명세 미확정).</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성 — 사람이 보는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>보이는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>내 태그 영역</strong></td>
+                <td>"내 태그 (현재/20)" 카운터, 내 칩들. 각 칩 옆에 X 아이콘.
+                  비어 있으면 "아래에서 관심 태그를 추가하세요" 안내.</td>
+                <td>현재 한도가 얼마나 남았는지 카운터로 즉시 보이게 — 한도 도달 직전에 사용자가 미리 정리할 수 있게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>추천 태그 영역</strong></td>
+                <td>운동·문화·라이프스타일·소셜 카테고리별 칩 묶음.
+                  이미 선택한 태그는 흐려져서 탭 불가.</td>
+                <td>사용자가 처음 들어왔을 때 빈 화면을 보지 않게 한다 — 칩으로 "내가 무엇을 고를 수 있는지" 미리 보여 준다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">선호 태그 정책의 결정점</span>
+          <ul>
+            <li><strong>추천 칩 목록은 클라이언트가 갖고 있다.</strong> 서버에서 추천 후보 목록을 내려 주지 않는다.
+              계절·시기에 따라 추천 칩을 바꾸려면 클라이언트 배포가 필요한 구조 — 추후 서버 관리로 옮길지 검토 항목.</li>
+            <li><strong>이름 기반으로 등록되며 서버 ID로 묶이지 않는다.</strong>
+              "캠핑"과 "캠핑 "(공백 포함)이 별개로 들어가지 않도록 서버가 입력을 정리하지만, 비슷한 단어는 별개 태그가 될 수 있다.
+              운영에서 태그 사용 빈도를 분석할 때 동의어 정리가 별도로 필요하다.</li>
+            <li><strong>저장 단계가 없다 = 잘못 누른 게 즉시 추천에 반영된다.</strong>
+              그래서 가역성(X 한 번으로 정리)이 핵심이다. X 버튼이 보이지 않거나 동작하지 않는 회귀가 들어가면
+              사용자가 자기 관심사를 통제할 수 없게 된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위 도메인</div><h3>13 프로필·설정</h3></a>
+          <a class="card" href="F13-01.html"><div class="eyebrow">진입</div><h3>F13-01 마이페이지</h3><p>본 화면으로 들어오는 출발점.</p></a>
+          <a class="card" href="F02-04.html"><div class="eyebrow">소비처</div><h3>F02-04 추천 더보기</h3><p>본 단위가 만든 태그를 추천 품질에 반영하는 화면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/13_profile_settings/F13-04_preference-tags/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

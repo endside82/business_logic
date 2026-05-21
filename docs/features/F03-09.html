@@ -19,85 +19,115 @@
         </div>
         <h1>F03-09. 이벤트 사진첩</h1>
         <p class="lede">
-          참석 확정 사용자만 사진을 업로드·조회할 수 있다. 첫 업로드 시 앨범이 자동 생성되고,
-          종료 후 일정 기간이 지나면 업로드가 차단되며 일정 시점에 일괄 정리된다.
-          외부 스토리지 업로드 + DB 등록의 두 단계 사이가 끊기면 orphan 파일이 생길 수 있어 운영 정리가 필요하다.
+          모임 중·후에 참석자들이 사진을 함께 공유하는 면. 첫 업로드 시점에 앨범이 생기고, 모임 종료 후 일정
+          기간이 지나면 앨범이 만료되어 더 이상 업로드되지 않는다. 참석 확정자만 진입할 수 있어 비공개 모임의
+          사진이 외부로 새 나가지 않게 한다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">하위 동작</div><div class="value">4</div><div class="hint">조회·업로드·삭제·만료 안내</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
-          <div class="metric"><div class="label">한도</div><div class="value">100장/앨범</div></div>
+          <div class="metric"><div class="label">앨범당 최대 사진</div><div class="value">100장</div></div>
+          <div class="metric"><div class="label">진입 자격</div><div class="value">참석 확정자</div><div class="hint">호스트·공동호스트·참석자·클럽 멤버</div></div>
+          <div class="metric"><div class="label">앨범 만료</div><div class="value">모임 종료 N일 후</div><div class="hint">기간 지나면 업로드 차단</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 모임의 추억은 모임 사람들 안에서만</span>
+          <p>모임 사진은 같이 갔던 사람들의 공유 자산이다. 참석 확정자만 진입할 수 있게 두는 게 핵심 안전 정책.
+            본인이 올린 사진은 본인만 삭제할 수 있고, 호스트는 부적절한 사진을 운영자로서 제거할 수 있다.
+            모임 종료 후 일정 기간이 지나면 앨범이 만료되어 새 업로드가 막힌다 — 사진은 시간이 지나도 보이지만
+            "이미 끝난 모임의 사진첩이 계속 자라지 않는" 자연스러운 마무리.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>사진 업로드</h3><p>외부 스토리지 PUT → DB 등록 + 앨범 자동 생성.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>그리드 조회 + 풀스크린 뷰어</h3></div>
-          <div class="card"><div class="eyebrow">동작 3</div><h3>본인 사진 삭제</h3><p>외부 스토리지 best-effort 삭제 + DB DELETE.</p></div>
-          <div class="card"><div class="eyebrow">동작 4</div><h3>만료 안내</h3><p>만료 임박 배너 + 만료 후 FAB 숨김.</p></div>
+          <article class="card">
+            <div class="eyebrow">첫 사진</div>
+            <h3>모임 끝난 길에 단체샷 업로드</h3>
+            <p>참석자가 사진첩에 처음 들어와 사진을 업로드한다. 앨범이 자동으로 생성되고, 그 앨범의 만료일은 모임 종료
+              시각을 기준으로 정해진다. 캡션을 함께 입력 가능.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 모임 직후의 첫 업로드가 가장 많은 추억을 만든다.
+              본 동선의 응답이 느리거나 실패하면 사진 공유 문화 자체가 약해진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">추가 업로드</div>
+            <h3>이어서 다른 참석자도 업로드</h3>
+            <p>이미 앨범이 있으면 같은 앨범에 추가된다. 100장 한도까지 누구든 올릴 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">만료 임박</div>
+            <h3>만료 2일 전 안내</h3>
+            <p>화면 상단에 노란 배너 "N일 후 사진첩이 만료됩니다" 안내. 사용자가 추가 업로드할지 결정할 수 있게.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">만료 후</div>
+            <h3>업로드는 막히지만 사진은 그대로</h3>
+            <p>만료일이 지나면 사진은 계속 볼 수 있지만 새 업로드는 차단. 화면에서 업로드 버튼이 사라지고
+              "사진 업로드 기간이 만료되었습니다" 안내만 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 추억을 보존하면서도 "끝난 모임의 새 활동"은 자연스럽게 마감.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">100장 한도</div>
+            <h3>한도 도달 후 추가 시도</h3>
+            <p>"사진 등록에 실패했습니다" 안내. 사용자가 어떤 사진을 보존할지 다시 결정해야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">본인 사진 삭제</div>
+            <h3>잘못 올린 사진을 본인이 삭제</h3>
+            <p>풀스크린 뷰어에서 본인이 올린 사진은 삭제 메뉴가 보인다. 확인 다이얼로그 후 삭제. 다른 사람의 사진은
+              삭제 메뉴가 보이지 않음.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 권한</div>
+            <h3>부적절한 사진을 호스트가 제거</h3>
+            <p>호스트는 운영 권한으로 다른 사용자의 사진도 삭제 가능. 현재 UI에는 호스트 전용 삭제 진입점이 명시되어
+              있지 않아 운영 도구로 처리 — 추후 운영자 도구로 노출 검토.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">진입 차단</div>
+            <h3>참석 확정이 아닌 사용자 진입</h3>
+            <p>대기 중이거나 신청 전 사용자는 사진첩에 들어올 수 없다. URL 직접 진입도 라우터에서 차단되어 상세로
+              리다이렉트.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 비공개 모임의 사진 보호. 참석하지 않은 사용자가 사진을 볼 수
+              있으면 모임의 안전 가치 자체가 사라진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">업로드 실패</div>
+            <h3>업로드 도중 네트워크 끊김</h3>
+            <p>"파일 업로드에 실패했습니다" 안내. 사진이 저장소까지 갔으나 등록에 실패한 경우, 저장소에는 고아 파일이
+              남을 수 있어 운영 측 정리가 필요한 잠재 영역.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 9개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1</div><h3>첫 업로드(앨범 자동 생성)</h3>
-            <ol><li>FAB → 갤러리 → 캡션 입력</li><li>외부 스토리지 PUT → 서버 등록</li><li>앨범 lazy 생성 + 1장 그리드 표시</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S2</div><h3>추가 업로드(앨범 reuse)</h3>
-            <ol><li>기존 앨범에 사진 추가 → photoCount++</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S3 · 만료 임박</div><h3>2일 후 만료 배너</h3>
-            <ol><li>상단에 “2일 후 사진첩이 만료됩니다” 배너</li><li>업로드는 여전히 가능</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S4 · 만료 후</div><h3>업로드 차단</h3>
-            <ol><li>조회만 가능, FAB 숨김</li><li>우회 시 400 EVENT_PHOTO_ALBUM_EXPIRED</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S5 · 한도</div><h3>100장 초과 시도</h3>
-            <ol><li>외부 스토리지 PUT은 성공해도 DB 등록 단계에서 400</li><li><strong>부작용:</strong> orphan 파일 발생 가능 → 운영 정리 필요</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S6 · 삭제</div><h3>본인 사진 삭제</h3>
-            <ol><li>풀스크린 뷰어 → 메뉴 → 확인 다이얼로그</li><li>외부 스토리지 + DB 삭제</li><li>photoCount-- + 토스트</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S7 · 호스트</div><h3>호스트의 타인 사진 삭제</h3>
-            <ol><li>UI에 진입점 없음, 직접 API 호출 시 호스트는 통과</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S8 · 비참석자</div><h3>비참석자 진입 시도</h3>
-            <ol><li>라우터 redirect로 사전 차단</li><li>우회 시 403 EVENT_PHOTO_NOT_ATTENDEE</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S9 · 업로드 실패</div><h3>외부 스토리지 PUT 중 네트워크 오류</h3>
-            <ol><li>토스트 노출, DB 등록 단계 미도달</li><li>fileKey 무효, 재시도 시 새 사전 서명 URL 발급</li></ol>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-            <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/photos</code></td><td>앨범 + 사진 목록(빈 앨범은 404)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/photos</code></td><td>사진 등록(앨범 lazy 생성)</td></tr>
-              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}/photos/{photoId}</code></td><td>삭제</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">사진첩의 결정점</span>
           <ul>
-            <li><strong>첫 진입 404를 에러 화면으로 노출</strong> — 빈 상태 UI로 자연스럽게 처리하는 게 옳다.</li>
-            <li><strong>외부 스토리지 PUT 성공 후 DB 등록 실패의 orphan</strong> — 한도 초과·동시성으로 자주 발생.</li>
-            <li><strong>만료 후에도 FAB 노출</strong> — 사용자가 업로드 시도 후 실패.</li>
-            <li><strong>비참석자 가드 누락</strong> — 사진 노출 위험.</li>
+            <li><strong>앨범은 첫 업로드 시점에 자동 생성된다.</strong> 모임이 끝나도 아무도 올리지 않으면 앨범 자체가
+              만들어지지 않는다 — 빈 앨범이 저장소를 차지하지 않게 둔다.</li>
+            <li><strong>참석 확정자만 진입할 수 있다.</strong> 이중 가드(라우터 + 화면)가 모두 통과해야 한다.
+              한 가드가 풀려도 다른 가드가 막는다.</li>
+            <li><strong>본인 사진만 사용자가 삭제 가능.</strong> 호스트의 강제 삭제는 운영 도구로 처리.
+              사용자 화면에서는 본인 것만 보여 준다.</li>
+            <li><strong>업로드 중 실패는 저장소에 고아 파일을 남길 수 있다.</strong> 현재 앨범 만료 시점에만
+              정리되므로, 자주 실패가 발생하는 경우 별도 정리 정책이 필요한 잠재 영역.</li>
+            <li><strong>현재 첫 진입에서 앨범이 없으면 "오류" 화면으로 보이는 UX 문제가 있다.</strong>
+              빈 앨범 상태로 자연스럽게 보여 주는 것이 더 자연스러운 경험. 운영 분석에서 첫 진입 이탈이
+              크면 우선 보강.</li>
           </ul>
         </div>
       </section>
@@ -105,12 +135,17 @@
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="F03-05.html"><div class="eyebrow">선행</div><h3>F03-05 신청·참석</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">진입점</div><h3>F03-02 이벤트 상세</h3><p>"사진첩" 진입이 시작되는 자리.</p></a>
+          <a class="card" href="F03-08.html"><div class="eyebrow">현장 동선</div><h3>F03-08 QR 체크인</h3><p>체크인 후 자연스럽게 이어지는 추억 공유.</p></a>
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련 도메인</div><h3>11 리뷰·신고</h3><p>부적절한 사진의 신고 경로.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-09_event-photos/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-09_event-photos/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

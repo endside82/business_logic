@@ -1,35 +1,227 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F12-05 디바이스 토큰 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/12-notification.html">12 알림</a><span>›</span>F12-05 디바이스 토큰</div>
-<h1>F12-05. FCM 디바이스 토큰 · 기기 관리</h1>
-<p class="lede">로그인 시 FCM 토큰을 서버에 등록. 토큰 갱신 자동 동기화. 기기 N개 관리.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>첫 등록</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>토큰 자동 갱신</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>로그아웃 시 정리</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>다른 기기 토큰 만료</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>첫 설치 → 자동 등록</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>토큰 갱신</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>권한 거부</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>로그아웃 시 토큰 삭제</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/notifications/devices</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/notifications/devices/{token}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위</div><h3>12 알림</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/12_notification/F12-05_device-token-management/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F12-05 푸시 기기 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/12-notification.html">12 알림</a><span>›</span>
+          F12-05 푸시 기기 관리
+        </div>
+        <h1>F12-05. 푸시 기기 관리</h1>
+        <p class="lede">
+          사용자가 폰·태블릿 등 여러 단말기에 동일 계정으로 로그인하면 모든 기기로 푸시가 도달하도록 단말 식별값을 등록·갱신·해제한다.
+          앱 실행과 로그아웃 같은 자동 흐름과, 사용자가 "기기 관리" 화면에서 직접 단말을 골라 제외하는 흐름이 함께 들어 있다.
+          본 단위가 깨지면 "내 폰에 알림이 안 와요"와 "쓰지 않는 단말에 내 알림이 갑니다" 양쪽의 사고가 발생한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">한 계정의 활성 기기</div><div class="value">제한 없음</div><div class="hint">폰·태블릿·웹 동시 가능</div></div>
+          <div class="metric"><div class="label">자동 등록 시점</div><div class="value">앱 시작 후 권한 허용 시</div><div class="hint">사용자가 별도 동작 안 함</div></div>
+          <div class="metric"><div class="label">로그아웃 시</div><div class="value">자동 해제</div><div class="hint">다른 사용자에게 잘못 도달 방지</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 토큰의 수명을 사용자에게 안 보이게 관리한다</span>
+          <p>푸시 채널은 단말마다 고유한 토큰을 두고 운영된다.
+            토큰은 사용자가 알 필요가 없는 기술 식별값이지만, 잘못 다루면 알림이 안 오거나 다른 사람에게 잘못 가는 사고가 즉시 발생한다.
+            그래서 본 단위의 가장 큰 목표는 <strong>이 모든 동작을 사용자가 의식하지 않게 처리하는 것</strong>이다.
+            앱 실행 시 자동 등록, 토큰 발급사가 새 토큰을 주면 자동 교체, 로그아웃 시 자동 해제.
+            사용자가 직접 화면을 만지는 자리는 단 하나 — "쓰지 않는 단말을 명시적으로 제외하고 싶을 때".</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>네 가지 라이프사이클</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">자동</div>
+            <h3>앱 시작 시 등록</h3>
+            <p>로그인된 사용자가 앱을 열면 권한 요청과 함께 단말의 푸시 토큰을 발급받아 서버에 등록한다.
+              사용자에게는 OS의 권한 다이얼로그가 보일 뿐, 등록 동작 자체는 보이지 않는다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">자동</div>
+            <h3>발급사가 토큰을 교체할 때 갱신</h3>
+            <p>모바일 OS나 푸시 발급사가 단말의 토큰을 새로 발행하는 경우가 있다.
+              앱은 새 토큰을 받자마자 서버에 이전 토큰을 비활성화하고 새 토큰을 등록 — 사용자가 모르는 사이에 알림 채널이 끊기지 않게 한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">자동</div>
+            <h3>로그아웃 시 해제</h3>
+            <p>사용자가 로그아웃하면 현재 단말의 토큰이 즉시 비활성화된다.
+              같은 단말을 다른 사람이 사용해도 이전 사용자의 알림이 흘러가지 않게 하는 보호 동작.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">사용자 명시 동작</div>
+            <h3>기기 관리 화면에서 제외</h3>
+            <p>사용자가 "이 단말은 더 이상 알림 받지 않게 하고 싶다"고 직접 정할 때 사용한다.
+              화면에 등록된 단말 카드들이 보이고, 카드의 "삭제"를 누르면 확인 다이얼로그가 뜬 뒤 해당 단말로의 알림이 끊긴다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>토큰 갱신의 결정적 순간</h2>
+        <p class="subtitle">발급사가 새 토큰을 발행하면 이전 토큰을 비활성화하고 새 토큰을 등록하는 동작이 한 번에 일어나야 한다. 이 동작이 끊기면 사용자는 푸시를 잠시 못 받게 된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    participant 단말
+    participant 서버
+
+    단말->>단말: 새 토큰 발급 감지
+    단말->>서버: 이전 토큰 → 새 토큰 교체 요청
+    서버->>서버: 이전 토큰 비활성화
+    서버->>서버: 같은 새 토큰이 다른 곳에 등록되어 있으면 정리
+    서버->>서버: 새 토큰 등록 (단말 종류 보존)
+    서버-->>단말: 완료
+    Note over 서버: 이후 푸시는 새 토큰으로 도달
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>신규 가입자가 앱을 처음 켜는 순간</h3>
+            <p>로그인 직후 OS의 알림 권한 다이얼로그가 떠오른다. 사용자가 "허용"을 누르면 단말 토큰이 자동으로 서버에 등록된다.
+              이후부터 신청 승인·결제 완료 같은 알림이 단말로 도달한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 명시적으로 "푸시 채널 등록"이라는 동작을 인지하지 않고도 알림을 받을 준비가 끝난다.
+              한 번의 권한 허용이 모든 후속 알림의 출발점.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">다중 단말</div>
+            <h3>폰과 태블릿 양쪽에서 알림을 받는다</h3>
+            <p>같은 계정을 폰과 태블릿 양쪽에 로그인한 사용자는 두 단말 모두에 알림이 도달한다.
+              어느 한쪽에서 알림을 읽으면 다른 단말의 인박스에도 반영된다(인박스는 계정 단위, 푸시는 단말 단위).</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "어떤 단말을 들고 있어도 놓치지 않는다"는 약속 — 사용자 만족과 재방문에 직접 기여.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">단말 교체</div>
+            <h3>새 폰으로 갈아탄 뒤 구 폰을 정리한다</h3>
+            <p>새 폰에서 같은 계정 로그인 → 자동 등록으로 새 폰에도 알림이 온다.
+              그런데 구 폰은 처분했지만 토큰은 서버에 남아 있을 수 있다.
+              사용자가 새 폰의 기기 관리 화면에서 구 폰 카드의 "삭제"를 누르면 확인 다이얼로그가 뜨고, 확정하면 구 폰으로의 알림이 차단된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 단말 교체는 사용자에게 가장 자주 일어나는 보안 결정.
+              사용자가 직접 끊을 수 있는 자리가 있어야 "이전 폰에 내 알림이 가는지 모르겠다"는 불안이 해소된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기기 공유 보호</div>
+            <h3>같은 단말을 다른 사용자가 쓴다</h3>
+            <p>한 단말을 가족과 공유하는 사용자가 로그아웃하면 그 단말의 토큰은 즉시 해제된다.
+              다른 가족이 같은 단말로 다른 계정에 로그인하면 새 토큰이 발급되어 그 사용자의 알림이 도달한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "내 알림이 다른 사람에게 가지 않는다"는 가장 기본적인 약속.
+              로그아웃 시 자동 해제가 빠지면 보안 사고가 발생.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 거부 사용자</div>
+            <h3>알림 권한을 거부한 채 앱을 사용한다</h3>
+            <p>사용자가 OS 권한 다이얼로그에서 "허용 안 함"을 눌렀어도 토큰 자체는 단말에서 발급될 수 있다.
+              서버에는 토큰이 등록되지만, OS가 단말 표시를 차단한다 — 푸시는 단말까지 도달하지 못한다.
+              사용자가 알림 화면에 들어오면 권한 회복 안내 배너(F12-06)가 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 권한 거부와 토큰 등록이 분리되어 있어, 권한이 회복되는 순간 즉시 알림이 살아난다 — 사용자가 추가 동작을 하지 않아도 됨.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">정보 노출 제한</div>
+            <h3>기기 카드에는 단말 종류만 나온다</h3>
+            <p>기기 관리 화면의 카드에는 "iOS 기기" 또는 "Android 기기"라는 라벨과 등록일만 보인다.
+              구체적인 단말 모델명이나 토큰 문자열은 사용자에게도 노출되지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 의미 있는 식별 정보(단말 종류·등록 시점)만 보여 주고, 보안에 민감한 식별값은 노출하지 않는다 — 사용자 선택을 돕되 사고 위험은 줄인다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>화면 제목</strong></td>
+                <td>"기기 관리 (N)" — 등록된 단말 수가 함께 보인다.</td>
+                <td>자신의 활성 단말이 몇 개인지 화면 진입 즉시 인지하게 한다 — "어 내가 등록한 적 없는 단말이 있네"의 발견점.</td>
+              </tr>
+              <tr>
+                <td><strong>단말 카드</strong></td>
+                <td>좌측 단말 아이콘, 단말 종류 라벨("iOS 기기"·"Android 기기"), 등록일, 우측 "삭제" 버튼.</td>
+                <td>등록 시점만 알아도 "이게 어떤 단말이었는지" 거의 정확히 떠올린다 — 토큰 문자열 같은 기술 식별값을 노출하지 않으면서 사용자가 결정 가능한 단서.</td>
+              </tr>
+              <tr>
+                <td><strong>삭제 확인 다이얼로그</strong></td>
+                <td>"이 기기를 알림 수신 목록에서 삭제하시겠습니까?" + "해당 기기에서는 더 이상 푸시 알림을 받지 않습니다" + 빨간 "삭제" 버튼.</td>
+                <td>되돌리기가 어려운 동작(다른 단말에서 다시 등록하려면 그 단말에서 로그인해야 함)이므로 한 단계 확인을 끼운다.</td>
+              </tr>
+              <tr>
+                <td><strong>빈 상태</strong></td>
+                <td>"등록된 기기가 없습니다 / 여기에 나타나는 기기들에서만 푸시 알림을 받을 수 있습니다."</td>
+                <td>등록된 단말이 0개면 알림이 도달하지 않는다는 사실을 사용자에게 명확히 알린다 — 이 상태를 비정상으로 인지하게.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">단말 토큰 라이프사이클의 정책 결정점</span>
+          <ul>
+            <li><strong>토큰은 단말 단위로 등록되고, 인박스는 계정 단위로 적재된다.</strong>
+              한 사용자의 5개 단말에 모두 알림이 가더라도 인박스는 한 곳 — 어느 단말에서 읽음 처리하든 다른 단말 인박스에도 반영된다.</li>
+            <li><strong>로그아웃 시 자동 해제는 보안 보장의 핵심이다.</strong>
+              이 동작이 빠지면 단말 공유 환경에서 이전 사용자의 알림이 다음 사용자에게 도달한다 — 단순 회귀가 아닌 보안 사고.</li>
+            <li><strong>토큰 갱신은 끊김 없이 일어나야 한다.</strong>
+              발급사가 새 토큰을 발행하는 순간 이전 토큰을 비활성화하고 새 토큰을 등록하는 동작이 분리되어 실패하면, 사용자에게는 "어느 시점부터 알림이 안 왔다"의 공백이 발생.</li>
+            <li><strong>기기 카드에 토큰 문자열이 노출되지 않는 정책은 보안 결정이다.</strong>
+              토큰 노출은 푸시 채널을 가로채는 공격에 직접 사용될 수 있다 — 사용자에게도 보여 주지 않는 것이 의도된 정책.</li>
+            <li><strong>활성 단말이 0개인 사용자는 푸시를 못 받는다.</strong>
+              "기기 관리 화면이 비어 있다"는 가입 직후나 모든 단말을 직접 제외한 경우뿐이어야 한다 — 그 외에 0개가 나타나면 토큰 등록 흐름 어딘가에 문제 신호.</li>
+            <li><strong>다른 사용자가 등록한 토큰을 갱신 요청할 수 있는지 점검 필요.</strong>
+              조작된 갱신 요청이 들어와도 다른 사용자의 토큰은 그대로 두는 보호가 들어 있다 — 이 가드가 어떤 경우에도 풀려서는 안 된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위 도메인</div><h3>12 알림</h3></a>
+          <a class="card" href="F12-06.html"><div class="eyebrow">관련</div><h3>F12-06 알림 권한 안내 배너</h3><p>권한 회복 후 본 단위의 자동 등록 흐름이 이어지는 시점.</p></a>
+          <a class="card" href="F12-01.html"><div class="eyebrow">관련</div><h3>F12-01 알림 목록 · 읽음 관리</h3><p>단말에 도달한 푸시가 사용자에게 보이는 인박스.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/12_notification/F12-05_device-token-management/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

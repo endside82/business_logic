@@ -1,39 +1,195 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F06-03 거래 내역 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-03 거래 내역</div>
-<h1>F06-03. 거래 내역 조회·필터·내보내기</h1>
-<p class="lede">지갑의 모든 입출금을 시간순으로 본다. 유형(충전/결제/환불/정산), 기간 필터, 상세 진입(이벤트로 점프), 내보내기까지 다룬다.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>거래 목록 + 날짜 그룹</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>유형 필터</h3><p>충전/결제/환불/정산/구독.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>상세 + 관련 이벤트 점프</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>기간 필터</h3></div>
-<div class="card"><div class="eyebrow">동작 5</div><h3>내보내기</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>유형 필터</h3><ol><li>“결제” 탭 → 0페이지부터 재조회</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>정산 상세 → 이벤트</h3><ol><li>relatedEventId로 점프</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>빈 결과</h3><ol><li>안내 + 다른 필터 권유</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>기간 필터</h3></article>
-<article class="card"><div class="eyebrow">S5</div><h3>무한 스크롤</h3></article>
-<article class="card"><div class="eyebrow">S6</div><h3>내보내기</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/wallet/transactions?type=&from=&to=&page=&size=</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/wallet/transactions/{id}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
-<a class="card" href="F06-01.html"><div class="eyebrow">진입</div><h3>F06-01 지갑 메인</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/06_payment/F06-03_transaction-history/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-03 거래 내역 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-03 거래 내역 조회·내보내기
+        </div>
+        <h1>F06-03. 거래 내역 조회·내보내기</h1>
+        <p class="lede">
+          지갑에서 일어난 모든 일의 흐름을 사용자가 자신의 시각으로 다시 보는 자리.
+          충전·결제·환불·정산이 한 줄씩 시간순으로 쌓여 있고, 유형·기간으로 좁혀 볼 수 있다.
+          개별 거래를 누르면 거래 번호, 거래 전·후 잔액, 연결된 이벤트나 클럽까지 한 화면에 모인다.
+          호스트 활동을 하는 사용자가 회계 기록용으로 거래 내역을 파일로 내려받는 동선도 여기서 제공한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">유형 분류</div><div class="value">5개</div><div class="hint">전체 · 충전 · 결제 · 환불 · 정산</div></div>
+          <div class="metric"><div class="label">기간 프리셋</div><div class="value">3개 + 직접</div><div class="hint">1주 · 1개월 · 3개월 · 직접 설정</div></div>
+          <div class="metric"><div class="label">파일 내보내기 한도</div><div class="value">90일</div><div class="hint">한 번에 받을 수 있는 최대 기간</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 모든 결제 흐름의 결과가 한 곳에 모이는 자리</span>
+          <p>충전(F06-02), 결제·환불(F06-06), 정산 수령(F06-10) — 결제 도메인의 모든 동작이 결국 거래로 남는다.
+            거래 내역은 그 모든 흐름의 결과를 사용자 시각으로 다시 묶어 보여 주는 면이다.
+            사용자가 "내가 얼마 썼지", "이 환불 진행은 어떻게 됐지", "지난달 호스트 정산이 얼마였지" 같은 질문을 한 화면 안에서 끝내게 한다.
+            거래 상세에는 거래 번호와 연결된 이벤트·클럽이 함께 들어가, 사용자가 "이 결제는 어떤 모임이었지"를 별도 검색 없이 추적한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>지난 한 주에 뭐 했는지 빠르게 본다</h3>
+            <p>호스트 활동을 자주 하는 사용자가 지갑에서 "거래내역"을 누른다.
+              날짜별 그룹 헤더("5월 7일 수요일") 아래 충전·결제·환불·정산 카드가 쌓여 있다.
+              유형 탭에서 "결제"만 누르면 본인이 어디에 썼는지 한눈에 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 "내 돈이 어디로 갔는지"를 직접 추적할 수 있다는 통제감.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">출처 추적</div>
+            <h3>정산 한 건이 어떤 모임에서 나왔는지</h3>
+            <p>호스트가 정산 카드를 누른다. 상세에 "총 매출 — 수수료 — 실수령액" 같은 항목과 함께
+              "관련 이벤트 보기" 카드가 떠 있다. 이 카드를 누르면 해당 이벤트 상세로 곧장 이동한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정산 한 줄이 어떤 모임에서 나왔는지를 사용자가 별도 검색 없이 잇는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">환불 추적</div>
+            <h3>어제 신청한 환불이 어디까지 갔는지</h3>
+            <p>12시간 전에 환불을 시작한 사용자.
+              환불 카드를 누르면 "포인트 환불 즉시 완료" 안내와 "카드 환불 진행 중" 표시가 함께 보인다 —
+              포인트는 그 자리에서 돌려받지만 외부 카드 환불은 영업일 기준으로 며칠이 더 걸린다는 사실을 명확히 분리해 알린다.
+              며칠 뒤 다시 들어오면 "카드 환불 완료"로 바뀌어 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "환불됐다는데 카드사 명세서에 안 보인다"는 의심을 한 화면에서 해소.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">회계 기록</div>
+            <h3>분기별 회계용으로 3개월치 내려받기</h3>
+            <p>호스트 활동을 하는 사용자가 다운로드 아이콘을 누른다.
+              기간을 3개월로 좁히고 파일을 받으면 시스템 공유 시트가 열려 메일·메모 앱으로 보낼 수 있다.
+              회계 담당에게 전달해야 하는 자료를 앱 안에서 끝낸다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 외부 회계 처리를 위해 별도 문서 요청을 운영팀에 보내지 않게 한다 — 운영 부담을 줄이는 자족적 동선.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한도</div>
+            <h3>1년치를 한 번에 받으려 함</h3>
+            <p>"1년치를 한 번에" 받으려고 기간을 1년 전으로 설정하면 거절된다.
+              내려받기는 한 번에 90일까지로 제한된다 — 그 이상 받으려면 기간을 나눠 여러 번 받아야 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 다운로드가 너무 무거워지면 서버 부담과 함께 사용자 측 파일 처리 부담이 커진다 — 운영 측 결정으로 둔 한도.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 상태</div>
+            <h3>가입 직후 거래 0건</h3>
+            <p>한 번도 결제·충전 없이 들어온 사용자에게는 "거래 내역이 없습니다" 안내가 보인다.
+              빈 화면을 빈 채로 두지 않고, 자연스럽게 충전·이벤트 둘러보기 같은 다음 동선을 안내하지 않는다 — 본 화면은 결과 조회의 자리이지 행동 유도의 자리가 아니라는 정책.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">사라진 거래</div>
+            <h3>오래된 알림 링크로 들어왔는데 거래가 없다</h3>
+            <p>몇 달 전의 거래 완료 알림을 다시 눌러 직진입한 사용자.
+              운영 측에서 해당 거래가 삭제된 드문 경우 "거래 정보를 찾을 수 없습니다" 안내가 보인다.
+              뒤로 돌아가 다른 거래로 자연스럽게 이동.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>유형 탭</strong></td>
+                <td>전체 · 충전 · 결제 · 환불 · 정산 5개 탭.</td>
+                <td>사용자가 "내 충전만 보고 싶다", "정산만 보고 싶다" 같은 의도를 한 번에 받아 낸다. 시스템 내부의 26개 거래 유형을 사용자 시각으로 5개로 묶은 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>기간 프리셋</strong></td>
+                <td>1주 · 1개월 · 3개월 · 직접 설정.</td>
+                <td>1주는 최근 활동 확인, 3개월은 분기 회계 단위. 직접 설정은 호스트가 특정 모임의 기간만 좁혀 볼 때 사용.</td>
+              </tr>
+              <tr>
+                <td><strong>날짜별 그룹</strong></td>
+                <td>"2026년 5월 7일 (수)" 같은 헤더 아래 같은 날 거래가 묶임.</td>
+                <td>거래는 시간 순으로 발생하지만 사용자 머릿속의 단위는 "그날"이다 — 같은 날 일어난 일들을 시각적으로 묶어 인지 부담을 줄인다.</td>
+              </tr>
+              <tr>
+                <td><strong>거래 카드</strong></td>
+                <td>유형 아이콘 + 설명 + 금액(±) + 거래 후 잔액.</td>
+                <td>한 줄 안에 "무슨 거래", "얼마", "결과 잔액"이 모두 보여, 상세를 안 열어도 1차 판단이 가능.</td>
+              </tr>
+              <tr>
+                <td><strong>거래 상세</strong></td>
+                <td>거래 번호, 유료/무료 포인트 분리, 거래 전·후 잔액, 거래 일시, 관련 이벤트/클럽 링크. 거래 번호 탭은 복사.</td>
+                <td>"이 거래가 어떤 모임의 어떤 결제였는지"를 다른 화면 없이 한 자리에서 확인. 거래 번호 복사는 사용자가 운영팀 문의 시 첨부할 정보.</td>
+              </tr>
+              <tr>
+                <td><strong>충전 취소 버튼</strong></td>
+                <td>충전 거래 중 한 푼도 안 쓴 건에만 표시.</td>
+                <td>되돌릴 수 있는 경우에만 버튼이 나타나, 사용자가 시도 후 거절되는 헛걸음을 줄인다.</td>
+              </tr>
+              <tr>
+                <td><strong>다운로드 아이콘</strong></td>
+                <td>화면 우상단. 기간 90일 이내에서 파일로 받기.</td>
+                <td>회계 기록이 필요한 호스트가 별도 문서 요청 없이 자족하게 한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">거래 내역은 본 도메인의 신뢰 근거다</span>
+          <ul>
+            <li><strong>거래 내역은 시스템 측 회계의 사용자 시각 표현이다.</strong>
+              사용자가 본 거래 내역과 시스템 측 회계가 어긋나면 운영 신뢰가 그 시점에 무너진다 — 거래 한 건이 누락되거나 잔액 표기가 어긋난다는 신고는 본 화면이 아니라 거래를 만든 흐름(충전·결제·환불·정산) 쪽을 의심.</li>
+            <li><strong>환불 거래에는 두 시점이 있다.</strong>
+              포인트는 즉시 사용자 잔액에 복구되지만, 외부 카드 환불은 영업일 기준 며칠이 걸린다. 이 두 시점이 거래 상세에서 명확히 분리되어 보여야 "환불됐다는데 카드사에는 왜 없냐"는 신고가 줄어든다.</li>
+            <li><strong>한 번에 받을 수 있는 파일은 90일까지로 둔다.</strong>
+              한 번의 다운로드가 너무 큰 묶음이 되지 않게 막는 결정이지만, 사용자가 1년치를 받으려는 시도가 많다면 사용자 측 회계 부담 신호 — 자동 메일 발송이나 기간 분할 안내 같은 보강이 필요할 수 있다.</li>
+            <li><strong>파일로 받은 거래 내역은 외부로 나간다.</strong>
+              메일·메시지로 공유되는 그 순간 운영 측 통제 밖이 되므로, 파일 안에 들어가는 정보의 민감도(예: 이벤트 식별자, 카드 정보)는 정기적으로 점검해야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위 도메인</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-01.html"><div class="eyebrow">진입</div><h3>F06-01 지갑 메인</h3><p>최근 거래 3건의 출처.</p></a>
+          <a class="card" href="F06-02.html"><div class="eyebrow">관련 동작</div><h3>F06-02 포인트 충전</h3><p>충전 취소가 시작되는 자리.</p></a>
+          <a class="card" href="F06-06.html"><div class="eyebrow">관련 동작</div><h3>F06-06 포인트 결제·환불</h3><p>거래 한 줄을 만드는 흐름.</p></a>
+          <a class="card" href="F06-10.html"><div class="eyebrow">관련 동작</div><h3>F06-10 정산 조회·이의</h3><p>정산 거래의 출처.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/06_payment/F06-03_transaction-history/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

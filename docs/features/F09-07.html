@@ -1,35 +1,278 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F09-07 차단 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>F09-07 차단</div>
-<h1>F09-07. 사용자 차단 · 해제</h1>
-<p class="lede">데이팅 도메인 한정 차단. 양방향으로 후보자 풀에서 제외, 기존 매치/채팅도 함께 종료. 사유는 운영 로그용.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>차단 등록(사유)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>차단 해제</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>매치/채팅 동시 종료</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>후보자에서 차단</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>매치된 사용자 차단</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>차단 해제</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>이미 차단됨 응답</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/date/blocks/{userId}?reason=</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/date/blocks/{userId}</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/date/blocks</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/09_private_date/F09-07_block/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F09-07 사용자 차단 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
+          F09-07 사용자 차단
+        </div>
+        <h1>F09-07. 사용자 차단</h1>
+        <p class="lede">
+          데이팅 도메인 전체에서 가장 강한 안전 기능. 후보 카드·매칭 목록·채팅 어디서든 발동할 수 있고,
+          한 번 누르면 그 사용자와의 매칭은 즉시 차단 상태로 바뀌고 함께 열려 있던 채팅방도 같은 동작으로 닫힌다.
+          차단된 사용자는 본인의 후보 카드에서도 영구히 제외된다(해제 전까지).
+          데이팅에서 "뭔가 이상하다" 싶을 때 사용자가 한 동작으로 즉시 끝낼 수 있는 1차 안전장치다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">차단 방향</div><div class="value">양방향</div><div class="hint">내가 차단해도 상대가 차단해도 동일하게 작동</div></div>
+          <div class="metric"><div class="label">차단 직후</div><div class="value">즉시</div><div class="hint">매칭·채팅·후보 노출 한 동작으로 정리</div></div>
+          <div class="metric"><div class="label">상대에게 통지</div><div class="value">없음</div><div class="hint">차단당한 자는 차단 사실을 알 수 없다</div></div>
+          <div class="metric"><div class="label">데이터 보존</div><div class="value">모두</div><div class="hint">메시지·매칭·차단 row 모두 보존</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 한 번의 동작으로 즉시 끝낼 수 있어야 사용자가 데이팅에 안심하고 머문다</span>
+          <p>데이팅에서 사용자가 가장 두려워하는 시나리오는 "이상한 사람에게 묶여 빠져나갈 수 없는" 상황이다.
+            차단은 그 두려움에 대한 답이다 — 사용자가 "지금 끊는다"는 의사 표시를 한 번 한 그 자리에서,
+            매칭 상태 변경·채팅방 종료·후보 카드 제외가 분리되지 않는 한 동작으로 처리된다.
+            상대에게는 차단 사실이 통지되지 않는다 — 통지하면 상대가 "왜 차단했냐"는 후속 접근을 시도할 수 있어 안전 정책에 어긋난다.
+            차단을 풀어도 매칭과 채팅은 자동 복원되지 않는다 — 한 번 끊어진 관계는 사용자가 다시 만들기로 결정해야 시작된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>차단이 통과하는 세 단계</h2>
+        <p class="subtitle">한 번의 "차단" 탭이 사용자에게 가는 동안 일어나는 일.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 차단 탭"] --> B["사유 입력 시트"]
+    B --> C{"이미 차단한 사용자인가"}
+    C -->|"예"| 안내1["차단에 실패했다고 안내"]
+    C -->|"아니오"| D["차단 기록 저장"]
+    D --> E{"이 상대와 매칭이 있나"}
+    E -->|"아니오"| F["완료"]
+    E -->|"예"| G["매칭 상태를 차단으로 변경"]
+    G --> H["채팅방도 같은 동작으로 종료"]
+    H --> F
+    F --> I["사용자에게 차단했다고 안내"]
+    I --> J["후속 카드 풀과 매칭 액션 모두 양방향 검사로 막힘"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 번 차단이 만드는 변화</h2>
+        <p class="subtitle">데이팅 도메인 안에서 어떤 면이 어떻게 달라지는지.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">즉시 단절</div>
+            <h3>채팅방이 함께 닫힌다</h3>
+            <p>차단 직후 양쪽 모두 그 채팅방에 메시지를 보낼 수 없다.
+              내 채팅방 목록에서는 활성 필터로 자연스럽게 사라진다.
+              메시지 데이터 자체는 보존되어 운영팀이 분쟁 시 참조할 수 있다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">노출 제외</div>
+            <h3>후보 카드에서 영구 제외</h3>
+            <p>차단된 사용자는 본인의 후보 카드에서 더 이상 등장하지 않는다.
+              이 검사는 양방향으로 작동한다 — 내가 차단한 쪽도, 나를 차단한 쪽도 같은 검사로 막힌다.
+              차단을 해제하기 전까지 영구적으로 노출이 막힌다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">매칭 종결</div>
+            <h3>매칭 상태가 차단으로 바뀐다</h3>
+            <p>그 사용자와 이미 매칭이 있었다면 매칭의 상태가 차단으로 바뀐다.
+              매칭 목록에서는 그대로 보일 수 있지만 새 매칭 액션은 막힌다.
+              만남 제안 흐름도 같은 가드에 막힌다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">통지 없음</div>
+            <h3>상대는 차단 사실을 모른다</h3>
+            <p>차단당한 사용자에게 별도 안내가 가지 않는다.
+              그 사람 입장에서는 "방이 사라졌다", "카드가 안 보인다" 정도의 간접 신호로만 인지된다.
+              안전 정책상 통지는 의도적으로 막혀 있다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>후보 카드에서 즉시 차단</h3>
+            <p>후보 카드를 보던 중 부적절한 자기소개를 발견한 사용자가 우상단 더보기에서 "차단"을 누른다.
+              사유 입력 시트가 떠오르고 사유를 적어 확정하면, 그 카드는 사라지고 다음 카드가 바로 자리한다.
+              매칭은 없었기 때문에 차단 기록만 새로 만들어지고, 그 사용자는 본인의 후보 풀에서 영원히 빠진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 "기분 나쁘다 → 한 동작으로 차단" 경로를 자연스럽게 사용할 수 있다. 후보 카드 화면에서 가장 흔하게 발동되는 안전 동작.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">매칭 단절</div>
+            <h3>이미 매칭된 사람을 차단</h3>
+            <p>매칭이 성사되어 며칠 대화를 나누던 사람을 차단한다.
+              차단 확정 직후 매칭의 상태가 차단으로 바뀌고, 함께 열려 있던 채팅방도 같은 동작으로 닫힌다.
+              채팅방 목록을 새로고침하면 그 방은 활성 필터로 자연스럽게 사라진다.
+              메시지 데이터는 그대로 보존된다 — 운영팀이 분쟁 시 참조할 수 있도록.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 매칭과 채팅이 한 번의 차단으로 동시에 끝난다는 통제감. 데이팅의 가장 중요한 안전 경로 중 하나.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>이미 차단한 사람을 다시 차단 시도</h3>
+            <p>같은 사용자를 한 번 더 차단하려고 한다.
+              서버는 이미 차단 기록이 있다는 이유로 요청을 막고, 클라이언트는 "차단에 실패했습니다" 안내를 보여 준다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 현 안내는 실패 토스트만 자리한다. 사용자가 "이미 차단된 사용자입니다" 같은 적극적 안내를 받으면 혼란을 덜 수 있다. 사용자 혼란 신호가 들어오면 정리할 여지.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">해제</div>
+            <h3>차단 해제 — 관계는 복원되지 않는다</h3>
+            <p>데이팅 프로필 화면 → "차단 목록" → 해당 사용자 옆 "해제" 버튼.
+              "{이름}의 차단을 해제하시겠습니까?" 확인 다이얼로그에서 "해제"를 누르면 차단 기록이 지워진다.
+              그러나 차단으로 끊어졌던 매칭과 채팅은 자동 복원되지 않는다 — 그 상태로 남는다.
+              상대가 다시 본인의 후보 카드에 등장할 수 있게 되어, 사용자가 새 호감을 표시하는 것은 가능하다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번 끊어진 관계는 사용자의 새로운 의사 표시로만 시작된다. 자동 복원은 사용자의 "끊겠다"는 의지를 약화시킨다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">목록 관리</div>
+            <h3>차단 목록을 둘러봄</h3>
+            <p>데이팅 프로필 화면 하단의 "차단 목록"으로 진입한 사용자가 자신이 차단한 사람들 목록을 본다.
+              각 항목에는 사용자 표시 이름, 자신이 적은 사유, 차단한 날짜가 함께 보인다.
+              아바타는 사진 대신 첫 글자 placeholder — 차단한 사용자의 사진을 다시 보고 싶지 않을 것이라는 가정.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자기 차단 이력을 통제하고 회고할 수 있는 자리. 차단 사유는 본인만 볼 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">존재하지 않는 해제</div>
+            <h3>차단하지 않은 사용자를 해제 시도</h3>
+            <p>어떤 경로로든 차단하지 않은 사용자에 대한 해제 호출이 들어오면 서버가 거절한다.
+              사용자에게는 "차단 해제에 실패했습니다" 안내만 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 차단 기록이 없는 상태에서 해제가 통과하는 사고를 막는다. 데이터의 일관성 보장.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단당한 자의 관점</div>
+            <h3>나를 차단한 사람의 흔적</h3>
+            <p>본인이 차단당한 사용자의 경우, 그 상대는 본인의 후보 카드에 더 이상 등장하지 않는다 — 양방향 검사이기 때문.
+              매칭이 있었다면 매칭 상태가 차단으로 바뀐다.
+              채팅방도 닫힌다 — 본인 입장에서는 "어느 날 채팅방이 사라졌다" 정도의 간접 신호.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 데이팅의 안전 정책은 차단당한 사람도 보호한다. 불필요한 통지가 가지 않아 추가 마찰이 일어나지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">신고와의 관계</div>
+            <h3>차단으로 끊고, 신고는 별도</h3>
+            <p>본 화면에는 신고 버튼이 없다. 차단은 즉시 단절 1차 안전장치, 신고는 운영팀 후속 조치 트리거로 분리되어 있다.
+              사용자가 둘 다 사용하고 싶으면 차단으로 즉시 단절한 뒤 별도 신고 도메인(11)에서 신고를 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 화면에 안전 기능을 모두 몰지 않는다. 차단의 빠른 동작과 신고의 정식 절차가 같은 자리에 놓이면 사용자 결정이 무거워진다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>차단 진입 메뉴</strong></td>
+                <td>후보 카드·매칭 카드의 우상단 더보기(⋮) → 시트의 "차단" 항목.</td>
+                <td>어디서든 한 동작으로 발동 가능. 사용자가 이상함을 느낀 순간 바로 차단까지 갈 수 있는 짧은 동선.</td>
+              </tr>
+              <tr>
+                <td><strong>사유 입력 시트</strong></td>
+                <td>상대 이름과 함께 사유 입력 칸. 비워 두면 차단 취소 가능, 작성하면 사유와 함께 차단.</td>
+                <td>사유 없는 차단은 운영팀이 패턴을 학습하기 어렵다. 동시에 입력 자체를 강제하지는 않아 사용자가 "그냥 차단" 의사일 때도 막지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>차단 목록 카드</strong></td>
+                <td>첫 글자 placeholder 아바타 + 상대 이름 + 본인이 적은 사유(있을 때) + 차단 날짜 + 우측 "해제" 버튼.</td>
+                <td>사진을 다시 보여 주지 않는다 — 차단한 사용자의 얼굴을 사용자가 의도와 무관하게 다시 보지 않게.</td>
+              </tr>
+              <tr>
+                <td><strong>해제 확인 다이얼로그</strong></td>
+                <td>"{이름}의 차단을 해제하시겠습니까?" + "취소" / "해제" 두 버튼.</td>
+                <td>해제는 되돌리기 어려운 결정이 아니지만, 의도하지 않은 해제를 막기 위해 한 번 더 확인을 받는다.</td>
+              </tr>
+              <tr>
+                <td><strong>빈 상태 안내</strong></td>
+                <td>"차단한 사용자가 없습니다" + "차단된 사용자는 매칭/채팅에 노출되지 않습니다" 보조문.</td>
+                <td>차단 기능 자체가 사용자에게 어떤 의미인지를 빈 상태에서도 인지하게.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위의 운영 신호</span>
+          <ul>
+            <li><strong>차단 발동 빈도</strong> — 일일/주간 차단 건수의 추이. 갑작스러운 증가는 안전 문제 발생의 신호일 수 있다.</li>
+            <li><strong>차단 사유 분포</strong> — 어떤 사유가 가장 많은지. 특정 사유가 늘어나면 후보 카드 단계의 필터 강화나 가입 단계 검수 보완이 필요한 신호.</li>
+            <li><strong>차단 발동 진입점 분포</strong> — 후보 카드·매칭 목록·채팅 어느 자리에서 차단이 가장 많이 발동되는지. 후보 카드 단계 차단이 많으면 매칭 알고리즘의 점수 보정이 필요할 수 있다.</li>
+            <li><strong>차단 해제 비율</strong> — 차단된 사용자가 다시 해제되는 비율. 너무 높으면 차단이 충동적으로 사용되고 있다는 신호.</li>
+            <li><strong>차단당한 자의 데이팅 이탈률</strong> — 본인 모르게 차단당한 사용자가 매칭 빈도가 떨어진 시점에 데이팅을 이탈하는지. 안전 정책과 사용자 보존의 균형 지표.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 단위가 무너지면 데이팅 도메인 전체가 안전을 잃는다</span>
+          <ul>
+            <li><strong>차단·매칭 상태 변경·채팅방 종료는 분리되지 않는 한 동작으로 처리되어야 한다.</strong>
+              "차단했는데 채팅방이 살아 있다", "차단했는데 후보 카드에서 또 보인다" 같은 사고가 한 번 발생하면 사용자가 차단 기능 자체를 신뢰하지 않게 된다.</li>
+            <li><strong>차단 검사는 양방향이다.</strong>
+              내가 차단한 쪽뿐 아니라 나를 차단한 쪽도 같은 검사로 막힌다.
+              한 방향만 검사하면 차단의 의미가 무너진다 — 양방향 검사가 후보 카드와 매칭 액션 양쪽에서 일관되게 작동해야 한다.</li>
+            <li><strong>차단된 사용자에게는 통지가 가지 않는다.</strong>
+              상대가 차단 사실을 알게 되면 추가 접근을 시도할 수 있어 안전 정책에 어긋난다.
+              운영팀에서도 차단 통지 기능을 별도로 만들지 않는다.</li>
+            <li><strong>차단 해제는 관계를 복원하지 않는다.</strong>
+              한 번 차단된 매칭은 해제 후에도 그대로 차단 상태로 남는다 — 채팅방도 닫힌 채로.
+              사용자가 같은 상대와 다시 매칭하려면 후보 카드에서 새로 호감을 표시해야 한다.</li>
+            <li><strong>모든 차단·메시지·매칭 데이터는 보존된다.</strong>
+              운영팀이 분쟁 조사·정책 학습을 위해 참조할 수 있어야 하기 때문.
+              사용자 화면에서만 사라질 뿐, 데이터 자체는 삭제하지 않는다.</li>
+            <li><strong>차단 사유는 본인만 볼 수 있다.</strong>
+              차단당한 자에게는 사유도 통지되지 않는다. 운영팀은 패턴 분석을 위해 권한 절차를 거친 후 조회.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위 도메인</div><h3>09 프라이빗 데이팅</h3><p>본 단위가 모든 자리에서 작동하는 횡단 안전 기능.</p></a>
+          <a class="card" href="F09-03.html"><div class="eyebrow">발동 자리</div><h3>F09-03 매칭 액션</h3><p>후보 카드에서 가장 흔하게 발동되는 차단.</p></a>
+          <a class="card" href="F09-04.html"><div class="eyebrow">발동 자리</div><h3>F09-04 매칭 목록</h3><p>매칭 카드의 더보기에서 발동되는 차단.</p></a>
+          <a class="card" href="F09-05.html"><div class="eyebrow">발동 자리</div><h3>F09-05 데이팅 채팅</h3><p>대화 중 즉시 끊을 때의 차단 발동 자리.</p></a>
+          <a class="card" href="F09-02.html"><div class="eyebrow">목록 진입</div><h3>F09-02 데이팅 프로필</h3><p>차단 목록 화면의 진입 자리.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/09_private_date/F09-07_block/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

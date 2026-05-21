@@ -1,37 +1,252 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F09-01 본인 인증 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>F09-01 본인 인증</div>
-<h1>F09-01. 본인 인증 (Toss)</h1>
-<p class="lede">데이팅 진입에 필요한 통신사 본인인증. Toss WebView로 진행되며, 인증 결과(이름·생년월일·성별·CI)는 AES 재암호화되어 저장. 1년 유효.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>상태 조회</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>인증 요청 + Toss WebView</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>결과 검증·저장</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>만료 갱신</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>첫 진입 → 인증 완료</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>WebView 취소</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>인증 실패</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>1년 만료 갱신</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/date/verification/status</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/date/verification/request</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/date/verification/verify</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
-<a class="card" href="F09-02.html"><div class="eyebrow">다음</div><h3>F09-02 프로필</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/09_private_date/F09-01_verification/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F09-01 본인 인증 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
+          F09-01 본인 인증
+        </div>
+        <h1>F09-01. 본인 인증</h1>
+        <p class="lede">
+          데이팅을 사용하려는 모든 사용자가 가장 먼저 통과해야 하는 관문.
+          외부 본인인증 사업자(토스)의 절차를 거쳐 실명·생년월일·성별·고유식별값을 검증받고,
+          이 단계를 통과해야 비로소 프로필 작성, 후보 카드 조회, 호감 표시, 채팅까지 모든 후속 기능에 접근할 수 있다.
+          데이팅에서 발생할 수 있는 안전 문제는 이 단계의 강도에 의해 1차로 걸러진다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">인증 유효 기간</div><div class="value">1년</div><div class="hint">1년이 지나면 다시 인증한다</div></div>
+          <div class="metric"><div class="label">일일 인증 시도</div><div class="value">5회</div><div class="hint">반복 실패 사용자의 폭주를 막는다</div></div>
+          <div class="metric"><div class="label">데이팅 진입 가드</div><div class="value">필수</div><div class="hint">미인증 사용자는 한 줄도 진행 불가</div></div>
+          <div class="metric"><div class="label">저장된 개인정보</div><div class="value">암호화</div><div class="hint">평문은 어디에도 남지 않는다</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 데이팅 도메인에서 한 번 무너지면 다른 모든 안전 장치가 의미를 잃는다</span>
+          <p>데이팅은 다른 도메인과 다르다. 사용자끼리 실제로 만나서 오프라인으로 이어지는 흐름이기 때문에,
+            허위 신원·미성년 가입·중복 계정이 한 건이라도 통과하면 그 한 건이 곧 사고로 이어진다.
+            그래서 본 단위는 "데이팅을 시작하기 전에 가장 강한 관문을 한 번 통과시키되,
+            한 번 통과한 사용자는 1년 동안 다시 묻지 않는다"는 균형으로 설계되어 있다.
+            너무 자주 묻으면 사용자가 지치고, 너무 길게 두면 신원의 신뢰가 헐거워진다 — 1년은 그 사이의 결정점.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>누가 영향을 받는가</h2>
+        <div class="callout">
+          <span class="label">본 단위는 데이팅을 처음 만나는 모든 사용자에게 가장 먼저 작동한다</span>
+          <ul>
+            <li><strong>신규 진입자</strong> — 데이팅 탭을 처음 누른 사람이 마주하는 첫 화면이 본 인증이다. 이 자리에서 이탈하면 데이팅 도메인 전체 사용자 수가 그만큼 줄어든다.</li>
+            <li><strong>1년 후 재사용자</strong> — 한 번 인증했지만 1년이 지난 사용자. 다시 데이팅을 켰을 때 같은 흐름을 한 번 더 거쳐야 한다 — 이 재인증의 불편이 너무 크면 휴면 사용자가 돌아오지 않는다.</li>
+            <li><strong>운영팀</strong> — 인증 통과율, 실패 사유 분포, 재시도 패턴을 본 단위 메트릭으로 관찰한다. 외부 사업자 측 장애가 데이팅 신규 가입에 직접 영향을 주기 때문에 이상 신호를 빠르게 잡아야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>인증 한 번이 거치는 단계</h2>
+        <p class="subtitle">사용자에게는 한 동작처럼 보이지만, 그 안에서 외부 사업자 호출과 개인정보 암호화가 순서대로 일어난다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 본인 인증하기 탭"] --> B{"오늘 5회 넘게 시도했나"}
+    B -->|"예"| 안내1["오늘은 더 이상 시도할 수 없다고 안내"]
+    B -->|"아니오"| C{"이미 인증된 사용자인가"}
+    C -->|"예"| 안내2["이미 인증되어 있다고 안내"]
+    C -->|"아니오"| D["토스 인증 페이지 발급 요청"]
+    D --> E["인증 페이지 화면에 띄움"]
+    E --> F["사용자가 통신사·이름·생년월일·휴대폰 입력 + SMS 확인"]
+    F -->|"성공"| G["서버가 토스에서 결과 회수"]
+    F -->|"중도 이탈"| 안내3["이전 화면으로 돌아옴"]
+    G --> H["실명·생년·성별·고유식별값을 암호화해 저장"]
+    H --> I["인증 완료 표시 + 데이팅 모든 기능 사용 가능"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>인증 상태의 라이프사이클</h2>
+        <p class="subtitle">한 사용자의 인증은 시간에 따라 다음 네 가지 상태를 거친다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 미인증: 데이팅을 한 번도 시도하지 않음
+    미인증 --> 진행중: 인증 페이지 발급
+    진행중 --> 완료: 외부 사업자에서 결과 회수 성공
+    진행중 --> 실패: 외부 사업자 오류 또는 정보 불일치
+    실패 --> 진행중: 사용자 재시도
+    완료 --> 만료: 1년 경과
+    만료 --> 진행중: 재인증 시작
+    완료 --> [*]: 1년 동안 데이팅 사용 가능
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>데이팅을 처음 켜는 사용자</h3>
+            <p>데이팅 탭에 처음 진입한다. 후보 카드 대신 본인 인증 안내가 보인다.
+              "본인 인증하기"를 누르면 토스 인증 페이지가 화면 안에 열린다.
+              통신사·이름·생년월일·휴대폰을 입력하고 문자 인증까지 마치면, 화면이 자동으로 닫히고 "본인인증이 완료되었습니다" 토스트가 뜬다.
+              뒤로 가서 다시 데이팅 탭으로 들어오면, 이번에는 후보 카드 또는 프로필 작성 안내로 바로 넘어간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 데이팅의 모든 후속 기능이 이 한 번의 통과를 전제로 한다. 첫 인증까지의 시간이 짧을수록 가입 후 첫 매칭까지의 시간도 짧아진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중도 이탈</div>
+            <h3>인증 페이지를 띄웠다가 닫음</h3>
+            <p>토스 인증 화면이 열렸지만 사용자가 X를 눌러 닫는다.
+              화면은 다시 안내 화면으로 돌아오고, 사용자에게 별다른 강제 안내는 뜨지 않는다.
+              필요하면 사용자가 같은 자리에서 다시 시도할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 마음을 바꿀 권리를 막지 않는다. 한 번 닫은 사용자가 다른 시간에 돌아와 다시 시도하는 게 자연스러운 사용자 흐름.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">반복 실패 차단</div>
+            <h3>하루에 다섯 번 넘게 시도</h3>
+            <p>같은 사용자가 하루에 5번까지 인증 페이지를 띄울 수 있다.
+              여섯 번째 시도부터는 인증 요청이 차단되고, 클라이언트는 "본인인증 요청에 실패했습니다" 토스트만 보여 준다.
+              다음 날이 되면 자동으로 풀린다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 인증 사업자에게 무한 호출이 가지 않도록 막는다. 동시에 사용자에게는 "내일 다시 시도"라는 인지로 자연스러운 정리.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">외부 장애</div>
+            <h3>외부 사업자가 일시적으로 응답하지 않는다</h3>
+            <p>사용자는 인증 페이지에서 정상 입력을 마쳤지만, 서버가 결과를 받아오는 단계에서 외부 사업자가 응답하지 않는다.
+              서버는 짧게 세 번 다시 시도한 뒤 "인증 확인에 실패했습니다. 다시 시도해주세요." 라는 안내로 사용자에게 결과를 돌려준다.
+              사용자의 인증 상태는 "진행중"으로 남아 있어, 잠시 후 같은 동작을 다시 시도할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 장애가 사용자 한 명의 신원에 영원한 흔적을 남기지 않는다. 잠시 후 다시 시도하면 그대로 통과한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">1년 후 재인증</div>
+            <h3>작년에 인증한 사용자가 다시 데이팅을 켰을 때</h3>
+            <p>작년에 데이팅을 잠깐 써 보고 나갔다가 1년 뒤에 다시 들어온 사용자.
+              앱은 만료 시점을 인지하고 "본인 인증이 만료되었습니다" 화면과 만료일을 함께 보여 준다.
+              "다시 인증하기"를 누르면 첫 인증과 동일한 흐름이 진행되고, 통과하면 또 다시 1년 동안 데이팅을 사용할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 휴면 사용자가 돌아왔을 때 안전 검증을 한 번 더 거치되, 새 가입처럼 모든 정보를 다시 받지는 않는다 — 데이팅 프로필 본문은 그대로 살아 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">이미 인증된 사용자</div>
+            <h3>호기심에 다시 인증을 시도</h3>
+            <p>이미 인증 완료 상태에서 사용자가 "본인 인증하기" 버튼을 다시 누르는 경우.
+              서버는 재인증이 필요 없다는 의미로 요청을 막는다.
+              사용자에게는 "본인인증 요청에 실패했습니다" 안내가 뜬다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 현 안내는 "이미 인증되어 있어 추가 인증이 필요 없습니다" 같은 적극적 메시지가 아니다. 사용자가 혼란스러워하는 신호가 들어오면 안내 카피의 분기를 따로 둘 여지 있음.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>안내 헤더</strong></td>
+                <td>"안전한 데이팅을 위해 본인 인증이 필요합니다" 라는 한 줄과 보조 설명.</td>
+                <td>인증을 단순한 행정 절차가 아닌 "내 안전을 위한 절차"로 사용자에게 다시 한 번 자리매김한다. 본인 인증을 "왜 하라는 거지?"의 의문 없이 자연스럽게 받아들이게.</td>
+              </tr>
+              <tr>
+                <td><strong>안전 체크리스트 세 줄</strong></td>
+                <td>"실명 인증으로 안전한 매칭 / 나이·성별 자동 확인 / 개인정보는 인증 목적으로만 사용".</td>
+                <td>사용자가 가장 자주 갖는 세 가지 의심에 대한 답을 미리 둔다. 동의 화면이 아니라 안내 화면이지만, 사용자가 본인 정보를 넘기는 것에 대한 심리적 저항을 줄이는 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>본인 인증하기 버튼</strong></td>
+                <td>화면 하단에 고정된 큰 버튼. 누르면 "인증 요청 중..."으로 잠깐 라벨이 바뀐 뒤 토스 인증 페이지가 자리에 들어온다.</td>
+                <td>의사결정 동작이 단 하나여야 한다. 인증을 하느냐, 안 하느냐 — 다른 선택지를 한 줄도 두지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>인증 페이지 안착</strong></td>
+                <td>풀스크린 모달이 아니라 같은 화면의 본문 자리에 인증 페이지가 자연스럽게 들어온다.</td>
+                <td>"외부 페이지로 떠난다"는 인상을 주지 않는다. 사용자에게는 "같은 앱 안에서 한 단계 진행 중"으로 보이는 게 자연스럽다.</td>
+              </tr>
+              <tr>
+                <td><strong>만료 안내 화면</strong></td>
+                <td>1년이 지난 사용자에게만 보이는 ⏰ 아이콘 + 만료일 + "다시 인증하기" 버튼.</td>
+                <td>"왜 갑자기 또?" 라는 의문에 미리 답한다. 만료일을 직접 보여 줘 사용자가 시간 흐름을 자기 눈으로 확인하게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>실패 사유 카드</strong></td>
+                <td>실패 시 노출 — "입력한 정보가 일치하지 않을 수 있습니다 / 일시적 장애일 수 있습니다 / 일일 시도 횟수를 초과했을 수 있습니다" 세 가지 후보.</td>
+                <td>실패 사유를 단정하지 않는다. 정확한 원인은 외부 사업자에게 있어 알기 어렵기 때문 — 사용자가 자신의 상황과 대조해 다음 행동을 정할 수 있게 후보를 나열한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 건강하다고 말하려면 이 네 가지 신호가 추적되어야 한다</span>
+          <ul>
+            <li><strong>데이팅 첫 진입 → 인증 완료 전환율</strong> — 신규 사용자가 인증을 거쳐 데이팅 사용자가 되는 비율. 이 숫자가 떨어지면 본 단위의 안내·인증 흐름 자체가 진입 장벽이 되고 있다는 신호.</li>
+            <li><strong>인증 요청 → 인증 완료 시간</strong> — 사용자가 "본인 인증하기"를 누른 시점부터 완료 토스트까지의 시간. 너무 길면 외부 환경 또는 사용자의 입력 단계 어딘가에서 막힌다.</li>
+            <li><strong>실패 사유 분포</strong> — "일치 안 함 / 외부 장애 / 일일 한도 초과" 어느 사유가 늘어나는지. 외부 장애 비중이 커지면 외부 사업자 측 상태를 의심한다.</li>
+            <li><strong>1년 만료 → 재인증 회수율</strong> — 만료된 휴면 사용자가 돌아와 다시 인증하는 비율. 너무 낮으면 만료 → 재인증 흐름 자체가 사용자 이탈 지점이 되고 있을 가능성.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 신뢰가 무너지면 데이팅 도메인 전체가 신뢰를 잃는다</span>
+          <ul>
+            <li><strong>외부 본인인증 사업자에 강하게 의존한다.</strong>
+              사업자 측 장애가 그대로 데이팅 신규 가입 정지로 나타난다 — 외부 상태 모니터링이 본 도메인 모니터링과 함께 가야 한다.</li>
+            <li><strong>일일 5회 한도는 사용자 1명 단위다.</strong>
+              같은 사람이 빠르게 다섯 번 시도하면 그날 안에는 더 이상 못 한다. 이 한도가 너무 낮다는 신호가 들어오면 조정 여지 있음 — 다만 외부 사업자 호출 비용·악용 방지 측면에서 균형이 필요.</li>
+            <li><strong>저장된 개인정보는 모두 암호화되어 있다.</strong>
+              실명·생년·휴대폰·고유식별값 어느 것도 평문으로 노출되지 않는다. 운영팀이 사용자 식별이 필요할 때도 별도 권한 절차를 거친다.</li>
+            <li><strong>1년 만료 처리가 정확히 동작하지 않으면</strong> 두 가지 위험이 동시에 발생.
+              너무 빨리 만료시키면 멀쩡한 사용자가 갑자기 데이팅에서 튕겨 나가고, 너무 늦게 만료시키면 신원이 바뀐 사용자가 통과 상태로 머문다.</li>
+            <li><strong>본 인증 통과는 데이팅 모든 후속 기능의 전제다.</strong>
+              프로필 작성, 후보 카드 조회, 호감 표시, 채팅 어느 한 곳이라도 인증 가드가 풀리는 사고가 발생하면 안전 보장이 전 도메인에서 의미를 잃는다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위 도메인</div><h3>09 프라이빗 데이팅</h3><p>본 인증이 통과시키는 모든 후속 기능의 시작점.</p></a>
+          <a class="card" href="F09-02.html"><div class="eyebrow">다음</div><h3>F09-02 데이팅 프로필</h3><p>인증 직후 사용자가 만나는 자기 표현 단위.</p></a>
+          <a class="card" href="F09-03.html"><div class="eyebrow">관련</div><h3>F09-03 매칭 액션</h3><p>인증 가드가 매번 작동하는 핵심 액션.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/09_private_date/F09-01_verification/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,39 +1,302 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F07-09 선입금·환불규정 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>F07-09 선입금·환불</div>
-<h1>F07-09. 선입금 결제 · 환불 · 환불 규정</h1>
-<p class="lede">호스트가 행사 전 단계별 환불률(예: 7일/3일/1일/당일)을 설정하고, 참가자가 선입금한다. 취소 시점에 따라 환불률 자동 계산.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>환불 규정 설정</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>선입금 결제(POINT/카드)</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>호스트 확인(계좌이체)</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>취소 시점별 환불 계산</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>호스트 규정 4단계 저장</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>참가자 POINT 선입금</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>호스트 계좌이체 확인</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>참가자 D-2 취소 → 30% 환불</h3></article>
-<article class="card"><div class="eyebrow">S5</div><h3>당일 취소 → 0% 환불</h3></article>
-<article class="card"><div class="eyebrow">S6</div><h3>호스트 취소 → 100% 환불</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/prepayments/refund-rules</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/prepayments/pay</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/prepayments/{id}/cancel</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">연동</div><h3>06 결제·지갑</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F07-09 선입금·환불·환불 규정 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
+          F07-09 선입금·환불 규정
+        </div>
+        <h1>F07-09. 선입금 · 환불 · 환불 규정</h1>
+        <p class="lede">
+          모임 시작 전에 호스트가 참가 확정 조건으로 받는 돈이 선입금이다. 참가자는 포인트나 계좌이체로 미리 결제하고,
+          이벤트 일정에 맞춰 참석하지 못하게 되면 환불을 요청한다. 환불 금액은 호스트가 미리 정해 둔 환불 규정
+          ("일주일 전 100% · 3일 전 50% · 1일 전 30% · 당일 0%" 같은 단계 룰)에 따라 자동으로 계산된다.
+          이 단위는 모임 자체의 신뢰가 결정되는 면이다 — 환불률 한 줄이 호스트와 참가자 양쪽에서 분쟁의 가장 큰 원인이 된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">규정 미설정 시</div><div class="value">전액 환불</div><div class="hint">호스트가 명시 안 하면 100%</div></div>
+          <div class="metric"><div class="label">이미 시작된 모임</div><div class="value">0%</div><div class="hint">규정 마지막 룰 적용</div></div>
+          <div class="metric"><div class="label">포인트 환불</div><div class="value">자동</div><div class="hint">계좌이체는 호스트가 수동</div></div>
+          <div class="metric"><div class="label">동일 모임 중복</div><div class="value">차단</div><div class="hint">미환불 선입금이 있으면 거절</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 환불 약속을 결제 전에 시각화하고, 약속대로 자동 계산한다</span>
+          <p>선입금은 호스트의 "참석 약속을 받았다"는 신호이자 모임을 노쇼로부터 보호하는 장치다.
+            그러나 사용자 사정으로 참석 못 하게 되는 경우는 늘 발생하므로 환불 규정이 필수다.
+            본 단위의 핵심은 호스트가 한 번 정해 둔 환불 규정이 사용자에게 미리 시각적으로 보이고,
+            환불 시점이 됐을 때 그 규정대로 시스템이 자동 계산해 준다는 점이다.
+            호스트가 매번 환불 협상하는 부담을 줄이고, 참가자도 "예상하지 못한 환불 비율"이라는 분쟁을 피한다.</p>
+          <p>한편 환불 규정을 호스트가 명시적으로 설정하지 않으면 시스템은 전액 환불을 기본값으로 적용한다 —
+            "규정이 없는 호스트의 모임에서는 환불을 다 받을 수 있다"는 사용자 안전 우선 정책.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>본 단위 안의 네 가지 동작</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1 · 환불 규정 설정</div>
+            <h3>호스트가 단계별 환불률을 미리 정한다</h3>
+            <p>"모임 N시간 전 환불률 M%" 형태의 단계 룰을 호스트가 자유롭게 정한다.
+              기본값으로 "168시간 전 100% / 72시간 전 50% / 24시간 전 30% / 당일 0%" 같은 4단계가 채워져 있다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2 · 선입금 결제</div>
+            <h3>참가자가 모임 전 미리 보낸다</h3>
+            <p>참가자가 포인트나 계좌이체로 미리 결제한다. 포인트는 즉시 차감되고,
+              계좌이체는 호스트가 본인 계좌에서 입금을 확인할 때까지 대기 상태로 남는다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3 · 환불 요청</div>
+            <h3>참가자가 환불을 요청하면 자동 계산</h3>
+            <p>참가자가 환불을 누르면 모임 시작까지 남은 시간과 환불 규정으로 환불률·환불 금액이 계산된다.
+              포인트 선입금이면 본인 지갑으로 자동 환원, 계좌이체 선입금이면 호스트가 직접 환불해야 한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4 · 호스트 수동 확인</div>
+            <h3>계좌이체 선입금의 호스트 확인</h3>
+            <p>계좌이체로 들어온 선입금은 호스트가 본인 계좌에서 입금을 확인한 뒤 "확인"을 눌러 줘야 완료된다.
+              모임 정산의 이체 확인(F07-06)과 같은 패턴.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>환불 금액이 결정되는 흐름</h2>
+        <p class="subtitle">참가자의 환불 요청 한 번이 모임 시작 시각과 호스트의 환불 규정을 모두 참조해 자동 계산된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["참가자: 환불 탭"] --> B{"호스트가 환불 규정을<br/>설정해 두었는가"}
+    B -->|"없음"| C1["전액 환불 (100%)"]
+    B -->|"있음"| C{"모임이 이미 시작됐는가"}
+    C -->|"시작됨"| C2["환불 불가 (0%)"]
+    C -->|"시작 전"| D["남은 시간 기준 룰 매치"]
+    D --> D1["예: 8일 전 → 100%<br/>3일 전 → 50%<br/>1일 전 → 30%<br/>30분 전 → 0%"]
+    C1 --> E{"결제 수단은 무엇이었는가"}
+    C2 --> E
+    D1 --> E
+    E -->|"포인트"| F1["송금자 지갑에 자동 환원"]
+    E -->|"계좌이체"| F2["환불 금액만 계산<br/>호스트가 직접 환불해야 함"]
+    F1 --> G["선입금 상태: 환불됨"]
+    F2 --> G
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>가상계좌 자동 인입(향후 연동)</h2>
+        <p class="subtitle">현재는 호스트가 본인 계좌에서 입금을 직접 확인해야 하지만,
+          외부 결제 대행사와 연동하면 입금이 들어오는 순간 시스템이 자동으로 확인 처리할 수 있다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor 참가자
+    participant 외부 as 외부 결제 대행
+    participant 시스템 as 우리 시스템
+    participant 호스트
+
+    참가자->>외부: 가상계좌로 입금
+    외부->>시스템: 입금 발생 통보 (서명 포함)
+    시스템->>시스템: 서명 검증
+    alt 검증 성공
+        시스템->>시스템: 선입금 자동 확인 처리
+        시스템-->>호스트: 입금 확인 알림
+    else 검증 실패
+        시스템-->>외부: 거절
+    end
+    Note over 시스템: 현재 상태 — 검증 단계까지만 구현
+    Note over 시스템: 실제 자동 확인은 외부 결제 대행 연동 후 활성화
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 호스트 규정 설정</div>
+            <h3>"일주일 전 100% / 3일 전 50% / 1일 전 30% / 당일 0%"</h3>
+            <p>호스트가 모임 정보를 만들고 환불 규정 화면으로 진입한다.
+              기본 4단계 룰이 미리 채워져 있고, 호스트는 슬라이더로 일부 비율만 조정한다.
+              "규정 저장"을 누르면 기존 룰이 한 번에 교체된다.
+              참가자는 이 규정을 결제 전에 확인할 수 있어 "내가 언제까지 취소하면 얼마나 받는지"를 미리 안다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 환불률을 결제 전에 알 수 있는 것이 분쟁의 가장 큰 예방 장치.
+              결제 후에야 "환불이 적다"고 알게 되면 사용자가 호스트를 신뢰하지 못한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 포인트 선입금</div>
+            <h3>지갑에서 5,000원을 모임 전에 보낸다</h3>
+            <p>참가자가 모임 화면에서 "선입금 결제"를 누르고 다이얼로그에서 포인트 5,000원을 선택한다.
+              포인트가 즉시 차감되고 선입금 상태가 완료로 잡힌다. 호스트는 이 사용자를 참석 확정 명단에 올린다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 계좌이체 선입금</div>
+            <h3>포인트가 부족해 계좌이체로 보낸다</h3>
+            <p>참가자가 계좌이체로 5,000원을 외부 송금 앱에서 보낸다.
+              community 앱에서 "계좌이체로 선입금" 결제를 등록하지만 호스트가 본인 계좌에서 확인하기 전까지는
+              선입금 상태가 "대기"로 남는다. 호스트가 입금을 확인하고 "확인"을 누르면 완료 상태로 바뀐다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 송금은 우리 시스템이 자동 확인할 수 없으므로 호스트의 손이 한 번 필요하다.
+              모임 정산의 이체 확인과 같은 패턴이라 호스트가 한 가지 동작 패턴만 익히면 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">환불 · 일주일 전</div>
+            <h3>8일 전 취소 → 100% 환불</h3>
+            <p>모임이 8일 후로 잡힌 상태에서 참가자가 환불을 요청한다.
+              환불 다이얼로그가 "100% 환불 — 5,000원" 안내를 미리 보여 주고, 확인하면 포인트 5,000원이 즉시 본인 지갑에 환원된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">환불 · 3일 전</div>
+            <h3>3일 남았을 때 50%만 돌려받는다</h3>
+            <p>모임 시작까지 80시간이 남은 상태. 환불 규정 매치에 따라 50% 환불이 계산된다.
+              5,000원 중 2,500원이 본인 지갑에 환원된다. 이때 사용자는 "약속한 환불률대로 받았다"는 인지를 명확히 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 환불 규정이 사전에 시각적으로 공개되어야 사용자가 결과를 받아들일 수 있다.
+              뒤늦게 환불률을 알게 되면 어떤 비율이든 분쟁이 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">환불 · 이미 시작</div>
+            <h3>모임이 시작된 후 환불을 시도</h3>
+            <p>모임 시작 시각이 지난 뒤 사용자가 환불을 시도한다.
+              환불 규정 매치에 따라 환불률이 0%로 계산되고, "환불 불가 — 고객센터 문의" 안내가 뜬다.
+              우회 호출이 들어와도 0원이 환불되며, 동일 선입금에 재환불 시도는 차단된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 0% 환불도 명시적인 정책 결과로 시스템 안에 기록된다 — 호스트가 임의로 처리하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">규정 미설정</div>
+            <h3>호스트가 환불 규정을 안 만들어 둔 모임</h3>
+            <p>호스트가 모임을 만들면서 환불 규정을 설정하지 않은 경우, 사용자의 환불 요청에는 기본값으로 전액 환불이 적용된다.
+              호스트가 명시적으로 정하지 않은 한 사용자 보호가 우선이라는 정책.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 환불률을 차감하고 싶다면 반드시 규정을 명시적으로 설정해야 한다는 운영 가이드.
+              규정 설정 화면을 호스트 온보딩에서 강조하는 것이 다음 개선 항목.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 중복 결제</div>
+            <h3>이미 결제한 선입금이 있는데 또 결제</h3>
+            <p>사용자가 이전에 결제한 선입금이 환불되지 않은 상태에서 또 결제를 시도한다.
+              "이미 결제한 선입금이 있습니다" 안내로 거절된다. 한 모임에 한 사용자의 선입금은 하나만 존재한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 비호스트</div>
+            <h3>참가자가 다른 사람의 계좌이체 확인을 시도</h3>
+            <p>일반 참가자가 디버그/우회로 계좌이체 선입금의 확인을 호출하면 호스트도 정산 생성자도 아니라는 이유로 거절된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 본인 외 환불</div>
+            <h3>다른 사용자의 선입금을 환불하려 한다</h3>
+            <p>사용자 A가 사용자 B의 선입금에 환불을 시도하면 본인이 아니라는 이유로 거절된다.
+              선입금 환불은 본인만 가능하다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">화면 요소</th><th>사용자가 보는 것</th><th style="width:34%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>환불 규정 화면(호스트)</strong></td>
+                <td>단계별 슬라이더(시간 vs 환불률) + 기본값 미리 채움. "규정 저장" 버튼.</td>
+                <td>호스트가 직관적으로 단계 룰을 시각화하면서 정할 수 있어야 환불 약속이 명확해진다.</td>
+              </tr>
+              <tr>
+                <td><strong>환불 타임라인(참가자 사전 안내)</strong></td>
+                <td>"지금 환불 시 100% / 3일 후엔 50% / 1일 전엔 30%" 같은 시각적 단계 표시.</td>
+                <td>결제 전 사용자가 환불 정책을 미리 시각적으로 봐야 결제 의사가 분명해진다.</td>
+              </tr>
+              <tr>
+                <td><strong>선입금 결제 다이얼로그</strong></td>
+                <td>금액 · 결제 수단(포인트/계좌이체) 선택. 계좌이체 선택 시 호스트 계좌 정보 함께 표시.</td>
+                <td>결제 수단별로 후속 처리가 다르다는 사실이 결제 직전에 명확해야 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>환불 확인 다이얼로그</strong></td>
+                <td>"현재 환불률 X% — Y원 환불됩니다" 같은 명시. 0% 환불은 별도 안내.</td>
+                <td>환불 금액이 결정되는 순간 사용자가 결과를 미리 보고 결정해야 분쟁이 줄어든다.</td>
+              </tr>
+              <tr>
+                <td><strong>호스트의 선입금 리스트</strong></td>
+                <td>참가자별 결제 상태(완료/대기/환불됨) + 금액. 계좌이체 대기 카드에 "확인" 버튼.</td>
+                <td>호스트가 모임 전에 누가 결제했는지 한눈에 확인해야 참석 명단 운영이 가능하다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">환불 규정 한 줄이 호스트 신뢰의 가장 큰 변수다</span>
+          <ul>
+            <li><strong>환불 규정 미설정 시 기본값은 전액 환불이다.</strong>
+              호스트가 명시적으로 정하지 않으면 사용자 보호 우선 정책이 작동한다 —
+              호스트 온보딩에서 "환불 규정을 명시적으로 설정해야 한다"는 안내가 빠지면 호스트가 의도치 않게 전액 환불을 강제당한다.</li>
+            <li><strong>환불률은 결제 전 사용자에게 시각적으로 보여 줘야 한다.</strong>
+              결제 직전 환불 타임라인이 미리 보이면 사용자가 "예상치 못한 환불률"이라는 분쟁을 일으키지 않는다 —
+              규정만 저장되고 사용자에게 노출되지 않는 회귀가 들어가면 정책의 의미가 사라진다.</li>
+            <li><strong>계좌이체 선입금의 환불은 자동이 아니다.</strong>
+              우리 시스템은 환불 금액만 계산하고, 실제 송금은 호스트가 외부 계좌에서 직접 처리해야 한다 —
+              포인트 환불과 다르다는 사실이 호스트에게 명확해야 한다.</li>
+            <li><strong>0% 환불도 명시적인 정책 결과로 기록된다.</strong>
+              0원이 환불되는 경우에도 선입금 상태가 환불됨으로 바뀌어 재환불 시도를 차단한다 — 호스트가 별도로 처리하지 않는다.</li>
+            <li><strong>한 모임에 한 사용자의 선입금은 하나만 존재한다.</strong>
+              환불되지 않은 미환불 선입금이 있는 한 추가 결제는 거절된다 — 사용자가 두 번 결제하는 사고를 막는다.</li>
+            <li><strong>외부 결제 대행과의 가상계좌 연동은 현재 검증 단계까지만 구현되어 있다.</strong>
+              실제 자동 입금 처리는 연동 활성화 후에 가능해진다 — 지금은 호스트의 수동 확인이 필수.</li>
+            <li><strong>호스트 본인 계좌의 마스킹·보안은 향후 강화 항목.</strong>
+              현재는 계좌번호가 평문으로 사용자에게 노출된다 — 향후 마스킹 표시·복사 보안 강화 검토.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 도메인</div><h3>07 모임 정산</h3></a>
+          <a class="card" href="F07-05.html"><div class="eyebrow">유사 패턴</div><h3>F07-05 분담금 납부</h3><p>포인트·계좌이체의 결제 처리.</p></a>
+          <a class="card" href="F07-06.html"><div class="eyebrow">유사 패턴</div><h3>F07-06 이체 확인</h3><p>계좌이체 입금의 수동 확인.</p></a>
+          <a class="card" href="F07-10.html"><div class="eyebrow">횡단</div><h3>F07-10 계좌·이력·신뢰도</h3><p>정산 수령용 계좌 등록.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">횡단</div><h3>06 지갑</h3><p>포인트 충전·차감.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

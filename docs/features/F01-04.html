@@ -19,423 +19,147 @@
         </div>
         <h1>F01-04. 비밀번호 재설정</h1>
         <p class="lede">
-          비밀번호를 잊은 사용자가 본인 이메일로 받은 30분 짜리 토큰을 써서 비밀번호를 다시 설정한다.
-          비로그인 상태에서 처리되며, 보안상 <strong>“이메일이 가입돼 있는지”는 절대 외부에 노출하지 않는다</strong>.
-          미가입 이메일에도 가입자와 똑같은 “이메일을 확인해주세요” 화면을 보여주는 것이 의도된 정책.
+          비밀번호를 잊은 사용자가 이메일 한 번으로 계정 통제권을 회복할 수 있게 한다.
+          가입자에게는 메일이 발송되지만, 누가 가입자인지 화면상으로는 절대 드러내지 않는다.
+          메일로 받은 링크는 30분 동안만 유효하고 한 번 사용된 토큰은 즉시 폐기된다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">하위 기능</div><div class="value">2</div><div class="hint">요청 화면·확인 화면</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">10</div><div class="hint">정상 1 · 보안/검증 7 · E2E 2</div></div>
-          <div class="metric"><div class="label">토큰 TTL</div><div class="value">30m</div><div class="hint">Redis 저장</div></div>
-          <div class="metric"><div class="label">민감도</div><div class="value">매우 높음</div><div class="hint">계정 탈취 경로</div></div>
+          <div class="metric"><div class="label">재설정 링크 유효</div><div class="value">30분</div><div class="hint">이메일 인증보다 짧게 — 더 민감한 동작</div></div>
+          <div class="metric"><div class="label">미가입 이메일 응답</div><div class="value">동일</div><div class="hint">가입 여부 노출 차단</div></div>
+          <div class="metric"><div class="label">토큰 재사용</div><div class="value">불가</div><div class="hint">한 번 쓰면 즉시 폐기</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">핵심 보안 정책 세 가지</span>
-          <ol style="margin:0 0 0 18px">
-            <li><strong>이메일 존재 여부 비노출</strong> — 미가입 이메일에도 가입자와 동일한 화면을 보여준다. 응답도 200 동일.</li>
-            <li><strong>토큰과 이메일 교차 검증</strong> — 토큰을 가로채도 본인 이메일이 아니면 변경 불가.</li>
-            <li><strong>일회용 토큰</strong> — 사용 즉시 폐기 + Redis TTL 30분.</li>
-          </ol>
+          <span class="label">설계 의도 — 본인 비밀번호 회복을 막지 않되, 그 과정이 공격 통로가 되지 않게 한다</span>
+          <p>비밀번호 재설정은 본인이 계정 통제권을 회복하는 가장 빠른 길이지만, 동시에 공격자가 다른 사람의 계정에 들어갈 수 있는 통로이기도 하다.
+            그래서 본 단위는 두 가지를 동시에 지킨다 — (1) 미가입 이메일을 입력해도 화면은 가입자와 똑같이 "메일을 보냈습니다" 안내를 보여서
+            누가 가입자인지 알 수 없게 하고, (2) 메일 링크의 토큰만으로는 비밀번호를 못 바꾸게 하고 사용자가 본인 이메일을 한 번 더 입력해야 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">하위 기능 1</div>
-            <h3>재설정 요청 화면</h3>
-            <p>이메일 한 칸과 “재설정 링크 발송” 버튼. 성공이든 미가입이든 결과 화면은
-              <strong>같은 “이메일을 확인해주세요”</strong> 안내로 통일된다. 사용자는 메일이 안 와도 화면상으로는 차이를 알 수 없다.</p>
-            <div class="meta"><span class="pill">단일 CTA</span><span class="pill">이메일 비노출</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">하위 기능 2</div>
-            <h3>재설정 확인 화면</h3>
-            <p>딥 링크로 진입한다. 새 비밀번호와 확인 입력을 받고 강도·일치를 실시간 검증.
-              “비밀번호 변경” 성공 시 별도 자동 로그인을 시키지 않고 <strong>로그인 화면으로 명시 이동</strong>하여 새 비밀번호로 다시 로그인하도록 유도한다.</p>
-            <div class="meta"><span class="pill">딥 링크 진입</span><span class="pill">자동 로그인 안 함</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면 전이</h2>
-        <p class="subtitle">요청 화면과 확인 화면 각자에 “모드 A 폼 / 모드 B 결과”가 있다. 둘은 같은 흐름의 두 라운드트립으로 연결된다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    Login["로그인"]
-    Req["재설정 요청 (폼)"]
-    ReqSent["발송 안내 (가입자·미가입자 동일)"]
-    Mail["메일 앱"]
-    Confirm["재설정 확인 (폼)"]
-    Done["변경 완료"]
-    Login -->|"비밀번호 찾기"| Req
-    Req -->|"발송"| ReqSent
-    ReqSent -->|"메일 도착"| Mail
-    Mail -->|"링크 클릭"| Confirm
-    Confirm -->|"변경 성공"| Done
-    Done -->|"로그인으로 이동"| Login
-    ReqSent -->|"로그인으로 돌아가기"| Login
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>요청 → 확인 시퀀스</h2>
-        <p class="subtitle">두 라운드트립이지만 한 사용자 흐름. 첫 호출은 Redis에 토큰을 SET하고 메일을 보낸다. 두 번째 호출은 토큰을 GET 후 즉시 DELETE한다.</p>
+        <h2>두 단계로 분리된 흐름</h2>
+        <p class="subtitle">메일 요청 단계와 비밀번호 변경 단계는 다른 시점에 일어난다. 사이 시간은 사용자가 메일함을 확인하는 시간.</p>
         <div class="diagram">
           <div class="mermaid">
 sequenceDiagram
-    actor U as 사용자
-    participant Req as 요청 화면
-    participant API as 인증 API
-    participant SVC as 재설정 서비스
-    participant R as Redis
-    participant DB as DB
-    participant Mail as 메일 서버
-    participant Conf as 확인 화면
-    U->>Req: 이메일 입력 → "재설정 링크 발송"
-    Req->>API: POST /api/v1/auth/password-reset/request
-    API->>SVC: 재설정 요청
-    SVC->>DB: 이메일로 사용자 조회
+    actor 나
+    participant 화면 as 재설정 화면
+    participant 메일 as 메일함
+    participant 서비스 as 인증 서비스
+
+    나->>화면: 비밀번호 찾기 진입 + 이메일 입력
+    화면->>서비스: 재설정 메일 발송 요청
+    Note right of 서비스: 가입자 여부와 무관하게<br/>화면 응답은 항상 동일
     alt 가입자
-        DB-->>SVC: 사용자
-        SVC->>R: SET 토큰 → userId (TTL 30분)
-        SVC->>Mail: 재설정 메일 발송
+        서비스->>나: 재설정 링크 담긴 메일
     else 미가입
-        DB-->>SVC: 없음
-        SVC-->>SVC: 조용히 종료 (보안)
+        서비스-->>화면: 동일 응답 (메일 미발송)
     end
-    SVC-->>API: 200 OK (동일 응답)
-    API-->>Req: 200
-    Req-->>U: "이메일을 확인해주세요" 안내
-    Note over U,Mail: 메일 도착 → 사용자가 링크 클릭 → 앱이 토큰·이메일과 함께 다시 열림
-    U->>Conf: 새 비밀번호 입력 → "비밀번호 변경"
-    Conf->>API: POST /api/v1/auth/password-reset/confirm
-    API->>SVC: 변경 요청
-    SVC->>R: GET 토큰
-    alt 토큰 없음 (만료/사용됨)
-        R-->>SVC: null
-        SVC-->>API: 400 TOKEN_INVALID
-    else 토큰 활성
-        R-->>SVC: userId
-        SVC->>DB: 사용자 조회
-        alt 이메일 불일치
-            SVC-->>API: 400 INVALID_INPUT
-        else 정상
-            SVC->>DB: 새 비밀번호 해싱 후 UPDATE
-            SVC->>R: 토큰 DELETE
-            SVC-->>API: 200 OK
-            API-->>Conf: 200
-            Conf-->>U: "변경 완료" → 로그인으로 이동
-        end
+    화면-->>나: "이메일을 확인해주세요" 안내
+
+    Note over 나: 사용자가 메일을 확인하는 동안 30분 카운트다운
+    나->>메일: 메일 안의 링크 탭
+    메일->>화면: 앱이 열림 + 토큰 + 이메일 전달
+    나->>화면: 새 비밀번호 입력
+    화면->>서비스: 토큰 + 본인 이메일 + 새 비밀번호
+    alt 토큰 유효 + 이메일 일치
+        서비스-->>화면: 비밀번호 변경 완료
+        화면-->>나: 로그인 화면으로 안내
+    else 만료/위조
+        서비스-->>화면: 거절
+        화면-->>나: 다시 요청 안내
     end
           </div>
         </div>
       </section>
 
       <section>
-        <h2>변경 검증 분기</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["POST /password-reset/confirm"] --> B{"Redis에 토큰?"}
-    B -->|"없음"| E1["400 TOKEN_INVALID"]
-    B -->|"있음"| C{"사용자 존재?"}
-    C -->|"아니오"| E2["404 USER_NOT_FOUND"]
-    C -->|"예"| D{"이메일 일치?"}
-    D -->|"아니오"| E3["400 INVALID_INPUT (토큰 탈취 차단)"]
-    D -->|"예"| F{"비밀번호 정책 통과?"}
-    F -->|"아니오"| E4["422 VALIDATION_ERROR"]
-    F -->|"예"| G["비밀번호 해싱 + UPDATE"]
-    G --> H["토큰 DELETE"]
-    H --> I["200 OK"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오 10개</h2>
+        <h2>사용자 시나리오</h2>
 
         <div class="cards">
           <article class="card">
-            <div class="eyebrow">S1 · Happy Path</div>
-            <h3>비밀번호 분실 후 정상 재설정</h3>
-            <ol>
-              <li>로그인 화면 → “비밀번호 찾기” 탭</li>
-              <li>이메일 입력 → “재설정 링크 발송” 탭</li>
-              <li>“이메일을 확인해주세요” 안내로 화면 전환</li>
-              <li>메일 앱에서 링크 탭 → 딥 링크로 확인 화면 진입</li>
-              <li>새 비밀번호 입력 + 확인 입력 → “비밀번호 변경”</li>
-              <li>서버: 토큰 검증 → 이메일 교차 검증 → 비밀번호 해싱 후 UPDATE → 토큰 폐기</li>
-              <li>“변경 완료” 화면 → “로그인으로 이동”</li>
-            </ol>
-            <p><strong>종료</strong> — 비밀번호 갱신, 토큰 폐기, 사용자 재로그인 유도.</p>
+            <div class="eyebrow">기본 흐름</div>
+            <h3>비밀번호를 잊어 새로 설정</h3>
+            <p>로그인 화면의 "비밀번호 찾기"를 누른 사용자가 자기 이메일을 입력하고 "재설정 링크 발송"을 누른다.
+              "이메일을 확인해주세요" 안내가 뜬다. 메일에서 링크를 누르면 새 비밀번호 입력 화면이 열리고,
+              두 번 입력해 일치를 확인한 뒤 변경하면 로그인 화면으로 돌아간다 — 새 비밀번호로 다시 로그인한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 본인 계정 통제권을 회복하는 가장 짧은 경로. CS 문의의 가장 큰 비중을 차지하는 비밀번호 관련 부담을 셀프 서비스로 흡수한다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">S2 · 보안 정책</div>
-            <h3>미가입 이메일로 재설정 요청</h3>
-            <ol>
-              <li>가입한 적 없는 이메일 입력 → “재설정 링크 발송”</li>
-              <li>서버: 사용자 미발견 → 조용히 종료, 200 OK 반환</li>
-              <li>화면은 가입자와 <strong>동일한</strong> “이메일을 확인해주세요” 안내</li>
-            </ol>
-            <p><strong>종료</strong> — 메일은 실제로 발송되지 않음. <strong>이메일 존재 여부 노출 차단</strong>이 목적.</p>
+            <div class="eyebrow">보안 정책</div>
+            <h3>가입 안 한 이메일을 입력</h3>
+            <p>오타로 다른 이메일을 입력하거나 가입한 적 없는 이메일을 시도해도 화면에는 똑같이 "이메일을 확인해주세요" 안내가 뜬다.
+              메일은 발송되지 않지만 사용자 측에서는 가입자 입력과 구분할 수 없다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 공격자가 "이 이메일이 가입자냐"를 알아내는 통로가 차단된다. 본 단위의 가장 중요한 보안 약속.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">S3 · 만료</div>
-            <h3>30분 지난 토큰으로 변경 시도</h3>
-            <ol>
-              <li>30분 후 메일 링크 클릭 → 확인 화면 → 새 비밀번호 입력 → 변경</li>
-              <li>서버: Redis TTL 만료로 자동 삭제됨 → 400 TOKEN_INVALID</li>
-              <li>실패 토스트, 사용자가 다시 “비밀번호 찾기” 진입</li>
-            </ol>
-            <p><strong>종료</strong> — 변경 실패, 재요청으로 새 토큰 발급.</p>
+            <div class="eyebrow">만료</div>
+            <h3>30분 지난 링크를 사용</h3>
+            <p>한 시간 뒤에 메일을 본 사용자가 링크를 누른다. 비밀번호 입력 화면까지는 진입하지만 변경을 시도하면 거절된다 —
+              "다시 요청해 주세요" 안내가 떠오르고 사용자는 비밀번호 찾기를 다시 한다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">S4 · 토큰 탈취 차단</div>
-            <h3>공격자가 가로챈 토큰으로 다른 이메일 변경 시도</h3>
-            <ol>
-              <li>공격자가 다른 사용자의 토큰을 입수</li>
-              <li>본인 이메일과 함께 변경 요청</li>
-              <li>서버: 토큰의 userId로 사용자 조회 → 저장된 이메일과 요청 이메일 비교 → 불일치 → 400 INVALID_INPUT</li>
-            </ol>
-            <p><strong>종료</strong> — 계정 탈취 차단. <strong>토큰 단독 보유는 충분하지 않다는 정책</strong>이 동작.</p>
+            <div class="eyebrow">토큰 탈취 차단</div>
+            <h3>공격자가 메일 링크를 가로채 본인 이메일로 변경 시도</h3>
+            <p>공격자가 사용자 A의 재설정 링크를 어떤 경로로 가져왔다고 해도, 변경 화면에서 본인의 이메일을 입력해서 통과할 수는 없다 —
+              토큰에 묶인 사용자의 이메일과 입력 이메일이 같아야만 변경이 진행되기 때문.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 메일 링크 자체만으로는 계정을 탈취할 수 없다는 보안 약속. 메일 노출 사고의 영향을 차단.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">S5 · 재사용 차단</div>
-            <h3>같은 토큰 두 번 사용 시도</h3>
-            <ol>
-              <li>첫 번째 변경 성공 → Redis에서 토큰 즉시 DELETE</li>
-              <li>같은 토큰으로 두 번째 변경 시도 → Redis에 없음 → 400 TOKEN_INVALID</li>
-            </ol>
-            <p><strong>종료</strong> — 재사용 차단. 일회용 토큰 정책.</p>
+            <div class="eyebrow">재사용 차단</div>
+            <h3>같은 링크로 두 번 변경 시도</h3>
+            <p>한 번 비밀번호를 바꾸고 나면 같은 메일의 같은 링크는 즉시 무효가 된다 — 다시 누르면 거절된다.
+              필요하면 사용자가 비밀번호 찾기를 다시 진행한다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">S6 · 정책 위반</div>
-            <h3>약한 비밀번호로 변경 시도</h3>
-            <ol>
-              <li>클라이언트는 “8자 + 영문/숫자”까지만 검증해 통과시킴</li>
-              <li>서버가 추가로 대소문자·특수문자 패턴까지 검증 → 422 VALIDATION_ERROR</li>
-              <li>실패 토스트</li>
-            </ol>
-            <p><strong>종료</strong> — 변경 실패. <strong>이중 방어:</strong> 클라이언트 우회 시도에도 서버가 막아준다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S7 · 외부 장애</div>
-            <h3>메일 서버 장애로 발송 실패</h3>
-            <ol>
-              <li>요청 → Redis SET 성공 → 메일 발송 단계에서 예외</li>
-              <li>본 단위 요청 메서드에는 별도 쓰기 트랜잭션이 없어 Redis SET은 자동 롤백되지 않음</li>
-              <li>사용자는 메일이 오지 않아 다시 요청 → 새 토큰 발급</li>
-              <li>이전 토큰은 30분 후 자연 만료</li>
-            </ol>
-            <p><strong>종료</strong> — 사용자가 재시도로 복구 가능. <strong>운영 노트:</strong> 메일 발송 실패율이 높아지면 “미사용 토큰이 30분 동안 살아있는 상태”가 누적될 수 있어 모니터링 후보.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S8 · 보안 강화 후보</div>
-            <h3>비밀번호 변경 후에도 다른 기기 세션 유지</h3>
-            <ol>
-              <li>비밀번호 변경 성공</li>
-              <li>그러나 본 단위는 다른 기기의 리프레시 토큰을 폐기하지 않음 → 기존 세션 유지됨</li>
-            </ol>
-            <p><strong>종료</strong> — 다른 기기는 새 비밀번호 없이도 기존 토큰으로 계속 사용 가능.
-              <strong>운영 결정 필요:</strong> 비밀번호 변경 시 모든 세션 강제 종료를 추가할지 여부는 향후 보안 강화 항목.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">E2E-1 · 요청 surface</div>
-            <h3>재설정 요청 → 발송 안내 surface 노출</h3>
-            <ol>
-              <li>로그인 화면 도달 후 재설정 화면으로 이동</li>
-              <li>“비밀번호 찾기” 헤더 + 이메일 입력 필드 가시</li>
-              <li>시드 이메일 입력 후 “재설정 링크 발송”</li>
-              <li>15초 이내 “이메일을 확인해주세요” 헤더 등장</li>
-              <li>입력한 이메일 텍스트 노출 + “로그인으로 돌아가기” CTA 가시</li>
-            </ol>
-            <p><strong>종료</strong> — 발송 안내 surface 안정 노출.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">E2E-2 · 확인 검증 surface</div>
-            <h3>확인 화면의 인라인 검증 (8자 미만 + 불일치)</h3>
-            <ol>
-              <li>딥 링크로 확인 화면 진입</li>
-              <li>새 비밀번호에 “short” 입력 → “최소 8자 이상 입력해주세요” 표시</li>
-              <li>확인 비밀번호에 다른 값 입력 → “비밀번호가 일치하지 않습니다” 표시</li>
-              <li>“비밀번호 변경” CTA는 존재하나 실패 입력으로는 전송되지 않음</li>
-            </ol>
-            <p><strong>종료</strong> — 두 인라인 에러 동시 노출, 사용자가 수정할 때까지 변경 차단.</p>
+            <div class="eyebrow">검증</div>
+            <h3>새 비밀번호가 정책에 안 맞음</h3>
+            <p>화면에서 즉시 검증이 일어난다 — 8자 미만이거나 확인 칸과 다르면 인라인 안내가 뜨고 변경 버튼이 비활성화된다.
+              사용자가 검증을 통과해도 서버에서 한 번 더 정책 검사를 하므로, 가입과 동일한 강도의 비밀번호가 강제된다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>화면 구성 — 사람이 보는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:140px">화면 / 모드</th><th>보이는 것</th><th style="width:34%">할 수 있는 것</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>요청 · 폼</strong></td>
-                <td>자물쇠 아이콘 · 안내 · 이메일 입력 · “재설정 링크 발송” · “로그인으로 돌아가기”</td>
-                <td>이메일 입력·발송 요청</td>
-              </tr>
-              <tr>
-                <td><strong>요청 · 발송 안내</strong></td>
-                <td>봉투 아이콘 · “이메일을 확인해주세요” · 입력한 이메일 · “로그인으로 돌아가기”</td>
-                <td>로그인 복귀</td>
-              </tr>
-              <tr>
-                <td><strong>확인 · 폼</strong></td>
-                <td>안내 “영문·숫자·특수문자 8~20자” · 새 비밀번호(강도 인디케이터) · 비밀번호 확인(일치 캡션) · “비밀번호 변경”</td>
-                <td>각 필드 실시간 검증, 변경 요청</td>
-              </tr>
-              <tr>
-                <td><strong>확인 · 변경 완료</strong></td>
-                <td>체크 아이콘 · “비밀번호가 변경되었습니다” · “로그인으로 이동”</td>
-                <td>로그인 화면 이동</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약 한눈에</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:74px">Method</th>
-                <th>Path</th>
-                <th>인증</th>
-                <th>핵심 동작</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>POST</code></td>
-                <td><code>/api/v1/auth/password-reset/request</code></td>
-                <td>불필요</td>
-                <td>토큰 발급 + 메일 발송. 가입/미가입 모두 200 동일.</td>
-              </tr>
-              <tr>
-                <td><code>POST</code></td>
-                <td><code>/api/v1/auth/password-reset/confirm</code></td>
-                <td>불필요</td>
-                <td>토큰·이메일 교차 검증 후 비밀번호 갱신. 사용 즉시 토큰 폐기.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
+        <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">에러 코드 매트릭스</span>
+          <span class="label">보안 약속과 정책 결정점</span>
           <ul>
-            <li><strong>400 PASSWORD_RESET_TOKEN_INVALID</strong> — 토큰 만료(자동 삭제) 또는 무효</li>
-            <li><strong>400 INVALID_INPUT</strong> — 토큰의 사용자 이메일과 요청 이메일 불일치</li>
-            <li><strong>404 USER_NOT_FOUND</strong> — 토큰의 userId에 해당하는 사용자 없음</li>
-            <li><strong>422 VALIDATION_ERROR</strong> — 비밀번호 복잡성 패턴 위반(대·소문자·숫자·특수문자 + 8자 이상)</li>
-            <li><strong>200 OK</strong> — 요청 단계는 가입/미가입 동일</li>
+            <li><strong>"이메일을 확인해주세요" 안내는 가입 여부와 무관하게 동일해야 한다.</strong>
+              만약 미가입 이메일에 다른 안내가 뜨는 회귀가 생기면 공격자가 가입자 목록을 추출할 수 있다 — 본 단위의 가장 중요한 보안 약속.</li>
+            <li><strong>토큰 30분 만료는 이메일 인증(24시간)보다 짧다.</strong>
+              비밀번호 변경이 더 민감한 동작이라는 정책의 발현. 운영 측이 이 수치를 늘릴 때는 보안 영향 평가가 필요하다.</li>
+            <li><strong>변경 화면에서 본인 이메일을 다시 입력받는 정책은 토큰 탈취 방어선이다.</strong>
+              UX 개선 요청으로 이 단계를 없애자는 제안이 들어오면 보안 약속과 충돌함을 사전 안내.</li>
+            <li><strong>비밀번호 변경 후 다른 기기 세션은 자동으로 끊지 않는다.</strong>
+              "다른 기기에서도 자동 로그아웃되길 기대했다"는 사용자 문의가 있을 수 있다 — 보안 강화 방안의 후보로 운영 측이 인지하고 있어야 한다.</li>
+            <li><strong>메일 시스템 장애 시에도 화면 응답은 200을 유지한다.</strong>
+              가입 여부 노출 방지 정책 때문에 메일이 안 가도 사용자에게는 "메일을 보냈습니다"로 보인다 — 발송 실패율은 운영 측에서 별도로 모니터링해야 한다.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>요청 시</th><th>확인 시</th></tr></thead>
-            <tbody>
-              <tr><td>Redis 토큰</td><td>SET <code>password_reset:{uuid}</code> → 사용자 ID, TTL 30분</td><td>GET 후 즉시 DELETE</td></tr>
-              <tr><td>사용자 본체</td><td>—</td><td>비밀번호 해시 UPDATE</td></tr>
-              <tr><td>리프레시 토큰</td><td>—</td><td>변경 안 함(다른 기기 세션 유지)</td></tr>
-              <tr><td>외부 메일 서버</td><td>재설정 메일 발송(미가입은 미발송)</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>가입 사용자, 비로그인</td><td>전체 흐름 완료</td><td>비밀번호 갱신, 토큰 폐기, 로그인 화면</td></tr>
-              <tr><td>AC-02</td><td>미가입 이메일</td><td>발송 요청</td><td>가입자와 동일한 안내 화면, 메일 미발송</td></tr>
-              <tr><td>AC-03</td><td>30분 지난 토큰</td><td>변경 시도</td><td>400 TOKEN_INVALID</td></tr>
-              <tr><td>AC-04</td><td>다른 사용자의 토큰 보유</td><td>본인 이메일과 함께 시도</td><td>400 INVALID_INPUT, 변경 차단</td></tr>
-              <tr><td>AC-05</td><td>한 번 사용한 토큰</td><td>다시 사용 시도</td><td>400 TOKEN_INVALID</td></tr>
-              <tr><td>AC-06</td><td>약한 비밀번호</td><td>변경 시도</td><td>422, 변경 안 됨</td></tr>
-              <tr><td>AC-07</td><td>메일 서버 장애</td><td>발송 요청</td><td>사용자는 재시도로 복구 가능</td></tr>
-              <tr><td>AC-08</td><td>요청 화면 진입</td><td>입력·발송</td><td>발송 안내 surface 등장</td></tr>
-              <tr><td>AC-09</td><td>확인 화면 진입</td><td>약한·불일치 입력</td><td>두 인라인 에러 동시 노출, 변경 차단</td></tr>
-              <tr><td>AC-10</td><td>변경 완료 후</td><td>“로그인으로 이동” 탭</td><td>로그인 화면, 자동 로그인 없음</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn">
-          <span class="label">레드 플래그</span>
-          <ul>
-            <li><strong>미가입 이메일에 다른 응답을 주는 회귀</strong> — 에러 코드·메시지·화면 어느 것이라도 달라지면 이메일 enumeration 공격에 노출.</li>
-            <li><strong>토큰·이메일 교차 검증 누락</strong> — 토큰만 가지면 누구나 어느 계정 비밀번호든 바꿀 수 있게 된다.</li>
-            <li><strong>토큰을 GET만 하고 DELETE 안 함</strong> — 같은 토큰으로 두 번 변경되는 회귀.</li>
-            <li><strong>변경 후 자동 로그인</strong> — 본 단위는 자동 로그인을 시키지 않는다. 명시적 재로그인을 통해 새 비밀번호가 동작하는지 사용자가 확인하게 한다.</li>
-            <li><strong>비밀번호 정책을 클라이언트만 검증</strong> — 서버에서도 동일/더 엄격한 검증을 적용해야 한다.</li>
-            <li><strong>30분 카운트다운을 화면에 보여줌</strong> — 의도적으로 표시하지 않는다. 시간 정보는 메일 본문에만.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이어지는 단위 · 관련 정책</h2>
+        <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/01-auth.html">
-            <div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3>
-            <p>본 기능이 속한 도메인.</p>
-          </a>
-          <a class="card" href="F01-03.html">
-            <div class="eyebrow">관련</div><h3>F01-03 이메일 인증</h3>
-            <p>비슷한 토큰 + 메일 흐름. 정책을 공유.</p>
-          </a>
-          <a class="card" href="F01-05.html">
-            <div class="eyebrow">보안</div><h3>F01-05 토큰 갱신·로그아웃</h3>
-            <p>비밀번호 변경 후 다른 기기 세션을 어떻게 다룰지의 정책 후보가 여기 모인다.</p>
-          </a>
-          <a class="card" href="../policies/privacy.html">
-            <div class="eyebrow">정책</div><h3>개인정보·안전</h3>
-            <p>이메일 존재 비노출 같은 보안 응답 패턴의 근거.</p>
-          </a>
+          <a class="card" href="../domains/01-auth.html"><div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3></a>
+          <a class="card" href="F01-01.html"><div class="eyebrow">진입처</div><h3>F01-01 이메일 가입·로그인</h3><p>로그인 화면의 "비밀번호 찾기" 링크에서 본 단위로.</p></a>
+          <a class="card" href="F01-03.html"><div class="eyebrow">유사 흐름</div><h3>F01-03 이메일 인증</h3><p>같은 메일 링크 방식의 형제 단위.</p></a>
         </div>
       </section>
 
 <!--
-  원천 자료 (페이지에는 노출하지 않음 — 갱신/추적용)
-  - business_logic/units/01_auth_onboarding/F01-04_password-reset/backend.md
-  - business_logic/units/01_auth_onboarding/F01-04_password-reset/frontend.md
-  - business_logic/units/01_auth_onboarding/F01-04_password-reset/scenarios.md
-  - business_logic/units/01_auth_onboarding/F01-04_password-reset/diagrams.md
-  - business_logic/prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/01_auth_onboarding/F01-04_password-reset/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

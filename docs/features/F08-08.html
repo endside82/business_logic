@@ -1,36 +1,200 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F08-08 마켓 메인 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>F08-08 마켓 메인</div>
-<h1>F08-08. 마켓 메인 탐색</h1>
-<p class="lede">카테고리·인기·최신 섹션을 통해 마켓 아이템을 둘러본다. 카테고리 칩으로 좁힐 수 있다.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>카테고리 칩 + 인기 가로 스크롤</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>최신 아이템 그리드</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>무한 스크롤 + 풀투리프레시</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>첫 진입 → 카테고리 좁히기</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>무한 스크롤</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>빈 카테고리</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/market/categories</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/market/items/popular?limit=</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/market/items?itemType=&sort=&page=&size=</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
-<a class="card" href="F08-09.html"><div class="eyebrow">다음</div><h3>F08-09 검색</h3></a>
-<a class="card" href="F08-10.html"><div class="eyebrow">다음</div><h3>F08-10 상세</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/08_plan_market/F08-08_market-main-browse/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-08 마켓 메인 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-08 마켓 메인
+        </div>
+        <h1>F08-08. 마켓 메인 탐색</h1>
+        <p class="lede">
+          판매 중인 플랜을 한 화면에서 둘러볼 수 있는 마켓의 첫 면이다. 상단에는 검색 바와 카테고리 칩,
+          중간에는 인기 플랜 가로 스크롤과 최근 본 플랜, 그 아래로는 최신 플랜이 무한 스크롤로 펼쳐진다.
+          정렬과 가격 필터로 결과를 좁힐 수 있다. 비로그인 상태로도 둘러볼 수 있어 가입 결정 전에 사용자가
+          "이 앱에 살 만한 게 있는지" 확인하는 자리이기도 하다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">인기 플랜 노출</div><div class="value">10</div><div class="hint">가로 스크롤 한 묶음</div></div>
+          <div class="metric"><div class="label">최신 페이지 단위</div><div class="value">20</div><div class="hint">무한 스크롤로 이어 붙음</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">구매 시점에만 로그인 안내</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 무엇을 살지 정하지 않고 들어오는 사람을 위한 면</span>
+          <p>마켓 메인은 "이미 살 것이 정해진" 사람을 위한 면이 아니다. 무엇이 있는지 둘러보면서 마음에 드는 카드를 찾는 자리다.
+            그래서 카테고리·인기·최신 세 가지 다른 발견 동기를 한 화면에 함께 두고, 사용자가 어느 쪽으로든 이어 가게 한다.
+            한 영역의 실패가 다른 영역을 막지 않게 — 인기 호출이 안 와도 카테고리·최신은 그대로 보인다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 화면이 보여 주는 다섯 영역</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">발견 1</div>
+            <h3>검색 바와 카테고리 칩</h3>
+            <p>상단의 검색 입력창을 누르거나 키워드를 치면 검색 화면(F08-09)으로 빠진다.
+              그 아래 가로 스크롤 카테고리 칩으로 "이번엔 데이트 쪽만"처럼 한 종류로 좁혀 볼 수 있다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">발견 2</div>
+            <h3>인기 플랜</h3>
+            <p>가로 스크롤 한 줄로 10개 정도의 인기 플랜. "전체보기"로 더 깊이 들어가면 같은 인기 목록을 세로 그리드로 펼쳐 본다.
+              누적 구매 수가 많은 플랜이 위에 온다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">발견 3</div>
+            <h3>최근 본 플랜</h3>
+            <p>사용자가 최근에 들어가 본 플랜을 로컬에 기록해서 가로 스크롤로 보여 준다.
+              두세 번 클릭으로 돌아갈 수 있어서 "들락날락 비교" 행동을 지원한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">발견 4</div>
+            <h3>최신 플랜 (무한 스크롤)</h3>
+            <p>화면 본체. 발행된 모든 플랜을 최신순으로 보여 주고, 끝까지 스크롤하면 다음 페이지가 자연스럽게 이어 붙는다.
+              정렬(최신/인기/낮은 가격/높은 가격)과 가격 필터를 한 줄에 함께 둔다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">발견 5</div>
+            <h3>가격 필터 시트</h3>
+            <p>"가격 필터" 버튼을 누르면 슬라이더 시트가 떠오른다. 0~100,000P 범위를 좁힌 뒤 "적용"을 누르면
+              해당 가격대로 최신 목록이 다시 그려진다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 영역이 실패해도 멈추지 않는다</h2>
+        <p class="subtitle">진입 시 세 영역을 동시에 호출한다. 그중 한 곳이 실패해도 다른 영역의 카드는 그대로 보이고, 사용자가 둘러보기를 이어 갈 수 있다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant 화면 as 마켓 메인
+    participant 서버 as 마켓 서비스
+
+    U->>화면: 마켓 진입
+    par 세 영역 동시 호출
+        화면->>서버: 카테고리 트리
+        화면->>서버: 인기 플랜
+        화면->>서버: 최신 플랜
+    end
+    서버-->>화면: 영역별 응답(성공·실패 섞일 수 있음)
+    alt 모든 영역 실패
+        화면-->>U: 빈 화면 + 다시 시도(드문 경우)
+    else 일부 실패
+        화면-->>U: 성공한 영역만 카드 표시
+    end
+    U->>화면: 끝까지 스크롤
+    화면->>서버: 최신 다음 페이지
+    서버-->>화면: 다음 묶음 20개
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>주말 코스를 찾아 첫 진입</h3>
+            <p>주말 데이트를 고민 중인 사용자가 마켓 메인에 처음 들어온다.
+              위에서 아래로 카테고리 → 인기 가로 스크롤 → 최근 본 플랜(비어 있음) → 최신 그리드를 훑는다.
+              두 번째 인기 카드가 마음에 들어 누른다 — 마켓 아이템 상세로 빠진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">필터 조합</div>
+            <h3>5만 원 이하 인기 플랜으로 좁힌다</h3>
+            <p>가성비를 보는 사용자. 최신 헤더의 정렬을 "인기"로 바꾸고, 가격 필터 버튼을 눌러 슬라이더로 0~50,000P를 지정.
+              그리드가 다시 그려지고, 가격 필터 아이콘이 활성 색으로 바뀐다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">전체보기</div>
+            <h3>인기 가로 스크롤 너머의 카드까지 본다</h3>
+            <p>인기 가로 스크롤 6장을 본 뒤 "전체보기"를 누른다. 같은 인기 목록을 세로 그리드로 펼친 화면이 열린다.
+              당겨서 새로고침로 다시 한 번 갱신한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한 영역 실패</div>
+            <h3>인기 호출만 응답이 안 온다</h3>
+            <p>인기 영역의 응답이 비어 있다. 그 자리는 표시되지 않고, 카테고리·최신은 평소대로 보인다.
+              사용자에게는 가시적 경고가 가지 않는다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 사용자에게 보이지 않는 영역 장애라, 인기 호출 실패율은 별도 모니터링 필요. 길게 누락되면 마켓 발견이 크게 무너진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 카테고리</div>
+            <h3>아직 데이터가 없는 카테고리를 누른다</h3>
+            <p>새로 만들어진 카테고리에 누가 아무도 플랜을 등록하지 않았다. 그리드 자리에 "등록된 플랜이 없습니다" 안내가 뜬다.
+              사용자는 다른 카테고리로 옮겨가거나 추천(전체)으로 돌아간다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비로그인</div>
+            <h3>로그인 없이 둘러본다</h3>
+            <p>아직 회원가입을 안 한 사용자가 마켓 메인에 들어온다. 카테고리·인기·최신 모두 그대로 보이고
+              카드를 눌러 마켓 상세까지도 갈 수 있다. 실제 구매를 시도하는 시점에 비로소 로그인 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "가입하고 둘러봐" 대신 "둘러보고 마음 들면 가입" 패턴. 가입 전환의 한 경로.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">발견의 첫 화면은 마켓 전체의 거울이다</span>
+          <ul>
+            <li><strong>인기 노출 10건은 "한 화면에서 가로로 두세 장 보이게" 한 균형점이다.</strong>
+              늘리면 인기가 풍부해 보이지만 그 아래 최근 본·최신 영역이 밀려 첫 화면 정보가 줄어든다.</li>
+            <li><strong>"한 영역이라도 살아 있으면 화면을 살린다"는 정책 때문에 영역 단위 장애가 사용자에게는 가시적으로 알려지지 않는다.</strong>
+              운영 모니터링이 영역별 호출 실패율을 별도로 잡지 않으면 마켓 발견이 조용히 무너진다.</li>
+            <li><strong>"최근 본 플랜"은 로컬 기록이다.</strong> 디바이스를 바꾸면 사라진다.
+              사용자 인지와 데이터의 일치가 깨질 수 있는 자리라, 클라우드 동기화 검토가 향후 필요할 수 있다.</li>
+            <li><strong>가격 필터 슬라이더의 범위 100,000P은 현재 가격대 분포에 맞춘 값이다.</strong>
+              마켓에 비싼 패키지 상품이 더 들어오면 필터가 의미를 잃을 수 있다.</li>
+            <li><strong>비로그인 진입이 허용된 화면이라 개인화 정보(찜, 본인 구매 여부 등)는 카드 단계에 노출되지 않는다.</strong>
+              로그인 사용자에게도 마켓 메인 카드는 비로그인과 같은 모습이다 — 향후 개인화가 필요하면 카드 자체를 분기해야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-09.html"><div class="eyebrow">다음</div><h3>F08-09 마켓 검색</h3><p>상단 검색 바의 도착지.</p></a>
+          <a class="card" href="F08-10.html"><div class="eyebrow">다음</div><h3>F08-10 마켓 아이템 상세</h3><p>카드 탭의 도착지.</p></a>
+          <a class="card" href="F08-07.html"><div class="eyebrow">관련</div><h3>F08-07 크리에이터 프로필</h3><p>발견 경로의 또 다른 출구.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음)
+  - business_logic/units/08_plan_market/F08-08_market-main-browse/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

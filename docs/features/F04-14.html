@@ -1,46 +1,180 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-14 클럽 기부 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-14 기부</div>
-<h1>F04-14. 클럽 기금에 기부하기</h1>
-<p class="lede">FREE 클럽 멤버가 본인 지갑에서 클럽 기금으로 송금한다. 기부 + 지갑 차감 + 회계 분개가 한 트랜잭션. 7일 이내 본인 취소만 허용되며, 인출 PENDING으로 가용 잔액이 부족하면 취소가 막힌다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">하위 동작</div><div class="value">3</div><div class="hint">기부·내역·취소</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-<div class="metric"><div class="label">취소 기한</div><div class="value">7일</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>기부 결제</h3><p>지갑 차감 + 기금 적립 + 분개 한 트랜잭션.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>내역 조회</h3><p>최신순, 본인/타인 기부 표시.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>본인 취소(7일)</h3><p>역분개 + 지갑 환불. 가용 기금 부족 시 차단.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 8개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>5만원 기부</h3><ol><li>확인 다이얼로그 → POST</li><li>지갑 차감 + 기금 적립 + 분개 한 번에</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>잔액 부족</h3><ol><li>UI 사전 차단</li><li>우회 시 INSUFFICIENT_BALANCE + 충전 안내</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>BUSINESS 기부 시도</h3><ol><li>UI에 CTA 없음, 우회 시 CLUB_DONATION_NOT_ALLOWED</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>비활성 클럽</h3><ol><li>CLUB_INACTIVE</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>본인 7일 내 취소</h3><ol><li>비관적 락 + 가용 잔액 검증</li><li>지갑 환불 + 역분개</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>7일 초과 취소 시도</h3><ol><li>버튼 비활성, 우회 시 CLUB_DONATION_CANCEL_PERIOD_EXPIRED</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>타인 기부 취소 시도</h3><ol><li>CLUB_NO_PERMISSION</li></ol></article>
-<article class="card"><div class="eyebrow">S8</div><h3>기금 가용 부족</h3><ol><li>PENDING 인출로 가용 부족 시 취소 차단</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/donations</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/donations?page=&size=</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/donations/{donationId}/cancel</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-15.html"><div class="eyebrow">관련</div><h3>F04-15 기금 인출</h3></a>
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">연동</div><h3>06 결제·지갑</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-14_donation/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-14 기부·기부 내역 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-14 기부·기부 내역
+        </div>
+        <h1>F04-14. 기부·기부 내역</h1>
+        <p class="lede">
+          멤버가 자기 지갑에서 클럽 운영비를 보태는 면. 무료 클럽에서만 작동하며, 한 번의 기부가
+          멤버 지갑 차감·클럽 기금 입금·회계 분개까지를 같은 동작 안에서 끝낸다.
+          잘못 보냈을 때를 위해 7일 이내에는 본인이 기부를 취소할 수 있고, 취소도 같은 방식으로 역방향 한 동작.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">최소 기부 금액</div><div class="value">1,000원</div><div class="hint">화면 가드 기준</div></div>
+          <div class="metric"><div class="label">취소 가능 기간</div><div class="value">7일</div><div class="hint">이후에는 환불 불가</div></div>
+          <div class="metric"><div class="label">기부 가능 클럽</div><div class="value">무료 클럽만</div><div class="hint">유료 클럽은 기부 차단</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 기부는 한 동작 안에서 끝나야 한다</span>
+          <p>"기부 했는데 돈은 빠졌고 기금에는 안 들어갔다", "기금에는 들어갔는데 지갑은 안 빠졌다" 같은 어긋남은
+            돈을 다루는 도메인에서 가장 치명적이다. 그래서 기부는 멤버 지갑 차감, 클럽 기금 입금, 회계 분개 세 가지를 한 동작으로 묶어 처리한다.
+            셋 중 어느 하나라도 실패하면 모두 되돌아간다.
+            취소도 같은 원리 — 기금에서 빠지고, 멤버 지갑으로 돌아가고, 역분개가 기록된다.
+            돈의 흐름이 어디서도 끊기지 않게 하는 것이 본 단위의 핵심.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>기부 한 번이 만들어 내는 세 가지 변화</h2>
+        <p class="subtitle">한 동작 안에서 세 곳이 같이 움직인다. 셋 다 성공해야 기부가 완료된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["멤버: 5만원 기부"] --> B["멤버 지갑 −5만원"]
+    A --> C["클럽 기금 +5만원"]
+    A --> D["회계 장부에 분개 기록<br/>(차변 클럽 기금 / 대변 멤버 지갑)"]
+    B --> E{"세 가지 모두 성공?"}
+    C --> E
+    D --> E
+    E -->|"예"| F["기부 완료"]
+    E -->|"하나라도 실패"| G["전부 되돌림"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>활동에 만족한 멤버가 5만원 기부</h3>
+            <p>재정 화면에서 "기부하기" → "₩50,000" 칩 선택 → "응원합니다" 메시지 입력 → 기부하기.
+              확인 다이얼로그에 "기부 후 지갑 잔액 ₩100,000"이 표시된다. 확인하면 그 자리에서 지갑이 줄고 기금이 늘어난다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 기부 직전 다이얼로그에 "기부 후 잔액"을 띄우는 것은 사용자의 확인 비용을 줄이고 우발적 기부를 막는 핵심 가드.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">잔액 부족</div>
+            <h3>지갑 잔액보다 큰 금액을 기부하려 한다</h3>
+            <p>입력 시점에 잔액 초과면 BottomCTA 버튼이 비활성으로 바뀌고 "잔액이 부족합니다" 안내가 떠오른다.
+              외부에서 강제로 호출해도 서버가 거절하면서 부족액을 함께 알려 준다.
+              사용자에게는 "충전하기" 버튼으로 지갑 충전 흐름이 안내된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">유료 클럽 차단</div>
+            <h3>유료 클럽에서 기부를 시도</h3>
+            <p>유료 클럽에는 기부 진입로 자체가 보이지 않는다. 외부에서 강제로 호출해도 거절된다.
+              유료 클럽은 가입비라는 별도 수익 모델이 있으므로 기부와 혼동되지 않도록 분리.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소</div>
+            <h3>다음 날 사정상 기부를 취소</h3>
+            <p>기부 내역에서 본인 카드의 "취소" 버튼 → 다이얼로그 확인.
+              그 자리에서 클럽 기금에서 빠지고 지갑으로 돌아간다. 카드 라벨은 "환불 완료"로 바뀌어 회색 처리되고 다시 취소할 수 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소 기간 만료</div>
+            <h3>기부 후 8일째 취소 시도</h3>
+            <p>기부 카드의 "취소" 버튼은 7일이 지나면 비활성으로 바뀐다. 외부에서 강제로 호출해도 "기부 취소 기간(7일)이 지났습니다" 안내가 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 기부는 즉시 운영비로 사용될 수 있는 돈. 시간이 지나면 클럽 측이 그 돈을 이미 운영에 쓴 상태일 수 있어 환불을 제한.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기금 부족 시 취소</div>
+            <h3>인출 대기로 잔액이 묶인 사이 취소를 시도</h3>
+            <p>운영자가 기금에서 100,000원 인출 요청을 걸어 둔 상태라면 그 만큼은 환불 가능한 기금에서 차감된다.
+              사용자가 기부를 취소하려 해도 사용 가능 기금이 부족하다고 안내되며, "잠시 후 다시 시도" 안내가 떠오른다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">남의 기부 취소 시도</div>
+            <h3>다른 사람의 기부 카드에서 취소를 시도</h3>
+            <p>본인 기부가 아닌 카드에는 "취소" 버튼이 보이지 않는다. 외부에서 강제로 호출해도 거절된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">동시성</div>
+            <h3>두 명이 동시에 기부</h3>
+            <p>두 사용자가 같은 클럽에 동시에 기부해도 잔액이 정확하게 합산된다. 서로의 기부가 서로의 결과를 덮어쓰지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기부 내역</div>
+            <h3>클럽 멤버가 기부 흐름을 한 화면에서 본다</h3>
+            <p>총 기부 금액·기부자 수·총 건수가 상단 요약 카드에 표시되고, 그 아래에 익명화된 기부자별 리스트가 나온다.
+              기부자 이름은 "기부자 #4" 같은 익명 라벨로 표시되어 본인 외에 누가 얼마를 냈는지는 알 수 없다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 기부의 투명성(총합·건수)과 개인 정보 보호(누가 얼마)를 동시에 보장하는 정책.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">진입 가드</div>
+            <h3>비멤버가 기부 화면에 직접 들어오려 한다</h3>
+            <p>비멤버가 외부 링크로 기부 화면에 진입하면 클럽 상세로 돌려보내지고
+              "가입 신청" 안내와 "클럽 멤버에게만 커뮤니티/이벤트/멤버 상세 정보가 공개됩니다" 카피가 노출된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">기부에서 어긋나면 즉시 분쟁이 일어난다</span>
+          <ul>
+            <li><strong>지갑 차감·기금 입금·회계 분개는 한 동작이어야 한다.</strong>
+              "지갑은 빠졌는데 기금은 안 들어갔다"가 한 번 발생하면 그날부터 사용자 신뢰가 회복되지 않는다.
+              셋 중 하나가 실패하면 셋 다 되돌아가야 한다.</li>
+            <li><strong>7일 취소 기준은 화면에 분명히 안내되어야 한다.</strong>
+              취소 기간을 모르고 8일째 시도한 사용자의 불만은 가장 흔한 클레임. 기부 직후 영수증·내역에 기간 표기 필요.</li>
+            <li><strong>기부자 익명화가 풀리면 사회적 압박이 발생한다.</strong>
+              "누가 얼마를 냈는지" 보이면 적게 낸 사람에게 보이지 않는 압박이 생긴다. 본 단위는 익명을 기본값으로 유지.</li>
+            <li><strong>인출 대기 중 기부 취소가 동시에 일어나면 사용 가능 잔액을 정확히 계산해야 한다.</strong>
+              인출 요청은 아직 빠지지 않았지만 곧 빠질 돈. 환불 가능한 잔액에서 이를 차감하지 않으면 클럽 기금이 음수로 떨어질 위험.</li>
+            <li><strong>유료 클럽 기부 차단은 수익 모델 분리의 핵심이다.</strong>
+              유료 클럽에 기부가 허용되면 운영자가 가입비와 기부를 섞어서 수익을 부풀리는 동선이 가능해진다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-15.html"><div class="eyebrow">다음</div><h3>F04-15 기금 인출</h3><p>모인 기금이 운영자에게 나가는 면.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>기부의 결제·환불은 지갑 도메인에서 처리.</p></a>
+          <a class="card" href="F04-03.html"><div class="eyebrow">관련</div><h3>F04-03 클럽 폐쇄</h3><p>폐쇄 시 남은 기금이 기부자에게 환불되는 정책.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-14_donation/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

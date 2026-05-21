@@ -17,263 +17,230 @@
           <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
           F07-05 분담금 납부
         </div>
-        <h1>F07-05. 분담금 납부 (Transfer Pay)</h1>
+        <h1>F07-05. 분담금 납부</h1>
         <p class="lede">
-          정산 도메인의 심장. 참가자가 본인 transfer를 <strong>포인트·외부 송금 앱·혼합</strong> 중
-          어느 방법으로든 결제할 수 있고, 마지막 결제 시점에 정산 자체가 자동 COMPLETED로 전이된다.
-          이의가 진행 중인 transfer는 결제 자체가 차단되어 호스트가 먼저 해결해야 한다.
+          참가자가 본인 분담을 보내는 단위. 결제 수단은 두 가지 — 시스템 안의 포인트 지갑, 또는 외부 송금 앱을 통한 계좌이체.
+          포인트는 누르는 순간 송금자 지갑에서 차감되고 수취자 지갑에 즉시 입금된다. 계좌이체는 우리 시스템 밖에서 움직이는 돈이라
+          외부 송금 앱을 열어 주는 데까지만 책임지고, 입금 확인은 호스트가 직접 한다(F07-06).
+          포인트 일부 + 계좌이체 일부의 혼합 결제, 그리고 취소된 정산에서 받은 돈을 본인이 직접 환불하는 본인 환불 경로도 본 단위에서 함께 다룬다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">결제 방법</div><div class="value">3</div><div class="hint">POINT·BANK·MIXED</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
-          <div class="metric"><div class="label">자동 완료</div><div class="value">last-pay 트리거</div></div>
+          <div class="metric"><div class="label">결제 수단</div><div class="value">2 + 혼합</div><div class="hint">포인트 · 계좌이체 · 혼합</div></div>
+          <div class="metric"><div class="label">포인트 결제 처리</div><div class="value">즉시</div><div class="hint">차감 · 입금 · 회계 분개 한 번에</div></div>
+          <div class="metric"><div class="label">중복 결제 방지</div><div class="value">최초 1회만</div><div class="hint">이미 완료된 송금은 거절</div></div>
+          <div class="metric"><div class="label">이의제기 중</div><div class="value">결제 차단</div><div class="hint">호스트 처리 후 풀림</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">결제 시점 가드 4단계</span>
-          <ol style="margin:0 0 0 18px">
-            <li><strong>PENDING 상태</strong> — 이미 완료/취소된 transfer는 차단</li>
-            <li><strong>본인 transfer</strong> — fromUserId 일치</li>
-            <li><strong>settlement ACTIVE</strong> — 취소·완료된 정산에서 결제 차단</li>
-            <li><strong>PENDING appeal 없음</strong> — 이의 진행 중인 subject 결제 차단</li>
-          </ol>
+        <div class="callout">
+          <span class="label">설계 의도 — 시스템 안의 돈과 시스템 밖의 돈을 다르게 처리한다</span>
+          <p>포인트는 우리 지갑 시스템 안에서 움직이는 돈이라 시스템이 송금자 차감과 수취자 입금을 한 동작으로 처리할 수 있다.
+            그래서 누르는 순간 결제가 완료된다.</p>
+          <p>계좌이체는 토스·카카오뱅크 같은 외부 송금 앱에서 움직이는 돈이라 우리 시스템이 입금을 자동으로 확인할 수 없다.
+            본 단위는 외부 송금 앱을 적정 금액과 함께 열어 주는 데까지만 책임을 진다 — 실제 입금 확인은 호스트가 자기 계좌를 보고 누르는 단계가 따로 있다.</p>
+          <p>이 두 갈래의 책임 경계가 흐려지면 "결제했다는데 돈이 안 들어왔다" 같은 사고가 일어난다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>포인트 한 번의 탭이 만들어내는 세 가지 변화</h2>
+        <p class="subtitle">참가자가 "포인트로 결제"를 누르는 순간 한 동작으로 일어나는 일.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["참가자: 포인트로 결제 탭"] --> B{"송금이 아직 대기 중인가"}
+    B -->|"아니오"| E1["이미 결제된 송금 안내"]
+    B -->|"예"| C{"이 송금에 이의가 걸려 있는가"}
+    C -->|"예"| E2["이의제기 진행 중 안내"]
+    C -->|"아니오"| D{"내 지갑에 잔액이 있는가"}
+    D -->|"아니오"| E3["포인트 부족 안내"]
+    D -->|"예"| F["내 지갑 차감"]
+    F --> G["수취자 지갑 입금"]
+    G --> H["회계 원장 기록 (분개)"]
+    H --> I["송금 상태: 완료"]
+    I --> J["수취자에게 '입금되었습니다' 알림"]
+    J --> K{"이게 마지막 송금이었는가"}
+    K -->|"예"| L["정산 상태: 완료로 자동 전환"]
+    K -->|"아니오"| M["진행 중 유지"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>외부 송금 앱을 여는 흐름</h2>
+        <p class="subtitle">우리 시스템은 적정 금액과 메시지를 미리 채운 송금 화면을 열어 주는 데까지만 책임진다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor 참가자
+    participant 화면 as 결제 화면
+    participant 외부 as 외부 송금 앱
+
+    참가자->>화면: 송금 앱 열기 탭
+    화면->>화면: 적정 금액·메시지 자동 채움
+    화면->>외부: 토스 / 카카오 송금 화면 열기
+    외부-->>참가자: 송금 진행
+    참가자->>참가자: 외부 앱에서 송금 확정
+    참가자->>화면: 다시 community 앱으로 복귀
+    Note over 화면: 우리 시스템은 자동 확인 없음
+    Note over 화면: 호스트가 본인 계좌에서 입금 확인 후 직접 누름 (F07-06)
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>포인트 결제</h3>
-            <p>유료 포인트로 즉시 차감 → 수취자 지갑 +. 회계 분개 동시. 한 호출로 양 쪽 잔액과 회계가 정렬된다.</p>
-            <div class="meta"><span class="pill">즉시 정산</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>외부 송금 앱(토스 등)</h3>
-            <p>딥 링크로 외부 앱을 열어 사용자가 직접 송금. 서버는 자동으로 알 수 없으며 <strong>호스트가 입금 확인 후 F07-06으로 처리</strong>.</p>
-            <div class="meta"><span class="pill">호스트 확인 필요</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>혼합 결제 (MIXED)</h3>
-            <p>POINT 일부 + BANK 일부. 합계가 정확히 일치해야 통과. POINT 부분은 즉시 정산, BANK 부분은 외부 송금 선언.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>self-refund (수취자 환불)</h3>
-            <p>정산이 취소된 BANK 입금분을 수취자가 직접 송금자에게 포인트로 환불. 회계 역분개로 정산.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 5</div>
-            <h3>자동 완료 트리거</h3>
-            <p>마지막 transfer가 COMPLETED 되는 순간 settlement도 자동 COMPLETED. 호스트에게 알림.</p>
-          </div>
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 포인트 결제</div>
+            <h3>알림을 받고 16,000원을 포인트로 즉시 결제</h3>
+            <p>지갑에 5만원이 있는 참가자가 정산 알림을 누르고 결제 화면으로 진입한다.
+              "포인트로 결제" 카드를 누르고 확인 다이얼로그에서 확인.
+              내 지갑에서 16,000원이 차감되고, 호스트 지갑에 같은 금액이 즉시 입금되며,
+              호스트에게 "정산금 16,000원이 입금되었습니다" 알림이 도착한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 포인트 결제가 빠르고 단순할수록 송금자의 결제 의사가 식기 전에 청구가 회수된다.
+              계좌이체 한 번 더 거치면 그 자리에서 결제를 미루는 사용자가 늘어난다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 외부 송금 앱</div>
+            <h3>토스로 호스트에게 16,000원 직접 송금</h3>
+            <p>토스 사용자인 참가자가 결제 카드의 "송금 앱 열기"를 누른다.
+              바텀시트에서 "토스로 송금"을 선택하면 토스 앱이 열리면서 호스트 계좌·금액·메시지가 미리 채워져 있다.
+              송금을 완료하고 community 앱으로 돌아오면 송금 상태는 아직 대기 중 — 호스트가 본인 계좌에서 입금을 확인하고
+              누르는 단계가 따로 있어야 완료된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 앱을 띄울 때 금액과 메모를 자동으로 채우는 것이
+              사용자의 송금 실수(금액 오타·메모 누락)를 줄이는 가장 큰 안전 장치다.
+              앱이 설치되어 있지 않으면 웹 페이지로 한 번 시도하고, 그것도 실패하면 송금 정보를 텍스트로 안내한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">혼합 결제</div>
+            <h3>포인트가 부족한 만큼만 계좌이체로 채운다</h3>
+            <p>분담은 16,000원인데 지갑에 10,000원만 있는 참가자.
+              혼합 결제 다이얼로그에서 포인트 10,000 + 계좌이체 6,000을 입력하면 합계가 정확히 일치하는지 화면에서 확인된다.
+              "결제"를 누르면 포인트 10,000원이 먼저 차감·입금되고, 계좌이체 6,000원 부분은 송금자가 외부에서 이미 보냈음을 선언하는 형태로
+              한 번에 완료 처리된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 포인트가 부족해도 충전을 강요하지 않고 결제를 진행할 수 있어야
+              결제 포기율이 낮아진다. 단, 계좌이체 부분의 실제 입금 책임은 송금자에게 있다 — 시스템은 자동 확인하지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">본인 환불</div>
+            <h3>취소된 정산에서 받은 계좌이체를 송금자에게 되돌린다</h3>
+            <p>호스트가 정산을 취소했고, 그 정산에서 본인이 받은 계좌이체 한 건이 "수동 환불 대기"로 표시되어 있다.
+              알림을 누르고 송금 카드에서 "포인트 환불"을 누르면 받은 16,000원이 본인 지갑에서 차감되고
+              송금자 지갑에 입금되며, 회계 역분개가 함께 기록된다. 송금자에게 "환불되었습니다" 알림이 도착.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 받은 돈을 다시 계좌이체로 돌려보내는 것은 시간과 분쟁의 여지가 크다 —
+              포인트로 한 번에 환불할 수 있어야 호스트가 미루지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 잔액 부족</div>
+            <h3>포인트가 부족한 채로 결제 시도</h3>
+            <p>지갑 잔액이 분담보다 적은 채로 "포인트로 결제"를 누르면 "포인트가 부족합니다" 안내와 함께 거절된다.
+              송금 상태는 그대로 대기 중 — 사용자는 지갑 충전 후 다시 시도하거나 혼합 결제로 진행할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 이미 완료</div>
+            <h3>같은 송금을 두 번 누른다</h3>
+            <p>첫 결제 응답이 도착하기 전에 사용자가 같은 카드를 또 누르거나 새로고침 후 다시 결제한다.
+              두 번째 호출은 이미 완료된 송금이라는 이유로 거절되고 "이미 결제된 이체입니다" 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 두 번 차감되는 사고가 일어나면 지갑 신뢰가 즉시 무너진다.
+              완료 상태를 기준으로 추가 결제를 거절하는 가드가 가장 마지막 방어선.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 이의제기 중</div>
+            <h3>본인 분담에 이의가 걸려 있는데 결제하려 한다</h3>
+            <p>다른 사람이 본인 분담에 이의를 제기한 상태에서 사용자가 결제를 시도하면
+              "이의제기가 진행 중입니다. 호스트 처리 후 다시 시도해주세요" 안내가 뜬다.
+              호스트가 이의를 처리해야 결제 가드가 풀린다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 분쟁 중인 금액의 결제를 막아 둬야 분쟁 해결 후 청산이 깔끔해진다.
+              결제 먼저 받아 두면 환불·재청구가 얽힌다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자동 완료 트리거</div>
+            <h3>마지막 송금이 정산을 완료시킨다</h3>
+            <p>5명 중 4명이 결제를 마쳤고 마지막 사용자가 결제를 완료한다.
+              본 단위가 결제를 처리하는 마지막에 모든 송금·분담이 완료됐는지 확인하고,
+              조건이 충족되면 정산 상태가 자동으로 완료로 바뀌면서 호스트에게 "모임 정산이 모두 완료되었습니다" 알림이 도착한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">분담 단위 결제</div>
+            <h3>송금 라인이 아닌 항목별 분담 단위로 결제</h3>
+            <p>호스트 일괄 수금 모드가 아닌 정산이거나, 송금 라인이 아닌 분담 단위로 직접 결제하고 싶을 때의 경로.
+              현재는 송금 단위 결제가 주된 흐름이고, 분담 단위 결제는 보조로 열려 있다.
+              누가 호스트(=받는 사람)인지가 분담 단위에서 결정된다.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>결제 결정 플로우</h2>
-        <div class="diagram"><div class="mermaid">
-flowchart TD
-    A["분담금 결제"] --> B{"결제 방법 선택"}
-    B -->|"포인트"| C["POST /transfers/{id}/pay"]
-    B -->|"송금 앱"| D["딥 링크 → 토스/카카오페이"]
-    B -->|"혼합"| E["POST /transfers/{id}/pay-mixed"]
-    C --> G{"가드 4단계 통과?"}
-    E --> G
-    G -->|"실패"| F1["에러 코드 반환"]
-    G -->|"통과"| H["송금자 지갑 −amount"]
-    H --> I["수취자 지갑 +amount"]
-    I --> J["회계 분개"]
-    J --> K["transfer COMPLETED + audit"]
-    K --> L{"settlement 모든 transfer 완료?"}
-    L -->|"예"| M["settlement COMPLETED + 호스트 알림"]
-    L -->|"아니오"| N["ACTIVE 유지"]
-    D -.->|"외부 송금 후"| Z["F07-06 호스트 이체 확인"]
-        </div></div>
-      </section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
 
-      <section>
-        <h2>결제 방법 비교</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>방법</th><th>송금자 지갑</th><th>수취자 지갑</th><th>회계</th><th>완료 트리거</th></tr></thead>
+            <thead><tr><th style="width:160px">화면 요소</th><th>참가자가 보는 것</th><th style="width:34%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><strong>POINT</strong></td><td>즉시 −amount</td><td>즉시 +amount</td><td>즉시 분개</td><td>같은 호출 안에서 자동</td></tr>
-              <tr><td><strong>BANK</strong></td><td>변동 없음(외부)</td><td>변동 없음(외부)</td><td>—</td><td>F07-06에서 호스트가 “이체 확인”</td></tr>
-              <tr><td><strong>MIXED</strong></td><td>POINT 부분만 즉시 −</td><td>POINT 부분만 즉시 +</td><td>POINT 부분만 분개</td><td>BANK 부분 확인 후 호스트가 transfer COMPLETED</td></tr>
+              <tr>
+                <td><strong>내 분담 카드</strong></td>
+                <td>본인이 내야 할 금액, 영수증 제목·썸네일. "포인트로 결제" 또는 "송금 앱 열기" 두 버튼.</td>
+                <td>"왜 이 금액을 내야 하는지"가 결제 행동과 같은 카드에 보여야 의심 없이 결제로 이어진다.</td>
+              </tr>
+              <tr>
+                <td><strong>혼합 결제 다이얼로그</strong></td>
+                <td>포인트 입력 칸 + 계좌이체 입력 칸, 합계가 분담 금액과 일치하는지 즉시 검산.</td>
+                <td>두 수단을 섞을 때 합이 어긋나면 차감만 되고 송금이 끝나지 않는 사고가 난다 — 입력 단계에서 막는다.</td>
+              </tr>
+              <tr>
+                <td><strong>송금 앱 선택 시트</strong></td>
+                <td>토스, 카카오뱅크 등 송금 앱 아이콘 리스트. 누르면 금액·메모가 채워진 송금 화면이 열림.</td>
+                <td>사용자가 평소 쓰는 앱을 직접 고르는 것이 송금 성공률을 가장 높인다.</td>
+              </tr>
+              <tr>
+                <td><strong>본인 환불 카드</strong></td>
+                <td>수동 환불 대기 상태의 송금에 "포인트 환불" 버튼이 강조되어 노출.</td>
+                <td>받은 돈을 빠르게 되돌려야 환불 분쟁이 늘어나지 않는다 — 호스트의 손을 한 번만 거치는 경로.</td>
+              </tr>
+              <tr>
+                <td><strong>결제 후 안내</strong></td>
+                <td>"결제 완료" 토스트, 카드 상태가 완료 배지로 즉시 변경.</td>
+                <td>결제가 통과됐다는 인지가 즉시 화면에 반영되어야 사용자가 결제 후 화면을 닫지 못한다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 9개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>포인트로 즉시 결제</h3>
-            <p><strong>분담금 16,000, 잔액 50,000.</strong></p>
-            <ol>
-              <li>“정산 시작” 푸시 → my-shares 화면 → “포인트로 결제”</li>
-              <li>가드 4단계 통과</li>
-              <li>송금자 −16,000 + 수취자 +16,000 + 회계 분개</li>
-              <li>transfer COMPLETED + audit TRANSFER_PAID_POINT</li>
-              <li>수취자에게 MEETING_SETTLEMENT_PAID 푸시 “정산금 16,000원이 입금되었습니다.”</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S2 · 외부 송금</div><h3>토스로 송금</h3>
-            <ol>
-              <li>“송금 앱 열기” → 시트 → “토스로 송금”</li>
-              <li>토스 딥 링크 생성 → 외부 앱 오픈</li>
-              <li>사용자가 토스에서 송금 완료 후 앱 복귀</li>
-              <li>서버는 자동 인지 불가 — 호스트가 입금 확인 후 F07-06에서 “이체 확인” 처리</li>
-            </ol>
-            <p><strong>Fallback:</strong> 토스 미설치 시 웹 페이지로 이동, 그것도 실패하면 토스트.</p>
-          </article>
-
-          <article class="card"><div class="eyebrow">S3 · 혼합 결제</div><h3>POINT 10k + BANK 6k</h3>
-            <ol>
-              <li>혼합 결제 다이얼로그에 분배 입력</li>
-              <li>합계가 amount와 일치 검증 → 불일치 시 MIXED_AMOUNT_MISMATCH</li>
-              <li>POINT 부분 즉시 차감 + 회계 분개</li>
-              <li>BANK 부분은 외부 송금 선언으로 기록만</li>
-              <li>transfer COMPLETED (paymentMethod=MIXED) + audit TRANSFER_PAID_MIXED</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S4 · 항목 단위</div><h3>share 직접 결제(저빈도)</h3>
-            <ol>
-              <li>HOST_COLLECT 모드가 아닌 흐름에서 항목 holder에게 직접 결제</li>
-              <li>UI는 기본적으로 transfer 흐름이 우세 → share 결제 버튼은 일부 화면에서만 노출</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S5 · self-refund</div><h3>정산 취소 후 수취자가 직접 환불</h3>
-            <ol>
-              <li>호스트가 정산 취소 → 본인이 받은 BANK 입금이 PENDING_MANUAL_REFUND로 전이</li>
-              <li>MEETING_SETTLEMENT_REFUND_REQUIRED 푸시</li>
-              <li>“포인트 환불” → 본인 지갑 −16,000 / 송금자 지갑 +16,000 + 역분개</li>
-              <li>transfer CANCELLED + audit TRANSFER_SELF_REFUNDED</li>
-              <li>송금자에게 REFUND_COMPLETED 푸시</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S6 · 잔액 부족</div><h3>포인트 결제 잔액 부족</h3>
-            <ol>
-              <li>deductPaidOnly에서 WALLET_INSUFFICIENT_BALANCE</li>
-              <li>트랜잭션 롤백 → transfer 상태 변동 없음</li>
-              <li>“포인트가 부족합니다” + 충전 안내(F06)</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S7 · 중복 차단</div><h3>이미 완료된 transfer 재결제</h3>
-            <ol>
-              <li>더블 탭/재시도 → 두 번째 호출이 transfer.status≠PENDING 감지</li>
-              <li>409 MEETING_TRANSFER_ALREADY_COMPLETED</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S8 · 이의 차단</div><h3>이의 진행 중 결제 시도</h3>
-            <ol>
-              <li>다른 사용자가 자기 share/item에 이의 제기</li>
-              <li>본인 transfer 결제 시도 → validateNoPendingAppeal 실패</li>
-              <li>400 MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL</li>
-              <li>“이의제기 진행 중” 토스트, 호스트 처리 후 재시도 안내</li>
-            </ol>
-            <p><strong>설계 의도:</strong> 이의가 진행 중인 동안 잔액이 옮겨지면 환원이 어려워진다. 결제 자체를 사전 차단.</p>
-          </article>
-
-          <article class="card"><div class="eyebrow">S9 · 자동 완료</div><h3>마지막 transfer가 settlement를 종료시킨다</h3>
-            <ol>
-              <li>5명 중 4명 완료, 5번째가 결제</li>
-              <li>checkAndCompleteSettlement → 모든 transfer + share COMPLETED 확인</li>
-              <li>settlement.status = COMPLETED + audit SETTLEMENT_COMPLETED(SYSTEM)</li>
-              <li>호스트(생성자)에게 MEETING_SETTLEMENT_COMPLETED 푸시</li>
-              <li>액션바가 “정산이 완료되었습니다” 라벨로 전환</li>
-            </ol>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-            <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/settlement/transfers/me</code></td><td>내 이체 목록</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/transfers/{transferId}/pay</code></td><td>포인트 결제</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed</code></td><td>혼합 결제</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/shares/{shareId}/pay</code></td><td>항목 직접 결제(저빈도)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/transfers/{transferId}/self-refund</code></td><td>수취자 self-refund</td></tr>
-            </tbody>
-          </table>
-        </div>
-
+        <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">에러 코드</span>
+          <span class="label">참가자가 돈을 보내는 흐름은 가장 자주 분쟁이 발생하는 면이다</span>
           <ul>
-            <li><strong>409 MEETING_TRANSFER_ALREADY_COMPLETED</strong> — 이미 완료</li>
-            <li><strong>400 MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL</strong> — 이의 진행 중</li>
-            <li><strong>400 MEETING_MIXED_AMOUNT_MISMATCH</strong> — 혼합 결제 합계 불일치</li>
-            <li><strong>400 WALLET_INSUFFICIENT_BALANCE</strong> — 포인트 부족</li>
-            <li><strong>403 UNAUTHORIZED</strong> — 본인 transfer 아님</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>POINT</th><th>BANK</th><th>MIXED</th><th>self-refund</th></tr></thead>
-            <tbody>
-              <tr><td>송금자 지갑</td><td>−amount</td><td>외부</td><td>−POINT 부분</td><td>+received amount</td></tr>
-              <tr><td>수취자 지갑</td><td>+amount</td><td>외부</td><td>+POINT 부분</td><td>−amount</td></tr>
-              <tr><td>transfer</td><td>COMPLETED</td><td>F07-06에서 변경</td><td>COMPLETED(paymentMethod=MIXED)</td><td>CANCELLED</td></tr>
-              <tr><td>회계</td><td>정분개</td><td>—</td><td>POINT 부분 정분개</td><td>역분개</td></tr>
-              <tr><td>audit</td><td>TRANSFER_PAID_POINT</td><td>(F07-06 영역)</td><td>TRANSFER_PAID_MIXED</td><td>TRANSFER_SELF_REFUNDED</td></tr>
-              <tr><td>settlement</td><td>마지막이면 COMPLETED</td><td>—</td><td>—</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>잔액 충분, PENDING transfer</td><td>포인트 결제</td><td>양쪽 지갑·회계·transfer 일관 갱신</td></tr>
-              <tr><td>AC-02</td><td>토스 설치</td><td>송금 앱 열기</td><td>외부 앱 오픈, 서버 무변동</td></tr>
-              <tr><td>AC-03</td><td>POINT 10k + BANK 6k = 16k</td><td>혼합 결제</td><td>POINT 부분 즉시 정산, transfer MIXED 완료</td></tr>
-              <tr><td>AC-04</td><td>합계 불일치</td><td>혼합 결제</td><td>MIXED_AMOUNT_MISMATCH</td></tr>
-              <tr><td>AC-05</td><td>잔액 부족</td><td>포인트 결제</td><td>롤백, transfer 무변동</td></tr>
-              <tr><td>AC-06</td><td>이미 완료된 transfer</td><td>재결제</td><td>409 ALREADY_COMPLETED</td></tr>
-              <tr><td>AC-07</td><td>이의 진행 중</td><td>결제 시도</td><td>400 UNDER_APPEAL</td></tr>
-              <tr><td>AC-08</td><td>마지막 결제</td><td>완료</td><td>settlement COMPLETED + 호스트 푸시</td></tr>
-              <tr><td>AC-09</td><td>정산 취소 후 BANK 입금</td><td>self-refund</td><td>잔액·회계·transfer 모두 역방향</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
-          <ul>
-            <li><strong>송금자·수취자 한 쪽만 잔액 변경</strong> — 회계 분개와 wallet이 어긋남.</li>
-            <li><strong>이의 가드를 빼고 결제 허용</strong> — 이의 해결 후 환원이 매우 복잡해진다.</li>
-            <li><strong>혼합 결제 합계 검증 누락</strong> — POINT 10k + BANK 5k로도 통과되어 부분 결제 후 완료 처리.</li>
-            <li><strong>마지막 결제 시 자동 완료 누락</strong> — settlement가 ACTIVE로 영원히 남는다.</li>
-            <li><strong>self-refund 역분개 누락</strong> — 정산 취소 후 회계 잔재.</li>
-            <li><strong>외부 송금을 자동 COMPLETED 처리</strong> — 서버가 인지할 수 없는 상태를 임의로 변경하면 호스트 확인 절차가 무력화.</li>
+            <li><strong>포인트 결제는 차감·입금·회계 분개가 한 동작으로 묶여야 한다.</strong>
+              셋 중 하나라도 누락되면 시스템이 잘못된 잔액을 들고 있게 된다 — 실패 시 모두 함께 되돌리는 처리.</li>
+            <li><strong>계좌이체는 우리 시스템이 자동 확인하지 않는다.</strong>
+              호스트가 본인 계좌에서 입금을 확인한 뒤 "이체 확인"을 누르기 전까지는 송금 상태가 대기 중으로 남아 있다 —
+              참가자는 본인이 보냈는데도 호스트가 안 눌러서 미납으로 보이는 시간차가 있다는 사실을 의식해야 한다.</li>
+            <li><strong>혼합 결제의 계좌이체 부분은 송금자가 보냈음을 선언하는 형태다.</strong>
+              우리 시스템은 자동 확인하지 않는다 — 송금자가 거짓으로 선언할 위험이 있다는 점을 호스트가 인지해야 하며,
+              필요 시 호스트가 사후에 본인 계좌를 점검해야 한다.</li>
+            <li><strong>이의제기가 걸린 송금은 결제가 막힌다.</strong>
+              분쟁 중인 금액을 먼저 받아 두면 환불·재청구가 꼬인다 — 본 화면에서 결제 거절 안내가 명확해야 사용자의 답답함을 줄인다.</li>
+            <li><strong>본인 환불은 계좌이체로 받은 돈을 포인트로 되돌리는 흐름이다.</strong>
+              받은 사람은 시스템 외부에서 받은 돈을 시스템 안의 포인트로 돌려주는 셈이라 호스트의 지갑 잔액 변동이 따라온다 —
+              호스트가 이 사실을 의식하지 않으면 본인 지갑이 비어 있어 환불이 안 되는 경우가 생긴다.</li>
+            <li><strong>마지막 송금이 정산을 완료시킨다는 트리거가 본 단위 끝에 있다.</strong>
+              완료 트리거가 누락되면 모든 송금이 끝났는데도 정산이 진행 중으로 남는 사고가 생긴다 — 호스트가 완료 알림을 받지 못하는 흐름.</li>
+            <li><strong>같은 송금을 빠르게 두 번 누르는 사고는 완료 상태 가드로 막는다.</strong>
+              첫 응답이 오기 전에 두 번째 탭이 들어오면 두 번 차감될 위험이 있다 — 클라이언트 측 더블탭 방지도 함께 검토.</li>
           </ul>
         </div>
       </section>
@@ -281,16 +248,17 @@ flowchart TD
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
-          <a class="card" href="F07-06.html"><div class="eyebrow">짝</div><h3>F07-06 이체 확인</h3></a>
-          <a class="card" href="F07-08.html"><div class="eyebrow">차단</div><h3>F07-08 이의제기</h3></a>
-          <a class="card" href="F07-03.html"><div class="eyebrow">전이</div><h3>F07-03 활성화·취소</h3></a>
-          <a class="card" href="F06-06.html"><div class="eyebrow">의존</div><h3>F06-06 포인트 결제·환불</h3></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 도메인</div><h3>07 모임 정산</h3></a>
+          <a class="card" href="F07-04.html"><div class="eyebrow">진입처</div><h3>F07-04 현황·요약</h3><p>본 단위로 진입하는 출발 화면.</p></a>
+          <a class="card" href="F07-06.html"><div class="eyebrow">호스트 책임</div><h3>F07-06 이체 확인·상각</h3><p>계좌이체 입금의 수동 확인.</p></a>
+          <a class="card" href="F07-08.html"><div class="eyebrow">분쟁 경로</div><h3>F07-08 이의제기·감사로그</h3><p>분담에 동의하지 못할 때.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">횡단</div><h3>06 지갑</h3><p>포인트 차감·충전이 일어나는 시스템.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/07_meeting_settlement/F07-05_pay-share/{scenarios,backend,frontend}.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/07_meeting_settlement/F07-05_pay-share/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

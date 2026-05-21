@@ -1,43 +1,194 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-15 기금 인출 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-15 기금 인출</div>
-<h1>F04-15. 클럽 기금 인출 요청</h1>
-<p class="lede">OWNER가 클럽 기금에서 본인 지갑으로 인출을 요청한다. 가용 잔액(잔액 − PENDING 인출 − 환불 예비금)을 미리 계산해 보여주고, 월 1회 + 최소 10,000원 정책을 따른다. 실제 송금은 관리자 승인 시점에 일어난다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">하위 동작</div><div class="value">2</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">6+</div></div>
-<div class="metric"><div class="label">수수료</div><div class="value">5% + 원천 3.3%</div></div>
-<div class="metric"><div class="label">제한</div><div class="value">월 1회 · 최소 1만원</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>인출 요청(OWNER)</h3><p>가용 잔액 검증 + PENDING 등록. 잔액 차감은 승인 시점에.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>관리자 승인 → 지갑 입금</h3><p>4중 분개 + 채무 상계 + 지갑 입금 + 푸시.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 6개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>10만원 인출 요청</h3><ol><li>수수료·실수령액 실시간 계산</li><li>PENDING INSERT</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>비OWNER 시도</h3><ol><li>UI 미노출</li><li>우회 시 CLUB_NOT_OWNER</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>가용 잔액 부족</h3><ol><li>잔액 − PENDING 인출 − 환불 예비금 계산</li><li>부족 시 INSUFFICIENT_BALANCE + 부족액 안내</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>월 1회 제한</h3><ol><li>이미 PENDING/PAID 있음 → DUPLICATE_TRANSACTION</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>최소 금액 미달</h3><ol><li>UI 가드, 우회 시 INVALID_PAYMENT_AMOUNT</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>관리자 승인 후 지갑 입금</h3><ol><li>기금 차감 + 채무 상계 + 지갑 적립 + 4중 분개</li><li>WITHDRAWAL_PAID 푸시</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/fund/withdraw</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/fund/withdrawals?page=&size=</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-14.html"><div class="eyebrow">관련</div><h3>F04-14 기부</h3></a>
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">연동</div><h3>06 결제·지갑</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-15_fund-withdrawal/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-15 기금 인출 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-15 기금 인출
+        </div>
+        <h1>F04-15. 기금 인출 요청</h1>
+        <p class="lede">
+          소유자가 클럽 기금을 자기 지갑으로 가져오는 단위. 멤버 기부로 쌓인 돈이 운영비로 회수되는 면이므로
+          돈의 흐름이 가장 무거운 자리다. 인출 금액에서 플랫폼 수수료 5%와 원천징수 3.3%가 미리 차감되어 실수령액이 결정되고,
+          관리자 승인이 떨어지면 그 차감 후 금액이 소유자 지갑으로 들어간다. 월 1회 제한이 걸려 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">플랫폼 수수료</div><div class="value">5%</div><div class="hint">인출 금액에서 차감</div></div>
+          <div class="metric"><div class="label">원천징수</div><div class="value">3.3%</div><div class="hint">수수료 차감 후 금액 기준</div></div>
+          <div class="metric"><div class="label">최소 인출 금액</div><div class="value">10,000원</div><div class="hint">이 미만은 신청 불가</div></div>
+          <div class="metric"><div class="label">인출 빈도</div><div class="value">월 1회</div><div class="hint">거절된 건은 제외</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 신청과 지급은 분리되어 있다</span>
+          <p>인출 신청은 소유자가 곧장 처리할 수 있지만, 실제 지급은 관리자 승인이 떨어진 뒤에야 일어난다.
+            왜 그런가 — 클럽 기금에는 멤버 기부로 들어온 돈이 섞여 있어, 무단 인출은 멤버의 신뢰를 깬다.
+            그래서 신청 시점에는 기금 잔액이 차감되지 않고 단지 "이 금액이 곧 빠질 예정"으로 표시되며,
+            승인 시점에 한 번에 기금 차감·지갑 입금·회계 4중 분개·알림이 모두 처리된다.
+            거절되면 기금에는 아무 변화가 없다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>인출 한 번이 거치는 흐름</h2>
+        <p class="subtitle">소유자의 신청부터 지급까지 두 단계, 단계마다 다른 사람이 다른 결정을 한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["소유자: 인출 신청"] --> B["사용 가능 잔액 검증<br/>(환불 예비금·인출 대기 차감)"]
+    B --> C["수수료·원천징수 계산"]
+    C --> D["인출 신청 등록 (대기 상태)"]
+    D --> E{"플랫폼 관리자 결정"}
+    E -->|"승인"| F["기금 차감 + 소유자 지갑 입금 + 4중 분개 + 알림"]
+    E -->|"거절"| G["사유 기록 + 알림 (기금 변동 없음)"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>소유자가 한 달 운영비 100,000원을 인출 신청</h3>
+            <p>재정 화면 → "인출 신청" → 금액 100,000원, 사유 "이벤트 운영비 사용을 위해" 입력.
+              화면에 실시간으로 수수료 카드가 표시된다 — 인출 금액 100,000원, 플랫폼 수수료 5,000원, 원천징수 3,135원, <strong>실수령액 91,865원</strong>.
+              사유를 적고 신청 확정.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 실수령액을 신청 시점에 분명히 보여 주는 것이 분쟁 방지의 핵심. 사용자가 사후에 "왜 91,865원이냐"고 묻지 않게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>관리자나 일반 멤버가 인출을 시도</h3>
+            <p>소유자가 아닌 사용자에게는 "인출 신청" 진입로 자체가 보이지 않는다. 외부에서 강제로 호출해도
+              "클럽 소유자만 인출을 요청할 수 있습니다" 안내로 거절된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 기금은 멤버 신뢰의 산물이므로 소유자 단독 권한. 관리자도 인출에 손댈 수 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">사용 가능 잔액</div>
+            <h3>기금에는 돈이 있지만 인출이 안 되는 상황</h3>
+            <p>기금 잔액 100,000원, 이미 신청해 둔 인출 50,000원, 최근 7일 이내 기부 60,000원이 있으면
+              사용 가능 잔액은 0원이 된다. 잔액은 보이지만 사용은 못 하는 상태.
+              "가용 잔액이 부족합니다" 안내가 떠오르고, 사용자에게 부족액이 표시된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 멤버가 7일 이내 기부 취소권을 행사할 가능성을 미리 빼고, 이미 신청해 둔 다른 인출도 미리 빼서 안전한 인출 가능액을 계산.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">월 1회 제한</div>
+            <h3>같은 달에 두 번째 인출을 시도</h3>
+            <p>이미 이번 달에 신청한 인출(승인 대기 또는 지급 완료)이 있으면 새 신청은 "이미 이번 달 인출 요청이 있습니다" 안내로 거절된다.
+              단, 이번 달에 거절된 신청은 카운트에서 제외되어 다시 시도할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">최소 금액</div>
+            <h3>5,000원을 인출 신청한다</h3>
+            <p>화면이 5,000원 같은 1만원 미만 금액에서 버튼을 비활성으로 막는다.
+              외부에서 강제로 호출해도 서버가 "최소 10,000원" 기준으로 거절한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">지급</div>
+            <h3>플랫폼 관리자가 승인을 누른다</h3>
+            <p>관리자가 승인하면 그 자리에서 기금에서 100,000원이 빠지고 소유자 지갑에 91,865원이 들어간다.
+              "클럽 기금 인출 ₩91,865이 지갑에 입금되었습니다" 알림이 소유자 폰에 도달한다.
+              회계 장부에는 차변에 인출 실수령액·플랫폼 수수료·원천징수가, 대변에 기금 총액이 4중으로 기록된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">거절</div>
+            <h3>플랫폼 관리자가 사유 불충분으로 거절</h3>
+            <p>거절되면 그 신청은 거절 상태로 남고 기금에는 아무 변화가 일어나지 않는다.
+              소유자에게 거절 알림이 가고, 같은 달에 새 신청을 다시 시도할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">은행 입력</div>
+            <h3>소유자가 은행 정보를 입력하려 한다</h3>
+            <p>현재 인출 화면에는 은행·계좌번호·예금주 입력 필드가 없다. "별도 은행 계좌 입력 없이 지갑 거래로 정산됩니다" 안내가 표시된다.
+              모든 인출은 소유자 지갑(가상 계좌)으로만 들어가며, 실제 은행 송금은 별도 흐름.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 외부 은행 정산은 미연동 상태. 추후 실 은행 송금이 도입되면 본 단위의 화면에 은행 입력 영역이 같이 부활.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">동시성</div>
+            <h3>소유자가 인출 신청을 하는 동안 멤버가 기부를 취소</h3>
+            <p>두 동작이 같은 기금 잔액을 동시에 참조해도 서로의 결과를 덮어쓰지 않는다.
+              먼저 들어온 동작이 잔액 검증·차감을 끝낸 뒤 두 번째 동작이 갱신된 잔액을 기준으로 검증한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>수수료가 화면에 보이는 방식</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:200px">화면 라벨</th><th>예시 (인출 100,000원)</th><th>그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr><td><strong>인출 금액</strong></td><td>100,000원</td><td>사용자가 적은 금액 그대로. 분쟁 시 기준이 되는 숫자.</td></tr>
+              <tr><td><strong>플랫폼 수수료 (5%)</strong></td><td>−5,000원</td><td>왜 빠지는지가 분명해야 사용자가 납득한다.</td></tr>
+              <tr><td><strong>원천징수 (3.3%)</strong></td><td>−3,135원</td><td>수수료 차감 후 금액 기준의 3.3%. 계산 순서가 결과를 가른다.</td></tr>
+              <tr><td><strong>실수령액</strong></td><td><strong>91,865원</strong></td><td>실제로 지갑에 들어오는 금액. 화면에서 가장 강조되어야 한다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">기금 인출은 모든 클럽 도메인 정책이 만나는 자리</span>
+          <ul>
+            <li><strong>실수령액 미표시는 즉시 분쟁의 원인이 된다.</strong>
+              "100,000원을 신청했는데 91,865원만 들어왔다"고 인지한 사용자는 화면에서 차감 내역을 보지 못했다면 분쟁을 제기한다.
+              수수료·원천징수·실수령액 세 줄이 신청 화면과 알림 메시지 모두에 명시되어야 한다.</li>
+            <li><strong>사용 가능 잔액 계산이 멤버 기부 취소권을 빼지 않으면 음수 기금이 발생한다.</strong>
+              7일 이내 기부는 환불될 가능성이 있어 그만큼 인출 가능액에서 미리 빼 두는 안전망.</li>
+            <li><strong>월 1회 제한이 풀리면 한 운영자가 잦은 인출로 운영 자금을 소진할 위험이 있다.</strong>
+              본 정책은 소유자에게도 운영의 일정한 리듬을 강제한다.</li>
+            <li><strong>승인은 멱등이어야 한다.</strong>
+              같은 신청에 대해 승인 동작이 두 번 들어와도 두 번 지급되어서는 안 된다.
+              이미 지급된 신청은 다시 처리하지 않고 동일 결과를 반환.</li>
+            <li><strong>외부 은행 송금은 현재 미연동.</strong>
+              사용자에게는 "지갑으로 들어옵니다" 안내가 분명히 보여야 한다.
+              "은행으로 입금된다"고 잘못 안내하면 사용자가 자기 은행 앱에서 입금을 기다리게 된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-14.html"><div class="eyebrow">앞 단위</div><h3>F04-14 기부·기부 내역</h3><p>인출의 출처가 되는 기금이 쌓이는 면.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>승인 시 지갑 입금과 4중 분개가 일어나는 곳.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-15_fund-withdrawal/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

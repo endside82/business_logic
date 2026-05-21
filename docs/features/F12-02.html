@@ -1,31 +1,202 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F12-02 그룹·배지 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/12-notification.html">12 알림</a><span>›</span>F12-02 그룹·배지</div>
-<h1>F12-02. 알림 그룹 보기 · 미읽음 배지</h1>
-<p class="lede">같은 출처(클럽 N건·이벤트 N건)를 그룹으로 묶어 본다. 하단 탭에 미읽음 카운트 배지.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>flat / grouped 토글</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>그룹 카드 펼침</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>탭 배지 동기화</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>5건 그룹 묶기</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>그룹 펼침 → 개별 진입</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>일괄 읽음 → 배지 0</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>GET</code></td><td><code>/api/v1/notifications/grouped?page=&size=20</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위</div><h3>12 알림</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/12_notification/F12-02_notification-grouped-badge/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F12-02 알림 그룹 보기 · 미읽음 배지 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/12-notification.html">12 알림</a><span>›</span>
+          F12-02 알림 그룹 보기 · 미읽음 배지
+        </div>
+        <h1>F12-02. 알림 그룹 보기 · 미읽음 배지</h1>
+        <p class="lede">
+          같은 유형의 알림(클럽 공지·결제 완료·채팅 메시지 등)이 누적되었을 때 한 줄짜리 그룹 카드로 묶어 보여 주는 보기 방식 전환,
+          그리고 하단 탭의 알림 아이콘 위에 "지금 미읽음이 몇 건 있는가"를 항상 노출하는 배지 — 두 가지를 함께 다룬다.
+          알림 한 건씩 보기에는 너무 많을 때 인박스를 가볍게 보여 주고, 앱 어디서든 새 알림이 있다는 사실을 사용자가 인지할 수 있게 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">그룹 묶음 기준</div><div class="value">알림 유형</div><div class="hint">예: 클럽 공지 5건이 한 카드</div></div>
+          <div class="metric"><div class="label">하단 탭 배지 갱신</div><div class="value">자동</div><div class="hint">읽음·삭제·새 알림 도착 시 즉시</div></div>
+          <div class="metric"><div class="label">기본 보기</div><div class="value">시간순</div><div class="hint">그룹 보기는 사용자가 토글</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 양과 변화를 두 자리에서 동시에 보여 준다</span>
+          <p>"알림이 몇 개 와 있는지"는 두 가지 다른 질문이다. 하나는 "지금 내가 처리해야 하는 일이 얼마나 남았나"(앱 안에 들어와 있지 않은 사용자가 묻는 질문),
+            다른 하나는 "어떤 종류의 일이 많이 일어났나"(인박스를 직접 들여다보는 사용자가 묻는 질문).
+            전자는 하단 탭 배지로 답하고, 후자는 그룹 보기 토글로 답한다.
+            이 둘이 같은 자리에 묶이면 안 되는 이유는 명확하다 — 배지는 앱 어디에서나 보여야 하고, 그룹 보기는 인박스 화면 안에서만 의미가 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>두 가지 인지 경로</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">앱 어디에서나</div>
+            <h3>하단 탭 알림 아이콘 위의 빨간 배지</h3>
+            <p>홈·검색·클럽·프로필 어느 탭에 있든 알림 아이콘 위에 미읽음 개수가 떠 있다.
+              포그라운드에서 새 알림을 받으면 자동으로 +1, 사용자가 알림을 읽으면 즉시 -1.
+              0이 되면 배지 자체가 사라진다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">인박스 안에서</div>
+            <h3>같은 유형끼리 묶어 보는 그룹 카드</h3>
+            <p>알림 화면 우측 상단의 토글로 그룹 보기로 전환한다.
+              "클럽 공지(5)", "결제 완료(3)", "채팅 메시지(8)" 처럼 유형 단위로 한 줄에 요약된다.
+              가장 최신 한 줄 메시지와 미읽음 개수가 한 카드 안에 모인다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>그룹 카드가 만들어지는 방식</h2>
+        <p class="subtitle">서버는 받아 온 알림 묶음을 유형별로 한 번에 묶어 내려준다. 가장 최신 한 건을 대표로 세우고 미읽음 수를 카드에 함께 표시한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["받아 온 알림 20건"] --> B["유형으로 묶기"]
+    B --> C["그룹 카드 N개 생성"]
+    C --> D["대표 = 그룹 내 가장 최신 알림"]
+    C --> E["카드 우측 미읽음 수"]
+    C --> F["미읽음 ≥1 → 옅은 파란 배경"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">정리</div>
+            <h3>클럽 공지 5건이 한 줄로 모인다</h3>
+            <p>가입한 클럽 3개에서 일주일 동안 공지 5건과 가입 요청 2건, 결제 완료 1건이 쌓였다.
+              그룹 토글을 누르면 8건이 3개 카드로 정리된다.
+              사용자는 "내가 처리할 일은 클럽 공지가 대부분"이라는 상황을 한눈에 본다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 누적된 인박스를 시간순 8줄이 아닌 유형 3줄로 보여 주어 인지 부담을 줄인다.
+              유형별 행동 패턴(특정 클럽 공지만 끄고 싶다 등)의 단서가 자연스럽게 보인다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">앱 밖에서의 인지</div>
+            <h3>홈을 보고 있는데 알림 배지가 1로 바뀐다</h3>
+            <p>홈 피드를 둘러보던 사용자에게 새 채팅 메시지가 도착한다.
+              화면을 떠나지 않고도 하단 탭의 알림 아이콘 위 배지가 "1"로 자동 갱신된다.
+              사용자가 알림 탭으로 들어가 한 건을 읽는 순간 다시 "0"으로 떨어진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 푸시 권한이 거부됐거나 방해금지 시간대여도 사용자는 변화를 인지할 수 있다.
+              인박스 자체가 두 번째 알림 채널이라는 약속의 시각화.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">즉시 반영</div>
+            <h3>읽음 처리하면 배지가 바로 줄어든다</h3>
+            <p>사용자가 알림을 한 건 탭하는 순간 화면의 미읽음 표시도, 하단 탭 배지도 즉시 -1.
+              서버 응답을 기다려서 갱신하지 않고 사용자 동작 시점에 즉시 반영한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 배지 숫자가 사용자의 동작을 늦게 따라오면 "이 앱이 내 동작을 정확히 본 게 맞나"의 불신이 누적된다.
+              즉시 반영은 신뢰의 가장 작은 단위.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">현재 한계</div>
+            <h3>그룹 카드를 탭해도 그룹 전체가 읽음 처리되지는 않는다</h3>
+            <p>"클럽 공지(5)" 카드를 탭하면 가장 최신 공지 1건만 읽음 처리되고 해당 클럽 상세로 빠진다.
+              나머지 4건은 미읽음으로 남는다 — 사용자가 그룹 전체를 정리하고 싶다면 "모두 읽음"(F12-01)을 사용해야 한다.</p>
+            <p><strong>운영 관찰 포인트</strong> — "그룹 카드 진입 = 그룹 전체 읽음"으로 바꾸면 사용자가 무심코 모든 공지를 읽음 처리해 버리는 사고가 생길 수 있다.
+              지금은 보수적으로 1건만 처리한다 — 데이터에서 사용자 불만이 누적되면 재검토 후보.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">그룹 보기의 범위</div>
+            <h3>아주 오래된 알림은 그룹에 안 들어온다</h3>
+            <p>그룹 보기는 화면이 받아 온 한 묶음(20건) 안에서만 유형별로 묶는다.
+              그보다 더 오래된 알림은 그룹 보기에서 보이지 않으며, 시간순 보기로 토글한 뒤 스크롤로 찾아야 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 그룹 보기는 "최근에 쌓인 알림의 분포"를 보는 도구지, 전체 알림 아카이브가 아니다.
+              운영자가 "전체 그룹 통계"를 원한다면 별도 화면이 필요하다는 신호.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>하단 탭 알림 배지</strong></td>
+                <td>알림 아이콘 위 작은 빨간 원과 숫자. 0이면 배지 자체가 사라진다.</td>
+                <td>앱 어디에 있든 새 변화의 유무를 한눈에 인지하게 한다 — 알림 탭으로 직접 들어가지 않아도 사용자가 상황을 파악.</td>
+              </tr>
+              <tr>
+                <td><strong>그룹 / 리스트 토글</strong></td>
+                <td>알림 화면 상단 우측의 아이콘 한 개. 누르면 보기 방식이 즉시 바뀐다.</td>
+                <td>사용자마다 인박스 정리 습관이 다르다 — 두 보기를 끼워 두고 사용자가 고르게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>그룹 카드 한 장</strong></td>
+                <td>유형 아이콘, 한국어 유형명("이벤트 알림" 등), 그룹 안 가장 최신 메시지 1줄, 우측 미읽음 카운트 칩, "총 N개" 표시.</td>
+                <td>유형명·최신 메시지·개수 세 가지가 한 줄 안에 — 카드를 탭할지 결정하기 위해 필요한 모든 정보가 한 자리에 모인다.</td>
+              </tr>
+              <tr>
+                <td><strong>미읽음 카드 배경</strong></td>
+                <td>그룹 안에 미읽음이 1건이라도 있으면 카드 배경이 옅은 파란색, 모두 읽었으면 흰색.</td>
+                <td>스크롤하는 동안 "어디부터 봐야 하는지"를 색만으로 인지하게 한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">그룹 보기와 배지의 정책 결정점</span>
+          <ul>
+            <li><strong>하단 탭 배지는 인박스 적재 시점에 늘어난다 — 푸시 발송 여부와는 무관하다.</strong>
+              사용자가 푸시 권한을 거부했어도, 방해금지 시간이어도, 인박스에 알림이 적재되면 배지는 갱신된다.
+              즉 배지는 "인박스의 진실"이고 푸시는 별도 채널이다.</li>
+            <li><strong>그룹 카드 탭 = 최신 1건만 읽음 처리</strong>가 현재 정책이다.
+              그룹 전체 일괄 읽음은 의도된 트레이드오프 — 사용자가 한 번의 탭으로 의도 없이 다수 알림을 정리해 버리는 사고를 막는다.</li>
+            <li><strong>그룹 보기 범위는 한 묶음(20건) 안으로 제한된다.</strong>
+              사용자가 그룹 보기에서 "내 알림이 다 안 보이네"라고 인지할 수 있다 — 안내가 필요해지면 그룹 보기 도입 시점의 정책 결정 재검토 대상.</li>
+            <li><strong>배지의 시각적 정렬은 외부(라우터/탭 컴포넌트)가 그린다.</strong>
+              본 단위는 미읽음 개수만 제공한다 — 배지의 색·위치·숫자 노출 한도 같은 디자인 결정은 도메인 전반의 탭 디자인 표준을 따른다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위 도메인</div><h3>12 알림</h3></a>
+          <a class="card" href="F12-01.html"><div class="eyebrow">같은 화면</div><h3>F12-01 알림 목록 · 읽음 관리</h3><p>그룹 카드 탭이 호출하는 읽음 처리·딥링크 흐름의 본체.</p></a>
+          <a class="card" href="F12-03.html"><div class="eyebrow">관련</div><h3>F12-03 카테고리별 알림 설정</h3><p>그룹 보기에서 "특정 유형이 너무 많다"고 인지한 사용자가 이어가는 흐름.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/12_notification/F12-02_notification-grouped-badge/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

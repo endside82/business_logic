@@ -1,32 +1,276 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F11-04 신고 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>F11-04 신고</div>
-<h1>F11-04. 신고</h1>
-<p class="lede">리뷰·사용자·이벤트·게시글·댓글 등 다양한 대상을 신고. 사유 코드 + 본문. 동일 대상 24h 1회 제한.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>대상별 신고 폼</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>중복 제한</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>운영자 검토 위임</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>리뷰 신고</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>사용자 신고</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>24h 내 중복 차단</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>대상 자동 숨김 임계</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>POST</code></td><td><code>/api/v1/reports</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/11-review.html"><div class="eyebrow">상위</div><h3>11 리뷰·신고</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/11_review_report/F11-04_report/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F11-04 신고 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
+          F11-04 신고
+        </div>
+        <h1>F11-04. 신고 (이벤트 · 사용자 · 리뷰)</h1>
+        <p class="lede">
+          부적절한 콘텐츠를 운영자에게 전달하는 화면이다. 한 화면이 세 가지 대상(이벤트 · 사용자 · 후기)을 같은 폼으로 받으며,
+          접수된 신고는 운영자 큐에 쌓이고 처리 결과에 따라 대상자의 신뢰점수에 영향을 준다(F11-05).
+          접수 자체는 즉시 점수를 깎지 않는다 — <strong>"운영자가 어떻게 결론을 내렸느냐"</strong>가 점수에 반영되는 시점이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">대상 유형</div><div class="value">3가지</div><div class="hint">이벤트·사용자·후기 (클럽은 미지원)</div></div>
+          <div class="metric"><div class="label">신고 사유</div><div class="value">7개</div><div class="hint">기타 선택 시 10자 이상 설명 필수</div></div>
+          <div class="metric"><div class="label">자기 신고</div><div class="value">차단</div><div class="hint">사용자 대상으로 본인 신고 불가</div></div>
+          <div class="metric"><div class="label">중복 신고</div><div class="value">동일 대상 1회</div><div class="hint">같은 상대를 한 번만 접수</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 가벼운 손길로 안전을 즉시 전달, 무거운 판단은 운영자에게</span>
+          <p>사용자가 부적절한 상황을 발견했을 때 "어떻게 알릴까"를 고민하느라 멈추면 그 사이에 피해가 더 쌓인다.
+            그래서 신고 진입은 콘텐츠 자리에 항상 붙어 있고(이벤트·사용자·후기 카드 안), 사유 선택 한 번이면 접수가 끝난다.
+            동시에 "신고했다고 즉시 점수가 깎인다"는 정책은 채택하지 않았다 — 그렇게 두면 사용자 간 보복 신고가 평판을 흔든다.
+            접수는 즉시지만 점수 영향은 운영자가 <strong>승인 또는 상위 이관</strong>으로 결론을 낸 시점에만 작동한다.
+            "사용자의 안전 동선은 짧게, 평판 시스템에 미치는 영향은 신중히"가 본 단위 정책의 골격이다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 안전과 평판 시스템에 닿는 자리</h2>
+        <div class="callout">
+          <span class="label">신고 한 건이 다른 도메인에 영향을 주는 경로</span>
+          <ul>
+            <li><strong>1차: 접수 즉시 운영자 큐에 적재.</strong>
+              사용자 화면에서는 "접수 완료" 안내로 끝나고, 신고는 검토 대기 상태로 잡힌다.
+              이 단계에서는 대상자의 어떤 점수도 변하지 않는다.</li>
+            <li><strong>2차: 운영자가 결론을 낸다.</strong>
+              승인(조치 완료) 또는 상위 이관으로 결정되면 대상자의 신뢰점수에서 패널티가 누적된다(1건당 20점, 최대 100점).
+              기각·검토 중 상태에서는 점수가 깎이지 않는다.</li>
+            <li><strong>3차: 신고자에게 결과 알림이 간다(운영 흐름).</strong>
+              운영자가 처리를 끝내면 신고자에게 "검토 후 적절한 조치를 취했습니다" 류의 알림이 발송된다.
+              본 단위는 접수까지만 책임지고 결과 알림은 운영 흐름이 다룬다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>신고 한 건의 라이프사이클</h2>
+        <p class="subtitle">사용자가 "신고"를 누른 순간부터 신뢰점수에 반영되거나 사라지기까지.</p>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 접수: 사용자 제출
+    접수 --> 검토중: 운영자가 검토 시작
+    접수 --> 기각: 무효로 결론
+    접수 --> 승인: 부적절 판정 (조치 완료)
+    검토중 --> 승인
+    검토중 --> 기각
+    검토중 --> 상위이관: 중대 사안
+    상위이관 --> 승인
+    승인 --> [*]
+    기각 --> [*]
+
+    note right of 승인
+      대상자 신뢰점수에 패널티 누적
+      (1건당 20점, 최대 100)
+    end note
+    note right of 상위이관
+      승인과 동일하게
+      패널티에 반영
+    end note
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>제출 한 번이 통과해야 하는 네 조건</h2>
+        <p class="subtitle">"신고" 버튼이 눌리는 순간 서버에서 네 가지가 차례로 확인된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 신고 탭"] --> B{"대상 유형이 허용 범위인가"}
+    B -->|"아니오 (예: 클럽)"| 안내1["대상이 올바르지 않다는 안내"]
+    B -->|"이벤트·사용자·후기"| C{"사유가 정의된 7개 중 하나인가"}
+    C -->|"아니오"| 안내2["대상이 올바르지 않다는 안내"]
+    C -->|"예"| D{"사용자 신고인데 본인은 아닌가"}
+    D -->|"본인"| 안내3["본인을 신고할 수 없다는 안내"]
+    D -->|"다른 사용자"| E{"같은 대상에 이미 신고한 적 없는가"}
+    E -->|"이미 있음"| 안내4["이미 신고한 대상이라는 안내"]
+    E -->|"없음"| F["접수 완료 — 운영자 큐에 적재"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>이상한 후기를 발견하고 카드에서 신고</h3>
+            <p>이벤트 리뷰 목록(F11-02)에서 부적절한 후기를 발견한 사용자가 카드 우상단 신고 아이콘을 누른다.
+              신고 화면이 열리고, 상단에 "리뷰"라는 대상 배지가 이미 잡혀 있다.
+              "괴롭힘·협박"을 선택하고 "신고"를 누르면 "신고 접수 완료" 다이얼로그가 떠오른다.
+              확인을 누르면 직전 화면으로 돌아온다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 부적절한 콘텐츠를 발견한 자리에서 별도 경로를 찾지 않고 즉시 운영자에게 전달할 수 있다. 안전 동선이 짧을수록 작동한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">본인 차단</div>
+            <h3>실수로 본인을 신고하려 함</h3>
+            <p>오조작 또는 잘못된 링크로 본인 사용자 신고 화면에 진입한 경우.
+              사유를 선택하고 제출하면 "본인을 신고할 수 없습니다" 토스트가 뜨고 화면이 닫힌다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 자기 신고로 본인 점수가 깎이게 하거나 운영자 큐를 어지럽히는 일을 가장 첫 가드에서 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>같은 사람을 다시 신고하려 함</h3>
+            <p>며칠 전 한 번 신고했던 사용자에 대해 다시 신고를 시도한다.
+              "이미 신고한 대상입니다" 안내가 뜨고 새 신고는 등록되지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 사람의 같은 신고가 여러 건으로 적재되어 패널티가 누적되는 우회 경로를 막는다. 동일 대상에 대한 우려는 운영자가 처음 한 건만 본다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">사유 보강</div>
+            <h3>"기타"를 선택했는데 설명이 너무 짧음</h3>
+            <p>7개 사유에 맞는 항목이 없어 "기타"를 선택한다. 라벨이 "상세 설명 (필수)"로 바뀌고,
+              세 글자만 입력한 상태에서는 인라인 에러("10자 이상 입력해주세요")가 뜨고 "신고" 버튼이 활성되지 않는다.
+              충분히 입력하면 정상 제출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사유 분류가 안 되는 신고는 운영자가 우선순위를 매기기 어렵다. 최소한의 본문이 있어야 운영 큐에서 의미 있는 처리가 가능하다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">정책 격차</div>
+            <h3>클럽 상세에서 "신고"를 눌렀을 때</h3>
+            <p>클럽 상세 화면에 "신고" 진입이 있어 화면까지는 들어온다. 사유를 선택하고 제출하면
+              "신고 대상이 올바르지 않습니다" 안내가 뜨고 화면이 닫힌다 — 현재 서버는 클럽 대상 신고를 받지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게는 "지금은 안 된다"가 명확히 전달된다. 운영·기획 측에서는 클럽 신고를 받을지 결정하고 서버에 대상을 추가하거나 클라이언트에서 진입 자체를 닫는 정리가 필요하다(알려진 격차).</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">접수 완료 후</div>
+            <h3>"신고 접수 완료"를 보고 자리를 떠남</h3>
+            <p>접수가 끝나면 사용자에게는 "검토 후 적절한 조치를 취하겠습니다"라는 다이얼로그가 뜨고 이전 화면으로 돌아간다.
+              이 시점에 대상자의 점수는 아무것도 바뀌지 않는다 — 변동은 운영자가 결론을 낸 뒤다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 "신고는 보복 도구가 아니다"라는 정책 메시지를 첫 화면에서 분명히 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">긴 본문 차단</div>
+            <h3>너무 긴 사유 설명을 입력</h3>
+            <p>화면 입력 단계에서 500자 한도가 잡혀 있어 그 이상은 입력할 수 없다.
+              직접 API를 호출해 더 긴 본문을 보내도 서버가 거부한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 운영자가 검토 시 한 건당 시간을 일정하게 쓸 수 있게 한다. 본문이 너무 길면 운영 효율과 자칫 안전 SLA가 같이 무너진다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <p class="subtitle">실제로 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>상단 대상 정보 카드</strong></td>
+                <td>"이벤트"/"사용자"/"리뷰"/"클럽" 라벨 배지 + 대상 제목(또는 폴백 텍스트).</td>
+                <td>사용자가 "내가 누구를 신고하고 있는지"를 신고 화면에서 한 번 더 확인 — 잘못된 대상으로 접수되는 사고를 막는다.</td>
+              </tr>
+              <tr>
+                <td><strong>신고 사유 라디오 7개</strong></td>
+                <td>괴롭힘·협박 / 부적절한 콘텐츠 / 노쇼 / 사기·사칭 / 기타 / 지각 / 나쁜 매너 — 단일 선택.</td>
+                <td>다중 선택은 운영자가 우선순위를 매기기 어렵다. 사용자에게는 단일 선택을 강제하는 대신 "기타" 옵션을 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>상세 설명 칸</strong></td>
+                <td>"기타" 선택 시에만 필수. 그 외에는 선택. 우하단에 글자수 카운터, 최대 500자.</td>
+                <td>분류된 사유는 본문이 짧아도 운영자가 처리할 수 있고, 기타만 본문이 있어야 의미 있는 검토가 가능하다.</td>
+              </tr>
+              <tr>
+                <td><strong>하단 빨간 "신고" 버튼</strong></td>
+                <td>화면 하단에 고정. 사유가 선택되지 않으면 비활성. 색상은 위험 동작을 알리는 빨강 계열.</td>
+                <td>접수가 가벼운 동작은 아니라는 시각적 신호. 한 번의 탭으로 신중하게 결정하라는 메시지가 색상에 담겨 있다.</td>
+              </tr>
+              <tr>
+                <td><strong>접수 완료 다이얼로그</strong></td>
+                <td>"신고 접수 완료" + "검토 후 적절한 조치를 취하겠습니다" 안내 + 확인 버튼 하나.</td>
+                <td>토스트가 아닌 풀스크린 다이얼로그를 둔 이유 — 접수 자체가 가벼운 결과가 아니라는 인지를 마지막에 한 번 더 만든다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 정상이라고 부르려면 이 네 가지 지표가 추적되어야 한다</span>
+          <ul>
+            <li><strong>접수 → 운영자 결론까지의 시간 분포(SLA).</strong>
+              본 단위는 접수까지만 책임지지만, 패널티가 신뢰점수에 반영되는 속도는 운영 처리 시간에 따라 결정된다.
+              SLA가 길어지면 신고가 사실상 무력화된다.</li>
+            <li><strong>승인·기각·이관 비율의 추세.</strong>
+              승인 비율이 너무 낮으면 사용자가 신고 기능을 신뢰하지 않게 되고, 너무 높으면 평판 시스템에 잡음이 쌓인다.</li>
+            <li><strong>사유 분포.</strong>
+              특정 사유(예: 노쇼·괴롭힘)가 빠르게 늘어나면 신고 자체가 아니라 그 사유의 원인 도메인(참석 정책·차단 흐름)을 손볼 시점.</li>
+            <li><strong>중복·자기 신고 차단 발동률.</strong>
+              차단이 자주 발동되면 화면 진입 자체가 명확하지 않다는 신호 — 진입 동선 정리가 필요하다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 무너지면 안전과 평판이 같이 흔들린다</span>
+          <ul>
+            <li><strong>"접수 즉시 점수 차감"은 정책상 채택하지 않았다.</strong>
+              운영자 결론 전에는 어떤 사용자의 점수도 신고만으로 깎이지 않는다 — 보복 신고로 평판을 흔드는 우회 경로를 막는 핵심 결정.
+              이 정책이 흔들리면 신고 자체가 무기로 변한다.</li>
+            <li><strong>같은 대상에 대한 중복 신고는 한 번만 받는다.</strong>
+              같은 사람이 같은 상대에게 여러 건의 신고를 쌓아 패널티를 가속하는 사고를 차단.
+              한 번 신고한 뒤 추가 우려가 생기면 사용자에게는 "이미 신고한 대상"으로 안내된다 — 운영 큐에는 첫 신고만 가 있다.</li>
+            <li><strong>클럽 신고는 현재 서버에서 받지 않는다(알려진 격차).</strong>
+              화면 라벨은 매핑되어 있어 진입은 되지만, 제출 시 거절된다. 사용자에게 "지금은 안 된다"가 명확히 전달되지만,
+              "클럽 신고를 받아야 하는가"는 정책 결정으로 별도 처리가 필요하다.</li>
+            <li><strong>본 단위의 패널티 누적은 1건당 20점·최대 100점이다.</strong>
+              승인된 신고 5건이면 패널티 점수가 가득 차고, 신뢰점수의 패널티 항목이 최대치로 빠진다.
+              "한 사용자에게 신고가 빠르게 누적되는 상황"이 측정에서 잡히면, 그 사용자의 다음 행동(이벤트 호스팅·매칭 노출 등)을 운영 측이 미리 통제할지 결정해야 한다.</li>
+            <li><strong>접수 결과 다이얼로그 카피("검토 후 적절한 조치를 취하겠습니다")는 운영 약속이다.</strong>
+              사용자에게 한 번 발화되면 SLA에 영향을 준다. 검토 시간이 늘어나면 사용자의 다음 신고 의지가 사라진다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위 · 관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">상위 도메인</div><h3>11 리뷰·신고</h3></a>
+          <a class="card" href="F11-05.html"><div class="eyebrow">연결</div><h3>F11-05 신뢰점수</h3><p>승인된 신고가 패널티로 누적되는 도착지.</p></a>
+          <a class="card" href="F11-02.html"><div class="eyebrow">진입</div><h3>F11-02 리뷰 목록</h3><p>카드의 신고 아이콘이 데려오는 경로.</p></a>
+          <a class="card" href="../policies/privacy.html"><div class="eyebrow">정책</div><h3>개인정보·안전 정책</h3><p>신고·차단·노출 원칙의 근거 문서.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/11_review_report/F11-04_report/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

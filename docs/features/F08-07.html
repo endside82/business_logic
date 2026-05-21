@@ -1,33 +1,167 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F08-07 크리에이터 프로필 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>F08-07 크리에이터 프로필</div>
-<h1>F08-07. 크리에이터 프로필 · 내 통계</h1>
-<p class="lede">크리에이터의 공개 프로필(판매 플랜·실적·평점)과 본인의 판매 통계(매출·환불·정산).</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>공개 프로필 + 플랜 목록</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>본인 판매 통계</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>정산 진입점</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>구매자가 크리에이터 탐방</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>본인 통계</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>처음 판매 빈 상태</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/creators/{userId}</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/creators/me/stats</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/08_plan_market/F08-07_creator-profile-stats/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-07 크리에이터 프로필 · 통계 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-07 크리에이터 프로필 · 통계
+        </div>
+        <h1>F08-07. 크리에이터 프로필 · 내 통계</h1>
+        <p class="lede">
+          한 크리에이터를 두 시점에서 보는 화면이다 — 다른 사용자에게 공개되는 프로필과, 본인만 볼 수 있는 판매 통계.
+          공개 프로필은 누구나 볼 수 있어 비로그인 상태로도 둘러볼 수 있고, 통계 화면은 작성자 본인의 누적 수익과 발행 현황을 한 화면에 모아 준다.
+          마켓 아이템 상세에서 크리에이터 정보를 누른 사람이 그 작성자의 다른 플랜을 함께 보게 되는 발견 경로이기도 하다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">대표 플랜 노출</div><div class="value">20</div><div class="hint">발행 중인 플랜 첫 페이지</div></div>
+          <div class="metric"><div class="label">통계 화면 권한</div><div class="value">본인만</div><div class="hint">매출은 외부 노출 없음</div></div>
+          <div class="metric"><div class="label">평균 별점</div><div class="value">공개</div><div class="hint">신뢰 단서로 카드에 함께 노출</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 공개 프로필은 발견의 통로, 통계는 운영의 거울</span>
+          <p>한 사람의 마켓 아이템에 신뢰가 생기면 자연스럽게 그 사람의 다른 작품도 궁금해진다.
+            공개 프로필은 이 호기심을 그대로 다음 카드로 잇는 통로다 — 작성자 정보 카드 한 번의 탭으로
+            그 크리에이터의 대표 플랜들이 한 화면에 모인다. 본인 통계는 반대다. 자기 운영이 잘 작동하고 있는지 한 번에 보고
+            가격·발행 결정에 반영하는 거울이다. 다른 사람의 매출은 절대 노출되지 않는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 화면이 다루는 두 가지</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">공개 프로필</div>
+            <h3>다른 사람이 보는 크리에이터</h3>
+            <p>닉네임·프로필 사진·"판매 플랜 N / 판매 실적 N" 두 칸의 통계, 그리고 대표 플랜 카드 목록.
+              로그인 없어도 누구나 볼 수 있다. 카드를 누르면 그 플랜의 마켓 상세로 이어진다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">내 통계</div>
+            <h3>본인만 보는 운영 대시보드</h3>
+            <p>"누적 판매 수익 N P / N건 판매 · N개 플랜 판매 중" 큰 카드 한 장, 그 아래 전체 플랜 / 발행 중 / 판매 건수 세 칸.
+              매출 합계는 본인 외에는 노출되지 않는 정책. 발행 우선도 안내 한 줄이 함께 있다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">발견 경로</div>
+            <h3>마음에 든 플랜의 작성자를 따라간다</h3>
+            <p>마켓 아이템 상세에서 본 플랜이 마음에 든 사용자. 화면에서 크리에이터 정보 카드를 누른다.
+              그 크리에이터의 공개 프로필이 열리고, 같은 작성자의 다른 플랜들이 카드 목록으로 펼쳐진다.
+              그중 하나를 누르면 또 다른 플랜의 마켓 상세로 이어진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 마음에 든 경험이 작성자 단위의 발견으로 확장된다. 마켓 안에서 사용자가 끊지 않고 머무는 한 가지 경로.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">발견 → 구매</div>
+            <h3>이미 산 사람이 같은 작성자의 새 작품을 만난다</h3>
+            <p>예전에 이 작성자의 다른 플랜을 산 적이 있는 사용자가 그 작성자의 프로필에서 새 카드를 만난다.
+              카드를 눌러 들어간 마켓 상세에서, 이미 산 플랜이라면 "구매 완료 플랜"으로 잠긴 표시가 뜨고,
+              새 플랜이라면 일반적인 구매 버튼이 뜬다. 발견과 구매 사이에 상태가 어긋나지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 작성자를 중심으로 한 컬렉션 형성. 단발 구매에서 단골 관계로 가는 길.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">본인 통계</div>
+            <h3>크리에이터가 첫 판매 결과를 확인한다</h3>
+            <p>플랜을 발행해 둔 크리에이터가 내 플랜 목록 우측 상단의 차트 아이콘을 누른다.
+              내 판매 현황 화면이 열리고, 큰 카드에 "누적 판매 수익 60,000 P / 12건 판매 · 3개 플랜 판매 중"이 보인다.
+              아래 작은 칸에는 "전체 플랜 5 / 발행 중 3 / 판매 건수 12".</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 발행 후의 결과를 한 번에 확인할 수 있는 자리. 가격·발행 결정을 다음에 더 잘 내리게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">최신화</div>
+            <h3>구매가 들어왔는지 당겨서 새로고침로 확인한다</h3>
+            <p>오늘 새로 구매가 들어왔는지 보고 싶은 크리에이터가 통계 화면에서 화면을 아래로 당긴다.
+              최신 누적 수익이 갱신된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">잘못된 식별자</div>
+            <h3>없는 크리에이터의 링크로 들어왔다</h3>
+            <p>외부 공유 링크가 끊어진 식별자를 가리키고 있다. 화면은 에러 상태로 떨어지고 "재시도" 버튼이 보인다.
+              사용자는 뒤로 가거나 재시도한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비로그인</div>
+            <h3>로그인 없이 공개 프로필을 둘러본다</h3>
+            <p>앱 설치 후 회원가입 전 상태로 외부 링크를 통해 한 크리에이터의 프로필에 들어온다.
+              닉네임·통계·대표 플랜 카드들이 정상적으로 보인다. 카드를 눌러 마켓 상세까지도 갈 수 있다.
+              실제 구매 단계에서 비로소 로그인 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입 결정 전 사용자가 "이 앱에서 누가 어떤 콘텐츠를 파는지" 둘러볼 수 있어야 가입 의사가 형성된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비로그인 통계</div>
+            <h3>통계 화면은 비로그인 진입이 막혀 있다</h3>
+            <p>같은 사용자가 통계 화면 링크를 직접 들어오면 로그인 화면으로 안내된다.
+              본인의 매출 정보가 인증 없이 노출되지 않게 하는 첫 차단선.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">공개와 비공개의 경계가 한 도메인 안에 함께 있다</span>
+          <ul>
+            <li><strong>공개 프로필의 "판매 플랜" 카운트는 작성한 모든 플랜이 들어 있다.</strong>
+              발행되지 않은 작성 중·숨김·삭제된 플랜까지 포함된 단순 카운트라, 사용자가 카드 라벨로 인지하는 숫자와 실제 마켓 노출 개수가 다를 수 있다.
+              개선 여지로 두고 있는 정책 결정점.</li>
+            <li><strong>본인 통계의 매출 합계는 인증 본인 외에는 절대 노출되지 않는다.</strong>
+              다른 크리에이터의 매출이 공개 프로필이나 다른 경로로 흘러가지 않는 것이 도메인 안전의 핵심 약속이다.</li>
+            <li><strong>대표 플랜 노출 순서는 정렬 키 없이 데이터베이스 기본 순서로 나간다.</strong>
+              사용자에게는 "왜 이 순서인지"가 명확하지 않을 수 있다. 향후 인기·최신·평균별점 같은 명시적 정렬 기준 도입이 필요한 시점.</li>
+            <li><strong>현재 공개 프로필의 부제는 임시 카피로 고정돼 있다.</strong>
+              크리에이터마다 다른 한 줄 소개 자리가 화면에는 있지만 데이터로 받지 않는다. 다양한 도메인의 크리에이터가 늘어나면 이 자리가 의미를 잃는다.</li>
+            <li><strong>본인이 자기 공개 프로필을 봐도 통계가 함께 노출되지 않는다.</strong>
+              두 화면이 다른 경로로 분리돼 있어, 본인은 차트 아이콘으로만 통계에 접근할 수 있다.
+              스펙 의도와 어긋나는 부분이라 향후 정렬 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-01.html"><div class="eyebrow">앞 단위</div><h3>F08-01 내 플랜 목록</h3><p>차트 아이콘으로 통계에 진입.</p></a>
+          <a class="card" href="F08-10.html"><div class="eyebrow">진입</div><h3>F08-10 마켓 아이템 상세</h3><p>크리에이터 정보 카드의 출발 화면.</p></a>
+          <a class="card" href="F08-08.html"><div class="eyebrow">관련</div><h3>F08-08 마켓 메인</h3><p>대표 플랜 카드의 다음 경로.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음)
+  - business_logic/units/08_plan_market/F08-07_creator-profile-stats/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

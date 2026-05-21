@@ -1,29 +1,226 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F14-02 위치 공유 중지 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>F14-02 opt-out</div>
-<h1>F14-02. 위치 공유 중지 (opt-out)</h1>
-<p class="lede">사용자가 위치 공유를 명시적으로 끈다. 폴링 종료 + 상태 UPDATE + 일행 화면에서 본인 마커 제거.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>opt-out 확인 다이얼로그</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>폴링 종료</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>도착 후 끄기</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>다른 화면 진입해도 유지</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/opt-out</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/14-location.html"><div class="eyebrow">상위</div><h3>14 위치·길찾기</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/14_location_directions/F14-02_location-opt-out/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F14-02 위치 공유 중지 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
+          F14-02 위치 공유 중지
+        </div>
+        <h1>F14-02. 위치 공유 중지</h1>
+        <p class="lede">
+          사용자가 토글을 내리는 순간 일행 화면에서 본인 위치가 즉시 사라지게 한다.
+          "끄겠다"는 의사 표시 한 번이 다른 사람의 다음 갱신 안에 반드시 반영되어야 하므로,
+          본 단위는 위치 공유의 4가지 원칙 중 "중지는 즉시"를 단호히 지키는 자리다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">중지 반영 시간</div><div class="value">다음 갱신 안</div><div class="hint">최대 30초 안에 다른 사람 화면에서 사라진다</div></div>
+          <div class="metric"><div class="label">확인 단계</div><div class="value">1단계</div><div class="hint">위치 화면에서는 다이얼로그로 한 번 더 확인</div></div>
+          <div class="metric"><div class="label">자동 중지</div><div class="value">모임 종료 2시간 후</div><div class="hint">사용자가 끄지 않아도 자동으로 멈춘다</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "끄면 즉시 사라진다"가 위치 공유 전체의 신뢰 기반</span>
+          <p>사용자가 위치 공유를 다시 켤 수 있는 이유는 "꺼지면 진짜 꺼진다"라는 보장이 있기 때문이다.
+            중지 후 1초라도 마커가 남는다면, 그 사용자는 더 이상 토글을 켜지 않는다 — 그리고 그 의심은 위치 도메인 전체로 번진다.
+            본 단위는 "사용자 의사 표시 한 번이 다음 30초 안에 반드시 반영된다"를 단호히 지키는 자리.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>중지의 세 가지 진입 경로</h2>
+        <p class="subtitle">사용자가 "끄겠다"라고 표시할 수 있는 자리는 두 곳이고, 사용자 손이 없어도 자동으로 멈추는 경로 한 가지가 더 있다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">진입 1 — 위치 화면</div>
+            <h3>이벤트 위치 화면 하단 시트의 토글</h3>
+            <p>지도를 보고 있는 도중에 토글을 내리면 "위치 공유를 중지하시겠습니까? 다른 참석자에게 내 위치가 표시되지 않습니다." 다이얼로그가 한 번 뜬다.
+              "중지"를 누르면 곧장 처리되고, "취소"를 누르면 토글이 시각적으로 그대로 켜진 상태에 머문다.
+              한 번 더 확인하는 이유는, 지도를 보면서 토글을 잘못 건드리는 사용자가 많기 때문.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">진입 2 — 프라이버시 대시보드</div>
+            <h3>위치 프라이버시 화면에서 끄기</h3>
+            <p>위치 화면 우상단 톱니바퀴를 통해 들어간 프라이버시 대시보드에서는 확인 다이얼로그 없이 즉시 처리된다.
+              이 화면은 사용자가 "내 위치가 어디에 보이고 있는가"를 점검하러 일부러 들어온 자리이므로,
+              한 번 더 묻는 단계가 오히려 흐름을 끊는다고 본 설계.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">진입 3 — 자동</div>
+            <h3>모임 종료 2시간 후 자동 중지</h3>
+            <p>사용자가 끄는 것을 잊어도 모임이 끝나고 2시간이 지나면 더 이상 좌표가 다른 사람 화면에 보이지 않는다.
+              위치 공유의 4가지 원칙 중 "자동 만료"의 실현 — 사용자가 끄는 것을 잊었다는 이유로 위치가 계속 노출되지 않게 한다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>중지 흐름</h2>
+        <p class="subtitle">사용자가 토글을 내리는 순간부터 다른 사람의 다음 갱신 응답에서 본인이 사라지기까지.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor 나
+    participant 화면 as 위치 화면
+    participant 서버 as 위치 서버
+    actor 일행
+
+    나->>화면: 토글 Off 탭
+    alt 위치 화면에서 끄기
+        화면-->>나: "공유 중지하시겠습니까?" 다이얼로그
+        나->>화면: "중지" 탭
+    else 프라이버시 대시보드에서 끄기
+        Note over 화면,나: 확인 다이얼로그 없음
+    end
+    화면->>서버: 위치 공유 중지 요청
+    서버->>서버: 본인 동의 상태를 '꺼짐'으로 갱신
+    서버-->>화면: 처리 완료
+    화면-->>나: "위치 공유를 중지했습니다" 토스트
+    화면-->>화면: 자동 갱신 루프 중지
+    Note over 일행: 다음 30초 갱신 응답에서<br/>나의 좌표가 사라진다
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>약속 장소에 도착해서 끈다</h3>
+            <p>모임 장소에 도착한 사용자가 시트의 위치 공유 토글을 내린다. 다이얼로그가 한 번 뜨고, "중지"를 누르면
+              "위치 공유를 중지했습니다" 토스트와 함께 시트 라벨이 회색으로 바뀐다.
+              다른 일행의 다음 갱신 응답에서 본인 마커가 사라진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 도착 후 위치를 끄는 자연스러운 마무리. 사용자가 "끝났다"를 직접 표시하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소</div>
+            <h3>잘못 건드린 토글</h3>
+            <p>지도를 보다가 손가락이 토글에 닿아 다이얼로그가 뜬다. 사용자가 "취소"를 누르면 어떤 호출도 일어나지 않고
+              토글은 시각적으로도 켜진 상태 그대로다. 자동 갱신은 끊김 없이 계속된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 위치 공유처럼 민감한 동작은 한 번 더 확인하는 단계가 사용자 신뢰의 기반.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">다른 진입점</div>
+            <h3>프라이버시 대시보드에서 즉시 끄기</h3>
+            <p>모임이 끝나서 "내가 어디에 위치를 공유하고 있는지" 점검하러 들어온 사용자가 카드의 스위치를 내린다.
+              여기서는 다이얼로그 없이 즉시 처리되고, "위치 공유를 중단했습니다" 토스트가 뜬 뒤 카드 라벨이 "위치 비공개"로 바뀐다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 의도하고 들어온 화면에서는 한 번 더 묻지 않는 것이 자연스럽다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자동 만료</div>
+            <h3>모임이 끝나고 화면을 켜둔 채로 둔다</h3>
+            <p>사용자가 직접 끄지 않아도 모임 종료 2시간이 지나면 화면이 더 이상 새 좌표를 받지 못한다.
+              마지막으로 받은 좌표가 잠시 그대로 표시될 수 있지만, 보관된 위치 데이터는 별도 청소 작업이 30일 안에 제거한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 끄는 것을 잊는 인간적 실수를 정책이 덮어 준다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">재개</div>
+            <h3>껐다가 다시 켠다</h3>
+            <p>잠시 끈 사용자가 토글을 다시 켜면, F14-01의 켜기 흐름이 그대로 다시 작동한다 — 권한 확인은 이미 받았으니 곧장 좌표가 보내지고 30초 갱신이 다시 시작된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번 꺼졌다고 영구히 막히지 않는 자유. 사용자가 자기 의사로 재개할 수 있어야 중지가 가벼운 동작이 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 차단의 간접 효과</div>
+            <h3>호스트가 모임 단위로 위치 공유를 끄면</h3>
+            <p>일반 참석자의 토글은 시각적으로는 켜진 상태로 유지되지만 좌표 갱신이 막힌다.
+              사용자 본인이 명시적으로 "끄겠다"는 의사를 표시한 것은 아니므로 본 단위의 흐름은 아니지만,
+              실질적으로 그 모임에 한해 위치가 더 이상 흘러가지 않는 결과가 된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 모임 단위 결정이 모든 참석자의 위치를 사실상 동시에 멈춘다.
+              "호스트는 위치 공유를 끌 책임이 있다"라는 모임 운영 신호.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 보는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:170px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>위치 화면 토글</strong></td>
+                <td>시트 맨 위의 스위치. 켜져 있을 때는 "위치 공유 중" 라벨, 꺼지면 회색 "위치 비공개".</td>
+                <td>지도와 같은 화면 안에 있어 "내 위치가 보이고 있는가"를 사용자가 항상 인지할 수 있어야 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>확인 다이얼로그</strong></td>
+                <td>"위치 공유 중지" 제목 + "다른 참석자에게 내 위치가 표시되지 않습니다" 본문 + "취소" / "중지"(빨강) 두 버튼.</td>
+                <td>지도를 보면서 토글을 우연히 건드린 경우와 의식적으로 끄는 경우를 분리한다. 빨간색 "중지"는 되돌릴 수 없는 동작이라는 점을 사용자가 색만으로 인지하게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>완료 토스트</strong></td>
+                <td>"위치 공유를 중지했습니다" (위치 화면) / "위치 공유를 중단했습니다" (프라이버시 대시보드).</td>
+                <td>처리가 끝났다는 신호 — 사용자가 "진짜 꺼졌나"를 재확인하지 않게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>꺼진 후의 시트</strong></td>
+                <td>토글 라벨이 회색으로 바뀌고, 만료 카운트다운과 연장 버튼이 사라진다.</td>
+                <td>"공유 상태가 시각화"되어야 하는 위치 도메인 원칙의 실현. 한 번에 "내가 지금 공유하고 있지 않다"를 알 수 있다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">위치 공유 중지가 정상적으로 동작한다고 부르려면</span>
+          <ul>
+            <li><strong>"끄겠다"는 사용자 의사 표시는 다음 30초 안에 다른 사람 화면에서 반영되어야 한다.</strong>
+              이 보장이 깨지면 사용자가 다시는 위치 공유를 켜지 않는다. 본 단위에서 가장 강하게 지켜야 하는 정책.</li>
+            <li><strong>위치 화면에서는 확인 다이얼로그, 프라이버시 대시보드에서는 즉시 처리.</strong>
+              두 진입점의 확인 단계가 다른 이유는 사용자가 의도하고 들어온 화면이 다르기 때문 — 한쪽에 통일하려면 이 의도 차이를 먼저 다시 검토해야 한다.</li>
+            <li><strong>중지 후에도 보관된 좌표는 즉시 삭제되지 않는다.</strong>
+              사용자 동의 상태는 즉시 꺼지지만 마지막 좌표 기록은 만료 시각이 지나거나 30일 청소 작업이 돌 때 삭제된다.
+              운영 관점에서는 "꺼졌는데도 데이터가 잠시 남아 있다"가 사실 — 다만 중지한 사용자의 좌표는 다른 사람 응답에서 자동으로 제외되므로 사용자 화면에는 보이지 않는다.</li>
+            <li><strong>모임 종료 2시간 후 자동 중지는 운영 모니터링 대상.</strong>
+              이 자동 중지가 동작하지 않으면 사용자가 끄지 않은 좌표가 모임이 끝난 뒤에도 흘러간다 — 위치 공유의 "자동 만료" 원칙이 무너지는 회귀.</li>
+            <li><strong>중지 실패(자격 미충족, 네트워크 오류)는 현재 별도 안내 없이 조용히 처리된다.</strong>
+              사용자가 토글을 내렸는데 실제로는 꺼지지 않은 상태로 머무는 분기다. 향후 명시적 토스트 보강 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위 도메인</div><h3>14 위치·길찾기</h3></a>
+          <a class="card" href="F14-01.html"><div class="eyebrow">반대 동작</div><h3>F14-01 참석자 위치 공유</h3><p>토글을 켜는 흐름.</p></a>
+          <a class="card" href="F14-04.html"><div class="eyebrow">대안 진입점</div><h3>F14-04 프라이버시 대시보드</h3><p>이벤트별 토글을 한 화면에서 일괄 제어.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/14_location_directions/F14-02_location-opt-out/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

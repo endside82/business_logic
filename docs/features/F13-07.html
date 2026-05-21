@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F13-07 계정 즉시 탈퇴 — community PRD</title>
+  <title>F13-07 즉시 비활성화 (탈퇴) — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,238 +15,235 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>
-          F13-07 즉시 탈퇴
+          F13-07 즉시 비활성화
         </div>
         <h1>F13-07. 계정 즉시 비활성화 (탈퇴)</h1>
         <p class="lede">
-          유예 없는 즉시 탈퇴. 단, <strong>차단 항목(blocking) × 자동 처리 항목(resolvable)</strong> 두 분류를 먼저 확인한다.
-          미정산·진행 중 결제 같은 차단 항목이 있으면 탈퇴 자체가 막히고, 무료 이벤트·클럽 멤버십 같은 자동 처리 항목은
-          탈퇴 진행 중에 일괄 정리된다. 사전 체크와 DELETE 시점 재검증으로 이중 안전망을 둔다.
+          30일 유예 없이 "지금 당장 서비스 이용을 멈추고 비공개로 만들고 싶다"는 사용자가 누르는 흐름.
+          하지만 사용자에게 의무(미정산, 진행 중인 결제, 소유한 클럽, 호스팅 중인 유료 이벤트 등)가 남아 있으면 즉시 비활성화가 차단된다.
+          그래서 본 단위는 두 단계로 동작한다 — 먼저 "탈퇴해도 되는지" 점검하고, 차단 항목이 없을 때만 실제 비활성화를 수행한다.
+          진행 중 자동 처리 가능한 활동(무료 이벤트 신청, 클럽 멤버십, 데이팅 매칭 등)은 사용자에게 명시한 뒤 한 번에 정리한다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">시나리오</div><div class="value">5</div></div>
-          <div class="metric"><div class="label">분류</div><div class="value">차단 · 자동 처리</div></div>
-          <div class="metric"><div class="label">상태 전이</div><div class="value">TRYEXIT</div></div>
-          <div class="metric"><div class="label">검증</div><div class="value">사전 + DELETE 시점 재검증</div></div>
+          <div class="metric"><div class="label">유예</div><div class="value">없음</div><div class="hint">확인 즉시 비활성화</div></div>
+          <div class="metric"><div class="label">사전 점검</div><div class="value">필수</div><div class="hint">차단 항목이 있으면 진행 불가</div></div>
+          <div class="metric"><div class="label">자동 처리</div><div class="value">5개 유형</div><div class="hint">신청 취소·매칭 만료 등</div></div>
+          <div class="metric"><div class="label">결과 계정 상태</div><div class="value">TRYEXIT</div><div class="hint">30일 유예 삭제(EXIT)와 다른 상태</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">두 단계 검증의 이유</span>
-          <p>사전 체크 통과와 DELETE 호출 사이에 다른 트랜잭션이 새 차단 항목(예: 새 정산 대상)을 만들 수 있다.
-            DELETE 시점에 <code>validateAndResolve</code>가 한 번 더 체크한다.</p>
+        <div class="callout">
+          <span class="label">설계 의도 — "당장 떠나고 싶다"와 "다른 사용자의 권리"를 동시에 지킨다</span>
+          <p>한 사용자의 즉시 탈퇴가 다른 사용자의 환불·납부·정산을 막아서는 안 된다.
+            그래서 호스트가 받아야 할 정산, 참가자가 받아야 할 환불, 클럽 운영 중인 호스트의 책임 같은 항목이 남아 있으면
+            본 단위는 탈퇴를 의도적으로 차단한다.
+            반대로 사용자 본인만의 활동(무료 이벤트 신청, 클럽 멤버십, 데이팅 매칭)은 자동 처리 항목으로 묶어
+            사용자에게 "이걸 한 번에 정리하고 떠납니다"라고 명시한 뒤 같은 동작 안에서 해결한다.
+            30일 유예 삭제(F13-06)와의 차이는 명확하다 — F13-06은 "충분한 회복 가능성", 본 단위는 "지금 비공개".</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>한 번의 탈퇴 탭이 통과하는 두 관문</h2>
+        <p class="subtitle">사전 점검 → 차단 검토 → 자동 처리 안내 → 최종 확인 → 실제 비활성화.
+          한 동작 같지만 두 번의 검증과 세 번의 사용자 의사 확인이 들어 있다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 계정 탈퇴 탭"] --> B["사전 점검 호출"]
+    B --> C{"점검 결과"}
+    C -->|"실패"| D["확인 불가 안내 → 진행 차단"]
+    C -->|"차단 항목 있음"| E["탈퇴 불가 다이얼로그(상세 최대 3건 + 외 N건)"]
+    E --> F["사용자가 항목 해결 후 재시도"]
+    C -->|"차단 없음"| G{"자동 처리 항목 있음?"}
+    G -->|"예"| H["최종 확인에 자동 처리 목록 포함"]
+    G -->|"아니오"| I["최종 확인(짧은 형태)"]
+    H --> J{"사용자가 탈퇴 확정?"}
+    I --> J
+    J -->|"취소"| Z["원상태로"]
+    J -->|"확정"| K["실제 비활성화 호출"]
+    K --> L{"서버 재검증 통과?"}
+    L -->|"아니오"| M["탈퇴 실패 안내(다른 사용자가 사이에 결제 등 발생)"]
+    L -->|"예"| N["자동 처리 실행 + 포인트 처리 + 익명화 + 토큰 폐기"]
+    N --> O["강제 로그아웃 + 로그인 화면 복귀"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>탈퇴 점검에서 막히는 것과 자동 처리되는 것</h2>
+        <p class="subtitle">사용자에게 "이 활동을 먼저 정리해야 합니다"라고 안내할 항목과
+          "이건 우리가 한 번에 처리합니다"라고 안내할 항목을 명확히 가른다.</p>
+
         <div class="cards">
           <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>사전 체크 (deactivation-check)</h3>
-            <p>차단 / 자동 처리 / 정보 안내 항목을 분류해서 반환. UI는 차단이 있으면 “탈퇴 불가” 다이얼로그.</p>
+            <div class="eyebrow">차단</div>
+            <h3>금전·운영 의무가 남은 경우</h3>
+            <p>호스트 정산 대기, 크리에이터 수익, 모임 정산 분배·송금, 클럽 자금 인출,
+              진행 중인 결제, 정산 정정, 클럽 구독 중, 클럽 소유, 유료 이벤트 호스팅 중.
+              이 중 하나라도 남아 있으면 탈퇴 자체가 막힌다 — 사용자는 해당 항목을 먼저 해결해야 한다.</p>
           </div>
           <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>최종 확인 다이얼로그</h3>
-            <p>자동 처리 항목 목록을 그대로 보여줘 사용자가 인지하고 탈퇴를 결정.</p>
+            <div class="eyebrow">자동 처리</div>
+            <h3>본인만의 활동</h3>
+            <p>이벤트 신청 자동 취소, 무료 이벤트 호스팅 자동 취소, 클럽 멤버십 자동 탈퇴,
+              데이팅 매칭 자동 만료, 데이팅 프로필 자동 비활성화. 탈퇴 확정 시 같은 동작 안에서 한 번에 정리.</p>
           </div>
           <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>DELETE + 재검증 + 자동 정리</h3>
-            <p>DELETE 시점에 다시 체크 → 통과 시 무료 이벤트 취소·클럽 탈퇴·매치 만료 일괄 → 익명화 + status=TRYEXIT.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>세션 종료</h3>
-            <p>리프레시 토큰 일괄 삭제 → 다른 기기는 다음 호출에서 401 → 자연 로그아웃.</p>
+            <div class="eyebrow">정리 결과</div>
+            <h3>익명화와 토큰 폐기</h3>
+            <p>이메일·닉네임 익명화, 멤버 정보 비우기, 푸시 토큰·소셜 로그인·결제 자격증명 삭제,
+              데이팅 프로필·사진·매칭·차단 기록 삭제. 강제 로그아웃 후 로그인 화면으로 빠진다.</p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>탈퇴 시퀀스</h2>
-        <div class="diagram"><div class="mermaid">
-sequenceDiagram
-    actor U as 사용자
-    participant API as 사용자 API
-    participant SVC as 탈퇴 서비스
-    participant DB as DB
-    U->>API: 사전 체크 GET /deactivation-check
-    API->>SVC: 차단/자동/정보 분류
-    alt 차단 있음
-        SVC-->>U: deactivationAllowed=false + blockingItems
-        Note over U: "탈퇴 불가" 다이얼로그
-    else 차단 없음
-        SVC-->>U: deactivationAllowed=true + resolvableItems
-        U->>U: 최종 확인 다이얼로그
-        U->>API: DELETE /users/me
-        API->>SVC: 탈퇴 실행
-        SVC->>SVC: validateAndResolve(재검증)
-        alt 새 차단 발생
-            SVC-->>U: 400 DEACTIVATION_BLOCKED
-        else 통과
-            SVC->>DB: 무료 이벤트·클럽·매치 자동 정리
-            SVC->>DB: 익명화 + status=TRYEXIT
-            SVC->>DB: 리프레시 토큰 일괄 삭제
-            SVC-->>U: 204 + 로그인 화면
-        end
-    end
-        </div></div>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>차단 없이 즉시 탈퇴</h3>
+            <p>데이터 프라이버시 화면에서 "계정 탈퇴"를 누른다. 사전 점검이 통과되고
+              자동 처리 항목도 없다. "정말 탈퇴하시겠습니까?" 최종 확인이 뜨고 사용자가 확인을 누른다.
+              계정이 즉시 익명화되고 토큰이 폐기되며 사용자는 로그인 화면으로 빠진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "당장 떠나고 싶다"는 사용자의 의사가 그 자리에서 해결된다.
+              30일 유예와의 본질적 차이가 사용자에게 분명히 전달되어야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">금전 차단</div>
+            <h3>호스트인데 정산이 안 끝났다</h3>
+            <p>"계정 탈퇴"를 누르면 사전 점검이 차단을 반환한다. "탈퇴 불가" 다이얼로그에 차단 항목 제목과 설명,
+              개수, 상세 항목 최대 3건과 "외 N건"이 표시된다. 사용자는 정산을 먼저 처리해야 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 다른 사용자(참가자)가 받아야 할 환불·정산이 한 호스트의 탈퇴로 막히면
+              안 된다 — 본 단위의 가장 큰 정책 책임.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자동 처리 동반</div>
+            <h3>무료 이벤트 신청과 클럽 멤버십이 있는 채로 탈퇴</h3>
+            <p>차단 항목은 없지만 자동 처리 항목이 있다. 최종 확인 다이얼로그에 "탈퇴 시 다음 항목이 자동 처리됩니다"
+              라는 안내와 함께 항목 목록이 포함된다.
+              사용자가 확인하면 같은 동작 안에서 신청 취소·클럽 탈퇴·데이팅 매칭 만료가 모두 일어나고 계정이 비활성화된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 "내가 떠나면 어떤 일이 자동으로 일어나는지"
+              미리 보고 결정한다 — 그 안내가 없으면 "예고 없이 사라진" 모임·매칭에 다른 사용자가 당황한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">사전 점검 실패</div>
+            <h3>네트워크가 끊긴 채 탈퇴 시도</h3>
+            <p>사전 점검 자체가 실패하면 "탈퇴 가능 여부를 확인할 수 없습니다" 안내가 뜨고 최종 확인 다이얼로그는 열리지 않는다.
+              사용자는 신호 회복 후 다시 시도한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 점검 없이 탈퇴를 진행하면 정산·결제 의무를 놓친 채 계정이 사라질 수 있다.
+              점검이 실패하면 무조건 멈추는 게 정책.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">최종 단계 재검증</div>
+            <h3>점검 통과 후 확정하기 직전 다른 결제가 들어옴</h3>
+            <p>사전 점검 시점과 확정 시점 사이에 다른 도메인에서 결제·정산이 발생하면
+              실제 비활성화 직전 서버가 한 번 더 검증해 새로운 차단 항목을 찾는다.
+              찾으면 비활성화는 일어나지 않고 "계정 탈퇴에 실패했습니다" 안내가 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 점검 결과를 그대로 믿고 실행하면 사이에 들어온 거래가 사라질 위험이 있다.
+              두 번 검증하는 게 본 흐름의 안전 장치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">포인트 처리</div>
+            <h3>지갑 잔액이 남은 채로 탈퇴</h3>
+            <p>비활성화 동작 안에서 지갑이 함께 정리된다 — 유료 포인트는 환불 처리, 무료 포인트는 소멸.
+              사용자에게 "탈퇴하면 무료 포인트는 사라진다"는 안내가 사전에 보이는지가 운영 관찰 포인트.</p>
+            <p><strong>운영 관찰 포인트</strong> — 사용자가 잔액 인지 없이 탈퇴해 환불 문의로 들어오는 비율이 신호.</p>
+          </article>
+        </div>
       </section>
 
       <section>
-        <h2>차단 / 자동 처리 항목 매트릭스</h2>
+        <h2>화면 구성 — 사람이 보는 것</h2>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>분류</th><th>항목</th><th>처리</th></tr></thead>
+            <thead><tr><th style="width:140px">영역</th><th>보이는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><strong>차단</strong></td><td>SETTLEMENT 미정산 · CREATOR_EARNING 대기 · 진행 결제 · 활성 구독</td><td>탈퇴 차단, 해결 후 재시도</td></tr>
-              <tr><td><strong>차단</strong></td><td>소유 클럽(이전·삭제 안 됨)</td><td>이전(F04-03) 또는 클럽 삭제 후 재시도</td></tr>
-              <tr><td><strong>차단</strong></td><td>호스트 OPEN 이벤트(취소·종료 안 됨)</td><td>이벤트 취소/종료 후 재시도</td></tr>
-              <tr><td>자동 처리</td><td>무료 이벤트 참가 신청</td><td>자동 취소</td></tr>
-              <tr><td>자동 처리</td><td>클럽 멤버 자격</td><td>자동 탈퇴</td></tr>
-              <tr><td>자동 처리</td><td>데이팅 매치</td><td>자동 만료(BLOCKED 또는 EXPIRED)</td></tr>
-              <tr><td>자동 처리</td><td>알림 디바이스 토큰</td><td>일괄 삭제</td></tr>
+              <tr>
+                <td><strong>탈퇴 섹션</strong></td>
+                <td>"계정 탈퇴" 제목, "계정을 탈퇴하면 즉시 로그아웃되며 더 이상 서비스를 이용할 수 없습니다" 설명,
+                  위험 색상의 "계정 탈퇴" 버튼.</td>
+                <td>30일 유예 삭제와 같은 화면에 있어 사용자가 두 가지를 의식적으로 구분할 수 있어야 한다.
+                  버튼 색·설명 문구로 "즉시·비공개"임을 명확히.</td>
+              </tr>
+              <tr>
+                <td><strong>탈퇴 불가 다이얼로그</strong></td>
+                <td>차단 항목별 제목·설명·개수, 상세 항목(최대 3건)과 "외 N건". 확인 버튼으로 닫는다.</td>
+                <td>사용자가 "왜 탈퇴가 안 되는지"를 항목 단위로 알아야 다음 행동을 할 수 있다.
+                  상세 라인은 사용자 본인의 의무를 식별할 수 있는 최소 단서.</td>
+              </tr>
+              <tr>
+                <td><strong>최종 확인 다이얼로그</strong></td>
+                <td>본문 + 자동 처리 항목 목록(있을 때) + 취소·탈퇴 두 버튼.</td>
+                <td>자동 처리 항목을 별도 화면이 아닌 확인 문구에 포함해 사용자가 한 곳에서 결정하게 한다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 5개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>차단 없는 즉시 탈퇴</h3>
-            <ol>
-              <li>“계정 탈퇴” → GET /deactivation-check → deactivationAllowed=true</li>
-              <li>최종 확인 다이얼로그 → 확정</li>
-              <li>DELETE /users/me → 자동 처리 실행 + 익명화 + TRYEXIT</li>
-              <li>토스트 “계정이 탈퇴되었습니다” + 로그인 화면</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S2 · 차단</div><h3>미정산으로 탈퇴 불가</h3>
-            <ol>
-              <li>사전 체크에서 deactivationAllowed=false + blockingItems</li>
-              <li>각 차단 항목의 제목·설명·상세 3건·초과 카운트 표시</li>
-              <li>DELETE 호출하지 않음, 사용자가 해결 후 재시도</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S3 · 자동 정리</div><h3>무료 이벤트·클럽만 있는 사용자</h3>
-            <ol>
-              <li>blockingItems 없음, resolvableItems만 다수</li>
-              <li>최종 확인 메시지에 자동 처리 목록 노출</li>
-              <li>DELETE → 무료 이벤트 취소·클럽 탈퇴·매치 만료 일괄</li>
-              <li>익명화 + 세션 종료</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S4 · API 실패</div><h3>사전 체크 실패</h3>
-            <ol>
-              <li>네트워크 등으로 deactivation-check Result.failure</li>
-              <li>“탈퇴 가능 여부를 확인할 수 없습니다” 토스트</li>
-              <li>최종 확인 다이얼로그 미노출</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S5 · 재검증</div><h3>DELETE 시점에 새 차단 발생</h3>
-            <ol>
-              <li>사전 체크는 통과</li>
-              <li>그 사이 새 정산 대상 생성</li>
-              <li>DELETE → validateAndResolve가 다시 차단 감지 → DEACTIVATION_BLOCKED</li>
-              <li>“계정 탈퇴에 실패했습니다” 토스트</li>
-            </ol>
-            <p><strong>UI 보강 후보:</strong> DELETE 실패에서 받은 차단 항목을 다이얼로그에 매핑하는 부분은 현재 미확인. 사용자에게 “무엇이 차단인지” 그 자리에서 보여주는 게 이상적.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-            <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/users/me/deactivation-check</code></td><td>사전 분류 + 항목 미리보기</td></tr>
-              <tr><td><code>DELETE</code></td><td><code>/api/v1/users/me</code></td><td>즉시 탈퇴 + 재검증 + 자동 정리</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">에러 코드</span>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 정상이라고 부르려면 이 다섯 가지가 추적되어야 한다</span>
           <ul>
-            <li><strong>400 DEACTIVATION_BLOCKED</strong> — DELETE 시점 재검증에서 차단 감지</li>
-            <li><strong>403 UNAUTHORIZED</strong> — 본인 아님</li>
+            <li><strong>탈퇴 시도 대비 차단 비율</strong> — 호스트·결제·정산 의무가 있는 사용자가 탈퇴를 시도하는 빈도.
+              너무 높으면 사용자가 의무를 인지하지 못한 채 탈퇴를 시도한다는 신호.</li>
+            <li><strong>차단 카테고리별 분포</strong> — 어떤 의무가 사용자를 가장 자주 막는지.
+              가장 흔한 차단 카테고리는 사용자 안내 강화 대상.</li>
+            <li><strong>점검 통과 → 실제 탈퇴 전환율</strong> — 사용자가 차단 없이 최종 확인까지 가서 정말 떠나는 비율.
+              너무 낮으면 자동 처리 항목 안내가 사용자를 망설이게 만든다는 신호일 수도.</li>
+            <li><strong>탈퇴 후 재가입(같은 이메일·전화번호)률</strong> — 본 단위가 "정리 도구"로 잘못 쓰이는지의 신호.</li>
+            <li><strong>점검 통과 후 최종 단계에서 재검증으로 차단된 비율</strong> — 사용자에게는 가장 답답한 케이스.
+              너무 높으면 점검 시점과 실행 시점 사이의 지연이 길다는 신호.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>처리</th></tr></thead>
-            <tbody>
-              <tr><td>사용자 상태</td><td>TRYEXIT 전이</td></tr>
-              <tr><td>리프레시 토큰</td><td>일괄 삭제 → 모든 기기 자연 로그아웃</td></tr>
-              <tr><td>알림 디바이스 토큰</td><td>삭제</td></tr>
-              <tr><td>참석 신청</td><td>무료는 자동 취소, 유료는 차단 항목으로 분류</td></tr>
-              <tr><td>클럽 멤버</td><td>자동 탈퇴(소유 클럽은 차단)</td></tr>
-              <tr><td>데이팅 매치</td><td>자동 만료/차단</td></tr>
-              <tr><td>거래·정산·회계</td><td>보존</td></tr>
-              <tr><td>닉네임·생년월일·전화 등</td><td>익명화</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>차단 없음</td><td>탈퇴</td><td>자동 정리 + TRYEXIT + 토큰 폐기</td></tr>
-              <tr><td>AC-02</td><td>미정산 존재</td><td>사전 체크</td><td>“탈퇴 불가” 다이얼로그, DELETE 미호출</td></tr>
-              <tr><td>AC-03</td><td>자동 처리만</td><td>탈퇴</td><td>자동 정리 + 익명화</td></tr>
-              <tr><td>AC-04</td><td>API 실패</td><td>사전 체크</td><td>오류 토스트, 다이얼로그 미노출</td></tr>
-              <tr><td>AC-05</td><td>DELETE 시 새 차단</td><td>실행</td><td>400 DEACTIVATION_BLOCKED, 계정 무변동</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 무너지면 다른 사용자의 권리가 막힌다</span>
           <ul>
-            <li><strong>사전 체크 결과를 신뢰</strong> — DELETE 시점에 재검증 안 하면 새 차단을 놓친다.</li>
-            <li><strong>소유 클럽을 자동 처리에 포함</strong> — 소유권 이전 없이 사라지면 클럽 좀비화. 반드시 차단.</li>
-            <li><strong>리프레시 토큰 삭제 누락</strong> — 다른 기기가 탈퇴 후에도 살아있는 회귀.</li>
-            <li><strong>익명화 누락(레코드 그대로)</strong> — 개인정보 노출 위험.</li>
-            <li><strong>유료 이벤트도 자동 취소로 분류</strong> — 환불·정산 일관성 깨짐. 유료는 미정산이면 차단.</li>
-            <li><strong>차단 항목 사유를 사용자에게 안 보여줌</strong> — 무엇을 해결해야 하는지 모름. 항목별 제목·상세 노출 필수.</li>
+            <li><strong>호스트가 정산 의무가 있는 채로 탈퇴되면</strong> 참가자가 받아야 할 환불·정산이 동결될 수 있다.
+              차단 검사 누락은 사용자 한 명의 문제가 아니라 다른 여러 사용자의 권리가 묶이는 사고.</li>
+            <li><strong>차단 점검과 실제 비활성화 사이의 재검증이 없으면</strong>
+              점검 직후 들어온 결제·정산이 그대로 사라질 위험이 있다 — 두 번 검증이 본 흐름의 안전 장치.</li>
+            <li><strong>자동 처리 항목 안내가 빠지면</strong> 사용자가 "내가 갑자기 나간 모임" 때문에 다른 사용자에게 미안한 상황이 된다.
+              자동 처리 항목 목록은 사용자에게 미리 보여 주는 것이 정책.</li>
+            <li><strong>30일 유예 삭제(F13-06)와 즉시 비활성화의 결과 계정 상태가 다르다.</strong>
+              운영 데이터에서 두 상태를 한 묶음으로 취급하면 사용자 흐름이 잘못 분석된다.</li>
+            <li><strong>지갑 잔액 처리가 비활성화 동작 안에 들어 있다.</strong>
+              유료 포인트 환불은 외부 결제사 연동이라 실패할 수 있다 — 실패한 케이스의 후속 처리가 운영 책임.</li>
+            <li><strong>강제 로그아웃이 동작하지 않으면</strong> 사용자가 비활성화된 계정으로 계속 로그인 상태가 유지된다.
+              본인이 자기 계정 상태를 잘못 인지하는 가장 위험한 회귀.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>이어지는 단위</h2>
+        <h2>이어지는 단위 · 관련 정책</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위</div><h3>13 프로필·설정</h3></a>
-          <a class="card" href="F13-06.html"><div class="eyebrow">대안</div><h3>F13-06 계정 삭제(30일 유예)</h3></a>
-          <a class="card" href="F01-05.html"><div class="eyebrow">세션</div><h3>F01-05 토큰·로그아웃</h3></a>
-          <a class="card" href="F04-03.html"><div class="eyebrow">선행</div><h3>F04-03 소유권 이전</h3></a>
-          <a class="card" href="F07-08.html"><div class="eyebrow">선행</div><h3>F07-08 정산 정리</h3></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위 도메인</div><h3>13 프로필·설정</h3></a>
+          <a class="card" href="F13-06.html"><div class="eyebrow">대안</div><h3>F13-06 계정 삭제(30일 유예)</h3><p>회복 가능성을 둔 다른 떠나기 경로.</p></a>
+          <a class="card" href="F13-05.html"><div class="eyebrow">사전 단계</div><h3>F13-05 데이터 내보내기</h3><p>떠나기 전 자기 데이터 사본을 받아 두는 곳.</p></a>
+          <a class="card" href="F13-01.html"><div class="eyebrow">진입</div><h3>F13-01 마이페이지</h3><p>본 흐름의 시작 메뉴가 있는 곳.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/13_profile_settings/F13-07_account-deactivation/{scenarios,backend,frontend}.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/13_profile_settings/F13-07_account-deactivation/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

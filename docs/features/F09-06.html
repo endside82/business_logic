@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F09-06 만남 제안·안전 흐름 — community PRD</title>
+  <title>F09-06 만남 제안 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,242 +17,166 @@
           <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
           F09-06 만남 제안
         </div>
-        <h1>F09-06. 만남 제안 · 안전 흐름</h1>
+        <h1>F09-06. 만남 제안</h1>
         <p class="lede">
-          채팅 중에 일시·장소를 합의해 “만남 제안”을 만들고, 상대가 수락하면 CONFIRMED.
-          확정 후에는 미팅 1시간 전부터 종료까지 위치 공유가 안내된다.
-          매치가 차단·만료되면 새 제안 자체가 막히고, 기존 row는 분쟁 기록용으로 보존된다.
+          매칭된 두 사용자가 오프라인으로 만나기 위한 일시·장소·메모를 주고받는 단위.
+          채팅이 무르익은 시점에 한쪽이 제안하고, 상대가 받아들이면 약속이 확정된다.
+          데이팅의 가치 사슬에서 가장 마지막 전환 — 온라인 매칭이 실제 만남으로 이어지는 자리다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">상태</div><div class="value">PROPOSED·CONFIRMED·CANCELED</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">10</div></div>
-          <div class="metric"><div class="label">매치 게이트</div><div class="value">MATCHED만</div></div>
-          <div class="metric"><div class="label">SOS/체크인</div><div class="value">미운영</div><div class="hint">의도적 제외</div></div>
+          <div class="metric"><div class="label">제안 가능 기간</div><div class="value">90일</div><div class="hint">오늘부터 3개월 이내</div></div>
+          <div class="metric"><div class="label">제안 상태</div><div class="value">4단계</div><div class="hint">제안 → 확정 → 취소 / 완료</div></div>
+          <div class="metric"><div class="label">위치 공유</div><div class="value">안내만</div><div class="hint">실제 공유 기능은 미운영</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">의도적 미운영 결정</span>
-          <p>SOS·체크인·긴급연락처는 제품 결정으로 <strong>서버·클라이언트 양쪽에서 삭제</strong>되었다.
-          스펙 문서(SCR-PD-006)의 관련 항목은 deprecated. 재도입 시 별도 작업.</p>
+          <span class="label">설계 의도 — 데이팅 가치 사슬의 마지막 전환을 가볍게 만든다</span>
+          <p>채팅까지 잘 흘러간 두 사람이 만남으로 넘어가지 못하는 자리에서 데이팅의 가치가 사라진다.
+            그래서 본 단위는 만남 제안을 한 화면 안에서 끝낼 수 있게 — 일시·장소·메모만 받고 곧장 제안 발송 — 짧게 설계되어 있다.
+            제안은 수정하지 않고 새로 보낸다. 같은 매칭에 새 제안이 누적되면 클라이언트가 가장 최신 활성 제안만 화면에 보여 줘 사용자가 혼란스러워하지 않는다.
+            SOS·체크인 같은 강한 안전 기능은 의도적으로 미운영 상태로 두고, 위치 공유 안내 메시지로 사용자가 안전 의식을 갖게 하는 데 그친다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>만남 제안</h3>
-            <p>일시·장소·메모 입력 → PROPOSED row INSERT. 매치 MATCHED만 허용.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>수락 / 거절 / 취소</h3>
-            <p>상대 또는 본인이 status 전환. 참여자 검증 필수.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>위치 공유 안내(CONFIRMED 이후)</h3>
-            <p>“미팅 1시간 전 ~ 종료” 위치 공유 정책 안내. 실제 공유는 F14-01.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>제안 누적</h3>
-            <p>같은 매치에 새 제안 가능. 서버 가드 없음 → 클라이언트가 “최신 활성” 1건만 노출.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 5</div>
-            <h3>차단·만료 시 차단</h3>
-            <p>매치가 BLOCKED/EXPIRED면 새 제안 차단. 기존 row는 보존(분쟁용).</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>제안 상태 머신</h2>
-        <div class="diagram"><div class="mermaid">
+        <h2>제안의 라이프사이클</h2>
+        <p class="subtitle">한 번의 제안이 거치는 네 상태.</p>
+        <div class="diagram">
+          <div class="mermaid">
 stateDiagram-v2
-    [*] --> PROPOSED: 사용자가 일시·장소 제안
-    PROPOSED --> CONFIRMED: 상대 수락
-    PROPOSED --> CANCELED: 상대 거절 또는 본인 취소
-    CONFIRMED --> CANCELED: 본인 또는 상대가 취소
-    CONFIRMED --> COMPLETED: 만남 시각 이후
-    CANCELED --> [*]
-    COMPLETED --> [*]
-        </div></div>
+    [*] --> 제안: 한쪽이 일시·장소·메모 작성
+    제안 --> 확정: 상대가 수락
+    제안 --> 취소: 한쪽이 취소
+    확정 --> 완료: 만남 종료 후 상태 갱신
+    확정 --> 취소: 만남 전 사정 변경
+    취소 --> [*]
+    완료 --> [*]
+          </div>
+        </div>
       </section>
 
       <section>
-        <h2>제안 → 수락 시퀀스</h2>
-        <div class="diagram"><div class="mermaid">
-sequenceDiagram
-    actor A as 사용자 A
-    actor B as 사용자 B
-    participant API as 미팅 API
-    participant SVC as 미팅 서비스
-    participant DB as DB
-    A->>API: GET /meetings/match/{matchId}
-    API-->>A: [] (없음)
-    A->>API: POST /meetings {date, time, locationName, note}
-    API->>SVC: 제안 등록
-    SVC->>SVC: 참여자 + 매치 MATCHED 검증
-    SVC->>DB: meeting INSERT (status=PROPOSED, proposedBy=A)
-    API-->>A: 201 + 카드 갱신
-    Note over B: B가 같은 라우트 진입 시 PROPOSED 카드 노출
-    B->>API: PATCH /meetings/{id} {status=CONFIRMED}
-    API->>SVC: 상태 전이
-    SVC->>SVC: 참여자 검증
-    SVC->>DB: status=CONFIRMED 갱신
-    API-->>B: 200
-    Note over A: A가 다시 진입 시 초록 "약속 확정" 카드 + 위치 공유 안내 버튼
-        </div></div>
-      </section>
+        <h2>사용자 시나리오</h2>
 
-      <section>
-        <h2>사용자 시나리오 10개</h2>
         <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>제안 → 수락</h3>
-            <ol>
-              <li>A가 채팅 헤더 📅 → 미팅 화면 진입</li>
-              <li>일시·장소·메모 입력 → “만남 제안하기”</li>
-              <li>POST → PROPOSED + proposedBy=A INSERT</li>
-              <li>B가 같은 라우트 진입 → PROPOSED 카드 노출</li>
-              <li>B가 수락 → PATCH status=CONFIRMED</li>
-              <li>A에 “약속 확정” + 위치 공유 안내 버튼</li>
-            </ol>
-            <p><strong>현재 갭:</strong> B에게 자동 푸시는 없음. 채팅 메시지 또는 라우트 재진입으로 인지.</p>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>채팅에서 만남 제안</h3>
+            <p>매칭 후 일주일 정도 대화한 사용자가 채팅 헤더의 📅 아이콘을 누른다.
+              만남 제안 화면이 열리고, 일시(달력 + 시간)·장소·메모(선택)를 입력한 뒤 "만남 제안하기"를 누른다.
+              "만남을 제안했습니다" 토스트가 떠오르고 자동으로 채팅 화면으로 돌아간다.
+              상대가 같은 매칭에서 진입하면 노란 "응답 대기 중" 상태 카드를 본다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 데이팅에서 가장 가치 있는 전환을 한 화면, 한 동작으로 끝낸다. 제안의 무게를 가볍게 둬서 사용자가 망설이지 않게 한다.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S2 · 검증</div><h3>일시·장소 미입력</h3>
-            <ol>
-              <li>장소만 입력 → “일시를 선택해주세요”</li>
-              <li>일시만 선택 → “장소를 입력해주세요”</li>
-              <li>송신 차단</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">필수 입력</div>
+            <h3>일시 또는 장소를 빠뜨림</h3>
+            <p>장소만 입력하고 일시를 비운 채로 제안하기를 누른다.
+              "일시를 선택해주세요" 토스트가 뜨고 송신은 막힌다.
+              반대로 일시만 채우고 장소를 빠뜨리면 "장소를 입력해주세요" 토스트.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 만남 제안에서 핵심 두 정보(언제·어디)를 빠뜨리지 않게 한다. 메모는 비워도 된다.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S3 · 권한</div><h3>다른 매치의 미팅 조작</h3>
-            <ol>
-              <li>자기 매치 아닌 meetingId로 PATCH 시도</li>
-              <li>참여자 검증 실패 → 403 FORBIDDEN</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">수락</div>
+            <h3>상대가 제안을 받아들임</h3>
+            <p>상대가 같은 화면으로 진입해 "약속 확정" 의사를 표시한다.
+              두 사용자 모두 화면 다시 진입 시 노란 "응답 대기 중" 대신 초록 "약속 확정" 카드를 본다.
+              카드 안에 "위치 공유 안내" 버튼이 있어 누르면 "미팅 시작 1시간 전부터 종료까지 자동으로 위치가 공유됩니다" 라는 안내 다이얼로그가 떠오른다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 위치 공유 실제 기능은 현재 미운영 상태. 안내 텍스트만 노출되는 한계가 있어 사용자가 "공유되고 있다고 믿는다"는 오해 가능. 안내 카피 분리 검토 여지.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S4 · 매치 게이트</div><h3>BLOCKED/EXPIRED 매치에 제안</h3>
-            <ol>
-              <li>POST → match.status≠MATCHED → DATE_MATCH_NOT_FOUND</li>
-              <li>토스트 “만남 제안에 실패했습니다”</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">새 제안</div>
+            <h3>응답이 없어 다른 일정으로 다시 제안</h3>
+            <p>1차 제안에 상대가 며칠 응답하지 않는다.
+              사용자가 같은 화면에서 다른 일시·장소로 새 제안을 입력해 보낸다.
+              화면은 항상 가장 최신 제안만 카드로 보여주므로 사용자에게는 자연스럽게 "새 제안이 활성"으로 보인다.</p>
+            <p><strong>운영 관찰 포인트</strong> — 서버에는 두 제안이 모두 살아 있다(누적 저장). 1차 제안이 PROPOSED 상태로 그대로 남기 때문에, 운영팀이 매칭의 제안 이력을 봤을 때 여러 row가 보일 수 있다. 향후 1차 자동 취소 정책 고려 여지.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S5 · 누적</div><h3>같은 매치에 새 제안</h3>
-            <ol>
-              <li>1차 PROPOSED 미응답 상태에서 새 제안</li>
-              <li>서버 단순 INSERT → row 누적</li>
-              <li>클라이언트가 id 최댓값으로 “최신 활성”만 노출</li>
-            </ol>
-            <p><strong>운영 노트:</strong> 서버 가드가 없어 1차가 PROPOSED로 남는다. 분쟁 시 전체 row가 기록.</p>
-          </article>
-
-          <article class="card"><div class="eyebrow">S6 · 위치 공유</div><h3>CONFIRMED 후 안내</h3>
-            <ol>
-              <li>카드 → “위치 공유 안내” 버튼</li>
-              <li>AlertDialog: “미팅 시작 1시간 전부터 종료까지 자동으로 위치가 공유됩니다”</li>
-              <li>실제 공유 구현은 F14-01에 의존</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S7 · 미운영</div><h3>SOS / 체크인</h3>
-            <p>의도적으로 운영하지 않음. 서버·클라이언트 양쪽 삭제. 별도 작업으로만 재도입.</p>
-          </article>
-
-          <article class="card"><div class="eyebrow">S8 · 차단</div><h3>차단 발동 → 미팅 중단</h3>
-            <ol>
-              <li>PROPOSED 상태에서 차단(F09-07)</li>
-              <li>매치 BLOCKED → 메시지 송신 차단 + 새 제안 차단</li>
-              <li>기존 미팅 row는 보존(분쟁 기록)</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S9 · 신고</div><h3>본 화면에 신고 액션 없음</h3>
-            <p>차단으로 단절. 신고 자체는 F11-04(외부 도메인).</p>
-          </article>
-
-          <article class="card"><div class="eyebrow">S10 · 시간대</div><h3>KST 가정</h3>
-            <p>서버는 LocalDateTime/LocalTime, 클라이언트는 디바이스 로컬 시간 그대로 송신. 운영상 KST 가정.</p>
+          <article class="card">
+            <div class="eyebrow">차단 발동</div>
+            <h3>제안 후 한쪽이 상대를 차단</h3>
+            <p>제안을 보낸 후 한쪽이 상대를 차단한다.
+              매칭 자체가 차단 상태로 바뀌어, 그 매칭에 새 제안을 보내려고 하면 "만남 제안에 실패했습니다" 토스트가 뜬다.
+              기존 제안 데이터는 그대로 보존된다 — 분쟁 시 운영팀이 참조할 수 있도록.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 차단이 매칭과 만남 제안 양쪽을 동시에 끊는다. 안전 가드의 일관성.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:140px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/date/meetings/match/{matchId}</code></td><td>해당 매치의 미팅 row 전체</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/date/meetings</code></td><td>새 제안 INSERT(PROPOSED)</td></tr>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/date/meetings/{id}</code></td><td>status 전이(CONFIRMED/CANCELED)</td></tr>
+              <tr>
+                <td><strong>진행 중 상태 카드</strong></td>
+                <td>현재 활성 제안이 있으면 상단에 색이 다른 카드가 자리. 제안 = 노란색, 확정 = 초록색, 취소·완료 = 회색.</td>
+                <td>"지금 우리 약속이 어디까지 와 있는가"를 색 하나로 인지하게. 본문을 읽기 전에 상태가 먼저 들어온다.</td>
+              </tr>
+              <tr>
+                <td><strong>상대 정보 카드</strong></td>
+                <td>분홍색 fallback 아바타 + "{상대 이름}님과의 만남" + "매칭한 지 N일" 같은 보조문.</td>
+                <td>제안 화면에서도 누구와의 약속인지 사용자에게 다시 한 번 보여 준다. 매칭 후 시간 감각도 함께 제공.</td>
+              </tr>
+              <tr>
+                <td><strong>일시 입력 영역</strong></td>
+                <td>📅 + "날짜와 시간을 선택하세요" 자리. 누르면 달력 → 시간 선택기 두 단계로 이어진다.</td>
+                <td>두 단계로 나눠 사용자가 "어느 날, 몇 시"를 차례로 결정. 한 화면에 둘 다 띄우면 결정 무게가 커진다.</td>
+              </tr>
+              <tr>
+                <td><strong>장소 입력</strong></td>
+                <td>📍 + "만남 장소를 입력하세요" 입력창. 자유 텍스트.</td>
+                <td>장소 검색·지도 연동이 없는 단순 텍스트 입력. 의사결정의 빠른 흐름을 우선.</td>
+              </tr>
+              <tr>
+                <td><strong>메모 영역</strong></td>
+                <td>여러 줄 텍스트 + "{현재}/200" 카운터. 선택 입력.</td>
+                <td>"옷차림, 모임 인사, 늦을 수도 있어요" 같은 추가 안내를 사용자가 자유롭게 보낼 수 있는 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>제안 버튼</strong></td>
+                <td>"💕 만남 제안하기" 분홍색 큰 버튼.</td>
+                <td>의사결정 동작 하나만 둔다. 제안의 무게를 가볍게 만드는 핵심 디자인.</td>
+              </tr>
+              <tr>
+                <td><strong>위치 공유 안내</strong></td>
+                <td>확정 상태 카드 안의 "위치 공유 안내" 버튼. 누르면 정적 안내 다이얼로그가 떠오른다.</td>
+                <td>실제 공유 기능은 없지만 사용자가 안전 의식을 갖게 하는 자리. 이 안내가 자리하는 것 자체가 "데이팅이 안전을 신경 쓴다"는 신호.</td>
+              </tr>
             </tbody>
           </table>
         </div>
+      </section>
 
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">에러 코드</span>
+          <span class="label">현 단위의 한계와 정책 포인트</span>
           <ul>
-            <li><strong>404 DATE_MATCH_NOT_FOUND</strong> — MATCHED 아닌 매치(BLOCKED/EXPIRED 포함)</li>
-            <li><strong>403 FORBIDDEN</strong> — 매치 참여자 아님</li>
-            <li><strong>400 INVALID_INPUT</strong> — 일시/장소 누락</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>제안</th><th>전이</th><th>차단/만료</th></tr></thead>
-            <tbody>
-              <tr><td>date_meeting</td><td>INSERT(PROPOSED + proposedBy)</td><td>status 전이</td><td>보존(분쟁용)</td></tr>
-              <tr><td>date_match</td><td>—</td><td>—</td><td>BLOCKED/EXPIRED 시 새 제안 차단</td></tr>
-              <tr><td>위치 공유 (F14-01)</td><td>—</td><td>CONFIRMED 후 안내</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>MATCHED 매치</td><td>제안 등록</td><td>PROPOSED INSERT</td></tr>
-              <tr><td>AC-02</td><td>일시/장소 누락</td><td>제안 시도</td><td>토스트 + 송신 차단</td></tr>
-              <tr><td>AC-03</td><td>PROPOSED + 상대</td><td>수락 PATCH</td><td>CONFIRMED 전이</td></tr>
-              <tr><td>AC-04</td><td>비참여자</td><td>PATCH 시도</td><td>403 FORBIDDEN</td></tr>
-              <tr><td>AC-05</td><td>BLOCKED/EXPIRED</td><td>제안 시도</td><td>404 NOT_FOUND</td></tr>
-              <tr><td>AC-06</td><td>이미 PROPOSED</td><td>새 제안</td><td>row 누적, 클라이언트는 최신만 노출</td></tr>
-              <tr><td>AC-07</td><td>CONFIRMED</td><td>위치 안내 버튼</td><td>다이얼로그 정책 안내</td></tr>
-              <tr><td>AC-08</td><td>차단 발동</td><td>새 제안</td><td>차단, 기존 row 보존</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
-          <ul>
-            <li><strong>매치 상태 게이트 누락</strong> — 차단/만료된 매치에 미팅이 만들어지면 사용자가 갇히는 흐름.</li>
-            <li><strong>제안 누적 시 1차 PROPOSED를 자동 CANCELED 처리하지 않음</strong> — 운영상 분쟁 추적은 가능하지만 사용자 인지가 혼란.</li>
-            <li><strong>CONFIRMED 후 알림 누락</strong> — 상대가 약속을 인지 못 함. 자동 푸시 도입 후보.</li>
-            <li><strong>참여자 검증 누락된 PATCH</strong> — 외부자가 임의로 status 전이 가능.</li>
-            <li><strong>위치 공유 안내를 실제 활성화로 오해</strong> — 안내는 F14-01에 의존. F09-06 단독으로 활성화 안 됨.</li>
-            <li><strong>SOS 흐름을 다시 추가</strong> — 의도적 미운영. 재도입은 별도 작업으로.</li>
+            <li><strong>제안 상태 변경 화면이 아직 없다.</strong>
+              상대가 받은 제안을 수락·거절하는 별도 화면이 현 구현에는 없다.
+              서버에는 상태를 바꾸는 경로가 열려 있지만 사용자 화면에서 호출하는 자리가 비어 있어, 향후 매칭 상세 또는 알림 진입에서 보완 필요.</li>
+            <li><strong>SOS·체크인·긴급연락처는 의도적으로 운영하지 않는다.</strong>
+              이전 결정으로 서버·클라이언트 양측에서 모두 삭제된 상태.
+              스펙 문서에 흔적이 남아 있어도 본 단위에는 포함되지 않는다 — 향후 재도입은 별도 작업으로 다룬다.</li>
+            <li><strong>위치 공유는 안내 메시지일 뿐 실제 공유는 동작하지 않는다.</strong>
+              사용자가 안내 카피를 보고 "공유되고 있다"고 오해할 가능성이 있다 — 안내 카피를 미운영 상태에 맞게 조정하거나, 실제 공유 기능 도입 시점까지 안내 자체를 빼는 선택지를 고려할 여지.</li>
+            <li><strong>제안 데이터는 누적 저장된다.</strong>
+              같은 매칭에 새 제안이 들어와도 1차 제안이 자동 취소되지 않는다.
+              운영상 한 매칭에 여러 PROPOSED row가 살아 있을 수 있으므로, 이력 조회 시 가장 최신만 유효 제안으로 본다는 정책을 운영팀이 인지해야 한다.</li>
+            <li><strong>차단된 매칭에 새 제안은 들어가지 않는다.</strong>
+              안전 가드가 일관되게 작동한다 — 매칭이 차단되면 만남 제안도 함께 막힌다.</li>
+            <li><strong>제안 일시는 디바이스 로컬 시간 그대로 송신된다.</strong>
+              사용자가 한국에서 입력하든 외국에서 입력하든 동일한 값으로 저장 — 운영상 한국 시간 기준으로 가정한다.</li>
           </ul>
         </div>
       </section>
@@ -260,15 +184,16 @@ sequenceDiagram
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
-          <a class="card" href="F09-05.html"><div class="eyebrow">진입</div><h3>F09-05 채팅</h3></a>
-          <a class="card" href="F09-07.html"><div class="eyebrow">차단</div><h3>F09-07 차단</h3></a>
-          <a class="card" href="F14-01.html"><div class="eyebrow">위치 공유</div><h3>F14-01 이벤트 위치 공유</h3></a>
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위 도메인</div><h3>09 프라이빗 데이팅</h3><p>본 단위가 만드는 가장 마지막 전환의 가치가 도메인 전체로 환원되는 자리.</p></a>
+          <a class="card" href="F09-05.html"><div class="eyebrow">앞 단위</div><h3>F09-05 데이팅 채팅</h3><p>본 화면 진입의 출발점.</p></a>
+          <a class="card" href="F09-04.html"><div class="eyebrow">관련</div><h3>F09-04 매칭 목록</h3><p>매칭이 만남 제안까지 가는 진척이 노출되는 자리.</p></a>
+          <a class="card" href="F09-07.html"><div class="eyebrow">관련</div><h3>F09-07 사용자 차단</h3><p>제안 흐름을 끊는 안전 액션.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/09_private_date/F09-06_meeting_proposal/{scenarios,backend,frontend}.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/09_private_date/F09-06_meeting_proposal/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

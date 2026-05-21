@@ -1,34 +1,281 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F07-03 활성화·취소 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>F07-03 활성화·취소</div>
-<h1>F07-03. 정산 활성화 · 취소</h1>
-<p class="lede">DRAFT 정산을 ACTIVE로 전환하면 참가자 푸시 + transfer 자동 생성이 시작된다. 활성화 후에도 호스트는 정산 전체 취소가 가능(미완료 transfer 환불).</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>활성화</h3><p>DRAFT → ACTIVE + transfer 자동 생성 + 푸시 fanout.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>취소</h3><p>완료된 transfer 환불, status=CANCELLED.</p></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>활성화</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>취소(완료 분 환불)</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>이의 진행 중 취소 차단</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>비호스트 차단</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>PATCH</code></td><td><code>/api/v1/events/{eventId}/settlement/activate</code></td></tr>
-<tr><td><code>PATCH</code></td><td><code>/api/v1/events/{eventId}/settlement/cancel</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
-<a class="card" href="F07-05.html"><div class="eyebrow">다음</div><h3>F07-05 분담금 납부</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/07_meeting_settlement/F07-03_activate-cancel/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F07-03 정산 활성화·취소 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
+          F07-03 활성화·취소
+        </div>
+        <h1>F07-03. 정산 활성화·취소</h1>
+        <p class="lede">
+          작성 중 정산을 호스트가 "활성화"하는 순간, 비로소 참가자에게 청구 알림이 나가고 결제가 가능해진다.
+          이 결정은 한 방향으로 흐른다 — 활성화 이후의 항목 자유 편집은 막히고, 잘못 나간 청구는
+          정산 취소를 통해서만 되돌릴 수 있다. 취소는 가장 위험한 동작이다.
+          이미 결제된 포인트는 자동으로 송금자 지갑에 환원되고, 계좌이체로 받은 돈은 호스트가 손으로 환불해야 한다.
+          본 단위는 "청구의 시작"과 "청구의 회수" 두 동작을 함께 다룬다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">활성화 직후 알림</div><div class="value">참가자 전원</div><div class="hint">한 번에 발송</div></div>
+          <div class="metric"><div class="label">취소 시 포인트</div><div class="value">자동 환원</div><div class="hint">송금자 지갑으로 즉시</div></div>
+          <div class="metric"><div class="label">취소 시 계좌이체</div><div class="value">수동 환불</div><div class="hint">호스트의 직접 송금 필요</div></div>
+          <div class="metric"><div class="label">완료된 정산</div><div class="value">취소 불가</div><div class="hint">마감 이후 되돌릴 수 없음</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 청구의 시작은 단 한 번, 회수는 그만큼 무겁게</span>
+          <p>"활성화"는 정산이 호스트의 작성 화면에서 참가자의 청구서로 변하는 순간이다.
+            한 번 활성화되면 참가자에게 알림이 가고, 결제가 시작되며, 항목 자유 편집은 잠긴다.
+            그래서 이 동작은 의도된 한 번의 결정이어야 한다 — 클릭 한 번으로 청구가 모두에게 동시에 나간다.</p>
+          <p>취소는 그 반대의 무게를 갖는다. 이미 누군가 돈을 보냈을 수도 있고, 그 돈이 다시 돌아가는 길도 결제 방식에 따라 다르다.
+            포인트는 시스템이 자동으로 송금자 지갑에 되돌려 놓고, 계좌이체로 받은 돈은 호스트가 직접 환불해야 한다.
+            "취소했는데 환불이 안 됐다" 같은 사고가 가장 자주 일어나는 흐름이라 본 단위는 그 두 갈래를 명확하게 분리한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>활성화 한 번이 만들어내는 변화</h2>
+        <p class="subtitle">"정산 활성화" 버튼이 눌리는 순간 한 번에 일어나는 일.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["작성 중 정산"] --> B{"항목이 1건 이상 있는가"}
+    B -->|"아니오"| E1["항목이 필요합니다 안내"]
+    B -->|"예"| C{"분담이 빈 항목이 있는가"}
+    C -->|"있음"| E2["분담 비어 있음 안내"]
+    C -->|"없음"| D["정산 상태: 진행 중으로 전환"]
+    D --> E["송금 구조 자동 생성<br/>(호스트 일괄 수금 / 직접 송금)"]
+    E --> F["참가자 전원에게 알림 발송"]
+    F --> G["참가자가 결제 화면에서 본인 청구 확인"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>두 가지 정산 모드, 두 가지 송금 구조</h2>
+        <p class="subtitle">활성화 시점에 호스트가 처음 정산을 만들 때 선택한 모드에 따라 송금 라인이 다르게 그려진다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">모드 1 · 호스트 일괄 수금</div>
+            <h3>호스트가 단일 허브가 된다</h3>
+            <p>모든 채무자가 호스트 한 명에게 송금하는 단순 구조. 호스트가 영수증을 모두 결제했고
+              나머지가 나눠서 호스트에게 돌려주는 형태에 어울린다.
+              송금 라인이 단순해서 호스트가 누구로부터 얼마를 받았는지 한눈에 확인하기 쉽다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">모드 2 · 직접 송금</div>
+            <h3>참가자끼리 직접 주고받는다</h3>
+            <p>여러 사람이 각자 다른 영수증을 결제한 경우. 시스템이 잔액 차액을 계산해서
+              가장 적은 송금 횟수로 정산되도록 짝지어 준다.
+              호스트가 모든 돈을 중개하지 않아도 되는 대신, 송금 라인이 여러 갈래로 흩어진다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>취소 한 번이 만들어내는 두 갈래의 환불</h2>
+        <p class="subtitle">이미 결제된 분담이 어떻게 처리되는가가 결제 방식에 따라 다르다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["호스트: 정산 취소 탭"] --> B["완료된 송금 한 건씩 확인"]
+    B --> C{"어떤 방식으로 결제됐는가"}
+    C -->|"포인트"| D1["송금자 지갑에 자동 환원"]
+    D1 --> D2["호스트 지갑에서 동액 차감"]
+    D2 --> D3["회계 역분개 기록"]
+    D3 --> X["송금 상태: 취소됨"]
+    C -->|"계좌이체"| E1["송금 상태: 수동 환불 대기"]
+    E1 --> E2["호스트에게 '직접 환불해 주세요' 알림"]
+    E2 --> E3["호스트가 별도 화면에서 본인이 받은 돈을<br/>송금자 지갑에 직접 되돌려준다"]
+    B --> F["아직 결제 안 된 송금<br/>(대기 중)"]
+    F --> F1["송금 상태: 취소됨<br/>(별도 환불 없음)"]
+    X --> Z["정산 상태: 취소됨"]
+    E3 --> Z
+    F1 --> Z
+    Z --> Y["관련 참가자 전원에게 '정산이 취소되었습니다' 알림"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 활성화</div>
+            <h3>6명에게 청구 알림이 한 번에 나간다</h3>
+            <p>호스트가 모든 항목 입력을 마치고 정산 현황 화면 하단의 "정산 신청" 버튼을 누른다.
+              "참여자에게 알림이 발송됩니다" 확인 다이얼로그 → 확인. 정산 상태가 진행 중으로 바뀌고,
+              송금 라인 5건이 자동으로 만들어지면서 참가자 5명에게 같은 시각에 알림이 도착한다.
+              호스트 화면의 액션 바는 "독촉 / 취소"로 변경된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "청구가 발송됐다"는 시점이 명확해야 호스트가
+              누구의 응답을 기다리고 있는지 의식할 수 있다. 활성화 전과 후가 모호하면 운영 책임이 모호해진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">활성화 옵션 · 마감 + 자동 독촉</div>
+            <h3>마감일을 설정하고 12시간 뒤 자동 독촉 예약</h3>
+            <p>호스트가 활성화 시점에 "1주일 후 마감 + 마감 12시간 후 자동 독촉" 옵션을 함께 설정한다.
+              마감 후 정해진 시간이 지나도 미납자가 있으면 시스템이 자동으로 한 번 알림을 보낸다.
+              본 단위는 옵션 저장까지만 책임지고, 실제 자동 발송은 리마인드 단위(F07-07)가 맡는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 항목 없음</div>
+            <h3>항목 0건인 채로 활성화 시도</h3>
+            <p>호스트가 실수로 항목을 한 건도 추가하지 않고 활성화를 누른다.
+              화면 안내 띠가 활성화 버튼을 비활성화시켜 두지만, 우회 호출이 들어오면
+              "항목이 필요합니다" 응답으로 막힌다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 청구할 내용이 없는 청구는 보낼 수 없다.
+              빈 청구가 발송되면 참가자는 "이게 뭐냐"라는 의문부터 갖는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 취소(포인트 환원)</div>
+            <h3>모임이 취소돼서 정산도 되돌린다</h3>
+            <p>호스트가 활성화한 다음 모임 자체가 취소됐다. 5건 중 2건은 이미 포인트로 결제 완료.
+              호스트가 "취소"를 누르면 "이미 결제된 포인트는 자동 환불됩니다" 다이얼로그가 뜨고, 확인하면
+              포인트 2건이 송금자 지갑으로 즉시 되돌아가고 호스트 지갑에서는 동액이 차감된다.
+              아직 결제되지 않은 3건은 그냥 취소되고 별도 환불은 없다. 관련 사용자 5명에게 "정산이 취소되었습니다" 알림이 도착.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 포인트는 시스템 안에서 움직이므로 시스템이 자동으로 되돌릴 수 있다.
+              이 자동화가 없으면 호스트가 한 명씩 직접 포인트를 보내야 하고, 사고 위험이 급격히 커진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소 · 계좌이체 분기</div>
+            <h3>계좌이체로 받은 돈은 호스트가 직접 환불해야 한다</h3>
+            <p>취소 시점에 계좌이체로 이미 받은 송금이 한 건 있다. 시스템은 그 송금을 "수동 환불 대기" 상태로 바꾸고
+              수취자(호스트)에게 별도 알림을 보낸다. "정산이 취소되었습니다. 받은 금액을 환불해 주세요" 같은 안내와 함께
+              호스트가 포인트로 즉시 환불할 수 있는 진입점이 따라온다(F07-05의 본인 환불 흐름).</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 계좌이체는 우리 시스템 밖에서 움직이는 돈이라
+              시스템이 임의로 되돌릴 수 없다. 호스트의 손을 명시적으로 한 번 더 거치게 해서 환불의 책임을 분명히 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소 · 환원 실패</div>
+            <h3>포인트 환원 도중 한 건이 실패한다</h3>
+            <p>지갑 잠금 같은 사정으로 포인트 환원 한 건이 실패한다. 시스템은 그 송금만 "환원 실패" 상태로 표시하고
+              다른 송금은 정상 처리한다. 정산 자체는 정상적으로 취소되고, 실패 건은 자동 재시도 스케줄러가 주기적으로 다시 시도한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 건의 실패로 전체 취소가 멈추면 더 큰 혼란이 생긴다.
+              실패는 따로 표시하고 본 흐름은 끝까지 진행한 뒤 나중에 재시도한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 권한</div>
+            <h3>참석자가 활성화 주소로 직접 접근</h3>
+            <p>일반 참석자가 디버그/우회로 활성화를 호출하면 정산 생성자도 호스트도 아니라는 이유로 거절된다.
+              액션 바에도 참석자에게는 활성화·취소 버튼이 노출되지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 · 완료된 정산</div>
+            <h3>이미 완료된 정산을 취소하려 한다</h3>
+            <p>모든 송금이 완료돼 정산이 자동으로 완료된 후에 호스트가 취소를 시도한다.
+              "이미 완료된 정산은 취소할 수 없습니다" 안내가 뜨고 거절된다.
+              화면의 액션 바에도 "정산이 완료되었습니다" 라벨만 남고 취소 버튼은 사라진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 완료된 정산을 되돌리려면 분쟁 처리 경로(이의제기 또는 별도 환불 협의)로 가야 한다.
+              자동 취소로 풀리면 회계가 어긋난다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">화면 요소</th><th>호스트가 보는 것</th><th style="width:34%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>작성 중 안내 띠</strong></td>
+                <td>"호스트가 정산을 준비 중입니다 — 활성화 후 참가자에게 알림이 갑니다" 같은 한 줄 안내.</td>
+                <td>활성화 전과 후가 명확히 구분되어야 한다 — 활성화가 한 방향 결정임을 호스트가 의식하게.</td>
+              </tr>
+              <tr>
+                <td><strong>"정산 신청" 버튼</strong></td>
+                <td>화면 하단 고정. 항목 0건이면 비활성화. 누르면 "참여자에게 알림이 발송됩니다" 확인 다이얼로그.</td>
+                <td>한 번 누르면 모두에게 알림이 가는 동작이라 다이얼로그로 의지 확인 한 번을 더 거친다.</td>
+              </tr>
+              <tr>
+                <td><strong>활성화 후 액션 바</strong></td>
+                <td>"독촉" 버튼과 "취소" 버튼으로 변경.</td>
+                <td>활성화 이후에는 호스트가 할 일이 달라진다 — 항목 편집이 아닌 "기다림과 회수".</td>
+              </tr>
+              <tr>
+                <td><strong>취소 확인 다이얼로그</strong></td>
+                <td>"이미 결제된 포인트는 자동 환불됩니다" 안내가 명시. 계좌이체 환불은 별도 처리됨을 함께 안내.</td>
+                <td>취소의 결과가 결제 방식에 따라 다르다는 사실을 호스트가 누르기 전에 인지해야 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>완료 후 액션 바</strong></td>
+                <td>"정산이 완료되었습니다" 라벨만. 다른 버튼은 사라짐.</td>
+                <td>완료된 정산은 더 이상 호스트가 손댈 동작이 없음을 명시.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 무너지면 청구 신뢰가 즉시 무너진다</span>
+          <ul>
+            <li><strong>활성화는 알림 발송과 한 동작으로 묶여 있다.</strong>
+              상태 전환은 됐는데 알림이 안 가는 사고가 일어나면 참가자는 청구를 모른 채 호스트만 기다리는 상태가 된다 —
+              둘이 분리되지 않도록 처리한다.</li>
+            <li><strong>취소 시 포인트 환원은 자동, 계좌이체 환불은 호스트의 손이다.</strong>
+              두 갈래의 책임 경계가 흐려지면 "취소했는데 돈이 안 돌아왔다"는 분쟁이 가장 자주 일어난다 —
+              계좌이체 분기에서 호스트에게 가는 알림 문구가 명확해야 한다.</li>
+            <li><strong>포인트 환원 실패는 본 흐름과 분리해서 재시도한다.</strong>
+              한 건의 실패로 정산 취소 자체가 멈추면 다른 환불도 못 받게 된다 —
+              실패 건은 따로 마킹하고 정산 취소 자체는 끝까지 진행하는 정책.</li>
+            <li><strong>완료된 정산은 자동 취소로 풀리지 않는다.</strong>
+              완료 이후의 환불은 사람 간 협의나 이의제기 경로로 가야 한다 — 자동 취소로 풀면 회계가 어긋나고
+              누가 얼마를 환불해야 하는지 추적이 불가능해진다.</li>
+            <li><strong>활성화 시 송금 구조는 한 번에 다시 그려진다.</strong>
+              호스트 일괄 수금이든 직접 송금이든 활성화 직전의 항목·분담 상태를 기준으로 송금 라인을 만든다 —
+              활성화 직후의 항목 수정은 막혀 있는 이유가 여기에 있다.</li>
+            <li><strong>대량 환원이 일어나는 시점이라 회계 원장과 지갑 거래가 어긋나지 않는지 모니터링한다.</strong>
+              포인트 환원 1건은 송금자 지갑 +, 호스트 지갑 -, 회계 역분개 세 개가 한 묶음으로 일어난다 —
+              이 셋 중 하나라도 누락되면 시스템이 잘못된 금액을 들고 있게 된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 도메인</div><h3>07 모임 정산</h3></a>
+          <a class="card" href="F07-02.html"><div class="eyebrow">앞 단위</div><h3>F07-02 항목 관리</h3></a>
+          <a class="card" href="F07-05.html"><div class="eyebrow">활성화 직후</div><h3>F07-05 분담금 납부</h3><p>참가자가 본인 분담을 결제하는 흐름.</p></a>
+          <a class="card" href="F07-06.html"><div class="eyebrow">호스트 책임</div><h3>F07-06 이체 확인·상각</h3><p>계좌이체 입금의 수동 확인.</p></a>
+          <a class="card" href="F07-07.html"><div class="eyebrow">관련</div><h3>F07-07 리마인드·마감 연장</h3><p>활성화 옵션과 자동 독촉.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/07_meeting_settlement/F07-03_activate-cancel/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

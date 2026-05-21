@@ -1,33 +1,201 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F11-01 이벤트 리뷰 작성 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>F11-01 리뷰 작성</div>
-<h1>F11-01. 이벤트 리뷰 작성</h1>
-<p class="lede">종료된 이벤트(ATTENDING + 7일 이내)에 한해 별점 + 본문을 1회만 작성. 호스트 본인은 작성 불가.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>리뷰 작성 폼</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>별점 + 본문</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>1회 제한 검증</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>참석자 리뷰 작성</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>중복 작성 차단</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>호스트 본인 작성 시도</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>7일 초과 작성 시도</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody><tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/reviews</code></td></tr></tbody>
-</table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/11-review.html"><div class="eyebrow">상위</div><h3>11 리뷰·신고</h3></a>
-<a class="card" href="F11-02.html"><div class="eyebrow">다음</div><h3>F11-02 목록</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/11_review_report/F11-01_event-review-write/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F11-01 이벤트 리뷰 작성 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
+          F11-01 이벤트 리뷰 작성
+        </div>
+        <h1>F11-01. 이벤트 리뷰 작성</h1>
+        <p class="lede">
+          모임에 실제로 참석한 사용자가 별점(1~5)과 후기를 남기는 면이다.
+          후기는 공개로 노출되어 다른 사용자의 신청 판단에 직접 영향을 주기 때문에,
+          "누가 작성할 자격이 있는가"와 "언제까지 받을 것인가"가 화면의 모든 정책을 결정한다.
+          후기 한 건이 등록되면 호스트의 신뢰점수가 다시 계산되고, 호스트에게 알림이 간다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">자격</div><div class="value">참석 확정자</div><div class="hint">신청·결제만으로는 안 됨</div></div>
+          <div class="metric"><div class="label">작성 가능 기간</div><div class="value">종료 후 7일</div><div class="hint">지나면 더는 받지 않는다</div></div>
+          <div class="metric"><div class="label">1인 1리뷰</div><div class="value">한 모임당 1건</div><div class="hint">삭제 후 재작성도 불가</div></div>
+          <div class="metric"><div class="label">본문 길이</div><div class="value">최대 1000자</div><div class="hint">별점만으로도 등록 가능</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 평판 데이터는 자격이 만들어야 한다</span>
+          <p>리뷰는 다음 참가자가 모임을 신청할지 말지 결정할 때 가장 먼저 보는 정보다.
+            그 자리에 들어갈 자격을 가진 사람을 좁히는 것이 본 단위의 첫 번째 책임이다 —
+            <strong>신청 취소·노쇼·호스트 본인</strong>은 모두 배제하고, 종료된 모임에 정상 참석한 사람만 글을 남길 수 있다.
+            "이 모임에 다녀온 사람의 말"이라는 신뢰가 한 번이라도 흔들리면 리뷰 자체의 가치가 사라진다.
+            동시에 너무 늦은 후기는 다른 신청자에게 도움이 되지 않으므로, 종료 후 7일이 지난 작성은 받지 않는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>제출 한 번이 통과해야 하는 다섯 조건</h2>
+        <p class="subtitle">사용자가 "제출"을 누르는 순간 서버에서 다섯 가지 자격이 차례로 확인된다.
+          하나라도 어긋나면 등록되지 않는다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 제출 탭"] --> B{"이 모임에 참석했는가"}
+    B -->|"아니오"| 안내1["참석자만 작성할 수 있다는 안내"]
+    B -->|"예"| C{"모임이 이미 끝났는가"}
+    C -->|"아직 진행 전"| 안내2["종료 후에 작성 가능 안내"]
+    C -->|"끝남"| D{"종료 후 7일 이내인가"}
+    D -->|"지났음"| 안내3["작성 기간이 끝났다는 안내"]
+    D -->|"이내"| E{"내가 호스트가 아닌가"}
+    E -->|"호스트 본인"| 안내4["호스트는 자기 모임에 작성 불가"]
+    E -->|"참가자"| F{"같은 모임에 이미 작성한 적이 있는가"}
+    F -->|"있음"| 안내5["이미 작성됨 — 수정으로 이동"]
+    F -->|"없음"| G["리뷰 등록 + 호스트 신뢰점수 재계산 + 호스트 알림"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>토요일 모임 다녀와서 별점 4, 후기 한 줄</h3>
+            <p>모임 종료 다음 날 알림을 받은 사용자가 "리뷰 작성"으로 들어온다.
+              상단에 이벤트 요약 카드가 보이고, 별점 4를 탭하면 "좋아요" 라벨이 뜬다.
+              짧은 후기를 적고 "제출"을 누르면 "리뷰가 등록되었습니다" 토스트와 함께 이전 화면으로 돌아온다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트는 새 리뷰 알림을 받고, 호스트의 신뢰점수가 재계산되어 다음 모임의 노출에 반영된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>어제 이미 쓴 모임에 또 작성 시도</h3>
+            <p>같은 모임에 어제 후기를 남긴 사용자가 푸시를 다시 눌러 작성 화면에 들어왔다.
+              "제출" 시점에 중복이 감지되어 "이미 리뷰를 작성하셨습니다" 토스트가 뜨고 이전 화면으로 자동 복귀한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 사람이 같은 모임에서 평점을 여러 번 올리지 못하게 막아, 평균 별점이 인위적으로 부풀어 오르지 않게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자격 차단</div>
+            <h3>신청만 하고 안 갔던 사람이 후기 시도</h3>
+            <p>신청은 했지만 노쇼였거나 신청을 취소한 사용자가 어떤 경로로든 작성 화면에 들어와 제출한다.
+              참석 기록이 없어 "참석한 사용자만 작성할 수 있습니다" 안내가 뜨고 화면이 닫힌다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가지 않은 모임에 후기가 쌓이면 다음 참가자가 그 후기를 믿고 결정한 뒤 배신감을 느낀다. 자격 가드는 한 번도 풀리면 안 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기간 마감</div>
+            <h3>한 달 전 모임에 뒤늦게 적으려 함</h3>
+            <p>한참 지난 후 생각나서 후기를 남기려 한다. 종료 후 7일이 지났으므로 제출이 거절되고 안내가 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 너무 오래된 후기는 다음 참가자의 결정에 도움이 되지 않는다. 작성 기간을 좁히면 그 자리에 남는 후기는 모두 "최근에 다녀온 사람의 말"이 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 차단</div>
+            <h3>호스트가 자기 모임에 후기 시도</h3>
+            <p>본인이 주최한 모임에 자기 평점을 남기려 한다. 호스트 본인은 자기 모임을 평가할 수 없다는 안내가 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 자기 별점을 직접 끌어올리는 행위를 막아, 평균 별점이 "다른 참가자의 평가"만 반영하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">의도 이탈</div>
+            <h3>별점만 누르다가 뒤로가기</h3>
+            <p>별점을 골랐다가 마음이 바뀐 사용자가 뒤로가기를 누른다. 작성 중인 내용이 있다는 확인 다이얼로그가 뜨고,
+              "나가기"를 선택하면 입력은 휘발되고 이전 화면으로 돌아간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 실수로 별점만 누른 채 화면을 떠나 의도하지 않은 후기가 등록되는 사고를 막는다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <p class="subtitle">실제로 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:130px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>상단 모임 요약 카드</strong></td>
+                <td>썸네일, 모임 제목, 시작일, 호스트 닉네임이 한 카드에.</td>
+                <td>"내가 어느 모임에 후기를 남기고 있는지" 화면 상단에서 의심 없이 확인 — 모임 식별이 어긋난 채 제출되는 사고를 막는다.</td>
+              </tr>
+              <tr>
+                <td><strong>"이 모임은 어떠셨나요?" 헤딩 + 별 5개</strong></td>
+                <td>크게 뜬 별 5개를 탭하면 1: 별로예요 / 2: 그저 그래요 / 3: 보통이에요 / 4: 좋아요 / 5: 최고예요 라벨이 뜬다.</td>
+                <td>숫자만으로는 사용자가 자기 마음을 정확히 짚기 어렵다. 라벨이 별점 의미를 매번 같은 기준으로 잡아준다.</td>
+              </tr>
+              <tr>
+                <td><strong>후기 입력 칸</strong></td>
+                <td>"이벤트에 대한 솔직한 후기를 남겨주세요" 안내, 우하단에 글자수 카운터, 최대 1000자.</td>
+                <td>별점은 필수, 본문은 선택이다 — 텍스트를 강제하면 별점만으로 의사를 표현하고 싶은 사용자가 작성을 포기한다.</td>
+              </tr>
+              <tr>
+                <td><strong>하단 고정 "제출" 버튼</strong></td>
+                <td>화면 최하단에 항상 보이는 단일 버튼. 별점이 없으면 비활성.</td>
+                <td>긴 후기를 적은 사용자가 마지막에 스크롤로 버튼을 찾는 번거로움을 없앤다. 한 번에 누를 수 있는 자리에 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>미저장 이탈 확인</strong></td>
+                <td>뒤로가기 시 "작성 중인 리뷰가 있습니다" 다이얼로그 + "계속 작성" / "나가기".</td>
+                <td>실수로 화면을 떠나서 입력이 사라지는 일을 막는다. 동시에 명시적 "나가기"를 누른 경우에는 즉시 닫는다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">리뷰 한 건이 일으키는 후속 동작</span>
+          <ul>
+            <li><strong>리뷰가 등록되는 순간 호스트의 신뢰점수가 다시 계산된다.</strong>
+              점수 변동이 1점 이상이면 변동 이력에 한 줄이 남는다(F11-05).
+              운영 측이 호스트 점수에 잡음이 생긴다고 느끼면 가장 먼저 들여다볼 곳이 이 호출 경로다.</li>
+            <li><strong>호스트에게 새 리뷰 알림이 즉시 발송된다.</strong>
+              호스트는 다음 모임을 준비하는 동안 자신이 받은 평가를 실시간으로 본다 — 부정적 후기에 호스트가 즉각 반응하지 않도록 한 박자 쉬는 안내 카피를 알림 측에서 고려할 필요가 있다.</li>
+            <li><strong>1인 1리뷰 정책은 삭제 후에도 유지된다.</strong>
+              본인이 리뷰를 지웠다고 같은 모임에 새 리뷰를 다시 쓸 수 없다 — 삭제 행은 그대로 남고 중복 검사 대상이다.
+              "삭제하면 다시 쓸 수 있다"고 오해하는 사용자가 나오면 안내 카피 보강이 필요하다.</li>
+            <li><strong>UI 스펙에는 "본문 10자 이상" 같은 표기가 있으나 현재 구현은 별점만 검증한다.</strong>
+              본문 강제 정책으로 전환할 경우 이 화면의 "제출" 활성 조건을 함께 손봐야 사용자 혼란이 없다.</li>
+            <li><strong>호스트 본인 차단은 "모임에 참석한 호스트"도 막는다.</strong>
+              호스트가 자기 모임에 참가자로 등록되어 있어도 본인 모임에는 후기를 남길 수 없다 — 평균 별점이 호스트 자신에 의해 끌어올려지지 않게 하는 것이 목적.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">상위 도메인</div><h3>11 리뷰·신고</h3></a>
+          <a class="card" href="F11-02.html"><div class="eyebrow">다음</div><h3>F11-02 리뷰 목록</h3><p>작성된 리뷰가 다른 사용자에게 한눈에 보이는 면.</p></a>
+          <a class="card" href="F11-03.html"><div class="eyebrow">관련</div><h3>F11-03 수정·삭제</h3><p>작성 후 본인이 정정할 수 있는 경로.</p></a>
+          <a class="card" href="F11-05.html"><div class="eyebrow">연결</div><h3>F11-05 신뢰점수</h3><p>리뷰가 호스트 점수를 어떻게 움직이는가.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/11_review_report/F11-01_event-review-write/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

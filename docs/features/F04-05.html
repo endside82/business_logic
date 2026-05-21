@@ -1,51 +1,178 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-05 대기열·초대 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-05 대기열·초대</div>
-<h1>F04-05. 가입 대기열 · 초대</h1>
-<p class="lede">승인제 클럽의 신청 대기열을 관리자가 처리하고, 멤버에게 초대장을 보내 가입을 권유한다. 초대는 7일 후 자동 만료되며, BUSINESS 클럽은 승인 시점에 가입비를 결제한다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">하위 동작</div><div class="value">4</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
-<div class="metric"><div class="label">초대 TTL</div><div class="value">7일</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>승인/거절</h3><p>승인은 MEMBER 등록, 거절은 사유 입력(노출 안 함).</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>가입비 결제(BUSINESS)</h3><p>승인 트랜잭션 안에서 차감 → 실패 시 멤버 등록까지 롤백.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>초대 보내기</h3><p>관리자가 사용자 검색 → 초대 + 알림.</p></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>초대 수락/거절</h3><p>알림함에서 처리. 만료된 초대는 차단.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 9개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>신청 승인</h3><ol><li>대기열 카드 → 승인 → MEMBER 등록 + 푸시</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>거절 + 사유</h3><ol><li>사유 입력(서버 로그용)</li><li>신청자 알림은 사유 미포함</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>BUSINESS 승인 시 가입비</h3><ol><li>승인 + 지갑 차감 + 기금 적립</li><li>잔액 부족 시 전체 롤백</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>초대 보내기</h3><ol><li>사용자 검색 → 초대장 INSERT</li><li>CLUB_INVITATION 푸시</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>초대 수락</h3><ol><li>알림함 → 수락 → MEMBER 등록</li><li>초대자에게 ACCEPTED 알림</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>초대 거절</h3><ol><li>거절 → wait 삭제, 초대자 알림 없음</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>만료된 초대 수락</h3><ol><li>7일 초과 → INVITATION_EXPIRED + wait 삭제</li></ol></article>
-<article class="card"><div class="eyebrow">S8</div><h3>구독 만료 클럽 초대</h3><ol><li>CLUB_SUBSCRIPTION_EXPIRED → 구독 갱신 안내</li></ol></article>
-<article class="card"><div class="eyebrow">S9</div><h3>차단 사용자 초대</h3><ol><li>CLUB_BANNED 안내</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/waitlist</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/waitlist/{waitId}/approve</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/waitlist/{waitId}/reject</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/invitations</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/invitations/{waitId}/accept</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/invitations/{waitId}/decline</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-02.html"><div class="eyebrow">관련</div><h3>F04-02 상세·가입</h3></a>
-<a class="card" href="F04-16.html"><div class="eyebrow">연동</div><h3>F04-16 클럽 구독</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-05_waitlist-invitation/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-05 가입 대기열·초대 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-05 가입 대기열·초대
+        </div>
+        <h1>F04-05. 가입 대기열·초대</h1>
+        <p class="lede">
+          승인 가입 클럽의 운영자가 신청을 처리하고, 동시에 마음에 드는 사용자를 직접 클럽으로 끌어오는 두 흐름을 다룬다.
+          신청과 초대는 사용자가 어느 쪽에서 시작했느냐가 다를 뿐 같은 대기 레코드를 사용해 처리되며,
+          단계마다 양 당사자에게 알림이 간다. 초대는 7일이 지나면 만료되어 자동으로 사라진다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">초대 유효 기간</div><div class="value">7일</div><div class="hint">이후 자동 만료</div></div>
+          <div class="metric"><div class="label">두 가지 출발점</div><div class="value">신청 / 초대</div><div class="hint">사용자가 시작 · 운영자가 시작</div></div>
+          <div class="metric"><div class="label">유료 클럽 승인</div><div class="value">즉시 결제</div><div class="hint">승인 시점에 가입비 차감</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 신청과 초대는 출발점이 다르고 처리 흐름도 다르다</span>
+          <p>신청은 "이 클럽에 들어가고 싶다"는 사용자의 의지에서 출발해 운영자에게 가는 흐름이고,
+            초대는 "이 사람이 우리 클럽에 들어왔으면 좋겠다"는 운영자의 의지에서 시작해 사용자에게 가는 흐름이다.
+            두 흐름이 정반대 방향이지만 결과는 같다 — 사용자가 클럽 멤버가 된다.
+            그래서 단계마다 알림 받는 사람이 다르다 — 신청 시점에는 운영자에게, 승인·거절 시점에는 신청자에게,
+            초대 시점에는 피초대자에게, 수락 시점에는 초대자에게.
+            방향을 헷갈리면 한쪽이 결정을 기다리고 있는지 알 길이 없어진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>두 가지 흐름의 동선</h2>
+        <p class="subtitle">신청과 초대는 출발 방향이 반대지만 같은 대기 레코드를 만든다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    subgraph 신청
+        A1["사용자: 가입 신청"] --> A2["관리자에게 알림"]
+        A2 --> A3{"관리자 결정"}
+        A3 -->|"승인"| A4["멤버 등록 + 신청자 알림"]
+        A3 -->|"거절"| A5["대기 해제 + 신청자 알림"]
+    end
+    subgraph 초대
+        B1["관리자: 초대"] --> B2["피초대자에게 알림"]
+        B2 --> B3{"피초대자 결정"}
+        B3 -->|"수락"| B4["멤버 등록 + 초대자 알림"]
+        B3 -->|"거절"| B5["대기 해제"]
+        B3 -->|"7일 미응답"| B6["만료 + 자동 정리"]
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">승인</div>
+            <h3>관리자가 신청을 받아 승인한다</h3>
+            <p>관리자가 가입 신청 알림을 누르고 대기열 화면으로 들어간다. 신청자 카드에 가입 메시지가 함께 보이고,
+              "승인" 버튼을 누르면 그 사용자는 즉시 멤버가 된다. 신청자 폰에 "가입이 승인되었습니다" 알림이 도달한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입 메시지가 결정 단서로 작동하고, 승인 결과가 양쪽 알림으로 한 번에 정리된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">거절</div>
+            <h3>거절 사유를 적어 신청을 거절한다</h3>
+            <p>관리자가 "거절"을 누르면 사유 입력 시트가 떠오른다. "활동 지역이 다릅니다" 같은 사유를 적어 거절하면
+              신청자에게는 거절 알림이 가지만 알림 본문에는 사유가 포함되지 않는다. 사유는 운영팀 내부 기록으로만 남는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 거절 사유를 신청자에게 곧장 노출하지 않는 것은 분쟁 방지. 다만 운영팀이 패턴을 학습할 수 있게 기록은 남긴다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">유료 클럽 승인</div>
+            <h3>가입비가 있는 클럽의 승인 시점</h3>
+            <p>유료 클럽 신청을 승인하면 그 자리에서 신청자 지갑에서 가입비가 빠지고 클럽 기금으로 들어간다.
+              잔액이 부족하면 승인 자체가 실패하고 신청은 여전히 대기 상태로 남는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입과 결제가 한 동작이어야 하므로, 결제 실패 시 멤버도 등록되지 않는다. 운영자에게는 결제 실패 안내가 노출되어 다른 처리(거절·재시도)를 결정할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">초대</div>
+            <h3>관리자가 친구 한 명을 직접 초대한다</h3>
+            <p>관리자가 멤버 목록 우상단 "초대"에서 사용자를 검색해 고르고 짧은 메시지와 함께 초대를 보낸다.
+              피초대자 폰에 "ㅇㅇ에게 초대가 왔습니다" 알림이 가고, 알림함에서 수락/거절을 선택할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수락</div>
+            <h3>피초대자가 알림을 누르고 수락한다</h3>
+            <p>알림함에서 "수락"을 누르면 즉시 클럽 멤버가 되고 클럽 상세 화면으로 이동한다.
+              초대를 보낸 관리자에게는 "초대가 수락되었습니다" 알림이 간다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">만료</div>
+            <h3>초대가 7일 동안 응답되지 않는다</h3>
+            <p>피초대자가 8일째 알림을 열고 수락을 시도하면 "만료된 초대입니다" 안내가 뜨고 항목이 알림함에서 사라진다.
+              관리자가 다시 초대를 보내야 새 7일이 시작된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 만료된 초대가 영원히 누적되면 대기열이 노이즈로 가득 차고 운영자가 진짜 결정을 놓친다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>차단된 사용자에게 초대를 보내려 한다</h3>
+            <p>차단된 사용자에게 초대를 시도하면 "차단된 사용자에게는 초대할 수 없습니다" 안내가 떠오른다.
+              차단의 의미가 무너지지 않도록 초대 경로도 가드를 걸어 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">유료 운영 클럽</div>
+            <h3>운영 구독이 만료된 클럽이 초대를 보내려 한다</h3>
+            <p>유료 운영 클럽이 운영 구독을 갱신하지 않아 만료된 상태라면 초대 자체가 차단된다.
+              "클럽 구독을 갱신해 주세요" 안내와 함께 구독 관리 화면으로 안내된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">신청·초대 정책 결정점</span>
+          <ul>
+            <li><strong>거절 사유는 신청자에게 노출하지 않는다.</strong>
+              "활동 지역이 다릅니다" 같은 사유가 사용자에게 직접 가면 분쟁의 출발점이 된다.
+              사유는 운영팀 내부에서만 보이도록 한다.</li>
+            <li><strong>유료 클럽 승인의 결제 실패는 멤버 등록 자체를 막아야 한다.</strong>
+              "승인은 됐는데 돈은 안 빠졌다"가 한 번이라도 발생하면 클럽이 무료로 사용되는 사고가 일어난다.
+              승인과 결제는 한 동작이며, 결제 실패 시 신청은 그대로 대기 상태로 남는다.</li>
+            <li><strong>초대 7일 만료는 자동이어야 한다.</strong>
+              운영자가 일일이 정리할 수 없다. 8일이 지난 초대는 사용자가 수락 시도하는 순간 만료되어 사라지며,
+              별도 스케줄러가 정기적으로 만료된 초대 정리를 같이 수행한다.</li>
+            <li><strong>차단된 사용자에 대한 초대 가드가 풀리면 차단의 의미가 무너진다.</strong>
+              가입과 초대 두 경로 모두 차단 검사가 동작해야 한다.</li>
+            <li><strong>운영 구독 만료 클럽의 초대 차단은 구독 결제를 유도하는 직접적 수단이다.</strong>
+              운영자가 운영을 이어 가려면 구독을 갱신해야 한다는 사실을 초대 시점에 자연스럽게 인지하게 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-02.html"><div class="eyebrow">관련</div><h3>F04-02 클럽 상세·가입</h3><p>신청 흐름의 출발점.</p></a>
+          <a class="card" href="F04-04.html"><div class="eyebrow">관련</div><h3>F04-04 멤버 관리</h3><p>초대 진입은 "초대" 탭에서.</p></a>
+          <a class="card" href="F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3><p>차단된 사용자의 초대·가입을 차단하는 정책의 출처.</p></a>
+          <a class="card" href="F04-16.html"><div class="eyebrow">관련</div><h3>F04-16 클럽 구독</h3><p>운영 구독 만료 시 초대 차단의 출처.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-05_waitlist-invitation/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

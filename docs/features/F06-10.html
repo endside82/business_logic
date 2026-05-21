@@ -1,39 +1,251 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F06-10 정산 조회·이의 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-10 정산</div>
-<h1>F06-10. 정산 조회 · 요약 · 이의 제기</h1>
-<p class="lede">호스트의 정산 목록과 상세를 본다. 상태별 필터, 라인 아이템 breakdown(수수료/원천), 거절된 정산에 대한 이의 제기까지.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>요약 + 상태 탭</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>상세 breakdown</h3><p>총매출/플랫폼 수수료/원천징수/실수령.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>이의 제기</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>타임라인</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>요약 + 상태별 보기</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>상세 breakdown</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>이의 제기 제출</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>재심사 진행 추적</h3></article>
-<article class="card"><div class="eyebrow">S5</div><h3>거절된 이의 재제출 차단</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/wallet/settlements?status=&page=&size=</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/wallet/settlements/summary</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/wallet/settlements/{id}</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/wallet/settlements/{id}/appeal</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
-<a class="card" href="F06-09.html"><div class="eyebrow">관련</div><h3>F06-09 수익 대시보드</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/06_payment/F06-10_settlement-appeal/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-10 정산 조회·이의 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-10 정산 조회·이의
+        </div>
+        <h1>F06-10. 정산 조회·요약·이의 제기</h1>
+        <p class="lede">
+          호스트가 자기 정산을 상태별로 추적하고 한 정산의 세부 내역(총 매출, 플랫폼 수수료, 원천징수, 실수령액)을 확인하는 자리.
+          정산이 거절된 경우 호스트는 사유에 동의하지 않으면 이의를 제기할 수 있고, 그 결과는 운영팀이 재심사로 답한다.
+          호스트가 "내 돈이 어디까지 왔는지", "왜 거절됐는지" 모두 확인할 수 있는 자족적 자리 — 본 화면이 흐려지면 운영팀에 들어오는 정산 문의가 즉시 늘어난다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">정산 상태</div><div class="value">5단계</div><div class="hint">대기 · 승인 · 지급중 · 완료 · 실패/거절</div></div>
+          <div class="metric"><div class="label">자동 재시도</div><div class="value">5일 이내</div><div class="hint">실패 시 운영팀 개입 전 자동</div></div>
+          <div class="metric"><div class="label">이의 제기 회신</div><div class="value">영업일 5일</div><div class="hint">제출 후 관리자 답변 약속</div></div>
+          <div class="metric"><div class="label">한 정산당 이의</div><div class="value">1번</div><div class="hint">제출 후 결과를 기다린다</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 호스트가 자기 정산을 운영팀 문의 없이 자족적으로 추적할 수 있게 한다</span>
+          <p>호스트는 자기 돈이 어디까지 왔는지를 즉시 알 수 있어야 다음 모임을 결정한다.
+            본 화면은 정산 한 건의 라이프사이클(대기 → 승인 → 지급중 → 완료)을 사용자 시각으로 분명히 보여 주고, 실패한 정산은 시스템이 자동으로 재시도한다는 사실까지 안내해 — 호스트가 운영팀에 문의를 던지지 않게 한다.
+            거절된 정산에 대해서는 사유를 그대로 보여 주고, 호스트가 동의하지 않으면 이의를 제기할 수 있다 — 이의는 한 정산당 한 번으로 제한해 같은 정산을 반복 제기로 채우지 못하게 한다.
+            정산 처리가 호스트에게 흐릿하게 보이면 그 시점에 호스트가 떠난다 — 본 화면은 호스트 잔류의 직접 신호다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>정산 한 건의 라이프사이클</h2>
+        <p class="subtitle">호스트의 정산은 다섯 상태 사이를 오간다. 정상 경로(대기 → 승인 → 지급중 → 완료)와 분기 경로(실패 자동 재시도 · 거절 후 이의 제기).</p>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 대기: 정산 발생
+    대기 --> 승인: 운영팀 검토 통과
+    대기 --> 거절: 운영팀 거절
+    승인 --> 지급중: 외부 송금 시작
+    지급중 --> 완료: 송금 성공
+    지급중 --> 실패: 송금 실패
+    실패 --> 지급중: 자동 재시도(5일 이내)
+    거절 --> 대기: 호스트 이의 제기 후 재심사 시작
+    완료 --> [*]
+    실패 --> [*]: 5일이 지나도 미해결
+
+    note right of 실패
+      자동 재시도가 동작 — 호스트가 별도 액션을 할 필요 없음
+      5일이 지나도 미해결이면 운영팀 수동 처리
+    end note
+    note right of 거절
+      거절 사유가 호스트에게 그대로 보임
+      이의 제기로 다시 대기 상태로 돌아간다
+    end note
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>완료된 정산과 보류 중인 정산을 한눈에 본다</h3>
+            <p>호스트가 지갑에서 "정산" 바로가기를 누른다.
+              요약 영역에 "정산 완료 ₩2,450,000 / 보류 ₩520,000"이 떠 있고 그 아래 상태별 탭이 있다.
+              "완료" 탭을 누르면 지급이 끝난 정산만, "대기" 탭을 누르면 운영팀 검토를 기다리는 정산만 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 "내 돈이 어디까지 왔는지"를 한 화면 안에서 파악.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">상세 확인</div>
+            <h3>한 정산의 수수료가 어떻게 계산됐는지</h3>
+            <p>한 정산 카드를 누르면 상세에 라인 항목이 보인다 — "총 매출 1,000,000 / 플랫폼 수수료 -100,000 (10%) / 원천징수 -33,000 (3.3%) / 실수령액 867,000".
+              왜 받기로 한 금액과 실제 받은 금액이 다른지를 호스트가 별도 문의 없이 인지한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정산 수수료에 대한 호스트 문의를 사전에 차단.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">진행 중</div>
+            <h3>"지급 처리 중" 안내를 본다</h3>
+            <p>정산이 지급 진행 단계인 호스트가 상세에 들어오면 "지급 처리 중 / 정산금 지급이 진행 중입니다. 완료되면 지갑 잔액과 거래 내역에서 확인할 수 있습니다" 안내가 떠 있다.
+              잠시 후 화면을 당겨 갱신하면 상태가 완료로 바뀌어 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">실패 자동 재시도</div>
+            <h3>외부 송금에 실패한 정산</h3>
+            <p>외부 송금이 한 번 실패한 정산. 상세 화면에 "자동 재시도 중 / 정산 지급에 실패하여 자동으로 재시도됩니다. 5일 이내에 처리되지 않으면 관리자에게 문의해 주세요" 안내가 보인다.
+              호스트는 별다른 액션 없이 기다린다 — 시스템이 정해진 시각에 자동으로 재시도.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 일시적 송금 실패가 호스트의 즉시 신고로 이어지지 않게 — 사용자 신뢰와 운영 부하를 동시에 보호.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">거절 — 이의 제기</div>
+            <h3>거절된 정산 사유에 동의하지 않는다</h3>
+            <p>운영팀이 정산을 거절했고, 사유가 "중복 정산 의심"으로 표시되어 있다.
+              호스트는 사실이 아니라고 보고 "이의 제기" 버튼을 누른다.
+              사유 입력 시트에 본인 설명을 쓰고 제출하면 정산이 재심사 대기 상태로 돌아간다.
+              영업일 기준 5일 이내에 운영팀이 답한다는 안내가 떠 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 거절을 일방적으로 받아들이지 않고, 정해진 절차로 의사를 표현할 수 있다는 통제감. 운영팀에는 거절에 대한 호스트 반응이 데이터로 쌓인다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 제출</div>
+            <h3>같은 정산에 이의를 또 제출하려 함</h3>
+            <p>이미 이의를 한 번 제출한 호스트가 같은 정산에 다시 제출을 시도한다.
+              시스템이 거절하고 "이미 이의를 제출하셨습니다" 안내. 화면을 새로고침하면 기존 이의 카드가 떠올라 호스트가 결과를 기다리는 단계임을 인지.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 정산당 한 번의 이의 제기 정책. 같은 정산을 반복 제기로 채우지 못하게 막아 운영팀 업무량을 보호.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기간 좁히기</div>
+            <h3>이번 달 정산만 본다</h3>
+            <p>요약 영역 아래의 기간 필터에서 "이번 달"을 누른다.
+              화면에 보이는 정산이 이번 달 발생 건으로 좁혀진다 — 서버 호출 없이 현재 보고 있는 데이터에서 빠르게 좁혀 보는 동선.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">상태 + 기간</div>
+            <h3>이번 달 완료된 정산만</h3>
+            <p>상태 탭 "완료" + 기간 탭 "이번 달"을 함께 누르면 정확한 부분집합이 보인다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>요약 영역</strong></td>
+                <td>"정산 완료 ₩N / 보류 ₩M" 두 카드.</td>
+                <td>호스트가 가장 먼저 확인하고 싶은 "지금까지 받은 돈"과 "받기로 한 돈"을 화면 가장 위에. 보류는 대기 + 승인 합산 — 사용자 시각으로 묶은 단위.</td>
+              </tr>
+              <tr>
+                <td><strong>상태 필터 탭</strong></td>
+                <td>전체 · 대기 · 승인 · 지급중 · 완료 · 실패 · 거절 7개 탭.</td>
+                <td>각 상태가 호스트에게 다른 의미를 가진다 — 대기는 "운영팀 검토 중", 지급중은 "곧 들어옴", 거절은 "이의 제기 가능". 한 화면에서 상태별로 분리.</td>
+              </tr>
+              <tr>
+                <td><strong>기간 필터</strong></td>
+                <td>전체 · 이번 주 · 지난 주 · 이번 달 · 지난 달 · 최근 3개월.</td>
+                <td>호스트가 회계 단위로 정산을 좁혀 볼 수 있게. 서버 호출 없이 화면 측에서 빠르게 필터.</td>
+              </tr>
+              <tr>
+                <td><strong>정산 상세 — 세부 내역</strong></td>
+                <td>총 매출 · 플랫폼 수수료(-N%) · 원천징수(-3.3%) · 무료 포인트 보조금 · 실수령액.</td>
+                <td>호스트가 "왜 N원이 빠졌는지"를 한 줄씩 확인. 정산 수수료에 대한 문의의 80%가 본 영역에서 자족적으로 해소.</td>
+              </tr>
+              <tr>
+                <td><strong>상태 타임라인</strong></td>
+                <td>대기 → 승인 → 지급중 → 완료 4단계 시각화.</td>
+                <td>호스트가 "지금 어느 단계인지"를 한눈에 — 진행 중인 정산의 다음 단계가 무엇인지 사용자에게 미리 인지.</td>
+              </tr>
+              <tr>
+                <td><strong>상태별 안내 카드</strong></td>
+                <td>지급중·실패·거절 각각 다른 색·문구의 안내 카드.</td>
+                <td>호스트가 다음에 해야 할 일(아무것도 없음 / 기다림 / 이의 제기) 또는 운영팀이 처리 중이라는 사실을 명확히 안내.</td>
+              </tr>
+              <tr>
+                <td><strong>이의 제기 버튼</strong></td>
+                <td>거절 상태 + 이의 미제출 정산에만 표시.</td>
+                <td>거절을 받지 않으면 이 버튼이 없어 — 사용자가 시도-거절의 헛걸음을 막는 시각적 가드.</td>
+              </tr>
+              <tr>
+                <td><strong>이의 제출 시트</strong></td>
+                <td>사유 입력칸(긴 글). 제출 후 "사유 / 상태 / 관리자 답변" 카드로 결과 추적.</td>
+                <td>호스트가 본인 설명을 충분히 적을 수 있어야 운영팀이 정확한 판단 가능. 결과는 같은 자리에 답변 카드로 표시 — 별도 화면을 보지 않게.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 정상이라고 부르려면 이 다섯 가지 지표가 추적되어야 한다</span>
+          <ul>
+            <li><strong>대기 → 승인까지의 평균 시간</strong> — 운영팀이 정산을 검토하는 데 걸리는 시간. 길어지면 호스트가 본 화면을 반복 진입하면서 신뢰가 떨어진다.</li>
+            <li><strong>승인 → 지급 완료까지의 평균 시간</strong> — 외부 송금에 걸리는 시간. 너무 길면 호스트가 다음 모임을 결정하기 어렵다.</li>
+            <li><strong>실패 자동 재시도 후 5일 이내 완료율</strong> — 자동 재시도가 운영팀 개입 없이 끝나는 비율. 낮으면 외부 송금 측의 구조적 문제 또는 호스트 계좌 정보 오류 비중을 의심.</li>
+            <li><strong>거절 → 이의 제기 비율</strong> — 거절된 정산 중 호스트가 이의를 제기하는 비율. 너무 높으면 거절 사유가 호스트에게 명확하지 않다는 신호.</li>
+            <li><strong>이의 제기 → 재심사 통과율</strong> — 이의 제기 후 운영팀이 원래 거절을 뒤집는 비율. 너무 높으면 1차 검토 기준이 약하다는 신호.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">본 화면이 흐려지면 호스트 잔류가 즉시 떨어진다</span>
+          <ul>
+            <li><strong>정산 처리가 호스트에게 흐릿하게 보이면 호스트가 떠난다.</strong>
+              "내 돈이 어디까지 왔는지" 모르는 호스트는 다음 모임을 열지 않는다 — 본 화면의 명확성이 호스트 공급의 직접 신호.</li>
+            <li><strong>거절 사유는 호스트가 그대로 읽는다.</strong>
+              운영팀이 거절 사유를 약식으로 적으면 호스트가 "왜 거절됐는지" 인지하지 못해 이의 제기가 늘어난다 — 거절 사유 작성 가이드라인이 본 화면의 사용자 경험을 직접 결정.</li>
+            <li><strong>이의 제기는 한 정산당 한 번이라는 정책을 유지해야 한다.</strong>
+              여러 번 제기를 허용하면 같은 정산을 반복 제기로 채워 운영팀 업무량이 폭증한다 — 한 번의 제기에 운영팀이 정확한 답을 주는 흐름이 본 정책의 전제.</li>
+            <li><strong>자동 재시도가 동작하지 않으면 호스트가 즉시 신고로 옮겨 간다.</strong>
+              실패 자동 재시도 흐름이 막힌 채로 며칠이 지나면, 본 화면의 "자동 재시도 중" 안내가 거짓말이 된다 — 운영팀 모니터링에 자동 재시도 성공률이 포함되어야 한다.</li>
+            <li><strong>요약 영역의 숫자와 페이지에 보이는 항목 합이 어긋나면 안 된다.</strong>
+              요약은 시스템 측 집계, 페이지는 현재 보이는 데이터 — 두 수치가 한 화면에서 어긋나 보이면 사용자 신뢰가 그 순간 무너진다.</li>
+            <li><strong>이의 제기 첨부 파일은 현재 지원되지 않는다.</strong>
+              호스트가 증빙을 첨부하고 싶은 경우가 늘어나면 별도 채널(고객센터)로 우회한다 — 운영 부담이 다른 자리에 쌓이는 신호이므로 첨부 지원 보강 검토.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위 · 관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위 도메인</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-09.html"><div class="eyebrow">진입</div><h3>F06-09 수익 대시보드</h3><p>본 화면을 둘러보기 → 상세로 이어 주는 자리.</p></a>
+          <a class="card" href="F06-03.html"><div class="eyebrow">관련 거래</div><h3>F06-03 거래 내역</h3><p>완료된 정산이 거래로 남는 자리.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 도메인</div><h3>07 모임 정산</h3><p>호스트 정산 발생의 출처.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">출처</div><h3>03 이벤트</h3><p>정산이 발생한 모임 상세.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/06_payment/F06-10_settlement-appeal/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

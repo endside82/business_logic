@@ -1,27 +1,120 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F12-06 권한 배너 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/12-notification.html">12 알림</a><span>›</span>F12-06 권한 배너</div>
-<h1>F12-06. 알림 권한 인라인 안내 배너</h1>
-<p class="lede">OS 알림 권한이 거부된 사용자에게 알림 화면 상단 배너로 OS 설정 진입을 안내. notDetermined는 첫 다이얼로그가 책임.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>거부 상태 배너 노출</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>OS 설정 진입 CTA</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>notDetermined → 배너 미노출</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>denied → 배너 노출</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>OS 설정 후 복귀</h3></article>
-</div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위</div><h3>12 알림</h3></a>
-<a class="card" href="F12-05.html"><div class="eyebrow">관련</div><h3>F12-05 디바이스 토큰</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/12_notification/F12-06_permission-banner/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F12-06 알림 권한 안내 배너 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/12-notification.html">12 알림</a><span>›</span>
+          F12-06 알림 권한 안내 배너
+        </div>
+        <h1>F12-06. 알림 권한 안내 배너</h1>
+        <p class="lede">
+          모바일 OS에서 알림 권한을 거부한 사용자가 알림 화면에 들어왔을 때, 화면 상단에 회복 경로를 한 줄로 안내하는 인라인 배너.
+          본 단위는 화면 한 칸을 차지할 뿐이지만, 권한 거부 상태로 결제·정산 같은 중요 알림을 놓치고 있는 사용자에게 "당신이 지금 알림을 못 받고 있다"는 사실 자체를 알려 주는 자리다.
+        </p>
+      </header>
+
+      <section>
+        <div class="callout">
+          <span class="label">설계 의도 — 권한 다이얼로그 한 번에 의존하지 않는다</span>
+          <p>가입 직후 한 번 보이는 OS 권한 다이얼로그에서 거부를 누른 사용자는 그 뒤로 그 다이얼로그를 다시 만나지 못한다.
+            모바일 OS의 동작 방식상 두 번째부터는 앱이 직접 권한 다이얼로그를 띄울 수 없고, 사용자가 OS 설정 화면에서 직접 토글해야 한다.
+            그런데 사용자는 거부를 누른 사실 자체를 잊는다 — "왜 결제 알림이 안 오지"라고 의아해할 뿐.
+            그래서 알림 화면(사용자가 알림 부재를 가장 강하게 의식하는 자리)에 한 줄짜리 배너로
+            <strong>"당신은 지금 권한이 꺼져 있고, 여기를 누르면 회복 경로로 갈 수 있다"</strong>는 사실을 명시한다.
+            과하게 침습적이지 않게 — 배너 한 줄, 닫기 없음, 권한이 회복되면 자동으로 사라진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자가 보는 것과 하는 일</h2>
+
+        <p>알림 화면 상단에 분홍빛 카드 한 장이 등장한다 — 알림 끄짐 아이콘, "알림이 꺼져 있습니다" 제목,
+          "신청 승인·결제·정산 등 중요 알림을 받으려면 권한을 허용해주세요" 한 줄, 우측의 "허용" 텍스트 버튼.
+          사용자가 "허용"을 누르면 OS의 앱 설정 화면이 열린다(앱이 직접 다이얼로그를 띄울 수 없으므로).
+          사용자가 OS 설정에서 권한 토글을 ON으로 바꾸고 앱으로 돌아오면 배너가 자동으로 사라지고,
+          푸시 토큰 등록(F12-05) 흐름이 백그라운드에서 이어진다.</p>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>권한을 거부했던 사용자가 결제 알림을 놓치고 후회한다</h3>
+            <p>가입 시 권한 다이얼로그에서 거부를 누른 사용자가 며칠 후 결제 실패를 뒤늦게 확인하고 알림 탭으로 들어온다.
+              상단에 권한 배너가 떠 있다. "허용"을 누르면 OS 설정 화면으로 진입, 권한 토글 ON 후 앱으로 돌아오면 배너가 사라지고 단말로 알림이 도달하기 시작한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 알림 부재의 원인을 사용자가 인지하지 못한 상태에서 사용자가 알림 채널 자체를 포기하지 않게 막아 준다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 거부 유지</div>
+            <h3>"허용"을 눌렀지만 OS 설정에서 권한을 켜지 않고 돌아온다</h3>
+            <p>사용자가 OS 설정 화면에서 권한 토글을 그대로 두고 앱으로 돌아오면 배너는 그대로 노출된다.
+              다음 진입에서도 같은 안내가 보이는 — 사용자의 의사 표시를 존중하되 회복 경로는 늘 열어 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 OFF 전환</div>
+            <h3>이미 켜져 있던 권한을 OS 설정에서 직접 끈다</h3>
+            <p>알림이 너무 많아 OS 설정에서 권한 자체를 끈 사용자가 며칠 후 다시 앱을 연다.
+              알림 탭에 들어오면 본 배너가 떠 있어 "현재 알림이 차단되어 있다"는 사실을 사용자가 다시 인지한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 권한 토글은 OS에 있지만 사용자는 그 사실을 잊는다.
+              앱 안의 배너가 "지금 상태"의 거울 역할을 한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">권한 배너 정책</span>
+          <ul>
+            <li><strong>배너는 OS 권한이 거부된 사용자에게만 보인다.</strong>
+              아직 다이얼로그를 만나지 않은 사용자나 이미 허용한 사용자에게는 보이지 않는다.
+              "한 번도 권한을 물어본 적 없는 사용자"에 대한 첫 권한 요청은 본 단위가 아닌 푸시 등록 흐름(F12-05)이 책임진다.</li>
+            <li><strong>배너에 닫기 동작은 없다.</strong>
+              권한이 회복되기 전까지 계속 보인다 — 사용자가 직접 닫게 두면 그 닫기 동작 자체가 알림 부재 상황을 가린다.
+              디자인 패턴상 "닫을 수 없는 안내"는 강한 결정 — 가벼운 카피와 작은 시각 비중으로 균형을 맞춘다.</li>
+            <li><strong>"허용" 버튼은 권한 다이얼로그를 직접 띄우지 않고 OS 설정 화면으로 보낸다.</strong>
+              모바일 OS가 같은 권한을 두 번 다이얼로그로 묻지 않기 때문 — 회복은 OS 설정에서만 가능하다는 제약을 사용자에게 한 단계로 보여 준다.</li>
+            <li><strong>권한 회복 후 푸시 도달까지는 자동으로 이어진다.</strong>
+              사용자가 OS 설정에서 권한 토글 ON 한 번이면, 앱으로 돌아왔을 때 배너 자동 소실 + 토큰 자동 등록(F12-05)이 모두 일어난다 — 사용자가 추가 동작을 하지 않아도 됨.</li>
+            <li><strong>본 단위는 백엔드 호출이 없다.</strong>
+              화면이 OS의 권한 상태를 직접 조회하고, "허용" 동작도 OS 설정으로 사용자를 보내는 것으로 끝난다.
+              운영 측에서 "배너가 안 보인다"는 신고가 들어오면 OS 권한 상태와 화면의 인지 시점(앱 복귀 시 자동 갱신)을 함께 확인.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위 도메인</div><h3>12 알림</h3></a>
+          <a class="card" href="F12-01.html"><div class="eyebrow">호스트 화면</div><h3>F12-01 알림 목록 · 읽음 관리</h3><p>본 배너가 상단에 자리잡는 화면.</p></a>
+          <a class="card" href="F12-05.html"><div class="eyebrow">권한 회복 후</div><h3>F12-05 푸시 기기 관리</h3><p>권한이 허용된 순간 자동으로 이어지는 토큰 등록 흐름.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/12_notification/F12-06_permission-banner/{backend,frontend,scenarios,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

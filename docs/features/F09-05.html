@@ -15,252 +15,238 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
-          F09-05 채팅
+          F09-05 데이팅 채팅
         </div>
         <h1>F09-05. 데이팅 채팅</h1>
         <p class="lede">
-          매치된 두 사용자만 들어오는 1:1 채팅. 본문은 AES로 암호화 저장되고, WebSocket으로 실시간 push되며,
-          <strong>clientMessageId 멱등키</strong>로 같은 메시지가 두 번 들어가지 않게 한다.
-          차단·비활성 등 사용자 상태 변화가 즉시 채팅에 반영되어 신뢰가 깨지지 않게 한다.
+          매칭이 성사된 두 사용자가 처음 대화를 나누는 면. 매칭 직후 곧장 열리는 채팅방에서 1:1 메시지를 주고받고,
+          상대가 입력 중인지·내가 보낸 메시지를 읽었는지·실시간 연결이 살아 있는지 모든 신호가 한 자리에서 보인다.
+          모든 메시지는 암호화되어 저장되고, 어느 한쪽이 상대를 차단하면 같은 동작으로 채팅방도 함께 닫힌다.
+          데이팅에서 사용자가 "관계가 시작된다"는 감각을 처음 받는 화면이다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">참여자</div><div class="value">2</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">10</div></div>
-          <div class="metric"><div class="label">암호화</div><div class="value">AES at-rest</div></div>
-          <div class="metric"><div class="label">실시간</div><div class="value">WebSocket</div></div>
+          <div class="metric"><div class="label">한 페이지 메시지</div><div class="value">50건</div><div class="hint">최신부터 받아 온다</div></div>
+          <div class="metric"><div class="label">메시지 저장</div><div class="value">암호화</div><div class="hint">평문은 어디에도 남지 않는다</div></div>
+          <div class="metric"><div class="label">재전송 안전</div><div class="value">동일 키</div><div class="hint">같은 메시지가 두 번 저장되지 않는다</div></div>
+          <div class="metric"><div class="label">차단 시 채팅방</div><div class="value">함께 닫힘</div><div class="hint">분리 불가능한 동작</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">중복·보안 가드 세 가지</span>
-          <ol style="margin:0 0 0 18px">
-            <li><strong>clientMessageId 멱등</strong> — 네트워크 재시도가 중복 메시지를 만들지 않음.</li>
-            <li><strong>참여자 검증</strong> — 방의 두 user 아니면 GET·POST 모두 차단(NOT_PARTICIPANT).</li>
-            <li><strong>방 상태 ACTIVE</strong> — 차단·만료된 매치의 방(CLOSED)에는 송신 불가.</li>
-          </ol>
+        <div class="callout">
+          <span class="label">설계 의도 — 매칭의 가치는 첫 메시지가 오갈 때 실현된다</span>
+          <p>매칭만으로는 사용자가 가치를 느끼지 못한다. 두 사람이 실제로 메시지를 한 번이라도 주고받았을 때 비로소 "데이팅이 작동한다"는 인지가 만들어진다.
+            그래서 본 단위는 매칭 성사 직후 즉시 열리고, 진입과 동시에 미읽음을 0으로 만들고, 상대의 입력 중 표시·내 메시지 읽음 표시를 실시간으로 주고받는다.
+            네트워크가 불안정해도 같은 메시지가 두 번 저장되지 않게 클라이언트가 부여하는 고유 키로 멱등성을 보장한다.
+            안전과 신뢰가 본 화면의 두 축이고, 메시지 암호화·차단 시 채팅방 동시 종료가 그 받침이다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>메시지 송수신</h3>
-            <p>TEXT(추가로 IMAGE 가능). 송신 → AES 암호화 → INSERT → 알림 + WebSocket push.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>읽음 처리</h3>
-            <p>화면 진입·메시지 수신 시 markAsRead → 상대에게 “읽음” 표시 push.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>타이핑 표시</h3>
-            <p>입력 시작/중지 이벤트를 WebSocket으로. 클라이언트 디바운스로 트래픽 절제.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>차단·종료 시 채팅 잠금</h3>
-            <p>매치 BLOCKED + 방 CLOSED. 송신 시 NOT_FOUND. 방 목록 폴링에서도 자연 제거.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 5</div>
-            <h3>비활성 프로필 송신 차단</h3>
-            <p>본인 isActive=false면 입력바에 안내 + 송신 비활성. 읽기·스크롤은 가능.</p>
+        <h2>한 메시지가 송신되는 자리</h2>
+        <p class="subtitle">사용자에게는 한 동작이지만, 그 안에서 암호화·중복 방지·실시간 전달이 순서대로 처리된다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자: 메시지 입력 + 송신 탭"] --> B["클라이언트가 고유 키 부여"]
+    B --> C{"채팅방이 활성 상태인가"}
+    C -->|"아니오(차단됨)"| 안내1["메시지 전송 실패 안내"]
+    C -->|"예"| D["같은 키로 이미 저장된 메시지가 있나"]
+    D -->|"있음"| E["기존 메시지 그대로 반환"]
+    D -->|"없음"| F["메시지 본문 암호화 후 저장"]
+    F --> G["상대에게 푸시 알림 발송"]
+    G --> H["실시간 채널로 상대 화면에 도착"]
+    E --> I["나에게는 송신 성공으로 보임"]
+    H --> I
           </div>
         </div>
       </section>
 
       <section>
-        <h2>송신 시퀀스 + 멱등</h2>
-        <div class="diagram"><div class="mermaid">
-sequenceDiagram
-    actor A as 사용자 A
-    actor B as 사용자 B
-    participant API as 채팅 API
-    participant SVC as 채팅 서비스
-    participant DB as DB
-    participant RT as 실시간 서버
-    A->>API: POST /messages {content, clientMessageId}
-    API->>SVC: 메시지 송신
-    SVC->>SVC: 참여자 검증 + 방 ACTIVE 검증
-    SVC->>DB: findByRoomId·SenderId·ClientMessageId
-    alt 이미 존재(재시도)
-        DB-->>SVC: 기존 메시지
-        SVC-->>API: 동일 메시지 반환 (멱등)
-    else 신규
-        SVC->>SVC: AES 암호화
-        SVC->>DB: INSERT
-        SVC->>RT: DateChatMessageCreatedEvent
-        RT->>B: WebSocket push
-        SVC-->>API: 메시지 ID + timestamp
-    end
-    B->>B: 미읽음 +1 + 알림
-    B->>API: PATCH /read (화면 진입 시)
-    API->>RT: read 이벤트
-    RT->>A: 읽음 표시 push
-        </div></div>
-      </section>
-
-      <section>
-        <h2>방 상태 머신</h2>
-        <div class="diagram"><div class="mermaid">
+        <h2>채팅방 상태의 라이프사이클</h2>
+        <p class="subtitle">한 매칭이 만든 채팅방은 다음 세 가지 상태를 거친다.</p>
+        <div class="diagram">
+          <div class="mermaid">
 stateDiagram-v2
-    [*] --> ACTIVE: 매칭 성사 + 방 INSERT
-    ACTIVE --> CLOSED: 한 쪽이 차단 (F09-07)
-    ACTIVE --> CLOSED: 매치 만료/언매치
-    CLOSED --> [*]: 다음 폴링에서 목록 제거
-        </div></div>
+    [*] --> 활성: 매칭 성사와 동시에 생성
+    활성 --> 종료: 한쪽이 상대를 차단
+    종료 --> [*]
+    활성 --> [*]: 사용자가 화면을 떠남(상태 유지)
+
+    note right of 활성
+      양쪽 모두 메시지 송수신 가능
+      입력 중·읽음 표시 실시간
+    end note
+    note right of 종료
+      양쪽 모두 메시지 송신 불가
+      화면 목록에서 자연 제거
+    end note
+          </div>
+        </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 10개</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>첫 메시지 송수신</h3>
-            <ol>
-              <li>A 입장 → GET 빈 페이지 + “대화를 시작해보세요”</li>
-              <li>A 입력 → typing 이벤트(소켓)</li>
-              <li>“보내기” → POST /messages → AES 암호화 + INSERT</li>
-              <li>알림 + WebSocket push → B에서 새 메시지 노출</li>
-              <li>B 입장 → markAsRead → A에 읽음 표시</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>매칭 직후 첫 메시지</h3>
+            <p>방금 매칭이 성사된 두 사용자가 채팅방에 처음 들어온다.
+              "대화를 시작해보세요 💬" 라는 빈 상태 안내가 떠 있고, 한쪽이 "안녕하세요"를 입력해 송신한다.
+              상대에게는 푸시 알림과 함께 메시지가 즉시 도착하고, 상대가 화면을 보고 있다면 곧 "읽음" 표시가 송신자에게 돌아온다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 매칭 성사부터 첫 메시지까지의 시간이 짧을수록 매칭의 가치가 실제 관계로 이어진다. 매칭 → 채팅 → 첫 메시지 동선이 끊기지 않는 게 본 단위의 핵심 목표.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S2 · 멱등</div><h3>네트워크 끊김 후 재전송</h3>
-            <ol>
-              <li>clientMessageId 부여하고 송신 → 응답 대기 중 네트워크 끊김</li>
-              <li>재시도 → 같은 clientMessageId로 송신</li>
-              <li>서버: 첫 번째 INSERT 또는 unique 충돌 시 기존 메시지 반환</li>
-              <li>두 번째 호출은 즉시 기존 메시지 반환</li>
-            </ol>
-            <p><strong>결과:</strong> DB에 1건만 존재. 사용자에게 중복 메시지 노출 없음.</p>
+          <article class="card">
+            <div class="eyebrow">실시간 신호</div>
+            <h3>상대가 입력 중인 게 보인다</h3>
+            <p>상대가 메시지 입력창에 글을 쓰기 시작하면 "상대방이 입력 중..." 표시가 내 화면 하단에 자리한다.
+              상대가 2초 이상 멈추면 표시도 사라진다.
+              상대가 송신하면 표시는 즉시 사라지고 메시지가 자리에 들어온다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "내가 보낸 메시지에 대한 응답을 상대가 지금 쓰고 있다"는 즉시성. 데이팅 채팅에서 가장 만족도가 높은 신호 중 하나.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S3 · 방 닫힘</div><h3>CLOSED 방 송신 시도</h3>
-            <ol>
-              <li>한쪽 차단으로 방 CLOSED</li>
-              <li>캐시된 화면에서 송신 → DATE_CHAT_ROOM_NOT_FOUND</li>
-              <li>“메시지 전송에 실패했습니다” 토스트</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">네트워크 끊김</div>
+            <h3>송신 도중 신호가 끊겼다 돌아옴</h3>
+            <p>지하철 진입 직전에 메시지를 보낸다. 신호가 끊겨 화면이 송신 실패 토스트를 보인다.
+              사용자가 같은 자리에서 다시 송신을 시도한다.
+              같은 메시지가 두 번 저장되지 않도록 서버가 클라이언트가 부여한 키를 검사해 — 기존 메시지가 있으면 그것을 그대로 반환한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 두 번 보낸 것처럼 보이지 않게 한다. 데이팅에서 같은 메시지가 두 번 도착하는 사고는 사용자 신뢰를 가장 빠르게 깨는 신호 중 하나.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S4 · 권한</div><h3>비참여자 조회 시도</h3>
-            <ol>
-              <li>방 ID를 알게 된 외부자가 GET /messages</li>
-              <li>validateParticipant → 403 DATE_CHAT_NOT_PARTICIPANT</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">실시간 연결</div>
+            <h3>연결이 잠시 끊겼을 때</h3>
+            <p>실시간 채널이 일시적으로 끊기면 상단에 작은 배지가 "연결 중..." 또는 "재연결 중..."으로 자리한다.
+              실시간 채널이 죽어 있어도 메시지 송수신 자체는 일반 통신으로 정상 작동한다 — "실시간 연결 실패. 메시지는 정상 전송됩니다." 토스트가 한 번 뜨는 것은 같은 세션에서 한 번뿐.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 실시간 신호가 부가 기능임을 사용자가 인지하게 한다. 핵심(메시지 전달)은 그대로 작동한다는 안심.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S5 · 즉시 종료</div><h3>차단 발동 → 채팅 종료</h3>
-            <ol>
-              <li>차단 호출 → 매치 BLOCKED + 방 CLOSED + closedAt</li>
-              <li>다음 폴링에서 ACTIVE 필터로 방 목록에서 제거</li>
-              <li>양쪽 모두 송신 불가</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">차단 발동</div>
+            <h3>대화 중에 차단으로 단절</h3>
+            <p>대화를 이어가던 사용자가 부적절한 메시지를 받고 즉시 차단 흐름으로 이동한다.
+              차단이 확정되면 그 자리에서 채팅방이 닫히고, 다음 송신 시도부터는 메시지가 보내지지 않는다.
+              채팅방 목록을 새로고침하면 닫힌 방은 활성 목록에서 자연스럽게 사라진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 데이팅의 가장 중요한 안전 경로 중 하나. 한 동작으로 대화를 완전히 끊을 수 있어야 사용자가 채팅에 안심하고 들어온다.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S6 · 신고</div><h3>채팅 내 직접 신고 없음</h3>
-            <p>차단으로 단절. 별도 신고는 외부 신고 도메인(F11-04)에서 처리.</p>
+          <article class="card">
+            <div class="eyebrow">비활성 프로필</div>
+            <h3>매칭은 살아있지만 본인 프로필이 비활성</h3>
+            <p>본인 프로필을 비활성으로 둔 사용자가 기존 매칭의 채팅방에 진입한다.
+              메시지는 정상적으로 읽고 스크롤할 수 있지만, 입력바 자리에는 "프로필이 비활성화 상태에서는 메시지를 보낼 수 없습니다" 안내가 자리한다.
+              본인 프로필을 다시 활성으로 켜면 정상적으로 송신 가능해진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 비활성 토글의 의미를 채팅에서도 일관되게 유지한다. "매칭은 그대로지만 내가 새로 행동하지는 않는다"는 사용자 의도를 채팅에서도 존중.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S7 · 본인 인증 만료</div><h3>인증 만료 사용자의 채팅</h3>
-            <p>채팅 컨트롤러에는 isVerified 가드 없음 → 인증 만료라도 기존 채팅은 가능. 새 매치는 F09-03에서 차단됨.</p>
+          <article class="card">
+            <div class="eyebrow">푸시 진입</div>
+            <h3>알림 누르고 직접 진입</h3>
+            <p>다른 화면에 있던 사용자가 새 메시지 푸시 알림을 누른다.
+              앱이 곧장 해당 채팅방을 열고, 진입 즉시 미읽음 0으로 정리된다.
+              상대 화면에는 "읽음" 표시가 곧 자리한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 어디에 있든 매칭 채팅으로 곧장 들어올 수 있는 경로. 데이팅의 재진입을 가장 자주 만드는 진입점.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S8 · 푸시 진입</div><h3>FCM → 채팅 화면</h3>
-            <ol>
-              <li>백그라운드 사용자에게 “새 메시지 + 30자 미리보기” 푸시</li>
-              <li>탭 → DeepLink로 /dating/chat/{roomId} push</li>
-              <li>진입 즉시 markAsRead → 카운터 0</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S9 · 만남 제안</div><h3>채팅에서 F09-06로 이동</h3>
-            <ol>
-              <li>채팅 헤더 📅 탭</li>
-              <li>/dating/meeting/{matchId} push</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S10 · 비활성</div><h3>본인 프로필 비활성 상태 송신</h3>
-            <ol>
-              <li>입력바에 “프로필이 비활성 상태에서는 메시지를 보낼 수 없습니다” 안내</li>
-              <li>송신 입력 자체 차단, 읽기·스크롤은 가능</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">만남 제안 진입</div>
+            <h3>채팅에서 만남 제안 화면으로</h3>
+            <p>대화가 무르익은 사용자가 상단 📅 아이콘을 누른다.
+              만남 제안 화면(F09-06)으로 이동해 일시·장소를 작성하고 제안을 보낸다.
+              제안을 보낸 직후 다시 채팅으로 돌아오고, "만남을 제안했습니다" 토스트로 결과를 인지한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 채팅이 그저 메시지 교환이 아니라 오프라인으로 이어지는 다리임을 인지하게 한다. 채팅 → 만남 제안 동선이 데이팅 도메인 가장 가치 있는 전환.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:140px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/date/chats/{roomId}/messages?page=&size=</code></td><td>메시지 페이지(최신순)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/date/chats/{roomId}/messages</code></td><td>송신(clientMessageId 멱등)</td></tr>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/date/chats/{roomId}/read</code></td><td>읽음 처리</td></tr>
+              <tr>
+                <td><strong>채팅방 목록 카드</strong></td>
+                <td>아바타 + 상대 이름 + 마지막 메시지 한 줄 + 시각 + 미읽음 배지.</td>
+                <td>매칭이 활성화된 모든 대화가 한 자리에 모인다. 닫힌 방은 보이지 않아 사용자가 "지금 살아 있는 대화"에만 집중하게.</td>
+              </tr>
+              <tr>
+                <td><strong>채팅 상단 헤더</strong></td>
+                <td>상대 이름 + 우측 📅 아이콘(만남 제안 진입) + 연결 상태 배지(필요할 때만).</td>
+                <td>대화의 다음 단계로 가는 경로(📅)와 실시간 연결의 신호를 같은 자리에 둔다. 사용자가 한 화면을 떠나지 않고 다음 행동을 결정.</td>
+              </tr>
+              <tr>
+                <td><strong>메시지 버블</strong></td>
+                <td>내 메시지는 분홍색 우측 정렬, 상대 메시지는 흰 배경 좌측 정렬 + 아바타. 시각은 메시지 옆에 작게.</td>
+                <td>한 화면에서 누가 누구인지 즉시 식별. 색과 정렬을 좌우로 갈라 시각적 부담을 최소화.</td>
+              </tr>
+              <tr>
+                <td><strong>읽음 표시</strong></td>
+                <td>내가 보낸 메시지의 시각 옆에 "읽음" 두 글자.</td>
+                <td>"상대가 봤다"는 확인은 데이팅에서 송신자에게 가장 의미 있는 신호. 강한 시각 요소 없이 두 글자로만 표현해 과하지 않게.</td>
+              </tr>
+              <tr>
+                <td><strong>입력 중 표시</strong></td>
+                <td>"상대방이 입력 중..." 하단에 한 줄로 자리.</td>
+                <td>"상대가 응답을 쓰고 있다"는 즉시성. 데이팅 채팅에서 만족도가 가장 큰 신호 중 하나라 메시지 영역과 분리된 자리에 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>입력바</strong></td>
+                <td>회색 배경 둥근 입력창 + 분홍색 원형 송신 버튼. 빈 메시지는 송신되지 않는다.</td>
+                <td>의도 없는 송신을 막는다. 송신 버튼은 입력창과 명확히 분리되어 한 동작으로 식별.</td>
+              </tr>
+              <tr>
+                <td><strong>비활성 안내</strong></td>
+                <td>본인 프로필 비활성 시 입력바 자리에 "프로필이 비활성화 상태에서는 메시지를 보낼 수 없습니다" 안내.</td>
+                <td>입력 자체를 막아 사용자가 송신을 시도하다 실패하는 좌절을 미리 차단. 안내문이 다음 행동(활성 토글)을 자연스럽게 가리킨다.</td>
+              </tr>
+              <tr>
+                <td><strong>빈 상태 안내</strong></td>
+                <td>매칭 직후 첫 진입 시 "대화를 시작해보세요 💬".</td>
+                <td>매칭 직후의 어색함을 가벼운 카피로 받아 준다. 첫 메시지를 누가 보낼지 결정하는 자리를 비워 두지 않는다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
+      </section>
 
-        <div class="callout warn">
-          <span class="label">에러 코드</span>
+      <section>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 건강하다고 말하려면 이 다섯 가지 신호가 추적되어야 한다</span>
           <ul>
-            <li><strong>403 DATE_CHAT_NOT_PARTICIPANT</strong> — 방 참여자 아님</li>
-            <li><strong>404 DATE_CHAT_ROOM_NOT_FOUND</strong> — 방 부재 또는 CLOSED</li>
-            <li><strong>400 INVALID_MESSAGE_TYPE</strong> — 미지원 type</li>
+            <li><strong>매칭 성사 → 첫 메시지까지의 시간</strong> — 매칭의 가치가 실제 관계로 이어지는 지표. 너무 길면 매칭이 그저 숫자에 그치고 있다는 신호.</li>
+            <li><strong>채팅방 진입율</strong> — 매칭이 만들어진 사용자 중 실제로 채팅방을 한 번이라도 연 비율. 낮으면 매칭 → 채팅 동선에 끊김이 있다.</li>
+            <li><strong>실시간 연결 안정성</strong> — "연결 중·재연결 중" 표시가 사용자에게 보이는 빈도. 잦으면 사용자가 실시간 신호를 신뢰하지 않는다.</li>
+            <li><strong>차단 발동 빈도</strong> — 채팅 중에 차단이 발동되는 비율과 사유. 특정 사유가 늘어나면 메시지 내용 검수나 후보 카드 단계의 필터 강화가 필요한 신호.</li>
+            <li><strong>채팅 → 만남 제안 전환율</strong> — 대화가 시작된 매칭 중 만남 제안까지 간 비율. 데이팅 가치 사슬의 가장 중요한 마지막 전환.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>송신</th><th>읽음</th><th>차단/종료</th></tr></thead>
-            <tbody>
-              <tr><td>date_chat_message</td><td>AES 암호화 INSERT (clientMessageId UNIQUE)</td><td>—</td><td>—</td></tr>
-              <tr><td>date_chat_room</td><td>lastMessageAt 갱신</td><td>readAt 또는 별도 카운터</td><td>status=CLOSED + closedAt</td></tr>
-              <tr><td>알림</td><td>CHAT_MESSAGE 알림 + WebSocket push</td><td>읽음 push</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>ACTIVE 방, 참여자</td><td>송신</td><td>AES INSERT + 알림 + 상대 push</td></tr>
-              <tr><td>AC-02</td><td>같은 clientMessageId 재전송</td><td>POST</td><td>기존 메시지 반환, DB 1건만</td></tr>
-              <tr><td>AC-03</td><td>CLOSED 방</td><td>송신</td><td>404 NOT_FOUND</td></tr>
-              <tr><td>AC-04</td><td>방 참여자 아님</td><td>GET</td><td>403 NOT_PARTICIPANT</td></tr>
-              <tr><td>AC-05</td><td>차단 발동</td><td>방 상태 전이</td><td>양쪽 송신 불가, 목록 제거</td></tr>
-              <tr><td>AC-06</td><td>백그라운드</td><td>FCM 탭</td><td>딥 링크 + markAsRead + 카운터 0</td></tr>
-              <tr><td>AC-07</td><td>본인 비활성</td><td>채팅 진입</td><td>송신 비활성 + 안내</td></tr>
-              <tr><td>AC-08</td><td>채팅 진입</td><td>화면 빌드</td><td>markAsRead 자동 호출</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 무너지면 데이팅의 관계 형성이 끊긴다</span>
           <ul>
-            <li><strong>clientMessageId UNIQUE 인덱스 누락</strong> — 멱등 가드가 작동 안 함. 트랜잭션 격리수준에서도 race 발생.</li>
-            <li><strong>방 참여자 검증을 GET만 적용</strong> — POST가 빠지면 외부자가 메시지 송신 가능.</li>
-            <li><strong>차단 시 방 상태만 바꾸고 사용자 측 화면 폴링은 그대로</strong> — “CLOSED 방”에 계속 송신 시도하는 회귀.</li>
-            <li><strong>읽음 push 누락</strong> — 보낸 쪽은 상대가 메시지를 봤는지 모름.</li>
-            <li><strong>비활성 사용자에게 송신 허용</strong> — 매칭 시점의 사용자 상태와 어긋난 대화 발생.</li>
-            <li><strong>본문을 평문 저장</strong> — AES 암호화 누락 시 데이터 보호 정책 위반.</li>
-            <li><strong>FCM 미리보기에 30자 이상 노출</strong> — 푸시 알림에 민감 정보 노출.</li>
+            <li><strong>모든 메시지는 암호화되어 저장된다.</strong>
+              운영팀이 분쟁 조사 등으로 메시지를 봐야 할 때도 별도 권한 절차를 거친다.
+              평문 노출이 어디에서도 일어나지 않게 카드의 마지막 메시지 미리보기 역시 즉시 풀어 보여주고 다시 저장하지 않는다.</li>
+            <li><strong>같은 메시지가 두 번 저장되는 사고는 반드시 막아야 한다.</strong>
+              클라이언트가 부여하는 고유 키로 멱등성이 보장된다. 이 키 생성이 깨지거나 키가 누락된 송신이 들어오면 동일 메시지가 중복 저장되는 사고로 이어진다.</li>
+            <li><strong>차단 발동 시 채팅방은 같은 동작으로 닫힌다.</strong>
+              차단과 채팅방 종료가 분리되면 "차단했는데 채팅방이 살아 있다"는 사고가 즉시 발생한다. 분리 불가능한 동작으로 유지해야 한다.</li>
+            <li><strong>채팅방 목록은 활성 방만 보여 준다.</strong>
+              닫힌 방은 자연스럽게 사라진다. 사용자가 별도 정리 동작을 하지 않아도 화면이 깨끗하게 유지되는 정책.</li>
+            <li><strong>실시간 채널이 죽어도 메시지 전달 자체는 살아 있다.</strong>
+              실시간은 부가 신호(입력 중·읽음 표시·즉시 도착)일 뿐 핵심이 아니다. 실시간이 죽었다고 사용자에게 큰 에러로 보이지 않게 — 작은 배지로만 자리한다.</li>
+            <li><strong>본인 프로필 비활성 시 송신을 막는 건 클라이언트 정책이다.</strong>
+              서버는 이 가드를 두지 않는다 — 만약 클라이언트 가드가 풀리면 비활성 사용자가 메시지를 보낼 수 있는 회귀가 발생한다. 비활성 사용자의 의도를 채팅에서도 존중하기 위한 정책의 자리.</li>
           </ul>
         </div>
       </section>
@@ -268,15 +254,16 @@ stateDiagram-v2
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
-          <a class="card" href="F09-03.html"><div class="eyebrow">선행</div><h3>F09-03 매칭</h3></a>
-          <a class="card" href="F09-06.html"><div class="eyebrow">진입</div><h3>F09-06 만남 제안</h3></a>
-          <a class="card" href="F09-07.html"><div class="eyebrow">차단</div><h3>F09-07 차단</h3></a>
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위 도메인</div><h3>09 프라이빗 데이팅</h3><p>본 채팅이 만드는 관계의 의미가 결정되는 도메인.</p></a>
+          <a class="card" href="F09-04.html"><div class="eyebrow">진입</div><h3>F09-04 매칭 목록</h3><p>본 채팅으로 들어오는 카드 목록.</p></a>
+          <a class="card" href="F09-06.html"><div class="eyebrow">다음</div><h3>F09-06 만남 제안</h3><p>대화에서 오프라인 약속으로 가는 다음 단계.</p></a>
+          <a class="card" href="F09-07.html"><div class="eyebrow">관련</div><h3>F09-07 사용자 차단</h3><p>채팅 중에도 즉시 발동 가능한 안전 액션.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/09_private_date/F09-05_chat/{scenarios,backend,frontend}.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/09_private_date/F09-05_chat/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

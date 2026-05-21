@@ -1,33 +1,225 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F10-04 반복 가용성 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/10-calendar.html">10 캘린더</a><span>›</span>F10-04 반복 가용성</div>
-<h1>F10-04. 반복 가용 시간 규칙</h1>
-<p class="lede">“매주 평일 12시” 같은 반복 규칙으로 가용성 자동 전개. 3개월 단위로 INSERT, 겹침 자동 회피.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>규칙 정의 + 미리보기</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>일괄 INSERT</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>규칙 수정·삭제</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>매주 평일 점심 등록</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>특정 회차 예외</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>규칙 삭제 시 미래분만</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/availability/recurring</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/availability/recurring/{ruleId}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/10-calendar.html"><div class="eyebrow">상위</div><h3>10 캘린더</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/10_calendar/F10-04_recurring-availability-rule/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F10-04 반복 가용 시간 규칙 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/10-calendar.html">10 캘린더</a><span>›</span>
+          F10-04 반복 가용 시간 규칙
+        </div>
+        <h1>F10-04. 반복 가용 시간 규칙 관리</h1>
+        <p class="lede">
+          "매주 평일 점심", "격주 토요일 오전"처럼 주기적으로 반복되는 가용 시간을 한 번의 규칙 설정으로 묶어 관리한다.
+          규칙 한 건을 만들면 서버가 그 자리에서 다음 3개월치 슬롯을 펼쳐 캘린더에 등록한다.
+          무기한 반복(종료일 없음)은 매일 새벽 자동으로 3개월씩 미래로 연장된다.
+          캘린더 위에서는 단일 가용 시간과 동일하게 보이지만, 수정과 삭제는 규칙 단위로 일괄 적용된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">주기 선택지</div><div class="value">3종</div><div class="hint">매주 · 격주 · 매월</div></div>
+          <div class="metric"><div class="label">한 번 펼치는 범위</div><div class="value">3개월</div><div class="hint">규칙 등록 시점부터 앞으로 3개월치 슬롯이 즉시 생긴다</div></div>
+          <div class="metric"><div class="label">무기한 반복 연장</div><div class="value">매일 자동</div><div class="hint">새벽 2시 스케줄러가 3개월 단위로 미래로 미는 형식</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 한 번의 설정으로 매번 자동 적용</span>
+          <p>"매주 월·수·금 점심을 비워 두고 싶다"는 의사 표시는 단일 슬롯 등록을 50번 하는 것과 본질이 다르다.
+            사용자는 한 번 결정을 내렸고, 같은 결정을 매번 다시 내리고 싶지 않다. 그래서 본 단위는 결정을 "규칙"으로 저장하고,
+            실제 시간 슬롯은 서버가 자동으로 펼친다. 사용자는 규칙 한 건을 만들고 한 건을 삭제할 뿐, 그 안의 50개 슬롯을 직접 다루지 않는다.
+            이 분리가 깨지면 사용자가 "지웠다"고 생각한 것과 실제 캘린더의 상태가 어긋난다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 번의 규칙으로 결정하는 것</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">주기</div>
+            <h3>매주 · 격주 · 매월</h3>
+            <p>매주는 선택한 요일마다, 격주는 선택한 요일이지만 한 주 건너서, 매월은 시작일의 일자에 매월 한 번.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">요일</div>
+            <h3>매주/격주에서만 사용</h3>
+            <p>월~일 중 다중 선택. 매월 주기는 요일 대신 시작일의 일자를 사용한다(28일 이후는 그 달의 마지막 날로 보정).</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">시간대</div>
+            <h3>시작·종료 시각</h3>
+            <p>30분 단위, 최소 30분~최대 8시간. 단일 슬롯과 같은 시간 규칙.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">기간</div>
+            <h3>시작일·종료일(또는 무기한)</h3>
+            <p>종료일을 지정하면 그날까지만 펼친다. "종료일 없음"으로 두면 무기한 — 스케줄러가 미래로 자동 연장.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>규칙 등록 한 번에 일어나는 일</h2>
+        <p class="subtitle">사용자가 "저장"을 누른 순간 서버는 (1) 규칙 한 건을 저장하고 (2) 다음 3개월치 슬롯을 펼쳐 등록한다.
+          이 펼침 도중 단일 가용 시간과 겹치는 인스턴스는 조용히 건너뛴다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant 화면 as 반복 규칙 화면
+    participant 서버 as 가용 시간 서비스
+    participant DB as 데이터 저장소
+
+    U->>화면: 주기·요일·시간·기간 입력 후 저장
+    화면->>서버: 규칙 생성 요청
+    서버->>서버: 시간 형식 / 길이 / 시작일 검증
+    서버->>DB: 규칙 한 건 저장
+    서버->>서버: 시작일~종료일(또는 +3개월) 범위로 인스턴스 펼침
+    loop 각 인스턴스
+        서버->>DB: 같은 사용자의 기존 슬롯과 겹침 검사
+        alt 겹침 없음
+            서버->>DB: 슬롯 저장
+        else 겹침 있음
+            서버->>서버: 조용히 건너뜀(로그만 남김)
+        end
+    end
+    서버-->>화면: 규칙 + 실제 만들어진 슬롯 수
+    화면-->>U: 등록 토스트 + 캘린더 복귀
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>무기한 반복은 매일 자동으로 연장된다</h2>
+        <p class="subtitle">규칙에 종료일을 두지 않으면 서버는 처음 3개월치만 펼친다.
+          그 다음부터는 매일 새벽 스케줄러가 마지막 인스턴스 날짜를 확인해 앞으로 3개월씩 미래로 밀어준다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["매일 새벽 2시"] --> B["분산 락 확보"]
+    B --> C["종료일 없는 규칙 목록 조회"]
+    C --> D{"각 규칙의 마지막 인스턴스가 1개월 이내?"}
+    D -->|"예"| E["+3개월치 펼침"]
+    D -->|"아니오"| F["건너뜀"]
+    E --> G{"각 인스턴스 겹침?"}
+    G -->|"겹침"| H["조용히 건너뜀"]
+    G -->|"없음"| I["슬롯 저장"]
+    F --> J["락 해제 + 통계 기록"]
+    I --> J
+    H --> J
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>매주 평일 점심을 정기로 비워두기</h3>
+            <p>반복 규칙 화면에서 주기 "매주", 요일 월·화·수·목·금, 시간 12:00-13:00, 시작일 내일, "종료일 없음" 유지.
+              저장하면 다음 3개월치(약 65건)가 한 번에 캘린더에 펼쳐지고, 그 이후는 매일 새벽 자동으로 연장된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "매주 같은 시간"이라는 약속이 한 번의 등록으로 모든 미래에 적용된다. 사용자가 매번 등록을 반복할 필요가 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">격주</div>
+            <h3>격주 토요일 오전만</h3>
+            <p>주기 "격주", 요일 토, 시간 10:00-12:00, 시작일 토요일. 저장하면 그 토요일부터 두 주 간격으로 슬롯이 펼쳐진다.
+              매 주가 아니라는 점이 단일 가용 시간이나 매주 반복으로 표현할 수 없는 가치다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">매월</div>
+            <h3>매월 25일 점심</h3>
+            <p>주기 "매월", 시작일 5월 25일. 매월 25일에 슬롯이 한 건씩 생긴다. 2월처럼 25일 이후로 일수가 부족한 달은
+              그 달의 마지막 날로 자동 보정된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">미리보기</div>
+            <h3>저장 전에 몇 개가 생기는지 확인</h3>
+            <p>편집 모드에서 "미리보기"를 누르면 서버가 펼친 결과를 미리 받아 "총 N개의 가용 시간이 생성됩니다" 안내한다.
+              신규 모드에서는 화면이 추정만 보여 주고, 실제 결과는 저장 후에 확정된다 — 추정과 실제가 다를 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수정</div>
+            <h3>규칙의 시간을 바꾸면 기존 슬롯이 모두 다시 만들어진다</h3>
+            <p>매주 평일 12:00-13:00을 11:30-13:00으로 바꾸려 한다. 저장하면 서버는 기존 펼침 슬롯 전체를 지우고
+              새 시간으로 다시 펼친다. 이 과정에서 단일 가용 시간과 겹치는 인스턴스는 건너뛰어 빈 칸이 생긴다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 규칙은 진실 공급원이고, 슬롯은 그 결과물이라는 분리. 사용자가 그 사실을 의식하지 않아도 결과는 항상 규칙과 일치한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">삭제</div>
+            <h3>이 반복을 더 이상 안 한다</h3>
+            <p>편집 화면 "삭제" → 확인 → 규칙과 펼쳐진 모든 슬롯이 한 번에 사라진다. "이번만", "이후만" 같은 부분 선택지는 현재 제공하지 않는다 — 항상 전체 삭제.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">충돌</div>
+            <h3>일부 날짜에 이미 단일 슬롯이 있다</h3>
+            <p>매주 평일 12-13시 규칙을 등록할 때 5/12에 이미 단일 가용 시간 12:00-13:30이 있다.
+              5/12 인스턴스는 서버가 조용히 건너뛰고, 다른 날짜는 정상 등록. 사용자에게는 "성공" 토스트만 보이고
+              "1건이 건너뛰어졌습니다" 같은 부분 충돌 안내는 별도로 가지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 부분 충돌이 등록 자체를 막지 않는다는 정책. 다만 사용자가 인지하지 못한 채 인스턴스 한두 건이 빠지는 가능성을 안고 간다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">규칙·인스턴스 분리가 흐트러지면 사용자 인지와 실제 캘린더가 어긋난다</span>
+          <ul>
+            <li><strong>삭제는 항상 전체 삭제다.</strong> 사용자가 "이 일정만 삭제", "이후 모든 일정 삭제"를 기대할 수 있지만 현재 서버 정책은 그 분기를 지원하지 않는다.
+              화면이 그 선택지를 제시하면 사용자에게 거짓 약속을 하게 되므로, 화면도 단일 "삭제"만 두고 있다.
+              "이번만 빼고 싶다"는 사용자에게는 단일 슬롯 삭제(F10-03)를 안내하는 우회로가 유일하다.</li>
+            <li><strong>수정은 "삭제 + 재펼침"으로 동작한다.</strong> 시간 변경 한 번이 기존 인스턴스 전체 삭제 + 재생성을 일으킨다 — 단일 가용 시간과 충돌하는 일자에서는 펼침이 건너뛰어진다.
+              사용자가 수정 후 "왜 어떤 날만 빈 칸이지" 라고 인지할 가능성이 있다.</li>
+            <li><strong>부분 충돌은 사용자에게 가시화되지 않는다.</strong> "성공" 토스트만 보이고 N건이 건너뛰어졌다는 안내는 가지 않는다.
+              사용자가 한참 뒤에 캘린더에서 빈 자리를 발견하는 회귀 가능성이 있다 — 사용자 피드백을 보고 부분 충돌 안내 추가를 검토할 시점.</li>
+            <li><strong>무기한 반복은 새벽 스케줄러에 의해 미래가 자동으로 채워진다.</strong> 운영 측이 이 스케줄러를 멈추면 한 달 안에 사용자 캘린더의 미래 슬롯이 비기 시작한다.
+              분산 락이 풀리지 않거나 무한 대기에 빠지면 무기한 규칙 사용자 전체에 영향이 가는 단일 실패 지점이다.</li>
+            <li><strong>요일 표기 일관성.</strong> 본 반복 일정 전용 화면은 약어(MON, TUE 등)로 서버와 일치하지만, 단일 가용 시간 화면에서 켜는 인라인 반복 토글이 풀네임(MONDAY 등)을 사용하는 비대칭이 있어
+              등록 자체가 실패할 가능성이 있다 — 화면 수정이 후속 과제로 남아 있다.</li>
+            <li><strong>매월 주기는 요일을 사용하지 않는다.</strong> 화면에 요일 칩이 노출되더라도 매월 주기에서는 무시되고 시작일의 일자가 기준이 된다.
+              사용자 입장에서 요일 칩이 보이는데 무시된다는 사실이 혼란을 줄 수 있다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/10-calendar.html"><div class="eyebrow">상위 도메인</div><h3>10 캘린더</h3></a>
+          <a class="card" href="F10-03.html"><div class="eyebrow">앞 단위</div><h3>F10-03 단일 가용 시간</h3><p>규칙이 펼친 슬롯과 같은 데이터를 다루는 1회성 흐름.</p></a>
+          <a class="card" href="F10-01.html"><div class="eyebrow">결과 노출</div><h3>F10-01 통합 캘린더 조회</h3><p>펼쳐진 슬롯들이 일반 가용 시간과 동일하게 캘린더에 표시되는 면.</p></a>
+          <a class="card" href="F10-05.html"><div class="eyebrow">데이터 소비</div><h3>F10-05 타 사용자 가용성</h3><p>공개 규칙의 슬롯이 다른 사용자에게 노출되는 면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/10_calendar/F10-04_recurring-availability-rule/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

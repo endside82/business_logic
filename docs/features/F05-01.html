@@ -1,47 +1,263 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F05-01 키워드 검색 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/05-search.html">05 검색</a><span>›</span>F05-01 키워드 검색</div>
-<h1>F05-01. 키워드 검색</h1>
-<p class="lede">한 번의 검색으로 이벤트·클럽·플랜 세 도메인을 동시에 조회한다. 결과는 탭으로 분리되고 정렬은 이벤트 탭에서만 동작한다. 무한 스크롤은 이벤트만, 클럽/플랜은 첫 20건만 보여 빠른 의사 결정에 집중한다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">동시 조회</div><div class="value">3</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>다중 도메인 검색</h3><p>이벤트·클럽·플랜 3개 호출 동시 발사.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>탭 전환(추가 호출 없음)</h3><p>한 번 로드된 결과를 캐시로 즉시 표시.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>정렬 + 무한 스크롤(이벤트)</h3><p>추천/최신/인기/가격 순.</p></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>idle 상태 surface</h3><p>저장된 검색·최근 검색어·트렌딩 키워드.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 8개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>키워드 검색 → 이벤트 진입</h3><ol><li>“등산” 입력 → 3 도메인 동시 호출</li><li>이벤트 탭 활성, 카운트 칩 표시</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>탭 전환</h3><ol><li>클럽 탭 → 캐시로 즉시 표시</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>무한 스크롤(이벤트만)</h3><ol><li>이벤트 페이지 누적</li><li>클럽/플랜은 첫 20건만</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>정렬 변경</h3><ol><li>0페이지부터 재조회</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>idle surface</h3><ol><li>저장된 검색·최근·트렌딩</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>0건 결과</h3><ol><li>빈 상태 안내 + 트렌딩 키워드</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>최근 검색어 클릭</h3><ol><li>입력란에 채워지고 즉시 재검색</li></ol></article>
-<article class="card"><div class="eyebrow">S8</div><h3>비로그인</h3><ol><li>저장된 검색·히스토리 숨김</li><li>검색은 가능</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/search?keyword=&sortType=&page=&size=</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/search/clubs?keyword=&page=&size=</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/search/plans?keyword=&page=&size=</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/05-search.html"><div class="eyebrow">상위</div><h3>05 검색</h3></a>
-<a class="card" href="F05-02.html"><div class="eyebrow">다음</div><h3>F05-02 자동완성</h3></a>
-<a class="card" href="F05-03.html"><div class="eyebrow">관련</div><h3>F05-03 필터</h3></a>
-<a class="card" href="F05-04.html"><div class="eyebrow">관련</div><h3>F05-04 검색 기록</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/05_search/F05-01_keyword-search/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F05-01 키워드 검색 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/05-search.html">05 검색</a><span>›</span>
+          F05-01 키워드 검색
+        </div>
+        <h1>F05-01. 키워드 검색</h1>
+        <p class="lede">
+          사용자가 검색창에 한 단어를 입력하면 이벤트·클럽·플랜 세 영역에서 같은 단어로 동시에 결과를 받아 본다.
+          한 번 입력하면 세 곳의 카탈로그를 같이 둘러보게 되어, "이 앱에 내가 찾는 게 있는지"를 한 자리에서 확인할 수 있다.
+          이벤트는 무한 스크롤과 다섯 가지 정렬을 지원하고, 클럽·플랜은 첫 묶음을 보여 주어 진입 분기 역할을 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">동시 조회 영역</div><div class="value">3개</div><div class="hint">이벤트·클럽·플랜</div></div>
+          <div class="metric"><div class="label">한 번에 받는 카드</div><div class="value">20장</div><div class="hint">이벤트는 스크롤하면 다음 묶음</div></div>
+          <div class="metric"><div class="label">정렬 옵션</div><div class="value">5개</div><div class="hint">추천·최신·인기·가격↑·가격↓</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">결과 카드 진입은 가능, 검색 기록만 비활성</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 한 입력 한 화면 안에서 세 카탈로그를 함께 본다</span>
+          <p>이벤트는 시간 단위 모임이고, 클럽은 지속 모임이며, 플랜은 콘텐츠 상품이다.
+            사용자가 "등산"이라고 떠올렸을 때 이 셋 중 어느 쪽을 원하는지 미리 정할 필요는 없게 한다.
+            결과 화면에서 영역 탭으로 갈아타게 두어, 입력 한 번이 세 카탈로그의 둘러보기로 이어진다.
+            이벤트만 무한 스크롤을 지원하는 이유는 이벤트가 카탈로그의 가장 큰 줄기이기 때문이고,
+            클럽·플랜은 "검색 결과 안에 있다"를 보여 주는 진입 분기로 충분하다고 판단한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 화면이 하는 일</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동시 조회</div>
+            <h3>한 입력으로 이벤트·클럽·플랜을 동시에</h3>
+            <p>사용자가 단어 하나 입력하고 엔터를 누르면 세 영역 호출이 같이 떠난다.
+              영역 탭에는 각각의 결과 개수가 함께 표시되어, 사용자가 어느 쪽으로 갈지 한눈에 판단할 수 있다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">정렬</div>
+            <h3>이벤트는 다섯 가지 정렬</h3>
+            <p>추천순(기본)·최신순·인기순·가격 낮은순·가격 높은순. "추천순"은 시작 시각이 다가오는 미래 이벤트를
+              인기·최신 신호와 함께 정렬한다. 사용자가 정렬을 바꾸면 첫 페이지부터 다시 받아 본다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">무한 스크롤</div>
+            <h3>이벤트 카탈로그를 끝까지 둘러본다</h3>
+            <p>이벤트 결과는 끝까지 스크롤하며 둘러볼 수 있다. 클럽·플랜 탭은 첫 20건만 노출되며,
+              더 둘러보려면 도메인 본 화면으로 진입하게 둔다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">자동 기록</div>
+            <h3>검색하면 최근 검색어로 들어간다</h3>
+            <p>로그인 사용자가 검색을 실행하면 입력 키워드가 자동으로 최근 검색어 목록 맨 앞에 들어간다.
+              사용자는 검색 후 "저장하라"는 단계 없이도 다음 방문에서 같은 단어를 빠르게 다시 찾을 수 있다 (F05-04).</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 번의 검색이 만드는 흐름</h2>
+        <p class="subtitle">사용자가 단어를 입력하고 엔터를 누른 순간부터 세 영역이 결과 카드로 채워지기까지.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant 화면 as 검색 화면
+    participant 서비스 as 검색 서비스
+
+    U->>화면: "등산" 입력 + 엔터
+    par 세 영역 동시 조회
+        화면->>서비스: 이벤트 검색
+        화면->>서비스: 클럽 검색
+        화면->>서비스: 플랜 검색
+    end
+    서비스->>서비스: 로그인 사용자면 키워드 자동 기록
+    서비스-->>화면: 영역별 결과(개수 + 첫 묶음)
+    화면-->>U: 이벤트 N · 클럽 N · 플랜 N 탭 + 카드 리스트
+    opt 이벤트 탭에서 스크롤 끝까지
+        U->>화면: 아래로 스크롤
+        화면->>서비스: 다음 묶음 요청
+        서비스-->>화면: 새 묶음 20장
+        화면-->>U: 누적 리스트
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>"등산" 한 단어로 세 카탈로그 둘러봄</h3>
+            <p>주말에 등산 모임을 찾고 싶은 사용자가 검색창에 "등산"을 입력한다.
+              결과 화면에 "이벤트 24 · 클럽 8 · 플랜 2" 탭이 뜨고, 기본은 이벤트 탭이 활성화되어 있다.
+              사용자는 이벤트를 둘러본 뒤 "클럽 8" 탭으로 갈아타 같은 단어로 만들어진 클럽 목록을 본다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 입력 한 번으로 세 카탈로그를 함께 본다는 경험.
+              사용자가 처음부터 "이건 이벤트야, 클럽이야"를 분류해 들어갈 필요가 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">깊게 둘러봄</div>
+            <h3>이벤트 결과를 끝까지 스크롤</h3>
+            <p>"독서" 검색으로 이벤트 30건이 나왔다. 사용자가 스크롤하면 자연스럽게 다음 묶음이 이어 붙는다.
+              끝에 도달하면 더 이상 카드가 나오지 않고 정지한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 이벤트는 검색의 가장 큰 줄기이므로 끝까지 둘러볼 수 있게 둔다.
+              클럽·플랜은 진입 분기로 충분하다고 판단해 첫 묶음만 노출한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">정렬 분기</div>
+            <h3>가격 낮은 순으로 보고 싶다</h3>
+            <p>"요리" 결과를 둘러보다가 정렬 드롭다운에서 "가격 낮은순"을 선택한다.
+              화면이 첫 페이지부터 다시 받아 와서, 무료 또는 저렴한 이벤트가 맨 위로 올라온다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정렬 변경은 누적된 묶음에 적용하지 않고 처음부터 다시 받아 본다.
+              "내가 본 위치"가 정렬 기준에서 의미를 잃기 때문에 자연스러운 동작이다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빈 결과</div>
+            <h3>찾는 단어가 없다</h3>
+            <p>"asdfqwer" 같은 의미 없는 단어로 검색하면 세 영역 모두 0건이 나온다.
+              화면에는 "검색 결과가 없습니다 — 다른 키워드로 검색해 보세요" 안내가 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "결과 없음"과 "필터 너무 강함"이 같은 메시지가 되지 않게,
+              필터 적용 중 빈 결과(F05-03)와는 다른 안내 흐름을 갖는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">가입 전 탐색</div>
+            <h3>비로그인 사용자가 둘러봄</h3>
+            <p>로그인 없이도 검색은 열려 있다. 입력하고 엔터를 누르면 세 영역 결과가 정상적으로 보인다.
+              단, 최근 검색어 영역은 비어 있고, 검색을 해도 기록되지 않는다.
+              결과 카드를 눌러 상세에 들어간 뒤 신청·가입 같은 행동을 할 때 비로소 로그인 화면이 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입 전 사용자가 "이 앱에 내가 찾는 게 있는지" 확인할 수 있어야
+              가입 의사가 형성된다. 검색은 그 확인 수단이라 비로그인에도 열어 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">탭 복귀</div>
+            <h3>결과 카드 들어갔다 돌아옴</h3>
+            <p>이벤트 카드를 눌러 상세에 들어갔다가 뒤로가기로 검색 화면에 돌아온다.
+              결과 리스트와 스크롤 위치가 그대로 보존되어, 사용자는 둘러보기를 이어 갈 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 카드 탐색은 보통 여러 장을 비교하는 행위이므로 상태 보존이 핵심.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">실패 분기</div>
+            <h3>이벤트 검색이 일시적으로 안 됨</h3>
+            <p>네트워크 문제로 이벤트 응답이 실패하면 이벤트 탭에 "오류가 발생했습니다 — 다시 시도" 표시가 나온다.
+              같은 입력으로 호출된 클럽·플랜은 정상적으로 보일 수 있다 — 영역별로 독립이다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 영역의 실패가 다른 영역의 결과를 가리지 않게 둔다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>검색 입력바</strong></td>
+                <td>입력창, X(클리어), 필터 아이콘(활성 시 점 표시), 북마크(검색 후만), 취소 버튼.</td>
+                <td>입력·필터·저장 세 동작이 자주 같이 쓰이므로 한 줄에 모아 둔다. 활성 필터의 점 표시는 "지금 필터가 걸려 있다"를 사용자가 잊지 않게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>활성 필터 칩</strong></td>
+                <td>적용된 필터가 있으면 검색바 바로 아래에 칩으로 나열. 각 칩은 X로 개별 제거, 맨 앞 칩은 전체 초기화.</td>
+                <td>"왜 결과가 적은가"를 사용자가 한눈에 인지하게 한다. 결과가 빈 상태일 때 필터를 잊고 있던 사용자를 구해 주는 핵심 단서.</td>
+              </tr>
+              <tr>
+                <td><strong>영역 탭</strong></td>
+                <td>"이벤트 N · 클럽 N · 플랜 N" 칩. 활성 탭은 강조 색.</td>
+                <td>입력 한 번이 세 카탈로그를 동시에 조회한다는 사실을 카운트로 분명하게 보여 준다.</td>
+              </tr>
+              <tr>
+                <td><strong>결과 요약 + 정렬</strong></td>
+                <td>"검색 결과 N건" 좌측 + "추천순/최신순/인기순/가격↑/가격↓" 드롭다운.</td>
+                <td>이벤트 탭은 사용자가 가장 깊게 둘러보는 영역이므로 정렬 통제권을 분명히 노출한다.</td>
+              </tr>
+              <tr>
+                <td><strong>이벤트 카드</strong></td>
+                <td>썸네일·제목·시작 시각·주소·현재 인원·가격. 사용자 컨텍스트(신청 여부·멤버십)가 있으면 배지로.</td>
+                <td>이벤트 의사결정에 가장 먼저 필요한 정보(언제·어디서·얼마)를 카드 안에 모아, 상세에 들어가지 않아도 1차 판단이 가능하게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>클럽·플랜 카드</strong></td>
+                <td>클럽은 카테고리와 멤버 수, 플랜은 가격과 구매 수를 카드 안에 함께 보여 준다.</td>
+                <td>두 카탈로그는 도메인 본 화면이 따로 있는 분기 진입점이므로, 카드는 진입 결정을 도와주는 최소 정보만 담는다.</td>
+              </tr>
+              <tr>
+                <td><strong>빈 결과 안내</strong></td>
+                <td>검색 아이콘 + "검색 결과가 없습니다" + "다른 키워드로 검색해 보세요".</td>
+                <td>키워드 자체가 없을 때의 안내. 필터로 좁혀 0건이 된 경우(F05-03)는 다른 메시지로 분리한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">검색 결과 화면의 정책 결정점</span>
+          <ul>
+            <li><strong>이벤트는 끝까지 스크롤, 클럽·플랜은 첫 묶음만.</strong>
+              이 비대칭은 검색의 무게 중심을 이벤트에 두는 의도적 선택이다.
+              클럽·플랜의 더 깊은 둘러보기를 원한다는 데이터가 쌓이면, 도메인 본 화면으로 가는 동선을 강화하거나 검색에서 무한 스크롤을 풀어야 한다.</li>
+            <li><strong>로그인 사용자가 검색하면 키워드는 자동으로 최근 검색어에 기록된다.</strong>
+              사용자가 별도로 "저장" 동작을 하지 않아도 다음 방문에서 같은 단어가 한 번에 보인다 — 검색의 재방문성을 지탱하는 가장 조용한 동력.</li>
+            <li><strong>비로그인 사용자에게도 검색은 열려 있다.</strong>
+              가입 결정 전에 "이 앱에 내가 찾는 게 있는지"를 확인할 수 있어야 가입 의사가 형성되기 때문이다.
+              단, 결과 카드를 누른 후 신청·가입·구매 시점에는 로그인 가드가 동작한다.</li>
+            <li><strong>거리 필터를 사용하려면 위치 권한이 필요하다.</strong>
+              권한이 없을 때 거리 조건은 결과에 반영되지 않고 조용히 무시된다 — 사용자에게는 칩이 보이지만 결과가 줄지 않는다.
+              이 사일런트 무효는 F05-03에서 별도 운영 이슈로 다룬다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/05-search.html"><div class="eyebrow">상위 도메인</div><h3>05 검색</h3></a>
+          <a class="card" href="F05-02.html"><div class="eyebrow">입력 보조</div><h3>F05-02 자동완성</h3><p>키워드를 떠올리는 도중에 추천 단어를 보여 준다.</p></a>
+          <a class="card" href="F05-03.html"><div class="eyebrow">결과 좁히기</div><h3>F05-03 검색 필터</h3><p>카테고리·날짜·가격·거리로 결과를 좁힌다.</p></a>
+          <a class="card" href="F05-04.html"><div class="eyebrow">재방문</div><h3>F05-04 최근 검색어</h3><p>사용자가 자동으로 만들어가는 검색 기록.</p></a>
+          <a class="card" href="F05-05.html"><div class="eyebrow">반복 검색</div><h3>F05-05 저장된 검색</h3><p>키워드+필터를 묶어 두고 한 번에 다시 실행.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/05_search/F05-01_keyword-search/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

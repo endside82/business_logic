@@ -17,347 +17,237 @@
           <a href="../domains/01-auth.html">01 인증·온보딩</a><span>›</span>
           F01-06 온보딩
         </div>
-        <h1>F01-06. 온보딩</h1>
+        <h1>F01-06. 온보딩 (서비스 소개 → 프로필 → 관심사 → 위치)</h1>
         <p class="lede">
-          첫 로그인 사용자를 “추천이 가능한 상태”까지 끌어올리는 4단계 흐름.
-          모든 단계는 <strong>건너뛰기 가능</strong>하지만, 단계별 입력이 비어 있을수록 추천 품질이 떨어진다.
-          사진·태그·위치 어디서 실패해도 사용자가 메인 셸까지 도달할 수 있게 흐름을 끊지 않는 것이 본 단위의 핵심이다.
+          가입을 끝낸 사용자가 처음 들어가는 네 단계. 서비스가 무엇을 하는 곳인지 보여주고,
+          본인 정보를 채우고, 관심사를 고르고, 동네를 설정해서 추천이 가능한 상태로 만든다.
+          모든 단계는 건너뛸 수 있지만 건너뛴 만큼 첫 화면이 비어 보이게 된다 — 강제하지 않으면서도
+          채우는 게 본인에게 이득임을 사용자가 자연스럽게 느끼게 만드는 흐름이다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">하위 단계</div><div class="value">4</div><div class="hint">웰컴·프로필·관심사·위치</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">11</div><div class="hint">정상 1 · 건너뛰기 1 · 분기 7 · E2E 2</div></div>
-          <div class="metric"><div class="label">재개</div><div class="value">중간부터</div><div class="hint">마지막 완료 단계 기준</div></div>
-          <div class="metric"><div class="label">강제성</div><div class="value">없음</div><div class="hint">모두 건너뛰기 가능</div></div>
+          <div class="metric"><div class="label">단계</div><div class="value">4개</div><div class="hint">서비스 소개·프로필·관심사·위치</div></div>
+          <div class="metric"><div class="label">관심사 최소</div><div class="value">3개</div><div class="hint">건너뛰기로 0개도 가능</div></div>
+          <div class="metric"><div class="label">중간 종료 재개</div><div class="value">가능</div><div class="hint">앱을 다시 켜면 끝난 단계 다음부터</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 원칙 한 줄</span>
-          <p>모든 화면은 “더 나은 추천을 위한 정보 수집”이지만, 어느 입력도 메인 셸 진입을 가로막지 않는다.
-          사용자가 가장 빠른 경로로 메인까지 가도 추천 시스템은 빈 입력에 대비해 동작해야 한다.</p>
+          <span class="label">설계 의도 — 강제하지 않되, 채울수록 사용자에게 이득인 흐름을 만든다</span>
+          <p>온보딩은 신규 사용자가 가입 직후 "이 앱이 나에게 줄 게 있는지" 확인하는 5분이다.
+            이 5분에 사용자가 본인 관심사·동네를 입력하느냐 아니냐가 첫 홈 화면의 풍부함을 결정하고,
+            첫 홈 화면의 풍부함이 재방문 여부를 결정한다. 그래서 본 단위는 각 단계를 모두 건너뛸 수 있게 두되,
+            건너뛴 결과(빈 추천 화면, 위치 기반 기능 비활성)가 자연스럽게 사용자에게 도달하도록 둔다 — 다음에 본인이 채울 동기가 생기게.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">단계 1</div>
-            <h3>웰컴 (4페이지 캐러셀)</h3>
-            <p>“새로운 만남을…” 문구 시리즈와 함께 서비스 소개 4페이지를 스와이프.
-              마지막 페이지에서 “시작하기”를 누르거나 어디서든 “건너뛰기” 가능.
-              완료 상태를 기록해 두 번째 진입 시 표시되지 않게 한다.</p>
-            <div class="meta"><span class="pill">스킵 가능</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">단계 2</div>
-            <h3>프로필 (1/3)</h3>
-            <p>프로필 사진(갤러리 선택 → 사전 서명 URL → 외부 스토리지 PUT) · 닉네임(가입 시 입력 유지) · 자기소개.
-              사진 업로드가 실패해도 닉네임·자기소개만으로 다음으로 진행 가능.</p>
-            <div class="meta"><span class="pill">사진 실패 허용</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">단계 3</div>
-            <h3>관심사 (2/3)</h3>
-            <p>“3개 이상 선택” 안내 + 카테고리 선택. 선택 후 “다음 (N개 선택)” 버튼 활성화.
-              선택된 태그는 <strong>각각</strong> 별도 요청으로 등록되며, 중간 실패 시 부분 저장이 될 수 있어
-              클라이언트가 멱등 처리(중복 409 무시)를 해줘야 한다.</p>
-            <div class="meta"><span class="pill">서버 한도 20개</span><span class="pill">멱등 필요</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">단계 4</div>
-            <h3>위치 (3/3)</h3>
-            <p>GPS로 현재 위치 자동 감지 후 역지오코딩으로 “시·구·동” 표시.
-              권한 거부·외부 API 실패·서버 오류 어디서 막혀도 “건너뛰기”로 메인 셸 진입 가능.</p>
-            <div class="meta"><span class="pill">권한 의존</span><span class="pill">스킵 가능</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면 전이</h2>
-        <p class="subtitle">선형 4단계지만 각 단계마다 건너뛰기 분기가 있다. 마지막 단계 통과 시 메인 셸 진입.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    Login["첫 로그인"]
-    Welcome["웰컴 캐러셀"]
-    Profile["프로필 설정 (1/3)"]
-    Interests["관심사 선택 (2/3)"]
-    Location["위치 설정 (3/3)"]
-    Home["홈"]
-    Login -->|"isNewUser"| Welcome
-    Welcome -->|"시작하기 / 건너뛰기"| Profile
-    Profile -->|"다음 / 건너뛰기"| Interests
-    Interests -->|"다음(3+) / 건너뛰기"| Location
-    Location -->|"이 위치로 / 건너뛰기"| Home
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>온보딩 진행과 재개</h2>
-        <p class="subtitle">각 단계 완료 시점에 “여기까지 했음” 플래그가 저장되어, 앱을 닫았다 다시 열어도 같은 자리에서 다시 시작한다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 시작전
-    시작전 --> 웰컴완료: "시작하기" 또는 "건너뛰기"
-    웰컴완료 --> 프로필완료: "다음" 또는 "건너뛰기"
-    프로필완료 --> 관심사완료: "다음" 또는 "건너뛰기"
-    관심사완료 --> 위치완료: "이 위치로" 또는 "건너뛰기"
-    위치완료 --> 온보딩완료: 사용자 플래그 = 참
-    온보딩완료 --> [*]: 메인 셸 진입
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오 11개</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">S1 · Happy Path</div>
-            <h3>4단계 모두 완료</h3>
-            <ol>
-              <li>웰컴 캐러셀 스와이프 → “시작하기”</li>
-              <li>프로필 사진 업로드(사전 서명 URL → 외부 PUT) → 자기소개 입력 → “다음”</li>
-              <li>관심사 3개 이상 선택 → “다음 (N개 선택)” → 각 태그 순차 등록</li>
-              <li>“현재 위치 자동 감지” → 권한 허용 → “시·구·동” 표시 → “이 위치로 설정”</li>
-              <li>온보딩 완료 플래그 = 참 → 홈 진입</li>
-            </ol>
-            <p><strong>종료</strong> — 프로필·태그·주소 모두 설정, 메인 진입.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S2 · 전부 건너뛰기</div>
-            <h3>모든 단계 건너뛰기로 가장 빠른 메인 진입</h3>
-            <ol>
-              <li>웰컴 → “건너뛰기”</li>
-              <li>프로필 → “건너뛰기” (서버 호출 없음)</li>
-              <li>관심사 → “건너뛰기”</li>
-              <li>위치 → “건너뛰기” → 온보딩 완료</li>
-            </ol>
-            <p><strong>종료</strong> — 사용자 정보는 비어 있고 추천 품질은 떨어지지만, 메인 셸 진입은 보장된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S3 · 외부 스토리지 실패</div>
-            <h3>프로필 사진 업로드 실패</h3>
-            <ol>
-              <li>갤러리에서 이미지 선택</li>
-              <li>사전 서명 URL 발급 성공 → 외부 스토리지 PUT 실패</li>
-              <li>“프로필 사진 업로드에 실패했습니다” 토스트, 미리보기는 유지</li>
-              <li>사용자가 “다음” → 사진 URL 없이 닉네임·자기소개만 저장</li>
-            </ol>
-            <p><strong>종료</strong> — 사진 미업로드, 다음 단계 진행 가능. <strong>흐름 단절 없음</strong>.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S4 · 부분 저장</div>
-            <h3>관심사 등록 중 네트워크 끊김</h3>
-            <ol>
-              <li>3개 태그 선택 → “다음”</li>
-              <li>첫 태그 등록 성공 → 두 번째에서 네트워크 오류</li>
-              <li>“저장 중 오류가 발생했습니다” 토스트, 다음 단계로 이동 안 함</li>
-              <li>재시도 시 이미 등록된 첫 태그는 409 중복으로 응답될 수 있음</li>
-            </ol>
-            <p><strong>종료</strong> — 부분 저장 상태. <strong>클라이언트 측 멱등 처리 필요</strong>(중복 응답을 “이미 등록됨”으로 간주하고 다음 태그로 진행).</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S5 · 권한 거부</div>
-            <h3>위치 권한 거부 후 건너뛰기로 진행</h3>
-            <ol>
-              <li>“현재 위치 자동 감지” 탭 → OS 권한 다이얼로그 거부</li>
-              <li>“위치 권한이 필요합니다” 토스트</li>
-              <li>사용자가 “건너뛰기” → 위치 미설정 상태로 메인 진입</li>
-            </ol>
-            <p><strong>종료</strong> — 주소 미설정. 메인 진입 가능. 위치 기반 추천은 동작하지 않음.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S6 · 중간 재개</div>
-            <h3>앱 재시작 시 마지막 완료 지점부터 다시 시작</h3>
-            <ol>
-              <li>프로필 단계까지 완료 후 앱 종료</li>
-              <li>다시 앱 실행 → 토큰 유효 확인</li>
-              <li>사용자가 온보딩 미완료 상태 → 저장된 “마지막 완료 단계”로 라우터 분기</li>
-              <li>관심사 단계부터 다시 시작</li>
-            </ol>
-            <p><strong>종료</strong> — 사용자가 처음부터 다시 하지 않아도 된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S7 · 서버 오류</div>
-            <h3>위치 등록 실패</h3>
-            <ol>
-              <li>“이 위치로 설정” 탭 → 서버 500</li>
-              <li>토스트로 알림 + 위치 완료 플래그 미설정</li>
-              <li>사용자가 재시도 또는 건너뛰기</li>
-            </ol>
-            <p><strong>종료</strong> — 사용자가 흐름에 갇히지 않음.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S8 · 중복</div>
-            <h3>닉네임 중복으로 프로필 갱신 실패</h3>
-            <ol>
-              <li>가입 시 자동 생성된 닉네임을 수정하려는 소셜 가입자</li>
-              <li>“다음” → 서버 409 NICKNAME_ALREADY_EXISTS</li>
-              <li>토스트 안내 + 사용자가 다른 닉네임으로 재시도</li>
-            </ol>
-            <p><strong>종료</strong> — 변경 실패, 흐름 유지.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">S9 · 한도 초과</div>
-            <h3>태그 21개 시도</h3>
-            <ol>
-              <li>현재 UI는 선택 개수 상한을 강제하지 않음</li>
-              <li>21번째 태그 등록 시 서버 400 MAX_PREFERENCE_TAGS_EXCEEDED</li>
-              <li>토스트 노출, 진행 중단</li>
-            </ol>
-            <p><strong>종료</strong> — 서버 한도가 마지막 방어선. <strong>UI 보강 후보</strong>: 클라이언트에서도 사전 차단.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">E2E-1 · 가입~온보딩 전부 건너뛰기</div>
-            <h3>가입 → 첫 로그인 → 4단계 모두 건너뛰기 → 홈</h3>
-            <ol>
-              <li>가입 폼에서 매번 고유한 신규 이메일로 가입</li>
-              <li>로그인 화면 복귀 후 동일 자격증명으로 로그인</li>
-              <li>첫 로그인이므로 웰컴 화면 진입 — “새로운 만남을…” 텍스트 가시</li>
-              <li>“건너뛰기” 4회 연속 — 프로필 “1/3”, 관심사 “3개 이상 선택”, 위치 “위치를 설정해주세요” 가시 확인</li>
-              <li>최종적으로 홈 화면 진입</li>
-            </ol>
-            <p><strong>종료</strong> — 가입부터 홈까지 한 세션에서 모든 단계 스킵 가능.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">E2E-2 · 회귀 방지</div>
-            <h3>기존 사용자 로그인 시 온보딩으로 돌아가지 않음</h3>
-            <ol>
-              <li>이미 온보딩을 완료한 시드 사용자로 로그인</li>
-              <li>홈 화면이 단일 노출되어야 함</li>
-              <li>웰컴 화면이 다시 보이면 회귀</li>
-            </ol>
-            <p><strong>종료</strong> — 메인 셸 진입, 웰컴 화면 미노출.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면 구성 — 사람이 보는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:140px">단계</th><th>보이는 것</th><th style="width:34%">할 수 있는 것</th></tr></thead>
-            <tbody>
-              <tr><td><strong>웰컴</strong></td><td>4페이지 캐러셀 · 페이지 인디케이터 · “시작하기” 버튼 · “건너뛰기” 링크</td><td>스와이프, 시작, 건너뛰기</td></tr>
-              <tr><td><strong>프로필 (1/3)</strong></td><td>진행 인디케이터 “1/3” · 프로필 사진 자리 · 닉네임 · 자기소개 · “다음” · “건너뛰기”</td><td>사진 갤러리 선택, 닉네임/자기소개 편집, 다음/건너뛰기</td></tr>
-              <tr><td><strong>관심사 (2/3)</strong></td><td>“3개 이상 선택” 안내 · 카테고리 칩 그리드 · “다음 (N개 선택)” · “건너뛰기”</td><td>다중 선택, 다음/건너뛰기</td></tr>
-              <tr><td><strong>위치 (3/3)</strong></td><td>“위치를 설정해주세요” 안내 · “현재 위치 자동 감지” · 감지 결과 표시 · “이 위치로 설정” · “건너뛰기”</td><td>권한 요청, 감지, 설정, 건너뛰기</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약 한눈에</h2>
-        <p class="subtitle">본 단위는 여러 API에 걸친 흐름이라 직접 호출하는 모든 엔드포인트를 모은다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">Method</th><th>Path</th><th>핵심 동작</th></tr></thead>
-            <tbody>
-              <tr><td><code>POST</code></td><td><code>/api/v1/files/presigned-url</code></td><td>프로필 사진용 사전 서명 URL 발급</td></tr>
-              <tr><td><code>PUT</code></td><td>외부 스토리지</td><td>이미지 본체 업로드</td></tr>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/users/me</code></td><td>닉네임·자기소개·프로필 이미지 키 갱신</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/users/me/preference-tags</code></td><td>관심사 태그 1개 등록 (선택 개수만큼 반복 호출)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/users/me/addresses</code></td><td>주소 1건 등록</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">분기 응답</span>
+        <h2>이 단위가 도메인 잔류·이탈을 결정한다</h2>
+        <div class="callout">
+          <span class="label">가입을 끝낸 사용자가 다시 돌아올지 떠날지는 이 5분에 결정된다</span>
           <ul>
-            <li><strong>409 NICKNAME_ALREADY_EXISTS</strong> — 닉네임 중복</li>
-            <li><strong>409 DUPLICATE_PREFERENCE_TAG</strong> — 같은 태그 재등록(부분 저장 후 재시도 케이스)</li>
-            <li><strong>400 MAX_PREFERENCE_TAGS_EXCEEDED</strong> — 한도 20개 초과</li>
-            <li><strong>403 권한 거부</strong> — 단말 OS 위치 권한 거부 시 클라이언트 표면에서 처리</li>
+            <li><strong>관심사가 비어 있으면 추천이 비어 보인다.</strong>
+              온보딩에서 관심사를 한 개도 안 고른 사용자는 첫 홈 화면에서 맞춤 추천 영역이 비거나 일반 콘텐츠로 채워진다 — "이 앱은 나를 모른다"는 인상이 첫 화면에서 형성된다.
+              그래서 본 단위는 "관심사 최소 3개"를 강하게 권장한다.</li>
+            <li><strong>위치를 설정해야 거리 기반 기능이 동작한다.</strong>
+              내 주변의 이벤트·모임을 보여주는 기능 전체가 위치를 입력값으로 쓴다 — 위치를 건너뛴 사용자는 "근처의 ~" 종류의 추천을 받을 수 없다.</li>
+            <li><strong>프로필 사진과 닉네임은 사용자 본인이 다른 사용자에게 어떻게 보일지를 결정한다.</strong>
+              본 단위에서 사진을 안 올린 사용자는 기본 아바타로 모임·매칭에 나타나서 다른 사용자의 의사 결정에 불리해진다 — 본인 노출 효과를 사용자가 본 단위에서 처음 인지하게 한다.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>수용 기준 (AC)</h2>
+        <h2>네 단계의 흐름</h2>
+        <p class="subtitle">앞 단계에서 입력한 결과가 다음 단계에서 쓰이지는 않는다 — 단계들은 서로 독립적이고 각자 건너뛸 수 있다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["가입 직후<br/>온보딩 진입"] --> B["1. 서비스 소개<br/>4페이지 캐러셀"]
+    B --> C["2. 프로필<br/>사진·닉네임·자기소개"]
+    C --> D["3. 관심사<br/>3개 이상 권장"]
+    D --> E["4. 위치<br/>현 위치 감지 또는 직접 검색"]
+    E --> F["홈 화면 진입"]
+
+    B -.건너뛰기.-> C
+    C -.건너뛰기.-> D
+    D -.건너뛰기.-> E
+    E -.건너뛰기.-> F
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>중간 종료 후 다시 켰을 때</h2>
+        <p class="subtitle">사용자가 온보딩 중간에 앱을 종료해도 다음 진입에서 본인이 어디까지 했는지를 잊지 않는다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor 나
+    participant 앱 as 앱
+    participant 진행 as 진행 상태
+
+    나->>앱: 프로필 단계까지 끝낸 뒤 앱 종료
+    앱->>진행: "프로필 끝남, 관심사부터" 기록
+    Note over 나: 며칠 뒤
+    나->>앱: 앱 다시 켬
+    앱->>진행: 어디까지 했는지 조회
+    진행-->>앱: 관심사부터 재개
+    앱-->>나: 관심사 화면이 곧장 표시
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>네 단계를 모두 채워서 풍부한 홈으로 진입</h3>
+            <p>가입 직후 4페이지 소개를 본 뒤 프로필 사진을 올리고 닉네임을 손본다.
+              관심사 그리드에서 등산·카페탐방·영화 세 개를 고른다. "현재 위치 자동 감지"로 동네를 설정하고 홈으로 들어간다 —
+              첫 홈 화면의 추천 영역이 본인 관심사로 채워져 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 첫 홈이 풍부하게 보일수록 다음날 재방문 비율이 높아진다. 본 시나리오가 본 단위의 핵심 성공 경로.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">빠른 진입</div>
+            <h3>모든 단계를 건너뛰고 곧장 홈으로</h3>
+            <p>"빨리 안을 보고 싶은" 사용자가 각 단계에서 "건너뛰기"만 누른다. 30초 안에 홈에 도달하지만 추천 영역이 비어 있고
+              위치 기반 기능이 동작하지 않는다 — 사용자에게는 "이 앱이 비어 있네"라는 인상이 첫 화면에서 형성된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 강제하지 않은 결과를 그대로 보여줌으로써 사용자가 본인 선택의 영향을 즉시 인지하게 한다. 다음에 본인이 프로필로 가서 관심사를 추가할 동기가 만들어진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중단·재개</div>
+            <h3>프로필까지 하고 앱 종료 → 며칠 뒤 다시 진입</h3>
+            <p>프로필을 채운 뒤 일정이 생겨 앱을 닫는다. 며칠 뒤 앱을 다시 켜면 로그인 화면이 아니라 관심사 화면이 곧장 뜬다 —
+              본인이 어디까지 했는지를 앱이 기억한다. 사용자는 처음부터 다시 입력할 필요가 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 분기</div>
+            <h3>위치 권한을 거부한 사용자</h3>
+            <p>"현재 위치 자동 감지" 버튼을 누르고 OS 권한 다이얼로그에서 거부한다. "위치 권한이 필요합니다" 안내가 한 번 뜨고,
+              사용자는 "건너뛰기"로 위치 없이 홈에 진입한다. 거리 기반 기능은 비활성 상태이지만 다른 기능은 정상.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 권한 거부가 온보딩 전체 진행을 막지 않는다. 권한 정책과 진행 정책을 분리.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">실패</div>
+            <h3>프로필 사진 업로드가 실패</h3>
+            <p>사진을 골라 업로드를 시도하지만 네트워크 끊김으로 실패한다. "업로드에 실패했습니다" 안내가 뜨고
+              미리보기는 그대로 보이지만 실제 저장은 안 된 상태. 사용자가 "다음"을 눌러도 프로필 사진은 비어 있는 채로 다음 단계로 넘어간다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복</div>
+            <h3>닉네임이 이미 사용 중</h3>
+            <p>소셜 가입자가 자동 생성된 닉네임을 더 좋은 것으로 바꿔보려고 한다. "이미 사용 중인 닉네임입니다" 안내가 뜬다 —
+              다른 닉네임으로 다시 시도하거나 그냥 자동 닉네임으로 다음 단계로 넘어갈 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 부재 우회</div>
+            <h3>위치 권한 없이 주소 직접 검색</h3>
+            <p>위치 권한을 주기 싫은 사용자가 "다른 주소 검색" 동선으로 본인 동네를 직접 입력한다.
+              우편번호 검색 모달이 뜨고 선택한 주소를 위치로 설정하면 거리 기반 기능이 동작한다 — 권한 없이도 위치 입력은 가능.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 권한과 입력 경로가 분리되어 있어서 한쪽이 막혀도 다른 경로로 같은 결과에 도달 가능.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <p class="subtitle">단계마다 다른 화면이지만 공통적으로 진행 인디케이터와 건너뛰기 동선이 같은 자리에 있다.</p>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <thead><tr><th style="width:160px">단계</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td>AC-01</td><td>첫 로그인 사용자</td><td>4단계 모두 완료</td><td>프로필·태그·주소 저장, 홈 진입</td></tr>
-              <tr><td>AC-02</td><td>첫 로그인 사용자</td><td>4단계 모두 건너뛰기</td><td>저장 없이도 홈 진입</td></tr>
-              <tr><td>AC-03</td><td>프로필 단계, 사진 업로드 실패</td><td>“다음” 탭</td><td>닉네임·자기소개만 저장, 다음 단계 진행</td></tr>
-              <tr><td>AC-04</td><td>관심사 부분 저장 후 네트워크 끊김</td><td>재시도</td><td>중복 응답을 무시하고 나머지 태그 등록</td></tr>
-              <tr><td>AC-05</td><td>위치 권한 거부</td><td>위치 단계</td><td>건너뛰기로 홈 진입 가능</td></tr>
-              <tr><td>AC-06</td><td>중간 단계 완료 후 앱 재시작</td><td>다시 진입</td><td>마지막 완료 단계 다음부터 재개</td></tr>
-              <tr><td>AC-07</td><td>주소 서버 오류</td><td>“이 위치로 설정”</td><td>토스트, 재시도 또는 건너뛰기 가능</td></tr>
-              <tr><td>AC-08</td><td>닉네임 중복</td><td>프로필 갱신</td><td>토스트, 다른 닉네임 재시도</td></tr>
-              <tr><td>AC-09</td><td>태그 21개 시도</td><td>등록</td><td>서버에서 400, 사용자에게 한도 안내</td></tr>
-              <tr><td>AC-10</td><td>가입 직후</td><td>웰컴~위치 4단계 스킵</td><td>홈 진입까지 1세션 라운드트립</td></tr>
-              <tr><td>AC-11</td><td>온보딩 완료한 기존 사용자</td><td>다시 로그인</td><td>웰컴 미노출, 홈 단독 노출</td></tr>
+              <tr>
+                <td><strong>1. 서비스 소개</strong></td>
+                <td>4페이지 캐러셀 — 만남·이벤트·클럽·내 주변. 페이지 인디케이터(점)와 "건너뛰기" 링크</td>
+                <td>가입 직후 사용자가 본 단위 진입 이유를 자기 언어로 정리하게 한다. 4페이지는 한 페이지당 한 가지 가치만 보여서 인지 부담을 낮춤.</td>
+              </tr>
+              <tr>
+                <td><strong>2. 프로필</strong></td>
+                <td>3단계 진행 표시 + "1/3 프로필 사진과 닉네임을 설정해주세요" 안내. 큰 원형 아바타·닉네임·자기소개 칸. 뒤로가기 차단</td>
+                <td>가입에서 자동 생성된 닉네임을 사용자가 한 번 더 직접 확인하게. 사진은 본인이 어떻게 보일지 첫 결정의 자리.</td>
+              </tr>
+              <tr>
+                <td><strong>3. 관심사</strong></td>
+                <td>카테고리별 태그 그리드 (스포츠/음식/문화). "3개 이상 선택" 안내와 현재 선택 카운트 배지. "다음 (N개 선택)" 버튼</td>
+                <td>"3개 이상"이라는 권장이 현재 선택 개수와 함께 보여서 사용자가 본인의 진행 상태를 매 순간 인지한다.</td>
+              </tr>
+              <tr>
+                <td><strong>4. 위치</strong></td>
+                <td>"주변 이벤트와 클럽을 추천받으려면 위치를 설정해주세요" 안내. "현재 위치 자동 감지" 큰 버튼. 감지 후에는 지도 미리보기 + "이 위치로 설정"</td>
+                <td>위치 입력이 추천 품질의 직접 입력값임을 안내 문구에서 명시 — 권한 요청 직전에 사용자가 "왜 이걸 묻는지" 알고 결정하게.</td>
+              </tr>
+              <tr>
+                <td><strong>공통 — 건너뛰기 링크</strong></td>
+                <td>모든 단계 하단에 동일하게 위치한 작은 텍스트 링크</td>
+                <td>"건너뛰기"가 부차적 동선임을 시각적 위계에서 분명히 — 채우는 게 기본 행동.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn">
-          <span class="label">레드 플래그</span>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">본 단위가 정상이라고 부르려면 이 다섯 지표가 추적되어야 한다</span>
           <ul>
-            <li><strong>중간 실패가 흐름을 끊는 회귀</strong> — 어느 단계도 실패가 메인 셸 진입을 막아서는 안 된다.</li>
-            <li><strong>건너뛰기가 단계 완료 플래그를 안 남기는 회귀</strong> — 다음 진입 시 같은 단계가 반복 노출된다.</li>
-            <li><strong>태그 부분 저장 후 재시도 시 409를 토스트로 노출</strong> — 사용자가 “이미 등록된 것”을 모르고 화내는 케이스. 멱등으로 무시.</li>
-            <li><strong>이미 온보딩 완료한 사용자가 다시 웰컴으로 회귀</strong> — 가장 분명한 회귀. 메인 셸 단독 노출이 보장돼야 한다.</li>
-            <li><strong>클라이언트가 태그 상한을 강제하지 않아 사용자가 21번째 클릭에서야 막힘</strong> — UI 보강 후보.</li>
-            <li><strong>권한 거부 후 “건너뛰기”가 안 보이는 화면 상태</strong> — 사용자가 갇히지 않게 항상 건너뛰기 노출.</li>
+            <li><strong>온보딩 시작 → 완료 전환율</strong> — 본 단위 진입 후 마지막 단계를 끝낸 사용자 비율. 본 단위 효과의 가장 큰 신호.</li>
+            <li><strong>단계별 건너뛰기 비율</strong> — 어느 단계가 가장 많이 건너뛰어지는지. 건너뛰기율이 높은 단계는 화면 설계 개선 후보.</li>
+            <li><strong>관심사 3개 이상 선택 비율</strong> — 권장 기준을 채운 사용자 비율. 추천 품질의 직접 입력 신호.</li>
+            <li><strong>위치 권한 허용 비율</strong> — 권한 거부 비율이 너무 높으면 권한 요청 시점 또는 안내 문구를 손봐야 한다.</li>
+            <li><strong>온보딩 완료 후 다음날 재방문 비율</strong> — 본 단위의 진짜 성과 지표. 풍부한 첫 홈을 만든 사용자와 빈 첫 홈을 본 사용자 사이의 재방문 격차를 추적.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>이어지는 단위 · 관련 정책</h2>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">본 단위에서 어긋나면 신규 사용자 잔류가 떨어진다</span>
+          <ul>
+            <li><strong>관심사 태그 카테고리는 클라이언트에 하드코딩되어 있다.</strong>
+              운영팀이 새로운 카테고리를 추가하려면 앱 업데이트가 필요하다 — 시즌성 콘텐츠(예: 여름 한정 야외 활동)를 빠르게 반영하기 어려움. 카테고리 동적 관리 기능이 필요해질 시점을 모니터링.</li>
+            <li><strong>관심사 등록은 한 개씩 순차로 일어난다.</strong>
+              중간에 네트워크가 끊기면 일부만 저장되고 나머지가 다음 진입에서 중복으로 거절될 수 있다 — 사용자가 답답한 상태로 막힐 위험. 이 동작의 사용자 경험은 운영 측에서 사용자 응답으로 모니터링해야 한다.</li>
+            <li><strong>관심사 0개로 메인 진입한 사용자가 재방문하지 않으면 본 단위의 의미가 사라진다.</strong>
+              "건너뛰기" 허용 자체는 정책이지만 그 결과 빈 추천을 본 사용자에게 다시 관심사 추가를 권하는 후속 알림이 필요한지 검토 필요.</li>
+            <li><strong>위치 권한 거부 사용자는 거리 기반 기능 전반에서 가치를 받지 못한다.</strong>
+              본 단위 외부(예: 홈 추천)에서 권한 거부 안내 띠를 노출하는 정책과 함께 움직여야 한다.</li>
+            <li><strong>중간 단계에서 종료한 사용자는 재진입 시 같은 자리부터 보여지지만, 너무 오래 안 돌아오면 본인이 어디까지 했는지 잊는다.</strong>
+              온보딩 중단 후 며칠이 지나도 재진입이 없으면 별도 알림으로 안내하는 정책을 검토할 수 있다.</li>
+            <li><strong>온보딩 단계의 상태는 사용자 기기에 저장되어 있다.</strong>
+              사용자가 앱을 삭제 후 재설치하면 처음부터 다시 보게 된다 — 본 단위의 정상 동작이지만 CS 문의로 들어올 수 있는 행동이라 매뉴얼에 포함.</li>
+            <li><strong>4페이지 캐러셀의 콘텐츠는 서비스 정체성을 결정한다.</strong>
+              마케팅·기획에서 가치 메시지가 바뀔 때 본 화면의 4페이지 카피와 일치하는지 점검 필수 — 어긋나면 사용자가 받은 첫 인상과 실제 사용 경험이 다르게 느껴진다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/01-auth.html">
-            <div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3>
-            <p>본 기능이 속한 도메인.</p>
-          </a>
-          <a class="card" href="F01-07.html">
-            <div class="eyebrow">다음</div><h3>F01-07 관심사 태그 관리</h3>
-            <p>온보딩 후에도 태그를 추가·삭제할 수 있다.</p>
-          </a>
-          <a class="card" href="../domains/14-location.html">
-            <div class="eyebrow">관련 도메인</div><h3>14 위치·길찾기</h3>
-            <p>위치 단계에서 사용하는 권한·역지오코딩 정책.</p>
-          </a>
-          <a class="card" href="../policies/permission.html">
-            <div class="eyebrow">정책</div><h3>권한·역할</h3>
-            <p>온보딩 완료 여부에 따른 진입 가드.</p>
-          </a>
+          <a class="card" href="../domains/01-auth.html"><div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3></a>
+          <a class="card" href="F01-01.html"><div class="eyebrow">앞 단위</div><h3>F01-01 이메일 가입·로그인</h3><p>가입 직후 본 단위로 진입.</p></a>
+          <a class="card" href="F01-02.html"><div class="eyebrow">앞 단위</div><h3>F01-02 소셜 로그인</h3><p>소셜 신규 가입자도 본 단위로 진입.</p></a>
+          <a class="card" href="F01-07.html"><div class="eyebrow">관련</div><h3>F01-07 관심사 태그</h3><p>본 단위가 등록한 태그의 라이프사이클.</p></a>
+          <a class="card" href="../domains/02-home.html"><div class="eyebrow">도착</div><h3>02 홈 피드</h3><p>온보딩 결과가 즉시 반영되는 첫 화면.</p></a>
         </div>
       </section>
 
 <!--
-  원천 자료 (페이지에는 노출하지 않음 — 갱신/추적용)
-  - business_logic/units/01_auth_onboarding/F01-06_onboarding/backend.md
-  - business_logic/units/01_auth_onboarding/F01-06_onboarding/frontend.md
-  - business_logic/units/01_auth_onboarding/F01-06_onboarding/scenarios.md
-  - business_logic/units/01_auth_onboarding/F01-06_onboarding/diagrams.md
-  - business_logic/prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/01_auth_onboarding/F01-06_onboarding/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

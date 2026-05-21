@@ -17,241 +17,205 @@
           <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
           F07-08 이의제기·감사로그
         </div>
-        <h1>F07-08. 정산 이의제기 · 처리 · 감사 로그</h1>
+        <h1>F07-08. 이의제기 · 감사로그</h1>
         <p class="lede">
-          정산 도메인의 안전망. 참가자가 share/item에 이의를 제기하면 해당 subject의 결제 자체가 차단되고,
-          호스트가 인정·거절을 결정해야 풀린다. 모든 단계는 감사 로그에 actorRole(USER/HOST/SYSTEM)과 함께 기록되어
-          “누가 언제 무엇을 했는지” 한 화면에서 추적 가능하다.
+          정산이 활성화된 다음에는 항목을 호스트가 자유롭게 고칠 수 없다.
+          분담에 동의하지 못하는 참가자가 호스트에게 의견을 전달하는 유일한 공식 경로가 본 단위의 이의제기다.
+          이의가 걸린 분담·송금은 즉시 결제가 잠긴다 — 호스트가 검토하고 수락 또는 거절을 결정해야 잠금이 풀린다.
+          정산에서 일어난 모든 변경(생성·활성화·결제·확인·취소·이의 처리)은 감사 기록으로 남아 누가 언제 무엇을 했는지 추적 가능하다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">이의 대상</div><div class="value">SHARE·ITEM·TRANSFER</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-          <div class="metric"><div class="label">상태</div><div class="value">PENDING·APPROVED·REJECTED</div></div>
-          <div class="metric"><div class="label">감사 actor</div><div class="value">USER·HOST·SYSTEM</div></div>
+          <div class="metric"><div class="label">이의 대상</div><div class="value">3종</div><div class="hint">항목 · 분담 · 송금</div></div>
+          <div class="metric"><div class="label">이의 중 결제</div><div class="value">자동 잠금</div><div class="hint">처리 전까지 거절</div></div>
+          <div class="metric"><div class="label">동일 대상 중복</div><div class="value">차단</div><div class="hint">진행 중 이의는 하나만</div></div>
+          <div class="metric"><div class="label">감사 기록</div><div class="value">모든 변경</div><div class="hint">생성·결제·취소·이의 모두</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">핵심 게이트</span>
-          <p>PENDING 이의가 있는 subject는 <strong>결제 자체가 차단</strong>된다(MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL).
-          이의 해결 후에야 잔액이 움직일 수 있다. 잔액 이동 후 환원이 매우 어렵기 때문에 사전 차단이 안전망 역할을 한다.</p>
+        <div class="callout">
+          <span class="label">설계 의도 — 분쟁을 막지 않고, 분쟁의 공식 경로를 시스템 안에 둔다</span>
+          <p>실제 정산에서는 "내 분담이 너무 크다", "이 항목은 내가 안 먹었다" 같은 이의가 종종 나온다.
+            이런 의견이 시스템 밖(개인 카톡, 단톡방)에서 흘러 다니면 호스트의 운영 부담이 누적되고
+            금액의 흔적이 시스템에 안 남는다. 그래서 본 단위는 이의를 시스템 안에서 받고, 그 대상에 대한 결제를 자동으로 잠그며,
+            호스트의 처리도 시스템 안에서 기록되게 한다.</p>
+          <p>감사 로그는 그 옆에서 모든 변경을 시간 순으로 기록한다 — "누가 언제 무엇을 했는지"가 한 화면에 시간 순으로 보이면
+            분쟁이 일어났을 때 호스트도 참가자도 운영팀도 같은 근거를 본다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이의 처리 상태 머신</h2>
-        <div class="diagram"><div class="mermaid">
-stateDiagram-v2
-    [*] --> PENDING: 참가자 이의 제기
-    PENDING --> APPROVED: 호스트 인정 + 응답
-    PENDING --> REJECTED: 호스트 기각 + 응답
-    APPROVED --> [*]: subject 수정 또는 정산 재구성
-    REJECTED --> [*]: subject 결제 차단 해제
-        </div></div>
+        <h2>이의 한 건이 시스템 안에서 흐르는 길</h2>
+        <p class="subtitle">이의가 만들어진 순간 결제가 잠기고, 호스트가 처리하면 잠금이 풀린다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["참가자: 이의제기 탭"] --> B{"같은 대상에<br/>진행 중인 이의가 있는가"}
+    B -->|"예"| E1["이미 검토 중인 이의가 있습니다 안내"]
+    B -->|"아니오"| C["이의 생성 (진행 중)"]
+    C --> D["해당 대상의 결제·확인 잠금"]
+    D --> E["호스트가 이의제기 관리 화면에서 검토"]
+    E --> F{"호스트의 결정"}
+    F -->|"수락"| F1["수락 상태로 처리 + 호스트 답변 기록"]
+    F -->|"거절"| F2["거절 상태로 처리 + 호스트 답변 기록"]
+    F1 --> G["잠금 해제 → 결제 가능"]
+    F2 --> G
+    G --> H["감사 로그에 이의 처리 기록"]
+          </div>
+        </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>이의를 걸 수 있는 세 가지 대상</h2>
+
         <div class="cards">
           <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>이의 제기 (SHARE/ITEM)</h3>
-            <p>참가자가 자기 share 또는 항목에 사유와 함께 제기. 동일 subject + PENDING 중복 차단.</p>
-            <div class="meta"><span class="pill">사유 최대 1500자</span></div>
+            <div class="eyebrow">대상 1 · 항목</div>
+            <h3>"이 영수증 자체에 동의 못 한다"</h3>
+            <p>가게 이름·금액·분할 방식 같은 영수증 단위 정보에 이의를 건다.
+              해당 항목에 묶인 분담 전체의 결제가 잠긴다.</p>
           </div>
           <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>호스트 인정 / 기각</h3>
-            <p>hostResponse(공개 메시지) 입력 + status 결정. RESOLVED 후 결제 차단 해제.
-              APPROVED 시 호스트가 항목/share를 직접 수정하거나(DRAFT만 가능) 정산 cancel 후 재생성.</p>
+            <div class="eyebrow">대상 2 · 분담</div>
+            <h3>"내 분담 금액이 잘못됐다"</h3>
+            <p>한 항목 안에서 본인에게 할당된 금액에 이의를 건다.
+              본인이 결제할 수 없게 잠긴다.</p>
           </div>
           <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>결제 차단 게이트</h3>
-            <p>모든 결제 호출이 validateNoPendingAppeal을 통과해야 한다. transfer·share·confirm 어디서든 동일.</p>
-            <div class="meta"><span class="pill">전역 가드</span></div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>감사 로그</h3>
-            <p>모든 정산 변경(SETTLEMENT_CREATED, ITEM_CREATED, TRANSFERS_REGENERATED, APPEAL_*, TRANSFER_PAID_*…)을
-              actor 정보(USER/HOST/SYSTEM)와 payload로 기록. 시간순 타임라인 + 페이징.</p>
+            <div class="eyebrow">대상 3 · 송금</div>
+            <h3>"내 송금 라인이 이상하다"</h3>
+            <p>활성화 직후 시스템이 만든 송금 라인(누구에게 얼마를 보내야 하는지)에 이의를 건다.
+              해당 송금의 결제·확인이 잠긴다.</p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>이의 제기와 결제 차단 효과</h2>
-        <div class="diagram"><div class="mermaid">
-sequenceDiagram
-    actor U as 참가자
-    actor H as 호스트
-    actor P as 송금자
-    participant SVC as 정산 서비스
-    participant AUD as 감사 로그
-    U->>SVC: 이의 제기 (subject=SHARE/42, reason)
-    SVC->>SVC: 중복 PENDING 검사
-    SVC->>SVC: appeal INSERT (PENDING)
-    SVC->>AUD: APPEAL_CREATED (USER role)
-    SVC-->>U: 이의가 제기되었습니다
-    Note over P: subject 42 결제 시도
-    P->>SVC: 포인트 결제
-    SVC->>SVC: validateNoPendingAppeal(SHARE,42)
-    SVC-->>P: 400 SUBJECT_UNDER_APPEAL
-    H->>SVC: resolve (APPROVED 또는 REJECTED + hostResponse)
-    SVC->>SVC: appeal status·resolvedAt 갱신
-    SVC->>AUD: APPEAL_RESOLVED (HOST role + hostResponse)
-    SVC-->>H: 이의가 처리되었습니다
-    Note over P: 결제 차단 해제
-    P->>SVC: 포인트 결제 재시도
-    SVC->>SVC: 정상 처리
-        </div></div>
-      </section>
+        <h2>사용자 시나리오</h2>
 
-      <section>
-        <h2>사용자 시나리오 8개</h2>
         <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · 이의 제기</div><h3>참가자가 share 16k에 이의</h3>
-            <ol>
-              <li>my-shares 카드 “이의제기” → 사유 입력 → 제기</li>
-              <li>중복 PENDING 검사 통과 → appeal INSERT(PENDING)</li>
-              <li>audit APPEAL_CREATED(USER, payload: appealId·reason)</li>
-              <li>“이의가 제기되었습니다” 토스트</li>
-            </ol>
-            <p><strong>결과:</strong> 본인 share의 결제가 차단된다(payShareByPoint/confirmBankTransfer 모두 SUBJECT_UNDER_APPEAL).</p>
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 이의 제기</div>
+            <h3>"먼저 자리를 떴는데 분담이 과하다"</h3>
+            <p>본인이 식사 자리에서 일찍 일어났는데 분담은 다른 사람들과 같은 16,000원으로 잡혔다.
+              결제 화면의 본인 분담 카드에서 "이의제기"를 누르고 사유를 입력해 보낸다.
+              이의가 만들어지는 순간 본인 분담의 결제가 잠기고, 호스트에게 이의제기 알림이 도착한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 참가자가 시스템 안에서 의견을 전달할 수 있어야 사적 관계로 흘러가지 않는다.
+              이의가 결제를 잠그는 효과는 분쟁 중인 돈이 먼저 흐르지 않도록 막는 안전 장치.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S2 · 인정</div><h3>호스트 APPROVED + 응답</h3>
-            <ol>
-              <li>이의제기 관리 화면 → PENDING 카드</li>
-              <li>status=APPROVED + hostResponse 입력 → resolve PATCH</li>
-              <li>appeal 갱신 + audit APPEAL_RESOLVED(HOST role)</li>
-              <li>호스트가 항목/share를 수정하거나 정산 cancel 후 재구성</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">호스트 · 수락</div>
+            <h3>"확인했습니다. 항목을 수정해드리겠습니다"</h3>
+            <p>호스트가 이의제기 관리 화면에서 진행 중인 이의를 검토한다.
+              "수락"을 선택하고 호스트 답변에 "확인했습니다. 항목을 수정해드리겠습니다"라고 입력해 보낸다.
+              이의가 수락 상태로 닫히면서 결제 잠금이 풀린다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 답변이 시스템 안에 기록되어야 후속 처리(정산 취소 후 재생성 등)에 일관된 근거가 된다.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S3 · 기각</div><h3>REJECTED + 응답</h3>
-            <ol>
-              <li>“추가 영수증 확인 결과 적정합니다” 등 응답 + REJECTED</li>
-              <li>차단 해제 → 사용자가 다시 결제 가능</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">호스트 · 거절</div>
+            <h3>"추가 영수증 확인 결과 분담금이 적정합니다"</h3>
+            <p>호스트가 영수증과 분담 구조를 다시 검토한 결과 이의가 받아들이기 어렵다고 판단한다.
+              "거절"을 선택하고 사유를 답변에 적어 보낸다. 결제 잠금이 풀리고 참가자는 다시 결제할 수 있게 된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 거절이 시스템 안에서 사유와 함께 기록되는 것이 사용자 만족과 운영 검토 양쪽에 중요하다.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S4 · 중복</div><h3>동일 subject 재제기</h3>
-            <ol>
-              <li>PENDING 1건이 이미 있는 상태에서 같은 사용자가 다시 제기</li>
-              <li>409 MEETING_APPEAL_ALREADY_PENDING</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">차단 · 중복 이의</div>
+            <h3>이미 검토 중인 이의가 있는데 또 제기한다</h3>
+            <p>같은 대상에 이미 진행 중인 이의가 있는 상태에서 사용자가 또 이의를 건다.
+              "이미 검토 중인 이의가 있습니다" 안내로 거절된다. 한 대상에는 진행 중인 이의가 하나만 존재한다.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S5 · 호스트 본인 제기</div><h3>UI 가드 vs 서버 가드</h3>
-            <ol>
-              <li>UI: 호스트의 share 카드는 이의 버튼 미노출</li>
-              <li>우회 시 백엔드는 현재 별도 차단 없음</li>
-              <li>→ 호스트가 자기 이의를 자기 처리하는 self-loop 가능</li>
-            </ol>
-            <p><strong>참고:</strong> 향후 서버 차단(appealerUserId == settlement.creatorUserId) 추가 후보.</p>
+          <article class="card">
+            <div class="eyebrow">결제 차단 효과</div>
+            <h3>이의가 걸린 송금을 결제하려 한다</h3>
+            <p>송금에 이의가 걸려 있는 상태에서 송금자가 "포인트로 결제"를 누르면
+              "이의제기가 진행 중입니다. 호스트 처리 후 다시 시도해주세요" 안내로 거절된다.
+              호스트가 이의를 수락 또는 거절로 처리해야 결제가 다시 가능해진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 분쟁 중인 금액의 결제를 막지 않으면 환불·재청구가 얽힌다.
+              결제 가드는 분쟁 해결 시간 동안 돈이 흐르는 것을 막는 단순한 약속.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S6 · 결제 차단</div><h3>PENDING 이의로 transfer 결제 차단</h3>
-            <ol>
-              <li>transfer 5에 이의 PENDING</li>
-              <li>송금자 “포인트 결제” → validateNoPendingAppeal → 400 SUBJECT_UNDER_APPEAL</li>
-              <li>호스트 resolve 후 재시도 가능</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">감사 로그 조회</div>
+            <h3>호스트가 정산에서 일어난 모든 변경을 시간 순으로 본다</h3>
+            <p>정산 현황 화면의 메뉴에서 "감사 로그"를 누르면 모든 변경이 시간 순으로 나열된다 —
+              "정산 생성", "항목 추가", "활성화", "송금 라인 생성", "포인트 결제", "이의 처리" 등.
+              누가 언제 어떤 동작을 했는지가 한 줄씩 표시되어, 분쟁이 일어났을 때 같은 근거를 본다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 감사 로그가 비공개로 운영팀에만 보이면 사용자가 의심을 풀지 못한다.
+              호스트와 참가자가 같은 기록을 본다는 사실 자체가 분쟁 해결의 출발점.</p>
           </article>
 
-          <article class="card"><div class="eyebrow">S7 · 감사 로그</div><h3>변경 이력 타임라인</h3>
-            <ol>
-              <li>“감사 로그” 진입 → 페이지 30건씩</li>
-              <li>SETTLEMENT_CREATED → ITEM_CREATED × N → SETTLEMENT_ACTIVATED → TRANSFERS_REGENERATED(SYSTEM) → TRANSFER_PAID_POINT(USER) → APPEAL_CREATED(USER) → APPEAL_RESOLVED(HOST) → SETTLEMENT_COMPLETED(SYSTEM)</li>
-              <li>각 행에 actorUserName · actorRole · payload · createdAt</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S8 · 잘못된 상태 전이</div><h3>이미 RESOLVED된 appeal에 resolve 호출</h3>
-            <ol>
-              <li>호스트가 동시에 두 번 처리 시도</li>
-              <li>두 번째 호출: PENDING 아님 → 400 MEETING_APPEAL_INVALID_STATUS</li>
-              <li>토스트로 “이미 처리됨” 안내</li>
-            </ol>
+          <article class="card">
+            <div class="eyebrow">차단 · 이미 처리됨</div>
+            <h3>다른 디바이스에서 이미 처리된 이의를 또 처리한다</h3>
+            <p>호스트가 두 디바이스에서 거의 동시에 같은 이의를 처리한다.
+              두 번째 처리는 "이미 처리된 이의입니다"로 거절된다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:160px">화면 요소</th><th>사용자가 보는 것</th><th style="width:34%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/appeals</code></td><td>이의 제기(SHARE/ITEM/TRANSFER)</td></tr>
-              <tr><td><code>PATCH</code></td><td><code>/api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve</code></td><td>호스트 인정/기각 + hostResponse</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/settlement/appeals</code></td><td>이의 목록(status 필터)</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/settlement/audit-log?page=&size=</code></td><td>변경 이력 페이지</td></tr>
+              <tr>
+                <td><strong>"이의제기" 버튼</strong></td>
+                <td>참가자의 분담 카드나 송금 카드에 함께 노출. 호스트 본인의 분담에는 노출되지 않음.</td>
+                <td>이의는 결제 직전 화면에서 즉시 걸 수 있어야 한다 — 다른 화면으로 가게 두면 결제 후 이의를 거는 사고가 생긴다.</td>
+              </tr>
+              <tr>
+                <td><strong>이의 입력 다이얼로그</strong></td>
+                <td>사유 입력 칸 + "제기" 버튼. 사유는 2,000자까지.</td>
+                <td>사유 없이 이의를 걸면 호스트가 판단할 근거가 없다 — 충분한 길이의 입력 공간을 확보.</td>
+              </tr>
+              <tr>
+                <td><strong>이의제기 관리 화면</strong></td>
+                <td>호스트가 자기 정산의 이의를 모아 보는 면. 진행 중 / 처리됨 카드로 분리.</td>
+                <td>호스트가 한 자리에서 모든 이의를 보고 처리할 수 있어야 답변이 누락되지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>이의 처리 옵션</strong></td>
+                <td>수락 / 거절 라디오 + 호스트 답변 입력 칸.</td>
+                <td>처리 결과 + 답변이 한 동작으로 묶여야 참가자가 "왜 그런 결과인지"를 답변에서 확인할 수 있다.</td>
+              </tr>
+              <tr>
+                <td><strong>감사 로그 화면</strong></td>
+                <td>변경 한 건당 카드 한 장. 동작 이름(한국어 라벨), 시간, 누가(시스템/호스트/사용자) 한눈에.</td>
+                <td>호스트와 참가자가 같은 기록을 본다는 사실 자체가 분쟁 해결의 출발점이다 — 코드 같은 어휘가 아닌 한국어 라벨이어야 한다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
+      </section>
 
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">에러 코드</span>
+          <span class="label">이의제기는 정산 신뢰의 마지막 안전 장치다</span>
           <ul>
-            <li><strong>409 MEETING_APPEAL_ALREADY_PENDING</strong> — 동일 subject + PENDING 중복</li>
-            <li><strong>400 MEETING_APPEAL_INVALID_STATUS</strong> — PENDING이 아닌 상태에서 resolve</li>
-            <li><strong>400 MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL</strong> — PENDING 이의로 결제 차단</li>
-            <li><strong>403 UNAUTHORIZED</strong> — 호스트 아님이 resolve 시도</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>감사 로그 액션 카테고리</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>카테고리</th><th>actions</th><th>actor</th></tr></thead>
-            <tbody>
-              <tr><td>생성/수정</td><td>SETTLEMENT_CREATED, ITEM_CREATED, ITEM_UPDATED, ITEM_DELETED</td><td>HOST</td></tr>
-              <tr><td>상태 전이</td><td>SETTLEMENT_ACTIVATED, SETTLEMENT_CANCELLED, SETTLEMENT_COMPLETED</td><td>HOST 또는 SYSTEM</td></tr>
-              <tr><td>이체 생성</td><td>TRANSFERS_REGENERATED</td><td>SYSTEM</td></tr>
-              <tr><td>이체 결제</td><td>TRANSFER_PAID_POINT, TRANSFER_PAID_MIXED, TRANSFER_CONFIRMED_BANK, TRANSFER_SELF_REFUNDED, TRANSFER_WRITE_OFF</td><td>USER 또는 HOST</td></tr>
-              <tr><td>리마인드</td><td>REMIND_SENT_MANUAL, REMIND_SENT_AUTO</td><td>HOST 또는 SYSTEM</td></tr>
-              <tr><td>이의</td><td>APPEAL_CREATED, APPEAL_RESOLVED</td><td>USER / HOST</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>본인 share, PENDING 없음</td><td>이의 제기</td><td>PENDING + audit APPEAL_CREATED(USER)</td></tr>
-              <tr><td>AC-02</td><td>PENDING 이의</td><td>호스트 APPROVED</td><td>상태 갱신 + audit APPEAL_RESOLVED(HOST) + 차단 해제</td></tr>
-              <tr><td>AC-03</td><td>PENDING 이의</td><td>호스트 REJECTED</td><td>상태 REJECTED + 차단 해제</td></tr>
-              <tr><td>AC-04</td><td>이미 PENDING</td><td>같은 사용자 재제기</td><td>409 ALREADY_PENDING</td></tr>
-              <tr><td>AC-05</td><td>PENDING 이의</td><td>해당 subject 결제 시도</td><td>400 SUBJECT_UNDER_APPEAL</td></tr>
-              <tr><td>AC-06</td><td>호스트 아님</td><td>resolve 호출</td><td>403 UNAUTHORIZED</td></tr>
-              <tr><td>AC-07</td><td>이미 RESOLVED</td><td>다시 resolve</td><td>400 INVALID_STATUS</td></tr>
-              <tr><td>AC-08</td><td>로그인</td><td>감사 로그 진입</td><td>변경 타임라인 페이지, actor·payload 동행</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
-          <ul>
-            <li><strong>결제 가드 누락</strong> — PENDING 이의 동안 잔액이 움직이면 환원이 매우 복잡. 모든 결제 경로에 validateNoPendingAppeal 적용.</li>
-            <li><strong>이의 사유를 알림에 포함</strong> — 호스트만 보는 정보. 알림은 “이의가 제기되었습니다” 같은 일반 안내로.</li>
-            <li><strong>APPROVED 후 정산 수정 가능 여부 미안내</strong> — DRAFT 아닌 정산은 항목 수정 불가. 사용자는 정산 cancel 후 재생성을 안내받아야 한다.</li>
-            <li><strong>actorRole 누락</strong> — “시스템이 한 일”과 “사용자가 한 일”이 섞이면 책임 추적 불가.</li>
-            <li><strong>감사 로그 페이징 누락</strong> — 큰 정산에서 메모리·렌더링 부담.</li>
-            <li><strong>호스트 self-loop 허용</strong> — 호스트가 자기 share에 이의 제기 후 본인이 처리하는 경로가 열려 있음. 정책 강화 시 차단.</li>
+            <li><strong>이의가 걸린 대상의 결제는 자동으로 잠긴다.</strong>
+              호스트가 처리할 때까지 결제가 막힌다 — 결제 가드가 풀리면 분쟁 중인 돈이 먼저 흐른다.</li>
+            <li><strong>한 대상에 진행 중인 이의는 하나만 존재한다.</strong>
+              사용자가 더블탭 등으로 중복 이의를 만들면 호스트의 처리 동작이 두 배가 된다 — 중복 차단은 입력 시점에.</li>
+            <li><strong>호스트 본인 분담에 본인이 이의를 거는 것은 화면에서 막는다.</strong>
+              현재 시스템 측 차단은 없고 화면에서만 버튼이 숨겨진다 — 우회 호출이 가능한 상태이므로 향후 시스템 차단 추가가 권장 항목.</li>
+              <li><strong>호스트 답변은 사유 부족 거절에서도 반드시 적게 한다.</strong>
+              답변 없이 거절되면 참가자가 결과를 받아들이지 못한다 — 답변 입력 칸이 필수가 되어야 사용자 만족이 유지된다.</li>
+            <li><strong>감사 로그의 한국어 라벨이 비즈니스 가치다.</strong>
+              사용자가 보는 화면에 시스템 코드 같은 어휘가 들어가면 신뢰의 기록이 아니라 개발 로그가 된다 —
+              "정산 생성", "활성화", "포인트 결제", "이의 수락" 같은 한국어 라벨로 표시.</li>
+            <li><strong>활성화 후 항목 변경은 이의제기를 거쳐야 한다.</strong>
+              호스트가 직접 항목을 고칠 수 없는 것이 의도된 제약 — 그 우회 경로가 이의제기다.
+              이 경로가 막히면 호스트는 정산을 취소하고 새로 만들어야 한다.</li>
+            <li><strong>감사 로그는 사용자에게 공개된다.</strong>
+              호스트와 참가자 모두 정산에서 일어난 모든 변경을 볼 수 있다 — 사적 정보가 노출되는 회귀가 없는지 운영 모니터링 필요.</li>
           </ul>
         </div>
       </section>
@@ -259,16 +223,17 @@ sequenceDiagram
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
-          <a class="card" href="F07-05.html"><div class="eyebrow">차단 대상</div><h3>F07-05 분담금 납부</h3></a>
-          <a class="card" href="F07-06.html"><div class="eyebrow">차단 대상</div><h3>F07-06 이체 확인</h3></a>
-          <a class="card" href="F07-02.html"><div class="eyebrow">수정 대상</div><h3>F07-02 항목 관리</h3></a>
-          <a class="card" href="F07-03.html"><div class="eyebrow">관련</div><h3>F07-03 활성화·취소</h3></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 도메인</div><h3>07 모임 정산</h3></a>
+          <a class="card" href="F07-04.html"><div class="eyebrow">진입처</div><h3>F07-04 현황·요약</h3><p>이의제기 관리 화면 진입.</p></a>
+          <a class="card" href="F07-05.html"><div class="eyebrow">결제 차단 영향</div><h3>F07-05 분담금 납부</h3><p>이의 중 결제 거절 흐름.</p></a>
+          <a class="card" href="F07-06.html"><div class="eyebrow">확인 차단 영향</div><h3>F07-06 이체 확인·상각</h3><p>이의 중 확인 거절 흐름.</p></a>
+          <a class="card" href="F07-02.html"><div class="eyebrow">관련</div><h3>F07-02 항목 관리</h3><p>활성화 후 변경의 우회 경로.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/07_meeting_settlement/F07-08_appeal-audit/{scenarios,backend,frontend}.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/07_meeting_settlement/F07-08_appeal-audit/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

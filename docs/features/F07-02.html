@@ -1,41 +1,248 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F07-02 정산 항목 관리 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>F07-02 정산 항목</div>
-<h1>F07-02. 정산 항목 관리 (CRUD)</h1>
-<p class="lede">정산 안의 비용 항목(식대·교통·숙박 등)을 카테고리별로 추가·수정·삭제. EQUAL/CUSTOM 분할, 영수증 사진, 최근 항목 자동완성 지원.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>항목 추가 (EQUAL/CUSTOM)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>최근 항목 자동완성</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>영수증 사진 첨부</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>수정·삭제</h3></div>
-<div class="card"><div class="eyebrow">동작 5</div><h3>분할 미세 조정</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>EQUAL 분할 추가</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>CUSTOM 분할</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>영수증 첨부</h3></article>
-<article class="card"><div class="eyebrow">S4</div><h3>항목 수정</h3></article>
-<article class="card"><div class="eyebrow">S5</div><h3>항목 삭제</h3></article>
-<article class="card"><div class="eyebrow">S6</div><h3>10원 단위 반올림</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/items</code></td></tr>
-<tr><td><code>PATCH</code></td><td><code>/api/v1/events/{eventId}/settlement/items/{itemId}</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/events/{eventId}/settlement/items/{itemId}</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/users/me/settlement-items/recent?category=</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
-<a class="card" href="F07-01.html"><div class="eyebrow">선행</div><h3>F07-01 생성</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/07_meeting_settlement/F07-02_settlement-items/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F07-02 정산 항목 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
+          F07-02 항목 관리
+        </div>
+        <h1>F07-02. 정산 항목 관리</h1>
+        <p class="lede">
+          작성 중 정산에 영수증·지출 단위를 더하고, 항목마다 누가 얼마를 부담할지를 정한다.
+          분할 방식은 균등·금액별·비율 세 가지 — 영수증의 성격에 따라 호스트가 골라 쓰고,
+          체크된 참여자에게 자동으로 1인당 금액이 흩어진다.
+          항목은 정산이 <strong>작성 중일 때만</strong> 자유롭게 고칠 수 있다.
+          활성화된 뒤에는 변경 이력이 감사 기록으로 추적되며 이의제기 흐름이 따라붙는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">분할 방식</div><div class="value">3가지</div><div class="hint">균등 · 금액별 · 비율</div></div>
+          <div class="metric"><div class="label">자유 편집 시점</div><div class="value">작성 중</div><div class="hint">활성화 후엔 감사 추적</div></div>
+          <div class="metric"><div class="label">최근 항목 자동완성</div><div class="value">최대 30개</div><div class="hint">카테고리별로 묶어 보임</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 영수증마다 다른 분담 방식을 한 화면에서 다룬다</span>
+          <p>실제 모임 비용은 한 가지 방식으로만 나눠지지 않는다. 식대는 모두가 균등하게,
+            와인 한 병은 마신 사람 4명이 비싸게, 임원 모임에서는 직책별 비율로 — 한 정산 안에 세 가지 방식이 섞인다.
+            그래서 본 단위는 항목마다 다른 분할 방식을 선택할 수 있게 두고, 한 사람이 여러 항목에 걸쳐 누적되는
+            1인당 금액을 시스템이 알아서 합산한다.
+            호스트가 손으로 계산하지 않게 해 주는 것이 이 화면의 가장 중요한 가치다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>세 가지 분할 방식</h2>
+        <p class="subtitle">영수증의 성격에 따라 호스트가 고른다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">방식 1 · 균등</div>
+            <h3>인원수로 똑같이 나눈다</h3>
+            <p>가장 흔한 방식. 6명이 96,000원을 균등 분담하면 1인당 16,000원. 10원 단위로 떨어지지 않는 잔돈은 마지막 사람이 흡수한다.
+              호스트가 사람 명단만 체크하면 끝 — 금액 입력은 한 번뿐이다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">방식 2 · 금액별</div>
+            <h3>각자 다른 금액을 직접 입력한다</h3>
+            <p>"와인은 마신 사람만 부담" 같은 경우. 4명은 25,000원, 1명은 안주값만 5,000원 — 사람마다 다른 금액을 입력하면
+              합계가 영수증 총액과 일치하는지 화면에서 즉시 검산된다. 합이 맞지 않으면 저장이 막힌다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">방식 3 · 비율</div>
+            <h3>직책·역할별 비율로 나눈다</h3>
+            <p>회식 모임에서 임원은 2, 사원은 1 같은 비율 분배. 호스트가 사람별 비율 숫자만 입력하면
+              영수증 총액에 비례해서 자동 계산된다. 잔돈은 마지막 사람에게 흡수.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>한 영수증을 등록하는 흐름</h2>
+        <p class="subtitle">호스트가 "항목 추가"를 누르고 저장하기까지.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["항목 추가 탭"] --> B["카테고리 선택<br/>(음식 · 카페 · 교통 · 숙박 · 기타)"]
+    B --> C["최근 항목 칩으로<br/>제목·금액 빠르게 채우기"]
+    C --> D{"분할 방식 선택"}
+    D -->|"균등"| E1["참여자 체크"]
+    D -->|"금액별"| E2["사람마다 금액 입력"]
+    D -->|"비율"| E3["사람마다 비율 입력"]
+    E1 --> F["저장"]
+    E2 --> F
+    E3 --> F
+    F --> G["1인당 금액 자동 계산<br/>· 총액 자동 합산"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 균등</div>
+            <h3>등산 후 식대 96,000원을 6명이 나눈다</h3>
+            <p>호스트가 "항목 추가"를 누르고 카테고리에서 "음식"을 선택한다.
+              최근 항목 자동완성에 "삼겹살집 (84,000원)"이 보이지만 이번에는 다른 가게라
+              제목과 금액을 직접 입력한다. 균등 분할에 6명을 모두 체크하고 저장하면
+              1인당 16,000원으로 자동 계산돼 항목 카드에 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 직접 나눗셈을 하지 않는다.
+              암산 과정에서 생기는 분쟁의 여지를 시스템이 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 금액별</div>
+            <h3>와인 모임에서 안 마신 사람의 부담을 줄인다</h3>
+            <p>한 명은 술을 안 마셔서 안주값만 부담하기로 한다. 분할을 "금액별"로 바꾸고 4명은 25,000원, 1명은 5,000원으로
+              입력한다. 합계가 영수증 총액 105,000원과 일치하므로 저장이 통과한다.
+              만약 합계가 어긋난 채로 저장을 누르면 "합계가 일치해야 합니다" 안내가 뜨고 막힌다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 분담 금액의 합이 영수증 금액과 정확히 일치해야 한다는
+              회계의 기본 약속을 입력 단계에서 강제한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 흐름 · 비율</div>
+            <h3>회식에서 임원·사원을 다른 비율로</h3>
+            <p>회식 6명 자리에서 임원 3명은 비율 2, 사원 3명은 비율 1로 입력한다.
+              영수증 총액 90,000원이 비율 합 9에 따라 임원 1명당 20,000원, 사원 1명당 10,000원으로 자동 계산된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수정</div>
+            <h3>빠뜨린 사람을 뒤늦게 추가</h3>
+            <p>이미 6명으로 등록한 항목에 7번째 사람이 같이 부담하기로 했다.
+              카드의 수정 아이콘을 눌러 다이얼로그를 열고 참여자 한 명을 추가한 뒤 저장한다.
+              항목 금액은 그대로지만 1인당 금액이 다시 계산돼 7명 분담으로 갱신된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 작성 중에는 호스트가 자유롭게 고칠 수 있는 것이 핵심.
+              활성화 후에는 이의제기 흐름을 거쳐야 하므로 활성화 직전까지 한 번 더 점검할 기회.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">삭제</div>
+            <h3>잘못 입력한 항목을 통째로 지운다</h3>
+            <p>카드의 삭제 아이콘 → 확인 다이얼로그 → 확인. 항목과 그에 딸린 분담이 한꺼번에 사라지고,
+              정산 총액이 자동으로 다시 계산된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">최근 항목 자동완성</div>
+            <h3>매번 같은 가게를 입력하지 않게</h3>
+            <p>카테고리 "교통"을 누르면 호스트가 과거에 입력한 교통 항목들이 칩으로 떠오른다.
+              "택시(강남→홍대) 18,000원" 같은 칩을 누르면 제목·금액이 자동으로 채워진다.
+              사람 체크만 하고 저장하면 한 번에 추가된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정기 모임 호스트의 반복 입력 부담을 줄인다.
+              매주 같은 가게·금액을 입력하는 노동이 누적되면 정산 자체를 미루게 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">잔여 자동 흡수</div>
+            <h3>금액별인데 합이 부족할 때 마지막 사람이 떠안기</h3>
+            <p>호스트가 4명에게 24,000원씩 입력하고 영수증 총액은 100,000원으로 둔다.
+              합계는 96,000원으로 부족하지만 "잔여 자동 흡수" 토글이 켜져 있어서
+              마지막 사람에게 28,000원이 배분되면서 저장된다. 다이얼로그 안내에 "마지막 분담자에게 4,000원이 추가됩니다"
+              문구가 같이 뜨므로 호스트가 의식하지 못한 채 통과되지는 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한</div>
+            <h3>참석자가 항목 추가를 시도</h3>
+            <p>일반 참석자에게는 항목 화면 자체가 노출되지 않지만, 우회 호출을 하더라도
+              호스트나 정산 생성자가 아니라는 이유로 거절된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:150px">화면 요소</th><th>호스트가 보는 것</th><th style="width:34%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>항목 카드 리스트</strong></td>
+                <td>입력한 영수증 한 건 = 카드 한 장. 제목·총액·분할 방식 배지·1인당 금액이 한 카드 안에.</td>
+                <td>호스트가 화면을 위에서 아래로 훑으며 "이 정산에 무엇이 들어 있는지"를 한눈에 확인하게.</td>
+              </tr>
+              <tr>
+                <td><strong>참가자별 합산 섹션</strong></td>
+                <td>여러 항목에 걸친 한 사람의 누적 분담 금액. 사람별로 한 줄.</td>
+                <td>한 항목씩 보면 안 보이는 "이 사람이 결국 얼마를 내야 하는지"가 사용자별로 합산된 결과로 보여야 호스트가 검산 가능.</td>
+              </tr>
+              <tr>
+                <td><strong>항목 추가 다이얼로그</strong></td>
+                <td>제목 · 금액 · 카테고리 칩 · 분할 방식 라디오 · 참여자 체크 · 영수증 사진 첨부 · 저장 버튼.</td>
+                <td>한 영수증을 등록하는 데 필요한 모든 결정이 한 다이얼로그 안에 있어야 호스트의 흐름이 끊기지 않는다.</td>
+              </tr>
+              <tr>
+                <td><strong>최근 항목 칩 띠</strong></td>
+                <td>카테고리 선택 직후 그 카테고리의 최근 항목 칩이 가로로 나열.</td>
+                <td>호스트가 매번 새로 입력하지 않게 — 정기 모임의 반복 영수증을 한 번 누르기로 단축.</td>
+              </tr>
+              <tr>
+                <td><strong>영수증 사진</strong></td>
+                <td>썸네일로 카드에 노출. 참가자도 클릭해서 원본 확인 가능.</td>
+                <td>"이 금액이 진짜였는지" 분쟁이 생겼을 때 영수증 사진이 그 자리에서 답이 된다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">항목 입력은 정산 신뢰의 가장 큰 변수다</span>
+          <ul>
+            <li><strong>금액별 분할에서 합계 불일치는 저장 단계에서 차단된다.</strong>
+              "잔여 자동 흡수"를 켰을 때만 통과되며, 켤 때는 마지막 사람에게 얼마가 추가되는지 다이얼로그에서 명시한다.
+              안내 문구가 빠지면 호스트가 모르는 채로 한 사람만 더 부담하는 사고가 난다.</li>
+            <li><strong>균등·비율 분할의 잔돈은 마지막 사람에게 흡수된다.</strong>
+              10원 단위 잔돈이지만 누적되면 사람마다 분담이 다르다는 인지가 생긴다 —
+              필요 시 "잔돈은 호스트가 흡수"로 정책 변경 검토.</li>
+            <li><strong>활성화 후에는 항목을 자유롭게 고칠 수 없다.</strong>
+              참가자에게 청구가 나간 뒤 항목이 바뀌면 청구의 신뢰가 무너진다 — 변경이 필요하면 이의제기 흐름으로.</li>
+            <li><strong>최근 항목 자동완성은 같은 제목·금액 묶음만 중복 제거된다.</strong>
+              비슷한 제목이 흩어져 있으면 호스트의 자동완성 효율이 떨어진다 — 향후 비슷한 제목 묶기 검토.</li>
+            <li><strong>영수증 사진은 정산에 속한 사람만 볼 수 있다.</strong>
+              영수증 ID를 임의로 넘긴 요청은 정산 범위 검증에서 막힌다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 도메인</div><h3>07 모임 정산</h3></a>
+          <a class="card" href="F07-01.html"><div class="eyebrow">앞 단위</div><h3>F07-01 정산 생성</h3></a>
+          <a class="card" href="F07-03.html"><div class="eyebrow">다음</div><h3>F07-03 활성화·취소</h3><p>항목이 채워진 정산을 참가자에게 공개하는 단계.</p></a>
+          <a class="card" href="F07-08.html"><div class="eyebrow">관련</div><h3>F07-08 이의제기·감사로그</h3><p>활성화 후 항목 변경의 추적.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/07_meeting_settlement/F07-02_settlement-items/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

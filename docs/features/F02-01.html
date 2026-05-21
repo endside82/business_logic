@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F02-01 홈 피드 메인 — community PRD</title>
+  <title>F02-01 홈 피드 메인 조회 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,194 +15,220 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/02-home.html">02 홈 피드</a><span>›</span>
-          F02-01 홈 피드 메인
+          F02-01 홈 피드 메인 조회
         </div>
         <h1>F02-01. 홈 피드 메인 조회</h1>
         <p class="lede">
-          앱 진입의 첫 화면. 4개 섹션(추천 이벤트·예정/인근·인기 클럽·최신 플랜)을 한 번에 그리되,
-          한 섹션이 실패해도 다른 섹션은 살아남아야 한다. 비로그인 게스트도 같은 화면을 본다(가입 유도 카드 포함).
-          5분 캐시로 재진입을 빠르게 만들고, 위치 권한은 첫 진입에 한 번만 묻는다.
+          앱을 켰을 때 가장 먼저 보이는 화면. 네 개의 영역 — <strong>추천 이벤트, 곧 시작하는 이벤트, 인기 클럽, 새로 올라온 플랜</strong> — 을
+          동시에 보여 주어 사용자가 무엇이든 한 번에 둘러볼 수 있게 한다.
+          로그인하지 않은 사용자도 진입할 수 있도록 열려 있어, 가입을 결정하기 전 사용자가 처음 보는 화면도 이곳이다.
+          네 영역 중 하나가 잠시 비어도 다른 영역의 탐색이 끊기지 않도록 설계되어 있다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">동시 호출</div><div class="value">4</div><div class="hint">섹션별 병렬</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-          <div class="metric"><div class="label">캐시</div><div class="value">5분</div></div>
-          <div class="metric"><div class="label">게스트</div><div class="value">허용</div></div>
+          <div class="metric"><div class="label">노출 섹션</div><div class="value">4개</div><div class="hint">한 화면, 한 번에</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">로그인 유도는 행동 시점에만</div></div>
+          <div class="metric"><div class="label">재진입 즉시 표시</div><div class="value">5분</div><div class="hint">상세에서 돌아와도 깜빡임 없음</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 원칙</span>
-          <p>각 섹션은 자기 상태(로딩/데이터/빈/에러)를 독립적으로 그린다.
-          “전부 에러”일 때만 전체 화면 에러로 떨어진다. 빈 상태와 에러 상태는 시각적으로 명확히 구분되어
-          사용자가 “데이터가 없어서 비어있다” vs “네트워크 문제로 못 받았다”를 알 수 있어야 한다.</p>
+          <span class="label">설계 의도 — "한 곳에서 모두 보이되, 한 곳이 비어도 멈추지 않는다"</span>
+          <p>홈은 사용자가 무엇을 원하는지 아직 정하지 않은 상태에서 들어오는 면이다.
+            추천, 시간 임박, 인기, 새 콘텐츠 네 가지 다른 탐색 동기를 한 화면에 함께 두어
+            사용자가 어느 쪽으로든 이어 갈 수 있게 한다. 동시에 일부 영역의 일시적 장애가
+            "앱 전체가 안 된다"는 인상을 주지 않도록, <strong>네 영역 모두 비어 있을 때만</strong>
+            전체 화면 오류를 띄운다. 하나라도 살아 있으면 사용자는 그쪽으로 탐색을 이어 갈 수 있다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>이 화면이 보여주는 네 가지</h2>
+        <p class="subtitle">각 영역은 다른 탐색 동기에 대응한다.</p>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">섹션 1</div><h3>추천 이벤트</h3><p>관심사·위치 기반 맞춤 추천. “더보기”로 F02-04 진입.</p></div>
-          <div class="card"><div class="eyebrow">섹션 2</div><h3>예정/인근 이벤트</h3><p>시작 임박 또는 인근 이벤트 10건. 가로 스크롤.</p></div>
-          <div class="card"><div class="eyebrow">섹션 3</div><h3>인기 클럽</h3><p>멤버 수 내림차순 5건. 빈 상태에서도 헤더는 유지.</p></div>
-          <div class="card"><div class="eyebrow">섹션 4</div><h3>최신 플랜</h3><p>신규 마켓 플랜 5건. 세로 리스트.</p></div>
-        </div>
-      </section>
-
-      <section>
-        <h2>섹션 상태 머신</h2>
-        <p class="subtitle">한 섹션의 4가지 상태. 다른 섹션과 독립적으로 전이한다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 로딩
-    로딩 --> 데이터: 200 + 비어있지 않음
-    로딩 --> 빈상태: 200 + 빈 배열
-    로딩 --> 에러: 4xx/5xx/네트워크
-    데이터 --> 로딩: 새로고침
-    빈상태 --> 로딩: 새로고침
-    에러 --> 로딩: "다시 시도"
+          <div class="card">
+            <div class="eyebrow">맞춤 추천</div>
+            <h3>추천 이벤트</h3>
+            <p>관심사·위치·인기·신선도를 종합해 사용자 한 명에게 맞춰진 카드 10장을 보여 준다.
+              관심사 데이터가 거의 없는 신규 사용자에게도 화면이 비지 않도록 기본 카드를 채워서 내려 보낸다.
+              "이 앱이 나에게 맞다"는 인상을 만드는 영역으로, 신규 이탈을 가장 크게 좌우한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">시간 임박</div>
+            <h3>곧 시작하는 이벤트</h3>
+            <p>지금 시각 이후에 시작하는 모집 중 이벤트 10건을 시작 시각이 가까운 순으로.
+              "오늘 저녁 뭐 하지" 류의 즉시 행동 의도를 받아 내는 자리.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">소속·발견</div>
+            <h3>인기 클럽</h3>
+            <p>멤버가 많은 활성 클럽 5개. 로그인 사용자에게는 본인의 가입·대기·차단 상태가
+              카드에 함께 표시되어 "내 클럽"인지를 한눈에 구분한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">새 콘텐츠</div>
+            <h3>새로 올라온 플랜</h3>
+            <p>마켓에 새로 발행된 플랜 5개. 가격·제작자·구매 수가 함께 보여 구매 결정의 단서가 한 카드 안에 모인다.
+              호스트 활동의 진입로이기도 하다.</p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>병렬 호출 구조</h2>
+        <h2>네 영역이 동시에 그려지는 흐름</h2>
+        <p class="subtitle">사용자가 홈 탭을 누른 순간부터 네 영역이 자기 자리에 안착하기까지.
+          핵심은 "한 영역이 늦거나 실패해도 다른 영역은 살린다".</p>
         <div class="diagram">
           <div class="mermaid">
-flowchart TD
-    A["홈 진입"] --> B{"캐시 5분 이내?"}
-    B -->|"예"| C["캐시 4종 즉시 반환"]
-    B -->|"아니오"| D["4개 API 병렬 호출"]
-    D --> E1["추천 이벤트"]
-    D --> E2["예정/인근"]
-    D --> E3["인기 클럽"]
-    D --> E4["최신 플랜"]
-    E1 --> F["섹션별 상태 매핑"]
-    E2 --> F
-    E3 --> F
-    E4 --> F
-    F --> G{"4개 모두 에러?"}
-    G -->|"예"| H["전체 화면 에러"]
-    G -->|"아니오"| I["섹션 단위 렌더"]
+sequenceDiagram
+    actor U as 사용자
+    participant 홈 as 홈 화면
+    participant 서버 as 서버
+
+    U->>홈: 홈 탭 진입
+    alt 최근 5분 안에 본 적 있음
+        홈-->>U: 직전 데이터로 즉시 표시(깜빡임 없음)
+    else 처음이거나 시간이 지남
+        홈-->>U: 네 영역 모두 로딩 표시
+        par 네 영역 동시 조회
+            홈->>서버: 추천 이벤트
+            홈->>서버: 곧 시작하는 이벤트
+            홈->>서버: 인기 클럽
+            홈->>서버: 새로 올라온 플랜
+        end
+        서버-->>홈: 영역별로 결과 도착(성공·실패 섞일 수 있음)
+        alt 네 영역 모두 실패
+            홈-->>U: 전체 화면 오류 + 다시 시도
+        else 한 영역이라도 성공
+            홈-->>U: 성공 영역은 데이터, 실패 영역은 그 칸에만 다시 시도 표시
+        end
+    end
           </div>
         </div>
       </section>
 
       <section>
-        <h2>사용자 시나리오 8개</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>로그인 사용자 첫 진입</h3>
-            <ol>
-              <li>홈 진입 → 4개 섹션 동시 로딩 → 스켈레톤 표시</li>
-              <li>위치 권한 다이얼로그(첫 진입 1회만)</li>
-              <li>4개 모두 200 → 정상 렌더</li>
-              <li>권한 거부 시 상단에 위치 권한 배너 노출</li>
-            </ol>
-            <p><strong>종료</strong> — 캐시 시각 기록, 5분 유효.</p>
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>로그인 직후 첫 진입</h3>
+            <p>로그인을 마친 사용자가 홈으로 들어온다. 네 영역이 짧게 로딩으로 보이다가
+              거의 동시에 채워진다. 위치 권한은 첫 진입에서 한 번만 묻고, 거부해도 상단 안내 띠로만 알린다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자는 "내가 이 앱에서 뭘 할 수 있는지"를 첫 5초 안에 본다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S2 · 캐시 hit</div><h3>30초 만에 재진입</h3>
-            <ol>
-              <li>상세 화면에서 백버튼 → 홈 재진입</li>
-              <li>캐시 유효 → 네트워크 호출 0건</li>
-              <li>스켈레톤 없이 즉시 렌더</li>
-            </ol>
+
+          <article class="card">
+            <div class="eyebrow">즉시 복귀</div>
+            <h3>카드 하나 들어갔다가 돌아옴</h3>
+            <p>추천 카드를 눌렀다가 뒤로가기로 홈에 돌아온다. 5분이 지나지 않았으면 같은 화면이 깜빡임 없이 그대로 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "들락날락"하는 자연스러운 탐색에서 매번 로딩이 깔리는 답답함을 없앤다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S3 · 부분 실패</div><h3>인기 클럽만 500</h3>
-            <ol>
-              <li>4개 중 인기 클럽만 500</li>
-              <li>나머지 3개 섹션은 정상</li>
-              <li>인기 클럽 섹션만 “다시 시도” 표시</li>
-              <li>사용자가 재시도 → 4개 모두 재호출 → 정상화</li>
-            </ol>
-            <p><strong>종료</strong> — 사용자 흐름이 막히지 않음.</p>
+
+          <article class="card">
+            <div class="eyebrow">일부 장애</div>
+            <h3>한 영역만 응답이 안 옴</h3>
+            <p>인기 클럽이 일시적으로 안 불러와진다. 다른 세 영역은 평소대로 보이고, 인기 클럽 자리에만 작은 "다시 시도" 카드가 뜬다.
+              사용자가 누르면 네 영역 전체를 다시 한 번 호출해 정합을 맞춘다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 영역 장애가 앱 전체 장애로 인지되지 않게 한다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S4 · 전체 실패</div><h3>비행기 모드</h3>
-            <ol>
-              <li>4개 모두 네트워크 오류</li>
-              <li>전체 화면 “피드를 불러올 수 없습니다” + 재시도</li>
-              <li>네트워크 복구 후 사용자가 명시적으로 재시도</li>
-            </ol>
-            <p><strong>주의:</strong> 자동 재시도는 하지 않는다.</p>
+
+          <article class="card">
+            <div class="eyebrow">완전 단절</div>
+            <h3>비행기 모드에서 켰을 때</h3>
+            <p>네 영역 모두 응답이 없으면 풀스크린 오류로 떨어진다.
+              스스로 다시 시도하지 않고, 사용자의 명시적 "다시 시도" 동작을 기다린다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 무한 재시도로 배터리·데이터를 낭비하지 않고, 복구 시점을 사용자가 통제한다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S5 · 게스트</div><h3>비로그인 사용자</h3>
-            <ol>
-              <li>토큰 없이 4개 호출</li>
-              <li>서버가 사용자 컨텍스트 없이 응답 (myMembershipStatus 등 null)</li>
-              <li>“내 예정”, “위시리스트” 같은 개인화 섹션은 미노출</li>
-              <li>4개 메인 섹션만 렌더 → 가입 퍼널 진입</li>
-            </ol>
+
+          <article class="card">
+            <div class="eyebrow">가입 전 탐색</div>
+            <h3>비로그인 사용자가 둘러봄</h3>
+            <p>로그인 없이도 네 영역이 그대로 보인다. 단, "내 가입 상태", "내가 찜한 이벤트" 같은 개인화 영역은
+              화면에 노출되지 않는다. 카드를 눌러 상세에 들어간 뒤 신청·찜 같은 행동을 할 때 비로소 로그인 화면이 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "가입하고 둘러봐" 대신 "둘러보고 마음 들면 가입" 패턴. 가입 전환의 결정적 진입 경로.</p>
           </article>
-          <article class="card"><div class="eyebrow">S6 · 파라미터 방어</div><h3>잘못된 카테고리</h3>
-            <ol>
-              <li>외부 도구가 잘못된 카테고리 값으로 호출</li>
-              <li>서버: 400 CLUB_INVALID_CATEGORY</li>
-            </ol>
-            <p><strong>주의:</strong> 현재 UI는 카테고리 파라미터를 보내지 않음. 향후 칩 추가 시 클라이언트 화이트리스트 필요.</p>
+
+          <article class="card">
+            <div class="eyebrow">빈 상태</div>
+            <h3>인기 클럽이 한 건도 없다</h3>
+            <p>응답은 정상이지만 데이터가 0건일 때, 인기 클럽 자리는 그대로 보이고
+              "아직 인기 클럽이 없어요" 같은 안내만 본문에 표시된다.
+              헤더(영역 제목)는 그대로 둬서 "이 영역이 존재한다"는 사실 자체는 사용자가 인지하게 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 데이터가 적은 초기 환경에서도 영역이 "사라진" 인상은 주지 않는다 — 운영자가 데이터를 채우면 자연스럽게 살아난다.</p>
           </article>
-          <article class="card"><div class="eyebrow">S7 · 빈 상태</div><h3>인기 클럽 빈 상태 노출</h3>
-            <ol>
-              <li>인기 클럽 응답이 빈 배열</li>
-              <li>섹션 헤더 “인기 클럽” + 본문 “인기 클럽이 없습니다” 동시 노출</li>
-              <li>섹션이 사라지지 않음(에러와 시각적으로 구분)</li>
-            </ol>
-            <p><strong>핵심:</strong> 빈 배열은 에러가 아니다. 헤더 유지가 “이 섹션이 존재함”을 알린다.</p>
-          </article>
-          <article class="card"><div class="eyebrow">S8 · 위치 권한 분기</div><h3>권한 거부 후 배너 노출</h3>
-            <ol>
-              <li>위치 권한 다이얼로그에서 거부</li>
-              <li>상단에 권한 안내 배너 표시</li>
-              <li>위치 기반 추천은 비활성, 다른 섹션은 정상</li>
-            </ol>
+
+          <article class="card">
+            <div class="eyebrow">권한 분기</div>
+            <h3>위치 권한을 거부했을 때</h3>
+            <p>거리 기반 추천은 좌표 없이 계산되어 약해지고, 화면 상단에 "위치 권한이 필요해요" 안내 띠가 한 줄 남는다.
+              네 영역의 다른 정보는 영향 없이 그대로 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 권한 한 가지를 거부해도 사용자가 다른 가치를 잃지 않게 한다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약 한눈에</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <p class="subtitle">실제로 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>섹션</th></tr></thead>
+            <thead><tr><th style="width:130px">영역</th><th>사용자가 보는 것</th><th style="width:30%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>GET</code></td><td><code>/api/v1/home/events?sort=startTime,asc&size=10</code></td><td>예정/인근 이벤트</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/home/clubs?sort=memberCount,desc&size=5</code></td><td>인기 클럽</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/home/plans?sort=createdAt,desc&size=5</code></td><td>최신 플랜</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/recommend?size=10</code></td><td>추천 이벤트(F02-04와 공유)</td></tr>
+              <tr>
+                <td><strong>상단 로고·검색·알림</strong></td>
+                <td>좌측 서비스 로고, 우측에 검색·알림 두 진입점. 알림에는 향후 미읽음 표시가 들어갈 자리.</td>
+                <td>스크롤과 무관하게 항상 같은 자리에서 검색과 알림으로 빠져나갈 수 있어야 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>위치 권한 안내 띠</strong></td>
+                <td>권한이 거부됐을 때만 노출. 한 줄짜리 카피와 "권한 다시 보기" 버튼.</td>
+                <td>거리 기반 추천이 약해진 이유를 사용자가 인지하고, 한 번에 설정으로 이동할 수 있게.</td>
+              </tr>
+              <tr>
+                <td><strong>추천 이벤트</strong></td>
+                <td>가로 스크롤 카드 10개, 끝에 "추천 더보기" 진입. 카드에 추천 이유가 한 줄 배지로.</td>
+                <td>"왜 이게 추천됐는지" 보이지 않으면 추천이 노이즈로 인지된다 — 짧은 이유로 신뢰를 만든다.</td>
+              </tr>
+              <tr>
+                <td><strong>곧 시작하는 이벤트</strong></td>
+                <td>세로 리스트 10개. "오늘 19시", "내일 14시" 같은 시작 시각이 가장 먼저 눈에 들어옴.</td>
+                <td>홈에 들어온 사람의 첫 질문은 보통 "지금/오늘/이번 주" — 시각이 가까운 순이 곧 의도의 순.</td>
+              </tr>
+              <tr>
+                <td><strong>인기 클럽</strong></td>
+                <td>가로 스크롤 5개. 로그인 시 카드 모서리에 "내 클럽" 같은 본인 상태 배지.</td>
+                <td>"이미 내가 속해 있는지"를 카드 단계에서 알아야 가입·재방문 의도가 자연스럽게 갈린다.</td>
+              </tr>
+              <tr>
+                <td><strong>새로 올라온 플랜</strong></td>
+                <td>세로 리스트 5개. 가격·제작자·구매 수가 한 줄 안에.</td>
+                <td>구매를 결정할 때 가장 먼저 보는 정보(가격·제작자·구매 수)를 카드 안에 함께 두어, 상세에 들어가지 않아도 1차 판단이 가능하게.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>로그인 + 5분 캐시 없음</td><td>홈 진입</td><td>4섹션 병렬 호출 + 스켈레톤</td></tr>
-              <tr><td>AC-02</td><td>5분 이내 재진입</td><td>홈 빌드</td><td>네트워크 호출 0, 즉시 렌더</td></tr>
-              <tr><td>AC-03</td><td>한 섹션만 5xx</td><td>응답 수신</td><td>해당 섹션만 재시도 UI</td></tr>
-              <tr><td>AC-04</td><td>4섹션 모두 실패</td><td>응답</td><td>전체 화면 에러</td></tr>
-              <tr><td>AC-05</td><td>비로그인</td><td>홈 진입</td><td>개인화 섹션 미노출, 메인 4섹션 정상</td></tr>
-              <tr><td>AC-06</td><td>한 섹션 빈 배열</td><td>렌더</td><td>헤더 유지 + 빈 카피</td></tr>
-              <tr><td>AC-07</td><td>위치 권한 거부</td><td>홈 진입</td><td>배너 노출, 거리 기반 정렬 비활성</td></tr>
-              <tr><td>AC-08</td><td>한 섹션 “다시 시도”</td><td>탭</td><td>4섹션 전체 재호출</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">홈에서 사용자가 보는 풍경은 이 다섯 가지 운영 결정으로 결정된다</span>
           <ul>
-            <li><strong>한 섹션 실패가 전체 화면 실패로 떨어짐</strong> — 가장 흔한 회귀.</li>
-            <li><strong>빈 배열을 에러로 표시</strong> — 사용자가 “문제 있나?”로 오해. 빈 카피로 분리.</li>
-            <li><strong>캐시로 오래된 상태 표시</strong> — 이미 신청한 이벤트에 “신청하기”가 남음. 진입 시점 정책 필요.</li>
-            <li><strong>위치 권한을 매 진입마다 묻기</strong> — 한 번만 묻고 결과를 기억.</li>
-            <li><strong>비로그인 사용자에게 개인화 섹션이 빈 상태로 노출</strong> — 섹션 자체를 미노출하는 것이 옳다.</li>
+            <li><strong>추천 노출 수 10건은 "스크롤하지 않고 두세 장 노출"의 균형점</strong>이다.
+              늘리면 추천이 풍부해 보이지만 첫 화면의 시간 임박/인기/플랜이 밀린다.</li>
+            <li><strong>인기 클럽 5건은 화면 한 폭 안에 다 들어가는 최대치다.</strong>
+              늘리면 가로 스크롤이 필요해지고 "인기" 라는 신호가 분산된다.</li>
+            <li><strong>"한 영역이라도 살아 있으면 화면을 살린다"</strong>는 정책 때문에 한 영역의 데이터 결핍은 운영 모니터링이 따로 잡아 줘야 한다.
+              사용자에게는 가시적 경보가 가지 않는다.</li>
+            <li><strong>가입 전 진입을 허용하는 화면</strong>이므로 카드 자체에 회원 전용 정보(예: 본인 가입 상태)는
+              로그인일 때만 채워서 보낸다 — 비로그인일 때 카드 카피가 어색해지지 않는지 콘텐츠 검수 필요.</li>
+            <li><strong>위치 권한은 첫 진입에서 한 번만 묻는다.</strong>
+              매 진입마다 묻는 회귀가 들어가면 사용자 이탈이 즉시 늘어난다.</li>
           </ul>
         </div>
       </section>
@@ -210,16 +236,17 @@ flowchart TD
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/02-home.html"><div class="eyebrow">상위 도메인</div><h3>02 홈 피드</h3><p>본 기능이 속한 도메인.</p></a>
-          <a class="card" href="F02-02.html"><div class="eyebrow">다음</div><h3>F02-02 새로고침</h3><p>풀투리프레시 정책.</p></a>
-          <a class="card" href="F02-03.html"><div class="eyebrow">관련</div><h3>F02-03 섹션 카드 진입</h3><p>각 카드의 라우팅.</p></a>
-          <a class="card" href="F02-04.html"><div class="eyebrow">관련</div><h3>F02-04 추천 이벤트 더보기</h3><p>“더보기”로 진입.</p></a>
+          <a class="card" href="../domains/02-home.html"><div class="eyebrow">상위 도메인</div><h3>02 홈 피드</h3></a>
+          <a class="card" href="F02-02.html"><div class="eyebrow">다음</div><h3>F02-02 새로고침</h3><p>아래로 당겨 최신화하는 흐름의 정책.</p></a>
+          <a class="card" href="F02-03.html"><div class="eyebrow">관련</div><h3>F02-03 카드 진입</h3><p>각 카드가 어떤 화면으로 사용자를 데려가는지.</p></a>
+          <a class="card" href="F02-04.html"><div class="eyebrow">관련</div><h3>F02-04 추천 더보기</h3><p>추천 영역을 깊게 펼치는 전용 화면.</p></a>
+          <a class="card" href="F02-05.html"><div class="eyebrow">관련</div><h3>F02-05 검색·알림 진입</h3><p>상단 두 아이콘의 행선지.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/02_home_feed/F02-01_home-feed-main/{backend,frontend,scenarios,diagrams}.md
-  - business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/02_home_feed/F02-01_home-feed-main/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F14-01 이벤트 위치 공유 — community PRD</title>
+  <title>F14-01 참석자 위치 공유 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,250 +15,244 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
-          F14-01 위치 공유
+          F14-01 참석자 위치 공유
         </div>
         <h1>F14-01. 이벤트 참석자 위치 공유</h1>
         <p class="lede">
-          모임 시작 24시간 전부터 종료 2시간 후까지, 참석 확정자가 본인 의지로 opt-in한 경우에만 일행끼리 위치를 공유한다.
-          <strong>opt-in × 시간 게이트 × 호스트 설정</strong> 세 축 모두 통과해야 잔여 좌표가 응답에 들어가고,
-          opt-out한 순간 다른 사람 화면에서 본인 마커가 즉시 사라진다.
+          참석 확정한 모임에서 일행끼리 지도 위에서 서로 어디쯤 오고 있는지를 보는 화면.
+          사용자가 직접 토글을 켜야만 본인 위치가 다른 사람 화면에 보이고, 토글을 켠 뒤에는 30초마다 좌표가 갱신된다.
+          위치 공유는 이 도메인에서 가장 민감한 동작이므로, 사용자 동의 · 모임 시간대 · 호스트의 이벤트 단위 허용 세 가지가 모두 맞아떨어진 경우에만 다른 참석자에게 좌표가 노출된다.
+          "지금 어디쯤?"이라는 질문을 채팅으로 다시 묻지 않게 하는 것이 본 단위의 목표다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">공유 윈도우</div><div class="value">−24h ~ +2h</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
-          <div class="metric"><div class="label">폴링 주기</div><div class="value">30초</div></div>
-          <div class="metric"><div class="label">자동 만료</div><div class="value">2시간</div><div class="hint">update마다 슬라이딩</div></div>
+          <div class="metric"><div class="label">공유 가능 시간대</div><div class="value">시작 24시간 전 ~ 종료 2시간 후</div><div class="hint">이 밖에서는 토글이 작동해도 좌표가 보이지 않는다</div></div>
+          <div class="metric"><div class="label">자동 갱신 주기</div><div class="value">30초</div><div class="hint">사용자가 멈춰 있어도 같은 주기</div></div>
+          <div class="metric"><div class="label">마지막 갱신 후 자동 종료</div><div class="value">2시간</div><div class="hint">갱신할 때마다 다시 2시간으로</div></div>
+          <div class="metric"><div class="label">한 화면에서 보는 일행</div><div class="value">참석 확정자 전원</div><div class="hint">단, 본인이 공유 켰을 때만</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">3축 게이트가 모두 통과해야 잔여 좌표 응답</span>
-          <ol style="margin:0 0 0 18px">
-            <li><strong>opt-in 명시 동의</strong> — 토글 ON + OS 권한 “허용”</li>
-            <li><strong>시간 게이트</strong> — 이벤트 시작 −24h ~ 종료 +2h. 호스트는 조회만 우회 가능.</li>
-            <li><strong>호스트 글로벌 토글</strong> — Event.locationShareEnabled. 호스트도 update는 우회 못 함.</li>
-          </ol>
+        <div class="callout">
+          <span class="label">설계 의도 — 위치는 사용자가 명시적으로 켰을 때만 보인다</span>
+          <p>위치는 본 서비스에서 가장 민감한 정보다. 그래서 본 단위의 모든 동작은 "본인이 직접 켜지 않으면 좌표는 한 번도 노출되지 않는다"를 보장한다.
+            동의를 받았다 해도 모임이 아닌 시간에 보이지 않도록 시간대 게이트가 있고,
+            호스트가 모임 단위로 위치 공유 자체를 꺼두면 사용자 토글이 켜 있어도 좌표가 더 이상 흘러가지 않는다.
+            이 세 겹 중 한 겹이라도 풀리는 회귀가 발생하면 "내가 켜지도 않았는데 위치가 보였다"라는, 본 서비스에서 가장 치명적인 신뢰 사고가 즉시 발생한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>호스트 우회 매트릭스</h2>
-        <p class="subtitle">동일 단위 안에서도 메서드마다 게이트가 다르다 — 사고가 잘 나는 지점이라 표로 명시.</p>
+        <h2>이 단위가 한 번에 처리하는 세 가지</h2>
+        <p class="subtitle">사용자에게는 토글 하나처럼 보이지만, 본 단위는 동의·갱신·조회 세 가지를 함께 책임진다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동의</div>
+            <h3>위치 공유 켜기</h3>
+            <p>사용자가 토글을 켜면 운영체제 위치 권한을 한 번 요청하고, 좌표를 처음 한 번 보낸 다음 자동 갱신 루프를 시작한다.
+              권한을 거부하면 토글은 꺼진 상태로 유지되며, 영구 거부면 운영체제 설정 화면으로 안내한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">유지</div>
+            <h3>30초마다 좌표 갱신</h3>
+            <p>토글이 켜져 있는 동안 30초마다 본인 좌표가 서버로 보내지고, 다른 사람 화면에서도 마커가 새 위치로 움직인다.
+              사용자가 "지금 바로 갱신"을 원하면 화면 우하단의 작은 버튼을 눌러 즉시 한 번 더 보낼 수 있다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">조회</div>
+            <h3>일행 위치 보기</h3>
+            <p>지도 위에 모임 장소(빨강), 본인(파랑), 다른 참석자(초록) 마커가 함께 표시되고,
+              하단 시트에는 각 참석자의 이름과 모임 장소까지의 거리·예상 소요 시간이 리스트로 보인다.
+              본인이 공유를 켜지 않으면 다른 사람 좌표도 보이지 않는다 — 일방적 관찰을 막는다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">호스트 우회</div>
+            <h3>호스트는 조회만 우회</h3>
+            <p>모임 호스트는 본인이 토글을 켜지 않아도 일행 위치를 볼 수 있다 — 모임을 안내해야 할 책임이 있기 때문.
+              단, 호스트도 자기 위치를 보내려면 일반 참석자와 똑같이 토글을 켜야 하며 시간대 안에 있어야 한다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>위치가 다른 사람에게 보이기까지의 세 겹 통과</h2>
+        <p class="subtitle">사용자가 켰다는 것만으로는 부족하다. 시간대, 호스트 허용, 그리고 본인 동의 — 셋 다 통과해야 좌표가 응답에 들어간다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자가 위치 화면 진입"] --> B{"본인이 공유 켰는가?"}
+    B -->|"아니오"| C1["다른 참석자 좌표가 보이지 않음 — 화면에 '공유를 켜야 일행이 보입니다'"]
+    B -->|"예 (호스트는 우회)"| D{"지금 모임 시간대 안인가?<br/>(시작 24h 전 ~ 종료 2h 후)"}
+    D -->|"아니오"| C2["공유 가능 시간이 아닙니다"]
+    D -->|"예"| E{"호스트가 모임 단위로<br/>공유를 켜둔 상태인가?"}
+    E -->|"아니오"| C3["좌표 갱신은 막힘<br/>(이미 받은 좌표만 화면에 잠시 남음)"]
+    E -->|"예"| F["일행 좌표가 응답에 포함<br/>각 노출은 접근 이력으로 남는다"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>위치 공유의 상태 흐름</h2>
+        <p class="subtitle">사용자 한 명의 공유 상태는 네 가지를 오간다. 자동 종료는 마지막 좌표 갱신 시점에서 2시간 뒤에 일어나고, 갱신할 때마다 종료 시각이 다시 2시간 뒤로 밀린다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 꺼짐: 화면 처음 진입
+    꺼짐 --> 켜짐: 토글 On + 권한 허용
+    켜짐 --> 켜짐: 30초마다 좌표 갱신 (종료 시각 2시간 뒤로 밀림)
+    켜짐 --> 켜짐: 연장 버튼 (F14-03)
+    켜짐 --> 꺼짐: 토글 Off (F14-02)
+    켜짐 --> 자동종료: 2시간 동안 갱신 없음
+    자동종료 --> 켜짐: 다시 좌표 갱신 또는 연장
+    켜짐 --> [*]: 이벤트 종료 + 2시간 경과
+    꺼짐 --> [*]: 이벤트 종료 + 2시간 경과
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>모임 30분 전, 위치를 켠다</h3>
+            <p>러닝 모임 참석을 확정한 사용자가 "참석자 위치" 화면에 들어온다.
+              "위치 공유" 토글을 켜면 운영체제 권한을 한 번 묻고, 허용을 누르는 순간 본인 좌표가 지도에 파란 마커로 찍힌다.
+              하단 시트에는 일행의 이름·모임 장소까지의 거리가 한 줄씩 보이고, 30초마다 자동으로 갱신된다.
+              "위치 공유를 시작합니다" 토스트가 한 번 떠 사용자가 자기 의사로 켰음을 확인시켜 준다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 모임 직전의 가장 큰 불확실성("일행이 어디쯤 오고 있나")이 채팅 없이 해소된다.
+              이 한 화면을 위해 위치 도메인 전체가 존재한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자동 갱신</div>
+            <h3>이동하는 중에 마커가 따라온다</h3>
+            <p>토글을 켠 채 5분간 화면을 보면 매 30초마다 본인 마커가 새 위치로 이동하고, 일행 마커도 자기 자리에서 갱신된다.
+              사용자가 "지금 한 번 더" 갱신하고 싶으면 우하단의 작은 동그란 버튼을 한 번 더 누른다 — 30초를 기다리지 않고 곧장 새 좌표가 반영된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 "내 위치가 진짜로 보내지고 있는가"를 직접 확인할 수 있는 통제 장치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 우회</div>
+            <h3>호스트는 위치를 켜지 않아도 일행을 본다</h3>
+            <p>모임 호스트가 같은 화면을 열면 본인 토글이 꺼져 있어도 일행의 마커가 즉시 보인다 — 모임을 안내할 책임이 있기 때문에 조회만 따로 허용된다.
+              다만 본인 위치를 보내려면 호스트도 똑같이 토글을 켜고 시간대 안에 들어와 있어야 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 책임 비대칭을 정책에 그대로 반영. 호스트가 일행을 못 보면 "도착했냐"를 채팅으로 다시 물어야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">시간대 분기</div>
+            <h3>모임 30시간 전에 미리 들어와 봤을 때</h3>
+            <p>호기심에 너무 일찍 위치 화면을 연 일반 참석자는 좌표가 한 점도 보이지 않는다.
+              "공유 가능 시간이 아닙니다" 안내만 노출되고, 모임 시작 24시간 전 시점이 되면 그제서야 일행이 보이기 시작한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 모임과 무관한 시간대에 위치가 노출되지 않게 한다. 사용자가 의식하지 못한 시점의 위치 노출을 막는 안전장치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 분기</div>
+            <h3>운영체제 위치 권한을 영구 거부한 사용자</h3>
+            <p>과거에 "다시 묻지 않기"로 위치 권한을 거부한 사용자가 토글을 켜면 권한 다이얼로그가 더 이상 뜨지 않는다.
+              앱이 "위치 권한이 영구 거부되었습니다. 설정에서 변경해주세요" 토스트를 띄우고, 그대로 운영체제 설정 화면으로 보낸다.
+              토글은 꺼진 상태로 남고, 서버에 동의 기록이 만들어지지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 앱 안에서는 풀 수 없는 영구 거부를 사용자가 어디로 가서 해결해야 하는지 한 번에 안내한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 차단</div>
+            <h3>호스트가 모임 단위로 위치 공유를 꺼두었다</h3>
+            <p>호스트가 모임 설정에서 "이 모임은 위치 공유 안 함"을 선택한 경우, 일반 참석자가 토글을 켜도 좌표 갱신 자체가 막힌다.
+              사용자 입장에서는 토글이 켜져 있는데 본인 마커가 다음 갱신에서 사라진다 — 현재 구현은 별도 안내 토스트가 없어 사용자가 "왜 안 보이지?"라고 의아해할 수 있는 분기.</p>
+            <p><strong>운영 관찰 포인트</strong> — 호스트의 모임 단위 비활성화가 발동되었을 때 일반 참석자에게 명시적 안내가 가도록 보강하는 것이 향후 과제. 현 상태는 "조용한 차단"에 가깝다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중도 비공개</div>
+            <h3>같이 가던 일행이 도중에 위치를 꺼버렸을 때</h3>
+            <p>모임 중 한 사람이 토글을 끄면 다음 30초 갱신에서 그 사람 마커가 다른 사람 화면에서 사라지고, 하단 시트의 거리 리스트에서도 빠진다.
+              그 사람의 이름이 "비공개"로 남는 게 아니라 목록에서 즉시 사라지는 동작이다 — 사용자가 끄는 순간 그 효과가 단호히 즉시 반영된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "껐다"는 사용자 의사 표시가 다른 사람의 다음 30초 안에 반드시 반영된다는 보장.
+              이 보장이 깨지면 위치 공유 중지 기능 자체의 신뢰가 무너진다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 보는 것</h2>
+        <p class="subtitle">위치 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
+
         <div class="table-wrap">
           <table>
-            <thead><tr><th>메서드</th><th>locationShareEnabled</th><th>시간 게이트</th><th>opt-in 검사</th></tr></thead>
+            <thead><tr><th style="width:150px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td>조회 (getEventLocations)</td><td>검사 없음</td><td>호스트 우회</td><td>호스트 우회(응답은 opt-in 한 사용자만)</td></tr>
-              <tr><td>위치 업데이트 (update)</td><td>모두 적용</td><td>모두 적용</td><td>모두 적용</td></tr>
-              <tr><td>만료 연장 (extend)</td><td>검사 없음</td><td>검사 없음</td><td>호스트 우회</td></tr>
+              <tr>
+                <td><strong>풀스크린 지도</strong></td>
+                <td>모임 장소(빨강 마커), 본인(파랑), 다른 참석자(초록). 지도 상단에 마커 색의 의미를 알려주는 작은 캡슐 범례.</td>
+                <td>색만으로 "나/장소/일행"을 즉시 구분할 수 있어야 시선이 흩어지지 않는다. 범례는 처음 본 사용자가 색의 의미를 한 번에 이해하도록 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>하단 시트</strong></td>
+                <td>토글 행("위치 공유 중/위치 비공개") + 본인 공유 카운트다운("약 N분 후 종료" + "+30분 연장" 버튼) + 참석자 카운트 + 일행 리스트(이름·거리·예상 시간·마지막 갱신).</td>
+                <td>지도와 함께 한 화면에 정보가 있어야 사용자가 시선을 바꾸지 않는다. 시트는 위·아래로 끌어 비율 조절이 가능해 지도 비중과 리스트 비중을 사용자가 정한다.</td>
+              </tr>
+              <tr>
+                <td><strong>위치 공유 토글</strong></td>
+                <td>시트 맨 위 큰 스위치. 꺼진 상태에서는 라벨이 회색, 켜진 상태에서는 색이 들어간다.</td>
+                <td>사용자가 자신의 공유 상태를 항상 시각적으로 인지하게 만든다 — 위치 공유의 4가지 원칙 중 "공유 상태 시각화"의 실현.</td>
+              </tr>
+              <tr>
+                <td><strong>내 위치 갱신 버튼</strong></td>
+                <td>화면 우하단의 작은 동그란 버튼(현재 위치 아이콘).</td>
+                <td>30초를 기다리지 않고 즉시 갱신할 수 있는 사용자 통제 장치. "내가 직접 보냈다"는 통제감을 자동 폴링과 분리해 둔다.</td>
+              </tr>
+              <tr>
+                <td><strong>상단 톱니바퀴</strong></td>
+                <td>오른쪽 위 아이콘 — 누르면 위치 프라이버시 대시보드(F14-04)로 이동.</td>
+                <td>"내 위치가 어디에 보이고 있는가"를 사용자가 언제든 한 번에 확인하러 갈 수 있는 출구. 위치 공유의 4가지 원칙 중 "공유 상태 시각화"가 이 진입로로 완성된다.</td>
+              </tr>
+              <tr>
+                <td><strong>일행 카드 한 줄</strong></td>
+                <td>닉네임·프로필 사진(호스트가 보고 있을 때만) + 모임 장소까지의 거리·예상 시간 + "방금 전 / N분 전" 같은 마지막 갱신 시각.</td>
+                <td>"이 사람이 지금 어디쯤?"이라는 질문을 한 줄로 답한다. 마지막 갱신 시각이 같이 보여 "데이터가 신선한지"를 사용자가 직접 가늠한다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">동작 1</div>
-            <h3>opt-in</h3>
-            <p>토글 ON → OS 권한 요청 → 좌표 획득 → opt-in API → 즉시 update → 30초 폴링 시작.
-              권한 영구 거부 분기에서는 OS 설정 화면으로 안내.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 2</div>
-            <h3>30초 위치 폴링 + 수동 새로고침</h3>
-            <p>Timer.periodic 30초로 GET. FAB(내 위치) 탭은 즉시 update 후 GET. 마커 수가 변할 때만 fitBounds 재계산.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 3</div>
-            <h3>일행 위치 지도/시트 표시</h3>
-            <p>지도 마커 + 하단 시트 리스트. opt-out한 참석자는 응답에서 제외되어 자동 사라짐. opt-in 한 사람만 access_log에 기록.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 4</div>
-            <h3>2시간 만료 자동 종료</h3>
-            <p>마지막 update 시점 + 2h. update마다 슬라이딩 갱신. 만료 시 좌표 응답 제외. 연장은 F14-03.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">동작 5</div>
-            <h3>호스트 토글 비활성화 응답</h3>
-            <p>이벤트 단위로 호스트가 위치 공유를 꺼두면 update 자체가 LOCATION_SHARE_DISABLED. 사용자 토글이 ON으로 보여도 실제 갱신은 막힘.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>opt-in + 첫 좌표 시퀀스</h2>
-        <div class="diagram"><div class="mermaid">
-sequenceDiagram
-    actor U as 참석자
-    participant OS as OS 권한
-    participant API as 위치 API
-    participant SVC as 위치 서비스
-    participant DB as DB
-    U->>API: GET /location (화면 진입)
-    API->>SVC: 조회 요청
-    SVC->>SVC: 시간 게이트 + opt-in 검사
-    alt 본인 opt-in 안 됨
-        SVC-->>U: 403 LOCATION_OPT_IN_REQUIRED
-    end
-    U->>OS: 위치 권한 요청
-    OS-->>U: 허용
-    U->>API: POST /opt-in
-    API->>DB: location_opt_in upsert (optedIn=true)
-    U->>U: getCurrentPosition()
-    U->>API: POST /update {lat, lng, accuracy}
-    API->>SVC: 업데이트 요청
-    SVC->>SVC: 3축 게이트 검증 (모두 적용)
-    SVC->>DB: location_share upsert (expiresAt=now+2h)
-    API-->>U: 200
-    U->>U: 30초 Timer 시작
-    loop 매 30초
-        U->>API: GET /location
-        API-->>U: 본인+opt-in 일행 좌표
-        Note over U: 응답마다 access_log 기록
-    end
-        </div></div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오 7개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>모임 30분 전 opt-in</h3>
-            <ol>
-              <li>EventLocationScreen 진입 → GET → 본인 opt-in 안 됨 → 403</li>
-              <li>OS 권한 다이얼로그 → 허용 → 토글 ON</li>
-              <li>opt-in API + update API 연속 호출 → location_share 생성(expiresAt=now+2h)</li>
-              <li>30초 폴링 시작, “위치 공유를 시작합니다” 토스트</li>
-              <li>지도/시트에 본인 + 일행 마커</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S2 · 폴링</div><h3>5분간 화면 유지하며 이동</h3>
-            <ol>
-              <li>30초마다 refresh() → 좌표 응답</li>
-              <li>마커 수 동일이면 fitBounds 유지, 변할 때만 재계산</li>
-              <li>FAB(내 위치) 수동 탭 → 즉시 update + refresh</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S3 · 호스트</div><h3>호스트는 opt-in 없이 조회</h3>
-            <ol>
-              <li>호스트 진입 → GET → isHost 분기로 opt-in/시간 게이트 우회</li>
-              <li>응답에는 여전히 <strong>opt-in 한 참석자 좌표만</strong> 포함(opt-out은 제외)</li>
-              <li>단, host 본인의 update는 시간 게이트 + locationShareEnabled 검사 받음</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S4 · 시간 차단</div><h3>24h보다 일찍 진입</h3>
-            <ol>
-              <li>참석자가 30시간 전 진입 → 403 LOCATION_ACCESS_DENIED</li>
-              <li>“공유 가능 시간이 아닙니다” 안내, 사용자는 윈도우 진입 후 재시도</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S5 · 권한 영구 거부</div><h3>OS 설정 분기</h3>
-            <ol>
-              <li>토글 ON → checkPermission → deniedForever</li>
-              <li>“위치 권한이 영구 거부되었습니다” 토스트 + openAppSettings()</li>
-              <li>토글 OFF 유지, opt-in API 미호출</li>
-            </ol>
-          </article>
-
-          <article class="card"><div class="eyebrow">S6 · 호스트 차단</div><h3>locationShareEnabled=false</h3>
-            <ol>
-              <li>토글 ON → opt-in API 성공</li>
-              <li>update 시도 → 403 LOCATION_SHARE_DISABLED</li>
-              <li>본인 좌표가 응답에 들어가지 않아 다음 폴링에서 본인 마커 미노출 → 토글이 자동 OFF로 추론</li>
-            </ol>
-            <p><strong>UX 보강 후보:</strong> 현재는 silent fail에 가깝다. 사용자에게 명시적 안내 토스트 필요.</p>
-          </article>
-
-          <article class="card"><div class="eyebrow">S7 · 비공개 마킹</div><h3>opt-out한 참석자는 응답에서 사라진다</h3>
-            <ol>
-              <li>A는 opt-in, B는 opt-in 후 opt-out</li>
-              <li>A의 다음 폴링 응답에서 B의 좌표 제외</li>
-              <li>A 화면의 마커/리스트에서 B 사라짐</li>
-            </ol>
-            <p><strong>설계 결정:</strong> UI 스펙은 “비공개” 라벨로만 노출하라고 했지만 현 백엔드는 좌표 자체를 제외. 사용자에게는 “목록에서 사라짐”으로 보임.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
-            <tbody>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/opt-in</code></td><td>본인 동의 등록</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/update</code></td><td>본인 좌표 갱신(슬라이딩 만료)</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/location</code></td><td>일행 좌표 조회(opt-in 한 사람만 포함)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/opt-out</code></td><td>중지 (F14-02)</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/extend</code></td><td>만료 연장 (F14-03)</td></tr>
-            </tbody>
-          </table>
-        </div>
-
+        <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">에러 코드</span>
+          <span class="label">본 화면이 정상이라고 부르려면 다음이 보장되어야 한다</span>
           <ul>
-            <li><strong>403 LOCATION_OPT_IN_REQUIRED</strong> — 본인 opt-in 안 됨</li>
-            <li><strong>403 LOCATION_ACCESS_DENIED</strong> — 시간 게이트 위반 또는 비참석자</li>
-            <li><strong>403 LOCATION_SHARE_DISABLED</strong> — 호스트가 이벤트 토글 OFF</li>
-            <li><strong>403 LOCATION_SHARE_TIME_EXPIRED</strong> — −24h ~ +2h 윈도우 벗어남</li>
+            <li><strong>본인이 위치 공유를 켜지 않으면 다른 참석자의 좌표도 보이지 않는다.</strong>
+              "남 위치는 보면서 내 건 안 보낸다"는 비대칭이 만들어지면 위치 공유의 신뢰 구조가 무너진다. 일방적 관찰 차단이 본 단위의 첫 번째 안전선.</li>
+            <li><strong>호스트가 모임 단위로 위치 공유를 끄면 일반 참석자에게 안내가 가야 한다.</strong>
+              현재는 토글이 켜져 있어도 좌표가 안 가는 "조용한 차단"에 가깝다 — 사용자가 "내가 진짜 보내고 있는가"를 모른다. 향후 명시적 토스트 안내 보강 필요.</li>
+            <li><strong>좌표 노출은 매번 접근 이력으로 기록된다.</strong>
+              누가 누구의 위치를 봤는지의 이력이 30일간 남아, 프라이버시 대시보드(F14-04)에서 사용자가 확인할 수 있는 원천이 된다.
+              이 기록이 빠지면 "내 위치를 누가 봤는가"를 추적할 수 없다.</li>
+            <li><strong>이벤트가 끝나고 2시간이 지나면 본 화면은 더 이상 열리지 않는다.</strong>
+              위치 데이터를 모임 시간대에 갇혀 있게 하는 정책. 모임 끝난 뒤에 위치를 보거나 보내는 일이 없도록 차단되며, 보관된 데이터는 별도 청소 작업이 30일 안에 제거한다.</li>
+            <li><strong>운영체제 위치 권한 영구 거부는 앱 안에서 해결 불가능하다.</strong>
+              "다시 묻기" CTA를 만들지 않고 운영체제 설정 화면으로 보내는 동작을 유지해야 한다. 앱 안에서 거부를 풀 수 있다고 사용자가 오해하면 권한 다이얼로그를 무한 반복으로 보게 된다.</li>
+            <li><strong>30초 자동 갱신은 화면을 벗어나면 멈춰야 한다.</strong>
+              화면을 나갔는데 갱신 루프가 계속 돌면 배터리·데이터가 새고, 사용자가 모르는 사이에 위치가 계속 서버로 흘러간다. 화면 dispose 와 앱 백그라운드 진입 시 둘 다 중지가 보장되어야 한다.</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>opt-in</th><th>update</th><th>조회</th></tr></thead>
-            <tbody>
-              <tr><td>location_opt_in</td><td>upsert(optedIn=true)</td><td>—</td><td>—</td></tr>
-              <tr><td>location_share</td><td>—</td><td>upsert + expiresAt 슬라이딩</td><td>—</td></tr>
-              <tr><td>location_access_log</td><td>—</td><td>—</td><td>조회자 → 응답에 포함된 사용자별 1행</td></tr>
-              <tr><td>외부 API</td><td>OS 권한 + Geolocator</td><td>Geolocator.getCurrentPosition</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>수용 기준 (AC)</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td>AC-01</td><td>−24h~+2h 윈도우, opt-in 안 됨</td><td>토글 ON + 권한 허용</td><td>opt-in + update + 폴링 시작</td></tr>
-              <tr><td>AC-02</td><td>opt-in 상태</td><td>30초 경과</td><td>refresh()로 마커 갱신</td></tr>
-              <tr><td>AC-03</td><td>호스트</td><td>화면 진입</td><td>opt-in/시간 우회로 조회 가능</td></tr>
-              <tr><td>AC-04</td><td>−24h 이전</td><td>참석자 진입</td><td>403 LOCATION_ACCESS_DENIED</td></tr>
-              <tr><td>AC-05</td><td>OS 권한 영구 거부</td><td>토글 ON</td><td>설정 화면 안내, 토글 OFF 유지</td></tr>
-              <tr><td>AC-06</td><td>호스트 토글 OFF</td><td>update</td><td>403 LOCATION_SHARE_DISABLED</td></tr>
-              <tr><td>AC-07</td><td>opt-in 사용자가 opt-out</td><td>다음 폴링</td><td>다른 사용자 응답에서 제외</td></tr>
-              <tr><td>AC-08</td><td>update 미발생 2h</td><td>폴링</td><td>본인 좌표가 응답에서 자동 제외</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>측정해야 하는 것</h2>
+        <div class="callout">
+          <span class="label">위치 공유가 사용자에게 가치를 주고 있는지를 보여주는 지표</span>
           <ul>
-            <li><strong>호스트 우회를 update에도 적용</strong> — 호스트도 시간 게이트와 토글에 묶여야 한다.</li>
-            <li><strong>opt-out 사용자 좌표가 응답에 남음</strong> — 비공개 보장 위배.</li>
-            <li><strong>30초 폴링 정지 누락</strong> — 화면을 나가도 Timer가 살아있으면 배터리·트래픽 낭비.</li>
-            <li><strong>fitBounds를 매 폴링 재계산</strong> — 지도가 떨려서 사용자 경험 저하.</li>
-            <li><strong>LOCATION_SHARE_DISABLED 안내 누락</strong> — 사용자는 토글이 ON인데 본인 마커가 안 보이는 이유를 모름.</li>
-            <li><strong>access_log를 GET 시점이 아니라 update 시점에 기록</strong> — “누가 누구의 위치를 봤는가” 추적이 깨진다.</li>
-            <li><strong>OS 권한 영구 거부 시 “허용” 다이얼로그 반복</strong> — openAppSettings로 명시 안내해야 한다.</li>
+            <li><strong>모임 시작 24시간 전 진입 → 토글 켜기까지의 비율</strong> — 화면에 들어왔지만 켜지 않는 비율이 높다면 사용자가 가치를 못 느끼거나 안내가 부족한 신호.</li>
+            <li><strong>토글 켠 채로 모임 종료까지 유지된 비율</strong> — 중간에 꺼버리는 사용자가 많다면 갱신 주기·배터리 부담·노출 범위 어딘가에 문제가 있다는 신호.</li>
+            <li><strong>운영체제 권한 영구 거부 비율</strong> — 너무 높다면 앱 외부에서 해결해야 하는 사용자가 너무 많다는 뜻 — 첫 권한 요청 시점의 설명이 부족한지 점검.</li>
+            <li><strong>호스트 차단(모임 단위 비활성화) 발동 후 사용자 행동</strong> — 명시적 안내가 부족한 현 상태에서 사용자가 어떻게 반응하는지를 추적하면 보강 우선순위가 결정된다.</li>
           </ul>
         </div>
       </section>
@@ -266,16 +260,17 @@ sequenceDiagram
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위</div><h3>14 위치·길찾기</h3></a>
-          <a class="card" href="F14-02.html"><div class="eyebrow">반대</div><h3>F14-02 opt-out</h3></a>
-          <a class="card" href="F14-03.html"><div class="eyebrow">연장</div><h3>F14-03 만료 연장</h3></a>
-          <a class="card" href="F14-04.html"><div class="eyebrow">감독</div><h3>F14-04 프라이버시 대시보드</h3></a>
-          <a class="card" href="F03-05.html"><div class="eyebrow">전제</div><h3>F03-05 참석 상태</h3></a>
+          <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위 도메인</div><h3>14 위치·길찾기</h3></a>
+          <a class="card" href="F14-02.html"><div class="eyebrow">반대 동작</div><h3>F14-02 위치 공유 중지</h3><p>토글을 끄면 일어나는 일.</p></a>
+          <a class="card" href="F14-03.html"><div class="eyebrow">연장</div><h3>F14-03 공유 만료 연장</h3><p>모임이 길어졌을 때 사용자가 누르는 버튼.</p></a>
+          <a class="card" href="F14-04.html"><div class="eyebrow">감독</div><h3>F14-04 프라이버시 대시보드</h3><p>"내 위치가 어디에 보이고 있는가" 확인 출구.</p></a>
+          <a class="card" href="F14-05.html"><div class="eyebrow">옆 단위</div><h3>F14-05 이벤트 길찾기</h3><p>참석자별 거리는 본 단위 시트의 데이터 원천.</p></a>
         </div>
       </section>
 
-<!-- 원천 자료
-  - business_logic/units/14_location_directions/F14-01_event-location-share/{scenarios,backend,frontend}.md
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/14_location_directions/F14-01_event-location-share/{scenarios,backend,frontend,diagrams}.md
 -->
     </main>
   </div>

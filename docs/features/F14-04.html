@@ -1,32 +1,203 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F14-04 위치 프라이버시 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>F14-04 프라이버시</div>
-<h1>F14-04. 위치 프라이버시 대시보드</h1>
-<p class="lede">사용자가 자신의 위치 공유 상태(어느 이벤트에 켜져있는지)를 한눈에 보고 일괄 끄기.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>활성 이벤트 목록</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>개별·일괄 토글</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>활성 1건 끄기</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>일괄 끄기</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>빈 상태</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/users/me/location-sharing</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/users/me/location-sharing/opt-out-all</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/14-location.html"><div class="eyebrow">상위</div><h3>14 위치·길찾기</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F14-04 위치 프라이버시 대시보드 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
+          F14-04 위치 프라이버시 대시보드
+        </div>
+        <h1>F14-04. 위치 프라이버시 대시보드</h1>
+        <p class="lede">
+          "내 위치가 지금 어떤 이벤트에 보이고 있는가"를 사용자가 한 화면에서 확인하고, 그 자리에서 즉시 끄거나 켤 수 있는 통제 자리.
+          위치 공유의 4가지 원칙 중 "공유 상태 시각화"가 형태로 드러나는 화면이며, 호스트와 일반 참석자가 같은 화면을 보지만 누르는 토글의 의미가 다르다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">접근 이력 보관</div><div class="value">30일</div><div class="hint">누가 내 위치를 봤는지 — 서버에는 기록되어 있다</div></div>
+          <div class="metric"><div class="label">진입 경로</div><div class="value">위치 화면 톱니바퀴</div><div class="hint">이벤트 위치 화면에서 한 단계 안쪽</div></div>
+          <div class="metric"><div class="label">호스트 분기</div><div class="value">있음</div><div class="hint">같은 토글이지만 의미가 다르다</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "꺼져 있다"가 시각적으로 보장되어야 사용자가 켤 수 있다</span>
+          <p>위치 공유는 사용자가 "내가 켰는지 안 켰는지" 확신하지 못하면 가벼운 마음으로 켜지 않게 된다.
+            본 화면은 사용자가 흩어진 화면을 돌아다닐 필요 없이 "지금 내 위치가 어디에 어떻게 보이고 있는가"를 한곳에서 확인할 수 있는 자리.
+            한편 호스트에게는 "이 모임 자체에서 위치 공유를 허용할 것인가"라는 모임 단위의 결정이 같은 자리에 함께 있어,
+            모임 운영자가 위치 공유 정책을 모임 별로 다르게 설정할 수 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>호스트와 참석자에게 다른 의미</h2>
+        <p class="subtitle">같은 화면을 봐도 토글이 작동하는 대상이 다르다. 사용자 본인 위치를 끄는가, 모임 전체의 위치 공유를 끄는가.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">참석자</div>
+            <h3>내가 이 모임에 위치를 공유할지</h3>
+            <p>일반 참석자가 토글을 켜면 본인 좌표가 이 모임의 다른 일행에게 보이기 시작한다.
+              끄면 즉시 자기 위치가 일행 화면에서 사라진다. 본인 한 사람의 동의 상태만 바뀐다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">호스트</div>
+            <h3>이 모임에 위치 공유 자체를 허용할지</h3>
+            <p>모임 호스트가 토글을 끄면 모임 전체에서 위치 공유 자체가 작동을 멈춘다 — 일반 참석자가 본인 토글을 켜도 좌표 갱신이 막힌다.
+              "이 모임은 위치 공유를 안 한다"라는 모임 단위의 결정 — 야외 모임이라 위치가 필요한 곳과, 실내 모임이라 위치가 의미 없는 곳을 운영자가 구분하는 자리.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면이 보여주는 정보 — 무엇이 있고 무엇이 빠져 있는가</h2>
+        <p class="subtitle">현재 본 화면은 단일 이벤트의 토글만 보여주고 있다. 서버 쪽에는 "누가 내 위치를 봤는가"라는 30일치 이력이 함께 준비되어 있으나, 화면이 이를 아직 쓰지 않는 상태.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:170px">정보</th><th>현 상태</th><th style="width:30%">의미</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>이벤트 카드 한 장</strong></td>
+                <td>현재 들어온 이벤트 한 개만 카드로 표시.</td>
+                <td>스펙은 "내가 공유할 수 있는 모든 모임의 리스트"를 의도했으나 현 구현은 한 이벤트 컨텍스트 안에서만 동작.</td>
+              </tr>
+              <tr>
+                <td><strong>토글과 상태 라벨</strong></td>
+                <td>"위치 공유 중" / "위치 비공개" 라벨이 색으로 구분. 처리 중에는 인디케이터가 같은 자리에서 돈다.</td>
+                <td>"내 상태"가 시각적으로 명확해야 사용자가 통제감을 느낀다.</td>
+              </tr>
+              <tr>
+                <td><strong>위치 공유 안내 박스</strong></td>
+                <td>옅은 파랑 배경 박스. "시작 1시간 전부터 종료까지 공유" · "참석 확정자에게만 위치 공유" · "이벤트 종료 후 위치 데이터 즉시 삭제" 세 줄.</td>
+                <td>사용자가 "내 위치가 언제까지, 누구에게, 얼마나 오래" 보이는지 한 곳에서 다시 확인할 수 있게 한다.</td>
+              </tr>
+              <tr>
+                <td><strong>접근 이력</strong></td>
+                <td>현재 화면에는 노출되지 않음. 서버에는 30일치 기록이 준비되어 있어 추후 화면에서 사용 가능.</td>
+                <td>"내 위치를 누가 봤는가"를 사용자가 직접 확인할 수 있는 정보. 현재는 운영팀이 분석/감사 목적으로만 활용.</td>
+              </tr>
+              <tr>
+                <td><strong>활성 시간대 표시</strong></td>
+                <td>스펙은 시작 1시간 전 ~ 종료 외에는 토글이 비활성으로 흐려져야 한다고 명시. 현 구현은 미반영 — 시간대 외에도 토글이 눌리고, 실제 갱신은 서버 게이트에서 차단된다.</td>
+                <td>UX 일관성 측면의 보강 항목. 현재는 "왜 안 켜지지?"라는 사용자의 의문이 남을 수 있다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>호스트 vs 참석자 토글 분기</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["사용자가 토글 탭"] --> B{"내가 이 모임의<br/>호스트인가?"}
+    B -->|"예"| C["모임 단위 위치 공유 설정 변경<br/>(이 모임의 모든 참석자에게 영향)"]
+    B -->|"아니오"| D["내 동의 상태만 변경<br/>(나 한 사람만 영향)"]
+    C --> E["성공 → '위치 공유가 활성화/비활성화되었습니다'"]
+    D --> F["성공 → '위치 공유에 참여했습니다 / 중단했습니다'"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">참석자 기본</div>
+            <h3>일반 참석자가 모임 단위로 끈다</h3>
+            <p>위치 화면 우상단 톱니바퀴를 누른 일반 참석자가 카드의 스위치를 내린다. 다이얼로그 없이 즉시 처리되고
+              "위치 공유를 중단했습니다" 토스트와 함께 라벨이 "위치 비공개"로 바뀐다. 일행의 다음 갱신 응답에서 본인 좌표가 사라진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 의식하고 들어온 화면이므로 한 번 더 묻지 않고 곧장 처리하는 게 자연스럽다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 분기</div>
+            <h3>호스트가 모임의 위치 공유를 꺼버린다</h3>
+            <p>야외에서 실내로 옮겨가는 모임을 운영하는 호스트가 같은 화면에서 토글을 끈다.
+              모임 전체에서 위치 공유가 멈춘다 — 일반 참석자가 본인 토글을 켜둔 상태였어도 좌표 갱신은 차단된다.
+              "위치 공유가 비활성화되었습니다" 토스트가 호스트에게 뜬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 모임의 위치 공유 정책을 직접 조정할 수 있어야 야외/실내 혼합 모임에서 일관된 운영이 가능하다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">처리 중</div>
+            <h3>토글을 누르고 응답을 기다리는 잠시 동안</h3>
+            <p>토글을 누르면 그 자리에 작은 인디케이터가 잠시 돈다. 응답이 올 때까지 다시 누를 수 없도록 막혀 있어
+              사용자가 빠르게 두 번 누르는 사고가 일어나지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 위치 공유처럼 민감한 동작에서 "이중 처리" 사고를 막는 안전 장치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">에러</div>
+            <h3>이벤트 정보를 불러올 수 없다</h3>
+            <p>이벤트가 삭제되었거나 네트워크가 끊긴 경우 카드 자리에 "다시 시도" 버튼이 있는 안내가 뜬다. 사용자가 누르면 다시 한 번 호출해서 데이터를 가져온다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 무한 로딩 대신 명시적 재시도 기회를 준다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">토글 실패</div>
+            <h3>네트워크가 끊긴 채 토글을 누른다</h3>
+            <p>토글을 눌렀는데 네트워크 단절로 실패하면 "위치 공유 설정에 실패했습니다" 토스트가 뜨고
+              토글의 시각 상태는 변하지 않는다. 사용자는 네트워크 회복 후 다시 시도해야 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 실패가 사용자에게 명시적으로 알려져야 "껐다고 생각했는데 실제로는 안 꺼졌다"는 사고가 없다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">본 화면의 현 상태와 향후 보강 항목</span>
+          <ul>
+            <li><strong>호스트와 일반 참석자가 같은 화면을 보지만 토글의 의미가 다르다.</strong>
+              호스트 토글은 모임 전체의 위치 공유를 켜고/끄는 동작이고, 일반 참석자 토글은 본인 한 사람의 동의 상태만 바꾼다.
+              운영 안내에서 이 차이를 명시하지 않으면 "내가 끈 줄 알았는데 다른 사람은 계속 보인다" 같은 혼란이 생긴다.</li>
+            <li><strong>현재 화면은 단일 이벤트 카드만 보여준다.</strong>
+              스펙이 의도한 "내가 공유 가능한 모든 이벤트의 리스트"는 아직 화면에 반영되지 않았다.
+              사용자가 여러 모임에 동시 참석 중일 때 한 화면에서 일괄 점검하는 가치가 향후 보강 시점에 살아난다.</li>
+            <li><strong>"누가 내 위치를 봤는가"의 접근 이력은 서버에는 30일치가 준비되어 있지만 화면에서 노출되지 않는다.</strong>
+              현재는 운영팀의 분석·감사 용도로만 활용 가능. 향후 사용자에게 직접 보여주는 화면으로 확장하면 위치 공유 신뢰도가 크게 올라간다.</li>
+            <li><strong>위치 공유 가능 시간대 외에는 토글이 흐려져야 한다는 스펙이 미반영.</strong>
+              현재는 시간대 밖에서도 토글이 눌리지만 실제 좌표 갱신은 서버에서 차단된다 — 사용자가 "왜 안 켜지지?"라고 느낄 수 있는 상태다.</li>
+            <li><strong>호스트가 모임 단위로 위치 공유를 끄면 모든 참석자의 다음 갱신이 막힌다.</strong>
+              참석자에게는 별도 안내 없이 갱신이 멈추므로 운영자가 모임 전환 시점에 별도 채팅 공지를 함께 보내는 것이 사용자 혼란을 줄인다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위 도메인</div><h3>14 위치·길찾기</h3></a>
+          <a class="card" href="F14-01.html"><div class="eyebrow">진입원</div><h3>F14-01 참석자 위치 공유</h3><p>본 화면이 톱니바퀴로 연결된 출발지.</p></a>
+          <a class="card" href="F14-02.html"><div class="eyebrow">동일 동작</div><h3>F14-02 위치 공유 중지</h3><p>본 화면에서도 토글을 통해 같은 중지 동작이 일어난다.</p></a>
+          <a class="card" href="../policies/privacy.html"><div class="eyebrow">정책</div><h3>개인정보·안전 정책</h3><p>위치 공유 정책의 상위 원칙.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/{scenarios,backend,frontend,diagrams}.md
+  - business_logic/verification/location_privacy_decision.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

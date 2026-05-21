@@ -15,97 +15,144 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-07 정원·대기열
+          F03-07 정원·대기열 관리
         </div>
-        <h1>F03-07. 정원 · 대기열 관리 (호스트)</h1>
+        <h1>F03-07. 정원·대기열 관리 (호스트)</h1>
         <p class="lede">
-          정원·대기열·승인제·모집 마감 토글을 한 폼에서 묶어 관리한다.
-          정원을 늘리면 대기자가 자동 승급하고, 한 명을 수동 승격하거나 강제 제거할 수도 있다.
-          모집을 잠시 닫았다가 다시 여는 라이프사이클도 본 단위가 책임진다.
+          호스트가 자기 이벤트의 정원·대기열·모집 마감을 운영하는 면. 정원 확장으로 자동 승급을 일으키거나,
+          노쇼 우려 사용자를 직접 제거하거나, 모집을 잠시 닫는 동작이 본 단위에서 일어난다. 사용자 측 대기열은
+          F03-05에서 처리되고, 본 단위는 호스트 시점의 운영 도구.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">관리 항목</div><div class="value">4</div><div class="hint">정원·대기열·승인제·모집 마감</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
+          <div class="metric"><div class="label">정원 설정 항목</div><div class="value">4개</div><div class="hint">기본 정원·대기열·최대 대기·승인제</div></div>
+          <div class="metric"><div class="label">자동 승급 트리거</div><div class="value">2가지</div><div class="hint">정원 확장 · 다른 사용자 취소</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 정원 변경 한 번이 여러 사용자에게 동시 영향</span>
+          <p>호스트가 정원을 10에서 15로 늘리면 대기열 1~5번까지가 한 번에 자동 승급되고, 각각의 사용자에게
+            푸시 알림이 도달한다. 한 번의 동작 안에서 5명의 상태가 바뀌고 5건의 알림이 발송된다. 그래서
+            본 단위의 동작은 정원 수치 변경에서 끝나지 않고, 대기열 재정렬·자동 승급·알림 발송까지가
+            같이 일어나야 한다. 호스트가 "정원을 늘렸다"고만 인지해도 사용자 측에서는 "대기열에서 참석으로
+            바뀌었다"는 결과가 나와야 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>이 기능 안의 하위 항목</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
-          <div class="card"><div class="eyebrow">동작 1</div><h3>정원 설정 폼</h3><p>baseCapacity·waitlistEnabled·maxWait·approvalRequired 한 폼.</p></div>
-          <div class="card"><div class="eyebrow">동작 2</div><h3>수동 승격</h3><p>대기 중 사용자를 호스트가 지목해 ATTENDING으로.</p></div>
-          <div class="card"><div class="eyebrow">동작 3</div><h3>강제 제거</h3><p>ATTENDING 사용자 제거 → 다음 대기자 자동 승급.</p></div>
-          <div class="card"><div class="eyebrow">동작 4</div><h3>모집 마감/재개</h3><p>isClosed 토글. 신규 신청 자동 차단/허용.</p></div>
+          <article class="card">
+            <div class="eyebrow">자동 승급</div>
+            <h3>정원을 10 → 15로 확장</h3>
+            <p>호스트가 정원 설정에서 기본 정원을 변경. 대기열 1~5번까지가 자동으로 참석 확정으로 전환되고
+              5명에게 푸시 알림이 도달한다. 대기열에 남은 6·7·8번은 1·2·3번으로 순번이 재정렬.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 정원 변경 한 번이 다수 사용자에게 동시 영향을 준다.
+              모든 사용자에게 알림이 도달해야 정원 운영이 정상.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수동 승급</div>
+            <h3>대기열의 단골을 우선 승격</h3>
+            <p>호스트가 대기열 화면에서 특정 사용자의 "승격" 버튼을 누른다. 그 사용자는 참석 확정으로 전환되고,
+              정원이 +1 늘어난다(기본 정원보다 커질 수 있음). 다른 대기자들의 순번이 재정렬.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 운영 재량. 정원 상한을 일시적으로 넘는 것을 호스트
+              결정으로 허용. 단골 운영의 핵심 도구.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">강제 제거</div>
+            <h3>노쇼 우려 사용자를 미리 제거</h3>
+            <p>이전 두 번 무단 결석한 사용자가 또 신청한 상태. 참석자 목록에서 "제거"를 누르면 확인 후 그 사용자는
+              취소 상태로 전환되고, 1번째 대기자가 자동 승급된다. 체크인 기록이 있었다면 함께 정리.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 안전 운영 도구. 잠재 노쇼를 사전에 제거해 모임의
+              실질 운영 인원을 보장.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">모집 마감</div>
+            <h3>갑자기 신청이 폭주해서 잠시 닫음</h3>
+            <p>인플루언서 공유로 신청이 폭주하자 호스트가 "모집 마감"을 누른다. 신규 신청은 차단되고
+              상세 화면 액션바도 "마감"으로 바뀐다. 호스트가 검토 후 "모집 재개"를 누르면 다시 신청 가능.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 임시 안전장치. 모집을 완전히 끝내지 않고 잠시만
+              닫는 동선이 본 단위의 특별한 가치.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">대기열 알림 수신</div>
+            <h3>참가자 시점 — 자동 승급 알림</h3>
+            <p>본인이 대기열 1번. 다른 사용자가 취소 → 자동 승급 → 푸시 "대기열에서 참석으로 승급되었습니다".
+              알림 탭 → 상세 진입 → 액션바가 "참석 취소"로 바뀌어 있음.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자기 상태 변화를 인지하지 못하면 노쇼로 이어진다.
+              알림 도달은 본 단위의 핵심 신호.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">잘못된 승격 시도</div>
+            <h3>이미 참석 중인 사용자를 승격 시도</h3>
+            <p>호스트가 오타로 이미 참석 중인 사용자에 "승격"을 누른다. "참석자 승격에 실패했습니다" 안내.
+              상태 변경이 일어나지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한</div>
+            <h3>일반 사용자가 정원 설정 URL 진입</h3>
+            <p>호스트와 공동호스트가 아닌 사용자가 URL로 진입해도 이벤트 상세로 리다이렉트된다. 우회 호출도
+              서버에서 차단.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>정원 변경 시 자동 승급</h2>
-        <div class="diagram"><div class="mermaid">
-flowchart LR
-    A["baseCapacity 10 → 15"] --> B["availableSlots = 5"]
-    B --> C["대기 1~5번 ATTENDING 승격"]
-    C --> D["currentCapacity = 15"]
-    C --> E["5명 WAITLIST_PROMOTED 푸시"]
-    C --> F["대기 6,7,8 → 1,2,3 재정렬"]
-        </div></div>
-      </section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
 
-      <section>
-        <h2>사용자 시나리오 7개</h2>
-        <div class="cards">
-          <article class="card"><div class="eyebrow">S1 · 수동 승격</div><h3>대기 2번을 우선 승격</h3>
-            <ol><li>대기열 화면에서 카드의 “승격” 탭</li><li>WAITING → ATTENDING + manuallyPromoted</li><li>나머지 순번 재정렬 + 푸시</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S2 · 자동 승급</div><h3>정원 확장으로 5명 일괄 승급</h3>
-            <ol><li>baseCapacity 10 → 15</li><li>대기 1~5번 ATTENDING + 푸시</li><li>나머지 순번 재정렬</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S3 · 강제 제거</div><h3>노쇼 사용자 제거</h3>
-            <ol><li>참석자 목록에서 “제거” 확인</li><li>CANCELLED + 체크인 정리</li><li>다음 대기자 자동 승급</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S4 · 마감/재개</div><h3>모집 일시 마감 후 재개</h3>
-            <ol><li>“모집 마감” → isClosed=true → 신규 신청 차단</li><li>검토 후 “모집 재개” → isClosed=false → 액션바 다시 활성</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S5 · 자동 승급 알림</div><h3>대기자가 푸시 수신</h3>
-            <ol><li>다른 사용자 취소 → 1번 대기자 자동 승급</li><li>푸시 “대기열에서 참석으로 승급되었습니다”</li><li>액션바 자동 “참석 취소”로 갱신</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S6 · 잘못된 승격</div><h3>이미 참석 중인 사용자 승격 시도</h3>
-            <ol><li>409 PROMOTION_FAILED</li></ol>
-          </article>
-          <article class="card"><div class="eyebrow">S7 · 권한</div><h3>일반 사용자가 설정 진입 시도</h3>
-            <ol><li>라우터 redirect</li><li>우회 시 403 EVENT_NOT_OWNER</li></ol>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>서버 계약</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <thead><tr><th style="width:150px">화면</th><th>사용자가 보는 것</th><th style="width:30%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><code>PUT</code></td><td><code>/api/v1/events/{id}/capacity/settings</code></td><td>정원 + 대기열 + 승인제 + 모집 토글</td></tr>
-              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/waitlist</code></td><td>대기열 조회</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/capacity/{userId}/promote</code></td><td>수동 승격</td></tr>
-              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}/capacity/{userId}</code></td><td>강제 제거</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/registration/close</code></td><td>모집 마감</td></tr>
-              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/registration/reopen</code></td><td>모집 재개</td></tr>
+              <tr>
+                <td><strong>참석자 목록</strong></td>
+                <td>현재 참석자 N / 정원 M명 헤더, 본인 상태 카드(본인이 참석/대기 중일 때), 닉네임 검색, 카드별 "승격"·"제거" 버튼(호스트).</td>
+                <td>호스트가 화면 하나에서 누가 와 있고 누구를 빼고 누구를 우선으로 올릴지 결정하게.</td>
+              </tr>
+              <tr>
+                <td><strong>대기열</strong></td>
+                <td>상단 "대기열 (N명)" 배너, 순번 표시 카드. 호스트는 카드마다 "승격" 버튼, 본인이 대기 중이면 상단에 "내 대기 순번 N번" 카드.</td>
+                <td>대기열은 순번이 핵심 정보. 순번이 명확하지 않으면 사용자가 자기 위치를 가늠하지 못한다.</td>
+              </tr>
+              <tr>
+                <td><strong>정원 설정 폼</strong></td>
+                <td>기본 정원(0 = 제한 없음), 대기열 활성 토글, 최대 대기 인원, 승인제 토글, "저장" 버튼.</td>
+                <td>네 가지 옵션을 한 화면에 모아 호스트가 모임 운영 방식을 한 자리에서 결정.</td>
+              </tr>
+              <tr>
+                <td><strong>제거 확인 다이얼로그</strong></td>
+                <td>"닉네임님을 참석자에서 제거하시겠습니까?" 빨강 강조 + 확인 버튼.</td>
+                <td>제거는 사용자에게 큰 영향을 주는 동작이므로 한 단계 더 강조해서 확인을 받는다.</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>자주 빠뜨리는 케이스</h2>
-        <div class="callout warn"><span class="label">레드 플래그</span>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">정원·대기열 운영의 결정점</span>
           <ul>
-            <li><strong>정원 확장 시 자동 승급 누락</strong> — 자리가 났는데 채워지지 않음.</li>
-            <li><strong>강제 제거 후 다음 대기자 승급 누락</strong> — 빈 자리.</li>
-            <li><strong>마감 후 재개 시점에 신청자 알림 누락</strong> — 사용자가 자리가 다시 열린 걸 모름(향후 알림 검토).</li>
-            <li><strong>비관적 잠금 없는 정원 변경</strong> — 동시 신청과 충돌.</li>
+            <li><strong>정원 변경 시 자동 승급·알림이 한 동작 안에서 일어나야 한다.</strong>
+              정원만 늘리고 자동 승급이 누락되면 "정원은 늘었는데 대기열에 사람이 그대로"라는 사고가 발생.</li>
+            <li><strong>수동 승급은 정원 상한을 일시적으로 초과할 수 있다.</strong> 호스트의 운영 재량.
+              "기본 정원 + 1, + 2"의 상태를 시각화해 호스트가 인지하게 한다.</li>
+            <li><strong>강제 제거 시 체크인 기록도 같이 정리된다.</strong> 잘못 제거하면 체크인 기록까지 사라지므로,
+              제거는 한 번 더 확인 단계를 거친다.</li>
+            <li><strong>모집 마감은 완전 종료가 아니다.</strong> 호스트가 다시 재개할 수 있다. 일시적 안전장치로
+              사용하도록 안내가 필요.</li>
+            <li><strong>대기열 자동 승급의 알림 도달이 노쇼율의 직접 신호.</strong>
+              사용자가 알림을 못 받으면 자기 상태 변화를 모른 채 모임에 나타나지 않는다.</li>
           </ul>
         </div>
       </section>
@@ -113,13 +160,18 @@ flowchart LR
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
-          <a class="card" href="F03-05.html"><div class="eyebrow">관련</div><h3>F03-05 신청·참석</h3></a>
-          <a class="card" href="F03-06.html"><div class="eyebrow">관련</div><h3>F03-06 신청서 승인·거절</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">진입점</div><h3>F03-02 이벤트 상세</h3><p>호스트 운영 메뉴에서 본 단위로 들어가는 자리.</p></a>
+          <a class="card" href="F03-05.html"><div class="eyebrow">사용자 측</div><h3>F03-05 신청·참석</h3><p>대기열 등록·자동 승급이 사용자에게 노출되는 면.</p></a>
+          <a class="card" href="F03-06.html"><div class="eyebrow">승인 동선</div><h3>F03-06 신청서 승인·거절</h3><p>정원 초과 시 호스트가 이동하는 자리.</p></a>
+          <a class="card" href="F03-12.html"><div class="eyebrow">참석 로그</div><h3>F03-12 내 이벤트·로그</h3><p>승격·제거의 변경 기록.</p></a>
         </div>
       </section>
 
-<!-- 원천: business_logic/units/03_event/F03-07_capacity-and-waitlist/ -->
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/03_event/F03-07_capacity-and-waitlist/{scenarios,backend,frontend,diagrams}.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

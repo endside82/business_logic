@@ -1,43 +1,158 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-06 차단 관리 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-06 차단 관리</div>
-<h1>F04-06. 클럽 차단 관리</h1>
-<p class="lede">문제 멤버를 영구 차단해 가입 시도와 초대 자체를 막는다. 차단 처리는 추방 + 가입비 환불 + 기존 신청/초대 정리 + 알림을 한 트랜잭션으로 묶는다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">하위 동작</div><div class="value">2</div><div class="hint">차단·차단 해제</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>차단</h3><p>사유 입력. 추방+환불+기존 wait 정리+BAN wait INSERT.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>차단 해제</h3><p>BAN wait DELETE. 재가입 시도 가능 상태로 복귀.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 8개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>MEMBER 차단</h3><ol><li>사유 입력 → BAN 등록 + 추방 + 환불</li><li>대상에게 CLUB_MEMBER_BANNED 알림</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>ADMIN→ADMIN 차단 시도</h3><ol><li>UI 항목 없음, 우회 시 CLUB_NO_PERMISSION</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>OWNER→ADMIN 차단</h3><ol><li>OWNER는 ADMIN 차단 가능</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>이미 차단된 사용자 재차단</h3><ol><li>INVALID_INPUT(중복)</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>차단된 사용자 재가입 시도</h3><ol><li>CTA UI 비활성</li><li>우회 시 CLUB_BANNED</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>차단된 사용자 초대 시도</h3><ol><li>CLUB_BANNED</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>차단 해제</h3><ol><li>BAN wait DELETE → 재가입 시도 가능</li></ol></article>
-<article class="card"><div class="eyebrow">S8</div><h3>환불 잔액 부족(BUSINESS)</h3><ol><li>기금 부족 시 환불 실패 처리</li><li>운영 정리 필요</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/members/{userId}/ban</code></td></tr>
-<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/bans</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/clubs/{id}/bans/{userId}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-04.html"><div class="eyebrow">관련</div><h3>F04-04 멤버 관리</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-06_ban-management/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-06 차단 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-06 차단 관리
+        </div>
+        <h1>F04-06. 차단 관리</h1>
+        <p class="lede">
+          클럽 운영자가 부적절한 사용자를 클럽에서 영구적으로 내보내는 단위.
+          차단 한 번이 추방·가입비 환불·재가입 차단·초대 차단까지를 한 동작 안에서 모두 처리한다.
+          진행 중이던 신청이나 초대가 있어도 같이 정리되며, 해제 전까지 그 사용자는 같은 클럽에 다시 들어올 수 없다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">차단 한 번이 정리하는 것</div><div class="value">4종</div><div class="hint">추방 · 환불 · 진행 신청 정리 · 재가입 차단</div></div>
+          <div class="metric"><div class="label">차단 시 환불</div><div class="value">항상 전액</div><div class="hint">7일 기준 무관</div></div>
+          <div class="metric"><div class="label">권한 가드</div><div class="value">2단계</div><div class="hint">관리자는 관리자를 차단할 수 없음</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 차단은 한 번의 동작으로 사용자와의 모든 연결을 끊는다</span>
+          <p>차단된 사용자는 단순히 "더 이상 게시글을 안 쓴다"의 의미가 아니다.
+            그 사용자가 클럽에 다시 들어올 수 없고, 누군가가 그 사용자를 초대할 수 없고, 진행 중이던 신청도 더 이상 유효하지 않으며,
+            유료 클럽이라면 가입비도 돌아간다. 이 네 가지가 한 번의 차단 동작 안에서 끝나지 않으면
+            "차단했는데 다시 가입했다", "차단된 사람을 초대해 버렸다", "돈은 안 돌아왔다" 같은 사고가 발생한다.
+            차단은 가장 강한 운영 도구이므로 그 의미가 흐려지면 운영자가 도구 자체를 신뢰하지 않게 된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 차단</div>
+            <h3>부적절한 게시글을 반복하는 멤버를 차단</h3>
+            <p>관리자가 멤버 카드 더보기 → "차단" → 사유 입력 → 차단 확정.
+              그 자리에서 그 사용자는 클럽에서 사라진다 — 멤버 목록에서 제거되고, 유료 클럽이었다면 가입비가 환불되고,
+              차단 알림이 그 사용자에게 발송된다. 진행 중이던 가입 신청이나 받은 초대도 같이 정리된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 번의 차단이 그 사용자와의 모든 연결을 끊는다는 정책의 발현 지점. 운영자에게 차단은 마지막 수단이지만 즉시 효과가 있어야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>관리자가 다른 관리자를 차단하려 한다</h3>
+            <p>관리자에게는 다른 관리자 카드의 더보기에서 "차단" 항목이 보이지 않는다.
+              외부에서 강제로 호출해도 거절된다. 소유자만이 관리자를 차단할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">재가입 차단</div>
+            <h3>차단된 사용자가 그 클럽에 다시 가입하려 한다</h3>
+            <p>차단된 사용자가 그 클럽 카드를 다시 누르면 상세 화면 하단 버튼이 "가입할 수 없습니다" 비활성으로 떠 있다.
+              외부에서 강제로 가입을 호출해도 서버가 차단 검사로 막는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">초대 차단</div>
+            <h3>차단된 사용자에게 초대를 보내려 한다</h3>
+            <p>관리자가 차단된 사용자를 초대하려 하면 "차단된 사용자에게는 초대할 수 없습니다" 안내가 뜬다.
+              차단의 의미가 가입·초대 양 경로에서 모두 작동.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">진행 중 정리</div>
+            <h3>가입 신청 중인 사용자를 차단한다</h3>
+            <p>아직 신청 대기 상태인 사용자를 차단하면 그 신청도 같이 사라진다.
+              대기열에서 카드가 즉시 제거되고, 차단 목록으로 옮겨진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기금 부족</div>
+            <h3>유료 클럽 차단 시 환불 잔액이 부족하다</h3>
+            <p>차단 대상의 가입비가 10,000원인데 클럽 기금에는 3,000원만 남아 있다.
+              부족한 7,000원은 플랫폼이 선지급으로 채워서 사용자에게는 전액 환불이 보장되고,
+              플랫폼 미수금이 클럽에 남아 있다가 향후 기부 등으로 채워질 때 상계된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자 환불을 클럽 기금 부족 때문에 깎지 않는다. 운영 책임은 플랫폼이 임시로 메우고 추후 정산.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단 해제</div>
+            <h3>오해가 풀려 차단을 해제한다</h3>
+            <p>관리자가 차단 목록 화면에서 사용자 카드 → "차단 해제" → 확인.
+              그 자리에서 차단이 풀린다. 단, 자동으로 멤버로 돌아오지는 않고 사용자가 다시 가입 신청을 해야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>이미 차단된 사용자를 또 차단하려 한다</h3>
+            <p>이미 차단 상태인 사용자를 외부에서 다시 차단하려 하면 "이미 차단된 사용자입니다" 안내가 뜬다.
+              차단 기록이 중복으로 쌓이지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">진입 가드</div>
+            <h3>차단된 사용자가 클럽 커뮤니티에 직접 들어오려 한다</h3>
+            <p>차단된 사용자가 외부 링크로 클럽 게시판·캘린더 같은 멤버 전용 면에 들어오면 라우터가 클럽 상세로 되돌려 보낸다.
+              상세 화면에서는 가입 버튼이 "가입할 수 없습니다"로 비활성화되어 있다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">차단이 흔들리면 운영의 마지막 도구가 무력해진다</span>
+          <ul>
+            <li><strong>차단 한 번의 네 가지 정리는 분리될 수 없다.</strong>
+              추방·환불·진행 신청 정리·재가입 차단 중 어느 하나라도 별도 동작이 되면
+              "차단했는데 돈은 안 돌아왔다", "차단했는데 다시 들어왔다" 같은 사고가 즉시 발생한다.</li>
+            <li><strong>차단 시 환불은 7일 기준과 무관하다.</strong>
+              사용자가 자발적으로 떠난 것이 아니라 운영자에 의해 강제로 끊어진 관계이므로, 가입비는 항상 전액 환불.</li>
+            <li><strong>기금 잔액이 부족해도 사용자 환불은 보장된다.</strong>
+              플랫폼이 임시로 메우고 미수금으로 기록한 뒤 정산. 사용자에게는 부족 때문에 환불이 깎이는 일이 없다.</li>
+            <li><strong>차단 가드는 가입·초대·커뮤니티 세 경로에서 모두 작동해야 한다.</strong>
+              한 경로라도 풀리면 차단된 사용자가 우회로 들어올 수 있다. 운영자가 다시 차단 동작을 반복해야 하는 상황은 차단 기능의 신뢰를 떨어뜨린다.</li>
+            <li><strong>차단 해제 시 자동 멤버 복귀는 일어나지 않는다.</strong>
+              해제는 "그 사용자가 다시 신청할 권리"만 돌려준다. 자동 복귀는 운영자가 의도하지 않은 결과를 만들 수 있다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-04.html"><div class="eyebrow">관련</div><h3>F04-04 멤버 관리</h3><p>"차단" 액션의 출발점인 멤버 카드.</p></a>
+          <a class="card" href="F04-02.html"><div class="eyebrow">관련</div><h3>F04-02 클럽 상세·가입</h3><p>차단된 사용자의 가입 시도가 막히는 면.</p></a>
+          <a class="card" href="F04-05.html"><div class="eyebrow">관련</div><h3>F04-05 가입 대기열·초대</h3><p>진행 중 신청·초대가 차단 시 같이 정리된다.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-06_ban-management/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

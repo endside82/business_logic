@@ -1,34 +1,158 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F13-03 주소 관리 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>F13-03 주소 관리</div>
-<h1>F13-03. 다중 주소 관리</h1>
-<p class="lede">집·회사 등 라벨로 구분된 주소 N개(최대 10) 관리. 기본 주소는 추천·길찾기 기본값. Daum 우편번호 + 역지오코딩 결합.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>주소 추가(라벨·검색·좌표)</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>기본 주소 전환</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>수정·삭제</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>집 주소 추가 + 기본 지정</h3></article>
-<article class="card"><div class="eyebrow">S2</div><h3>10개 한도</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>기본 주소 삭제 시 다음 자동 기본</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET/POST</code></td><td><code>/api/v1/users/me/addresses</code></td></tr>
-<tr><td><code>PATCH/DELETE</code></td><td><code>/api/v1/users/me/addresses/{id}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위</div><h3>13 프로필·설정</h3></a>
-<a class="card" href="../domains/14-location.html"><div class="eyebrow">연동</div><h3>14 위치·길찾기</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/13_profile_settings/F13-03_address-management/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F13-03 주소 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>
+          F13-03 주소 관리
+        </div>
+        <h1>F13-03. 다중 주소 관리</h1>
+        <p class="lede">
+          사용자가 생활 거점(집·회사·기타) 주소를 등록·수정·삭제하고, 그중 하나를 "기본 주소"로 지정하는 화면.
+          위치 기반 추천, 정산, 배송 등 거리·지역에 영향을 받는 다른 도메인이 이 값을 참조한다.
+          한 번에 너무 많은 주소를 두지 못하게 최대 10개로 제한하고, 집·회사 라벨은 각각 한 개씩만 허용된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">최대 주소</div><div class="value">10개</div><div class="hint">한도 도달 시 추가 차단</div></div>
+          <div class="metric"><div class="label">기본 주소</div><div class="value">1개</div><div class="hint">전환 시 기존 기본 자동 해제</div></div>
+          <div class="metric"><div class="label">집·회사 라벨</div><div class="value">각 1개</div><div class="hint">기타 라벨은 여러 개 가능</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "기본 주소 하나"가 다른 도메인의 동작을 결정한다</span>
+          <p>사용자가 거리 기반 추천을 받거나 호스트가 모임 위치를 정할 때 본 단위가 만든 "기본 주소"가 기준이 된다.
+            여러 주소를 등록하게 두는 이유는 평일·주말 거점이 다른 사용자가 많기 때문이고,
+            그중 무엇이 "지금의 기본인가"를 사용자 스스로 정하게 한다.
+            집·회사 라벨이 각각 한 개로 제한되는 건 사용자가 "내 집 주소"를 의식적으로 한 개로 관리하게 하기 위함.
+            여러 개의 "집"은 다른 도메인의 거리 계산을 흔든다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>집 주소를 등록하고 기본 주소로 설정</h3>
+            <p>주소 관리 화면에서 "+"를 누른다. "집" 라벨을 고르고 주소 검색으로 주소를 채운 뒤
+              상세 주소를 입력하고 "기본 주소로 설정"을 켠다. 저장하면 기존 기본 주소의 표시가 자동으로 풀리고
+              새 주소가 기본이 된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 한 번 등록한 주소로 거리 기반 추천이 즉시 사용자 동선에 맞게 조정된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">기본 전환</div>
+            <h3>평일 거점을 회사 근처로 바꾼다</h3>
+            <p>회사 주소가 일반 주소로 등록되어 있다. 회사 카드의 "기본설정"을 누르면 회사가 기본으로 올라오고
+              기존 집 주소의 기본 표시는 자동으로 풀린다. 사용자는 토스트로 결과를 확인한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">정리 제한</div>
+            <h3>기본 주소는 직접 삭제할 수 없다</h3>
+            <p>기본 주소 카드에서 "삭제"를 누르면 클라이언트가 즉시 막고
+              "기본 주소는 삭제할 수 없습니다. 다른 주소를 기본으로 설정 후 삭제해주세요" 안내가 뜬다.
+              서버 호출은 일어나지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 기본 주소가 빈 상태가 되면 거리 기반 추천이 좌표 없이 계산되어 품질이 떨어진다.
+              사용자가 의식적으로 기본을 바꾼 뒤 삭제하도록 한 단계 끼워 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>집 주소를 두 번 등록하려 함</h3>
+            <p>이미 "집" 라벨의 주소가 있는데 또 "집"으로 등록을 시도하면 저장 시점에 거절된다.
+              "기타" 라벨은 여러 개 등록 가능하다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한도</div>
+            <h3>10개에 도달하면 추가 버튼이 사라진다</h3>
+            <p>등록 주소가 10개가 되면 화면 우상단 "+" 버튼이 안 보인다.
+              하단 안내 문구로 "최대 10개까지 등록 가능"이 함께 표시된다.
+              사용자가 새로 추가하려면 기존 주소를 정리해야 한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성 — 사람이 보는 것</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:140px">영역</th><th>보이는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>주소 목록</strong></td>
+                <td>주소마다 라벨 아이콘·라벨명·주소·상세주소가 카드로. 기본 주소에는 "기본" 배지가 붙는다.
+                  기본이 아닌 카드에만 "기본설정" 버튼이 보인다.</td>
+                <td>"지금 어떤 주소가 기본인지"가 카드 단계에서 보여야 한다. 버튼이 다 같이 보이면 사용자가 누른 결과를 예측 못한다.</td>
+              </tr>
+              <tr>
+                <td><strong>추가·수정 폼</strong></td>
+                <td>라벨 칩 3개(집·회사·기타), 주소 검색 입력, 상세 주소 입력, "기본 주소로 설정" 스위치.</td>
+                <td>주소 검색은 외부 우편번호 서비스를 끼워 사용자 입력 오류와 자유 입력 부담을 줄인다.</td>
+              </tr>
+              <tr>
+                <td><strong>한도 안내</strong></td>
+                <td>리스트 아래에 "주소는 최대 10개까지 등록할 수 있습니다" 한 줄.</td>
+                <td>한도가 안 보이면 사용자가 "왜 추가 버튼이 사라졌지" 하고 당황한다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">기본 주소 정책의 결정점</span>
+          <ul>
+            <li><strong>기본 주소 삭제 가드는 현재 클라이언트에서만 동작한다.</strong>
+              운영 측에서 직접 데이터를 손대거나 다른 클라이언트가 호출하면 기본 주소가 사라질 수 있다 —
+              위치 추천 품질이 떨어지는 사용자가 생기면 이 케이스부터 확인.</li>
+            <li><strong>주소 한도는 클라이언트·서버 모두 10개로 맞춰져 있다.</strong>
+              한쪽만 풀면 한쪽이 거절해 사용자가 "왜 저장이 안 되지" 하는 회귀가 일어난다.</li>
+            <li><strong>좌표가 없을 때 0.0으로 채워 보내는 흐름이 있다.</strong>
+              거리 기반 추천이 한국 어딘가가 아니라 0,0 좌표에서 계산되면 결과가 어긋난다 —
+              우편번호 검색 결과에 좌표가 빠지면 운영에서 즉시 잡아야 하는 신호.</li>
+            <li><strong>집·회사 중복 차단은 같은 사용자 내에서만 동작한다.</strong>
+              다른 사용자와 같은 주소를 쓰는 건 정상이다(가족·룸메이트).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위 도메인</div><h3>13 프로필·설정</h3></a>
+          <a class="card" href="F13-01.html"><div class="eyebrow">진입</div><h3>F13-01 마이페이지</h3><p>본 화면으로 들어오는 출발점.</p></a>
+          <a class="card" href="F13-04.html"><div class="eyebrow">옆 단위</div><h3>F13-04 선호 태그</h3><p>거리와 함께 추천 품질을 결정하는 다른 입력값.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/13_profile_settings/F13-03_address-management/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,47 +1,110 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-09 댓글·대댓글 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-09 댓글</div>
-<h1>F04-09. 게시글 댓글 · 대댓글</h1>
-<p class="lede">게시글 하단 1단 들여쓰기 답글까지 지원하는 댓글 시스템. 본인 수정/삭제, ADMIN의 부적절 댓글 삭제, 답글 보존을 위한 soft delete를 분기한다.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">하위 동작</div><div class="value">4</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
-<div class="metric"><div class="label">깊이</div><div class="value">2단</div><div class="hint">댓글 + 답글</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>댓글 작성</h3><p>입력창 → POST → 카운트 갱신.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>답글 작성</h3><p>“@사용자” 자동 prefix, 1단 들여쓰기.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>수정(작성자)</h3><p>“(수정됨)” 표시.</p></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>삭제</h3><p>자식이 있으면 placeholder로 유지, 없으면 제거.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 8개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>첫 댓글 작성</h3><ol><li>입력 → POST → 카운트 갱신 + 토스트</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>답글 작성</h3><ol><li>“@사용자” prefix + 1단 들여쓰기 노출</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>본인 수정/삭제</h3><ol><li>수정: PUT + “(수정됨)”</li><li>삭제: 자식 유무로 placeholder/제거 분기</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>ADMIN의 댓글 삭제</h3><ol><li>requireStaff 통과 → soft delete</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>일반 멤버의 타인 수정/삭제</h3><ol><li>UI 미노출</li><li>우회 시 COMMENT_NO_EDIT_PERMISSION</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>비멤버 진입</h3><ol><li>게시글 가시성 정책 적용</li></ol></article>
-<article class="card"><div class="eyebrow">S7</div><h3>긴 본문 분기</h3><ol><li>“더보기” 토글</li></ol></article>
-<article class="card"><div class="eyebrow">S8</div><h3>삭제된 댓글 placeholder</h3><ol><li>“삭제된 댓글입니다”로 자리 유지</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{cid}/posts/{pid}/comments</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{cid}/posts/{pid}/comments/{commentId}/replies</code></td></tr>
-<tr><td><code>PUT</code></td><td><code>/api/v1/clubs/{cid}/comments/{commentId}</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/clubs/{cid}/comments/{commentId}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F04-08.html"><div class="eyebrow">관련</div><h3>F04-08 게시판</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-09_post-comments/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-09 게시글 댓글 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-09 게시글 댓글
+        </div>
+        <h1>F04-09. 게시글 댓글</h1>
+        <p class="lede">
+          게시글 아래에서 멤버끼리 짧게 이야기를 주고받는 면. 댓글에 답글을 한 단계까지 달 수 있고,
+          작성자는 자기 댓글을 수정·삭제하며 운영자는 부적절한 댓글을 삭제한다.
+          답글이 달려 있는 댓글이 삭제되면 답글 흐름은 유지하기 위해 "삭제된 댓글입니다" 표시만 남는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="callout">
+          <span class="label">설계 의도 — 한 단계 답글만 허용하면 대화가 끊어지지 않는다</span>
+          <p>댓글 아래에 답글, 그 답글 아래에 또 답글… 깊이가 깊어질수록 사용자는 대화의 흐름을 따라가지 못한다.
+            그래서 답글은 한 단계까지만 허용하고, 그 안에서 자연스럽게 멘션으로 누구에게 답하는지 표시한다.
+            깊이를 무한히 허용하면 들여쓰기가 화면 폭을 넘어가고, 사용자가 답글 모드인지 일반 댓글 모드인지를 잃는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>모임 후기 글에 멤버가 짧게 댓글</h3>
+            <p>게시글 하단 입력창에 "오늘 너무 즐거웠어요!"를 적고 전송. 댓글 카운트가 한 칸 올라가고 게시판 목록 카드의 댓글 수도 같이 갱신된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">답글</div>
+            <h3>특정 멤버 댓글에 답글로 호명한다</h3>
+            <p>"답글" 버튼을 누르면 입력창에 그 멤버 닉네임이 자동으로 들어가고 "답글 모드" 표시가 떠오른다.
+              답글은 부모 댓글 아래에 들여쓰기로 묶여 보인다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">수정/삭제</div>
+            <h3>자기 댓글을 손보거나 지운다</h3>
+            <p>자기 댓글 길게 누르기로 메뉴를 띄워 수정·삭제. 수정한 댓글에는 "(수정됨)" 표시가 붙는다.
+              답글이 달리지 않은 댓글을 삭제하면 화면에서 사라지고, 답글이 달린 댓글을 삭제하면 "삭제된 댓글입니다" 자리만 남아 답글 흐름이 끊기지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 부모 댓글이 통째로 사라지면 그 아래 답글의 맥락이 없어진다. 답글 작성자의 권리를 보호하는 정책.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">운영자 삭제</div>
+            <h3>관리자가 부적절한 댓글을 삭제한다</h3>
+            <p>관리자가 다른 사람의 댓글 길게 누르기로 "삭제"를 본다. 수정은 보이지 않는다.
+              삭제하면 다른 사람의 글에 동일한 정책이 적용된다 — 답글 있으면 placeholder, 없으면 제거.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">깊이 가드</div>
+            <h3>답글의 답글을 시도</h3>
+            <p>답글에는 "답글" 버튼이 보이지 않는다. 외부에서 강제로 호출해도 "답글에는 답글을 달 수 없습니다" 안내로 거절된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">댓글 정책 결정점</span>
+          <ul>
+            <li><strong>삭제된 부모 댓글의 placeholder는 답글 작성자 보호다.</strong>
+              부모를 완전히 제거하면 답글 글쓴이가 자기 답글의 맥락을 잃는다. 이 정책이 흐려지지 않아야 답글이 적극적으로 쓰인다.</li>
+            <li><strong>운영자가 댓글을 수정할 수 없다는 정책은 게시글 정책과 일관된다.</strong>
+              운영자는 삭제만 할 수 있고, 사용자의 글 내용은 본인만 손볼 수 있다.</li>
+            <li><strong>답글 깊이를 1단계로 제한하는 정책이 풀리면 화면이 좁아진다.</strong>
+              모바일 화면에서 두 단계 이상 들여쓰기는 본문이 거의 보이지 않는 상태를 만든다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-08.html"><div class="eyebrow">앞 단위</div><h3>F04-08 게시판·게시글</h3><p>댓글이 달리는 게시글 본체.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-09_post-comments/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,37 +1,106 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F06-07 호스팅 티켓 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-07 호스팅 티켓</div>
-<h1>F06-07. 호스팅 티켓 구매</h1>
-<p class="lede">프라이빗 모임을 개최할 권한을 사는 티켓. 티어별 가격·잔여수·유효기간(6개월). 유료 잔액으로만 결제.</p></header>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>티켓 목록 + 보유 현황</h3></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>구매(유료 잔액만)</h3></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>티켓 사용(프라이빗 개최 시)</h3></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>만료 안내</h3></div>
-</div></section>
-<section><h2>사용자 시나리오</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>첫 구매</h3><ol><li>잔액 충분 시 6개월 유효 티켓 INSERT</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>잔액 부족 → 충전 분기</h3></article>
-<article class="card"><div class="eyebrow">S3</div><h3>유료 잔액만 가능</h3><ol><li>무료 잔액으로는 구매 불가</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>티켓 만료</h3></article>
-<article class="card"><div class="eyebrow">S5</div><h3>티켓 사용</h3></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/hosting-tickets</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/hosting-tickets/purchase</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
-<a class="card" href="F03-03.html"><div class="eyebrow">소비처</div><h3>F03-03 이벤트 생성(프라이빗)</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/06_payment/F06-07_hosting-ticket/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-07 호스팅 티켓 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-07 호스팅 티켓 구매
+        </div>
+        <h1>F06-07. 호스팅 티켓 구매</h1>
+        <p class="lede">
+          프라이빗 모임을 개최할 권리를 포인트로 구매하는 화면.
+          한 번의 구매로 6개월간 유효한 티켓이 발급되고, 모임을 시작할 때마다 한 장씩 차감된다.
+          잔액이 부족하면 충전 화면(F06-02)으로 자연스럽게 옮겨지고, 충전 후 다시 본 화면으로 돌아와 구매를 마친다.
+          호스트 활동을 시작하려는 사용자가 가장 먼저 거치는 결제 자리.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">유효기간</div><div class="value">6개월</div><div class="hint">구매 시점부터</div></div>
+          <div class="metric"><div class="label">잔액 부족 시</div><div class="value">충전 분기</div><div class="hint">자연스러운 두 단계 동선</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 호스트 활동의 첫 결제는 부담 없이 끝나야 한다</span>
+          <p>프라이빗 모임을 처음 열려는 사용자는 호스트로서의 결정을 막 내린 직후다.
+            이 시점의 결제가 막히거나 복잡하면 호스트 활동 시작이 미뤄지고, 그만큼 플랫폼의 모임 공급이 줄어든다.
+            본 화면은 티어 카드 위에서 한 번의 탭으로 구매가 끝나도록 두고, 잔액 부족도 충전으로 자연스럽게 이어지게 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">첫 구매</div>
+            <h3>호스트 활동을 시작하려는 사용자가 티켓을 산다</h3>
+            <p>잔액이 충분한 사용자가 티어 카드에서 "구매하기"를 누른다.
+              구매 확인 안내에 잔액과 차감 후 잔액이 보이고, 확인을 누르면 포인트가 차감되고 6개월간 유효한 티켓이 즉시 발급된다.
+              화면 상단에 "현재 티켓 1장 이용 중" 배너가 떠오른다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 첫 호스트 결정이 한 번의 탭으로 끝난다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">잔액 부족</div>
+            <h3>잔액이 모자라 충전으로 옮겨감</h3>
+            <p>잔액이 모자란 사용자가 구매를 시도하면 안내가 떠오르고, 동의 시 충전 화면이 자동으로 열린다.
+              충전을 마치고 다시 본 화면으로 돌아오면 잔액이 채워진 상태에서 같은 구매를 다시 시도할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">만료 임박</div>
+            <h3>곧 만료될 티켓이 있다</h3>
+            <p>지난번에 산 티켓이 며칠 안에 만료된다.
+              화면 상단에 "만료 임박 · 2일 남음 · 잔여 1장" 배너가 강조된 색으로 떠오른다 — 사용자가 만료 전 사용 또는 재구매를 결정할 수 있게.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">호스팅 티켓 화면의 결정점</span>
+          <ul>
+            <li><strong>티켓 한 장의 가격과 유효기간은 호스트 활동 진입 장벽이다.</strong>
+              너무 높으면 신규 호스트가 시작하지 않고, 너무 낮으면 자리만 잡고 모임을 안 여는 사용자가 늘어난다.</li>
+            <li><strong>현재 화면이 보여 주는 티어(Basic/Standard/Premium 세 종류)와 시스템이 처리하는 단가가 정합하지 않는 상태.</strong>
+              시스템 측은 단일 단가로 차감하고, 화면이 자체적으로 세 티어를 그리고 있는 상황 — 향후 정책 결정에 따라 화면 또는 시스템 어느 한쪽을 맞춰야 한다.</li>
+            <li><strong>만료된 티켓은 환불되지 않는다.</strong>
+              만료 임박 안내가 명확히 보여야 사용자가 만료 전 사용 또는 재구매로 이어진다 — 안내가 약하면 만료 후 신고가 늘어난다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위 도메인</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-02.html"><div class="eyebrow">잔액 보충</div><h3>F06-02 포인트 충전</h3><p>잔액 부족 시의 자연스러운 분기.</p></a>
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">사용처</div><h3>09 프라이빗 데이팅</h3><p>티켓이 실제로 쓰이는 자리.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/06_payment/F06-07_hosting-ticket/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

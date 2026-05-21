@@ -1,41 +1,135 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F05-04 검색 기록 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/05-search.html">05 검색</a><span>›</span>F05-04 검색 기록</div>
-<h1>F05-04. 최근 검색어</h1>
-<p class="lede">사용자 검색 키워드를 Redis에 자동 기록한다. 최근 20개를 유지, 90일 TTL. 같은 키워드는 최상단으로 이동.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">최대 보관</div><div class="value">20개</div></div>
-<div class="metric"><div class="label">TTL</div><div class="value">90일</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">5</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>자동 기록</h3><p>검색 호출 시점 서버가 LPUSH + LTRIM + EXPIRE.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>최근 검색어 표시</h3><p>idle 상태에 첫 10건.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>개별 삭제 / 전체 삭제</h3></div>
-</div></section>
-<section><h2>사용자 시나리오 5개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>자동 기록 + 재검색</h3><ol><li>탭한 키워드 → 최상단 이동</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>빈 기록</h3><ol><li>섹션 자체 미노출</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>중복 입력</h3><ol><li>기존 항목 LREM 후 LPUSH → 최상단</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>21개째 입력</h3><ol><li>LTRIM 0 19로 가장 오래된 항목 제거</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>전체 삭제</h3><ol><li>섹션 초기화</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>GET</code></td><td><code>/api/v1/search/history</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/search/history</code> · <code>/api/v1/search/history/{keyword}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/05-search.html"><div class="eyebrow">상위</div><h3>05 검색</h3></a>
-<a class="card" href="F05-05.html"><div class="eyebrow">관련</div><h3>F05-05 저장된 검색</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/05_search/F05-04_search-history/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F05-04 최근 검색어 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/05-search.html">05 검색</a><span>›</span>
+          F05-04 최근 검색어
+        </div>
+        <h1>F05-04. 최근 검색어</h1>
+        <p class="lede">
+          로그인 사용자가 검색을 실행할 때마다 그 키워드가 자동으로 최근 목록 맨 앞에 들어간다.
+          사용자가 별도로 "저장" 동작을 하지 않아도, 다음 방문에서 같은 단어를 한 번에 다시 찾을 수 있게 해 주는 조용한 재방문 동력이다.
+          항목 탭은 곧장 재검색이고, X 또는 스와이프로 한 건씩 지울 수 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">보관 갯수</div><div class="value">최대 20건</div><div class="hint">새 항목이 들어오면 오래된 것이 빠진다</div></div>
+          <div class="metric"><div class="label">자동 만료</div><div class="value">90일</div><div class="hint">사용자가 활성 상태일 때만 유지</div></div>
+          <div class="metric"><div class="label">로그인 필요</div><div class="value">필수</div><div class="hint">비로그인 사용자에게는 영역 자체가 비어 있다</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "검색을 저장한다"는 의식적 동작 없이도 재방문이 이어진다</span>
+          <p>사용자는 자기가 "검색 기록을 만들었다"고 의식하지 않는다. 단지 검색하고 결과를 보고 떠난다.
+            서비스 쪽에서 그 행위를 조용히 기억해 두었다가, 다음에 검색 화면을 열었을 때 "저번에 봤던 단어들"이 그대로 보이게 해 준다.
+            이 자동성이 검색의 재방문성을 떠받치는 가장 조용한 동력이다 —
+            의식적으로 저장해야 한다면(F05-05) 사용자가 매번 그 단계를 거치지 않고, 자주 쓰는 단어만 저장된 검색으로 승격된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">자동 기록</div>
+            <h3>어제 "등산" 검색했고, 오늘 그대로 다시 보임</h3>
+            <p>어제 "등산"을 검색한 사용자가 오늘 검색 화면을 다시 연다. 최근 검색어 영역에 "등산"이 맨 위에 있고,
+              아래로 어제 입력했던 다른 단어들이 이어진다. 사용자가 "등산"을 누르면 같은 단어로 결과가 다시 받아 와진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 별도 동작 없이도 "자기가 둘러봤던 단어"로 빠르게 돌아갈 수 있게 한다.
+              재방문의 가장 조용한 동력.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">중복 정리</div>
+            <h3>같은 단어를 다시 검색하면 맨 위로 올라온다</h3>
+            <p>이미 목록 가운데에 있던 "독서"를 다시 검색하면, 그 항목이 같은 자리에 남는 것이 아니라 맨 위로 이동한다.
+              사용자에게는 "내가 최근에 본 것"의 순서가 항상 자연스럽게 유지된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">개별 삭제</div>
+            <h3>실수로 친 단어를 지운다</h3>
+            <p>오타로 입력해 둔 "이상한키워드"를 좌측으로 스와이프하거나 X 버튼을 누르면 즉시 사라진다.
+              사용자에게는 "지운 직후 화면에서 빠짐"의 느낌을 주고, 서버에서도 그 항목이 함께 제거된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">전체 삭제</div>
+            <h3>모든 검색 기록을 한 번에 지운다</h3>
+            <p>풀스크린 검색 기록 화면에서 "전체 삭제"를 누르면 확인 다이얼로그가 뜨고, 확인하면 모든 기록이 한 번에 사라진다.
+              검색 메인의 인라인 "전체 삭제"는 다이얼로그 없이 즉시 동작 — 두 진입점의 안전 장치 차이가 정책 결정점.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 풀스크린은 의식적 정리 동작, 인라인은 가벼운 제거.
+              두 진입의 의도를 분리하려는 정책이지만, 사용자가 인라인에서 실수로 누르는 경우는 운영 관찰 포인트.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비로그인</div>
+            <h3>로그인하지 않은 사용자가 검색 화면에 진입</h3>
+            <p>비로그인 사용자에게는 최근 검색어 영역 자체가 보이지 않는다.
+              검색을 해도 기록이 남지 않으므로 다음 방문에 같은 단어가 보이지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 검색 기록은 회원 전용 가치이며, 가입 후에야 의미를 가진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">자동 만료</div>
+            <h3>90일 동안 검색하지 않으면 기록이 자동으로 비워진다</h3>
+            <p>한참 만에 앱에 들어온 사용자에게는 검색 기록이 비어 있다.
+              마지막 검색에서 90일이 지났으면 시스템이 자동으로 기록을 정리한 결과다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 더 이상 활성이 아닌데 오래된 단어가 무한히 남아 있지 않게 한다.
+              개인정보 측면에서도 활성 사용자에게만 기록이 유지되는 정책이 자연스럽다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">최근 검색어의 정책 결정점</span>
+          <ul>
+            <li><strong>"저장"이 아니라 "기록"이다.</strong> 검색 한 번이 기록 한 줄을 만들고, 같은 단어 재검색은 맨 위로 이동만 한다.
+              사용자에게 "저장됨" 같은 피드백을 주지 않는 이유 — 의식적 동작이 아니기 때문.</li>
+            <li><strong>로그인 사용자만 기록된다.</strong> 비로그인 사용자에게는 영역 자체가 보이지 않고, 검색 행위가 추적되지 않는다.</li>
+            <li><strong>자동완성(F05-02)은 기록을 만들지 않는다.</strong> 후보를 둘러보다 검색을 실행하는 순간(엔터 또는 후보 탭)에 비로소 기록이 들어간다.</li>
+            <li><strong>전체 삭제의 안전 장치가 두 진입점에서 다르다.</strong>
+              풀스크린은 확인 다이얼로그가 있지만, 검색 메인의 인라인 "전체 삭제"는 즉시 동작.
+              한쪽으로 통일이 필요한지 사용자 실수 빈도를 보고 결정할 것.</li>
+            <li><strong>풀스크린 검색 기록 화면에서 항목을 눌러도 검색이 실행되지 않는 경로가 있다.</strong>
+              풀스크린은 단순히 닫히기만 하고, 받은 키워드를 검색에 연결하는 콜백이 현재 연결되어 있지 않다 — 잠재적 결함, 라우터 정비 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/05-search.html"><div class="eyebrow">상위 도메인</div><h3>05 검색</h3></a>
+          <a class="card" href="F05-01.html"><div class="eyebrow">기록 생성</div><h3>F05-01 키워드 검색</h3><p>검색 실행이 곧 자동 기록을 만든다.</p></a>
+          <a class="card" href="F05-05.html"><div class="eyebrow">의식적 저장</div><h3>F05-05 저장된 검색</h3><p>자주 쓰는 검색은 키워드+필터 묶음으로 의식적으로 저장.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/05_search/F05-04_search-history/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

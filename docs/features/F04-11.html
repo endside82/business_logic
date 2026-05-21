@@ -1,45 +1,143 @@
 <!doctype html>
 <html lang="ko">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F04-11 클럽 사진첩 — community PRD</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="../assets/styles.css"></head>
-<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-11 사진첩</div>
-<h1>F04-11. 클럽 사진첩</h1>
-<p class="lede">앨범 단위로 사진을 모은다. 새 앨범 생성, 사진 일괄 업로드/삭제, ADMIN의 앨범 통째 삭제까지 책임진다. 앨범당 50장 한도, 본인 사진은 본인이, ADMIN은 누구든 삭제 가능.</p></header>
-<section><div class="metrics">
-<div class="metric"><div class="label">하위 동작</div><div class="value">4</div></div>
-<div class="metric"><div class="label">시나리오</div><div class="value">6</div></div>
-<div class="metric"><div class="label">한도</div><div class="value">50장/앨범</div></div>
-</div></section>
-<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
-<div class="card"><div class="eyebrow">동작 1</div><h3>앨범 생성</h3><p>제목·설명. 첫 사진의 fileKey가 자동 커버.</p></div>
-<div class="card"><div class="eyebrow">동작 2</div><h3>사진 업로드</h3><p>외부 스토리지 PUT → DB 등록. 한도 50장.</p></div>
-<div class="card"><div class="eyebrow">동작 3</div><h3>일괄 삭제</h3><p>본인 사진만 또는 ADMIN/OWNER.</p></div>
-<div class="card"><div class="eyebrow">동작 4</div><h3>앨범 삭제(ADMIN)</h3><p>앨범 + 사진 메타 + 외부 객체 정리.</p></div>
-</div></section>
-<section><h2>사용자 시나리오 6개</h2><div class="cards">
-<article class="card"><div class="eyebrow">S1</div><h3>앨범 생성 + 첫 5장</h3><ol><li>앨범 INSERT → 사진 5장 PUT/등록</li><li>첫 사진이 커버</li></ol></article>
-<article class="card"><div class="eyebrow">S2</div><h3>50장 초과 시도</h3><ol><li>외부 PUT 성공 후 등록에서 PHOTO_ALBUM_LIMIT_EXCEEDED</li><li>orphan 가능 — 사전 검사 권장</li></ol></article>
-<article class="card"><div class="eyebrow">S3</div><h3>본인 사진 일괄 삭제</h3><ol><li>다중 선택 → batch-delete</li><li>외부 + DB 일괄 삭제 + photoCount-=N</li></ol></article>
-<article class="card"><div class="eyebrow">S4</div><h3>비ADMIN의 타인 사진 포함 삭제</h3><ol><li>전체 트랜잭션 롤백 → 변경 없음</li></ol></article>
-<article class="card"><div class="eyebrow">S5</div><h3>ADMIN의 앨범 통째 삭제</h3><ol><li>외부 객체 best-effort + DB DELETE</li></ol></article>
-<article class="card"><div class="eyebrow">S6</div><h3>비멤버 접근</h3><ol><li>탭 자체가 보이지 않음, 우회 시 401/403</li></ol></article>
-</div></section>
-<section><h2>서버 계약</h2><div class="table-wrap"><table>
-<thead><tr><th>Method</th><th>Path</th></tr></thead>
-<tbody>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/photo-albums</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/photo-albums/{albumId}/photos</code></td></tr>
-<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/photos/batch-delete</code></td></tr>
-<tr><td><code>DELETE</code></td><td><code>/api/v1/clubs/{id}/photo-albums/{albumId}</code></td></tr>
-</tbody></table></div></section>
-<section><h2>이어지는 단위</h2><div class="hub-grid">
-<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
-<a class="card" href="F03-09.html"><div class="eyebrow">유사</div><h3>F03-09 이벤트 사진첩</h3></a>
-</div></section>
-<!-- 원천: business_logic/units/04_club/F04-11_photo-album/ -->
-</main></div>
-<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
-</body></html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F04-11 사진첩 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/04-club.html">04 클럽</a><span>›</span>
+          F04-11 사진첩
+        </div>
+        <h1>F04-11. 사진첩</h1>
+        <p class="lede">
+          멤버가 모임 사진을 앨범 단위로 모아 올리는 면. 게시판의 글에 사진을 덧붙이는 것과 다르게,
+          사진 자체가 중심이 되어 그리드와 뷰어로 본다. 앨범은 멤버 누구나 만들 수 있고,
+          한 앨범에 최대 50장까지 사진이 쌓인다. 자기 사진은 본인이 일괄 삭제하고, 부적절한 앨범은 운영자가 통째로 정리한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">앨범당 사진</div><div class="value">50장</div><div class="hint">초과 업로드 차단</div></div>
+          <div class="metric"><div class="label">한 번 업로드</div><div class="value">10장</div><div class="hint">화면 한 번에 선택 가능</div></div>
+          <div class="metric"><div class="label">앨범 생성</div><div class="value">멤버 누구나</div><div class="hint">앨범 수정/삭제는 작성자 또는 운영자</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 사진은 글과 다른 흐름이 필요하다</span>
+          <p>게시글에 사진 두세 장을 덧붙이는 흐름과, 모임에서 찍은 사진 30장을 한 자리에 모으는 흐름은 다르다.
+            후자를 게시판에 강제로 묶으면 글 본문이 의미를 잃고 사진은 묻힌다.
+            그래서 사진첩은 앨범 단위로 사진을 모으는 별도 면으로 두고, 글 작성·검색·고정 같은 기능은 빠져 있다.
+            앨범 자체는 멤버라면 누구나 만들 수 있게 열어 두어, 사진을 올리고 싶은 사용자가 곧장 시작할 수 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>모임이 끝난 멤버가 새 앨범을 만들고 사진을 올린다</h3>
+            <p>사진첩 화면에서 + 버튼 → "새 앨범 만들기" → 제목 "2월 한강 러닝" → 만들기.
+              앨범이 생기면 그 자리에서 갤러리에서 5장을 골라 업로드. 사진들이 사용자 기기에서 클라우드로 차례로 올라가고
+              그리드에 다섯 장이 들어찬다. 첫 사진은 자동으로 앨범 커버가 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한도</div>
+            <h3>이미 50장 찬 앨범에 한 장 더 올리려 한다</h3>
+            <p>업로드 시도 시 "앨범당 최대 50장까지 업로드 가능합니다" 안내가 뜬다.
+              새 앨범을 만들어서 거기에 올리거나, 기존 앨범의 사진을 정리해야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">일괄 삭제</div>
+            <h3>본인이 올린 흐릿한 사진 세 장을 한꺼번에 지운다</h3>
+            <p>앨범 상세에서 "선택" 모드로 들어가 본인 사진 세 장을 체크하고 일괄 삭제. 그 자리에서 사진들이 사라지고
+              앨범의 사진 카운트가 셋만큼 줄어든다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>다른 멤버의 사진을 포함해 일괄 삭제하려 한다</h3>
+            <p>일반 멤버가 본인 사진 두 장 + 다른 멤버 사진 한 장을 함께 선택해 삭제하려 하면
+              한 장이라도 본인 사진이 아닌 게 섞이면 동작 전체가 거절된다. 다른 사람의 사진은 그대로 남고 본인 사진도 지워지지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 부분 성공이 일어나면 사용자에게 "지운 줄 알았는데 일부 남았다"는 혼란이 생긴다. 모두 통과해야 동작이 일어나는 정책.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">운영자 정리</div>
+            <h3>관리자가 부적절한 앨범을 통째로 지운다</h3>
+            <p>관리자가 앨범 더보기 → "앨범 삭제" → 확인. 앨범 안의 모든 사진이 같이 사라진다.
+              저장된 사진 파일도 함께 삭제된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">업로드 실패</div>
+            <h3>5장 업로드 중 3장째에서 네트워크 단절</h3>
+            <p>2장은 이미 올라가 있고 3장째에서 실패하면 해당 사진이 빨간색으로 표시되고 "재시도" 버튼이 떠오른다.
+              사용자가 신호를 회복한 뒤 재시도를 누르면 실패한 사진만 다시 시도된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">앨범 수정</div>
+            <h3>앨범 작성자가 제목을 손본다</h3>
+            <p>본인이 만든 앨범의 더보기에서 "앨범 수정" → 제목·설명만 변경. 커버 사진은 이 흐름에서는 바꿀 수 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">진입 가드</div>
+            <h3>비멤버가 사진첩에 진입하려 한다</h3>
+            <p>비멤버에게는 클럽 커뮤니티의 "사진첩" 탭 자체가 보이지 않는다.
+              외부 링크로 사진첩 화면에 들어와도 서버가 거절한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">사진첩 운영 정책</span>
+          <ul>
+            <li><strong>한 번에 10장, 앨범당 50장 한도는 화면 사용성과 운영 비용의 균형점이다.</strong>
+              풀면 한 사용자가 한 앨범에 수백 장을 쌓아 다른 앨범이 묻히는 흐름이 만들어진다.</li>
+            <li><strong>일괄 삭제의 권한 검사는 한 장이라도 다른 사람 것이 섞이면 전체가 거절되도록 작동한다.</strong>
+              부분 성공은 사용자 혼란의 원인. 운영자가 강제로 정리하려면 앨범 통째 삭제 권한을 사용한다.</li>
+            <li><strong>업로드 실패 시 클라우드에 올라간 파일은 자동 정리되지 않는다.</strong>
+              현재는 알면서 남겨 두는 한계 — 사용자 시점에서는 보이지 않지만 운영 비용으로 누적된다.
+              필요해지면 정기 정리 도입 검토.</li>
+            <li><strong>비멤버 진입 가드는 라우터·화면·서버 세 곳에서 작동한다.</strong>
+              사진은 멤버 사이의 사적 콘텐츠이므로 비멤버에게 노출되면 안 된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 도메인</div><h3>04 클럽</h3></a>
+          <a class="card" href="F04-08.html"><div class="eyebrow">관련</div><h3>F04-08 게시판·게시글</h3><p>글에 사진을 덧붙이는 다른 흐름.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/units/04_club/F04-11_photo-album/{scenarios,backend,frontend,diagrams}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>
