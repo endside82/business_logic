@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F01-02 소셜 로그인 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/01-auth.html">01 인증·온보딩</a><span>›</span>
+          F01-02 소셜 로그인
+        </div>
+        <h1>F01-02. 소셜 로그인 (Apple · Google · Kakao · Naver)</h1>
+        <p class="lede">
+          외부 제공자에서 받은 토큰 하나로 가입과 로그인을 동시에 처리한다.
+          이메일 가입과 달리 비밀번호 단계가 없고, 사용자에게 받는 추가 정보(닉네임·생년월일·약관)는
+          서비스가 직접 모은다. 단 한 번의 서버 호출로 “신규 가입 + 토큰 발급” 또는 “기존 로그인”이 결정되며,
+          응답의 <strong>첫 로그인 여부</strong>가 다음 화면을 가른다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하위 기능</div><div class="value">4</div><div class="hint">버튼·시트·SDK 호출·서버 검증</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">8</div><div class="hint">정상 2 · 검증 실패 5 · 마이그레이션 1</div></div>
+          <div class="metric"><div class="label">제공자</div><div class="value">4</div><div class="hint">Apple·Google·Kakao·Naver</div></div>
+          <div class="metric"><div class="label">외부 의존</div><div class="value">5</div><div class="hint">4개 OAuth + Apple JWKS</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">이 기능이 다루는 범위</span>
+          <p>버튼 4개 + 추가 정보 시트 + 4가지 외부 토큰 검증 경로를 단일 엔드포인트로 모은다.
+          기존 사용자라면 시트에서 입력한 닉네임/생년월일은 <em>무시</em>되고 토큰만 새로 발급된다.
+          신규 사용자에게는 시트 입력값이 그대로 사용자 레코드에 저장된다.
+          이메일 인증 메일은 보내지 않는다(소셜은 외부 제공자가 이미 검증한 것으로 본다).</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <p class="subtitle">한 카드 = 사용자가 한 번에 의식하는 흐름 단위.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">하위 기능 1</div>
+            <h3>4종 소셜 버튼</h3>
+            <p>로그인 화면 하단에 항상 4개가 동일 순서(카카오 → 네이버 → 구글 → 애플)로 노출된다.
+              각 버튼은 자기 브랜드 색을 따른다(카카오 노랑·네이버 그린·구글 화이트·애플 블랙).
+              한 번에 한 버튼만 활성화돼 동시 다중 SDK 호출을 막는다.</p>
+            <div class="meta"><span class="pill">시각 통일</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 기능 2</div>
+            <h3>추가 정보 시트</h3>
+            <p>SDK 인증을 시작하기 <strong>전</strong>에 닉네임·생년월일·약관 동의를 받는 바텀시트.
+              사용자가 시트를 닫으면 SDK 호출 자체가 일어나지 않는다. 외부 제공자가 보내주는 정보를
+              믿지 않고 본 서비스가 직접 수집하는 핵심 설계 결정.</p>
+            <div class="meta"><span class="pill">필수 약관 2종</span><span class="pill">만 19세 검증</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 기능 3</div>
+            <h3>제공자별 SDK 인증</h3>
+            <p>시트 완료 후 해당 제공자의 SDK 화면으로 이동. 사용자가 SDK 화면에서 취소하면
+              <strong>토스트 없이</strong> 조용히 로그인 화면으로 돌아온다(취소는 에러가 아님).
+              인증 성공 시 토큰을 받아 서버 호출 단계로.</p>
+            <div class="meta"><span class="pill">취소 = 무토스트</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 기능 4</div>
+            <h3>서버 토큰 검증 + 가입/로그인 결정</h3>
+            <p>서버가 제공자의 토큰을 다시 검증해 <strong>소셜 식별자</strong>를 얻는다.
+              DB에 같은 식별자가 있으면 기존 사용자로 로그인, 없으면 즉시 신규 가입.
+              결과 응답의 “첫 로그인 여부”가 클라이언트의 다음 분기를 결정한다.</p>
+            <div class="meta"><span class="pill">단일 엔드포인트</span><span class="pill">외부 검증</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 전이</h2>
+        <p class="subtitle">버튼 → 시트 → SDK → 서버의 4단계. 어디서든 취소할 수 있고, 취소는 깔끔하게 원점으로.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    Login["로그인 화면"]
+    Sheet["추가 정보 시트<br/>(닉네임·생년월일·약관)"]
+    SDK["외부 SDK 인증 화면"]
+    Onboarding["온보딩<br/>(F01-06)"]
+    Home["홈"]
+    Login -->|"소셜 버튼 탭"| Sheet
+    Sheet -->|"닫기 · 외부 탭"| Login
+    Sheet -->|"시작하기"| SDK
+    SDK -->|"사용자가 취소"| Login
+    SDK -->|"성공 + 첫 로그인"| Onboarding
+    SDK -->|"성공 + 기존 사용자"| Home
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>신규 카카오 가입 시퀀스</h2>
+        <p class="subtitle">가장 흔한 경로. 시트로 사용자 정보를 먼저 받고, SDK에서 토큰을 받고, 서버가 카카오 API로 다시 확인한 뒤 4테이블에 가입을 만든다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant S as 로그인 화면
+    participant Sheet as 추가 정보 시트
+    participant SDK as 카카오 SDK
+    participant API as 소셜 로그인 API
+    participant SVC as 소셜 로그인 서비스
+    participant K as 카카오 사용자 API
+    participant DB as DB
+    U->>S: "카카오로 시작하기" 탭
+    S->>Sheet: 시트 표시
+    U->>Sheet: 닉네임·생년월일·약관 → "시작하기"
+    Sheet-->>S: 입력값 반환
+    S->>SDK: SDK 인증 시작
+    SDK->>U: 카카오 로그인 화면
+    U->>SDK: 인증·동의 완료
+    SDK-->>S: accessToken
+    S->>API: POST /api/v1/auth/social
+    API->>SVC: 가입/로그인 요청
+    SVC->>K: 사용자 정보 조회
+    K-->>SVC: 카카오 사용자 id
+    SVC->>SVC: 소셜 식별자 만들기 (kakao_id)
+    SVC->>DB: 같은 식별자의 사용자 조회
+    DB-->>SVC: 없음 (신규)
+    SVC->>SVC: 만 19세 검증
+    SVC->>DB: 사용자·회원·소셜로그인 INSERT + 토큰 발급
+    SVC-->>API: 토큰 + 첫 로그인 표시
+    API-->>S: 200 OK
+    S-->>U: 온보딩 첫 화면으로 이동
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>기존 사용자 재로그인 시퀀스</h2>
+        <p class="subtitle">시트 입력은 그대로 받지만 사용하지 않는다. 잠금/탈퇴 상태 검사를 먼저 통과한 뒤에만 토큰을 재발급.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    participant S as 로그인 화면
+    participant API as 소셜 로그인 API
+    participant SVC as 소셜 로그인 서비스
+    participant VAL as 상태 검증기
+    participant DB as DB
+    S->>API: POST /api/v1/auth/social
+    API->>SVC: 가입/로그인 요청
+    SVC->>SVC: 외부 토큰 검증 → 소셜 식별자
+    SVC->>DB: 식별자로 사용자 조회
+    DB-->>SVC: 사용자 존재
+    SVC->>VAL: 잠금/탈퇴 상태 검사
+    alt 비정상 상태
+        VAL-->>SVC: 거부
+        SVC-->>API: 403 LOGIN_FAILURE_USER_STATUS_*
+    else 정상
+        SVC->>DB: loginAt 갱신 + 이전 리프레시 토큰 폐기 후 신규 발급
+        SVC-->>API: 토큰 + 첫 로그인 여부
+        API-->>S: 200 OK
+        S-->>S: 첫 로그인이면 온보딩, 아니면 홈
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>토큰 검증 분기</h2>
+        <p class="subtitle">제공자 4종에 따라 외부 호출 경로가 갈리고, 한 곳이라도 실패하면 동일한 인증 토큰 오류로 응답한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["POST /auth/social"] --> B{"제공자 문자열 유효?"}
+    B -->|"아니오"| E1["400 INVALID_REQUEST"]
+    B -->|"예"| C{"어느 제공자?"}
+    C -->|"Google"| G1["Google ID Token 검증"]
+    C -->|"Kakao"| G2["카카오 사용자 API"]
+    C -->|"Naver"| G3["네이버 사용자 API"]
+    C -->|"Apple"| G4["Apple JWKS 키 검증"]
+    G1 --> D{"식별자 추출 OK?"}
+    G2 --> D
+    G3 --> D
+    G4 --> D
+    D -->|"실패"| E2["401 INVALID_AUTH_TOKEN"]
+    D -->|"성공"| F{"기존 사용자?"}
+    F -->|"예"| H["상태 검증 → 토큰 재발급"]
+    F -->|"아니오"| I{"만 19세 이상?"}
+    I -->|"아니오"| E3["403 UNDERAGE_NOT_ALLOWED"]
+    I -->|"예"| J["신규 가입 + 토큰 발급"]
+    H --> M["200 LoginVo"]
+    J --> M
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 8개</h2>
+        <p class="subtitle">정상 두 가지, 정책/검증 실패 다섯 가지, 그리고 마이그레이션 회귀 한 가지.</p>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">S1 · Happy Path · 신규 카카오</div>
+            <h3>신규 회원이 카카오로 가입+로그인 완료</h3>
+            <p><strong>페르소나</strong> — 카카오톡 사용자, 비밀번호 입력을 싫어함.</p>
+            <p><strong>시작</strong> — 로그인 화면.</p>
+            <ol>
+              <li>“카카오로 시작하기” 탭</li>
+              <li>추가 정보 시트 표시 — 닉네임·생년월일·필수 약관 2개 체크</li>
+              <li>“시작하기” 탭 → 시트 닫히고 SDK 인증 시작</li>
+              <li>카카오 로그인 화면에서 인증·동의 → 토큰 획득</li>
+              <li>서버: 카카오 사용자 API 호출 → 식별자가 DB에 없음 → 신규 가입 분기</li>
+              <li>만 19세 검증 통과 → 사용자·회원·소셜 로그인 수단 INSERT → 토큰 발급</li>
+              <li>응답: 첫 로그인 = 참 → 클라이언트는 온보딩 저장소 초기화</li>
+            </ol>
+            <p><strong>종료</strong> — 새 사용자 생성, 온보딩 첫 화면 진입.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S2 · Happy Path · 기존 카카오</div>
+            <h3>기존 카카오 사용자 재로그인</h3>
+            <p><strong>페르소나</strong> — 이전에 카카오로 가입한 사용자, 새 기기 또는 토큰 만료 상태.</p>
+            <ol>
+              <li>“카카오로 시작하기” → 시트 입력 → SDK 인증</li>
+              <li>서버: 식별자로 기존 소셜 로그인 발견 → 사용자 조회 → 상태 정상 확인</li>
+              <li>이전 로그인 시각이 있어 첫 로그인 = 거짓</li>
+              <li>토큰 재발급 (이전 리프레시 토큰은 폐기)</li>
+              <li>클라이언트: 온보딩 완료로 표시 → 홈으로 이동</li>
+            </ol>
+            <p><strong>종료</strong> — 메인 피드 진입. <strong>시트의 닉네임·생년월일·약관 입력값은 사용되지 않는다</strong>(기존 사용자라 변경 안 함).</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S3 · 사용자 취소</div>
+            <h3>SDK 인증 화면에서 사용자가 취소</h3>
+            <p><strong>페르소나</strong> — 시트는 채웠지만 SDK 화면에서 마음이 바뀐 사용자.</p>
+            <ol>
+              <li>SDK 화면에서 “취소” 또는 시스템 뒤로</li>
+              <li>SDK가 인증 결과 없음을 반환</li>
+              <li>로딩 해제, <strong>토스트 미표시</strong></li>
+              <li>로그인 화면 그대로 유지</li>
+            </ol>
+            <p><strong>종료</strong> — 변화 없음. 취소를 에러로 다루지 않는 것이 핵심.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S4 · 외부 검증 실패</div>
+            <h3>Apple 토큰 검증 실패 (개발자 설정 오류)</h3>
+            <p><strong>페르소나</strong> — iOS 사용자, 백엔드의 Apple JWKS 검증 설정 불일치.</p>
+            <ol>
+              <li>Apple Sign-In 성공, 토큰을 서버로 전송</li>
+              <li>서버: Apple JWKS 키로 JWT 검증 → 발급자/만료 검증 실패 → 401 INVALID_AUTH_TOKEN</li>
+              <li>클라이언트: “소셜 로그인에 실패했습니다” 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 로그인 화면 유지. <strong>운영 관점:</strong> 사용자 실수보다 서버 설정 오류일 가능성이 높음 → 모니터링 알림 후보.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S5 · 정책 차단</div>
+            <h3>미성년자 신규 소셜 가입 차단</h3>
+            <p><strong>페르소나</strong> — 시트에 만 19세 미만 생년월일을 입력한 신규 사용자.</p>
+            <ol>
+              <li>SDK 인증 성공 → 서버 호출</li>
+              <li>서버: 식별자로 사용자 조회 → 없음(신규) → 생년월일 파싱</li>
+              <li>만 19세 미만 → 403 UNDERAGE_NOT_ALLOWED</li>
+              <li>클라이언트: 차단 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 가입 차단, 사용자 레코드 미생성.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S6 · 마이그레이션 회귀</div>
+            <h3>과거 해시 방식 사용자의 신규 인식 문제</h3>
+            <p><strong>페르소나</strong> — 과거에 카카오 식별자를 SHA-256 해시로 저장하던 시기에 가입한 사용자.</p>
+            <ol>
+              <li>카카오 토큰 검증 → 실제 카카오 사용자 ID 형식의 식별자</li>
+              <li>DB에는 SHA-256 해시 식별자만 존재 → <strong>매칭 실패</strong></li>
+              <li>서버는 신규 사용자로 처리 → 같은 카카오 계정인데 별도의 새 사용자 레코드 생성</li>
+            </ol>
+            <p><strong>종료</strong> — 동일 카카오 계정에 두 개의 별도 사용자 레코드가 존재하게 됨(기존 데이터와 단절).
+              <strong>대응:</strong> 운영 마이그레이션으로 옛 해시 식별자를 새 형식으로 일괄 갱신 필요.
+              이 항목은 <em>버그 분류상 데이터 마이그레이션 미시행</em>으로 추적된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S7 · 정책 차단 · 상태</div>
+            <h3>차단(BAN) 사용자의 소셜 로그인 시도</h3>
+            <p><strong>페르소나</strong> — 운영자가 차단한 기존 소셜 사용자.</p>
+            <ol>
+              <li>SDK 인증 성공 → 서버 호출</li>
+              <li>서버: 식별자로 기존 사용자 발견 → 상태 검증에서 BAN 거부 → 403 LOGIN_FAILURE_USER_STATUS_BAN</li>
+              <li>클라이언트: 차단 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 로그인 거부, 토큰 미발급.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S8 · 입력 오류</div>
+            <h3>잘못된 제공자 문자열 전송 (개발 실수)</h3>
+            <ol>
+              <li>제공자 문자열로 “facebook” 같은 미지원 값이 전송됨</li>
+              <li>서버: 제공자 파싱 실패 → 400 INVALID_REQUEST</li>
+              <li>클라이언트: 일반 에러 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 화면 유지.
+              <strong>참고:</strong> 정상 경로에서는 발생 불가(버튼이 4종으로 고정). 개발자 디버깅 시나리오.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성 — 사람이 보는 것</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:130px">화면 / 위젯</th><th>보이는 것</th><th style="width:36%">할 수 있는 것</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>4종 소셜 버튼</strong></td>
+                <td>52px 높이 버튼 4개를 세로 10px 간격으로 배치. 각자 브랜드 색·아이콘·텍스트 색을 유지.</td>
+                <td>버튼 탭으로 해당 제공자의 시트를 띄움</td>
+              </tr>
+              <tr>
+                <td><strong>추가 정보 시트</strong></td>
+                <td>상단 핸들 · 제목 “추가 정보 입력” · 안내 · 닉네임 입력 · 생년월일 picker · 약관 동의 카드(전체동의/이용약관/개인정보/마케팅) · “시작하기” 버튼</td>
+                <td>닉네임(2~16자), 생년월일 선택, 필수 약관 2개 체크 → “시작하기”. 시트 외부 탭/드래그다운으로 취소.</td>
+              </tr>
+              <tr>
+                <td><strong>외부 SDK 화면</strong></td>
+                <td>제공자 SDK가 직접 그리는 인증 화면. 본 서비스 외부.</td>
+                <td>인증·동의 또는 취소.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약 한눈에</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:74px">Method</th>
+                <th>Path</th>
+                <th>인증</th>
+                <th>핵심 동작</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/v1/auth/social</code></td>
+                <td>불필요</td>
+                <td>외부 토큰 검증 + 자동 가입 또는 로그인 (200 OK). 응답의 “첫 로그인 여부”로 신규/기존 구분.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <span class="label">제공자별 외부 호출</span>
+          <ul>
+            <li><strong>Google</strong> — Google ID Token Verifier로 JWT 검증 (audience = 서비스 클라이언트 ID). 식별자 = <code>google_<sub></code>.</li>
+            <li><strong>Kakao</strong> — <code>https://kapi.kakao.com/v2/user/me</code> 호출로 사용자 ID 획득. 식별자 = <code>kakao_<id></code>.</li>
+            <li><strong>Naver</strong> — <code>https://openapi.naver.com/v1/nid/me</code> 호출. 식별자 = <code>naver_<id></code>.</li>
+            <li><strong>Apple</strong> — Apple JWKS 키 캐시로 JWT 검증 (발급자 = appleid.apple.com, 시계 오차 허용 300초). 식별자 = <code>apple_<sub></code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드 매트릭스</span>
+          <ul>
+            <li><strong>400 INVALID_REQUEST</strong> — 미지원 제공자 문자열</li>
+            <li><strong>401 INVALID_AUTH_TOKEN</strong> — 외부 토큰 검증 실패(어떤 제공자든)</li>
+            <li><strong>400 INVALID_INPUT</strong> — 신규 가입 시 생년월일 누락</li>
+            <li><strong>403 UNDERAGE_NOT_ALLOWED</strong> — 만 19세 미만</li>
+            <li><strong>403 LOGIN_FAILURE_USER_STATUS_BAN / STOP / TRYEXIT / EXIT</strong> — 비정상 상태</li>
+            <li><strong>404 USER_NOT_FOUND</strong> — DB 일관성 오류(소셜 로그인 수단은 있는데 사용자가 없음)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>신규 사용자</th><th>기존 사용자</th></tr></thead>
+            <tbody>
+              <tr><td>사용자 본체</td><td>INSERT (이메일은 “식별자@제공자” 형식으로 자동 생성, 비밀번호 없음)</td><td>loginAt 갱신, 상태를 정상으로 정규화</td></tr>
+              <tr><td>회원 부가정보</td><td>INSERT (생년월일·로케일)</td><td>—</td></tr>
+              <tr><td>소셜 로그인 수단</td><td>INSERT (제공자, 식별자)</td><td>—</td></tr>
+              <tr><td>리프레시 토큰</td><td>INSERT</td><td>이전 토큰 일괄 폐기 후 신규 INSERT (단일 기기 정책)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>토큰 없음, 로그인 화면</td><td>S1 신규 카카오 가입 흐름 완료</td><td>새 사용자 생성, 온보딩 진입</td></tr>
+              <tr><td>AC-02</td><td>이미 가입한 카카오 사용자</td><td>S2 재로그인 흐름</td><td>홈 진입, 시트 입력은 무시</td></tr>
+              <tr><td>AC-03</td><td>시트 완료, SDK 진행 중</td><td>SDK에서 취소</td><td>토스트 없이 로그인 화면 유지</td></tr>
+              <tr><td>AC-04</td><td>Apple 인증 + 잘못된 JWKS 설정</td><td>서버에 토큰 전송</td><td>401, 사용자에게 일반 실패 토스트</td></tr>
+              <tr><td>AC-05</td><td>신규 + 만 19세 미만 생년월일</td><td>가입 시도</td><td>403, 사용자 레코드 미생성</td></tr>
+              <tr><td>AC-06</td><td>BAN 상태 기존 사용자</td><td>소셜 인증 성공 후 서버 호출</td><td>403, 토큰 미발급</td></tr>
+              <tr><td>AC-07</td><td>잘못된 제공자 문자열</td><td>서버 호출</td><td>400, 일반 에러 토스트</td></tr>
+              <tr><td>AC-08</td><td>옛 해시 식별자 보유 사용자</td><td>새 식별자 형식으로 인증 시도</td><td>매칭 실패로 신규 가입 처리됨(운영 마이그레이션 필요)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn">
+          <span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>SDK 취소를 에러로 표시</strong> — 사용자가 자발적으로 닫은 화면에 “실패” 토스트가 뜨면 신뢰가 깨진다. 인증 결과 없음과 검증 실패는 분리해서 다룬다.</li>
+            <li><strong>외부 토큰을 그대로 신뢰</strong> — 클라이언트가 보낸 토큰만 보고 가입을 시키면 위조에 노출. 서버가 제공자 API/JWKS로 다시 검증해야 한다.</li>
+            <li><strong>제공자 변경 시 식별자 형식 마이그레이션 누락</strong> — S6 시나리오 처럼 같은 사용자가 새 사용자로 인식되는 회귀. 형식 변경 전후 데이터를 모두 처리할 마이그레이션 필수.</li>
+            <li><strong>시트 입력값을 기존 사용자에게 덮어쓰기</strong> — 닉네임·약관 동의는 신규일 때만 사용한다. 기존 사용자는 변경 안 함.</li>
+            <li><strong>제공자별 응답 차이로 동일 흐름 가정 깨짐</strong> — Google·Apple은 JWT, Kakao·Naver는 OAuth 토큰. 서버에서 통일된 인터페이스로 추출해야 클라이언트가 단일 엔드포인트로 다룬다.</li>
+            <li><strong>이메일을 자동 생성하지 않거나 빈 값으로 둠</strong> — “식별자@제공자” 규칙을 깨면 UNIQUE 제약 위반·로그인 충돌 가능.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위 · 관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/01-auth.html">
+            <div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3>
+            <p>본 기능이 속한 도메인. 8개 기능 전체 흐름.</p>
+          </a>
+          <a class="card" href="F01-01.html">
+            <div class="eyebrow">대안 진입</div><h3>F01-01 이메일 가입·로그인</h3>
+            <p>비밀번호 기반의 본인 가입 경로.</p>
+          </a>
+          <a class="card" href="../policies/state.html">
+            <div class="eyebrow">정책</div><h3>계정 상태 정책</h3>
+            <p>잠금/탈퇴 거부 분기의 정의.</p>
+          </a>
+          <a class="card" href="../qa/exceptions.html">
+            <div class="eyebrow">QA</div><h3>가입·인증 예외 케이스</h3>
+            <p>SDK·외부 API 실패 시 대응.</p>
+          </a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음 — 갱신/추적용)
+  - business_logic/units/01_auth_onboarding/F01-02_social-login/backend.md
+  - business_logic/units/01_auth_onboarding/F01-02_social-login/frontend.md
+  - business_logic/units/01_auth_onboarding/F01-02_social-login/scenarios.md
+  - business_logic/units/01_auth_onboarding/F01-02_social-login/diagrams.md
+  - business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

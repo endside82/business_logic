@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F04-04 멤버 관리 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-04 멤버 관리</div>
+<h1>F04-04. 멤버 관리</h1>
+<p class="lede">클럽 멤버의 역할 변경과 추방을 다룬다. OWNER는 ADMIN을 임명·해임할 수 있고, ADMIN은 일반 MEMBER만 추방할 수 있다. OWNER 본인은 어떤 경로로도 추방·변경되지 않는다.</p></header>
+<section><div class="metrics">
+<div class="metric"><div class="label">역할</div><div class="value">3</div><div class="hint">OWNER·ADMIN·MEMBER</div></div>
+<div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
+</div></section>
+<section><h2>권한 매트릭스</h2><div class="table-wrap"><table>
+<thead><tr><th>실행자\\대상</th><th>OWNER</th><th>ADMIN</th><th>MEMBER</th></tr></thead>
+<tbody>
+<tr><td>OWNER</td><td>—(이전만 가능)</td><td>역할 변경·추방 가능</td><td>역할 변경·추방 가능</td></tr>
+<tr><td>ADMIN</td><td>차단</td><td>차단</td><td>추방 가능(역할 변경 불가)</td></tr>
+<tr><td>MEMBER</td><td>차단</td><td>차단</td><td>차단</td></tr>
+</tbody></table></div></section>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>멤버 목록 + 역할 필터</h3><p>탭: 전체/관리자/멤버. 페이징.</p></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>역할 변경(OWNER 전용)</h3><p>ADMIN ↔ MEMBER 토글. OWNER는 옵션 자체 없음.</p></div>
+<div class="card"><div class="eyebrow">동작 3</div><h3>추방</h3><p>BUSINESS는 가입비 항상 환불(KICKED 환불 규칙).</p></div>
+</div></section>
+<section><h2>사용자 시나리오 9개</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>OWNER가 ADMIN 승격</h3><ol><li>역할 변경 시트 → ADMIN → 저장</li><li>대상에게 권한 부여</li></ol></article>
+<article class="card"><div class="eyebrow">S2</div><h3>ADMIN의 역할 변경 시도</h3><ol><li>UI 항목 숨김, 우회 시 403</li></ol></article>
+<article class="card"><div class="eyebrow">S3</div><h3>OWNER 역할 변경 차단</h3><ol><li>UI에 OWNER 옵션 없음</li><li>우회 시 CLUB_CANNOT_CHANGE_OWNER_ROLE</li></ol></article>
+<article class="card"><div class="eyebrow">S4</div><h3>ADMIN이 MEMBER 추방</h3><ol><li>가입비 환불 + DELETE + memberCount--</li><li>대상에게 CLUB_MEMBER_KICKED 알림</li></ol></article>
+<article class="card"><div class="eyebrow">S5</div><h3>ADMIN→ADMIN 추방 시도</h3><ol><li>UI 항목 없음, 우회 시 403 CLUB_NO_PERMISSION</li></ol></article>
+<article class="card"><div class="eyebrow">S6</div><h3>OWNER→ADMIN 추방</h3><ol><li>OWNER는 모든 ADMIN 추방 가능</li></ol></article>
+<article class="card"><div class="eyebrow">S7</div><h3>OWNER 자기 추방 시도</h3><ol><li>본인 카드에 ⋮ 미표시</li><li>우회 시 403</li></ol></article>
+<article class="card"><div class="eyebrow">S8</div><h3>역할 필터</h3><ol><li>“관리자” 탭 → role=ADMIN 쿼리</li></ol></article>
+<article class="card"><div class="eyebrow">S9</div><h3>비멤버 진입</h3><ol><li>라우터 차단</li><li>우회 시 401/403</li></ol></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/members?role=&page=&size=</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/members/{userId}/role</code></td></tr>
+<tr><td><code>DELETE</code></td><td><code>/api/v1/clubs/{id}/members/{userId}</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
+<a class="card" href="F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3></a>
+<a class="card" href="F04-03.html"><div class="eyebrow">관련</div><h3>F04-03 소유권 이전</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/04_club/F04-04_member-management/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F09-06 만남 제안·안전 흐름 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
+          F09-06 만남 제안
+        </div>
+        <h1>F09-06. 만남 제안 · 안전 흐름</h1>
+        <p class="lede">
+          채팅 중에 일시·장소를 합의해 “만남 제안”을 만들고, 상대가 수락하면 CONFIRMED.
+          확정 후에는 미팅 1시간 전부터 종료까지 위치 공유가 안내된다.
+          매치가 차단·만료되면 새 제안 자체가 막히고, 기존 row는 분쟁 기록용으로 보존된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">상태</div><div class="value">PROPOSED·CONFIRMED·CANCELED</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">10</div></div>
+          <div class="metric"><div class="label">매치 게이트</div><div class="value">MATCHED만</div></div>
+          <div class="metric"><div class="label">SOS/체크인</div><div class="value">미운영</div><div class="hint">의도적 제외</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">의도적 미운영 결정</span>
+          <p>SOS·체크인·긴급연락처는 제품 결정으로 <strong>서버·클라이언트 양쪽에서 삭제</strong>되었다.
+          스펙 문서(SCR-PD-006)의 관련 항목은 deprecated. 재도입 시 별도 작업.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>만남 제안</h3>
+            <p>일시·장소·메모 입력 → PROPOSED row INSERT. 매치 MATCHED만 허용.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>수락 / 거절 / 취소</h3>
+            <p>상대 또는 본인이 status 전환. 참여자 검증 필수.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>위치 공유 안내(CONFIRMED 이후)</h3>
+            <p>“미팅 1시간 전 ~ 종료” 위치 공유 정책 안내. 실제 공유는 F14-01.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>제안 누적</h3>
+            <p>같은 매치에 새 제안 가능. 서버 가드 없음 → 클라이언트가 “최신 활성” 1건만 노출.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>차단·만료 시 차단</h3>
+            <p>매치가 BLOCKED/EXPIRED면 새 제안 차단. 기존 row는 보존(분쟁용).</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>제안 상태 머신</h2>
+        <div class="diagram"><div class="mermaid">
+stateDiagram-v2
+    [*] --> PROPOSED: 사용자가 일시·장소 제안
+    PROPOSED --> CONFIRMED: 상대 수락
+    PROPOSED --> CANCELED: 상대 거절 또는 본인 취소
+    CONFIRMED --> CANCELED: 본인 또는 상대가 취소
+    CONFIRMED --> COMPLETED: 만남 시각 이후
+    CANCELED --> [*]
+    COMPLETED --> [*]
+        </div></div>
+      </section>
+
+      <section>
+        <h2>제안 → 수락 시퀀스</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor A as 사용자 A
+    actor B as 사용자 B
+    participant API as 미팅 API
+    participant SVC as 미팅 서비스
+    participant DB as DB
+    A->>API: GET /meetings/match/{matchId}
+    API-->>A: [] (없음)
+    A->>API: POST /meetings {date, time, locationName, note}
+    API->>SVC: 제안 등록
+    SVC->>SVC: 참여자 + 매치 MATCHED 검증
+    SVC->>DB: meeting INSERT (status=PROPOSED, proposedBy=A)
+    API-->>A: 201 + 카드 갱신
+    Note over B: B가 같은 라우트 진입 시 PROPOSED 카드 노출
+    B->>API: PATCH /meetings/{id} {status=CONFIRMED}
+    API->>SVC: 상태 전이
+    SVC->>SVC: 참여자 검증
+    SVC->>DB: status=CONFIRMED 갱신
+    API-->>B: 200
+    Note over A: A가 다시 진입 시 초록 "약속 확정" 카드 + 위치 공유 안내 버튼
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 10개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>제안 → 수락</h3>
+            <ol>
+              <li>A가 채팅 헤더 📅 → 미팅 화면 진입</li>
+              <li>일시·장소·메모 입력 → “만남 제안하기”</li>
+              <li>POST → PROPOSED + proposedBy=A INSERT</li>
+              <li>B가 같은 라우트 진입 → PROPOSED 카드 노출</li>
+              <li>B가 수락 → PATCH status=CONFIRMED</li>
+              <li>A에 “약속 확정” + 위치 공유 안내 버튼</li>
+            </ol>
+            <p><strong>현재 갭:</strong> B에게 자동 푸시는 없음. 채팅 메시지 또는 라우트 재진입으로 인지.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 검증</div><h3>일시·장소 미입력</h3>
+            <ol>
+              <li>장소만 입력 → “일시를 선택해주세요”</li>
+              <li>일시만 선택 → “장소를 입력해주세요”</li>
+              <li>송신 차단</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 권한</div><h3>다른 매치의 미팅 조작</h3>
+            <ol>
+              <li>자기 매치 아닌 meetingId로 PATCH 시도</li>
+              <li>참여자 검증 실패 → 403 FORBIDDEN</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 매치 게이트</div><h3>BLOCKED/EXPIRED 매치에 제안</h3>
+            <ol>
+              <li>POST → match.status≠MATCHED → DATE_MATCH_NOT_FOUND</li>
+              <li>토스트 “만남 제안에 실패했습니다”</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 누적</div><h3>같은 매치에 새 제안</h3>
+            <ol>
+              <li>1차 PROPOSED 미응답 상태에서 새 제안</li>
+              <li>서버 단순 INSERT → row 누적</li>
+              <li>클라이언트가 id 최댓값으로 “최신 활성”만 노출</li>
+            </ol>
+            <p><strong>운영 노트:</strong> 서버 가드가 없어 1차가 PROPOSED로 남는다. 분쟁 시 전체 row가 기록.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 위치 공유</div><h3>CONFIRMED 후 안내</h3>
+            <ol>
+              <li>카드 → “위치 공유 안내” 버튼</li>
+              <li>AlertDialog: “미팅 시작 1시간 전부터 종료까지 자동으로 위치가 공유됩니다”</li>
+              <li>실제 공유 구현은 F14-01에 의존</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 미운영</div><h3>SOS / 체크인</h3>
+            <p>의도적으로 운영하지 않음. 서버·클라이언트 양쪽 삭제. 별도 작업으로만 재도입.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 차단</div><h3>차단 발동 → 미팅 중단</h3>
+            <ol>
+              <li>PROPOSED 상태에서 차단(F09-07)</li>
+              <li>매치 BLOCKED → 메시지 송신 차단 + 새 제안 차단</li>
+              <li>기존 미팅 row는 보존(분쟁 기록)</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S9 · 신고</div><h3>본 화면에 신고 액션 없음</h3>
+            <p>차단으로 단절. 신고 자체는 F11-04(외부 도메인).</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S10 · 시간대</div><h3>KST 가정</h3>
+            <p>서버는 LocalDateTime/LocalTime, 클라이언트는 디바이스 로컬 시간 그대로 송신. 운영상 KST 가정.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/date/meetings/match/{matchId}</code></td><td>해당 매치의 미팅 row 전체</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/date/meetings</code></td><td>새 제안 INSERT(PROPOSED)</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/date/meetings/{id}</code></td><td>status 전이(CONFIRMED/CANCELED)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>404 DATE_MATCH_NOT_FOUND</strong> — MATCHED 아닌 매치(BLOCKED/EXPIRED 포함)</li>
+            <li><strong>403 FORBIDDEN</strong> — 매치 참여자 아님</li>
+            <li><strong>400 INVALID_INPUT</strong> — 일시/장소 누락</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>제안</th><th>전이</th><th>차단/만료</th></tr></thead>
+            <tbody>
+              <tr><td>date_meeting</td><td>INSERT(PROPOSED + proposedBy)</td><td>status 전이</td><td>보존(분쟁용)</td></tr>
+              <tr><td>date_match</td><td>—</td><td>—</td><td>BLOCKED/EXPIRED 시 새 제안 차단</td></tr>
+              <tr><td>위치 공유 (F14-01)</td><td>—</td><td>CONFIRMED 후 안내</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>MATCHED 매치</td><td>제안 등록</td><td>PROPOSED INSERT</td></tr>
+              <tr><td>AC-02</td><td>일시/장소 누락</td><td>제안 시도</td><td>토스트 + 송신 차단</td></tr>
+              <tr><td>AC-03</td><td>PROPOSED + 상대</td><td>수락 PATCH</td><td>CONFIRMED 전이</td></tr>
+              <tr><td>AC-04</td><td>비참여자</td><td>PATCH 시도</td><td>403 FORBIDDEN</td></tr>
+              <tr><td>AC-05</td><td>BLOCKED/EXPIRED</td><td>제안 시도</td><td>404 NOT_FOUND</td></tr>
+              <tr><td>AC-06</td><td>이미 PROPOSED</td><td>새 제안</td><td>row 누적, 클라이언트는 최신만 노출</td></tr>
+              <tr><td>AC-07</td><td>CONFIRMED</td><td>위치 안내 버튼</td><td>다이얼로그 정책 안내</td></tr>
+              <tr><td>AC-08</td><td>차단 발동</td><td>새 제안</td><td>차단, 기존 row 보존</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>매치 상태 게이트 누락</strong> — 차단/만료된 매치에 미팅이 만들어지면 사용자가 갇히는 흐름.</li>
+            <li><strong>제안 누적 시 1차 PROPOSED를 자동 CANCELED 처리하지 않음</strong> — 운영상 분쟁 추적은 가능하지만 사용자 인지가 혼란.</li>
+            <li><strong>CONFIRMED 후 알림 누락</strong> — 상대가 약속을 인지 못 함. 자동 푸시 도입 후보.</li>
+            <li><strong>참여자 검증 누락된 PATCH</strong> — 외부자가 임의로 status 전이 가능.</li>
+            <li><strong>위치 공유 안내를 실제 활성화로 오해</strong> — 안내는 F14-01에 의존. F09-06 단독으로 활성화 안 됨.</li>
+            <li><strong>SOS 흐름을 다시 추가</strong> — 의도적 미운영. 재도입은 별도 작업으로.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
+          <a class="card" href="F09-05.html"><div class="eyebrow">진입</div><h3>F09-05 채팅</h3></a>
+          <a class="card" href="F09-07.html"><div class="eyebrow">차단</div><h3>F09-07 차단</h3></a>
+          <a class="card" href="F14-01.html"><div class="eyebrow">위치 공유</div><h3>F14-01 이벤트 위치 공유</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/09_private_date/F09-06_meeting_proposal/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

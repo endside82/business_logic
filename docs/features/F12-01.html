@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F12-01 알림 목록·읽음 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/12-notification.html">12 알림</a><span>›</span>
+          F12-01 목록·읽음
+        </div>
+        <h1>F12-01. 알림 목록 · 읽음 관리</h1>
+        <p class="lede">
+          사용자의 알림 인박스. 시간순 그룹 + 미읽음 카운트 + 개별/일괄 읽음 + 딥 링크 진입.
+          모든 액션은 <strong>낙관적 UI</strong>로 즉시 반영되고, 서버 실패 시 자연 롤백된다.
+          포그라운드 푸시는 인박스가 자동으로 인지하지 못해 풀투리프레시가 필요한 알려진 한계가 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">시나리오</div><div class="value">8+</div></div>
+          <div class="metric"><div class="label">페이지 크기</div><div class="value">20</div></div>
+          <div class="metric"><div class="label">시간 그룹</div><div class="value">오늘·어제·이번주·과거</div></div>
+          <div class="metric"><div class="label">낙관적 UI</div><div class="value">읽음·삭제</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도</span>
+          <p>알림은 “정리”와 “진입” 두 행동이 빠르게 이뤄져야 한다. 모두 읽음은 화면 갱신 후 서버 호출하고,
+          개별 탭은 읽음 처리와 딥 링크 라우팅을 같은 동작에 묶는다. 알림 자체에 referenceId가 누락되면
+          “열 수 없습니다” 폴백을 모달로 안내해 사용자가 갇히지 않게 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>목록 + 미읽음 카운트 병렬 호출</h3>
+            <p>화면 진입 시 GET /notifications + GET /unread-count 동시 호출. 페이지 20건씩 무한 스크롤.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>개별 읽음 (탭과 동시에)</h3>
+            <p>알림 카드 탭 → 낙관적 isRead=true + 배지 -1 → PATCH /{id}/read → 같은 동작에서 딥 링크 라우팅.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>모두 읽음</h3>
+            <p>앱바 “모두 읽음” → 모든 카드 즉시 흰 배경 + 배지 0 → PATCH /read-all.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>좌측 스와이프 삭제</h3>
+            <p>Dismissible로 영구 삭제. <strong>현재 Undo 미구현</strong>.</p>
+            <div class="meta"><span class="pill warn">복구 불가</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>딥 링크 라우팅</h3>
+            <p>NotificationRouter가 type별로 적절한 화면 경로 결정. referenceId 누락 시 폴백 모달.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 6</div>
+            <h3>FCM 포그라운드 처리</h3>
+            <p>포그라운드 수신 시 unreadCount만 자동 invalidate. 목록 자체는 풀투리프레시 필요(알려진 한계).</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>알림 탭 → 라우팅 시퀀스</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant L as 알림 목록 화면
+    participant API as 알림 API
+    participant R as 알림 라우터
+    U->>L: 알림 카드 탭
+    L->>L: Optimistic isRead=true, 배지 -1
+    L->>API: PATCH /notifications/{id}/read
+    par 읽음 처리
+        API-->>L: 200
+    and 라우팅 결정
+        L->>R: navigate(notification)
+        R->>R: type별 resolve(referenceId, eventId 등)
+        alt 라우트 결정 가능
+            R->>U: GoRouter push
+        else referenceId 없음
+            R->>U: 폴백 모달 "알림을 열 수 없습니다"
+        end
+    end
+    alt API 실패
+        API-->>L: 4xx
+        L->>L: Optimistic 롤백
+    end
+        </div></div>
+      </section>
+
+      <section>
+        <h2>알림 타입별 라우팅 (요약)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>type</th><th>대상 화면</th></tr></thead>
+            <tbody>
+              <tr><td>APPLICATION_APPROVED · NEW_APPLICATION</td><td>이벤트 상세 / 신청자 관리</td></tr>
+              <tr><td>EVENT_UPDATED · EVENT_CANCELLED</td><td>이벤트 상세</td></tr>
+              <tr><td>PAYMENT_COMPLETED · REFUND_COMPLETED</td><td>거래 내역 또는 정산</td></tr>
+              <tr><td>CHAT_MESSAGE</td><td>데이팅 채팅 방</td></tr>
+              <tr><td>CLUB_ANNOUNCEMENT · CLUB_JOIN_REQUEST</td><td>클럽 상세 / 대기열</td></tr>
+              <tr><td>LOCATION_SHARE_EXPIRING · WAITLIST_PROMOTED</td><td>이벤트 위치/상세</td></tr>
+              <tr><td>REVIEW_NUDGE</td><td>이벤트 상세 → 리뷰 작성</td></tr>
+              <tr><td>referenceId 누락</td><td>폴백 모달</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 8개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>일괄 정리 후 딥 링크 진입</h3>
+            <ol>
+              <li>알림 탭 진입 → 두 호출 병렬 (목록 + unreadCount)</li>
+              <li>“모두 읽음” → 12장 즉시 흰 배경 + 배지 0 → PATCH /read-all</li>
+              <li>특정 알림 탭 → 이미 읽음이므로 read 호출 없이 NotificationRouter.navigate</li>
+              <li>대상 화면(예: 이벤트 상세) push</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 포그라운드</div><h3>FCM 수신 직후</h3>
+            <ol>
+              <li>onForegroundMessage → unreadCount만 invalidate + 인앱 배너</li>
+              <li>목록 자체는 갱신 안 됨(알려진 한계)</li>
+              <li>사용자가 풀투리프레시 → 새 알림 포함</li>
+              <li>탭 → optimistic 읽음 + 라우팅</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 삭제</div><h3>좌측 스와이프 삭제</h3>
+            <ol>
+              <li>Dismissible 끝까지 스와이프 → DELETE /{id}</li>
+              <li>토스트 “알림이 삭제되었습니다”</li>
+              <li>Undo 액션 없음 — 영구 삭제</li>
+            </ol>
+            <p><strong>UI 보강 후보:</strong> Undo 액션 추가.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 권한</div><h3>다른 사용자 알림 변조 시도</h3>
+            <ol>
+              <li>외부자가 다른 사용자 notificationId로 PATCH</li>
+              <li>서버: notification.userId 검증 실패 → 403 NOTIFICATION_NOT_OWNER</li>
+              <li>클라이언트 optimistic 롤백</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 무한 스크롤</div><h3>100개 누적 사용자</h3>
+            <ol>
+              <li>page=0 → 20건</li>
+              <li>스크롤 끝 → loadMore() → page=1 → 누적</li>
+              <li>마지막 페이지(last=true) 도달 → hasMore=false, 이후 호출 없음</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 폴백</div><h3>referenceId 누락 알림</h3>
+            <ol>
+              <li>탭 → optimistic 읽음</li>
+              <li>NotificationRouter.resolve() = null</li>
+              <li>“알림을 열 수 없습니다” 폴백 모달</li>
+              <li>사용자가 닫고 다른 알림으로 이동</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 그룹 헤더</div><h3>시간 그룹 표시</h3>
+            <ol>
+              <li>오늘/어제/이번 주/과거 헤더</li>
+              <li>각 그룹 안에서 createdAt DESC 정렬</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 빈 인박스</div><h3>알림이 하나도 없는 사용자</h3>
+            <ol>
+              <li>0건 응답 → 빈 상태 일러스트 + “아직 알림이 없습니다”</li>
+              <li>“모두 읽음” 비활성</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/notifications?page=&size=20</code></td><td>알림 페이지(최신순)</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/notifications/unread-count</code></td><td>미읽음 카운트(탭 배지용)</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/notifications/{id}/read</code></td><td>개별 읽음</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/notifications/read-all</code></td><td>일괄 읽음</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/notifications/{id}</code></td><td>영구 삭제</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>403 NOTIFICATION_NOT_OWNER</strong> — 본인 알림 아님</li>
+            <li><strong>404 NOTIFICATION_NOT_FOUND</strong> — 이미 삭제 또는 부재</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>읽음</th><th>일괄 읽음</th><th>삭제</th></tr></thead>
+            <tbody>
+              <tr><td>notification</td><td>isRead=true, readAt=now</td><td>모든 본인 알림 일괄</td><td>row 삭제(또는 soft)</td></tr>
+              <tr><td>unread_count(캐시·뷰)</td><td>−1</td><td>0으로 리셋</td><td>−1(미읽음이었으면)</td></tr>
+              <tr><td>FCM 디바이스 토큰</td><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>알림 12건 + unread 12</td><td>탭 진입</td><td>병렬 호출, 시간 그룹 노출</td></tr>
+              <tr><td>AC-02</td><td>알림 카드</td><td>탭</td><td>optimistic 읽음 + 라우팅</td></tr>
+              <tr><td>AC-03</td><td>알림 12건</td><td>“모두 읽음”</td><td>전체 즉시 읽음 + 배지 0</td></tr>
+              <tr><td>AC-04</td><td>알림 카드</td><td>좌측 스와이프</td><td>DELETE + 토스트</td></tr>
+              <tr><td>AC-05</td><td>다른 사용자 알림 ID</td><td>PATCH</td><td>403 + rollback</td></tr>
+              <tr><td>AC-06</td><td>FCM foreground</td><td>수신</td><td>unreadCount invalidate + 인앱 배너</td></tr>
+              <tr><td>AC-07</td><td>referenceId 누락</td><td>탭</td><td>읽음 + 폴백 모달</td></tr>
+              <tr><td>AC-08</td><td>0건</td><td>탭 진입</td><td>빈 상태 + “모두 읽음” 비활성</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>optimistic 롤백 누락</strong> — 서버 실패 후에도 읽음 상태가 그대로면 인박스와 실제 상태가 어긋남.</li>
+            <li><strong>“모두 읽음” 후 새 알림이 즉시 안 보임</strong> — 포그라운드 push 시 목록 invalidate를 빠뜨림.</li>
+            <li><strong>Undo 없는 삭제</strong> — 사용자 실수 복구 불가. UX 보강 후보.</li>
+            <li><strong>딥 링크 폴백 누락</strong> — referenceId 없는 알림이 무한 로딩.</li>
+            <li><strong>본인 검증 누락</strong> — 외부자가 임의로 다른 사람 알림 PATCH.</li>
+            <li><strong>그룹 헤더 가짜 정렬</strong> — 그룹 안의 시간순이 깨지면 사용자가 “어제 본 알림이 오늘 위에” 같은 혼란.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">상위</div><h3>12 알림</h3></a>
+          <a class="card" href="F12-02.html"><div class="eyebrow">관련</div><h3>F12-02 그룹·배지</h3></a>
+          <a class="card" href="F12-05.html"><div class="eyebrow">관련</div><h3>F12-05 디바이스 토큰</h3></a>
+          <a class="card" href="F12-06.html"><div class="eyebrow">권한</div><h3>F12-06 권한 배너</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/12_notification/F12-01_notification-list-read/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

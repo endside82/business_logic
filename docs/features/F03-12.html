@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-12 내 이벤트·참석 로그 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-12 내 이벤트·참석 로그
+        </div>
+        <h1>F03-12. 내 이벤트 관리 · 참석 로그</h1>
+        <p class="lede">
+          내 신청·주최·지난 이벤트를 한 화면에서 본다. 호스트는 추가로 이벤트의 참석 로그(누가 언제 어떤 단계로 갔는지)를 시간 순서로 확인 가능.
+          종료된 이벤트도 disabled 상태로 노출되어 회고·리뷰 진입점으로 연결된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">탭</div><div class="value">3</div><div class="hint">참석 예정·주최 중·지난</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">탭 1</div><h3>참석 예정</h3><p>본인 신청 중 APPROVED만 필터.</p></div>
+          <div class="card"><div class="eyebrow">탭 2</div><h3>주최 중</h3><p>본인이 host인 이벤트(DRAFT/OPEN).</p></div>
+          <div class="card"><div class="eyebrow">탭 3</div><h3>지난 이벤트</h3><p>CLOSED/CANCELED 이벤트(리뷰 진입점).</p></div>
+          <div class="card"><div class="eyebrow">호스트 전용</div><h3>참석 로그 타임라인</h3><p>이벤트별 신청/취소/체크인 등 단계 순서.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 9개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1</div><h3>참석 예정 확인</h3><ol><li>APPROVED 카드만 노출</li><li>임박 카드 탭 → 이벤트 상세</li></ol></article>
+          <article class="card"><div class="eyebrow">S2</div><h3>주최 중 임시저장 발견</h3><ol><li>DRAFT 카드 회색 “임시저장” 뱃지</li><li>탭 → 상세 → “발행”</li></ol>
+            <p><strong>알려진 이슈:</strong> 컨트롤러가 status 쿼리 무시. CLOSED/CANCELED 섞일 가능성, 추가 필터 필요.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S3</div><h3>지난 이벤트 회고</h3><ol><li>disabled 카드 + 상태 라벨</li><li>탭 → 리뷰 작성 진입점(F11)</li></ol></article>
+          <article class="card"><div class="eyebrow">S4 · 호스트</div><h3>참석 로그 타임라인</h3>
+            <ol><li>상세 → 참석자 목록 → “로그 >”</li><li>최신순 타임라인 + 날짜 구분선</li><li>“참석 확정/대기열 등록/참석 취소/호스트 거절” 라벨</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S5</div><h3>로그 무한 스크롤</h3><ol><li>page=0→1→2 누적</li><li>last=true 시 추가 호출 차단</li></ol></article>
+          <article class="card"><div class="eyebrow">S6</div><h3>참석 예정 중 호스트 취소</h3><ol><li>Application=APPROVED지만 event=CANCELED</li><li>disabled + “취소됨” 라벨</li><li>탭 → 환불 안내(F03-04/F06)</li></ol></article>
+          <article class="card"><div class="eyebrow">S7</div><h3>빈 상태</h3><ol><li>“참석 예정인 이벤트가 없습니다” + “이벤트 탐색”</li></ol></article>
+          <article class="card"><div class="eyebrow">S8</div><h3>풀투리프레시</h3><ol><li>리스트 reset → 0페이지 재호출</li></ol></article>
+          <article class="card"><div class="eyebrow">S9 · 권한</div><h3>비호스트가 로그 URL 직접 접근</h3><ol><li>라우터 redirect</li><li>우회 시 403 EVENT_NOT_OWNER</li></ol></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/users/me/applications</code></td><td>내 신청 목록</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/my?page=&size=</code></td><td>내가 호스트인 이벤트</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/capacity/logs</code></td><td>참석 로그(호스트 전용)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>주최 중 탭에 종료된 이벤트 섞임</strong> — 컨트롤러 status 필터 누락.</li>
+            <li><strong>참석 예정에 취소된 이벤트가 활성 카드로 노출</strong> — 상태 라벨 반영 누락.</li>
+            <li><strong>호스트 로그 권한 검증 누락</strong> — 우회 시 다른 사용자 행적 노출 위험.</li>
+            <li><strong>풀투리프레시 후 페이지 인덱스 reset 누락</strong> — 중복 호출.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">진입</div><h3>11 리뷰·신고</h3></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">진입점</div><h3>13 프로필·설정</h3></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/03_event/F03-12_my-events/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F06-06 포인트 결제·환불 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>
+          F06-06 포인트 결제·환불
+        </div>
+        <h1>F06-06. 포인트 결제 · 환불</h1>
+        <p class="lede">
+          이벤트 참여비·티켓·구독 등 <strong>모든 포인트 결제의 공통 경로</strong>.
+          유료/무료 잔액 우선순위 차감, 충전 lot의 FIFO 소비, 회계 분개,
+          잔액 부족 시 자동충전 분기, 정책별 환불 비율, 이중 결제 가드까지를 한 트랜잭션 안에서 묶는다.
+          이 단위가 깨지면 잔액·정산·회계가 동시에 어긋난다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하위 동작</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">10</div></div>
+          <div class="metric"><div class="label">잔액 종류</div><div class="value">유료·무료</div></div>
+          <div class="metric"><div class="label">회계</div><div class="value">복식부기</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">핵심 규칙 세 가지</span>
+          <ol style="margin:0 0 0 18px">
+            <li><strong>가격은 항상 서버 사실</strong> — 클라이언트가 보낸 금액은 검증용. 이벤트의 실제 가격과 다르면 즉시 거절.</li>
+            <li><strong>중복 결제 가드를 가장 먼저</strong> — 같은 사용자×같은 참조×같은 referenceId면 wallet lock 이전에 차단.</li>
+            <li><strong>잔액 → 자동충전 → 재시도 순서 고정</strong> — 잔액이 부족하면 자동충전을 시도한 후에만 재시도. 자동충전이 꺼져 있으면 즉시 부족액 정보 반환.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>결제 (Wallet.pay)</h3>
+            <p>중복 가드 → 가격 검증 → wallet row lock → 유료/무료 우선순위 차감 → 거래·결제 기록 → FIFO lot 소비 → 회계 분개 → 알림.
+              한 트랜잭션 안에서 모든 부수효과를 묶는다.</p>
+            <div class="meta"><span class="pill">한 트랜잭션</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>잔액 부족 분기</h3>
+            <p>자동충전 ON이면 부족분을 충전(최소 충전 금액과 부족액 중 큰 값)한 뒤 결제 재시도.
+              자동충전 OFF면 <strong>부족 페이로드</strong>(필요금액·현재잔액·부족액)를 그대로 반환해
+              클라이언트가 충전 화면을 prefill로 띄울 수 있게 한다.</p>
+            <div class="meta"><span class="pill">PaymentShortfall</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>FIFO lot 소비</h3>
+            <p>충전 시점의 lot(만료일·결제수단·PG 키 포함)을 FIFO로 차감. 회계 분개에 lot 기준 정보가 동행해
+              나중에 환불할 때 정확한 lot로 되돌리거나 PG 측 환불을 매칭할 수 있게 한다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>환불 (정책 + 비율)</h3>
+            <p>이벤트 시작 시각과 환불 정책(STANDARD/STRICT)에 따라 100%/50%/30%/0% 비율 결정.
+              사용자 잔액은 즉시 복구, PG 카드 환불은 비동기 워커가 별도 처리.</p>
+            <div class="meta"><span class="pill">정책 머신</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>실패 처리 + failed_refund</h3>
+            <p>PG 환불 실패 시 failed_refund 큐로 적재. 운영자 수동 대사 + 재시도 스케줄러. 사용자 잔액은 영향 없이 보장.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>결제 흐름 시퀀스</h2>
+        <p class="subtitle">한 호출 안에 일어나는 모든 부수효과. 어떤 단계에서 실패해도 트랜잭션 전체가 롤백된다.</p>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant API as 결제 API
+    participant SVC as 지갑 서비스
+    participant DB as DB (잠금)
+    participant LOT as 충전 lot
+    participant LED as 회계 원장
+    U->>API: POST /wallet/pay {eventId, amount}
+    API->>SVC: 결제 요청
+    SVC->>DB: 중복 가드 (사용자×참조×ID)
+    alt 이미 결제됨
+        DB-->>SVC: 존재
+        SVC-->>API: 409 DUPLICATE_PAYMENT
+    else 미결제
+        SVC->>DB: 이벤트 가격 검증
+        alt 가격 불일치
+            SVC-->>API: 400 INVALID_PAYMENT_AMOUNT
+        else 일치
+            SVC->>DB: wallet row 락
+            SVC->>SVC: 잔액 충분?
+            alt 부족
+                SVC->>SVC: 자동충전 시도
+                alt 자동충전 OFF
+                    SVC-->>API: 400 + PaymentShortfall
+                else 자동충전 성공
+                    SVC->>DB: 충전 거래 + 잔액 보충
+                    SVC->>SVC: 재시도
+                end
+            end
+            SVC->>DB: 유료/무료 우선 차감 + balance 업데이트
+            SVC->>DB: 결제 거래·결제 기록 INSERT
+            SVC->>LOT: FIFO lot 소비 + consumption 매핑
+            SVC->>LED: 사용자지갑 → 크리에이터/플랫폼 분개
+            SVC-->>U: 결제 완료 푸시
+            SVC-->>API: 200 + TransactionVo
+        end
+    end
+        </div></div>
+      </section>
+
+      <section>
+        <h2>잔액 부족 분기</h2>
+        <div class="diagram"><div class="mermaid">
+flowchart LR
+    A["잔액 < 결제 금액"] --> B{"자동충전 설정 존재?"}
+    B -->|"아니오"| F["PaymentShortfall 반환<br/>(필요·현재·부족·메시지)"]
+    B -->|"예"| C{"월 한도·MIN·MAX 통과?"}
+    C -->|"아니오"| F
+    C -->|"예"| D["충전 금액 = max(설정, 부족액)"]
+    D --> E["PG 결제 (또는 dev 시뮬레이션 키)"]
+    E --> G["wallet 보충 + CHARGE 거래"]
+    G --> H["결제 재시도 → 성공"]
+    F --> X["클라가 충전 화면 prefill push"]
+        </div></div>
+      </section>
+
+      <section>
+        <h2>환불 정책 머신</h2>
+        <p class="subtitle">정책(STANDARD/STRICT)과 잔여 시간으로 비율이 결정된다. 시간이 음수면 정책 무관 거절.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>잔여 시간</th><th>STANDARD</th><th>STRICT</th></tr></thead>
+            <tbody>
+              <tr><td>≥ 48h</td><td>100%</td><td>50%</td></tr>
+              <tr><td>24h ~ 48h</td><td>100%</td><td>30%</td></tr>
+              <tr><td>12h ~ 24h</td><td>50%</td><td>0%</td></tr>
+              <tr><td>0h ~ 12h</td><td>0%</td><td>0%</td></tr>
+              <tr><td>시작 후</td><td colspan="2">REFUND_NOT_ALLOWED</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 10개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>이벤트 참여비 결제</h3>
+            <p><strong>잔액 50,000P, 8,000P 결제.</strong></p>
+            <ol>
+              <li>“참여하기” 탭 → 확인 모달(“잔액 50,000 → 42,000”)</li>
+              <li>중복 가드 통과 → 가격 검증 통과 → wallet 락</li>
+              <li>유료/무료 우선순위로 8,000 차감 → 잔액 42,000</li>
+              <li>결제 거래(EVENT_PAYMENT) + 결제 기록(COMPLETED) INSERT</li>
+              <li>FIFO lot 소비 → consumption 매핑 → 회계 분개(사용자 지갑 → 크리에이터/플랫폼)</li>
+              <li>호스트에게 PAYMENT_COMPLETED 푸시 + 클라이언트 지갑 invalidate</li>
+            </ol>
+            <p><strong>종료:</strong> 호스트는 정산 대상의 grossAmount에 누적될 예정.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 자동충전</div><h3>잔액 부족 + 자동충전 ON</h3>
+            <p><strong>잔액 4,500P, 8,000원 결제, 자동충전(임계 5,000/충전 30,000) 활성.</strong></p>
+            <ol>
+              <li>POST /pay → 잔액 부족 → tryAutoCharge 호출</li>
+              <li>부족 3,500. chargeAmount = max(30,000, 3,500) = 30,000</li>
+              <li>dev 환경은 시뮬레이션 PG 키(SIM_AUTO_…) 즉시 부여, prod는 실제 PG billingPayment</li>
+              <li>+30,000 충전 + 충전 거래·결제 기록·회계 분개 INSERT</li>
+              <li>tryAutoCharge 성공 → 본 결제 재시도 → 8,000 차감 성공</li>
+              <li>거래 내역에 충전 +30,000P + 결제 −8,000P 두 행, 최종 잔액 26,500P</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · prefill 분기</div><h3>잔액 부족 + 자동충전 OFF</h3>
+            <ol>
+              <li>POST /pay → 자동충전 설정 없음 → tryAutoCharge가 즉시 false</li>
+              <li>서버: PaymentFailureVo(필요 8000, 현재 4500, 부족 3500, 메시지)와 함께 400 INSUFFICIENT_BALANCE</li>
+              <li>클라이언트: ErrorInterceptor가 PaymentShortfall로 변환 → 충전 화면을 부족액 prefill로 push</li>
+              <li>사용자가 5,000원 충전 후 다시 결제 → 성공</li>
+            </ol>
+            <p><strong>설계 의도:</strong> 자동충전을 끈 사용자는 “부족액만큼만” 충전하도록 안내. 풀 가격 prefill은 의도 위배.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 환불</div><h3>24시간 전 100% 환불 (STANDARD)</h3>
+            <ol>
+              <li>“참여 취소” → 환불 정책 모달(100%)</li>
+              <li>POST /wallet/refund → RefundPolicyService가 정책·잔여시간으로 비율 결정</li>
+              <li>RefundLotAllocator가 lot 단위 환불 분배(무료/유료 비율 보존)</li>
+              <li>무료 부분은 즉시 wallet 복구, 유료 부분도 즉시 wallet 복구 + RefundRequest 큐(현재 dormant)</li>
+              <li>환불 거래(EVENT_REFUND) INSERT + 회계 역분개 + REFUND_COMPLETED 푸시</li>
+            </ol>
+            <p><strong>주의:</strong> RefundRequest 워커는 현재 비활성(PG_SKIPPED). v3에서 활성 예정.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 환불</div><h3>12-24h 전 50% 환불</h3>
+            <ol>
+              <li>정책 모달: “50% 환불”</li>
+              <li>POST /refund → 50% 비율 적용 → wallet 50%만 복구</li>
+              <li>나머지 50%는 호스트 정산에 영향 없이 보존</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 환불 거절</div><h3>12h 미만 환불 시도</h3>
+            <ol>
+              <li>POST /refund → RefundPolicyService.allowed=false → 400 REFUND_NOT_ALLOWED</li>
+              <li>토스트로 정책 안내, 사용자 흐름 유지</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 중복 차단</div><h3>이중 결제 시도</h3>
+            <ol>
+              <li>결제 직후 푸시 지연으로 사용자가 다시 탭</li>
+              <li>중복 가드(사용자×참조×referenceId)가 wallet lock 이전에 차단</li>
+              <li>409 DUPLICATE_PAYMENT → 클라는 ApiError.conflict로 매핑 → 화면 재조회로 정확한 상태 정렬</li>
+            </ol>
+            <p><strong>핵심:</strong> 가드가 lock 이전에 실행되어 잔액·거래 행 모두 무변동을 보장.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 위변조 차단</div><h3>가격 조작 시도(amount=1)</h3>
+            <ol>
+              <li>비정상 클라이언트가 8,000원 이벤트를 amount=1로 결제 시도</li>
+              <li>서버: event.price와 amount 불일치 → 400 INVALID_PAYMENT_AMOUNT</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S9 · PG 실패</div><h3>PG 측 카드 환불 실패</h3>
+            <ol>
+              <li>wallet은 환불 시점 즉시 복구</li>
+              <li>비동기 워커가 PG cancelPayment 호출 → 실패 → failed_refund 큐 적재</li>
+              <li>거래 상세에 “관리자 확인 중” 표기</li>
+              <li>운영자 수동 대사 + RefundLedgerFailureRetryScheduler 재시도</li>
+            </ol>
+            <p><strong>설계 의도:</strong> 사용자 경험과 PG 후처리를 분리해, 사용자에게는 실패가 전파되지 않게.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S10 · 유료 승인제</div><h3>승인 후 결제 확정 (정책 목표)</h3>
+            <ol>
+              <li>호스트 승인으로 APPROVED_PENDING_PAYMENT 상태</li>
+              <li>사용자가 “결제하고 참석 확정” → POST /pay</li>
+              <li>서버: 신청 상태·결제 기한·중복 결제 검증 → 결제 성공 후에만 ATTENDING + currentCapacity++</li>
+              <li>실패: PAYMENT_WINDOW_EXPIRED / PAYMENT_NOT_ALLOWED / PaymentShortfall / DUPLICATE_PAYMENT 분기</li>
+            </ol>
+            <p><strong>현재 구현 갭:</strong> 결제 서비스가 Application 상태를 조회하지 않음. 결제 후처리 경로 미구현. 별도 라운드로 마이그레이션 예정.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/wallet/pay</code></td><td>이벤트·구독·티켓 등 모든 포인트 결제 단일 엔드포인트</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/wallet/refund</code></td><td>정책·비율 자동 계산 환불</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/wallet/refund/policy?eventId=</code></td><td>환불 가능 비율 미리 조회</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드 매트릭스</span>
+          <ul>
+            <li><strong>409 DUPLICATE_PAYMENT</strong> — 중복 결제(가드가 lock 이전)</li>
+            <li><strong>400 INVALID_PAYMENT_AMOUNT</strong> — 가격 위변조 또는 불일치</li>
+            <li><strong>400 INSUFFICIENT_BALANCE</strong> — PaymentShortfall 페이로드 동봉</li>
+            <li><strong>400 REFUND_NOT_ALLOWED</strong> — 정책 거절(시작 후 또는 시간 미달)</li>
+            <li><strong>409 DUPLICATE_REFUND</strong> — 이미 환불됨</li>
+            <li><strong>404 TRANSACTION_NOT_FOUND</strong> — 결제 거래 부재(존재 안 함 또는 다른 사용자)</li>
+            <li><strong>400 PAYMENT_WINDOW_EXPIRED · PAYMENT_NOT_ALLOWED</strong> — 유료 승인제 결제 기한 만료/미허용(정책 목표)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>결제</th><th>환불</th><th>자동충전</th></tr></thead>
+            <tbody>
+              <tr><td>지갑</td><td>유료/무료 우선 차감, totalSpent 누적</td><td>비율만큼 복구</td><td>+chargeAmount, totalCharged 누적</td></tr>
+              <tr><td>거래(PointTransaction)</td><td>PAY(EVENT_PAYMENT) INSERT</td><td>REFUND(EVENT_REFUND) INSERT</td><td>CHARGE(AUTO_CHARGE) INSERT</td></tr>
+              <tr><td>결제 기록(PaymentRecord)</td><td>COMPLETED INSERT</td><td>—</td><td>COMPLETED INSERT + PG 키</td></tr>
+              <tr><td>충전 lot</td><td>FIFO 소비 + consumption 매핑</td><td>(현재) PG 측은 PG_SKIPPED</td><td>새 lot 생성</td></tr>
+              <tr><td>회계 원장</td><td>사용자→크리에이터/플랫폼 복식부기</td><td>역분개</td><td>PG_RECEIVABLE↔사용자</td></tr>
+              <tr><td>실패 큐</td><td>—</td><td>PG 실패 시 failed_refund</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>잔액 충분</td><td>결제</td><td>유료/무료 우선 차감 + lot FIFO 소비 + 회계 분개</td></tr>
+              <tr><td>AC-02</td><td>자동충전 ON, 잔액 부족</td><td>결제</td><td>충전 후 재시도 → 성공, 거래 2행</td></tr>
+              <tr><td>AC-03</td><td>자동충전 OFF, 잔액 부족</td><td>결제</td><td>PaymentShortfall 반환, 잔액·거래 무변동</td></tr>
+              <tr><td>AC-04</td><td>이미 결제</td><td>다시 결제</td><td>409 DUPLICATE_PAYMENT, lock 이전 차단</td></tr>
+              <tr><td>AC-05</td><td>가격 위변조</td><td>amount≠event.price</td><td>400 INVALID_PAYMENT_AMOUNT</td></tr>
+              <tr><td>AC-06</td><td>STANDARD 정책, ≥24h</td><td>환불</td><td>100% wallet 복구 + 역분개</td></tr>
+              <tr><td>AC-07</td><td>STANDARD 정책, 12-24h</td><td>환불</td><td>50% wallet 복구</td></tr>
+              <tr><td>AC-08</td><td>STRICT 정책, 24-48h</td><td>환불</td><td>30% wallet 복구</td></tr>
+              <tr><td>AC-09</td><td>이벤트 시작 후</td><td>환불 시도</td><td>400 REFUND_NOT_ALLOWED</td></tr>
+              <tr><td>AC-10</td><td>이미 환불됨</td><td>다시 환불</td><td>409 DUPLICATE_REFUND</td></tr>
+              <tr><td>AC-11</td><td>PG 카드 환불 실패</td><td>워커 실행</td><td>failed_refund 적재, 사용자 wallet은 영향 없음</td></tr>
+              <tr><td>AC-12</td><td>유료 승인제(목표)</td><td>승인 전 결제 시도</td><td>PAYMENT_NOT_ALLOWED 또는 PAYMENT_WINDOW_EXPIRED</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>중복 가드를 wallet lock 이후로 옮기는 회귀</strong> — 잔액이 차감되었다 롤백되면서 잔액 잠금이 길어진다. 가드는 트랜잭션의 첫 단계.</li>
+            <li><strong>가격 검증을 클라이언트만</strong> — 위변조 즉시 통과. 서버에서 event.price 기준으로 강제.</li>
+            <li><strong>PaymentShortfall 페이로드 누락</strong> — 클라이언트가 부족액을 모르고 풀 가격 prefill 하면 사용자가 과충전.</li>
+            <li><strong>FIFO lot 소비를 안 함</strong> — 환불 시점에 어떤 lot을 되돌릴지 결정 불가, PG 환불 매칭 깨짐.</li>
+            <li><strong>회계 분개 빠뜨림</strong> — 호스트 정산·플랫폼 수수료 집계가 어긋난다.</li>
+            <li><strong>호스트가 자기 이벤트에 결제 가능</strong> — 현재는 신청 단계에서 막히지만 결제 자체에는 가드 없음. co-host도 마찬가지. 정책 강화 시 추가.</li>
+            <li><strong>PG 환불 워커 활성화 전에 PG_SKIPPED 처리 누락</strong> — 모든 RefundRequestItem이 PG_SKIPPED로 생성되어야 이중 환불 회피.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
+          <a class="card" href="F06-02.html"><div class="eyebrow">선행</div><h3>F06-02 포인트 충전</h3></a>
+          <a class="card" href="F06-05.html"><div class="eyebrow">분기</div><h3>F06-05 자동 충전</h3></a>
+          <a class="card" href="F03-05.html"><div class="eyebrow">호출자</div><h3>F03-05 이벤트 신청·참석</h3></a>
+          <a class="card" href="F03-04.html"><div class="eyebrow">호출자</div><h3>F03-04 이벤트 취소·환불</h3></a>
+          <a class="card" href="F06-10.html"><div class="eyebrow">후속</div><h3>F06-10 정산</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/06_payment/F06-06_point-pay-refund/scenarios.md
+  - business_logic/units/06_payment/F06-06_point-pay-refund/{backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

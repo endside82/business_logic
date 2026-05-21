@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F07-08 이의제기·감사로그 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/07-settlement.html">07 모임 정산</a><span>›</span>
+          F07-08 이의제기·감사로그
+        </div>
+        <h1>F07-08. 정산 이의제기 · 처리 · 감사 로그</h1>
+        <p class="lede">
+          정산 도메인의 안전망. 참가자가 share/item에 이의를 제기하면 해당 subject의 결제 자체가 차단되고,
+          호스트가 인정·거절을 결정해야 풀린다. 모든 단계는 감사 로그에 actorRole(USER/HOST/SYSTEM)과 함께 기록되어
+          “누가 언제 무엇을 했는지” 한 화면에서 추적 가능하다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">이의 대상</div><div class="value">SHARE·ITEM·TRANSFER</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
+          <div class="metric"><div class="label">상태</div><div class="value">PENDING·APPROVED·REJECTED</div></div>
+          <div class="metric"><div class="label">감사 actor</div><div class="value">USER·HOST·SYSTEM</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">핵심 게이트</span>
+          <p>PENDING 이의가 있는 subject는 <strong>결제 자체가 차단</strong>된다(MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL).
+          이의 해결 후에야 잔액이 움직일 수 있다. 잔액 이동 후 환원이 매우 어렵기 때문에 사전 차단이 안전망 역할을 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이의 처리 상태 머신</h2>
+        <div class="diagram"><div class="mermaid">
+stateDiagram-v2
+    [*] --> PENDING: 참가자 이의 제기
+    PENDING --> APPROVED: 호스트 인정 + 응답
+    PENDING --> REJECTED: 호스트 기각 + 응답
+    APPROVED --> [*]: subject 수정 또는 정산 재구성
+    REJECTED --> [*]: subject 결제 차단 해제
+        </div></div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>이의 제기 (SHARE/ITEM)</h3>
+            <p>참가자가 자기 share 또는 항목에 사유와 함께 제기. 동일 subject + PENDING 중복 차단.</p>
+            <div class="meta"><span class="pill">사유 최대 1500자</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>호스트 인정 / 기각</h3>
+            <p>hostResponse(공개 메시지) 입력 + status 결정. RESOLVED 후 결제 차단 해제.
+              APPROVED 시 호스트가 항목/share를 직접 수정하거나(DRAFT만 가능) 정산 cancel 후 재생성.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>결제 차단 게이트</h3>
+            <p>모든 결제 호출이 validateNoPendingAppeal을 통과해야 한다. transfer·share·confirm 어디서든 동일.</p>
+            <div class="meta"><span class="pill">전역 가드</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>감사 로그</h3>
+            <p>모든 정산 변경(SETTLEMENT_CREATED, ITEM_CREATED, TRANSFERS_REGENERATED, APPEAL_*, TRANSFER_PAID_*…)을
+              actor 정보(USER/HOST/SYSTEM)와 payload로 기록. 시간순 타임라인 + 페이징.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이의 제기와 결제 차단 효과</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor U as 참가자
+    actor H as 호스트
+    actor P as 송금자
+    participant SVC as 정산 서비스
+    participant AUD as 감사 로그
+    U->>SVC: 이의 제기 (subject=SHARE/42, reason)
+    SVC->>SVC: 중복 PENDING 검사
+    SVC->>SVC: appeal INSERT (PENDING)
+    SVC->>AUD: APPEAL_CREATED (USER role)
+    SVC-->>U: 이의가 제기되었습니다
+    Note over P: subject 42 결제 시도
+    P->>SVC: 포인트 결제
+    SVC->>SVC: validateNoPendingAppeal(SHARE,42)
+    SVC-->>P: 400 SUBJECT_UNDER_APPEAL
+    H->>SVC: resolve (APPROVED 또는 REJECTED + hostResponse)
+    SVC->>SVC: appeal status·resolvedAt 갱신
+    SVC->>AUD: APPEAL_RESOLVED (HOST role + hostResponse)
+    SVC-->>H: 이의가 처리되었습니다
+    Note over P: 결제 차단 해제
+    P->>SVC: 포인트 결제 재시도
+    SVC->>SVC: 정상 처리
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 8개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · 이의 제기</div><h3>참가자가 share 16k에 이의</h3>
+            <ol>
+              <li>my-shares 카드 “이의제기” → 사유 입력 → 제기</li>
+              <li>중복 PENDING 검사 통과 → appeal INSERT(PENDING)</li>
+              <li>audit APPEAL_CREATED(USER, payload: appealId·reason)</li>
+              <li>“이의가 제기되었습니다” 토스트</li>
+            </ol>
+            <p><strong>결과:</strong> 본인 share의 결제가 차단된다(payShareByPoint/confirmBankTransfer 모두 SUBJECT_UNDER_APPEAL).</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 인정</div><h3>호스트 APPROVED + 응답</h3>
+            <ol>
+              <li>이의제기 관리 화면 → PENDING 카드</li>
+              <li>status=APPROVED + hostResponse 입력 → resolve PATCH</li>
+              <li>appeal 갱신 + audit APPEAL_RESOLVED(HOST role)</li>
+              <li>호스트가 항목/share를 수정하거나 정산 cancel 후 재구성</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 기각</div><h3>REJECTED + 응답</h3>
+            <ol>
+              <li>“추가 영수증 확인 결과 적정합니다” 등 응답 + REJECTED</li>
+              <li>차단 해제 → 사용자가 다시 결제 가능</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 중복</div><h3>동일 subject 재제기</h3>
+            <ol>
+              <li>PENDING 1건이 이미 있는 상태에서 같은 사용자가 다시 제기</li>
+              <li>409 MEETING_APPEAL_ALREADY_PENDING</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 호스트 본인 제기</div><h3>UI 가드 vs 서버 가드</h3>
+            <ol>
+              <li>UI: 호스트의 share 카드는 이의 버튼 미노출</li>
+              <li>우회 시 백엔드는 현재 별도 차단 없음</li>
+              <li>→ 호스트가 자기 이의를 자기 처리하는 self-loop 가능</li>
+            </ol>
+            <p><strong>참고:</strong> 향후 서버 차단(appealerUserId == settlement.creatorUserId) 추가 후보.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 결제 차단</div><h3>PENDING 이의로 transfer 결제 차단</h3>
+            <ol>
+              <li>transfer 5에 이의 PENDING</li>
+              <li>송금자 “포인트 결제” → validateNoPendingAppeal → 400 SUBJECT_UNDER_APPEAL</li>
+              <li>호스트 resolve 후 재시도 가능</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 감사 로그</div><h3>변경 이력 타임라인</h3>
+            <ol>
+              <li>“감사 로그” 진입 → 페이지 30건씩</li>
+              <li>SETTLEMENT_CREATED → ITEM_CREATED × N → SETTLEMENT_ACTIVATED → TRANSFERS_REGENERATED(SYSTEM) → TRANSFER_PAID_POINT(USER) → APPEAL_CREATED(USER) → APPEAL_RESOLVED(HOST) → SETTLEMENT_COMPLETED(SYSTEM)</li>
+              <li>각 행에 actorUserName · actorRole · payload · createdAt</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 잘못된 상태 전이</div><h3>이미 RESOLVED된 appeal에 resolve 호출</h3>
+            <ol>
+              <li>호스트가 동시에 두 번 처리 시도</li>
+              <li>두 번째 호출: PENDING 아님 → 400 MEETING_APPEAL_INVALID_STATUS</li>
+              <li>토스트로 “이미 처리됨” 안내</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/settlement/appeals</code></td><td>이의 제기(SHARE/ITEM/TRANSFER)</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve</code></td><td>호스트 인정/기각 + hostResponse</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/settlement/appeals</code></td><td>이의 목록(status 필터)</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/settlement/audit-log?page=&size=</code></td><td>변경 이력 페이지</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>409 MEETING_APPEAL_ALREADY_PENDING</strong> — 동일 subject + PENDING 중복</li>
+            <li><strong>400 MEETING_APPEAL_INVALID_STATUS</strong> — PENDING이 아닌 상태에서 resolve</li>
+            <li><strong>400 MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL</strong> — PENDING 이의로 결제 차단</li>
+            <li><strong>403 UNAUTHORIZED</strong> — 호스트 아님이 resolve 시도</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>감사 로그 액션 카테고리</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>카테고리</th><th>actions</th><th>actor</th></tr></thead>
+            <tbody>
+              <tr><td>생성/수정</td><td>SETTLEMENT_CREATED, ITEM_CREATED, ITEM_UPDATED, ITEM_DELETED</td><td>HOST</td></tr>
+              <tr><td>상태 전이</td><td>SETTLEMENT_ACTIVATED, SETTLEMENT_CANCELLED, SETTLEMENT_COMPLETED</td><td>HOST 또는 SYSTEM</td></tr>
+              <tr><td>이체 생성</td><td>TRANSFERS_REGENERATED</td><td>SYSTEM</td></tr>
+              <tr><td>이체 결제</td><td>TRANSFER_PAID_POINT, TRANSFER_PAID_MIXED, TRANSFER_CONFIRMED_BANK, TRANSFER_SELF_REFUNDED, TRANSFER_WRITE_OFF</td><td>USER 또는 HOST</td></tr>
+              <tr><td>리마인드</td><td>REMIND_SENT_MANUAL, REMIND_SENT_AUTO</td><td>HOST 또는 SYSTEM</td></tr>
+              <tr><td>이의</td><td>APPEAL_CREATED, APPEAL_RESOLVED</td><td>USER / HOST</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>본인 share, PENDING 없음</td><td>이의 제기</td><td>PENDING + audit APPEAL_CREATED(USER)</td></tr>
+              <tr><td>AC-02</td><td>PENDING 이의</td><td>호스트 APPROVED</td><td>상태 갱신 + audit APPEAL_RESOLVED(HOST) + 차단 해제</td></tr>
+              <tr><td>AC-03</td><td>PENDING 이의</td><td>호스트 REJECTED</td><td>상태 REJECTED + 차단 해제</td></tr>
+              <tr><td>AC-04</td><td>이미 PENDING</td><td>같은 사용자 재제기</td><td>409 ALREADY_PENDING</td></tr>
+              <tr><td>AC-05</td><td>PENDING 이의</td><td>해당 subject 결제 시도</td><td>400 SUBJECT_UNDER_APPEAL</td></tr>
+              <tr><td>AC-06</td><td>호스트 아님</td><td>resolve 호출</td><td>403 UNAUTHORIZED</td></tr>
+              <tr><td>AC-07</td><td>이미 RESOLVED</td><td>다시 resolve</td><td>400 INVALID_STATUS</td></tr>
+              <tr><td>AC-08</td><td>로그인</td><td>감사 로그 진입</td><td>변경 타임라인 페이지, actor·payload 동행</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>결제 가드 누락</strong> — PENDING 이의 동안 잔액이 움직이면 환원이 매우 복잡. 모든 결제 경로에 validateNoPendingAppeal 적용.</li>
+            <li><strong>이의 사유를 알림에 포함</strong> — 호스트만 보는 정보. 알림은 “이의가 제기되었습니다” 같은 일반 안내로.</li>
+            <li><strong>APPROVED 후 정산 수정 가능 여부 미안내</strong> — DRAFT 아닌 정산은 항목 수정 불가. 사용자는 정산 cancel 후 재생성을 안내받아야 한다.</li>
+            <li><strong>actorRole 누락</strong> — “시스템이 한 일”과 “사용자가 한 일”이 섞이면 책임 추적 불가.</li>
+            <li><strong>감사 로그 페이징 누락</strong> — 큰 정산에서 메모리·렌더링 부담.</li>
+            <li><strong>호스트 self-loop 허용</strong> — 호스트가 자기 share에 이의 제기 후 본인이 처리하는 경로가 열려 있음. 정책 강화 시 차단.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위</div><h3>07 정산</h3></a>
+          <a class="card" href="F07-05.html"><div class="eyebrow">차단 대상</div><h3>F07-05 분담금 납부</h3></a>
+          <a class="card" href="F07-06.html"><div class="eyebrow">차단 대상</div><h3>F07-06 이체 확인</h3></a>
+          <a class="card" href="F07-02.html"><div class="eyebrow">수정 대상</div><h3>F07-02 항목 관리</h3></a>
+          <a class="card" href="F07-03.html"><div class="eyebrow">관련</div><h3>F07-03 활성화·취소</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/07_meeting_settlement/F07-08_appeal-audit/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

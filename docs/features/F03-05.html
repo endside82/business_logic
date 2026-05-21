@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-05 이벤트 신청·참석 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-05 신청·참석
+        </div>
+        <h1>F03-05. 이벤트 신청 · 참석 (참가자)</h1>
+        <p class="lede">
+          한 이벤트에 신청해서 정식 참석자가 되거나, 대기열에 들어가거나, 호스트 승인을 받거나, 결제를 거치는 모든 분기를 다룬다.
+          <strong>승인 × 결제 × 정원 × 대기열</strong> 네 축의 조합이 본 단위의 모든 시나리오를 만든다.
+          이벤트 도메인에서 가장 시나리오가 많고 가장 자주 회귀가 일어나는 단위.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">분기 축</div><div class="value">4</div><div class="hint">승인·결제·정원·대기</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">13</div></div>
+          <div class="metric"><div class="label">참석 상태</div><div class="value">PENDING/ATTENDING/WAITING/CANCELLED</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">유료 + 승인제 흐름의 핵심 정책</span>
+          <p>승인과 결제, 결제와 참석 확정은 모두 다른 단계다.
+          신청 시 결제 X, 승인 후 결제 권한 부여, 결제 성공 후에만 ATTENDING이 된다.
+          이 순서가 뒤집히면 환불·정산이 즉시 깨진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>신청·참석 분기 머신</h2>
+        <div class="diagram"><div class="mermaid">
+flowchart TD
+    A["참석 신청"] --> B{"호스트?"}
+    B -->|"예"| E1["EVENT_CANNOT_APPLY"]
+    B -->|"아니오"| C{"클럽 멤버십?"}
+    C -->|"미가입"| E2["CLUB_MEMBERSHIP_REQUIRED"]
+    C -->|"통과"| D{"승인 필요?"}
+    D -->|"예"| P1["Application=PENDING<br/>호스트에게 알림"]
+    P1 --> P2{"호스트 승인?"}
+    P2 -->|"거절"| E3["REJECTED"]
+    P2 -->|"승인 + 유료"| P3["APPROVED_PENDING_PAYMENT<br/>결제 권한"]
+    P3 --> P4{"결제 성공?"}
+    P4 -->|"성공"| F["ATTENDING + 거래 기록"]
+    P4 -->|"실패/만료"| E4["PAYMENT_EXPIRED<br/>예약 정원 반환"]
+    P2 -->|"승인 + 무료"| F
+    D -->|"아니오"| G{"정원 여유?"}
+    G -->|"있음"| F
+    G -->|"없음 + 대기열 OK"| H["WAITING + 순번"]
+    G -->|"대기열도 가득"| E5["WAITLIST_FULL"]
+        </div></div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">동작 1</div><h3>직접 신청 (무료 + 승인불요)</h3><p>액션바 “참석 신청” 즉시 ATTENDING.</p></div>
+          <div class="card"><div class="eyebrow">동작 2</div><h3>대기열 등록</h3><p>정원 가득 시 WAITING + 순번. 자동 승급 알림.</p></div>
+          <div class="card"><div class="eyebrow">동작 3</div><h3>승인제 신청서</h3><p>메시지 첨부, 호스트 승인 후 ATTENDING.</p></div>
+          <div class="card"><div class="eyebrow">동작 4</div><h3>유료 결제 흐름</h3><p>승인 후 결제 권한 부여, 결제 성공 시에만 ATTENDING.</p></div>
+          <div class="card"><div class="eyebrow">동작 5</div><h3>자가 취소</h3><p>ATTENDING/WAITING/PENDING 모두 취소 가능, 대기자 자동 승급.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 13개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>무료 + 승인 불요 + 정원 여유</h3>
+            <ol><li>“참석 신청” 탭 → 정원 여유 확인 → ATTENDING + capacity++</li><li>로그·trending INCR</li><li>액션바 “참석 취소”로 교체</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S2 · 대기열</div><h3>정원 초과 대기 등록</h3>
+            <ol><li>정원 가득 + 대기열 활성</li><li>WAITING + 순번 부여</li><li>“대기 취소 (N번째)” 표시</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S3 · 순번 갱신</div><h3>다른 사용자 취소로 순번 당김</h3>
+            <ol><li>ATTENDING 1명 취소 → 1번 대기자 자동 승급</li><li>나머지 대기자 순번 재정렬</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S4 · 자동 승급</div><h3>대기 → ATTENDING 알림</h3>
+            <ol><li>1번 대기자에게 푸시 “참석으로 확정되었습니다!”</li><li>상세 진입 시 1회성 강조 노출</li><li>dismiss 후 재진입 시에는 강조 안 보임</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S5 · 승인제</div><h3>신청서 제출 → 호스트 승인</h3>
+            <ol><li>“신청서 작성” → 메시지 입력 → 제출</li><li>PENDING + 호스트 fanout</li><li>호스트 승인 시 ATTENDING + APPLICATION_APPROVED 푸시</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S6 · 자가 취소</div><h3>ATTENDING 취소</h3>
+            <ol><li>환불 정책 안내 시트 → 확인</li><li>CANCELLED + 1번 대기자 자동 승급</li><li>유료면 환불 흐름(F06)</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S7 · 호스트 시도</div><h3>호스트 본인 신청 시도</h3>
+            <ol><li>UI 우회 시 400 EVENT_CANNOT_APPLY</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S8 · 클럽 가드</div><h3>클럽 비멤버 신청</h3>
+            <ol><li>“참석 신청” → CLUB_MEMBERSHIP_REQUIRED</li><li>클럽 가입 CTA 표시</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S9 · 중복</div><h3>이미 신청한 사용자가 다시 시도</h3>
+            <ol><li>409 ALREADY_ATTENDING 또는 APPLICATION_ALREADY_EXISTS</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S10 · 가득</div><h3>정원·대기열 모두 가득</h3>
+            <ol><li>409 WAITLIST_FULL</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S11 · 잔액</div><h3>유료 + 잔액 부족</h3>
+            <ol><li>결제 시트에 “잔액 부족 + 충전” CTA</li><li>충전 후 다시 신청 가능</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S12 · 마감</div><h3>모집 마감 후 신청</h3>
+            <ol><li>EVENT_ALREADY_CLOSED</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S13 · 유료 + 승인제</div><h3>승인 → 결제 → 확정</h3>
+            <ol><li>신청 시 결제 X, PENDING 등록</li><li>호스트 승인 시 “결제 필요” 상태로 전환</li><li>사용자가 결제 → ATTENDING + 거래 기록</li><li>결제 실패/만료 시 예약 정원 반환</li></ol>
+            <p><strong>현재 갭:</strong> 일부 정책은 구현 중. 승인 즉시 ATTENDING이 만들어지는 경로가 남아있어 결제 검증 강화가 필요.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/capacity</code></td><td>직접 참석(승인 불요)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/apply</code></td><td>신청서 제출(승인제)</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}/capacity</code></td><td>자가 취소</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn"><span class="label">에러 코드</span>
+          <ul>
+            <li><strong>400 EVENT_CANNOT_APPLY</strong> · <strong>EVENT_ALREADY_CLOSED</strong></li>
+            <li><strong>403 CLUB_MEMBERSHIP_REQUIRED</strong></li>
+            <li><strong>409 ALREADY_ATTENDING</strong> · <strong>APPLICATION_ALREADY_EXISTS</strong> · <strong>WAITLIST_FULL</strong></li>
+            <li><strong>402 결제 부족</strong> (F06)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>승인 즉시 결제 없이 ATTENDING으로 만드는 회귀</strong> — 유료 정산 일관성 깨짐.</li>
+            <li><strong>거절된 사용자에게 결제 CTA 노출</strong> — 자격 검증 누락.</li>
+            <li><strong>중복 결제 가능</strong> — 결제 전 신청 상태·기한 검증 필수.</li>
+            <li><strong>대기자 자동 승급 누락</strong> — 빈 자리가 채워지지 않는 회귀.</li>
+            <li><strong>승급 알림 미발송</strong> — 사용자가 자리가 났는지 모름.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-06.html"><div class="eyebrow">호스트</div><h3>F03-06 신청서 승인·거절</h3></a>
+          <a class="card" href="F03-07.html"><div class="eyebrow">관련</div><h3>F03-07 정원·대기열</h3></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">연동</div><h3>06 결제·지갑</h3></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/03_event/F03-05_event-attendance/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-04 이벤트 수정·생명주기 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-04 수정·생명주기
+        </div>
+        <h1>F03-04. 이벤트 수정 · 생명주기 관리 (호스트)</h1>
+        <p class="lede">
+          이벤트의 “이후 모든 운영”을 책임진다. DRAFT 수정·발행, OPEN 일정 변경(전원 알림), 취소(자동 환불),
+          공지 발송(throttle), 삭제(DRAFT만), 종료 후 회고까지. 사용자 환불·알림 같은 다른 단위와 가장 많이 얽혀 있어
+          상태 전이의 단방향성(DRAFT→OPEN→CLOSED/CANCELED)을 깨면 시스템 전체가 흔들린다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">생명주기 액션</div><div class="value">6</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">11</div></div>
+          <div class="metric"><div class="label">상태</div><div class="value">DRAFT/OPEN/CLOSED/CANCELED</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">상태 전이 일방향</span>
+          <p>DRAFT → OPEN → (CLOSED 또는 CANCELED). 한 번 떠난 상태로는 절대 돌아오지 않는다.
+          publish 재시도, 종료된 이벤트 재발행 같은 회귀는 모두 상태 전이 가드에서 차단되어야 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>상태 전이</h2>
+        <div class="diagram"><div class="mermaid">
+stateDiagram-v2
+    [*] --> DRAFT: 생성
+    DRAFT --> OPEN: publish
+    DRAFT --> [*]: 삭제 (DRAFT만 가능)
+    OPEN --> OPEN: 일정 변경 (alert fanout)
+    OPEN --> CLOSED: 종료
+    OPEN --> CANCELED: 취소 (자동 환불 + alert)
+    CLOSED --> [*]: 리뷰·사진첩 진입점
+    CANCELED --> [*]: 조회만
+        </div></div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">동작 1</div><h3>수정 (DRAFT)</h3><p>모든 필드 수정 가능. OPEN 이후에는 일정·정원이 lock.</p></div>
+          <div class="card"><div class="eyebrow">동작 2</div><h3>발행</h3><p>DRAFT → OPEN. publishedAt 기록.</p></div>
+          <div class="card"><div class="eyebrow">동작 3</div><h3>일정 변경 (OPEN)</h3><p>ATTENDING+WAITING 모두에게 EVENT_UPDATED 알림 fanout.</p></div>
+          <div class="card"><div class="eyebrow">동작 4</div><h3>취소 (OPEN)</h3><p>ATTENDING은 자동 환불, 실패는 failed_refund + 호스트 알림.</p></div>
+          <div class="card"><div class="eyebrow">동작 5</div><h3>공지 발송</h3><p>참석자 fanout. 1분당 한도(throttle).</p></div>
+          <div class="card"><div class="eyebrow">동작 6</div><h3>삭제</h3><p>DRAFT만 삭제. OPEN 이후는 취소/종료를 사용.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 11개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>DRAFT 수정 후 발행</h3>
+            <ol><li>수정 화면 진입 → 기존값 prefill</li><li>변경한 필드만 PATCH 전송</li><li>상세 복귀 → “발행” 다이얼로그 → publish</li><li>액션바가 “일정변경/종료/취소”로 교체</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S2 · 알림 fanout</div><h3>OPEN 일정 변경</h3>
+            <ol><li>일정 변경 다이얼로그에 새 시각 + 사유 입력</li><li>서버: 시간 검증 → UPDATE → ATTENDING/WAITING 전원에게 EVENT_UPDATED 알림</li><li>참석자가 푸시로 새 시각 확인</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S3 · 자동 환불</div><h3>유료 이벤트 취소</h3>
+            <ol><li>취소 다이얼로그에 환불 금액 안내</li><li>서버: status=CANCELED, ATTENDING 각각 환불 시도</li><li>실패는 failed_refund + 호스트 알림</li><li>참석자/대기자 모두에게 EVENT_CANCELLED 알림</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S4 · 공지</div><h3>참석자 전체 공지</h3>
+            <ol><li>공지 다이얼로그에 제목·본문</li><li>호스트 제외 참석자 fanout</li><li>발송 알림 카운트 갱신</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S5 · throttle</div><h3>공지 한도 초과</h3>
+            <ol><li>1분 내 4번째 공지 시도</li><li>429 RATE_LIMIT_EXCEEDED</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S6 · 삭제</div><h3>DRAFT 삭제</h3>
+            <ol><li>“삭제” 확인 다이얼로그 → 204</li><li>마이 이벤트 목록 갱신</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S7 · 삭제 차단</div><h3>발행된 이벤트 삭제 시도</h3>
+            <ol><li>UI에서는 버튼 숨김</li><li>우회 시 400 EVENT_INVALID_STATUS_TRANSITION</li><li>“취소/종료를 사용해주세요” 안내</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S8 · 권한</div><h3>비호스트의 수정 시도</h3>
+            <ol><li>수정 화면 진입 시 권한 가드 → “접근 권한이 없습니다”</li><li>우회 시 403 EVENT_NOT_OWNER</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S9 · 검증</div><h3>일정 변경 시간 검증 실패</h3>
+            <ol><li>새 시각을 과거로 입력</li><li>클라이언트 picker가 미래만 허용</li><li>우회 시 400</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S10 · 종료/취소 수정 차단</div><h3>CLOSED/CANCELED 수정 시도</h3>
+            <ol><li>수정 화면 진입 시 “종료되었거나 취소된 이벤트는 수정할 수 없습니다” + 돌아가기</li><li>수정 폼은 마운트되지 않음</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S11 · 위치 정책</div><h3>호스트 위치 공유 안내 화면</h3>
+            <ol><li>오프라인 이벤트 호스트가 위치 공유 정책을 확인</li><li>“참석 확정자에게만 위치 공유” 라벨 표시</li><li>토글 OFF 시 PATCH로 갱신</li></ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/events/{id}</code></td><td>수정(DRAFT 전 필드, OPEN은 일부만)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/publish</code></td><td>DRAFT → OPEN</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/events/{id}/reschedule</code></td><td>일정 변경 + 참석자 알림</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/cancel</code></td><td>취소 + 자동 환불 + 알림</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/announce</code></td><td>공지 발송(throttle)</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}</code></td><td>DRAFT만 삭제</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn"><span class="label">에러 코드</span>
+          <ul>
+            <li><strong>400 EVENT_INVALID_STATUS_TRANSITION</strong> — DRAFT가 아닌데 삭제, OPEN이 아닌데 일정 변경 등</li>
+            <li><strong>403 EVENT_NOT_OWNER</strong> — 비호스트 운영 액션</li>
+            <li><strong>429 RATE_LIMIT_EXCEEDED</strong> — 공지 throttle 초과</li>
+            <li><strong>400 INVALID_INPUT</strong> — 시각 검증 실패</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>일정 변경 후 알림 fanout 누락</strong> — 참석자가 옛 시각으로 이동.</li>
+            <li><strong>취소 시 환불 실패가 침묵</strong> — failed_refund + 호스트 알림이 필수.</li>
+            <li><strong>발행된 이벤트 삭제 우회 허용</strong> — 결제·정산 일관성 붕괴.</li>
+            <li><strong>일정 변경 사유 입력 없이 알림 발송</strong> — 참석자가 무슨 변경인지 모름.</li>
+            <li><strong>공지 throttle 미적용</strong> — 사용자 푸시 폭주, 차단 위험.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">연동</div><h3>06 결제·지갑</h3><p>환불 처리.</p></a>
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">연동</div><h3>12 알림</h3><p>fanout·throttle.</p></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/03_event/F03-04_event-lifecycle/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

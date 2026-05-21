@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F04-07 내 클럽·통계 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-07 내 클럽·통계</div>
+<h1>F04-07. 내 클럽 · 멤버 통계</h1>
+<p class="lede">내가 속한 모든 클럽(운영/가입)을 한 화면에 모은다. OWNER/ADMIN은 추가로 클럽별 멤버 통계(전체·활성·이벤트 참석)를 본다.</p></header>
+<section><div class="metrics">
+<div class="metric"><div class="label">화면</div><div class="value">2</div><div class="hint">내 클럽 목록 · 멤버 통계</div></div>
+<div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
+</div></section>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>내 클럽 목록</h3><p>운영/가입 섹션 분류, 역할 배지.</p></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>멤버 통계</h3><p>전체·활성·이번달 신규·이벤트 참석 TOP.</p></div>
+</div></section>
+<section><h2>사용자 시나리오 7개</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>내 클럽 한눈에</h3><ol><li>운영 2 + 가입 3 분류 노출</li></ol></article>
+<article class="card"><div class="eyebrow">S2</div><h3>빈 상태</h3><ol><li>“클럽 둘러보기” CTA</li></ol></article>
+<article class="card"><div class="eyebrow">S3</div><h3>OWNER 멤버 통계</h3><ol><li>전체·활성 카운트 + TOP 5 차트</li></ol></article>
+<article class="card"><div class="eyebrow">S4</div><h3>페이징</h3><ol><li>20명씩, 전체 카운트는 동일</li></ol></article>
+<article class="card"><div class="eyebrow">S5</div><h3>MEMBER 진입 차단</h3><ol><li>라우터 가드, 우회 시 UI에서 차단</li></ol></article>
+<article class="card"><div class="eyebrow">S6</div><h3>비멤버 진입</h3><ol><li>UNAUTHORIZED</li></ol></article>
+<article class="card"><div class="eyebrow">S7</div><h3>큰 데이터 지연</h3><ol><li>스켈레톤 + 풀투리프레시</li></ol></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/api/v1/clubs/my</code></td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/members/stats?page=&size=</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
+<a class="card" href="../domains/13-profile.html"><div class="eyebrow">진입</div><h3>13 프로필·설정</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/04_club/F04-07_my-clubs-stats/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>

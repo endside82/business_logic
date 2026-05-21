@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F06-08 개인 구독 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-08 개인 구독</div>
+<h1>F06-08. 개인 구독 관리</h1>
+<p class="lede">BASIC/PREMIUM 구독을 지갑 포인트로 결제. 30일 자동 갱신, 자동갱신 해제 시에도 만료까지 이용 가능.</p></header>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>플랜 목록 + 현재 구독</h3></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>구독 시작</h3></div>
+<div class="card"><div class="eyebrow">동작 3</div><h3>자동 갱신</h3></div>
+<div class="card"><div class="eyebrow">동작 4</div><h3>해제(이용은 만료까지 유지)</h3></div>
+<div class="card"><div class="eyebrow">동작 5</div><h3>재활성/플랜 변경</h3></div>
+</div></section>
+<section><h2>사용자 시나리오</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>첫 구독</h3></article>
+<article class="card"><div class="eyebrow">S2</div><h3>자동갱신 해제</h3></article>
+<article class="card"><div class="eyebrow">S3</div><h3>갱신 실패</h3></article>
+<article class="card"><div class="eyebrow">S4</div><h3>플랜 업그레이드</h3></article>
+<article class="card"><div class="eyebrow">S5</div><h3>해지 후 만료</h3></article>
+<article class="card"><div class="eyebrow">S6</div><h3>잔액 부족</h3></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/api/v1/subscriptions/plans</code></td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/subscriptions/me</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/subscriptions/subscribe</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/subscriptions/cancel</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/06_payment/F06-08_personal-subscription/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>

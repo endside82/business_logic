@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F02-01 홈 피드 메인 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/02-home.html">02 홈 피드</a><span>›</span>
+          F02-01 홈 피드 메인
+        </div>
+        <h1>F02-01. 홈 피드 메인 조회</h1>
+        <p class="lede">
+          앱 진입의 첫 화면. 4개 섹션(추천 이벤트·예정/인근·인기 클럽·최신 플랜)을 한 번에 그리되,
+          한 섹션이 실패해도 다른 섹션은 살아남아야 한다. 비로그인 게스트도 같은 화면을 본다(가입 유도 카드 포함).
+          5분 캐시로 재진입을 빠르게 만들고, 위치 권한은 첫 진입에 한 번만 묻는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">동시 호출</div><div class="value">4</div><div class="hint">섹션별 병렬</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
+          <div class="metric"><div class="label">캐시</div><div class="value">5분</div></div>
+          <div class="metric"><div class="label">게스트</div><div class="value">허용</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 원칙</span>
+          <p>각 섹션은 자기 상태(로딩/데이터/빈/에러)를 독립적으로 그린다.
+          “전부 에러”일 때만 전체 화면 에러로 떨어진다. 빈 상태와 에러 상태는 시각적으로 명확히 구분되어
+          사용자가 “데이터가 없어서 비어있다” vs “네트워크 문제로 못 받았다”를 알 수 있어야 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">섹션 1</div><h3>추천 이벤트</h3><p>관심사·위치 기반 맞춤 추천. “더보기”로 F02-04 진입.</p></div>
+          <div class="card"><div class="eyebrow">섹션 2</div><h3>예정/인근 이벤트</h3><p>시작 임박 또는 인근 이벤트 10건. 가로 스크롤.</p></div>
+          <div class="card"><div class="eyebrow">섹션 3</div><h3>인기 클럽</h3><p>멤버 수 내림차순 5건. 빈 상태에서도 헤더는 유지.</p></div>
+          <div class="card"><div class="eyebrow">섹션 4</div><h3>최신 플랜</h3><p>신규 마켓 플랜 5건. 세로 리스트.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>섹션 상태 머신</h2>
+        <p class="subtitle">한 섹션의 4가지 상태. 다른 섹션과 독립적으로 전이한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 로딩
+    로딩 --> 데이터: 200 + 비어있지 않음
+    로딩 --> 빈상태: 200 + 빈 배열
+    로딩 --> 에러: 4xx/5xx/네트워크
+    데이터 --> 로딩: 새로고침
+    빈상태 --> 로딩: 새로고침
+    에러 --> 로딩: "다시 시도"
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>병렬 호출 구조</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["홈 진입"] --> B{"캐시 5분 이내?"}
+    B -->|"예"| C["캐시 4종 즉시 반환"]
+    B -->|"아니오"| D["4개 API 병렬 호출"]
+    D --> E1["추천 이벤트"]
+    D --> E2["예정/인근"]
+    D --> E3["인기 클럽"]
+    D --> E4["최신 플랜"]
+    E1 --> F["섹션별 상태 매핑"]
+    E2 --> F
+    E3 --> F
+    E4 --> F
+    F --> G{"4개 모두 에러?"}
+    G -->|"예"| H["전체 화면 에러"]
+    G -->|"아니오"| I["섹션 단위 렌더"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 8개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>로그인 사용자 첫 진입</h3>
+            <ol>
+              <li>홈 진입 → 4개 섹션 동시 로딩 → 스켈레톤 표시</li>
+              <li>위치 권한 다이얼로그(첫 진입 1회만)</li>
+              <li>4개 모두 200 → 정상 렌더</li>
+              <li>권한 거부 시 상단에 위치 권한 배너 노출</li>
+            </ol>
+            <p><strong>종료</strong> — 캐시 시각 기록, 5분 유효.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S2 · 캐시 hit</div><h3>30초 만에 재진입</h3>
+            <ol>
+              <li>상세 화면에서 백버튼 → 홈 재진입</li>
+              <li>캐시 유효 → 네트워크 호출 0건</li>
+              <li>스켈레톤 없이 즉시 렌더</li>
+            </ol>
+          </article>
+          <article class="card"><div class="eyebrow">S3 · 부분 실패</div><h3>인기 클럽만 500</h3>
+            <ol>
+              <li>4개 중 인기 클럽만 500</li>
+              <li>나머지 3개 섹션은 정상</li>
+              <li>인기 클럽 섹션만 “다시 시도” 표시</li>
+              <li>사용자가 재시도 → 4개 모두 재호출 → 정상화</li>
+            </ol>
+            <p><strong>종료</strong> — 사용자 흐름이 막히지 않음.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S4 · 전체 실패</div><h3>비행기 모드</h3>
+            <ol>
+              <li>4개 모두 네트워크 오류</li>
+              <li>전체 화면 “피드를 불러올 수 없습니다” + 재시도</li>
+              <li>네트워크 복구 후 사용자가 명시적으로 재시도</li>
+            </ol>
+            <p><strong>주의:</strong> 자동 재시도는 하지 않는다.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S5 · 게스트</div><h3>비로그인 사용자</h3>
+            <ol>
+              <li>토큰 없이 4개 호출</li>
+              <li>서버가 사용자 컨텍스트 없이 응답 (myMembershipStatus 등 null)</li>
+              <li>“내 예정”, “위시리스트” 같은 개인화 섹션은 미노출</li>
+              <li>4개 메인 섹션만 렌더 → 가입 퍼널 진입</li>
+            </ol>
+          </article>
+          <article class="card"><div class="eyebrow">S6 · 파라미터 방어</div><h3>잘못된 카테고리</h3>
+            <ol>
+              <li>외부 도구가 잘못된 카테고리 값으로 호출</li>
+              <li>서버: 400 CLUB_INVALID_CATEGORY</li>
+            </ol>
+            <p><strong>주의:</strong> 현재 UI는 카테고리 파라미터를 보내지 않음. 향후 칩 추가 시 클라이언트 화이트리스트 필요.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S7 · 빈 상태</div><h3>인기 클럽 빈 상태 노출</h3>
+            <ol>
+              <li>인기 클럽 응답이 빈 배열</li>
+              <li>섹션 헤더 “인기 클럽” + 본문 “인기 클럽이 없습니다” 동시 노출</li>
+              <li>섹션이 사라지지 않음(에러와 시각적으로 구분)</li>
+            </ol>
+            <p><strong>핵심:</strong> 빈 배열은 에러가 아니다. 헤더 유지가 “이 섹션이 존재함”을 알린다.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S8 · 위치 권한 분기</div><h3>권한 거부 후 배너 노출</h3>
+            <ol>
+              <li>위치 권한 다이얼로그에서 거부</li>
+              <li>상단에 권한 안내 배너 표시</li>
+              <li>위치 기반 추천은 비활성, 다른 섹션은 정상</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약 한눈에</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>섹션</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/home/events?sort=startTime,asc&size=10</code></td><td>예정/인근 이벤트</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/home/clubs?sort=memberCount,desc&size=5</code></td><td>인기 클럽</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/home/plans?sort=createdAt,desc&size=5</code></td><td>최신 플랜</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/recommend?size=10</code></td><td>추천 이벤트(F02-04와 공유)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>로그인 + 5분 캐시 없음</td><td>홈 진입</td><td>4섹션 병렬 호출 + 스켈레톤</td></tr>
+              <tr><td>AC-02</td><td>5분 이내 재진입</td><td>홈 빌드</td><td>네트워크 호출 0, 즉시 렌더</td></tr>
+              <tr><td>AC-03</td><td>한 섹션만 5xx</td><td>응답 수신</td><td>해당 섹션만 재시도 UI</td></tr>
+              <tr><td>AC-04</td><td>4섹션 모두 실패</td><td>응답</td><td>전체 화면 에러</td></tr>
+              <tr><td>AC-05</td><td>비로그인</td><td>홈 진입</td><td>개인화 섹션 미노출, 메인 4섹션 정상</td></tr>
+              <tr><td>AC-06</td><td>한 섹션 빈 배열</td><td>렌더</td><td>헤더 유지 + 빈 카피</td></tr>
+              <tr><td>AC-07</td><td>위치 권한 거부</td><td>홈 진입</td><td>배너 노출, 거리 기반 정렬 비활성</td></tr>
+              <tr><td>AC-08</td><td>한 섹션 “다시 시도”</td><td>탭</td><td>4섹션 전체 재호출</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>한 섹션 실패가 전체 화면 실패로 떨어짐</strong> — 가장 흔한 회귀.</li>
+            <li><strong>빈 배열을 에러로 표시</strong> — 사용자가 “문제 있나?”로 오해. 빈 카피로 분리.</li>
+            <li><strong>캐시로 오래된 상태 표시</strong> — 이미 신청한 이벤트에 “신청하기”가 남음. 진입 시점 정책 필요.</li>
+            <li><strong>위치 권한을 매 진입마다 묻기</strong> — 한 번만 묻고 결과를 기억.</li>
+            <li><strong>비로그인 사용자에게 개인화 섹션이 빈 상태로 노출</strong> — 섹션 자체를 미노출하는 것이 옳다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/02-home.html"><div class="eyebrow">상위 도메인</div><h3>02 홈 피드</h3><p>본 기능이 속한 도메인.</p></a>
+          <a class="card" href="F02-02.html"><div class="eyebrow">다음</div><h3>F02-02 새로고침</h3><p>풀투리프레시 정책.</p></a>
+          <a class="card" href="F02-03.html"><div class="eyebrow">관련</div><h3>F02-03 섹션 카드 진입</h3><p>각 카드의 라우팅.</p></a>
+          <a class="card" href="F02-04.html"><div class="eyebrow">관련</div><h3>F02-04 추천 이벤트 더보기</h3><p>“더보기”로 진입.</p></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/02_home_feed/F02-01_home-feed-main/{backend,frontend,scenarios,diagrams}.md
+  - business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

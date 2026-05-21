@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-11 아이템·번들·플랜 구매 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-11 구매
+        </div>
+        <h1>F08-11. 아이템 · 번들 · 플랜 구매</h1>
+        <p class="lede">
+          마켓의 모든 구매가 통과하는 단일 경로. 단건 아이템, 번들(여러 아이템 + 보너스 포인트),
+          플랜 직접 구매를 분기 처리한다. <strong>잔액 · 재고 · 월 한도 · 본인 차단</strong> 네 가드를 통과해야
+          결제·컬렉션 INSERT·크리에이터 수익 PENDING이 한 트랜잭션 안에서 일어난다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">구매 타입</div><div class="value">3</div><div class="hint">단건·번들·플랜</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
+          <div class="metric"><div class="label">월 한도</div><div class="value">50건</div></div>
+          <div class="metric"><div class="label">수익 분배</div><div class="value">10% + 3.3%</div><div class="hint">플랫폼 수수료 + 원천</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">한 구매가 만드는 데이터 6가지</span>
+          <ol style="margin:0 0 0 18px">
+            <li>지갑 차감 + PointTransaction(PAY)</li>
+            <li>MarketPurchase INSERT (단건/번들 구분)</li>
+            <li>Collection INSERT × N (번들은 아이템 수만큼)</li>
+            <li>CreatorEarning INSERT (PENDING, gross/fee/tax/net 계산)</li>
+            <li>아이템 purchaseCount++ + 재고 차감</li>
+            <li>번들 보너스 포인트 적립 (BundleCurrency가 있을 때)</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">동작 1</div><h3>단건 아이템 구매</h3><p>가장 흔한 경로. 잔액 → 재고 → 월 한도 가드 통과 후 결제 + 컬렉션 + 수익 PENDING 동시 INSERT.</p></div>
+          <div class="card"><div class="eyebrow">동작 2</div><h3>번들 구매</h3><p>여러 아이템 묶음 가격. 컬렉션 N건 INSERT + 번들 보너스 포인트 자동 적립. 번들별 “인당 구매 횟수” 한도 별도.</p><div class="meta"><span class="pill">보너스 포인트</span></div></div>
+          <div class="card"><div class="eyebrow">동작 3</div><h3>플랜 직접 구매</h3><p>마켓 아이템을 거치지 않고 플랜 자체 구매. <strong>본인 플랜 차단·1인 1구매</strong>는 플랜 경로에서만 적용(마켓 아이템은 중복 가능).</p><div class="meta"><span class="pill">1인 1구매</span></div></div>
+          <div class="card"><div class="eyebrow">동작 4</div><h3>무료 플랜 구매</h3><p>가격 0인 플랜은 결제 스킵. PlanPurchase만 생성(transactionId=null).</p></div>
+          <div class="card"><div class="eyebrow">동작 5</div><h3>크리에이터 수익 PENDING</h3><p>구매 시점에 gross/fee/tax/net을 계산해 CreatorEarning을 PENDING으로 적립. 정산 사이클에서 PAID로 전이(F06-10).</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>구매 가드 흐름</h2>
+        <p class="subtitle">네 가드를 통과해야 결제가 진행된다. 어느 한 단계에서 실패하면 전체 트랜잭션 롤백.</p>
+        <div class="diagram"><div class="mermaid">
+flowchart TD
+    A["POST /market/items/{id}/purchase"] --> B{"아이템 상태"}
+    B -->|"ON_SALE 아님"| E1["400 ITEM_NOT_AVAILABLE"]
+    B -->|"ON_SALE"| C{"본인 플랜?<br/>(플랜 경로만)"}
+    C -->|"본인"| E2["400 PLAN_CANNOT_PURCHASE_OWN"]
+    C -->|"타인"| D{"재고 충분?"}
+    D -->|"소진"| E3["400 ITEM_STOCK_EXHAUSTED"]
+    D -->|"가능"| F{"월 한도?"}
+    F -->|"50건 초과"| E4["400 PURCHASE_LIMIT_EXCEEDED"]
+    F -->|"여유"| G{"잔액 충분?"}
+    G -->|"부족"| E5["400 INSUFFICIENT_BALANCE<br/>+ PaymentShortfall"]
+    G -->|"충분"| H["지갑 차감 + 거래 INSERT"]
+    H --> I["MarketPurchase + Collection × N INSERT"]
+    I --> J["CreatorEarning PENDING (gross/fee/tax/net)"]
+    J --> K["purchaseCount++ + 재고 차감"]
+    K --> L["번들이면 보너스 포인트 적립"]
+    L --> M["200/201 + MarketPurchaseVo"]
+        </div></div>
+      </section>
+
+      <section>
+        <h2>수익 분배 계산</h2>
+        <p class="subtitle">크리에이터에게 가는 금액은 PENDING으로 적립되고, 정산 사이클에 PAID로 전이된다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>30,000P 구매 예시</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td>gross</td><td>30,000</td><td>구매 가격</td></tr>
+              <tr><td>플랫폼 수수료(10%)</td><td>−3,000</td><td>플랫폼 수익</td></tr>
+              <tr><td>원천징수(3.3%)</td><td>−891</td><td>세후 입금 전 차감</td></tr>
+              <tr><td>net</td><td>26,109</td><td>크리에이터 PENDING 적립액</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 8개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>단건 구매 — 잔액 충분</h3>
+            <p><strong>잔액 50,000P, 30,000P 아이템.</strong></p>
+            <ol>
+              <li>“구매하기” 탭 → spinner 표시</li>
+              <li>가드 통과 → 지갑 −30,000 + PAY 거래</li>
+              <li>MarketPurchase + Collection(isActivated=false, qty=1) INSERT</li>
+              <li>CreatorEarning(gross=30,000 / fee=3,000 / tax=891 / net=26,109) PENDING INSERT</li>
+              <li>“구매 완료” 다이얼로그 → 컬렉션 화면(F08-12)으로 이동</li>
+            </ol>
+            <p><strong>종료:</strong> 비활성 상태 카드 표시, 사용자가 “활성화” 시점에 사용 가능.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 잔액 부족</div><h3>충전 분기로 전환</h3>
+            <ol>
+              <li>POST /purchase → 400 INSUFFICIENT_BALANCE + PaymentShortfall</li>
+              <li>“포인트 부족” 다이얼로그 → “충전하기”</li>
+              <li>충전 화면을 부족액 prefill로 push</li>
+              <li>충전 후 다시 구매 시도</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 번들</div><h3>3개 아이템 + 1,000P 보너스</h3>
+            <ol>
+              <li>“이 번들로 구매하기” 탭</li>
+              <li>번들 가드(countPerPerson=1) + 월 한도 통과</li>
+              <li>지갑 차감 + 번들 재고 차감</li>
+              <li>MarketPurchase(BUNDLE) + Collection INSERT × 3</li>
+              <li>BundleCurrency 1,000 보너스 → 지갑 +1,000(FREE_POINT)</li>
+            </ol>
+            <p><strong>참고:</strong> 보너스는 무료 포인트로 적립되어 우선 소비된다.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 중복</div><h3>이미 구매한 아이템 재시도</h3>
+            <ol>
+              <li>마켓 아이템: 정책상 <strong>중복 허용</strong> (수량 누적). 컨트롤러 가드 없음.</li>
+              <li>플랜 직접 구매: existsByPlanIdAndBuyerId → 409 PLAN_ALREADY_PURCHASED</li>
+              <li>클라이언트: 409 시 “이미 구매한 플랜입니다” 토스트</li>
+            </ol>
+            <p><strong>UX 부정합:</strong> 마켓 아이템도 “보유 중” 상태에서는 UI가 중복 구매를 막아야 하지만 서버는 허용. 추후 정렬 필요.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 동시성</div><h3>마지막 한 개에 두 명 동시 구매</h3>
+            <ol>
+              <li>stockQuantity=1 상태</li>
+              <li>첫 번째 사용자: 트랜잭션 내 stockQuantity=0 + 구매 완료</li>
+              <li>두 번째 사용자: stockQuantity≤0 감지 → 400 ITEM_STOCK_EXHAUSTED</li>
+            </ol>
+            <p><strong>UI 보강:</strong> 현재 ITEM_STOCK_EXHAUSTED 전용 다이얼로그 미구현 → 일반 400 핸들러로 폴백.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 한도</div><h3>월 50건 도달</h3>
+            <ol>
+              <li>한 달 안에 50건 누적 후 51번째 시도</li>
+              <li>checkMonthlyLimit → 400 PURCHASE_LIMIT_EXCEEDED</li>
+              <li>익월까지 마켓 구매 차단</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 본인 차단</div><h3>크리에이터가 자기 플랜 구매 시도</h3>
+            <ol>
+              <li>plan.creatorId == buyerId → 400 PLAN_CANNOT_PURCHASE_OWN</li>
+              <li>토스트로 안내</li>
+            </ol>
+            <p><strong>주의:</strong> 마켓 아이템 경로에는 가드 없음. 본인 플랜이라도 구매 가능 → 정책 정렬 필요.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 무료</div><h3>가격 0 플랜 구매</h3>
+            <ol>
+              <li>plan.price=0 → 결제 스킵, transactionId=null</li>
+              <li>PlanPurchase INSERT(pricePaid=0)</li>
+              <li>purchaseCount 증가</li>
+            </ol>
+            <p><strong>종료:</strong> 무료 플랜 보유함 추가, 지갑 무변동, CreatorEarning도 생성 안 됨.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/market/items/{id}/purchase</code></td><td>마켓 단건 구매</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/market/bundles/{bundleId}/purchase</code></td><td>번들 구매(아이템 N + 보너스)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/plans/{planId}/purchase</code></td><td>플랜 직접 구매(1인 1구매)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>400 ITEM_NOT_AVAILABLE</strong> — ON_SALE 상태 아님</li>
+            <li><strong>400 ITEM_STOCK_EXHAUSTED</strong> — 재고 소진</li>
+            <li><strong>400 PURCHASE_LIMIT_EXCEEDED</strong> — 월 50건 한도</li>
+            <li><strong>400 PLAN_CANNOT_PURCHASE_OWN</strong> — 본인 플랜(플랜 경로만)</li>
+            <li><strong>409 PLAN_ALREADY_PURCHASED</strong> — 플랜 1인 1구매 위반</li>
+            <li><strong>400 INSUFFICIENT_BALANCE + PaymentShortfall</strong> — 잔액 부족</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>변경</th></tr></thead>
+            <tbody>
+              <tr><td>지갑</td><td>유료 우선 차감(번들 보너스는 무료로 적립)</td></tr>
+              <tr><td>PointTransaction</td><td>PAY(referenceType=MARKET_ITEM/MARKET_BUNDLE/PLAN_PURCHASE) INSERT</td></tr>
+              <tr><td>MarketPurchase</td><td>구매 타입별 1건 INSERT</td></tr>
+              <tr><td>Collection</td><td>아이템마다 1건 INSERT (활성화 전)</td></tr>
+              <tr><td>CreatorEarning</td><td>PENDING + gross/fee/tax/net 계산</td></tr>
+              <tr><td>MarketItem.purchaseCount / stockQuantity</td><td>+1 / −1</td></tr>
+              <tr><td>BundleCurrency</td><td>번들 보너스 포인트 → wallet 적립</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>잔액 충분, 재고 있음, 월 한도 여유</td><td>단건 구매</td><td>지갑·구매·컬렉션·수익 INSERT, 다이얼로그</td></tr>
+              <tr><td>AC-02</td><td>잔액 부족</td><td>구매</td><td>충전 분기로 안내</td></tr>
+              <tr><td>AC-03</td><td>번들 + 보너스</td><td>구매</td><td>컬렉션 N건 + 무료 포인트 적립</td></tr>
+              <tr><td>AC-04</td><td>플랜 1인 1구매</td><td>재구매</td><td>409 차단</td></tr>
+              <tr><td>AC-05</td><td>마지막 한 개</td><td>두 명 동시</td><td>한 명만 성공, 다른 한 명 STOCK_EXHAUSTED</td></tr>
+              <tr><td>AC-06</td><td>50건 누적</td><td>51번째</td><td>LIMIT_EXCEEDED</td></tr>
+              <tr><td>AC-07</td><td>본인 플랜</td><td>플랜 구매</td><td>PLAN_CANNOT_PURCHASE_OWN</td></tr>
+              <tr><td>AC-08</td><td>무료 플랜</td><td>구매</td><td>결제 스킵, PlanPurchase만 INSERT</td></tr>
+              <tr><td>AC-09</td><td>모든 구매</td><td>완료</td><td>CreatorEarning PENDING 1건 적립</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>가드 순서 뒤집힘</strong> — 잔액 가드를 재고/한도보다 먼저 실행하면, 잔액 없는 사용자에게 재고가 “예약 차감”되는 회귀.</li>
+            <li><strong>마켓 아이템 중복 구매를 UI는 막는데 서버는 허용</strong> — 빠른 더블 탭에서 두 번 결제되는 사용자 불만 발생.</li>
+            <li><strong>CreatorEarning 누락</strong> — 정산 사이클에 수익이 안 잡혀 크리에이터 미정산 상태.</li>
+            <li><strong>번들 보너스가 유료 포인트로 적립</strong> — 환불 정책과 충돌. 보너스는 반드시 무료 포인트.</li>
+            <li><strong>본인 플랜 차단을 클라이언트만</strong> — UI 우회 시 본인이 본인 수익 만들기 가능.</li>
+            <li><strong>무료 플랜에 CreatorEarning 생성</strong> — net=0인 PENDING이 쌓여 정산 처리에 혼란.</li>
+            <li><strong>재고 차감을 트랜잭션 밖에서</strong> — 결제 실패 시 재고가 영구 차감.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-12.html"><div class="eyebrow">다음</div><h3>F08-12 내 컬렉션</h3></a>
+          <a class="card" href="F06-06.html"><div class="eyebrow">의존</div><h3>F06-06 결제·환불</h3></a>
+          <a class="card" href="F06-10.html"><div class="eyebrow">정산</div><h3>F06-10 정산·이의</h3></a>
+          <a class="card" href="F08-07.html"><div class="eyebrow">수익</div><h3>F08-07 크리에이터 통계</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/08_plan_market/F08-11_purchase/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

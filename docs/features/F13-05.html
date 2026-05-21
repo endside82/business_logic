@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F13-05 데이터 내보내기 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>F13-05 데이터 내보내기</div>
+<h1>F13-05. 데이터 내보내기 (Export)</h1>
+<p class="lede">사용자가 본인 데이터 사본을 요청. 백그라운드 처리 후 다운로드 가능 → 만료 후 자동 삭제.</p></header>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>요청 + 상태(PROCESSING/READY/FAILED)</h3></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>다운로드</h3></div>
+<div class="card"><div class="eyebrow">동작 3</div><h3>재요청 / 실패 재시도</h3></div>
+</div></section>
+<section><h2>사용자 시나리오</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>처음 요청</h3></article>
+<article class="card"><div class="eyebrow">S2</div><h3>처리 중 상태 표시</h3></article>
+<article class="card"><div class="eyebrow">S3</div><h3>다운로드 + 만료</h3></article>
+<article class="card"><div class="eyebrow">S4</div><h3>실패 → 다시 요청</h3></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>POST</code></td><td><code>/api/v1/users/me/data-export</code></td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/users/me/data-export/status</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위</div><h3>13 프로필·설정</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/13_profile_settings/F13-05_data-export/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>

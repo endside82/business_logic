@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F06-03 거래 내역 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/06-payment.html">06 결제·지갑</a><span>›</span>F06-03 거래 내역</div>
+<h1>F06-03. 거래 내역 조회·필터·내보내기</h1>
+<p class="lede">지갑의 모든 입출금을 시간순으로 본다. 유형(충전/결제/환불/정산), 기간 필터, 상세 진입(이벤트로 점프), 내보내기까지 다룬다.</p></header>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>거래 목록 + 날짜 그룹</h3></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>유형 필터</h3><p>충전/결제/환불/정산/구독.</p></div>
+<div class="card"><div class="eyebrow">동작 3</div><h3>상세 + 관련 이벤트 점프</h3></div>
+<div class="card"><div class="eyebrow">동작 4</div><h3>기간 필터</h3></div>
+<div class="card"><div class="eyebrow">동작 5</div><h3>내보내기</h3></div>
+</div></section>
+<section><h2>사용자 시나리오</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>유형 필터</h3><ol><li>“결제” 탭 → 0페이지부터 재조회</li></ol></article>
+<article class="card"><div class="eyebrow">S2</div><h3>정산 상세 → 이벤트</h3><ol><li>relatedEventId로 점프</li></ol></article>
+<article class="card"><div class="eyebrow">S3</div><h3>빈 결과</h3><ol><li>안내 + 다른 필터 권유</li></ol></article>
+<article class="card"><div class="eyebrow">S4</div><h3>기간 필터</h3></article>
+<article class="card"><div class="eyebrow">S5</div><h3>무한 스크롤</h3></article>
+<article class="card"><div class="eyebrow">S6</div><h3>내보내기</h3></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/api/v1/wallet/transactions?type=&from=&to=&page=&size=</code></td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/wallet/transactions/{id}</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/06-payment.html"><div class="eyebrow">상위</div><h3>06 결제·지갑</h3></a>
+<a class="card" href="F06-01.html"><div class="eyebrow">진입</div><h3>F06-01 지갑 메인</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/06_payment/F06-03_transaction-history/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>

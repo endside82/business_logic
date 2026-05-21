@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F02-05 검색·알림 진입점 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/02-home.html">02 홈 피드</a><span>›</span>
+          F02-05 검색·알림 진입점
+        </div>
+        <h1>F02-05. 검색 · 알림 진입점</h1>
+        <p class="lede">
+          홈 AppBar 우측의 두 아이콘이 검색·알림 도메인으로 보낸다. 본 단위는 라우팅과 트래킹 이벤트까지 담당하고,
+          나머지 화면 동작은 검색(F05)과 알림(F12) 단위가 책임진다.
+          비로그인 게스트가 알림 아이콘을 누르면 로그인 화면으로 안내된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">아이콘</div><div class="value">2</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">6</div></div>
+          <div class="metric"><div class="label">트래킹</div><div class="value">2 이벤트</div></div>
+          <div class="metric"><div class="label">탭 보존</div><div class="value">indexedStack</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">이 단위가 책임지는 것</span>
+          <p>아이콘 탭 시점의 라우팅과 트래킹 이벤트 기록까지. 미읽음 배지·검색 입력 UI 같은 후속 동작은
+          각 도메인 단위가 처리한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">아이콘 1</div><h3>검색 진입</h3><p>AppBar 검색 아이콘 탭 → 트래킹 이벤트 + 검색 화면 라우팅.</p></div>
+          <div class="card"><div class="eyebrow">아이콘 2</div><h3>알림 진입</h3><p>AppBar 알림 아이콘 탭 → 트래킹 + 알림 목록 화면 라우팅. 비로그인은 로그인 화면으로 안내.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>탭 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["홈 AppBar 아이콘 탭"] --> B{"어느 아이콘?"}
+    B -->|"검색"| C["트래킹: home.appbar.search"] --> D["/search"]
+    B -->|"알림"| E["트래킹: home.appbar.notifications"] --> F{"로그인?"}
+    F -->|"예"| G["/notifications"]
+    F -->|"아니오"| H["/auth/login (라우터 가드)"]
+    D -.->|"백 / 홈 탭"| I["홈 indexedStack 복원"]
+    G -.->|"백 / 홈 탭"| I
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 6개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1</div><h3>검색 진입</h3>
+            <ol><li>검색 아이콘 탭 → 트래킹 1건 기록 → 검색 화면 진입</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S2</div><h3>알림 진입</h3>
+            <ol><li>알림 아이콘 탭 → 트래킹 + 알림 목록 진입</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S3 · 복귀</div><h3>홈 탭으로 돌아오기</h3>
+            <ol><li>알림 화면에서 홈 탭 탭 또는 백버튼</li><li>indexedStack에서 홈이 복원 → 스크롤 위치·데이터 유지</li><li>추가 API 호출 없음</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S4 · 게스트</div><h3>비로그인 알림 탭</h3>
+            <ol><li>게스트가 알림 아이콘 탭</li><li>publicRoute에 알림 미포함 → 라우터가 로그인 화면으로 redirect</li><li>로그인 후 다시 알림 화면 진입</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S5 · 미확인 영역</div><h3>미읽음 배지(현재 미구현)</h3>
+            <ol><li>서버상 미읽음 5건이라도 현재 홈 AppBar에는 배지 위젯이 보이지 않음</li><li>탭하면 알림 화면에 진입해 배지/카운트 확인 가능</li></ol>
+            <p><strong>후속 검토:</strong> F12에서 배지 위젯 추가 여부.</p>
+          </article>
+          <article class="card"><div class="eyebrow">S6 · 트래킹</div><h3>전환율 측정 데이터 흐름</h3>
+            <ol><li>검색/알림 탭 시 각각 1건의 트래킹 이벤트 기록</li><li>BI에서 홈 → 검색 / 홈 → 알림 전환율 측정</li></ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>로그인 사용자</td><td>검색 아이콘 탭</td><td>트래킹 + /search 진입</td></tr>
+              <tr><td>AC-02</td><td>로그인 사용자</td><td>알림 아이콘 탭</td><td>트래킹 + /notifications 진입</td></tr>
+              <tr><td>AC-03</td><td>다른 탭에 있음</td><td>홈 탭 탭</td><td>indexedStack 복원, 호출 없음</td></tr>
+              <tr><td>AC-04</td><td>게스트</td><td>알림 아이콘 탭</td><td>로그인 화면으로 redirect</td></tr>
+              <tr><td>AC-05</td><td>각 탭 탭</td><td>BI 수신</td><td>각각 1건 이벤트 기록</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>게스트 알림 탭이 401 화이트스크린</strong> — 로그인 가드를 반드시 통과.</li>
+            <li><strong>탭 전환 시 홈 데이터 reset</strong> — indexedStack 보존이 깨지면 매번 4섹션 재호출 발생.</li>
+            <li><strong>트래킹 이벤트 누락</strong> — BI 측정 데이터 손실.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/02-home.html"><div class="eyebrow">상위</div><h3>02 홈 피드</h3></a>
+          <a class="card" href="../domains/05-search.html"><div class="eyebrow">진입</div><h3>05 검색</h3></a>
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">진입</div><h3>12 알림</h3></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/02_home_feed/F02-05_search-notification-entry/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

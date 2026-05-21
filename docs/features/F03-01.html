@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-01 이벤트 발견·탐색 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-01 이벤트 발견·탐색
+        </div>
+        <h1>F03-01. 이벤트 발견 · 탐색</h1>
+        <p class="lede">
+          전체 이벤트 목록을 키워드·카테고리·정렬로 탐색한다. 비로그인 사용자도 같은 화면을 볼 수 있고
+          액션 시점에 로그인이 유도된다. 무한 스크롤·풀투리프레시·빈 결과·유사 이벤트 추천까지를 단일 단위가 책임진다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하위 동작</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
+          <div class="metric"><div class="label">페이지 크기</div><div class="value">20</div></div>
+          <div class="metric"><div class="label">게스트</div><div class="value">허용</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">동작 1</div><h3>키워드 검색</h3><p>검색바 입력 시 0페이지부터 재조회.</p></div>
+          <div class="card"><div class="eyebrow">동작 2</div><h3>카테고리 필터</h3><p>칩 다중 선택. “전체”는 필터 해제.</p></div>
+          <div class="card"><div class="eyebrow">동작 3</div><h3>정렬</h3><p>최신순·가까운순. “가까운순”은 위치 권한 필요.</p></div>
+          <div class="card"><div class="eyebrow">동작 4</div><h3>무한 스크롤 + 풀투리프레시</h3><p>20건씩 누적. 위로 당기면 0페이지 재조회.</p></div>
+          <div class="card"><div class="eyebrow">동작 5</div><h3>유사 이벤트 진입</h3><p>상세 하단 “유사 이벤트 더보기” 진입점.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>탐색 흐름</h2>
+        <div class="diagram"><div class="mermaid">
+flowchart TD
+    A["이벤트 탭 진입"] --> B["1페이지 호출 (최신순)"]
+    B --> C{"사용자 액션"}
+    C -->|"키워드 입력"| D["0페이지 재조회"]
+    C -->|"카테고리 칩"| D
+    C -->|"정렬 변경"| D
+    C -->|"스크롤 끝"| E["다음 페이지 누적"]
+    C -->|"위로 당김"| F["풀투리프레시 → 0페이지"]
+    C -->|"카드 탭"| G["F03-02 상세"]
+    C -->|"하트 탭"| H["F03-11 위시리스트 토글"]
+    D --> C
+    E --> C
+    F --> C
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 7개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>키워드 검색 → 필터 → 정렬 → 상세 진입</h3>
+            <ol>
+              <li>이벤트 탭 진입 → 1페이지 20건</li>
+              <li>“보드게임” 검색 → 12건</li>
+              <li>SOCIAL 칩 → 7건</li>
+              <li>“가까운순” 정렬</li>
+              <li>하트 탭(낙관적 채워짐) + 카드 탭 → 상세 진입</li>
+            </ol>
+          </article>
+          <article class="card"><div class="eyebrow">S2 · 게스트</div><h3>비로그인 탐색</h3>
+            <ol>
+              <li>publicRoute로 진입 허용</li>
+              <li>카드의 viewer context(참석 상태·위시리스트)는 모두 null/false</li>
+              <li>FAB(이벤트 생성) 숨김</li>
+              <li>상세 진입은 가능, “참석 신청”은 로그인 유도</li>
+            </ol>
+          </article>
+          <article class="card"><div class="eyebrow">S3 · 페이징</div><h3>무한 스크롤 + 풀투리프레시</h3>
+            <ol>
+              <li>스크롤 끝 200px 도달 → 다음 페이지</li>
+              <li>마지막 페이지에서 스피너 사라짐</li>
+              <li>위로 당김 → 0페이지부터 재조회</li>
+            </ol>
+          </article>
+          <article class="card"><div class="eyebrow">S4 · 빈 결과</div><h3>검색 0건</h3>
+            <ol><li>키워드 “도자기수업” 검색 → 0건</li><li>빈 상태 일러스트 + 안내</li><li>“전체” 칩으로 복구</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S5 · 유사 이벤트</div><h3>상세 → 더보기</h3>
+            <ol><li>상세 하단 “유사 이벤트” 가로 스크롤</li><li>“더보기” → 유사 이벤트 화면</li><li>카드 탭으로 다른 상세 이동</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S6 · 네트워크</div><h3>지하철에서 추가 페이지 실패</h3>
+            <ol><li>추가 페이지 호출 실패 → 하단 로더만 사라짐(기존 유지)</li><li>첫 페이지부터 실패면 전체 화면 에러 + “다시 시도”</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S7 · 유사 빈 결과</div><h3>유사 풀이 비어있는 경우</h3>
+            <ol><li>유사 이벤트 응답이 빈 배열</li><li>“이런 이벤트는 어떠세요?” 헤더 유지 + 빈 카피 “유사한 이벤트가 없습니다”</li></ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events?page=&size=20&keyword=&sortType=&categories=</code></td><td>이벤트 목록</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/similar?limit=5</code></td><td>유사 이벤트</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/wishlist</code></td><td>하트(F03-11)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>로그인 사용자</td><td>탐색 → 상세</td><td>위시리스트·정렬 모두 동작</td></tr>
+              <tr><td>AC-02</td><td>게스트</td><td>탭 진입</td><td>FAB 숨김, viewer context null</td></tr>
+              <tr><td>AC-03</td><td>20건 누적</td><td>스크롤 끝</td><td>다음 페이지 추가</td></tr>
+              <tr><td>AC-04</td><td>키워드</td><td>0건 응답</td><td>빈 상태 안내</td></tr>
+              <tr><td>AC-05</td><td>상세</td><td>유사 더보기</td><td>전용 화면 진입</td></tr>
+              <tr><td>AC-06</td><td>추가 페이지 실패</td><td>스크롤</td><td>기존 유지, 재시도 가능</td></tr>
+              <tr><td>AC-07</td><td>유사 빈 결과</td><td>화면 빌드</td><td>헤더 유지 + 빈 카피</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>게스트에게 FAB 노출</strong> — 권한 없는 행동 유도.</li>
+            <li><strong>위치 권한 없음에서 “가까운순” 활성</strong> — 의도된 disabled 처리 누락.</li>
+            <li><strong>유사 빈 결과를 에러로 표시</strong> — 헤더 유지 + 빈 카피로 구분.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">다음</div><h3>F03-02 상세</h3></a>
+          <a class="card" href="F03-11.html"><div class="eyebrow">관련</div><h3>F03-11 위시리스트</h3></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/03_event/F03-01_event-discovery/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

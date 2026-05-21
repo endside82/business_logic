@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-03 블록 에디터 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-03 블록 에디터
+        </div>
+        <h1>F08-03. 블록 에디터</h1>
+        <p class="lede">
+          DRAFT 플랜의 모든 블록(텍스트·헤딩·이미지·체크리스트·POI 등)을 추가·편집·정렬·삭제한다.
+          인라인 입력 + 300ms 디바운스로 자동 저장되고, 마크다운 단축키로 블록 타입을 즉석에서 변환하며,
+          삭제는 soft delete + 실행 취소 토스트로 안전하게 되돌릴 수 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">블록 타입</div><div class="value">7+</div><div class="hint">PARAGRAPH·HEADING·IMAGE·TODO·TOGGLE·POI…</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
+          <div class="metric"><div class="label">디바운스</div><div class="value">300ms</div></div>
+          <div class="metric"><div class="label">블록 한도</div><div class="value">200/플랜</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">편집 가능 조건</span>
+          <p>본인 소유 + plan.status=DRAFT 두 가지 모두 통과해야 한다.
+          비작성자는 화면 진입 자체가 차단되고, 본인이라도 PUBLISHED/HIDDEN 상태에서는 서버가 PLAN_NOT_EDITABLE로 거절한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>블록 추가</h3>
+            <p>“+ 블록 추가” 시트에서 타입 선택 → POST. 한도 200 도달 시 PLAN_BLOCK_LIMIT_EXCEEDED.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>인라인 입력 + 자동 저장</h3>
+            <p>300ms 디바운스로 PATCH(content). 우측 인디케이터 “저장됨/저장 중/재시도 필요” 노출.
+              네트워크 실패 시 자동 재시도는 없고, 다음 입력이 트리거.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>마크다운 단축키로 타입 변환</h3>
+            <p>PARAGRAPH 블록에서 “## ” 입력 → HEADING_2로 변환 + content 초기화. 한 블록의 같은 위치에서 진행.</p>
+            <div class="meta"><span class="pill">즉석 변환</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>이미지 블록 전용 다이얼로그</h3>
+            <p>이미지·POI·체크리스트 같은 복잡한 블록은 INSERT 후 전용 에디터 다이얼로그에서 properties JSON 편집.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>Soft Delete + Undo</h3>
+            <p>본인 + 자손 일괄 deleted_at 세팅. 토스트의 “실행 취소”로 복구. 자식 블록도 함께 복구.</p>
+            <div class="meta"><span class="pill">복구 가능</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>자동 저장 + 단축키 변환 흐름</h2>
+        <div class="diagram"><div class="mermaid">
+flowchart TD
+    A["사용자 입력"] --> B["controller.text 변경"]
+    B --> C["300ms 디바운스"]
+    C --> D{"마크다운 단축키?"}
+    D -->|"예 (## , - , etc.)"| E["controller 비움 + 타입 변환 PATCH"]
+    D -->|"아니오"| F["content PATCH (silent)"]
+    E --> G["타입 갱신 + 인라인 편집 이어짐"]
+    F --> H["인디케이터: 저장됨"]
+    F --> I{"네트워크 실패?"}
+    I -->|"예"| J["status=error · 재시도 필요"]
+    I -->|"아니오"| H
+    J --> K["다음 입력이 재시도 트리거"]
+        </div></div>
+      </section>
+
+      <section>
+        <h2>Soft Delete + 자손 복구</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant API as 블록 API
+    participant SVC as 블록 서비스
+    participant DB as DB
+    U->>API: 길게 누름 → "삭제"
+    API->>SVC: DELETE /blocks/{id}
+    SVC->>DB: softDeleteBlockAndDescendants(id, now)
+    Note over DB: 본인 + 자손 deleted_at 일괄 세팅
+    SVC-->>API: 204
+    API-->>U: 토스트 "삭제됨" + 실행 취소 액션
+    U->>API: "실행 취소" 탭
+    API->>SVC: POST /blocks/{id}/restore
+    SVC->>DB: restoreBlockAndDescendants(id)
+    Note over DB: 자손도 함께 복구
+    API-->>U: 토스트 "복구되었습니다"
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 9개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>첫 텍스트 블록 + 자동 저장</h3>
+            <ol>
+              <li>“블록을 추가해보세요” 빈 상태에서 “+ 블록 추가” → PARAGRAPH</li>
+              <li>POST 201 + 카드 추가</li>
+              <li>본문 입력 → 300ms 디바운스 후 PATCH(content) silent</li>
+              <li>인디케이터 “저장됨”</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 단축키</div><h3>마크다운 “## ” → HEADING_2</h3>
+            <ol>
+              <li>PARAGRAPH에서 “## ” 입력</li>
+              <li>detectMarkdownShortcut → HEADING_2</li>
+              <li>controller 비움 → PATCH(type=HEADING_2, content=””)</li>
+              <li>같은 블록이 헤딩 스타일로 재렌더링</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 이미지</div><h3>전용 다이얼로그</h3>
+            <ol>
+              <li>시트 → IMAGE 선택 → POST 201</li>
+              <li>카드 탭 → showImageBlockEditDialog</li>
+              <li>갤러리 선택 + 외부 스토리지 PUT → fileKey 획득</li>
+              <li>PATCH(properties JSON)로 fileKey 저장</li>
+              <li>썸네일 표시</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 안전망</div><h3>Soft Delete + Undo</h3>
+            <ol>
+              <li>길게 누름 → “삭제”</li>
+              <li>본인 + 자손 soft delete</li>
+              <li>토스트 + “실행 취소” 액션</li>
+              <li>사용자가 취소 탭 → POST /restore → 자손까지 복구</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 한도</div><h3>200개 초과 추가</h3>
+            <ol>
+              <li>POST → 400 PLAN_BLOCK_LIMIT_EXCEEDED</li>
+              <li>“블록 추가에 실패했습니다” + “다시 시도”</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 상태 차단</div><h3>PUBLISHED 플랜 편집</h3>
+            <ol>
+              <li>본인 작성이라도 status≠DRAFT</li>
+              <li>화면은 진입 가능, 블록 추가/수정 시도 → 400 PLAN_NOT_EDITABLE</li>
+              <li>해결: 플랜 hide(UNPUBLISHED) 후 다시 시도</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 권한</div><h3>비작성자 진입 차단</h3>
+            <ol>
+              <li>isCreatorOwned=false → 즉시 “접근 권한이 없습니다”</li>
+              <li>서버 호출 없이 화면 차단</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 들여쓰기</div><h3>자식 블록 생성</h3>
+            <ol>
+              <li>현재 시트는 root에 추가</li>
+              <li>자식 추가는 드래그(F08-04) 들여쓰기 또는 TOGGLE/TODO 다이얼로그 내부 항목</li>
+            </ol>
+            <p><strong>UX 노트:</strong> 자식 생성을 컨텍스트 시트에 추가하는 것은 후속 후보.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S9 · 네트워크</div><h3>인라인 편집 중 끊김</h3>
+            <ol>
+              <li>디바운스 후 PATCH → DioException</li>
+              <li>status=error → 인디케이터 “재시도 필요”</li>
+              <li>사용자가 다시 입력하면 자동 재시도</li>
+            </ol>
+            <p><strong>현재 갭:</strong> 자동 백오프 재시도 없음. 사용자 타이핑이 트리거.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/plans/{id}/blocks</code></td><td>플랜의 모든 블록(트리 평탄화)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/plans/{id}/blocks</code></td><td>블록 추가</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/plans/{id}/blocks/{blockId}</code></td><td>content/type/properties 갱신</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/plans/{id}/blocks/{blockId}</code></td><td>본인 + 자손 soft delete</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/plans/{id}/blocks/{blockId}/restore</code></td><td>본인 + 자손 복구</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>400 PLAN_NOT_EDITABLE</strong> — DRAFT 아닌 플랜</li>
+            <li><strong>400 PLAN_BLOCK_LIMIT_EXCEEDED</strong> — 200 블록 한도 초과</li>
+            <li><strong>403 PLAN_NOT_OWNER</strong> — 비작성자(서버 백업 가드)</li>
+            <li><strong>404 BLOCK_NOT_FOUND</strong> — 이미 삭제 또는 다른 플랜</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>추가</th><th>편집</th><th>삭제/복구</th></tr></thead>
+            <tbody>
+              <tr><td>plan_block</td><td>INSERT(blockType, depth, parentId)</td><td>content/properties/type 갱신</td><td>soft delete + 자손까지 deleted_at</td></tr>
+              <tr><td>외부 스토리지</td><td>이미지 PUT(별도 흐름)</td><td>—</td><td>—</td></tr>
+              <tr><td>plan.updatedAt</td><td>자동 갱신</td><td>자동 갱신</td><td>자동 갱신</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>DRAFT, 본인</td><td>블록 추가</td><td>POST 201, 트리에 카드 추가</td></tr>
+              <tr><td>AC-02</td><td>인라인 입력</td><td>300ms 정지</td><td>silent PATCH, 인디케이터 “저장됨”</td></tr>
+              <tr><td>AC-03</td><td>PARAGRAPH에서 “## ”</td><td>입력</td><td>HEADING_2 변환 PATCH, 컨트롤러 비움</td></tr>
+              <tr><td>AC-04</td><td>이미지 카드 탭</td><td>편집</td><td>다이얼로그 → properties JSON PATCH</td></tr>
+              <tr><td>AC-05</td><td>블록 길게 누름</td><td>삭제</td><td>soft delete + 토스트 + 실행 취소</td></tr>
+              <tr><td>AC-06</td><td>200개 보유</td><td>추가</td><td>BLOCK_LIMIT_EXCEEDED</td></tr>
+              <tr><td>AC-07</td><td>PUBLISHED 플랜</td><td>편집</td><td>PLAN_NOT_EDITABLE</td></tr>
+              <tr><td>AC-08</td><td>비작성자</td><td>진입</td><td>“접근 권한이 없습니다”, 호출 없음</td></tr>
+              <tr><td>AC-09</td><td>네트워크 실패</td><td>PATCH</td><td>인디케이터 error, 자동 재시도 없음</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>디바운스 없이 매 키스트로크 PATCH</strong> — 서버 부하 + 동시성 문제.</li>
+            <li><strong>Soft delete 자손 누락</strong> — 부모는 사라졌는데 자식이 남아 트리 깨짐.</li>
+            <li><strong>복구 시 자손 누락</strong> — 실행 취소 했는데 일부 자식만 살아남는 회귀.</li>
+            <li><strong>마크다운 단축키 변환 시 controller listener 미제거</strong> — 무한 변환 루프.</li>
+            <li><strong>네트워크 실패 시 자동 무한 재시도</strong> — 큐가 쌓여 사용자 경험 저하. 사용자 입력이 트리거가 되는 게 안전.</li>
+            <li><strong>PUBLISHED 플랜 편집을 클라이언트만 가드</strong> — 서버에서 PLAN_NOT_EDITABLE로 강제.</li>
+            <li><strong>이미지 properties JSON 검증 누락</strong> — 잘못된 형식으로 카드 깨짐.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-04.html"><div class="eyebrow">관련</div><h3>F08-04 블록 재정렬</h3></a>
+          <a class="card" href="F08-05.html"><div class="eyebrow">다음</div><h3>F08-05 발행</h3></a>
+          <a class="card" href="F08-01.html"><div class="eyebrow">진입</div><h3>F08-01 내 플랜 목록</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/08_plan_market/F08-03_block-editor/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F01-07 관심사 태그 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/01-auth.html">01 인증·온보딩</a><span>›</span>
+          F01-07 관심사 태그 관리
+        </div>
+        <h1>F01-07. 관심사 태그 관리</h1>
+        <p class="lede">
+          추천 알고리즘에 들어가는 사용자 선호 신호를 만들고 유지한다.
+          온보딩에서 처음 입력되지만 이후 프로필·설정 화면에서 추가·이름 변경·가중치 조정·삭제가 모두 가능하다.
+          본 단위는 등록 진입점에 화면이 있고, 조회·수정·삭제는 외부 단위에서 호출하는 <strong>리소스 단위</strong>의 기능이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하위 동작</div><div class="value">4</div><div class="hint">등록·조회·수정·삭제</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">10</div></div>
+          <div class="metric"><div class="label">사용자당 한도</div><div class="value">20</div></div>
+          <div class="metric"><div class="label">가중치 범위</div><div class="value">0.0–5.0</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">이 기능이 다루는 범위</span>
+          <p>한 사용자의 관심사 태그 목록(태그명·가중치)을 CRUD 단위로 관리한다.
+          본 단위에서 화면이 있는 부분은 <strong>온보딩 단계 2</strong>(F01-06 안의 일괄 등록)만이고,
+          그 외 조회/수정/삭제는 프로필·설정 영역의 외부 화면에서 호출한다.
+          추천 알고리즘 자체는 별도 단위로, 본 단위는 입력값만 책임진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">하위 동작 1</div>
+            <h3>태그 등록</h3>
+            <p>한 태그씩 등록. 중복(같은 이름) 검사 + 사용자당 한도(20개) 검사.
+              <strong>온보딩에서 N개를 묶어 등록할 때도 서버 호출은 N회 분할 호출</strong>이라
+              부분 저장 위험이 있다. 멱등 처리는 클라이언트 책임.</p>
+            <div class="meta"><span class="pill">409 중복</span><span class="pill">400 한도 초과</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 동작 2</div>
+            <h3>본인 태그 목록 조회</h3>
+            <p>가중치 내림차순으로 정렬되어 반환. 가장 관심도 높은 태그가 위쪽에 노출되도록 외부 단위 화면이 그대로 사용한다.</p>
+            <div class="meta"><span class="pill">가중치 정렬</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 동작 3</div>
+            <h3>태그 수정 (이름 또는 가중치)</h3>
+            <p>이름 변경 시 중복 검사. 이름이 같고 가중치만 바뀌면 중복 검사를 생략.
+              가중치 범위는 0.0~5.0이며 서버에서 강제.</p>
+            <div class="meta"><span class="pill">422 범위</span></div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 동작 4</div>
+            <h3>태그 삭제</h3>
+            <p>소유권 검증(본인 태그만 삭제 가능). 다른 사용자의 태그 ID로 시도하면 <strong>404</strong>로 응답해
+              태그 존재 여부 자체를 노출하지 않는다.</p>
+            <div class="meta"><span class="pill">소유권 검증</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>CRUD 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    Onboarding["온보딩 등록 (F01-06)"] -->|"POST"| Reg["태그 등록"]
+    Profile["프로필·설정 화면"] -->|"GET"| Read["목록 조회"]
+    Profile -->|"PUT"| Upd["이름/가중치 수정"]
+    Profile -->|"DELETE"| Del["삭제"]
+    Reg --> DB["사용자 관심사 태그 테이블"]
+    Read --> DB
+    Upd --> DB
+    Del --> DB
+    DB --> Reco["추천 알고리즘 입력"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>등록 검증 분기</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["POST /preference-tags"] --> B{"이미 같은 이름?"}
+    B -->|"예"| E1["409 DUPLICATE"]
+    B -->|"아니오"| C{"개수 < 20?"}
+    C -->|"아니오"| E2["400 MAX_EXCEEDED"]
+    C -->|"예"| D["INSERT (가중치 기본 1.0)"]
+    D --> R["201 + 태그 정보"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 10개</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">S1 · Happy Path</div>
+            <h3>온보딩에서 3개 태그 일괄 등록</h3>
+            <ol>
+              <li>관심사 단계에서 3개 선택 → “다음 (3개 선택)” 탭</li>
+              <li>3회 분할 호출 모두 성공 → 가중치 기본 1.0으로 저장</li>
+              <li>온보딩 완료 플래그 갱신 후 다음 단계로 이동</li>
+            </ol>
+            <p><strong>종료</strong> — 3개 행 INSERT.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S2 · 부분 저장 회귀</div>
+            <h3>중간 실패 후 재시도 시 중복 에러</h3>
+            <ol>
+              <li>S1의 두 번째 호출에서 네트워크 끊김</li>
+              <li>첫 번째 태그만 저장된 상태</li>
+              <li>사용자가 다시 “다음” → 첫 태그 재등록 시도 → 409 DUPLICATE</li>
+              <li>토스트로 사용자가 진행 불가</li>
+            </ol>
+            <p><strong>종료</strong> — 부분 저장 상태에서 막힘.
+              <strong>알려진 한계:</strong> 클라이언트에서 409를 “이미 등록됨”으로 무시하고 다음 태그로 진행하는 멱등 처리를 추가할 후보.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S3 · 한도 초과</div>
+            <h3>21번째 태그 등록 시도</h3>
+            <ol>
+              <li>이미 20개 보유 사용자</li>
+              <li>외부 단위 화면에서 추가 시도</li>
+              <li>서버: 400 MAX_PREFERENCE_TAGS_EXCEEDED</li>
+            </ol>
+            <p><strong>종료</strong> — 추가 차단.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S4 · 중복</div>
+            <h3>이미 가진 태그를 다시 등록</h3>
+            <ol>
+              <li>같은 이름의 태그를 다시 등록 요청</li>
+              <li>서버: 409 DUPLICATE_PREFERENCE_TAG</li>
+            </ol>
+            <p><strong>종료</strong> — 변경 없음.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S5 · 조회</div>
+            <h3>본인 태그 목록 조회</h3>
+            <ol>
+              <li>프로필/설정 화면 진입 → 목록 GET</li>
+              <li>가중치 내림차순으로 정렬되어 응답</li>
+              <li>관심도 높은 태그가 위쪽에 노출</li>
+            </ol>
+            <p><strong>종료</strong> — 조회 성공.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S6 · 이름 변경</div>
+            <h3>‘러닝’을 ‘마라톤’으로 변경</h3>
+            <ol>
+              <li>외부 단위에서 PUT 호출</li>
+              <li>서버: 소유권 확인 → 이름 다름 → 새 이름 중복 검사 → 통과 → UPDATE</li>
+            </ol>
+            <p><strong>종료</strong> — 이름 변경.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S7 · 보안</div>
+            <h3>다른 사용자의 태그 수정 시도</h3>
+            <ol>
+              <li>A 사용자가 B 사용자의 태그 ID로 PUT 시도</li>
+              <li>서버: 본인 소유 태그 조회에서 미발견 → 404 PREFERENCE_TAG_NOT_FOUND</li>
+            </ol>
+            <p><strong>종료</strong> — 차단. <strong>의도:</strong> 403이 아닌 404로 응답해 태그 존재 여부 자체를 숨긴다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S8 · 가중치</div>
+            <h3>이름은 그대로, 가중치만 변경</h3>
+            <ol>
+              <li>같은 이름 + 가중치 3.5로 PUT</li>
+              <li>서버: 이름 동일 인식 → 중복 검사 생략 → 가중치만 UPDATE</li>
+            </ol>
+            <p><strong>종료</strong> — 다음 조회 시 정렬 위치가 변경됨.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S9 · 범위 위반</div>
+            <h3>가중치 6.0으로 시도</h3>
+            <ol>
+              <li>PUT 요청에 weight=6.0</li>
+              <li>서버: 범위 검증 실패 → 422 VALIDATION_ERROR</li>
+            </ol>
+            <p><strong>종료</strong> — 변경 거부.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S10 · 삭제</div>
+            <h3>태그 삭제</h3>
+            <ol>
+              <li>DELETE 요청</li>
+              <li>서버: 소유권 확인 → DELETE → 204</li>
+            </ol>
+            <p><strong>종료</strong> — 태그 제거, 다음 추천부터 신호 변동.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약 한눈에</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">Method</th><th>Path</th><th>인증</th><th>핵심 동작</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/users/me/preference-tags</code></td><td>로그인</td><td>태그 1개 등록. 가중치 기본 1.0.</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/users/me/preference-tags</code></td><td>로그인</td><td>본인 태그 목록. 가중치 내림차순.</td></tr>
+              <tr><td><code>PUT</code></td><td><code>/api/v1/users/me/preference-tags/{tagId}</code></td><td>로그인</td><td>이름/가중치 수정. 소유권 + 중복 + 범위 검증.</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/users/me/preference-tags/{tagId}</code></td><td>로그인</td><td>삭제. 본인 태그만.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드 매트릭스</span>
+          <ul>
+            <li><strong>409 DUPLICATE_PREFERENCE_TAG</strong> — 같은 이름 태그 보유 중</li>
+            <li><strong>400 MAX_PREFERENCE_TAGS_EXCEEDED</strong> — 한도 20개 초과</li>
+            <li><strong>404 PREFERENCE_TAG_NOT_FOUND</strong> — 미보유 또는 다른 사용자 태그</li>
+            <li><strong>422 VALIDATION_ERROR</strong> — 가중치 범위(0.0~5.0) 위반</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>변경</th></tr></thead>
+            <tbody>
+              <tr><td>사용자 관심사 태그 테이블</td><td>등록 INSERT, 수정 UPDATE, 삭제 DELETE — 모두 본인 행만</td></tr>
+              <tr><td>추천 알고리즘 입력</td><td>다음 호출 시점부터 변동된 가중치/태그가 반영(별도 단위 책임)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>온보딩 관심사 단계</td><td>3개 선택 후 다음</td><td>3행 INSERT</td></tr>
+              <tr><td>AC-02</td><td>부분 저장 상태</td><td>재시도</td><td>409가 사용자 흐름을 막지 않도록 멱등 처리 권장</td></tr>
+              <tr><td>AC-03</td><td>20개 보유</td><td>1개 추가</td><td>400 MAX_EXCEEDED</td></tr>
+              <tr><td>AC-04</td><td>같은 이름 보유</td><td>등록</td><td>409 DUPLICATE</td></tr>
+              <tr><td>AC-05</td><td>로그인 사용자</td><td>목록 조회</td><td>가중치 내림차순으로 응답</td></tr>
+              <tr><td>AC-06</td><td>본인 태그 보유</td><td>이름 변경 PUT</td><td>중복 검사 후 UPDATE</td></tr>
+              <tr><td>AC-07</td><td>다른 사용자 태그</td><td>본인이 PUT</td><td>404</td></tr>
+              <tr><td>AC-08</td><td>본인 태그</td><td>가중치만 변경</td><td>중복 검사 없이 UPDATE</td></tr>
+              <tr><td>AC-09</td><td>가중치 6.0</td><td>변경 요청</td><td>422</td></tr>
+              <tr><td>AC-10</td><td>본인 태그</td><td>DELETE</td><td>204, 다음 조회에서 미노출</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn">
+          <span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>온보딩 일괄 등록의 비멱등 회귀</strong> — 부분 저장 후 재시도 시 사용자가 갇히는 알려진 한계.</li>
+            <li><strong>이름 동일 가중치만 변경할 때도 중복 검사 호출</strong> — 본인이 본인 태그를 “중복”으로 자기검출하는 버그.</li>
+            <li><strong>다른 사용자 태그 시도 시 403 응답</strong> — 존재 여부 노출. 404로 통일.</li>
+            <li><strong>가중치 클라이언트 측 범위 미검증</strong> — 422가 사용자 화면 끝에서 노출되어 UX 저하. UI에서 슬라이더 범위로 사전 차단.</li>
+            <li><strong>한도 20개 클라이언트 미강제</strong> — 21번째에 막혀 “선택했는데 안 됨” 경험. UI 칩 그리드에서 사전 비활성화.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위 · 관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/01-auth.html"><div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3><p>본 기능이 속한 도메인.</p></a>
+          <a class="card" href="F01-06.html"><div class="eyebrow">진입점</div><h3>F01-06 온보딩</h3><p>관심사 단계에서 본 단위 등록 API를 호출.</p></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">외부 진입</div><h3>13 프로필·설정</h3><p>등록 외 조회/수정/삭제 화면이 여기에 있다.</p></a>
+          <a class="card" href="../domains/02-home.html"><div class="eyebrow">소비처</div><h3>02 홈 피드</h3><p>관심사 가중치가 추천 입력으로 들어간다.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음 — 갱신/추적용)
+  - business_logic/units/01_auth_onboarding/F01-07_preference-tags/backend.md
+  - business_logic/units/01_auth_onboarding/F01-07_preference-tags/frontend.md
+  - business_logic/units/01_auth_onboarding/F01-07_preference-tags/scenarios.md
+  - business_logic/units/01_auth_onboarding/F01-07_preference-tags/diagrams.md
+  - business_logic/prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

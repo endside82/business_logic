@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F09-05 데이팅 채팅 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>
+          F09-05 채팅
+        </div>
+        <h1>F09-05. 데이팅 채팅</h1>
+        <p class="lede">
+          매치된 두 사용자만 들어오는 1:1 채팅. 본문은 AES로 암호화 저장되고, WebSocket으로 실시간 push되며,
+          <strong>clientMessageId 멱등키</strong>로 같은 메시지가 두 번 들어가지 않게 한다.
+          차단·비활성 등 사용자 상태 변화가 즉시 채팅에 반영되어 신뢰가 깨지지 않게 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">참여자</div><div class="value">2</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">10</div></div>
+          <div class="metric"><div class="label">암호화</div><div class="value">AES at-rest</div></div>
+          <div class="metric"><div class="label">실시간</div><div class="value">WebSocket</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">중복·보안 가드 세 가지</span>
+          <ol style="margin:0 0 0 18px">
+            <li><strong>clientMessageId 멱등</strong> — 네트워크 재시도가 중복 메시지를 만들지 않음.</li>
+            <li><strong>참여자 검증</strong> — 방의 두 user 아니면 GET·POST 모두 차단(NOT_PARTICIPANT).</li>
+            <li><strong>방 상태 ACTIVE</strong> — 차단·만료된 매치의 방(CLOSED)에는 송신 불가.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>메시지 송수신</h3>
+            <p>TEXT(추가로 IMAGE 가능). 송신 → AES 암호화 → INSERT → 알림 + WebSocket push.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>읽음 처리</h3>
+            <p>화면 진입·메시지 수신 시 markAsRead → 상대에게 “읽음” 표시 push.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>타이핑 표시</h3>
+            <p>입력 시작/중지 이벤트를 WebSocket으로. 클라이언트 디바운스로 트래픽 절제.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>차단·종료 시 채팅 잠금</h3>
+            <p>매치 BLOCKED + 방 CLOSED. 송신 시 NOT_FOUND. 방 목록 폴링에서도 자연 제거.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>비활성 프로필 송신 차단</h3>
+            <p>본인 isActive=false면 입력바에 안내 + 송신 비활성. 읽기·스크롤은 가능.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>송신 시퀀스 + 멱등</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor A as 사용자 A
+    actor B as 사용자 B
+    participant API as 채팅 API
+    participant SVC as 채팅 서비스
+    participant DB as DB
+    participant RT as 실시간 서버
+    A->>API: POST /messages {content, clientMessageId}
+    API->>SVC: 메시지 송신
+    SVC->>SVC: 참여자 검증 + 방 ACTIVE 검증
+    SVC->>DB: findByRoomId·SenderId·ClientMessageId
+    alt 이미 존재(재시도)
+        DB-->>SVC: 기존 메시지
+        SVC-->>API: 동일 메시지 반환 (멱등)
+    else 신규
+        SVC->>SVC: AES 암호화
+        SVC->>DB: INSERT
+        SVC->>RT: DateChatMessageCreatedEvent
+        RT->>B: WebSocket push
+        SVC-->>API: 메시지 ID + timestamp
+    end
+    B->>B: 미읽음 +1 + 알림
+    B->>API: PATCH /read (화면 진입 시)
+    API->>RT: read 이벤트
+    RT->>A: 읽음 표시 push
+        </div></div>
+      </section>
+
+      <section>
+        <h2>방 상태 머신</h2>
+        <div class="diagram"><div class="mermaid">
+stateDiagram-v2
+    [*] --> ACTIVE: 매칭 성사 + 방 INSERT
+    ACTIVE --> CLOSED: 한 쪽이 차단 (F09-07)
+    ACTIVE --> CLOSED: 매치 만료/언매치
+    CLOSED --> [*]: 다음 폴링에서 목록 제거
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 10개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>첫 메시지 송수신</h3>
+            <ol>
+              <li>A 입장 → GET 빈 페이지 + “대화를 시작해보세요”</li>
+              <li>A 입력 → typing 이벤트(소켓)</li>
+              <li>“보내기” → POST /messages → AES 암호화 + INSERT</li>
+              <li>알림 + WebSocket push → B에서 새 메시지 노출</li>
+              <li>B 입장 → markAsRead → A에 읽음 표시</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 멱등</div><h3>네트워크 끊김 후 재전송</h3>
+            <ol>
+              <li>clientMessageId 부여하고 송신 → 응답 대기 중 네트워크 끊김</li>
+              <li>재시도 → 같은 clientMessageId로 송신</li>
+              <li>서버: 첫 번째 INSERT 또는 unique 충돌 시 기존 메시지 반환</li>
+              <li>두 번째 호출은 즉시 기존 메시지 반환</li>
+            </ol>
+            <p><strong>결과:</strong> DB에 1건만 존재. 사용자에게 중복 메시지 노출 없음.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 방 닫힘</div><h3>CLOSED 방 송신 시도</h3>
+            <ol>
+              <li>한쪽 차단으로 방 CLOSED</li>
+              <li>캐시된 화면에서 송신 → DATE_CHAT_ROOM_NOT_FOUND</li>
+              <li>“메시지 전송에 실패했습니다” 토스트</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 권한</div><h3>비참여자 조회 시도</h3>
+            <ol>
+              <li>방 ID를 알게 된 외부자가 GET /messages</li>
+              <li>validateParticipant → 403 DATE_CHAT_NOT_PARTICIPANT</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 즉시 종료</div><h3>차단 발동 → 채팅 종료</h3>
+            <ol>
+              <li>차단 호출 → 매치 BLOCKED + 방 CLOSED + closedAt</li>
+              <li>다음 폴링에서 ACTIVE 필터로 방 목록에서 제거</li>
+              <li>양쪽 모두 송신 불가</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 신고</div><h3>채팅 내 직접 신고 없음</h3>
+            <p>차단으로 단절. 별도 신고는 외부 신고 도메인(F11-04)에서 처리.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 본인 인증 만료</div><h3>인증 만료 사용자의 채팅</h3>
+            <p>채팅 컨트롤러에는 isVerified 가드 없음 → 인증 만료라도 기존 채팅은 가능. 새 매치는 F09-03에서 차단됨.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S8 · 푸시 진입</div><h3>FCM → 채팅 화면</h3>
+            <ol>
+              <li>백그라운드 사용자에게 “새 메시지 + 30자 미리보기” 푸시</li>
+              <li>탭 → DeepLink로 /dating/chat/{roomId} push</li>
+              <li>진입 즉시 markAsRead → 카운터 0</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S9 · 만남 제안</div><h3>채팅에서 F09-06로 이동</h3>
+            <ol>
+              <li>채팅 헤더 📅 탭</li>
+              <li>/dating/meeting/{matchId} push</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S10 · 비활성</div><h3>본인 프로필 비활성 상태 송신</h3>
+            <ol>
+              <li>입력바에 “프로필이 비활성 상태에서는 메시지를 보낼 수 없습니다” 안내</li>
+              <li>송신 입력 자체 차단, 읽기·스크롤은 가능</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/date/chats/{roomId}/messages?page=&size=</code></td><td>메시지 페이지(최신순)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/date/chats/{roomId}/messages</code></td><td>송신(clientMessageId 멱등)</td></tr>
+              <tr><td><code>PATCH</code></td><td><code>/api/v1/date/chats/{roomId}/read</code></td><td>읽음 처리</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>403 DATE_CHAT_NOT_PARTICIPANT</strong> — 방 참여자 아님</li>
+            <li><strong>404 DATE_CHAT_ROOM_NOT_FOUND</strong> — 방 부재 또는 CLOSED</li>
+            <li><strong>400 INVALID_MESSAGE_TYPE</strong> — 미지원 type</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>송신</th><th>읽음</th><th>차단/종료</th></tr></thead>
+            <tbody>
+              <tr><td>date_chat_message</td><td>AES 암호화 INSERT (clientMessageId UNIQUE)</td><td>—</td><td>—</td></tr>
+              <tr><td>date_chat_room</td><td>lastMessageAt 갱신</td><td>readAt 또는 별도 카운터</td><td>status=CLOSED + closedAt</td></tr>
+              <tr><td>알림</td><td>CHAT_MESSAGE 알림 + WebSocket push</td><td>읽음 push</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>ACTIVE 방, 참여자</td><td>송신</td><td>AES INSERT + 알림 + 상대 push</td></tr>
+              <tr><td>AC-02</td><td>같은 clientMessageId 재전송</td><td>POST</td><td>기존 메시지 반환, DB 1건만</td></tr>
+              <tr><td>AC-03</td><td>CLOSED 방</td><td>송신</td><td>404 NOT_FOUND</td></tr>
+              <tr><td>AC-04</td><td>방 참여자 아님</td><td>GET</td><td>403 NOT_PARTICIPANT</td></tr>
+              <tr><td>AC-05</td><td>차단 발동</td><td>방 상태 전이</td><td>양쪽 송신 불가, 목록 제거</td></tr>
+              <tr><td>AC-06</td><td>백그라운드</td><td>FCM 탭</td><td>딥 링크 + markAsRead + 카운터 0</td></tr>
+              <tr><td>AC-07</td><td>본인 비활성</td><td>채팅 진입</td><td>송신 비활성 + 안내</td></tr>
+              <tr><td>AC-08</td><td>채팅 진입</td><td>화면 빌드</td><td>markAsRead 자동 호출</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>clientMessageId UNIQUE 인덱스 누락</strong> — 멱등 가드가 작동 안 함. 트랜잭션 격리수준에서도 race 발생.</li>
+            <li><strong>방 참여자 검증을 GET만 적용</strong> — POST가 빠지면 외부자가 메시지 송신 가능.</li>
+            <li><strong>차단 시 방 상태만 바꾸고 사용자 측 화면 폴링은 그대로</strong> — “CLOSED 방”에 계속 송신 시도하는 회귀.</li>
+            <li><strong>읽음 push 누락</strong> — 보낸 쪽은 상대가 메시지를 봤는지 모름.</li>
+            <li><strong>비활성 사용자에게 송신 허용</strong> — 매칭 시점의 사용자 상태와 어긋난 대화 발생.</li>
+            <li><strong>본문을 평문 저장</strong> — AES 암호화 누락 시 데이터 보호 정책 위반.</li>
+            <li><strong>FCM 미리보기에 30자 이상 노출</strong> — 푸시 알림에 민감 정보 노출.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
+          <a class="card" href="F09-03.html"><div class="eyebrow">선행</div><h3>F09-03 매칭</h3></a>
+          <a class="card" href="F09-06.html"><div class="eyebrow">진입</div><h3>F09-06 만남 제안</h3></a>
+          <a class="card" href="F09-07.html"><div class="eyebrow">차단</div><h3>F09-07 차단</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/09_private_date/F09-05_chat/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

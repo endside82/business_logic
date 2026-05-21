@@ -5,6 +5,154 @@
   const placeholder = document.getElementById('sidebar');
   if (!placeholder) return;
 
+  // Feature children for each domain. Code + concise label.
+  const FEATURES = {
+    '01-auth': [
+      ['F01-01', '이메일 가입·로그인'],
+      ['F01-02', '소셜 로그인'],
+      ['F01-03', '이메일 인증'],
+      ['F01-04', '비밀번호 재설정'],
+      ['F01-05', '토큰 갱신·로그아웃'],
+      ['F01-06', '온보딩'],
+      ['F01-07', '관심사 태그'],
+      ['F01-08', '소셜 연결 해제'],
+    ],
+    '02-home': [
+      ['F02-01', '홈 메인 조회'],
+      ['F02-02', '새로고침'],
+      ['F02-03', '섹션 카드 진입'],
+      ['F02-04', '추천 이벤트 더보기'],
+      ['F02-05', '검색·알림 진입점'],
+    ],
+    '03-event': [
+      ['F03-01', '발견·탐색'],
+      ['F03-02', '상세 조회'],
+      ['F03-03', '이벤트 생성'],
+      ['F03-04', '수정·생명주기'],
+      ['F03-05', '신청·참석'],
+      ['F03-06', '신청서 승인·거절'],
+      ['F03-07', '정원·대기열'],
+      ['F03-08', 'QR 체크인'],
+      ['F03-09', '이벤트 사진첩'],
+      ['F03-10', '이벤트-플랜 연결'],
+      ['F03-11', '위시리스트'],
+      ['F03-12', '내 이벤트·로그'],
+    ],
+    '04-club': [
+      ['F04-01', '발견·탐색'],
+      ['F04-02', '상세·가입'],
+      ['F04-03', '생성·수정·이전'],
+      ['F04-04', '멤버 관리'],
+      ['F04-05', '대기열·초대'],
+      ['F04-06', '차단 관리'],
+      ['F04-07', '내 클럽·통계'],
+      ['F04-08', '게시판'],
+      ['F04-09', '댓글·대댓글'],
+      ['F04-10', '공지사항'],
+      ['F04-11', '사진첩'],
+      ['F04-12', '클럽 이벤트·캘린더'],
+      ['F04-14', '기부하기'],
+      ['F04-15', '기금 인출'],
+      ['F04-16', '클럽 구독'],
+    ],
+    '05-search': [
+      ['F05-01', '키워드 검색'],
+      ['F05-02', '자동완성'],
+      ['F05-03', '검색 필터'],
+      ['F05-04', '최근 검색어'],
+      ['F05-05', '저장된 검색'],
+    ],
+    '06-payment': [
+      ['F06-01', '지갑 메인'],
+      ['F06-02', '포인트 충전'],
+      ['F06-03', '거래 내역'],
+      ['F06-04', '결제 수단'],
+      ['F06-05', '자동 충전'],
+      ['F06-06', '결제·환불'],
+      ['F06-07', '호스팅 티켓'],
+      ['F06-08', '개인 구독'],
+      ['F06-09', '수익 대시보드'],
+      ['F06-10', '정산·이의'],
+    ],
+    '07-settlement': [
+      ['F07-01', '정산 생성'],
+      ['F07-02', '항목 관리'],
+      ['F07-03', '활성화·취소'],
+      ['F07-04', '현황·영수증'],
+      ['F07-05', '분담금 납부'],
+      ['F07-06', '이체 확인·상각'],
+      ['F07-07', '리마인드·연장'],
+      ['F07-08', '이의·감사로그'],
+      ['F07-09', '선입금·환불규정'],
+      ['F07-10', '계좌·이력·신뢰도'],
+    ],
+    '08-plan-market': [
+      ['F08-01', '내 플랜 목록'],
+      ['F08-02', '플랜 상세'],
+      ['F08-03', '블록 에디터'],
+      ['F08-04', '블록 재정렬'],
+      ['F08-05', '플랜 발행'],
+      ['F08-06', '마켓 아이템 관리'],
+      ['F08-07', '크리에이터 프로필'],
+      ['F08-08', '마켓 메인'],
+      ['F08-09', '마켓 검색'],
+      ['F08-10', '아이템 상세'],
+      ['F08-11', '구매'],
+      ['F08-12', '내 컬렉션'],
+      ['F08-13', '이벤트·리뷰'],
+    ],
+    '09-dating': [
+      ['F09-01', '본인 인증'],
+      ['F09-02', '프로필 관리'],
+      ['F09-03', '스와이프·매칭'],
+      ['F09-04', '매칭 목록'],
+      ['F09-05', '채팅'],
+      ['F09-06', '만남 제안'],
+      ['F09-07', '차단·해제'],
+      ['F09-08', '프로필 조회 이력'],
+    ],
+    '10-calendar': [
+      ['F10-01', '통합 캘린더'],
+      ['F10-02', '항목 라우팅'],
+      ['F10-03', '단일 가용 시간'],
+      ['F10-04', '반복 가용 규칙'],
+      ['F10-05', '타 사용자 가용성'],
+    ],
+    '11-review': [
+      ['F11-01', '리뷰 작성'],
+      ['F11-02', '리뷰 목록'],
+      ['F11-03', '리뷰 수정·삭제'],
+      ['F11-04', '신고'],
+      ['F11-05', '신뢰점수'],
+      ['F11-06', '취향 프로필'],
+    ],
+    '12-notification': [
+      ['F12-01', '목록·읽음'],
+      ['F12-02', '그룹·배지'],
+      ['F12-03', '카테고리 설정'],
+      ['F12-04', '방해금지 시간'],
+      ['F12-05', '디바이스 토큰'],
+      ['F12-06', '권한 안내 배너'],
+    ],
+    '13-profile': [
+      ['F13-01', '마이페이지 허브'],
+      ['F13-02', '프로필 수정'],
+      ['F13-03', '주소 관리'],
+      ['F13-04', '선호 태그'],
+      ['F13-05', '데이터 내보내기'],
+      ['F13-06', '계정 삭제(유예)'],
+      ['F13-07', '즉시 탈퇴'],
+    ],
+    '14-location': [
+      ['F14-01', '위치 공유'],
+      ['F14-02', '공유 중지'],
+      ['F14-03', '만료 연장'],
+      ['F14-04', '프라이버시 대시보드'],
+      ['F14-05', '이벤트 길찾기'],
+      ['F14-06', '역지오코딩'],
+    ],
+  };
+
   const NAV = [
     {
       heading: '시작점',
@@ -25,21 +173,22 @@
     },
     {
       heading: '14개 도메인',
+      domainGroup: true,
       links: [
-        { href: 'domains/01-auth.html',         num: '01', label: '인증·온보딩' },
-        { href: 'domains/02-home.html',         num: '02', label: '홈 피드' },
-        { href: 'domains/03-event.html',        num: '03', label: '이벤트' },
-        { href: 'domains/04-club.html',         num: '04', label: '클럽' },
-        { href: 'domains/05-search.html',       num: '05', label: '검색' },
-        { href: 'domains/06-payment.html',      num: '06', label: '결제·지갑' },
-        { href: 'domains/07-settlement.html',   num: '07', label: '모임 정산' },
-        { href: 'domains/08-plan-market.html',  num: '08', label: '플랜 마켓' },
-        { href: 'domains/09-dating.html',       num: '09', label: '프라이빗 데이팅' },
-        { href: 'domains/10-calendar.html',     num: '10', label: '캘린더' },
-        { href: 'domains/11-review.html',       num: '11', label: '리뷰·신고' },
-        { href: 'domains/12-notification.html', num: '12', label: '알림' },
-        { href: 'domains/13-profile.html',      num: '13', label: '프로필·설정' },
-        { href: 'domains/14-location.html',     num: '14', label: '위치·길찾기' },
+        { href: 'domains/01-auth.html',         num: '01', label: '인증·온보딩',      slug: '01-auth' },
+        { href: 'domains/02-home.html',         num: '02', label: '홈 피드',          slug: '02-home' },
+        { href: 'domains/03-event.html',        num: '03', label: '이벤트',           slug: '03-event' },
+        { href: 'domains/04-club.html',         num: '04', label: '클럽',             slug: '04-club' },
+        { href: 'domains/05-search.html',       num: '05', label: '검색',             slug: '05-search' },
+        { href: 'domains/06-payment.html',      num: '06', label: '결제·지갑',       slug: '06-payment' },
+        { href: 'domains/07-settlement.html',   num: '07', label: '모임 정산',       slug: '07-settlement' },
+        { href: 'domains/08-plan-market.html',  num: '08', label: '플랜 마켓',       slug: '08-plan-market' },
+        { href: 'domains/09-dating.html',       num: '09', label: '프라이빗 데이팅', slug: '09-dating' },
+        { href: 'domains/10-calendar.html',     num: '10', label: '캘린더',           slug: '10-calendar' },
+        { href: 'domains/11-review.html',       num: '11', label: '리뷰·신고',       slug: '11-review' },
+        { href: 'domains/12-notification.html', num: '12', label: '알림',             slug: '12-notification' },
+        { href: 'domains/13-profile.html',      num: '13', label: '프로필·설정',     slug: '13-profile' },
+        { href: 'domains/14-location.html',     num: '14', label: '위치·길찾기',     slug: '14-location' },
       ],
     },
     {
@@ -73,10 +222,49 @@
     },
   ];
 
+  // Figure out which domain (if any) the current page belongs to so we can
+  // auto-expand its child list.
+  const currentPath = location.pathname.replace(/\\/g, '/');
+  let activeDomainSlug = null;
+  const domainMatch = currentPath.match(/domains\/([\w-]+)\.html$/);
+  if (domainMatch) activeDomainSlug = domainMatch[1];
+  const featureMatch = currentPath.match(/features\/(F(\d{2})-\d{2})\.html$/);
+  let activeFeatureCode = null;
+  if (featureMatch) {
+    activeFeatureCode = featureMatch[1];
+    const domainNum = featureMatch[2];
+    const domainEntry = NAV.find((g) => g.domainGroup);
+    if (domainEntry) {
+      const match = domainEntry.links.find((l) => l.num === domainNum);
+      if (match) activeDomainSlug = match.slug;
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   const navHtml = NAV.map((group) => {
     const links = group.links.map((link) => {
       const num = link.num ? `<span class="num">${link.num}</span>` : '';
-      return `<a href="${base}${link.href}">${num}${link.label}</a>`;
+      const linkHtml = `<a href="${base}${link.href}">${num}${escapeHtml(link.label)}</a>`;
+
+      if (group.domainGroup && link.slug && FEATURES[link.slug]) {
+        const isOpen = link.slug === activeDomainSlug;
+        const subLinks = FEATURES[link.slug].map(([code, label]) => {
+          return `<a class="sub" href="${base}features/${code}.html"><span class="code">${code}</span>${escapeHtml(label)}</a>`;
+        }).join('');
+        return `<div class="dom${isOpen ? ' is-open' : ''}">
+          <div class="dom-row">
+            ${linkHtml}
+            <button class="dom-toggle" type="button" aria-expanded="${isOpen}" aria-label="${escapeHtml(link.label)} 하위 기능 펼치기">
+              <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 L6 7.5 L9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="dom-children">${subLinks}</div>
+        </div>`;
+      }
+      return linkHtml;
     }).join('');
     return `<h4>${group.heading}</h4>${links}`;
   }).join('');
@@ -87,18 +275,27 @@
     <nav aria-label="문서 탐색">${navHtml}</nav>
   `;
 
-  // Mark the active link
-  const path = location.pathname.replace(/\\/g, '/');
+  // Mark the active link (works for domain pages and feature pages)
   placeholder.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href') || '';
     const target = href.split('/').slice(-2).join('/');
-    if (path.endsWith(target) || path.endsWith('/' + target)) {
+    if (currentPath.endsWith(target) || currentPath.endsWith('/' + target)) {
       a.classList.add('active');
     }
   });
 
+  // Wire up domain expand/collapse toggles
+  placeholder.querySelectorAll('.dom .dom-toggle').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const dom = btn.closest('.dom');
+      const open = dom.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
   // ---------- Mobile topbar with hamburger toggle ----------
-  // Inject a sticky topbar before <main> for narrow viewports.
   let topbar = document.querySelector('.mobile-topbar');
   if (!topbar) {
     topbar = document.createElement('header');
@@ -118,7 +315,6 @@
     }
   }
 
-  // Backdrop for the slide-out drawer
   let backdrop = document.querySelector('.sidebar-backdrop');
   if (!backdrop) {
     backdrop = document.createElement('div');
@@ -126,7 +322,7 @@
     document.body.appendChild(backdrop);
   }
 
-  const sidebarEl = placeholder; // <aside class="sidebar">
+  const sidebarEl = placeholder;
   sidebarEl.id = sidebarEl.id || 'sidebar';
 
   function openDrawer() {
@@ -152,20 +348,33 @@
   });
   backdrop.addEventListener('click', closeDrawer);
 
-  // Close drawer on link tap so content is visible immediately
+  // Close drawer on link tap so content is visible immediately. Toggle buttons
+  // (inside .dom-row) must not close the drawer — they only expand/collapse.
   sidebarEl.querySelectorAll('a').forEach((a) => {
     a.addEventListener('click', () => {
       if (window.matchMedia('(max-width: 1100px)').matches) closeDrawer();
     });
   });
 
-  // Esc closes drawer
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && sidebarEl.classList.contains('is-open')) closeDrawer();
   });
 
-  // Restore desktop state on resize up
   window.addEventListener('resize', () => {
     if (!window.matchMedia('(max-width: 1100px)').matches) closeDrawer();
   });
+
+  // Scroll the active link into view inside the sidebar so deep feature pages
+  // don't require manual scrolling to confirm location.
+  const active = sidebarEl.querySelector('a.active');
+  if (active && typeof active.scrollIntoView === 'function') {
+    // Use a microtask so layout has settled.
+    setTimeout(() => {
+      try {
+        active.scrollIntoView({ block: 'center', behavior: 'instant' });
+      } catch (_) {
+        active.scrollIntoView();
+      }
+    }, 0);
+  }
 })();

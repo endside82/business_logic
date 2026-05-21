@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F01-01 이메일 회원가입·로그인 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/01-auth.html">01 인증·온보딩</a><span>›</span>
+          F01-01 이메일 회원가입·로그인
+        </div>
+        <h1>F01-01. 이메일 회원가입 · 로그인</h1>
+        <p class="lede">
+          이메일과 비밀번호만으로 신규 사용자를 등록하고, 기존 사용자를 다시 들여보낸다.
+          모든 사용자의 첫 접점이라 “여기서 멈추면 다른 모든 기능이 보이지 않는다”는 점이 본 기능의
+          무게다. 가입은 사용자·약관·생년월일·로그인 수단까지 한 번에 만들어내는
+          단일 트랜잭션이고, 로그인은 상태 검증과 토큰 재발급이 합쳐진 짧지만 분기가 많은 흐름이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하위 기능</div><div class="value">4</div><div class="hint">가입·로그인·스플래시·DEV 바이패스</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">10</div><div class="hint">정상 2 · 검증 실패 6 · E2E 2</div></div>
+          <div class="metric"><div class="label">화면</div><div class="value">3</div><div class="hint">로그인·회원가입·스플래시</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">높음</div><div class="hint">자격증명·계정 잠김</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">이 기능이 다루는 범위</span>
+          <p>여기서는 <strong>이메일 + 비밀번호</strong>만 다룬다.
+          소셜 로그인(F01-02), 이메일 인증 메일 발송(F01-03), 비밀번호 재설정(F01-04), 토큰 갱신(F01-05),
+          첫 로그인 뒤의 온보딩(F01-06)은 각자 별도 단위로 분리되어 있다. 본 단위는 <em>로그인 화면에 진입한 사람이 어떻게 사용자 레코드를 갖게 되고,
+          어떤 조건에서 다음 화면으로 이동하게 되는지</em>까지를 책임진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <p class="subtitle">한 카드 = 사용자가 한 번에 의식하는 흐름 단위. 시나리오는 이 단위 안에서 분기한다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">하위 기능 1</div>
+            <h3>신규 회원가입</h3>
+            <p>이메일·비밀번호·닉네임·생년월일·약관 동의를 받아 한 번의 가입 요청으로
+              <strong>사용자·회원정보·약관·로그인 수단</strong> 4가지 레코드를 동시에 만든다.
+              만 19세 미만, 중복 이메일/닉네임, 약한 비밀번호는 가입 자체를 막는다.</p>
+            <div class="meta">
+              <span class="pill">5 시나리오</span>
+              <span class="pill warn">미성년자 차단</span>
+              <span class="pill">409 중복</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 기능 2</div>
+            <h3>이메일 로그인</h3>
+            <p>등록된 이메일과 비밀번호로 다시 진입한다. 잘못된 자격 증명·잠금/탈퇴 상태는 거부.
+              <strong>처음 로그인하는 사용자</strong>는 별도 플래그로 구분되어 이어지는 화면이
+              온보딩으로 분기한다.</p>
+            <div class="meta">
+              <span class="pill">3 시나리오</span>
+              <span class="pill danger">잠금/탈퇴 거부</span>
+              <span class="pill">첫 로그인 분기</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 기능 3</div>
+            <h3>스플래시 진입 분기</h3>
+            <p>앱을 열 때 저장된 토큰을 확인해 <strong>로그인 화면 / 온보딩 / 홈</strong>
+              중 어디로 보낼지 결정한다. 토큰이 없으면 무조건 로그인 화면.
+              사용자는 이 화면에서 직접 액션을 하지 않지만, 잘못 분기하면
+              “앱이 매번 로그인 화면을 띄운다”는 가장 흔한 회귀가 발생한다.</p>
+            <div class="meta">
+              <span class="pill">자동 분기</span>
+              <span class="pill info">F01-05 의존</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">하위 기능 4</div>
+            <h3>개발 환경 바이패스</h3>
+            <p>개발자가 시드 계정으로 한 번에 들어갈 수 있는 임시 진입점.
+              <strong>프로덕션 빌드에서는 노출되지 않는다.</strong>
+              E2E 테스트는 이 버튼을 쓰지 않고 실제 가입/로그인 흐름을 검증한다.</p>
+            <div class="meta">
+              <span class="pill">DEV 전용</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 전이</h2>
+        <p class="subtitle">스플래시가 토큰을 보고 갈래를 정한다. 회원가입은 곧장 홈으로 가지 않고
+          한 번 로그인 화면으로 돌려보내 명시적 로그인을 유도한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    Splash["스플래시<br/>토큰 검사"]
+    Login["로그인 화면"]
+    Signup["회원가입 화면"]
+    EmailVerify["이메일 인증<br/>(F01-03)"]
+    Onboarding["온보딩<br/>(F01-06)"]
+    Home["홈"]
+    Splash -->|"토큰 없음"| Login
+    Splash -->|"토큰 + 온보딩 완료"| Home
+    Login -->|"회원가입 링크"| Signup
+    Signup -->|"가입 성공 + 토스트"| Login
+    Login -->|"로그인 + 첫 로그인 사용자"| EmailVerify
+    Login -->|"로그인 + 온보딩 미완료"| Onboarding
+    Login -->|"로그인 + 완료 사용자"| Home
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>회원가입 — 사용자 시퀀스</h2>
+        <p class="subtitle">사용자가 한 번의 “가입하기” 탭을 누른 뒤 서버 안에서 일어나는 일.
+          <strong>중복 검사 → 나이 검증 → 4테이블 INSERT → 토큰 발급</strong>이 한 트랜잭션 안에서 일어난다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant S as 회원가입 화면
+    participant API as 회원가입 API
+    participant SVC as 회원 서비스
+    participant DB as DB
+    U->>S: 이메일·비밀번호·닉네임·생년월일·약관 입력
+    U->>S: "가입하기" 탭
+    S->>API: POST /api/v1/auth/signup
+    API->>SVC: 가입 요청
+    SVC->>DB: 이메일·닉네임 중복 확인
+    alt 중복
+        DB-->>SVC: 이미 존재
+        SVC-->>API: 409 USER/NICKNAME_ALREADY_EXISTS
+    else 정상
+        DB-->>SVC: 사용 가능
+        SVC->>SVC: 만 19세 검증 + 비밀번호 해싱
+        SVC->>DB: 사용자·회원·약관·로그인수단 INSERT
+        SVC->>DB: 이전 리프레시 토큰 정리 후 신규 발급
+        SVC-->>API: 토큰 + 사용자 정보
+        API-->>S: 201 Created
+        S-->>U: "가입 완료" 토스트 + 로그인 화면 복귀
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>로그인 — 사용자 시퀀스</h2>
+        <p class="subtitle">짧지만 분기가 많다. <strong>사용자 존재 → 상태 정상 → 비밀번호 일치</strong>
+          세 조건을 모두 통과해야 토큰이 발급된다. 어느 단계에서든 실패하면 같은 “자격 증명 오류” 메시지로 응답해서
+          공격자가 “이메일이 존재하는지”를 추측하지 못하게 한다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant S as 로그인 화면
+    participant API as 로그인 API
+    participant SVC as 회원 서비스
+    participant VAL as 상태 검증기
+    participant DB as DB
+    U->>S: 이메일 + 비밀번호 입력 + "로그인" 탭
+    S->>API: POST /api/v1/auth/login
+    API->>SVC: 로그인 요청
+    SVC->>DB: 이메일로 사용자 조회
+    alt 사용자 없음
+        DB-->>SVC: 없음
+        SVC-->>API: 403 LOGIN_FAILURE_BAD_CREDENTIAL
+    else 사용자 있음
+        DB-->>SVC: 사용자 정보
+        SVC->>VAL: 잠금/탈퇴 상태 검사
+        alt 비정상 상태
+            VAL-->>SVC: 거부
+            SVC-->>API: 403 LOGIN_FAILURE_USER_STATUS_*
+        else 정상
+            SVC->>SVC: 비밀번호 검증
+            alt 불일치
+                SVC-->>API: 403 LOGIN_FAILURE_BAD_CREDENTIAL
+            else 일치
+                SVC->>SVC: 첫 로그인 여부 판단
+                SVC->>DB: loginAt 갱신 + 토큰 발급
+                SVC-->>API: 토큰 + isNewUser
+                API-->>S: 200 OK
+                S-->>U: 첫 로그인이면 인증/온보딩, 아니면 홈
+            end
+        end
+    end
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>가입 검증 분기</h2>
+        <p class="subtitle">가입 요청 하나가 서버에서 통과해야 할 4단계 검증. 어디서 막혀도 사용자 레코드는 만들어지지 않는다.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["가입 요청"] --> B{"이메일 중복?"}
+    B -->|"예"| E1["409 USER_ALREADY_EXISTS"]
+    B -->|"아니오"| C{"닉네임 중복?"}
+    C -->|"예"| E2["409 NICKNAME_ALREADY_EXISTS"]
+    C -->|"아니오"| D{"생년월일 입력?"}
+    D -->|"비어 있음"| E3["400 INVALID_INPUT"]
+    D -->|"있음"| F{"만 19세 이상?"}
+    F -->|"아니오"| E4["403 UNDERAGE_NOT_ALLOWED"]
+    F -->|"예"| G["4테이블 동시 INSERT"]
+    G --> H["토큰 발급"]
+    H --> I["201 Created"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 10개</h2>
+        <p class="subtitle">아래 시나리오는 모두 동일한 형식 — <strong>페르소나 / 시작 상태 / 단계 / 종료 상태</strong>.
+          시퀀스의 각 단계는 사용자가 인지하는 행동 또는 화면 응답 기준으로 정리한다.</p>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">S1 · Happy Path · 가입</div>
+            <h3>신규 회원이 이메일로 가입한다</h3>
+            <p><strong>페르소나</strong> — 30대 직장인, 친구 추천으로 앱 설치. 이메일 가입 선호.</p>
+            <p><strong>시작</strong> — 앱 첫 실행, 토큰 없음. 스플래시가 로그인 화면으로 보내준 상태.</p>
+            <ol>
+              <li>로그인 화면 하단 “회원가입” 링크 탭 → 회원가입 화면 진입</li>
+              <li>이메일 입력 → 정규식 검증 통과</li>
+              <li>비밀번호 입력 → 강도 인디케이터가 “강함”으로 표시</li>
+              <li>비밀번호 확인 입력 → 일치 표시</li>
+              <li>닉네임 입력 (2~16자) → 통과</li>
+              <li>생년월일 picker로 선택</li>
+              <li>약관 동의: 이용약관·개인정보 필수 체크, 마케팅 선택</li>
+              <li>“가입하기” 탭 → 서버에 가입 요청</li>
+              <li>서버: 4개 레코드 동시 INSERT 후 토큰 발급</li>
+              <li>“회원가입이 완료되었습니다. 로그인해주세요.” 토스트 + 로그인 화면 복귀</li>
+            </ol>
+            <p><strong>종료</strong> — 사용자 레코드 생성 (상태=정상, 이메일 미인증), 토큰 저장, 로그인 화면 표시.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S2 · Happy Path · 첫 로그인</div>
+            <h3>가입 직후 로그인하여 이메일 인증 화면으로 진입한다</h3>
+            <p><strong>페르소나</strong> — S1을 막 마친 신규 회원.</p>
+            <p><strong>시작</strong> — 로그인 화면, 토큰은 있으나 이메일 미인증.</p>
+            <ol>
+              <li>이메일 + 비밀번호 입력 후 “로그인” 탭</li>
+              <li>서버: 비밀번호 검증 후, 이전 로그인 시각이 없는 것을 보고 <em>첫 로그인 사용자</em>로 판정</li>
+              <li>토큰 발급 + 사용자 정보 반환</li>
+              <li>클라이언트: 첫 로그인 신호를 받고 온보딩 저장소 초기화</li>
+              <li>본인 정보 API로 온보딩 완료 여부 확인</li>
+              <li>이메일 미인증 사용자라 우선 이메일 인증 화면(F01-03)으로 보냄</li>
+            </ol>
+            <p><strong>종료</strong> — 사용자 상태=정상, loginAt 기록, 이메일 인증 또는 온보딩 화면 진입.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S3 · 실패 · 자격증명</div>
+            <h3>잘못된 비밀번호로 로그인 실패</h3>
+            <p><strong>페르소나</strong> — 등록 사용자, 비밀번호 오타.</p>
+            <p><strong>시작</strong> — 로그인 화면, 이메일은 맞지만 비밀번호 오타.</p>
+            <ol>
+              <li>“로그인” 탭 → 서버에 로그인 요청</li>
+              <li>서버: 사용자 발견, 비밀번호 해시 비교 실패 → 403 LOGIN_FAILURE_BAD_CREDENTIAL</li>
+              <li>클라이언트: “이메일 또는 비밀번호가 올바르지 않습니다” 토스트</li>
+              <li>사용자가 비밀번호 재입력 또는 “비밀번호 찾기” 탭</li>
+            </ol>
+            <p><strong>종료</strong> — 로그인 화면 유지, 토큰 미발급.
+            <strong>보안 노트:</strong> 사용자 미존재일 때도 동일한 에러 코드/메시지로 응답.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S4 · 실패 · 중복</div>
+            <h3>이메일 중복 가입 시도</h3>
+            <p><strong>페르소나</strong> — 이미 가입한 이메일로 다시 가입을 시도하는 사용자.</p>
+            <p><strong>시작</strong> — 회원가입 화면.</p>
+            <ol>
+              <li>같은 이메일 + 새 비밀번호/닉네임 입력</li>
+              <li>“가입하기” 탭 → 서버 응답 409 USER_ALREADY_EXISTS</li>
+              <li>클라이언트: “이미 사용 중인 이메일입니다” 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 회원가입 화면 유지.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S5 · 정책 차단 · 미성년자</div>
+            <h3>만 19세 미만 가입 차단</h3>
+            <p><strong>페르소나</strong> — 만 18세, 모든 필드 입력 완료.</p>
+            <p><strong>시작</strong> — 회원가입 화면.</p>
+            <ol>
+              <li>생년월일 picker에서 만 19세 미만 날짜 선택</li>
+              <li>“가입하기” 탭 → 서버에서 만 19세 미만 거부 → 403 UNDERAGE_NOT_ALLOWED</li>
+              <li>클라이언트: 차단 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 사용자 레코드 미생성, 화면 유지.
+            <strong>주의:</strong> 클라이언트 picker는 기본값이 2000-01-01이라 “별다른 입력 없이 통과”하는 케이스가 없도록 picker UI를 항상 명시적 선택으로 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S6 · 정책 차단 · 상태</div>
+            <h3>잠금·탈퇴 상태 사용자의 로그인 시도</h3>
+            <p><strong>페르소나</strong> — STOP / BAN / TRYEXIT / EXIT 상태 사용자.</p>
+            <p><strong>시작</strong> — 로그인 화면.</p>
+            <ol>
+              <li>정상 이메일·비밀번호 입력 후 “로그인” 탭</li>
+              <li>서버: 비밀번호는 맞지만 상태가 비정상 → 403 LOGIN_FAILURE_USER_STATUS_*</li>
+              <li>클라이언트: 상태에 맞는 차단 메시지 토스트</li>
+            </ol>
+            <p><strong>종료</strong> — 로그인 거부, 화면 유지. 토큰 미발급.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S7 · 실패 · 중복</div>
+            <h3>닉네임 중복으로 가입 실패</h3>
+            <p><strong>페르소나</strong> — 이미 사용 중인 닉네임을 시도.</p>
+            <ol>
+              <li>“가입하기” 탭 → 서버 응답 409 NICKNAME_ALREADY_EXISTS</li>
+              <li>클라이언트: 토스트 표시</li>
+              <li>닉네임만 바꿔 재시도</li>
+            </ol>
+            <p><strong>종료</strong> — 가입 실패. 사용자가 닉네임 수정 후 재시도하면 통과한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">S8 · 검증 · 비밀번호</div>
+            <h3>비밀번호 검증 정책 위반</h3>
+            <p><strong>페르소나</strong> — 단순 비밀번호(“abc123”)를 시도한 사용자.</p>
+            <ol>
+              <li>비밀번호 입력 즉시 클라이언트 측 검증 실패 → 인라인 에러
+                “최소 8자 이상 입력해주세요”</li>
+              <li>가입 버튼은 비활성</li>
+              <li>(클라이언트 검증을 우회한 경우) 서버에서 동일 정책으로 한 번 더 검증 → 422 VALIDATION_ERROR</li>
+            </ol>
+            <p><strong>종료</strong> — 가입 차단. <strong>이중 방어:</strong> 화면과 서버 둘 다 같은 정책을 적용.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">E2E-1 · 단일 세션 라운드트립</div>
+            <h3>가입 → 로그인 → 메인 셸 진입</h3>
+            <p><strong>출처</strong> — <code>integration_test/auth_flow_test.dart</code></p>
+            <p><strong>페르소나</strong> — 첫 실행 사용자, 가입 직후 즉시 로그인까지 확인하려는 신규 회원.</p>
+            <ol>
+              <li>로그인 화면(슬로건 “함께하는 즐거움을 발견하세요”) 도달</li>
+              <li>“회원가입” 탭 → 가입 폼 진입</li>
+              <li>이메일/비밀번호/비밀번호 확인/닉네임 입력</li>
+              <li>생년월일 picker → 확인</li>
+              <li>“전체 동의” 탭 → “가입하기” 탭 → 로그인 화면 복귀</li>
+              <li>동일 자격증명으로 로그인</li>
+              <li>최대 30초 폴링: 메인 탭(홈/검색/클럽/알림/프로필) <strong>또는</strong> 온보딩 첫 페이지가 보이면 통과</li>
+            </ol>
+            <p><strong>종료</strong> — 메인 셸 또는 온보딩 첫 페이지 진입, 둘 중 하나는 반드시 도달.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">E2E-2 · 시드 사용자 단발 로그인</div>
+            <h3>기존 시드 사용자 로그인 → 홈/온보딩 분기 허용</h3>
+            <p><strong>출처</strong> — <code>integration_test/seed_login_flow_test.dart</code></p>
+            <p><strong>페르소나</strong> — 시드 데이터에 미리 존재하는 사용자.</p>
+            <ol>
+              <li>콜드 스타트 → 로그인 화면 도달 확인(슬로건 가시)</li>
+              <li>시드 자격증명 입력 후 “로그인” 탭</li>
+              <li>30초 폴링: 메인 탭 또는 온보딩 첫 페이지가 보이면 통과</li>
+            </ol>
+            <p><strong>종료</strong> — 온보딩 완료 여부에 따라 둘 중 하나로 분기.
+              정확한 분기 검증은 별도 회귀 테스트가 담당한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성 — 사람이 보는 것</h2>
+        <p class="subtitle">코드 레벨 디테일은 생략. “사용자가 화면을 열었을 때 무엇이 보이고 무엇을 할 수 있는가”만 정리한다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:130px">화면</th><th>보이는 것</th><th style="width:36%">할 수 있는 것</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>로그인</strong><br><span style="color:var(--muted); font-size:12.5px">SCR-AU-001</span></td>
+                <td>로고·태그라인 “함께하는 즐거움을 발견하세요” · 이메일 입력 · 비밀번호 입력(가리기 토글) · 로그인 버튼 · 비밀번호 찾기 링크 · 소셜 로그인 4종 · 회원가입 링크. 개발 빌드에서는 DEV 바이패스 버튼이 추가로 보인다.</td>
+                <td>이메일/비밀번호 실시간 검증, 로그인 요청, 비밀번호 찾기로 이동(F01-04), 회원가입 화면으로 이동, 소셜 로그인 시작(F01-02)</td>
+              </tr>
+              <tr>
+                <td><strong>회원가입</strong><br><span style="color:var(--muted); font-size:12.5px">SCR-AU-002</span></td>
+                <td>이메일 · 비밀번호(3단계 강도 인디케이터) · 비밀번호 확인(일치 표시) · 닉네임(2~16자, 카운터) · 생년월일 picker · 휴대폰(선택) · 성별 3분할 토글 · 약관 동의 카드(전체동의/이용약관/개인정보/마케팅) · 가입하기 버튼</td>
+                <td>각 필드 실시간 검증, 약관 상세로 이동, 가입 요청. 성공 시 토스트 후 로그인 화면 복귀.</td>
+              </tr>
+              <tr>
+                <td><strong>스플래시</strong><br><span style="color:var(--muted); font-size:12.5px">SCR-Splash</span></td>
+                <td>로고 + 스피너만.</td>
+                <td>없음. 토큰을 자동 검사한 뒤 로그인/온보딩/홈 중 한 곳으로 라우터가 자동 분기.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약 한눈에</h2>
+        <p class="subtitle">기능을 책임지는 두 엔드포인트. 응답 형식이 같아서 클라이언트는 가입과 로그인 이후의 후속 처리를 동일하게 한다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:74px">Method</th>
+                <th>Path</th>
+                <th>인증</th>
+                <th>핵심 동작</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/v1/auth/signup</code></td>
+                <td>불필요</td>
+                <td>신규 회원 생성 + 토큰 발급 (201 Created). 사용자·회원·약관·이메일 로그인 수단 4개 레코드 동시 INSERT.</td>
+              </tr>
+              <tr>
+                <td><code>POST</code></td>
+                <td><code>/api/v1/auth/login</code></td>
+                <td>불필요</td>
+                <td>자격 증명 검증 + 상태 검증 + 토큰 재발급 (200 OK). 이전 리프레시 토큰은 단일 기기 정책으로 일괄 폐기.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <span class="label">응답 본문 (가입·로그인 공통)</span>
+          <p>액세스 토큰(JWT, 1시간) · 리프레시 토큰(UUID, 30일) · 사용자 ID · 이메일 · 닉네임 · 역할 · <strong>첫 로그인 여부</strong>.
+          “첫 로그인 여부”는 가입 직후이거나 이전 로그인 시각이 비어 있을 때 참이 되고, 클라이언트가 온보딩/이메일 인증으로 분기하는 핵심 신호다.</p>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드 매트릭스</span>
+          <ul>
+            <li><strong>409 USER_ALREADY_EXISTS</strong> — 이미 가입된 이메일</li>
+            <li><strong>409 NICKNAME_ALREADY_EXISTS</strong> — 중복 닉네임</li>
+            <li><strong>403 UNDERAGE_NOT_ALLOWED</strong> — 만 19세 미만 가입 시도</li>
+            <li><strong>400 INVALID_INPUT</strong> — 생년월일 누락</li>
+            <li><strong>403 LOGIN_FAILURE_BAD_CREDENTIAL</strong> — 이메일 미존재 <em>또는</em> 비밀번호 불일치 (동일 코드로 응답해 사용자 존재 여부 노출 방지)</li>
+            <li><strong>403 LOGIN_FAILURE_USER_STATUS_BAN / STOP / TRYEXIT / EXIT</strong> — 비정상 상태 사용자</li>
+            <li><strong>422 VALIDATION_ERROR</strong> — 비밀번호 정책 위반(서버 측 재검증)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>가입 시</th><th>로그인 시</th></tr></thead>
+            <tbody>
+              <tr><td>사용자 본체</td><td>INSERT (상태=정상, 이메일 미인증, 역할=일반)</td><td>loginAt 갱신, 상태=정상으로 정규화</td></tr>
+              <tr><td>회원 부가정보</td><td>INSERT (생년월일·성별·로케일)</td><td>—</td></tr>
+              <tr><td>약관 동의 기록</td><td>INSERT (이용약관·개인정보·마케팅)</td><td>—</td></tr>
+              <tr><td>로그인 수단</td><td>INSERT (이메일 타입, 식별자=이메일)</td><td>—</td></tr>
+              <tr><td>리프레시 토큰</td><td>INSERT</td><td>이전 토큰 일괄 DELETE → 신규 INSERT (단일 기기 정책)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <p class="subtitle">각 시나리오는 Given / When / Then으로 풀어 정의한다. QA·E2E는 “종료 상태”가 관측 가능한지를 검증한다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>토큰 없음, 로그인 화면</td><td>S1의 가입 흐름 완료</td><td>사용자 레코드 생성(상태=정상, 이메일 미인증), 토큰 저장, 로그인 화면 복귀</td></tr>
+              <tr><td>AC-02</td><td>가입 직후, 이메일 미인증</td><td>S2의 첫 로그인 완료</td><td>loginAt 기록, 이메일 인증 또는 온보딩 화면 진입</td></tr>
+              <tr><td>AC-03</td><td>등록 사용자 + 비밀번호 오타</td><td>로그인 시도</td><td>로그인 화면 유지, 토큰 미발급, 동일 메시지 토스트</td></tr>
+              <tr><td>AC-04</td><td>이미 가입된 이메일</td><td>같은 이메일로 가입 시도</td><td>회원가입 화면 유지, 409 토스트</td></tr>
+              <tr><td>AC-05</td><td>만 19세 미만 생년월일</td><td>가입 시도</td><td>레코드 미생성, 화면 유지, 차단 토스트</td></tr>
+              <tr><td>AC-06</td><td>잠금/탈퇴 사용자</td><td>정상 자격증명으로 로그인</td><td>로그인 거부, 화면 유지</td></tr>
+              <tr><td>AC-07</td><td>중복 닉네임</td><td>가입 시도</td><td>가입 실패, 닉네임 변경 후 재시도로 통과</td></tr>
+              <tr><td>AC-08</td><td>약한 비밀번호</td><td>입력</td><td>인라인 에러, 가입 버튼 비활성, 서버 우회 시 422</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn">
+          <span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>가입 성공 후 “자동 로그인된 채로” 화면이 그대로 머무는 회귀</strong> — 현재 정책은 토스트 후 로그인 화면 복귀. 이걸 “자동 진입”으로 바꾸면 약관·이메일 인증 분기와 어긋난다.</li>
+            <li><strong>이메일 미존재 vs 비밀번호 불일치를 다른 메시지로 응답</strong> — 사용자 열거 공격에 노출. 둘은 같은 코드/메시지를 유지한다.</li>
+            <li><strong>생년월일 picker 기본값을 그대로 두고 가입 통과</strong> — picker는 명시 선택을 강제해야 한다.</li>
+            <li><strong>가입 트랜잭션 부분 실패</strong> — 사용자·회원·약관·로그인 수단 INSERT가 모두 같은 트랜잭션이어야 한다. 중간 실패 시 전부 롤백.</li>
+            <li><strong>로그인 시 이전 리프레시 토큰을 남겨두는 경우</strong> — 단일 기기 정책 위반. 다른 기기에서 동시 세션이 살아남아 토큰 갱신 충돌(F01-05) 회귀로 이어진다.</li>
+            <li><strong>잠금/탈퇴 상태에서 비밀번호 검증을 먼저 하는 경우</strong> — 상태 검증을 먼저 통과해야 비밀번호를 비교한다(타이밍 정보 노출 방지).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위 · 관련 정책</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/01-auth.html">
+            <div class="eyebrow">상위 도메인</div><h3>01 인증·온보딩</h3>
+            <p>본 기능이 속한 도메인. 8개 기능 전체 흐름과 도메인 안 부수효과는 여기서.</p>
+          </a>
+          <a class="card" href="../policies/state.html">
+            <div class="eyebrow">정책</div><h3>계정 상태 정책</h3>
+            <p>잠금/탈퇴/유예의 상태 모델. 로그인 거부 분기의 정의가 여기에서 온다.</p>
+          </a>
+          <a class="card" href="../policies/permission.html">
+            <div class="eyebrow">정책</div><h3>역할·진입 권한</h3>
+            <p>비로그인·로그인·관계자·관리자의 권한 매트릭스.</p>
+          </a>
+          <a class="card" href="../qa/exceptions.html">
+            <div class="eyebrow">QA</div><h3>가입·인증 빠뜨리기 쉬운 시나리오</h3>
+            <p>토큰·메일·소셜 모듈·계정 상태 관련 케이스 모음.</p>
+          </a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (페이지에는 노출하지 않음 — 갱신/추적용)
+  - business_logic/units/01_auth_onboarding/F01-01_email-signup-login/backend.md
+  - business_logic/units/01_auth_onboarding/F01-01_email-signup-login/frontend.md
+  - business_logic/units/01_auth_onboarding/F01-01_email-signup-login/scenarios.md
+  - business_logic/units/01_auth_onboarding/F01-01_email-signup-login/diagrams.md
+  - business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

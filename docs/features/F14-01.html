@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F14-01 이벤트 위치 공유 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
+          F14-01 위치 공유
+        </div>
+        <h1>F14-01. 이벤트 참석자 위치 공유</h1>
+        <p class="lede">
+          모임 시작 24시간 전부터 종료 2시간 후까지, 참석 확정자가 본인 의지로 opt-in한 경우에만 일행끼리 위치를 공유한다.
+          <strong>opt-in × 시간 게이트 × 호스트 설정</strong> 세 축 모두 통과해야 잔여 좌표가 응답에 들어가고,
+          opt-out한 순간 다른 사람 화면에서 본인 마커가 즉시 사라진다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">공유 윈도우</div><div class="value">−24h ~ +2h</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">7</div></div>
+          <div class="metric"><div class="label">폴링 주기</div><div class="value">30초</div></div>
+          <div class="metric"><div class="label">자동 만료</div><div class="value">2시간</div><div class="hint">update마다 슬라이딩</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">3축 게이트가 모두 통과해야 잔여 좌표 응답</span>
+          <ol style="margin:0 0 0 18px">
+            <li><strong>opt-in 명시 동의</strong> — 토글 ON + OS 권한 “허용”</li>
+            <li><strong>시간 게이트</strong> — 이벤트 시작 −24h ~ 종료 +2h. 호스트는 조회만 우회 가능.</li>
+            <li><strong>호스트 글로벌 토글</strong> — Event.locationShareEnabled. 호스트도 update는 우회 못 함.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>호스트 우회 매트릭스</h2>
+        <p class="subtitle">동일 단위 안에서도 메서드마다 게이트가 다르다 — 사고가 잘 나는 지점이라 표로 명시.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>메서드</th><th>locationShareEnabled</th><th>시간 게이트</th><th>opt-in 검사</th></tr></thead>
+            <tbody>
+              <tr><td>조회 (getEventLocations)</td><td>검사 없음</td><td>호스트 우회</td><td>호스트 우회(응답은 opt-in 한 사용자만)</td></tr>
+              <tr><td>위치 업데이트 (update)</td><td>모두 적용</td><td>모두 적용</td><td>모두 적용</td></tr>
+              <tr><td>만료 연장 (extend)</td><td>검사 없음</td><td>검사 없음</td><td>호스트 우회</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>opt-in</h3>
+            <p>토글 ON → OS 권한 요청 → 좌표 획득 → opt-in API → 즉시 update → 30초 폴링 시작.
+              권한 영구 거부 분기에서는 OS 설정 화면으로 안내.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>30초 위치 폴링 + 수동 새로고침</h3>
+            <p>Timer.periodic 30초로 GET. FAB(내 위치) 탭은 즉시 update 후 GET. 마커 수가 변할 때만 fitBounds 재계산.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>일행 위치 지도/시트 표시</h3>
+            <p>지도 마커 + 하단 시트 리스트. opt-out한 참석자는 응답에서 제외되어 자동 사라짐. opt-in 한 사람만 access_log에 기록.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>2시간 만료 자동 종료</h3>
+            <p>마지막 update 시점 + 2h. update마다 슬라이딩 갱신. 만료 시 좌표 응답 제외. 연장은 F14-03.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>호스트 토글 비활성화 응답</h3>
+            <p>이벤트 단위로 호스트가 위치 공유를 꺼두면 update 자체가 LOCATION_SHARE_DISABLED. 사용자 토글이 ON으로 보여도 실제 갱신은 막힘.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>opt-in + 첫 좌표 시퀀스</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor U as 참석자
+    participant OS as OS 권한
+    participant API as 위치 API
+    participant SVC as 위치 서비스
+    participant DB as DB
+    U->>API: GET /location (화면 진입)
+    API->>SVC: 조회 요청
+    SVC->>SVC: 시간 게이트 + opt-in 검사
+    alt 본인 opt-in 안 됨
+        SVC-->>U: 403 LOCATION_OPT_IN_REQUIRED
+    end
+    U->>OS: 위치 권한 요청
+    OS-->>U: 허용
+    U->>API: POST /opt-in
+    API->>DB: location_opt_in upsert (optedIn=true)
+    U->>U: getCurrentPosition()
+    U->>API: POST /update {lat, lng, accuracy}
+    API->>SVC: 업데이트 요청
+    SVC->>SVC: 3축 게이트 검증 (모두 적용)
+    SVC->>DB: location_share upsert (expiresAt=now+2h)
+    API-->>U: 200
+    U->>U: 30초 Timer 시작
+    loop 매 30초
+        U->>API: GET /location
+        API-->>U: 본인+opt-in 일행 좌표
+        Note over U: 응답마다 access_log 기록
+    end
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 7개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · Happy Path</div><h3>모임 30분 전 opt-in</h3>
+            <ol>
+              <li>EventLocationScreen 진입 → GET → 본인 opt-in 안 됨 → 403</li>
+              <li>OS 권한 다이얼로그 → 허용 → 토글 ON</li>
+              <li>opt-in API + update API 연속 호출 → location_share 생성(expiresAt=now+2h)</li>
+              <li>30초 폴링 시작, “위치 공유를 시작합니다” 토스트</li>
+              <li>지도/시트에 본인 + 일행 마커</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 폴링</div><h3>5분간 화면 유지하며 이동</h3>
+            <ol>
+              <li>30초마다 refresh() → 좌표 응답</li>
+              <li>마커 수 동일이면 fitBounds 유지, 변할 때만 재계산</li>
+              <li>FAB(내 위치) 수동 탭 → 즉시 update + refresh</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 호스트</div><h3>호스트는 opt-in 없이 조회</h3>
+            <ol>
+              <li>호스트 진입 → GET → isHost 분기로 opt-in/시간 게이트 우회</li>
+              <li>응답에는 여전히 <strong>opt-in 한 참석자 좌표만</strong> 포함(opt-out은 제외)</li>
+              <li>단, host 본인의 update는 시간 게이트 + locationShareEnabled 검사 받음</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 시간 차단</div><h3>24h보다 일찍 진입</h3>
+            <ol>
+              <li>참석자가 30시간 전 진입 → 403 LOCATION_ACCESS_DENIED</li>
+              <li>“공유 가능 시간이 아닙니다” 안내, 사용자는 윈도우 진입 후 재시도</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 권한 영구 거부</div><h3>OS 설정 분기</h3>
+            <ol>
+              <li>토글 ON → checkPermission → deniedForever</li>
+              <li>“위치 권한이 영구 거부되었습니다” 토스트 + openAppSettings()</li>
+              <li>토글 OFF 유지, opt-in API 미호출</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S6 · 호스트 차단</div><h3>locationShareEnabled=false</h3>
+            <ol>
+              <li>토글 ON → opt-in API 성공</li>
+              <li>update 시도 → 403 LOCATION_SHARE_DISABLED</li>
+              <li>본인 좌표가 응답에 들어가지 않아 다음 폴링에서 본인 마커 미노출 → 토글이 자동 OFF로 추론</li>
+            </ol>
+            <p><strong>UX 보강 후보:</strong> 현재는 silent fail에 가깝다. 사용자에게 명시적 안내 토스트 필요.</p>
+          </article>
+
+          <article class="card"><div class="eyebrow">S7 · 비공개 마킹</div><h3>opt-out한 참석자는 응답에서 사라진다</h3>
+            <ol>
+              <li>A는 opt-in, B는 opt-in 후 opt-out</li>
+              <li>A의 다음 폴링 응답에서 B의 좌표 제외</li>
+              <li>A 화면의 마커/리스트에서 B 사라짐</li>
+            </ol>
+            <p><strong>설계 결정:</strong> UI 스펙은 “비공개” 라벨로만 노출하라고 했지만 현 백엔드는 좌표 자체를 제외. 사용자에게는 “목록에서 사라짐”으로 보임.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/opt-in</code></td><td>본인 동의 등록</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/update</code></td><td>본인 좌표 갱신(슬라이딩 만료)</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/{eventId}/location</code></td><td>일행 좌표 조회(opt-in 한 사람만 포함)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/opt-out</code></td><td>중지 (F14-02)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{eventId}/location/extend</code></td><td>만료 연장 (F14-03)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>403 LOCATION_OPT_IN_REQUIRED</strong> — 본인 opt-in 안 됨</li>
+            <li><strong>403 LOCATION_ACCESS_DENIED</strong> — 시간 게이트 위반 또는 비참석자</li>
+            <li><strong>403 LOCATION_SHARE_DISABLED</strong> — 호스트가 이벤트 토글 OFF</li>
+            <li><strong>403 LOCATION_SHARE_TIME_EXPIRED</strong> — −24h ~ +2h 윈도우 벗어남</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 단위가 만들거나 바꾸는 데이터</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>opt-in</th><th>update</th><th>조회</th></tr></thead>
+            <tbody>
+              <tr><td>location_opt_in</td><td>upsert(optedIn=true)</td><td>—</td><td>—</td></tr>
+              <tr><td>location_share</td><td>—</td><td>upsert + expiresAt 슬라이딩</td><td>—</td></tr>
+              <tr><td>location_access_log</td><td>—</td><td>—</td><td>조회자 → 응답에 포함된 사용자별 1행</td></tr>
+              <tr><td>외부 API</td><td>OS 권한 + Geolocator</td><td>Geolocator.getCurrentPosition</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>−24h~+2h 윈도우, opt-in 안 됨</td><td>토글 ON + 권한 허용</td><td>opt-in + update + 폴링 시작</td></tr>
+              <tr><td>AC-02</td><td>opt-in 상태</td><td>30초 경과</td><td>refresh()로 마커 갱신</td></tr>
+              <tr><td>AC-03</td><td>호스트</td><td>화면 진입</td><td>opt-in/시간 우회로 조회 가능</td></tr>
+              <tr><td>AC-04</td><td>−24h 이전</td><td>참석자 진입</td><td>403 LOCATION_ACCESS_DENIED</td></tr>
+              <tr><td>AC-05</td><td>OS 권한 영구 거부</td><td>토글 ON</td><td>설정 화면 안내, 토글 OFF 유지</td></tr>
+              <tr><td>AC-06</td><td>호스트 토글 OFF</td><td>update</td><td>403 LOCATION_SHARE_DISABLED</td></tr>
+              <tr><td>AC-07</td><td>opt-in 사용자가 opt-out</td><td>다음 폴링</td><td>다른 사용자 응답에서 제외</td></tr>
+              <tr><td>AC-08</td><td>update 미발생 2h</td><td>폴링</td><td>본인 좌표가 응답에서 자동 제외</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>호스트 우회를 update에도 적용</strong> — 호스트도 시간 게이트와 토글에 묶여야 한다.</li>
+            <li><strong>opt-out 사용자 좌표가 응답에 남음</strong> — 비공개 보장 위배.</li>
+            <li><strong>30초 폴링 정지 누락</strong> — 화면을 나가도 Timer가 살아있으면 배터리·트래픽 낭비.</li>
+            <li><strong>fitBounds를 매 폴링 재계산</strong> — 지도가 떨려서 사용자 경험 저하.</li>
+            <li><strong>LOCATION_SHARE_DISABLED 안내 누락</strong> — 사용자는 토글이 ON인데 본인 마커가 안 보이는 이유를 모름.</li>
+            <li><strong>access_log를 GET 시점이 아니라 update 시점에 기록</strong> — “누가 누구의 위치를 봤는가” 추적이 깨진다.</li>
+            <li><strong>OS 권한 영구 거부 시 “허용” 다이얼로그 반복</strong> — openAppSettings로 명시 안내해야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위</div><h3>14 위치·길찾기</h3></a>
+          <a class="card" href="F14-02.html"><div class="eyebrow">반대</div><h3>F14-02 opt-out</h3></a>
+          <a class="card" href="F14-03.html"><div class="eyebrow">연장</div><h3>F14-03 만료 연장</h3></a>
+          <a class="card" href="F14-04.html"><div class="eyebrow">감독</div><h3>F14-04 프라이버시 대시보드</h3></a>
+          <a class="card" href="F03-05.html"><div class="eyebrow">전제</div><h3>F03-05 참석 상태</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/14_location_directions/F14-01_event-location-share/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

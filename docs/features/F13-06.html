@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F13-06 계정 삭제 요청 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/13-profile.html">13 프로필·설정</a><span>›</span>
+          F13-06 계정 삭제
+        </div>
+        <h1>F13-06. 계정 삭제 요청 (30일 유예)</h1>
+        <p class="lede">
+          즉시 탈퇴(F13-07)와 별도의 “차분한” 종료 경로. 30일 유예 동안 사용자가 마음을 바꾸면 취소할 수 있고,
+          유예 만료 시 스케줄러가 개인정보를 익명화·삭제한다. 거래 기록은 법적 보존 의무로 남는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">유예 기간</div><div class="value">30일</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">스케줄러</div><div class="value">매일 04:00</div></div>
+          <div class="metric"><div class="label">상태</div><div class="value">PENDING/APPROVED/COMPLETED/CANCELLED</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">삭제 정책</span>
+          <p>개인정보(이름·이메일·전화·생년월일·프로필 이미지·자기소개) + 알림 토큰·결제 자격증명·데이팅 프로필·캘린더 가용시간을 일괄 삭제 또는 익명화.
+            거래·정산·회계 원장은 법적 보존 요건에 따라 <strong>남긴다</strong>.
+            계정 status는 EXIT로 전이.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">동작 1</div>
+            <h3>30일 유예 삭제 요청</h3>
+            <p>PENDING 요청 INSERT + scheduledAt = now+30d. 사용자에게는 D-day 카드가 노출된다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 2</div>
+            <h3>유예 중 취소</h3>
+            <p>DELETE로 status=CANCELLED. 진행 배너 즉시 사라짐.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 3</div>
+            <h3>중복 요청 차단</h3>
+            <p>PENDING이 이미 있으면 INVALID_INPUT.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 4</div>
+            <h3>D-day 배너</h3>
+            <p>마이페이지·프라이버시 화면에 D-N 카운트 표시 + “관리” CTA로 취소 진입.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">동작 5</div>
+            <h3>스케줄러 익명화·삭제</h3>
+            <p>매일 04:00에 만료된 PENDING을 일괄 처리 → COMPLETED + 사용자 상태 EXIT.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>상태 머신</h2>
+        <div class="diagram"><div class="mermaid">
+stateDiagram-v2
+    [*] --> PENDING: 사용자 요청 (scheduledAt=+30d)
+    PENDING --> CANCELLED: 사용자가 취소
+    PENDING --> COMPLETED: 스케줄러가 만료 처리
+    CANCELLED --> [*]
+    COMPLETED --> [*]: 사용자 EXIT, 개인정보 제거
+        </div></div>
+      </section>
+
+      <section>
+        <h2>요청 → 만료 시퀀스</h2>
+        <div class="diagram"><div class="mermaid">
+sequenceDiagram
+    actor U as 사용자
+    participant API as 사용자 API
+    participant SVC as 탈퇴 서비스
+    participant DB as DB
+    participant SCH as 스케줄러
+    U->>API: POST /users/me/data-deletion
+    API->>SVC: 삭제 요청
+    SVC->>DB: PENDING + scheduledAt=now+30d
+    API-->>U: 토스트 + D-30 카드
+    Note over U: D-day 진행 동안 마이페이지에 배너
+    U->>API: (선택) DELETE /users/me/data-deletion
+    API->>DB: status=CANCELLED
+    API-->>U: 진행 배너 사라짐
+    Note over SCH: 매일 04:00 실행
+    SCH->>DB: PENDING + scheduledAt < now
+    DB-->>SCH: 만료 행
+    SCH->>SVC: 익명화·삭제 + status=COMPLETED
+    SCH->>DB: 사용자 status=EXIT
+        </div></div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 5개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1 · 요청</div><h3>30일 유예 삭제 요청</h3>
+            <ol>
+              <li>프라이버시 → “계정 삭제 요청”</li>
+              <li>확인 다이얼로그 → POST</li>
+              <li>PENDING + scheduledAt=+30d INSERT</li>
+              <li>토스트 + D-day 카드</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S2 · 진행 배너</div><h3>마이페이지 진입 시 D-N 표시</h3>
+            <ol>
+              <li>삭제 상태 provider 구독</li>
+              <li>PENDING/APPROVED 상태면 배너 노출</li>
+              <li>scheduledAt 기준 “D-N” 카운트</li>
+              <li>“관리” 탭 → 프라이버시 화면</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S3 · 취소</div><h3>유예 중 삭제 취소</h3>
+            <ol>
+              <li>“삭제까지 N일 남음” 카드 + “삭제 취소” 버튼</li>
+              <li>DELETE → status=CANCELLED</li>
+              <li>토스트 “계정 삭제가 취소되었습니다” + 배너 사라짐</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S4 · 중복</div><h3>이미 PENDING인 상태 재요청</h3>
+            <ol>
+              <li>findByUserIdAndStatus(PENDING) → 발견</li>
+              <li>INVALID_INPUT → “요청에 실패했습니다”</li>
+            </ol>
+          </article>
+
+          <article class="card"><div class="eyebrow">S5 · 스케줄러</div><h3>30일 만료 후 자동 익명화</h3>
+            <ol>
+              <li>매일 04:00 실행</li>
+              <li>PENDING + scheduledAt 과거 행 조회</li>
+              <li>사용자/멤버 익명화 + 알림·결제·데이팅·캘린더 개인정보 삭제</li>
+              <li>거래 기록은 보존</li>
+              <li>요청 status=COMPLETED, 사용자 EXIT</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>익명화·삭제 대상</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>도메인</th><th>처리</th></tr></thead>
+            <tbody>
+              <tr><td>users / member</td><td>이름·생년월일·전화 등 익명화, status=EXIT</td></tr>
+              <tr><td>알림 디바이스 토큰</td><td>전부 삭제</td></tr>
+              <tr><td>결제 수단·자동충전</td><td>billingKey 등 자격증명 삭제</td></tr>
+              <tr><td>데이팅 프로필·사진</td><td>전부 삭제</td></tr>
+              <tr><td>캘린더 가용시간</td><td>전부 삭제</td></tr>
+              <tr><td>거래·정산·회계</td><td><strong>보존</strong>(법적 의무)</td></tr>
+              <tr><td>리뷰·게시글</td><td>닉네임만 “탈퇴한 사용자”로 변경, 본문 보존</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/users/me/data-deletion</code></td><td>현재 요청 상태(없으면 빈 응답)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/users/me/data-deletion</code></td><td>30일 유예 요청</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/users/me/data-deletion</code></td><td>PENDING 취소</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">에러 코드</span>
+          <ul>
+            <li><strong>400 INVALID_INPUT</strong> — 이미 PENDING 요청 존재</li>
+            <li><strong>404 DELETION_REQUEST_NOT_FOUND</strong> — 취소 대상 없음</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>수용 기준 (AC)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:74px">AC</th><th>Given</th><th>When</th><th>Then</th></tr></thead>
+            <tbody>
+              <tr><td>AC-01</td><td>요청 없음</td><td>삭제 요청</td><td>PENDING + scheduledAt=+30d INSERT</td></tr>
+              <tr><td>AC-02</td><td>PENDING/APPROVED</td><td>마이페이지 진입</td><td>D-N 배너 + “관리”</td></tr>
+              <tr><td>AC-03</td><td>PENDING</td><td>취소 호출</td><td>CANCELLED + 배너 사라짐</td></tr>
+              <tr><td>AC-04</td><td>PENDING 존재</td><td>재요청</td><td>INVALID_INPUT</td></tr>
+              <tr><td>AC-05</td><td>scheduledAt 만료</td><td>스케줄러</td><td>익명화·삭제 + EXIT + COMPLETED</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>거래 기록 함께 삭제</strong> — 법적 보존 의무 위반. 영업 기록 유지 필수.</li>
+            <li><strong>익명화 누락(닉네임만 변경, PK 그대로)</strong> — 사용자 식별 가능 정보가 남음.</li>
+            <li><strong>스케줄러가 트랜잭션 없이 진행</strong> — 중간 실패 시 익명화는 됐는데 EXIT 미적용 등 부분 상태 발생.</li>
+            <li><strong>유예 기간 중 사용자 로그인 후 즉시 EXIT 표시</strong> — 정책상 PENDING 동안은 정상 로그인 + 배너만.</li>
+            <li><strong>요청 취소 후 D-day 카드가 즉시 사라지지 않음</strong> — provider invalidate 누락.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">상위</div><h3>13 프로필·설정</h3></a>
+          <a class="card" href="F13-07.html"><div class="eyebrow">대안</div><h3>F13-07 즉시 탈퇴</h3></a>
+          <a class="card" href="F01-05.html"><div class="eyebrow">세션</div><h3>F01-05 토큰·로그아웃</h3></a>
+          <a class="card" href="../policies/privacy.html"><div class="eyebrow">정책</div><h3>개인정보·안전</h3></a>
+        </div>
+      </section>
+
+<!-- 원천 자료
+  - business_logic/units/13_profile_settings/F13-06_account-deletion/{scenarios,backend,frontend}.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

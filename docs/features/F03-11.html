@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-11 위시리스트 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-11 위시리스트
+        </div>
+        <h1>F03-11. 위시리스트 (찜)</h1>
+        <p class="lede">
+          하트 탭 한 번으로 추가·해제되는 가장 가벼운 사용자 액션. 낙관적 토글로 즉시 시각 피드백을 주고,
+          실패하면 자연스럽게 롤백된다. 이벤트 상태(종료·취소·PRIVATE)와 멤버십 가드가 서버에서 추가로 검증된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">동작</div><div class="value">3</div><div class="hint">추가·해제·목록</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
+          <div class="metric"><div class="label">멱등</div><div class="value">서버 보장</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">동작 1</div><h3>낙관적 토글</h3><p>탭 즉시 UI 변경 + 서버 호출. 실패 시 캐시 재조회로 자연 롤백.</p></div>
+          <div class="card"><div class="eyebrow">동작 2</div><h3>위시리스트 목록</h3><p>페이징 + 풀투리프레시. 낙관적 제거.</p></div>
+          <div class="card"><div class="eyebrow">동작 3</div><h3>상세 캐시 동기화</h3><p>토글 시 detail provider invalidate로 두 화면 일관성 유지.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 9개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1</div><h3>검색 결과에서 첫 찜</h3><ol><li>회색 하트 탭 → 즉시 빨강</li><li>서버 INSERT → 토스트 “찜했어요”</li></ol></article>
+          <article class="card"><div class="eyebrow">S2</div><h3>위시리스트 화면에서 해제</h3><ol><li>하트 탭 → 즉시 리스트에서 제거</li><li>서버 DELETE → 토스트 “찜 해제했어요”</li></ol></article>
+          <article class="card"><div class="eyebrow">S3</div><h3>종료된 이벤트 찜 시도</h3><ol><li>낙관 patch 후 서버 400 EVENT_ALREADY_CLOSED</li><li>detail 재조회로 롤백 + 토스트</li></ol></article>
+          <article class="card"><div class="eyebrow">S4</div><h3>PRIVATE 이벤트 비멤버 시도</h3><ol><li>서버 403 → 낙관 롤백 + 토스트</li></ol></article>
+          <article class="card"><div class="eyebrow">S5</div><h3>PRIVATE 멤버 통과</h3><ol><li>멤버십 통과 → INSERT 성공</li></ol></article>
+          <article class="card"><div class="eyebrow">S6</div><h3>이미 찜한 이벤트 재요청</h3><ol><li>서버 idempotent: 204 동일</li><li>중복 행 없음</li></ol></article>
+          <article class="card"><div class="eyebrow">S7</div><h3>무한 스크롤</h3><ol><li>20건씩 누적, last=true 시 추가 호출 차단</li></ol></article>
+          <article class="card"><div class="eyebrow">S8</div><h3>풀투리프레시</h3><ol><li>0페이지부터 재로드 → 다른 디바이스 변경 반영</li></ol></article>
+          <article class="card"><div class="eyebrow">S9</div><h3>네트워크 단절 중 토글</h3><ol><li>낙관 patch → 서버 실패 → 캐시 재조회로 자연 롤백</li><li>토스트로 안내</li></ol></article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/wishlist</code></td><td>추가(idempotent)</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}/wishlist</code></td><td>해제(idempotent)</td></tr>
+              <tr><td><code>GET</code></td><td><code>/api/v1/users/me/wishlist?page=&size=20</code></td><td>본인 위시리스트 목록</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>낙관 patch만 하고 실패 시 롤백 안 함</strong> — 실제 상태와 어긋남.</li>
+            <li><strong>두 화면(상세/목록) 불일치</strong> — invalidate 누락.</li>
+            <li><strong>서버에서 멱등 보장 안 함</strong> — 중복 행 생성.</li>
+            <li><strong>PRIVATE 가드 누락</strong> — 비멤버가 찜 가능해지면 가시성 정책 위반.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-01.html"><div class="eyebrow">진입</div><h3>F03-01 발견·탐색</h3></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">관련</div><h3>F03-02 상세</h3></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/03_event/F03-11_wishlist/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

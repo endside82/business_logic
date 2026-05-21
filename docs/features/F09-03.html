@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F09-03 후보자 스와이프·매칭 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/09-dating.html">09 프라이빗 데이팅</a><span>›</span>F09-03 스와이프·매칭</div>
+<h1>F09-03. 후보자 스와이프 · 매칭 액션</h1>
+<p class="lede">후보자 카드를 LIKE/PASS로 평가. 양쪽 LIKE 시 즉시 매치 + 채팅방 생성. 차단된 사용자는 양방향 풀에서 제외.</p></header>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>후보자 풀 조회</h3></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>LIKE/PASS 액션</h3></div>
+<div class="card"><div class="eyebrow">동작 3</div><h3>매치 생성 + 채팅방 INSERT</h3></div>
+</div></section>
+<section><h2>사용자 시나리오</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>양쪽 LIKE → 즉시 매치</h3></article>
+<article class="card"><div class="eyebrow">S2</div><h3>일방 LIKE → PENDING</h3></article>
+<article class="card"><div class="eyebrow">S3</div><h3>PASS</h3></article>
+<article class="card"><div class="eyebrow">S4</div><h3>차단 사용자 노출 제외</h3></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/api/v1/date/candidates</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/date/matches/action</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/09-dating.html"><div class="eyebrow">상위</div><h3>09 프라이빗 데이팅</h3></a>
+<a class="card" href="F09-04.html"><div class="eyebrow">다음</div><h3>F09-04 매칭 목록</h3></a>
+<a class="card" href="F09-05.html"><div class="eyebrow">관련</div><h3>F09-05 채팅</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/09_private_date/F09-03_candidate_swipe/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-09 이벤트 사진첩 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-09 이벤트 사진첩
+        </div>
+        <h1>F03-09. 이벤트 사진첩</h1>
+        <p class="lede">
+          참석 확정 사용자만 사진을 업로드·조회할 수 있다. 첫 업로드 시 앨범이 자동 생성되고,
+          종료 후 일정 기간이 지나면 업로드가 차단되며 일정 시점에 일괄 정리된다.
+          외부 스토리지 업로드 + DB 등록의 두 단계 사이가 끊기면 orphan 파일이 생길 수 있어 운영 정리가 필요하다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">하위 동작</div><div class="value">4</div><div class="hint">조회·업로드·삭제·만료 안내</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">9</div></div>
+          <div class="metric"><div class="label">한도</div><div class="value">100장/앨범</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 기능 안의 하위 항목</h2>
+        <div class="cards">
+          <div class="card"><div class="eyebrow">동작 1</div><h3>사진 업로드</h3><p>외부 스토리지 PUT → DB 등록 + 앨범 자동 생성.</p></div>
+          <div class="card"><div class="eyebrow">동작 2</div><h3>그리드 조회 + 풀스크린 뷰어</h3></div>
+          <div class="card"><div class="eyebrow">동작 3</div><h3>본인 사진 삭제</h3><p>외부 스토리지 best-effort 삭제 + DB DELETE.</p></div>
+          <div class="card"><div class="eyebrow">동작 4</div><h3>만료 안내</h3><p>만료 임박 배너 + 만료 후 FAB 숨김.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오 9개</h2>
+        <div class="cards">
+          <article class="card"><div class="eyebrow">S1</div><h3>첫 업로드(앨범 자동 생성)</h3>
+            <ol><li>FAB → 갤러리 → 캡션 입력</li><li>외부 스토리지 PUT → 서버 등록</li><li>앨범 lazy 생성 + 1장 그리드 표시</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S2</div><h3>추가 업로드(앨범 reuse)</h3>
+            <ol><li>기존 앨범에 사진 추가 → photoCount++</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S3 · 만료 임박</div><h3>2일 후 만료 배너</h3>
+            <ol><li>상단에 “2일 후 사진첩이 만료됩니다” 배너</li><li>업로드는 여전히 가능</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S4 · 만료 후</div><h3>업로드 차단</h3>
+            <ol><li>조회만 가능, FAB 숨김</li><li>우회 시 400 EVENT_PHOTO_ALBUM_EXPIRED</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S5 · 한도</div><h3>100장 초과 시도</h3>
+            <ol><li>외부 스토리지 PUT은 성공해도 DB 등록 단계에서 400</li><li><strong>부작용:</strong> orphan 파일 발생 가능 → 운영 정리 필요</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S6 · 삭제</div><h3>본인 사진 삭제</h3>
+            <ol><li>풀스크린 뷰어 → 메뉴 → 확인 다이얼로그</li><li>외부 스토리지 + DB 삭제</li><li>photoCount-- + 토스트</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S7 · 호스트</div><h3>호스트의 타인 사진 삭제</h3>
+            <ol><li>UI에 진입점 없음, 직접 API 호출 시 호스트는 통과</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S8 · 비참석자</div><h3>비참석자 진입 시도</h3>
+            <ol><li>라우터 redirect로 사전 차단</li><li>우회 시 403 EVENT_PHOTO_NOT_ATTENDEE</li></ol>
+          </article>
+          <article class="card"><div class="eyebrow">S9 · 업로드 실패</div><h3>외부 스토리지 PUT 중 네트워크 오류</h3>
+            <ol><li>토스트 노출, DB 등록 단계 미도달</li><li>fileKey 무효, 재시도 시 새 사전 서명 URL 발급</li></ol>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td><code>/api/v1/events/{id}/photos</code></td><td>앨범 + 사진 목록(빈 앨범은 404)</td></tr>
+              <tr><td><code>POST</code></td><td><code>/api/v1/events/{id}/photos</code></td><td>사진 등록(앨범 lazy 생성)</td></tr>
+              <tr><td><code>DELETE</code></td><td><code>/api/v1/events/{id}/photos/{photoId}</code></td><td>삭제</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>자주 빠뜨리는 케이스</h2>
+        <div class="callout warn"><span class="label">레드 플래그</span>
+          <ul>
+            <li><strong>첫 진입 404를 에러 화면으로 노출</strong> — 빈 상태 UI로 자연스럽게 처리하는 게 옳다.</li>
+            <li><strong>외부 스토리지 PUT 성공 후 DB 등록 실패의 orphan</strong> — 한도 초과·동시성으로 자주 발생.</li>
+            <li><strong>만료 후에도 FAB 노출</strong> — 사용자가 업로드 시도 후 실패.</li>
+            <li><strong>비참석자 가드 누락</strong> — 사진 노출 위험.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-05.html"><div class="eyebrow">선행</div><h3>F03-05 신청·참석</h3></a>
+        </div>
+      </section>
+
+<!-- 원천: business_logic/units/03_event/F03-09_event-photos/ -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

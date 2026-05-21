@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F04-12 클럽 이벤트·캘린더 — community PRD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="../assets/styles.css"></head>
+<body data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+<header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">04 클럽</a><span>›</span>F04-12 클럽 이벤트·캘린더</div>
+<h1>F04-12. 클럽 이벤트 · 캘린더</h1>
+<p class="lede">클럽 전용 이벤트를 생성·게시·참석한다. 게시 시점에 가입 순서대로 정원만큼 자동 참석 처리되고, 캘린더 탭에서 월별 이벤트 도트로 한눈에 본다. 일반 이벤트(F03)와 같은 상태 머신을 따르지만 멤버 자동 참가가 클럽만의 특징.</p></header>
+<section><div class="metrics">
+<div class="metric"><div class="label">하위 동작</div><div class="value">5</div></div>
+<div class="metric"><div class="label">시나리오</div><div class="value">7+</div></div>
+</div></section>
+<section><h2>이 기능 안의 하위 항목</h2><div class="cards">
+<div class="card"><div class="eyebrow">동작 1</div><h3>클럽 이벤트 생성</h3><p>DRAFT INSERT.</p></div>
+<div class="card"><div class="eyebrow">동작 2</div><h3>게시(자동 참가)</h3><p>가입 순서대로 정원만큼 ATTENDING 일괄 INSERT + 알림.</p></div>
+<div class="card"><div class="eyebrow">동작 3</div><h3>캘린더 조회</h3><p>월별 도트 + 날짜별 카드.</p></div>
+<div class="card"><div class="eyebrow">동작 4</div><h3>참석/대기/취소</h3><p>대기열 자동 승급 포함.</p></div>
+<div class="card"><div class="eyebrow">동작 5</div><h3>이벤트 취소(유료 환불)</h3><p>실패 시 고객센터 안내.</p></div>
+</div></section>
+<section><h2>사용자 시나리오 7개</h2><div class="cards">
+<article class="card"><div class="eyebrow">S1</div><h3>게시 + 자동 참가</h3><ol><li>DRAFT → OPEN</li><li>가입 순서대로 20명 ATTENDING</li><li>본인 제외 알림</li></ol></article>
+<article class="card"><div class="eyebrow">S2</div><h3>캘린더 → 참석</h3><ol><li>월별 도트 → 날짜 셀 탭 → 카드 → 상세 → ATTENDING INSERT</li></ol></article>
+<article class="card"><div class="eyebrow">S3</div><h3>정원 가득 → 대기</h3><ol><li>WAITING 순번 부여</li></ol></article>
+<article class="card"><div class="eyebrow">S4</div><h3>취소 → 대기 승급</h3><ol><li>다음 대기자 자동 ATTENDING + 알림</li></ol></article>
+<article class="card"><div class="eyebrow">S5</div><h3>유료 이벤트 취소</h3><ol><li>참가자 자동 환불, 실패는 고객센터 안내</li></ol></article>
+<article class="card"><div class="eyebrow">S6</div><h3>DRAFT만 수정·삭제</h3><ol><li>OPEN 수정·삭제는 EVENT_INVALID_STATUS_TRANSITION</li></ol></article>
+<article class="card"><div class="eyebrow">S7</div><h3>BUSINESS 구독 만료 차단</h3><ol><li>게시·참가 모두 CLUB_SUBSCRIPTION_EXPIRED</li></ol></article>
+</div></section>
+<section><h2>서버 계약</h2><div class="table-wrap"><table>
+<thead><tr><th>Method</th><th>Path</th></tr></thead>
+<tbody>
+<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/events</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/events/{eventId}/publish</code></td></tr>
+<tr><td><code>GET</code></td><td><code>/api/v1/clubs/{id}/events/calendar?year=&month=</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/events/{eventId}/attendees</code></td></tr>
+<tr><td><code>POST</code></td><td><code>/api/v1/clubs/{id}/events/{eventId}/cancel</code></td></tr>
+</tbody></table></div></section>
+<section><h2>이어지는 단위</h2><div class="hub-grid">
+<a class="card" href="../domains/04-club.html"><div class="eyebrow">상위</div><h3>04 클럽</h3></a>
+<a class="card" href="../domains/03-event.html"><div class="eyebrow">연동</div><h3>03 이벤트</h3></a>
+<a class="card" href="../domains/10-calendar.html"><div class="eyebrow">관련</div><h3>10 캘린더</h3></a>
+</div></section>
+<!-- 원천: business_logic/units/04_club/F04-12_club-events-calendar/ -->
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script><script src="../assets/app.js"></script>
+</body></html>
