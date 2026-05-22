@@ -80,15 +80,15 @@ flowchart TD
               <tr><td><strong>승인 후 결제 필요</strong></td><td>호스트 승인은 “결제 권한 부여”이지 참석 확정이 아니다.</td></tr>
               <tr><td><strong>결제 전 참석 권한 제한</strong></td><td>체크인·위치 공유·리뷰 자격은 결제 성공 후 열린다.</td></tr>
               <tr><td><strong>기한 만료 처리</strong></td><td>결제 대기 상태에는 기한이 있고, 만료 시 예약 정원을 반환한다.</td></tr>
-              <tr><td><strong>서버 검증</strong></td><td><code>WalletService.pay</code>는 승인 대기 상태·기한·중복 결제를 검증해야 한다.</td></tr>
+              <tr><td><strong>서버 검증</strong></td><td><code>WalletService.payForApplication</code>와 선입금 facade는 승인 대기 상태·기한·중복 결제를 검증해야 한다.</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="callout danger">
-          <span class="label">서버 보강 필요</span>
-          <p>현재 서버에는 <code>APPROVED_PENDING_PAYMENT</code>·<code>PAYMENT_EXPIRED</code> 상태와
-          “결제 후 attendance 생성” 계약이 없다. 따라서 이 조합은 구현 보강 대상이며,
-          임시로 결제를 승인 전에 받거나 승인 즉시 ATTENDING으로 만드는 방식은 정책 위반이다.</p>
+        <div class="callout warn">
+          <span class="label">이벤트 참가 선입금으로 반영</span>
+          <p><code>APPROVED_PENDING_PAYMENT</code>·<code>PAYMENT_EXPIRED</code> 상태와
+          “결제 후 attendance 생성” 계약은 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 별도 결제 row로 다룬다.
+          승인 전 결제 금지와 승인 즉시 ATTENDING 금지 원칙은 그대로 유지된다.</p>
         </div>
       </section>
 

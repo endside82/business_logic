@@ -1,6 +1,6 @@
 # 권한 정책 PRD
 
-<!-- supporting-doc-status: 2026-05-18 -->
+<!-- supporting-doc-status: 2026-05-22 -->
 
 > 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 
@@ -168,3 +168,94 @@ flowchart TD
 - 모든 주요 액션은 비로그인, 로그인, 관계자, 소유자/관리자 역할별 결과가 정의되어야 한다.
 - 권한 없음은 숨김, 비활성, 로그인 유도, 접근 불가 안내 중 하나로 일관되게 표현되어야 한다.
 - 여러 역할을 동시에 가진 사용자의 우선순위를 정의해야 한다.
+
+## v4.5 W1~W7 신규 endpoint 권한 매트릭스 (2026-05-22)
+
+> updated: 2026-05-22. 본 절은 `docs/plan/event-extensions/PLAN.md` v4.5의 W1~W7 슬라이스에서 신설되는 endpoint의 권한 결정을 추적한다. 실제 enforcement는 `community_api/src/main/java/com/endside/community/event/auth/EventAuthorizationService.java` 신규 빈에서 단일화한다 (D12 결정 — 기존 `EventService.validateOwnership` private helper를 별도 빈으로 추출).
+
+### EventAuthorizationService 신규 빈 (D12)
+
+| 메서드 | 의미 | 호출자 |
+|---|---|---|
+| `assertHostOrCoHost(eventId, userId)` | 호스트 또는 공동호스트만 통과 | capacity/transport/carpool/bus/prepayment host endpoints |
+| `assertMemberSelf(eventId, userId, targetUserId)` | 본인만 통과 | prepayment 결제·취소, carpool offer 생성 |
+| `assertAttendingOrApproved(eventId, userId)` | ATTENDING 또는 APPROVED_PENDING_PAYMENT만 통과 | 카풀 탑승 요청, 버스 좌석 점유 |
+
+기존 EventService 호출은 그대로 유지하되, 내부적으로 새 빈에 위임한다. 신규 facade(`EventPrepaymentService`, `EventCarpoolService`, `EventBusService`, `EventCapacitySettingsService`)는 처음부터 새 빈만 호출한다 (P1#1 해결).
+
+### W1 — 정원 초과 허용
+
+| Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
+|---|---|---|---|---|
+| `/events/{id}/capacity-settings` | PATCH | HOST, COHOST | `assertHostOrCoHost` | DRAFT + OPEN 상태에서 호출 가능 (Q7). baseCapacity, overcapacityAllowed, hardCapacityLimit 갱신. |
+
+### W2~W3 — 참가 선입금
+
+| Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
+|---|---|---|---|---|
+| `/events/{id}/prepayment/wallet-pay` | POST | Member(self) | `assertMemberSelf` | APPROVED_PENDING_PAYMENT 상태에서만. WALLET 즉시 차감 + ATTENDING 전이. |
+| `/events/{id}/prepayment/bank-declare` | POST | Member(self) | `assertMemberSelf` | 참가자가 입금했다고 신고. event_payment.declared_at 갱신, 72 알림. |
+| `/events/{id}/prepayment/cancel` | POST | Member(self) | `assertMemberSelf` | 결제 전 취소 — event_payment.status=CANCELED. |
+| `/events/{id}/applications/{appId}/bank-confirm` | POST | HOST, COHOST | `assertHostOrCoHost` | 호스트가 입금 확인. event_payment.status=PAID → application ATTENDING. 73 알림. |
+| `/events/{id}/applications/{appId}/bank-reject` | POST | HOST, COHOST | `assertHostOrCoHost` | 호스트가 입금 미확인 처리. 74 알림. |
+| `/events/{id}/host/payments` | GET | HOST, COHOST | `assertHostOrCoHost` | 호스트 결제 보고서 6 섹션 (W3). |
+
+### W4 — 교통 모드 베이스
+
+| Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
+|---|---|---|---|---|
+| `/events/{id}/transport/config` | PUT | HOST, COHOST | `assertHostOrCoHost` | mode 전이 (NONE/CARPOOL/BUS). DRAFT only hard delete, OPEN immutable (§3.2). |
+
+### W5 — 카풀 운영
+
+| Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
+|---|---|---|---|---|
+| `/events/{id}/carpool/offer` | POST | Member(ATTENDING 또는 APPROVED) | `assertAttendingOrApproved` | 운전자가 offer 등록. event_carpool_offer.status=OFFERED. |
+| `/events/{id}/carpool/offers/{oid}/decision` | POST | HOST, COHOST | `assertHostOrCoHost` | 호스트가 confirm/reject. 77/78 알림. |
+| `/events/{id}/carpool/passengers/{pid}/assignment` | PUT | HOST, COHOST | `assertHostOrCoHost` | 탑승자 배정/해제. 79/80 알림. swap 시 `event_carpool_assignment_log` 기록. |
+| `/events/{id}/carpool/passengers` | GET | HOST(all rows), Member(본인 row만) | `assertHostOrCoHost` 분기 | 호스트는 전체, 일반 멤버는 본인 1건. |
+
+### W6 — 차량 레이아웃 카탈로그
+
+| Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
+|---|---|---|---|---|
+| `/vehicle-layouts/active` | GET | Authenticated | (인증만) | 호스트가 버스 생성 시 활성 레이아웃 read-only 조회. |
+| `/admin/v1/manage/vehicle-layouts` | POST | Admin | Admin 인증 | 관리자 카탈로그 생성. 1차 출시는 admin API만 (Q5 — 관리자 UI는 후속 슬라이스). |
+| `/admin/v1/manage/vehicle-layouts/{id}` | PUT/DELETE | Admin | Admin 인증 | 동일. soft delete 권장. |
+| `/admin/v1/manage/vehicle-layouts/{id}/seats` | PUT | Admin | Admin 인증 | 좌석 JSON 갱신. |
+
+### W7 — 이벤트 측 버스 운영
+
+| Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
+|---|---|---|---|---|
+| `/events/{id}/buses` | POST | HOST, COHOST | `assertHostOrCoHost` | 버스 인스턴스 생성 (vehicle_layout 참조). |
+| `/events/{id}/buses/{bid}` | PUT/DELETE | HOST, COHOST | `assertHostOrCoHost` | 버스 메타 변경/제거. OPEN 이후 좌석 점유 발생 시 제한. |
+| `/events/{id}/buses/{bid}/seats/{seatNo}` | PUT | HOST, COHOST, 또는 self if `allow_self_swap=true` | `assertHostOrCoHost` 또는 `assertMemberSelf` | FREE 모드는 self 점유 가능. FIXED_BY_HOST는 호스트만. FIRST_COME은 첫 시도자 자동 배정 후 host override. 81/82 알림. |
+| `/events/{id}/buses/{bid}/seats` | GET | ATTENDING 또는 HOST | `assertAttendingOrApproved` 또는 `assertHostOrCoHost` | 호스트는 전체 점유 상태, 참가자는 본인 좌석 + 남은 좌석 카운트. |
+
+### 이벤트 권한 매트릭스 확장 (요약)
+
+| 액션 | 게스트 | 로그인 사용자 | 신청자 | 참석자 | 대기자 | 호스트 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| 정원 설정 변경 |  |  |  |  |  | O |
+| 참가 선입금 결제 (WALLET) |  |  | 조건부(승인 후) |  |  |  |
+| 계좌이체 입금 신고 |  |  | 조건부(승인 후) |  |  |  |
+| 계좌이체 확인/거절 |  |  |  |  |  | O |
+| 교통 모드 설정 |  |  |  |  |  | O |
+| 카풀 offer 등록 |  |  |  | O | (대기는 보통 제외) |  |
+| 카풀 offer 확정/거절 |  |  |  |  |  | O |
+| 카풀 탑승자 배정 |  |  |  |  |  | O |
+| 버스 인스턴스 생성/수정 |  |  |  |  |  | O |
+| 버스 좌석 점유 (FREE 모드) |  |  |  | O |  | O |
+| 버스 좌석 변경 (FIXED) |  |  |  |  |  | O |
+
+조건부 항목:
+- 참가 선입금 결제는 `application.status = APPROVED_PENDING_PAYMENT`일 때만 허용. 승인 전/거절 후/만료 후/이미 결제 완료 상태에서는 차단.
+- 카풀 offer는 본인이 운전자여야 하며 본인 application이 ATTENDING 또는 APPROVED_PENDING_PAYMENT여야 함.
+- 버스 좌석 점유는 `event_bus.assignment_mode=FREE` 또는 호스트일 때만. 좌석 변경(swap)은 `allow_self_swap` 설정 따름.
+
+### 권한 enforcement 후속 (1차 범위 외)
+
+- **관리자 SPA** — `/admin/v1/manage/vehicle-layouts/*`의 UI 구현은 후속 슬라이스. 1차는 admin API + 직접 INSERT.
+- **EventAuthorizationService 캐시** — viewer context 배치 조회 시 권한 캐싱은 성능 모니터링 후 후속.
+- **공동호스트(COHOST) 역할 enum** — 현재 host 단일 필드. 공동호스트 다중화는 별도 PRD.

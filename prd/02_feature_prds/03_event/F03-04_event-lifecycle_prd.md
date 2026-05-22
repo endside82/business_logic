@@ -1,6 +1,6 @@
 # F03-04. 이벤트 수정/생명주기 관리 (호스트) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/03_event/F03-04_event-lifecycle -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/03_event/F03-04_event-lifecycle -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-04_event-lifecycle`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -61,11 +61,29 @@
 
 호스트/공동호스트가 이벤트의 메타데이터를 수정하거나 상태를 전이시킨다. 상태 전이는 `DRAFT → OPEN → CLOSED|CANCELED`만 합법이며 엔티티의 `Event#publish()/close()/cancel()` 메서드가 검증한다. 일정 변경은 OPEN 상태에서만 가능하고 변경 즉시 참석자/대기자에게 FCM 알림을 발송한다. 취소 시 유료 이벤트는 ATTENDING 사용자에게 100% 환불(Unit 06 위임)을 시도하고 실패한 건은 `failed_refund` 테이블에 기록한다. 호스트는 참석자 전체에게 공지(`announce`)를 일괄 발송할 수 있다 (throttle 적용).
 
+### 정원/오버캡 변경 정책 (v4.5 W1, D9)
+
+이벤트 메타 수정(`PATCH /events/{id}`)은 `EventService.updateEvent`가 처리하며, **DRAFT 상태만 허용**한다(`community_api/src/main/java/com/endside/community/event/service/EventService.java`의 상태 가드). OPEN/CLOSED/CANCELED 진입 후의 메타 변경은 차단된다.
+
+운영 중인 OPEN 이벤트에서도 정원 운영 폭(`baseCapacity / overcapacityAllowed / hardCapacityLimit`)을 조정할 필요가 있기 때문에, 정원 필드만 별도 서비스 `EventCapacitySettingsService.updateCapacitySettings`(`community_api/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java`)로 분리되었다. 이 엔드포인트는 **DRAFT 또는 OPEN** 상태에서만 호출 가능하다(Q7 — CLOSED는 `INVALID_EVENT_STATUS`로 차단).
+
+| 변경 항목 | OPEN 이벤트에 미치는 영향 |
+|---|---|
+| `baseCapacity` 증가 | 신청·승인 흐름에서 `CapacityPolicy.decide` R1 적용 좌석 확대. 정원 증가로 인한 대기자 자동 승격 트리거(`WaitlistService`)는 별도 호출 — 본 PRD 범위 외(F03-07) |
+| `baseCapacity` 축소 | 기존 ATTENDING은 강제 취소되지 않음. `exceedingAttendees > 0` 발생, `event_attendance_log.change_type=10 (CAPACITY_REDUCED)` 1행 기록. 신규 apply는 `overcap=false`일 때 `CAPACITY_FULL` |
+| `overcapacityAllowed=true` 전환 | 이후 `apply/approve` 시점 매트릭스 R2(`OVERCAPACITY`) 분기 활성. 자동 승인 이벤트에서는 즉시 ATTENDING 진입(Q6) |
+| `overcapacityAllowed=false` 전환 | 이미 ATTENDING으로 진입한 초과 인원은 유지. 신규 apply는 baseCapacity 도달 시 매트릭스 R4/R5로 전환 |
+| `hardCapacityLimit` 설정/변경 | invariant `hardCapacityLimit >= baseCapacity` 검증, 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)`. 도달 시 신규 apply는 R5(`FULL`) |
+| `clearHardCapacityLimit=true` | hardCapacityLimit을 NULL로 set — 사실상 무한 |
+
+정원 변경에 동반되는 알림 발송은 본 PRD 범위 외(현재 정원 조정 자체에 대한 FCM 알림은 없음). 자동 승격이 발생하면 F03-07의 `WAITLIST_PROMOTED` 알림이 별도로 fanout된다.
+
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| PATCH | /api/v1/events/{eventId} | EventController#updateEvent | required | DRAFT 메타 수정 |
+| PATCH | /api/v1/events/{eventId} | EventController#updateEvent | required | **DRAFT 메타 수정 only** (`EventService.updateEvent`는 DRAFT 상태만 허용) |
+| PATCH | /api/v1/events/{eventId}/capacity-settings | EventController#updateCapacitySettings → `EventCapacitySettingsService#updateCapacitySettings` | required | **v4.5 W1 신설** — DRAFT/OPEN 운영 중 정원 필드(`baseCapacity / overcapacityAllowed / hardCapacityLimit`)만 조정. CLOSED 차단(Q7). 정책 본체는 F03-07 §3-1 |
 | DELETE | /api/v1/events/{eventId} | EventController#deleteEvent | required | DRAFT 삭제 |
 | POST | /api/v1/events/{eventId}/publish | EventController#publishEvent | required | DRAFT → OPEN |
 | POST | /api/v1/events/{eventId}/close | EventController#closeEvent | required | OPEN → CLOSED |
@@ -249,3 +267,7 @@
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 변경 이력
+
+- **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `EventService.updateEvent`의 DRAFT-only 제약은 그대로 유지. 정원 토글이 OPEN 운영 중에도 필요한 요구를 별도 서비스 `EventCapacitySettingsService.updateCapacitySettings`(`community_api/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java`)와 신규 엔드포인트 `PATCH /events/{id}/capacity-settings`로 흡수. DRAFT/OPEN에서만 호출, CLOSED는 `INVALID_EVENT_STATUS`(Q7). 정원 변경이 OPEN 이벤트의 신청·승인 흐름에 미치는 영향은 §정원/오버캡 변경 정책 표 참조. 정책 본체와 매트릭스는 F03-07 §3-1에 위치.

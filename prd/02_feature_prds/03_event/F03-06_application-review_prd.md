@@ -1,6 +1,6 @@
 # F03-06. 신청서 승인/거절 (호스트) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/03_event/F03-06_application-review -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/03_event/F03-06_application-review -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-06_application-review`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -51,6 +51,21 @@
 호스트/공동호스트가 승인 필요(`approvalRequired=true` 또는 `visibility=APPROVAL`) 이벤트의 PENDING 신청서를 승인하거나 거절한다. 현재 구현은 승인 시 자동으로 `event_attendance` 레코드를 ATTENDING 또는 WAITING으로 만들어 currentCapacity를 증가시키며 정원 초과는 비관적 잠금으로 동시성 보호된다. 승인/거절 결과는 신청자에게 FCM 푸시(`APPLICATION_APPROVED` / `APPLICATION_REJECTED`)로 fanout된다. 본 단위는 신청 처리만 다루며, 신청서 작성·취소(참가자 시점)는 F03-05에서 다룬다.
 
 유료 승인제 이벤트에서는 현재 구현처럼 승인 즉시 ATTENDING을 만들면 안 된다. 목표 정책은 승인 후 `APPROVED_PENDING_PAYMENT` 또는 별도 결제 대기 상태를 만들고, 결제 성공 후에만 참석 확정으로 전환하는 것이다.
+
+### 승인 시점 정원 분기 (v4.5 W1)
+
+`ApplicationService.approveApplication`의 사전 정원 체크는 **명백한 FULL만** 차단하도록 완화되었다(`hardCapacityLimit` 도달 또는 `baseCapacity` 도달 + `!waitlistEnabled` + `!overcapacityAllowed`). 그 외 분기는 본 서비스가 호출하는 `CapacityService.createAttendanceFromApplication`이 위임받아 `CapacityPolicy.decide(event, attendingCount)` 5-룰 매트릭스를 단일 진실의 원천(single source of truth)으로 적용한다. 매트릭스 규칙은 F03-07 §3-1에 정의되어 있다.
+
+호스트가 승인을 누른 순간의 결과:
+
+| 조건 | 결과 |
+|---|---|
+| 매트릭스 R1 (`ATTENDING`) | `Application=APPROVED`, `EventAttendance=ATTENDING`, `currentCapacity++`, `change_type=APPLIED_ATTENDING` |
+| 매트릭스 R2 (`OVERCAPACITY`) | `Application=APPROVED`, `EventAttendance=ATTENDING`, `currentCapacity++`, `change_type=OVERCAPACITY_APPROVED(9)` (v4.5 W1) |
+| 매트릭스 R3/R4 (`WAITING`) | `Application=APPROVED`, `EventAttendance=WAITING`(waitlistOrder 부여) |
+| 매트릭스 R5 (`FULL`) | `RestException(ErrorCode.CAPACITY_FULL)` 409 — 클라이언트는 정원 초과 다이얼로그 노출 후 F03-07로 안내 |
+
+`hardCapacityLimit`을 켜둔 호스트가 한도까지 채운 뒤 추가 PENDING을 승인하려고 하면 R5로 즉시 차단되며, `overcapacityAllowed=true`인 경우에도 hardLimit 초과는 발생하지 않는다.
 
 ### 엔드포인트 요약
 
@@ -224,3 +239,7 @@
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 변경 이력
+
+- **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `approveApplication`의 사전 정원 체크를 명백한 FULL(hardLimit 도달 또는 baseCapacity 도달 + !waitlist + !overcap)만 차단하도록 완화. OVERCAPACITY 분기 결정은 `CapacityService.createAttendanceFromApplication`이 호출하는 `CapacityPolicy.decide` 매트릭스에 위임 (F03-07 §3-1). 승인 시점 결과는 §승인 시점 정원 분기 표 참조. `ChangeType.OVERCAPACITY_APPROVED(9)`로 audit log 기록.

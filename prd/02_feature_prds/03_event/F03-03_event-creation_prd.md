@@ -1,6 +1,6 @@
 # F03-03. 이벤트 생성 (호스트) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/03_event/F03-03_event-creation -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/03_event/F03-03_event-creation -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-03_event-creation`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -81,6 +81,7 @@
   - `@Min(1)` baseCapacity
   - `@Min(0)` price
   - `@Pattern(regexp="^(https?://.*)?$")` thumbnailUrl, onlineUrl
+  - **v4.5 W1**: `overcapacityAllowed` (Boolean, optional, 기본 false), `hardCapacityLimit` (Integer, optional, `@Min(1)`). DRAFT 생성 시 그대로 저장된다. invariant `hardCapacityLimit IS NULL OR hardCapacityLimit >= baseCapacity` 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)` 400. 생성 후 변경은 F03-07의 `PATCH /capacity-settings` 별도 엔드포인트로만 가능 (D9 — `EventService.updateEvent`는 DRAFT만 허용하므로 OPEN 진입 후에는 본 엔드포인트로 정원 필드를 바꿀 수 없음).
 
 ### 의존 단위 / 외부 시스템
 
@@ -129,6 +130,8 @@
 
 #### Step 3 — 옵션 (`event_create_step3.dart`)
 - 정원 `NumberInput` (스텝퍼, ≥1)
+- **정원 초과 허용 `Switch` (default OFF, v4.5 W1)** — 켜면 호스트가 baseCapacity 이상으로 ATTENDING을 받을 수 있음. 켰을 때만 "하드 상한" 입력이 노출됨
+- **하드 상한 `NumberInput` (optional, v4.5 W1)** — `overcapacityAllowed=true`일 때만 표시. `hardCapacityLimit >= baseCapacity` invariant. 비워두면 무한
 - 참가비 `CurrencyInput` (0이면 "무료" 표시)
 - 대기열 `Switch` (default OFF)
 - 위치 공유 `Switch` (오프라인일 때만 표시)
@@ -136,6 +139,8 @@
 - CUSTOM 선택 시 환불 마감 시간 입력
 - 사전결제 토글 + 금액/유형 (POINT/CASH/MIXED)
 - 공동호스트 추가 (`UserSearchInput`)
+
+> UI 경고 (v4.5 W1): `overcapacityAllowed=true && hardCapacityLimit=null && waitlistEnabled=true` 조합은 waitlist 의미가 사라지므로 호스트에게 경고 노출(F03-07 §3-1 매트릭스 R3 참조).
 
 #### Step 4 — 미리보기 (`event_create_step4.dart`)
 - `event_preview_card.dart` — SCR-EV-002와 동일한 레이아웃 미리보기
@@ -251,3 +256,7 @@
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 변경 이력
+
+- **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: 이벤트 생성 시점에 `overcapacityAllowed`/`hardCapacityLimit` 두 필드를 DRAFT로 함께 저장할 수 있도록 `EventAddParam`을 확장. invariant(`hardCapacityLimit >= baseCapacity`) 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)` 400. 생성 후 OPEN 진입 후의 정원 토글은 본 PRD가 아닌 F03-07의 별도 엔드포인트 `PATCH /events/{id}/capacity-settings`로 위임.

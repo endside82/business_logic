@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-17 차량 레이아웃 카탈로그 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-17 차량 레이아웃 카탈로그
+        </div>
+        <h1>F03-17. 차량 레이아웃 카탈로그</h1>
+        <p class="lede">
+          버스대절 기능에서 사용할 차량 좌석 구조를 read-only로 제공하는 카탈로그. 호스트는 활성 레이아웃을 고르고,
+          시스템은 그 레이아웃의 좌석 row를 기준으로 이벤트 버스 좌석표를 만든다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">초기 시드</div><div class="value">4종</div><div class="hint">28 · 45 · 20 · 8인승</div></div>
+          <div class="metric"><div class="label">출시 범위</div><div class="value">조회</div><div class="hint">관리자 CRUD는 후속</div></div>
+          <div class="metric"><div class="label">사용처</div><div class="value">F03-16</div><div class="hint">버스 좌석 row 생성 원천</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 좌석표를 이벤트마다 새로 그리지 않는다</span>
+          <p>차량 좌석 구조는 반복해서 재사용되는 운영 자산이다. 카탈로그를 별도로 두면 28인승, 45인승 같은
+            표준 차량을 여러 이벤트에서 같은 방식으로 쓸 수 있고, 좌석 선택 가능 여부도 레이아웃 단위로 통제할 수 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>조회 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["호스트가 버스 추가"] --> B["활성 레이아웃 목록 조회"]
+    B --> C["레이아웃 선택"]
+    C --> D["좌석 row 조회"]
+    D --> E["event_bus_seat 생성"]
+    E --> F["이벤트별 좌석 운영"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 조회</div>
+            <h3>활성 차량 4종 노출</h3>
+            <p>시드가 적용된 DB에서 호스트가 버스 추가 화면을 열면 28인승 A타입, 45인승, 20인승, 8인승이 보인다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">좌석 그림</div>
+            <h3>레이아웃 좌석 row 조회</h3>
+            <p>레이아웃을 고르면 row_index, col_index, seat_type, is_selectable을 받아 좌석 grid를 그린다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">비활성</div>
+            <h3>운영자가 비활성화한 레이아웃</h3>
+            <p>`is_active=0`인 레이아웃은 활성 목록에 보이지 않는다. 기존 이벤트가 이미 참조한 좌석표는 이벤트별 row로 남는다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">권한</div>
+            <h3>비인증 조회 차단</h3>
+            <p>차량 카탈로그는 이벤트 운영 도구의 일부이므로 인증이 필요하다. 토큰 없이 조회하면 401로 거절된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/api/v1/vehicle-layouts/active</code></td><td>활성 차량 레이아웃 목록 조회</td></tr>
+              <tr><td>GET</td><td><code>/api/v1/vehicle-layouts/{id}/seats</code></td><td>선택 레이아웃의 좌석 row 조회</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">1차 범위는 read-only다</span>
+          <ul>
+            <li><strong>관리자 CRUD는 후속이다.</strong> 1차 운영은 seed 또는 admin API 호출로 레이아웃을 관리한다.</li>
+            <li><strong>레이아웃은 원본이고 이벤트 좌석은 복사본이다.</strong> 레이아웃이 바뀌어도 이미 생성된 이벤트 좌석표를 소급 변경하지 않는다.</li>
+            <li><strong>좌석 선택 가능 여부가 중요하다.</strong> 운전석, 통로, 비선택 좌석을 구분해야 좌석 grid가 안전하게 동작한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="F03-16.html"><div class="eyebrow">사용처</div><h3>F03-16 이벤트 버스대절</h3><p>버스 좌석 row 생성 원천.</p></a>
+          <a class="card" href="F03-14.html"><div class="eyebrow">전제</div><h3>F03-14 이동수단 공통 베이스</h3><p>mode=BUS 설정.</p></a>
+          <a class="card" href="../policies/permission.html"><div class="eyebrow">정책</div><h3>권한·역할</h3><p>호스트 운영 도구 접근.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

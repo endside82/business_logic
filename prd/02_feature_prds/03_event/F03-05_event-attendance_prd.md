@@ -1,8 +1,10 @@
 # F03-05. 이벤트 신청 & 참석 (참가자) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/03_event/F03-05_event-attendance -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/03_event/F03-05_event-attendance -->
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-05_event-attendance`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 문서 상태: **실사 기반 전환본 + W1/W2/W3 신규 분기 통합 (2026-05-22)**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-05_event-attendance`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-05-22 W2/W3 추가: 선입금 활성 이벤트의 `APPROVED_PENDING_PAYMENT`/`PAYMENT_EXPIRED` 분기와 `EventParticipationCancellationService.cancelMyParticipation` facade가 `apply`/`approveApplication`/`DELETE .../apply` 흐름에 통합되었다. 선입금 결제·환불 자체의 facade·회계·환불 매트릭스는 **F03-13 (이벤트 참가 선입금)** 으로 분리. 본 PRD는 신청·취소 사용자 액션과 상태 전이까지만 다룬다.
 
 ## 1. 결론
 
@@ -79,6 +81,68 @@
 
 현재 서버 코드는 이 목표 흐름을 완성하지 못한다. `ApplicationService.approveApplication`은 승인 즉시 `capacityService.createAttendanceFromApplication`을 호출해 ATTENDING을 만든다. `WalletService.pay`는 가격과 중복 결제만 검증하고 신청/승인 상태를 확인하지 않는다. 따라서 유료 승인제는 문서상 정책과 구현 보강 대상이 함께 추적되어야 한다.
 
+> **2026-05-22 W2 갱신**: 위 "현재 코드 미완" 문구는 선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에 한해서 해결됨. `ApplicationService.apply`/`approveApplication`이 선입금 활성을 감지하면 즉시 `APPROVED_PENDING_PAYMENT + paymentDueAt` 상태로 진입하고 capacity는 점유하지 않는다(D4). 결제 facade(F03-13)가 결제 완료 시 `confirmPaymentAndAttend`를 통해 `APPROVED + ATTENDING + capacity++`로 전이한다. 선입금 미활성 유료 이벤트의 미해결 흐름은 별도 후속 슬라이스로 추적.
+
+### 2.0 W2 선입금 분기 (자동 승인 + 승인 필요 두 경로)
+
+PLAN.md §1.4.1과 §2.10·§2.14를 본 단위 흐름에 반영하면 다음과 같다.
+
+**`apply` (자동 승인 + 선입금 활성)** — `ApplicationService.apply`가 `EventPrepayment.prepaymentRequired=true`를 감지하면:
+- `Application.status = APPROVED_PENDING_PAYMENT`
+- `Application.paymentDueAt = now() + (policy.paymentDeadlineHours || 24h)`
+- capacity 변화 없음 (D4 — 결제 완료 전까지 좌석 미점유)
+- `ApplicationPendingPaymentEvent` 발행 (after-commit) → 알림 `EVENT_PREPAYMENT_REQUIRED(71)`
+- 자동 승인 무료 이벤트만 기존 `APPROVED + createAttendanceFromApplication` 흐름
+
+**`approveApplication` (승인 필요 + 선입금 활성)** — 호스트 승인 시:
+- `Application.status = APPROVED_PENDING_PAYMENT + paymentDueAt`로 전이 (capacity 미점유)
+- `ApplicationApprovedEvent` 미발행 — 캘린더 sync 등은 `confirmPaymentAndAttend`(`:437`)에서 1회만 발행
+- 알림 71 발송 (after-commit)
+
+**중복 차단 강화** — `apply`의 재신청 케이스에서 다음 상태는 active로 간주해 `APPLICATION_ALREADY_EXISTS` 차단:
+- `PENDING, APPROVED, APPROVED_PENDING_PAYMENT`
+
+`PAYMENT_EXPIRED` 재신청은 active `event_payment` row가 없을 때만 허용. 있으면 `PAYMENT_PENDING` 에러.
+
+### 2.6 사용자 자가 취소 facade (`DELETE /api/v1/events/{eventId}/apply`) — W2 변경
+
+기존 `EventController.cancelApplication`이 직접 호출하던 `ApplicationService.cancelApplication`은 **`EventParticipationCancellationService.cancelMyParticipation`** 으로 라우팅 변경 (PLAN.md §2.14, 위치 `community_api/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java:44`).
+
+facade 동작:
+1. lock 순서 `event → application → event_payment` 준수 (§0.4)
+2. active `event_payment` 조회 후 상태별 분기:
+   - `event_payment.PENDING` → `event_payment(CANCELED)` + 내부 `cancelApplication` 호출 → `Application=CANCELED`
+   - `event_payment.PAID + WALLET` → `EventPaymentRefundService.refundByWallet`(100% 환불, 분개 1건) → 내부 cancelApplication → `Application=CANCELED + capacity--`
+   - `event_payment.PAID + BANK_TRANSFER` → `event_payment(REFUND_REQUESTED)` + 호스트 알림 `EVENT_PREPAYMENT_REFUND_REQUESTED(83)`. **Application은 유지** — 호스트가 별도 환불 후 `refundByBankConfirm` 호출해야 `Application=CANCELED` 전이
+   - `event_payment.REFUND_REQUESTED` → `REFUND_ALREADY_REQUESTED` 에러
+   - active 결제 없음 → 기존 cancelApplication 흐름 그대로
+3. 응답: `ApplicationVo` (status는 위 분기에 따라 `CANCELED` 또는 미변경)
+
+> `ApplicationService.cancelApplication`은 그대로 두되 public API 라우팅에서 제거. 내부 호출자(환불 facade, AccountDeactivation 등)만 사용.
+
+### 2.7 결제 만료 스케줄러
+
+`EventPrepaymentExpiryScheduler`가 60s 주기로 `Application.paymentDueAt < now()`인 row를 `PAYMENT_EXPIRED`로 일괄 전이. 동일 application의 active `event_payment(PENDING)`도 `CANCELED`로 정리. capacity 변화 없음(D4). 알림 `EVENT_PREPAYMENT_EXPIRED(75)` after-commit.
+
+### 2.1 정원 판정 흐름 (v4.5 W1 — CapacityPolicy 매트릭스 위임)
+
+`apply`(직접 참석) 경로는 더 이상 사전 정원 체크를 단순 `currentCapacity >= baseCapacity`로 하지 않는다. 사전 체크는 **명백한 FULL만** 차단(`hardCapacityLimit` 도달 또는 `baseCapacity` 도달 + `!waitlistEnabled` + `!overcapacityAllowed`)하고, 나머지 분기는 `CapacityService.createAttendanceFromApplication`이 호출하는 `CapacityPolicy.decide(event, attendingCount)` 5-룰 매트릭스에 위임된다(F03-07 §3-1 참조).
+
+- 매트릭스가 `OVERCAPACITY` 분기로 결정하면 `apply` 또는 `attend`로 들어온 직접 참석자도 즉시 `ATTENDING`으로 진입한다 (자동 승인 이벤트 + `overcapacityAllowed=true` 조합, Q6). `event_attendance_log`에는 `ChangeType.OVERCAPACITY_APPROVED(9)`가 기록된다.
+- 매트릭스가 `WAITING`을 반환하면 기존 대기열 흐름 그대로(`AttendanceStatus.WAITING`).
+- 매트릭스가 `FULL`을 반환하면 `ErrorCode.CAPACITY_FULL`을 던진다.
+
+신규 ErrorCode:
+- `INVALID_HARD_CAPACITY_LIMIT(400013)` — F03-07의 capacity-settings 엔드포인트에서 invariant 위반 시 (apply 경로 자체는 던지지 않음).
+- `CAPACITY_FULL_AT_CONFIRMATION(400012)` — W2와 공유. 결제 확정 시점 race에서만 사용.
+
+### 2.2 결제 확정 race (v4.5 W1 + W2 공유)
+
+선입금 흐름에서 사용자가 결제(`POST /events/{id}/prepayment/wallet` 또는 BANK_TRANSFER `bank-confirm`)를 호출한 시점에 이미 다른 사용자가 정원을 채워버린 race가 발생할 수 있다. `CapacityService.confirmAttendanceFromPayment`는 W1 이후 동일 매트릭스를 적용하며, `WAITING/FULL`이면 `ErrorCode.CAPACITY_FULL_AT_CONFIRMATION(400012)`을 던진다.
+
+- WALLET 경로: 결제 facade(`EventPrepaymentService.payByWallet`) 트랜잭션 안에서 catch되어 **전체 롤백** — 지갑 차감/`event_payment` insert 모두 되돌려짐. 사용자에게 "정원 초과로 결제 실패" 응답.
+- BANK_TRANSFER 경로: 호스트의 `bank-confirm` 시점에 fail. `event_payment.status=REFUND_REQUESTED` 전환 + 호스트에게 수동 환불 알림.
+
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
@@ -107,7 +171,21 @@
   - `Event#waitlistEnabled: boolean`
   - `Event#maxWaitlist: int` (0이면 baseCapacity * 2)
   - `Event#currentCapacity: int`
+  - **v4.5 W1**: `Event#overcapacityAllowed: boolean`, `Event#hardCapacityLimit: Integer (nullable)`
   - `EventAttendance` 필드: `id, eventId, userId, status, waitlistOrder, promotedFromWaitlist, manuallyPromoted, createdAt`
+
+#### EventVo 노출 필드 (v4.5 W1)
+
+`community_api/src/main/java/com/endside/community/event/vo/EventVo.java`는 다음 정원 관련 필드를 노출한다(`EventVoAssembler.assemble`이 채움).
+
+| 필드 | 타입 | 조회 위치 |
+|---|---|---|
+| `overcapacityAllowed` | `boolean` | 단건/목록 모두 |
+| `hardCapacityLimit` | `Integer` (nullable) | 단건/목록 모두 |
+| `exceedingAttendees` | `int` | 단건/목록 모두 — `max(0, currentCapacity - baseCapacity)` |
+| `reservedPaymentPendingCount` | `int` | **단건 응답에만 lazy 조회**, EventSimpleVo와 목록에서는 항상 0 (D16, N+1 회피) |
+
+참가자 시점 UI(상세 액션바, 참석자 카운트)는 `exceedingAttendees`로 "+N명 초과" 뱃지를 표시한다. `reservedPaymentPendingCount`는 호스트 시점 결제 대기 인원 추적용.
 
 ### 의존 단위 / 외부 시스템
 
@@ -226,6 +304,7 @@
   - `APPROVAL_REQUIRED` → "이 모임은 호스트 승인이 필요합니다"
   - `CLUB_MEMBERSHIP_REQUIRED` → "클럽 멤버만 참석할 수 있습니다" + 클럽 가입 CTA
   - `APPLICATION_ALREADY_EXISTS` → "이미 신청한 모임입니다"
+  - `CAPACITY_FULL_AT_CONFIRMATION` (400012, v4.5 W1) → "결제 처리 중 정원이 초과되어 참석 확정에 실패했습니다. 결제가 되돌려졌습니다" + 환불 안내
   - `PaymentShortfall` (Unit 06) → "잔액이 부족합니다" + 충전 CTA
 - **신청 메시지 글자수**: 서버 제한 미확인 (DB column 길이 기준, 화면에서 500자 권장)
 - **AttendanceStatus enum 매핑** (서버 그대로): `ATTENDING`, `WAITING`, `CANCELLED`, `REJECTED` — `WAITLISTED` 아님!
@@ -252,6 +331,12 @@
 | S11 | 유료 이벤트 신청 시 잔액 부족 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S12 | 모집 마감(`isClosed=true`) 후 신청 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S13 | 유료 + 승인제 이벤트 신청 → 승인 후 결제 필요 | 로그인됨, 이벤트 status=OPEN, price=20,000, approvalRequired=true 또는 visibility=APPROVAL, currentCapacity=8/10. | 결제 성공 전까지 정식 참석자가 아니며, 결제 성공 후에만 참석 확정. |
+| S2-2 (W2) | 선입금 + 승인 필요 + 호스트 승인 → APPROVED_PENDING_PAYMENT | `EventPrepayment.prepaymentRequired=true`, `approvalRequired=true`. 호스트가 승인 호출 | `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`. capacity 미점유. 알림 71 (after-commit). 참가자 결제 화면 진입 가능 (F03-13). |
+| S2-2b (W2) | 선입금 + 자동 승인 → 즉시 APPROVED_PENDING_PAYMENT | `prepaymentRequired=true`, `approvalRequired=false`. 참가자가 `POST .../apply` | `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`. capacity 미점유. 결제 facade 진입 (F03-13). |
+| S2-5 (W2) | 결제 기한 만료 | `APPROVED_PENDING_PAYMENT + paymentDueAt < now()` | `EventPrepaymentExpiryScheduler` → `Application=PAYMENT_EXPIRED`. `event_payment(PENDING→CANCELED)` 동시 처리. capacity 변화 없음. 알림 75. 사용자는 재신청 가능. |
+| S2-6 (W3) | 사용자 자가 취소 — `cancelMyParticipation` (WALLET PAID) | `event_payment.PAID(WALLET)`, deadline 통과 전 | `DELETE /api/v1/events/{eventId}/apply` → facade가 `refundByWallet` 100% 위임 → `Application=CANCELED + capacity-- + event_payment.REFUNDED`. 알림 76. |
+| S2-7 (W3) | 사용자 자가 취소 — BANK_TRANSFER PAID | `event_payment.PAID(BANK_TRANSFER)` | `event_payment.REFUND_REQUESTED + Application 유지`. 호스트 알림 83. 환불 정리는 호스트 책임. |
+| S2-11 (W3) | 탈퇴 차단 | active `event_payment` 보유 | 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + BlockingItem `ACTIVE_EVENT_PAYMENT`. |
 
 ## 7. 정합성 판단
 
@@ -303,9 +388,19 @@
 - **AC-11. 유료 이벤트 신청 시 잔액 부족**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-12. 모집 마감(`isClosed=true`) 후 신청**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-13. 유료 + 승인제 이벤트 신청 → 승인 후 결제 필요**: Given 로그인됨, 이벤트 status=OPEN, price=20,000, approvalRequired=true 또는 visibility=APPROVAL, currentCapacity=8/10. When 사용자가 해당 흐름을 실행하면 Then 결제 성공 전까지 정식 참석자가 아니며, 결제 성공 후에만 참석 확정.
+- **AC-W2-1 (S2-2). 선입금 + 승인 필요 + 호스트 승인**: Given `prepaymentRequired=true`, `approvalRequired=true`. When 호스트가 승인 호출. Then `Application=APPROVED_PENDING_PAYMENT + paymentDueAt` 설정, capacity 미점유. 알림 71 발송(after-commit). 결제 facade 진입은 F03-13.
+- **AC-W2-2 (S2-2b). 선입금 + 자동 승인**: Given `prepaymentRequired=true`, `approvalRequired=false`. When 참가자가 `POST .../apply`. Then 즉시 `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`, capacity 미점유. 결제 후에만 ATTENDING.
+- **AC-W2-3 (S2-5). 결제 기한 만료**: Given `APPROVED_PENDING_PAYMENT + paymentDueAt < now()`. When `EventPrepaymentExpiryScheduler` 실행. Then `Application=PAYMENT_EXPIRED + event_payment(PENDING→CANCELED)`. capacity 변화 없음. 알림 75.
+- **AC-W2-4 (S2-6). 사용자 자가 취소 (WALLET PAID) — `cancelMyParticipation`**: Given `event_payment.PAID(WALLET)`. When `DELETE /api/v1/events/{eventId}/apply`. Then facade가 `refundByWallet` 호출 → `Application=CANCELED + capacity-- + event_payment.REFUNDED + 분개 1건`. 알림 76. (환불 facade 자체는 F03-13에서 검증)
+- **AC-W2-5 (S2-7). 사용자 자가 취소 (BANK PAID)**: Given `event_payment.PAID(BANK_TRANSFER)`. When 동일 호출. Then `event_payment.REFUND_REQUESTED + Application 유지`. 알림 83.
+- **AC-W2-6 (S2-11). 탈퇴 차단**: Given active `event_payment` 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + `ACTIVE_EVENT_PAYMENT` BlockingItem.
 
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 변경 이력
+
+- **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `apply` 사전 정원 체크를 명백한 FULL만 차단하도록 완화하고, 분기 결정은 `CapacityService.createAttendanceFromApplication`(및 결제 확정 경로 `confirmAttendanceFromPayment`)이 호출하는 `CapacityPolicy.decide` 5-룰 매트릭스에 위임(§2.1). 자동 승인 이벤트 + `overcapacityAllowed=true` 조합에서는 `attend/apply`가 즉시 `ATTENDING + OVERCAPACITY_APPROVED(9)` 분기로 진입(Q6). 결제 확정 시점 race에는 `CAPACITY_FULL_AT_CONFIRMATION(400012)` ErrorCode 도입 — WALLET은 전체 롤백, BANK는 `REFUND_REQUESTED` 전환(§2.2). EventVo에 `overcapacityAllowed / hardCapacityLimit / exceedingAttendees / reservedPaymentPendingCount` 4개 필드 노출(`reservedPaymentPendingCount`는 단건 lazy 조회, 목록은 0).

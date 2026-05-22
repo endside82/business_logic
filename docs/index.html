@@ -26,8 +26,8 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">업무 도메인</div><div class="value">14</div><div class="hint">가입부터 위치까지 책임이 분리된 영역</div></div>
-          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">117</div><div class="hint">Golden 1 · 전환 완료 116</div></div>
-          <div class="metric"><div class="label">검증 시나리오</div><div class="value">987</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
+          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">122</div><div class="hint">Golden 1 · 전환 완료 121</div></div>
+          <div class="metric"><div class="label">검증 시나리오</div><div class="value">1024</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
           <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
         </div>
 
@@ -35,7 +35,7 @@
           <span class="label">2026-05-20 갱신 — 운영 모델 변경 반영</span>
           <p>원문 PRD가 <strong>source-first 모델</strong>로 전환됐다. 기능 PRD는 이제 “시나리오 나열”이 아니라
           실제 서버·Flutter 소스를 직접 대조한 판단 문서로 운영된다. 자세한 골자는
-          <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 117개 기능의 전환 상태와 Trace/Risk 후보 수는
+          <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 122개 기능의 전환 상태와 Trace/Risk 후보 수는
           <a href="qa/migration-status.html">전환 상태표</a>에서 확인한다. 시각화 변경 내역은
           <a href="overview/changelog.html">변경 기록</a> 페이지에 있다.</p>
         </div>
@@ -118,13 +118,13 @@ flowchart LR
           </a>
           <a class="card" href="qa/migration-status.html">
             <div class="eyebrow">신규</div>
-            <h3>117개 PRD 전환 상태표</h3>
-            <p>Golden sample 1 · 전환 완료 116. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
+            <h3>122개 PRD 전환 상태표</h3>
+            <p>Golden sample 1 · 전환 완료 121. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="features/catalog.html">
             <div class="eyebrow">기능</div>
-            <h3>117개 기능 카탈로그</h3>
+            <h3>122개 기능 카탈로그</h3>
             <p>전 기능을 한 화면에서 검색·필터·정렬한다. 영향 영역(알림/돈/캘린더/위치/신뢰)으로도 좁힐 수 있다.</p>
             <div class="meta"><span class="pill brand">전수</span><span class="pill">검색</span></div>
           </a>
@@ -167,7 +167,7 @@ flowchart LR
           <a class="card" href="qa/coverage.html">
             <div class="eyebrow">QA & 릴리즈</div>
             <h3>시나리오 커버리지</h3>
-            <p>987개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
+            <p>1024개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="qa/release.html">
@@ -182,7 +182,7 @@ flowchart LR
       <section>
         <h2>왜 이 문서가 필요한가</h2>
         <p>
-          117개 기능이 한 데 모이면, 한 기능을 바꿀 때 어디가 같이 바뀌는지 잊어버리기 쉽다.
+          122개 기능이 한 데 모이면, 한 기능을 바꿀 때 어디가 같이 바뀌는지 잊어버리기 쉽다.
           예를 들어 “이벤트 신청” 한 줄을 고치면 알림, 결제 흐름, 캘린더 동기화,
           호스트 정산, 리뷰 자격이 동시에 영향받는다. 이 문서들은 그 연결을
           머릿속이 아니라 종이로 남겨두기 위해 있다.

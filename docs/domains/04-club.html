@@ -66,7 +66,7 @@
 
         <h3>돈</h3>
         <div class="cards">
-          <div class="card"><div class="eyebrow">F04-13</div><h3>기금 현황·거래 차트</h3><p>잔액·거래 차트, 인출 가능액.</p><div class="meta"><span class="pill">단위 없음</span></div></div>
+          <a class="card" href="../features/F04-13.html"><div class="eyebrow">F04-13</div><h3>기금 현황·거래 차트</h3><p>잔액·거래 차트, 인출 가능액.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-14.html"><div class="eyebrow">F04-14</div><h3>기부하기·기부 내역</h3><p>지갑 차감, 취소, 기금 반영, 잔액 부족 처리.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-15.html"><div class="eyebrow">F04-15</div><h3>기금 인출 요청</h3><p>가용 잔액 검증, pending 중복, 승인 위임.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-16.html"><div class="eyebrow">F04-16</div><h3>클럽 구독</h3><p>시작/해지/재활성, 결제 실패, 만료 혜택.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
@@ -178,6 +178,17 @@ flowchart LR
             <li><strong>인출 요청 pending 중복</strong> — 소유자가 같은 금액을 두 번 인출 요청.</li>
             <li><strong>구독 만료 후 혜택 노출</strong> — 결제 실패로 만료된 사용자에게 멤버 전용 콘텐츠가 캐시되어 보임.</li>
           </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>최근 구현 확장 — PRD ID 배정 대기</h2>
+        <div class="callout warn">
+          <span class="label">클럽 활동 운영 묶음</span>
+          <p>최근 구현에는 마일리지, 경고·이의, 운영자 outbox 모니터링, permission flag 관리,
+            클럽 활동 알림 채널 설정, 멤버 신뢰도 점수 위젯이 추가됐다. 아직 <code>business_logic/prd</code>의 기능 ID 체계에는
+            별도 단위가 없으므로 이 도메인에서 구현 반영 대기 묶음으로 추적한다. 기능 ID를 임의로 만들지 않고,
+            다음 PRD 정리 시 F04 클럽 운영 확장 또는 F11/F12 정책 확장으로 배정해야 한다.</p>
         </div>
       </section>
 

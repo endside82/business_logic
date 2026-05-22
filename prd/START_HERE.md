@@ -16,6 +16,21 @@
    `backend.md`, `frontend.md`, `scenarios.md`, `diagrams.md`
 7. 구현 우선순위와 현재 위험도를 보려면 `../../docs/IMPLEMENTATION_CROSSWALK.md`와
    `../../docs/IMPLEMENTATION_WORKBOARD.md`
+8. v4.5 이벤트 확장(W1~W7) master plan을 보려면 `../../docs/plan/event-extensions/PLAN.md` (관련 산출물: `ENUM_RESERVATIONS.md`, `E2E_SCENARIOS.md`)
+
+## v4.5 W1~W7 이벤트 확장 신규 PRD (2026-05-22)
+
+이벤트 도메인 신규 5개 PRD가 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice로 추가된다. 모든 본문은 별도 agent가 신설하며 본 인덱스는 등록만 한다.
+
+| ID | 기능 | 예상 파일 | Wave |
+|---|---|---|---|
+| F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | `02_feature_prds/03_event/F03-13_event-prepayment_prd.md` (또는 `02_feature_prds/07_meeting_settlement/F07-11_event-prepayment-flow_prd.md`) | W2a/W2b/W3 |
+| F03-14 | 교통 모드 베이스 | `02_feature_prds/03_event/F03-14_event-transport-mode_prd.md` | W4 |
+| F03-15 | 카풀 운영 | `02_feature_prds/03_event/F03-15_event-carpool_prd.md` | W5 |
+| F03-16 | 이벤트 측 버스 운영 | `02_feature_prds/03_event/F03-16_event-bus-charter_prd.md` | W7 |
+| F03-17 | 차량 레이아웃 카탈로그 | `02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md` | W6 |
+
+source-of-truth는 `docs/plan/event-extensions/PLAN.md`다. 본문 신설 후 `PRD_MIGRATION_STATUS.md`의 v4.5 표에 trace/risk 후보 수를 채운다.
 
 ## 역할별로 뭘 보면 되나
 

@@ -1,15 +1,96 @@
 # PRD 전환 상태표
 
-> 업데이트: 2026-05-18. 이 표는 `business_logic/units`의 117개 기능 단위와 `business_logic/prd/02_feature_prds`의 기능 PRD를 1:1로 맞춘 결과다.
+> 업데이트: 2026-05-22. 이 표는 `business_logic/units`의 117개 기능 단위와 `business_logic/prd/02_feature_prds`의 기능 PRD를 1:1로 맞춘 결과다.
+>
+> v4.5 W1~W7 (이벤트 확장 슬라이스) 신규 PRD 5개(F03-13~17)가 같은 디렉터리에 추가된다. 본 슬라이스는 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice이며, V1__init.sql 단일 마이그레이션 파일 원칙(`community_api/CLAUDE.md`)을 유지한다.
 
 ## 요약
 
 | 항목 | 개수 |
 |---|---:|
-| 전체 기능 단위 | 117 |
+| 전체 기능 단위 (v4.5 확장 전) | 117 |
+| v4.5 신규 기능 단위 (F03-13~17) | 5 |
 | Golden sample 유지 | 1 |
 | 실사 기반 전환 완료 | 116 |
+| v4.5 신규 PRD (별도 master plan 산하) | 5 |
 | 누락/확인 필요 | 0 |
+
+## v4.5 W1~W7 영향 요약 (2026-05-22)
+
+`docs/plan/event-extensions/PLAN.md` v4.5의 7개 Wave는 아래 인프라/스키마 변경을 동반한다. 모두 단일 `community_api/src/main/resources/db/migration/V1__init.sql`에 흡수한다 (V2 이상 신규 파일 금지 — `community_api/CLAUDE.md` 규칙 준수). 운영 환경 정합성 복구는 별도 절차 SQL인 `docs/sql/local_schema_repair_2026-05-22.sql`(또는 `docs/sql/repair_local_schema_2026-05-22.sql`)을 통해 수동 실행한다.
+
+### 스키마 변경
+
+| 대상 | 변경 종류 | 상세 | Wave |
+|---|---|---|---|
+| `event` 테이블 | 컬럼 2개 추가 | `overcapacity_allowed TINYINT(1) NOT NULL DEFAULT 0`, `hard_capacity_limit INT NULL` | W1 |
+| `application` 테이블 | 복합 인덱스 1개 추가 | `idx_application_event_status (event_id, status)` — `countByEventIdInAndStatus` 최적화 | W2a |
+| `event_payment` | 신규 테이블 | 참가 선입금 결제/환불 트래킹. FK: event/users/application/point_transaction | W2a |
+| `event_transport_config` | 신규 테이블 | 이벤트별 교통 모드 (NONE/CARPOOL/BUS) | W4 |
+| `event_carpool_offer` | 신규 테이블 | 운전자 offer (OFFERED→CONFIRMED/REJECTED/CANCELED) | W5 |
+| `event_carpool_passenger` | 신규 테이블 | 탑승자 배정 상태 | W5 |
+| `event_carpool_assignment_log` | 신규 테이블 | 카풀 swap 감사 로그 | W5 |
+| `vehicle_layout` | 신규 테이블 | 관리자 카탈로그 (admin 측 마스터) | W6 |
+| `vehicle_layout_seat` | 신규 테이블 | 좌석 정의 (NORMAL/DRIVER/GUIDE/FOLDABLE/DISABLED/AISLE) | W6 |
+| `event_bus` | 신규 테이블 | 이벤트별 버스 인스턴스 | W7 |
+| `event_bus_seat` | 신규 테이블 | 좌석 배정 (FREE/FIXED_BY_HOST/FIRST_COME) | W7 |
+
+추가 테이블 총 **9개** (event_payment 1 + carpool 3 + vehicle_layout 2 + bus 2 + log 1). 기존 테이블 컬럼/인덱스 추가는 `event` 2 컬럼 + `application` 1 인덱스로 한정.
+
+### Enum 변경
+
+| 대상 enum | 종류 | 추가/신규 | Wave |
+|---|---|---|---|
+| `TransactionType` | 기존 enum 값 추가 | 26 = `EVENT_PREPAYMENT_REFUND` (WALLET 환불 그룹 집계 포함) | W2b |
+| `NotificationType` | 기존 enum 값 추가 | 71~83 (13개 — 선입금/카풀/버스 알림) | W2~W7 |
+| `ChangeType` | 기존 enum 값 추가 | 9 = `OVERCAPACITY_APPROVED`, 10 = `CAPACITY_REDUCED` | W1 |
+| `EventPaymentMethod` | 신규 enum | `WALLET`, `BANK_TRANSFER` | W2a |
+| `EventPaymentStatus` | 신규 enum | `PENDING`, `PAID`, `REFUND_REQUESTED`, `REFUNDED`, `CANCELED` | W2a |
+| `TransportMode` | 신규 enum | `NONE`, `CARPOOL`, `BUS` | W4 |
+| `CarpoolStatus` | 신규 enum | `OFFERED`, `CONFIRMED`, `REJECTED`, `CANCELED` | W5 |
+| `TransportChoice` | 신규 enum | `CARPOOL_REQUESTED`, `CARPOOL_ASSIGNED`, `SELF`, `DRIVER` | W5 |
+| `BusAssignmentMode` | 신규 enum | `FREE`, `FIXED_BY_HOST`, `FIRST_COME` | W7 |
+| `VehicleSeatType` | 신규 enum | `NORMAL`, `DRIVER`, `GUIDE`, `FOLDABLE`, `DISABLED`, `AISLE` | W6 |
+
+검증 테스트: `community_api/src/test/java/com/endside/community/EnumReservationTest.java` (모든 enum 번호의 unique + presence 검증).
+
+### V1__init.sql 단일 파일 규칙
+
+- `community_api/CLAUDE.md`에 명시된 대로 **모든 W1~W7 DDL은 `V1__init.sql` 한 파일에만 누적**. V2/V3 추가 금지.
+- 신규 `CREATE TABLE` 9개와 신규 컬럼 2개 + 인덱스 1개를 `V1__init.sql`의 적절한 위치에 삽입.
+- 로컬/스테이징 DB가 이미 V1 적용 후일 경우, `docs/sql/local_schema_repair_2026-05-22.sql`을 수동 실행해 동기화. (운영 절차: ① 백업 → ② repair SQL dry-run → ③ 실행 → ④ flyway info 확인). 부록은 PLAN.md §"부록 A — Repair SQL 패턴"을 참조.
+
+### 시드 데이터 (W6 — vehicle_layout 4종)
+
+| 레이아웃 | 좌석 수 | 용도 |
+|---|---:|---|
+| 8인승 (밴) | 8 | 소규모 카풀/렌터카 |
+| 20인승 (소형버스) | 20 | 소규모 단체 |
+| 28인승 (미니버스) | 28 | 중간 단체 |
+| 45인승 (대형버스) | 45 | 대규모 단체 |
+
+- 시드 SQL은 `V1__init.sql` 말미 또는 `community_admin_api/docs/seed/vehicle_layouts.json` 기반 ddl insert 블록으로 삽입.
+- 좌석 JSON은 운영자가 직접 수정 가능 — 1차 출시 관리자 UI는 범위 외, admin API + 직접 INSERT로 운영.
+
+### 후속 슬라이스 (1차 범위 외)
+
+- **관리자 SPA** — `vehicle_layout` 관리 UI (W6b로 분리, 1차 출시 직후 후속)
+- **Flutter W5/W7 클라이언트** — 카풀/버스 좌석 위젯, 운전자 offer 화면
+- **WalletRefundExecutor** — `EventPaymentRefundService` 분리 후 별도 빈 (W2b 완료 시점에 추출)
+- **환불 비율 정책** — 시간대별 환불 비율(시작 N시간 전 100%/50%/0% 등)은 별도 PRD로 결정. 현재 PLAN은 100% 환불만 명시.
+- **카풀 swap 로그 분석** — `event_carpool_assignment_log` 기반 호스트 swap 패턴 리포트 (분석/감사 용도)
+
+## v4.5 신규 기능 PRD (별도 등록 — `02_feature_prds/03_event/`)
+
+| ID | 도메인 | 예상 PRD 파일 | 주요 기능 | Wave | 상태 |
+|---|---|---|---|---|---|
+| F03-13 | 이벤트 | `F03-13_event-prepayment_prd.md` 또는 `F07-11_event-prepayment-flow_prd.md` | 참가 선입금 (WALLET/BANK_TRANSFER) | W2a/W2b/W3 | 신설 진행중 (별도 agent) |
+| F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 교통 모드 베이스 (NONE/CARPOOL/BUS 전이) | W4 | 신설 진행중 (별도 agent) |
+| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 카풀 운영 (offer/passenger/swap) | W5 | 신설 진행중 (별도 agent) |
+| F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 이벤트 측 버스 운영 + 좌석 위젯 | W7 | 신설 진행중 (별도 agent) |
+| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 관리자 차량 레이아웃 카탈로그 | W6 | 신설 진행중 (별도 agent) |
+
+신규 PRD 5개는 본 인덱스에는 등록하되, 본문 작성은 별도 agent에서 진행. 본 표는 머지 시점에 trace/risk 후보 수가 채워진다.
 
 ## 읽는 법
 

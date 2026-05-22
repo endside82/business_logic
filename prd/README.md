@@ -80,6 +80,26 @@ trace source를 실제 코드에서 다시 확인한다.
 ## 생성 기준
 
 - 14개 업무 영역
-- 117개 기능
+- 117개 기능 (v4.5 W1~W7 신규 5개 — F03-13~17 별도)
 - 987개 시나리오
 - 508개 도식
+
+## v4.5 이벤트 확장 슬라이스 (2026-05-22)
+
+이벤트 도메인 4기능 확장이 단일 master plan(`../../docs/plan/event-extensions/PLAN.md`)으로 통합 관리된다.
+
+- 마스터 플랜: `../../docs/plan/event-extensions/PLAN.md`
+- enum 예약표: `../../docs/plan/event-extensions/ENUM_RESERVATIONS.md`
+- E2E 시나리오: `../../docs/plan/event-extensions/E2E_SCENARIOS.md`
+
+신규 기능 PRD 5개 (F03-13~17 — 별도 agent가 본문 신설):
+
+| ID | 기능 | Wave |
+|---|---|---|
+| F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | W2a/W2b/W3 |
+| F03-14 | 교통 모드 베이스 (NONE/CARPOOL/BUS) | W4 |
+| F03-15 | 카풀 운영 (offer/passenger/swap) | W5 |
+| F03-16 | 이벤트 측 버스 운영 + 좌석 위젯 | W7 |
+| F03-17 | 차량 레이아웃 카탈로그 (관리자) | W6 |
+
+영향 받는 보조 문서: `PRD_MIGRATION_STATUS.md`, `SUPPORTING_DOCS_INDEX.md`, `03_policy_prds/notification_policy_prd.md`, `03_policy_prds/permission_policy_prd.md`, `03_policy_prds/state_policy_prd.md`, `00_product_prd.md`.

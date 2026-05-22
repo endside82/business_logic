@@ -1,8 +1,13 @@
 # 06. 결제 & 지갑 PRD
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/06_payment -->
+<!-- generated: domain-source-first-rollup; updated: 2026-05-22; unit: business_logic/units/06_payment -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/06_payment/00_overview.md`와 117개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본 + W2 신규 결제 경로 통합 (2026-05-22)**. 이 문서는 `business_logic/units/06_payment/00_overview.md`와 117개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+>
+> 2026-05-22 변경 이력:
+> - **F06-06 갱신** — 신규 결제 경로 `WalletService.payForApplication`(referenceType=`EVENT_PREPAYMENT`) 추가. 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)는 변경 없음 (D8). 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 도입. 자세한 내용은 F06-06 §4.2 W2 절 참조.
+> - **F06-10 갱신** — BANK_TRANSFER 선입금은 호스트 직접 수취(D5)로 회계 분개 발생 없음. 호스트 정산 보고서에 6 섹션 별도 노출 (§5.1 W2 추가).
+> - **F03-13 신설** (이벤트 도메인) — `WalletService.payForApplication`의 facade 호출자. 결제·환불 흐름은 03_이벤트_prd 도메인 rollup 참조.
 
 ## 1. 결론
 
@@ -118,11 +123,12 @@
 - **사용자 가치**: 이벤트 참여비를 별도 카드 입력 없이 보유 포인트로 즉시 지불하고, 정해진 정책에 따라 취소·환불을 받는다.
 - **주요 화면**: 결제는 이벤트/플랜/호스팅 티켓 등 호출 화면(상세는 각 유닛). 본 유닛에서는 환불 정책 안내(거래 상세·환불 모달)와 거래 기록을 노출.
 - **백엔드 엔드포인트**:
-  - `POST /api/v1/wallet/pay` (`PaymentParam`: eventId 등) → `TransactionVo` (포인트 차감).
+  - `POST /api/v1/wallet/pay` (`PaymentParam`: eventId 등) → `TransactionVo` (포인트 차감). 기존 경로. referenceType=`EVENT_PAYMENT`.
   - `POST /api/v1/wallet/refund` (`RefundParam.eventId`) → `TransactionVo` (환불 거래 생성).
   - `GET /api/v1/wallet/refund/policy` → 24시간 전 100% / 12시간 전 50% / 12시간 미만 0% 규정 응답.
-- **선결 조건/상태**: 인증 필요. 잔액 부족 시 자동충전(설정 ON) 또는 충전 화면 분기. 환불은 정책 조건과 결제 거래 존재가 전제.
-- **결과 상태 변화**: 결제 시 잔액 차감 + 거래 내역에 결제 행 + 이벤트 참여 확정. 환불 시 잔액 복구 + 환불 거래(원거래 링크 포함) + 알림. 실패 시 재시도 또는 고객센터 안내.
+  - (W2 신규, 내부 호출 전용) `WalletService.payForApplication(userId, applicationId, eventPaymentId, eventId, hostId, amount)` — referenceType=`EVENT_PREPAYMENT` / referenceId=`eventPaymentId`. controller 노출 없음, `EventPrepaymentService.payByWallet` facade가 호출 (F03-13).
+- **선결 조건/상태**: 인증 필요. 잔액 부족 시 자동충전(설정 ON) 또는 충전 화면 분기. 환불은 정책 조건과 결제 거래 존재가 전제. 신규 경로는 `Application=APPROVED_PENDING_PAYMENT` 상태에서만 진입 가능 (facade 가드).
+- **결과 상태 변화**: 결제 시 잔액 차감 + 거래 내역에 결제 행 + 이벤트 참여 확정. 환불 시 잔액 복구 + 환불 거래(원거래 링크 포함) + 알림. 실패 시 재시도 또는 고객센터 안내. 신규 경로는 `event_payment(PAID)` 전이 + facade에서 `confirmPaymentAndAttend`로 ATTENDING 확정.
 
 ### F06-07 호스팅 티켓 구매
 - **사용자 가치**: 프라이빗 모임을 개최하기 위한 권리(티켓)를 보유 포인트로 즉시 구매해 호스팅 권한을 확보한다.
@@ -184,3 +190,7 @@
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+## 9. 변경 이력
+
+- **2026-05-22 (v4.5 W2/W3 — 이벤트 참가 선입금 결제·환불 신규 경로)**: 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`, `:73-178`) 변경 없음. 신규 `WalletService.payForApplication(:189)` 추가 — referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`. 환불 측 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` (`docs/plan/event-extensions/ENUM_RESERVATIONS.md`). 회계 분개는 `AccountingLedgerService.recordPayment/recordRefund` 기존 메서드 재사용 — AccountCode 신규 없음. BANK_TRANSFER 선입금은 **분개 없음**(D5 — 호스트 직접 수취), 호스트 정산 보고서 6 섹션(F06-10 §5.1)에 별도 노출. `WalletRefundExecutor` 공통 헬퍼 추출 및 PG queue 통합 환불은 후속 슬라이스로 분리. 영향 받는 기능: F06-06(신규 경로 명세), F06-10(BANK 6 섹션), F03-13(facade 호출자). 결제 facade·환불 facade·이벤트 취소 환불 coordinator·탈퇴 차단 통합은 03_이벤트_prd.md 도메인 rollup §9 참조.

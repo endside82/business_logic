@@ -1,8 +1,8 @@
 # 결제·정산 정책 PRD
 
-<!-- supporting-doc-status: 2026-05-18 -->
+<!-- supporting-doc-status: 2026-05-22 -->
 
-> 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
+> 문서 상태: **보조 문서 + W2/W3 정책 결정 사항 통합 (2026-05-22)**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 
 ## 1. 목적
 
@@ -55,7 +55,90 @@ flowchart TD
 
 현재 서버에는 `APPROVED_PENDING_PAYMENT`/`PAYMENT_EXPIRED` 상태와 결제 후 attendance 생성 계약이 없다. 따라서 이 조합은 구현 보강 대상이며, 임시로 결제를 승인 전에 받거나 승인 즉시 ATTENDING으로 만드는 방식은 PRD 정책과 맞지 않는다.
 
-## 5. 수용 기준
+> **2026-05-22 W2/W3 정책 결정**: 위 "현재 서버에 상태가 없다" 문구는 **선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에 한해서 해결됨**. `ApplicationStatus.APPROVED_PENDING_PAYMENT, PAYMENT_EXPIRED`가 서버 enum에 추가되었고, `Application.paymentDueAt`가 자동 설정된다. 결제 흐름과 환불·취소·탈퇴 통합은 §5의 D-시리즈 결정으로 명문화한다. 선입금 미활성 유료 이벤트의 미해결 흐름은 별도 후속 슬라이스로 추적.
+
+## 5. W2/W3 결정 사항 (Event Extensions v4.5)
+
+본 절은 `docs/plan/event-extensions/PLAN.md` v4.5에서 결정된 8개 정책 결정을 정책 문서에 고정한다. 본 결정은 이벤트 참가 선입금 흐름(F03-13, F06-06)에 한해 적용되며, 모임 정산 선입금(F07-09)·하스팅 티켓(F06-07)·구독(F06-08)에는 적용되지 않는다.
+
+### D1. 단방향 price 동기화
+
+선입금 활성 시 `Event.price = EventPrepayment.prepaymentAmount` 단방향 동기화.
+
+- 활성 + price 불일치 → 400 `PRICE_PREPAYMENT_MISMATCH`
+- 활성 + `amount <= 0` → 400 `INVALID_PREPAYMENT_AMOUNT`
+- 비활성 → `Event.price` 자체값 사용
+- ON → OFF 전환 (Q2 사용자 확정): `event.price = 0` 무료 이벤트로 자동 전환. 사용자에게 price 재입력 받지 않음.
+
+### D4. `APPROVED_PENDING_PAYMENT` 좌석 미점유
+
+호스트 승인 또는 자동 승인 이후 `APPROVED_PENDING_PAYMENT` 상태에 진입한 application은 **capacity를 점유하지 않는다**. 결제 facade(`payByWallet` 성공, `bankConfirm` 성공)가 `confirmPaymentAndAttend`를 호출한 시점에만 `currentCapacity++`. 정원 race는 결제 확정 시점 `CapacityPolicy.decide` 매트릭스로 단일 판정(F03-07).
+
+### D5. 계좌이체 호스트 직접 수취
+
+BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫폼 회계 분개를 발생시키지 않는다.
+
+- `bankConfirm/bankReject/refundByBankConfirm` → `AccountingLedgerService` 호출 없음
+- audit 데이터(`event_payment.method, status, amount, host_confirmed_at, host_confirmed_by, refunded_at, refund_amount, refund_reason`)만 기록
+- 호스트 정산 보고서에 6 섹션 별도 노출 (F06-10 §5.1) — 플랫폼 정산금과 명확히 구분
+- 1차 출시는 호스트 직접 수취만 (Q3 가정). 가상계좌 등 PG 자동화는 후속 슬라이스.
+
+### D6. application당 active payment 1건
+
+`event_payment.active_application_id` STORED generated column + `UNIQUE KEY`로 application당 active(PENDING/PAID/REFUND_REQUESTED) 결제 1건만 허용.
+
+- DDL: `active_application_id BIGINT GENERATED ALWAYS AS (CASE WHEN status IN ('PENDING','PAID','REFUND_REQUESTED') THEN application_id ELSE NULL END) STORED, UNIQUE KEY uk_event_payment_active (active_application_id)`
+- 동일 application에 대해 두 번째 결제 시도 시 `DataIntegrityViolationException` → service에서 `DUPLICATE_PAYMENT`로 변환
+- 환불 완료(`REFUNDED`)·취소(`CANCELED`) 후에는 generated column이 NULL이 되어 재신청·재결제 가능
+
+### D7. 1차 환불 정책 단순화
+
+이벤트 참가 선입금의 1차 환불 정책은 **단일 deadline 100% / 마감 후 0%** 만 지원.
+
+- `RefundDeadlinePolicy.isWithinDeadline(eventId)` 단일 분기
+- `EventPrepayment.refundDeadlineHours` (없으면 이벤트 시작 시각 기준 0h)
+- 시간 비율 정책(GRADUATED 24h/12h 등)은 **후속 슬라이스로 분리**. 1차 PRD에 포함됐다고 작성 금지.
+- 호스트 이벤트 취소(`refundByHostCancel`) 시에는 정책 무시하고 항상 100% 환불 (`EventPaymentRefundService.refundByHostCancel`)
+- 사용자 자가 취소·BANK 호스트 환불은 정책 통과 시에만 환불 진행
+
+### D8. 신규 결제 경로 분리
+
+기존 `WalletService.pay`(`:73-178`, referenceType=`EVENT_PAYMENT`)는 **변경 없음**.
+
+신규 `WalletService.payForApplication`(`:189`)만 추가:
+- referenceType=`EVENT_PREPAYMENT`
+- referenceId=`eventPaymentId` (기존 `eventId` 기준 중복차단의 false-positive 회피)
+- 중복 차단: `existsByUserIdAndReferenceTypeAndReferenceId(userId, "EVENT_PREPAYMENT", eventPaymentId)`
+- 14단계 (자동충전·FIFO·분개·metric·log·도메인 이벤트 발행 위임)
+- 환불은 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 사용
+
+### D15. 알림은 도메인 이벤트 + AFTER_COMMIT
+
+선입금 흐름의 모든 알림(71~76, 83)은 facade가 `ApplicationEventPublisher.publishEvent`로 도메인 이벤트만 발행하고, `EventExtensionNotificationListener`가 `@TransactionalEventListener(phase=AFTER_COMMIT)`로 `NotificationService`를 호출한다. 결제 트랜잭션 롤백 시 알림은 발송되지 않는다.
+
+### D16. Pending count 단건 lazy
+
+`EventVo.reservedPaymentPendingCount`는 단건 응답(`GET /events/{id}`)에서만 lazy 조회로 채워진다. `EventSimpleVo`와 목록 응답은 항상 0. N+1 회피.
+
+## 6. 미완 정책 (후속 슬라이스 운영 결정 필요)
+
+### 6.1 WalletRefundExecutor 공통 헬퍼 추출
+
+`RefundService.doRefund`(14단계)와 `EventPaymentRefundService.refundByWallet`은 lot 처리·PG queue·Settlement adjustment에서 공통 패턴을 가진다. 1차 W2/W3 슬라이스에서는 회귀 위험을 줄이기 위해 두 경로를 별도로 두었다. 후속 슬라이스에서 `WalletRefundExecutor`로 추출 시 다음 운영 정책 결정 필요:
+
+- 환불 실패 시 `FailedRefund` 레코드의 처리 SLA (현재 inline handling)
+- PG queue refund 통합 — 본 facade에서 PG 환불 비동기 처리 시 우선순위 정책
+- Settlement adjustment 트리거 — 신규 환불도 기존 settlement에 음수 adjustment를 만들어야 하는지 회계 정합성 점검
+
+### 6.2 환불 정책 비율 계산 (GRADUATED)
+
+D7 단순화로 1차에서 제외. 후속 슬라이스에서 `EventPrepayment.refundPolicyType` enum + 시간 비율 분기를 도입할 때 운영 정책 결정 필요.
+
+### 6.3 BANK_TRANSFER PAID 사용자 취소 SLA
+
+S2-7/S2-9 흐름에서 BANK PAID → `REFUND_REQUESTED` 전환 후 호스트 수동 환불까지의 SLA·알림 빈도가 미정. 호스트 정산 보고서에 미정리 row가 누적되는 경우의 모니터링 정책 결정 필요.
+
+## 7. 수용 기준
 
 - 결제 성공과 기능 성공이 분리되는 경우 처리중/재조회 상태가 있어야 한다.
 - 환불은 원거래, 환불 금액, 환불 상태가 추적 가능해야 한다.

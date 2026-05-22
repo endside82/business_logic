@@ -1,12 +1,16 @@
 # F06-10. 정산 조회·요약·이의 제기 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/06_payment/F06-10_settlement-appeal -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/06_payment/F06-10_settlement-appeal -->
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-10_settlement-appeal`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 문서 상태: **실사 기반 전환본 + W2 D5 호스트 직접 수취 정산 영향 추가 (2026-05-22)**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-10_settlement-appeal`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-05-22 W2 추가: 이벤트 참가 선입금의 BANK_TRANSFER 결제는 D5에 따라 호스트가 직접 수취하며 회계 분개를 발생시키지 않는다. 호스트 정산 보고서에는 별도 6 섹션(§6.1)으로 노출되어 플랫폼 정산금과 구분된다. 본 변경은 정산 상태머신·이의 제기 흐름에는 영향이 없고, 정산 보고서 UI에서만 audit 데이터를 보강한다.
 
 ## 1. 결론
 
 호스트가 자신에게 발생한 정산을 상태별로 조회하고, 서버 측 집계로 총/대기/승인 합계와 건수를 따로 받아 일관된 요약을 본다(CL-05). 정산 상세는 수수료 10% / 원천징수 3.3% / 무료 포인트 보조금 차감 / 실수령액으로 자동 분해되어 라인 아이템(`FeeLineItem`)으로 응답된다. `REJECTED` 상태일 때만 이의 제기가 가능하며, 본 단위는 이의 제기 생성/조회 API도 함께 묶는다.
+
+(W2 추가) BANK_TRANSFER 선입금은 호스트 직접 수취(D5)이므로 본 정산 흐름과 분리된 별도 6 섹션으로 노출된다. 호스트는 플랫폼 정산금 vs 직접 수취 입금을 구분하여 확인한다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -177,6 +181,21 @@
   - REJECTED + 이의 이미 제출됨: 버튼 숨김, 이의 카드만 노출
 - **모달/시트/네비게이션**:
   - `SettlementAppealDialog(onSubmit: (reason) => ...)` — 사유 입력. UI/UX 20에는 첨부 파일도 명시되어 있으나 **서버 Param에 첨부 필드 없음** → 클라 다이얼로그도 텍스트만 받음
+
+## 5.1 호스트 정산 보고서의 BANK_TRANSFER 6 섹션 (W2 D5 추가)
+
+이벤트 참가 선입금 BANK_TRANSFER는 호스트 계좌로 직접 입금되므로 플랫폼 정산금 산정에서 제외된다. 그러나 호스트가 자신의 수익을 정확히 파악하려면 BANK 입금 audit 데이터도 함께 봐야 하므로, PLAN.md §2.8에 따라 정산 보고서에 다음 6 섹션을 추가한다(데이터 출처는 모두 `event_payment` 테이블).
+
+| 섹션 | 데이터 출처 | 분개 영향 |
+|---|---|---|
+| 플랫폼 수납 (WALLET PAID) | `event_payment.method=WALLET AND status=PAID` | F06-06 §4.2.5 분개 발생 (`recordPayment`) → 본 정산 흐름에 누적 |
+| 호스트 직접 수납 확인 (BANK_TRANSFER PAID) | `method=BANK_TRANSFER AND status=PAID` | **분개 없음** (D5). 본 정산 흐름에서 제외 |
+| 입금 대기 (BANK_TRANSFER PENDING) | `method=BANK_TRANSFER AND status=PENDING` | 분개 없음. 호스트 confirm/reject 대기 |
+| 환불 필요 (REFUND_REQUESTED) | `status=REFUND_REQUESTED` | 호스트 수동 환불 대기. 처리 시점에 BANK는 분개 없음, WALLET은 `recordRefund` 분개 |
+| 환불 완료 (REFUNDED) | `status=REFUNDED` | WALLET은 정산금 차감 누적. BANK는 audit만 |
+| 플랫폼 지급 제외 (BANK 합계) | `method=BANK_TRANSFER` 누계 | 호스트가 별도 수취한 합계. 본 정산 보고서의 "플랫폼 정산금" 합계와 구분 표시 |
+
+W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount, paid_at, refunded_at`)만 확정한다. 보고서 UI 통합은 F06-09 수익 대시보드 후속 슬라이스에서 처리한다(§10 참조).
 
 ## 6. 상태/권한/시나리오 매트릭스
 

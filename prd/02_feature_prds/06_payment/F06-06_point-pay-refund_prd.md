@@ -1,8 +1,10 @@
 # F06-06. 포인트 결제·환불 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/06_payment/F06-06_point-pay-refund -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/06_payment/F06-06_point-pay-refund -->
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-06_point-pay-refund`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 문서 상태: **실사 기반 전환본 + W2/W3 신규 결제 경로 통합 (2026-05-22)**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-06_point-pay-refund`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-05-22 W2/W3 추가: 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)에 더해 신규 결제 경로 `WalletService.payForApplication`(referenceType=`EVENT_PREPAYMENT`)이 도입되었다. 기존 경로는 변경 없이 유지하고(D8), 신규 경로만 본 PRD §4.2 W2에 명세한다. 환불 측 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)`도 함께 추가. 신규 환불 흐름의 facade는 F03-13에서 다루고 본 PRD에서는 분개·중복차단·자동충전 호환성만 다룬다.
 
 ## 1. 결론
 
@@ -83,10 +85,70 @@
 - **외부 PG (🟠 Toss)**: 환불 시 비동기 `cancelPayment` 호출 (RefundRequestWorker)
 - 다른 Unit:
   - **Event Unit (03)**: `event.price`로 가격 검증 + `event.hostUserId`로 호스트 식별. 결제 후 이벤트 신청 확정은 Event Unit에서 처리.
-  - **F03-05/F03-06 유료 승인제**: 승인 후 결제 대기 상태에서만 결제를 허용해야 한다. 현재 서버에는 이 상태가 없어 보강 필요.
-  - **F06-05 자동 충전**: 잔액 부족 시 즉시 트리거
+  - **F03-05/F03-06 유료 승인제**: 승인 후 결제 대기 상태에서만 결제를 허용해야 한다. (2026-05-22 W2 갱신: 선입금 활성 이벤트에 한해 `APPROVED_PENDING_PAYMENT` 상태가 도입되어 본 단위 신규 경로 `payForApplication`이 사용된다. F03-13 참조.)
+  - **F03-13 이벤트 참가 선입금** (신규): 신규 결제 경로 `WalletService.payForApplication`의 호출자. `EventPrepaymentService.payByWallet` facade가 본 메서드를 호출. 신규 `event_payment` 테이블 기반.
+  - **F06-05 자동 충전**: 잔액 부족 시 즉시 트리거 (기존 `pay`와 신규 `payForApplication` 둘 다 호환).
   - **F06-09 수익 대시보드**, **F06-10 정산**: 결제가 호스트의 정산/수익에 누적 (별도 SettlementBatchService가 주기적 집계)
-- 알림: `PAYMENT_COMPLETED`, `REFUND_COMPLETED` (NotificationType + `PaymentNotificationData(eventId, amount)`)
+- 알림: `PAYMENT_COMPLETED`, `REFUND_COMPLETED` (NotificationType + `PaymentNotificationData(eventId, amount)`). 선입금 알림(`EVENT_PREPAYMENT_*` 71~76, 83)은 본 단위가 아닌 F03-13에서 발행.
+
+### 4.2 W2 신규 결제 경로 — `WalletService.payForApplication` (D8)
+
+위치: `community_api/src/main/java/com/endside/community/payment/service/WalletService.java:189`
+
+#### 4.2.1 시그니처와 인자
+
+```
+TransactionVo payForApplication(
+    long userId,
+    long applicationId,
+    long eventPaymentId,
+    long eventId,
+    long hostId,
+    long amount)
+```
+
+#### 4.2.2 기존 `WalletService.pay`와의 분리 원칙 (D8)
+
+기존 `WalletService.pay`(`:73-178`)는 그대로 유지(referenceType=`EVENT_PAYMENT`, referenceId=`eventId`). 신규 메서드는 다음 점만 다르다:
+- **referenceType**: `EVENT_PREPAYMENT` (기존 `EVENT_PAYMENT`와 분리 — 동일 사용자가 동일 이벤트에 환불 후 재신청하는 케이스에서 중복 차단 false-positive 방지)
+- **referenceId**: `eventPaymentId` (기존은 `eventId`). 신규 `event_payment` row 단위로 1건 결제 → application당 active 1건(D6, STORED + UNIQUE)
+- **중복 차단**: `pointTransactionRepository.existsByUserIdAndReferenceTypeAndReferenceId(userId, "EVENT_PREPAYMENT", eventPaymentId)` → 동일 `eventPaymentId`로 두 번째 호출 시 `DUPLICATE_PAYMENT`
+- **트랜잭션 경계**: facade(`EventPrepaymentService.payByWallet`)의 트랜잭션 안에서 호출됨. controller에서 직접 노출하지 않음 — 본 메서드는 controller 노출 없음.
+
+#### 4.2.3 14단계 흐름 (기존 `pay`와 동일 패턴, referenceType만 다름)
+
+1. 금액 검증(`amount <= 0` → `INVALID_PAYMENT_AMOUNT`)
+2. 중복 결제 차단 (위 §4.2.2 referenceType/referenceId 기준)
+3. Wallet 잠금 (`walletQueryRepository.findByUserIdForUpdate`)
+4. 잔액 부족 시 자동충전 시도 (F06-05 `ChargeService.tryAutoCharge`) — 실패 시 `INSUFFICIENT_BALANCE + PaymentFailureVo`
+5. 유료 우선 차감(`wallet.deductAmount(amount)`)
+6. `PointTransaction(type=PAY, referenceType="EVENT_PREPAYMENT", referenceId=eventPaymentId)` insert
+7. `PaymentRecord(COMPLETED, pointTransactionId=tx.id)` insert
+8. FIFO `ChargeLot` 소진(`chargeLotConsumptionService.consumeFifo`)
+9. 회계 분개 (`AccountingLedgerService.recordPayment(txId, userId, eventId, hostId, amount)` — 기존 메서드 재사용)
+10. Metric (`wallet.pay` counter, label `ref_type=EVENT_PREPAYMENT`)
+11. Log
+12. **알림 미발행** — 도메인 이벤트 발행은 facade(`EventPrepaymentService.payByWallet`) 책임. `@TransactionalEventListener(AFTER_COMMIT)`이 알림(`EVENT_PREPAYMENT_BANK_CONFIRMED(73)` 또는 결제 완료 알림) 호출 (D15)
+13. `TransactionVo` 반환
+14. (호출 측) facade가 `event_payment(PAID)` 전이 + `confirmPaymentAndAttend`
+
+#### 4.2.4 환불 측 신규 경로
+
+신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 도입. 환불은 본 PRD §4.2.5 분개 표만 다루고, facade(`EventPaymentRefundService.refundByWallet/refundByHostCancel`)는 F03-13에서 다룬다.
+
+- referenceType: `EVENT_PREPAYMENT_REFUND`
+- referenceId: `eventPaymentId`
+- description: "이벤트 참가 선입금 환불 — eventPayment {id}"
+
+> WalletRefundExecutor 공통 헬퍼는 본 슬라이스에서는 미완. 기존 `RefundService.doRefund`와 신규 `EventPaymentRefundService.refundByWallet`은 별도 구현(회귀 방지). 후속 슬라이스에서 추출 예정.
+
+#### 4.2.5 회계 분개 (신규 경로) — D8 + 기존 분개 메서드 재사용
+
+| 트리거 | 분개 호출 | 비고 |
+|---|---|---|
+| `payForApplication` 성공 | `AccountingLedgerService.recordPayment(txId, userId, eventId, hostId, amount)` | 기존 메서드와 동일. AccountCode 신규 없음 |
+| `EventPaymentRefundService.refundByWallet/refundByHostCancel` (F03-13) | `AccountingLedgerService.recordRefund(refundTxId, userId, eventId, hostId, walletRefundedAmount)` + (PG queue 분 있으면) `recordPgRefundRequested` | 기존 RefundService 패턴 |
+| BANK_TRANSFER 결제·환불 (F03-13 `bankConfirm/bankReject/refundByBankConfirm`) | **분개 없음** (D5 — 호스트 직접 수취) | 호스트 정산 보고서 별도 6 섹션에만 노출 |
 
 ## 5. 프론트 계약
 
@@ -204,6 +266,10 @@
 - **AC-08. 가격 조작 시도 (클라 amount=1)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가격 조작 차단. 이벤트는 결제되지 않음.
 - **AC-09. PG 측 카드 환불 실패 → 수동 대사**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시.
 - **AC-10. 유료 승인제 이벤트 — 승인 후 결제 확정**: Given `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. When 사용자가 해당 흐름을 실행하면 Then alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (EVENT_PAYMENT 1302). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 DUPLICATE_PAYMENT 409).
+- **AC-W2-1 (S2-1). 신규 결제 경로 `payForApplication` happy path**: Given `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT`, 잔액 충분. When facade가 `WalletService.payForApplication(userId, applicationId, eventPaymentId, eventId, hostId, amount)` 호출. Then `PointTransaction(type=PAY, referenceType=EVENT_PREPAYMENT, referenceId=eventPaymentId)` 신규 1건 + `PaymentRecord` 신규 1건 + `AccountingLedger.recordPayment` 분개 1건. 잔액 = before - amount. metric `wallet.pay{status=success, ref_type=EVENT_PREPAYMENT}` ++.
+- **AC-W2-2. 신규 경로 중복 차단**: Given 동일 `eventPaymentId`로 이미 PAY 트랜잭션 존재. When `payForApplication` 재호출. Then 즉시 `DUPLICATE_PAYMENT` 409. wallet 변동 없음 (lock 이전 단계 차단).
+- **AC-W2-3. 자동충전 호환성**: Given 잔액 부족 + 자동충전 활성. When `payForApplication` 호출. Then `ChargeService.tryAutoCharge` 발동 → 충전 후 차감. 거래 내역에 충전·결제 두 행. 기존 `pay`와 동일 분기 동작.
+- **AC-W2-4. 환불 측 신규 TransactionType**: Given facade `refundByWallet` 호출. When 환불 분개 생성. Then `PointTransaction(type=EVENT_PREPAYMENT_REFUND(26), referenceType=EVENT_PREPAYMENT_REFUND, referenceId=eventPaymentId)` + `AccountingLedger.recordRefund` 분개. 환불 facade의 100% 정책 검증은 F03-13에서.
 
 ## 10. 미결정 / 후속
 

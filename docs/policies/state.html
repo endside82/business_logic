@@ -123,11 +123,11 @@ stateDiagram-v2
     CANCELED --> PENDING: 재신청
           </div>
         </div>
-        <div class="callout danger">
-          <span class="label">서버 보강 필요</span>
-          <p>현재 서버 enum에는 <code>APPROVED_PENDING_PAYMENT</code>, <code>PAYMENT_EXPIRED</code>가 없다.
-          구현 전까지 이 조합은 “정책 보강 필요” 항목이며, 임시로 승인 즉시 ATTENDING으로 만드는 처리는
-          결제 분쟁을 만든다.</p>
+        <div class="callout warn">
+          <span class="label">F03-13 선입금 상태로 분리</span>
+          <p><code>APPROVED_PENDING_PAYMENT</code>, <code>PAYMENT_EXPIRED</code>는 이벤트 참가 선입금의 핵심 상태다.
+          승인 즉시 ATTENDING으로 만들지 않고, 지갑 결제 또는 계좌이체 확인 이후에만 참석 확정으로 전이한다.
+          자세한 결제 row 상태는 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 본다.</p>
         </div>
       </section>
 

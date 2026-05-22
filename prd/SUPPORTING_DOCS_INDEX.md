@@ -1,6 +1,6 @@
 # 보조 PRD 문서 인덱스
 
-> 업데이트: 2026-05-18. 이 인덱스는 기능 PRD가 아닌 보조 문서 27개를 추적한다.
+> 업데이트: 2026-05-22. 이 인덱스는 기능 PRD가 아닌 보조 문서 30개를 추적한다 (이벤트 확장 슬라이스 산출물 3개 추가).
 
 ## 읽는 법
 
@@ -37,3 +37,6 @@
 | [05_planning_artifacts/notion_import_order.md](05_planning_artifacts/notion_import_order.md) | Notion 업로드 순서 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/ppt_feature_intro_outline_draft.md](05_planning_artifacts/ppt_feature_intro_outline_draft.md) | community 기능 소개 PPT 항목 초안 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/prd_review_workshop.md](05_planning_artifacts/prd_review_workshop.md) | PRD 리뷰 워크숍 가이드 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
+| [../../docs/plan/event-extensions/PLAN.md](../../docs/plan/event-extensions/PLAN.md) | 이벤트 확장 마스터 플랜 v4.5 (W1~W7) | 정원 초과 / 참가 선입금 / 카풀 / 버스 대절 4기능 통합 실행계획. F03-13~17 PRD의 source-of-truth. updated: 2026-05-22 |
+| [../../docs/plan/event-extensions/ENUM_RESERVATIONS.md](../../docs/plan/event-extensions/ENUM_RESERVATIONS.md) | 이벤트 확장 enum 번호 예약표 | TransactionType 26 / NotificationType 71~83 / ChangeType 9~10 + 신규 enum 7종. 머지 전까지 다른 PR이 사용 금지. updated: 2026-05-22 |
+| [../../docs/plan/event-extensions/E2E_SCENARIOS.md](../../docs/plan/event-extensions/E2E_SCENARIOS.md) | 이벤트 확장 E2E 시나리오 | W1~W7 슬라이스 통과 게이트가 되는 통합 시나리오 집합. updated: 2026-05-22 |
