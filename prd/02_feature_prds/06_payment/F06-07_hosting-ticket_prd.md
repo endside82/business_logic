@@ -6,7 +6,7 @@
 
 ## 1. 결론
 
-프라이빗 모임 개최 권리(호스팅 티켓)를 보유 포인트로 구매한다. 단가는 서버 상수 `TICKET_PRICE = 3,000원`이며 사용자는 한 번에 1~100장 구매 가능. 결제는 유료 포인트만 차감(`deductPaidOnly`) 후 6개월 만료 티켓 1행을 생성. 보유 티켓은 만료 전 + 잔여 수량 > 0인 항목만 노출.
+프라이빗 모임 개최 권리(호스팅 티켓)를 보유 포인트로 구매한다. 단가는 서버 상수 `TICKET_PRICE = 3,000원`이며 사용자는 한 번에 1~100장 구매 가능. 결제는 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)`로 차감(무료 미허용 시 유료만 차감) 후 6개월 만료 티켓 1행을 생성. 보유 티켓은 만료 전 + 잔여 수량 > 0인 항목만 노출.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -62,7 +62,7 @@
 
 ### 개요
 
-프라이빗 모임 개최 권리(호스팅 티켓)를 보유 포인트로 구매한다. 단가는 서버 상수 `TICKET_PRICE = 3,000원`이며 사용자는 한 번에 1~100장 구매 가능. 결제는 유료 포인트만 차감(`deductPaidOnly`) 후 6개월 만료 티켓 1행을 생성. 보유 티켓은 만료 전 + 잔여 수량 > 0인 항목만 노출.
+프라이빗 모임 개최 권리(호스팅 티켓)를 보유 포인트로 구매한다. 단가는 서버 상수 `TICKET_PRICE = 3,000원`이며 사용자는 한 번에 1~100장 구매 가능. 결제는 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)`로 차감(무료 미허용 시 유료만 차감) 후 6개월 만료 티켓 1행을 생성. 보유 티켓은 만료 전 + 잔여 수량 > 0인 항목만 노출.
 
 ### 엔드포인트 요약
 
@@ -79,6 +79,8 @@
   - `HostingTicket` (`payment/model/HostingTicket.java`) — userId, totalCount, remainCount, purchasedAt, expiresAt, createdAt/updatedAt
   - 사용/반환 메서드: `useOne()` (잔량 -1), `restoreOne()` (반환 +1)
 - 추가 서비스: `HostingTicketExpirationScheduler` — 만료 티켓을 주기적으로 정리 (본 단위 외)
+
+> **유료/무료 분리정산 — free-burn** (2026-05-24 반영): 호스팅 티켓은 수취자가 없는 **플랫폼 매출**이라 사용처 분류상 **free-burn**이다. 결제는 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)`로 차감된다. opt-in으로 무료 결제를 허용하면 무료분은 수취자 없이 지갑에서 차감(소각)된다(별도 수취자에게 전파되지 않음). **단 spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현 — followup.** 정본은 정책 PRD §2.5.
 
 ### 의존 단위 / 외부 시스템
 

@@ -132,6 +132,7 @@
   - `GET /api/v1/creators/{creatorId}` (CreatorController.getCreatorProfile, 공개 프로필 + 판매 아이템)
   - `GET /api/v1/creators/me/stats` (CreatorController.getMyStats, 본인만)
 - **컨트롤러**: CreatorController
+- **창작자 정산 split** (2026-05-24 포인트 분리정산 반영): 창작자 수익(`CreatorEarning`)은 유료/무료를 분리 기록한다. 수수료·원천징수는 **유료분에만** 적용하고, 무료 매출은 무수수료 `free_credit`으로 창작자 free에 적립되어 **인출 불가**(무료→현금 전환 차단). 정본은 정책 PRD §2.5.
 
 ---
 
@@ -173,6 +174,7 @@
   - `POST /api/v1/plans/{planId}/purchase` (PlanController.purchasePlan, 플랜 직접 구매)
 - **에러 분기**: 400 INSUFFICIENT_BALANCE, 409 ALREADY_PURCHASED, 409 PARTIAL_ALREADY_PURCHASED
 - **컨트롤러**: MarketPurchaseController, PlanController
+- **유료/무료 차등가격** (2026-05-24 포인트 분리정산 반영): 마켓 구매는 무료 수취자(창작자)가 존재하는 **flow-through** 사용처. 무료 허용 결정 필드는 도메인별로 다르다 — **마켓 아이템/번들**은 `currencyType`(PAID_POINT/FREE_POINT/ANY_POINT) + 구매자 `fundingMode`로, **플랜 직접 구매**는 `allowFreePoints` + 구매자 `fundingMode`로 결정한다. 무료 전용가는 양쪽 모두 `freePointPrice`(nullable). 차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1, 무료 미허용 상품(마켓 `PAID_POINT`/플랜 `allowFreePoints=false`)의 무료 결제 요청은 `INVALID_REQUEST`로 거부. 마켓 `ANY_POINT + freePointPrice==null + fundingMode=FREE`도 `INVALID_REQUEST`(기본가는 무료로 결제 불가); `ANY_POINT + freePointPrice==null + 유료`는 PAID_FIRST 혼합 허용. 결제 시 유료/무료 split이 창작자 수익까지 전파된다. 정본은 정책 PRD §2.5. (followup: 마켓 번들 차등가 admin 배선은 `community_admin_api`.)
 
 #### F08-12. 내 컬렉션 (보유함 / 활성화 / 만료 관리)
 - **사용자 가치**: 구매한 모든 플랜을 보관·필터링(전체/활성/비활성)하고, 비활성 아이템을 활성화하거나 만료 임박 알림으로 갱신을 챙김

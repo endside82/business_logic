@@ -6,7 +6,7 @@
 
 ## 1. 결론
 
-플랜 카탈로그(BASIC/PREMIUM) 조회 → 구독 시작(`/subscribe`) → 자동갱신 해제(`/cancel`) → 정지된 구독 재활성(`/reactivate`)을 한 컨트롤러에서 제공한다. 결제는 외부 PG가 아닌 사용자 지갑 포인트 차감(`walletService.deductFromWallet`)으로 처리되며, `TransactionType.PERSONAL_SUBSCRIPTION_PAY`로 거래 내역에 기록된다. 자동갱신 시도(주기 만료 시)는 `SubscriptionService` 스케줄러에서 별도로 운영(본 단위 외).
+플랜 카탈로그(BASIC/PREMIUM) 조회 → 구독 시작(`/subscribe`) → 자동갱신 해제(`/cancel`) → 정지된 구독 재활성(`/reactivate`)을 한 컨트롤러에서 제공한다. 결제는 외부 PG가 아닌 사용자 지갑 포인트 차감(`walletSpendService.spend(SUBSCRIPTION, ...)`)으로 처리되며, `TransactionType.PERSONAL_SUBSCRIPTION_PAY`로 거래 내역에 기록된다. 자동갱신 시도(주기 만료 시)는 `SubscriptionService` 스케줄러에서 별도로 운영(본 단위 외).
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -67,7 +67,7 @@
 
 ### 개요
 
-플랜 카탈로그(BASIC/PREMIUM) 조회 → 구독 시작(`/subscribe`) → 자동갱신 해제(`/cancel`) → 정지된 구독 재활성(`/reactivate`)을 한 컨트롤러에서 제공한다. 결제는 외부 PG가 아닌 사용자 지갑 포인트 차감(`walletService.deductFromWallet`)으로 처리되며, `TransactionType.PERSONAL_SUBSCRIPTION_PAY`로 거래 내역에 기록된다. 자동갱신 시도(주기 만료 시)는 `SubscriptionService` 스케줄러에서 별도로 운영(본 단위 외).
+플랜 카탈로그(BASIC/PREMIUM) 조회 → 구독 시작(`/subscribe`) → 자동갱신 해제(`/cancel`) → 정지된 구독 재활성(`/reactivate`)을 한 컨트롤러에서 제공한다. 결제는 외부 PG가 아닌 사용자 지갑 포인트 차감(`walletSpendService.spend(SUBSCRIPTION, ...)`)으로 처리되며, `TransactionType.PERSONAL_SUBSCRIPTION_PAY`로 거래 내역에 기록된다. 자동갱신 시도(주기 만료 시)는 `SubscriptionService` 스케줄러에서 별도로 운영(본 단위 외).
 
 ### 엔드포인트 요약
 
@@ -88,9 +88,11 @@
   - `Subscription` (`payment/model/Subscription.java`) — userId, planType, status, startedAt, expiresAt, autoRenew, price, renewalAttempts, paymentRecordId
   - `SubscriptionService`의 자동갱신 스케줄러: `MAX_RENEWAL_ATTEMPTS=3`, `GRACE_PERIOD_DAYS=7`
 
+> **유료/무료 분리정산 — free-burn** (2026-05-24 반영): 개인 구독은 수취자가 없는 **플랫폼 매출**이라 사용처 분류상 **free-burn**이다. 결제는 `walletSpendService.spend(SUBSCRIPTION, ...)`로 차감된다. opt-in으로 무료 결제를 허용하면 무료분은 수취자 없이 지갑에서 차감(소각)된다. **단 spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현 — followup.** 구독 환불(`refundToWallet` 계열)은 전액 paid 복원(원결제 split 미보존)이며 `refundByTransaction` 전환은 followup. 정본은 정책 PRD §2.5.
+
 ### 의존 단위 / 외부 시스템
 
-- **WalletService**: 본 흐름 전체가 `deductFromWallet`을 통해 포인트 차감 → F06-01/03에 영향
+- **WalletSpendService**: 본 흐름 전체가 `spend(SUBSCRIPTION, ...)`을 통해 포인트 차감 → F06-01/03에 영향
 - 다른 Unit: 멤버십 혜택(광고 제거/배지/우선 노출 등)은 다른 도메인이 `Subscription.status`를 참조하여 적용 (Unit별 책임)
 - 외부: 없음 (PG 직접 호출 없음 — 포인트 결제만)
 - 알림: 본 코드에는 직접 발송 명시 없음. 자동갱신 실패 시는 별도 스케줄러가 발송 가능 (본 단위 외).

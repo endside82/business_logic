@@ -17,8 +17,8 @@
 - 결제 호출 진입점:
   - 이벤트 상세(Unit 03) ▶ "참여하기" CTA → 결제 확인 모달 → `POST /api/v1/wallet/pay`
   - 유료 승인제 이벤트(Unit 03) ▶ 호스트 승인 알림/상세 CTA "결제하고 참석 확정" → `POST /api/v1/wallet/pay`
-  - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletService.deductPaidOnly` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
-  - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletService.deductFromWallet`
+  - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
+  - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletSpendService.spend(SUBSCRIPTION, ...)`
 - 환불 호출 진입점:
   - 이벤트 상세(Unit 03)/내 신청 화면 ▶ "참여 취소" → 환불 정책 안내 모달 → `POST /api/v1/wallet/refund`
 - 환불 정책 안내(`GET /refund/policy`) 모달:
@@ -150,6 +150,14 @@ TransactionVo payForApplication(
 | `EventPaymentRefundService.refundByWallet/refundByHostCancel` (F03-13) | `AccountingLedgerService.recordRefund(refundTxId, userId, eventId, hostId, walletRefundedAmount)` + (PG queue 분 있으면) `recordPgRefundRequested` | 기존 RefundService 패턴 |
 | BANK_TRANSFER 결제·환불 (F03-13 `bankConfirm/bankReject/refundByBankConfirm`) | **분개 없음** (D5 — 호스트 직접 수취) | 호스트 정산 보고서 별도 6 섹션에만 노출 |
 
+### 4.3 유료/무료 분리정산 — 결제 split + 환불 split 보존
+
+> 2026-05-24: 포인트 분리정산 반영. 정본은 정책 PRD `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
+
+- **결제 split**: 결제는 유료(paid) 우선 차감이 기본이며, `spend()`로 이관된 opt-in 사용처(마켓/플랜/프라이빗 미팅비/클럽 기부·가입비 등 flow-through)에서는 유료/무료 split이 발생해 무료 결제분이 수취자(창작자/기금)에게 free로 전파되어 현금화되지 않는다. **이벤트 참가비는 정책 목표상 flow-through이나, 현재는 `WalletService.pay`/`payForApplication`(PaymentRecord 기반) legacy 경로로 동작하며 `spend(EVENT_*)` 이관은 followup이다 — 즉 EVENT는 아직 split flow-through가 적용되지 않는다.**
+- **환불 split 보존**: `refundByTransaction` 경로의 환불은 원결제의 유료/무료 split을 그대로 복원한다(유료분 → paid, 무료분 → free로 환원). 거래 상세는 무료 환불분(`freeAmount > 0`)을 별도 카드로 표시.
+- **followup (미완)**: 클럽 기부·가입비·구독 환불에 쓰이는 `refundToWallet` 계열은 아직 원결제 split을 보존하지 못한다 — `refundByTransaction` 전환 + 결제 txId 스키마 보강 필요. EVENT 결제·환불 경로(`WalletService.pay`/`RefundService` PG-queue)의 `spend()` 이관도 followup.
+
 ## 5. 프론트 계약
 
 ### 진입 경로
@@ -159,8 +167,8 @@ TransactionVo payForApplication(
 - 결제 호출 진입점:
   - 이벤트 상세(Unit 03) ▶ "참여하기" CTA → 결제 확인 모달 → `POST /api/v1/wallet/pay`
   - 유료 승인제 이벤트(Unit 03) ▶ 호스트 승인 알림/상세 CTA "결제하고 참석 확정" → `POST /api/v1/wallet/pay`
-  - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletService.deductPaidOnly` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
-  - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletService.deductFromWallet`
+  - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
+  - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletSpendService.spend(SUBSCRIPTION, ...)`
 - 환불 호출 진입점:
   - 이벤트 상세(Unit 03)/내 신청 화면 ▶ "참여 취소" → 환불 정책 안내 모달 → `POST /api/v1/wallet/refund`
 - 환불 정책 안내(`GET /refund/policy`) 모달:
@@ -217,7 +225,7 @@ TransactionVo payForApplication(
 | S7 | 이중 결제 시도 (이미 결제한 이벤트 재결제) | 결제 직후 푸시 지연으로 다시 탭한 사용자 | 이중 차감 없음. 사용자 화면이 정확한 상태로 정렬. |
 | S8 | 가격 조작 시도 (클라 amount=1) | 비정상 클라이언트가 8,000원 이벤트를 1원으로 결제 시도 | 가격 조작 차단. 이벤트는 결제되지 않음. |
 | S9 | PG 측 카드 환불 실패 → 수동 대사 | 카드 환불 시도가 PG 측에서 실패 | 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시. |
-| S10 | 유료 승인제 이벤트 — 승인 후 결제 확정 | `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. | alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (EVENT_PAYMENT 1302). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 DUPLICATE_PAYMENT 409). |
+| S10 | 유료 승인제(선입금) 이벤트 — 승인 후 결제 확정 | `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. | alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (`type=PAY`, referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 중복 가드 `existsByUserIdAndReferenceTypeAndReferenceId(userId, "EVENT_PREPAYMENT", eventPaymentId)`로 DUPLICATE_PAYMENT 409). |
 
 ## 7. 정합성 판단
 
@@ -265,7 +273,7 @@ TransactionVo payForApplication(
 - **AC-07. 이중 결제 시도 (이미 결제한 이벤트 재결제)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 이중 차감 없음. 사용자 화면이 정확한 상태로 정렬.
 - **AC-08. 가격 조작 시도 (클라 amount=1)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가격 조작 차단. 이벤트는 결제되지 않음.
 - **AC-09. PG 측 카드 환불 실패 → 수동 대사**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시.
-- **AC-10. 유료 승인제 이벤트 — 승인 후 결제 확정**: Given `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. When 사용자가 해당 흐름을 실행하면 Then alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (EVENT_PAYMENT 1302). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 DUPLICATE_PAYMENT 409).
+- **AC-10. 유료 승인제(선입금) 이벤트 — 승인 후 결제 확정**: Given `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. When 사용자가 해당 흐름을 실행하면 Then alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (`type=PAY`, referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 중복 가드로 DUPLICATE_PAYMENT 409). (선입금 경로 검증 세부는 AC-W2-1 참조)
 - **AC-W2-1 (S2-1). 신규 결제 경로 `payForApplication` happy path**: Given `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT`, 잔액 충분. When facade가 `WalletService.payForApplication(userId, applicationId, eventPaymentId, eventId, hostId, amount)` 호출. Then `PointTransaction(type=PAY, referenceType=EVENT_PREPAYMENT, referenceId=eventPaymentId)` 신규 1건 + `PaymentRecord` 신규 1건 + `AccountingLedger.recordPayment` 분개 1건. 잔액 = before - amount. metric `wallet.pay{status=success, ref_type=EVENT_PREPAYMENT}` ++.
 - **AC-W2-2. 신규 경로 중복 차단**: Given 동일 `eventPaymentId`로 이미 PAY 트랜잭션 존재. When `payForApplication` 재호출. Then 즉시 `DUPLICATE_PAYMENT` 409. wallet 변동 없음 (lock 이전 단계 차단).
 - **AC-W2-3. 자동충전 호환성**: Given 잔액 부족 + 자동충전 활성. When `payForApplication` 호출. Then `ChargeService.tryAutoCharge` 발동 → 충전 후 차감. 거래 내역에 충전·결제 두 행. 기존 `pay`와 동일 분기 동작.

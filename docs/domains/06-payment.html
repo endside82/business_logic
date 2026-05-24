@@ -70,6 +70,22 @@
         </div>
       </section>
 
+      <!-- 2026-05-24: 포인트 분리정산 반영 -->
+      <section>
+        <h2>지갑 유료/무료 분리 + 인출 paid-only</h2>
+        <p class="subtitle">지갑 잔액은 <strong>유료(paid)</strong> / <strong>무료(free)</strong>로 분리 관리된다. 결제 시 유료/무료 split이 수취자까지 전파되어, 무료로 결제된 금액은 수취자도 무료로 받는다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>구분</th><th>유입</th><th>사용</th><th>인출(현금화)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>유료(paid)</strong></td><td>충전, 현금 환불</td><td>모든 사용처</td><td><span class="pill brand">가능</span></td></tr>
+              <tr><td><strong>무료(free)</strong></td><td>프로모션 지급</td><td>opt-in 사용처(이벤트·마켓·구독·티켓 등)</td><td><span class="pill danger">불가</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>외부 출금·탈퇴 환불은 모두 <strong>유료 잔액만</strong> 대상이다. 탈퇴 시 무료 잔액은 소멸(forfeit). 사용처 3분류(flow-through / free-burn / PAID_ONLY)와 차등가격(<code>allowFreePoints</code>/<code>freePointPrice</code>)은 <a href="../policies/payment.html">결제·정산 정책</a>에 정리되어 있다. (followup: EVENT 결제·환불 <code>spend()</code> 이관, <code>refundToWallet</code> split 보존 미완.)</p>
+      </section>
+
       <section>
         <h2>환불 정책 — STANDARD vs STRICT</h2>
         <p class="subtitle">F06-06의 핵심. <code>RefundPolicyService</code>가 모임 시작 시간까지의 남은 시간으로 환불률을 계산한다.</p>

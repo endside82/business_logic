@@ -256,9 +256,15 @@ ACTIVE (=PAYING, 납부 진행)
 > 백엔드 Settlement 도메인의 `PENDING → APPROVED → PAYING → PAID/FAILED/REJECTED` 5단계와는 별개로,
 > Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE/COMPLETED/CANCELLED** 4단계 모델을 따른다 (UI/UX 21번 문서 기준).
 
+### 유료/무료 포인트 분리정산 — 모임 정산은 PAID_ONLY
+
+> 2026-05-24: 포인트 분리정산 반영. 정본은 `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
+
+모임 정산 송금·회수·선입금은 참가자→호스트로 흐르는 **순수 P2P 채무 정산**이므로 사용처 분류상 **PAID_ONLY**다. 분담금·선입금 결제는 **유료(paid) 잔액만** 차감되고 무료 포인트로는 납부할 수 없다(실제 채무를 프로모션 포인트로 갚게 두지 않는다). 호스트에게 흘러간 정산금도 유료/무료 split이 보존되며, 호스트 외부 출금은 유료분만 현금화된다. flow-through/free-burn 등 다른 사용처는 06/08/04 도메인 PRD 참조.
+
 ### 외부 의존 (Cross-cutting / 단위 외)
 
-- **Wallet (Unit 06)**: 포인트 결제 시 잔액 차감/충전 흐름 의존
+- **Wallet (Unit 06)**: 포인트 결제 시 잔액 차감/충전 흐름 의존 (모임 정산은 PAID_ONLY — 유료 잔액만 차감)
 - **Notification (Unit 12)**: 활성화·납부완료·확인·이의·리마인드 푸시 발송
 - **Event (Unit 03)**: 정산 대상 이벤트와 참석자 목록 (참여자 추천에 사용)
 - **File (인프라)**: 영수증 이미지 업로드 / presigned URL

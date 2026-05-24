@@ -151,6 +151,17 @@ flowchart LR
         </div>
       </section>
 
+      <!-- 2026-05-24: 포인트 분리정산 반영 -->
+      <section>
+        <h2>클럽 기금 유료/무료 분리 + 인출 paid-only</h2>
+        <p class="subtitle">기금 잔액도 지갑과 동일하게 <strong>유료(paid)</strong> / <strong>무료(free)</strong>로 분리 관리된다. 기부·가입비는 무료 수취자(기금)가 존재하는 <strong>flow-through</strong>다.</p>
+        <ul>
+          <li><strong>기부·가입비 split 전파</strong>: 멤버가 무료 포인트로 기부·가입비를 내면 그 split이 기금에 <strong>free로 적립</strong>된다. 무료로 적립된 기금은 클럽 안에서 쓸 수 있으나 <strong>인출(현금화) 불가</strong>.</li>
+          <li><strong>인출 가용액</strong> = paid 잔액 − 예비금/미수금. 위 “5% 수수료 + 3.3% 원천징수”는 <strong>유료(현금)분에만</strong> 부과된다. 폐쇄 인출도 유료만 현금화하고 <strong>무료 기금은 소멸</strong>한다.</li>
+        </ul>
+        <p>전체 정책(사용처 3분류·차등가격·flow-through)은 <a href="../policies/payment.html">결제·정산 정책</a> 참조. (followup: <code>refundToWallet</code> — 클럽 기부·가입비·구독 환불의 원결제 split 보존은 <code>refundByTransaction</code> 전환 예정.)</p>
+      </section>
+
       <section>
         <h2>이 도메인의 부수효과</h2>
         <div class="table-wrap">

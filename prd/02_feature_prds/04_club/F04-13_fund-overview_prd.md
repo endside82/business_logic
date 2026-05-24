@@ -52,6 +52,8 @@
 |---|---|---|---|---|
 | GET | `/api/v1/clubs/{id}/fund` | `ClubController#getFund` | required (멤버) | 기금 요약 조회 |
 
+> **유료/무료 분리 표시** (2026-05-24 포인트 분리정산 반영): 기금은 내부적으로 유료(paid = 인출 가능)/무료(free = 사용 가능·인출 불가)로 분리 관리된다(`ClubFund` 엔티티의 `paidBalance`/`freeBalance`). **단 현재 `ClubFundVo`에는 `paidBalance`/`freeBalance` 필드가 없어 화면에 노출되지 않는다 — VO/화면 노출은 followup.** 정본은 정책 PRD `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
+
 > 거래 추이/최근 거래 세부 내역은 본 Unit에 별도 엔드포인트가 **없다** (`(서버 미제공)`). 클라이언트 표시는 기부 내역(`F04-14 GET /donations`) + 인출 이력(`F04-15 GET /fund/withdrawals`) 등을 조합해 구성.
 
 ### 의존 단위 / 외부 시스템

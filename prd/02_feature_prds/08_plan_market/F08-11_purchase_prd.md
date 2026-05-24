@@ -79,10 +79,12 @@
   - `gross = payAmount`, `fee = gross * 0.10`, `tax = (gross - fee) * 0.033`, `net = gross - fee - tax`
 - **월 구매 한도**: `MONTHLY_PURCHASE_LIMIT = 50`
 
+> **유료/무료 분리정산 — 결제수단(fundingMode) + 차등가격** (2026-05-24 반영): 마켓 구매는 무료 수취자(창작자)가 존재하는 **flow-through** 사용처. 구매 요청에 결제수단(`fundingMode`: 유료/무료)을 받는다. 무료 허용 결정 필드는 도메인별로 다르다 — **마켓 아이템/번들**은 `currencyType`(PAID_POINT/FREE_POINT/ANY_POINT), **플랜 직접 구매**는 `allowFreePoints`로 결정한다(`PricingDecision`). `freePointPrice`(nullable)가 설정되면 무료 결제 시 이 가격을 적용. 차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1, 무료 미허용 상품(마켓 `PAID_POINT`/플랜 `allowFreePoints=false`)에 무료 결제 요청 시 `INVALID_REQUEST`로 거부. 마켓 `ANY_POINT + freePointPrice==null + fundingMode=FREE`도 `INVALID_REQUEST`(기본가 무료 결제 불가); `ANY_POINT + freePointPrice==null + 유료`는 PAID_FIRST 혼합 허용. 결제 시 유료/무료 split이 `CreatorEarning`까지 전파된다(F08-15). 정본은 정책 PRD §2.5.
+
 ### 의존 단위 / 외부 시스템
 
 - **Unit 06 결제·지갑** (필수):
-  - `WalletService.deductByCurrencyType` / `deductFromWallet` — 잔액 차감 + 거래 기록
+  - `WalletSpendService.spend(MARKET_ITEM/MARKET_BUNDLE/PLAN_PURCHASE, ...)` — 잔액 차감 + 거래 기록(유료/무료 split)
   - `WalletService.creditBonusToWallet` — 번들 보너스 적립
   - `AccountingLedgerService` — 회계 분개 (`USER_WALLET`, `CREATOR_PAYABLE`, `PLATFORM_FEE_REVENUE`, `WITHHOLDING_TAX_PAYABLE` 등)
   - 잔액 부족: `INSUFFICIENT_BALANCE` 에러를 본 단위가 그대로 클라이언트에 전달

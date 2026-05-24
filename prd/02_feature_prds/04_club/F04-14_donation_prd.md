@@ -51,6 +51,8 @@
 
 > **결제·회계는 별 Unit 위임**: 지갑 차감/환불, AccountingLedger 분개는 모두 결제/지갑 Unit이 처리. 본 Unit은 `WalletService` / `AccountingLedgerService` 호출만 담당.
 
+> **유료/무료 split 전파** (2026-05-24 포인트 분리정산 반영): 기부는 무료 수취자(기금)가 존재하는 **flow-through** 사용처. 멤버가 무료 포인트로 기부하면 그 split이 기금에 **free로 적립**되어 인출(현금화) 불가 상태로 유지된다(무료 기부 → 기금 free → 현금화 불가). 유료분만 기금 paid로 적립되어 인출 대상이 된다. (followup: 기부 취소·환불의 원결제 split 보존은 `refundToWallet` → `refundByTransaction` 전환 예정 — 결제 txId 스키마 보강 동반.) 정본은 정책 PRD `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
+
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
@@ -63,7 +65,7 @@
 ### 의존 단위 / 외부 시스템
 
 - **Unit 결제/지갑 (별 Unit)**:
-  - `WalletService.deductFromWallet`, `WalletService.refundToWallet` — 지갑 트랜잭션 처리
+  - `WalletSpendService.spend(CLUB_DONATION, ...)` — 기부 결제(유료/무료 split), `WalletService.refundToWallet` — 폐쇄 시 기부금 환불(전액 paid 복원, split 미보존 — followup)
   - `AccountingLedgerService.recordDonation`, `recordDonationRefund` — 복식부기 분개 (`DR CLUB_FUND / CR USER_WALLET`)
   - `PointTransaction` (별 Unit Entity) — 거래 이력
 - **Unit 04 자체**: `ClubFundService.addToFund / deductFromFund`, `ClubFundQueryRepository.findByClubIdForUpdate` (비관적 락).

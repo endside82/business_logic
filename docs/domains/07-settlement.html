@@ -119,6 +119,17 @@ sequenceDiagram
         </div>
       </section>
 
+      <!-- 2026-05-24: 포인트 분리정산 반영 -->
+      <section>
+        <h2>모임 정산은 PAID_ONLY — 무료 포인트 불가</h2>
+        <div class="callout danger">
+          <span class="label">실제 채무를 프로모션 포인트로 갚게 두지 않는다</span>
+          <p>모임 정산 송금·회수·선입금은 참가자→호스트로 흐르는 <strong>순수 P2P 채무 정산</strong>이라 사용처 분류상 <strong>PAID_ONLY</strong>다.
+          분담금·선입금 결제는 <strong>유료(paid) 잔액만</strong> 차감되고, 무료 포인트로는 납부할 수 없다. 정산금이 호스트에게 흘러간 뒤에도 유료/무료 split이 그대로 보존되며,
+          호스트의 외부 출금·정산금 인출 역시 <strong>유료분만 현금화</strong> 가능하다(무료분은 인출 불가). 전체 정책은 <a href="../policies/payment.html">결제·정산 정책</a> 참조.</p>
+        </div>
+      </section>
+
       <section>
         <h2>레드 플래그</h2>
         <div class="callout danger">

@@ -79,6 +79,25 @@ flowchart LR
         </div>
       </section>
 
+      <!-- 2026-05-24: 포인트 분리정산 반영 -->
+      <section>
+        <h2>차등가격 + 창작자 정산 split</h2>
+        <p class="subtitle">마켓 구매는 무료 수취자(창작자)가 존재하는 <strong>flow-through</strong> 사용처다. 결제 시 유료/무료 split이 창작자 수익까지 전파된다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>정책</th></tr></thead>
+            <tbody>
+              <tr><td><strong>무료 허용</strong> (마켓 아이템/번들)</td><td><code>currencyType</code>(PAID_POINT/FREE_POINT/ANY_POINT) + 구매자 <code>fundingMode</code>로 결정(<code>PricingDecision</code>)</td></tr>
+              <tr><td><strong>무료 허용</strong> (플랜 직접 구매)</td><td><code>allowFreePoints</code> + 구매자 <code>fundingMode</code>로 결정</td></tr>
+              <tr><td><strong>무료 전용가</strong> <code>freePointPrice</code></td><td>nullable(마켓/플랜 공통). 무료 결제 시 이 가격 적용(미설정 시 기본가)</td></tr>
+              <tr><td><strong>단일 결제수단</strong></td><td>차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1. <code>ANY_POINT + freePointPrice==null</code>은 PAID_FIRST 혼합 허용</td></tr>
+              <tr><td><strong>미허용 거부</strong></td><td>무료 미허용 상품(마켓 <code>PAID_POINT</code> / 플랜 <code>allowFreePoints=false</code>)에 무료 결제 요청 시 <code>INVALID_REQUEST</code>. 마켓 <code>ANY_POINT + freePointPrice==null + fundingMode=FREE</code>도 <code>INVALID_REQUEST</code>(기본가 무료 결제 불가)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>창작자 수익(<code>CreatorEarning</code>)은 유료/무료를 분리 기록한다. 수수료(10%)·원천징수(3.3%)는 <strong>유료분에만</strong> 적용하고, 무료 매출은 무수수료 <code>free_credit</code>으로 창작자 free에 적립되어 <strong>인출 불가</strong>다(무료→현금 전환 차단). 전체 정책은 <a href="../policies/payment.html">결제·정산 정책</a> 참조. (followup: 마켓 번들 차등가 admin 배선은 <code>community_admin_api</code>.)</p>
+      </section>
+
       <section>
         <h2>레드 플래그</h2>
         <div class="callout danger">
