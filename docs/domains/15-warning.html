@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>15 경고·징계 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>16개 도메인<span>›</span>15 경고·징계</div>
+        <h1>15. 경고 & 징계</h1>
+        <p class="lede">
+          클럽이 부적절한 행동을 “점수”로 누적해 관리하는 자율 운영 신뢰 시스템.
+          멤버 제보·호스트 출결 연계·운영진 직접 부여로 경고가 쌓이고, 점수가 임계치를 넘으면 검토 대상이 되며,
+          최종적으로 공지·이벤트 신청 제한·역할 제한·강제 탈퇴 같은 제재로 이어진다.
+          돈이 직접 오가지는 않지만 “강제 탈퇴”와 “이벤트 신청 차단”으로 사용자 영향이 가장 큰 운영 도구다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">9</div><div class="hint">멤버 3 · 운영진 6</div></div>
+          <div class="metric"><div class="label">사용자 역할</div><div class="value">4+</div><div class="hint">멤버·호스트·검토자·소유자</div></div>
+          <div class="metric"><div class="label">원장 방식</div><div class="value">Append-only</div><div class="hint">부여·감경·정정·만료</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">높음</div><div class="hint">강제 탈퇴·신청 차단</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">이 도메인을 읽을 때 꼭 잡고 가야 할 두 가지</span>
+          <p>① <strong>경고는 “지우는” 게 아니라 “기록을 추가해서 무력화”한다.</strong> 한 번 부여된 경고는 원장에서 삭제되지 않고,
+          정정(REVERSE)·만료(EXPIRE)·감경(MITIGATE)이라는 별도 기록이 쌓여서 점수에 반영된다. 그래서 “왜 점수가 그런가”를 항상 이력으로 추적할 수 있다.
+          ② <strong>점수는 돈이 아니지만 결과는 크다.</strong> 점수가 임계치를 넘으면 검토 대상이 되고, 운영진이 이벤트 신청을 막거나 강제 탈퇴까지 할 수 있다.
+          이 두 가지를 같이 머릿속에 두지 않으면 “경고를 풀었는데 점수가 안 내려갔다”, “강제 탈퇴했는데 사용자가 그대로 있다” 같은 사고가 발생한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>9개 기능 — 두 묶음으로 본다</h2>
+
+        <h3>멤버가 쓰는 면 (본인 / 제보 / 이의)</h3>
+        <div class="cards">
+          <a class="card" href="../features/F15-01.html"><div class="eyebrow">F15-01</div><h3>내 경고 현황·원장</h3><p>본인 점수·검토 등급·활성 제재·전체 이력.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-02.html"><div class="eyebrow">F15-02</div><h3>신고 제출·내 신고 관리</h3><p>멤버 제보 + 호스트 출결 연계 제보, 철회.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-03.html"><div class="eyebrow">F15-03</div><h3>이의제기</h3><p>부여된 경고에 이의, 진행 중 1건 제한, 철회.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+        </div>
+
+        <h3>운영진이 쓰는 면 (정책 / 심사 / 부여 / 처리 / 제재 / 큐)</h3>
+        <div class="cards">
+          <a class="card" href="../features/F15-04.html"><div class="eyebrow">F15-04</div><h3>정책·패널티 유형 설정</h3><p>제도 ON/OFF, 익명 허용, 검토 임계치, 유형별 점수.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-05.html"><div class="eyebrow">F15-05</div><h3>신고 심사</h3><p>제보 검토함, 승인(부여)·반려·보완 요청.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-06.html"><div class="eyebrow">F15-06</div><h3>경고 부여·원장 조정</h3><p>직접 부여, 감경·정정·만료·일괄 만료.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-07.html"><div class="eyebrow">F15-07</div><h3>이의제기 처리</h3><p>인용(정정)·부분 인용(감경)·기각, 재제기 허용.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-08.html"><div class="eyebrow">F15-08</div><h3>제재 집행</h3><p>공지·신청 제한·역할 제한·강제 탈퇴·수동 잠금.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F15-09.html"><div class="eyebrow">F15-09</div><h3>검토 큐·대시보드·통계·감사로그</h3><p>운영 콘솔의 모니터링·감사 레이어.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+        </div>
+      </section>
+
+      <section>
+        <h2>경고가 흐르는 길</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    R["제보<br/>(멤버·호스트)"] --> RV["신고 심사<br/>(승인/반려)"]
+    RV -->|승인| L["경고 원장<br/>GRANT"]
+    D["운영진 직접 부여"] --> L
+    AT["출결 자동<br/>(지각·노쇼)"] --> L
+    L --> S["멤버 요약<br/>effective_score"]
+    S --> LV["검토 등급<br/>주의→모니터링→제재후보→강제탈퇴후보"]
+    LV --> SA["제재<br/>(공지·신청제한·역할제한·강제탈퇴)"]
+    L -.->|이의제기| AP["이의 처리"]
+    AP -.->|인용| L2["정정 REVERSE"]
+    AP -.->|부분 인용| L3["감경 MITIGATE"]
+          </div>
+        </div>
+        <p>핵심은 <strong>원장(GRANT) → 요약(점수) → 등급 → 제재</strong>의 한 방향 흐름과, 그 옆으로 빠지는 <strong>이의제기</strong> 경로다.
+        이의가 인용되면 원장에 정정·감경 기록이 추가되어 점수가 다시 계산된다.</p>
+      </section>
+
+      <section>
+        <h2>검토 등급 — 점수가 사람을 어떻게 분류하는가</h2>
+        <p class="subtitle">유효 점수(effective_score)가 클럽이 정한 임계치를 넘으면 단계가 올라간다. 단, <strong>심각(SEVERE) 등급 경고가 살아있으면 점수와 무관하게 곧장 “강제 탈퇴 후보”</strong>로 올라가 소유자에게 알림이 간다.</p>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead><tr><th>등급</th><th>의미</th><th>운영 행동</th></tr></thead>
+            <tbody>
+              <tr><td><code>NONE</code></td><td>검토 대상 아님</td><td>없음</td></tr>
+              <tr><td><code>ATTENTION</code></td><td>주의</td><td>안내</td></tr>
+              <tr><td><code>MONITOR</code></td><td>모니터링</td><td>관찰</td></tr>
+              <tr><td><code>RESTRICTION_CANDIDATE</code></td><td>제재 후보</td><td>이벤트 신청 제한 등 검토</td></tr>
+              <tr><td><code>SEVERE_SANCTION_CANDIDATE</code></td><td>강제 탈퇴 후보</td><td>소유자 알림 + 강제 탈퇴 검토</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>제재 6종 — 강도가 다른 운영 도구</h2>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead><tr><th>제재</th><th>효과</th><th>권한</th></tr></thead>
+            <tbody>
+              <tr><td><code>NOTICE</code></td><td>공지/주의</td><td>검토자</td></tr>
+              <tr><td><code>EVENT_APPLY_RESTRICT</code></td><td>이벤트 신청 차단 (이벤트 도메인에서 검사)</td><td>검토자</td></tr>
+              <tr><td><code>ROLE_RESTRICT</code></td><td>역할 제한</td><td>검토자</td></tr>
+              <tr><td><code>FORCED_REMOVE</code></td><td>강제 탈퇴</td><td><span class="pill warn">소유자 단독</span></td></tr>
+              <tr><td><code>MANUAL_LOCK / MANUAL_UNLOCK</code></td><td>자동 등급 재평가 잠금/해제</td><td>검토자</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">강제 탈퇴는 아직 “기록만” 된다</span>
+          <p>현재 강제 탈퇴는 제재 기록과 도메인 이벤트만 남기고, <strong>실제 클럽 멤버십 제거와 (유료 클럽의) 환불·구독 정리로 자동 연결되지 않는다.</strong>
+          이 부분이 닫히지 않으면 “강제 탈퇴했는데 사용자가 그대로 있고 돈도 안 돌아왔다”가 발생할 수 있어 가장 먼저 봐야 할 지점이다 (F15-08 참고).</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>권한 — 같은 도메인 안에서 면마다 다르다</h2>
+        <div class="table-wrap">
+          <table class="compact">
+            <thead><tr><th>면</th><th>필요 권한</th></tr></thead>
+            <tbody>
+              <tr><td>본인 경고/제보/이의 (F15-01~03)</td><td>클럽 멤버 (호스트 출결 제보는 이벤트 호스트)</td></tr>
+              <tr><td>정책·패널티 유형 (F15-04)</td><td><code>POLICY_OWNER</code> (소유자 자동 통과)</td></tr>
+              <tr><td>심사·부여·이의 처리·제재·큐 (F15-05~09)</td><td><code>WARNING_REVIEWER</code> (소유자 자동 통과)</td></tr>
+              <tr><td>강제 탈퇴 (F15-08)</td><td><span class="pill warn">소유자 단독</span> (서비스에서 재검증)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 도메인의 부수효과</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>감사 로그</td><td><span class="pill brand">강함</span></td><td>모든 쓰기가 before/after JSON으로 감사 로그(5년 보존)에 기록.</td></tr>
+              <tr><td>알림</td><td><span class="pill brand">강함</span></td><td>제보·승인·제재·등급 변화가 도메인 이벤트(outbox)로 발행되어 알림으로 전환.</td></tr>
+              <tr><td>이벤트</td><td><span class="pill brand">있음</span></td><td>신청 제한이 이벤트 신청을 차단하고, 출결(지각·노쇼)이 자동 경고를 만든다.</td></tr>
+              <tr><td>결제·정산</td><td><span class="pill">간접/미연결</span></td><td>강제 탈퇴의 환불·구독 정리는 아직 자동 연결되지 않음(F15-08 Gap).</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 깨지는 케이스</span>
+          <ul>
+            <li><strong>강제 탈퇴가 멤버십 제거로 안 이어짐</strong> — 기록만 남고 사용자가 클럽에 그대로, 유료 클럽이면 돈도 안 돌아옴.</li>
+            <li><strong>경고를 정정·만료했는데 점수가 안 내려감</strong> — 요약 캐시 재계산이 안 돌면 화면 점수가 어긋난다.</li>
+            <li><strong>익명 반복 악성 제보가 안 막힘</strong> — 익명 제보는 신고자가 숨겨지는데, 누적 반려율 차단이 익명 기록을 못 잡는 구조적 결함.</li>
+            <li><strong>기한부 제재가 만료 후에도 살아있음</strong> — 만료 자동 종료 스케줄러가 활성화되지 않아 신청 차단이 계속될 수 있음.</li>
+            <li><strong>통계가 항상 전체 기간만 보임</strong> — 화면이 기간(period)을 서버에 안 보내서 7일/30일 통계를 못 봄.</li>
+            <li><strong>임계치 기본값이 클럽마다 다름</strong> — 코드와 DB 기본값이 달라 같은 점수가 클럽마다 다른 등급으로 분류될 수 있음.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·도메인</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 맥락</div><h3>04 클럽</h3><p>경고는 클럽 단위로 동작하며 권한도 클럽 권한 flag로 격리.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>신청 제한 차단·출결 자동 경고로 직접 연결.</p></a>
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련</div><h3>11 리뷰·신고</h3><p>플랫폼 차원 신고와 구분되는 클럽 내부 경고.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - community_api/src/main/java/com/endside/community/warning/ (controller 5, service 11, vo, param, constants)
+  - community_api/src/main/resources/db/migration/V1__init.sql (warning_* 10 tables)
+  - community_app/lib/{data/api,data/models,data/repositories,domain/providers,presentation}/warning/
+  - business_logic/prd/01_domain_prds/15_경고_징계_prd.md, business_logic/prd/02_feature_prds/15_warning/
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

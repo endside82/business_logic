@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F15-07 이의제기 처리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/15-warning.html">15 경고·징계</a><span>›</span>
+          F15-07 이의제기 처리
+        </div>
+        <h1>F15-07. 이의제기 처리</h1>
+        <p class="lede">
+          운영진이 멤버가 제기한 이의를 판정하는 면. 인용하면 대상 경고가 정정되어 점수에서 빠지고,
+          부분 인용하면 점수가 일부 깎이며, 기각하면 그대로 유지된다. 기각된 이의도 운영진이 “다시 제기해도 된다”고 열어줄 수 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">권한</div><div class="value">검토자</div><div class="hint">소유자 자동 통과</div></div>
+          <div class="metric"><div class="label">판정 3종</div><div class="value">인용·부분·기각</div><div class="hint">인용=정정, 부분=감경</div></div>
+          <div class="metric"><div class="label">재제기</div><div class="value">허용 가능</div><div class="hint">종결 이의에 한해</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 판정은 곧바로 점수에 반영된다</span>
+          <p>이의 처리는 단순 상태 변경이 아니라 점수에 직접 연결된다. 인용은 대상 경고를 정정(REVERSE)해 점수에서 완전히 빼고,
+            부분 인용은 감경(MITIGATE)으로 점수를 일부만 줄인다. 기각은 점수를 그대로 둔다.
+            이렇게 “판정 → 원장 기록 → 점수 재계산”이 한 번에 묶여서, 멤버는 판정 결과를 바로 자기 점수로 확인할 수 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">인용</div>
+            <h3>이의가 타당해 경고를 정정한다</h3>
+            <p>인용으로 판정하면 대상 경고가 정정되어 점수에서 빠진다. 멤버 유효 점수가 즉시 내려간다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">부분 인용</div>
+            <h3>일부만 인정해 점수를 깎아준다</h3>
+            <p>부분 인용 + 감경 점수를 지정하면 그만큼만 점수가 줄어든다. 경고 자체는 남되 강도가 낮아진다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">기각</div>
+            <h3>이의가 근거 없어 기각한다</h3>
+            <p>기각하면 점수 변화 없이 이의가 종결된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">재제기 허용</div>
+            <h3>기각된 이의를 다시 받기로 한다</h3>
+            <p>운영진이 종결된 이의에 재제기를 허용하면 그 사실이 기록되고 멤버에게 안내된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">재처리 차단</div>
+            <h3>이미 판정한 이의를 또 처리하려 한다</h3>
+            <p>종결된 이의는 “이미 처리됨”으로 막힌다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">에러 메시지와 재제기 허용의 실효성</span>
+          <ul>
+            <li><strong>사유를 빼먹으면 “이의를 찾을 수 없음”이라는 엉뚱한 에러가 뜬다.</strong> 부분 인용 점수를 안 넣으면 “유효 점수 초과”로 떠서, 실제 원인과 메시지가 다르다.</li>
+            <li><strong>“재제기 허용”이 강제 가드가 아니다.</strong> 현재 멤버 재제기는 진행 중 이의가 없으면 자동으로 가능해, 운영진이 명시적으로 허용하지 않아도 재제기될 수 있다. 허용 기록의 실효성을 정책으로 확정해야 한다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/15-warning.html"><div class="eyebrow">상위 도메인</div><h3>15 경고·징계</h3></a>
+          <a class="card" href="F15-03.html"><div class="eyebrow">관련</div><h3>F15-03 이의제기</h3><p>처리 대상 이의가 들어오는 면.</p></a>
+          <a class="card" href="F15-06.html"><div class="eyebrow">관련</div><h3>F15-06 부여·원장 조정</h3><p>인용=정정, 부분=감경 원장 로직 공유.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - WarningAdminActionController#searchAppeals/resolveAppeal/allowResubmit (WARNING_REVIEWER)
+  - WarningAppealService#searchAdmin/claimForReview/resolve/allowResubmit, WarningLedgerService#insertReverse/insertMitigate
+  - community_app: warning/admin/warning_appeal_inbox_screen.dart
+  - business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

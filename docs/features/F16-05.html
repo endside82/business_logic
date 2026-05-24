@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F16-05 메타 정의 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
+          F16-05 메타 정의 관리
+        </div>
+        <h1>F16-05. 적립규칙·등급·배지·교환 프리셋 관리</h1>
+        <p class="lede">
+          운영진(정책 담당)이 마일리지의 뼈대를 만드는 CRUD. 자동 적립 규칙, 등급, 배지 정의, 차감 프리셋, 시즌을 정의한다.
+          등급에는 개수·이름·임계치 제약이 있고, 차감 프리셋은 삭제 대신 비활성화만 된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">관리 대상</div><div class="value">5종</div><div class="hint">규칙·등급·배지·프리셋·시즌</div></div>
+          <div class="metric"><div class="label">등급 한도</div><div class="value">10개</div><div class="hint">클럽당</div></div>
+          <div class="metric"><div class="label">배지 한도</div><div class="value">50개</div><div class="hint">클럽당</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 마일리지가 "돈처럼 보이지 않게"</span>
+          <p>등급 이름에 "원·캐시·포인트" 같은 금전성 단어를 막는 것은 의도된 안전장치다. 마일리지가 현금처럼 보이면
+            법적·세무적 문제와 사용자 오해를 부른다. 차감 프리셋을 삭제하지 않고 비활성화만 하는 것도 과거 거래의 사유 기록을 보존하기 위해서다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>관리 대상과 규칙</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>핵심 규칙</th></tr></thead>
+            <tbody>
+              <tr><td><strong>적립 규칙</strong></td><td>체크인·후기·사진 승인 트리거별로 점수·활성 여부 설정. 같은 트리거 재저장은 덮어쓰기(upsert)</td></tr>
+              <tr><td><strong>등급</strong></td><td>클럽당 최대 10개. 임계치 단조·중복 금지. 이름에 금전성 단어 금지</td></tr>
+              <tr><td><strong>배지 정의</strong></td><td>클럽당 최대 50개. 활성/비활성 토글. 멤버 화면엔 활성만 노출</td></tr>
+              <tr><td><strong>차감 프리셋</strong></td><td>차감 사유 템플릿. 삭제 불가 — 비활성화만</td></tr>
+              <tr><td><strong>시즌</strong></td><td>기간 중복 금지. 종료(close)하면 다음 예정 시즌 자동 시작</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>경로</th><th>비고</th></tr></thead>
+            <tbody>
+              <tr><td>적립 규칙</td><td><code>.../mileage/earning-rules</code> (GET·POST·PUT)</td><td>POST는 트리거별 upsert</td></tr>
+              <tr><td>등급</td><td><code>.../mileage/grades</code> (GET·POST·PUT·DELETE)</td><td>제약 위반 시 거절</td></tr>
+              <tr><td>배지</td><td><code>.../mileage/badges</code> (GET·POST·PUT)</td><td>50개 한도</td></tr>
+              <tr><td>프리셋</td><td><code>.../mileage/redemption-presets</code> (GET·POST·PUT·DELETE)</td><td>DELETE = 비활성화</td></tr>
+              <tr><td>시즌</td><td><code>.../mileage/seasons</code> (GET·POST·PUT·/close)</td><td>기간 중복 금지</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">에러 메시지가 사유를 구분하지 못한다</span>
+          <ul>
+            <li><strong>등급 생성 실패가 한 가지 에러로 뭉뚱그려진다.</strong> 개수 초과, 금전성 단어, 임계치 중복이 모두 같은 에러로 나와
+              사용자가 "왜 안 되는지"를 알기 어렵다. 사유별 메시지 분리가 필요하다.</li>
+            <li><strong>적립 규칙 "생성"은 사실 덮어쓰기다.</strong> 같은 트리거를 또 만들면 기존 규칙이 갱신된다. UI에서 "수정"으로 보이게 해야 한다.</li>
+            <li><strong>종료된 시즌 수정 거부가 "없음" 에러를 재사용한다.</strong> 실제로는 있지만 수정 불가 상태인데 "찾을 수 없음"으로 표시된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
+          <a class="card" href="F16-04.html"><div class="eyebrow">앞 단위</div><h3>F16-04 정책 설정</h3><p>큰 스위치를 먼저 켠다.</p></a>
+          <a class="card" href="F16-06.html"><div class="eyebrow">사용처</div><h3>F16-06 집행</h3><p>여기서 만든 프리셋·배지로 점수를 집행.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

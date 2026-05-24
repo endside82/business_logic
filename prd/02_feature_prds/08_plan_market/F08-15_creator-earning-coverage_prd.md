@@ -308,6 +308,22 @@ F08-14가 본 PRD에 의존하는 인터페이스:
 - 환불 거절: `creatorEarning.status = PENDING`으로 복원.
 - 운영자 강제 환불: 위와 동일 경로, `decision_source = OPERATOR` 메타.
 
+### 7.1 정산 사이클 회수 흐름 (구현됨)
+
+월간 정산 직전 `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, totalNet)`이 호출되어 `REVERSED` 상태 earning을 가용 정산금으로 회수한다. 본 PRD는 **전액 회수만 지원**한다.
+
+| 입력 | 처리 |
+|---|---|
+| `REVERSED` earning 없음 | 회수 0, 정산 그대로 |
+| 가용 정산금 ≥ earning.netAmount | earning을 `PAID`로 전이, 가용금에서 차감, `recordCreatorReceivableOffset` 분개 발행 |
+| 가용 정산금 < earning.netAmount | 회수 안 함 (다음 사이클로 이월) |
+
+부분 회수는 본 라운드 미지원. 향후 결정 사항.
+
+### 7.2 부분 환불 (F08-14 PARTIAL_ITEM)
+
+F08-14 부분 환불의 경우 선택된 BundleItem의 earning만 상태 전이 + 분개. `PurchaseRefundService.earningsForRefund`가 `refundScope=PARTIAL_ITEM`이면 `purchase_refund_item` 행과 대조해 선택된 earning만 반환한다. 미선택 earning은 `PENDING` 유지되어 정상 정산 대상이 된다.
+
 본 PRD는 위 상태와 회계 메서드 시그니처를 보장한다. 실제 환불 흐름은 F08-14가 정한다.
 
 ## 8. 클라이언트 영향

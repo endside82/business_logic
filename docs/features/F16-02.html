@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F16-02 등급·배지·랭킹·프로필 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
+          F16-02 등급·배지·랭킹·프로필
+        </div>
+        <h1>F16-02. 등급·배지·랭킹·프로필 카드</h1>
+        <p class="lede">
+          멤버가 보상 체계를 보는 화면. 등급 정의와 본인 등급 변경 이력, 클럽이 운영하는 배지, 멤버 간 랭킹,
+          다른 멤버의 프로필 카드를 본다. 등급은 누적 적립으로 자동 매겨지고, 랭킹 기준은 클럽 정책이 정한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">핵심 API</div><div class="value">5개</div><div class="hint">등급·이력·배지·랭킹·프로필</div></div>
+          <div class="metric"><div class="label">랭킹 기준</div><div class="value">3종</div><div class="hint">잔액·누적 적립·시즌 적립</div></div>
+          <div class="metric"><div class="label">등급 방향</div><div class="value">3종</div><div class="hint">최초·승급·강등</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 보상은 보여야 동기가 된다</span>
+          <p>등급과 배지는 "이만큼 하면 이걸 받는다"는 약속이다. 다음 등급까지 남은 점수가 보여야 멤버가 한 번 더 참여한다.
+            랭킹은 클럽 분위기에 맞춰 잔액 기준·누적 기준·시즌 기준 중 하나로 운영한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면 구성</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">등급</div>
+            <h3>등급 정의 + 내 변경 이력</h3>
+            <p>클럽 등급을 임계치 순으로 보고, 본인이 언제 어느 등급으로 올라갔는지(또는 내려갔는지) timeline으로 본다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">배지</div>
+            <h3>활성 배지만 노출</h3>
+            <p>멤버 화면에는 운영진이 켜둔(active) 배지 정의만 보인다. 비활성 배지는 숨겨진다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">랭킹</div>
+            <h3>클럽 내 순위</h3>
+            <p>정책이 정한 기준(잔액·누적·시즌)으로 순위·점수·등급을 표시한다. 멤버가 기준을 지정하지 않으면 정책 기본값을 쓴다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">프로필 카드</div>
+            <h3>다른 멤버 요약</h3>
+            <p>다른 멤버의 등급·배지를 본다. 점수(시즌/누적) 노출 여부는 정책에 따라 정해진다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>등급은 어떻게 매겨지나</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    E["적립 누적<br/>(정정·만료 반영)"] --> T{"임계치 비교"}
+    T -->|"임계치 도달"| UP["승급 (UP)"]
+    T -->|"첫 등급 도달"| INIT["최초 (INITIAL)"]
+    T -->|"정정·만료로 누적 감소"| DOWN["강등 (DOWN)"]
+          </div>
+        </div>
+        <p>등급은 "등급 산정용 누적 적립"이 임계치 이상일 때 자동으로 매겨진다. 정정·만료로 누적이 줄면 강등될 수 있다.
+        등급 변경 이력은 별도 표가 아니라 감사 로그에서 읽어 온다.</p>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/grades</code></td><td>등급 정의 목록</td></tr>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/me/grade-history</code></td><td>내 등급 변경 timeline</td></tr>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/badges</code></td><td>활성 배지 정의</td></tr>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/ranking</code></td><td>클럽 랭킹</td></tr>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/members/{memberId}/profile-card</code></td><td>다른 멤버 프로필 카드</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">노출 정책 주의</span>
+          <ul>
+            <li><strong>등급 이력은 감사 로그를 파싱해 만든다.</strong> 감사 로그 형식이 바뀌면 등급 timeline이 깨질 수 있다.</li>
+            <li><strong>강등 이력도 멤버에게 보인다.</strong> 운영진이 정정해서 등급이 내려가면 멤버가 그 사실을 직접 본다.</li>
+            <li><strong>프로필 점수 노출은 정책 한 값에 묶인다.</strong> 잔액 기준 클럽에서는 프로필에 점수가 전혀 안 보인다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
+          <a class="card" href="F16-05.html"><div class="eyebrow">정의 출처</div><h3>F16-05 등급·배지 관리</h3><p>운영진이 등급·배지를 만드는 곳.</p></a>
+          <a class="card" href="F16-03.html"><div class="eyebrow">관련</div><h3>F16-03 시즌</h3><p>시즌 기준 랭킹과 연결.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F15-08 제재 집행 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/15-warning.html">15 경고·징계</a><span>›</span>
+          F15-08 제재 집행
+        </div>
+        <h1>F15-08. 제재 집행</h1>
+        <p class="lede">
+          누적된 경고에 대해 운영진이 실제 조치를 내리는 면. 공지/주의, 이벤트 신청 제한, 역할 제한, 강제 탈퇴, 수동 잠금까지
+          강도가 다른 6가지 도구가 있다. 가장 강한 강제 탈퇴는 소유자만 쓸 수 있고, 제재는 사유와 함께 기록되며 나중에 철회할 수 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">제재 유형</div><div class="value">6종</div><div class="hint">공지~강제 탈퇴</div></div>
+          <div class="metric"><div class="label">강제 탈퇴</div><div class="value">소유자 단독</div><div class="hint">서비스에서 재검증</div></div>
+          <div class="metric"><div class="label">신청 차단 연동</div><div class="value">이벤트 도메인</div><div class="hint">신청 시 실시간 검사</div></div>
+        </div>
+
+        <div class="callout danger">
+          <span class="label">현재 가장 중요한 미완성 — 강제 탈퇴가 “기록만” 된다</span>
+          <p>강제 탈퇴는 제재 기록과 도메인 이벤트만 남기고, <strong>실제 클럽 멤버십 제거와 (유료 클럽의) 가입비 환불·구독 정리로 자동 연결되지 않는다.</strong>
+            서버 코드 주석도 “별도 클럽 서비스에서 후속 처리되어야 한다”고 인정한다. 이 부분이 닫히지 않으면
+            “강제 탈퇴했는데 사용자가 클럽에 그대로 있고, 유료 클럽인데 돈도 안 돌아왔다”는 사고가 발생한다. 이 도메인에서 가장 먼저 닫아야 할 지점.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">신청 제한</div>
+            <h3>반복 노쇼 멤버의 이벤트 신청을 막는다</h3>
+            <p>이벤트 신청 제한 제재를 걸면, 그 멤버가 이벤트를 신청할 때 이벤트 도메인이 실시간으로 검사해 막는다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">강제 탈퇴</div>
+            <h3>심각 등급 멤버를 강제 탈퇴시킨다</h3>
+            <p>소유자만 가능. 사유를 적어 확정하면 제재가 기록된다. (단, 현재는 멤버십 제거가 자동으로 따라오지 않음 — 위 레드 플래그 참고.)</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">권한 가드</div>
+            <h3>관리자가 강제 탈퇴를 시도한다</h3>
+            <p>소유자가 아니면 “소유자만 가능합니다”로 막힌다. 외부에서 강제 호출해도 서버가 재검증한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">수동 잠금</div>
+            <h3>특정 멤버의 자동 등급 재평가를 잠근다</h3>
+            <p>수동 잠금을 걸면 점수가 바뀌어도 자동으로 등급이 재평가되지 않는다. 해제하면 다시 평가된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">철회</div>
+            <h3>오해가 풀려 제재를 해제한다</h3>
+            <p>활성 제재만 철회 가능. 강제 탈퇴 철회도 소유자만 할 수 있다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">제재의 “효력”이 이 도메인 밖에 있다</span>
+          <ul>
+            <li><strong>강제 탈퇴가 멤버십 제거·환불·구독 정리로 안 이어진다.</strong> (가장 시급) 기록만 남고 실제 효력이 다른 도메인 책임으로 위임돼 있어 자동 연결이 필요하다.</li>
+            <li><strong>기한부 제재가 만료 후에도 살아있을 수 있다.</strong> 만료 자동 종료 스케줄러가 아직 동작 전이라, 신청 차단이 만료 후에도 계속될 수 있다.</li>
+            <li><strong>공지·역할 제한의 실효도 알림/권한 파이프라인에 위임돼 있다.</strong> 그 파이프라인이 안 돌면 “제재가 기록만 되고 효력은 없는” 상태가 된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/15-warning.html"><div class="eyebrow">상위 도메인</div><h3>15 경고·징계</h3></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>신청 제한이 이벤트 신청을 차단.</p></a>
+          <a class="card" href="../features/F04-06.html"><div class="eyebrow">관련</div><h3>F04-06 차단 관리</h3><p>클럽 차단의 환불·멤버십 정리 모델 참고.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - WarningAdminActionController#applyNotice/applyEventRestrict/applyRoleRestrict/applyForcedRemove/revokeSanction/manualLock/manualUnlock
+  - WarningSanctionService#apply/revoke/isApplyRestricted/closeExpiredSanctions (FORCED_REMOVE는 OWNER 재검증, row+outbox만)
+  - WarningSanctionType 6값, V1__init.sql warning_sanction
+  - community_app: warning/admin/warning_sanction_screen.dart, widgets/warning_forced_remove_dialog.dart
+  - business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

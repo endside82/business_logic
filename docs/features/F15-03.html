@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F15-03 이의제기 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/15-warning.html">15 경고·징계</a><span>›</span>
+          F15-03 이의제기
+        </div>
+        <h1>F15-03. 이의제기 (Appeal)</h1>
+        <p class="lede">
+          멤버가 “이 경고는 부당하다”고 다투는 면. 본인에게 부여된 살아있는 경고 항목을 골라 사유를 적어 제출하면,
+          운영진이 인용·부분 인용·기각으로 판정한다(F15-07). 한 경고에는 진행 중 이의가 하나만 있을 수 있고, 처리 전이라면 스스로 철회할 수 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">대상</div><div class="value">활성 GRANT</div><div class="hint">정정·만료된 건 불가</div></div>
+          <div class="metric"><div class="label">진행 중 제한</div><div class="value">1건</div><div class="hint">종결되면 재제기 가능</div></div>
+          <div class="metric"><div class="label">철회</div><div class="value">처리 전만</div><div class="hint">제출/검토 중일 때</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 다툴 수 있는 건 “살아있는 경고”뿐이다</span>
+          <p>이미 정정(REVERSE)되거나 만료(EXPIRE)된 경고는 점수에 영향이 없으므로 다툴 이유가 없다. 그래서 이의는 살아있는 GRANT에만 걸 수 있다.
+            또 같은 경고에 이의가 여러 건 동시에 진행되면 운영진 판단이 충돌하므로 진행 중 1건만 허용한다.
+            기각된 뒤에도 새 근거가 생기면 다시 제기할 수 있어, 멤버에게 “한 번 거절되면 끝”이 아닌 길이 열려 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 이의</div>
+            <h3>부당하다고 생각하는 경고에 이의를 건다</h3>
+            <p>원장(F15-01)에서 살아있는 경고를 고르고 사유를 적어 제출. “제출됨” 상태로 운영진 검토함에 올라간다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">중복 차단</div>
+            <h3>같은 경고에 또 이의를 걸려 한다</h3>
+            <p>이미 처리 중인 이의가 있으면 “처리 중인 이의가 있습니다”로 막힌다. 한 경고당 진행 중 1건만.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">무력화된 경고</div>
+            <h3>이미 정정·만료된 경고에 이의를 걸려 한다</h3>
+            <p>“이미 정정/만료된 경고입니다”로 막힌다. 점수에 영향 없는 경고는 다툴 수 없다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">재제기</div>
+            <h3>기각된 이의를 새 근거로 다시 제기한다</h3>
+            <p>이전 이의가 종결됐으면 진행 중 이의가 없으므로 새 이의를 다시 낼 수 있다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">철회</div>
+            <h3>제출한 이의를 거둬들인다</h3>
+            <p>아직 처리 전(제출/검토 중)이면 철회 가능. 판정이 끝난 이의는 철회되지 않는다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout warn">
+          <span class="label">동시 제출 경합과 SLA 알림</span>
+          <ul>
+            <li><strong>진행 중 1건 제한이 동시 제출 경합에 취약할 수 있다.</strong> 같은 순간에 두 번 제출하면 둘 다 들어갈 여지가 있어 동시성 점검이 필요하다.</li>
+            <li><strong>이의가 오래 방치될 때의 알림(14·28일)이 아직 실제로 발송되지 않는다.</strong> SLA 알림 스케줄러가 아직 동작 전 상태다(F15-09와 함께 닫아야 함).</li>
+            <li><strong>내 이의 목록은 페이지네이션이 없다.</strong> 누적되면 응답이 커진다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/15-warning.html"><div class="eyebrow">상위 도메인</div><h3>15 경고·징계</h3></a>
+          <a class="card" href="F15-07.html"><div class="eyebrow">관련</div><h3>F15-07 이의제기 처리</h3><p>운영진이 인용·부분·기각으로 판정.</p></a>
+          <a class="card" href="F15-01.html"><div class="eyebrow">관련</div><h3>F15-01 내 경고 현황·원장</h3><p>이의 대상 경고를 고르는 출발점.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - WarningMemberController#submitAppeal/getMyAppeals/withdrawAppeal, WarningAppealService#submit/withdraw
+  - WarningAppealAddParam, WarningAppealVo, WarningLedgerService#getInvalidationStatus
+  - community_app: warning/screens/appeal_submit_screen.dart, my_appeals_screen.dart, widgets/warning_appeal_dialog.dart
+  - business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

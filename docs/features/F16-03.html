@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F16-03 시즌 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
+          F16-03 시즌
+        </div>
+        <h1>F16-03. 시즌 (목록·과거 랭킹·내 스냅샷)</h1>
+        <p class="lede">
+          마일리지를 기간 단위로 끊어 운영하는 시즌제. 멤버는 시즌 목록, 종료된 시즌의 랭킹(마감 시점 기록을 동결한 스냅샷),
+          그 시즌 본인 기록을 본다. 시즌이 끝나면 다음 예약 시즌이 자동으로 시작된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">핵심 API</div><div class="value">3개</div><div class="hint">목록·과거 랭킹·내 스냅샷</div></div>
+          <div class="metric"><div class="label">시즌 상태</div><div class="value">3단계</div><div class="hint">예정·진행·종료</div></div>
+          <div class="metric"><div class="label">랭킹 출처</div><div class="value">스냅샷</div><div class="hint">마감 시점 동결</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 시즌은 "다시 시작할 수 있는 무대"</span>
+          <p>누적 점수만 있으면 후발 주자가 따라잡기 어렵다. 시즌제는 일정 기간마다 무대를 새로 열어 모두에게 기회를 준다.
+            종료된 시즌의 랭킹은 마감 순간의 기록을 그대로 동결해 보존하므로 나중에 봐도 그대로다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>시즌 한 살이</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    S["예정 (SCHEDULED)"] --> A["진행 (ACTIVE)"]
+    A -->|"운영진 마감"| C["종료 (CLOSED) + 스냅샷 동결"]
+    C -.->|"다음 예정 시즌 자동 시작"| A2["다음 시즌 진행"]
+          </div>
+        </div>
+        <p>시즌은 예정 → 진행 → 종료로 흐른다. 운영진이 마감하면 그 시점 멤버별 기록이 스냅샷으로 동결되고,
+        시작 시각이 도래한 다음 예정 시즌이 자동으로 진행 상태가 된다.</p>
+      </section>
+
+      <section>
+        <h2>화면 구성</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">목록</div>
+            <h3>시즌 목록 (상태 필터)</h3>
+            <p>전체 또는 예정/진행/종료 상태로 시즌을 본다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">과거 랭킹</div>
+            <h3>종료 시즌 스냅샷 랭킹</h3>
+            <p>마감 시점에 동결된 순위·점수를 본다. 적립 기준 또는 잔액 기준으로 정렬.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">내 기록</div>
+            <h3>본인 시즌 스냅샷</h3>
+            <p>해당 시즌의 본인 적립·잔액·순위를 본다. 기록이 없으면 빈 상태(204).</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/seasons</code></td><td>시즌 목록 (상태 필터)</td></tr>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/seasons/{seasonId}/ranking</code></td><td>과거 시즌 랭킹</td></tr>
+              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/seasons/{seasonId}/me</code></td><td>내 시즌 스냅샷 (없으면 빈 응답)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout danger">
+          <span class="label">시즌 랭킹의 두 가지 함정</span>
+          <ul>
+            <li><strong>랭킹 정렬 기준 값이 어긋나 있다.</strong> 문서·클라이언트는 "적립 기준/잔액 기준"이라는 별도 값을 쓰는데,
+              서버가 실제로 받는 값은 그와 다르다. 잘못된 값을 보내면 잔액 기준 랭킹에 도달하지 못하거나 오류가 날 수 있다.</li>
+            <li><strong>마감만 하면 스냅샷이 비어 있을 수 있다.</strong> 시즌을 종료해도 멤버별 기록을 채우는 처리가 별도로 보장되지 않으면
+              과거 랭킹이 비어 보인다. 마감 시 전체 멤버 스냅샷 생성이 함께 일어나는지 확인이 필요하다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
+          <a class="card" href="F16-05.html"><div class="eyebrow">생성·마감</div><h3>F16-05 시즌 관리</h3><p>운영진이 시즌을 만들고 마감하는 곳.</p></a>
+          <a class="card" href="F16-02.html"><div class="eyebrow">관련</div><h3>F16-02 랭킹</h3><p>현재 시즌 기준 랭킹.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/16_mileage/F16-03_season_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

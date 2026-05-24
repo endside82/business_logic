@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F16-08 검토 큐·대시보드·감사로그 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
+          F16-08 검토 큐·대시보드·감사로그
+        </div>
+        <h1>F16-08. 검토 큐 &amp; 대시보드/감사로그</h1>
+        <p class="lede">
+          운영진(집행 담당)의 마일리지 콘솔. 검토가 필요한 항목을 모아 처리하는 큐, 클럽 운영 현황 대시보드, 멤버별 상세,
+          모든 액션이 기록되는 감사 로그를 본다. 마일리지 운영의 컨트롤 타워다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">콘솔 화면</div><div class="value">4개</div><div class="hint">큐·대시보드·멤버상세·감사</div></div>
+          <div class="metric"><div class="label">큐 유형</div><div class="value">7종</div><div class="hint">제안·남용 탐지 등</div></div>
+          <div class="metric"><div class="label">감사 보존</div><div class="value">5년</div><div class="hint">모든 액션 기록</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — "누가 무엇을 했는가"가 전부 남는다</span>
+          <p>마일리지는 멤버의 보상이므로 운영의 투명성이 중요하다. 모든 적립·차감·정정·정책 변경이 감사 로그에 변경 전/후로 남고,
+            의심스러운 패턴(반복 수동 적립·등급 이상 등)은 검토 큐로 모인다. 대시보드는 클럽의 마일리지 건강 상태를 한눈에 보여준다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>콘솔 4화면</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">검토 큐</div>
+            <h3>처리 대기 항목</h3>
+            <p>호스트 제안, 반복 수동 적립, 등급 이상 등 검토가 필요한 항목을 모아 승인/반려/무시로 처리한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">대시보드</div>
+            <h3>운영 현황 요약</h3>
+            <p>활성 멤버 수, 이번 달 적립·차감·만료, 전월 대비, 열린 큐 수, 최근 액션, 현재 시즌을 한 화면에.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">멤버 상세</div>
+            <h3>한 멤버의 전체 그림</h3>
+            <p>특정 멤버의 요약·원장·감사 이력·열린 큐 항목을 모아 본다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">감사 로그</div>
+            <h3>모든 액션 추적</h3>
+            <p>행위자·액션 유형·기간·대상으로 필터해 변경 전/후 기록을 본다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET/POST</td><td><code>.../mileage/queue</code>, <code>/queue/{id}</code>, <code>/queue/{id}/process</code></td><td>검토 큐 조회·처리</td></tr>
+              <tr><td>GET</td><td><code>.../mileage/dashboard</code></td><td>운영 대시보드</td></tr>
+              <tr><td>GET</td><td><code>.../mileage/members/{memberId}</code></td><td>멤버 운영 상세</td></tr>
+              <tr><td>GET</td><td><code>.../mileage/members/{memberId}/grade-history</code></td><td>멤버 등급 이력</td></tr>
+              <tr><td>GET</td><td><code>.../mileage/audit-logs</code></td><td>감사 로그</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
+        <div class="callout danger">
+          <span class="label">콘솔의 데이터 누락 가능 지점</span>
+          <ul>
+            <li><strong>멤버 상세가 일부만 보일 수 있다.</strong> 서버가 멤버 상세를 자유 형식(요약+원장+감사+큐)으로 내려주는데
+              클라이언트가 요약 모델로만 받아, 원장·감사·열린 큐가 화면에서 사라질 수 있다.</li>
+            <li><strong>대시보드의 발송 파이프라인 수치가 클럽 단위가 아니다.</strong> 알림 발송 메트릭이 전체 마일리지 도메인 합계라
+              특정 클럽 대시보드에 다른 클럽 수치가 섞여 보인다.</li>
+            <li><strong>일부 검토 큐 유형이 채워지지 않을 수 있다.</strong> 큐 유형은 7종이지만, 남용 탐지(반복 적립·등급 이상 등)를
+              자동으로 큐에 올리는 트리거가 모두 구현됐는지 점검이 필요하다.</li>
+            <li><strong>대시보드·멤버 상세 집계가 전체 원장을 훑는다.</strong> 멤버가 많은 클럽에서 콘솔 진입이 느려질 수 있다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
+          <a class="card" href="F16-06.html"><div class="eyebrow">집행</div><h3>F16-06 적립·차감·정정</h3><p>여기서 한 액션이 감사·대시보드에 반영.</p></a>
+          <a class="card" href="F16-07.html"><div class="eyebrow">큐 항목</div><h3>F16-07 호스트 제안</h3><p>제안이 검토 큐의 한 유형.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

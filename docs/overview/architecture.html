@@ -12,8 +12,8 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 14도메인</div>
-        <h1>14개 도메인의 책임</h1>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 16도메인</div>
+        <h1>16개 도메인의 책임</h1>
         <p class="lede">
           제품을 “어디에 어떤 기능이 사는가”로 나눠 둔 지도다. 이 지도가 흔들리면
           기능 추가의 책임 소재가 흔들리기 때문에, 새 기능이 도착했을 때
@@ -22,8 +22,8 @@
       </header>
 
       <section>
-        <h2>다섯 축으로 묶은 14개 도메인</h2>
-        <p class="subtitle">14개를 일렬로 보면 외우기 어렵다. 행동 축 다섯 개로 묶어서 본다.</p>
+        <h2>다섯 축으로 묶은 16개 도메인</h2>
+        <p class="subtitle">16개를 일렬로 보면 외우기 어렵다. 행동 축 다섯 개로 묶어서 본다.</p>
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
@@ -41,6 +41,8 @@ flowchart TD
     D --> D2["04 클럽"]
     D --> D3["10 캘린더"]
     D --> D4["14 위치·길찾기"]
+    D --> D5["15 경고·징계"]
+    D --> D6["16 마일리지"]
     E --> E1["06 결제·지갑"]
     E --> E2["07 모임 정산"]
     F --> F1["09 프라이빗 데이팅"]
@@ -81,6 +83,8 @@ flowchart TD
               <tr><td>12</td><td><strong>알림</strong></td><td>상태 변화를 푸시·알림함으로 전달하고 수신 설정을 제공한다.</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td><a href="../domains/12-notification.html">열기</a></td></tr>
               <tr><td>13</td><td><strong>프로필 · 설정</strong></td><td>내 프로필·주소·선호태그·데이터 내보내기·계정 삭제/비활성화.</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td><a href="../domains/13-profile.html">열기</a></td></tr>
               <tr><td>14</td><td><strong>위치 · 길찾기</strong></td><td>장소·경로 안내·참석자 위치 공유와 프라이버시 통제.</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td><a href="../domains/14-location.html">열기</a></td></tr>
+              <tr><td>15</td><td><strong>경고 · 징계</strong></td><td>신고·이의제기·경고 원장·제재로 이어지는 클럽 거버넌스. 효과 점수 산정과 운영진 심사 큐.</td><td style="text-align:right">9</td><td style="text-align:right">—</td><td><a href="../domains/15-warning.html">열기</a></td></tr>
+              <tr><td>16</td><td><strong>마일리지</strong></td><td>클럽 활동 적립·차감·정정 원장, 등급·배지·랭킹·시즌, 호스트 제안과 운영진 검토.</td><td style="text-align:right">8</td><td style="text-align:right">—</td><td><a href="../domains/16-mileage.html">열기</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -110,6 +114,8 @@ flowchart LR
     K --> L
     M["12 알림"] --> B
     N["13 프로필·설정"] --> A
+    E --> O["15 경고·징계"]
+    E --> P["16 마일리지"]
           </div>
         </div>
       </section>

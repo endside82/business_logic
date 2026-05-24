@@ -15,6 +15,17 @@
 | v4.5 신규 PRD (별도 master plan 산하) | 5 |
 | 누락/확인 필요 | 0 |
 
+## 2026-05-24 — 경고·징계 / 마일리지 도메인 추가
+
+community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs에 누락되어 있어 source-first 로 신규 작성했다. 서버 controller/service/VO/enum + Flutter `lib/.../warning|mileage/` + `V1__init.sql` 을 직접 대조했다.
+
+| 도메인 | 도메인 PRD | 기능 PRD | docs |
+|---|---|---|---:|
+| 15 경고 & 징계 | `01_domain_prds/15_경고_징계_prd.md` | `02_feature_prds/15_warning/F15-01~09` | `docs/domains/15-warning.html` + `F15-01~09.html` |
+| 16 마일리지 | `01_domain_prds/16_마일리지_prd.md` | `02_feature_prds/16_mileage/F16-01~08` | `docs/domains/16-mileage.html` + `F16-01~08.html` |
+
+신규 기능 PRD 17개(F15 9 + F16 8) 추가 → 기능 인벤토리 122 → **139**, 도메인 14 → **16**. 두 도메인은 units/ 파이프라인 없이 source-first 로 직접 작성(시나리오 수는 미측정 "—"). 주요 Gap: FORCED_REMOVE 후속 미연동, mileage batch/member-detail 응답 타입(Map↔VO) 불일치, 자동적립 트리거 호출처 부재, 시즌 랭킹 basis 값 불일치 — 각 기능 PRD §8 참조.
+
 ## v4.5 W1~W7 영향 요약 (2026-05-22)
 
 `docs/plan/event-extensions/PLAN.md` v4.5의 7개 Wave는 아래 인프라/스키마 변경을 동반한다. 모두 단일 `community_api/src/main/resources/db/migration/V1__init.sql`에 흡수한다 (V2 이상 신규 파일 금지 — `community_api/CLAUDE.md` 규칙 준수). 운영 환경 정합성 복구는 별도 절차 SQL인 `docs/sql/local_schema_repair_2026-05-22.sql`(또는 `docs/sql/repair_local_schema_2026-05-22.sql`)을 통해 수동 실행한다.

@@ -296,6 +296,42 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 | POST | `/api/v1/market/refunds/{refundId}/reject` | 거절. Body: `{ rejectionReason }` |
 | POST | `/api/v1/market/refunds/{refundId}/request-evidence` | 자료 보완 요청 (1회) |
 
+### 7.2a 번들 큐레이터 관리
+
+| Method | Path | 설명 |
+|---|---|---|
+| GET | `/api/v1/market/bundles/{bundleId}/curators` | 큐레이터 목록 |
+| POST | `/api/v1/market/bundles/{bundleId}/curators` | 큐레이터 추가. Body: `{ userId, role: LEAD|CO }` |
+| DELETE | `/api/v1/market/bundles/{bundleId}/curators/{curatorId}` | 큐레이터 제거 |
+
+권한: `bundle.curator_user_id` 또는 LEAD 큐레이터만 호출 가능. LEAD는 번들당 최대 1명.
+
+### 7.2b 번들 부분 환불
+
+| Method | Path | 설명 |
+|---|---|---|
+| POST | `/api/v1/market/refunds/partial` | 번들 부분 환불 신청. Body: `{ purchaseId, selectedBundleItemIds, reasonCategory, reasonMemo? }` |
+
+선택된 BundleItem만 환불 처리되며 `refund_scope=PARTIAL_ITEM`으로 기록. 모든 아이템 선택 시 일반 환불(`FULL`)로 자동 전환된다.
+
+### 7.2c 다운로드 트래킹
+
+| Method | Path | 설명 |
+|---|---|---|
+| POST | `/api/v1/market/collection/{id}/download` | 다운로드 흔적 기록 |
+
+호출 시 `Collection.downloadCount++`, `firstDownloadedAt`(없을 때만), `lastDownloadedAt` 갱신. 단순 변심 환불 차단 기준이 된다.
+
+### 7.2d Admin API 이관 정책
+
+운영자 분쟁 처리·강제 환불 엔드포인트는 현재 `community_api`의 `AdminRefundController`에 있다. `community_admin_api`로의 이관은 다음 조건을 충족해야 한다:
+
+- `PurchaseRefundRequest`/`PurchaseRefundDispute` Entity·Repository를 admin_api 패키지에 복제 (또는 공유 모듈로 추출)
+- admin_api에 별도 `ManageRefundController` + `ManageRefundService` 작성 — 분개·지갑 환불은 community_api의 트랜잭션 경로를 그대로 사용해야 lot 추적과 회계 정합성이 유지됨
+- 따라서 단순 복제가 아니라 community_api → admin_api 호출 또는 공유 라이브러리 도입이 선행돼야 한다
+
+본 PRD 시점에는 community_api에 유지하되 라우트 prefix(`/api/v1/admin/...`)는 admin 도메인 표시로 둔다. 보안은 admin 토큰 또는 별도 `@PreAuthorize` 정책으로 강화. 모듈 분리는 별도 의사결정 + 인프라 작업으로 분리한다.
+
 ### 7.3 운영자 (admin API)
 
 | Method | Path | 설명 |
@@ -358,7 +394,7 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 
 `CreatorEarning.status = REVERSED`로 변경.
 
-다음 정산 사이클에서 `CREATOR_RECEIVABLE`을 우선 차감하여 회수한다. 크리에이터 지갑 잔액으로 즉시 회수 가능하면 즉시 처리.
+다음 정산 사이클에서 `CREATOR_RECEIVABLE`을 우선 차감하여 회수한다. `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, availableNet)`이 정산 직전 호출되어 `REVERSED` 상태의 earning을 회수 대상으로 잡고, 가용 정산금에서 차감한 뒤 회수 완료된 행은 `PAID`로 전이된다.
 
 `CREATOR_RECEIVABLE_OFFSET` 분개로 회수:
 
@@ -366,6 +402,14 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 차변: CREATOR_PAYABLE (다음 정산 크리에이터 지급액에서 회수)
 대변: CREATOR_RECEIVABLE
 ```
+
+회수 흐름(구현):
+1. 월간 정산 시작 시 각 크리에이터별로 `offsetCreatorReceivable(creatorId, totalNet)` 호출
+2. `REVERSED` 상태 earning 목록 조회
+3. 가용 정산금이 미수금 전액을 충당하면 해당 earning은 `PAID`로 전이 + 회수 금액만큼 정산 지급액 감소
+4. 부분 회수는 본 라운드 미지원 — 전액 회수만. 부분 회수가 필요한 잔액은 다음 사이클로 이월
+5. 회수 분개 1행 발행 (`recordCreatorReceivableOffset`)
+6. 정산 지갑 입금 안내 메시지에 회수 금액 표시
 
 장기 미수(예: 60일 초과)는 운영자 알림 + 판매 중지 트리거.
 

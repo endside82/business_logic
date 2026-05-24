@@ -157,6 +157,27 @@
       ['F14-05', '이벤트 길찾기'],
       ['F14-06', '역지오코딩'],
     ],
+    '15-warning': [
+      ['F15-01', '내 경고 현황'],
+      ['F15-02', '신고 제출·관리'],
+      ['F15-03', '이의제기'],
+      ['F15-04', '정책·페널티 유형'],
+      ['F15-05', '신고 심사'],
+      ['F15-06', '경고 부여·조정'],
+      ['F15-07', '이의제기 처리'],
+      ['F15-08', '제재 집행'],
+      ['F15-09', '검토 큐·대시보드'],
+    ],
+    '16-mileage': [
+      ['F16-01', '내 마일리지·영수증'],
+      ['F16-02', '등급·배지·랭킹'],
+      ['F16-03', '시즌'],
+      ['F16-04', '마일리지 정책'],
+      ['F16-05', '적립규칙·교환 관리'],
+      ['F16-06', '적립·차감·정정'],
+      ['F16-07', '호스트 제안'],
+      ['F16-08', '검토 큐·대시보드'],
+    ],
   };
 
   const NAV = [
@@ -178,7 +199,7 @@
       ],
     },
     {
-      heading: '14개 도메인',
+      heading: '16개 도메인',
       domainGroup: true,
       links: [
         { href: 'domains/01-auth.html',         num: '01', label: '인증·온보딩',      slug: '01-auth' },
@@ -195,12 +216,14 @@
         { href: 'domains/12-notification.html', num: '12', label: '알림',             slug: '12-notification' },
         { href: 'domains/13-profile.html',      num: '13', label: '프로필·설정',     slug: '13-profile' },
         { href: 'domains/14-location.html',     num: '14', label: '위치·길찾기',     slug: '14-location' },
+        { href: 'domains/15-warning.html',      num: '15', label: '경고·징계',       slug: '15-warning' },
+        { href: 'domains/16-mileage.html',      num: '16', label: '마일리지',         slug: '16-mileage' },
       ],
     },
     {
       heading: '기능 인벤토리',
       links: [
-        { href: 'features/catalog.html', label: '122개 기능 카탈로그' },
+        { href: 'features/catalog.html', label: '139개 기능 카탈로그' },
         { href: 'features/impact.html', label: '부수효과 매트릭스' },
         { href: 'reference/numbers.html', label: '비즈니스 수치 레퍼런스' },
       ],
