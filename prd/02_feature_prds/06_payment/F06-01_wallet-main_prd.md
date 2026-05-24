@@ -59,6 +59,11 @@
   - `TransactionType` (`payment/constants/TransactionType.java`): `CHARGE`, `PAY`, `REFUND`, `WITHDRAW`, `DONATE`, `CLUB_SUBSCRIPTION_PAY`, `DONATION_REFUND`, `MEMBER_FEE_PAY`, `FREE_POINT_GRANT`, `SETTLEMENT`, `EXPIRATION`, `MEETING_PREPAYMENT`, `MEETING_SETTLEMENT`, `PRIVATE_HOSTING_COST`, `PRIVATE_MEETING_FEE`, `CHARGE_CANCEL`, `FREE_POINT_FORFEIT`, `MEETING_PREPAYMENT_REFUND`, `MARKETPLACE_SETTLEMENT`, `CLUB_FUND_WITHDRAWAL`, `POINT_EXPIRATION`, `SUBSCRIPTION_REFUND`, `SETTLEMENT_CORRECTION_DEBIT`, `SETTLEMENT_CORRECTION_CREDIT`, `MEMBER_FEE_REFUND`, `PERSONAL_SUBSCRIPTION_PAY` (총 26개, 0~25 코드)
 - 핵심 도메인 객체:
   - `Wallet` (`payment/model/Wallet.java`): userId 1:1, 두 종류 잔액(유료/무료)을 함께 관리. 편의 메서드 `addPaidBalance`, `addFreeBalance`, `deductPaidBalance`, `deductAmount(long)` (유료 우선 차감), 누적 메트릭 `totalCharged`/`totalSpent`/`totalRefunded`/`totalFreeGranted`.
+- 응답 VO 잔액 필드 (`WalletVo` — `payment/vo/WalletVo.java`):
+  - `balance` (long): 총잔액 (= 유료 + 무료)
+  - `paidBalance` (long): **유료 잔액**. 충전·현금 환불로 들어온 분으로 **현금 인출 가능** 대상
+  - `freeBalance` (long): **무료 잔액**. 프로모션 적립분으로 사용 가능하나 **현금 인출 불가**
+  - 유료/무료 분리정산(Point Split Flow-Through) 정책에 따라 잔액·결제·정산·인출이 전 구간에서 분리된다. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 
 ### 의존 단위 / 외부 시스템
 
@@ -163,5 +168,6 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
+- 잔액 화면 표기: `WalletVo`가 유료(`paidBalance`)/무료(`freeBalance`)를 분리 노출하므로, 합계만 보여 줄지 분리 표기할지(특히 "무료는 인출 불가"를 사용자에게 어떻게 알릴지)는 화면에서 결정한다. 정책 자체(무료는 현금화 불가, 유료만 인출 대상)는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

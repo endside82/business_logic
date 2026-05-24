@@ -71,6 +71,11 @@
 - **PlanStatus** 전이: `DRAFT → PUBLISHED → HIDDEN → PUBLISHED → ... → DELETED`
 - **PlanVo.status** 가능 값: `DRAFT`, `PUBLISHED`, `HIDDEN`, `DELETED`
 - **PlanType**: `PERSONAL`, `CREATOR`
+- **PlanVo 무료 포인트 관련 필드** (`plan/vo/PlanVo.java`):
+  - `price` (BigDecimal): 기본(유료) 구매 금액
+  - `allowFreePoints` (boolean): 이 플랜을 무료 포인트로 구매할 수 있는지 여부. 작성자(콘텐츠 생산자) opt-in으로 결정
+  - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액. 미설정(null)이면서 무료 허용인 경우 유료우선 혼합(PAID_FIRST), 설정된 경우 무료 결제는 그 금액으로 단일 통화 결제
+  - 유료/무료 분리정산(Point Split Flow-Through) 정책에 따라, 무료 포인트로 결제하면 수취자에게 무료로 전파되어 현금화되지 않는다. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 - **에러 코드**:
   - 1500001 PLAN_NOT_FOUND (404)
   - 1500002 PLAN_NOT_CREATOR (403)
@@ -200,5 +205,6 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
+- 플랜 상세는 `allowFreePoints`/`freePointPrice`를 응답에 포함하므로, 구매 화면에서 무료 포인트 결제 허용 여부와 무료 결제가(차등가)를 어떻게 노출·선택하게 할지(`PaymentFundingMode` PAID/FREE 선택)는 화면에서 결정한다. 정책 자체(무료는 차등가 설정 시에만 허용, 무료분은 현금화 불가)는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

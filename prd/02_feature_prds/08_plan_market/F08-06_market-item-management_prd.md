@@ -79,6 +79,10 @@
   - `thumbnailUrl (500)`, `displayOrder: Integer? (default 0)`
   - `purchaseCount: int NOT NULL` (default 0)
   - `createdAt/updatedAt: LocalDateTime`
+- **무료 포인트 관련 Param 필드**:
+  - 생성 (`MarketItemAddParam`, `POST /api/v1/market/items`): `currencyType`(String — PAID_POINT/FREE_POINT/ANY_POINT)와 `freePointPrice`(BigDecimal, nullable)를 함께 받는다. 즉 사용 가능 통화 종류(`currencyType`)는 **생성 시점에만 결정**된다.
+  - 수정 (`MarketItemModParam`, `PUT /api/v1/market/items/{itemId}`): `freePointPrice`(BigDecimal, nullable)만 수정 가능하다. `currencyType`은 `MarketItemModParam`에 **없으므로 수정 불가**(아래 "수정 가능 필드" 항목과 일치).
+  - 유료/무료 분리정산(Point Split Flow-Through): 무료 포인트 결제분은 수취자에게 무료로 전파되어 현금화되지 않는다. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 
 ### 의존 단위 / 외부 시스템
 
@@ -167,7 +171,7 @@
   - title trim 후 비어있지 않으면 통과 (`_isFormValid`)
   - 그 외 필드 클라이언트 검증 없음 (서버 검증에 위임)
   - title `maxLength: 200`, description `maxLength: 2000` (UI 제약)
-- **수정 가능 필드**: 서버는 itemType/currencyType 변경 불가. 화면도 이 두 필드는 폼에 포함하지 않음 (생성 시점에만 결정)
+- **수정 가능 필드**: 서버는 itemType/currencyType 변경 불가(`MarketItemModParam`에 두 필드 없음). 화면도 이 두 필드는 폼에 포함하지 않음 (생성 시점에만 결정). 무료 결제 차등가(`freePointPrice`)는 `MarketItemModParam`에 있어 수정 가능하나, 현재 편집 화면 폼은 이를 포함하지 않음 → 차등가 입력 UI 추가 여부는 화면 결정 사항
 - **재고 수량 빈 입력**: `int.tryParse` → null → 무제한 의미
 - **표시 순서**: 0이 기본값 (서버 builder default)
 - **확인 다이얼로그**:
@@ -223,5 +227,6 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
+- 통화 종류(`currencyType`)는 생성 시점에만 정해지고 수정 단계에서는 무료 결제 차등가(`freePointPrice`)만 손댈 수 있다. 현재 편집 폼이 `freePointPrice`를 전송하지 않으므로, 차등가 입력 UI를 편집 화면에 추가할지는 화면 결정 사항이다. 정책 자체(무료 허용은 통화 종류로 제어, 무료분은 현금화 불가)는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

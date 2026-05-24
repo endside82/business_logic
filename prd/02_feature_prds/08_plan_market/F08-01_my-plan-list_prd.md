@@ -72,6 +72,11 @@
 - **PlanLimit 상수** (`PlanService`):
   - `MAX_PLANS_USER = 5`
   - `MAX_PLANS_HOST = 10`
+- **PlanAddParam 무료 포인트 관련 필드** (`POST /api/v1/plans`, `plan/param/PlanAddParam.java`): 플랜 생성 시 설정 가능
+  - `allowFreePoints` (boolean): 이 플랜을 무료 포인트로 구매할 수 있게 허용할지 여부 (작성자 opt-in)
+  - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액
+  - 현재 화면의 새 플랜 다이얼로그는 `title`(+ `price:0`)만 전달하므로 이 두 값은 생성 시점에 기본값으로 들어가고, 이후 발행/수정(F08-05, `PlanModParam`)에서 작성자가 조정한다.
+  - 유료/무료 분리정산(Point Split Flow-Through) 정책 적용. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 
 ### 의존 단위 / 외부 시스템
 
@@ -186,5 +191,6 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
+- `PlanAddParam`에 `allowFreePoints`/`freePointPrice`가 있으나 현재 생성 다이얼로그는 제목만 받는다. 생성 시점에 무료 허용/차등가를 입력받게 할지, 발행/수정 단계(F08-05)로 미룰지는 화면 결정 사항이다. 정책 자체는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

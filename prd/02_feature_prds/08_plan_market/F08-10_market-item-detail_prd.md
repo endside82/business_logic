@@ -70,9 +70,13 @@
 ### 도메인 모델 / Enum (이 기능 관련)
 
 - **Enum** `ItemStatus`: `READY`, `ON_SALE`, `STOP_SELLING`, `REMOVED`
-- **VO** `MarketItemVo`: F08-08 참조
+- **VO** `MarketItemVo`: F08-08 참조. 무료 포인트 관련 필드 (`plan/vo/MarketItemVo.java`):
+  - `currencyType` (String): `PAID_POINT`(유료만) / `FREE_POINT`(무료만) / `ANY_POINT`(둘 다). 구매 시 사용 가능한 통화 종류를 콘텐츠 생산자가 결정
+  - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액. `ANY_POINT`인데 미설정이면 유료우선 혼합(PAID_FIRST), 설정되면 통화별 단일가
+  - 구매 시 결제 통화 선택은 `PaymentFundingMode`(`PAID`/`FREE`)로 전달 — `FREE`는 무료가 허용되고 차등가가 설정된 경우에만 가능
 - **VO** `ItemReviewVo`: 위 응답 섹션 참조 — `boolean isEdited` Jackson 직렬화 시 JSON 키 `edited`
-- **VO** `BundleVo` / `BundleItemVo`: 위 응답 섹션 참조
+- **VO** `BundleVo` / `BundleItemVo`: 위 응답 섹션 참조. `BundleVo` (`plan/vo/BundleVo.java`)도 `currencyType`(String)·`freePointPrice`(BigDecimal, nullable)를 **조회 응답으로 노출**한다. 단, 번들의 차등가(`freePointPrice`) **설정**은 `community_admin_api`에서 관리하며 admin 빌더 배선은 followup이다(community_api에는 VO/param 노출만 있음).
+- 유료/무료 분리정산(Point Split Flow-Through): 무료 포인트로 구매하면 수취자에게 무료로 전파되어 현금화되지 않는다. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 
 ### 의존 단위 / 외부 시스템
 
@@ -197,5 +201,6 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
+- 아이템/번들 상세가 `currencyType`/`freePointPrice`를 응답에 포함하므로, 구매 화면에서 결제 통화(유료/무료)를 어떻게 선택·노출할지(차등가 표시 포함)는 화면에서 결정한다. **번들 차등가 설정은 admin(`community_admin_api`) 배선 followup**이므로 번들 `freePointPrice`는 당분간 조회 노출 위주로 본다. 정책 자체는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
