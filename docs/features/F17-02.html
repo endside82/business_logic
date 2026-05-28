@@ -19,60 +19,107 @@
         </div>
         <h1>F17-02. 정기모임 상세 조회</h1>
         <p class="lede">
-          모임 본체·회차 요약·내 위치(보는 사람이 호스트인지 멤버인지 게스트인지)를 한 화면에 보여준다.
-          하단 버튼은 "지금 보는 사람이 누구이고 모임이 어떤 상태인가"에 따라 6가지로 갈린다.
-          비로그인도 들어올 수 있지만 초안은 호스트 본인에게만 보인다.
+          카드에서 진입하면 도착하는 면. 모임 본체·회차 요약·내 위치(보는 사람이 호스트·멤버·게스트 중 누구인가)를 한 화면에 모은다.
+          정기모임은 사용자마다 다음 행동이 완전히 다르기 때문에 <strong>하단 버튼이 가장 중요한 디자인 결정</strong>이다 —
+          "지금 보는 사람이 누구이고, 모임이 어떤 상태인가"의 두 축으로 6가지 버튼으로 갈린다.
+          비로그인도 들어올 수 있지만, 발행 전 초안은 호스트 본인에게만 보인다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">접근</div><div class="value">비로그인 가능</div><div class="hint">초안 제외</div></div>
           <div class="metric"><div class="label">하단 버튼 분기</div><div class="value">6</div><div class="hint">상태 × 보는 사람</div></div>
-          <div class="metric"><div class="label">회차 요약</div><div class="value">포함</div><div class="hint">전체 목록은 별도 호출</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">초안 제외</div></div>
+          <div class="metric"><div class="label">회차 요약</div><div class="value">동일 화면</div><div class="hint">전체 회차는 별도 진입</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 의도 — 한 화면에 "내가 지금 뭘 할 수 있는지" 직설</span>
-          <p>정기모임은 호스트·멤버·게스트가 같은 화면을 본다. 누구냐에 따라 다음 행동이 완전히 다르기 때문에
-            하단 버튼이 가장 중요한 디자인 결정이다. 상태(초안·모집중·종료·취소) × 보는 사람(호스트·멤버·게스트)
-            매트릭스로 분기해, 사용자가 망설이지 않게 한다.</p>
+          <span class="label">설계 의도 — "내가 지금 뭘 할 수 있는지"를 단 한 버튼으로</span>
+          <p>호스트·멤버·게스트가 같은 화면을 보지만 다음 행동은 완전히 다르다. 호스트는 멤버 관리·발행·종료가 필요하고,
+            결제대기 멤버는 시간이 흐르고 있고, 게스트는 가입을 결정해야 한다. 화면에 행동 버튼을 여러 개 깔지 않고,
+            상황별로 가장 의미 있는 버튼 1~3개만 남겨 사용자가 망설이지 않게 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>누가 보느냐에 따라 다른 하단 버튼</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>보는 사람</th><th>모임 상태</th><th>버튼</th></tr></thead>
-            <tbody>
-              <tr><td>호스트</td><td>초안</td><td>발행하기</td></tr>
-              <tr><td>호스트</td><td>모집 중</td><td>멤버 관리 · 회차 추가 · 출석 확정</td></tr>
-              <tr><td>호스트</td><td>종료</td><td>정산 보기</td></tr>
-              <tr><td>게스트</td><td>모집 중</td><td>참가 신청 (고정형) / 회차별 신청 (변동형)</td></tr>
-              <tr><td>멤버 (참가확정)</td><td>모집 중</td><td>취소 (환불 기한 내)</td></tr>
-              <tr><td>멤버 (결제대기)</td><td>모집 중</td><td>결제하기 + 남은 시간 카운트다운</td></tr>
-            </tbody>
-          </table>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">게스트 가입 결정</div>
+            <h3>모집 중 모임을 처음 본다</h3>
+            <p>화면 상단에 운영 방식 뱃지·호스트 닉네임·회차 요약. 하단에 "참가 신청" 버튼 1개.
+              화면을 스크롤하면 회차 일정을 카드로 본다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 가입 전 사용자가 모임 전체 일정을 확인할 수 있어야 가입 결정의 망설임이 줄어든다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">결제대기 멤버</div>
+            <h3>승인 후 결제 기한이 흐른다</h3>
+            <p>하단 버튼은 "결제하기" + 남은 시간 카운트다운(예: "67시간 남음").
+              상단에는 "결제 대기" 라벨이 노란색으로 표기된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 결제 기한 만료 = 자리 빼앗김 + 대기자 자동 승격. 카운트다운으로 긴급성을 시각화.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">참가확정 멤버</div>
+            <h3>이미 가입한 코스를 다시 본다</h3>
+            <p>하단 버튼은 "취소" 1개. 환불 기한 안내가 함께 노출되어 "지금 취소하면 얼마 돌려받는지"를 카드 단계에서 가늠한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 취소 시점이 환불 금액을 좌우하므로, 결정 화면에서 환불 산정 기준을 미리 보여 준다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 초안</div>
+            <h3>본인 초안을 다시 연다</h3>
+            <p>하단에 "발행하기" 버튼. 회차가 부족하면 "회차를 N개 더 추가해야 발행할 수 있어요" 안내.
+              초안은 외부 사용자에게는 "모임을 찾을 수 없습니다"로 가려진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 안전하게 모임을 다듬을 수 있는 보호된 공간 유지.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 운영</div>
+            <h3>모집 중 모임의 운영자 진입</h3>
+            <p>하단 버튼이 "멤버 관리 · 회차 추가 · 출석 확정" 세 개로 갈린다. 결제 대기 멤버 수가 카드 형태로 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트 일과의 핵심 액션을 한 화면에서 분기 없이 진입.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">호스트 종료</div>
+            <h3>코스 종료 후 정산을 본다</h3>
+            <p>하단 버튼이 "정산 보기" 1개. 정산이 자동 생성되기 전이면 "준비중" 라벨 + 새로고침 안내.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 종료 직후의 짧은 대기 시간을 사용자가 오류로 오인하지 않게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">취소 모임</div>
+            <h3>취소된 모임을 본다</h3>
+            <p>본문이 회색 처리되고 "취소된 모임" 라벨이 상단에 붙는다. 멤버에게는 환불 안내 라벨이 같이 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 카드 클릭 → 빈 화면 같은 단절을 겪지 않게, 취소된 모임도 상태를 명시한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">회차 진입</div>
+            <h3>회차 카드 탭</h3>
+            <p>회차 카드를 누르면 일반 이벤트 상세로 이동한다. 단, 화면 상단에 "이건 정기모임의 N회차" 표기가 항상 같이 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 일반 이벤트 화면을 재사용하면서도 사용자가 컨텍스트를 잃지 않게 한다.</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}</code></td><td>모임 본체 + 회차 요약 + 호스트 여부</td></tr>
-              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}/events</code></td><td>회차 전체 목록 (취소된 회차 포함 옵션)</td></tr>
-              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}/members/me</code></td><td>내 멤버십 상태 (없으면 404)</td></tr>
+              <tr><td><strong>상태 라벨</strong></td><td>"모집 중·종료·취소·결제 대기" 등 상태가 상단에 색으로 구분.</td><td>같은 화면이라도 상태에 따라 하단 액션이 달라지므로, 사용자가 자기 위치를 먼저 인지하게 한다.</td></tr>
+              <tr><td><strong>하단 버튼</strong></td><td>최대 3개. 상황에서 가장 의미 있는 액션만 남긴다.</td><td>버튼이 많아지면 사용자가 망설이고, 적은 버튼이 결정 속도를 높인다.</td></tr>
+              <tr><td><strong>회차 카드 영역</strong></td><td>회차 시작 시각·장소·정원이 카드로 줄지어 노출.</td><td>코스 가입 결정에는 "이 코스가 내 일정에 맞는지"가 가장 중요해, 상세 화면에서 일정 가시성을 최대화.</td></tr>
+              <tr><td><strong>호스트 정보</strong></td><td>호스트 닉네임·운영 이력 표기.</td><td>코스는 호스트 신뢰가 가입 결정의 핵심 요소.</td></tr>
+              <tr><td><strong>결제대기 카운트다운</strong></td><td>결제 대기 상태에서만 노출. 남은 시간이 실시간으로 줄어든다.</td><td>72시간 안에 결제 안 하면 자리가 빠지는 정책이 있으므로, 긴급성을 시각화.</td></tr>
+              <tr><td><strong>회차 컨텍스트 표기</strong></td><td>회차 상세에서 "정기모임 N회차" 라벨이 상단 고정.</td><td>일반 이벤트 화면 재사용 시 사용자가 컨텍스트를 잃지 않도록 표기 유지.</td></tr>
             </tbody>
           </table>
-        </div>
-        <div class="callout warn">
-          <span class="label">초안 보호</span>
-          <p>초안 상태 모임은 호스트 본인이 아니면 "모임을 찾을 수 없습니다"로 응답한다 — 초안이 존재한다는 사실 자체를 숨겨,
-            호스트가 준비 중인 모임 정보가 새지 않게 한다.</p>
         </div>
       </section>
 
@@ -81,10 +128,11 @@
         <div class="callout warn">
           <span class="label">화면 동작</span>
           <ul>
-            <li><strong>회차 카드 탭 시 일반 이벤트 상세로 이동</strong> — 그러나 "이건 정기모임 회차다" 라는 표기가 항상 함께 노출된다.</li>
-            <li><strong>일반 신청 버튼은 회차에서 숨김</strong> — 정기모임 회차에 일반 이벤트처럼 신청하는 경로는 막혀 있다(고정형은 모임 본체에서 가입).</li>
-            <li><strong>취소된 모임은 본문 회색 처리</strong> + 멤버에게 환불 안내 라벨.</li>
-            <li><strong>종료된 모임의 호스트는 정산 보기로</strong> — 정산이 아직 만들어지기 전이면 "준비중" 라벨.</li>
+            <li><strong>초안 모임은 외부에 "찾을 수 없음"으로 가린다</strong> — 초안의 존재 자체가 노출되지 않게 해, 호스트가 준비 단계에서 노출 부담을 갖지 않게 한다.</li>
+            <li><strong>정기모임 회차에는 일반 신청 버튼이 노출되지 않는다</strong> — 고정형은 본체 가입이 필수이고, 변동형은 회차에서 신청.</li>
+            <li><strong>취소된 모임도 본문은 보여 준다</strong> — 환불 안내를 사용자가 확인할 수 있게.</li>
+            <li><strong>종료 직후 정산은 "준비중"이 잠시 보일 수 있다</strong> — 안전망 재시도 1시간 안에 자동으로 갱신.</li>
+            <li><strong>비호스트가 초안 URL을 직접 쳐도 노출되지 않는다</strong> — 공유 링크 보호.</li>
           </ul>
         </div>
       </section>
@@ -94,8 +142,9 @@
         <div class="callout danger">
           <span class="label">자주 발생하는 케이스</span>
           <ul>
-            <li><strong>결제대기 멤버 카운트만 노출, 호스트 액션 화면은 1차 미신설</strong> — 호스트 결제 관리 화면이 후속으로 빠져 있어, 입금 확인은 별도 진입 필요.</li>
-            <li><strong>회차별 출석 명단 화면 부재</strong> — 호스트가 회차별 명단을 보고 한 명씩 결과를 바꾸는 UI는 아직 없다. 1차는 일괄 확정만.</li>
+            <li><strong>결제 대기 멤버 호스트 관리 화면이 1차 미신설</strong> — 입금 확인은 별도 진입을 통해야 한다. 카운트만 노출되어 호스트가 답답할 수 있음.</li>
+            <li><strong>회차별 출석 명단 화면 부재</strong> — 호스트가 회차마다 누가 왔는지 한 명씩 보는 UI는 1차에서 빠짐. 일괄 확정만 가능.</li>
+            <li><strong>비호스트 사용자가 회차 카드 깊이까지 들어가도 정기모임 컨텍스트 유지</strong> — 라벨이 빠지면 사용자가 일반 이벤트로 오인.</li>
           </ul>
         </div>
       </section>
@@ -104,9 +153,9 @@
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
-          <a class="card" href="F17-04.html"><div class="eyebrow">호스트 액션</div><h3>F17-04 생명주기</h3><p>발행·종료·취소·재오픈 버튼이 이어지는 곳.</p></a>
-          <a class="card" href="F17-06.html"><div class="eyebrow">게스트 액션</div><h3>F17-06 등록·승인·대기열</h3><p>"참가 신청" 후 진입하는 단위.</p></a>
-          <a class="card" href="F17-07.html"><div class="eyebrow">멤버 액션</div><h3>F17-07 결제</h3><p>"결제하기" 버튼 이후 단위.</p></a>
+          <a class="card" href="F17-04.html"><div class="eyebrow">호스트 액션</div><h3>F17-04 생명주기</h3><p>발행·종료·취소 버튼이 가는 곳.</p></a>
+          <a class="card" href="F17-06.html"><div class="eyebrow">게스트 액션</div><h3>F17-06 등록·승인·대기열</h3><p>"참가 신청"이 가는 곳.</p></a>
+          <a class="card" href="F17-07.html"><div class="eyebrow">멤버 액션</div><h3>F17-07 결제</h3><p>"결제하기"가 가는 곳.</p></a>
         </div>
       </section>
 

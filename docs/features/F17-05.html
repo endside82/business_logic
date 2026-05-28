@@ -19,10 +19,10 @@
         </div>
         <h1>F17-05. 회차 관리 (추가·일괄·대체·취소)</h1>
         <p class="lede">
-          회차는 일반 이벤트 위에서 동작하지만, 정기모임 컨텍스트로 묶여 일반 이벤트 화면에서의 직접 수정이 막혀 있다.
+          회차는 일반 이벤트와 같은 화면을 그대로 쓰지만, 정기모임 컨텍스트로 묶여 일반 이벤트 운영 화면에서의 직접 수정이 막혀 있다.
           호스트는 네 가지 액션을 가진다 — <strong>한 회차 추가</strong>, <strong>여러 회차 일괄 추가</strong>,
-          <strong>취소된 회차의 대체본 추가</strong>, <strong>회차 취소</strong>. 같은 순번에 대체본이 따로 보관되어
-          "원본 취소 + 대체본" 이력이 남는다.
+          <strong>취소된 회차의 대체본 추가</strong>, <strong>회차 취소</strong>.
+          취소된 회차와 대체본이 같은 순번에 보관되어 "원본 취소 + 대체본" 이력이 사용자에게 보인다.
         </p>
       </header>
 
@@ -35,68 +35,91 @@
 
         <div class="callout">
           <span class="label">설계 의도 — 회차는 정기모임만의 영역</span>
-          <p>회차도 결국 이벤트의 한 형태라 일반 이벤트 화면을 그대로 재사용할 수 있지만, 일반 이벤트 운영 경로로 회차를
-            수정하면 모임 본체와 정합성이 깨진다. 그래서 호스트는 정기모임 화면에서만 회차를 손볼 수 있고, 일반 이벤트의
-            게시/취소/정원 변경 같은 경로는 명시적으로 차단되어 있다.</p>
+          <p>회차도 결국 이벤트의 한 형태라 일반 이벤트 화면을 재사용할 수 있지만,
+            일반 이벤트 운영 경로로 회차를 수정하면 모임 본체와 정합성이 깨진다.
+            그래서 호스트는 정기모임 화면에서만 회차를 손볼 수 있고,
+            일반 이벤트의 게시/취소/정원 변경 같은 경로는 명시적으로 차단되어 있다.</p>
         </div>
       </section>
 
       <section>
-        <h2>네 가지 액션</h2>
+        <h2>사용자 시나리오</h2>
+
         <div class="cards">
           <article class="card">
-            <div class="eyebrow">추가</div>
-            <h3>한 회차 추가</h3>
-            <p>다음 순번이 자동 할당된다. 변동형은 정원·가격을 회차마다 따로 줄 수 있고, 고정형은 모임 본체 값을 상속한다.</p>
+            <div class="eyebrow">한 회차 추가</div>
+            <h3>8회 코스의 다음 회차 한 건</h3>
+            <p>호스트가 회차 추가 화면에서 시작 시각·장소만 입력. 순번은 자동으로 다음 번호가 붙는다.
+              고정형은 정원·가격이 모임 본체 값을 자동 상속한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 매 회차마다 같은 값을 반복 입력하지 않도록 본체 상속.</p>
           </article>
+
           <article class="card">
-            <div class="eyebrow">일괄 추가</div>
-            <h3>여러 회차 한 번에</h3>
-            <p>8회 코스를 단번에 만드는 등 고정형 셋업에 쓴다. 시간 겹침은 호스트가 직접 확인.</p>
+            <div class="eyebrow">여러 회차 일괄 추가</div>
+            <h3>8회 코스를 한 번에 셋업</h3>
+            <p>일괄 추가 화면에서 시작 시각·요일·간격을 입력하면 8회차가 한 번에 만들어진다(예: 매주 토요일 10시).</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 고정형 셋업에서 가장 시간이 많이 드는 부분을 한 액션으로 끝낸다.</p>
           </article>
+
           <article class="card">
-            <div class="eyebrow">대체</div>
-            <h3>취소된 회차의 새 일정</h3>
-            <p>원본을 취소하고 같은 순번에 새 회차를 단다. 원본 행과 대체본이 모두 이력으로 남아 "이 코스의 3회차는 한 번 옮겨졌다"가 보인다.</p>
+            <div class="eyebrow">변동형 회차 추가</div>
+            <h3>매번 다른 정원·가격</h3>
+            <p>변동형 회차는 본체 값을 상속하지 않고, 회차마다 정원·가격을 따로 입력한다(이번 달은 정원 5, 다음 달은 10 식).</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 변동형 모임의 핵심 자유도. 본체는 공통 정책만, 회차는 자유 운영.</p>
           </article>
+
           <article class="card">
-            <div class="eyebrow">취소</div>
-            <h3>회차만 닫기</h3>
-            <p>회차 한 건만 닫는다. 고정형 멤버 본체는 영향 없고, 해당 회차의 자동 참석 명단만 빠진다.</p>
+            <div class="eyebrow">회차 취소</div>
+            <h3>3회차 일정이 안 됐다</h3>
+            <p>호스트가 3회차 카드에서 "취소" 누름. 회차 상태가 "취소"로 바뀌고 자동 참석 명단에서 제거된다.
+              멤버 본체는 그대로 — 다른 회차에는 그대로 참여.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 회차 취소가 멤버십 전체를 흔들지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">대체본 추가</div>
+            <h3>취소된 3회차를 다음주로 옮긴다</h3>
+            <p>취소된 3회차의 "대체본 추가"로 새 일정 입력. 같은 순번(3회차)에 새 회차가 단다.
+              원본은 "취소"로 남고 대체본이 활성으로 노출된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 "3회차가 한 번 옮겨졌다"가 자연스럽게 노출되어 호스트의 일정 조정 이력이 투명해진다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">일반 이벤트로 진입</div>
+            <h3>회차 카드 탭 → 일반 이벤트 상세</h3>
+            <p>회차 카드를 누르면 일반 이벤트 상세 화면으로 이동한다. 화면 상단에 "정기모임 N회차" 라벨이 고정되어
+              사용자가 컨텍스트를 잃지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 일반 이벤트 화면 재사용으로 개발 비용 절감, 컨텍스트 라벨로 사용자 인지 보호.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/events</code></td><td>회차 한 건 추가</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/events/bulk</code></td><td>회차 일괄 추가</td></tr>
-              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}/events</code></td><td>회차 목록 (취소 회차 포함 옵션)</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/events/{eventId}/replace</code></td><td>취소된 회차의 대체본 추가</td></tr>
-              <tr><td>DELETE</td><td><code>/api/v1/regular-meetings/{id}/events/{eventId}</code></td><td>회차 취소</td></tr>
+              <tr><td><strong>회차 순번</strong></td><td>"1회차·2회차·3회차" 같은 표기가 모든 회차 카드 상단에 노출.</td><td>코스에서 자기 위치를 사용자가 직관적으로 인지하게 한다.</td></tr>
+              <tr><td><strong>대체본 표기</strong></td><td>같은 순번에 원본(취소) + 대체본(활성)이 같이 노출. 원본은 회색 처리.</td><td>호스트의 일정 조정 이력이 가려지지 않게 한다 — 멤버가 "왜 일정이 바뀌었지?"를 인지하게.</td></tr>
+              <tr><td><strong>변동형 정원·가격</strong></td><td>회차 카드마다 다른 값으로 노출.</td><td>변동형의 자유도가 카드 단계에서 노출되어야 사용자가 "이번 달은 가격이 다르네"를 인지.</td></tr>
+              <tr><td><strong>취소 회차 노출</strong></td><td>기본 목록에서는 숨김. "이력 포함" 옵션을 켜면 회색으로 노출.</td><td>일반 사용자는 활성 회차만 보면 충분, 호스트는 이력 확인이 필요해 옵션 분리.</td></tr>
+              <tr><td><strong>일반 이벤트 운영 차단</strong></td><td>호스트가 일반 이벤트 화면에서 회차 운영 버튼을 눌러도 거절.</td><td>운영 경로 분리로 모임 본체와 회차 정합성 보호.</td></tr>
             </tbody>
           </table>
-        </div>
-        <div class="callout warn">
-          <span class="label">일반 이벤트 운영 화면을 통한 회차 손대기는 차단</span>
-          <p>회차를 일반 이벤트의 게시/취소/정원 변경 화면으로 손대려고 하면 운영 가드가 거절한다. 회차에 대한 모든 변경은
-            정기모임 전용 화면에서만 가능하다.</p>
         </div>
       </section>
 
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">대체본·취소 이력</span>
+          <span class="label">회차 운영 규칙</span>
           <ul>
-            <li><strong>대체본은 원본과 같은 순번에 붙는다</strong> — 사용자에겐 "3회차가 한 번 옮겨졌다"가 자연스럽게 노출.</li>
-            <li><strong>취소된 회차는 기본 목록에서 숨김</strong> — 호스트가 "이력 포함" 옵션을 켜면 함께 표시.</li>
-            <li><strong>고정형 회차 취소 시 멤버 본체에는 영향 없음</strong> — 자동 참석 명단만 갱신.</li>
+            <li><strong>고정형 회차 취소 시 멤버 본체는 그대로</strong> — 자동 참석 명단만 갱신. 다른 회차에는 그대로 참여.</li>
             <li><strong>변동형은 회차마다 정원·가격이 독립적</strong> — 회차별로 다른 가격을 받을 수 있다.</li>
+            <li><strong>회차 시간 겹침 자동 검출 없음</strong> — 호스트가 같은 시간대에 두 회차를 만들 수 있음. 1차는 호스트 자율.</li>
+            <li><strong>모집 중 모임에 회차 추가 시 가입자에게 알림 미배선</strong> — 1차 출시는 사용자 새로고침 의존. 후속에 알림 통합.</li>
+            <li><strong>일반 이벤트 운영 화면 우회 차단</strong> — 회차에 대한 모든 변경은 정기모임 화면에서만 가능.</li>
           </ul>
         </div>
       </section>
@@ -106,9 +129,9 @@
         <div class="callout danger">
           <span class="label">자주 발생하는 케이스</span>
           <ul>
-            <li><strong>일괄 추가/대체 호스트 UI 미완성</strong> — API는 준비됐지만 화면 우선순위가 낮아 1차에서 빠짐.</li>
-            <li><strong>회차 시간 겹침 자동 검출 없음</strong> — 호스트가 같은 시간대에 두 회차를 만들 수 있음. 1차는 호스트 자율.</li>
-            <li><strong>모집 중 모임에 회차 추가</strong> — 이미 가입한 멤버의 자동 참석 명단이 즉시 갱신되는데, 알림 미배선이라 멤버가 모를 수 있음.</li>
+            <li><strong>일괄 추가/대체 호스트 UI 1차 미신설</strong> — 단건 추가는 가능. 일괄·대체는 후속 화면으로 빠짐.</li>
+            <li><strong>회차 시간 겹침 미검증</strong> — 호스트가 실수로 같은 시간에 두 회차를 만들 수 있음.</li>
+            <li><strong>모집 중 회차 추가 시 멤버 인지 없음</strong> — 자동 참석 명단에는 즉시 추가되지만 멤버에게 푸시가 안 가서 새 회차를 모를 수 있음.</li>
           </ul>
         </div>
       </section>
@@ -117,7 +140,7 @@
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
-          <a class="card" href="F17-03.html"><div class="eyebrow">이전</div><h3>F17-03 생성</h3><p>모임 본체를 만든 다음 회차 추가.</p></a>
+          <a class="card" href="F17-03.html"><div class="eyebrow">이전</div><h3>F17-03 생성</h3><p>본체를 만든 다음 회차 추가.</p></a>
           <a class="card" href="F17-04.html"><div class="eyebrow">다음</div><h3>F17-04 생명주기</h3><p>회차가 다 차면 발행.</p></a>
           <a class="card" href="F17-09.html"><div class="eyebrow">관련</div><h3>F17-09 출석 확정</h3><p>회차 종료 후 확정 단계.</p></a>
         </div>

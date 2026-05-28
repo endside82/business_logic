@@ -19,69 +19,107 @@
         </div>
         <h1>F17-03. 정기모임 생성 (호스트)</h1>
         <p class="lede">
-          호스트가 모임 본체를 만든다. 무조건 <strong>초안 상태</strong>로 저장돼서, 회차를 다 꾸리고 가격·정원을
-          확정한 다음 별도로 발행한다. 고정형은 코스 전체 회차 수·정원·가격이 필수이고, 변동형은 회차마다 따로
-          정의되므로 본체에서는 비워둘 수 있다.
+          호스트가 정기모임 본체를 만드는 면. 무조건 <strong>초안 상태로 먼저 저장</strong>한 뒤, 회차를 다 꾸리고
+          가격·정원·정책을 확정한 다음 별도로 발행한다.
+          고정형은 코스 전체 회차 수·정원·가격이 필수이고, 변동형은 회차마다 따로 정의되므로 본체에서는 비워둘 수 있다.
+          한 번 정한 호스트는 끝까지 바꿀 수 없다 — 정산 수익자와 환불 책임자를 흔들지 않기 위한 결정이다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">초기 상태</div><div class="value">항상 초안</div><div class="hint">발행은 별도 단계</div></div>
-          <div class="metric"><div class="label">가격 단위</div><div class="value">100원</div><div class="hint">100원 미만은 자동 절삭</div></div>
+          <div class="metric"><div class="label">가격 단위</div><div class="value">100원</div><div class="hint">100원 미만 자동 절삭</div></div>
           <div class="metric"><div class="label">호스트 교체</div><div class="value">불가</div><div class="hint">정산 책임자 고정</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 의도 — 모임을 만든 사람이 끝까지 책임진다</span>
+          <span class="label">설계 의도 — 만든 사람이 끝까지 책임진다, 그 사이 자유롭게 다듬는다</span>
           <p>정기모임은 코스 단위 결제·정산·환불을 동반하므로 <strong>호스트가 한 번 정해지면 못 바꾼다</strong>.
-            정산 수익자와 환불 책임자가 흔들리는 순간 분쟁이 일어나기 때문이다. 또 모임은 항상 초안으로 시작하므로,
-            발행 전까지는 회차·가격·정책을 자유롭게 손볼 수 있고 운영중 사용자에게 영향이 없다.</p>
+            정산 수익자와 환불 책임자가 흔들리는 순간 분쟁이 일어나기 때문이다.
+            반면 <strong>초안 단계는 자유롭다</strong> — 발행 전까지 회차·가격·정책을 자유롭게 손볼 수 있고
+            운영중 사용자에게 영향이 없다. 모임을 "확정"하는 순간(발행)을 별도 단계로 분리해
+            호스트가 충분히 준비된 다음에 사용자에게 노출되도록 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>고정형 vs 변동형 — 본체 폼이 다르다</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>입력 필드</th><th>고정형</th><th>변동형</th></tr></thead>
-            <tbody>
-              <tr><td>총 회차 수</td><td>필수 (1 이상)</td><td>비움(회차마다 자유 추가)</td></tr>
-              <tr><td>기본 정원</td><td>필수 (1 이상, 코스 단위)</td><td>비움(회차마다 따로)</td></tr>
-              <tr><td>가격</td><td>코스 전체 가격</td><td>비움(회차마다 따로)</td></tr>
-              <tr><td>승인제·선결제</td><td>모임 단위로 한 번 결정</td><td>모임 단위로 한 번 결정</td></tr>
-              <tr><td>노쇼 정책</td><td>모임 단위(기본 없음)</td><td>모임 단위(기본 없음)</td></tr>
-            </tbody>
-          </table>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">고정형 코스 생성</div>
+            <h3>"8주 러닝 코스" 만들기</h3>
+            <p>호스트가 운영방식을 "고정형"으로 선택. 총 회차 8, 기본 정원 10, 코스 전체 가격 80,000원, 승인제 입력.
+              저장 누르면 초안으로 들어가고 회차 추가 화면으로 이어진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 회차 셋업 전에 본체 정책(가격·정원·승인)을 먼저 결정하게 해, 회차 추가가 일관성을 잃지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">변동형 모임 생성</div>
+            <h3>"매달 다른 주제 독서 모임"</h3>
+            <p>운영방식을 "변동형"으로 선택. 총 회차·정원·가격 필드는 비워둔다(회차마다 따로 정의).
+              승인제·노쇼 정책 정도만 본체에 잡고 저장.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 회차마다 운영을 다르게 가져가야 하는 모임에 필요한 자유도. 본체는 "공통 정책 컨테이너" 역할만 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">가격 자동 절삭</div>
+            <h3>12,345원 입력 → 12,300원 저장</h3>
+            <p>가격 입력 후 저장. 100원 미만 단위는 자동 절삭되어 12,300원으로 저장된다.
+              상세 화면에서 저장된 가격을 다시 보여 줘 사용자가 인지하게 한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 원 단위 미세 금액을 막아 환불 산식이 깨끗하게 떨어지게 한다(일반 이벤트와 동일).</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">필수값 누락</div>
+            <h3>고정형인데 회차 수가 비어 있음</h3>
+            <p>고정형 + 총 회차 수가 비어 있으면 저장이 거절되고 "고정형은 총 회차 수가 필요해요" 안내.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 고정형의 핵심(코스 전체 규모) 확정이 누락된 채 발행으로 흘러가지 않게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">온라인 모임</div>
+            <h3>장소를 온라인으로 선택 + URL 입력</h3>
+            <p>장소 종류가 온라인이면 URL 입력칸이 활성화. URL 형식이 아니면 "올바른 URL 형식이 아닙니다" 안내.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 회차마다 URL을 다시 입력하지 않게, 본체에서 한 번 정해 회차 추가 시 자동 상속 가능.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">노쇼 정책 기본</div>
+            <h3>아무 선택 안 해도 저장됨</h3>
+            <p>노쇼 정책을 지정하지 않으면 "없음"으로 저장된다. 호스트가 명시적으로 "경고" 또는 "자격박탈"을 선택해야 한도 추적이 켜진다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 노쇼 정책이 강한 모임은 의도적 선택이어야 한다(자동 활성화 시 분쟁 가능).</p>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>화면에서 사용자가 인지하는 것</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td>POST</td><td><code>/api/v1/regular-meetings</code></td><td>모임 초안 생성 — 항상 초안 상태로 저장</td></tr>
+              <tr><td><strong>운영방식 토글</strong></td><td>"고정형/변동형" 라디오. 선택에 따라 하단 필드가 달라진다.</td><td>본체 폼이 운영방식에 따라 달라지므로 가장 먼저 결정하게 한다.</td></tr>
+              <tr><td><strong>총 회차·정원</strong></td><td>고정형에서만 활성. 변동형에서는 비활성·회색.</td><td>변동형 본체에 입력해도 의미 없는 값이라 폼 단에서 비활성화하는 게 사용자 혼동을 줄인다.</td></tr>
+              <tr><td><strong>가격</strong></td><td>입력 후 100원 단위 안내. 저장 직후 절삭된 값으로 표기.</td><td>"내가 입력한 값과 저장된 값이 다르네?" 혼동을 막기 위해 자동 절삭을 명시 안내.</td></tr>
+              <tr><td><strong>승인제·선결제</strong></td><td>토글 두 개. 본체에서 한 번 결정.</td><td>모임 전체의 운영 방침이라 회차마다 바꿀 수 없게 본체로 묶는다.</td></tr>
+              <tr><td><strong>노쇼 정책</strong></td><td>"없음·경고·자격박탈" + 한도 카운트 방식 선택.</td><td>현금성 박탈 정책이라 명시적 선택을 요구해 분쟁 가능성을 낮춘다.</td></tr>
+              <tr><td><strong>저장 후 안내</strong></td><td>저장 직후 회차 추가 화면으로 자연스럽게 이어진다.</td><td>"본체만 만들어 두고 발행을 잊는" 케이스를 줄이기 위해 다음 단계로 흐름 연결.</td></tr>
             </tbody>
           </table>
-        </div>
-        <div class="callout warn">
-          <span class="label">가격은 100원 단위로 자동 절삭</span>
-          <p>예: 12,345원을 입력하면 12,300원으로 저장된다(일반 이벤트와 같은 정책). 사용자에게는 저장된 값을 다시
-            보여줘 혼동이 없도록 안내한다.</p>
         </div>
       </section>
 
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">초안 단계의 자유도</span>
+          <span class="label">초안 단계의 자유도와 호스트 제약</span>
           <ul>
-            <li><strong>호스트는 초안을 여러 개 동시에 가질 수 있다</strong> — 1차 출시에는 호스트당 모임 수 제한이 없다.</li>
-            <li><strong>온라인 모임 URL은 형식 검증을 거친다</strong> — 잘못된 형식이면 가입 단계에서 안내.</li>
-            <li><strong>노쇼 정책 기본은 "없음"</strong> — 호스트가 명시적으로 선택해야 한도·강제박탈 정책이 켜진다.</li>
-            <li><strong>환불 정책 기본은 "전액"</strong> — 호스트가 명시적으로 부분 환불 정책을 선택할 수 있다.</li>
+            <li><strong>호스트당 동시 초안 수 제한 없음</strong> — 1차 출시는 quota 없이 자유롭게. 운영상 청소 정책은 후속.</li>
+            <li><strong>호스트 교체 불가</strong> — 발행 후뿐 아니라 초안 단계에서도 불가. 모임을 다른 사람에게 넘기려면 새 모임을 만들어야 한다.</li>
+            <li><strong>변동형 본체에 가격·정원 입력은 무시된다</strong> — 회차마다 따로 정의되므로 본체 값은 의미 없음. 폼에서 비활성 처리 권장.</li>
+            <li><strong>환불 정책 기본은 "전액"</strong> — 호스트가 부분 환불 정책을 명시적으로 선택하면 적용.</li>
           </ul>
         </div>
       </section>
@@ -91,9 +129,9 @@
         <div class="callout danger">
           <span class="label">자주 발생하는 케이스</span>
           <ul>
-            <li><strong>변동형 본체에 가격·정원 입력</strong> — 의미 없는 값이라 무시되지만 사용자는 입력 가능. 폼에서 비활성 처리 권장.</li>
-            <li><strong>가격 절삭 혼동</strong> — 입력값과 저장값이 다를 수 있으므로 저장 직후 상세에서 절삭된 가격을 노출해야 함.</li>
-            <li><strong>호스트당 초안 quota 없음</strong> — 동시에 다수 초안을 만들 수 있어 운영상 청소가 필요할 수 있음.</li>
+            <li><strong>가격 절삭 혼동</strong> — 입력값과 저장값이 다르므로 저장 직후 상세에서 절삭된 가격이 노출되어야 한다. 누락 시 호스트가 "왜 가격이 줄었지?" 혼동.</li>
+            <li><strong>변동형인데 본체에 가격을 적은 모임</strong> — 사용자가 카드 단계에서 본체 가격을 "코스 총액"으로 오인할 수 있다. 변동형에서는 입력 자체가 막혀야 함.</li>
+            <li><strong>초안 많이 만들어 놓고 발행 안 함</strong> — 호스트당 초안 quota 없어 청소가 안 됨. 운영 모니터링 필요.</li>
           </ul>
         </div>
       </section>
@@ -102,7 +140,7 @@
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
-          <a class="card" href="F17-05.html"><div class="eyebrow">다음 단계</div><h3>F17-05 회차 관리</h3><p>초안에 회차를 추가/대체/취소.</p></a>
+          <a class="card" href="F17-05.html"><div class="eyebrow">다음 단계</div><h3>F17-05 회차 관리</h3><p>본체를 만든 다음 회차 추가.</p></a>
           <a class="card" href="F17-04.html"><div class="eyebrow">발행</div><h3>F17-04 생명주기</h3><p>회차가 다 차면 발행.</p></a>
         </div>
       </section>
