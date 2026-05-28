@@ -208,7 +208,7 @@
       links: [
         { href: 'overview/service.html', label: '서비스 정의' },
         { href: 'overview/personas.html', label: '사용자 유형' },
-        { href: 'overview/architecture.html', label: '정보구조 14도메인' },
+        { href: 'overview/architecture.html', label: '정보구조 17도메인' },
         { href: 'overview/journeys.html', label: '7대 사용자 여정' },
         { href: 'overview/operating-model.html', label: 'PRD 운영 모델' },
         { href: 'overview/changelog.html', label: '변경 기록' },
