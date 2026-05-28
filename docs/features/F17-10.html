@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-10 호스트 정산 (flow-through) — community PRD</title>
+  <title>F17-10 호스트 정산 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -19,98 +19,126 @@
         </div>
         <h1>F17-10. 호스트 정산 (flow-through)</h1>
         <p class="lede">
-          FIXED 모임 종료 시 코스당 1건의 <code>Settlement(regular_meeting_id=...)</code> 생성.
-          flow-through 모델: WALLET 결제의 retained 유료 포인트만 호스트 수익(gross), retained 무료 포인트는
-          freePointSubsidy(플랫폼 보조, payout 비대상)로 분리한다. BANK_TRANSFER는 off-ledger(payout 대상 아님).
+          코스가 종료되면 코스당 정산 1건이 만들어진다. <strong>호스트가 실제로 받는 금액은 유료 포인트로 들어온 매출만</strong>이고,
+          무료 보너스 포인트로 결제된 부분은 플랫폼 보조로 분리되어 호스트 지급 대상이 아니다. 외부 계좌이체 결제는
+          호스트가 직접 받은 돈이라 정산에 들어가지 않는다. 환불은 정산 이전에 끝나도록 설계되어 정산 후 새 환불이
+          생기지 않는다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">platform fee</div><div class="value">10%</div></div>
-          <div class="metric"><div class="label">withholding tax</div><div class="value">3.3%</div></div>
-          <div class="metric"><div class="label">멱등</div><div class="value">3중</div><div class="hint">uk_settlement_rm · existsByRegularMeetingId · existsBy ref SETTLEMENT</div></div>
+          <div class="metric"><div class="label">코스당 정산</div><div class="value">1건</div><div class="hint">멱등 보장</div></div>
+          <div class="metric"><div class="label">호스트 수익 기준</div><div class="value">유료 잔존액</div><div class="hint">무료 보너스는 플랫폼 보조</div></div>
+          <div class="metric"><div class="label">수수료</div><div class="value">10% + 3.3%</div><div class="hint">플랫폼 수수료·원천징수</div></div>
         </div>
 
         <div class="callout warn">
-          <span class="label">설계 핵심 — 정산 후 환불 위험 0</span>
-          <p>close가 통과하려면 모든 정션이 FINALIZED여야 한다. 정산은 close 커밋 후 <strong>afterCommit REQUIRES_NEW</strong>로
-            만들어진다. cancelEnrollment는 CLOSED/CANCELED를 거절하고, cancel도 findByIdForUpdate로 잠궈 정산 스냅샷과
-            환불 경합을 차단한다. FORFEIT 환불은 finalize 시점(=close 전)에 끝나서 settlement gross의 retained paid에
-            자연 반영된다.</p>
+          <span class="label">flow-through — 유료/무료를 분리해 호스트 수익에 잡는다</span>
+          <p>플랫폼 포인트는 두 종류 — <strong>유료 포인트</strong>(사용자가 현금으로 충전)와 <strong>무료 보너스</strong>(이벤트로 받은 무료 적립).
+            결제 시 두 종류가 섞이고 환불도 비례 차감되는데, 정산에서는 <strong>유료 잔존액만 호스트 수익</strong>으로 잡는다.
+            무료 잔존액은 플랫폼이 보조한 부분이라 호스트에게 지급되지 않는다 — 분리하지 않으면 무료 포인트로 결제된 코스
+            매출까지 호스트 지급이 일어나 플랫폼 손실이 된다.</p>
         </div>
       </section>
 
       <section>
-        <h2>flow-through 산식</h2>
-        <pre><code>// WALLET, !isHostDirect, pointTxId != null, status ∈ {PAID, REFUNDED} 결제 순회
-retainedPaid = Σ (origTx.paidAmount − refundTx.paidAmount)
-retainedFree = Σ (origTx.freeAmount − refundTx.freeAmount)
-
-if retainedPaid ≤ 0 → skip (settlement-skipped 잔여 후속)
-
-gross = retainedPaid
-freePointSubsidy = retainedFree  // payout 비대상, 플랫폼 보조 기록
-platformFee = gross × 0.10
-withholdingTax = gross × 0.033
-netAmount = gross − platformFee − withholdingTax</code></pre>
+        <h2>정산 금액 구성</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>의미</th></tr></thead>
+            <tbody>
+              <tr><td>매출 (gross)</td><td>유료 포인트 잔존액 — 결제에서 환불을 뺀 순액</td></tr>
+              <tr><td>플랫폼 보조 (별도)</td><td>무료 보너스 잔존액 — 호스트 지급 대상 아님, 정산에 별도 표시</td></tr>
+              <tr><td>플랫폼 수수료</td><td>매출의 10%</td></tr>
+              <tr><td>원천징수</td><td>매출의 3.3%</td></tr>
+              <tr><td>실지급액 (net)</td><td>매출 − 수수료 − 원천징수</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <span class="label">계좌이체는 정산 대상 아님</span>
+          <p>계좌이체로 결제된 부분은 호스트가 외부에서 직접 받은 돈이라 플랫폼 매출이 아니다. 정산에는 한 푼도 포함되지 않으며
+            "이건 호스트가 직접 받은 거래"라고 분리되어 표기된다.</p>
+        </div>
       </section>
 
       <section>
-        <h2>트리거 — close → afterCommit</h2>
+        <h2>왜 "정산 후 환불 위험 0"인가</h2>
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
-    A["호스트 POST /close"] --> B["findByIdForUpdate 락"]
-    B --> C{FIXED 가드}
-    C -->|미충족| D[400 INVALID_STATUS]
-    C -->|충족| E["transitionTo CLOSED + closedAt=now"]
-    E --> F["TransactionSynchronization.afterCommit 등록"]
-    F --> G["트랜잭션 커밋"]
-    G --> H["afterCommit: tryCreateSettlement REQUIRES_NEW"]
-    H --> I{이미 생성?}
-    I -->|예| J[null 반환 멱등]
-    I -->|아니오| K["payment row 순회 retained 계산"]
-    K --> L["Settlement 1건 INSERT<br/>recordSettlementComplete CREATOR_PAYABLE 소거"]
-    F -.실패시 1h 후.-> M[RegularMeetingSettlementScheduler 재시도]
+    A["호스트: 종료 버튼"] --> B{"모든 회차 확정 완료?"}
+    B -->|"아니오"| BX["거절 — 종료 통과 못 함"]
+    B -->|"예"| C["종료 확정"]
+    C --> D["정산 생성 — 별도 단계"]
+    C --> E{"멤버 자가 취소?"}
+    E -->|"종료 후 시도"| EX["차단 — 시스템이 거절"]
+    D --> F["호스트 정산 보기"]
           </div>
         </div>
-      </section>
-
-      <section>
-        <h2>Settlement / failed_refund 확장</h2>
-        <ul>
-          <li><code>Settlement.event_id</code> long → Long nullable</li>
-          <li><code>Settlement.regular_meeting_id</code> Long 신규</li>
-          <li><code>Settlement.reserved_refund</code> BigDecimal 신규 (미정리 환불 게이트)</li>
-          <li><code>uk_settlement_rm(regular_meeting_id)</code> UNIQUE — 코스당 정산 1건</li>
-          <li><code>CHECK ((event_id IS NULL) &lt;&gt; (regular_meeting_id IS NULL))</code> — 양립 불가</li>
-          <li><code>failed_refund.event_id</code> nullable + <code>failed_refund.regular_meeting_id</code> 신규</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>fail-closed 안전성</h2>
-        <p>payment의 <code>pointTxId</code> 또는 <code>refundPointTxId</code>가 가리키는 PointTransaction이 없으면
-          <code>TRANSACTION_NOT_FOUND</code>를 던지고 트랜잭션 롤백. failsafe 스케줄러가 데이터 보정 후 재시도.
-          과소/과대 지급을 절대 만들지 않는다(silent skip 금지).</p>
+        <div class="callout warn">
+          <span class="label">다층 방어</span>
+          <p>① 종료는 모든 회차 확정 후에만 통과. ② 정산은 종료 확정이 끝난 다음 별도 단계로 만들어진다. ③ 그 사이 멤버의
+            자가 취소는 차단된다. ④ 자격박탈 환불은 회차 확정 시점(=종료 이전)에만 발생하므로 정산 매출에 자연 반영된다.
+            그래서 정산이 만들어진 뒤에 새 환불이 발생할 가능성이 사실상 0이다.</p>
+        </div>
       </section>
 
       <section>
         <h2>서버 계약</h2>
-        <p><code>GET /api/v1/regular-meetings/{id}/settlement</code> — host만. 정산 미생성이면 204 No Content.
-          생성됐으면 <code>RegularMeetingSettlementVo</code>:
-          <code>settlementId, regularMeetingId, status, grossAmount, platformFee, withholdingTax, netAmount, freePointSubsidy, reservedRefund, periodStart, periodEnd, settledAt, createdAt</code>.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}/settlement</code></td><td>호스트 정산 조회 (없으면 204 "준비중")</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">정산 생성은 종료 확정 직후 자동으로 일어난다(호스트 수동 호출 없음). 만약 자동 생성 단계가 실패하면 안전망 스케줄러가 1시간마다 재시도한다 — 호스트는 정산이 만들어질 때까지 "준비중" 화면을 본다.</p>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md">F17-10 PRD 본문</a></li>
-          <li><a href="F17-04.html">F17-04 close 트리거</a></li>
-          <li><a href="../policies/payment.html">결제·정산 정책</a></li>
-        </ul>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">멱등·재시도·잔액 게이트</span>
+          <ul>
+            <li><strong>코스당 정산 1건 보장</strong> — 같은 코스에서 두 번 정산이 만들어지지 않는다(시스템이 막음).</li>
+            <li><strong>참조 거래가 없으면 정산 생성을 중단하고 재시도</strong> — 데이터 무결성이 깨진 상태에서는 정산을 만들지 않고 다음 안전망 주기에서 재시도.</li>
+            <li><strong>유료 잔존액이 0 이하면 정산 행을 만들지 않는다</strong> — 무료 포인트만으로 채워진 코스는 호스트 지급 대상이 아님.</li>
+            <li><strong>승인·지급은 일반 모임 정산 파이프라인을 그대로 재사용</strong> — 미정리 환불(잔여 환불 책임)이 남으면 지급이 보류된다.</li>
+            <li><strong>호스트가 종료 직후 정산을 보면 "준비중" 메시지를 볼 수 있다</strong> — 자동 생성 성공 후에는 즉시 보임. 실패 시 최대 1시간 대기.</li>
+          </ul>
+        </div>
       </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">분쟁이 일어날 수 있는 케이스</span>
+          <ul>
+            <li><strong>안전망 재시도까지 호스트가 정산을 못 보는 시간</strong> — 자동 생성이 실패하면 최대 1시간 대기. UI 안내 필수.</li>
+            <li><strong>무료 포인트만으로 결제된 코스</strong> — 호스트가 "왜 정산이 0원이지?" 라고 묻는 케이스. 무료 보너스는 호스트 수익 아님을 사전 안내 필요.</li>
+            <li><strong>호스트 정산 이의제기 흐름 부재</strong> — 1차 출시는 일반 모임 정산의 이의제기 흐름을 재사용. 정기모임 전용 분쟁 화면은 후속.</li>
+            <li><strong>코스가 무료/유료 섞여 끝났을 때 보고 라벨</strong> — 정산에 "유료 매출 / 플랫폼 보조 / 수수료 / 원천징수 / 실지급액"이 모두 나오므로 분해 라벨이 명확해야 함.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
+          <a class="card" href="F17-04.html"><div class="eyebrow">전제</div><h3>F17-04 생명주기</h3><p>종료가 정산을 만든다.</p></a>
+          <a class="card" href="F17-08.html"><div class="eyebrow">환불 연동</div><h3>F17-08 환불</h3><p>환불은 정산 이전에 끝난다.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">상위 정산</div><h3>07 모임 정산</h3><p>코스 단위 정산이 추가된 곳.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

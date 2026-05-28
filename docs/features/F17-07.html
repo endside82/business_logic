@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-07 FIXED 결제 — community PRD</title>
+  <title>F17-07 고정형 결제 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,46 +15,57 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
-          F17-07 FIXED 결제
+          F17-07 결제
         </div>
-        <h1>F17-07. 고정형 결제 (WALLET / BANK_TRANSFER)</h1>
+        <h1>F17-07. 고정형 결제 (지갑·계좌이체)</h1>
         <p class="lede">
-          FIXED 모임은 코스 단위로 한 번에 결제한다. WALLET은 즉시 차감 + 분개, BANK_TRANSFER는
-          호스트 직접입금(off-ledger)이라 분개 없고 호스트가 별도 확인해야 한다. 멤버당 동시 활성 결제 1건은
-          STORED 생성컬럼 + UNIQUE 인덱스로 보장한다.
+          결제 대기 상태가 된 멤버가 <strong>코스 전체 금액</strong>을 한 번에 납부한다. 두 가지 방식 —
+          <strong>지갑(포인트) 결제</strong>는 즉시 차감되고 회계에 잡혀 자동으로 참가 확정. <strong>계좌이체</strong>는
+          호스트가 직접 받는 외부 송금이라 회계에 잡히지 않고, 호스트가 입금을 확인해야 참가 확정으로 마감된다.
+          멤버 한 명에게는 동시에 살아 있는 결제가 최대 1건뿐이다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">결제 수단</div><div class="value">2</div><div class="hint">WALLET · BANK_TRANSFER</div></div>
-          <div class="metric"><div class="label">활성 결제</div><div class="value">1건</div><div class="hint">멤버당 UNIQUE</div></div>
-          <div class="metric"><div class="label">paymentDueAt</div><div class="value">+72h</div><div class="hint">BANK declare 기본</div></div>
+          <div class="metric"><div class="label">결제 방식</div><div class="value">2</div><div class="hint">지갑·계좌이체</div></div>
+          <div class="metric"><div class="label">결제 기한</div><div class="value">72시간</div><div class="hint">계좌이체 입금 마감</div></div>
+          <div class="metric"><div class="label">동시 활성 결제</div><div class="value">1건</div><div class="hint">멤버당</div></div>
         </div>
 
         <div class="callout warn">
-          <span class="label">설계 의도 — 멤버당 활성 1건 보장</span>
-          <p><code>regular_meeting_payment</code>는 STORED 생성컬럼 <code>active_member_id</code>
-            (status IN PENDING/PAID/REFUND_REQUESTED일 때만 member_id, 그 외 NULL) + <code>uk_payment_active</code> UNIQUE로
-            동시 활성 결제 1건을 강제한다. CANCELED/REFUNDED 후에는 NULL이 되어 재결제 허용.</p>
+          <span class="label">두 방식의 회계상 차이</span>
+          <p><strong>지갑 결제</strong>는 플랫폼이 중개하므로 매출·수수료·정산이 자동으로 잡힌다. <strong>계좌이체</strong>는
+            호스트가 직접 받는 외부 송금이라 회계에 안 잡히고 정산 대상도 아니다(호스트 직거래). 그래서 환불도
+            지갑 결제는 자동, 계좌이체는 호스트가 직접 송금하고 "환불 완료"를 눌러야 마감된다.</p>
         </div>
       </section>
 
       <section>
-        <h2>전체 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A[member.APPROVED_PENDING_PAYMENT] --> B{method?}
-    B -->|WALLET| C[payment PENDING 저장]
-    C --> D["WalletService.payForRegularMeeting<br/>분개: USER_WALLET → CREATOR_PAYABLE<br/>PointTransaction(REGULAR_MEETING_PAYMENT)"]
-    D --> E[payment PAID + member ENROLLED + materialize]
-    B -->|BANK_TRANSFER| F["payment PENDING<br/>isHostDirect=true<br/>paymentDueAt = now+72h"]
-    F --> G{호스트 액션}
-    G -->|confirm| H[payment PAID + member ENROLLED]
-    G -->|reject(reason)| I[payment CANCELED, member 유지]
-    G -->|paymentDueAt 만료 scheduler| J[payment CANCELED + member PAYMENT_EXPIRED + WAITING 승격]
-          </div>
+        <h2>두 가지 결제 방식</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">지갑 결제</div>
+            <h3>즉시 차감 → 참가 확정</h3>
+            <p>플랫폼 포인트에서 코스 전체 금액이 즉시 빠지고, 정산이 잡히는 거래 이력이 남는다. 잔액이 부족하면
+              충전 화면으로 자동 안내. 환불 시에는 같은 경로로 자동 복원된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">계좌이체</div>
+            <h3>호스트 직접 입금 확인</h3>
+            <p>호스트가 사용자에게 별도로 알려준 계좌로 송금한다(플랫폼 외부). 호스트가 입금을 확인하면 참가 확정.
+              72시간 안에 입금 안 되면 자동으로 결제 만료되고 자리가 다음 대기자에게 넘어간다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">호스트 거절</div>
+            <h3>잘못된 송금자 등</h3>
+            <p>호스트가 "입금 확인 안 됨" 등 사유로 거절할 수 있다. 멤버 상태는 결제 대기로 유지되어 재결제가 가능하다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">결제 만료</div>
+            <h3>72시간 안에 결제 안 함</h3>
+            <p>자동으로 결제가 만료되고 자리가 비워진다. 가장 오래 기다린 대기자가 자동 승격된다.</p>
+          </article>
         </div>
       </section>
 
@@ -62,33 +73,65 @@ flowchart TD
         <h2>서버 계약</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>엔드포인트</th><th>Method</th><th>응답</th></tr></thead>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
             <tbody>
-              <tr><td>/{id}/payment/pay</td><td>POST</td><td>RegularMeetingPaymentVo</td></tr>
-              <tr><td>/{id}/payment/{paymentId}/confirm</td><td>POST</td><td>PAID</td></tr>
-              <tr><td>/{id}/payment/{paymentId}/reject?reason=</td><td>POST</td><td>CANCELED</td></tr>
-              <tr><td>/{id}/payment/{paymentId}/refund-confirm</td><td>POST</td><td>REFUNDED (F17-08 §3.5)</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/payment/pay</code></td><td>결제 (지갑 또는 계좌이체 선언)</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/payment/{paymentId}/confirm</code></td><td>호스트 입금 확인 (계좌이체)</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/payment/{paymentId}/reject</code></td><td>호스트 결제 거절 (계좌이체)</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/payment/{paymentId}/refund-confirm</code></td><td>호스트 환불 송금 완료 마감 (계좌이체)</td></tr>
             </tbody>
           </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">멤버당 활성 결제 1건 보장</span>
+          <p>한 멤버에게 동시에 살아 있는(진행중) 결제 행은 최대 1건뿐이다. 시스템이 중복 결제를 거절하므로 결제 화면이 두 번
+            열려도 두 번 결제되지 않는다. 거절·취소·환불이 끝난 결제는 비활성이라 같은 멤버가 새 결제를 다시 만들 수 있다.</p>
         </div>
       </section>
 
       <section>
-        <h2>락 순서</h2>
-        <p><code>meeting → member → payment → wallet</code>. 데드락 방지 + 정산 스냅샷과 결제 경합 차단.</p>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">결제·환불 책임 분리</span>
+          <ul>
+            <li><strong>지갑 결제는 정산 대상</strong> — 호스트 수익으로 잡혀 추후 정산에 포함.</li>
+            <li><strong>계좌이체는 정산 대상 아님</strong> — 호스트가 직접 받고 직접 환불하는 외부 거래.</li>
+            <li><strong>잔액 부족 → 충전 화면</strong> — 사용자가 즉시 충전 후 재시도할 수 있게 안내.</li>
+            <li><strong>결제 만료 시 대기자 자동 승격</strong> — 자리는 항상 다음 대기자에게 흘러간다.</li>
+            <li><strong>변동형은 본 화면 사용 안 함</strong> — 회차마다 일반 이벤트 결제 흐름을 그대로 쓴다.</li>
+          </ul>
+        </div>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md">F17-07 PRD 본문</a></li>
-          <li><a href="F17-08.html">F17-08 환불</a></li>
-        </ul>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생하는 케이스</span>
+          <ul>
+            <li><strong>계좌이체 입금 확인 무대응</strong> — 호스트가 확인을 안 하면 자리가 예약된 채로 72시간이 흘러간다. 다른 대기자가 못 들어옴.</li>
+            <li><strong>계좌이체 환불 마감 무대응</strong> — 호스트가 송금만 하고 "환불 완료"를 안 누르면 멤버 입장에서 영구 "환불 진행중".</li>
+            <li><strong>지갑 잔액 부족</strong> — 충전 화면 진입 후 다시 결제 화면으로 복귀하는 동선이 길어 이탈 위험.</li>
+          </ul>
+        </div>
       </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
+          <a class="card" href="F17-06.html"><div class="eyebrow">이전</div><h3>F17-06 등록</h3><p>결제 대기 상태에 도달하는 경로.</p></a>
+          <a class="card" href="F17-08.html"><div class="eyebrow">환불</div><h3>F17-08 환불</h3><p>지갑 vs 계좌이체에 따라 다른 환불 흐름.</p></a>
+          <a class="card" href="F17-10.html"><div class="eyebrow">정산</div><h3>F17-10 호스트 정산</h3><p>지갑 결제만 정산 대상.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>

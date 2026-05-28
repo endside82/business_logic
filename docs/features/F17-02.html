@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-02 정기모임 상세 — community PRD</title>
+  <title>F17-02 정기모임 상세 조회 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,39 +15,43 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
-          F17-02 정기모임 상세 조회
+          F17-02 상세 조회
         </div>
         <h1>F17-02. 정기모임 상세 조회</h1>
         <p class="lede">
-          모임 본체 + 세션 요약 + 조회자 컨텍스트를 단일 엔드포인트에서 받는다. DRAFT는 호스트만,
-          나머지는 optional auth로 누구나 조회 가능. status × viewer 매트릭스로 하단 CTA가 정해진다.
+          모임 본체·회차 요약·내 위치(보는 사람이 호스트인지 멤버인지 게스트인지)를 한 화면에 보여준다.
+          하단 버튼은 "지금 보는 사람이 누구이고 모임이 어떤 상태인가"에 따라 6가지로 갈린다.
+          비로그인도 들어올 수 있지만 초안은 호스트 본인에게만 보인다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">엔드포인트</div><div class="value">3</div><div class="hint">detail · sessions · my membership</div></div>
-          <div class="metric"><div class="label">CTA 분기</div><div class="value">8+</div><div class="hint">status × viewer</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
+          <div class="metric"><div class="label">접근</div><div class="value">비로그인 가능</div><div class="hint">초안 제외</div></div>
+          <div class="metric"><div class="label">하단 버튼 분기</div><div class="value">6</div><div class="hint">상태 × 보는 사람</div></div>
+          <div class="metric"><div class="label">회차 요약</div><div class="value">포함</div><div class="hint">전체 목록은 별도 호출</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">isHost JSON key는 host</span>
-          <p>VO 필드는 <code>isHost</code>지만 Jackson이 <code>is</code> 프리픽스를 제거해 JSON 키는 <code>host</code>로 직렬화된다.
-            Flutter는 <code>@JsonKey(name: 'host')</code>로 명시 매핑한다.</p>
+        <div class="callout">
+          <span class="label">설계 의도 — 한 화면에 "내가 지금 뭘 할 수 있는지" 직설</span>
+          <p>정기모임은 호스트·멤버·게스트가 같은 화면을 본다. 누구냐에 따라 다음 행동이 완전히 다르기 때문에
+            하단 버튼이 가장 중요한 디자인 결정이다. 상태(초안·모집중·종료·취소) × 보는 사람(호스트·멤버·게스트)
+            매트릭스로 분기해, 사용자가 망설이지 않게 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>status × viewer CTA 매트릭스</h2>
+        <h2>누가 보느냐에 따라 다른 하단 버튼</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>status</th><th>host</th><th>member</th><th>guest</th></tr></thead>
+            <thead><tr><th>보는 사람</th><th>모임 상태</th><th>버튼</th></tr></thead>
             <tbody>
-              <tr><td>DRAFT</td><td>발행하기</td><td>—</td><td>404 (마스킹)</td></tr>
-              <tr><td>OPEN</td><td>멤버 관리·세션 추가·출석 확정</td><td>취소 / 결제 (APPROVED_PENDING_PAYMENT)</td><td>참가 신청 (FIXED) · 세션 신청 (VARIABLE)</td></tr>
-              <tr><td>CLOSED</td><td>정산 보기 (F17-10)</td><td>지난 모임 라벨</td><td>지난 모임 라벨</td></tr>
-              <tr><td>CANCELED</td><td>본문 회색</td><td>환불 안내</td><td>"취소된 모임"</td></tr>
+              <tr><td>호스트</td><td>초안</td><td>발행하기</td></tr>
+              <tr><td>호스트</td><td>모집 중</td><td>멤버 관리 · 회차 추가 · 출석 확정</td></tr>
+              <tr><td>호스트</td><td>종료</td><td>정산 보기</td></tr>
+              <tr><td>게스트</td><td>모집 중</td><td>참가 신청 (고정형) / 회차별 신청 (변동형)</td></tr>
+              <tr><td>멤버 (참가확정)</td><td>모집 중</td><td>취소 (환불 기한 내)</td></tr>
+              <tr><td>멤버 (결제대기)</td><td>모집 중</td><td>결제하기 + 남은 시간 카운트다운</td></tr>
             </tbody>
           </table>
         </div>
@@ -55,24 +59,64 @@
 
       <section>
         <h2>서버 계약</h2>
-        <ul>
-          <li><code>GET /api/v1/regular-meetings/{id}</code> — optional auth. DRAFT는 hostUserId 본인만, 그 외 <code>REGULAR_MEETING_NOT_FOUND(2700001)</code>로 마스킹.</li>
-          <li><code>GET /api/v1/regular-meetings/{id}/events?includeHistory={bool}</code> — CANCELED 포함 옵션.</li>
-          <li><code>GET /api/v1/regular-meetings/{id}/members/me</code> — 인증 필수, 없으면 404 (silent).</li>
-        </ul>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}</code></td><td>모임 본체 + 회차 요약 + 호스트 여부</td></tr>
+              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}/events</code></td><td>회차 전체 목록 (취소된 회차 포함 옵션)</td></tr>
+              <tr><td>GET</td><td><code>/api/v1/regular-meetings/{id}/members/me</code></td><td>내 멤버십 상태 (없으면 404)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">초안 보호</span>
+          <p>초안 상태 모임은 호스트 본인이 아니면 "모임을 찾을 수 없습니다"로 응답한다 — 초안이 존재한다는 사실 자체를 숨겨,
+            호스트가 준비 중인 모임 정보가 새지 않게 한다.</p>
+        </div>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md">F17-02 PRD 본문</a></li>
-          <li><a href="../domains/17-regular-meeting.html">17 정기모임 도메인</a></li>
-        </ul>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">화면 동작</span>
+          <ul>
+            <li><strong>회차 카드 탭 시 일반 이벤트 상세로 이동</strong> — 그러나 "이건 정기모임 회차다" 라는 표기가 항상 함께 노출된다.</li>
+            <li><strong>일반 신청 버튼은 회차에서 숨김</strong> — 정기모임 회차에 일반 이벤트처럼 신청하는 경로는 막혀 있다(고정형은 모임 본체에서 가입).</li>
+            <li><strong>취소된 모임은 본문 회색 처리</strong> + 멤버에게 환불 안내 라벨.</li>
+            <li><strong>종료된 모임의 호스트는 정산 보기로</strong> — 정산이 아직 만들어지기 전이면 "준비중" 라벨.</li>
+          </ul>
+        </div>
       </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생하는 케이스</span>
+          <ul>
+            <li><strong>결제대기 멤버 카운트만 노출, 호스트 액션 화면은 1차 미신설</strong> — 호스트 결제 관리 화면이 후속으로 빠져 있어, 입금 확인은 별도 진입 필요.</li>
+            <li><strong>회차별 출석 명단 화면 부재</strong> — 호스트가 회차별 명단을 보고 한 명씩 결과를 바꾸는 UI는 아직 없다. 1차는 일괄 확정만.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
+          <a class="card" href="F17-04.html"><div class="eyebrow">호스트 액션</div><h3>F17-04 생명주기</h3><p>발행·종료·취소·재오픈 버튼이 이어지는 곳.</p></a>
+          <a class="card" href="F17-06.html"><div class="eyebrow">게스트 액션</div><h3>F17-06 등록·승인·대기열</h3><p>"참가 신청" 후 진입하는 단위.</p></a>
+          <a class="card" href="F17-07.html"><div class="eyebrow">멤버 액션</div><h3>F17-07 결제</h3><p>"결제하기" 버튼 이후 단위.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>

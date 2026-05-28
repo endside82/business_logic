@@ -17,75 +17,130 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-04 생명주기
         </div>
-        <h1>F17-04. 정기모임 생명주기 (publish / close / cancel / reopen)</h1>
+        <h1>F17-04. 정기모임 생명주기 (발행·종료·취소·재오픈)</h1>
         <p class="lede">
-          모임 본체 4상태 머신. close는 정산 트리거이고 cancel은 일괄 호스트 환불을 일으킨다.
-          모든 전이는 도메인 메서드 <code>transitionTo(target)</code>로 통과하며, close/cancel은
-          <code>findByIdForUpdate</code>로 잠궈서 정산/환불 경합을 차단한다.
+          모임 본체는 <strong>초안 → 모집 중 → 종료</strong>(또는 어디서든 <strong>취소</strong>)로 흘러간다. 종료는
+          모든 회차의 출석이 확정된 뒤에만 통과하고, 취소는 멤버 전원에게 자동 환불을 발사한다. 정산은 종료가
+          확정된 다음 별도 단계로 만들어져, "정산 후 새 환불"이 생기는 사고를 막는다.
         </p>
       </header>
 
       <section>
-        <h2>상태 머신</h2>
+        <div class="metrics">
+          <div class="metric"><div class="label">상태</div><div class="value">4</div><div class="hint">초안·모집중·종료·취소</div></div>
+          <div class="metric"><div class="label">호스트 액션</div><div class="value">6</div><div class="hint">발행·종료·취소·재오픈·수정·삭제</div></div>
+          <div class="metric"><div class="label">취소 후</div><div class="value">재개 불가</div><div class="hint">취소는 종착 상태</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">머니 안전 — 종료와 정산 사이에 빈틈 없음</span>
+          <p>종료는 모든 회차의 출석이 확정된 뒤에만 통과한다(미확정 회차가 하나라도 있으면 막힘). 종료가 확정된 직후
+            정산이 만들어지고, 그 사이 멤버 자가 취소는 차단된다. 자격박탈로 인한 환불은 회차 확정 시점(=종료 이전)에만
+            발생하므로 정산 금액에 자연 반영된다 — <strong>정산이 만들어진 뒤에 새 환불이 발생할 가능성이 0</strong>이다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>네 가지 상태 전이</h2>
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A[DRAFT] -->|publish| B[OPEN]
-    A -->|cancel| C[CANCELED]
-    B -->|close| D[CLOSED]
-    B -->|cancel| C
-    D -->|reopen| B
+    D["초안"] -->|"발행"| O["모집 중"]
+    D -->|"취소"| X["취소"]
+    O -->|"종료"| C["종료"]
+    O -->|"취소"| X
+    C -->|"재오픈"| O
+    X --> X2["(종착)"]
           </div>
         </div>
-        <p>CANCELED는 terminal. 허용되지 않은 전이는 <code>REGULAR_MEETING_INVALID_STATUS</code>.</p>
       </section>
 
       <section>
-        <h2>close (OPEN → CLOSED) 가드</h2>
-        <ul>
-          <li><code>findByIdForUpdate(meetingId)</code> 락 — pay와 직렬화</li>
-          <li>FIXED: 미래 OPEN 세션 무 + <code>activeSessionCount == totalSessionCount</code></li>
-          <li>FIXED: 모든 정션 <code>attendanceFinalizationStatus == FINALIZED</code> (F17-09 finalize 완료)</li>
-          <li>통과 시 <strong>afterCommit</strong> 동기화 등록 → <code>tryCreateSettlement(REQUIRES_NEW)</code> 호출(F17-10)</li>
-          <li>실패해도 close 자체는 롤백 안 됨. 1h failsafe 스케줄러가 재시도</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>cancel (DRAFT|OPEN → CANCELED) 흐름</h2>
-        <ul>
-          <li><code>findByIdForUpdate</code> 락 (close 정산 스냅샷과 cancel REQUIRES_NEW 환불 경합 차단)</li>
-          <li>ACTIVE 멤버 전원 HOST_CANCEL pro-rata 환불 (F17-08)</li>
-          <li>미래 활성 세션 일괄 CANCELED</li>
-          <li>CANCELED는 terminal — 재개 불가</li>
-        </ul>
+        <h2>각 액션의 사용자 의미</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">발행</div>
+            <h3>모집을 연다</h3>
+            <p>고정형은 회차가 약속한 수만큼 채워져 있어야 한다(8회 코스라면 8회차 등록 완료). 발행되면 일반 검색에 노출되고
+              사용자 신청이 들어오기 시작한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">종료</div>
+            <h3>모든 회차 출석 확정 후에만</h3>
+            <p>고정형은 미래에 잡힌 회차가 없고 모든 회차의 출석이 확정돼야 한다. 종료가 확정된 직후 정산이 만들어진다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">취소</div>
+            <h3>멤버 전원 자동 환불</h3>
+            <p>호스트가 모임을 접는 행동. 활성 멤버 전원에게 "호스트 취소" 사유로 비례 환불을 발사한다(이미 제공된 회차분은 제외).
+              미래 회차도 자동 취소된다. 한 번 취소된 모임은 되살릴 수 없다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">재오픈</div>
+            <h3>종료를 풀어 다시 모집</h3>
+            <p>주로 변동형의 자동 종료를 풀거나, 호스트가 코스를 더 연장하고 싶을 때 사용. 기존에 취소된 회차는 되살아나지 않는다.</p>
+          </article>
+        </div>
       </section>
 
       <section>
         <h2>서버 계약</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>엔드포인트</th><th>Method</th><th>가드</th></tr></thead>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
             <tbody>
-              <tr><td>/{id}/publish</td><td>POST</td><td>DRAFT만 + 호스트</td></tr>
-              <tr><td>/{id}/close</td><td>POST</td><td>OPEN만 + FIXED 세션·finalize 가드</td></tr>
-              <tr><td>/{id}/cancel</td><td>POST</td><td>DRAFT/OPEN + 호스트</td></tr>
-              <tr><td>/{id}/reopen</td><td>POST</td><td>CLOSED만 + 호스트</td></tr>
-              <tr><td>/{id}</td><td>PATCH</td><td>DRAFT만</td></tr>
-              <tr><td>/{id}</td><td>DELETE</td><td>DRAFT만</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/publish</code></td><td>초안 → 모집 중</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/close</code></td><td>모집 중 → 종료 (모든 회차 확정 필수)</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/cancel</code></td><td>초안/모집 중 → 취소 + 멤버 전원 환불</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings/{id}/reopen</code></td><td>종료 → 모집 중 (취소된 회차는 되살리지 않음)</td></tr>
+              <tr><td>PATCH</td><td><code>/api/v1/regular-meetings/{id}</code></td><td>본체 수정 (초안만)</td></tr>
+              <tr><td>DELETE</td><td><code>/api/v1/regular-meetings/{id}</code></td><td>본체 삭제 (초안만, 영구 삭제)</td></tr>
             </tbody>
           </table>
+        </div>
+        <p class="hint">모든 액션은 호스트 본인만 호출 가능. 다른 사용자가 시도하면 권한 없음으로 거절된다.</p>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">현금 가드</span>
+          <ul>
+            <li><strong>종료가 막혀 있으면 출석 미확정 회차가 남은 것</strong> — 호스트에게 어떤 회차가 남았는지 안내.</li>
+            <li><strong>취소 환불은 비동기로 멤버마다 따로 진행</strong> — 일부 실패해도 모임 취소 자체는 완료되고, 실패한 환불은 별도 큐로 들어가 자동 재시도된다.</li>
+            <li><strong>재오픈은 변동형 위주</strong> — 고정형도 호출은 가능하나, 회차 확정을 다시 갈아엎고 닫아야 하므로 사실상 운영 케이스가 드물다.</li>
+            <li><strong>본체 수정은 초안 단계만</strong> — 발행 후에는 수정 불가. 노출 정보가 흔들리지 않도록.</li>
+            <li><strong>본체 삭제도 초안만</strong> — 발행된 모임은 멤버·결제·회차 이력 보존 의무로 삭제 불가.</li>
+          </ul>
         </div>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md">F17-04 PRD 본문</a></li>
-          <li><a href="F17-10.html">F17-10 정산 (close 트리거)</a></li>
-          <li><a href="F17-08.html">F17-08 환불 (cancel 트리거)</a></li>
-        </ul>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">분쟁이 일어날 수 있는 케이스</span>
+          <ul>
+            <li><strong>호스트가 출석 확정을 미루면 종료 버튼이 막혀 있음</strong> — 다음 회차로 못 넘어가는 멤버 항의 가능. 자동 마감 스케줄러는 기본 비활성.</li>
+            <li><strong>취소 환불 일부 실패</strong> — 자동 재시도가 돌지만 사용자 입장에서는 환불이 늦어 보일 수 있음. 안내 필요.</li>
+            <li><strong>재오픈 후 회차 추가 → 다시 종료</strong> — 정산이 멱등이라 한 번만 생성되지만, 호스트 입장에서 "정산이 안 늘었네?" 혼동 가능.</li>
+          </ul>
+        </div>
       </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
+          <a class="card" href="F17-09.html"><div class="eyebrow">종료 전제</div><h3>F17-09 회차 출석 확정·노쇼</h3><p>모든 회차 확정이 종료 통과 조건.</p></a>
+          <a class="card" href="F17-10.html"><div class="eyebrow">종료 후</div><h3>F17-10 호스트 정산</h3><p>종료가 확정되면 정산이 만들어진다.</p></a>
+          <a class="card" href="F17-08.html"><div class="eyebrow">취소 시</div><h3>F17-08 환불</h3><p>호스트 취소가 멤버 전원에게 발사하는 환불 산식.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

@@ -17,51 +17,124 @@
           <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
           F08-14 구매 환불
         </div>
-        <h1>F08-14. 플랜 마켓 환불 (Purchase Refund)</h1>
+        <h1>F08-14. 플랜 마켓 환불</h1>
         <p class="lede">
-          마켓 아이템·번들·플랜 직접 구매분에 대해 구매자가 환불을 신청하고, 판매자(크리에이터)가 승인 또는 거절한다.
-          판매자 무응답에 대비한 자동 처리, 사용 흔적 기반 차단, 거절에 대한 운영자 중재까지 본 PRD가 다룬다.
-          API는 이미 구현됨 (<code>PurchaseRefundController</code> / <code>PurchaseRefundService</code>).
+          마켓 아이템·번들·플랜 직접 구매분에 대한 환불 흐름. <strong>구매자가 신청</strong>하고 <strong>판매자가 승인/거절</strong>하며,
+          판매자 무응답에는 자동 처리가 붙는다. 사용 흔적이 있는 구매는 자동 환불을 막고 운영자 검토로 넘기며,
+          거절에 동의 못 하는 구매자는 분쟁을 열어 운영자 중재로 갈 수 있다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">상태</div><div class="value">구현됨</div><div class="hint">codex 페어 리뷰 v2</div></div>
-          <div class="metric"><div class="label">하드 의존</div><div class="value">F08-15</div><div class="hint">CreatorEarning 매출 귀속 기반</div></div>
-          <div class="metric"><div class="label">followup</div><div class="value">split 보존</div><div class="hint">refundByTransaction 전환</div></div>
+          <div class="metric"><div class="label">결정자</div><div class="value">3</div><div class="hint">구매자·판매자·운영자</div></div>
+          <div class="metric"><div class="label">자동 처리</div><div class="value">7일</div><div class="hint">무응답 + 사용 흔적 없음 → 자동 승인</div></div>
+          <div class="metric"><div class="label">분쟁 기한</div><div class="value">7일</div><div class="hint">거절 후 1회 분쟁</div></div>
         </div>
 
         <div class="callout warn">
-          <span class="label">followup — 지갑 환불 split 미보존</span>
-          <p>현재 환불 회계 분개에는 paid/free split이 들어가지만, 지갑 환불 자체는 <code>walletService.refundToWallet</code>로
-            <strong>전액 paid 복원</strong>된다. 원결제의 유료/무료 split 보존을 위해서는
-            <code>refundByTransaction</code> 경로로 전환해야 한다. EVENT 환불 followup과 함께 처리.</p>
+          <span class="label">설계 의도 — 판매자 무응답이 구매자를 인질로 잡지 않는다</span>
+          <p>플랜 마켓은 1인 크리에이터 판매자가 많아 무응답·지연 응답이 잦다. 그래서 판매자 결정만 기다리지 않고
+            <strong>7일 자동 처리</strong>를 깐다 — 사용 흔적이 없으면 자동 승인(환불), 사용 흔적이 있으면 운영자 검토로
+            올라간다. 판매자가 추가 자료를 요청해 타이머를 한 번 멈출 수 있는 안전장치도 있다.</p>
         </div>
       </section>
 
       <section>
-        <h2>환불 흐름</h2>
-        <ul>
-          <li>구매자 환불 신청 → <code>PurchaseRefundService</code> 진입</li>
-          <li>판매자 승인/거절</li>
-          <li>판매자 무응답 시 자동 처리 (스케줄러)</li>
-          <li>사용 흔적 기반 환불 차단 (이미 사용한 플랜은 환불 거절)</li>
-          <li>판매자 거절에 대해 구매자가 분쟁 진입 → 운영자 중재</li>
-          <li>회계 분개: paid/free split 기록 (PointTransaction + AccountingLedger)</li>
-        </ul>
+        <h2>세 결정자가 만드는 흐름</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">구매자</div>
+            <h3>보유함에서 신청</h3>
+            <p>사유 분류(품질·설명 불일치·실수·하자·기타) + 메모. 신청 즉시 카드는 잠긴다(사용·다운로드·이벤트 연결 불가).
+              거절 후 24시간 지나면 1회 추가 신청 가능.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">판매자</div>
+            <h3>대시보드에서 결정</h3>
+            <p>구매자 정보·사유·결제 금액·사용 흔적(다운로드·이벤트 연결 등)을 보고 승인/거절/추가 자료 요청 중 선택.
+              추가 자료 요청은 1회만 가능하며 7일 타이머를 멈춘다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">운영자</div>
+            <h3>분쟁 중재 + 자동 에스컬레이션 검토</h3>
+            <p>구매자가 거절에 분쟁을 걸면 운영자 큐로 진입. 거절 유지·강제 환불·추가 자료 요청 중 선택.
+              사용 흔적이 있는 7일 무응답 건도 운영자 검토로 자동 올라간다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">자동 처리</div>
+            <h3>판매자 7일 무응답</h3>
+            <p>사용 흔적 없으면 자동 환불 승인 → 구매자에게 즉시 환불. 사용 흔적이 있으면 운영자 검토 큐로 이관.</p>
+          </article>
+        </div>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md">F08-14 PRD 본문</a></li>
-          <li><a href="F08-15.html">F08-15 매출 귀속 보정 (하드 선행)</a></li>
-        </ul>
+        <h2>상태 모델</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["환불 신청"] --> B{"판매자 결정"}
+    B -->|"승인"| C["환불 진행"]
+    B -->|"거절"| D["거절"]
+    B -->|"추가 자료 요청"| E["사용자 보완 대기"]
+    B -->|"7일 무응답·미사용"| C
+    B -->|"7일 무응답·사용 흔적"| F["운영자 검토"]
+    E -->|"사용자 응답"| B
+    E -->|"기한 만료"| G["만료"]
+    D -->|"분쟁 신청"| H["운영자 중재"]
+    H -->|"거절 유지"| D
+    H -->|"강제 환불"| C
+    F -->|"운영자 결정"| C
+    F -->|"운영자 거절"| D
+    C --> I["지갑 환불 완료"]
+          </div>
+        </div>
       </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">사용 흔적·자동 처리·재신청</span>
+          <ul>
+            <li><strong>"사용 흔적"의 정의</strong> — 다운로드 횟수, 이벤트 연결, 활성화 시각. 이 중 하나라도 있으면 자동 환불 불가, 운영자 검토.</li>
+            <li><strong>거절 후 24시간 1회 재신청</strong> — 같은 구매에 무한 신청을 막기 위함.</li>
+            <li><strong>분쟁은 거절로부터 7일 이내 1회</strong> — 단발성. 분쟁이 끝나면 결과 확정.</li>
+            <li><strong>운영자 강제 환불은 별도 라벨</strong> — 정산·노출 패널티 누적에 영향(별도 정책).</li>
+            <li><strong>구매 잠금 동안 사용 불가</strong> — 환불 신청 즉시 카드는 잠기고, 결정이 날 때까지 사용·다운로드 막힘.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생하는 케이스</span>
+          <ul>
+            <li><strong>지갑 환불의 유료/무료 분리 미보존</strong> — 현재는 환불 시 전액이 유료 포인트로 복원된다(원결제의 유료/무료 비율 보존 후속). 이게 회계 분개와 충돌하지는 않지만, 후속 일정에 잡혀 있다.</li>
+            <li><strong>매출 귀속(F08-15)과 의존</strong> — 환불 회계는 크리에이터 매출 원장을 잠그거나 역전시키므로 F08-15가 정확해야 환불도 정확하다.</li>
+            <li><strong>추가 자료 요청 후 기한 만료</strong> — 사용자가 응답 안 하면 환불 신청이 만료된다(거절 아님). 사용자에게 명확히 안내 필요.</li>
+            <li><strong>판매자가 잠수타면 7일 동안 카드 잠금</strong> — 사용자 입장에서 답답할 수 있어, 신청 시 "최대 7일 소요" 안내 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/08-plan-market.html"><div class="eyebrow">상위 도메인</div><h3>08 플랜 마켓</h3></a>
+          <a class="card" href="F08-15.html"><div class="eyebrow">하드 선행</div><h3>F08-15 크리에이터 매출 귀속</h3><p>환불 회계가 기대는 매출 원장.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>

@@ -15,52 +15,105 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
-          F17-03 정기모임 생성
+          F17-03 생성
         </div>
         <h1>F17-03. 정기모임 생성 (호스트)</h1>
         <p class="lede">
-          항상 <code>DRAFT</code>로 시작하고 별도 publish 호출(F17-04)에서 발행한다. FIXED는
-          <code>totalSessionCount&gt;0</code>, <code>baseCapacity&gt;0</code> 불변식이 강제되고, 가격은 100원 단위로
-          자동 절삭(<code>RoundingMode.DOWN</code>)된다. VARIABLE은 세션별로 재정의되므로 본체 필드 0/null 허용.
+          호스트가 모임 본체를 만든다. 무조건 <strong>초안 상태</strong>로 저장돼서, 회차를 다 꾸리고 가격·정원을
+          확정한 다음 별도로 발행한다. 고정형은 코스 전체 회차 수·정원·가격이 필수이고, 변동형은 회차마다 따로
+          정의되므로 본체에서는 비워둘 수 있다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">초기 상태</div><div class="value">DRAFT</div></div>
-          <div class="metric"><div class="label">가격 정규화</div><div class="value">100원 floor</div><div class="hint">Event.price와 동일 정책</div></div>
-          <div class="metric"><div class="label">호스트 교체</div><div class="value">불가</div></div>
+          <div class="metric"><div class="label">초기 상태</div><div class="value">항상 초안</div><div class="hint">발행은 별도 단계</div></div>
+          <div class="metric"><div class="label">가격 단위</div><div class="value">100원</div><div class="hint">100원 미만은 자동 절삭</div></div>
+          <div class="metric"><div class="label">호스트 교체</div><div class="value">불가</div><div class="hint">정산 책임자 고정</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 모임을 만든 사람이 끝까지 책임진다</span>
+          <p>정기모임은 코스 단위 결제·정산·환불을 동반하므로 <strong>호스트가 한 번 정해지면 못 바꾼다</strong>.
+            정산 수익자와 환불 책임자가 흔들리는 순간 분쟁이 일어나기 때문이다. 또 모임은 항상 초안으로 시작하므로,
+            발행 전까지는 회차·가격·정책을 자유롭게 손볼 수 있고 운영중 사용자에게 영향이 없다.</p>
         </div>
       </section>
 
       <section>
-        <h2>FIXED 불변식</h2>
-        <ul>
-          <li><code>totalSessionCount &gt; 0</code> — 위반 시 <code>INVALID_INPUT</code></li>
-          <li><code>baseCapacity &gt; 0</code> — 위반 시 <code>INVALID_INPUT</code></li>
-          <li>publish 시점: 활성 세션 수 == totalSessionCount (F17-04 §3.1)</li>
-        </ul>
+        <h2>고정형 vs 변동형 — 본체 폼이 다르다</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>입력 필드</th><th>고정형</th><th>변동형</th></tr></thead>
+            <tbody>
+              <tr><td>총 회차 수</td><td>필수 (1 이상)</td><td>비움(회차마다 자유 추가)</td></tr>
+              <tr><td>기본 정원</td><td>필수 (1 이상, 코스 단위)</td><td>비움(회차마다 따로)</td></tr>
+              <tr><td>가격</td><td>코스 전체 가격</td><td>비움(회차마다 따로)</td></tr>
+              <tr><td>승인제·선결제</td><td>모임 단위로 한 번 결정</td><td>모임 단위로 한 번 결정</td></tr>
+              <tr><td>노쇼 정책</td><td>모임 단위(기본 없음)</td><td>모임 단위(기본 없음)</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>
         <h2>서버 계약</h2>
-        <p><code>POST /api/v1/regular-meetings</code> — 인증 필수. Body <code>RegularMeetingAddParam</code>:
-          <code>title, description, category, meetingType, locationType, address, addressDetail, latitude, longitude, onlineUrl, startDate, endDate, totalSessionCount, price, prepaymentRequired, refundPolicy, refundDeadlineHours, baseCapacity, approvalRequired, noShowPolicy, noShowLimit, noShowCountMode, thumbnailUrl</code>.
-          응답 201 <code>RegularMeetingVo</code> (status=DRAFT).</p>
-        <p>도메인 builder가 status 기본값 DRAFT, refundPolicy 기본값 FULL, noShowPolicy 기본값 NONE을 강제한다.
-          외부에서 status 강제 불가.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>POST</td><td><code>/api/v1/regular-meetings</code></td><td>모임 초안 생성 — 항상 초안 상태로 저장</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">가격은 100원 단위로 자동 절삭</span>
+          <p>예: 12,345원을 입력하면 12,300원으로 저장된다(일반 이벤트와 같은 정책). 사용자에게는 저장된 값을 다시
+            보여줘 혼동이 없도록 안내한다.</p>
+        </div>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md">F17-03 PRD 본문</a></li>
-        </ul>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">초안 단계의 자유도</span>
+          <ul>
+            <li><strong>호스트는 초안을 여러 개 동시에 가질 수 있다</strong> — 1차 출시에는 호스트당 모임 수 제한이 없다.</li>
+            <li><strong>온라인 모임 URL은 형식 검증을 거친다</strong> — 잘못된 형식이면 가입 단계에서 안내.</li>
+            <li><strong>노쇼 정책 기본은 "없음"</strong> — 호스트가 명시적으로 선택해야 한도·강제박탈 정책이 켜진다.</li>
+            <li><strong>환불 정책 기본은 "전액"</strong> — 호스트가 명시적으로 부분 환불 정책을 선택할 수 있다.</li>
+          </ul>
+        </div>
       </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생하는 케이스</span>
+          <ul>
+            <li><strong>변동형 본체에 가격·정원 입력</strong> — 의미 없는 값이라 무시되지만 사용자는 입력 가능. 폼에서 비활성 처리 권장.</li>
+            <li><strong>가격 절삭 혼동</strong> — 입력값과 저장값이 다를 수 있으므로 저장 직후 상세에서 절삭된 가격을 노출해야 함.</li>
+            <li><strong>호스트당 초안 quota 없음</strong> — 동시에 다수 초안을 만들 수 있어 운영상 청소가 필요할 수 있음.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
+          <a class="card" href="F17-05.html"><div class="eyebrow">다음 단계</div><h3>F17-05 회차 관리</h3><p>초안에 회차를 추가/대체/취소.</p></a>
+          <a class="card" href="F17-04.html"><div class="eyebrow">발행</div><h3>F17-04 생명주기</h3><p>회차가 다 차면 발행.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>

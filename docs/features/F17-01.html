@@ -15,77 +15,113 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
-          F17-01 정기모임 발견·탐색
+          F17-01 발견·탐색
         </div>
         <h1>F17-01. 정기모임 발견·탐색</h1>
         <p class="lede">
-          호스트가 발행(OPEN)한 정기모임을 사용자가 찾는 진입점. 검색·내 모임 두 화면.
-          OPEN 상태 모임만 노출되고, 카테고리·지역·타입(FIXED/VARIABLE)으로 필터한다.
-          일반 이벤트 카드와 시각적으로 구분되는 FIXED/VARIABLE 뱃지가 붙는다.
+          사용자가 발행된 정기모임을 찾는 두 화면 — <strong>전체 목록</strong>과 <strong>내 모임</strong>. 전체 목록은
+          현재 모집 중인 모임만 노출하고, 카테고리·지역·운영방식(고정형/변동형)으로 필터한다. 내 모임은 호스팅 중인
+          모임과 내가 등록한 모임을 한 번에 모아 종료된 모임까지 보여준다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">엔드포인트</div><div class="value">2</div><div class="hint">search · my</div></div>
-          <div class="metric"><div class="label">응답 타입</div><div class="value">Page</div><div class="hint">Spring Page → Flutter PageResponse</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">화면</div><div class="value">2</div><div class="hint">전체 목록·내 모임</div></div>
+          <div class="metric"><div class="label">필터</div><div class="value">4</div><div class="hint">키워드·카테고리·운영방식·지역</div></div>
+          <div class="metric"><div class="label">노출 기준</div><div class="value">모집 중만</div><div class="hint">초안·종료·취소는 제외</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 일반 이벤트와 정기모임을 시각으로 구분</span>
+          <p>정기모임은 한 번 등록하면 여러 회차에 묶이기 때문에 일반 이벤트와 같은 카드처럼 보이면 사용자가 헷갈린다.
+            카드에 <strong>고정형/변동형 뱃지</strong>를 붙여 "이건 코스로 가입하는 것"임을 미리 알리고, 카테고리·운영방식
+            필터로 자기 성향에 맞는 모임만 좁힐 수 있게 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>전체 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["목록 진입"] --> B["GET /regular-meetings?keyword=&category=&meetingType="]
-    B --> C["서버 search()"]
-    C --> D["RegularMeetingQueryRepository<br/>QueryDSL: status=OPEN 강제"]
-    D --> E["호스트 닉네임 일괄 조회"]
-    E --> F["Page&lt;RegularMeetingSimpleVo&gt;"]
-    F --> G["Flutter 카드 + RegularMeetingBadge"]
-    G -->|"카드 탭"| H["F17-02 상세"]
-    A2["내 모임 탭"] --> I["GET /regular-meetings/my"]
-    I --> J["호스팅 + 멤버 합산"]
-          </div>
+        <h2>두 화면이 보여주는 것</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">전체 목록</div>
+            <h3>모집 중인 모임만</h3>
+            <p>발행되어 모집을 받는 모임만 카드로 노출. 키워드·카테고리·운영방식·지역으로 좁힐 수 있다. 비로그인 상태로도
+              열람 가능. 발행 시각 최신순이 기본.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">내 모임</div>
+            <h3>호스팅 + 멤버 합산</h3>
+            <p>내가 호스트인 모임과 멤버로 들어가 있는 모임을 한 화면에 모은다. 종료·취소된 모임도 포함해 이력을
+              놓치지 않게 한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">뱃지</div>
+            <h3>고정형·변동형 구분</h3>
+            <p>카드 상단에 운영방식 뱃지가 붙는다. 사용자가 카드만 봐도 "코스 일괄 등록"인지 "회차별 신청"인지 즉시 알 수 있다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">초안 보호</div>
+            <h3>호스트만 자기 초안을 본다</h3>
+            <p>발행하지 않은 초안 모임은 일반 검색에 노출되지 않는다. 호스트 본인은 내 모임에서 자기 초안을 계속 볼 수 있다.</p>
+          </article>
         </div>
       </section>
 
       <section>
         <h2>서버 계약</h2>
-        <ul>
-          <li><code>GET /api/v1/regular-meetings</code> — optional auth, <code>RegularMeetingSearchParam extends PagingParam</code> (keyword, category, meetingType, region, page, size) → <code>Page&lt;RegularMeetingSimpleVo&gt;</code>. status=OPEN 강제, publishedAt DESC 기본.</li>
-          <li><code>GET /api/v1/regular-meetings/my</code> — 인증 필수, <code>PagingParam</code> → <code>Page&lt;RegularMeetingSimpleVo&gt;</code>. 호스트(<code>hostUserId=userId</code>) + 멤버(seat-occupying) 합산.</li>
-        </ul>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/api/v1/regular-meetings</code></td><td>전체 목록 — 모집 중인 모임만, 키워드·카테고리·운영방식·지역 필터</td></tr>
+              <tr><td>GET</td><td><code>/api/v1/regular-meetings/my</code></td><td>내 모임 — 호스팅 + 멤버 합산(상태 무관)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">응답에는 호스트 닉네임이 한 번에 담겨 카드 표기에 추가 호출이 필요 없다. 페이지 단위로 잘려 내려오며, 무한 스크롤로 다음 페이지를 요청한다.</p>
       </section>
 
       <section>
-        <h2>주요 시나리오</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>ID</th><th>조건</th><th>결과</th></tr></thead>
-            <tbody>
-              <tr><td>S1-1</td><td>비로그인 목록 진입</td><td>OPEN 모임만 노출</td></tr>
-              <tr><td>S1-2</td><td>category=RUNNING, meetingType=FIXED</td><td>필터된 결과</td></tr>
-              <tr><td>S1-3</td><td>매치 없음</td><td>empty 카드</td></tr>
-              <tr><td>S1-4</td><td>내 모임 (호스팅+멤버)</td><td>합산 결과, CLOSED/CANCELED 포함</td></tr>
-              <tr><td>S1-5</td><td>DRAFT 차단</td><td>일반 검색 미노출, 내 모임은 호스트에게만</td></tr>
-            </tbody>
-          </table>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">노출 규칙</span>
+          <ul>
+            <li><strong>전체 목록은 모집 중인 모임만</strong> — 초안·종료·취소는 노출 대상 아님.</li>
+            <li><strong>내 모임은 종료·취소 포함</strong> — 정산·환불 이력 확인용이라 전 상태 포함.</li>
+            <li><strong>일반 이벤트 검색에서 정기모임 회차도 자동 분류</strong>되어 노출 정책이 따로 적용된다 — 도메인 17에서 통합 관리.</li>
+            <li><strong>호스트 닉네임은 한 번에 묶어서 가져온다</strong>(N+1 회피) — 페이지가 커도 카드 표기 성능 안정.</li>
+          </ul>
         </div>
       </section>
 
       <section>
-        <h2>관련 PRD</h2>
-        <ul>
-          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md">F17-01 PRD 본문(마크다운)</a></li>
-          <li><a href="../domains/17-regular-meeting.html">17 정기모임 도메인 PRD</a></li>
-        </ul>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생하는 케이스</span>
+          <ul>
+            <li><strong>홈·트렌딩·관심인 알림에 정기모임 카드 미통합</strong> — 일반 이벤트 카드 호출처가 십수 개라 점진적으로만 뱃지가 적용된다(잔여).</li>
+            <li><strong>지역 요약 텍스트가 너무 길면 카드 깨짐</strong> — 주소 원문이 그대로 들어올 경우 잘림 처리 필요.</li>
+          </ul>
+        </div>
       </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">상위 도메인</div><h3>17 정기모임</h3></a>
+          <a class="card" href="F17-02.html"><div class="eyebrow">다음 단계</div><h3>F17-02 상세 조회</h3><p>카드 탭 시 진입하는 상세 화면.</p></a>
+          <a class="card" href="F17-06.html"><div class="eyebrow">고정형 가입</div><h3>F17-06 등록·승인·대기열</h3><p>상세에서 "참가 신청"을 누르면 이어지는 단위.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md
+-->
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>
