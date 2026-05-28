@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F08-15 크리에이터 매출 귀속 보정 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/08-plan-market.html">08 플랜 마켓</a><span>›</span>
+          F08-15 매출 귀속 보정
+        </div>
+        <h1>F08-15. 크리에이터 매출 귀속 보정 (Creator Earning Coverage)</h1>
+        <p class="lede">
+          플랜 마켓의 세 가지 구매 소스(<code>MARKET_ITEM</code>, <code>MARKET_BUNDLE</code>, <code>PLAN_DIRECT</code>)는
+          모두 크리에이터 매출 원장(<code>CreatorEarning</code>)에 잡힌다. 수수료·원천징수는 유료분에만, 무료분은
+          무수수료 <code>free_credit</code>으로 적립된다. F08-14 환불 PRD의 하드 선행이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">소스 타입</div><div class="value">3</div><div class="hint">MARKET_ITEM · MARKET_BUNDLE · PLAN_DIRECT</div></div>
+          <div class="metric"><div class="label">상태</div><div class="value">구현됨</div><div class="hint">마켓/플랜 split 적용</div></div>
+          <div class="metric"><div class="label">followup</div><div class="value">EVENT split</div><div class="hint">legacy 미이관</div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>매출 귀속 진실</h2>
+        <ul>
+          <li><code>MarketPurchaseService</code>가 MARKET_ITEM, MARKET_BUNDLE을 <code>grossPaid/gross_free</code> split으로 CreatorEarning 생성</li>
+          <li><code>PlanPurchaseService</code>가 PLAN_DIRECT를 동일 split으로 생성</li>
+          <li><code>MarketplaceSettlementService</code>가 세 source type 모두 정산 대상으로 집계 (과거 MARKET_ITEM만 잡히던 결손 해소)</li>
+          <li>수수료·원천징수는 유료분(<code>grossPaid</code>)에만 적용. 무료분은 <code>free_credit</code>으로 적립(수수료 없음)</li>
+          <li>EVENT 정산의 earning split만 legacy 경로로 미이관 (followup)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>관련 PRD</h2>
+        <ul>
+          <li><a href="../../prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md">F08-15 PRD 본문</a></li>
+          <li><a href="F08-14.html">F08-14 환불 (의존자)</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

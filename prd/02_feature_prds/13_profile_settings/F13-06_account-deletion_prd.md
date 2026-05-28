@@ -1,12 +1,14 @@
 # F13-06. 계정 삭제 요청 (30일 유예) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/13_profile_settings/F13-06_account-deletion -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-27 (member.mbti null 처리 추가); unit: business_logic/units/13_profile_settings/F13-06_account-deletion -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-06_account-deletion`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 계정 삭제 요청은 즉시 탈퇴와 별도로 30일 유예 기간을 둔 데이터 삭제 예약 기능이다. 서버는 삭제 요청을 `PENDING` 상태와 `scheduledAt = now + 30일`로 저장하고, 스케줄러가 매일 새벽 4시에 만료된 요청을 처리한다. UI 스펙의 비밀번호 재확인 body는 실제 컨트롤러와 Param에서 확인되지 않는다.
+
+**2026-05-27 변경**: `DataDeletionService`가 Member 익명화 시 `mbti`도 null 처리(기존 name/birthDate/gender/bio/profileImageUrl + mbti). [[F13-02]]의 MBTI 필드가 삭제 범위에 포함된다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 

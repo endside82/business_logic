@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F17-10 호스트 정산 (flow-through) — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
+          F17-10 호스트 정산
+        </div>
+        <h1>F17-10. 호스트 정산 (flow-through)</h1>
+        <p class="lede">
+          FIXED 모임 종료 시 코스당 1건의 <code>Settlement(regular_meeting_id=...)</code> 생성.
+          flow-through 모델: WALLET 결제의 retained 유료 포인트만 호스트 수익(gross), retained 무료 포인트는
+          freePointSubsidy(플랫폼 보조, payout 비대상)로 분리한다. BANK_TRANSFER는 off-ledger(payout 대상 아님).
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">platform fee</div><div class="value">10%</div></div>
+          <div class="metric"><div class="label">withholding tax</div><div class="value">3.3%</div></div>
+          <div class="metric"><div class="label">멱등</div><div class="value">3중</div><div class="hint">uk_settlement_rm · existsByRegularMeetingId · existsBy ref SETTLEMENT</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">설계 핵심 — 정산 후 환불 위험 0</span>
+          <p>close가 통과하려면 모든 정션이 FINALIZED여야 한다. 정산은 close 커밋 후 <strong>afterCommit REQUIRES_NEW</strong>로
+            만들어진다. cancelEnrollment는 CLOSED/CANCELED를 거절하고, cancel도 findByIdForUpdate로 잠궈 정산 스냅샷과
+            환불 경합을 차단한다. FORFEIT 환불은 finalize 시점(=close 전)에 끝나서 settlement gross의 retained paid에
+            자연 반영된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>flow-through 산식</h2>
+        <pre><code>// WALLET, !isHostDirect, pointTxId != null, status ∈ {PAID, REFUNDED} 결제 순회
+retainedPaid = Σ (origTx.paidAmount − refundTx.paidAmount)
+retainedFree = Σ (origTx.freeAmount − refundTx.freeAmount)
+
+if retainedPaid ≤ 0 → skip (settlement-skipped 잔여 후속)
+
+gross = retainedPaid
+freePointSubsidy = retainedFree  // payout 비대상, 플랫폼 보조 기록
+platformFee = gross × 0.10
+withholdingTax = gross × 0.033
+netAmount = gross − platformFee − withholdingTax</code></pre>
+      </section>
+
+      <section>
+        <h2>트리거 — close → afterCommit</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["호스트 POST /close"] --> B["findByIdForUpdate 락"]
+    B --> C{FIXED 가드}
+    C -->|미충족| D[400 INVALID_STATUS]
+    C -->|충족| E["transitionTo CLOSED + closedAt=now"]
+    E --> F["TransactionSynchronization.afterCommit 등록"]
+    F --> G["트랜잭션 커밋"]
+    G --> H["afterCommit: tryCreateSettlement REQUIRES_NEW"]
+    H --> I{이미 생성?}
+    I -->|예| J[null 반환 멱등]
+    I -->|아니오| K["payment row 순회 retained 계산"]
+    K --> L["Settlement 1건 INSERT<br/>recordSettlementComplete CREATOR_PAYABLE 소거"]
+    F -.실패시 1h 후.-> M[RegularMeetingSettlementScheduler 재시도]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Settlement / failed_refund 확장</h2>
+        <ul>
+          <li><code>Settlement.event_id</code> long → Long nullable</li>
+          <li><code>Settlement.regular_meeting_id</code> Long 신규</li>
+          <li><code>Settlement.reserved_refund</code> BigDecimal 신규 (미정리 환불 게이트)</li>
+          <li><code>uk_settlement_rm(regular_meeting_id)</code> UNIQUE — 코스당 정산 1건</li>
+          <li><code>CHECK ((event_id IS NULL) &lt;&gt; (regular_meeting_id IS NULL))</code> — 양립 불가</li>
+          <li><code>failed_refund.event_id</code> nullable + <code>failed_refund.regular_meeting_id</code> 신규</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>fail-closed 안전성</h2>
+        <p>payment의 <code>pointTxId</code> 또는 <code>refundPointTxId</code>가 가리키는 PointTransaction이 없으면
+          <code>TRANSACTION_NOT_FOUND</code>를 던지고 트랜잭션 롤백. failsafe 스케줄러가 데이터 보정 후 재시도.
+          과소/과대 지급을 절대 만들지 않는다(silent skip 금지).</p>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <p><code>GET /api/v1/regular-meetings/{id}/settlement</code> — host만. 정산 미생성이면 204 No Content.
+          생성됐으면 <code>RegularMeetingSettlementVo</code>:
+          <code>settlementId, regularMeetingId, status, grossAmount, platformFee, withholdingTax, netAmount, freePointSubsidy, reservedRefund, periodStart, periodEnd, settledAt, createdAt</code>.</p>
+      </section>
+
+      <section>
+        <h2>관련 PRD</h2>
+        <ul>
+          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md">F17-10 PRD 본문</a></li>
+          <li><a href="F17-04.html">F17-04 close 트리거</a></li>
+          <li><a href="../policies/payment.html">결제·정산 정책</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

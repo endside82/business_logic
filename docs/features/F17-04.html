@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F17-04 정기모임 생명주기 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
+          F17-04 생명주기
+        </div>
+        <h1>F17-04. 정기모임 생명주기 (publish / close / cancel / reopen)</h1>
+        <p class="lede">
+          모임 본체 4상태 머신. close는 정산 트리거이고 cancel은 일괄 호스트 환불을 일으킨다.
+          모든 전이는 도메인 메서드 <code>transitionTo(target)</code>로 통과하며, close/cancel은
+          <code>findByIdForUpdate</code>로 잠궈서 정산/환불 경합을 차단한다.
+        </p>
+      </header>
+
+      <section>
+        <h2>상태 머신</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A[DRAFT] -->|publish| B[OPEN]
+    A -->|cancel| C[CANCELED]
+    B -->|close| D[CLOSED]
+    B -->|cancel| C
+    D -->|reopen| B
+          </div>
+        </div>
+        <p>CANCELED는 terminal. 허용되지 않은 전이는 <code>REGULAR_MEETING_INVALID_STATUS</code>.</p>
+      </section>
+
+      <section>
+        <h2>close (OPEN → CLOSED) 가드</h2>
+        <ul>
+          <li><code>findByIdForUpdate(meetingId)</code> 락 — pay와 직렬화</li>
+          <li>FIXED: 미래 OPEN 세션 무 + <code>activeSessionCount == totalSessionCount</code></li>
+          <li>FIXED: 모든 정션 <code>attendanceFinalizationStatus == FINALIZED</code> (F17-09 finalize 완료)</li>
+          <li>통과 시 <strong>afterCommit</strong> 동기화 등록 → <code>tryCreateSettlement(REQUIRES_NEW)</code> 호출(F17-10)</li>
+          <li>실패해도 close 자체는 롤백 안 됨. 1h failsafe 스케줄러가 재시도</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>cancel (DRAFT|OPEN → CANCELED) 흐름</h2>
+        <ul>
+          <li><code>findByIdForUpdate</code> 락 (close 정산 스냅샷과 cancel REQUIRES_NEW 환불 경합 차단)</li>
+          <li>ACTIVE 멤버 전원 HOST_CANCEL pro-rata 환불 (F17-08)</li>
+          <li>미래 활성 세션 일괄 CANCELED</li>
+          <li>CANCELED는 terminal — 재개 불가</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>엔드포인트</th><th>Method</th><th>가드</th></tr></thead>
+            <tbody>
+              <tr><td>/{id}/publish</td><td>POST</td><td>DRAFT만 + 호스트</td></tr>
+              <tr><td>/{id}/close</td><td>POST</td><td>OPEN만 + FIXED 세션·finalize 가드</td></tr>
+              <tr><td>/{id}/cancel</td><td>POST</td><td>DRAFT/OPEN + 호스트</td></tr>
+              <tr><td>/{id}/reopen</td><td>POST</td><td>CLOSED만 + 호스트</td></tr>
+              <tr><td>/{id}</td><td>PATCH</td><td>DRAFT만</td></tr>
+              <tr><td>/{id}</td><td>DELETE</td><td>DRAFT만</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 PRD</h2>
+        <ul>
+          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md">F17-04 PRD 본문</a></li>
+          <li><a href="F17-10.html">F17-10 정산 (close 트리거)</a></li>
+          <li><a href="F17-08.html">F17-08 환불 (cancel 트리거)</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -2,7 +2,9 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-22; unit: business_logic/units/03_event -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/03_event/00_overview.md`와 117개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/03_event/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+
+> **2026-05-28 RM 도메인 신설 영향(cross-ref).** `EventType.REGULAR_MEETING(3)` 신규. `event/util/EventScope` 공용 거름망 2개 도입(디스커버리 8표면 분류 + 신청 가드). EventVo/EventSimpleVo/CalendarEventVo에 RM 컨텍스트 5필드(`regularMeetingId`, `regularMeetingTitle`, `regularMeetingType`, `sequenceNo`, `directApplyBlocked`) 오버레이. RM 세션은 일반 `EventService.publishEvent/cancelEvent`/`EventCapacitySettingsService`/`CapacitySettingsService`/`RecurringEventCreateService` 6개 경로에서 `RegularMeetingSessionGuard`로 직접 mutation 차단. 자세한 내용은 [17 정기모임](../01_domain_prds/17_정기모임_prd.md).
 
 ## 1. 결론
 
@@ -12,7 +14,7 @@
 - 프론트 feature: `community_app/lib/presentation/event/` (15 screens, 45 widgets)
 **프라이빗 모임(eventType=PRIVATE)** 은 SCR-EV-006 + `GET/POST .../private/detail|open|select|complete|cancel` 시리즈로 별도 단계 모델(`WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED`)을 갖는다. 호스팅비 결제·지갑 차감이 결합되므로 본 단위(F03)에서는 **F03-03(생성)/F03-04(생명주기)/F03-06(신청자 선택)** 의 변형으로 다루고, 결제 흐름은 Unit 06(결제 & 지갑)에서 교차 정리한다.
 
-이 도메인은 기능 PRD 16개로 구성된다(F03-01~12 기존 + F03-14~17 W4~W7 이동수단 확장). 기존 기능별 trace source는 총 62개, risk 후보는 총 57개이며, 이동수단 확장 슬라이스는 backend-only 1차 출시이고 Flutter 클라이언트는 후속이다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+이 도메인은 기능 PRD 18개로 구성된다(F03-01~12 기존 + F03-13~17 W2~W7 슬라이스 + F03-18 구성인원 인구통계 2026-05-27). 기존 기능별 trace source는 총 70개대, risk 후보는 총 58개이며, 이동수단 확장 슬라이스(F03-14~17)는 backend-only 1차 출시이고 Flutter 클라이언트는 후속이다. F03-18은 서버 + 앱 양쪽 완성. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
 
 ## 2. 실사 근거 맵
 
@@ -35,6 +37,7 @@
 | F03-15 | F03-15. 이벤트 카풀 (CARPOOL) | [F03-15_event-carpool_prd.md](../02_feature_prds/03_event/F03-15_event-carpool_prd.md) | (W5 슬라이스 — PLAN.md v4.5 §3) | 신규 (backend-only 1차) | 11 | 5 |
 | F03-16 | F03-16. 이벤트 버스대절 (BUS) | [F03-16_event-bus-charter_prd.md](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | (W7 슬라이스 — PLAN.md v4.5 §4) | 신규 (backend-only 1차) | 11 | 5 |
 | F03-17 | F03-17. 차량 레이아웃 카탈로그 | [F03-17_vehicle-layout-catalog_prd.md](../02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | (W6 슬라이스 — PLAN.md v4.5 §4.1~§4.3) | 신규 (호스트용 read-only API + 시드 4종 1차) | 6 | 4 |
+| F03-18 | F03-18. 이벤트 구성인원 인구통계 | [F03-18_event-demographics_prd.md](../02_feature_prds/03_event/F03-18_event-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2, Codex sign-off) | 신규 (2026-05-27 도입) | 8 | 1 |
 
 ## 3. 먼저 볼 기능
 

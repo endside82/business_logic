@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F17-07 FIXED 결제 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
+          F17-07 FIXED 결제
+        </div>
+        <h1>F17-07. 고정형 결제 (WALLET / BANK_TRANSFER)</h1>
+        <p class="lede">
+          FIXED 모임은 코스 단위로 한 번에 결제한다. WALLET은 즉시 차감 + 분개, BANK_TRANSFER는
+          호스트 직접입금(off-ledger)이라 분개 없고 호스트가 별도 확인해야 한다. 멤버당 동시 활성 결제 1건은
+          STORED 생성컬럼 + UNIQUE 인덱스로 보장한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">결제 수단</div><div class="value">2</div><div class="hint">WALLET · BANK_TRANSFER</div></div>
+          <div class="metric"><div class="label">활성 결제</div><div class="value">1건</div><div class="hint">멤버당 UNIQUE</div></div>
+          <div class="metric"><div class="label">paymentDueAt</div><div class="value">+72h</div><div class="hint">BANK declare 기본</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">설계 의도 — 멤버당 활성 1건 보장</span>
+          <p><code>regular_meeting_payment</code>는 STORED 생성컬럼 <code>active_member_id</code>
+            (status IN PENDING/PAID/REFUND_REQUESTED일 때만 member_id, 그 외 NULL) + <code>uk_payment_active</code> UNIQUE로
+            동시 활성 결제 1건을 강제한다. CANCELED/REFUNDED 후에는 NULL이 되어 재결제 허용.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>전체 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A[member.APPROVED_PENDING_PAYMENT] --> B{method?}
+    B -->|WALLET| C[payment PENDING 저장]
+    C --> D["WalletService.payForRegularMeeting<br/>분개: USER_WALLET → CREATOR_PAYABLE<br/>PointTransaction(REGULAR_MEETING_PAYMENT)"]
+    D --> E[payment PAID + member ENROLLED + materialize]
+    B -->|BANK_TRANSFER| F["payment PENDING<br/>isHostDirect=true<br/>paymentDueAt = now+72h"]
+    F --> G{호스트 액션}
+    G -->|confirm| H[payment PAID + member ENROLLED]
+    G -->|reject(reason)| I[payment CANCELED, member 유지]
+    G -->|paymentDueAt 만료 scheduler| J[payment CANCELED + member PAYMENT_EXPIRED + WAITING 승격]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>엔드포인트</th><th>Method</th><th>응답</th></tr></thead>
+            <tbody>
+              <tr><td>/{id}/payment/pay</td><td>POST</td><td>RegularMeetingPaymentVo</td></tr>
+              <tr><td>/{id}/payment/{paymentId}/confirm</td><td>POST</td><td>PAID</td></tr>
+              <tr><td>/{id}/payment/{paymentId}/reject?reason=</td><td>POST</td><td>CANCELED</td></tr>
+              <tr><td>/{id}/payment/{paymentId}/refund-confirm</td><td>POST</td><td>REFUNDED (F17-08 §3.5)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>락 순서</h2>
+        <p><code>meeting → member → payment → wallet</code>. 데드락 방지 + 정산 스냅샷과 결제 경합 차단.</p>
+      </section>
+
+      <section>
+        <h2>관련 PRD</h2>
+        <ul>
+          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md">F17-07 PRD 본문</a></li>
+          <li><a href="F17-08.html">F17-08 환불</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

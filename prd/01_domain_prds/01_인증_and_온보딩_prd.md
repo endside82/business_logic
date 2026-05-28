@@ -2,7 +2,7 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/01_auth_onboarding -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/01_auth_onboarding/00_overview.md`와 117개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/01_auth_onboarding/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
 ## 1. 결론
 

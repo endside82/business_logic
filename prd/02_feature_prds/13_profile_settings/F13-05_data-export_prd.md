@@ -1,12 +1,14 @@
 # F13-05. 데이터 내보내기 (Export) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/13_profile_settings/F13-05_data-export -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-27 (member.mbti 추가 반영); unit: business_logic/units/13_profile_settings/F13-05_data-export -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-05_data-export`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 데이터 내보내기는 로그인 사용자가 자기 데이터 사본을 JSON 파일로 생성하도록 요청하고, 최신 요청 상태를 조회하는 기능이다. 서버는 요청을 `PROCESSING`으로 저장한 뒤 비동기 worker로 사용자 데이터를 수집해 파일을 만들고 완료 상태와 다운로드 위치를 기록한다. UI 스펙은 "최대 48시간"을 안내하지만, account 코드 안에서 48시간 제한을 강제하는 로직은 확인되지 않는다.
+
+**2026-05-27 변경**: `DataExportAsyncWorker.toMemberMap`이 `mbti` 필드를 export에 포함한다(기존 name/birthDate/gender/bio/profileImageUrl/locale + mbti). [[F13-02]] / [[F09-01]]의 데이터가 모두 사용자에게 내보내져야 한다는 GDPR-style 원칙에 따른다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 

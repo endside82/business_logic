@@ -36,13 +36,13 @@ trace source를 실제 코드에서 다시 확인한다.
 | 경로 | 내용 | 먼저 보는 사람 | 산출/결정 |
 |---|---|---|---|
 | START_HERE.md | 사람용 PRD 읽는 법 | 신규 기획자, 개발자, QA, PO | 역할별로 무엇을 먼저 봐야 하는지 |
-| PRD_MIGRATION_STATUS.md | 117개 기능 PRD 전환 상태표 | 문서 운영자, 기능 담당자, QA | Golden sample/전환본/trace/risk 후보 현황 |
+| PRD_MIGRATION_STATUS.md | 153개 기능 PRD 전환 상태표 | 문서 운영자, 기능 담당자, QA | Golden sample/전환본/trace/risk 후보 현황 |
 | SUPPORTING_DOCS_INDEX.md | 보조 PRD 문서 27개 인덱스 | 문서 운영자, PO, QA | 인벤토리/정책/QA/운영 문서의 역할 구분 |
 | 00_product_prd.md | 제품 전체 PRD | PO, 신규 기획자, 이해관계자 | 제품 범위, 사용자 유형, 전체 여정, 미결정 항목 |
 | FEATURE_PRD_STANDARD.md | 실사 기반 기능 PRD 작성 표준 | PRD 작성자, 리뷰어 | source-first 작성 절차, 금지 패턴, 품질 체크 |
 | 00_prd_items/ | PRD 작성 가능 항목별 독립 문서 12개 | 신규 기획자, 문서 운영자 | 서비스 개요, persona, 정보구조, 기능 정의, 상태/권한/QA 기준 |
-| 01_domain_prds/ | 14개 업무 영역별 PRD | 도메인 담당 기획자 | 도메인 목적, 기능 목록, 영역별 수용 기준 |
-| 02_feature_prds/ | 117개 기능별 PRD | 기능 담당 기획자, QA | 기능 목적, 실제 계약, 정합성 판단, Gap/Risk, 수용 기준 |
+| 01_domain_prds/ | 17개 업무 영역별 PRD | 도메인 담당 기획자 | 도메인 목적, 기능 목록, 영역별 수용 기준 |
+| 02_feature_prds/ | 153개 기능별 PRD | 기능 담당 기획자, QA | 기능 목적, 실제 계약, 정합성 판단, Gap/Risk, 수용 기준 |
 | 03_policy_prds/ | 상태, 권한, 알림, 결제/정산, 개인정보/안전 정책 | 정책/운영/기획 | 공통 정책, 상태/권한 판단, 민감 기능 기준 |
 | 04_qa_acceptance/ | 수용 기준, 시나리오 커버리지, 릴리즈 체크리스트 | QA, 릴리즈 담당자 | QA 기준, 회귀 검토, 출시 차단 조건 |
 | 05_planning_artifacts/ | Notion 업로드, 결정 등록부, MVP 범위, 리뷰 워크숍 | PO, 문서 운영자 | 업로드 순서, 미결정 사항, MVP 후보, 리뷰 진행안 |
@@ -56,7 +56,7 @@ trace source를 실제 코드에서 다시 확인한다.
 5. `FEATURE_PRD_STANDARD.md`에서 기능 PRD의 source-first 작성 기준을 확인한다.
 6. `02_feature_prds/03_event/F03-02_event-detail_prd.md`를 golden sample로 읽는다.
 7. `00_prd_items/README.md`에서 PRD 항목별 문서 역할을 확인한다.
-8. `00_prd_items/05_feature_definitions.md`로 117개 기능을 훑는다.
+8. `00_prd_items/05_feature_definitions.md`로 153개 기능을 훑는다.
 9. `01_domain_prds/`에서 담당 도메인의 목적과 범위를 확인한다.
 10. `03_policy_prds/`로 상태, 권한, 돈, 알림, 안전 정책을 먼저 고정한다.
 11. `02_feature_prds/`에서 기능별 상세 계약, 시나리오, Gap/Risk 후보를 검토한다.
@@ -79,10 +79,10 @@ trace source를 실제 코드에서 다시 확인한다.
 
 ## 생성 기준
 
-- 14개 업무 영역
-- 117개 기능 (v4.5 W1~W7 신규 5개 — F03-13~17 별도)
-- 987개 시나리오
-- 508개 도식
+- 17개 업무 영역
+- 153개 기능 (v4.5 W1~W7 신규 5개 F03-13~17 + F03-18/F04-17 인구통계 + F08-14/F08-15 환불·매출 귀속 + F15·F16·F17 도메인 신설 누적)
+- 1134개 시나리오
+- 534개 도식
 
 ## v4.5 이벤트 확장 슬라이스 (2026-05-22)
 

@@ -1,12 +1,14 @@
 # F13-07. 계정 즉시 비활성화 (탈퇴) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/13_profile_settings/F13-07_account-deactivation -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-27 (deactivateAccount의 비식별화 범위 확장); unit: business_logic/units/13_profile_settings/F13-07_account-deactivation -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-07_account-deactivation`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 계정 즉시 비활성화는 사용자가 30일 유예 없이 서비스를 떠나는 흐름이다. 서버는 먼저 탈퇴 가능 여부를 점검해 금전적/운영상 차단 항목과 자동 처리 가능한 항목을 반환하고, 실제 DELETE에서는 차단 항목이 없을 때 자동 해결 항목을 처리한 뒤 계정을 익명화/비활성화한다. 삭제 예약(F13-06)과 달리 결과 계정 상태는 `TRYEXIT`로 설정된다.
+
+**2026-05-27 변경**: `UserService.deactivateAccount`의 Member 비식별화 범위가 확장됐다. 기존(name, profileImageUrl, bio)에 더해 `birthDate`, `gender`, `mbti`도 null 처리한다(이전엔 birthDate/gender가 잔존하던 MF6 보강). [[F09-01]] 본인인증 검증값과 [[F13-02]] MBTI가 모두 삭제 범위에 포함된다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 

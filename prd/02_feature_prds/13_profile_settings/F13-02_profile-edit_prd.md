@@ -1,12 +1,14 @@
 # F13-02. 프로필 수정 (닉네임·자기소개·사진) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/13_profile_settings/F13-02_profile-edit -->
+<!-- generated: source-first-unit-sync; updated: 2026-05-27 (MBTI 선택/명시적 삭제 추가); unit: business_logic/units/13_profile_settings/F13-02_profile-edit -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-02_profile-edit`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-프로필 수정 API는 사용자가 다른 사람에게 보이는 닉네임, 자기소개, 프로필 이미지를 갱신하는 기능이다. 닉네임 변경 시 중복 여부를 검사하고 변경 이력을 남기며, 자기소개와 이미지 URL은 멤버 상세 정보에 저장한다. 이미지 파일 업로드 자체는 file 도메인 의존이며 본 account 컨트롤러에는 포함되지 않는다.
+프로필 수정 API는 사용자가 다른 사람에게 보이는 닉네임, 자기소개, 프로필 이미지, **MBTI**를 갱신하는 기능이다. 닉네임 변경 시 중복 여부를 검사하고 변경 이력을 남기며, 자기소개·이미지 URL·MBTI는 멤버 상세 정보에 저장한다. 이미지 파일 업로드 자체는 file 도메인 의존이며 본 account 컨트롤러에는 포함되지 않는다.
+
+**2026-05-27 변경**: `UserModParam.mbti(Mbti enum 16)` 신규 + `clearMbti(boolean)` 플래그 추가. PATCH 의미는 유지(mbti=null+clearMbti=false → 미변경)하면서, 명시적 삭제 의도(`mbti=null + clearMbti=true`)는 서버가 null 저장으로 반영한다. 앱은 ChoiceChip 재탭 해제 시 `clearMbti=true` 전송. MBTI는 [[F03-18 event-demographics]] / [[F04-17 club-demographics]] 의 I·E 비율 분포의 데이터 원천이다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -55,12 +57,15 @@
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
-- **Param** `UserModParam`: `nickname`, `bio`, `profileImageUrl`, `locale`
-- **VO** `UserProfileVo`: 프로필 카드와 편집 완료 후 화면 동기화 기준
+- **Param** `UserModParam`: `nickname`, `bio`, `profileImageUrl`, `locale`, **`mbti` (Mbti enum, nullable)**, **`clearMbti` (boolean, default false)**
+- **VO** `UserProfileVo`: 프로필 카드와 편집 완료 후 화면 동기화 기준 (`mbti(Mbti)` 노출 추가)
+- **VO** `UserProfileViewVo`: 타인 프로필 — SELF·MATCHED·SAME_CLUB에서 `mbti` 노출, THIRD_PARTY는 미노출
 - **Entity** `Users`: `email`, `nickname`, `status`, `user_role`
-- **Entity** `Member`: `name`, `birthDate`, `gender`, `bio`, `profileImageUrl`, `locale`
+- **Entity** `Member`: `name`, `birthDate`, `gender`, `bio`, `profileImageUrl`, `locale`, **`mbti (Mbti)` (varchar(4))**. `user_id`에 UNIQUE 제약 추가(Users-Member 1:1).
 - **Entity** `NicknameHistory`: 닉네임 변경 이력 저장, 필드 상세는 본 기능의 필수 응답이 아니라 요약만 표기
 - **Enum** `UserStatus`: `NORMAL`, `LOGOUT`, `STOP`, `BAN`, `TRYEXIT`, `EXIT`
+- **Enum** `Mbti` (신규, `account.constants.Mbti`): `INTJ, INTP, ENTJ, ENTP, INFJ, INFP, ENFJ, ENFP, ISTJ, ISFJ, ESTJ, ESFJ, ISTP, ISFP, ESTP, ESFP` (16). `isIntrovert() == name().charAt(0)=='I'`.
+- **서비스 로직** (`UserService.updateProfile`): `if (mbti!=null) setMbti(mbti)` else if `clearMbti` then `setMbti(null)`. 둘 다 미지정이면 미변경.
 
 ### 의존 단위 / 외부 시스템
 
@@ -96,11 +101,14 @@
   - 닉네임 안내 문구 `2~30자, 한글/영문/숫자` (서버 `UserModParam.nickname @Size(min=2, max=30)` 와 일치)
   - 자기소개 입력 영역
   - 자기소개 maxLength 200
+  - **MBTI 선택 영역** — `ChoiceChip` 16개(INTJ…ESFP) Wrap. 선택 시 강조, 재탭 시 해제.
 - **사용자가 할 수 있는 액션**:
   - 사진 영역 또는 `사진 변경` 탭 ▶ 갤러리 picker 실행
   - 이미지 선택 ▶ `uploadImageFile(ref, file, purpose: 'PROFILE')`
   - 닉네임/자기소개 수정 ▶ `_hasChanges` 갱신
-  - 저장 탭 ▶ `authRepositoryProvider.updateProfile(UserModParam)` ▶ `PATCH /api/v1/users/me`
+  - MBTI 칩 선택/변경 ▶ `_selectedMbti` 갱신, `_hasChanges` 반영
+  - MBTI 칩 재탭으로 해제 ▶ `_selectedMbti=null` → 저장 시 `clearMbti=true` 동반 전송으로 서버에서 명시 삭제
+  - 저장 탭 ▶ `authRepositoryProvider.updateProfile(UserModParam(..., mbti, clearMbti))` ▶ `PATCH /api/v1/users/me`
   - 뒤로가기 ▶ 변경 사항이 있으면 폐기 확인 다이얼로그
 - **상태 분기**:
   - `_hasChanges == false`: 저장 액션 비활성 색상
@@ -141,6 +149,9 @@
 | S3 | 닉네임이 너무 짧아 저장되지 않는다 | 로그인됨, 프로필 수정 화면 표시 중 | 프로필은 변경되지 않고 사용자는 입력을 수정할 수 있다. |
 | S4 | 중복 닉네임으로 서버 저장이 실패한다 | 로그인됨, 유효한 길이의 닉네임 입력 완료 | 기존 프로필 값이 유지된다. 사용자에게 구체적 중복 메시지를 매핑하는지는 `(미확인)`. |
 | S5 | 변경 사항이 있는 상태로 나가기를 시도한다 | `_hasChanges == true` | 취소 시 변경 중 상태 유지, 나가기 시 저장하지 않은 값은 폐기된다. |
+| S6 | MBTI를 선택하여 저장한다 | 기존 `member.mbti=null` 또는 다른 값 | `member.mbti = <선택값>` 저장, 응답 VO의 `mbti` 갱신, 인구통계의 I·E 분포에 반영 |
+| S7 | MBTI를 ChoiceChip 재탭으로 해제 후 저장한다 | 기존 `member.mbti != null` | `clearMbti=true` 동반 전송 → `member.mbti=null` 저장 |
+| S8 | MBTI 변경 없이 저장한다 | `_selectedMbti`가 초기값과 동일 | `_hasChanges` 미증가 → 서버 호출 시 `mbti=null + clearMbti=false`로 미변경 처리(다른 필드만 갱신) |
 
 ## 7. 정합성 판단
 
@@ -167,6 +178,8 @@
 - **AC-03. 닉네임이 너무 짧아 저장되지 않는다**: Given 로그인됨, 프로필 수정 화면 표시 중 When 사용자가 해당 흐름을 실행하면 Then 프로필은 변경되지 않고 사용자는 입력을 수정할 수 있다.
 - **AC-04. 중복 닉네임으로 서버 저장이 실패한다**: Given 로그인됨, 유효한 길이의 닉네임 입력 완료 When 사용자가 해당 흐름을 실행하면 Then 기존 프로필 값이 유지된다. 사용자에게 구체적 중복 메시지를 매핑하는지는 `(미확인)`.
 - **AC-05. 변경 사항이 있는 상태로 나가기를 시도한다**: Given `_hasChanges == true` When 사용자가 해당 흐름을 실행하면 Then 취소 시 변경 중 상태 유지, 나가기 시 저장하지 않은 값은 폐기된다.
+- **AC-06. MBTI 신규 선택/변경**: Given `_selectedMbti=INTJ`(기존 null) When 저장하면 Then `member.mbti=INTJ`, 응답 `UserProfileVo.mbti=INTJ`.
+- **AC-07. MBTI 명시적 삭제**: Given `member.mbti=INTJ`인 상태에서 ChoiceChip 재탭으로 해제(`_selectedMbti=null`) When 저장하면 Then 서버가 `clearMbti=true`를 받아 `member.mbti=null` 저장. 단순 미선택 상태(`clearMbti=false + mbti=null`)와 구분된다.
 
 ## 10. 미결정 / 후속
 

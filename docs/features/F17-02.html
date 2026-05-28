@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F17-02 정기모임 상세 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
+          F17-02 정기모임 상세 조회
+        </div>
+        <h1>F17-02. 정기모임 상세 조회</h1>
+        <p class="lede">
+          모임 본체 + 세션 요약 + 조회자 컨텍스트를 단일 엔드포인트에서 받는다. DRAFT는 호스트만,
+          나머지는 optional auth로 누구나 조회 가능. status × viewer 매트릭스로 하단 CTA가 정해진다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">엔드포인트</div><div class="value">3</div><div class="hint">detail · sessions · my membership</div></div>
+          <div class="metric"><div class="label">CTA 분기</div><div class="value">8+</div><div class="hint">status × viewer</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">8</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">isHost JSON key는 host</span>
+          <p>VO 필드는 <code>isHost</code>지만 Jackson이 <code>is</code> 프리픽스를 제거해 JSON 키는 <code>host</code>로 직렬화된다.
+            Flutter는 <code>@JsonKey(name: 'host')</code>로 명시 매핑한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>status × viewer CTA 매트릭스</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>status</th><th>host</th><th>member</th><th>guest</th></tr></thead>
+            <tbody>
+              <tr><td>DRAFT</td><td>발행하기</td><td>—</td><td>404 (마스킹)</td></tr>
+              <tr><td>OPEN</td><td>멤버 관리·세션 추가·출석 확정</td><td>취소 / 결제 (APPROVED_PENDING_PAYMENT)</td><td>참가 신청 (FIXED) · 세션 신청 (VARIABLE)</td></tr>
+              <tr><td>CLOSED</td><td>정산 보기 (F17-10)</td><td>지난 모임 라벨</td><td>지난 모임 라벨</td></tr>
+              <tr><td>CANCELED</td><td>본문 회색</td><td>환불 안내</td><td>"취소된 모임"</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <ul>
+          <li><code>GET /api/v1/regular-meetings/{id}</code> — optional auth. DRAFT는 hostUserId 본인만, 그 외 <code>REGULAR_MEETING_NOT_FOUND(2700001)</code>로 마스킹.</li>
+          <li><code>GET /api/v1/regular-meetings/{id}/events?includeHistory={bool}</code> — CANCELED 포함 옵션.</li>
+          <li><code>GET /api/v1/regular-meetings/{id}/members/me</code> — 인증 필수, 없으면 404 (silent).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>관련 PRD</h2>
+        <ul>
+          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md">F17-02 PRD 본문</a></li>
+          <li><a href="../domains/17-regular-meeting.html">17 정기모임 도메인</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

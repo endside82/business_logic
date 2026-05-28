@@ -1,4 +1,4 @@
-# 117개 기능 정의
+# 153개 기능 정의
 
 <!-- supporting-doc-status: 2026-05-18 -->
 
@@ -42,6 +42,12 @@
 | F03-10 | 이벤트 | 이벤트-플랜 연결 | 호스트 | 플랜 추가/순서/활성화, 권한, 연결 해제 | 8 | 4 |
 | F03-11 | 이벤트 | 위시리스트 | 참가자 | 낙관적 토글, 비로그인, 숨김/삭제 이벤트 | 9 | 5 |
 | F03-12 | 이벤트 | 내 이벤트 관리 & 참석 로그 | 참가자/호스트 | 주최/참석/지난 탭, 로그 페이지네이션, 상태별 카드 | 9 | 5 |
+| F03-13 | 이벤트 | 이벤트 참가 선입금 (WALLET / BANK_TRANSFER) | 참가자/호스트 | APPROVED_PENDING_PAYMENT, paymentDueAt, BANK 입금확인/거부, 호스트 취소 환불, deactivation 차단 | 11 | 5 |
+| F03-14 | 이벤트 | 이동수단 공통 베이스 (Transport Mode) | 호스트 | NONE/CARPOOL/BUS mode, DRAFT 변경, OPEN 변경 차단, 개별 이동 허용 토글 | 6 | 2 |
+| F03-15 | 이벤트 | 이벤트 카풀 (CARPOOL) | 호스트/참가자 | 운전자 offer, 호스트 확정/거절, 탑승자 배정, SELF 이동 선택, swap 감사로그 | 8 | 4 |
+| F03-16 | 이벤트 | 이벤트 버스대절 (BUS) | 호스트/참가자 | 버스 추가, 좌석표, FREE/FIXED_BY_HOST/FIRST_COME, 중복 좌석 방지 | 8 | 4 |
+| F03-17 | 이벤트 | 차량 레이아웃 카탈로그 | 호스트(read-only) | 활성 레이아웃, 좌석 row, 시드 4종 1차 | 4 | 2 |
+| F03-18 | 이벤트 | 구성인원 인구통계 (성별/나이대/MBTI) | 참가자/예비참가자/호스트 | k-익명성 3단계 게이트, 공개+OPEN/CLOSED 비참가자 노출, 비공개=host·cohost·ATTENDING | 8 | 1 |
 | F04-01 | 클럽 | 클럽 발견 & 탐색 | 게스트/사용자 | 공개/비공개, 멤버십 상태, 빈 결과 | 8 | 3 |
 | F04-02 | 클럽 | 클럽 상세 보기 & 가입 액션 | 게스트/사용자/멤버 | 가입/탈퇴/대기/차단/소유자 CTA | 7 | 3 |
 | F04-03 | 클럽 | 클럽 생성·수정·삭제·소유권 이전 | 소유자 | 삭제 보상, 멤버 존재, 이전 수락/거절 | 13 | 4 |
@@ -58,6 +64,7 @@
 | F04-14 | 클럽 | 기부하기 & 기부 내역 | 멤버 | 지갑 차감, 취소, 기금 반영, 잔액 부족 | 16 | 4 |
 | F04-15 | 클럽 | 기금 인출 요청 | 소유자 | 가용 잔액, pending 중복, 승인 위임 | 10 | 5 |
 | F04-16 | 클럽 | 클럽 구독 | 멤버/관리자/소유자 | 시작/해지/재활성, 결제 실패, 만료 혜택 | 13 | 5 |
+| F04-17 | 클럽 | 구성인원 인구통계 (성별/나이대/MBTI) | 클럽 멤버 | 멤버 전용 게이트, k-익명성 3단계, Asia/Seoul 기준일 | 7 | 1 |
 | F05-01 | 검색 | 키워드 검색 | 탐색 사용자 | 영역별 결과, 정렬, 무한스크롤, 결과 없음 | 8 | 4 |
 | F05-02 | 검색 | 자동완성 서제스트 | 탐색 사용자 | 입력 전/입력 중, 디바운스, 최근/트렌딩 조합 | 7 | 3 |
 | F05-03 | 검색 | 검색 필터 적용 | 탐색 사용자 | 필터 칩, 미리보기 카운트, GPS 권한 | 8 | 4 |
@@ -96,6 +103,8 @@
 | F08-11 | 플랜 마켓 | 아이템·번들·플랜 구매 | 구매자 | 잔액 부족, 이미 구매, 부분 중복 | 8 | 5 |
 | F08-12 | 플랜 마켓 | 내 컬렉션 | 구매자 | 활성/비활성, 만료 임박, 미리보기 | 9 | 5 |
 | F08-13 | 플랜 마켓 | 구매 플랜 -> 이벤트 생성/리뷰 | 구매자 | 소유권, 이벤트 정보 복사, 리뷰 중복 | 12 | 6 |
+| F08-14 | 플랜 마켓 | 플랜 마켓 환불 (Purchase Refund) | 구매자/크리에이터 | 요청·승인·거절·자동처리·분쟁, 사용 흔적 차단, 회계 분개 split, 지갑 paid 복원 (split 미보존 followup) | — | — |
+| F08-15 | 플랜 마켓 | 크리에이터 매출 귀속 보정 (Creator Earning Coverage) | 크리에이터/플랫폼 | 3 소스(MARKET_ITEM/BUNDLE/PLAN_DIRECT) CreatorEarning, grossPaid/grossFree split, 무료=free_credit 무수수료, EVENT legacy followup | — | — |
 | F09-01 | 프라이빗 데이팅 | 본인 인증 | 데이팅 사용자 | 인증 요청/검증, 미성년/실패, 재인증 | 7 | 4 |
 | F09-02 | 프라이빗 데이팅 | 데이팅 프로필 관리 | 데이팅 사용자 | 사진, 소개, active 토글, 미인증 차단 | 8 | 4 |
 | F09-03 | 프라이빗 데이팅 | 후보자 스와이프 & 매칭 액션 | 데이팅 사용자 | 좋아요/패스, 상호 매칭, 일일 한도 | 9 | 4 |
@@ -134,3 +143,30 @@
 | F14-04 | 위치 & 길찾기 | 위치 프라이버시 대시보드 | 참석자/호스트 | 이벤트별 토글, 호스트 분기, 실패 롤백 | 6 | 4 |
 | F14-05 | 위치 & 길찾기 | 이벤트 길찾기 | 참석자/호스트 | 현재 위치/저장 주소, 외부 지도, 참석자 거리 | 9 | 4 |
 | F14-06 | 위치 & 길찾기 | 역지오코딩 | 위치 입력 사용자 | 캐시, 좌표 오류, 외부 시스템 연동 장애 | 6 | 4 |
+| F15-01 | 경고 & 징계 | 내 경고 현황 | 일반 사용자 | 활성 경고/이의제기 표시, 페이지네이션, 만료 게이팅 | — | — |
+| F15-02 | 경고 & 징계 | 신고 제출 & 신고 관리 | 일반 사용자 | 대상 유형, 자기 신고, 중복 신고, 운영 접수 | — | — |
+| F15-03 | 경고 & 징계 | 이의제기 | 경고 보유 사용자 | 한 경고당 1회, 사유, 운영 검토 | — | — |
+| F15-04 | 경고 & 징계 | 정책·페널티 유형 (조회) | 일반 사용자/운영자 | enum 노출, 임계값 설명 | — | — |
+| F15-05 | 경고 & 징계 | 신고 심사 | WARNING_REVIEWER | 검토 큐, 승인/기각, 감사로그 | — | — |
+| F15-06 | 경고 & 징계 | 경고 부여·조정 | WARNING_REVIEWER | 효과 점수, 자동/수동, 만료, 강도 | — | — |
+| F15-07 | 경고 & 징계 | 이의제기 처리 | WARNING_REVIEWER | 승인 시 경고 무효화, 기각, 감사 | — | — |
+| F15-08 | 경고 & 징계 | 제재 집행 | WARNING_REVIEWER | RESTRICT/SUSPEND/PERMANENT, FORCED_REMOVE 후속 미연동 | — | — |
+| F15-09 | 경고 & 징계 | 검토 큐 & 대시보드/통계/감사로그 | WARNING_REVIEWER | 큐 처리, period 집계, findAll 메모리 집계 | — | — |
+| F16-01 | 마일리지 | 내 마일리지 메인 & 월간 영수증 & 원장 | 클럽 멤버 | 잔액/등급/배지, 월간 byType 합성, FEFO 원장 | — | — |
+| F16-02 | 마일리지 | 등급·배지·랭킹·프로필 카드 | 클럽 멤버 | threshold 등급, 랭킹 정렬(BALANCE), 배지 정의 | — | — |
+| F16-03 | 마일리지 | 시즌 (목록·과거 랭킹·내 스냅샷) | 클럽 멤버 | SCHEDULED/ACTIVE/CLOSED, 스냅샷 랭킹, basis 값 정합 | — | — |
+| F16-04 | 마일리지 | 마일리지 정책 설정 | POLICY_OWNER | 활성화, 만료일, 랭킹 기준, 미리보기 | — | — |
+| F16-05 | 마일리지 | 적립규칙·등급·배지·교환 프리셋 관리 | POLICY_OWNER | CRUD, 등급 제약(단일 ErrorCode), 프리셋 비활성 | — | — |
+| F16-06 | 마일리지 | 적립/차감/정정 집행 | MILEAGE_MANAGER | EARN/REDEEM/REVERSE, 멱등, 자동적립 트리거 호출처, batch 결과 타입(Map↔VO) | — | — |
+| F16-07 | 마일리지 | 호스트 제안 | 이벤트 호스트/MILEAGE_MANAGER | SUBMITTED→APPROVED/REJECTED, 승인 시 원장 반영 | — | — |
+| F16-08 | 마일리지 | 검토 큐 & 대시보드/감사로그 | MILEAGE_MANAGER | 큐 처리, 멤버 상세 타입(Map↔VO), findAll 집계 | — | — |
+| F17-01 | 정기모임 | 정기모임 발견·탐색 | 사용자/게스트 | OPEN 필터, 카테고리/타입(FIXED/VARIABLE)/지역 필터, 내 모임 합산, DRAFT 마스킹 | 5 | 1 |
+| F17-02 | 정기모임 | 정기모임 상세 조회 | 사용자/호스트/게스트 | DRAFT 마스킹, isHost(JSON: host), 세션 요약, status×viewer CTA 분기 | 8 | 1 |
+| F17-03 | 정기모임 | 정기모임 생성 (호스트) | 호스트 | DRAFT 강제, FIXED 불변식(totalSessionCount>0/baseCapacity>0), 100원 floor, 호스트 교체 불가 | 8 | 0 |
+| F17-04 | 정기모임 | 생명주기 (publish/close/cancel/reopen) | 호스트 | 4상태 머신, findByIdForUpdate 락, close FIXED 가드(모든 정션 FINALIZED), afterCommit 정산, cancel pro-rata 환불 | 11 | 1 |
+| F17-05 | 정기모임 | 세션 관리 (add/bulk/replace/cancel) | 호스트 | event_id UNIQUE, sequence_no 중복허용(원본+대체본), RegularMeetingSessionGuard 6경로 차단 | 9 | 0 |
+| F17-06 | 정기모임 | FIXED 등록·승인·대기열 | 사용자/호스트 | 8 멤버 상태, 승인제/즉시/유료 분기, FORFEITED 영구 차단, CLOSED 자가 취소 차단, WAITING 자동 승격 | 14 | 1 |
+| F17-07 | 정기모임 | FIXED 결제 (WALLET / BANK_TRANSFER) | 사용자/호스트 | active_member_id UNIQUE 활성 1건, WALLET 즉시·BANK off-ledger(isHostDirect), paymentDueAt 72h, lock 순서 | 10 | 1 |
+| F17-08 | 정기모임 | 환불 (pro-rata · 트리거별) | 멤버/호스트 | MEMBER_CANCEL=elapsed, HOST_CANCEL=delivered, FORFEIT 동일 산식, 100원 floor, failed_refund.regular_meeting_id | 10 | 1 |
+| F17-09 | 정기모임 | 세션 출석 확정·노쇼 | 호스트 | session_attendance 권위, endTime≤now 가드, FORFEIT_ON_LIMIT, scheduler opt-in, close 가드 연동 | 10 | 0 |
+| F17-10 | 정기모임 | 호스트 정산 (flow-through) | 호스트 | retained paid/free 분리, close afterCommit REQUIRES_NEW, uk_settlement_rm 멱등, fail-closed, reservedRefund 게이트 | 10 | 1 |

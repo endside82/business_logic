@@ -2,7 +2,9 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 117개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+
+> **2026-05-28 RM 도메인 신설 영향(cross-ref).** `Settlement` 엔티티 확장: `event_id` `long`→`Long` nullable + `regular_meeting_id` Long + `reserved_refund` BigDecimal 신규. DDL `uk_settlement_rm(regular_meeting_id)` UNIQUE + `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))`로 양립 불가. `failed_refund.event_id` nullable + `regular_meeting_id` 추가(결정 K). **flow-through 정산 모델**: RM은 `retainedPaid`만 호스트 수익(gross), `retainedFree`는 `freePointSubsidy`로 분리(플랫폼 보조, payout 비대상). close→**afterCommit**→`tryCreateSettlement(REQUIRES_NEW)` 다층 방어 + 1h failsafe 스케줄러. `SettlementService.completeSettlement` 재사용 + `reservedRefund.signum() > 0` 게이트 추가. 자세한 내용은 [17 정기모임 F17-10](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md).
 
 ## 1. 결론
 

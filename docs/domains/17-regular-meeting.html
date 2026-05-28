@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>17 정기모임 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>17개 도메인<span>›</span>17 정기모임</div>
+        <h1>17. 정기모임</h1>
+        <p class="lede">
+          호스트가 동일 멤버를 묶어 여러 회차를 운영하는 신규 경량 도메인. FIXED(고정형)과 VARIABLE(변동형)이
+          인원·정산의 바인딩 레벨을 전환한다. 클럽·EventRecurrence 어느 쪽도 부적합하다는 결론 후 별도 도메인으로
+          신설했다(<code>regularmeeting</code>). 하위 세션은 모두 일반 이벤트 머신 위에서 동작하되 정션
+          <code>regular_meeting_event</code>가 순번·교체·확정 상태를 잡는다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">기능</div><div class="value">10</div></div>
+          <div class="metric"><div class="label">엔드포인트</div><div class="value">25</div></div>
+          <div class="metric"><div class="label">신규 테이블</div><div class="value">5</div></div>
+          <div class="metric"><div class="label">민감도</div><div class="value">매우 높음</div><div class="hint">코스 단위 결제·정산·환불</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">이 도메인의 핵심 결정</span>
+          <p><strong>FIXED</strong>는 코스(전체 세션) 단위로 인원·결제·정산이 묶인다. 멤버가 한 번 등록하면 모든 세션에
+          ATTENDING이 깔리고, 결제는 한 번에 일괄, 정산은 코스 종료 시 한 번 발생한다. <strong>VARIABLE</strong>은
+          세션마다 독립된 이벤트로 동작해 일반 이벤트 머신을 그대로 재사용한다.
+          모임 본체는 한 형태만 가지고 두 가지 운영 모드를 전환한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>10개 기능</h2>
+        <div class="cards">
+          <a class="card" href="../features/F17-01.html"><div class="eyebrow">F17-01</div><h3>정기모임 발견·탐색</h3><p>OPEN 모임 검색, 카테고리/타입/지역 필터, FIXED/VARIABLE 뱃지.</p><div class="meta"><span class="pill">5 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-02.html"><div class="eyebrow">F17-02</div><h3>정기모임 상세 조회</h3><p>모임 본체 + 세션 요약 + viewer 분기. DRAFT 마스킹, 호스트/멤버/게스트 CTA.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-03.html"><div class="eyebrow">F17-03</div><h3>정기모임 생성</h3><p>DRAFT 초기화, FIXED 불변식, 가격 100원 floor. 호스트 교체 불가.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-04.html"><div class="eyebrow">F17-04</div><h3>생명주기</h3><p>publish/close/cancel/reopen. close→afterCommit 정산 + cancel 일괄 HOST_CANCEL 환불.</p><div class="meta"><span class="pill">11 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-05.html"><div class="eyebrow">F17-05</div><h3>세션 관리</h3><p>add/bulk/replace/cancel. 정션 ORIGINAL/REPLACEMENT, RM 세션 직접 mutation 가드.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-06.html"><div class="eyebrow">F17-06</div><h3>FIXED 등록·승인·대기열</h3><p>8 멤버 상태. 승인제/즉시/유료 분기. 자동 승격. CLOSED 자가 취소 차단.</p><div class="meta"><span class="pill danger">14 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-07.html"><div class="eyebrow">F17-07</div><h3>FIXED 결제</h3><p>WALLET 즉시 / BANK_TRANSFER off-ledger. active_member_id UNIQUE 활성 1건.</p><div class="meta"><span class="pill danger">10 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-08.html"><div class="eyebrow">F17-08</div><h3>환불 (pro-rata)</h3><p>MEMBER_CANCEL=elapsed, HOST_CANCEL=delivered, FORFEIT=동일 산식. failed_refund 추적.</p><div class="meta"><span class="pill danger">10 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-09.html"><div class="eyebrow">F17-09</div><h3>세션 출석 확정·노쇼</h3><p>권위 테이블 session_attendance. endTime≤now 가드. FORFEIT_ON_LIMIT 즉시 환불.</p><div class="meta"><span class="pill">10 시나리오</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-10.html"><div class="eyebrow">F17-10</div><h3>호스트 정산 (flow-through)</h3><p>retained paid/free 분리. close→afterCommit→REQUIRES_NEW 다층 방어. uk_settlement_rm 멱등.</p><div class="meta"><span class="pill danger">10 시나리오</span><span class="pill brand">상세 →</span></div></a>
+        </div>
+      </section>
+
+      <section>
+        <h2>핵심 흐름 — FIXED 코스 가입에서 정산까지</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["호스트: DRAFT 모임 생성"] --> B["세션 N개 추가"]
+    B --> C["publish → OPEN"]
+    C --> D{"멤버 신청"}
+    D -->|"승인제"| E["PENDING → 호스트 승인"]
+    D -->|"무승인·유료"| F["APPROVED_PENDING_PAYMENT"]
+    D -->|"무승인·무료"| G["ENROLLED"]
+    E --> F
+    F --> H{"WALLET vs BANK_TRANSFER"}
+    H -->|"WALLET"| I["즉시 차감 + 분개 + ENROLLED"]
+    H -->|"BANK"| J["호스트 confirm → ENROLLED (off-ledger)"]
+    I --> K["매 세션 finalize (호스트, endTime≤now)"]
+    J --> K
+    K --> L["NO_SHOW 카운터 + EventAttendance demote"]
+    L --> M{"FORFEIT_ON_LIMIT 한도?"}
+    M -->|"도달"| N["FORFEITED + FORFEIT 환불 (남은 세션분)"]
+    M -->|"미만"| O["다음 세션 계속"]
+    O --> K
+    K --> P{"모든 세션 FINALIZED?"}
+    P -->|"예"| Q["close → 호스트 trigger"]
+    Q --> R["afterCommit: tryCreateSettlement REQUIRES_NEW"]
+    R --> S["Settlement(regular_meeting_id=X) 1건<br/>gross=retainedPaid · freeSubsidy=retainedFree"]
+          </div>
+        </div>
+        <div class="callout warn">
+          <span class="label">정산 후 환불 위험 0 — 다층 방어</span>
+          <p>close가 통과하려면 모든 세션이 FINALIZED여야 한다. 정산 row는 close 커밋 후 별도 트랜잭션(REQUIRES_NEW)에서
+            만들어지고, cancelEnrollment는 CLOSED/CANCELED를 거절한다. cancel도 findByIdForUpdate로 잠궈서
+            close 정산 스냅샷과 환불 경합을 차단한다. 환불은 항상 close 이전(finalize 시점)에 끝나야 정산 gross가 정확해진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>FIXED vs VARIABLE 바인딩 레벨</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>FIXED</th><th>VARIABLE</th></tr></thead>
+            <tbody>
+              <tr><td>인원 바인딩</td><td><strong>코스(모임 본체)</strong></td><td>세션(이벤트)</td></tr>
+              <tr><td>결제 바인딩</td><td>코스 일괄 — <code>regular_meeting_payment</code></td><td>세션 결제 — 일반 EventPayment</td></tr>
+              <tr><td>정산 바인딩</td><td>코스 1건 — <code>Settlement(regular_meeting_id)</code></td><td>세션별 — 일반 Settlement(event_id)</td></tr>
+              <tr><td>멤버 상태</td><td>8 상태 (PENDING/APPROVED_PENDING_PAYMENT/ENROLLED/WAITING/PAYMENT_EXPIRED/CANCELED/REJECTED/FORFEITED)</td><td>일반 Application 상태머신 재사용</td></tr>
+              <tr><td>세션 신청</td><td>모임에 한 번 등록 (자동 ATTENDING)</td><td>세션마다 별도 신청</td></tr>
+              <tr><td>가격 정책</td><td>코스 단가(meeting.price)</td><td>세션 단가(event.price)</td></tr>
+              <tr><td>환불 산식</td><td>pro-rata (진행/제공 세션 차감)</td><td>일반 환불 정책 (선입금 deadline)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <span class="label">하위 세션 공통점</span>
+          <p>두 타입 모두 세션은 <code>event</code> 테이블(<code>eventType=REGULAR_MEETING(3)</code>) 위에서 동작한다.
+            정션 <code>regular_meeting_event</code>가 모임-세션을 잇고 순번·취소대체본·머터리얼라이즈·확정 상태를 따로 관리한다.
+            VARIABLE이라도 RM 세션은 일반 검색에서 <code>EventScope</code> 거름망(<code>publiclyDiscoverable</code>·신청 가드)이 적용된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>신규 테이블·확장 5종</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>테이블</th><th>책임</th><th>핵심 제약</th></tr></thead>
+            <tbody>
+              <tr><td><code>regular_meeting</code></td><td>모임 본체 (호스트·타입·코스·노쇼 정책)</td><td><code>meetingType IN (FIXED,VARIABLE)</code>, price 100원 floor</td></tr>
+              <tr><td><code>regular_meeting_event</code></td><td>모임 ↔ 세션 정션</td><td><code>event_id</code> UNIQUE, (meeting_id, sequence_no) 중복 허용(원본+대체본)</td></tr>
+              <tr><td><code>regular_meeting_member</code></td><td>FIXED 등록 멤버</td><td>(meeting_id, user_id) UNIQUE, 카운터 영속(attended/noShow/consecutiveNoShow)</td></tr>
+              <tr><td><code>regular_meeting_payment</code></td><td>FIXED 결제</td><td><code>active_member_id</code> STORED + <code>uk_payment_active</code> UNIQUE 활성 1건</td></tr>
+              <tr><td><code>regular_meeting_session_attendance</code></td><td>Phase 4 출석 확정 권위</td><td>(event_id, user_id) UNIQUE, FK CASCADE</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">Settlement / failed_refund 확장</span>
+          <p><code>Settlement.event_id</code>를 nullable로 바꾸고 <code>regular_meeting_id</code> Long + <code>reserved_refund</code> BigDecimal을 추가했다.
+            <code>uk_settlement_rm(regular_meeting_id)</code> UNIQUE + <code>CHECK ((event_id IS NULL) &lt;&gt; (regular_meeting_id IS NULL))</code>로 양립 불가.
+            <code>failed_refund</code>도 같은 방식으로 두 종류 환불 실패를 추적한다(결정 K).</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 도메인의 부수효과</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>이벤트(03)</td><td><span class="pill brand">강함</span></td><td>EventType.REGULAR_MEETING(3) 신규. EventScope 거름망 2개. EventVo 5필드 오버레이.</td></tr>
+              <tr><td>결제·지갑(06)</td><td><span class="pill brand">강함</span></td><td>WALLET=PointTransaction(REGULAR_MEETING_PAYMENT) 신규. BANK_TRANSFER=off-ledger.</td></tr>
+              <tr><td>모임 정산(07)</td><td><span class="pill brand">강함</span></td><td>Settlement 확장. flow-through 산식. retainedPaid만 호스트 수익, retainedFree는 플랫폼 보조.</td></tr>
+              <tr><td>검색(05)</td><td><span class="pill">있음</span></td><td>RM 본체는 전용 endpoint. RM 세션은 EventScope에서 분류.</td></tr>
+              <tr><td>리뷰(11)</td><td><span class="pill">조건부</span></td><td>FIXED 세션 EventCheckIn 기반 ATTENDED만 리뷰 자격.</td></tr>
+              <tr><td>프로필·설정(13)</td><td><span class="pill">있음</span></td><td>AccountDeactivationService 4건 가드 추가.</td></tr>
+              <tr><td>알림(12)</td><td><span class="pill">조건부</span></td><td>NotificationType REGULAR_MEETING_* 미정의 — 1차 출시 미연동(잔여).</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">실제 분쟁 가능 사례</span>
+          <ul>
+            <li><strong>finalize 안 끝낸 채 close 시도</strong> — close 가드가 모든 정션 FINALIZED 요구해서 막힌다. 안내 메시지 명확화.</li>
+            <li><strong>BANK_TRANSFER 입금 확인 무대응</strong> — 호스트가 확인 안 하면 paymentDueAt 만료까지 좌석 예약된 채. 멤버에게 안내 필수.</li>
+            <li><strong>BANK_TRANSFER REFUND_REQUESTED 무대응</strong> — 호스트가 계좌환불 후 refund-confirm 안 하면 환불 진행중 영구 잔존.</li>
+            <li><strong>CLOSED 모임 자가 취소 시도</strong> — 클로백 갭 + 중복 환불 위험이라 명시적으로 차단. UI에서 CTA 자체 비표시.</li>
+            <li><strong>FORFEITED 재신청</strong> — 한 번 박탈된 멤버는 영구 차단(<code>ENROLLMENT_FORFEITED</code>). 정책 안내 필요.</li>
+            <li><strong>VARIABLE 본체에 가격·정원 입력</strong> — 무시되지만 사용자는 입력 가능. 폼 단에서 비활성화 필요.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·다른 도메인</h2>
+        <div class="hub-grid">
+          <a class="card" href="../policies/payment.html"><div class="eyebrow">정책</div><h3>결제·정산 정책</h3><p>flow-through 산식, retained paid vs retainedFree.</p></a>
+          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>상태 정책</h3><p>모임 4상태 + 멤버 8상태 + 결제 5상태 머신.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련 도메인</div><h3>03 이벤트</h3><p>EventType.REGULAR_MEETING(3) + EventScope 거름망.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 도메인</div><h3>07 모임 정산</h3><p>Settlement 확장(event_id nullable + regular_meeting_id).</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>WalletService.payForRegularMeeting + PointTransaction.</p></a>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 # PRD 전환 상태표
 
-> 업데이트: 2026-05-22. 이 표는 `business_logic/units`의 117개 기능 단위와 `business_logic/prd/02_feature_prds`의 기능 PRD를 1:1로 맞춘 결과다.
+> 업데이트: 2026-05-28. `business_logic/prd/02_feature_prds`에 기능 PRD 153개가 등록되어 있다. 그중 117개는 `business_logic/units/`의 기능 단위와 1:1로 맞춰진 source-first 전환본(2026-05-22 v4.5 이전)이고, 나머지 36개(F03-13~18 / F04-17 / F08-14~15 / F15·F16 / F17)는 `units/` 폴더 없이 별도 plan 문서를 canonical로 운영한다(아래 운영 원칙 참고).
 >
 > v4.5 W1~W7 (이벤트 확장 슬라이스) 신규 PRD 5개(F03-13~17)가 같은 디렉터리에 추가된다. 본 슬라이스는 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice이며, V1__init.sql 단일 마이그레이션 파일 원칙(`community_api/CLAUDE.md`)을 유지한다.
+>
+> **2026-05-28 운영 원칙 명시 — units/ 부재 = source-first.** F03-13~18 / F04-17 / F08-14~15 / F15-01~09 / F16-01~08 / F17-01~10 (총 36개 신규 PRD)은 `business_logic/units/<domain>/<feature>/` 폴더 없이 작성된다. canonical은 다음 위치들이다: F03-13~17 = `docs/plan/event-extensions/PLAN.md` v4.5, F03-18·F04-17 = `community_api/docs/plan/DEMOGRAPHICS_STATS_PLAN.md`, F08-14~15 = 각 PRD §1·§4 + community_api 실제 소스, F15·F16 = `community_api/src/main/java/com/endside/community/{warning,mileage}/` 실제 소스, F17 = `docs/plan/regular-meeting/` 16분할본 + `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md`. units/ 새로 만들면 운영 모델이 깨진다 — 만들지 않는다.
 
 ## 요약
 
@@ -14,6 +16,31 @@
 | 실사 기반 전환 완료 | 116 |
 | v4.5 신규 PRD (별도 master plan 산하) | 5 |
 | 누락/확인 필요 | 0 |
+
+## 2026-05-28 — 정기모임 (Regular Meeting) 도메인 추가
+
+`community_api` 신규 패키지 `regularmeeting/` (엔티티 5 · enum 9 · 서비스 17 · 컨트롤러 1 · 엔드포인트 25) + Flutter `community_app/lib/.../regular_meeting/` (VO 6 · Param 8 · API 1 · Repo 1 · Provider 5 · Screen 10 · Widget 2) 가 단일 세션(2026-05-28)에 구현·sign-off 완료됐다 (Codex 금전 영역 100% 합의). 원천 자료:
+
+- `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md`
+- `docs/plan/regular-meeting/` 16개 분할본 (canonical, GLOSSARY · NEXT_SESSION 포함)
+- 실제 소스 `community_api/src/main/java/com/endside/community/regularmeeting/`
+
+| 도메인 | 도메인 PRD | 기능 PRD | docs |
+|---|---|---|---:|
+| 17 정기모임 | `01_domain_prds/17_정기모임_prd.md` | `02_feature_prds/17_regular_meeting/F17-01~10` | `docs/domains/17-regular-meeting.html` + `F17-01~10.html` |
+
+신규 기능 PRD 10개 추가 → 기능 인벤토리 141 → **151** (이후 2026-05-28 후속 정합성 보정에서 F08-14·F08-15 정식 기능 ID 확정 등록 → **153**), 도메인 16 → **17**. source-first 로 직접 작성. 핵심 결정:
+- FIXED(고정형, 코스 바인딩) vs VARIABLE(변동형, 세션 바인딩) — 인원·결제·정산 바인딩 레벨 전환
+- 정산 후 환불 위험 0: close FIXED 가드(모든 정션 FINALIZED) + afterCommit REQUIRES_NEW + uk_settlement_rm UNIQUE + reservedRefund 게이트
+- flow-through 정산: retainedPaid=호스트 수익, retainedFree=플랫폼 보조 (payout 비대상)
+- BANK_TRANSFER off-ledger (isHostDirect=true), 호스트 confirm/reject 책임
+- failed_refund.event_id nullable + regular_meeting_id 추가 (결정 K)
+
+잔여 (서버 확장 필요, 비차단):
+- NotificationType `REGULAR_MEETING_*` 미정의 → RM 푸시 라우팅 미구현
+- 호스트 결제 list endpoint 부재 → 결제 화면 부분 구현
+- finalize per-attendee override UI 부재 → MVP 일괄 확정으로 충분
+- `retained ≤ 0` 종료 코스 settlement-skipped 마커 영구 재검사 후속
 
 ## 2026-05-24 — 경고·징계 / 마일리지 도메인 추가
 

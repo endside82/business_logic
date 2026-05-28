@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-18 이벤트 구성인원 인구통계 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-18 구성인원 인구통계
+        </div>
+        <h1>F03-18. 이벤트 구성인원 인구통계</h1>
+        <p class="lede">
+          이벤트 상세에서 host·공동호스트·참석 확정자(ATTENDING)의 성별·나이대·MBTI I·E 비율을 가로 비율 바로 보여준다.
+          데이터는 본인인증으로 검증된 값(성별·생년월일)과 프로필에서 직접 입력한 MBTI를 사용한다.
+          소수 셀(개인)이 드러나지 않도록 프라이버시 3단계 게이트를 거친다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">차원</div><div class="value">3</div><div class="hint">성별 · 나이대 · MBTI I·E</div></div>
+          <div class="metric"><div class="label">프라이버시</div><div class="value">k=5</div><div class="hint">전체·차원·버킷 3단계 게이트</div></div>
+          <div class="metric"><div class="label">대상</div><div class="value">호스트+공동호스트+ATTENDING</div><div class="hint">distinct</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 가입 전 구성 가늠 + 개인 식별 방지</span>
+          <p>참가 전 사용자가 모임의 구성을 가늠할 수 있게 하면서, 소수 인원에서 한 사람의 속성이 그대로 노출되는 일을 막는다.
+            노출되는 모든 버킷 카운트가 최소 5명 이상일 때만 그 차원을 보여주고, 응답에는 비율만 내려보낸다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>조회 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["이벤트 상세 진입"] --> B["GET /events/{id}/demographics"]
+    B --> C{"접근권한"}
+    C -->|"공개+진행/종료"| D["인증 사용자 OK"]
+    C -->|"비공개·DRAFT 등"| E["호스트·공동호스트·ATTENDING만"]
+    D --> F["대상 userId 수집"]
+    E --> F
+    F --> G["Member 조인(성별·생년월일·MBTI)"]
+    G --> H["3단계 게이트"]
+    H --> I["비율 바 렌더 or 안내"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">정상 표시</div>
+            <h3>참가자 10명, 성별 5:5, MBTI 입력 10명</h3>
+            <p>모든 차원이 게이트를 통과 — 성별(50%/50%), 나이대 분포, I·E 비율이 가로 비율 바로 표시된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">전체 게이트</div>
+            <h3>참가자 4명</h3>
+            <p>전체 인원이 5명 미만이라 분포 자체를 보여주지 않고 “구성원이 적어 통계를 표시하지 않습니다” 안내만 노출.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">차원 게이트</div>
+            <h3>여성 4명·남성 6명</h3>
+            <p>여성 버킷이 5명 미만이라 성별 차원만 숨김. 나이대·I·E는 자체 게이트로 따로 평가.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">접근권한</div>
+            <h3>비공개 이벤트의 비참가자</h3>
+            <p>HOST·공동호스트·ATTENDING이 아니면 403. 공개+OPEN/CLOSED만 인증 사용자 전체에게 허용.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>서버 계약</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/api/v1/events/{eventId}/demographics</code></td><td>이벤트 구성인원 인구통계 조회</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">응답에 원시 카운트는 없고 비율(<code>ratio</code>)·전체 인원·MBTI 입력률만 포함. 게이트로 노출 버킷 카운트는 항상 ≥5(k-익명성).</p>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">데이터 원천과 책임</span>
+          <ul>
+            <li><strong>성별·생년월일은 본인인증 검증값</strong>이다. 인증 성공 시 Member로 동기화된다(F09-01).</li>
+            <li><strong>MBTI는 사용자가 프로필에서 직접 입력</strong>한다(F13-02). 미입력자는 I·E 분포 분모에서 제외.</li>
+            <li><strong>나이는 만나이</strong>이며 기준일은 이벤트의 timezone(없으면 Asia/Seoul) 기준.</li>
+            <li><strong>버킷 최소셀 게이트</strong> 때문에 소규모 모임에서는 차원이 자주 숨겨질 수 있다 — 정상 동작.</li>
+            <li><strong>Phase 0 이전 인증자</strong>는 본인인증 backfill 전까지 가입 시 입력값으로 동기화 — 분포 정확도 보강은 backfill 실행 시 향상.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="F09-01.html"><div class="eyebrow">데이터 원천</div><h3>F09-01 본인 인증</h3><p>성별·생년월일 검증값 동기화.</p></a>
+          <a class="card" href="F13-02.html"><div class="eyebrow">데이터 원천</div><h3>F13-02 프로필 수정</h3><p>MBTI 입력 게이트.</p></a>
+          <a class="card" href="F04-17.html"><div class="eyebrow">짝 기능</div><h3>F04-17 클럽 구성인원 인구통계</h3><p>같은 집계 코어 공유.</p></a>
+          <a class="card" href="F03-02.html"><div class="eyebrow">호스트 화면</div><h3>F03-02 이벤트 상세</h3><p>이 섹션이 표시되는 화면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md
+  - community/docs/plan/DEMOGRAPHICS_STATS_PLAN.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

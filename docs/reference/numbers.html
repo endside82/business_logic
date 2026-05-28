@@ -159,6 +159,33 @@
       </section>
 
       <section>
+        <h2>정기모임 가격·환불·정산</h2>
+        <p class="subtitle">F17 정기모임 (소스: <code>community_api/src/main/java/com/endside/community/regularmeeting/</code>, canonical 계획: <code>docs/plan/regular-meeting/</code> 16분할본)</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>항목</th><th>값</th><th>비고</th></tr></thead>
+            <tbody>
+              <tr><td>가격 정규화</td><td><span class="pill warn">100원 floor</span></td><td><code>RoundingMode.DOWN</code>. <code>RegularMeeting.truncateToHundred(price)</code>. Event.price와 동일 정책</td></tr>
+              <tr><td>플랫폼 수수료</td><td><span class="pill money">10%</span></td><td>gross(retainedPaid) 기준. <code>RegularMeetingSettlementService.PLATFORM_FEE_RATE</code></td></tr>
+              <tr><td>원천징수</td><td><span class="pill warn">3.3%</span></td><td>이벤트 정산과 동일. <code>WITHHOLDING_TAX_RATE</code></td></tr>
+              <tr><td>paymentDueAt</td><td><span class="pill">+72h</span></td><td>승인 후 결제 마감 / BANK_TRANSFER declare 후 입금 마감</td></tr>
+              <tr><td>MEMBER_CANCEL pro-rata</td><td>amount × (N − elapsed) / N</td><td>elapsed = 활성 세션 중 <code>startTime ≤ now</code> count (정각 포함, 노쇼 포함)</td></tr>
+              <tr><td>HOST_CANCEL pro-rata</td><td>amount × (N − delivered) / N</td><td>delivered = 활성 세션 중 <code>status == CLOSED</code> count. 호스트 미제공분 전액 환불</td></tr>
+              <tr><td>FORFEIT pro-rata</td><td>MEMBER_CANCEL과 동일</td><td>시작된 세션 무환불, 미래 미제공분만. <code>RefundReason.FORFEIT</code></td></tr>
+              <tr><td>환불 단위</td><td>100원 floor + 0 clamp</td><td><code>floorToHundred(raw)</code> + <code>Math.max(0L, ...)</code></td></tr>
+              <tr><td>flow-through 정산</td><td>gross = retainedPaid<br/>freeSubsidy = retainedFree</td><td>retained = orig.paid − refund.paid (PAID + REFUNDED 둘 다 순회). 유료=호스트 수익 / 무료=플랫폼 보조(payout 비대상)</td></tr>
+              <tr><td>BANK_TRANSFER 회계</td><td>off-ledger</td><td><code>isHostDirect=true</code>. 분개 없음. 호스트 직접 수취 → 정산 payout 제외</td></tr>
+              <tr><td>활성 결제 1건 보장</td><td>STORED 생성컬럼 + UNIQUE</td><td><code>regular_meeting_payment.active_member_id</code> (status IN PENDING/PAID/REFUND_REQUESTED) + <code>uk_payment_active</code></td></tr>
+              <tr><td>정산 멱등</td><td>3중 보장</td><td><code>uk_settlement_rm(regular_meeting_id)</code> + <code>existsByRegularMeetingId</code> + <code>existsByReferenceTypeAndReferenceId("SETTLEMENT", id)</code></td></tr>
+              <tr><td>failsafe scheduler</td><td>1h 주기</td><td>close afterCommit 실패시 재시도. <code>RegularMeetingSettlementScheduler</code></td></tr>
+              <tr><td>auto-finalize 스케줄러</td><td>기본 OFF</td><td><code>@Value("${regular-meeting.auto-finalize.enabled:false}")</code>. opt-in. endTime+24h grace</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:12px"><strong>F15 경고·징계 / F16 마일리지 수치는 후속 슬라이스에서 정리한다</strong> (Codex 페어리뷰 합의: F15 PRD에 stale 표기 / F16은 mileage_grade.threshold 기반 클럽별 동적 설정 구조라 고정 임계값 부적절).</p>
+      </section>
+
+      <section>
         <h2>데이팅·채팅</h2>
         <div class="table-wrap">
           <table>

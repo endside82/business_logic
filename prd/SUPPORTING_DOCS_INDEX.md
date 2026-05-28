@@ -13,8 +13,8 @@
 | [00_prd_items/01_service_overview.md](00_prd_items/01_service_overview.md) | 서비스 개요 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/02_user_personas.md](00_prd_items/02_user_personas.md) | 사용자 유형과 Persona | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/03_information_architecture.md](00_prd_items/03_information_architecture.md) | 전체 정보구조와 기능구조 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
-| [00_prd_items/04_domain_purposes.md](00_prd_items/04_domain_purposes.md) | 14개 도메인별 목적 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
-| [00_prd_items/05_feature_definitions.md](00_prd_items/05_feature_definitions.md) | 117개 기능 정의 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
+| [00_prd_items/04_domain_purposes.md](00_prd_items/04_domain_purposes.md) | 17개 도메인별 목적 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
+| [00_prd_items/05_feature_definitions.md](00_prd_items/05_feature_definitions.md) | 153개 기능 정의 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/06_user_journeys.md](00_prd_items/06_user_journeys.md) | 사용자 여정 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/07_role_action_matrix.md](00_prd_items/07_role_action_matrix.md) | 권한/역할별 액션 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/08_state_transitions.md](00_prd_items/08_state_transitions.md) | 상태 전이 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
@@ -40,3 +40,5 @@
 | [../../docs/plan/event-extensions/PLAN.md](../../docs/plan/event-extensions/PLAN.md) | 이벤트 확장 마스터 플랜 v4.5 (W1~W7) | 정원 초과 / 참가 선입금 / 카풀 / 버스 대절 4기능 통합 실행계획. F03-13~17 PRD의 source-of-truth. updated: 2026-05-22 |
 | [../../docs/plan/event-extensions/ENUM_RESERVATIONS.md](../../docs/plan/event-extensions/ENUM_RESERVATIONS.md) | 이벤트 확장 enum 번호 예약표 | TransactionType 26 / NotificationType 71~83 / ChangeType 9~10 + 신규 enum 7종. 머지 전까지 다른 PR이 사용 금지. updated: 2026-05-22 |
 | [../../docs/plan/event-extensions/E2E_SCENARIOS.md](../../docs/plan/event-extensions/E2E_SCENARIOS.md) | 이벤트 확장 E2E 시나리오 | W1~W7 슬라이스 통과 게이트가 되는 통합 시나리오 집합. updated: 2026-05-22 |
+| [../../docs/plan/regular-meeting/README.md](../../docs/plan/regular-meeting/README.md) | 정기모임 구현 계획 (16분할) | 신규 도메인 17 정기모임의 canonical 소스. GLOSSARY · 16개 분할본(요구/결제·환불/노쇼/예외/Flutter/Phase 등) + NEXT_SESSION. F17-01~10 PRD source-of-truth. updated: 2026-05-28 |
+| [../../community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md](../../community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md) | 정기모임 구현 리포트 | Pre-1 → Phase 1~7 단일 세션 구현 결과. 백엔드 50+ 파일 / Flutter 33 파일 / DDL 5 테이블 / Codex 다단 sign-off (금전 100%). updated: 2026-05-28 |

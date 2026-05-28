@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F17-08 환불 (pro-rata) — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
+          F17-08 환불 (pro-rata)
+        </div>
+        <h1>F17-08. 환불 (pro-rata · 트리거별 · FAILED_REFUND)</h1>
+        <p class="lede">
+          FIXED 모임 환불은 진행 세션 차감 pro-rata 산식 + 3 트리거 분기.
+          모두 <code>amount × (N − consumed) / N</code> 골격을 쓰고 <code>consumed</code> 정의만 다르다.
+          100원 단위 floor, 0 clamp.
+        </p>
+      </header>
+
+      <section>
+        <h2>산식</h2>
+        <pre><code>total = meeting.totalSessionCount
+consumed = (트리거별)
+remaining = max(0, total - consumed)
+raw = paymentAmount × remaining / total (RoundingMode.DOWN)
+refundAmount = floorToHundred(raw)</code></pre>
+      </section>
+
+      <section>
+        <h2>트리거별 consumed 정의</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>트리거</th><th>consumed 정의</th><th>의미</th><th>refund 진입점</th></tr></thead>
+            <tbody>
+              <tr><td>MEMBER_CANCEL</td><td>활성 세션 중 <code>startTime ≤ now</code></td><td>시작된 모든 세션은 사용</td><td>cancelEnrollment (F17-06)</td></tr>
+              <tr><td>HOST_CANCEL</td><td>활성 세션 중 <code>status == CLOSED</code></td><td>호스트 미제공분 전액 환불</td><td>meeting cancel (F17-04)</td></tr>
+              <tr><td>FORFEIT</td><td>MEMBER_CANCEL과 동일</td><td>시작된 세션 무환불, 미래 미제공분만</td><td>finalizeSession FORFEIT_ON_LIMIT (F17-09)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>WALLET vs BANK_TRANSFER 환불 경로</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A[환불 트리거] --> B{결제 method?}
+    B -->|WALLET| C[WalletService 즉시 환불<br/>PointTransaction(EVENT_REFUND or similar)<br/>분개 1건]
+    C --> D[payment REFUNDED<br/>refundAmount, refundedAt 설정]
+    B -->|BANK_TRANSFER| E[payment REFUND_REQUESTED]
+    E --> F[호스트가 별도 계좌환불 후<br/>POST /payment/{paymentId}/refund-confirm]
+    F --> G[payment REFUNDED, 분개 없음]
+    C -->|실패| H[FailedRefund row<br/>(regular_meeting_id, user_id, amount)]
+    H --> I[스케줄러 재시도]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>failed_refund 스키마 확장 (결정 K)</h2>
+        <ul>
+          <li><code>event_id</code> Long nullable (기존 NOT NULL에서 변경)</li>
+          <li><code>regular_meeting_id</code> Long 신규</li>
+          <li>RM 환불 실패도 같은 큐로 추적</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>주요 시나리오</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>조건</th><th>refundAmount</th></tr></thead>
+            <tbody>
+              <tr><td>S8-1</td><td>MEMBER_CANCEL, total=8, consumed=0, amount=80000</td><td>80000 (전액)</td></tr>
+              <tr><td>S8-2</td><td>MEMBER_CANCEL, consumed=3</td><td>50000 (80000 × 5/8)</td></tr>
+              <tr><td>S8-3</td><td>MEMBER_CANCEL, consumed=8 (전 세션 진행)</td><td>0</td></tr>
+              <tr><td>S8-4</td><td>HOST_CANCEL, delivered=5</td><td>30000 per member (80000 × 3/8)</td></tr>
+              <tr><td>S8-5</td><td>FORFEIT, consumed=4, FORFEIT_ON_LIMIT</td><td>40000 + member FORFEITED</td></tr>
+              <tr><td>S8-9</td><td>100원 floor, raw=12345</td><td>12300</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 PRD</h2>
+        <ul>
+          <li><a href="../../prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md">F17-08 PRD 본문</a></li>
+          <li><a href="F17-10.html">F17-10 정산 (환불 후 settlement gross 자연 반영)</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

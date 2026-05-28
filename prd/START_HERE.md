@@ -17,6 +17,7 @@
 7. 구현 우선순위와 현재 위험도를 보려면 `../../docs/IMPLEMENTATION_CROSSWALK.md`와
    `../../docs/IMPLEMENTATION_WORKBOARD.md`
 8. v4.5 이벤트 확장(W1~W7) master plan을 보려면 `../../docs/plan/event-extensions/PLAN.md` (관련 산출물: `ENUM_RESERVATIONS.md`, `E2E_SCENARIOS.md`)
+9. **2026-05-28 이후 신규 PRD 36개(F03-13~18 / F04-17 / F08-14~15 / F15·F16 / F17)는 `units/` 폴더 없이 source-first로 운영된다.** canonical은 각 PRD §실사 근거의 plan 문서와 community_api 실제 소스. 자세한 위치는 `PRD_MIGRATION_STATUS.md` 상단 운영 원칙 참고.
 
 ## v4.5 W1~W7 이벤트 확장 신규 PRD (2026-05-22)
 
@@ -36,7 +37,7 @@ source-of-truth는 `docs/plan/event-extensions/PLAN.md`다. 본문 신설 후 `P
 
 | 사람 | 먼저 볼 것 | 이유 |
 |---|---|---|
-| 신규 기획자 | `00_product_prd.md` -> `00_prd_items/05_feature_definitions.md` | 제품 구조와 117개 기능 이름을 빠르게 잡는다. |
+| 신규 기획자 | `00_product_prd.md` -> `00_prd_items/05_feature_definitions.md` | 제품 구조와 153개 기능 이름을 빠르게 잡는다. |
 | 기능 담당 기획자 | `PRD_MIGRATION_STATUS.md` -> 담당 기능 PRD -> 담당 기능의 `units/*` 4개 문서 | 전환 상태와 risk 후보를 먼저 보고 실제 source 기반 근거를 확인한다. |
 | 개발자 | `../../docs/IMPLEMENTATION_CROSSWALK.md` -> 담당 기능의 `units/*/backend.md` -> 실제 서버 소스 | 패키지가 아니라 vertical slice 기준으로 구현 범위를 잡는다. |
 | Flutter 개발자 | 담당 기능의 `units/*/frontend.md` -> 실제 API/Repository/Provider/Screen | 서버 계약과 화면 분기 사이의 불일치를 찾는다. |
@@ -47,7 +48,7 @@ source-of-truth는 `docs/plan/event-extensions/PLAN.md`다. 본문 신설 후 `P
 
 | 문서 | 신뢰도 | 이유 |
 |---|---|---|
-| `PRD_MIGRATION_STATUS.md` | 운영 기준 | 117개 기능 PRD의 전환 상태, trace 수, risk 후보 수를 한 번에 보여준다. |
+| `PRD_MIGRATION_STATUS.md` | 운영 기준 | 153개 기능 PRD의 전환 상태, trace 수, risk 후보 수를 한 번에 보여준다. |
 | `SUPPORTING_DOCS_INDEX.md` | 보조 문서 안내 | 인벤토리, 정책, QA, Notion/운영 산출물의 역할을 구분한다. |
 | `FEATURE_PRD_STANDARD.md` | 기준 문서 | 앞으로 기능 PRD를 어떻게 써야 하는지 정의한다. |
 | `02_feature_prds/03_event/F03-02_event-detail_prd.md` | golden sample | 실제 서버/Flutter 소스를 다시 대조해서 Gap/Risk까지 남긴 첫 샘플이다. |
