@@ -1,10 +1,10 @@
 # PRD 전환 상태표
 
-> 업데이트: 2026-05-28. `business_logic/prd/02_feature_prds`에 기능 PRD 153개가 등록되어 있다. 그중 117개는 `business_logic/units/`의 기능 단위와 1:1로 맞춰진 source-first 전환본(2026-05-22 v4.5 이전)이고, 나머지 36개(F03-13~18 / F04-17 / F08-14~15 / F15·F16 / F17)는 `units/` 폴더 없이 별도 plan 문서를 canonical로 운영한다(아래 운영 원칙 참고).
+> 업데이트: 2026-06-05. `business_logic/prd/02_feature_prds`에 기능 PRD 168개가 등록되어 있다. 그중 117개는 `business_logic/units/`의 기능 단위와 1:1로 맞춰진 source-first 전환본(2026-05-22 v4.5 이전)이고, 나머지 51개(F03-13~20 / F04-17~18 / F08-14~15 / F11-07 / F15·F16 / F17 / F18·F19·F20)는 `units/` 폴더 없이 별도 plan 문서 또는 실제 소스를 canonical로 운영한다(아래 운영 원칙 참고).
 >
 > v4.5 W1~W7 (이벤트 확장 슬라이스) 신규 PRD 5개(F03-13~17)가 같은 디렉터리에 추가된다. 본 슬라이스는 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice이며, V1__init.sql 단일 마이그레이션 파일 원칙(`community_api/CLAUDE.md`)을 유지한다.
 >
-> **2026-05-28 운영 원칙 명시 — units/ 부재 = source-first.** F03-13~18 / F04-17 / F08-14~15 / F15-01~09 / F16-01~08 / F17-01~10 (총 36개 신규 PRD)은 `business_logic/units/<domain>/<feature>/` 폴더 없이 작성된다. canonical은 다음 위치들이다: F03-13~17 = `docs/plan/event-extensions/PLAN.md` v4.5, F03-18·F04-17 = `community_api/docs/plan/DEMOGRAPHICS_STATS_PLAN.md`, F08-14~15 = 각 PRD §1·§4 + community_api 실제 소스, F15·F16 = `community_api/src/main/java/com/endside/community/{warning,mileage}/` 실제 소스, F17 = `docs/plan/regular-meeting/` 16분할본 + `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md`. units/ 새로 만들면 운영 모델이 깨진다 — 만들지 않는다.
+> **2026-05-28 운영 원칙 명시 — units/ 부재 = source-first.** F03-13~18 / F04-17 / F08-14~15 / F15-01~09 / F16-01~08 / F17-01~10 (총 36개 신규 PRD, 2026-06-05에 F03-19~20 / F04-18 / F11-07 / F18-01~05 / F19-01~03 / F20-01~03 15개 추가로 총 51개)은 `business_logic/units/<domain>/<feature>/` 폴더 없이 작성된다. canonical은 다음 위치들이다: F03-13~17 = `docs/plan/event-extensions/PLAN.md` v4.5, F03-18·F04-17 = `community_api/docs/plan/DEMOGRAPHICS_STATS_PLAN.md`, F08-14~15 = 각 PRD §1·§4 + community_api 실제 소스, F15·F16 = `community_api/src/main/java/com/endside/community/{warning,mileage}/` 실제 소스, F17 = `docs/plan/regular-meeting/` 16분할본 + `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md`. units/ 새로 만들면 운영 모델이 깨진다 — 만들지 않는다.
 
 ## 요약
 
@@ -15,7 +15,44 @@
 | Golden sample 유지 | 1 |
 | 실사 기반 전환 완료 | 116 |
 | v4.5 신규 PRD (별도 master plan 산하) | 5 |
+| source-first 신규 (2026-05-24 ~ 2026-06-05, units/ 없음) | 51 |
+| **현재 총 기능 PRD (2026-06-05)** | **168** |
 | 누락/확인 필요 | 0 |
+
+## 2026-06-05 — 분쟁 해결 v3 일괄 반영 + 도메인 3개 신설 (17 → 20, 기능 153 → 168)
+
+2026-05-28 베이스라인(community_api a1f1967 / community_app d766ede) 이후의 소스 변경 전부를 9개 영역 병렬 실사(dossier: `.delta_2026-06-04/01~09`) 후 반영했다. 모든 신규 PRD는 source-first(units/ 없음)로 작성했다.
+
+| 구분 | 내용 | canonical |
+|---|---|---|
+| 도메인 18 분쟁 해결 (신규) | `01_domain_prds/18_분쟁_해결_prd.md` + `02_feature_prds/18_dispute_resolution/F18-01~05` + `docs/domains/18-dispute.html` | `community_api/src/.../host/` (dispute 패키지) 실제 소스 |
+| 도메인 19 관심인 (신규 — 기존 누락 등재) | `01_domain_prds/19_관심인_prd.md` + `02_feature_prds/19_favorite/F19-01~03` + `docs/domains/19-favorite.html` | `community_api/src/.../favorite/` 실제 소스 + `docs/plan/FAVORITE_PERSON_CALENDAR_PLAN.md` |
+| 도메인 20 고객지원 (신규 — 기존 누락 등재) | `01_domain_prds/20_고객지원_prd.md` + `02_feature_prds/20_support/F20-01~03` + `docs/domains/20-support.html` | `community_api/src/.../inquiry/`·`support/` 실제 소스 |
+| F03-19 일정 변경 제안·참가자 합의 | `02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md` | `community_api/src/.../event/reschedule/` + `community_api/docs/plan/reschedule-response/` (RS-002) |
+| F03-20 이벤트 노쇼 관리 | `02_feature_prds/03_event/F03-20_event-no-show_prd.md` | `community_api/src/.../capacity/` (EventNoShow) 실제 소스 |
+| F04-18 클럽 레퓨테이션 | `02_feature_prds/04_club/F04-18_club-reputation_prd.md` | `community_api/src/.../club/reputation/` 실제 소스 |
+| F11-07 호스트 리뷰 모더레이션 | `02_feature_prds/11_review_report/F11-07_review-moderation_prd.md` | `community_api/src/.../review/` (ReviewReply·hide) 실제 소스 |
+
+기능 인벤토리 153 → **168** (+15), 도메인 17 → **20** (+3).
+
+### 기존 PRD 정밀 갱신 (약 30건)
+
+- **환불 정책 통일 (D-1, 2026-06-02~03)**: F03-13 / F06-06 / F07-09 / `payment_settlement_policy_prd.md` — 레거시 고정 환불율("24h=100%/12h=50%/0%", "단일 deadline") 기술 전부를 `event_refund_policy` 카탈로그(템플릿 6종) + `RefundFaultCategory` 7분류 + BANK 귀책 상한 + exact-once 동시성 보장으로 교체. `meeting_refund_rule`(F07-09)은 통합 범위 제외 명기.
+- **참가 신청 계약**: F03-05/06 — ApplicationStatus 7값, 거절 reasonCode 필수(7값), application_decision_log(6 decision type), stale "APPROVED_PENDING_PAYMENT 미구현" 문구 제거.
+- **제재 강화**: F15-02 (익명 표적 제보 방어 — dedup_key/일일캡/정합 검증), F15-08 (FORCED_REMOVE 실효 연결·만료 스케줄러·read-time 필터 Gap 해소 + PlatformSanction·EventApplyRestrictionGuard 17개 진입점 신규 절), F15-01/03.
+- **클럽 모더레이션**: F04-04/06 (kick/ban 사유코드 enum + ClubMembershipAction 이력 + 분쟁 연계), F04-03/16 (소유권 이전 구독 정리), F04 도메인 PRD.
+- **리뷰·신고**: F11-04 (ReportType 3 → 8종, 증빙 첨부, 자동 플래그), F11-05 (신뢰등급 임계값 서버 단일출처 — nextGradeScore), F11-02.
+- **정산·지갑**: F07-06/07 (TransferStatus 8값, limbo SLA 스케줄러), F07-08·F08-14 (통합 분쟁 union 노트), F06-01 (지갑 lazy-create), 가상계좌 webhook은 **계획(미구현)** 으로 명확화.
+- **기타**: F09-02 (사진 검수 상태), F09-07 (차단 soft 전환 + 안전신고·증빙), F12-01 (NotificationType 97종 전수 + reschedule 딥링크), F03-03 (공동호스트 권한 flag 5종), F03-08/09/15, F06-08 (프리미엄 실혜택 게이팅).
+- **전사 문서**: `00_prd_items/03·04·05·08·10`, `00_product_prd.md`, 정책 PRD 4종(state/notification/privacy_safety/permission).
+
+### 주요 잔여 Gap (소스 측, 비차단 — 각 기능 PRD §8 참조)
+
+- 분쟁: 알림 딥링크 미배선(기존 REFUND_DISPUTE 3종 포함 전부), 호스트 appeal 승인/거절 공개 API 부재, 접수 화면 증빙 첨부 v1 제외, EVENT_NO_SHOW 외 원본 status sync 없음(audit-only).
+- 노쇼: 소명 기한 서버 미구현, Flutter 소명/번복/일괄 endpoint 미배선, cohost canManageAttendance 미체크.
+- 환불: 호스트 신규 6종 템플릿 설정 UI 미구현(레거시 5종 폼), 취소 시트 preview-레거시 병렬 표시 모순 가능.
+- 경고: PlatformSanction listActiveByUser 공개 API 미배선, EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 진입점 가드 없음.
+- 관심인/고객지원: Flutter NotificationType enum에 FAVORITE_PERSON_NEW_EVENT 미등재(라우팅은 문자열 기반으로 동작), Inquiry Flutter 전 레이어 미구현.
 
 ## 2026-05-28 — 정기모임 (Regular Meeting) 도메인 추가
 

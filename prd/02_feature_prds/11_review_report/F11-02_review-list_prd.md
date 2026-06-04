@@ -1,6 +1,6 @@
 # F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/11_review_report/F11-02_review-list -->
+<!-- updated: 2026-06-05; delta: 2026-06-04 dossier 04 §4-3 반영 (ReviewVo 5 신규 필드, 호스트 모더레이션 CTA, 숨김 표시) -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/11_review_report/F11-02_review-list`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -70,6 +70,20 @@
 - 매퍼: `ReviewMapper.updateReviewToVo(Review)` 단일 변환 + `updateReviewToVoWithUserInfo(Review, Map<Long, String[]>)` 닉네임/이미지 채움.
 - 평균 별점·분포·정렬은 본 단위 백엔드에서 계산하지 않는다 (클라이언트 책임).
 
+**ReviewVo 신규 필드** (커밋 0eae1ed/86356e5, 소스: `review/vo/ReviewVo.java:10-27`):
+
+| 필드 | 타입 | nullable | 비고 |
+|---|---|---|---|
+| `temporarilyHidden` | boolean | N | 호스트 임시 숨김 여부 (default false) |
+| `hiddenReasonCode` | String | Y | `ReviewHideReasonCode.name()` — HARASSMENT/DEFAMATION/SPAM/OFF_TOPIC/FAKE_REVIEW/OTHER |
+| `hiddenReasonText` | String | Y | 호스트 자유 기재 |
+| `hiddenAt` | LocalDateTime | Y | 숨김 시각 |
+| `reply` | ReviewReplyVo | Y | 호스트 답변. 없으면 null. |
+
+`getReviewsByEvent` / `getReviewsByUser` 응답에 항상 포함됨. N+1 방지: `attachReplies()` 메서드가 답변 배치 조회 1회 + 호스트 닉네임 배치 조회 1회 (`ReviewService.java:223-246`).
+
+상세 모더레이션(답변/숨김) 흐름은 **F11-07** 참조.
+
 ### 의존 단위 / 외부 시스템
 
 - **Account 도메인**: `UserService.getUserBasicInfoMap(List<Long>)` — 닉네임/프로필 이미지 일괄 조회 (호출만)
@@ -102,11 +116,14 @@
   - `CommunityAppBar(title: '리뷰')`
   - 헤더 영역(첫 ListView 항목): `RatingSummaryWidget(averageRating, totalCount, distribution)` — 큰 평균 숫자 + 별 + "리뷰 N개" + 5점→1점 분포 막대그래프 (warning500 색상)
   - 정렬 라벨 "최신순 ▼" (현재 정적 텍스트, 실제 정렬 변경 미구현)
-  - 리뷰 카드 리스트 (`ReviewCard`): 작성자 아바타/닉네임, 별점, 상대 시간(15분 전/2시간 전/3일 전 또는 MM/DD), 본문 텍스트, 우측 신고 아이콘
+  - 리뷰 카드 리스트 (`ReviewCard`): 작성자 아바타/닉네임, 별점, 상대 시간, 본문 텍스트, 우측 신고 아이콘
+  - **임시 숨김 상태**: `review.temporarilyHidden=true`이면 본문 대신 `_HiddenReviewNotice(reasonText)` 표시, `_HiddenBadge(reasonCode)` 뱃지 노출 (`review_card.dart:44-48, 189-196`)
+  - **호스트 답변**: `review.reply != null && reply.content.isNotEmpty`이면 `_HostReply(reply)` 녹색 카드 노출
 - **사용자가 할 수 있는 액션**:
   - 풀투리프레시 → `ref.invalidate(eventReviewListNotifierProvider(eventId))`
   - 리뷰 카드의 신고 아이콘 탭 → `context.push('/report', extra: {'targetType': 'REVIEW', 'targetId': review.id})` → F11-04
   - (정렬 옵션 탭 — 라벨은 있으나 동작은 미구현)
+  - **호스트 전용 더보기 CTA** (`review_list_screen.dart:262-264`): `review.revieweeId == currentUserId` 조건으로 활성화. 더보기 메뉴: "답변하기" / "임시 숨김" / "숨김 해제". 상세 흐름은 F11-07 참조.
 - **상태 분기**:
   - 데이터: 위 구성 그대로
   - 빈 상태: `AppEmptyState(icon: Icons.rate_review_outlined, title: '아직 리뷰가 없습니다')`
@@ -167,10 +184,10 @@
 
 ## 8. Gap / Risk
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후보 | frontend.md:26 | - 정렬 라벨 "최신순 ▼" (현재 정적 텍스트, 실제 정렬 변경 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:31 | - (정렬 옵션 탭 — 라벨은 있으나 동작은 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
+|---|---|---|---|---|
+| Gap | 정렬 기능 미구현 | `review_list_screen.dart` — "최신순 ▼" 라벨은 있으나 동작 없음. 서버도 정렬 파라미터 미노출. | 사용자가 정렬 탭을 눌러도 아무 변화 없음. 서버 응답 순서에 의존. | 정렬 기능 추가 여부 결정 필요. 현재는 UX 불편 수준. |
+| Gap | 호스트 답변 수정 UI 미배선 | `review_list_screen.dart:347` — `review.reply != null`일 때 더보기에서 수정(PUT /reply) 경로 없음. 항상 createReply 호출 → 서버에서 `REVIEW_REPLY_ALREADY_EXISTS(409)` 발생. | 호스트가 답변 수정을 시도하면 409 에러 발생. | F11-07 참조. review_list_screen에서 reply 존재 시 updateReply 분기 추가 필요. |
 
 ## 9. 수용 기준
 

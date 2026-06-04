@@ -1,6 +1,6 @@
 # F07-07. 미납자 리마인드 / 마감 연장 (Remind Unpaid & Extend Deadline) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement/F07-07_remind-extend -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/07_meeting_settlement/F07-07_remind-extend -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-07_remind-extend`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -147,10 +147,23 @@
 | 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
 | 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
+### limbo 상태 자동 재알림 정책 (기존 deadline 리마인드와 별도)
+
+> **Fact (2026-06-04, 커밋 985f586)**. 이 정책은 본 기능의 호스트 수동 리마인드(§4)와 다른 별도 스케줄러 흐름이다.
+
+`BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 상태 transfer가 SLA(`meeting-settlement.limbo-escalation-days`, 기본 3일) 경과 시 자동 재알림이 발화된다. 호스트의 명시적 독촉 없이 백엔드가 자동으로 관련 행위자에게 알린다.
+
+- **BANK_AWAITING_CONFIRM** 재알림: 수취자(toUserId) + 호스트(creatorUserId). `NotificationType.MEETING_SETTLEMENT_REMIND`
+- **PENDING_MANUAL_REFUND** 재알림: 수취자(toUserId). `NotificationType.MEETING_SETTLEMENT_REFUND_REQUIRED`
+- **2회 이상 미해소**: `OperatorAlertType.SETTLEMENT_TRANSFER_LIMBO HIGH` 운영알림 자동 승급
+- 자동 만료(EXPIRED 전이) 없음 — 상태 변경 없이 알림만 발화
+- 상세 계약은 F07-06 §4 "limbo SLA 정책" 참조
+
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
+| 해소 | limbo 상태 장기 방치 | BANK_AWAITING_CONFIRM/PENDING_MANUAL_REFUND 상태 transfer에 자동 재알림 없었음 | **해소** — 985f586 (2026-06-04): limbo SLA 자동 재알림 + 운영알림 승급 구현 완료 (상세: F07-06 §4 limbo SLA) |
 | 후보 | frontend.md:27 | ### 마감 연장 진입 (현재 UI 미구현 — 백엔드 엔드포인트만 존재) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:30 | ### 리마인드 이력 화면 (현재 UI 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:59 | - **customMessage 입력 UI** (옵션): 현재 미구현, 향후 200자 입력 + 미리보기 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |

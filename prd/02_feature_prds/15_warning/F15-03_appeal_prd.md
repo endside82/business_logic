@@ -1,5 +1,7 @@
 # F15-03. 이의제기 (Appeal) PRD
 
+> **범위 경계**: 이 PRD는 **클럽 경고 이의제기(`WarningAppeal`)** 만 다룬다. `WarningAppealStatus`는 6값(`SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN`)이다. v3 통합 분쟁 이의(`DisputeAppeal`, 4값 `PENDING/UPHELD/REJECTED/CLOSED`)는 전혀 다른 도메인이며 `../../01_domain_prds/18_분쟁_해결_prd.md`(병렬 작성 중, 링크만)를 참조한다.
+
 ## 1. 결론
 
 이의제기는 멤버가 본인에게 부여된 **활성 GRANT 원장 항목**(`targetGrantLedgerId`)에 대해 `POST /api/v1/clubs/{clubId}/warnings/appeals`로 제출하는 흐름이다. 서버 `WarningAppealService.submit`은 (a) 대상 ledger가 GRANT 타입이고 본인(`memberId`)·해당 클럽 소유인지, (b) 이미 REVERSE/EXPIRE되지 않았는지, (c) 같은 GRANT에 진행 중(SUBMITTED/IN_REVIEW) 이의가 없는지를 검증한 뒤 `SUBMITTED`로 저장한다. 종결된 이의(REJECTED/PARTIALLY_ACCEPTED/WITHDRAWN)가 있으면 재제기를 허용한다(진행 중 1건 제한만 적용). 본인 이의 목록은 `List<WarningAppealVo>`(Page 아님)로 내려오고, 진행 중 이의는 철회할 수 있다. Flutter `appeal_submit_screen.dart`/`my_appeals_screen.dart`/`warning_appeal_dialog.dart`가 이를 구현했다.

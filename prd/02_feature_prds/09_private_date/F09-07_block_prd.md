@@ -1,6 +1,6 @@
 # F09-07. 사용자 차단/해제 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/09_private_date/F09-07_block -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/09_private_date/F09-07_block -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/09_private_date/F09-07_block`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -69,13 +69,57 @@
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
 | GET | /api/v1/date/blocks | DateBlockController#listBlocks | required | 내가 차단한 사용자 목록 |
-| POST | /api/v1/date/blocks/{targetUserId} | DateBlockController#blockUser | required | 차단 + 활성 매치 BLOCKED + 채팅방 CLOSED |
-| DELETE | /api/v1/date/blocks/{targetUserId} | DateBlockController#unblockUser | required | 차단 해제 (매치/채팅 복원 없음) |
+| POST | /api/v1/date/blocks/{targetUserId} | DateBlockController#blockUser | required | 차단 + 활성 매치 BLOCKED + 채팅방 CLOSED. 선택적 body(DateBlockParam)로 증빙 첨부 + 안전신고 동시 생성 가능 |
+| DELETE | /api/v1/date/blocks/{targetUserId} | DateBlockController#unblockUser | required | 차단 해제 — hard delete 아닌 상태를 UNBLOCKED로 전환 (이력 보존) |
+
+### POST /api/v1/date/blocks/{targetUserId} — 입력 형태 (하위 호환)
+
+RS-002 P3-A(Wave D-5)로 두 가지 입력 형태를 동시 지원한다. 기존 `?reason=` query param 경로는 그대로 유효하다.
+
+| 형태 | 진입 조건 | 동작 |
+|---|---|---|
+| **레거시** (`?reason=`) | body 미전달 | reason-only 차단. evidence/안전신고 없음 |
+| **신규** (`DateBlockParam` body) | body 전달 시 | body 우선. `fileReport=true`이면 `ReportType.DATE_USER` 안전신고 동시 생성 + `DateBlock.reportId` 백필. `evidenceFileIds` 는 `DateBlock.evidenceFileIds(json)` 에 저장되어 dispute(SAFETY) evidence로 노출됨 |
+
+**`DateBlockParam` 필드** (모두 선택적):
+
+| 필드 | 타입 | 제약 | 설명 |
+|---|---|---|---|
+| `reason` | String | max 200 | 차단 사유 메모 |
+| `fileReport` | boolean | 기본 false | true면 DATE_USER 안전신고 동시 생성 |
+| `reportReason` | String | nullable | `ReportReason.name()`. null이면 OTHER로 보정 |
+| `evidenceFileIds` | List\<Long\> | nullable, max 5 | 증빙 파일 식별자(file_metadata.id) |
+
+### 차단 해제 (soft-transition) — Wave D-5
+
+**변경 전**: `DELETE` 시 `date_block` row hard delete.
+**변경 후**: `status = UNBLOCKED`로 전환, row 보존 (이력 보존). `unblocked_at` 컬럼 기록.
+
+- `date_block` 테이블 신규 컬럼: `status varchar(20) NOT NULL`, `unblocked_at datetime`
+- "현재 차단 중인가" 판단 기준: `DateBlockStatus.BLOCKED` row 존재 여부 (UNBLOCKED row는 이력으로만 취급)
+- `FavoriteService.isBlockedBetween()` 등 소비자는 `status=BLOCKED`인 row만 검사
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
-- **Entity `DateBlock`**: `id, blockerId, blockedId, reason?, createdAt`
+- **Enum `DateBlockStatus`** (`DateBlockStatus.java`):
+
+  | 값 | 설명 |
+  |---|---|
+  | `BLOCKED` | 현재 차단 중 |
+  | `UNBLOCKED` | 차단 해제됨. row 보존, 이력·안전 분석용 |
+
+- **Entity `DateBlock`** (Wave D-5 이후 추가 컬럼):
+  - `id, blockerId, blockedId, reason?, status(DateBlockStatus), unblocked_at?, reportId?, evidenceFileIds(json)?, createdAt`
 - **VO `DateBlockVo`**: 위 응답 필드 (mutable, `@Setter` — service에서 nickname 주입)
+
+### 통합 분쟁 케이스 포함 (Wave D-5, dossier 01 §4-D)
+
+차단 row는 `DATE_BLOCK:{id}` caseId로 통합 분쟁 케이스 union에 포함된다.
+- 안전신고 동반 시(`fileReport=true`): evidence 1년 보존, legal hold 적용 (dispute 상태가 OPEN/IN_REVIEW/ESCALATED인 동안 data deletion 차단)
+- legal hold 기준: 연결 report의 status에서 파생. reportId=null이면 hold 없음
+- retention 스케줄러(`DisputeCaseRetentionScheduler`): `report.processed_at + terminal status` 조건으로 1년 후 evidence 파일 cleanup
+
+관련 문서: `../../01_domain_prds/18_분쟁_해결_prd.md` (병렬 작성 중)
 
 ### 의존 단위 / 외부 시스템
 
@@ -84,6 +128,7 @@
   - **F09-04** — 매칭 status가 BLOCKED로 갱신되어 목록에 반영
   - **F09-05** — 채팅방 CLOSED 전환으로 메시지 송신 차단
   - **account 도메인 (`UserRepository`)** — 닉네임 lookup
+  - **review 도메인 (`ReportService`)** — `fileReport=true` 시 `DATE_USER` 신고 생성
 - 외부:
   - 없음
 
@@ -120,10 +165,24 @@
   - 로딩: `CircularProgressIndicator`
   - 에러: `AppErrorState.fromError(onRetry: invalidate)`
 
-### 차단 사유 입력 시트 (`date_block_reason_sheet.dart`)
+### 차단 사유 입력 시트 (`date_block_reason_sheet.dart`) — Wave D-5 확장
 
-- **사용자가 보는 것**: 사유 입력 바텀시트 (구현 세부는 본 작업 범위 외 — 단 호출 시그니처는 `DateBlockReasonSheet.show(context, targetNickname: ...)` → `Future<String?>`)
-- **반환**: null이면 액션 취소, 문자열이면 사유로 전달
+RS-002 P3-A 이후 `date_block_reason_sheet.dart`는 단순 String 사유 반환에서 `DateBlockParam` body 전달로 확장되었다.
+
+- **사용자가 보는 것**: 사유 옵션 6종 (HARASSMENT, INAPPROPRIATE ×2, FRAUD ×2, OTHER) + "안전신고도 함께 접수" 토글(`fileReport` 활성화 UI)
+- **반환**: `DateBlockParam` (reason, fileReport, reportReason, evidenceFileIds 포함). null이면 차단 취소
+- **API 호출 형태**: `DateBlockApi.blockUser(targetUserId, reason: legacyReason, param: DateBlockParam)` — body 전달 시 신규 경로, 미전달 시 레거시 `?reason=` 경로
+
+**`DateBlockParam` Flutter 모델** (`data/models/date/date_block_param.dart`):
+
+```dart
+@freezed class DateBlockParam {
+  String? reason,
+  @Default(false) bool fileReport,
+  String? reportReason,      // ReportReason.name()
+  List<int>? evidenceFileIds // max 5
+}
+```
 
 ### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
 
@@ -133,11 +192,10 @@
 - **토스트 메시지**: "차단을 해제했습니다" / "차단 해제에 실패했습니다"
 - **TestId**: `screenDatingBlocks`
 - **라우트 진입 방식**: 데이팅 프로필 화면에서 `context.pushNamed('datingBlocks')` 사용
-- **차단 사유 옵션 UI**: `DateBlockReasonSheet`가 사유 텍스트(자유 입력 또는 사전 정의 옵션 — 본 작업 범위 외)를 받아 String 반환. 현 코드 호출부는 단순 String만 사용
 - **차단 후 즉각 후처리**:
   - 후보자(F09-03): `dateCandidatesNotifier.removeCandidate(userId)` 호출 후 인덱스 ++
   - 매칭 목록(F09-04): 토스트만 — 사용자가 새로고침하면 BLOCKED 반영
-- **차단 시 기록 정책**: 차단 사유는 분쟁 시 운영팀 참조 용도. 서버는 평문으로 저장(개인정보 X). 사용자에게 보임
+- **차단 시 기록 정책**: 차단 사유 + evidence는 안전 분석·분쟁 조사 용도. 서버는 plain text + json으로 보존(hard delete 없음). 본인만 사유를 볼 수 있음
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -146,7 +204,7 @@
 | S1 | 후보자 카드에서 차단 (Happy Path) | 활성 매치 없음, 후보 카드 표시 중. | 차단 row 1개. 다음 후보자 fetch에서 해당 사용자 제외 (양방향 차단 필터). |
 | S2 | 매칭 카드에서 차단 → 매치 BLOCKED + 채팅 CLOSED | `Match.MATCHED`, `ChatRoom.ACTIVE`, 메시지 5건 교환됨. | 메시지 송신 차단, 새 매칭 액션 차단. |
 | S3 | 이미 차단한 사용자에게 다시 차단 시도 | 시나리오 본문 참조 | 변동 없음. |
-| S4 | 차단 해제 — 매치 복원 없음 | 과거에 차단한 사용자 1명. 매치는 BLOCKED 상태로 잔존. | 차단 row 삭제, 매치/채팅 그대로. |
+| S4 | 차단 해제 — 매치 복원 없음 | 과거에 차단한 사용자 1명. 매치는 BLOCKED 상태로 잔존. | 차단 row status=UNBLOCKED 전환 (삭제 아님), 매치/채팅 그대로. |
 | S5 | 권한 — 존재하지 않는 차단 해제 | 시나리오 본문 참조 | 변동 없음. |
 | S6 | 차단당한 자의 관점 (간접) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | 신고와의 관계 (간접) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
@@ -165,14 +223,16 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | diagrams.md:18 | Chat[🔵 chat_screen F09-05] -.->\|차단 메뉴 미구현\| Sheet1 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | diagrams.md:18 | F09-05 채팅 화면에서 차단 메뉴 미연결 (`date_block_reason_sheet` 호출 코드 없음) | 채팅 화면 더보기(⋮) → 차단 진입 추가 |
+| Gap | dossier 09 §3-5 | Flutter `DateProfilePhotoVo`에 `fileId`, `moderationStatus` 필드 없음 — 차단+신고 시 증빙 사진의 moderationStatus 표시 불가 (F09-02 영역) | F09-02 Gap 참조 |
+| Risk | dossier 01 §4-D | `fileReport=true`이면 evidence 1년 legal hold → 탈퇴 사용자 데이터 보존 정책과 충돌 가능성 | 법무 검토 필요 |
 
 ## 9. 수용 기준
 
 - **AC-01. 후보자 카드에서 차단 (Happy Path)**: Given 활성 매치 없음, 후보 카드 표시 중. When 사용자가 해당 흐름을 실행하면 Then 차단 row 1개. 다음 후보자 fetch에서 해당 사용자 제외 (양방향 차단 필터).
 - **AC-02. 매칭 카드에서 차단 → 매치 BLOCKED + 채팅 CLOSED**: Given `Match.MATCHED`, `ChatRoom.ACTIVE`, 메시지 5건 교환됨. When 사용자가 해당 흐름을 실행하면 Then 메시지 송신 차단, 새 매칭 액션 차단.
 - **AC-03. 이미 차단한 사용자에게 다시 차단 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변동 없음.
-- **AC-04. 차단 해제 — 매치 복원 없음**: Given 과거에 차단한 사용자 1명. 매치는 BLOCKED 상태로 잔존. When 사용자가 해당 흐름을 실행하면 Then 차단 row 삭제, 매치/채팅 그대로.
+- **AC-04. 차단 해제 — 매치 복원 없음**: Given 과거에 차단한 사용자 1명. 매치는 BLOCKED 상태로 잔존. When 사용자가 해당 흐름을 실행하면 Then 차단 row status=UNBLOCKED 전환(row 보존), 매치/채팅 그대로. `FavoriteService.isBlockedBetween()` 등 소비자는 이 row를 "차단 중" 아닌 이력으로 처리.
 - **AC-05. 권한 — 존재하지 않는 차단 해제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변동 없음.
 - **AC-06. 차단당한 자의 관점 (간접)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-07. 신고와의 관계 (간접)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과

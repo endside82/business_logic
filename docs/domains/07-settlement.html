@@ -12,7 +12,7 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>17개 도메인<span>›</span>07 모임 정산</div>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>20개 도메인<span>›</span>07 모임 정산</div>
         <h1>07. 모임 정산</h1>
         <p class="lede">
           모임이 끝난 뒤 비용을 참가자에게 나눠 받는 흐름.
@@ -114,8 +114,8 @@ sequenceDiagram
         </ul>
         <div class="callout">
           <span class="label">F06-06과의 관계</span>
-          <p>F06-06의 시스템 STANDARD(24h=100%/12h=50%/0%)는 “이벤트 참가비 일반 결제”에 적용되고,
-          F07-09의 호스트 정의 규칙은 “선입금 모임의 정산 환불”에 적용된다. 두 흐름이 같은 모임에서 동시에 일어나지 않도록 PRD가 분리되어 있다.</p>
+          <p>F06-06의 이벤트별 환불 정책 카탈로그(<code>event_refund_policy</code>, 템플릿 6종)는 “이벤트 참가비 일반 결제”에 적용되고,
+          F07-09의 호스트 정의 규칙(<code>meeting_refund_rule</code>)은 “선입금 모임의 정산 환불”에 적용된다. 두 흐름은 저장 정책이 분리돼 있고, 계산 엔진은 공통 <code>RefundPolicyService.computeRefund</code>를 재사용한다(Phase 4(③): MeetingRefundRule→transient EventRefundPolicy 변환 후 위임, 저장하지 않음). 두 흐름이 같은 모임에서 동시에 일어나지 않도록 PRD가 분리되어 있다.</p>
         </div>
       </section>
 

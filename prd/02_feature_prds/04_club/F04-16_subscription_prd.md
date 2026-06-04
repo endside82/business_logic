@@ -1,6 +1,6 @@
 # F04-16. 클럽 구독 (시작/갱신/해지/재활성) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/04_club/F04-16_subscription -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/04_club/F04-16_subscription -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/04_club/F04-16_subscription`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -73,7 +73,17 @@
 - **F04-13 (ClubFund)**: `deductFromFund` 우선 차감 → 우선순위 결제.
 - **알림**: 결제 실패 단계별 `PAYMENT_FAILED`, 만료 시 `SUBSCRIPTION_EXPIRED` (별 Unit `NotificationService.createNotification`).
 - **Unit 04 자체 (F04-10 / F04-12)**: BUSINESS 클럽 운영 구독이 만료되면 공지/이벤트 작성 차단 (`validateClubSubscription`).
+- **F04-03 소유권 이전**: 소유권 이전 시 구 오너 활성 구독 즉시 CANCELLED + `autoRenew=false`. 신 오너 구독 자동 생성 없음. `club.subscriptionExpiresAt` 폴백으로 기간 내 혜택 유지.
 - **외부**: PG 직접 결제 미연동. 모든 결제는 ClubFund/지갑 잔액에서. (스펙 SCR-CF-005에는 "신용/체크카드", "간편결제(카카오페이)" 옵션이 있으나 서버 미구현 — `(서버 미연동)`)
+
+### processAutoRenewals owner-mismatch 가드 (5f70d1b, 2026-06-04)
+
+소스: `ClubSubscriptionService.java:210-234`
+
+- 자동 갱신 배치 실행 시, 구독 `userId != club.ownerId` 인 stale row 탐지
+- `sub.cancel()` + `sub.setAutoRenew(false)` 후 continue (재청구/알림 없이 조용히 정리)
+- 로그: `[CLUB_SUBSCRIPTION] stale subscription cancelled (owner mismatch)`
+- 목적: 소유권 이전 후 구 오너 구독이 배치에서 재청구되는 것을 방어
 
 ## 5. 프론트 계약
 
@@ -176,14 +186,11 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:136 | - **외부**: PG 직접 결제 미연동. 모든 결제는 ClubFund/지갑 잔액에서. (스펙 SCR-CF-005에는 "신용/체크카드", "간편결제(카카오페이)" 옵션이 있으나 서버 미구현 — `(서버 미연동)`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:41 | - 결제 이력 (`payment_history_list.dart`, 최근 6건): 결제일/금액/결과 — **현재 서버 GET /subscription 응답에 결제 이력 별도 없음** → 클라이언트가 거래 내역(별 Unit) 또는 별도 API로 조립 필요 `(미확인)` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:45 | - "변경하기" ▶ 다른 plan으로 `POST /subscription`(즉시 갱신) — 가격 차이 처리는 서버 측 결제 로직(차액 처리는 `(미확인)`, 현재 코드는 단순히 새 plan 가격 전액 결제) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:81 | - **차액 처리(잔여 월간 환불)는 현재 미구현 — 풀가격 청구**. 클라이언트 안내 필요. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:96 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, 인라인 검증 포인트 모음) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:100 | ### S1 보강 — OWNER 구독 플랜 화면 라벨 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:114 | ### S7 보강 — 구독 관리 화면 surface (해지 진입점) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:126 | - S2~S6의 자동 갱신/실패/SUSPENDED/유예 surface(만료 배지, 재활성 버튼 등)는 본 E2E에서 검증하지 않으나, 본 S7 보강이 ACTIVE 상태 surface의 회귀 가드로 작동한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| **해소** | dossier §4-E / 5f70d1b (2026-06-04) | **소유권 이전 시 구 오너 구독 처리** — `ClubService.transferOwnership`에서 구 오너 활성 구독 즉시 CANCELLED + autoRenew=false. processAutoRenewals owner-mismatch stale row 가드 추가. **구현 완료** (5f70d1b, 2026-06-04) | 완료 |
+| 후보 | backend.md:136 | **외부 PG 미연동**: PG 직접 결제 미연동. 모든 결제는 ClubFund/지갑 잔액에서. (스펙 SCR-CF-005에는 "신용/체크카드", "간편결제(카카오페이)" 옵션이 있으나 서버 미구현) | Decision Needed: PG 연동 여부 결정 |
+| 후보 | frontend.md:41 | **결제 이력 조회 미확인**: 서버 GET /subscription 응답에 결제 이력 별도 없음 → 클라이언트가 거래 내역(별 Unit) 또는 별도 API로 조립 필요 | 실제 소스 대조 확인 |
+| 후보 | frontend.md:45 | **플랜 변경 차액 처리 미구현**: 월간→연간 변경 시 잔여 월간 환불 없이 풀가격 청구. 클라이언트 안내 필요 | Decision Needed: 차액 처리 정책 결정 |
+| 정보 | G5 (dossier) | **신 오너 구독 없음 + subscriptionExpiresAt 폴백**: 소유권 이전 후 신 오너에게 즉시 구독 안내 화면 없음. 앱 구독 관리 화면은 별도 진입 필요 | 신 오너 대상 구독 안내 UX 추가 검토 |
 
 ## 9. 수용 기준
 

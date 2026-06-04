@@ -1,6 +1,6 @@
 # F09-02. 데이팅 프로필 관리 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/09_private_date/F09-02_profile -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/09_private_date/F09-02_profile -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/09_private_date/F09-02_profile`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -69,12 +69,26 @@
 
 - **Enum `DateGender`** (int code): `MALE(0), FEMALE(1)`
 - **Enum `ProfileVisibility`** (int type): `PUBLIC(0), MATCHED_ONLY(1), HIDDEN(2)`
+- **Enum `DatePhotoModerationStatus`** (`DatePhotoModerationStatus.java`) — Wave D-6 신규:
+
+  | 값 | 설명 | 외부 노출 |
+  |---|---|---|
+  | `PENDING` | 업로드 직후 기본값. 수동/자동 검수 대기 | 본인만 |
+  | `APPROVED` | 검수 통과 | 전체 |
+  | `REJECTED` | 검수 거절 (부적절 이미지 등) | 본인만 |
+  | `UNDER_REPORT` | 신고 접수 중. hard delete 차단(legal hold) + 노출 보류 | 본인만 |
+
 - **Entity `DateProfile`** 핵심:
   - `id, userId, displayName, birthYear, gender(int), introduction, height?, occupation?, locationCity?`
   - `preferredGender(int), preferredAgeMin?, preferredAgeMax?`
   - `isActive(boolean), visibility(int), lastActiveAt, createdAt, updatedAt`
-- **Entity `DateProfilePhoto`**: `id, profileId, photoUrl, isPrimary, isVerified, displayOrder, createdAt`
+- **Entity `DateProfilePhoto`** (Wave D-6 이후 추가 컬럼):
+  - `id, profileId, photoUrl(varchar 500, 하위호환 fallback), isPrimary, isVerified, displayOrder, createdAt`
+  - `fileId Long` — `file_metadata.id` FK (Wave D-6 이후 업로드는 필수, 이전 row는 NULL 허용)
+  - `moderationStatus varchar(20)` — `DatePhotoModerationStatus.name()`, 기본 `PENDING`
+  - `moderatedAt LocalDateTime` — 검수 처리 시각
 - **VO `DateProfileVo`**: gender/preferredGender/visibility를 **String enum 이름으로 직렬화** (서버 코드의 mapper가 변환).
+- **VO `DateProfilePhotoVo`** (Wave D-6 이후 신규 필드): `fileId(Long?), moderationStatus(String), moderatedAt(LocalDateTime?)` — 클라이언트가 검수 상태 기반 사진 표시 제어에 활용해야 함 (아래 Gap 참조)
 
 ### 의존 단위 / 외부 시스템
 
@@ -187,8 +201,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:64 | - **사진 슬롯 그리드**: 2x3, 빈 슬롯에는 + 아이콘 (편집 모드 미구현 — 현재 코드에서는 사진 추가 UI 미연결) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:45 | 3. 클라이언트는 `Result.failure`로 받아 토스트 ("사진은 최대 6장까지 등록 가능합니다" — 스펙 텍스트, 실 화면 미구현 시 일반 에러로 표시) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | frontend.md:64 | **사진 슬롯 그리드**: 2x3, 빈 슬롯에는 + 아이콘 (편집 모드 미구현 — 현재 코드에서는 사진 추가 UI 미연결) | 사진 추가/삭제 UI 구현 |
+| Gap | scenarios.md:45 | 클라이언트는 `Result.failure`로 받아 토스트 ("사진은 최대 6장까지 등록 가능합니다" — 실 화면 미구현 시 일반 에러로 표시) | 에러 토스트 문구 구체화 |
+| Gap (P0) | dossier 09 §3-5 | **Flutter `DateProfilePhotoVo` 미반영**: 서버 Wave D-6에서 `fileId`, `moderationStatus`, `moderatedAt` 신규 필드가 추가됐으나 `community_app/lib/data/models/date/date_profile_photo_vo.dart`에 해당 필드 없음. PENDING/REJECTED 사진 구분 불가, 검수 상태 표시 불가 | Freezed 모델에 `fileId(int?)`, `moderationStatus(String)`, `moderatedAt(DateTime?)` 추가 후 build_runner 재실행. 화면에서 `APPROVED` 사진만 외부 노출 |
 
 ## 9. 수용 기준
 

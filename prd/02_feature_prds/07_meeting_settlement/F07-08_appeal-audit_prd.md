@@ -1,6 +1,6 @@
 # F07-08. 정산 이의제기 / 처리 / 감사로그 (Appeal & Audit Log) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement/F07-08_appeal-audit -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/07_meeting_settlement/F07-08_appeal-audit -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-08_appeal-audit`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -179,6 +179,14 @@
 | 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
 | 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
 | 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
+
+### 통합 분쟁 케이스 union 연결 (Fact)
+
+> **Fact (v3 dispute, 커밋 0eae1ed + 86356e5, 2026-05-29/06-02)**: 본 기능의 `MeetingSettlementAppeal` 이의제기 레코드는 v3 통합 분쟁 케이스 union에서 `SETTLEMENT_APPEAL:{id}` caseId로 노출된다. 소스: `DisputeCaseQueryRepository`, `DisputeLegalHoldService.java`. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
+
+- **조회**: 참가자가 `GET /api/v1/me/dispute-cases?caseType=SETTLEMENT` 또는 `GET /api/v1/me/dispute-cases/{caseId}` 로 `SETTLEMENT_APPEAL:{id}` 케이스 조회 가능 (`DisputeCaseVo` 형태로 반환).
+- **처리(resolution)**: 이의 처리 endpoint는 기존 `PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve` 그대로 유지. 통합 분쟁 경로에서 별도 처리 endpoint 없음.
+- **상태 매핑**: `MeetingSettlementAppeal.AppealStatus(PENDING/APPROVED/REJECTED/RESOLVED)` → `UnifiedDisputeStatus(OPEN/RESOLVED/RESOLVED/CLOSED)` 로 파생.
 
 ## 8. Gap / Risk
 

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F19-02 관심인 캘린더 뷰·알림 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/19-favorite.html">19 관심인</a><span>›</span>
+          F19-02 캘린더 뷰·알림
+        </div>
+        <h1>F19-02. 관심인 캘린더 뷰·새 이벤트 알림</h1>
+        <p class="lede">
+          등록한 관심인들의 공개 모임 일정이 내 캘린더 위에 겹쳐 보이는 기능과,
+          관심인이 새 모임을 열었을 때 받는 알림.
+          캘린더는 하트 아이콘 하나로 오버레이를 켜고 끌 수 있고,
+          알림은 무료·프리미엄 구분 없이 유효 관심인 등록자 전원에게 발송된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">뷰 종류</div><div class="value">2가지</div><div class="hint">전체 집계·개별 1인</div></div>
+          <div class="metric"><div class="label">알림 대상</div><div class="value">전원</div><div class="hint">무료 포함 유효 관심인</div></div>
+          <div class="metric"><div class="label">표시 이벤트</div><div class="value">공개 모임만</div><div class="hint">클럽·비공개 제외</div></div>
+          <div class="metric"><div class="label">주최+참가</div><div class="value">모두 표시</div><div class="hint">관심인이 가는 모임까지</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 내 캘린더를 열면 관심인들이 언제 모이는지 한눈에</span>
+          <p>관심인 캘린더 오버레이는 구글 캘린더의 "다른 사람 캘린더 구독"과 비슷한 경험을 목표로 한다.
+            하트 아이콘을 켜면 관심인 전원의 일정이 내 일정 위에 겹쳐 보인다. 날짜 칸에 누구누구의
+            마커가 뜨고, 탭하면 어떤 모임인지 알 수 있다. 오버레이를 끄면 내 일정만 깨끗하게 남는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">오버레이 켜기</div>
+            <h3>관심인들이 이번 달에 어디에서 모이는지 확인</h3>
+            <p>캘린더 화면 우측 하단의 하트 아이콘을 탭한다. 관심인들의 모임 날짜에 각자의 이름 태그가
+              보인다. 날짜 셀을 탭하면 해당 일의 카드 목록이 표시된다. 카드에서 이벤트 상세로 직접 진입하는 CTA는 현재 없다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — "이 날에 서로 모임이 겹치네" 같은 커뮤니티 맥락을
+              캘린더 한 화면에서 파악할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">새 모임 알림</div>
+            <h3>관심인이 새 모임을 열었다</h3>
+            <p>등록한 관심인이 공개 모임을 발행하면 바로 알림이 온다. "관심인이 '주말 하이킹' 모임을 열었어요."
+              형태의 문구. 탭하면 해당 모임 상세 화면으로 이동한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 관심인의 새 모임을 놓치지 않고 먼저 자리를 잡을 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">비공개 설정된 관심인</div>
+            <h3>관심인이 "캘린더 비공개"를 켜 두었다</h3>
+            <p>그 사람의 일정은 오버레이에 표시되지 않는다. 알림도 발송되지 않는다.
+              비공개 설정 여부는 상대방만 알고, 나에게는 "일정 없음"으로 보인다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">이미 지난 일정</div>
+            <h3>관심인이 지난달에 참가한 모임도 보인다</h3>
+            <p>지난 일정도 캘린더에서 확인할 수 있다. "이 분이 이런 모임을 주로 즐기는구나"를 파악하는 데 도움이 된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>오버레이에 보이는 것 / 안 보이는 것</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">표시 여부</th><th>종류</th><th style="width:32%">이유</th></tr></thead>
+            <tbody>
+              <tr><td>✅ 표시됨</td><td>관심인이 주최하는 공개 독립 모임</td><td>공개 모집 중인 모임</td></tr>
+              <tr><td>✅ 표시됨</td><td>관심인이 참가 확정된 공개 모임</td><td>모임에 가는 것도 관심인의 활동</td></tr>
+              <tr><td>❌ 표시 안 됨</td><td>클럽 내부 행사</td><td>클럽 멤버 전용 정보</td></tr>
+              <tr><td>❌ 표시 안 됨</td><td>비공개(초대 전용) 모임</td><td>공개 범위 외</td></tr>
+              <tr><td>❌ 표시 안 됨</td><td>취소된 모임</td><td>유효한 일정 아님</td></tr>
+              <tr><td>❌ 표시 안 됨</td><td>상대방이 캘린더 비공개 설정한 경우</td><td>프리미엄 프라이버시 설정 존중</td></tr>
+              <tr><td>❌ 표시 안 됨</td><td>차단 관계인 관심인</td><td>안전 필터</td></tr>
+              <tr><td>❌ 표시 안 됨</td><td>프리미엄 해지로 비활성 처리된 관심인</td><td>한도 초과 dormant</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>알림은 언제 오나</h2>
+        <div class="callout">
+          <span class="label">발행 시점에만 — 참가·수정은 알림 없음</span>
+          <p>알림은 관심인이 <strong>모임을 새로 공개(발행)</strong>할 때만 발송된다. 이미 발행된 모임에
+            새 날짜가 추가되거나, 모임 정보가 수정되거나, 관심인이 다른 사람의 모임에 참가할 때는
+            알림이 오지 않는다. "새로 열렸다"는 신호에만 집중해 알림 피로를 줄이기 위한 설계다.</p>
+        </div>
+        <div class="callout">
+          <span class="label">알림 탭 시 모임 상세로 이동된다</span>
+          <p>알림을 탭하면 해당 모임 상세 화면으로 이동한다. <code>notification_router.dart</code>에
+            <code>FAVORITE_PERSON_NEW_EVENT</code> 케이스가 이벤트 상세로 배선되어 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout">
+          <span class="label">알림은 무료 포함 전원에게</span>
+          <p>관심인의 새 모임 알림은 프리미엄 여부와 관계없이 유효한 관심인 등록자 모두에게 발송된다.
+            단, 한도를 초과한 비활성(dormant) 상태의 관심인은 알림 대상에서 제외된다.
+            알림 수신을 끄고 싶으면 알림 설정에서 해당 카테고리를 비활성화하면 된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/19-favorite.html"><div class="eyebrow">상위 도메인</div><h3>19 관심인</h3></a>
+          <a class="card" href="F19-01.html"><div class="eyebrow">이전</div><h3>F19-01 등록·해제·한도</h3><p>등록해야 캘린더가 보인다.</p></a>
+          <a class="card" href="F19-03.html"><div class="eyebrow">연결</div><h3>F19-03 프라이버시 설정</h3><p>상대방이 비공개로 설정하면 안 보인다.</p></a>
+          <a class="card" href="../domains/10-calendar.html"><div class="eyebrow">연관 도메인</div><h3>10 캘린더</h3><p>오버레이가 얹히는 화면.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

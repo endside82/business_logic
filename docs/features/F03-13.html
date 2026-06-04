@@ -92,8 +92,15 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">사용자 취소</div>
             <h3>결제 후 참가자가 직접 취소</h3>
-            <p>WALLET 결제는 정책 기한 안에서 자동 환불된다. BANK 결제는 호스트 수동 환불이 필요하므로
+            <p>WALLET 결제는 이벤트별 환불 정책 카탈로그(STANDARD/STRICT/FLEXIBLE 등)에 따라 남은 시간 비율로 환불된다.
+              BANK 결제는 호스트 수동 환불이 필요하므로
               <code>REFUND_REQUESTED</code> 상태로 남고 호스트에게 환불 요청 알림이 간다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">환불 미리보기</div>
+            <h3>취소 전 예상 환불액 확인</h3>
+            <p>참가자가 취소 버튼을 누르기 전 <code>POST .../refund-preview</code>로 예상 환불액·적용 비율·귀책 카테고리를 미리 볼 수 있다.
+              <code>allowed=false</code>이면 취소 확정 버튼이 비활성화된다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">이벤트 취소</div>
@@ -114,11 +121,32 @@ flowchart TD
               <tr><td>POST</td><td><code>/api/v1/events/{eventId}/prepayment/bank-declare</code></td><td>계좌이체 입금 신고</td></tr>
               <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/bank-confirm</code></td><td>호스트 입금 확인</td></tr>
               <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/bank-reject</code></td><td>호스트 입금 거부</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-wallet</code></td><td>지갑 선입금 환불</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-wallet</code></td><td>지갑 선입금 환불 (카탈로그 기반 환불율 적용)</td></tr>
               <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm</code></td><td>호스트 수동 계좌환불 완료 표시</td></tr>
+              <tr><td>GET</td><td><code>/api/v1/refund-policy-templates</code></td><td>환불 정책 카탈로그 6종 조회 (public)</td></tr>
+              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-preview</code></td><td>환불 예상액 미리보기</td></tr>
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section>
+        <h2>환불 정책 카탈로그</h2>
+        <p>환불율은 이벤트별 <code>event_refund_policy</code> 카탈로그에 기반한 by_time 다단계 비율로 산출된다. 귀책(RefundFaultCategory)에 따라 100%~0% 범위에서 결정된다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>템플릿</th><th>주요 tier</th><th>고정 수수료</th></tr></thead>
+            <tbody>
+              <tr><td>STANDARD</td><td>168h→100%, 72h→80%, 24h→50%, 12h→30%, 0h→0%</td><td>1,000원</td></tr>
+              <tr><td>STRICT</td><td>168h→100%, 72h→50%, 24h→0%</td><td>2,000원</td></tr>
+              <tr><td>FLEXIBLE</td><td>24h→100%, 0h→0%</td><td>없음</td></tr>
+              <tr><td>FULL</td><td>항상 100%</td><td>없음</td></tr>
+              <tr><td>NON_REFUNDABLE</td><td>항상 0%</td><td>없음</td></tr>
+              <tr><td>CUSTOM</td><td>호스트 직접 설정 (1~6 segments)</td><td>조정 가능</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>귀책(HOST_FAULT/FORCE_MAJEURE/MUTUAL/RESCHEDULE_DECLINED)</strong>이면 정책과 무관하게 100% 환불, 수수료 0. 참가자 귀책(PARTICIPANT_FAULT)이면 by_time 비율 적용.</p>
       </section>
 
       <section>
@@ -126,7 +154,8 @@ flowchart TD
         <div class="callout danger">
           <span class="label">돈과 정원이 같이 움직이는 구간</span>
           <ul>
-            <li><strong>BANK_TRANSFER는 분개가 없다.</strong> 호스트가 직접 수취하므로 플랫폼 회계는 audit과 상태만 남긴다.</li>
+            <li><strong>환불율은 카탈로그 기반 다단계다.</strong> "마감 전 100%/마감 후 0%"가 아니라 이벤트별 <code>event_refund_policy</code>(6종 템플릿)의 by_time tier가 적용된다. 귀책(HOST_FAULT 등)이면 100%, 참가자 귀책이면 정책%.</li>
+            <li><strong>BANK_TRANSFER는 분개가 없다.</strong> 호스트가 직접 수취하므로 플랫폼 회계는 audit과 상태만 남긴다. BANK 수동 환불도 정책 상한(<code>BANK_REFUND_EXCEEDS_POLICY</code>) 적용.</li>
             <li><strong>capacity는 결제 확정 시점에만 증가한다.</strong> 결제 대기 인원은 예약 대기 수로 보이지만 참석 확정자는 아니다.</li>
             <li><strong>탈퇴 차단 조건이 생긴다.</strong> PENDING, PAID, REFUND_REQUESTED 결제 row가 남아 있으면 계정 비활성화를 막아야 한다.</li>
             <li><strong>F07-09의 모임 정산 선입금과 다르다.</strong> 본 단위는 이벤트 참가비 선입금이고, 정산 선입금은 모임 종료 후 비용 분담 보증금이다.</li>

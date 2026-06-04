@@ -52,6 +52,8 @@
 4. 강제 환불은 판매자 승인 환불과 동일한 회계 경로를 탄다. 다만 `decision_source = OPERATOR` 메타가 남는다.
 5. 결정은 양측에 알림으로 통지된다. 판매자 측 정산·노출 패널티는 누적되어 별도 정책으로 추적된다.
 
+> **Fact (v3 dispute union, 커밋 86356e5, 2026-06-02)**: `purchase_refund_dispute` 레코드는 v3 통합 분쟁 케이스 view에서 `REFUND_DISPUTE:{id}` caseId로 조회된다. 구매자가 `GET /api/v1/me/dispute-cases?sourceType=REFUND` 로 조회하면 `DisputeCaseVo` 형태로 포함됨. `DisputeLegalHoldService`가 `RefundDisputeStatus(OPEN→OPEN/UPHELD/OVERTURNED→RESOLVED/CLOSED→CLOSED)` 매핑을 통해 legal hold 적용 — active 상태(OPEN)이면 evidence 삭제 차단, 증거 파일 1년 보존 retention 스케줄러 대상. SLA 스케줄러(`DisputeSlaExceededScheduler`) 7일 초과 시 `DISPUTE_SLA_EXCEEDED HIGH` 운영알림 대상. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
+
 ## 4. 상태 모델
 
 ```

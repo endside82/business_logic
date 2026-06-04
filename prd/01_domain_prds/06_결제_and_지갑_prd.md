@@ -2,7 +2,7 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-22; unit: business_logic/units/06_payment -->
 
-> 문서 상태: **도메인 전환본 + W2 신규 결제 경로 통합 (2026-05-22)**. 이 문서는 `business_logic/units/06_payment/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본 + W2 신규 결제 경로 통합 (2026-05-22)**. 이 문서는 `business_logic/units/06_payment/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 >
 > 2026-05-22 변경 이력:
 > - **F06-06 갱신** — 신규 결제 경로 `WalletService.payForApplication`(referenceType=`EVENT_PREPAYMENT`) 추가. 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)는 변경 없음 (D8). 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 도입. 자세한 내용은 F06-06 §4.2 W2 절 참조.
@@ -134,12 +134,13 @@
 - **결과 상태 변화**: 활성 시 결제 시점 잔액 체크 → 임계값 이하면 자동 충전 트리거 → 잔액 부족이면 자동 충전 우선 실행 후 원래 결제 재시도. 자동 충전 결과는 거래 내역에 기록되고 알림 발송.
 
 ### F06-06 포인트 결제·환불
-- **사용자 가치**: 이벤트 참여비를 별도 카드 입력 없이 보유 포인트로 즉시 지불하고, 정해진 정책에 따라 취소·환불을 받는다.
-- **주요 화면**: 결제는 이벤트/플랜/호스팅 티켓 등 호출 화면(상세는 각 유닛). 본 유닛에서는 환불 정책 안내(거래 상세·환불 모달)와 거래 기록을 노출.
+- **사용자 가치**: 이벤트 참여비를 별도 카드 입력 없이 보유 포인트로 즉시 지불하고, `event_refund_policy` 카탈로그(6종 템플릿)에 따라 취소·환불을 받는다.
+- **주요 화면**: 결제는 이벤트/플랜/호스팅 티켓 등 호출 화면(상세는 각 유닛). 본 유닛에서는 환불 정책 안내(거래 상세·환불 미리보기 모달)와 거래 기록을 노출.
 - **백엔드 엔드포인트**:
   - `POST /api/v1/wallet/pay` (`PaymentParam`: eventId 등) → `TransactionVo` (포인트 차감). 기존 경로. referenceType=`EVENT_PAYMENT`.
   - `POST /api/v1/wallet/refund` (`RefundParam.eventId`) → `TransactionVo` (환불 거래 생성).
-  - `GET /api/v1/wallet/refund/policy` → 24시간 전 100% / 12시간 전 50% / 12시간 미만 0% 규정 응답.
+  - `GET /api/v1/wallet/refund/policy` → 레거시 안내 고정값(24h=100%/12h=50%/0%) 응답. 실제 환불 계산에는 미사용(하위 호환 유지).
+  - `GET /api/v1/refund-policy-templates` → `List<RefundPolicyTemplateVo>`. 카탈로그 6종(STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM). 소스: `RefundPolicyController.java:36` (D-1, 2026-06-04).
   - (W2 신규, 내부 호출 전용) `WalletService.payForApplication(userId, applicationId, eventPaymentId, eventId, hostId, amount)` — referenceType=`EVENT_PREPAYMENT` / referenceId=`eventPaymentId`. controller 노출 없음, `EventPrepaymentService.payByWallet` facade가 호출 (F03-13).
 - **선결 조건/상태**: 인증 필요. 잔액 부족 시 자동충전(설정 ON) 또는 충전 화면 분기. 환불은 정책 조건과 결제 거래 존재가 전제. 신규 경로는 `Application=APPROVED_PENDING_PAYMENT` 상태에서만 진입 가능 (facade 가드).
 - **결과 상태 변화**: 결제 시 잔액 차감 + 거래 내역에 결제 행 + 이벤트 참여 확정. 환불 시 잔액 복구 + 환불 거래(원거래 링크 포함) + 알림. 실패 시 재시도 또는 고객센터 안내. 신규 경로는 `event_payment(PAID)` 전이 + facade에서 `confirmPaymentAndAttend`로 ATTENDING 확정.

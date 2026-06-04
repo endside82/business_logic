@@ -2,32 +2,36 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/11_review_report -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/11_review_report/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/11_review_report/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
 ## 1. 결론
 
 이 단위는 community 플랫폼이 모임이 끝난 뒤 사용자 간 신뢰를 회복·축적하는 "후속 평가" 영역을 담당한다. 이벤트에 실제로 참석한 사용자가 공개 리뷰(별점 + 텍스트)를 남기고, 이벤트별·사용자별 리뷰 목록과 평균/분포를 열람한다. 부적절한 콘텐츠(이벤트/사용자/리뷰/클럽)는 신고로 운영자에게 전달되어 검토 큐에 쌓이고, 모든 활동(참석, 리뷰, 신고, 노쇼 등)은 0~100점 범위의 신뢰점수(TrustScore)로 환산되어 본인은 변동 이력까지, 타인은 점수·등급만 열람 가능하다. 또한 비공개 취향 평가(별점 + 태그 + 메모)와 자동 누적되는 취향 프로필(긍정/부정 태그 가중치, 선호 카테고리/시간대/그룹 크기)을 통해 추천·매칭 품질을 개인화한다. 이 단위가 끝나면 사용자는 자신의 평판(공개 리뷰)과 신뢰등급, 자신만의 취향 데이터(비공개 평가/태그)를 확인·관리할 수 있다.
 
-이 도메인은 기능 PRD 6개로 구성된다. 현재 기능별 trace source는 총 15개이고, risk 후보는 총 10개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+이 도메인은 기능 PRD 7개로 구성된다. 현재 기능별 trace source는 총 15개이고, risk 후보는 총 10개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+
+2026-06-04 기준 호스트 리뷰 모더레이션(답변/임시 숨김) 기능이 서버와 앱 모두 구현 완료됐다(F11-07). ReportType이 8종으로 확장되어 CLUB 신고가 지원된다(v1 운영자 수동). 신뢰점수 임계값이 서버 단일출처로 통합됐다(클라 하드코딩 제거, b0dc370).
 
 ## 2. 실사 근거 맵
 
 | ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
 |---|---|---|---|---|---:|---:|
 | F11-01 | F11-01. 이벤트 리뷰 작성 | [F11-01_event-review-write_prd.md](../02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | [F11-01_event-review-write](../../units/11_review_report/F11-01_event-review-write) | 전환 완료 | 1 | 0 |
-| F11-02 | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | [F11-02_review-list_prd.md](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | [F11-02_review-list](../../units/11_review_report/F11-02_review-list) | 전환 완료 | 2 | 2 |
+| F11-02 | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | [F11-02_review-list_prd.md](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | [F11-02_review-list](../../units/11_review_report/F11-02_review-list) | 갱신 완료 (2026-06-05) | 2 | 2 |
 | F11-03 | F11-03. 리뷰 수정 & 삭제 | [F11-03_review-edit-delete_prd.md](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | [F11-03_review-edit-delete](../../units/11_review_report/F11-03_review-edit-delete) | 전환 완료 | 2 | 3 |
-| F11-04 | F11-04. 신고 (이벤트/사용자/리뷰/클럽) | [F11-04_report_prd.md](../02_feature_prds/11_review_report/F11-04_report_prd.md) | [F11-04_report](../../units/11_review_report/F11-04_report) | 전환 완료 | 2 | 3 |
-| F11-05 | F11-05. 신뢰점수 & 변동 이력 | [F11-05_trust-score_prd.md](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | [F11-05_trust-score](../../units/11_review_report/F11-05_trust-score) | 전환 완료 | 3 | 1 |
+| F11-04 | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | [F11-04_report_prd.md](../02_feature_prds/11_review_report/F11-04_report_prd.md) | [F11-04_report](../../units/11_review_report/F11-04_report) | 갱신 완료 (2026-06-05) | 2 | 4 |
+| F11-05 | F11-05. 신뢰점수 & 변동 이력 | [F11-05_trust-score_prd.md](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | [F11-05_trust-score](../../units/11_review_report/F11-05_trust-score) | 갱신 완료 (2026-06-05) | 3 | 1 |
 | F11-06 | F11-06. 취향 평가 & 취향 프로필 | [F11-06_taste-profile_prd.md](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | [F11-06_taste-profile](../../units/11_review_report/F11-06_taste-profile) | 전환 완료 | 5 | 1 |
+| F11-07 | F11-07. 호스트 리뷰 모더레이션 (답변 · 임시 숨김) | [F11-07_review-moderation_prd.md](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | — | 신규 작성 (2026-06-05) | 5 | 4 |
 
 ## 3. 먼저 볼 기능
 
 | 먼저 볼 기능 | 기능 | 이유 |
 |---|---|---|
+| [F11-07](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | F11-07. 호스트 리뷰 모더레이션 | Risk 후보 4 (답변 수정 미배선, autoEscalate 불일치, 알림 미구현, 엔티티 직접 반환) |
 | [F11-03](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | F11-03. 리뷰 수정 & 삭제 | Risk 후보 3 |
-| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽) | Risk 후보 3 |
-| [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | Risk 후보 2 |
+| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | Risk 후보 4 |
+| [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | Risk 후보 2 (호스트 답변 수정 409 잠재) |
 | [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | Risk 후보 1 |
 | [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | Risk 후보 1 |
 
@@ -40,11 +44,12 @@
 | F11-01 | 이벤트 리뷰 작성 | 참석한 이벤트에 별점(1~5)과 텍스트 후기를 남긴다 | 별점 탭, 후기 입력, "제출" 탭 |
 | F11-02 | 리뷰 목록 조회 (이벤트별/사용자별) | 이벤트 또는 사용자 단위로 받은 리뷰 목록과 평균 별점·분포를 본다 | 이벤트 리뷰 탭/사용자 프로필 리뷰 탭 진입, 스크롤 |
 | F11-03 | 리뷰 수정 & 삭제 | 본인이 작성한 리뷰를 수정하거나 삭제한다 | 리뷰 카드의 수정/삭제 액션 |
-| F11-04 | 신고 (이벤트/사용자/리뷰/클럽) | 부적절한 콘텐츠를 신고 유형 + 상세 설명으로 운영자에게 접수한다 | 신고 대상의 "신고" 탭 → 유형 선택 → 상세 설명 입력 → "신고" 탭 |
-| F11-05 | 신뢰점수 & 변동 이력 | 본인/타인의 신뢰점수·등급을 확인하고, 본인은 기간별 변동 이력까지 본다 | 마이페이지/프로필의 신뢰점수 진입, 기간(1주/1개월/3개월) 변경 |
+| F11-04 | 신고 (이벤트/사용자/리뷰/클럽/카풀) | 부적절한 콘텐츠를 신고 유형 + 상세 설명으로 운영자에게 접수한다. 증빙 파일 첨부(max 5개) 지원. CLUB(7) 서버 지원(v1 수동). | 신고 대상의 "신고" 탭 → 유형 선택 → 상세 설명 입력 → "신고" 탭 |
+| F11-05 | 신뢰점수 & 변동 이력 | 본인/타인의 신뢰점수·등급을 확인하고, 본인은 기간별 변동 이력까지 본다. 다음 등급 임계는 서버 nextGradeScore 값 사용. | 마이페이지/프로필의 신뢰점수 진입, 기간(1주/1개월/3개월) 변경 |
 | F11-06 | 취향 평가 & 취향 프로필 | 비공개 별점·태그·메모 기록과 자동 누적된 긍정/부정 태그 가중치, 선호 카테고리/시간대/그룹 크기를 조회·설정한다 | 평점 작성, 취향 프로필 조회, "선호도 설정" 바텀시트에서 카테고리/시간/그룹 선택 → 저장 |
+| F11-07 | 호스트 리뷰 모더레이션 (답변·임시 숨김) | 이벤트 호스트가 본인 이벤트에 달린 리뷰에 답변을 달고(1:1, 24h 수정), 임시 숨김(6종 사유코드, autoEscalate→신고 자동생성) 처리한다 | 리뷰 카드 더보기 → 답변하기 / 임시 숨김 / 숨김 해제 |
 
-> M = 6 기능. F11-01 ~ F11-03은 공개 리뷰 라이프사이클(작성/조회/수정·삭제)이고, F11-04는 신고 접수, F11-05는 신뢰점수(공개 점수 + 본인 한정 이력), F11-06은 비공개 취향(평가 + 프로필 누적/설정)이다. 컨트롤러에는 본인이 받은 신고 목록 조회(`GET /api/v1/reports/my`)도 존재하나 신고 라이프사이클의 보조 기능이므로 F11-04에 흡수한다. UI 스펙(SCR-RR-005)에는 활동 패턴 히트맵·월별 차트가 있으나 서버 `TasteProfileVo`/`RatingStatsVo`에 해당 필드가 없고 클라이언트도 렌더링하지 않으므로 본 단위 기능 목록에 포함하지 않는다.
+> M = 7 기능. F11-01 ~ F11-03은 공개 리뷰 라이프사이클(작성/조회/수정·삭제), F11-04는 신고 접수(8종 대상, 증빙 첨부, 자동 플래그), F11-05는 신뢰점수(공개 점수 + 본인 한정 이력), F11-06은 비공개 취향(평가 + 프로필 누적/설정), F11-07은 호스트 모더레이션(답변/숨김)이다. 컨트롤러에는 본인이 받은 신고 목록 조회(`GET /api/v1/reports/my`)도 존재하나 F11-04에 흡수한다. UI 스펙(SCR-RR-005)에는 활동 패턴 히트맵·월별 차트가 있으나 서버 `TasteProfileVo`/`RatingStatsVo`에 해당 필드가 없고 클라이언트도 렌더링하지 않으므로 본 단위 기능 목록에 포함하지 않는다.
 
 ---
 
@@ -151,13 +156,14 @@
 
 ## 7. Gap / Risk Rollup
 
-| 기능 | 제목 | 후보 수 | 처리 기준 |
+| 기능 | 제목 | Risk 수 | 처리 기준 |
 |---|---|---:|---|
-| [F11-03](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | F11-03. 리뷰 수정 & 삭제 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽) | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F11-07](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | F11-07. 호스트 리뷰 모더레이션 | 4 | 답변 수정 UI 미배선(409 잠재), autoEscalate 기본값 불일치, 알림 미구현, 엔티티 직접 반환 — 기능 PRD §8 참조 |
+| [F11-03](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | F11-03. 리뷰 수정 & 삭제 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 source 대조로 확정 |
+| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | 4 | DDL COMMENT 불일치, contextId 미배선(실영향 없음), OTHER 서버 미검증, CLUB v1 안내 미노출 — 기능 PRD §8 참조 |
+| [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | 2 | 정렬 미구현, 답변 수정 경로 미배선(409 잠재) — 기능 PRD §8 참조 |
+| [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | 1 | breakdown 키 매핑 불일치 — 기능 PRD §8 참조 |
+| [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | 1 | 기능 PRD의 `Gap / Risk` 섹션 확인 |
 
 ## 8. 운영 방법
 

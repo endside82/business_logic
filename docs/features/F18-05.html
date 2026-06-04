@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F18-05 호스트 운영 인박스 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/18-dispute.html">18 분쟁 해결</a><span>›</span>
+          F18-05 호스트 운영 인박스
+        </div>
+        <h1>F18-05. 호스트 운영 인박스</h1>
+        <p class="lede">
+          호스트가 처리해야 할 이벤트 문의, 참가 신청, 정산 이의, 공개 신고, 결제·환불 이슈, 운영 이슈, 분쟁 케이스를
+          <strong>한 화면에서 확인하고 처리</strong>하는 운영 대시보드. 8가지 source를 NEEDS_RESPONSE·IN_PROGRESS·DONE
+          3탭으로 분류하고, 미응답 이벤트 문의에는 건수 배지가 표시된다. 분쟁 케이스 카드는
+          케이스 상세 화면으로 바로 연결된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">통합 source</div><div class="value">8가지</div><div class="hint">문의·신청·분쟁·결제·정산</div></div>
+          <div class="metric"><div class="label">처리 상태</div><div class="value">3탭</div><div class="hint">응답필요/처리중/완료</div></div>
+          <div class="metric"><div class="label">응답률</div><div class="value">통계 제공</div><div class="hint">평균 응답 시간 포함</div></div>
+          <div class="metric"><div class="label">실시간 업데이트</div><div class="value">미지원</div><div class="hint">pull-to-refresh만 지원</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 호스트가 "오늘 내가 뭘 처리해야 하는지" 한 눈에</span>
+          <p>이전에는 이벤트 문의는 이벤트 화면, 참가 신청은 신청 관리, 정산 이의는 정산 화면으로
+            흩어져 있었다. 운영 인박스는 이 모든 항목을 하나의 처리 큐로 모아 호스트가 우선순위를 파악하고
+            놓치는 것 없이 대응하게 한다. 특히 이벤트 문의 미응답 건수 배지가
+            "답장 안 한 게 있다"는 것을 즉각 알려준다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>8가지 source와 처리 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["호스트 인박스 진입"] --> B["GET /host/inbox\n8 source 통합"]
+    B --> C["NEEDS_RESPONSE 탭"]
+    B --> D["IN_PROGRESS 탭"]
+    B --> E["DONE 탭"]
+
+    C --> F["EVENT_MESSAGE\n이벤트 문의 스레드"]
+    C --> G["APPLICATION\n참가 신청 PENDING"]
+    C --> H["MEETING_SETTLEMENT_APPEAL\n정산 이의"]
+    C --> I["REPORT\n공개 신고"]
+    C --> J["PAYMENT_ISSUE\n결제 이슈"]
+    C --> K["REFUND_ISSUE\n환불 이슈"]
+    C --> L["OPERATIONAL_ISSUE\n운영 이슈"]
+    C --> M["DISPUTE_CASE\n분쟁 케이스"]
+
+    F -->|"unansweredCount > 0"| N["'미응답 N' 배지"]
+    M -->|"카드 탭"| O["/host/disputes/{caseId}\n케이스 상세 화면"]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>8가지 source 개요</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>source</th><th>내용</th><th>특이사항</th></tr></thead>
+            <tbody>
+              <tr><td><strong>EVENT_MESSAGE</strong></td><td>이벤트 문의 스레드 (참가자→호스트)</td><td>스레드 단위 미응답 판정 → unansweredCount 배지</td></tr>
+              <tr><td><strong>APPLICATION</strong></td><td>참가 신청 (PENDING / 취소환불대기)</td><td>상태 기반 처리 필요 여부 판정</td></tr>
+              <tr><td><strong>MEETING_SETTLEMENT_APPEAL</strong></td><td>모임 정산 이의</td><td>실제 처리는 07 도메인 canonical</td></tr>
+              <tr><td><strong>REPORT</strong></td><td>호스트 이벤트(EVENT type) target 공개 신고</td><td>ReportType.EVENT(targetType=1)만 포함. EVENT_PHOTO 매칭은 후속 wave 미구현</td></tr>
+              <tr><td><strong>PAYMENT_ISSUE</strong></td><td>결제·지갑 거래 관련 운영 이슈</td><td>relatedHostUserId=host인 항목만</td></tr>
+              <tr><td><strong>REFUND_ISSUE</strong></td><td>환불 이슈 + failed_refund 이벤트 항목</td><td>상태 기반 처리</td></tr>
+              <tr><td><strong>OPERATIONAL_ISSUE</strong></td><td>정산·정기모임 정산 관련 운영 이슈</td><td>호스트가 정산 creator인 항목만</td></tr>
+              <tr><td><strong>DISPUTE_CASE</strong></td><td>통합 분쟁 케이스 5개 도메인</td><td>disputeCaseId로 케이스 상세 직접 이동</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>인박스 열면 오늘 할 일이 한눈에</h3>
+            <p>호스트가 인박스에 진입하면 "응답 필요" 탭에 미처리 항목이 모인다.
+              상단 헤더에는 총 응답 필요 건수와 응답률, source별 카운트가 보인다.
+              EVENT_MESSAGE 카드에 "미응답 3"이 표시되어 있으면 답장이 필요한 스레드가 3개다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 여러 화면을 돌아다니지 않아도
+              처리해야 할 것이 얼마나 남았는지 즉시 인지한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">분쟁 케이스 처리</div>
+            <h3>인박스에서 분쟁 케이스 상세로 바로 이동</h3>
+            <p>DISPUTE_CASE 카드에는 케이스 id가 연결되어 있다. 카드를 탭하면
+              호스트 분쟁 케이스 상세 화면(<code>/host/disputes/{caseId}</code>)으로 바로 이동한다.
+              상세 화면에서 타임라인·증빙을 확인하고 호스트 액션 패널로 처리한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">이벤트 문의</div>
+            <h3>미응답 문의가 있다는 알림</h3>
+            <p>EVENT_MESSAGE 카드의 "미응답 N" 배지는 스레드 단위로 집계된다.
+              배지를 보고 해당 스레드로 이동해 답장을 보내면 응답 필요 탭에서 빠진다.
+              실시간 업데이트가 없으므로 최신 상태는 pull-to-refresh로 갱신한다. 화면 재진입 시 자동 갱신되지 않는다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">통계 헤더</div>
+            <h3>응답률과 평균 응답 시간 확인</h3>
+            <p>인박스 상단에는 전체 응답률(%)과 평균 응답 시간(분), source별 항목 수가 표시된다.
+              "이번 주 응답률 82%" 같은 형태로 호스트 자신의 운영 품질을 인지하게 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">탭 분류</div>
+            <h3>처리 단계별로 나누어 보기</h3>
+            <p>"응답 필요" 탭은 지금 당장 처리해야 할 항목, "처리 중" 탭은 진행 중,
+              "완료" 탭은 마무리된 항목이다. 탭은 NEEDS_RESPONSE/IN_PROGRESS/DONE 3개뿐이며 source type 필터는 없다.
+              pull-to-refresh로 최신 데이터를 재조회한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">운영 주의사항</span>
+          <ul>
+            <li><strong>DISPUTE_CASE 카드의 disputeCaseId가 null이면 fallback 동작이다.</strong> 정상 케이스라면 disputeCaseId가 있어야 한다. null이면 item.id로 대신 이동하는데, 이 경우 상세 화면으로 정확히 이동하지 않을 수 있다.</li>
+            <li><strong>실시간 업데이트가 없다.</strong> 새 문의가 도착해도 화면이 자동으로 갱신되지 않는다. 화면을 벗어났다 돌아와야 최신 목록이 나타난다. 긴급 대응이 필요한 상황에서 호스트가 놓칠 수 있다.</li>
+            <li><strong>대량 항목 시 성능 저하 가능성.</strong> stats 호출 시 size=500 파라미터로 수집을 시작하지만, 개별 finder는 자체 제한(호스트 이벤트 200건, 분쟁 케이스 100건, APPLICATION·REPORT·정산 이의·FailedRefund는 전량 로드)을 따른다. 수집 후 메모리 정렬이 적용되며 최종 페이지 크기는 최대 100건으로 캡된다. 활성 이벤트가 많은 호스트는 인박스 로딩이 느려질 수 있다.</li>
+            <li><strong>dispute 딥링크 미배선.</strong> FCM 알림에서 분쟁 관련 신규 타입을 클릭하면 인박스 화면이 아닌 홈으로 이동한다. REFUND_DISPUTE 기존 3개 타입만 배선되어 있다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">현재 알려진 미구현·주의 사항</span>
+          <ul>
+            <li><strong>dispute 딥링크 미배선.</strong> 분쟁 관련 FCM 알림 클릭 시 인박스 또는 케이스 상세로 이동하지 않는다. 알림을 받아도 어디서 확인해야 할지 찾아야 한다.</li>
+            <li><strong>실시간 업데이트 없음.</strong> WebSocket이나 polling이 없어 새 항목을 즉각 인지할 방법이 없다. 빠른 응답이 필요한 문의 처리에 지장을 줄 수 있다.</li>
+            <li><strong>성능 위험.</strong> HostInboxService stats가 size=500으로 수집을 시작하지만, source별 finder 자체 제한(호스트 이벤트 200건, 분쟁 100건 등)을 거친 후 메모리 정렬·페이징 적용, 최종 출력은 최대 100건이다. 그럼에도 이벤트가 많은 호스트는 응답 지연과 메모리 부하가 발생할 수 있다.</li>
+            <li><strong>노쇼 환불 화면 직접 진입 경로 없음.</strong> 노쇼 환불 화면(<code>/host/disputes/:caseId/no-show-refund/:applicationId</code>)은 호스트 분쟁 상세에서만 들어갈 수 있다. 인박스에서 직접 진입하는 경로가 없다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/18-dispute.html"><div class="eyebrow">상위 도메인</div><h3>18 분쟁 해결</h3></a>
+          <a class="card" href="F18-01.html"><div class="eyebrow">연계</div><h3>F18-01 통합 케이스 조회</h3><p>DISPUTE_CASE 카드에서 이동하는 호스트 케이스 상세.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">연계 도메인</div><h3>03 이벤트</h3><p>EVENT_MESSAGE·APPLICATION source 원천.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">연계 도메인</div><h3>07 모임 정산</h3><p>MEETING_SETTLEMENT_APPEAL source 원천.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

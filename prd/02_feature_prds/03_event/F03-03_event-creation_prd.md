@@ -257,6 +257,35 @@
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
 
-## 11. 변경 이력
+## 12. 공동호스트(CoHost) 권한 세분화 (Wave E-1)
+
+> **갱신일**: 2026-06-05. 소스: `EventCoHost.java:38-55`, `EventCoHostController.java:31`, `EventCoHostService.java:48`.
+
+### 권한 flag 5종
+
+이벤트 생성 이후, 호스트는 공동호스트를 추가한 뒤 5개 권한 flag를 개별 부여할 수 있다. 기본값은 보수적(기존 사용 패턴 유지 위해 `canSendAnnouncement`만 `true`, 나머지 `false`).
+
+| 필드 | 컬럼 | 기본값 | 의미 |
+|---|---|---|---|
+| `canManageAttendance` | `can_manage_attendance` | false | 수동 체크인·참석자 강제 제거·대기열 수동 승급 |
+| `canModerateMessages` | `can_moderate_messages` | false | 타 사용자 메시지 삭제 (콘텐츠 모더레이션) |
+| `canSendAnnouncement` | `can_send_announcement` | **true** | 공지 일괄 발송 (기존 동작 보존) |
+| `canHandleRefundIssue` | `can_handle_refund_issue` | false | 환불 처리 (은행 환불 확인 등) |
+| `canResolveDispute` | `can_resolve_dispute` | false | 분쟁 처리 (host/dispute 도메인 연동) |
+
+### PATCH 엔드포인트
+
+```
+PATCH /api/v1/events/{eventId}/co-hosts/{coHostUserId}/permissions
+```
+
+- **인증**: 호스트 본인만 호출 가능 (`assertHostOrCoHost` 아님 — `assertHost`)
+- **Body**: `EventCoHostPermissionParam` — 5개 `Boolean` 필드, null 필드는 기존 값 유지 (PATCH 의미)
+- **응답**: 갱신된 `EventCoHost` 엔티티
+
+소스: `EventCoHostController.java:31-41`, `EventCoHostService.java:37-70`
+
+## 13. 변경 이력
 
 - **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: 이벤트 생성 시점에 `overcapacityAllowed`/`hardCapacityLimit` 두 필드를 DRAFT로 함께 저장할 수 있도록 `EventAddParam`을 확장. invariant(`hardCapacityLimit >= baseCapacity`) 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)` 400. 생성 후 OPEN 진입 후의 정원 토글은 본 PRD가 아닌 F03-07의 별도 엔드포인트 `PATCH /events/{id}/capacity-settings`로 위임.
+- **2026-06-05 (Wave E-1 — 공동호스트 권한 세분화)**: `EventCoHost` 엔티티에 permission flag 5종 추가(`canManageAttendance/canModerateMessages/canSendAnnouncement/canHandleRefundIssue/canResolveDispute`). `PATCH /api/v1/events/{eventId}/co-hosts/{coHostUserId}/permissions` 신규 엔드포인트 — 호스트 전용, null 필드는 기존 값 유지. `canSendAnnouncement` 기본값 true (기존 동작 보존), 나머지 기본값 false (명시 부여 필요). 소스: §12 공동호스트 권한 세분화.

@@ -41,7 +41,7 @@
 | 인증/권한 | Bearer 필수, `permissionChecker.requireClubMember(clubId, userId)` |
 | Path | `clubId: long` |
 | 응답 | `WarningMemberOverviewVo` |
-| Side effect | summary row 없으면 `getOrInitialize`가 0값 INSERT (`@Transactional`) |
+| Side effect | summary row 없으면 `getOrInitialize`가 0값 INSERT — `WarningQueryService.getMemberOverview`에 `@Transactional(rollbackFor={Exception.class})` 적용(커밋 `4637b30`, 2026-06-04 readOnly tx 500 버그 수정) |
 
 `WarningMemberOverviewVo`: `summary: WarningMemberSummaryVo`, `recentLedger: List<WarningLedgerVo>`(최대 5), `activeSanctions: List<WarningSanctionVo>`.
 
@@ -96,6 +96,7 @@
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
+| **버그 해소** | `getMemberOverview`/`getAdminMemberDetail` readOnly tx에서 `getOrInitialize`/`ensureRow`가 INSERT 시도 → "Connection is read-only" 500 발생 | 커밋 `4637b30` (2026-06-04): 두 메서드에 `@Transactional(rollbackFor = {Exception.class})` 추가로 쓰기 tx 전환. `WarningQueryService.java:54,77` | 해소됨 — 클럽 진입 시 500 오류 없이 summary row 정상 생성 | — |
 | P2 | 정책 비활성 클럽에서도 본인 화면 진입 시 summary row 생성 | `getMyMain`은 `requireActive`를 호출하지 않고, `getOrInitialize`가 row를 INSERT | 경고 제도를 켜지 않은 클럽에도 빈 경고 행이 양산됨(데이터 노이즈) | 정책 비활성 시 본인 화면을 "제도 미운영"으로 처리할지, row 생성을 lazy 유지할지 결정 |
 | P2 | summary 캐시와 원장 일시 불일치 | summary는 `recalculateForUpdate`로 갱신되지만 화면은 캐시값을 신뢰 | 동시 조정 중 점수가 잠깐 어긋나 보일 수 있음 | 화면 새로고침 시 재조회로 수렴, 운영 안내 필요 |
 | P3 | `WarningLedgerSearchParam` 필터 컬럼이 PRD에서 미확정 | 본 PRD에서 search param 필드 전수 확인 안 함 | 원장 필터 UX와 서버 쿼리 정합 미검증 | `WarningLedgerSearchParam`/`WarningLedgerQueryRepository` 대조 후 보강 |

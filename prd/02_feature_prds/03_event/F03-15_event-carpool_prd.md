@@ -59,7 +59,7 @@
 
 ## 4. 서버 계약
 
-### 엔드포인트 요약 (7개)
+### 엔드포인트 요약 (8개)
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
@@ -69,7 +69,23 @@
 | POST | `/api/v1/events/{eventId}/carpool/offers/{offerId}/decision` | `EventCarpoolController#decideOffer` | 호스트/공동호스트 | `decision=CONFIRMED\|REJECTED` 쿼리, status 전이 + 운전자 알림 |
 | PUT | `/api/v1/events/{eventId}/carpool/passenger` | `EventCarpoolController#registerPassenger` | 본인 | `transport_choice`, `boarding_location` upsert |
 | PUT | `/api/v1/events/{eventId}/carpool/passengers/{passengerId}/assignment` | `EventCarpoolController#assign` | 호스트/공동호스트 | `?offerId=` 쿼리. null이면 해제. `pickup_capacity` 초과 시 400 |
-| GET | `/api/v1/events/{eventId}/carpool/offers` (위와 동일) | | | |
+| POST | `/api/v1/events/{eventId}/carpool/offers/{offerId}/report` | `EventCarpoolController#reportDriver` | 인증 | 카풀 운전자 안전신고 (Wave RS-002 P3-B, 갱신 2026-06-05) |
+
+### 카풀 운전자 안전신고 (Wave RS-002 P3-B, 갱신 2026-06-05)
+
+> 소스: `EventCarpoolController.java:68-75`, `ReportType.java:7-24`.
+
+`POST /api/v1/events/{eventId}/carpool/offers/{offerId}/report`
+
+- **인증**: 인증된 사용자 (본인 또는 탑승자)
+- **Body**: `CarpoolReportParam { reason: String @NotBlank (ReportReason.name()), description: String (max 500, nullable) }`
+- **응답**: `ReportVo`
+- **ReportType**: `CARPOOL(6)` — targetId=운전자 userId, contextId=offerId
+- **Flutter 배선**: `carpool_report_param.dart` + `event_carpool_api.dart:13` + `carpool_report_screen.dart` (+180줄) + 라우트 `eventCarpoolReport = '/events/:eventId/carpool/offers/:offerId/report'`
+
+**ReportType 전체 값** (`ReportType.java:7-24`): USER(0), EVENT(1), REVIEW(2), EVENT_PHOTO(3), EVENT_MESSAGE(4), DATE_USER(5), **CARPOOL(6)**, CLUB(7)
+
+**ReportReason 전체 값** (`ReportReason.java:7-13`): HARASSMENT(1), INAPPROPRIATE(2), NO_SHOW(3), FRAUD(4), OTHER(5), LATE(6), BAD_MANNER(7)
 
 `POST /events/{id}/carpool/offer` Body는 `CarpoolOfferParam` (Freezed-equivalent), `PUT /carpool/passenger` Body는 `CarpoolPassengerParam`. 두 param 클래스 모두 `event/transport/param/`에 정의.
 
@@ -216,3 +232,4 @@ CREATE TABLE event_carpool_assignment_log (
 | 일자 | 버전 | 변경 |
 |---|---|---|
 | 2026-05-22 | v0.1 | 신규 — W5 카풀 운영 슬라이스 반영 (PLAN.md v4.5 §3 + E2E S3-1~S3-5). backend-only 1차 출시. swap 로그·Flutter UI는 후속 |
+| 2026-06-05 | v0.2 | Wave RS-002 P3-B — 카풀 운전자 안전신고 엔드포인트 추가 (`POST .../carpool/offers/{offerId}/report`, ReportType.CARPOOL(6)). CarpoolReportParam·Flutter carpool_report_screen·Routes.eventCarpoolReport 배선 완료. ReportType 전체 8종 목록 갱신. |

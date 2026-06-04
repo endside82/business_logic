@@ -1,6 +1,6 @@
 # F06-01. 지갑 메인 조회 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/06_payment/F06-01_wallet-main -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/06_payment/F06-01_wallet-main -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-01_wallet-main`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -51,7 +51,9 @@
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| GET | /api/v1/wallet | WalletController#getWallet | required (`@AuthenticationPrincipal`) | 사용자 지갑 단건 조회 (잔액/누적 메트릭 묶음) |
+| GET | /api/v1/wallet | WalletController#getWallet | required (`@AuthenticationPrincipal`) | 사용자 지갑 단건 조회 (잔액/누적 메트릭 묶음). 지갑 행이 없는 신규 유저는 lazy-create (아래 서버 계약 참조). |
+
+> **Fact (2026-06-04, 커밋 4637b30)**: `WalletService.getWallet`은 `findByUserId` 결과가 null일 때 `self.ensureWalletExists(userId)` 를 호출한다. `self` 는 `@Lazy @Autowired WalletService self` 로 자기 자신을 프록시 경유 주입받아, `@Transactional(propagation=REQUIRES_NEW)` 쓰기 트랜잭션을 readOnly 커넥션과 분리한다. 해결 전에는 신규 가입자가 최초 `GET /api/v1/wallet` 호출 시 "Connection is read-only" 500 오류가 발생했다. 동시 생성 경합은 `DataIntegrityViolationException` catch 후 재조회로 처리. 소스: `WalletService.java:74-100`.
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
@@ -154,7 +156,9 @@
 
 ## 8. Gap / Risk
 
-> 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
+| 등급 | 항목 | 근거 | 영향 | 상태 |
+|---|---|---|---|---|
+| 해소 | S1 신규 유저 첫 GET /api/v1/wallet 500 오류 | `WalletService.getWallet` 에서 readOnly 트랜잭션 내 INSERT 시도로 "Connection is read-only" | 신규 가입자가 지갑 화면 진입 시 500 응답 | **해소** — 4637b30 (2026-06-04): `@Lazy` self-injection + `REQUIRES_NEW` 분리로 수정. 첫 조회부터 balance=0 정상 응답. |
 
 ## 9. 수용 기준
 

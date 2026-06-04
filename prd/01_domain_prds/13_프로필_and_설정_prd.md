@@ -2,9 +2,11 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/13_profile_settings -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/13_profile_settings/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/13_profile_settings/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
 > **2026-05-28 RM 도메인 신설 영향(cross-ref).** `AccountDeactivationService`에 RM 가드 4건 추가(결정 L). (1) `checkRegularMeetingPayments` — PENDING/REFUND_REQUESTED 항상 차단, PAID는 `meeting.status != CLOSED`일 때만 차단. (2) `checkRegularMeetingHosting` — 호스트의 DRAFT/OPEN 운영중 모임 차단(자동 cancel 없음, 금전 발화 방지). (3) `checkRegularMeetingHostedRefunds` — 호스트가 책임진 멤버 PENDING/REFUND_REQUESTED 결제 + RM-keyed failed_refund 차단(CANCELED 호스트의 환불 책임 갭 해소). (4) `checkFailedRefunds` — 멤버측 user_id 기반 PENDING/FAILED 차단. 즉시 비활성화(F13-07) 진입 전 `AccountDeactivationCheckVo.blockingItems`에서 확인. 자세한 내용은 [17 정기모임 도메인 §6](17_정기모임_prd.md).
+
+> **2026-06-05 관심인(19) 도메인 신설 영향(cross-ref).** 마이페이지(`my_profile_screen.dart:115-129`) 메뉴에 두 항목이 추가됐다: ① "관심인" → `/profile/favorites`(`FavoriteListScreen`) — 관심인 목록·등록·해제 진입점. ② "프라이버시 설정" → `/profile/privacy-settings`(`PrivacySettingsScreen`) — 캘린더 비공개 + 가입 클럽 숨기기 토글 진입점(프리미엄 전용). 두 화면 모두 `app_router.dart`의 profile 쉘 내 GoRoute로 등록. 자세한 내용은 [19 관심인 도메인](19_관심인_prd.md).
 
 ## 1. 결론
 

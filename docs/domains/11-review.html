@@ -12,7 +12,7 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>17개 도메인<span>›</span>11 리뷰·신고</div>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>20개 도메인<span>›</span>11 리뷰·신고</div>
         <h1>11. 리뷰 · 신고</h1>
         <p class="lede">
           활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다.
@@ -37,6 +37,7 @@
           <a class="card" href="../features/F11-04.html"><div class="eyebrow">F11-04</div><h3>신고</h3><p>대상 유형, 자기 신고·중복 신고 차단, 운영 접수.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F11-05.html"><div class="eyebrow">F11-05</div><h3>신뢰점수·변동 이력</h3><p>본인·타인 노출 차이, 등급 임계, 이력.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F11-06.html"><div class="eyebrow">F11-06</div><h3>취향 평가·취향 프로필</h3><p>비공개 평가, 태그 가중치, 데이터 부족 빈 상태.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F11-07.html"><div class="eyebrow">F11-07</div><h3>호스트 리뷰 모더레이션</h3><p>답변(1:1·24h 수정), 임시 숨김(6사유코드), autoEscalate 신고 연동.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
 
@@ -160,26 +161,27 @@ flowchart LR
             </tbody>
           </table>
         </div>
-        <p>대상 유형은 <code>EVENT</code> / <code>USER</code> / <code>REVIEW</code> 3가지. <strong><code>CLUB</code>은 클라이언트 UI에는 표시되지만 서버 enum에 없다</strong> — 알려진 Gap이며 <code>targetType="CLUB"</code> 전송 시 <code>REPORT_INVALID_TARGET</code>으로 거절된다.</p>
+        <p>대상 유형은 8가지: <code>USER(0)</code> / <code>EVENT(1)</code> / <code>REVIEW(2)</code> / <code>EVENT_PHOTO(3)</code> / <code>EVENT_MESSAGE(4)</code> / <code>DATE_USER(5)</code> / <code>CARPOOL(6)</code> / <code>CLUB(7)</code>. <strong>CLUB 신고는 2026-06-04 서버 지원 완료</strong> — v1은 운영자 수동 집행, 자동 제재 없음. 카풀 신고는 전용 엔드포인트(<code>POST /events/{id}/carpool/offers/{offerId}/report</code>) 경로를 탄다.</p>
       </section>
 
       <section>
-        <h2>등급 임계 — 서버·클라이언트 불일치 (알려진 Gap)</h2>
-        <div class="table-wrap">
+        <h2>등급 임계 — 서버 단일출처 (2026-06-04 해소)</h2>
+        <div class=”table-wrap”>
           <table>
             <thead><tr><th></th><th>서버 (정답)</th><th>클라이언트 (현재)</th></tr></thead>
             <tbody>
-              <tr><td>SILVER 도달</td><td>40+</td><td>40+</td></tr>
-              <tr><td>GOLD 도달</td><td><strong>60+</strong></td><td>60+</td></tr>
-              <tr><td>PLATINUM 도달</td><td><strong>75+</strong></td><td><strong>80+</strong></td></tr>
-              <tr><td>DIAMOND 도달</td><td><strong>90+</strong></td><td>없음 (PLATINUM이 최대)</td></tr>
+              <tr><td>SILVER 도달</td><td>40+</td><td>40+ (서버 <code>nextGradeScore</code> 값 사용)</td></tr>
+              <tr><td>GOLD 도달</td><td>60+</td><td>60+ (서버 값 사용)</td></tr>
+              <tr><td>PLATINUM 도달</td><td>75+</td><td>75+ (서버 값 사용, 이전 80+ 하드코딩 해소)</td></tr>
+              <tr><td>DIAMOND 도달</td><td>90+</td><td>90+ (서버 값 사용, 이전 미노출 해소)</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="callout warn">
-          <span class="label">UI 보강 필요</span>
-          <p>클라이언트가 “다음 등급까지 N점” 문구를 그릴 때 서버 임계와 어긋난다.
-          서버 응답의 <code>grade</code>를 신뢰하되, 다음 등급 임계는 <code>SILVER 40 / GOLD 60 / PLATINUM 75 / DIAMOND 90</code>으로 맞춰야 정확하다.</p>
+        <div class=”callout”>
+          <span class=”label”>해소 완료 — 커밋 b0dc370 (2026-06-04)</span>
+          <p>클라이언트가 <code>TrustScoreVo.nextGradeScore</code> 서버 값을 직접 소비하도록 전환됐다.
+          PLATINUM 80 하드코딩과 DIAMOND 미노출이 모두 해소됐다.
+          서버 임계(<code>SILVER 40 / GOLD 60 / PLATINUM 75 / DIAMOND 90</code>)가 화면 표기에 그대로 반영된다.</p>
         </div>
       </section>
 

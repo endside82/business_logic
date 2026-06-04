@@ -1,6 +1,6 @@
 # F04-03. 클럽 생성/수정/삭제/소유권 이전 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/04_club/F04-03_club-crud-transfer -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/04_club/F04-03_club-crud-transfer -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/04_club/F04-03_club-crud-transfer`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -65,7 +65,27 @@
 | POST | /api/v1/clubs | ClubController#createClub | required | 클럽 생성 (max-owned-clubs 제한) |
 | PATCH | /api/v1/clubs/{id} | ClubController#updateClub | required (OWNER) | 메타 부분 수정 |
 | DELETE | /api/v1/clubs/{id} | ClubController#deleteClub | required (OWNER) | 클럽 폐쇄 + 환불 + 알림 |
-| POST | /api/v1/clubs/{id}/transfer-ownership | ClubController#transferOwnership | required (OWNER) | 소유권 이전 |
+| POST | /api/v1/clubs/{id}/transfer-ownership | ClubController#transferOwnership | required (OWNER) | 소유권 이전 + **구 오너 구독 즉시 해지** |
+
+### 소유권 이전 사이드이펙트 (5f70d1b, 2026-06-04)
+
+소스: `ClubService.java:354-408`
+
+1. 기존 OWNER → ADMIN 역할 변경
+2. 신규 OWNER 설정 + `club.ownerId` 갱신
+3. **구 오너 활성 구독 즉시 해지**: `findActiveSubscription(currentOwnerId, clubId)` → `sub.cancel()` + `sub.setAutoRenew(false)`
+   - 환불 없음 (정책: "이전 시 환불 없음")
+   - 신 오너 구독 자동 생성 없음
+4. **신 오너 구독 폴백**: `club.subscriptionExpiresAt` 유지 → 신 오너는 구독 화면에 진입하기 전까지 기간 내 혜택을 자동 수혜 (소스: `ClubService.java:385-396`)
+5. `CLUB_OWNER_CHANGED` FCM 알림
+
+### deleteClub 구독 환불 기준
+
+소스: `ClubService.java:261-347`
+
+- 활성 구독 전체 cancel
+- **잔여 기간 일할 환불 대상**: `subscription.userId == club.ownerId` 인 경우만 — 즉 현재 ownerId와 일치하는 구독
+- 소유권 이전으로 넘어온 구 오너의 CANCELLED 구독은 환불 제외 (이미 이전 시 해지됨)
 
 ### 도메인 모델 / Enum (이 기능 관련)
 

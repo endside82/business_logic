@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>18 분쟁 해결 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>20개 도메인<span>›</span>18 분쟁 해결</div>
+        <h1>18. 분쟁 해결</h1>
+        <p class="lede">
+          기존 16개 도메인 곳곳에 흩어진 신고·이의·운영 이슈를 <strong>단일 통합 케이스 뷰</strong>로 묶는 경량 어댑터 도메인.
+          사용자가 직접 분쟁을 접수하거나, 다른 도메인에서 발생한 케이스에 이의를 제기하고, 증빙을 제출하며, 호스트는
+          운영 인박스 한 화면에서 자신과 관련된 모든 분쟁·문의를 처리한다. 각 원천 도메인의 해결 권위는
+          그대로 유지되며 — 이 도메인은 조회·접수·이의 창구만 제공한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">통합 원천</div><div class="value">21값 enum</div><div class="hint">컨텍스트 분류용. 실제 emit 사용자 8종·호스트 2종</div></div>
+          <div class="metric"><div class="label">SLA</div><div class="value">7일</div><div class="hint">초과 시 운영자 알림</div></div>
+          <div class="metric"><div class="label">케이스당 이의</div><div class="value">1건</div><div class="hint">본인 UNIQUE 보장</div></div>
+          <div class="metric"><div class="label">증빙 보존</div><div class="value">종결 + 1년</div><div class="hint">이후 자동 정리</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">이 도메인이 하는 것과 하지 않는 것</span>
+          <p>이 도메인은 <strong>원천 도메인의 status를 직접 변경하지 않는다.</strong>
+            통합 union 조회, 사용자 직접 분쟁 생성(USER_DISPUTE), 이의제기(DisputeAppeal) 생성·철회만이
+            공개 API 범위다. UPHELD/REJECTED 전이와 개별 원천 도메인의 실제 해결 처리(정산 재계산·환불 실행 등)는
+            각 도메인 또는 admin API가 소유한다. 단, 노쇼(EVENT_NO_SHOW) 이의제기 시에만 원본 도메인 상태와
+            best-effort 동기화가 이루어진다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>5개 기능 — 두 관점으로 본다</h2>
+
+        <h3>사용자·참가자 관점</h3>
+        <div class="cards">
+          <a class="card" href="../features/F18-01.html"><div class="eyebrow">F18-01</div><h3>통합 케이스 조회</h3><p>다양한 원천에서 발생한 분쟁·신고·이의를 한 목록으로 본다. 참가자 뷰(8종 emit)와 호스트 뷰(2종 emit)가 분리되어 제공된다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F18-02.html"><div class="eyebrow">F18-02</div><h3>분쟁 직접 접수</h3><p>사용자가 자발적으로 분쟁을 신규 생성한다. 24시간 10건 한도, 동일 상대 활성 케이스 중복 차단.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F18-03.html"><div class="eyebrow">F18-03</div><h3>분쟁 이의제기</h3><p>기존 케이스 결정에 이의를 낸다. 케이스당 본인 1건 한정. 노쇼 이의는 원본 도메인과 동기화된다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+        </div>
+
+        <h3>증빙·보존·호스트 운영</h3>
+        <div class="cards">
+          <a class="card" href="../features/F18-04.html"><div class="eyebrow">F18-04</div><h3>증빙·공개범위·보존</h3><p>증빙 파일의 공개범위(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY)와 legal hold, 종결 1년 후 자동 정리.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F18-05.html"><div class="eyebrow">F18-05</div><h3>호스트 운영 인박스</h3><p>호스트가 처리해야 할 문의·이의·신고·운영이슈를 8가지 source로 통합한 단일 화면.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+        </div>
+      </section>
+
+      <section>
+        <h2>분쟁 케이스가 거치는 길</h2>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["원천 도메인 이벤트 발생\n(신고·노쇼·정산이의·강퇴 등)"] --> B["DisputeCaseQueryRepository\nunion 조회 (사용자 8종·호스트 2종)"]
+    C["사용자 직접 접수\nPOST /me/dispute-cases"] --> D["user_dispute_case\n테이블 저장"]
+    D --> B
+    B --> E["통합 케이스 뷰\ncaseId = sourceType:sourceId"]
+    E --> F{"케이스 상태"}
+    F -->|"OPEN"| G["이의제기 가능\nPOST .../appeals"]
+    F -->|"IN_REVIEW"| G
+    F -->|"ESCALATED"| G
+    G --> H["DisputeAppeal\ndispute_appeal 테이블"]
+    H --> I{"이의 상태"}
+    I -->|"PENDING"| J["본인 철회 가능"]
+    I -->|"UPHELD/REJECTED"| K["admin 전이 완료\n(공개 API 없음)"]
+    F -->|"RESOLVED"| L["종결\n1년 후 증빙 정리"]
+    F -->|"CLOSED"| L
+    E --> M{"SLA 7일 초과?"}
+    M -->|"예"| N["운영자 알림 발행\nDISPUTE_SLA_EXCEEDED"]
+          </div>
+        </div>
+        <div class="callout">
+          <span class="label">caseId 형식</span>
+          <p>모든 케이스는 <code>{prefix}:{sourceId}</code> 형태의 통합 식별자로 표현된다. prefix는 원천 도메인을 나타내며
+            <code>USER_DISPUTE:42</code>, <code>EVENT_NO_SHOW:7</code>, <code>WARNING_APPEAL:15</code> 같은 형태다.
+            이 식별자는 URL 경로에 그대로 쓰이므로 URL-encoding이 필요하다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>통합 상태 5값</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>상태</th><th>의미</th><th>evidenceFrozen</th><th>이의제기</th></tr></thead>
+            <tbody>
+              <tr><td><strong>OPEN</strong></td><td>접수됨. 운영팀 검토 전</td><td>잠김</td><td>가능</td></tr>
+              <tr><td><strong>IN_REVIEW</strong></td><td>운영팀 검토 중</td><td>잠김</td><td>가능</td></tr>
+              <tr><td><strong>ESCALATED</strong></td><td>상위 CS로 에스컬레이션됨</td><td>잠김</td><td>가능</td></tr>
+              <tr><td><strong>RESOLVED</strong></td><td>처리 완료</td><td>해제</td><td>불가</td></tr>
+              <tr><td><strong>CLOSED</strong></td><td>종결(철회·기각)</td><td>해제</td><td>불가</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>각 원천 도메인의 고유 상태(예: WarningReport의 SUBMITTED/IN_REVIEW 등)는 서버가 위 5값으로 변환하여 전달한다. 클라이언트는 항상 통합 상태 5값만 다룬다.</p>
+      </section>
+
+      <section>
+        <h2>도메인 경계 — 통합 조회만 하는 원천들</h2>
+        <div class="callout warn">
+          <span class="label">canonical 소유권은 각 원천 도메인에 있다</span>
+          <p>아래 세 기능은 이 도메인(18)이 통합 union 조회 창구로만 참조한다. 실제 해결·처리는 각 원천 도메인 PRD를 따른다.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>원천</th><th>canonical 도메인</th><th>여기서의 역할</th></tr></thead>
+            <tbody>
+              <tr><td>클럽 경고 이의 (WarningAppeal)</td><td><a href="../features/F15-03.html">F15-03 클럽 경고 이의</a></td><td><code>WARNING_APPEAL:{id}</code> union source로만 조회</td></tr>
+              <tr><td>모임 정산 이의 (MeetingSettlementAppeal)</td><td>07 모임 정산 도메인</td><td><code>SETTLEMENT_APPEAL:{id}</code> union source로만 조회</td></tr>
+              <tr><td>플랜 마켓 구매 환불 분쟁 (PurchaseRefundDispute)</td><td>08 플랜 마켓 도메인</td><td><code>REFUND_DISPUTE:{id}</code> union source로만 조회</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">핵심 운영 원칙</span>
+          <ul>
+            <li><strong>SLA는 7일이다.</strong> 미해결 상태로 7일을 넘긴 케이스는 매일 06:00(KST)에 운영자 알림이 발행된다. 8개 scanOne 호출(OPERATIONAL_ISSUE·WARNING_REPORT·WARNING_APPEAL·SETTLEMENT_APPEAL·PUBLIC_REPORT·REFUND_DISPUTE·USER_DISPUTE·DISPUTE_APPEAL)이 독립적으로 실행되므로 한 source 처리 실패가 나머지를 차단하지 않는다. PUBLIC_REPORT는 PENDING+IN_REVIEW만 스캔(ESCALATED 제외).</li>
+            <li><strong>legal hold는 계정 삭제를 차단한다.</strong> 활성 케이스(OPEN/IN_REVIEW/ESCALATED)에 연관된 사용자는 계정 삭제 및 데이터 익명화가 차단된다. 단, 연관 판정은 source별 finder 범위에 따라 다르다 — OperationalIssue·WarningReport는 reporter 측만, RefundDispute는 seller(판매자) 측만, USER_DISPUTE만 reporter/target 양측을 판정한다. SETTLEMENT_APPEAL appealer(비호스트)·PurchaseRefundDispute buyer 등 일부 시점은 현재 미검출(후속 개선 과제).</li>
+            <li><strong>증빙은 종결 후 1년이 지나야 정리된다.</strong> 활성 케이스의 증빙 파일은 삭제 불가(evidenceFrozen=true). 종결 + 1년 경과 후 매일 05:00에 자동 정리된다.</li>
+            <li><strong>이의제기 승인·기각은 admin API 전용이다.</strong> 공개 API로는 PENDING 이의를 본인이 철회하는 것만 가능하다. 호스트도 공개 API로 이의를 처리할 수 없다.</li>
+            <li><strong>EVENT_NO_SHOW 이의만 원본과 동기화된다.</strong> 다른 source 이의제기는 audit-only로 dispute_appeal 테이블에만 기록되고 원천 케이스 상태는 변하지 않는다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">현재 알려진 미구현·주의 사항</span>
+          <ul>
+            <li><strong>dispute 딥링크가 배선되지 않았다.</strong> FCM 알림을 눌러도 분쟁 화면으로 이동하지 않고 홈으로 떨어진다. USER_DISPUTE·CLUB_MEMBERSHIP_ACTION 관련 푸시 알림 클릭 경로가 누락 상태다.</li>
+            <li><strong>이의 승인·거절 공개 endpoint가 없다.</strong> 앱 화면에 호스트용 이의 승인 버튼이 존재하지만 서버 endpoint가 없어 동작하지 않는다. admin API 경로로만 처리 가능하다.</li>
+            <li><strong>분쟁 접수 시 증빙 첨부 UI가 없다 (v1).</strong> 사용자가 분쟁을 직접 접수할 때 파일 업로드 화면이 의도적으로 제외됐다. 서버 검증 로직은 배선되어 있어 v2에서 추가된다.</li>
+            <li><strong>플랜 마켓 환불 분쟁 증빙 보존 미구현.</strong> purchase_refund_dispute는 다른 source와 파일 구조가 달라 종결 1년 후 자동 정리 대상에서 제외되어 있다.</li>
+            <li><strong>HostInboxService 성능 위험.</strong> stats 호출 시 size=500 파라미터로 collectAllItems를 호출하지만, 개별 finder는 각자 제한(호스트 이벤트 200건, 분쟁 케이스 100건, APPLICATION·REPORT·정산 이의·FailedRefund는 전량 로드)을 따른다. 수집 후 메모리 정렬·페이징이 적용되며 최종 페이지 크기는 최대 100건으로 캡된다. 활성 이벤트가 많은 호스트는 응답 지연 가능성이 있다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이 도메인이 다른 도메인에 미치는 영향</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영향 받는 도메인</th><th>여부</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>03 이벤트</td><td><span class="pill brand">강함</span></td><td>EVENT_NO_SHOW 이의제기 시 EventNoShowService와 best-effort 동기화. APPLICATION·ATTENDANCE·CHECK_IN·EVENT_RESCHEDULE은 enum에만 있고 현재 emit 안 됨.</td></tr>
+              <tr><td>04 클럽</td><td><span class="pill">있음</span></td><td>CLUB_MEMBERSHIP_ACTION(KICK/BAN만, UNBAN 제외) union. 강퇴·차단 감사 연계. CLUB은 WARNING_REPORT/WARNING_APPEAL 경로로 간접 연계.</td></tr>
+              <tr><td>07 모임 정산</td><td><span class="pill">있음</span></td><td>SETTLEMENT_APPEAL union(호스트 뷰). 실제 정산 이의 해결은 07 도메인 소관.</td></tr>
+              <tr><td>08 플랜 마켓</td><td><span class="pill">있음</span></td><td>REFUND_DISPUTE union(호스트 뷰·legal hold). 실제 환불 처리는 08 도메인 소관.</td></tr>
+              <tr><td>09 프라이빗 데이팅</td><td><span class="pill">있음</span></td><td>DATE_BLOCK(reportId≠null 안전신고 동반 차단만)·TRANSPORT union. DATE_CHAT·DATE_PROFILE_PHOTO는 enum에만 있고 emit 안 됨. legal hold 적용.</td></tr>
+              <tr><td>11 리뷰·신고</td><td><span class="pill">있음</span></td><td>REPORT(EVENT type, reporter)·OPERATIONAL_ISSUE union. REVIEW·POST·COMMENT·PHOTO_ALBUM은 enum에만 있고 emit 안 됨.</td></tr>
+              <tr><td>13 프로필·설정</td><td><span class="pill brand">강함</span></td><td>활성 분쟁 케이스가 있으면 계정 삭제·데이터 익명화를 차단한다(legal hold). source별 finder 범위에 따라 buyer/appealer 측 미검출 케이스 존재(후속 과제).</td></tr>
+              <tr><td>15 경고·징계</td><td><span class="pill">있음</span></td><td>WARNING_REPORT(reporter)·WARNING_APPEAL(member) source union. WarningAppeal 해결은 F15-03 canonical.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>관련 정책·다른 도메인</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">연계 도메인</div><h3>03 이벤트</h3><p>EVENT_NO_SHOW 이의제기 동기화 원천.</p></a>
+          <a class="card" href="../domains/15-warning.html"><div class="eyebrow">연계 도메인</div><h3>15 경고·징계</h3><p>WarningAppeal canonical 소유 도메인.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">연계 도메인</div><h3>07 모임 정산</h3><p>정산 이의 canonical 소유 도메인.</p></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">연계 도메인</div><h3>13 프로필·설정</h3><p>legal hold → 계정 삭제 차단 연계.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/01_domain_prds/18_분쟁_해결_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

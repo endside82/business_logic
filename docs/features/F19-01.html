@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F19-01 관심인 등록·해제·한도 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/19-favorite.html">19 관심인</a><span>›</span>
+          F19-01 등록·해제·한도
+        </div>
+        <h1>F19-01. 관심인 등록·해제·한도</h1>
+        <p class="lede">
+          관심 있는 사용자를 내 관심인 목록에 추가하고 원할 때 해제하는 기능.
+          무료는 최대 3명, 프리미엄은 최대 10명까지 등록할 수 있다.
+          한도를 넘으면 프리미엄 안내가 뜨고, 추가는 막힌다.
+          프리미엄을 해지해도 목록은 지워지지 않고 앞 3명만 다시 활성 상태가 된다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">무료 한도</div><div class="value">3명</div><div class="hint">초과 시 프리미엄 안내</div></div>
+          <div class="metric"><div class="label">프리미엄 한도</div><div class="value">10명</div><div class="hint">PREMIUM 구독 중</div></div>
+          <div class="metric"><div class="label">등록 방식</div><div class="value">단방향</div><div class="hint">상대방 승인 불필요</div></div>
+          <div class="metric"><div class="label">상대방 알림</div><div class="value">없음</div><div class="hint">비공개 관계</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 상대방이 모르게, 언제든 자유롭게</span>
+          <p>관심인 등록은 상대방의 동의나 알림 없이 이루어진다. 내가 누구를 등록했는지는 나만 안다.
+            이 방식 덕분에 "등록하면 상대방이 어색해할까?" 같은 부담 없이 자유롭게 관심 있는 사람을
+            추가할 수 있다. 언제든 해제도 가능하며, 상대방에게 해제 알림도 가지 않는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름</div>
+            <h3>관심 가는 호스트를 추가한다</h3>
+            <p>모임에 참가해서 좋았던 호스트를 관심인으로 등록한다. 마이페이지 → 관심인 → 추가 버튼을
+              눌러 닉네임으로 검색한 뒤 선택하면 바로 등록된다. 상대방에게는 아무 알림이 가지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 등록 후 그 사람이 새 모임을 열면 알림을 받고,
+              캘린더에서 일정을 볼 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">한도 도달 (무료)</div>
+            <h3>이미 3명을 등록한 상태에서 한 명 더 추가하려 한다</h3>
+            <p>추가 버튼을 누르면 "프리미엄으로 더 많은 관심인" 안내가 뜬다. "프리미엄 보기"를 누르면
+              구독 화면으로 이동한다. 프리미엄에 가입하면 10명까지 늘어난다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 관심인 한도 확장이 프리미엄의 핵심 가치 중 하나다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">해제</div>
+            <h3>더 이상 관심이 없는 사람을 목록에서 뺀다</h3>
+            <p>목록 항목 우측 × 버튼 → 확인 다이얼로그 → 해제. 상대방에게 알림 없음.
+              해제하면 그 사람의 일정은 캘린더에서 사라지고 새 모임 알림도 끊긴다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">프리미엄 해지 후</div>
+            <h3>10명이 등록된 상태에서 구독을 해지했다</h3>
+            <p>목록에서 등록 순서 기준 앞 3명은 그대로 "활성" 상태가 되고, 나머지 7명은 "프리미엄 시 활성"
+              배지가 붙어 흐릿하게 표시된다. 목록은 지워지지 않고, 재구독하면 즉시 10명 전원이 다시 활성화된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 재구독 시 목록을 다시 쌓을 필요가 없다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">차단된 상대</div>
+            <h3>차단한 사람을 관심인으로 추가하려 한다</h3>
+            <p>등록이 차단된다. 양방향 — 내가 차단한 사람도, 나를 차단한 사람도 등록 불가.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>화면에서 사용자가 인지하는 것</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:160px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
+            <tbody>
+              <tr><td><strong>등록 수 / 한도</strong></td><td>목록 상단에 "3/3" 또는 "7/10" 형태로 표시된다.</td><td>현재 몇 명을 등록했는지, 더 추가할 수 있는지를 진입 즉시 파악하게 한다.</td></tr>
+              <tr><td><strong>프리미엄 시 활성 배지</strong></td><td>한도 초과분 항목에 "프리미엄 시 활성" 배지 + 반투명 표시.</td><td>목록이 사라진 게 아니라 비활성 상태임을 알려 재구독 유인을 제공한다.</td></tr>
+              <tr><td><strong>FAB "추가" 버튼</strong></td><td>화면 우측 하단에 항상 표시된다.</td><td>관심인 추가는 목록이 있든 없든 언제나 접근 가능해야 한다.</td></tr>
+              <tr><td><strong>프리미엄 업셀 다이얼로그</strong></td><td>한도 도달 + 비프리미엄이면 "프리미엄으로 더 많은 관심인" 안내가 뜬다.</td><td>한도 제한 이유를 명확히 하고, 구독으로 연결하는 자연스러운 동선을 만든다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout">
+          <span class="label">한도 수치는 설정값으로 관리된다</span>
+          <p>무료 3명, 프리미엄 10명 한도는 서버 설정 파일에서 관리된다. 서비스 전략에 따라 조정이 필요할 때
+            코드 배포 없이 설정만 바꾸면 즉시 반영된다. 단, 기존 사용자의 등록 목록은 변경된 한도에 맞게
+            자동 재계산된다(등록순 최초 N명이 활성 기준).</p>
+        </div>
+        <div class="callout warn">
+          <span class="label">나를 관심인으로 등록한 사람 목록은 제공되지 않는다</span>
+          <p>이 기능은 의도적으로 설계된 것이다. 상대방이 누가 자신에게 관심을 보이는지 알면 관계가 부자연스러워진다.
+            운영 도구에서도 이 역방향 조회 수단은 제공하지 않는 것을 원칙으로 한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생할 수 있는 케이스</span>
+          <ul>
+            <li><strong>동시 등록 경쟁</strong> — 두 탭에서 동시에 "추가"를 누르면 한도 초과 등록이 발생할 수 있다. 서버에서 잠금으로 직렬화하므로 한쪽은 "잠시 후 다시 시도하세요" 오류가 뜬다.</li>
+            <li><strong>비활성 목록에서 추가 시도</strong> — 목록에 10명이 있는데(프리미엄 해지로 3명 활성) 새 항목 추가를 하려면 먼저 기존 목록 중 한 명을 해제해야 한다. 단순히 프리미엄에 재가입하는 것만으로는 "새 자리"가 생기지 않는다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/19-favorite.html"><div class="eyebrow">상위 도메인</div><h3>19 관심인</h3></a>
+          <a class="card" href="F19-02.html"><div class="eyebrow">다음</div><h3>F19-02 캘린더 뷰·알림</h3><p>등록 후 관심인 일정이 보이는 곳.</p></a>
+          <a class="card" href="F19-03.html"><div class="eyebrow">연결</div><h3>F19-03 프라이버시 설정</h3><p>내 정보가 관심인에게 보이는 범위.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

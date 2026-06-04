@@ -12,7 +12,7 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>17개 도메인<span>›</span>06 결제·지갑</div>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>20개 도메인<span>›</span>06 결제·지갑</div>
         <h1>06. 결제 · 지갑</h1>
         <p class="lede">
           포인트라는 단일 잔액을 중심에 두고, 충전·결제·환불·구독·수익 정산을 모은다.
@@ -61,7 +61,7 @@
             <tbody>
               <tr><td><strong>포인트 충전</strong></td><td>사용자 → 지갑</td><td>외부 PG 결제로 잔액 증가</td></tr>
               <tr><td><strong>포인트 결제</strong></td><td>지갑 → 서비스</td><td>이벤트·플랜·구독 등 비용 지불</td></tr>
-              <tr><td><strong>환불</strong></td><td>서비스 → 지갑 또는 원수단</td><td>기존 결제 취소 또는 보상</td></tr>
+              <tr><td><strong>환불</strong></td><td>서비스 → 지갑 복원이 기본; 원수단(PG) 환불은 조건부</td><td>기존 결제 취소 또는 보상. 현재 기본 설정에서는 유료 포인트도 지갑으로 즉시 복원. 원수단(PG) 환불 큐는 설정 활성화(<code>refund.pg-queue.enabled</code>) + PG 결제건에 한해 동작.</td></tr>
               <tr><td><strong>모임 정산</strong></td><td>참가자 → 호스트</td><td>모임 비용 분담. <a href="07-settlement.html">07 정산 도메인</a>이 책임.</td></tr>
               <tr><td><strong>호스트 정산금</strong></td><td>플랫폼 → 호스트</td><td>수익 지급. F06-10에서 조회·이의제기.</td></tr>
               <tr><td><strong>클럽 기금</strong></td><td>멤버 → 클럽</td><td>공동 자금. <a href="04-club.html">04 클럽 도메인</a>이 책임.</td></tr>
@@ -87,20 +87,25 @@
       </section>
 
       <section>
-        <h2>환불 정책 — STANDARD vs STRICT</h2>
-        <p class="subtitle">F06-06의 핵심. <code>RefundPolicyService</code>가 모임 시작 시간까지의 남은 시간으로 환불률을 계산한다.</p>
+        <h2>환불 정책 — 이벤트별 카탈로그 (템플릿 6종)</h2>
+        <p class="subtitle">F06-06의 핵심. 2026-06-02 환불 통일(D-1)로 고정 규칙(24h=100%/12h=50%/0%)이 폐기되고,
+        이벤트마다 <code>event_refund_policy</code> 카탈로그의 템플릿이 적용된다. 남은 시간 구간(by_time)으로 환불률을 계산한다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>정책</th><th>남은 시간</th><th>환불률</th><th>비고</th></tr></thead>
+            <thead><tr><th>템플릿</th><th>규칙 (이벤트 시작까지 남은 시간)</th><th>수수료</th></tr></thead>
             <tbody>
-              <tr><td rowspan="3"><strong>STANDARD</strong></td><td>≥ 24시간</td><td><span class="pill brand">100%</span></td><td>잔액 즉시 복구, PG 카드 환불은 영업일 처리</td></tr>
-              <tr><td>12 ~ 24시간</td><td><span class="pill warn">50%</span></td><td>부분 환불</td></tr>
-              <tr><td>&lt; 12시간</td><td><span class="pill danger">0%</span></td><td>환불 거절(<code>REFUND_NOT_ALLOWED</code>)</td></tr>
-              <tr><td><strong>STRICT</strong></td><td>24 ~ 48시간</td><td><span class="pill warn">30%</span></td><td>호스트가 적용 가능한 강화 정책</td></tr>
+              <tr><td><strong>STANDARD</strong> (기본)</td><td>7일 전 <span class="pill brand">100%</span> · 3일 전 80% · 24시간 전 50% · 12시간 전 <span class="pill warn">30%</span> · 이후 <span class="pill danger">0%</span></td><td>1,000원</td></tr>
+              <tr><td><strong>STRICT</strong></td><td>7일 전 <span class="pill brand">100%</span> · 3일 전 50% · 24시간 전부터 <span class="pill danger">0%</span></td><td>2,000원</td></tr>
+              <tr><td><strong>FLEXIBLE</strong></td><td>24시간 전 <span class="pill brand">100%</span> · 이후 <span class="pill danger">0%</span></td><td>없음</td></tr>
+              <tr><td><strong>FULL</strong></td><td>언제든 <span class="pill brand">100%</span></td><td>없음</td></tr>
+              <tr><td><strong>NON_REFUNDABLE</strong></td><td>신청 즉시 <span class="pill danger">환불 불가</span></td><td>없음</td></tr>
+              <tr><td><strong>CUSTOM</strong></td><td>호스트가 시간 구간·비율을 직접 정의</td><td>호스트 정의</td></tr>
             </tbody>
           </table>
         </div>
-        <p>환불 정책 안내는 <code>GET /api/v1/wallet/refund/policy</code>로 별도 BottomSheet에 표시된다. 결제 흐름 외부에서도 사용자가 미리 확인할 수 있다.</p>
+        <p>참가자 귀책(단순 변심)일 때만 위 비율이 적용되고, <strong>호스트 귀책(이벤트 취소·일정 변경 거절 등)은 항상 100% 환불</strong>이다(귀책 7분류).
+        취소 전 <code>refund-preview</code>로 환불 예상액을 미리 보여주며, 템플릿 목록은 <code>GET /api/v1/refund-policy-templates</code>로 조회한다.
+        (기존 <code>GET /api/v1/wallet/refund/policy</code>는 레거시 고정값 안내용으로만 남아 있다.)</p>
       </section>
 
       <section>

@@ -113,10 +113,37 @@
 | POST | `/api/v1/events/{eventId}/check-in/{userId}` | `CheckInController#manualCheckIn` | 호스트/공동호스트 | 수동 체크인 (호스트가 참석자 선택) |
 | GET | `/api/v1/events/{eventId}/check-in/stats` | `CheckInController#getCheckInStats` | 호스트/공동호스트 | 체크인율 + 미체크인 사용자 ID 목록 |
 
+### EventCheckIn 엔티티 — Wave D-1 감사 추적 컬럼 (갱신 2026-06-05)
+
+> 소스: `EventCheckIn.java:41-56`.
+
+Wave D-1에서 수동/정정 체크인 감사 추적을 위한 3개 컬럼이 추가되었다:
+
+| 신규 컬럼 | 타입 | nullable | 설명 |
+|---|---|---|---|
+| `manual_actor_id` | bigint | Y | MANUAL/CORRECTED 체크인 실행 actor. QR/SHORT_CODE 체크인은 null |
+| `manual_reason_code` | varchar(40) | Y | 감사 추적용 사유 코드 (LATE_ARRIVAL, MISTAKEN_NO_SHOW, HOST_OVERRIDE 등) |
+| `corrected_from_check_in_id` | bigint | Y | 정정 체크인인 경우 원본 `event_check_in.id` (노쇼 OVERTURNED 후 사후 체크인 시나리오) |
+
+체크인 `method` 값: `QR_CODE`, `SHORT_CODE`, `MANUAL` (기존) — Wave D-1에서 CORRECTED 논리 추가.  
+체크인 허용 시간: 이벤트 시작 -2h ~ 종료 +2h (`CheckInService.java:323-326`).
+
+### 노쇼 통계 CANCEL_PENDING_REFUND 제외 정책 (갱신 2026-06-05)
+
+> 소스: `CheckInService.java:237-255`.
+
+`GET /api/v1/events/{eventId}/check-in/stats` (`getCheckInStats`) 응답에서 `CANCEL_PENDING_REFUND` 상태인 참가자는 다음과 같이 처리된다:
+
+- `pendingRefundUserIds` 집합으로 필터링되어 **노쇼 목록(분자)에서 제외**
+- **총 참석자 수(분모)에서도 제외** — 계좌이체 취소 후 환불 대기 중인 인원이 출석률에 부당한 영향을 주지 않도록 처리
+
+이 정책은 노쇼 확정 시 참가자 제재 카운트에도 연계된다 (F03-20 이벤트 노쇼 관리 링크 예정).
+
 ### 의존 단위 / 외부 시스템
 
 - **F03-07 정원/대기열** — 체크인 대상자는 status=ATTENDING 이어야 함. 호스트가 `removeByHost` 로 강제 제거하면 `event_check_in` 행도 함께 삭제됨 (F03-07 backend 참조)
 - **F03-12 참석 로그** — 미체크인(no-show) 정보가 향후 신뢰점수/리뷰 권한에 사용 (Unit 11)
+- **F03-20 이벤트 노쇼 관리** — 체크인 통계 기반 노쇼 확정 흐름 (F03-20은 병렬 작성 중 — `./F03-20_event-no-show_prd.md`)
 - **외부**: 없음. **인프라**: Redis (notiRedisTemplate, `@Qualifier("notiRedisTemplate")`)
 
 ## 5. 프론트 계약
@@ -246,3 +273,7 @@
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 변경 이력
+
+- **2026-06-05 (Wave D-1 — EventCheckIn 감사 추적 컬럼 + 노쇼 통계 CANCEL_PENDING_REFUND 제외)**: `EventCheckIn` 엔티티에 3개 컬럼 추가 — `manual_actor_id`, `manual_reason_code`, `corrected_from_check_in_id` (소스: `EventCheckIn.java:41-56`, DDL: `V1__init.sql:2712`). 노쇼 통계 API(`getCheckInStats`)에서 `CANCEL_PENDING_REFUND` 상태 참가자를 분자+분모 모두에서 제외하는 정책 추가 (소스: `CheckInService.java:237-255`).

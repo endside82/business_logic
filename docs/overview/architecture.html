@@ -12,8 +12,8 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 17도메인</div>
-        <h1>17개 도메인의 책임</h1>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 20개 도메인</div>
+        <h1>20개 도메인의 책임</h1>
         <p class="lede">
           제품을 “어디에 어떤 기능이 사는가”로 나눠 둔 지도다. 이 지도가 흔들리면
           기능 추가의 책임 소재가 흔들리기 때문에, 새 기능이 도착했을 때
@@ -22,8 +22,8 @@
       </header>
 
       <section>
-        <h2>다섯 축으로 묶은 17개 도메인</h2>
-        <p class="subtitle">17개를 일렬로 보면 외우기 어렵다. 행동 축 다섯 개로 묶어서 본다.</p>
+        <h2>여섯 축으로 묶은 20개 도메인</h2>
+        <p class="subtitle">20개를 일렬로 보면 외우기 어렵다. 행동 축 다섯 개로 묶어서 본다.</p>
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
@@ -49,7 +49,10 @@ flowchart TD
     F --> F1["09 프라이빗 데이팅"]
     F --> F2["11 리뷰·신고"]
     F --> F3["12 알림"]
+    F --> F4["18 분쟁 해결"]
+    F --> F5["19 관심인"]
     G --> G1["13 프로필·설정"]
+    G --> G2["20 고객지원"]
           </div>
         </div>
       </section>
@@ -72,21 +75,24 @@ flowchart TD
             <tbody>
               <tr><td>01</td><td><strong>인증 · 온보딩</strong></td><td>가입·인증·온보딩·관심사 설정으로 사용자를 “추천 가능한 상태”까지 끌어올린다.</td><td style="text-align:right">8</td><td style="text-align:right">82</td><td><a href="../domains/01-auth.html">열기</a></td></tr>
               <tr><td>02</td><td><strong>홈 피드</strong></td><td>로그인 직후 첫 화면. 추천 콘텐츠와 주요 진입점을 제공한다.</td><td style="text-align:right">5</td><td style="text-align:right">38</td><td><a href="../domains/02-home.html">열기</a></td></tr>
-              <tr><td>03</td><td><strong>이벤트</strong></td><td>오프라인 모임의 발견·생성·신청·참석·체크인·리뷰 풀 사이클. (선입금·이동수단·인구통계 포함)</td><td style="text-align:right">18</td><td style="text-align:right">156</td><td><a href="../domains/03-event.html">열기</a></td></tr>
-              <tr><td>04</td><td><strong>클럽</strong></td><td>장기 커뮤니티. 가입·운영·게시판·이벤트·기금까지 가장 무거운 영역. (인구통계 포함)</td><td style="text-align:right">17</td><td style="text-align:right">196</td><td><a href="../domains/04-club.html">열기</a></td></tr>
+              <tr><td>03</td><td><strong>이벤트</strong></td><td>오프라인 모임의 발견·생성·신청·참석·체크인·리뷰 풀 사이클. (선입금·이동수단·인구통계 포함)</td><td style="text-align:right">20</td><td style="text-align:right">156</td><td><a href="../domains/03-event.html">열기</a></td></tr>
+              <tr><td>04</td><td><strong>클럽</strong></td><td>장기 커뮤니티. 가입·운영·게시판·이벤트·기금까지 가장 무거운 영역. (인구통계·레퓨테이션 포함)</td><td style="text-align:right">18</td><td style="text-align:right">196</td><td><a href="../domains/04-club.html">열기</a></td></tr>
               <tr><td>05</td><td><strong>검색</strong></td><td>이벤트·클럽·플랜을 키워드·필터로 탐색한다. 자동완성·저장된 검색 포함.</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td><a href="../domains/05-search.html">열기</a></td></tr>
               <tr><td>06</td><td><strong>결제 · 지갑</strong></td><td>포인트 잔액·충전·결제수단·자동충전·거래내역·구독·호스트 수익.</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td><a href="../domains/06-payment.html">열기</a></td></tr>
               <tr><td>07</td><td><strong>모임 정산</strong></td><td>모임 후 비용을 나누고 납부·확인·이의제기·환불 규정을 처리.</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td><a href="../domains/07-settlement.html">열기</a></td></tr>
               <tr><td>08</td><td><strong>플랜 마켓</strong></td><td>코스·모임 플랜을 작성·발행·구매·보관·활용·리뷰한다. (환불·매출 귀속 보정 포함)</td><td style="text-align:right">15</td><td style="text-align:right">107</td><td><a href="../domains/08-plan-market.html">열기</a></td></tr>
               <tr><td>09</td><td><strong>프라이빗 데이팅</strong></td><td>본인 인증 기반 매칭·채팅·만남 제안·차단·안전 흐름. 민감 영역.</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td><a href="../domains/09-dating.html">열기</a></td></tr>
               <tr><td>10</td><td><strong>캘린더</strong></td><td>이벤트·가용시간·데이팅 만남을 시간축으로 통합한다.</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td><a href="../domains/10-calendar.html">열기</a></td></tr>
-              <tr><td>11</td><td><strong>리뷰 · 신고</strong></td><td>활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다.</td><td style="text-align:right">6</td><td style="text-align:right">39</td><td><a href="../domains/11-review.html">열기</a></td></tr>
+              <tr><td>11</td><td><strong>리뷰 · 신고</strong></td><td>활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다. 호스트 리뷰 모더레이션 포함.</td><td style="text-align:right">7</td><td style="text-align:right">39</td><td><a href="../domains/11-review.html">열기</a></td></tr>
               <tr><td>12</td><td><strong>알림</strong></td><td>상태 변화를 푸시·알림함으로 전달하고 수신 설정을 제공한다.</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td><a href="../domains/12-notification.html">열기</a></td></tr>
               <tr><td>13</td><td><strong>프로필 · 설정</strong></td><td>내 프로필·주소·선호태그·데이터 내보내기·계정 삭제/비활성화.</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td><a href="../domains/13-profile.html">열기</a></td></tr>
               <tr><td>14</td><td><strong>위치 · 길찾기</strong></td><td>장소·경로 안내·참석자 위치 공유와 프라이버시 통제.</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td><a href="../domains/14-location.html">열기</a></td></tr>
               <tr><td>15</td><td><strong>경고 · 징계</strong></td><td>신고·이의제기·경고 원장·제재로 이어지는 클럽 거버넌스. 효과 점수 산정과 운영진 심사 큐.</td><td style="text-align:right">9</td><td style="text-align:right">—</td><td><a href="../domains/15-warning.html">열기</a></td></tr>
               <tr><td>16</td><td><strong>마일리지</strong></td><td>클럽 활동 적립·차감·정정 원장, 등급·배지·랭킹·시즌, 호스트 제안과 운영진 검토.</td><td style="text-align:right">8</td><td style="text-align:right">—</td><td><a href="../domains/16-mileage.html">열기</a></td></tr>
               <tr><td>17</td><td><strong>정기모임</strong></td><td>호스트가 코스(FIXED) 또는 비정기 세션(VARIABLE)으로 다회 모임을 운영. flow-through 정산·pro-rata 환불.</td><td style="text-align:right">10</td><td style="text-align:right">95</td><td><a href="../domains/17-regular-meeting.html">열기</a></td></tr>
+              <tr><td>18</td><td><strong>분쟁 해결</strong></td><td>원천 도메인의 분쟁·이의를 단일 케이스 뷰로 통합. 직접 접수·이의제기·증빙/보존·호스트 인박스.</td><td style="text-align:right">5</td><td style="text-align:right">—</td><td><a href="../domains/18-dispute.html">열기</a></td></tr>
+              <tr><td>19</td><td><strong>관심인</strong></td><td>관심 가는 사람을 등록해 공개 일정을 캘린더로 보고 새 이벤트 알림을 받는다. 공개범위(프라이버시) 설정 포함.</td><td style="text-align:right">3</td><td style="text-align:right">—</td><td><a href="../domains/19-favorite.html">열기</a></td></tr>
+              <tr><td>20</td><td><strong>고객지원</strong></td><td>1:1 문의·운영 이슈 접수·FAQ. 이벤트/클럽/정산 컨텍스트를 묶어 운영으로 라우팅한다.</td><td style="text-align:right">3</td><td style="text-align:right">—</td><td><a href="../domains/20-support.html">열기</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -122,6 +128,13 @@ flowchart LR
     Q --> G
     Q --> H
     Q --> I
+    D --> R["18 분쟁 해결"]
+    H --> R
+    L --> R
+    D --> S["19 관심인"]
+    I --> S
+    D --> T["20 고객지원"]
+    H --> T
           </div>
         </div>
       </section>
@@ -135,6 +148,7 @@ flowchart LR
           <li><strong>결제·지갑·정산</strong>은 돈의 상태를 다루는 별도 축이다. 다른 도메인이 직접 잔액을 만지지 않는다.</li>
           <li><strong>알림·캘린더·위치</strong>는 다른 기능의 “결과”를 사용자에게 다시 연결한다. 단독 기능이 아니다.</li>
           <li><strong>리뷰·신고·차단·신뢰점수</strong>는 플랫폼 안전의 기반이다. 운영 흐름과 사용자 흐름이 같은 데이터를 본다.</li>
+          <li><strong>분쟁 해결·고객지원</strong>은 사용자와 운영을 잇는 채널이다. 원천 도메인의 분쟁·이의·문의를 한곳으로 모아 추적한다.</li>
         </ul>
       </section>
 

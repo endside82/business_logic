@@ -43,6 +43,8 @@
       ['F03-16', '버스대절'],
       ['F03-17', '차량 레이아웃'],
       ['F03-18', '구성인원 인구통계'],
+      ['F03-19', '일정 변경 제안·합의'],
+      ['F03-20', '노쇼 관리'],
     ],
     '04-club': [
       ['F04-01', '발견·탐색'],
@@ -62,6 +64,7 @@
       ['F04-15', '기금 인출'],
       ['F04-16', '클럽 구독'],
       ['F04-17', '구성인원 인구통계'],
+      ['F04-18', '클럽 레퓨테이션'],
     ],
     '05-search': [
       ['F05-01', '키워드 검색'],
@@ -135,6 +138,7 @@
       ['F11-04', '신고'],
       ['F11-05', '신뢰점수'],
       ['F11-06', '취향 프로필'],
+      ['F11-07', '호스트 리뷰 모더레이션'],
     ],
     '12-notification': [
       ['F12-01', '목록·읽음'],
@@ -194,6 +198,23 @@
       ['F17-09', '출석 확정·노쇼'],
       ['F17-10', '호스트 정산'],
     ],
+    '18-dispute': [
+      ['F18-01', '통합 분쟁 케이스 조회'],
+      ['F18-02', '분쟁 직접 접수'],
+      ['F18-03', '분쟁 이의제기'],
+      ['F18-04', '증빙·공개범위·보존'],
+      ['F18-05', '호스트 운영 인박스'],
+    ],
+    '19-favorite': [
+      ['F19-01', '등록·해제·한도'],
+      ['F19-02', '캘린더 뷰·알림'],
+      ['F19-03', '프라이버시 설정'],
+    ],
+    '20-support': [
+      ['F20-01', '1:1 문의'],
+      ['F20-02', '운영 이슈 접수'],
+      ['F20-03', '지원 FAQ'],
+    ],
   };
 
   const NAV = [
@@ -208,14 +229,14 @@
       links: [
         { href: 'overview/service.html', label: '서비스 정의' },
         { href: 'overview/personas.html', label: '사용자 유형' },
-        { href: 'overview/architecture.html', label: '정보구조 17도메인' },
+        { href: 'overview/architecture.html', label: '정보구조 20개 도메인' },
         { href: 'overview/journeys.html', label: '7대 사용자 여정' },
         { href: 'overview/operating-model.html', label: 'PRD 운영 모델' },
         { href: 'overview/changelog.html', label: '변경 기록' },
       ],
     },
     {
-      heading: '17개 도메인',
+      heading: '20개 도메인',
       domainGroup: true,
       links: [
         { href: 'domains/01-auth.html',             num: '01', label: '인증·온보딩',      slug: '01-auth' },
@@ -235,12 +256,15 @@
         { href: 'domains/15-warning.html',          num: '15', label: '경고·징계',       slug: '15-warning' },
         { href: 'domains/16-mileage.html',          num: '16', label: '마일리지',         slug: '16-mileage' },
         { href: 'domains/17-regular-meeting.html',  num: '17', label: '정기모임',         slug: '17-regular-meeting' },
+        { href: 'domains/18-dispute.html',          num: '18', label: '분쟁 해결',        slug: '18-dispute' },
+        { href: 'domains/19-favorite.html',          num: '19', label: '관심인',            slug: '19-favorite' },
+        { href: 'domains/20-support.html',           num: '20', label: '고객지원',           slug: '20-support' },
       ],
     },
     {
       heading: '기능 인벤토리',
       links: [
-        { href: 'features/catalog.html', label: '153개 기능 카탈로그' },
+        { href: 'features/catalog.html', label: '168개 기능 카탈로그' },
         { href: 'features/impact.html', label: '부수효과 매트릭스' },
         { href: 'reference/numbers.html', label: '비즈니스 수치 레퍼런스' },
       ],

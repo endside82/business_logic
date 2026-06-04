@@ -1,6 +1,6 @@
 # F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -78,6 +78,53 @@
 - F07-08 (Appeal): `appealService.hasPendingAppeal` 차단
 - 외부 시스템: FCM
 
+### TransferStatus 전체값 (Fact)
+
+> 소스: `payment/meeting/constants/TransferStatus.java` (커밋 985f586, 2026-06-04)
+
+| 값 | 의미 |
+|---|---|
+| `PENDING` | 결제/이체 대기 |
+| `BANK_AWAITING_CONFIRM` | 혼합결제의 은행 부분 확인 대기 (21자 — 구 varchar(20) 영속 실패 잠재버그, varchar(32) 정정 완료) |
+| `COMPLETED` | 완료 |
+| `CANCELLED` | 취소됨 |
+| `EXPIRED` | 만료 |
+| `SUPERSEDED` | 재발급(reissue)으로 대체된 원본 — 정산 완료 판정에서 제외 |
+| `REVERSAL_FAILED` | 역분개 실패 |
+| `PENDING_MANUAL_REFUND` | 역분개 실패 후 수동 환불 대기 (21자 — 동일 varchar(32) 정정 완료) |
+
+> **DDL 정정 (해소 — 985f586, 2026-06-04)**: `meeting_settlement_transfer.status` varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자로 구 스키마에서 strict mode 영속 실패 잠재 버그 해소.
+
+### limbo SLA 정책 (Fact)
+
+> 소스: `MeetingSettlementExpirationScheduler.java:139-275` (커밋 985f586, 2026-06-04). 이 스케줄러는 05:00 만료 스캔과 별도로 동작한다.
+
+**대상 상태**: `BANK_AWAITING_CONFIRM`, `PENDING_MANUAL_REFUND` — 실제 돈이 움직였을 수 있는 중간 상태(limbo). 자동 만료 전이 금지(코드 주석 라인 112-122: "자동 EXPIRED 전이는 위험").
+
+| 항목 | 값 |
+|---|---|
+| cron | `0 10 5 * * *` (매일 05:10) |
+| SLA 간격 설정 키 | `meeting-settlement.limbo-escalation-days` (기본값 **3일**) |
+| ShedLock 이름 | `meetingSettlementLimboEscalation`, lockAtMostFor=PT20M |
+| 에스컬레이션 카운트 임계값 | `OPERATOR_ALERT_THRESHOLD = 2` (2회 이상이면 운영알림) |
+
+**재알림 수신자 및 NotificationType**:
+
+| limbo 상태 | 수신자 | NotificationType |
+|---|---|---|
+| `BANK_AWAITING_CONFIRM` | `toUserId`(수취자) + `creatorUserId`(호스트, 다를 경우) | `MEETING_SETTLEMENT_REMIND` |
+| `PENDING_MANUAL_REFUND` | `toUserId`(수취자) | `MEETING_SETTLEMENT_REFUND_REQUIRED` |
+
+**2회 이상 미해소 → 운영알림 승급**:
+- `OperatorAlertType.SETTLEMENT_TRANSFER_LIMBO`, severity=`HIGH`
+- idempotencyKey: `"SETTLEMENT_TRANSFER_LIMBO:{transferId}:{escalationCount}"`
+- orphan 케이스(BANK_AWAITING_CONFIRM이지만 settlement가 비ACTIVE): 즉시 운영알림, idempotencyKey: `"SETTLEMENT_TRANSFER_LIMBO_ORPHAN:{transferId}"`
+
+**DB 변경 (해소 — 985f586)**:
+- 신규 컬럼: `limbo_escalated_at DATETIME DEFAULT NULL`, `limbo_escalation_count INT NOT NULL DEFAULT 0`
+- 신규 인덱스: `idx_mst_limbo (status, limbo_escalated_at)`
+- 상태 전이 없음: `limboEscalatedAt`/`limboEscalationCount` 갱신만 수행
+
 ## 5. 프론트 계약
 
 ### 진입 경로
@@ -100,7 +147,7 @@
 ### 이체 내역 화면 — 호스트 뷰
 - **사용자가 보는 것 (전체 탭)**:
   - `TabBar` "전체"/"내 이체" — 전체에서 호스트는 모든 transfer 카드 노출
-  - 카드 정보: 송금자→수취자 아바타·이름, 금액, status 배지(`PENDING/COMPLETED/CANCELLED/EXPIRED/REVERSAL_FAILED/PENDING_MANUAL_REFUND`), `paymentMethod`
+  - 카드 정보: 송금자→수취자 아바타·이름, 금액, status 배지(`PENDING/BANK_AWAITING_CONFIRM/COMPLETED/CANCELLED/EXPIRED/SUPERSEDED/REVERSAL_FAILED/PENDING_MANUAL_REFUND`), `paymentMethod`
   - 상단 `SettlementActionBarWidget` 액션 — 호스트 권한이면 "일괄 확인" / "미납자 알림"(F07-07) 노출
 - **호스트가 할 수 있는 액션**:
   - 카드 PENDING → "이체 확인" 탭 ▶ `PATCH .../transfers/{id}/confirm` ▶ 토스트 "이체가 확인되었습니다"
@@ -176,6 +223,10 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
+| 해소 | V1__init.sql:3002 | `meeting_settlement_transfer.status` varchar(20) — `BANK_AWAITING_CONFIRM`(21자)/`PENDING_MANUAL_REFUND`(21자) strict mode 영속 실패 잠재 버그 | **해소** — 985f586 (2026-06-04): varchar(32) 정정 완료 |
+| 해소 | MeetingSettlementExpirationScheduler 없음 | limbo 상태(BANK_AWAITING_CONFIRM/PENDING_MANUAL_REFUND) 장기 방치 시 자동 알림·운영 에스컬레이션 없음 | **해소** — 985f586 (2026-06-04): 05:10 cron + ShedLock + 3일 SLA + 2회 이상 미해소 시 SETTLEMENT_TRANSFER_LIMBO HIGH 운영알림 구현 |
+| Risk | `MeetingSettlementExpirationScheduler.java:120-122` | `BANK_AWAITING_CONFIRM` 첫 발송 앵커가 전용 진입 컬럼 없이 `createdAt` 폴백 사용. 결제가 transfer 생성보다 늦으면 첫 알림이 다소 이르게 발화 가능 (무해하나 인지 필요) | 인지 필요 — 영향 없음 |
+| Risk | community_app | 서버 TransferStatus에 `SUPERSEDED`(재발급 대체) 추가됨. 앱 Flutter 모델 베이스라인 이후 변경 없어 미반영 가능성 있음 | Flutter `TransferStatus` enum에 `SUPERSEDED` 추가 여부 확인 필요 |
 | 후보 | frontend.md:83 | - **포기 버튼 색상**: `AppColors.error500` 강조 (위험 액션) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:86 | - **호스트가 자기 share를 직접 confirm할 수 없는 가드**: UI에서 호스트 본인 share 카드의 confirm 버튼 숨김 (백엔드 403 가드 보강) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 

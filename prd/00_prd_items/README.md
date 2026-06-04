@@ -10,9 +10,9 @@
 |---|---|---|---|---|
 | 서비스 개요 | 01_service_overview.md | 제품 전체를 처음 설명하거나 온보딩할 때 | 제품이 풀 문제, 전체 범위, 미결정 영역 | 00_product_prd.md |
 | 사용자 유형/persona | 02_user_personas.md | 기능별 주 사용자를 정하거나 화면 권한을 나눌 때 | 사용자 유형, 기대 경험, 관계 구조 | 07_role_action_matrix.md |
-| 전체 정보구조/기능구조 | 03_information_architecture.md | 서비스 구조와 도메인 경계를 잡을 때 | 17개 도메인 구조, 기능 규모, 의존 축 | 04_domain_purposes.md |
-| 17개 도메인별 목적 | 04_domain_purposes.md | 기능이 어느 도메인에 속하는지 판단할 때 | 도메인 목적, 도메인 간 의존 관계 | 01_domain_prds/ |
-| 153개 기능 정의 | 05_feature_definitions.md | 전체 기능 누락 여부를 전수 확인할 때 | 기능 ID, 주 사용자, 검산 포인트, 시나리오 수 | 02_feature_prds/ |
+| 전체 정보구조/기능구조 | 03_information_architecture.md | 서비스 구조와 도메인 경계를 잡을 때 | 20개 도메인 구조, 기능 규모, 의존 축 | 04_domain_purposes.md |
+| 20개 도메인별 목적 | 04_domain_purposes.md | 기능이 어느 도메인에 속하는지 판단할 때 | 도메인 목적, 도메인 간 의존 관계 | 01_domain_prds/ |
+| 168개 기능 정의 | 05_feature_definitions.md | 전체 기능 누락 여부를 전수 확인할 때 | 기능 ID, 주 사용자, 검산 포인트, 시나리오 수 | 02_feature_prds/ |
 | 사용자 여정 | 06_user_journeys.md | 기능 목록을 실제 행동 흐름으로 설명할 때 | 핵심 여정, 시작/종료 상태, 복구 지점 | 09_exceptions_edge_cases.md |
 | 권한/역할별 액션 | 07_role_action_matrix.md | 버튼 노출, 비활성, 접근 제한을 정할 때 | 역할별 허용 액션과 차단 방식 | 03_policy_prds/permission_policy_prd.md |
 | 상태 전이 | 08_state_transitions.md | 상태값이 화면/알림/결제에 영향을 줄 때 | 상태별 문구, 허용 액션, 전이 조건 | 03_policy_prds/state_policy_prd.md |

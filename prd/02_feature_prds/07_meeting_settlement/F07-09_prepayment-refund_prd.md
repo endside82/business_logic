@@ -1,12 +1,12 @@
 # F07-09. 선입금 결제 / 확인 / 환불 / 환불규정 (Prepayment & Refund Rules) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement/F07-09_prepayment-refund -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/07_meeting_settlement/F07-09_prepayment-refund -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-09_prepayment-refund`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불은 환불 규칙(이벤트 시작 N시간 전 환불률 %)에 따라 자동 계산된다. 가상계좌 입금은 PG의 webhook으로 인입되어 prepayment 상태를 자동 업데이트하도록 설계되어 있다 (현재 stub은 401 반환).
+이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불 규칙은 **별도 `meeting_refund_rule` 테이블**에 저장(이벤트 시작 N시간 전 환불률 %)되며, 카탈로그 저장 범위 외로 관리된다. 단 계산 엔진은 Phase 4(③)에서 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용한다(저장하지 않음). 가상계좌 입금은 PG의 webhook으로 인입되어 prepayment 상태를 자동 업데이트하도록 설계되어 있으나 **현재 미구현** (서비스 메서드 자체 없음 — 상세는 §8 Gap 참조).
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -67,7 +67,7 @@
 
 ### 개요
 
-이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불은 환불 규칙(이벤트 시작 N시간 전 환불률 %)에 따라 자동 계산된다. 가상계좌 입금은 PG의 webhook으로 인입되어 prepayment 상태를 자동 업데이트하도록 설계되어 있다 (현재 stub은 401 반환).
+이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불 규칙은 **별도 `meeting_refund_rule` 테이블**에 저장(카탈로그 저장 범위 외)되며, 계산 엔진은 Phase 4(③)에서 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용한다(저장하지 않음). 가상계좌 입금은 PG의 webhook으로 인입되어 prepayment 상태를 자동 업데이트하도록 설계되어 있으나 현재 미구현 (서비스 메서드 자체 없음 — 상세는 §8 Gap 참조).
 
 ### 엔드포인트 요약
 
@@ -86,7 +86,20 @@
 - Unit 06 (Wallet): `WalletService.deductPaidOnly`, `creditMeetingSettlement` (POINT 결제/환불)
 - Unit 06 (Accounting): `AccountingLedgerService.recordMeetingPrepayment`, `recordMeetingPrepaymentRefund`
 - Unit 03 (Event): `Event.startTime` (환불률 계산용), 호스트 검증
-- 외부 PG (가상계좌): `POST /webhooks/meeting-settlement/virtual-account/deposit` 인입 (실제 연동 시)
+- 외부 PG (가상계좌): `POST /webhooks/meeting-settlement/virtual-account/deposit` — **PG 계약 선행 필요, D-1~4 미결, 현재 미구현** (§8 Gap 참조). 체크리스트: `community_api/docs/plan/VIRTUAL_ACCOUNT_WEBHOOK_TODO.md`
+
+### EVENT_PREPAYMENT 정산 집계 계약 (Fact)
+
+> **Fact (2026-06-04, 커밋 6c5988e)**: 결제 CTA가 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)에서 `EventPrepaymentService.payByWallet`(referenceType=`EVENT_PREPAYMENT`)로 이관된 이후, 정산 집계가 `EVENT_PREPAYMENT` 거래를 포함하도록 4종 메서드가 업데이트되었다. 소스: `PointTransactionQueryRepositoryDataJpaTest.java:41-185` (배포 게이트 테스트).
+
+| 메서드 | 계약 |
+|---|---|
+| `calculateNetPaymentByEventId(eventId)` | `EVENT_PAYMENT`(레거시, referenceId=eventId) + `EVENT_PREPAYMENT`(referenceId=event_payment.id, 서브쿼리로 eventId 복원) 중복없이 합산. COMPLETED인 row만 포함. |
+| `calculateNetPaymentByEventIdAndPeriod(eventId, start, end)` | 위와 동일 + [start, end) 경계 필터. start 포함, end 배제. |
+| `calculatePaidNetPaymentByEventIdAndPeriod(...)` | paid 분리 합산 (`EVENT_PREPAYMENT.paidAmount` 포함) |
+| `calculateFreeNetPaymentByEventIdAndPeriod(...)` | free 분리 합산 (`EVENT_PREPAYMENT.freeAmount` 포함) |
+
+referenceType 2종 통합 의미: 동일 이벤트에 대해 `EVENT_PAYMENT` 레거시 거래와 `EVENT_PREPAYMENT` 신규 거래가 공존할 수 있으며, 두 유형을 합산해야 정확한 정산 금액이 산출된다.
 
 ## 5. 프론트 계약
 
@@ -206,6 +219,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
+| Gap (미구현) | ea906cf (2026-06-04) | **가상계좌 webhook `confirmVirtualAccountDeposit` 서비스 메서드 자체 없음**. `VirtualAccountWebhookController`의 서비스 호출이 주석 처리됨. `VirtualAccountPgProvider` stub(전 요청 401 거부). PG 가상계좌 발급·입금 통지 webhook 지원 PG 사업자 계약 선행 필요. 미결 결정사항 D-1~D-4: (D-1) webhook 적용 범위 MIXED 은행 부분만 vs BANK_TRANSFER 단독 포함; (D-2) 부분입금/초과입금 정책; (D-3) pending appeal 있는 transfer 자동 확인 시 처리 방침; (D-4) 가상계좌 발급 시점. 완료 정의(DoD): 테스트베드 발급→입금→webhook→COMPLETED→정산완료 무인통과 + 중복통지 멱등 + 금액불일치 운영알림 + 서명위조 401. 체크리스트: `community_api/docs/plan/VIRTUAL_ACCOUNT_WEBHOOK_TODO.md` | **PG 계약 체결 후 착수**. D-1~4 결정 전 코드 착수 금지. |
 | 후보 | backend.md:82 | - **참고**: BANK_TRANSFER 환불은 환불 금액 계산만 하고 wallet credit은 호출하지 않음 (호스트가 수동으로 외부 환불해야 함 — 현재 코드는 POINT에 한해 자동 환불) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:26 | - 호스트 뷰 + BANK 미확인: "확인" / "환불" 버튼 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:38 | - BANK 미확인 / POINT 완료 / 환불 완료 각각 다른 배지 색 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |

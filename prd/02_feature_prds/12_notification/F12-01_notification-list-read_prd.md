@@ -1,6 +1,6 @@
 # F12-01. 알림 목록 조회 & 읽음 관리 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/12_notification/F12-01_notification-list-read -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/12_notification/F12-01_notification-list-read -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/12_notification/F12-01_notification-list-read`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -107,9 +107,126 @@
 | created_at, updated_at | datetime | `@CreatedDate`/`@LastModifiedDate` |
 
 ### Enum
-- `NotificationType` (61종, `NotificationType.java`) — `getType()`이 정수 코드(0~60)이며 DB에 정수로 저장. VO에서는 `name()` 문자열로 직렬화
-- `NotificationChannel` — `IN_APP`, `PUSH`, `EMAIL`, `SMS`
-- `NotificationStatusType` — `PENDING`, ... (자세한 값은 본 단위 외부에서 전이)
+
+#### `NotificationType` 전체 (97종, `NotificationType.java`)
+
+`getType()`이 정수 코드(0~96)이며 DB에 정수로 저장. VO에서는 `name()` 문자열로 직렬화.
+
+| 코드 | 이름 | 라우팅 도메인 | 딥링크 |
+|------|------|-------------|--------|
+| 0 | `EVENT_REMINDER` | 이벤트 | 이벤트 상세 |
+| 1 | `APPLICATION_APPROVED` | 이벤트 | 이벤트 상세 |
+| 2 | `APPLICATION_REJECTED` | 이벤트 | 이벤트 상세 |
+| 3 | `PROMOTION` | 마케팅 | 없음 |
+| 4 | `EVENT_CANCELLED` | 이벤트 | 이벤트 상세 |
+| 5 | `REVIEW_RECEIVED` (**Deprecated** — NEW_REVIEW 사용) | 리뷰 | 내 리뷰 목록 |
+| 6 | `REPORT_RESOLVED` | 신고 | 내 신고 상세 |
+| 7 | `PAYMENT_COMPLETED` | 결제 | 지갑 |
+| 8 | `WAITLIST_PROMOTED` | 이벤트 | 이벤트 상세 |
+| 9 | `CHAT_MESSAGE` | 데이팅 | 채팅방 목록 |
+| 10 | `EVENT_CANCELED` (**Deprecated** — EVENT_CANCELLED 사용) | 이벤트 | 이벤트 상세 |
+| 11 | `EVENT_UPDATED` | 이벤트 | 이벤트 상세 (RS-002: RESCHEDULE_PROPOSAL 서브타입이면 참가자 응답 화면 직행 — 아래 §라우팅 규칙 참조) |
+| 12 | `NEW_APPLICATION` | 이벤트 | 신청자 관리 |
+| 13 | `NEW_REVIEW` | 리뷰 | 내 리뷰 목록 |
+| 14 | `REFUND_COMPLETED` | 결제 | 지갑 거래내역 |
+| 15 | `SETTLEMENT_COMPLETED` | 정산 | 정산 목록 |
+| 16 | `LOCATION_SHARED` | 위치 | 없음 |
+| 17 | `CLUB_EVENT_PUBLISHED` | 클럽 | 이벤트 상세 → 클럽 fallback |
+| 18 | `CLUB_EVENT_REMINDER` | 클럽 | 이벤트 상세 → 클럽 fallback |
+| 19 | `CLUB_EVENT_UPDATED` | 클럽 | 이벤트 상세 → 클럽 fallback |
+| 20 | `SETTLEMENT_APPROVED` | 정산 | 정산 상세 |
+| 21 | `SETTLEMENT_REJECTED` | 정산 | 정산 상세 |
+| 22 | `SETTLEMENT_FAILED` | 정산 | 정산 상세 |
+| 23 | `WITHDRAWAL_PAID` | 출금 | 클럽 재정 → 지갑 fallback |
+| 24 | `PAYMENT_FAILED` | 결제 | 클럽 구독 → 지갑 fallback |
+| 25 | `CHARGE_FAILED` | 결제 | 지갑 거래내역 |
+| 26 | `WITHDRAWAL_REQUESTED` | 출금 | — |
+| 27 | `WITHDRAWAL_CLUB_REQUESTED` | 출금 | — |
+| 28 | `WITHDRAWAL_APPROVED` | 출금 | — |
+| 29 | `POINT_EXPIRATION` | 포인트 | 지갑 거래내역 |
+| 30 | `EVENT_PHOTO_EXPIRY` | 이벤트 사진 | 이벤트 사진첩 |
+| 31 | `CLUB_JOIN_REQUEST` | 클럽 | 클럽 대기자 목록 |
+| 32 | `CLUB_JOIN_APPROVED` | 클럽 | 클럽 홈 |
+| 33 | `CLUB_JOIN_REJECTED` | 클럽 | 클럽 홈 |
+| 34 | `CLUB_INVITATION` | 클럽 | 클럽 홈 |
+| 35 | `CLUB_INVITATION_ACCEPTED` | 클럽 | 클럽 멤버 목록 |
+| 36 | `CLUB_MEMBER_BANNED` | 클럽 | 없음 |
+| 37 | `CLUB_MEMBER_KICKED` | 클럽 | 없음 |
+| 38 | `CLUB_MEMBER_LEFT` | 클럽 | 클럽 멤버 목록 |
+| 39 | `CLUB_ANNOUNCEMENT` | 클럽 | 클럽 공지 목록 |
+| 40 | `CLUB_CLOSED` | 클럽 | 없음 |
+| 41 | `WITHDRAWAL_REJECTED` | 출금 | 클럽 재정 → 지갑 fallback |
+| 42 | `SAVED_SEARCH_NEW_RESULTS` | 검색 | 저장 검색 |
+| 43 | `SUBSCRIPTION_EXPIRED` | 구독 | 클럽 구독 |
+| 44 | `MEETING_SETTLEMENT_ACTIVATED` | 모임정산 | 이벤트 정산 |
+| 45 | `MEETING_SETTLEMENT_PAID` | 모임정산 | 이벤트 정산 |
+| 46 | `MEETING_SETTLEMENT_COMPLETED` | 모임정산 | 이벤트 정산 |
+| 47 | `MEETING_SETTLEMENT_EXPIRED` | 모임정산 | 이벤트 정산 |
+| 48 | `SETTLEMENT_CORRECTION_PENDING` | 정산 | 정산 상세 |
+| 49 | `SETTLEMENT_CORRECTION_COMPLETED` | 정산 | 정산 상세 |
+| 50 | `MEETING_SETTLEMENT_CANCELLED` | 모임정산 | 이벤트 정산 |
+| 51 | `CLUB_OWNER_CHANGED` | 클럽 | 클럽 홈 |
+| 52 | `MEETING_SETTLEMENT_TRANSFER_REISSUED` | 모임정산 | — |
+| 53 | `MEETING_SETTLEMENT_REFUND_REQUIRED` | 모임정산 | — |
+| 54 | `MEETING_SETTLEMENT_REFUND_COMPLETED` | 모임정산 | — |
+| 55 | `REVIEW_NUDGE` | 리뷰 | 리뷰 작성 화면 (eventId 직행) |
+| 56 | `LOCATION_SHARE_EXPIRING` | 위치 | 이벤트 위치 공유 화면 |
+| 57 | `MEETING_SETTLEMENT_REMIND` | 모임정산 | 이벤트 정산 |
+| 58 | `REFUND_PG_COMPLETED` | 결제 | 지갑 거래내역 (transactionId 있으면 상세 직행) |
+| 59 | `REFUND_PG_FAILED` | 결제 | 지갑 거래내역 |
+| 60 | `EVENT_ANNOUNCE` | 이벤트 | 이벤트 상세 |
+| 61 | `SAFETY_CHECKIN_REMINDER` | 안전 | — (정보성) |
+| 62 | `EVENT_MESSAGE_CREATED` | 이벤트 대화 | 이벤트 메시지 화면 |
+| 63 | `EVENT_MESSAGE_REPLIED` | 이벤트 대화 | 이벤트 메시지 화면 |
+| 64 | `MEETING_SETTLEMENT_APPEAL_CREATED` | 모임정산 이의 | 이벤트 정산 이의 목록 |
+| 65 | `MEETING_SETTLEMENT_APPEAL_RESOLVED` | 모임정산 이의 | 이벤트 정산 이의 목록 |
+| 66 | `SUPPORT_ISSUE_UPDATED` | 운영 문의 | 운영 이슈 상세 |
+| 67 | `EVENT_PHOTO_GRACE_ENTERED` | 이벤트 사진 | 이벤트 사진첩 |
+| 68 | `EVENT_PHOTO_EXPIRY_FINAL` | 이벤트 사진 | 이벤트 사진첩 |
+| 69 | `EVENT_PHOTO_CLEANUP_IMMINENT` | 이벤트 사진 | 이벤트 사진첩 |
+| 70 | `EVENT_PHOTO_AUTO_HIDDEN` | 이벤트 사진 | 이벤트 사진첩 |
+| 71 | `EVENT_PREPAYMENT_REQUIRED` | 선입금 | — |
+| 72 | `EVENT_PREPAYMENT_BANK_DECLARED` | 선입금 | — |
+| 73 | `EVENT_PREPAYMENT_BANK_CONFIRMED` | 선입금 | — |
+| 74 | `EVENT_PREPAYMENT_BANK_REJECTED` | 선입금 | — |
+| 75 | `EVENT_PREPAYMENT_EXPIRED` | 선입금 | — |
+| 76 | `EVENT_PREPAYMENT_REFUNDED` | 선입금 | — |
+| 77 | `CARPOOL_OFFER_CONFIRMED` | 카풀 | — (미배선) |
+| 78 | `CARPOOL_OFFER_REJECTED` | 카풀 | — (미배선) |
+| 79 | `CARPOOL_PASSENGER_ASSIGNED` | 카풀 | — (미배선) |
+| 80 | `CARPOOL_PASSENGER_UNASSIGNED` | 카풀 | — (미배선) |
+| 81 | `BUS_SEAT_ASSIGNED` | 버스 | — (미배선) |
+| 82 | `BUS_SEAT_CHANGED` | 버스 | — (미배선) |
+| 83 | `EVENT_PREPAYMENT_REFUND_REQUESTED` | 선입금 환불 | — |
+| 84 | `REFUND_REQUESTED` | 마켓 환불 | — |
+| 85 | `REFUND_APPROVED` | 마켓 환불 | — |
+| 86 | `REFUND_AUTO_APPROVED` | 마켓 환불 | — |
+| 87 | `REFUND_REJECTED` | 마켓 환불 | — |
+| 88 | `REFUND_EVIDENCE_REQUESTED` | 마켓 환불 | — |
+| 89 | `REFUND_EVIDENCE_RESPONDED` | 마켓 환불 | — |
+| 90 | `REFUND_ESCALATED` | 마켓 환불 | — |
+| 91 | `REFUND_FAILED` | 마켓 환불 | — |
+| 92 | `REFUND_DISPUTE_CREATED` | 마켓 분쟁 | — (딥링크 미배선, Gap 참조) |
+| 93 | `REFUND_DISPUTE_UPHELD` | 마켓 분쟁 | — (딥링크 미배선, Gap 참조) |
+| 94 | `REFUND_DISPUTE_OVERTURNED` | 마켓 분쟁 | — (딥링크 미배선, Gap 참조) |
+| 95 | `REFUND_CREATOR_RECEIVABLE_OFFSET` | 마켓 정산 | — |
+| 96 | `FAVORITE_PERSON_NEW_EVENT` | 관심인 | 이벤트 상세 |
+
+#### EVENT_UPDATED 서브타입 라우팅 (RS-002)
+
+`EVENT_UPDATED(11)` 알림의 `dataJson.type` 값에 따라 라우팅이 분기된다:
+
+| `dataJson.type` | 추가 payload | 라우팅 결과 |
+|---|---|---|
+| `RESCHEDULE_PROPOSAL` | `proposalId`, `batchId` | `/me/reschedule-proposals/{proposalId}` — 참가자 응답 화면 직행 |
+| `RESCHEDULE_APPLIED` | `batchId` | 이벤트 상세 fallback |
+| `RESCHEDULE` (AUTO 경로) | — | 이벤트 상세 fallback |
+| 기타 / 없음 | — | 이벤트 상세 |
+
+소스: `notification_router.dart` `_resolveReschedulePath()` (RS-002 f4109a0)
+
+#### `NotificationChannel` — `IN_APP`, `PUSH`, `EMAIL`, `SMS`
+#### `NotificationStatusType` — `PENDING`, ... (자세한 값은 본 단위 외부에서 전이)
 
 ### ErrorCode (notification 도메인)
 - `NOTIFICATION_NOT_FOUND` (404, 800001)
@@ -225,10 +342,12 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:26 | - 우선순위 칩 ("주의" — p1만), 제목, 메시지(2줄 ellipsis), 상대 시간 ("방금"/"N분 전"/"N시간 전"/"N일 전"/"M/D") | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:85 | - p1 (좌측 노란 바 + "주의" 칩): `PAYMENT_FAILED`, `CHARGE_FAILED`, `SETTLEMENT_FAILED`, `SETTLEMENT_REJECTED`, `WITHDRAWAL_REJECTED`, `MEETING_SETTLEMENT_EXPIRED`, `MEETING_SETTLEMENT_CANCELLED`, `SETTLEMENT_CORRECTION_PENDING`, `REFUND_PG_FAILED` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:89 | - **토스트 메시지**: "알림이 삭제되었습니다" (성공 시), 삭제 실패 메시지 미정 (현재 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:46 | 5. 실수로 삭제했음 — 현재 구현은 Undo 액션 미제공 (스펙 27-notification.md는 Undo 언급하나 코드 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Risk | frontend.md:26 | 우선순위 칩("주의" — p1만): `PAYMENT_FAILED`, `CHARGE_FAILED`, `SETTLEMENT_FAILED`, `SETTLEMENT_REJECTED`, `WITHDRAWAL_REJECTED`, `MEETING_SETTLEMENT_EXPIRED`, `MEETING_SETTLEMENT_CANCELLED`, `SETTLEMENT_CORRECTION_PENDING`, `REFUND_PG_FAILED` — 신규 타입(77~96)은 p1 분류 미확인 | 신규 알림 타입의 priority 분류 코드 확인 후 `_resolveNotificationIcon` 갱신 |
+| Gap | frontend.md:89 | 삭제 실패 메시지 미정 — 현재 구현은 `false` 반환만, 토스트 없음 | 삭제 실패 토스트 문구 확정 후 구현 |
+| Gap | scenarios.md:46 | Undo 미구현 — 스펙 27-notification.md는 Undo 언급하나 코드 미구현 | Decision Needed: Undo 제공 여부 결정 |
+| Gap (P1) | dossier 01 §3-E-4, dossier 09 §2-8 | **분쟁 딥링크 미배선**: `notification_router.dart`에 신규 통합 분쟁 케이스 알림 타입 없음. `REFUND_DISPUTE_CREATED(92)`, `REFUND_DISPUTE_UPHELD(93)`, `REFUND_DISPUTE_OVERTURNED(94)` 기존 3종만 isNavigable에 포함 안 됨. 신규 `USER_DISPUTE`, `CLUB_MEMBERSHIP_ACTION`, `DATE_BLOCK` 분쟁 알림 클릭 시 홈 fall-through | `notification_router.dart`에 분쟁 케이스 딥링크 추가 (`/me/disputes/:caseId`) |
+| Gap | dossier 09 §2-8 | 카풀(77~80)/버스(81~82) 알림 딥링크 미배선 — `isNavigable` 목록에 없음, `resolve()` switch에 없음 | 카풀/버스 화면 라우트 연결 |
+| Gap | dossier 09 §2-8 | `SAFETY_CHECKIN_REMINDER(61)`, `EVENT_PREPAYMENT_*(71~76, 83)`, `REFUND_*(84~95)` 대부분 딥링크 미배선 | 각 도메인 화면 라우트 연결 또는 정보성 처리 확정 |
 
 ## 9. 수용 기준
 

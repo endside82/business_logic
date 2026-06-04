@@ -93,9 +93,23 @@
 ### 의존 단위 / 외부 시스템
 
 - **WalletSpendService**: 본 흐름 전체가 `spend(SUBSCRIPTION, ...)`을 통해 포인트 차감 → F06-01/03에 영향
-- 다른 Unit: 멤버십 혜택(광고 제거/배지/우선 노출 등)은 다른 도메인이 `Subscription.status`를 참조하여 적용 (Unit별 책임)
+- 다른 Unit: 멤버십 혜택은 다른 도메인이 `SubscriptionService.isPremium(userId)`를 호출하여 게이팅 적용 (Unit별 책임)
 - 외부: 없음 (PG 직접 호출 없음 — 포인트 결제만)
 - 알림: 본 코드에는 직접 발송 명시 없음. 자동갱신 실패 시는 별도 스케줄러가 발송 가능 (본 단위 외).
+
+### 실제 프리미엄 혜택 게이팅 (2026-06-05 보강)
+
+> **Fact**: 서버에서 `SubscriptionService.isPremium(long userId)`가 활성 PREMIUM 존재 여부를 판정하며, 이를 게이팅으로 쓰는 도메인은 현재 **favorite 도메인 단독**이다(소스 확인 기준 2026-06-05).
+
+| 혜택 | 도메인 | 서버 게이팅 소스 | 클라 업셀 경로 |
+|---|---|---|---|
+| 관심인 한도 3명→10명 | 19 관심인 | `FavoriteService.java:162-165` — `isPremium ? premiumMax : defaultMax` | `favorite_list_screen.dart:104-125` |
+| 캘린더 비공개 토글 | 19 관심인 | `PrivacySettingService.java:36-38` — `privateToFavorites && !isPremium → PREMIUM_REQUIRED` | `privacy_settings_screen.dart:78-81` |
+| 가입 클럽 숨기기 토글 | 19 관심인 | `PrivacySettingService.java:45-47` — `hideClubs && !isPremium → PREMIUM_REQUIRED` | `privacy_settings_screen.dart:95-98` |
+
+> **isPremium 구현**: `SubscriptionService`에 `isPremium(long userId)` 메서드가 존재하며, `hasActiveSubscription`(BASIC도 true)과 구분하여 **활성 PREMIUM만** 판별한다. 계획 원본(`FAVORITE_PERSON_CALENDAR_PLAN.md §2-A`)에 `BASIC+PREMIUM row 공존 시 findTopBy... false-negative` 함정이 기술되어 있어 전용 쿼리로 구현됨.
+>
+> **Gap**: BASIC 플랜은 현재 구독 가능하나 어떤 혜택도 게이팅하지 않는다. `BASIC → 0원 재가격 불가`(SpendCommand amount<=0 거절) 제약으로 별도 정책 결정 필요(계획서 §2-A 참조).
 
 ## 5. 프론트 계약
 

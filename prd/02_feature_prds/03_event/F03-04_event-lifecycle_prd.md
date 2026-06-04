@@ -88,7 +88,14 @@
 | POST | /api/v1/events/{eventId}/publish | EventController#publishEvent | required | DRAFT → OPEN |
 | POST | /api/v1/events/{eventId}/close | EventController#closeEvent | required | OPEN → CLOSED |
 | POST | /api/v1/events/{eventId}/cancel | EventController#cancelEvent | required | OPEN/DRAFT → CANCELED + 환불 + 알림 |
-| PATCH | /api/v1/events/{eventId}/reschedule | EventController#rescheduleEvent | required | 일정 변경 (OPEN만) + 참석자 알림 |
+| PATCH | /api/v1/events/{eventId}/reschedule | EventController#rescheduleEvent | required | 일정 변경 (OPEN만) — 내부에서 RS-002 제안 흐름으로 위임. **상세는 F03-19** |
+| POST | /api/v1/events/{eventId}/reschedule-proposals | RescheduleProposalController | required | 직접 제안 생성 (newPrice/hostMessage 포함). **상세는 F03-19** |
+| GET | /api/v1/events/{eventId}/reschedule-proposals/{batchId} | RescheduleProposalController | required | 호스트 batch 현황 |
+| POST | /api/v1/events/{eventId}/reschedule-proposals/{batchId}/apply | RescheduleProposalController | required | batch 확정 |
+| DELETE | /api/v1/events/{eventId}/reschedule-proposals/{batchId} | RescheduleProposalController | required | batch 철회 |
+| POST | /api/v1/reschedule-proposals/{proposalId}/response | RescheduleProposalController | required(참가자) | 참가자 응답 |
+| GET | /api/v1/me/reschedule-proposals/{proposalId} | RescheduleProposalController | required | 참가자 단건 상세 |
+| GET | /api/v1/me/reschedule-proposals | RescheduleProposalController | required | 참가자 목록 |
 | POST | /api/v1/events/{eventId}/announce | EventController#announceToAttendees | required | 참석자 전체 공지 fanout |
 | PATCH | /api/v1/events/{eventId}/recurring | EventController#updateFutureEvents | required | 반복 자식 일괄 수정 |
 | DELETE | /api/v1/events/{eventId}/recurring | EventController#cancelAllFutureEvents | required | 반복 자식 일괄 취소 |
@@ -102,10 +109,16 @@
   - `OPEN → {CLOSED, CANCELED}`
   - `CLOSED, CANCELED, HIDDEN → {}` (terminal)
 - **Enum** `NotificationType` (Unit 12): `EVENT_UPDATED`, `EVENT_CANCELLED`, `EVENT_ANNOUNCE`, `PAYMENT_FAILED`
+  - `EVENT_UPDATED` dataJson 서브타입: `type:"RESCHEDULE"` (AUTO), `type:"RESCHEDULE_PROPOSAL"` (MAJOR 제안, proposalId+batchId 포함), `type:"RESCHEDULE_APPLIED"` (확정 완료, batchId 포함)
+  - `EventNotificationData`에 `proposalId`, `batchId` 필드 추가됨 (RS-002 커밋 86356e5)
 - **Enum** `FailedRefundStatus` (Unit 06): `PENDING`, `RETRY`, `RESOLVED`
+- **Enum** `RescheduleChangeType` (RS-002): `TIME, PLACE, PRICE, MULTI`
+- **Enum** `RescheduleClassification` (RS-002): `AUTO, MAJOR`
+- **Enum** `RescheduleResponseStatus` (RS-002): `PENDING, ACCEPTED, DECLINED, AUTO_ACCEPTED, WITHDRAWN`
 - **검증**:
   - `EventModParam`: 모든 필드 nullable, `baseCapacity @Min(1)`
-  - `EventRescheduleParam`: `newStartTime/newEndTime @NotNull`, `changeReason @NotBlank @Size(max=200)`
+  - `EventRescheduleParam` (기존 PATCH 경로, 앱 사용): `newStartTime/newEndTime @NotNull`, `changeReason @NotBlank @Size(max=200)`. **newPrice/hostMessage 없음**
+  - `RescheduleProposalCreateParam` (직접 POST 경로, 앱 미사용): EventRescheduleParam 5필드 + `newPrice(BigDecimal?)` + `hostMessage(@Size(max=500)?)`
   - `EventAnnounceParam`: `title @NotBlank @Size(max=100)`, `message @NotBlank @Size(max=500) @SafeAnnounceContent(maxLinks=2)`
 
 ### 의존 단위 / 외부 시스템
@@ -171,10 +184,14 @@
   - 발송 ▶ `EventAnnounceNotifier.announce` ▶ `POST .../announce`
   - 성공 → 토스트 "공지가 발송되었습니다" + `notificationListNotifier.invalidate()`
   - 실패 (RATE_LIMIT_EXCEEDED) → "잠시 후 다시 시도해주세요"
-- **일정 변경 (reschedule)**:
-  - 별도 진입점 (호스트 액션바 또는 수정 화면 내 "일정 변경" 버튼)
-  - 다이얼로그: 새 시작/종료 시각, 새 주소(선택), 변경 사유 (필수)
-  - ▶ `EventRepository.rescheduleEvent` (Repository 메서드 추가 필요 — 현재 `event_repository.dart`에 정의됨 가정)
+- **일정 변경 (reschedule)** — RS-002 합의-우선 모델 적용 ([F03-19 상세](F03-19_event-reschedule-consent_prd.md)):
+  - 진입점: 이벤트 수정 화면(`event_edit_screen.dart`)에서 시간/장소/변경 사유 입력 후 저장.
+  - `EventRepository.rescheduleEvent(id, EventRescheduleParam)` ▶ `PATCH .../reschedule` — 구현 완료.
+  - 서버 응답의 `classification` 값에 따라 앱이 분기:
+    - **AUTO** (`applied=true`): 토스트 "경미한 변경으로 바로 반영됐습니다". 참가자에게 `EVENT_UPDATED(type=RESCHEDULE)` 알림 자동 발송.
+    - **MAJOR** (`applied=false, batchId!=null`): `pushReplacement`로 `RescheduleProposalBatchScreen` 이동. 참가자에게 `EVENT_UPDATED(type=RESCHEDULE_PROPOSAL, proposalId)` 알림 발송. 참가자 48시간 합의 후 호스트가 `applyBatch`로 확정.
+  - MAJOR 분류 조건: |Δstart| ≥ 60분 OR 장소 변경 OR 가격 인상.
+  - **Gap**: 기존 PATCH 경로 `EventRescheduleParam`에 `newPrice`, `hostMessage` 없음 → 가격 인상 시 분류기 미동작 위험 (F03-19 G-1).
 
 ### API 호출 순서 (Provider/Repository 관점)
 

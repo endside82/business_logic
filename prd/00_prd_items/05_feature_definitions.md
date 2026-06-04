@@ -1,4 +1,4 @@
-# 153개 기능 정의
+# 168개 기능 정의
 
 <!-- supporting-doc-status: 2026-05-18 -->
 
@@ -14,6 +14,8 @@
 | 같이 볼 문서 | 02_feature_prds/, 10_impact_matrix.md, 11_qa_acceptance_criteria.md |
 
 이 문서는 전체 기능을 한 번에 검토하기 위한 인벤토리다. 개별 상세는 `02_feature_prds`의 기능별 PRD에서 확인한다.
+
+> 갱신: 2026-06-05. 도메인 18(분쟁 해결)/19(관심인)/20(고객지원) 신설 +9개, 기존 도메인 신규 기능 +6개 추가. 총 153 → 168개.
 
 | ID | 도메인 | 기능 | 주 사용자 | 핵심 검산 포인트 | 시나리오 | 도식 |
 |---|---|---|---|---|---:|---:|
@@ -170,3 +172,18 @@
 | F17-08 | 정기모임 | 환불 (pro-rata · 트리거별) | 멤버/호스트 | MEMBER_CANCEL=elapsed, HOST_CANCEL=delivered, FORFEIT 동일 산식, 100원 floor, failed_refund.regular_meeting_id | 10 | 1 |
 | F17-09 | 정기모임 | 세션 출석 확정·노쇼 | 호스트 | session_attendance 권위, endTime≤now 가드, FORFEIT_ON_LIMIT, scheduler opt-in, close 가드 연동 | 10 | 0 |
 | F17-10 | 정기모임 | 호스트 정산 (flow-through) | 호스트 | retained paid/free 분리, close afterCommit REQUIRES_NEW, uk_settlement_rm 멱등, fail-closed, reservedRefund 게이트 | 10 | 1 |
+| F03-19 | 이벤트 | 일정 변경 제안·참가자 합의 (RS-002) | 호스트/참가자 | RescheduleClassification(AUTO/MAJOR) 분류, 참가자 PENDING→ACCEPTED/DECLINED/AUTO_ACCEPTED/WITHDRAWN 응답, batch 확정/철회, 48h 자동수락 스케줄러, DECLINED→무료 자동취소 연계, EVENT_UPDATED 알림(type:RESCHEDULE_PROPOSAL/RESCHEDULE_APPLIED/RESCHEDULE) | — | — |
+| F03-20 | 이벤트 | 이벤트 노쇼 관리 | 호스트/참가자 | NoShowStatus(CONFIRMED/APPEALED/OVERTURNED), 호스트·cohost 단건/일괄 확정, 참가자 소명(appealCaseId 외부 발급 필요), 호스트 뒤집기(OVERTURNED 제재 카운트 제외), 노쇼 사후 환불(NoShowRefund + dispute_case_id 자동 생성), EventApplyRestrictionGuard 17개 진입점 통합 | — | — |
+| F04-18 | 클럽 | 클럽 레퓨테이션 점수 | 클럽 멤버/관리자 | ReputationScoreController(GET /api/v1/club/reputation/me, /members/{memberId}), 클럽 호스트 신뢰도 (HostSettlementReputation)와 별개 도메인, 클럽-스코프 점수 | — | — |
+| F11-07 | 리뷰 & 신고 | 호스트 리뷰 모더레이션 | 이벤트 호스트 | 호스트 답변(POST/PUT/GET /reviews/{reviewId}/reply, 수정 EditWindow 제한), 임시 숨김(POST /reviews/{reviewId}/hide, ReviewHideReasonCode **6종**), 숨김 해제(unhide), autoEscalate 옵션(hide 시 Report 자동 생성), 증빙 파일 첨부(EvidenceFileValidator, max 5), 신고 진행 중 리뷰 unhide 차단(legal hold) | — | — |
+| F18-01 | 분쟁 해결 | 통합 분쟁 케이스 조회 | 참가자/호스트 | GET /me/dispute-cases(참가자), GET /host/dispute-cases(호스트), UnifiedDisputeStatus(OPEN/IN_REVIEW/RESOLVED/CLOSED/ESCALATED) 필터, **DisputeSourceType enum 21값(분류용) — 실제 emit: 사용자 7종+USER_DISPUTE 양측/호스트 2종**, caseId 형식 `{sourceType}:{sourceId}`, DisputeCaseVo 목록·상세(타임라인·증빙·actorPermissions), Page 페이지네이션 | — | — |
+| F18-02 | 분쟁 해결 | 분쟁 직접 접수 | 참가자 | POST /me/dispute-cases, DisputeCaseType(REPORT/APPEAL/REFUND_ISSUE/NO_SHOW_APPEAL/CONTENT_MODERATION/SAFETY/SETTLEMENT/TRANSPORT/HOST_ACTION_REVIEW) 9종, summary 필수(min 10/max 2000자), evidenceFileIds max 5, rate-limit 429/중복 409 가드, active_dedup_key GENERATED 컬럼(OPEN/IN_REVIEW/ESCALATED+target 존재 시 중복 방지) | — | — |
+| F18-03 | 분쟁 해결 | 분쟁 이의제기 | 참가자 | POST /me/dispute-cases/{caseId}/appeals, AppealCreateParam(reasonCode 5종: FACT_INCORRECT/EVIDENCE_MISSING/PROCEDURE_UNFAIR/CIRCUMSTANCE_OVERRIDE/OTHER, reasonText min 20/max 1000자), UNIQUE(caseId, appellantUserId) 1건 제약, 철회(POST .../withdraw, PENDING만 가능→CLOSED), DisputeAppealStatus(PENDING/UPHELD/REJECTED/CLOSED), admin이 UPHELD/REJECTED 전이 소유 | — | — |
+| F18-04 | 분쟁 해결 | 분쟁 증빙·공개범위·보존 | 참가자/호스트/CS | Visibility(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY) 4종 **정책 의도(4종 분류)** — **현재 구현은 CS_ONLY 항목 제거만(public detail 조회 시 CS_ONLY 필터링), 역할별 게이트(HOST_ONLY·PARTIES 분기) 미생성**, evidenceFrozen flag, legal hold(OPEN/IN_REVIEW/ESCALATED 상태에서 evidence 삭제 차단), DisputeCaseRetentionScheduler(매일 05:00, RESOLVED/CLOSED 후 1년 경과 시 evidence 정리), EvidenceFileValidator(max 5, 소유권 검증) | — | — |
+| F18-05 | 분쟁 해결 | 호스트 운영 인박스 | 호스트 | GET /host/inbox(Page<HostInboxItemVo>), GET /host/inbox/stats(HostInboxStatsVo), HostInboxSourceType 8종(EVENT_MESSAGE/APPLICATION/MEETING_SETTLEMENT_APPEAL/REPORT/PAYMENT_ISSUE/REFUND_ISSUE/OPERATIONAL_ISSUE/DISPUTE_CASE), HostInboxStatus(NEEDS_RESPONSE/IN_PROGRESS/DONE), DISPUTE_CASE 카드→호스트 분쟁 상세 딥링크(미배선 Gap 포함), **unansweredCount는 EVENT_MESSAGE 카드의 스레드 단위 미응답 카운트** | — | — |
+| F19-01 | 관심인 | 관심인 등록·관리 | 로그인 사용자 | POST /api/v1/favorites(등록), DELETE /api/v1/favorites/{targetUserId}(해제), GET /api/v1/favorites(목록, active=true max N명 등록순), GET /api/v1/favorites/limit(구독 플랜별 한도 확인), isBlockedBetween status-aware(BLOCKED row만 체크, UNBLOCKED history 제외), FAVORITE_PERSON_NEW_EVENT(96) 알림 팬아웃(FavoriteService.isEffectiveFavorite 기반) | — | — |
+| F19-02 | 관심인 | 관심인 캘린더·알림 | 로그인 사용자 | GET /api/v1/favorites/calendar/monthly(관심인 전체 월간 일정 합산), GET /api/v1/favorites/{targetUserId}/monthly(특정 관심인 월간 일정), 관심인이 새 이벤트 발행 시 FAVORITE_PERSON_NEW_EVENT(96) 수신, effectiveTargetIds()로 캘린더·알림 팬아웃 공통 대상 집합 관리 | — | — |
+| F19-03 | 관심인 | 공개범위(프라이버시) 설정 | 로그인 사용자 | PUT `/api/v1/users/me/privacy/calendar`(본인 캘린더 공개범위), PUT `/api/v1/users/me/privacy/clubs`(클럽 활동 공개범위), 관심인 한도 무료 **3명** / 프리미엄 **10명**, PrivacySettingController 기반 | — | — |
+| F20-01 | 고객지원 | 1:1 문의 | 로그인 사용자 | POST /api/v1/inquiries(문의 생성, InquiryCategory 6종: ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC, sourceType 4종: NONE/EVENT/CLUB/SETTLEMENT), GET /api/v1/inquiries/my(내 문의 목록), GET /api/v1/inquiries/{inquiryId}(상세), POST /api/v1/inquiries/{inquiryId}/messages(추가 메시지), 운영팀 답변 시 SUPPORT_ISSUE_UPDATED(66) 알림 | — | — |
+| F20-02 | 고객지원 | 운영 이슈 접수 | 로그인 사용자 | POST /api/v1/operational-issues(이슈 접수), GET /api/v1/operational-issues/my(내 이슈 목록), GET /api/v1/operational-issues/my/by-source(소스별 조회), GET /api/v1/operational-issues/{issueId}(상세), POST /api/v1/operational-issues/{issueId}/messages(추가 메시지), HostInboxSourceType.OPERATIONAL_ISSUE로 호스트 인박스 연동, DisputeSlaExceededScheduler SLA 7일 초과 시 운영알림 승급 | — | — |
+| F20-03 | 고객지원 | 지원 FAQ | 로그인/게스트 사용자 | SupportFaqController 기반 자주 묻는 질문 목록·상세 조회, 카테고리별 분류, 고객 자가해결 지원 | — | — |

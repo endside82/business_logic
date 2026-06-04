@@ -28,7 +28,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">점수 범위</div><div class="value">0~100</div><div class="hint">신규 사용자는 50에서 시작</div></div>
-          <div class="metric"><div class="label">등급</div><div class="value">5단계</div><div class="hint">서버: 40·60·75·90이 임계</div></div>
+          <div class="metric"><div class="label">등급</div><div class="value">5단계</div><div class="hint">서버 단일출처: 40·60·75·90 임계, nextGradeScore 제공</div></div>
           <div class="metric"><div class="label">변동 이력 적재</div><div class="value">1점 이상</div><div class="hint">미세 변동은 이력에서 제외</div></div>
           <div class="metric"><div class="label">기간 셀렉터</div><div class="value">7·30·90일</div><div class="hint">서버는 1~365일 받지만 화면은 3개만 노출</div></div>
         </div>
@@ -113,11 +113,11 @@
           </table>
         </div>
 
-        <div class="callout warn" style="margin-top:1rem">
-          <span class="label">알려진 격차 — 클라이언트 임계가 서버와 어긋난다</span>
-          <p>현재 화면이 "다음 등급까지 N점"을 표시할 때 PLATINUM 도달을 80점으로 잡고 DIAMOND를 미노출하고 있다.
-            서버 정답은 PLATINUM 75 · DIAMOND 90이므로 화면 표기와 어긋난다.
-            사용자가 "다음 등급까지 남은 점수"를 보고 결정하는 행동(예: 추가 인증)이 어긋난 임계로 안내되고 있다 — 화면 임계를 서버 기준으로 맞춰야 한다.</p>
+        <div class="callout" style="margin-top:1rem">
+          <span class="label">2026-06-04 해소 — 클라이언트 임계 서버 단일출처로 전환</span>
+          <p>이전에는 화면이 "다음 등급까지 N점"을 표시할 때 PLATINUM 80점 · DIAMOND 미노출로 하드코딩되어 있었다.
+            커밋 b0dc370(2026-06-04)에서 서버가 제공하는 <code>TrustScoreVo.nextGradeScore</code> 값을 직접 소비하도록 전환했다.
+            이제 서버 임계(BRONZE &lt;40 / SILVER 40+ / GOLD 60+ / PLATINUM 75+ / DIAMOND 90+)가 화면 표기에도 그대로 반영된다.</p>
         </div>
       </section>
 
@@ -218,8 +218,8 @@ flowchart LR
               </tr>
               <tr>
                 <td><strong>"다음 등급까지 N점"</strong></td>
-                <td>배지 아래 한 줄 안내. 최고 등급에서는 노출되지 않는다.</td>
-                <td>다음 단계로 갈 동기를 만든다 — "조금만 더 활동하면" 신호. 단, 현재 화면 임계는 서버와 어긋나 있어(위 격차) 정정 필요.</td>
+                <td>배지 아래 한 줄 안내. DIAMOND(최고 등급)에서는 노출되지 않는다.</td>
+                <td>다음 단계로 갈 동기를 만든다 — "조금만 더 활동하면" 신호. 2026-06-04 기준 서버가 제공하는 <code>nextGradeScore</code> 값을 직접 사용하여 임계 불일치가 해소됐다.</td>
               </tr>
               <tr>
                 <td><strong>점수 구성 카드 리스트</strong></td>
@@ -267,9 +267,9 @@ flowchart LR
           <ul>
             <li><strong>점수 산정식 한 줄이 추천·매칭·검색의 노출 가중치를 동시에 결정한다.</strong>
               식의 어느 한 갈래가 잘못 계산되면 사용자가 보는 모든 노출 결과가 어긋난다 — 본 단위의 모니터링이 가장 우선.</li>
-            <li><strong>등급 임계 격차(클라이언트 PLATINUM 80 vs 서버 75)는 사용자 안내가 잘못 나가게 한다.</strong>
-              "다음 등급까지 N점" 카피를 보고 인증을 추가한 사용자가 예상보다 일찍 등급이 오르거나 늦게 오르는 혼란이 발생.
-              화면 임계를 서버 정답(40·60·75·90)으로 맞춰야 한다.</li>
+            <li><strong>등급 임계는 서버 단일출처로 전환됐다(2026-06-04 해소).</strong>
+              화면이 <code>nextGradeScore</code> 서버 값을 직접 소비하므로 임계 불일치가 해소됐다.
+              서버 임계(40·60·75·90)와 화면 표기가 이제 일치한다.</li>
             <li><strong>본인 한정 변동 이력 정책이 흔들리면 사생활이 노출된다.</strong>
               점수 변동 사유에는 운영자 결론(신고 승인) 같은 민감 정보가 섞일 수 있어 다른 사용자가 보면 안 된다.
               본인 외 노출 가드는 어떤 회귀에서도 풀려서는 안 된다.</li>

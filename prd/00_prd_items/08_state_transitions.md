@@ -265,3 +265,206 @@ flowchart TD
 - 상태 이름만 정의하지 말고 사용자가 보는 문구와 가능한 액션까지 같이 정의한다.
 - 상태 변경은 알림, 캘린더, 결제, 리뷰 자격에 영향을 줄 수 있다.
 - 취소, 만료, 삭제, 차단은 성공 상태와 다른 복구 동선을 가져야 한다.
+
+---
+
+> 아래 섹션은 2026-06-05 신규 상태기계 추가분이다. 소스: `.delta_2026-06-04/` dossier 전수 확인.
+
+## 10. ApplicationStatus — 참가 신청 상태 (전체 7값, 갱신)
+
+> 소스: `ApplicationStatus.java:24-36`. 기존 §2의 4값 기술을 7값으로 갱신한다.
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: 신청 제출
+    PENDING --> APPROVED: 호스트 승인 (선입금 미활성)
+    PENDING --> APPROVED_PENDING_PAYMENT: 호스트 승인 + 선입금 필요
+    PENDING --> REJECTED: 호스트 거절 (reasonCode 필수)
+    PENDING --> CANCELED: 사용자 취소
+    APPROVED --> CANCELED: 사용자 취소
+    APPROVED_PENDING_PAYMENT --> CANCELED: 사용자 취소
+    APPROVED_PENDING_PAYMENT --> PAYMENT_EXPIRED: 결제 기한 만료 (스케줄러)
+    APPROVED_PENDING_PAYMENT --> CANCEL_PENDING_REFUND: 계좌이체 취소 후 호스트 환불 확인 대기
+    REJECTED --> PENDING: 재신청
+    PAYMENT_EXPIRED --> PENDING: 재신청 (active event_payment 없을 때만)
+    CANCELED --> PENDING: 재신청
+```
+
+| 상태 | 의미 | 정원 점유 | 터미널 여부 |
+|---|---|---|---|
+| `PENDING` | 호스트 심사 대기 | 미점유 | 아니오 |
+| `APPROVED` | 승인 완료 | 점유 (`occupiesCapacity()`) | 아니오 |
+| `APPROVED_PENDING_PAYMENT` | 승인됐으나 선입금 결제 대기 | 미점유 (D4) | 아니오 |
+| `PAYMENT_EXPIRED` | 결제 기한 만료 | 미점유 | 예 (`isTerminated()`) |
+| `REJECTED` | 호스트 거절 | 미점유 | 예 |
+| `CANCELED` | 정상 취소 완료 | 미점유 | 예 |
+| `CANCEL_PENDING_REFUND` | 계좌이체 취소 후 호스트 환불 확인 대기 | 점유 유지 (hold), 노쇼 통계 제외 | 아니오 |
+
+기획 주의점:
+- `CANCEL_PENDING_REFUND`는 정원을 hold하되, `CheckInService.getCheckInStats()`에서 `pendingRefundUserIds` 필터로 노쇼 통계 분모/분자에서 제외된다.
+- 거절(REJECTED) 시 `ApplicationRejectReasonCode`(CAPACITY_FULL/ELIGIBILITY_NOT_MET/SANCTIONED/HOST_DISCRETION/DUPLICATE_PROFILE/PAYMENT_TIMEOUT/OTHER) 7종 중 하나를 반드시 지정해야 한다. 미지정 시 서버 400 반환.
+- 승인→attendance 생성 직전 `EventApplyRestrictionGuard.assertNotRestricted`가 재검사된다(클럽-스코프 + 플랫폼 전역 2축).
+
+## 11. NoShowStatus — 이벤트 노쇼 상태 (신규)
+
+> 소스: `NoShowStatus.java:18-22`, `EventNoShowService.java:82-390`
+
+```mermaid
+stateDiagram-v2
+    [*] --> CONFIRMED: 호스트·cohost·클럽 운영진 confirm() 또는 confirmBatch()
+    CONFIRMED --> APPEALED: 본인(row.userId)만 appeal(noShowId, appealCaseId) — appealCaseId 외부 발급 필요
+    CONFIRMED --> OVERTURNED: 호스트·cohost·클럽 운영진 또는 SYSTEM(id=0) overturn() 직접 가능
+    APPEALED --> OVERTURNED: 호스트·cohost·클럽 운영진 또는 SYSTEM overturn()
+```
+
+| 상태 | 의미 | 제재 카운트 포함 여부 |
+|---|---|---|
+| `CONFIRMED` | 호스트 또는 시스템 자동 확정 | 포함 |
+| `APPEALED` | 참가자 소명 진행 중 (dispute_case 연결) | 포함 (`countRecentNoShows`는 CONFIRMED+APPEALED 합산) |
+| `OVERTURNED` | CS/호스트가 결정 뒤집음 — 터미널 | 제외 |
+
+기획 주의점:
+- OVERTURNED 상태에서 추가 전이 불가 (`EVENT_NO_SHOW_ALREADY_OVERTURNED` 409).
+- APPEALED 상태에서 다시 appeal 시도 시 `EVENT_NO_SHOW_ALREADY_APPEALED` 409.
+- appeal 기한은 v1에서 미구현. 참가자가 CONFIRMED 상태를 무기한 소명 가능한 상태(Gap G-3).
+- `cohost.canManageAttendance` flag 체크 없이 노쇼 확정/뒤집기 가능한 불일치 존재(Gap G-6 — `EventNoShowService.validateCheckInManager()` vs `CheckInService.validateCheckInManager()` 비교).
+
+## 12. UnifiedDisputeStatus — 통합 분쟁 케이스 상태 (신규)
+
+> 소스: `UnifiedDisputeStatus.java`, `DisputeLegalHoldService.java:103-107`
+
+```mermaid
+stateDiagram-v2
+    [*] --> OPEN: 분쟁 접수 (USER_DISPUTE 직접 생성, 또는 원천 도메인 파생)
+    OPEN --> IN_REVIEW: 운영자 검토 시작
+    OPEN --> ESCALATED: CS/운영자 에스컬레이션
+    OPEN --> RESOLVED: 처리 완료
+    OPEN --> CLOSED: 액션 없이 종결
+    IN_REVIEW --> RESOLVED: 처리 완료
+    IN_REVIEW --> ESCALATED: 에스컬레이션
+    IN_REVIEW --> CLOSED: 종결
+    ESCALATED --> RESOLVED: 처리 완료
+    ESCALATED --> CLOSED: 종결
+```
+
+| 상태 | Legal Hold | Evidence 정리 대상 |
+|---|---|---|
+| `OPEN` | 활성 | 아니오 |
+| `IN_REVIEW` | 활성 | 아니오 |
+| `ESCALATED` | 활성 | 아니오 |
+| `RESOLVED` | 비활성 | 예 (1년 후) |
+| `CLOSED` | 비활성 | 예 (1년 후) |
+
+**원천 도메인 → UnifiedDisputeStatus 매핑:**
+
+| 원천 도메인 (caseId prefix) | 원천 상태 | 매핑 UnifiedDisputeStatus |
+|---|---|---|
+| `OPERATIONAL_ISSUE` | OPEN | OPEN |
+| `OPERATIONAL_ISSUE` | IN_PROGRESS | IN_REVIEW |
+| `OPERATIONAL_ISSUE` | RESOLVED | RESOLVED |
+| `OPERATIONAL_ISSUE` | REJECTED | CLOSED |
+| `WARNING_REPORT` | SUBMITTED | OPEN |
+| `WARNING_REPORT` | IN_REVIEW / NEEDS_MORE_INFO | IN_REVIEW |
+| `WARNING_REPORT` | APPROVED / REJECTED | RESOLVED |
+| `WARNING_REPORT` | WITHDRAWN | CLOSED |
+| `WARNING_APPEAL` | SUBMITTED | OPEN |
+| `WARNING_APPEAL` | IN_REVIEW | IN_REVIEW |
+| `WARNING_APPEAL` | ACCEPTED / PARTIALLY_ACCEPTED / REJECTED | RESOLVED |
+| `WARNING_APPEAL` | WITHDRAWN | CLOSED |
+| `SETTLEMENT_APPEAL` (AppealStatus) | PENDING | OPEN |
+| `SETTLEMENT_APPEAL` | APPROVED / REJECTED | RESOLVED |
+| `SETTLEMENT_APPEAL` | RESOLVED | CLOSED |
+| `REPORT` (public) | PENDING | OPEN |
+| `REPORT` | IN_REVIEW | IN_REVIEW |
+| `REPORT` | RESOLVED / DISMISSED | RESOLVED |
+| `REPORT` | ESCALATED | ESCALATED |
+| `REFUND_DISPUTE` | OPEN | OPEN |
+| `REFUND_DISPUTE` | UPHELD / OVERTURNED | RESOLVED |
+| `REFUND_DISPUTE` | CLOSED | CLOSED |
+| `DATE_BLOCK` | — | 연결 report.status로 파생 (reportId=null → hold 없음) |
+| `TRANSPORT` | — | source row = report, mapReport와 동일 |
+| `CLUB_MEMBERSHIP_ACTION` | DisputeAppeal 없음 | OPEN |
+| `CLUB_MEMBERSHIP_ACTION` | DisputeAppeal PENDING | IN_REVIEW |
+| `CLUB_MEMBERSHIP_ACTION` | DisputeAppeal UPHELD / REJECTED | RESOLVED |
+| `CLUB_MEMBERSHIP_ACTION` | DisputeAppeal CLOSED | CLOSED |
+| `USER_DISPUTE` | OPEN (native) | OPEN (admin API가 전이 소유) |
+| `USER_DISPUTE` | IN_REVIEW / ESCALATED / RESOLVED / CLOSED | 동일 매핑 |
+
+## 13. DisputeAppealStatus — 분쟁 이의제기 상태 (신규)
+
+> 소스: `DisputeAppealStatus.java`, `DisputeAppealService.java:210-241`
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: 이의 제출 (POST /me/dispute-cases/{caseId}/appeals)
+    PENDING --> CLOSED: 본인 철회 (POST .../withdraw)
+    PENDING --> UPHELD: admin 인용
+    PENDING --> REJECTED: admin 기각
+```
+
+| 상태 | 의미 | 철회 가능 |
+|---|---|---|
+| `PENDING` | 검토 대기 | 가능 (본인만) |
+| `UPHELD` | 인용됨 — 터미널 | 불가 |
+| `REJECTED` | 기각됨 — 터미널 | 불가 |
+| `CLOSED` | 철회/만료 — 터미널 | 불가 |
+
+`isClosed()` 로직: `this != PENDING` (`DisputeAppealStatus.java:17`).
+
+## 14. RescheduleProposalStatus — 일정 변경 제안 응답 상태 (신규)
+
+> 소스: `RescheduleResponseStatus.java:15-21`, `EventRescheduleProposalService.java`
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: 참가자별 proposal 생성 (MAJOR 분류 시)
+    PENDING --> ACCEPTED: 참가자 accept=true 응답 (마감 전)
+    PENDING --> DECLINED: 참가자 accept=false 응답 (마감 전) → 자동 취소 트리거
+    PENDING --> AUTO_ACCEPTED: 스케줄러 48h 자동수락 (deadline 경과, bulk UPDATE) 또는 마감 후 늦은 응답 시 인라인 전이 후 409
+    PENDING --> WITHDRAWN: 호스트 batch 철회 (이미 응답한 row 포함 일괄)
+```
+
+| 상태 | 의미 | 응답 변경 가능 |
+|---|---|---|
+| `PENDING` | 참가자 응답 대기 | 가능 (마감 전) |
+| `ACCEPTED` | 동의 — 터미널 | 불가 |
+| `DECLINED` | 거절 → 참가 자동 취소(RESCHEDULE_DECLINED, 100% 환불) | 불가 |
+| `AUTO_ACCEPTED` | 스케줄러 자동 수락 — 터미널 | 불가 |
+| `WITHDRAWN` | 호스트 철회로 소프트 삭제 (감사 보존) | 불가 |
+
+**분류 규칙 (RescheduleClassifierService):**
+
+| 조건 | 분류 | 동작 |
+|---|---|---|
+| |Δstart| ≥ 60분 또는 주소 변경 또는 가격 인상 | `MAJOR` | 참가자별 proposal 생성, 48h 응답 기한, batch 확정 필요 |
+| 위 조건 모두 미해당 | `AUTO` | 즉시 이벤트 필드 반영, proposal row 생성 없음, EVENT_UPDATED(RESCHEDULE) 알림 |
+
+applyBatch 조건: `pendingCount == 0 && withdrawnCount == 0` (readyToApply=true).
+
+## 15. TransferStatus — 모임 정산 이체 상태 (전체 8값, 갱신)
+
+> 소스: `TransferStatus.java`. 기존 6값 기술을 8값으로 갱신.
+
+| 상태 | 의미 | 비고 |
+|---|---|---|
+| `PENDING` | 이체 대기 | — |
+| `BANK_AWAITING_CONFIRM` | 혼합결제의 은행 부분 확인 대기 | 21자 — varchar(32)로 정정 완료 (985f586). limbo SLA 스케줄러 재알림 대상 |
+| `COMPLETED` | 이체 완료 | — |
+| `CANCELLED` | 취소됨 | — |
+| `EXPIRED` | 만료됨 | — |
+| `SUPERSEDED` | 재발급으로 대체된 원본 | 정산 완료 판정에서 제외 |
+| `REVERSAL_FAILED` | 역분개 실패 | — |
+| `PENDING_MANUAL_REFUND` | 역분개 실패 → 수동 환불 대기 | 21자 — varchar(32)로 정정 완료. limbo SLA 스케줄러 재알림 대상 |
+
+limbo 상태(BANK_AWAITING_CONFIRM, PENDING_MANUAL_REFUND): 실제 돈이 움직였을 수 있는 중간 상태로 자동 EXPIRED 전이 금지. `MeetingSettlementExpirationScheduler`(05:10 cron)가 N일(기본 3일) 경과 시 수신자에게 재알림, 2회 이상 미해소 시 `SETTLEMENT_TRANSFER_LIMBO` 운영알림(HIGH severity) 승급.
+
+## 16. DateBlockStatus — 데이트 차단 상태 (신규)
+
+> 소스: `DateBlockStatus.java` (Wave D-5)
+
+| 상태 | 의미 | 비고 |
+|---|---|---|
+| `BLOCKED` | 차단 활성 | `isBlockedBetween()` 체크 대상 |
+| `UNBLOCKED` | 차단 해제 (이력 보존) | hard delete → soft transition. UNBLOCKED history row는 차단 체크에서 제외 |
+
+안전신고 연동: 차단 시 `DateBlockParam.fileReport=true`이면 `ReportType.DATE_USER` 안전신고 동시 생성 + `DateBlock.reportId` 백필. evidence_file_ids 첨부 시 dispute(SAFETY) evidence로 처리. legal hold: 연결 report가 IN_REVIEW/OPEN/ESCALATED이면 DATE_BLOCK source에 legal hold 적용, RESOLVED/CLOSED 후 1년 evidence 정리.

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F20-01 1:1 문의 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/20-support.html">20 고객지원</a><span>›</span>
+          F20-01 1:1 문의
+        </div>
+        <h1>F20-01. 1:1 문의</h1>
+        <p class="lede">
+          사용자가 카테고리를 골라 관리자에게 스레드를 여는 자유 문의 채널.
+          계정·결제·이벤트·클럽·신고·기타 6가지 카테고리가 있고, 특정 이벤트·클럽·정산 컨텍스트를
+          연결하면 그 자리의 호스트도 답변에 참여할 수 있도록 설계됐다.
+          상태는 <strong>접수됨 → 답변 완료 → 종결</strong> 3단계이며,
+          사용자가 추가 메시지를 보내면 다시 접수됨으로 돌아간다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">서버 endpoint</div><div class="value">4</div><div class="hint">생성·목록·상세·메시지 추가</div></div>
+          <div class="metric"><div class="label">카테고리</div><div class="value">6</div><div class="hint">계정·결제·이벤트·클럽·신고·기타</div></div>
+          <div class="metric"><div class="label">소스 컨텍스트</div><div class="value">4</div><div class="hint">NONE·EVENT·CLUB·SETTLEMENT</div></div>
+          <div class="metric"><div class="label">Flutter 구현</div><div class="value">미구현</div><div class="hint">서버만 완성</div></div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">현재 상태 — 서버 완성, 앱 미구현</span>
+          <p>서버 4개 endpoint가 완전히 구현됐고 소유권 검증 로직도 동작한다.
+            그러나 Flutter 앱에 <code>InquiryApi</code>, 모델, 화면, 진입점이 없어
+            현재 사용자는 앱으로 1:1 문의를 접수할 수 없다.
+            운영 이슈(F20-02)는 Flutter 구현이 완료돼 있으므로,
+            결제·환불·정산 이슈라면 운영 이슈 채널을 먼저 사용한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">일반 문의</div>
+            <h3>"비밀번호를 바꾸려는데 이메일이 안 와요"</h3>
+            <p>카테고리 "계정"을 고르고 제목·내용을 작성해 접수한다.
+              소스 컨텍스트 없음(NONE)이라 소유권 검증 없이 바로 관리자 큐에 들어간다.
+              관리자가 답변하면 상태가 "답변 완료"로 바뀐다.
+              사용자가 추가 질문을 보내면 "접수됨"으로 되돌아간다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 관리자가 답변까지의 이력 전체를
+              한 스레드에서 볼 수 있다. 사용자도 진행 상태를 문의 목록에서 확인한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">컨텍스트 연결 문의</div>
+            <h3>"이 이벤트 참가비 영수증이 잘못됐어요"</h3>
+            <p>카테고리 "이벤트", sourceType=EVENT, sourceId=이벤트 ID로 접수한다.
+              서버가 사용자가 그 이벤트의 참가자(APPROVED 이상)임을 확인하고 문의를 만든다.
+              관련 이벤트 ID가 문의에 기록돼 관리자가 배경을 빠르게 파악할 수 있다.</p>
+            <p><strong>v1 한계</strong> — 호스트가 직접 답변하는 경로는 admin 콘솔에 아직 없다.
+              관리자가 중간에서 처리한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">정산 컨텍스트 문의</div>
+            <h3>"정산 금액이 제가 계산한 것과 달라요 (호스트)"</h3>
+            <p>sourceType=SETTLEMENT, sourceId=정산 ID로 접수한다.
+              서버가 그 정산의 hostUserId가 문의자와 같은지 확인한다.
+              정산 호스트만 이 소스 타입으로 문의를 넣을 수 있다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>문의 상태 흐름</h2>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> OPEN : 문의 접수 (POST /inquiries)
+    OPEN --> ANSWERED : 관리자 답변
+    ANSWERED --> OPEN : 사용자 추가 메시지
+    OPEN --> CLOSED : 관리자 종결
+    ANSWERED --> CLOSED : 관리자 종결
+    CLOSED --> [*]
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>소스 컨텍스트별 소유권 검증</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>sourceType</th><th>소유권 조건</th><th>sourceId</th></tr></thead>
+            <tbody>
+              <tr><td>NONE</td><td>없음 — 누구나 접수 가능</td><td>불필요</td></tr>
+              <tr><td>EVENT</td><td>이벤트 호스트, 공동호스트, 또는 APPROVED/APPROVED_PENDING_PAYMENT/CANCEL_PENDING_REFUND 참가자</td><td>event.id</td></tr>
+              <tr><td>CLUB</td><td>클럽 owner 또는 ClubMember</td><td>club.id</td></tr>
+              <tr><td>SETTLEMENT</td><td>settlement.hostUserId == 문의자</td><td>settlement.id</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <span class="label">검증 실패 시</span>
+          <p>소유권이 없으면 <strong>403 오류</strong>가 반환된다. sourceType이 NONE/null이 아닌데
+            sourceId를 빠뜨리면 <strong>400 오류</strong>가 반환된다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>주요 규칙</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">스레드 닫힌 뒤 추가 불가</div>
+            <h3>CLOSED 상태에서 메시지 추가 시도</h3>
+            <p>관리자가 문의를 종결 처리하면 사용자는 더 이상 메시지를 추가할 수 없다.
+              종결된 문의에 추가를 시도하면 <strong>400 오류</strong>가 반환된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">내 문의만 볼 수 있다</div>
+            <h3>타인 문의 접근 차단</h3>
+            <p>문의 상세 조회는 작성자 본인만 가능하다. 다른 사람의 문의 ID를 직접 입력해
+              접근하면 <strong>403 오류</strong>가 반환된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">사용자 추가 메시지 → 재접수</div>
+            <h3>ANSWERED 상태에서 사용자 답변</h3>
+            <p>관리자가 답변(ANSWERED)한 뒤 사용자가 추가 질문을 보내면
+              문의 상태가 자동으로 OPEN으로 되돌아간다.
+              관리자가 다시 답변 대기 큐에 들어간다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>알려진 격차</h2>
+        <div class="callout danger">
+          <span class="label">Flutter 앱 미구현</span>
+          <ul>
+            <li>InquiryApi, 모델, Repository, Provider, 화면 모두 없다. 현재 사용자는 앱으로 이 기능을 쓸 수 없다.</li>
+            <li>호스트 답변 루프(EVENT/CLUB sourceType)가 admin 콘솔에 미구현이다. host_response_at 컬럼은 준비돼 있다.</li>
+            <li>관리자 답변 시 사용자에게 푸시 알림이 가는지 확인이 필요하다 (SUPPORT_ISSUE_UPDATED 알림 코드는 정의됨).</li>
+          </ul>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용)
+  - business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md
+  - community_api/src/main/java/com/endside/community/inquiry/
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

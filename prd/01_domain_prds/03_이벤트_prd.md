@@ -2,7 +2,7 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-22; unit: business_logic/units/03_event -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/03_event/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/03_event/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
 > **2026-05-28 RM 도메인 신설 영향(cross-ref).** `EventType.REGULAR_MEETING(3)` 신규. `event/util/EventScope` 공용 거름망 2개 도입(디스커버리 8표면 분류 + 신청 가드). EventVo/EventSimpleVo/CalendarEventVo에 RM 컨텍스트 5필드(`regularMeetingId`, `regularMeetingTitle`, `regularMeetingType`, `sequenceNo`, `directApplyBlocked`) 오버레이. RM 세션은 일반 `EventService.publishEvent/cancelEvent`/`EventCapacitySettingsService`/`CapacitySettingsService`/`RecurringEventCreateService` 6개 경로에서 `RegularMeetingSessionGuard`로 직접 mutation 차단. 자세한 내용은 [17 정기모임](../01_domain_prds/17_정기모임_prd.md).
 
@@ -14,7 +14,7 @@
 - 프론트 feature: `community_app/lib/presentation/event/` (15 screens, 45 widgets)
 **프라이빗 모임(eventType=PRIVATE)** 은 SCR-EV-006 + `GET/POST .../private/detail|open|select|complete|cancel` 시리즈로 별도 단계 모델(`WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED`)을 갖는다. 호스팅비 결제·지갑 차감이 결합되므로 본 단위(F03)에서는 **F03-03(생성)/F03-04(생명주기)/F03-06(신청자 선택)** 의 변형으로 다루고, 결제 흐름은 Unit 06(결제 & 지갑)에서 교차 정리한다.
 
-이 도메인은 기능 PRD 18개로 구성된다(F03-01~12 기존 + F03-13~17 W2~W7 슬라이스 + F03-18 구성인원 인구통계 2026-05-27). 기존 기능별 trace source는 총 70개대, risk 후보는 총 58개이며, 이동수단 확장 슬라이스(F03-14~17)는 backend-only 1차 출시이고 Flutter 클라이언트는 후속이다. F03-18은 서버 + 앱 양쪽 완성. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+이 도메인은 기능 PRD 20개로 구성된다(F03-01~12 기존 + F03-13~17 W2~W7 슬라이스 + F03-18 구성인원 인구통계 + F03-19 일정 변경 제안·합의 + F03-20 노쇼 관리 2026-06-05 등재). 기존 기능별 trace source는 총 70개대, risk 후보는 총 58개이며, 이동수단 확장 슬라이스(F03-14~17)는 backend-only 1차 출시이고 Flutter 클라이언트는 후속이다. F03-18/F03-19/F03-20은 서버 + 앱 양쪽 완성 (F03-20 PRD는 병렬 작성 중). 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
 
 ## 2. 실사 근거 맵
 
@@ -38,6 +38,8 @@
 | F03-16 | F03-16. 이벤트 버스대절 (BUS) | [F03-16_event-bus-charter_prd.md](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | (W7 슬라이스 — PLAN.md v4.5 §4) | 신규 (backend-only 1차) | 11 | 5 |
 | F03-17 | F03-17. 차량 레이아웃 카탈로그 | [F03-17_vehicle-layout-catalog_prd.md](../02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | (W6 슬라이스 — PLAN.md v4.5 §4.1~§4.3) | 신규 (호스트용 read-only API + 시드 4종 1차) | 6 | 4 |
 | F03-18 | F03-18. 이벤트 구성인원 인구통계 | [F03-18_event-demographics_prd.md](../02_feature_prds/03_event/F03-18_event-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2, Codex sign-off) | 신규 (2026-05-27 도입) | 8 | 1 |
+| F03-19 | F03-19. 이벤트 일정 변경 제안·참가자 합의 | [F03-19_event-reschedule-consent_prd.md](../02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | (RS-002 reschedule response 계획, 2026-06-01 완료) | 신규 (2026-06-05 등재) | — | — |
+| F03-20 | F03-20. 이벤트 노쇼 관리 | [F03-20_event-no-show_prd.md](../02_feature_prds/03_event/F03-20_event-no-show_prd.md) | (D-20/v3 노쇼 확정·소명·뒤집기, 2026-06-04 구현 완료) | 신규 (2026-06-05 등재) | — | — |
 
 ## 3. 먼저 볼 기능
 
@@ -55,6 +57,8 @@
 | [F03-09](../02_feature_prds/03_event/F03-09_event-photos_prd.md) | F03-09. 이벤트 사진첩 | Risk 후보 2 |
 | [F03-11](../02_feature_prds/03_event/F03-11_wishlist_prd.md) | F03-11. 위시리스트 (관심 이벤트) | Risk 후보 1 |
 | [F03-08](../02_feature_prds/03_event/F03-08_qr-checkin_prd.md) | F03-08. QR 체크인 | Risk 후보 1 |
+| [F03-19](../02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | F03-19. 이벤트 일정 변경 제안·참가자 합의 | RS-002 reschedule response 계약 (2026-06-01 구현 완료) |
+| [F03-20](../02_feature_prds/03_event/F03-20_event-no-show_prd.md) | F03-20. 이벤트 노쇼 관리 | 노쇼 확정·소명·뒤집기·사후 환불·제재 카운트 (2026-06-04 구현 완료) |
 
 ## 4. 도메인 기능 목록
 
@@ -80,6 +84,8 @@
 | F03-15 | 이벤트 카풀 (CARPOOL) | 호스트 + 운전자 + 탑승자 | (Flutter UI 후속) | `GET/POST .../carpool/offer[s]`, `POST .../carpool/offers/{offerId}/decision`, `PUT .../carpool/passenger`, `PUT .../carpool/passengers/{pid}/assignment`, `GET .../carpool/passengers` |
 | F03-16 | 이벤트 버스대절 (BUS) | 호스트 + 참가자 | (Flutter UI 후속) | `GET /events/{id}/buses`, `GET .../buses/{busId}/seats`, `POST .../buses`, `PUT .../buses/{busId}/seats/{seatNo}?userId=` |
 | F03-17 | 차량 레이아웃 카탈로그 | 호스트(read-only) + 운영자(후속 admin CRUD) | (Flutter UI 후속) | `GET /api/v1/vehicle-layouts/active`, `GET /api/v1/vehicle-layouts/{id}/seats` |
+| F03-19 | 이벤트 일정 변경 제안·참가자 합의 | 호스트 (reschedule 제안 배치 생성·확인) | 참가자 (동의/거절, 기한 만료 자동 처리) | `GET /api/v1/events/{id}/reschedule-proposals`, `POST .../reschedule-proposals/{batchId}/respond` 등 |
+| F03-20 | 이벤트 노쇼 관리 | 호스트·공동호스트 (노쇼 확정·일괄·사후 환불) | 참가자 (소명 제출) | `POST /api/v1/events/{id}/no-shows`, `POST .../no-shows/batch`, `POST .../no-shows/{noShowId}/appeal`, `POST .../no-shows/{noShowId}/overturn` |
 
 > **프라이빗 모임(eventType=PRIVATE)** 은 SCR-EV-006 + `GET/POST .../private/detail|open|select|complete|cancel` 시리즈로 별도 단계 모델(`WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED`)을 갖는다. 호스팅비 결제·지갑 차감이 결합되므로 본 단위(F03)에서는 **F03-03(생성)/F03-04(생명주기)/F03-06(신청자 선택)** 의 변형으로 다루고, 결제 흐름은 Unit 06(결제 & 지갑)에서 교차 정리한다.
 
@@ -111,7 +117,7 @@
 - **Unit 06 결제 & 지갑** — 유료 이벤트 참가비, 프라이빗 모임 호스팅비 차감 (F03-05, F03-04 PRIVATE)
 - **Unit 07 모임 정산** — 사전결제·정산 항목 등록 (호스트가 SCR-EV-003 옵션 단계에서 prepayment 설정 시)
 - **Unit 08 플랜 마켓** — F03-10이 참조하는 plan 엔티티
-- **Unit 12 알림** — 신청 승인/거절, 일정 변경, 대기열 자동 승격, 호스트 공지(announce) FCM 발송
+- **Unit 12 알림** — 신청 승인/거절, 일정 변경(AUTO=즉시 FCM / MAJOR=참가자 합의 절차 후 FCM — F03-19 참조), 대기열 자동 승격, 호스트 공지(announce) FCM 발송
 - **Unit 11 리뷰 & 신고** — 종료된 이벤트 리뷰 작성 (SCR-EV-002 종료 후 진입점)
 - **Unit 14 위치 & 길찾기** — 오프라인 이벤트 주소 검색·지오코딩, 지도 미리보기
 - 횡단 인프라 — `file/FileController` (썸네일/사진 S3 presigned URL)
@@ -121,12 +127,15 @@
 - **EventStatus**: `DRAFT → OPEN → CLOSED` (정상) / `OPEN → CANCELED` (호스트 취소) / `HIDDEN` (비공개)
 - **AttendanceStatus**: `ATTENDING` / `WAITING` (대기 순번 보유) / `CANCELLED`
   - 승격 플래그: `promotedFromWaitlist` (자동), `manuallyPromoted` (호스트 수동)
-- **ApplicationStatus**: `PENDING → APPROVED` / `PENDING → REJECTED` / `CANCELED` (신청자 본인 취소, L 한 개)
+- **ApplicationStatus** (전체 7값, 갱신 2026-06-05, `ApplicationStatus.java:24-36`):
+  `PENDING` / `APPROVED` / `APPROVED_PENDING_PAYMENT` (선입금 결제 대기) / `PAYMENT_EXPIRED` (터미널) / `REJECTED` (터미널) / `CANCELED` (L 한 개, 터미널) / `CANCEL_PENDING_REFUND` (계좌이체 취소 후 환불 대기, capacity hold)
 - **PrivateMeetingPhase**: `WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED` / `CANCELLED`
 - **TransportMode** (W4): `NONE / CARPOOL / BUS` — DRAFT only 변경 (hard delete). OPEN 후 immutable.
 - **CarpoolStatus** (W5): `OFFERED → CONFIRMED` / `OFFERED → REJECTED` / `CANCELED` (`event_carpool_offer.status`)
 - **TransportChoice** (W5): `CARPOOL_REQUESTED / CARPOOL_ASSIGNED / SELF / DRIVER` (`event_carpool_passenger.transport_choice`)
 - **BusAssignmentMode** (W7): `FREE / FIXED_BY_HOST / FIRST_COME` — 좌석 배정자 0명일 때만 OPEN에서 변경 가능
+- **NoShowStatus** (D-20): `CONFIRMED / APPEALED / OVERTURNED` (`event_no_show.status`)
+- **EventCheckIn 감사 컬럼** (Wave D-1, 갱신 2026-06-05): `manual_actor_id` (MANUAL/CORRECTED 체크인 actor) / `manual_reason_code` (사유 코드) / `corrected_from_check_in_id` (원본 체크인 ID) — 소스: `EventCheckIn.java:41-56`
 
 ## 6. 화면/API 매핑
 
@@ -181,4 +190,5 @@
 - **2026-05-22 (v4.5 W4 — 이동수단 공통 베이스 도입, [F03-14](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md))**: 신규 테이블 `event_transport_config(event_id PK, mode ENUM(NONE,CARPOOL,BUS), allows_self_transport)` 추가. 신규 패키지 `event/transport/` 신설. 사용자 확정 D2(택일) 반영 — 한 이벤트는 한 mode만. `mode` 변경은 **DRAFT only hard delete** 정책 (PLAN.md §3.2). OPEN 이후 immutable, `MODE_CHANGE_NOT_ALLOWED` 가드. mode-internal 토글(`allowsSelfTransport`, `event_bus.allow_self_swap`)은 OPEN에서도 변경 가능. 신규 enum: `TransportMode`, `CarpoolStatus`, `TransportChoice`, `BusAssignmentMode` (`ENUM_RESERVATIONS.md`). 신규 endpoint: `GET /api/v1/events/{eventId}/transport`, `PUT /transport/config`. Flutter 클라이언트는 후속 슬라이스.
 - **2026-05-22 (v4.5 W5 — 카풀 운영 도입, [F03-15](../02_feature_prds/03_event/F03-15_event-carpool_prd.md))**: 신규 테이블 3종 — `event_carpool_offer`(driver_user_id, pickup_capacity, pickup_locations, status), `event_carpool_passenger`(event_id+user_id UNIQUE, transport_choice, boarding_location, assigned_offer_id), `event_carpool_assignment_log`(현 슬라이스는 스키마만, INSERT 미적용 — 후속). `EventCarpoolService.assertCarpoolMode` 가드를 offer/decideOffer/registerPassenger/assign 전체에 적용. 권한 정책: `GET /carpool/passengers`는 host/coHost이면 전체, 그 외는 본인 row 1건만 (E2E S3-4). `pickup_capacity` 초과 배정 차단. NotificationType 77~80 — `CARPOOL_OFFER_CONFIRMED/REJECTED`, `CARPOOL_PASSENGER_ASSIGNED/UNASSIGNED` (AFTER_COMMIT). 신규 endpoint 7개(controller line 29~71). Flutter 클라이언트와 swap 로그 INSERT는 후속.
 - **2026-05-22 (v4.5 W6 — 차량 레이아웃 카탈로그 도입, [F03-17](../02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md))**: 신규 테이블 `vehicle_layout(name, seat_count, is_active)` + `vehicle_layout_seat(layout_id, seat_no, row_index, col_index, seat_type ENUM(NORMAL,DRIVER,GUIDE,FOLDABLE,DISABLED,AISLE), is_selectable)`. 시드 4종 INSERT: 28인승 A타입, 45인승, 20인승, 8인승(운전자 제외). 호스트용 read-only endpoint 2개 — `GET /api/v1/vehicle-layouts/active`, `GET /vehicle-layouts/{id}/seats`. **관리자 CRUD UI(SPA)는 1차 출시 범위 외** (Q5 사용자 확정) — `community_admin_api` 후속 슬라이스. 1차 운영은 직접 INSERT 또는 admin API curl 호출.
+- **2026-06-05 (D-20/v3 + Phase 4/5 — ApplicationStatus 전체 7값·NoShowStatus·EventCheckIn 감사컬럼·F03-19/F03-20 등재)**: `ApplicationStatus` 7값 전체 갱신 (APPROVED_PENDING_PAYMENT/PAYMENT_EXPIRED/CANCEL_PENDING_REFUND 추가). `NoShowStatus` (CONFIRMED/APPEALED/OVERTURNED) 상태 모델 추가. `EventCheckIn` Wave D-1 감사 추적 3컬럼 (manual_actor_id/manual_reason_code/corrected_from_check_in_id) 추가. "일정 변경 즉시 FCM 발송" → AUTO/MAJOR 분기·합의 절차 요약 교체 (F03-19 참조). F03-19(일정 변경 제안·참가자 합의), F03-20(이벤트 노쇼 관리) 기능 표·먼저 볼 기능·도메인 기능 목록에 등재. 도메인 기능 PRD 18개 → 20개.
 - **2026-05-22 (v4.5 W7 — 버스대절 운영 도입, [F03-16](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md))**: 신규 테이블 `event_bus(event_id+bus_no UNIQUE, vehicle_layout_id, assignment_mode ENUM(FREE,FIXED_BY_HOST,FIRST_COME), allow_self_swap)` + `event_bus_seat(event_bus_id+seat_no UNIQUE, event_id+user_id UNIQUE 비정규화, user_id nullable, locked_by_host)`. 최대 3대/이벤트 (`MAX_BUSES_PER_EVENT=3`) service-level 가드. 모드별 좌석 prepopulate: `FREE`는 seat row 미생성, `FIXED_BY_HOST`/`FIRST_COME`은 `vehicle_layout_seat.is_selectable=true` 좌석을 미리 INSERT. 동시성: `event_bus` parent lock + seat `FOR UPDATE`, `UNIQUE(event_id, user_id)` 위반 → `DataIntegrityViolationException` → `USER_ALREADY_SEATED_IN_EVENT` 변환. `event_bus.eventId != pathEventId` 시 400 (E2E S4-7). NotificationType 81~82 — `BUS_SEAT_ASSIGNED`, `BUS_SEAT_CHANGED`. VO 추출 완료(`EventBusVo`, `EventBusSeatVo`). 신규 endpoint 4개(controller line 28~48). Flutter 좌석 위젯·모델·화면은 후속.

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F03-20 이벤트 노쇼 관리 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
+          F03-20 이벤트 노쇼 관리
+        </div>
+        <h1>F03-20. 이벤트 노쇼 관리</h1>
+        <p class="lede">
+          이벤트가 끝난 후, 참석 확정됐지만 나타나지 않은 사람을 기록하고 그 결정에 이의를 제기할 수 있게 한다.
+          호스트의 확정 → 참가자의 소명 → 결정 뒤집기로 이어지는 3단계 절차와,
+          노쇼 확정 후 사정이 생긴 경우 호스트가 부분 환불을 줄 수 있는 <strong>사후 조정 환불</strong>이 이 단위의 두 축이다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">노쇼 상태</div><div class="value">3단계</div><div class="hint">확정→소명→뒤집기</div></div>
+          <div class="metric"><div class="label">소명 기한</div><div class="value">미정</div><div class="hint">v1 정책 결정 전</div></div>
+          <div class="metric"><div class="label">뒤집히면</div><div class="value">카운트 제외</div><div class="hint">제재 누적에서 빠짐</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 호스트 기록이 최종이 아니다</span>
+          <p>이벤트 당일 연락 없이 불참했다는 사실은 호스트가 가장 잘 안다. 그래서 확정 권한은 호스트에게 있다.
+            그러나 호스트가 체크인을 놓쳤거나 참가자에게 예외적 사정이 있었을 수 있다.
+            때문에 확정된 노쇼에 대해 참가자가 소명할 수 있고, 호스트나 운영팀이 뒤집을 수 있다.
+            뒤집힌 노쇼는 제재 누적 카운트에서 제외된다. "기록이 남았다"는 사실 자체는 변하지 않는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>노쇼 상태가 거치는 길</h2>
+        <div class="diagram">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> 확정됨: 호스트·공동호스트·클럽 운영진
+    확정됨 --> 소명중: 본인만 소명 제출
+    소명중 --> 뒤집힘: 호스트 또는 운영팀
+    확정됨 --> 뒤집힘: 호스트 또는 운영팀 직접
+    뒤집힘 --> [*]: 제재 카운트 제외
+
+    note right of 확정됨
+      CANCEL_PENDING_REFUND 참가자는
+      일괄 확정 대상 제외
+    end note
+    note right of 소명중
+      소명 기한 v1 미구현
+      외부 dispute_case 식별자 필요
+    end note
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름 — 호스트</div>
+            <h3>이벤트 후 체크인 안 한 참가자를 노쇼로 기록</h3>
+            <p>이벤트가 끝나면 호스트는 참석자 목록에서 체크인 기록 없는 사람을 확인한다.
+              "노쇼 확정" 버튼으로 한 명씩 처리하거나, "일괄 확정"으로 해당 인원 전체를 한 번에 처리한다.
+              사유와 증거 파일을 첨부할 수 있다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 노쇼 기록은 이후 제재 카운트 근거로 남는다.
+              사유와 증거를 함께 남기면 소명 단계에서 판단 근거가 된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">참가자 — 소명</div>
+            <h3>불가피한 사정이 있었는데 노쇼로 기록됐다</h3>
+            <p>참가자는 노쇼로 기록된 경우 이의를 제기할 수 있다. 분쟁 시스템에서 소명 케이스를 만들고
+              그 식별자를 소명 폼에 입력한다. 소명 중 상태가 되면 제재 카운트는 여전히 유지되지만,
+              운영팀 또는 호스트가 뒤집으면 카운트에서 제외된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 현재 앱에 소명 화면이 없어 참가자가 직접 소명할 수 없다.
+              이는 개선 예정 항목이다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">뒤집기</div>
+            <h3>호스트가 체크인을 놓쳐서 잘못 기록됐다</h3>
+            <p>호스트가 직접 또는 운영팀이 개입해 "노쇼 아님"으로 뒤집을 수 있다.
+              뒤집기 사유를 입력하면 해당 노쇼 기록은 제재 카운트에서 빠진다.
+              기록 자체는 감사 목적으로 남아 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">사후 조정 환불</div>
+            <h3>노쇼이지만 호스트가 부분 환불을 주기로 했다</h3>
+            <p>노쇼가 확정됐어도 호스트가 재량으로 일부 또는 전액을 환불해 줄 수 있다.
+              환불 사유와 금액을 입력하고 제출하면 처리된다. 이 흐름은 호스트-운영팀 간
+              분쟁 해소 도구로도 사용된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 규칙대로면 0원이지만, 호스트가 좋은 관계를 위해
+              자발적으로 환불하는 사례에 대응한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">제재 연계</div>
+            <h3>같은 사람이 여러 번 노쇼가 됐다</h3>
+            <p>노쇼 카운트는 일정 기간 내 누적으로 집계된다. 뒤집힌 건은 빠진다.
+              카운트가 기준을 넘으면 이벤트 신청이 제한된다. 현재 제한 발동 기준은
+              운영 정책으로 별도 결정된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">운영 주의사항</span>
+          <ul>
+            <li><strong>CANCEL_PENDING_REFUND 상태는 노쇼 확정 대상에서 제외된다.</strong>
+              계좌이체 환불 확인 대기 중인 참가자는 일괄 확정 목록에 포함되지 않는다.
+              이 참가자는 별도로 처리해야 한다.</li>
+            <li><strong>동일 (이벤트, 참가자) 쌍에 대한 중복 확정은 멱등하다.</strong>
+              실수로 두 번 누르거나 재호출해도 기존 row가 그대로 반환되며 새로 생성되지 않는다.</li>
+            <li><strong>소명 기한이 현재 없다.</strong> 참가자가 이론적으로 언제든 소명을 제출할 수 있다.
+              이는 v1 미구현 사항으로, 법무·운영 정책 결정 후 기한이 추가될 예정이다.</li>
+            <li><strong>사후 조정 환불은 원결제 금액을 초과할 수 없다.</strong>
+              초과 금액 입력 시 요청이 거부된다.</li>
+            <li><strong>같은 신청에 대해 환불을 두 번 제출할 수 없다.</strong>
+              동일 applicationId에 대한 중복 노쇼 환불 요청은 차단된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>레드 플래그</h2>
+        <div class="callout danger">
+          <span class="label">자주 발생하는 케이스</span>
+          <ul>
+            <li><strong>현재 앱에서 참가자가 소명을 직접 제출할 수 없다</strong> — 소명 화면이 미구현 상태다.
+              참가자는 고객센터를 통해 처리해야 한다.</li>
+            <li><strong>체크인 관리 권한 없는 공동호스트가 노쇼를 확정할 수 있는 서버 갭</strong> —
+              체크인 관리 권한과 노쇼 확정 권한 간에 불일치가 있다. 서버 수정이 필요하다.</li>
+            <li><strong>노쇼 환불 제출 이력을 앱에서 확인할 수 없다</strong> —
+              조회 화면이 없어 이미 제출했는지 앱에서 확인이 불가능하다. 중복 제출 시도는 서버에서 차단된다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
+          <a class="card" href="F03-08.html"><div class="eyebrow">선행 데이터</div><h3>F03-08 QR 체크인</h3><p>노쇼 판단의 근거인 체크인 기록.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>사후 조정 환불 처리 경로.</p></a>
+          <a class="card" href="../domains/18-dispute.html"><div class="eyebrow">연계 도메인</div><h3>18 분쟁 해결</h3><p>소명이 통합 분쟁 유니온 EVENT_NO_SHOW로 연결된다.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

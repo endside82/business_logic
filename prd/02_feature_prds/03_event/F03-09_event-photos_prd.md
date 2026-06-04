@@ -75,6 +75,37 @@
 | GET | `/api/v1/events/{eventId}/photos` | `EventPhotoController#getPhotos` | 참석자 또는 호스트/공동호스트 | 앨범 + 사진 목록 (createdAt DESC) |
 | POST | `/api/v1/events/{eventId}/photos` | `EventPhotoController#uploadPhoto` | 참석자 또는 호스트/공동호스트 | 사진 등록 (S3 presigned 업로드 완료 후 fileKey 전달) |
 | DELETE | `/api/v1/events/{eventId}/photos/{photoId}` | `EventPhotoController#deletePhoto` | 업로더 본인 또는 호스트 | 사진 삭제 + S3 객체 삭제 |
+| PATCH | `/api/v1/events/{eventId}/photos/{photoId}/hide` | `EventPhotoController#hidePhoto` | 호스트/공동호스트/클럽 매니저 | 사진 soft-숨김 또는 숨김 해제 (Wave B-8, `EventPhotoHideParam`) |
+
+### 구조화 숨김 사유 (PhotoHideReasonCode) — Wave B-8 (갱신 2026-06-05)
+
+> 소스: `PhotoHideReasonCode.java`, `EventPhotoHideParam.java`, `EventPhotoService.java:565-627`.
+
+운영자가 `PATCH .../photos/{photoId}/hide` 호출 시 `EventPhotoHideParam` body를 전달한다:
+
+- `hidden` (`Boolean`, `@NotNull`) — true=숨김, false=숨김 해제
+- `reasonCode` (`PhotoHideReasonCode`, nullable) — 숨김 시 사유 코드. null이면 서비스 레이어에서 `MANUAL`로 자동 보정
+- `reasonText` (`String`, max 500, nullable) — 자유 텍스트 (운영자 보충)
+
+**PhotoHideReasonCode 전체 7종** (`PhotoHideReasonCode.java`):
+
+| 값 | 의미 |
+|---|---|
+| `INAPPROPRIATE` | 부적절한 내용 (욕설/혐오/선정성) |
+| `HARASSMENT` | 특정 참석자 괴롭힘/모욕 |
+| `OFF_TOPIC` | 모임과 무관한 사진 |
+| `PRIVACY_VIOLATION` | 개인정보/PII 노출 |
+| `COPYRIGHT` | 저작권 침해 |
+| `OTHER` | 기타 (reasonText 보충 권장) |
+| `MANUAL` | 사유 미지정 호환 케이스 (Wave B-8 이전 호출자) |
+
+### Soft-delete / Legal hold 정책 (Wave B-8, 갱신 2026-06-05)
+
+> 소스: `EventPhotoService.java:565-627`.
+
+- **숨김(`hidden=true`)**: `reasonCode` + `reasonText` + 조치자 + 시각을 audit 컬럼에 기록. 일반 참석자 조회에서 제외. 운영자에게만 표시.
+- **숨김 해제(`hidden=false`)**: 신고가 `PENDING`/`IN_REVIEW` 상태로 진행 중이면 **unhide 차단** (legal hold) — `EventPhotoService.java:604-606`. 신고 종결 또는 없을 때만 숨김 해제 가능하며 `hidden_reason_*` 컬럼 초기화.
+- 신고 진행 중인 사진은 호스트/공동호스트 삭제 불가 (동일 legal hold 정책).
 
 ### 의존 단위 / 외부 시스템
 
@@ -176,3 +207,7 @@
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 변경 이력
+
+- **2026-06-05 (Wave B-8 — 구조화 숨김 사유 + soft-delete/legal hold)**: `PATCH /api/v1/events/{eventId}/photos/{photoId}/hide` 신규 엔드포인트 추가 (`EventPhotoController.java:134`). `PhotoHideReasonCode` 7종 — INAPPROPRIATE/HARASSMENT/OFF_TOPIC/PRIVACY_VIOLATION/COPYRIGHT/OTHER/MANUAL (소스: `PhotoHideReasonCode.java`). `EventPhotoHideParam` — `hidden`(필수), `reasonCode`(null시 MANUAL 보정), `reasonText`(max500). Legal hold 정책: 신고 진행 중 사진은 unhide 및 삭제 차단 (소스: `EventPhotoService.java:565-627`).

@@ -22,7 +22,7 @@
 | 3 | 00_prd_items | PRD 항목별로 무엇을 어디서 봐야 하는지 확인 |
 | 4 | 01_domain_prds | 업무 영역별 책임과 기능 경계 확인 |
 | 5 | 03_policy_prds | 상태, 권한, 돈, 알림, 안전 정책을 먼저 고정 |
-| 6 | 02_feature_prds | 153개 기능 상세 검토 |
+| 6 | 02_feature_prds | 168개 기능 상세 검토 |
 | 7 | 04_qa_acceptance | QA 범위와 릴리즈 기준 확정 |
 | 8 | 05_planning_artifacts | 미결정 사항과 MVP 범위 운영 |
 

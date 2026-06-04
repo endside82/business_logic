@@ -189,6 +189,16 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | GET | `/api/v1/events/{eventId}/attendance/me` | `AttendanceController#getMyAttendance` | 같음 | 동일 (플랜 호환 경로) |
 | PATCH | `/api/v1/events/{eventId}/capacity-settings` | `EventController#updateCapacitySettings` → `EventCapacitySettingsService#updateCapacitySettings` | 호스트/공동호스트 | **v4.5 W1 신설**: DRAFT/OPEN에서만 `baseCapacity / overcapacityAllowed / hardCapacityLimit` 조정. invariant 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)`, CLOSED 호출 시 `INVALID_EVENT_STATUS`. 자세한 정책은 §3-1 참조 |
 
+### 대기열 자동 승급 시 제재 사용자 skip 필터 (갱신 2026-06-05)
+
+> 소스: `WaitlistService.java:161, 230`.
+
+대기열 자동 승급(`autoPromoteNextWaiting`, `autoPromoteAll`) 시 `EventApplyRestrictionGuard.isRestricted(userId, clubId)` 를 호출하여 제재 사용자는 자동 승급 대상에서 건너뛴다(skip). 제재 상태가 해제되면 다음 승급 주기에 정상 포함된다.
+
+- `assertNotRestricted` (throw): `promoteToAttending` (수동 승격 경로) — `WaitlistService.java:101`
+- `isRestricted` (skip): `autoPromoteNextWaiting` — `WaitlistService.java:161`
+- `isRestricted` (skip): `autoPromoteAll` — `WaitlistService.java:230`
+
 ### 의존 단위 / 외부 시스템
 
 - **F03-05 신청 & 참석** — `attend`/`cancel` 흐름 자체는 F03-05 (신청). 본 단위는 그 결과에 대한 호스트 측 관리 + 자동 승격 트리거.
@@ -344,3 +354,4 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 ## 11. 변경 이력
 
 - **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `overcapacity_allowed`/`hard_capacity_limit` 두 컬럼을 `event` 테이블에 추가하고, `CapacityPolicy.decide` 5-룰 매트릭스(§3-1)를 도입. 별도 서비스 `EventCapacitySettingsService`(`community_api/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java`)와 `PATCH /events/{id}/capacity-settings` 엔드포인트로 DRAFT/OPEN 운영 중 정원 토글이 가능하도록 분리(Q7: CLOSED 차단). `ChangeType.OVERCAPACITY_APPROVED(9)`/`CAPACITY_REDUCED(10)` 추가, `ErrorCode.INVALID_HARD_CAPACITY_LIMIT(400013)` + `CAPACITY_FULL_AT_CONFIRMATION(400012)` 신설. EventVo에 `overcapacityAllowed / hardCapacityLimit / exceedingAttendees / reservedPaymentPendingCount` 4개 필드 노출. 자동 승인 이벤트에서 `overcap=true`이면 `apply` 시점에 즉시 ATTENDING으로 진입(Q6). 정원 축소 시 기존 ATTENDING은 유지. 시나리오 S1-1~S1-4 추가.
+- **2026-06-05 (D-20 / v3 — 대기열 자동 승급 제재 skip)**: `WaitlistService.autoPromoteNextWaiting`(`:161`), `autoPromoteAll`(`:230`)에 `EventApplyRestrictionGuard.isRestricted` skip 로직 추가. 제재 사용자는 자동 승급에서 건너뛰어 다음 비제재 사용자가 승급됨. 수동 승격(`promoteToAttending`)은 `assertNotRestricted` — 제재 사용자 시도 시 throw. 상세는 §대기열 자동 승급 시 제재 사용자 skip 필터 절 참조.

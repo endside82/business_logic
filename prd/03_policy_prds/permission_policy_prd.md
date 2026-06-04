@@ -259,3 +259,76 @@ flowchart TD
 - **관리자 SPA** — `/admin/v1/manage/vehicle-layouts/*`의 UI 구현은 후속 슬라이스. 1차는 admin API + 직접 INSERT.
 - **EventAuthorizationService 캐시** — viewer context 배치 조회 시 권한 캐싱은 성능 모니터링 후 후속.
 - **공동호스트(COHOST) 역할 enum** — 현재 host 단일 필드. 공동호스트 다중화는 별도 PRD.
+
+## v5.0 delta 신규 권한 (2026-06-05)
+
+### EventCoHost Permission Flag 5종 (Wave E-1)
+
+> 소스: `EventCoHost.java:38-55`, `EventCoHostController.java:31`
+
+공동호스트는 이제 기능별 개별 권한 플래그를 부여받는다. PATCH `/api/v1/events/{eventId}/co-hosts/{coHostUserId}/permissions` (호스트만 호출 가능).
+
+| 플래그 | 컬럼 | 기본값 | 의미 |
+|---|---|---|---|
+| `canManageAttendance` | `can_manage_attendance` | false | 수동 체크인·참석자 강제 제거·대기열 수동 승급. Gap: 노쇼 확정/뒤집기(`EventNoShowService`)는 이 flag를 미체크하는 불일치 존재. |
+| `canModerateMessages` | `can_moderate_messages` | false | 타 사용자 이벤트 메시지 삭제(콘텐츠 모더레이션) |
+| `canSendAnnouncement` | `can_send_announcement` | **true** | 공지 일괄 발송 (기존 동작 보존 — 기본 true) |
+| `canHandleRefundIssue` | `can_handle_refund_issue` | false | 환불 처리(은행 환불 확인 등) |
+| `canResolveDispute` | `can_resolve_dispute` | false | 분쟁 처리 가능 여부 |
+
+이벤트 권한 매트릭스 확장 (공동호스트):
+
+| 액션 | 호스트 | 공동호스트 (flag 충족 시) |
+|---|---|---|
+| 수동 체크인·참석자 제거 | O | `canManageAttendance=true` 시만 |
+| 메시지 삭제 모더레이션 | O | `canModerateMessages=true` 시만 |
+| 공지 일괄 발송 | O | 기본 허용 (`canSendAnnouncement` 기본 true) |
+| 환불 처리 | O | `canHandleRefundIssue=true` 시만 |
+| 분쟁 처리 | O | `canResolveDispute=true` 시만 |
+
+### 분쟁 케이스 Visibility별 접근 권한
+
+> 소스: `Visibility.java`, `DisputeCaseDetailVo.ActorPermissionFlags`
+
+**정책 의도 (4종 분류)**
+
+| Visibility | 열람 가능 역할 (정책 목표) |
+|---|---|
+| `PARTIES` | 신고자(reporterUserId), 피신고자(targetUserId), 소유 호스트(ownerHostUserId) |
+| `HOST_ONLY` | 소유 호스트(ownerHostUserId), CS/운영팀 |
+| `CS_ONLY` | CS/운영팀만 (admin API 전용) |
+| `PUBLIC_SUMMARY` | 인증된 모든 사용자 (요약 정보만) |
+
+**현재 구현**: public detail 조회 시 CS_ONLY 항목 제거 필터만 적용. HOST_ONLY를 소유 호스트에게만 노출하거나 PARTIES를 당사자로 제한하는 역할별 분기 builder는 미구현(Gap — 향후 구현 필요).
+
+**ActorPermissionFlags** (서버가 케이스별로 내려주는 동적 권한 flag):
+
+| 플래그 | 의미 | 비고 |
+|---|---|---|
+| `canResolveDispute` | 분쟁 처리 권한 | 호스트/CS |
+| `canEscalateToCs` | CS 에스컬레이션 권한 | — |
+| `canSendNote` | 타임라인 노트 추가 | — |
+| `canModerateMessages` | 메시지 숨김/삭제 | — |
+| `canHandleRefundIssue` | 환불 처리 | — |
+| `canManageAttendance` | 노쇼 관리 | — |
+| `canApproveAppeal` | 이의 승인/거절 | **Gap**: 공개 API endpoint 없음. admin API 소유만. flag는 UI gating용이지만 호스트/공동호스트가 appeal을 UPHELD/REJECTED로 전이하는 공개 endpoint 미구현. |
+
+### 노쇼 확정/뒤집기 권한 (Gap 포함)
+
+| 액션 | 권한 | Gap |
+|---|---|---|
+| 노쇼 확정(confirm, confirmBatch) | 호스트·cohost·클럽 운영진(canCreateEvent) | `EventNoShowService.validateCheckInManager()`가 `cohost.canManageAttendance` flag를 체크하지 않음 — `existsByEventIdAndUserId`로만 판단. 체크인 관리 권한 없는 cohost가 노쇼 확정/뒤집기 가능한 불일치. |
+| 노쇼 뒤집기(overturn) | 호스트·cohost·클럽 운영진 또는 SYSTEM(id=0) | 동일 Gap |
+| 참가자 소명(appeal) | **본인(row.userId)만** | 호스트/관리자 소명 불가 |
+
+### 클럽 강퇴(kick)/차단(ban) 권한 + 사유코드 의무
+
+> 소스: `ClubController`, `ClubMemberPermissionController`
+
+| 액션 | 허용 역할 | 사유코드 |
+|---|---|---|
+| 멤버 강퇴(kick) | 관리자, 소유자 (자기 자신·소유자 보호) | **필수 — 별도 enum `ClubKickReasonCode`(5값), 누락 시 `CLUB_KICK_REASON_REQUIRED` 400** |
+| 멤버 차단(ban) | 관리자, 소유자 | **필수 — 별도 enum `ClubBanReasonCode`(7값), 누락 시 `CLUB_BAN_REASON_REQUIRED` 400** |
+| 강퇴/차단 이의제기 | **본인(강퇴/차단 당사자)만** | RS-002 P3-C: `CLUB_MEMBERSHIP_ACTION:{id}`로 분쟁 union 진입. 제3자 이의 생성 차단(`FORBIDDEN`, `DisputeAppealService.java:126`). |
+
+> 사유코드는 `ApplicationRejectReasonCode`와 무관한 별도 enum으로 구현 완료. `ClubKickReasonCode`/`ClubBanReasonCode` controller level 필수 강제 적용됨.

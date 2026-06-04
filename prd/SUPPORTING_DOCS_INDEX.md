@@ -13,8 +13,8 @@
 | [00_prd_items/01_service_overview.md](00_prd_items/01_service_overview.md) | 서비스 개요 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/02_user_personas.md](00_prd_items/02_user_personas.md) | 사용자 유형과 Persona | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/03_information_architecture.md](00_prd_items/03_information_architecture.md) | 전체 정보구조와 기능구조 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
-| [00_prd_items/04_domain_purposes.md](00_prd_items/04_domain_purposes.md) | 17개 도메인별 목적 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
-| [00_prd_items/05_feature_definitions.md](00_prd_items/05_feature_definitions.md) | 153개 기능 정의 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
+| [00_prd_items/04_domain_purposes.md](00_prd_items/04_domain_purposes.md) | 20개 도메인별 목적 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
+| [00_prd_items/05_feature_definitions.md](00_prd_items/05_feature_definitions.md) | 168개 기능 정의 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/06_user_journeys.md](00_prd_items/06_user_journeys.md) | 사용자 여정 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/07_role_action_matrix.md](00_prd_items/07_role_action_matrix.md) | 권한/역할별 액션 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |
 | [00_prd_items/08_state_transitions.md](00_prd_items/08_state_transitions.md) | 상태 전이 | 제품/도메인/기능 인벤토리와 PRD 작성 항목 |

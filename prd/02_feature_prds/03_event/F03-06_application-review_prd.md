@@ -77,13 +77,80 @@
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
-- **Enum** `ApplicationStatus`: `PENDING`, `APPROVED`, `REJECTED`, `CANCELED` — `CANCELLED` (LL)이 아님 주의
+- **Enum** `ApplicationStatus` (전체 7값, 갱신 2026-06-05, `ApplicationStatus.java:24-36`):
+
+  | 값 | 의미 | 특성 |
+  |---|---|---|
+  | `PENDING` | 호스트 심사 대기 | active |
+  | `APPROVED` | 승인 완료 (정원 점유) | active |
+  | `APPROVED_PENDING_PAYMENT` | 승인됐으나 선입금 결제 대기 | active, capacity 미점유 |
+  | `PAYMENT_EXPIRED` | 결제 기한 만료 | 터미널 |
+  | `REJECTED` | 호스트 거절 | 터미널 |
+  | `CANCELED` | 정상 취소 (L 한 개 — `CANCELLED` 아님) | 터미널 |
+  | `CANCEL_PENDING_REFUND` | 계좌이체 취소 후 환불 대기 | capacity hold 유지 |
+
 - **Enum** `AttendanceStatus`: 승인 후 자동 등록 시 `ATTENDING` 또는 `WAITING`. 정원 초과 + !waitlist면 자동 등록 실패로 트랜잭션 롤백.
 - **Enum** `NotificationType` (Unit 12): `APPLICATION_APPROVED`, `APPLICATION_REJECTED`, `NEW_APPLICATION` (호스트 수신은 F03-05에서 발생)
 - **`Application` 엔티티 핵심 필드**:
   - `id, eventId, userId, status, message, reviewedBy, processedAt, createdAt`
   - VO에서는 `id`로 노출되지만 클라이언트 모델은 `applicationId`로도 부를 수 있음 (서버 필드명은 `id`)
 - **반환 타입**: `getApplicationsByEvent`는 **List**. CR-04 history에서 `PageResponse`로 잘못 매핑한 사례가 있어 주의.
+
+### 거절 시 reasonCode 필수화 (갱신 2026-06-05)
+
+`POST .../applications/{applicationId}/reject` 호출 시 `decisionParam.getReasonCode()` 가 null이면 `APPLICATION_REJECT_REASON_REQUIRED(400, 내부코드 300013)` 에러를 반환한다 (`ApplicationService.java:568-569`).
+
+**Enum** `ApplicationRejectReasonCode` (전체 7값, `ApplicationRejectReasonCode.java:20-27`):
+
+| 값 | 의미 |
+|---|---|
+| `CAPACITY_FULL` | 정원 부족 |
+| `ELIGIBILITY_NOT_MET` | 참가 자격 미충족 |
+| `SANCTIONED` | 제재 사용자 |
+| `HOST_DISCRETION` | 호스트 재량 |
+| `DUPLICATE_PROFILE` | 중복 신청자 |
+| `PAYMENT_TIMEOUT` | 결제 기한 초과 (자동 거절) |
+| `OTHER` | 기타 |
+
+Flutter 측 거절 화면에서 사유 선택 UI를 제공해야 한다. 현재 미구현(F03-06 §5 프론트 계약 Gap 참조).
+
+### 참가 결정 이력 (application_decision_log) — 신규 (갱신 2026-06-05)
+
+> 소스: `ApplicationDecisionLog.java:29-135`, `V1__init.sql:1116-1141`.
+
+모든 신청 상태 전이는 `application_decision_log` 테이블에 **append-only**로 기록된다. Row 수정·삭제 금지. 단일 진입점: `ApplicationService.recordDecisionLog()` (`ApplicationService.java:762-764`).
+
+#### 테이블 핵심 컬럼
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `application_id` | bigint | |
+| `event_id` | bigint | |
+| `applicant_user_id` | bigint | |
+| `attempt_no` | int DEFAULT 1 | 재신청 차수 (최초=1) |
+| `decision_type` | varchar(20) | `ApplicationDecisionType` |
+| `from_status` | varchar(30) | 전이 직전 상태 (최초 APPLY시 null) |
+| `to_status` | varchar(30) | 전이 후 상태 |
+| `actor_user_id` | bigint | SYSTEM=0 |
+| `actor_role` | varchar(20) | APPLICANT/HOST/CO_HOST/CLUB_STAFF/SYSTEM |
+| `reason_code` | varchar(40) | REJECT시 `ApplicationRejectReasonCode` |
+| `reason_text` | varchar(500) | 자유 텍스트 (nullable) |
+| `created_at` | datetime | @CreatedDate (append-only) |
+
+#### ApplicationDecisionType 전체 6값 (`ApplicationDecisionType.java:21-27`)
+
+| 값 | 기록 시점 | actorRole |
+|---|---|---|
+| `APPLY` | 사용자 최초 신청 | APPLICANT |
+| `APPROVE` | 호스트/공동호스트 승인 | HOST/CO_HOST |
+| `REJECT` | 호스트/공동호스트 거절 | HOST/CO_HOST |
+| `CANCEL` | 사용자 취소 | APPLICANT |
+| `REAPPLY` | 사용자 재신청 (attemptNo 증가) | APPLICANT |
+| `AUTO_REJECT` | 시스템 자동 만료 (PAYMENT_EXPIRED 등) | SYSTEM |
+
+### 승인→attendance 전환 직전 제재 재검사 (갱신 2026-06-05)
+
+승인(`approveApplication`)은 `EventApplyRestrictionGuard`를 직접 호출하지 않는다. 대신 승인 후 `createAttendanceFromApplication`에서 `assertNotRestricted`를 재검사한다 (`CapacityService.java:380`). 즉, 호스트가 승인한 뒤 capacity 확정 직전에 참가자의 제재 상태를 다시 확인한다.
 
 ### 의존 단위 / 외부 시스템
 
@@ -211,7 +278,7 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 후보 | backend.md:77 | #### 유료 승인제 승인 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:108 | - **Enum** `ApplicationStatus`: `PENDING`, `APPROVED`, `REJECTED`, `CANCELED` — `CANCELLED` (LL)이 아님 주의 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 | backend.md:108 | ~~`ApplicationStatus` 4값만 열거~~ → 7값 전체 (APPROVED_PENDING_PAYMENT/PAYMENT_EXPIRED/CANCEL_PENDING_REFUND 포함) | 해소 2026-06-05 |
 | 후보 | backend.md:114 | - **반환 타입**: `getApplicationsByEvent`는 **List**. CR-04 history에서 `PageResponse`로 잘못 매핑한 사례가 있어 주의. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:28 | - 유료 승인제 보강 상태: `APPROVED_PENDING_PAYMENT` 또는 결제 대기 필드가 도입되면 "승인됨 · 결제 대기" 뱃지와 결제 기한 표시 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:46 | - 거절 시 사유 입력 (선택) — 현재 코드는 사유 없이 거절만 가능 (서버는 reason 받지 않음). UI에서 입력받아 클라이언트 노트로만 저장하는 정책은 미정. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
@@ -243,3 +310,4 @@
 ## 11. 변경 이력
 
 - **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `approveApplication`의 사전 정원 체크를 명백한 FULL(hardLimit 도달 또는 baseCapacity 도달 + !waitlist + !overcap)만 차단하도록 완화. OVERCAPACITY 분기 결정은 `CapacityService.createAttendanceFromApplication`이 호출하는 `CapacityPolicy.decide` 매트릭스에 위임 (F03-07 §3-1). 승인 시점 결과는 §승인 시점 정원 분기 표 참조. `ChangeType.OVERCAPACITY_APPROVED(9)`로 audit log 기록.
+- **2026-06-05 (D-20 / v3 — ApplicationStatus 전체 7값 + 거절 reasonCode 필수 + 결정 이력 + 제재 재검사)**: `ApplicationStatus` 7값 전체 표로 갱신 (APPROVED_PENDING_PAYMENT/PAYMENT_EXPIRED/CANCEL_PENDING_REFUND 추가). 거절 시 `reasonCode` 필수 — `APPLICATION_REJECT_REASON_REQUIRED(400, 300013)`, `ApplicationRejectReasonCode` 7값 명시 (`ApplicationRejectReasonCode.java:20-27`). `application_decision_log` append-only 이력 신규 절 — `ApplicationDecisionType` 6값, 모든 전이 로깅, 단일 진입점 `recordDecisionLog()`. 승인→attendance 직전 `CapacityService.createAttendanceFromApplication`에서 제재 재검사 명시.

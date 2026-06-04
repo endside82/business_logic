@@ -2,7 +2,7 @@
 
 <!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement -->
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 153개 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
 > **2026-05-28 RM 도메인 신설 영향(cross-ref).** `Settlement` 엔티티 확장: `event_id` `long`→`Long` nullable + `regular_meeting_id` Long + `reserved_refund` BigDecimal 신규. DDL `uk_settlement_rm(regular_meeting_id)` UNIQUE + `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))`로 양립 불가. `failed_refund.event_id` nullable + `regular_meeting_id` 추가(결정 K). **flow-through 정산 모델**: RM은 `retainedPaid`만 호스트 수익(gross), `retainedFree`는 `freePointSubsidy`로 분리(플랫폼 보조, payout 비대상). close→**afterCommit**→`tryCreateSettlement(REQUIRES_NEW)` 다층 방어 + 1h failsafe 스케줄러. `SettlementService.completeSettlement` 재사용 + `reservedRefund.signum() > 0` 게이트 추가. 자세한 내용은 [17 정기모임 F17-10](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md).
 
@@ -231,6 +231,35 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 - **Frontend**: `screens/bank_account_screen.dart`, `screens/my_settlement_history_screen.dart`, `widgets/bank_account_card_widget.dart`, `widgets/bank_account_form_dialog.dart`, `widgets/host_reputation_badge.dart`
 
 ---
+
+## 4-A. TransferStatus 전체값 및 limbo SLA 운영 정책 (2026-06-05 추가)
+
+### TransferStatus 전체값 (Fact)
+
+> 소스: `payment/meeting/constants/TransferStatus.java` (커밋 985f586, 2026-06-04). 상세 계약은 [F07-06](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) §4 참조.
+
+| 값 | 의미 |
+|---|---|
+| `PENDING` | 결제/이체 대기 |
+| `BANK_AWAITING_CONFIRM` | 혼합결제 은행 확인 대기 (limbo 대상) |
+| `COMPLETED` | 완료 |
+| `CANCELLED` | 취소됨 |
+| `EXPIRED` | 만료 |
+| `SUPERSEDED` | 재발급으로 대체된 원본 — 정산 완료 판정 제외 |
+| `REVERSAL_FAILED` | 역분개 실패 |
+| `PENDING_MANUAL_REFUND` | 역분개 실패 후 수동 환불 대기 (limbo 대상) |
+
+> **DDL 정정 (해소 — 985f586)**: `status` 컬럼 varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자라 구 스키마에서 strict mode 영속 실패 잠재 버그 → 정정 완료.
+
+### limbo SLA 운영 정책 요약
+
+`BANK_AWAITING_CONFIRM` / `PENDING_MANUAL_REFUND` 상태가 **3일(기본값, `meeting-settlement.limbo-escalation-days`)** 이상 지속되면:
+
+1. 관련 행위자(수취자/호스트)에게 자동 재알림 발화 (`MeetingSettlementExpirationScheduler`, 05:10 cron)
+2. 2회 이상 미해소 시 `OperatorAlertType.SETTLEMENT_TRANSFER_LIMBO HIGH` 운영알림 자동 승급
+3. 자동 만료(EXPIRED 전이) **없음** — 실제 돈이 움직였을 수 있어 자동 상태 전이 위험
+
+상세: [F07-06 §4 limbo SLA 정책](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md), [F07-07 §8 limbo 재알림](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md).
 
 ## 5. 상태/권한/의존성
 
