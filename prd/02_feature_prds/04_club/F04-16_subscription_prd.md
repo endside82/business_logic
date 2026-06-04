@@ -87,33 +87,39 @@
 
 | 라우트 (GoRouter) | Screen 파일 (lib/presentation/club/finance/...) | 역할 |
 |---|---|---|
-| `/clubs/:clubId/subscriptions` | `screens/subscription_screen.dart` | 클럽 구독 플랜 선택 (SCR-CF-005) |
-| `/clubs/:clubId/subscriptions/manage` | `screens/subscription_manage_screen.dart` | 구독 관리 (SCR-CF-006) |
+| `/clubs/:clubId/subscriptions` | `screens/subscription_screen.dart` | 클럽 운영 구독 플랜 선택 (SCR-CF-005) |
+| `/clubs/:clubId/subscriptions/manage` | `screens/subscription_manage_screen.dart` | 운영 구독 관리 (SCR-CF-006) |
 
 라우트 상수: `Routes.clubSubscriptions`(`...:69`), `clubSubscriptionManage`(`...:70`).
 
-> 앱 스펙 SCR-CF-005에는 일반 사용자가 클럽을 구독하는 흐름이 묘사되지만, 실제 서버 모델은 **OWNER가 플랫폼에 운영비를 내는 구조**. 본 Frontend 문서는 서버 모델에 맞춰 OWNER 관점으로 정리한다. (UI 텍스트가 "Basic/Premium 혜택"으로 표기된 부분은 향후 분리 검토 필요 — 현재는 MONTHLY/YEARLY 플랜에 매핑.)
+> 실제 서버 모델은 **OWNER가 플랫폼에 운영비를 내는 구조** (`subscribe`는 비오너 `CLUB_NOT_OWNER` 403).
+> **2026-06-04 P2-② 정정 완료**: 클라 두 화면 모두 비오너 게이팅("클럽장 전용 메뉴입니다") + 문구를
+> "클럽 운영 구독"으로 정정, 서버 plans 혜택 문구도 실제 게이트되는 운영 기능
+> (`ClubSubscriptionFeature`: 이벤트 게시/공지/멤버 초대/상한 확장/사진 앨범) 기준의 오너 관점으로
+> 교체했다 (구 "Basic/Premium 멤버 혜택" 문구는 서버에 없는 기능이라 폐기). 앱 스펙
+> `17-club-finance.md` SCR-CF-005/006 도 동일 기준으로 갱신됨.
 
 ### 화면별 구성 요소 & 액션
 
-### 클럽 구독 (`subscription_screen.dart`)
-- **사용자가 보는 것** (SCR-CF-005):
-  - "{클럽명} 구독 플랜"
+### 클럽 운영 구독 (`subscription_screen.dart`)
+- **오너 게이팅**: 클럽 상세 `myRole != OWNER` 이면 플랜/구독 조회 없이 "클럽장 전용 메뉴입니다" 안내만 노출
+- **사용자가 보는 것** (SCR-CF-005, OWNER):
+  - AppBar "클럽 운영 구독", 부제 "{클럽명} 운영 구독 플랜"
   - 플랜 카드 2개 (`finance/widgets/subscription_plan_card.dart`):
-    - MONTHLY: "₩{FREE_MONTHLY 또는 BUSINESS_MONTHLY} / 월", description, benefits 리스트
-    - YEARLY: "₩{FREE_YEARLY 또는 BUSINESS_YEARLY} / 월(연간)", description "연간 구독 플랜 (2개월 할인)", benefits
-  - 안내 텍스트: "구독은 매월 자동 갱신됩니다. 해지는 언제든 가능하며, 남은 기간까지 이용 가능합니다."
-  - 이미 구독 중인 플랜에는 "현재 구독 중" 배지
+    - MONTHLY: "₩{FREE_MONTHLY 또는 BUSINESS_MONTHLY} / 월", description "월간 운영 구독 플랜", benefits(운영 기능)
+    - YEARLY: "₩{FREE_YEARLY 또는 BUSINESS_YEARLY} / 년", description "연간 운영 구독 플랜 (2개월 할인)", benefits
+  - 안내 텍스트: 자동 갱신/해지 + "구독료(운영비)는 클럽 기금에서 우선 차감되며, 부족분은 클럽장 지갑에서 결제됩니다."
+  - 이미 구독 중인 플랜에는 "현재 플랜" 배지
 - **사용자가 할 수 있는 액션**:
   - 플랜 카드의 "구독하기" 버튼 ▶ `payment_method_sheet.dart` (BottomSheet) 표시:
-    - 내 지갑 (잔액 표시) — 기본 선택
-    - 신용/체크카드 — `(미연동)`
-    - 간편결제 — `(미연동)`
+    - 내 지갑 단일 옵션 (부제 "클럽 기금에서 우선 차감 후 부족분 결제") — 2026-06-04 P2-② 정정으로
+      서버에 없는 신용카드/간편결제 옵션 제거 (서버 subscribe 는 결제수단 파라미터 없이 기금→지갑 고정)
   - "결제하기" → 확인 → `POST /clubs/{clubId}/subscription` (`{planType, autoRenew: true}`)
   - 성공 → "구독이 시작되었습니다" 토스트 → 구독 관리 화면으로 이동
 
-### 구독 관리 (`subscription_manage_screen.dart`)
-- **사용자가 보는 것** (SCR-CF-006):
+### 운영 구독 관리 (`subscription_manage_screen.dart`)
+- **오너 게이팅**: SCR-CF-005 와 동일 — 비오너는 "클럽장 전용 메뉴입니다" 안내만 노출 (AppBar "운영 구독 관리")
+- **사용자가 보는 것** (SCR-CF-006, OWNER):
   - 구독 정보 카드 (`subscription_info_card.dart`): 클럽명, 플랜명, 상태(`subscription_status_badge.dart`), 시작일, 다음 결제일, 결제 금액, 결제 수단
   - 결제 이력 (`payment_history_list.dart`, 최근 6건): 결제일/금액/결과 — **현재 서버 GET /subscription 응답에 결제 이력 별도 없음** → 클라이언트가 거래 내역(별 Unit) 또는 별도 API로 조립 필요 `(미확인)`
   - 플랜 변경 영역: 다른 플랜 정보 + "변경하기"
