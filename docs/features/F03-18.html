@@ -19,7 +19,7 @@
         </div>
         <h1>F03-18. 이벤트 구성인원 인구통계</h1>
         <p class="lede">
-          이벤트 상세에서 host·공동호스트·참석 확정자(ATTENDING)의 성별·나이대·MBTI I·E 비율을 가로 비율 바로 보여준다.
+          이벤트 상세에서 호스트·공동호스트·참석 확정자의 성별·나이대·MBTI I·E 비율을 가로 비율 바로 보여준다.
           데이터는 본인인증으로 검증된 값(성별·생년월일)과 프로필에서 직접 입력한 MBTI를 사용한다.
           소수 셀(개인)이 드러나지 않도록 프라이버시 3단계 게이트를 거친다.
         </p>
@@ -29,7 +29,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">차원</div><div class="value">3</div><div class="hint">성별 · 나이대 · MBTI I·E</div></div>
           <div class="metric"><div class="label">프라이버시</div><div class="value">k=5</div><div class="hint">전체·차원·버킷 3단계 게이트</div></div>
-          <div class="metric"><div class="label">대상</div><div class="value">호스트+공동호스트+ATTENDING</div><div class="hint">distinct</div></div>
+          <div class="metric"><div class="label">대상</div><div class="value">호스트+공동호스트+참석 확정자</div><div class="hint">중복 없이 집계</div></div>
         </div>
 
         <div class="callout">
@@ -44,13 +44,13 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["이벤트 상세 진입"] --> B["GET /events/{id}/demographics"]
+    A["이벤트 상세 진입"] --> B["구성 통계 조회"]
     B --> C{"접근권한"}
     C -->|"공개+진행/종료"| D["인증 사용자 OK"]
-    C -->|"비공개·DRAFT 등"| E["호스트·공동호스트·ATTENDING만"]
-    D --> F["대상 userId 수집"]
+    C -->|"비공개·초안 등"| E["호스트·공동호스트·참석 확정자만"]
+    D --> F["대상 참가자 수집"]
     E --> F
-    F --> G["Member 조인(성별·생년월일·MBTI)"]
+    F --> G["회원 정보 결합(성별·생년월일·MBTI)"]
     G --> H["3단계 게이트"]
     H --> I["비율 바 렌더 or 안내"]
           </div>
@@ -78,22 +78,22 @@ flowchart LR
           <article class="card">
             <div class="eyebrow">접근권한</div>
             <h3>비공개 이벤트의 비참가자</h3>
-            <p>HOST·공동호스트·ATTENDING이 아니면 403. 공개+OPEN/CLOSED만 인증 사용자 전체에게 허용.</p>
+            <p>호스트·공동호스트·참석 확정자가 아니면 접근이 막힌다. 공개+진행/종료 이벤트만 로그인 사용자 전체에게 허용.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>이 화면이 제공하는 것</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>GET</td><td><code>/api/v1/events/{eventId}/demographics</code></td><td>이벤트 구성인원 인구통계 조회</td></tr>
+              <tr><td>구성 통계 보기</td><td>접근 권한이 있는 사용자</td><td>이벤트 구성인원의 성별·나이대·MBTI I·E 분포를 비율 바로 확인한다.</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="hint">응답에 원시 카운트는 없고 비율(<code>ratio</code>)·전체 인원·MBTI 입력률만 포함. 게이트로 노출 버킷 카운트는 항상 ≥5(k-익명성).</p>
+        <p class="hint">화면에 내려오는 값은 사람 수가 아니라 비율과 전체 인원, MBTI 입력률뿐이다. 게이트를 통과해 노출되는 버킷은 항상 5명 이상이라 한 사람이 식별되지 않는다.</p>
       </section>
 
       <section>

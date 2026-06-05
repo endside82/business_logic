@@ -28,7 +28,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">제안 상태</div><div class="value">2주축</div><div class="hint">제출 → 승인 / 반려</div></div>
           <div class="metric"><div class="label">제안 권한</div><div class="value">이벤트 호스트</div><div class="hint">자기 이벤트만</div></div>
-          <div class="metric"><div class="label">처리 권한</div><div class="value">집행 담당</div><div class="hint">MILEAGE_MANAGER</div></div>
+          <div class="metric"><div class="label">처리 권한</div><div class="value">집행 담당</div><div class="hint">마일리지 관리자</div></div>
         </div>
 
         <div class="callout">
@@ -44,10 +44,10 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["호스트: 멤버·점수·사유 제안"] --> B["제출 (SUBMITTED) + 검토 큐 적재"]
+    A["호스트: 멤버·점수·사유 제안"] --> B["제출 + 검토 큐 적재"]
     B --> C{"운영진 결정"}
-    C -->|"승인"| D["적립 실행 + APPROVED"]
-    C -->|"반려 (사유 필수)"| E["REJECTED + 기록"]
+    C -->|"승인"| D["적립 실행 + 승인 처리"]
+    C -->|"반려 (사유 필수)"| E["반려 + 기록"]
           </div>
         </div>
       </section>
@@ -79,15 +79,15 @@ flowchart LR
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>호스트·운영진이 할 수 있는 동작</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>POST</td><td><code>/clubs/{clubId}/events/{eventId}/mileage-proposals</code></td><td>호스트 제안 제출</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/events/{eventId}/mileage-proposals</code></td><td>내 제안 목록</td></tr>
-              <tr><td>POST</td><td><code>.../mileage/host-proposals/{id}/approve</code></td><td>운영진 승인 (적립 실행)</td></tr>
-              <tr><td>POST</td><td><code>.../mileage/host-proposals/{id}/reject</code></td><td>운영진 반려 (사유 필수)</td></tr>
+              <tr><td><strong>제안 제출</strong></td><td>이벤트 호스트</td><td>자기 이벤트에서 활약한 멤버에게 줄 점수를 사유와 함께 제안한다. 제안은 검토 큐에 올라간다.</td></tr>
+              <tr><td><strong>내 제안 목록 보기</strong></td><td>이벤트 호스트</td><td>자기 이벤트에 올린 제안들의 처리 상태를 본다.</td></tr>
+              <tr><td><strong>제안 승인</strong></td><td>집행 담당</td><td>제안을 승인하면 적립이 실행된다. 승인 시 점수를 조정할 수 있다.</td></tr>
+              <tr><td><strong>제안 반려</strong></td><td>집행 담당</td><td>제안을 반려한다. 사유 없이는 반려할 수 없다.</td></tr>
             </tbody>
           </table>
         </div>

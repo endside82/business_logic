@@ -19,24 +19,24 @@
         </div>
         <h1>F03-13. 이벤트 참가 선입금</h1>
         <p class="lede">
-          유료 이벤트에서 호스트 승인과 참석 확정 사이에 놓이는 결제 확정 단위. 참가자는 결제 기한 안에
-          지갑 포인트 또는 계좌이체 신고로 선입금을 납부해야 참석자로 확정된다. 신청 row와 결제 row를 분리해
+          유료 이벤트에서 호스트 승인과 참석 확정 사이에 놓이는 결제 확정 단계. 참가자는 결제 기한 안에
+          지갑 포인트 또는 계좌이체 신고로 선입금을 납부해야 참석자로 확정된다. 신청 절차와 결제 절차를 분리해
           승인, 결제 대기, 입금 확인, 환불 요청, 만료를 각각 추적한다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">결제 수단</div><div class="value">2</div><div class="hint">WALLET · BANK_TRANSFER</div></div>
-          <div class="metric"><div class="label">주요 상태</div><div class="value">5</div><div class="hint">PENDING · PAID · CANCELED · REFUND_REQUESTED · REFUNDED</div></div>
-          <div class="metric"><div class="label">신규 알림</div><div class="value">7종</div><div class="hint">71~76, 83</div></div>
+          <div class="metric"><div class="label">결제 수단</div><div class="value">2</div><div class="hint">지갑 포인트 · 계좌이체 신고</div></div>
+          <div class="metric"><div class="label">주요 상태</div><div class="value">5</div><div class="hint">결제 대기 · 결제 완료 · 결제 취소 · 환불 요청 · 환불 완료</div></div>
+          <div class="metric"><div class="label">신규 알림</div><div class="value">7종</div><div class="hint">결제 안내·입금 신고·확인·거부·만료·환불 등</div></div>
         </div>
 
         <div class="callout warn">
           <span class="label">설계 의도 — 승인은 결제 권한이고, 참석 확정은 결제 이후다</span>
           <p>유료 승인제 이벤트에서 호스트가 신청서를 승인해도 바로 참석 확정이 아니다.
-            사용자는 <code>APPROVED_PENDING_PAYMENT</code> 상태로 들어가고, 결제 또는 입금 확인이 끝나야
-            capacity가 증가하고 <code>EventAttendance=ATTENDING</code>이 만들어진다. 이 분리를 지키지 않으면
+            사용자는 "승인 후 결제 대기" 상태로 들어가고, 결제 또는 입금 확인이 끝나야
+            정원에 자리가 잡히고 참석 확정이 만들어진다. 이 분리를 지키지 않으면
             "승인됐는데 돈을 냈는지", "돈을 냈는데 자리가 확보됐는지"가 흐려진다.</p>
         </div>
       </section>
@@ -47,17 +47,17 @@
           <div class="mermaid">
 flowchart TD
     A["참가 신청"] --> B{"승인 필요?"}
-    B -->|"자동 승인"| C["APPROVED_PENDING_PAYMENT"]
-    B -->|"호스트 심사"| D["PENDING"]
+    B -->|"자동 승인"| C["승인 후 결제 대기"]
+    B -->|"호스트 심사"| D["심사 대기"]
     D -->|"승인"| C
     C --> E{"결제 수단"}
-    E -->|"WALLET"| F["포인트 즉시 차감"]
-    F --> G["event_payment=PAID<br/>Application=APPROVED<br/>Attendance=ATTENDING"]
-    E -->|"BANK_TRANSFER"| H["입금 신고<br/>event_payment=PENDING"]
+    E -->|"지갑 포인트"| F["포인트 즉시 차감"]
+    F --> G["결제 완료<br/>신청 승인<br/>참석 확정"]
+    E -->|"계좌이체"| H["입금 신고<br/>호스트 확인 대기"]
     H --> I{"호스트 확인"}
     I -->|"확인"| G
-    I -->|"거부"| J["event_payment=CANCELED<br/>재신고 가능"]
-    C -->|"기한 만료"| K["PAYMENT_EXPIRED"]
+    I -->|"거부"| J["결제 취소<br/>재신고 가능"]
+    C -->|"기한 만료"| K["결제 기한 만료"]
           </div>
         </div>
       </section>
@@ -66,65 +66,65 @@ flowchart TD
         <h2>사용자 시나리오</h2>
         <div class="cards">
           <article class="card">
-            <div class="eyebrow">WALLET</div>
+            <div class="eyebrow">지갑 포인트</div>
             <h3>승인 후 포인트로 바로 확정</h3>
-            <p>참가자가 "결제하고 참석 확정"을 누르면 지갑에서 즉시 차감되고, 결제 row가 PAID가 된다.
-              같은 트랜잭션 안에서 신청 상태와 참석 상태가 함께 확정된다.</p>
+            <p>참가자가 "결제하고 참석 확정"을 누르면 지갑에서 즉시 차감되어 결제가 완료된다.
+              같은 처리 안에서 신청 상태와 참석 상태가 함께 확정된다.</p>
           </article>
           <article class="card">
-            <div class="eyebrow">BANK_TRANSFER</div>
+            <div class="eyebrow">계좌이체</div>
             <h3>입금 신고 후 호스트 확인 대기</h3>
             <p>참가자가 입금자명 또는 메모를 신고하면 호스트에게 확인 알림이 간다. 호스트가 확인하기 전까지는
-              capacity를 차지하지 않는다.</p>
+              정원에 자리를 차지하지 않는다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">입금 거부</div>
             <h3>호스트가 입금 미확인을 거부</h3>
-            <p>거부되면 결제 row는 CANCELED가 되지만 신청은 결제 대기 상태로 남는다. 참가자는 기한 안에 다시
+            <p>거부되면 결제는 취소되지만 신청은 결제 대기 상태로 남는다. 참가자는 기한 안에 다시
               신고할 수 있다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">만료</div>
             <h3>기한 안에 결제하지 않음</h3>
-            <p>스케줄러가 <code>APPROVED_PENDING_PAYMENT</code>를 <code>PAYMENT_EXPIRED</code>로 바꾸고,
-              PENDING 결제 row가 있으면 CANCELED로 정리한다. capacity 변화는 없다.</p>
+            <p>기한이 지나면 신청이 "승인 후 결제 대기"에서 "결제 기한 만료"로 바뀌고,
+              아직 확인되지 않은 입금 신고가 있으면 함께 취소로 정리된다. 정원 변화는 없다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">사용자 취소</div>
             <h3>결제 후 참가자가 직접 취소</h3>
-            <p>WALLET 결제는 이벤트별 환불 정책 카탈로그(STANDARD/STRICT/FLEXIBLE 등)에 따라 남은 시간 비율로 환불된다.
-              BANK 결제는 호스트 수동 환불이 필요하므로
-              <code>REFUND_REQUESTED</code> 상태로 남고 호스트에게 환불 요청 알림이 간다.</p>
+            <p>지갑 결제는 이벤트별 환불 정책 카탈로그(기준·엄격·유연 등)에 따라 남은 시간 비율로 환불된다.
+              계좌이체 결제는 호스트 수동 환불이 필요하므로
+              환불 요청 상태로 남고 호스트에게 환불 요청 알림이 간다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">환불 미리보기</div>
             <h3>취소 전 예상 환불액 확인</h3>
-            <p>참가자가 취소 버튼을 누르기 전 <code>POST .../refund-preview</code>로 예상 환불액·적용 비율·귀책 카테고리를 미리 볼 수 있다.
-              <code>allowed=false</code>이면 취소 확정 버튼이 비활성화된다.</p>
+            <p>참가자가 취소 버튼을 누르기 전 예상 환불액·적용 비율·귀책 분류를 미리 볼 수 있다.
+              환불이 불가한 구간이면 취소 확정 버튼이 비활성화된다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">이벤트 취소</div>
             <h3>호스트가 이벤트를 취소</h3>
-            <p>신규 <code>event_payment</code>가 있으면 이 경로를 우선 환불하고, 없으면 legacy 이벤트 결제 환불로
-              fallback한다. 같은 이벤트 안에서 구형 결제와 신형 선입금이 섞인 전환기를 위한 장치다.</p>
+            <p>선입금 결제가 있으면 이 경로를 우선 환불하고, 없으면 구형 이벤트 결제 환불로
+              넘어간다. 같은 이벤트 안에서 구형 결제와 신형 선입금이 섞인 전환기를 위한 장치다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>참가자·호스트가 할 수 있는 동작</h2>
+        <p class="subtitle">선입금 단계에서 양쪽이 취할 수 있는 행동.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th style="width:140px">주체</th><th>동작</th><th>의미</th></tr></thead>
             <tbody>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/prepayment/wallet</code></td><td>지갑으로 선입금 결제</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/prepayment/bank-declare</code></td><td>계좌이체 입금 신고</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/bank-confirm</code></td><td>호스트 입금 확인</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/bank-reject</code></td><td>호스트 입금 거부</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-wallet</code></td><td>지갑 선입금 환불 (카탈로그 기반 환불율 적용)</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm</code></td><td>호스트 수동 계좌환불 완료 표시</td></tr>
-              <tr><td>GET</td><td><code>/api/v1/refund-policy-templates</code></td><td>환불 정책 카탈로그 6종 조회 (public)</td></tr>
-              <tr><td>POST</td><td><code>/api/v1/events/{eventId}/applications/{applicationId}/refund-preview</code></td><td>환불 예상액 미리보기</td></tr>
+              <tr><td><strong>참가자</strong></td><td>지갑으로 선입금 결제</td><td>보유 포인트로 그 자리에서 참석을 확정한다.</td></tr>
+              <tr><td><strong>참가자</strong></td><td>계좌이체 입금 신고</td><td>입금자명·메모를 적어 호스트에게 입금 사실을 알린다.</td></tr>
+              <tr><td><strong>호스트</strong></td><td>입금 확인 / 입금 거부</td><td>들어온 입금을 확인하면 참석 확정, 확인 못 하면 거부해 재신고를 허용한다.</td></tr>
+              <tr><td><strong>참가자</strong></td><td>지갑 결제 취소·환불</td><td>이벤트 환불 정책 카탈로그(6종)에 따라 남은 시간 비율로 환불받는다.</td></tr>
+              <tr><td><strong>호스트</strong></td><td>계좌환불 완료 표시</td><td>계좌이체 결제는 호스트가 직접 송금한 뒤 완료를 표시한다.</td></tr>
+              <tr><td><strong>참가자</strong></td><td>환불 미리보기</td><td>취소 전 예상 환불액·적용 비율·귀책 분류를 미리 확인한다.</td></tr>
+              <tr><td><strong>누구나</strong></td><td>환불 정책 카탈로그 조회</td><td>로그인 없이도 6종 환불 정책 템플릿 목록을 볼 수 있다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -132,21 +132,21 @@ flowchart TD
 
       <section>
         <h2>환불 정책 카탈로그</h2>
-        <p>환불율은 이벤트별 <code>event_refund_policy</code> 카탈로그에 기반한 by_time 다단계 비율로 산출된다. 귀책(RefundFaultCategory)에 따라 100%~0% 범위에서 결정된다.</p>
+        <p>환불율은 이벤트마다 설정한 환불 정책(6종 카탈로그)에 따라, 모임 시작까지 남은 시간 구간별 다단계 비율로 산출된다. 누구의 잘못으로 취소됐는지(귀책 분류)에 따라 100%~0% 범위에서 결정된다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>템플릿</th><th>주요 tier</th><th>고정 수수료</th></tr></thead>
+            <thead><tr><th>정책</th><th>주요 구간 (모임 시작까지 남은 시간 → 환불율)</th><th>고정 수수료</th></tr></thead>
             <tbody>
-              <tr><td>STANDARD</td><td>168h→100%, 72h→80%, 24h→50%, 12h→30%, 0h→0%</td><td>1,000원</td></tr>
-              <tr><td>STRICT</td><td>168h→100%, 72h→50%, 24h→0%</td><td>2,000원</td></tr>
-              <tr><td>FLEXIBLE</td><td>24h→100%, 0h→0%</td><td>없음</td></tr>
-              <tr><td>FULL</td><td>항상 100%</td><td>없음</td></tr>
-              <tr><td>NON_REFUNDABLE</td><td>항상 0%</td><td>없음</td></tr>
-              <tr><td>CUSTOM</td><td>호스트 직접 설정 (1~6 segments)</td><td>조정 가능</td></tr>
+              <tr><td><strong>기준</strong></td><td>168시간 전 100%, 72시간 전 80%, 24시간 전 50%, 12시간 전 30%, 이후 0%</td><td>1,000원</td></tr>
+              <tr><td><strong>엄격</strong></td><td>168시간 전 100%, 72시간 전 50%, 24시간 전부터 0%</td><td>2,000원</td></tr>
+              <tr><td><strong>유연</strong></td><td>24시간 전 100%, 이후 0%</td><td>없음</td></tr>
+              <tr><td><strong>전액</strong></td><td>항상 100%</td><td>없음</td></tr>
+              <tr><td><strong>환불 불가</strong></td><td>항상 0%</td><td>없음</td></tr>
+              <tr><td><strong>직접 설정</strong></td><td>호스트가 시간 구간·비율을 직접 정의 (최대 6구간)</td><td>조정 가능</td></tr>
             </tbody>
           </table>
         </div>
-        <p><strong>귀책(HOST_FAULT/FORCE_MAJEURE/MUTUAL/RESCHEDULE_DECLINED)</strong>이면 정책과 무관하게 100% 환불, 수수료 0. 참가자 귀책(PARTICIPANT_FAULT)이면 by_time 비율 적용.</p>
+        <p>귀책은 <strong>호스트 귀책 · 불가항력 · 상호 합의 · 일정 변경 거절 · 노쇼 · 참가자 귀책 · 노쇼 사후 조정</strong>의 7가지로 분류된다. 호스트 귀책·불가항력·상호 합의·일정 변경 거절로 취소되면 정책과 무관하게 100% 환불, 수수료 0원이다. 참가자 단순 변심이면 위 남은 시간 구간 비율이 그대로 적용되고, 노쇼는 환불이 거절되며, 노쇼 사후 조정은 호스트가 금액을 직접 정한다.</p>
       </section>
 
       <section>
@@ -154,10 +154,10 @@ flowchart TD
         <div class="callout danger">
           <span class="label">돈과 정원이 같이 움직이는 구간</span>
           <ul>
-            <li><strong>환불율은 카탈로그 기반 다단계다.</strong> "마감 전 100%/마감 후 0%"가 아니라 이벤트별 <code>event_refund_policy</code>(6종 템플릿)의 by_time tier가 적용된다. 귀책(HOST_FAULT 등)이면 100%, 참가자 귀책이면 정책%.</li>
-            <li><strong>BANK_TRANSFER는 분개가 없다.</strong> 호스트가 직접 수취하므로 플랫폼 회계는 audit과 상태만 남긴다. BANK 수동 환불도 정책 상한(<code>BANK_REFUND_EXCEEDS_POLICY</code>) 적용.</li>
-            <li><strong>capacity는 결제 확정 시점에만 증가한다.</strong> 결제 대기 인원은 예약 대기 수로 보이지만 참석 확정자는 아니다.</li>
-            <li><strong>탈퇴 차단 조건이 생긴다.</strong> PENDING, PAID, REFUND_REQUESTED 결제 row가 남아 있으면 계정 비활성화를 막아야 한다.</li>
+            <li><strong>환불율은 정책 카탈로그 기반 다단계다.</strong> "마감 전 100%/마감 후 0%"가 아니라 이벤트마다 설정한 환불 정책(6종)의 남은 시간 구간 비율이 적용된다. 호스트 귀책 등이면 100%, 참가자 변심이면 정책 비율.</li>
+            <li><strong>계좌이체는 플랫폼 회계에 잡히지 않는다.</strong> 호스트가 직접 입금을 수취하므로 플랫폼은 이력과 상태만 남긴다. 계좌 수동 환불도 정책 상한을 넘으면 거부된다.</li>
+            <li><strong>정원은 결제 확정 시점에만 늘어난다.</strong> 결제 대기 인원은 예약 대기 수로 보이지만 참석 확정자는 아니다.</li>
+            <li><strong>탈퇴 차단 조건이 생긴다.</strong> 결제 대기·결제 완료·환불 요청 중인 결제가 남아 있으면 계정 비활성화를 막아야 한다.</li>
             <li><strong>F07-09의 모임 정산 선입금과 다르다.</strong> 본 단위는 이벤트 참가비 선입금이고, 정산 선입금은 모임 종료 후 비용 분담 보증금이다.</li>
           </ul>
         </div>
@@ -169,7 +169,7 @@ flowchart TD
           <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
           <a class="card" href="F03-05.html"><div class="eyebrow">신청</div><h3>F03-05 이벤트 신청·참석</h3><p>결제 대기 상태의 진입점.</p></a>
           <a class="card" href="F03-06.html"><div class="eyebrow">호스트 심사</div><h3>F03-06 신청서 승인·거절</h3><p>승인 후 결제 권한 부여.</p></a>
-          <a class="card" href="F06-06.html"><div class="eyebrow">결제</div><h3>F06-06 포인트 결제·환불</h3><p>WALLET 차감과 환불 회계.</p></a>
+          <a class="card" href="F06-06.html"><div class="eyebrow">결제</div><h3>F06-06 포인트 결제·환불</h3><p>지갑 포인트 차감과 환불 회계.</p></a>
           <a class="card" href="F07-09.html"><div class="eyebrow">구분 필요</div><h3>F07-09 정산 선입금</h3><p>참가비 선입금과 다른 정책.</p></a>
         </div>
       </section>

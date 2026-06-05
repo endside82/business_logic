@@ -16,8 +16,8 @@
         <h1>14. 위치 · 길찾기</h1>
         <p class="lede">
           이벤트 장소·경로 안내·참석자 위치 공유·프라이버시 통제를 모은다.
-          위치 공유는 가장 민감한 데이터이므로 모든 동작이 <strong>opt-in</strong>으로 시작하고,
-          opt-out은 즉시 반영되며, 공유 중인 상태가 항상 사용자에게 시각화된다.
+          위치 공유는 가장 민감한 데이터이므로 모든 동작이 <strong>사용자의 직접 동의</strong>로 시작하고,
+          중지는 즉시 반영되며, 공유 중인 상태가 항상 사용자에게 시각화된다.
         </p>
       </header>
 
@@ -32,8 +32,8 @@
       <section>
         <h2>6개 기능</h2>
         <div class="cards">
-          <a class="card" href="../features/F14-01.html"><div class="eyebrow">F14-01</div><h3>참석자 위치 공유</h3><p>opt-in, 30초 갱신, 시간 게이트, OS 권한.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F14-02.html"><div class="eyebrow">F14-02</div><h3>위치 공유 중지</h3><p>opt-out, 데이터 제거, 자동 만료, 재개.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F14-01.html"><div class="eyebrow">F14-01</div><h3>참석자 위치 공유</h3><p>직접 동의 기반, 30초 갱신, 시간 게이트, OS 권한.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F14-02.html"><div class="eyebrow">F14-02</div><h3>위치 공유 중지</h3><p>공유 중지, 데이터 제거, 자동 만료, 재개.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F14-03.html"><div class="eyebrow">F14-03</div><h3>공유 만료 연장</h3><p>연장 한도, 만료 후 시도, 알림.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F14-04.html"><div class="eyebrow">F14-04</div><h3>위치 프라이버시 대시보드</h3><p>이벤트별 토글, 호스트 분기, 실패 롤백.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F14-05.html"><div class="eyebrow">F14-05</div><h3>이벤트 길찾기</h3><p>현재 위치·저장 주소, 외부 지도 앱, 참석자 거리.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
@@ -47,11 +47,11 @@
           <table>
             <thead><tr><th>항목</th><th>값</th></tr></thead>
             <tbody>
-              <tr><td>자동 갱신 주기</td><td><strong>30초</strong> — <code>Timer.periodic(Duration(seconds: 30))</code> (<code>EventLocationNotifier.startAutoRefresh</code>)</td></tr>
-              <tr><td>좌표 노출 로그</td><td>모든 노출은 <code>location_access_log</code>에 기록 → F14-04 프라이버시 대시보드의 입력</td></tr>
-              <tr><td>호스트 권한</td><td><strong>opt-in 없이도</strong> 모든 참석자 좌표 조회 가능</td></tr>
-              <tr><td>일반 참석자 권한</td><td>본인이 opt-in 한 경우에만 다른 참석자의 좌표가 응답에 노출</td></tr>
-              <tr><td>업데이트 엔드포인트</td><td><code>POST /api/v1/events/{eventId}/location/update</code> — <code>LocationShare</code> upsert + <code>sharedAt</code>·<code>expiresAt</code> 갱신</td></tr>
+              <tr><td>자동 갱신 주기</td><td><strong>30초</strong>마다 참석자 위치가 자동으로 다시 불러와진다</td></tr>
+              <tr><td>좌표 노출 기록</td><td>내 위치가 누구에게 노출됐는지 모두 기록으로 남는다 → F14-04 프라이버시 대시보드에서 확인</td></tr>
+              <tr><td>호스트 권한</td><td><strong>참석자 동의 없이도</strong> 모든 참석자 좌표 조회 가능</td></tr>
+              <tr><td>일반 참석자 권한</td><td>본인이 공유에 동의한 경우에만 다른 참석자의 좌표가 노출</td></tr>
+              <tr><td>위치 갱신 동작</td><td>참석자가 위치를 공유하면 해당 이벤트에 본인 위치가 등록·갱신되고, 공유 시각과 만료 시각이 함께 기록된다</td></tr>
               <tr><td>마지막 갱신 시각 포맷</td><td>&lt;1분 “방금 전”, &lt;60분 “N분 전”, ≥60분 “N시간 전”</td></tr>
             </tbody>
           </table>
@@ -73,7 +73,7 @@ flowchart LR
           </div>
         </div>
         <ul>
-          <li><strong>opt-in이 기본</strong> — 동의 없이 위치가 노출되는 동작은 없다.</li>
+          <li><strong>직접 동의가 기본</strong> — 동의 없이 위치가 노출되는 동작은 없다.</li>
           <li><strong>중지는 즉시</strong> — 옵트아웃 후 1초라도 마커가 남으면 위반.</li>
           <li><strong>공유 상태가 시각화</strong> — 어디에 누구에게 보이고 있는지 사용자가 한 화면에서 본다 (F14-04 프라이버시 대시보드).</li>
           <li><strong>자동 만료</strong> — 이벤트 종료 시간 + 짧은 버퍼로 자동 만료. 사용자가 잊지 않게 한다.</li>
@@ -84,8 +84,8 @@ flowchart LR
         <h2>레드 플래그</h2>
         <div class="callout danger">
           <ul>
-            <li><strong>opt-in 없이 위치가 보임</strong> — 가장 큰 사고.</li>
-            <li><strong>opt-out 후 마커가 남음</strong> — 사용자가 “껐다”라고 생각하지만 다른 사람 화면엔 잠시 보임.</li>
+            <li><strong>동의 없이 위치가 보임</strong> — 가장 큰 사고.</li>
+            <li><strong>공유 중지 후 마커가 남음</strong> — 사용자가 “껐다”라고 생각하지만 다른 사람 화면엔 잠시 보임.</li>
             <li><strong>위치 권한 영구 거부</strong> — 앱 내 CTA로는 해결 불가. OS 설정 진입 안내 필수.</li>
             <li><strong>위치 공유 자동 만료 후에도 “공유 중”으로 표시</strong> — 사용자가 계속 보인다고 오해.</li>
             <li><strong>이벤트 종료 후 위치 데이터 보관</strong> — 보관 기간을 명시하고 자동 삭제.</li>

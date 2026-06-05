@@ -46,13 +46,13 @@
           <table>
             <thead><tr><th>항목</th><th>값</th></tr></thead>
             <tbody>
-              <tr><td>유예 기간</td><td><strong>30일</strong> — <code>scheduledAt = now + 30일</code></td></tr>
-              <tr><td>저장 위치</td><td><code>data_deletion_request</code> 테이블, status는 <code>PENDING</code>으로 시작</td></tr>
+              <tr><td>유예 기간</td><td><strong>30일</strong> — 요청 시점부터 30일 뒤로 실제 삭제 예약 시각이 잡힌다</td></tr>
+              <tr><td>접수 직후 상태</td><td>삭제 예약 — 유예 기간 동안 언제든 취소 가능</td></tr>
               <tr><td>실제 처리</td><td>스케줄러가 <strong>매일 새벽 04:00</strong>에 만료된 요청을 실행</td></tr>
-              <tr><td>삭제 후 계정 상태</td><td><code>EXIT</code></td></tr>
+              <tr><td>삭제 후 계정 상태</td><td>탈퇴 완료</td></tr>
               <tr><td>유예 중 취소 동선</td><td>화면에 “유예 기간 중 로그인하면 삭제 요청이 취소됩니다” 안내. <strong>단, 서버 자동 취소 로직은 미확인(Gap)</strong></td></tr>
-              <tr><td>요청 엔드포인트</td><td><code>POST /api/v1/users/me/data-deletion</code></td></tr>
-              <tr><td>UI 스펙 vs 서버</td><td>UI 스펙은 비밀번호 재확인 body를 요구하지만 실제 컨트롤러·Param에서 확인되지 않음 — Gap</td></tr>
+              <tr><td>요청 방식</td><td>사용자가 설정 화면에서 직접 계정 삭제를 신청한다</td></tr>
+              <tr><td>UI 스펙 vs 서버</td><td>화면 스펙은 삭제 시 비밀번호 재확인을 요구하지만, 실제 서버 처리에서는 이 확인 단계가 적용되는지 확인되지 않음 — Gap</td></tr>
             </tbody>
           </table>
         </div>
@@ -89,7 +89,7 @@
       <section>
         <h2>관련 정책</h2>
         <div class="hub-grid">
-          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>계정 상태 모델</h3><p>NONE·PENDING·APPROVED·COMPLETED 흐름.</p></a>
+          <a class="card" href="../policies/state.html"><div class="eyebrow">정책</div><h3>계정 상태 모델</h3><p>삭제 요청 없음 → 삭제 예약 → 처리 대기 → 삭제 완료 흐름.</p></a>
           <a class="card" href="../policies/privacy.html"><div class="eyebrow">정책</div><h3>개인정보·안전 정책</h3><p>내보내기·삭제의 사용자 통제권.</p></a>
         </div>
       </section>

@@ -101,24 +101,23 @@ flowchart LR
       </section>
 
       <section>
-        <h2>가상계좌 자동 인입(계획 · 미구현)</h2>
-        <p class="subtitle">현재는 호스트가 본인 계좌에서 입금을 직접 확인해야 한다.
-          가상계좌 webhook 자동 인입은 PG 사업자 계약이 선행되어야 착수할 수 있으며, 현재 서버 측 핵심 서비스 메서드가 구현되어 있지 않다.
-          아래 다이어그램은 향후 완성된 형태의 흐름이며, 현재는 webhook endpoint 골격만 존재한다.</p>
+        <h2>가상계좌 입금 자동 확인(계획 단계)</h2>
+        <p class="subtitle">가상계좌로 들어온 선입금을 시스템이 자동으로 확인해 주는 흐름은 아직 계획 단계다.
+          외부 결제 대행 사업자와의 계약이 선행되어야 착수할 수 있고, 현재는 자동 확인 처리 자체가 동작하지 않는다.
+          그래서 지금은 호스트가 본인 계좌에서 입금을 직접 확인해 처리한다. 아래 다이어그램은 향후 완성됐을 때의 흐름이다.</p>
         <div class="callout warn">
-          <span class="label">가상계좌 webhook — 미구현 (PG 계약 선행 필요)</span>
+          <span class="label">가상계좌 자동 확인 — 계획 단계 (결제 대행 계약 선행 필요)</span>
           <ul>
-            <li>webhook 수신 컨트롤러 골격은 있으나, 내부 서비스 메서드(`confirmVirtualAccountDeposit`)가 존재하지 않는다.</li>
-            <li>PG Provider stub이 전 요청을 401로 거부하는 상태다.</li>
-            <li>착수 전 결정이 필요한 사항: (D-1) webhook 적용 범위, (D-2) 부분/초과 입금 정책, (D-3) 분쟁 중 transfer 자동 확인 처리 방침, (D-4) 가상계좌 발급 시점.</li>
-            <li>체크리스트: <code>community_api/docs/plan/VIRTUAL_ACCOUNT_WEBHOOK_TODO.md</code></li>
+            <li>외부 결제 대행으로부터 입금 통보를 받아 자동 확인하는 흐름은 아직 동작하지 않는다 — 현재는 운영자·호스트의 수동 확인이 유일한 경로다.</li>
+            <li>입금 통보를 받기 위한 외부 결제 대행 연동이 아직 막혀 있는 상태다(연동 전 모든 통보가 거부됨).</li>
+            <li>착수 전 결정이 필요한 사항: (1) 자동 확인을 어떤 결제 방식까지 적용할지, (2) 부분·초과 입금 처리 정책, (3) 이의제기가 걸린 송금의 자동 확인 처리 방침, (4) 가상계좌를 언제 발급할지.</li>
           </ul>
         </div>
         <div class="diagram">
           <div class="mermaid">
 sequenceDiagram
     actor 참가자
-    participant 외부 as 외부 결제 대행 (PG 계약 후)
+    participant 외부 as 외부 결제 대행 (계약 후)
     participant 시스템 as 우리 시스템
     participant 호스트
 
@@ -131,9 +130,9 @@ sequenceDiagram
     else 검증 실패
         시스템-->>외부: 거절
     end
-    Note over 시스템: 현재 상태 — webhook endpoint 골격만 존재
-    Note over 시스템: confirmVirtualAccountDeposit 서비스 메서드 미구현
-    Note over 시스템: PG 계약 + D-1~D-4 결정 후 착수
+    Note over 시스템: 현재 상태 — 자동 입금 확인은 동작하지 않음
+    Note over 시스템: 지금은 호스트가 입금을 직접 확인해 처리
+    Note over 시스템: 결제 대행 계약과 4가지 정책 결정 후 착수
           </div>
         </div>
       </section>
@@ -281,8 +280,8 @@ sequenceDiagram
               0원이 환불되는 경우에도 선입금 상태가 환불됨으로 바뀌어 재환불 시도를 차단한다 — 호스트가 별도로 처리하지 않는다.</li>
             <li><strong>한 모임에 한 사용자의 선입금은 하나만 존재한다.</strong>
               환불되지 않은 미환불 선입금이 있는 한 추가 결제는 거절된다 — 사용자가 두 번 결제하는 사고를 막는다.</li>
-            <li><strong>외부 결제 대행과의 가상계좌 연동은 현재 검증 단계까지만 구현되어 있다.</strong>
-              실제 자동 입금 처리는 연동 활성화 후에 가능해진다 — 지금은 호스트의 수동 확인이 필수.</li>
+            <li><strong>가상계좌 입금의 자동 확인은 아직 계획 단계다.</strong>
+              외부 결제 대행 계약과 정책 결정이 끝나야 착수할 수 있으며, 그 전까지 가상계좌 입금도 호스트의 수동 확인이 필수다 — 운영 안내에서 "자동으로 처리된다"는 기대를 주지 않아야 한다.</li>
             <li><strong>호스트 본인 계좌의 마스킹·보안은 향후 강화 항목.</strong>
               현재는 계좌번호가 평문으로 사용자에게 노출된다 — 향후 마스킹 표시·복사 보안 강화 검토.</li>
           </ul>

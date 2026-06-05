@@ -26,7 +26,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">핵심 API</div><div class="value">3개</div><div class="hint">목록·과거 랭킹·내 스냅샷</div></div>
+          <div class="metric"><div class="label">멤버가 보는 화면</div><div class="value">3개</div><div class="hint">목록·과거 랭킹·내 스냅샷</div></div>
           <div class="metric"><div class="label">시즌 상태</div><div class="value">3단계</div><div class="hint">예정·진행·종료</div></div>
           <div class="metric"><div class="label">랭킹 출처</div><div class="value">스냅샷</div><div class="hint">마감 시점 동결</div></div>
         </div>
@@ -43,8 +43,8 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    S["예정 (SCHEDULED)"] --> A["진행 (ACTIVE)"]
-    A -->|"운영진 마감"| C["종료 (CLOSED) + 스냅샷 동결"]
+    S["예정"] --> A["진행"]
+    A -->|"운영진 마감"| C["종료 + 스냅샷 동결"]
     C -.->|"다음 예정 시즌 자동 시작"| A2["다음 시즌 진행"]
           </div>
         </div>
@@ -68,20 +68,20 @@ flowchart LR
           <article class="card">
             <div class="eyebrow">내 기록</div>
             <h3>본인 시즌 스냅샷</h3>
-            <p>해당 시즌의 본인 적립·잔액·순위를 본다. 기록이 없으면 빈 상태(204).</p>
+            <p>해당 시즌의 본인 적립·잔액·순위를 본다. 기록이 없으면 빈 상태로 보인다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>멤버가 할 수 있는 동작</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/seasons</code></td><td>시즌 목록 (상태 필터)</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/seasons/{seasonId}/ranking</code></td><td>과거 시즌 랭킹</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/seasons/{seasonId}/me</code></td><td>내 시즌 스냅샷 (없으면 빈 응답)</td></tr>
+              <tr><td><strong>시즌 목록 보기</strong></td><td>클럽 멤버</td><td>전체 또는 예정·진행·종료 상태로 시즌을 본다.</td></tr>
+              <tr><td><strong>과거 시즌 랭킹 보기</strong></td><td>클럽 멤버</td><td>종료된 시즌의 마감 시점 동결 순위·점수를 본다.</td></tr>
+              <tr><td><strong>내 시즌 기록 보기</strong></td><td>클럽 멤버</td><td>해당 시즌의 본인 적립·잔액·순위를 본다. 기록이 없으면 빈 상태로 보인다.</td></tr>
             </tbody>
           </table>
         </div>

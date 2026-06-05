@@ -60,8 +60,8 @@
           <a class="card" href="../features/F08-11.html"><div class="eyebrow">F08-11</div><h3>아이템·번들·플랜 구매</h3><p>잔액 부족, 이미 구매, 부분 중복 처리.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F08-12.html"><div class="eyebrow">F08-12</div><h3>내 컬렉션</h3><p>활성·비활성·만료 임박. 미리보기.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F08-13.html"><div class="eyebrow">F08-13</div><h3>구매 플랜으로 이벤트 생성·리뷰</h3><p>소유권 확인, 이벤트 정보 자동 복사, 리뷰 중복 차단.</p><div class="meta"><span class="pill">12 시나리오</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F08-14.html"><div class="eyebrow">F08-14</div><h3>플랜 마켓 환불 (Purchase Refund)</h3><p>구매자 환불 신청, 판매자 승인·거절, 자동 처리, 사용 흔적 차단, 운영자 중재. <code>PurchaseRefundController</code> 구현.</p><div class="meta"><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F08-15.html"><div class="eyebrow">F08-15</div><h3>크리에이터 매출 귀속 보정</h3><p>3개 소스(MARKET_ITEM/BUNDLE/PLAN_DIRECT) 모두 CreatorEarning 잡힘. paid/free split, 무료=free_credit 무수수료.</p><div class="meta"><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F08-14.html"><div class="eyebrow">F08-14</div><h3>플랜 마켓 환불</h3><p>구매자 환불 신청, 판매자 승인·거절, 자동 처리, 사용 흔적 차단, 운영자 중재.</p><div class="meta"><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F08-15.html"><div class="eyebrow">F08-15</div><h3>크리에이터 매출 귀속 보정</h3><p>3개 구매 경로(마켓 아이템·번들·플랜 직접 구매) 모두 창작자 수익으로 잡힘. 유료/무료 분리 정산, 무료분은 무수수료.</p><div class="meta"><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
 
@@ -70,7 +70,7 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["플랜 DRAFT<br/>(편집 가능)"] --> B["플랜 PUBLISHED<br/>(편집 잠금)"]
+    A["플랜 초안<br/>(편집 가능)"] --> B["플랜 발행됨<br/>(편집 잠금)"]
     B --> C["마켓 상품 등록"]
     C --> D["판매중"]
     D --> E["구매됨 → 컬렉션"]
@@ -89,15 +89,15 @@ flowchart LR
           <table>
             <thead><tr><th>항목</th><th>정책</th></tr></thead>
             <tbody>
-              <tr><td><strong>무료 허용</strong> (마켓 아이템/번들)</td><td><code>currencyType</code>(PAID_POINT/FREE_POINT/ANY_POINT) + 구매자 <code>fundingMode</code>로 결정(<code>PricingDecision</code>)</td></tr>
-              <tr><td><strong>무료 허용</strong> (플랜 직접 구매)</td><td><code>allowFreePoints</code> + 구매자 <code>fundingMode</code>로 결정</td></tr>
-              <tr><td><strong>무료 전용가</strong> <code>freePointPrice</code></td><td>nullable(마켓/플랜 공통). 무료 결제 시 이 가격 적용(미설정 시 기본가)</td></tr>
-              <tr><td><strong>단일 결제수단</strong></td><td>차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1. <code>ANY_POINT + freePointPrice==null</code>은 PAID_FIRST 혼합 허용</td></tr>
-              <tr><td><strong>미허용 거부</strong></td><td>무료 미허용 상품(마켓 <code>PAID_POINT</code> / 플랜 <code>allowFreePoints=false</code>)에 무료 결제 요청 시 <code>INVALID_REQUEST</code>. 마켓 <code>ANY_POINT + freePointPrice==null + fundingMode=FREE</code>도 <code>INVALID_REQUEST</code>(기본가 무료 결제 불가)</td></tr>
+              <tr><td><strong>무료 허용</strong> (마켓 아이템/번들)</td><td>상품에 설정된 결제 포인트 정책(유료 전용 / 무료 전용 / 둘 다 허용)과 구매자가 고른 결제 방식(유료·무료)에 따라 결정된다</td></tr>
+              <tr><td><strong>무료 허용</strong> (플랜 직접 구매)</td><td>플랜의 무료 포인트 허용 여부와 구매자가 고른 결제 방식에 따라 결정된다</td></tr>
+              <tr><td><strong>무료 전용가</strong></td><td>마켓·플랜 공통으로 별도 지정 가능. 무료로 결제할 때 이 가격을 적용하고, 지정하지 않았으면 기본가를 적용한다</td></tr>
+              <tr><td><strong>단일 결제수단</strong></td><td>차등가 콘텐츠는 전액 무료(무료 전용가 또는 기본가) 또는 전액 유료(기본가) 중 하나로만 결제한다. 다만 둘 다 허용이면서 무료 전용가가 없는 경우에는 유료 포인트를 우선 차감하고 부족분을 채우는 혼합 결제를 허용한다</td></tr>
+              <tr><td><strong>미허용 거부</strong></td><td>무료 결제를 허용하지 않는 상품(유료 전용 마켓 상품, 무료 포인트 비허용 플랜)에 무료 결제를 요청하면 거부된다. 둘 다 허용이지만 무료 전용가가 없는 마켓 상품을 무료로 결제하려는 경우에도 거부된다(기본가는 무료로 결제할 수 없다)</td></tr>
             </tbody>
           </table>
         </div>
-        <p>창작자 수익(<code>CreatorEarning</code>)은 유료/무료를 분리 기록한다. 수수료(10%)·원천징수(3.3%)는 <strong>유료분에만</strong> 적용하고, 무료 매출은 무수수료 <code>free_credit</code>으로 창작자 free에 적립되어 <strong>인출 불가</strong>다(무료→현금 전환 차단). 전체 정책은 <a href="../policies/payment.html">결제·정산 정책</a> 참조. (followup: 마켓 번들 차등가 admin 배선은 <code>community_admin_api</code>.)</p>
+        <p>창작자 수익은 유료/무료를 분리해 기록한다. 수수료(10%)·원천징수(3.3%)는 <strong>유료분에만</strong> 적용하고, 무료 매출은 수수료 없이 창작자의 무료 적립금으로 쌓이며 <strong>인출 불가</strong>다(무료→현금 전환 차단). 전체 정책은 <a href="../policies/payment.html">결제·정산 정책</a> 참조.</p>
       </section>
 
       <section>

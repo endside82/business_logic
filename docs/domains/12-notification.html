@@ -36,7 +36,7 @@
           <a class="card" href="../features/F12-03.html"><div class="eyebrow">F12-03</div><h3>카테고리별 알림 설정</h3><p>카테고리·내부 타입 매핑, 실패 원복.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F12-04.html"><div class="eyebrow">F12-04</div><h3>방해금지 시간</h3><p>자정 넘김, 요일, 카테고리 설정과 중첩.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F12-05.html"><div class="eyebrow">F12-05</div><h3>푸시 기기 관리</h3><p>다중 기기, 토큰 갱신, 로그아웃 시 해제.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F12-06.html"><div class="eyebrow">F12-06</div><h3>알림 권한 안내 배너</h3><p>OS 권한 거부 시 설정 진입, lifecycle 재확인.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F12-06.html"><div class="eyebrow">F12-06</div><h3>알림 권한 안내 배너</h3><p>OS 권한 거부 시 설정 진입, 앱 복귀 때 재확인.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
 
@@ -48,9 +48,9 @@
             <tbody>
               <tr><td>시간 형식</td><td><strong>자정 넘김 지원</strong> — 예: <code>22:00 ~ 07:00</code> (END &lt; START 처리)</td></tr>
               <tr><td>요일 형식</td><td>정수 리스트 <code>1=월요일 ~ 7=일요일</code></td></tr>
-              <tr><td>차단 범위</td><td><strong>FCM 푸시만 차단</strong> — 인박스(<code>notification</code> 테이블)에는 정상 적재. 사용자가 나중에 인지 가능</td></tr>
+              <tr><td>차단 범위</td><td><strong>푸시만 차단</strong> — 앱 안의 알림함에는 정상 보관되어 사용자가 나중에 인지 가능</td></tr>
               <tr><td>카테고리 설정과 관계</td><td>독립적 — 카테고리 OFF + 방해금지 OFF여도 양쪽이 모두 통과해야 푸시 발송</td></tr>
-              <tr><td>화면 경로</td><td><code>/notifications/settings/quiet-hours</code></td></tr>
+              <tr><td>진입 위치</td><td>알림 설정 → 방해금지 시간</td></tr>
             </tbody>
           </table>
         </div>

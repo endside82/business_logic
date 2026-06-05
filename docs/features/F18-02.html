@@ -17,29 +17,29 @@
           <a href="../domains/18-dispute.html">18 분쟁 해결</a><span>›</span>
           F18-02 분쟁 직접 접수
         </div>
-        <h1>F18-02. 분쟁 직접 접수 (USER_DISPUTE)</h1>
+        <h1>F18-02. 분쟁 직접 접수</h1>
         <p class="lede">
           사용자가 어떤 도메인의 케이스와도 무관하게 <strong>직접 분쟁을 신규 접수</strong>하는 기능.
           9가지 분쟁 유형 중 하나를 선택하고 사유를 10~2000자로 작성한 뒤 제출하면 즉시 케이스가 생성된다.
-          이렇게 만들어진 케이스는 <code>USER_DISPUTE</code> source로 통합 분쟁 목록에 포함되며,
-          이후 상태 전이는 admin이 처리한다. 24시간 10건 한도와 동일 상대 활성 케이스 중복 방지가
+          이렇게 만들어진 분쟁은 "내가 직접 접수한 분쟁"으로 통합 분쟁 목록에 포함되며,
+          이후 처리는 운영팀이 담당한다. 24시간 10건 한도와, 같은 상대로 진행 중인 분쟁이 있을 때 중복 접수를 막는 장치가
           남용을 막는다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">분쟁 유형</div><div class="value">9가지</div><div class="hint">REPORT·APPEAL·REFUND_ISSUE 등</div></div>
+          <div class="metric"><div class="label">분쟁 유형</div><div class="value">9가지</div><div class="hint">신고·이의·환불·노쇼·안전 등</div></div>
           <div class="metric"><div class="label">사유 글자 수</div><div class="value">10~2000자</div><div class="hint">필수 입력</div></div>
           <div class="metric"><div class="label">24시간 한도</div><div class="value">10건</div><div class="hint">초과 시 차단</div></div>
-          <div class="metric"><div class="label">증빙 첨부</div><div class="value">v1 미제공</div><div class="hint">v2에서 추가 예정</div></div>
+          <div class="metric"><div class="label">증빙 첨부</div><div class="value">1차 버전 미제공</div><div class="hint">다음 버전에서 추가 예정</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 어디에도 소속되지 않은 분쟁을 접수할 창구</span>
           <p>이벤트·클럽·정산 등 기존 도메인에는 각자의 이의 경로가 있다. 그러나 어느 화면에서도 처리되지 않는
             복합적 상황이나 새로운 유형의 분쟁은 갈 곳이 없었다. F18-02는 그 공백을 채우는 직접 접수 창구다.
-            기존 케이스와 연결 맥락(sourceType/sourceId, 이벤트/클럽 id)을 함께 전달할 수 있어
+            어떤 이벤트나 클럽에서 비롯된 분쟁인지 연결 맥락을 함께 전달할 수 있어,
             "어떤 일에서 비롯됐는지"를 운영팀이 추적하기 쉬운 구조다.</p>
         </div>
       </section>
@@ -51,22 +51,22 @@
 flowchart TD
     A["사용자: 분쟁 접수 화면 진입"] --> B["분쟁 유형 선택\n9가지 중 하나"]
     B --> C["사유 작성\n10~2000자"]
-    C --> E["제출\n(책임 동의 체크박스 없음)"]
-    E --> F{"서버 검증"}
-    F -->|"24h 10건 초과"| G["429 → '요청이 너무 많습니다. 잠시 후 다시 시도해주세요'"]
-    F -->|"동일 상대 활성 케이스 있음"| H["409 → '이미 동일한 상대로 진행 중인 분쟁이 있어요'"]
-    F -->|"자기 자신 신고"| I["400 → 에러"]
-    F -->|"사유 10자 미만"| J["400 → 유효성 오류"]
-    F -->|"통과"| K["user_dispute_case 저장\nstatus=OPEN"]
-    K --> L["HTTP 201\n케이스 상세 화면으로 이동"]
-    L --> M["admin 처리 대기"]
+    C --> E["제출"]
+    E --> F{"접수 검증"}
+    F -->|"24시간 10건 초과"| G["'요청이 너무 많습니다. 잠시 후 다시 시도해주세요'"]
+    F -->|"같은 상대로 진행 중 분쟁 있음"| H["'이미 동일한 상대로 진행 중인 분쟁이 있어요'"]
+    F -->|"자기 자신 신고"| I["접수 불가"]
+    F -->|"사유 10자 미만"| J["입력 오류 안내"]
+    F -->|"통과"| K["내가 접수한 분쟁으로 저장\n상태: 접수됨"]
+    K --> L["케이스 상세 화면으로 이동"]
+    L --> M["운영팀 처리 대기"]
           </div>
         </div>
         <div class="callout warn">
-          <span class="label">생성 후 상태 변경 방법 없음</span>
-          <p>케이스가 OPEN으로 생성된 뒤에는 사용자가 앱에서 상태를 바꾸는 방법이 없다.
-            운영팀이 처리하기 전까지 OPEN이 유지된다. 접수 완료 화면에서 처리에 시간이 걸린다는 안내가
-            필요하나 v1에서 이 안내 문구가 빠져 있다.</p>
+          <span class="label">접수 후 상태를 바꾸는 방법 없음</span>
+          <p>분쟁이 "접수됨"으로 만들어진 뒤에는 사용자가 앱에서 상태를 바꿀 방법이 없다.
+            운영팀이 처리하기 전까지 "접수됨"이 유지된다. 접수 완료 화면에서 처리에 시간이 걸린다는 안내가
+            필요하나 1차 버전에서는 이 안내 문구가 빠져 있다.</p>
         </div>
       </section>
 
@@ -77,9 +77,9 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">기본 흐름</div>
             <h3>현장에서 불쾌한 일이 있었다 — 안전 신고</h3>
-            <p>사용자가 "안전 관련(SAFETY)" 유형을 선택하고 사유를 15자 이상 작성한다. 책임 동의 체크박스는 없으며, 유형 선택 + 사유 10자 이상 입력 시 제출 버튼이 활성화된다.
+            <p>사용자가 "안전 관련" 유형을 선택하고 사유를 15자 이상 작성한다. 유형을 고르고 사유를 10자 이상 입력하면 제출 버튼이 활성화된다.
               제출하면 즉시 케이스가 생성되고 케이스 상세 화면으로 이동한다.
-              케이스 id는 <code>USER_DISPUTE:42</code> 형태로 이후 통합 분쟁 목록에 나타난다.</p>
+              이렇게 접수한 분쟁은 이후 통합 분쟁 목록에 "내가 직접 접수한 분쟁"으로 나타난다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 사용자가 고객센터 채널을 별도로 찾을 필요 없이
               앱 내에서 즉시 접수가 가능하다.</p>
           </article>
@@ -87,31 +87,31 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">중복 방지</div>
             <h3>같은 상대에게 두 번 접수 시도</h3>
-            <p>이미 처리 중인 활성 케이스가 동일 상대와 존재하면 서버가 409를 반환한다.
-              "이미 동일한 상대로 진행 중인 분쟁이 있어요" 안내가 표시된다. 이전 케이스가 RESOLVED 또는 CLOSED로
-              종결되면 다시 접수할 수 있다.</p>
+            <p>같은 상대로 진행 중인 분쟁이 이미 있으면 접수가 막히고
+              "이미 동일한 상대로 진행 중인 분쟁이 있어요" 안내가 표시된다. 이전 분쟁이 처리 완료 또는 종결되면
+              같은 상대로 다시 접수할 수 있다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 같은 상대에 대한 병행 케이스가 운영팀에 쌓이는 것을 방지한다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">연결 맥락</div>
             <h3>이벤트에서 비롯된 분쟁을 접수</h3>
-            <p>다른 화면에서 "이 이벤트에 대해 분쟁 접수"로 진입하면 이벤트 id와 source 맥락이
-              자동으로 채워진다. 사용자는 유형과 사유만 추가로 입력한다. 이 맥락은 운영팀이
+            <p>다른 화면에서 "이 이벤트에 대해 분쟁 접수"로 진입하면 어떤 이벤트에서 비롯됐는지
+              맥락이 자동으로 채워진다. 사용자는 유형과 사유만 추가로 입력한다. 이 맥락은 운영팀이
               어떤 이벤트에서 비롯된 분쟁인지 추적하는 데 사용된다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">한도 초과</div>
             <h3>하루에 너무 많이 접수 시도</h3>
-            <p>24시간 안에 10건을 초과해 접수하면 429가 반환된다. "요청이 너무 많습니다. 잠시 후 다시 시도해주세요" 안내 후 재시도할 수 있다.</p>
+            <p>24시간 안에 10건을 초과해 접수하면 접수가 막힌다. "요청이 너무 많습니다. 잠시 후 다시 시도해주세요" 안내 후 다시 시도할 수 있다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">v1 제약</div>
+            <div class="eyebrow">1차 버전 제약</div>
             <h3>증빙 파일을 첨부하고 싶은데 방법이 없다</h3>
-            <p>v1에서는 분쟁 접수 시 파일 첨부 UI가 의도적으로 제외됐다. 접수는 사유 텍스트만으로 이루어진다.
-              서버는 파일 첨부를 지원하지만 앱 화면에 업로드 기능이 없다. v2 wave에서 추가된다.</p>
+            <p>1차 버전에서는 분쟁 접수 시 파일 첨부 화면이 의도적으로 제외됐다. 접수는 사유 텍스트만으로 이루어진다.
+              서버는 파일 첨부를 받을 준비가 되어 있지만 앱 화면에 업로드 기능이 없다. 다음 버전에서 추가된다.</p>
           </article>
         </div>
       </section>
@@ -122,15 +122,15 @@ flowchart TD
           <table>
             <thead><tr><th>유형</th><th>언제 쓰나</th></tr></thead>
             <tbody>
-              <tr><td><strong>REPORT</strong></td><td>공개 신고·제보</td></tr>
-              <tr><td><strong>APPEAL</strong></td><td>이의 제기</td></tr>
-              <tr><td><strong>REFUND_ISSUE</strong></td><td>환불 분쟁</td></tr>
-              <tr><td><strong>NO_SHOW_APPEAL</strong></td><td>노쇼 이의</td></tr>
-              <tr><td><strong>CONTENT_MODERATION</strong></td><td>콘텐츠 운영 액션에 대한 이의</td></tr>
-              <tr><td><strong>SAFETY</strong></td><td>안전 관련 신고</td></tr>
-              <tr><td><strong>SETTLEMENT</strong></td><td>정산 이의</td></tr>
-              <tr><td><strong>TRANSPORT</strong></td><td>교통·카풀 관련 분쟁</td></tr>
-              <tr><td><strong>HOST_ACTION_REVIEW</strong></td><td>강퇴·제재 등 호스트 액션에 대한 이의</td></tr>
+              <tr><td><strong>공개 신고</strong></td><td>공개 신고·제보</td></tr>
+              <tr><td><strong>이의 제기</strong></td><td>결정에 대한 이의 제기</td></tr>
+              <tr><td><strong>환불 분쟁</strong></td><td>환불을 둘러싼 분쟁</td></tr>
+              <tr><td><strong>노쇼 이의</strong></td><td>모임 불참 처리에 대한 이의</td></tr>
+              <tr><td><strong>콘텐츠 운영 이의</strong></td><td>콘텐츠 운영 조치에 대한 이의</td></tr>
+              <tr><td><strong>안전 관련</strong></td><td>안전 관련 신고</td></tr>
+              <tr><td><strong>정산 이의</strong></td><td>정산 결과에 대한 이의</td></tr>
+              <tr><td><strong>교통·카풀</strong></td><td>교통·카풀 관련 분쟁</td></tr>
+              <tr><td><strong>호스트 조치 검토</strong></td><td>강퇴·제재 등 호스트 조치에 대한 이의</td></tr>
             </tbody>
           </table>
         </div>
@@ -141,10 +141,10 @@ flowchart TD
         <div class="callout warn">
           <span class="label">운영 주의사항</span>
           <ul>
-            <li><strong>targetUserId가 없는 케이스는 중복 방지가 작동하지 않는다.</strong> 특정 상대를 지정하지 않은 일반 분쟁은 동일 유형으로 여러 건을 접수할 수 있다. 24시간 10건 한도만 적용된다.</li>
-            <li><strong>이벤트·클럽 맥락 정보 전달 경로 확인 필요.</strong> Dart 모델에는 eventId, clubId, reasonCode 필드가 선언되어 있으나, 실제 분쟁 접수 화면 진입 시 어떤 경로에서 이 값들이 채워지는지 확인이 필요하다. 채워지지 않는 경로에서는 null로 전송된다.</li>
-            <li><strong>접수 후 처리 기간 안내 없음.</strong> v1에서 "운영팀이 N일 내 처리 예정" 같은 안내 문구가 없다. 사용자가 상태 변화가 없다고 중복 접수를 시도할 수 있다.</li>
-            <li><strong>rate-limit 구현 검증 필요.</strong> 컨트롤러 문서에 429 조건이 명시되어 있으나 서비스 레이어 내 실제 rate-limit 로직 구현 여부가 직접 확인되지 않았다.</li>
+            <li><strong>상대를 지정하지 않은 분쟁은 중복 방지가 작동하지 않는다.</strong> 특정 상대 없이 접수하는 일반 분쟁은 같은 유형으로 여러 건을 접수할 수 있다. 24시간 10건 한도만 적용된다.</li>
+            <li><strong>이벤트·클럽 맥락 정보 전달 경로 확인 필요.</strong> 분쟁이 어떤 이벤트·클럽에서 비롯됐는지를 함께 보낼 수 있는 구조이나, 실제 접수 화면에 어떤 경로로 진입하느냐에 따라 이 맥락이 채워지지 않은 채 접수될 수 있다. 맥락이 비면 운영 추적이 어려워진다.</li>
+            <li><strong>접수 후 처리 기간 안내 없음.</strong> 1차 버전에서 "운영팀이 며칠 내 처리 예정" 같은 안내 문구가 없다. 사용자가 상태 변화가 없다고 오해해 중복 접수를 시도할 수 있다.</li>
+            <li><strong>24시간 한도 작동 여부 점검 필요.</strong> 하루 10건 한도가 안내되어 있으나, 실제로 한도가 작동하는지 확인이 필요하다. 작동하지 않으면 무제한 접수가 가능해진다.</li>
           </ul>
         </div>
       </section>
@@ -154,9 +154,9 @@ flowchart TD
         <div class="callout danger">
           <span class="label">현재 알려진 미구현·주의 사항</span>
           <ul>
-            <li><strong>증빙 첨부 v1 미제공.</strong> 서버는 최대 5개 파일을 받을 준비가 되어 있지만 앱에 업로드 UI가 없다. 접수 후 증빙을 추가할 방법이 없다.</li>
-            <li><strong>이벤트·클럽 맥락 주입 경로 미확인.</strong> eventId, clubId, reasonCode 필드는 모델에 있지만, 어떤 화면 진입 경로에서 값이 채워지는지 확인이 필요하다. 채워지지 않는 진입 경로에서는 null로 전송된다.</li>
-            <li><strong>접수 완료 후 처리 기간 안내 없음.</strong> 케이스가 OPEN으로 만들어진 뒤 상태가 바뀌지 않으면 사용자가 "처리됐는지 아직인지" 모른다.</li>
+            <li><strong>증빙 첨부 1차 버전 미제공.</strong> 서버는 최대 5개 파일을 받을 준비가 되어 있지만 앱에 업로드 화면이 없다. 접수 후 증빙을 추가할 방법이 없다.</li>
+            <li><strong>이벤트·클럽 맥락이 비어 전송될 수 있다.</strong> 분쟁이 어떤 이벤트·클럽에서 비롯됐는지 함께 보낼 수 있으나, 일부 진입 경로에서는 이 맥락이 채워지지 않은 채 접수된다. 운영 추적이 어려워질 수 있다.</li>
+            <li><strong>접수 완료 후 처리 기간 안내 없음.</strong> 분쟁이 "접수됨"으로 만들어진 뒤 상태가 바뀌지 않으면 사용자가 "처리됐는지 아직인지" 알 수 없다.</li>
           </ul>
         </div>
       </section>

@@ -17,7 +17,7 @@
         <p class="lede">
           이 문서는 화면 설명보다 “지금 이게 어떤 상태인지”가 중요한 기능만 모았다.
           버튼·문구·알림·예외 처리를 결정할 때 첫 참고서다.
-          코드를 보지 않고도 “이 상태에서는 무엇이 가능한가”를 답할 수 있어야 한다.
+          구현 내용을 따로 확인하지 않고도 “이 상태에서는 무엇이 가능한가”를 답할 수 있어야 한다.
         </p>
       </header>
 
@@ -42,25 +42,25 @@
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> DRAFT: 호스트가 초안 생성
-    DRAFT --> OPEN: 발행
-    OPEN --> CLOSED: 모집 또는 이벤트 종료
-    OPEN --> CANCELED: 호스트 취소
-    OPEN --> HIDDEN: 비공개 처리
-    CLOSED --> [*]
-    CANCELED --> [*]
-    HIDDEN --> [*]
+    [*] --> 작성중: 호스트가 초안 생성
+    작성중 --> 모집중: 발행
+    모집중 --> 종료됨: 모집 또는 이벤트 종료
+    모집중 --> 취소됨: 호스트 취소
+    모집중 --> 비공개: 비공개 처리
+    종료됨 --> [*]
+    취소됨 --> [*]
+    비공개 --> [*]
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>상태</th><th>사용자에게 보이는 의미</th><th>주요 허용 액션</th></tr></thead>
             <tbody>
-              <tr><td><code>DRAFT</code></td><td>아직 공개되지 않은 작성중 이벤트</td><td>호스트 편집·발행</td></tr>
-              <tr><td><code>OPEN</code></td><td>모집 또는 참여 가능</td><td>참가자 신청·취소, 호스트 운영</td></tr>
-              <tr><td><code>CLOSED</code></td><td>모집 또는 이벤트가 종료</td><td>리뷰·사진첩·정산 등 후속 흐름</td></tr>
-              <tr><td><code>CANCELED</code></td><td>취소된 이벤트</td><td>취소 안내·환불·알림 후속</td></tr>
-              <tr><td><code>HIDDEN</code></td><td>일반 노출에서 제외</td><td>관리자·호스트 정책에 따름</td></tr>
+              <tr><td><strong>작성중</strong></td><td>아직 공개되지 않은 초안 이벤트</td><td>호스트 편집·발행</td></tr>
+              <tr><td><strong>모집중</strong></td><td>모집 또는 참여 가능</td><td>참가자 신청·취소, 호스트 운영</td></tr>
+              <tr><td><strong>종료됨</strong></td><td>모집 또는 이벤트가 종료</td><td>리뷰·사진첩·정산 등 후속 흐름</td></tr>
+              <tr><td><strong>취소됨</strong></td><td>취소된 이벤트</td><td>취소 안내·환불·알림 후속</td></tr>
+              <tr><td><strong>비공개</strong></td><td>일반 노출에서 제외</td><td>관리자·호스트 정책에 따름</td></tr>
             </tbody>
           </table>
         </div>
@@ -73,36 +73,36 @@ stateDiagram-v2
           <div class="mermaid">
 flowchart TD
     A["참석 신청 버튼"] --> B{"승인 필요?"}
-    B -->|"예"| C["PENDING"]
-    C -->|"호스트 승인"| D["APPROVED → ATTENDING"]
-    C -->|"호스트 거절"| E["REJECTED"]
-    C -->|"사용자 취소"| F["CANCELED"]
+    B -->|"예"| C["심사 대기"]
+    C -->|"호스트 승인"| D["승인됨 → 참석 확정"]
+    C -->|"호스트 거절"| E["거절됨"]
+    C -->|"사용자 취소"| F["신청 취소"]
     B -->|"아니오"| G{"정원 여유?"}
-    G -->|"예"| H["ATTENDING"]
-    G -->|"대기열 가능"| I["WAITING"]
+    G -->|"예"| H["참석 확정"]
+    G -->|"대기열 가능"| I["대기 중"]
     G -->|"대기열도 가득"| J["신청 실패"]
     I -->|"자리 발생"| H
-    H -->|"사용자 취소"| K["CANCELLED"]
+    H -->|"사용자 취소"| K["참석 취소"]
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>구분</th><th>상태</th><th>의미</th></tr></thead>
             <tbody>
-              <tr><td>신청서</td><td><code>PENDING</code></td><td>호스트 검토 전</td></tr>
-              <tr><td>신청서</td><td><code>APPROVED</code></td><td>승인됨</td></tr>
-              <tr><td>신청서</td><td><code>REJECTED</code></td><td>거절됨</td></tr>
-              <tr><td>신청서</td><td><code>CANCELED</code></td><td>신청자가 취소 (L 1개)</td></tr>
-              <tr><td>참석</td><td><code>ATTENDING</code></td><td>참석 확정</td></tr>
-              <tr><td>참석</td><td><code>WAITING</code></td><td>대기열에 있음</td></tr>
-              <tr><td>참석</td><td><code>CANCELLED</code></td><td>참석이 취소됨 (L 2개)</td></tr>
+              <tr><td>신청서</td><td><strong>심사 대기</strong></td><td>호스트 검토 전</td></tr>
+              <tr><td>신청서</td><td><strong>승인됨</strong></td><td>호스트가 승인</td></tr>
+              <tr><td>신청서</td><td><strong>거절됨</strong></td><td>호스트가 거절</td></tr>
+              <tr><td>신청서</td><td><strong>신청 취소</strong></td><td>신청자가 심사 전에 취소</td></tr>
+              <tr><td>참석</td><td><strong>참석 확정</strong></td><td>참석이 확정됨</td></tr>
+              <tr><td>참석</td><td><strong>대기 중</strong></td><td>대기열에 있음</td></tr>
+              <tr><td>참석</td><td><strong>참석 취소</strong></td><td>확정됐던 참석이 취소됨</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout warn">
           <span class="label">자주 헷갈리는 부분</span>
           <ul>
-            <li><code>CANCELED</code>(신청서)와 <code>CANCELLED</code>(참석)는 다른 enum이다. 코드 리뷰 시 가장 자주 어긋남.</li>
+            <li>"신청 취소"(심사 전 신청서를 거둠)와 "참석 취소"(확정된 자리를 비움)는 서로 다른 상태다. 정원 반환·환불·대기열 승급 처리가 달라지는, 가장 자주 혼동되는 지점.</li>
             <li>대기열 자동 승격은 사용자 행동 없이 시스템이 바꾼다. 따라서 <strong>알림</strong>이 필수.</li>
             <li>“승인됨”과 “참석 확정”은 다르다. 유료 승인제 이벤트의 경우 결제 후에만 참석 확정이다.</li>
           </ul>
@@ -112,22 +112,22 @@ flowchart TD
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> PENDING: 신청서 제출
-    PENDING --> REJECTED: 호스트 거절
-    PENDING --> APPROVED_PENDING_PAYMENT: 호스트 승인
-    APPROVED_PENDING_PAYMENT --> ATTENDING: 결제 성공
-    APPROVED_PENDING_PAYMENT --> PAYMENT_EXPIRED: 기한 만료
-    APPROVED_PENDING_PAYMENT --> CANCELED: 사용자 취소
-    REJECTED --> PENDING: 재신청
-    PAYMENT_EXPIRED --> PENDING: 재신청
-    CANCELED --> PENDING: 재신청
+    [*] --> 심사대기: 신청서 제출
+    심사대기 --> 거절됨: 호스트 거절
+    심사대기 --> 승인후결제대기: 호스트 승인
+    승인후결제대기 --> 참석확정: 결제 성공
+    승인후결제대기 --> 결제기한만료: 기한 만료
+    승인후결제대기 --> 취소됨: 사용자 취소
+    거절됨 --> 심사대기: 재신청
+    결제기한만료 --> 심사대기: 재신청
+    취소됨 --> 심사대기: 재신청
           </div>
         </div>
         <div class="callout warn">
           <span class="label">F03-13 선입금 상태로 분리</span>
-          <p><code>APPROVED_PENDING_PAYMENT</code>, <code>PAYMENT_EXPIRED</code>는 이벤트 참가 선입금의 핵심 상태다.
-          승인 즉시 ATTENDING으로 만들지 않고, 지갑 결제 또는 계좌이체 확인 이후에만 참석 확정으로 전이한다.
-          자세한 결제 row 상태는 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 본다.</p>
+          <p>"승인 후 결제 대기", "결제 기한 만료"는 이벤트 참가 선입금의 핵심 상태다.
+          승인 즉시 참석 확정으로 만들지 않고, 지갑 결제 또는 계좌이체 확인 이후에만 참석 확정으로 넘어간다.
+          자세한 결제 단계별 상태는 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 본다.</p>
         </div>
       </section>
 
@@ -136,13 +136,13 @@ stateDiagram-v2
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> WAITING_PAYMENT: 호스팅비 결제 대기
-    WAITING_PAYMENT --> RECRUITING: 결제 완료 후 모집
-    RECRUITING --> MATCHED: 매칭 또는 선택 완료
-    MATCHED --> COMPLETED: 만남 완료
-    WAITING_PAYMENT --> CANCELLED: 취소
-    RECRUITING --> CANCELLED: 취소
-    MATCHED --> CANCELLED: 취소
+    [*] --> 결제대기: 호스팅비 결제 대기
+    결제대기 --> 모집중: 결제 완료 후 모집
+    모집중 --> 매칭됨: 매칭 또는 선택 완료
+    매칭됨 --> 완료: 만남 완료
+    결제대기 --> 취소됨: 취소
+    모집중 --> 취소됨: 취소
+    매칭됨 --> 취소됨: 취소
           </div>
         </div>
         <div class="table-wrap">
@@ -163,29 +163,29 @@ stateDiagram-v2
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> DRAFT: 호스트가 정산 생성
-    DRAFT --> ACTIVE: 납부 요청 시작
-    ACTIVE --> COMPLETED: 모든 납부·확인 완료
-    ACTIVE --> CANCELLED: 호스트가 취소
-    COMPLETED --> [*]
-    CANCELLED --> [*]
+    [*] --> 작성중: 호스트가 정산 생성
+    작성중 --> 진행중: 납부 요청 시작
+    진행중 --> 완료: 모든 납부·확인 완료
+    진행중 --> 취소됨: 호스트가 취소
+    완료 --> [*]
+    취소됨 --> [*]
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>상태</th><th>의미</th><th>호스트 액션</th><th>참가자 액션</th></tr></thead>
             <tbody>
-              <tr><td><code>DRAFT</code></td><td>아직 참가자에게 요청하지 않은 정산</td><td>항목 편집·활성화</td><td>노출 없음</td></tr>
-              <tr><td><code>ACTIVE</code></td><td>납부 진행중</td><td>독촉·연장·이체 확인·취소</td><td>분담금 확인·납부·이의제기</td></tr>
-              <tr><td><code>COMPLETED</code></td><td>정산 완료</td><td>내역 조회</td><td>내역 조회</td></tr>
-              <tr><td><code>CANCELLED</code></td><td>정산 취소</td><td>내역 조회</td><td>환불·취소 안내</td></tr>
+              <tr><td><strong>작성중</strong></td><td>아직 참가자에게 요청하지 않은 정산</td><td>항목 편집·활성화</td><td>노출 없음</td></tr>
+              <tr><td><strong>진행중</strong></td><td>납부 진행중</td><td>독촉·연장·이체 확인·취소</td><td>분담금 확인·납부·이의제기</td></tr>
+              <tr><td><strong>완료</strong></td><td>정산 완료</td><td>내역 조회</td><td>내역 조회</td></tr>
+              <tr><td><strong>취소됨</strong></td><td>정산 취소</td><td>내역 조회</td><td>환불·취소 안내</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout danger">
           <span class="label">절대 위반 금지</span>
           <ul>
-            <li>정산 생성만으로 참가자에게 알림이 가면 안 된다. 알림은 DRAFT → ACTIVE 전이 시점에만.</li>
+            <li>정산 생성만으로 참가자에게 알림이 가면 안 된다. 알림은 작성중 → 진행중 전환(납부 요청 시작) 시점에만.</li>
             <li>포인트 납부는 즉시 반영, 계좌이체는 호스트 확인 필요. 사용자가 “냈다”와 “시스템이 받았다”를 구분할 수 있어야 한다.</li>
             <li>이의제기와 감사로그는 분쟁을 줄이는 안전망이다. 임의로 끄지 않는다.</li>
           </ul>
@@ -198,15 +198,15 @@ stateDiagram-v2
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> PENDING: 정산 대기
-    PENDING --> APPROVED: 승인
-    APPROVED --> PAYING: 지급 처리
-    PAYING --> PAID: 지급 완료
-    PAYING --> FAILED: 지급 실패
-    FAILED --> PAYING: 재시도
-    PENDING --> REJECTED: 거절
-    APPROVED --> REJECTED: 거절
-    REJECTED --> PENDING: 이의제기 후 재심사
+    [*] --> 정산대기: 정산 대기
+    정산대기 --> 승인됨: 승인
+    승인됨 --> 지급처리중: 지급 처리
+    지급처리중 --> 지급완료: 지급 완료
+    지급처리중 --> 지급실패: 지급 실패
+    지급실패 --> 지급처리중: 재시도
+    정산대기 --> 거절됨: 거절
+    승인됨 --> 거절됨: 거절
+    거절됨 --> 정산대기: 이의제기 후 재심사
           </div>
         </div>
       </section>
@@ -216,7 +216,7 @@ stateDiagram-v2
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["플랜 DRAFT"] --> B["플랜 PUBLISHED"]
+    A["플랜 초안"] --> B["플랜 발행"]
     B --> C["마켓 상품 등록"]
     C --> D["판매중"]
     D --> E["구매됨"]
@@ -237,22 +237,22 @@ flowchart LR
           <div class="diagram">
             <div class="mermaid">
 flowchart TD
-    A["데이터 내보내기 요청"] --> B["PROCESSING"]
-    B --> C["COMPLETED"]
-    B --> D["FAILED"]
+    A["데이터 내보내기 요청"] --> B["처리 중"]
+    B --> C["처리 완료"]
+    B --> D["처리 실패"]
     C --> E["다운로드 가능"]
-    E --> F["EXPIRED"]
+    E --> F["기한 만료"]
             </div>
           </div>
           <div class="diagram">
             <div class="mermaid">
 stateDiagram-v2
-    [*] --> NONE: 삭제 요청 없음
-    NONE --> PENDING: 삭제 예약
-    PENDING --> APPROVED: 처리 대기
-    PENDING --> CANCELLED: 사용자 취소
-    APPROVED --> CANCELLED: 사용자 취소
-    APPROVED --> COMPLETED: 유예 종료 후 삭제
+    [*] --> 요청없음: 삭제 요청 없음
+    요청없음 --> 삭제예약: 삭제 예약
+    삭제예약 --> 처리대기: 처리 대기
+    삭제예약 --> 취소됨: 사용자 취소
+    처리대기 --> 취소됨: 사용자 취소
+    처리대기 --> 삭제완료: 유예 종료 후 삭제
             </div>
           </div>
         </div>
@@ -278,7 +278,7 @@ flowchart LR
           </div>
         </div>
         <ul>
-          <li>위치 공유는 항상 opt-in. 동의 없이 위치가 노출되는 동작은 금지.</li>
+          <li>위치 공유는 항상 사용자가 직접 동의해야 켜진다. 동의 없이 위치가 노출되는 동작은 금지.</li>
           <li>중지 버튼과 프라이버시 대시보드가 함께 있어야 사용자가 통제권을 가진다.</li>
           <li>이벤트 종료 후 위치 데이터 보관·삭제 정책을 화면 문구와 맞춘다.</li>
         </ul>

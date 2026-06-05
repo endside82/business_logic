@@ -26,7 +26,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">핵심 API</div><div class="value">5개</div><div class="hint">등급·이력·배지·랭킹·프로필</div></div>
+          <div class="metric"><div class="label">멤버가 보는 것</div><div class="value">5가지</div><div class="hint">등급·이력·배지·랭킹·프로필</div></div>
           <div class="metric"><div class="label">랭킹 기준</div><div class="value">3종</div><div class="hint">잔액·누적 적립·시즌 적립</div></div>
           <div class="metric"><div class="label">등급 방향</div><div class="value">3종</div><div class="hint">최초·승급·강등</div></div>
         </div>
@@ -70,9 +70,9 @@
           <div class="mermaid">
 flowchart LR
     E["적립 누적<br/>(정정·만료 반영)"] --> T{"임계치 비교"}
-    T -->|"임계치 도달"| UP["승급 (UP)"]
-    T -->|"첫 등급 도달"| INIT["최초 (INITIAL)"]
-    T -->|"정정·만료로 누적 감소"| DOWN["강등 (DOWN)"]
+    T -->|"임계치 도달"| U["승급"]
+    T -->|"첫 등급 도달"| I["최초 등급 부여"]
+    T -->|"정정·만료로 누적 감소"| D["강등"]
           </div>
         </div>
         <p>등급은 "등급 산정용 누적 적립"이 임계치 이상일 때 자동으로 매겨진다. 정정·만료로 누적이 줄면 강등될 수 있다.
@@ -80,16 +80,16 @@ flowchart LR
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>멤버가 할 수 있는 동작</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/grades</code></td><td>등급 정의 목록</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/me/grade-history</code></td><td>내 등급 변경 timeline</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/badges</code></td><td>활성 배지 정의</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/ranking</code></td><td>클럽 랭킹</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/members/{memberId}/profile-card</code></td><td>다른 멤버 프로필 카드</td></tr>
+              <tr><td><strong>등급 정의 보기</strong></td><td>클럽 멤버</td><td>클럽이 정한 등급들을 임계치 순으로 본다.</td></tr>
+              <tr><td><strong>내 등급 이력 보기</strong></td><td>클럽 멤버</td><td>본인이 언제 어느 등급으로 올라갔는지(또는 내려갔는지) timeline으로 본다.</td></tr>
+              <tr><td><strong>활성 배지 보기</strong></td><td>클럽 멤버</td><td>운영진이 켜둔 활성 배지 정의만 본다. 비활성 배지는 보이지 않는다.</td></tr>
+              <tr><td><strong>랭킹 보기</strong></td><td>클럽 멤버</td><td>정책이 정한 기준(잔액·누적·시즌)으로 클럽 내 순위·점수·등급을 본다.</td></tr>
+              <tr><td><strong>다른 멤버 프로필 보기</strong></td><td>클럽 멤버</td><td>다른 멤버의 등급·배지를 본다. 점수 노출 여부는 정책에 따른다.</td></tr>
             </tbody>
           </table>
         </div>

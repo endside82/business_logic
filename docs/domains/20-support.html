@@ -17,8 +17,8 @@
         <p class="lede">
           사용자가 플랫폼에 도움을 요청하는 두 가지 채널.
           <strong>1:1 문의</strong>는 카테고리를 골라 관리자에게 스레드를 여는 일반 문의이고,
-          <strong>운영 이슈</strong>는 특정 트랜잭션·정산·신고 객체에 직접 연결해 접수하는 구조화된 채널이다.
-          운영 이슈는 접수 시 서버가 자동으로 관련 호스트를 찾아 라우팅 키를 채운다.
+          <strong>운영 이슈</strong>는 특정 거래·정산·신고 건에 직접 연결해 접수하는 구조화된 채널이다.
+          운영 이슈는 접수 시 시스템이 관련 호스트를 자동으로 찾아 담당자로 연결한다.
           두 채널은 진입점과 대상이 명확히 다르다.
         </p>
       </header>
@@ -26,19 +26,19 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">기능</div><div class="value">3</div><div class="hint">1:1 문의·운영 이슈·FAQ 제안</div></div>
-          <div class="metric"><div class="label">채널</div><div class="value">2</div><div class="hint">Inquiry·OperationalIssue</div></div>
-          <div class="metric"><div class="label">서버 endpoint</div><div class="value">10</div><div class="hint">Inquiry 4 · OperationalIssue 5 · FAQ 1</div></div>
-          <div class="metric"><div class="label">자동 라우팅</div><div class="value">있음</div><div class="hint">소스별 호스트 자동 해석</div></div>
+          <div class="metric"><div class="label">채널</div><div class="value">2</div><div class="hint">1:1 문의·운영 이슈</div></div>
+          <div class="metric"><div class="label">문의 대상 연결</div><div class="value">11종</div><div class="hint">일반 4 · 거래/정산/신고 7</div></div>
+          <div class="metric"><div class="label">자동 라우팅</div><div class="value">있음</div><div class="hint">문의 대상별 호스트 자동 연결</div></div>
         </div>
 
         <div class="callout">
           <span class="label">두 채널을 혼동하지 않는다</span>
-          <p><strong>1:1 문의(Inquiry)</strong>는 "결제 문제가 있어요"처럼 카테고리를 고르는 자유 문의다.
-            선택적으로 특정 이벤트·클럽·정산에 연결할 수 있고, 연결하면 그 컨텍스트의 호스트도
-            답변에 참여할 수 있도록 설계됐다 (v1에서 호스트 답변은 미구현).
-            <strong>운영 이슈(OperationalIssue)</strong>는 "거래 번호 123 환불이 안 돼요"처럼
-            소스 객체 ID를 필수로 입력해 접수한다. 서버가 그 ID로 호스트를 자동 해석해
-            HostInbox에 라우팅 키를 심어두기 때문에 담당자 배정이 빠르다.</p>
+          <p><strong>1:1 문의</strong>는 "결제 문제가 있어요"처럼 카테고리를 고르는 자유 문의다.
+            선택적으로 특정 이벤트·클럽·정산에 연결할 수 있고, 연결하면 그 모임의 호스트도
+            답변에 참여할 수 있도록 설계돼 있다 (현재 버전에서 호스트 답변은 아직 동작하지 않는다).
+            <strong>운영 이슈</strong>는 "거래 번호 123 환불이 안 돼요"처럼
+            문제가 걸린 거래·정산·신고 건을 반드시 지정해 접수한다. 시스템이 그 건으로 담당 호스트를 자동으로 찾아
+            호스트 작업함에 연결해 두기 때문에 담당자 배정이 빠르다.</p>
         </div>
       </section>
 
@@ -57,16 +57,16 @@
           <a class="card" href="../features/F20-02.html">
             <div class="eyebrow">F20-02</div>
             <h3>운영 이슈</h3>
-            <p>결제·환불·정산·신고·정기모임 결제·정기모임 정산 7종 소스 타입에 연결해 접수한다.
-              소유권 검증 후 생성되고, 서버가 관련 호스트를 자동 해석해 라우팅한다.
-              증빙 파일 최대 5개 첨부 가능.</p>
+            <p>거래·결제·환불·정산·신고·정기모임 결제·정기모임 정산 7종 대상에 연결해 접수한다.
+              본인이 실제로 참여·거래한 건인지 확인한 뒤 생성되고, 시스템이 관련 호스트를 자동으로 찾아 연결한다.
+              증빙은 최대 5개까지 정책이 준비되어 있다(앱 첨부 기능은 미제공).</p>
             <div class="meta"><span class="pill brand">상세 →</span></div>
           </a>
           <a class="card" href="../features/F20-03.html">
             <div class="eyebrow">F20-03</div>
             <h3>FAQ 제안</h3>
-            <p>운영 이슈 작성 화면 진입 시 소스 타입에 맞는 도움말 카드를 최대 5개 보여준다.
-              DB 없이 코드에 하드코딩된 경량 제안 기능이다.</p>
+            <p>운영 이슈 작성 화면 진입 시 문의 대상에 맞는 도움말 카드를 최대 5개 보여준다.
+              별도 저장소 없이 서버에 직접 적어 둔 가벼운 제안 기능이다.</p>
             <div class="meta"><span class="pill">상세 →</span></div>
           </a>
         </div>
@@ -79,34 +79,35 @@
           <article class="card">
             <div class="eyebrow">1:1 문의 — 일반</div>
             <h3>"비밀번호를 바꾸고 싶은데 이메일이 안 와요"</h3>
-            <p>카테고리 "계정"을 고르고 제목·내용을 작성해 접수한다. sourceType=NONE이라 소유권
-              검증 없이 바로 관리자 대기 큐에 들어간다. 관리자가 답변하면 상태가 "답변 완료"로
-              바뀌고 사용자가 추가 메시지를 보내면 다시 "접수됨"으로 돌아간다.</p>
+            <p>카테고리 "계정"을 고르고 제목·내용을 작성해 접수한다. 특정 모임이나 거래에 걸린 문의가
+              아니므로 별도 확인 없이 바로 관리자 대기열에 들어간다. 관리자가 답변하면 상태가 "답변 완료"로
+              바뀌고, 사용자가 추가 메시지를 보내면 다시 "접수됨"으로 돌아간다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">1:1 문의 — 컨텍스트 연결</div>
+            <div class="eyebrow">1:1 문의 — 모임 연결</div>
             <h3>"이 이벤트 참가비에 문제가 있어요"</h3>
-            <p>카테고리 "이벤트", sourceType=EVENT, sourceId=해당 이벤트 ID로 접수한다.
-              서버가 사용자가 그 이벤트의 참가자임을 확인한 뒤 문의를 생성한다.
-              호스트 답변 기능은 v1에서 미구현이지만 컨텍스트가 연결돼 관리자가 배경을
+            <p>카테고리 "이벤트"를 고르고 해당 이벤트를 지정해 접수한다.
+              내가 실제로 그 이벤트의 참가자임을 확인한 뒤 문의가 만들어진다 — 참여하지 않은
+              남의 모임을 끌어와 문의하는 것은 차단된다.
+              호스트가 직접 답변하는 기능은 아직 동작하지 않지만, 모임이 연결돼 관리자가 배경을
               빠르게 파악할 수 있다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">운영 이슈</div>
             <h3>"거래 번호 123 환불이 3일째 안 돼요"</h3>
-            <p>거래 내역 화면에서 "이 거래 문의하기" 버튼을 누른다. sourceType=REFUND,
-              sourceId=123이 자동으로 채워진 상태로 문의 작성 화면이 열린다. 접수되면
-              서버가 그 거래가 어느 이벤트의 환불인지 추적해 호스트 ID를 채워두므로
-              HostInbox에서 호스트도 상황을 볼 수 있다.</p>
+            <p>거래 내역 화면에서 "이 거래 문의하기" 버튼을 누른다. 어떤 거래의 환불 문의인지가
+              자동으로 채워진 상태로 문의 작성 화면이 열린다. 접수되면
+              시스템이 그 거래가 어느 이벤트의 환불인지 추적해 담당 호스트를 자동 연결하므로
+              호스트도 작업함에서 상황을 볼 수 있다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">운영 이슈 — 신고 관련</div>
             <h3>"제가 낸 신고 결과가 어떻게 됐는지 모르겠어요"</h3>
-            <p>신고 내역에서 해당 신고 ID로 sourceType=REPORT 이슈를 접수한다.
-              증빙 가시성이 자동으로 CS_ONLY로 설정돼 피신고자에게는 내용이 노출되지 않는다.
+            <p>신고 내역에서 해당 신고 건으로 문의를 접수한다.
+              신고 관련 문의는 증빙 공개 범위가 자동으로 "운영팀 전용"으로 설정돼 피신고자에게는 내용이 노출되지 않는다.
               운영자만 내용을 보고 처리한다.</p>
           </article>
         </div>
@@ -117,18 +118,18 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
-    A["사용자: 카테고리 선택"] --> B{"sourceType 있음?"}
-    B -->|"NONE"| C["소유권 검증 없이 생성"]
-    B -->|"EVENT/CLUB/SETTLEMENT"| D["소유권 검증"]
+    A["사용자: 카테고리 선택"] --> B{"특정 대상에 연결?"}
+    B -->|"연결 안 함"| C["바로 접수"]
+    B -->|"이벤트·클럽·정산 연결"| D["본인 참여 확인"]
     D -->|"통과"| C
-    D -->|"실패"| E["403 반환"]
-    C --> F["status = OPEN"]
+    D -->|"실패"| E["접수 거부"]
+    C --> F["접수됨"]
     F --> G["관리자 답변"]
-    G --> H["status = ANSWERED"]
+    G --> H["답변 완료"]
     H --> I{"사용자 추가 메시지?"}
     I -->|"있음"| F
     I -->|"없음"| J["관리자 종결"]
-    J --> K["status = CLOSED"]
+    J --> K["종결"]
           </div>
         </div>
       </section>
@@ -136,35 +137,35 @@ flowchart TD
       <section>
         <h2>운영 이슈 자동 라우팅</h2>
         <div class="callout">
-          <span class="label">relatedHostUserId — 접수 즉시 자동 채운다</span>
-          <p>운영 이슈가 생성되는 순간, 서버가 sourceType에 따라 관련 호스트를 자동으로 찾아
-            <code>relatedHostUserId</code>를 채워둔다. HostInbox는 이 값으로 이슈를 필터한다.</p>
+          <span class="label">접수 즉시 담당 호스트를 자동 연결한다</span>
+          <p>운영 이슈가 접수되는 순간, 시스템이 문의 대상에 따라 관련 호스트를 자동으로 찾아
+            연결해 둔다. 호스트 작업함은 이 연결을 기준으로 자기에게 온 이슈만 추려 보여 준다.</p>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>소스 타입</th><th>라우팅 경로</th><th>결과</th></tr></thead>
+            <thead><tr><th>문의 대상</th><th>연결되는 사람</th></tr></thead>
             <tbody>
-              <tr><td>SETTLEMENT / REGULAR_MEETING_SETTLEMENT</td><td>MeetingSettlement.creatorUserId</td><td>정산 생성자(호스트)</td></tr>
-              <tr><td>PAYMENT / REFUND</td><td>PointTransaction → Event → hostUserId</td><td>이벤트 호스트</td></tr>
-              <tr><td>REGULAR_MEETING_PAYMENT</td><td>PointTransaction → RegularMeetingPayment → RegularMeeting → hostUserId</td><td>정기모임 호스트</td></tr>
-              <tr><td>WALLET_TRANSACTION / REPORT</td><td>해석 불가</td><td>null — CS 직접 처리</td></tr>
+              <tr><td>정산 / 정기모임 정산</td><td>정산을 만든 호스트</td></tr>
+              <tr><td>결제 / 환불</td><td>해당 이벤트의 호스트</td></tr>
+              <tr><td>정기모임 결제</td><td>해당 정기모임의 호스트</td></tr>
+              <tr><td>지갑 거래 / 신고</td><td>단일 호스트로 좁혀지지 않음 — 운영팀이 직접 처리</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>두 채널의 소스 타입 비교</h2>
+        <h2>두 채널의 문의 대상 비교</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>항목</th><th>1:1 문의 (Inquiry)</th><th>운영 이슈 (OperationalIssue)</th></tr></thead>
+            <thead><tr><th>항목</th><th>1:1 문의</th><th>운영 이슈</th></tr></thead>
             <tbody>
-              <tr><td>소스 타입 값</td><td>NONE / EVENT / CLUB / SETTLEMENT</td><td>WALLET_TRANSACTION / PAYMENT / REFUND / SETTLEMENT / REPORT / REGULAR_MEETING_PAYMENT / REGULAR_MEETING_SETTLEMENT</td></tr>
-              <tr><td>sourceId 필수 여부</td><td>NONE이면 불필요, 나머지 필수</td><td>항상 필수</td></tr>
-              <tr><td>소유권 검증</td><td>sourceType별 맞춤 검증 (참가자·멤버·호스트)</td><td>모든 소스 타입에 검증 (거래자·정산 당사자·신고자)</td></tr>
-              <tr><td>증빙 첨부</td><td>없음</td><td>파일 최대 5개 + visibility(PARTIES/HOST_ONLY/CS_ONLY)</td></tr>
-              <tr><td>자동 호스트 라우팅</td><td>없음</td><td>relatedHostUserId 자동 채우기</td></tr>
-              <tr><td>메시지 작성자 역할</td><td>USER / ADMIN</td><td>USER / OPERATOR</td></tr>
+              <tr><td>연결할 수 있는 대상</td><td>일반 문의, 이벤트, 클럽, 정산 — 4종</td><td>지갑 거래, 결제, 환불, 정산, 신고, 정기모임 결제, 정기모임 정산 — 7종</td></tr>
+              <tr><td>대상 지정 필수 여부</td><td>일반 문의는 지정 안 함, 나머지는 대상 지정 필수</td><td>항상 대상 지정 필수</td></tr>
+              <tr><td>본인 참여 확인</td><td>대상별 맞춤 확인 (참가자·멤버·호스트)</td><td>모든 대상에 확인 (거래 당사자·정산 당사자·신고자)</td></tr>
+              <tr><td>증빙 첨부</td><td>없음</td><td>파일 최대 5개 + 공개 범위(양측 공개 / 호스트 공개 / 운영팀 전용)</td></tr>
+              <tr><td>자동 호스트 연결</td><td>없음</td><td>접수 즉시 담당 호스트 자동 연결</td></tr>
+              <tr><td>답변하는 사람</td><td>사용자 ↔ 관리자</td><td>사용자 ↔ 운영자</td></tr>
             </tbody>
           </table>
         </div>
@@ -173,12 +174,12 @@ flowchart TD
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">현재 구현 한계</span>
+          <span class="label">현재 비즈니스 한계</span>
           <ul>
-            <li><strong>Flutter에 1:1 문의 화면이 없다.</strong> 서버 endpoint 4개가 완전히 구현됐지만 앱에서 접근할 수 없다. 사용자는 앱으로 1:1 문의를 접수할 수 없는 상태다.</li>
-            <li><strong>1:1 문의 호스트 답변이 미구현이다.</strong> EVENT/CLUB sourceType으로 문의가 들어와도 호스트가 admin 콘솔에서 답변하는 경로가 없다. 컬럼은 준비돼 있다.</li>
-            <li><strong>운영 이슈에 정기모임 소스 타입이 Flutter에 없다.</strong> 서버에는 REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT가 있으나 앱 enum에 없어 정기모임 관련 운영 이슈 접수가 불완전하다.</li>
-            <li><strong>증빙 첨부가 Flutter에서 불가하다.</strong> 서버는 파일 5개를 받도록 설계됐지만 앱 접수 화면에 파일 선택 UI가 없다.</li>
+            <li><strong>1:1 문의는 사용자가 아직 쓸 수 없다.</strong> 서버 준비는 끝났지만 앱에 화면이 없어 사용자가 1:1 문의를 접수할 방법이 없다. 결제·환불·정산 건은 운영 이슈 채널로 우회해야 한다.</li>
+            <li><strong>1:1 문의의 호스트 답변이 아직 동작하지 않는다.</strong> 이벤트·클럽에 연결된 문의가 들어와도 호스트가 직접 답변할 경로가 없어, 모든 답변을 관리자가 중간에서 처리해야 한다. 답변 이력을 담을 자리는 준비돼 있다.</li>
+            <li><strong>정기모임 관련 운영 이슈 접수가 불완전하다.</strong> 서버는 정기모임 결제·정산 문의를 받을 수 있으나 앱이 이 두 대상을 아직 인식하지 못해, 정기모임 건을 문의하면 엉뚱한 대상으로 접수될 수 있다.</li>
+            <li><strong>증빙 첨부가 앱에서 불가하다.</strong> 서버는 파일 5개를 받도록 준비됐지만 앱 접수 화면에 파일 선택 기능이 없어, 현재는 글로만 상황을 설명할 수 있다.</li>
           </ul>
         </div>
       </section>
@@ -190,19 +191,19 @@ flowchart TD
             <thead><tr><th>비교 대상</th><th>고객지원 (이 도메인)</th><th>구분 기준</th></tr></thead>
             <tbody>
               <tr>
-                <td>18 분쟁 (DisputeCase)</td>
-                <td>1:1 문의 / 운영 이슈 — 신청자 단방향 접수, 법적 hold 없음</td>
-                <td>분쟁은 양측 당사자 구조, SLA·appeal·법적 hold 포함. 고객지원은 CS 처리만.</td>
+                <td>18 분쟁</td>
+                <td>1:1 문의 / 운영 이슈 — 접수자 단방향 접수, 법적 보존 의무 없음</td>
+                <td>분쟁은 양측 당사자가 맞붙는 구조로 처리 기한·이의 제기·법적 보존을 포함한다. 고객지원은 운영팀의 단순 처리만 담당한다.</td>
               </tr>
               <tr>
                 <td>11 신고 (F11-04)</td>
-                <td>OperationalIssue sourceType=REPORT — 신고 결과에 대한 문의</td>
-                <td>신고 자체는 ReportController. 신고에 대한 불만·처리 문의가 이 도메인.</td>
+                <td>신고 대상 운영 이슈 — 신고 결과에 대한 문의</td>
+                <td>신고 접수·조치 자체는 신고 도메인. 그 신고가 어떻게 처리됐는지에 대한 문의가 이 도메인.</td>
               </tr>
               <tr>
                 <td>15 경고·징계</td>
                 <td>해당 없음 — 경고는 징계 처분</td>
-                <td>경고는 WarningController. 고객지원은 결제/환불/정산 이슈 전담.</td>
+                <td>경고·징계는 별도 도메인. 고객지원은 결제·환불·정산 문의를 전담한다.</td>
               </tr>
             </tbody>
           </table>
@@ -212,10 +213,10 @@ flowchart TD
       <section>
         <h2>관련 도메인</h2>
         <div class="hub-grid">
-          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>운영 이슈 PAYMENT/REFUND/WALLET_TRANSACTION 소스의 소유권 검증과 호스트 해석 경로.</p></a>
-          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 도메인</div><h3>07 모임 정산</h3><p>운영 이슈 SETTLEMENT/REGULAR_MEETING_SETTLEMENT의 정산 creator 조회 및 라우팅.</p></a>
-          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련 도메인</div><h3>11 리뷰·신고</h3><p>운영 이슈 REPORT sourceType — 신고자 본인이 신고 결과를 문의하는 경로.</p></a>
-          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">관련 도메인</div><h3>17 정기모임</h3><p>운영 이슈 REGULAR_MEETING_PAYMENT/SETTLEMENT — 정기모임 결제·정산 문의 전용 소스 타입.</p></a>
+          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>결제·환불·지갑 거래 문의에서 본인 거래인지 확인하고 담당 호스트를 찾는 출처.</p></a>
+          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 도메인</div><h3>07 모임 정산</h3><p>정산·정기모임 정산 문의에서 정산을 만든 호스트를 찾아 연결하는 출처.</p></a>
+          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련 도메인</div><h3>11 리뷰·신고</h3><p>신고 문의 — 신고를 낸 본인이 그 처리 결과를 문의하는 경로.</p></a>
+          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">관련 도메인</div><h3>17 정기모임</h3><p>정기모임 결제·정산 문의 — 정기모임 전용 문의 대상.</p></a>
         </div>
       </section>
 

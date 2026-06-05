@@ -33,7 +33,7 @@
               <tr><td><strong>권한·역할</strong></td><td>이 사용자가 이 액션을 할 수 있는가</td><td>비호스트 정산 생성 차단, 타인 리뷰 수정 차단</td></tr>
               <tr><td><strong>상태 불일치</strong></td><td>화면을 보는 사이 상태가 바뀌면?</td><td>정원 마감, 이미 취소된 이벤트, 만료된 토큰</td></tr>
               <tr><td><strong>입력 검증</strong></td><td>값이 부족하거나 잘못되면?</td><td>비밀번호 약함, 금액 범위 초과, 시간 역전</td></tr>
-              <tr><td><strong>실패·복구</strong></td><td>네트워크·외부 시스템 실패 시</td><td>PG 실패, SMTP 실패, 지도 시스템 연동 장애</td></tr>
+              <tr><td><strong>실패·복구</strong></td><td>네트워크·외부 시스템 실패 시</td><td>결제 대행 실패, 메일 발송 실패, 지도 시스템 연동 장애</td></tr>
               <tr><td><strong>중복·동시성</strong></td><td>같은 액션을 반복하거나 여러 기기에서 하면?</td><td>중복 신청, 토큰 동시 갱신, 일괄 승인 충돌</td></tr>
             </tbody>
           </table>
@@ -70,7 +70,7 @@ flowchart TD
               <tr><td>03 이벤트</td><td style="text-align:right">12</td><td style="text-align:right">111</td><td style="text-align:right">9.3</td><td>정원, 승인, 유료 승인제, 결제, 대기열, 체크인</td></tr>
               <tr><td>04 클럽</td><td style="text-align:right">16</td><td style="text-align:right">189</td><td style="text-align:right">11.8</td><td>권한, 멤버십, 게시판, 기금, 구독</td></tr>
               <tr><td>05 검색</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td style="text-align:right">8.2</td><td>입력 전·중·결과, 필터, 기록</td></tr>
-              <tr><td>06 결제·지갑</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td style="text-align:right">7.1</td><td>PG 실패, 잔액 부족, 유료 승인제, 환불, 자동충전</td></tr>
+              <tr><td>06 결제·지갑</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td style="text-align:right">7.1</td><td>결제 대행 실패, 잔액 부족, 유료 승인제, 환불, 자동충전</td></tr>
               <tr><td>07 모임 정산</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td style="text-align:right">8.4</td><td>작성중·진행중, 납부, 이체 확인, 이의</td></tr>
               <tr><td>08 플랜 마켓</td><td style="text-align:right">13</td><td style="text-align:right">107</td><td style="text-align:right">8.2</td><td>초안·발행, 구매 중복, 컬렉션, 리뷰</td></tr>
               <tr><td>09 프라이빗 데이팅</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td style="text-align:right">8.8</td><td>인증, 매칭, 채팅, 만남, 차단</td></tr>
@@ -78,7 +78,7 @@ flowchart TD
               <tr><td>11 리뷰·신고</td><td style="text-align:right">6</td><td style="text-align:right">39</td><td style="text-align:right">6.5</td><td>작성 자격, 중복, 자기 신고, 신뢰점수</td></tr>
               <tr><td>12 알림</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td style="text-align:right">6.3</td><td>권한, 카테고리, 방해금지, 토큰</td></tr>
               <tr><td>13 프로필·설정</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td style="text-align:right">5.0</td><td>데이터 내보내기, 삭제·비활성화, 주소</td></tr>
-              <tr><td>14 위치·길찾기</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td style="text-align:right">7.0</td><td>opt-in/out, 위치 권한, 외부 지도</td></tr>
+              <tr><td>14 위치·길찾기</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td style="text-align:right">7.0</td><td>공유 동의·중지, 위치 권한, 외부 지도</td></tr>
             </tbody>
           </table>
         </div>

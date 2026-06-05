@@ -20,65 +20,63 @@
         <h1>F18-04. 분쟁 증빙·공개범위·보존</h1>
         <p class="lede">
           분쟁 케이스에 첨부된 증빙 파일이 <strong>누구에게 보이고, 언제까지 보존되며, 언제 삭제되는지</strong>를
-          결정하는 정책 레이어. 서버 필터는 CS_ONLY 항목만 제거하며, PARTIES·HOST_ONLY·PUBLIC_SUMMARY는 그대로 전달한다
-          (현재 builder는 HOST_ONLY를 emit하지 않으므로 실질적으로 PARTIES·PUBLIC_SUMMARY만 전달됨).
-          클라이언트는 받은 목록을 그대로 표시한다. 활성 케이스의 증빙은 법적 보존(evidenceFrozen)으로
-          삭제가 차단되며, 케이스 종결 후 1년이 지나야 자동 정리된다. 활성 케이스에 연관된 사용자는
-          계정 삭제도 차단된다.
+          결정하는 정책 레이어. 공개범위는 운영팀 전용·분쟁 당사자 공개·호스트 공개·요약 공개 네 등급으로 설계되어 있으나,
+          현재는 운영팀 전용 메모만 가려지고 나머지 등급 구분은 설계만 되어 있을 뿐 화면에는 아직 반영되지 않았다.
+          진행 중인 케이스의 증빙은 케이스가 끝날 때까지 삭제·수정 없이 보존되며, 케이스가 종결되고 1년이 지나야 자동 정리된다.
+          진행 중인 케이스에 연관된 사용자는 계정 삭제도 차단된다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">공개범위</div><div class="value">4단계</div><div class="hint">PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY</div></div>
+          <div class="metric"><div class="label">공개범위</div><div class="value">4등급</div><div class="hint">운영팀 전용·당사자·호스트·요약</div></div>
           <div class="metric"><div class="label">증빙 보존</div><div class="value">종결 + 1년</div><div class="hint">이후 자동 정리</div></div>
-          <div class="metric"><div class="label">legal hold</div><div class="value">계정 삭제 차단</div><div class="hint">활성 케이스 연관 사용자</div></div>
+          <div class="metric"><div class="label">계정 삭제 차단</div><div class="value">진행 중 케이스</div><div class="hint">연관 사용자 차단</div></div>
           <div class="metric"><div class="label">파일 한도</div><div class="value">최대 5개</div><div class="hint">이의·접수 시</div></div>
         </div>
 
         <div class="callout warn">
           <span class="label">이 기능이 분쟁 해결 도메인에서 가장 먼저 이해해야 하는 이유</span>
-          <p>legal hold는 계정 삭제와 데이터 익명화 자체를 차단한다. source별 finder 기준에 해당하는 역할
-            (OperationalIssue·WarningReport·공개Report·CARPOOL·DateBlock reporter, PurchaseRefundDispute seller,
-            WarningAppeal member, MeetingSettlementAppeal 호스트, ClubMembershipAction 대상 멤버,
-            USER_DISPUTE reporter/target 양측)로 OPEN/IN_REVIEW/ESCALATED 케이스에 연관되어 있으면,
+          <p>분쟁이 진행 중인 동안에는 계정 삭제와 개인정보 익명화 자체가 차단된다. 운영 이슈·클럽 신고·공개 신고·카풀·데이트 안전신고의 신고자,
+            플랜 마켓 환불 분쟁의 판매자, 클럽 경고 이의의 당사자, 모임 정산 이의의 호스트, 강퇴·차단 처분의 대상 멤버,
+            이용자 간 분쟁의 신고자·피신고자 양측 중 하나로 진행 중인 케이스에 연관되어 있으면,
             그 케이스가 종결될 때까지 계정을 삭제할 수 없다.
             이 판정은 자동으로 이루어지며 사용자에게도 알려져야 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>증빙 공개범위 4단계</h2>
+        <h2>증빙 공개범위 4등급</h2>
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
-    A["증빙 파일 제출"] --> B["Visibility 태그 부여\n(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY)"]
-    B --> K{"filterByActorVisibility\n실제 구현: CS_ONLY만 제거"}
-    K -->|"CS_ONLY"| I["응답에서 제거"]
-    K -->|"PARTIES / HOST_ONLY\n/ PUBLIC_SUMMARY"| G["케이스 조회 시 포함"]
-    G --> N["※ 정책 의도: HOST_ONLY는 호스트/CS만\n현재 구현은 CS_ONLY 제거만 — HOST_ONLY 게이팅 미구현\n(현재 builder가 HOST_ONLY를 emit하지 않아 실질 미노출)"]
+    A["증빙 파일 제출"] --> B["공개범위 등급 부여\n(운영팀 전용·당사자·호스트·요약)"]
+    B --> K{"케이스 조회 시\n현재 동작: 운영팀 전용만 가림"}
+    K -->|"운영팀 전용"| I["화면에서 제거"]
+    K -->|"당사자 / 호스트\n/ 요약"| G["케이스 조회 시 노출"]
+    G --> N["※ 설계 의도: 호스트 전용은 호스트·운영팀에게만\n현재는 운영팀 전용만 가려지고 나머지 등급 구분은\n설계만 되어 있고 화면에는 아직 반영되지 않음"]
           </div>
         </div>
-        <p>실제 서버 필터링(<code>filterByActorVisibility</code>)은 <strong>CS_ONLY 항목만 제거</strong>한다. PARTIES/HOST_ONLY/PUBLIC_SUMMARY는 유지되며, 현재 빌더는 HOST_ONLY를 emit하지 않는다. 클라이언트는 수신한 목록을 추가 처리 없이 그대로 표시한다.</p>
+        <p>현재 동작은 <strong>운영팀 전용 증빙만 화면에서 가린다</strong>. 당사자·호스트·요약 등급은 모두 그대로 노출되며, 나머지 등급 구분은 설계만 되어 있을 뿐 아직 화면에 반영되지 않았다. 사용자에게는 받은 목록이 추가 처리 없이 그대로 보인다.</p>
       </section>
 
       <section>
-        <h2>legal hold와 evidenceFrozen</h2>
+        <h2>증빙 보존과 계정 삭제 차단</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>케이스 상태</th><th>evidenceFrozen</th><th>증빙 조회</th><th>계정 삭제</th></tr></thead>
+            <thead><tr><th>케이스 상태</th><th>증빙 보존</th><th>증빙 조회</th><th>계정 삭제</th></tr></thead>
             <tbody>
-              <tr><td><strong>OPEN</strong></td><td>잠김</td><td>가능 (frozen 배너 표시)</td><td>차단</td></tr>
-              <tr><td><strong>IN_REVIEW</strong></td><td>잠김</td><td>가능 (frozen 배너 표시)</td><td>차단</td></tr>
-              <tr><td><strong>ESCALATED</strong></td><td>잠김</td><td>가능 (frozen 배너 표시)</td><td>차단</td></tr>
-              <tr><td><strong>RESOLVED</strong></td><td>해제</td><td>가능 (배너 없음)</td><td>허용</td></tr>
-              <tr><td><strong>CLOSED</strong></td><td>해제</td><td>가능 (배너 없음)</td><td>허용</td></tr>
+              <tr><td><strong>접수됨</strong></td><td>보존(삭제 불가)</td><td>가능 (보존 중 배너 표시)</td><td>차단</td></tr>
+              <tr><td><strong>검토 중</strong></td><td>보존(삭제 불가)</td><td>가능 (보존 중 배너 표시)</td><td>차단</td></tr>
+              <tr><td><strong>상위 이관</strong></td><td>보존(삭제 불가)</td><td>가능 (보존 중 배너 표시)</td><td>차단</td></tr>
+              <tr><td><strong>처리 완료</strong></td><td>해제</td><td>가능 (배너 없음)</td><td>허용</td></tr>
+              <tr><td><strong>종결</strong></td><td>해제</td><td>가능 (배너 없음)</td><td>허용</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout">
-          <span class="label">legal hold 계정 삭제 차단 — 누가 차단되는가</span>
-          <p>활성 케이스(OPEN/IN_REVIEW/ESCALATED)에 연관된 사용자는 계정 삭제 요청이 차단된다. 단, source별 finder 범위가 제한적이어서 SETTLEMENT_APPEAL appealer(비호스트), PurchaseRefundDispute buyer 측의 경우 hold가 미검출될 수 있다(후속 개선 과제). 케이스가 전부 종결(RESOLVED/CLOSED)되면 차단이 해제된다.</p>
+          <span class="label">계정 삭제 차단 — 누가 차단되는가</span>
+          <p>진행 중인 케이스(접수됨·검토 중·상위 이관)에 연관된 사용자는 계정 삭제 요청이 차단된다. 다만 차단 판정이 일부 역할을 놓칠 수 있어, 모임 정산 이의를 낸 사람이 호스트가 아닌 경우와 플랜 마켓 환불 분쟁의 구매자 측은 차단이 잡히지 않을 수 있다(후속 개선 과제). 케이스가 전부 종결(처리 완료·종결)되면 차단이 해제된다.</p>
         </div>
       </section>
 
@@ -89,26 +87,26 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">증빙 조회</div>
             <h3>케이스 상세에서 증빙 확인</h3>
-            <p>참가자가 케이스 상세를 열면 자신이 볼 수 있는 증빙 목록이 나타난다. 현재 서버 필터는
-              CS_ONLY 항목만 제거한다. PARTIES·HOST_ONLY·PUBLIC_SUMMARY는 응답에 유지된다.
-              다만 현재 builder가 HOST_ONLY를 생성하지 않아 실질적으로 PARTIES·PUBLIC_SUMMARY만 전달된다.
-              CS_ONLY 증빙은 응답에서 제거되어 노출되지 않는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 운영팀의 내부 메모나 CS 전용 파일이 실수로 노출되지 않는다.</p>
+            <p>참가자가 케이스 상세를 열면 자신이 볼 수 있는 증빙 목록이 나타난다. 현재는
+              운영팀 전용 증빙만 가려지고, 당사자·호스트·요약 등급은 그대로 보인다.
+              나머지 등급 구분은 설계만 되어 있고 아직 화면에 반영되지 않았다.
+              운영팀 전용 증빙은 화면에서 제거되어 노출되지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 운영팀의 내부 메모나 운영팀 전용 파일이 실수로 노출되지 않는다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">evidenceFrozen</div>
+            <div class="eyebrow">증빙 보존</div>
             <h3>진행 중인 케이스의 증빙 — 삭제 불가</h3>
-            <p>케이스 상태가 OPEN·IN_REVIEW·ESCALATED이면 "증빙 보존 중" 안내 배너가 표시된다.
-              증빙 삭제 endpoint 자체가 미구현이므로 frozen 여부와 관계없이 삭제는 불가하며, 증빙은 조회 전용이다.</p>
+            <p>케이스가 접수됨·검토 중·상위 이관 상태이면 "증빙 보존 중" 안내 배너가 표시된다.
+              증빙을 삭제하는 기능 자체가 아직 없으므로 보존 여부와 관계없이 삭제는 불가하며, 증빙은 조회 전용이다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">legal hold</div>
+            <div class="eyebrow">계정 삭제 차단</div>
             <h3>분쟁 중에 계정 삭제 시도</h3>
-            <p>활성 케이스에 연관된 상태에서 계정 삭제를 요청하면 서버가 차단한다.
+            <p>진행 중인 케이스에 연관된 상태에서 계정 삭제를 요청하면 차단된다.
               케이스가 모두 종결될 때까지 계정을 삭제할 수 없다는 안내가 필요하다.
-              이 상태는 서버가 자동으로 판정한다.</p>
+              이 판정은 자동으로 이루어진다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 분쟁 중 증거를 은닉하거나 책임을 회피하기 위한
               계정 삭제를 막는다.</p>
           </article>
@@ -118,32 +116,33 @@ flowchart TD
             <h3>이의제기 시 파일 첨부</h3>
             <p>이의제기(F18-03) 시 최대 5개 파일을 함께 제출할 수 있다. 본인 소유 파일만 첨부 가능하고,
               이미 다른 케이스에 사용 중이거나 삭제된 파일은 서버가 차단한다.
-              분쟁 직접 접수(F18-02) 시에는 v1에서 첨부 UI가 제공되지 않는다.</p>
+              분쟁 직접 접수(F18-02)에서는 아직 증빙 첨부 기능이 제공되지 않는다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">자동 정리</div>
             <h3>오래된 종결 케이스 증빙 정리</h3>
-            <p>케이스가 RESOLVED/CLOSED로 종결된 뒤 1년이 지나면 매일 05:00에 증빙 파일이 자동으로 삭제된다.
-              파일 일부가 삭제 실패하면 해당 파일만 다음 날 재시도한다 — 케이스 row 자체는 삭제되지 않는다.</p>
+            <p>케이스가 처리 완료 또는 종결된 뒤 1년이 지나면 매일 05:00에 증빙 파일이 자동으로 삭제된다.
+              파일 일부가 삭제 실패하면 해당 파일만 다음 날 재시도한다 — 케이스 기록 자체는 삭제되지 않는다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>보존 스케줄러 범위</h2>
+        <h2>자동 정리 대상 범위</h2>
+        <p class="subtitle">종결 후 1년이 지난 케이스의 증빙을 매일 자동 정리하는데, 분쟁 종류에 따라 포함 여부가 다르다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>원천</th><th>포함 여부</th><th>비고</th></tr></thead>
+            <thead><tr><th>분쟁 종류</th><th>자동 정리</th><th>비고</th></tr></thead>
             <tbody>
-              <tr><td>OperationalIssue</td><td>포함</td><td>resolved_at 기준</td></tr>
-              <tr><td>WarningReport / WarningAppeal</td><td>포함</td><td>processed_at 기준</td></tr>
-              <tr><td>DATE_BLOCK</td><td>포함</td><td>연결 report.processed_at 기준</td></tr>
-              <tr><td>CLUB_MEMBERSHIP_ACTION</td><td>포함</td><td>appeal.processed_at 기준</td></tr>
-              <tr><td>USER_DISPUTE</td><td>포함</td><td>resolved_at 기준</td></tr>
-              <tr><td>Report(공개)</td><td>포함</td><td>terminal status 기준</td></tr>
-              <tr><td>meeting_settlement_appeal</td><td><strong>제외</strong></td><td>evidence 필드 미보유</td></tr>
-              <tr><td>purchase_refund_dispute</td><td><strong>제외</strong></td><td>file group 구조가 달라 별도 처리 필요</td></tr>
+              <tr><td>운영 이슈</td><td>포함</td><td>처리 완료 시점 기준</td></tr>
+              <tr><td>클럽 신고·클럽 경고 이의</td><td>포함</td><td>처리 완료 시점 기준</td></tr>
+              <tr><td>데이트 안전신고</td><td>포함</td><td>연결된 신고 처리 시점 기준</td></tr>
+              <tr><td>강퇴·차단 처분</td><td>포함</td><td>이의 처리 시점 기준</td></tr>
+              <tr><td>이용자 간 분쟁</td><td>포함</td><td>처리 완료 시점 기준</td></tr>
+              <tr><td>공개 신고</td><td>포함</td><td>종결 상태 기준</td></tr>
+              <tr><td>모임 정산 이의</td><td><strong>제외</strong></td><td>증빙 저장 구조가 없음</td></tr>
+              <tr><td>플랜 마켓 환불 분쟁</td><td><strong>제외</strong></td><td>파일 구조가 달라 별도 처리 필요</td></tr>
             </tbody>
           </table>
         </div>
@@ -154,10 +153,10 @@ flowchart TD
         <div class="callout warn">
           <span class="label">운영 주의사항</span>
           <ul>
-            <li><strong>purchase_refund_dispute 증빙이 자동 정리되지 않는다.</strong> 파일 구조가 달라 보존 스케줄러 대상에서 제외됐다. 이 source의 오래된 증빙 파일은 별도 정리가 필요하다.</li>
-            <li><strong>legal hold 탈퇴 차단 시 사용자 안내가 필요하다.</strong> "왜 계정 삭제가 안 되는지" 앱이 설명하지 못하면 CS로 문의가 집중될 수 있다.</li>
-            <li><strong>증빙 삭제 endpoint 미구현.</strong> DisputeCaseController에 DELETE endpoint가 없으며, EvidenceGallery는 frozen 시 안내 배너만 표시한다. 증빙은 조회 전용이다. 삭제 기능 추가 여부는 제품 정책 결정이 필요하다.</li>
-            <li><strong>증빙 첨부 분쟁 접수는 v1 미제공.</strong> 분쟁 직접 접수(F18-02) 시 파일 업로드 UI가 없다. 서버는 수신할 준비가 되어 있어 v2에서 추가 예정.</li>
+            <li><strong>플랜 마켓 환불 분쟁 증빙이 자동 정리되지 않는다.</strong> 파일 구조가 달라 자동 정리 대상에서 제외됐다. 이 분쟁의 오래된 증빙 파일은 별도 정리가 필요하다.</li>
+            <li><strong>계정 삭제가 차단될 때 사용자 안내가 필요하다.</strong> "왜 계정 삭제가 안 되는지" 앱이 설명하지 못하면 고객 문의가 집중될 수 있다.</li>
+            <li><strong>증빙을 삭제하는 기능이 아직 없다.</strong> 보존 중일 때는 안내 배너만 표시되고, 증빙은 조회 전용이다. 삭제 기능 추가 여부는 제품 정책 결정이 필요하다.</li>
+            <li><strong>분쟁 접수 시 증빙 첨부는 아직 제공되지 않는다.</strong> 분쟁 직접 접수(F18-02) 시 파일 첨부 화면이 없다. 다음 버전에서 추가할 예정이다.</li>
           </ul>
         </div>
       </section>
@@ -167,9 +166,9 @@ flowchart TD
         <div class="callout danger">
           <span class="label">현재 알려진 미구현·주의 사항</span>
           <ul>
-            <li><strong>증빙 첨부 접수 v1 미제공.</strong> 분쟁 접수 시 증빙 없이 텍스트만 제출된다. 운영팀이 처리할 때 맥락이 부족할 수 있다.</li>
-            <li><strong>플랜 마켓 환불 분쟁 증빙 보존 미구현.</strong> purchase_refund_dispute의 오래된 증빙 파일이 영구적으로 남는다. 별도 cleanup 스케줄러 필요.</li>
-            <li><strong>증빙 삭제 endpoint 미구현 확정.</strong> DisputeCaseController에 DELETE endpoint가 없으며 증빙은 조회 전용이다. frozen 상태에서는 "증빙 보존 중" 안내 배너만 표시되고, 삭제 버튼은 현재 제공되지 않는다. 삭제 기능 추가 여부는 제품 정책 결정이 필요하다.</li>
+            <li><strong>분쟁 접수 시 증빙 첨부가 아직 제공되지 않는다.</strong> 분쟁 접수 시 증빙 없이 텍스트만 제출된다. 운영팀이 처리할 때 맥락이 부족할 수 있다.</li>
+            <li><strong>플랜 마켓 환불 분쟁 증빙은 자동 정리되지 않는다.</strong> 이 분쟁의 오래된 증빙 파일이 영구적으로 남는다. 별도 정리 방안이 필요하다.</li>
+            <li><strong>증빙을 삭제하는 기능이 아직 없다.</strong> 증빙은 조회 전용이며, 보존 중일 때는 "증빙 보존 중" 안내 배너만 표시되고 삭제 버튼은 현재 제공되지 않는다. 삭제 기능 추가 여부는 제품 정책 결정이 필요하다.</li>
           </ul>
         </div>
       </section>
@@ -180,7 +179,7 @@ flowchart TD
           <a class="card" href="../domains/18-dispute.html"><div class="eyebrow">상위 도메인</div><h3>18 분쟁 해결</h3></a>
           <a class="card" href="F18-01.html"><div class="eyebrow">연계</div><h3>F18-01 통합 케이스 조회</h3><p>증빙이 표시되는 케이스 상세 화면.</p></a>
           <a class="card" href="F18-03.html"><div class="eyebrow">연계</div><h3>F18-03 분쟁 이의제기</h3><p>이의 제출 시 증빙을 함께 첨부하는 경로.</p></a>
-          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">연계 도메인</div><h3>13 프로필·설정</h3><p>legal hold → 계정 삭제 차단 연계.</p></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">연계 도메인</div><h3>13 프로필·설정</h3><p>분쟁 진행 중 계정 삭제 차단 연계.</p></a>
         </div>
       </section>
 

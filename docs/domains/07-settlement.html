@@ -17,7 +17,7 @@
         <p class="lede">
           모임이 끝난 뒤 비용을 참가자에게 나눠 받는 흐름.
           핵심은 “돈을 어떻게 나누는가”가 아니라 <strong>“상태가 어떻게 흘러가는가”</strong>다.
-          DRAFT 상태에서 알림이 새어 나가면 사용자가 “모르는 청구서”를 받는다.
+          아직 참가자에게 요청하지 않은 작성 중 상태에서 알림이 새어 나가면 사용자가 “모르는 청구서”를 받는다.
         </p>
       </header>
 
@@ -34,7 +34,7 @@
         <div class="cards">
           <a class="card" href="../features/F07-01.html"><div class="eyebrow">F07-01</div><h3>정산 생성</h3><p>중복 정산 방지, 복제, 참가자 선택, Quick-add.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-02.html"><div class="eyebrow">F07-02</div><h3>항목 관리</h3><p>작성중 편집, 항목·분담금, 최근 항목, 영수증 첨부.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F07-03.html"><div class="eyebrow">F07-03</div><h3>활성화·취소</h3><p>DRAFT → ACTIVE 전이 시점 납부 알림, 취소·환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F07-03.html"><div class="eyebrow">F07-03</div><h3>활성화·취소</h3><p>작성 중에서 진행 중으로 넘어가는 시점의 납부 알림, 취소·환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-04.html"><div class="eyebrow">F07-04</div><h3>현황·요약·영수증</h3><p>요약 카드, 참여자 상태, 영수증 권한.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-05.html"><div class="eyebrow">F07-05</div><h3>분담금 납부</h3><p>포인트·계좌이체·혼합 결제, 재발행·환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-06.html"><div class="eyebrow">F07-06</div><h3>이체 확인·일괄 확인·상각</h3><p>수동 확인, 일괄 처리, 완료 전이, 회수불가 상각.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
@@ -50,30 +50,30 @@
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> DRAFT: 호스트가 정산 생성
-    DRAFT --> ACTIVE: 납부 요청 시작
-    ACTIVE --> COMPLETED: 모든 납부·확인 완료
-    ACTIVE --> CANCELLED: 호스트가 취소
-    COMPLETED --> [*]
-    CANCELLED --> [*]
+    [*] --> 작성중: 호스트가 정산 생성
+    작성중 --> 진행중: 납부 요청 시작
+    진행중 --> 완료: 모든 납부·확인 완료
+    진행중 --> 취소됨: 호스트가 취소
+    완료 --> [*]
+    취소됨 --> [*]
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>상태</th><th>의미</th><th>호스트 액션</th><th>참가자 액션</th></tr></thead>
             <tbody>
-              <tr><td><code>DRAFT</code></td><td>아직 참가자에게 요청하지 않은 정산</td><td>항목 편집, 참여자 조정, 활성화</td><td>노출 없음</td></tr>
-              <tr><td><code>ACTIVE</code></td><td>납부 진행중</td><td>독촉, 마감 연장, 이체 확인, 취소</td><td>분담금 확인, 납부, 이의제기</td></tr>
-              <tr><td><code>COMPLETED</code></td><td>정산 완료</td><td>내역 조회</td><td>내역 조회</td></tr>
-              <tr><td><code>CANCELLED</code></td><td>정산 취소</td><td>내역 조회</td><td>환불·취소 안내 확인</td></tr>
+              <tr><td><strong>작성중</strong></td><td>아직 참가자에게 요청하지 않은 정산</td><td>항목 편집, 참여자 조정, 활성화</td><td>노출 없음</td></tr>
+              <tr><td><strong>진행중</strong></td><td>납부 진행중</td><td>독촉, 마감 연장, 이체 확인, 취소</td><td>분담금 확인, 납부, 이의제기</td></tr>
+              <tr><td><strong>완료</strong></td><td>정산 완료</td><td>내역 조회</td><td>내역 조회</td></tr>
+              <tr><td><strong>취소됨</strong></td><td>정산 취소</td><td>내역 조회</td><td>환불·취소 안내 확인</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout danger">
           <span class="label">절대 위반 금지</span>
-          <p><strong>DRAFT 상태에서는 참가자에게 어떤 알림도 가서는 안 된다.</strong>
+          <p><strong>작성 중 상태에서는 참가자에게 어떤 알림도 가서는 안 된다.</strong>
           정산 생성 자체로 “돈 내라”라는 신호가 사용자에게 전달되면 분쟁이 시작된다.
-          알림은 DRAFT → ACTIVE 전이 시점에 한 번만 보낸다.</p>
+          알림은 작성 중에서 진행 중으로 넘어가는 시점에 한 번만 보낸다.</p>
         </div>
       </section>
 
@@ -88,9 +88,9 @@ sequenceDiagram
     participant W as 지갑·계좌
     participant N as 알림
 
-    H->>S: 종료된 모임에서 정산 생성 (DRAFT)
+    H->>S: 종료된 모임에서 정산 생성 (작성중)
     H->>S: 항목·참여자 선택
-    H->>S: 정산 활성화 (DRAFT → ACTIVE)
+    H->>S: 정산 활성화 (작성중 → 진행중)
     S->>N: 참가자에게 납부 알림 (이때 최초 발송)
     P->>S: 내 분담금 확인
     P->>W: 포인트 또는 계좌이체로 납부
@@ -103,29 +103,31 @@ sequenceDiagram
 
       <section>
         <h2>호스트 정의 환불 규칙 (F07-09)</h2>
-        <p class="subtitle">모임마다 호스트가 직접 설정한다. 시스템 기본값(F06-06의 STANDARD)과 별개로 작동한다.</p>
+        <p class="subtitle">모임마다 호스트가 직접 설정한다. 이벤트 참가비 일반 결제에 적용되는 시스템 기본 환불 정책과는 별개로 작동한다.</p>
         <ul>
-          <li><strong>입력 단위</strong>: <code>hoursBeforeStart</code>(이벤트 시작 N시간 전) × <code>refundPercentage</code>(0~100, <strong>5% 단위 권장</strong>)</li>
-          <li><strong>참가자 결제 방식</strong>: <code>POINT</code> 또는 <code>BANK_TRANSFER</code></li>
-          <li><strong><code>BANK_TRANSFER</code></strong>는 호스트가 수동 확인. 가상계좌 자동 입금은 PG webhook(<strong>현재 stub 401</strong>)으로 처리 예정</li>
-          <li>화면 표시 예: “이벤트 3일 전 / 환불률: 50% / 환불금액: 5,000원” — 정책별 환불 금액을 항상 즉시 표시</li>
-          <li><strong>0% 룰</strong>일 때는 “환불 불가” 안내 명시</li>
-          <li>UI: <code>RefundTimelineWidget</code>으로 시간 흐름에 따른 환불률 그래프 시각화</li>
+          <li><strong>설정 단위</strong>: “모임 시작 N시간 전”마다 환불율(0~100%, <strong>5% 단위 권장</strong>)을 단계별로 지정한다.</li>
+          <li><strong>참가자 결제 방식</strong>: 포인트 또는 계좌이체</li>
+          <li><strong>계좌이체</strong>는 호스트가 본인 계좌에서 입금을 직접 확인한다. 가상계좌 입금의 자동 확인은 아직 계획 단계이며 외부 결제 대행 계약이 선행되어야 한다(현재는 동작하지 않음).</li>
+          <li>화면 표시 예: “이벤트 3일 전 / 환불률: 50% / 환불금액: 5,000원” — 시점별 환불 금액을 항상 즉시 보여 준다.</li>
+          <li>환불율이 <strong>0%</strong>인 구간에서는 “환불 불가” 안내를 명시한다.</li>
+          <li>시간 흐름에 따른 환불율을 그래프로 시각화해 결제 전에 보여 준다.</li>
         </ul>
         <div class="callout">
           <span class="label">F06-06과의 관계</span>
-          <p>F06-06의 이벤트별 환불 정책 카탈로그(<code>event_refund_policy</code>, 템플릿 6종)는 “이벤트 참가비 일반 결제”에 적용되고,
-          F07-09의 호스트 정의 규칙(<code>meeting_refund_rule</code>)은 “선입금 모임의 정산 환불”에 적용된다. 두 흐름은 저장 정책이 분리돼 있고, 계산 엔진은 공통 <code>RefundPolicyService.computeRefund</code>를 재사용한다(Phase 4(③): MeetingRefundRule→transient EventRefundPolicy 변환 후 위임, 저장하지 않음). 두 흐름이 같은 모임에서 동시에 일어나지 않도록 PRD가 분리되어 있다.</p>
+          <p>F06-06의 이벤트별 환불 정책 카탈로그(템플릿 6종)는 “이벤트 참가비 일반 결제”에 적용되고,
+          F07-09의 호스트 정의 규칙은 “선입금 모임의 정산 환불”에 적용된다. 두 흐름은 정책을 따로 보관하지만,
+          환불액은 모임 시작까지 남은 시간 구간별 환불율로 계산된다 — 두 흐름 모두 이벤트 환불과 동일한 계산 방식을 공유한다.
+          두 흐름이 같은 모임에서 동시에 일어나지 않도록 분리되어 있다.</p>
         </div>
       </section>
 
       <!-- 2026-05-24: 포인트 분리정산 반영 -->
       <section>
-        <h2>모임 정산은 PAID_ONLY — 무료 포인트 불가</h2>
+        <h2>모임 정산은 유료 포인트만 — 무료 포인트로 낼 수 없다</h2>
         <div class="callout danger">
           <span class="label">실제 채무를 프로모션 포인트로 갚게 두지 않는다</span>
-          <p>모임 정산 송금·회수·선입금은 참가자→호스트로 흐르는 <strong>순수 P2P 채무 정산</strong>이라 사용처 분류상 <strong>PAID_ONLY</strong>다.
-          분담금·선입금 결제는 <strong>유료(paid) 잔액만</strong> 차감되고, 무료 포인트로는 납부할 수 없다. 정산금이 호스트에게 흘러간 뒤에도 유료/무료 split이 그대로 보존되며,
+          <p>모임 정산 송금·회수·선입금은 참가자에서 호스트로 흐르는 <strong>순수한 사람 간 채무 정산</strong>이라, 무료로 지급된 프로모션 포인트로는 갚을 수 없는 용도다.
+          분담금·선입금 결제는 <strong>유료로 충전한 잔액만</strong> 차감되고, 무료 포인트로는 납부할 수 없다. 정산금이 호스트에게 흘러간 뒤에도 유료분과 무료분의 구분이 그대로 보존되며,
           호스트의 외부 출금·정산금 인출 역시 <strong>유료분만 현금화</strong> 가능하다(무료분은 인출 불가). 전체 정책은 <a href="../policies/payment.html">결제·정산 정책</a> 참조.</p>
         </div>
       </section>
@@ -134,7 +136,7 @@ sequenceDiagram
         <h2>레드 플래그</h2>
         <div class="callout danger">
           <ul>
-            <li><strong>DRAFT인데 참가자에게 노출</strong> — 정책상 가장 큰 사고. 노출 가드와 알림 가드를 이중으로 둔다.</li>
+            <li><strong>작성 중인데 참가자에게 노출</strong> — 정책상 가장 큰 사고. 노출 가드와 알림 가드를 이중으로 둔다.</li>
             <li><strong>계좌이체 후 호스트 미확인</strong> — 참가자는 “냈다”라고 생각하지만 시스템은 미완료. 자동 확인이 불가능하므로 호스트 액션이 필요함을 명시.</li>
             <li><strong>포인트 vs 계좌이체 즉시성 차이 미안내</strong> — 포인트는 즉시 반영, 계좌이체는 수동 확인. UI에서 분리.</li>
             <li><strong>이의제기 수락/기각 시 금액·상태·알림·감사로그 동시 변경 누락</strong>.</li>

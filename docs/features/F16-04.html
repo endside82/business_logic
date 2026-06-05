@@ -26,8 +26,8 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">핵심 API</div><div class="value">3개</div><div class="hint">조회 / 수정 / 미리보기</div></div>
-          <div class="metric"><div class="label">권한</div><div class="value">정책 담당</div><div class="hint">POLICY_OWNER</div></div>
+          <div class="metric"><div class="label">운영진이 하는 일</div><div class="value">3가지</div><div class="hint">조회 / 수정 / 미리보기</div></div>
+          <div class="metric"><div class="label">권한</div><div class="value">정책 담당</div><div class="hint">정책 관리 권한자</div></div>
           <div class="metric"><div class="label">기본 만료일</div><div class="value">365일</div><div class="hint">초기 생성값</div></div>
         </div>
 
@@ -81,14 +81,14 @@
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>운영진이 할 수 있는 동작</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>GET</td><td><code>/admin/clubs/{clubId}/mileage/config</code></td><td>정책 조회 (없으면 기본값 생성)</td></tr>
-              <tr><td>PUT</td><td><code>/admin/clubs/{clubId}/mileage/config</code></td><td>정책 수정 (부분 갱신)</td></tr>
-              <tr><td>GET</td><td><code>/admin/clubs/{clubId}/mileage/config/preview</code></td><td>변경 영향 미리보기</td></tr>
+              <tr><td><strong>정책 조회</strong></td><td>정책 담당</td><td>현재 마일리지 정책을 본다. 아직 정책이 없으면 기본값으로 만들어 보여준다.</td></tr>
+              <tr><td><strong>정책 수정</strong></td><td>정책 담당</td><td>활성화·만료일·랭킹 기준·시즌 사용 중 바꾸려는 항목만 골라 갱신한다.</td></tr>
+              <tr><td><strong>변경 미리보기</strong></td><td>정책 담당</td><td>저장 전에 그 변화가 누구에게 어떤 영향을 줄지 미리 본다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -107,7 +107,7 @@
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
-          <a class="card" href="F16-05.html"><div class="eyebrow">다음</div><h3>F16-05 메타 정의 관리</h3><p>규칙·등급·배지·프리셋 CRUD.</p></a>
+          <a class="card" href="F16-05.html"><div class="eyebrow">다음</div><h3>F16-05 메타 정의 관리</h3><p>규칙·등급·배지·프리셋 생성·수정·삭제.</p></a>
           <a class="card" href="F16-06.html"><div class="eyebrow">영향받음</div><h3>F16-06 집행</h3><p>정책 OFF면 적립·차감 전면 차단.</p></a>
         </div>
       </section>

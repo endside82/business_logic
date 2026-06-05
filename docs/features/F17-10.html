@@ -29,7 +29,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">코스당 정산</div><div class="value">1건</div><div class="hint">멱등 보장</div></div>
+          <div class="metric"><div class="label">코스당 정산</div><div class="value">1건</div><div class="hint">중복 생성 차단</div></div>
           <div class="metric"><div class="label">호스트 수익 기준</div><div class="value">유료 잔존액</div><div class="hint">무료는 플랫폼 보조</div></div>
           <div class="metric"><div class="label">수수료</div><div class="value">10% + 3.3%</div><div class="hint">플랫폼 수수료·원천징수</div></div>
         </div>
@@ -155,7 +155,7 @@ flowchart TD
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">멱등·재시도·잔액 가드</span>
+          <span class="label">중복 방지·재시도·잔액 가드</span>
           <ul>
             <li><strong>코스당 정산 1건 보장</strong> — 같은 코스에서 두 번 정산이 만들어지지 않는다.</li>
             <li><strong>참조 거래가 없으면 정산 생성 중단</strong> — 데이터 무결성이 깨진 상태에서는 정산을 만들지 않고 다음 안전망 주기에서 재시도.</li>

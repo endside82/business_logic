@@ -19,29 +19,29 @@
         </div>
         <h1>F20-02. 운영 이슈</h1>
         <p class="lede">
-          특정 트랜잭션·정산·신고 객체에 직접 연결해 접수하는 구조화된 지원 채널.
-          결제·환불·거래·정산·신고·정기모임 결제·정기모임 정산 7가지 소스 타입이 있고,
-          각 타입마다 소유권 검증 방식이 다르다.
-          접수 즉시 서버가 호스트 매핑 가능한 source(PAYMENT/REFUND/SETTLEMENT/REGULAR_MEETING_*)에 한해
-          관련 호스트를 자동으로 찾아 라우팅 키를 심어두고, WALLET_TRANSACTION·REPORT는 null(CS 직접 처리)이다.
-          증빙 파일을 최대 5개 첨부할 수 있다.
+          문제가 걸린 거래·정산·신고 건에 직접 연결해 접수하는 구조화된 지원 채널.
+          결제·환불·지갑 거래·정산·신고·정기모임 결제·정기모임 정산 7가지 대상이 있고,
+          대상마다 본인 참여를 확인하는 방식이 다르다.
+          접수 즉시 시스템이 담당 호스트를 찾을 수 있는 건(결제·환불·정산·정기모임 결제·정기모임 정산)에 한해
+          관련 호스트를 자동으로 연결해 두고, 지갑 거래·신고는 단일 호스트로 좁혀지지 않아 운영팀이 직접 처리한다.
+          증빙은 최대 5개까지 받도록 정책이 준비되어 있으나, 현재 앱에서는 첨부 기능이 제공되지 않는다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">서버 endpoint</div><div class="value">5</div><div class="hint">생성·목록·소스별 목록·상세·메시지 추가</div></div>
-          <div class="metric"><div class="label">소스 타입</div><div class="value">7</div><div class="hint">결제·환불·거래·정산·신고·정기모임 2종</div></div>
-          <div class="metric"><div class="label">증빙 첨부</div><div class="value">최대 5개</div><div class="hint">Flutter 미구현</div></div>
-          <div class="metric"><div class="label">Flutter 구현</div><div class="value">5/7 타입</div><div class="hint">정기모임 타입 enum 누락</div></div>
+          <div class="metric"><div class="label">문의 단계</div><div class="value">5</div><div class="hint">작성·내 목록·건별 목록·상세·추가 답장</div></div>
+          <div class="metric"><div class="label">문의 대상</div><div class="value">7</div><div class="hint">결제·환불·거래·정산·신고·정기모임 2종</div></div>
+          <div class="metric"><div class="label">증빙 첨부</div><div class="value">최대 5개</div><div class="hint">앱 화면 미구현</div></div>
+          <div class="metric"><div class="label">앱 지원 대상</div><div class="value">5/7</div><div class="hint">정기모임 2종 누락</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">왜 "특정 객체에 연결"하는가</span>
+          <span class="label">왜 "특정 건에 연결"하는가</span>
           <p>결제나 환불 문제는 "언제 무엇이 얼마"라는 맥락이 없으면 처리가 느리다.
-            소스 객체 ID를 필수로 받아 서버가 자동으로 거래 이력을 추적하고
+            문제가 걸린 거래·정산 건을 반드시 지정받아 시스템이 자동으로 거래 이력을 추적하고
             관련 호스트를 찾아두면, 담당자가 배경 조사 없이 바로 처리할 수 있다.
-            증빙 첨부와 가시성 분류(양측 공개·호스트 전용·CS 전용)로
+            증빙 첨부와 공개 범위 분류(양측 공개·호스트 공개·운영팀 전용)로
             민감 정보도 안전하게 전달된다.</p>
         </div>
       </section>
@@ -54,70 +54,71 @@
             <div class="eyebrow">결제 / 환불 문의</div>
             <h3>"환불 요청한 지 3일이 됐는데 처리가 안 돼요"</h3>
             <p>거래 내역에서 해당 거래 항목 옆 "문의하기"를 누른다.
-              sourceType=REFUND, sourceId=거래 ID가 자동으로 채워진다.
-              내용을 쓰고 접수하면 서버가 그 거래가 어느 이벤트의 환불인지 찾아
-              이벤트 호스트 ID를 라우팅 키에 저장한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — HostInbox에서 호스트도 상황을 볼 수 있고,
-              CS도 거래 번호를 따로 요청하지 않고 바로 처리할 수 있다.</p>
+              어떤 거래의 환불 문의인지가 자동으로 채워진다.
+              내용을 쓰고 접수하면 시스템이 그 거래가 어느 이벤트의 환불인지 찾아
+              담당 이벤트 호스트를 자동 연결한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 호스트도 작업함에서 상황을 볼 수 있고,
+              운영팀도 거래 번호를 따로 요청하지 않고 바로 처리할 수 있다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">정산 문의</div>
             <h3>"이번 모임 정산 금액이 제가 계산한 것과 달라요 (호스트)"</h3>
             <p>정산 상세 화면에서 "정산 문의하기"를 누른다.
-              sourceType=SETTLEMENT, sourceId=정산 ID가 채워진다.
-              정산 참가자(creator 또는 항목 holder/share user)만 접수 가능하다.
-              증빙으로 계산 근거 파일을 첨부하면 가시성이 PARTIES로 설정돼
-              운영자와 호스트 모두 볼 수 있다.</p>
+              어떤 정산 건인지가 자동으로 채워진다.
+              그 정산의 당사자(정산을 만든 호스트 또는 정산 항목·분배 당사자)만 접수 가능하다.
+              증빙 정책상 계산 근거 파일은 "양측 공개"로 분류되어 운영자와 호스트가 모두 볼 수 있게
+              설계되어 있다 — 다만 현재 앱에서는 첨부 기능이 아직 제공되지 않는다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">신고 결과 문의</div>
             <h3>"제가 낸 신고 결과가 어떻게 됐는지 모르겠어요"</h3>
             <p>신고 내역에서 해당 신고를 누르고 "문의하기"를 탭한다.
-              sourceType=REPORT, sourceId=신고 ID로 접수된다.
-              신고를 낸 사람(reporter)만 접수 가능하다.
-              증빙 가시성이 자동으로 CS_ONLY로 설정돼 피신고자에게 내용이 노출되지 않는다.</p>
+              어떤 신고 건인지가 자동으로 채워져 접수된다.
+              신고를 낸 본인만 접수 가능하다.
+              증빙 공개 범위가 자동으로 "운영팀 전용"으로 설정돼 피신고자에게 내용이 노출되지 않는다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>소스 타입별 소유권 검증</h2>
+        <h2>문의 대상별 본인 참여 확인</h2>
+        <p class="subtitle">내가 실제로 거래·참여한 건에만 문의를 걸 수 있다 — 남의 결제나 남의 정산을 끌어와 문의하는 것은 차단된다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>소스 타입</th><th>소유권 조건</th><th>증빙 기본 가시성</th></tr></thead>
+            <thead><tr><th>문의 대상</th><th>접수할 수 있는 사람</th><th>증빙 기본 공개 범위</th></tr></thead>
             <tbody>
-              <tr><td>WALLET_TRANSACTION</td><td>PointTransaction.userId == 문의자</td><td>PARTIES</td></tr>
-              <tr><td>PAYMENT</td><td>PointTransaction.userId == 문의자</td><td>PARTIES</td></tr>
-              <tr><td>REFUND</td><td>PointTransaction.userId == 문의자</td><td>PARTIES</td></tr>
-              <tr><td>SETTLEMENT</td><td>MeetingSettlement.creatorUserId == 문의자, 또는 항목 holder/share user</td><td>PARTIES</td></tr>
-              <tr><td>REPORT</td><td>Report.reporterId == 문의자</td><td>CS_ONLY</td></tr>
-              <tr><td>REGULAR_MEETING_PAYMENT</td><td>PointTransaction.userId == 문의자</td><td>PARTIES</td></tr>
-              <tr><td>REGULAR_MEETING_SETTLEMENT</td><td>MeetingSettlement.creatorUserId == 문의자, 또는 항목 당사자</td><td>PARTIES</td></tr>
+              <tr><td>지갑 거래</td><td>그 거래의 당사자 본인</td><td>양측 공개</td></tr>
+              <tr><td>결제</td><td>그 결제의 당사자 본인</td><td>양측 공개</td></tr>
+              <tr><td>환불</td><td>그 환불의 당사자 본인</td><td>양측 공개</td></tr>
+              <tr><td>정산</td><td>정산을 만든 호스트, 또는 정산 항목·분배 당사자</td><td>양측 공개</td></tr>
+              <tr><td>신고</td><td>그 신고를 낸 본인</td><td>운영팀 전용</td></tr>
+              <tr><td>정기모임 결제</td><td>그 결제의 당사자 본인</td><td>양측 공개</td></tr>
+              <tr><td>정기모임 정산</td><td>정산을 만든 호스트, 또는 정산 항목·분배 당사자</td><td>양측 공개</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>자동 호스트 라우팅</h2>
+        <h2>담당 호스트 자동 연결</h2>
         <div class="callout">
-          <span class="label">호스트 매핑 가능한 source만 자동 라우팅, WALLET_TRANSACTION·REPORT는 CS 직접 처리</span>
-          <p>운영 이슈가 생성되는 순간 서버가 sourceType에 따라 관련 호스트를 자동으로 추적한다.
-            PAYMENT/REFUND/SETTLEMENT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT는 PointTransaction 또는
-            MeetingSettlement를 통해 hostUserId·creatorUserId를 채운다.
-            WALLET_TRANSACTION은 일반 거래라 단일 호스트 매핑이 모호해 null, REPORT는 target에 따라
-            단일 호스트로 환원되지 않아 null — 두 타입 모두 CS가 직접 처리한다.
-            HostInbox는 이 값으로 이슈를 필터해 호스트에게 라우팅한다.</p>
+          <span class="label">담당 호스트를 찾을 수 있는 건만 자동 연결, 지갑 거래·신고는 운영팀 직접 처리</span>
+          <p>운영 이슈가 접수되는 순간 시스템이 문의 대상에 따라 관련 호스트를 자동으로 추적한다.
+            결제·환불·정산·정기모임 결제·정기모임 정산은 거래 기록이나 정산 기록을 거슬러
+            담당 이벤트 호스트 또는 정산을 만든 호스트를 찾아 연결한다.
+            지갑 거래는 일반 거래라 단일 호스트로 좁혀지지 않고, 신고는 대상에 따라
+            한 명의 호스트로 환원되지 않아 — 두 대상 모두 운영팀이 직접 처리한다.
+            호스트 작업함은 이 연결을 기준으로 자기에게 온 이슈만 추려 보여 준다.</p>
         </div>
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["PAYMENT/REFUND"] --> B["PointTransaction"] --> C["Event"] --> D["hostUserId"]
-    E["SETTLEMENT"] --> F["MeetingSettlement"] --> G["creatorUserId"]
-    H["REGULAR_MEETING_PAYMENT"] --> I["PointTransaction"] --> J["RegularMeetingPayment"] --> K["RegularMeeting"] --> L["hostUserId"]
-    M["WALLET_TRANSACTION\nREPORT"] --> N["null — CS 직접 처리"]
+    A["결제 / 환불"] --> B["거래 기록"] --> C["이벤트"] --> D["이벤트 호스트"]
+    E["정산"] --> F["정산 기록"] --> G["정산을 만든 호스트"]
+    H["정기모임 결제"] --> I["거래 기록"] --> J["정기모임 결제 기록"] --> K["정기모임"] --> L["정기모임 호스트"]
+    M["지갑 거래 / 신고"] --> N["연결 불가 — 운영팀 직접 처리"]
           </div>
         </div>
       </section>
@@ -127,18 +128,18 @@ flowchart LR
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> OPEN : 사용자 접수
-    OPEN --> IN_PROGRESS : 운영자 처리 시작
-    IN_PROGRESS --> RESOLVED : 완료
-    IN_PROGRESS --> REJECTED : 반려
-    OPEN --> RESOLVED : 즉시 완료
-    OPEN --> REJECTED : 즉시 반려
-    RESOLVED --> [*]
-    REJECTED --> [*]
+    [*] --> 접수됨 : 사용자 접수
+    접수됨 --> 처리중 : 운영자 처리 시작
+    처리중 --> 처리완료 : 완료
+    처리중 --> 반려 : 반려
+    접수됨 --> 처리완료 : 즉시 완료
+    접수됨 --> 반려 : 즉시 반려
+    처리완료 --> [*]
+    반려 --> [*]
           </div>
         </div>
-        <p>RESOLVED 또는 REJECTED 상태가 되면 사용자는 추가 메시지를 보낼 수 없다.
-          상세 화면에서 상태가 닫힌 경우 메시지 입력창이 숨겨진다.</p>
+        <p>처리 완료 또는 반려 상태가 되면 사용자는 추가 메시지를 보낼 수 없다.
+          상세 화면에서 문의가 닫힌 경우 메시지 입력창이 숨겨진다.</p>
       </section>
 
       <section>
@@ -147,33 +148,31 @@ stateDiagram-v2
           <table>
             <thead><tr><th>규칙</th><th>내용</th></tr></thead>
             <tbody>
-              <tr><td>최대 개수</td><td>5개 (초과 시 400 오류)</td></tr>
-              <tr><td>파일 소유권</td><td>문의자 본인이 업로드한 파일만 허용 (403)</td></tr>
-              <tr><td>파일 상태</td><td>COMPLETED 상태 파일만 허용 (400)</td></tr>
-              <tr><td>허용 purpose</td><td>EVIDENCE 또는 REVIEW (profile/event_photo/club_photo 등 불허)</td></tr>
-              <tr><td>가시성</td><td>PARTIES(양측 공개) / HOST_ONLY / CS_ONLY. 미지정 시 sourceType별 기본값 자동 적용</td></tr>
+              <tr><td>최대 개수</td><td>5개 (초과하면 접수 거부)</td></tr>
+              <tr><td>파일 소유</td><td>문의자 본인이 올린 파일만 허용</td></tr>
+              <tr><td>파일 상태</td><td>업로드가 끝난 파일만 허용</td></tr>
+              <tr><td>허용 용도</td><td>증빙 또는 리뷰용으로 올린 파일만 (프로필·이벤트 사진·클럽 사진 등은 불허)</td></tr>
+              <tr><td>공개 범위</td><td>양측 공개 / 호스트 공개 / 운영팀 전용. 지정하지 않으면 문의 대상별 기본값이 자동 적용</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout warn">
-          <span class="label">Flutter 앱에서 증빙 첨부 불가</span>
+          <span class="label">앱에서 증빙 첨부 불가</span>
           <p>서버는 파일 첨부를 받을 준비가 돼 있지만,
-            Flutter 접수 화면에 파일 선택 UI가 없고
-            <code>OperationalIssueCreateParam</code> 모델에 <code>evidenceFileIds</code> 필드가 없다.
-            현재는 내용만 전달할 수 있다.</p>
+            앱 접수 화면에 파일 선택 기능이 아직 만들어지지 않았다.
+            현재는 글로만 상황을 설명할 수 있다.</p>
         </div>
       </section>
 
       <section>
         <h2>알려진 격차</h2>
         <div class="callout danger">
-          <span class="label">Flutter 불완전 구현</span>
+          <span class="label">앱 불완전 구현</span>
           <ul>
-            <li><strong>정기모임 소스 타입(REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT)</strong>이
-              Flutter enum에 없다. 앱에서 정기모임 관련 이슈를 접수하면 잘못된 소스 타입이 전달될 수 있다.</li>
-            <li><strong>증빙 첨부 UI</strong>가 없다. 서버는 최대 5개 파일을 받도록 설계됐다.</li>
-            <li><strong>답변 알림</strong>이 앱으로 오는지 확인이 필요하다.
-              <code>SUPPORT_ISSUE_UPDATED(66)</code> 알림 코드는 정의됐지만 emit 경로 확인 필요.</li>
+            <li><strong>정기모임 결제·정기모임 정산</strong> 두 대상을 앱이 아직 인식하지 못한다.
+              앱에서 정기모임 관련 이슈를 접수하면 엉뚱한 대상으로 접수될 수 있다.</li>
+            <li><strong>증빙 첨부 기능</strong>이 앱에 없다. 서버는 최대 5개 파일을 받도록 준비돼 있다.</li>
+            <li><strong>답변 알림</strong>이 앱으로 실제 전달되는지 확인이 필요하다.</li>
           </ul>
         </div>
       </section>

@@ -138,11 +138,9 @@ flowchart TD
           <table>
             <thead><tr><th>항목</th><th>값</th></tr></thead>
             <tbody>
-              <tr><td>토큰 만료</td><td><strong>24시간</strong></td></tr>
-              <tr><td>재발송 쿨다운</td><td><strong>60초</strong> (<code>_cooldownSeconds = 60</code>) — 카운트다운 표시</td></tr>
-              <tr><td>발송 엔드포인트</td><td><code>POST /api/v1/auth/send-verification-email</code></td></tr>
-              <tr><td>검증 엔드포인트</td><td><code>GET /api/v1/auth/verify-email</code> (Deep Link), <code>POST /api/v1/users/me/email/verify/confirm</code> (POST 버전)</td></tr>
-              <tr><td>미러링</td><td><code>/auth/*</code>와 <code>/users/me/email/verify/*</code> 두 컨트롤러에 미러링 — 클라는 발송에 auth, 확인에 auth/verify-email 사용</td></tr>
+              <tr><td>인증 링크 유효 기간</td><td><strong>24시간</strong> — 지나면 다시 발송받아야 한다</td></tr>
+              <tr><td>재발송 제한</td><td><strong>60초</strong>에 한 번 — 남은 시간 카운트다운 표시</td></tr>
+              <tr><td>인증 방법</td><td>메일 속 링크를 누르면 앱이 열리며 자동으로 인증된다. 링크가 동작하지 않는 환경을 위한 수동 확인 경로도 함께 제공.</td></tr>
             </tbody>
           </table>
         </div>

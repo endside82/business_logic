@@ -109,7 +109,7 @@ flowchart TD
             <thead><tr><th>표시 여부</th><th>이유</th></tr></thead>
             <tbody>
               <tr><td>✅ 독립 모임 (공개 모집, 승인제 포함)</td><td>공개 범위에 해당</td></tr>
-              <tr><td>✅ 위 모임의 참가 확정 상태</td><td>EventAttendance ATTENDING 기준</td></tr>
+              <tr><td>✅ 위 모임에 참가 확정된 일정</td><td>관심인이 실제로 참석하는 모임</td></tr>
               <tr><td>❌ 클럽 내부 행사</td><td>클럽 멤버 전용</td></tr>
               <tr><td>❌ 비공개(초대장) 모임</td><td>공개 범위 외</td></tr>
               <tr><td>❌ 상대방이 캘린더 비공개 설정 시</td><td>프리미엄 프라이버시 설정</td></tr>
@@ -122,25 +122,23 @@ flowchart TD
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout">
-          <span class="label">관심인 알림 딥링크 — 이벤트 상세로 이동</span>
-          <p>관심인이 새 모임을 열면 알림이 발송되고, 알림을 탭하면 해당 모임 상세 화면으로 이동한다.
-            <code>notification_router.dart</code>에 <code>FAVORITE_PERSON_NEW_EVENT</code> 케이스가
-            이벤트 상세로 배선되어 있다. Flutter <code>NotificationType</code> enum에 해당 값이 미등재되어
-            있어 타입 안전성은 없으나 딥링크는 정상 동작한다.</p>
+          <span class="label">관심인이 새 모임을 열면 가는 알림은 모임 상세로 이동한다</span>
+          <p>관심인이 새 모임을 열면 알림이 발송되고, 알림을 탭하면 해당 모임 상세 화면으로 바로 이동한다.
+            관심인의 새 모임이 실제 모임 유입으로 이어지는 핵심 경로다.</p>
         </div>
         <div class="callout">
-          <span class="label">한도 설정은 코드 배포 없이 변경 가능</span>
-          <p>무료 3명 / 프리미엄 10명 한도는 서버 설정값(`application.yml`)으로 관리된다.
-            서비스 전략에 따라 한도를 조정할 때 코드 배포 없이 서버 설정만 변경하면 된다.</p>
+          <span class="label">한도 수치는 운영 설정으로 관리</span>
+          <p>무료 3명 / 프리미엄 10명 한도는 운영 설정값으로 관리되어,
+            서비스 전략에 따라 조정할 수 있다.</p>
         </div>
       </section>
 
       <section>
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
-          <a class="card" href="F19-01.html"><div class="eyebrow">F19-01</div><h3>등록·해제·한도</h3><p>관심인을 추가하고 관리하는 시작점.</p></a>
-          <a class="card" href="F19-02.html"><div class="eyebrow">F19-02</div><h3>캘린더 뷰·알림</h3><p>등록한 관심인의 일정이 보이는 곳.</p></a>
-          <a class="card" href="F19-03.html"><div class="eyebrow">F19-03</div><h3>프라이버시 설정</h3><p>내가 보이는 정보를 제어한다.</p></a>
+          <a class="card" href="../features/F19-01.html"><div class="eyebrow">F19-01</div><h3>등록·해제·한도</h3><p>관심인을 추가하고 관리하는 시작점.</p></a>
+          <a class="card" href="../features/F19-02.html"><div class="eyebrow">F19-02</div><h3>캘린더 뷰·알림</h3><p>등록한 관심인의 일정이 보이는 곳.</p></a>
+          <a class="card" href="../features/F19-03.html"><div class="eyebrow">F19-03</div><h3>프라이버시 설정</h3><p>내가 보이는 정보를 제어한다.</p></a>
           <a class="card" href="../domains/06-payment.html"><div class="eyebrow">연관 도메인</div><h3>06 결제·지갑</h3><p>프리미엄 구독 관리.</p></a>
           <a class="card" href="../domains/10-calendar.html"><div class="eyebrow">연관 도메인</div><h3>10 캘린더</h3><p>관심인 일정이 오버레이되는 화면.</p></a>
         </div>

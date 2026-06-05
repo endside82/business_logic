@@ -28,7 +28,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">점수 범위</div><div class="value">0~100</div><div class="hint">신규 사용자는 50에서 시작</div></div>
-          <div class="metric"><div class="label">등급</div><div class="value">5단계</div><div class="hint">서버 단일출처: 40·60·75·90 임계, nextGradeScore 제공</div></div>
+          <div class="metric"><div class="label">등급</div><div class="value">5단계</div><div class="hint">서버 단일출처: 40·60·75·90 도달선, 다음 등급까지 남은 점수 제공</div></div>
           <div class="metric"><div class="label">변동 이력 적재</div><div class="value">1점 이상</div><div class="hint">미세 변동은 이력에서 제외</div></div>
           <div class="metric"><div class="label">기간 셀렉터</div><div class="value">7·30·90일</div><div class="hint">서버는 1~365일 받지만 화면은 3개만 노출</div></div>
         </div>
@@ -115,9 +115,9 @@
 
         <div class="callout" style="margin-top:1rem">
           <span class="label">2026-06-04 해소 — 클라이언트 임계 서버 단일출처로 전환</span>
-          <p>이전에는 화면이 "다음 등급까지 N점"을 표시할 때 PLATINUM 80점 · DIAMOND 미노출로 하드코딩되어 있었다.
-            커밋 b0dc370(2026-06-04)에서 서버가 제공하는 <code>TrustScoreVo.nextGradeScore</code> 값을 직접 소비하도록 전환했다.
-            이제 서버 임계(BRONZE &lt;40 / SILVER 40+ / GOLD 60+ / PLATINUM 75+ / DIAMOND 90+)가 화면 표기에도 그대로 반영된다.</p>
+          <p>이전에는 화면이 "다음 등급까지 N점"을 표시할 때 PLATINUM 도달선을 80점으로 잘못 잡고 DIAMOND를 표시하지 않았다.
+            2026-06-04에 서버가 내려주는 "다음 등급까지 남은 점수" 값을 그대로 쓰도록 전환했다.
+            이제 서버 도달선(BRONZE 40 미만 / SILVER 40+ / GOLD 60+ / PLATINUM 75+ / DIAMOND 90+)이 화면 표기에도 그대로 반영된다.</p>
         </div>
       </section>
 
@@ -219,7 +219,7 @@ flowchart LR
               <tr>
                 <td><strong>"다음 등급까지 N점"</strong></td>
                 <td>배지 아래 한 줄 안내. DIAMOND(최고 등급)에서는 노출되지 않는다.</td>
-                <td>다음 단계로 갈 동기를 만든다 — "조금만 더 활동하면" 신호. 2026-06-04 기준 서버가 제공하는 <code>nextGradeScore</code> 값을 직접 사용하여 임계 불일치가 해소됐다.</td>
+                <td>다음 단계로 갈 동기를 만든다 — "조금만 더 활동하면" 신호. 2026-06-04 기준 서버가 내려주는 "다음 등급까지 남은 점수"를 그대로 사용하여 도달선 불일치가 해소됐다.</td>
               </tr>
               <tr>
                 <td><strong>점수 구성 카드 리스트</strong></td>
@@ -253,7 +253,7 @@ flowchart LR
             <li><strong>패널티 평균과 최댓값.</strong>
               누적 패널티가 한 사용자에게 빠르게 쌓이는 패턴이 관찰되면 그 사용자의 다음 활동(이벤트 호스팅·매칭 노출)을 운영 측이 미리 통제할 결정 시점.</li>
             <li><strong>변동 이력 적재 비율.</strong>
-              호출당 이력 INSERT 비율이 너무 낮으면 1점 임계가 너무 높다는 신호, 너무 높으면 임계를 더 올릴 수 있다.</li>
+              점수 재계산 대비 이력으로 남는 비율이 너무 낮으면 1점 기준이 너무 높다는 신호, 너무 높으면 기준을 더 올릴 수 있다.</li>
             <li><strong>본인 화면 진입과 추가 활동 사이의 상관.</strong>
               점수 화면이 사용자의 추가 인증·참석을 유도하는지 측정 — 화면이 정말 동기 부여로 작동하는지의 핵심 신호.</li>
           </ul>
@@ -267,9 +267,9 @@ flowchart LR
           <ul>
             <li><strong>점수 산정식 한 줄이 추천·매칭·검색의 노출 가중치를 동시에 결정한다.</strong>
               식의 어느 한 갈래가 잘못 계산되면 사용자가 보는 모든 노출 결과가 어긋난다 — 본 단위의 모니터링이 가장 우선.</li>
-            <li><strong>등급 임계는 서버 단일출처로 전환됐다(2026-06-04 해소).</strong>
-              화면이 <code>nextGradeScore</code> 서버 값을 직접 소비하므로 임계 불일치가 해소됐다.
-              서버 임계(40·60·75·90)와 화면 표기가 이제 일치한다.</li>
+            <li><strong>등급 도달선은 서버 단일출처로 전환됐다(2026-06-04 해소).</strong>
+              화면이 서버가 내려주는 "다음 등급까지 남은 점수"를 그대로 쓰므로 도달선 불일치가 해소됐다.
+              서버 도달선(40·60·75·90)과 화면 표기가 이제 일치한다.</li>
             <li><strong>본인 한정 변동 이력 정책이 흔들리면 사생활이 노출된다.</strong>
               점수 변동 사유에는 운영자 결론(신고 승인) 같은 민감 정보가 섞일 수 있어 다른 사용자가 보면 안 된다.
               본인 외 노출 가드는 어떤 회귀에서도 풀려서는 안 된다.</li>

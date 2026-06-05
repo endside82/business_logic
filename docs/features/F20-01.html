@@ -29,19 +29,19 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">서버 endpoint</div><div class="value">4</div><div class="hint">생성·목록·상세·메시지 추가</div></div>
+          <div class="metric"><div class="label">문의 단계</div><div class="value">4</div><div class="hint">작성·내 목록·상세·추가 답장</div></div>
           <div class="metric"><div class="label">카테고리</div><div class="value">6</div><div class="hint">계정·결제·이벤트·클럽·신고·기타</div></div>
-          <div class="metric"><div class="label">소스 컨텍스트</div><div class="value">4</div><div class="hint">NONE·EVENT·CLUB·SETTLEMENT</div></div>
-          <div class="metric"><div class="label">Flutter 구현</div><div class="value">미구현</div><div class="hint">서버만 완성</div></div>
+          <div class="metric"><div class="label">연결 대상</div><div class="value">4</div><div class="hint">일반·이벤트·클럽·정산</div></div>
+          <div class="metric"><div class="label">앱 화면</div><div class="value">미구현</div><div class="hint">서버만 준비됨</div></div>
         </div>
 
         <div class="callout warn">
-          <span class="label">현재 상태 — 서버 완성, 앱 미구현</span>
-          <p>서버 4개 endpoint가 완전히 구현됐고 소유권 검증 로직도 동작한다.
-            그러나 Flutter 앱에 <code>InquiryApi</code>, 모델, 화면, 진입점이 없어
-            현재 사용자는 앱으로 1:1 문의를 접수할 수 없다.
-            운영 이슈(F20-02)는 Flutter 구현이 완료돼 있으므로,
-            결제·환불·정산 이슈라면 운영 이슈 채널을 먼저 사용한다.</p>
+          <span class="label">현재 상태 — 서버 준비됨, 앱 화면 없음</span>
+          <p>서버 쪽 접수·조회·답장 처리와 본인 참여 확인은 모두 동작한다.
+            그러나 앱에 1:1 문의 화면과 진입점이 아직 만들어지지 않아
+            현재 사용자는 앱으로 1:1 문의를 접수할 수 없다 — 서버 준비만 끝난 상태다.
+            운영 이슈(F20-02)는 앱 화면이 완성돼 있으므로,
+            결제·환불·정산 건이라면 운영 이슈 채널을 먼저 사용한다.</p>
         </div>
       </section>
 
@@ -53,29 +53,30 @@
             <div class="eyebrow">일반 문의</div>
             <h3>"비밀번호를 바꾸려는데 이메일이 안 와요"</h3>
             <p>카테고리 "계정"을 고르고 제목·내용을 작성해 접수한다.
-              소스 컨텍스트 없음(NONE)이라 소유권 검증 없이 바로 관리자 큐에 들어간다.
+              특정 모임이나 거래에 걸린 문의가 아니므로 별도 확인 없이 바로 관리자 대기열에 들어간다.
               관리자가 답변하면 상태가 "답변 완료"로 바뀐다.
               사용자가 추가 질문을 보내면 "접수됨"으로 되돌아간다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 관리자가 답변까지의 이력 전체를
-              한 스레드에서 볼 수 있다. 사용자도 진행 상태를 문의 목록에서 확인한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 관리자가 답변까지의 대화 이력 전체를
+              한 자리에서 볼 수 있다. 사용자도 진행 상태를 문의 목록에서 확인한다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">컨텍스트 연결 문의</div>
+            <div class="eyebrow">모임 연결 문의</div>
             <h3>"이 이벤트 참가비 영수증이 잘못됐어요"</h3>
-            <p>카테고리 "이벤트", sourceType=EVENT, sourceId=이벤트 ID로 접수한다.
-              서버가 사용자가 그 이벤트의 참가자(APPROVED 이상)임을 확인하고 문의를 만든다.
-              관련 이벤트 ID가 문의에 기록돼 관리자가 배경을 빠르게 파악할 수 있다.</p>
-            <p><strong>v1 한계</strong> — 호스트가 직접 답변하는 경로는 admin 콘솔에 아직 없다.
+            <p>카테고리 "이벤트"를 고르고 해당 이벤트를 지정해 접수한다.
+              내가 실제로 그 이벤트의 확정 참가자임을 확인한 뒤 문의가 만들어진다 — 참여하지 않은
+              남의 모임을 끌어와 문의하는 것은 차단된다.
+              연결된 이벤트가 문의에 기록돼 관리자가 배경을 빠르게 파악할 수 있다.</p>
+            <p><strong>현재 한계</strong> — 호스트가 직접 답변하는 경로는 아직 동작하지 않는다.
               관리자가 중간에서 처리한다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">정산 컨텍스트 문의</div>
+            <div class="eyebrow">정산 연결 문의</div>
             <h3>"정산 금액이 제가 계산한 것과 달라요 (호스트)"</h3>
-            <p>sourceType=SETTLEMENT, sourceId=정산 ID로 접수한다.
-              서버가 그 정산의 hostUserId가 문의자와 같은지 확인한다.
-              정산 호스트만 이 소스 타입으로 문의를 넣을 수 있다.</p>
+            <p>해당 정산을 지정해 접수한다.
+              그 정산의 호스트가 문의자 본인인지 확인한다.
+              정산 호스트만 정산에 연결한 문의를 넣을 수 있다.</p>
           </article>
         </div>
       </section>
@@ -85,33 +86,34 @@
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> OPEN : 문의 접수 (POST /inquiries)
-    OPEN --> ANSWERED : 관리자 답변
-    ANSWERED --> OPEN : 사용자 추가 메시지
-    OPEN --> CLOSED : 관리자 종결
-    ANSWERED --> CLOSED : 관리자 종결
-    CLOSED --> [*]
+    [*] --> 접수됨 : 문의 접수
+    접수됨 --> 답변완료 : 관리자 답변
+    답변완료 --> 접수됨 : 사용자 추가 메시지
+    접수됨 --> 종결 : 관리자 종결
+    답변완료 --> 종결 : 관리자 종결
+    종결 --> [*]
           </div>
         </div>
       </section>
 
       <section>
-        <h2>소스 컨텍스트별 소유권 검증</h2>
+        <h2>연결 대상별 본인 참여 확인</h2>
+        <p class="subtitle">내가 실제로 참여·거래한 건에만 문의를 걸 수 있다 — 남의 모임이나 남의 정산을 끌어와 문의하는 것은 차단된다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>sourceType</th><th>소유권 조건</th><th>sourceId</th></tr></thead>
+            <thead><tr><th>연결 대상</th><th>접수할 수 있는 사람</th></tr></thead>
             <tbody>
-              <tr><td>NONE</td><td>없음 — 누구나 접수 가능</td><td>불필요</td></tr>
-              <tr><td>EVENT</td><td>이벤트 호스트, 공동호스트, 또는 APPROVED/APPROVED_PENDING_PAYMENT/CANCEL_PENDING_REFUND 참가자</td><td>event.id</td></tr>
-              <tr><td>CLUB</td><td>클럽 owner 또는 ClubMember</td><td>club.id</td></tr>
-              <tr><td>SETTLEMENT</td><td>settlement.hostUserId == 문의자</td><td>settlement.id</td></tr>
+              <tr><td>일반 (대상 없음)</td><td>누구나 접수 가능</td></tr>
+              <tr><td>이벤트</td><td>이벤트 호스트, 공동호스트, 또는 그 이벤트의 확정·결제 대기·취소 환불 대기 참가자</td></tr>
+              <tr><td>클럽</td><td>클럽 운영자 또는 클럽 멤버</td></tr>
+              <tr><td>정산</td><td>그 정산의 호스트 본인</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout">
-          <span class="label">검증 실패 시</span>
-          <p>소유권이 없으면 <strong>403 오류</strong>가 반환된다. sourceType이 NONE/null이 아닌데
-            sourceId를 빠뜨리면 <strong>400 오류</strong>가 반환된다.</p>
+          <span class="label">확인에 걸리면</span>
+          <p>참여하지 않은 대상이면 <strong>접수가 거부</strong>된다. 대상을 지정하기로 한 문의인데
+            어떤 건인지 빠뜨리면 역시 <strong>접수되지 않는다</strong>.</p>
         </div>
       </section>
 
@@ -119,23 +121,23 @@ stateDiagram-v2
         <h2>주요 규칙</h2>
         <div class="cards">
           <article class="card">
-            <div class="eyebrow">스레드 닫힌 뒤 추가 불가</div>
-            <h3>CLOSED 상태에서 메시지 추가 시도</h3>
+            <div class="eyebrow">종결 뒤 추가 불가</div>
+            <h3>종결된 문의에 메시지 추가 시도</h3>
             <p>관리자가 문의를 종결 처리하면 사용자는 더 이상 메시지를 추가할 수 없다.
-              종결된 문의에 추가를 시도하면 <strong>400 오류</strong>가 반환된다.</p>
+              종결된 문의에 추가를 시도하면 <strong>막힌다</strong>.</p>
           </article>
           <article class="card">
             <div class="eyebrow">내 문의만 볼 수 있다</div>
             <h3>타인 문의 접근 차단</h3>
-            <p>문의 상세 조회는 작성자 본인만 가능하다. 다른 사람의 문의 ID를 직접 입력해
-              접근하면 <strong>403 오류</strong>가 반환된다.</p>
+            <p>문의 상세 조회는 작성자 본인만 가능하다. 다른 사람의 문의를 직접 열어
+              보려 하면 <strong>접근이 차단된다</strong>.</p>
           </article>
           <article class="card">
             <div class="eyebrow">사용자 추가 메시지 → 재접수</div>
-            <h3>ANSWERED 상태에서 사용자 답변</h3>
-            <p>관리자가 답변(ANSWERED)한 뒤 사용자가 추가 질문을 보내면
-              문의 상태가 자동으로 OPEN으로 되돌아간다.
-              관리자가 다시 답변 대기 큐에 들어간다.</p>
+            <h3>답변 완료 상태에서 사용자가 다시 질문</h3>
+            <p>관리자가 답변을 마친 뒤 사용자가 추가 질문을 보내면
+              문의 상태가 자동으로 "접수됨"으로 되돌아가
+              다시 답변 대기열에 들어간다.</p>
           </article>
         </div>
       </section>
@@ -143,11 +145,11 @@ stateDiagram-v2
       <section>
         <h2>알려진 격차</h2>
         <div class="callout danger">
-          <span class="label">Flutter 앱 미구현</span>
+          <span class="label">앱 화면 미구현</span>
           <ul>
-            <li>InquiryApi, 모델, Repository, Provider, 화면 모두 없다. 현재 사용자는 앱으로 이 기능을 쓸 수 없다.</li>
-            <li>호스트 답변 루프(EVENT/CLUB sourceType)가 admin 콘솔에 미구현이다. host_response_at 컬럼은 준비돼 있다.</li>
-            <li>관리자 답변 시 사용자에게 푸시 알림이 가는지 확인이 필요하다 (SUPPORT_ISSUE_UPDATED 알림 코드는 정의됨).</li>
+            <li>1:1 문의를 위한 앱 화면과 진입점이 아직 만들어지지 않아, 현재 사용자는 앱으로 이 기능을 쓸 수 없다. 서버 준비만 끝난 상태다.</li>
+            <li>이벤트·클럽에 연결된 문의에서 호스트가 직접 답변하는 기능이 아직 동작하지 않는다. 답변 이력을 담을 자리는 준비돼 있다.</li>
+            <li>관리자가 답변할 때 사용자에게 푸시 알림이 실제로 전달되는지 확인이 필요하다.</li>
           </ul>
         </div>
       </section>

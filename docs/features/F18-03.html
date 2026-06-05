@@ -17,28 +17,29 @@
           <a href="../domains/18-dispute.html">18 분쟁 해결</a><span>›</span>
           F18-03 분쟁 이의제기
         </div>
-        <h1>F18-03. 분쟁 이의제기 (DisputeAppeal)</h1>
+        <h1>F18-03. 분쟁 이의제기</h1>
         <p class="lede">
           통합 케이스 조회에서 확인한 케이스 결정에 동의하지 않을 때 <strong>공식 이의를 제기</strong>하는 기능.
-          이의는 케이스당 본인 1건으로 제한되며, PENDING 상태에서만 본인이 철회할 수 있다.
-          승인·기각은 admin API가 처리한다. 노쇼(EVENT_NO_SHOW) 케이스에 한해서만 이의제기 시 원본 도메인 상태가 동기화된다 — EVENT_NO_SHOW 외 prefix는 이의 기록(audit)만 남는다. 강퇴/차단(CLUB_MEMBERSHIP_ACTION) prefix는 제출 전 본인 가시성 검증이 이루어진다.
+          이의는 한 케이스당 본인 1건으로 제한되며, 검토가 시작되기 전(대기 상태)까지만 본인이 철회할 수 있다.
+          이의를 받아들일지 기각할지는 운영팀이 결정한다. 노쇼 케이스에 한해서만 이의를 제출하는 순간 원본 노쇼 기록이 "이의 제기됨" 상태로 함께 바뀐다 —
+          나머지 종류의 케이스는 이의 사실만 기록으로 남고 원본은 그대로다. 강퇴·차단 케이스는 제출 전에 "이의를 낸 사람이 실제 처분 대상자 본인인지"를 먼저 확인한다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">케이스당 이의</div><div class="value">1건</div><div class="hint">본인 UNIQUE 보장</div></div>
-          <div class="metric"><div class="label">이의 상태</div><div class="value">4값</div><div class="hint">PENDING/UPHELD/REJECTED/CLOSED</div></div>
-          <div class="metric"><div class="label">원본 동기화</div><div class="value">노쇼(EVENT_NO_SHOW)만</div><div class="hint">EVENT_NO_SHOW 외 prefix는 audit-only</div></div>
+          <div class="metric"><div class="label">케이스당 이의</div><div class="value">1건</div><div class="hint">본인 1건만 접수</div></div>
+          <div class="metric"><div class="label">이의 상태</div><div class="value">4가지</div><div class="hint">대기·인용·기각·철회</div></div>
+          <div class="metric"><div class="label">원본 자동 반영</div><div class="value">노쇼만</div><div class="hint">나머지는 기록만 남음</div></div>
           <div class="metric"><div class="label">사유 글자 수</div><div class="value">20~1000자</div><div class="hint">필수 입력</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 결정을 뒤집는 게 아니라 "다시 봐달라"는 요청</span>
-          <p>이의제기는 케이스 결과에 대한 재검토 요청이다. 사용자가 이의를 제기해도 원천 케이스의 상태는
-            즉시 바뀌지 않는다. admin이 이의를 인용(UPHELD)하거나 기각(REJECTED)하고 필요한 경우
-            원천 케이스 상태를 별도로 처리한다. 유일한 예외가 노쇼 이의인데, 이 경우에 한해서만
-            이의 제출 시 <code>EventNoShow.status</code>가 APPEALED로 자동 전환된다.</p>
+          <p>이의제기는 케이스 결과에 대한 재검토 요청이다. 사용자가 이의를 제기해도 원래 케이스의 상태는
+            즉시 바뀌지 않는다. 운영팀이 이의를 받아들이거나 기각하고, 필요한 경우
+            원래 케이스 상태를 별도로 처리한다. 유일한 예외가 노쇼 이의인데, 이 경우에 한해서만
+            이의를 제출하는 순간 원본 노쇼 기록이 "이의 제기됨" 상태로 함께 바뀐다.</p>
         </div>
       </section>
 
@@ -47,28 +48,28 @@
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> PENDING: 이의 제출\n(케이스당 본인 1건)
-    PENDING --> CLOSED: 본인 철회\n(공개 API)
-    PENDING --> UPHELD: admin 인용\n(admin API 전용)
-    PENDING --> REJECTED: admin 기각\n(admin API 전용)
-    UPHELD --> [*]: 종결 (재전이 불가)
-    REJECTED --> [*]: 종결 (재전이 불가)
-    CLOSED --> [*]: 종결 (재전이 불가)
+    [*] --> 대기: 이의 제출\n(케이스당 본인 1건)
+    대기 --> 철회: 본인 철회
+    대기 --> 인용: 운영팀 인용
+    대기 --> 기각: 운영팀 기각
+    인용 --> [*]: 종결 (되돌릴 수 없음)
+    기각 --> [*]: 종결 (되돌릴 수 없음)
+    철회 --> [*]: 종결 (되돌릴 수 없음)
 
-    note right of PENDING
-      canWithdraw = true
-      철회 버튼 표시
+    note right of 대기
+      이 단계에서만
+      철회 버튼이 보인다
     end note
-    note right of UPHELD
-      EVENT_NO_SHOW라면
-      원본 노쇼 상태도 변경됨
+    note right of 인용
+      노쇼 케이스라면
+      원본 노쇼 기록도 함께 바뀐다
     end note
           </div>
         </div>
         <div class="callout warn">
-          <span class="label">UPHELD/REJECTED/CLOSED는 모두 종결 — 재전이 불가</span>
-          <p>이의가 인용(UPHELD)됐거나 기각(REJECTED)됐거나 본인이 철회(CLOSED)했다면 더 이상 상태가 바뀌지 않는다.
-            동일 케이스에 이의를 다시 제기하는 것도 불가능하다. 재심이 필요하면 직접 분쟁 접수(F18-02)로
+          <span class="label">인용·기각·철회는 모두 종결 — 되돌릴 수 없음</span>
+          <p>이의가 인용됐거나 기각됐거나 본인이 철회했다면 더 이상 상태가 바뀌지 않는다.
+            같은 케이스에 이의를 다시 제기하는 것도 불가능하다. 재심이 필요하면 직접 분쟁 접수(F18-02)로
             새 케이스를 만들어야 한다.</p>
         </div>
       </section>
@@ -80,10 +81,10 @@ stateDiagram-v2
           <article class="card">
             <div class="eyebrow">기본 흐름</div>
             <h3>노쇼로 기록됐는데 실제로는 참석했다</h3>
-            <p>케이스 상세 화면에서 "이의제기" 버튼을 탭한다. 사유 코드(FACT_INCORRECT)를 선택하고
+            <p>케이스 상세 화면에서 "이의제기" 버튼을 탭한다. 사유 "사실관계가 다르다"를 선택하고
               "현장에 있었지만 체크인이 안 됐습니다"를 20자 이상 입력한 뒤 제출한다.
-              이의가 접수되면 케이스 상세에 PENDING 배지가 표시된다.
-              EVENT_NO_SHOW 케이스이므로 노쇼 원본 기록도 APPEALED 상태로 전환된다.</p>
+              이의가 접수되면 케이스 상세에 "대기" 배지가 표시된다.
+              노쇼 케이스이므로 원본 노쇼 기록도 "이의 제기됨" 상태로 함께 바뀐다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 참가자 입장에서 일방적 노쇼 기록을 그냥 받아들이지
               않아도 된다는 표시가 서비스 내에서 가능해진다.</p>
           </article>
@@ -91,8 +92,8 @@ stateDiagram-v2
           <article class="card">
             <div class="eyebrow">기타 원천</div>
             <h3>클럽 경고 처분이 부당하다고 이의</h3>
-            <p>WARNING_APPEAL 케이스에 대해 이의를 제기할 수 있다. 이의 기록이 dispute_appeal에 남지만
-              원본 WarningAppeal의 상태는 변하지 않는다. 이 케이스의 최종 처리는 admin이 담당한다.</p>
+            <p>클럽 경고 이의 케이스에 대해 이의를 제기할 수 있다. 이의를 냈다는 기록은 남지만
+              원본 경고 이의의 상태는 변하지 않는다. 이 케이스의 최종 처리는 운영팀이 담당한다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 모든 케이스에 이의 경로가 열려 있지만,
               노쇼를 제외한 원천 케이스는 즉각 변화가 없다는 것을 사용자에게 알려야 한다.</p>
           </article>
@@ -100,55 +101,55 @@ stateDiagram-v2
           <article class="card">
             <div class="eyebrow">이의 철회</div>
             <h3>제출 후 마음이 바뀌었다</h3>
-            <p>이의가 PENDING 상태인 동안은 철회할 수 있다. 케이스 상세에서 "철회" 버튼을 누르면
-              CLOSED로 전환된다. UPHELD 또는 REJECTED 이후에는 철회 버튼이 사라진다.</p>
+            <p>이의가 아직 검토 대기 상태인 동안은 철회할 수 있다. 케이스 상세에서 "철회" 버튼을 누르면
+              철회 상태로 전환된다. 운영팀이 인용하거나 기각한 뒤에는 철회 버튼이 사라진다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">중복 차단</div>
             <h3>이미 이의를 낸 케이스에 다시 시도</h3>
-            <p>동일 케이스에 이미 이의를 제출한 상태에서 다시 제출하려 하면 서버가 409를 반환한다.
-              PENDING이든 UPHELD/REJECTED든 기존 이의가 있으면 재접수가 차단된다.</p>
+            <p>같은 케이스에 이미 이의를 제출한 상태에서 다시 제출하려 하면 "이미 이의가 접수되어 있습니다"로 막힌다.
+              검토 대기든 인용·기각이 끝난 뒤든, 기존 이의가 있으면 재접수가 차단된다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">결과 확인</div>
-            <h3>admin이 이의를 인용하거나 기각했다</h3>
-            <p>admin 처리 후 케이스 상세에서 UPHELD 또는 REJECTED 배지로 확인할 수 있다.
-              인용(UPHELD)됐다면 별도 알림 또는 케이스 목록 재조회로 결과를 인지한다.
-              결과에 따른 원천 케이스 처리(환불·제재 조정 등)는 admin이 별도로 수행한다.</p>
+            <h3>운영팀이 이의를 인용하거나 기각했다</h3>
+            <p>운영팀 처리 후 케이스 상세에서 "인용" 또는 "기각" 배지로 확인할 수 있다.
+              인용됐다면 별도 알림 또는 케이스 목록 재조회로 결과를 인지한다.
+              결과에 따른 원래 케이스 처리(환불·제재 조정 등)는 운영팀이 별도로 수행한다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>이의 사유 코드</h2>
+        <h2>이의 사유 5가지</h2>
         <div class="callout">
-          <span class="label">클라이언트 드롭다운 5값 / 서버는 임의 문자열 허용</span>
-          <p>앱 이의제기 화면은 아래 5가지 코드를 드롭다운으로 제공한다. 서버 <code>AppealCreateParam.reasonCode</code>는 <code>@NotBlank @Size(max=40)</code>으로만 검증하며 enum whitelist가 없으므로, 40자 이내 임의 문자열을 허용한다.</p>
+          <span class="label">사용자가 고르는 5가지 사유</span>
+          <p>이의제기 화면은 아래 5가지 사유를 드롭다운으로 제공하고, 그중 하나를 고른 뒤 20~1000자의 설명을 함께 적어 제출하게 한다.</p>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>사유 코드 (클라 드롭다운)</th><th>언제 쓰나</th></tr></thead>
+            <thead><tr><th>사유</th><th>언제 쓰나</th></tr></thead>
             <tbody>
-              <tr><td><strong>FACT_INCORRECT</strong></td><td>결정의 기반이 된 사실이 틀렸다</td></tr>
-              <tr><td><strong>EVIDENCE_MISSING</strong></td><td>판단 시 중요한 증빙이 누락됐다</td></tr>
-              <tr><td><strong>PROCEDURE_UNFAIR</strong></td><td>처리 절차가 공정하지 않았다</td></tr>
-              <tr><td><strong>CIRCUMSTANCE_OVERRIDE</strong></td><td>특수한 사정이 있어 일반 원칙을 그대로 적용할 수 없다</td></tr>
-              <tr><td><strong>OTHER</strong></td><td>위 분류에 해당하지 않는 사유</td></tr>
+              <tr><td><strong>사실관계가 다르다</strong></td><td>결정의 기반이 된 사실이 틀렸다</td></tr>
+              <tr><td><strong>증빙이 반영되지 않았다</strong></td><td>판단 시 중요한 증빙이 누락됐다</td></tr>
+              <tr><td><strong>절차가 불공정했다</strong></td><td>처리 절차가 공정하지 않았다</td></tr>
+              <tr><td><strong>사정을 참작해 달라</strong></td><td>특수한 사정이 있어 일반 원칙을 그대로 적용할 수 없다</td></tr>
+              <tr><td><strong>기타</strong></td><td>위 분류에 해당하지 않는 사유</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>WarningAppeal(F15-03)과의 경계</h2>
+        <h2>클럽 경고 이의(F15-03)와의 경계</h2>
         <div class="callout">
           <span class="label">이름이 비슷하지만 완전히 다른 두 이의 시스템</span>
-          <p>클럽 경고·징계에 대한 이의는 <strong>F15-03 WarningAppeal</strong>이 별도 경로(<code>POST /api/v1/clubs/{clubId}/warnings/appeals</code>)로 처리한다.
-            이 기능(F18-03)의 DisputeAppeal과 F15-03의 WarningAppeal은 서버 enum, endpoint, 테이블, 상태값이 모두 다르다.
-            F18-01 통합 조회에서는 WarningAppeal도 <code>WARNING_APPEAL:{id}</code>로 보이지만,
-            F18-03 이의제기를 통해 이 케이스에 이의를 낼 경우 원본 WarningAppeal 상태는 변하지 않는다.</p>
+          <p>클럽 경고·징계에 대한 이의는 <strong>F15-03 클럽 경고 이의</strong>가 별도 경로로 처리한다.
+            이 기능(F18-03)의 분쟁 이의와 F15-03의 클럽 경고 이의는 처리 경로·상태 단계가 모두 다른 별개의 시스템이다.
+            F18-01 통합 조회에서는 클럽 경고 이의도 하나의 케이스로 함께 보이지만,
+            F18-03 이의제기를 통해 이 케이스에 이의를 낼 경우 원본 클럽 경고 이의의 상태는 변하지 않는다.</p>
         </div>
       </section>
 
@@ -157,10 +158,10 @@ stateDiagram-v2
         <div class="callout warn">
           <span class="label">운영 주의사항</span>
           <ul>
-            <li><strong>EVENT_NO_SHOW 외 prefix 케이스는 이의 제출 후 원본이 바뀌지 않는다.</strong> audit 기록만 생기며, 실제 원천 케이스를 처리하려면 admin이 별도로 각 원천 도메인에서 조치해야 한다. CLUB_MEMBERSHIP_ACTION prefix는 제출 전 본인(영향받은 멤버) 가시성을 검증한다.</li>
-            <li><strong>이의 기한 정책이 v1에 없다.</strong> 케이스 종결 후 수개월이 지나도 이의 제출이 이론적으로 가능하다. 원천 케이스가 종결됐더라도 이의를 막는 기한 제약이 없다.</li>
-            <li><strong>이의 승인·기각 공개 endpoint가 없다.</strong> 호스트용 appeal 처리가 앱에서 가능해 보이도록 버튼이 있지만 실제 서버 endpoint가 미구현이다. admin 화면을 통해서만 처리 가능하다.</li>
-            <li><strong>노쇼 sync는 best-effort다.</strong> EventNoShowService 호출이 실패해도 이의 기록 자체는 남는다. 노쇼 상태가 APPEALED로 바뀌지 않았더라도 이의는 접수된 것이다.</li>
+            <li><strong>노쇼 외 케이스는 이의 제출 후 원본이 바뀌지 않는다.</strong> 이의를 냈다는 기록만 생기며, 실제 원래 케이스를 처리하려면 운영팀이 별도로 각 영역에서 조치해야 한다. 강퇴·차단 케이스는 제출 전에 이의를 낸 사람이 처분 대상자 본인인지 먼저 확인한다.</li>
+            <li><strong>이의를 낼 수 있는 기한이 아직 정해져 있지 않다.</strong> 케이스가 종결된 지 수개월이 지나도 이의 제출이 이론적으로 가능하다. 종결된 케이스에도 이의를 막는 기한 제약이 없다.</li>
+            <li><strong>이의를 받아들이거나 기각하는 버튼이 아직 동작하지 않는다.</strong> 호스트 앱에 처리 버튼이 보이지만 실제로는 동작하지 않으며, 현재는 운영팀만 처리할 수 있다.</li>
+            <li><strong>노쇼 원본 반영은 실패해도 이의는 접수된다.</strong> 원본 노쇼 기록을 "이의 제기됨"으로 바꾸는 처리가 실패하더라도 이의 자체는 정상 접수된다. 노쇼 화면 상태가 아직 안 바뀌었더라도 이의는 들어간 것이다.</li>
           </ul>
         </div>
       </section>
@@ -170,9 +171,10 @@ stateDiagram-v2
         <div class="callout danger">
           <span class="label">현재 알려진 미구현·주의 사항</span>
           <ul>
-            <li><strong>이의 승인·기각 공개 API 없음.</strong> actorPermissions.canApproveAppeal=true인 케이스에서 호스트 앱에 버튼이 있으나 동작하지 않는다. admin API 경로만 존재한다.</li>
-            <li><strong>audit-only 이의의 의미 미안내.</strong> EVENT_NO_SHOW 외 케이스에 이의를 제출해도 원본 케이스 상태가 바뀌지 않는다는 안내가 앱에 없다. 사용자가 이의 제출 후 원본이 바뀌길 기대할 수 있다.</li>
-            <li><strong>이의제기 기한 미구현.</strong> 서버 소스에 v1 미구현으로 명시되어 있다. 노쇼 확정 수개월 후에도 이의가 가능하다.</li>
+            <li><strong>이의를 받아들이거나 기각하는 기능이 아직 동작하지 않는다.</strong> 호스트가 직접 처리할 수 있는 케이스에도 앱에 버튼만 있고 동작하지 않는다 — 현재는 운영팀만 처리할 수 있다.</li>
+            <li><strong>기록만 남는 이의라는 안내가 빠져 있다.</strong> 노쇼 외 케이스에 이의를 제출해도 원본 케이스가 바뀌지 않는다는 안내가 앱에 없다. 사용자가 이의 제출 후 원본이 바뀌길 기대할 수 있다.</li>
+            <li><strong>이의를 낼 수 있는 기한이 아직 정해지지 않았다.</strong> 노쇼가 확정된 지 수개월이 지난 뒤에도 이의가 가능하다.</li>
+            <li><strong>관련 없는 사람이 남의 케이스에 이의를 넣을 수 있다.</strong> 강퇴·차단 케이스만 처분 대상자 본인 확인을 거치고, 나머지 유형은 이의를 낸 사람이 그 케이스의 당사자인지 확인하지 않는다. 같은 사람이 같은 케이스에 두 번 내는 것은 막히지만, 제3자가 임의의 케이스 번호로 이의 기록을 만들 수 있어 운영팀 검토 큐가 오염될 수 있다.</li>
           </ul>
         </div>
       </section>
@@ -182,8 +184,8 @@ stateDiagram-v2
         <div class="hub-grid">
           <a class="card" href="../domains/18-dispute.html"><div class="eyebrow">상위 도메인</div><h3>18 분쟁 해결</h3></a>
           <a class="card" href="F18-01.html"><div class="eyebrow">연계</div><h3>F18-01 통합 케이스 조회</h3><p>이의를 제기하는 케이스가 있는 화면.</p></a>
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">연계 도메인</div><h3>03 이벤트</h3><p>EVENT_NO_SHOW 이의 시 동기화 대상.</p></a>
-          <a class="card" href="../domains/15-warning.html"><div class="eyebrow">연계 도메인</div><h3>15 경고·징계</h3><p>WarningAppeal canonical 소유 도메인.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">연계 도메인</div><h3>03 이벤트</h3><p>노쇼 이의 시 원본이 함께 바뀌는 영역.</p></a>
+          <a class="card" href="../domains/15-warning.html"><div class="eyebrow">연계 도메인</div><h3>15 경고·징계</h3><p>클럽 경고 이의를 소유하는 영역.</p></a>
         </div>
       </section>
 

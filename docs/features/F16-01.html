@@ -27,7 +27,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">핵심 API</div><div class="value">3개</div><div class="hint">메인 / 영수증 / 원장</div></div>
+          <div class="metric"><div class="label">멤버가 보는 화면</div><div class="value">3개</div><div class="hint">메인 / 영수증 / 원장</div></div>
           <div class="metric"><div class="label">권한</div><div class="value">클럽 멤버</div><div class="hint">비멤버 접근 차단</div></div>
           <div class="metric"><div class="label">최근 거래</div><div class="value">5건</div><div class="hint">메인에 노출</div></div>
         </div>
@@ -66,20 +66,20 @@
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>멤버가 할 수 있는 동작</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/me</code></td><td>메인 — 잔액·등급·배지·최근 5건</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/me/receipts/{year}/{month}</code></td><td>월간 영수증</td></tr>
-              <tr><td>GET</td><td><code>/clubs/{clubId}/mileage/me/ledger</code></td><td>원장 (유형·기간·키워드 필터)</td></tr>
+              <tr><td><strong>마일리지 메인 보기</strong></td><td>클럽 멤버</td><td>본인의 잔액·등급·배지와 최근 거래 5건을 한 화면에서 본다.</td></tr>
+              <tr><td><strong>월간 영수증 보기</strong></td><td>클럽 멤버</td><td>특정 연·월을 골라 그 달의 적립·차감·만료를 정산서처럼 묶어 본다.</td></tr>
+              <tr><td><strong>원장 보기</strong></td><td>클럽 멤버</td><td>본인의 전체 거래를 유형·기간·키워드로 필터해 페이지로 본다.</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout warn">
           <span class="label">본인 거래만 보장</span>
-          <p>원장 조회는 클라이언트가 멤버 ID를 보내지 않아도 서버가 로그인 사용자 ID를 강제로 끼워 넣는다.
+          <p>원장은 본인 거래만 보인다. 멤버를 따로 지정하지 않아도 시스템이 로그인한 본인으로 고정하므로
             남의 원장을 볼 수 없다. 잘못된 월(13월 등)은 거절된다.</p>
         </div>
       </section>

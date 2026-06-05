@@ -65,16 +65,16 @@
       </section>
 
       <section>
-        <h2>서버 계약</h2>
+        <h2>운영진이 할 수 있는 동작</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Method</th><th>Path</th><th>사용자 의미</th></tr></thead>
+            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>GET/POST</td><td><code>.../mileage/queue</code>, <code>/queue/{id}</code>, <code>/queue/{id}/process</code></td><td>검토 큐 조회·처리</td></tr>
-              <tr><td>GET</td><td><code>.../mileage/dashboard</code></td><td>운영 대시보드</td></tr>
-              <tr><td>GET</td><td><code>.../mileage/members/{memberId}</code></td><td>멤버 운영 상세</td></tr>
-              <tr><td>GET</td><td><code>.../mileage/members/{memberId}/grade-history</code></td><td>멤버 등급 이력</td></tr>
-              <tr><td>GET</td><td><code>.../mileage/audit-logs</code></td><td>감사 로그</td></tr>
+              <tr><td><strong>검토 큐 처리</strong></td><td>집행 담당</td><td>검토가 필요한 항목을 모아 보고 승인·반려·무시로 처리한다.</td></tr>
+              <tr><td><strong>운영 대시보드 보기</strong></td><td>집행 담당</td><td>클럽의 마일리지 운영 현황을 한 화면에서 본다.</td></tr>
+              <tr><td><strong>멤버 운영 상세 보기</strong></td><td>집행 담당</td><td>한 멤버의 요약·원장·감사·열린 큐를 모아 본다.</td></tr>
+              <tr><td><strong>멤버 등급 이력 보기</strong></td><td>집행 담당</td><td>특정 멤버의 등급 변경 이력을 본다.</td></tr>
+              <tr><td><strong>감사 로그 보기</strong></td><td>집행 담당</td><td>행위자·액션 유형·기간·대상으로 필터해 변경 전/후 기록을 본다.</td></tr>
             </tbody>
           </table>
         </div>

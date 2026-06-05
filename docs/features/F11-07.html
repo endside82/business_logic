@@ -20,19 +20,19 @@
         <h1>F11-07. 호스트 리뷰 모더레이션 (답변 · 임시 숨김)</h1>
         <p class="lede">
           이벤트 호스트가 본인 이벤트에 달린 리뷰에 직접 대응할 수 있는 두 가지 도구다.
-          <strong>답변</strong>은 리뷰 1건에 공개 댓글을 붙이고(1:1, 24시간 이내만 수정 가능),
-          <strong>임시 숨김</strong>은 6가지 사유코드 중 하나를 선택해 리뷰를 일시적으로 가린다.
-          허위 리뷰로 숨기면 운영자 검토 신고가 자동으로 접수된다(F11-04 연동).
+          <strong>답변</strong>은 리뷰 1건에 공개 댓글을 붙이고(리뷰당 1개, 작성 후 24시간 이내만 수정 가능),
+          <strong>임시 숨김</strong>은 6가지 사유 중 하나를 선택해 리뷰를 일시적으로 가린다.
+          허위 리뷰 사유로 숨기면 운영자 검토를 위한 신고가 자동으로 접수된다(F11-04 연동).
           모더레이션 권한은 해당 이벤트의 호스트에게만 있다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">답변</div><div class="value">1:1</div><div class="hint">리뷰 1건당 1개, 24h 수정 윈도우</div></div>
-          <div class="metric"><div class="label">숨김 사유</div><div class="value">6가지</div><div class="hint">HARASSMENT·DEFAMATION·SPAM·OFF_TOPIC·FAKE_REVIEW·OTHER</div></div>
+          <div class="metric"><div class="label">답변</div><div class="value">리뷰당 1개</div><div class="hint">작성 후 24시간 이내만 수정 가능</div></div>
+          <div class="metric"><div class="label">숨김 사유</div><div class="value">6가지</div><div class="hint">욕설·명예훼손·광고·주제 무관·허위 리뷰·기타</div></div>
           <div class="metric"><div class="label">숨김 → 신고</div><div class="value">자동 연동</div><div class="hint">허위 리뷰 사유 선택 시 신고 자동 접수</div></div>
-          <div class="metric"><div class="label">숨김 해제</div><div class="value">언제든</div><div class="hint">unhide로 원상 복구</div></div>
+          <div class="metric"><div class="label">숨김 해제</div><div class="value">언제든</div><div class="hint">원래대로 다시 보이게 복구</div></div>
         </div>
 
         <div class="callout">
@@ -40,7 +40,7 @@
           <p>모임 후기는 다른 사용자의 판단 근거다. 사실과 다른 후기에 호스트가 침묵해야 한다면
             커뮤니티 신뢰는 유지되지 않는다 — 답변 기능이 그 발언권이다.
             동시에 호스트가 부정적인 후기를 마음대로 지워버릴 수 있다면 리뷰 자체가 무력화된다.
-            그래서 <strong>삭제는 없고 임시 숨김만 있다</strong>. 숨김도 사유 코드를 남기고, 운영자가 검토할 수 있는 신고 경로와 연동된다.
+            그래서 <strong>삭제는 없고 임시 숨김만 있다</strong>. 숨김도 사유를 남기고, 운영자가 검토할 수 있는 신고 경로와 연동된다.
             "호스트가 불쾌하다고 숨겼느냐, 진짜 문제 있는 후기를 정리했느냐"를 운영 기록이 추적한다.</p>
         </div>
       </section>
@@ -51,41 +51,41 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["호스트: 더보기 → 답변하기"] --> B["review_reply_sheet<br/>답변 내용 입력"]
-    B --> C["POST /reviews/{id}/reply"]
+    A["호스트: 더보기 → 답변하기"] --> B["답변 입력창<br/>답변 내용 작성"]
+    B --> C["답변 등록 시도"]
     C --> D{"이미 답변 있음?"}
-    D -->|"예"| E["409 REVIEW_REPLY_ALREADY_EXISTS<br/>에러 토스트"]
-    D -->|"없음"| F["ReviewReply 저장<br/>allowEdit=true"]
+    D -->|"예"| E["이미 답변을 단 리뷰<br/>다시 답변 불가 안내"]
+    D -->|"없음"| F["답변 저장<br/>24시간 수정 가능 상태"]
     F --> G["리뷰 카드에 녹색 답변 카드 표시"]
-    G --> H{"24h 이내?"}
-    H -->|"예"| I["더보기 → 답변 수정 가능<br/>PUT /reviews/{id}/reply"]
-    H -->|"이후"| J["allowEdit=false<br/>수정 불가"]
+    G --> H{"24시간 이내?"}
+    H -->|"예"| I["더보기 → 답변 수정 가능"]
+    H -->|"이후"| J["수정 불가"]
           </div>
         </div>
 
         <div class="callout warn">
-          <span class="label">알려진 배선 갭 — 답변 수정 UI 미배선</span>
-          <p>현재 앱에서 이미 답변이 달린 리뷰의 더보기를 누르면 수정 경로 대신 작성 경로(createReply)가 호출된다.
-            서버는 이미 답변이 있으면 <strong>409 REVIEW_REPLY_ALREADY_EXISTS</strong>를 반환한다.
-            호스트가 24시간 이내 답변을 수정하려 할 때 에러가 발생한다.
-            수정(PUT /reply)과 작성(POST /reply)을 분기하는 코드가 화면에 추가되어야 한다.</p>
+          <span class="label">알려진 갭 — 답변 수정 경로 미연결</span>
+          <p>현재 앱에서 이미 답변이 달린 리뷰의 더보기를 누르면 수정이 아니라 새 답변 작성으로 처리된다.
+            이미 답변을 단 리뷰에는 다시 답변할 수 없으므로,
+            호스트가 24시간 이내 답변을 수정하려 할 때 오류 안내가 뜬다.
+            답변이 이미 있는 경우 수정 경로로 보내도록 화면을 손봐야 한다.</p>
         </div>
       </section>
 
       <section>
-        <h2>임시 숨김 — 사유 코드가 있는 가림</h2>
-        <p class="subtitle">숨김은 리뷰를 지우는 게 아니다. 사유 코드를 남기고 가리는 것이다. 운영자가 나중에 그 흔적을 볼 수 있다.</p>
+        <h2>임시 숨김 — 사유를 남기고 가린다</h2>
+        <p class="subtitle">숨김은 리뷰를 지우는 게 아니다. 사유를 남기고 가리는 것이다. 운영자가 나중에 그 흔적을 볼 수 있다.</p>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th style="width:160px">사유 코드</th><th>의미</th><th style="width:30%">특이사항</th></tr></thead>
+            <thead><tr><th style="width:160px">숨김 사유</th><th>의미</th><th style="width:30%">특이사항</th></tr></thead>
             <tbody>
-              <tr><td><code>HARASSMENT</code></td><td>욕설 · 괴롭힘</td><td>—</td></tr>
-              <tr><td><code>DEFAMATION</code></td><td>명예훼손 · 허위 사실 적시</td><td>—</td></tr>
-              <tr><td><code>SPAM</code></td><td>광고 · 스팸</td><td>—</td></tr>
-              <tr><td><code>OFF_TOPIC</code></td><td>모임과 무관한 내용</td><td>—</td></tr>
-              <tr><td><code>FAKE_REVIEW</code></td><td>허위 리뷰</td><td>선택 시 신고 자동 접수(priority=높음). 앱에서 autoEscalate=true로 재초기화(비활성화 아님 — 체크박스로 해제 가능).</td></tr>
-              <tr><td><code>OTHER</code></td><td>기타</td><td>reasonText 직접 입력(호스트 자유 기재)</td></tr>
+              <tr><td>욕설·괴롭힘</td><td>욕설 · 괴롭힘</td><td>—</td></tr>
+              <tr><td>명예훼손</td><td>명예훼손 · 허위 사실 적시</td><td>—</td></tr>
+              <tr><td>광고·스팸</td><td>광고 · 스팸</td><td>—</td></tr>
+              <tr><td>주제 무관</td><td>모임과 무관한 내용</td><td>—</td></tr>
+              <tr><td>허위 리뷰</td><td>허위 리뷰</td><td>선택 시 우선 검토 표시가 붙은 신고가 자동 접수된다. 자동 신고는 기본으로 켜지지만 호스트가 체크박스로 끌 수 있다.</td></tr>
+              <tr><td>기타</td><td>기타</td><td>호스트가 사유를 직접 적어 넣는다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -93,26 +93,26 @@ flowchart LR
         <div class="diagram" style="margin-top:1.5rem">
           <div class="mermaid">
 flowchart LR
-    A["호스트: 임시 숨김 선택"] --> B["review_hide_sheet<br/>사유 코드 선택"]
-    B --> C{"FAKE_REVIEW 선택?"}
-    C -->|"예"| D["autoEscalate=true 초기화<br/>(비활성화 아님 — 체크박스 해제 가능)"]
-    C -->|"아니오"| E["autoEscalate=true (기본값)<br/>사용자가 체크박스로 해제 가능"]
-    D --> F["POST /reviews/{id}/hide"]
+    A["호스트: 임시 숨김 선택"] --> B["숨김 사유 선택"]
+    B --> C{"허위 리뷰 선택?"}
+    C -->|"예"| D["자동 신고 켜짐<br/>(호스트가 체크박스로 끌 수 있음)"]
+    C -->|"아니오"| E["자동 신고 기본 켜짐<br/>(호스트가 체크박스로 끌 수 있음)"]
+    D --> F["임시 숨김 처리"]
     E --> F
-    F --> G["임시 숨김 저장<br/>리뷰 카드: 숨김 배지 + 안내 문구"]
-    F --> H["autoEscalate=true이면<br/>Report PENDING 자동 생성 (F11-04)"]
-    H --> I["운영자 신고 큐에 적재"]
+    F --> G["리뷰 카드: 숨김 배지 + 안내 문구"]
+    F --> H["자동 신고가 켜져 있으면<br/>운영자 검토 신고 자동 접수 (F11-04)"]
+    H --> I["운영자 신고 목록에 적재"]
           </div>
         </div>
 
         <div class="callout warn" style="margin-top:1.5rem">
-          <span class="label">알려진 배선 갭 — autoEscalate 기본값 불일치</span>
-          <p>앱의 <code>_autoEscalate</code> 초기값은 <strong>true</strong>이며, 사용자가 체크박스로 해제할 수 있다.
-            <code>FAKE_REVIEW</code> 선택 시 true로 재초기화되지만 비활성화는 되지 않아 여전히 해제 가능하다.
-            서버의 기본값은 <strong>false</strong>다.
-            사용자가 체크박스를 해제하지 않으면 모든 임시 숨김 요청이 autoEscalate=true로 전송되어 신고를 자동 생성한다.
-            이것이 의도된 운영 정책이라면 문서화하고 서버 기본값을 true로 통일해야 한다.
-            의도하지 않았다면 앱 기본값을 false로 수정해야 한다.</p>
+          <span class="label">알려진 갭 — 자동 신고 기본값이 양쪽에서 다르다</span>
+          <p>앱에서는 어떤 사유로 숨기든 "자동 신고"가 <strong>기본으로 켜진</strong> 상태이며, 호스트가 체크박스를 직접 꺼야만 해제된다.
+            허위 리뷰를 골라도 자동 신고가 켜지지만 끄는 것은 여전히 가능하다.
+            반면 서버 쪽 기본값은 <strong>꺼짐</strong>이다.
+            그 결과 호스트가 체크박스를 의식하지 못하면 허위 리뷰가 아닌 일반 숨김까지도 운영자 신고가 자동으로 접수된다.
+            이것이 의도한 운영 정책이라면 그대로 두되 양쪽 기본값을 "켜짐"으로 맞추고,
+            의도하지 않았다면 앱 기본값을 "꺼짐"으로 바꿔야 한다.</p>
         </div>
       </section>
 
@@ -123,8 +123,8 @@ flowchart LR
           <span class="label">숨김 상태 리뷰 카드의 모습</span>
           <ul>
             <li><strong>리뷰 작성자와 별점은 그대로 보인다.</strong> 누가 쓴 리뷰인지, 몇 점을 줬는지는 가려지지 않는다 — 신뢰점수에도 계속 반영된다.</li>
-            <li><strong>본문 자리에 "임시 숨김" 안내가 들어온다.</strong> reasonText가 있으면 그 내용이, 없으면 사유 코드의 의미가 안내문으로 보인다.</li>
-            <li><strong>숨김 배지가 붙는다.</strong> FAKE_REVIEW이면 "허위 리뷰 검토 중", 그 외이면 "임시 숨김" 라벨이 카드 상단에 붙는다.</li>
+            <li><strong>본문 자리에 "임시 숨김" 안내가 들어온다.</strong> 호스트가 적은 사유가 있으면 그 내용이, 없으면 선택한 숨김 사유의 의미가 안내문으로 보인다.</li>
+            <li><strong>숨김 배지가 붙는다.</strong> 허위 리뷰 사유면 "허위 리뷰 검토 중", 그 외이면 "임시 숨김" 라벨이 카드 상단에 붙는다.</li>
             <li><strong>호스트 답변이 있으면 숨김 상태에서도 함께 보인다.</strong></li>
           </ul>
         </div>
@@ -151,14 +151,14 @@ flowchart LR
           <article class="card">
             <div class="eyebrow">임시 숨김</div>
             <h3>광고성 스팸 후기를 잠시 가린다</h3>
-            <p>이벤트와 전혀 무관한 광고 문구가 적힌 후기가 달렸다. 더보기 → "임시 숨김" → "광고·스팸(SPAM)" 선택. 확인하면 후기 본문 자리에 "임시 숨김" 안내가 들어온다. 다른 사람은 그 후기의 내용 대신 "임시 숨김 처리된 리뷰"라는 안내를 본다.</p>
+            <p>이벤트와 전혀 무관한 광고 문구가 적힌 후기가 달렸다. 더보기 → "임시 숨김" → "광고·스팸" 선택. 확인하면 후기 본문 자리에 "임시 숨김" 안내가 들어온다. 다른 사람은 그 후기의 내용 대신 "임시 숨김 처리된 리뷰"라는 안내를 본다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 리뷰가 사라지지 않는다는 것을 사용자가 인지한다. 호스트가 부정적인 후기를 모두 없앨 수 있다는 오해를 막는다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">허위 리뷰 신고 연동</div>
             <h3>"이건 허위다" — 숨김과 신고가 한 번에</h3>
-            <p>참석하지 않은 사용자가 리뷰를 남긴 것이 의심된다. 더보기 → "임시 숨김" → "허위 리뷰(FAKE_REVIEW)" 선택. 확인하면 리뷰가 가려지는 동시에 운영자 신고 큐에 우선 검토 플래그가 붙은 신고가 자동으로 접수된다.</p>
+            <p>참석하지 않은 사용자가 리뷰를 남긴 것이 의심된다. 더보기 → "임시 숨김" → "허위 리뷰" 선택. 확인하면 리뷰가 가려지는 동시에 운영자 신고 목록에 우선 검토 표시가 붙은 신고가 자동으로 접수된다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 호스트가 "이건 신고감이다"고 판단할 때 두 번 행동(숨김 + 신고)하지 않아도 된다. 허위 리뷰를 발견한 순간 한 번의 선택으로 운영 검토까지 이어진다.</p>
           </article>
 
@@ -184,7 +184,7 @@ flowchart LR
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th style="width:160px">화면 요소</th><th>일반 사용자</th><th style="width:35%">호스트(revieweeId 본인)</th></tr></thead>
+            <thead><tr><th style="width:160px">화면 요소</th><th>일반 사용자</th><th style="width:35%">호스트(본인 이벤트)</th></tr></thead>
             <tbody>
               <tr>
                 <td><strong>리뷰 카드 더보기</strong></td>
@@ -199,12 +199,12 @@ flowchart LR
               <tr>
                 <td><strong>호스트 답변 카드</strong></td>
                 <td>리뷰 아래 녹색 카드 — 호스트 닉네임 + 답변 내용</td>
-                <td>동일. 24h 이내이면 더보기에 "답변 수정" 메뉴 노출. (현재 미배선 — Gap)</td>
+                <td>동일. 작성 후 24시간 이내이면 더보기에 "답변 수정" 메뉴 노출. (현재 미연결 — Gap)</td>
               </tr>
               <tr>
                 <td><strong>답변 수정 여부</strong></td>
                 <td>보이지 않음</td>
-                <td>allowEdit=true이면 수정 메뉴 노출. false이면 비활성.</td>
+                <td>작성 후 24시간 이내이면 수정 메뉴 노출, 지나면 비활성.</td>
               </tr>
             </tbody>
           </table>
@@ -216,17 +216,18 @@ flowchart LR
         <div class="callout warn">
           <span class="label">모더레이션 흔적은 남는다</span>
           <ul>
-            <li><strong>임시 숨김 해제의 별도 audit 로그는 없다.</strong>
-              숨김 해제(<code>unhide</code>)는 <code>hidden_reason_code·hidden_by_user_id</code> 등 컬럼을 null로 초기화할 뿐이다(<code>ReviewService.java:454-459</code>). 별도 audit 로그 테이블 기록은 없다.
-              다만 <code>autoEscalate=true</code>로 숨김 시 생성된 <code>Report</code> row는 삭제되지 않고 그대로 남아, 반복 숨김·해제 패턴은 Report 큐를 통해 운영에서 감지할 수 있다.</li>
-            <li><strong>FAKE_REVIEW 숨김은 자동으로 신고가 접수된다(우선 검토 플래그 포함).</strong>
-              운영자 큐에서 priority=true로 상단 노출. 숨김 해제를 해도 신고 레코드는 남는다.
+            <li><strong>임시 숨김을 해제해도 그 사실이 별도 이력으로 남지 않는다.</strong>
+              숨김 해제 시 숨김 사유·실행자 등의 기록이 비워질 뿐, 누가 언제 해제했는지를 따로 남기는 이력은 없다.
+              다만 자동 신고가 켜진 채 숨겼다면 그때 접수된 신고는 삭제되지 않고 그대로 남으므로,
+              숨김과 해제를 반복하는 패턴은 신고 목록을 통해 운영에서 감지할 수 있다.</li>
+            <li><strong>허위 리뷰 숨김은 자동으로 신고가 접수된다(우선 검토 표시 포함).</strong>
+              운영자 목록 상단에 우선 노출된다. 숨김을 해제해도 신고 기록은 남는다.
               운영 처리(승인/기각)는 별도로 진행되어야 한다.</li>
             <li><strong>별점은 숨겨도 신뢰점수에서 제외되지 않는다.</strong>
-              현재 정책은 "임시 숨김 중에도 별점을 신뢰점수 계산에서 빼지 않는다"다(ReviewService.java 주석).
+              현재 정책은 임시 숨김 중에도 별점을 신뢰점수 계산에서 빼지 않는 것이다.
               이 정책이 바뀌면 신뢰점수 재계산이 필요하다.</li>
-            <li><strong>답변 삭제는 운영자도 사용자 경로로는 못 한다.</strong>
-              DELETE 엔드포인트가 없다. soft delete 경로는 서비스 레이어에 있지만 컨트롤러에 미노출. 필요 시 admin API 경로를 통해야 한다.</li>
+            <li><strong>답변 삭제는 호스트도 운영자도 일반 화면으로는 할 수 없다.</strong>
+              현재 답변을 지우는 경로 자체가 화면에 열려 있지 않다. 꼭 지워야 한다면 운영자용 별도 도구를 거쳐야 한다.</li>
           </ul>
         </div>
       </section>
@@ -236,11 +237,11 @@ flowchart LR
         <div class="callout danger">
           <span class="label">지금 바로 처리해야 하는 항목</span>
           <ul>
-            <li><strong>답변 수정 UI 미배선</strong> — 이미 답변이 있는 리뷰에서 더보기를 누르면 서버에서 409 에러가 발생한다.
-              review_list_screen에서 reply 존재 여부에 따라 createReply / updateReply를 분기해야 한다.</li>
-            <li><strong>autoEscalate 기본값 운영 정책 결정</strong> — 앱 기본값은 ON이나 사용자가 시트의 체크박스에서 해제 가능(해제 시 false 전송). 서버 기본값은 false.
-              체크박스 가시성과 기본값 방향이 의도된 정책인지 확인하고, 필요하면 UI 강조 또는 기본값 통일이 필요하다.</li>
-            <li><strong>답변 알림 미구현</strong> — 리뷰 작성자가 호스트 답변을 알 방법이 없다. NotificationType 추가 + 서비스 연동 검토 필요.</li>
+            <li><strong>답변 수정 경로 미연결</strong> — 이미 답변이 있는 리뷰에서 더보기를 누르면 수정이 아니라 새 답변 작성으로 처리돼 오류가 난다.
+              리뷰 목록 화면에서 답변이 이미 있는 경우 수정 경로로 보내도록 분기를 추가해야 한다.</li>
+            <li><strong>자동 신고 기본값 운영 정책 결정</strong> — 앱은 자동 신고가 기본으로 켜진 채이고 호스트가 체크박스로 끌 수 있는데, 서버 기본값은 꺼짐이다.
+              체크박스가 잘 보이는지와 기본 방향이 의도한 정책인지 확인하고, 필요하면 안내를 강조하거나 양쪽 기본값을 맞춰야 한다.</li>
+            <li><strong>답변 알림 미구현</strong> — 리뷰 작성자가 호스트 답변이 달렸다는 사실을 알 방법이 없다. 답변 알림 추가를 검토해야 한다.</li>
           </ul>
         </div>
       </section>

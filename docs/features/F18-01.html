@@ -19,27 +19,27 @@
         </div>
         <h1>F18-01. 통합 분쟁 케이스 조회</h1>
         <p class="lede">
-          다양한 원천 도메인에서 발생한 분쟁·신고·이의를 <strong>단일 목록</strong>으로 묶어 보여 주는 화면.
-          source별 조회 기준이 다르다 — 대부분의 source는 신고자·영향받은 당사자 시점만 포함하고,
-          USER_DISPUTE만 reporter/target 양측을 포함한다. 호스트는 정산 이의(개설자 시점)와 환불 분쟁(판매자 시점) 2종의
-          source에서 별도 케이스를 확인한다. 케이스 상태는 원천 도메인의 고유 상태를 5값으로 정규화한 통합 상태를 사용한다.
-          7일 이상 미해결 케이스는 운영자 알림이 자동으로 발행된다.
+          다양한 원천에서 발생한 분쟁·신고·이의를 <strong>단일 목록</strong>으로 묶어 보여 주는 화면.
+          대부분의 분쟁은 신고한 사람과 직접 영향을 받은 당사자에게만 보이고, 사용자가 직접 접수한 분쟁만
+          신고한 쪽과 신고당한 쪽 양쪽 모두에게 보인다. 호스트는 정산 이의(개설자 시점)와 환불 분쟁(판매자 시점)
+          두 종류의 분쟁을 별도로 확인한다. 원천 도메인마다 상태를 부르는 이름이 다르더라도, 사용자에게는 항상
+          같은 5단계 중 하나로 통일되어 보인다. 7일 이상 미해결 케이스는 운영팀에 알림이 자동으로 발송된다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">통합 원천</div><div class="value">enum 21값</div><div class="hint">분류용. 실제 emit 사용자 8종·호스트 2종</div></div>
-          <div class="metric"><div class="label">통합 상태</div><div class="value">5값</div><div class="hint">OPEN/IN_REVIEW/RESOLVED/CLOSED/ESCALATED</div></div>
-          <div class="metric"><div class="label">SLA 기준</div><div class="value">7일</div><div class="hint">초과 시 운영자 알림</div></div>
-          <div class="metric"><div class="label">액션 권한</div><div class="value">7개 flag</div><div class="hint">ActorPermissionFlags</div></div>
+          <div class="metric"><div class="label">통합되는 분쟁 원천</div><div class="value">참가자 8종</div><div class="hint">호스트는 정산 이의·환불 분쟁 2종</div></div>
+          <div class="metric"><div class="label">통합 상태</div><div class="value">5단계</div><div class="hint">접수됨·검토 중·상위 이관·처리 완료·종결</div></div>
+          <div class="metric"><div class="label">처리 기한</div><div class="value">7일</div><div class="hint">초과 시 운영팀 알림</div></div>
+          <div class="metric"><div class="label">화면이 안내하는 가능 동작</div><div class="value">역할별 분기</div><div class="hint">이의·노트·환불 처리 등</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — "내 분쟁이 지금 어떻게 되고 있는지" 한 눈에</span>
           <p>이전에는 노쇼 이의는 이벤트 화면, 정산 이의는 정산 화면, 경고 이의는 클럽 화면으로 각자 흩어져 있었다.
             이 기능은 그 모든 케이스를 하나의 목록으로 모아 사용자가 현재 진행 중인 분쟁과 종결된 분쟁을
-            한 화면에서 추적하게 한다. 원천 도메인이 다르더라도 사용자가 보는 상태 레이블은 항상 동일하다.</p>
+            한 화면에서 추적하게 한다. 원천이 다르더라도 사용자가 보는 상태 표시는 항상 동일하다.</p>
         </div>
       </section>
 
@@ -48,33 +48,33 @@
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> OPEN: 원천 이벤트 발생 또는 사용자 직접 접수
-    OPEN --> IN_REVIEW: 운영팀 검토 시작
-    OPEN --> ESCALATED: 바로 에스컬레이션
-    OPEN --> RESOLVED: 바로 처리 완료
-    OPEN --> CLOSED: 바로 종결
-    IN_REVIEW --> ESCALATED: 상위 CS로
-    IN_REVIEW --> RESOLVED: 처리 완료
-    IN_REVIEW --> CLOSED: 종결(철회·기각)
-    ESCALATED --> RESOLVED: 처리 완료
-    ESCALATED --> CLOSED: 종결
-    RESOLVED --> [*]: 종결 + 1년 후 증빙 정리
-    CLOSED --> [*]: 종결 + 1년 후 증빙 정리
+    [*] --> 접수됨: 원천 분쟁 발생 또는 사용자 직접 접수
+    접수됨 --> 검토중: 운영팀 검토 시작
+    접수됨 --> 상위이관: 바로 상위 이관
+    접수됨 --> 처리완료: 바로 처리 완료
+    접수됨 --> 종결: 바로 종결
+    검토중 --> 상위이관: 상위 운영팀으로
+    검토중 --> 처리완료: 처리 완료
+    검토중 --> 종결: 종결(철회·기각)
+    상위이관 --> 처리완료: 처리 완료
+    상위이관 --> 종결: 종결
+    처리완료 --> [*]: 종결 + 1년 후 증빙 정리
+    종결 --> [*]: 종결 + 1년 후 증빙 정리
 
-    note right of OPEN
-      evidenceFrozen = true
+    note right of 접수됨
+      증빙 보존(삭제 불가)
       이의제기 가능
     end note
-    note right of RESOLVED
-      evidenceFrozen = false
-      재접수 CTA 없음
+    note right of 처리완료
+      증빙 정리 가능 상태
+      재접수 버튼 없음
     end note
           </div>
         </div>
         <div class="callout warn">
-          <span class="label">상태 전이는 admin API만 소유</span>
-          <p>공개 API는 케이스 상태를 직접 변경하는 endpoint를 제공하지 않는다.
-            USER_DISPUTE source는 OPEN으로 생성된 후 admin이 처리할 때까지 상태가 변하지 않는다.
+          <span class="label">상태를 바꾸는 것은 운영팀만 가능</span>
+          <p>사용자는 앱에서 케이스 상태를 직접 바꿀 수 없다.
+            직접 접수한 분쟁은 "접수됨"으로 만들어진 뒤 운영팀이 처리할 때까지 상태가 그대로다.
             사용자는 현재 상태를 조회하고 이의를 제기하는 것만 가능하다.</p>
         </div>
       </section>
@@ -87,8 +87,8 @@ stateDiagram-v2
             <div class="eyebrow">기본 흐름 — 참가자</div>
             <h3>내가 관련된 분쟁 목록 확인</h3>
             <p>이벤트 노쇼 기록, 클럽 강퇴 이의, 직접 접수한 분쟁이 모두 한 목록에 보인다.
-              "처리 중" 필터를 선택하면 OPEN·IN_REVIEW·ESCALATED 케이스만 추려 볼 수 있다.
-              카드를 탭하면 상세 화면으로 진입해 타임라인과 증빙을 확인한다.</p>
+              "처리 중" 필터를 선택하면 접수됨·검토 중·상위 이관 케이스만 추려 볼 수 있다.
+              카드를 탭하면 상세 화면으로 진입해 진행 이력과 증빙을 확인한다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 어느 도메인에서 발생했든 "내 분쟁 이력"이
               한 화면으로 집약된다.</p>
           </article>
@@ -96,44 +96,43 @@ stateDiagram-v2
           <article class="card">
             <div class="eyebrow">기본 흐름 — 호스트</div>
             <h3>내 이벤트·클럽에 걸린 분쟁 확인</h3>
-            <p>호스트가 확인하는 source는 두 종류다. SETTLEMENT_APPEAL(정산 이의, 개설자 기준)과
-              REFUND_DISPUTE(환불 분쟁, 판매자 기준). 두 source의 호스트 조회 기준이 다르며,
-              동일한 목록·필터 구조를 공유한다. 상세 화면에서 호스트에게 허용된 액션 패널이 별도로 표시된다.</p>
+            <p>호스트가 확인하는 분쟁은 두 종류다. 정산 이의(개설자 기준)와 환불 분쟁(판매자 기준).
+              두 분쟁은 호스트에게 묶이는 기준이 다르며, 같은 목록·필터 구조를 공유한다.
+              상세 화면에서는 호스트가 할 수 있는 동작이 별도 패널로 표시된다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 호스트 입장에서 처리해야 할 케이스를
               놓치지 않게 한다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">상세 조회</div>
-            <h3>타임라인과 증빙으로 맥락 파악</h3>
-            <p>케이스 상세에는 타임라인 항목(누가 언제 어떤 액션을 했는지)과 증빙 파일이 포함된다.
-              보이는 내용은 역할에 따라 다르다 — 참가자는 양측 공개(PARTIES) 증빙만 볼 수 있고,
-              CS 전용 항목은 표시되지 않는다.</p>
+            <h3>진행 이력과 증빙으로 맥락 파악</h3>
+            <p>케이스 상세에는 진행 이력(누가 언제 어떤 조치를 했는지)과 증빙이 포함된다.
+              보이는 내용은 역할에 따라 다르다 — 참가자는 양측에 공개된 증빙만 볼 수 있고,
+              운영팀 전용 항목은 표시되지 않는다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — "왜 이 결정이 났는지"를 사용자가 직접 추적할 수 있다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">상태 필터</div>
             <h3>종결된 케이스만 이력으로 보기</h3>
-            <p>"종결" 필터를 선택하면 RESOLVED·CLOSED 케이스만 남는다.
-              sourceType 파라미터로 원천 유형을 좁힐 수 있으나, DisputeSourceType enum과 실제 caseId prefix가 1:1 대응하지 않으므로 필터 결과에 주의가 필요하다.
-              무한 스크롤로 이력 전체를 탐색한다.</p>
+            <p>"종결" 필터를 선택하면 처리 완료·종결 케이스만 남는다.
+              분쟁 종류로도 목록을 좁힐 수 있으나, 일부 분쟁 유형은 유형 필터로 정확히 걸러지지 않을 수 있어
+              결과를 확인할 때 주의가 필요하다. 무한 스크롤로 이력 전체를 탐색한다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">권한 분기</div>
             <h3>내가 뭘 할 수 있는지 화면이 알려준다</h3>
-            <p>케이스 상세에는 7개의 액션 권한 flag(ActorPermissionFlags)가 포함된다.
-              이의제기 가능 여부, 노트 전송 가능 여부, 환불 분쟁 처리 가능 여부 등이 이 flag를 기반으로
-              화면에 버튼으로 표시되거나 숨겨진다. "이의 승인" 버튼은 현재 서버 endpoint가 없어
-              비활성 상태다.</p>
+            <p>케이스 상세는 사용자의 역할에 따라 가능한 동작을 다르게 보여 준다.
+              이의제기 가능 여부, 보완 요청 노트 전송 가능 여부, 환불 분쟁 처리 가능 여부 등에 맞춰
+              버튼이 표시되거나 숨겨진다. "이의 승인" 버튼은 아직 동작하지 않아 눌러도 처리되지 않는다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">evidenceFrozen</div>
+            <div class="eyebrow">증빙 보존</div>
             <h3>케이스가 진행 중이면 증빙 보존 안내가 표시된다</h3>
-            <p>증빙 삭제 기능은 현재 미구현(조회 전용)이다. OPEN·IN_REVIEW·ESCALATED 케이스에서는
-              "증빙 보존 중" 안내 배너가 표시된다. 케이스 종결 후에도 삭제 버튼은 별도 구현 전까지 제공되지 않는다.</p>
+            <p>증빙 삭제 기능은 현재 제공되지 않는다(조회 전용). 진행 중(접수됨·검토 중·상위 이관) 케이스에서는
+              "증빙 보존 중" 안내가 표시된다. 케이스가 종결된 뒤에도 삭제 버튼은 아직 제공되지 않는다.</p>
           </article>
         </div>
       </section>
@@ -143,10 +142,10 @@ stateDiagram-v2
         <div class="callout warn">
           <span class="label">운영 주의사항</span>
           <ul>
-            <li><strong>SLA 7일 알림은 8개 scanOne 호출을 독립 처리한다.</strong> 한 source의 스캔이 실패해도 나머지는 계속 처리된다. 알림은 idempotency_key로 중복 발행이 차단된다. PUBLIC_REPORT는 PENDING+IN_REVIEW만 스캔(ESCALATED 제외).</li>
-            <li><strong>타임라인 CS_ONLY 항목은 사용자에게 보이지 않는다.</strong> 서버 filterByActorVisibility가 CS_ONLY를 제거한 결과만 전달한다. PARTIES/HOST_ONLY/PUBLIC_SUMMARY는 유지된다(현재 builder는 HOST_ONLY 미emit).</li>
-            <li><strong>caseId prefix와 DisputeSourceType enum이 1:1 대응하지 않는다.</strong> DisputeSourceType enum 21값은 케이스 sourceType 필드 분류용이며, 실제 emit prefix(OPERATIONAL_ISSUE:/WARNING_REPORT:/WARNING_APPEAL:/ SETTLEMENT_APPEAL:/REFUND_DISPUTE:/REPORT:/DATE_BLOCK:/TRANSPORT:/CLUB_MEMBERSHIP_ACTION:/USER_DISPUTE:)와 다르다. EVENT_NO_SHOW는 enum에 없는 appeal dispatcher 전용 prefix다. 새 source 추가 시 클라이언트 enum 동기화가 필요하다.</li>
-            <li><strong>canApproveAppeal flag는 있지만 공개 endpoint가 없다.</strong> 호스트/클럽 staff용 이의 승인·거절 공개 API가 미구현 상태다. 현재 admin API로만 처리 가능하다.</li>
+            <li><strong>처리 기한 7일 알림은 분쟁 원천마다 따로 점검한다.</strong> 한 원천의 점검이 실패해도 나머지 원천의 미해결 케이스 알림은 정상적으로 발송된다. 같은 케이스에 대한 알림은 한 번만 간다.</li>
+            <li><strong>운영팀 전용 진행 이력은 사용자에게 보이지 않는다.</strong> 현재는 운영팀 전용 메모만 가려지고 나머지 항목은 모두 전달된다 — 공개 등급 4종의 세부 구분은 아직 화면에 반영되지 않았다(자세한 내용은 F18-04).</li>
+            <li><strong>유형 필터가 일부 분쟁 유형을 정확히 거르지 못할 수 있다.</strong> 분쟁 종류가 매우 다양해, 특정 유형으로 목록을 좁혔을 때 일부 케이스가 빠지거나 섞일 수 있다. 정밀한 분류가 필요한 운영 작업에서는 결과를 한 번 더 확인하는 것이 안전하다.</li>
+            <li><strong>호스트의 이의 승인·거절은 아직 앱에서 불가능하다.</strong> 화면에 버튼은 있으나 동작하지 않으며, 현재는 운영팀만 처리할 수 있다.</li>
           </ul>
         </div>
       </section>
@@ -156,9 +155,9 @@ stateDiagram-v2
         <div class="callout danger">
           <span class="label">현재 알려진 미구현·주의 사항</span>
           <ul>
-            <li><strong>dispute 딥링크 미배선.</strong> 분쟁 관련 FCM 알림(USER_DISPUTE·CLUB_MEMBERSHIP_ACTION 타입)을 클릭하면 홈으로 이동한다. 기존 REFUND_DISPUTE 3개 타입만 처리되어 있다.</li>
-            <li><strong>canApproveAppeal 버튼 동작 불가.</strong> 앱 화면에 이의 승인 버튼이 있으나 서버 전이 endpoint가 없어 실제 동작하지 않는다.</li>
-            <li><strong>union 정합성 테스트 없음.</strong> 실제 emit source(사용자 8종/호스트 2종) 각각에 대해 caseId 형식·상태 매핑·visibility 필터가 올바른지 검증하는 자동화 테스트가 없다.</li>
+            <li><strong>분쟁 알림을 눌러도 해당 화면으로 가지 않는다.</strong> 직접 접수한 분쟁이나 클럽 제명 관련 알림을 누르면 홈으로 이동한다. 환불 분쟁 알림만 정상적으로 연결된다.</li>
+            <li><strong>호스트의 이의 승인 버튼이 동작하지 않는다.</strong> 앱 화면에 이의 승인 버튼이 있으나 아직 동작하지 않아, 눌러도 처리되지 않는다.</li>
+            <li><strong>통합 목록 정확성 검증이 없다.</strong> 다양한 분쟁 원천이 목록에 올바른 형태와 상태로, 올바른 공개범위로 들어오는지 자동으로 점검하는 장치가 아직 없다.</li>
           </ul>
         </div>
       </section>
@@ -167,9 +166,9 @@ stateDiagram-v2
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/18-dispute.html"><div class="eyebrow">상위 도메인</div><h3>18 분쟁 해결</h3></a>
-          <a class="card" href="F18-02.html"><div class="eyebrow">연계</div><h3>F18-02 분쟁 직접 접수</h3><p>USER_DISPUTE 케이스를 생성하는 write 경로.</p></a>
+          <a class="card" href="F18-02.html"><div class="eyebrow">연계</div><h3>F18-02 분쟁 직접 접수</h3><p>사용자가 직접 분쟁을 접수하는 경로.</p></a>
           <a class="card" href="F18-03.html"><div class="eyebrow">연계</div><h3>F18-03 분쟁 이의제기</h3><p>케이스 상세에서 이의를 제기하는 흐름.</p></a>
-          <a class="card" href="F18-04.html"><div class="eyebrow">연계</div><h3>F18-04 증빙·공개범위·보존</h3><p>evidenceFrozen과 visibility 필터 원리.</p></a>
+          <a class="card" href="F18-04.html"><div class="eyebrow">연계</div><h3>F18-04 증빙·공개범위·보존</h3><p>증빙 보존과 공개범위가 정해지는 원리.</p></a>
         </div>
       </section>
 

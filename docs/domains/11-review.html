@@ -37,7 +37,7 @@
           <a class="card" href="../features/F11-04.html"><div class="eyebrow">F11-04</div><h3>신고</h3><p>대상 유형, 자기 신고·중복 신고 차단, 운영 접수.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F11-05.html"><div class="eyebrow">F11-05</div><h3>신뢰점수·변동 이력</h3><p>본인·타인 노출 차이, 등급 임계, 이력.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F11-06.html"><div class="eyebrow">F11-06</div><h3>취향 평가·취향 프로필</h3><p>비공개 평가, 태그 가중치, 데이터 부족 빈 상태.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F11-07.html"><div class="eyebrow">F11-07</div><h3>호스트 리뷰 모더레이션</h3><p>답변(1:1·24h 수정), 임시 숨김(6사유코드), autoEscalate 신고 연동.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F11-07.html"><div class="eyebrow">F11-07</div><h3>호스트 리뷰 모더레이션</h3><p>답변(1:1·24시간 내 수정), 임시 숨김(6가지 사유), 심각한 경우 운영자 검토로 자동 접수.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
 
@@ -56,132 +56,129 @@
       </section>
 
       <section>
-        <h2>신뢰점수 산정식 — 활동·인증·패널티</h2>
+        <h2>신뢰점수는 무엇으로 만들어지는가 — 활동·인증·감점</h2>
         <p class="subtitle">
-          F11-05의 핵심. 점수는 호출 시점에 즉시 계산해서 응답하고,
-          외부 도메인이 <code>TrustScoreService.recalculate(userId)</code>를 호출하면
-          변동치 ≥ 1.0인 경우에만 <code>ScoreSnapshot</code>이 추가된다.
-          서버 소스 기준 식이며, 절대값은 클라이언트에서 다시 그리지 않는다.
+          F11-05의 핵심. 점수는 화면을 열 때마다 그 자리에서 다시 계산되며,
+          다른 도메인의 행동(리뷰·신고 처리·인증)으로 점수가 바뀔 때
+          변동 폭이 1점 이상일 때만 변동 이력에 한 줄이 쌓인다.
+          작은 변동은 이력을 어지럽히지 않도록 기록에서 빠진다.
         </p>
 
-        <pre><code>activity   = 0.4·attended + 0.3·hosted + 0.15·50 + 0.15·50    (0~100)
-verification = email30 + phone30 + profile20(image10+bio5+name5) + social10|20
-penalty    = min(100, confirmedReports × 20)   ← RESOLVED + ESCALATED만 카운트
-
-total      = clamp([0,100], 0.5·activity + 0.25·verification − 0.25·penalty)
-grade      = 90+ DIAMOND  /  75+ PLATINUM  /  60+ GOLD  /  40+ SILVER  /  else BRONZE</code></pre>
+        <div class="callout">
+          <span class="label">점수가 만들어지는 방식 — 활동 절반, 인증 1/4, 감점 −1/4</span>
+          <p>최종 점수(0~100)는 세 갈래의 가중합이다. <strong>활동</strong>은 참석·주최 실적의 절반 비중,
+            <strong>인증</strong>은 이메일·전화·프로필·소셜 연동의 1/4 비중, <strong>감점</strong>은 확정된 신고가 깎는 1/4 비중이다.
+            등급은 점수에 따라 90점 이상 DIAMOND · 75점 이상 PLATINUM · 60점 이상 GOLD · 40점 이상 SILVER · 그 미만 BRONZE로 나뉜다.</p>
+        </div>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th style="width:130px">컴포넌트</th><th>가중치</th><th>입력 신호</th><th>책임</th></tr></thead>
+            <thead><tr><th style="width:130px">갈래</th><th>가중치</th><th>들어가는 신호</th></tr></thead>
             <tbody>
               <tr>
-                <td><strong>Activity</strong></td>
-                <td><span class="pill brand">+0.50</span></td>
-                <td>참석 수·주최 수 (클럽/연속 점수는 현재 50점 고정)</td>
-                <td><code>ActivityScoreCalculator</code></td>
+                <td><strong>활동</strong></td>
+                <td><span class="pill brand">+50%</span></td>
+                <td>참석한 모임 수·주최한 모임 수 (클럽·연속 활동 점수는 현재 기본값 고정)</td>
               </tr>
               <tr>
-                <td><strong>Verification</strong></td>
-                <td><span class="pill info">+0.25</span></td>
+                <td><strong>인증</strong></td>
+                <td><span class="pill info">+25%</span></td>
                 <td>이메일 인증, 전화번호, 프로필(사진·자기소개·실명), 소셜 연동 수</td>
-                <td><code>VerificationScoreCalculator</code></td>
               </tr>
               <tr>
-                <td><strong>Penalty</strong></td>
-                <td><span class="pill danger">−0.25</span></td>
-                <td>RESOLVED·ESCALATED 상태 신고 1건당 20점, 최대 100점</td>
-                <td><code>PenaltyScoreCalculator</code></td>
+                <td><strong>감점</strong></td>
+                <td><span class="pill danger">−25%</span></td>
+                <td>운영자가 승인·이관 처리한 신고 1건당 20점, 최대 100점</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <h3>TrustScore 엔티티 필드</h3>
-        <p>점수는 호출 시 즉시 산정하지만, 누적 수치는 <code>TrustScore</code> 엔티티에 저장된다.</p>
+        <h3>점수와 함께 누적되는 활동 지표</h3>
+        <p>점수는 화면을 열 때 즉시 계산하지만, 점수의 바탕이 되는 누적 수치는 사용자별로 함께 보관된다.</p>
         <div class="table-wrap">
           <table class="compact">
-            <thead><tr><th>필드</th><th>의미</th></tr></thead>
+            <thead><tr><th>지표</th><th>의미</th></tr></thead>
             <tbody>
-              <tr><td><code>activityScore</code> / <code>verificationScore</code> / <code>penaltyScore</code></td><td>3개 컴포넌트 점수 스냅샷</td></tr>
-              <tr><td><code>totalScore</code> (default 50.0)</td><td>가중합 결과. 신규 사용자는 50에서 시작.</td></tr>
-              <tr><td><code>grade</code> (default <code>BRONZE</code>)</td><td>등급 문자열. enum이 아닌 String 상수.</td></tr>
-              <tr><td><code>reviewCount</code></td><td>받은 리뷰 수 (soft delete 제외)</td></tr>
-              <tr><td><code>eventCount</code></td><td>ATTENDING 참석 수</td></tr>
-              <tr><td><code>noShowCount</code></td><td>노쇼 카운트 누적</td></tr>
-              <tr><td><code>reportCount</code></td><td>확정 신고 누적</td></tr>
+              <tr><td>활동 점수 / 인증 점수 / 감점</td><td>세 갈래 각각의 현재 점수</td></tr>
+              <tr><td>총점 (기본 50.0)</td><td>가중합 결과. 신규 사용자는 50에서 시작.</td></tr>
+              <tr><td>등급 (기본 BRONZE)</td><td>점수가 떨어지는 등급 구간.</td></tr>
+              <tr><td>받은 리뷰 수</td><td>삭제된 리뷰는 제외.</td></tr>
+              <tr><td>참여 횟수</td><td>참석 확정된 모임 수.</td></tr>
+              <tr><td>노쇼 횟수</td><td>예약하고 나타나지 않은 횟수 누적.</td></tr>
+              <tr><td>확정 신고 수</td><td>운영자가 인정한 신고 누적.</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>패널티는 어떻게 쌓이는가</h2>
-        <p>패널티 점수는 신고 자체가 아니라 <strong>운영자가 신고를 어떻게 처리했는지</strong>로 정해진다. 신고가 들어와도 PENDING 상태에서는 점수가 깎이지 않고, 운영자가 RESOLVED 또는 ESCALATED로 결론을 내려야 그때 점수에 반영된다.</p>
+        <h2>감점은 어떻게 쌓이는가</h2>
+        <p>감점은 신고 자체가 아니라 <strong>운영자가 신고를 어떻게 처리했는지</strong>로 정해진다. 신고가 들어와도 검토 대기 상태에서는 점수가 깎이지 않고, 운영자가 승인 또는 상위 이관으로 결론을 내려야 그때 점수에 반영된다.</p>
 
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["다른 사용자가 신고 접수<br/>POST /api/v1/reports"] --> B["Report: PENDING"]
+    A["다른 사용자가 신고 접수"] --> B["검토 대기"]
     B --> C{"운영자 처리"}
-    C -->|"승인"| D["RESOLVED"]
-    C -->|"심각·이관"| E["ESCALATED"]
-    C -->|"기각"| F["DISMISSED"]
-    C -->|"검토중"| G["IN_REVIEW"]
-    D --> H["PenaltyScoreCalculator<br/>+20점 누적"]
+    C -->|"승인"| D["조치 완료"]
+    C -->|"심각·이관"| E["상위 이관"]
+    C -->|"기각"| F["무효 처리"]
+    C -->|"검토중"| G["검토 중"]
+    D --> H["감점 +20점 누적"]
     E --> H
-    H --> I["TrustScoreService.recalculate(userId)"]
-    I --> J{"diff ≥ 1.0?"}
-    J -->|"예"| K["ScoreSnapshot INSERT"]
-    J -->|"아니오"| L["스킵 (노이즈 방지)"]
+    H --> I["신뢰점수 다시 계산"]
+    I --> J{"변동 폭 1점 이상?"}
+    J -->|"예"| K["변동 이력에 한 줄 추가"]
+    J -->|"아니오"| L["이력 생략 (잡음 방지)"]
           </div>
         </div>
 
         <div class="callout">
           <span class="label">읽는 법</span>
           <ul>
-            <li>신고 접수(<code>POST /api/v1/reports</code>) <strong>자체로는 점수가 깎이지 않는다</strong>. 운영자가 <code>RESOLVED</code> 또는 <code>ESCALATED</code>로 처리해야 카운트.</li>
-            <li>그래서 신뢰점수에는 “접수 즉시 반영”이 없다. 운영 SLA가 곧 패널티 반영 속도가 된다.</li>
-            <li>변동치가 1.0 미만이면 스냅샷이 쌓이지 않는다. 잦은 미세 변동이 이력 그래프를 어지럽히지 않도록 한 장치.</li>
+            <li>신고 접수 <strong>자체로는 점수가 깎이지 않는다</strong>. 운영자가 승인 또는 상위 이관으로 처리해야 감점에 반영된다.</li>
+            <li>그래서 신뢰점수에는 “접수 즉시 반영”이 없다. 운영 처리 속도가 곧 감점 반영 속도가 된다.</li>
+            <li>변동 폭이 1점 미만이면 이력이 쌓이지 않는다. 잦은 미세 변동이 이력 그래프를 어지럽히지 않도록 한 장치.</li>
           </ul>
         </div>
 
-        <h3>신고 사유 7종 (F11-04 enum)</h3>
+        <h3>신고 사유 7종</h3>
         <div class="table-wrap">
           <table class="compact">
-            <thead><tr><th style="width:120px">코드</th><th>라벨</th></tr></thead>
+            <thead><tr><th>사유</th></tr></thead>
             <tbody>
-              <tr><td><code>HARASSMENT</code></td><td>괴롭힘·협박</td></tr>
-              <tr><td><code>INAPPROPRIATE</code></td><td>부적절한 콘텐츠</td></tr>
-              <tr><td><code>NO_SHOW</code></td><td>노쇼</td></tr>
-              <tr><td><code>FRAUD</code></td><td>사기·사칭</td></tr>
-              <tr><td><code>LATE</code></td><td>지각</td></tr>
-              <tr><td><code>BAD_MANNER</code></td><td>나쁜 매너</td></tr>
-              <tr><td><code>OTHER</code></td><td>기타</td></tr>
+              <tr><td>괴롭힘·협박</td></tr>
+              <tr><td>부적절한 콘텐츠</td></tr>
+              <tr><td>노쇼(나타나지 않음)</td></tr>
+              <tr><td>사기·사칭</td></tr>
+              <tr><td>지각</td></tr>
+              <tr><td>나쁜 매너</td></tr>
+              <tr><td>기타</td></tr>
             </tbody>
           </table>
         </div>
-        <p>대상 유형은 8가지: <code>USER(0)</code> / <code>EVENT(1)</code> / <code>REVIEW(2)</code> / <code>EVENT_PHOTO(3)</code> / <code>EVENT_MESSAGE(4)</code> / <code>DATE_USER(5)</code> / <code>CARPOOL(6)</code> / <code>CLUB(7)</code>. <strong>CLUB 신고는 2026-06-04 서버 지원 완료</strong> — v1은 운영자 수동 집행, 자동 제재 없음. 카풀 신고는 전용 엔드포인트(<code>POST /events/{id}/carpool/offers/{offerId}/report</code>) 경로를 탄다.</p>
+        <p>신고할 수 있는 대상은 8가지: 사용자 · 이벤트 · 후기 · 이벤트 사진 · 이벤트 채팅 메시지 · 데이트 상대 · 카풀 · 클럽. <strong>클럽 신고는 2026-06-04 서버 지원 완료</strong> — v1은 운영자 수동 집행, 자동 제재 없음. 카풀 신고는 같은 카풀 제안에 대한 재신고를 허용하는 전용 경로를 탄다.</p>
       </section>
 
       <section>
         <h2>등급 임계 — 서버 단일출처 (2026-06-04 해소)</h2>
-        <div class=”table-wrap”>
+        <div class="table-wrap">
           <table>
             <thead><tr><th></th><th>서버 (정답)</th><th>클라이언트 (현재)</th></tr></thead>
             <tbody>
-              <tr><td>SILVER 도달</td><td>40+</td><td>40+ (서버 <code>nextGradeScore</code> 값 사용)</td></tr>
+              <tr><td>SILVER 도달</td><td>40+</td><td>40+ (서버 기준값 사용)</td></tr>
               <tr><td>GOLD 도달</td><td>60+</td><td>60+ (서버 값 사용)</td></tr>
-              <tr><td>PLATINUM 도달</td><td>75+</td><td>75+ (서버 값 사용, 이전 80+ 하드코딩 해소)</td></tr>
+              <tr><td>PLATINUM 도달</td><td>75+</td><td>75+ (서버 값 사용, 이전 80+ 불일치 해소)</td></tr>
               <tr><td>DIAMOND 도달</td><td>90+</td><td>90+ (서버 값 사용, 이전 미노출 해소)</td></tr>
             </tbody>
           </table>
         </div>
-        <div class=”callout”>
-          <span class=”label”>해소 완료 — 커밋 b0dc370 (2026-06-04)</span>
-          <p>클라이언트가 <code>TrustScoreVo.nextGradeScore</code> 서버 값을 직접 소비하도록 전환됐다.
-          PLATINUM 80 하드코딩과 DIAMOND 미노출이 모두 해소됐다.
-          서버 임계(<code>SILVER 40 / GOLD 60 / PLATINUM 75 / DIAMOND 90</code>)가 화면 표기에 그대로 반영된다.</p>
+        <div class="callout">
+          <span class="label">해소 완료 (2026-06-04)</span>
+          <p>화면이 “다음 등급까지 N점”을 계산할 때 서버가 내려주는 기준값을 그대로 쓰도록 전환됐다.
+          이전에 PLATINUM 도달선을 80점으로 잘못 잡고 DIAMOND를 표시하지 않던 문제가 모두 해소됐다.
+          서버 도달선(SILVER 40 / GOLD 60 / PLATINUM 75 / DIAMOND 90)이 화면 표기에 그대로 반영된다.</p>
         </div>
       </section>
 
@@ -189,32 +186,32 @@ flowchart LR
         <h2>다른 도메인이 패널티에 영향을 주는 지점</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>트리거</th><th>발생 도메인</th><th>패널티 영향 경로</th></tr></thead>
+            <thead><tr><th>계기</th><th>발생 도메인</th><th>감점·점수 영향 경로</th></tr></thead>
             <tbody>
               <tr>
                 <td>리뷰 작성·수정·삭제</td>
                 <td><a href="11-review.html">11 리뷰·신고</a> (F11-01/03)</td>
-                <td><code>recalculate(revieweeId)</code> 직접 호출 → activity·review 갱신</td>
+                <td>대상자 점수 즉시 재계산 → 활동·받은 리뷰 수 갱신</td>
               </tr>
               <tr>
                 <td>신고 처리 (운영)</td>
-                <td>F11-04 (admin 흐름)</td>
-                <td>RESOLVED·ESCALATED 시 <code>PenaltyScoreCalculator</code>가 즉시 반영</td>
+                <td>F11-04 (운영자 흐름)</td>
+                <td>승인·상위 이관 시 감점이 즉시 반영</td>
               </tr>
               <tr>
                 <td>이벤트 참석·노쇼</td>
                 <td><a href="03-event.html">03 이벤트</a></td>
-                <td>참석 카운트는 activity, 노쇼는 <code>noShowCount</code> 누적 (현재는 패널티 컴포넌트 자체는 신고에서만 산정)</td>
+                <td>참석은 활동 점수, 노쇼는 노쇼 횟수에 누적 (단, 감점은 현재 신고에서만 산정)</td>
               </tr>
               <tr>
                 <td>인증 추가</td>
                 <td><a href="01-auth.html">01 인증</a> · <a href="13-profile.html">13 프로필</a></td>
-                <td>이메일·전화·프로필·소셜 인증이 verification 점수에 직접 반영</td>
+                <td>이메일·전화·프로필·소셜 인증이 인증 점수에 직접 반영</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p style="color:var(--muted); font-size:13px">참고: <code>noShowCount</code>는 신뢰점수 안에 자리는 있지만, 지금 패널티 계산식에는 들어가지 않는다 — 확정 신고 수만 본다. 노쇼 그 자체로 점수를 깎으려면 식을 한 줄 더 늘려야 한다(보강 후보).</p>
+        <p style="color:var(--muted); font-size:13px">참고: 노쇼 횟수는 신뢰점수 안에 자리는 있지만, 지금 감점 계산에는 들어가지 않는다 — 확정 신고 수만 본다. 노쇼 그 자체로 점수를 깎으려면 정책을 한 줄 더 늘려야 한다(보강 후보).</p>
       </section>
 
       <section>

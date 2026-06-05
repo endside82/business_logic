@@ -84,11 +84,11 @@ flowchart TD
             <thead><tr><th>항목</th><th>값</th></tr></thead>
             <tbody>
               <tr><td>메시지 저장</td><td><strong>AES 암호화</strong>되어 DB에 저장 (평문 보존 없음)</td></tr>
-              <tr><td>실시간 푸시</td><td>서버는 메시지 송신 시 <code>ApplicationEvent</code>만 발행. 별도 realtime 레이어가 WebSocket으로 처리</td></tr>
-              <tr><td>멱등성</td><td><code>clientMessageId</code> 기반 — 같은 ID로 재전송해도 중복 저장되지 않음</td></tr>
-              <tr><td>읽음 처리</td><td>메시지마다 처리하지 않고 별도 <code>PATCH</code>로 일괄 갱신</td></tr>
-              <tr><td>채팅방 생성</td><td>매칭 <code>DateMatch.MATCHED</code>이 자동으로 <code>DateChatRoom(ACTIVE)</code> 생성</td></tr>
-              <tr><td>딥링크 진입</td><td>푸시 알림 탭 → <code>/dating/chat/{roomId}?matchId=...&partnerName=...</code></td></tr>
+              <tr><td>실시간 푸시</td><td>메시지 전달은 별도의 실시간 전용 서버가 담당 — 채팅이 몰려도 본 서비스 속도에 영향을 주지 않는 구조</td></tr>
+              <tr><td>중복 방지</td><td>같은 메시지를 다시 보내도 중복으로 저장되지 않는다</td></tr>
+              <tr><td>읽음 처리</td><td>메시지마다 처리하지 않고 한 번에 일괄 갱신</td></tr>
+              <tr><td>채팅방 생성</td><td>매칭이 성사되는 순간 채팅방이 자동으로 열린다</td></tr>
+              <tr><td>딥링크 진입</td><td>푸시 알림을 누르면 해당 채팅방으로 바로 이동하며, 매칭 건과 상대 닉네임 정보가 함께 전달된다</td></tr>
             </tbody>
           </table>
         </div>

@@ -28,12 +28,12 @@
         <div class="metrics">
           <div class="metric"><div class="label">권한</div><div class="value">검토자</div><div class="hint">소유자 자동 통과</div></div>
           <div class="metric"><div class="label">조정 4종</div><div class="value">부여·감경·정정·만료</div><div class="hint">+ 일괄 만료(사면)</div></div>
-          <div class="metric"><div class="label">멱등</div><div class="value">이중</div><div class="hint">원장 고유키 + 멱등 키 헤더</div></div>
+          <div class="metric"><div class="label">중복 방지</div><div class="value">이중</div><div class="hint">기록 고유성 + 요청 표식 이중 차단</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 같은 작업을 두 번 눌러도 두 번 부여되지 않는다</span>
-          <p>운영 화면은 네트워크 재시도나 더블클릭이 흔하다. 그래서 부여·일괄 만료는 멱등 키를 받아 같은 요청이 반복돼도 한 번만 처리한다.
+          <p>운영 화면은 네트워크 재시도나 더블클릭이 흔하다. 그래서 부여·일괄 만료는 같은 요청이 반복돼도 한 번만 처리된다.
             원장 자체도 “같은 출처의 같은 건”은 한 번만 들어가도록 고유키로 막혀 있어, 이중으로 중복 부여를 방지한다.
             감경은 남은 유효 점수를 넘을 수 없고, 정정·만료는 한 경고당 한 번만 가능해 “과하게 깎거나 두 번 무효화”되는 일을 막는다.</p>
         </div>
@@ -48,9 +48,9 @@
             <p>대상·유형·사유로 부여. 원장에 부여 기록이 생기고 유효 점수가 올라간다. 여러 명을 한 번에 부여할 수도 있다.</p>
           </article>
           <article class="card">
-            <div class="eyebrow">멱등</div>
+            <div class="eyebrow">중복 방지</div>
             <h3>같은 부여 요청이 두 번 도착한다</h3>
-            <p>멱등 키가 같으면 캐시된 결과를 돌려주고 새 경고를 만들지 않는다. 더블클릭·재시도에 안전.</p>
+            <p>같은 요청이 다시 들어오면 처음 결과를 그대로 돌려주고 새 경고를 만들지 않는다. 더블클릭·재시도에 안전.</p>
           </article>
           <article class="card">
             <div class="eyebrow">감경</div>

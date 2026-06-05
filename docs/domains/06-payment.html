@@ -40,7 +40,7 @@
         <h2>10개 기능</h2>
         <div class="cards">
           <a class="card" href="../features/F06-01.html"><div class="eyebrow">F06-01</div><h3>지갑 메인 조회</h3><p>잔액 숨김, 최근 거래, 바로가기 진입.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F06-02.html"><div class="eyebrow">F06-02</div><h3>포인트 충전</h3><p>결제수단 없음, PG 실패, 승인·취소, 금액 범위.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F06-02.html"><div class="eyebrow">F06-02</div><h3>포인트 충전</h3><p>결제수단 없음, 결제 대행 실패, 승인·취소, 금액 범위.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F06-03.html"><div class="eyebrow">F06-03</div><h3>거래 내역</h3><p>조회·필터·내보내기. 기간 제한, 빈 결과.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F06-04.html"><div class="eyebrow">F06-04</div><h3>결제 수단 관리</h3><p>최대 5개, 기본 수단 지정, 삭제 시 자동충전 영향.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F06-05.html"><div class="eyebrow">F06-05</div><h3>자동 충전 설정</h3><p>임계값·충전 금액, 결제 실패 시 원래 결제 재시도 정책.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
@@ -59,9 +59,9 @@
           <table>
             <thead><tr><th>흐름</th><th>주체</th><th>의미</th></tr></thead>
             <tbody>
-              <tr><td><strong>포인트 충전</strong></td><td>사용자 → 지갑</td><td>외부 PG 결제로 잔액 증가</td></tr>
+              <tr><td><strong>포인트 충전</strong></td><td>사용자 → 지갑</td><td>외부 결제 대행을 통한 결제로 잔액 증가</td></tr>
               <tr><td><strong>포인트 결제</strong></td><td>지갑 → 서비스</td><td>이벤트·플랜·구독 등 비용 지불</td></tr>
-              <tr><td><strong>환불</strong></td><td>서비스 → 지갑 복원이 기본; 원수단(PG) 환불은 조건부</td><td>기존 결제 취소 또는 보상. 현재 기본 설정에서는 유료 포인트도 지갑으로 즉시 복원. 원수단(PG) 환불 큐는 설정 활성화(<code>refund.pg-queue.enabled</code>) + PG 결제건에 한해 동작.</td></tr>
+              <tr><td><strong>환불</strong></td><td>서비스 → 지갑 복원이 기본; 원수단(카드) 환불은 조건부</td><td>기존 결제 취소 또는 보상. 현재 기본 설정에서는 유료 포인트도 지갑으로 즉시 복원. 원수단(카드) 환불 큐는 별도 설정이 켜져 있고 카드로 결제된 건일 때만 동작.</td></tr>
               <tr><td><strong>모임 정산</strong></td><td>참가자 → 호스트</td><td>모임 비용 분담. <a href="07-settlement.html">07 정산 도메인</a>이 책임.</td></tr>
               <tr><td><strong>호스트 정산금</strong></td><td>플랫폼 → 호스트</td><td>수익 지급. F06-10에서 조회·이의제기.</td></tr>
               <tr><td><strong>클럽 기금</strong></td><td>멤버 → 클럽</td><td>공동 자금. <a href="04-club.html">04 클럽 도메인</a>이 책임.</td></tr>
@@ -72,86 +72,86 @@
 
       <!-- 2026-05-24: 포인트 분리정산 반영 -->
       <section>
-        <h2>지갑 유료/무료 분리 + 인출 paid-only</h2>
-        <p class="subtitle">지갑 잔액은 <strong>유료(paid)</strong> / <strong>무료(free)</strong>로 분리 관리된다. 결제 시 유료/무료 split이 수취자까지 전파되어, 무료로 결제된 금액은 수취자도 무료로 받는다.</p>
+        <h2>지갑 유료/무료 분리 + 인출은 유료분만</h2>
+        <p class="subtitle">지갑 잔액은 <strong>유료</strong> / <strong>무료</strong>로 분리 관리된다. 무료로 결제된 금액이 수취자에게 어떻게 넘어가는지는 사용처 유형에 따라 다르다 — 구분을 그대로 이어 전달하는 유형, 무료분을 소멸 처리하는 유형, 유료만 받는 유형으로 나뉜다.</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>구분</th><th>유입</th><th>사용</th><th>인출(현금화)</th></tr></thead>
             <tbody>
-              <tr><td><strong>유료(paid)</strong></td><td>충전, 현금 환불</td><td>모든 사용처</td><td><span class="pill brand">가능</span></td></tr>
-              <tr><td><strong>무료(free)</strong></td><td>프로모션 지급</td><td>opt-in 사용처(이벤트·마켓·구독·티켓 등)</td><td><span class="pill danger">불가</span></td></tr>
+              <tr><td><strong>유료</strong></td><td>충전, 현금 환불</td><td>모든 사용처</td><td><span class="pill brand">가능</span></td></tr>
+              <tr><td><strong>무료</strong></td><td>프로모션 지급</td><td>허용된 사용처만(이벤트·마켓·구독·티켓 등)</td><td><span class="pill danger">불가</span></td></tr>
             </tbody>
           </table>
         </div>
-        <p>외부 출금·탈퇴 환불은 모두 <strong>유료 잔액만</strong> 대상이다. 탈퇴 시 무료 잔액은 소멸(forfeit). 사용처 3분류(flow-through / free-burn / PAID_ONLY)와 차등가격(<code>allowFreePoints</code>/<code>freePointPrice</code>)은 <a href="../policies/payment.html">결제·정산 정책</a>에 정리되어 있다. (followup: EVENT 결제·환불 <code>spend()</code> 이관, <code>refundToWallet</code> split 보존 미완.)</p>
+        <p>외부 출금·탈퇴 환불은 모두 <strong>유료 잔액만</strong> 대상이다. 탈퇴 시 무료 잔액은 소멸한다. 사용처 3분류(무료가 수취자까지 전파되는 흐름 / 수취자 없이 소각되는 흐름 / 무료 결제 자체를 막는 유료 전용)와 차등가격(콘텐츠 생산자가 무료 허용 여부와 무료 전용가를 정하는 방식)은 <a href="../policies/payment.html">결제·정산 정책</a>에 정리되어 있다. (보강 예정: 이벤트 결제·환불의 분리정산 이관, 클럽 기부·구독 환불 시 유료/무료 비율 보존.)</p>
       </section>
 
       <section>
-        <h2>환불 정책 — 이벤트별 카탈로그 (템플릿 6종)</h2>
-        <p class="subtitle">F06-06의 핵심. 2026-06-02 환불 통일(D-1)로 고정 규칙(24h=100%/12h=50%/0%)이 폐기되고,
-        이벤트마다 <code>event_refund_policy</code> 카탈로그의 템플릿이 적용된다. 남은 시간 구간(by_time)으로 환불률을 계산한다.</p>
+        <h2>환불 정책 — 이벤트별 카탈로그 (6종)</h2>
+        <p class="subtitle">F06-06의 핵심. 2026-06-02 환불 통일로 고정 규칙(24시간 전 100%/12시간 전 50%/이후 0%)이 폐기되고,
+        이벤트마다 호스트가 고른 환불 정책이 적용된다. 모임 시작까지 남은 시간 구간으로 환불률을 계산한다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>템플릿</th><th>규칙 (이벤트 시작까지 남은 시간)</th><th>수수료</th></tr></thead>
+            <thead><tr><th>환불 정책</th><th>규칙 (모임 시작까지 남은 시간)</th><th>수수료</th></tr></thead>
             <tbody>
-              <tr><td><strong>STANDARD</strong> (기본)</td><td>7일 전 <span class="pill brand">100%</span> · 3일 전 80% · 24시간 전 50% · 12시간 전 <span class="pill warn">30%</span> · 이후 <span class="pill danger">0%</span></td><td>1,000원</td></tr>
-              <tr><td><strong>STRICT</strong></td><td>7일 전 <span class="pill brand">100%</span> · 3일 전 50% · 24시간 전부터 <span class="pill danger">0%</span></td><td>2,000원</td></tr>
-              <tr><td><strong>FLEXIBLE</strong></td><td>24시간 전 <span class="pill brand">100%</span> · 이후 <span class="pill danger">0%</span></td><td>없음</td></tr>
-              <tr><td><strong>FULL</strong></td><td>언제든 <span class="pill brand">100%</span></td><td>없음</td></tr>
-              <tr><td><strong>NON_REFUNDABLE</strong></td><td>신청 즉시 <span class="pill danger">환불 불가</span></td><td>없음</td></tr>
-              <tr><td><strong>CUSTOM</strong></td><td>호스트가 시간 구간·비율을 직접 정의</td><td>호스트 정의</td></tr>
+              <tr><td><strong>기준</strong> (기본)</td><td>7일 전 <span class="pill brand">100%</span> · 3일 전 80% · 24시간 전 50% · 12시간 전 <span class="pill warn">30%</span> · 이후 <span class="pill danger">0%</span></td><td>1,000원</td></tr>
+              <tr><td><strong>엄격</strong></td><td>7일 전 <span class="pill brand">100%</span> · 3일 전 50% · 24시간 전부터 <span class="pill danger">0%</span></td><td>2,000원</td></tr>
+              <tr><td><strong>유연</strong></td><td>24시간 전 <span class="pill brand">100%</span> · 이후 <span class="pill danger">0%</span></td><td>없음</td></tr>
+              <tr><td><strong>전액</strong></td><td>언제든 <span class="pill brand">100%</span></td><td>없음</td></tr>
+              <tr><td><strong>환불 불가</strong></td><td>신청 즉시 <span class="pill danger">환불 불가</span></td><td>없음</td></tr>
+              <tr><td><strong>직접 설정</strong></td><td>호스트가 시간 구간·비율을 직접 정의</td><td>호스트 정의</td></tr>
             </tbody>
           </table>
         </div>
-        <p>참가자 귀책(단순 변심)일 때만 위 비율이 적용되고, <strong>호스트 귀책(이벤트 취소·일정 변경 거절 등)은 항상 100% 환불</strong>이다(귀책 7분류).
-        취소 전 <code>refund-preview</code>로 환불 예상액을 미리 보여주며, 템플릿 목록은 <code>GET /api/v1/refund-policy-templates</code>로 조회한다.
-        (기존 <code>GET /api/v1/wallet/refund/policy</code>는 레거시 고정값 안내용으로만 남아 있다.)</p>
+        <p>귀책은 <strong>호스트 귀책 · 불가항력 · 상호 합의 · 일정 변경 거절 · 노쇼 · 참가자 귀책 · 노쇼 사후 조정</strong>의 7가지로 분류된다. 참가자 귀책(단순 변심)일 때만 위 비율이 적용되고, 호스트 귀책·불가항력·상호 합의·일정 변경 거절은 항상 100% 환불(수수료 0원), 노쇼는 환불 거절, 노쇼 사후 조정은 호스트가 금액을 정한다.
+        취소 전 환불 미리보기로 환불 예상액을 보여주며, 정책 목록은 로그인 없이도 조회할 수 있다.
+        (기존 고정값 안내는 구형 정보용으로만 남아 있다.)</p>
       </section>
 
       <section>
-        <h2>자동충전 — 임계값·월간 한도·FIFO</h2>
-        <p class="subtitle">F06-05. 결제 시 잔액이 부족하면 자동으로 충전 후 원 결제를 재시도한다.</p>
+        <h2>자동충전 — 임계값·월간 한도·먼저 충전한 순서대로 차감</h2>
+        <p class="subtitle">F06-05. 결제 시 잔액이 부족하면 자동으로 충전 후 원래 결제를 재시도한다.</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>항목</th><th>값</th></tr></thead>
             <tbody>
-              <tr><td>임계값 <code>thresholdAmount</code></td><td>1,000 ~ 100,000원 사이 입력 (<code>AutoChargeConstants.validateThreshold</code>)</td></tr>
-              <tr><td>충전 금액 <code>chargeAmount</code></td><td><code>GET /api/v1/wallet/charge/presets</code>의 프리셋 칩 선택</td></tr>
-              <tr><td>월간 한도 <code>monthlyLimit</code></td><td>D-03 결정으로 추가. 그 달에 자동충전된 누계가 한도를 넘으면 더 이상 충전하지 않는다. 한도가 한 번 충전 금액보다 작으면 저장 단계에서 거절된다.</td></tr>
-              <tr><td>PG 연동</td><td>prod: Toss <code>billingPayment(billingKey, orderId, amount)</code>. non-prod은 시뮬레이션 키 <code>SIM_AUTO_*</code></td></tr>
-              <tr><td>발동 위치</td><td><code>WalletService.pay</code> 안의 <code>ChargeService.tryAutoCharge</code></td></tr>
+              <tr><td>임계값</td><td>잔액이 이 금액 아래로 내려가면 자동 충전이 발동한다. 1,000 ~ 100,000원 사이로 설정한다.</td></tr>
+              <tr><td>한 번 충전 금액</td><td>미리 준비된 금액 칩 중에서 고른다.</td></tr>
+              <tr><td>월간 한도</td><td>그 달에 자동충전된 누계가 한도를 넘으면 더 이상 충전하지 않는다. 한도가 한 번 충전 금액보다 작으면 설정 저장 단계에서 거절된다.</td></tr>
+              <tr><td>카드 결제 연동</td><td>운영 환경에서는 한 번 등록한 카드로 매번 자동 결제된다. 그 외 환경에서는 시뮬레이션으로 동작한다.</td></tr>
+              <tr><td>발동 시점</td><td>결제 처리 도중 잔액이 부족할 때 자동 충전이 끼어든다.</td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section>
-        <h2>FIFO 충전 로트와 복식부기</h2>
-        <p class="subtitle">충전·결제·환불은 모두 <code>ChargeLot</code>(FIFO 단위)과 <code>AccountingLedger</code>(복식부기) 두 곳에 동시에 기록된다.</p>
+        <h2>먼저 충전한 순서대로 쓰는 잔액과 복식 회계</h2>
+        <p class="subtitle">충전·결제·환불은 모두 충전 단위(먼저 충전한 잔액부터 차감되는 환불 가능 단위)와 복식 회계 장부 양쪽에 동시에 기록된다.</p>
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
-    A["사용자 50,000원 충전"] --> B["wallets.balance += 50,000"]
-    B --> C["point_transactions(type=CHARGE, COMPLETED) 1행"]
-    B --> D["payment_records(COMPLETED) 1행"]
-    B --> E["charge_lots 1행 신규 생성<br/>(FIFO 환불 가능 단위)"]
-    B --> F["accounting_ledger 분개 다수"]
+    A["사용자 50,000원 충전"] --> B["지갑 잔액 +50,000"]
+    B --> C["충전 거래 1건 기록"]
+    B --> D["결제 영수 1건 기록"]
+    B --> E["충전 단위 1건 신규 생성<br/>(환불 가능 단위)"]
+    B --> F["회계 장부에 분개"]
 
-    G["사용자 결제 8,000원"] --> H["wallets.balance -= 8,000"]
-    H --> I["point_transactions(type=PAY) 1행"]
-    H --> J["FIFO: 가장 오래된 charge_lot부터 8,000 차감"]
-    H --> K["accounting_ledger 분개 다수"]
+    G["사용자 결제 8,000원"] --> H["지갑 잔액 -8,000"]
+    H --> I["결제 거래 1건 기록"]
+    H --> J["가장 먼저 충전한 단위부터 8,000 차감"]
+    H --> K["회계 장부에 분개"]
 
-    L["환불 (50%, 4,000원)"] --> M["wallets.balance += 4,000"]
-    M --> N["point_transactions(type=REFUND) 1행"]
-    M --> O["관련 charge_lot 일부/전체 무효화"]
-    M --> P["accounting_ledger 역분개"]
+    L["환불 (50%, 4,000원)"] --> M["지갑 잔액 +4,000"]
+    M --> N["환불 거래 1건 기록"]
+    M --> O["관련 충전 단위 일부·전체 복원"]
+    M --> P["회계 장부에 반대 분개"]
           </div>
         </div>
         <ul>
-          <li><strong>중복 결제 가드</strong>: <code>existsByUserIdAndReferenceTypeAndReferenceId</code> 체크 → 위반 시 <code>DUPLICATE_PAYMENT 409</code>로 즉시 차단</li>
-          <li><strong>서버 가격 검증</strong>: 클라가 보낸 <code>amount</code> vs <code>event.price</code> 비교 후 불일치 시 차단(가격 조작 방지)</li>
-          <li><strong>역분개</strong>: 모임 정산 취소 시 <code>AccountingLedgerService.recordMeetingSettlementReversal</code>로 분개를 반대로 한 줄 더 기록</li>
+          <li><strong>중복 결제 차단</strong>: 같은 건에 대한 두 번째 결제 시도는 그 자리에서 거절된다 — 잔액은 한 번만 차감된다.</li>
+          <li><strong>서버 가격 검증</strong>: 사용자가 보낸 금액과 시스템에 등록된 모임 가격이 다르면 결제가 거절된다(가격 조작 방지).</li>
+          <li><strong>반대 분개</strong>: 모임 정산을 취소하면 원래 분개를 반대로 한 줄 더 기록해 장부를 되돌린다.</li>
         </ul>
       </section>
 
@@ -160,15 +160,15 @@ flowchart TD
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> PENDING: 정산 대기
-    PENDING --> APPROVED: 승인
-    APPROVED --> PAYING: 지급 처리
-    PAYING --> PAID: 지급 완료
-    PAYING --> FAILED: 지급 실패
-    FAILED --> PAYING: 재시도
-    PENDING --> REJECTED: 거절
-    APPROVED --> REJECTED: 거절
-    REJECTED --> PENDING: 이의제기 후 재심사
+    [*] --> 정산대기: 정산 대기
+    정산대기 --> 승인됨: 승인
+    승인됨 --> 지급처리중: 지급 처리
+    지급처리중 --> 지급완료: 지급 완료
+    지급처리중 --> 지급실패: 지급 실패
+    지급실패 --> 지급처리중: 재시도
+    정산대기 --> 거절됨: 거절
+    승인됨 --> 거절됨: 거절
+    거절됨 --> 정산대기: 이의제기 후 재심사
           </div>
         </div>
       </section>
@@ -177,9 +177,9 @@ stateDiagram-v2
         <h2>레드 플래그</h2>
         <div class="callout danger">
           <ul>
-            <li><strong>결제 성공과 기능 성공이 분리되는 경우</strong> — PG 콜백 지연 또는 정원 마감 직후 결제 케이스. 처리중 화면과 재조회 동선 필수.</li>
-            <li><strong>중복 결제</strong> — 같은 버튼 연타 또는 콜백 중복 도착. 멱등 처리.</li>
-            <li><strong>잔액 부족 vs PG 실패 구분 미흡</strong> — 사용자는 둘 중 어느 쪽인지 알아야 다음 행동을 결정한다.</li>
+            <li><strong>결제 성공과 기능 성공이 분리되는 경우</strong> — 결제 대행 응답 지연 또는 정원 마감 직후 결제 케이스. 처리중 화면과 재조회 동선 필수.</li>
+            <li><strong>중복 결제</strong> — 같은 버튼 연타 또는 응답 중복 도착. 같은 결제는 한 번만 처리된다.</li>
+            <li><strong>잔액 부족 vs 결제 대행 실패 구분 미흡</strong> — 사용자는 둘 중 어느 쪽인지 알아야 다음 행동을 결정한다.</li>
             <li><strong>자동충전 실패 후 원래 결제까지 실패</strong> — 두 단계의 실패를 분리해서 안내해야 한다.</li>
             <li><strong>결제수단 삭제 시 자동충전·구독 영향 미고지</strong> — 다른 곳에서 쓰이던 수단을 그냥 지우면 결제 실패가 연쇄.</li>
           </ul>
