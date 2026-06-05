@@ -33,7 +33,7 @@
 6. `EventService#getEvent`는 이벤트를 조회한 뒤 `DRAFT` 이벤트에 비호스트/비공동호스트가 접근하면 `EVENT_NOT_FOUND`로 마스킹한다.
 7. 통과한 조회는 Redis 조회수 증가(`TrendingService.recordView`)와 로그인 사용자의 view interaction 기록을 수행한다. interaction 기록 실패는 warning으로만 남기고 상세 조회는 계속한다.
 8. `loadEventVoWithDetails`는 host nickname, co-host, viewer context, 클럽 비멤버 제한, 사전결제 환불 정보, private meeting detail을 `EventVo`에 주입한다.
-9. Flutter는 `EventVo.status`, `clubId`, `myMembershipStatus`, `myRole`, `myAttendanceStatus`, `myApplicationStatus`, `isWishlisted`, `myPromotedFromWaitlist` 등을 바탕으로 본문 섹션과 하단 CTA를 결정한다.
+9. Flutter는 `EventVo.status`, `clubId`, `myMembershipStatus`, `myRole`, `myAttendanceStatus`, `myApplicationStatus`, `isWishlisted`, `myPromotedFromWaitlist` 등을 바탕으로 본문 섹션과 하단 CTA를 결정한다. 2026-06-05부터 호스트 또는 참석확정(ATTENDING) 사용자에게 "모임 정산" 네비게이션 행이 항상 노출된다(`/home/events/:id/settlement` push — D-OPEN-2 미리보기 정식화의 진입 경로, [F07-04](../07_meeting_settlement/F07-04_status-summary-receipt_prd.md) 참조).
 10. `.ics` 내보내기는 `exportEventCalendarProvider`가 `GET /api/v1/events/{eventId}/calendar`를 호출하고, Flutter가 임시 파일로 저장한 뒤 share sheet를 연다.
 11. 유사 이벤트는 `similarEventsProvider`가 `GET /api/v1/events/{eventId}/similar?limit=5`를 호출한다. 실패 시 빈 리스트로 숨긴다.
 
@@ -117,6 +117,7 @@
 | manage applications | host/staff |
 | check-in | host/staff/attending |
 | location view | host/co-host/attending |
+| 모임 정산 입구 | `isHost \|\| isAttendingViewer` — 항상 노출 (2026-06-05 신설, DEC-V8). 정산 부재 시 정산 화면이 참가자 빈 상태/호스트 생성 CTA로 분기 ([F07-04](../07_meeting_settlement/F07-04_status-summary-receipt_prd.md)) |
 | bottom CTA capacity full | `currentCapacity + reservedPaymentPendingCount >= baseCapacity` |
 | promoted notice | `myPromotedFromWaitlist && !promotedSeen && viewerStatus == attending` |
 

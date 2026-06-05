@@ -1,6 +1,6 @@
 # F07-10. 정산 계좌 / 내 정산 이력 / 호스트 신뢰도 (Account, History, Reputation) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement/F07-10_account-history-reputation -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05 (평판 DRAFT 제외 DEC-V5 + 지갑 모임정산 목록 DEC-V9 반영); unit: business_logic/units/07_meeting_settlement/F07-10_account-history-reputation -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-10_account-history-reputation`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -70,7 +70,8 @@
 | PATCH | /api/v1/users/me/bank-accounts/{id}/default | SettlementBankAccountController#setDefault | required | 기본 계좌 설정 |
 | GET | /api/v1/users/me/meeting-settlements | MeetingSettlementHistoryController#getMyHistory | required | 내 정산 참여 이력 |
 | GET | /api/v1/users/me/meeting-settlements/monthly-summary | MeetingSettlementHistoryController#getMonthlySummary | required | 월별 요약 (최대 24개월) |
-| GET | /api/v1/users/{userId}/meeting-settlement-reputation | HostSettlementReputationController#getReputation | required | 호스트 정산 신뢰도 |
+| GET | /api/v1/users/{userId}/meeting-settlement-reputation | HostSettlementReputationController#getReputation | required | 호스트 정산 신뢰도 — "진행 중 건수"(activeCount)는 ACTIVE만 집계, DRAFT(준비 중)는 제외 (DEC-V5, 2026-06-05) |
+| GET | /api/v1/wallet/meeting-settlements | WalletController(→ MeetingSettlementService#getMySettlements) | required | 내가 참여한 모임 정산 목록 — §7-A 참조. **앱 소비처 0** (서버 선구현) |
 
 ### 의존 단위 / 외부 시스템
 
@@ -181,6 +182,15 @@
 | 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
 | 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
+### 7-A. 평판 DRAFT 제외 + 지갑 모임정산 목록 (Fact, 2026-06-05)
+
+> **Fact (D-OPEN-2 해소의 일부, 서버 커밋 426c26d·94c4869, 2026-06-05)**: 결정·검토 이력 canonical은 `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md`.
+
+- **호스트 평판 집계 정정(DEC-V5)**: `HostSettlementReputationService`의 "진행 중 건수"(activeCount)가 DRAFT를 ACTIVE와 섞어 세던 오염을 정정 — **ACTIVE만 집계, DRAFT 제외**. 작성 중(비확정) 정산이 호스트 평판 숫자에 들어가지 않는다.
+- **지갑 모임정산 목록 DRAFT 포함(DEC-V9)**: `GET /api/v1/wallet/meeting-settlements`(`MeetingSettlementQueryRepository.findByParticipantUserId`)의 참여 판정이 기존 "생성자 or transfer 당사자"였는데, DRAFT 단계에는 transfer가 없어 **내 분담금이 걸린 준비 중 정산이 목록에 안 들어오던 것**을 "DRAFT && 본인 share 당사자"(share→item→settlement 조인) 분기 추가로 해소. **DRAFT && 비생성자 행은 note·autoRemindAfterHours·autoRemindSentAt null 마스킹**(F07-04 차등 노출과 동일 원칙). ACTIVE 이후 행과 생성자 행은 무변경. 실데이터 `@DataJpaTest` 8건(포함/제외/무회귀/필터/페이징).
+- **앱 소비처 0 (계획 정정)**: 이 API는 앱이 호출하지 않는다 — `WalletRepository.getMyMeetingSettlements` 정의만 존재, 지갑 화면(`SettlementListScreen`)은 별개의 이벤트 정산 API(`/wallet/settlements`, F06-10)를 사용. 따라서 DEC-V9는 **서버 측 선구현 완료** 상태이고, 참가자 가시화는 "지갑 모임정산 목록 화면" 후속 슬라이스가 생길 때 자동 적용된다. v1의 참가자 발견 경로는 이벤트 상세 입구(F03-02)가 유일·공식.
+- **참고**: 본 PRD §4의 "내 정산 참여 이력"(`/users/me/meeting-settlements`)은 별개 API로, transfer 기반 집계라 **DRAFT는 애초에 히스토리에 유입되지 않는다**(앱 히스토리 화면의 'DRAFT→준비중' 칩은 렌더 코드만 존재).
+
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
@@ -188,6 +198,7 @@
 | 후보 | frontend.md:47 | - 카드 탭 ▶ 해당 settlement의 status 화면(F07-04) 진입 (현재 코드는 `_HistoryTile` 클릭 라우팅 별도 처리) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:55 | - 탭 ▶ 상세 모달 (옵션 — 현재 코드에 모달 화면 X) 또는 단순 표시 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:97 | - 70% 미만 주의 (회색 배지) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap (P2) | DRAFT_SETTLEMENT_VISIBILITY_PLAN §8.5.1 | 지갑 "내 모임정산 목록" 화면 부재 — 서버 목록 API는 DRAFT 포함+마스킹까지 준비 완료인데 앱 소비처 0 | 후속 슬라이스로 지갑 영역 모임정산 목록 화면 신설 (비ATTENDING share 당사자의 앱 진입 경로 부재 해소와 동일 건) |
 
 ## 9. 수용 기준
 

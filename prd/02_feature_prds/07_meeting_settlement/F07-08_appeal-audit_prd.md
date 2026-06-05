@@ -1,6 +1,6 @@
 # F07-08. 정산 이의제기 / 처리 / 감사로그 (Appeal & Audit Log) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/07_meeting_settlement/F07-08_appeal-audit -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-05 (DRAFT 이의 차단 DEC-V4 반영); unit: business_logic/units/07_meeting_settlement/F07-08_appeal-audit -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-08_appeal-audit`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -8,11 +8,13 @@
 
 참가자가 본인의 분담 또는 이체에 이의를 제기하면 PENDING appeal이 생성되고 해당 subject에 대한 결제·확인이 차단된다. 호스트(=정산 생성자)가 APPROVED/REJECTED/RESOLVED 중 하나로 처리해야 차단이 해제된다. 모든 정산 변경은 감사 로그(audit log)로 기록되어 페이지네이션 조회된다.
 
+**2026-06-05부터 DRAFT(준비 중) 정산에는 이의제기를 서버가 차단한다(DEC-V4)** — 비확정 금액에 대한 이의는 혼란과 활성화 후 결제 장애(미처리 PENDING appeal의 결제 차단)만 만들기 때문. 정산 신청(ACTIVE) 이후부터 이의 가능하며, COMPLETED에서의 현행 허용은 유지된다. 상세는 §7-A Fact 참조.
+
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
 - **이의 생성**:
-  - `MySettlementSharesScreen` 카드의 "이의 제기" 버튼 (참가자, F07-05)
-  - `TransferListScreen` 카드의 "이의 제기" 버튼 (참가자/호스트)
+  - `MySettlementSharesScreen` 카드의 "이의 제기" 버튼 (참가자, F07-05) — DRAFT 또는 status 미확정(로딩/에러) 동안은 버튼 숨김(3상태 가드, 2026-06-05)
+  - `TransferListScreen` 카드의 "이의 제기" 버튼 (참가자/호스트) — transfer는 활성화 시점에 생성되므로 DRAFT에서는 진입 자체가 없음
 - **이의 관리 / 감사 로그**:
   - 정산 현황 화면 manager PopupMenu → "이의제기 관리" / "감사 로그"
 
@@ -62,13 +64,13 @@
 
 ### 개요
 
-참가자가 본인의 분담 또는 이체에 이의를 제기하면 PENDING appeal이 생성되고 해당 subject에 대한 결제·확인이 차단된다. 호스트(=정산 생성자)가 APPROVED/REJECTED/RESOLVED 중 하나로 처리해야 차단이 해제된다. 모든 정산 변경은 감사 로그(audit log)로 기록되어 페이지네이션 조회된다.
+참가자가 본인의 분담 또는 이체에 이의를 제기하면 PENDING appeal이 생성되고 해당 subject에 대한 결제·확인이 차단된다. 호스트(=정산 생성자)가 APPROVED/REJECTED/RESOLVED 중 하나로 처리해야 차단이 해제된다. 모든 정산 변경은 감사 로그(audit log)로 기록되어 페이지네이션 조회된다. **DRAFT 정산에는 이의 생성이 차단된다(DEC-V4)** — `MeetingSettlementAppealService` 생성 진입부에서 status==DRAFT면 `MEETING_SETTLEMENT_NOT_ACTIVE` 거부. COMPLETED 이의 허용은 현행 유지(DRAFT만 명시 차단).
 
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| POST | /api/v1/events/{eventId}/settlement/appeals | MeetingSettlementController#createAppeal | required | 이의 생성 (참가자/호스트) |
+| POST | /api/v1/events/{eventId}/settlement/appeals | MeetingSettlementController#createAppeal | required | 이의 생성 (참가자/호스트) — settlement DRAFT면 `MEETING_SETTLEMENT_NOT_ACTIVE` 거부(저장·호스트 알림 이전 가드, 2026-06-05) |
 | GET | /api/v1/events/{eventId}/settlement/appeals | MeetingSettlementController#getAppeals | required | 정산의 모든 이의 리스트 |
 | PATCH | /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve | MeetingSettlementController#resolveAppeal | required | 이의 처리 (호스트) |
 | GET | /api/v1/events/{eventId}/settlement/audit-log | MeetingSettlementController#getAuditLog | required | 감사 로그 페이지네이션 |
@@ -84,8 +86,8 @@
 ### 진입 경로
 
 - **이의 생성**:
-  - `MySettlementSharesScreen` 카드의 "이의 제기" 버튼 (참가자, F07-05)
-  - `TransferListScreen` 카드의 "이의 제기" 버튼 (참가자/호스트)
+  - `MySettlementSharesScreen` 카드의 "이의 제기" 버튼 (참가자, F07-05) — DRAFT 또는 status 미확정(로딩/에러) 동안은 버튼 숨김(3상태 가드, 2026-06-05)
+  - `TransferListScreen` 카드의 "이의 제기" 버튼 (참가자/호스트) — transfer는 활성화 시점에 생성되므로 DRAFT에서는 진입 자체가 없음
 - **이의 관리 / 감사 로그**:
   - 정산 현황 화면 manager PopupMenu → "이의제기 관리" / "감사 로그"
 
@@ -170,6 +172,7 @@
 | S7 | (참가자 / 호스트 · 감사 로그 조회) 정산 변경 이력 추적 | 호스트가 누가 언제 무엇을 했는지 점검 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S8 | (엣지 · ALREADY_RESOLVED) 이미 처리된 이의를 다시 처리 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S9 | (엣지 · INVALID_STATUS) status에 PENDING으로 resolve 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+| S10 | (엣지 · DRAFT 이의 차단) 준비 중 정산에 이의제기 시도 (UI 우회 포함) | settlement DRAFT, 본인 share 존재 | `MEETING_SETTLEMENT_NOT_ACTIVE` 거부, appeal row 미생성, 호스트 알림 0건. 앱은 버튼 자체를 숨김 (2026-06-05) |
 
 ## 7. 정합성 판단
 
@@ -188,6 +191,14 @@
 - **처리(resolution)**: 이의 처리 endpoint는 기존 `PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve` 그대로 유지. 통합 분쟁 경로에서 별도 처리 endpoint 없음.
 - **상태 매핑**: `MeetingSettlementAppeal.AppealStatus(PENDING/APPROVED/REJECTED/RESOLVED)` → `UnifiedDisputeStatus(OPEN/RESOLVED/RESOLVED/CLOSED)` 로 파생.
 
+### 7-A. DRAFT 이의 차단 (Fact, 2026-06-05)
+
+> **Fact (D-OPEN-2 해소의 일부, 서버 커밋 426c26d + 앱 커밋 7ba69c0, 2026-06-05)**: 그동안 DRAFT 정산은 **이의제기만 잠기지 않은 유일한 문**이었다 — 결제·확정·재발행·상각은 전부 ACTIVE 전용 가드가 있었지만 appeal 생성은 status 미검사로 접수되고 호스트 알림까지 발생했다. 호스트가 항목을 고치면 이의의 대상 자체가 사라지는데, 처리 안 된 PENDING 이의는 활성화 후 해당 결제를 차단해 장애가 됐다.
+
+- **서버(DEC-V4)**: `MeetingSettlementAppealService` 생성 진입부에 `status == DRAFT → MEETING_SETTLEMENT_NOT_ACTIVE` 가드 — **저장과 호스트 알림 발송 이전에 차단**해 "정산 신청 전 알림 침묵" 원칙을 완성. COMPLETED에서의 이의 허용은 현행 유지(DRAFT만 명시 차단). 운영 DB에 DRAFT 단계 이의 데이터 없음 확인(2026-06-04) — 기존 데이터 영향 0.
+- **앱**: `MySettlementSharesScreen` 이의 버튼을 **3상태 가드**로 변경 — status 확정 + 비DRAFT + 비호스트일 때만 노출. status를 모르는 동안(로딩/에러)은 안전 기본값으로 숨겨, 분담금 목록이 정산 상세보다 먼저 로드될 때 DRAFT 정산에서 버튼이 잠깐 보이는 레이스를 봉합(Codex 7차 MAJOR 반영).
+- 결정·검토 이력 canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V4, Codex 1차 BLOCKER ①).
+
 ## 8. Gap / Risk
 
 > 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
@@ -203,6 +214,7 @@
 - **AC-07. (참가자 / 호스트 · 감사 로그 조회) 정산 변경 이력 추적**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-08. (엣지 · ALREADY_RESOLVED) 이미 처리된 이의를 다시 처리 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-09. (엣지 · INVALID_STATUS) status에 PENDING으로 resolve 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+- **AC-10. (엣지 · DRAFT 이의 차단) 준비 중 정산에 이의제기 시도**: Given settlement DRAFT, 본인 share 존재 When 참가자가 이의 생성을 호출하면(UI 우회 포함) Then `MEETING_SETTLEMENT_NOT_ACTIVE`로 거부되고 appeal이 저장되지 않으며 호스트 알림도 발생하지 않는다
 
 ## 10. 미결정 / 후속
 

@@ -25,9 +25,9 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">업무 도메인</div><div class="value">17</div><div class="hint">가입부터 정기모임까지 책임이 분리된 영역</div></div>
-          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">153</div><div class="hint">Golden 1 · 전환 완료 150</div></div>
-          <div class="metric"><div class="label">검증 시나리오</div><div class="value">1134</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
+          <div class="metric"><div class="label">업무 도메인</div><div class="value">20</div><div class="hint">7개 줄기로 묶인 책임 분리 영역</div></div>
+          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">168</div><div class="hint">Golden 1 · 전환 완료 150 · 신규 17</div></div>
+          <div class="metric"><div class="label">검증 시나리오</div><div class="value">1180</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
           <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
         </div>
 
@@ -42,7 +42,8 @@
 
         <div class="callout">
           <span class="label">이 허브를 보는 법</span>
-          <p>왼쪽 사이드바는 “이해 → 도메인 → 기능 → 정책 → QA” 순서로 정렬돼 있다.
+          <p>왼쪽 사이드바는 “이해 → 도메인(7개 줄기) → 기능 → 정책 → QA” 순서로 정렬돼 있다.
+          도메인은 줄기별로 묶여 있다 — 들여쓰인 항목(정기모임·모임 정산·마일리지·경고)은 큰 줄기(이벤트·클럽)에 속한 위성 도메인이다.
           처음이라면 <a href="overview/service.html">서비스 정의</a> → <a href="overview/architecture.html">정보구조</a> →
           <a href="overview/journeys.html">7대 여정</a>을 차례로 읽고, 담당 영역 도메인 페이지로 내려가는 흐름을 권장한다.
           담당 기능을 직접 다루려면 <a href="overview/operating-model.html">운영 모델</a> →
@@ -119,7 +120,7 @@ flowchart LR
           <a class="card" href="qa/migration-status.html">
             <div class="eyebrow">신규</div>
             <h3>168개 PRD 전환 상태표</h3>
-            <p>Golden sample 1 · 전환 완료 121. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
+            <p>Golden sample 1 · 전환 완료 150 · 신규 17. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="features/catalog.html">
@@ -131,7 +132,7 @@ flowchart LR
           <a class="card" href="reference/numbers.html">
             <div class="eyebrow">신규</div>
             <h3>비즈니스 수치 레퍼런스</h3>
-            <p>환불률 24h=100%·12h=50%·0%, 클럽 구독 FREE 10,000원/월·BUSINESS 30,000원/월, 인출 수수료 5%+원천징수 3.3%, 30일 유예, 30초 갱신 등 정책 상수 모음.</p>
+            <p>이벤트별 환불 정책 템플릿 6종(기준·엄격·유연·전액·환불불가·직접설정), 클럽 구독 FREE 10,000원/월·BUSINESS 30,000원/월, 인출 수수료 5%+원천징수 3.3%, 30일 유예 등 정책 상수 모음.</p>
             <div class="meta"><span class="pill money">돈</span><span class="pill">상수</span></div>
           </a>
           <a class="card" href="features/impact.html">
@@ -167,7 +168,7 @@ flowchart LR
           <a class="card" href="qa/coverage.html">
             <div class="eyebrow">QA & 릴리즈</div>
             <h3>시나리오 커버리지</h3>
-            <p>1134개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
+            <p>1180개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="qa/release.html">

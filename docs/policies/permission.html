@@ -151,7 +151,7 @@ flowchart TD
               <tr><td>분담금 납부</td><td></td><td>O</td><td>조건부</td><td></td></tr>
               <tr><td>계좌이체 확인·상각</td><td></td><td></td><td>O</td><td></td></tr>
               <tr><td>미납자 리마인드</td><td></td><td></td><td>O</td><td></td></tr>
-              <tr><td>정산 이의제기</td><td></td><td>O</td><td>O</td><td></td></tr>
+              <tr><td>정산 이의제기</td><td></td><td>조건부</td><td>조건부</td><td></td></tr>
               <tr><td>클럽 기금 인출</td><td></td><td></td><td></td><td>O</td></tr>
             </tbody>
           </table>
@@ -160,6 +160,14 @@ flowchart TD
           <span class="label">유료 승인제 결제 조건</span>
           <p>유료 승인제 이벤트에서 일반 사용자의 참가비 결제는 “호스트 승인 후 결제 대기 상태”일 때만 허용한다.
           <strong>승인 전 결제·거절 후 결제·결제 기한 만료 후 결제는 모두 차단</strong>해야 한다.</p>
+        </div>
+        <div class="callout">
+          <span class="label">정산 이의제기·열람 조건 (2026-06-05)</span>
+          <p>정산 이의제기는 정산이 신청(활성화)된 이후부터만 가능하다 — 준비 중 정산에는 시스템이 이의 접수를 거부하고 앱도 버튼을 숨긴다.
+          호스트 본인 분담에 대한 이의는 상태와 무관하게 불가.
+          모임 정산 열람 자격은 <strong>참석 확정자 + 해당 정산에 분담금·송금이 걸린 사람 + 호스트</strong>다 —
+          참석을 취소했어도 내 돈이 걸려 있으면 본인 정산을 볼 수 있다.
+          준비 중 정산은 참가자에게 총액·상태·내 분담금만 보이는 미리보기 수위로 차등 노출된다.</p>
         </div>
       </section>
 

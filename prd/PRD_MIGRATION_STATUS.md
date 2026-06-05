@@ -19,6 +19,20 @@
 | **현재 총 기능 PRD (2026-06-05)** | **168** |
 | 누락/확인 필요 | 0 |
 
+## 2026-06-05 (2차) — DRAFT 정산 미리보기 정식화(D-OPEN-2 해소) 반영
+
+같은 날 community_api 426c26d·94c4869 + community_app 7ba69c0으로 구현·커밋된 D-OPEN-2 해소분(준비 중 정산 노출 정식화)을 기능 PRD 5개 + 도메인 PRD 1개 + 정책/전사 문서에 반영했다. canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V1~V9, Codex 7라운드 SIGN-OFF).
+
+| 문서 | 반영 내용 |
+|---|---|
+| F07-04 §1·§4·§5·§7-A·§8 | 열람 자격 확장(`validateSettlementReadAccess`), DRAFT && 비호스트 차등 노출(note 마스킹/summary 본인 행/items 빈 목록/영수증 거부), 미리보기 배너·404 빈 상태/생성 CTA, 잔여 Gap 2건(비ATTENDING 당사자 앱 진입 불가 P2 / DRAFT 자동 정리 없음 P3) |
+| F07-05 §4·§5 | `transfers/me` 인가 누락 수정(DEC-V3), read 자격 확장, my-shares '준비 중' 뱃지+캡션, 이의 버튼 3상태 가드 |
+| F07-08 §1·§4·§7-A·S10/AC-10 | DRAFT 이의 생성 서버 차단(DEC-V4 — 저장·호스트 알림 이전 가드), COMPLETED 허용 유지 |
+| F07-10 §4·§7-A·§8 | 평판 activeCount DRAFT 제외(DEC-V5), 지갑 모임정산 목록 DRAFT 포함+비생성자 마스킹(DEC-V9) — **앱 소비처 0, 서버 선구현**(지갑 화면 후속 Gap P2) |
+| F03-02 §3·§5 | 이벤트 상세 "모임 정산" 입구 신설(host‖ATTENDING 항상 노출, DEC-V8) — v1 참가자 발견 경로 유일 |
+| 07 도메인 PRD | 상단 cross-ref 블록 + 기능별 요약·상태 다이어그램 DRAFT 미리보기 반영 |
+| 정책/전사 | `permission_policy`(이의 조건부 + 열람 자격), `payment_settlement_policy` §7(미리보기 수위), `state_policy`·`08_state_transitions`(DRAFT 행 "보통 노출 없음" → 미리보기) |
+
 ## 2026-06-05 — 분쟁 해결 v3 일괄 반영 + 도메인 3개 신설 (17 → 20, 기능 153 → 168)
 
 2026-05-28 베이스라인(community_api a1f1967 / community_app d766ede) 이후의 소스 변경 전부를 9개 영역 병렬 실사(dossier: `.delta_2026-06-04/01~09`) 후 반영했다. 모든 신규 PRD는 source-first(units/ 없음)로 작성했다.

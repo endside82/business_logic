@@ -18,42 +18,56 @@
           제품을 “어디에 어떤 기능이 사는가”로 나눠 둔 지도다. 이 지도가 흔들리면
           기능 추가의 책임 소재가 흔들리기 때문에, 새 기능이 도착했을 때
           “어느 도메인에 둘 것인가”를 가장 먼저 묻는다.
+          나중에 만들어져 별도 도메인이 된 기능들도 맥락상으로는 큰 줄기에 속한다 —
+          그래서 20개 도메인을 <strong>7개 줄기</strong>로 묶어 본다 (도메인 번호와 기능 ID는
+          다른 문서·이슈에서 그대로 참조하는 안정 식별자라 바꾸지 않는다).
         </p>
       </header>
 
       <section>
-        <h2>여섯 축으로 묶은 20개 도메인</h2>
-        <p class="subtitle">20개를 일렬로 보면 외우기 어렵다. 행동 축 다섯 개로 묶어서 본다.</p>
+        <h2>일곱 줄기로 묶은 20개 도메인</h2>
+        <p class="subtitle">20개를 일렬로 보면 외우기 어렵다. 사용자 스토리의 줄기로 묶어서 본다.
+          마일리지·경고는 클럽 안에서 굴러가는 운영 기능이고, 정기모임·모임 정산은 모임(이벤트) 줄기의 확장이다.</p>
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
-    A["community"] --> B["가입·계정"]
-    A --> C["탐색"]
-    A --> D["참여·운영"]
-    A --> E["돈"]
-    A --> F["관계·신뢰"]
-    A --> G["개인정보·설정"]
+    A["community"] --> B["시작·발견"]
+    A --> D["모임 줄기"]
+    A --> E["클럽 줄기"]
+    A --> M["돈"]
+    A --> F["사람·관계"]
+    A --> T["신뢰·운영 (횡단)"]
+    A --> G["기반 (횡단)"]
     B --> B1["01 인증·온보딩"]
-    C --> C1["02 홈 피드"]
-    C --> C2["05 검색"]
-    C --> C3["08 플랜 마켓"]
+    B --> B2["02 홈 피드"]
+    B --> B3["05 검색"]
     D --> D1["03 이벤트"]
-    D --> D2["04 클럽"]
-    D --> D3["10 캘린더"]
-    D --> D4["14 위치·길찾기"]
-    D --> D5["15 경고·징계"]
-    D --> D6["16 마일리지"]
-    D --> D7["17 정기모임"]
-    E --> E1["06 결제·지갑"]
-    E --> E2["07 모임 정산"]
+    D1 --> D2["17 정기모임<br/>(여러 회차 모임)"]
+    D1 --> D3["07 모임 정산<br/>(모임 후 비용 분담)"]
+    E --> E1["04 클럽"]
+    E1 --> E2["16 마일리지<br/>(클럽 보상 프로그램)"]
+    E1 --> E3["15 경고·징계<br/>(클럽 운영 제재)"]
+    M --> M1["06 결제·지갑"]
+    M --> M2["08 플랜 마켓"]
     F --> F1["09 프라이빗 데이팅"]
-    F --> F2["11 리뷰·신고"]
-    F --> F3["12 알림"]
-    F --> F4["18 분쟁 해결"]
-    F --> F5["19 관심인"]
-    G --> G1["13 프로필·설정"]
-    G --> G2["20 고객지원"]
+    F --> F2["19 관심인"]
+    F --> F3["10 캘린더"]
+    F --> F4["13 프로필·설정"]
+    T --> T1["11 리뷰·신고"]
+    T --> T2["18 분쟁 해결"]
+    T --> T3["20 고객지원"]
+    G --> G1["12 알림"]
+    G --> G2["14 위치·길찾기"]
           </div>
+        </div>
+        <div class="callout">
+          <span class="label">왜 줄기인가 — 위성 도메인의 소속</span>
+          <p><strong>16 마일리지와 15 경고·징계는 클럽 안의 기능이다.</strong> 보상 프로그램 설정·적립 원장·등급·심사 큐가
+          전부 클럽 단위로 굴러가고, 진입점도 클럽 상세 화면이다 (경고의 “플랫폼 전역 제재” 한 축만 횡단).
+          <strong>17 정기모임은 “여러 회차로 진행되는 모임”</strong>으로, 클럽이 아니라 이벤트와 같은 참여·결제·정산 흐름을 공유한다.
+          <strong>07 모임 정산</strong>도 모임 줄기지만 규모와 금전 민감도가 커서 독립 도메인으로 유지한다.
+          나중에 만들어졌다는 이유로 별도 대항목처럼 나열돼 있던 것을 줄기 소속으로 정리한 것이며(2026-06-05),
+          도메인 번호·기능 ID는 그대로다.</p>
         </div>
       </section>
 
@@ -73,26 +87,33 @@ flowchart TD
               </tr>
             </thead>
             <tbody>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">시작·발견</td></tr>
               <tr><td>01</td><td><strong>인증 · 온보딩</strong></td><td>가입·인증·온보딩·관심사 설정으로 사용자를 “추천 가능한 상태”까지 끌어올린다.</td><td style="text-align:right">8</td><td style="text-align:right">82</td><td><a href="../domains/01-auth.html">열기</a></td></tr>
               <tr><td>02</td><td><strong>홈 피드</strong></td><td>로그인 직후 첫 화면. 추천 콘텐츠와 주요 진입점을 제공한다.</td><td style="text-align:right">5</td><td style="text-align:right">38</td><td><a href="../domains/02-home.html">열기</a></td></tr>
-              <tr><td>03</td><td><strong>이벤트</strong></td><td>오프라인 모임의 발견·생성·신청·참석·체크인·리뷰 풀 사이클. (선입금·이동수단·인구통계 포함)</td><td style="text-align:right">20</td><td style="text-align:right">156</td><td><a href="../domains/03-event.html">열기</a></td></tr>
-              <tr><td>04</td><td><strong>클럽</strong></td><td>장기 커뮤니티. 가입·운영·게시판·이벤트·기금까지 가장 무거운 영역. (인구통계·레퓨테이션 포함)</td><td style="text-align:right">18</td><td style="text-align:right">196</td><td><a href="../domains/04-club.html">열기</a></td></tr>
               <tr><td>05</td><td><strong>검색</strong></td><td>이벤트·클럽·플랜을 키워드·필터로 탐색한다. 자동완성·저장된 검색 포함.</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td><a href="../domains/05-search.html">열기</a></td></tr>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">모임 줄기</td></tr>
+              <tr><td>03</td><td><strong>이벤트</strong></td><td>오프라인 모임의 발견·생성·신청·참석·체크인·리뷰 풀 사이클. (선입금·이동수단·인구통계 포함)</td><td style="text-align:right">20</td><td style="text-align:right">156</td><td><a href="../domains/03-event.html">열기</a></td></tr>
+              <tr><td>17</td><td style="padding-left:22px">└ <strong>정기모임</strong></td><td>“여러 회차로 진행되는 모임”. 호스트가 코스형 또는 비정기 세션형으로 다회 모임을 운영. 회차 비례 환불.</td><td style="text-align:right">10</td><td style="text-align:right">95</td><td><a href="../domains/17-regular-meeting.html">열기</a></td></tr>
+              <tr><td>07</td><td style="padding-left:22px">└ <strong>모임 정산</strong></td><td>모임 후 비용을 나누고 납부·확인·이의제기·환불 규정을 처리. 금전 민감도가 커서 독립 도메인으로 유지.</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td><a href="../domains/07-settlement.html">열기</a></td></tr>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">클럽 줄기</td></tr>
+              <tr><td>04</td><td><strong>클럽</strong></td><td>장기 커뮤니티. 가입·운영·게시판·이벤트·기금까지 가장 무거운 영역. (인구통계·레퓨테이션 포함)</td><td style="text-align:right">18</td><td style="text-align:right">196</td><td><a href="../domains/04-club.html">열기</a></td></tr>
+              <tr><td>16</td><td style="padding-left:22px">└ <strong>마일리지</strong></td><td>클럽 보상 프로그램. 활동 적립·차감·정정 원장, 등급·배지·랭킹·시즌, 호스트 제안과 운영진 검토 — 전부 클럽 단위.</td><td style="text-align:right">8</td><td style="text-align:right">—</td><td><a href="../domains/16-mileage.html">열기</a></td></tr>
+              <tr><td>15</td><td style="padding-left:22px">└ <strong>경고 · 징계</strong></td><td>클럽 운영 제재. 신고·이의제기·경고 원장·운영진 심사 큐 — 클럽 거버넌스가 주축이고 플랫폼 전역 제재 한 축만 횡단.</td><td style="text-align:right">9</td><td style="text-align:right">—</td><td><a href="../domains/15-warning.html">열기</a></td></tr>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">돈</td></tr>
               <tr><td>06</td><td><strong>결제 · 지갑</strong></td><td>포인트 잔액·충전·결제수단·자동충전·거래내역·구독·호스트 수익.</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td><a href="../domains/06-payment.html">열기</a></td></tr>
-              <tr><td>07</td><td><strong>모임 정산</strong></td><td>모임 후 비용을 나누고 납부·확인·이의제기·환불 규정을 처리.</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td><a href="../domains/07-settlement.html">열기</a></td></tr>
               <tr><td>08</td><td><strong>플랜 마켓</strong></td><td>코스·모임 플랜을 작성·발행·구매·보관·활용·리뷰한다. (환불·매출 귀속 보정 포함)</td><td style="text-align:right">15</td><td style="text-align:right">107</td><td><a href="../domains/08-plan-market.html">열기</a></td></tr>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">사람·관계</td></tr>
               <tr><td>09</td><td><strong>프라이빗 데이팅</strong></td><td>본인 인증 기반 매칭·채팅·만남 제안·차단·안전 흐름. 민감 영역.</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td><a href="../domains/09-dating.html">열기</a></td></tr>
-              <tr><td>10</td><td><strong>캘린더</strong></td><td>이벤트·가용시간·데이팅 만남을 시간축으로 통합한다.</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td><a href="../domains/10-calendar.html">열기</a></td></tr>
-              <tr><td>11</td><td><strong>리뷰 · 신고</strong></td><td>활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다. 호스트 리뷰 모더레이션 포함.</td><td style="text-align:right">7</td><td style="text-align:right">39</td><td><a href="../domains/11-review.html">열기</a></td></tr>
-              <tr><td>12</td><td><strong>알림</strong></td><td>상태 변화를 푸시·알림함으로 전달하고 수신 설정을 제공한다.</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td><a href="../domains/12-notification.html">열기</a></td></tr>
-              <tr><td>13</td><td><strong>프로필 · 설정</strong></td><td>내 프로필·주소·선호태그·데이터 내보내기·계정 삭제/비활성화.</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td><a href="../domains/13-profile.html">열기</a></td></tr>
-              <tr><td>14</td><td><strong>위치 · 길찾기</strong></td><td>장소·경로 안내·참석자 위치 공유와 프라이버시 통제.</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td><a href="../domains/14-location.html">열기</a></td></tr>
-              <tr><td>15</td><td><strong>경고 · 징계</strong></td><td>신고·이의제기·경고 원장·제재로 이어지는 클럽 거버넌스. 효과 점수 산정과 운영진 심사 큐.</td><td style="text-align:right">9</td><td style="text-align:right">—</td><td><a href="../domains/15-warning.html">열기</a></td></tr>
-              <tr><td>16</td><td><strong>마일리지</strong></td><td>클럽 활동 적립·차감·정정 원장, 등급·배지·랭킹·시즌, 호스트 제안과 운영진 검토.</td><td style="text-align:right">8</td><td style="text-align:right">—</td><td><a href="../domains/16-mileage.html">열기</a></td></tr>
-              <tr><td>17</td><td><strong>정기모임</strong></td><td>호스트가 코스(FIXED) 또는 비정기 세션(VARIABLE)으로 다회 모임을 운영. flow-through 정산·pro-rata 환불.</td><td style="text-align:right">10</td><td style="text-align:right">95</td><td><a href="../domains/17-regular-meeting.html">열기</a></td></tr>
-              <tr><td>18</td><td><strong>분쟁 해결</strong></td><td>원천 도메인의 분쟁·이의를 단일 케이스 뷰로 통합. 직접 접수·이의제기·증빙/보존·호스트 인박스.</td><td style="text-align:right">5</td><td style="text-align:right">—</td><td><a href="../domains/18-dispute.html">열기</a></td></tr>
               <tr><td>19</td><td><strong>관심인</strong></td><td>관심 가는 사람을 등록해 공개 일정을 캘린더로 보고 새 이벤트 알림을 받는다. 공개범위(프라이버시) 설정 포함.</td><td style="text-align:right">3</td><td style="text-align:right">—</td><td><a href="../domains/19-favorite.html">열기</a></td></tr>
+              <tr><td>10</td><td><strong>캘린더</strong></td><td>이벤트·가용시간·데이팅 만남을 시간축으로 통합한다.</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td><a href="../domains/10-calendar.html">열기</a></td></tr>
+              <tr><td>13</td><td><strong>프로필 · 설정</strong></td><td>내 프로필·주소·선호태그·데이터 내보내기·계정 삭제/비활성화.</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td><a href="../domains/13-profile.html">열기</a></td></tr>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">신뢰·운영 (횡단)</td></tr>
+              <tr><td>11</td><td><strong>리뷰 · 신고</strong></td><td>활동 후 리뷰·신고·신뢰점수·취향 데이터를 관리한다. 호스트 리뷰 모더레이션 포함.</td><td style="text-align:right">7</td><td style="text-align:right">39</td><td><a href="../domains/11-review.html">열기</a></td></tr>
+              <tr><td>18</td><td><strong>분쟁 해결</strong></td><td>원천 도메인의 분쟁·이의를 단일 케이스 뷰로 통합. 직접 접수·이의제기·증빙/보존·호스트 인박스.</td><td style="text-align:right">5</td><td style="text-align:right">—</td><td><a href="../domains/18-dispute.html">열기</a></td></tr>
               <tr><td>20</td><td><strong>고객지원</strong></td><td>1:1 문의·운영 이슈 접수·FAQ. 이벤트/클럽/정산 컨텍스트를 묶어 운영으로 라우팅한다.</td><td style="text-align:right">3</td><td style="text-align:right">—</td><td><a href="../domains/20-support.html">열기</a></td></tr>
+              <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">기반 (횡단)</td></tr>
+              <tr><td>12</td><td><strong>알림</strong></td><td>상태 변화를 푸시·알림함으로 전달하고 수신 설정을 제공한다.</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td><a href="../domains/12-notification.html">열기</a></td></tr>
+              <tr><td>14</td><td><strong>위치 · 길찾기</strong></td><td>장소·경로 안내·참석자 위치 공유와 프라이버시 통제.</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td><a href="../domains/14-location.html">열기</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -143,10 +164,14 @@ flowchart LR
         <h2>구조 해석 기준</h2>
         <ul>
           <li><strong>인증·프로필은 모든 기능의 진입 조건</strong>이다. 무엇을 만들든 비로그인 동작과 비교한다.</li>
-          <li><strong>홈·검색·플랜 마켓</strong>은 발견·탐색의 축이다. 추천 알고리즘과 콘텐츠 가시성을 책임진다.</li>
-          <li><strong>이벤트와 클럽</strong>은 오프라인 활동의 핵심 실행 단위다. 무거운 상태 머신이 여기 있다.</li>
+          <li><strong>홈·검색</strong>은 발견·탐색의 축이다. 추천 알고리즘과 콘텐츠 가시성을 책임진다.
+            플랜 마켓도 콘텐츠 발견 면이 있지만, 본질은 판매·구매·정산이라는 돈 흐름이라 "돈" 줄기에 둔다.</li>
+          <li><strong>이벤트와 클럽</strong>은 오프라인 활동의 핵심 실행 단위다. 무거운 상태 머신이 여기 있다.
+            정기모임·모임 정산은 이벤트 줄기의 확장이고, 마일리지·경고는 클럽 안에서 굴러가는 운영 기능이다 —
+            별도 도메인 번호를 갖지만 새 기능을 붙일 때는 줄기 기준으로 판단한다.</li>
           <li><strong>결제·지갑·정산</strong>은 돈의 상태를 다루는 별도 축이다. 다른 도메인이 직접 잔액을 만지지 않는다.</li>
-          <li><strong>알림·캘린더·위치</strong>는 다른 기능의 “결과”를 사용자에게 다시 연결한다. 단독 기능이 아니다.</li>
+          <li><strong>알림·위치</strong>는 다른 기능의 “결과”를 사용자에게 다시 연결하는 기반 횡단이다. 단독 기능이 아니다.
+            캘린더도 같은 성격이 있지만, 가용 시간 공유·관심인 일정·만남 조율처럼 사람 사이의 시간 약속이 핵심 사용처라 "사람·관계" 줄기에 둔다.</li>
           <li><strong>리뷰·신고·차단·신뢰점수</strong>는 플랫폼 안전의 기반이다. 운영 흐름과 사용자 흐름이 같은 데이터를 본다.</li>
           <li><strong>분쟁 해결·고객지원</strong>은 사용자와 운영을 잇는 채널이다. 원천 도메인의 분쟁·이의·문의를 한곳으로 모아 추적한다.</li>
         </ul>
@@ -157,10 +182,10 @@ flowchart LR
         <div class="callout">
           <span class="label">결정 순서</span>
           <ol>
-            <li>이 기능이 풀려는 사용자 문제가 위 5축 중 어디에 있는가</li>
-            <li>그 축 안에서 책임을 가지는 도메인은 어디인가</li>
+            <li>이 기능이 풀려는 사용자 문제가 위 7개 줄기 중 어디에 있는가</li>
+            <li>그 줄기 안에서 책임을 가지는 도메인은 어디인가 — 클럽 안의 기능이면 클럽 줄기(04·16·15), 모임의 변형이면 모임 줄기(03·17·07)부터 본다</li>
             <li>다른 도메인 데이터를 “쓰기”로 만지는가 — 그렇다면 정책 PRD가 먼저 갱신돼야 한다</li>
-            <li>기존 도메인에 들어가면 그 도메인 PRD의 기능 목록에 추가, 들어가지 않으면 새 도메인 후보로 보류</li>
+            <li>기존 도메인에 들어가면 그 도메인 PRD의 기능 목록에 추가, 들어가지 않으면 새 도메인 후보로 보류 — 단, 새 도메인을 만들더라도 어느 줄기에 속하는지 먼저 정한다 (줄기 없는 대항목을 늘리지 않는다)</li>
           </ol>
         </div>
       </section>

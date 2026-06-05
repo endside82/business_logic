@@ -125,6 +125,8 @@ aside.sidebar {
 
 /* Domain group with collapsible feature children */
 .sidebar nav .dom { margin: 1px 0; }
+/* 줄기에 속한 위성 도메인 — 부모 도메인 아래 들여쓰기로 소속을 표시 */
+.sidebar nav .dom.sat { margin-left: 14px; border-left: 2px solid var(--line); padding-left: 4px; }
 .sidebar nav .dom-row {
   display: flex;
   align-items: center;

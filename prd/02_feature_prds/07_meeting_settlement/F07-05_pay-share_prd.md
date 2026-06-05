@@ -73,6 +73,8 @@ share 결제 액션 (my_shares에서):
 
 > 본 기능은 **참가자 관점**에서 본 결제 흐름. 호스트의 계좌이체 확인은 F07-06에서 다룬다. 단, `confirmBankTransfer` (Share)는 본인 결제 의사 표시(=확인 요청) 시 호출되며, 동일 엔드포인트가 호스트의 확인에도 쓰인다 (양쪽에서 모두 호출 가능, F07-06 참조).
 
+> **2026-06-05 (D-OPEN-2 슬라이스)**: ① `GET .../transfers/me`에 인가 검증이 누락돼 있던 것을 수정 — 본인 것만 반환돼 정보 유출은 없었으나 다른 조회와 잠금 수준이 달랐다(DEC-V3). ② read 계열(`my-shares`, `transfers/me`)의 열람 자격이 `validateSettlementReadAccess`(ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트)로 확장 — 참석을 취소했어도 내 돈이 걸려 있으면 본인 분담금을 볼 수 있다. 결제(쓰기) 가드는 무변경 — DRAFT 결제·확정·재발행·상각 8경로 거부는 회귀 테스트로 고정. 상세는 [F07-04 §7-A](F07-04_status-summary-receipt_prd.md).
+
 ### 의존 단위 / 외부 시스템
 
 - Unit 06 (Wallet): `WalletService.deductPaidOnly`, `creditMeetingSettlement`, `refundToWallet` (셀프 환불에서 reversal에서)
@@ -107,6 +109,7 @@ share 결제 액션 (my_shares에서):
   - `CommunityAppBar` "내 분담금"
   - 분담금 카드 리스트 (`MyShareRowCard`)
     - itemTitle, shareAmount(천단위), 결제 상태(완료/대기), `paymentMethod`, 영수증 미리보기 아이콘
+    - **DRAFT(준비 중) 정산이면**: '준비 중' 뱃지 + "준비 중 — 금액이 바뀔 수 있어요" 캡션 (`isDraft` 분기, 2026-06-05) — 비확정 금액임을 명시
   - 빈 상태 (`AppEmptyState(icon: receipt_long_outlined, title: '분담금이 없습니다')`)
 - **사용자가 할 수 있는 액션**:
   - 영수증 보기 ▶ `context.push('/home/events/:eventId/settlement/receipts/$fileId')`
@@ -114,7 +117,8 @@ share 결제 액션 (my_shares에서):
   - 풀투리프레시 ▶ `invalidate(mySharesProvider(eventId))`
 - **상태 분기**:
   - `mySharesProvider` 로딩/에러 분기
-  - **호스트 본인은 자기 share 이의제기 불가** (`onAppealTap: isHost ? null : ...`) — 호스트 자기 appeal로 자동 완료 차단 방지
+  - **호스트 본인은 자기 share 이의제기 불가** — 호스트 자기 appeal로 자동 완료 차단 방지
+  - **이의제기 버튼 3상태 가드 (2026-06-05, DEC-V4 쌍)**: status 확정 + 비DRAFT + 비호스트일 때만 노출. status 미확정(로딩/에러) 동안은 안전 기본값으로 숨김 — shares가 정산 상세보다 먼저 로드될 때 DRAFT 정산에서 버튼이 잠깐 보이는 레이스 봉합. '준비 중' 뱃지는 status 확정된 DRAFT일 때만(버튼만 엄격, 뱃지는 관대)
 
 ### 이체 내역 화면 (`transfer_list_screen.dart`, SCR-MS-005)
 - **사용자가 보는 것**:

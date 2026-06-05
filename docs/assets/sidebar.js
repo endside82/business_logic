@@ -192,9 +192,9 @@
       ['F17-03', '모임 생성'],
       ['F17-04', '생명주기'],
       ['F17-05', '세션 관리'],
-      ['F17-06', 'FIXED 등록·승인'],
-      ['F17-07', 'FIXED 결제'],
-      ['F17-08', '환불 (pro-rata)'],
+      ['F17-06', '고정형 등록·승인'],
+      ['F17-07', '고정형 결제'],
+      ['F17-08', '회차 비례 환불'],
       ['F17-09', '출석 확정·노쇼'],
       ['F17-10', '호스트 정산'],
     ],
@@ -235,30 +235,69 @@
         { href: 'overview/changelog.html', label: '변경 기록' },
       ],
     },
+    // 20개 도메인을 7개 줄기(스토리 그룹)로 묶는다. 도메인 번호·기능 ID는 안정
+    // 식별자라 그대로 두고, 내비게이션 맥락만 줄기 중심으로 재편한 것 (2026-06-05).
+    // sat: true = 큰 줄기에 속한 위성 도메인 (들여쓰기로 표시).
     {
-      heading: '20개 도메인',
+      heading: '시작·발견',
       domainGroup: true,
       links: [
         { href: 'domains/01-auth.html',             num: '01', label: '인증·온보딩',      slug: '01-auth' },
         { href: 'domains/02-home.html',             num: '02', label: '홈 피드',          slug: '02-home' },
-        { href: 'domains/03-event.html',            num: '03', label: '이벤트',           slug: '03-event' },
-        { href: 'domains/04-club.html',             num: '04', label: '클럽',             slug: '04-club' },
         { href: 'domains/05-search.html',           num: '05', label: '검색',             slug: '05-search' },
+      ],
+    },
+    {
+      heading: '모임 줄기',
+      domainGroup: true,
+      links: [
+        { href: 'domains/03-event.html',            num: '03', label: '이벤트',           slug: '03-event' },
+        { href: 'domains/17-regular-meeting.html',  num: '17', label: '정기모임',         slug: '17-regular-meeting', sat: true },
+        { href: 'domains/07-settlement.html',       num: '07', label: '모임 정산',       slug: '07-settlement', sat: true },
+      ],
+    },
+    {
+      heading: '클럽 줄기',
+      domainGroup: true,
+      links: [
+        { href: 'domains/04-club.html',             num: '04', label: '클럽',             slug: '04-club' },
+        { href: 'domains/16-mileage.html',          num: '16', label: '마일리지',         slug: '16-mileage', sat: true },
+        { href: 'domains/15-warning.html',          num: '15', label: '경고·징계',       slug: '15-warning', sat: true },
+      ],
+    },
+    {
+      heading: '돈',
+      domainGroup: true,
+      links: [
         { href: 'domains/06-payment.html',          num: '06', label: '결제·지갑',       slug: '06-payment' },
-        { href: 'domains/07-settlement.html',       num: '07', label: '모임 정산',       slug: '07-settlement' },
         { href: 'domains/08-plan-market.html',      num: '08', label: '플랜 마켓',       slug: '08-plan-market' },
+      ],
+    },
+    {
+      heading: '사람·관계',
+      domainGroup: true,
+      links: [
         { href: 'domains/09-dating.html',           num: '09', label: '프라이빗 데이팅', slug: '09-dating' },
+        { href: 'domains/19-favorite.html',         num: '19', label: '관심인',           slug: '19-favorite' },
         { href: 'domains/10-calendar.html',         num: '10', label: '캘린더',           slug: '10-calendar' },
-        { href: 'domains/11-review.html',           num: '11', label: '리뷰·신고',       slug: '11-review' },
-        { href: 'domains/12-notification.html',     num: '12', label: '알림',             slug: '12-notification' },
         { href: 'domains/13-profile.html',          num: '13', label: '프로필·설정',     slug: '13-profile' },
-        { href: 'domains/14-location.html',         num: '14', label: '위치·길찾기',     slug: '14-location' },
-        { href: 'domains/15-warning.html',          num: '15', label: '경고·징계',       slug: '15-warning' },
-        { href: 'domains/16-mileage.html',          num: '16', label: '마일리지',         slug: '16-mileage' },
-        { href: 'domains/17-regular-meeting.html',  num: '17', label: '정기모임',         slug: '17-regular-meeting' },
+      ],
+    },
+    {
+      heading: '신뢰·운영 (횡단)',
+      domainGroup: true,
+      links: [
+        { href: 'domains/11-review.html',           num: '11', label: '리뷰·신고',       slug: '11-review' },
         { href: 'domains/18-dispute.html',          num: '18', label: '분쟁 해결',        slug: '18-dispute' },
-        { href: 'domains/19-favorite.html',          num: '19', label: '관심인',            slug: '19-favorite' },
-        { href: 'domains/20-support.html',           num: '20', label: '고객지원',           slug: '20-support' },
+        { href: 'domains/20-support.html',          num: '20', label: '고객지원',         slug: '20-support' },
+      ],
+    },
+    {
+      heading: '기반 (횡단)',
+      domainGroup: true,
+      links: [
+        { href: 'domains/12-notification.html',     num: '12', label: '알림',             slug: '12-notification' },
+        { href: 'domains/14-location.html',         num: '14', label: '위치·길찾기',     slug: '14-location' },
       ],
     },
     {
@@ -303,11 +342,10 @@
   if (featureMatch) {
     activeFeatureCode = featureMatch[1];
     const domainNum = featureMatch[2];
-    const domainEntry = NAV.find((g) => g.domainGroup);
-    if (domainEntry) {
-      const match = domainEntry.links.find((l) => l.num === domainNum);
-      if (match) activeDomainSlug = match.slug;
-    }
+    // 도메인은 여러 줄기 그룹에 분산돼 있으므로 모든 domainGroup을 탐색한다.
+    const allDomainLinks = NAV.filter((g) => g.domainGroup).flatMap((g) => g.links);
+    const match = allDomainLinks.find((l) => l.num === domainNum);
+    if (match) activeDomainSlug = match.slug;
   }
 
   function escapeHtml(s) {
@@ -324,7 +362,7 @@
         const subLinks = FEATURES[link.slug].map(([code, label]) => {
           return `<a class="sub" href="${base}features/${code}.html"><span class="code">${code}</span>${escapeHtml(label)}</a>`;
         }).join('');
-        return `<div class="dom${isOpen ? ' is-open' : ''}">
+        return `<div class="dom${link.sat ? ' sat' : ''}${isOpen ? ' is-open' : ''}">
           <div class="dom-row">
             ${linkHtml}
             <button class="dom-toggle" type="button" aria-expanded="${isOpen}" aria-label="${escapeHtml(link.label)} 하위 기능 펼치기">

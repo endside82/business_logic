@@ -90,7 +90,7 @@ legal hold(OPEN/IN_REVIEW/ESCALATED) 케이스에 연관된 사용자의 계정 
 |---|---|
 | 03 이벤트 | EVENT_NO_SHOW(appeal prefix, enum 미존재), TRANSPORT(CARPOOL report) union 포함. 노쇼 appeal best-effort sync. APPLICATION·ATTENDANCE·CHECK_IN·EVENT_RESCHEDULE은 DisputeSourceType enum에만 있고 현재 emit 안 됨 |
 | 04 클럽 | CLUB_MEMBERSHIP_ACTION source union(KICK/BAN만, UNBAN 제외). WARNING_REPORT/WARNING_APPEAL은 경고·징계 도메인 소관 |
-| 07 모임 정산 | SETTLEMENT_APPEAL caseId prefix union(호스트 뷰만). MeetingSettlementAppeal은 원본 endpoint에서 처리 |
+| 07 모임 정산 | SETTLEMENT_APPEAL caseId prefix union(호스트 뷰만). MeetingSettlementAppeal은 원본 endpoint에서 처리. ACTIVE 이후 생성분만 유입 — DRAFT 이의는 생성 자체가 차단(2026-06-05, DEC-V4) |
 | 08 플랜 마켓 | REFUND_DISPUTE caseId prefix union(호스트 뷰·legal hold). PurchaseRefundDispute는 원본 endpoint에서 처리 |
 | 09 프라이빗 데이팅 | DATE_BLOCK(reportId≠null 안전신고 동반 차단만) · TRANSPORT(CARPOOL report) union. DATE_CHAT·DATE_PROFILE_PHOTO는 enum에만 있고 emit 안 됨. legal hold 적용 |
 | 11 리뷰·신고 | REPORT(EVENT type만, reporter), OPERATIONAL_ISSUE union. REVIEW·POST·COMMENT·PHOTO_ALBUM은 enum에만 있고 emit 안 됨 |

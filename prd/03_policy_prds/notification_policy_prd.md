@@ -109,7 +109,7 @@ flowchart TD
 | 61 | `SAFETY_CHECKIN_REMINDER` | 안전 체크인 트리거 | 해당 사용자 | 데이팅 안전 흐름 |
 | 62 | `EVENT_MESSAGE_CREATED` | 이벤트 채팅 메시지 신규 | 이벤트 참가자 | — |
 | 63 | `EVENT_MESSAGE_REPLIED` | 이벤트 채팅 메시지 답변 | 원 메시지 작성자 | — |
-| 64 | `MEETING_SETTLEMENT_APPEAL_CREATED` | 모임 정산 이의제기 생성 | 호스트 | — |
+| 64 | `MEETING_SETTLEMENT_APPEAL_CREATED` | 모임 정산 이의제기 생성 | 호스트 | 정산 신청(ACTIVE) 이후 생성된 이의만 — DRAFT 이의는 서버 차단으로 미발생(2026-06-05, DEC-V4) |
 | 65 | `MEETING_SETTLEMENT_APPEAL_RESOLVED` | 모임 정산 이의제기 처리 완료 | 이의제기자(참가자) | — |
 | 66 | `SUPPORT_ISSUE_UPDATED` | 운영 문의(1:1 문의/이슈) 답변 | 문의 접수자 | F20-01/02 딥링크 필요 |
 | 67 | `EVENT_PHOTO_GRACE_ENTERED` | 이벤트 사진 유예 기간 진입 | 업로더 | — |
