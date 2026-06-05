@@ -19,6 +19,10 @@
 | **현재 총 기능 PRD (2026-06-05)** | **168** |
 | 누락/확인 필요 | 0 |
 
+## 2026-06-05 (3차) — 지갑 모임정산 목록 화면 후속 슬라이스 완료 반영
+
+D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c5 / app 8c60999)이 구현·커밋되어 관련 Gap을 해소 처리했다. F07-10(§4 엔드포인트 행·§7-A·§8 Gap), F07-04(§7-A 발견 경로·§8 read 게이트 Gap), 07 도메인 PRD(cross-ref ⑤⑥·API 행), 05_feature_definitions F07-10 행 갱신. 핵심: 목록 행 `eventTitle` 배치 enrich(서버), 앱 read 게이트 재구성(캐시 기반 빠른 통과 + `getMyShares` BE 판정 폴백 — 게이트의 이벤트 상세 조회 부작용 제거, 비ATTENDING share 당사자·DRAFT 이벤트 정산 당사자 진입 해소), 지갑 메인 진입 카드, UI/UX 스펙 SCR-PA-005 신설(community_api docs). Codex diff 리뷰 최종 BLOCKER/MAJOR 0.
+
 ## 2026-06-05 (2차) — DRAFT 정산 미리보기 정식화(D-OPEN-2 해소) 반영
 
 같은 날 community_api 426c26d·94c4869 + community_app 7ba69c0으로 구현·커밋된 D-OPEN-2 해소분(준비 중 정산 노출 정식화)을 기능 PRD 5개 + 도메인 PRD 1개 + 정책/전사 문서에 반영했다. canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V1~V9, Codex 7라운드 SIGN-OFF).

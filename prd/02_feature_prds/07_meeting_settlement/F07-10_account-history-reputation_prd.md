@@ -71,7 +71,7 @@
 | GET | /api/v1/users/me/meeting-settlements | MeetingSettlementHistoryController#getMyHistory | required | 내 정산 참여 이력 |
 | GET | /api/v1/users/me/meeting-settlements/monthly-summary | MeetingSettlementHistoryController#getMonthlySummary | required | 월별 요약 (최대 24개월) |
 | GET | /api/v1/users/{userId}/meeting-settlement-reputation | HostSettlementReputationController#getReputation | required | 호스트 정산 신뢰도 — "진행 중 건수"(activeCount)는 ACTIVE만 집계, DRAFT(준비 중)는 제외 (DEC-V5, 2026-06-05) |
-| GET | /api/v1/wallet/meeting-settlements | WalletController(→ MeetingSettlementService#getMySettlements) | required | 내가 참여한 모임 정산 목록 — §7-A 참조. **앱 소비처 0** (서버 선구현) |
+| GET | /api/v1/wallet/meeting-settlements | WalletController(→ MeetingSettlementService#getMySettlements) | required | 내가 참여한 모임 정산 목록 — §7-A 참조. 행에 `eventTitle` 배치 enrich(2026-06-05, c8977c5). 소비처: 지갑 모임정산 목록 화면(SCR-PA-005, app 8c60999) |
 
 ### 의존 단위 / 외부 시스템
 
@@ -188,7 +188,7 @@
 
 - **호스트 평판 집계 정정(DEC-V5)**: `HostSettlementReputationService`의 "진행 중 건수"(activeCount)가 DRAFT를 ACTIVE와 섞어 세던 오염을 정정 — **ACTIVE만 집계, DRAFT 제외**. 작성 중(비확정) 정산이 호스트 평판 숫자에 들어가지 않는다.
 - **지갑 모임정산 목록 DRAFT 포함(DEC-V9)**: `GET /api/v1/wallet/meeting-settlements`(`MeetingSettlementQueryRepository.findByParticipantUserId`)의 참여 판정이 기존 "생성자 or transfer 당사자"였는데, DRAFT 단계에는 transfer가 없어 **내 분담금이 걸린 준비 중 정산이 목록에 안 들어오던 것**을 "DRAFT && 본인 share 당사자"(share→item→settlement 조인) 분기 추가로 해소. **DRAFT && 비생성자 행은 note·autoRemindAfterHours·autoRemindSentAt null 마스킹**(F07-04 차등 노출과 동일 원칙). ACTIVE 이후 행과 생성자 행은 무변경. 실데이터 `@DataJpaTest` 8건(포함/제외/무회귀/필터/페이징).
-- **앱 소비처 0 (계획 정정)**: 이 API는 앱이 호출하지 않는다 — `WalletRepository.getMyMeetingSettlements` 정의만 존재, 지갑 화면(`SettlementListScreen`)은 별개의 이벤트 정산 API(`/wallet/settlements`, F06-10)를 사용. 따라서 DEC-V9는 **서버 측 선구현 완료** 상태이고, 참가자 가시화는 "지갑 모임정산 목록 화면" 후속 슬라이스가 생길 때 자동 적용된다. v1의 참가자 발견 경로는 이벤트 상세 입구(F03-02)가 유일·공식.
+- **앱 소비처 0 (계획 정정)** → **2026-06-05 후속 슬라이스로 해소 (api c8977c5 / app 8c60999)**: 지갑 모임정산 목록 화면(`WalletMeetingSettlementListScreen`, `/profile/wallet/meeting-settlements`, SCR-PA-005)이 이 API의 첫 소비자가 됨 — 상태 필터·무한스크롤·DRAFT '준비중' 칩+금액 변동 캡션·'내가 만든 정산' 태그. 목록 행에 `eventTitle` 배치 enrich(서버, N+1 금지, 이벤트 부재 시 null). 진입은 지갑 메인 카드. 항목 탭 시 정산 현황으로 이동하며, 앱 read 게이트는 캐시 기반 빠른 통과 + `getMyShares` BE 판정 폴백으로 재구성돼 비ATTENDING share 당사자도 진입 가능(F07-04 §8 참조).
 - **참고**: 본 PRD §4의 "내 정산 참여 이력"(`/users/me/meeting-settlements`)은 별개 API로, transfer 기반 집계라 **DRAFT는 애초에 히스토리에 유입되지 않는다**(앱 히스토리 화면의 'DRAFT→준비중' 칩은 렌더 코드만 존재).
 
 ## 8. Gap / Risk
@@ -198,7 +198,7 @@
 | 후보 | frontend.md:47 | - 카드 탭 ▶ 해당 settlement의 status 화면(F07-04) 진입 (현재 코드는 `_HistoryTile` 클릭 라우팅 별도 처리) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:55 | - 탭 ▶ 상세 모달 (옵션 — 현재 코드에 모달 화면 X) 또는 단순 표시 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:97 | - 70% 미만 주의 (회색 배지) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| Gap (P2) | DRAFT_SETTLEMENT_VISIBILITY_PLAN §8.5.1 | 지갑 "내 모임정산 목록" 화면 부재 — 서버 목록 API는 DRAFT 포함+마스킹까지 준비 완료인데 앱 소비처 0 | 후속 슬라이스로 지갑 영역 모임정산 목록 화면 신설 (비ATTENDING share 당사자의 앱 진입 경로 부재 해소와 동일 건) |
+| ~~Gap (P2)~~ 해소 (2026-06-05, api c8977c5 / app 8c60999) | DRAFT_SETTLEMENT_VISIBILITY_PLAN §8.6 후속 완료 기록 | ~~지갑 "내 모임정산 목록" 화면 부재~~ → SCR-PA-005 구현 — 비ATTENDING share 당사자 앱 진입 경로 부재도 동시 해소(read 게이트 재구성) | 완료 |
 
 ## 9. 수용 기준
 

@@ -182,7 +182,7 @@ status 화면 진입 시:
 - **열람 자격 확장(DEC-V7)**: 신규 헬퍼 `MeetingSettlementService.validateSettlementReadAccess` — **ATTENDING 참가자 ∪ 해당 정산 share/transfer 당사자 ∪ 호스트**. 참석을 취소했어도 분담금/송금이 걸려 있으면 본인 정산을 볼 수 있다. share 당사자 판정은 share→item 조인으로 **현재 정산(settlementId) 스코프에 한정**(`existsShareBySettlementAndUser`) — 같은 이벤트의 과거/CANCELLED 정산 share로 자격이 열리던 누수를 Codex 6차 BLOCKER로 잡아 정정. 기존 `validateEventParticipantOrHost`는 정산 read 밖 호출처(이의 생성·선입금 read·분쟁 resolver)가 있어 무변경 보존.
 - **차등 노출(DEC-V6, DRAFT && 비호스트, 서버 강제)**: ① R1 본체 — note(호스트 메모) null 마스킹(viewer-aware `getSettlementByEventId(eventId, viewerUserId)`), ② R2 summary — participants/transfers를 요청자 본인 행으로만 필터, 총액·상태 유지(viewer-aware 오버로드 신설, 무필터 버전은 호스트 전용 리마인드 내부용 보존), ③ R3 items — 빈 목록(`isDraftHiddenForViewer`), ④ R11 영수증 다운로드 URL — `FORBIDDEN` 거부. ACTIVE 이후/호스트 요청은 전 경로 무변경(무회귀 테스트 고정).
 - **인가 누락 수정(DEC-V3)**: `GET .../settlement/transfers/me`(F07-05)가 인가 검증 없이 호출되던 것을 동일 헬퍼 적용으로 수정.
-- **앱 분기(Phase 1·2)**: DRAFT && 참가자 미리보기 배너 + 영수증 갤러리 숨김, 정산 부재 404 정상 분기(참가자 빈 상태/호스트 생성 CTA), 이벤트 상세 "모임 정산" 입구 신설(DEC-V8 — v1 참가자 발견 경로는 이 입구가 유일·공식, [F03-02](../03_event/F03-02_event-detail_prd.md)).
+- **앱 분기(Phase 1·2)**: DRAFT && 참가자 미리보기 배너 + 영수증 갤러리 숨김, 정산 부재 404 정상 분기(참가자 빈 상태/호스트 생성 CTA), 이벤트 상세 "모임 정산" 입구 신설(DEC-V8, [F03-02](../03_event/F03-02_event-detail_prd.md)). 후속(2026-06-05, api c8977c5/app 8c60999)으로 지갑 모임정산 목록(SCR-PA-005)이 두 번째 공식 발견 경로로 추가됨.
 - **테스트**: DraftVisibility 15건 + DRAFT 결제·확정·재발행·상각 8경로 거부 + 자격 3분류(ATTENDING/share·transfer 당사자/무관계자) + 차등 노출 + ACTIVE 무회귀 — 대상 스위트 0 실패, Codex SIGN-OFF.
 
 ## 8. Gap / Risk
@@ -191,7 +191,7 @@ status 화면 진입 시:
 |---|---|---|---|
 | 후보 | frontend.md:83 | - **참가자 카드 탭**: 해당 참가자의 transfer 상세로 이동 (현재 코드에선 my-shares로 이동) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:23 | 3. 자기 카드 강조 표시 (현재 코드는 별도 강조 없음, 카드만 노출) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| Gap (P2) | `app_router.dart` 정산 read 게이트 (2026-06-05 주석 현행화) | 앱 라우트 게이트는 의도적으로 보수적(host‖ATTENDING)이라, **비ATTENDING share/transfer 당사자는 서버는 허용하지만 앱 경로로는 진입 불가** | 해당 사용자용 진입 경로(지갑 모임정산 목록 화면 등) 후속 슬라이스에서 해소 |
+| ~~Gap (P2)~~ 해소 (2026-06-05, app 8c60999) | `app_router.dart` 정산 read 게이트 재구성 | ~~비ATTENDING share/transfer 당사자 앱 진입 불가~~ → read 게이트가 **캐시된 이벤트 상세로만 빠른 통과**(게이트의 이벤트 상세 fetch 부작용 — 조회수 기록·DRAFT 이벤트 404 차단 — 제거) + **부작용 없는 BE 판정 폴백**(`getMyShares` → `validateSettlementReadAccess`)으로 변경. 지갑 모임정산 목록(SCR-PA-005)이 해당 사용자의 진입 경로 | 완료 — hostOnly 분기는 보수적 통과 유지 |
 | Gap (P3) | DRAFT_SETTLEMENT_VISIBILITY_PLAN §8.6 | 오래된 DRAFT 자동 정리 없음 — 호스트가 취소하지 않으면 "준비 중"으로 영구 잔존(돈은 잠겨 있어 위험이 아닌 표시 문제) | 별도 후속 |
 
 ## 9. 수용 기준
