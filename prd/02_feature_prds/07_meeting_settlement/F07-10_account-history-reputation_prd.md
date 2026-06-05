@@ -53,6 +53,10 @@
 1. `hostReputationProvider(userId)` ▶ `GET .../users/{userId}/meeting-settlement-reputation`
 2. 배지 또는 모달에 표시
 
+지갑 모임정산 목록 진입 (2026-06-05 신설):
+1. `walletMeetingSettlementListNotifierProvider` ▶ `WalletRepository.getMyMeetingSettlements(page,size,status)` ▶ `GET /api/v1/wallet/meeting-settlements`
+2. 무한스크롤 loadMore / 상태 필터 변경 시 재조회. 카드 탭 ▶ `/home/events/{eventId}/settlement` (read 게이트 — 캐시 빠른 통과 + getMyShares BE 폴백)
+
 ## 4. 서버 계약
 
 ### 개요
@@ -85,6 +89,7 @@
 
 - 프로필 화면 → "정산 계좌" 메뉴 → `bank_account_screen`
 - 프로필 화면 → "정산 히스토리" 메뉴 → `my_settlement_history_screen`
+- 지갑 메인(F06-01) → "모임 정산" 진입 카드 → `wallet_meeting_settlement_list_screen` (2026-06-05 신설, SCR-PA-005)
 - 호스트 프로필 카드 / 모임 상세 → `HostReputationBadge` 탭 → 신뢰도 모달/화면 (현재 위젯만 — 별도 화면 없음)
 
 ### 사용 라우트 & 화면 파일
@@ -93,6 +98,7 @@
 |---|---|---|
 | `/profile/bank-accounts` | `bank_account_screen.dart` | 정산 계좌 CRUD |
 | `/profile/settlement-history` | `my_settlement_history_screen.dart` | 내 정산 참여 이력 + 월별 요약 |
+| `/profile/wallet/meeting-settlements` | `payment/screens/wallet_meeting_settlement_list_screen.dart` | 내가 참여한 모임 정산 목록 (상태 필터·무한스크롤·DRAFT '준비중' 칩, 탭 → 정산 현황. 2026-06-05) |
 | (위젯) | `widgets/bank_account_card_widget.dart` | 계좌 카드 |
 | (위젯) | `widgets/bank_account_form_dialog.dart` | 계좌 입력 다이얼로그 |
 | (위젯) | `widgets/host_reputation_badge.dart` | 호스트 신뢰도 배지 (다른 화면에 embed) |

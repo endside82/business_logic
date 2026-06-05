@@ -87,7 +87,7 @@
 
 | 라우트 (GoRouter) | Screen 파일 (lib/presentation/...) | 역할 |
 |---|---|---|
-| `/profile/wallet` | `payment/screens/wallet_screen.dart` | 지갑 메인 (잔액 카드 + 바로가기 4개 + 멤버십 진입 카드 + 최근 거래 3건) |
+| `/profile/wallet` | `payment/screens/wallet_screen.dart` | 지갑 메인 (잔액 카드 + 바로가기 4개 + 모임 정산 진입 카드 + 멤버십 진입 카드 + 최근 거래 3건) |
 
 ### 화면별 구성 요소 & 액션
 
@@ -97,6 +97,7 @@
   - AppBar 타이틀 `내 지갑`
   - `BalanceCardWidget` — 합계 잔액 + 유료/무료 분리 표시 + "충전하기" CTA (.pen 기준 큰 숫자 + 눈 아이콘 토글)
   - `ShortcutGridWidget` — 4개 아이콘: 거래내역 / 결제수단 / 수익 / 정산
+  - `_MeetingSettlementEntryCard` — "모임 정산" 진입 카드 (2026-06-05 신설, F07-10 지갑 모임정산 목록으로 진입)
   - `_MembershipEntryCard` — 커뮤니티 멤버십(개인 구독) 진입 카드 (primary50/primary500 스타일)
   - `RecentTransactionWidget` — 최근 거래 프리뷰 (서버 wallet 응답이 거래 3건을 직접 포함하지는 않으므로 별도 provider로 거래내역 first page 일부를 그려 사용; 각 항목 탭 시 거래 상세로 이동)
 - **사용자가 할 수 있는 액션**:
@@ -108,6 +109,7 @@
     - 결제수단 → `/profile/wallet/methods` (F06-04)
     - 수익 → `/profile/wallet/earnings` (F06-09)
     - 정산 → `/profile/wallet/settlements` (F06-10)
+  - 모임 정산 카드 탭 → `/profile/wallet/meeting-settlements` (F07-10 지갑 모임정산 목록, 2026-06-05)
   - 멤버십 카드 탭 → `/profile/wallet/subscription` (F06-08)
   - 최근 거래 항목 탭 → `/profile/wallet/transactions/{id}` (F06-03 거래 상세)
   - "거래내역 전체보기" 탭 → `/profile/wallet/transactions`
