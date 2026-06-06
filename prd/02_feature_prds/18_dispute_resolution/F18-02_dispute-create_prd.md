@@ -8,7 +8,7 @@
 
 status 전이(OPEN → IN_REVIEW / ESCALATED / RESOLVED / CLOSED)는 admin API가 소유하며 공개 API에는 전이 endpoint가 없다. rate-limit는 24시간 10건, 동일 상대 활성 케이스 중복은 `active_dedup_key` GENERATED STORED 컬럼의 UNIQUE 제약으로 409를 반환한다.
 
-앱 `DisputeCaseCreateScreen`은 분쟁 유형 picker + 상세 사유(10~2000자) + 제출 흐름을 제공한다. 제출 활성화 조건은 `caseType 선택 + summary.trim() 길이 10~2000 + evidenceFileIds.length <= 5`이며(`dispute_case_create_provider.dart:39-44`), 별도 책임 동의 체크박스는 없다. v1에서 증빙 첨부 업로드 UI는 의도적으로 제외했으며, 제출 시 항상 빈 `evidenceFileIds` 목록을 전송한다.
+앱 `DisputeCaseCreateScreen`은 분쟁 유형 picker + 상세 사유(10~2000자) + 증빙 첨부 + 제출 흐름을 제공한다. 제출 활성화 조건은 `caseType 선택 + summary.trim() 길이 10~2000 + evidenceFileIds.length <= 5`이며(`dispute_case_create_provider.dart:39-44`), 별도 책임 동의 체크박스는 없다. **증빙 첨부 UI는 2026-06-06(W14 S4)에 배선 완료** — 통합 분쟁 접수 화면에 `EvidencePickerField`가 연결되어 최대 5개의 `evidenceFileIds`를 채워 전송한다(community_app `3cb12ac`).
 
 ## 2. 실사 근거
 
@@ -133,7 +133,7 @@ OPEN ──→ IN_REVIEW | ESCALATED | RESOLVED | CLOSED
 | 생성자 인자 | `targetUserId?`, `eventId?`, `clubId?`, `sourceType?`, `sourceId?` |
 | 필수 입력 | `caseType` 선택 + `summary` 10~2000자 (evidenceFileIds<=5 포함, 책임 동의 체크박스 없음) |
 | 제출 조건 | `canSubmit = !isSubmitting && caseType != null && summary 10~2000자 && evidenceFileIds.length <= 5` |
-| evidence v1 | 항상 빈 목록 제출. 업로드 UI 없음 (의도적 제외) |
+| evidence | `EvidencePickerField` 배선 완료(2026-06-06, W14 S4). 최대 5개 `evidenceFileIds` 첨부·전송 |
 | 409 처리 | `AppToast.show("이미 동일한 상대로 진행 중인 분쟁이 있어요")` (`dispute_case_create_screen.dart:148`) |
 | 429 처리 | `AppToast.show("요청이 너무 많습니다. 잠시 후 다시 시도해주세요")` (`:158`) |
 | 성공 처리 | `myDisputeCasesProvider` invalidate 후 상세 또는 이전 화면으로 이동 |
@@ -163,7 +163,7 @@ OPEN ──→ IN_REVIEW | ESCALATED | RESOLVED | CLOSED
 | 같은 상대 활성 케이스 중복 | `active_dedup_key` UNIQUE 위반 → 409 | AppToast 409 "이미 동일한 상대로 진행 중인 분쟁이 있어요" | 화면 유지 | 일치 |
 | 자기 신고 | CHECK 제약 위반 → 400 | AppToast 400 | 에러 처리 | 일치 |
 | rate-limit 초과 | 24h 10건 → 429 | AppToast 429 "요청이 너무 많습니다. 잠시 후 다시 시도해주세요" | 화면 유지 | 일치 |
-| evidence 첨부 | v1 제외 | 빈 목록 제출 | evidence 없이 접수됨 | Gap(의도적) |
+| evidence 첨부 | max 5 | `EvidencePickerField`로 최대 5개 첨부(W14 S4) | 증빙과 함께 접수됨 | 해소(2026-06-06, W14 S4) |
 
 ## 7. 정합성 판단
 
@@ -171,7 +171,7 @@ OPEN ──→ IN_REVIEW | ESCALATED | RESOLVED | CLOSED
 |---|---|---|---|
 | `caseType` 9값 | `DisputeCaseType` enum | Dart `DisputeCaseType` enum 9값 일치 | 일치 |
 | `summary` 제약 | min 10, max 2000 | UI 10~2000자 제한 | 일치 |
-| `evidenceFileIds` | max 5 | `@Default(<int>[])` 빈 목록 제출 | v1 의도적 제외 |
+| `evidenceFileIds` | max 5 | `EvidencePickerField`로 최대 5개 첨부·전송 | 해소(2026-06-06, W14 S4) |
 | `eventId`, `clubId`, `reasonCode` | `DisputeCaseCreateParam` 지원 | `dispute_case_create_param.dart:15-25` 전부 선언됨. provider `setContext`로 주입 가능 | 일치(v1은 화면에서 채워 보내는 경로가 제한적) |
 | dedup key | `active_dedup_key` GENERATED STORED | 클라는 dedup 판단 없음 (서버 409 수신) | 정합 |
 
@@ -179,7 +179,7 @@ OPEN ──→ IN_REVIEW | ESCALATED | RESOLVED | CLOSED
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P1 | **evidence 첨부 v1 제외**: `DisputeCaseCreateScreen`에서 evidence 업로드 UI 의도적 제외. 항상 빈 목록 제출. | `dispute_case_create_screen.dart` 주석 | 증빙 없는 분쟁만 가능. EvidenceFileValidator는 배선돼 있으므로 서버에서 추후 수신 가능 | v2 wave에서 evidence 첨부 UI 추가 |
+| ~~P1~~ 해소(2026-06-06, W14 S4) | **evidence 첨부**: `DisputeCaseCreateScreen`에 `EvidencePickerField` 배선 완료. 최대 5개 `evidenceFileIds` 첨부·전송(community_app `3cb12ac`). | `dispute_case_create_screen.dart` | 증빙과 함께 분쟁 접수 가능. 서버 `EvidenceFileValidator`가 소유권/용도/상태 검증 | 완료 |
 | P1 | **eventId/clubId/targetUserId 화면 주입 경로 확인 필요**: Dart 모델(`dispute_case_create_param.dart:15-25`)에 `eventId?`, `clubId?`, `reasonCode?` 필드는 모두 선언됨. provider `setContext`로 주입 가능하나, 실제 생성 화면 진입 시 어떤 호출 경로가 이 값들을 채워 보내는지 화면별로 확인 필요. | `dispute_case_create_provider.dart:113-123` 제출 param 구성 | 진입 경로에 따라 맥락 정보가 null로 전송되어 운영 추적이 어려울 수 있음 | 분쟁 접수 진입 경로별 setContext 호출 여부 확인 |
 | P2 | **rate-limit 서버 구현 확인 필요**: 컨트롤러 Javadoc에 "rate limit(24h 10건) 초과는 429"로 명시되어 있으나, `DisputeCaseService.createUserDispute` 내 실제 rate-limit 로직 구현 여부를 직접 확인하지 않음 | `DisputeCaseController.java:createMyDispute` Javadoc | rate-limit 비구현 시 무제한 접수 가능 | 서비스 레이어 rate-limit 구현 검증 |
 | P2 | **admin 전이 전용 구조 앱 미안내**: 생성 후 상태가 OPEN으로 고정되고 admin 처리 전까지 변화 없음. 사용자에게 "처리에 시간이 걸립니다" 안내 없음 | `DisputeCaseCreateScreen` UX | 사용자가 상태 변화 없다고 오해하고 중복 접수 가능 | 접수 완료 화면에 처리 기간 안내 추가 |
@@ -220,7 +220,7 @@ Then 공개 API에 전이 endpoint가 없으므로 상태 변경 불가. 상세 
 
 | 분류 | 항목 | 결정/작업 |
 |---|---|---|
-| 구현 | evidence 첨부 v2 | `DisputeCaseCreateScreen`에 `EvidenceImagePicker` 연결. `EvidenceFileValidator` 배선됨 |
+| ~~구현~~ 해소(2026-06-06, W14 S4) | evidence 첨부 | `DisputeCaseCreateScreen`에 `EvidencePickerField` 연결 완료(최대 5). `EvidenceFileValidator` 서버 검증 |
 | 구현 | 화면별 setContext 호출 확인 | 이벤트/클럽 등 각 진입 경로에서 setContext(eventId:, clubId:) 호출 여부 검증 |
 | 운영 | 처리 기간 안내 UX | 접수 완료 화면에 "운영팀이 {N}일 내 처리 예정" 등 안내 문구 추가 |
 | 검증 | rate-limit 구현 확인 | `DisputeCaseService.createUserDispute` 내 rate-limit 로직 소스 직접 검증 |

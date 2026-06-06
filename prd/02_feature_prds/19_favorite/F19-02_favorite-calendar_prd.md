@@ -10,7 +10,7 @@
 
 알림은 관심인이 독립 공개 이벤트를 발행(DRAFT→OPEN)할 때 `FAVORITE_PERSON_NEW_EVENT(96)` 타입으로, 그 host를 유효하게(등록순 N명 내) 관심등록한 사용자에게 팬아웃된다. 무료·프리미엄 구분 없이 전원 수신.
 
-알림 딥링크(`notification_router.dart` :50)는 `FAVORITE_PERSON_NEW_EVENT` 케이스가 이벤트 상세로 배선되어 있어 탭 시 정상 이동한다. 단 Flutter `NotificationType` enum(`notification_type.dart`)에 해당 값이 미등재되어 있어 타입 안전성이 없다(문자열 직접 처리로 동작).
+알림 딥링크(`notification_router.dart` :50)는 `FAVORITE_PERSON_NEW_EVENT` 케이스가 이벤트 상세로 배선되어 있어 탭 시 정상 이동한다. Flutter `NotificationType` enum(`notification_type.dart`) 미등재 Gap은 **해소(2026-06-06, W14 S1)** — `FAVORITE_PERSON_NEW_EVENT`가 분쟁 3종과 함께 enum에 등재되어 타입 안전성을 확보했다(community_app `3cb12ac`).
 
 ## 2. 실사 근거
 
@@ -149,7 +149,7 @@ AND event.startTime >= from AND event.startTime < to
 | 개별 뷰 — dormant 관심인 | `FAVORITE_NOT_FOUND` | 에러 처리 필요 | 404 |
 | 개별 뷰 — 비공개 설정 대상 | `CALENDAR_PRIVATE` | 에러 처리 필요 | 403 |
 | 알림 수신(무료) | ownerIds 포함 | — | FAVORITE_PERSON_NEW_EVENT 수신 |
-| 알림 탭 | notification_router.dart :50 배선 완료 | 이벤트 상세 이동 | 정상 동작. NotificationType enum 미등재는 별도 P1 (타입 안전성만) |
+| 알림 탭 | notification_router.dart :50 배선 완료 | 이벤트 상세 이동 | 정상 동작. NotificationType enum 등재 완료(2026-06-06, W14 S1) |
 
 ## 7. 정합성 판단
 
@@ -159,13 +159,13 @@ AND event.startTime >= from AND event.startTime < to
 | 개별 API endpoint | `GET /api/v1/calendar/favorites/{targetUserId}/monthly` | `@GET('/api/v1/calendar/favorites/{targetUserId}/monthly')` | 정합 |
 | ownerNickname | 서버 채움 | Flutter null-safe `?? '관심인 #'` 대체 | 정합 |
 | ATTENDING 기준 | `EventAttendance.ATTENDING` | — (서버 처리) | 정합 |
-| 알림 타입 96 | `NotificationType.FAVORITE_PERSON_NEW_EVENT(96)` | router 배선 완료. enum 미등재(문자열 처리) | 딥링크 정상. enum P1 |
+| 알림 타입 96 | `NotificationType.FAVORITE_PERSON_NEW_EVENT(96)` | router 배선 완료. enum 등재 완료(W14 S1) | 딥링크 정상. 타입 안전성 확보 |
 
 ## 8. Gap / Risk
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| **P1** | Flutter `NotificationType` enum에 `FAVORITE_PERSON_NEW_EVENT` 미등재 | `notification_router.dart:50` 배선 완료 → 딥링크 정상 동작. `notification_type.dart` enum 미등재로 타입 안전성 없음 | 런타임 동작 정상이나 enum fromString이 null 반환(문자열 직접 처리로 대체됨) | `NotificationType` enum에 `favoritePersonNewEvent('FAVORITE_PERSON_NEW_EVENT')` 추가 |
+| ~~P1~~ 해소(2026-06-06, W14 S1) | Flutter `NotificationType` enum에 `FAVORITE_PERSON_NEW_EVENT` ~~미등재~~ → **등재 완료** | `notification_type.dart` enum에 분쟁 3종과 함께 등재됨 → 타입 안전성 확보(community_app `3cb12ac`) | enum fromString 정상 매핑 | 완료 |
 | **P1** | 개별 뷰 Provider·CTA 미구현 | 서버 endpoint·Flutter API 메서드(`FavoriteApi.getFavoritePersonMonthly`) 구현됨, Flutter Provider·화면 진입 CTA 없음 | 특정 관심인 캘린더 개별 조회 화면 미지원 | `FavoritePersonCalendarNotifier(targetUserId, year, month)` Provider 추가 + 관심인 프로필 화면 CTA 연결 |
 | **P2** | `isEffectiveFavorite` N+1 | `FavoriteService.java:145-147` 전체 목록 로드 후 contains | 팬아웃 시 대형 host 성능 | rank 쿼리 최적화 |
 | Risk | 본인 캘린더 참가 이벤트 누락 | 계획서 §5.3 메모 — `CalendarQueryRepository.findAttendingEvents`는 Application APPROVED 기반(EventAttendance 미사용). 관심인 캘린더는 EventAttendance 기반이라 이중 기준 존재. | 본인 캘린더 참가 이벤트 일부 누락 가능성 | 별도 후속 검토 |

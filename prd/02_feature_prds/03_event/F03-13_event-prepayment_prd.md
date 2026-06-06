@@ -186,7 +186,7 @@ PLAN.md §2.4·§2.6·§2.14·§2.15의 facade 체계를 7단계로 압축한다
 ### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
 
 - 결제 화면 라벨: "결제하고 참석 확정" / "입금 신고하기" / "입금 확인 대기 중" / "환불 요청됨"
-- 환불 규정 안내 모달 문구: `GET /api/v1/events/{eventId}/applications/{applicationId}/refund-preview` (RefundPreviewVo) 기반으로 예상 환불액·적용 비율·귀책 카테고리를 표시. 레거시 "시작 전 100%/시작 후 0%" 문구는 더 이상 정확하지 않음 — 카탈로그 기반 by_time 비율로 갱신 필요. `RefundPreviewVo.appliedPercent`와 `allowed` 필드로 UI 분기
+- 환불 규정 안내 모달 문구: `GET /api/v1/events/{eventId}/applications/{applicationId}/refund-preview` (RefundPreviewVo) 기반으로 예상 환불액·적용 비율·귀책 카테고리를 표시. **레거시 "시작 전 100%/시작 후 0%"(및 100/50/30 하드코딩 추정) 문구 제거 완료(2026-06-06, W14 S5)** — 이벤트 상세·신청 확인 표시는 `effectiveRulesJson`(by_time) 기반으로 전환, 취소 시트는 서버 preview 단일 출처(community_app `3cb12ac`). `RefundPreviewVo.appliedPercent`와 `allowed` 필드로 UI 분기
 - 잔액 부족 분기 → 충전 화면 prefill (F06-06과 동일 패턴)
 - 알림 라우팅 (`NotificationRouter`): 71~76, 83 케이스 각각 결제 화면 또는 결과 화면 deep link
 
@@ -346,8 +346,8 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 | 항목 | 사유 | 후속 슬라이스 |
 |---|---|---|
 | WalletRefundExecutor 공통 헬퍼 추출 | Phase 3에서 `EventRefundSettlementService`로 분개 공통화 완료. PG lot은 RefundService만 적용(선결제 경로 pgQueuedPaid=0). PG queue 통합 후속. | EventExtensions W4 또는 별도 결제 리팩터링 슬라이스 |
-| 호스트 환불 정책 설정 UI | `refund_policy_form.dart`가 레거시 5종 enumRadioGroup만 제공. 신규 6종 템플릿(STRICT/FLEXIBLE/NON_REFUNDABLE 직접 선택) 폼 미구현. 현재 레거시→신규 매핑으로만 간접 설정. | 레거시 폼 교체 슬라이스 |
-| 환불 preview + 레거시 섹션 병렬 표시 모순 | `cancel_attendance_sheet.dart`에서 preview와 함께 레거시 `RefundPolicySection.forEvent(refundPolicy, refundDeadlineHours)` 병렬 표시 — 신규 preview와 레거시 섹션 내용이 모순될 수 있음 (`cancel_attendance_sheet.dart:97-101`). | 레거시 섹션 제거 또는 조건부 표시 슬라이스 |
+| ~~호스트 환불 정책 설정 UI~~ 해소(2026-06-06, W14 S5) | 호스트 폼이 카탈로그 6종(STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM) picker로 교체 완료 — STRICT/FLEXIBLE 직접 선택 불가 해소. 전송 권위 = `refundPolicyConfig.templateCode`, 앱이 `EventVo.refundPolicyConfig` read-back 모델링(community_app `3cb12ac`). | 완료 |
+| ~~환불 preview + 레거시 섹션 병렬 표시 모순~~ 해소(2026-06-06, W14 S5) | 취소 시트가 서버 preview **단일 출처**로 전환 — 레거시 `RefundPolicySection.forEvent(refundPolicy, refundDeadlineHours)` 병렬 표시 제거. preview/레거시 모순 해소(community_app `3cb12ac`). | 완료 |
 | BANK_REFUND_EXCEEDS_POLICY(300014) 앱 에러 핸들링 | 에러 코드 신규 추가, 앱 측 에러 핸들러 매핑 미확인. | 에러 핸들러 매핑 확인/추가 |
 | Flutter 결제 화면 신설 | 본 W2/W3는 서버 facade 우선. 화면은 서버 응답(`myPaymentRequired`, `myPayableAmount`, `myPaymentDueAt`)을 기반으로 후속에서 구현. | EventExtensions W6 (`event_participation_payment_screen.dart` 등 §5 라우트 신설) |
 | PG queue refund 통합 | WALLET 환불 lot 일부가 PG queue로 가는 케이스의 본 facade 통합은 후속. | WalletRefundExecutor 슬라이스와 함께 |
@@ -359,3 +359,4 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 
 - **2026-05-22 (v4.5 W2/W3 — 이벤트 참가 선입금 + 환불 + 호스트 cancel 통합)**: 최초 신설. WALLET/BANK_TRANSFER 결제 facade, 결제 상태기계, 회계 분개, 알림 71~76·83, 탈퇴 차단 BlockingItem 상세.
 - **2026-06-05 (Phase 4/5 — 환불 정책 카탈로그 일원화)**: §1 "단일 deadline 100%/마감 후 0%" 표현을 `event_refund_policy` 카탈로그 기반 다단계 환불로 전면 교체. GRADUATED Gap 해소 표기. §7-A 신규 — 환불 정책 카탈로그(6종 템플릿), 귀책 매트릭스(7종), refund-preview API, BANK 귀책 인지형 상한(inferBankRefundFault + BANK_REFUND_EXCEEDS_POLICY 300014), EVENT_PREPAYMENT 정산 집계 계약. `event_payment.refund_evidence_file_ids` 컬럼 추가. S2-6 AC-06 환불율 표현 갱신. §10 호스트 UI Gap/레거시 섹션 병렬 모순 Gap 추가.
+- **2026-06-06 (W14 S5 — 환불 템플릿 호스트 폼 교체)**: §10 "호스트 환불 정책 설정 UI" Gap·"환불 preview + 레거시 섹션 병렬 표시 모순" Gap 해소. 호스트 폼이 카탈로그 6종 picker로 교체(STRICT/FLEXIBLE 선택 불가 해소), 전송 권위=`refundPolicyConfig.templateCode`, 상세·신청 확인 표시가 `effectiveRulesJson`(by_time)로 전환(§5 모달 문구 레거시 100/50/30 추정 제거), 취소 시트는 서버 preview 단일 출처, 앱이 `EventVo.refundPolicyConfig` read-back 모델링(community_app `3cb12ac`).

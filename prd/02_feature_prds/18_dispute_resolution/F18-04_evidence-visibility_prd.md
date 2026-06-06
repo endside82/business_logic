@@ -190,7 +190,7 @@ UNBAN 액션 시 null 전달 → validator short-circuit (빈 목록 처리).
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P1 | **evidence 첨부 v1 제외**: `DisputeCaseCreateScreen` v1에서 evidence 업로드 UI 의도적 제외. EvidenceFileValidator는 배선됨. | `dispute_case_create_screen.dart` 주석 | 사용자가 증빙을 첨부할 수 없어 운영팀 처리 시 맥락 부족 | v2 wave에서 `EvidenceImagePicker` UI 배선 |
+| ~~P1~~ 해소(2026-06-06, W14 S4) | **evidence 첨부**: `DisputeCaseCreateScreen`에 `EvidencePickerField` 배선 완료(최대 5 `evidenceFileIds`). 서버 `EvidenceFileValidator` 검증. | `dispute_case_create_screen.dart`(community_app `3cb12ac`) | 사용자가 증빙을 첨부해 운영팀에 맥락 전달 가능 | 완료 (마켓 환불 분쟁 첨부는 F08-14 §13 서버 계약 갭으로 별도) |
 | P1 | **purchase_refund_dispute retention 미구현**: `evidence_file_group_id` 구조로 인해 단일 file_metadata 패턴과 다름. 별도 file group cleanup 경로 필요. | `DisputeCaseRetentionScheduler.java` 주석 | REFUND_DISPUTE evidence가 1년 후에도 정리되지 않음 | 별도 file group cleanup 스케줄러 추가 |
 | P2 | **evidence 삭제 endpoint 미구현 확정**: `DisputeCaseController.java` 전체 확인 결과 DELETE endpoint 없음. `EvidenceGallery`는 frozen 시 안내 배너만 표시 (`evidence_gallery.dart:37-47`) — 삭제 버튼/AC 없음. 증빙은 조회 전용 + frozen 보존 안내만. | `DisputeCaseController.java` grep DELETE 0건 | evidence 삭제 기능 자체가 미구현. evidenceFrozen=false 상태에서도 삭제 불가 | evidence 삭제 endpoint 추가 여부 제품 정책 결정 필요 |
 | P2 | **legal hold MeetingSettlementAppeal appealer 직접 finder 없음**: `existsActiveCaseByUserId`(:158-169)는 settlement.creatorUserId(호스트) 경로로만 SETTLEMENT_APPEAL을 검출. appealer가 호스트가 아닌 경우 legal hold 미검출 가능. | `DisputeCaseQueryRepository.java:158-169` 주석 | SETTLEMENT_APPEAL appealer(비호스트)의 계정 삭제가 잘못 허용될 수 있음 | MeetingSettlementAppeal appealer 직접 finder 추가 |

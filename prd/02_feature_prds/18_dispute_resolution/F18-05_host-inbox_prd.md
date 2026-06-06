@@ -184,7 +184,7 @@
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P1 | **dispute 딥링크 미배선**: FCM 알림에서 분쟁 관련 신규 알림 타입 클릭 시 `NotificationRouter`에 라우팅 없어 홈으로 fall-through. `REFUND_DISPUTE_CREATED`(92)/`UPHELD`(93)/`OVERTURNED`(94) 기존 3개만 처리. | `notification_router.dart` grep 0건 | 분쟁 알림 클릭 시 인박스 또는 케이스 상세로 이동 불가 | `NotificationRouter`에 분쟁 신규 타입 라우팅 추가 |
+| P1 — 부분 해소(2026-06-06, W14 S1) | **dispute 딥링크**: `REFUND_DISPUTE_CREATED`(92)/`UPHELD`(93)/`OVERTURNED`(94)는 **배선 완료** — `REFUND_DISPUTE:{id}`→`/me/disputes/:caseId`(community_app `3cb12ac`). **사실 정정**: 그 외 분쟁 계열은 caseId prefix로만 존재하고 사용자 알림 NotificationType(분쟁은 92~94뿐)·발송 경로가 서버에 없다(`DomainOutboxEventMapper` `case DISPUTE -> unsupported()`, SLA 스캐너는 `OperatorAlertService` 운영자 경보) — 호스트 인박스용 분쟁 알림 자체가 발화되지 않으므로 "라우팅 미배선 잔존"이 아니라 서버 알림 신설 선행 영역 | `notification_router.dart`(refund 3종 배선됨) / `DomainOutboxEventMapper`(DISPUTE unsupported) | 해당 분쟁은 사용자 알림 미발화라 라우팅만으로는 인박스/케이스 상세 진입 불가 | (선행) 서버 분쟁 사용자 알림 타입·발송 경로 신설 → 이후 `NotificationRouter` 라우팅 추가 |
 | P2 | **HostInboxService 성능**: 각 source를 size=500까지 수집 후 메모리 정렬/page() 페이징. 인박스 항목 많을 시 N+1 + 메모리 부하. | `HostInboxService.java:83,126,601` | 응답 지연, OOM 가능 | DB 집계 쿼리로 전환 또는 cursor-based pagination |
 | P2 | **실시간 업데이트 미배선**: WebSocket/polling 없음. pull-to-refresh만 지원. | `host_inbox_screen.dart:217` — refresh()만 | 미응답 건수가 stale 가능. 새 문의 수신을 즉각 알 수 없음 | 주기적 polling 또는 FCM push → invalidate 연결 |
 | P2 | **sourceTypeCounts 타입 안전성**: `Map<String, int>`로 역직렬화. 잘못된 key 무시됨. | `host_inbox_stats.dart` | 새 source type 추가 시 통계 카운트 누락 가능 | `Map<HostInboxSourceType, int>` 또는 extension parser 추가 |
@@ -232,7 +232,7 @@ Then `hostInboxNotifierProvider.refresh()`가 호출되어 `GET /api/v1/host/inb
 
 | 분류 | 항목 | 결정/작업 |
 |---|---|---|
-| 구현 | dispute 딥링크 | `NotificationRouter`에 인박스/케이스 상세 라우팅 추가 |
+| 구현 | dispute 딥링크 | refund 3종(92/93/94)은 W14 S1 배선 완료. 그 외 분쟁 계열은 서버 사용자 알림 타입·발송 경로 부재(`DomainOutboxEventMapper` DISPUTE unsupported) — 라우팅에 앞서 서버 알림 신설 선행 필요 |
 | 구현 | HostInboxService 성능 | DB 집계 쿼리로 전환. size=500 전량 조회 제거 |
 | 구현 | 실시간 업데이트 | FCM push → provider invalidate 연결 또는 polling 주기 설정 |
 | 정책 | 인박스 항목 보존 기간 | DONE 항목을 언제까지 인박스에 유지할지 정책 결정 |

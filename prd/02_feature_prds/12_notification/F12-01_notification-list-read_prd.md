@@ -206,9 +206,9 @@
 | 89 | `REFUND_EVIDENCE_RESPONDED` | 마켓 환불 | — |
 | 90 | `REFUND_ESCALATED` | 마켓 환불 | — |
 | 91 | `REFUND_FAILED` | 마켓 환불 | — |
-| 92 | `REFUND_DISPUTE_CREATED` | 마켓 분쟁 | — (딥링크 미배선, Gap 참조) |
-| 93 | `REFUND_DISPUTE_UPHELD` | 마켓 분쟁 | — (딥링크 미배선, Gap 참조) |
-| 94 | `REFUND_DISPUTE_OVERTURNED` | 마켓 분쟁 | — (딥링크 미배선, Gap 참조) |
+| 92 | `REFUND_DISPUTE_CREATED` | 마켓 분쟁 | `/me/disputes/:caseId` (`REFUND_DISPUTE:{disputeId}`, 2026-06-06 W14 S1 배선) |
+| 93 | `REFUND_DISPUTE_UPHELD` | 마켓 분쟁 | `/me/disputes/:caseId` (W14 S1 배선) |
+| 94 | `REFUND_DISPUTE_OVERTURNED` | 마켓 분쟁 | `/me/disputes/:caseId` (W14 S1 배선) |
 | 95 | `REFUND_CREATOR_RECEIVABLE_OFFSET` | 마켓 정산 | — |
 | 96 | `FAVORITE_PERSON_NEW_EVENT` | 관심인 | 이벤트 상세 |
 
@@ -345,7 +345,7 @@
 | Risk | frontend.md:26 | 우선순위 칩("주의" — p1만): `PAYMENT_FAILED`, `CHARGE_FAILED`, `SETTLEMENT_FAILED`, `SETTLEMENT_REJECTED`, `WITHDRAWAL_REJECTED`, `MEETING_SETTLEMENT_EXPIRED`, `MEETING_SETTLEMENT_CANCELLED`, `SETTLEMENT_CORRECTION_PENDING`, `REFUND_PG_FAILED` — 신규 타입(77~96)은 p1 분류 미확인 | 신규 알림 타입의 priority 분류 코드 확인 후 `_resolveNotificationIcon` 갱신 |
 | Gap | frontend.md:89 | 삭제 실패 메시지 미정 — 현재 구현은 `false` 반환만, 토스트 없음 | 삭제 실패 토스트 문구 확정 후 구현 |
 | Gap | scenarios.md:46 | Undo 미구현 — 스펙 27-notification.md는 Undo 언급하나 코드 미구현 | Decision Needed: Undo 제공 여부 결정 |
-| Gap (P1) | dossier 01 §3-E-4, dossier 09 §2-8 | **분쟁 딥링크 미배선**: `notification_router.dart`에 신규 통합 분쟁 케이스 알림 타입 없음. `REFUND_DISPUTE_CREATED(92)`, `REFUND_DISPUTE_UPHELD(93)`, `REFUND_DISPUTE_OVERTURNED(94)` 기존 3종만 isNavigable에 포함 안 됨. 신규 `USER_DISPUTE`, `CLUB_MEMBERSHIP_ACTION`, `DATE_BLOCK` 분쟁 알림 클릭 시 홈 fall-through | `notification_router.dart`에 분쟁 케이스 딥링크 추가 (`/me/disputes/:caseId`) |
+| Gap (P1) — 부분 해소(2026-06-06, W14 S1) | dossier 01 §3-E-4, dossier 09 §2-8 | **분쟁 딥링크**: `REFUND_DISPUTE_CREATED(92)`/`UPHELD(93)`/`OVERTURNED(94)`는 **배선 완료** — `data.disputeId`로 `REFUND_DISPUTE:{id}` caseId 조립 후 `/me/disputes/:caseId` 이동(앱 enum에도 3종 등재, community_app `3cb12ac`). **사실 정정**: `USER_DISPUTE`·`CLUB_MEMBERSHIP_ACTION`·`DATE_BLOCK`은 서버 분쟁 caseId prefix로만 존재하며 **사용자 알림 NotificationType(분쟁 계열은 92~94 REFUND_DISPUTE 3종뿐)·발송 경로 자체가 없다**(`DomainOutboxEventMapper`에서 `case DISPUTE -> unsupported()`, SLA 스캐너는 `OperatorAlertService`로 운영자 경보만 발행). 따라서 "잔존 미배선 딥링크"가 아니라, 라우팅에 앞서 **서버 사용자 알림 타입·발송 경로 신설이 선행돼야 하는 영역**이다 | (선행) 서버에 해당 분쟁 사용자 알림 타입·발송 경로 신설 → 이후 caseId prefix 조립·`/me/disputes/:caseId` 라우팅 추가 |
 | Gap | dossier 09 §2-8 | 카풀(77~80)/버스(81~82) 알림 딥링크 미배선 — `isNavigable` 목록에 없음, `resolve()` switch에 없음 | 카풀/버스 화면 라우트 연결 |
 | Gap | dossier 09 §2-8 | `SAFETY_CHECKIN_REMINDER(61)`, `EVENT_PREPAYMENT_*(71~76, 83)`, `REFUND_*(84~95)` 대부분 딥링크 미배선 | 각 도메인 화면 라우트 연결 또는 정보성 처리 확정 |
 

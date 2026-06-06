@@ -32,16 +32,16 @@
           <div class="metric"><div class="label">문의 단계</div><div class="value">4</div><div class="hint">작성·내 목록·상세·추가 답장</div></div>
           <div class="metric"><div class="label">카테고리</div><div class="value">6</div><div class="hint">계정·결제·이벤트·클럽·신고·기타</div></div>
           <div class="metric"><div class="label">연결 대상</div><div class="value">4</div><div class="hint">일반·이벤트·클럽·정산</div></div>
-          <div class="metric"><div class="label">앱 화면</div><div class="value">미구현</div><div class="hint">서버만 준비됨</div></div>
+          <div class="metric"><div class="label">앱 화면</div><div class="value">구현 완료</div><div class="hint">2026-06-06 W14 S3</div></div>
         </div>
 
-        <div class="callout warn">
-          <span class="label">현재 상태 — 서버 준비됨, 앱 화면 없음</span>
-          <p>서버 쪽 접수·조회·답장 처리와 본인 참여 확인은 모두 동작한다.
-            그러나 앱에 1:1 문의 화면과 진입점이 아직 만들어지지 않아
-            현재 사용자는 앱으로 1:1 문의를 접수할 수 없다 — 서버 준비만 끝난 상태다.
-            운영 이슈(F20-02)는 앱 화면이 완성돼 있으므로,
-            결제·환불·정산 건이라면 운영 이슈 채널을 먼저 사용한다.</p>
+        <div class="callout">
+          <span class="label">현재 상태 — 앱 화면 구현 완료 (2026-06-06 W14 S3)</span>
+          <p>서버 쪽 접수·조회·답장 처리와 본인 참여 확인이 모두 동작하고,
+            앱에도 1:1 문의 목록·상세 스레드·작성 화면과 마이페이지 진입 메뉴가 추가돼
+            사용자가 직접 문의를 접수·조회할 수 있다.
+            다만 작성 화면은 1차 버전에서 연결 대상(이벤트·클럽·정산)을 고르는 분기를 아직 제공하지 않아
+            모든 문의가 '일반(NONE)'으로 접수된다 — 연결 대상 지정은 후속이다.</p>
         </div>
       </section>
 
@@ -144,10 +144,10 @@ stateDiagram-v2
 
       <section>
         <h2>알려진 격차</h2>
-        <div class="callout danger">
-          <span class="label">앱 화면 미구현</span>
+        <div class="callout warn">
+          <span class="label">남은 격차</span>
           <ul>
-            <li>1:1 문의를 위한 앱 화면과 진입점이 아직 만들어지지 않아, 현재 사용자는 앱으로 이 기능을 쓸 수 없다. 서버 준비만 끝난 상태다.</li>
+            <li>1:1 문의 앱 화면·진입점은 2026-06-06(W14 S3) 구현 완료됐다. 다만 작성 화면은 1차 버전에서 연결 대상(이벤트·클럽·정산) 분기를 제공하지 않아 모든 문의가 '일반(NONE)'으로 접수된다 — 연결 대상 지정은 후속이다.</li>
             <li>이벤트·클럽에 연결된 문의에서 호스트가 직접 답변하는 기능이 아직 동작하지 않는다. 답변 이력을 담을 자리는 준비돼 있다.</li>
             <li>관리자가 답변할 때 사용자에게 푸시 알림이 실제로 전달되는지 확인이 필요하다.</li>
           </ul>

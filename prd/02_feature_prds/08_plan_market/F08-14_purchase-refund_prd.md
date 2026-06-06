@@ -503,6 +503,7 @@ F08-11 사용자 가이드(`business_logic/user_guides/08_plan_market/F08-11_pur
 
 ## 13. Gap / Risk
 
+- **마켓 환불 분쟁 증빙 첨부 — 서버 계약 갭 (2026-06-06, W14 S4 확인)**: 통합 분쟁(F18) 접수 화면은 W14 S4에서 `EvidencePickerField`(개별 `evidenceFileIds` 최대 5)가 배선됐으나, **마켓 환불 분쟁(`POST /api/v1/market/refunds/{refundId}/dispute`) 접수 화면은 배선 불가**다. 서버 `PurchaseRefundDisputeCreateParam.evidenceFileGroupId`는 `Long`(파일 **그룹** 식별자, "외부 파일 시스템과 연동되어 별도 업로드된 후 ID만 참조" — `RefundDisputeService`에서 검증 없이 저장)이며, 이 그룹 ID를 만들어 줄 파일 그룹 생성 API가 서버에 없다(`FileController`는 presigned-url/upload-complete 등 개별 `fileId` 기반만 제공). 앱이 채워 보낼 값을 생산할 수 없어 증빙 없이 접수만 가능하다. **서버 후속 필요**: (a) 파일 그룹 생성 API 신설, 또는 (b) param을 `evidenceFileIds`(개별 ID 목록 + 검증)로 변경. 후자면 F18 접수 화면과 동일하게 `EvidencePickerField` 재사용 가능.
 - **F08-15 의존**: 본 PRD는 F08-15 완료 전 구현 불가.
 - **분쟁 운영자 UI 부재**: API는 있으나 UI는 후속. 운영자가 임시로 API 도구를 써야 한다. UI 후속 PRD 우선순위 높음.
 - **사용 흔적 측정 정확도**: 다운로드 카운터·플랜 구매 ID 추적은 신규 컬럼이라 백필 데이터 없음. 본 PRD 시행 이전 구매에는 사용 흔적이 0으로 보일 수 있다. 운영 정책으로 별도 안내.
@@ -612,7 +613,7 @@ F08-11 사용자 가이드(`business_logic/user_guides/08_plan_market/F08-11_pur
 ## 18. 명시되지 않은 결정 사항 (후속)
 
 - 환불 사유 분류 한글 라벨 확정
-- 분쟁 증빙 파일 업로드 제약 (개수·용량·형식)
+- 분쟁 증빙 파일 업로드 제약 (개수·용량·형식) — §13 서버 계약 갭(evidenceFileGroupId 그룹 생성 API 부재) 선결 필요
 - 판매자 패널티 임계값 (자동 승인 비율 X%, 분쟁 패소 비율 Y%)
 - 신뢰점수 차감 가중치 정책 (F11-05와 연동)
 - `CREATOR_RECEIVABLE` 장기 미수 처리 시점 (60일이 적정한가)
