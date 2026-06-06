@@ -62,8 +62,12 @@
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| PATCH | /api/v1/events/{eventId}/settlement/activate | MeetingSettlementController#activateSettlement | required | DRAFT → ACTIVE + transfer 자동 생성 + 알림 |
+| PATCH | /api/v1/events/{eventId}/settlement/activate | MeetingSettlementController#activateSettlement | required | DRAFT → ACTIVE + **대상자 검증(W14-S7)** + transfer 자동 생성 + 알림 |
 | PATCH | /api/v1/events/{eventId}/settlement/cancel | MeetingSettlementController#cancelSettlement | required | DRAFT/ACTIVE → CANCELLED + 환불 처리 |
+
+**활성화 시점 대상자 검증 (W14-S7, 커밋 `c7fd7e4`, D-4=활성화 시점 일괄 검증)**: `activateSettlement`는 transfer 생성 직전, 분담 당사자 집합 `holder ∪ share ∪ 수동 transfer 당사자`가 `실참석자(FIXED=체크인) ∪ host` 부분집합인지 일괄 검증한다. 위반 시 `MEETING_SETTLEMENT_SUBJECT_NOT_IN_SETTLEMENT`(400, 2000025) + 위반자 payload를 반환한다(작성 중에는 자유, 활성화 시점에만 차단). 비참석자에게 송금 라인이 생성되는 것을 차단한다.
+
+**작성 중(DRAFT) 정산 30일 자동 정리 (W14-S7, 신규 `MeetingSettlementDraftCleanupScheduler`, D-3=30일)**: DRAFT 상태로 30일 방치된 정산은 `CANCELLED`로 전이된다(삭제 금지 — 복구 여지 보존, audit + 호스트 알림). DRAFT에도 존재할 수 있는 PENDING 수동 transfer는 동반 취소된다. ShedLock·`REQUIRES_NEW`·멱등 fresh 재검 적용. 기존 `MeetingSettlementExpirationScheduler`(Transfer 전용)와 별도 클래스로 분리.
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
@@ -169,6 +173,8 @@
 | 후보 | scenarios.md:31 | **현재 UI 상태**: body는 `null` (옵션 입력 UI 미구현). 옵션 추가가 필요할 때 활성화 다이얼로그를 확장. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 해소 (2026-06-06) | MeetingSettlementCalculator (커밋 46b54b9) | **EQUAL 분배 음수 share 방지(MED)** — EQUAL 분배 계산에서 음수 share가 산출돼 정산이 deadlock되던 경로를 가드. 정산 활성화/계산 시 음수 분담금이 생기지 않는다. | 없음 |
 | 해소 (2026-06-06) | MeetingSettlementTransferService.java:97-111, WalletRefundService.java:45-126 | **취소 역분개 회수 재설계 + split 보존(C2/H1)** — 취소 시 reversal 환불이 원결제 split을 복원하며(`refundByTransaction`, refundToWallet 차단), 수취 분개가 RECEIVABLE clearing으로 소거된다. 상세는 F07-05 §4 회계 무결성 노트. | 없음 |
+| 해소 (2026-06-06, W14-S7 `c7fd7e4`) | MeetingSettlementService#activateSettlement | **분담 대상자 검증 부재(D-4)** — `holder ∪ share ∪ 수동 transfer 당사자 ⊆ 실참석자(FIXED=체크인) ∪ host`를 활성화 시점에 일괄 검증, 위반 시 `MEETING_SETTLEMENT_SUBJECT_NOT_IN_SETTLEMENT`(2000025) + 위반자 payload. 비참석자에게 임의로 송금 라인이 생성되던 경로를 차단. | 없음 |
+| 해소 (2026-06-06, W14-S7 `c7fd7e4`) | MeetingSettlementDraftCleanupScheduler (신규) | **작성 중 정산 영구 잔존(D-3)** — DRAFT 30일 방치 시 `CANCELLED` 전이(삭제 아님, audit+호스트 알림)+PENDING 수동 transfer 동반 취소. ShedLock·REQUIRES_NEW·멱등 재검. Transfer 전용 만료 스케줄러와 별도 클래스. | 없음 |
 
 ## 9. 수용 기준
 

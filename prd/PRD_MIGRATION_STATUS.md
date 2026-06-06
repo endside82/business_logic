@@ -51,6 +51,16 @@
 
 community_app `3cb12ac`(W14)의 앱 슬라이스 4건을 관련 PRD/도메인 HTML에 반영했다(신규 PRD 없음 — 기존 Gap → 해소). **S1 분쟁 알림 딥링크**: REFUND_DISPUTE 92/93/94가 `REFUND_DISPUTE:{id}`→`/me/disputes/:caseId`로 배선 + 앱 `NotificationType` enum에 분쟁 3종·FAVORITE_PERSON_NEW_EVENT 등재 → F12-01·F18-01·F18-05 딥링크 Gap **부분 해소**(USER_DISPUTE/CLUB_MEMBERSHIP_ACTION/DATE_BLOCK은 서버 caseId prefix로만 존재 — 사용자 알림 NotificationType[분쟁은 92~94뿐]·발송 경로가 서버에 없어[`DomainOutboxEventMapper` DISPUTE unsupported, SLA 스캐너는 운영자 경보] 클라 라우팅 누락 "잔존"이 아니라 서버 알림 신설 선행 영역), F19-02 enum 미등재 Gap **해소**. **S3 1:1 문의(F20-01)**: 앱 풀스택(목록/상세/작성 + `/profile/inquiries` 라우트 + 마이페이지 메뉴) 구현 → §1·§5·§7·§8 P0·§10 **해소**. **S4 증빙 첨부**: 통합 분쟁 접수(F18-02)에 `EvidencePickerField`(최대 5) 배선 → P1 evidence Gap **해소**. 단 마켓 환불 분쟁(F08-14)은 `evidenceFileGroupId`(그룹 생성 API 부재) **서버 계약 갭**으로 §13에 신규 등재. **S5 환불 템플릿(F03-13)**: 호스트 폼 카탈로그 6종 picker 교체(STRICT/FLEXIBLE 선택 불가 해소), 상세·신청 확인 `effectiveRulesJson`(by_time) 전환, 취소 시트 서버 preview 단일 출처 → §10 호스트 UI Gap·병렬 모순 Gap **해소**. 도메인 HTML 반영: `18-dispute.html`(딥링크·증빙), `20-support.html`(1:1 문의 앱).
 
+## 2026-06-06 — W14 서버 슬라이스 S2·S6·S7 + S8 문서 정합화 (기능 수 증감 없음, Gap 상태/통념 정정)
+
+community_api `07bdb38`(S2)/`6faa833`(S6)/`c7fd7e4`(S7)의 서버 3슬라이스를 관련 PRD/도메인 HTML에 반영하고(신규 PRD 없음 — 기존 Gap 해소 + 통념 정정), R-레지스터(R-8)·WORKBOARD 모순·BACKLOG 구식 티켓을 함께 정정했다. canonical: 루트 `docs/plan/REMAINING_GAPS_EXECUTION_PLAN.md` §8 Phase 결과(서버 슬라이스) + §7 확정 D-결정.
+
+- **S2 노쇼 마감 (F03-20, F18-03)**: cohost 권한 버그 해소(`EventAttendanceManagerGuard` 단일 추출 — `canManageAttendance` 미보유 cohost 차단, G-6 해소), 소명 기한 `confirmedAt+7일`(`EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 400036, D-2, G-3 해소), 앱 appeal/overturn/batch 배선(`NoShowManageSection` host/coHost/staff + 참가자 소명 CTA, G-1 해소). 통합 분쟁 경로 사전검증(F18-03): `DisputeAppealService.createAppeal`이 EVENT_NO_SHOW에 대해 save 전 기한·본인·canonical caseId 검증·실패 전파(과거 검증 실패를 삼키고 201 반환하던 BLOCKER 해소). → F03-20 §1·§4·§5·§6·§7·§8 G-1/G-3/G-6·§10, F18-03 §1·§3·§4·§6·§8·§10·AC, `F03-20.html`(소명 기한 미정→7일·red-flag 2건) **해소**.
+- **S6 제재 집행 마감 (F15-08, 도메인 15)**: `EVENT_HOST_RESTRICT` 6경로 집행(클럽 이벤트·클럽 레거시 반복·정기모임 생성·세션 3경로·플랜 기반·일반 반복 자식), `DATE_PROFILE_BLOCK` 실집행(생성·활성 전환, 1600028), `GET /api/v1/users/me/sanctions`(`UserSanctionController`) 신설 → 해당 §8 Gap **해소**. **"강퇴 시 구독 정리" Gap은 D-6 무코드 처분으로 허구 정정**(ClubSubscription 오너 전용 — 멤버 보유 구독 부재, 가입비는 기존 전액 환불로 완결). **신규 후속 1건 등재**: 기활성 데이팅 프로필 매칭 노출(제재 부여 시 비활성화 미수행, §8 P2). → F15-08 §1·§2·§4-A·§4-B·§7·§8·§10·AC, 도메인 15 PRD, `15-warning.html`·`F15-08.html` red-flag 정정.
+- **R-8 정정**: F15-08·도메인 15 PRD의 "PlatformSanction admin grant/revoke 미확인/미배선" stale 표기를 community_admin_api `PlatformSanctionAdminController` 배선 확인(2026-06-06 실측)으로 정정.
+- **S7 정리성 부채 (F07-03, F07-04)**: DRAFT 정산 30일 자동 정리(신규 `MeetingSettlementDraftCleanupScheduler` — CANCELLED 전이+PENDING 수동 transfer 동반 취소, D-3), `activateSettlement` 대상자 검증(holder∪share∪manual transfer 당사자 ⊆ 실참석자∪host, `MEETING_SETTLEMENT_SUBJECT_NOT_IN_SETTLEMENT` 2000025, D-4) → F07-03 §4·§8, F07-04 §8(DRAFT 자동정리 P3 Gap)·`F07-04.html` red-flag **해소**. **D-5 무변경 처분**(user 실삭제 없음=익명화 전용·club soft-close → cascade 발화 부재, DDL 유지).
+- **S8 문서 정합화(루트 docs, 본 repo 외)**: `IMPLEMENTATION_WORKBOARD.md`(W13C 내부 모순 정정 — Verification Log 완료 기준으로 Lane 2 행·Recommended Execution Order 정합화, W14 Status→In Progress S1~S7 완료/S8 마무리), `docs/todo/BACKLOG.md`(O-004 MULTI_TIER 환불 티켓 → D-1 카탈로그 6종 체계로 대체 표기), `REMAINING_GAPS_EXECUTION_PLAN.md`(§8 Phase 결과 서버 슬라이스 + §7 D-6 무코드 추기).
+
 ## 2026-06-05 (3차) — 지갑 모임정산 목록 화면 후속 슬라이스 완료 반영
 
 D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c5 / app 8c60999)이 구현·커밋되어 관련 Gap을 해소 처리했다. F07-10(§4 엔드포인트 행·§7-A·§8 Gap), F07-04(§7-A 발견 경로·§8 read 게이트 Gap), 07 도메인 PRD(cross-ref ⑤⑥·API 행), 05_feature_definitions F07-10 행 갱신. 핵심: 목록 행 `eventTitle` 배치 enrich(서버), 앱 read 게이트 재구성(캐시 기반 빠른 통과 + `getMyShares` BE 판정 폴백 — 게이트의 이벤트 상세 조회 부작용 제거, 비ATTENDING share 당사자·DRAFT 이벤트 정산 당사자 진입 해소), 지갑 메인 진입 카드, UI/UX 스펙 SCR-PA-005 신설(community_api docs). Codex diff 리뷰 최종 BLOCKER/MAJOR 0.
@@ -99,9 +109,9 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 ### 주요 잔여 Gap (소스 측, 비차단 — 각 기능 PRD §8 참조)
 
 - 분쟁: 알림 딥링크 미배선(기존 REFUND_DISPUTE 3종 포함 전부), 호스트 appeal 승인/거절 공개 API 부재, 접수 화면 증빙 첨부 v1 제외, EVENT_NO_SHOW 외 원본 status sync 없음(audit-only). *(→ 2026-06-06 W14 S1/S4: REFUND_DISPUTE 3종 딥링크 + 통합 분쟁 증빙 첨부 해소. appeal 공개 API·status sync는 잔존.)*
-- 노쇼: 소명 기한 서버 미구현, Flutter 소명/번복/일괄 endpoint 미배선, cohost canManageAttendance 미체크.
+- 노쇼: 소명 기한 서버 미구현, Flutter 소명/번복/일괄 endpoint 미배선, cohost canManageAttendance 미체크. *(→ 2026-06-06 W14 S2 해소: 소명 기한 7일(400036), 앱 소명/번복/일괄 배선, cohost 권한 가드 추출. 통합 분쟁 경로 사전검증 BLOCKER 동반 수정.)*
 - 환불: 호스트 신규 6종 템플릿 설정 UI 미구현(레거시 5종 폼), 취소 시트 preview-레거시 병렬 표시 모순 가능. *(→ 2026-06-06 W14 S5 해소: 호스트 폼 6종 picker 교체, 취소 시트 서버 preview 단일 출처.)*
-- 경고: PlatformSanction listActiveByUser 공개 API 미배선, EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 진입점 가드 없음.
+- 경고: PlatformSanction listActiveByUser 공개 API 미배선, EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 진입점 가드 없음. *(→ 2026-06-06 W14 S6 해소: `GET /api/v1/users/me/sanctions` 신설, EVENT_HOST_RESTRICT 6경로 + DATE_PROFILE_BLOCK 생성·활성 집행. admin grant/revoke 배선 확인(R-8). "강퇴 구독 정리"는 D-6 무코드 처분. 신규 후속: 기활성 데이팅 프로필 매칭 노출.)*
 - 관심인/고객지원: Flutter NotificationType enum에 FAVORITE_PERSON_NEW_EVENT 미등재(라우팅은 문자열 기반으로 동작), Inquiry Flutter 전 레이어 미구현. *(→ 2026-06-06 W14 S1/S3 해소: enum 등재 + Inquiry 앱 풀스택 구현.)*
 
 ## 2026-05-28 — 정기모임 (Regular Meeting) 도메인 추가
