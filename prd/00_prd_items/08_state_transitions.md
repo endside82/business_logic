@@ -468,3 +468,49 @@ limbo 상태(BANK_AWAITING_CONFIRM, PENDING_MANUAL_REFUND): 실제 돈이 움직
 | `UNBLOCKED` | 차단 해제 (이력 보존) | hard delete → soft transition. UNBLOCKED history row는 차단 체크에서 제외 |
 
 안전신고 연동: 차단 시 `DateBlockParam.fileReport=true`이면 `ReportType.DATE_USER` 안전신고 동시 생성 + `DateBlock.reportId` 백필. evidence_file_ids 첨부 시 dispute(SAFETY) evidence로 처리. legal hold: 연결 report가 IN_REVIEW/OPEN/ESCALATED이면 DATE_BLOCK source에 legal hold 적용, RESOLVED/CLOSED 후 1년 evidence 정리.
+
+## 17. 돈 흐름 무결성 운영 상태 (2026-06-06 추가)
+
+> 2026-06-06 돈·포인트 흐름 무결성 수정으로 도입/정정된 결제 운영 상태. 모두 실제 enum 소스 확인 기준이며, 운영자 환불·정산 직렬화와 limbo 감시를 위한 비ACTIVE 예약 상태가 핵심이다.
+
+### 17.1 SubscriptionStatus — 개인 구독 (갱신)
+
+> 소스: `payment/constants/SubscriptionStatus.java`
+
+| 상태 | 의미 | 비고 |
+|---|---|---|
+| `ACTIVE` | 활성 구독 | 혜택 게이팅 대상 |
+| `CANCELLED` | 해지 | autoRenew=false |
+| `SUSPENDED` | 정지 | |
+| `EXPIRED` | 만료 | |
+| `REFUNDING` | **운영 환불 진행중 예약 마킹 (신규)** | admin prepare tx가 환불 대상 row 선점 → 동시 중복 환불 차단. 비ACTIVE 취급. EnumType.STRING valueOf 파싱 호환을 위해 enum 동기 |
+
+> `ClubSubscriptionStatus`(`club/constants/ClubSubscriptionStatus.java`)에도 동일하게 `REFUNDING` 추가 — admin 클럽구독 환불 진행 중 비ACTIVE 게이트 차단.
+
+### 17.2 FailedRefundStatus — 환불 실패 보상 큐 (갱신)
+
+> 소스: `payment/constants/FailedRefundStatus.java`
+
+| 상태 | type | 의미 | 비고 |
+|---|---|---|---|
+| `PENDING` | 0 | 처리 대기 | 스케줄러 재시도 대상 |
+| `RESOLVED` | 1 | 처리 완료 | |
+| `FAILED` | 2 | 처리 실패 | |
+| `PROCESSING` | 3 | **운영 포인트 보상 진행중 예약 마킹 (신규)** | admin prepare tx가 선점, unresolved 필터에서 제외 |
+
+### 17.3 WithdrawalDeadLetterAction — 외부출금 dead-letter 운영 액션 (신규)
+
+> 소스: `payment/withdrawal/constants/WithdrawalDeadLetterAction.java`
+
+| 액션 | 의미 | 비고 |
+|---|---|---|
+| `REQUEUE` | dead-letter 재처리(재전송) | provider 멱등성에 의존(NOOP 상태 미검증, PG 게이트) |
+| `RESTORE_RESERVE` | 터미널 FAILED/DEAD_LETTER에서 지갑 예약 복원 | `pgTransactionId` 가드 + 운영자 confirmPayoutNotSent 오버라이드. 출금 예약 spend 복원 |
+
+> 외부출금은 요청 시 지갑 paidBalance·lot을 reserve spend(SETTLEMENT-lot 우선소비)하고, 출금 가능액은 원장 RECEIVABLE-leg(Σ수취−Σ회수) 기반으로 산정(C1). 정산 수취 크레딧을 지갑에서 소비하면서 동시에 출금하는 이중사용이 차단된다.
+
+### 17.4 회계 무결성 — 정산/원천세 상태 부수 효과 (정정)
+
+- **정산 완료 분개(§5 PAID)**: `CREATOR_PAYABLE`를 gross 전액(net+fee+tax)으로 소거(triple-entry). admin 운영 정산도 community_api에 위임해 동일 분개(H0).
+- **원천세 예수금(`WITHHOLDING_TAX_PAYABLE`)**: 적립=정방향(DR PLATFORM_CASH/CR WITHHOLDING), 납부(소거)=DR WITHHOLDING/CR PLATFORM_CASH. ledger-only `TransactionType.WITHHOLDING_REMITTANCE(30)`. 운영 납부는 admin 멱등 액션(`accounting_remit_lock` 직렬화).
+- **감시 경보(신규 `OperatorAlertType`)**: `REVERSAL_EXHAUSTED`(역분개 회수 3회 소진), `BANK_REFUND_STALE`(BANK 환불요청 3일 무응답), `SETTLEMENT_FAILED_STALE`(정산 FAILED 5일 경과) — 멱등 키, 상태 전이 없음(돈 in-flight 자동 만료 금지).

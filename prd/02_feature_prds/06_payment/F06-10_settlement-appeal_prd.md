@@ -197,6 +197,18 @@
 
 W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount, paid_at, refunded_at`)만 확정한다. 보고서 UI 통합은 F06-09 수익 대시보드 후속 슬라이스에서 처리한다(§10 참조).
 
+## 5.2 정산 회계·원천세·감시 (2026-06-06 돈 흐름 무결성)
+
+> 본 절은 호스트가 보는 정산 화면 뒤에서 동작하는 회계·원천세·감시 운영 사실을 기술한다. 모두 백엔드 사실이며 화면 직접 노출은 없다(운영/대사용).
+
+| 영역 | Fact (소스) | 사용자 영향 |
+|---|---|---|
+| 정산 완료 triple-entry | 정산 완료 분개가 `CREATOR_PAYABLE`를 **gross 전액**(net + fee + tax)으로 소거하도록 통일됨(api `AccountingLedgerService.recordSettlementTripleEntry`). admin 운영 정산도 동일 분개를 community_api에 위임(admin `ManageAccountingService`/`SettlementService` 직접 net-only 분개 제거). 과거 admin net-only 분개(fee+tax≈gross 12.97% 영구 잔류)는 H0으로 해소. | 호스트 net 지급은 변동 없음. 매출·원천세가 정확히 인식됨. |
+| 원천세 예수금 방향 정정 | 원천세 예수금(`WITHHOLDING_TAX_PAYABLE`, 부채)을 **정방향**으로 적립하도록 정정 — 적립 시 `DR PLATFORM_CASH(tax) / CR WITHHOLDING_TAX_PAYABLE(tax)`(신설 `AccountCode.PLATFORM_CASH` 플랫폼 현금성 자산, 소스: `payment/constants/AccountCode.java:22`, `AccountingLedgerService.java:99-141`). 과거 적립이 차변(방향 역)이라 운영 원천세 리포트가 과소집계되던 버그(MED) 해소. | 호스트 영향 없음. 운영 원천세 리포트 신뢰성 확보. |
+| 원천세 납부(소거) | `recordWithholdingRemittance`(`AccountingLedgerService.java:683-`) 분개 신설 — 납부 시 `DR WITHHOLDING_TAX_PAYABLE / CR PLATFORM_CASH`로 한 라이프사이클의 예수금·현금 순잔액이 0으로 수렴. 운영 액션은 admin `POST /admin/v1/manage/accounting/withholding-tax/remit`(`ManageAccountingController.java:124`) — AdminIdempotency 멱등 + 전 기간 누적 초과 거부 가드. ledger-only `TransactionType.WITHHOLDING_REMITTANCE(30)`(PointTransaction row 미생성). 동시성: `accounting_remit_lock` 단일행 비관락 + `WHT-REMIT:{key}` 결정적 referenceId 영구 백스톱(crash-takeover 재실행 안전, api `5cb386e`/admin `aba730e`). | 호스트 영향 없음. 운영자가 예수금을 실제 납부로 소거. |
+| 정산 FAILED 감시 | `SettlementRetryScheduler`가 FAILED 정산 5일 경과 시 멱등 운영자 경보(`OperatorAlertType.SETTLEMENT_FAILED_STALE`, 키 `SETTLEMENT_FAILED:{id}`) 발화 — 과거 무제한 재시도+로그만이던 사각지대 해소. 자동 만료·자동 중단은 없음(돈 in-flight는 사람이 처리). | 화면의 "5일 이내 미처리 시 관리자 문의" 안내(§169)와 정합. |
+| 지급명세서 환불 반영 | admin 지급명세서가 정산 후 전액환불의 net 회수를 반영 — `netPaid = CREATOR_SETTLEMENT(DR−CR) − withheldTax − netRecovery`(전액환불 시 netPaid=0). | 호스트 지급명세서 정확성. |
+
 ## 6. 상태/권한/시나리오 매트릭스
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
@@ -228,6 +240,8 @@ W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount
 | 후보 | backend.md:134 | - **Event Unit (03)**: `eventTitle` 보강을 위해 `eventRepository.findById` 호출 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:87 | - **이의 제출 다이얼로그 디자인**: 사유 텍스트 입력 (max 1000자 가드 — 서버 `@Size(max=1000)`과 일치 권장), 첨부 파일은 UI/UX에는 있지만 서버 미구현 → 현재 화면도 텍스트만 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:87 | **종료 상태**: 빠른 클라이언트 필터로 사용자 결정 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | AccountingLedgerService.java:99-141, ManageAccountingController.java:124 | **정산 회계 무결성 해소** — H0(admin net-only 분개 → triple-entry 위임), 원천세 적립 방향 정정 + 납부 분개·운영 액션 신설(MED), 정산 FAILED 5일 감시 경보(MED). 호스트 net 지급 정확성·운영 리포트 신뢰성 확보. | 없음 |
+| Risk (PG 게이트) | NoopPayoutProvider.java:21,28 | **실 payout(출금) provider 미구현(NOOP)** — dev/default mock이며 prod 부팅 시 `@PostConstruct guardAgainstProd` 예외로 차단. 정산 → 외부 송금(PAYING→PAID 실 지급)은 PG/출금 provider 계약 후에만 검증 가능. release-gate `05_pg.md` 등재. | PG 계약 시 검증 |
 
 ## 9. 수용 기준
 

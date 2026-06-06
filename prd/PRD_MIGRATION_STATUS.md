@@ -19,6 +19,34 @@
 | **현재 총 기능 PRD (2026-06-05)** | **168** |
 | 누락/확인 필요 | 0 |
 
+## 2026-06-06 — 돈 흐름 무결성 (기능 수 증감 없음, 기존 §7 사실/§8 Gap 갱신)
+
+2026-06-05 돈·포인트 흐름 전수 감사(`docs/audit/money-flow-2026-06-05/REPORT.md` — CRITICAL 6·HIGH 20·MED 11·LOW 3) → 라운드 1·2 + MED 백로그 + 납부 동시성으로 전 40건 + MED 백로그 종결. 커밋 범위: community_api `a7876aa..2e0ba2a`, community_admin_api `9eafc0e..aba730e`. 신규 FNN-MM 기능은 추가하지 않고, 기존 기능 PRD의 §7 사실/§8 Gap을 소스(현 HEAD) 직접 인용으로 갱신했다. 운영 신규 기능(원천세 납부 등)은 해당 도메인 기존 기능/정책 PRD에 운영 절차·사실로 기술.
+
+| 문서 | 반영 내용 |
+|---|---|
+| F06-01 §8 | 외부출금 정산 크레딧 이중사용 차단(C1 — 원장 기반 출금게이트+reserve+RESTORE_RESERVE) |
+| F06-02 §8 | 충전취소 PG 실패 처리(H14) + 응답유실 PG 게이트 |
+| F06-06 §4.3·§8 | refundToWallet split 미보존 영구 Gap 해소(H1/H2/H7 — 7경로 refundByTransaction 전환·본체 차단) |
+| F06-08 §4·§8 | 구독 자동갱신 이중과금 방지(C6)·환불 split 복원/REFUNDING(H1/H10)·만료 락(MED) |
+| F06-10 §5.2·§8 | 정산 triple-entry(H0)·원천세 방향 정정+납부 액션(MED)·정산 FAILED 5일 감시(MED)·지급명세서 환불 반영·payout NOOP 게이트 |
+| F07-03 §8 | EQUAL 음수 share 방지(MED)·취소 역분개 split 복원(C2/H1) |
+| F07-05 §4·§8 | 모임정산 수취 회계 정식화(RECEIVABLE clearing)·출금자격 수취자 귀속(C1/C2)·역분개 split(H1) |
+| F07-06 §4·§8 | 송금 제안 반올림 합 보존(H19)·POINT_COMPENSATION 실입금(H12)·BANK_AWAITING admin 전이(H13)·REVERSAL 소진 재처리+경보(MED) |
+| F07-08(F17) §3.6·§8 | RM 환불 실패 실금액 기록(MED/LOW)·BANK 환불요청 SLA(MED) |
+| F04-14 §8 | 기부 취소·폐쇄 환불 split 보존(H1)·기금 drain 장부 대칭(H5) |
+| F04-15 §8 | 미수금 상계 장부(H6)·클럽 출금 원천세 분개 정정 |
+| F04-16 §8 | 클럽구독 환불=지갑 부담분 일할 기준+internal 위임+REFUNDING(C3/C4/H1) |
+| F08-11 §8 | 마켓 구매 동시성 직렬화(H16) |
+| F08-14 §13.1 | 마켓 이중환불 차단(C5)·환불 split 복원/회계-지갑 일치(H1/H7)·claw-back 부분회수(H17)·무료분 장부(H3) |
+| F08-15 §3.4a | 마켓 무료분 정산 장부 분개(H3) |
+| F03-13 §8 | BANK 환불요청 무SLA 해소(MED — RefundRequestEscalationScheduler) |
+| F03-19 §4-7 | 일정변경 가격-선결제 동기(H9) |
+| `00_prd_items/08_state_transitions.md` §17 | 신규 운영 상태(Subscription/ClubSubscription REFUNDING·FailedRefund PROCESSING·WithdrawalDeadLetterAction REQUEUE/RESTORE_RESERVE) + 회계/감시 부수효과 |
+| `03_policy_prds/payment_settlement_policy_prd.md` §2.6·§6.1-B·§6.3 | 돈 흐름 무결성 정책 신설(환불 split/admin 위임/멱등/출금자격/원천세/대사/감시/동시성) + 기존 Known Gap 2건 해소 |
+
+잔여(범위 밖, PG 계약 의존): 충전취소 응답유실 보정·출금 provider 멱등 검증(release-gate `05_pg.md` 등재) + 가상계좌 webhook TODO. EVENT 결제 측 `spend()` 이관(flow-through화)·appeal 첨부 그룹 API는 별도 followup.
+
 ## 2026-06-06 — W14 앱 슬라이스 4건 상태 반영 (기능 수 증감 없음, Gap 상태만 변경)
 
 community_app `3cb12ac`(W14)의 앱 슬라이스 4건을 관련 PRD/도메인 HTML에 반영했다(신규 PRD 없음 — 기존 Gap → 해소). **S1 분쟁 알림 딥링크**: REFUND_DISPUTE 92/93/94가 `REFUND_DISPUTE:{id}`→`/me/disputes/:caseId`로 배선 + 앱 `NotificationType` enum에 분쟁 3종·FAVORITE_PERSON_NEW_EVENT 등재 → F12-01·F18-01·F18-05 딥링크 Gap **부분 해소**(USER_DISPUTE/CLUB_MEMBERSHIP_ACTION/DATE_BLOCK은 서버 caseId prefix로만 존재 — 사용자 알림 NotificationType[분쟁은 92~94뿐]·발송 경로가 서버에 없어[`DomainOutboxEventMapper` DISPUTE unsupported, SLA 스캐너는 운영자 경보] 클라 라우팅 누락 "잔존"이 아니라 서버 알림 신설 선행 영역), F19-02 enum 미등재 Gap **해소**. **S3 1:1 문의(F20-01)**: 앱 풀스택(목록/상세/작성 + `/profile/inquiries` 라우트 + 마이페이지 메뉴) 구현 → §1·§5·§7·§8 P0·§10 **해소**. **S4 증빙 첨부**: 통합 분쟁 접수(F18-02)에 `EvidencePickerField`(최대 5) 배선 → P1 evidence Gap **해소**. 단 마켓 환불 분쟁(F08-14)은 `evidenceFileGroupId`(그룹 생성 API 부재) **서버 계약 갭**으로 §13에 신규 등재. **S5 환불 템플릿(F03-13)**: 호스트 폼 카탈로그 6종 picker 교체(STRICT/FLEXIBLE 선택 불가 해소), 상세·신청 확인 `effectiveRulesJson`(by_time) 전환, 취소 시트 서버 preview 단일 출처 → §10 호스트 UI Gap·병렬 모순 Gap **해소**. 도메인 HTML 반영: `18-dispute.html`(딥링크·증빙), `20-support.html`(1:1 문의 앱).

@@ -71,6 +71,8 @@ refundAmount = floorToHundred(raw)  # 100원 단위 절삭, 0 clamp
 - `FailedRefund(regular_meeting_id, user_id, amount, reason, attempt_count)` row.
 - 별도 스케줄러가 재시도. 성공 시 마감.
 
+> **Fact (2026-06-06 돈 흐름 무결성 — RM failed_refund 실금액 기록, 커밋 8ea29eb)**: 과거 RM 환불 실패가 `failed_refund.amount=0`으로 기록되어 운영 재시도/보상이 실금액을 모르던 오라우팅(감사 MED/LOW)이 해소되었다. `RegularMeetingRefundService.recordFailedRefund(meeting, member, reason, amount)`(`:119-137`)가 **실제 환불 실패 금액**을 기록하고, `sendRefundFailedAlert`(`:157-174`)가 `OperatorAlertType` REFUND_FAILED 운영자 경보(멱등키 `REFUND_FAILED:REGULAR_MEETING:{failedRefundId}`)를 발화한다. 복구 경로 = 스케줄러 재시도 + 운영자 경보 기반 수동 처리(자동 만료 없음).
+
 ## 4. 서버 계약
 
 본 기능은 endpoint 가 cancel 흐름(F17-04/06) 안에 합쳐져 있음. 추가 endpoint:
@@ -117,7 +119,8 @@ refundAmount = floorToHundred(raw)  # 100원 단위 절삭, 0 clamp
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 위험 | BANK refund-confirm 누락 | 호스트가 confirm 안 하면 REFUND_REQUESTED 영구 잔존 → 멤버는 환불 대기로 인지 | SLA 모니터링 + 호스트 알림 |
+| 해소 (2026-06-06) | RefundRequestEscalationScheduler.java, RegularMeetingPayment.java:99,103 | **BANK REFUND_REQUESTED 무SLA 해소(MED)** — 신규 `RefundRequestEscalationScheduler`(이벤트+RM 양쪽)가 `refund-request.escalation-days`(기본 3일) 경과 RM `REFUND_REQUESTED` 결제에 호스트 재알림 → 2회 후 `OperatorAlertType.BANK_REFUND_STALE` 운영자 경보. 신규 컬럼 `refund_escalated_at`/`refund_escalation_count`. 자동 만료 없음(limbo 원칙). | 없음 |
+| 해소 (2026-06-06) | RegularMeetingRefundService.java:119-174 (커밋 8ea29eb) | **RM 환불 실패 실금액 기록 + 복구 경로** — `failed_refund.amount`에 실금액 기록 + REFUND_FAILED 운영자 경보(§3.6). 과거 amount=0 오라우팅 해소. | 없음 |
 | 위험 | clawback (음수 잔액) | 사용자 잔액이 환불액보다 작아 마이너스 잔액 가능 | wallet 정책: 마이너스 허용 + 적립 시 우선 차감 |
 | 잔여 | reservedRefund | FORFEIT 환불은 settlement reservedRefund 에 예약분 반영 (F17-10 §7) | 검증됨 |
 

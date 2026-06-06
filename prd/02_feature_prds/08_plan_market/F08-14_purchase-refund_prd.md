@@ -1,13 +1,13 @@
 # F08-14 — 플랜 마켓 환불 (Purchase Refund) · v2
 
 > 신규 PRD. 작성일 2026-05-24, codex 페어 리뷰 합의 v2 갱신.
-> 상태: **구현됨** (`PurchaseRefundController`/`PurchaseRefundService`). 본 문서가 구현 계약(spec)이며 아래 일부 절(특히 환불 split 보존)은 followup이다.
+> 상태: **구현됨** (`PurchaseRefundController`/`PurchaseRefundService`). 본 문서가 구현 계약(spec)이다. 환불 split 보존 followup은 **2026-06-06 해소**(§13.1 — `refundByTransaction` 원거래 구성 복원 + 이중환불 차단).
 > **하드 의존**: `F08-15_creator-earning-coverage_prd.md` 완료 전에는 본 PRD 백엔드 구현에 들어가지 않는다.
 > 의존 이유: 환불 회계는 `CreatorEarning`의 정확한 매출 귀속과 상태 모델에 기반한다. F08-15가 그 기반이다.
 
 ## 1. 결론
 
-플랜 마켓에서 구매한 아이템·번들·플랜에 대해 **구매자가 환불을 신청**하고, **판매자(크리에이터)가 승인 또는 거절**하는 흐름을 다룬다. 판매자 무응답에 대비한 자동 처리, 사용 흔적 기반 차단, 거절에 대한 운영자 중재까지 본 PRD가 다룬다. 환불 API는 구현되어 있다(`PurchaseRefundController`/`PurchaseRefundService` — 요청·승인·거절·구매자취소·자동처리·분쟁 진입, 회계 분개 split 포함). 다만 지갑 환불 자체는 `walletService.refundToWallet`로 **전액 paid 복원**(원결제 유료/무료 split 미보존)이며, split 보존을 위한 `refundByTransaction` 전환은 followup이다.
+플랜 마켓에서 구매한 아이템·번들·플랜에 대해 **구매자가 환불을 신청**하고, **판매자(크리에이터)가 승인 또는 거절**하는 흐름을 다룬다. 판매자 무응답에 대비한 자동 처리, 사용 흔적 기반 차단, 거절에 대한 운영자 중재까지 본 PRD가 다룬다. 환불 API는 구현되어 있다(`PurchaseRefundController`/`PurchaseRefundService` — 요청·승인·거절·구매자취소·자동처리·분쟁 진입, 회계 분개 split 포함). 지갑 환불 자체도 원결제의 유료/무료 split을 보존한다: `PurchaseRefundService`(`PurchaseRefundService.java:190-198`)가 원결제 PointTransaction을 역참조하는 `WalletRefundService.refundByTransaction`를 호출해 유료분은 구매자 paid로, 무료분은 free로 복원한다. 과거 followup이던 전액 paid 복원(`refundToWallet`)은 **2026-06-06 해소**됐고, `WalletService.refundToWallet`(`WalletService.java:684-692`)는 진입 즉시 throw로 차단되어 재발하지 않는다.
 
 ## 2. 의존성
 
@@ -370,31 +370,34 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 
 기존 코드 관례(`AccountingLedgerService.recordRefund`: `USER_WALLET` 차변, `CREATOR_PAYABLE` 대변)에 맞춰 다음 메서드를 신설:
 
-> **유료/무료 split 보존** (2026-05-24 포인트 분리정산 반영): 마켓 구매는 flow-through 사용처이므로, 환불은 원결제의 유료/무료 split을 그대로 복원하는 것이 정책 목표다 — 유료분은 구매자 paid로, 무료분은 구매자 free로 환원(무료→현금 전환 차단). 회계 분개는 이미 `CreatorEarning`의 `grossPaid/grossFree`·수수료·원천징수를 split으로 인식한다(`recordMarketplaceRefundDetailedBefore/AfterSettlement`, 수수료·원천징수 환원은 유료분에만). **단 지갑 환불 자체는 현재 `walletService.refundToWallet`로 전액 paid 복원(원결제 split 미보존)이며, `refundByTransaction`(결제 txId 기준 split 조회) 전환은 followup이다.** 정본은 정책 PRD §2.5.
+> **유료/무료 split 보존** (2026-05-24 포인트 분리정산 반영, 2026-06-06 지갑 경로 해소): 마켓 구매는 flow-through 사용처이므로, 환불은 원결제의 유료/무료 split을 그대로 복원한다 — 유료분은 구매자 paid로, 무료분은 구매자 free로 환원(무료→현금 전환 차단). 회계 분개는 `CreatorEarning`의 `grossPaid/grossFree`·수수료·원천징수를 split으로 인식한다(`recordMarketplaceRefundDetailedBefore/AfterSettlement`, 수수료·원천징수 환원은 유료분에만). **지갑 환불 자체도 `WalletRefundService.refundByTransaction`(결제 txId 역참조로 split 조회)로 원결제 split을 복원하며**(`PurchaseRefundService.java:190-198`), 과거 followup이던 전액 paid 복원(`refundToWallet`)은 **2026-06-06 해소**됐다(본체 진입 즉시 throw로 차단). 정본은 정책 PRD §2.5.
 
 #### 8.2.1 정산 전 환불
 
 ```
 차변: USER_WALLET (구매자 지갑 입금)
-대변: CREATOR_PAYABLE[creator_i] (각 크리에이터 미지급금 차감)
-대변: PLATFORM_FEE_REVENUE (수수료 환원)
-대변: WITHHOLDING_TAX_PAYABLE (원천세 환원)
+대변: CREATOR_PAYABLE[creator_i] (각 크리에이터 미지급금 차감, net 유료분)
+대변: PLATFORM_FEE_REVENUE (수수료 환원, 유료분만)
+대변: CREATOR_PAYABLE (원천세분 — 정산 전엔 예수금이 아직 적립 안 됐으므로 WITHHOLDING 미사용, 미지급금 환원으로만 처리)
+대변: PROMOTION_EXPENSE (무료분 grossFree 환원)
 
 (번들의 경우 N행으로 발행)
 ```
 
-`CreatorEarning.status = REFUNDED`로 변경.
+원천세 슬라이스는 정산 전 예수금이 아직 없으므로 `WITHHOLDING_TAX_PAYABLE`을 건드리지 않고 `CREATOR_PAYABLE` 환원으로만 처리한다(`AccountingLedgerService.java:909-918`). `CreatorEarning.status = REFUNDED`로 변경.
 
 #### 8.2.2 정산 후 환불
 
 ```
-차변: USER_WALLET (구매자 지갑 입금)
-대변: CREATOR_RECEIVABLE[creator_i] (각 크리에이터 미수금)
-대변: PLATFORM_FEE_RECEIVABLE 또는 PLATFORM_FEE_REVENUE 보정
-대변: WITHHOLDING_TAX_RECEIVABLE 또는 보정
+차변: USER_WALLET (구매자 지갑 입금, netPaid)   대변: CREATOR_RECEIVABLE[creator_i] (각 크리에이터 미수금)
+차변: USER_WALLET (수수료분)                     대변: PLATFORM_FEE_REVENUE (수수료 환원)
+원천세 환원(역원복) — 2쌍 분개:
+  차변: USER_WALLET (원천세분 지갑 복구)         대변: CREATOR_SETTLEMENT (정산 tax 슬라이스 역원복)
+  차변: WITHHOLDING_TAX_PAYABLE (예수금 부채 소거) 대변: PLATFORM_CASH (플랫폼 현금 회수)
+차변: USER_WALLET (무료분 grossFree)            대변: PROMOTION_EXPENSE
 ```
 
-`CreatorEarning.status = REVERSED`로 변경.
+원천세 환원은 적립된 예수금 부채를 차변으로 소거하므로 `[USER_WALLET / CREATOR_SETTLEMENT]` + `[WITHHOLDING_TAX_PAYABLE / PLATFORM_CASH]` 2쌍으로 발행한다(`AccountingLedgerService.java:958-973`). `CreatorEarning.status = REVERSED`로 변경.
 
 다음 정산 사이클에서 `CREATOR_RECEIVABLE`을 우선 차감하여 회수한다. `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, availableNet)`이 정산 직전 호출되어 `REVERSED` 상태의 earning을 회수 대상으로 잡고, 가용 정산금에서 차감한 뒤 회수 완료된 행은 `PAID`로 전이된다.
 
@@ -512,6 +515,13 @@ F08-11 사용자 가이드(`business_logic/user_guides/08_plan_market/F08-11_pur
 - **세무 보고**: `WITHHOLDING_TAX_PAYABLE` 환원 시 신고 변경. 재무·세무팀 합의.
 - **국제 사례**: 한국 전자상거래법 적용 여부. 법무 검토 필요.
 - **동시 환불 + 정산 경합**: 락 정책으로 방어하지만 부하 테스트 필요.
+
+### 13.1 돈 흐름 무결성 해소 (2026-06-06)
+
+- **이중환불 차단 (C5 해소 — 커밋 1f37cd3)**: 환불 신규 신청 차단 상태 목록(`PURCHASE_REFUND_BLOCKING_STATUSES`, `PurchaseRefundService.java:81-89`)에 `REFUNDED`/`REFUNDED_BY_OPERATOR`(완료된 환불)를 포함해 1구매당 full refund 2회(환불 > 결제액)를 차단. 지갑층 누적환불 가드가 백스톱. 과거 완료 상태가 차단 조건에서 빠져 있던 결함 해소.
+- **환불 split 보존 + 회계-지갑 일치 (H1/H7 해소 — 커밋 2494654)**: 환불이 원결제 PointTransaction을 역참조(`resolveOriginalPointTransactionId` → `WalletRefundService.refundByTransaction`, `PurchaseRefundService.java:190-193`)해 유료/무료 split을 복원하며, 지갑 입금과 원장 환원이 같은 split 기준으로 일치(과거: wallet 전액 paid 입금 vs 원장 free 분리의 불일치) — 분해 컬럼 신설 없이 역참조로 해결.
+- **claw-back 부분회수 (H17 해소 — 커밋 5407508)**: 정산 후 환불의 `MarketplaceSettlementService.offsetCreatorReceivable`이 차기 net < owed인 경우에도 가능한 만큼 부분 회수하도록 변경(과거 `if applied>=owed`로 부분 net이면 REVERSED earning 영구 미회수=플랫폼 손실).
+- **무료분 정산 장부 (H3 해소 — 커밋 b7e384b)**: `MarketplaceSettlementService` 무료 매출 정산(freeCredit 지급)에 원장 분개를 기록(과거 무원장 → USER_WALLET 차변 < 실지급). 상세는 F08-15 §3.4a.
 
 ## 14. 구현 순서
 

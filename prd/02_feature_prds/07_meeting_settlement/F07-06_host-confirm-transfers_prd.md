@@ -125,6 +125,15 @@
 - 신규 인덱스: `idx_mst_limbo (status, limbo_escalated_at)`
 - 상태 전이 없음: `limboEscalatedAt`/`limboEscalationCount` 갱신만 수행
 
+### 송금 제안 반올림 + 운영 수동 처리 (2026-06-06 돈 흐름 무결성)
+
+> **Fact (H19 해소 — 커밋 0bfe19e)**: 호스트 일괄 수금 송금 제안(`MeetingSettlementCalculator.suggestHostCollectTransfers`)이 10원 단위로 독립 반올림하면서 송금 채무 합 ≠ share 합이 되던 결함이 수정되어, 제안 송금액 합이 보존된다.
+
+> **Fact (운영 수동 처리 — admin)**: limbo/실패 상태의 운영 복구 경로가 배선되었다. 소스: `community_admin_api ManageMeetingSettlementService.java:53-187`, `ManageMeetingSettlementController`.
+> - **POINT_COMPENSATION 실입금(H12)**: 과거 "보상" 라벨인데 실 입금이 0이던 결함을 정정 — admin `resolveManualRefund(method=POINT_COMPENSATION)`이 수취자에게 실제 포인트를 입금(referenceType `MEETING_SETTLEMENT_POINT_COMPENSATION`, 멱등키 `MEETING_SETTLEMENT_POINT_COMPENSATION:{transferId}`).
+> - **BANK_AWAITING_CONFIRM admin 전이(H13)**: 정산이 비ACTIVE여도 admin이 BANK_VERIFIED/POINT_COMPENSATION/WRITE_OFF로 상태를 전이할 수 있는 endpoint 배선(`resolveBankAwaitingConfirm`). 자동 만료는 limbo 원칙에 따라 비자동(수동 전이+에스컬레이션).
+> - **REVERSAL_FAILED 회수실패 재처리(MED)**: retry 3회 소진 transfer에 admin `RESET_REVERSAL` 수동 재시도 경로 + 소진 시 1회성 멱등 운영자 경보(`OperatorAlertType.REVERSAL_EXHAUSTED`, 키 `REVERSAL_EXHAUSTED:{transferId}` — 상태 전이 없이 경보만). 과거 무로그·무알림 영구 제외 사각지대 해소.
+
 ## 5. 프론트 계약
 
 ### 진입 경로
@@ -229,6 +238,7 @@
 | Risk | community_app | 서버 TransferStatus에 `SUPERSEDED`(재발급 대체) 추가됨. 앱 Flutter 모델 베이스라인 이후 변경 없어 미반영 가능성 있음 | Flutter `TransferStatus` enum에 `SUPERSEDED` 추가 여부 확인 필요 |
 | 후보 | frontend.md:83 | - **포기 버튼 색상**: `AppColors.error500` 강조 (위험 액션) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:86 | - **호스트가 자기 share를 직접 confirm할 수 없는 가드**: UI에서 호스트 본인 share 카드의 confirm 버튼 숨김 (백엔드 403 가드 보강) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | MeetingSettlementCalculator.suggestHostCollectTransfers (0bfe19e), ManageMeetingSettlementService.java:53-187 | **송금 제안 반올림 합 보존(H19)·POINT_COMPENSATION 실입금(H12)·BANK_AWAITING admin 전이(H13)·REVERSAL 소진 재처리+경보(MED) 해소** — §4 "송금 제안 반올림 + 운영 수동 처리" 참조. | 없음 |
 
 ## 9. 수용 기준
 

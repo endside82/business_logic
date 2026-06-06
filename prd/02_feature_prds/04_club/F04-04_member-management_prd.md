@@ -131,7 +131,7 @@
 
 ### 의존 단위 / 외부 시스템
 
-- **Unit 06 (payment/wallet)**: `WalletService.refundToWallet`, `AccountingLedgerService.recordMemberFeeRefund` — BUSINESS 클럽 강퇴 시 가입비 환불.
+- **Unit 06 (payment/wallet)**: `WalletRefundService.refundByTransaction`(원결제 split 복원 — `refundToWallet`는 2026-06-06 해소·본체 차단), `AccountingLedgerService.recordMemberFeeRefund` — BUSINESS 클럽 강퇴 시 가입비 환불(`ClubMembershipService.java:382,399`).
 - **Unit 11 (notification)**: `NotificationService` — `CLUB_MEMBER_KICKED` FCM.
 - **F04-13~14 (이 단위 후반)**: `ClubFundService.deductFromFund` — 환불 시 기금 차감.
 - **dispute (host/dispute)**: `ClubMembershipAction` 행이 `DisputeSourceType.CLUB_MEMBERSHIP_ACTION` union 소스로 피강퇴 사용자의 이의제기 진입로가 된다.

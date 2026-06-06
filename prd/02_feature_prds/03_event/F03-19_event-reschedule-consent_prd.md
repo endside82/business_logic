@@ -225,6 +225,8 @@ DECLINED 시 `EventParticipationCancellationService.cancelMyParticipation`을 `R
 
 소스: `EventRescheduleProposalService.java:534-537`, `RefundFaultCategory.java:31`, `EventPaymentRefundService.java:371,392`
 
+> **Fact (2026-06-06 돈 흐름 무결성 — H9 해소, 커밋 6c1d630)**: 일정 변경이 가격을 바꾸는 경우(`newPrice ≠ oldPrice`) 이벤트 가격과 **선결제 금액(prepaymentAmount)을 동기화**하도록 `EventRescheduleProposalService`(apply 경로)가 정정되었다. 과거에는 `EventService.cancelEvent`/`reschedule` 시 `prepaymentAmount`가 미동기되어 `FailedRefund.amount`(→ admin `compensatePoints` 적립 구동)가 원금초과/과소 환불을 유발하던 불변식 위반(H9). 이제 가격 변경 apply가 선결제 금액 불변식을 보존해 환불액이 실제 결제액과 일치한다. (단 가격 인상 입력 UI 부재(G-1)로 앱에서 newPrice 제안 자체는 현재 불가 — 본 동기화는 서버 경로/admin 강제 변경 시 보호.)
+
 ### 4-8. 알림 구조
 
 | 트리거 | NotificationType | dataJson | 수신자 |

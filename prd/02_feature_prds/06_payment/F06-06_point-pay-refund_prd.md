@@ -187,7 +187,9 @@ TransactionVo payForApplication(
 
 - **결제 split**: 결제는 유료(paid) 우선 차감이 기본이며, `spend()`로 이관된 opt-in 사용처(마켓/플랜/프라이빗 미팅비/클럽 기부·가입비 등 flow-through)에서는 유료/무료 split이 발생해 무료 결제분이 수취자(창작자/기금)에게 free로 전파되어 현금화되지 않는다. **이벤트 참가비는 정책 목표상 flow-through이나, 현재는 `WalletService.pay`/`payForApplication`(PaymentRecord 기반) legacy 경로로 동작하며 `spend(EVENT_*)` 이관은 followup이다 — 즉 EVENT는 아직 split flow-through가 적용되지 않는다.**
 - **환불 split 보존**: `refundByTransaction` 경로의 환불은 원결제의 유료/무료 split을 그대로 복원한다(유료분 → paid, 무료분 → free로 환원). 거래 상세는 무료 환불분(`freeAmount > 0`)을 별도 카드로 표시.
-- **followup (미완)**: 클럽 기부·가입비·구독 환불에 쓰이는 `refundToWallet` 계열은 아직 원결제 split을 보존하지 못한다 — `refundByTransaction` 전환 + 결제 txId 스키마 보강 필요. EVENT 결제·환불 경로(`WalletService.pay`/`RefundService` PG-queue)의 `spend()` 이관도 followup.
+
+> **Fact (2026-06-06 돈 흐름 무결성 — H1/H2/H7 해소)**: 과거 followup으로 남아 있던 "클럽 기부·가입비·구독·마켓·모임정산 역분개 환불의 `refundToWallet` 계열이 원결제 split을 보존하지 못한다"가 **해소**되었다. 7개 호출처가 split-보존 헬퍼 `WalletRefundService.refundByTransaction`(소스: `payment/service/WalletRefundService.java:45-126` — 원결제 PointTransaction의 paid/free 비율 복원 + `chargeLotConsumptionService.restoreByTransaction`로 lot 복원)으로 전환되었고(커밋 2494654·c539cfe·251c460·b635078·f46b929 등), 원결제 미해석이 불가피한 폐쇄 환불은 row별 split을 독립 보존하도록 재설계되었다. 분해 컬럼 신설 대신 환불 PointTransaction에 `original_point_transaction_id` 역참조를 두어 split을 복원한다. `WalletService.refundToWallet`(`payment/service/WalletService.java:684-692`) 본체는 **`@Deprecated` + 진입 즉시 `RestException(INVALID_INPUT)` throw**로 차단되어 재호출 시 split 세탁이 재발하지 않는다. (커밋 a7876aa..2e0ba2a 범위, 감사 리포트 §6 H1/H2/H7.)
+- **followup (잔여)**: EVENT 결제·환불 경로(`WalletService.pay`/`RefundService` PG-queue)의 `spend()` 이관(이벤트 참가비 flow-through화)은 여전히 미완. 결제 측 split flow-through 자체(환불이 아닌 결제 흐름)는 EVENT 도메인에 적용되지 않은 상태로 남아 있다.
 
 ## 5. 프론트 계약
 
@@ -271,6 +273,8 @@ TransactionVo payForApplication(
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
+| 해소 (2026-06-06) | WalletService.java:684-692, WalletRefundService.java:45-126 | **환불 split 미보존 영구 Gap 해소** — `refundToWallet` 7개 호출처를 split-보존 `refundByTransaction`으로 전환, 본체는 `@Deprecated`+즉시 throw로 차단. 무료→유료 현금화 세탁 경로 제거. | 없음 — 잔여는 EVENT 결제 측 `spend()` 이관(flow-through화) followup |
+| Risk (PG 게이트) | ChargeService.java:347-463 | **충전취소(cancelCharge) 응답유실 엣지** — DB-first→PG cancel 순서에서 PG 성공+응답유실 시 DB 롤백으로 지갑 미환불+PG 환불됨 불일치 가능. 실 PG(Toss) 연동 전까지 잠재. release-gate `05_pg.md`에 등재됨(코드 무변경, PG 계약 시 일괄 검증). | PG 계약 시 webhook TODO와 함께 검증 |
 | Risk | WalletController.java:190 | `GET /api/v1/wallet/refund/policy`는 24h=100%/12h=50%/0% 하드코딩 값을 반환. 실제 환불 계산과 무관하지만 클라이언트가 이 값을 정책 기준으로 표시하면 실제 카탈로그와 불일치. Deprecation 계획 미결정. | 신규 환불 UI는 `GET /api/v1/refund-policy-templates` 카탈로그 응답 기반으로 전환 검토 |
 | 후보 | backend.md:48 | #### 유료 승인제 결제 검증 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | backend.md:117 | - **Enum** `RefundPgStatus` (응답 보강용): `PENDING`, `PROCESSING`, `SUCCESS`, `FAILED`, `CANCELLED`, `MANUAL_REQUIRED` (정확 값은 `payment/constants/RefundPgStatus.java` 참조) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |

@@ -75,7 +75,8 @@
   - free-burn(플랫폼 매출): 개인 구독(F06-08), 호스팅 티켓(F06-07), 클럽 구독, 프라이빗 호스팅비 → opt-in 시 무료 허용, 무료분은 지갑에서 차감(소각). spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현(followup).
   - PAID_ONLY: 모임 정산 송금·회수·선입금, 충전 취소 → 무료 불가.
 - **인출 paid-only**: 사용자 외부 출금·탈퇴 환불은 유료 잔액만 대상. 무료는 현금 인출 불가, 탈퇴 시 무료는 소멸(forfeit).
-- **후속(미완)**: EVENT 결제·환불(`WalletService.pay`/`RefundService`)의 `spend()` 이관, `refundToWallet` 계열(구독 환불 포함) 원결제 split 보존은 followup.
+- **해소 (2026-06-06)**: `refundToWallet` 계열(클럽 기부·가입비·구독·마켓·모임정산 역분개 환불)의 원결제 split 보존은 전부 해소됐다 — 모든 호출처가 원결제 PointTransaction을 역참조하는 `WalletRefundService.refundByTransaction`로 전환됐고, `WalletService.refundToWallet`(`WalletService.java:684-692`) 본체는 진입 즉시 throw로 차단된다.
+- **후속(미완)**: EVENT 결제·환불(`WalletService.pay`/`RefundService`)의 `spend()` 이관(flow-through화)은 followup.
 
 ## 6. 화면/API 매핑
 

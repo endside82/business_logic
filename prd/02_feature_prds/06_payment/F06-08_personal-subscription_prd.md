@@ -88,7 +88,13 @@
   - `Subscription` (`payment/model/Subscription.java`) — userId, planType, status, startedAt, expiresAt, autoRenew, price, renewalAttempts, paymentRecordId
   - `SubscriptionService`의 자동갱신 스케줄러: `MAX_RENEWAL_ATTEMPTS=3`, `GRACE_PERIOD_DAYS=7`
 
-> **유료/무료 분리정산 — free-burn** (2026-05-24 반영): 개인 구독은 수취자가 없는 **플랫폼 매출**이라 사용처 분류상 **free-burn**이다. 결제는 `walletSpendService.spend(SUBSCRIPTION, ...)`로 차감된다. opt-in으로 무료 결제를 허용하면 무료분은 수취자 없이 지갑에서 차감(소각)된다. **단 spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현 — followup.** 구독 환불(`refundToWallet` 계열)은 전액 paid 복원(원결제 split 미보존)이며 `refundByTransaction` 전환은 followup. 정본은 정책 PRD §2.5.
+> **유료/무료 분리정산 — free-burn** (2026-05-24 반영): 개인 구독은 수취자가 없는 **플랫폼 매출**이라 사용처 분류상 **free-burn**이다. 결제는 `walletSpendService.spend(SUBSCRIPTION, ...)`로 차감된다. opt-in으로 무료 결제를 허용하면 무료분은 수취자 없이 지갑에서 차감(소각)된다. **단 spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현 — followup.** 정본은 정책 PRD §2.5.
+
+> **Fact (2026-06-06 돈 흐름 무결성 — C6/H10/H1 해소)**:
+> - **C6 자동갱신 중복과금 방지**: `SubscriptionService` 자동갱신 스케줄러에 분산락(Redisson) + 중복 워커 가드가 추가되어, 멀티인스턴스 동시 실행 시 같은 구독이 이중 결제되던 결함이 해소됨(커밋 e6326f4). 소스: `payment/service/SubscriptionService.java`(자동갱신 락 — `processAutoRenewals`는 `:173` Redisson 락 보유).
+> - **구독 만료 스케줄러 락(MED)**: `processExpiredSubscriptions`(`SubscriptionService.java:273-296`)에 Redisson `lock:subscription:expire` 추가 — 돈 이동은 없으나 멀티인스턴스 중복 만료 알림 방지.
+> - **구독 환불 split 복원(H1/H10)**: admin 구독 환불이 community_api internal 위임(`POST /api/internal/wallet/refunds/by-transaction`)으로 전환되어 원결제 split·lot·매출 역분개가 단일 트랜잭션에서 기록됨(과거 admin 전액-paid 직접 입금 제거). 원거래 미해석 시 무료 포인트(현금화 불가) grant 분기. 환불 진행 중에는 진행 상태 마킹으로 동시 중복 환불 차단.
+> - **환불 진행 상태(REFUNDING)**: 클럽 구독에서 admin prepare tx가 환불 대상 row를 `ClubSubscriptionStatus.REFUNDING`(`club/constants/ClubSubscriptionStatus.java:14`)으로 선점해 동시 환불 중복을 막는다(개인 구독 enum에는 미적용 — 개인 구독은 internal 위임 멱등키가 1차 가드). community_api는 이 상태를 비ACTIVE(게이트 차단)로 취급하며 EnumType.STRING 파싱 호환을 위해 enum에 동기.
 
 ### 의존 단위 / 외부 시스템
 
@@ -179,6 +185,7 @@
 | 후보 | scenarios.md:162 | ## P71 매트릭스 한계 및 향후 보강 (보강 메모) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:164 | 본 절은 본 라운드 시점의 P71 미커버 시나리오와 그 사유를 기록한다. 5필드 시나리오 형식이 아닌 운영 메모이므로 check_format `보강 메모` 화이트리스트 적용. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:167 | - **S4 (잔액 부족)**: 클라 사전 가드가 서버 호출 전 차단. Provider 통한 직접 호출 매트릭스에서는 UI 가드를 우회하나, 서버 INSUFFICIENT_BALANCE 분기 자체는 P70 `pay_insufficient_prefill` 가 같은 코드 경로 (`walletService.deductFromWallet`) 로 이미 검증. 본 단위 별도 mode 보강은 alice 잔액 사전 소진 setup 이 필요 — 향후 보강 후보. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | SubscriptionService.java(e6326f4), InternalWalletRefundService.java | **구독 자동갱신 이중과금(C6)·환불 split 미보존(H1/H10) 해소** — 자동갱신 분산락+중복워커 가드, admin 구독 환불 internal 위임으로 split·lot·매출 역분개 정합. 만료 스케줄러 락(MED)으로 중복 알림 방지. | 없음 |
 
 ## 9. 수용 기준
 

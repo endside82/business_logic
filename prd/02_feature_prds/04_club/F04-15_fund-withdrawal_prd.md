@@ -160,6 +160,7 @@ OWNER만 클럽 기금을 외부(지갑) 계좌로 인출 신청할 수 있다. 
 |---|---|---|---|
 | 후보 | backend.md:29 | - `reason: String?` — UI는 10~200자 권장 (서버 검증 없음 — `(서버 미검증, 클라이언트 가드)`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:32 | - **현재 서버는 실제 은행 송금 미연동**. UI는 받지만 결과적으로 OWNER 지갑(WALLET)으로 입금됨. 안내 문구 노출 권장: "현재는 본인 지갑으로 입금됩니다" (UI 가드) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | ClubSettlementService.java:160-182, ClubFundService.java:176, AccountingLedgerService.java (커밋 80641c7) | **미수금 상계 장부(H6) + 기금 drain 장부 대칭(H5) 해소** — 클럽 인출 정산 시 미수금 상계분(`settleOutstandingDebt`)을 Owner 지급이 아닌 `PLATFORM_RECEIVABLE` 소거로 분개해 미소거·netAmount 오기록 해소. 폐쇄 drain은 잔여 forfeit만 분개(상세 F04-14 §8). 원천세 분개: 클럽 은행출금 tax 슬라이스를 `CREATOR_SETTLEMENT` 차변+`PLATFORM_CASH`/`WITHHOLDING_TAX_PAYABLE` 정방향으로 기록(일일 출금 대사 오탐 제거). | 없음 |
 
 ## 9. 수용 기준
 

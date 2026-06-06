@@ -324,7 +324,7 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 | 해소 | PLAN.md §2.6.1, D7 | ~~1차 환불 정책 단일 deadline 100%/마감 후 0%, GRADUATED 미구현~~ → Phase 4(c7b4315)에서 `event_refund_policy` 카탈로그 계산기로 전환 완료. GRADUATED는 레거시 STANDARD로 매핑. | 해소 2026-06-05 |
 | 후속 | F03-13 §5 | 1차 Flutter 화면 미신설 가능 — W2/W3은 서버 facade 우선. 상세 화면 구현은 후속 슬라이스 | `lib/presentation/event/screens/event_participation_payment_*` 신설은 별도 슬라이스에서 처리 |
 | 위험 | PLAN.md §1.4.2, S2-3 | `bankConfirm` 시 capacity 매트릭스 fail → `event_payment.REFUND_REQUESTED` 전이. 호스트가 별도 환불 후 `refundByBankConfirm` 호출해야 정리 | 호스트 화면 UI에서 "정원 초과 — 환불 필요" 라벨 강조. 미정리 row 모니터링 필요 (호스트 정산 보고서 §2.8 4번 섹션). |
-| 위험 | PLAN.md §2.15, S2-9 | BANK PAID + 이벤트 취소 → `REFUND_REQUESTED`만 남고 자동 환불 불가. 호스트가 직접 계좌 환불 후 `refundByBankConfirm` 호출 필수 | 호스트 알림 + 정산 보고서에 미정리 행 노출. SLA 모니터링 후속 슬라이스 |
+| 해소 (2026-06-06) | RefundRequestEscalationScheduler.java:54-68, EventPayment.java:92,96 | **BANK 환불요청 무SLA 해소(MED)** — `event_payment.REFUND_REQUESTED`가 호스트 무응답으로 무기한 방치되던 사각지대에 신규 `RefundRequestEscalationScheduler`(ShedLock 05:20)가 `refund-request.escalation-days`(기본 3일) 경과 시 호스트 재알림 → 2회 후 운영자 경보(`OperatorAlertType.BANK_REFUND_STALE`)를 발화. 신규 컬럼 `refund_escalated_at`/`refund_escalation_count`(양 V1). 자동 환불·자동 만료는 없음(돈 in-flight는 사람이 처리 — limbo 원칙). | 없음 |
 | Decision Needed | PLAN.md §2.16 | APPROVED_PENDING_PAYMENT + active event_payment 없음(PAYMENT_EXPIRED 직전 race) → 탈퇴 시 자동 `cancelApplication` 허용 케이스 | 운영 정책 추가 검증(QA 매트릭스에 포함) |
 
 ## 9. 수용 기준

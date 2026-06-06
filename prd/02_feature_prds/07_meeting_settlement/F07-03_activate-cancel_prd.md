@@ -74,7 +74,7 @@
 
 ### 의존 단위 / 외부 시스템
 
-- Unit 06 (Wallet): `WalletService.refundToWallet`, `WalletService.deductPaidOnly`, `WalletService.creditMeetingSettlement` 호출 (POINT 환불/차감)
+- Unit 06 (Wallet): `WalletRefundService.refundByTransaction`(취소 역분개 환불 — 원결제 split 복원, `refundToWallet`는 2026-06-06 해소·본체 차단), `WalletService.deductPaidOnly`, `WalletService.creditMeetingSettlement` 호출 (POINT 환불/차감)
 - Unit 06 (Accounting): `AccountingLedgerService.recordMeetingSettlementReversal` (복식부기 역분개)
 - Unit 12 (Notification): `NotificationService.createNotification` — 종류 `MEETING_SETTLEMENT_ACTIVATED`, `MEETING_SETTLEMENT_CANCELLED`, `MEETING_SETTLEMENT_REFUND_REQUIRED` (알림 데이터: `MeetingSettlementNotificationData{eventId, settlementId, transferId?}`)
 - Unit 03 (Event): 호스트 ID 검증
@@ -167,6 +167,8 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 후보 | scenarios.md:31 | **현재 UI 상태**: body는 `null` (옵션 입력 UI 미구현). 옵션 추가가 필요할 때 활성화 다이얼로그를 확장. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | MeetingSettlementCalculator (커밋 46b54b9) | **EQUAL 분배 음수 share 방지(MED)** — EQUAL 분배 계산에서 음수 share가 산출돼 정산이 deadlock되던 경로를 가드. 정산 활성화/계산 시 음수 분담금이 생기지 않는다. | 없음 |
+| 해소 (2026-06-06) | MeetingSettlementTransferService.java:97-111, WalletRefundService.java:45-126 | **취소 역분개 회수 재설계 + split 보존(C2/H1)** — 취소 시 reversal 환불이 원결제 split을 복원하며(`refundByTransaction`, refundToWallet 차단), 수취 분개가 RECEIVABLE clearing으로 소거된다. 상세는 F07-05 §4 회계 무결성 노트. | 없음 |
 
 ## 9. 수용 기준
 

@@ -201,6 +201,7 @@
 | 후보 | frontend.md:83 | - **확인 다이얼로그 노출 여부**: 현재 구현은 별도 사전 확인 시트 없이 즉시 API 호출 (스펙 문서의 "구매 확인 바텀시트"는 미구현 — 향후 일관성 확보 필요) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:94 | - **충전 후 복귀 정책**: 현 구현은 단순 push (충전 화면에서 뒤로 가면 상세로 복귀). 자동 재시도는 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:72 | 4. 클라이언트: 일반 400 핸들러로 폴백 (현 구현은 INSUFFICIENT_BALANCE와 동일하게 다이얼로그를 띄울 가능성 — `_handlePurchaseError`의 badRequest 분기) — 명시적 라벨 미구현 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | MarketPurchaseService.java:53,115,214-222 (커밋 0c9f337) | **구매 동시성 직렬화(H16)** — 동일 유저 동시 구매를 구매자 users-row 비관락(`lockBuyer` → wallet-row보다 먼저 획득, 락 순서 규약 주석)으로 직렬화해 재고(`findForUpdateByItemId`/`findForUpdateByBundleId`)·월 한도·번들 보너스 경합과 paid 보너스 과지급을 차단. 과거 비관락·@Version 부재로 한도 우회 가능하던 결함 해소. | 없음 |
 
 ## 9. 수용 기준
 

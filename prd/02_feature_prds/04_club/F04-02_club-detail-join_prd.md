@@ -70,7 +70,7 @@
 
 ### 의존 단위 / 외부 시스템
 
-- **Unit 06 (payment)**: `WalletService.deductFromWallet`, `WalletService.refundToWallet`, `AccountingLedgerService.recordMemberFee`/`recordMemberFeeRefund` — BUSINESS 가입비 결제/환불.
+- **Unit 06 (payment)**: `WalletService.deductFromWallet`, `WalletRefundService.refundByTransaction`(원결제 split 복원 — `refundToWallet`는 2026-06-06 해소·본체 차단), `AccountingLedgerService.recordMemberFee`/`recordMemberFeeRefund` — BUSINESS 가입비 결제/환불.
 - **Unit 11 (notification)**: `NotificationService.createNotification` (`CLUB_JOIN_REQUEST`, `CLUB_MEMBER_LEFT`) → 내부적으로 FCM 발송.
 - **Unit 01 (account)**: `Users` (nickname 표시).
 

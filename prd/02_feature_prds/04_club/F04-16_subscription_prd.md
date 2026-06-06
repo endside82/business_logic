@@ -191,6 +191,7 @@
 | 후보 | frontend.md:41 | **결제 이력 조회 미확인**: 서버 GET /subscription 응답에 결제 이력 별도 없음 → 클라이언트가 거래 내역(별 Unit) 또는 별도 API로 조립 필요 | 실제 소스 대조 확인 |
 | 후보 | frontend.md:45 | **플랜 변경 차액 처리 미구현**: 월간→연간 변경 시 잔여 월간 환불 없이 풀가격 청구. 클라이언트 안내 필요 | Decision Needed: 차액 처리 정책 결정 |
 | 정보 | G5 (dossier) | **신 오너 구독 없음 + subscriptionExpiresAt 폴백**: 소유권 이전 후 신 오너에게 즉시 구독 안내 화면 없음. 앱 구독 관리 화면은 별도 진입 필요 | 신 오너 대상 구독 안내 UX 추가 검토 |
+| 해소 (2026-06-06) | community_admin_api ManageClubSubscriptionService.java:108-180 (29e6430), api ClubSubscriptionStatus.java:14 | **클럽구독 환불 정합(C3/C4/H1) 해소** — admin 클럽구독 환불이 ① **지갑 부담분(`walletPaidAmount`) 기준 일할 환불**(`walletTransactionId==null`/`walletPaidAmount==0`이면 거부), ② community_api internal 위임(`refunds/by-transaction`)으로 split·lot·매출 역분개 정합, ③ 환불 중 `ClubSubscriptionStatus.REFUNDING` 선점으로 동시 중복 환불·취소 차단(멱등키 resume), ④ C4 잔여 멱등 적용. 과거 admin 전액-paid 직접 입금(split 파괴) 제거. | 없음 |
 
 ## 9. 수용 기준
 

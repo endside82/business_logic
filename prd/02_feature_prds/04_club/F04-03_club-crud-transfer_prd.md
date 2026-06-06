@@ -98,7 +98,7 @@
 ### 의존 단위 / 외부 시스템
 
 - **Unit 03 (event)**: `EventRepository.findByClubId`, `event.transitionTo(CANCELED)` — 폐쇄 시 진행 이벤트 정리.
-- **Unit 06 (payment/wallet)**: `WalletService.refundToWallet`, `AccountingLedgerService.recordSubscriptionRefund` — 구독 일할 환불.
+- **Unit 06 (payment/wallet)**: `WalletRefundService.refundByTransaction`(원결제 split 복원 — `refundToWallet`는 2026-06-06 해소·본체 차단), `AccountingLedgerService.recordSubscriptionRefund` — 구독 일할 환불(`ClubService.java:323`).
 - **F04-13~14 (이 단위 후반)**: `ClubFundService.getOrCreateFund`, `ClubDonationService.refundDonationsOnClosure` — 기금 자동 생성/잔액 환불.
 - **F04-08**: `ClubBoardService.createDefaultBoards` — 기본 게시판 3개 자동 생성.
 - **Unit 11 (notification)**: `NotificationService` — `CLUB_CLOSED`, `CLUB_OWNER_CHANGED` FCM.

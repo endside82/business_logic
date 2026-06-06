@@ -184,6 +184,11 @@
 
 > 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
 
+| 분류 | 근거 | 내용 | 다음 조치 |
+|---|---|---|---|
+| 해소 (2026-06-06) | ChargeService.java:347-463 (커밋 36fb0a6) | **충전취소 PG 실패 처리(H14)** — `cancelCharge`가 PG 취소 실패 시 예외를 전파해 전체 롤백하도록 정정(과거: 예외 미전파 + FailedRefund 자동 worker 부재로 포인트·카드 이중손실 가능). | 잔여 응답유실 엣지는 PG 게이트 |
+| Risk (PG 게이트) | ChargeService.java:347-463 | **응답유실 엣지** — DB-first→PG cancel 순서에서 PG 성공+응답유실 시 DB 롤백 = 지갑 미환불+PG 환불됨 불일치 가능. 실 PG(Toss) 연동 전까지 잠재. release-gate `05_pg.md`에 cancelCharge 응답유실 재검 항목으로 등재(코드 무변경, PG 계약 시 일괄). | PG 계약 시 webhook TODO와 함께 검증 |
+
 ## 9. 수용 기준
 
 - **AC-01. 일반 충전 Happy Path (지갑 메인 → 50,000원 충전)**: Given `/profile/wallet`에서 "충전하기" 탭 When 사용자가 해당 흐름을 실행하면 Then `wallets.balance += 50,000`, `point_transactions` 1행(COMPLETED), `payment_records` 1행(COMPLETED), `charge_lots` 1행, accounting_ledger 분개 다수

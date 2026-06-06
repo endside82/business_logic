@@ -98,6 +98,8 @@
 - **무료 매출**: 수수료·원천징수를 **부과하지 않고** 무수수료 `free_credit`으로 적재. 창작자 free에 적립되어 **인출 불가**(무료→현금 전환 차단).
 - 따라서 위 3.4의 분개(수수료/원천세 인식)는 **유료분에만** 적용된다. 무료 매출분은 정산 시 `MarketplaceSettlementService`가 `creditMarketplaceSettlement(creator, PointSplit(totalNet, totalFreeCredit))`로 창작자 지갑에 **free_credit 적립만** 한다(구현됨). spend/정산 시점의 프로모션 비용(`PROMOTION_EXPENSE`) 분개는 **미구현 — followup**.
 
+> **Fact (2026-06-06 돈 흐름 무결성 — H3 해소, 커밋 b7e384b)**: 과거 무료 매출 정산(freeCredit 지급)이 **원장 분개 없이** 지갑에만 입금되어 USER_WALLET 차변 < 실지급으로 장부가 비대칭이던 결함이 해소됨. `MarketplaceSettlementService` 무료분 지급에 대응 원장 분개가 추가되어(`AccountingLedgerService` 확장), 무료 free_credit 지급도 차/대변이 대칭으로 기록된다.
+
 `MarketplaceSettlementService`가 현재 `MARKET_ITEM`의 `PENDING`만 집계한다. 다음 두 source type까지 확장한다.
 
 - `MARKET_BUNDLE` (다중 크리에이터별 행)

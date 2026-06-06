@@ -161,6 +161,7 @@
 | 등급 | 항목 | 근거 | 영향 | 상태 |
 |---|---|---|---|---|
 | 해소 | S1 신규 유저 첫 GET /api/v1/wallet 500 오류 | `WalletService.getWallet` 에서 readOnly 트랜잭션 내 INSERT 시도로 "Connection is read-only" | 신규 가입자가 지갑 화면 진입 시 500 응답 | **해소** — 4637b30 (2026-06-04): `@Lazy` self-injection + `REQUIRES_NEW` 분리로 수정. 첫 조회부터 balance=0 정상 응답. |
+| 해소 (2026-06-06) | WithdrawalService.java:407-461, AccountingLedgerService.java | **외부출금 정산 크레딧 이중사용 차단(C1)** — 과거 외부출금 요청/성공이 지갑 paidBalance·lot을 전혀 차감하지 않아 정산 수취 포인트를 지갑에서 소비하면서 동시에 같은 금액을 현금 출금할 수 있었다. 수정: 출금 승인 시 지갑/lot reserve spend(SETTLEMENT-lot 우선소비), 출금 가능액을 **원장 기반**(Σ수취 RECEIVABLE-leg 분개 − Σ회수, `WithdrawalService.java:447-461`)으로 산정해 selfRefund/선입금환불 credit 오인 차단, 터미널 FAILED/DEAD_LETTER에 `RESTORE_RESERVE` 복원 액션. | 잔여 = 실 payout provider(NOOP) PG 게이트 |
 
 ## 9. 수용 기준
 

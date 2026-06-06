@@ -77,8 +77,13 @@ share 결제 액션 (my_shares에서):
 
 ### 의존 단위 / 외부 시스템
 
-- Unit 06 (Wallet): `WalletService.deductPaidOnly`, `creditMeetingSettlement`, `refundToWallet` (셀프 환불에서 reversal에서)
-- Unit 06 (Accounting): `AccountingLedgerService.recordMeetingSettlementPayment`, `recordMeetingSettlementReversal`
+- Unit 06 (Wallet): `WalletService.deductPaidOnly`, `creditMeetingSettlement`. (셀프 환불·역분개 환불의 `refundToWallet`는 split-보존 `WalletRefundService.refundByTransaction`로 전환됨 — 아래 §4 회계 무결성 노트 참조)
+- Unit 06 (Accounting): `AccountingLedgerService.recordMeetingSettlementPayment`(납부자 측), `recordMeetingSettlementReceiptCredit`(수취자 RECEIVABLE 소거 — clearing), `recordMeetingSettlementReversal`
+
+> **Fact (2026-06-06 돈 흐름 무결성 — C1/C2/H1 해소)**: 모임정산 분개 주체가 정정되었다. 소스: `payment/meeting/service/MeetingSettlementTransferService.java:97-111,201-207,369-374`.
+> - **C2 분개 주체 분리**: 과거 RECEIVABLE 차/대변이 둘 다 **납부자**에 기록되어 분담금 낸 사람이 그 금액만큼 현금 출금자격을 획득하던 결함을 정정 — 이제 납부자 측은 `recordMeetingSettlementPayment`, 수취자 측은 `creditMeetingSettlement`(지갑 입금) + `recordMeetingSettlementReceiptCredit`(`DR USER_WALLET / CR RECEIVABLE` — RECEIVABLE=clearing 계정으로 소거)을 **같은 트랜잭션**에서 기록. 수취 credit이 무원장이던 것도 해소.
+> - **C1 출금자격 수취자 귀속**: 출금 가능액 게이트가 PointTransaction referenceType 누계가 아닌 **원장 RECEIVABLE-leg 분개 기반**(Σ수취 − Σ회수)으로 전환되어, 출금자격이 실제 수취자에게만 귀속된다(`WithdrawalService.java:447-461`). selfRefund/선입금환불 credit이 출금 권리로 오인되지 않는다.
+> - **역분개 환불 split 복원(H1)**: 정산 취소 시 reversal 환불도 `refundByTransaction` 경로로 원결제 split을 보존(무료→유료 세탁 차단). `refundToWallet` 본체는 차단(@Deprecated+throw).
 - Unit 12 (Notification): `MEETING_SETTLEMENT_PAID`, `MEETING_SETTLEMENT_REFUND_COMPLETED`
 - F07-08 (Appeal): `appealService.hasPendingAppeal(SHARE/ITEM/TRANSFER, id)` — PENDING appeal 있으면 결제 차단
 - 외부 시스템: FCM (수취자 알림)
@@ -196,6 +201,7 @@ share 결제 액션 (my_shares에서):
 |---|---|---|---|
 | 후보 | backend.md:38 | - **권한**: `@AuthenticationPrincipal` 필수 (별도 검증 없음 — 본인 transfer만 조회 SQL 단에서 필터) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:62 | 1. my-shares 화면에서 share 카드 액션 (현재 코드에선 view만 노출, 결제 버튼 미노출 — `payShareByPoint`는 가능하지만 UI에서 기본은 transfer 결제 흐름) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 (2026-06-06) | MeetingSettlementTransferService.java:97-111, WithdrawalService.java:447-461 | **모임정산 출금자격 오귀속·수취 무원장(C1/C2) + 역분개 환불 split 미보존(H1) 해소** — 분개 주체 납부자/수취자 분리(RECEIVABLE clearing), 출금 게이트 원장화, reversal 환불 split 복원. 분담금 납부자의 부당 출금자격·수취자 이중 현금화 경로 제거. | 없음 |
 
 ## 9. 수용 기준
 
