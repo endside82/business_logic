@@ -66,7 +66,7 @@ PLAN.md §2.4·§2.6·§2.14·§2.15의 facade 체계를 7단계로 압축한다
    - WALLET: `POST /api/v1/events/{eventId}/prepayment/wallet` → `EventPrepaymentService.payByWallet`.
    - BANK_TRANSFER: `POST /api/v1/events/{eventId}/prepayment/bank-declare` → `EventPrepaymentService.bankDeclare`.
 4. **결제 처리** (트랜잭션 단위, lock 순서 event → application → event_payment, §0.4):
-   - WALLET: `event_payment(PENDING) → WalletService.payForApplication → event_payment(PAID) + Application(APPROVED) + capacity++ + EventAttendance(ATTENDING)`. 단일 트랜잭션. 실패 시 전체 롤백 (capacity 매트릭스가 `CAPACITY_FULL_AT_CONFIRMATION`을 던지면 wallet 차감/event_payment insert 모두 rollback).
+   - WALLET: `event_payment(PENDING) → WalletSpendService.spend(EVENT_PREPAYMENT, PAID_FIRST) → event_payment(PAID) + Application(APPROVED) + capacity++ + EventAttendance(ATTENDING)`. 단일 트랜잭션. 충전 단위(lot)를 필수 추적해 잔액-추적 정합이 깨지면(lot 부족) 결제가 진행되지 않고 트랜잭션이 롤백된다(2026-06-06 이관 — 이전 `payForApplication` legacy 경로는 경고만 남기고 진행). 멱등 가드·결제 기록·회계 분개는 wrapper(`EventPrepaymentService.payByWallet`)가 같은 트랜잭션에서 처리. 실패 시 전체 롤백 (capacity 매트릭스가 `CAPACITY_FULL_AT_CONFIRMATION`을 던지면 wallet 차감/event_payment insert 모두 rollback).
    - BANK_TRANSFER: `event_payment(PENDING, method=BANK_TRANSFER, bankTransferMemo)` 생성 후 호스트 알림(`EVENT_PREPAYMENT_BANK_DECLARED(72)`). capacity 미점유.
 5. **호스트 BANK 처리** (BANK_TRANSFER만):
    - 확인: `POST /api/v1/events/{eventId}/applications/{applicationId}/bank-confirm` → `bankConfirm`. capacity 매트릭스 통과 시 `event_payment(PAID) + Application(APPROVED) + capacity++ + EventAttendance(ATTENDING)`. 매트릭스 fail 시 rollback 없이 `event_payment(REFUND_REQUESTED)` + 호스트 수동 환불 대기 (PLAN.md §1.4.2, §2.4.3).
@@ -118,9 +118,9 @@ PLAN.md §2.4·§2.6·§2.14·§2.15의 facade 체계를 7단계로 압축한다
 
 | 트리거 | 결제 방식 | 분개 호출 | 사용 계정 |
 |---|---|---|---|
-| `payByWallet` | WALLET | `AccountingLedgerService.recordPayment(txId, userId, eventId, hostId, amount)` (F06-06 기존 경로) | `USER_WALLET → CREATOR_PAYABLE` 등 |
+| `payByWallet` | WALLET | `WalletSpendService.spend(EVENT_PREPAYMENT, PAID_FIRST)`로 차감(유료우선·충전 단위 필수 추적·부족 시 롤백) 후 wrapper가 `AccountingLedgerService.recordPayment(txId, userId, eventId, hostId, amount)` 호출(gross 전액 CREATOR_PAYABLE 적립) | `USER_WALLET → CREATOR_PAYABLE` 등 |
 | `bankConfirm` | BANK_TRANSFER | **분개 없음** (D5 — 호스트 직접 수취) | 호스트 정산 보고서 별도 6 섹션에만 노출 (PLAN.md §2.8) |
-| `refundByWallet`(사용자 자가 취소 / 호스트 이벤트 취소) | WALLET | 정산 후처리는 공통 `EventRefundSettlementService.applyRefundToSettlement(…, paidRefund, 0L, freeRefund)` — pgQueuedPaid=0 고정, PG queue 미경유. paid/free 모두 즉시 지갑 복원. PG queue 통합은 후속 슬라이스. | type=`EVENT_PREPAYMENT_REFUND(26)` |
+| `refundByWallet`(사용자 자가 취소 / 호스트 이벤트 취소) | WALLET | 지갑 복원은 표준 환불 헬퍼 `WalletRefundService.refundByTransaction`(명시 split 오버로드 — 환불 정책 산식 보존 + 원결제 충전 단위 복원 + 유료/무료 각각의 통화별 누적 환불 한도 강제)로 수렴(2026-06-06). 정산 후처리는 공통 `EventRefundSettlementService.applyRefundToSettlement(…, paidRefund, 0L, freeRefund)` — pgQueuedPaid=0 고정, PG queue 미경유. 정산 완료(PAID) 후 무료분 환불은 호스트 회수 없이 플랫폼 비용(`PROMOTION_EXPENSE`)으로 흡수. | type=`EVENT_PREPAYMENT_REFUND(26)` |
 | `refundByBankConfirm` | BANK_TRANSFER | **분개 없음** (D5) | audit log만 (`event_payment.refund_amount, refund_reason, refunded_at`) |
 | `bankReject` | BANK_TRANSFER | 분개 없음 | `event_payment.status=CANCELED, refund_reason=<host_reason>` |
 
@@ -129,7 +129,7 @@ PLAN.md §2.4·§2.6·§2.14·§2.15의 facade 체계를 7단계로 압축한다
 ### 의존 단위 / 외부 시스템
 
 - **Unit 03 F03-05** — `Application` 상태머신을 공유. `APPROVED_PENDING_PAYMENT` 진입은 F03-05의 apply/approve 분기에서 이루어지고, 본 단위는 그 상태에서만 결제 진입 허용.
-- **Unit 06 F06-06** — `WalletService.payForApplication` (`WalletService.java:189`)이 신규 결제 경로. referenceType=`EVENT_PREPAYMENT` / referenceId=`eventPaymentId` 기준 중복 차단. 기존 `WalletService.pay`는 변경 없음 (D8).
+- **Unit 06 F06-06** — 결제는 표준 차감 경로 `WalletSpendService.spend(EVENT_PREPAYMENT, PAID_FIRST)`를 직접 호출(2026-06-06 이관). referenceType=`EVENT_PREPAYMENT` / referenceId=`eventPaymentId` 기준 멱등 가드는 wrapper(`payByWallet`)가 처리. 구식 결제 메서드 `WalletService.pay`/`payForApplication`은 본체가 차단됨(호출 시 거부).
 - **Unit 06 회계** — `AccountingLedgerService.recordPayment/recordRefund` 재사용. AccountCode 신규 추가 없음 (D5).
 - **Unit 03 F03-04 이벤트 취소** — `EventService.cancelEvent` (`:631 tryRefundNewPrepayment`) 가 신규 `event_payment` 우선 환불 후 legacy fallback. ClubEventService / RecurringEventCreateService 동일 패턴.
 - **Unit 12 알림** — 71~76, 83. 모두 `@TransactionalEventListener(AFTER_COMMIT)` 패턴 (D15).
@@ -211,8 +211,8 @@ PLAN.md §2.4·§2.6·§2.14·§2.15의 facade 체계를 7단계로 압축한다
 | 항목 | 확인 기준 | 현재 판단 |
 |---|---|---|
 | 서버 계약 | `community_api/src/main/java/com/endside/community/event/prepayment/` 전체 (controller, service, repository, model, vo, param, event listener) | W2a/W2b/W3 슬라이스로 구현 완료. PLAN.md §2.4/§2.6/§2.14/§2.15와 일치. lock 순서 `event → application → event_payment` 준수(§0.4). |
-| 회계 분개 | WALLET 결제·환불만 `AccountingLedgerService` 진입. BANK는 분개 없음 (D5). | F06-06 기존 분개 경로 재사용. 신규 AccountCode 추가 없음. |
-| 중복 차단 | `event_payment.active_application_id` STORED + UNIQUE + `point_transaction.existsByUserIdAndReferenceTypeAndReferenceId(userId, "EVENT_PREPAYMENT", eventPaymentId)` 이중 보장 (D6, D8). | UNIQUE 제약 위반 시 `DataIntegrityViolationException` → `DUPLICATE_PAYMENT` 변환 |
+| 회계 분개 | WALLET 결제·환불만 `AccountingLedgerService` 진입. BANK는 분개 없음 (D5). | 결제는 표준 차감 경로 `spend(EVENT_PREPAYMENT)`로 차감 후 wrapper가 `recordPayment`(gross 전액 CREATOR_PAYABLE 적립). 정산 완료 시 무료분은 호스트에 무료 포인트로 실지급(`recordEventFreeSettlement`, residue 0 수렴), 무료만 모인 이벤트도 fee/tax 0 정산 생성. 2026-06-06 이관(정책 PRD §2.6). |
+| 중복 차단 | `event_payment.active_application_id` STORED + UNIQUE + `point_transaction.existsByUserIdAndReferenceTypeAndReferenceId(userId, "EVENT_PREPAYMENT", eventPaymentId)` 이중 보장 (D6). | UNIQUE 제약 위반 시 `DataIntegrityViolationException` → `DUPLICATE_PAYMENT` 변환. 멱등 가드는 `spend()` 호출 전 wrapper에서 처리(2026-06-06 이관). |
 | 환불 정책 | Phase 4(커밋 c7b4315)에서 `event_refund_policy` 카탈로그 기반 계산기로 전환 완료. D7 "단일 deadline 100%/마감 후 0%" 폐기. GRADUATED는 레거시 STANDARD 매핑. | `RefundPolicyService.computeRefund`(귀책 분기) + `EventPaymentRefundService.refundByWallet` (2026-06-05 해소). |
 | 알림 | 71~76, 83 모두 `@TransactionalEventListener(AFTER_COMMIT)` (D15). | `EventExtensionNotificationListener` (`event/prepayment/event/`). 결제 트랜잭션 롤백 시 알림 미발송. |
 | 탈퇴 통합 | `AccountDeactivationService` BlockingItem `ACTIVE_EVENT_PAYMENT` + `DEACTIVATION_BLOCKED_BY_PAYMENT` | 자동 cancel 허용 케이스(PENDING 결제 없음, APPROVED 무료, APPROVED_PENDING_PAYMENT + 결제 만료) 분기 명문화 |
@@ -324,6 +324,7 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 | 해소 | PLAN.md §2.6.1, D7 | ~~1차 환불 정책 단일 deadline 100%/마감 후 0%, GRADUATED 미구현~~ → Phase 4(c7b4315)에서 `event_refund_policy` 카탈로그 계산기로 전환 완료. GRADUATED는 레거시 STANDARD로 매핑. | 해소 2026-06-05 |
 | 후속 | F03-13 §5 | 1차 Flutter 화면 미신설 가능 — W2/W3은 서버 facade 우선. 상세 화면 구현은 후속 슬라이스 | `lib/presentation/event/screens/event_participation_payment_*` 신설은 별도 슬라이스에서 처리 |
 | 위험 | PLAN.md §1.4.2, S2-3 | `bankConfirm` 시 capacity 매트릭스 fail → `event_payment.REFUND_REQUESTED` 전이. 호스트가 별도 환불 후 `refundByBankConfirm` 호출해야 정리 | 호스트 화면 UI에서 "정원 초과 — 환불 필요" 라벨 강조. 미정리 row 모니터링 필요 (호스트 정산 보고서 §2.8 4번 섹션). |
+| 해소 (2026-06-06) | EventPrepaymentService.java, EventPaymentRefundService.java, SettlementBatchService.java | **EVENT 결제·환불 표준 경로 이관 + flow-through 완성** — WALLET 선입금 결제가 표준 차감 경로 `spend(EVENT_PREPAYMENT, PAID_FIRST)`를 직접 호출(충전 단위 필수 추적·부족 시 결제 롤백, 이전엔 경고만 남기고 진행). 지갑 환불은 `refundByTransaction`(명시 split·충전 단위 복원·통화별 누적 한도)로 수렴. 구식 결제 메서드 2개(`pay`/`payForApplication`) 본체 차단. 정산: 무료 매출이 호스트에 무료 포인트로 실지급되고 무료만 모인 이벤트도 fee/tax 0 정산 생성, 정산 후 무료 환불은 `PROMOTION_EXPENSE` 흡수. admin 정산 미러(`270b1f9`). | 없음 — 정책 PRD §2.6 |
 | 해소 (2026-06-06) | RefundRequestEscalationScheduler.java:54-68, EventPayment.java:92,96 | **BANK 환불요청 무SLA 해소(MED)** — `event_payment.REFUND_REQUESTED`가 호스트 무응답으로 무기한 방치되던 사각지대에 신규 `RefundRequestEscalationScheduler`(ShedLock 05:20)가 `refund-request.escalation-days`(기본 3일) 경과 시 호스트 재알림 → 2회 후 운영자 경보(`OperatorAlertType.BANK_REFUND_STALE`)를 발화. 신규 컬럼 `refund_escalated_at`/`refund_escalation_count`(양 V1). 자동 환불·자동 만료는 없음(돈 in-flight는 사람이 처리 — limbo 원칙). | 없음 |
 | Decision Needed | PLAN.md §2.16 | APPROVED_PENDING_PAYMENT + active event_payment 없음(PAYMENT_EXPIRED 직전 race) → 탈퇴 시 자동 `cancelApplication` 허용 케이스 | 운영 정책 추가 검증(QA 매트릭스에 포함) |
 
@@ -360,3 +361,4 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 - **2026-05-22 (v4.5 W2/W3 — 이벤트 참가 선입금 + 환불 + 호스트 cancel 통합)**: 최초 신설. WALLET/BANK_TRANSFER 결제 facade, 결제 상태기계, 회계 분개, 알림 71~76·83, 탈퇴 차단 BlockingItem 상세.
 - **2026-06-05 (Phase 4/5 — 환불 정책 카탈로그 일원화)**: §1 "단일 deadline 100%/마감 후 0%" 표현을 `event_refund_policy` 카탈로그 기반 다단계 환불로 전면 교체. GRADUATED Gap 해소 표기. §7-A 신규 — 환불 정책 카탈로그(6종 템플릿), 귀책 매트릭스(7종), refund-preview API, BANK 귀책 인지형 상한(inferBankRefundFault + BANK_REFUND_EXCEEDS_POLICY 300014), EVENT_PREPAYMENT 정산 집계 계약. `event_payment.refund_evidence_file_ids` 컬럼 추가. S2-6 AC-06 환불율 표현 갱신. §10 호스트 UI Gap/레거시 섹션 병렬 모순 Gap 추가.
 - **2026-06-06 (W14 S5 — 환불 템플릿 호스트 폼 교체)**: §10 "호스트 환불 정책 설정 UI" Gap·"환불 preview + 레거시 섹션 병렬 표시 모순" Gap 해소. 호스트 폼이 카탈로그 6종 picker로 교체(STRICT/FLEXIBLE 선택 불가 해소), 전송 권위=`refundPolicyConfig.templateCode`, 상세·신청 확인 표시가 `effectiveRulesJson`(by_time)로 전환(§5 모달 문구 레거시 100/50/30 추정 제거), 취소 시트는 서버 preview 단일 출처, 앱이 `EventVo.refundPolicyConfig` read-back 모델링(community_app `3cb12ac`).
+- **2026-06-06 (EVENT 결제 표준화 — flow-through 완성)**: WALLET 결제가 표준 차감 경로 `spend(EVENT_PREPAYMENT, PAID_FIRST)`를 직접 호출하도록 이관(충전 단위 필수 추적·부족 시 롤백, 멱등·결제 기록·분개는 wrapper 처리). 지갑 환불은 `WalletRefundService.refundByTransaction`(명시 split 오버로드·충전 단위 복원·통화별 누적 한도)로 수렴. 구식 결제 메서드 `WalletService.pay`/`payForApplication` 본체 차단. 정산: 무료 매출이 호스트에 무료 포인트로 실지급(`recordEventFreeSettlement`), 무료만 모인 이벤트도 fee/tax 0 정산 생성, 정산 후 무료 환불은 `PROMOTION_EXPENSE` 흡수, admin 정산 미러. §3·§4·§7·§8 갱신. (커밋 api `7d9f2cf`/admin `270b1f9`, 정책 PRD §2.6.) **D8/legacy `pay` 변경없음 표기가 stale → 차단으로 정정.**

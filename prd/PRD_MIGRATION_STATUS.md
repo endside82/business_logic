@@ -19,6 +19,20 @@
 | **현재 총 기능 PRD (2026-06-05)** | **168** |
 | 누락/확인 필요 | 0 |
 
+## 2026-06-06 — EVENT 결제 표준화·무료 포인트 호스트 전달 (기능 수 증감 없음, §7 사실/§8 Gap 갱신)
+
+이벤트 참가비 결제·환불을 표준 결제·환불 경로로 통합해 분리정산 flow-through를 완성했다(신규 PRD 없음 — 기존 followup 종결 + §7/§8 갱신). 정본: 정책 PRD §2.6 + `community_api/docs/plan/POINT_POLICY_DECOUPLING_PLAN.md` §3.5. 커밋: community_api `7d9f2cf` / community_admin_api `270b1f9`.
+
+| 문서 | 반영 내용 |
+|---|---|
+| 정책 PRD §2.5·§2.6·§5(D8)·§6.1-B | EVENT flow-through 완성 표기, 결제 표준화·무료 매출 호스트 전달 정책 신설, D8 결제 경로 통합 갱신, 구식 통로 2개 차단 |
+| 06 도메인 PRD §5.1·§6(F06-06)·§9 | 이벤트 참가비 flow-through 편입, live 결제 경로 갱신(구식 endpoint 차단 표기), 변경 이력 추가 |
+| F03-13 §7·§8 | 결제 표준 차감 경로 직접 호출(충전 단위 추적·롤백), 환불 표준 경로 수렴, 구식 메서드 차단 |
+| F06-06 §4·§7·§8 | 결제 split flow-through 편입(EVENT 미이관 followup 종결), 환불 통화별 누적 한도 |
+| F06-10 §7·§8 | free-only 정산 생성(수수료·세금 0)·무료분 호스트 지급 분개·정산 후 무료 환불 PROMOTION_EXPENSE 흡수, admin 미러 |
+
+잔여(이번 변경과 무관, 비-blocker): 미사용 legacy 차감 메서드 4종 cleanup, 외부 출금 시 충전 단위 소비 추적, 마켓/번들 무료 전용 가격 명시적 해제 기능, free-burn 결제 시점 PROMOTION_EXPENSE 분개.
+
 ## 2026-06-06 — 돈 흐름 무결성 (기능 수 증감 없음, 기존 §7 사실/§8 Gap 갱신)
 
 2026-06-05 돈·포인트 흐름 전수 감사(`docs/audit/money-flow-2026-06-05/REPORT.md` — CRITICAL 6·HIGH 20·MED 11·LOW 3) → 라운드 1·2 + MED 백로그 + 납부 동시성으로 전 40건 + MED 백로그 종결. 커밋 범위: community_api `a7876aa..2e0ba2a`, community_admin_api `9eafc0e..aba730e`. 신규 FNN-MM 기능은 추가하지 않고, 기존 기능 PRD의 §7 사실/§8 Gap을 소스(현 HEAD) 직접 인용으로 갱신했다. 운영 신규 기능(원천세 납부 등)은 해당 도메인 기존 기능/정책 PRD에 운영 절차·사실로 기술.
@@ -45,7 +59,7 @@
 | `00_prd_items/08_state_transitions.md` §17 | 신규 운영 상태(Subscription/ClubSubscription REFUNDING·FailedRefund PROCESSING·WithdrawalDeadLetterAction REQUEUE/RESTORE_RESERVE) + 회계/감시 부수효과 |
 | `03_policy_prds/payment_settlement_policy_prd.md` §2.6·§6.1-B·§6.3 | 돈 흐름 무결성 정책 신설(환불 split/admin 위임/멱등/출금자격/원천세/대사/감시/동시성) + 기존 Known Gap 2건 해소 |
 
-잔여(범위 밖, PG 계약 의존): 충전취소 응답유실 보정·출금 provider 멱등 검증(release-gate `05_pg.md` 등재) + 가상계좌 webhook TODO. EVENT 결제 측 `spend()` 이관(flow-through화)·appeal 첨부 그룹 API는 별도 followup.
+잔여(범위 밖, PG 계약 의존): 충전취소 응답유실 보정·출금 provider 멱등 검증(release-gate `05_pg.md` 등재) + 가상계좌 webhook TODO. ~~EVENT 결제 측 `spend()` 이관(flow-through화)~~ → **해소 (2026-06-06, 아래 EVENT 결제 표준화 절)**. appeal 첨부 그룹 API는 별도 followup.
 
 ## 2026-06-06 — W14 앱 슬라이스 4건 상태 반영 (기능 수 증감 없음, Gap 상태만 변경)
 

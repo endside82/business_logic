@@ -1,12 +1,12 @@
 # F08-15 — 크리에이터 매출 귀속 보정 (Creator Earning Coverage)
 
 > 신규 PRD. 작성일: 2026-05-24
-> 상태: **마켓/플랜 창작자 정산 split 구현됨**. 본 문서가 구현 계약(spec)이며, 아래는 현행 동작 기준으로 읽는다. (EVENT 정산의 earning split만 legacy/followup.)
+> 상태: **마켓/플랜 창작자 정산 split 구현됨**. 본 문서가 구현 계약(spec)이며, 아래는 현행 동작 기준으로 읽는다. (EVENT 정산의 earning split도 2026-06-06 이관으로 동일하게 `grossPaid`/`grossFree` 분리·무료분 호스트 무료 포인트 전달이 완성됨 — 정책 PRD §2.6.)
 > 출처: F08-14(플랜 마켓 환불) 합의 과정에서 codex 페어 리뷰가 짚은 선행 결손. 환불 PRD의 하드 의존 대상이다.
 
 ## 1. 결론
 
-플랜 마켓의 세 가지 구매 소스(`MARKET_ITEM`, `MARKET_BUNDLE`, `PLAN_DIRECT`)는 **모두 크리에이터 매출 원장(`CreatorEarning`)에 잡힌다** — `MarketPurchaseService`가 MARKET_ITEM·MARKET_BUNDLE를, `PlanPurchaseService`가 PLAN_DIRECT를 `grossPaid/gross_free` 분리로 생성하고, `MarketplaceSettlementService`가 세 source type을 모두 정산 대상으로 집계한다(과거 `MARKET_ITEM`만 잡히던 결손은 해소됨). 수수료·원천징수는 유료분에만, 무료분은 무수수료 `free_credit`으로 적립된다. EVENT 정산의 earning split만 아직 legacy 경로로 미이관(followup)이다.
+플랜 마켓의 세 가지 구매 소스(`MARKET_ITEM`, `MARKET_BUNDLE`, `PLAN_DIRECT`)는 **모두 크리에이터 매출 원장(`CreatorEarning`)에 잡힌다** — `MarketPurchaseService`가 MARKET_ITEM·MARKET_BUNDLE를, `PlanPurchaseService`가 PLAN_DIRECT를 `grossPaid/gross_free` 분리로 생성하고, `MarketplaceSettlementService`가 세 source type을 모두 정산 대상으로 집계한다(과거 `MARKET_ITEM`만 잡히던 결손은 해소됨). 수수료·원천징수는 유료분에만, 무료분은 무수수료 `free_credit`으로 적립된다. EVENT 정산도 2026-06-06 이관으로 동일 모델이 적용됐다 — `SettlementBatchService`가 `CreatorEarning`에 `grossPaid`/`grossFree`를 분리 적재하고, 무료 매출이 호스트에게 무료 포인트로 전달되며(`recordEventFreeSettlement`), 무료만 모인 이벤트도 수수료·세금 0의 정산이 생성된다(정책 PRD §2.6).
 
 본 PRD는 F08-14(환불)의 **하드 의존**이다. 본 PRD가 닫히기 전에는 F08-14 백엔드 구현에 들어가지 않는다.
 

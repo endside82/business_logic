@@ -106,7 +106,7 @@
 | F08-12 | 플랜 마켓 | 내 컬렉션 | 구매자 | 활성/비활성, 만료 임박, 미리보기 | 9 | 5 |
 | F08-13 | 플랜 마켓 | 구매 플랜 -> 이벤트 생성/리뷰 | 구매자 | 소유권, 이벤트 정보 복사, 리뷰 중복 | 12 | 6 |
 | F08-14 | 플랜 마켓 | 플랜 마켓 환불 (Purchase Refund) | 구매자/크리에이터 | 요청·승인·거절·자동처리·분쟁, 사용 흔적 차단, 회계 분개 split, 지갑 paid 복원 (split 미보존 followup) | — | — |
-| F08-15 | 플랜 마켓 | 크리에이터 매출 귀속 보정 (Creator Earning Coverage) | 크리에이터/플랫폼 | 3 소스(MARKET_ITEM/BUNDLE/PLAN_DIRECT) CreatorEarning, grossPaid/grossFree split, 무료=free_credit 무수수료, EVENT legacy followup | — | — |
+| F08-15 | 플랜 마켓 | 크리에이터 매출 귀속 보정 (Creator Earning Coverage) | 크리에이터/플랫폼 | 3 소스(MARKET_ITEM/BUNDLE/PLAN_DIRECT) CreatorEarning, grossPaid/grossFree split, 무료=free_credit 무수수료, EVENT 정산도 2026-06-06 이관 완료(grossPaid/grossFree·무료 호스트 전달) | — | — |
 | F09-01 | 프라이빗 데이팅 | 본인 인증 | 데이팅 사용자 | 인증 요청/검증, 미성년/실패, 재인증 | 7 | 4 |
 | F09-02 | 프라이빗 데이팅 | 데이팅 프로필 관리 | 데이팅 사용자 | 사진, 소개, active 토글, 미인증 차단 | 8 | 4 |
 | F09-03 | 프라이빗 데이팅 | 후보자 스와이프 & 매칭 액션 | 데이팅 사용자 | 좋아요/패스, 상호 매칭, 일일 한도 | 9 | 4 |

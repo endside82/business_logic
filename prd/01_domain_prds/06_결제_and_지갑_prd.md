@@ -71,12 +71,12 @@
 
 - **유료/무료 분리**: 지갑 잔액을 유료(paid = 충전·현금환불 = 인출 가능) / 무료(free = 프로모션 지급 = 사용 가능·인출 불가)로 분리 관리한다. 결제 시 유료/무료 split이 발생하고, 수취자(창작자/호스트/기금)까지 그대로 전파된다.
 - **사용처 3분류**:
-  - flow-through(무료 수취자 존재): 마켓 구매, 플랜 직접 구매, 프라이빗 미팅비, 클럽 기부·가입비 → opt-in 시 무료 허용, split이 수취자/기금에 free 적립. 이벤트 참가비는 정책 목표상 flow-through이나 현재 legacy 경로로 미이관(followup).
-  - free-burn(플랫폼 매출): 개인 구독(F06-08), 호스팅 티켓(F06-07), 클럽 구독, 프라이빗 호스팅비 → opt-in 시 무료 허용, 무료분은 지갑에서 차감(소각). spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현(followup).
+  - flow-through(무료 수취자 존재): 마켓 구매, 플랜 직접 구매, 프라이빗 미팅비, 클럽 기부·가입비, **이벤트 참가비**(2026-06-06 이관 완료) → opt-in 시 무료 허용, split이 수취자/기금/호스트에 free 적립. 이벤트도 무료 매출이 호스트에게 전달되며(flow-through 완성), 무료 결제만 모인 이벤트도 수수료·세금 0의 정산이 생성된다.
+  - free-burn(플랫폼 매출): 개인 구독(F06-08), 호스팅 티켓(F06-07), 클럽 구독, 프라이빗 호스팅비 → opt-in 시 무료 허용, 무료분은 지갑에서 차감(소각). 결제(spend) 시점의 프로모션 비용(PROMOTION_EXPENSE) 분개는 여전히 미구현(followup) — 이벤트의 정산·환불 흡수 경로와는 별개.
   - PAID_ONLY: 모임 정산 송금·회수·선입금, 충전 취소 → 무료 불가.
 - **인출 paid-only**: 사용자 외부 출금·탈퇴 환불은 유료 잔액만 대상. 무료는 현금 인출 불가, 탈퇴 시 무료는 소멸(forfeit).
 - **해소 (2026-06-06)**: `refundToWallet` 계열(클럽 기부·가입비·구독·마켓·모임정산 역분개 환불)의 원결제 split 보존은 전부 해소됐다 — 모든 호출처가 원결제 PointTransaction을 역참조하는 `WalletRefundService.refundByTransaction`로 전환됐고, `WalletService.refundToWallet`(`WalletService.java:684-692`) 본체는 진입 즉시 throw로 차단된다.
-- **후속(미완)**: EVENT 결제·환불(`WalletService.pay`/`RefundService`)의 `spend()` 이관(flow-through화)은 followup.
+- **해소 (2026-06-06)**: EVENT 결제·환불의 표준 결제·환불 경로 이관이 완료됐다 — 이벤트 선입금 결제는 표준 차감 경로(`WalletSpendService.spend`)를 직접 호출(충전 단위 추적 필수, 부족 시 결제 롤백)하고, 환불은 표준 환불 경로(`WalletRefundService.refundByTransaction` 명시 split 오버로드)로 수렴했다. 구식 결제 메서드 2개(`WalletService.pay`/`payForApplication`)는 본체가 차단됐다.
 
 ## 6. 화면/API 매핑
 
@@ -138,13 +138,13 @@
 - **사용자 가치**: 이벤트 참여비를 별도 카드 입력 없이 보유 포인트로 즉시 지불하고, `event_refund_policy` 카탈로그(6종 템플릿)에 따라 취소·환불을 받는다.
 - **주요 화면**: 결제는 이벤트/플랜/호스팅 티켓 등 호출 화면(상세는 각 유닛). 본 유닛에서는 환불 정책 안내(거래 상세·환불 미리보기 모달)와 거래 기록을 노출.
 - **백엔드 엔드포인트**:
-  - `POST /api/v1/wallet/pay` (`PaymentParam`: eventId 등) → `TransactionVo` (포인트 차감). 기존 경로. referenceType=`EVENT_PAYMENT`.
+  - `POST /api/v1/wallet/pay` (`PaymentParam`: eventId 등) → **차단됨 (2026-06-06)**. 구식 이벤트 결제 통로로, 본체가 차단되어 호출 시 거부된다(하위호환 endpoint만 보존). 유료 이벤트 결제는 아래 선입금 경로로 일원화됨.
   - `POST /api/v1/wallet/refund` (`RefundParam.eventId`) → `TransactionVo` (환불 거래 생성).
   - `GET /api/v1/wallet/refund/policy` → 레거시 안내 고정값(24h=100%/12h=50%/0%) 응답. 실제 환불 계산에는 미사용(하위 호환 유지).
   - `GET /api/v1/refund-policy-templates` → `List<RefundPolicyTemplateVo>`. 카탈로그 6종(STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM). 소스: `RefundPolicyController.java:36` (D-1, 2026-06-04).
-  - (W2 신규, 내부 호출 전용) `WalletService.payForApplication(userId, applicationId, eventPaymentId, eventId, hostId, amount)` — referenceType=`EVENT_PREPAYMENT` / referenceId=`eventPaymentId`. controller 노출 없음, `EventPrepaymentService.payByWallet` facade가 호출 (F03-13).
-- **선결 조건/상태**: 인증 필요. 잔액 부족 시 자동충전(설정 ON) 또는 충전 화면 분기. 환불은 정책 조건과 결제 거래 존재가 전제. 신규 경로는 `Application=APPROVED_PENDING_PAYMENT` 상태에서만 진입 가능 (facade 가드).
-- **결과 상태 변화**: 결제 시 잔액 차감 + 거래 내역에 결제 행 + 이벤트 참여 확정. 환불 시 잔액 복구 + 환불 거래(원거래 링크 포함) + 알림. 실패 시 재시도 또는 고객센터 안내. 신규 경로는 `event_payment(PAID)` 전이 + facade에서 `confirmPaymentAndAttend`로 ATTENDING 확정.
+  - 이벤트 선입금 결제(live 경로): `EventPrepaymentService.payByWallet`가 표준 차감 경로(`WalletSpendService.spend`, SpendingPurpose=`EVENT_PREPAYMENT`, 유료우선)를 직접 호출. 충전 단위(lot)를 필수 추적해 잔액-추적 정합이 깨지면 결제를 롤백한다. 멱등 가드·결제 기록·회계 분개(`recordPayment`)는 wrapper가 같은 트랜잭션에서 처리. (2026-06-06 이관 — 이전 내부 메서드 `payForApplication`도 차단됨.)
+- **선결 조건/상태**: 인증 필요. 잔액 부족 시 자동충전(설정 ON) 또는 충전 화면 분기. 환불은 정책 조건과 결제 거래 존재가 전제. 선입금 경로는 `Application=APPROVED_PENDING_PAYMENT` 상태에서만 진입 가능 (facade 가드).
+- **결과 상태 변화**: 결제 시 잔액 차감(충전 단위 소비) + 거래 내역에 결제 행 + 이벤트 참여 확정(`event_payment(PAID)` 전이 + facade `confirmPaymentAndAttend`로 ATTENDING 확정). 환불 시 잔액 복구(충전 단위 복원) + 환불 거래(원거래 링크 포함) + 알림. 실패 시 재시도 또는 고객센터 안내.
 
 ### F06-07 호스팅 티켓 구매
 - **사용자 가치**: 프라이빗 모임을 개최하기 위한 권리(티켓)를 보유 포인트로 즉시 구매해 호스팅 권한을 확보한다.
@@ -210,3 +210,4 @@
 ## 9. 변경 이력
 
 - **2026-05-22 (v4.5 W2/W3 — 이벤트 참가 선입금 결제·환불 신규 경로)**: 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`, `:73-178`) 변경 없음. 신규 `WalletService.payForApplication(:189)` 추가 — referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`. 환불 측 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` (`docs/plan/event-extensions/ENUM_RESERVATIONS.md`). 회계 분개는 `AccountingLedgerService.recordPayment/recordRefund` 기존 메서드 재사용 — AccountCode 신규 없음. BANK_TRANSFER 선입금은 **분개 없음**(D5 — 호스트 직접 수취), 호스트 정산 보고서 6 섹션(F06-10 §5.1)에 별도 노출. `WalletRefundExecutor` 공통 헬퍼 추출 및 PG queue 통합 환불은 후속 슬라이스로 분리. 영향 받는 기능: F06-06(신규 경로 명세), F06-10(BANK 6 섹션), F03-13(facade 호출자). 결제 facade·환불 facade·이벤트 취소 환불 coordinator·탈퇴 차단 통합은 03_이벤트_prd.md 도메인 rollup §9 참조.
+- **2026-06-06 (EVENT 결제 표준화·무료 포인트 호스트 전달 — flow-through 완성)**: 이벤트 참가비 결제·환불을 표준 결제·환불 경로로 통합. `EventPrepaymentService.payByWallet`가 표준 차감 경로(`WalletSpendService.spend`, SpendingPurpose=`EVENT_PREPAYMENT`, 유료우선)를 직접 호출 — 충전 단위(lot) 필수 추적(부족 시 결제 롤백, 이전엔 경고만 남기고 진행), 멱등 가드·결제 기록·회계 분개는 wrapper가 같은 트랜잭션에서 처리. 환불은 `WalletRefundService.refundByTransaction`(명시 split 오버로드)로 수렴 — 충전 단위 복원 + 유료/무료 각각의 통화별 누적 환불 한도 강제. 구식 결제 메서드 2개(`WalletService.pay`/`payForApplication`)는 본체 차단(호출 시 거부). 정산: 무료 매출이 호스트에게 무료 포인트(현금화 불가)로 전달되고(`recordEventFreeSettlement`), 무료만 모인 이벤트도 수수료·세금 0의 정산이 생성된다(`SettlementBatchService` free-only 정산 + `grossPaid/grossFree` 분리 적재). 정산 완료 후 무료분 환불은 호스트 회수 없이 플랫폼 비용(`PROMOTION_EXPENSE`)으로 흡수. 운영(admin) 정산 완료도 동일 규칙 미러(무료분 지급 + SETTLEMENT 충전 단위 생성, free-only 허용·음수 net 거부). 영향: F03-13/F06-06(결제·환불 경로), F06-10(free-only 정산·무료 분개). 정본: 정책 PRD §2.6. 커밋 api `7d9f2cf`/admin `270b1f9`.
