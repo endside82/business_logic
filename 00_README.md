@@ -7,7 +7,7 @@
 ## 먼저 볼 문서
 
 | 목적 | 위치 | 읽는 이유 |
-|---|---|---|
+| --- | --- | --- |
 | PRD 전체 진입점 | [`prd/START_HERE.md`](prd/START_HERE.md) | 사람이 기능 PRD를 읽을 때 어디서 시작해야 하는지 안내한다. |
 | PRD 문서 상태 | [`prd/PRD_MIGRATION_STATUS.md`](prd/PRD_MIGRATION_STATUS.md) | 어떤 PRD가 실제 소스/단위 산출물/source-first 기준으로 작성됐는지 확인한다. |
 | 기능 PRD 작성 기준 | [`prd/FEATURE_PRD_STANDARD.md`](prd/FEATURE_PRD_STANDARD.md) | 추측 기반 문서를 막기 위한 필수 품질 기준이다. |

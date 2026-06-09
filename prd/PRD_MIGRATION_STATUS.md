@@ -9,7 +9,7 @@
 ## 요약
 
 | 항목 | 개수 |
-|---|---:|
+| --- | ---: |
 | **현재 총 기능 PRD (2026-06-09)** | **168** |
 | Golden sample | 1 |
 | 실사 기반 전환본 | 115 |
@@ -26,7 +26,7 @@
 이벤트 참가비 결제·환불을 표준 결제·환불 경로로 통합해 분리정산 flow-through를 완성했다(신규 PRD 없음 — 기존 followup 종결 + §7/§8 갱신). 정본: 정책 PRD §2.6 + `community_api/docs/plan/POINT_POLICY_DECOUPLING_PLAN.md` §3.5. 커밋: community_api `7d9f2cf` / community_admin_api `270b1f9`.
 
 | 문서 | 반영 내용 |
-|---|---|
+| --- | --- |
 | 정책 PRD §2.5·§2.6·§5(D8)·§6.1-B | EVENT flow-through 완성 표기, 결제 표준화·무료 매출 호스트 전달 정책 신설, D8 결제 경로 통합 갱신, 구식 통로 2개 차단 |
 | 06 도메인 PRD §5.1·§6(F06-06)·§9 | 이벤트 참가비 flow-through 편입, live 결제 경로 갱신(구식 endpoint 차단 표기), 변경 이력 추가 |
 | F03-13 §7·§8 | 결제 표준 차감 경로 직접 호출(충전 단위 추적·롤백), 환불 표준 경로 수렴, 구식 메서드 차단 |
@@ -40,7 +40,7 @@
 2026-06-05 돈·포인트 흐름 전수 감사(`docs/audit/money-flow-2026-06-05/REPORT.md` — CRITICAL 6·HIGH 20·MED 11·LOW 3) → 라운드 1·2 + MED 백로그 + 납부 동시성으로 전 40건 + MED 백로그 종결. 커밋 범위: community_api `a7876aa..2e0ba2a`, community_admin_api `9eafc0e..aba730e`. 신규 FNN-MM 기능은 추가하지 않고, 기존 기능 PRD의 §7 사실/§8 Gap을 소스(현 HEAD) 직접 인용으로 갱신했다. 운영 신규 기능(원천세 납부 등)은 해당 도메인 기존 기능/정책 PRD에 운영 절차·사실로 기술.
 
 | 문서 | 반영 내용 |
-|---|---|
+| --- | --- |
 | F06-01 §8 | 외부출금 정산 크레딧 이중사용 차단(C1 — 원장 기반 출금게이트+reserve+RESTORE_RESERVE) |
 | F06-02 §8 | 충전취소 PG 실패 처리(H14) + 응답유실 PG 게이트 |
 | F06-06 §4.3·§8 | refundToWallet split 미보존 영구 Gap 해소(H1/H2/H7 — 7경로 refundByTransaction 전환·본체 차단) |
@@ -86,7 +86,7 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 같은 날 community_api 426c26d·94c4869 + community_app 7ba69c0으로 구현·커밋된 D-OPEN-2 해소분(준비 중 정산 노출 정식화)을 기능 PRD 5개 + 도메인 PRD 1개 + 정책/전사 문서에 반영했다. canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V1~V9, Codex 7라운드 SIGN-OFF).
 
 | 문서 | 반영 내용 |
-|---|---|
+| --- | --- |
 | F07-04 §1·§4·§5·§7-A·§8 | 열람 자격 확장(`validateSettlementReadAccess`), DRAFT && 비호스트 차등 노출(note 마스킹/summary 본인 행/items 빈 목록/영수증 거부), 미리보기 배너·404 빈 상태/생성 CTA, 잔여 Gap 2건(비ATTENDING 당사자 앱 진입 불가 P2 / DRAFT 자동 정리 없음 P3) |
 | F07-05 §4·§5 | `transfers/me` 인가 누락 수정(DEC-V3), read 자격 확장, my-shares '준비 중' 뱃지+캡션, 이의 버튼 3상태 가드 |
 | F07-08 §1·§4·§7-A·S10/AC-10 | DRAFT 이의 생성 서버 차단(DEC-V4 — 저장·호스트 알림 이전 가드), COMPLETED 허용 유지 |
@@ -100,7 +100,7 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 2026-05-28 베이스라인(community_api a1f1967 / community_app d766ede) 이후의 소스 변경 전부를 9개 영역 병렬 실사(dossier: `.delta_2026-06-04/01~09`) 후 반영했다. 모든 신규 PRD는 source-first(units/ 없음)로 작성했다.
 
 | 구분 | 내용 | canonical |
-|---|---|---|
+| --- | --- | --- |
 | 도메인 18 분쟁 해결 (신규) | `01_domain_prds/18_분쟁_해결_prd.md` + `02_feature_prds/18_dispute_resolution/F18-01~05` + `docs/domains/18-dispute.html` | `community_api/src/.../host/` (dispute 패키지) 실제 소스 |
 | 도메인 19 관심인 (신규 — 기존 누락 등재) | `01_domain_prds/19_관심인_prd.md` + `02_feature_prds/19_favorite/F19-01~03` + `docs/domains/19-favorite.html` | `community_api/src/.../favorite/` 실제 소스 + `docs/plan/FAVORITE_PERSON_CALENDAR_PLAN.md` |
 | 도메인 20 고객지원 (신규 — 기존 누락 등재) | `01_domain_prds/20_고객지원_prd.md` + `02_feature_prds/20_support/F20-01~03` + `docs/domains/20-support.html` | `community_api/src/.../inquiry/`·`support/` 실제 소스 |
@@ -139,10 +139,11 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 - 실제 소스 `community_api/src/main/java/com/endside/community/regularmeeting/`
 
 | 도메인 | 도메인 PRD | 기능 PRD | docs |
-|---|---|---|---:|
+| --- | --- | --- | ---: |
 | 17 정기모임 | `01_domain_prds/17_정기모임_prd.md` | `02_feature_prds/17_regular_meeting/F17-01~10` | `docs/domains/17-regular-meeting.html` + `F17-01~10.html` |
 
 신규 기능 PRD 10개 추가 → 기능 인벤토리 141 → **151** (이후 2026-05-28 후속 정합성 보정에서 F08-14·F08-15 정식 기능 ID 확정 등록 → **153**), 도메인 16 → **17**. source-first 로 직접 작성. 핵심 결정:
+
 - FIXED(고정형, 코스 바인딩) vs VARIABLE(변동형, 세션 바인딩) — 인원·결제·정산 바인딩 레벨 전환
 - 정산 후 환불 위험 0: close FIXED 가드(모든 정션 FINALIZED) + afterCommit REQUIRES_NEW + uk_settlement_rm UNIQUE + reservedRefund 게이트
 - flow-through 정산: retainedPaid=호스트 수익, retainedFree=플랫폼 보조 (payout 비대상)
@@ -150,6 +151,7 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 - failed_refund.event_id nullable + regular_meeting_id 추가 (결정 K)
 
 잔여 (서버 확장 필요, 비차단):
+
 - NotificationType `REGULAR_MEETING_*` 미정의 → RM 푸시 라우팅 미구현
 - 호스트 결제 list endpoint 부재 → 결제 화면 부분 구현
 - finalize per-attendee override UI 부재 → MVP 일괄 확정으로 충분
@@ -160,7 +162,7 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs에 누락되어 있어 source-first 로 신규 작성했다. 서버 controller/service/VO/enum + Flutter `lib/.../warning|mileage/` + `V1__init.sql` 을 직접 대조했다.
 
 | 도메인 | 도메인 PRD | 기능 PRD | docs |
-|---|---|---|---:|
+| --- | --- | --- | ---: |
 | 15 경고 & 징계 | `01_domain_prds/15_경고_징계_prd.md` | `02_feature_prds/15_warning/F15-01~09` | `docs/domains/15-warning.html` + `F15-01~09.html` |
 | 16 마일리지 | `01_domain_prds/16_마일리지_prd.md` | `02_feature_prds/16_mileage/F16-01~08` | `docs/domains/16-mileage.html` + `F16-01~08.html` |
 
@@ -173,7 +175,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 ### 스키마 변경
 
 | 대상 | 변경 종류 | 상세 | Wave |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` 테이블 | 컬럼 2개 추가 | `overcapacity_allowed TINYINT(1) NOT NULL DEFAULT 0`, `hard_capacity_limit INT NULL` | W1 |
 | `application` 테이블 | 복합 인덱스 1개 추가 | `idx_application_event_status (event_id, status)` — `countByEventIdInAndStatus` 최적화 | W2a |
 | `event_payment` | 신규 테이블 | 참가 선입금 결제/환불 트래킹. FK: event/users/application/point_transaction | W2a |
@@ -191,7 +193,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 ### Enum 변경
 
 | 대상 enum | 종류 | 추가/신규 | Wave |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `TransactionType` | 기존 enum 값 추가 | 26 = `EVENT_PREPAYMENT_REFUND` (WALLET 환불 그룹 집계 포함) | W2b |
 | `NotificationType` | 기존 enum 값 추가 | 71~83 (13개 — 선입금/카풀/버스 알림) | W2~W7 |
 | `ChangeType` | 기존 enum 값 추가 | 9 = `OVERCAPACITY_APPROVED`, 10 = `CAPACITY_REDUCED` | W1 |
@@ -214,7 +216,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 ### 시드 데이터 (W6 — vehicle_layout 4종)
 
 | 레이아웃 | 좌석 수 | 용도 |
-|---|---:|---|
+| --- | ---: | --- |
 | 8인승 (밴) | 8 | 소규모 카풀/렌터카 |
 | 20인승 (소형버스) | 20 | 소규모 단체 |
 | 28인승 (미니버스) | 28 | 중간 단체 |
@@ -234,7 +236,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 ## v4.5 신규 기능 PRD (별도 등록 — `02_feature_prds/03_event/`)
 
 | ID | 도메인 | 예상 PRD 파일 | 주요 기능 | Wave | 상태 |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | F03-13 | 이벤트 | `F03-13_event-prepayment_prd.md` 또는 `F07-11_event-prepayment-flow_prd.md` | 참가 선입금 (WALLET/BANK_TRANSFER) | W2a/W2b/W3 | 신규 PRD |
 | F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 교통 모드 베이스 (NONE/CARPOOL/BUS 전이) | W4 | 신규 PRD |
 | F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 카풀 운영 (offer/passenger/swap) | W5 | 신규 PRD |
@@ -257,7 +259,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 ## 전체 목록
 
 | ID | 도메인 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---|---:|---:|
+| --- | --- | --- | --- | --- | ---: | ---: |
 | F01-01 | 인증 & 온보딩 | [F01-01_email-signup-login_prd.md](02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | [F01-01_email-signup-login](../units/01_auth_onboarding/F01-01_email-signup-login) | 실사 기반 전환본 | 2 | 0 |
 | F01-02 | 인증 & 온보딩 | [F01-02_social-login_prd.md](02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | [F01-02_social-login](../units/01_auth_onboarding/F01-02_social-login) | 실사 기반 전환본 | 1 | 1 |
 | F01-03 | 인증 & 온보딩 | [F01-03_email-verification_prd.md](02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | [F01-03_email-verification](../units/01_auth_onboarding/F01-03_email-verification) | 실사 기반 전환본 | 4 | 1 |
