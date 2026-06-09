@@ -322,7 +322,7 @@
     {
       heading: 'QA & 릴리즈',
       links: [
-        { href: 'qa/migration-status.html', label: 'PRD 전환 상태' },
+        { href: 'qa/migration-status.html', label: 'PRD 문서 상태' },
         { href: 'qa/acceptance.html', label: '전체 수용 기준' },
         { href: 'qa/coverage.html',   label: '시나리오 커버리지' },
         { href: 'qa/exceptions.html', label: '예외·엣지 케이스' },

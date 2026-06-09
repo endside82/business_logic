@@ -7,7 +7,7 @@
 처음 보는 사람은 이 README가 아니라 `START_HERE.md`부터 본다.
 
 - 사람용 읽는 법: `START_HERE.md`
-- 전환 상태표: `PRD_MIGRATION_STATUS.md`
+- PRD 문서 상태표: `PRD_MIGRATION_STATUS.md`
 - 보조 문서 인덱스: `SUPPORTING_DOCS_INDEX.md`
 - 기능 PRD 작성 표준: `FEATURE_PRD_STANDARD.md`
 - 제대로 된 기능 PRD 샘플: `02_feature_prds/03_event/F03-02_event-detail_prd.md`
@@ -19,24 +19,24 @@
 소스를 다시 확인해야 한다.
 
 - 사람용 시작점: `START_HERE.md`
-- 전환 상태표: `PRD_MIGRATION_STATUS.md`
+- PRD 문서 상태표: `PRD_MIGRATION_STATUS.md`
 - 보조 문서 인덱스: `SUPPORTING_DOCS_INDEX.md`
 - 작성 표준: `FEATURE_PRD_STANDARD.md`
 - golden sample: `02_feature_prds/03_event/F03-02_event-detail_prd.md`
 - legacy 자동 생성기: `business_logic/prd_tools/generate_prd.mjs`
 - source-first 전환 도구: `business_logic/prd_tools/rebuild_feature_prds_from_units.mjs`
 
-2026-05-18 기준 `02_feature_prds/` 117개 중 1개는 golden sample이고 116개는
-`business_logic/units`의 실사 자료를 기준으로 전환 완료됐다. 다만 전환본은
-원천 실사 내용을 PRD 구조로 재배치한 문서이므로, 구현 착수 전에는 각 문서의
-trace source를 실제 코드에서 다시 확인한다.
+2026-06-09 기준 `02_feature_prds/` 168개 중 1개는 golden sample, 115개는
+`business_logic/units`의 실사 자료를 기준으로 한 전환본, 43개는 `units/` 없이
+실제 소스·plan·구현 리포트를 canonical로 삼은 source-first PRD다. 구현 착수 전에는
+각 문서의 trace source와 §7·§8의 정합성/GAP 판단을 실제 코드에서 다시 확인한다.
 
 ## 구성
 
 | 경로 | 내용 | 먼저 보는 사람 | 산출/결정 |
 |---|---|---|---|
 | START_HERE.md | 사람용 PRD 읽는 법 | 신규 기획자, 개발자, QA, PO | 역할별로 무엇을 먼저 봐야 하는지 |
-| PRD_MIGRATION_STATUS.md | 168개 기능 PRD 전환 상태표 | 문서 운영자, 기능 담당자, QA | Golden sample/전환본/trace/risk 후보 현황 |
+| PRD_MIGRATION_STATUS.md | 168개 기능 PRD 문서 상태표 | 문서 운영자, 기능 담당자, QA | Golden sample/전환본/source-first/trace/risk 후보 현황 |
 | SUPPORTING_DOCS_INDEX.md | 보조 PRD 문서 27개 인덱스 | 문서 운영자, PO, QA | 인벤토리/정책/QA/운영 문서의 역할 구분 |
 | 00_product_prd.md | 제품 전체 PRD | PO, 신규 기획자, 이해관계자 | 제품 범위, 사용자 유형, 전체 여정, 미결정 항목 |
 | FEATURE_PRD_STANDARD.md | 실사 기반 기능 PRD 작성 표준 | PRD 작성자, 리뷰어 | source-first 작성 절차, 금지 패턴, 품질 체크 |

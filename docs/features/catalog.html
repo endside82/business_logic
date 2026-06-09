@@ -39,7 +39,7 @@
           <label class="chip"><input type="checkbox" data-impact="location">위치</label>
           <label class="chip"><input type="checkbox" data-impact="review">신뢰</label>
         </div>
-        <p style="margin:0 0 12px; color:var(--muted); font-size:12.5px">전환 상태와 Trace/Risk 후보 수는 <a href="../qa/migration-status.html">전환 상태표</a>에서 확인한다.</p>
+        <p style="margin:0 0 12px; color:var(--muted); font-size:12.5px">PRD 문서 상태와 Trace/Risk 후보 수는 <a href="../qa/migration-status.html">PRD 문서 상태표</a>에서 확인한다.</p>
         <p class="feature-count" id="feature-count">불러오는 중…</p>
 
         <div class="table-wrap">
@@ -51,7 +51,7 @@
                 <th>기능명·검산 포인트</th>
                 <th style="width:130px">주 사용자</th>
                 <th style="width:150px">영향</th>
-                <th style="width:78px">상태</th>
+                <th style="width:128px">PRD 상태</th>
                 <th style="width:78px;text-align:right">시나리오</th>
               </tr>
             </thead>
@@ -115,11 +115,18 @@
           .filter(([, v]) => v)
           .map(([k]) => `<span class="pill ${IMPACT_CLASSES[k]}">${IMPACT_LABELS[k]}</span>`)
           .join(' ') || '<span class="pill">직접 영향 없음</span>';
-        const statusBadge = f.status === 'Golden sample'
-          ? '<span class="pill brand">Golden</span>'
-          : f.status === '전환 완료'
-            ? '<span class="pill info">전환</span>'
-            : '<span class="pill">—</span>';
+        const statusClass = f.status === 'Golden sample'
+          ? 'brand'
+          : f.status.includes('부분')
+            ? 'warn'
+            : f.status.includes('신규')
+              ? 'violet'
+              : f.status.startsWith('source-first')
+                ? 'info'
+                : f.status.includes('갱신')
+                  ? 'money'
+                  : '';
+        const statusBadge = `<span class="pill ${statusClass}" title="${esc(f.statusDetail || f.status)}">${esc(f.status)}</span>`;
         return `<tr>
           <td><code>${esc(f.id)}</code></td>
           <td>${slug ? `<a href="../domains/${slug}.html">${esc(f.domain)}</a>` : esc(f.domain)}</td>

@@ -26,7 +26,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">업무 도메인</div><div class="value">20</div><div class="hint">7개 줄기로 묶인 책임 분리 영역</div></div>
-          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">168</div><div class="hint">Golden 1 · 전환 완료 150 · 신규 17</div></div>
+          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">168</div><div class="hint">Golden 1 · 실사 기반 115 · source-first 43</div></div>
           <div class="metric"><div class="label">검증 시나리오</div><div class="value">1180</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
           <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
         </div>
@@ -35,8 +35,8 @@
           <span class="label">2026-05-20 갱신 — 운영 모델 변경 반영</span>
           <p>원문 PRD가 <strong>source-first 모델</strong>로 전환됐다. 기능 PRD는 이제 “시나리오 나열”이 아니라
           실제 서버·Flutter 소스를 직접 대조한 판단 문서로 운영된다. 자세한 골자는
-          <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 168개 기능의 전환 상태와 Trace/Risk 후보 수는
-          <a href="qa/migration-status.html">전환 상태표</a>에서 확인한다. 시각화 변경 내역은
+          <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 168개 기능의 PRD 문서 상태와 Trace/Risk 후보 수는
+          <a href="qa/migration-status.html">PRD 문서 상태표</a>에서 확인한다. 시각화 변경 내역은
           <a href="overview/changelog.html">변경 기록</a> 페이지에 있다.</p>
         </div>
 
@@ -47,7 +47,7 @@
           처음이라면 <a href="overview/service.html">서비스 정의</a> → <a href="overview/architecture.html">정보구조</a> →
           <a href="overview/journeys.html">7대 여정</a>을 차례로 읽고, 담당 영역 도메인 페이지로 내려가는 흐름을 권장한다.
           담당 기능을 직접 다루려면 <a href="overview/operating-model.html">운영 모델</a> →
-          <a href="qa/migration-status.html">전환 상태표</a> → 해당 기능 PRD 순서로 본다.</p>
+          <a href="qa/migration-status.html">PRD 문서 상태표</a> → 해당 기능 PRD 순서로 본다.</p>
         </div>
       </section>
 
@@ -119,8 +119,8 @@ flowchart LR
           </a>
           <a class="card" href="qa/migration-status.html">
             <div class="eyebrow">신규</div>
-            <h3>168개 PRD 전환 상태표</h3>
-            <p>Golden sample 1 · 전환 완료 150 · 신규 17. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
+            <h3>168개 PRD 문서 상태표</h3>
+            <p>Golden sample 1 · 실사 기반 전환본 115 · source-first 43. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="features/catalog.html">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PRD 전환 상태 — community PRD</title>
+  <title>PRD 문서 상태 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -12,13 +12,12 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>전환 상태</div>
-        <h1>168개 기능 PRD 전환 상태</h1>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>PRD 문서 상태</div>
+        <h1>168개 기능 PRD 문서 상태</h1>
         <p class="lede">
-          <code>business_logic/prd/PRD_MIGRATION_STATUS.md</code>의 데이터를 그대로 가져왔다.
-          기준일은 <strong>2026-05-22</strong>. Golden sample은 1건, 나머지 121건은
-          <code>units/*</code>의 실사 자료 또는 최근 이벤트 확장 PRD를 문서 구조로 재배치한 baseline이다.
-          Trace 수와 Risk 후보 수가 이 표의 핵심 신호다.
+          상태는 <code>business_logic/prd/02_feature_prds/</code>의 실제 기능 PRD를 기준으로 갱신한다.
+          <strong>문서 작성 방식과 소스 대조 수준</strong>을 보여주는 표이며, 기능 구현 완료표가 아니다.
+          Trace 수와 Risk 후보 수는 구현·QA 착수 전에 다시 열어볼 우선순위를 잡는 핵심 신호다.
         </p>
       </header>
 
@@ -26,13 +25,15 @@
         <div class="metrics">
           <div class="metric"><div class="label">전체 기능</div><div class="value" id="m-total">168</div></div>
           <div class="metric"><div class="label">Golden sample</div><div class="value" id="m-golden">1</div><div class="hint">실사 + 직접 대조 완료</div></div>
-          <div class="metric"><div class="label">전환 완료</div><div class="value" id="m-converted">150</div><div class="hint">Baseline. 착수 전 trace 재확인</div></div>
+          <div class="metric"><div class="label">실사 기반 전환본</div><div class="value" id="m-reviewed">115</div><div class="hint">units 근거를 PRD로 재배치</div></div>
+          <div class="metric"><div class="label">source-first</div><div class="value" id="m-source-first">43</div><div class="hint">실제 소스·plan 기준 PRD</div></div>
           <div class="metric"><div class="label">Risk 후보 합계</div><div class="value" id="m-risk">547</div><div class="hint">우선 검토 가중치</div></div>
         </div>
 
         <div class="callout">
           <span class="label">읽는 법</span>
           <ul>
+            <li><strong>상태</strong> — 실제 PRD의 상단 문서 상태 또는 source-first 본문을 기준으로 분류한 문서 작성/검증 성격. 구현 완료 여부와는 별개다.</li>
             <li><strong>Trace 수</strong> — 원천 units 문서에 남아 있는 <code>&lt;!-- traces: ... --&gt;</code> 소스 참조 수. 클수록 PRD가 실제 소스와 묶여 있을 가능성이 높다.</li>
             <li><strong>Risk 후보 수</strong> — 원천 문서에 Gap/Risk/주의/보강으로 표시된 판단 후보. 클수록 사용자 피해 가능성이 큰 영역.</li>
             <li>Risk 후보가 많다고 “위험”이라는 뜻이 아니라 <strong>“검토해야 할 항목이 많다”</strong>는 뜻이다. F03-05(이벤트 신청)와 F06-06(포인트 결제·환불)이 특히 무겁다.</li>
@@ -61,11 +62,7 @@
         <div class="toolbar">
           <input id="search" type="search" placeholder="ID·기능명·도메인 검색">
           <select id="domain-filter"><option value="">전체 도메인</option></select>
-          <select id="status-filter">
-            <option value="">전체 상태</option>
-            <option value="Golden sample">Golden sample만</option>
-            <option value="전환 완료">전환 완료만</option>
-          </select>
+          <select id="status-filter"><option value="">전체 상태</option></select>
           <label class="chip"><input type="checkbox" id="risk-only">Risk 후보 ≥ 5만 보기</label>
         </div>
         <p class="feature-count" id="feature-count"></p>
@@ -99,10 +96,14 @@
   <script src="../assets/sidebar.js"></script>
   <script>
     function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-    function statusPill(s){
-      if(s==='Golden sample') return '<span class="pill brand">Golden</span>';
-      if(s==='전환 완료') return '<span class="pill info">전환</span>';
-      return '<span class="pill">'+esc(s||'미정')+'</span>';
+    function statusPill(s, detail){
+      let cls='';
+      if(s==='Golden sample') cls='brand';
+      else if(s.includes('부분')) cls='warn';
+      else if(s.includes('신규')) cls='violet';
+      else if(s.startsWith('source-first')) cls='info';
+      else if(s.includes('갱신')) cls='money';
+      return '<span class="pill '+cls+'" title="'+esc(detail||s||'미정')+'">'+esc(s||'미정')+'</span>';
     }
     let SORT_KEY='risk';
     let DATA=[];
@@ -158,7 +159,7 @@
           <td><code>${esc(f.id)}</code></td>
           <td>${esc(f.domain)}</td>
           <td>${esc(f.name)}</td>
-          <td>${statusPill(f.status)}</td>
+          <td>${statusPill(f.status, f.statusDetail)}</td>
           <td style="text-align:right">${f.trace||0}</td>
           <td style="text-align:right">${(f.risk||0)>=5?'<strong>'+f.risk+'</strong>':(f.risk||0)}</td>
         </tr>`).join('');
@@ -169,11 +170,20 @@
       DATA=window.PRD_FEATURES||[];
       document.querySelector('#m-total').textContent=DATA.length;
       document.querySelector('#m-golden').textContent=DATA.filter(f=>f.status==='Golden sample').length;
-      document.querySelector('#m-converted').textContent=DATA.filter(f=>f.status==='전환 완료').length;
+      document.querySelector('#m-reviewed').textContent=DATA.filter(f=>f.status==='실사 기반 전환본').length;
+      document.querySelector('#m-source-first').textContent=DATA.filter(f=>f.status.startsWith('source-first')).length;
       document.querySelector('#m-risk').textContent=DATA.reduce((s,f)=>s+(f.risk||0),0);
       const sel=document.querySelector('#domain-filter');
       [...new Set(DATA.map(f=>f.domain))].forEach(d=>{
         const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);
+      });
+      const statusOrder=['Golden sample','실사 기반 전환본','실사 기반 갱신본','실사 기반 신규 작성','신규 PRD','source-first 구현 확인','source-first PRD','source-first 부분 구현'];
+      const statusSel=document.querySelector('#status-filter');
+      [...new Set(DATA.map(f=>f.status))].sort((a,b)=>{
+        const ai=statusOrder.indexOf(a), bi=statusOrder.indexOf(b);
+        return (ai<0?999:ai)-(bi<0?999:bi)||a.localeCompare(b);
+      }).forEach(s=>{
+        const o=document.createElement('option');o.value=s;o.textContent=s;statusSel.appendChild(o);
       });
       document.querySelector('#search').addEventListener('input',renderFull);
       document.querySelector('#domain-filter').addEventListener('change',renderFull);
