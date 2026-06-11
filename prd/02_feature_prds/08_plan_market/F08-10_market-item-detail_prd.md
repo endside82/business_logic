@@ -1,12 +1,14 @@
 # F08-10. 마켓 아이템 상세 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/08_plan_market/F08-10_market-item-detail -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-10; unit: business_logic/units/08_plan_market/F08-10_market-item-detail -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-10_market-item-detail`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 마켓 아이템 한 건의 상세 정보, 리뷰 목록, 연계 번들 옵션을 한 번에 노출하기 위한 다중 GET 엔드포인트 묶음. 사용자는 아이템 정보·리뷰·번들 할인까지 모두 비교한 뒤 구매 결정을 내린다 (구매 자체는 F08-11에서 처리).
+
+**AUTH-08(2026-06-09 커밋 api `eed2867` / app `ee95483`)**: 마켓 아이템 상세 조회 시 **인증된 비소유자(non-owner)** 조회에 한해 `market_item.view_count` 원자 증가. 소유자(크리에이터) 본인 조회와 익명 조회는 카운트 제외. 집계 합산은 크리에이터 대시보드(F08-07 `marketItemViewTotal`)로 환류.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -37,6 +39,11 @@
 | `community_api/src/main/java/com/endside/community/plan/controller/BundleController.java:32` | 확인됨 |
 | `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:34` | 확인됨 |
 | `community_api/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java:36` | 확인됨 |
+| `community_api/src/main/java/com/endside/community/plan/model/MarketItem.java:82` (view_count 컬럼) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/MarketItemService.java:67` (getMarketItem 2-arg — view count 분기) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/MarketItemService.java:77` (비소유자 가드 + increment 호출) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/ViewCountIncrementService.java:43` (incrementMarketItemView, REQUIRES_NEW) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/repository/query/MarketItemQueryRepository.java:102` (incrementViewCount — 단일 UPDATE) | 확인됨 (AUTH-08) |
 
 ## 3. 전체 동작 흐름
 
@@ -61,15 +68,16 @@
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| GET | /api/v1/market/items/{itemId} | MarketItemController#getMarketItem | unauthenticated 가능 | 단건 아이템 상세 조회 |
-| GET | /api/v1/market/items/{itemId}/reviews | MarketItemReviewController#getReviews | unauthenticated 가능 | 아이템 리뷰 페이지 조회 |
-| GET | /api/v1/market/items/{itemId}/bundles | BundleController#listBundlesForItem | unauthenticated 가능 | 아이템 포함 번들 목록 |
-| GET | /api/v1/market/bundles/{bundleId} | BundleController#getBundleDetail | unauthenticated 가능 | 번들 단건 상세 |
-| GET | /api/v1/market/bundles | BundleController#listActiveBundles | unauthenticated 가능 | 활성 번들 전체 목록 |
+| GET | /api/v1/market/items/{itemId} | MarketItemController#getMarketItem | optional (`errorOnInvalidType=false`) — `anyRequest().authenticated()` 전역 규칙 하에 마켓 아이템 GET은 `SecurityConfiguration.java`에서 별도 permitAll 없음 → **실질적으로 인증 필수**. 단, 컨트롤러가 optional로 처리 (`MarketItemController.java:39`) | 단건 아이템 상세 조회. **인증된 비소유자** 조회 시 `view_count` 원자 증가(AUTH-08). |
+| GET | /api/v1/market/items/{itemId}/reviews | MarketItemReviewController#getReviews | optional(컨트롤러 principal 없음) — 전역 보안상 **실질 인증 필수**(`/api/v1/market/**` permitAll 미선언) | 아이템 리뷰 페이지 조회 |
+| GET | /api/v1/market/items/{itemId}/bundles | BundleController#listBundlesForItem | optional(컨트롤러) — **실질 인증 필수** | 아이템 포함 번들 목록 |
+| GET | /api/v1/market/bundles/{bundleId} | BundleController#getBundleDetail | optional(컨트롤러) — **실질 인증 필수** | 번들 단건 상세 |
+| GET | /api/v1/market/bundles | BundleController#listActiveBundles | optional(컨트롤러) — **실질 인증 필수** | 판매중(ON_SALE) 번들 전체 목록 |
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
 - **Enum** `ItemStatus`: `READY`, `ON_SALE`, `STOP_SELLING`, `REMOVED`
+- **view_count 컬럼** (`plan/model/MarketItem.java:82`): `INT NOT NULL DEFAULT 0`. `MarketItemVo`에는 노출하지 않음(크리에이터 대시보드 집계 전용). 비소유자 상세 조회 때마다 `MarketItemQueryRepository.incrementViewCount` 단일 UPDATE로 race-safe 원자 증가(`plan/repository/query/MarketItemQueryRepository.java:102`). 증가는 `ViewCountIncrementService(REQUIRES_NEW, noRollbackFor=Exception.class)`로 격리(`plan/service/ViewCountIncrementService.java:43`) — 실패 시 warn 로그만 남기고 조회 트랜잭션 정상 반환. 집계는 `CreatorStatsQueryRepository.sumMarketItemViewCountByCreatorId` → `CreatorStatsVo.marketItemViewTotal`(F08-07)로 환류.
 - **VO** `MarketItemVo`: F08-08 참조. 무료 포인트 관련 필드 (`plan/vo/MarketItemVo.java`):
   - `currencyType` (String): `PAID_POINT`(유료만) / `FREE_POINT`(무료만) / `ANY_POINT`(둘 다). 구매 시 사용 가능한 통화 종류를 콘텐츠 생산자가 결정
   - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액. `ANY_POINT`인데 미설정이면 유료우선 혼합(PAID_FIRST), 설정되면 통화별 단일가
@@ -169,6 +177,8 @@
 | S5 | status != ON_SALE / 비로그인 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S6 | 404 / 네트워크 에러 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | 크리에이터 프로필 이동 | 홈 추천/딥링크 등으로 `/home/market/1001` 진입 | 크리에이터의 다른 판매 아이템 탐색 가능. |
+| S8 (AUTH-08) | 인증된 비소유자 상세 조회 → view_count 증가 | 타 사용자가 GET /api/v1/market/items/{itemId} 호출 | view_count +1 원자 증가. 조회 응답 정상 반환(증가 실패 시에도 warn 로그만, 응답 무중단) |
+| S9 (AUTH-08) | 크리에이터 본인 상세 조회 → view_count 불변 | 아이템 소유 크리에이터가 자기 아이템 조회 | view_count 변화 없음. 통계 부풀리기 방지 |
 
 ## 7. 정합성 판단
 
@@ -183,10 +193,13 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:28 | - **비즈니스 로직**: `MarketItemService.getMarketItem(itemId)` — 단순 조회 + reviewCount/avgRating 집계 (서비스 구현 미확인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:86 | - **비즈니스 로직**: `BundleService.listBundlesForItem(itemId)` — 해당 아이템을 포함하는 활성 번들만 반환 (서비스 구현 미확인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:99 | - **비즈니스 로직**: `BundleService.getBundleDetail(bundleId)` (구현 미확인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:109 | - **비즈니스 로직**: `BundleService.listActiveBundles()` — `ItemStatus.ON_SALE` + 판매기간 내 번들 (구현 미확인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap (설계 vs 배선) | `SecurityConfiguration.java:97` | **비로그인 열람 가능 여부**: 컨트롤러 시그니처는 `optional`이나 전역 `anyRequest().authenticated()` 하에 `/api/v1/market/**` 가 permitAll 목록에 없어 비인증 접근이 필터에서 차단됨. 상세·리뷰·번들 GET 모두 실질 인증 필수. 비로그인 조회가 의도면 SecurityConfiguration 정비 필요. | SecurityConfiguration에 market 조회 GET 경로 permitAll 추가 여부 결정 |
+| 구현됨 (AUTH-08) | `MarketItemService.java:67`, `ViewCountIncrementService.java:43` | view_count 비소유자 조회 시 원자 증가. REQUIRES_NEW 격리. 실패 무중단. | QA: 소유자/비소유자/증가실패 시나리오 E2E 확인 |
+| 주의 (AUTH-08) | `MarketItemVo.java` | view_count는 MarketItemVo 응답 필드에 노출되지 않음. 상세 화면에서 직접 조회수 표시 불가 — 크리에이터 대시보드(F08-07)에서만 집계 확인. | 현재 정책 유지: 상세 화면 미표시, 대시보드 집계만 제공. |
+| 확정-OK | `MarketItemService.java:67,226` | `getMarketItem` — 상세 조회 + 평점/리뷰 수 enrich 구현 확인 | 해소됨 |
+| 확정-OK | `BundleService.java:43` | `listBundlesForItem(itemId)` — 해당 아이템 포함 번들 반환 구현 확인 | 해소됨 |
+| 확정-OK | `BundleService.java:62` | `getBundleDetail(bundleId)` 구현 확인 | 해소됨 |
+| 확정-OK (정정) | `BundleService.java:34`, `BundleRepository.java:20` | `listActiveBundles()` — `findByStatus(ON_SALE)` 만 사용(상태=판매중 번들). **판매기간 필터는 미적용** — 기존 "판매기간 내 번들" 서술은 부정확 | 판매기간 필터 필요 시 별도 구현 |
 
 ## 9. 수용 기준
 
@@ -197,6 +210,8 @@
 - **AC-05. status != ON_SALE / 비로그인**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-06. 404 / 네트워크 에러**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-07. 크리에이터 프로필 이동**: Given 홈 추천/딥링크 등으로 `/home/market/1001` 진입 When 사용자가 해당 흐름을 실행하면 Then 크리에이터의 다른 판매 아이템 탐색 가능.
+- **AC-08 (AUTH-08). 인증된 비소유자 상세 조회 → view_count 증가**: Given 타 사용자가 GET /api/v1/market/items/{itemId} 호출 When 조회 완료 Then view_count +1 원자 증가. 조회 응답 정상 반환. 증가 실패 시에도 응답 무중단.
+- **AC-09 (AUTH-08). 크리에이터 본인 조회 → view_count 불변**: Given 아이템 소유 크리에이터가 자기 아이템 조회 When 조회 완료 Then view_count 변화 없음.
 
 ## 10. 미결정 / 후속
 

@@ -1,12 +1,14 @@
 # F04-11. 사진첩 (앨범 + 사진) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/04_club/F04-11_photo-album -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-10; unit: business_logic/units/04_club/F04-11_photo-album -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/04_club/F04-11_photo-album`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-클럽 멤버가 앨범을 만들고 사진을 모아 올리는 사진첩 기능. 앨범 단위로 사진 그리드/뷰어를 제공하고, 본인 사진은 자기 삭제·일괄 삭제 가능, OWNER/ADMIN은 모든 사진/앨범 관리 가능. 사진 업로드는 클라이언트가 S3 presigned URL로 원본 PUT 후, 서버에는 메타데이터(`fileKey`)만 등록.
+클럽 멤버가 앨범을 만들고 사진을 모아 올리는 사진첩 기능. 앨범 단위로 사진 그리드/뷰어를 제공하고, 본인 사진은 자기 삭제·일괄 삭제 가능, OWNER/ADMIN은 모든 사진/앨범 관리 가능. 사진 업로드는 클라이언트가 S3 presigned URL로 원본 PUT 후, `completeUpload`를 호출해 PENDING→COMPLETED 전환까지 완료해야 서버에 정상 등록된다.
+
+**이미지 업로드 완료 수정 (2026-06-10)**: presigned URL 발급 → S3 PUT → `completeUpload`(`POST /api/v1/files/{fileId}/complete`) 순서가 필수다. `completeUpload` 미호출 시 FileMetadata가 PENDING 상태로 남아 24h 후 파일이 소실된다. 사진첩 업로드 화면(`photo_upload_screen.dart`)은 `ImageUploadHelper.uploadImageFileWithId`를 통해 이 흐름을 수행한다(`community_app/lib/presentation/club/community/screens/photo_upload_screen.dart:343`).
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -55,7 +57,7 @@
 
 ### 개요
 
-클럽 멤버가 앨범을 만들고 사진을 모아 올리는 사진첩 기능. 앨범 단위로 사진 그리드/뷰어를 제공하고, 본인 사진은 자기 삭제·일괄 삭제 가능, OWNER/ADMIN은 모든 사진/앨범 관리 가능. 사진 업로드는 클라이언트가 S3 presigned URL로 원본 PUT 후, 서버에는 메타데이터(`fileKey`)만 등록.
+클럽 멤버가 앨범을 만들고 사진을 모아 올리는 사진첩 기능. 앨범 단위로 사진 그리드/뷰어를 제공하고, 본인 사진은 자기 삭제·일괄 삭제 가능, OWNER/ADMIN은 모든 사진/앨범 관리 가능. 사진 업로드는 클라이언트가 S3 presigned URL로 원본 PUT 후, `completeUpload`로 COMPLETED 전환까지 완료해야 서버에 정상 등록된다.
 
 ### 엔드포인트 요약
 
@@ -70,7 +72,7 @@
 | DELETE | `/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/{photoId}` | `ClubPhotoAlbumController#deletePhoto` | required | 단건 삭제 (업로더 또는 OWNER/ADMIN) |
 | POST | `/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/batch-delete` | `ClubPhotoAlbumController#batchDeletePhotos` | required | 일괄 삭제 |
 
-> **사전 단계**: 클라이언트는 `POST /api/v1/files/presigned-url` (Unit 공통 file 도메인) → S3에 원본 PUT → 받은 `fileKey`를 본 API에 등록. (해당 엔드포인트는 본 Unit 04 범위 외)
+> **업로드 필수 3단계**: 클라이언트는 1) `POST /api/v1/files/presigned-url` 발급 → 2) S3에 원본 PUT → 3) `POST /api/v1/files/{fileId}/complete`(`completeUpload`) 호출(PENDING→COMPLETED 전환). `completeUpload` 미호출 시 FileMetadata가 PENDING으로 남아 24h 후 소실. 앱은 `ImageUploadHelper.uploadImageFileWithId`를 통해 이 3단계를 수행(`community_app/lib/core/utils/image_upload_helper.dart:117-162`). (해당 file 엔드포인트는 본 Unit 04 범위 외)
 
 ### 의존 단위 / 외부 시스템
 

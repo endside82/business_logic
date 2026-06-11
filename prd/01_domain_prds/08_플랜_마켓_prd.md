@@ -1,6 +1,6 @@
 # 08. 플랜 마켓 PRD
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/08_plan_market -->
+<!-- generated: domain-source-first-rollup; updated: 2026-06-10; unit: business_logic/units/08_plan_market -->
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/08_plan_market/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
@@ -11,12 +11,25 @@
 
 이 도메인은 기능 PRD 15개로 구성된다(F08-01~13 기존 + F08-14 구매 환불·F08-15 크리에이터 매출 귀속 보정 2026-05-24 추가). 현재 기능별 trace source는 총 45개대이고, risk 후보는 총 39개대다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
 
+### 2026-06-09 크리에이터 저작도구 고도화(AUTH-01~05, AUTH-08) 반영
+
+이 도메인은 2026-06-09 기준 아래 capability를 새로 갖췄다. 각 기능 PRD에 상세 반영됨.
+
+| capability | 관련 F | 핵심 변화 | 실측 소스 |
+|---|---|---|---|
+| **AUTH-01 발행 준비도 서버 검증** | F08-05 | `GET /api/v1/plans/{planId}/publish-readiness` 신설. 발행 전 체크리스트(제목/설명/블록/가격/커버이미지) 서버 측 일괄 검증. 앱에서 항목별 BLOCKER/WARNING 표시. | `PlanController.java:102`, `PlanService.java` |
+| **AUTH-02/03 블록 에디터 자동저장 + picker/패턴(20종)** | F08-03 | 블록 편집 시 debounce 자동저장. 블록 타입 picker 20종(TEXT/IMAGE/LINK/CALLOUT/DIVIDER/LOCATION/TIMETABLE/TODO/LIST + 패턴 조합). Draft generation token 발급(`draftToken`). | `PlanBlockController.java`, `block_type_sheet.dart` |
+| **AUTH-05 마켓 아이템 운영자 moderation (Option B)** | F08-06 | 판매 전 `REVIEW_PENDING` 상태 추가. admin에서 승인/반려. `on-sale`/`review-history` 엔드포인트 신설. `community_admin_api` admin 배선. | `MarketItemController.java:53,61`, `MarketItemModerationService.java` |
+| **AUTH-06 예약 발행** | F08-05, F08-06 공통 | 플랜/마켓 아이템 미래 시점 자동 발행 스케줄 등록(`POST /api/v1/authoring/schedules`). 플랜/마켓/클럽 발행을 단일 스케줄링 코어로 통합. | `AuthoringScheduleController.java`, `ScheduledPublishService.java` |
+| **AUTH-06 Slice 3 초안 미리보기 로그인 게이트** | F08-02 | `getPreview`: DRAFT/HIDDEN 미리보기는 로그인 필수(익명→401). DELETED→404. PUBLISHED 공개 유지. | `PlanService.java:159-173` (커밋 `90de4ed`) |
+| **AUTH-08 상세 조회수 수집 + 크리에이터 대시보드 환류** | F08-02, F08-10, F08-07 | `plan.view_count`/`market_item.view_count` 컬럼 신설. 비소유자 조회 시 원자 증가(`ViewCountIncrementService`, REQUIRES_NEW). 대시보드 `planViewTotal`/`marketItemViewTotal` 집계 표시. | `Plan.java:74`, `MarketItem.java:82`, `ViewCountIncrementService.java:36,43`, `CreatorStatsQueryRepository.java:127,141` (커밋 `eed2867`/`ee95483`) |
+
 ## 2. 실사 근거 맵
 
 | ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
 |---|---|---|---|---|---:|---:|
 | F08-01 | F08-01. 내 플랜 목록 관리 | [F08-01_my-plan-list_prd.md](../02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | [F08-01_my-plan-list](../../units/08_plan_market/F08-01_my-plan-list) | 전환 완료 | 3 | 1 |
-| F08-02 | F08-02. 플랜 상세 / 작성자용 미리보기 | [F08-02_plan-detail_prd.md](../02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | [F08-02_plan-detail](../../units/08_plan_market/F08-02_plan-detail) | 전환 완료 | 6 | 0 |
+| F08-02 | F08-02. 플랜 상세 / 작성자용 미리보기 | [F08-02_plan-detail_prd.md](../02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | [F08-02_plan-detail](../../units/08_plan_market/F08-02_plan-detail) | 전환 완료 (AUTH-08/06 갱신 2026-06-10) | 13 | 1 |
 | F08-03 | F08-03. 블록 에디터 (블록 CRUD) | [F08-03_block-editor_prd.md](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | [F08-03_block-editor](../../units/08_plan_market/F08-03_block-editor) | 전환 완료 | 5 | 4 |
 | F08-04 | F08-04. 블록 드래그 재정렬 / 계층 이동 | [F08-04_block-reorder_prd.md](../02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | [F08-04_block-reorder](../../units/08_plan_market/F08-04_block-reorder) | 전환 완료 | 2 | 2 |
 | F08-05 | F08-05. 플랜 발행 | [F08-05_plan-publish_prd.md](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | [F08-05_plan-publish](../../units/08_plan_market/F08-05_plan-publish) | 전환 완료 | 1 | 3 |
@@ -24,7 +37,7 @@
 | F08-07 | F08-07. 크리에이터 프로필 / 내 통계 | [F08-07_creator-profile-stats_prd.md](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | [F08-07_creator-profile-stats](../../units/08_plan_market/F08-07_creator-profile-stats) | 전환 완료 | 2 | 7 |
 | F08-08 | F08-08. 마켓 메인 탐색 | [F08-08_market-main-browse_prd.md](../02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | [F08-08_market-main-browse](../../units/08_plan_market/F08-08_market-main-browse) | 전환 완료 | 3 | 2 |
 | F08-09 | F08-09. 마켓 검색 | [F08-09_market-search_prd.md](../02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | [F08-09_market-search](../../units/08_plan_market/F08-09_market-search) | 전환 완료 | 1 | 4 |
-| F08-10 | F08-10. 마켓 아이템 상세 | [F08-10_market-item-detail_prd.md](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | [F08-10_market-item-detail](../../units/08_plan_market/F08-10_market-item-detail) | 전환 완료 | 5 | 4 |
+| F08-10 | F08-10. 마켓 아이템 상세 | [F08-10_market-item-detail_prd.md](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | [F08-10_market-item-detail](../../units/08_plan_market/F08-10_market-item-detail) | 전환 완료 (AUTH-08 갱신 2026-06-10) | 10 | 4 |
 | F08-11 | F08-11. 아이템·번들·플랜 구매 | [F08-11_purchase_prd.md](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | [F08-11_purchase](../../units/08_plan_market/F08-11_purchase) | 전환 완료 | 3 | 4 |
 | F08-12 | F08-12. 내 컬렉션 | [F08-12_my-collection_prd.md](../02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | [F08-12_my-collection](../../units/08_plan_market/F08-12_my-collection) | 전환 완료 | 4 | 4 |
 | F08-13 | F08-13. 구매 플랜 이벤트 생성 / 리뷰 작성 | [F08-13_plan-event-and-review_prd.md](../02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | [F08-13_plan-event-and-review](../../units/08_plan_market/F08-13_plan-event-and-review) | 전환 완료 | 4 | 2 |
@@ -33,17 +46,18 @@
 
 | 먼저 볼 기능 | 기능 | 이유 |
 |---|---|---|
-| [F08-07](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | F08-07. 크리에이터 프로필 / 내 통계 | Risk 후보 7 |
+| [F08-07](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | F08-07. 크리에이터 프로필 / 내 통계 | Risk 후보 7 + AUTH-08 planViewTotal/marketItemViewTotal 집계 환류 신규 반영 |
 | [F08-09](../02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | F08-09. 마켓 검색 | Risk 후보 4 |
 | [F08-11](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | F08-11. 아이템·번들·플랜 구매 | Risk 후보 4 |
 | [F08-12](../02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | F08-12. 내 컬렉션 | Risk 후보 4 |
-| [F08-03](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | F08-03. 블록 에디터 (블록 CRUD) | Risk 후보 4 |
-| [F08-10](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | F08-10. 마켓 아이템 상세 | Risk 후보 4 |
-| [F08-05](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | F08-05. 플랜 발행 | Risk 후보 3 |
+| [F08-03](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | F08-03. 블록 에디터 (블록 CRUD) | Risk 후보 4 + AUTH-02/03 자동저장·20종 picker 신규 |
+| [F08-10](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | F08-10. 마켓 아이템 상세 | Risk 후보 4 + AUTH-08 view_count 수집 신규 |
+| [F08-05](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | F08-05. 플랜 발행 | Risk 후보 3 + AUTH-01 준비도 검증·AUTH-06 예약 발행 신규 |
+| [F08-02](../02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | F08-02. 플랜 상세 / 작성자용 미리보기 | AUTH-08 view_count 수집·AUTH-06 Slice 3 미리보기 게이트 신규 |
+| [F08-06](../02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | F08-06. 마켓 아이템 관리 (등록/수정/판매중지) | Risk 후보 2 + AUTH-05 moderation 상태 전이(REVIEW_PENDING) 신규 |
 | [F08-04](../02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | F08-04. 블록 드래그 재정렬 / 계층 이동 | Risk 후보 2 |
 | [F08-08](../02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | F08-08. 마켓 메인 탐색 | Risk 후보 2 |
 | [F08-13](../02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | F08-13. 구매 플랜 이벤트 생성 / 리뷰 작성 | Risk 후보 2 |
-| [F08-06](../02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | F08-06. 마켓 아이템 관리 (등록/수정/판매중지) | Risk 후보 2 |
 | [F08-01](../02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | F08-01. 내 플랜 목록 관리 | Risk 후보 1 |
 
 ## 4. 도메인 기능 목록
@@ -79,7 +93,8 @@
 - **사용자 가치**: 작성한 플랜의 블록 구성, 상태(DRAFT/PUBLISHED), 메타데이터를 검토하고 편집·발행·복사 진입점 제공
 - **화면**: SCR-PE-002 / `plan_detail_screen.dart`, `plan_preview_screen.dart`
 - **API**:
-  - `GET /api/v1/plans/{planId}` (PlanController.getPlan)
+  - `GET /api/v1/plans/{planId}` (PlanController.getPlan) — **AUTH-08**: 인증된 비소유자 조회 시 `view_count` +1 원자 증가 (`PlanService.java:148`, 커밋 api `eed2867`)
+  - `GET /api/v1/plans/{planId}/preview` (PlanController.getPreview) — **AUTH-06 Slice 3**: DRAFT/HIDDEN 미리보기 익명→401, DELETED→404 게이트 (`PlanService.java:159-173`, 커밋 api `90de4ed`)
   - `PATCH /api/v1/plans/{planId}` (PlanController.updatePlan, 메타 수정)
   - `DELETE /api/v1/plans/{planId}` (PlanController.deletePlan)
   - `POST /api/v1/plans/{planId}/copy` (PlanController.copyPlan, 복사본 DRAFT 생성)
@@ -89,6 +104,7 @@
 #### F08-03. 블록 에디터 (블록 CRUD + 인라인 편집)
 - **사용자 가치**: 텍스트/이미지/장소/시간/체크리스트 등 다양한 타입의 블록을 트리 구조로 추가·편집·삭제하여 플랜 내용을 구성
 - **화면**: SCR-PE-003 / `block_editor_screen.dart` + `widgets/block_edit_dialogs/*` (callout, image, link, list, location, timetable, todo) + `block_renderer.dart`, `block_type_sheet.dart`
+- **AUTH-02/03 (2026-06-09)**: 블록 편집 debounce 자동저장. 블록 타입 picker 20종. Draft generation token(`draftToken`) 발급으로 세션 경합 방지.
 - **API**:
   - `GET /api/v1/plans/{planId}/blocks` (PlanBlockController.getBlockTree, 트리 반환)
   - `POST /api/v1/plans/{planId}/blocks` (PlanBlockController.addBlock)
@@ -108,18 +124,26 @@
 #### F08-05. 플랜 발행 (체크리스트 검증 → 마켓 등록)
 - **사용자 가치**: 제목·설명·블록·가격·커버이미지 등 발행 요건을 충족시킨 후 마켓에 등록하여 판매 시작
 - **화면**: SCR-PE-005 / `plan_publish_screen.dart`
+- **AUTH-01 (2026-06-09)**: `GET /api/v1/plans/{planId}/publish-readiness` — 발행 전 체크리스트 서버 측 검증. 항목별 BLOCKER/WARNING + `publishable` 플래그. 앱에서 통과 여부 시각화.
+- **AUTH-06 예약 발행 (2026-06-09)**: `POST /api/v1/authoring/schedules` — 플랜 발행을 미래 시점에 예약. 스케줄 취소·조회 지원.
 - **API**:
+  - `GET /api/v1/plans/{planId}/publish-readiness` (PlanController.getPublishReadiness — AUTH-01)
   - `POST /api/v1/plans/{planId}/publish` (PlanController.publishPlan)
+  - `POST /api/v1/authoring/schedules` (AuthoringScheduleController — AUTH-06)
 - **에러 분기**: 400 PUBLISH_REQUIREMENTS_NOT_MET, 409 ALREADY_PUBLISHED
-- **컨트롤러**: PlanController
+- **컨트롤러**: PlanController, AuthoringScheduleController
 
 #### F08-06. 마켓 아이템 관리 (등록·수정·판매중지)
 - **사용자 가치**: 발행된 플랜을 상품(아이템) 단위로 노출 제어, 가격/설명/이미지 수정, 판매 중지/재개
 - **화면**: `market_item_edit_screen.dart` + `MarketItemController.getMyItems` 기반 내 아이템 관리
+- **AUTH-05 moderation (2026-06-09, Option B)**: 판매 전 `REVIEW_PENDING` 상태 추가. admin 승인 시 ON_SALE, 반려 시 READY 복귀. `on-sale` 전환 엔드포인트·`review-history` 조회 신설. admin 배선은 `community_admin_api`.
+- **AUTH-06 예약 발행 (2026-06-09)**: 마켓 아이템 판매 시작도 미래 시점 예약 가능(targetType=`MARKET_ITEM`, actionType=`PUBLISH`). `ScheduledPublishActionType.java:8`에 `PUBLISH` 하나만 정의됨 — `SUBMIT_FOR_REVIEW` 타겟은 존재하지 않는다.
 - **API**:
   - `POST /api/v1/market/items` (MarketItemController.createItem)
   - `PUT /api/v1/market/items/{itemId}` (MarketItemController.updateItem)
-  - `POST /api/v1/market/items/{itemId}/publish` (MarketItemController.publishItem)
+  - `POST /api/v1/market/items/{itemId}/publish` (MarketItemController.publishItem — AUTH-05: REVIEW_PENDING 전환)
+  - `POST /api/v1/market/items/{itemId}/on-sale` (MarketItemController — AUTH-05: admin 승인 후 ON_SALE)
+  - `GET /api/v1/market/items/{itemId}/review-history` (MarketItemController — AUTH-05: 심사 이력 조회)
   - `POST /api/v1/market/items/{itemId}/stop` (MarketItemController.stopSelling)
   - `DELETE /api/v1/market/items/{itemId}` (MarketItemController.removeItem)
   - `GET /api/v1/market/items/my` (MarketItemController.getMyItems)
@@ -128,9 +152,10 @@
 #### F08-07. 크리에이터 프로필 / 내 통계
 - **사용자 가치**: 크리에이터로서 등록 플랜 수, 평균 별점, 총 판매·매출 등 자신의 활동 성과를 확인 (본인 프로필이면 통계 섹션 추가)
 - **화면**: SCR-MK-004 / `creator_profile_screen.dart`, `creator_stats_screen.dart`
+- **AUTH-08 대시보드 환류 (2026-06-09)**: `CreatorStatsVo`에 `planViewTotal`(플랜 전체 조회수 합산) + `marketItemViewTotal`(마켓 아이템 전체 조회수 합산) 추가. Flutter `CreatorProfileVo` 동기 (`creator_profile_vo.dart:47-48`). 앱 크리에이터 성과 대시보드 화면에서 표시 (커밋 app `ee95483`).
 - **API**:
   - `GET /api/v1/creators/{creatorId}` (CreatorController.getCreatorProfile, 공개 프로필 + 판매 아이템)
-  - `GET /api/v1/creators/me/stats` (CreatorController.getMyStats, 본인만)
+  - `GET /api/v1/creators/me/stats` (CreatorController.getMyStats, 본인만 — `planViewTotal`/`marketItemViewTotal` 포함)
 - **컨트롤러**: CreatorController
 - **창작자 정산 split** (2026-05-24 포인트 분리정산 반영): 창작자 수익(`CreatorEarning`)은 유료/무료를 분리 기록한다. 수수료·원천징수는 **유료분에만** 적용하고, 무료 매출은 무수수료 `free_credit`으로 창작자 free에 적립되어 **인출 불가**(무료→현금 전환 차단). 정본은 정책 PRD §2.5.
 
@@ -157,8 +182,9 @@
 #### F08-10. 마켓 아이템 상세 (커버 / 설명 / 크리에이터 / 리뷰 / 번들)
 - **사용자 가치**: 구매 결정에 필요한 모든 정보(이미지, 설명, 크리에이터, 평점, 리뷰, 번들 옵션)를 한 화면에서 확인
 - **화면**: SCR-MK-002 / `market_item_detail_screen.dart`
+- **AUTH-08 (2026-06-09)**: `GET /api/v1/market/items/{itemId}` 조회 시 인증된 비소유자는 `market_item.view_count` 원자 증가. 집계는 F08-07 `marketItemViewTotal`로 환류 (`MarketItemService.java:77`, 커밋 api `eed2867`).
 - **API**:
-  - `GET /api/v1/market/items/{itemId}` (MarketItemController.getMarketItem)
+  - `GET /api/v1/market/items/{itemId}` (MarketItemController.getMarketItem — AUTH-08: 비소유자 조회수 증가)
   - `GET /api/v1/market/items/{itemId}/reviews` (MarketItemReviewController.getReviews, PageResponse)
   - `GET /api/v1/market/items/{itemId}/bundles` (BundleController.listBundlesForItem)
   - `GET /api/v1/market/bundles/{bundleId}` (BundleController.getBundleDetail)

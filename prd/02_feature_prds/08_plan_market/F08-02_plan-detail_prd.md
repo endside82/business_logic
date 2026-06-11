@@ -1,12 +1,16 @@
 # F08-02. 플랜 상세 / 작성자용 미리보기 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/08_plan_market/F08-02_plan-detail -->
+<!-- generated: source-first-unit-sync; updated: 2026-06-10; unit: business_logic/units/08_plan_market/F08-02_plan-detail -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-02_plan-detail`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 플랜의 메타데이터(제목/설명/상태/구매수)와 블록 트리, 그리고 현재 사용자의 소유/구매 여부를 반환한다. 작성자는 추가로 수정·삭제·복사·발행·숨김(Hide) 같은 라이프사이클 액션을 호출할 수 있다.
+
+**AUTH-08(2026-06-09 커밋 api `eed2867`)**: 플랜 상세 조회 시 **인증된 비소유자(non-owner)** 조회에 한해 `view_count` 원자 증가를 수행한다. 소유자(크리에이터) 본인과 익명(보안상 도달 불가) 조회는 카운트 대상 제외. 집계 합산은 크리에이터 대시보드(F08-07 `planViewTotal`)로 환류된다.
+
+**AUTH-06 Slice 3(2026-06-09 커밋 api `90de4ed`)**: `getPreview` **서비스 레이어**에 상태별 게이트 적용 — PUBLISHED는 익명 허용(의도), DRAFT/HIDDEN은 로그인 필수(익명 → 401 UNAUTHORIZED), DELETED는 404 PLAN_NOT_FOUND. **단 현재 preview 경로는 전역 보안 permitAll 미선언이라 익명 HTTP 요청 자체가 필터에서 차단됨 → "PUBLISHED 익명 공개"·"익명→401" 분기는 서비스 의도일 뿐 실제로는 미도달(실효 효과 = 로그인 비소유자의 DRAFT/HIDDEN 미리보기 허용). §8 Gap 참조.**
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -36,6 +40,13 @@
 | `community_api/src/main/java/com/endside/community/plan/controller/PlanController.java:72` | 확인됨 |
 | `community_api/src/main/java/com/endside/community/plan/controller/PlanController.java:81` | 확인됨 |
 | `community_api/src/main/java/com/endside/community/plan/controller/PlanController.java:91` | 확인됨 |
+| `community_api/src/main/java/com/endside/community/plan/model/Plan.java:74` (view_count 컬럼) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/PlanService.java:131` (getPlan 2-arg — view count 분기) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/PlanService.java:148` (비소유자 가드 + increment 호출) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/ViewCountIncrementService.java:36` (incrementPlanView, REQUIRES_NEW) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/repository/query/PlanQueryRepository.java:33` (incrementViewCount — 단일 UPDATE) | 확인됨 (AUTH-08) |
+| `community_api/src/main/java/com/endside/community/plan/service/PlanService.java:159` (getPreview — AUTH-06 Slice 3 게이트) | 확인됨 (AUTH-06) |
+| `community_api/src/main/java/com/endside/community/plan/service/PlanService.java:172` (DRAFT/HIDDEN + 익명 → UNAUTHORIZED) | 확인됨 (AUTH-06) |
 
 ## 3. 전체 동작 흐름
 
@@ -59,8 +70,8 @@
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| GET | /api/v1/plans/{planId} | `PlanController#getPlan` | optional | 플랜 풀 정보 (블록 포함) + 소유/구매 플래그 |
-| GET | /api/v1/plans/{planId}/preview | `PlanController#getPreview` | optional | 마켓용 미리보기 (샘플 블록 최대 3개, 비구매자는 본문 차단) |
+| GET | /api/v1/plans/{planId} | `PlanController#getPlan` | `anyRequest().authenticated()` (Spring Security 전역 — `SecurityConfiguration.java:97`) | 플랜 풀 정보 (블록 포함) + 소유/구매 플래그. **인증된 비소유자** 조회 시 `view_count` 원자 증가(AUTH-08). |
+| GET | /api/v1/plans/{planId}/preview | `PlanController#getPreview` | optional(컨트롤러) — 전역 보안상 **실질 인증 필수**(preview permitAll 미선언) + 서비스 레이어 상태별 게이트(AUTH-06 Slice 3) | 서비스 의도: PUBLISHED 익명 허용·DRAFT/HIDDEN 로그인 필수(익명→401)·DELETED 404. **단 익명은 보안 필터에서 먼저 차단되어 실효는 로그인 비소유자 게이트(§8 참조).** 비구매자는 샘플 블록 최대 3개만 노출, 본문 차단. |
 | PATCH | /api/v1/plans/{planId} | `PlanController#updatePlan` | required | 메타 부분 수정 (작성자만) |
 | DELETE | /api/v1/plans/{planId} | `PlanController#deletePlan` | required | DELETED 상태로 soft delete |
 | POST | /api/v1/plans/{planId}/copy | `PlanController#copyPlan` | required | 본인 플랜 복사 → DRAFT 신규 생성 |
@@ -71,16 +82,18 @@
 - **PlanStatus** 전이: `DRAFT → PUBLISHED → HIDDEN → PUBLISHED → ... → DELETED`
 - **PlanVo.status** 가능 값: `DRAFT`, `PUBLISHED`, `HIDDEN`, `DELETED`
 - **PlanType**: `PERSONAL`, `CREATOR`
+- **view_count 컬럼** (`plan/model/Plan.java:74`): `INT NOT NULL DEFAULT 0`. `PlanVo`에는 노출하지 않음(크리에이터 대시보드 집계 전용). 비소유자 상세 조회 때마다 `PlanQueryRepository.incrementViewCount` 단일 UPDATE로 race-safe 원자 증가(`plan/repository/query/PlanQueryRepository.java:33`). 증가는 `ViewCountIncrementService(REQUIRES_NEW, noRollbackFor=Exception.class)`로 격리(`plan/service/ViewCountIncrementService.java:36`) — 실패 시 warn 로그만 남기고 조회 트랜잭션 정상 반환. 집계는 `CreatorStatsQueryRepository.sumPlanViewCountByCreatorId` → `CreatorStatsVo.planViewTotal`(F08-07)로 환류.
 - **PlanVo 무료 포인트 관련 필드** (`plan/vo/PlanVo.java`):
   - `price` (BigDecimal): 기본(유료) 구매 금액
   - `allowFreePoints` (boolean): 이 플랜을 무료 포인트로 구매할 수 있는지 여부. 작성자(콘텐츠 생산자) opt-in으로 결정
   - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액. 미설정(null)이면서 무료 허용인 경우 유료우선 혼합(PAID_FIRST), 설정된 경우 무료 결제는 그 금액으로 단일 통화 결제
   - 유료/무료 분리정산(Point Split Flow-Through) 정책에 따라, 무료 포인트로 결제하면 수취자에게 무료로 전파되어 현금화되지 않는다. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 - **에러 코드**:
-  - 1500001 PLAN_NOT_FOUND (404)
+  - 1500001 PLAN_NOT_FOUND (404) — 존재하지 않는 planId, 또는 DELETED 플랜 미리보기 접근
   - 1500002 PLAN_NOT_CREATOR (403)
   - 1500003 PLAN_INVALID_STATUS_TRANSITION (400)
   - 1500015 PLAN_LIMIT_EXCEEDED (400)
+  - UNAUTHORIZED (401) — DRAFT/HIDDEN 미리보기에 익명 접근 시 (`PlanService.java:173`, AUTH-06 Slice 3)
 
 ### 의존 단위 / 외부 시스템
 
@@ -138,6 +151,7 @@
 - 진입 시 `GET /api/v1/plans/{planId}/preview` 호출하여 `PlanPreviewVo` 받음
 - 작성자 정보 (`creator.nickname`, `planCount`, `totalSales`) 카드
 - 비구매자에게는 `sampleBlocks`만 표시되고 본문은 잠금 처리됨
+- **AUTH-06 Slice 3 게이트** (`PlanService.java:159`): DRAFT/HIDDEN 상태 플랜 미리보기는 로그인 사용자만 접근 가능. 익명 사용자가 요청하면 서버에서 401 UNAUTHORIZED 반환 — 앱은 로그인 유도 처리 필요. DELETED 플랜은 404 PLAN_NOT_FOUND로 처리하여 마치 존재하지 않는 플랜처럼 취급.
 
 ### API 호출 순서 (Provider/Repository 관점)
 
@@ -177,6 +191,10 @@
 | S6 | 잘못된 상태 전이 시도 — DRAFT에서 hide 호출 | 시나리오 본문 참조 | 상태 변경 없음 |
 | S7 | 구매자가 미리보기 진입 | planId=123 구매 완료 | 본문 열람 가능. 하단 "이 플랜으로 이벤트 만들기" 버튼 |
 | S8 | 비구매자가 미리보기 진입 | `/plan/1002` 상세, status=DRAFT, isCreatorOwned=true | 구매 유도 |
+| S9 (AUTH-08) | 인증된 비소유자 상세 조회 → view_count 증가 | 타 사용자가 GET /api/v1/plans/{planId} 호출 | view_count +1 원자 증가. 조회 응답 정상 반환(증가 실패 시에도 warn 로그만, 응답 무중단) |
+| S10 (AUTH-08) | 크리에이터 본인 상세 조회 → view_count 불변 | 작성자가 자기 PUBLISHED 플랜 조회 | view_count 변화 없음. 통계 부풀리기 방지 |
+| S11 (AUTH-06) | 익명 사용자가 DRAFT 플랜 미리보기 진입 | GET /api/v1/plans/{planId}/preview, 비로그인, status=DRAFT | 401 UNAUTHORIZED 반환. 앱 로그인 유도 |
+| S12 (AUTH-06) | 로그인 사용자가 HIDDEN 플랜 미리보기 진입 | GET /api/v1/plans/{planId}/preview, 로그인, status=HIDDEN | 미리보기 허용(sampleBlocks). 본문은 비구매자 차단 |
 
 ## 7. 정합성 판단
 
@@ -189,7 +207,12 @@
 
 ## 8. Gap / Risk
 
-> 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
+| 분류 | 근거 | 내용 | 다음 조치 |
+|---|---|---|---|
+| 구현됨 (AUTH-08) | `PlanService.java:148`, `ViewCountIncrementService.java:36` | view_count 비소유자 조회 시 원자 증가. REQUIRES_NEW 격리. 실패 무중단. | QA: 소유자/비소유자/증가실패 시나리오 E2E 확인 |
+| 구현됨 (AUTH-06) | `PlanService.java:159-173` | getPreview 서비스 게이트(DELETED→404, DRAFT/HIDDEN+익명→401, PUBLISHED→익명 포함 공개, DRAFT/HIDDEN+로그인→허용·person-specific 보류). | QA: 로그인 비소유자의 DRAFT 미리보기 → 허용, DELETED 미리보기 → 404 E2E 확인 |
+| 의도 vs 배선 주의 (AUTH-06) | `SecurityConfiguration.java:77~88`(permitAll 목록), `PlanController.java:64` | `/api/v1/plans/*/preview`는 permitAll 목록에 없어 `anyRequest().authenticated()` 적용 → **익명 요청은 보안 레이어에서 먼저 차단**. 따라서 서비스의 "PUBLISHED 익명 공개" 의도와 "익명→401(UNAUTHORIZED)" 분기는 현재 HTTP로 도달 불가(방어적 게이트로만 작동). 실효 효과는 "로그인 비소유자의 DRAFT/HIDDEN 미리보기 허용". | 비로그인 미리보기 공유가 의도라면 preview 경로를 permitAll에 추가 필요. AUTH-08 상세 조회수의 익명 미도달과 동일 패턴. |
+| 주의 | `PlanVo.java` | view_count는 PlanVo 응답 필드에 노출되지 않음 — 크리에이터 대시보드(F08-07 planViewTotal)에서만 집계 확인 가능. 앱 상세 화면에서 직접 조회수를 표시하려면 별도 필드 추가 필요(현재 미노출). | 현재 정책 유지: 상세 화면에 조회수 미표시, 대시보드 집계만 제공. |
 
 ## 9. 수용 기준
 
@@ -201,6 +224,10 @@
 - **AC-06. 잘못된 상태 전이 시도 — DRAFT에서 hide 호출**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 상태 변경 없음
 - **AC-07. 구매자가 미리보기 진입**: Given planId=123 구매 완료 When 사용자가 해당 흐름을 실행하면 Then 본문 열람 가능. 하단 "이 플랜으로 이벤트 만들기" 버튼
 - **AC-08. 비구매자가 미리보기 진입**: Given `/plan/1002` 상세, status=DRAFT, isCreatorOwned=true When 사용자가 해당 흐름을 실행하면 Then 구매 유도
+- **AC-09 (AUTH-08). 인증된 비소유자 상세 조회 → view_count 증가**: Given 타 사용자가 GET /api/v1/plans/{planId} 호출 When 조회 완료 Then view_count +1 원자 증가. 조회 응답 정상 반환. 증가 실패 시에도 응답 무중단.
+- **AC-10 (AUTH-08). 크리에이터 본인 조회 → view_count 불변**: Given 작성자가 자기 PUBLISHED 플랜 조회 When 조회 완료 Then view_count 변화 없음.
+- **AC-11 (AUTH-06). 익명 사용자가 DRAFT/HIDDEN 미리보기 진입 → 401**: Given GET /api/v1/plans/{planId}/preview, 비로그인, status=DRAFT When 요청 Then 서버 401 UNAUTHORIZED 반환.
+- **AC-12 (AUTH-06). DELETED 플랜 미리보기 → 404**: Given GET /api/v1/plans/{planId}/preview, status=DELETED When 요청 Then 서버 404 PLAN_NOT_FOUND 반환.
 
 ## 10. 미결정 / 후속
 
