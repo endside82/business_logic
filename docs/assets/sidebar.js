@@ -301,6 +301,14 @@
       ],
     },
     {
+      heading: '돈 흐름 감사',
+      links: [
+        { href: 'money-flow/index.html', label: '비즈니스 개요' },
+        { href: 'money-flow/flowcharts.html', label: '도식·종착점' },
+        { href: 'money-flow/scenarios.html', label: '상황별 시나리오' },
+      ],
+    },
+    {
       heading: '기능 인벤토리',
       links: [
         { href: 'features/catalog.html', label: '168개 기능 카탈로그' },

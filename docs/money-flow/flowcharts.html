@@ -1,0 +1,2121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>돈·포인트 흐름 도식과 종착점 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="money-flow-doc" data-doc="flowcharts">
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>돈 흐름 감사<span>›</span>도식·종착점</div>
+        <h1>돈·포인트 흐름 도식과 종착점</h1>
+        <p class="lede">시나리오별 Mermaid 흐름도, 모든 케이스의 종착점, 운영 개입 지점을 한눈에 확인한다.</p>
+      </header>
+      <section class="doc-links compact">
+          <a class="card" href="index.html"><div class="eyebrow">개요</div><h3>돈 성격과 공통 원칙</h3></a>
+          <a class="card" href="flowcharts.html"><div class="eyebrow">도식</div><h3>흐름도와 종착점</h3></a>
+          <a class="card" href="scenarios.html"><div class="eyebrow">시나리오</div><h3>상황별 업무 설명</h3></a>
+        </section>
+      <nav class="local-toc" aria-label="페이지 목차"><strong>이 페이지에서 보기</strong><div><a href="#0-읽는-법">0. 읽는 법</a><a href="#1-전체-경로-지도">1. 전체 경로 지도</a><a href="#2-지갑-충전과-자동충전">2. 지갑 충전과 자동충전</a><a href="#3-지갑-소비와-공통-환불">3. 지갑 소비와 공통 환불</a><a href="#4-이벤트-참가-결제와-호스트-정산">4. 이벤트 참가 결제와 호스트 정산</a><a href="#5-이벤트-환불">5. 이벤트 환불</a><a href="#6-마켓-아이템-번들-플랜-구매와-크리에이터-정산">6. 마켓 아이템·번들·플랜 구매와 크리에이터 정산</a><a href="#7-모임-선입금">7. 모임 선입금</a><a href="#8-모임-정산-공유와-취소-역처리">8. 모임 정산 공유와 취소 역처리</a><a href="#9-클럽-기금-기부-가입비-운영-구독-인출">9. 클럽 기금, 기부, 가입비, 운영 구독, 인출</a><a href="#10-정기모임-결제-환불-정산">10. 정기모임 결제, 환불, 정산</a><a href="#11-개인-구독-프라이빗-호스팅-비용-호스팅-티켓">11. 개인 구독, 프라이빗 호스팅 비용, 호스팅 티켓</a><a href="#12-사용자-외부-출금과-outbox">12. 사용자 외부 출금과 outbox</a><a href="#13-pg-환불-큐와-failedrefund-보상">13. PG 환불 큐와 FailedRefund 보상</a><a href="#14-무료-포인트-포인트-만료-정산-보정-원천세-차지백">14. 무료 포인트, 포인트 만료, 정산 보정, 원천세, 차지백</a><a href="#15-마일리지">15. 마일리지</a><a href="#16-운영자-internal-처리와-대사">16. 운영자 internal 처리와 대사</a><a href="#17-종착점-통합-사전">17. 종착점 통합 사전</a></div></nav>
+      <article class="doc-body">
+<blockquote class="doc-note">
+<p>대상 독자: 기획, 운영, CS, 정책 담당자</p>
+<p>목적: 제품 안에서 돈, 유료 포인트, 무료 포인트, 마일리지가 어떤 상황에서 어디로 흘러가고 어디서 끝나는지 시나리오별로 한눈에 확인한다.</p>
+<p>함께 볼 문서: <a class="inline-doc" href="index.html">비즈니스 개요</a>, <a class="inline-doc" href="scenarios.html">상황별 시나리오</a></p>
+</blockquote>
+<h2 id="0-읽는-법">0. 읽는 법</h2>
+<p>이 문서는 내부 구현을 설명하는 문서가 아니다. 기획자가 정책, 화면 문구, 운영 매뉴얼, CS 답변을 만들 때 필요한 “상황별 흐름”과 “최종 상태”만 먼저 보여준다.</p>
+<p>각 도식의 마지막 노드는 다음 다섯 가지 종착점으로 읽는다.</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점 접두어</th>
+<th>의미</th>
+<th>기획·운영 해석</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS</code></td>
+<td>정상 완료</td>
+<td>사용자나 수취자가 기대한 상태로 끝난다. 추가 조치가 없다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD</code></td>
+<td>대기·보류</td>
+<td>돈이나 권리가 확정되지 않았다. 다음 액션 주체와 제한 시간을 명확히 안내해야 한다.</td>
+</tr>
+<tr>
+<td><code>T-FAIL</code></td>
+<td>실패·거절</td>
+<td>거래가 끝났고 잔액 변화가 없거나 원복됐다. 재시도 가능 여부를 안내해야 한다.</td>
+</tr>
+<tr>
+<td><code>T-OPS</code></td>
+<td>운영 개입 필요</td>
+<td>자동 흐름만으로 닫히지 않는다. 운영자 보상, 수동 확인, 재처리, 대사가 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-NO-MONEY</code></td>
+<td>돈 이동 없음</td>
+<td>상태만 바뀌거나 기능 이용권만 소모된다. 지갑·정산·출금에 영향이 없다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="1-전체-경로-지도">1. 전체 경로 지도</h2>
+<p>제품의 금전 흐름은 크게 “유입, 소비, 정산, 환불, 반출, 보상·복구, 마일리지”로 나뉜다.</p>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;사용자 또는 운영 이벤트&quot;] --&gt; B{&quot;돈 성격&quot;}
+  B -- &quot;PG 결제&quot; --&gt; C[&quot;지갑 유료 포인트 충전&quot;]
+  B -- &quot;무료 지급&quot; --&gt; D[&quot;무료 포인트 지급&quot;]
+  B -- &quot;클럽 활동 리워드&quot; --&gt; E[&quot;클럽 마일리지&quot;]
+
+  C --&gt; F{&quot;사용처&quot;}
+  D --&gt; F
+  F -- &quot;이벤트·마켓·클럽·개인구독&quot; --&gt; G[&quot;지갑 소비&quot;]
+  F -- &quot;모임 정산·선입금·외부출금&quot; --&gt; H[&quot;유료 전용 소비&quot;]
+  F -- &quot;무료 전용 기능&quot; --&gt; I[&quot;무료 전용 소비&quot;]
+
+  G --&gt; J{&quot;수취자 존재&quot;}
+  H --&gt; J
+  I --&gt; K[&quot;플랫폼 비용 또는 기능 비용&quot;]
+
+  J -- &quot;있음&quot; --&gt; L[&quot;호스트·크리에이터·클럽 정산 대기&quot;]
+  J -- &quot;없음&quot; --&gt; M[&quot;플랫폼 매출 또는 비용 확정&quot;]
+
+  L --&gt; N{&quot;환불·취소 발생&quot;}
+  M --&gt; N
+  N -- &quot;없음&quot; --&gt; O[&quot;정산 또는 매출 확정&quot;]
+  N -- &quot;있음&quot; --&gt; P[&quot;원결제 구성 기준 환불&quot;]
+
+  O --&gt; Q{&quot;외부 지급 필요&quot;}
+  Q -- &quot;예&quot; --&gt; R[&quot;출금 또는 지급 outbox&quot;]
+  Q -- &quot;아니오&quot; --&gt; T1[&quot;T-SUCCESS 내부 종결&quot;]
+  R --&gt; T2{&quot;지급 결과&quot;}
+  T2 -- &quot;성공&quot; --&gt; T3[&quot;T-SUCCESS 외부 지급 완료&quot;]
+  T2 -- &quot;실패·지연&quot; --&gt; T4[&quot;T-OPS 재처리 또는 수동 복구&quot;]
+
+  P --&gt; T5{&quot;환불 결과&quot;}
+  T5 -- &quot;자동 완료&quot; --&gt; T6[&quot;T-SUCCESS 원결제 기준 환불 완료&quot;]
+  T5 -- &quot;은행·PG·보상 대기&quot; --&gt; T7[&quot;T-HOLD 또는 T-OPS 환불 대기&quot;]
+
+  E --&gt; T8[&quot;T-SUCCESS 마일리지 장부 내 종결&quot;]
+</div></div>
+<h3 id="전체-지도-종착점">전체 지도 종착점</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>설명</th>
+<th>후속 액션</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 내부 종결</code></td>
+<td>플랫폼 내부 지갑, 정산, 회계 상태가 닫힌다.</td>
+<td>일반 화면에는 완료 상태만 노출한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 외부 지급 완료</code></td>
+<td>실제 은행 지급 또는 외부 지급 큐까지 끝난다.</td>
+<td>지급 내역과 완료일을 노출한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 원결제 기준 환불 완료</code></td>
+<td>유료는 유료로, 무료는 무료로 복원된다.</td>
+<td>사용자 환불 완료 알림과 내역을 노출한다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 또는 T-OPS 환불 대기</code></td>
+<td>자동 처리로 닫히지 않았다.</td>
+<td>운영자 대시보드, CS 매뉴얼, SLA가 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 마일리지 장부 내 종결</code></td>
+<td>지갑 포인트와 분리된 클럽 마일리지 안에서만 끝난다.</td>
+<td>포인트·정산 화면과 섞어 보여주지 않는다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="2-지갑-충전과-자동충전">2. 지갑 충전과 자동충전</h2>
+<h3 id="2-1-흐름도">2.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;사용자가 충전 금액 선택&quot;] --&gt; B{&quot;금액·월한도·지갑상한 통과&quot;}
+  B -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 충전 요청 거절&quot;]
+  B -- &quot;예&quot; --&gt; C[&quot;충전 거래 PENDING 생성&quot;]
+  C --&gt; D{&quot;PG 승인 결과&quot;}
+  D -- &quot;실패&quot; --&gt; T2[&quot;T-FAIL PG 승인 실패, 잔액 변화 없음&quot;]
+  D -- &quot;성공&quot; --&gt; E{&quot;DB 반영 성공&quot;}
+  E -- &quot;성공&quot; --&gt; F[&quot;유료 lot 생성, 지갑 paid 증가, 충전 COMPLETED&quot;]
+  F --&gt; T3[&quot;T-SUCCESS 충전 완료&quot;]
+  E -- &quot;실패&quot; --&gt; G{&quot;PG 취소 성공&quot;}
+  G -- &quot;성공&quot; --&gt; T4[&quot;T-FAIL 보상 취소 완료, 잔액 변화 없음&quot;]
+  G -- &quot;실패&quot; --&gt; H[&quot;FailedRefund PENDING 기록&quot;]
+  H --&gt; T5[&quot;T-OPS 운영 보상 필요&quot;]
+
+  I[&quot;원결제 중 잔액 부족&quot;] --&gt; J{&quot;자동충전 설정·한도 통과&quot;}
+  J -- &quot;아니오&quot; --&gt; T6[&quot;T-FAIL 원결제 실패, 잔액 부족&quot;]
+  J -- &quot;예&quot; --&gt; K[&quot;빌링키 자동결제&quot;]
+  K --&gt; L{&quot;자동충전 성공&quot;}
+  L -- &quot;성공&quot; --&gt; M[&quot;유료 포인트 충전 후 원결제 재개&quot;]
+  M --&gt; T7[&quot;T-SUCCESS 원결제 흐름으로 복귀&quot;]
+  L -- &quot;실패&quot; --&gt; T8[&quot;T-FAIL 자동충전 실패, 원결제 실패&quot;]
+</div></div>
+<h3 id="2-2-케이스별-결과">2.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자에게 보이는 결과</th>
+<th>돈의 실제 상태</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>직접 충전 성공</td>
+<td>충전 완료, 유료 포인트 증가</td>
+<td>PG 승인금이 paid lot으로 들어온다.</td>
+<td><code>T-SUCCESS 충전 완료</code></td>
+</tr>
+<tr>
+<td>금액·한도 실패</td>
+<td>충전 불가</td>
+<td>PG 호출 전 종료, 잔액 변화 없음</td>
+<td><code>T-FAIL 충전 요청 거절</code></td>
+</tr>
+<tr>
+<td>PG 승인 실패</td>
+<td>결제 실패</td>
+<td>PG 승인 없음, 잔액 변화 없음</td>
+<td><code>T-FAIL PG 승인 실패</code></td>
+</tr>
+<tr>
+<td>PG 성공 후 DB 실패, PG 취소 성공</td>
+<td>충전 실패 또는 취소 처리</td>
+<td>승인금이 취소되어 잔액 변화 없음</td>
+<td><code>T-FAIL 보상 취소 완료</code></td>
+</tr>
+<tr>
+<td>PG 성공 후 DB 실패, PG 취소 실패</td>
+<td>운영 확인 필요</td>
+<td>사용자는 돈을 냈지만 지갑 반영이 안 됐을 수 있다.</td>
+<td><code>T-OPS 운영 보상 필요</code></td>
+</tr>
+<tr>
+<td>자동충전 성공</td>
+<td>원래 결제가 이어짐</td>
+<td>자동충전금은 일반 유료 포인트와 동일한 paid lot</td>
+<td><code>T-SUCCESS 원결제 흐름으로 복귀</code></td>
+</tr>
+<tr>
+<td>자동충전 실패</td>
+<td>원래 결제 실패</td>
+<td>잔액 변화 없음</td>
+<td><code>T-FAIL 자동충전 실패</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="2-3-종착점-상세">2.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>닫히는 상태</th>
+<th>다음 액션 주체</th>
+<th>CS 설명 포인트</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 충전 완료</code></td>
+<td>지갑 paid 증가, 충전 거래 완료</td>
+<td>없음</td>
+<td>“충전 금액은 유료 포인트로 반영됐습니다.”</td>
+</tr>
+<tr>
+<td><code>T-FAIL 충전 요청 거절</code></td>
+<td>거래 생성 전 또는 실패 상태</td>
+<td>사용자</td>
+<td>“금액, 월 한도, 보유 한도 조건을 확인해 주세요.”</td>
+</tr>
+<tr>
+<td><code>T-FAIL PG 승인 실패</code></td>
+<td>PG 실패, 충전 실패</td>
+<td>사용자 또는 PG사</td>
+<td>“결제수단 승인 실패입니다. 다른 결제수단을 이용해 주세요.”</td>
+</tr>
+<tr>
+<td><code>T-OPS 운영 보상 필요</code></td>
+<td>FailedRefund 대기</td>
+<td>운영자</td>
+<td>“결제 승인 여부와 지갑 반영 여부를 확인 후 보상합니다.”</td>
+</tr>
+</tbody></table></div>
+<h2 id="3-지갑-소비와-공통-환불">3. 지갑 소비와 공통 환불</h2>
+<h3 id="3-1-흐름도">3.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;상품·기능 결제 요청&quot;] --&gt; B{&quot;소비 목적&quot;}
+  B -- &quot;유료 전용&quot; --&gt; C[&quot;paid 잔액만 검사&quot;]
+  B -- &quot;무료 전용&quot; --&gt; D[&quot;free 잔액만 검사&quot;]
+  B -- &quot;유료 우선&quot; --&gt; E[&quot;paid 먼저, 부족분 free 검사&quot;]
+
+  C --&gt; F{&quot;잔액 충분&quot;}
+  D --&gt; F
+  E --&gt; F
+  F -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 잔액 부족&quot;]
+  F -- &quot;예&quot; --&gt; G[&quot;지갑 차감, 거래 COMPLETED&quot;]
+  G --&gt; H{&quot;도메인 수취 처리 성공&quot;}
+  H -- &quot;성공&quot; --&gt; T2[&quot;T-SUCCESS 소비 완료&quot;]
+  H -- &quot;실패&quot; --&gt; I[&quot;원거래 기준 환불 시도&quot;]
+  I --&gt; J{&quot;환불 성공&quot;}
+  J -- &quot;성공&quot; --&gt; T3[&quot;T-SUCCESS 소비 원복&quot;]
+  J -- &quot;실패&quot; --&gt; T4[&quot;T-OPS 수동 보상 필요&quot;]
+
+  K[&quot;환불 요청&quot;] --&gt; L{&quot;원결제 존재·중복 초과 없음&quot;}
+  L -- &quot;아니오&quot; --&gt; T5[&quot;T-FAIL 환불 거절&quot;]
+  L -- &quot;예&quot; --&gt; M[&quot;원결제 paid/free 구성 계산&quot;]
+  M --&gt; N{&quot;환불 방식&quot;}
+  N -- &quot;지갑 환불&quot; --&gt; O[&quot;paid는 paid로, free는 free로 복원&quot;]
+  N -- &quot;은행·PG 환불&quot; --&gt; P[&quot;환불 대기 상태 기록&quot;]
+  O --&gt; T6[&quot;T-SUCCESS 환불 완료&quot;]
+  P --&gt; T7[&quot;T-HOLD 환불 완료 확인 대기&quot;]
+</div></div>
+<h3 id="3-2-케이스별-결과">3.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>허용 통화</th>
+<th>대표 사용처</th>
+<th>돈의 종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>유료 전용 소비</td>
+<td>paid only</td>
+<td>모임 선입금, 모임 정산, 외부출금, 정산 보정</td>
+<td>paid lot만 차감된다. 부족하면 실패한다.</td>
+</tr>
+<tr>
+<td>무료 전용 소비</td>
+<td>free only</td>
+<td>일부 프라이빗 호스팅 무료 코인 흐름</td>
+<td>free lot만 차감된다. paid로 대체하지 않는다.</td>
+</tr>
+<tr>
+<td>유료 우선 소비</td>
+<td>paid first, then free</td>
+<td>이벤트, 마켓, 플랜, 클럽 기부, 개인 구독</td>
+<td>paid와 free가 함께 차감될 수 있다.</td>
+</tr>
+<tr>
+<td>일반 지갑 환불</td>
+<td>원결제 구성 유지</td>
+<td>이벤트·마켓·클럽·구독 등</td>
+<td>paid는 paid로, free는 free로 복원된다.</td>
+</tr>
+<tr>
+<td>중복·초과 환불</td>
+<td>불가</td>
+<td>모든 지갑 환불</td>
+<td>원결제 총액을 넘으면 실패한다.</td>
+</tr>
+</tbody></table></div>
+<h3 id="3-3-종착점-상세">3.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>닫히는 상태</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 소비 완료</code></td>
+<td>사용자의 지갑 차감과 도메인 처리 완료</td>
+<td>없음</td>
+<td>결제 완료 화면에 결제 수단별 구성까지 보여줄 수 있다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 소비 원복</code></td>
+<td>도메인 실패로 소비가 되돌아감</td>
+<td>없음</td>
+<td>사용자는 “결제 실패, 포인트 반환”으로 이해해야 한다.</td>
+</tr>
+<tr>
+<td><code>T-FAIL 잔액 부족</code></td>
+<td>소비 전 실패</td>
+<td>사용자</td>
+<td>자동충전 가능 상품인지에 따라 CTA가 달라진다.</td>
+</tr>
+<tr>
+<td><code>T-FAIL 환불 거절</code></td>
+<td>환불 요청 거절</td>
+<td>사용자 또는 운영자</td>
+<td>원결제 없음, 이미 환불 완료, 금액 초과를 구분한다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 환불 완료 확인 대기</code></td>
+<td>은행·PG·호스트 확인 필요</td>
+<td>호스트 또는 운영자</td>
+<td>“환불 요청 접수”와 “환불 완료”를 분리해 표시한다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="4-이벤트-참가-결제와-호스트-정산">4. 이벤트 참가 결제와 호스트 정산</h2>
+<h3 id="4-1-흐름도">4.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;이벤트 신청 승인 후 결제 필요&quot;] --&gt; B{&quot;결제 방식&quot;}
+  B -- &quot;지갑&quot; --&gt; C{&quot;잔액 충분 또는 자동충전 성공&quot;}
+  C -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 참가 결제 실패&quot;]
+  C -- &quot;예&quot; --&gt; D[&quot;이벤트 참가비 지갑 차감&quot;]
+  D --&gt; E[&quot;참가 결제 PAID, 출석 ATTENDING&quot;]
+  E --&gt; F[&quot;호스트 정산 후보 금액으로 누적&quot;]
+
+  B -- &quot;계좌이체&quot; --&gt; G[&quot;참가 결제 PENDING&quot;]
+  G --&gt; H{&quot;호스트 입금 확인&quot;}
+  H -- &quot;확인&quot; --&gt; I[&quot;참가 결제 PAID, 출석 ATTENDING&quot;]
+  H -- &quot;거절·기한만료&quot; --&gt; T2[&quot;T-FAIL 참가 결제 취소&quot;]
+  G --&gt; J{&quot;제재·운영 취소 발생&quot;}
+  J -- &quot;발생&quot; --&gt; T3[&quot;T-HOLD 은행 환불 요청 대기&quot;]
+
+  F --&gt; K[&quot;정산 배치 또는 정산 생성&quot;]
+  I --&gt; K
+  K --&gt; L{&quot;정산 전 환불 보류 존재&quot;}
+  L -- &quot;있음&quot; --&gt; T4[&quot;T-HOLD 정산 보류&quot;]
+  L -- &quot;없음&quot; --&gt; M[&quot;수수료·원천세 계산&quot;]
+  M --&gt; N{&quot;정산 승인&quot;}
+  N -- &quot;승인&quot; --&gt; O[&quot;APPROVED 후 PAYING&quot;]
+  O --&gt; P{&quot;지급 처리 성공&quot;}
+  P -- &quot;성공&quot; --&gt; T5[&quot;T-SUCCESS 호스트 정산 PAID&quot;]
+  P -- &quot;실패&quot; --&gt; T6[&quot;T-HOLD 정산 FAILED, 재시도 가능&quot;]
+  N -- &quot;거절&quot; --&gt; T7[&quot;T-FAIL 정산 REJECTED&quot;]
+</div></div>
+<h3 id="4-2-케이스별-결과">4.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>참가자 상태</th>
+<th>호스트 수취 상태</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>지갑 결제 성공</td>
+<td>참가 확정</td>
+<td>정산 후보로 누적</td>
+<td><code>T-SUCCESS 호스트 정산 PAID</code> 또는 정산 대기</td>
+</tr>
+<tr>
+<td>지갑 결제 실패</td>
+<td>참가비 결제 실패</td>
+<td>수취 없음</td>
+<td><code>T-FAIL 참가 결제 실패</code></td>
+</tr>
+<tr>
+<td>계좌이체 입금 확인</td>
+<td>참가 확정</td>
+<td>정산 후보로 누적</td>
+<td><code>T-SUCCESS 호스트 정산 PAID</code> 또는 정산 대기</td>
+</tr>
+<tr>
+<td>계좌이체 미입금·거절</td>
+<td>참가 취소</td>
+<td>수취 없음</td>
+<td><code>T-FAIL 참가 결제 취소</code></td>
+</tr>
+<tr>
+<td>계좌이체 입금 후 취소·제재</td>
+<td>환불 요청 상태</td>
+<td>호스트 또는 운영 확인 필요</td>
+<td><code>T-HOLD 은행 환불 요청 대기</code></td>
+</tr>
+<tr>
+<td>환불 보류가 있는 정산</td>
+<td>참가자는 환불 또는 분쟁 중</td>
+<td>정산 지급 보류</td>
+<td><code>T-HOLD 정산 보류</code></td>
+</tr>
+<tr>
+<td>정산 지급 실패</td>
+<td>참가 결제는 유지</td>
+<td>호스트 지급 실패</td>
+<td><code>T-HOLD 정산 FAILED</code></td>
+</tr>
+<tr>
+<td>정산 거절</td>
+<td>참가 결제와 별도</td>
+<td>호스트 지급 없음</td>
+<td><code>T-FAIL 정산 REJECTED</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="4-3-종착점-상세">4.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>화면·정책 표현</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 호스트 정산 PAID</code></td>
+<td>호스트 지갑 또는 정산 수취분으로 확정</td>
+<td>없음</td>
+<td>정산 완료일, 수수료, 원천세, 실수령액 표시</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정산 보류</code></td>
+<td>플랫폼 내부에서 지급 전 보류</td>
+<td>운영자</td>
+<td>보류 사유와 예상 해제 조건 표시</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정산 FAILED</code></td>
+<td>정산 지급 실패, 재시도 대상</td>
+<td>운영자 또는 시스템</td>
+<td>재시도 중, 지급 계좌 확인 필요</td>
+</tr>
+<tr>
+<td><code>T-HOLD 은행 환불 요청 대기</code></td>
+<td>계좌이체 환불 미확정</td>
+<td>호스트 또는 운영자</td>
+<td>입금 확인과 환불 완료를 분리한다.</td>
+</tr>
+<tr>
+<td><code>T-FAIL 참가 결제 취소</code></td>
+<td>참가비 수취 없음</td>
+<td>사용자</td>
+<td>“입금 확인 전 취소”로 안내한다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="5-이벤트-환불">5. 이벤트 환불</h2>
+<h3 id="5-1-흐름도">5.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;이벤트 환불 요청 또는 취소 발생&quot;] --&gt; B{&quot;원결제 방식&quot;}
+  B -- &quot;지갑&quot; --&gt; C{&quot;환불 정책 통과&quot;}
+  C -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 환불 거절&quot;]
+  C -- &quot;예&quot; --&gt; D[&quot;원결제 paid/free 구성 기준 지갑 복원&quot;]
+  D --&gt; E{&quot;호스트 정산 전&quot;}
+  E -- &quot;예&quot; --&gt; F[&quot;호스트 정산 후보 금액에서 차감&quot;]
+  E -- &quot;아니오&quot; --&gt; G[&quot;이미 지급된 금액은 회수채권으로 기록&quot;]
+  F --&gt; T2[&quot;T-SUCCESS 지갑 환불 완료&quot;]
+  G --&gt; H[&quot;다음 정산에서 상계&quot;]
+  H --&gt; T3[&quot;T-HOLD 정산후 환불 회수 대기&quot;]
+
+  B -- &quot;계좌이체&quot; --&gt; I{&quot;호스트 환불 확인 필요&quot;}
+  I -- &quot;예&quot; --&gt; J[&quot;REFUND_REQUESTED&quot;]
+  J --&gt; K{&quot;호스트 환불 완료 확인&quot;}
+  K -- &quot;완료&quot; --&gt; T4[&quot;T-SUCCESS 은행 환불 완료&quot;]
+  K -- &quot;지연&quot; --&gt; T5[&quot;T-HOLD 은행 환불 대기&quot;]
+  K -- &quot;분쟁&quot; --&gt; T6[&quot;T-OPS 운영 개입&quot;]
+</div></div>
+<h3 id="5-2-케이스별-결과">5.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자에게 보여야 할 상태</th>
+<th>호스트·플랫폼 영향</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>지갑 결제 정산 전 환불</td>
+<td>환불 완료</td>
+<td>호스트 정산 후보에서 차감</td>
+<td><code>T-SUCCESS 지갑 환불 완료</code></td>
+</tr>
+<tr>
+<td>지갑 결제 정산 후 환불</td>
+<td>환불 완료, 회수 진행</td>
+<td>호스트에게 지급된 금액은 다음 정산에서 회수</td>
+<td><code>T-HOLD 정산후 환불 회수 대기</code></td>
+</tr>
+<tr>
+<td>계좌이체 환불 요청</td>
+<td>환불 요청 접수</td>
+<td>호스트 환불 완료 확인 필요</td>
+<td><code>T-HOLD 은행 환불 대기</code></td>
+</tr>
+<tr>
+<td>계좌이체 환불 완료</td>
+<td>환불 완료</td>
+<td>환불 완료 상태 확정</td>
+<td><code>T-SUCCESS 은행 환불 완료</code></td>
+</tr>
+<tr>
+<td>환불 정책 불가</td>
+<td>환불 불가</td>
+<td>돈 이동 없음</td>
+<td><code>T-FAIL 환불 거절</code></td>
+</tr>
+<tr>
+<td>호스트 미처리·분쟁</td>
+<td>운영 확인 필요</td>
+<td>수동 판단 필요</td>
+<td><code>T-OPS 운영 개입</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="5-3-종착점-상세">5.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>닫히는 상태</th>
+<th>다음 액션 주체</th>
+<th>CS 설명 포인트</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 지갑 환불 완료</code></td>
+<td>지갑 paid/free 복원</td>
+<td>없음</td>
+<td>“결제에 사용한 포인트 구성대로 반환됐습니다.”</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 은행 환불 완료</code></td>
+<td>은행 환불 완료 상태</td>
+<td>없음</td>
+<td>“호스트 환불 확인이 완료됐습니다.”</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정산후 환불 회수 대기</code></td>
+<td>사용자 환불은 끝났지만 호스트 회수 남음</td>
+<td>시스템 또는 운영자</td>
+<td>사용자는 완료, 운영자는 회수 대기 상태로 본다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 은행 환불 대기</code></td>
+<td>환불 요청 상태</td>
+<td>호스트</td>
+<td>완료가 아니므로 “환불 요청”으로 표현한다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 운영 개입</code></td>
+<td>분쟁·지연·증빙 필요</td>
+<td>운영자</td>
+<td>호스트 증빙, 사용자 문의, 수동 처리 필요</td>
+</tr>
+</tbody></table></div>
+<h2 id="6-마켓-아이템-번들-플랜-구매와-크리에이터-정산">6. 마켓 아이템·번들·플랜 구매와 크리에이터 정산</h2>
+<h3 id="6-1-흐름도">6.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;사용자가 아이템·번들·플랜 구매&quot;] --&gt; B{&quot;판매 가능·중복 구매 아님&quot;}
+  B -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 구매 거절&quot;]
+  B -- &quot;예&quot; --&gt; C[&quot;지갑 유료우선 차감&quot;]
+  C --&gt; D{&quot;차감 성공&quot;}
+  D -- &quot;아니오&quot; --&gt; T2[&quot;T-FAIL 잔액 부족&quot;]
+  D -- &quot;예&quot; --&gt; E[&quot;구매권한 지급&quot;]
+  E --&gt; F[&quot;크리에이터 earning PENDING&quot;]
+
+  F --&gt; G{&quot;환불 요청&quot;}
+  G -- &quot;없음&quot; --&gt; H{&quot;정산 컷오프 도래&quot;}
+  H -- &quot;아니오&quot; --&gt; T3[&quot;T-HOLD 정산 대기&quot;]
+  H -- &quot;예&quot; --&gt; I[&quot;월정산 대상 집계&quot;]
+  I --&gt; J[&quot;수수료·세금 계산 후 지급&quot;]
+  J --&gt; T4[&quot;T-SUCCESS 크리에이터 정산 PAID&quot;]
+
+  G -- &quot;있음&quot; --&gt; K[&quot;earning REFUND_HELD&quot;]
+  K --&gt; L{&quot;환불 승인&quot;}
+  L -- &quot;거절&quot; --&gt; M[&quot;earning PENDING 복귀&quot;]
+  M --&gt; T5[&quot;T-HOLD 구매 유지·정산 대기&quot;]
+  L -- &quot;승인, 정산 전&quot; --&gt; N[&quot;사용자 환불, earning REFUNDED&quot;]
+  N --&gt; T6[&quot;T-SUCCESS 정산전 환불 완료&quot;]
+  L -- &quot;승인, 정산 후&quot; --&gt; O[&quot;사용자 환불, earning REVERSED&quot;]
+  O --&gt; P[&quot;크리에이터 회수채권 생성&quot;]
+  P --&gt; Q{&quot;다음 정산에서 전액 회수&quot;}
+  Q -- &quot;예&quot; --&gt; T7[&quot;T-SUCCESS 정산후 환불 회수 완료&quot;]
+  Q -- &quot;아니오&quot; --&gt; T8[&quot;T-HOLD 회수채권 잔액 유지&quot;]
+</div></div>
+<h3 id="6-2-케이스별-결과">6.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>구매자 상태</th>
+<th>크리에이터 상태</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>구매 성공, 환불 없음</td>
+<td>이용권 보유</td>
+<td>월정산 대기 후 지급</td>
+<td><code>T-SUCCESS 크리에이터 정산 PAID</code></td>
+</tr>
+<tr>
+<td>구매 중복·판매 불가</td>
+<td>구매 실패</td>
+<td>영향 없음</td>
+<td><code>T-FAIL 구매 거절</code></td>
+</tr>
+<tr>
+<td>잔액 부족</td>
+<td>구매 실패</td>
+<td>영향 없음</td>
+<td><code>T-FAIL 잔액 부족</code></td>
+</tr>
+<tr>
+<td>환불 요청 접수</td>
+<td>이용권 또는 지급 보류</td>
+<td>earning REFUND_HELD</td>
+<td><code>T-HOLD 구매 유지·정산 대기</code> 또는 환불 판단 대기</td>
+</tr>
+<tr>
+<td>환불 거절</td>
+<td>구매 유지</td>
+<td>정산 대기 복귀</td>
+<td><code>T-HOLD 구매 유지·정산 대기</code></td>
+</tr>
+<tr>
+<td>정산 전 환불 승인</td>
+<td>구매자 환불 완료</td>
+<td>크리에이터 earning 제거</td>
+<td><code>T-SUCCESS 정산전 환불 완료</code></td>
+</tr>
+<tr>
+<td>정산 후 환불 승인</td>
+<td>구매자 환불 완료</td>
+<td>크리에이터 회수채권 발생</td>
+<td><code>T-HOLD 회수채권 잔액 유지</code> 또는 <code>T-SUCCESS 회수 완료</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="6-3-종착점-상세">6.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 크리에이터 정산 PAID</code></td>
+<td>크리에이터 수취 확정</td>
+<td>없음</td>
+<td>실수령액과 정산기간을 보여준다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 정산전 환불 완료</code></td>
+<td>구매자 지갑 복원, 크리에이터 수취 없음</td>
+<td>없음</td>
+<td>“정산 전 취소”로 이해시키기 쉽다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 정산후 환불 회수 완료</code></td>
+<td>구매자 환불과 크리에이터 회수 모두 완료</td>
+<td>없음</td>
+<td>운영 내부 완료 상태다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정산 대기</code></td>
+<td>구매는 완료, 지급은 아직 미확정</td>
+<td>시스템</td>
+<td>정산 예정일과 환불 가능 기간을 구분한다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 회수채권 잔액 유지</code></td>
+<td>크리에이터에게 회수할 금액이 남음</td>
+<td>시스템 또는 운영자</td>
+<td>다음 정산에서 자동 상계된다는 안내가 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-FAIL 구매 거절</code></td>
+<td>돈 이동 없음</td>
+<td>사용자</td>
+<td>중복 구매, 판매 종료, 권한 제한을 분리한다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="7-모임-선입금">7. 모임 선입금</h2>
+<h3 id="7-1-흐름도">7.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;모임 선입금 요청&quot;] --&gt; B{&quot;결제 방식&quot;}
+  B -- &quot;포인트&quot; --&gt; C{&quot;paid 잔액 충분&quot;}
+  C -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 선입금 잔액 부족&quot;]
+  C -- &quot;예&quot; --&gt; D[&quot;paid-only 차감&quot;]
+  D --&gt; E[&quot;선입금 clearing에 보관&quot;]
+  E --&gt; T2[&quot;T-SUCCESS 포인트 선입금 완료&quot;]
+
+  B -- &quot;계좌이체&quot; --&gt; F[&quot;입금 대기&quot;]
+  F --&gt; G{&quot;입금 확인&quot;}
+  G -- &quot;확인&quot; --&gt; H[&quot;선입금 완료 상태&quot;]
+  H --&gt; T3[&quot;T-SUCCESS 계좌 선입금 완료&quot;]
+  G -- &quot;미확인·취소&quot; --&gt; T4[&quot;T-FAIL 선입금 취소&quot;]
+
+  E --&gt; I{&quot;모임 전 환불&quot;}
+  H --&gt; I
+  I -- &quot;포인트 환불&quot; --&gt; J[&quot;사용자 paid 복원&quot;]
+  J --&gt; T5[&quot;T-SUCCESS 선입금 환불 완료&quot;]
+  I -- &quot;계좌 환불&quot; --&gt; K[&quot;수동 환불 확인 필요&quot;]
+  K --&gt; T6[&quot;T-HOLD 계좌 선입금 환불 대기&quot;]
+
+  E --&gt; L{&quot;모임 종료·호스트 수취&quot;}
+  H --&gt; L
+  L -- &quot;수취 확정&quot; --&gt; M[&quot;호스트에게 선입금 release&quot;]
+  M --&gt; T7[&quot;T-SUCCESS 호스트 선입금 수취&quot;]
+</div></div>
+<h3 id="7-2-케이스별-결과">7.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자 상태</th>
+<th>호스트 상태</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>포인트 선입금 성공</td>
+<td>paid 포인트 차감</td>
+<td>선입금 보관금 대기</td>
+<td><code>T-SUCCESS 포인트 선입금 완료</code></td>
+</tr>
+<tr>
+<td>포인트 잔액 부족</td>
+<td>선입금 실패</td>
+<td>영향 없음</td>
+<td><code>T-FAIL 선입금 잔액 부족</code></td>
+</tr>
+<tr>
+<td>계좌 선입금 확인</td>
+<td>선입금 완료</td>
+<td>보관금 또는 수취 예정</td>
+<td><code>T-SUCCESS 계좌 선입금 완료</code></td>
+</tr>
+<tr>
+<td>계좌 입금 미확인</td>
+<td>선입금 취소</td>
+<td>영향 없음</td>
+<td><code>T-FAIL 선입금 취소</code></td>
+</tr>
+<tr>
+<td>모임 전 포인트 환불</td>
+<td>paid 복원</td>
+<td>수취 없음</td>
+<td><code>T-SUCCESS 선입금 환불 완료</code></td>
+</tr>
+<tr>
+<td>모임 전 계좌 환불</td>
+<td>환불 대기</td>
+<td>수동 확인 필요</td>
+<td><code>T-HOLD 계좌 선입금 환불 대기</code></td>
+</tr>
+<tr>
+<td>모임 종료 후 release</td>
+<td>이용 확정</td>
+<td>호스트 수취</td>
+<td><code>T-SUCCESS 호스트 선입금 수취</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="7-3-종착점-상세">7.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 포인트 선입금 완료</code></td>
+<td>플랫폼 clearing에 보관</td>
+<td>모임 진행 결과</td>
+<td>“호스트에게 즉시 지급”으로 표현하지 않는다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 계좌 선입금 완료</code></td>
+<td>입금 확인 상태</td>
+<td>모임 진행 결과</td>
+<td>계좌 입금 확인 시점과 수취 확정 시점을 분리한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 호스트 선입금 수취</code></td>
+<td>호스트 수취 확정</td>
+<td>없음</td>
+<td>모임 종료 또는 조건 충족 후 완료된다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 계좌 선입금 환불 대기</code></td>
+<td>수동 환불 확인 필요</td>
+<td>운영자 또는 호스트</td>
+<td>환불 완료가 아니라 환불 대기다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="8-모임-정산-공유와-취소-역처리">8. 모임 정산 공유와 취소 역처리</h2>
+<h3 id="8-1-흐름도">8.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;모임 정산 생성&quot;] --&gt; B[&quot;DRAFT&quot;]
+  B --&gt; C{&quot;정산 활성화&quot;}
+  C -- &quot;활성화&quot; --&gt; D[&quot;ACTIVE&quot;]
+  C -- &quot;취소&quot; --&gt; T1[&quot;T-NO-MONEY DRAFT 취소&quot;]
+
+  D --&gt; E{&quot;참여자 결제 방식&quot;}
+  E -- &quot;포인트 분담금&quot; --&gt; F{&quot;paid 잔액 충분&quot;}
+  F -- &quot;아니오&quot; --&gt; T2[&quot;T-FAIL 분담금 결제 실패&quot;]
+  F -- &quot;예&quot; --&gt; G[&quot;payer paid 차감, holder 수취&quot;]
+  G --&gt; H[&quot;share 완료&quot;]
+
+  E -- &quot;포인트 송금&quot; --&gt; I[&quot;from paid 차감, to 수취&quot;]
+  I --&gt; J[&quot;transfer COMPLETED&quot;]
+
+  E -- &quot;계좌 송금&quot; --&gt; K[&quot;BANK_AWAITING_CONFIRM&quot;]
+  K --&gt; L{&quot;수취자 확인&quot;}
+  L -- &quot;확인&quot; --&gt; M[&quot;transfer COMPLETED&quot;]
+  L -- &quot;기한만료·취소&quot; --&gt; T3[&quot;T-FAIL 계좌 송금 미완료&quot;]
+
+  E -- &quot;혼합 송금&quot; --&gt; N[&quot;포인트분 이동, 계좌분 확인 대기&quot;]
+  N --&gt; O{&quot;계좌분 확인&quot;}
+  O -- &quot;확인&quot; --&gt; P[&quot;mixed transfer COMPLETED&quot;]
+  O -- &quot;미확인&quot; --&gt; T4[&quot;T-HOLD 혼합 송금 일부 대기&quot;]
+
+  H --&gt; Q{&quot;모든 분담 완료&quot;}
+  J --&gt; Q
+  M --&gt; Q
+  P --&gt; Q
+  Q -- &quot;예&quot; --&gt; T5[&quot;T-SUCCESS 모임 정산 COMPLETED&quot;]
+  Q -- &quot;아니오&quot; --&gt; T6[&quot;T-HOLD 모임 정산 진행중&quot;]
+
+  D --&gt; R{&quot;정산 취소 발생&quot;}
+  R -- &quot;발생&quot; --&gt; S[&quot;완료된 포인트 이동 역처리&quot;]
+  S --&gt; U{&quot;역처리 성공&quot;}
+  U -- &quot;성공&quot; --&gt; V[&quot;계좌 완료분은 수동 환불 대기&quot;]
+  V --&gt; W{&quot;수동 환불 필요 없음&quot;}
+  W -- &quot;예&quot; --&gt; T7[&quot;T-SUCCESS 정산 취소 완료&quot;]
+  W -- &quot;아니오&quot; --&gt; T8[&quot;T-HOLD 수동 환불 대기&quot;]
+  U -- &quot;실패&quot; --&gt; X[&quot;REVERSAL_FAILED&quot;]
+  X --&gt; Y{&quot;재시도 성공&quot;}
+  Y -- &quot;성공&quot; --&gt; T9[&quot;T-SUCCESS 역처리 후 취소 완료&quot;]
+  Y -- &quot;실패 누적&quot; --&gt; T10[&quot;T-OPS 역처리 수동 복구&quot;]
+</div></div>
+<h3 id="8-2-케이스별-결과">8.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>돈의 이동</th>
+<th>상태 종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>DRAFT 취소</td>
+<td>돈 이동 없음</td>
+<td><code>T-NO-MONEY DRAFT 취소</code></td>
+</tr>
+<tr>
+<td>포인트 분담금 성공</td>
+<td>payer paid 차감, holder 수취</td>
+<td>모든 share 완료 시 <code>T-SUCCESS 모임 정산 COMPLETED</code></td>
+</tr>
+<tr>
+<td>포인트 분담금 실패</td>
+<td>돈 이동 없음</td>
+<td><code>T-FAIL 분담금 결제 실패</code></td>
+</tr>
+<tr>
+<td>포인트 송금 성공</td>
+<td>from paid 차감, to 수취</td>
+<td><code>T-SUCCESS 모임 정산 COMPLETED</code> 또는 진행중</td>
+</tr>
+<tr>
+<td>계좌 송금 확인 전</td>
+<td>내부 돈 이동 없음</td>
+<td><code>T-HOLD 모임 정산 진행중</code></td>
+</tr>
+<tr>
+<td>계좌 송금 확인 실패·만료</td>
+<td>내부 돈 이동 없음</td>
+<td><code>T-FAIL 계좌 송금 미완료</code></td>
+</tr>
+<tr>
+<td>혼합 송금 포인트분 성공, 계좌분 미확인</td>
+<td>포인트만 이미 이동</td>
+<td><code>T-HOLD 혼합 송금 일부 대기</code></td>
+</tr>
+<tr>
+<td>ACTIVE 취소, 포인트 역처리 성공</td>
+<td>이동한 포인트 원복</td>
+<td><code>T-SUCCESS 정산 취소 완료</code></td>
+</tr>
+<tr>
+<td>ACTIVE 취소, 계좌 완료분 존재</td>
+<td>내부 원복 불가</td>
+<td><code>T-HOLD 수동 환불 대기</code></td>
+</tr>
+<tr>
+<td>역처리 실패</td>
+<td>일부 돈 이동이 닫히지 않음</td>
+<td><code>T-OPS 역처리 수동 복구</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="8-3-종착점-상세">8.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>화면·운영 표현</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 모임 정산 COMPLETED</code></td>
+<td>모든 분담·송금이 완료</td>
+<td>없음</td>
+<td>완료자, 금액, 방식별 기록 표시</td>
+</tr>
+<tr>
+<td><code>T-HOLD 모임 정산 진행중</code></td>
+<td>일부 참여자 미완료</td>
+<td>참여자</td>
+<td>미완료자와 요청 상태를 보여준다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 혼합 송금 일부 대기</code></td>
+<td>포인트분은 이동, 계좌분은 미확인</td>
+<td>수취자</td>
+<td>“일부 완료”로 표현해야 한다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 수동 환불 대기</code></td>
+<td>계좌 송금 완료분은 앱이 자동 원복 불가</td>
+<td>운영자 또는 참여자</td>
+<td>은행 환불 증빙 플로우가 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 역처리 수동 복구</code></td>
+<td>포인트 역처리 실패</td>
+<td>운영자</td>
+<td>재시도 이력과 남은 금액을 보여준다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="9-클럽-기금-기부-가입비-운영-구독-인출">9. 클럽 기금, 기부, 가입비, 운영 구독, 인출</h2>
+<h3 id="9-1-기금-유입과-환불-흐름도">9.1 기금 유입과 환불 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;클럽 관련 결제&quot;] --&gt; B{&quot;결제 종류&quot;}
+  B -- &quot;기부&quot; --&gt; C[&quot;지갑 유료우선 차감&quot;]
+  B -- &quot;가입비&quot; --&gt; D[&quot;지갑 유료우선 차감&quot;]
+  B -- &quot;운영 구독&quot; --&gt; E{&quot;결제 수단&quot;}
+  E -- &quot;지갑&quot; --&gt; F[&quot;구독비 지갑 차감&quot;]
+  E -- &quot;외부 PG&quot; --&gt; G[&quot;PG 구독 결제&quot;]
+
+  C --&gt; H[&quot;클럽 fund paid/free 증가&quot;]
+  D --&gt; H
+  F --&gt; I[&quot;플랫폼 구독 매출&quot;]
+  G --&gt; I
+  H --&gt; T1[&quot;T-SUCCESS 클럽 기금 유입&quot;]
+  I --&gt; T2[&quot;T-SUCCESS 클럽 운영 구독 활성&quot;]
+
+  H --&gt; J{&quot;취소·환불&quot;}
+  J -- &quot;기금 충분&quot; --&gt; K[&quot;원결제 구성대로 사용자 지갑 환불&quot;]
+  K --&gt; T3[&quot;T-SUCCESS 클럽 환불 완료&quot;]
+  J -- &quot;기금 부족&quot; --&gt; L[&quot;부족분 플랫폼 회수채권 또는 운영 처리&quot;]
+  L --&gt; T4[&quot;T-HOLD 클럽 환불 회수 대기&quot;]
+</div></div>
+<h3 id="9-2-클럽-기금-인출-흐름도">9.2 클럽 기금 인출 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;클럽 오너 인출 요청&quot;] --&gt; B{&quot;인출 가능 금액 충분&quot;}
+  B -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 클럽 인출 요청 거절&quot;]
+  B -- &quot;예&quot; --&gt; C[&quot;인출 요청 PENDING&quot;]
+  C --&gt; D{&quot;운영 승인&quot;}
+  D -- &quot;거절&quot; --&gt; T2[&quot;T-FAIL 클럽 인출 REJECTED&quot;]
+  D -- &quot;승인&quot; --&gt; E{&quot;지급 방식&quot;}
+  E -- &quot;외부 계좌 지급&quot; --&gt; F[&quot;클럽 paid 기금 reserve&quot;]
+  F --&gt; G[&quot;outbox PENDING&quot;]
+  G --&gt; H{&quot;지급 성공&quot;}
+  H -- &quot;성공&quot; --&gt; T3[&quot;T-SUCCESS 클럽 외부 인출 PAID&quot;]
+  H -- &quot;실패·재시도 초과&quot; --&gt; T4[&quot;T-OPS 클럽 인출 복구 필요&quot;]
+
+  E -- &quot;오너 지갑 수취&quot; --&gt; I[&quot;클럽 paid 기금 차감&quot;]
+  I --&gt; J{&quot;클럽 채무 상계 필요&quot;}
+  J -- &quot;있음&quot; --&gt; K[&quot;채무 상계 후 잔액만 오너 지갑 지급&quot;]
+  J -- &quot;없음&quot; --&gt; L[&quot;오너 지갑 지급&quot;]
+  K --&gt; T5[&quot;T-SUCCESS 클럽 기금 지갑 지급&quot;]
+  L --&gt; T5
+</div></div>
+<h3 id="9-3-케이스별-결과">9.3 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자·클럽 상태</th>
+<th>돈의 종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>기부 성공</td>
+<td>사용자 지갑 차감, 클럽 기금 증가</td>
+<td><code>T-SUCCESS 클럽 기금 유입</code></td>
+</tr>
+<tr>
+<td>가입비 성공</td>
+<td>회원 가입비 납부, 클럽 기금 증가</td>
+<td><code>T-SUCCESS 클럽 기금 유입</code></td>
+</tr>
+<tr>
+<td>운영 구독 성공</td>
+<td>클럽 운영 기능 활성</td>
+<td><code>T-SUCCESS 클럽 운영 구독 활성</code></td>
+</tr>
+<tr>
+<td>기부·가입비 환불 성공</td>
+<td>사용자 지갑 복원, 클럽 기금 차감</td>
+<td><code>T-SUCCESS 클럽 환불 완료</code></td>
+</tr>
+<tr>
+<td>기금 부족 환불</td>
+<td>사용자 환불과 회수 분리</td>
+<td><code>T-HOLD 클럽 환불 회수 대기</code></td>
+</tr>
+<tr>
+<td>클럽 인출 거절</td>
+<td>인출 없음</td>
+<td><code>T-FAIL 클럽 인출 요청 거절</code> 또는 <code>REJECTED</code></td>
+</tr>
+<tr>
+<td>외부 인출 성공</td>
+<td>클럽 기금이 외부 지급됨</td>
+<td><code>T-SUCCESS 클럽 외부 인출 PAID</code></td>
+</tr>
+<tr>
+<td>외부 인출 실패</td>
+<td>reserve 또는 outbox 복구 필요</td>
+<td><code>T-OPS 클럽 인출 복구 필요</code></td>
+</tr>
+<tr>
+<td>오너 지갑 수취</td>
+<td>클럽 기금이 오너 지갑으로 이동</td>
+<td><code>T-SUCCESS 클럽 기금 지갑 지급</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="9-4-종착점-상세">9.4 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 클럽 기금 유입</code></td>
+<td>클럽 fund paid/free</td>
+<td>클럽 운영자</td>
+<td>기금 화면에는 유료·무료 성격을 분리할 수 있어야 한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 클럽 운영 구독 활성</code></td>
+<td>플랫폼 매출</td>
+<td>없음</td>
+<td>클럽 기금이 아니라 플랫폼 매출이다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 클럽 환불 회수 대기</code></td>
+<td>환불은 되었지만 클럽 쪽 회수 필요</td>
+<td>운영자</td>
+<td>기금 부족과 사용자 환불 완료를 분리한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 클럽 외부 인출 PAID</code></td>
+<td>은행 지급 완료</td>
+<td>없음</td>
+<td>지급일과 수취 계좌를 운영 화면에서 확인한다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 클럽 인출 복구 필요</code></td>
+<td>outbox 실패 또는 reserve 잔류</td>
+<td>운영자</td>
+<td>재처리, reserve 복원, 실패 사유 확인이 필요하다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="10-정기모임-결제-환불-정산">10. 정기모임 결제, 환불, 정산</h2>
+<h3 id="10-1-흐름도">10.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;정기모임 참가 결제&quot;] --&gt; B{&quot;결제 방식&quot;}
+  B -- &quot;지갑&quot; --&gt; C{&quot;잔액 충분 또는 자동충전 성공&quot;}
+  C -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 정기모임 결제 실패&quot;]
+  C -- &quot;예&quot; --&gt; D[&quot;지갑 결제 PAID&quot;]
+  D --&gt; E[&quot;멤버 ENROLLED&quot;]
+  E --&gt; T2[&quot;T-SUCCESS 정기모임 지갑 결제 완료&quot;]
+
+  B -- &quot;계좌이체&quot; --&gt; F[&quot;결제 PENDING&quot;]
+  F --&gt; G{&quot;호스트·운영 입금 확인&quot;}
+  G -- &quot;확인&quot; --&gt; H[&quot;결제 PAID, 멤버 ENROLLED&quot;]
+  H --&gt; T3[&quot;T-SUCCESS 정기모임 계좌 결제 완료&quot;]
+  G -- &quot;미확인 기한만료&quot; --&gt; I[&quot;결제 CANCELED&quot;]
+  I --&gt; T4[&quot;T-FAIL 정기모임 계좌 결제 취소&quot;]
+  F --&gt; J{&quot;제재·취소 발생&quot;}
+  J -- &quot;발생&quot; --&gt; K[&quot;REFUND_REQUESTED, 멤버 CANCELED&quot;]
+  K --&gt; T5[&quot;T-HOLD 정기모임 계좌 환불 대기&quot;]
+
+  E --&gt; L{&quot;환불 요청&quot;}
+  H --&gt; L
+  L -- &quot;지갑 결제&quot; --&gt; M[&quot;잔여 회차 기준 pro-rata 계산&quot;]
+  M --&gt; N{&quot;지갑 환불 성공&quot;}
+  N -- &quot;성공&quot; --&gt; T6[&quot;T-SUCCESS 정기모임 지갑 환불 완료&quot;]
+  N -- &quot;실패&quot; --&gt; O[&quot;FailedRefund PENDING&quot;]
+  O --&gt; T7[&quot;T-OPS 정기모임 환불 보상 필요&quot;]
+
+  L -- &quot;계좌 PAID&quot; --&gt; P[&quot;REFUND_REQUESTED&quot;]
+  P --&gt; Q{&quot;호스트 환불 완료 확인&quot;}
+  Q -- &quot;완료&quot; --&gt; T8[&quot;T-SUCCESS 정기모임 계좌 환불 완료&quot;]
+  Q -- &quot;대기&quot; --&gt; T9[&quot;T-HOLD 정기모임 계좌 환불 대기&quot;]
+
+  R[&quot;정기모임 종료 또는 취소 후 보유금 존재&quot;] --&gt; S[&quot;정산 생성 시도&quot;]
+  S --&gt; U{&quot;보류 환불·진행 정산 없음&quot;}
+  U -- &quot;아니오&quot; --&gt; T10[&quot;T-HOLD 정기모임 정산 보류&quot;]
+  U -- &quot;예&quot; --&gt; V[&quot;공통 정산 서비스로 호스트 지급&quot;]
+  V --&gt; T11[&quot;T-SUCCESS 정기모임 정산 PAID&quot;]
+</div></div>
+<h3 id="10-2-케이스별-결과">10.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>참가자 상태</th>
+<th>호스트 상태</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>지갑 결제 성공</td>
+<td>ENROLLED</td>
+<td>수취 후보 발생</td>
+<td><code>T-SUCCESS 정기모임 지갑 결제 완료</code></td>
+</tr>
+<tr>
+<td>지갑 결제 실패</td>
+<td>등록 실패</td>
+<td>수취 없음</td>
+<td><code>T-FAIL 정기모임 결제 실패</code></td>
+</tr>
+<tr>
+<td>계좌 결제 확인</td>
+<td>ENROLLED</td>
+<td>수취 후보 발생</td>
+<td><code>T-SUCCESS 정기모임 계좌 결제 완료</code></td>
+</tr>
+<tr>
+<td>계좌 결제 미확인 만료</td>
+<td>등록 취소</td>
+<td>수취 없음</td>
+<td><code>T-FAIL 정기모임 계좌 결제 취소</code></td>
+</tr>
+<tr>
+<td>계좌 결제 후 제재·취소</td>
+<td>멤버 CANCELED</td>
+<td>환불 대기</td>
+<td><code>T-HOLD 정기모임 계좌 환불 대기</code></td>
+</tr>
+<tr>
+<td>지갑 환불 성공</td>
+<td>잔여 회차분 환불</td>
+<td>수취 후보 차감</td>
+<td><code>T-SUCCESS 정기모임 지갑 환불 완료</code></td>
+</tr>
+<tr>
+<td>지갑 환불 실패</td>
+<td>환불 보상 대기</td>
+<td>운영 확인 필요</td>
+<td><code>T-OPS 정기모임 환불 보상 필요</code></td>
+</tr>
+<tr>
+<td>계좌 환불 요청</td>
+<td>환불 요청 접수</td>
+<td>호스트 확인 필요</td>
+<td><code>T-HOLD 정기모임 계좌 환불 대기</code></td>
+</tr>
+<tr>
+<td>정산 생성 가능</td>
+<td>수취분 확정</td>
+<td>호스트 정산 지급</td>
+<td><code>T-SUCCESS 정기모임 정산 PAID</code></td>
+</tr>
+<tr>
+<td>보류 환불 또는 진행 정산 존재</td>
+<td>정산 대기</td>
+<td>지급 보류</td>
+<td><code>T-HOLD 정기모임 정산 보류</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="10-3-종착점-상세">10.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 정기모임 지갑 결제 완료</code></td>
+<td>사용자 지갑 차감, 호스트 payable 증가</td>
+<td>없음</td>
+<td>멤버 상태와 결제 상태를 함께 보여준다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정기모임 계좌 환불 대기</code></td>
+<td>은행 환불 미확정</td>
+<td>호스트 또는 운영자</td>
+<td>REFUNDED가 아니므로 완료 문구 금지</td>
+</tr>
+<tr>
+<td><code>T-OPS 정기모임 환불 보상 필요</code></td>
+<td>FailedRefund 보상 대기</td>
+<td>운영자</td>
+<td>admin 보상 처리 전까지 자동 완료로 보지 않는다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정기모임 정산 보류</code></td>
+<td>호스트 지급 전 보류</td>
+<td>운영자 또는 시스템</td>
+<td>환불 대기와 정산 중복을 차단하는 상태다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 정기모임 정산 PAID</code></td>
+<td>호스트 수취 확정</td>
+<td>없음</td>
+<td>일반 이벤트 정산과 같은 완료 개념으로 본다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="11-개인-구독-프라이빗-호스팅-비용-호스팅-티켓">11. 개인 구독, 프라이빗 호스팅 비용, 호스팅 티켓</h2>
+<h3 id="11-1-흐름도">11.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;개인 구독 또는 프라이빗 기능 결제&quot;] --&gt; B{&quot;상품 유형&quot;}
+  B -- &quot;개인 구독&quot; --&gt; C{&quot;이미 활성 구독 존재&quot;}
+  C -- &quot;예&quot; --&gt; T1[&quot;T-FAIL 중복 구독 거절&quot;]
+  C -- &quot;아니오&quot; --&gt; D[&quot;지갑 유료우선 차감&quot;]
+  D --&gt; E{&quot;결제 성공&quot;}
+  E -- &quot;성공&quot; --&gt; F[&quot;구독 ACTIVE&quot;]
+  F --&gt; T2[&quot;T-SUCCESS 개인 구독 활성&quot;]
+  E -- &quot;실패&quot; --&gt; T3[&quot;T-FAIL 개인 구독 결제 실패&quot;]
+
+  F --&gt; G{&quot;갱신 결제&quot;}
+  G -- &quot;성공&quot; --&gt; T4[&quot;T-SUCCESS 개인 구독 갱신&quot;]
+  G -- &quot;실패&quot; --&gt; H[&quot;구독 정지 또는 만료 처리&quot;]
+  H --&gt; T5[&quot;T-HOLD 구독 갱신 실패&quot;]
+
+  B -- &quot;프라이빗 호스팅 비용&quot; --&gt; I{&quot;비용 방식&quot;}
+  I -- &quot;무료 코인&quot; --&gt; J[&quot;free-only 차감&quot;]
+  I -- &quot;유료 코인&quot; --&gt; K[&quot;paid-only 차감&quot;]
+  I -- &quot;호스팅 티켓&quot; --&gt; L[&quot;티켓 사용&quot;]
+  J --&gt; M{&quot;처리 성공&quot;}
+  K --&gt; M
+  L --&gt; T10[&quot;T-NO-MONEY 호스팅 티켓 사용 완료&quot;]
+  M -- &quot;성공&quot; --&gt; T6[&quot;T-SUCCESS 프라이빗 호스팅 가능&quot;]
+  M -- &quot;실패&quot; --&gt; T7[&quot;T-FAIL 프라이빗 호스팅 불가&quot;]
+
+  T6 --&gt; N{&quot;호스팅 취소·환불&quot;}
+  N -- &quot;포인트 비용&quot; --&gt; O[&quot;원결제 통화로 환불&quot;]
+  N -- &quot;티켓&quot; --&gt; P[&quot;티켓 복원&quot;]
+  O --&gt; T8[&quot;T-SUCCESS 호스팅 비용 환불&quot;]
+  P --&gt; T9[&quot;T-SUCCESS 호스팅 티켓 복원&quot;]
+</div></div>
+<h3 id="11-2-케이스별-결과">11.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자 권리</th>
+<th>돈·권리 종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>개인 구독 신규 성공</td>
+<td>구독 ACTIVE</td>
+<td><code>T-SUCCESS 개인 구독 활성</code></td>
+</tr>
+<tr>
+<td>개인 구독 중복</td>
+<td>구독 변화 없음</td>
+<td><code>T-FAIL 중복 구독 거절</code></td>
+</tr>
+<tr>
+<td>개인 구독 갱신 성공</td>
+<td>구독 연장</td>
+<td><code>T-SUCCESS 개인 구독 갱신</code></td>
+</tr>
+<tr>
+<td>개인 구독 갱신 실패</td>
+<td>구독 정지 또는 만료 후보</td>
+<td><code>T-HOLD 구독 갱신 실패</code></td>
+</tr>
+<tr>
+<td>무료 코인 호스팅 비용</td>
+<td>무료 포인트 차감</td>
+<td><code>T-SUCCESS 프라이빗 호스팅 가능</code></td>
+</tr>
+<tr>
+<td>유료 코인 호스팅 비용</td>
+<td>유료 포인트 차감</td>
+<td><code>T-SUCCESS 프라이빗 호스팅 가능</code></td>
+</tr>
+<tr>
+<td>호스팅 티켓 사용</td>
+<td>티켓 1장 소모</td>
+<td><code>T-NO-MONEY 호스팅 티켓 사용 완료</code></td>
+</tr>
+<tr>
+<td>호스팅 취소, 포인트 비용</td>
+<td>원결제 통화 환불</td>
+<td><code>T-SUCCESS 호스팅 비용 환불</code></td>
+</tr>
+<tr>
+<td>호스팅 취소, 티켓</td>
+<td>티켓 복원</td>
+<td><code>T-SUCCESS 호스팅 티켓 복원</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="11-3-종착점-상세">11.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 개인 구독 활성</code></td>
+<td>플랫폼 구독 매출</td>
+<td>사용자</td>
+<td>구독 기간과 다음 갱신일 표시</td>
+</tr>
+<tr>
+<td><code>T-HOLD 구독 갱신 실패</code></td>
+<td>갱신 결제 실패, 권리 제한 가능</td>
+<td>사용자</td>
+<td>결제수단 갱신 CTA 필요</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 프라이빗 호스팅 가능</code></td>
+<td>비용 방식에 따라 paid, free, 티켓 소모</td>
+<td>없음</td>
+<td>“무료 코인”, “유료 코인”, “티켓”을 같은 돈처럼 쓰면 안 된다.</td>
+</tr>
+<tr>
+<td><code>T-NO-MONEY 호스팅 티켓 사용 완료</code></td>
+<td>지갑 돈 이동 없음, 티켓 권리만 소모</td>
+<td>없음</td>
+<td>포인트 결제와 같은 결제 완료 문구를 쓰지 않는다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 호스팅 티켓 복원</code></td>
+<td>돈 이동 없음, 티켓 권리 복원</td>
+<td>없음</td>
+<td>포인트 환불과 다른 내역으로 표시한다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="12-사용자-외부-출금과-outbox">12. 사용자 외부 출금과 outbox</h2>
+<h3 id="12-1-흐름도">12.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;사용자 외부 출금 요청&quot;] --&gt; B{&quot;출금 가능 조건 통과&quot;}
+  B -- &quot;아니오&quot; --&gt; T1[&quot;T-FAIL 출금 요청 거절&quot;]
+  B -- &quot;예&quot; --&gt; C[&quot;출금 요청 PENDING&quot;]
+  C --&gt; D{&quot;운영 승인&quot;}
+  D -- &quot;거절&quot; --&gt; T2[&quot;T-FAIL 출금 REJECTED&quot;]
+  D -- &quot;승인&quot; --&gt; E[&quot;paid-only 지갑 reserve&quot;]
+  E --&gt; F[&quot;Withdrawal APPROVED 또는 PAYING&quot;]
+  F --&gt; G[&quot;outbox PENDING&quot;]
+  G --&gt; H[&quot;worker가 IN_FLIGHT claim&quot;]
+  H --&gt; I{&quot;외부 지급 provider 결과&quot;}
+  I -- &quot;성공&quot; --&gt; J[&quot;outbox DONE, withdrawal PAID&quot;]
+  J --&gt; T3[&quot;T-SUCCESS 외부 출금 완료&quot;]
+  I -- &quot;일시 실패&quot; --&gt; K[&quot;재시도 대기&quot;]
+  K --&gt; T4[&quot;T-HOLD 외부 출금 재시도&quot;]
+  I -- &quot;재시도 초과&quot; --&gt; L[&quot;outbox DEAD_LETTER&quot;]
+  L --&gt; T5[&quot;T-OPS 출금 수동 복구&quot;]
+
+  T5 --&gt; M{&quot;운영 처리&quot;}
+  M -- &quot;재큐&quot; --&gt; G
+  M -- &quot;reserve 복원·거절&quot; --&gt; N[&quot;사용자 paid 복원, withdrawal REJECTED 또는 FAILED&quot;]
+  N --&gt; T6[&quot;T-SUCCESS 출금 원복 완료&quot;]
+</div></div>
+<h3 id="12-2-케이스별-결과">12.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자 상태</th>
+<th>돈의 위치</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>출금 조건 실패</td>
+<td>출금 불가</td>
+<td>지갑 변화 없음</td>
+<td><code>T-FAIL 출금 요청 거절</code></td>
+</tr>
+<tr>
+<td>운영 거절</td>
+<td>출금 거절</td>
+<td>지갑 변화 없음 또는 reserve 복원</td>
+<td><code>T-FAIL 출금 REJECTED</code></td>
+</tr>
+<tr>
+<td>승인 후 지급 성공</td>
+<td>출금 완료</td>
+<td>외부 계좌 지급 완료</td>
+<td><code>T-SUCCESS 외부 출금 완료</code></td>
+</tr>
+<tr>
+<td>지급 일시 실패</td>
+<td>처리중</td>
+<td>reserve 유지, 재시도 대기</td>
+<td><code>T-HOLD 외부 출금 재시도</code></td>
+</tr>
+<tr>
+<td>지급 재시도 초과</td>
+<td>운영 복구 필요</td>
+<td>reserve 또는 outbox가 닫히지 않음</td>
+<td><code>T-OPS 출금 수동 복구</code></td>
+</tr>
+<tr>
+<td>운영 reserve 복원</td>
+<td>출금 원복</td>
+<td>사용자 paid 복원</td>
+<td><code>T-SUCCESS 출금 원복 완료</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="12-3-종착점-상세">12.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>닫히는 상태</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 외부 출금 완료</code></td>
+<td>paid 포인트가 외부 지급으로 확정</td>
+<td>없음</td>
+<td>완료일, 지급액, 수수료가 있으면 분리 표시</td>
+</tr>
+<tr>
+<td><code>T-HOLD 외부 출금 재시도</code></td>
+<td>자동 재시도 중</td>
+<td>시스템</td>
+<td>사용자는 “처리중”으로 본다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 출금 수동 복구</code></td>
+<td>DEAD_LETTER 또는 reserve 잔류</td>
+<td>운영자</td>
+<td>재큐, 지급 확인, reserve 복원 선택지가 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 출금 원복 완료</code></td>
+<td>출금이 되돌아가 paid 복원</td>
+<td>없음</td>
+<td>“출금 실패 후 반환”으로 안내한다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="13-pg-환불-큐와-failedrefund-보상">13. PG 환불 큐와 FailedRefund 보상</h2>
+<h3 id="13-1-흐름도">13.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;PG 환불 또는 보상 필요 상황&quot;] --&gt; B{&quot;종류&quot;}
+  B -- &quot;PG 환불 큐 대상&quot; --&gt; C{&quot;PG 환불 큐 활성화&quot;}
+  C -- &quot;비활성&quot; --&gt; T1[&quot;T-HOLD PG 환불 수동·휴면 대기&quot;]
+  C -- &quot;활성&quot; --&gt; D[&quot;RefundItem REQUESTED&quot;]
+  D --&gt; E[&quot;worker가 PG_PROCESSING&quot;]
+  E --&gt; F{&quot;PG cancel 결과&quot;}
+  F -- &quot;성공&quot; --&gt; G[&quot;PG_COMPLETED, 환불 원장 완료&quot;]
+  G --&gt; T2[&quot;T-SUCCESS PG 환불 완료&quot;]
+  F -- &quot;실패&quot; --&gt; H[&quot;PG_FAILED&quot;]
+  H --&gt; T3[&quot;T-OPS PG 환불 실패 처리&quot;]
+  E --&gt; I{&quot;처리중 장기 체류&quot;}
+  I -- &quot;발생&quot; --&gt; J[&quot;stale recovery&quot;]
+  J --&gt; T4[&quot;T-HOLD PG 환불 재처리 대기&quot;]
+
+  G --&gt; K{&quot;원장 완료 기록 실패&quot;}
+  K -- &quot;발생&quot; --&gt; L[&quot;RefundLedgerFailure PENDING&quot;]
+  L --&gt; M{&quot;재시도 성공&quot;}
+  M -- &quot;성공&quot; --&gt; T5[&quot;T-SUCCESS 환불 원장 복구 완료&quot;]
+  M -- &quot;실패&quot; --&gt; T6[&quot;T-OPS 환불 원장 수동 복구&quot;]
+
+  B -- &quot;PG 성공 후 DB 실패 등 보상&quot; --&gt; N[&quot;FailedRefund PENDING&quot;]
+  N --&gt; O{&quot;운영 보상 방식&quot;}
+  O -- &quot;포인트 보상&quot; --&gt; P[&quot;PROCESSING 후 사용자 보상&quot;]
+  P --&gt; Q{&quot;보상 성공&quot;}
+  Q -- &quot;성공&quot; --&gt; T7[&quot;T-SUCCESS FailedRefund RESOLVED&quot;]
+  Q -- &quot;실패&quot; --&gt; T8[&quot;T-OPS FailedRefund 재처리&quot;]
+  O -- &quot;손실 처리·기타 종결&quot; --&gt; R[&quot;FAILED 또는 운영 종결&quot;]
+  R --&gt; T9[&quot;T-OPS 운영 종결 기록&quot;]
+</div></div>
+<h3 id="13-2-케이스별-결과">13.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자 영향</th>
+<th>운영 영향</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>PG 환불 큐 비활성</td>
+<td>자동 PG 환불 없음</td>
+<td>수동·휴면 상태 관리 필요</td>
+<td><code>T-HOLD PG 환불 수동·휴면 대기</code></td>
+</tr>
+<tr>
+<td>PG 환불 성공</td>
+<td>외부 결제 취소 완료</td>
+<td>환불 원장 완료</td>
+<td><code>T-SUCCESS PG 환불 완료</code></td>
+</tr>
+<tr>
+<td>PG 환불 실패</td>
+<td>환불 미완료</td>
+<td>PG 실패 사유 확인</td>
+<td><code>T-OPS PG 환불 실패 처리</code></td>
+</tr>
+<tr>
+<td>PG_PROCESSING 장기 체류</td>
+<td>처리 지연</td>
+<td>stale recovery 필요</td>
+<td><code>T-HOLD PG 환불 재처리 대기</code></td>
+</tr>
+<tr>
+<td>환불 원장 실패</td>
+<td>PG 환불은 됐으나 장부 미완</td>
+<td>원장 재시도 또는 수동 복구</td>
+<td><code>T-OPS 환불 원장 수동 복구</code></td>
+</tr>
+<tr>
+<td>FailedRefund 보상 성공</td>
+<td>사용자 보상 완료</td>
+<td>RESOLVED</td>
+<td><code>T-SUCCESS FailedRefund RESOLVED</code></td>
+</tr>
+<tr>
+<td>FailedRefund 보상 실패</td>
+<td>보상 대기 지속</td>
+<td>재처리 필요</td>
+<td><code>T-OPS FailedRefund 재처리</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="13-3-종착점-상세">13.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>닫히는 상태</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-HOLD PG 환불 수동·휴면 대기</code></td>
+<td>큐가 꺼져 있어 자동 완료 안 됨</td>
+<td>운영자</td>
+<td>사용자에게 자동 완료처럼 안내하지 않는다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS PG 환불 완료</code></td>
+<td>PG 취소와 장부 완료</td>
+<td>없음</td>
+<td>결제수단 환불은 카드사 반영 시간이 따를 수 있다.</td>
+</tr>
+<tr>
+<td><code>T-OPS PG 환불 실패 처리</code></td>
+<td>PG 취소 실패</td>
+<td>운영자</td>
+<td>PG 오류, 중복 취소, 금액 불일치를 분리한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS FailedRefund RESOLVED</code></td>
+<td>보상 건 닫힘</td>
+<td>없음</td>
+<td>원결제 환불이 아니라 운영 보상일 수 있다.</td>
+</tr>
+<tr>
+<td><code>T-OPS FailedRefund 재처리</code></td>
+<td>보상 실패 또는 처리중 고착</td>
+<td>운영자</td>
+<td>중복 보상을 막는 교차 멱등 상태를 유지한다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="14-무료-포인트-포인트-만료-정산-보정-원천세-차지백">14. 무료 포인트, 포인트 만료, 정산 보정, 원천세, 차지백</h2>
+<h3 id="14-1-흐름도">14.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;운영·시스템성 포인트 또는 회계 이벤트&quot;] --&gt; B{&quot;이벤트 종류&quot;}
+
+  B -- &quot;무료 포인트 지급&quot; --&gt; C[&quot;무료 포인트 lot 생성&quot;]
+  C --&gt; D[&quot;사용자 free 잔액 증가&quot;]
+  D --&gt; T1[&quot;T-SUCCESS 무료 포인트 지급 완료&quot;]
+
+  B -- &quot;무료 포인트 회수&quot; --&gt; E{&quot;미사용 free 잔액 충분&quot;}
+  E -- &quot;아니오&quot; --&gt; T2[&quot;T-FAIL 무료 포인트 회수 실패&quot;]
+  E -- &quot;예&quot; --&gt; F[&quot;free 잔액 차감&quot;]
+  F --&gt; T3[&quot;T-SUCCESS 무료 포인트 회수 완료&quot;]
+
+  B -- &quot;포인트 만료&quot; --&gt; G[&quot;만료 대상 lot 산정&quot;]
+  G --&gt; H{&quot;잔여 만료분 존재&quot;}
+  H -- &quot;없음&quot; --&gt; T4[&quot;T-NO-MONEY 만료 대상 없음&quot;]
+  H -- &quot;있음&quot; --&gt; I[&quot;paid 또는 free 잔여분 만료 처리&quot;]
+  I --&gt; T5[&quot;T-SUCCESS 포인트 만료 완료&quot;]
+
+  B -- &quot;정산 보정&quot; --&gt; J{&quot;보정 방향&quot;}
+  J -- &quot;사용자 또는 수취자 지급&quot; --&gt; K[&quot;보정 credit&quot;]
+  K --&gt; T6[&quot;T-SUCCESS 정산 보정 지급 완료&quot;]
+  J -- &quot;사용자 또는 수취자 차감&quot; --&gt; L{&quot;paid 잔액 또는 회수 가능액 충분&quot;}
+  L -- &quot;아니오&quot; --&gt; T7[&quot;T-HOLD 정산 보정 회수 대기&quot;]
+  L -- &quot;예&quot; --&gt; M[&quot;보정 debit&quot;]
+  M --&gt; T8[&quot;T-SUCCESS 정산 보정 회수 완료&quot;]
+
+  B -- &quot;원천세 납부&quot; --&gt; N[&quot;정산 시 예수한 원천세 확인&quot;]
+  N --&gt; O[&quot;플랫폼 현금에서 세금 납부&quot;]
+  O --&gt; T9[&quot;T-SUCCESS 원천세 납부 완료&quot;]
+
+  B -- &quot;차지백&quot; --&gt; P[&quot;PG 또는 카드사 차지백 통지&quot;]
+  P --&gt; Q{&quot;사용자·거래 매칭 가능&quot;}
+  Q -- &quot;아니오&quot; --&gt; T10[&quot;T-OPS 차지백 매칭 필요&quot;]
+  Q -- &quot;예&quot; --&gt; R[&quot;차지백 손실 또는 회수 대상 기록&quot;]
+  R --&gt; S{&quot;회수 가능&quot;}
+  S -- &quot;예&quot; --&gt; T11[&quot;T-HOLD 차지백 회수 대기&quot;]
+  S -- &quot;아니오&quot; --&gt; T12[&quot;T-OPS 차지백 손실 확정&quot;]
+</div></div>
+<h3 id="14-2-케이스별-결과">14.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>사용자 영향</th>
+<th>플랫폼·운영 영향</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>무료 포인트 지급</td>
+<td>free 잔액 증가</td>
+<td>프로모션 비용 또는 운영 보상</td>
+<td><code>T-SUCCESS 무료 포인트 지급 완료</code></td>
+</tr>
+<tr>
+<td>무료 포인트 회수 성공</td>
+<td>free 잔액 감소</td>
+<td>잘못 지급된 무료분 회수</td>
+<td><code>T-SUCCESS 무료 포인트 회수 완료</code></td>
+</tr>
+<tr>
+<td>무료 포인트 회수 실패</td>
+<td>잔액 부족으로 회수 불가</td>
+<td>운영 판단 필요 가능</td>
+<td><code>T-FAIL 무료 포인트 회수 실패</code></td>
+</tr>
+<tr>
+<td>포인트 만료 대상 없음</td>
+<td>변화 없음</td>
+<td>만료 작업 종료</td>
+<td><code>T-NO-MONEY 만료 대상 없음</code></td>
+</tr>
+<tr>
+<td>포인트 만료 성공</td>
+<td>잔여 유효기간 지난 lot 차감</td>
+<td>만료 수익 또는 비용 처리</td>
+<td><code>T-SUCCESS 포인트 만료 완료</code></td>
+</tr>
+<tr>
+<td>정산 보정 지급</td>
+<td>사용자·수취자 잔액 증가</td>
+<td>보정 사유 기록 필요</td>
+<td><code>T-SUCCESS 정산 보정 지급 완료</code></td>
+</tr>
+<tr>
+<td>정산 보정 회수 성공</td>
+<td>paid 잔액 또는 회수 가능액 차감</td>
+<td>보정 완료</td>
+<td><code>T-SUCCESS 정산 보정 회수 완료</code></td>
+</tr>
+<tr>
+<td>정산 보정 회수 실패</td>
+<td>즉시 차감 불가</td>
+<td>회수채권 또는 운영 관리</td>
+<td><code>T-HOLD 정산 보정 회수 대기</code></td>
+</tr>
+<tr>
+<td>원천세 납부</td>
+<td>사용자 잔액 변화 없음</td>
+<td>예수금 납부 완료</td>
+<td><code>T-SUCCESS 원천세 납부 완료</code></td>
+</tr>
+<tr>
+<td>차지백 매칭 실패</td>
+<td>사용자에게 즉시 표시 어려움</td>
+<td>운영 매칭 필요</td>
+<td><code>T-OPS 차지백 매칭 필요</code></td>
+</tr>
+<tr>
+<td>차지백 회수 가능</td>
+<td>회수 또는 상계 예정</td>
+<td>회수 완료 전까지 미종결</td>
+<td><code>T-HOLD 차지백 회수 대기</code></td>
+</tr>
+<tr>
+<td>차지백 회수 불가</td>
+<td>사용자 잔액 변화 없음 또는 별도 조치</td>
+<td>플랫폼 손실 확정</td>
+<td><code>T-OPS 차지백 손실 확정</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="14-3-종착점-상세">14.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>돈의 위치</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 무료 포인트 지급 완료</code></td>
+<td>사용자 free 잔액 증가</td>
+<td>없음</td>
+<td>현금성 보상으로 표현하지 않는다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 포인트 만료 완료</code></td>
+<td>만료 대상 lot 제거</td>
+<td>없음</td>
+<td>만료 예정·완료 알림 정책과 연결한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 정산 보정 지급 완료</code></td>
+<td>보정 대상 지갑 증가</td>
+<td>없음</td>
+<td>보정 사유와 원거래 링크가 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 정산 보정 회수 대기</code></td>
+<td>회수해야 할 금액이 남음</td>
+<td>운영자 또는 시스템</td>
+<td>다음 정산 상계인지, 별도 회수인지 구분한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 원천세 납부 완료</code></td>
+<td>플랫폼이 보유하던 예수금 감소</td>
+<td>없음</td>
+<td>사용자 환급이나 지갑 환불이 아니다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 차지백 매칭 필요</code></td>
+<td>어떤 거래 손실인지 확정 전</td>
+<td>운영자</td>
+<td>PG 거래번호, 사용자, 원거래 매칭 화면이 필요하다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 차지백 손실 확정</code></td>
+<td>플랫폼 손실로 닫힘</td>
+<td>운영자</td>
+<td>손실 처리 사유와 회수 불가 판단을 남긴다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="15-마일리지">15. 마일리지</h2>
+<h3 id="15-1-흐름도">15.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;클럽 활동 또는 운영 이벤트&quot;] --&gt; B{&quot;마일리지 이벤트&quot;}
+  B -- &quot;적립&quot; --&gt; C[&quot;mileage ledger EARN&quot;]
+  C --&gt; D[&quot;클럽별 사용자 마일리지 증가&quot;]
+  D --&gt; T1[&quot;T-SUCCESS 마일리지 적립&quot;]
+
+  B -- &quot;사용&quot; --&gt; E{&quot;사용 가능 잔액 충분&quot;}
+  E -- &quot;아니오&quot; --&gt; T2[&quot;T-FAIL 마일리지 사용 실패&quot;]
+  E -- &quot;예&quot; --&gt; F[&quot;FEFO 방식으로 잔여 마일리지 차감&quot;]
+  F --&gt; T3[&quot;T-SUCCESS 마일리지 사용&quot;]
+
+  B -- &quot;회수&quot; --&gt; G{&quot;대상 적립 또는 사용 내역 유효&quot;}
+  G -- &quot;아니오&quot; --&gt; T4[&quot;T-FAIL 마일리지 회수 실패&quot;]
+  G -- &quot;예&quot; --&gt; H[&quot;mileage ledger REVERSE&quot;]
+  H --&gt; T5[&quot;T-SUCCESS 마일리지 회수&quot;]
+
+  B -- &quot;만료&quot; --&gt; I[&quot;만료 대상 산정&quot;]
+  I --&gt; J[&quot;mileage ledger EXPIRE&quot;]
+  J --&gt; T6[&quot;T-SUCCESS 마일리지 만료&quot;]
+
+  K[&quot;마일리지 대사&quot;] --&gt; L{&quot;요약 잔액과 ledger 일치&quot;}
+  L -- &quot;일치&quot; --&gt; T7[&quot;T-SUCCESS 마일리지 대사 정상&quot;]
+  L -- &quot;불일치&quot; --&gt; T8[&quot;T-OPS 마일리지 대사 확인&quot;]
+</div></div>
+<h3 id="15-2-케이스별-결과">15.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>지갑 포인트 영향</th>
+<th>마일리지 영향</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>적립</td>
+<td>없음</td>
+<td>클럽별 잔액 증가</td>
+<td><code>T-SUCCESS 마일리지 적립</code></td>
+</tr>
+<tr>
+<td>사용 성공</td>
+<td>없음</td>
+<td>잔액 차감</td>
+<td><code>T-SUCCESS 마일리지 사용</code></td>
+</tr>
+<tr>
+<td>사용 실패</td>
+<td>없음</td>
+<td>변화 없음</td>
+<td><code>T-FAIL 마일리지 사용 실패</code></td>
+</tr>
+<tr>
+<td>회수 성공</td>
+<td>없음</td>
+<td>적립 또는 사용을 반대로 처리</td>
+<td><code>T-SUCCESS 마일리지 회수</code></td>
+</tr>
+<tr>
+<td>만료</td>
+<td>없음</td>
+<td>만료분 차감</td>
+<td><code>T-SUCCESS 마일리지 만료</code></td>
+</tr>
+<tr>
+<td>대사 불일치</td>
+<td>없음</td>
+<td>운영 확인 필요</td>
+<td><code>T-OPS 마일리지 대사 확인</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="15-3-종착점-상세">15.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>닫히는 상태</th>
+<th>다음 액션 주체</th>
+<th>기획 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-SUCCESS 마일리지 적립</code></td>
+<td>mileage ledger 안에서만 증가</td>
+<td>없음</td>
+<td>유료·무료 포인트와 합산하지 않는다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 마일리지 사용</code></td>
+<td>마일리지 사용 완료</td>
+<td>없음</td>
+<td>현금성 환불 대상이 아니다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 마일리지 회수</code></td>
+<td>잘못된 적립·사용이 회수됨</td>
+<td>없음</td>
+<td>회수 사유를 활동 로그에 보여준다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 마일리지 대사 확인</code></td>
+<td>ledger와 summary 불일치</td>
+<td>운영자</td>
+<td>금전 대사와 분리된 마일리지 대사다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="16-운영자-internal-처리와-대사">16. 운영자 internal 처리와 대사</h2>
+<h3 id="16-1-흐름도">16.1 흐름도</h3>
+<div class="diagram"><div class="mermaid">
+flowchart TD
+  A[&quot;운영자가 돈 관련 조치 시도&quot;] --&gt; B{&quot;조치 방식&quot;}
+  B -- &quot;admin에서 지갑 직접 증감&quot; --&gt; T1[&quot;T-FAIL 직접 증감 차단&quot;]
+  B -- &quot;internal API 호출&quot; --&gt; C{&quot;internal token 유효&quot;}
+  C -- &quot;아니오&quot; --&gt; T2[&quot;T-FAIL internal 호출 거절&quot;]
+  C -- &quot;예&quot; --&gt; D{&quot;업무 유형&quot;}
+  D -- &quot;정산 완료&quot; --&gt; E[&quot;API 정산 서비스가 완료 처리&quot;]
+  D -- &quot;강제 환불&quot; --&gt; F[&quot;API 도메인 환불 서비스가 처리&quot;]
+  D -- &quot;출금 dead-letter 복구&quot; --&gt; G[&quot;outbox 재큐 또는 reserve 복원&quot;]
+  D -- &quot;클럽 인출 승인·거절&quot; --&gt; H[&quot;API 클럽 인출 서비스가 처리&quot;]
+  E --&gt; T3[&quot;T-SUCCESS 운영 처리 완료&quot;]
+  F --&gt; T3
+  G --&gt; T3
+  H --&gt; T3
+
+  I[&quot;정기 대사&quot;] --&gt; J{&quot;지갑·lot·거래·원장 일치&quot;}
+  J -- &quot;일치&quot; --&gt; T4[&quot;T-SUCCESS 대사 정상&quot;]
+  J -- &quot;불일치&quot; --&gt; K{&quot;자동 복구 가능&quot;}
+  K -- &quot;예&quot; --&gt; L[&quot;재시도 또는 보정 작업&quot;]
+  L --&gt; T5[&quot;T-HOLD 대사 복구 대기&quot;]
+  K -- &quot;아니오&quot; --&gt; T6[&quot;T-OPS 대사 수동 확인&quot;]
+</div></div>
+<h3 id="16-2-케이스별-결과">16.2 케이스별 결과</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>케이스</th>
+<th>결과</th>
+<th>종착점</th>
+</tr></thead><tbody>
+<tr>
+<td>admin 지갑 직접 증감</td>
+<td>차단</td>
+<td><code>T-FAIL 직접 증감 차단</code></td>
+</tr>
+<tr>
+<td>internal token 없음·오류</td>
+<td>API 호출 거절</td>
+<td><code>T-FAIL internal 호출 거절</code></td>
+</tr>
+<tr>
+<td>internal API 정상 호출</td>
+<td>API 도메인 서비스가 장부와 함께 처리</td>
+<td><code>T-SUCCESS 운영 처리 완료</code></td>
+</tr>
+<tr>
+<td>대사 정상</td>
+<td>조치 없음</td>
+<td><code>T-SUCCESS 대사 정상</code></td>
+</tr>
+<tr>
+<td>자동 복구 가능 불일치</td>
+<td>재시도·복구 대기</td>
+<td><code>T-HOLD 대사 복구 대기</code></td>
+</tr>
+<tr>
+<td>자동 복구 불가 불일치</td>
+<td>운영 확인 필요</td>
+<td><code>T-OPS 대사 수동 확인</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="16-3-종착점-상세">16.3 종착점 상세</h3>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착점</th>
+<th>의미</th>
+<th>다음 액션 주체</th>
+<th>기획·운영 주의</th>
+</tr></thead><tbody>
+<tr>
+<td><code>T-FAIL 직접 증감 차단</code></td>
+<td>admin이 임의로 사용자 돈을 바꾸지 못한다.</td>
+<td>운영자</td>
+<td>보상·보정은 허용된 internal 경로로만 처리한다.</td>
+</tr>
+<tr>
+<td><code>T-SUCCESS 운영 처리 완료</code></td>
+<td>운영 조치도 API의 도메인 규칙과 장부를 통과했다.</td>
+<td>없음</td>
+<td>감사 로그와 처리 사유가 필수다.</td>
+</tr>
+<tr>
+<td><code>T-HOLD 대사 복구 대기</code></td>
+<td>자동 복구 대상</td>
+<td>시스템</td>
+<td>알림은 필요하지만 즉시 수동 보정 대상은 아닐 수 있다.</td>
+</tr>
+<tr>
+<td><code>T-OPS 대사 수동 확인</code></td>
+<td>장부 불일치가 닫히지 않음</td>
+<td>운영자</td>
+<td>사용자 영향, 금액, 원인 거래를 우선순위로 본다.</td>
+</tr>
+</tbody></table></div>
+<h2 id="17-종착점-통합-사전">17. 종착점 통합 사전</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>종착 상태</th>
+<th>대표 도메인</th>
+<th>사용자에게 보이는 표현</th>
+<th>운영자에게 필요한 정보</th>
+</tr></thead><tbody>
+<tr>
+<td><code>COMPLETED</code></td>
+<td>지갑 거래, 모임 정산 송금</td>
+<td>완료</td>
+<td>거래 ID, 원결제, paid/free 구성</td>
+</tr>
+<tr>
+<td><code>PAID</code></td>
+<td>이벤트 결제, 정산, 출금, 정기모임 결제</td>
+<td>결제 완료 또는 지급 완료</td>
+<td>지급일, 수수료, 세금, 수취자</td>
+</tr>
+<tr>
+<td><code>PENDING</code></td>
+<td>충전, 계좌이체, 정산, 인출</td>
+<td>대기중</td>
+<td>누가 다음 액션을 해야 하는지</td>
+</tr>
+<tr>
+<td><code>APPROVED</code></td>
+<td>정산, 출금</td>
+<td>승인됨</td>
+<td>지급 실행 여부</td>
+</tr>
+<tr>
+<td><code>PAYING</code></td>
+<td>정산, 출금</td>
+<td>지급 처리중</td>
+<td>provider/outbox 상태</td>
+</tr>
+<tr>
+<td><code>FAILED</code></td>
+<td>충전, 정산, 출금, 보상</td>
+<td>실패</td>
+<td>재시도 가능 여부와 실패 사유</td>
+</tr>
+<tr>
+<td><code>REJECTED</code></td>
+<td>정산, 출금</td>
+<td>거절됨</td>
+<td>거절 사유</td>
+</tr>
+<tr>
+<td><code>CANCELED</code> 또는 <code>CANCELLED</code></td>
+<td>이벤트, 정기모임, 모임 정산</td>
+<td>취소됨</td>
+<td>원복 또는 환불 여부</td>
+</tr>
+<tr>
+<td><code>REFUND_REQUESTED</code></td>
+<td>이벤트·정기모임 계좌 환불</td>
+<td>환불 요청됨</td>
+<td>환불 완료 증빙, 처리자</td>
+</tr>
+<tr>
+<td><code>REFUNDED</code></td>
+<td>이벤트·정기모임·마켓·클럽 환불</td>
+<td>환불 완료</td>
+<td>원결제 대비 환불 금액</td>
+</tr>
+<tr>
+<td><code>REFUND_HELD</code></td>
+<td>마켓·플랜 earning</td>
+<td>환불 검토중</td>
+<td>환불 요청, 정산 보류 사유</td>
+</tr>
+<tr>
+<td><code>REVERSED</code></td>
+<td>정산 후 마켓 환불</td>
+<td>회수 예정</td>
+<td>회수채권 잔액, 다음 상계 대상</td>
+</tr>
+<tr>
+<td><code>BANK_AWAITING_CONFIRM</code></td>
+<td>모임 정산 계좌 송금</td>
+<td>입금 확인 대기</td>
+<td>수취자 확인 필요</td>
+</tr>
+<tr>
+<td><code>PENDING_MANUAL_REFUND</code></td>
+<td>모임 정산 취소 후 계좌 완료분</td>
+<td>수동 환불 대기</td>
+<td>은행 환불 증빙</td>
+</tr>
+<tr>
+<td><code>REVERSAL_FAILED</code></td>
+<td>모임 정산 역처리</td>
+<td>복구 필요</td>
+<td>재시도 횟수, 실패 금액</td>
+</tr>
+<tr>
+<td><code>DEAD_LETTER</code></td>
+<td>출금 outbox</td>
+<td>지급 실패, 운영 처리 필요</td>
+<td>재큐 또는 reserve 복원 판단</td>
+</tr>
+<tr>
+<td><code>PROCESSING</code></td>
+<td>FailedRefund admin 보상</td>
+<td>처리중</td>
+<td>중복 보상 방지 키</td>
+</tr>
+<tr>
+<td><code>RESOLVED</code></td>
+<td>FailedRefund</td>
+<td>보상 완료</td>
+<td>보상 방식, 금액, 처리자</td>
+</tr>
+<tr>
+<td><code>EXPIRED</code></td>
+<td>모임 송금, 마일리지</td>
+<td>만료</td>
+<td>자동 만료 기준</td>
+</tr>
+<tr>
+<td><code>DONE</code></td>
+<td>출금 outbox</td>
+<td>outbox 완료</td>
+<td>연결된 Withdrawal 상태</td>
+</tr>
+</tbody></table></div>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

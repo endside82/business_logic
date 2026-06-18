@@ -636,6 +636,97 @@ dl.def dt:last-of-type, dl.def dd:last-of-type { border-bottom: none; }
   margin: 0 0 36px;
 }
 
+/* Source-verified money-flow documentation */
+.money-flow-doc section {
+  max-width: 1080px;
+}
+.money-flow-doc .doc-body h2 {
+  margin-top: 52px;
+  padding-top: 4px;
+}
+.money-flow-doc .doc-body h2:first-child {
+  margin-top: 0;
+}
+.money-flow-doc .doc-body h3 {
+  margin-top: 30px;
+}
+.money-flow-doc .doc-body .table-wrap {
+  max-width: 1080px;
+}
+.doc-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  max-width: 1080px;
+  margin: 0 0 28px;
+}
+.doc-links.compact {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin-bottom: 24px;
+}
+.doc-links .card {
+  min-height: 130px;
+}
+.doc-links.compact .card {
+  min-height: 88px;
+}
+.local-toc {
+  max-width: 1080px;
+  margin: 0 0 34px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.local-toc strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 13px;
+}
+.local-toc div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.local-toc a {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  font-size: 12.5px;
+}
+.local-toc a:hover {
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+  border-color: transparent;
+}
+blockquote.doc-note {
+  margin: 0 0 24px;
+  padding: 14px 18px;
+  border-left: 3px solid var(--info);
+  background: var(--info-soft);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+blockquote.doc-note p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+a.inline-doc {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .92em;
+  padding: 1px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+}
+
 /* Status legend */
 .legend {
   display: inline-flex;
