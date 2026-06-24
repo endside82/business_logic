@@ -12,21 +12,21 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 20개 도메인</div>
-        <h1>20개 도메인의 책임</h1>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>정보구조 21개 도메인</div>
+        <h1>21개 도메인의 책임</h1>
         <p class="lede">
           제품을 “어디에 어떤 기능이 사는가”로 나눠 둔 지도다. 이 지도가 흔들리면
           기능 추가의 책임 소재가 흔들리기 때문에, 새 기능이 도착했을 때
           “어느 도메인에 둘 것인가”를 가장 먼저 묻는다.
           나중에 만들어져 별도 도메인이 된 기능들도 맥락상으로는 큰 줄기에 속한다 —
-          그래서 20개 도메인을 <strong>7개 줄기</strong>로 묶어 본다 (도메인 번호와 기능 ID는
+          그래서 21개 도메인을 <strong>7개 줄기</strong>로 묶어 본다 (도메인 번호와 기능 ID는
           다른 문서·이슈에서 그대로 참조하는 안정 식별자라 바꾸지 않는다).
         </p>
       </header>
 
       <section>
-        <h2>일곱 줄기로 묶은 20개 도메인</h2>
-        <p class="subtitle">20개를 일렬로 보면 외우기 어렵다. 사용자 스토리의 줄기로 묶어서 본다.
+        <h2>일곱 줄기로 묶은 21개 도메인</h2>
+        <p class="subtitle">21개를 일렬로 보면 외우기 어렵다. 사용자 스토리의 줄기로 묶어서 본다.
           마일리지·경고는 클럽 안에서 굴러가는 운영 기능이고, 정기모임·모임 정산은 모임(이벤트) 줄기의 확장이다.</p>
         <div class="diagram">
           <div class="mermaid">
@@ -44,6 +44,7 @@ flowchart TD
     D --> D1["03 이벤트"]
     D1 --> D2["17 정기모임<br/>(여러 회차 모임)"]
     D1 --> D3["07 모임 정산<br/>(모임 후 비용 분담)"]
+    D1 --> D4["21 제공자 배정·정산<br/>(호스트 기획 모임 서비스)"]
     E --> E1["04 클럽"]
     E1 --> E2["16 마일리지<br/>(클럽 보상 프로그램)"]
     E1 --> E3["15 경고·징계<br/>(클럽 운영 제재)"]
@@ -66,6 +67,7 @@ flowchart TD
           전부 클럽 단위로 굴러가고, 진입점도 클럽 상세 화면이다 (경고의 “플랫폼 전역 제재” 한 축만 횡단).
           <strong>17 정기모임은 “여러 회차로 진행되는 모임”</strong>으로, 클럽이 아니라 이벤트와 같은 참여·결제·정산 흐름을 공유한다.
           <strong>07 모임 정산</strong>도 모임 줄기지만 규모와 금전 민감도가 커서 독립 도메인으로 유지한다.
+          <strong>21 제공자 배정·정산</strong>은 호스트 기획 모임에 서비스 제공자를 배정하고 참가자 서비스비·정산을 처리하는 모임 줄기 위성이다.
           나중에 만들어졌다는 이유로 별도 대항목처럼 나열돼 있던 것을 줄기 소속으로 정리한 것이며(2026-06-05),
           도메인 번호·기능 ID는 그대로다.</p>
         </div>
@@ -95,6 +97,7 @@ flowchart TD
               <tr><td>03</td><td><strong>이벤트</strong></td><td>오프라인 모임의 발견·생성·신청·참석·체크인·리뷰 풀 사이클. (선입금·이동수단·인구통계 포함)</td><td style="text-align:right">20</td><td style="text-align:right">156</td><td><a href="../domains/03-event.html">열기</a></td></tr>
               <tr><td>17</td><td style="padding-left:22px">└ <strong>정기모임</strong></td><td>“여러 회차로 진행되는 모임”. 호스트가 코스형 또는 비정기 세션형으로 다회 모임을 운영. 회차 비례 환불.</td><td style="text-align:right">10</td><td style="text-align:right">95</td><td><a href="../domains/17-regular-meeting.html">열기</a></td></tr>
               <tr><td>07</td><td style="padding-left:22px">└ <strong>모임 정산</strong></td><td>모임 후 비용을 나누고 납부·확인·이의제기·환불 규정을 처리. 금전 민감도가 커서 독립 도메인으로 유지.</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td><a href="../domains/07-settlement.html">열기</a></td></tr>
+              <tr><td>21</td><td style="padding-left:22px">└ <strong>제공자 배정·정산</strong></td><td>호스트 기획 모임에 서비스 제공자를 배정하고 참가자 서비스비 분담 결제·제공자 정산·환불·계약금·정기 묶음 배정까지 처리.</td><td style="text-align:right">7</td><td style="text-align:right">38</td><td><a href="../domains/21-curated.html">열기</a></td></tr>
               <tr><td colspan="6" style="background:var(--brand-soft);font-weight:600">클럽 줄기</td></tr>
               <tr><td>04</td><td><strong>클럽</strong></td><td>장기 커뮤니티. 가입·운영·게시판·이벤트·기금까지 가장 무거운 영역. (인구통계·레퓨테이션 포함)</td><td style="text-align:right">18</td><td style="text-align:right">196</td><td><a href="../domains/04-club.html">열기</a></td></tr>
               <tr><td>16</td><td style="padding-left:22px">└ <strong>마일리지</strong></td><td>클럽 보상 프로그램. 활동 적립·차감·정정 원장, 등급·배지·랭킹·시즌, 호스트 제안과 운영진 검토 — 전부 클럽 단위.</td><td style="text-align:right">8</td><td style="text-align:right">—</td><td><a href="../domains/16-mileage.html">열기</a></td></tr>
@@ -156,6 +159,8 @@ flowchart LR
     I --> S
     D --> T["20 고객지원"]
     H --> T
+    D --> U["21 제공자 배정·정산"]
+    U --> G
           </div>
         </div>
       </section>

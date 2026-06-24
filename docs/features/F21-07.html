@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F21-07 정기모임 묶음 배정·정산 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb">
+          <a href="../index.html">문서 허브</a><span>›</span>
+          <a href="../domains/21-curated.html">21 서비스 제공자 배정·정산</a><span>›</span>
+          F21-07 정기모임 묶음 배정·정산
+        </div>
+        <h1>F21-07. 정기모임 묶음 배정 · 정산</h1>
+        <p class="lede">
+          여러 회차로 구성된 정기모임에 같은 제공자를 한 번의 동작으로 배정하고,
+          모든 회차를 한 번에 정산할 수 있다.
+          회차별로 정산 결과가 따로 표시되며, 막힌 회차가 있으면 호스트가 직접 조치한 뒤
+          다시 시도해야 한다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">배정 방식</div><div class="value">정기모임 단위 일괄</div><div class="hint">한 번 설정으로 소속 회차 전체에 동시 반영</div></div>
+          <div class="metric"><div class="label">정산 결과 단위</div><div class="value">회차별 개별 표시</div><div class="hint">6가지 결과 중 하나로 각 회차 상태 표시</div></div>
+          <div class="metric"><div class="label">막힌 회차 처리</div><div class="value">호스트 조치 필요</div><div class="hint">막힌 회차는 원인 해소 후 재시도</div></div>
+          <div class="metric"><div class="label">이미 정산된 회차</div><div class="value">건너뜀</div><div class="hint">중복 정산 없이 미완료 회차만 처리</div></div>
+        </div>
+
+        <div class="callout">
+          <span class="label">설계 의도 — 반복되는 모임에서 매번 배정·정산을 반복하지 않도록</span>
+          <p>같은 강사가 매주 오는 정기모임에서 회차마다 배정을 새로 만들고 정산을 따로 실행하면
+            호스트의 반복 작업이 누적된다.
+            묶음 배정은 한 번의 동작으로 전체 회차에 제공자를 배정하고,
+            묶음 정산은 준비된 회차를 한 번에 처리한다.
+            각 회차의 결과는 개별로 추적되어 어느 회차가 정산됐고 어느 회차에 문제가 있는지 바로 알 수 있다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>회차별 정산 결과 6가지</h2>
+        <p class="subtitle">묶음 정산을 실행하면 각 회차에 다음 중 하나의 결과가 붙는다.</p>
+
+        <div class="cards">
+          <div class="card">
+            <div class="eyebrow">정산됨</div>
+            <h3>이번 정산에서 정상 완료된 회차</h3>
+            <p>해당 회차의 분담금 합계가 약정 조건을 충족하고,
+              제공자에게 지급이 성공적으로 완료됐다.
+              이후 이 회차는 재처리 대상에서 제외된다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">이미 정산</div>
+            <h3>이전에 이미 완료된 회차</h3>
+            <p>지난번 묶음 정산 또는 개별 정산에서 이미 처리된 회차다.
+              이번 실행에서 건너뛰어 중복 지급이 발생하지 않는다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">대상 없음</div>
+            <h3>이 회차에 배정된 제공자가 없다</h3>
+            <p>해당 회차에는 서비스 배정 자체가 없는 경우다.
+              정산 대상이 아니므로 자동으로 건너뛴다.
+              호스트가 의도적으로 이 회차에 제공자를 배정하지 않은 것이다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">준비 안 됨</div>
+            <h3>분담금 수금이 완전하지 않아 아직 정산할 수 없다</h3>
+            <p>회차가 끝났지만 일부 참가자의 분담금이 미납됐거나
+              과수금 상태여서 정산 조건을 충족하지 못했다.
+              호스트가 미수금을 해소하거나 과수금을 조정한 뒤 다음 묶음 정산에서 처리된다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">막힘</div>
+            <h3>호스트 조치가 필요한 문제가 있다</h3>
+            <p>기술적·운영적 이유로 이 회차 정산을 자동으로 진행할 수 없는 상태다.
+              호스트가 화면에서 원인을 확인하고 직접 조치한 뒤 재시도해야 한다.
+              다른 회차의 정산은 이 회차 때문에 멈추지 않는다.</p>
+          </div>
+          <div class="card">
+            <div class="eyebrow">실패</div>
+            <h3>시도했지만 오류로 처리되지 못했다</h3>
+            <p>정산 시도 중 예상치 못한 오류가 발생하여 지급이 이루어지지 않았다.
+              실패 회차는 별도 재시도 또는 개별 정산으로 처리해야 한다.
+              다른 회차의 결과는 이 실패에 영향받지 않는다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>묶음 배정 및 정산 흐름</h2>
+        <p class="subtitle">한 번의 동작으로 여러 회차가 어떻게 처리되는지.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart TD
+    A["호스트가 정기모임 단위로<br/>제공자 묶음 배정 생성"] --> B["소속 모든 회차에 동시 배정 반영"]
+    B --> C["각 회차별 참가자 분담금 수금 진행"]
+    C --> D["호스트가 묶음 정산 실행"]
+    D --> E["회차별 결과 개별 판정"]
+
+    E --> R1["정산됨 — 지급 완료"]
+    E --> R2["이미 정산 — 건너뜀"]
+    E --> R3["대상 없음 — 건너뜀"]
+    E --> R4["준비 안 됨 — 다음 기회로"]
+    E --> R5["막힘 — 호스트 조치 필요"]
+    E --> R6["실패 — 재시도 필요"]
+
+    R5 --> F["호스트가 원인 확인 후 조치"]
+    F --> G["해당 회차만 재정산"]
+    R6 --> G
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>사용자 시나리오</h2>
+
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">기본 흐름 — 묶음 배정 후 일괄 정산</div>
+            <h3>4주 연속 정기모임에 같은 강사를 배정하고 한 번에 정산한다</h3>
+            <p>호스트가 4주 정기모임의 제공자로 강사를 설정한다.
+              한 번의 동작으로 4개 회차 모두에 배정이 생성된다.
+              4주차가 모두 끝난 뒤 묶음 정산을 실행하면 회차별 결과가 나란히 표시된다.
+              1~3주차는 "정산됨", 4주차는 참가자 한 명이 미납 상태라 "준비 안 됨"으로 표시된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 4번 반복할 배정과 정산이 하나의 동작으로 줄어든다.
+              미완료 회차가 어디인지 한눈에 파악할 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">막힘 회차 처리</div>
+            <h3>3개 회차 중 하나가 막혀 있다</h3>
+            <p>묶음 정산을 실행했더니 2회차가 "막힘"으로 표시된다.
+              호스트가 2회차 상세를 열어 원인을 확인한다.
+              원인을 해소한 뒤 해당 회차만 개별 재정산을 실행한다.
+              1회차와 3회차는 이미 "정산됨" 상태이므로 영향을 받지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 한 회차의 문제가 전체를 막지 않는다.
+              정상 처리된 회차는 확정된 채로 유지되고, 막힌 회차만 별도로 해결한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">재실행 — 이미 정산된 회차 건너뜀</div>
+            <h3>묶음 정산을 두 번 실행했다</h3>
+            <p>호스트가 실수로 묶음 정산 버튼을 한 번 더 눌렀다.
+              이미 "정산됨" 처리된 1~3회차는 "이미 정산" 결과로 건너뛴다.
+              아직 처리되지 않은 4회차만 새로 시도된다.
+              중복 지급이 발생하지 않는다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 운영 과정의 실수로 같은 정산이 두 번 처리되는 사고를 막는다.
+              정산된 회차는 안전하게 잠기고 재처리에서 자동으로 제외된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">배정 없는 회차 포함</div>
+            <h3>5회차 중 3회차는 제공자가 없다</h3>
+            <p>5회차 정기모임 중 3회차는 호스트가 직접 진행하여 제공자를 배정하지 않았다.
+              묶음 정산 시 1, 2, 4, 5회차는 정상 처리되고,
+              3회차는 "대상 없음"으로 자동 건너뛴다.
+              특별한 조치 없이도 전체 묶음 정산이 완료된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 배정이 없는 회차가 섞여 있어도 묶음 정산이 중단되지 않는다.
+              호스트는 매 회차 배정 여부를 신경 쓰지 않고 일괄 처리를 누를 수 있다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">준비 안 됨 — 다음 묶음 정산에서 처리</div>
+            <h3>이번 달 4개 회차 중 1개가 미납 상태다</h3>
+            <p>묶음 정산 결과 4회차가 "준비 안 됨"으로 나왔다.
+              호스트가 미납 참가자에게 연락하여 분담금을 수령한다.
+              다음 달 묶음 정산을 실행하면 이번 달 미완료 회차가 포함되어 다시 시도된다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 준비 안 된 회차는 다음 기회에 자동으로 재포함된다.
+              호스트가 별도로 추적하거나 개별 정산을 만들 필요가 없다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>회차별 결과와 호스트 대응</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:120px">결과</th><th>의미</th><th style="width:38%">호스트가 해야 할 일</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>정산됨</strong></td>
+                <td>이번 실행에서 정상 완료</td>
+                <td>없음 — 완료 상태로 잠김</td>
+              </tr>
+              <tr>
+                <td><strong>이미 정산</strong></td>
+                <td>이전에 이미 처리됨</td>
+                <td>없음 — 자동 건너뜀</td>
+              </tr>
+              <tr>
+                <td><strong>대상 없음</strong></td>
+                <td>이 회차에 배정된 제공자 없음</td>
+                <td>없음 — 의도적 미배정이면 그대로 둠</td>
+              </tr>
+              <tr>
+                <td><strong>준비 안 됨</strong></td>
+                <td>분담금 미납 또는 과수금으로 조건 미충족</td>
+                <td>미납분 수금 또는 과수금 조정 후 다음 묶음 정산 실행</td>
+              </tr>
+              <tr>
+                <td><strong>막힘</strong></td>
+                <td>운영 또는 기술 문제로 처리 불가</td>
+                <td>화면에서 원인 확인 후 조치 → 해당 회차 재시도</td>
+              </tr>
+              <tr>
+                <td><strong>실패</strong></td>
+                <td>시도 중 오류 발생</td>
+                <td>해당 회차 개별 재시도 또는 운영팀 문의</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>운영자가 알아야 할 것</h2>
+        <div class="callout warn">
+          <span class="label">한 회차의 문제가 전체를 막지 않는다 — 회차별 결과를 각각 확인해야 한다</span>
+          <ul>
+            <li><strong>묶음 정산을 실행했다고 모든 회차가 처리된 것이 아니다.</strong>
+              회차별 결과를 반드시 확인해야 한다. "정산됨"이 아닌 결과가 있으면 각 결과에 맞는 조치가 필요하다.</li>
+            <li><strong>"막힘"과 "실패"는 다르다.</strong>
+              막힘은 운영 또는 배정 상태 문제로 시스템이 진행을 멈춘 것이고,
+              실패는 진행하다가 오류가 난 것이다.
+              막힘은 호스트가 원인을 해소하면 재시도 가능하고,
+              실패는 오류 내역을 확인하여 재시도하거나 운영팀에 문의해야 한다.</li>
+            <li><strong>이미 정산된 회차는 중복 처리되지 않는다.</strong>
+              묶음 정산을 여러 번 실행해도 "이미 정산" 회차는 건너뛴다.
+              호스트가 실수로 다시 눌러도 중복 지급 사고가 발생하지 않는다.</li>
+            <li><strong>묶음 배정을 취소하면 소속 전 회차의 배정이 함께 취소된다.</strong>
+              일부 회차만 선택하여 취소하는 것은 별도 개별 취소로 처리한다.
+              묶음 단위 취소는 아직 정산되지 않은 회차에만 적용된다 — 이미 정산된 회차는 영향을 받지 않는다.</li>
+            <li><strong>회차 단위 개별 정산과 묶음 정산은 함께 사용할 수 있다.</strong>
+              급한 회차를 먼저 개별 정산으로 처리한 뒤, 나머지를 묶음으로 정산해도 된다.
+              이미 처리된 회차는 묶음 정산 시 자동으로 건너뛴다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>이어지는 단위</h2>
+        <div class="hub-grid">
+          <a class="card" href="../domains/21-curated.html"><div class="eyebrow">상위 도메인</div><h3>21 서비스 제공자 배정·정산</h3></a>
+          <a class="card" href="F21-01.html"><div class="eyebrow">선행 단위</div><h3>F21-01 제공자 배정</h3><p>정기모임 단위 묶음 배정 생성의 출발점.</p></a>
+          <a class="card" href="F21-03.html"><div class="eyebrow">관련 단위</div><h3>F21-03 제공자 정산</h3><p>회차별 개별 정산 흐름 — 막힘·실패 재시도 경로.</p></a>
+          <a class="card" href="F21-05.html"><div class="eyebrow">관련 단위</div><h3>F21-05 환불·회수</h3><p>묶음 정산 완료 후 회차별 환불·회수 맥락.</p></a>
+          <a class="card" href="F21-06.html"><div class="eyebrow">관련 단위</div><h3>F21-06 계약금 선납</h3><p>묶음 배정에 계약금을 결합하는 경우.</p></a>
+        </div>
+      </section>
+
+<!--
+  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
+  - community_api/src/main/java/com/endside/community/curated/ (CuratedSettlementBatchService, BulkSettleStatus)
+  - dossier: .delta_2026-06-24_curated/00_dossier.md §F21-07
+-->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

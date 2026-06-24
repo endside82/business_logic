@@ -1,4 +1,4 @@
-# 168개 기능 정의
+# 175개 기능 정의
 
 <!-- supporting-doc-status: 2026-05-18 -->
 
@@ -16,6 +16,7 @@
 이 문서는 전체 기능을 한 번에 검토하기 위한 인벤토리다. 개별 상세는 `02_feature_prds`의 기능별 PRD에서 확인한다.
 
 > 갱신: 2026-06-05. 도메인 18(분쟁 해결)/19(관심인)/20(고객지원) 신설 +9개, 기존 도메인 신규 기능 +6개 추가. 총 153 → 168개.
+> 갱신: 2026-06-24. 도메인 21(제공자 배정·정산) 신설 +7개(F21-01~07). 총 168 → 175개.
 
 | ID | 도메인 | 기능 | 주 사용자 | 핵심 검산 포인트 | 시나리오 | 도식 |
 |---|---|---|---|---|---:|---:|
@@ -187,3 +188,10 @@
 | F20-01 | 고객지원 | 1:1 문의 | 로그인 사용자 | POST /api/v1/inquiries(문의 생성, InquiryCategory 6종: ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC, sourceType 4종: NONE/EVENT/CLUB/SETTLEMENT), GET /api/v1/inquiries/my(내 문의 목록), GET /api/v1/inquiries/{inquiryId}(상세), POST /api/v1/inquiries/{inquiryId}/messages(추가 메시지), 운영팀 답변 시 SUPPORT_ISSUE_UPDATED(66) 알림 | — | — |
 | F20-02 | 고객지원 | 운영 이슈 접수 | 로그인 사용자 | POST /api/v1/operational-issues(이슈 접수), GET /api/v1/operational-issues/my(내 이슈 목록), GET /api/v1/operational-issues/my/by-source(소스별 조회), GET /api/v1/operational-issues/{issueId}(상세), POST /api/v1/operational-issues/{issueId}/messages(추가 메시지), HostInboxSourceType.OPERATIONAL_ISSUE로 호스트 인박스 연동, DisputeSlaExceededScheduler SLA 7일 초과 시 운영알림 승급 | — | — |
 | F20-03 | 고객지원 | 지원 FAQ | 로그인/게스트 사용자 | SupportFaqController 기반 자주 묻는 질문 목록·상세 조회, 카테고리별 분류, 고객 자가해결 지원 | — | — |
+| F21-01 | 제공자 배정·정산 | 제공자 배정 | 호스트/운영자 | 호스트 기획 모임에 서비스 제공자 배정·배정 변경·해제, 배정 이력 조회 | 3 | 1 |
+| F21-02 | 제공자 배정·정산 | 참가자 서비스비 분담 결제 | 참가자/호스트 | 참가자별 서비스비 분담 청구·결제(WALLET/BANK_TRANSFER), 미납 알림, 납부 확인 | 3 | 1 |
+| F21-03 | 제공자 배정·정산 | 제공자 정산 | 호스트/제공자 | 제공자 수익 정산 생성·지급·실패 복구, flow-through 정산(유료/무료 분리), 세금 처리 | 4 | 1 |
+| F21-04 | 제공자 배정·정산 | 무료 초대·호스트 대납 | 호스트 | 특정 참가자 서비스비 면제(무료 초대), 호스트가 참가자 몫 대신 납부(호스트 대납) | 6 | 1 |
+| F21-05 | 제공자 배정·정산 | 환불·회수 | 참가자/호스트/제공자 | 참가자 서비스비 환불(부분/전액), 정산 후 clawback(제공자 receivable 회수), 이중 환불 차단, 멱등 처리 | 8 | 2 |
+| F21-06 | 제공자 배정·정산 | 계약금 선납 | 호스트/제공자 | 모임 확정 전 제공자에게 계약금 선납·완납 처리, 취소 시 환불 규칙, 선납 상태 추적 | 7 | 1 |
+| F21-07 | 제공자 배정·정산 | 정기모임 묶음 배정·정산 | 호스트/제공자 | 정기모임(도메인 17)과 연계해 회차 묶음 배정, 회차별 출석 기반 정산, pro-rata 환불 | 7 | 0 |

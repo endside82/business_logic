@@ -215,6 +215,15 @@
       ['F20-02', '운영 이슈 접수'],
       ['F20-03', '지원 FAQ'],
     ],
+    '21-curated': [
+      ['F21-01', '제공자 배정'],
+      ['F21-02', '참가자 서비스비 분담 결제'],
+      ['F21-03', '제공자 정산'],
+      ['F21-04', '무료초대·호스트 대납'],
+      ['F21-05', '환불·회수'],
+      ['F21-06', '계약금 선납'],
+      ['F21-07', '정기모임 묶음 배정·정산'],
+    ],
   };
 
   const NAV = [
@@ -229,13 +238,13 @@
       links: [
         { href: 'overview/service.html', label: '서비스 정의' },
         { href: 'overview/personas.html', label: '사용자 유형' },
-        { href: 'overview/architecture.html', label: '정보구조 20개 도메인' },
+        { href: 'overview/architecture.html', label: '정보구조 21개 도메인' },
         { href: 'overview/journeys.html', label: '7대 사용자 여정' },
         { href: 'overview/operating-model.html', label: 'PRD 운영 모델' },
         { href: 'overview/changelog.html', label: '변경 기록' },
       ],
     },
-    // 20개 도메인을 7개 줄기(스토리 그룹)로 묶는다. 도메인 번호·기능 ID는 안정
+    // 21개 도메인을 7개 줄기(스토리 그룹)로 묶는다. 도메인 번호·기능 ID는 안정
     // 식별자라 그대로 두고, 내비게이션 맥락만 줄기 중심으로 재편한 것 (2026-06-05).
     // sat: true = 큰 줄기에 속한 위성 도메인 (들여쓰기로 표시).
     {
@@ -254,6 +263,7 @@
         { href: 'domains/03-event.html',            num: '03', label: '이벤트',           slug: '03-event' },
         { href: 'domains/17-regular-meeting.html',  num: '17', label: '정기모임',         slug: '17-regular-meeting', sat: true },
         { href: 'domains/07-settlement.html',       num: '07', label: '모임 정산',       slug: '07-settlement', sat: true },
+        { href: 'domains/21-curated.html',          num: '21', label: '제공자 배정·정산', slug: '21-curated', sat: true },
       ],
     },
     {
@@ -311,7 +321,7 @@
     {
       heading: '기능 인벤토리',
       links: [
-        { href: 'features/catalog.html', label: '168개 기능 카탈로그' },
+        { href: 'features/catalog.html', label: '175개 기능 카탈로그' },
         { href: 'features/impact.html', label: '부수효과 매트릭스' },
         { href: 'reference/numbers.html', label: '비즈니스 수치 레퍼런스' },
       ],
