@@ -228,6 +228,16 @@
 
 ---
 
+## 4-C. 접근권한 감사 교정 (2026-07-02)
+
+> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F08_plan_market.md`
+
+- **D-F08-1 — 유료 플랜 전체 본문 = 작성자·구매자만**: `GET /api/v1/plans/{planId}/blocks`(블록 트리)는 유료 플랜(price 또는 freePointPrice > 0)이 PUBLISHED 상태일 때 **작성자 또는 구매자**만 전체 본문 열람 가능. 비구매자에게는 `getPreview`(샘플 3개)만 제공(기존 페이월 동작 유지). 무료 플랜은 공개 유지. 이전에는 PUBLISHED이면 로그인 사용자 전원이 전체 블록에 접근 가능했음(페이월 우회 S2 수정 완료).
+- **D-F08-2 — 번들 자기구매 차단**: `POST /api/v1/market/bundles/{bundleId}/purchase` 번들 구매 시, 번들에 포함된 아이템의 원작자인 경우 구매가 차단됨(`MARKET_CANNOT_PURCHASE_OWN`). 단일 아이템·플랜의 자기구매 차단과 동일한 정책. 혼합 번들도 원작자 포함 시 차단.
+- **D-F08-3 — 비공개 플랜 메타 접근 제한**: `GET /api/v1/plans/{planId}` 비공개(DRAFT/HIDDEN) 플랜 메타데이터는 **작성자만** 열람 가능(비작성자 → FORBIDDEN). DELETED 플랜은 PLAN_NOT_FOUND. 이전에는 상태 무관 전체 메타(제목·설명·체크리스트·타임라인·주소·가격)가 누구에게나 반환됐음.
+- **마켓 심사 관리자 전용(F08-07 심층방어)**: 심사 승인·반려·비공개 엔드포인트(`/api/v1/admin/market/**`)는 SecurityConfiguration에서 **ADMIN 역할**만 허용. 운영 심사 UI는 community_admin_api 이관 중. 이전에는 feature-flag(기본 off)만으로 보호됐고 역할 게이트 없었음.
+- **판매자 구매 버튼 숨김(F08-01 UX 교정)**: 마켓 아이템 상세에서 판매자 본인에게 "구매하기" 버튼가 숨겨짐. 서버는 이미 `MARKET_CANNOT_PURCHASE_OWN`으로 자기구매를 거부하므로 자금이동 누수는 없었음. 순수 UX 개선.
+
 ## 5. 상태/권한/의존성
 
 ### 외부 단위 의존

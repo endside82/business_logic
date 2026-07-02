@@ -110,6 +110,15 @@ legal hold(OPEN/IN_REVIEW/ESCALATED) 케이스에 연관된 사용자의 계정 
 | Flutter | 7 화면 + providers + 37 라우트 + 모델 전체 | 완료 | — UI 영역 |
 | RS-002 P3 | DATE_BLOCK·TRANSPORT·CLUB_MEMBERSHIP_ACTION 확장 | 완료 | ✅ sign-off |
 
+## 7-A. 접근권한 감사 교정 (2026-07-02)
+
+> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F15_F18_F11_moderation.md` (F18 분쟁 파트)
+
+- **경고 신고·이의 분쟁 상세 — 당사자/권한자 전용(G-DISP-2, S3 수정 완료)**: `WARNING_REPORT`·`WARNING_APPEAL` 케이스 상세는 **경고 검토권한자(WARNING_REVIEWER 플래그 보유 또는 OWNER) 또는 당사자(신고자/피신고자/이의제기자)**만 열람 가능. 이전에는 `DisputeSourceResolver`에서 `actorCanView`에 `isMember`만 주입되어 같은 클럽 멤버 누구나 신고 내용·대상 신원을 열람 가능했음(수평 누수 S3). 교정: 서버 게이트를 정확한 WARNING_REVIEWER‖OWNER 술어 + 당사자 조합으로 조임.
+- **강제환불 서비스단 심층방어(G-DISP-1)**: `RefundDisputeService.forceRefund/upholdRejection/requestMoreEvidence`에 서비스단 ADMIN 단언이 추가됨. URL 매처(SecurityConfiguration)와 이중 방어. 라이브 누수는 없었으나 방어 심도 강화.
+- **강제환불 조회/실행 — ADMIN 전용**: 환불 분쟁의 강제환불·판정·증빙요청은 **전역 ADMIN**만 수행 가능(06_결제_and_지갑 §8-A 참조).
+- **ActorPermissionFlags 패턴 — 인가 골든 스탠다드 재확인**: 서버 `DisputeSourceResolver`가 한 곳에서 능력플래그를 계산하고 클라이언트가 로컬 재계산 없이 소비하는 방식이 이 도메인의 인가 패턴 북극성임. 이 패턴 덕분에 클라이언트 flag 위조로 권한상승이 불가하며, 다른 도메인(F15, F08, F21 등)으로 확산이 권장됨.
+
 ## 8. 잔여 후속
 
 | 항목 | 차단 사유 |

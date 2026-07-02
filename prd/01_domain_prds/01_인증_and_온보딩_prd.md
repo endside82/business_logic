@@ -198,3 +198,23 @@
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+## 9. 접근권한 감사 교정 (2026-07-02)
+
+접근권한 전수 감사(Wave 4 — F01 인증·온보딩)에서 확인된 동작 변경 사항을 반영한다.
+
+### 소셜 로그인 토큰 앱 귀속 검증 (F01-F1 하드닝)
+
+소셜 로그인 시 외부 OAuth 토큰이 **우리 앱 발급분인지** 검증하는 단계가 카카오·애플에 누락되어 있었다. 구글은 `setAudience`가 이미 정상 적용됨. 카카오·네이버 user id는 앱별(app-specific) 식별자라 타 앱 토큰을 사용해도 다른 id로 해석되므로 계정 탈취는 아니지만 OAuth 표준(audience 검증)·심층방어 요건을 충족하지 못하는 상태였다.
+
+**수정**: 카카오 — `/v1/user/access_token_info` 응답의 `app_id`를 서버 설정값(`KAKAO_APP_ID`)과 비교 검증. 애플 — `setExpectedAudience`로 우리 앱 bundle ID 검증. **단계적 롤아웃**: 운영 환경에서 `KAKAO_APP_ID` / `APPLE_CLIENT_ID` 설정이 되어 있을 때 강제 검증, 미설정 시 경고 로그 + 스킵(운영 활성화가 필요한 외부 설정 사항).
+
+### 인증 필수 엔드포인트 분류 교정 (F01-F2)
+
+`POST /auth/logout`, `DELETE /auth/social/{providerType}`(소셜 연결 해제), `POST /users/me/email/verify/send`(인증 메일 발송)가 `SecurityConfiguration`의 `permitAll /auth/**` 매처 아래 포함되어 있었다. 각 엔드포인트는 내부적으로 principal을 검증하나 익명 호출 시 401 대신 500이 반환되는 일관성 문제가 있었다. **수정**: 위 세 엔드포인트를 `.authenticated()` 매처 범위로 이동하여 미인증 요청에 401 응답.
+
+### 기타 보안 현황 (확인)
+
+- 토큰 회전·재사용·IDOR 방어 견고: 기존 구현 정상 확인
+- 계정 삭제는 본인 전용(self-only): 기존 서버 강제 확인
+- 비밀번호 재설정 기존 세션 잔존(F01-F4): 완화 수준 수용, 백로그 처리

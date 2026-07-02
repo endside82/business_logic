@@ -104,3 +104,5 @@ Bottom Sheet에서 카테고리(다중 칩), 날짜 범위, 거리(0~50km), 가�
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+<!-- 접근권한 감사 검증 (2026-07-02): 검색 결과는 비공개·초안·숨김 콘텐츠 미노출 확인. 저장검색·검색기록 self-scoped 확인. 차단한 사람의 공개 콘텐츠는 발견에 노출(D-W4-1 결정 = 현행 유지) — 이슈 없음. -->

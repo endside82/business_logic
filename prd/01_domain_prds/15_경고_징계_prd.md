@@ -95,8 +95,8 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 - **프론트**: `admin/warning_appeal_inbox_screen.dart`
 
 #### F15-08. 제재 집행
-> WARNING_REVIEWER(FORCED_REMOVE는 OWNER 단독)가 공지·이벤트 신청 제한·역할 제한·강제 탈퇴·수동 잠금/해제를 집행하고 제재를 철회한다.
-- **사용자**: `WARNING_REVIEWER`, OWNER(FORCED_REMOVE)
+> SANCTION_PROPOSER(비-FORCED 제재)·OWNER(FORCED_REMOVE)가 공지·이벤트 신청 제한·역할 제한·강제 탈퇴·수동 잠금/해제를 집행하고 제재를 철회한다. WARNING_REVIEWER 권한만으로는 제재를 집행할 수 없다(직무 분리).
+- **사용자**: `SANCTION_PROPOSER`(비-FORCED 제재 부과·해제), OWNER(FORCED_REMOVE 전용)
 - **API**: `POST /sanctions/notice|event-apply-restrict|role-restrict|forced-remove(Idempotency-Key)`, `POST /sanctions/{sanctionId}/revoke`, `POST /members/{memberId}/manual-lock|manual-unlock`
 - **프론트**: `admin/warning_sanction_screen.dart`, `widgets/warning_forced_remove_dialog.dart`, `warning_sanction_action_row.dart`
 
@@ -113,7 +113,8 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 - **멤버 (본인)**: `requireClubMember(clubId, userId)` — 본인 경고/원장 조회, 제보 제출/철회, 이의 제출/철회.
 - **이벤트 호스트**: `isEventHost(eventId, userId)` — 출결 연계 제보만. `attendance_linkable=true` 패널티 유형으로 제한.
 - **POLICY_OWNER**: `@RequiresClubPermission(POLICY_OWNER)` — 정책/패널티 유형 설정 (`WarningAdminPolicyController`). OWNER 자동 통과.
-- **WARNING_REVIEWER**: `@RequiresClubPermission(WARNING_REVIEWER)` — 제보 심사/원장 조정/이의 처리/제재/큐 (`WarningAdminActionController`, `WarningAdminQueueController`). OWNER 자동 통과.
+- **WARNING_REVIEWER**: `@RequiresClubPermission(WARNING_REVIEWER)` — 제보 심사/원장 조정/이의 처리/큐 (`WarningAdminActionController`, `WarningAdminQueueController`). OWNER 자동 통과. 단, 제재 부과·해제 엔드포인트는 메서드 레벨에서 SANCTION_PROPOSER로 게이트가 대체되므로 WARNING_REVIEWER만으로는 제재를 집행할 수 없다(스택이 아니라 독립 게이트).
+- **SANCTION_PROPOSER** (`‖OWNER`): 비-`FORCED_REMOVE` 제재 부과(`apply`)·해제(`revoke`) 전용. 신고 심사 권한(WARNING_REVIEWER)과 제재 집행 권한(SANCTION_PROPOSER)은 직무가 분리된다. 한 운영자가 둘 다 담당하려면 두 권한을 동시 보유해야 한다.
 - **OWNER 단독**: `FORCED_REMOVE` 적용·철회는 `WarningSanctionService`가 actorRole==OWNER를 다시 검증 (`WARNING_SANCTION_OWNER_ONLY`).
 - **SYSTEM**: 출결 자동 GRANT, 자동 종료/만료 (actor_id=0, actorRole=SYSTEM).
 
@@ -164,6 +165,16 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 | [F15-03](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 3 | reason blank가 APPEAL_NOT_FOUND로 매핑 (오해 소지) |
 | [F15-05](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 3 | claim/approve 2회 호출 사이 동시성, reason blank가 REPORT_NOT_FOUND로 매핑 |
 | [F15-07](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 3 | allow-resubmit가 DB 컬럼만 기록, 재제기 강제 가드 없음 |
+
+### 접근권한 감사 교정 (2026-07-02)
+
+접근권한 감사(2026-06-30~07-01)에서 확정·교정된 사항이다. 서버 코드에만 적용됐다.
+
+**제재 직무 분리 (D-F15-2).** 신고 심사 권한(WARNING_REVIEWER)과 제재 집행 권한(SANCTION_PROPOSER)이 서버에서 실제로 분리됐다. 이전에 SANCTION_PROPOSER 플래그는 코드에만 정의되어 있고 강제되지 않았으나, 현재 비-FORCED 제재 부과·해제에 이 플래그가 실제 게이트로 연결된다. FORCED_REMOVE 및 그 해제는 기존과 동일하게 OWNER 단독 유지.
+
+**멤버 self-view 스태프 신원 은닉 (D-F15-1).** 경고를 받은 멤버가 자신의 경고 현황·원장·제보·이의 이력을 조회할 때 제재를 부과하거나 처리한 운영자 신원이 제거된다(보복 방지, 플랫폼 제재 정책 미러). 운영자 전용 큐·대시보드에서는 운영자 신원이 유지된다.
+
+**경고 신고/이의 분쟁 상세 접근 제한 (G-DISP-2).** 경고 신고 및 이의 분쟁 상세는 WARNING_REVIEWER(또는 OWNER) 또는 해당 사건의 당사자(신고자·이의제기자·대상자)만 열람 가능하다. 이전에는 같은 클럽 멤버라면 caseId만 알면 신고 본문·당사자 식별 정보를 열람할 수 있었으나, 현재 접근이 제한됐다.
 
 ## 7. 운영 방법
 

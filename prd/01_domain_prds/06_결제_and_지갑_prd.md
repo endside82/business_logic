@@ -207,6 +207,13 @@
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
 
+## 8-A. 접근권한 감사 교정 (2026-07-02)
+
+> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F07_F06_money.md`
+
+- **강제환불 중재 — ADMIN 이중 방어 확정(G1/S1)**: 운영자 강제환불·판정·증빙요청·에스컬레이션 액션(`/api/v1/admin/refund-disputes/**`, `/api/v1/admin/refund-escalations/**`)은 **전역 ADMIN 역할**만 수행 가능. SecurityConfiguration URL 매처(첫 번째 방어선) + `RefundDisputeService` 서비스단 ADMIN 단언(두 번째 방어선)으로 이중 방어됨. 이전 상태: 두 방어선 모두 없어 로그인 누구나 강제환불 가능했음(S1 수정 완료).
+- **지갑 엔드포인트 전체 — self-scoped 클린**: 지갑 전 조회/변경 엔드포인트는 `@AuthenticationPrincipal`으로 호출자 본인 데이터만 반환하며, IDOR 접근 경로가 없음. 감사에서 결함 없음 확인.
+
 ## 9. 변경 이력
 
 - **2026-05-22 (v4.5 W2/W3 — 이벤트 참가 선입금 결제·환불 신규 경로)**: 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`, `:73-178`) 변경 없음. 신규 `WalletService.payForApplication(:189)` 추가 — referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`. 환불 측 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` (`docs/plan/event-extensions/ENUM_RESERVATIONS.md`). 회계 분개는 `AccountingLedgerService.recordPayment/recordRefund` 기존 메서드 재사용 — AccountCode 신규 없음. BANK_TRANSFER 선입금은 **분개 없음**(D5 — 호스트 직접 수취), 호스트 정산 보고서 6 섹션(F06-10 §5.1)에 별도 노출. `WalletRefundExecutor` 공통 헬퍼 추출 및 PG queue 통합 환불은 후속 슬라이스로 분리. 영향 받는 기능: F06-06(신규 경로 명세), F06-10(BANK 6 섹션), F03-13(facade 호출자). 결제 facade·환불 facade·이벤트 취소 환불 coordinator·탈퇴 차단 통합은 03_이벤트_prd.md 도메인 rollup §9 참조.

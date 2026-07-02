@@ -119,6 +119,13 @@ admin 전용 curated 화면은 없으며, `ManageCreatorEarning`에서 `SERVICE_
 | Flutter | 호스트/제공자/참가자 7개 화면 + 모델 + API + Repository + Providers | 완료 | — UI |
 | 3레포 origin/main | api `21c0bb5` · admin `e4c93d5` · app `1d2e094` | 완료 | — |
 
+## 7-A. 접근권한 감사 교정 (2026-07-02)
+
+> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F21_curated.md`
+
+- **제공자 배정·정산 화면 — 호스트/공동호스트 라우트 가드 추가(F21-01)**: `eventAssignments`, `eventAssignmentCreate`, `regularMeetingBulkSettle` 화면 진입은 **호스트/공동호스트** 전용 라우트 가드가 추가됨(클라이언트 `app_router`). `eventServiceFeeCharge`(참가자 과금)는 참가자 가드 적용. 서버 25개 mutation은 감사 이전부터 `assertHostOrCoHost` / `assertEventParticipant` / `retrieveAsProvider`로 전부 강제됐으므로 자금이동 누수는 없었음. 비인가 딥링크 시 press-then-error 상태를 라우트 리다이렉트로 교정.
+- **서비스료 총액 노출 — 전체 투명성 확정(D-F21-1)**: 참가자 my-charge-status VO의 `serviceFeeGross`(제공자 약정 총액) 노출은 **의도된 투명성 설계**임(2026-07-02 확정). n빵 분담액의 정당성 확인을 위해 필요하며, 제공자 실수령(net)·수수료·세금은 참가자에게 미노출. F07 D-F07-1(정산 전체 투명성)과 일관.
+
 ## 8. 잔여 후속
 
 | 항목 | 차단 사유 |

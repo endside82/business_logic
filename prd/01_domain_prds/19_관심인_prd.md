@@ -106,3 +106,5 @@
 - 구독 게이팅: `prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md`
 - 캘린더: `prd/01_domain_prds/10_캘린더_prd.md`
 - 알림 정책: `prd/03_policy_prds/notification_policy_prd.md`
+
+<!-- 접근권한 감사 검증 (2026-07-02): 관심인 관계는 단방향·owner에게만 비공개(대상에 역조회 미노출), 팔로워/팔로잉 목록 자체 없음, self-scoped — 이슈 없음. -->

@@ -264,6 +264,15 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 
 상세: [F07-06 §4 limbo SLA 정책](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md), [F07-07 §8 limbo 재알림](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md).
 
+## 4-B. 접근권한 감사 교정 (2026-07-02)
+
+> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F07_F06_money.md`
+
+- **정산 이의 목록 — 생성자/호스트 전용(F07C4-01, S2 수정 완료)**: `GET /api/v1/events/{eventId}/settlement/appeals` 이의 목록 조회 권한이 **정산 생성자 또는 이벤트 호스트**로 제한됨. 이전에는 `validateSettlementReadAccess`(참가자 누구나)로 열려 있어 다른 참가자의 이의 사유·이름·호스트 답변이 전원에게 노출됐음. 이제 `validateSettlementCreatorOrHost` 게이트로 교정.
+- **이체 매트릭스(who-owes-whom) — 참가자 전체 투명성 유지(D-F07-1 확정)**: ACTIVE/COMPLETED 정산의 전체 납부 매트릭스가 참가자 전원에게 노출되는 것은 **n빵 투명성 의도 설계**임(2026-07-01 확정). 결함 아님, 수정 불요.
+- **정산 관리 게이팅 — 호스트 전용 정렬(F07C1-01/02)**: 정산 활성화·일괄 확인 등 관리 액션 게이팅을 클라이언트에서 "정산 생성자 또는 이벤트 호스트"로 조임. 이전에는 클럽 스태프(OWNER/ADMIN)까지 포함했으나 서버의 `validateSettlementCreatorOrHost` 와 불일치했음.
+- **TransferStatus 클라이언트 교정(F07C3-01/02)**: `BANK_AWAITING_CONFIRM`·`SUPERSEDED` 두 값이 클라이언트 enum에 누락되어 `PENDING` 폴백 및 오배지·오버튼이 발생했음. 두 값 추가 및 4개 switch 처리 교정 완료. 서버 정의(§4-A)는 원래 정확했음.
+
 ## 5. 상태/권한/의존성
 
 ### 정산 상태 전이 요약 (참고)

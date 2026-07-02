@@ -146,3 +146,23 @@
 - 계획 마스터: `docs/plan/regular-meeting/README.md` (16 분할 + GLOSSARY · NEXT_SESSION)
 - 결제 정책 횡단: `prd/03_policy_prds/payment_settlement_policy_prd.md`
 - 상태 정책 횡단: `prd/03_policy_prds/state_policy_prd.md`
+
+## 11. 접근권한 감사 교정 (2026-07-02)
+
+접근권한 전수 감사(F17 정기모임)에서 확인된 동작 변경 사항을 반영한다. Codex 2R GO 완료·커밋·푸시.
+
+### 미발행 정기모임 상세·세션 비호스트 접근 차단 (F17-3)
+
+`GET /api/v1/regular-meetings/{id}` 및 `GET .../sessions`가 인증 사용자 누구에게나 DRAFT 상태 또는 발행 전 취소(status=CANCELED && publishedAt=null) 정기모임의 상세와 세션 목록을 노출하는 문제. 직접 링크(ID)를 알면 비호스트도 모임 주소·온라인 URL 등을 열람 가능했다. **수정**: 상태가 OPEN이 아닌 정기모임(미발행 DRAFT, 발행 전 취소 포함)은 호스트가 아닌 요청자에게 NOT_FOUND 응답. 재현 테스트 추가.
+
+이 원칙은 플랜 마켓(F08-03 getPlan 비공개 게이트)과 동일하다: 발행 전 콘텐츠는 작성자(호스트)만 열람 가능, 직접 링크로도 비호스트 접근 불가.
+
+### 기타 접근권한 현황 (이슈 없음)
+
+- 정기모임 멤버 명단(PII 표면): 서버가 호스트 전용으로 강제(기존 설계 정상)
+- 결제: 등록 당사자만 조회·결제 가능(기존 서버 강제 확인)
+- 승인/반려: 호스트만 처리 가능(기존 서버 강제 확인)
+
+### 잔여 백로그 (비보안, 별도)
+
+호스트 생애주기 UI 도달불가(F17-1 기능 갭)·관리 라우트 딥링크 press-then-error(F17-2)·`/regular-meetings/my` 라우트 크래시(F17-4)는 별도 기능 트랙으로 이연.

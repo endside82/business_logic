@@ -83,10 +83,10 @@
 - **핵심 enum**: `EarningTriggerType{EVENT_CHECKIN,EVENT_REVIEW,EVENT_PHOTO_APPROVED}`
 - **제약**: 등급 ≤10, threshold 단조·중복 금지·금전성 단어 차단(모두 `MILEAGE_GRADE_LIMIT_EXCEEDED`), 배지 ≤50, 프리셋 삭제 불가(비활성화만)
 
-### 운영진 — 액션/큐 (`MILEAGE_MANAGER`)
+### 운영진 — 액션/큐 (`REWARD_MANAGER` / `BADGE_AWARD_MANAGER` / `MILEAGE_MANAGER`)
 
 #### F16-06. 적립/차감/정정 집행
-> 운영진이 멤버에게 수동/일괄 적립, 차감, 원장 정정(reverse), 배지 부여/회수를 집행한다. `Idempotency-Key` 멱등 처리.
+> 운영진이 멤버에게 수동/일괄 적립, 차감, 원장 정정(reverse), 배지 부여/회수를 집행한다. 포인트 이동(지급·차감·되돌림·호스트제안 승인)에는 `REWARD_MANAGER`, 배지 부여·회수에는 `BADGE_AWARD_MANAGER` 권한이 각각 필요하다. `Idempotency-Key` 멱등 처리.
 - **API**: `grants`, `grants/bulk`, `redemptions`, `redemptions/bulk` (모두 `GrantResultVo`), `ledger/{ledgerId}/reverse` (`MileageLedgerVo`), `badges/{badgeDefId}/awards` (`List<MileageBadgeAwardVo>`), `badge-awards/{awardId}` DELETE, `batches/{batchId}` GET (서버 `Map`)
 - **핵심 enum**: `LedgerType`, `ActorRole{OWNER,ADMIN,EVENT_HOST,MEMBER,SYSTEM,PLATFORM_ADMIN}`
 - **부분 성공**: 일괄 처리는 멤버별 row 단위 성공/실패(`GrantResultVo.Row.success/errorReason`)
@@ -103,7 +103,9 @@
 - **클럽 멤버 (member)**: 본인 마일리지/원장/영수증/등급/배지/랭킹/시즌 조회. `ClubMemberPermissionChecker.requireClubMember`로 검증. (F16-01~03)
 - **이벤트 호스트 (EVENT_HOST)**: 자기 이벤트에 마일리지 적립 제안 제출/조회. `permissionChecker.isEventHost`. (F16-07 제출)
 - **POLICY_OWNER**: 프로그램 설정·적립규칙·등급·배지정의·프리셋·시즌 CRUD. `@RequiresClubPermission(POLICY_OWNER)`. (F16-04, F16-05)
-- **MILEAGE_MANAGER**: 적립/차감/정정/배지 부여·회수, 검토 큐 처리, 호스트 제안 승인/반려, 대시보드/감사 조회. `@RequiresClubPermission(MILEAGE_MANAGER)`. (F16-06, F16-07 처리, F16-08)
+- **REWARD_MANAGER**: 포인트 지급·차감·되돌림(reverse)·호스트 제안 승인. `@RequiresClubPermission(REWARD_MANAGER)`. (F16-06 포인트 액션, F16-07 제안 승인)
+- **BADGE_AWARD_MANAGER**: 배지 부여·회수. `@RequiresClubPermission(BADGE_AWARD_MANAGER)`. (F16-06 배지 액션) REWARD_MANAGER와 독립 — 한 운영자가 둘 다 담당하려면 두 권한을 동시 보유해야 한다.
+- **MILEAGE_MANAGER**: 검토 큐·대시보드·멤버 상세·감사 로그 조회 전용. 포인트 이동 및 배지 집행에는 각각 REWARD_MANAGER, BADGE_AWARD_MANAGER가 필요하다. `@RequiresClubPermission(MILEAGE_MANAGER)`. (F16-08 조회)
 - **ActorRole 결정**: 운영 액션 컨트롤러는 `permissionChecker.isOwner(...) ? OWNER : ADMIN`으로 actorRole을 정해 audit log에 기록. 자동 적립은 `SYSTEM`, 호스트 제안 제출은 `EVENT_HOST`.
 
 ### 핵심 상태 모델
@@ -137,6 +139,14 @@
 | [F16-07](../02_feature_prds/16_mileage/F16-07_host-proposal_prd.md) | 호스트 제안 | 3 | 기능 PRD `Gap / Risk`에서 source 대조로 확정 |
 | [F16-01](../02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md) | 내 마일리지 메인 & 영수증 & 원장 | 3 | 기능 PRD `Gap / Risk`에서 source 대조로 확정 |
 | [F16-04](../02_feature_prds/16_mileage/F16-04_policy-config_prd.md) | 정책 설정 | 2 | 기능 PRD `Gap / Risk`에서 source 대조로 확정 |
+
+### 접근권한 감사 교정 (2026-07-02)
+
+접근권한 감사(2026-06-30~07-01)에서 확정·교정된 사항이다. 서버 코드에만 적용됐다.
+
+**위임 권한 분리 (D-F16-1).** 이전에 단일 MILEAGE_MANAGER 권한으로 게이트되던 운영 액션이 세 권한으로 분리됐다. 포인트 지급·차감·되돌림·호스트 제안 승인은 REWARD_MANAGER, 배지 부여·회수는 BADGE_AWARD_MANAGER, 검토 큐·대시보드·감사 로그 조회는 MILEAGE_MANAGER 전용이다. 두 뮤테이션 권한은 독립적으로 분리되어 있으므로, 한 운영자가 포인트와 배지를 모두 담당하려면 두 권한을 동시 보유해야 한다.
+
+**멤버 self-view 스태프 신원 은닉 (D-F15-1 일관).** 멤버가 자신의 마일리지 메인 화면·원장·월간 영수증, 그리고 타 멤버의 프로필 카드를 조회할 때 포인트를 지급하거나 배지를 부여·회수한 운영자 신원이 노출되지 않는다. 운영자 전용 관리 화면에서는 운영자 신원이 유지된다.
 
 ## 8. 운영 방법
 

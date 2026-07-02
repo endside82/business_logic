@@ -334,3 +334,33 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+## 9. 접근권한 감사 교정 (2026-07-02)
+
+접근권한 전수 감사(F04 클럽)에서 확인된 동작 변경 사항을 반영한다. 모두 Codex GO 완료·커밋·푸시.
+
+### 클럽 정보 수정 권한 완화 (D-F04-1)
+
+기존 스펙·PRD는 클럽 수정 화면(SCR-CL-004)을 OWNER/ADMIN 모두 진입 가능으로 기술하면서 서버는 OWNER 전용으로 구현된 불일치가 있었다. **결정: 서버를 완화**하여 `PATCH /api/v1/clubs/{id}`(클럽 메타정보 수정)는 소유자(OWNER)∪관리자(ADMIN) 모두 허용. 단 `DELETE /api/v1/clubs/{id}`(삭제)와 `POST /api/v1/clubs/{id}/transfer-ownership`(소유권 이전)은 소유자 전용으로 유지. §4의 F04-03·§5 권한 매트릭스 F04-03 행의 수정 범위도 이를 반영한다.
+
+### 가입 대기열 열람 범위 조정 (D-F04-3)
+
+`GET /api/v1/clubs/{id}/waitlist`에서 **신청 대기(APPLY/null 상태)** 항목(신청자 닉네임·가입 메시지 포함)은 **스태프(OWNER/ADMIN)만** 열람 가능하도록 서버 게이트 조임. 초대(INVITE) 상태 항목은 기존대로 멤버에게도 노출(본인 수락/거절 동선). 앱 가입 대기 탭 본문도 스태프 조건으로 정렬.
+
+### 민감 정보 read 게이트 추가
+
+| API | 이전 | 이후 |
+|---|---|---|
+| `GET /clubs/{id}/members/stats` (멤버별 기부/출석 통계) | 멤버 전체 | 스태프(canManageMembers) 전용 |
+| `GET /fund/withdrawals` (출금 이력 — 은행코드·계좌번호·예금주 포함) | 멤버 전체 | 소유자(OWNER) 전용 |
+| `GET /events/statistics` (클럽 이벤트 집계 통계) | 멤버 전체 | 스태프 전용 |
+
+F04-15 기금 인출 화면(`clubWithdraw`) 라우트도 기존 `_redirectClubStaffOnly`에서 `_redirectClubOwnerOnly`로 정렬(서버 owner 강제 거울).
+
+### 멤버 권한 플래그 unknown-bit 보존
+
+`ClubMemberPermissionFlag` enum에서 서버에 정의된 3개 플래그(EVENT_MODERATION_MANAGER/EVENT_REFUND_MANAGER/EVENT_DISPUTE_RESOLVER)가 클라에 누락된 상태였다. ADMIN 권한 콘솔이 절대 SET 방식으로 저장되어 편집 시 누락 플래그가 조용히 삭제되는 데이터 손상 버그. **수정**: enum 3개 추가 + 콘솔 저장 시 `unknownBits | combine` 라운드트립 보존으로 미지 비트 보호.
+
+### 잔여 백로그 (비보안, 별도 기능 슬라이스)
+
+앨범 편집/삭제 메뉴 작성자 게이팅(F04D-01/02)·NOTICE FAB 비스태프 노출(F04D-03)·독립이벤트 FAB(F04F-05)·게스트 CTA 死코드 제거(D-F04-4)·앨범 생성 정책(D-F04-2)·기능 갭(초대 수락/거절·기부취소·해지철회 NO-OP)은 별도 트랙으로 이연.

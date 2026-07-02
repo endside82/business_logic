@@ -168,3 +168,5 @@
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+<!-- 접근권한 감사 검증 (2026-07-02): 운영자 알림은 admin_api 물리 분리로 사용자 누수 불가, 타인 알림 IDOR 불가(id 조회 없음), FCM 기기토큰·설정 self-scoped — 이슈 없음. -->

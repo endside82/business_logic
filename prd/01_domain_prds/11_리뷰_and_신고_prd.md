@@ -44,7 +44,7 @@
 | F11-01 | 이벤트 리뷰 작성 | 참석한 이벤트에 별점(1~5)과 텍스트 후기를 남긴다 | 별점 탭, 후기 입력, "제출" 탭 |
 | F11-02 | 리뷰 목록 조회 (이벤트별/사용자별) | 이벤트 또는 사용자 단위로 받은 리뷰 목록과 평균 별점·분포를 본다 | 이벤트 리뷰 탭/사용자 프로필 리뷰 탭 진입, 스크롤 |
 | F11-03 | 리뷰 수정 & 삭제 | 본인이 작성한 리뷰를 수정하거나 삭제한다 | 리뷰 카드의 수정/삭제 액션 |
-| F11-04 | 신고 (이벤트/사용자/리뷰/클럽/카풀) | 부적절한 콘텐츠를 신고 유형 + 상세 설명으로 운영자에게 접수한다. 증빙 파일 첨부(max 5개) 지원. CLUB(7) 서버 지원(v1 수동). | 신고 대상의 "신고" 탭 → 유형 선택 → 상세 설명 입력 → "신고" 탭 |
+| F11-04 | 신고 (이벤트/사용자/리뷰/클럽/글/댓글) | 부적절한 콘텐츠를 신고 유형 + 상세 설명으로 운영자에게 접수한다. 증빙 파일 첨부(max 5개) 지원. CLUB(7) 서버 지원(v1 수동). 클럽 글(COMMUNITY_POST, 9)·댓글(COMMUNITY_COMMENT, 10) 신고 서버 지원 추가(2026-07-01), 클라 실배선 완료(기존 기만 토스트/pop 제거). | 신고 대상의 "신고" 탭 → 유형 선택 → 상세 설명 입력 → "신고" 탭 |
 | F11-05 | 신뢰점수 & 변동 이력 | 본인/타인의 신뢰점수·등급을 확인하고, 본인은 기간별 변동 이력까지 본다. 다음 등급 임계는 서버 nextGradeScore 값 사용. | 마이페이지/프로필의 신뢰점수 진입, 기간(1주/1개월/3개월) 변경 |
 | F11-06 | 취향 평가 & 취향 프로필 | 비공개 별점·태그·메모 기록과 자동 누적된 긍정/부정 태그 가중치, 선호 카테고리/시간대/그룹 크기를 조회·설정한다 | 평점 작성, 취향 프로필 조회, "선호도 설정" 바텀시트에서 카테고리/시간/그룹 선택 → 저장 |
 | F11-07 | 호스트 리뷰 모더레이션 (답변·임시 숨김) | 이벤트 호스트가 본인 이벤트에 달린 리뷰에 답변을 달고(1:1, 24h 수정), 임시 숨김(6종 사유코드, autoEscalate→신고 자동생성) 처리한다 | 리뷰 카드 더보기 → 답변하기 / 임시 숨김 / 숨김 해제 |
@@ -104,7 +104,7 @@
   - 삭제 성공: `Review` 레코드 제거 → 목록에서 사라짐
   - 실패: 403(타인 리뷰), 404 REVIEW_NOT_FOUND
 
-### F11-04 신고 (이벤트/사용자/리뷰/클럽)
+### F11-04 신고 (이벤트/사용자/리뷰/클럽/글/댓글)
 
 - **사용자 가치**: 부적절한 콘텐츠를 운영자에게 빠르게 전달해 커뮤니티 품질을 자정한다.
 - **주요 화면**:
@@ -112,7 +112,8 @@
 - **백엔드 엔드포인트** (`ReportController`):
   - `POST /api/v1/reports` — `ReportParam` (`targetType`, `targetId`, `reason`, `description?`), 201 + `ReportVo`
   - `GET /api/v1/reports/my` — 200 + `List<ReportVo>` (본인이 접수한 신고 이력)
-- **선결 조건/상태**: 로그인 상태. `targetType ∈ {EVENT, USER, REVIEW, CLUB}`(클라이언트 라벨 매핑 기준), `reason`은 `ReportReason` enum(클라이언트는 `SPAM/HARASSMENT/INAPPROPRIATE_CONTENT/FALSE_INFORMATION/FRAUD/OTHER` 라벨 노출, "OTHER" 선택 시 상세 설명 10자 이상 필수). 본인 신고 불가(400 CANNOT_REPORT_SELF), 동일 대상 중복 신고 불가(409 ALREADY_REPORTED).
+- **선결 조건/상태**: 로그인 상태. `targetType ∈ {EVENT, USER, REVIEW, CLUB, COMMUNITY_POST, COMMUNITY_COMMENT}`(클라이언트 라벨 매핑 기준), `reason`은 `ReportReason` enum(클라이언트는 `SPAM/HARASSMENT/INAPPROPRIATE_CONTENT/FALSE_INFORMATION/FRAUD/OTHER` 라벨 노출, "OTHER" 선택 시 상세 설명 10자 이상 필수). 본인 신고 불가(400 CANNOT_REPORT_SELF), 동일 대상 중복 신고 불가(409 ALREADY_REPORTED).
+- **신고자 익명성**: 이벤트 신고를 받은 피신고 호스트 인박스에 신고자 신원이 포함되지 않는다. 신고 내용과 처리 상태만 호스트에게 전달되며, 신고자 신원은 운영팀 전용이다.
 - **결과 상태 변화**:
   - 성공: `Report` 레코드 생성 → "신고 접수 완료" 다이얼로그 → 이전 화면 복귀
   - 실패: 400 CANNOT_REPORT_SELF(토스트 후 뒤로), 404 TARGET_NOT_FOUND(토스트 후 뒤로), 409 ALREADY_REPORTED(토스트 후 뒤로), 500(토스트)
@@ -126,7 +127,7 @@
   - `GET /api/v1/users/{userId}/trust-score` (`ReviewController#getTrustScore`) — 200 + `TrustScoreVo` (`trustScore`, `grade`, `breakdown`)
   - `GET /api/v1/users/me/trust-score` (`ReviewController#getMyTrustScore`) — 본인 단축 경로
   - `GET /api/v1/users/{userId}/trust-score/history?days={N}` (`ScoreHistoryController#getScoreHistory`) — `days` 기본 90, 최대 365 클램프, 200 + `ScoreHistoryVo` (`history[]: {date, totalScore, changeReason}`)
-- **선결 조건/상태**: 본인 조회는 자신의 토큰만 있으면 충분. 타인 조회는 점수·등급만 노출(상세 이력은 본인 한정 정책).
+- **선결 조건/상태**: 본인 조회는 자신의 토큰만 있으면 충분. 타인 조회는 점수·등급만 노출(상세 이력은 본인 한정 정책). 차단 관계(양방향 어느 쪽이든)이면 타인 신뢰점수를 열람할 수 없다.
 - **결과 상태 변화**:
   - 데이터: 원형 게이지(0~100) + 등급 배지 + 점수 구성(`breakdown`) + 본인 한정 변동 이력 리스트 + 기간 셀렉터(7/30/90일)
   - 다음 등급까지 남은 점수: 클라이언트가 임계값(BRONZE 40 / SILVER 60 / GOLD 80 / PLATINUM max)으로 계산해 표시
@@ -164,6 +165,18 @@
 | [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | 2 | 정렬 미구현, 답변 수정 경로 미배선(409 잠재) — 기능 PRD §8 참조 |
 | [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | 1 | breakdown 키 매핑 불일치 — 기능 PRD §8 참조 |
 | [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | 1 | 기능 PRD의 `Gap / Risk` 섹션 확인 |
+
+### 접근권한 감사 교정 (2026-07-02)
+
+접근권한 감사(2026-06-30~07-01)에서 확정·교정된 사항이다. 서버 코드에만 적용됐다.
+
+**신고자 익명성 보호 (F11-F1).** 이벤트 신고 호스트 인박스에 신고자 userId가 포함되어 있었으나 제거됐다. 피신고 호스트는 신고 내용과 처리 상태만 확인할 수 있으며, 자신을 신고한 사용자 신원은 알 수 없다.
+
+**임시숨김 리뷰 본문·사유 마스킹 (F11-F2).** 임시숨김(temporarilyHidden) 처리된 리뷰는 리뷰 작성자와 이벤트 호스트 외의 뷰어에게 본문이 제거된 상태로 전달된다. 호스트가 입력한 숨김 사유 텍스트도 호스트 본인 외에는 노출되지 않는다. 숨김 상태 코드와 사유 코드는 모든 뷰어에게 유지된다.
+
+**신뢰점수 차단 게이트 (F11-F3).** 차단 관계(양방향)인 상대의 신뢰점수를 조회하면 USER_NOT_FOUND가 반환된다. 이전에 점수 이력 조회는 차단 게이트가 있었으나 점수 단건 조회는 누구에게나 열람 가능했다.
+
+**클럽 글·댓글 신고 실배선 (D-F11-1).** 클럽 게시글 신고가 기존에는 클라이언트에서 기만 토스트(접수된 것처럼 보이나 실제 API 미호출) 또는 단순 pop으로 처리됐다. 서버에 COMMUNITY_POST(9)·COMMUNITY_COMMENT(10) 신고 유형이 추가됐고, 클라이언트가 실제 신고 화면으로 연결됐다(중복 차단, 사유/증빙 입력 포함).
 
 ## 8. 운영 방법
 

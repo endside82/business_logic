@@ -163,3 +163,5 @@
 | SUPPORT_ISSUE_UPDATED 알림 emit | community_api 서버에서 OperationalIssueService가 답변 시 알림 emit하는 코드 없음. admin_api에만 있을 가능성. |
 | OperationalIssue Flutter 모델 — REGULAR_MEETING_* sourceType 미반영 | Flutter `OperationalIssueSourceType` enum에 `REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT` 없음 (서버에는 존재). |
 | 증빙 첨부 Flutter UI | `OperationalIssueCreateParam`에 `evidenceFileIds` 필드 없음. 서버는 지원. |
+
+<!-- 접근권한 감사 검증 (2026-07-02): 1:1 문의 IDOR 불가(소유자 검증 서버 강제), 운영 이슈 일반사용자 접근 불가(admin_api 분리), 상담원 내부메모는 `user_visible` 필드 기반 필터(operational_issue_message) — 이슈 없음. -->
