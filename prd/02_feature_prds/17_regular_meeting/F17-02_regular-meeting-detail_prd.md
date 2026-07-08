@@ -1,5 +1,7 @@
 # F17-02. 정기모임 상세 조회 PRD
 
+> 2026-07-08 현재 소스 갱신: 재사용 경험 루프 보강으로 정기모임 상세는 단일 모임 본체 조회뿐 아니라 이전 회차 결과·다음 회차/세션으로 이어지는 진입점과 함께 봐야 한다. 특히 유료 VARIABLE 세션, 세션별 선결제, 클럽 recurrence, host cost type, 비공개 clone 안전장치는 F17 결제/정산 PRD 및 F03 이벤트 반복 문서와 함께 확인한다. 신규 기능 ID는 만들지 않고 기존 F17 상세·세션·결제 흐름에 흡수한다.
+
 ## 1. 결론
 
 `GET /api/v1/regular-meetings/{id}` 단일 엔드포인트가 모임 본체 + 세션 요약(`sessions`) + 조회자 컨텍스트(`host` boolean, `myMembership` Phase 2 후 별도 endpoint) 를 한 번에 내려준다. optional auth 라 비로그인도 진입 가능. DRAFT 는 호스트 본인만 조회 가능(기타는 `REGULAR_MEETING_NOT_FOUND`). 세션 목록은 별도 `GET /api/v1/regular-meetings/{id}/events?includeHistory={bool}` 로 조회한다 (취소된 세션 포함 옵션).

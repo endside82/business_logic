@@ -3,6 +3,8 @@
 <!-- supporting-doc-status: 2026-05-18 -->
 
 > 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
+>
+> 2026-07-08 current QA 기준: Flutter current expansion QA는 canonical 53/53 close이며 active pending-run/merge/gap은 0이다. 신규 기능 ID 없이 기존 175개 기능 체계 안에서 게스트 동반 예매·궁합/핏·플랜 에디터·위치/길찾기·커뮤니티 메시지·재사용 루프를 검산한다.
 
 ## 1. 공통 수용 기준
 
@@ -13,6 +15,7 @@
 | 역할 커버리지 | 게스트, 로그인 사용자, 관계자, 소유자/관리자 역할별 CTA가 정의되어야 한다. |
 | 상태 커버리지 | 생성, 진행, 완료, 취소, 만료, 삭제, 차단 상태를 구분해야 한다. |
 | 회귀 방지 | 홈/검색 진입, 알림 딥링크, 결제/환불, 위치 권한 흐름이 깨지지 않아야 한다. |
+| 현재 소스 특이점 | 게스트 동반 예매는 owner/guest attendance row를 분리하고, 커뮤니티 메시지는 데이팅 채팅이 아닌 맥락 한정 별도 채널로 본다. |
 
 ## 2. 기능별 커버리지 인덱스
 

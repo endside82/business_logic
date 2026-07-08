@@ -1,6 +1,6 @@
 # PRD 문서 상태표
 
-> 업데이트: 2026-06-24. `business_logic/prd/02_feature_prds`에 기능 PRD 175개가 등록되어 있다. 상태 컬럼은 각 기능 PRD의 실제 `문서 상태` 문구 또는 source-first 본문을 기준으로 갱신한다. 이 표는 구현 완료표가 아니라, PRD가 어떤 원천과 어느 수준의 소스 대조로 작성됐는지 보여주는 문서 운영 인벤토리다.
+> 업데이트: 2026-07-08. `business_logic/prd/02_feature_prds`에 기능 PRD 175개가 등록되어 있다. 상태 컬럼은 각 기능 PRD의 실제 `문서 상태` 문구 또는 source-first 본문을 기준으로 갱신한다. 이 표는 구현 완료표가 아니라, PRD가 어떤 원천과 어느 수준의 소스 대조로 작성됐는지 보여주는 문서 운영 인벤토리다.
 >
 > v4.5 W1~W7 (이벤트 확장 슬라이스) 신규 PRD 5개(F03-13~17)가 같은 디렉터리에 추가된다. 본 슬라이스는 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice이며, V1__init.sql 단일 마이그레이션 파일 원칙(`community_api/CLAUDE.md`)을 유지한다.
 >
@@ -10,7 +10,7 @@
 
 | 항목 | 개수 |
 | --- | ---: |
-| **현재 총 기능 PRD (2026-06-24)** | **175** |
+| **현재 총 기능 PRD (2026-07-08)** | **175** |
 | Golden sample | 1 |
 | 실사 기반 전환본 | 115 |
 | 실사 기반 갱신본 | 1 |
@@ -20,6 +20,19 @@
 | source-first PRD | 5 |
 | source-first 부분 구현 | 3 |
 | 누락/확인 필요 | 0 |
+
+## 2026-07-08 — 현재 소스 동기화 (기능 수 증감 없음, 기존 PRD/Docs 갱신)
+
+2026-06-24 도메인 21 추가 이후 구현된 소스 변경을 기존 175개 기능 체계에 흡수했다. 신규 도메인·기능 ID는 만들지 않는다. 기준 노트: `05_planning_artifacts/current_source_update_2026-07-08.md`.
+
+| 묶음 | 영향 PRD/Docs | 반영 내용 |
+| --- | --- | --- |
+| 게스트 동반 예매 | F03-05/06/07/08/13/20, 이벤트/결제 문서 | 예매 소유자 기준 게스트 attendance row, `partySize`/`guestNames`/`payableAmount`, 일행 관리, 증분 결제, 라인 환불, 호스트 강제환불, 게스트 노쇼 소유자 패널티. 현재 워크트리의 event-first lock order hardening도 deadlock 방지 사실로 기록. |
+| 궁합/핏 Phase 0 | F11-01/05/06, F09-06, F01-07/F13-04, 개인정보 정책 | GraphQL 추천·legacy PreferenceRating/TasteNeighbor 중심 서술을 제거하고 이벤트 피드백/데이트 만남 피드백/InterestTag 카탈로그/데이터 내보내기·삭제 포함 기준으로 갱신. |
+| 플랜 블록 에디터/공유 | F08-02/03/05/10/11 | preview teaser, 작성자 선택 sample preview, Kakao/system share, URL bookmark 제안, 모바일 IME 분할, course map, 체크리스트/시간표 정리. |
+| 위치·길찾기 | F14-04/05/06 | 주소→좌표 geocode 추가, reverse geocode와 함께 Kakao Local 양방향 lookup, location privacy access-log 소비, 저장 주소/현재 위치 출발지와 좌표 null guard. |
+| 연결성/커뮤니티 메시지 | 정책/도메인 노트 | Person access policy, block/report, 공통 맥락 한정 커뮤니티 메시지와 `/community-chat` realtime namespace는 현재 소스에 있으나 2026-07-08에는 신규 기능 ID로 승격하지 않는다. |
+| 재사용 경험 루프 | F03 반복/리스케줄, F04 recurrence, F17, 결제 정책 | 이전 이벤트/정기모임/클럽 반복을 다음 실행으로 잇는 loop와 유료 반복·정기모임 세션·host cost type·비공개 clone 안전장치 반영. |
 
 ## 2026-06-06 — EVENT 결제 표준화·무료 포인트 호스트 전달 (기능 수 증감 없음, §7 사실/§8 Gap 갱신)
 

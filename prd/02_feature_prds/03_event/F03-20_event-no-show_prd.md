@@ -3,6 +3,7 @@
 <!-- 작성일: 2026-06-05 -->
 <!-- 소스 기준: community_api 0eae1ed/86356e5/c3f95a1/46c8335, community_app c3bfdc8 -->
 <!-- 갱신: 2026-06-06 (W14-S2 — community_api 07bdb38 / community_app 577c9ac 반영): cohost 권한 버그(G-6) 해소, 소명 기한 7일(G-3) 해소, 앱 소명/번복/일괄 배선(G-1) 해소 -->
+<!-- 갱신: 2026-07-08 (게스트 동반 예매 반영): 계정 없는 게스트 노쇼는 attendance row 기준으로 남기되 소유자(owner_user_id)의 최근 노쇼/제재 신호에 합산한다. -->
 
 ## 1. 결론
 
@@ -11,6 +12,8 @@
 `NoShowStatus`는 CONFIRMED/APPEALED/OVERTURNED 3값이다. **소명 기한은 2026-06-06(W14-S2, D-2 확정)에 확정 후 7일로 도입**됐다(`confirmedAt + 7일` 경과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED`(409, 400036) 거부). CANCEL_PENDING_REFUND 상태 참가자는 노쇼 산정 대상에서 제외된다(체크인 통계 분모 필터). 노쇼 사후 조정 환불은 `NoShowRefundService`가 `refundAmount ≤ grossPaid` 직접 검증 후 원 결제 paid/free 비율로 직접 분리하고, `EventRefundSettlementService.applyRefundToSettlement`를 통해 정산 상태별 claw-back을 적용한다(`RefundFaultCategory`/`computeRefund` 미사용). 분쟁 소명이 성공하면(`OVERTURNED`) 제재 카운트에서 제외된다. 소명은 외부 dispute_case 식별자(`appealCaseId`)를 사전에 발급받아 전달해야 하며, 이 흐름은 통합 분쟁 유니온 EVENT_NO_SHOW source(`../18_dispute_resolution/F18-03_dispute-appeal_prd.md`)로 연결된다 — 통합 분쟁 경로(`DisputeAppealService.createAppeal`)도 동일 기한·본인·canonical caseId 검증을 save 전에 공유한다(W14-S2 Codex BLOCKER 해소: 검증 실패를 삼키고 201을 반환하던 문제 수정).
 
 cohost 권한 버그(과거 G-6: `canManageAttendance` flag 미검사로 권한 없는 cohost가 노쇼 확정 가능)는 **2026-06-06(W14-S2)에 해소**됐다 — 체크인과 노쇼에 복제돼 있던 권한 로직을 `EventAttendanceManagerGuard`로 단일 추출해 두 경로가 같은 기준(`canManageAttendance` 미보유 cohost → `EVENT_CO_HOST_PERMISSION_DENIED`)을 공유한다.
+
+2026-07-08 게스트 동반 예매 반영: 게스트는 자체 계정이 없으므로 소명/제재의 주체를 소유자 예매자로 본다. 노쇼 row는 attendance를 기준으로 식별하고 화면에는 게스트 이름과 소유자를 함께 표기하되, `countRecentNoShows`와 제재·신뢰 신호는 owner에게 합산한다.
 
 ## 2. 실사 근거
 

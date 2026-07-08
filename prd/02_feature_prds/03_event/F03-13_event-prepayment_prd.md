@@ -3,6 +3,8 @@
 <!-- generated: source-first-event-extensions; updated: 2026-05-22; unit: business_logic/units/03_event/F03-13_event-prepayment -->
 
 > 문서 상태: **신규 신설본 (W2/W3)**. 본 PRD는 `docs/plan/event-extensions/PLAN.md` v4.5 §2 / §0.2 / §0.4 / §2.14 / §2.15와 `ENUM_RESERVATIONS.md`, `E2E_SCENARIOS.md` S2-1 ~ S2-11을 근거로 신규 작성한다. F03-05(참가 신청), F06-06(포인트 결제·환불), F07-09(모임 정산 선입금)와 명확히 분리되는 별도 결제 객체(`event_payment` 테이블)를 다룬다.
+>
+> 2026-07-08 현재 소스 갱신: 게스트 동반 예매는 같은 `event_payment` 결제 객체 위에서 party 단위 금액을 계산한다. 결제 후 게스트 추가는 `GUEST_INCREMENT` 증분 결제, 게스트 삭제는 line refund, 전체 취소는 잔여 party 기준 환불로 처리한다. BANK 경로의 line preview 제한, paid/free split 보존, host removal 강제환불, event-first lock order hardening을 F03-05와 함께 검토한다.
 
 ## 1. 결론
 

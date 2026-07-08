@@ -41,6 +41,13 @@
             참가자 분담금 수금액이 약정액에서 계약금만큼 줄어드는 효과가 있다.
             호스트는 처음부터 전액을 내지 않아도 제공자를 미리 확보할 수 있다.</p>
         </div>
+
+        <div class="callout warn">
+          <span class="label">2026-07-08 현재 소스 갱신 — 계약금 버튼 게이트</span>
+          <p>보장수수료 모드(<code>serviceFeeGross</code>)와 engagement 계약금 모드는 상호 배타다.
+            Flutter는 <code>!hasServiceFee &amp;&amp; !hasEngagement</code>일 때만 계약금 버튼을 노출한다.
+            계약금 취소는 PENDING 상태에서만 가능하고, WALLET 결제는 즉시 PAID가 되므로 "차감된 계약금이 지갑으로 복원된다"는 일반 흐름으로 설명하지 않는다.</p>
+        </div>
       </section>
 
       <section>
@@ -136,12 +143,12 @@ flowchart TD
 
           <article class="card">
             <div class="eyebrow">계약금 취소</div>
-            <h3>섭외가 확정되기 전에 계약금을 철회하고 싶다</h3>
-            <p>호스트가 아직 배정이 확정되지 않은 상태에서 계약금 선납을 취소한다.
-              차감된 계약금이 호스트 지갑으로 복원되고, 계약 관계가 해소된다.
-              이 시점 이후에는 계약금 없이 일반 총액 보장 방식으로 배정을 다시 설정할 수 있다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 배정이 최종 확정되기 전에는 계약금을 되돌릴 여지가 있다.
-              확정 이후에는 취소해도 계약금이 제공자에게 귀속된다.</p>
+            <h3>PENDING 계약금만 취소할 수 있다</h3>
+            <p>계약금 취소 API는 PENDING 상태만 허용한다.
+              현재 WALLET 계약금은 결제 성공과 동시에 PAID로 전이되므로, 일반적인 지갑 결제 후에는 취소가 아니라 정산 적용 또는 배정 취소 시 제공자 귀속 경로로 간다.
+              취소 가능한 PENDING 상태는 드문 중간 상태로만 다룬다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 계약금은 결제 완료 후 되돌리는 지갑 복원 기능이 아니다.
+              호스트가 계약금 버튼을 누르기 전 보장수수료 모드와 engagement 모드 중 하나를 명확히 선택해야 한다.</p>
           </article>
         </div>
       </section>

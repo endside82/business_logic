@@ -41,6 +41,13 @@
             "내가 신청한 건지 안 한 건지", "참석된 건지 대기인지"를 사용자가 헷갈리고, 그 혼란이
             환불 분쟁의 출발점이 된다.</p>
         </div>
+
+        <div class="callout warn">
+          <span class="label">2026-07-08 현재 소스 갱신 — 게스트 동반 예매</span>
+          <p>이제 신청·참석 흐름은 계정 있는 본인 1명만이 아니라 예매 소유자가 데려오는 게스트 attendance row까지 포함한다.
+            신청 확인 시 partySize/guestNames/payableAmount를 계산하고, 유료 이벤트에서는 게스트 추가가 증분 결제, 게스트 삭제가 라인 환불로 이어진다.
+            체크인·노쇼·환불은 사용자 ID만이 아니라 attendance row와 owner를 함께 봐야 한다.</p>
+        </div>
       </section>
 
       <section>

@@ -3,6 +3,8 @@
 <!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/09_private_date/F09-06_meeting_proposal -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/09_private_date/F09-06_meeting_proposal`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-07-08 현재 소스 갱신: 만남 완료 이후 궁합/핏 라벨을 남기는 데이트 만남 피드백이 추가됐다. `DateMeetingFeedbackService`와 관련 VO/Param이 만남 단위 피드백을 수집하고, 앱은 만남 제안 화면/배너에서 피드백 시트를 노출한다. 본 PRD의 제안/수락/완료 상태 전이는 유지하되, `COMPLETED` 이후의 사용자 행동과 추천 입력 부수효과는 F11-06과 함께 본다.
 
 ## 1. 결론
 

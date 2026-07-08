@@ -3,6 +3,8 @@
 <!-- generated: source-first-unit-sync; updated: 2026-06-10; unit: business_logic/units/08_plan_market/F08-03_block-editor -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-03_block-editor`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-07-08 현재 소스 갱신: 여행/플랜 에디터 후속이 반영됐다. 모바일 IME Enter는 블록 분할로 처리되고, URL 입력은 bookmark/link card 제안으로 이어지며, 체크리스트/시간표 업데이트와 controller 정리가 들어갔다. 앱은 course map 렌더링, system share, Kakao plan share를 지원하고, 서버는 공개 preview teaser(텍스트 3 + 이미지 1 + 시간표 1)와 작성자 선택 sample preview(최대 5개)를 내려준다. 발행 준비와 상세/공유 문서는 F08-05/F08-02/F08-10도 함께 확인한다.
 
 ## 1. 결론
 

@@ -9,6 +9,8 @@
 > `lib/presentation/curated/` 직접 확인 결과다.
 >
 > **상태 확인(2026-06-24)**: 3레포 모두 `origin/main` 반영 완료. per-slice Codex 합의 PASS.
+>
+> 2026-07-08 현재 소스 갱신: F21-06 계약금 버튼 게이팅이 앱에 반영됐다. `serviceFeeGross` 보장수수료 모드와 engagement 계약금 모드는 상호 배타이며, Flutter는 `!hasServiceFee && !hasEngagement`일 때만 계약금 버튼을 노출한다. 계약금 취소는 PENDING 상태만 가능하고 WALLET은 즉시 PAID라 취소가 드문 흐름이다. 정기모임 다음 회차/replace에서는 제공자 id와 role만 DRAFT 배정으로 복제·이동하며 돈·계약금·정산·과금 권리는 이관하지 않는다.
 
 ## 1. 결론
 

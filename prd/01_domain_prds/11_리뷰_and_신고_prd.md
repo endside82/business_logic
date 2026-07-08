@@ -3,6 +3,8 @@
 <!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/11_review_report -->
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/11_review_report/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+>
+> 2026-07-08 현재 소스 갱신: F11-06의 현재 구현 기준은 legacy `PreferenceRatingController`, `/api/v1/ratings`, `TasteNeighbor`, GraphQL 추천이 아니다. 이벤트 피드백(`EventFeedbackController`)과 데이트 만남 피드백(`DateMeetingFeedbackController`)이 궁합/핏 라벨 입력의 현재 원천이고, `TasteProfileService`는 `EventFeedbackChoice`의 긍정 `ImpressionTag`를 사용해 취향 프로필을 재구성한다. 커뮤니티 메시지·클럽 게시글·클럽 댓글 신고 타입(`COMMUNITY_MESSAGE`, `COMMUNITY_POST`, `COMMUNITY_COMMENT`)도 현재 ReportType에 포함된다.
 
 ## 1. 결론
 
@@ -46,7 +48,7 @@
 | F11-03 | 리뷰 수정 & 삭제 | 본인이 작성한 리뷰를 수정하거나 삭제한다 | 리뷰 카드의 수정/삭제 액션 |
 | F11-04 | 신고 (이벤트/사용자/리뷰/클럽/글/댓글) | 부적절한 콘텐츠를 신고 유형 + 상세 설명으로 운영자에게 접수한다. 증빙 파일 첨부(max 5개) 지원. CLUB(7) 서버 지원(v1 수동). 클럽 글(COMMUNITY_POST, 9)·댓글(COMMUNITY_COMMENT, 10) 신고 서버 지원 추가(2026-07-01), 클라 실배선 완료(기존 기만 토스트/pop 제거). | 신고 대상의 "신고" 탭 → 유형 선택 → 상세 설명 입력 → "신고" 탭 |
 | F11-05 | 신뢰점수 & 변동 이력 | 본인/타인의 신뢰점수·등급을 확인하고, 본인은 기간별 변동 이력까지 본다. 다음 등급 임계는 서버 nextGradeScore 값 사용. | 마이페이지/프로필의 신뢰점수 진입, 기간(1주/1개월/3개월) 변경 |
-| F11-06 | 취향 평가 & 취향 프로필 | 비공개 별점·태그·메모 기록과 자동 누적된 긍정/부정 태그 가중치, 선호 카테고리/시간대/그룹 크기를 조회·설정한다 | 평점 작성, 취향 프로필 조회, "선호도 설정" 바텀시트에서 카테고리/시간/그룹 선택 → 저장 |
+| F11-06 | 취향 평가 & 취향 프로필 | 이벤트 피드백과 데이트 만남 피드백으로 쌓인 긍정 태그 가중치, 선호 카테고리/시간대/그룹 크기를 조회·설정한다 | 피드백 작성, 취향 프로필 조회, "선호도 설정" 바텀시트에서 카테고리/시간/그룹 선택 → 저장 |
 | F11-07 | 호스트 리뷰 모더레이션 (답변·임시 숨김) | 이벤트 호스트가 본인 이벤트에 달린 리뷰에 답변을 달고(1:1, 24h 수정), 임시 숨김(6종 사유코드, autoEscalate→신고 자동생성) 처리한다 | 리뷰 카드 더보기 → 답변하기 / 임시 숨김 / 숨김 해제 |
 
 > M = 7 기능. F11-01 ~ F11-03은 공개 리뷰 라이프사이클(작성/조회/수정·삭제), F11-04는 신고 접수(8종 대상, 증빙 첨부, 자동 플래그), F11-05는 신뢰점수(공개 점수 + 본인 한정 이력), F11-06은 비공개 취향(평가 + 프로필 누적/설정), F11-07은 호스트 모더레이션(답변/숨김)이다. 컨트롤러에는 본인이 받은 신고 목록 조회(`GET /api/v1/reports/my`)도 존재하나 F11-04에 흡수한다. UI 스펙(SCR-RR-005)에는 활동 패턴 히트맵·월별 차트가 있으나 서버 `TasteProfileVo`/`RatingStatsVo`에 해당 필드가 없고 클라이언트도 렌더링하지 않으므로 본 단위 기능 목록에 포함하지 않는다.
@@ -139,10 +141,13 @@
 - **주요 화면**:
   - `community_app/lib/presentation/review/screens/taste_profile_screen.dart` (SCR-RR-005, "선호도 설정" 바텀시트 포함)
 - **백엔드 엔드포인트**:
-  - 비공개 평가 (`PreferenceRatingController`):
-    - `POST /api/v1/ratings` — `PreferenceRatingParam` body, 201 + `PreferenceRatingVo`
-    - `GET /api/v1/ratings/me?page=&size=` — 200 + `Page<PreferenceRatingVo>` (Spring `Page` → 클라이언트 `PageResponse`)
-    - `GET /api/v1/ratings/me/stats` — 200 + `RatingStatsVo` (`totalRatings`, `averageGiven` 등)
+  - 이벤트 피드백 (`EventFeedbackController`):
+    - `GET /api/v1/events/{eventId}/feedback/candidates` — 함께한 사람 피드백 후보
+    - `POST /api/v1/events/{eventId}/feedback` — 이벤트 선택 피드백 제출 + 취향 프로필 재구축
+    - `GET /api/v1/feedback/me` / `GET /api/v1/feedback/me/stats` — 본인 피드백 이력/통계
+  - 데이트 만남 피드백 (`DateMeetingFeedbackController`):
+    - `POST /api/v1/date/meetings/{meetingId}/feedback` — 완료된 만남 피드백 제출
+    - `GET /api/v1/date/meetings/{meetingId}/feedback/me` — 호출자 본인 응답 상태만 조회
   - 취향 프로필 (`TasteProfileController`):
     - `GET /api/v1/taste/profile` — 200 + `TasteProfileVo` (`positiveTagWeights`, `negativeTagWeights`, `preferredCategories`, `preferredTimeSlots`, `preferredGroupSize`)
     - `PUT /api/v1/taste/preferences` — `TastePreferenceParam` body, 200 + 갱신된 `TasteProfileVo`

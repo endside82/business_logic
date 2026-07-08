@@ -5,6 +5,8 @@
 > 문서 상태: **실사 기반 전환본 + W1/W2/W3 신규 분기 통합 (2026-05-22)**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-05_event-attendance`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 >
 > 2026-05-22 W2/W3 추가: 선입금 활성 이벤트의 `APPROVED_PENDING_PAYMENT`/`PAYMENT_EXPIRED` 분기와 `EventParticipationCancellationService.cancelMyParticipation` facade가 `apply`/`approveApplication`/`DELETE .../apply` 흐름에 통합되었다. 선입금 결제·환불 자체의 facade·회계·환불 매트릭스는 **F03-13 (이벤트 참가 선입금)** 으로 분리. 본 PRD는 신청·취소 사용자 액션과 상태 전이까지만 다룬다.
+>
+> 2026-07-08 현재 소스 갱신: 게스트 동반 예매가 같은 참석 흐름에 편입됐다. 서버는 `allowGuests`, `maxGuestsPerBooking`, `Application.partySize`, `guestNames`, `payableAmount`, 계정 없는 게스트 attendance row를 사용하고, 앱은 신청 확인 시트·일행 관리 시트·참석자/체크인 화면에서 소유자와 게스트를 분리 표시한다. 유료 이벤트의 게스트 추가/삭제는 F03-13 결제·환불 경로(증분 결제, 라인 환불, 호스트 강제환불)를 따른다. 현재 워크트리에는 host removal / party removal의 lock 순서를 event-first로 정렬한 deadlock hardening도 포함되어 있다.
 
 ## 1. 결론
 

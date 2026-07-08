@@ -11,6 +11,7 @@
 - 보조 문서 인덱스: `SUPPORTING_DOCS_INDEX.md`
 - 기능 PRD 작성 표준: `FEATURE_PRD_STANDARD.md`
 - 제대로 된 기능 PRD 샘플: `02_feature_prds/03_event/F03-02_event-detail_prd.md`
+- 현재 소스 갱신 노트: `05_planning_artifacts/current_source_update_2026-07-08.md`
 
 ## 현재 운영 원칙
 
@@ -23,13 +24,17 @@
 - 보조 문서 인덱스: `SUPPORTING_DOCS_INDEX.md`
 - 작성 표준: `FEATURE_PRD_STANDARD.md`
 - golden sample: `02_feature_prds/03_event/F03-02_event-detail_prd.md`
+- 현재 소스 갱신: `05_planning_artifacts/current_source_update_2026-07-08.md`
 - legacy 자동 생성기: `business_logic/prd_tools/generate_prd.mjs`
 - source-first 전환 도구: `business_logic/prd_tools/rebuild_feature_prds_from_units.mjs`
 
-2026-06-09 기준 `02_feature_prds/` 175개 중 1개는 golden sample, 115개는
+2026-07-08 기준 `02_feature_prds/` 175개 중 1개는 golden sample, 115개는
 `business_logic/units`의 실사 자료를 기준으로 한 전환본, 43개는 `units/` 없이
 실제 소스·plan·구현 리포트를 canonical로 삼은 source-first PRD다. 구현 착수 전에는
 각 문서의 trace source와 §7·§8의 정합성/GAP 판단을 실제 코드에서 다시 확인한다.
+2026-06-24 이후 구현된 게스트 동반 예매, 궁합/핏 Phase 0, 플랜 블록 에디터 후속,
+위치/길찾기 보강, 연결성/커뮤니티 메시지, 재사용 경험 루프는 신규 기능 ID를 만들지 않고
+기존 기능 PRD의 현재 소스 갱신으로 흡수한다.
 
 ## 구성
 
@@ -38,6 +43,7 @@
 | START_HERE.md | 사람용 PRD 읽는 법 | 신규 기획자, 개발자, QA, PO | 역할별로 무엇을 먼저 봐야 하는지 |
 | PRD_MIGRATION_STATUS.md | 175개 기능 PRD 문서 상태표 | 문서 운영자, 기능 담당자, QA | Golden sample/전환본/source-first/trace/risk 후보 현황 |
 | SUPPORTING_DOCS_INDEX.md | 보조 PRD 문서 27개 인덱스 | 문서 운영자, PO, QA | 인벤토리/정책/QA/운영 문서의 역할 구분 |
+| 05_planning_artifacts/current_source_update_2026-07-08.md | 현재 소스 갱신 노트 | 문서 운영자, 기능 담당자, QA | 2026-06-24 이후 구현분을 기존 175개 기능 체계에 반영한 기준 |
 | 00_product_prd.md | 제품 전체 PRD | PO, 신규 기획자, 이해관계자 | 제품 범위, 사용자 유형, 전체 여정, 미결정 항목 |
 | FEATURE_PRD_STANDARD.md | 실사 기반 기능 PRD 작성 표준 | PRD 작성자, 리뷰어 | source-first 작성 절차, 금지 패턴, 품질 체크 |
 | 00_prd_items/ | PRD 작성 가능 항목별 독립 문서 12개 | 신규 기획자, 문서 운영자 | 서비스 개요, persona, 정보구조, 기능 정의, 상태/권한/QA 기준 |

@@ -3,6 +3,8 @@
 <!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/14_location_directions/F14-06_reverse-geocoding -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/14_location_directions/F14-06_reverse-geocoding`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-07-08 현재 소스 갱신: 본 단위는 좌표→주소(reverse geocode)뿐 아니라 주소→좌표 geocode도 함께 제공한다. 서버 `GeocodingController`는 `GET /api/v1/location/geocode?address=...`를 추가했고 Kakao Local address search 결과의 `x/y`를 `longitude/latitude`로 매핑한다. Flutter `geocoding_api.dart`/provider는 주소 검색 결과를 좌표로 확정해, 주소 등록·길찾기에서 `0.0,0.0` 저장을 피한다.
 
 ## 1. 결론
 

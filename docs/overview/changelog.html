@@ -22,6 +22,21 @@
       </header>
 
       <section>
+        <h2>2026-07-08 — 현재 소스 동기화 (기능 수 증감 없음)</h2>
+        <p class="subtitle">2026-06-24 도메인 21 추가 이후 구현된 변경을 기존 175개 기능 체계 안에 흡수했다. 새 기능 ID는 만들지 않고, PRD와 HTML의 현재 기준 노트·대표 기능 설명·카탈로그 체크포인트를 갱신했다.</p>
+        <ul>
+          <li><strong>게스트 동반 예매</strong> — 예매 소유자 기준 게스트 attendance row, partySize/guestNames/payableAmount, 일행 관리, 증분 결제, 라인 환불, 호스트 강제환불, 게스트 노쇼 owner 패널티를 F03-05·08·13·20에 반영.</li>
+          <li><strong>궁합/핏 Phase 0</strong> — legacy GraphQL 추천·PreferenceRating 중심 서술을 낮추고, 이벤트 피드백·데이트 만남 피드백·InterestTag 단일 카탈로그·데이터 내보내기/삭제 포함 기준으로 F09-06·F11-06을 갱신.</li>
+          <li><strong>플랜 블록 에디터와 공유</strong> — URL bookmark 제안, 모바일 Enter 분할, course map, preview teaser, 작성자 선택 sample preview, system/Kakao share를 F08-03 중심으로 반영.</li>
+          <li><strong>위치·길찾기</strong> — 위치 프라이버시 access-log 소비, 저장 주소/현재 위치 출발지, 좌표 null guard, 주소→좌표 geocode와 기존 reverse geocode의 양방향 lookup을 F14-04·05·06에 반영.</li>
+          <li><strong>인증·검색·알림 표면</strong> — 비밀번호 재설정 request/confirm, 이메일 인증 재발송/검증, 검색 typed result, 검색 history roundtrip, saved-search CRUD/execute, 주요 알림 딥링크 배선을 기능 정의에 반영.</li>
+          <li><strong>연결성/커뮤니티 메시지</strong> — Person access policy와 공통 맥락 한정 커뮤니티 메시지는 현재 소스에 있으나 이번 문서화에서는 신규 기능 ID로 승격하지 않고 정책·갱신 노트에만 기록.</li>
+          <li><strong>정합성 보정</strong> — `features.js` 대표 기능 체크포인트, 도메인 15·16·21 영향 매트릭스 누락, 운영 모델/architecture/QA의 정적 수치를 현재 175개 데이터와 맞췄다. current expansion QA는 canonical 53/53 close, active pending-run/merge/gap 0으로 기록했다.</li>
+        </ul>
+        <p class="subtitle" style="margin-top:12px">기준 문서: <a href="../../prd/05_planning_artifacts/current_source_update_2026-07-08.md">2026-07-08 현재 소스 갱신 노트</a>.</p>
+      </section>
+
+      <section>
         <h2>2026-06-24 — 도메인 21 제공자 배정·정산 신설 (도메인 20 → 21, 기능 168 → 175)</h2>
         <p class="subtitle">호스트 기획 모임에 서비스 제공자를 배정하고 참가자 서비스비 분담 결제·제공자 정산·환불·계약금·정기 묶음 배정까지 처리하는 도메인이 추가됐다. 모임(이벤트) 줄기의 위성으로 배치한다.</p>
         <ul>

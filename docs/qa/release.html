@@ -21,6 +21,14 @@
       </header>
 
       <section>
+        <div class="callout warn">
+          <span class="label">2026-07-08 current QA 기준</span>
+          <p>Flutter current expansion QA는 canonical 53/53 close이며 active pending-run, merge, gap은 0이다.
+            P83 communication runner는 별도 존재하지만 current 53/53 canonical에는 아직 포함하지 않는다.</p>
+        </div>
+      </section>
+
+      <section>
         <h2>1. 기능 범위</h2>
         <ul>
           <li>이번 릴리즈에 포함되는 기능 ID를 175개 인벤토리 기준으로 표시했다</li>
@@ -35,6 +43,7 @@
           <li>신규 사용자 가입·온보딩 흐름이 깨지지 않는다</li>
           <li>홈·검색에서 핵심 콘텐츠로 진입할 수 있다</li>
           <li>이벤트 신청·클럽 가입·플랜 구매·데이팅 매칭 중 릴리즈 대상 흐름이 QA됐다</li>
+          <li>게스트 동반 예매 대상 릴리즈라면 신청·체크인·노쇼·환불에서 owner와 guest attendance row가 분리된다</li>
         </ul>
       </section>
 
@@ -60,6 +69,7 @@
         <h2>5. 개인정보와 안전</h2>
         <ul>
           <li>위치 공유의 동의·중지 동선이 명확하다</li>
+          <li>실제 GPS 주기 업로드 완료, live 지도 키 readiness, staging 실증 완료를 검증 없이 완료로 쓰지 않는다</li>
           <li>데이팅 차단·신고가 관련 화면에 즉시 반영된다</li>
           <li>데이터 내보내기·계정 삭제·비활성화 문구가 검토됐다</li>
         </ul>

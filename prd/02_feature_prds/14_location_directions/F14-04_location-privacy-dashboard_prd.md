@@ -3,6 +3,8 @@
 <!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/14_location_directions/F14-04_location-privacy-dashboard -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/14_location_directions/F14-04_location-privacy-dashboard`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-07-08 현재 소스 갱신: 앱 화면이 `GET /api/v1/events/{eventId}/location/privacy`의 access-log 대시보드를 실제로 소비한다. "서버에는 기록이 있지만 화면은 호출하지 않는다"는 기존 Gap은 해소된 기준으로 본다. 단, 위치 공유 자동 갱신·만료·종료 후 삭제는 F14-01/F14-02의 별도 검증 대상이다.
 
 ## 1. 결론
 
