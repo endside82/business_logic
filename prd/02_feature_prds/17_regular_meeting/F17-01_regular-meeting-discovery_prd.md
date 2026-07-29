@@ -19,7 +19,7 @@ Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카�
 | Discovery 거름망 | `event/util/EventScope` | RM 세션(eventType=REGULAR_MEETING)을 일반 검색·홈·트렌딩·관심인 8표면에서 분류 |
 | Flutter API | `community_app/lib/data/api/regular_meeting_api.dart` | Retrofit endpoint |
 | Flutter Repository | `regular_meeting_repository.dart` | `Result<PageResponse<RegularMeetingSimpleVo>>` |
-| Flutter Provider | `regular_meeting_list_provider.dart`, `my_regular_meetings_provider.dart` | `@Riverpod(keepAlive: true)` |
+| Flutter Provider | `community_app/lib/domain/providers/regular_meeting/regular_meeting_list_provider.dart` | `regularMeetingList`, `myRegularMeetings`가 한 파일에 통합된 `@riverpod` 2종 |
 | Flutter Screen | `presentation/regular_meeting/screens/regular_meeting_list_screen.dart` | 검색 카드 + FIXED/VARIABLE 뱃지 |
 | Flutter Widget | `widgets/regular_meeting_badge.dart` | 카드 상단 뱃지 |
 

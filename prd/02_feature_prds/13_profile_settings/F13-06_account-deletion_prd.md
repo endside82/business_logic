@@ -1,6 +1,6 @@
 # F13-06. 계정 삭제 요청 (30일 유예) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-27 (member.mbti null 처리 추가); unit: business_logic/units/13_profile_settings/F13-06_account-deletion -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/13_profile_settings/F13-06_account-deletion -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-06_account-deletion`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -9,6 +9,21 @@
 계정 삭제 요청은 즉시 탈퇴와 별도로 30일 유예 기간을 둔 데이터 삭제 예약 기능이다. 서버는 삭제 요청을 `PENDING` 상태와 `scheduledAt = now + 30일`로 저장하고, 스케줄러가 매일 새벽 4시에 만료된 요청을 처리한다. UI 스펙의 비밀번호 재확인 body는 실제 컨트롤러와 Param에서 확인되지 않는다.
 
 **2026-05-27 변경**: `DataDeletionService`가 Member 익명화 시 `mbti`도 null 처리(기존 name/birthDate/gender/bio/profileImageUrl + mbti). [[F13-02]]의 MBTI 필드가 삭제 범위에 포함된다.
+
+### 2026-07-29 소스 재실측 — 게이트·삭제 범위·보존
+
+- `POST /api/v1/users/me/data-deletion`은 body/비밀번호 없이 202를 반환하고 `PENDING`, `scheduledAt=now+30일`을 만든다. 취소는 PENDING에서만 `DELETE` 204다. `GET status`는 최신 `PENDING`/`APPROVED`만 조회하고 취소·완료 후에는 NOT_FOUND다.
+- 요청 시점과 실제 실행 직전에 `AccountDeactivationService.checkDeactivation`을 모두 수행한다. 미정산·미수령 earning·진행 중 제공자 배정 등 미해결 금융 의무가 있으면 `DEACTIVATION_BLOCKED`와 상세를 반환하고 삭제를 보류한다.
+- 스케줄러는 매일 04:00에 만료된 `PENDING`을 처리한다. 로그인 자체가 요청을 자동 취소하는 서버 로직은 없다.
+- 계정은 `EXIT`로 익명화하고 Member 이름·생년·성별·bio·MBTI·프로필 이미지 포인터를 지운다. bare fileKey 프로필 이미지는 FileStorage에서 best-effort 삭제한다.
+- 주소·관심태그·인증/소셜/토큰·알림/기기/검색 설정·결제 자격증명/정산계좌·데이팅 프로필/매치/미팅/피드백/차단/인증·캘린더·취향 프로필·이벤트 선택 피드백·trait 개인 세션을 삭제한다. trait 응답/점수는 session cascade이고 전역 축/문항은 유지한다.
+- 거래/정산 기록은 5년 보존한다. active legal hold에서는 분쟁 증거가 될 알림·데이트 채팅과 분쟁 원천/evidence를 보존하며, 종결 분쟁 retention은 별도 `closedAt+1년` 정책이다.
+
+확정 Gap/Risk:
+
+1. Flutter provider는 `DEACTIVATION_BLOCKED`의 상세를 bool 실패로 축약해 사용자가 어떤 금융 의무를 먼저 해소해야 하는지 보지 못한다.
+2. `DateProfilePhotoRepository.deleteAllByProfileId`는 DB row를 지우지만 각 데이팅 사진의 FileStorage 실물을 삭제하는 호출은 확인되지 않는다.
+3. Entity는 `user_id unique=true`를 선언하지만 canonical `V1__init.sql`은 non-unique 복합 index만 둔다. 서비스는 취소/완료 후 새 row INSERT 방식이므로 스키마 선언을 일치시켜야 한다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -43,7 +58,7 @@
 3. 요청 성공: provider 상태 갱신 후 D-day 카드 노출.
 4. 마이페이지 진입: `DeletionInProgressBanner`도 같은 `deletionStatusNotifierProvider`를 구독한다.
 5. 취소 버튼: `cancelDeletion()` ▶ `DELETE /api/v1/users/me/data-deletion`.
-6. provider 내부 repository/Retrofit 메서드명은 허용 탐색 범위 밖이라 `(미확인)`.
+6. `DeletionStatusNotifier` → `ProfileRepository` → `DataPrivacyApi` 체인이 조회·요청·취소를 수행한다.
 
 ## 4. 서버 계약
 
@@ -57,14 +72,16 @@
 |---|---|---|---|---|
 | POST | `/api/v1/users/me/data-deletion` | `DataPrivacyController#requestDeletion` | required | 30일 후 데이터 삭제 예약 |
 | GET | `/api/v1/users/me/data-deletion/status` | `DataPrivacyController#getDeletionStatus` | required | 진행 중 삭제 요청 상태 조회 |
-| DELETE | `/api/v1/users/me/data-deletion` | `DataPrivacyController#cancelDeletion` | required | 진행 중 삭제 요청 취소 |
+| DELETE | `/api/v1/users/me/data-deletion` | `DataPrivacyController#cancelDeletion` | required | `PENDING` 삭제 요청만 취소 |
+
+관리자 `process`는 내부 실행 경로를 호출하며 현재 `COMPLETED`만 멱등 skip한다. `PENDING`/`APPROVED`뿐 아니라 이미 `CANCELLED`인 row도 실행할 수 있어 공개 취소 상태를 우회하는 확인된 상태 가드 공백이다.
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
 - **Enum** `DataDeletionStatus`: `PENDING`, `APPROVED`, `COMPLETED`, `CANCELLED`
 - **Entity** `DataDeletionRequest`: 테이블 `data_deletion_request`
   - `id`, `userId`, `status`, `scheduledAt`, `createdAt`
-  - `user_id` unique
+  - Entity annotation은 `user_id unique=true`, canonical `V1__init.sql`은 `KEY (user_id,status,created_at)`만 존재 — 정합화 필요
 - **VO** `DataDeletionRequestVo`: `id`, `userId`, `status`, `scheduledAt`, `createdAt`
 - **상수** `GRACE_PERIOD_DAYS = 30`
 
@@ -88,18 +105,18 @@
 | 라우트 (GoRouter) | Screen 파일 (lib/presentation/...) | 역할 |
 |---|---|---|
 | `/profile/privacy` | `profile/screens/data_privacy_screen.dart` | 삭제 요청, 남은 기간 표시, 삭제 취소 |
-| 하단 탭 마이페이지 (`/profile` 추정, 실제 등록 미확인) | `profile/widgets/deletion_in_progress_banner.dart` | 진행 중 삭제 요청 배너 |
+| 하단 탭 마이페이지 `/profile` | `profile/widgets/deletion_in_progress_banner.dart` | 진행 중 삭제 요청 배너 |
 
 ### 화면별 구성 요소 & 액션
 
 ### 데이터 프라이버시 - 계정 삭제 섹션 (`data_privacy_screen.dart`)
 - **사용자가 보는 것**:
   - 섹션 제목 `계정 삭제`
-  - 경고 박스 `계정 삭제를 요청하면 30일 유예 기간 후 모든 데이터가 영구 삭제됩니다.`
+  - 경고 박스는 `30일 유예 기간 후 개인정보가 삭제·익명화되고, 법적 의무에 따라 일부 기록은 보존될 수 있습니다.`라고 안내한다.
   - 요청이 없거나 `CANCELLED`/`COMPLETED`이면 `계정 삭제 요청` danger 버튼
   - 진행 중이면 `삭제까지 N일 남음` 카드
-  - `유예 기간 중 로그인하면 삭제 요청이 취소됩니다.` 안내 문구
-  - 진행 중이면 `삭제 취소` outline 버튼
+  - 개인정보 삭제/익명화와 법적 보존 기록을 구분해 안내하며, 로그인 자동 취소 문구는 현재 코드에 없다.
+  - `PENDING`이면 `삭제 취소` outline 버튼. `APPROVED` 분기에는 승인 badge와 새로고침만 있고 취소 버튼은 없다.
 - **사용자가 할 수 있는 액션**:
   - 계정 삭제 요청 탭 ▶ 확인 `AlertDialog` ▶ `deletionStatusNotifierProvider.notifier.requestDeletion()`
   - 삭제 취소 탭 ▶ `deletionStatusNotifierProvider.notifier.cancelDeletion()`
@@ -107,7 +124,8 @@
   - loading: 중앙 `CircularProgressIndicator`
   - error: `계정 삭제 요청` 버튼 표시
   - data null, `CANCELLED`, `COMPLETED`: 신규 요청 버튼
-  - `PENDING`, `APPROVED`: D-day 카드와 취소 버튼
+  - `PENDING`: D-day 카드와 취소 버튼
+  - `APPROVED`: 승인 badge와 새로고침, 취소 버튼 없음
   - 기타 상태: `SizedBox.shrink`
 - **모달/시트/네비게이션**:
   - 요청 전 `정말 삭제하시겠습니까?...` AlertDialog
@@ -133,7 +151,7 @@
 3. 요청 성공: provider 상태 갱신 후 D-day 카드 노출.
 4. 마이페이지 진입: `DeletionInProgressBanner`도 같은 `deletionStatusNotifierProvider`를 구독한다.
 5. 취소 버튼: `cancelDeletion()` ▶ `DELETE /api/v1/users/me/data-deletion`.
-6. provider 내부 repository/Retrofit 메서드명은 허용 탐색 범위 밖이라 `(미확인)`.
+6. `DeletionStatusNotifier` → `ProfileRepository` → `DataPrivacyApi` 체인이 조회·요청·취소를 수행한다.
 
 ### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
 
@@ -141,7 +159,7 @@
 - UI 스펙의 비밀번호 재확인은 현재 화면에 없다.
 - `scheduledAt`이 null이면 남은 일수 기본값을 30으로 표시한다.
 - 남은 일수가 음수면 0일로 보정해 표시한다.
-- "유예 기간 중 로그인하면 삭제 요청이 취소됩니다" 문구는 UI에 있으나 account 서버 코드에서 자동 취소 로직은 확인되지 않는다.
+- 로그인 자동 취소 계약은 서버에 없다. 현재 Flutter 문구도 데이터가 삭제/익명화되고 법적 기록은 보존된다는 내용으로 교정됐다.
 - 삭제 진행 배너는 별도 취소 버튼이 아니라 관리 화면 진입만 제공한다.
 
 ## 6. 상태/권한/시나리오 매트릭스
@@ -149,7 +167,7 @@
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
 | S1 | 사용자가 30일 유예 삭제를 요청한다 | 로그인됨, 진행 중 삭제 요청 없음 | `data_deletion_request`에 `PENDING` 삭제 예약이 존재한다. |
-| S2 | 사용자가 마이페이지에서 삭제 진행 배너를 확인한다 | 삭제 요청 status가 `PENDING` 또는 `APPROVED` | 사용자는 삭제 상태와 취소 버튼을 볼 수 있다. |
+| S2 | 사용자가 마이페이지에서 삭제 진행 배너를 확인한다 | 삭제 요청 status가 `PENDING` 또는 `APPROVED` | 두 상태 모두 배너는 보인다. 프라이버시 화면의 취소 버튼은 PENDING에만 있고 APPROVED에는 없다. |
 | S3 | 유예 기간 중 삭제 요청을 취소한다 | 삭제 요청 status가 `PENDING` | 삭제 진행 배너는 사라지고 신규 삭제 요청 버튼 상태로 돌아간다. |
 | S4 | 이미 삭제 요청이 있어 중복 요청이 실패한다 | 서버에 `PENDING` 삭제 요청 존재 | 기존 삭제 요청은 유지된다. |
 | S5 | 30일이 지나 스케줄러가 개인정보를 삭제한다 | `PENDING`, `scheduledAt`이 현재보다 과거 | 사용자의 개인정보는 삭제/익명화되고 계정 status는 `EXIT`가 된다. |
@@ -167,15 +185,17 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:38 | - 기존 `CANCELLED`/`COMPLETED` 행이 unique 제약에 미치는 영향은 `(미확인)` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:11 | \| 하단 탭 마이페이지 (`/profile` 추정, 실제 등록 미확인) \| `profile/widgets/deletion_in_progress_banner.dart` \| 진행 중 삭제 요청 배너 \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Risk | `DataDeletionRequest` vs `V1__init.sql` | Entity는 `unique=true`, canonical migration은 non-unique다. 취소/완료 후 신규 row 정책의 스키마 권위를 일치시켜야 한다. | annotation/migration/운영 DB 제약 동기화 |
+| Gap | `data_privacy_provider.dart` | 서버 `DEACTIVATION_BLOCKED` 상세가 사용자에게 전달되지 않고 일반 실패가 된다. | 차단 의무 목록을 보존해 선행 해결 CTA 제공 |
+| Gap | `DataDeletionService` | 데이팅 사진 row 삭제 전 FileStorage 실물 삭제 호출이 없다. | 사진 fileKey별 삭제 및 회귀 테스트 |
+| Risk | admin `process` → internal execute | 관리자 process가 CANCELLED row도 실행할 수 있어 사용자가 취소한 삭제를 완료로 바꿀 수 있다. | process 허용 상태를 PENDING/APPROVED 등 명시적 allowlist로 제한 |
+| 해소 | `app_router.dart`, `my_profile_screen.dart` | `/profile` 허브와 삭제 진행 배너 진입을 확인했다. | — |
 | 후보 | frontend.md:34 | - 비밀번호 재확인 다이얼로그는 현재 코드에 없음. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:55 | 6. provider 내부 repository/Retrofit 메서드명은 허용 탐색 범위 밖이라 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
 
 - **AC-01. 사용자가 30일 유예 삭제를 요청한다**: Given 로그인됨, 진행 중 삭제 요청 없음 When 사용자가 해당 흐름을 실행하면 Then `data_deletion_request`에 `PENDING` 삭제 예약이 존재한다.
-- **AC-02. 사용자가 마이페이지에서 삭제 진행 배너를 확인한다**: Given 삭제 요청 status가 `PENDING` 또는 `APPROVED` When 사용자가 해당 흐름을 실행하면 Then 사용자는 삭제 상태와 취소 버튼을 볼 수 있다.
+- **AC-02. 사용자가 마이페이지에서 삭제 진행 배너를 확인한다**: Given 삭제 요청 status가 PENDING 또는 APPROVED When 마이페이지와 프라이버시 화면을 열면 Then 두 상태 모두 배너는 보이지만 취소 CTA는 PENDING에만 보인다.
 - **AC-03. 유예 기간 중 삭제 요청을 취소한다**: Given 삭제 요청 status가 `PENDING` When 사용자가 해당 흐름을 실행하면 Then 삭제 진행 배너는 사라지고 신규 삭제 요청 버튼 상태로 돌아간다.
 - **AC-04. 이미 삭제 요청이 있어 중복 요청이 실패한다**: Given 서버에 `PENDING` 삭제 요청 존재 When 사용자가 해당 흐름을 실행하면 Then 기존 삭제 요청은 유지된다.
 - **AC-05. 30일이 지나 스케줄러가 개인정보를 삭제한다**: Given `PENDING`, `scheduledAt`이 현재보다 과거 When 사용자가 해당 흐름을 실행하면 Then 사용자의 개인정보는 삭제/익명화되고 계정 status는 `EXIT`가 된다.

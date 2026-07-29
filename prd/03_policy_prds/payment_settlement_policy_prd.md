@@ -140,13 +140,11 @@ flowchart TD
 | 기한 만료 처리 | 결제 대기 상태에는 기한이 있고 만료 시 예약 정원을 반환한다. |
 | 서버 검증 | 선입금 승인제 흐름의 검증 주체는 이벤트 선입금 결제 facade다(§5 D8) — 승인 대기 상태·기한·중복 결제를 검증한다. 2026-06-06 이관으로 결제는 표준 차감 경로를 직접 호출하며, 구식 비선입금 결제 통로는 차단되었다. |
 
-현재 서버에는 `APPROVED_PENDING_PAYMENT`/`PAYMENT_EXPIRED` 상태와 결제 후 attendance 생성 계약이 없다. 따라서 이 조합은 구현 보강 대상이며, 임시로 결제를 승인 전에 받거나 승인 즉시 ATTENDING으로 만드는 방식은 PRD 정책과 맞지 않는다.
+현재 서버에는 `APPROVED_PENDING_PAYMENT`, `PAYMENT_EXPIRED`, `CANCEL_PENDING_REFUND`와 결제 후 `Application=APPROVED + EventAttendance=ATTENDING` 계약이 구현돼 있다. `APPROVED_PENDING_PAYMENT`는 attendance/currentCapacity를 만들지 않지만 pending party size를 용량 판정의 논리 hold로 반영한다. 다만 만료 bulk update가 PENDING payment를 정리하거나 75 event를 발행하지 않는 Gap이 있다.
 
-> **2026-05-22 W2/W3 정책 결정**: 위 "현재 서버에 상태가 없다" 문구는 **선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에 한해서 해결됨**. `ApplicationStatus.APPROVED_PENDING_PAYMENT, PAYMENT_EXPIRED`가 서버 enum에 추가되었고, `Application.paymentDueAt`가 자동 설정된다. 결제 흐름과 환불·취소·탈퇴 통합은 §5의 D-시리즈 결정으로 명문화한다. 선입금 미활성 유료 이벤트의 미해결 흐름은 별도 후속 슬라이스로 추적.
+## 5. 이벤트 참가 선입금 현재 정책
 
-## 5. W2/W3 결정 사항 (Event Extensions v4.5)
-
-본 절은 `docs/plan/event-extensions/PLAN.md` v4.5에서 결정된 8개 정책 결정을 정책 문서에 고정한다. 본 결정은 이벤트 참가 선입금 흐름(F03-13, F06-06)에 한해 적용되며, 모임 정산 선입금(F07-09)·하스팅 티켓(F06-07)·구독(F06-08)에는 적용되지 않는다.
+본 절은 현재 `event/prepayment` 서비스, DDL, 관련 테스트와 Flutter 호출부를 기준으로 한다. 이벤트 참가 선입금(F03-13, F06-06)에 한해 적용되며 모임 정산 선입금(F07-09)·호스팅 티켓(F06-07)·구독(F06-08)과 구분한다.
 
 ### D1. 단방향 price 동기화
 
@@ -157,9 +155,9 @@ flowchart TD
 - 비활성 → `Event.price` 자체값 사용
 - ON → OFF 전환 (Q2 사용자 확정): `event.price = 0` 무료 이벤트로 자동 전환. 사용자에게 price 재입력 받지 않음.
 
-### D4. `APPROVED_PENDING_PAYMENT` 좌석 미점유
+### D4. `APPROVED_PENDING_PAYMENT` currentCapacity 미증가·논리 hold
 
-호스트 승인 또는 자동 승인 이후 `APPROVED_PENDING_PAYMENT` 상태에 진입한 application은 **capacity를 점유하지 않는다**. 결제 facade(`payByWallet` 성공, `bankConfirm` 성공)가 `confirmPaymentAndAttend`를 호출한 시점에만 `currentCapacity++`. 정원 race는 결제 확정 시점 `CapacityPolicy.decide` 매트릭스로 단일 판정(F03-07).
+호스트 승인 또는 자동 승인 이후 `APPROVED_PENDING_PAYMENT` application은 attendance를 만들지 않고 `currentCapacity`도 증가시키지 않는다. 그러나 `ApplicationService`는 pending party size를 용량 판정의 논리 hold로 차감한다. 결제 facade(`payByWallet` 성공, `bankConfirm` 성공)가 `confirmPaymentAndAttend`를 호출한 시점에 `currentCapacity++`와 attendance 생성이 일어난다.
 
 ### D5. 계좌이체 호스트 직접 수취
 
@@ -170,12 +168,12 @@ BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫�
 - 호스트 정산 보고서에 6 섹션 별도 노출 (F06-10 §5.1) — 플랫폼 정산금과 명확히 구분
 - 1차 출시는 호스트 직접 수취만 (Q3 가정). 가상계좌 등 PG 자동화는 후속 슬라이스.
 
-### D6. application당 active payment 1건
+### D6. application당 active INITIAL payment 1건
 
-`event_payment.active_application_id` STORED generated column + `UNIQUE KEY`로 application당 active(PENDING/PAID/REFUND_REQUESTED) 결제 1건만 허용.
+`event_payment.active_application_id` STORED generated column + `UNIQUE KEY`로 application당 active(PENDING/PAID/REFUND_REQUESTED) **INITIAL** 결제 1건만 허용한다. `GUEST_INCREMENT`는 다건 허용이다.
 
-- DDL: `active_application_id BIGINT GENERATED ALWAYS AS (CASE WHEN status IN ('PENDING','PAID','REFUND_REQUESTED') THEN application_id ELSE NULL END) STORED, UNIQUE KEY uk_event_payment_active (active_application_id)`
-- 동일 application에 대해 두 번째 결제 시도 시 `DataIntegrityViolationException` → service에서 `DUPLICATE_PAYMENT`로 변환
+- DDL: `CASE WHEN status IN (...) AND purpose='INITIAL' THEN application_id ELSE NULL END`
+- 순차 중복은 service 선조회로 `DUPLICATE_PAYMENT`가 되지만 DB unique 경쟁 예외를 동일 코드로 명시 변환하는 catch는 없다.
 - 환불 완료(`REFUNDED`)·취소(`CANCELED`) 후에는 generated column이 NULL이 되어 재신청·재결제 가능
 
 ### D7. 환불 정책 카탈로그 일원화 (2026-06-04 D-1 업데이트)
@@ -189,6 +187,8 @@ BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫�
 - `EventPrepayment.refundDeadlineHours` 컬럼은 하위 호환 유지(paymentDueAt 계산에 계속 사용). 실환불 계산에는 미사용
 - 모임 정산 선입금(`meeting_refund_rule` 기반)은 D-1 카탈로그 저장 범위 외 — 저장은 `meeting_refund_rule` 별도 유지. 단 계산 엔진은 Phase 4(③)에서 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용(저장하지 않음)
 
+조회 권한 실측: `GET /api/v1/refund-policy-templates`도 전역 `anyRequest().authenticated()` 대상이다. `POST .../refund-preview`는 Controller가 actor를 service에 전달하지 않고, `GET .../no-show-refund`는 actor가 없으며 path eventId도 무시하므로 applicationId 기반 IDOR 후보가 남아 있다.
+
 ### D8. 결제 경로 분리 → 표준 결제 경로로 통합 (2026-06-06 갱신)
 
 > **2026-06-06 갱신 (EVENT 표준 결제 이관, §2.6)**: 아래 W2/W3 당시의 "신규/기존 분리" 구도는 종결됐다. 이벤트 선입금 결제는 이제 표준 차감 경로(`WalletSpendService.spend`)를 직접 호출하고(유료우선 차감 + 충전 단위 FIFO 소비, 단위 추적 필수 — 부족 시 결제 롤백), 멱등 가드·결제 기록·회계 분개는 호출 wrapper가 같은 트랜잭션에서 처리한다. 구식 결제 메서드 2개(`WalletService.pay`/`payForApplication`)는 본체가 차단되어 호출 시 즉시 거부된다(시그니처·endpoint는 하위호환 보존). 환불은 표준 환불 경로(`WalletRefundService.refundByTransaction`)로 통합 — 충전 단위 복원 + 통화별 누적 환불 한도 강제.
@@ -197,7 +197,7 @@ BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫�
 
 ### D15. 알림은 도메인 이벤트 + AFTER_COMMIT
 
-선입금 흐름의 모든 알림(71~76, 83)은 facade가 `ApplicationEventPublisher.publishEvent`로 도메인 이벤트만 발행하고, `EventExtensionNotificationListener`가 `@TransactionalEventListener(phase=AFTER_COMMIT)`로 `NotificationService`를 호출한다. 결제 트랜잭션 롤백 시 알림은 발송되지 않는다.
+71~74·76은 facade domain event와 `EventExtensionNotificationListener(AFTER_COMMIT)`가 연결돼 있다. 75는 listener만 있고 production publisher가 없어 실제 전송되지 않는다. 83은 최초 환불 요청 event가 아니라 기본 3일 후 `RefundRequestEscalationScheduler`의 직접 재알림이다. 72와 83의 수신자는 CoHost fanout 없이 주 호스트 한 명이다. Flutter `NotificationRouter`에는 71~76·83 case가 없다.
 
 ### D16. Pending count 단건 lazy
 
@@ -207,7 +207,7 @@ BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫�
 
 ### 6.1 EventRefundSettlementService 분개 공통화 완료 — PG lot 처리 경로 분리 유지
 
-> **D-1 Phase 3 완료 (커밋 419e050)**: `EventRefundSettlementService`로 분개 + 정산 후처리 일원화 완료. 이전에 미완이었던 `WalletRefundExecutor` 추출 이슈의 핵심(분개 공통화)은 해소됨.
+> `EventRefundSettlementService`로 분개 + 정산 후처리가 일원화됐다. 별도 지갑 환불 executor class/interface는 없으며 과거 리팩터링 아이디어와 현재 구현을 혼동하지 않는다.
 
 - PG lot 처리(RefundLotAllocator)와 PG 환불 queue(RefundRequest)는 **`RefundService` 경로만 사용**. `EventPaymentRefundService`(선입금 결제 환불 경로)는 PG queue를 사용하지 않으며 `pgQueuedPaid = 0` 고정.
 - `RefundLotAllocator`: `@Value("${refund.pg-queue.enabled:false}")` — **기본 비활성**. PG 환불 가능 lot + paymentKey 존재 + enabled 조건이 모두 충족될 때만 PG queue 대기. 조건 미충족 시 `RefundService.java:184-194`에서 paidRefund도 지갑 즉시 복원.
@@ -243,7 +243,9 @@ F07-06 limbo SLA 운영 정책 링크: [F07-06 §4 limbo SLA 정책](../02_featu
 
 ### 6.3 BANK_TRANSFER PAID 사용자 취소 SLA — 해소 (2026-06-06)
 
-> **해소 (2026-06-06 돈 흐름 무결성, MED)**: BANK PAID → `REFUND_REQUESTED` 전환 후 호스트 수동 환불까지의 무SLA 사각지대를 신규 `RefundRequestEscalationScheduler`(이벤트·RM 양쪽, ShedLock 05:20)가 닫았다. `refund-request.escalation-days`(기본 3일) 경과 시 호스트 재알림 → 2회 후 `OperatorAlertType.BANK_REFUND_STALE` 운영자 경보. 자동 환불·자동 만료는 없음(limbo 원칙). 신규 컬럼 `refund_escalated_at`/`refund_escalation_count`(event_payment·regular_meeting_payment 양 V1).
+> **부분 구현 (2026-07-29 재실측)**: BANK PAID → `REFUND_REQUESTED` 후 기본 3일 경과 시 `RefundRequestEscalationScheduler`가 주 호스트에게 재알림하고 2회 후 운영 경보를 낸다. 그러나 event payment 대상 조회/저장이 row lock 없이 이뤄지고 `EventPayment`와 DDL에 version도 없어, 동시에 환불 완료된 row를 stale `REFUND_REQUESTED`로 되살릴 경쟁 위험이 있다. 전용 refund 경합 테스트도 없다.
+
+이벤트 취소 환불에도 현재 경계가 있다. `EventService.tryRefundNewPrepayment`는 ATTENDING/WAITING 순회 기반이라 attendance가 없는 `APPROVED_PENDING_PAYMENT`와 BANK PENDING 결제가 정리에서 누락될 수 있다. BANK PAID는 `REFUND_REQUESTED`로만 전이하지만 caller가 refunded=true/완료 알림으로 취급하는 오표시가 있으며 Club/Recurring 취소 경로도 같은 계열을 재검증해야 한다. 별도 취소 환불 coordinator class가 아니라 이 실제 서비스 호출을 추적한다.
 
 ## 7. 수용 기준
 

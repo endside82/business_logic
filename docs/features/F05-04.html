@@ -26,6 +26,15 @@
       </header>
 
       <section>
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측</span>
+          <p>비어 있지 않은 사람 검색도 기존 Redis 검색 기록에 자동 저장된다. Flutter는 한 번의 검색 제출로
+            콘텐츠 탭들과 로그인 시 사람 탭을 함께 조회한 뒤 history를 갱신한다. 서버의 remove-then-LPUSH
+            로직 때문에 여러 endpoint가 같은 키워드를 기록해도 하나만 맨 앞에 남고 최대 20개로 trim된다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
           <div class="metric"><div class="label">보관 갯수</div><div class="value">최대 20건</div><div class="hint">새 항목이 들어오면 오래된 것이 빠진다</div></div>
           <div class="metric"><div class="label">자동 만료</div><div class="value">90일</div><div class="hint">사용자가 활성 상태일 때만 유지</div></div>

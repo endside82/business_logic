@@ -1,163 +1,114 @@
 # F03-17. 차량 레이아웃 카탈로그 (Vehicle Layout Catalog) PRD
 
-<!-- generated: source-first-event-extensions; updated: 2026-05-22; plan: docs/plan/event-extensions/PLAN.md v4.5 §4.1~§4.3 / W6 슬라이스 -->
+<!-- source-measured: 2026-07-29; authority: community_api/community_admin_api/community_app current source -->
 
-> 문서 상태: **신규 PRD**. mode 베이스는 [F03-14](F03-14_event-transport-mode_prd.md), 이벤트 측 버스 운영은 [F03-16](F03-16_event-bus-charter_prd.md)을 함께 본다. 본 슬라이스는 호스트용 **read-only API + 시드 4종**만 1차 출시 범위에 포함한다. **관리자 차량 카탈로그 CRUD UI(SPA)는 후속 슬라이스** — Q5 사용자 확정에 따라 `community_admin_api`에서 분리해 다룬다.
+> 문서 상태: **현재 소스 실측본**. 삭제된 `docs/plan/event-extensions/*`에 있던 “기본 시드 4종”과 `VehicleSeatType` enum은 현재 소스에 존재하지 않는다.
 
 ## 1. 결론
 
-[F03-16 버스대절](F03-16_event-bus-charter_prd.md)에서 호스트가 버스를 추가하려면 사전에 정의된 **차량 레이아웃(좌석 그림)** 을 선택해야 한다. 이 카탈로그는 운영자가 관리하는 마스터 데이터이며, 본 슬라이스에서는:
+사용자 API에는 활성 레이아웃 목록과 특정 레이아웃 좌석 목록을 읽는 2개 endpoint가 있다. 관리자 API에는 목록·상세·생성·메타 수정·전체 좌석맵 교체·활성 토글이 구현되어 있다. 삭제 endpoint는 없다.
 
-1. `vehicle_layout` + `vehicle_layout_seat` 테이블 신설
-2. **시드 4종** INSERT: 28인승 A타입, 45인승, 20인승, 8인승(운전자 제외)
-3. 호스트용 read-only endpoint 2개 신설 — `GET /api/v1/vehicle-layouts/active`, `GET /api/v1/vehicle-layouts/{id}/seats`
+`seatType`은 Java enum이 아니라 **문자열**이며 관리자 서비스가 6개 허용값을 검증한다. 두 V1 migration과 seed SQL을 실측한 결과 28인승/45인승/20인승/8인승 기본 INSERT는 없다.
 
-관리자 CRUD(엔드포인트 + SPA UI)는 본 슬라이스 범위 외다. PLAN.md §4.3에 따라 1차 운영은 직접 INSERT 또는 admin API 호출(community_admin_api)로 처리하고, SPA UI는 후속 슬라이스에서 추가한다.
+## 2. 실측 근거
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Plan | [PLAN.md v4.5 §4.1~§4.3](../../../../docs/plan/event-extensions/PLAN.md) | 있음 | 데이터 모델 + Q5 사용자 확정(1차 SPA UI 제외) |
-| Enum | [ENUM_RESERVATIONS.md VehicleSeatType](../../../../docs/plan/event-extensions/ENUM_RESERVATIONS.md) | 있음 | `VehicleSeatType` 예약 |
-| E2E | [E2E_SCENARIOS.md S4-1](../../../../docs/plan/event-extensions/E2E_SCENARIOS.md) | 있음 | 시드 4종 + read-only 동작 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
+| 범위 | 현재 소스 |
 |---|---|
-| `community_api/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java:27` (GET active) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java:32` (GET {id}/seats) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/model/VehicleLayout.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/model/VehicleLayoutSeat.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/repository/VehicleLayoutRepository.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/repository/VehicleLayoutSeatRepository.java` | 확인됨 |
+| 사용자 Controller | `community_api/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java` |
+| 사용자 Model/VO | `VehicleLayout.java`, `VehicleLayoutSeat.java`, `VehicleLayoutVo.java`, `VehicleLayoutSeatVo.java` |
+| 관리자 Controller/Service | `community_admin_api/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java`, `.../service/ManageVehicleLayoutService.java` |
+| 관리자 Param/VO | `ManageVehicleLayoutCreateParam.java`, `ManageVehicleLayoutUpdateParam.java`, `ManageVehicleLayoutActiveParam.java`, `ManageVehicleLayoutVo.java`, `ManageVehicleLayoutDetailVo.java` |
+| DDL | 양 서버의 `src/main/resources/db/migration/V1__init.sql` |
 
-## 3. 전체 동작 흐름
+사용자·관리자 어느 쪽에서도 차량 레이아웃 전용 테스트는 찾지 못했다.
 
-1. **호스트가 버스 추가 화면 진입** (F03-16의 후속 Flutter 화면): `GET /api/v1/vehicle-layouts/active` 호출.
-2. **선택지 노출**: `is_active=1` row만 반환 (시드 4종 + 운영자가 admin API로 추가한 row).
-3. **선택된 layout의 좌석 그림 미리보기**: `GET /api/v1/vehicle-layouts/{id}/seats` → 좌석 목록(`row_index, col_index, seat_type, seat_no, is_selectable`)을 그리드 렌더링 (Flutter는 후속).
-4. **버스 추가**: 호스트가 `POST /api/v1/events/{eventId}/buses`에 `vehicleLayoutId` 전달 ([F03-16](F03-16_event-bus-charter_prd.md)). 본 PRD 범위 밖.
+## 3. 사용자 API
 
-## 4. 서버 계약
+Base path: `/api/v1/vehicle-layouts`. 전역 Security 설정상 두 endpoint 모두 로그인 필요다.
 
-### 엔드포인트 요약 (호스트용 read-only 2개)
+| Method | Path | 응답 | 실제 동작 |
+|---|---|---|---|
+| GET | `/active` | `List<VehicleLayoutVo>` | active row 전체 조회 |
+| GET | `/{id}/seats` | `List<VehicleLayoutSeatVo>` | layout의 활성 여부를 검사하지 않고 해당 ID 좌석 조회. 없는 ID도 404가 아니라 빈 목록 |
 
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/vehicle-layouts/active` | `VehicleLayoutController#getActive` | 인증 | `is_active=1` layout 목록 반환 |
-| GET | `/api/v1/vehicle-layouts/{id}/seats` | `VehicleLayoutController#getSeats` | 인증 | 해당 layout의 좌석 row 목록 반환 |
+`VehicleLayoutVo` Java 필드와 JSON wire key:
 
-### 데이터 모델 (W6 신규 2개 테이블)
+- Java: `id`, `name`, `seatCount`, `description`, `isActive`, `createdAt`, `updatedAt`
+- JSON: `id`, `name`, `seatCount`, `description`, **`active`**, `createdAt`, `updatedAt`
 
-```sql
-CREATE TABLE vehicle_layout (
-  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  seat_count INT NOT NULL,
-  description VARCHAR(500) NULL,
-  is_active TINYINT(1) NOT NULL DEFAULT 1,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL
-);
+`VehicleLayoutSeatVo` Java 필드와 JSON wire key:
 
-CREATE TABLE vehicle_layout_seat (
-  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  vehicle_layout_id BIGINT NOT NULL,
-  seat_no VARCHAR(10) NOT NULL,
-  row_index INT NOT NULL,
-  col_index INT NOT NULL,
-  seat_type ENUM('NORMAL','DRIVER','GUIDE','FOLDABLE','DISABLED','AISLE') NOT NULL DEFAULT 'NORMAL',
-  is_selectable TINYINT(1) NOT NULL DEFAULT 1,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
-  UNIQUE KEY uk_vehicle_layout_seat (vehicle_layout_id, seat_no),
-  KEY idx_vehicle_layout_seat_layout (vehicle_layout_id),
-  CONSTRAINT fk_vehicle_layout_seat_layout FOREIGN KEY (vehicle_layout_id) REFERENCES vehicle_layout(id)
-);
-```
+- Java: `id`, `vehicleLayoutId`, `seatNo`, `rowIndex`, `colIndex`, `seatType: String`, `isSelectable`, `createdAt`, `updatedAt`
+- JSON: `id`, `vehicleLayoutId`, `seatNo`, `rowIndex`, `colIndex`, `seatType`, **`selectable`**, `createdAt`, `updatedAt`
 
-### Enum
+사용자 API는 “호스트 전용” 서비스 가드를 사용하지 않으며 인증 사용자 전체가 호출할 수 있다.
 
-`VehicleSeatType = {NORMAL, DRIVER, GUIDE, FOLDABLE, DISABLED, AISLE}` — Flutter 좌석 위젯에서 색상/터치 가능 여부 분기. `DRIVER`, `GUIDE`, `AISLE`는 `is_selectable=false`가 일반적.
+## 4. 관리자 API
 
-### 시드 4종 (1차 출시 포함)
+Base path: `/admin/v1/manage/vehicle-layouts`. 모든 endpoint는 로그인 관리자에게 `AdminPrivilege.MANAGE_EVENT`를 요구한다.
 
-`docs/sql/repair_local_schema_2026-05-22.sql` 또는 V1__init.sql 이벤트 도메인 섹션에 INSERT.
-
-| name | seat_count | 특징 |
+| Method | Path | 동작 |
 |---|---|---|
-| 28인승 A타입 | 28 | 일반 관광버스 표준 레이아웃 |
-| 45인승 | 45 | 대형버스 표준 |
-| 20인승 | 20 | 미니버스 |
-| 8인승 | 8 | 운전자 제외 — 카니발/스타리아 |
+| GET | `/` | 레이아웃 목록. 각 항목에 등록 좌석 수 포함 |
+| GET | `/{id}` | 메타와 좌석을 포함한 상세 |
+| POST | `/` | 레이아웃 생성 (201) |
+| PUT | `/{id}` | 이름·좌석 수·설명 수정 |
+| POST | `/{id}/seats` | 기존 좌석 전체 삭제 후 요청 좌석맵으로 교체 |
+| PATCH | `/{id}/active` | 활성 상태 토글 |
 
-좌석 row는 layout별로 vehicle_layout_seat에 미리 INSERT (`seat_no` = "1A", "1B" 등). E2E S4-1에서 `GET /active`가 4건을 반환하는지 검증한다.
+관리자 삭제 API는 없다.
 
-### 관리자 측 (후속 슬라이스)
+## 5. 검증 규칙
 
-PLAN.md §4.2에 따른 admin endpoint는 `community_admin_api`에 후속으로 추가한다. 본 슬라이스에서는 신설하지 않으며, 1차 운영은 DB INSERT 또는 운영자 매뉴얼로 처리한다.
+레이아웃 생성·수정:
 
-| Method | Path | 비고 |
-|---|---|---|
-| GET | `/admin/v1/manage/vehicle-layouts` | 후속 슬라이스 (community_admin_api) |
-| POST | `/admin/v1/manage/vehicle-layouts` | 후속 |
-| PUT | `/admin/v1/manage/vehicle-layouts/{id}` | 후속 |
-| DELETE | `/admin/v1/manage/vehicle-layouts/{id}` | 후속 (soft delete, `is_active=0`) |
-| GET | `/admin/v1/manage/vehicle-layouts/{id}/seats` | 후속 |
+- 이름: blank 불가, 최대 100자, unique
+- `seatCount >= 1`
+- 설명: 최대 500자
+- create body에 `active: boolean`이 있어 true로 즉시 생성할 수 있고, 생략 시 primitive 기본값 false
+- 생성 후 메타 수정과 active 토글은 별도 endpoint지만 create에서 active 설정을 금지하지 않음
 
-### 의존 단위
+좌석맵 전체 교체:
 
-- **F03-16 버스대절** — `event_bus.vehicle_layout_id`가 `vehicle_layout.id`를 참조. 좌석 prepopulate 시 `vehicle_layout_seat.is_selectable=true`만 사용.
-- **community_admin_api** — 관리자 CRUD endpoint + SPA UI 후속 슬라이스.
+- 요청 목록은 비어 있을 수 없음
+- `seatNo`는 최대 10자이며 요청 내 unique
+- `rowIndex`, `colIndex`는 0 이상
+- `seatType`은 최대 20자, 대문자로 정규화
+- null/blank `seatType`은 `NORMAL`
+- 허용 문자열: `NORMAL`, `DRIVER`, `GUIDE`, `FOLDABLE`, `DISABLED`, `AISLE`
 
-## 5. 프론트 계약
+현재 서비스는 `seatCount`와 실제 좌석 row 수의 일치, active 전환 전 좌석맵 완성 여부를 검증하지 않는다. create body 자체가 `active=true`를 허용하므로 좌석 0건인 활성 레이아웃도 만들 수 있다.
 
-본 슬라이스는 **호스트용 read-only API 노출까지**. Flutter 클라이언트는 [F03-16](F03-16_event-bus-charter_prd.md)의 후속 슬라이스에서 다룬다(버스 추가 화면이 이 카탈로그를 소비).
+## 6. 시드·Flutter 실측
 
-후속 작업 단위(PLAN.md §4.10):
+- `community_api`와 `community_admin_api`의 단일 `V1__init.sql`에 차량 레이아웃 DDL은 있지만 기본 레이아웃 INSERT는 없다.
+- 기타 SQL에서도 “28인승 A타입”, “45인승”, “20인승”, “8인승” seed를 찾지 못했다.
+- Flutter에는 vehicle layout API·Repository·Provider·좌석 그리드가 없다.
+- 따라서 빈 운영 DB에서는 관리자가 레이아웃을 생성·좌석 등록·활성화하기 전 사용자 `/active`가 빈 목록을 반환할 수 있다.
 
-| 단위 | 작업 |
+## 7. 버스 기능과의 경계
+
+- 버스 생성은 `vehicleLayoutId`를 받는다.
+- `FREE`를 제외한 버스는 layout의 `isSelectable=true` 좌석을 event bus seat로 복사한다.
+- 현재 `EventBusService`는 layout 존재·활성 여부를 명시적으로 검증하지 않는다.
+- layout을 나중에 수정해도 이미 복사된 event bus seat가 자동 동기화되지는 않는다.
+
+## 8. 현재 Gap / Risk
+
+| 우선순위 | 실측 Gap |
 |---|---|
-| 모델 | `vehicle_layout_vo.dart`, `vehicle_layout_seat_vo.dart` (Freezed) |
-| API | `vehicle_layout_api.dart` (Retrofit, read-only 2개 메서드) |
-| Repository | `vehicle_layout_repository.dart` |
-| Provider | `domain/providers/event/vehicle_layout_provider.dart` |
-| Widget | F03-16 `BusSeatLayoutWidget`이 본 데이터 소비 |
-
-관리자 SPA(community_admin_api 측 별도 Flutter Web 또는 React)는 본 슬라이스 범위 외.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| AC-01 | 시드 4종 read-only 노출 (**E2E S4-1**) | 시드 적용된 DB | `GET /vehicle-layouts/active` → 28인승 A타입/45인승/20인승/8인승 4건 |
-| AC-02 | 좌석 그림 조회 | layout id 선택 | `GET /vehicle-layouts/{id}/seats` → 좌석 row 목록 (`row_index, col_index, seat_type, is_selectable`) |
-| AC-03 | 비활성 layout 제외 | 운영자가 `is_active=0` 설정 | `GET /active` 응답에 미노출. `GET /{id}/seats`는 직접 조회 시 가능 |
-| AC-04 | 비인증 접근 | 토큰 없음 | 401 (인증 필수) |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | `VehicleLayoutController` read-only 2개 | W6에서 구현 완료 |
-| 시드 4종 | DB INSERT로 28/45/20/8인승 등록 | W6에서 시드 INSERT 포함 (E2E S4-1로 검증) |
-| 관리자 CRUD endpoint | `/admin/v1/manage/vehicle-layouts/*` | **후속 슬라이스(community_admin_api)** — Q5 사용자 확정 |
-| 관리자 SPA UI | community_admin_api 프론트엔드 | **본 슬라이스 범위 외** — 운영은 직접 INSERT/admin API 호출 |
-| Flutter 호스트용 모델/API | `vehicle_layout_api.dart` 등 | **후속 슬라이스** — F03-16 클라이언트와 함께 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후속 | PLAN.md §4.2 / §4.3 | 관리자 CRUD endpoint(`/admin/v1/manage/vehicle-layouts/*`)와 SPA UI 미구현 | `community_admin_api` 후속 슬라이스에서 진행 (Q5 사용자 확정) |
-| 후속 | E2E S9-* | 관리자 CRUD UI 시나리오 미작성 | community_admin_api SPA 슬라이스에서 추가 |
-| Risk | PLAN.md 회귀 위험 7 | `vehicle_layout` 공유 DB 가정 — `community_admin_api`가 동일 MySQL 인스턴스를 사용해야 함. 인스턴스 분리 시 별도 plan 필요 | 인프라 검토 필요. 분리 결정 시 admin이 community_api endpoint를 호출하는 형태로 재설계 |
-| Risk | 운영 | 1차 출시는 운영자가 직접 SQL INSERT — 좌석 데이터 작성 오류 가능 | 시드 INSERT 검수 + 향후 SPA UI 도입 시 검증 폼 |
+| 높음 | 기본 차량 레이아웃 seed가 없어 초기 `/active`가 빈 목록일 수 있음 |
+| 높음 | Flutter 카탈로그 소비·좌석 렌더링 수직 슬라이스가 없음 |
+| 중간 | public seat 조회가 inactive layout도 노출하고 없는 ID를 빈 목록으로 처리 |
+| 중간 | 관리자 active 토글 전에 좌석맵 완성도·seatCount 일치를 검증하지 않음 |
+| 중간 | create가 `active=true`를 허용해 별도 토글 전에 좌석맵 없는 active row 생성 가능 |
+| 중간 | 버스 추가 서비스가 layout 존재·활성 여부를 명시적으로 검증하지 않음 |
+| 중간 | 전용 사용자/관리자 회귀 테스트가 없음 |
+| 낮음 | seatType이 문자열 whitelist라 양 서버·클라이언트 간 compile-time enum 보장이 없음 |
 
 ## 9. 변경 이력
 
-| 일자 | 버전 | 변경 |
+| 날짜 | 버전 | 변경 |
 |---|---|---|
-| 2026-05-22 | v0.1 | 신규 — W6 차량 카탈로그 슬라이스 반영 (PLAN.md v4.5 §4.1~§4.3 + E2E S4-1). 호스트용 read-only API + 시드 4종까지 1차. 관리자 CRUD SPA는 후속 |
+| 2026-05-22 | v0.1 | 삭제된 event-extensions 계획을 기준으로 기본 4종 seed와 후속 관리자 구현을 기술 |
+| 2026-07-29 | v1.0 | 현재 사용자·관리자 API, String seatType, 무시드 상태, Flutter 부재를 실측해 전면 교정 |

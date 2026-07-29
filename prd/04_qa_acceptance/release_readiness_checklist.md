@@ -4,7 +4,7 @@
 
 > 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 >
-> 2026-07-08 current QA 기준: `community_app/docs/testing/SCENARIO_TEST_STATUS_CURRENT.md` 기준 canonical 53개 scenario는 53/53 close, active pending-run/merge/gap은 0이다. P83 communication runner는 별도 존재하지만 current 53/53 canonical에는 아직 포함하지 않는다.
+> 2026-07-29 current QA 기준: `community_app/docs/testing/SCENARIO_TEST_STATUS_CURRENT.md` 기준 canonical 53개 scenario는 53/53 close, active pending-run/merge/gap은 0이다. P83 communication runner는 별도 존재하지만 current 53/53 canonical에는 아직 포함하지 않는다.
 
 ## 1. 기능 범위
 

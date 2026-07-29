@@ -1,12 +1,44 @@
 # F13-01. 내 프로필 조회 (마이페이지 허브) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/13_profile_settings/F13-01_profile-hub -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/13_profile_settings/F13-01_profile-hub -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-01_profile-hub`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 마이페이지 허브의 백엔드 핵심은 로그인 사용자의 기본 프로필을 조회하는 것이다. 사용자는 닉네임, 이름, 자기소개, 프로필 이미지, 언어, 역할, 가입일을 한 번에 받아 자기 프로필 카드의 기준 데이터를 확인한다. 지갑/이벤트/클럽/신뢰점수 요약은 이 컨트롤러가 제공하지 않으며 각 외부 도메인 의존으로 분리된다.
+
+### 2026-07-29 소스 재실측 — 허브의 연결성·성향 진입점
+
+#### 만난 사람
+
+- 마이페이지 `만난 사람` 메뉴는 `/my/met-people`로 이동하고 `GET /api/v1/users/me/met-people?page&size`의 Spring `Page<MetPersonVo>`를 Flutter `PageResponse`로 소비한다.
+- 항목은 `userId`, `nickname`, `avatarUrl`, `coAttendedCount`, `lastMetEventTitle`, `lastMetAt`이다. 사람별로 접어 최근 만남 내림차순으로 정렬한다.
+- 후보는 증거등급 공동참석자다. 매 조회 시 현재 `NORMAL` 사용자, 양방향 비차단, `hideFromSearch=false`를 다시 적용하므로 삭제·차단·검색 숨김 사용자는 과거에 실제로 만났더라도 목록에서 사라질 수 있다. 이 화면은 불변 감사 원장이 아니라 **현재 표시 가능한 공동참석자 목록**이다.
+- 카드 탭은 공용 `PersonSheet`를 연다.
+
+#### 성향 검사와 리포트
+
+| HTTP | 경로 | 현재 응답 |
+|---|---|---|
+| GET | `/api/v1/traits/questions` | 활성 문항 `List<TraitQuestionVo>` |
+| POST | `/api/v1/traits/sessions` | 201 `TraitSessionVo { id, status, startedAt }` |
+| POST | `/api/v1/traits/sessions/{sessionId}/submit` | 200 `TraitSessionResultVo` |
+| GET | `/api/v1/traits/me` | 최신 제출 결과. 없으면 `sessionId/submittedAt=null`, `scores=[]` |
+
+- V1에는 11개 활성 축과 24개 활성 문항이 있다. 문항 format은 `FORCED_CHOICE`와 `LIKERT`, 세션 상태는 `IN_PROGRESS`/`SUBMITTED`다.
+- 제출 body는 필수 `clientRequestId`(nonblank, 최대 64)와 `{ questionId, value }[]`다. 서버는 세션 snapshot 문항·중복 없음·LIKERT 1~5·forced choice 0/1을 검증하고 축당 최소 2개 응답이 있는 축만 0~100 점수로 산출한다. 서버는 부분 제출을 허용하지만 현재 Flutter 화면은 모든 문항에 답해야 제출 CTA가 활성화된다.
+- 동일 세션·동일 `clientRequestId` 재제출은 같은 결과를 반환한다. 제출 완료 뒤 다른 키로 다시 제출하면 중복 오류다.
+- 마이페이지 성향 메뉴는 활성 문항 또는 기존 본인 점수가 있을 때만 보인다. `/profile/trait-report`에서 결과를 보고 미제출이면 `/profile/trait-assessment`로 이동한다.
+- 타인의 원 trait 축점수 조회 endpoint는 없다. 이벤트/클럽 fit preview는 최신 제출 점수를 비율·버킷으로만 집계한다.
+
+#### 공용 PersonSheet 관계·연락 경계
+
+- `RelationshipSummary.commonGround`는 공통 관심 태그 최대 5개, 선언 선호 카테고리 최대 3개, 선언 선호 시간대 최대 3개만 반환한다. 세 축이 모두 비면 객체가 null이고 숫자 궁합 점수는 없다.
+- 커뮤니티 관계 chip에서 데이팅 `MATCHED`는 제거됐다. 데이팅 페르소나와 커뮤니티 실신원을 역연결하지 않는다.
+- 커뮤니티 메시지 자격은 같은 클럽, 진행 중/종료 후 72시간 이내 공동참석, 또는 미결 금융·제공자 의무 중 하나와 양방향 비차단·상대 `NORMAL`을 매 전송마다 재평가한다. 채널 응답은 `sendableBasis=UNLIMITED|EVENT_GRACE|OBLIGATION`과 nullable `sendableUntil`로 앱이 무기한·종료 유예·의무 종료 조건을 구분하게 한다.
+
+실측 근거: `MetPeopleController/Service`, `TraitController/Service`, `RelationshipService`, `MessageEligibilityService`, `MessageChannelService`, Flutter `my_profile_screen.dart`, `met_people_screen.dart`, trait screens/providers 및 `person_sheet.dart`.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 

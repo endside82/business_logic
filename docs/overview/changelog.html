@@ -22,6 +22,21 @@
       </header>
 
       <section>
+        <h2>2026-07-29 — API·App·Realtime·Admin 직접 재실측 (기능 수 증감 없음)</h2>
+        <p class="subtitle">2026-07-08 문서 기준선 이후의 현재 소스를 실제 endpoint부터 화면 caller까지 다시 쟀다. 50개 기능과 15개 도메인을 교정했고, API가 있다는 사실과 사용자가 앱에서 실행할 수 있다는 사실을 분리했다.</p>
+        <ul>
+          <li><strong>이벤트</strong> — 상세의 CANCELED/CLOSED 실제 body, capability, clone/delete 불일치, 정원 close/reopen·초과정원 미배선, 수동 승급 hard limit 우회, 일정 변경 late-response rollback, 노쇼 환불 권한·path scope를 반영.</li>
+          <li><strong>돈·플랜·정기모임</strong> — 혼합결제 은행분 수기 확인, 플랜 block revision/cycle/depth, preview 보안 필터, 정기모임 category enum과 bulk/replace UI 공백을 반영.</li>
+          <li><strong>사람·신뢰·개인정보</strong> — 사람 추천·공유 맥락 검색, 양쪽 community-data 동의, 이벤트 피드백 기반 취향 재구축, 데이터 export/delete, 검색 숨김과 프로필 숨김을 교정.</li>
+          <li><strong>위치</strong> — timer 실제 재시작 범위, opt-out 즉시 삭제, access-log raw polling, 연장 scheduler, 외부 지도 fallback과 geocode caller를 반영.</li>
+          <li><strong>제공자 marketplace</strong> — 검증 프로필/상품, versioned terms, fee snapshot, fulfillment gate, 환불·회수·계약금·회차 복제 재수락을 API/App/Admin 소스에서 확인.</li>
+          <li><strong>카탈로그 수치</strong> — F03/F04/F08/F17/F19/F21 본문의 시나리오 수를 기능 metadata와 다시 맞춰 현재 합계를 1218 → 1275로 교정하고, 새로 확정한 F04/F08/F11/F17/F21 Gap을 반영해 Risk 후보 합계를 576 → 598로 갱신.</li>
+          <li><strong>검증</strong> — 도메인별 서버·Flutter focused test와 tracked diff/HTML/링크 검사를 수행하고, pre-existing Flutter 플랜 worktree 변경은 보존했다.</li>
+        </ul>
+        <p class="subtitle" style="margin-top:12px">기준 문서: <a href="../../prd/05_planning_artifacts/current_source_update_2026-07-29.md">2026-07-29 현재 소스 실측 갱신 노트</a>.</p>
+      </section>
+
+      <section>
         <h2>2026-07-08 — 현재 소스 동기화 (기능 수 증감 없음)</h2>
         <p class="subtitle">2026-06-24 도메인 21 추가 이후 구현된 변경을 기존 175개 기능 체계 안에 흡수했다. 새 기능 ID는 만들지 않고, PRD와 HTML의 현재 기준 노트·대표 기능 설명·카탈로그 체크포인트를 갱신했다.</p>
         <ul>

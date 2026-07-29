@@ -445,7 +445,7 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 
 - `my_collection_screen.dart` — 카드에 "환불 신청" 버튼 + "환불 심사 중"·"분쟁 진행 중" 배지
 - `creator_stats_screen.dart` — 환불 요청 카운트 + 진입 링크
-- `notification_screen.dart` — 환불 신청·결정·분쟁 알림 표시
+- `community_app/lib/presentation/notification/screens/notification_list_screen.dart` — 환불 신청·결정·분쟁 알림 표시
 - `market_item_detail_screen.dart` — 환불 정책 안내 섹션 신설
 
 ### 9.3 라우트

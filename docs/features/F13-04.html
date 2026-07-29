@@ -19,17 +19,28 @@
         </div>
         <h1>F13-04. 선호 태그 관리</h1>
         <p class="lede">
-          사용자가 자기 관심사를 직접 칩 형태로 추가·삭제하는 화면. 운동·문화·라이프스타일·소셜 네 카테고리에서
-          앱이 제안하는 추천 태그를 누르면 즉시 내 태그에 합류하고, 내 태그 옆 X를 누르면 즉시 삭제된다.
-          추천·검색 도메인이 본 단위가 만든 태그 묶음을 보고 사용자에게 어떤 콘텐츠를 먼저 보여 줄지 결정한다.
+          사용자가 서버 카탈로그의 관심사를 칩 형태로 추가·삭제하는 화면.
+          서버가 반환한 카테고리별 태그를 누르면 내 태그에 합류하고, 내 태그 옆 X를 누르면 삭제된다.
+          태그는 관계 공통점·홈 사람 추천·양측 동의 데이팅 점수에서 실제 사용된다.
           저장 버튼 없이 한 번 누른 게 바로 반영되는 화면이라 한도(최대 20개)를 두어 무제한 추가를 막는다.
         </p>
       </header>
 
       <section>
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 태그 소비</span>
+          <p>태그는 PersonSheet 공통점(최대 5개), 홈 사람 추천 COMMON_GROUND, 양측 옵트인 데이팅
+            Jaccard 점수에 실제 사용된다. weight는 공통점 표시 순서에는 쓰이지만 사람 추천 개수와
+            데이팅 유사도에 직접 곱하지 않는다. 전체 상대 태그와 숫자 궁합은 노출하지 않는다.</p>
+          <p>온보딩과 프로필 화면은 같은 <code>GET /api/v1/interests/catalog</code> Provider를 공유한다.
+            현재 서버 단일 출처는 비어 있지 않은 13개 카테고리, 25개 라벨이며 앱 하드코딩 목록이 아니다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
           <div class="metric"><div class="label">최대 태그</div><div class="value">20개</div><div class="hint">초과 시 추가 차단</div></div>
-          <div class="metric"><div class="label">추천 카테고리</div><div class="value">4개</div><div class="hint">운동·문화·라이프스타일·소셜</div></div>
+          <div class="metric"><div class="label">현재 카테고리</div><div class="value">13개</div><div class="hint">서버 응답의 비어 있지 않은 그룹</div></div>
           <div class="metric"><div class="label">저장 동작</div><div class="value">즉시</div><div class="hint">탭 한 번이 곧 반영</div></div>
         </div>
 
@@ -81,7 +92,7 @@
             <div class="eyebrow">다른 기기와 어긋남</div>
             <h3>다른 기기에서 이미 삭제된 태그를 누름</h3>
             <p>한 기기에서 삭제한 태그를 다른 기기에서 다시 보고 X를 누르면 서버가 "이미 없는 태그"라고 거절한다.
-              화면이 어떻게 동기화되는지는 운영 관찰 포인트(현재 명세 미확정).</p>
+              Provider는 실패를 false로 접고 목록을 invalidate하지 않으므로 기존 칩이 그대로 남으며 오류 안내도 뜨지 않는다.</p>
           </article>
         </div>
       </section>
@@ -101,7 +112,7 @@
               </tr>
               <tr>
                 <td><strong>추천 태그 영역</strong></td>
-                <td>운동·문화·라이프스타일·소셜 카테고리별 칩 묶음.
+                <td>서버 카탈로그가 반환한 비어 있지 않은 13개 카테고리와 25개 라벨의 칩 묶음.
                   이미 선택한 태그는 흐려져서 탭 불가.</td>
                 <td>사용자가 처음 들어왔을 때 빈 화면을 보지 않게 한다 — 칩으로 "내가 무엇을 고를 수 있는지" 미리 보여 준다.</td>
               </tr>
@@ -115,14 +126,17 @@
         <div class="callout warn">
           <span class="label">선호 태그 정책의 결정점</span>
           <ul>
-            <li><strong>추천 칩 목록은 클라이언트가 갖고 있다.</strong> 서버에서 추천 후보 목록을 내려 주지 않는다.
-              계절·시기에 따라 추천 칩을 바꾸려면 클라이언트 배포가 필요한 구조 — 추후 서버 관리로 옮길지 검토 항목.</li>
+            <li><strong>추천 칩 목록은 서버 카탈로그가 단일 출처다.</strong>
+              온보딩과 프로필 화면이 공유 Provider로 <code>/api/v1/interests/catalog</code>를 읽으므로
+              라벨·그룹 변경 때문에 클라이언트 목록을 따로 배포할 필요가 없다.</li>
             <li><strong>이름 기반으로 등록되며 서버 ID로 묶이지 않는다.</strong>
               "캠핑"과 "캠핑 "(공백 포함)이 별개로 들어가지 않도록 서버가 입력을 정리하지만, 비슷한 단어는 별개 태그가 될 수 있다.
               운영에서 태그 사용 빈도를 분석할 때 동의어 정리가 별도로 필요하다.</li>
             <li><strong>저장 단계가 없다 = 잘못 누른 게 즉시 추천에 반영된다.</strong>
               그래서 가역성(X 한 번으로 정리)이 핵심이다. X 버튼이 보이지 않거나 동작하지 않는 회귀가 들어가면
               사용자가 자기 관심사를 통제할 수 없게 된다.</li>
+            <li><strong>추가·삭제 실패는 현재 조용히 흡수된다.</strong>
+              화면이 mutation Future를 await하지 않고 Provider도 실패를 false로 접어 오류 toast와 재동기화가 없다.</li>
           </ul>
         </div>
       </section>

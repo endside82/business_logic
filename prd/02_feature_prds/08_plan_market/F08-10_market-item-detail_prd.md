@@ -1,6 +1,6 @@
 # F08-10. 마켓 아이템 상세 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-06-10; unit: business_logic/units/08_plan_market/F08-10_market-item-detail -->
+<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce; unit: business_logic/units/08_plan_market/F08-10_market-item-detail -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-10_market-item-detail`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -57,6 +57,19 @@
 2. 구매하기 액션 시: F08-11 참조 (`POST /api/v1/market/items/{itemId}/purchase`)
 3. 번들 구매 시: F08-11 참조 (`POST /api/v1/market/bundles/{bundleId}/purchase`)
 4. 리뷰 작성/수정/삭제 시: F08-13 참조
+
+### 플랜 직접 상세/미리보기의 결제 수단 선택(인접 구현 실측)
+
+F08-10의 마켓 아이템 화면과 별개로, 플랜 직접 구매 화면에는 무료 포인트 선택 UX가 구현되어 있다.
+
+- `home/screens/market_plan_detail_screen.dart`는 `PlanVo.allowFreePoints/freePointPrice`를 사용한다.
+- `plan/screens/plan_preview_screen.dart`는 별도 상세 조회 없이 `PlanPreviewVo`의 같은 필드를 사용한다.
+- `freePointPrice`가 `null`이면 플랜 기본가로 폴백한다.
+- `allowFreePoints && price > 0 && (freePointPrice ?? price) >= 1`일 때 `PlanFundingChoiceSheet`를 연다.
+- 시트는 `PAID` “일반 결제”와 `FREE` “무료 포인트로 구매”를 반환한다.
+- 무료 잔액은 `walletNotifierProvider.freeBalance`로 표시하며, 부족해도 옵션을 비활성화하지 않는다. 최종 잔액 판정은 서버다.
+
+반면 **현재 마켓 아이템/번들 Flutter 경로는 결제 수단 선택이 없다**. `market_api.dart`, repository, provider의 `purchaseItem/purchaseBundle`은 `fundingMode`를 받지 않아 서버의 기본값 `PAID`로만 호출한다. 응답의 `currencyType/freePointPrice`도 구매 CTA에서 소비하지 않는다.
 
 ## 4. 서버 계약
 
@@ -194,6 +207,7 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | Gap (설계 vs 배선) | `SecurityConfiguration.java:97` | **비로그인 열람 가능 여부**: 컨트롤러 시그니처는 `optional`이나 전역 `anyRequest().authenticated()` 하에 `/api/v1/market/**` 가 permitAll 목록에 없어 비인증 접근이 필터에서 차단됨. 상세·리뷰·번들 GET 모두 실질 인증 필수. 비로그인 조회가 의도면 SecurityConfiguration 정비 필요. | SecurityConfiguration에 market 조회 GET 경로 permitAll 추가 여부 결정 |
+| Gap(Flutter) | `market_api.dart:82`, `market_repository.dart:213`, `market_item_detail_screen.dart:647` | 서버는 아이템/번들 구매의 `fundingMode`와 VO의 `currencyType/freePointPrice`를 제공하지만 앱은 query를 전송하지 않아 항상 기본 `PAID`로 구매한다. 플랜 직접 구매만 선택 시트가 구현됐다. | 아이템/번들의 FREE/ANY_POINT 노출·선택 UX 및 API 배선 필요 |
 | 구현됨 (AUTH-08) | `MarketItemService.java:67`, `ViewCountIncrementService.java:43` | view_count 비소유자 조회 시 원자 증가. REQUIRES_NEW 격리. 실패 무중단. | QA: 소유자/비소유자/증가실패 시나리오 E2E 확인 |
 | 주의 (AUTH-08) | `MarketItemVo.java` | view_count는 MarketItemVo 응답 필드에 노출되지 않음. 상세 화면에서 직접 조회수 표시 불가 — 크리에이터 대시보드(F08-07)에서만 집계 확인. | 현재 정책 유지: 상세 화면 미표시, 대시보드 집계만 제공. |
 | 확정-OK | `MarketItemService.java:67,226` | `getMarketItem` — 상세 조회 + 평점/리뷰 수 enrich 구현 확인 | 해소됨 |
@@ -216,6 +230,6 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- 아이템/번들 상세가 `currencyType`/`freePointPrice`를 응답에 포함하므로, 구매 화면에서 결제 통화(유료/무료)를 어떻게 선택·노출할지(차등가 표시 포함)는 화면에서 결정한다. **번들 차등가 설정은 admin(`community_admin_api`) 배선 followup**이므로 번들 `freePointPrice`는 당분간 조회 노출 위주로 본다. 정책 자체는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
+- 플랜 직접 상세/미리보기의 유료/무료 선택은 구현됐다. 남은 결정은 마켓 아이템/번들 화면에서 `currencyType`/`freePointPrice`를 어떻게 표시하고 `fundingMode`를 전송할지다. **번들 차등가 설정은 admin(`community_admin_api`) 배선 followup**이므로 번들 `freePointPrice`는 당분간 조회 노출 위주로 본다. 정책 자체는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

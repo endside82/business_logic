@@ -70,7 +70,7 @@
 | POST | /api/v1/wallet/pay | WalletController#pay | required | ⛔ **차단됨(2026-06-06)** — 진입 즉시 거부(deprecate-not-delete). 현행 결제는 선입금 facade 단일 경로 |
 | POST | /api/v1/wallet/refund | WalletController#refund | required | 이벤트 환불 (정책 기반 부분/전액) |
 | GET | /api/v1/wallet/refund/policy | WalletController#getRefundPolicy | required | 레거시 환불 안내 고정값 응답 (24h=100%/12h=50%/0% 하드코딩). 실 계산에는 미사용. |
-| GET | /api/v1/refund-policy-templates | RefundPolicyController#listTemplates | 불필요(public) | 이벤트 환불 정책 카탈로그 6종 목록 (STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM). 소스: `RefundPolicyController.java:36`. |
+| GET | /api/v1/refund-policy-templates | RefundPolicyController#listTemplates | required | 이벤트 환불 정책 카탈로그 6종 목록 (STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM). permitAll 매처가 없어 전역 `anyRequest().authenticated()` 적용. |
 
 > **Fact**: `GET /api/v1/wallet/refund/policy` 는 `WalletController.java:190-203` 에 존재하며, `Map<String, Object>` 에 `hoursBeforeEvent`/`refundPercent` 하드코딩 값을 반환한다. 신규 카탈로그 기반 계산(`payment/refundpolicy/service/RefundPolicyService`)과는 무관하게 레거시 안내 목적으로만 살아 있다. Deprecation 계획은 미결정 (§8 Gap 참조).
 
@@ -173,7 +173,7 @@ TransactionVo payForApplication(
 - referenceId: `eventPaymentId`
 - description: "이벤트 참가 선입금 환불 — eventPayment {id}"
 
-> WalletRefundExecutor 공통 헬퍼는 본 슬라이스에서는 미완. 기존 `RefundService.doRefund`와 신규 `EventPaymentRefundService.refundByWallet`은 별도 구현(회귀 방지). 후속 슬라이스에서 추출 예정.
+> 현재 별도 지갑 환불 executor는 없다. 이벤트 WALLET 환불은 `WalletRefundService.refundByTransaction` 표준 경로로 충전 lot와 유료/무료 split을 복원하고, `EventRefundSettlementService`가 분개·정산 후처리를 잇는다. 과거 “공통 헬퍼 후속 추출”은 현재 계약이 아니다.
 
 #### 4.2.5 회계 분개 (신규 경로) — D8 + 기존 분개 메서드 재사용
 
@@ -296,7 +296,7 @@ TransactionVo payForApplication(
 | 후보 | scenarios.md:294 | 2. (1) 충족 후 P70 매트릭스에 `refund_async_worker_success` / `refund_pg_failure_retry` 2 mode 보강 — 단, mutation 전제이므로 `pg_payment_key` / `charge_lot.pg_refundable=true` 시드 보강 + sample_data 재초기화 의존성 명시 필요. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:301 | > 17차-A 라운드 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:304 | **시작 상태**: 로그인 완료(seed alice). walletRepository.getWallet() → balance=17,200, totalSpent=48,300 (17차-A 보강 후). PointTransaction 9016 (EVENT_PAYMENT, 1304, 5000) 존재. EVENT_REFUND 거래 부재. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:322 | 출처: `community_api/src/main/java/com/endside/community/payment/service/RefundService.java:60-87,99-180` (refund + doRefund), `community_api/src/main/java/com/endside/community/payment/service/RefundPolicyService.java:48-71,157-167` (STANDARD ≥24h → 100%), `community_api/docs/sql/sample_data.sql` (17차-A 보강 event 1304 + PointTransaction 9016), `community_api/docs/sql/seed_local.sh` (NOW()+35d 동적 startTime 갱신). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 후보 | scenarios.md:322 | 출처: `community_api/src/main/java/com/endside/community/payment/service/RefundService.java:60-87,99-180` (refund + doRefund), `community_api/src/main/java/com/endside/community/payment/refundpolicy/service/RefundPolicyService.java:48-71,157-167` (STANDARD ≥24h → 100%), `community_api/docs/sql/sample_data.sql` (17차-A 보강 event 1304 + PointTransaction 9016), `community_api/docs/sql/seed_local.sh` (NOW()+35d 동적 startTime 갱신). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:366 | > 17차-C 라운드 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:369 | **시작 상태**: 로그인 완료(seed `alice@community.local`). walletRepository.getWallet() → `balance=17,200, totalCharged=65,500, totalSpent=48,300` (17차-A 보강 후 합계 — 9015~9020 충전/결제 시드로 17,200 그대로 유지). event 1303 (host=user 6, price 8,000P, alice 미결제) + event 1312 (host=user 2, price 12,000P, club 1201 co-host 3331 — co-host 라도 결제 허용, alice 미결제) 시드 상태. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:399 | > 18차-B 라운드 보강 — F06-06 S7 해소 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |

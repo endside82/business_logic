@@ -27,15 +27,15 @@
         <div class="metrics">
           <div class="metric"><div class="label">업무 도메인</div><div class="value">21</div><div class="hint">7개 줄기로 묶인 책임 분리 영역</div></div>
           <div class="metric"><div class="label">기능 인벤토리</div><div class="value">175</div><div class="hint">Golden 1 · 실사 기반 115 · source-first 50</div></div>
-          <div class="metric"><div class="label">검증 시나리오</div><div class="value">1218</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
+          <div class="metric"><div class="label">검증 시나리오</div><div class="value">1275</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
           <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
         </div>
 
         <div class="callout warn">
-          <span class="label">2026-07-08 갱신 — 현재 소스 동기화</span>
-          <p>기능 수는 175개로 유지하되, 게스트 동반 예매·궁합/핏 피드백·플랜 에디터 preview/share·위치/길찾기 보강·커뮤니티 메시지·재사용 경험 루프 구현분을 기존 기능 문서에 반영했다. 상세는
+          <span class="label">2026-07-29 갱신 — API·App·Admin 직접 재실측</span>
+          <p>기능 수는 175개로 유지하되 50개 핵심 기능을 실제 Controller/DTO/Service와 Flutter caller까지 다시 대조했다. UI 미배선, 권한·상태 불일치, 알림 설정, path scope와 보안 후보를 완료 표현에서 분리했다. 상세는
           <a href="overview/changelog.html">변경 기록</a>과
-          <a href="../prd/05_planning_artifacts/current_source_update_2026-07-08.md">현재 소스 갱신 노트</a>에서 확인한다.</p>
+          <a href="../prd/05_planning_artifacts/current_source_update_2026-07-29.md">현재 소스 실측 노트</a>에서 확인한다.</p>
         </div>
 
         <div class="callout warn">
@@ -127,7 +127,7 @@ flowchart LR
           <a class="card" href="qa/migration-status.html">
             <div class="eyebrow">신규</div>
             <h3>175개 PRD 문서 상태표</h3>
-            <p>Golden sample 1 · 실사 기반 전환본 115 · source-first 50. 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
+            <p>unit 근거 보유 117개(골든 1 + 실사 기반 전환/갱신 116) · unit 부재 58개(신규 PRD 7 + 실사 기반 신규 1 + source-first 상태 50). 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="features/catalog.html">
@@ -181,7 +181,7 @@ flowchart LR
           <a class="card" href="qa/coverage.html">
             <div class="eyebrow">QA & 릴리즈</div>
             <h3>시나리오 커버리지</h3>
-            <p>1218개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
+            <p>1275개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="qa/release.html">

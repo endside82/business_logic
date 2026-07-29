@@ -1,216 +1,119 @@
 # F03-16. 이벤트 버스대절 (BUS) PRD
 
-<!-- generated: source-first-event-extensions; updated: 2026-05-22; plan: docs/plan/event-extensions/PLAN.md v4.5 §4 / W7 슬라이스 -->
+<!-- source-measured: 2026-07-29; authority: community_api/community_app current source -->
 
-> 문서 상태: **신규 PRD**. mode 공통 베이스는 [F03-14](F03-14_event-transport-mode_prd.md), 차량 레이아웃 카탈로그(read-only)는 [F03-17](F03-17_vehicle-layout-catalog_prd.md)을 참조한다. 본 슬라이스는 **backend-only 1차 출시** — Flutter 좌석 위젯·모델·화면은 후속 슬라이스에서 진행한다. 관리자 차량 카탈로그 CRUD UI는 **본 슬라이스 범위 외**이며 `community_admin_api` 후속 슬라이스(Q5 사용자 확정)에서 다룬다.
+> 문서 상태: **현재 소스 실측본**. 삭제된 `docs/plan/event-extensions/*`의 자동 배정·`SKIP LOCKED` 설계는 현재 구현으로 간주하지 않는다. 차량 카탈로그는 [F03-17](F03-17_vehicle-layout-catalog_prd.md)을 함께 본다.
 
 ## 1. 결론
 
-이벤트 `mode=BUS` 일 때, 호스트가 차량 레이아웃 카탈로그([F03-17](F03-17_vehicle-layout-catalog_prd.md))에서 1대를 선택해 **버스를 추가하고**, 배정 모드(`FREE/FIXED_BY_HOST/FIRST_COME`) + `allow_self_swap` 플래그로 **좌석 운영 방식을 결정**한다. 한 이벤트에 최대 **3대**까지 추가할 수 있다.
+서버에는 버스 목록·좌석 조회·버스 추가·좌석 지정의 4개 API가 구현되어 있다. `FIXED_BY_HOST`와 `FIRST_COME`는 버스 생성 시 레이아웃의 선택 가능한 좌석을 복사하지만, 이름과 달리 `FIRST_COME` 자동 배정은 구현되어 있지 않다. 현재 좌석 변경 API는 target seat의 `userId`를 덮어쓰는 단일 동작이며, 이동·swap·명시적 unassign API가 아니다.
 
-요구사항 #4의 매핑:
+Flutter에는 버스 모델/API/Repository/Provider/좌석 화면이 없다. 알림 81~82도 enum만 있고 생산 배선과 앱 라우팅이 없다.
 
-| 요구 | 본 PRD에서 어디로 |
+## 2. 실측 근거
+
+| 계층 | 현재 소스 |
 |---|---|
-| 4종 차량 시드 (28/45/20/8인승) | [F03-17](F03-17_vehicle-layout-catalog_prd.md) 카탈로그가 제공, 본 PRD는 `vehicle_layout_id` 참조만 |
-| 좌석 그림 | [F03-17](F03-17_vehicle-layout-catalog_prd.md) `vehicle_layout_seat` (`seat_type/row_index/col_index/is_selectable`). 본 PRD가 prepopulate 책임 |
-| 3개 배정 모드 | `event_bus.assignment_mode` enum (`FREE/FIXED_BY_HOST/FIRST_COME`) |
-| 최대 3대 | service-level `MAX_BUSES_PER_EVENT=3` 가드 |
-| `allow_self_swap` | `event_bus.allow_self_swap` — `FIXED_BY_HOST` 모드에서 참가자 본인 좌석 swap 허용 여부 |
+| Controller/Service | `event/transport/controller/EventBusController.java`, `event/transport/service/EventBusService.java` |
+| Model | `EventBus.java`, `EventBusSeat.java`, `EventBusSeatLog.java` |
+| Param/VO | `BusSetupParam.java`, `EventBusVo.java`, `EventBusSeatVo.java` |
+| Enum | `BusAssignmentMode.java`, `BusSeatChangeType.java` |
+| Repository | `EventBusRepository.java`, `EventBusSeatRepository.java`, `EventBusSeatLogRepository.java` |
+| Test | `community_api/src/test/java/com/endside/community/event/transport/service/EventBusServiceTest.java` |
+| DDL | `community_api/src/main/resources/db/migration/V1__init.sql` |
 
-호스트의 진입 흐름은 다음을 기준으로 판단한다.
+## 3. 서버 API
 
-- 이벤트 상세(F03-02) 호스트 액션 → "버스 운영" 화면 (후속 슬라이스)
-- 본 슬라이스는 backend-only이므로 운영은 Postman/curl로 endpoint 직접 호출
-
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
+| Method | Path | 요청/응답 | 실제 동작 |
 |---|---|---|---|
-| Plan | [PLAN.md v4.5 §4.4~§4.11](../../../../docs/plan/event-extensions/PLAN.md) | 있음 | 데이터 모델, 모드별 동작, 동시성, 알림 |
-| Enum | [ENUM_RESERVATIONS.md NotificationType 81~82 / BusAssignmentMode / VehicleSeatType](../../../../docs/plan/event-extensions/ENUM_RESERVATIONS.md) | 있음 | 알림 + enum 예약 |
-| E2E | [E2E_SCENARIOS.md S4-1~S4-7](../../../../docs/plan/event-extensions/E2E_SCENARIOS.md) | 있음 | 모드별 동작 / 최대 3대 / eventId 검증 / 동시성 |
+| GET | `/api/v1/events/{eventId}/buses` | `List<EventBusVo>` | 로그인 필요. 서비스 수준 event 존재·역할 검증 없이 eventId 목록 조회 |
+| GET | `/api/v1/events/{eventId}/buses/{busId}/seats` | `List<EventBusSeatVo>` | Host/CoHost 또는 `ATTENDING`/`WAITING`. bus의 eventId 일치 필수 |
+| POST | `/api/v1/events/{eventId}/buses` | `BusSetupParam` → `EventBusVo` (201) | Host/CoHost, mode `BUS`, 이벤트당 최대 3대 |
+| PUT | `/api/v1/events/{eventId}/buses/{busId}/seats/{seatNo}?userId={id}` | `EventBusSeatVo` | Host/CoHost, 또는 `allowSelfSwap=true`이고 `userId=본인`인 인증 사용자 |
 
-### 확인된 소스 trace
+삭제, 버스 수정, 자동 배정, 명시적 좌석 해제 endpoint는 없다.
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/event/transport/controller/EventBusController.java:28` (GET buses) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/controller/EventBusController.java:33` (GET bus seats) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/controller/EventBusController.java:39` (POST buses) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/controller/EventBusController.java:48` (PUT seat assignment) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/service/EventBusService.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/model/EventBus.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/model/EventBusSeat.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/vo/EventBusVo.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/vo/EventBusSeatVo.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/constants/BusAssignmentMode.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/param/BusSetupParam.java` | 확인됨 |
+## 4. 데이터와 Enum
 
-## 3. 전체 동작 흐름
+`BusSetupParam`:
 
-1. **mode 가드 + 차량 카탈로그 조회**: 호스트가 `GET /api/v1/vehicle-layouts/active`(F03-17)로 4종 카탈로그를 받아 `vehicleLayoutId` 선택.
-2. **버스 추가**: `POST /api/v1/events/{eventId}/buses` Body `{"busNo":1,"vehicleLayoutId":1,"assignmentMode":"FIRST_COME","allowSelfSwap":false}` → bus 가드 + 최대 3대 검증 + mode별 좌석 prepopulate.
-3. **모드별 좌석 prepopulate**:
-   - `FREE`: 좌석 row 생성 안 함 (인원 카운트만)
-   - `FIXED_BY_HOST` / `FIRST_COME`: `vehicle_layout_seat` 중 `is_selectable=true`만 `event_bus_seat` row로 prepopulate (`user_id=NULL`)
-4. **좌석 배정/swap**: `PUT /buses/{busId}/seats/{seatNo}?userId=` → bus row + seat row 잠금(`FOR UPDATE`) 후 모드별 권한 가드 → `UNIQUE(event_id, user_id)` 위반 시 `DataIntegrityViolationException` → service-level `USER_ALREADY_SEATED_IN_EVENT` 변환.
-5. **모드별 권한**:
-   - `FREE`: 호스트만 (좌석 row 없으므로 사실상 미사용)
-   - `FIXED_BY_HOST`: 호스트 기본. `allow_self_swap=true`이면 참가자 본인 좌석만 swap 가능
-   - `FIRST_COME`: 호스트는 항상 가능. 참가자는 `allow_self_swap=true`일 때 본인 좌석 자가 선택
-6. **GET 응답**:
-   - `GET /buses`: `EventBusVo` 목록 (배정 모드, 인원 수 등)
-   - `GET /buses/{busId}/seats`: `FREE`는 빈 배열, 그 외는 좌석 + `user_id` 노출
+- `busNo: int` — 1~3
+- `vehicleLayoutId: long`
+- `assignmentMode: BusAssignmentMode`
+- `allowSelfSwap: boolean`
+- `notes: String`
 
-## 4. 서버 계약
+Enum:
 
-### 엔드포인트 요약 (4개 in controller; 본 PRD 범위 4개)
+- `BusAssignmentMode = FREE | FIXED_BY_HOST | FIRST_COME`
+- `BusSeatChangeType = ASSIGN | REASSIGN | UNASSIGN | SELF_SWAP`
 
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/events/{eventId}/buses` | `EventBusController#getBuses` | 인증 | 이벤트의 버스 목록 + 모드별 인원 카운트 |
-| GET | `/api/v1/events/{eventId}/buses/{busId}/seats` | `EventBusController#getSeats` | 인증 | bus의 좌석 목록. FREE는 빈 배열. eventId/busId 소속 검증 |
-| POST | `/api/v1/events/{eventId}/buses` | `EventBusController#createBus` | 호스트/공동호스트 | bus 추가 + 좌석 prepopulate. 최대 3대 검증 |
-| PUT | `/api/v1/events/{eventId}/buses/{busId}/seats/{seatNo}` | `EventBusController#assignSeat` | 모드별 권한 | `?userId=` 쿼리. 좌석 배정/swap. UNIQUE 충돌 → `USER_ALREADY_SEATED_IN_EVENT` |
+좌석에는 `eventId`, `eventBusId`, `seatNo`, nullable `userId`, `lockedByHost`, `assignedAt`, `assignedBy`가 있다. DB는 `(event_id, user_id)` unique로 한 이벤트에서 같은 사용자의 중복 좌석을 막고, bus와 seat entity는 version 컬럼을 가진다.
 
-> 본 슬라이스에는 bus 삭제·수정 endpoint는 포함되지 않는다. 후속 슬라이스에서 추가 가능(`BUS_NOT_EMPTY` 가드 적용).
+## 5. 생성과 좌석 변경의 실제 의미
 
-`POST /buses` Body는 `BusSetupParam` (`event/transport/param/BusSetupParam.java`).
-
-### 데이터 모델 (W7 신규 2개 테이블)
-
-```sql
-CREATE TABLE event_bus (
-  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  event_id BIGINT NOT NULL,
-  bus_no INT NOT NULL,
-  vehicle_layout_id BIGINT NOT NULL,
-  assignment_mode ENUM('FREE','FIXED_BY_HOST','FIRST_COME') NOT NULL,
-  allow_self_swap TINYINT(1) NOT NULL DEFAULT 0,
-  notes VARCHAR(500) NULL,
-  version BIGINT NOT NULL DEFAULT 0,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
-  UNIQUE KEY uk_event_bus (event_id, bus_no),
-  CONSTRAINT fk_event_bus_event FOREIGN KEY (event_id) REFERENCES event(id),
-  CONSTRAINT fk_event_bus_vehicle FOREIGN KEY (vehicle_layout_id) REFERENCES vehicle_layout(id)
-);
-
-CREATE TABLE event_bus_seat (
-  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  event_id BIGINT NOT NULL,            -- 비정규화 (event_bus.event_id와 동일)
-  event_bus_id BIGINT NOT NULL,
-  seat_no VARCHAR(10) NOT NULL,
-  user_id BIGINT NULL,
-  locked_by_host TINYINT(1) NOT NULL DEFAULT 0,
-  assigned_at DATETIME NULL,
-  assigned_by BIGINT NULL,
-  version BIGINT NOT NULL DEFAULT 0,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
-  UNIQUE KEY uk_event_bus_seat (event_bus_id, seat_no),
-  UNIQUE KEY uk_event_bus_user_per_event (event_id, user_id),  -- user_id NULL 다중 허용
-  KEY idx_event_bus_seat_user (user_id),
-  CONSTRAINT fk_event_bus_seat_bus FOREIGN KEY (event_bus_id) REFERENCES event_bus(id),
-  CONSTRAINT fk_event_bus_seat_event FOREIGN KEY (event_id) REFERENCES event(id),
-  CONSTRAINT fk_event_bus_seat_user FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-```
-
-`event_bus_seat.event_id`는 `event_bus.event_id`의 비정규화. UNIQUE `(event_id, user_id)`로 동일 사용자가 같은 이벤트의 두 버스에 동시에 배정되는 race를 DB 수준에서 차단.
-
-### Enum
-
-- `BusAssignmentMode = {FREE, FIXED_BY_HOST, FIRST_COME}` (`event_bus.assignment_mode`)
-- `VehicleSeatType = {NORMAL, DRIVER, GUIDE, FOLDABLE, DISABLED, AISLE}` ([F03-17](F03-17_vehicle-layout-catalog_prd.md))
-
-### 모드별 동작 표
-
-| 모드 | 좌석 row 생성 | 좌석 배정 권한 | `allow_self_swap=true` 효과 | GET seats 응답 |
-|---|---|---|---|---|
-| `FREE` | 미생성 | (좌석 없음) | 무효 | 빈 배열 |
-| `FIXED_BY_HOST` | prepopulate | 호스트만 | 참가자가 **본인 좌석만** swap 가능 (`userId == actorUserId`) | 좌석 + user_id 노출 |
-| `FIRST_COME` | prepopulate | 호스트는 항상 가능. 참가자는 `allow_self_swap=true`일 때 본인 선택 가능. `SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1`로 자동 배정 가능 | 참가자 본인 좌석 선택 허용 | 좌석 + user_id 노출 |
-
-### 최대 3대 제약
-
-서비스 레이어에서 `event.id` 기준 `event_bus` 카운트가 3 이상이면 `POST /buses`는 400 (`MAX_BUSES_EXCEEDED` 예약, 현재는 `INVALID_REQUEST` 변환).
-
-### 동시성 (PLAN.md §4.8)
-
-1. `event_bus` parent row `FOR UPDATE` 잠금 후 seat row 잠금 (lock 순서 일관).
-2. `event_bus.eventId != pathEventId` 시 400 (E2E S4-7 — eventId 소속 검증).
-3. `UNIQUE(event_id, user_id)` 위반 → `DataIntegrityViolationException` catch → `USER_ALREADY_SEATED_IN_EVENT` 변환.
-4. `FIRST_COME` 자동 배정은 `findFirstAvailableForUpdateSkipLocked` (MySQL 8.4 `SKIP LOCKED`).
-5. `event_bus.allow_self_swap`/`assignment_mode` 변경은 좌석 배정자 0명일 때만 허용 (`BUS_NOT_EMPTY` 가드 — 본 슬라이스 endpoint 없음, 후속).
-
-### 알림 (NotificationType 81~82, AFTER_COMMIT)
-
-| number | name | 트리거 | 수신자 |
-|---|---|---|---|
-| 81 | `BUS_SEAT_ASSIGNED` | 호스트가 좌석 배정 또는 `FIRST_COME` 자동 배정 | 좌석 user |
-| 82 | `BUS_SEAT_CHANGED` | 호스트가 사용자 좌석을 swap | 좌석 user (oldSeat → newSeat payload) |
-
-### 의존 단위
-
-- **F03-14 transport mode 베이스** — `mode=BUS` 가드의 진실의 원천.
-- **F03-17 차량 레이아웃 카탈로그** — `vehicle_layout_id` 참조 + 좌석 prepopulate 소스.
-- **F03-05 신청 & 참석** — `FIRST_COME` 자동 배정은 `ApplicationService.confirmPaymentAndAttend`/`approveApplication` 흐름에서 트리거(PLAN.md §4.7). 한 트랜잭션 안에서 `application → capacity → bus` 처리.
-- **Unit 12 알림** — NotificationType 81~82 fanout.
-
-## 5. 프론트 계약
-
-본 슬라이스는 **backend-only**. Flutter 좌석 위젯/모델/화면은 후속 슬라이스에서 다룬다.
-
-후속 작업 단위(PLAN.md §4.10):
-
-| 단위 | 작업 |
-|---|---|
-| 모델 | `event_bus_vo.dart`, `event_bus_seat_vo.dart`, `bus_setup_param.dart`, `bus_seat_assignment_param.dart`, `bus_swap_param.dart` (Freezed) |
-| API | `event_bus_api.dart` (Retrofit) — 4개 메서드 |
-| Repository | `event_bus_repository.dart` |
-| Provider | `domain/providers/event/event_bus_provider.dart` (Riverpod) |
-| Widget | `BusSeatLayoutWidget` — GridView/Canvas 좌석 렌더 (seat_type 색상 분기) |
-| Screen | 3개 — 버스 추가, 버스 운영(좌석 grid), 참가자 좌석 선택 |
-| Router | 신규 라우트 상수 3개 |
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| AC-01 | 차량 카탈로그 read-only (**E2E S4-1**) | 시드 4종 존재 | `GET /vehicle-layouts/active`에서 28/45/20/8인승 4건 반환 |
-| AC-02 | 버스 추가 + FIRST_COME 자동 배정 (**E2E S4-2**) | mode=BUS DRAFT, 28인승 카탈로그 | `POST /buses` 201, `event_bus_seat` 28 row 자동 생성 (user_id=NULL). 발행 후 자동 배정 동작 |
-| AC-03 | FIXED_BY_HOST + allow_self_swap=false (**E2E S4-3**) | 호스트가 U1을 3B에 배정 | U1의 자가 swap 시도 403. 호스트의 3B→3C swap은 200 |
-| AC-04 | FREE 모드 인원 카운트만 (**E2E S4-4**) | `assignmentMode=FREE` | seat row 0건, `GET seats` 빈 배열, `passengerCount`는 APPROVED 수 추정 |
-| AC-05 | 최대 3대 제한 (**E2E S4-5**) | 이미 3대 등록 | 4번째 `POST /buses` 400 `MAX_BUSES_EXCEEDED` |
-| AC-06 | bus mode 가드 (**E2E S4-6**) | mode=NONE 또는 mode=CARPOOL | `POST /buses` 400 (mode 가드 실패) |
-| AC-07 | eventId 소속 검증 (**E2E S4-7**) | 이벤트 A의 busId=10, 이벤트 B에 busId=20 | `GET /events/A/buses/20/seats` 400 (INVALID_REQUEST) |
-| AC-08 | 동일 사용자 두 버스 배정 race | 동시 2개 트랜잭션이 U1을 bus1, bus2에 배정 | 1건만 성공, 다른 건은 `USER_ALREADY_SEATED_IN_EVENT` (DataIntegrityViolation 변환) |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 모드 | 버스 생성 시 | 현재 배정 동작 |
 |---|---|---|
-| 서버 계약 | `EventBusController` 4 endpoints + `EventBusService` mode 가드 + `MAX_BUSES_PER_EVENT=3` | W7에서 구현 완료 |
-| VO 추출 | `EventBusVo`, `EventBusSeatVo` 분리 | W7에서 완료 |
-| 동시성 | `event_bus` parent lock + seat `FOR UPDATE` + UNIQUE 변환 | PLAN.md §4.8 명세대로 구현. SKIP LOCKED는 MySQL 8.4 지원 |
-| eventId 소속 검증 | `bus.eventId != pathEventId` 시 400 | E2E S4-7로 검증 |
-| Flutter 좌석 위젯 | `BusSeatLayoutWidget` 등 미구현 | **후속 슬라이스** — backend-only 1차 |
-| 관리자 차량 카탈로그 SPA | community_admin_api UI | **본 슬라이스 범위 외** (Q5 사용자 확정) — [F03-17](F03-17_vehicle-layout-catalog_prd.md) 참조 |
+| `FREE` | 좌석 row를 만들지 않음 | 좌석 지정 API가 찾을 row가 없어 사실상 사용할 수 없음 |
+| `FIXED_BY_HOST` | 레이아웃의 `isSelectable=true` 좌석을 복사 | Host/CoHost가 target seat의 user를 지정 |
+| `FIRST_COME` | `FIXED_BY_HOST`와 동일하게 빈 좌석 row 복사 | 자동 배정 없음. 같은 PUT API로 수동 지정 |
 
-## 8. Gap / Risk
+추가 확인 사항:
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후속 | PLAN.md §4.10 | Flutter 좌석 위젯/모델/Screen 전체 미구현 | 후속 슬라이스에서 진행. `BusSeatLayoutWidget` 디자인 + Provider/Repository |
-| 후속 | PLAN.md §4.8 | bus 삭제·모드 변경 endpoint 미포함 (`BUS_NOT_EMPTY` 가드 포함) | 후속 슬라이스에서 추가 |
-| 후속 | [F03-17 Gap](F03-17_vehicle-layout-catalog_prd.md) | 관리자 차량 카탈로그 CRUD SPA(community_admin_api) 미구현 — Q5 사용자 확정으로 1차 출시 범위 외 | community_admin_api 후속 슬라이스에서 진행. 1차는 admin API + 시드 4종 INSERT로 운영 |
-| Risk | PLAN.md 회귀 위험 9 | `autoAssignOnApproval` 훅이 `ApplicationService` 흐름에 들어가야 함 — 한 트랜잭션 안에서 application → capacity → bus 처리 | W7 후속 가드 추가 (현 슬라이스는 endpoint만 노출) |
-| Risk | E2E S5-3 / S5-4 | 호스트 이벤트 취소 시 좌석 배정자 알림 + 데이터 정리 정책 | 후속 슬라이스에서 정의 |
+- 버스 추가는 event row 잠금과 host/cohost 검사를 사용한다.
+- add/assign 모두 event status를 검사하지 않아 mode가 BUS로 남아 있는 CLOSED/CANCELED 이벤트에서도 mutation할 수 있다. mode 변경은 DRAFT-only라 이 상태를 transport config로 정리할 수도 없다.
+- layout 존재·활성 여부를 명시적으로 검증하지 않고 repository 결과를 사용한다.
+- non-host는 `allowSelfSwap=true`이고 query `userId`가 본인일 때만 통과하지만, 참석/대기 자격과 `assignmentMode`, `lockedByHost`는 검사하지 않는다.
+- 좌석 PUT은 기존 사용자 좌석을 비우지 않는다. 이미 좌석이 있는 사용자가 다른 좌석으로 이동하면 DB unique 위반이 될 수 있다.
+- API의 `userId`는 primitive `long`이라 null unassign이 불가능하며, `UNASSIGN` 로그 분기는 이 endpoint에서 도달할 수 없다.
+- 다른 사람이 앉은 좌석을 self 요청으로 덮어쓸 수 있어 현재 `SELF_SWAP`은 두 좌석을 맞바꾸는 진짜 swap이 아니다.
+- `DataIntegrityViolationException`은 구체 원인을 구분하지 않고 `INVALID_REQUEST`로 변환한다.
 
-## 9. 변경 이력
+## 6. 조회 개인정보와 동시성
 
-| 일자 | 버전 | 변경 |
+- Host/CoHost는 모든 seat의 `userId`를 본다.
+- 일반 참가자는 자기 좌석의 `userId`만 보고, 다른 좌석의 `userId`는 null로 마스킹된다.
+- `assignedBy`는 일반 참가자 응답에서도 마스킹되지 않는다.
+- 버스 추가와 좌석 지정은 event row를 잠가 같은 이벤트의 write를 직렬화한다.
+- seat row 전용 비관적 잠금이나 `SELECT ... FOR UPDATE SKIP LOCKED` 쿼리는 없다.
+- `FIRST_COME` 자동 할당과 신청/결제 확정 흐름의 연계도 없다.
+
+## 7. 로그·알림·Flutter
+
+- 좌석 PUT은 `EventBusSeatLog`를 기록한다.
+- 변경 타입은 기존/새 사용자와 self 여부로 계산하지만, null userId가 불가능해 `UNASSIGN`은 현재 API에서 생성되지 않는다.
+- `BUS_SEAT_ASSIGNED(81)`, `BUS_SEAT_CHANGED(82)` enum은 있으나 발행·listener·send 코드가 없다.
+- Flutter `NotificationRouter`에 81~82 deep link가 없다.
+- Flutter에 버스 운영 기능 파일은 없다.
+
+## 8. 테스트로 확인된 범위
+
+`EventBusServiceTest` 11개는 좌석 조회 권한·타인 userId 마스킹과 좌석 변경 로그 타입을 검증한다. 특히 타인이 앉은 target 좌석을 self 요청으로 덮어쓰는 동작을 `SELF_SWAP` 성공으로 고정하지만, 두 좌석의 실제 swap·참석 자격·locked seat 검증을 의미하지 않는다. 다음 핵심 계약은 확인되지 않았다.
+
+- 최대 3대와 중복 busNo
+- mode·event status·layout 유효성
+- FREE/FIRST_COME 실제 동작
+- 중복 사용자·동시 좌석 경쟁
+- self swap과 locked seat
+- 알림 발행
+
+## 9. 현재 Gap / Risk
+
+| 우선순위 | 실측 Gap |
+|---|---|
+| 높음 | Flutter 버스 운영 수직 슬라이스가 전혀 없음 |
+| 높음 | `FIRST_COME` 자동 배정과 `SKIP LOCKED`는 구현되지 않음 |
+| 높음 | 좌석 PUT이 이동·swap·unassign을 올바르게 모델링하지 않음 |
+| 높음 | self 변경이 참석 자격·assignment mode·lockedByHost를 검사하지 않음 |
+| 높음 | add/assign에 event status 가드가 없어 CLOSED/CANCELED event도 mutation 가능 |
+| 중간 | GET buses에 event 존재·역할 검증이 없음 |
+| 중간 | bus 추가 시 event status 및 layout 존재/활성 검증이 없음 |
+| 중간 | 81~82 알림은 enum만 있고 생산 배선·앱 라우팅이 없음 |
+| 중간 | 핵심 제약과 동시성 회귀 테스트가 부족 |
+
+## 10. 변경 이력
+
+| 날짜 | 버전 | 변경 |
 |---|---|---|
-| 2026-05-22 | v0.1 | 신규 — W7 버스대절 운영 슬라이스 반영 (PLAN.md v4.5 §4 + E2E S4-1~S4-7). backend-only 1차 출시. Flutter 좌석 위젯·관리자 CRUD SPA는 후속 |
+| 2026-05-22 | v0.1 | 삭제된 event-extensions 계획을 기준으로 초안 작성 |
+| 2026-07-29 | v1.0 | 실제 4개 API와 권한·좌석 변경·동시성·테스트를 실측하고 자동 배정/SKIP LOCKED/알림 오기 제거 |

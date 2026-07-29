@@ -1,12 +1,12 @@
 # F07-05. 분담금 납부 (Pay Share / Transfer) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/07_meeting_settlement/F07-05_pay-share -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29 (혼합결제 은행분 확인 source-of-truth 재실측); unit: business_logic/units/07_meeting_settlement/F07-05_pay-share -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-05_pay-share`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체 확인 요청**, 또는 **POINT+계좌이체 혼합**으로 납부한다. 또한 PENDING_MANUAL_REFUND 상태의 transfer에 대해 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED 상태의 transfer를 호스트가 재발행(reissue)하기 직전에 참가자가 결제 흐름을 다시 시작할 수 있다.
+참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체**, 또는 **POINT+계좌이체 혼합**으로 납부한다. POINT는 즉시 완료되지만 혼합 결제에 은행분이 있으면 transfer가 `BANK_AWAITING_CONFIRM`에 머물고, 수취자 또는 정산 생성자가 실제 입금 내역을 수기로 확인해야 `COMPLETED`가 된다. 또한 `PENDING_MANUAL_REFUND` 상태의 transfer에 대해 수취자가 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED transfer는 정산 생성자가 재발행(reissue)할 수 있다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -37,6 +37,16 @@
 | `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java:284` | 확인됨 |
 | `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java:296` | 확인됨 |
 
+### 2026-07-29 직접 재실측 trace
+
+| 계층 | 실제 소스 |
+|---|---|
+| 서버 endpoint | `MeetingSettlementController.confirmTransferBankPortion` — `POST .../transfers/{transferId}/confirm-bank-portion`, body 없음, `200 Void` |
+| 서버 상태·권한 | `MeetingSettlementTransferService.payTransferMixed`, `confirmBankPortion`, `checkAndCompleteSettlement`; `TransferStatus`, `MeetingPaymentMethod`, `MeetingSettlementTransferVo` |
+| 서버 회귀 테스트 | `MeetingSettlementTransferServiceTest.ConfirmBankPortionTest`, `MeetingSettlementServiceTest.confirmBankPortion_rejectedWhenDraft`, `MeetingSettlementControllerTest.confirmTransferBankPortion_success` |
+| Flutter caller | `meeting_settlement_api.dart` → `meeting_settlement_repository.dart` → `transfer_list_provider.dart` → `transfer_list_screen.dart` → `transfer_card_widget.dart` |
+| Flutter 테스트 | `transfer_actions_provider_test.dart`, `transfer_card_widget_test.dart` |
+
 ## 3. 전체 동작 흐름
 
 아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
@@ -52,11 +62,16 @@
 POINT 결제 액션:
 1. `AppDialog.confirm` 확인
 2. `transferListProvider.payTransfer(transferId)` ▶ `POST .../transfers/{id}/pay`
-3. invalidate 모두 (`transferList`, `summary`, `detail`, `myShares`)
+3. 현재 탭 목록 재조회 + `settlementDetailProvider` invalidate
 
-혼합 결제 액션 (별도 다이얼로그에서 입력 후):
-1. `MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`
-2. `transferListProvider.payTransferMixed(transferId, param)` ▶ `POST .../transfers/{id}/pay-mixed`
+혼합 결제 서버/data/provider 흐름:
+1. `MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`의 합은 transfer 총액과 정확히 같아야 한다.
+2. `transferListProvider.payTransferMixed(...)` ▶ `POST .../transfers/{id}/pay-mixed`
+3. `bankTransferAmount == 0`이면 전액 POINT로 즉시 `COMPLETED`; `> 0`이면 POINT 부분만 차감·수취 반영하고 transfer는 `BANK_AWAITING_CONFIRM`
+4. 수취자 또는 정산 생성자가 `받았어요` ▶ `POST .../confirm-bank-portion`
+5. 서버가 transfer를 `COMPLETED`로 바꾸고 정산 완료 조건을 다시 계산
+
+> **현재 Flutter 도달성:** API/Repository/Provider에는 `payTransferMixed`가 있으나 `community_app/lib/presentation/meeting_settlement`에는 이를 호출하는 결제 CTA/다이얼로그가 없다. 반대로 이미 `BANK_AWAITING_CONFIRM`인 transfer를 확정하는 `받았어요` CTA와 caller는 구현돼 있다.
 
 self-refund 액션:
 1. `AppDialog.confirm` ("환불 후 되돌릴 수 없습니다")
@@ -69,15 +84,24 @@ share 결제 액션 (my_shares에서):
 
 ### 개요
 
-참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체 확인 요청**, 또는 **POINT+계좌이체 혼합**으로 납부한다. 또한 PENDING_MANUAL_REFUND 상태의 transfer에 대해 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED 상태의 transfer를 호스트가 재발행(reissue)하기 직전에 참가자가 결제 흐름을 다시 시작할 수 있다.
+참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체**, 또는 **POINT+계좌이체 혼합**으로 납부한다. POINT는 즉시 완료되고, 은행분이 있는 혼합 결제는 `BANK_AWAITING_CONFIRM`에서 별도 확인을 기다린다. `PENDING_MANUAL_REFUND` transfer의 수취자는 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED transfer는 정산 생성자가 재발행(reissue)할 수 있다.
 
 > 본 기능은 **참가자 관점**에서 본 결제 흐름. 호스트의 계좌이체 확인은 F07-06에서 다룬다. 단, `confirmBankTransfer` (Share)는 본인 결제 의사 표시(=확인 요청) 시 호출되며, 동일 엔드포인트가 호스트의 확인에도 쓰인다 (양쪽에서 모두 호출 가능, F07-06 참조).
 
 > **2026-06-05 (D-OPEN-2 슬라이스)**: ① `GET .../transfers/me`에 인가 검증이 누락돼 있던 것을 수정 — 본인 것만 반환돼 정보 유출은 없었으나 다른 조회와 잠금 수준이 달랐다(DEC-V3). ② read 계열(`my-shares`, `transfers/me`)의 열람 자격이 `validateSettlementReadAccess`(ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트)로 확장 — 참석을 취소했어도 내 돈이 걸려 있으면 본인 분담금을 볼 수 있다. 결제(쓰기) 가드는 무변경 — DRAFT 결제·확정·재발행·상각 8경로 거부는 회귀 테스트로 고정. 상세는 [F07-04 §7-A](F07-04_status-summary-receipt_prd.md).
 
+### 혼합결제 은행분 상태·확인 경계 (Fact, 2026-07-29)
+
+- `payTransferMixed`는 transfer가 `PENDING`, 호출자가 `fromUserId`, settlement가 `ACTIVE`, PENDING appeal 없음, 두 금액이 음수가 아니고 합계가 transfer 총액과 같을 때만 처리한다.
+- `pointAmount > 0`인 부분은 유료 POINT로 즉시 차감·수취자 입금·회계 분개한다.
+- `bankTransferAmount > 0`이면 `paymentMethod=MIXED`, `status=BANK_AWAITING_CONFIRM`로 저장하고 `completedAt`은 확인 시점까지 기록하지 않는다. 이 상태는 `COMPLETED`가 아니므로 정산 완료를 막는다.
+- `POST .../confirm-bank-portion`은 요청 body가 없고, `BANK_AWAITING_CONFIRM` 상태에서 수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`)만 허용한다. 송금자(`fromUserId`) 검사를 먼저 하므로 송금자이면서 생성자인 경우도 self-confirm으로 403이다.
+- 성공하면 transfer `COMPLETED` + `completedAt`, `TRANSFER_BANK_PORTION_CONFIRMED` 감사로그, 송금자 알림을 남기고 정산 완료 조건을 재검사한다.
+- 이 endpoint는 영수증/입금증이나 은행 조회 결과를 받지 않는다. 실제 입금 여부를 검증하지 않는 **수기 신뢰 확인**이다.
+
 ### 의존 단위 / 외부 시스템
 
-- Unit 06 (Wallet): `WalletService.deductPaidOnly`, `creditMeetingSettlement`. (셀프 환불·역분개 환불의 `refundToWallet`는 split-보존 `WalletRefundService.refundByTransaction`로 전환됨 — 아래 §4 회계 무결성 노트 참조)
+- Unit 06 (Wallet): `WalletSpendService.spend(... CurrencyPolicy.PAID_ONLY ...)`, `WalletService.creditMeetingSettlement`. (정산 취소 역분개 환불은 split-보존 `WalletRefundService.refundByTransaction` 경로)
 - Unit 06 (Accounting): `AccountingLedgerService.recordMeetingSettlementPayment`(납부자 측), `recordMeetingSettlementReceiptCredit`(수취자 RECEIVABLE 소거 — clearing), `recordMeetingSettlementReversal`
 
 > **Fact (2026-06-06 돈 흐름 무결성 — C1/C2/H1 해소)**: 모임정산 분개 주체가 정정되었다. 소스: `payment/meeting/service/MeetingSettlementTransferService.java:97-111,201-207,369-374`.
@@ -101,7 +125,7 @@ share 결제 액션 (my_shares에서):
 | 라우트 (GoRouter) | Screen 파일 | 역할 |
 |---|---|---|
 | `/home/events/:eventId/settlement/my-shares` | `my_settlement_shares_screen.dart` | 본인 분담 리스트 (E-01c) |
-| `/home/events/:eventId/settlement/transfers` | `transfer_list_screen.dart` | 이체 리스트 (전체/내 이체 탭) |
+| `/home/events/:eventId/settlement/transfers` | `transfer_list_screen.dart` | 이체 리스트 (표시 문구 "참여자"/"최근 이체", 내부적으로 전체/내 이체 로드) |
 | (위젯) | `widgets/my_share_row_card.dart` | 분담 카드 (영수증/이의제기) |
 | (위젯) | `widgets/transfer_card_widget.dart` | 이체 카드 (액션 버튼 분기) |
 | (위젯) | `widgets/transfer_status_badge_widget.dart` | 상태 배지 (PENDING/COMPLETED/CANCELLED/EXPIRED 등) |
@@ -127,20 +151,26 @@ share 결제 액션 (my_shares에서):
 
 ### 이체 내역 화면 (`transfer_list_screen.dart`, SCR-MS-005)
 - **사용자가 보는 것**:
-  - `TabBar` "전체" / "내 이체" (탭 변경 시 `loadAllTransfers` / `loadMyTransfers` 호출)
+  - `TabBar` 표시 문구는 "참여자" / "최근 이체"이며, 내부 동작은 각각 `loadAllTransfers` / `loadMyTransfers`
+  - 상단 `SettlementTransferGuidanceCard`: POINT는 즉시 완료, 계좌/혼합 은행분은 실제 입금 확인 후 완료, 시스템은 실제 입금을 검증하지 않는다고 안내
   - 이체 카드 리스트 (`TransferCardWidget`):
-    - 송금자→수취자 아바타·이름, 금액, `TransferStatusBadgeWidget`(PENDING/COMPLETED/CANCELLED/EXPIRED/REVERSAL_FAILED/PENDING_MANUAL_REFUND)
+    - 송금자→수취자 아바타·이름, 금액, `TransferStatusBadgeWidget`(`PENDING/BANK_AWAITING_CONFIRM/COMPLETED/CANCELLED/EXPIRED/SUPERSEDED/REVERSAL_FAILED/PENDING_MANUAL_REFUND`)
     - 송금자(`fromUserId == currentUser`)일 때:
-      - PENDING: "포인트로 결제" / "송금 앱 열기"(토스/카카오) / "이체 확인 요청" / "이의제기"
+      - PENDING: "포인트 결제" / "송금 앱으로 보내기" / "이의 제기"
+      - BANK_AWAITING_CONFIRM: `받았어요` 미노출. 정산 생성자이기도 해도 송금자 우선 차단
     - 수취자(`toUserId == currentUser`)일 때:
-      - PENDING: "이체 확인" (호스트 권한 — F07-06)
+      - BANK_AWAITING_CONFIRM: 송금자가 아니면 "받았어요"
       - PENDING_MANUAL_REFUND: "포인트 환불(self-refund)"
-      - EXPIRED: 호스트는 "재요청" / "포기(writeoff)"
+    - 정산 생성자(`settlementDetail.creatorUserId == currentUser`)일 때:
+      - PENDING: "이체 확인"
+      - BANK_AWAITING_CONFIRM: 송금자가 아니면 수취자 대신 "받았어요"
+      - EXPIRED: "재요청" / "포기(writeoff)"
 - **사용자가 할 수 있는 액션 (참가자/송금자 관점)**:
   - "포인트로 결제" ▶ 확인 다이얼로그 ▶ `transferListProvider.payTransfer(transferId)` ▶ `POST .../transfers/{id}/pay` ▶ 토스트 "결제 완료"
   - "송금 앱 열기" ▶ 바텀시트 (토스/카카오 선택) ▶ `RemitUrlBuilder.tossRemit(amount, msg)` 또는 `kakaoPayRemit()` ▶ `launchUrl(externalApplication)` ▶ 사용자가 외부 앱에서 송금 후 돌아옴
   - "이의 제기" ▶ AlertDialog (사유 입력 maxLength 2000) ▶ `appealsProvider.createAppeal(subjectType:'TRANSFER', subjectId, reason)`
   - "포인트 환불(self-refund)" (수취자) ▶ `AppDialog.confirm("환불 후 되돌릴 수 없습니다")` ▶ `transferListProvider.selfRefundTransfer(transferId)` ▶ `POST .../transfers/{id}/self-refund`
+  - "받았어요" (수취자 또는 정산 생성자, 송금자 제외) ▶ 되돌릴 수 없는 확인 다이얼로그 ▶ `transferListProvider.confirmBankPortion(transferId)` ▶ `POST .../confirm-bank-portion` ▶ 현재 탭 재조회 + `settlementDetailProvider` invalidate
 - **상태 분기**:
   - 탭 인덱스 0 → loadAllTransfers, 1 → loadMyTransfers
   - 이체 0건 → AppEmptyState
@@ -159,11 +189,18 @@ share 결제 액션 (my_shares에서):
 POINT 결제 액션:
 1. `AppDialog.confirm` 확인
 2. `transferListProvider.payTransfer(transferId)` ▶ `POST .../transfers/{id}/pay`
-3. invalidate 모두 (`transferList`, `summary`, `detail`, `myShares`)
+3. 현재 탭 목록 재조회 + `settlementDetailProvider` invalidate
 
-혼합 결제 액션 (별도 다이얼로그에서 입력 후):
+혼합 결제 data/provider 액션 (현재 presentation caller 없음):
 1. `MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`
 2. `transferListProvider.payTransferMixed(transferId, param)` ▶ `POST .../transfers/{id}/pay-mixed`
+
+혼합결제 은행분 확인 액션:
+1. 화면이 `bankAwaitingConfirm && !isSender && (isRecipient || isSettlementCreator)`를 계산
+2. `TransferCardWidget`에 callback이 있을 때만 `받았어요` 노출
+3. 확인 다이얼로그가 “실제 입금 여부는 시스템이 검증하지 않음”을 경고
+4. `transferListProvider.confirmBankPortion(transferId)` ▶ `POST .../confirm-bank-portion`
+5. 성공 시 현재 탭 재조회 + `settlementDetailProvider` invalidate, 실패 시 이전 목록 유지 후 오류 토스트
 
 self-refund 액션:
 1. `AppDialog.confirm` ("환불 후 되돌릴 수 없습니다")
@@ -178,7 +215,9 @@ share 결제 액션 (my_shares에서):
 |---|---|---|---|
 | S1 | (Happy Path · 참가자 · POINT 결제) 분담금 16,000원을 포인트로 즉시 결제 | settlement ACTIVE, 본인 transfer 1건 PENDING (16,000원 → 호스트) | 사용자 지갑 -16,000, 호스트 지갑 +16,000, transfer COMPLETED, 호스트 푸시 1건. |
 | S2 | (참가자 · 외부 송금 앱) 토스로 16,000원을 호스트에게 송금 | 토스 앱 사용자 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | (참가자 · 혼합 결제 mixed) POINT 일부 + 계좌이체 일부 | 지갑 잔액 10,000원 보유, 분담금 16,000원 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+| S3 | (참가자 · 혼합 결제 mixed) POINT 10,000 + 계좌이체 6,000 | ACTIVE, 본인 PENDING transfer 16,000원 | POINT 10,000은 즉시 이동하고 transfer는 `MIXED/BANK_AWAITING_CONFIRM`; `completedAt`은 아직 기록되지 않으며 수취자/정산 생성자 확인 전 정산 완료 불가 |
+| S3-A | (수취자/정산 생성자 · 은행분 확인) `받았어요` | 위 S3 transfer, PENDING appeal 없음, 확인자는 송금자가 아님 | transfer `COMPLETED` + `completedAt`, 송금자 알림·감사로그, 모든 유효 transfer/share 완료 시 settlement `COMPLETED` |
+| S3-B | (차단 · 송금자/제3자/상태 불일치) 은행분 확인 우회 호출 | 송금자 또는 무관 사용자, 혹은 상태가 `BANK_AWAITING_CONFIRM`이 아님 | 각각 403 SELF_CONFIRM / 403 NOT_AUTHORIZED / 400 NOT_AWAITING_CONFIRM, 상태 불변 |
 | S4 | (참가자 · share 직접 결제) my-shares에서 항목 단위로 결제 | HOST_COLLECT 모드가 아니라 항목 단위 share 결제 흐름 (현재는 transfer 단위 결제가 주류) | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S5 | (수취자 · self-refund) 정산 취소로 PENDING_MANUAL_REFUND 된 BANK 입금분 환불 | 호스트가 정산 취소 → 자기 transfer가 BANK_TRANSFER COMPLETED였음 → PENDING_MANUAL_REFUND로 전이 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S6 | (엣지 · 잔액 부족) 결제 시도 시 지갑 잔액 부족 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
@@ -201,13 +240,18 @@ share 결제 액션 (my_shares에서):
 |---|---|---|---|
 | 후보 | backend.md:38 | - **권한**: `@AuthenticationPrincipal` 필수 (별도 검증 없음 — 본인 transfer만 조회 SQL 단에서 필터) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:62 | 1. my-shares 화면에서 share 카드 액션 (현재 코드에선 view만 노출, 결제 버튼 미노출 — `payShareByPoint`는 가능하지만 UI에서 기본은 transfer 결제 흐름) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap (2026-07-29 실측) | `transfer_list_provider.dart:111`, presentation 전체 caller 검색 | `pay-mixed` API/Repository/Provider는 있으나 현재 Flutter presentation에서 호출하는 CTA/다이얼로그가 없어 사용자가 혼합 결제를 시작할 수 없음 | 혼합 결제 입력 CTA를 배선하거나 미지원 기능으로 명시 |
+| Risk (2026-07-29 실측) | `MeetingSettlementTransferVo`, `transfer_list_screen.dart:_confirmBankPortion` | transfer 응답에는 혼합 결제의 point/bank 분할 금액이 없고 총액 `amount`만 있다. 확인 다이얼로그는 총액을 “계좌이체 부분” 확인 금액으로 표시해 실제 은행분보다 크게 보일 수 있음 | 서버 VO에 분할 금액을 보존·노출하거나 다이얼로그에서 금액 단정을 제거 |
+| Fact (2026-07-29 실측) | `confirmBankPortion`, `canConfirmBankPortion` | 서버와 Flutter 모두 송금자 self-confirm을 막고 수취자/정산 생성자만 은행분 확인 가능. 실제 입금 자동 검증은 없음 | 현 신뢰 경계와 경고 문구 유지 |
 | 해소 (2026-06-06) | MeetingSettlementTransferService.java:97-111, WithdrawalService.java:447-461 | **모임정산 출금자격 오귀속·수취 무원장(C1/C2) + 역분개 환불 split 미보존(H1) 해소** — 분개 주체 납부자/수취자 분리(RECEIVABLE clearing), 출금 게이트 원장화, reversal 환불 split 복원. 분담금 납부자의 부당 출금자격·수취자 이중 현금화 경로 제거. | 없음 |
 
 ## 9. 수용 기준
 
 - **AC-01. (Happy Path · 참가자 · POINT 결제) 분담금 16,000원을 포인트로 즉시 결제**: Given settlement ACTIVE, 본인 transfer 1건 PENDING (16,000원 → 호스트) When 사용자가 해당 흐름을 실행하면 Then 사용자 지갑 -16,000, 호스트 지갑 +16,000, transfer COMPLETED, 호스트 푸시 1건.
 - **AC-02. (참가자 · 외부 송금 앱) 토스로 16,000원을 호스트에게 송금**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. (참가자 · 혼합 결제 mixed) POINT 일부 + 계좌이체 일부**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+- **AC-03. (참가자 · 혼합 결제 mixed) POINT 일부 + 계좌이체 일부**: Given ACTIVE 정산의 본인 PENDING transfer이고 두 금액 합이 총액과 같을 때 When `pay-mixed`를 호출하면 Then POINT 부분만 즉시 이동하고 은행분이 있으면 transfer는 `BANK_AWAITING_CONFIRM`에 머물며 `completedAt`은 아직 기록되지 않는다.
+- **AC-03-A. (수취자/정산 생성자 · 혼합 은행분 확인)**: Given `BANK_AWAITING_CONFIRM`이고 PENDING appeal이 없을 때 When 송금자가 아닌 수취자 또는 정산 생성자가 `받았어요`를 확정하면 Then transfer가 `COMPLETED`가 되고 송금자 알림·감사로그·정산 완료 재평가가 실행된다.
+- **AC-03-B. (차단 · 은행분 self-confirm/제3자/잘못된 상태)**: Given 혼합 은행분 확인 요청 When 송금자, 무관 사용자, 또는 잘못된 상태로 호출하면 Then 각각 서버의 SELF_CONFIRM, NOT_AUTHORIZED, NOT_AWAITING_CONFIRM 오류로 거절되고 transfer 상태는 바뀌지 않는다.
 - **AC-04. (참가자 · share 직접 결제) my-shares에서 항목 단위로 결제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-05. (수취자 · self-refund) 정산 취소로 PENDING_MANUAL_REFUND 된 BANK 입금분 환불**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-06. (엣지 · 잔액 부족) 결제 시도 시 지갑 잔액 부족**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과

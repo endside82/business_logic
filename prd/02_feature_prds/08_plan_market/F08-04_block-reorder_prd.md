@@ -1,202 +1,134 @@
 # F08-04. 블록 드래그 재정렬 / 계층 이동 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/08_plan_market/F08-04_block-reorder -->
+<!-- source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce -->
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-04_block-reorder`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 문서 상태: **현재 소스 실측본**. 서버 Controller/Service/Param과 Flutter API/Repository/Provider/화면을 직접 대조했다. 이 기능의 최종 권한·트리 무결성·동시성 판단은 서버가 담당한다.
 
 ## 1. 결론
 
-블록의 순서(sortOrder)와 부모/깊이(parentBlockId/depth)를 변경하는 두 개의 엔드포인트. 드래그앤드롭 UI에서 한 번 드롭한 결과를 일괄 반영(reorder)하거나, 단일 블록의 부모/순서/깊이를 한 번에 갱신(move)한다.
+작성자는 `DRAFT` 플랜의 블록을 로컬에서 드래그·들여쓰기·내어쓰기한 뒤 저장할 수 있다. 저장은 부모가 바뀐 블록의 `move`를 먼저 처리하고, 각 부모 아래의 **살아 있는 전체 형제 집합**을 `reorder`로 보낸다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+현재 구현은 과거 문서의 “마지막 요청 우선”, “사이클은 프론트만 차단” 계약이 아니다.
 
-- 블록 에디터(F08-03) ▶ 우측 상단 "재정렬" 텍스트 액션 ▶ `/plan/:planId/reorder`
+- 서버는 같은 플랜의 mutation을 플랜 행 비관락으로 직렬화한다.
+- 기대 `revision`이 다르면 `409 CONCURRENT_MODIFICATION`으로 전체 요청을 롤백한다.
+- 부모 범위 reorder는 전체 형제 ID의 중복·누락·외부 ID를 set-equality로 거절한다.
+- move는 자기 자신/자손을 새 부모로 지정하는 cycle을 서버에서 거절한다.
+- `depth`는 요청값을 신뢰하지 않고 서버가 부모 기준으로 계산하며, 자손 depth도 함께 재계산한다.
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 소스 근거
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/08_plan_market/F08-04_block-reorder/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/08_plan_market/F08-04_block-reorder/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/08_plan_market/F08-04_block-reorder/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/08_plan_market/F08-04_block-reorder/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
+| 영역 | 실제 소스 |
 |---|---|
-| `community_api/src/main/java/com/endside/community/plan/controller/PlanBlockController.java:70` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/plan/controller/PlanBlockController.java:78` | 확인됨 |
+| Controller | `community_api/.../plan/controller/PlanBlockController.java` |
+| Service | `community_api/.../plan/service/PlanBlockService.java` |
+| Params | `PlanBlockReorderParam.java`, `PlanBlockMoveParam.java` |
+| Revision 저장 | `Plan.blockTreeRevision`, `PlanRevisionRepository.java` |
+| Flutter API/Repository | `community_app/lib/data/api/plan_api.dart`, `data/repositories/plan_repository.dart` |
+| Flutter 상태 | `domain/providers/plan/plan_block_provider.dart` |
+| Flutter 화면/모델 | `presentation/plan/screens/block_reorder_screen.dart`, `block_reorder_model.dart` |
 
-## 3. 전체 동작 흐름
+## 3. 서버 계약
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
+### 3.1 엔드포인트
 
-1. 진입 시: `planBlocksNotifierProvider(planId)` 캐시된 트리 사용 (별도 fetch 안 함, F08-03에서 이미 로드됨)
-2. 사용자 드래그/들여쓰기는 모두 로컬 `BlockReorderModel`에서만 수행 (API 호출 X)
-3. "완료" 탭 시:
-   - parent가 변경된 블록 각각: `PlanRepository.moveBlock(blockId, MoveParam(parentBlockId, sortOrder, depth))` ▶ `PATCH /api/v1/plans/{planId}/blocks/{blockId}/move`
-   - 각 부모 그룹별: `PlanRepository.reorderBlocks(blockIds)` ▶ `PUT /api/v1/plans/{planId}/blocks/reorder`
-4. 모두 성공 시 `Navigator.pop` → 에디터로 복귀 (자동으로 invalidate되며 새 순서 반영)
-
-## 4. 서버 계약
-
-### 개요
-
-블록의 순서(sortOrder)와 부모/깊이(parentBlockId/depth)를 변경하는 두 개의 엔드포인트. 드래그앤드롭 UI에서 한 번 드롭한 결과를 일괄 반영(reorder)하거나, 단일 블록의 부모/순서/깊이를 한 번에 갱신(move)한다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| PUT | /api/v1/plans/{planId}/blocks/reorder | `PlanBlockController#reorderBlocks` | required | 순서 일괄 갱신 (`blockIds` 순서 그대로 0..N) |
-| PATCH | /api/v1/plans/{planId}/blocks/{blockId}/move | `PlanBlockController#moveBlock` | required | 단일 블록 parent/order/depth 동시 갱신 |
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **상수**:
-  - `MAX_BLOCK_DEPTH = 3` (PlanBlockService)
-  - `MAX_BLOCK_COUNT = 200`
-- **PlanBlock**:
-  - `parentBlockId: Long?` (root는 null)
-  - `sortOrder: int NOT NULL` — 같은 parent 내 순서
-  - `depth: int NOT NULL` — 들여쓰기 시각화용 깊이
-- **에러 코드**:
-  - 1500017 PLAN_BLOCK_DEPTH_EXCEEDED (400)
-  - 1500012 PLAN_BLOCK_INVALID_PARENT (400)
-  - 1500018 PLAN_NOT_EDITABLE (400)
-  - 1500010 PLAN_BLOCK_NOT_FOUND (404)
-
-### 의존 단위 / 외부 시스템
-
-- **F08-03**: 같은 PlanBlockController 내 블록 CRUD와 동일한 권한·트랜잭션 가드
-- 외부 시스템 의존 없음
-- **DB 일관성 주의**:
-  - reorder는 saveAll로 일괄 처리 — 동시 변경 시 마지막 요청이 우선
-  - move는 단일 행 UPDATE — 사이클 방지 검증 없음 (예: A를 A의 자식으로 이동하면 트리 깨짐 가능). 프론트가 막아야 함
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 블록 에디터(F08-03) ▶ 우측 상단 "재정렬" 텍스트 액션 ▶ `/plan/:planId/reorder`
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 | Screen 파일 | 역할 |
-|---|---|---|
-| `/plan/:planId/reorder` | `plan/screens/block_reorder_screen.dart` | 드래그 + 들여/내어쓰기 |
-| (모델) | `plan/screens/block_reorder_model.dart` | 평탄화/이동/그룹화 도메인 모델 |
-
-### 화면별 구성 요소 & 액션
-
-### 블록 재정렬 (`block_reorder_screen.dart`)
-- **사용자가 보는 것**:
-  - `CommunityAppBar(title: '순서 변경')` (별도 액션 없음)
-  - 상단 `_HintBanner`: 연두색 배경, 💡 + "길게 눌러 드래그로 순서 변경, 화살표 버튼으로 들여쓰기/내어쓰기"
-  - `ReorderableListView.builder` — 드래그 핸들 + 블록 요약(아이콘 + 텍스트 1줄) + 들여/내어쓰기 IconButton
-  - 들여쓴 블록은 `gray50` 배경, 좌측 패딩 `depth * 20`
-  - 부모 변경된 블록은 좌측 `linkBlue` 2px 보더 (시각 피드백)
-  - 하단 SafeArea + Padding: "취소" / "완료" 두 버튼 (각각 width 등분, primary500 / 흰색)
-- **사용자가 할 수 있는 액션**:
-  - 길게 눌러 드래그 ▶ `setState(() => model.reorder(o, n))` — 로컬 상태 변경, API 호출 안 함
-  - 들여쓰기 (`format_indent_increase`) ▶ `model.indent(index)` — depth +1, parentBlockId 변경
-  - 내어쓰기 (`format_indent_decrease`) ▶ `model.outdent(index)` — depth -1, parentBlockId 변경
-  - "취소" ▶ `Navigator.of(context).pop()` (변경 폐기)
-  - "완료" ▶ `_saveOrder()`:
-    1. parentChanged된 블록만 `notifier.moveBlock(id, MoveParam)` 순차 호출 → `PATCH /move`
-    2. parent별로 그룹핑한 후 각 그룹별 `notifier.reorderBlocks(ids)` → `PUT /reorder`
-- **상태 분기**:
-  - 로딩: `CircularProgressIndicator`
-  - 에러: `AppErrorState.fromError`
-  - 빈 트리: `AppErrorState(title: '블록이 없습니다')`
-  - 저장 중: "완료" 버튼 자리에 `CircularProgressIndicator`
-- **모달/시트/네비게이션**:
-  - 별도 모달 없음
-  - 저장 성공: `AppToast.show("순서가 변경되었습니다")` + `Navigator.pop()`
-  - 일부 실패: `AppToast.show("일부 변경에 실패했습니다", ToastType.error)` (pop 안 함)
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 진입 시: `planBlocksNotifierProvider(planId)` 캐시된 트리 사용 (별도 fetch 안 함, F08-03에서 이미 로드됨)
-2. 사용자 드래그/들여쓰기는 모두 로컬 `BlockReorderModel`에서만 수행 (API 호출 X)
-3. "완료" 탭 시:
-   - parent가 변경된 블록 각각: `PlanRepository.moveBlock(blockId, MoveParam(parentBlockId, sortOrder, depth))` ▶ `PATCH /api/v1/plans/{planId}/blocks/{blockId}/move`
-   - 각 부모 그룹별: `PlanRepository.reorderBlocks(blockIds)` ▶ `PUT /api/v1/plans/{planId}/blocks/reorder`
-4. 모두 성공 시 `Navigator.pop` → 에디터로 복귀 (자동으로 invalidate되며 새 순서 반영)
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- **드래그 동작 (Flutter ReorderableListView)**:
-  - 길게 누르기로 드래그 시작
-  - `proxyDecorator`: 드래그 중 elevation 2의 Material로 감쌈
-  - drop 위치 인디케이터는 ReorderableListView 기본 동작 활용
-- **`BlockReorderModel` 핵심 메서드**:
-  - `flatten(blocks)`: 트리 → 평탄화된 List<FlatBlock> (block + depth + parentBlockId)
-  - `reorder(o, n)`: 인덱스 o → n으로 이동
-  - `indent(index)` / `outdent(index)`: depth/parent 갱신, `canIndent`/`canOutdent`로 가능 여부 판단
-  - `parentChanged: bool` per-item: 원본 parent와 다르면 true
-  - `parentChangedBlocks()`: 변경된 블록 목록
-  - `groupedByParent()`: parent별로 blockIds 그룹화 (Map<Long?, List<Long>>)
-  - `sortOrderOf(fb)`: 형제 그룹 내 위치 (0..N)
-- **저장 전략**:
-  - 부분 실패 허용 (각 호출이 독립적 try/catch)
-  - parent 변경부터 처리한 뒤 sort 갱신 — 새 부모로 옮긴 후에야 그룹별 reorder가 의미 있음
-  - 모두 성공해야만 pop, 일부 실패면 화면에 머무름
-- **들여쓰기/내어쓰기 UX**:
-  - 형 직전에 같은/낮은 depth 블록이 있어야 indent 가능
-  - 0번째이거나 형이 없으면 indent 비활성 (회색 아이콘)
-  - depth 0이면 outdent 비활성
-  - MAX_BLOCK_DEPTH=3 (서버 검증) 도달 시 indent 시도해도 서버 400 반환 (현재 클라이언트는 모델 단계에서 막지 않음 — 후속 개선 여지)
-- **시각 단서**:
-  - 부모 변경 블록: 좌측 `linkBlue` 2px (`AppColors.linkBlue` = #5B7FD8)
-  - child 블록: `gray50` 배경 + 작은 폰트 (`isChild ? 12 : 13`)
-  - 드래그 핸들 텍스트: `≡` (≡)
-- **취소 정책**: 단순 pop만 호출. 로컬 모델은 화면 dispose와 함께 폐기 → 서버 상태는 변하지 않음
-- **저장 실패 시 자동 새로고침 없음**: 부분 실패면 사용자가 다시 시도 또는 취소를 눌러야 함
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
+| Method | Path | 요청 | 응답 |
 |---|---|---|---|
-| S1 | 같은 부모 안에서 두 블록 순서 바꾸기 (Happy Path) | DRAFT 플랜, 루트 5개 블록, parent 변경 없음 | 에디터에서 새 순서 반영 |
-| S2 | 들여쓰기로 블록을 자식으로 만들기 | 루트 블록 A, B (B는 평블록) | B는 A의 자식 블록으로 트리 구조 변경 |
-| S3 | depth 한도 초과 시도 | 이미 depth 3에 도달한 블록 | 부분 실패. 사용자가 직접 outdent 후 다시 저장해야 함 |
-| S4 | 동시 편집 충돌 (다른 디바이스) | 시나리오 본문 참조 | 데이터 불일치 가능. 후속 개선: 화면 진입 전 fresh fetch + 변경된 ids만 보내도록 |
-| S5 | 빈 트리에서 진입 | 시나리오 본문 참조 | 사용자는 취소만 가능 |
-| S6 | 취소 | 시나리오 본문 참조 | 변경 없이 에디터로 복귀 |
-| S7 | 비작성자/PUBLISHED 시도 (서버 가드) | 시나리오 본문 참조 | 차단. UI 가드는 F08-03에서 이미 `isCreatorOwned` 체크하므로 일반 흐름은 진입 자체가 차단됨 |
+| `PUT` | `/api/v1/plans/{planId}/blocks/reorder` | `PlanBlockReorderParam` | `List<PlanBlockVo>` + `X-Plan-Block-Tree-Revision` |
+| `PATCH` | `/api/v1/plans/{planId}/blocks/{blockId}/move` | `PlanBlockMoveParam` | `PlanBlockVo` + `X-Plan-Block-Tree-Revision` |
 
-## 7. 정합성 판단
+`PlanBlockReorderParam`:
 
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
+- 신규 계약: `parentBlockId: Long?`, `siblingIds: List<Long>`, `revision: Long?`
+- 구앱 호환 계약: `blockIds: List<Long>`, `revision: Long?`
+- `siblingIds`가 있으면 부모 범위 계약을 우선한다.
 
-## 8. Gap / Risk
+`PlanBlockMoveParam`:
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후보 | backend.md:88 | - **DB 일관성 주의**: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:90 | - move는 단일 행 UPDATE — 사이클 방지 검증 없음 (예: A를 A의 자식으로 이동하면 트리 깨짐 가능). 프론트가 막아야 함 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+- `parentBlockId: Long?`
+- `sortOrder: int`
+- `depth: int` — 전송 필드는 남아 있으나 서버의 권위값이 아니다.
+- `revision: Long?`
 
-## 9. 수용 기준
+### 3.2 편집 권한
 
-- **AC-01. 같은 부모 안에서 두 블록 순서 바꾸기 (Happy Path)**: Given DRAFT 플랜, 루트 5개 블록, parent 변경 없음 When 사용자가 해당 흐름을 실행하면 Then 에디터에서 새 순서 반영
-- **AC-02. 들여쓰기로 블록을 자식으로 만들기**: Given 루트 블록 A, B (B는 평블록) When 사용자가 해당 흐름을 실행하면 Then B는 A의 자식 블록으로 트리 구조 변경
-- **AC-03. depth 한도 초과 시도**: Given 이미 depth 3에 도달한 블록 When 사용자가 해당 흐름을 실행하면 Then 부분 실패. 사용자가 직접 outdent 후 다시 저장해야 함
-- **AC-04. 동시 편집 충돌 (다른 디바이스)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 데이터 불일치 가능. 후속 개선: 화면 진입 전 fresh fetch + 변경된 ids만 보내도록
-- **AC-05. 빈 트리에서 진입**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자는 취소만 가능
-- **AC-06. 취소**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변경 없이 에디터로 복귀
-- **AC-07. 비작성자/PUBLISHED 시도 (서버 가드)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 차단. UI 가드는 F08-03에서 이미 `isCreatorOwned` 체크하므로 일반 흐름은 진입 자체가 차단됨
+- 플랜이 존재해야 한다.
+- 요청자는 `creatorId`와 같아야 한다.
+- 상태는 `DRAFT`여야 한다.
+- 미지원 버전의 `rawEnvelope`를 가진 읽기 전용 블록은 개별 move할 수 없다.
 
-## 10. 미결정 / 후속
+### 3.3 reorder 불변식
 
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+부모 범위 계약은 해당 `parentBlockId` 아래 살아 있는 전체 자식 ID와 `siblingIds`가 정확히 같은 집합이어야 한다.
+
+- 중복 ID: 거절
+- 일부 형제 누락: 거절
+- 다른 부모/플랜의 ID 포함: 거절
+- 통과 시 기존 형제들이 사용하던 `sortOrder` 슬롯을 정렬해 요청 순서대로 재배치
+
+레거시 `blockIds` 계약도 플랜 전체 살아 있는 블록 집합과 set-equality를 강제한다.
+
+### 3.4 move 불변식
+
+- 새 부모는 같은 플랜의 유효 블록이어야 한다.
+- 자기 자신 또는 자신의 자손을 부모로 지정하면 `PLAN_BLOCK_INVALID_PARENT`로 거절한다.
+- 루트 depth는 `0`, 자식은 `parent.depth + 1`로 서버가 계산한다.
+- 이동된 루트의 모든 자손 depth도 재계산한다.
+- 재계산 결과 `MAX_BLOCK_DEPTH = 3`을 넘으면 트랜잭션 전체를 롤백한다.
+- `sortOrder`는 음수일 수 없고 대상 부모의 현재 형제 최대값 `+1`보다 클 수 없다.
+
+### 3.5 동시성
+
+- 각 mutation 시작 시 플랜 행을 `SELECT ... FOR UPDATE` 성격의 저장소 호출로 잠근다.
+- revision 제공 시 현재 토큰과 일치할 때만 `+1`하며, 불일치는 `409 CONCURRENT_MODIFICATION`이다.
+- `plan.editor.revision-fail-closed=false`이면 revision 없는 구앱 요청도 허용하되 토큰은 무조건 증가한다.
+- fail-closed가 켜지면 revision 미제공 요청은 `428 PLAN_BLOCK_REVISION_REQUIRED`다.
+- 성공 응답은 새 revision을 `X-Plan-Block-Tree-Revision` 헤더로 돌려준다.
+
+## 4. Flutter 계약
+
+### 4.1 진입과 로컬 편집
+
+- 블록 에디터에서 `/plan/:planId/reorder`로 진입한다.
+- 트리는 `planBlocksNotifierProvider(planId)`를 사용한다.
+- 드래그와 indent/outdent는 `BlockReorderModel`의 로컬 상태만 바꾸며 즉시 API를 호출하지 않는다.
+- 미지원/읽기 전용 블록의 부모가 바뀐 상태면 저장 전에 경고하고 중단한다.
+
+### 4.2 저장 순서
+
+1. 부모가 바뀐 블록을 순차적으로 `moveBlock`한다.
+2. 각 부모 그룹의 전체 형제 ID를 `reorderSiblings`로 순차 전송한다.
+3. 모든 호출이 성공하면 성공 토스트 후 이전 화면으로 돌아간다.
+4. 중간 실패면 이후 호출을 멈추고 provider를 invalidate해 최신 서버 트리로 재동기화하며 화면에 남는다.
+
+`PlanBlocksNotifier`는 mutation을 직렬 큐에 넣고, 직전 응답 헤더의 revision을 다음 요청에 연결한다. `409`이면 최신 트리/revision을 다시 읽고 동일 요청을 **한 번만** 재시도한다. revision이 건너뛴 충돌은 로그를 남기고 버스트 단위로 사용자에게 경고한다.
+
+## 5. 상태·실패 매트릭스
+
+| 시나리오 | 서버/화면 결과 |
+|---|---|
+| 같은 부모 안에서 순서 변경 | 부모 범위 reorder 성공 후 최신 트리 반영 |
+| 다른 부모 아래로 이동 | move로 부모/depth 변경 후 두 부모 그룹 reorder |
+| depth 3을 넘는 서브트리 이동 | 서버 400, 전체 move 롤백 |
+| cycle 이동 | 서버 400, 트리 유지 |
+| 형제 ID 누락·중복·외부 ID | reorder 거절, 기존 순서 유지 |
+| 다른 기기에서 먼저 수정 | 첫 요청 409 → 최신 트리/revision reconcile → 동일 mutation 1회 재시도 |
+| 저장 흐름 중 일부 호출 실패 | 이후 호출 중단, 최신 트리로 화면 모델 재설정, 오류 토스트 |
+| 비작성자 또는 비-DRAFT | 서버 차단 |
+| 취소 | 로컬 모델 폐기, 서버 변경 없음 |
+
+## 6. 수용 기준
+
+- **AC-01**: reorder 요청은 대상 부모의 전체 살아 있는 형제 ID를 정확히 한 번씩 포함해야 한다.
+- **AC-02**: move 요청의 `depth`와 무관하게 저장 depth는 서버가 부모 기준으로 산출해야 한다.
+- **AC-03**: 이동된 블록의 자손도 연쇄 재계산되며 하나라도 최대 depth를 넘으면 부분 저장이 없어야 한다.
+- **AC-04**: 자기 자신/자손 아래로의 이동은 서버에서 거절되어야 한다.
+- **AC-05**: revision 불일치는 409여야 하며 Flutter는 최신 토큰을 받은 뒤 한 번만 재시도해야 한다.
+- **AC-06**: 여러 로컬 mutation은 병렬 발사하지 않고 직렬 큐에서 순서대로 처리되어야 한다.
+- **AC-07**: 중간 실패 후 화면은 오래된 로컬 순서를 성공 상태처럼 유지하지 않아야 한다.
+
+## 7. 확인된 리스크
+
+- 저장은 여러 HTTP mutation으로 구성되므로 앞선 move가 성공하고 뒤 reorder가 실패하는 **요청 간 부분 반영**은 가능하다. 화면은 이를 감지해 최신 트리를 다시 읽고 재시도를 요구한다.
+- Flutter `PlanBlockMoveParam.depth`는 호환상 남아 있으나 서버가 무시하는 입력이다. 제품 계약과 QA 기대값은 서버 산출 depth를 기준으로 해야 한다.
+- revision fail-closed의 기본값은 현재 `false`다. 구앱 호환을 종료하려면 운영 설정과 최소 지원 버전 정책을 함께 결정해야 한다.

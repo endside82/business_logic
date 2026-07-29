@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F05-01 키워드 검색 — community PRD</title>
+  <title>F05-01 키워드 검색 (이벤트·클럽·플랜·사람) — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -19,27 +19,39 @@
         </div>
         <h1>F05-01. 키워드 검색</h1>
         <p class="lede">
-          사용자가 검색창에 한 단어를 입력하면 이벤트·클럽·플랜 세 영역에서 같은 단어로 동시에 결과를 받아 본다.
-          한 번 입력하면 세 곳의 카탈로그를 같이 둘러보게 되어, "이 앱에 내가 찾는 게 있는지"를 한 자리에서 확인할 수 있다.
-          이벤트는 무한 스크롤과 다섯 가지 정렬을 지원하고, 클럽·플랜은 첫 묶음을 보여 주어 진입 분기 역할을 한다.
+          사용자가 검색창에 한 단어를 입력하면 이벤트·클럽·플랜과 사람 네 탭을 함께 조회한다.
+          앞의 세 콘텐츠 탭은 비로그인도 가능하지만, 사람은 같은 클럽·증거등급 공동참석 맥락 안에서만 찾는
+          인증 전용 표면이다. 이벤트와 사람은 다음 페이지를 이어 보고, 클럽·플랜은 첫 묶음을 진입 분기로 사용한다.
         </p>
       </header>
 
       <section>
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 사람 탭 추가</span>
+          <p><code>GET /api/v1/search/people?keyword&amp;page&amp;size</code>는 인증 전용이며 전역 회원 검색이
+            아니다. 후보는 같은 클럽 멤버와 증거등급 공동참석자의 합집합이고, 본인·비정상 상태·양방향 차단·
+            <code>hideFromSearch</code> 사용자를 DB paging 전에 제외한다. 응답은
+            <code>userId, nickname, avatarUrl, sharedClub, coAttendedCount</code>이고 Flutter의 네 번째
+            사람 탭이 공유 맥락 라벨과 무한스크롤로 소비한다.</p>
+          <p>별도 <code>/api/v1/users/search</code>는 최대 20건 전역 선택기이며
+            <code>hideFromSearch</code>와 <code>hideFromStrangers</code>를 모두 적용한다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
-          <div class="metric"><div class="label">동시 조회 영역</div><div class="value">3개</div><div class="hint">이벤트·클럽·플랜</div></div>
-          <div class="metric"><div class="label">한 번에 받는 카드</div><div class="value">20장</div><div class="hint">이벤트는 스크롤하면 다음 묶음</div></div>
+          <div class="metric"><div class="label">결과 탭</div><div class="value">4개</div><div class="hint">이벤트·클럽·플랜·사람</div></div>
+          <div class="metric"><div class="label">페이지 크기</div><div class="value">20장</div><div class="hint">이벤트·사람은 다음 묶음</div></div>
           <div class="metric"><div class="label">정렬 옵션</div><div class="value">5개</div><div class="hint">추천·최신·인기·가격↑·가격↓</div></div>
-          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">결과 카드 진입은 가능, 검색 기록만 비활성</div></div>
+          <div class="metric"><div class="label">사람 탭</div><div class="value">인증 필수</div><div class="hint">비로그인은 로그인 유도</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 의도 — 한 입력 한 화면 안에서 세 카탈로그를 함께 본다</span>
+          <span class="label">설계 의도 — 콘텐츠 탐색과 공유 맥락 사람 찾기를 한 입력으로 연결한다</span>
           <p>이벤트는 시간 단위 모임이고, 클럽은 지속 모임이며, 플랜은 콘텐츠 상품이다.
             사용자가 "등산"이라고 떠올렸을 때 이 셋 중 어느 쪽을 원하는지 미리 정할 필요는 없게 한다.
-            결과 화면에서 영역 탭으로 갈아타게 두어, 입력 한 번이 세 카탈로그의 둘러보기로 이어진다.
-            이벤트만 무한 스크롤을 지원하는 이유는 이벤트가 카탈로그의 가장 큰 줄기이기 때문이고,
-            클럽·플랜은 "검색 결과 안에 있다"를 보여 주는 진입 분기로 충분하다고 판단한다.</p>
+            사람 탭은 전역 디렉터리가 아니라 이미 같은 클럽이거나 실제로 함께한 사람으로 범위를 좁혀
+            안전한 재연결을 돕는다. 클럽·플랜은 첫 묶음을 진입 분기로 두고 이벤트·사람은 페이지를 이어 본다.</p>
         </div>
       </section>
 
@@ -49,8 +61,8 @@
         <div class="cards">
           <div class="card">
             <div class="eyebrow">동시 조회</div>
-            <h3>한 입력으로 이벤트·클럽·플랜을 동시에</h3>
-            <p>사용자가 단어 하나 입력하고 엔터를 누르면 세 영역 호출이 같이 떠난다.
+            <h3>한 입력으로 콘텐츠와 사람을 동시에</h3>
+            <p>사용자가 단어 하나 입력하고 엔터를 누르면 콘텐츠 세 영역과, 로그인 상태라면 사람 검색이 같이 떠난다.
               영역 탭에는 각각의 결과 개수가 함께 표시되어, 사용자가 어느 쪽으로 갈지 한눈에 판단할 수 있다.</p>
           </div>
           <div class="card">
@@ -61,8 +73,8 @@
           </div>
           <div class="card">
             <div class="eyebrow">무한 스크롤</div>
-            <h3>이벤트 카탈로그를 끝까지 둘러본다</h3>
-            <p>이벤트 결과는 끝까지 스크롤하며 둘러볼 수 있다. 클럽·플랜 탭은 첫 20건만 노출되며,
+            <h3>이벤트와 사람 결과를 이어 본다</h3>
+            <p>이벤트와 사람 결과는 다음 페이지를 이어 붙인다. 클럽·플랜 탭은 첫 20건만 노출되며,
               더 둘러보려면 도메인 본 화면으로 진입하게 둔다.</p>
           </div>
           <div class="card">
@@ -76,7 +88,7 @@
 
       <section>
         <h2>한 번의 검색이 만드는 흐름</h2>
-        <p class="subtitle">사용자가 단어를 입력하고 엔터를 누른 순간부터 세 영역이 결과 카드로 채워지기까지.</p>
+        <p class="subtitle">사용자가 단어를 입력하고 엔터를 누른 순간부터 네 탭이 결과로 채워지기까지.</p>
         <div class="diagram">
           <div class="mermaid">
 sequenceDiagram
@@ -85,15 +97,18 @@ sequenceDiagram
     participant 서비스 as 검색 서비스
 
     U->>화면: "등산" 입력 + 엔터
-    par 세 영역 동시 조회
+    par 콘텐츠 세 영역 동시 조회
         화면->>서비스: 이벤트 검색
         화면->>서비스: 클럽 검색
         화면->>서비스: 플랜 검색
     end
+    opt 로그인 상태
+        화면->>서비스: 공유 맥락 사람 검색
+    end
     서비스->>서비스: 로그인 사용자면 키워드 자동 기록
     서비스-->>화면: 영역별 결과(개수 + 첫 묶음)
-    화면-->>U: 이벤트 N · 클럽 N · 플랜 N 탭 + 카드 리스트
-    opt 이벤트 탭에서 스크롤 끝까지
+    화면-->>U: 이벤트 N · 클럽 N · 플랜 N · 사람 N 탭
+    opt 이벤트 또는 사람 탭에서 스크롤 끝까지
         U->>화면: 아래로 스크롤
         화면->>서비스: 다음 묶음 요청
         서비스-->>화면: 새 묶음 20장
@@ -109,11 +124,11 @@ sequenceDiagram
         <div class="cards">
           <article class="card">
             <div class="eyebrow">기본 흐름</div>
-            <h3>"등산" 한 단어로 세 카탈로그 둘러봄</h3>
+            <h3>"등산" 한 단어로 네 탭을 둘러봄</h3>
             <p>주말에 등산 모임을 찾고 싶은 사용자가 검색창에 "등산"을 입력한다.
-              결과 화면에 "이벤트 24 · 클럽 8 · 플랜 2" 탭이 뜨고, 기본은 이벤트 탭이 활성화되어 있다.
-              사용자는 이벤트를 둘러본 뒤 "클럽 8" 탭으로 갈아타 같은 단어로 만들어진 클럽 목록을 본다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 입력 한 번으로 세 카탈로그를 함께 본다는 경험.
+              결과 화면에 "이벤트 24 · 클럽 8 · 플랜 2 · 사람 3" 탭이 뜨고, 기본은 이벤트 탭이 활성화되어 있다.
+              사람 탭에는 같은 클럽 또는 함께한 모임이라는 공유 맥락 라벨이 보인다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 입력 한 번으로 콘텐츠 카탈로그와 이미 연결된 사람을 함께 본다는 경험.
               사용자가 처음부터 "이건 이벤트야, 클럽이야"를 분류해 들어갈 필요가 없다.</p>
           </article>
 
@@ -138,7 +153,7 @@ sequenceDiagram
           <article class="card">
             <div class="eyebrow">빈 결과</div>
             <h3>찾는 단어가 없다</h3>
-            <p>"asdfqwer" 같은 의미 없는 단어로 검색하면 세 영역 모두 0건이 나온다.
+            <p>"asdfqwer" 같은 의미 없는 단어로 검색하면 네 탭 모두 0건이 나온다.
               화면에는 "검색 결과가 없습니다 — 다른 키워드로 검색해 보세요" 안내가 떠오른다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — "결과 없음"과 "필터 너무 강함"이 같은 메시지가 되지 않게,
               필터 적용 중 빈 결과(F05-03)와는 다른 안내 흐름을 갖는다.</p>
@@ -147,8 +162,8 @@ sequenceDiagram
           <article class="card">
             <div class="eyebrow">가입 전 탐색</div>
             <h3>비로그인 사용자가 둘러봄</h3>
-            <p>로그인 없이도 검색은 열려 있다. 입력하고 엔터를 누르면 세 영역 결과가 정상적으로 보인다.
-              단, 최근 검색어 영역은 비어 있고, 검색을 해도 기록되지 않는다.
+            <p>로그인 없이도 콘텐츠 검색은 열려 있어 이벤트·클럽·플랜 결과가 보인다.
+              사람 탭은 API를 호출하지 않고 로그인 유도를 표시한다. 최근 검색어 영역은 비어 있고 검색 기록도 남지 않는다.
               결과 카드를 눌러 상세에 들어간 뒤 신청·가입 같은 행동을 할 때 비로소 로그인 화면이 떠오른다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 가입 전 사용자가 "이 앱에 내가 찾는 게 있는지" 확인할 수 있어야
               가입 의사가 형성된다. 검색은 그 확인 수단이라 비로그인에도 열어 둔다.</p>
@@ -166,8 +181,15 @@ sequenceDiagram
             <div class="eyebrow">실패 분기</div>
             <h3>이벤트 검색이 일시적으로 안 됨</h3>
             <p>네트워크 문제로 이벤트 응답이 실패하면 이벤트 탭에 "오류가 발생했습니다 — 다시 시도" 표시가 나온다.
-              같은 입력으로 호출된 클럽·플랜은 정상적으로 보일 수 있다 — 영역별로 독립이다.</p>
+              같은 입력으로 호출된 클럽·플랜·사람은 정상적으로 보일 수 있다 — 영역별로 독립이다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 한 영역의 실패가 다른 영역의 결과를 가리지 않게 둔다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">사람 발견 경계</div>
+            <h3>닉네임은 맞지만 공유 맥락이 없는 사람</h3>
+            <p>전체 회원에는 존재해도 같은 클럽이나 증거등급 공동참석 이력이 없으면 F05 사람 검색 결과에는 나오지 않는다.
+              또한 탈퇴·정지·양방향 차단·<code>hideFromSearch</code> 대상은 DB paging 전에 제외된다.</p>
           </article>
         </div>
       </section>
@@ -191,8 +213,8 @@ sequenceDiagram
               </tr>
               <tr>
                 <td><strong>영역 탭</strong></td>
-                <td>"이벤트 N · 클럽 N · 플랜 N" 칩. 활성 탭은 강조 색.</td>
-                <td>입력 한 번이 세 카탈로그를 동시에 조회한다는 사실을 카운트로 분명하게 보여 준다.</td>
+                <td>"이벤트 N · 클럽 N · 플랜 N · 사람 N" 칩. 활성 탭은 강조 색. 비로그인 사람 탭은 로그인 유도.</td>
+                <td>콘텐츠와 공유 맥락 사람 결과를 한 입력으로 조회한다는 사실을 분명하게 보여 준다.</td>
               </tr>
               <tr>
                 <td><strong>결과 요약 + 정렬</strong></td>
@@ -208,6 +230,11 @@ sequenceDiagram
                 <td><strong>클럽·플랜 카드</strong></td>
                 <td>클럽은 카테고리와 멤버 수, 플랜은 가격과 구매 수를 카드 안에 함께 보여 준다.</td>
                 <td>두 카탈로그는 도메인 본 화면이 따로 있는 분기 진입점이므로, 카드는 진입 결정을 도와주는 최소 정보만 담는다.</td>
+              </tr>
+              <tr>
+                <td><strong>사람 결과 행</strong></td>
+                <td>닉네임·아바타와 <code>같은 클럽</code>, <code>함께한 모임 N회</code> 공유 맥락.</td>
+                <td>전역 회원 검색이 아니라 이미 안전한 연결 근거가 있는 사람이라는 점을 설명한다.</td>
               </tr>
               <tr>
                 <td><strong>빈 결과 안내</strong></td>
@@ -230,8 +257,10 @@ sequenceDiagram
             <li><strong>로그인 사용자가 검색하면 키워드는 자동으로 최근 검색어에 기록된다.</strong>
               사용자가 별도로 "저장" 동작을 하지 않아도 다음 방문에서 같은 단어가 한 번에 보인다 — 검색의 재방문성을 지탱하는 가장 조용한 동력.</li>
             <li><strong>비로그인 사용자에게도 검색은 열려 있다.</strong>
-              가입 결정 전에 "이 앱에 내가 찾는 게 있는지"를 확인할 수 있어야 가입 의사가 형성되기 때문이다.
-              단, 결과 카드를 누른 후 신청·가입·구매 시점에는 로그인 가드가 동작한다.</li>
+              가입 결정 전에 콘텐츠를 확인할 수 있어야 하기 때문이다. 단, 사람 탭은 인증 전용이고 API를 호출하지 않으며,
+              콘텐츠 카드의 신청·가입·구매 시점에도 로그인 가드가 동작한다.</li>
+            <li><strong>사람 탭은 전역 디렉터리가 아니다.</strong>
+              같은 클럽 멤버와 증거등급 공동참석자만 후보이며, 현재 상태·양방향 차단·검색 숨김을 paging 전에 다시 적용한다.</li>
             <li><strong>거리 필터를 사용하려면 위치 권한이 필요하다.</strong>
               권한이 없을 때 거리 조건은 결과에 반영되지 않고 조용히 무시된다 — 사용자에게는 칩이 보이지만 결과가 줄지 않는다.
               이 사일런트 무효는 F05-03에서 별도 운영 이슈로 다룬다.</li>

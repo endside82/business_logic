@@ -1,16 +1,30 @@
-# F09-03. 후보자 스와이프 & 매칭 액션 PRD
+# F09-03. 후보자 카드 & 매칭 액션 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/09_private_date/F09-03_candidate_swipe -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/09_private_date/F09-03_candidate_swipe -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/09_private_date/F09-03_candidate_swipe`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-활성 프로필 사용자에게 매칭 후보 카드를 노출(서로의 선호 성별·연령·차단 관계 반영)하고, LIKE/PASS 액션을 받아 양쪽 LIKE가 일치하면 `DateMatch.MATCHED` + `DateChatRoom.ACTIVE` 채팅방을 즉시 생성한다. 매칭 미성사 시 7일짜리 PENDING 매치를 보관하여 상대 응답을 기다린다.
+후보 카드를 한 장씩 보여 주고 버튼으로 LIKE/PASS를 받는다. drag/swipe gesture는 없다. 양쪽 LIKE가 일치하면 `DateMatch.MATCHED` + `DateChatRoom.ACTIVE` 채팅방을 즉시 생성하고, 매칭 미성사 시 7일짜리 PENDING row를 보관한다. 현재 후보 쿼리는 과거 액션·매치 row를 제외하지 않아 이미 처리한 페어도 재노출될 수 있다.
+
+### 2026-07-29 소스 재실측 — 후보 하드필터와 점수 옵트인
+
+- 기존 성별·연령·차단·활성 프로필 조건 뒤에 **조회자 관점의 단방향 결격 필터**가 적용된다.
+  - `excludeSmoker=true`이면 후보 `SMOKER` 제외
+  - `excludeHeavyDrinker=true`이면 후보 `OFTEN` 제외
+  - `excludeCasualPurpose=true`이면 후보 `CASUAL` 제외
+  - `sameReligionOnly=true`이면 양쪽 종교가 모두 non-null이고 서로 다를 때만 제외
+- 후보의 특성 값이 null이면 위 결격 필터를 통과한다. 필터가 상호 대칭으로 강제되는 것은 아니며 현재 조회자의 설정만 적용한다.
+- 기본 점수 성분은 태그 교집합 0.30, 지역 0.25, 상호 연령 선호 0.20, 신뢰점수 유사도 0.15, 활동성 0.10이다. 태그·신뢰점수는 양쪽 `communityDataOptIn=true`일 때만 포함한다.
+- 한쪽이라도 미동의면 지역·연령·활동성 성분의 합으로 가중치를 재정규화한다. 신규 프로필 보너스는 30일 범위 최대 +0.15, 과다 노출 페널티는 최대 -0.10이며 옵트인과 무관하다.
+- trait 검사 점수와 내부 `behaviorStyleEstimate`는 현재 데이팅 후보 점수에 사용되지 않는다.
+
+실측 근거: `DateMatchingService.passesDealbreakers`, `MatchScoringService.calculateMatchScore`, `DateProfileQueryRepository`, 관련 service/repository 테스트.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
-- **데이팅 탭 메인 카드** — 활성 프로필 사용자가 매일 열어보는 화면 (`/dating/candidates`)
+- **데이팅 탭 메인** — `/dating`과 `/dating/candidates` 모두 같은 후보 카드 화면
 - **매칭 목록 빈 상태에서 "후보자 둘러보기" 버튼** (스펙)
 
 현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
@@ -62,7 +76,7 @@
 
 ### 개요
 
-활성 프로필 사용자에게 매칭 후보 카드를 노출(서로의 선호 성별·연령·차단 관계 반영)하고, LIKE/PASS 액션을 받아 양쪽 LIKE가 일치하면 `DateMatch.MATCHED` + `DateChatRoom.ACTIVE` 채팅방을 즉시 생성한다. 매칭 미성사 시 7일짜리 PENDING 매치를 보관하여 상대 응답을 기다린다.
+활성·PUBLIC 후보를 필터링해 카드 데이터를 반환하고 LIKE/PASS 액션을 처리한다. 후보 쿼리는 과거 LIKE/PASS나 PENDING/REJECTED/MATCHED row를 제외하지 않으므로 이미 처리한 페어가 재노출될 수 있다.
 
 ### 엔드포인트 요약
 
@@ -142,7 +156,7 @@
 - **빈 상태 텍스트**: "추천 상대가 없습니다", "모든 후보를 확인했습니다"
 - **나이 계산**: `DateTime.now().year - candidate.birthYear` (만 나이가 아닌 한국식 출생연도 차이)
 - **TestId**: `screenDatingCandidates`
-- **연속 스와이프 보호**: 액션 응답 받기 전 `removeCandidate` 후 `setState`로 인덱스 ++ — race 시 두 번 누르면 두 카드가 한 번에 처리될 수 있어, 사용자 인지 상 LIKE/PASS 후 즉시 다음 카드가 나타남
+- **연속 액션 보호**: 액션 응답 받기 전 `removeCandidate` 후 `setState`로 인덱스 ++ — race 시 두 번 누르면 두 카드가 한 번에 처리될 수 있어, 사용자 인지 상 LIKE/PASS 후 즉시 다음 카드가 나타남
 - **차단 시트 사유 입력**: `DateBlockReasonSheet` 내부에서 `String?` 반환. null이면 액션 취소.
 - **매칭 후 라우팅 정책**: 채팅 시작 시 `partnerName` 쿼리 파라미터로 전달 (URL 인코딩)
 - **에러 토스트**: `'오류가 발생했습니다'` (서버 에러 코드 그대로 노출하지 않음)
@@ -154,7 +168,7 @@
 |---|---|---|---|
 | S1 | LIKE → 상대도 LIKE → 즉시 매칭 + 채팅 시작 (Happy Path) | 후보자 카드 화면. 상대(targetUserId=42)가 이미 나에게 LIKE 한 상태(즉, `DateMatch(user1=42, user2=me, user1Action=LIKE, user2Action=PENDING, status=PENDING)` 존재). | `DateMatch.status=MATCHED, DateChatRoom.status=ACTIVE`. 매칭 목록(F09-04)·채팅방 목록(F09-05)에 반영. |
 | S2 | LIKE → 상대 미응답 → 7일 PENDING 보류 | 시나리오 본문 참조 | 사용자에게는 매칭 목록의 `새매칭` 탭에 PENDING 카드가 일정 기간 노출됨 (잔여시간 배너 — F09-04). |
-| S3 | PASS → 상대도 이미 PASS → REJECTED 종결 | 시나리오 본문 참조 | 매치 row가 REJECTED로 보존되어, 향후 같은 페어로 후보자에 다시 노출되지 않음(QueryRepository 필터 가정). |
+| S3 | PASS → 상대도 이미 PASS → REJECTED | 상대가 이미 PASS한 PENDING 페어 | row는 REJECTED로 보존되지만 후보 쿼리가 매치 row를 제외하지 않아 같은 페어가 다시 노출될 수 있음. |
 | S4 | 차단된 사용자에게 LIKE 시도 | 내가 user42를 차단한 상태에서 어쩐 일로 카드가 노출(또는 캐시). | 매칭 미생성. |
 | S5 | 이미 매칭된 사용자에게 LIKE 재시도 | 시나리오 본문 참조 | 무변동. |
 | S6 | 미인증 / 프로필 미작성 사용자가 후보자 호출 | 시나리오 본문 참조 | 가드 통과 후 재시도 가능. |
@@ -175,7 +189,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:29 | 4. `DateProfileQueryRepository#findCandidates(myPreferredGender, myGender, userId)` — 기본 필터: `gender=내 선호`, `preferredGender=내 성별`, 본인 제외, (활성/visibility 등 추가 필터는 QueryRepository 내부 — 본 작업 범위 외 상세 미확인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | `DateProfileQueryRepository#findCandidates` | 활성·PUBLIC/성별/본인 제외까지만 DB에서 필터하고 과거 액션·PENDING/REJECTED/MATCHED 페어를 제외하지 않아 처리한 카드가 재노출될 수 있다. | 후보 쿼리의 재노출 정책을 정의하고 상태별 제외 또는 명시적 재추천 규칙 구현 |
 | 후보 | backend.md:86 | - `DateMatchExpirationScheduler` (`service/DateMatchExpirationScheduler.java`) — 7일 만료된 PENDING 매치를 `EXPIRED`로 전환 (본 작업 범위 외 상세는 미확인, 존재 사실만) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:50 | - **카드 1장씩 진행**: `_currentIndex`로 단순 인덱스 진행. 실제 스와이프 제스처는 미구현 — 액션 버튼 탭만 사용. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:83 | 2. 클라이언트는 첫 응답에서 `removeCandidate` + 인덱스++ 했으므로 두 번째 액션은 다음 카드 대상이 되어버릴 위험. 코드 보호 장치는 명시적이지 않음 (UX 개선 여지 있음). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
@@ -184,7 +198,7 @@
 
 - **AC-01. LIKE → 상대도 LIKE → 즉시 매칭 + 채팅 시작 (Happy Path)**: Given 후보자 카드 화면. 상대(targetUserId=42)가 이미 나에게 LIKE 한 상태(즉, `DateMatch(user1=42, user2=me, user1Action=LIKE, user2Action=PENDING, status=PENDING)` 존재). When 사용자가 해당 흐름을 실행하면 Then `DateMatch.status=MATCHED, DateChatRoom.status=ACTIVE`. 매칭 목록(F09-04)·채팅방 목록(F09-05)에 반영.
 - **AC-02. LIKE → 상대 미응답 → 7일 PENDING 보류**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자에게는 매칭 목록의 `새매칭` 탭에 PENDING 카드가 일정 기간 노출됨 (잔여시간 배너 — F09-04).
-- **AC-03. PASS → 상대도 이미 PASS → REJECTED 종결**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 매치 row가 REJECTED로 보존되어, 향후 같은 페어로 후보자에 다시 노출되지 않음(QueryRepository 필터 가정).
+- **AC-03. PASS → 상대도 이미 PASS → REJECTED**: Given 상대가 이미 PASS한 PENDING 페어 When 내가 PASS하면 Then row는 REJECTED가 되지만 현재 후보 쿼리에서는 같은 페어가 다시 노출될 수 있다.
 - **AC-04. 차단된 사용자에게 LIKE 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 매칭 미생성.
 - **AC-05. 이미 매칭된 사용자에게 LIKE 재시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 무변동.
 - **AC-06. 미인증 / 프로필 미작성 사용자가 후보자 호출**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가드 통과 후 재시도 가능.

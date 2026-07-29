@@ -1,25 +1,41 @@
 # PRD 문서 상태표
 
-> 업데이트: 2026-07-08. `business_logic/prd/02_feature_prds`에 기능 PRD 175개가 등록되어 있다. 상태 컬럼은 각 기능 PRD의 실제 `문서 상태` 문구 또는 source-first 본문을 기준으로 갱신한다. 이 표는 구현 완료표가 아니라, PRD가 어떤 원천과 어느 수준의 소스 대조로 작성됐는지 보여주는 문서 운영 인벤토리다.
+> 업데이트: 2026-07-29. `business_logic/prd/02_feature_prds`에 기능 PRD 175개가 등록되어 있다. 상태 컬럼은 각 기능 PRD의 실제 `문서 상태` 문구 또는 source-first 본문을 기준으로 갱신한다. 이 표는 구현 완료표가 아니라, PRD가 어떤 원천과 어느 수준의 소스 대조로 작성됐는지 보여주는 문서 운영 인벤토리다.
 >
-> v4.5 W1~W7 (이벤트 확장 슬라이스) 신규 PRD 5개(F03-13~17)가 같은 디렉터리에 추가된다. 본 슬라이스는 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice이며, V1__init.sql 단일 마이그레이션 파일 원칙(`community_api/CLAUDE.md`)을 유지한다.
+> v4.5 W1~W7 이벤트 확장 슬라이스에서 PRD 5개(F03-13~17)가 추가됐다.
+> 당시 단일 master plan 등 `docs/plan/event-extensions/` 산출물 3개는 실코드 병합 뒤
+> 2026-06-05 폐기됐다. 현재 계약은 각 기능 PRD와 `community_api` 실제 소스가 기준이며,
+> V1__init.sql 단일 마이그레이션 파일 원칙을 유지한다.
 >
-> **2026-05-28 운영 원칙 명시 — units/ 부재 = source-first.** F03-13~18 / F04-17 / F08-14~15 / F15-01~09 / F16-01~08 / F17-01~10 (총 36개 신규 PRD, 2026-06-05에 F03-19~20 / F04-18 / F11-07 / F18-01~05 / F19-01~03 / F20-01~03 15개 추가로 총 51개)은 `business_logic/units/<domain>/<feature>/` 폴더 없이 작성된다. canonical은 다음 위치들이다: F03-13~17 = `docs/plan/event-extensions/PLAN.md` v4.5, F03-18·F04-17 = `community_api/docs/plan/DEMOGRAPHICS_STATS_PLAN.md`, F08-14~15 = 각 PRD §1·§4 + community_api 실제 소스, F15·F16 = `community_api/src/main/java/com/endside/community/{warning,mileage}/` 실제 소스, F17 = `docs/plan/regular-meeting/` 16분할본 + `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md`. units/ 새로 만들면 운영 모델이 깨진다 — 만들지 않는다.
+> **2026-05-28 운영 원칙 명시 — units/ 부재 = source-first.** F03-13~18 / F04-17 / F08-14~15 / F15-01~09 / F16-01~08 / F17-01~10 (총 36개 신규 PRD, 2026-06-05에 F03-19~20 / F04-18 / F11-07 / F18-01~05 / F19-01~03 / F20-01~03 15개 추가로 총 51개), 이후 F21-01~07 7개가 추가되어 현재 58개 기능은 `business_logic/units/<domain>/<feature>/` 폴더 없이 작성된다. canonical은 실제 Controller/Service/DTO/enum/DDL/test와 App/Admin 소비부이며, plan·구현 리포트는 설계 배경으로만 사용한다. F03-13~17은 `EnumReservationTest`가 enum registry만 검증하고, F15·F16은 `community_api/src/main/java/com/endside/community/{warning,mileage}/`, F21은 API/App/Admin 제공자·약관·배정·원장 소스를 직접 대조한다. units/ 새로 만들면 운영 모델이 깨진다 — 만들지 않는다.
 
 ## 요약
 
 | 항목 | 개수 |
 | --- | ---: |
-| **현재 총 기능 PRD (2026-07-08)** | **175** |
+| **현재 총 기능 PRD (2026-07-29)** | **175** |
 | Golden sample | 1 |
 | 실사 기반 전환본 | 115 |
 | 실사 기반 갱신본 | 1 |
 | 실사 기반 신규 작성 | 1 |
 | 신규 PRD | 7 |
-| source-first 구현 확인 | 35 |
+| source-first 구현 확인 | 42 |
 | source-first PRD | 5 |
 | source-first 부분 구현 | 3 |
 | 누락/확인 필요 | 0 |
+
+## 2026-07-29 — 현재 소스 직접 재실측 (기능 수 증감 없음)
+
+`community_api be38d128b80d`, `community_app cb21bce8ef08`,
+`community-realtime 2d9215e56781`, `community_admin_api e507ab96a9fe`를 기준으로
+15개 도메인의 50개 기능 PRD/HTML을 다시 대조했다. API 존재와 Flutter 사용자 도달성을 분리하고,
+capability·enum·nullable·상태 전이·알림 설정·비동기 side effect를 실제 caller까지 확인했다.
+
+대표적으로 이벤트 detail/capacity/reschedule/no-show, 혼합 정산 은행분 확인, 플랜 block revision,
+정기모임 enum/세션 UI, 위치 공유·privacy·directions, 사람 추천/검색/핏, 제공자 marketplace terms·fee·
+fulfillment 계약을 교정했다. 미배선과 권한/path scope·보안 후보는 완료 처리하지 않고 Gap/Risk로 남겼다.
+전체 기준점과 파일 범위는
+`05_planning_artifacts/current_source_update_2026-07-29.md`가 canonical이다.
 
 ## 2026-07-08 — 현재 소스 동기화 (기능 수 증감 없음, 기존 PRD/Docs 갱신)
 
@@ -69,7 +85,7 @@
 | F08-11 §8 | 마켓 구매 동시성 직렬화(H16) |
 | F08-14 §13.1 | 마켓 이중환불 차단(C5)·환불 split 복원/회계-지갑 일치(H1/H7)·claw-back 부분회수(H17)·무료분 장부(H3) |
 | F08-15 §3.4a | 마켓 무료분 정산 장부 분개(H3) |
-| F03-13 §8 | BANK 환불요청 무SLA 해소(MED — RefundRequestEscalationScheduler) |
+| F03-13 §8 | BANK 환불요청 escalation 부분 구현. non-locking/no-version 환불 경합 위험은 미해소 |
 | F03-19 §4-7 | 일정변경 가격-선결제 동기(H9) |
 | `00_prd_items/08_state_transitions.md` §17 | 신규 운영 상태(Subscription/ClubSubscription REFUNDING·FailedRefund PROCESSING·WithdrawalDeadLetterAction REQUEUE/RESTORE_RESERVE) + 회계/감시 부수효과 |
 | `03_policy_prds/payment_settlement_policy_prd.md` §2.6·§6.1-B·§6.3 | 돈 흐름 무결성 정책 신설(환불 split/admin 위임/멱등/출금자격/원천세/대사/감시/동시성) + 기존 Known Gap 2건 해소 |
@@ -183,7 +199,10 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 
 ## v4.5 W1~W7 영향 요약 (2026-05-22)
 
-`docs/plan/event-extensions/PLAN.md` v4.5의 7개 Wave는 아래 인프라/스키마 변경을 동반한다. 모두 단일 `community_api/src/main/resources/db/migration/V1__init.sql`에 흡수한다 (V2 이상 신규 파일 금지 — `community_api/CLAUDE.md` 규칙 준수). 운영 환경 정합성 복구는 별도 절차 SQL인 `docs/sql/local_schema_repair_2026-05-22.sql`(또는 `docs/sql/repair_local_schema_2026-05-22.sql`)을 통해 수동 실행한다.
+폐기된 v4.5 계획 산출물의 7개 Wave가 도입한 인프라/스키마 변경은 아래와 같다.
+현재 계약은 실제 enum·service·V1 DDL로 재확인해야 한다. 모든 DDL은 단일
+`community_api/src/main/resources/db/migration/V1__init.sql`에 흡수하며
+(V2 이상 신규 파일 금지), 운영 환경 정합성 복구는 `community_api/docs/sql/`의 현재 절차를 따른다.
 
 ### 스키마 변경
 
@@ -195,7 +214,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | `event_transport_config` | 신규 테이블 | 이벤트별 교통 모드 (NONE/CARPOOL/BUS) | W4 |
 | `event_carpool_offer` | 신규 테이블 | 운전자 offer (OFFERED→CONFIRMED/REJECTED/CANCELED) | W5 |
 | `event_carpool_passenger` | 신규 테이블 | 탑승자 배정 상태 | W5 |
-| `event_carpool_assignment_log` | 신규 테이블 | 카풀 swap 감사 로그 | W5 |
+| `event_carpool_assignment_log` | 신규 테이블 | 스키마만 존재하며 현재 서비스 INSERT 없음 | W5 |
 | `vehicle_layout` | 신규 테이블 | 관리자 카탈로그 (admin 측 마스터) | W6 |
 | `vehicle_layout_seat` | 신규 테이블 | 좌석 정의 (NORMAL/DRIVER/GUIDE/FOLDABLE/DISABLED/AISLE) | W6 |
 | `event_bus` | 신규 테이블 | 이벤트별 버스 인스턴스 | W7 |
@@ -216,7 +235,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | `CarpoolStatus` | 신규 enum | `OFFERED`, `CONFIRMED`, `REJECTED`, `CANCELED` | W5 |
 | `TransportChoice` | 신규 enum | `CARPOOL_REQUESTED`, `CARPOOL_ASSIGNED`, `SELF`, `DRIVER` | W5 |
 | `BusAssignmentMode` | 신규 enum | `FREE`, `FIXED_BY_HOST`, `FIRST_COME` | W7 |
-| `VehicleSeatType` | 신규 enum | `NORMAL`, `DRIVER`, `GUIDE`, `FOLDABLE`, `DISABLED`, `AISLE` | W6 |
+| vehicle `seatType` | **enum 아님** | String whitelist `NORMAL`, `DRIVER`, `GUIDE`, `FOLDABLE`, `DISABLED`, `AISLE` | 관리자 service 검증 |
 
 검증 테스트: `community_api/src/test/java/com/endside/community/EnumReservationTest.java` (모든 enum 번호의 unique + presence 검증).
 
@@ -226,35 +245,30 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 - 신규 `CREATE TABLE` 9개와 신규 컬럼 2개 + 인덱스 1개를 `V1__init.sql`의 적절한 위치에 삽입.
 - 로컬/스테이징 DB가 이미 V1 적용 후일 경우, `docs/sql/local_schema_repair_2026-05-22.sql`을 수동 실행해 동기화. (운영 절차: ① 백업 → ② repair SQL dry-run → ③ 실행 → ④ flyway info 확인). 부록은 PLAN.md §"부록 A — Repair SQL 패턴"을 참조.
 
-### 시드 데이터 (W6 — vehicle_layout 4종)
+### vehicle_layout 시드 실측 (2026-07-29)
 
-| 레이아웃 | 좌석 수 | 용도 |
-| --- | ---: | --- |
-| 8인승 (밴) | 8 | 소규모 카풀/렌터카 |
-| 20인승 (소형버스) | 20 | 소규모 단체 |
-| 28인승 (미니버스) | 28 | 중간 단체 |
-| 45인승 (대형버스) | 45 | 대규모 단체 |
+- `community_api`와 `community_admin_api`의 V1, seed/sample SQL에 기본 차량 INSERT가 없다.
+- 8/20/28/45인승 4종은 과거 계획값일 뿐 현재 데이터 계약이 아니다.
+- 별도 vehicle layout seed JSON도 존재하지 않는다.
+- 빈 DB에서는 `GET /api/v1/vehicle-layouts/active`가 빈 목록일 수 있다. 운영자가 관리자 API로 레이아웃 생성 → 좌석맵 전체 등록 → active 설정을 해야 한다.
 
-- 시드 SQL은 `V1__init.sql` 말미 또는 `community_admin_api/docs/seed/vehicle_layouts.json` 기반 ddl insert 블록으로 삽입.
-- 좌석 JSON은 운영자가 직접 수정 가능 — 1차 출시 관리자 UI는 범위 외, admin API + 직접 INSERT로 운영.
+### 현재 후속 범위
 
-### 후속 슬라이스 (1차 범위 외)
-
-- **관리자 SPA** — `vehicle_layout` 관리 UI (W6b로 분리, 1차 출시 직후 후속)
-- **Flutter W5/W7 클라이언트** — 카풀/버스 좌석 위젯, 운전자 offer 화면
-- **WalletRefundExecutor** — `EventPaymentRefundService` 분리 후 별도 빈 (W2b 완료 시점에 추출)
-- **환불 비율 정책** — 시간대별 환불 비율(시작 N시간 전 100%/50%/0% 등)은 별도 PRD로 결정. 현재 PLAN은 100% 환불만 명시.
-- **카풀 swap 로그 분석** — `event_carpool_assignment_log` 기반 호스트 swap 패턴 리포트 (분석/감사 용도)
+- **관리자 차량 API** — 이미 `community_admin_api`에 `MANAGE_EVENT` 목록·상세·생성·메타 수정·좌석 전체 교체·active 토글 6개가 구현됨. DELETE는 없음.
+- **Flutter 교통** — transport/bus 수직 슬라이스 없음. 카풀은 신고 API·route·screen만 있으나 presentation에서 해당 route로 이동하는 caller가 없어 direct route/deep-link 수준.
+- **환불 정책** — 6종 카탈로그와 귀책 기반 계산이 구현됨.
+- **카풀 로그/알림** — assignment log는 쓰지 않고 77~82 알림은 enum only.
+- **선입금 만료/환불** — 만료 payment 정리·75 publisher와 escalation 환불 경합 방지가 현재 Gap.
 
 ## v4.5 신규 기능 PRD (별도 등록 — `02_feature_prds/03_event/`)
 
 | ID | 도메인 | 예상 PRD 파일 | 주요 기능 | Wave | 상태 |
 | --- | --- | --- | --- | --- | --- |
-| F03-13 | 이벤트 | `F03-13_event-prepayment_prd.md` 또는 `F07-11_event-prepayment-flow_prd.md` | 참가 선입금 (WALLET/BANK_TRANSFER) | W2a/W2b/W3 | 신규 PRD |
-| F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 교통 모드 베이스 (NONE/CARPOOL/BUS 전이) | W4 | 신규 PRD |
-| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 카풀 운영 (offer/passenger/swap) | W5 | 신규 PRD |
-| F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 이벤트 측 버스 운영 + 좌석 위젯 | W7 | 신규 PRD |
-| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 관리자 차량 레이아웃 카탈로그 | W6 | 신규 PRD |
+| F03-13 | 이벤트 | `F03-13_event-prepayment_prd.md` | 참가 선입금 (서버 WALLET/BANK, Flutter WALLET only) | W2a/W2b/W3 | current source 실측 |
+| F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 교통 모드 베이스 (Flutter 없음) | W4 | current source 실측 |
+| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 카풀 서버 운영 + 고아 신고 route | W5 | current source 실측 |
+| F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 이벤트 버스 서버 운영, 좌석 위젯 없음 | W7 | current source 실측 |
+| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 사용자 read + 관리자 API, 무시드 | W6 | current source 실측 |
 
 신규 PRD 5개는 모두 작성 완료 상태다. 세부 구현/클라이언트 후속 범위는 각 기능 PRD의 §8 Gap/Risk를 우선한다.
 
@@ -307,7 +321,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | F03-19 | 이벤트 | [F03-19_event-reschedule-consent_prd.md](02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | `source-first` | source-first 구현 확인 | 4 | 5 |
 | F03-20 | 이벤트 | [F03-20_event-no-show_prd.md](02_feature_prds/03_event/F03-20_event-no-show_prd.md) | `source-first` | source-first 구현 확인 | 4 | 7 |
 | F04-01 | 클럽 | [F04-01_club-discovery_prd.md](02_feature_prds/04_club/F04-01_club-discovery_prd.md) | [F04-01_club-discovery](../units/04_club/F04-01_club-discovery) | 실사 기반 전환본 | 1 | 3 |
-| F04-02 | 클럽 | [F04-02_club-detail-join_prd.md](02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | [F04-02_club-detail-join](../units/04_club/F04-02_club-detail-join) | 실사 기반 전환본 | 3 | 0 |
+| F04-02 | 클럽 | [F04-02_club-detail-join_prd.md](02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | [F04-02_club-detail-join](../units/04_club/F04-02_club-detail-join) | 실사 기반 전환본 | 3 | 2 |
 | F04-03 | 클럽 | [F04-03_club-crud-transfer_prd.md](02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md) | [F04-03_club-crud-transfer](../units/04_club/F04-03_club-crud-transfer) | 실사 기반 전환본 | 4 | 11 |
 | F04-04 | 클럽 | [F04-04_member-management_prd.md](02_feature_prds/04_club/F04-04_member-management_prd.md) | [F04-04_member-management](../units/04_club/F04-04_member-management) | 실사 기반 전환본 | 3 | 0 |
 | F04-05 | 클럽 | [F04-05_waitlist-invitation_prd.md](02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | [F04-05_waitlist-invitation](../units/04_club/F04-05_waitlist-invitation) | 실사 기반 전환본 | 6 | 1 |
@@ -350,7 +364,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | F07-09 | 모임 정산 | [F07-09_prepayment-refund_prd.md](02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) | [F07-09_prepayment-refund](../units/07_meeting_settlement/F07-09_prepayment-refund) | 실사 기반 전환본 | 7 | 7 |
 | F07-10 | 모임 정산 | [F07-10_account-history-reputation_prd.md](02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | [F07-10_account-history-reputation](../units/07_meeting_settlement/F07-10_account-history-reputation) | 실사 기반 전환본 | 0 | 3 |
 | F08-01 | 플랜 마켓 | [F08-01_my-plan-list_prd.md](02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | [F08-01_my-plan-list](../units/08_plan_market/F08-01_my-plan-list) | 실사 기반 전환본 | 3 | 1 |
-| F08-02 | 플랜 마켓 | [F08-02_plan-detail_prd.md](02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | [F08-02_plan-detail](../units/08_plan_market/F08-02_plan-detail) | 실사 기반 전환본 | 6 | 0 |
+| F08-02 | 플랜 마켓 | [F08-02_plan-detail_prd.md](02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | [F08-02_plan-detail](../units/08_plan_market/F08-02_plan-detail) | 실사 기반 전환본 | 6 | 1 |
 | F08-03 | 플랜 마켓 | [F08-03_block-editor_prd.md](02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | [F08-03_block-editor](../units/08_plan_market/F08-03_block-editor) | 실사 기반 전환본 | 5 | 4 |
 | F08-04 | 플랜 마켓 | [F08-04_block-reorder_prd.md](02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | [F08-04_block-reorder](../units/08_plan_market/F08-04_block-reorder) | 실사 기반 전환본 | 2 | 2 |
 | F08-05 | 플랜 마켓 | [F08-05_plan-publish_prd.md](02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | [F08-05_plan-publish](../units/08_plan_market/F08-05_plan-publish) | 실사 기반 전환본 | 1 | 3 |
@@ -377,7 +391,7 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | F10-03 | 캘린더 | [F10-03_single-availability-crud_prd.md](02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md) | [F10-03_single-availability-crud](../units/10_calendar/F10-03_single-availability-crud) | 실사 기반 전환본 | 5 | 3 |
 | F10-04 | 캘린더 | [F10-04_recurring-availability-rule_prd.md](02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md) | [F10-04_recurring-availability-rule](../units/10_calendar/F10-04_recurring-availability-rule) | 실사 기반 전환본 | 5 | 8 |
 | F10-05 | 캘린더 | [F10-05_other-user-availability_prd.md](02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md) | [F10-05_other-user-availability](../units/10_calendar/F10-05_other-user-availability) | 실사 기반 전환본 | 2 | 2 |
-| F11-01 | 리뷰 & 신고 | [F11-01_event-review-write_prd.md](02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | [F11-01_event-review-write](../units/11_review_report/F11-01_event-review-write) | 실사 기반 전환본 | 1 | 0 |
+| F11-01 | 리뷰 & 신고 | [F11-01_event-review-write_prd.md](02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | [F11-01_event-review-write](../units/11_review_report/F11-01_event-review-write) | 실사 기반 전환본 | 1 | 1 |
 | F11-02 | 리뷰 & 신고 | [F11-02_review-list_prd.md](02_feature_prds/11_review_report/F11-02_review-list_prd.md) | [F11-02_review-list](../units/11_review_report/F11-02_review-list) | 실사 기반 전환본 | 2 | 2 |
 | F11-03 | 리뷰 & 신고 | [F11-03_review-edit-delete_prd.md](02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | [F11-03_review-edit-delete](../units/11_review_report/F11-03_review-edit-delete) | 실사 기반 전환본 | 2 | 3 |
 | F11-04 | 리뷰 & 신고 | [F11-04_report_prd.md](02_feature_prds/11_review_report/F11-04_report_prd.md) | [F11-04_report](../units/11_review_report/F11-04_report) | 실사 기반 갱신본 | 2 | 3 |
@@ -422,9 +436,9 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | F16-08 | 마일리지 | [F16-08_review-queue-dashboard_prd.md](02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md) | `source-first` | source-first 구현 확인 | 0 | 5 |
 | F17-01 | 정기모임 | [F17-01_regular-meeting-discovery_prd.md](02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md) | `source-first` | source-first 구현 확인 | 3 | 2 |
 | F17-02 | 정기모임 | [F17-02_regular-meeting-detail_prd.md](02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md) | `source-first` | source-first 구현 확인 | 4 | 3 |
-| F17-03 | 정기모임 | [F17-03_regular-meeting-creation_prd.md](02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | `source-first` | source-first 구현 확인 | 3 | 2 |
+| F17-03 | 정기모임 | [F17-03_regular-meeting-creation_prd.md](02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
 | F17-04 | 정기모임 | [F17-04_regular-meeting-lifecycle_prd.md](02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md) | `source-first` | source-first 구현 확인 | 5 | 4 |
-| F17-05 | 정기모임 | [F17-05_regular-meeting-sessions_prd.md](02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `source-first` | source-first 구현 확인 | 6 | 2 |
+| F17-05 | 정기모임 | [F17-05_regular-meeting-sessions_prd.md](02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `source-first` | source-first 구현 확인 | 6 | 6 |
 | F17-06 | 정기모임 | [F17-06_regular-meeting-enrollment_prd.md](02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | `source-first` | source-first 구현 확인 | 8 | 5 |
 | F17-07 | 정기모임 | [F17-07_regular-meeting-payment_prd.md](02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | `source-first` | source-first 구현 확인 | 6 | 6 |
 | F17-08 | 정기모임 | [F17-08_regular-meeting-refund_prd.md](02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | `source-first` | source-first 구현 확인 | 7 | 6 |
@@ -441,6 +455,13 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | F20-01 | 고객지원 | [F20-01_inquiry_prd.md](02_feature_prds/20_support/F20-01_inquiry_prd.md) | `source-first` | source-first 부분 구현 | 2 | 3 |
 | F20-02 | 고객지원 | [F20-02_operational-issue_prd.md](02_feature_prds/20_support/F20-02_operational-issue_prd.md) | `source-first` | source-first 부분 구현 | 2 | 3 |
 | F20-03 | 고객지원 | [F20-03_support-faq_prd.md](02_feature_prds/20_support/F20-03_support-faq_prd.md) | `source-first` | source-first 구현 확인 | 1 | 1 |
+| F21-01 | 제공자 배정·정산 | [F21-01_provider-assignment_prd.md](02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | `source-first` | source-first 구현 확인 | 4 | 6 |
+| F21-02 | 제공자 배정·정산 | [F21-02_participant-fee-charge_prd.md](02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | `source-first` | source-first 구현 확인 | 6 | 7 |
+| F21-03 | 제공자 배정·정산 | [F21-03_provider-settlement_prd.md](02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | `source-first` | source-first 구현 확인 | 5 | 7 |
+| F21-04 | 제공자 배정·정산 | [F21-04_free-invite-host-subsidy_prd.md](02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | `source-first` | source-first 구현 확인 | 4 | 5 |
+| F21-05 | 제공자 배정·정산 | [F21-05_refund-clawback_prd.md](02_feature_prds/21_curated/F21-05_refund-clawback_prd.md) | `source-first` | source-first 구현 확인 | 5 | 5 |
+| F21-06 | 제공자 배정·정산 | [F21-06_engagement-prepayment_prd.md](02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | `source-first` | source-first 구현 확인 | 5 | 5 |
+| F21-07 | 제공자 배정·정산 | [F21-07_regular-meeting-bulk_prd.md](02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | `source-first` | source-first 구현 확인 | 4 | 6 |
 
 ## 누락/확인 필요
 

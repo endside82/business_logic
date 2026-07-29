@@ -1,8 +1,27 @@
 # F21-07. 정기모임 묶음 배정·정산 PRD
 
+<!-- source-first; updated: 2026-07-29; source: community_api curated/ + event listeners + community_app curated/ -->
+
 ## 1. 결론
 
-정기모임 묶음 배정(`POST /api/v1/regular-meetings/{meetingId}/assignments`)과 묶음 정산(`POST /api/v1/regular-meetings/{meetingId}/settlements`) 모두 서버와 Flutter 양쪽에서 구현이 닫혀 있다. 묶음 배정은 단일 트랜잭션(한 회차 실패 시 전체 롤백)이고, 묶음 정산만 회차별 독립 트랜잭션(`NOT_SUPPORTED`)으로 부분 성공을 허용하며 결과를 `BulkSettleStatus` 6종으로 반환한다. BLOCKED 상태 회차는 호스트가 해당 회차의 배정 화면으로 이동해 분담금 현황을 확인하고 조치해야 한다. meetingId는 `RegularMeetingVo.id` (정기모임 자체 ID)이고, 서버는 `getRegularMeetingSessionEventIds`로 그 활성 세션들의 eventId 목록을 추출해 각 회차에 작업한다.
+정기모임 direct 묶음 배정(`POST /api/v1/regular-meetings/{meetingId}/assignments`)과 묶음 정산(`POST /api/v1/regular-meetings/{meetingId}/settlements`)의 핵심 경로는 서버와 Flutter에 구현돼 있다. 묶음 배정은 단일 트랜잭션(한 회차 실패 시 전체 롤백)이고, 묶음 정산만 회차별 독립 트랜잭션(`NOT_SUPPORTED`)으로 부분 성공을 허용하며 결과를 `BulkSettleStatus` 6종으로 반환한다. BLOCKED 상태 회차는 호스트가 해당 회차의 배정 화면으로 이동해 분담금 현황을 확인하고 조치해야 한다. meetingId는 `RegularMeetingVo.id` (정기모임 자체 ID)이고, 서버는 `getRegularMeetingSessionEventIds`로 그 활성 세션들의 eventId 목록을 추출해 각 회차에 작업한다. CATALOG 묶음 배정과 DRAFT 재개는 현재 지원하지 않는다.
+
+### 2026-07-29 현재 소스 델타
+
+- 일괄 배정 API는 `assignmentSource=CATALOG`를 거부한다. 카탈로그 상품을 여러 회차에 한 번에 배정하는
+  전용 API는 없으며 현재 bulk는 direct 출처만 지원한다.
+- 카탈로그 계약이 수락된 비종단 배정의 다음 회차는 offering 스냅샷과 마지막 수락 조건 X/D를 새
+  terms v1로 복제하지만 수락 포인터는 비운다. 새 회차에서 현재 fee policy로 재수락해야 하며 이전
+  money/engagement/serviceFee 권위는 승계하지 않는다.
+- direct 또는 미수락 terms 배정의 다음 회차는 provider id/role만 가진 DRAFT로 생긴다. 현재 DRAFT를
+  ASSIGNED로 재개하는 API가 없고 `(eventId, providerUserId)` 유일성 때문에 다시 생성할 수도 있어
+  후속 보완이 필요하다.
+- 회차 replace 이벤트는 비종단 assignment 엔티티의 `eventId`를 새 회차로 이동한다. 별도 행인
+  charge/prepayment/terms는 assignmentId를 참조하므로 함께 따라가며, 종단 배정은 이동하지 않는다.
+- 앱의 `/regular-meetings/:id/bundle-settlement` 라우트에는 현재 host redirect가 없다. 서버
+  `assertRegularMeetingHost`가 최종 권한을 강제한다.
+- bulk 결과 `SETTLED`는 회차 배정 잠금 + earning APPROVED이며 즉시 지갑 지급이 아니다. 실지급은
+  주간 배치에서 처리한다.
 
 ## 2. 실사 근거
 
@@ -18,7 +37,7 @@
 | Frontend Repository | `service_assignment_repository.dart` | `Result<List<...>>` |
 | Frontend Screen | `regular_meeting_bulk_settle_screen.dart` | `RegularMeetingBulkSettleScreen`, `_ResultCard`, `BLOCKED needsHostAction` → 이동 |
 | Frontend Model | `service_assignment_bulk_settle_result_vo.dart` | `eventId`, `assignmentId`, `status`, `reason` |
-| Verification | 서버 유닛 테스트 / codex 합의 PASS | 부분 성공·권한 게이트 |
+| Verification | 서버 유닛 테스트 + 서버/Flutter 소스 실측 | 부분 성공·권한 게이트·DRAFT/bulk cancel/UI Gap |
 
 ## 3. 전체 동작 흐름
 
@@ -50,7 +69,8 @@
 
 ### 3-C. BLOCKED 처리 흐름
 
-BLOCKED 회차: 완납 게이트 미충족(미수금·금액불일치·earning 미완·forfeit-출석 충돌·계약금 미적용).
+BLOCKED 회차: 완납 게이트 미충족(미수금·금액불일치·earning 미완·forfeit-출석 충돌·계약금 미적용),
+terms 재수락 대기 또는 이행 확인 미완료.
 
 1. 호스트가 결과 화면에서 BLOCKED 회차의 "분담금 현황" 버튼을 누른다.
 2. `EventAssignmentsScreen(eventId, focusAssignmentId: assignmentId)`로 이동, 해당 배정 카드가 강조(파란 테두리).
@@ -105,7 +125,7 @@ BLOCKED 회차: 완납 게이트 미충족(미수금·금액불일치·earning �
 | ErrorCode | BulkSettleStatus |
 |---|---|
 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_EVENT_NOT_ENDED` | `SKIPPED_NOT_READY` |
-| `ASSIGNMENT_NOT_FULLY_COLLECTED`, `ASSIGNMENT_FEE_MISMATCH`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`, `ASSIGNMENT_BENEFICIARY_ATTENDED`, `ASSIGNMENT_PREPAYMENT_REQUIRED` | `BLOCKED` |
+| `ASSIGNMENT_NOT_FULLY_COLLECTED`, `ASSIGNMENT_FEE_MISMATCH`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`, `ASSIGNMENT_BENEFICIARY_ATTENDED`, `ASSIGNMENT_PREPAYMENT_REQUIRED`, `ASSIGNMENT_TERMS_STALE`, `ASSIGNMENT_FULFILLMENT_INVALID_STATE` | `BLOCKED` |
 | 그 외 | `FAILED` |
 
 ## 5. 프론트 계약
@@ -118,6 +138,7 @@ BLOCKED 회차: 완납 게이트 미충족(미수금·금액불일치·earning �
 | 제공자 선택 | `ProviderPickerSheet.show(context)` |
 | 정산 실행 | `ref.read(serviceAssignmentRepositoryProvider).bulkSettle(meetingId, param)` — Repository를 그 provider로 접근하는 단발(one-shot) 변이 패턴(목록상태 Notifier 아님). 동형 선례: `bulkSettle`/`charge` 등 단발 액션. 정상(규칙 위반 아님). |
 | 결과 렌더링 | `_ResultCard` — `AppStateBadge(label, tone, icon)` + reason 한글화(`resolveApiErrorMessage`) |
+| 회차 식별 | 카드 제목은 현재 `회차 #${eventId}`. sequenceNo/날짜/제목은 결과 VO와 화면에 없음 |
 | BLOCKED CTA | `Routes.eventAssignmentsFor(eventId, focusAssignmentId: assignmentId)` 이동, 배정 카드 강조 |
 | 성공 집계 | `results.where((r) => r.status.isSuccess).length` |
 
@@ -157,7 +178,10 @@ BLOCKED 회차: 완납 게이트 미충족(미수금·금액불일치·earning �
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P1 | 묶음 배정 응답에 skip된 회차 포함 여부 불명확 | `bulkAssignToRegularMeeting`은 새로 생성된 것만 반환 — skip된 회차(이미 배정)는 응답에 없음 | 호스트가 어느 회차가 skip됐는지 파악 불가 | 묶음 배정도 묶음 정산처럼 회차별 status(CREATED/SKIPPED) 응답 고려 |
+| P1 | 묶음 배정 응답에서 skip 회차가 확정적으로 누락 | `bulkAssignToRegularMeeting`은 새로 생성된 배정만 반환하고 기존 배정 회차는 `continue` | 호스트가 어느 회차가 skip됐는지 파악 불가 | 묶음 배정도 묶음 정산처럼 회차별 status(CREATED/SKIPPED) 응답 고려 |
+| P0 | direct/미수락 다음 회차 DRAFT를 재개할 경로 없음 | listener가 provider id/role만 복제하지만 DRAFT→ASSIGNED 공개 API가 없고 재생성은 유일키 충돌 | 다음 회차 배정이 돈·수락 단계로 진행 불가 | DRAFT resume API/CTA 또는 direct 복제 정책 변경 |
+| P2 | 묶음 배정 취소 API 없음 | Controller에는 묶음 create/settle만 있고 assignment bulk cancel endpoint가 없음 | 전 회차를 취소하려면 회차별 개별 취소 필요 | 실제 정책이 필요하면 회차별 결과를 갖는 bulk cancel 설계 |
+| P2 | 결과 카드가 회차를 raw eventId로만 식별 | `_ResultCard` 제목이 `회차 #eventId`, 결과 VO도 eventId 외 표시 정보 없음 | 호스트가 실제 날짜/회차를 매칭하기 어려움 | sequenceNo/startAt/title을 결과 VO 또는 사전 조회와 결합 |
 | 확인됨 | `BulkSettleStatus` Flutter enum 일치 | 서버 6종 vs Flutter 6종 — `service_assignment_bulk_settle_result_vo.dart` 소스 확인 완료, 전값 일치 | — | 조치 불필요 |
 | P2 | 묶음 배정 실패 시 부분 롤백 | 단일 `@Transactional` — 한 회차 실패 시 전체 롤백 vs 묶음 정산의 `NOT_SUPPORTED`(부분 성공) 정책 불일치 | 정기모임 전체 배정이 한 회차 오류로 롤백 | 배정도 `NOT_SUPPORTED` + 회차별 결과 반환 고려(현재 설계는 단일 tx) |
 | P3 | SKIPPED_NOT_READY 회차의 재트리거 UX 없음 | 결과 카드에 배지만 표시, 재트리거 안내 문구나 CTA 없음 | 호스트가 언제 다시 시도해야 하는지 불명확 | "나중에 다시 시도" 메시지 또는 배지 tooltip |
@@ -214,3 +238,5 @@ Then 해당 회차만 `FAILED`, 나머지 회차 결과는 유지. `FAILED` 회�
 | 확인됨 | `BulkSettleStatus` Flutter enum 소스 확인 | `service_assignment_bulk_settle_result_vo.dart` 6종 전값 일치 확인 완료. |
 | UX | SKIPPED_NOT_READY 재시도 안내 | 회차 종료 예정 일시 표시 또는 "종료 후 다시 시도" 안내 |
 | 정책 | 묶음 배정 단일 tx vs NOT_SUPPORTED | 한 회차 오류 시 전체 롤백 정책 유지 여부 결정 |
+| 구현 | direct/미수락 DRAFT 재개 경로 | resume API/CTA 없이는 다음 회차 복제 행이 진행 불가 |
+| 정책 | 묶음 배정 취소 | 현재 API 없음. 필요 시 부분 성공·이미 정산 회차 정책부터 결정 |

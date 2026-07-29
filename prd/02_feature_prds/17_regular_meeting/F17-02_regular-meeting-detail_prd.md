@@ -1,6 +1,6 @@
 # F17-02. 정기모임 상세 조회 PRD
 
-> 2026-07-08 현재 소스 갱신: 재사용 경험 루프 보강으로 정기모임 상세는 단일 모임 본체 조회뿐 아니라 이전 회차 결과·다음 회차/세션으로 이어지는 진입점과 함께 봐야 한다. 특히 유료 VARIABLE 세션, 세션별 선결제, 클럽 recurrence, host cost type, 비공개 clone 안전장치는 F17 결제/정산 PRD 및 F03 이벤트 반복 문서와 함께 확인한다. 신규 기능 ID는 만들지 않고 기존 F17 상세·세션·결제 흐름에 흡수한다.
+> 2026-07-29 현재 소스 갱신: 재사용 경험 루프 보강으로 정기모임 상세는 단일 모임 본체 조회뿐 아니라 이전 회차 결과·다음 회차/세션으로 이어지는 진입점과 함께 봐야 한다. 특히 유료 VARIABLE 세션, 세션별 선결제, 클럽 recurrence, host cost type, 비공개 clone 안전장치는 F17 결제/정산 PRD 및 F03 이벤트 반복 문서와 함께 확인한다. 신규 기능 ID는 만들지 않고 기존 F17 상세·세션·결제 흐름에 흡수한다.
 
 ## 1. 결론
 
@@ -17,7 +17,7 @@ Flutter `RegularMeetingDetailScreen` 은 status (DRAFT/OPEN/CLOSED/CANCELED) 와
 | Backend VO | `RegularMeetingVo`, `RegularMeetingEventVo`, `RegularMeetingMemberVo` | 필드 매트릭스 |
 | Backend ErrorCode | `ErrorCode.REGULAR_MEETING_NOT_FOUND(2700001)` | DRAFT 마스킹 |
 | Flutter API | `regular_meeting_api.dart` | Retrofit getDetail/getSessions/getMyMembership |
-| Flutter Provider | `regular_meeting_detail_provider.dart`, `regular_meeting_sessions_provider.dart`, `my_regular_meeting_membership_provider.dart` | `@Riverpod` 3종 |
+| Flutter Provider | `community_app/lib/domain/providers/regular_meeting/regular_meeting_detail_provider.dart` | `regularMeetingDetail`, `regularMeetingSessions`, `myRegularMeetingMembership`가 한 파일에 통합된 `@riverpod` 3종 |
 | Flutter Screen | `regular_meeting_detail_screen.dart` | 헤더·세션·status별 CTA 분기 |
 | Flutter VO | `regular_meeting_vo.dart` | `isHost` → `@JsonKey(name: 'host')`, `directApplyBlocked` 그대로 |
 

@@ -1,14 +1,31 @@
 # F09-06. 만남 제안 & 안전 흐름 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/09_private_date/F09-06_meeting_proposal -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/09_private_date/F09-06_meeting_proposal -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/09_private_date/F09-06_meeting_proposal`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 >
-> 2026-07-08 현재 소스 갱신: 만남 완료 이후 궁합/핏 라벨을 남기는 데이트 만남 피드백이 추가됐다. `DateMeetingFeedbackService`와 관련 VO/Param이 만남 단위 피드백을 수집하고, 앱은 만남 제안 화면/배너에서 피드백 시트를 노출한다. 본 PRD의 제안/수락/완료 상태 전이는 유지하되, `COMPLETED` 이후의 사용자 행동과 추천 입력 부수효과는 F11-06과 함께 본다.
+> 2026-07-29 현재 소스 갱신: 만남 완료 이후 데이트 만남 피드백이 추가됐다. `DateMeetingFeedbackService`와 관련 VO/Param이 만남 단위의 `meetAgain`/`satisfaction`을 수집하고, 앱은 만남 제안 화면/배너에서 피드백 시트를 노출한다. 현재 소스에서 이 응답을 F11-06 취향 프로필이나 추천 점수로 전달하는 호출은 없으며, privatedate 격리 데이터와 본인 export 원본으로만 확인된다.
 
 ## 1. 결론
 
-매칭된 두 사용자가 오프라인으로 만나기 위한 일시·장소·메모를 제안·수락·거절·완료할 수 있게 한다. 제안은 row를 누적 INSERT (수정 대신 새 제안)로 처리하며, 상태는 `PROPOSED → CONFIRMED/CANCELLED → COMPLETED` 단순 흐름이다. 같은 매치에 여러 미팅이 누적되면 클라이언트가 "최신 활성"만 표시한다.
+서버는 매칭 당사자의 만남 제안과 `PROPOSED → CONFIRMED/CANCELLED → COMPLETED` 상태 전이를 지원한다. 현재 Flutter 화면에서 사용자가 실행할 수 있는 것은 새 제안과 목록 확인뿐이며, 수락·취소·완료 버튼/presentation caller는 없다. 제안은 row를 누적 INSERT하고 클라이언트는 가장 최신 활성 row만 표시한다.
+
+### 2026-07-29 소스 재실측 — 완료 후 본인 피드백
+
+| HTTP | 경로 | 요청/응답 |
+|---|---|---|
+| POST | `/api/v1/date/meetings/{meetingId}/feedback` | body `{ meetAgain: Boolean(필수), satisfaction: Integer?(1~5) }` → 201 `DateMeetingFeedbackVo` |
+| GET | `/api/v1/date/meetings/{meetingId}/feedback/me` | 본인 응답만 → 200 `DateMeetingFeedbackVo` |
+
+`DateMeetingFeedbackVo`는 `meetingId`, `submitted`, `meetAgain?`, `satisfaction?`, `createdAt?`를 가진다. 미제출이면 `{ meetingId, submitted: false }`이며 상대 응답 여부·상대 내용·상호 성사 결과는 어떤 응답에도 포함하지 않는다.
+
+제출 조건은 미팅 `COMPLETED`, 호출자가 해당 매치 당사자, 양방향 활성 DateBlock 없음, 만남/응답자당 1회다. 비당사자는 존재 누출을 막기 위해 `DATE_MEETING_NOT_FOUND`, 차단은 `DATE_USER_BLOCKED`, 중복은 `DUPLICATE_RESOURCE`다.
+
+Flutter `meeting_proposal_screen.dart`는 완료 미팅에서 내 상태를 조회해 미제출 배너를 보여 주고, `DateMeetingFeedbackSheet`의 두 질문을 제출한다. 동시/재시도 중 409 중복이 오면 provider가 `alreadySubmitted`로 분류해 본인 상태를 invalidate·재조회하고 배너를 닫으며 `이미 응답한 만남이에요`를 안내한다.
+
+이 피드백은 privatedate 격리 데이터다. 커뮤니티 프로필이나 추천 이유에는 노출되지 않으며 데이터 내보내기에는 **내가 작성한 응답만** 포함된다.
+
+실측 근거: `DateMeetingFeedbackController/Service/Param/Vo`, `date_meeting_api.dart`, `date_meeting_repository.dart`, `date_meeting_provider.dart`, `meeting_proposal_screen.dart`, `date_meeting_feedback_sheet.dart` 및 focused tests.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -67,15 +84,17 @@
 
 ### 개요
 
-매칭된 두 사용자가 오프라인으로 만나기 위한 일시·장소·메모를 제안·수락·거절·완료할 수 있게 한다. 제안은 row를 누적 INSERT (수정 대신 새 제안)로 처리하며, 상태는 `PROPOSED → CONFIRMED/CANCELLED → COMPLETED` 단순 흐름이다. 같은 매치에 여러 미팅이 누적되면 클라이언트가 "최신 활성"만 표시한다.
+서버 API는 제안·확정·취소·완료 전이를 제공한다. Flutter는 제안 POST와 목록 GET만 화면에 연결했고 PATCH 상태 변경은 Provider에만 존재해 사용자 UI에서는 실행할 수 없다.
 
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
 | POST | /api/v1/date/meetings | DateMeetingController#proposeMeeting | required | 매치 참여자가 새 만남 제안 생성 |
-| PATCH | /api/v1/date/meetings/{meetingId} | DateMeetingController#updateMeetingStatus | required | 상태 변경 (수락/거절/완료) |
+| PATCH | /api/v1/date/meetings/{meetingId} | DateMeetingController#updateMeetingStatus | required | 상태 변경 (확정/취소/완료) |
 | GET | /api/v1/date/meetings/match/{matchId} | DateMeetingController#getMeetings | required | 매치별 미팅 목록 |
+
+> PATCH는 서버·Repository·Provider에 구현되어 있지만 현재 presentation caller가 없다. 아래 상태 전이는 서버 계약이지 현재 사용자 화면 happy path가 아니다.
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
@@ -157,7 +176,7 @@
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
-| S1 | 첫 만남 제안 → 수락 (Happy Path) | `DateMatch.MATCHED`, 진행 중 미팅 없음. | 미팅 CONFIRMED. 만남 당일 양 사용자 위치 공유 안내(현 구현은 텍스트만). |
+| S1 | 첫 만남 제안 (현재 UI Happy Path) | `DateMatch.MATCHED`, 진행 중 미팅 없음. | 새 `PROPOSED` row 생성 후 채팅 화면으로 복귀. 앱 UI만으로 상대가 CONFIRMED로 전환할 수는 없음. |
 | S2 | 일시 미선택 / 장소 미입력 검증 | 시나리오 본문 참조 | 송신 차단. |
 | S3 | 다른 매치의 미팅을 조작 시도 (권한) | 시나리오 본문 참조 | 무변동. |
 | S4 | BLOCKED/EXPIRED 매치에서 제안 시도 | 차단(F09-07)으로 매치 status=BLOCKED 또는 7일 만료로 EXPIRED. | 미팅 미생성. |
@@ -182,9 +201,9 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 후보 | backend.md:82 | - **Enum `MeetingStatus`**: `PROPOSED, CONFIRMED, CANCELLED, COMPLETED` (4개. 스펙에 있는 `ACCEPTED/REJECTED`와 명칭 다름 — 스펙 vs 코드 불일치 주의) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:47 | 3. (후속) 상대 사용자가 수락/거절은 별도 흐름. 현 화면에서 PATCH 호출은 미구현 — 상태 변경 UI 별도 (스펙은 수신자에게 카드 + 수락/거절 버튼 — 본 코드에는 미연결) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | `meeting_proposal_screen.dart` | 상대 수락, 양측 취소·완료를 실행하는 presentation caller가 없다. Provider의 PATCH만으로는 사용자 흐름이 완성되지 않는다. | 상태별 CTA와 권한·전이 실패 UI 연결 |
 | 후보 | frontend.md:61 | - **위치 공유 정책**: 현 화면은 "안내만" — 실제 위치 공유 라우트는 미구현 (G-01 BE 의존). `AppDialog.alert`로 정적 안내만 노출 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:67 | - **상태 변경 UI 부재**: 수락/거절/완료 버튼이 화면에 없음 — 향후 매치 단건 화면이나 알림에서 별도 처리 필요. 서버 PATCH는 존재하지만 호출 지점 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | `meeting_proposal_screen.dart` | 완료 전이 UI가 없어 완료 후 피드백 기능의 선행 상태도 앱만으로 만들 수 없다. | 완료 CTA와 완료 알림/피드백 진입을 end-to-end 연결 |
 | 후보 | scenarios.md:14 | 7. B가 수락 의사 표명 → 어떤 UI(현 화면 미구현)에서 `PATCH /api/v1/date/meetings/{meetingId} {status:'CONFIRMED'}` 호출 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:62 | 3. 실제 위치 공유 자체는 미구현 (G-01 BE 의존) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | diagrams.md:36 | participant SB as 🔵 (수신자 UI 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
@@ -192,7 +211,7 @@
 
 ## 9. 수용 기준
 
-- **AC-01. 첫 만남 제안 → 수락 (Happy Path)**: Given `DateMatch.MATCHED`, 진행 중 미팅 없음. When 사용자가 해당 흐름을 실행하면 Then 미팅 CONFIRMED. 만남 당일 양 사용자 위치 공유 안내(현 구현은 텍스트만).
+- **AC-01. 첫 만남 제안 (현재 UI Happy Path)**: Given `DateMatch.MATCHED`, 진행 중 미팅 없음 When 사용자가 제안 폼을 제출하면 Then 새 `PROPOSED` row가 생기고 채팅으로 복귀한다. CONFIRMED 전환은 서버 API로 가능하지만 현재 앱 UI caller는 없다.
 - **AC-02. 일시 미선택 / 장소 미입력 검증**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 송신 차단.
 - **AC-03. 다른 매치의 미팅을 조작 시도 (권한)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 무변동.
 - **AC-04. BLOCKED/EXPIRED 매치에서 제안 시도**: Given 차단(F09-07)으로 매치 status=BLOCKED 또는 7일 만료로 EXPIRED. When 사용자가 해당 흐름을 실행하면 Then 미팅 미생성.

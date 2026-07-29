@@ -19,23 +19,29 @@
         </div>
         <h1>F03-15. 이벤트 카풀</h1>
         <p class="lede">
-          이동수단이 CARPOOL인 이벤트에서 운전자가 좌석을 제공하고, 호스트가 참가자를 차량에 배정하는 운영 도구.
-          참가자는 개별 이동을 선택하거나 카풀 배정을 받을 수 있고, 호스트는 정원·픽업 가능 인원·권한을 기준으로
-          배정을 조정한다.
+          서버에는 운전자 offer·탑승 선택·호스트 결정과 배정·안전신고 API가 있다.
+          Flutter에는 운전자 신고 API·화면·route가 있으나 그 route로 이동시키는 인앱 caller가 없어
+          direct route/deep-link 수준이다. 전체 카풀 운영 화면은 완성되지 않았다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">전제 방식</div><div class="value">카풀</div></div>
-          <div class="metric"><div class="label">운영 축</div><div class="value">3</div><div class="hint">운전자 지원 · 탑승자 · 배정 이력</div></div>
-          <div class="metric"><div class="label">신규 알림</div><div class="value">4종</div><div class="hint">운전자 확정·거절, 배정·해제</div></div>
+          <div class="metric"><div class="label">서버 API</div><div class="value">7개</div><div class="hint">조회·offer·결정·신고·탑승·배정</div></div>
+          <div class="metric"><div class="label">Flutter 연결</div><div class="value">고아 신고 route</div><div class="hint">인앱 CTA 없음</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 호스트가 이동 리스크를 운영 가능한 표로 만든다</span>
           <p>카풀은 "누가 탈 수 있나"보다 "누가 누구 차에 배정됐나"가 중요하다. 운전자 지원, 호스트 확정,
             참가자 배정, 배정 해제, 개별 이동 선택을 모두 분리해야 당일 혼선이 줄어든다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">현재 구현 경계</span>
+          <p>배정 로그 테이블은 있지만 서비스가 기록하지 않는다. 알림 77~80도 enum만 있고 발행·전송 코드가 없다.
+            offer 목록은 Host/CoHost 또는 참석자만 보지만, 탑승자 목록의 일반 사용자는 별도 참석 검사 없이 자기 row만 본다.
+            자차 허용 토글도 SELF/DRIVER 선택을 실제로 막지 않는다.</p>
         </div>
       </section>
 
@@ -74,7 +80,7 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">참가자</div>
             <h3>개별 이동 선택</h3>
-            <p>자차 이동이 허용된 이벤트라면 참가자가 직접 이동을 선택할 수 있다. 이 참가자는 호스트의 카풀 배정 대상에서 빠진다.</p>
+            <p>서버는 SELF 선택을 저장할 수 있지만 자차 허용 토글이나 실제 운전자 역할과 입력 enum을 대조하지 않는다. Flutter 선택 화면도 없다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">권한</div>
@@ -84,7 +90,7 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">방식 가드</div>
             <h3>카풀이 아닌 이벤트에서 진입</h3>
-            <p>이동수단 방식이 "없음" 또는 "버스"이면 카풀 기능 전체가 닫힌다. 하위 기능은 F03-14의 이동수단 방식을 따른다.</p>
+            <p>등록·결정·탑승·배정은 CARPOOL mode를 검사한다. 반면 offer 조회·탑승자 조회·신고에는 같은 mode 가드가 없어 완전히 닫히지는 않는다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">초안 단계 전환</div>
@@ -95,15 +101,15 @@ flowchart TD
       </section>
 
       <section>
-        <h2>사용자·호스트가 할 수 있는 동작</h2>
+        <h2>서버 동작과 현재 Flutter 노출</h2>
         <div class="table-wrap">
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>운전자 지원·수정</td><td>참가자(운전자)</td><td>좌석 수와 픽업 가능 인원을 적어 차량 제공을 신청한다.</td></tr>
-              <tr><td>운전자 확정·거절</td><td>호스트</td><td>지원한 운전자를 배정 가능한 차량으로 확정하거나 거절한다.</td></tr>
-              <tr><td>탑승자 목록 보기·이동 선택</td><td>참가자·호스트</td><td>참가자는 카풀과 개별 이동 중 하나를 고르고, 자기 배정 상태를 확인한다.</td></tr>
-              <tr><td>차량 배정·해제</td><td>호스트</td><td>누가 어느 차량을 타는지 정하고, 바꾼 이력이 함께 남는다.</td></tr>
+              <tr><td>운전자 offer 등록</td><td>ATTENDING 사용자</td><td>서버 API만 구현. 이벤트당 운전자 1건.</td></tr>
+              <tr><td>offer 확정·거절</td><td>Host/CoHost</td><td>서버 API만 구현. 현재 상태 가드가 없어 재결정 가능.</td></tr>
+              <tr><td>탑승 선택·배정/해제</td><td>참가자·Host/CoHost</td><td>등록은 lock/version이 없어 host 배정과 lost update 가능. SELF/DRIVER 변경 뒤 offerId 잔존.</td></tr>
+              <tr><td>운전자 안전신고</td><td>운전자가 아닌 ATTENDING 사용자</td><td>서버와 Flutter route는 있으나 presentation navigation caller가 없음.</td></tr>
             </tbody>
           </table>
         </div>
@@ -116,8 +122,11 @@ flowchart TD
           <ul>
             <li><strong>확정된 운전자만 배정 대상이다.</strong> 지원만 한 운전자의 차량에는 참가자를 배정하지 않는다.</li>
             <li><strong>픽업 가능 인원을 넘길 수 없다.</strong> 좌석 수와 픽업 가능 인원은 다를 수 있다.</li>
-            <li><strong>배정 해제도 알림 대상이다.</strong> 참가자의 당일 이동 계획이 바뀌므로 배정/해제 모두 알림이 필요하다.</li>
-            <li><strong>1차 범위는 운영 로직 중심이다.</strong> 참가자·호스트 화면은 후속 운영 화면에서 더 구체화될 수 있다.</li>
+            <li><strong>배정 이력은 현재 남지 않는다.</strong> DDL의 assignment log를 서비스가 쓰지 않는다.</li>
+            <li><strong>알림은 미구현이다.</strong> 77~80 enum만 있고 생산 배선과 Flutter deep link가 없다.</li>
+            <li><strong>Flutter는 신고만 제공한다.</strong> 운전자·탑승자·호스트 운영 화면은 없다.</li>
+            <li><strong>terminal event mutation이 가능하다.</strong> offer 생성 외 decide/register/assign/report는 event status를 검사하지 않는다.</li>
+            <li><strong>재배정·등록 경쟁에 결함이 있다.</strong> full offer에 같은 passenger를 다시 지정하면 자기 count로 거부되고, register/assign 경쟁은 lost update될 수 있다.</li>
           </ul>
         </div>
       </section>
@@ -127,7 +136,7 @@ flowchart TD
         <div class="hub-grid">
           <a class="card" href="F03-14.html"><div class="eyebrow">전제</div><h3>F03-14 이동수단 공통 베이스</h3><p>카풀 방식일 때만 열림.</p></a>
           <a class="card" href="F03-05.html"><div class="eyebrow">참가자</div><h3>F03-05 이벤트 신청·참석</h3><p>승인된 참가자 기반.</p></a>
-          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">알림</div><h3>12 알림</h3><p>운전자 확정·거절, 배정·해제 알림.</p></a>
+          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">알림 Gap</div><h3>12 알림</h3><p>77~80 enum은 있으나 발행·라우팅 미구현.</p></a>
         </div>
       </section>
 

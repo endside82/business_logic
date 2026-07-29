@@ -114,6 +114,28 @@ flowchart TD
       </section>
 
       <section>
+        <h2>선입금·교통 현재 권한 경계</h2>
+        <div class="callout danger">
+          <span class="label">2026-07-29 소스 실측</span>
+          <p>공통 권한 빈은 <code>event/service/EventAuthorizationService</code>이며 공개 메서드는
+            Host, Host/CoHost 검사 두 개뿐이다. 참가자 본인·ATTENDING 검사는 각 서비스가 직접 수행한다.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영역</th><th>실제 허용</th><th>주의할 경계</th></tr></thead>
+            <tbody>
+              <tr><td>선입금</td><td>본인 WALLET/BANK, Host/CoHost 확인·거부. BANK 환불 확인은 club OWNER/환불관리자도 가능</td><td>Flutter는 WALLET만 사용자 연결</td></tr>
+              <tr><td>환불 조회</td><td>템플릿도 인증 필요</td><td>preview/no-show GET은 actor·event scoping이 빠진 IDOR 후보</td></tr>
+              <tr><td>교통 설정</td><td>GET 인증 사용자, PUT Host/CoHost</td><td>GET은 event·참가 검증 없음. 자차 허용 토글은 소비자가 없어 inert</td></tr>
+              <tr><td>카풀</td><td>offer는 ATTENDING, 결정·배정은 Host/CoHost, 신고는 운전자가 아닌 ATTENDING</td><td>passenger GET과 report의 mode gate가 느슨하고 결정·탑승선택·배정·신고에는 종료 상태 gate가 없음</td></tr>
+              <tr><td>버스</td><td>추가는 Host/CoHost, 좌석 조회는 Host/CoHost 또는 ATTENDING/WAITING</td><td>self PUT은 참석·mode·locked seat를 검사하지 않으며 생성·좌석 지정에 종료 상태 gate가 없음</td></tr>
+              <tr><td>차량 카탈로그</td><td>사용자 read는 인증, 관리자 write는 MANAGE_EVENT</td><td>관리자 DELETE 없음</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
         <h2>클럽 권한 매트릭스</h2>
         <div class="table-wrap">
           <table class="compact center">

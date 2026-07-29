@@ -1,6 +1,6 @@
 # business_logic 문서 진입점
 
-> 정리 기준일: 2026-07-08
+> 정리 기준일: 2026-07-29
 
 이 폴더의 루트는 더 이상 과거 진행 로그를 읽는 곳이 아니다. 루트에는 현재 기준 문서로 들어가는 최소 진입점만 둔다.
 
@@ -12,7 +12,7 @@
 | PRD 문서 상태 | [`prd/PRD_MIGRATION_STATUS.md`](prd/PRD_MIGRATION_STATUS.md) | 어떤 PRD가 실제 소스/단위 산출물/source-first 기준으로 작성됐는지 확인한다. |
 | 기능 PRD 작성 기준 | [`prd/FEATURE_PRD_STANDARD.md`](prd/FEATURE_PRD_STANDARD.md) | 추측 기반 문서를 막기 위한 필수 품질 기준이다. |
 | 지원 문서 인덱스 | [`prd/SUPPORTING_DOCS_INDEX.md`](prd/SUPPORTING_DOCS_INDEX.md) | PRD를 보조하는 정책/QA/기획 문서의 현재 역할을 확인한다. |
-| 현재 소스 갱신 노트 | [`prd/05_planning_artifacts/current_source_update_2026-07-08.md`](prd/05_planning_artifacts/current_source_update_2026-07-08.md) | 2026-06-24 이후 구현된 게스트 동반 예매·궁합/핏·플랜 에디터·위치/길찾기·커뮤니티 메시지 변경을 기존 PRD 체계에 어떻게 흡수했는지 확인한다. |
+| 현재 소스 실측 노트 | [`prd/05_planning_artifacts/current_source_update_2026-07-29.md`](prd/05_planning_artifacts/current_source_update_2026-07-29.md) | API·App·Realtime·Admin의 2026-07-27 기준 소스를 다시 재어 50개 기능의 실제 계약·UI 도달성·Gap을 교정한 범위를 확인한다. |
 | 기능별 근거 문서 | [`units/`](units/) | backend/frontend/scenarios/diagrams 원천 근거를 확인한다. |
 | 검증 자료 | [`verification/`](verification/) | 문서/코드 동기화와 라운드 검증 결과를 확인한다. |
 | 루트 레거시 문서 | [`archive/root_legacy/`](archive/root_legacy/) | 루트에서 제거한 과거 체크리스트, 진행 로그, 의사결정 로그를 보존한다. |

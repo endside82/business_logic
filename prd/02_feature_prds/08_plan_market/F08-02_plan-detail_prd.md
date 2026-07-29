@@ -70,8 +70,8 @@
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| GET | /api/v1/plans/{planId} | `PlanController#getPlan` | `anyRequest().authenticated()` (Spring Security 전역 — `SecurityConfiguration.java:97`) | 플랜 풀 정보 (블록 포함) + 소유/구매 플래그. **인증된 비소유자** 조회 시 `view_count` 원자 증가(AUTH-08). |
-| GET | /api/v1/plans/{planId}/preview | `PlanController#getPreview` | optional(컨트롤러) — 전역 보안상 **실질 인증 필수**(preview permitAll 미선언) + 서비스 레이어 상태별 게이트(AUTH-06 Slice 3) | 서비스 의도: PUBLISHED 익명 허용·DRAFT/HIDDEN 로그인 필수(익명→401)·DELETED 404. **단 익명은 보안 필터에서 먼저 차단되어 실효는 로그인 비소유자 게이트(§8 참조).** 비구매자는 샘플 블록 최대 3개만 노출, 본문 차단. |
+| GET | /api/v1/plans/{planId} | `PlanController#getPlan` | `anyRequest().authenticated()` (Spring Security 전역 — `SecurityConfiguration.java`) | 플랜 메타 + 소유/구매 플래그. `blocks`는 null이 정상이며 본문은 별도 `/blocks`. **인증된 비소유자** 조회 시 `view_count` 원자 증가(AUTH-08). |
+| GET | /api/v1/plans/{planId}/preview | `PlanController#getPreview` | optional(컨트롤러) — 전역 보안상 **실질 인증 필수**(preview permitAll 미선언) + 서비스 레이어 상태별 게이트(AUTH-06 Slice 3) | 서비스 의도: PUBLISHED 익명 허용·DRAFT/HIDDEN 로그인 필수(익명→401)·DELETED 404. **단 익명은 보안 필터에서 먼저 차단된다.** 작성자 지정 샘플 최대 5 또는 자동 티저(텍스트 3 + 일정표 1 + 로그인 시 이미지 1). |
 | PATCH | /api/v1/plans/{planId} | `PlanController#updatePlan` | required | 메타 부분 수정 (작성자만) |
 | DELETE | /api/v1/plans/{planId} | `PlanController#deletePlan` | required | DELETED 상태로 soft delete |
 | POST | /api/v1/plans/{planId}/copy | `PlanController#copyPlan` | required | 본인 플랜 복사 → DRAFT 신규 생성 |
@@ -86,7 +86,7 @@
 - **PlanVo 무료 포인트 관련 필드** (`plan/vo/PlanVo.java`):
   - `price` (BigDecimal): 기본(유료) 구매 금액
   - `allowFreePoints` (boolean): 이 플랜을 무료 포인트로 구매할 수 있는지 여부. 작성자(콘텐츠 생산자) opt-in으로 결정
-  - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액. 미설정(null)이면서 무료 허용인 경우 유료우선 혼합(PAID_FIRST), 설정된 경우 무료 결제는 그 금액으로 단일 통화 결제
+  - `freePointPrice` (BigDecimal, nullable): 무료 포인트 결제 시 적용할 차등 금액. 미설정(null)이면서 `fundingMode=FREE`면 기본 `price`로 폴백해 `FREE_ONLY`; 일반 구매는 `price`와 `PAID_ONLY`
   - 유료/무료 분리정산(Point Split Flow-Through) 정책에 따라, 무료 포인트로 결제하면 수취자에게 무료로 전파되어 현금화되지 않는다. 상세 정책: `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
 - **에러 코드**:
   - 1500001 PLAN_NOT_FOUND (404) — 존재하지 않는 planId, 또는 DELETED 플랜 미리보기 접근
@@ -130,7 +130,7 @@
   - **PUBLISHED + 작성자 본인** 한정: primary50 배경 통계 카드 (구매 횟수, 상태)
   - description 텍스트
   - Divider 후 `BlockRenderer(blocks: plan.blocks!)` (블록이 있을 때)
-  - **HIDDEN + 비작성자**: `BackdropFilter(blur:8)` 오버레이 + "비공개 플랜" 안내
+  - **HIDDEN + 비작성자·비구매자**: `BackdropFilter(blur:8)` 오버레이 + "비공개 플랜" 안내. 기존 구매자는 숨김 뒤에도 전체 읽기 유지
 - **사용자가 할 수 있는 액션 (작성자, isCreatorOwned)**:
   - "편집" ▶ `context.push('/plan/$planId/edit')`
   - DRAFT/HIDDEN: "발행하기" ▶ `context.push('/plan/$planId/publish')`
@@ -140,7 +140,7 @@
   - 휴지통 ▶ confirm ▶ `planCreateNotifierProvider.deletePlan(planId)` ▶ `DELETE /api/v1/plans/{id}` ▶ `context.go('/plan')`
 - **사용자가 할 수 있는 액션 (구매자, isPurchased && !isCreatorOwned)**:
   - "이 플랜으로 이벤트 만들기" ▶ `context.push('/plan/$planId/create-event')`
-- **상태 분기**: 로딩 / 에러 (`AppErrorState.fromError(onRetry: invalidate)`) / HIDDEN 비작성자 → 블러
+- **상태 분기**: 로딩 / 에러 (`AppErrorState.fromError(onRetry: invalidate)`) / HIDDEN 비작성자·비구매자 → 블러
 - **모달/시트/네비게이션**:
   - 삭제 확인: `AppDialog.confirm(isDangerous: true)`
   - 판매 중지 확인: `AppDialog.confirm(isDangerous: true)`
@@ -167,7 +167,7 @@
 
 - **삭제 노출 정책**: 작성자 본인 + (DRAFT 또는 HIDDEN)일 때만 휴지통 노출. PUBLISHED 상태는 휴지통 숨김 (`_canDeletePlan` 메서드)
 - **`_formatUpdatedAt` 포맷**: "수정 N분 전" / "수정 N시간 전" / "수정 N일 전" — 60분 미만 / 24시간 미만 / 그 이상으로 분기
-- **HIDDEN 블러 오버레이**: sigmaX/Y=8, 흰색 60% 투명 배경 위에 자물쇠 아이콘 + "비공개 플랜" + "이 플랜은 현재 공개되지 않았습니다."
+- **HIDDEN 블러 오버레이**: `!isCreatorOwned && !isPurchased`일 때만 sigmaX/Y=8, 흰색 60% 투명 배경 위에 자물쇠 아이콘 + "비공개 플랜" 안내. 기존 구매자는 블러하지 않는다.
 - **PUBLISHED 통계 카드**: 작성자만 노출. "구매 N회" + "상태: 판매중" 두 칸. primary50 배경, primary200 divider
 - **하단 액션 레이아웃**:
   - 작성자: "편집" + (DRAFT/HIDDEN ? "발행하기" : "판매 중지" + "복제")
@@ -186,7 +186,8 @@
 | S1 | 작성자가 DRAFT 플랜을 검토하고 발행 진입 (Happy Path) | 자기 소유 플랜, status=DRAFT, 블록 5개 | F08-05 발행 화면 진입 |
 | S2 | PUBLISHED 작성자 본인 — 통계 + 판매 중지 / 복제 | status=PUBLISHED, purchaseCount=12 | 새 DRAFT 플랜 124가 새 화면에 표시됨 |
 | S3 | PUBLISHED 작성자 — 판매 중지 → HIDDEN | 시나리오 본문 참조 | 마켓에 노출되지 않음. 다시 발행할 수 있음 |
-| S4 | 비작성자가 HIDDEN 플랜 진입 (블러) | 작성자가 발행 후 HIDDEN으로 전환한 플랜 | 사용자는 본문을 볼 수 없고 뒤로 이동만 가능 |
+| S4 | 비구매 비작성자가 HIDDEN 플랜 진입 | 작성자가 발행 후 HIDDEN으로 전환한 플랜 | 서버 상세/블록이 FORBIDDEN이며 앱은 접근 불가/블러 폴백 |
+| S4-A | 기존 구매자가 HIDDEN 플랜 재진입 | 구매 뒤 작성자가 HIDDEN으로 전환 | 전체 본문과 이벤트 생성 권한 유지, 블러 없음 |
 | S5 | 작성자가 DRAFT 플랜 삭제 | 시나리오 본문 참조 | 목록에서 사라짐 (count는 status=DELETED 제외 카운트라 한도 회복) |
 | S6 | 잘못된 상태 전이 시도 — DRAFT에서 hide 호출 | 시나리오 본문 참조 | 상태 변경 없음 |
 | S7 | 구매자가 미리보기 진입 | planId=123 구매 완료 | 본문 열람 가능. 하단 "이 플랜으로 이벤트 만들기" 버튼 |
@@ -219,7 +220,8 @@
 - **AC-01. 작성자가 DRAFT 플랜을 검토하고 발행 진입 (Happy Path)**: Given 자기 소유 플랜, status=DRAFT, 블록 5개 When 사용자가 해당 흐름을 실행하면 Then F08-05 발행 화면 진입
 - **AC-02. PUBLISHED 작성자 본인 — 통계 + 판매 중지 / 복제**: Given status=PUBLISHED, purchaseCount=12 When 사용자가 해당 흐름을 실행하면 Then 새 DRAFT 플랜 124가 새 화면에 표시됨
 - **AC-03. PUBLISHED 작성자 — 판매 중지 → HIDDEN**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 마켓에 노출되지 않음. 다시 발행할 수 있음
-- **AC-04. 비작성자가 HIDDEN 플랜 진입 (블러)**: Given 작성자가 발행 후 HIDDEN으로 전환한 플랜 When 사용자가 해당 흐름을 실행하면 Then 사용자는 본문을 볼 수 없고 뒤로 이동만 가능
+- **AC-04. 비구매 비작성자가 HIDDEN 플랜 진입**: Given 작성자가 발행 후 HIDDEN으로 전환한 플랜 When 비구매자가 상세/블록을 요청하면 Then FORBIDDEN이며 전체 본문은 노출되지 않음
+- **AC-04-A. 기존 구매자의 HIDDEN 접근 유지**: Given 구매 완료 뒤 플랜이 HIDDEN When 구매자가 상세/블록/이벤트 생성을 요청하면 Then 기존 소유 권한이 유지되고 앱 블러가 없음
 - **AC-05. 작성자가 DRAFT 플랜 삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 목록에서 사라짐 (count는 status=DELETED 제외 카운트라 한도 회복)
 - **AC-06. 잘못된 상태 전이 시도 — DRAFT에서 hide 호출**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 상태 변경 없음
 - **AC-07. 구매자가 미리보기 진입**: Given planId=123 구매 완료 When 사용자가 해당 흐름을 실행하면 Then 본문 열람 가능. 하단 "이 플랜으로 이벤트 만들기" 버튼
@@ -232,6 +234,38 @@
 ## 10. 미결정 / 후속
 
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- 플랜 상세는 `allowFreePoints`/`freePointPrice`를 응답에 포함하므로, 구매 화면에서 무료 포인트 결제 허용 여부와 무료 결제가(차등가)를 어떻게 노출·선택하게 할지(`PaymentFundingMode` PAID/FREE 선택)는 화면에서 결정한다. 정책 자체(무료는 차등가 설정 시에만 허용, 무료분은 현금화 불가)는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
+- `PlanPreviewVo`도 `allowFreePoints`/`freePointPrice`를 직접 포함하고, 앱 preview/마켓 플랜 상세는 유료 플랜에서 무료 구매가 허용되면 PAID/FREE 선택 시트를 실제로 연다. `freePointPrice`가 null이면 기본가로 무료 결제하며, 무료 잔액 최종 판정은 서버가 담당한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 2026-07-29 소스 실측 보강
+
+### 11.1 상세·preview·전체 본문은 서로 다른 계약
+
+- `GET /plans/{id}`: DRAFT 작성자만, HIDDEN 작성자 또는 기존 구매자, DELETED 없음.
+- `GET /plans/{id}/blocks`: 위 상태 게이트에 더해 PUBLISHED 유료 플랜은 작성자/구매자만. 무료 플랜은 인증 사용자 전체 읽기.
+- `GET /plans/{id}/preview`: PUBLISHED 공개 의도, DRAFT/HIDDEN 로그인 사용자 preview 허용(person-specific 보류), DELETED 없음.
+- `POST /plans/{id}/create-event`: 작성자 또는 구매자. HIDDEN 기존 구매자도 계속 가능하고 신규 구매만 막힌다.
+
+### 11.2 티저 선택
+
+- `properties.previewSample=true`인 known/non-envelope 블록이 있으면 문서 순서 최대 5.
+- 없으면 텍스트 3 + 일정표 1 + 로그인 시 이미지 1 자동 폴백.
+- 구매한 비작성자는 전체 본문을 쓰므로 `sampleBlocks=[]`; 작성자는 실제 판매 preview 검수용으로 티저를 받는다.
+- 이미지 projection은 접근 게이트 통과 뒤 붙인다.
+
+### 11.3 committed 읽기 UX와 미커밋 작업본 구분
+
+committed HEAD `cb21bce8ef08`에서 상세는 별도 block provider로 전체 트리를 읽고, preview는 서버 `sampleBlocks`를 렌더링하며, 구매자는 이벤트 생성 CTA를 본다. committed 본문 기본 스타일은 14px이고 기존 제목 여백을 사용한다.
+
+현재 Flutter worktree에는 별도 미커밋 변경이 있다.
+
+- 읽기 모드에 커버·제목·작성자 header와 최대 폭 680 추가
+- 본문 16px/line-height 1.65, 제목 위 여백 확대
+- `BlockRenderer(reading:true)`와 읽기/편집 여백 소유권 분리
+- TABLE canonical rows와 제한적 legacy `columns + content JSON` dual-read. 깨진 표는 raw JSON 대신 안전 안내 카드로 표시
+- 2열 같은 작은 표는 가용 폭을 채우고 열당 96px를 넘으면 표 내부 가로 스크롤
+- 콘텐츠 역할별 tone과 링크/장소/파일/코드/영상 카드 표현 보강
+- tests/goldens 갱신
+
+이 미커밋 렌더링·TABLE 호환 작업은 진행 중 제안이며 출시 계약이나 수용 기준으로 간주하지 않는다.

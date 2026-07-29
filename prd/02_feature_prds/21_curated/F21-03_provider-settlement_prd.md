@@ -1,6 +1,6 @@
 # F21-03. 제공자 정산 PRD
 
-<!-- source-first; updated: 2026-06-24; source: community_api curated/ + community_app lib/…/curated/ -->
+<!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + payment/ + community_app curated/ -->
 
 ## 1. 결론
 
@@ -10,13 +10,27 @@
 
 보장수수료 모드(`serviceFeeGross>0`, non-engagement)에서는 추가로 Σ(money charge) == X 금액 검증을 통과해야 한다.
 
-`/settlement-readiness`는 호스트가 `/settle` 트리거 전에 게이트 통과 여부와 미커버/과커버 신원을 미리 확인할 수 있는 읽기 전용 사전점검 엔드포인트다. `lockAndSettle`과 동일한 집합 계산 로직을 사용하므로 readiness=true이면 실제 settle도 통과할 것을 미리 알 수 있다(단 다른 게이트 — earning 링크 완결·회차 종료·CONFIRMED 상태 — 는 별도).
+`/settlement-readiness`는 호스트가 `/settle` 트리거 전에 coverage 집합과 보장 금액을 미리 확인할 수 있는 읽기 전용 사전점검 엔드포인트다. `lockAndSettle`과 집합 계산은 공유하지만 readiness=true가 settle 성공을 보장하지는 않는다. settle은 추가로 회차 종료·CONFIRMED·최신 terms 수락·terms-managed 이행 완료·earning 링크 완결·engagement 계약금 존재/금액 정합을 검사한다.
 
 검증형 정산 포트(`CuratedProviderSettlementPort.approveAssignmentEarnings`)는 earning이 전부 SERVICE_ASSIGNMENT·PENDING·동일 provider이고 `validSourceIds`(chargeId ∪ prepaymentId)에 속함을 확인한 후에만 APPROVED로 승인한다. 직접 `processCreatorSettlement` 호출은 금지(신뢰형 = 안전하지 않음).
 
 실지급은 매주 월요일 03:00 스케줄러/JVM 기본 시간대(`0 0 3 * * MON`, zone 미지정 — UTC/KST 단정 금지) 주간 배치에서 APPROVED·SERVICE_ASSIGNMENT earning을 provider 단위로 모아 처리한다. Redisson 분산락 + 개별 provider REQUIRES_NEW로 부분 성공 허용.
 
-per-slice Codex 합의 PASS.
+서버 정산·배치 핵심은 테스트되지만 readiness 범위와 Flutter 표시·제공자 지급 UI에는 아래 Gap이 남는다.
+
+### 2026-07-29 현재 소스 델타
+
+- terms-managed 배정은 `acceptedTermsVersion == currentTermsVersion`이어야 하고, 호스트가 이행 상태를
+  FULFILLED 또는 PARTIALLY_FULFILLED로 기록해야 정산된다. NO_SHOW·DISPUTED·PENDING은
+  `ASSIGNMENT_FULFILLMENT_INVALID_STATE`로 차단된다. direct/legacy 배정은 무회귀 정책으로 이행
+  게이트를 적용하지 않는다.
+- `recordFulfillment` 자체는 CONFIRMED 뒤 FULFILLED·PARTIALLY_FULFILLED·NO_SHOW 입력을 허용한다.
+  공개 이행 통계는 자기배정을 제외하고 fulfilledCount와 terminal 분모의 noShowRate를 계산한다.
+- `SETTLED`는 배정 잠금과 earning의 APPROVED 전환을 뜻한다. 제공자 지갑 실지급은 이후 주간 배치다.
+- 카탈로그 계약의 earning은 수락 시 스냅샷된 수수료율로 gross/fee/tax/net을 기록한다. 현재 신규
+  계약은 5.00%이고, 기존 0% 스냅샷은 재수락 전까지 그대로 유지한다.
+- terms 미리보기는 X 전체에 한 번 반올림하지만 실제 원장은 charge/deposit별로 반올림하므로 합산 결과와
+  최대 charge 행 수만큼 원 단위 차이가 날 수 있다. 정산의 진실은 각 earning 원장이다.
 
 ## 2. 실사 근거
 
@@ -54,12 +68,14 @@ per-slice Codex 합의 PASS.
    - `missing = expected − covered`, `unexpected = covered − expected`
    - 보장모드이면 Σ(money) vs serviceFeeGross 비교
    - `ServiceAssignmentSettlementReadinessVo(ready, notReadyReason, missing, unexpected)` 반환
-4. `ready=true`면 Flutter가 "정산 시작" 버튼을 활성화한다. `ready=false`면 `missingBeneficiaryIds`(추가 과금 필요)·`unexpectedBeneficiaryIds`(커버 오기재) 신원을 표시한다.
-5. 호스트가 "정산 시작" → `POST /api/v1/events/{eventId}/assignments/{assignmentId}/settle`.
+4. Flutter의 별도 readiness 화면은 없다. 호스트가 배정 카드의 "정산"을 누르면 먼저 readiness를 조회하고, `ready=false`면 `#userId` 목록과 사유를 alert로 보여 준 뒤 settle을 호출하지 않는다. 이름·개별 금액·행별 조치 CTA는 표시하지 않는다.
+5. `ready=true`면 확인 dialog 뒤 `POST /api/v1/events/{eventId}/assignments/{assignmentId}/settle`.
 6. 서버 `lockAndSettle(hostUserId, eventId, assignmentId)`:
    - `assertHostOrCoHost` 재검증
    - `assertEventEnded(eventId)` — 회차 미종료 시 차단
    - `status == CONFIRMED` 검증 — CONFIRMED 아니면 `ASSIGNMENT_NOT_CONFIRMED`
+   - terms-managed이면 `acceptedTermsVersion == currentTermsVersion`
+   - terms-managed이면 fulfillment가 FULFILLED 또는 PARTIALLY_FULFILLED
    - 완납 게이트(집합 동일성): `coveredBeneficiaries.equals(expectedBeneficiaries)` — 불일치 시 `ASSIGNMENT_NOT_FULLY_COLLECTED`
    - money 행(FREE_EXCLUDED 제외) earning 링크 완결: `creatorEarningId!=null && transactionId!=null` — 미완 시 `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`
    - 보장모드: `Σmoney == serviceFeeGross` — 불일치 시 `ASSIGNMENT_FEE_MISMATCH`
@@ -76,8 +92,8 @@ per-slice Codex 합의 PASS.
 
 1. 호스트가 `/settlement-readiness`를 조회한다.
 2. 서버가 `ready=false, notReadyReason="ASSIGNMENT_NOT_FULLY_COLLECTED", missingBeneficiaryIds=[userId_A, userId_B]`를 반환한다.
-3. Flutter가 "A님, B님의 서비스비가 미납됐습니다" 안내와 "과금", "무료처리", "대납" CTA를 표시한다.
-4. 호스트가 각 참가자를 처리(과금/무료/대납/노쇼forfeit)한 후 다시 readiness를 확인하고 settle을 트리거한다.
+3. Flutter가 `"미커버 출석자: #userId_A, #userId_B"`와 공통 사유를 alert로 표시한다. 사용자 이름·미납액·직접 조치 버튼은 없다.
+4. 호스트가 alert를 닫고 배정 카드의 별도 과금/무료/대납/노쇼 액션으로 처리한 뒤 다시 "정산"을 눌러 readiness와 settle을 재시도한다.
 
 ### 시나리오 C: 보장모드 금액 불일치
 
@@ -119,9 +135,12 @@ per-slice Codex 합의 PASS.
 | 권한 | `assertHostOrCoHost(eventId, userId)` |
 | 게이트 1 | `assertEventEnded(eventId)` — 회차 미종료 차단 |
 | 게이트 2 | `status == CONFIRMED` — 아니면 `ASSIGNMENT_NOT_CONFIRMED` |
-| 게이트 3 | 완납 게이트: `coveredBeneficiaries.equals(expectedBeneficiaries)` |
-| 게이트 4 | earning 링크 완결: 모든 money 행의 `creatorEarningId != null && transactionId != null` |
-| 게이트 5 | 보장모드(non-engagement, serviceFeeGross>0): `Σmoney == serviceFeeGross` |
+| 게이트 3 | terms-managed: 최신 terms 수락(`acceptedTermsVersion == currentTermsVersion`) |
+| 게이트 4 | terms-managed: fulfillment ∈ {FULFILLED, PARTIALLY_FULFILLED} |
+| 게이트 5 | 완납 게이트: `coveredBeneficiaries.equals(expectedBeneficiaries)` |
+| 게이트 6 | earning 링크 완결: 모든 money 행의 `creatorEarningId != null && transactionId != null` |
+| 게이트 7 | 보장모드(non-engagement, serviceFeeGross>0): `Σmoney == serviceFeeGross` |
+| 게이트 8 | engagement: PAID·미적용 계약금 존재 및 `Σparticipant charge + D == X` |
 | 부수 효과 | `transitionTo(SETTLEMENT_LOCKED)` + `approveAssignmentEarnings(...)` (검증형 포트) |
 | 응답 | `Void` 200 |
 | 실패 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_NOT_FULLY_COLLECTED`, `ASSIGNMENT_BENEFICIARY_ATTENDED`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`, `ASSIGNMENT_FEE_MISMATCH`, `ASSIGNMENT_PREPAYMENT_REQUIRED` |
@@ -158,31 +177,32 @@ per-slice Codex 합의 PASS.
 
 | 항목 | 실제 구현 |
 |---|---|
-| readiness 화면 | `EventAssignmentsScreen` 내 "정산 준비 확인" + 미커버/과커버 표시 |
+| readiness UX | `EventAssignmentsScreen`의 "정산" 액션이 선조회. not-ready면 사유와 raw `#userId` 목록 alert |
 | 묶음 정산 화면 | `RegularMeetingBulkSettleScreen` |
 | Readiness Provider | `SettlementReadinessNotifier(eventId, assignmentId)` — `@riverpod` |
 | Settle Action | `EventAssignmentsNotifier.settle(assignmentId)` |
 | Retrofit | `ServiceAssignmentApi.settlementReadiness`, `settle` |
 | 성공 후 | 배정 목록 갱신 (status = SETTLEMENT_LOCKED) |
-| 에러 | `ASSIGNMENT_NOT_FULLY_COLLECTED` → 미커버 목록 + 조치 CTA 표시 |
+| 에러 | `ASSIGNMENT_NOT_FULLY_COLLECTED` → 미커버/과커버 raw ID alert. 이름·금액·행별 조치 CTA 없음 |
 
 readiness 화면 분기:
 
 | `ready` | `missingBeneficiaryIds` | `unexpectedBeneficiaryIds` | 표시 |
 |---|---|---|---|
-| true | 빈 배열 | 빈 배열 | "정산 가능" + "정산 시작" 버튼 활성 |
-| false | 비어있지 않음 | (무관) | "X명 미납" + 과금/무료/대납 CTA |
-| false | 빈 배열 | 비어있지 않음 | "과커버" + 환불/노쇼처리 CTA |
+| true | 빈 배열 | 빈 배열 | 확인 dialog 뒤 settle 호출 |
+| false | 비어있지 않음 | (무관) | 사유 + `"미커버 출석자: #id"` alert |
+| false | 빈 배열 | 비어있지 않음 | 사유 + `"과커버: #id"` alert |
 | false | (보장모드 금액 불일치) | — | `ASSIGNMENT_FEE_MISMATCH` 안내 |
 
 ## 6. 상태/권한 매트릭스
 
 | 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
 |---|---|---|---|---|
-| 호스트 + CONFIRMED + 회차 종료 + 완납 | 게이트 5개 통과 | `settle` 성공 | SETTLEMENT_LOCKED + 배치 지급 대기 | 일치 |
+| 호스트 + CONFIRMED + 회차 종료 + 모든 추가 게이트 통과 | settle 전체 게이트 통과 | `settle` 성공 | SETTLEMENT_LOCKED + 배치 지급 대기 | 일치 |
 | 호스트 + CONFIRMED + 회차 미종료 | `assertEventEnded` 실패 | API 에러 | 회차 종료 후 가능 안내 | 일치 |
 | 호스트 + ACCEPTED(미확정) + settle 시도 | `status != CONFIRMED` → `ASSIGNMENT_NOT_CONFIRMED` | API 에러 | 확정(confirm) 먼저 안내 | 일치 |
-| 호스트 + 미수금 있음 | 집합 불일치 → `ASSIGNMENT_NOT_FULLY_COLLECTED` | `missingBeneficiaryIds` 표시 | 미납자 과금/무료처리 유도 | 일치 |
+| 호스트 + 미수금 있음 | 집합 불일치 → `ASSIGNMENT_NOT_FULLY_COLLECTED` | raw `#userId` alert | 별도 카드 액션으로 조치 | 정보 제한 |
+| readiness=true + stale terms/이행 미완/계약금 미납 | readiness는 coverage·금액만 검사 | 확인 뒤 settle 호출 | settle에서 별도 에러 | 의도된 사전점검 한계 |
 | 호스트 + 보장모드 금액 미달 | `Σmoney != serviceFeeGross` → `ASSIGNMENT_FEE_MISMATCH` | API 에러 | 잔액 추가 과금 유도 | 일치 |
 | 호스트 + earning 링크 미완 | `creatorEarningId == null` → `ASSIGNMENT_SETTLEMENT_INVALID_EARNING` | API 에러 | 운영 에러(정상 과금 흐름이면 발생 안 함) | 일치 |
 | 호스트 + SETTLEMENT_LOCKED + settle 재호출 | `status != CONFIRMED` → `ASSIGNMENT_NOT_CONFIRMED`(직접 `/settle` 재호출); 묶음 정산은 이미 LOCKED를 `ALREADY_SETTLED`로 매핑 | API 에러 | 이미 정산됨 표시 | 일치 |
@@ -208,6 +228,9 @@ readiness 화면 분기:
 | Risk | 주간 배치 지급 전 earning 상태 표시 | SETTLEMENT_LOCKED 이후 앱에서 "정산 완료"처럼 표시되지만 실제 지급은 다음 월요일 배치까지 지연 | 제공자가 지갑 입금 전 "지급 완료"로 오해 가능 | 앱에서 "정산 잠금됨, 지급 예정" vs "지급 완료" 상태 분리 표시 |
 | Gap | 배치 실패 provider 재처리 경로 | `processWeeklySettlements`에서 `fail++` 로깅만 하고 재처리 알림/재시도 경로 없음 | 지급 실패 provider가 다음 주 배치까지 지급 누락 | 배치 실패 provider 운영 알림 또는 수동 재처리 엔드포인트 필요 여부 운영 판단 |
 | Gap | 계약금(engagement) 정산 X 검증 | `applyDepositIfPresent`가 `Σ참가자charge + D == agreedFee` 검증 — 계약금 모드에서 `serviceFeeGross`가 아닌 `agreed_provider_fee` 기준 | 두 금액이 다른 경우 프론트 UI 혼동 가능 | `ServiceAssignmentVo.engagementId!=null` 분기에서 UI를 `agreedProviderFee` 기준으로 표시 필요 |
+| Gap | readiness dialog가 ID만 표시 | VO가 beneficiary ID만 제공하고 Flutter도 `#id` 문자열로 렌더링 | 호스트가 대상 이름·개별 미납액을 알 수 없고 alert 안에서 조치할 수 없음 | 이름/금액 projection 또는 별도 coverage 목록과 연결 |
+| Gap | 제공자 earning·지급 상태 화면 없음 | `MyAssignmentsScreen`은 event/status/role/terms/수락·거절만 표시 | 제공자가 APPROVED 대기와 PAID 완료, net 금액을 앱에서 구분하지 못함 | provider payout/earning read model과 UI 추가 |
+| Risk | readiness 범위가 settle 전체 게이트보다 좁음 | readiness는 coverage 집합·보장 금액만, settle은 terms·fulfillment·event/status·earning·deposit도 검사 | ready=true 뒤 settle 실패 가능 | UI 문구를 `"coverage 사전점검 통과"`로 제한하고 settle 에러를 구체화 |
 
 ## 9. 수용 기준
 
@@ -225,7 +248,7 @@ Then `ready=false, notReadyReason="ASSIGNMENT_NOT_FULLY_COLLECTED", missingBenef
 
 ### AC-03. settle 완납 게이트 통과
 
-Given 모든 게이트(회차 종료, CONFIRMED, 집합 동일, earning 링크 완결, 보장모드 금액 일치) 통과.
+Given 모든 게이트(회차 종료, CONFIRMED, 최신 terms, 이행 완료, 집합 동일, earning 링크 완결, 보장/engagement 금액 일치) 통과.
 When `POST .../settle`을 호출한다.
 Then `200 OK`, 배정 status=SETTLEMENT_LOCKED, earning들이 PENDING→APPROVED로 전이된다.
 

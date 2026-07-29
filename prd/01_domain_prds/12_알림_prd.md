@@ -116,6 +116,7 @@
 - **결과 상태 변화**:
   - 토글 OFF: TimePicker·요일 칩 dim + 입력 비활성, 저장 시 푸시 차단 해제
   - 토글 ON + 저장: 지정된 요일·시간대(자정 넘김 가능, 예 22:00~07:00)에 서버가 푸시 발송 보류(앱 내 알림은 저장)
+  - 저장은 `findByUserId` 후 같은 row를 갱신하는 upsert다. `QuietHoursSetting.userId`의 `unique=true`와 canonical `V1__init.sql`의 `UNIQUE KEY uk_quiet_hours_user (user_id)`가 사용자당 1행을 함께 강제한다.
   - 저장 성공: "저장되었습니다" 토스트 + 이전 화면 복귀
   - 저장 실패: "서버 오류가 발생했습니다" 에러 토스트(현재 화면 유지)
 

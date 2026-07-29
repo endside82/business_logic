@@ -19,27 +19,35 @@
         </div>
         <h1>F19-03. 프라이버시 공개범위 설정</h1>
         <p class="lede">
-          내 모임 일정과 가입 클럽을 타인에게 얼마나 보여줄지 설정하는 화면.
-          두 가지 토글을 제공한다 — 하나는 관심인에게도 내 캘린더를 숨기는 것이고,
-          다른 하나는 타인이 내 프로필에서 가입 클럽 목록을 보지 못하게 하는 것.
-          두 토글 모두 프리미엄 구독 전용이다. 끄는 것(다시 공개)은 항상 가능하다.
+          캘린더·가입 클럽·낯선 사람의 직접 프로필 열람·사람 검색/추천 노출을 각각 제어한다.
+          캘린더와 클럽 숨김의 ON만 프리미엄이며, 낯선 사람 숨김과 검색 숨김은 누구나 쓸 수 있다.
+          설정 row가 없으면 네 값 모두 false다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">토글 종류</div><div class="value">2가지</div><div class="hint">캘린더·가입클럽</div></div>
-          <div class="metric"><div class="label">게이팅</div><div class="value">프리미엄 전용</div><div class="hint">켜는 것만</div></div>
+          <div class="metric"><div class="label">토글 종류</div><div class="value">4가지</div><div class="hint">일정·클럽·프로필·발견</div></div>
+          <div class="metric"><div class="label">게이팅</div><div class="value">2 PREMIUM + 2 무료</div><div class="hint">켜는 계약이 다름</div></div>
           <div class="metric"><div class="label">기본값</div><div class="value">전체 공개</div><div class="hint">설정 없으면 공개</div></div>
           <div class="metric"><div class="label">타인 클럽 보기</div><div class="value">무료 포함</div><div class="hint">숨김 설정 없으면 누구나</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 의도 — 프리미엄의 첫 실질 혜택은 "내 정보를 내가 제어"</span>
+          <span class="label">설계 의도 — 직접 열람과 발견 표면을 분리한다</span>
           <p>이전까지 서비스에서 프리미엄 구독이 어떤 실질적인 혜택을 주는지 명확하지 않았다.
-            이 기능이 프리미엄의 첫 번째 실질 게이팅이다 — <strong>내 모임 일정과 클럽을 타인이 보는지 여부를
-            내가 결정할 수 있다는 것</strong>. "나를 좋아하는 사람이 내 일정을 추적한다"는 불편함을 느끼는
-            사용자에게 구독의 유인이 된다.</p>
+            캘린더·클럽 숨김은 그 혜택을 유지하되, 낯선 사람의 프로필 열람과 검색/추천 제외는
+            기본 안전 통제로 무료 제공한다.</p>
+        </div>
+
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 신규 공개범위</span>
+          <p><code>hideFromStrangers</code>는 SELF/MATCHED/같은 클럽/증거등급 모임/host-participant
+            맥락이 없는 직접 프로필 조회를 USER_NOT_FOUND로 숨긴다.
+            <code>hideFromSearch</code>는 사람 검색, 전역 사용자 선택기, 만난 사람, 홈 추천 후보에서
+            제외하지만 직접 URL은 막지 않는다. 전역 <code>/users/search</code>는 두 값 모두 false인
+            사용자만 반환한다. 앱의 <code>/profile/users/:userId</code> 통합 프로필 route는 즐겨찾기
+            목록·사람 시트·멘션에서 실제로 호출되며, 직접 열람 시에도 같은 서버 공개범위가 적용된다.</p>
         </div>
       </section>
 
@@ -74,6 +82,22 @@
             <h3>비공개를 유지하다가 다시 공개로 전환하고 싶다</h3>
             <p>토글 OFF — 프리미엄 여부와 무관하게 언제든 가능하다. 다시 공개로 전환하면 관심인의
               캘린더 오버레이에 내 일정이 다시 나타나고, 새 모임 알림도 다시 발송된다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">낯선 사람 숨김 · 무료</div>
+            <h3>공유 맥락이 없는 사람의 직접 프로필 열람을 막는다</h3>
+            <p><code>hideFromStrangers</code>를 켜면 SELF/MATCHED/같은 클럽/증거등급 공동참석/
+              host-participant 중 어떤 맥락도 없는 조회자에게 leak-safe <code>USER_NOT_FOUND</code>를 반환한다.
+              공유 맥락이 있으면 기존 관계별 프로필 view를 유지한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">검색·추천 숨김 · 무료</div>
+            <h3>발견 표면에서 빠지되 직접 URL은 별도로 둔다</h3>
+            <p><code>hideFromSearch</code>를 켜면 사람 검색·전역 사용자 선택기·만난 사람·홈 사람 추천
+              후보에서 제외된다. 이미 프로필 URL을 아는 사용자의 직접 열람은 이 값만으로 막지 않으며
+              필요하면 <code>hideFromStrangers</code>를 함께 설정한다.</p>
           </article>
         </div>
       </section>
@@ -113,6 +137,11 @@
           <p>타인 프로필 화면에 가입 클럽 섹션이 구현되어 있다.
             숨기기 설정이 켜져 있으면 해당 섹션에 "공개된 가입 클럽이 없습니다."
             빈 상태 메시지가 표시된다.</p>
+        </div>
+        <div class="callout">
+          <span class="label">백엔드 공개범위 회귀 테스트가 있다</span>
+          <p>신규 토글 저장과 전역 사용자 검색, 사람 검색, 만난 사람·추천 제외는 서비스·repository
+            테스트로 검증된다. Flutter 전용 공개범위 테스트는 별도 확인되지 않았다.</p>
         </div>
       </section>
 

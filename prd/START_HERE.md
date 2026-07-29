@@ -16,22 +16,29 @@
    `backend.md`, `frontend.md`, `scenarios.md`, `diagrams.md`
 7. 구현 우선순위와 현재 위험도를 보려면 `../../docs/IMPLEMENTATION_CROSSWALK.md`와
    `../../docs/IMPLEMENTATION_WORKBOARD.md`
-8. v4.5 이벤트 확장(W1~W7) master plan을 보려면 `../../docs/plan/event-extensions/PLAN.md` (관련 산출물: `ENUM_RESERVATIONS.md`, `E2E_SCENARIOS.md`)
-9. **2026-05-28 이후 신규 PRD 36개(F03-13~18 / F04-17 / F08-14~15 / F15·F16 / F17)는 `units/` 폴더 없이 source-first로 운영된다.** canonical은 각 PRD §실사 근거의 plan 문서와 community_api 실제 소스. 자세한 위치는 `PRD_MIGRATION_STATUS.md` 상단 운영 원칙 참고.
+8. v4.5 이벤트 확장(W1~W7)의 현재 계약은 F03-13~17 기능 PRD와
+   `community_api` 실제 소스에서 본다. 과거 `docs/plan/event-extensions/` 계획 산출물 3개는
+   실코드 병합 뒤 2026-06-05 폐기됐다.
+9. **현재 source-first 계열 58개 기능은 `units/` 폴더 없이 운영된다.**
+   2026-06-05까지 51개였고, 이후 제공자 배정·정산 F21-01~07이 7개 추가됐다.
+   canonical 위치와 정확한 기능 목록은 `PRD_MIGRATION_STATUS.md` 상단 운영 원칙에서 확인한다.
+10. 2026-07-29 실제 소스 기준점과 재실측 Gap은 `05_planning_artifacts/current_source_update_2026-07-29.md`에서 확인한다.
 
-## v4.5 W1~W7 이벤트 확장 신규 PRD (2026-05-22)
+## v4.5 W1~W7 이벤트 확장 계보 (2026-05-22)
 
-이벤트 도메인 신규 5개 PRD가 단일 master plan(`docs/plan/event-extensions/PLAN.md`) 산하 vertical slice로 추가된다. 모든 본문은 별도 agent가 신설하며 본 인덱스는 등록만 한다.
+이벤트 도메인 5개 PRD는 W1~W7 계획을 거쳐 추가됐다. 당시 계획 파일은 폐기됐으므로,
+아래 기능 PRD와 실제 Controller/Service/DTO/enum을 현재 근거로 사용한다.
 
-| ID | 기능 | 예상 파일 | Wave |
+| ID | 기능 | 현재 기능 PRD | Wave |
 |---|---|---|---|
-| F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | `02_feature_prds/03_event/F03-13_event-prepayment_prd.md` (또는 `02_feature_prds/07_meeting_settlement/F07-11_event-prepayment-flow_prd.md`) | W2a/W2b/W3 |
+| F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | `02_feature_prds/03_event/F03-13_event-prepayment_prd.md` | W2a/W2b/W3 |
 | F03-14 | 교통 모드 베이스 | `02_feature_prds/03_event/F03-14_event-transport-mode_prd.md` | W4 |
 | F03-15 | 카풀 운영 | `02_feature_prds/03_event/F03-15_event-carpool_prd.md` | W5 |
 | F03-16 | 이벤트 측 버스 운영 | `02_feature_prds/03_event/F03-16_event-bus-charter_prd.md` | W7 |
 | F03-17 | 차량 레이아웃 카탈로그 | `02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md` | W6 |
 
-source-of-truth는 `docs/plan/event-extensions/PLAN.md`다. 본문 신설 후 `PRD_MIGRATION_STATUS.md`의 v4.5 표에 trace/risk 후보 수를 채운다.
+enum 번호와 충돌은
+`community_api/src/test/java/com/endside/community/EnumReservationTest.java`가 회귀 검증한다.
 
 ## 역할별로 뭘 보면 되나
 

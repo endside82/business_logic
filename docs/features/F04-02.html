@@ -27,6 +27,24 @@
       </header>
 
       <section>
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 멤버 전용 클럽 핏</span>
+          <p><code>GET /api/v1/clubs/{clubId}/fit-preview</code>는 현재 멤버만 호출한다. 응답은
+            <code>knownMembersBucket</code>, <code>similarTraitBucket</code>,
+            <code>traitAxisDistribution</code>이며 1~2명은 FEW, 3명 이상은 SEVERAL, 0명은 필드 부재다.
+            trait 후보 표본 5명 미만 또는 축/밴드 k-익명 기준 미달이면 해당 신호를 숨기며 원점수·원인원은
+            내려가지 않는다.</p>
+          <p>클럽 상세 <code>GET /api/v1/clubs/{id}</code>도 현재 Security 설정에서는 JWT 인증 필수다.
+            Controller가 nullable principal을 받더라도 공개 matcher가 없어 익명 직접 호출은 401이며,
+            Flutter의 <code>/home/clubs/:id</code> public prefix로 들어온 게스트는 라우터를 통과한 뒤
+            상세 GET에서 401을 받고 화면의 일반 "클럽을 찾을 수 없습니다" 상태에 도달한다.</p>
+          <p>APPROVAL 가입도 현재 화면에는 메시지 입력 다이얼로그가 없다.
+            <code>joinClub(clubId)</code>가 <code>ClubJoinParam(message: null)</code>을 보내고
+            서버는 WAITLIST 신청을 만든다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
           <div class="metric"><div class="label">하단 버튼의 분기</div><div class="value">6가지</div><div class="hint">사용자 상태별로 다른 라벨</div></div>
           <div class="metric"><div class="label">가입 방식</div><div class="value">2가지</div><div class="hint">자유 가입 · 승인 가입</div></div>
@@ -52,8 +70,7 @@
 flowchart LR
     A["사용자: 가입하기 탭"] --> B{"이 클럽의 가입 방식?"}
     B -->|"자유 가입"| C["즉시 멤버로 등록"]
-    B -->|"승인 가입"| D["가입 메시지 입력"]
-    D --> E["대기열에 신청 등록"]
+    B -->|"승인 가입"| E["메시지 없이 대기열 신청"]
     C --> F{"유료 클럽?"}
     F -->|"예"| G["가입비를 지갑에서 차감"]
     F -->|"아니오"| H["가입 완료"]
@@ -78,10 +95,20 @@ flowchart LR
 
           <article class="card">
             <div class="eyebrow">승인 가입 (신청)</div>
-            <h3>"가입 신청"을 누르고 메시지를 적는다</h3>
-            <p>승인 가입 클럽이면 "가입 신청"을 누른 뒤 가입 메시지 입력창이 떠오른다.
-              "러닝에 관심이 많아요" 한 줄을 적고 신청을 보내면, 관리자에게 알림이 가고 사용자에게는 "승인 대기 중" 비활성 버튼이 남는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 가입 메시지는 관리자의 승인 결정 데이터인 동시에, 신청자에게 "내가 진심으로 신청했다"는 자기 확인의 면.</p>
+            <h3>"가입 신청"을 누르면 메시지 없이 대기열로</h3>
+            <p>승인 가입 클럽에서도 가입 메시지 입력창은 뜨지 않는다.
+              앱은 <code>message=null</code>로 신청을 보내고, 서버가 WAITLIST를 만들면 사용자에게
+              "승인 대기 중" 비활성 버튼이 남는다.</p>
+            <p><strong>확인된 Gap</strong> — 서버와 관리자 대기열은 가입 메시지를 지원하지만 현재 신청 화면은
+              이를 수집하지 않는다. 메시지가 제품상 필요하다면 입력과 검증을 연결해야 한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">공개 홈 경로 회귀</div>
+            <h3>게스트가 홈의 클럽 카드를 눌렀지만 상세를 읽지 못한다</h3>
+            <p><code>/home/clubs/:id</code>는 Flutter public prefix라 로그인 없이 화면까지 이동한다.
+              그러나 상세 API는 JWT 필수라 401이 발생하고, 화면은 이를 "클럽을 찾을 수 없습니다"로 축약한다.
+              화면 안의 "로그인 후 가입하기" CTA는 상세 데이터가 없어 렌더링되지 않는다.</p>
           </article>
 
           <article class="card">
@@ -181,9 +208,12 @@ flowchart LR
             <li><strong>가입과 가입비 결제는 분리될 수 없는 한 동작이어야 한다.</strong>
               "가입은 됐는데 결제가 실패했다"가 한 번이라도 발생하면 사용자는 자기가 멤버인지 아닌지 모른 채로 떠난다.
               두 동작 중 하나가 실패하면 양쪽 모두 롤백되어야 한다.</li>
-            <li><strong>승인 가입 클럽의 가입 메시지 입력은 클라이언트가 강제한다.</strong>
-              가입 메시지 없이 신청이 들어오면 관리자에게는 결정 단서가 없는 신청이 쌓인다.
-              메시지 입력 다이얼로그를 거치지 않고 신청 호출이 가능해지면 승인 화면의 효용이 떨어진다.</li>
+            <li><strong>승인 가입 클럽의 가입 메시지 입력은 현재 구현되지 않았다.</strong>
+              앱은 <code>joinClub(clubId)</code>를 바로 호출해 null 메시지 신청을 만든다.
+              관리자에게 결정 단서가 필요하다면 입력 UI와 서버 검증을 함께 연결해야 한다.</li>
+            <li><strong>공개 홈 경로와 상세 API 인증 계약이 어긋난다.</strong>
+              <code>/home/clubs/:id</code> 게스트는 Flutter 라우터를 통과하지만 상세 GET에서 401을 받고,
+              화면은 인증 문제를 일반 미존재 상태로 보여 준다.</li>
             <li><strong>차단된 사용자의 가입 가드는 카드·상세·서버 세 곳에서 모두 작동한다.</strong>
               한 곳이라도 빠지면 차단의 의미 자체가 무너진다.
               상세 화면의 "가입할 수 없습니다" 비활성 버튼은 사용자에게 보내는 신호이고, 서버 가드는 마지막 안전망이다.</li>

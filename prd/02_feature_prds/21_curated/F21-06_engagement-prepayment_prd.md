@@ -1,8 +1,35 @@
 # F21-06. 계약금 선납(engagement) PRD
 
+<!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + payment/ + community_app curated/ -->
+
 ## 1. 결론
 
-계약금 선납(engagement)은 서버와 Flutter 양쪽에서 구현이 닫혀 있다. 호스트가 제공자와 합의한 총 보수 X를 `service_engagement`에 기록하고, 그 일부 D(계약금)를 지갑으로 선납한다. 정산 시 Σ(참가자 charge) + D == X 검증을 통해 이중 재원화를 구조적으로 차단한다. 배정 취소 시 D는 제공자에게 forfeit(비환불)되고, service-fee(보장수수료 모드, serviceFeeGross > 0)와 engagement는 상호 배타적이다(`ASSIGNMENT_FEE_AUTHORITY_CONFLICT`). Flutter는 `hasServiceFee`/`hasEngagement` 플래그로 UI 버튼을 사전 분기한다.
+계약금 선납(engagement)의 서버 계약은 직접 배정과 카탈로그 terms 배정 모두 존재하지만, Flutter의
+end-to-end 경로는 직접 배정에만 닫혀 있다. 호스트가 제공자와 합의한 총 보수 X를
+`service_engagement`에 기록하고, 그 일부 D(계약금)를 지갑으로 선납한다. 정산 시
+Σ(참가자 charge) + D == X 검증을 통해 이중 재원화를 구조적으로 차단한다. 배정 취소 시 D는
+제공자에게 forfeit(비환불)되고, service-fee(보장수수료 모드, `serviceFeeGross > 0`)와 engagement는
+상호 배타적이다(`ASSIGNMENT_FEE_AUTHORITY_CONFLICT`). 다만 카탈로그 D>0 terms 수락은 결제 전에
+`engagementId`를 만들고, Flutter는 `hasEngagement=true`이면 "계약금" 버튼을 숨긴다. 따라서 현재 앱에서는
+수락된 카탈로그 계약금을 실제로 납부할 CTA가 없다.
+
+### 2026-07-29 현재 소스 델타
+
+- 카탈로그 계약에서는 terms의 `agreedGross=X`, `depositGross=D`가 engagement 권위다. D>0 조건을
+  수락하면 engagement와 `requiresDeposit=true`가 생성되고 `serviceFeeGross=0`을 유지한다.
+  D=0 조건은 반대로 `serviceFeeGross=X`, engagement 없음이다.
+- 카탈로그 계약금 생성은 최신 terms 수락과 X/D 일치를 요구한다. 구 prepayment API로 다른 X/D를
+  주입할 수 없다. 자기 카탈로그 배정은 D>0 제안 자체가 금지된다.
+- 카탈로그 D>0 terms 수락 직후 engagement가 이미 존재한다. 서버 `payByWallet`은 이 engagement를
+  재사용할 수 있지만 Flutter의 `canPrepay = !hasServiceFee && !hasEngagement`가 버튼을 숨겨 결제 호출에
+  도달하지 못한다. 직접 배정의 engagement 생성 전 경로만 현재 앱에서 실행 가능하다.
+- 신규 5% 계약에서 계약금도 별도 money leg로 플랫폼 수수료 5.00%와 원천징수 3.3%를 스냅샷한다.
+  이후 참가자 charge마다 같은 정책을 개별 적용한다. 수수료는 각 leg마다 `HALF_UP` 원 단위 반올림하므로
+  X 전체에 한 번 계산한 값과 항상 같다고 가정하면 안 된다.
+- 제공자 견적은 미래 `expiresAt`이 필수다. 견적 제출 시 fee policy를 캡처하고, 호스트가 수락할 때
+  만료와 terms 버전을 검증한다. 호스트 고정가 제안은 제공자 수락 순간 현재 fee policy/version을 검증한다.
+- 계약금 취소 API/Repository는 존재하지만 Flutter 화면에서 호출하는 CTA는 없다. 또한 WALLET 결제는
+  같은 트랜잭션에서 즉시 PAID가 되어 `cancelPending`의 PENDING 조건을 일반 사용자 흐름에서 충족하지 않는다.
 
 ## 2. 실사 근거
 
@@ -18,11 +45,11 @@
 | Frontend API | `service_assignment_api.dart` | `createPrepayment`, `cancelPrepayment` |
 | Frontend Repository | `service_assignment_repository.dart` | `ServiceAssignmentPrepaymentCreateParam` |
 | Frontend Screen | `event_assignments_screen.dart` | `canPrepay = !hasServiceFee && !hasEngagement`, `_createPrepayment` 바텀시트 |
-| Verification | 서버 유닛 테스트 / codex 합의 PASS | X 검증·forfeit·authority XOR |
+| Verification | 서버 유닛 테스트 + 앱 소스 실측 | X 검증·forfeit·authority XOR, 카탈로그 결제 CTA 단절 |
 
 ## 3. 전체 동작 흐름
 
-### 3-A. 계약금 선납(payByWallet)
+### 3-A. 직접 배정 계약금 선납(payByWallet)
 
 1. 호스트가 배정 카드의 "계약금" 버튼을 누른다. 버튼은 `canPrepay = !hasServiceFee && !hasEngagement`가 true일 때만 노출된다(서비스비 보장모드 또는 이미 engagement면 숨김).
 2. 바텀시트에서 약정 총 보수 X(`agreedProviderFee`)와 계약금 D(`depositAmount`)를 입력한다. 클라이언트에서 `0 < D < X` 범위를 사전 검증한다.
@@ -41,6 +68,14 @@
    - `prepayment.status = PAID`, `pointTxId` 갱신
    - `assignment.engagementId` 설정, `requiresDeposit = true`
 5. Flutter는 성공 토스트 표시. 배정 카드에서 `engagementId != null`로 이후 "계약금" 버튼을 숨긴다.
+
+### 3-A-1. 카탈로그 D>0 terms 배정 — 서버 경로와 현재 앱 단절
+
+1. 카탈로그 terms의 최종 수락 시 서버가 X로 engagement를 만들고 `requiresDeposit=true`를 설정한다.
+2. 서버 `payByWallet`은 최신 수락 terms의 X/D와 요청 X/D가 같은지 검증한 뒤 기존 engagement를 재사용한다.
+3. 그러나 Flutter는 `engagementId != null`을 `hasEngagement=true`로 해석하고 `canPrepay=false`로
+   "계약금" 버튼을 숨긴다.
+4. 따라서 현재 앱 UI에서는 카탈로그 D>0 계약을 수락한 뒤 지갑 결제 API를 호출할 수 없다.
 
 ### 3-B. 계약금 적용(정산 시, lockAndSettle 내부)
 
@@ -120,45 +155,50 @@ WALLET 결제는 즉시 PAID라 이 경로는 거의 실행되지 않는다. PEN
 | 클라 사전 검증 | `fee > 0 && deposit > 0 && deposit < fee` — 서버 게이트와 정확히 일치 |
 | Repository 메서드 | `ServiceAssignmentRepository.createPrepayment(eventId, assignmentId, ServiceAssignmentPrepaymentCreateParam)` |
 | 응답 VO | `ServiceAssignmentPrepaymentVo` — Freezed, 필드: `id`, `engagementId`, `amount`, `method`, `status`, `paidAt` |
-| 취소 | `ServiceAssignmentRepository.cancelPrepayment(eventId, assignmentId, prepaymentId)` |
+| 취소 | API/Repository의 `cancelPrepayment(...)`만 존재. Screen 호출/CTA 없음 |
 | 계약금 후 버튼 숨김 | `item.engagementId != null`이면 `hasEngagement=true` → `canPrepay=false`로 버튼 숨김(2026-06-24 해소) |
+| 카탈로그 D>0 | terms 수락 단계에서 이미 `engagementId`가 생겨 같은 숨김 조건이 결제 전부터 적용됨 — 결제 CTA 없음 |
 
 ## 6. 상태/권한 매트릭스
 
 | 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
 |---|---|---|---|---|
-| 호스트 + ACCEPTED + 수금액 모드 | `payByWallet` 통과 | `canPrepay=true` | 계약금 선납 가능 | 일치 |
+| 호스트 + ACCEPTED + direct 수금액 모드 | `payByWallet` 통과 | `canPrepay=true` | 계약금 선납 가능 | 일치 |
+| 호스트 + 카탈로그 D>0 terms 수락 | 기존 engagement와 X/D 검증 후 `payByWallet` 가능 | `hasEngagement=true` → `canPrepay=false` | 앱에서 결제 API 호출 불가 | **불일치** |
 | 호스트 + 보장수수료 모드(X>0) | `ASSIGNMENT_FEE_AUTHORITY_CONFLICT` | `canPrepay=false`, 버튼 숨김 | 버튼 미노출 | 일치(이중 가드) |
 | 호스트 = 제공자(자전거래) | `ASSIGNMENT_SELF_CHARGE` | 서버 에러 토스트 | 거부 | 일치(서버 백스톱) |
 | D >= X 또는 D <= 0 | `ASSIGNMENT_PREPAYMENT_INVALID_AMOUNT` | 클라 사전 검증 거부 | 바텀시트 에러 토스트 | 일치(이중 가드) |
 | 동일 engagement 활성 계약금 존재 | `ASSIGNMENT_PREPAYMENT_ALREADY_EXISTS` | 서버 에러 토스트 | 거부 | 일치 |
 | 정산 시 Σcharge + D ≠ X | `ASSIGNMENT_FEE_MISMATCH` | 서버 에러 토스트 | 정산 거부 | 일치 |
-| PAID 계약금 취소 시도 | `ASSIGNMENT_PREPAYMENT_NOT_CANCELABLE` | 서버 에러 토스트 | 거부 | 일치 |
+| PAID 계약금 취소 시도 | `ASSIGNMENT_PREPAYMENT_NOT_CANCELABLE` | 취소 CTA 없음 | 앱에서 시도 불가 | 서버 계약만 존재 |
 | 배정 취소 시 PAID 계약금 | `forfeitOnAssignmentCancel` 자동 실행 | 배정 취소 결과 화면 | D 제공자 forfeit(비환불) | 일치 |
 
 ## 7. 서버-프론트 정합성 판단
 
 | 항목 | Backend | Frontend | 판단 |
 |---|---|---|---|
-| authority XOR 게이팅 | `serviceFeeGross > 0` → `ASSIGNMENT_FEE_AUTHORITY_CONFLICT` | `canPrepay = !hasServiceFee && !hasEngagement` | 일치 |
+| direct authority XOR 게이팅 | `serviceFeeGross > 0` → `ASSIGNMENT_FEE_AUTHORITY_CONFLICT` | `canPrepay = !hasServiceFee && !hasEngagement` | 일치 |
+| 카탈로그 engagement의 결제 전 상태 | D>0 terms 수락 시 engagement 생성, 이후 `payByWallet`이 재사용 | engagement가 있으면 결제 버튼 숨김 | **불일치 — 카탈로그 결제 단절** |
 | X 불변 정책 | `agreedProviderFee` 재입력 시 기존과 일치 검증 | 클라는 매번 X 입력 — 두 번째 계약금 시도 시 다른 X 입력 가능(서버가 거부) | 서버 단독 보호 |
-| 계약금 후 버튼 재노출 | `assignment.engagementId != null`이면 기존 engagement 재사용(새 계약금 중복 거부) | `canPrepay = !hasServiceFee && !hasEngagement` — engagement 시 `hasEngagement=true`로 버튼 숨김 | 일치 — engagement 시 `hasEngagement=true`로 버튼 숨김(2026-06-24 app `6847d8e` 해소) |
+| direct 계약금 납부 후 버튼 재노출 | direct 결제 성공으로 engagement가 생기고 새 계약금은 중복 거부 | engagement 시 `hasEngagement=true`로 버튼 숨김 | 직접 배정의 납부 완료 상태에서는 일치 |
 | 정산 연결(`engagementId↔serviceFeeGross`) | `applyDepositIfPresent`에서 engagement null/not-null 분기 | `ServiceAssignmentVo.engagementId` 필드로 판단 | 일치 |
 
 ## 8. Gap / Risk
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| ✅ 해소 | 이미 계약금 있는 배정에서 "계약금" 버튼 재노출 | `canPrepay = !hasServiceFee`는 engagement 여부를 체크하지 않음. engagement 배정은 `serviceFeeGross=0`이라 `hasServiceFee=false` → 버튼 노출 | 서버가 `ASSIGNMENT_PREPAYMENT_ALREADY_EXISTS`로 거부하지만 사용자 UX 혼란 | **해소(2026-06-24, app `6847d8e`)**: `canPrepay = !hasServiceFee && !hasEngagement` 적용 |
+| ✅ 해소(직접) | 직접 계약금 납부 완료 뒤 "계약금" 버튼 재노출 | 과거 `canPrepay = !hasServiceFee`는 이미 납부해 engagement가 생긴 direct 배정에도 버튼을 다시 노출 | 서버 중복 거부 전 UX 혼란 | `canPrepay = !hasServiceFee && !hasEngagement`로 직접 납부 완료 재노출은 해소. 단 같은 조건이 카탈로그 결제 전 engagement도 숨기는 P0를 만듦 |
 | P2 | 계약금 조회 GET 엔드포인트 없음 | 서버에 `GET .../prepayment` 없음. 앱에서 현재 계약금 상태·금액을 직접 표시 불가 | 호스트가 계약금 납부 여부·금액을 배정 목록에서 확인 불가 | `ServiceAssignmentVo`에 `depositAmount`, `depositStatus` 추가 또는 별도 GET 엔드포인트 |
 | P2 | PAID 계약금 취소 경로 없음 | `cancelPending`은 PENDING만 허용. WALLET은 즉시 PAID라 취소 불가 | 호스트가 계약금 잘못 납부 시 배정 취소(forfeit)만 가능 | 운영 정책 결정: PAID 계약금 취소+환불 경로 추가 여부 |
+| P0 | 카탈로그 D>0 terms 수락 후 계약금 결제 CTA 없음 | 수락이 engagement를 생성하지만 Flutter `canPrepay`는 engagement 존재 시 false | 카탈로그 계약금 필수 배정이 미납 상태로 남고 정산 게이트를 통과할 수 없음 | `requiresDeposit && prepayment 미납`을 표현하는 서버 VO 추가 후 결제 CTA 노출 |
+| P2 | PENDING 계약금 취소 UI 없음 | API/Repository만 있고 `event_assignments_screen.dart` 호출부 없음 | 취소 가능한 중간 상태가 생겨도 앱에서 조작 불가 | 조회 VO/CTA와 함께 취소 액션 배선 |
 | P3 | 자전거래(호스트=제공자) 프론트 사전 차단 없음 | 서버 `ASSIGNMENT_SELF_CHARGE`로 거부하지만 앱은 별도 체크 없음 | 에러 후 재시도 UX | 배정 생성 시점에 호스트=제공자 판단하여 계약금 버튼 비활성 |
 
 ## 9. 수용 기준
 
 ### AC-01. 계약금 선납 정상 흐름
 
-Given 호스트가 ACCEPTED 배정(수금액 모드, serviceFeeGross=0)에서 계약금 버튼을 누른다.  
+Given 호스트가 ACCEPTED 직접 배정(terms 비관리, engagement 없음, serviceFeeGross=0)에서 계약금 버튼을 누른다.
 When X=100000, D=30000 입력 후 제출한다.  
 Then `service_engagement.agreedProviderFee=100000`, `service_assignment_prepayment.status=PAID`, `assignment.engagementId` 설정. 호스트 지갑 30000원 차감. Flutter 성공 토스트.
 
@@ -197,6 +237,13 @@ Then 클라이언트에서 `deposit >= fee` 조건으로 에러 토스트 표시
 Given PAID 계약금이 이미 있는 engagement에 두 번째 계약금 시도.  
 When `POST .../prepayment/wallet`를 호출한다.  
 Then `ASSIGNMENT_PREPAYMENT_ALREADY_EXISTS` 반환. Flutter 에러 토스트.
+
+### AC-08. 카탈로그 D>0 현재 앱 단절 확인
+
+Given 카탈로그 배정에서 D>0 terms가 최종 수락되어 `engagementId`와 `requiresDeposit=true`가 설정됐다.
+When Flutter가 배정 카드 액션을 렌더링한다.
+Then `hasEngagement=true`, `canPrepay=false`여서 "계약금" 버튼이 보이지 않는다. 서버 결제 계약은
+존재하지만 현재 앱 UI에서는 호출할 수 없음을 Gap으로 유지한다.
 
 ## 10. 미결정 / 후속
 

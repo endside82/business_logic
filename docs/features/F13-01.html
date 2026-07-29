@@ -29,6 +29,19 @@
 
       <section>
         <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 만난 사람·성향·연락</span>
+          <p>마이페이지에는 <code>/my/met-people</code>, 성향 검사/리포트, 커뮤니티 메시지 진입점이
+            연결됐다. 만난 사람은 증거등급 공동참석자를 사람별로 접고 현재 상태·차단·
+            <code>hideFromSearch</code>를 매 조회마다 다시 적용한다.</p>
+          <p>trait API는 문항/세션/제출/내 최신 결과 4개이며 V1 기준 활성 11축·24문항이다. 타인 원점수
+            endpoint는 없다. PersonSheet는 공통 태그·선언 선호만 제한 노출하고 커뮤니티 관계 chip에서
+            데이팅 MATCHED를 제거했다. 메시지는 같은 클럽·이벤트 72시간 유예·미결 의무 자격을 전송마다
+            재평가하고 <code>sendableBasis</code>/<code>sendableUntil</code>로 종료 조건을 표시한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="callout">
           <span class="label">설계 의도 — "내 상태를 보는 곳"과 "내 데이터를 바꾸는 곳"을 분리</span>
           <p>마이페이지는 사용자가 자기 정보를 직접 수정하는 자리가 아니다.
             자기 신원과 활동을 빠르게 확인하고, 바꿔야 할 게 있으면 그 화면으로 한 번 더 들어가게 한다.

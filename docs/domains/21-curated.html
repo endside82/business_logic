@@ -17,7 +17,7 @@
         <p class="lede">
           호스트가 모임에 <strong>강사 등 서비스 제공자를 배정</strong>하고, 참가자가 <strong>서비스비를 공동 부담</strong>하며,
           회차 종료 후 <strong>제공자에게 정산 지급</strong>하는 도메인.
-          플랫폼은 수수료를 취하지 않으며(원천징수만), 기존 결제·원장 인프라 위에서 동작한다.
+          카탈로그 계약은 5% 플랫폼 수수료와 원천징수를 적용하고, 기존 결제·원장 인프라 위에서 동작한다.
           배정·결제·정산의 세 단계가 하나의 흐름으로 이어지고, 호스트는 일반 이벤트와 정기모임 어느 쪽에도 제공자를 붙일 수 있다.
         </p>
       </header>
@@ -26,7 +26,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">기능 수</div><div class="value">7개</div><div class="hint">배정·결제·정산·초대·환불·계약금·묶음</div></div>
           <div class="metric"><div class="label">분담 방식</div><div class="value">4가지</div><div class="hint">본인 결제·호스트 대납·무료 초대·노쇼 귀속</div></div>
-          <div class="metric"><div class="label">플랫폼 수수료</div><div class="value">0%</div><div class="hint">원천징수 3.3%만 차감</div></div>
+          <div class="metric"><div class="label">신규 카탈로그 수수료</div><div class="value">5%</div><div class="hint">direct/기존 0% 스냅샷은 유지</div></div>
           <div class="metric"><div class="label">정산 지급</div><div class="value">주간 배치</div><div class="hint">회차 종료·전액 납부 확인 후</div></div>
         </div>
 
@@ -36,6 +36,55 @@
             붙인다. 결제 인프라는 그대로 쓰되 서비스 제공자 전용 수익 추적과 분담 계산만 이 도메인이 담당한다.
             호스트는 강사·통역사 등 서비스 제공자를 직접 지정해 참가자들이 각자 몫을 내도록 안내하거나,
             일부 참가자의 서비스비를 호스트가 직접 대납할 수 있다.</p>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">2026-07-29 실제 소스 기준</span>
+          <p>공개 API는 curated 30개와 provider 19개, 총 49개 엔드포인트다. 데이터는 curated 7개와
+            provider 5개, 총 12개 엔티티/테이블로 구성된다. 관리자 API에는 심사 큐·상세·승인·거절·
+            추가자료요청·문서 URL·상품 정지/해제 8개 엔드포인트가 있고, Flutter에는 curated 5화면과
+            provider 7화면, 관련 라우트 13개가 있다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">현재 앱이 서버 계약을 모두 노출하거나 도달시키는 것은 아니다</span>
+          <p>과금 화면은 aggregate 금액만 보여 주며 X/D cap·<code>chargeable</code>을 충분히 설명하지 않는다.
+            readiness 경고는 이름·금액 대신 raw userId를 표시하고 provider 지급내역 화면은 없다.
+            카탈로그 D&gt;0 terms 수락 뒤에는 engagement가 먼저 생겨 계약금 버튼이 사라진다.
+            무료 제외에는 undo와 참가자 검증 공백이 있고, 정기모임 direct DRAFT 복제에는 재개 API가 없다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>제공자 센터와 카탈로그가 추가된 현재 구조</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">제공자 등록·검증</div>
+            <h3>프로필과 증빙을 분리 관리한다</h3>
+            <p>개인/사업자 프로필을 만들고 완료된 PROVIDER_DOC 파일을 제출한다. 상태는 NONE, PENDING,
+              NEEDS_MORE_INFO, VERIFIED, REJECTED이며, 사업자번호는 암호화·유일 해시로 저장하고 응답에는
+              마스킹 값만 보낸다. 본인 숨김·관리자 정지·차단 관계는 공개 조회에서 404로 감춘다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">상품 카탈로그</div>
+            <h3>상품을 고르고 서버 스냅샷으로 배정한다</h3>
+            <p>VEHICLE, VENUE, LABOR, OTHER 상품을 지역·가격모델·가격 범위로 찾는다. ACTIVE 상품만
+              공개되며 차량/공간은 VERIFIED가 필수다. 배정 시 제공자·출처·상품 제목·카테고리·버전은
+              서버가 결정하므로 클라이언트가 바꿀 수 없다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">버전형 계약조건</div>
+            <h3>총액 X와 계약금 D를 서로 수락한다</h3>
+            <p>호스트 고정가 또는 제공자 견적을 불변 버전으로 누적한다. 상대방이 최신 버전을 수락해야
+              확정·과금·정산할 수 있다. 신규 수락은 FEE_V2_5PCT(5.00%)를 스냅샷하며, 기존 0% 계약은
+              재수락 전까지 그대로 유지된다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">이행·운영</div>
+            <h3>이행 결과와 심사 권한을 따로 기록한다</h3>
+            <p>terms-managed 배정은 FULFILLED 또는 PARTIALLY_FULFILLED여야 정산된다. 관리자는
+              검증 권한(NR)과 문서 열람 권한(NS)을 분리해 사용한다. 현재 관리자 프런트와 검증 결과
+              알림 연결, 상품 일정 충돌 검증은 남아 있다.</p>
+          </article>
         </div>
       </section>
 
@@ -49,16 +98,16 @@
 
         <h3>서비스비 분담 결제</h3>
         <div class="cards">
-          <a class="card" href="../features/F21-02.html"><div class="eyebrow">F21-02</div><h3>참가자 서비스비 분담 결제</h3><p>호스트가 총 서비스비를 정하면 참가자 각자가 본인 몫을 낸다. 회차 종료 후 시스템이 출석 인원으로 나눈 내 몫을 자동 계산해 표시한다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F21-04.html"><div class="eyebrow">F21-04</div><h3>무료 초대·호스트 대납</h3><p>호스트가 특정 참가자를 무료로 초대하거나, 그 몫을 직접 대납한다. 보장 총액 모드에서는 무료 초대가 제한된다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
-          <a class="card" href="../features/F21-06.html"><div class="eyebrow">F21-06</div><h3>계약금 선납</h3><p>호스트가 제공자와 사전 계약을 맺고 계약금을 먼저 납부한다. 정산 시 계약금이 총액 안에서 차감 적용된다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
+          <a class="card" href="../features/F21-02.html"><div class="eyebrow">F21-02</div><h3>참가자 서비스비 분담 결제</h3><p>서버는 X/D cap과 납부가능 여부를 계산한다. 현재 앱은 aggregate 납부액·제안 분담액만 표시하며 첫 “내 몫 결제”는 잔액이 아닌 full share다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F21-04.html"><div class="eyebrow">F21-04</div><h3>무료 초대·호스트 대납</h3><p>호스트가 무료 처리하거나 대납한다. 생성 뒤 undo가 없고 beneficiary의 실제 참가자 검증이 비어 있으며, 카탈로그 무료 제외는 서버가 금지한다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
+          <a class="card" href="../features/F21-06.html"><div class="eyebrow">F21-06</div><h3>계약금 선납</h3><p>직접 배정은 앱에서 납부 가능하다. 카탈로그 D&gt;0은 terms 수락 시 engagement가 먼저 생겨 현재 앱의 계약금 CTA가 숨겨진다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
         </div>
 
         <h3>정산·환불·묶음</h3>
         <div class="cards">
-          <a class="card" href="../features/F21-03.html"><div class="eyebrow">F21-03</div><h3>제공자 정산</h3><p>회차 종료 후 호스트가 정산을 실행한다. 출석자 전원의 서비스비가 납부된 경우에만 통과되며, 누가 아직 납부하지 않았는지 미리 확인할 수 있다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F21-05.html"><div class="eyebrow">F21-05</div><h3>환불·회수</h3><p>정산 전 전액 환불, 정산 전 부분 환불(호스트가 차액 흡수), 정산 후 회수(제공자 수익 일부 돌려받음) 세 가지 경우를 구분한다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
-          <a class="card" href="../features/F21-07.html"><div class="eyebrow">F21-07</div><h3>정기모임 묶음 배정·정산</h3><p>정기모임의 여러 회차를 한 번에 배정하고, 묶음 단위로 정산을 실행한다. 문제가 있는 회차는 호스트가 개별 조치한 뒤 다시 처리한다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
+          <a class="card" href="../features/F21-03.html"><div class="eyebrow">F21-03</div><h3>제공자 정산</h3><p>readiness는 coverage와 보장합계만 미리 보고 실제 settle이 종료·terms·이행·earning·계약금을 추가 검증한다. 앱은 미납자를 raw userId로 표시한다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F21-05.html"><div class="eyebrow">F21-05</div><h3>환불·회수</h3><p>부분환불은 참가자 복원액과 같은 금액을 호스트가 부담한다. PAID 회수는 원 provider net 기준이며, 요청 고유키는 부분환불·회수에만 적용된다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
+          <a class="card" href="../features/F21-07.html"><div class="eyebrow">F21-07</div><h3>정기모임 묶음 배정·정산</h3><p>direct 묶음 배정과 회차별 독립 정산을 제공한다. DRAFT 재개·묶음 취소 API는 없고 결과 화면은 회차를 raw eventId로 식별한다.</p><div class="meta"><span class="pill">상세 →</span></div></a>
         </div>
       </section>
 
@@ -67,7 +116,7 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart TD
-    A["호스트가 제공자 배정"] --> B["제공자 수락"]
+    A["호스트가 직접 지정 또는\n카탈로그 상품 선택"] --> B["제공자 수락\n카탈로그는 조건 버전 수락"]
     B --> C["호스트 최종 확정"]
     C --> D["호스트가 총 서비스비 설정"]
     D --> E["참가자들이 각자 본인 몫 납부"]
@@ -79,18 +128,18 @@ flowchart TD
     H --> I
     I --> J["회차 종료\n시스템이 출석 인원 확정"]
     J --> K{"모든 출석자 납부?"}
-    K -->|"미납 있음"| L["호스트에게 미납자 안내\n추가 조치 후 재시도"]
+    K -->|"미납 있음"| L["앱 경고에 raw userId 표시\n카드 액션으로 별도 조치 후 재시도"]
     K -->|"전원 납부"| M["호스트 정산 실행"]
     L --> K
     M --> N["검증 통과\n주간 배치로 제공자에게 지급"]
           </div>
         </div>
         <div class="callout">
-          <span class="label">정산 확정 조건 — 전원 납부 확인이 필수 관문</span>
+          <span class="label">readiness는 사전 신호이고 실제 settle 게이트는 더 넓다</span>
           <p>제공자 정산은 단순히 호스트가 "실행" 버튼을 누른다고 즉시 완료되지 않는다.
-            출석자 전원이 각자의 몫을 냈는지 시스템이 확인한 다음에만 지급 절차로 넘어간다.
-            누가 아직 납부하지 않았는지 정산 전에 미리 확인하는 기능이 제공되므로,
-            호스트는 정산 전 미납 현황을 파악하고 필요한 조치(대납·무료 처리·독촉)를 마친 뒤 정산을 실행한다.</p>
+            사전 readiness는 출석자 coverage 집합과 보장합계만 확인한다. 실제 settle은 여기에 회차 종료,
+            CONFIRMED 상태, 최신 terms 수락, 이행 확인, earning 유효성, 계약금 적용을 더 검증한다.
+            현재 앱 경고는 미납자의 이름·금액이 아니라 <code>#userId</code> 목록만 보여 주며 전용 조치 CTA는 없다.</p>
         </div>
       </section>
 
@@ -121,14 +170,14 @@ flowchart TD
               <tr>
                 <td><strong>노쇼 귀속</strong></td>
                 <td>선납 참가자가 무단 불참 시 제공자 귀속</td>
-                <td>환불 없음</td>
+                <td>노쇼 전환 순간 환불 없음. 정산 전 전액환불은 가능</td>
                 <td>인정(제공자 수익으로 전환)</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p>단, 호스트가 보장 총액을 설정한 경우에는 무료 초대가 허용되지 않는다 — 총액 수령 보장 모드에서는
-          모든 출석자가 실제 납부해야 총액이 맞아 떨어지기 때문이다.</p>
+        <p>단, 호스트가 보장 총액을 설정한 direct 배정과 모든 offering/terms 배정에서는 무료 초대가
+          허용되지 않는다. 카탈로그 계약에서 무료로 초대하려면 돈이 실제 이동하는 호스트 대납을 사용한다.</p>
       </section>
 
       <section>
@@ -136,12 +185,21 @@ flowchart TD
         <div class="callout warn">
           <span class="label">핵심 운영 원칙</span>
           <ul>
-            <li><strong>플랫폼 수수료는 0%다.</strong> 이 도메인의 결제는 서비스 제공자에 대한 분담금이지 플랫폼 수익이 아니다. 단, 개인 제공자에게 지급 시 원천징수(3.3%)가 자동 차감된다.</li>
+            <li><strong>신규 카탈로그 계약은 5%다.</strong> 수락된 fee policy/rate를 계약에 고정하고,
+              각 charge/deposit의 gross에서 5%를 뺀 뒤 잔액에 3.3% 원천징수를 적용한다. direct/legacy와
+              기존 FEE_V1_PASSTHROUGH 계약은 0% 스냅샷을 유지한다.</li>
             <li><strong>정산은 호스트가 직접 실행해야 한다.</strong> 회차가 종료돼도 호스트가 정산 버튼을 누르기 전까지 지급은 일어나지 않는다. 시스템은 완납 여부를 검증할 뿐이며, 자동 정산은 없다.</li>
-            <li><strong>미납이 한 명이라도 있으면 정산이 막힌다.</strong> 호스트가 그 참가자를 대납하거나 무료로 처리하거나 정산에서 제외하는 조치를 취해야 정산이 통과된다.</li>
+            <li><strong>미납이 한 명이라도 있으면 정산이 막힌다.</strong> 호스트가 그 참가자를 대납하거나,
+              허용되는 direct 수금액 모드에서만 무료 제외한 뒤 정산을 다시 실행한다. 카탈로그/보장 총액 모드의
+              무료 제외는 서버가 거부한다.</li>
             <li><strong>정기모임 묶음 정산은 회차별로 결과가 개별 반환된다.</strong> 일부 회차가 통과되지 않아도 나머지 회차는 정상 처리된다. 통과 안 된 회차는 호스트가 별도 조치 후 재실행한다.</li>
             <li><strong>계약금과 서비스비 설정은 동시에 쓸 수 없다.</strong> 호스트는 "총 서비스비 설정" 방식 또는 "계약금 선납" 방식 중 하나만 선택한다. 두 가지를 동시에 사용하면 시스템이 거부한다.</li>
             <li><strong>제공자 본인은 본인이 배정된 모임의 참가자 서비스비를 낼 수 없다.</strong> 자기가 받는 서비스비를 자기가 납부하는 거래는 시스템이 차단한다.</li>
+            <li><strong>path eventId와 assignment owner의 일치 검증은 endpoint마다 같지 않다.</strong>
+              confirm/cancel은 서비스에서 assignment의 실제 event 권한을 검사해 권한 상승은 막지만,
+              controller path의 eventId가 같은 event인지 별도로 검증하지 않는다.</li>
+            <li><strong>무료 제외·대납은 실제 참가자 여부를 서버가 확인하지 않고 되돌리기 endpoint도 없다.</strong>
+              입력 picker만으로 신원을 보장한다고 가정하면 안 된다.</li>
           </ul>
         </div>
       </section>
@@ -156,7 +214,9 @@ flowchart TD
               <tr><td><strong>06 결제·지갑</strong></td><td>서비스비 납부·환불은 기존 지갑 차감 인프라를 그대로 사용한다. 제공자 수익도 기존 크리에이터 수익 구조에 기록된다.</td></tr>
               <tr><td><strong>07 모임 정산</strong></td><td>정산 지급 처리를 모임 정산 도메인이 담당하는 기존 정산 경로로 위임한다.</td></tr>
               <tr><td><strong>17 정기모임</strong></td><td>묶음 배정·묶음 정산 기능은 정기모임 단위로 동작하며, 출석 인원 확정도 정기모임 정책을 따른다.</td></tr>
-              <tr><td><strong>운영 대시보드(admin)</strong></td><td>전용 관리 화면은 없으며, 기존 크리에이터 수익 관리·머니플로우 추적 화면에서 서비스 배정 출처로 조회된다.</td></tr>
+              <tr><td><strong>운영 대시보드(admin)</strong></td><td>제공자 심사·문서 URL·상품 정지/해제
+                관리자 API 8개가 구현됐다. 이 워크스페이스에는 대응 관리자 프런트가 아직 없고,
+                정산은 기존 크리에이터 수익 관리·머니플로우 추적을 함께 사용한다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -175,7 +235,10 @@ flowchart TD
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - community_api/src/main/java/com/endside/community/curated/
-  - community_app/lib/.../curated/
+  - community_api/src/main/java/com/endside/community/provider/
+  - community_admin_api/src/main/java/com/endside/communityadmin/provider/
+  - community_app/lib/.../curated/ + lib/.../provider/
+  - measured 2026-07-29
 -->
     </main>
   </div>

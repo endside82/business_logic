@@ -1,12 +1,12 @@
 # F14-03. 위치 공유 만료 연장 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/14_location_directions/F14-03_location-extend -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/14_location_directions/F14-03_location-extend -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/14_location_directions/F14-03_location-extend`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장하는 API. 기본 30분, 최대 120분으로 클램프된다. `LocationShareExpiringScheduler` 가 만료 30분 전에 발송하는 `LOCATION_SHARE_EXPIRING` 푸시 알림이 사용자가 모임이 길어졌을 때 본 API를 호출하도록 유도하는 흐름의 종착지.
+옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장하는 API. 기본 요청은 30분이고 각 요청값을 1~120분으로 클램프한다. 누적 만료 상한이나 재탭 제한은 없어 반복 호출하면 계속 연장할 수 있다. `LocationShareExpiringScheduler`는 매분 잔여 25~31분 범위의 share를 찾아 `LOCATION_SHARE_EXPIRING` 알림 생성을 시도하며, 실제 인앱/푸시 도달은 사용자 채널 설정과 비동기 발송 결과에 따른다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -38,7 +38,7 @@
 2. `EventLocationRepository.extendShare(eventId, 30)` → POST `/api/v1/events/{eventId}/location/extend?extendMinutes=30`
 3. 성공 → notifier 가 내부 `refresh()` 호출 → `GET /location` → 응답의 `LocationVo.expiresAt` 이 갱신된 값으로 들어옴
 4. UI: `myLocation.expiresAt` 이 다음 빌드에서 새 값으로 반영 → 카운트다운 텍스트 즉시 증가
-5. (백그라운드) 서버 측 스케줄러가 새 expiresAt 의 30분 전 시점에 다시 알림 가능
+5. (백그라운드) 서버 측 스케줄러가 새 expiresAt 기준 잔여 25~31분 window에서 다시 알림 생성을 시도할 수 있음
 
 > 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조).
 
@@ -46,7 +46,7 @@
 
 ### 개요
 
-옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장하는 API. 기본 30분, 최대 120분으로 클램프된다. `LocationShareExpiringScheduler` 가 만료 30분 전에 발송하는 `LOCATION_SHARE_EXPIRING` 푸시 알림이 사용자가 모임이 길어졌을 때 본 API를 호출하도록 유도하는 흐름의 종착지.
+옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장한다. 기본 요청은 30분이며 한 요청의 값만 1~120분으로 클램프된다. 기존 `expiresAt`에 매번 더하므로 반복 요청에 대한 누적 상한은 없다.
 
 ### 엔드포인트 요약
 
@@ -61,10 +61,11 @@
   - 컨트롤러 주석 (G-01) 에 "최대 120분" 명시. 서비스 클램프 로직과 일치.
 - **Enum**: 본 기능 전용 enum 없음.
 - **외부 알림 producer**: `LocationShareExpiringScheduler`
-  - `@Scheduled(fixedRate = 60000)` — 매분 실행
-  - 윈도우: `[now + 25m, now + 31m]` (lookback 5m + lookahead 1m)
+  - `@Scheduled(fixedRate = 60000)` — 정상 실행 cadence 매분
+  - 윈도우: `[now + 25m, now + 31m]` (lookback 5m + lookahead 1m). 정확히 30분 전 1회라는 시간 보장은 아님
   - dedupe TTL 35분, key 에 `expiresAt` 포함 → 연장 시 새 슬롯 자동 발급
   - opt-out 사용자에게는 발송 스킵
+  - NotificationSetting에서 in-app 비활성 시 생성 자체를 return하고, push 비활성 시 인앱만 저장한다. push 허용 시에도 FCM 발송은 비동기다.
 
 ### 의존 단위 / 외부 시스템
 
@@ -111,7 +112,7 @@
 2. `EventLocationRepository.extendShare(eventId, 30)` → POST `/api/v1/events/{eventId}/location/extend?extendMinutes=30`
 3. 성공 → notifier 가 내부 `refresh()` 호출 → `GET /location` → 응답의 `LocationVo.expiresAt` 이 갱신된 값으로 들어옴
 4. UI: `myLocation.expiresAt` 이 다음 빌드에서 새 값으로 반영 → 카운트다운 텍스트 즉시 증가
-5. (백그라운드) 서버 측 스케줄러가 새 expiresAt 의 30분 전 시점에 다시 알림 가능
+5. (백그라운드) 서버 측 스케줄러가 새 expiresAt 기준 잔여 25~31분 window에서 다시 알림 생성을 시도할 수 있음
 
 > 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조).
 
@@ -131,7 +132,7 @@
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
-| S1 | 만료 30분 전 푸시를 받고 연장한다 (Happy Path, 알림 트리거) | opt-in true, LocationShare 행 존재 | - 서버: `location_share.expires_at` += 30분 |
+| S1 | 만료 근접 알림을 받고 연장한다 (Happy Path, 알림 트리거) | opt-in true, LocationShare 행 존재, 인앱 알림 허용 | 스케줄러 window와 dedupe를 통과하면 인앱 알림이 생성되고 push 허용 시 비동기 발송을 시도한다. 사용자가 연장하면 `location_share.expires_at` += 30분 |
 | S2 | 시트에서 직접 연장 (알림 없이 능동적으로) | 카운트다운을 보고 미리 연장하려는 사용자 | 위 S1 의 7~9 단계와 동일 |
 | S3 | 호스트가 본인 위치 공유 없이 연장 시도 (호스트 분기) | 호스트, 본인은 LocationShare 행 없음 (위치 update 호출 안 함) | 호스트는 본인 좌표를 한 번이라도 update 한 후에야 연장 가능 |
 | S4 | 이미 만료된 공유를 연장 시도 (만료 분기) | 알림을 늦게 본 사용자, expiresAt 이 이미 5분 전 | 사용자는 옵트인 토글을 다시 켜고 update 호출하여 새로 시작해야 함 (`POST /update` 가 `expiresAt = now+2h` 로 재설정) |
@@ -155,14 +156,17 @@
 | 후보 | frontend.md:42 | > 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:76 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=extend) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:106 | - 클램프(1~120분) 검증은 본 E2E 에서 미커버 — 서비스 단위 테스트로 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 정책 Gap | `LocationService#extendShare` | 120분은 요청 1회 clamp일 뿐이다. 기존 만료에 반복 가산하므로 누적 상한·재탭 제한·이벤트 종료 상한이 없다. | 총 공유 종료 상한이 필요한지 결정하고 서버에서 enforce |
+| 전달 한계 | `LocationShareExpiringScheduler`, `NotificationService` | 잔여 25~31분 window에서 알림 생성을 시도하며 채널 설정에 따라 skip된다. push는 비동기라 정확히 30분 전 도달을 보장하지 않는다. | 문구를 근사 알림으로 유지하고 trace/설정별 테스트 |
+| UX Gap | `_CountdownRow` | 만료 여부로 연장 버튼을 disable하지 않는다. 다음 GET 전에 stale `myLocation`이 남으면 `"공유 종료됨"` 옆 버튼이 활성이고 누르면 서버 실패 토스트가 날 수 있다. | `expiresAt <= now`에서 버튼 숨김/비활성화 |
 
 ## 9. 수용 기준
 
-- **AC-01. 만료 30분 전 푸시를 받고 연장한다 (Happy Path, 알림 트리거)**: Given opt-in true, LocationShare 행 존재 When 사용자가 해당 흐름을 실행하면 Then - 서버: `location_share.expires_at` += 30분
+- **AC-01. 만료 근접 알림을 받고 연장한다 (Happy Path, 알림 트리거)**: Given opt-in true, share가 잔여 25~31분 window에 있고 인앱 알림이 허용될 때 When scheduler와 dedupe를 통과하면 Then 인앱 알림을 생성하고 push 허용 시 비동기 발송을 시도하며, 사용자의 +30분 요청 성공 시 기존 `expiresAt`에 30분을 더한다
 - **AC-02. 시트에서 직접 연장 (알림 없이 능동적으로)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 위 S1 의 7~9 단계와 동일
 - **AC-03. 호스트가 본인 위치 공유 없이 연장 시도 (호스트 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 호스트는 본인 좌표를 한 번이라도 update 한 후에야 연장 가능
 - **AC-04. 이미 만료된 공유를 연장 시도 (만료 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자는 옵트인 토글을 다시 켜고 update 호출하여 새로 시작해야 함 (`POST /update` 가 `expiresAt = now+2h` 로 재설정)
-- **AC-05. 클램프 동작 — 사용자가 200분을 보내도 120분으로 잘림**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 항상 1~120 분 범위 내에서만 연장. 음수/0 도 1로 클램프
+- **AC-05. 요청 1회 클램프**: Given 200분·0분 같은 값을 보낼 때 When 연장 서비스가 처리하면 Then 해당 요청만 120분·1분으로 클램프한다. 반복 호출 누적 만료에는 상한이 없다
 - **AC-06. opt-out 후 알림 발송 차단 (알림 producer 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then opt-out 사용자는 만료 알림을 받지 않음 (스케줄러 79-83 행)
 - **AC-07. 미참가자가 연장 시도 (자격 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 변화 없음
 

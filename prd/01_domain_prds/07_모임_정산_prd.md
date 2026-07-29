@@ -1,10 +1,14 @@
 # 07. 모임 정산 PRD
 
-<!-- generated: domain-source-first-rollup; updated: 2026-06-05 (DRAFT 미리보기 정식화 D-OPEN-2); unit: business_logic/units/07_meeting_settlement -->
+<!-- generated: domain-source-first-rollup; updated: 2026-07-29 (혼합결제 은행분 확인 source-of-truth 재실측); unit: business_logic/units/07_meeting_settlement -->
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
 > **2026-06-05 DRAFT 미리보기 정식화(D-OPEN-2 해소).** 준비 중(DRAFT) 정산의 참가자 노출이 "설계되지 않은 노출"에서 **공식 미리보기 기능**으로 확정됐다 (결정 DEC-V1~V9, canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md`, 서버 426c26d·94c4869 + 앱 7ba69c0). 핵심: ① **차등 노출(서버 강제)** — DRAFT && 비호스트는 총액·상태·내 분담금만(note 마스킹/summary 본인 행만/items 빈 목록/영수증 URL 거부), ② **DRAFT 이의제기 차단** — 유일하게 잠기지 않았던 문을 닫아 "확정 전 무행동" 완성, ③ **열람 자격 확장** — ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트(`validateSettlementReadAccess` 신설, 기존 술어 보존), ④ **호스트 평판 집계에서 DRAFT 제외**, ⑤ **지갑 모임정산 목록 DRAFT 포함+마스킹** — 같은 날 후속 슬라이스(api c8977c5/app 8c60999)로 지갑 모임정산 목록 화면(SCR-PA-005)까지 완성, ⑥ **이벤트 상세 "모임 정산" 입구 신설**(호스트‖ATTENDING 항상 노출, 정산 없으면 빈 상태/생성 CTA — 발견 경로는 이 입구와 지갑 목록 둘). 알림은 현행대로 "정산 신청" 시점에만(준비 중 알림 신설 없음). 상세: [F07-04 §7-A](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md), [F07-08 §7-A](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md), [F07-10 §7-A](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md).
+
+> **2026-07-29 혼합결제 은행분 확인 재실측.** `pay-mixed`에서 은행분이 1원 이상이면 transfer는 즉시 완료되지 않고 `BANK_AWAITING_CONFIRM`에 머문다. `POST .../transfers/{transferId}/confirm-bank-portion`은 **수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`)**만 호출할 수 있고, 송금자(`fromUserId`)는 정산 생성자이기도 해도 self-confirm 가드에 먼저 차단된다. Flutter도 `bankAwaitingConfirm && !sender && (recipient || settlement creator)`일 때만 `받았어요` CTA를 넘긴다. 이 확인은 요청 body·영수증·은행 조회가 없는 수기 신뢰 선언이므로 화면은 “시스템이 실제 입금을 검증하지 않는다”는 경고를 노출한다.
+
+> **2026-07-29 이체 화면·일괄 처리 추가 실측.** `bulkConfirmBankTransfers`는 같은 service bean의 `@Transactional` method를 self-invocation하므로 주석과 달리 건별 Spring transaction을 만들지 않는다. Flutter의 “미납자 알림”은 실제 API 호출 없이 성공 토스트만 표시하고, “대기 금액”은 `BANK_AWAITING_CONFIRM`을 제외한다. 일반 BANK 확인은 서버가 수취자/정산 생성자를 허용하지만 화면 CTA는 정산 생성자에게만 보이며, 완료된 정산에서도 하단 액션이 남을 수 있다. 상세와 조치는 [F07-06 Gap / Risk](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md)를 우선한다.
 
 > **2026-05-28 RM 도메인 신설 영향(cross-ref).** `Settlement` 엔티티 확장: `event_id` `long`→`Long` nullable + `regular_meeting_id` Long + `reserved_refund` BigDecimal 신규. DDL `uk_settlement_rm(regular_meeting_id)` UNIQUE + `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))`로 양립 불가. `failed_refund.event_id` nullable + `regular_meeting_id` 추가(결정 K). **flow-through 정산 모델**: RM은 `retainedPaid`만 호스트 수익(gross), `retainedFree`는 `freePointSubsidy`로 분리(플랫폼 보조, payout 비대상). close→**afterCommit**→`tryCreateSettlement(REQUIRES_NEW)` 다층 방어 + 1h failsafe 스케줄러. `SettlementService.completeSettlement` 재사용 + `reservedRefund.signum() > 0` 게이트 추가. 자세한 내용은 [17 정기모임 F17-10](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md).
 
@@ -17,8 +21,8 @@ Settlement 도메인의 정산 단계와 별개로, 정산은 항목/이체/선�
 항목별 분할 모드일 때 항목명·금액·카테고리·참여자를 추가/수정/삭제하여 분담금을 산출한다. 호스트는 본인이 과거 입력한 최근 항목을 칩(chip)으로 빠르게 재사용할 수 있다.
 호스트가 DRAFT 정산을 **ACTIVE**로 활성화하면 모든 참가자에게 납부 알림이 발송되고, 분담금 결제가 가능해진다. 활성화된 정산은 호스트 권한으로 취소(CANCEL)할 수 있다.
 정산 본체·요약(총액/1인당/납부진척률)·참여자 상태 리스트·항목별 영수증 이미지를 조회한다. 열람 자격은 ATTENDING 참가자 ∪ 해당 정산 share/transfer 당사자 ∪ 호스트(2026-06-05 확장). DRAFT 단계는 참가자에게 미리보기 수위(총액·상태·내 분담금만)로 차등 노출된다.
-참가자가 본인에게 할당된 분담금을 **포인트(지갑) 또는 계좌이체**로 납부한다. 포인트는 즉시 차감 처리되고, 계좌이체는 호스트의 수동 확인이 필요하다. 포인트+계좌이체 혼합 결제 및 자기환불·재발행도 지원.
-참가자가 계좌이체로 납부한 건을 호스트가 수동 확인하여 완료 처리한다. 다건 일괄 확인과, 회수 불가 분담금의 상각(write-off) 처리 가능. 모든 이체 확인이 완료되면 정산 상태가 자동 **COMPLETED**로 전이.
+참가자가 본인에게 할당된 분담금을 **포인트(지갑) 또는 계좌이체**로 납부한다. 포인트는 즉시 차감 처리되고, 계좌이체는 수동 확인이 필요하다. 포인트+계좌이체 혼합 결제에서 은행분이 있으면 `BANK_AWAITING_CONFIRM`에 머물며, 수취자 또는 정산 생성자가 실제 입금 내역을 확인한 뒤에만 transfer가 `COMPLETED`가 된다.
+일반 계좌이체의 단건·일괄 확인과 회수 불가 분담금의 상각(write-off)을 지원한다. 혼합결제 은행분 확인은 송금자 self-confirm과 제3자 호출을 서버와 Flutter 양쪽에서 막는다. 유효 transfer(취소·대체 원본 제외)가 모두 `COMPLETED`이고 모든 share도 완료된 경우에만 정산 상태가 자동 **COMPLETED**로 전이한다.
 호스트가 미납 참가자에게 푸시 리마인드를 발송하거나, 정산 마감 기한을 연장한다. 리마인드 이력도 조회 가능 (E-02 푸시 리마인드 기능).
 참가자는 자신의 분담금 산정에 이의를 제기할 수 있고, 호스트는 이의를 검토해 수락/기각 처리한다. 정산 변경 내역은 감사 로그(audit log)로 페이지네이션 조회된다.
 이벤트 시작 전 참가확정의 조건으로 선입금을 받는다. 참가자는 포인트/계좌이체로 선입금하고, 호스트는 계좌이체 입금을 수동 확인 또는 환불 처리한다. 호스트는 이벤트 시점 기준 N일 전 환불률을 정의하는 환불 규칙을 설정한다.
@@ -130,7 +134,7 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 ---
 
 ### F07-05. 분담금 납부 (Pay Share / Transfer) — 참가자
-> 참가자가 본인에게 할당된 분담금을 **포인트(지갑) 또는 계좌이체**로 납부한다. 포인트는 즉시 차감 처리되고, 계좌이체는 호스트의 수동 확인이 필요하다. 포인트+계좌이체 혼합 결제 및 자기환불·재발행도 지원.
+> 참가자가 본인에게 할당된 분담금을 **포인트(지갑) 또는 계좌이체**로 납부한다. 포인트는 즉시 완료되고, 은행분이 포함된 혼합 결제는 `BANK_AWAITING_CONFIRM`에서 수취자/정산 생성자의 수기 입금 확인을 기다린다. 자기환불·재발행도 지원한다.
 
 - **관점**: 참가자
 - **상태**: ACTIVE 정산에서만 동작
@@ -142,17 +146,17 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 - **API** (Transfer 단위):
   - `GET /api/v1/events/{eventId}/settlement/transfers/me` — 내 이체 리스트
   - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay` — 포인트 결제
-  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed` — 포인트+계좌이체 혼합 (`MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`)
+  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed` — 포인트+계좌이체 혼합 (`MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`); 은행분 `> 0`이면 `BANK_AWAITING_CONFIRM`, `== 0`이면 즉시 `COMPLETED`
   - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/self-refund` — 본인 결제 자체 환불
   - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/reissue` — 이체 재발행
 - **Frontend**: `screens/my_settlement_shares_screen.dart`, `screens/transfer_list_screen.dart`, `widgets/my_share_row_card.dart`, `widgets/transfer_card_widget.dart`, `widgets/transfer_status_badge_widget.dart`, `utils/remit_url_builder.dart`
 
 ---
 
-### F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) — 호스트
-> 참가자가 계좌이체로 납부한 건을 호스트가 수동 확인하여 완료 처리한다. 다건 일괄 확인과, 회수 불가 분담금의 상각(write-off) 처리 가능. 모든 이체 확인이 완료되면 정산 상태가 자동 **COMPLETED**로 전이.
+### F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) — 호스트 + 혼합 이체 수취자
+> 일반 계좌이체는 정산 생성자가 수동 확인하고, 혼합결제의 은행분은 수취자 또는 정산 생성자가 확인한다. 다건 일괄 확인과 회수 불가 분담금의 상각(write-off)을 지원하며, 모든 유효 transfer와 모든 share가 완료돼야 정산이 자동 **COMPLETED**로 전이한다.
 
-- **관점**: 호스트
+- **관점**: 정산 생성자(일반/혼합 확인·일괄 처리) + 혼합 이체 수취자(`BANK_AWAITING_CONFIRM` 단건 확인)
 - **상태 전이**: ACTIVE → (모든 transfer 확인 시) **COMPLETED**
 - **UI/UX**: SCR-MS-005 (이체 내역) 호스트 뷰
 - **API**:
@@ -160,6 +164,7 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
   - `PATCH /api/v1/events/{eventId}/settlement/shares/{shareId}/confirm` — 분담금 단위 계좌이체 확인 (호스트가 클릭)
   - `PATCH /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm` — 이체 단위 확인
   - `PATCH /api/v1/events/{eventId}/settlement/transfers/bulk-confirm` — `MeetingSettlementBulkConfirmParam(transferIds[])` 일괄 확인 (호스트 권한)
+  - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm-bank-portion` — body 없음, 혼합결제 은행분 확인. `BANK_AWAITING_CONFIRM` + ACTIVE + PENDING appeal 없음 + (`toUserId` 또는 `creatorUserId`) 조건이며 `fromUserId`는 항상 차단
   - `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/writeoff` — `MeetingSettlementTransferWriteoffParam(reason)` 회수 불가 상각
 - **Frontend**: `screens/transfer_list_screen.dart`, `widgets/transfer_card_widget.dart`, `widgets/settlement_action_bar_widget.dart`
 
@@ -270,8 +275,30 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 
 - **정산 이의 목록 — 생성자/호스트 전용(F07C4-01, S2 수정 완료)**: `GET /api/v1/events/{eventId}/settlement/appeals` 이의 목록 조회 권한이 **정산 생성자 또는 이벤트 호스트**로 제한됨. 이전에는 `validateSettlementReadAccess`(참가자 누구나)로 열려 있어 다른 참가자의 이의 사유·이름·호스트 답변이 전원에게 노출됐음. 이제 `validateSettlementCreatorOrHost` 게이트로 교정.
 - **이체 매트릭스(who-owes-whom) — 참가자 전체 투명성 유지(D-F07-1 확정)**: ACTIVE/COMPLETED 정산의 전체 납부 매트릭스가 참가자 전원에게 노출되는 것은 **n빵 투명성 의도 설계**임(2026-07-01 확정). 결함 아님, 수정 불요.
-- **정산 관리 게이팅 — 호스트 전용 정렬(F07C1-01/02)**: 정산 활성화·일괄 확인 등 관리 액션 게이팅을 클라이언트에서 "정산 생성자 또는 이벤트 호스트"로 조임. 이전에는 클럽 스태프(OWNER/ADMIN)까지 포함했으나 서버의 `validateSettlementCreatorOrHost` 와 불일치했음.
+- **정산 관리 게이팅 — 실측 경계(F07C1-01/02)**: 서버 `validateSettlementCreatorOrHost`는 정산 생성자 또는 이벤트 호스트를 허용하지만, 현재 이체 화면의 `isHost`는 `settlementDetail.creatorUserId == currentUserId`만 본다. 따라서 이벤트 호스트가 정산 생성자와 다른 경우 서버 권한보다 Flutter 관리 CTA가 좁다.
 - **TransferStatus 클라이언트 교정(F07C3-01/02)**: `BANK_AWAITING_CONFIRM`·`SUPERSEDED` 두 값이 클라이언트 enum에 누락되어 `PENDING` 폴백 및 오배지·오버튼이 발생했음. 두 값 추가 및 4개 switch 처리 교정 완료. 서버 정의(§4-A)는 원래 정확했음.
+
+## 4-C. 혼합결제 은행분 확인 계약 (2026-07-29 소스 재실측)
+
+| 구분 | 현재 구현 |
+|---|---|
+| 진입 상태 | `TransferStatus.BANK_AWAITING_CONFIRM`만 허용. 다른 상태는 `MEETING_SETTLEMENT_TRANSFER_NOT_AWAITING_CONFIRM`(400) |
+| 호출 계약 | `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm-bank-portion`, 요청 body 없음, 성공 `200 Void` |
+| 확인 권한 | 수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`). 단 송금자(`fromUserId`) 검사를 먼저 하므로 송금자이면서 생성자인 경우도 `MEETING_SETTLEMENT_TRANSFER_SELF_CONFIRM`(403) |
+| 기타 차단 | 무관한 사용자는 `MEETING_TRANSFER_NOT_AUTHORIZED`(403), 비ACTIVE 정산은 `MEETING_SETTLEMENT_NOT_ACTIVE`(400), PENDING appeal은 `MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL`(409) |
+| 성공 효과 | transfer `COMPLETED`, `completedAt=now`, `TRANSFER_BANK_PORTION_CONFIRMED` 감사로그, 송금자 알림, 정산 완료 재평가 |
+| 정산 완료 | `CANCELLED`/`SUPERSEDED`를 제외한 transfer가 모두 `COMPLETED`이고 모든 item share가 완료됐을 때 ACTIVE settlement만 `COMPLETED`로 전이 |
+| Flutter CTA | `TransferListScreen`: `status == bankAwaitingConfirm && !isSender && (isRecipient || settlementDetail.creatorUserId == currentUserId)`. 이때만 `TransferCardWidget`에 callback을 전달하고 카드가 `받았어요` 버튼 노출 |
+| 신뢰 경계 | 서버 endpoint에는 영수증·입금증·은행 검증 body가 없다. Flutter 안내 카드/확인 다이얼로그가 실제 입금을 시스템이 검증하지 않는다고 경고하며, 사용자가 입금 내역을 직접 확인해야 한다 |
+
+> **표시 금액 한계.** `MeetingSettlementTransferVo`에는 `amount`(transfer 총액)만 있고 혼합 결제의 `pointAmount`/`bankTransferAmount`는 없다. 현재 `받았어요` 확인 다이얼로그는 이 총액을 “계좌이체 부분” 확인 금액으로 표시한다. 은행분만의 정확한 금액 표시는 현 DTO로 불가능하므로 총액을 은행분으로 오인하지 않도록 후속 계약 보강이 필요하다.
+
+## 4-D. 일괄 처리·이체 화면 구현 경계 (2026-07-29 소스 재실측)
+
+- **건별 transaction 불성립 Risk**: bulk method는 비트랜잭션이고 같은 bean의 `confirmTransferBankTransfer`를 직접 호출한다. 응답은 부분 성공을 집계하지만 한 건 내부 side effect의 원자성은 주석대로 보장되지 않는다.
+- **가짜 성공 Gap**: `_notifyUnpaid`는 서버/알림 호출 없이 “보냈습니다” 토스트를 띄운다.
+- **표시/CTA Gap**: 대기 합계가 입금 확인 대기를 제외하고, 일반 BANK 수취자 CTA가 없으며, 완료 후 하단 관리 액션이 남을 수 있다.
+- **재발행 상태**: EXPIRED 원본은 그대로 남지 않고 `SUPERSEDED`로 전환되며 새 PENDING row가 `parentTransferId`로 원본을 가리킨다.
 
 ## 5. 상태/권한/의존성
 
@@ -287,6 +314,9 @@ DRAFT (생성 직후)
   ▼  PATCH /settlement/activate
 ACTIVE (=PAYING, 납부 진행)
   │  POST /transfers/{id}/pay        — 참가자 포인트 결제
+  │  POST /transfers/{id}/pay-mixed  — 은행분 > 0이면 transfer BANK_AWAITING_CONFIRM
+  │  POST /transfers/{id}/confirm-bank-portion
+  │                                  — 수취자/정산 생성자 확인 후 transfer COMPLETED
   │  PATCH /shares/{id}/confirm      — 호스트 계좌이체 확인
   │  PATCH /transfers/bulk-confirm   — 호스트 일괄 확인
   │  POST /remind                    — 호스트 미납 리마인드

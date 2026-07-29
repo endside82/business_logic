@@ -1,6 +1,6 @@
 # F08-11. 아이템·번들·플랜 구매 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/08_plan_market/F08-11_purchase -->
+<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce; unit: business_logic/units/08_plan_market/F08-11_purchase -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-11_purchase`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -49,8 +49,9 @@
 2. 응답 `MarketPurchaseVo` (`purchaseType="BUNDLE"`, `collections=[N개]`)
 
 ### 플랜 직접 구매
-1. `planPurchaseNotifierProvider.notifier.purchasePlan(planId)` ▶ `PlanRepository.purchasePlan` ▶ `POST /api/v1/plans/{planId}/purchase`
-2. 성공 시 plan 관련 Provider invalidate → 본인 플랜 화면이 새로고침되며 "구매한 플랜" 탭에 표시
+1. `allowFreePoints && price > 0 && (freePointPrice ?? price) >= 1`이면 결제 수단 시트에서 `PAID` 또는 `FREE`를 선택한다. 그 외에는 query를 생략해 서버 기본값 `PAID`를 사용한다.
+2. `planPurchaseNotifierProvider.notifier.purchasePlan(planId, fundingMode)` ▶ `PlanRepository.purchasePlan` ▶ `POST /api/v1/plans/{planId}/purchase?fundingMode=...`
+3. 성공 시 plan 관련 Provider invalidate → 본인 플랜 화면이 새로고침되며 "구매한 플랜" 탭에 표시
 
 ## 4. 서버 계약
 
@@ -62,9 +63,9 @@
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
-| POST | /api/v1/market/items/{itemId}/purchase | MarketPurchaseController#purchaseItem | required | 아이템 단건 구매 |
-| POST | /api/v1/market/bundles/{bundleId}/purchase | MarketPurchaseController#purchaseBundle | required | 번들 일괄 구매 |
-| POST | /api/v1/plans/{planId}/purchase | PlanController#purchasePlan | required | 플랜 직접 구매 |
+| POST | /api/v1/market/items/{itemId}/purchase?fundingMode=PAID\|FREE | MarketPurchaseController#purchaseItem | required | 아이템 단건 구매. query 기본값 `PAID` |
+| POST | /api/v1/market/bundles/{bundleId}/purchase?fundingMode=PAID\|FREE | MarketPurchaseController#purchaseBundle | required | 번들 일괄 구매. query 기본값 `PAID` |
+| POST | /api/v1/plans/{planId}/purchase?fundingMode=PAID\|FREE | PlanController#purchasePlan | required | 플랜 직접 구매. query 기본값 `PAID` |
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
@@ -77,9 +78,18 @@
   - `PLATFORM_FEE_RATE = 0.10` (10%)
   - `WITHHOLDING_TAX_RATE = 0.033` (3.3%)
   - `gross = payAmount`, `fee = gross * 0.10`, `tax = (gross - fee) * 0.033`, `net = gross - fee - tax`
-- **월 구매 한도**: `MONTHLY_PURCHASE_LIMIT = 50`
+- **월 구매 한도**: `MONTHLY_PURCHASE_LIMIT = 50`은 `MarketPurchaseService`의 아이템·번들 구매에 적용된다. `PlanPurchaseService`의 플랜 직접 구매에는 이 검사와 재고 검사가 없다.
 
 > **유료/무료 분리정산 — 결제수단(fundingMode) + 차등가격** (2026-05-24 반영): 마켓 구매는 무료 수취자(창작자)가 존재하는 **flow-through** 사용처. 구매 요청에 결제수단(`fundingMode`: 유료/무료)을 받는다. 무료 허용 결정 필드는 도메인별로 다르다 — **마켓 아이템/번들**은 `currencyType`(PAID_POINT/FREE_POINT/ANY_POINT), **플랜 직접 구매**는 `allowFreePoints`로 결정한다(`PricingDecision`). `freePointPrice`(nullable)가 설정되면 무료 결제 시 이 가격을 적용. 차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1, 무료 미허용 상품(마켓 `PAID_POINT`/플랜 `allowFreePoints=false`)에 무료 결제 요청 시 `INVALID_REQUEST`로 거부. 마켓 `ANY_POINT + freePointPrice==null + fundingMode=FREE`도 `INVALID_REQUEST`(기본가 무료 결제 불가); `ANY_POINT + freePointPrice==null + 유료`는 PAID_FIRST 혼합 허용. 결제 시 유료/무료 split이 `CreatorEarning`까지 전파된다(F08-15). 정본은 정책 PRD §2.5.
+
+플랜 직접 구매의 현재 서버 규칙은 다음과 같다.
+
+- `fundingMode=PAID`: `price`, `PAID_ONLY`
+- `fundingMode=FREE && allowFreePoints=true`: `freePointPrice ?? price`, `FREE_ONLY`
+- `fundingMode=FREE && allowFreePoints=false`: `INVALID_REQUEST`
+- 적용 금액은 `longValue()` 정수로 확정되고 `PlanPurchase.pricePaid`에 스냅샷으로 저장된다.
+- 적용 금액이 `0`이면 지갑 spend와 `CreatorEarning` 생성을 건너뛰되 구매 기록과 `purchaseCount`는 생성·증가한다.
+- 플랜은 구매 시점에 반드시 `PUBLISHED`여야 한다. `HIDDEN`은 기존 구매자의 읽기 권한은 유지하지만 신규 구매는 받지 않는다.
 
 ### 의존 단위 / 외부 시스템
 
@@ -145,7 +155,11 @@
 
 - **사용자가 보는 것**: 플랜 상세/미리보기 화면의 "구매하기" 버튼
 - **사용자가 할 수 있는 액션**:
-  - 탭 ▶ `planPurchaseNotifierProvider.notifier.purchasePlan(planId)` ▶ `PlanRepository.purchasePlan(planId)` ▶ `POST /api/v1/plans/{planId}/purchase`
+  - 무료 포인트가 허용된 유료 플랜이면 `PlanFundingChoiceSheet`를 열어 “일반 결제”(`PAID`) 또는 “무료 포인트로 구매”(`FREE`)를 선택한다.
+  - `freePointPrice`가 없으면 플랜 기본 가격을 FREE 가격으로 표시한다.
+  - 무료 잔액은 표시하고 부족 상태를 붉게 안내하지만 선택을 막지 않는다. 서버 spend가 최종 판정한다.
+  - 선택 후 `planPurchaseNotifierProvider.notifier.purchasePlan(planId, fundingMode)` ▶ `PlanRepository.purchasePlan` ▶ `POST /api/v1/plans/{planId}/purchase?fundingMode=...`
+  - 무료 포인트 선택 조건이 아니면 query를 보내지 않아 서버 기본 `PAID`를 사용한다.
   - 성공 시 다음 Provider invalidate: `planDetailNotifierProvider(planId)`, `planPreviewNotifierProvider(planId)`, `myPurchasedPlansNotifierProvider`
 - **상태 분기**:
   - 성공: 토스트 "플랜을 구매했습니다" + 내 플랜 구매 탭에 표시 (F08-01에서)
@@ -168,8 +182,9 @@
 2. 응답 `MarketPurchaseVo` (`purchaseType="BUNDLE"`, `collections=[N개]`)
 
 ### 플랜 직접 구매
-1. `planPurchaseNotifierProvider.notifier.purchasePlan(planId)` ▶ `PlanRepository.purchasePlan` ▶ `POST /api/v1/plans/{planId}/purchase`
-2. 성공 시 plan 관련 Provider invalidate → 본인 플랜 화면이 새로고침되며 "구매한 플랜" 탭에 표시
+1. 선택 가능한 플랜이면 시트에서 `PAID`/`FREE`를 고른다.
+2. `planPurchaseNotifierProvider.notifier.purchasePlan(planId, fundingMode)` ▶ `PlanRepository.purchasePlan` ▶ `POST /api/v1/plans/{planId}/purchase`
+3. 성공 시 plan 관련 Provider invalidate → 본인 플랜 화면이 새로고침되며 "구매한 플랜" 탭에 표시
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -178,11 +193,15 @@
 | S1 | 아이템 단건 구매 — 잔액 충분 (Happy Path) | F08-10 마켓 아이템 상세 화면, `status="ON_SALE"`. | 사용자 잔액 -30,000P, `MarketPurchase` 1건, `Collection` 1건 추가, 크리에이터 수익 PENDING 26,109P. |
 | S2 | 잔액 부족 → 충전 분기 | 잔액 5,000P 사용자, 30,000P 아이템 구매 시도. | 결제는 일어나지 않음, `_isPurchasing = false`로 복귀, 사용자가 충전 화면으로 이동. |
 | S3 | 번들 구매 — 보너스 통화 적립 | 3개 아이템 묶음 + 1,000P 보너스가 포함된 번들 구매. | 사용자 컬렉션 +3개, 보너스 포인트 +1,000 적립. |
-| S4 | 이미 구매한 아이템 (409 conflict) | 시나리오 본문 참조 | 플랜 구매 차단, 마켓 아이템은 정책상 중복 가능. (UI 의도와 백엔드 정책 차이는 향후 정렬 필요) |
+| S4 | 같은 마켓 아이템 재구매 | 같은 사용자가 이미 한 번 산 ON_SALE 아이템, 재고·월 한도·잔액 충족 | 새 구매/컬렉션/수익 기록이 한 건 더 생성된다. 플랜 직접 구매의 중복 차단과 다르다. |
 | S5 | 재고 소진 | 시나리오 본문 참조 | 한 명만 구매 성공. |
 | S6 | 월 50건 한도 초과 | 시나리오 본문 참조 | 익월까지 마켓 구매 차단. |
 | S7 | 플랜 직접 구매 — 본인 플랜 차단 | 시나리오 본문 참조 | 결제 미발생. |
 | S8 | 무료 플랜 (price=0) 구매 | 시나리오 본문 참조 | 무료 플랜 보유함 추가, 지갑 변동 없음. |
+| S9 | 플랜 FREE 차등가 구매 | `PUBLISHED`, `allowFreePoints=true`, `freePointPrice>=1`, 무료 잔액 충분 | `freePointPrice`만 FREE_ONLY로 차감하고 그 금액을 `pricePaid`에 저장 |
+| S10 | 플랜 FREE 기본가 폴백 | `allowFreePoints=true`, `freePointPrice=null` | 기본 `price`를 FREE_ONLY로 차감 |
+| S11 | 무료 결제 미허용 플랜에 FREE 직접 호출 | `allowFreePoints=false` | `INVALID_REQUEST`, 구매·지갑·수익 변동 없음 |
+| S12 | HIDDEN 플랜 신규 구매 | 과거 구매 이력이 없는 사용자 | `PLAN_NOT_PUBLISHED`, 결제 없음. 기존 구매자의 읽기 권한과 구분 |
 
 ## 7. 정합성 판단
 
@@ -197,22 +216,28 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:76 | - 주의: 번들 구매 시 개별 아이템의 creator earnings는 적재하지 않음 (현재 구현은 번들 전체 단위 — 향후 정책 변경 가능) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨(F08-15) | `MarketPurchaseService.distributeBundleEarnings` | 과거 “번들 구매 시 개별 원작자 수익 미적재” 기록과 달리 현재는 각 포함 아이템의 정가×수량 비율로 매출과 paid/free split을 배분한다. 정가 합계 0은 균등 배분하고 반올림 잔여는 마지막 행이 흡수한다. | 완료 |
 | 후보 | frontend.md:83 | - **확인 다이얼로그 노출 여부**: 현재 구현은 별도 사전 확인 시트 없이 즉시 API 호출 (스펙 문서의 "구매 확인 바텀시트"는 미구현 — 향후 일관성 확보 필요) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:94 | - **충전 후 복귀 정책**: 현 구현은 단순 push (충전 화면에서 뒤로 가면 상세로 복귀). 자동 재시도는 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:72 | 4. 클라이언트: 일반 400 핸들러로 폴백 (현 구현은 INSUFFICIENT_BALANCE와 동일하게 다이얼로그를 띄울 가능성 — `_handlePurchaseError`의 badRequest 분기) — 명시적 라벨 미구현 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 해소 (2026-06-06) | MarketPurchaseService.java:53,115,214-222 (커밋 0c9f337) | **구매 동시성 직렬화(H16)** — 동일 유저 동시 구매를 구매자 users-row 비관락(`lockBuyer` → wallet-row보다 먼저 획득, 락 순서 규약 주석)으로 직렬화해 재고(`findForUpdateByItemId`/`findForUpdateByBundleId`)·월 한도·번들 보너스 경합과 paid 보너스 과지급을 차단. 과거 비관락·@Version 부재로 한도 우회 가능하던 결함 해소. | 없음 |
+| 해소됨(플랜 직접 구매) | `plan_funding_choice_sheet.dart`, `plan_preview_screen.dart`, `market_plan_detail_screen.dart` | 플랜의 `allowFreePoints/freePointPrice`를 이용한 `PAID/FREE` 선택과 query 전달이 구현됐다. | 없음 |
+| Gap(아이템/번들 Flutter) | `market_api.dart:82`, `market_repository.dart:213` | 서버는 아이템/번들의 fundingMode를 받지만 앱 API/repository/provider는 이를 노출하지 않아 기본 `PAID`만 호출한다. | `currencyType/freePointPrice` 표시·선택·query 배선 필요 |
+| Gap(오류 카피) | `market_item_detail_screen.dart#_handlePurchaseError` | 앱의 일반 409 문구는 “이미 구매한 아이템입니다”지만 서버의 아이템 단건 정책은 재구매를 허용한다. 다른 409가 생기면 잘못된 이유로 안내할 수 있다. | errorCode별 문구로 분기하거나 현재 중복 정책에 맞게 일반 충돌 문구로 교체 |
 
 ## 9. 수용 기준
 
 - **AC-01. 아이템 단건 구매 — 잔액 충분 (Happy Path)**: Given F08-10 마켓 아이템 상세 화면, `status="ON_SALE"`. When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 -30,000P, `MarketPurchase` 1건, `Collection` 1건 추가, 크리에이터 수익 PENDING 26,109P.
 - **AC-02. 잔액 부족 → 충전 분기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 결제는 일어나지 않음, `_isPurchasing = false`로 복귀, 사용자가 충전 화면으로 이동.
 - **AC-03. 번들 구매 — 보너스 통화 적립**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 컬렉션 +3개, 보너스 포인트 +1,000 적립.
-- **AC-04. 이미 구매한 아이템 (409 conflict)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 플랜 구매 차단, 마켓 아이템은 정책상 중복 가능. (UI 의도와 백엔드 정책 차이는 향후 정렬 필요)
+- **AC-04. 같은 마켓 아이템 재구매**: Given 같은 사용자가 이미 구매한 ON_SALE 아이템이고 재고·월 한도·잔액이 충분 When 다시 구매하면 Then 새 구매·컬렉션·수익 기록이 한 건 더 생성되어야 한다. 플랜 직접 구매는 별도로 중복 차단한다.
 - **AC-05. 재고 소진**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 한 명만 구매 성공.
-- **AC-06. 월 50건 한도 초과**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 익월까지 마켓 구매 차단.
+- **AC-06. 월 50건 한도 초과**: Given 아이템·번들 구매가 월 50건에 도달 When 추가 마켓 구매 Then 익월까지 해당 구매 차단. 플랜 직접 구매에는 이 한도를 적용하지 않음.
 - **AC-07. 플랜 직접 구매 — 본인 플랜 차단**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 결제 미발생.
 - **AC-08. 무료 플랜 (price=0) 구매**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 무료 플랜 보유함 추가, 지갑 변동 없음.
+- **AC-09. 플랜 차등가 스냅샷**: Given FREE 선택과 유효한 차등가 When 구매 성공 Then 실제 차감액과 `PlanPurchase.pricePaid`가 같아야 한다.
+- **AC-10. 플랜 기본가 FREE 폴백**: Given 무료 포인트 허용, `freePointPrice=null` When FREE 구매 Then 기본 `price`를 FREE_ONLY로 차감해야 한다.
+- **AC-11. HIDDEN 신규 구매 차단**: Given HIDDEN 플랜 When 미구매자가 구매 호출 Then `PLAN_NOT_PUBLISHED`이고 어떤 금전·구매 기록도 남지 않아야 한다.
 
 ## 10. 미결정 / 후속
 

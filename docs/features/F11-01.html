@@ -27,6 +27,18 @@
       </header>
 
       <section>
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 선택형 피드백 분위기 태그</span>
+          <p>별점·텍스트 Review와 별도로 EventFeedback 제출은
+            <code>clientRequestId, displayedUserIds, choices, vibeTags</code>를 받는다. 분위기 태그는
+            LIVELY, CALM, TALKATIVE, FOCUSED, WELCOMING, ORGANIZED, FREE_FLOWING,
+            DRINKS_CENTERED 중 선택 최대 3개다. 본인 제출만 반환하고 받은 선택·상대 응답·상호 결과는
+            노출하지 않는다. 현재 집계 표시 API는 없으며 사용자 작성 vibeTags가 데이터 export에서
+            누락된 것은 확정 Gap이다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
           <div class="metric"><div class="label">자격</div><div class="value">참석 확정자</div><div class="hint">신청·결제만으로는 안 됨</div></div>
           <div class="metric"><div class="label">작성 가능 기간</div><div class="value">종료 후 7일</div><div class="hint">지나면 더는 받지 않는다</div></div>
@@ -174,6 +186,9 @@ flowchart LR
               본문 강제 정책으로 전환할 경우 이 화면의 "제출" 활성 조건을 함께 손봐야 사용자 혼란이 없다.</li>
             <li><strong>호스트 본인 차단은 "모임에 참석한 호스트"도 막는다.</strong>
               호스트가 자기 모임에 참가자로 등록되어 있어도 본인 모임에는 후기를 남길 수 없다 — 평균 별점이 호스트 자신에 의해 끌어올려지지 않게 하는 것이 목적.</li>
+            <li><strong>선택형 EventFeedback의 <code>vibeTags</code>는 export에서 누락된다.</strong>
+              본인 피드백 조회에는 사용자가 작성한 분위기 태그가 남지만
+              <code>DataExportAsyncWorker#toEventFeedbackMap</code>이 이를 내보내지 않는 확인된 Gap이다.</li>
           </ul>
         </div>
       </section>

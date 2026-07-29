@@ -29,8 +29,8 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">처리 방식</div><div class="value">비동기</div><div class="hint">요청 → 처리 → 완료</div></div>
-          <div class="metric"><div class="label">사용자 안내</div><div class="value">최대 48시간</div><div class="hint">대기 기대 시간</div></div>
-          <div class="metric"><div class="label">파일 보관</div><div class="value">30일</div><div class="hint">지나면 만료, 다시 요청 필요</div></div>
+          <div class="metric"><div class="label">사용자 안내</div><div class="value">최대 48시간</div><div class="hint">UI 문구, 서버 SLA 아님</div></div>
+          <div class="metric"><div class="label">접근 기한</div><div class="value">30일</div><div class="hint">만료 후 URL 미발급</div></div>
         </div>
 
         <div class="callout">
@@ -39,7 +39,20 @@
             사용자에게 "지금 만들어 두고 있어요" 라는 상태를 분명히 보여 주지 않으면
             "이게 다운로드가 되긴 한 건가" 라는 불신이 생긴다.
             그래서 본 화면은 요청 직후 진행 표시·경과 시간·"최대 48시간" 안내를 같이 두어
-            "기다리는 게 정상"이라는 맥락을 만든다. 완료 후 30일이 지나면 만료시켜 파일 보관 책임을 사용자에게 명시적으로 넘긴다.</p>
+            "기다리는 게 정상"이라는 맥락을 만든다. 요청의 접근 기한은 30일이며 community_api의 자연 만료는
+            presigned URL만 중단하고 status 전이·artifact 정리를 하지 않는다. 별도 관리자 expire 액션은 수동으로 EXPIRED를 만들 수 있다.</p>
+        </div>
+
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 현재 저장·다운로드 계약</span>
+          <p>worker는 JSON을 <code>exports/{userId}/{requestId}_{timestamp}.json</code> FileStorage key로
+            업로드하고 DB에는 fileKey만 저장한다. 상태 조회가 COMPLETED·미만료일 때
+            <code>my-data-export.json</code>용 presigned GET URL을 동적으로 발급한다. 로컬 절대경로
+            계약이 아니다.</p>
+          <p>metadata 외 9개 섹션에 데이팅 새 필드, 내가 작성한 이벤트/만남 피드백, trait,
+            behavior estimate가 포함된다. 현재 사용자 작성 <code>vibeTags</code>는 export에서 빠진다.
+            시간 경과만으로 EXPIRED가 되는 자동 전이와 artifact 정리는 없고 자연 만료는
+            <code>COMPLETED + downloadUrl=null</code>이다. 관리자 <code>expire</code>를 실행한 경우에만 EXPIRED로 바뀐다.</p>
         </div>
       </section>
 
@@ -84,8 +97,8 @@
           <article class="card">
             <div class="eyebrow">만료</div>
             <h3>완료 후 오래 두면 파일이 만료된다</h3>
-            <p>완료된 파일을 30일 안에 받지 않으면 상태가 "만료"로 바뀌고 "다시 요청" 버튼이 뜬다.
-              한 번 만들어진 파일을 영원히 보관하지 않는 것이 보안·저장 비용 양쪽 정책.</p>
+            <p>완료된 파일을 30일 안에 받지 않으면 community_api는 presigned URL을 더 이상 발급하지 않고
+              status를 COMPLETED에 둔다. 관리자가 별도 expire 액션을 실행한 요청만 EXPIRED와 다시 요청 UI에 도달한다.</p>
           </article>
         </div>
       </section>
@@ -115,9 +128,14 @@
                 <td>만료일을 카드에 함께 두어 "지금 받지 않으면 다시 요청해야 한다"는 사실을 사용자가 인지하게.</td>
               </tr>
               <tr>
-                <td><strong>실패·만료</strong></td>
-                <td>"상태: 실패" 또는 "상태: 만료됨", "다시 요청" 버튼.</td>
-                <td>실패와 만료 모두 사용자 행동(다시 요청)이 같으므로 같은 UI 패턴.</td>
+                <td><strong>실패</strong></td>
+                <td>"상태: 실패", "다시 요청" 버튼.</td>
+                <td>새 요청으로 복구한다.</td>
+              </tr>
+              <tr>
+                <td><strong>완료 후 만료</strong></td>
+                <td>자연 만료는 <code>COMPLETED + downloadUrl=null</code>이다. 관리자 expire가 실행된 경우에는 <code>EXPIRED</code>와 다시 요청 버튼이 보인다.</td>
+                <td>자동 만료·관리자 전이·artifact 정리·재요청 UI를 함께 정렬해야 하는 Gap.</td>
               </tr>
             </tbody>
           </table>
@@ -132,8 +150,9 @@
             <li><strong>"최대 48시간" 안내는 클라이언트 문구일 뿐 서버가 48시간을 강제하지 않는다.</strong>
               실제 처리 시간이 그보다 오래 걸리는 케이스가 누적되면 사용자가 "약속이 안 지켜진다"는 인상을 받는다 —
               평균 처리 시간 모니터링이 운영 책임.</li>
-            <li><strong>완료 후 30일이 지나면 파일은 만료된다.</strong>
-              사용자가 같은 파일을 두 번 받으려고 하면 다시 요청이 필요하다는 안내가 보여야 한다.</li>
+            <li><strong>완료 후 30일이 지나면 자연 만료 경로는 다운로드 URL을 발급하지 않는다.</strong>
+              DB status는 COMPLETED에 남고 artifact 정리도 없다. 관리자 expire만 EXPIRED를 만들 수 있으므로
+              자동 만료·수동 운영·재요청·retention을 한 계약으로 보완해야 한다.</li>
             <li><strong>실패 사유는 사용자에게 노출되지 않는다.</strong>
               개인 데이터 처리 중 오류의 구체적 원인이 클라이언트로 흘러가면 보안 위험이 있다 —
               "다시 요청"으로만 안내하고 실패율은 운영 측에서 별도 추적.</li>

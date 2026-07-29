@@ -1,16 +1,16 @@
 # 11. 리뷰 & 신고 PRD
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/11_review_report -->
+<!-- generated: domain-source-first-rollup; updated: 2026-07-29; unit: business_logic/units/11_review_report -->
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/11_review_report/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 >
-> 2026-07-08 현재 소스 갱신: F11-06의 현재 구현 기준은 legacy `PreferenceRatingController`, `/api/v1/ratings`, `TasteNeighbor`, GraphQL 추천이 아니다. 이벤트 피드백(`EventFeedbackController`)과 데이트 만남 피드백(`DateMeetingFeedbackController`)이 궁합/핏 라벨 입력의 현재 원천이고, `TasteProfileService`는 `EventFeedbackChoice`의 긍정 `ImpressionTag`를 사용해 취향 프로필을 재구성한다. 커뮤니티 메시지·클럽 게시글·클럽 댓글 신고 타입(`COMMUNITY_MESSAGE`, `COMMUNITY_POST`, `COMMUNITY_COMMENT`)도 현재 ReportType에 포함된다.
+> 2026-07-29 현재 소스 갱신: F11-06의 현재 구현 기준은 legacy `PreferenceRatingController`, `/api/v1/ratings`, `TasteNeighbor`, GraphQL 추천이 아니다. `TasteProfileService`의 재구축 원천은 이벤트 피드백(`EventFeedbackChoice`)의 긍정 `ImpressionTag`이며, 데이트 만남 피드백은 별도 privatedate 원본으로 취향 프로필에 합산되지 않는다. 커뮤니티 메시지·클럽 게시글·클럽 댓글 신고 타입(`COMMUNITY_MESSAGE`, `COMMUNITY_POST`, `COMMUNITY_COMMENT`)도 현재 ReportType에 포함된다.
 
 ## 1. 결론
 
-이 단위는 community 플랫폼이 모임이 끝난 뒤 사용자 간 신뢰를 회복·축적하는 "후속 평가" 영역을 담당한다. 이벤트에 실제로 참석한 사용자가 공개 리뷰(별점 + 텍스트)를 남기고, 이벤트별·사용자별 리뷰 목록과 평균/분포를 열람한다. 부적절한 콘텐츠(이벤트/사용자/리뷰/클럽)는 신고로 운영자에게 전달되어 검토 큐에 쌓이고, 모든 활동(참석, 리뷰, 신고, 노쇼 등)은 0~100점 범위의 신뢰점수(TrustScore)로 환산되어 본인은 변동 이력까지, 타인은 점수·등급만 열람 가능하다. 또한 비공개 취향 평가(별점 + 태그 + 메모)와 자동 누적되는 취향 프로필(긍정/부정 태그 가중치, 선호 카테고리/시간대/그룹 크기)을 통해 추천·매칭 품질을 개인화한다. 이 단위가 끝나면 사용자는 자신의 평판(공개 리뷰)과 신뢰등급, 자신만의 취향 데이터(비공개 평가/태그)를 확인·관리할 수 있다.
+이 단위는 community 플랫폼이 모임 종료 뒤 신뢰와 본인 관점 피드백을 축적하는 영역이다. 공개 `Review`는 별점·텍스트 평판이고, 별도 `EventFeedback`은 증거등급 참석자가 또 함께하고 싶은 사람·긍정 인상 태그·모임 분위기를 비공개로 남기는 흐름이다. 받은 선택과 상대 응답은 노출하지 않는다. 본인 선택의 긍정 인상은 `positiveTagWeights`로 재구축되고, 선언 카테고리·시간대는 사람 추천/관계 공통점에 사용된다. 그룹 크기는 현재 저장·조회·export되지만 이 두 소비 경로에는 쓰이지 않는다. 최근 참석 이력 기반 행동 근사는 내부 저장/export만 되고 API/UI에는 아직 없다.
 
-이 도메인은 기능 PRD 7개로 구성된다. 현재 기능별 trace source는 총 15개이고, risk 후보는 총 10개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+이 도메인은 기능 PRD 7개로 구성된다. 현재 기능별 trace source는 총 18개이고, risk 후보는 총 15개다. 도메인 수준의 판단은 아래 기능별 PRD와 실제 Controller/Service/VO/Flutter 소비 근거를 따라가며 확정한다.
 
 2026-06-04 기준 호스트 리뷰 모더레이션(답변/임시 숨김) 기능이 서버와 앱 모두 구현 완료됐다(F11-07). ReportType이 8종으로 확장되어 CLUB 신고가 지원된다(v1 운영자 수동). 신뢰점수 임계값이 서버 단일출처로 통합됐다(클라 하드코딩 제거, b0dc370).
 
@@ -18,13 +18,13 @@
 
 | ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
 |---|---|---|---|---|---:|---:|
-| F11-01 | F11-01. 이벤트 리뷰 작성 | [F11-01_event-review-write_prd.md](../02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | [F11-01_event-review-write](../../units/11_review_report/F11-01_event-review-write) | 전환 완료 | 1 | 0 |
+| F11-01 | F11-01. 이벤트 리뷰 작성 | [F11-01_event-review-write_prd.md](../02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | [F11-01_event-review-write](../../units/11_review_report/F11-01_event-review-write) | 갱신 완료 (2026-07-29) | 1 | 1 |
 | F11-02 | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | [F11-02_review-list_prd.md](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | [F11-02_review-list](../../units/11_review_report/F11-02_review-list) | 갱신 완료 (2026-06-05) | 2 | 2 |
 | F11-03 | F11-03. 리뷰 수정 & 삭제 | [F11-03_review-edit-delete_prd.md](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | [F11-03_review-edit-delete](../../units/11_review_report/F11-03_review-edit-delete) | 전환 완료 | 2 | 3 |
-| F11-04 | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | [F11-04_report_prd.md](../02_feature_prds/11_review_report/F11-04_report_prd.md) | [F11-04_report](../../units/11_review_report/F11-04_report) | 갱신 완료 (2026-06-05) | 2 | 4 |
-| F11-05 | F11-05. 신뢰점수 & 변동 이력 | [F11-05_trust-score_prd.md](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | [F11-05_trust-score](../../units/11_review_report/F11-05_trust-score) | 갱신 완료 (2026-06-05) | 3 | 1 |
-| F11-06 | F11-06. 취향 평가 & 취향 프로필 | [F11-06_taste-profile_prd.md](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | [F11-06_taste-profile](../../units/11_review_report/F11-06_taste-profile) | 전환 완료 | 5 | 1 |
-| F11-07 | F11-07. 호스트 리뷰 모더레이션 (답변 · 임시 숨김) | [F11-07_review-moderation_prd.md](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | — | 신규 작성 (2026-06-05) | 5 | 4 |
+| F11-04 | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | [F11-04_report_prd.md](../02_feature_prds/11_review_report/F11-04_report_prd.md) | [F11-04_report](../../units/11_review_report/F11-04_report) | 갱신 완료 (2026-06-05) | 2 | 3 |
+| F11-05 | F11-05. 신뢰점수 & 변동 이력 | [F11-05_trust-score_prd.md](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | [F11-05_trust-score](../../units/11_review_report/F11-05_trust-score) | 갱신 완료 (2026-07-29) | 3 | 1 |
+| F11-06 | F11-06. 취향 평가 & 취향 프로필 | [F11-06_taste-profile_prd.md](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | [F11-06_taste-profile](../../units/11_review_report/F11-06_taste-profile) | 갱신 완료 (2026-07-29) | 5 | 1 |
+| F11-07 | F11-07. 호스트 리뷰 모더레이션 (답변 · 임시 숨김) | [F11-07_review-moderation_prd.md](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | — | 신규 작성 (2026-06-05) | 3 | 4 |
 
 ## 3. 먼저 볼 기능
 
@@ -32,14 +32,14 @@
 |---|---|---|
 | [F11-07](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | F11-07. 호스트 리뷰 모더레이션 | Risk 후보 4 (답변 수정 미배선, autoEscalate 불일치, 알림 미구현, 엔티티 직접 반환) |
 | [F11-03](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | F11-03. 리뷰 수정 & 삭제 | Risk 후보 3 |
-| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | Risk 후보 4 |
+| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | Risk 후보 3 |
 | [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | Risk 후보 2 (호스트 답변 수정 409 잠재) |
-| [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | Risk 후보 1 |
+| [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | Risk 후보 1 (상세 PRD §8 참조) |
 | [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | Risk 후보 1 |
 
 ## 4. 도메인 기능 목록
 
-### 핵심 기능 목록 (6개)
+### 핵심 기능 목록 (7개)
 
 | ID | 기능명 | 한 줄 설명 | 주요 사용자 액션 |
 |----|---|---|---|
@@ -47,11 +47,11 @@
 | F11-02 | 리뷰 목록 조회 (이벤트별/사용자별) | 이벤트 또는 사용자 단위로 받은 리뷰 목록과 평균 별점·분포를 본다 | 이벤트 리뷰 탭/사용자 프로필 리뷰 탭 진입, 스크롤 |
 | F11-03 | 리뷰 수정 & 삭제 | 본인이 작성한 리뷰를 수정하거나 삭제한다 | 리뷰 카드의 수정/삭제 액션 |
 | F11-04 | 신고 (이벤트/사용자/리뷰/클럽/글/댓글) | 부적절한 콘텐츠를 신고 유형 + 상세 설명으로 운영자에게 접수한다. 증빙 파일 첨부(max 5개) 지원. CLUB(7) 서버 지원(v1 수동). 클럽 글(COMMUNITY_POST, 9)·댓글(COMMUNITY_COMMENT, 10) 신고 서버 지원 추가(2026-07-01), 클라 실배선 완료(기존 기만 토스트/pop 제거). | 신고 대상의 "신고" 탭 → 유형 선택 → 상세 설명 입력 → "신고" 탭 |
-| F11-05 | 신뢰점수 & 변동 이력 | 본인/타인의 신뢰점수·등급을 확인하고, 본인은 기간별 변동 이력까지 본다. 다음 등급 임계는 서버 nextGradeScore 값 사용. | 마이페이지/프로필의 신뢰점수 진입, 기간(1주/1개월/3개월) 변경 |
-| F11-06 | 취향 평가 & 취향 프로필 | 이벤트 피드백과 데이트 만남 피드백으로 쌓인 긍정 태그 가중치, 선호 카테고리/시간대/그룹 크기를 조회·설정한다 | 피드백 작성, 취향 프로필 조회, "선호도 설정" 바텀시트에서 카테고리/시간/그룹 선택 → 저장 |
+| F11-05 | 신뢰점수 & 변동 이력 | 현재 앱에서는 본인의 점수·등급·기간별 이력을 본다. 서버는 양방향 비차단 사용자라면 임의 userId의 점수와 이력까지 반환한다. 다음 등급 임계는 서버 nextGradeScore 값 사용. | 마이페이지의 신뢰점수 진입, 기간(1주/1개월/3개월) 변경 |
+| F11-06 | 취향 평가 & 취향 프로필 | 이벤트 선택형 피드백으로 쌓인 긍정 태그 가중치, 선언 선호, 내부 행동 근사를 관리한다 | 피드백 작성, 취향 프로필 조회, "선호도 설정" 바텀시트에서 카테고리/시간/그룹 선택 → 저장 |
 | F11-07 | 호스트 리뷰 모더레이션 (답변·임시 숨김) | 이벤트 호스트가 본인 이벤트에 달린 리뷰에 답변을 달고(1:1, 24h 수정), 임시 숨김(6종 사유코드, autoEscalate→신고 자동생성) 처리한다 | 리뷰 카드 더보기 → 답변하기 / 임시 숨김 / 숨김 해제 |
 
-> M = 7 기능. F11-01 ~ F11-03은 공개 리뷰 라이프사이클(작성/조회/수정·삭제), F11-04는 신고 접수(8종 대상, 증빙 첨부, 자동 플래그), F11-05는 신뢰점수(공개 점수 + 본인 한정 이력), F11-06은 비공개 취향(평가 + 프로필 누적/설정), F11-07은 호스트 모더레이션(답변/숨김)이다. 컨트롤러에는 본인이 받은 신고 목록 조회(`GET /api/v1/reports/my`)도 존재하나 F11-04에 흡수한다. UI 스펙(SCR-RR-005)에는 활동 패턴 히트맵·월별 차트가 있으나 서버 `TasteProfileVo`/`RatingStatsVo`에 해당 필드가 없고 클라이언트도 렌더링하지 않으므로 본 단위 기능 목록에 포함하지 않는다.
+> M = 7 기능. F11-01 ~ F11-03은 공개 리뷰 라이프사이클, F11-04는 신고 접수, F11-05는 신뢰점수, F11-06은 본인이 남긴 이벤트 선택형 피드백과 취향 프로필, F11-07은 호스트 모더레이션이다. 컨트롤러에는 본인이 접수한 신고 목록 조회(`GET /api/v1/reports/my`)도 존재하나 F11-04에 흡수한다. UI 스펙(SCR-RR-005)의 행동 근사 차트는 현재 `TasteProfileVo`/Flutter 화면에 없으므로 구현 기능으로 보지 않는다.
 
 ---
 
@@ -122,22 +122,22 @@
 
 ### F11-05 신뢰점수 & 변동 이력
 
-- **사용자 가치**: 자신의 활동(참석/리뷰/주최/노쇼/신고 접수 등)이 정량 점수와 등급(BRONZE/SILVER/GOLD/PLATINUM)으로 환산된 결과와 변동 이력을 확인하고, 타인의 신뢰도도 점수·등급으로 가늠한다.
+- **사용자 가치**: 자신의 활동(참석/리뷰/주최/노쇼/신고 접수 등)이 정량 점수와 등급(BRONZE/SILVER/GOLD/PLATINUM/DIAMOND)으로 환산된 결과와 변동 이력을 확인한다. 타인 점수 화면 분기는 있으나 현재 이를 여는 presentation CTA는 없다.
 - **주요 화면**:
   - `community_app/lib/presentation/review/screens/trust_score_screen.dart` (SCR-RR-004)
 - **백엔드 엔드포인트**:
   - `GET /api/v1/users/{userId}/trust-score` (`ReviewController#getTrustScore`) — 200 + `TrustScoreVo` (`trustScore`, `grade`, `breakdown`)
   - `GET /api/v1/users/me/trust-score` (`ReviewController#getMyTrustScore`) — 본인 단축 경로
   - `GET /api/v1/users/{userId}/trust-score/history?days={N}` (`ScoreHistoryController#getScoreHistory`) — `days` 기본 90, 최대 365 클램프, 200 + `ScoreHistoryVo` (`history[]: {date, totalScore, changeReason}`)
-- **선결 조건/상태**: 본인 조회는 자신의 토큰만 있으면 충분. 타인 조회는 점수·등급만 노출(상세 이력은 본인 한정 정책). 차단 관계(양방향 어느 쪽이든)이면 타인 신뢰점수를 열람할 수 없다.
+- **선결 조건/상태**: 본인 조회는 자신의 토큰만 있으면 충분하다. 서버의 타인 점수와 이력 조회는 모두 인증 + 양방향 비차단만 검사하며 owner-only를 강제하지 않는다. 차단 관계(양방향 어느 쪽이든)이면 타인 신뢰점수와 이력을 열람할 수 없다.
 - **결과 상태 변화**:
-  - 데이터: 원형 게이지(0~100) + 등급 배지 + 점수 구성(`breakdown`) + 본인 한정 변동 이력 리스트 + 기간 셀렉터(7/30/90일)
-  - 다음 등급까지 남은 점수: 클라이언트가 임계값(BRONZE 40 / SILVER 60 / GOLD 80 / PLATINUM max)으로 계산해 표시
+  - 데이터: 원형 게이지(0~100) + 등급 배지 + 점수 구성(`breakdown`) + 현재 앱 본인 모드의 변동 이력 리스트 + 기간 셀렉터(7/30/90일)
+  - 다음 등급까지 남은 점수: 서버 `nextGradeScore`를 사용하며 최고 등급 DIAMOND에서는 null
   - 에러: 404 USER_NOT_FOUND(다이얼로그 후 뒤로), 500(토스트)
 
 ### F11-06 취향 평가 & 취향 프로필
 
-- **사용자 가치**: 비공개 별점·태그·메모로 자신의 호불호를 누적 기록하고, 자동 집계된 긍정/부정 태그 가중치 + 직접 설정한 선호 카테고리/시간대/그룹 크기로 추천·매칭의 입력값을 본인이 통제한다.
+- **사용자 가치**: 종료 이벤트에서 또 함께하고 싶은 사람·긍정 인상·분위기를 비공개로 남기고, 본인이 남긴 선택의 긍정 태그 가중치와 선언 선호를 확인·관리한다. 받은 선택은 노출하지 않는다.
 - **주요 화면**:
   - `community_app/lib/presentation/review/screens/taste_profile_screen.dart` (SCR-RR-005, "선호도 설정" 바텀시트 포함)
 - **백엔드 엔드포인트**:
@@ -145,17 +145,17 @@
     - `GET /api/v1/events/{eventId}/feedback/candidates` — 함께한 사람 피드백 후보
     - `POST /api/v1/events/{eventId}/feedback` — 이벤트 선택 피드백 제출 + 취향 프로필 재구축
     - `GET /api/v1/feedback/me` / `GET /api/v1/feedback/me/stats` — 본인 피드백 이력/통계
-  - 데이트 만남 피드백 (`DateMeetingFeedbackController`):
+  - 데이트 만남 피드백 (`DateMeetingFeedbackController`, 별도 privatedate 원본이며 TasteProfile 재구축에는 미사용):
     - `POST /api/v1/date/meetings/{meetingId}/feedback` — 완료된 만남 피드백 제출
     - `GET /api/v1/date/meetings/{meetingId}/feedback/me` — 호출자 본인 응답 상태만 조회
   - 취향 프로필 (`TasteProfileController`):
-    - `GET /api/v1/taste/profile` — 200 + `TasteProfileVo` (`positiveTagWeights`, `negativeTagWeights`, `preferredCategories`, `preferredTimeSlots`, `preferredGroupSize`)
+    - `GET /api/v1/taste/profile` — 200 + `TasteProfileVo` (`positiveTagWeights`, `preferredCategories`, `preferredTimeSlots`, `preferredGroupSize`, `updatedAt`)
     - `PUT /api/v1/taste/preferences` — `TastePreferenceParam` body, 200 + 갱신된 `TasteProfileVo`
-- **선결 조건/상태**: 모두 로그인 상태(`@AuthenticationPrincipal UserPrincipal`). 평가는 한 건씩 작성, 통계는 자동 집계. 프로필 데이터가 부족하면(태그 3개 미만) 레이더 차트는 비표시(클라이언트 가드).
+- **선결 조건/상태**: 모두 로그인 상태다. 이벤트 피드백은 종료 후 7일 이내, 증거등급 참석, 차단·본인 제외 후보 2명 이상이어야 한다. 한 이벤트/응답자당 응답 1개이며 같은 `clientRequestId` 재시도만 멱등 반환한다. 프로필 태그가 3개 미만이면 레이더 차트는 비표시한다.
 - **결과 상태 변화**:
-  - 평가 생성: `PreferenceRating` 레코드 누적 → 통계/태그 가중치에 반영
-  - 프로필 갱신: `TasteProfile`의 카테고리/시간대/그룹 크기 필드 갱신 → "선호도가 저장되었습니다" 토스트 → 추천/매칭 도메인의 입력값 변동
-  - 빈 상태: "아직 활동 데이터가 없습니다" / "아직 남긴 평점이 없습니다"
+  - 이벤트 피드백 생성: `EventFeedbackChoice` 누적 → `positiveTagWeights`와 `behaviorStyleEstimate` 재구축
+  - 프로필 갱신: 카테고리/시간대/그룹 크기 저장. 현재 사람 추천·관계 공통점은 카테고리/시간대만 소비하고 그룹 크기는 저장·조회·export에 머문다.
+  - 빈 상태: "아직 취향 데이터가 부족합니다" / "아직 고른 사람이 없습니다"
   - 에러: 404 PROFILE_NOT_FOUND(빈 상태 표시, 최초 데이터 없음), 500(토스트)
 
 ---
@@ -164,12 +164,13 @@
 
 | 기능 | 제목 | Risk 수 | 처리 기준 |
 |---|---|---:|---|
+| [F11-01](../02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | F11-01. 이벤트 리뷰 작성 | 1 | EventFeedback의 본인 작성 `vibeTags`가 export에서 누락 — 기능 PRD 참조 |
 | [F11-07](../02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | F11-07. 호스트 리뷰 모더레이션 | 4 | 답변 수정 UI 미배선(409 잠재), autoEscalate 기본값 불일치, 알림 미구현, 엔티티 직접 반환 — 기능 PRD §8 참조 |
 | [F11-03](../02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | F11-03. 리뷰 수정 & 삭제 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 source 대조로 확정 |
-| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | 4 | DDL COMMENT 불일치, contextId 미배선(실영향 없음), OTHER 서버 미검증, CLUB v1 안내 미노출 — 기능 PRD §8 참조 |
+| [F11-04](../02_feature_prds/11_review_report/F11-04_report_prd.md) | F11-04. 신고 (이벤트/사용자/리뷰/클럽/카풀) | 3 | DDL COMMENT 불일치, contextId 미배선(현재 영향 없음), OTHER 서버 미검증 — 기능 PRD §8 참조 |
 | [F11-02](../02_feature_prds/11_review_report/F11-02_review-list_prd.md) | F11-02. 리뷰 목록 조회 (이벤트별 / 사용자별) | 2 | 정렬 미구현, 답변 수정 경로 미배선(409 잠재) — 기능 PRD §8 참조 |
-| [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | 1 | breakdown 키 매핑 불일치 — 기능 PRD §8 참조 |
-| [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | 1 | 기능 PRD의 `Gap / Risk` 섹션 확인 |
+| [F11-05](../02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | F11-05. 신뢰점수 & 변동 이력 | 1 | features.js 정본 기준 후보 1건 — 상세 PRD §8 참조 |
+| [F11-06](../02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | F11-06. 취향 평가 & 취향 프로필 | 1 | 참석 이력 변경 후 다음 이벤트 피드백 제출 전까지 행동 근사 갱신 지연 — 기능 PRD §8 참조 |
 
 ### 접근권한 감사 교정 (2026-07-02)
 
@@ -189,3 +190,13 @@
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+## 9. 선택형 피드백·행동 근사·데이트 옵트인 재실측 (2026-07-29)
+
+F11-01의 별점/텍스트 Review와 별도로 EventFeedback은 또 만나고 싶은 사람과 모임 분위기를 수집한다. `vibeTags`는 `LIVELY`, `CALM`, `TALKATIVE`, `FOCUSED`, `WELCOMING`, `ORGANIZED`, `FREE_FLOWING`, `DRINKS_CENTERED` 중 선택 최대 3개다. 본인 제출만 조회되며 받은 선택/상대 응답/상호 결과는 노출하지 않는다.
+
+F11-06 `UserTasteProfile.behaviorStyleEstimate`는 최근 12개월 증거등급 참석 이벤트 3건 이상에서 `ACTIVITY_LEVEL`, `GROUP_SIZE_PREFERENCE` 두 축을 산출한다. 3건 미만이면 축 없이 `INSUFFICIENT_EVIDENCE`를 저장한다. 재계산은 이벤트 피드백 제출 성공 때 일어난다.
+
+현재 `TasteProfileVo`와 Flutter 화면은 행동 근사를 노출하지 않지만 데이터 export의 `taste` 섹션은 포함한다. 이벤트/클럽 fit preview는 행동 근사가 아니라 최신 제출 trait 점수만 쓴다. EventFeedback의 사용자 작성 `vibeTags`가 export에서 누락된 것은 확정 Gap이다.
+
+F11-05 신뢰점수는 양쪽 데이팅 프로필의 `communityDataOptIn`이 모두 true일 때만 내부 후보 유사도 0.15 성분으로 사용된다. 원점수나 성분별 점수는 데이팅 카드에 노출하지 않는다.

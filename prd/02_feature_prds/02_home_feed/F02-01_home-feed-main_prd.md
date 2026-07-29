@@ -1,12 +1,22 @@
 # F02-01. 홈 피드 메인 조회 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/02_home_feed/F02-01_home-feed-main -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/02_home_feed/F02-01_home-feed-main -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/02_home_feed/F02-01_home-feed-main`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-홈 피드 메인 화면(SCR-HF-001) 진입 시 4개 섹션(추천 이벤트 / 예정 이벤트 / 인기 클럽 / 최신 플랜)에 표시할 카드 데이터를 한 번에 만들어내기 위한 읽기 전용 API 묶음이다. 비로그인 상태도 진입 가능하도록 인증을 선택적으로 허용하며, 각 섹션은 클라이언트가 병렬로 호출한다.
+홈 피드 메인 화면(SCR-HF-001)은 추천 이벤트 / 예정 이벤트 / 인기 클럽 / 최신 플랜과, 로그인 사용자 전용 **다시 만나면 좋을 사람** 섹션을 조립한다. 홈 라우트와 세 `/api/v1/home/**` 목록은 비로그인 진입을 허용하지만 추천 이벤트 `/api/v1/events/recommend`는 인증 필수다. Flutter는 추천 이벤트를 게스트에게도 호출하므로 401이 해당 섹션 오류 UI로 나타난다. 사람 추천은 로그인 여부를 먼저 확인해 비로그인에는 호출하지 않는다.
+
+### 2026-07-29 소스 재실측 — 사람 추천 섹션
+
+- `GET /api/v1/users/me/people-recommendations`는 페이징 없이 최대 10개의 `PersonRecommendationVo { userId, nickname, avatarUrl, reasonCodes, coAttendedCount }`를 반환한다.
+- 후보 풀은 증거등급 공동참석자다. 체크인 데이터가 있는 이벤트는 양쪽 체크인, 체크인 데이터가 없는 이벤트는 양쪽 `ATTENDING`이면서 확정/이의중 노쇼가 아닌 경우만 인정한다. 탈퇴·정지 사용자, 양방향 차단, `hideFromSearch=true` 사용자는 매 조회 시 제외한다.
+- 정렬 신호는 내가 남긴 다시 만나기 선택(+4), 공동참석 횟수(+1, 최대 5), 같은 클럽(+1.5), 공통 관심/취향(+0.5, 최대 4), 최근 90일 만남(+1)이다. 상대가 나를 선택했는지는 읽지 않는다.
+- 사용자에게는 점수나 순위를 노출하지 않고 `CHOSE_AGAIN`, `CO_ATTENDED`, `SAME_CLUB`, `COMMON_GROUND` 순으로 최대 2개 이유만 표시한다. 동점은 최근 만남 내림차순, 사용자 ID 오름차순으로 안정 정렬한다.
+- Flutter `PeopleRecommendSection`은 비로그인·빈 결과·로딩·오류에서 섹션과 여백을 모두 조용히 숨기며, 카드 탭은 `PersonSheet`로 연결한다. v1에는 더보기 CTA가 없다.
+
+실측 근거: `PersonRecommendationController/Service`, `EventAttendanceQueryRepository`, `connectivity_api.dart`, `people_recommendation_provider.dart`, `people_recommend_section.dart` 및 `people_recommend_section_test.dart`.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -53,18 +63,19 @@
 
 ### 개요
 
-홈 피드 메인 화면(SCR-HF-001) 진입 시 4개 섹션(추천 이벤트 / 예정 이벤트 / 인기 클럽 / 최신 플랜)에 표시할 카드 데이터를 한 번에 만들어내기 위한 읽기 전용 API 묶음이다. 비로그인 상태도 진입 가능하도록 인증을 선택적으로 허용하며, 각 섹션은 클라이언트가 병렬로 호출한다.
+홈 피드의 네 콘텐츠 섹션을 병렬 호출하지만 인증 조건은 같지 않다. 추천 이벤트는 인증 필수이고 예정 이벤트·인기 클럽·최신 플랜은 optional auth다. 로그인 사용자는 별도 인증 전용 people-recommendations provider를 더해 다섯 번째 사람 섹션을 조건부 조립한다.
 
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
 |---|---|---|---|---|
+| GET | `/api/v1/events/recommend` | `EventController#getRecommendations` | **required** | 로그인 사용자 추천 이벤트 페이지. Flutter 홈의 첫 섹션 |
 | GET | `/api/v1/home/clubs` | `HomeController#getPopularClubs` | optional (`errorOnInvalidType=false`) | ACTIVE 클럽 페이지, 기본 정렬 `memberCount,desc`, 로그인 시 본인의 멤버십/대기/제재 컨텍스트 함께 채움 |
 | GET | `/api/v1/home/plans` | `HomeController#getNewPlans` | optional | PUBLISHED 플랜 페이지, 기본 정렬 `createdAt,desc`, 로그인 시 본인 구매·제작 여부 채움 |
 | GET | `/api/v1/home/events` | `HomeController#getUpcomingEvents` | (없음) | OPEN 상태 + `startTime > now` 이벤트 페이지, 기본 정렬 `startTime,asc` |
 | GET | `/api/v1/search/trending` | `TrendingController#getTrending` | (없음) | Redis ZSET 기반 트렌딩 이벤트 상위 N건, OPEN + 종료시간 미경과만 |
 
-> 위 4개가 본 유닛에서 확인된 모든 홈 피드용 서버 엔드포인트다. UI/UX 문서에 등장하는 `/api/v1/events/recommend`는 본 유닛 코드 탐색 범위(`main/`)에 없으며, 홈 피드 클라이언트는 별도 도메인의 `EventApi.getRecommendEvents`를 호출한다(이벤트 유닛 영역).
+> `/api/v1/events/recommend`는 `main/` 패키지가 아니라 이벤트/검색 영역에 있지만 Flutter 홈 fan-out의 실제 첫 호출이다. `/api/v1/search/trending`은 구현돼 있으나 현재 홈 화면이 아니라 검색 화면에서 사용한다.
 
 ---
 
@@ -102,7 +113,7 @@
 
 | 라우트 (GoRouter) | Screen 파일 | 역할 |
 |---|---|---|
-| `/home` | `lib/presentation/home/screens/home_feed_screen.dart` | SCR-HF-001 메인 피드 (4개 섹션 + 부가 섹션) |
+| `/home` | `lib/presentation/home/screens/home_feed_screen.dart` | SCR-HF-001 메인 피드 (기존 4개 콘텐츠 + 로그인 전용 사람 추천 + 부가 섹션) |
 
 > 이 기능에서 표시되는 카드의 클릭 후 진입(이벤트 상세 / 클럽 상세 / 플랜 상세 / 추천 더보기)은 F02-03·F02-04에서 다룬다.
 
@@ -149,10 +160,10 @@
 
 ### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
 
-- **클라이언트 캐시 정책**: `HomeRepository._cacheDuration = 5분`. 5분 이내 재진입 시 4개 섹션 모두 캐시 반환, 네트워크 호출 없음.
+- **클라이언트 캐시 정책**: 기존 HomeRepository 콘텐츠 응답은 5분 캐시를 사용한다. 사람 추천은 별도 provider/API 계약이다.
 - **호출 size**: 추천/예정 이벤트 `size=10`, 인기 클럽 `size=5`, 최신 플랜 `size=5` (서버 기본값 20을 클라이언트가 덮어씀).
 - **위치 파라미터 사용**: `_fetchNearbyEvents`는 `latitude/longitude`를 보내지 않고 `sort/size`만 전달. 위치 권한 결과는 추천 이벤트 호출(`EventApi.getRecommendEvents`)에만 영향.
-- **부분 실패 정책**: 4개 섹션 중 일부만 실패해도 화면은 그대로 렌더링하고 실패 섹션만 "재시도" 버튼 표시. 전체 실패일 때만 풀스크린 에러.
+- **부분 실패 정책**: 기존 콘텐츠 섹션 일부 실패에도 화면은 유지한다. 사람 추천은 로딩/오류/빈 결과를 조용히 숨겨 다른 섹션에 영향을 주지 않는다.
 - **빈 상태 문구**: 섹션별 위젯이 정의(예: 추천 이벤트 0건이면 섹션 자체를 비표시 또는 EmptySection). 본 화면에서는 "아직 등록된 이벤트가 없습니다" 등의 문구를 섹션 위젯에 위임.
 - **로딩 UI**: 4개 모두 로딩이면 `HomeSkeleton`(전체 스켈레톤), 아니면 섹션 단위 skeleton.
 - **위치 권한 자동 요청**: 첫 진입에서 `LocationPermissionStatus.notAsked`이면 자동으로 시스템 권한 요청. 거부되면 상단 배너로 알리고 사용자가 "설정" 탭으로 재요청 가능.
@@ -165,11 +176,11 @@
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
-| S1 | (Happy Path) 첫 로그인 사용자가 홈 피드를 본다 | `AuthState.authenticated`, `LocationPermissionStatus.notAsked`, 5분 캐시 비어있음. | 4개 섹션 모두 표시, 클라이언트 캐시 `_lastFetchTime = now()` 기록(5분 유효). |
+| S1 | (Happy Path) 첫 로그인 사용자가 홈 피드를 본다 | `AuthState.authenticated`, 5분 콘텐츠 캐시 비어있음 | 기존 콘텐츠 섹션을 표시하고 추천 사람이 있으면 사람 섹션도 표시한다. |
 | S2 | (캐시 hit) 화면 재진입 시 캐시로 즉시 표시 | `_lastFetchTime`이 30초 전, `keepAlive: true`인 `homeRepositoryProvider`가 살아있음. | 네트워크 호출 0건, 화면 즉시 렌더. |
 | S3 | (부분 실패) 인기 클럽 섹션만 500을 받는다 | `AuthState.unauthenticated`, 캐시 만료. | 부분 실패가 사용자 흐름을 막지 않고, 명시적 재시도로 복구됨. |
 | S4 | (전체 실패) 비행기 모드에서 홈 진입 | 네트워크 차단, 캐시 만료. | 네트워크 복구 후 사용자 액션으로 정상화. (자동 재시도는 본 유닛에서 수행하지 않는다.) |
-| S5 | (비로그인 진입) 게스트가 홈을 본다 | `AuthState.unauthenticated`. `Routes.publicRoutes`에 `/home`이 포함되어 있어 진입 허용. | 게스트 사용자가 추천/예정/인기/신상품 탐색 가능. 카드 탭으로 상세 진입 시 인증 가드는 각 도메인 유닛이 처리. |
+| S5 | (비로그인 진입) 게스트가 홈을 본다 | `AuthState.unauthenticated`. `Routes.publicRoutes`에 `/home`이 포함되어 있어 진입 허용. | 예정 이벤트·인기 클럽·최신 플랜은 조회된다. 추천 이벤트는 401로 해당 섹션에 재시도 UI가 표시되고, 사람 추천·내 일정·찜은 숨겨진다. |
 | S6 | (잘못된 카테고리 필터) 클럽/플랜 카테고리 파라미터 검증 | 일반 사용자 흐름에서는 발생하지 않음(현재 홈 화면은 `category` 파라미터를 보내지 않는다). | 본 화면에서 자체적으로 카테고리 파라미터를 송신하지 않으므로 사용자 시나리오에서는 발생 가능성 낮음. 향후 카테고리 칩 추가 시 클라이언트 측 화이트리스트 검증 필요. |
 
 ## 7. 정합성 판단
@@ -185,17 +196,18 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
+| Gap | `SecurityConfiguration`, `HomeRepository`, `home_feed_screen.dart` | 라우트는 public이지만 Flutter가 게스트에게도 인증 필수 추천 이벤트 API를 호출해 추천 섹션이 401 오류가 된다. | 게스트용 추천 계약을 공개로 만들거나, 앱이 인증 상태에 따라 호출/대체 섹션을 분기 |
 | 후보 | backend.md:97 | - `latitude: Double?`, `longitude: Double?` — **현재 서버 코드(HomeService#getUpcomingEvents)에서는 사용하지 않음.** 파라미터는 받지만 거리 정렬/필터에 반영하지 않는다(미확인 — 확장 슬롯). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | backend.md:118 | ### `GET /api/v1/search/trending` — 트렌딩 이벤트(보강용) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:69 | - **디자인 토큰**: 섹션 간격 `AppSpacing.sectionGap`, 카드 패딩 `AppSpacing.screenPadding`, 메인 컬러 `AppColors.primary500`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
 
-- **AC-01. (Happy Path) 첫 로그인 사용자가 홈 피드를 본다**: Given `AuthState.authenticated`, `LocationPermissionStatus.notAsked`, 5분 캐시 비어있음. When 사용자가 해당 흐름을 실행하면 Then 4개 섹션 모두 표시, 클라이언트 캐시 `_lastFetchTime = now()` 기록(5분 유효).
+- **AC-01. (Happy Path) 첫 로그인 사용자가 홈 피드를 본다**: Given 인증 사용자와 콘텐츠 캐시 없음 When 홈 진입 Then 기존 콘텐츠를 표시하고 추천 사람이 있으면 이유 최대 2개의 사람 섹션을 추가한다.
 - **AC-02. (캐시 hit) 화면 재진입 시 캐시로 즉시 표시**: Given `_lastFetchTime`이 30초 전, `keepAlive: true`인 `homeRepositoryProvider`가 살아있음. When 사용자가 해당 흐름을 실행하면 Then 네트워크 호출 0건, 화면 즉시 렌더.
 - **AC-03. (부분 실패) 인기 클럽 섹션만 500을 받는다**: Given `AuthState.unauthenticated`, 캐시 만료. When 사용자가 해당 흐름을 실행하면 Then 부분 실패가 사용자 흐름을 막지 않고, 명시적 재시도로 복구됨.
 - **AC-04. (전체 실패) 비행기 모드에서 홈 진입**: Given 네트워크 차단, 캐시 만료. When 사용자가 해당 흐름을 실행하면 Then 네트워크 복구 후 사용자 액션으로 정상화. (자동 재시도는 본 유닛에서 수행하지 않는다.)
-- **AC-05. (비로그인 진입) 게스트가 홈을 본다**: Given `AuthState.unauthenticated`. `Routes.publicRoutes`에 `/home`이 포함되어 있어 진입 허용. When 사용자가 해당 흐름을 실행하면 Then 게스트 사용자가 추천/예정/인기/신상품 탐색 가능. 카드 탭으로 상세 진입 시 인증 가드는 각 도메인 유닛이 처리.
+- **AC-05. (비로그인 진입) 게스트가 홈을 본다**: Given `AuthState.unauthenticated`이고 `/home` 진입이 허용됨 When 홈 fan-out이 실행되면 Then 예정 이벤트·인기 클럽·최신 플랜은 보이고, 추천 이벤트는 401 섹션 오류가 되며 사람 추천·내 일정·찜은 숨겨진다.
 - **AC-06. (잘못된 카테고리 필터) 클럽/플랜 카테고리 파라미터 검증**: Given 일반 사용자 흐름에서는 발생하지 않음(현재 홈 화면은 `category` 파라미터를 보내지 않는다). When 사용자가 해당 흐름을 실행하면 Then 본 화면에서 자체적으로 카테고리 파라미터를 송신하지 않으므로 사용자 시나리오에서는 발생 가능성 낮음. 향후 카테고리 칩 추가 시 클라이언트 측 화이트리스트 검증 필요.
 
 ## 10. 미결정 / 후속

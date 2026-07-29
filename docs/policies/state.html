@@ -129,6 +129,26 @@ stateDiagram-v2
           승인 즉시 참석 확정으로 만들지 않고, 지갑 결제 또는 계좌이체 확인 이후에만 참석 확정으로 넘어간다.
           자세한 결제 단계별 상태는 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 본다.</p>
         </div>
+        <div class="callout danger">
+          <span class="label">현재 구현에서 함께 봐야 할 Gap</span>
+          <p>결제 성공 시 Application은 APPROVED, 별도 Attendance가 ATTENDING이 된다. BANK 결제 후 취소는
+            CANCEL_PENDING_REFUND로 정원을 논리 hold한 뒤 환불 완료 때 CANCELED가 된다.
+            만료 scheduler는 Application만 바꾸고 PENDING payment와 75 알림을 정리하지 않는다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>2-A. 이동수단·카풀·버스 상태</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>현재 상태 계약</th><th>미구현·비대칭</th></tr></thead>
+            <tbody>
+              <tr><td>Transport mode</td><td>NONE/CARPOOL/BUS, mode 변경은 DRAFT, 이탈 데이터 hard delete</td><td>자차 허용 토글은 terminal 상태에서도 변경 가능하고 소비자가 없음</td></tr>
+              <tr><td>Carpool offer</td><td>OFFERED/CONFIRMED/REJECTED/CANCELED enum</td><td>기존 status 가드·cancel cascade·assignment log·77~80 알림 없음</td></tr>
+              <tr><td>Bus seat</td><td>FREE는 좌석 없음, 나머지는 selectable 좌석 복사</td><td>FIRST_COME 자동배정·진짜 swap/unassign·81~82 알림 없음</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>

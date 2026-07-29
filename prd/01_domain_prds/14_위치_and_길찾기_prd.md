@@ -1,10 +1,12 @@
 # 14. 위치 & 길찾기 PRD
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/14_location_directions -->
+<!-- generated: domain-source-first-rollup; updated: 2026-07-29; unit: business_logic/units/14_location_directions -->
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/14_location_directions/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 >
 > 2026-07-08 현재 소스 갱신: 위치 API는 `GET /api/v1/location/geocode?address=...`와 `reverse-geocode`를 모두 제공한다. 위치 공유 조회는 차단 사용자, 현재 이벤트 소속이 아닌 사용자, 계정 없는 게스트 행, 만료된 공유를 제외한다. 길찾기는 현재 위치 또는 저장 주소를 출발지로 선택하고 외부 지도 앱 링크를 여는 화면이며, 실제 내장 turn-by-turn/polyline 경로 안내로 설명하지 않는다.
+>
+> 2026-07-29 현재 소스 갱신: 위치 목록 GET은 30초, 내 GPS 재취득 POST는 60초 주기로 분리됐고 활성 공유의 자동 좌표 갱신은 만료를 연장하지 않는다. opt-out은 현재 좌표를 즉시 삭제한다. 프라이버시 화면은 path의 이벤트별 최근 30일 접근 로그와 공유 상태를 실제 소비하며, 길찾기는 오프라인 이벤트 상세 CTA·이동수단 선택·직선거리 추정 면책까지 연결됐다.
 
 ## 1. 결론
 
@@ -21,7 +23,7 @@
 | F14-03 | F14-03. 위치 공유 만료 연장 | [F14-03_location-extend_prd.md](../02_feature_prds/14_location_directions/F14-03_location-extend_prd.md) | [F14-03_location-extend](../../units/14_location_directions/F14-03_location-extend) | 전환 완료 | 1 | 3 |
 | F14-04 | F14-04. 위치 프라이버시 대시보드 | [F14-04_location-privacy-dashboard_prd.md](../02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md) | [F14-04_location-privacy-dashboard](../../units/14_location_directions/F14-04_location-privacy-dashboard) | 전환 완료 | 1 | 4 |
 | F14-05 | F14-05. 이벤트 길찾기 (경로 + 참석자 거리) | [F14-05_event-directions_prd.md](../02_feature_prds/14_location_directions/F14-05_event-directions_prd.md) | [F14-05_event-directions](../../units/14_location_directions/F14-05_event-directions) | 전환 완료 | 2 | 2 |
-| F14-06 | F14-06. 역지오코딩 (좌표 → 주소) | [F14-06_reverse-geocoding_prd.md](../02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md) | [F14-06_reverse-geocoding](../../units/14_location_directions/F14-06_reverse-geocoding) | 전환 완료 | 1 | 0 |
+| F14-06 | F14-06. 지오코딩 (좌표 ↔ 주소) | [F14-06_reverse-geocoding_prd.md](../02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md) | [F14-06_reverse-geocoding](../../units/14_location_directions/F14-06_reverse-geocoding) | 전환 완료 | 1 | 0 |
 
 ## 3. 먼저 볼 기능
 
@@ -39,12 +41,12 @@
 
 | ID | 기능명 | 한 줄 설명 | 주요 사용자 액션 |
 |----|---|---|---|
-| F14-01 | 이벤트 참석자 위치 공유 (opt-in / 위치 갱신 / 조회) | 참석 확정한 이벤트에서 내 위치 공유를 켜고, 30초 간격으로 좌표를 갱신하며, 다른 참석자 위치를 지도에서 본다 | "위치 공유" 토글 On, 내 위치 갱신 버튼 탭, 참석자 마커/리스트 확인 |
+| F14-01 | 이벤트 참석자 위치 공유 (opt-in / 위치 갱신 / 조회) | 참석 확정 이벤트에서 내 위치를 60초마다 보내고, 30초마다 공유 목록을 다시 읽어 지도에서 본다 | "위치 공유" 토글 On, 내 위치 갱신 버튼 탭, 참석자 마커/리스트 확인 |
 | F14-02 | 위치 공유 중지 (opt-out) | 공유 중인 이벤트에서 토글을 내려 내 위치를 즉시 숨기고 서버에 보관된 위치 데이터를 제거한다 | "위치 공유" 토글 Off, 확인 다이얼로그에서 "중지" 탭 |
 | F14-03 | 위치 공유 만료 연장 | 모임이 길어질 때 위치 공유 종료 시각을 분 단위로 연장한다(기본 30분, 최대 120분) | 연장 버튼/액션 트리거 |
-| F14-04 | 위치 프라이버시 대시보드 | 현재 내가 위치 공유 가능한 모든 이벤트와 각 이벤트의 공유 상태를 한 화면에서 조회·일괄 제어한다 | 설정(톱니바퀴) 진입 → 이벤트별 토글 On/Off |
+| F14-04 | 위치 프라이버시 대시보드 | 현재 단일 이벤트의 공유 상태와 최근 30일 접근 기록을 조회·제어한다 | 설정(톱니바퀴) 진입 → 토글 On/Off, 접근 기록 확인 |
 | F14-05 | 이벤트 길찾기 (경로 + 참석자 거리) | 현재 위치 또는 저장 주소에서 이벤트 장소까지의 거리·예상 시간을 근사 계산하고, 외부 지도 앱 링크로 인계한다. 추가로 다른 참석자들이 이벤트 장소에서 얼마나 떨어져 있는지 거리 리스트를 본다 | 출발지 선택(현재 위치/집/회사), 거리·예상 시간 확인, [외부 지도 앱으로 열기] 탭 |
-| F14-06 | 지오코딩 (좌표↔주소) | 위도/경도 좌표를 한국식 주소로 바꾸고, 주소 문자열을 좌표로 확정한다 | 주소 등록/이벤트 생성/길찾기 출발지 선택 시 자동 호출 |
+| F14-06 | 지오코딩 (좌표↔주소) | 위도/경도 좌표를 한국식 주소로 바꾸고, 주소 문자열을 좌표로 확정한다 | 온보딩 현재 GPS 주소화, 주소 검색·프로필 주소·이벤트 생성/편집에서 자동 호출 |
 
 > M = 6 기능. F14-01 ~ F14-04는 위치 공유 라이프사이클(켜기 → 갱신 → 중지 → 연장 → 대시보드 일괄 제어), F14-05는 출발지에서 도착지까지 도달을 위한 길찾기 + 다른 참석자와의 상대 거리, F14-06은 좌표↔주소 변환 인프라 기능이다. UI/UX 스펙(SCR-LD-001 ~ SCR-LD-003)과 실제 컨트롤러(`LocationController`, `GeocodingController`, `DirectionsController`)에 정의된 모든 엔드포인트가 본 6개 기능에 매핑되며, 외부에 정의되지 않은 기능을 임의로 추가하지 않았다.
 
@@ -68,12 +70,12 @@
   - `POST /api/v1/events/{eventId}/location/opt-in` — 위치 공유 시작 (200, body 없음)
   - `POST /api/v1/events/{eventId}/location/update` — 내 위치 좌표 갱신 (`@RequestBody LocationModParam`, 200)
   - `GET /api/v1/events/{eventId}/location` — 이벤트 참석자들의 위치 목록 조회 (`List<LocationVo>`)
-- **선결 조건/상태**: 로그인 상태 + 해당 이벤트에 참석 확정된 사용자(스펙: "이벤트 참석 확정 사용자"). 디바이스 OS 위치 권한 부여 필요.
+- **선결 조건/상태**: endpoint마다 다르다. opt-in/opt-out/extend는 호스트·공동호스트·`ATTENDING`, update는 호스트·`ATTENDING`, 목록 GET은 호스트·공동호스트·클럽 `canCreateEvent` 운영자 또는 `ATTENDING`이 가능하다. 일반 참석자의 GET에는 opt-in과 시간창이 추가로 적용된다. 디바이스 좌표 update에는 OS 위치 권한이 필요하다.
 - **결과 상태 변화**:
   - opt-in 성공: 서버에 해당 사용자의 공유 활성 상태 등록 → 이후 update 호출이 유효해지며 다른 참석자의 GET 응답에 본인 위치가 포함되기 시작
-  - update 성공: 서버 보관 좌표가 최신으로 교체, 30초 간격 자동 폴링 루프 유지
-  - GET 성공: opt-in 한 참석자만 좌표 노출, opt-out 사용자는 "비공개"로 마킹되어 리스트에 이름만 노출
-  - 실패: 권한 미부여(OS) → 권한 요청 다이얼로그 + 설정 이동, 참석 미확정 등 서버 거부 시 에러 토스트
+  - update 성공: 서버 보관 좌표가 최신으로 교체. 앱은 60초 GPS POST와 30초 목록 GET을 별도 타이머로 유지하고, 활성 공유의 만료는 그대로 보존
+  - GET 성공: 현재 ATTENDING·호스트·공동호스트 중 opt-in·미만료·비차단 사용자만 좌표 노출; opt-out 사용자는 목록에서 제외
+  - 실패: 화면 진입 시 OS 권한을 요청하지만 영구 거부 전용 설정 이동 흐름은 확인되지 않는다. 토글에서 opt-in 자체가 성공해도 첫 GPS update 실패를 무시하므로 성공 토스트·타이머 시작과 실제 share row 생성이 어긋날 수 있다.
 
 ### F14-02 위치 공유 중지 (opt-out)
 
@@ -83,11 +85,11 @@
   - `community_app/lib/presentation/location/screens/location_privacy_screen.dart` (SCR-LD-003 — 이벤트별 토글 Off도 동일 엔드포인트)
 - **백엔드 엔드포인트**:
   - `POST /api/v1/events/{eventId}/location/opt-out` (`LocationController#optOut`) — 200, body 없음
-- **선결 조건/상태**: 로그인 상태 + 해당 이벤트에 대해 현재 opt-in 상태인 사용자. 클라이언트 측에서 확인 다이얼로그("위치 공유를 중지하시겠습니까?") 후 호출.
+- **선결 조건/상태**: 로그인 상태 + 호스트·공동호스트·`ATTENDING`. 기존 opt-in 행은 필수가 아니며, 없으면 `optedIn=false` 행을 새로 만든 뒤 좌표를 삭제한다.
 - **결과 상태 변화**:
   - 성공: 서버에서 해당 사용자의 공유 상태 비활성화 + 보관 좌표 삭제 (스펙: "이벤트 종료 후 위치 데이터는 즉시 삭제됩니다" — opt-out 시에도 동일 정책 적용), 다른 참석자의 GET 응답에서 본인 좌표 사라짐, 클라이언트 지도에서 내 마커 제거
-  - 자동 발생: 이벤트 종료 시점 도달 시 위치 공유 자동 비활성화(스펙)
-  - 실패: 네트워크 오류 시 토글을 이전 상태로 롤백 + 토스트
+  - 자동 발생: `LocationShare`는 선택한 만료 모드(`FIXED_TWO_HOURS`, `UNTIL_EVENT_END_PLUS_30M`, `CUSTOM_HOURS`)의 `expiresAt`으로 목록에서 제외되고 매일 03:30 정리된다. 이벤트 종료 자체가 opt-in을 자동 false로 바꾸지는 않는다.
+  - 실패: `EventLocationNotifier.optOut`이 `Result.failure`를 `false`로 바꾸며 프라이버시 화면은 false 분기를 처리하지 않아 조용히 실패할 수 있다. 롤백/토스트 보장은 없다.
 
 ### F14-03 위치 공유 만료 연장
 
@@ -106,14 +108,15 @@
 - **주요 화면**:
   - `community_app/lib/presentation/location/screens/location_privacy_screen.dart` (SCR-LD-003 위치 프라이버시)
 - **백엔드 엔드포인트**:
-  - `GET /api/v1/events/{eventId}/location/privacy` (`LocationController#getPrivacyDashboard`) — `LocationPrivacyVo` 반환. 컨트롤러 시그니처상 `eventId`는 path에 존재하지만 서비스 호출은 `principal.getUserId()`만 사용 — 사용자 단위의 프라이버시 대시보드를 반환하는 엔드포인트로 동작.
+  - `GET /api/v1/events/{eventId}/location/privacy` (`LocationController#getPrivacyDashboard`) — 해당 이벤트의 최근 30일 접근 로그, `userOptedIn`, `locationShareEnabled`를 담은 `LocationPrivacyVo`
   - 토글 On/Off: F14-01의 opt-in / F14-02의 opt-out 엔드포인트를 그대로 재사용
 - **선결 조건/상태**: 로그인 상태. 화면 진입 시 SCR-LD-001의 설정(톱니바퀴) 또는 별도 진입점에서 호출.
 - **결과 상태 변화**:
-  - 조회 성공: 위치 공유 가능한 이벤트 목록 + 각 이벤트의 공유 상태가 카드 리스트로 렌더링
-  - 토글 변경: 즉시 서버 반영(opt-in/opt-out 호출), opt-out 시 확인 다이얼로그
-  - 활성 시간 외(이벤트 시작 1시간 전 ~ 종료 시간 외)에는 토글 비활성화 + "위치 공유 가능 시간이 아닙니다" 안내 (스펙)
-  - 이벤트 종료 시 목록에서 자동 제거(스펙)
+  - 조회 성공: path의 단일 이벤트 공유 상태 + 해당 이벤트의 최근 30일 접근 횟수/접근자 ID/시각 렌더링
+  - 참석자 토글 On/Off: opt-in/opt-out 엔드포인트를 호출한다. 실패 결과는 화면에서 처리하지 않아 조용히 끝날 수 있다.
+  - 토글 On은 동의 행만 true로 바꾸며 GPS 취득·`POST /update`·타이머 시작을 하지 않는다. 기존 opt-out으로 share row가 삭제된 뒤라면 위치 화면에서 다시 update하기 전까지 좌표가 노출되지 않는다.
+  - 호스트의 이벤트 전체 공유 허용 토글은 generic `PATCH /events/{id}`를 사용하고 `EventService`가 DRAFT만 허용하므로 OPEN/진행 중 이벤트에서는 `INVALID_EVENT_STATUS`로 실패한다.
+  - 스펙의 활성 시간 외 토글 비활성화는 현재 화면에 구현되어 있지 않으며, 다중 이벤트 일괄 목록/자동 제거도 없다.
 
 ### F14-05 이벤트 길찾기 (경로 + 참석자 거리)
 
@@ -126,19 +129,20 @@
 - **선결 조건/상태**: 로그인 상태(스펙 권한: 로그인 사용자). "현재 위치" 출발지 선택 시 OS 위치 권한 필요. "집/회사" 선택 시 사전 등록된 `userAddressId` 보유.
 - **결과 상태 변화**:
   - 조회 성공: 도착지 카드, 거리/예상 시간, 간단 3단계 안내, 외부 지도 앱 링크 표시
-  - 외부 지도 앱 인계: 바텀시트(설치된 지도 앱 목록)에서 선택 → 딥링크로 외부 앱 호출 (외부 앱 호출은 클라이언트 측 동작이며 서버 상태 변화 없음)
-  - 참석자 거리 조회 성공: 참석자별 거리(예: 2km, 800m, "비공개") 리스트 표시
+  - 외부 지도 앱 인계: 카카오·네이버·구글·애플 provider 버튼을 세로 목록으로 보여주고 딥링크로 외부 앱을 호출한다. 카카오/네이버/애플 실행 실패 시 같은 이동수단의 Google 링크로 자동 fallback한다.
+  - 참석자 거리 조회 성공: 호스트·공동호스트·클럽 `canCreateEvent` 운영자에게 `ATTENDING` 계정 회원∩opt-in∩활성 share∩미차단 subset만 반환한다. 나머지는 "비공개" placeholder 없이 row 자체가 빠진다.
   - 실패: 경로 미존재 → "경로를 찾을 수 없습니다" 에러 + 외부 앱 열기 유도, 좌표/주소 누락 시 4xx
 
-### F14-06 역지오코딩 (좌표 → 주소)
+### F14-06 지오코딩 (좌표 ↔ 주소)
 
-- **사용자 가치**: 위·경도 좌표 자체는 사용자에게 의미가 없으므로, 현재 위치나 지도에서 선택한 지점을 한국식 주소 문자열로 변환해 사람이 즉시 이해하고 공유할 수 있게 한다. 길찾기/위치 공유의 보조 인프라 기능.
-- **주요 화면**: 본 단위에는 전용 화면 없음. 다른 화면(주소 검색/등록, 길찾기 출발지 선택 등)에서 좌표를 주소로 표기할 때 호출되는 보조 API. UI/UX 스펙(`29-location-directions.md`)에 직접 매핑된 화면은 없으나 같은 도메인(`location/`) 패키지 내 컨트롤러로 정식 노출되어 본 단위에 포함.
+- **사용자 가치**: 위·경도 좌표를 주소로, 주소 문자열을 저장 가능한 좌표로 바꾸는 보조 인프라다.
+- **주요 화면**: 전용 화면은 없다. Flutter 전수 검색상 좌표→주소는 온보딩 현재 GPS 한 곳에서만 호출한다. 주소→좌표는 온보딩 주소 검색, 프로필 주소 폼, 이벤트 생성, 이벤트 편집·일정변경에서 호출한다. 길찾기와 지도 핀/long-press는 본 API를 직접 호출하지 않는다.
 - **백엔드 엔드포인트**:
   - `GET /api/v1/location/reverse-geocode?lat={lat}&lng={lng}` (`GeocodingController#reverseGeocode`) — `AddressVo` 반환. `lat`, `lng`는 `@RequestParam double` 필수.
+  - `GET /api/v1/location/geocode?address={address}` (`GeocodingController#geocode`) — `AddressCoordinateVo(latitude, longitude, addressName, roadAddressName)` 반환
 - **선결 조건/상태**: 유효한 위/경도 좌표(범위 검증은 서비스 단). 인증 요구 사항은 컨트롤러에 `@AuthenticationPrincipal`이 없어 본 컨트롤러 메서드 단에서는 명시적 사용자 식별 없이 호출 가능한 구조.
 - **결과 상태 변화**:
-  - 성공: 좌표 → 주소 문자열 변환 결과(`AddressVo`) 반환, 클라이언트는 이를 입력 필드/마커 라벨에 채움
+  - 성공: 좌표→주소는 `AddressVo`, 주소→좌표는 `AddressCoordinateVo`를 반환한다. 현재 reverse-geocode 결과를 소비하는 Flutter 화면은 온보딩뿐이다.
   - 실패: 좌표 범위 외/외부 지오코딩 서비스 오류 시 4xx/5xx → 호출자 화면에서 "주소를 찾을 수 없습니다" 등 안내
 
 ---
@@ -152,6 +156,7 @@
 | [F14-01](../02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md) | F14-01. 이벤트 참석자 위치 공유 (opt-in / 위치 갱신 / 조회) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F14-02](../02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md) | F14-02. 위치 공유 중지 (opt-out) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F14-05](../02_feature_prds/14_location_directions/F14-05_event-directions_prd.md) | F14-05. 이벤트 길찾기 (경로 + 참석자 거리) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F14-06](../02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md) | F14-06. 지오코딩 (좌표 ↔ 주소) | 0 | features.js 정본 기준 Risk 후보 없음 |
 
 ## 8. 운영 방법
 
@@ -177,4 +182,4 @@ opt-in 이후 참석을 취소하거나 퇴장한 사용자가 공유 활성 상
 - 위치 열람 허용: 현재 ATTENDING 상태인 참석자 + 호스트 + 공동호스트 (opt-in한 경우에 한해 좌표 노출)
 - 차단 상대(양방향) 실시간 위치에서 제외 — opt-in 여부와 무관
 - 참석 취소·퇴장 후 위치 잔존 없음 (read 시점 현재 참석 재확인)
-- 이벤트 종료 시 위치 데이터 자동 비활성화 (기존 정책 유지)
+- 이벤트 종료 자체가 opt-in을 자동 비활성화하지는 않는다. 좌표 노출은 share의 `expiresAt`, 일반 조회 시간창, 스케줄 정리로 제한된다.

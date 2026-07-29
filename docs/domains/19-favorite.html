@@ -25,6 +25,16 @@
       </header>
 
       <section>
+        <div class="callout">
+          <span class="label">2026-07-29 소스 재실측 — 네 가지 공개범위</span>
+          <p>기존 PREMIUM 캘린더·클럽 숨김에 무료 <code>hideFromStrangers</code>와
+            <code>hideFromSearch</code>가 추가됐다. 전자는 무맥락 직접 프로필 조회를 leak-safe
+            USER_NOT_FOUND로 숨기고, 후자는 사람 검색·만난 사람·홈 추천 후보에서 제외하되 직접 URL은
+            막지 않는다. 설정 row가 없으면 네 값 모두 false다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
           <div class="metric"><div class="label">기능</div><div class="value">3</div><div class="hint">등록관리·캘린더·프라이버시</div></div>
           <div class="metric"><div class="label">무료 한도</div><div class="value">3명</div><div class="hint">등록 가능 관심인</div></div>
@@ -46,7 +56,7 @@
         <div class="cards">
           <a class="card" href="../features/F19-01.html"><div class="eyebrow">F19-01</div><h3>등록·해제·한도</h3><p>관심 있는 사람을 추가하고 원할 때 해제한다. 무료 3명, 프리미엄 10명. 한도를 넘으면 구독 안내가 뜬다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F19-02.html"><div class="eyebrow">F19-02</div><h3>캘린더 뷰·알림</h3><p>관심인들의 공개 모임 일정을 내 캘린더에 겹쳐 본다. 새 모임이 열리면 알림이 온다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F19-03.html"><div class="eyebrow">F19-03</div><h3>프라이버시 설정</h3><p>내 일정과 가입 클럽을 타인에게 숨긴다. 프리미엄 전용 설정이며 끄는 것은 항상 가능하다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F19-03.html"><div class="eyebrow">F19-03</div><h3>프라이버시 설정</h3><p>캘린더·클럽 숨김은 PREMIUM, 낯선 사람 직접 열람·검색/추천 숨김은 무료다. 네 설정을 독립 제어한다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
 
@@ -80,6 +90,8 @@ flowchart TD
               <tr><td><strong>새 모임 알림</strong></td><td>수신(무료 포함 전원)</td><td>수신</td></tr>
               <tr><td><strong>내 캘린더 비공개</strong></td><td>불가 — 항상 공개</td><td>토글로 숨길 수 있음</td></tr>
               <tr><td><strong>가입 클럽 숨기기</strong></td><td>불가 — 타인이 볼 수 있음</td><td>토글로 숨길 수 있음</td></tr>
+              <tr><td><strong>낯선 사람에게 프로필 숨기기</strong></td><td>토글 사용 가능</td><td>토글 사용 가능</td></tr>
+              <tr><td><strong>사람 검색·추천에서 숨기기</strong></td><td>토글 사용 가능</td><td>토글 사용 가능</td></tr>
               <tr><td><strong>프리미엄 해지 후 등록 목록</strong></td><td>—</td><td>보존. 등록순 3명만 활성, 나머지 임시 비활성</td></tr>
             </tbody>
           </table>
@@ -130,6 +142,13 @@ flowchart TD
           <span class="label">한도 수치는 운영 설정으로 관리</span>
           <p>무료 3명 / 프리미엄 10명 한도는 운영 설정값으로 관리되어,
             서비스 전략에 따라 조정할 수 있다.</p>
+        </div>
+        <div class="callout">
+          <span class="label">직접 프로필 route와 서버 회귀 검증이 실제로 연결돼 있다</span>
+          <p>앱의 <code>/profile/users/:userId</code> route는 즐겨찾기 목록·사람 시트·멘션에서 호출된다.
+            <code>hideFromStrangers</code>는 이 직접 조회에서도 서버가 강제한다. 신규 설정 저장과
+            전역/사람 검색·만난 사람·추천 제외는 백엔드 테스트로 검증되며, Flutter 전용 테스트는
+            별도 확인되지 않았다.</p>
         </div>
       </section>
 

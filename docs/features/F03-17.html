@@ -19,22 +19,28 @@
         </div>
         <h1>F03-17. 차량 레이아웃 카탈로그</h1>
         <p class="lede">
-          버스대절 기능에서 사용할 차량 좌석 구조를 조회 전용으로 제공하는 카탈로그. 호스트는 활성 레이아웃을 고르고,
-          시스템은 그 레이아웃의 좌석 배치를 기준으로 이벤트 버스 좌석표를 만든다.
+          버스대절 기능에서 사용할 차량 좌석 구조 카탈로그. 사용자 read API와 관리자 생성·수정·좌석맵 교체·활성화 API가
+          구현되어 있지만 기본 차량 seed와 Flutter 소비 화면은 없다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">초기 시드</div><div class="value">4종</div><div class="hint">28 · 45 · 20 · 8인승</div></div>
-          <div class="metric"><div class="label">출시 범위</div><div class="value">조회</div><div class="hint">관리자 편집은 후속</div></div>
-          <div class="metric"><div class="label">사용처</div><div class="value">F03-16</div><div class="hint">버스 좌석 배치 생성 원천</div></div>
+          <div class="metric"><div class="label">기본 시드</div><div class="value">0종</div><div class="hint">V1·seed SQL에 INSERT 없음</div></div>
+          <div class="metric"><div class="label">사용자 API</div><div class="value">2개</div><div class="hint">활성 목록 · 좌석 조회</div></div>
+          <div class="metric"><div class="label">관리자 API</div><div class="value">6개</div><div class="hint">목록·상세·생성·수정·좌석·활성</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 좌석표를 이벤트마다 새로 그리지 않는다</span>
           <p>차량 좌석 구조는 반복해서 재사용되는 운영 자산이다. 카탈로그를 별도로 두면 28인승, 45인승 같은
             표준 차량을 여러 이벤트에서 같은 방식으로 쓸 수 있고, 좌석 선택 가능 여부도 레이아웃 단위로 통제할 수 있다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">현재 운영 전제</span>
+          <p>빈 DB에는 28·45·20·8인승 기본 row가 없다. 관리자가 레이아웃을 생성하고 좌석맵을 등록한 뒤
+            활성화해야 사용자 active 목록에 나타난다. 단 create body가 active=true를 허용해 좌석맵 없이 즉시
+            활성 row를 만들 수도 있다. seatType은 enum이 아니라 6개 허용 문자열이다.</p>
         </div>
       </section>
 
@@ -57,8 +63,8 @@ flowchart LR
         <div class="cards">
           <article class="card">
             <div class="eyebrow">기본 조회</div>
-            <h3>활성 차량 4종 노출</h3>
-            <p>시드가 적용된 DB에서 호스트가 버스 추가 화면을 열면 28인승 A타입, 45인승, 20인승, 8인승이 보인다.</p>
+            <h3>초기 active 목록이 비어 있음</h3>
+            <p>기본 seed가 없으므로 운영자가 등록·활성화하지 않은 DB에서는 active 목록이 빈 배열이다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">좌석 그림</div>
@@ -79,13 +85,14 @@ flowchart LR
       </section>
 
       <section>
-        <h2>이 화면이 제공하는 것</h2>
+        <h2>API가 제공하는 것</h2>
         <div class="table-wrap">
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>활성 차량 목록 보기</td><td>호스트</td><td>지금 쓸 수 있는 차량 레이아웃 목록을 받는다.</td></tr>
-              <tr><td>좌석 배치 보기</td><td>호스트</td><td>고른 레이아웃의 좌석 배치를 받아 좌석표를 그린다.</td></tr>
+              <tr><td>활성 차량 목록</td><td>인증 사용자</td><td>JSON boolean key는 <code>active</code>. Flutter 호출부는 없다.</td></tr>
+              <tr><td>좌석 배치</td><td>인증 사용자</td><td>JSON boolean key는 <code>selectable</code>. inactive ID도 조회되고 없는 ID는 빈 목록이다.</td></tr>
+              <tr><td>레이아웃·좌석 운영</td><td>MANAGE_EVENT 관리자</td><td>생성·메타 수정·좌석 전체 교체·active 토글. DELETE는 없다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -94,11 +101,12 @@ flowchart LR
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">1차 범위는 조회 전용이다</span>
+          <span class="label">관리자 CRUD는 구현됐고 기본 데이터는 없다</span>
           <ul>
-            <li><strong>관리자 편집 기능은 후속이다.</strong> 1차 운영은 초기 등록 데이터로 레이아웃을 관리한다.</li>
+            <li><strong>관리자 API는 현재 구현돼 있다.</strong> `MANAGE_EVENT` 권한으로 목록·상세·생성·수정·좌석 전체 교체·활성 토글을 수행한다.</li>
+            <li><strong>기본 시드는 없다.</strong> 운영 초기화 절차에서 직접 등록해야 한다.</li>
             <li><strong>레이아웃은 원본이고 이벤트 좌석은 복사본이다.</strong> 레이아웃이 바뀌어도 이미 생성된 이벤트 좌석표를 소급 변경하지 않는다.</li>
-            <li><strong>좌석 선택 가능 여부가 중요하다.</strong> 운전석, 통로, 비선택 좌석을 구분해야 좌석표가 안전하게 동작한다.</li>
+            <li><strong>seatType은 String whitelist다.</strong> NORMAL·DRIVER·GUIDE·FOLDABLE·DISABLED·AISLE만 허용한다.</li>
           </ul>
         </div>
       </section>

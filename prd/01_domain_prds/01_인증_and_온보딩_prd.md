@@ -46,7 +46,7 @@
 | F01-04 | 비밀번호 재설정 | 이메일로 받은 토큰 링크를 통해 새 비밀번호를 설정한다 | 이메일 입력 → 메일 수신 → 링크 클릭 → 새 비밀번호 입력 |
 | F01-05 | 토큰 갱신 & 로그아웃 | Access Token 만료 시 Refresh Token으로 자동 재발급하고, 명시적 로그아웃으로 세션을 종료한다 | (자동) 401 응답 시 백그라운드 갱신, 명시적 로그아웃 액션 |
 | F01-06 | 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | 첫 로그인 후 4단계 온보딩으로 프로필·태그·위치를 채워 추천 가능한 상태로 만든다 | 캐러셀 스와이프, 프로필 사진/닉네임 입력, 태그 3개 이상 선택, 위치 권한 허용 또는 주소 검색 |
-| F01-07 | 관심사 태그 관리 | 온보딩 후에도 선호 태그를 조회·추가·수정·삭제하여 추천 품질을 갱신한다 | 태그 추가/수정/삭제 |
+| F01-07 | 관심사 태그 관리 | 서버 카탈로그 기반 태그를 단건 CRUD한다. 현재 Flutter 사용자 흐름은 온보딩 추가와 프로필 조회·추가·삭제만 연결한다 | 온보딩 태그 추가, 프로필 태그 추가/삭제 |
 | F01-08 | 소셜 계정 연결 해제 | 연결된 소셜 제공자(Apple/Google/Kakao/Naver)를 개별 해제한다 | 설정 화면에서 특정 소셜 제공자 "연결 해제" 탭 |
 
 > M = 8 기능. F01-01 ~ F01-05는 인증 라이프사이클, F01-06은 첫 사용자 경험, F01-07은 인증 후에도 지속되는 선호 태그 관리, F01-08은 소셜 라이프사이클 종료(연결 해제)이다. 회원 탈퇴(Account 비활성화)는 `AccountController`에 메서드가 정의되어 있지 않으므로 본 단위에 포함하지 않는다 — `AccountController`는 이메일 인증 send/confirm 두 엔드포인트만 노출한다.
@@ -161,14 +161,15 @@
 ### F01-07 관심사 태그 관리
 
 - **사용자 가치**: 온보딩 이후에도 사용자의 흥미 변화를 반영해 추천 품질을 지속적으로 조정한다.
-- **주요 화면**: 본 단위에는 전용 화면 없음. `community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart`가 신규 등록 진입점이며, 수정/삭제는 프로필/설정 영역(외부 단위)에서 호출. 본 기능은 백엔드 라이프사이클이 인증 도메인(`account/`)에 속하므로 본 단위에 포함.
-- **백엔드 엔드포인트** (모두 `UserPreferenceTagController`):
+- **주요 화면**: `community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart`가 신규 등록 진입점이고, `community_app/lib/presentation/profile/screens/preference_tag_screen.dart`가 운영 중 조회·추가·삭제 화면이다. 서버 PUT과 Retrofit 선언은 있으나 이름·가중치 편집 UI/Provider/Repository 호출자는 없다.
+- **백엔드 엔드포인트**:
+  - `GET /api/v1/interests/catalog` (`InterestCatalogController#getCatalog`) — 서버 허용 라벨 25개를 비어 있지 않은 13개 카테고리로 반환
   - `GET /api/v1/users/me/preference-tags` — 내 태그 전체 조회 (List<UserPreferenceTagVo>)
   - `POST /api/v1/users/me/preference-tags` — 태그 추가
   - `PUT /api/v1/users/me/preference-tags/{tagId}` — 태그 수정
   - `DELETE /api/v1/users/me/preference-tags/{tagId}` — 태그 삭제 (204)
 - **선결 조건/상태**: 로그인 상태(`@AuthenticationPrincipal UserPrincipal` 필요).
-- **결과 상태 변화**: `user_preference_tag` 테이블에 신규/수정/삭제 반영 → 추천/검색 도메인의 입력값 변동.
+- **결과 상태 변화**: `user_preference_tag` 테이블에 신규/수정/삭제가 반영된다. 현재 저장값은 PersonSheet 공통점, 홈 사람 추천 `COMMON_GROUND`, 양쪽 동의 데이팅 Jaccard 점수에서 실제 소비된다.
 
 ### F01-08 소셜 계정 연결 해제
 
@@ -218,3 +219,13 @@
 - 토큰 회전·재사용·IDOR 방어 견고: 기존 구현 정상 확인
 - 계정 삭제는 본인 전용(self-only): 기존 서버 강제 확인
 - 비밀번호 재설정 기존 세션 잔존(F01-F4): 완화 수준 수용, 백로그 처리
+
+## 10. 관심사 태그 downstream 재실측 (2026-07-29)
+
+F01-07의 CRUD 계약은 유지되지만 저장된 태그는 현재 세 경로에서 실제 소비된다.
+
+- 공용 PersonSheet 관계 요약: 태그명 교집합을 뷰어 weight 순 최대 5개로 노출
+- 홈 사람 추천: 태그·선언 선호 카테고리·시간대의 공통 개수를 `COMMON_GROUND` 신호로 사용
+- 데이팅 후보 점수: 양쪽 `communityDataOptIn=true`일 때만 태그 Jaccard 유사도를 0.30 성분으로 사용
+
+추천과 데이팅 점수는 저장 weight를 직접 곱하지 않는다. 타인에게 전체 태그나 수치 궁합을 노출하지 않으며 데이팅 미동의자는 해당 커뮤니티 성분을 제외한 뒤 남은 가중치를 재정규화한다. 근거는 `UserPreferenceTagService`, `RelationshipService`, `PersonRecommendationService`, `MatchScoringService`다.

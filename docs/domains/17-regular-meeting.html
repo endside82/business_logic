@@ -18,7 +18,8 @@
           호스트가 같은 사람들을 묶어 여러 회차를 운영하는 모임. 한 도메인 안에 두 가지 운영 방식이 함께 들어 있다 —
           <strong>고정형</strong>은 정해 둔 회차 전체를 멤버가 한 번에 등록·결제·정산하고,
           <strong>변동형</strong>은 회차마다 따로 모집·결제·정산한다. 두 방식이 같은 모임 카드 위에서
-          뱃지로 구분되고, 회차는 일반 이벤트와 같은 화면을 그대로 쓴다.
+          뱃지로 구분된다. 서버의 회차는 일반 이벤트 위에 있지만, 현재 정기모임 상세의 회차 카드는 읽기 전용이라
+          일반 이벤트 상세로 이동하지 않는다.
           본 도메인은 코스 단위 돈 흐름이 핵심이라 환불·정산이 가장 민감하게 설계되어 있다.
           <strong>모임 줄기의 위성 도메인</strong> — 클럽이 아니라 “여러 회차로 진행되는 모임”으로, 단발 이벤트와 같은 참여·결제·정산 흐름을 공유한다. <a href="03-event.html">03 이벤트</a>와 함께 본다.
         </p>
@@ -52,9 +53,9 @@
 
         <h3>호스트가 만들고 운영하는 것</h3>
         <div class="cards">
-          <a class="card" href="../features/F17-03.html"><div class="eyebrow">F17-03</div><h3>생성</h3><p>초안으로 먼저 저장하고, 회차를 다 꾸린 다음 발행한다. 한 번 정한 호스트는 교체할 수 없다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-03.html"><div class="eyebrow">F17-03</div><h3>생성</h3><p>초안으로 먼저 저장하고 타입별 가격·환불·노쇼 결과를 확인한 뒤 발행한다. 카테고리 enum P0 Gap 확인.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F17-04.html"><div class="eyebrow">F17-04</div><h3>생명주기</h3><p>발행·종료·취소·재오픈. 종료는 회차 출석이 다 끝나야 통과, 취소는 멤버 전원에게 자동 환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F17-05.html"><div class="eyebrow">F17-05</div><h3>회차 관리</h3><p>회차 추가·일괄 추가·취소·대체. 일반 이벤트 화면 위에서 동작하되 직접 수정 경로는 막혀 있다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-05.html"><div class="eyebrow">F17-05</div><h3>회차 관리</h3><p>앱은 단건 추가·반복 자동생성을 제공한다. 임의 bulk·대체 UI와 회차 카드 상세 이동은 아직 없다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
 
         <h3>멤버가 들어오고 자리잡는 것 (고정형 전용)</h3>
@@ -122,9 +123,42 @@ flowchart TD
         </div>
         <div class="callout">
           <span class="label">두 운영 방식의 공통점</span>
-          <p>두 방식 모두 회차는 일반 이벤트와 같은 화면을 그대로 쓴다. 정기모임 회차임을 알리는 뱃지·표기만 덧붙고,
-            일반 검색·홈·트렌딩에서는 자동으로 분류되어 노출 정책이 따로 적용된다. 호스트는 정기모임 전용 화면에서만
-            회차를 손볼 수 있고, 일반 이벤트 운영 화면을 통한 직접 수정·신청은 막혀 있다.</p>
+          <p>두 방식 모두 서버에서는 일반 이벤트 위에 회차를 만든다. 일반 검색·홈·트렌딩에서는 자동으로 분류되어
+            노출 정책이 따로 적용된다. 다만 현재 정기모임 상세의 회차 카드는 탭 동작이 없는 읽기 전용이고,
+            일반 이벤트 상세도 <code>sequenceNo</code>를 사용한 “정기모임 N회차” 표기를 렌더링하지 않는다.
+            호스트는 정기모임 전용 화면에서만
+            회차를 손볼 수 있어 일반 이벤트 운영 화면의 직접 mutation은 막혀 있다. 세션 단독 신청은 고정형에서만
+            코스 등록으로 돌리고, 변동형은 일반 이벤트처럼 세션별 신청·결제를 허용한다.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>2026-07-29 소스 실측 — 작성·가격·파일 계약</h2>
+        <div class="callout danger">
+          <span class="label">P0 — 생성 화면 카테고리 enum 불일치</span>
+          <p>앱의 기본값 <code>CLASS</code>와 <code>STUDY/HOBBY</code>는 서버 <code>Category</code>에 없다.
+            현재 공통 값은 SPORTS·COOKING·OTHER뿐이며, 그 외 앱 값은 요청 역직렬화 단계에서 생성 실패가 날 수 있다.
+            화면 옵션을 서버 enum 정본으로 맞추는 것이 최우선이다.</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">변동형 유료 회차</div>
+            <h3>가격은 회차에만 귀속</h3>
+            <p>가격을 100원 단위로 절삭한 결과가 양수일 때 CASH 사전결제를 만든다. 1~99원은 0원이 되어 무료 처리된다.
+              환불 template은 지정값 또는 STANDARD, 결제기한은 지정값 또는 24시간이다. 단건·자동생성·bulk·대체 모두 같은 규칙을 쓴다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">고정형 회차</div>
+            <h3>세션 가격은 항상 0</h3>
+            <p>고정형은 코스 본체에서 한 번 결제하므로 세션 요청에 가격이 들어와도 서버가 0으로 강제한다.
+              정원만 본체 값을 상속한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">썸네일</div>
+            <h3>서버는 안전, 화면 authoring은 공백</h3>
+            <p>호스트 소유·업로드 완료·EVENT_THUMBNAIL 키만 저장하고 조회 때 새 표시 URL을 발급한다.
+              앱 목록·상세는 표시하지만 생성·수정 화면에는 업로드 입력이 없다.</p>
+          </article>
         </div>
       </section>
 
@@ -133,7 +167,7 @@ flowchart TD
         <div class="callout warn">
           <span class="label">현금 안전 원칙</span>
           <ul>
-            <li><strong>호스트는 한 번 정해지면 못 바꾼다.</strong> 정산 수익자와 환불 책임자가 흔들리지 않도록 v1 에서는 호스트 교체를 막아두었다.</li>
+            <li><strong>일반 호스트는 모임을 직접 이양할 수 없다.</strong> 관리자에게만 CANCELED 이전의 break-glass 이양 경로가 있으며, 이미 결제·정산이 잡힌 세션은 기존 호스트 귀속을 유지한다.</li>
             <li><strong>코스 종료는 출석이 다 확정돼야 통과한다.</strong> 미확정 회차가 남아 있으면 종료 버튼이 막힌다 — 호스트에게 안내가 필요하다.</li>
             <li><strong>계좌이체 환불은 호스트 책임이다.</strong> 외부 송금이라 호스트가 직접 환불한 뒤 "환불 완료"를 눌러야 마감된다. 누락 시 환불 진행중 상태가 계속 남는다.</li>
             <li><strong>유료 잔존액만 호스트 수익이다.</strong> 무료 보너스 포인트로 결제된 부분은 플랫폼 보조로 잡혀 호스트 지급 대상이 아니다.</li>
@@ -152,7 +186,11 @@ flowchart TD
             <li><strong>계좌이체 환불 마감 무대응</strong> — 호스트가 외부 송금만 하고 "환불 완료"를 안 누르면 멤버 입장에서 영구 "환불 진행중".</li>
             <li><strong>종료된 모임 자가 취소 시도</strong> — 정산 후 환불 위험 때문에 명시적으로 차단했다. 모임이 끝난 뒤 환불은 운영자 중재 경로.</li>
             <li><strong>자격박탈 후 재신청 시도</strong> — 노쇼 한도로 박탈된 멤버는 같은 모임에 다시 들어올 수 없다(영구 차단). 정책으로 안내 필요.</li>
-            <li><strong>변동형 본체에 가격·정원 입력</strong> — 의미 없는 값이 무시되지만 사용자는 입력할 수 있다. 폼에서 비활성 처리 필요.</li>
+            <li><strong>생성 카테고리 enum 불일치</strong> — 앱 기본값부터 서버에 없어 생성 실패가 날 수 있다. 배포 전 정본 일치가 필요하다.</li>
+            <li><strong>FIXED 음수 가격 서버 검증 누락</strong> — 앱 폼은 막지만 직접 API 요청은 음수 가격을 저장할 수 있어 서버 가드가 필요하다.</li>
+            <li><strong>VARIABLE 1~99원 유료 오인</strong> — 100원 절삭 후 무료가 되지만 앱에 최소 유료 금액 안내가 없다.</li>
+            <li><strong>썸네일·상세 장소 authoring 공백</strong> — 서버 필드는 있지만 앱 생성·수정 화면에서 값을 만들 수 없다.</li>
+            <li><strong>회차 상세 진입·문맥 표기 공백</strong> — 상세의 회차 카드는 읽기 전용이며 일반 이벤트 상세로 이동하지 않는다. 일반 이벤트 상세에도 “정기모임 N회차” 라벨이 없다.</li>
           </ul>
         </div>
       </section>

@@ -19,18 +19,19 @@
         </div>
         <h1>F21-01. 제공자 배정</h1>
         <p class="lede">
-          호스트가 모임에 강사 등 서비스 제공자를 지정해 배정하고, 제공자가 수락 또는 거절하며,
-          호스트가 최종 확정하는 흐름. 제공자가 자기 배정 현황을 본인 화면에서만 조회하도록
+          호스트가 제공자를 직접 지정하거나 검증된 프로필·상품 카탈로그에서 선택해 배정하고,
+          제공자가 수락 또는 거절하며 호스트가 최종 확정하는 흐름. 카탈로그 배정은 금액·계약금·
+          수수료 정책을 버전형 조건으로 상호 수락한다. 제공자가 자기 배정 현황을 본인 화면에서만 조회하도록
           정보 접근이 철저히 분리되어 있다. 이 배정이 확정되어야 서비스비 분담 결제와 정산이 시작될 수 있다.
         </p>
       </header>
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">배정 진행 단계</div><div class="value">5단계</div><div class="hint">초안→배정→수락→확정→취소</div></div>
+          <div class="metric"><div class="label">배정 상태</div><div class="value">7개</div><div class="hint">계약 상태머신 전체 값</div></div>
           <div class="metric"><div class="label">모임 종류</div><div class="value">2가지</div><div class="hint">단일 이벤트·정기모임 모두 가능</div></div>
           <div class="metric"><div class="label">배정 조회 권한</div><div class="value">본인만</div><div class="hint">제공자는 자기 배정만 열람</div></div>
-          <div class="metric"><div class="label">동시 중복 배정</div><div class="value">불가</div><div class="hint">모임당 제공자 1인 고정</div></div>
+          <div class="metric"><div class="label">중복 기준</div><div class="value">동일 제공자 불가</div><div class="hint">(모임, 제공자) 조합 유일</div></div>
         </div>
 
         <div class="callout">
@@ -42,26 +43,60 @@
       </section>
 
       <section>
-        <h2>배정이 거치는 5단계</h2>
+        <h2>2026-07-29 현재 제공자 마켓플레이스</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">프로필·검증</div>
+            <h3>개인/사업자와 증빙 상태를 관리한다</h3>
+            <p>사업자번호는 암호화하고 마스킹 값만 응답한다. 완료된 PROVIDER_DOC 파일을 제출하면
+              PENDING 심사로 들어가며 VERIFIED, REJECTED, NEEDS_MORE_INFO로 판정된다. 본인 숨김,
+              관리자 정지, 차단 관계는 공개 화면에서 404로 감춘다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">상품 카탈로그</div>
+            <h3>카테고리·가격·지역으로 상품을 찾는다</h3>
+            <p>VEHICLE, VENUE, LABOR, OTHER와 5개 가격 모델을 지원한다. ACTIVE 상품만 공개되고
+              차량/공간은 VERIFIED가 필수다. 카탈로그 배정의 제공자·출처·상품 스냅샷은 서버가 정한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">계약조건</div>
+            <h3>최신 버전만 상대방이 수락한다</h3>
+            <p>호스트 고정가 또는 제공자 견적으로 X와 D를 정한다. 수락 시 현재 정책
+              FEE_V2_5PCT(5.00%)를 스냅샷하며, accepted 버전이 current와 같아야 확정·과금·정산이
+              열린다. 견적은 미래 만료시각이 필수다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">이행·운영</div>
+            <h3>이행 통계와 관리자 심사를 분리한다</h3>
+            <p>terms-managed 정산은 FULFILLED 또는 PARTIALLY_FULFILLED만 허용한다. 관리자 API는
+              심사·문서 열람·상품 제재 권한을 분리한다. 일정 충돌 검증, 관리자 프런트, 검증 결과 알림은
+              아직 연결되지 않았다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>배정이 거치는 상태</h2>
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> 초안 : 호스트가 배정 생성
-    초안 --> 배정됨 : 제공자에게 배정 요청 발송
-    배정됨 --> 수락됨 : 제공자 수락
+    [*] --> 초안 : 다음 회차 direct·미수락 복제
+    초안 --> 배정됨 : 상태 전이는 정의됨\n공개 resume API는 없음
+    [*] --> 배정됨 : direct 또는 카탈로그 배정 생성
+    배정됨 --> 수락됨 : direct 수락 또는 최신 조건 수락
     배정됨 --> 거절됨 : 제공자 거절
     수락됨 --> 확정됨 : 호스트 최종 확정
-    확정됨 --> 정산완료 : 정산 실행 완료
-    초안 --> 취소됨 : 호스트 취소
+    확정됨 --> 정산완료 : 배정 잠금·earning 승인
     배정됨 --> 취소됨 : 호스트 취소
     수락됨 --> 취소됨 : 호스트 취소
     확정됨 --> 취소됨 : 호스트 취소(정산 전)
           </div>
         </div>
         <div class="callout">
-          <span class="label">본인 배정은 자동 수락</span>
-          <p>호스트가 자기 자신을 제공자로 직접 배정하는 경우, 수락 단계를 거치지 않고 바로 "수락됨" 상태로
-            진입한다. 호스트이면서 동시에 제공자 역할을 맡을 때 불필요한 자기 승인 절차를 없앤 것이다.</p>
+          <span class="label">본인 direct와 본인 카탈로그는 다르다</span>
+          <p>호스트가 자기 자신을 direct로 배정하면 바로 수락됨으로 진입한다. 카탈로그 자기 배정은
+            배정됨으로 생성되지만 호스트가 제안한 조건은 자동 수락된다. 카탈로그 배정은 일반 수락
+            엔드포인트를 쓸 수 없고 항상 계약조건 흐름을 사용한다.</p>
         </div>
       </section>
 
@@ -103,17 +138,17 @@ stateDiagram-v2
             <h3>확정 전에 배정을 취소해야 하는 경우</h3>
             <p>이미 배정 요청을 보낸 뒤 제공자 측 사정으로 불가능해졌을 때, 호스트는 배정을 취소한다.
               수락됨 단계에서도 취소할 수 있다. 확정 이후라도 정산이 완료되기 전이라면 호스트가 취소할 수 있다.
-              취소 시 이미 납부된 서비스비가 있다면 환불 흐름으로 이어진다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 배정 취소만으로 서비스비 환불이 자동 처리되지 않는다.
-              환불은 F21-05 환불·회수 기능을 통해 별도로 진행된다.</p>
+              취소 시 이미 납부된 서비스비는 서버가 자동 역분개한다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 일반 charge는 납부자에게 자동 복원되고 earning도
+              취소된다. 단, PAID 상태의 미적용 계약금은 제공자에게 귀속되는 예외다.</p>
           </article>
 
           <article class="card">
-            <div class="eyebrow">모임당 하나</div>
+            <div class="eyebrow">동일 제공자 중복 방지</div>
             <h3>같은 모임에 같은 제공자를 중복 배정하면</h3>
             <p>이미 배정된 제공자를 같은 모임에 한 번 더 배정하려 하면 시스템이 거부한다.
-              한 모임에 한 명의 제공자만 유효하게 배정될 수 있다.
-              다른 제공자를 추가하려면 기존 배정을 취소한 뒤 새 배정을 만들어야 한다.</p>
+              유일성은 같은 모임 전체가 아니라 같은 <strong>(모임, 제공자)</strong> 조합이다.
+              따라서 서로 다른 제공자는 같은 모임에 각각 배정할 수 있다.</p>
           </article>
         </div>
       </section>
@@ -149,10 +184,17 @@ stateDiagram-v2
         <div class="callout warn">
           <span class="label">배정 확정 전후의 차이</span>
           <ul>
-            <li><strong>확정 전에는 서비스비 설정이 불가능하다.</strong> 배정이 "확정됨" 상태가 돼야 호스트가 총 서비스비를 설정하고 참가자 납부를 받을 수 있다.</li>
-            <li><strong>확정 이후 취소는 환불 흐름을 동반한다.</strong> 이미 납부된 서비스비가 있는 배정을 취소하면 참가자·호스트 등 납부 주체에게 환불 절차가 필요하다. 취소 자체가 환불을 자동 실행하지는 않는다.</li>
+            <li><strong>금액 권위는 배정 방식에 따라 다르다.</strong> direct 배정은 ACCEPTED 또는
+              CONFIRMED에서 service-fee를 설정할 수 있고, 카탈로그 배정은 구 API를 쓰지 않고 최신 terms의
+              X/D를 상대방이 수락해야 한다. 참가자 화면의 납부 CTA는 CONFIRMED에서 열린다.</li>
+            <li><strong>취소는 일반 charge를 자동 역분개한다.</strong> 납부자 복원과 earning 취소가 함께
+              처리된다. 미적용 PAID 계약금은 제공자 귀속 예외다.</li>
             <li><strong>제공자는 자기 배정만 본다.</strong> 제공자 본인이 아닌 사람이 그 제공자의 배정을 조회하는 경로는 없다. 호스트라도 다른 모임의 제공자 배정은 볼 수 없다.</li>
-            <li><strong>같은 모임에 동시에 두 명의 제공자가 "수락됨" 상태로 존재할 수 없다.</strong> 한 모임에 동일 제공자 중복 배정이 막혀 있어, 반드시 하나의 배정만 유효한 상태로 유지된다.</li>
+            <li><strong>같은 제공자만 중복 배정할 수 없다.</strong> 서로 다른 제공자는 한 모임에 여러 명
+              존재할 수 있다. 중복은 서비스가 먼저 409 도메인 오류로 거부하고 DB 유일성은 동시성 방어선으로 남는다.</li>
+            <li><strong>확정·취소 route의 경로 eventId는 현재 실제 owner와 대조하지 않는다.</strong>
+              서비스는 배정에 저장된 실제 eventId의 호스트 권한을 검사하므로 권한 상승은 없지만,
+              path와 배정 owner가 같은지 검증하는 계약은 후속 보완이 필요하다.</li>
           </ul>
         </div>
       </section>
@@ -170,7 +212,8 @@ stateDiagram-v2
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - community_api/src/main/java/com/endside/community/curated/
-  - F21-01: 제공자 배정 기능 (AssignmentStatus: DRAFT/ASSIGNED/ACCEPTED/DECLINED/CONFIRMED/CANCELED)
+  - measured 2026-07-29: provider profile/verification/offering/catalog/terms/admin review included
+  - AssignmentStatus: DRAFT/ASSIGNED/ACCEPTED/DECLINED/CONFIRMED/SETTLEMENT_LOCKED/CANCELED
 -->
     </main>
   </div>

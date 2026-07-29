@@ -6,7 +6,7 @@
 >
 > 2026-05-22 W2/W3 추가: 선입금 활성 이벤트의 `APPROVED_PENDING_PAYMENT`/`PAYMENT_EXPIRED` 분기와 `EventParticipationCancellationService.cancelMyParticipation` facade가 `apply`/`approveApplication`/`DELETE .../apply` 흐름에 통합되었다. 선입금 결제·환불 자체의 facade·회계·환불 매트릭스는 **F03-13 (이벤트 참가 선입금)** 으로 분리. 본 PRD는 신청·취소 사용자 액션과 상태 전이까지만 다룬다.
 >
-> 2026-07-08 현재 소스 갱신: 게스트 동반 예매가 같은 참석 흐름에 편입됐다. 서버는 `allowGuests`, `maxGuestsPerBooking`, `Application.partySize`, `guestNames`, `payableAmount`, 계정 없는 게스트 attendance row를 사용하고, 앱은 신청 확인 시트·일행 관리 시트·참석자/체크인 화면에서 소유자와 게스트를 분리 표시한다. 유료 이벤트의 게스트 추가/삭제는 F03-13 결제·환불 경로(증분 결제, 라인 환불, 호스트 강제환불)를 따른다. 현재 워크트리에는 host removal / party removal의 lock 순서를 event-first로 정렬한 deadlock hardening도 포함되어 있다.
+> 2026-07-29 현재 소스 갱신: 게스트 동반 예매가 같은 참석 흐름에 편입됐다. 서버는 `allowGuests`, `maxGuestsPerBooking`, `Application.partySize`, `guestNames`, `payableAmount`, 계정 없는 게스트 attendance row를 사용하고, 앱은 신청 확인 시트·일행 관리 시트·참석자/체크인 화면에서 소유자와 게스트를 분리 표시한다. 유료 이벤트의 게스트 추가/삭제는 F03-13 결제·환불 경로(증분 결제, 라인 환불, 호스트 강제환불)를 따른다. 현재 워크트리에는 host removal / party removal의 lock 순서를 event-first로 정렬한 deadlock hardening도 포함되어 있다.
 
 ## 1. 결론
 
@@ -92,12 +92,12 @@ PLAN.md §1.4.1과 §2.10·§2.14를 본 단위 흐름에 반영하면 다음과
 **`apply` (자동 승인 + 선입금 활성)** — `ApplicationService.apply`가 `EventPrepayment.prepaymentRequired=true`를 감지하면:
 - `Application.status = APPROVED_PENDING_PAYMENT`
 - `Application.paymentDueAt = now() + (policy.paymentDeadlineHours || 24h)`
-- capacity 변화 없음 (D4 — 결제 완료 전까지 좌석 미점유)
+- `currentCapacity`·attendance는 결제 전까지 늘지 않지만, `APPROVED_PENDING_PAYMENT.partySize`는 정원 검사에서 **논리 좌석 hold**로 점유
 - `ApplicationPendingPaymentEvent` 발행 (after-commit) → 알림 `EVENT_PREPAYMENT_REQUIRED(71)`
 - 자동 승인 무료 이벤트만 기존 `APPROVED + createAttendanceFromApplication` 흐름
 
 **`approveApplication` (승인 필요 + 선입금 활성)** — 호스트 승인 시:
-- `Application.status = APPROVED_PENDING_PAYMENT + paymentDueAt`로 전이 (capacity 미점유)
+- `Application.status = APPROVED_PENDING_PAYMENT + paymentDueAt`로 전이 (`currentCapacity`·attendance 물리 점유는 없지만 `partySize` 논리 hold는 시작)
 - `ApplicationApprovedEvent` 미발행 — 캘린더 sync 등은 `confirmPaymentAndAttend`(`:437`)에서 1회만 발행
 - 알림 71 발송 (after-commit)
 
@@ -124,7 +124,7 @@ facade 동작:
 
 ### 2.7 결제 만료 스케줄러
 
-`EventPrepaymentExpiryScheduler`가 60s 주기로 `Application.paymentDueAt < now()`인 row를 `PAYMENT_EXPIRED`로 일괄 전이. 동일 application의 active `event_payment(PENDING)`도 `CANCELED`로 정리. capacity 변화 없음(D4). 알림 `EVENT_PREPAYMENT_EXPIRED(75)` after-commit.
+`ApplicationPaymentExpiryScheduler`가 기본 initial delay 60초, fixed delay 300초로 `Application.paymentDueAt < now()`인 `APPROVED_PENDING_PAYMENT` row를 `PAYMENT_EXPIRED`로 bulk 전이한다. 이때 `partySize` 논리 hold는 상태 집계에서 빠지지만 `currentCapacity`·attendance는 원래 생성되지 않아 물리 변화가 없다. 현재 bulk 경로는 동일 application의 active `event_payment(PENDING)`을 `CANCELED`로 정리하지 않고 알림 `EVENT_PREPAYMENT_EXPIRED(75)`도 발행하지 않는다.
 
 ### 2.1 정원 판정 흐름 (v4.5 W1 — CapacityPolicy 매트릭스 위임)
 
@@ -366,9 +366,9 @@ facade 동작:
 | S11 | 유료 이벤트 신청 시 잔액 부족 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S12 | 모집 마감(`isClosed=true`) 후 신청 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S13 | 유료 + 승인제 이벤트 신청 → 승인 후 결제 필요 | 로그인됨, 이벤트 status=OPEN, price=20,000, approvalRequired=true 또는 visibility=APPROVAL, currentCapacity=8/10. | 결제 성공 전까지 정식 참석자가 아니며, 결제 성공 후에만 참석 확정. |
-| S2-2 (W2) | 선입금 + 승인 필요 + 호스트 승인 → APPROVED_PENDING_PAYMENT | `EventPrepayment.prepaymentRequired=true`, `approvalRequired=true`. 호스트가 승인 호출 | `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`. capacity 미점유. 알림 71 (after-commit). 참가자 결제 화면 진입 가능 (F03-13). |
-| S2-2b (W2) | 선입금 + 자동 승인 → 즉시 APPROVED_PENDING_PAYMENT | `prepaymentRequired=true`, `approvalRequired=false`. 참가자가 `POST .../apply` | `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`. capacity 미점유. 결제 facade 진입 (F03-13). |
-| S2-5 (W2) | 결제 기한 만료 | `APPROVED_PENDING_PAYMENT + paymentDueAt < now()` | `EventPrepaymentExpiryScheduler` → `Application=PAYMENT_EXPIRED`. `event_payment(PENDING→CANCELED)` 동시 처리. capacity 변화 없음. 알림 75. 사용자는 재신청 가능. |
+| S2-2 (W2) | 선입금 + 승인 필요 + 호스트 승인 → APPROVED_PENDING_PAYMENT | `EventPrepayment.prepaymentRequired=true`, `approvalRequired=true`. 호스트가 승인 호출 | `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`. `currentCapacity`·attendance는 미점유지만 `partySize`는 논리 hold. 알림 71 (after-commit). 참가자 결제 화면 진입 가능 (F03-13). |
+| S2-2b (W2) | 선입금 + 자동 승인 → 즉시 APPROVED_PENDING_PAYMENT | `prepaymentRequired=true`, `approvalRequired=false`. 참가자가 `POST .../apply` | `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`. 물리 attendance 전이 전에도 `partySize` 논리 hold가 정원 검사에 반영. 결제 facade 진입 (F03-13). |
+| S2-5 (W2) | 결제 기한 만료 | `APPROVED_PENDING_PAYMENT + paymentDueAt < now()` | `ApplicationPaymentExpiryScheduler`의 bulk update가 `Application=PAYMENT_EXPIRED`만 처리해 논리 hold를 해제한다. 연결된 `event_payment(PENDING)` 취소와 알림 75 발행은 현재 없다. active payment가 남으면 재신청도 차단될 수 있다. |
 | S2-6 (W3) | 사용자 자가 취소 — `cancelMyParticipation` (WALLET PAID) | `event_payment.PAID(WALLET)`, deadline 통과 전 | `DELETE /api/v1/events/{eventId}/apply` → facade가 `refundByWallet` 100% 위임 → `Application=CANCELED + capacity-- + event_payment.REFUNDED`. 알림 76. |
 | S2-7 (W3) | 사용자 자가 취소 — BANK_TRANSFER PAID | `event_payment.PAID(BANK_TRANSFER)` | `event_payment.REFUND_REQUESTED + Application 유지`. 호스트 알림 83. 환불 정리는 호스트 책임. |
 | S2-11 (W3) | 탈퇴 차단 | active `event_payment` 보유 | 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + BlockingItem `ACTIVE_EVENT_PAYMENT`. |
@@ -423,9 +423,9 @@ facade 동작:
 - **AC-11. 유료 이벤트 신청 시 잔액 부족**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-12. 모집 마감(`isClosed=true`) 후 신청**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-13. 유료 + 승인제 이벤트 신청 → 승인 후 결제 필요**: Given 로그인됨, 이벤트 status=OPEN, price=20,000, approvalRequired=true 또는 visibility=APPROVAL, currentCapacity=8/10. When 사용자가 해당 흐름을 실행하면 Then 결제 성공 전까지 정식 참석자가 아니며, 결제 성공 후에만 참석 확정.
-- **AC-W2-1 (S2-2). 선입금 + 승인 필요 + 호스트 승인**: Given `prepaymentRequired=true`, `approvalRequired=true`. When 호스트가 승인 호출. Then `Application=APPROVED_PENDING_PAYMENT + paymentDueAt` 설정, capacity 미점유. 알림 71 발송(after-commit). 결제 facade 진입은 F03-13.
-- **AC-W2-2 (S2-2b). 선입금 + 자동 승인**: Given `prepaymentRequired=true`, `approvalRequired=false`. When 참가자가 `POST .../apply`. Then 즉시 `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`, capacity 미점유. 결제 후에만 ATTENDING.
-- **AC-W2-3 (S2-5). 결제 기한 만료**: Given `APPROVED_PENDING_PAYMENT + paymentDueAt < now()`. When `EventPrepaymentExpiryScheduler` 실행. Then `Application=PAYMENT_EXPIRED + event_payment(PENDING→CANCELED)`. capacity 변화 없음. 알림 75.
+- **AC-W2-1 (S2-2). 선입금 + 승인 필요 + 호스트 승인**: Given `prepaymentRequired=true`, `approvalRequired=true`. When 호스트가 승인 호출. Then `Application=APPROVED_PENDING_PAYMENT + paymentDueAt` 설정, `currentCapacity`·attendance는 미점유지만 `partySize` 논리 hold가 시작된다. 알림 71 발송(after-commit). 결제 facade 진입은 F03-13.
+- **AC-W2-2 (S2-2b). 선입금 + 자동 승인**: Given `prepaymentRequired=true`, `approvalRequired=false`. When 참가자가 `POST .../apply`. Then 즉시 `Application=APPROVED_PENDING_PAYMENT + paymentDueAt`, 물리 attendance 전이 전에도 논리 hold는 점유한다. 결제 후에만 ATTENDING.
+- **AC-W2-3 (S2-5). 결제 기한 만료**: Given `APPROVED_PENDING_PAYMENT + paymentDueAt < now()`. When `ApplicationPaymentExpiryScheduler` 실행. Then `Application=PAYMENT_EXPIRED`로 논리 hold가 해제된다. 현재 bulk 경로는 `event_payment(PENDING)` 취소와 알림 75를 처리하지 않는다.
 - **AC-W2-4 (S2-6). 사용자 자가 취소 (WALLET PAID) — `cancelMyParticipation`**: Given `event_payment.PAID(WALLET)`. When `DELETE /api/v1/events/{eventId}/apply`. Then facade가 `refundByWallet` 호출 → `Application=CANCELED + capacity-- + event_payment.REFUNDED + 분개 1건`. 알림 76. (환불 facade 자체는 F03-13에서 검증)
 - **AC-W2-5 (S2-7). 사용자 자가 취소 (BANK PAID)**: Given `event_payment.PAID(BANK_TRANSFER)`. When 동일 호출. Then `event_payment.REFUND_REQUESTED + Application 유지`. 알림 83.
 - **AC-W2-6 (S2-11). 탈퇴 차단**: Given active `event_payment` 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + `ACTIVE_EVENT_PAYMENT` BlockingItem.

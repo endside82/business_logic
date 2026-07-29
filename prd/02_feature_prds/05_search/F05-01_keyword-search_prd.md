@@ -1,12 +1,31 @@
-# F05-01. 키워드 검색 (이벤트/클럽/플랜) PRD
+# F05-01. 키워드 검색 (이벤트/클럽/플랜/사람) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/05_search/F05-01_keyword-search -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/05_search/F05-01_keyword-search -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/05_search/F05-01_keyword-search`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
-사용자가 입력한 키워드와 정렬·페이징 파라미터로 **이벤트**, **클럽**, **플랜** 세 도메인을 각각 무한 스크롤(20건) 단위로 검색한다. 인증 사용자가 키워드를 동반하여 검색하면 컨트롤러가 `SearchHistoryService.record`를 호출해 Redis 검색 기록(F05-04)에 자동 저장한다. 결과 카드의 클릭 후 진입 동작(이벤트 상세, 클럽 상세, 플랜 상세)은 본 Unit 범위 밖이며 각각의 도메인 Unit에서 다룬다.
+사용자가 입력한 키워드와 페이징 파라미터로 **이벤트**, **클럽**, **플랜**, **사람** 네 탭을 검색한다. 사람 검색은 전역 사용자 디렉터리가 아니라 같은 클럽 또는 증거등급 공동참석이라는 공유 맥락 안의 사용자만 찾는 인증 전용 표면이다. 인증 사용자가 비어 있지 않은 키워드로 검색하면 Redis 검색 기록(F05-04)에도 저장된다.
+
+### 2026-07-29 소스 재실측 — 사람 탭 계약
+
+| 항목 | 현재 계약 |
+|---|---|
+| Endpoint | `GET /api/v1/search/people?keyword&page&size` |
+| 인증 | 필수. `SearchController` 매핑이 public 경로에 걸려 있어도 principal이 null이면 명시적으로 401을 반환한다. |
+| 응답 | Spring `Page<PersonSearchVo>` / Flutter `PageResponse<PersonSearchVo>` |
+| 필드 | `userId`, `nickname`, `avatarUrl`, `sharedClub`, `coAttendedCount` |
+| 후보 우주 | 내 클럽의 현재 멤버 ∪ 증거등급 공동참석자. 전체 회원 검색이 아니다. |
+| DB 선필터 | 본인 제외, `UserStatus.NORMAL`, 양방향 차단 제외, `hideFromSearch=false` 또는 설정 row 없음 |
+| 키워드/정렬 | nickname 대소문자 무시 포함 검색, `nickname ASC, userId ASC` 안정 정렬 |
+| 공동참석 | 체크인 운영 이벤트는 양쪽 체크인, 무체크인 이벤트는 양쪽 `ATTENDING`이고 확정/이의중 노쇼가 아니어야 한다. |
+
+`sharedClub`과 `coAttendedCount`는 page 후보를 정한 뒤 배치 조립하며, Flutter는 이를 `같은 클럽` / `함께한 모임 N회` 라벨로 렌더한다. 비로그인 사용자는 사람 탭에서 로그인 유도를 보고 API는 호출하지 않는다. `hideFromSearch`는 이 표면, 만난 사람, 사람 추천에 적용하지만 직접 프로필 URL까지 막지는 않는다.
+
+별도 `GET /api/v1/users/search?nickname=`은 즐겨찾기 추가/운영 선택기용 최대 20건 전역 검색이다. 이 경로는 `hideFromSearch`와 `hideFromStrangers`를 모두 적용하며 F05 사람 탭과 후보·응답 계약이 다르다.
+
+실측 근거: `SearchController`, `PersonSearchService`, `PersonSearchQueryRepository`, `PersonSearchVo`, Flutter `search_api.dart`, `search_repository.dart`, `search_provider.dart`, `search_screen.dart`.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -67,7 +86,7 @@
 
 ### 개요
 
-사용자가 입력한 키워드와 정렬·페이징 파라미터로 **이벤트**, **클럽**, **플랜** 세 도메인을 각각 무한 스크롤(20건) 단위로 검색한다. 인증 사용자가 키워드를 동반하여 검색하면 컨트롤러가 `SearchHistoryService.record`를 호출해 Redis 검색 기록(F05-04)에 자동 저장한다. 결과 카드의 클릭 후 진입 동작(이벤트 상세, 클럽 상세, 플랜 상세)은 본 Unit 범위 밖이며 각각의 도메인 Unit에서 다룬다.
+사용자가 입력한 키워드로 **이벤트**, **클럽**, **플랜**, **사람** 네 탭을 검색한다. 앞의 세 콘텐츠 탭은 optional auth이고, 사람 탭은 같은 클럽/증거등급 공동참석 후보로 한정한 인증 전용 검색이다. 인증 사용자가 nonblank 키워드로 검색하면 `SearchHistoryService.record`가 Redis 검색 기록(F05-04)에 자동 저장한다.
 
 ### 엔드포인트 요약
 
@@ -76,12 +95,14 @@
 | GET | `/api/v1/search` | `SearchController#searchEvents` | optional | 이벤트 검색 + 키워드 자동 기록 |
 | GET | `/api/v1/search/clubs` | `SearchController#searchClubs` | optional | 클럽 검색 (ACTIVE 한정) + 키워드 자동 기록 |
 | GET | `/api/v1/search/plans` | `SearchController#searchPlans` | optional | 플랜 마켓 published 상품 검색 + 키워드 자동 기록 |
+| GET | `/api/v1/search/people` | `SearchController#searchPeople` | required | 공유 맥락 사람 검색 + 키워드 자동 기록 |
 
 > 동일 컨트롤러의 `/suggest`, `/history`, `/filter-hints`는 다른 기능에서 다룬다 (F05-02, F05-03, F05-04). `/trending`은 Unit 02 소관.
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
 - **`SearchVo`** (`vo/SearchVo.java`) — 위 `GET /api/v1/search` 응답 참조
+- **`PersonSearchVo`** — `userId`, `nickname`, `avatarUrl`, `sharedClub`, `coAttendedCount`
 - **`SortType`** (`constants/SortType.java`):
   - `LATEST(0)` — `event.startTime DESC` (기본값)
   - `POPULAR(1)` — `event.currentCapacity DESC`
@@ -100,6 +121,7 @@
   - Unit 03 (Event): `Event` 엔티티, `Category`, `EventStatus`, `Application`, `EventAttendance`
   - Unit 04 (Club): `ClubSearchParam`, `ClubSimpleVo`, `ClubQueryRepository`, `ClubMember`, `ClubMemberWait`
   - Unit 08 (Plan): `PlanService`, `PlanSimpleVo`
+  - Connectivity/Account/Favorite: 증거등급 공동참석, 양방향 차단, 사용자 상태, `hideFromSearch`
   - Unit 11 (Review): `ReviewQueryRepository.findAverageRatingsByHostUserIds`
   - Unit 12 (Notification): 본 기능 자체에서는 호출 없음 (저장검색 스케줄러 F05-05에서만)
 - **외부 시스템**: Redis (캐시 `eventSearch` + 검색기록 list)
@@ -136,14 +158,15 @@
   2. 활성 필터가 있으면 `ActiveFilterChipBar` (검색바 하단, 가로 스크롤, 초기화 + 개별 칩)
   3. **Idle 상태** (검색 안 했을 때): "저장된 검색 보기" 단축 → `/search/saved`, "최근 검색어" 섹션(`SearchHistoryItem` × N + "전체 삭제"), `TrendingKeywordChips` (Unit 02)
   4. **검색 후**:
-     - 결과 타입 탭 (`이벤트 N` / `클럽 N` / `플랜 N`) — primary500 chip 강조
+     - 결과 타입 탭 (`이벤트 N` / `클럽 N` / `플랜 N` / `사람 N`) — primary500 chip 강조
      - 이벤트 탭: `SearchResultSummary` (총 N건 + 정렬 드롭다운) + `EventCard` 리스트 + `EventViewerBadge`
      - 클럽 탭: `_ClubResultCard` (썸네일 + 이름 + 카테고리 + 멤버 수)
      - 플랜 탭: `_PlanResultCard` (썸네일 + 제목 + 크리에이터 + 가격/구매수)
+     - 사람 탭: 공유 맥락 결과 행 + `같은 클럽` / `함께한 모임 N회`; 비로그인은 로그인 유도
   5. 자동완성 활성 시 `SuggestDropdown` 오버레이 (F05-02)
 - **사용자가 할 수 있는 액션**:
   - 키워드 입력 + 엔터 / 제안 항목 탭 / 트렌딩 키워드 탭 / 최근 검색어 탭
-    → `_onSearch(keyword)`: 동시에 3개 검색 호출 (`searchNotifierProvider.search`, `searchClubsNotifierProvider.search`, `searchPlansNotifierProvider.search`) + 검색 기록 새로고침
+    → `_onSearch(keyword)`: 콘텐츠 3개 검색과, 로그인 상태면 `searchPeopleNotifierProvider.search`를 함께 호출한 뒤 검색 기록 새로고침
   - 정렬 드롭다운 변경 → `searchNotifierProvider.setSortType(sortType)` → 0페이지부터 재호출
   - 결과 카드 탭 → 각 도메인 상세 라우트로 push/go
   - 무한 스크롤: `_scrollController` 가 maxScroll-200 이하에서 `searchNotifierProvider.loadMore()` 호출 (이벤트 탭 한정)
@@ -152,9 +175,9 @@
   - 필터 아이콘 → `SearchFilterSheet.show` (F05-03)
   - 북마크 아이콘 → `SaveSearchDialog` (F05-05)
 - **상태 분기**:
-  - 로딩: `SkeletonLoader(preset: SkeletonPreset.card, count: 4)` (이벤트/클럽/플랜 탭 모두)
+  - 로딩: 콘텐츠 탭은 card skeleton, 사람 탭은 전용 loading state
   - 에러 (이벤트 탭): 아이콘 + "오류가 발생했습니다" + "다시 시도" `TextButton` → `notifier.search(keyword)` 재호출
-  - 에러 (클럽/플랜 탭): `SearchEmptyState`로 동일 표시 (분리된 에러 UI 없음)
+  - 에러 (클럽/플랜 탭): `SearchEmptyState`로 동일 표시. 사람 탭은 retry 가능한 `AppErrorState`
   - 빈 결과: `SearchEmptyState` ("검색 결과가 없습니다" + "다른 키워드로 검색해보세요" 안내, `Icons.search_off_outlined` × 64)
 - **모달/시트/네비게이션**:
   - 필터 시트 (`showModalBottomSheet`, `DraggableScrollableSheet 0.85`)
@@ -169,6 +192,7 @@
 - `searchRepositoryProvider` → 두 API 모두 주입한 `SearchRepository` (`Result<T>` 래핑)
 - `searchNotifierProvider` (`@Riverpod(keepAlive: true)`, `class SearchNotifier extends _$SearchNotifier`) — 이벤트 검색 상태 + 무한 스크롤
 - `searchClubsNotifierProvider` / `searchPlansNotifierProvider` (`@riverpod`, auto-dispose) — 각 도메인 보조 검색
+- `searchPeopleNotifierProvider` — 인증 전용 사람 검색 + page append
 - `searchHistoryNotifierProvider` — 검색 직후 invalidate (F05-04)
 
 ### 검색 실행 시
@@ -178,7 +202,8 @@
    - `success` → `_items = pageResponse.content`, `_totalElements = pageResponse.totalElements`, `_hasMore = !pageResponse.last`
 2. `searchClubsNotifierProvider.search(keyword)` → `GET /api/v1/search/clubs?keyword=&page=0&size=20`
 3. `searchPlansNotifierProvider.search(keyword)` → `GET /api/v1/search/plans?keyword=&page=0&size=20`
-4. `searchHistoryNotifierProvider.refresh()` → `GET /api/v1/search/history` 재조회
+4. 인증 상태면 `searchPeopleNotifierProvider.search(keyword)` → `GET /api/v1/search/people?keyword=&page=0&size=20`
+5. `searchHistoryNotifierProvider.refresh()` → `GET /api/v1/search/history` 재조회
 
 ### 정렬 변경 / 필터 변경 시
 - `setSortType(sortType)` 또는 `setFilter(filter)` → `_reSearch()` (page=0부터 재호출). 키워드가 비어 있으면 호출하지 않는다.
@@ -189,12 +214,12 @@
 
 ### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
 
-- **페이지 사이즈**: 이벤트/클럽/플랜 모두 `_pageSize = 20` (Provider 상수)
+- **페이지 사이즈**: 이벤트/클럽/플랜/사람 모두 20
 - **기본 정렬**: 프론트는 `RECOMMEND`로 시작 (`SearchNotifier._defaultSortType`). 서버 디폴트는 `LATEST`이지만 Notifier가 전송 전에 `RECOMMEND`로 강제. 잘못된 sortType은 `RECOMMEND`로 정규화
 - **유효 sortType 화이트리스트**: `LATEST, POPULAR, PRICE_ASC, PRICE_DESC, RECOMMEND` (Notifier에서 한 번 더 검증)
 - **카테고리 정규화**: 사용자 입력 라벨/value/code를 `ClubCategoryMapper.toApiCode`로 서버 enum 이름으로 변환
 - **거리 필터 GPS 보충**: `radiusKm` 만 설정되고 lat/lng가 비어 있으면 `locationPermissionNotifierProvider.getCurrentPosition()` 호출. 5분 캐시. 권한 거부 시 lat/lng null → 서버가 위치 조건 무시(사일런트 무효)
-- **결과 타입 탭**: 이벤트/클럽/플랜 3탭은 프론트에서만 분리된 UX. 서버는 별도 엔드포인트로 처리하지만 동일 검색바에서 동시 호출됨
+- **결과 타입 탭**: 이벤트/클럽/플랜/사람 4탭. 사람만 인증 필수이며 전역 디렉터리가 아니라 공유 맥락 후보만 조회
 - **카드 갯수 표시**: 이벤트는 서버 `totalElements`, 클럽/플랜은 현재 로드된 길이만 (페이징 무한스크롤 미연결)
 - **검색 결과 카드 라우팅**:
   - 이벤트 → `context.go('/home/events/${id}')` (탭 전환됨, 본 Unit 범위 밖)

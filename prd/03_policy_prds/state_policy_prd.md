@@ -95,7 +95,7 @@ stateDiagram-v2
 
 | 진입점 | 조건 | 동작 |
 |---|---|---|
-| `ApplicationService.apply` | `EventPrepayment.prepaymentRequired=true` + `approvalRequired=false` (자동 승인 + 선입금 활성) | `Application.status=APPROVED_PENDING_PAYMENT + paymentDueAt=now()+(policy.paymentDeadlineHours \|\| 24h)`. capacity 미점유(D4). 알림 71 (after-commit) |
+| `ApplicationService.apply` | `EventPrepayment.prepaymentRequired=true` + `approvalRequired=false` (자동 승인 + 선입금 활성) | `Application.status=APPROVED_PENDING_PAYMENT + paymentDueAt=...`. attendance/currentCapacity는 없지만 pending party size를 용량 판정에 논리 hold. 알림 71 (after-commit) |
 | `ApplicationService.approveApplication` | `EventPrepayment.prepaymentRequired=true` + 호스트가 `PENDING` application을 승인 | 동일하게 `APPROVED_PENDING_PAYMENT + paymentDueAt` 전이. `ApplicationApprovedEvent` 미발행 — 캘린더 sync는 결제 확정 시점에 1회만 |
 
 진입 후 허용 액션:
@@ -105,14 +105,14 @@ stateDiagram-v2
 | 참가자 WALLET 결제 성공 | `APPROVED + ATTENDING + capacity++ + event_payment.PAID` |
 | 참가자 BANK_TRANSFER 신고 → 호스트 확인 | 동일 (분개 없음, D5) |
 | 참가자 자가 취소 (`DELETE .../apply`) | `event_payment` 상태별 분기(F03-05 §2.6), 종료 상태는 `Application=CANCELED` 또는 `REFUND_REQUESTED 진행` |
-| `paymentDueAt < now()` 스케줄러 트리거 | `Application=PAYMENT_EXPIRED`, `event_payment(PENDING→CANCELED)`. capacity 변화 없음 |
+| `paymentDueAt < now()` 스케줄러 트리거 | `Application=PAYMENT_EXPIRED`, capacity 변화 없음. 현재 PENDING `event_payment` 취소는 빠져 있음 |
 | 호스트 이벤트 취소 (`EventService.cancelEvent`) | facade가 결제 상태별 환불 진행 후 `Application=CANCELED` |
 
 `PAYMENT_EXPIRED` 재신청은 active `event_payment` 행이 없을 때만 허용. 있으면 `PAYMENT_PENDING` 에러.
 
 ### 2.2 `event_payment` 상태머신 (W2 신규)
 
-선입금 결제는 별도 row(`event_payment`, application당 active 1건, D6)로 추적된다. 본 상태머신은 `Application` 상태와 1:0..1로 결합되며, 두 상태를 함께 봐야 사용자에게 정확한 액션바를 표시할 수 있다.
+선입금 결제는 별도 `event_payment` row로 추적된다. `purpose=INITIAL`의 active 결제만 application당 1건이고 `GUEST_INCREMENT`는 다건 허용이므로 전체 관계는 1:0..N이다. Application과 결제 상태를 함께 봐야 정확한 액션을 표시할 수 있다.
 
 ```mermaid
 stateDiagram-v2
@@ -132,7 +132,7 @@ stateDiagram-v2
 | `PAID` | 결제 완료 | WALLET → `recordPayment` 분개 1건. BANK → 분개 없음(D5) | "결제 완료" — 액션바는 "참석 확정" |
 | `REFUND_REQUESTED` | 환불 진행 필요 (BANK 사용자 취소 또는 호스트 이벤트 취소 또는 capacity full) | WALLET 환불 시점에 분개. BANK는 분개 없음 | "환불 요청됨 — 호스트 처리 대기" |
 | `REFUNDED` | 환불 완료 | WALLET 환불 분개(`recordRefund`). BANK는 분개 없음 | "환불 완료" |
-| `CANCELED` | 결제 미진행 종료 (PENDING에서 호스트 거부 / 만료 / 사용자 취소) | 분개 없음 | "결제 취소됨 — 재시도 가능" |
+| `CANCELED` | 결제 미진행 종료 (호스트 거부 / 사용자 취소 등) | 분개 없음 | "결제 취소됨 — 재시도 가능". 현재 payment 만료 자동 취소는 미구현 |
 
 상태 전이는 다음 가드를 따른다:
 
@@ -144,7 +144,7 @@ stateDiagram-v2
 기획 주의점:
 
 - 사용자 화면에는 `Application.status` 단독이 아니라 `event_payment.status`와 결합한 라벨이 필요하다. 예: `Application=APPROVED_PENDING_PAYMENT` + `event_payment=PENDING(BANK_TRANSFER)`는 "입금 확인 대기"로, 같은 application에 결제 row가 없으면 "결제 필요"로 표시한다.
-- 호스트 화면(`host_participation_payment_pending_screen.dart`)은 `event_payment.status=PENDING(BANK_TRANSFER)`만 노출한다. confirm 응답이 `REFUND_REQUESTED`로 오면 capacity 초과 → 환불 안내 라벨로 전환.
+- 현재 호스트 신청 관리 UI는 `community_app/lib/presentation/event/screens/application_list_screen.dart`의 **결제 대기** 탭(`Application.status=APPROVED_PENDING_PAYMENT`)까지 구현한다. 전용 호스트 결제대기 화면은 없고 카드가 `event_payment.method/status`를 받지 않으므로, `PENDING(BANK_TRANSFER)` 전용 표시·bank confirm/reject와 confirm 결과의 `REFUND_REQUESTED` 라벨 전환은 현재 UI에 없다.
 - `REFUNDED → [*]` 종료 후에는 `active_application_id`가 NULL이 되어 같은 application에 신규 PENDING 진입이 다시 가능하다. 단, `Application` 자체가 `CANCELED`로 전이된 경우는 신규 신청이 필요.
 
 ## 3. 프라이빗 모임 단계
@@ -315,24 +315,26 @@ flowchart TD
 - 상태 변경 후 이전 화면의 CTA가 오래된 상태를 보여주지 않아야 한다.
 - 취소, 만료, 삭제, 차단 상태는 성공 상태와 별도의 복구 동선을 가져야 한다.
 
-## 10. v4.5 W1~W7 신규 상태머신 (2026-05-22)
+## 10. 이벤트 선입금·교통 상태머신 (2026-07-29 현재 소스)
 
-> updated: 2026-05-22. 본 절은 `docs/plan/event-extensions/PLAN.md` v4.5의 W2~W7에서 도입되는 신규 상태머신과 기존 Application 상태머신의 확장을 추적한다. 본문 §2(이벤트 신청과 참석 상태)의 "유료 승인제 권장 상태"는 v4.5에서 정식 enum으로 반영되며, 본 절이 그 enforcement를 명문화한다.
+> 현재 `ApplicationStatus`, 결제/교통 enum, Service, DDL과 테스트를 기준으로 한다. 삭제된 event-extensions 계획의 예정 전이는 구현으로 간주하지 않는다.
 
-### 10.1 Application 상태머신 확장 — APPROVED_PENDING_PAYMENT / PAYMENT_EXPIRED 정식화
+### 10.1 Application 상태머신 — 결제와 Attendance 분리
 
-기존 §2.유료 승인제 권장 상태에서 "현재 서버 enum에는 `APPROVED_PENDING_PAYMENT`, `PAYMENT_EXPIRED`가 없다"고 표시한 항목이 v4.5 W2a에서 enum 정식 추가된다.
+`ApplicationStatus`의 실제 7값은 `PENDING, APPROVED, APPROVED_PENDING_PAYMENT, PAYMENT_EXPIRED, REJECTED, CANCELED, CANCEL_PENDING_REFUND`다. `ATTENDING`은 Application 상태가 아니라 별도 `EventAttendance.status`다.
 
 ```mermaid
 stateDiagram-v2
     [*] --> PENDING: 신청서 제출
     PENDING --> REJECTED: 호스트 거절
     PENDING --> APPROVED_PENDING_PAYMENT: 호스트 승인 + 선입금 필요
-    PENDING --> ATTENDING: 호스트 승인 + 선입금 없음 (즉시 확정)
-    APPROVED_PENDING_PAYMENT --> ATTENDING: 결제 성공 (WALLET 또는 BANK_TRANSFER 확정)
+    PENDING --> APPROVED: 호스트 승인 + 선입금 없음
+    APPROVED_PENDING_PAYMENT --> APPROVED: 결제 성공
     APPROVED_PENDING_PAYMENT --> PAYMENT_EXPIRED: 결제 마감 만료
     APPROVED_PENDING_PAYMENT --> CANCELED: 사용자 취소
-    APPROVED_PENDING_PAYMENT --> CANCELED: 호스트 입금 미확인 처리
+    APPROVED_PENDING_PAYMENT --> APPROVED_PENDING_PAYMENT: BANK 입금 거부 후 재신고
+    APPROVED --> CANCEL_PENDING_REFUND: BANK 결제 참가자가 취소
+    CANCEL_PENDING_REFUND --> CANCELED: 호스트가 BANK 환불 완료 표시
     REJECTED --> PENDING: 재신청 (active event_payment 없을 때만)
     PAYMENT_EXPIRED --> PENDING: 재신청
     CANCELED --> PENDING: 재신청
@@ -340,39 +342,39 @@ stateDiagram-v2
 
 | 상태 | 의미 | 허용 액션 | 관련 event_payment 상태 |
 |---|---|---|---|
-| `APPROVED_PENDING_PAYMENT` | 호스트 승인 + 결제 대기 (정원 점유 없음 — D4) | 참가자 결제, 사용자 취소, 만료, 호스트 거절 | PENDING |
-| `PAYMENT_EXPIRED` | 결제 마감 시간 지남 | 재신청 가능 | CANCELED (만료 스케줄러) |
-| `ATTENDING` | 결제까지 완료된 참석 확정 (정원 점유) | 취소/환불(REFUND_REQUESTED), 체크인 | PAID |
+| `APPROVED_PENDING_PAYMENT` | 승인 + 결제 대기 | 결제, 취소, 만료, BANK 재신고 | active payment가 없거나 BANK PENDING |
+| `PAYMENT_EXPIRED` | 결제 마감 시간 지남 | 재신청 | 현재 scheduler는 application만 bulk update하여 PENDING payment가 남을 수 있음 |
+| `APPROVED` | 결제 또는 무료 승인 완료 | 취소/환불, 참석 row 기반 체크인 | PAID일 수 있음 |
+| `CANCEL_PENDING_REFUND` | BANK 취소 후 외부 환불 확인 대기 | 호스트 환불 완료 표시 | REFUND_REQUESTED, capacity hold |
 
-재신청 게이트: `PAYMENT_EXPIRED → PENDING` 전이는 **active event_payment가 없을 때만** 허용 (orphan payment 방지).
+결제 성공 시 Application은 `APPROVED`가 되고 별도 `EventAttendance(ATTENDING)`가 생성된다. 현재 만료 bulk update는 payment 취소와 만료 event 발행을 하지 않아 orphan active payment 위험이 있다.
 
-### 10.2 event_payment 상태머신 (신규 — W2a/W2b/W3)
+### 10.2 event_payment 상태머신
 
-선입금 결제 라이프사이클의 단일 진실 테이블. application과 1:1 적극 대응 (uk_event_payment_active).
+`EventPaymentPurpose = INITIAL | GUEST_INCREMENT`다. `uk_event_payment_active`는 status가 `PENDING/PAID/REFUND_REQUESTED`인 **INITIAL**만 application당 1건으로 제한하며, 게스트 증분 결제는 다건을 허용한다.
 
 ```mermaid
 stateDiagram-v2
-    [*] --> PENDING: APPROVED_PENDING_PAYMENT 진입 시 INSERT
-    PENDING --> PAID: WALLET 즉시 결제 또는 BANK_TRANSFER 호스트 확인
-    PENDING --> CANCELED: 사용자 취소 / 만료 / 호스트 입금 거절
+    [*] --> PENDING: WALLET 결제 시작 또는 BANK 신고
+    PENDING --> PAID: WALLET 같은 트랜잭션 또는 BANK 호스트 확인
+    PENDING --> CANCELED: 사용자 취소 / 호스트 입금 거절
     PAID --> REFUND_REQUESTED: 참가 취소 또는 이벤트 취소 (환불 facade 진입)
-    REFUND_REQUESTED --> REFUNDED: WALLET 자동 환불 또는 호스트 수동 환불 완료
-    REFUND_REQUESTED --> CANCELED: 환불 실패 시 FailedRefund 기록 + 별도 운영 처리
+    REFUND_REQUESTED --> REFUNDED: 환불 완료
 ```
 
 | 상태 | 의미 | application 영향 | 알림 |
 |---|---|---|---|
-| `PENDING` | 결제 대기 (active 1건 제약) | APPROVED_PENDING_PAYMENT 유지 | 71 EVENT_PREPAYMENT_REQUIRED |
-| `PAID` | 결제 완료 | ATTENDING으로 전이 | 73 (BANK 확인 시) |
-| `REFUND_REQUESTED` | 환불 진행 중 | (별도) | 83 (BANK일 때 호스트에게) |
-| `REFUNDED` | 환불 완료 | (별도) | 76 EVENT_PREPAYMENT_REFUNDED |
-| `CANCELED` | 결제 안 됨 / 거절 / 만료 | PAYMENT_EXPIRED/CANCELED 등 | 74/75 |
+| `PENDING` | WALLET 처리 중 또는 BANK 신고 대기 | APPROVED_PENDING_PAYMENT | 71은 application event, 72는 BANK 신고 event |
+| `PAID` | 결제 완료 | APPROVED + 별도 ATTENDING | BANK 확인은 73, WALLET은 기존 `PAYMENT_COMPLETED` |
+| `REFUND_REQUESTED` | 환불 진행 중 | BANK 사용자 취소면 CANCEL_PENDING_REFUND | 83은 최초 전이가 아니라 기본 3일 후 escalation |
+| `REFUNDED` | 환불 완료 | CANCELED 정리 가능 | 76 |
+| `CANCELED` | 결제 미진행 종료/입금 거부 | BANK reject에서는 APPROVED_PENDING_PAYMENT 유지 | 74 |
 
-**Lock 순서**: 모든 결제·환불·취소 facade는 `event → application → event_payment` 순으로 PESSIMISTIC_WRITE 잠금 (PLAN §0.4 — 전역 deadlock 방지).
+**만료 Gap**: `ApplicationPaymentExpiryScheduler`는 application만 bulk update한다. PENDING payment를 CANCELED로 바꾸지 않고 `ApplicationPaymentExpiredEvent`도 발행하지 않아 75 listener는 dead wiring이다.
 
-**회계 분개**: WALLET 결제는 `AccountingLedgerService`로 즉시 분개. BANK_TRANSFER는 호스트 확인 시점에만 분개. 환불은 별도 라인 (D5). 호스트 정산 보고서 영향은 6 섹션 (PLAN §2.8).
+**회계 분개**: WALLET 결제·환불만 ledger에 기록한다. BANK_TRANSFER는 확인·환불까지 전 과정이 off-ledger다.
 
-### 10.3 event_carpool_offer 상태머신 (신규 — W5)
+### 10.3 event_carpool_offer 상태 값과 실제 전이
 
 운전자가 등록하는 카풀 offer 라이프사이클.
 
@@ -381,20 +383,19 @@ stateDiagram-v2
     [*] --> OFFERED: 운전자가 offer 등록
     OFFERED --> CONFIRMED: 호스트 confirm
     OFFERED --> REJECTED: 호스트 reject
-    OFFERED --> CANCELED: 운전자 자진 취소
-    CONFIRMED --> CANCELED: 운전자가 ATTENDING에서 이탈 시 (참가취소 등)
+    OFFERED --> CANCELED: enum 값은 존재하나 public 전이 API 없음
 ```
 
 | 상태 | 의미 | 탑승자 배정 가능 여부 | 알림 |
 |---|---|---|---|
 | `OFFERED` | 호스트 검토 전 | 불가 | (없음) |
-| `CONFIRMED` | 호스트 확정 — 운전자 자격 부여 | 가능 | 77 CARPOOL_OFFER_CONFIRMED |
-| `REJECTED` | 호스트 거절 | 불가 | 78 CARPOOL_OFFER_REJECTED |
-| `CANCELED` | 취소됨 (자진/이탈) | 배정 자동 해제 + 80 알림 fanout | 80 (탑승자 측) |
+| `CONFIRMED` | 호스트 확정 — 배정 대상 | 가능 | 77 enum만 있고 생산 알림 없음 |
+| `REJECTED` | 호스트 거절 | 불가 | 78 enum만 있고 생산 알림 없음 |
+| `CANCELED` | enum 값 | 불가 | public cancel/cascade 구현 없음 |
 
-CONFIRMED → CANCELED 전이 시: 해당 offer에 배정된 모든 `event_carpool_passenger.offer_id`를 NULL로 되돌리고 탑승자에게 80 알림. `event_carpool_assignment_log`에 swap 사유 기록.
+현재 decision 서비스는 입력을 CONFIRMED/REJECTED로 제한하지만 기존 status를 검사하지 않아 재결정할 수 있다. offer 취소, 참석 이탈 cascade, 탑승자 자동 해제, 77~80 알림, `event_carpool_assignment_log` insert는 구현되어 있지 않다.
 
-### 10.4 event_transport_config.mode 전이 정책 (신규 — W4, §3.2 / [F03-14](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md))
+### 10.4 event_transport_config.mode 전이 정책 ([F03-14](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md))
 
 ```mermaid
 stateDiagram-v2
@@ -410,28 +411,22 @@ stateDiagram-v2
 | 현재 이벤트 상태 | 허용 mode 전이 | 비고 |
 |---|---|---|
 | DRAFT (`published_at IS NULL`) | NONE ↔ CARPOOL ↔ BUS | 이전 mode의 carpool/bus 데이터를 **hard delete** (`EventTransportService.changeMode`). 알림·감사 없음 |
-| OPEN | **mode immutable** | `mode` 필드 변경 시 400/409 `MODE_CHANGE_NOT_ALLOWED`. `allowsSelfTransport` 등 mode-internal 토글만 허용 |
-| CLOSED/CANCELED/HIDDEN | 변경 금지 | 종료 후 mode는 read-only |
+| OPEN | **mode immutable** | mode 변경 시 `INVALID_EVENT_STATUS`. `allowsSelfTransport` 단독 변경은 허용 |
+| CLOSED/CANCELED/HIDDEN | mode 변경 금지 | 그러나 현재 서비스는 `allowsSelfTransport` 단독 변경을 허용하는 Gap이 있음 |
 
 **D2 — 택일 원칙**: CARPOOL과 BUS 동시 운영 불가. 한 이벤트는 한 mode만.
 
-**OPEN에서 변경 가능한 mode-internal 토글**:
-- `event_transport_config.allows_self_transport` ([F03-14](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md))
-- `event_bus.allow_self_swap` (좌석 배정자 0명일 때만, 후속 endpoint)
-- `event_bus.assignment_mode` (좌석 배정자 0명일 때만, 후속 endpoint — `BUS_NOT_EMPTY` 가드)
-- carpool offer 결정 / passenger 배정 등 mode 내부 운영 흐름은 OPEN에서도 항상 가능
+버스의 `allowSelfSwap`·`assignmentMode`를 수정하는 endpoint는 없다. mode 내부 카풀·버스 write는 각 서비스의 개별 상태 검사를 따르며, 일관된 OPEN gate가 있는 것은 아니다.
 
-DRAFT 상태에서만 hard delete가 안전한 이유: OPEN 이후에는 참가자가 offer 등록·좌석 점유·신청을 한 상태이므로, mode 변경 시 사용자에게 손실이 발생. 후속 정책으로 "OPEN에서 NONE으로의 강제 전환 + 모든 운송 데이터 무효화"는 별도 호스트 액션(`disableTransport`)으로 분리 검토.
-
-### 10.5 event_bus 좌석 점유 모델 (신규 — W7 / [F03-16](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md))
+### 10.5 event_bus 좌석 점유 모델 ([F03-16](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md))
 
 `event_bus.assignment_mode` 3종에 따라 좌석 점유 상태머신이 분기.
 
 | assignment_mode | 좌석 row 생성 | 좌석 배정 권한 | `allow_self_swap=true` 효과 | 비고 |
 |---|---|---|---|---|
-| `FREE` | **미생성** (인원 카운트만) | (좌석 없음) | 무효 | `GET seats` 빈 배열. `passengerCount`는 APPROVED 수 추정 |
-| `FIXED_BY_HOST` | prepopulate | 호스트만 | 참가자가 **본인 좌석만** swap 가능 | 호스트가 미리 배치 |
-| `FIRST_COME` | prepopulate | 호스트는 항상. 참가자는 `allow_self_swap=true`일 때 본인 선택 | 참가자 본인 좌석 선택 허용 | `SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1` 자동 배정 가능 |
+| `FREE` | **미생성** | target seat가 없어 PUT 사용 불가 | 무효 | GET seats 빈 배열 |
+| `FIXED_BY_HOST` | selectable seat prepopulate | Host/CoHost, 또는 `allowSelfSwap=true` self | target user 덮어쓰기 | service는 assignmentMode를 검사하지 않음 |
+| `FIRST_COME` | selectable seat prepopulate | FIXED_BY_HOST와 같은 PUT | target user 덮어쓰기 | 이름과 달리 자동 배정·SKIP LOCKED 없음 |
 
 좌석별 `event_bus_seat`의 점유 상태머신:
 
@@ -439,25 +434,25 @@ DRAFT 상태에서만 hard delete가 안전한 이유: OPEN 이후에는 참가�
 stateDiagram-v2
     [*] --> EMPTY: 좌석 prepopulate (user_id=NULL)
     EMPTY --> ASSIGNED: PUT seats/{seatNo}?userId= 성공
-    ASSIGNED --> ASSIGNED: 호스트 swap (oldSeat → newSeat, BUS_SEAT_CHANGED 82)
-    ASSIGNED --> EMPTY: ?userId= 해제 또는 참가 취소 cascade
+    ASSIGNED --> ASSIGNED: target seat userId 덮어쓰기
 ```
 
-**동시성 가드**:
-- `event_bus` parent row `FOR UPDATE` 잠금 → seat row `FOR UPDATE` (lock 순서 일관)
-- `UNIQUE(event_id, user_id)` 비정규화로 한 이벤트에서 한 사용자가 동시 두 좌석 배정 불가 → `DataIntegrityViolationException` catch → `USER_ALREADY_SEATED_IN_EVENT` 변환
-- `event_bus.eventId != pathEventId` 시 400 (E2E S4-7)
-- 최대 3대 (`MAX_BUSES_PER_EVENT=3`) — service-level 가드
-- `assignment_mode`/`allow_self_swap` 변경은 **좌석 배정자 0명**일 때만 허용 — 후속 endpoint에서 `BUS_NOT_EMPTY` 가드
+**실제 동시성/제약**:
 
-알림: 좌석 배정 시 `BUS_SEAT_ASSIGNED`(81), 호스트 swap 시 `BUS_SEAT_CHANGED`(82) — payload에 `oldSeat/newSeat`.
+- add/assign은 event row를 잠가 같은 이벤트 write를 직렬화한다. seat row 전용 `FOR UPDATE`와 `SKIP LOCKED`는 없다.
+- `UNIQUE(event_id, user_id)`가 중복을 막지만 위반은 `USER_ALREADY_SEATED_IN_EVENT`가 아닌 일반 `INVALID_REQUEST`로 변환된다.
+- `userId`는 primitive long이라 null unassign이 불가능하고, 기존 사용자 좌석을 먼저 비우지 않아 좌석 이동이 unique 위반이 될 수 있다.
+- self 요청은 참석/대기 자격, assignmentMode, `lockedByHost`를 검사하지 않는다.
+- 좌석 변경 log는 기록하지만 81~82 생산 알림은 없다.
 
-### 10.6 후속 (1차 범위 외)
+### 10.6 현재 상태 Gap
 
-- 환불 비율 정책 (시간대별 100/50/0%) — `EventPaymentRefundService`에서 `refundRatio` 계산 로직 추가.
-- WalletRefundExecutor 분리 — W2b에서 인터페이스만 정의, 구현은 후속.
-- 카풀 swap 로그 분석 — `event_carpool_assignment_log` 기반 호스트 운영 리포트.
-- BUS_FIRST_COME 모드의 자동 배정 SLA — 신청 시 즉시 배정 vs 배치성 배정 결정 필요.
+- 만료 application과 PENDING payment를 같은 트랜잭션에서 정리하고 75 event를 발행해야 한다.
+- 카풀 decision 선행상태, cancel/cascade, assignment log, 77~80 알림이 없다. register는 assignedOfferId를 정리하지 않고 assign과 경합하면 lost update 가능하다.
+- `allowsSelfTransport` terminal-state 변경이 가능하고 SELF/DRIVER 선택에 소비되지 않는 inert flag다.
+- carpool decide/register/assign/report와 bus add/assign은 event status 가드가 없어 CLOSED/CANCELED에서도 mutation할 수 있다.
+- 버스 FIRST_COME 자동 배정, 진짜 swap/unassign, locked seat·참석 자격 검사, 81~82 알림이 없다.
+- Flutter에는 transport/bus 운영 화면이 없고 카풀 신고 route도 인앱 navigation caller가 없다.
 
 ## 11. 2026-06-05 신규 상태기계 (v5.0 delta)
 

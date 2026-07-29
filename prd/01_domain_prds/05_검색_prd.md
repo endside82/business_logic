@@ -6,7 +6,7 @@
 
 ## 1. 결론
 
-사용자가 이벤트/클럽/플랜을 키워드와 필터로 탐색하고, 자주 쓰는 검색 조건을 저장하여 재실행한다.
+사용자가 이벤트/클럽/플랜/공유 맥락 사람을 키워드로 탐색하고, 자주 쓰는 콘텐츠 검색 조건을 저장하여 재실행한다.
 
 이 도메인은 기능 PRD 5개로 구성된다. 현재 기능별 trace source는 총 14개이고, risk 후보는 총 10개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
 
@@ -14,7 +14,7 @@
 
 | ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
 |---|---|---|---|---|---:|---:|
-| F05-01 | F05-01. 키워드 검색 (이벤트/클럽/플랜) | [F05-01_keyword-search_prd.md](../02_feature_prds/05_search/F05-01_keyword-search_prd.md) | [F05-01_keyword-search](../../units/05_search/F05-01_keyword-search) | 전환 완료 | 3 | 2 |
+| F05-01 | F05-01. 키워드 검색 (이벤트/클럽/플랜/사람) | [F05-01_keyword-search_prd.md](../02_feature_prds/05_search/F05-01_keyword-search_prd.md) | [F05-01_keyword-search](../../units/05_search/F05-01_keyword-search) | 전환 완료 | 3 | 2 |
 | F05-02 | F05-02. 자동완성 서제스트 | [F05-02_autocomplete-suggest_prd.md](../02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md) | [F05-02_autocomplete-suggest](../../units/05_search/F05-02_autocomplete-suggest) | 전환 완료 | 1 | 2 |
 | F05-03 | F05-03. 검색 필터 적용 | [F05-03_search-filter_prd.md](../02_feature_prds/05_search/F05-03_search-filter_prd.md) | [F05-03_search-filter](../../units/05_search/F05-03_search-filter) | 전환 완료 | 2 | 2 |
 | F05-04 | F05-04. 최근 검색어 (검색 기록) | [F05-04_search-history_prd.md](../02_feature_prds/05_search/F05-04_search-history_prd.md) | [F05-04_search-history](../../units/05_search/F05-04_search-history) | 전환 완료 | 3 | 0 |
@@ -27,7 +27,7 @@
 | [F05-05](../02_feature_prds/05_search/F05-05_saved-search_prd.md) | F05-05. 저장된 검색 | Risk 후보 4 |
 | [F05-02](../02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md) | F05-02. 자동완성 서제스트 | Risk 후보 2 |
 | [F05-03](../02_feature_prds/05_search/F05-03_search-filter_prd.md) | F05-03. 검색 필터 적용 | Risk 후보 2 |
-| [F05-01](../02_feature_prds/05_search/F05-01_keyword-search_prd.md) | F05-01. 키워드 검색 (이벤트/클럽/플랜) | Risk 후보 2 |
+| [F05-01](../02_feature_prds/05_search/F05-01_keyword-search_prd.md) | F05-01. 키워드 검색 (이벤트/클럽/플랜/사람) | Risk 후보 2 |
 
 ## 4. 도메인 기능 목록
 
@@ -38,7 +38,7 @@ prefix는 `F05-NN`. UI/UX 화면 ID(SCR-SR-NNN), 백엔드 엔드포인트, 프�
 
 | ID | 기능명 | UI/UX | 백엔드 엔드포인트 | 프론트 화면/위젯 |
 |---|---|---|---|---|
-| **F05-01** | 키워드 검색 (이벤트/클럽/플랜) | SCR-SR-001 | `GET /api/v1/search`<br>`GET /api/v1/search/clubs`<br>`GET /api/v1/search/plans` | `search_screen.dart`, `search_app_bar.dart`, `search_result_summary.dart`, `search_empty_state.dart` |
+| **F05-01** | 키워드 검색 (이벤트/클럽/플랜/사람) | SCR-SR-001 | `GET /api/v1/search`<br>`GET /api/v1/search/clubs`<br>`GET /api/v1/search/plans`<br>`GET /api/v1/search/people` | `search_screen.dart`, `search_app_bar.dart`, `search_result_summary.dart`, `search_empty_state.dart` |
 | **F05-02** | 자동완성 서제스트 | SCR-SR-001 | `GET /api/v1/search/suggest` (`q`, `limit` 기본 10) | `suggest_dropdown.dart`, `trending_keyword_chips.dart` (포커스 시 노출) |
 | **F05-03** | 검색 필터 적용 | SCR-SR-002 | `GET /api/v1/search` (필터 파라미터 통합)<br>`GET /api/v1/search/filter-hints` (`region`) | `search_filter_sheet.dart`, `filter_category_chips`, `filter_date_range_picker`, `filter_distance_slider`, `filter_price_range_slider`, `filter_capacity_stepper`, `filter_region_selector`, `filter_hint_chips`, `active_filter_chip_bar` |
 | **F05-04** | 최근 검색어 (검색 기록) | SCR-SR-003 | `GET /api/v1/search/history`<br>`DELETE /api/v1/search/history`<br>`DELETE /api/v1/search/history/{keyword}`<br>(검색 시 `SearchController`가 자동 기록) | `search_history_screen.dart`, `search_history_item.dart` |
@@ -52,8 +52,8 @@ prefix는 `F05-NN`. UI/UX 화면 ID(SCR-SR-NNN), 백엔드 엔드포인트, 프�
 
 ### 기능별 사용자 가치
 
-### F05-01 키워드 검색 (이벤트/클럽/플랜)
-사용자가 텍스트(또는 음성)로 입력한 키워드로 이벤트, 클럽, 플랜을 무한 스크롤(20건 단위)로 탐색한다.
+### F05-01 키워드 검색 (이벤트/클럽/플랜/사람)
+사용자가 입력한 키워드로 이벤트, 클럽, 플랜과 공유 맥락 사람을 페이징 탐색한다.
 정렬 옵션은 관련도/날짜/거리/가격(이벤트 기준)이다. 결과 카드는 이벤트 상세(SCR-EV-002) 등으로 전이된다.
 - 서버: `EventSearchService.searchEvents` → `Page<SearchVo>`, `ClubSearchService.searchClubs` → `Page<ClubSimpleVo>`, `PlanService.searchPublishedPlans` → `Page<PlanSimpleVo>`.
 - 인증 사용자가 검색하면 `SearchHistoryService.record`가 키워드를 자동 기록한다 (F05-04 연결).
@@ -94,7 +94,7 @@ Bottom Sheet에서 카테고리(다중 칩), 날짜 범위, 거리(0~50km), 가�
 | 기능 | 제목 | 후보 수 | 처리 기준 |
 |---|---|---:|---|
 | [F05-05](../02_feature_prds/05_search/F05-05_saved-search_prd.md) | F05-05. 저장된 검색 | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F05-01](../02_feature_prds/05_search/F05-01_keyword-search_prd.md) | F05-01. 키워드 검색 (이벤트/클럽/플랜) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F05-01](../02_feature_prds/05_search/F05-01_keyword-search_prd.md) | F05-01. 키워드 검색 (이벤트/클럽/플랜/사람) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F05-02](../02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md) | F05-02. 자동완성 서제스트 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F05-03](../02_feature_prds/05_search/F05-03_search-filter_prd.md) | F05-03. 검색 필터 적용 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 
@@ -104,5 +104,17 @@ Bottom Sheet에서 카테고리(다중 칩), 날짜 범위, 거리(0~50km), 가�
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+## 9. 사람 검색·검색 공개범위 재실측 (2026-07-29)
+
+F05-01의 결과 탭은 이벤트·클럽·플랜에 **사람**이 추가됐다. `GET /api/v1/search/people?keyword&page&size`는 인증 필수이며 Spring `Page<PersonSearchVo>`를 반환한다. 사람 후보는 내 클럽 멤버와 증거등급 공동참석자의 합집합이지 전역 사용자 디렉터리가 아니다.
+
+- 필드: `userId`, `nickname`, `avatarUrl`, `sharedClub`, `coAttendedCount`
+- 선필터: 본인 제외, `NORMAL`, 양방향 차단 제외, `hideFromSearch=false`
+- 검색/정렬: nickname 대소문자 무시 포함, `nickname ASC, userId ASC`
+- Flutter: 네 번째 사람 탭, 비로그인 로그인 유도, 공유 맥락 라벨과 무한스크롤
+- F05-04: nonblank 사람 검색도 같은 Redis 최근 검색어를 기록하며 중복 제거 후 최대 20개 유지
+
+별도 `/api/v1/users/search?nickname=`은 즐겨찾기/운영 선택기용 최대 20건 전역 검색이며 `hideFromSearch`와 `hideFromStrangers`를 모두 적용한다. 두 endpoint를 같은 사람 검색 계약으로 취급하면 안 된다.
 
 <!-- 접근권한 감사 검증 (2026-07-02): 검색 결과는 비공개·초안·숨김 콘텐츠 미노출 확인. 저장검색·검색기록 self-scoped 확인. 차단한 사람의 공개 콘텐츠는 발견에 노출(D-W4-1 결정 = 현행 유지) — 이슈 없음. -->

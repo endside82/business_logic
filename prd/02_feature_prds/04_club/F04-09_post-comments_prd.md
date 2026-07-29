@@ -1,168 +1,160 @@
-# F04-09. 게시글 댓글 & 대댓글 PRD
+# F04-09. 게시글 댓글·대댓글·멘션 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/04_club/F04-09_post-comments -->
+<!-- source-measured: 2026-07-29; api HEAD be38d128b80d; app HEAD cb21bce8ef08 -->
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/04_club/F04-09_post-comments`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 이 문서는 2026-07-29 현재 `community_api`와 `community_app`의 실제 소스를 다시 대조한 계약이다. 과거 unit 문서의 “댓글/답글 알림 미구현”, “답글 선택 시 `@닉네임` 자동 삽입”, “댓글 좋아요”, “정렬 토글이 실제 정렬을 바꿈” 서술은 현행 구현과 다르므로 이 문서가 우선한다.
 
 ## 1. 결론
 
-클럽 게시글에 1단계 댓글 + 1단계 대댓글(답글)을 달 수 있는 스레드 구조의 댓글 시스템. 작성자는 자기 글을 수정/삭제하고, OWNER/ADMIN은 멤버의 댓글을 삭제할 수 있다. 삭제된 댓글에 자식 답글이 있으면 placeholder("삭제된 댓글입니다")로 보존하고, 자식이 없으면 그냥 사라진다.
+클럽 멤버는 게시글에 최상위 댓글과 1단계 답글을 작성하고, 댓글 본문에서 최대 10명의 현재 클럽 멤버를 `@닉네임`으로 멘션할 수 있다. 서버는 클라이언트가 보낸 사용자 ID를 그대로 믿지 않고 실제 본문 토큰과 클럽 멤버십을 다시 확인한다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+댓글·답글 작성 시 알림은 이미 구현되어 있다. 같은 수신자가 여러 조건에 해당하면 **멘션 > 답글 > 게시글 댓글** 우선순위로 한 번만 알리고, 자기 자신과 현재 클럽 멤버가 아닌 사용자는 제외한다. 앱은 알림을 게시글 상세의 대상 댓글까지 딥링크하고 3초 동안 강조한다.
 
-- 클럽 상세 ▶ 커뮤니티 탭 ▶ 게시판 ▶ 게시글 상세 (SCR-CC-003) ▶ 하단 댓글 섹션
-- 푸시 알림 ("새 댓글이 달렸습니다") ▶ 게시글 상세 ▶ 댓글로 스크롤 (스펙)
+## 2. 실사 기준
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
-
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/04_club/F04-09_post-comments/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/04_club/F04-09_post-comments/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/04_club/F04-09_post-comments/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/04_club/F04-09_post-comments/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java:28` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java:36` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java:46` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java:57` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java:67` | 확인됨 |
-
-## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
-1. **화면 진입 시**: `postDetailNotifierProvider(clubId, boardId, postId)` ▶ 게시글 상세 + `commentNotifierProvider(clubId, postId)` 트리거 ▶ `ClubCommentRepository.getComments()` ▶ `GET /comments` (List 반환 → 클라이언트 측 그룹핑은 서버에서 이미 완료)
-2. **댓글 작성**: `commentNotifier.addComment(content)` ▶ `POST /comments` ▶ 응답으로 받은 `Comment`를 목록에 prepend (또는 invalidate) ▶ `AppToast.show('댓글이 등록되었습니다')`
-3. **답글 작성**: `commentNotifier.addReply(parentId, content)` ▶ `POST /comments/{parentId}/replies` ▶ 부모 댓글의 `replies`에 append
-4. **수정**: `commentNotifier.updateComment(id, content)` ▶ `PUT /comments/{id}` ▶ 해당 댓글 in-place 갱신
-5. **삭제**: `commentNotifier.deleteComment(id)` ▶ `DELETE /comments/{id}` ▶ 응답 후 invalidate (서버가 자식 답글 유무에 따라 placeholder 처리하므로 낙관적 업데이트 어려움)
-
-## 4. 서버 계약
-
-### 개요
-
-클럽 게시글에 1단계 댓글 + 1단계 대댓글(답글)을 달 수 있는 스레드 구조의 댓글 시스템. 작성자는 자기 글을 수정/삭제하고, OWNER/ADMIN은 멤버의 댓글을 삭제할 수 있다. 삭제된 댓글에 자식 답글이 있으면 placeholder("삭제된 댓글입니다")로 보존하고, 자식이 없으면 그냥 사라진다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/clubs/{clubId}/posts/{postId}/comments` | `ClubPostCommentController#getComments` | required | 댓글 + 대댓글 트리 조회 (List) |
-| POST | `/api/v1/clubs/{clubId}/posts/{postId}/comments` | `ClubPostCommentController#createComment` | required | 댓글 작성 |
-| POST | `/api/v1/clubs/{clubId}/posts/{postId}/comments/{commentId}/replies` | `ClubPostCommentController#createReply` | required | 답글(대댓글) 작성 |
-| PUT | `/api/v1/clubs/{clubId}/comments/{commentId}` | `ClubPostCommentController#updateComment` | required | 본인 댓글 수정 |
-| DELETE | `/api/v1/clubs/{clubId}/comments/{commentId}` | `ClubPostCommentController#deleteComment` | required | 본인 또는 ADMIN/OWNER가 삭제 |
-
-> 응답 타입은 **`List<ClubPostCommentVo>`** (Page 아님). `community_app` 측 매핑 시 주의.
-
-### 의존 단위 / 외부 시스템
-
-- **Unit 04 자체**: `ClubPostService`(F04-08)에서 `comment_count` 관리. `ClubAccessService`로 멤버/스태프 검증.
-- **공통 인프라**: 인증(`@AuthenticationPrincipal UserPrincipal`).
-- **알림**: 댓글/답글 작성 시 FCM 발송은 스펙에 명시되었으나 현재 서비스 구현에는 없음 — 추후 추가 시 `NotificationService` 호출 예정.
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 클럽 상세 ▶ 커뮤니티 탭 ▶ 게시판 ▶ 게시글 상세 (SCR-CC-003) ▶ 하단 댓글 섹션
-- 푸시 알림 ("새 댓글이 달렸습니다") ▶ 게시글 상세 ▶ 댓글로 스크롤 (스펙)
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 (lib/presentation/club/...) | 역할 |
+| 계층 | 확인한 실제 소스 | 확인한 계약 |
 |---|---|---|
-| `/clubs/:clubId/community/boards/:boardId/posts/:postId` | `community/screens/post_detail_screen.dart` | 게시글 상세 + 하단 댓글 섹션 (SCR-CC-003 + SCR-CC-006 통합) |
+| Controller | `club/controller/ClubPostCommentController.java` | 5개 endpoint, body/response |
+| Param / VO | `ClubCommentAddParam`, `ClubCommentModParam`, `ClubPostCommentVo`, `ClubPostCommentMentionVo` | `content`, `mentionedUserIds`, `mentions` |
+| Service | `club/service/ClubPostCommentService.java` | 권한, 깊이, 멘션 검증·diff, 알림 우선순위 |
+| DB | `V1__init.sql`, `ClubPostCommentMention` | 댓글-멘션 고유 관계와 cascade |
+| Notification | `NotificationType`, `NotificationService`, `ClubPostNotificationData` | 타입, 차단/설정, payload |
+| Flutter data | `club_comment_api.dart`, `comment*.dart`, `comment_provider.dart` | Retrofit/Freezed/Provider 전달 |
+| Flutter UI | `mention_field.dart`, `mention_text.dart`, `post_detail_screen.dart` | 후보 검색, 확정 멘션 렌더링, 댓글 강조 |
+| Flutter routing | `notification_router.dart`, `app_router.dart` | 알림 → 게시글/댓글 딥링크 |
 
-> 댓글 단독 화면은 없음. 게시글 상세 화면 안에서 댓글 입력/목록/액션이 모두 처리됨.
+## 3. 서버 API 계약
 
-### 화면별 구성 요소 & 액션
+기본 경로는 `/api/v1/clubs/{clubId}`이며 전부 인증과 해당 클럽 멤버십이 필요하다.
 
-### 게시글 상세 — 댓글 영역 (`post_detail_screen.dart`)
-- **사용자가 보는 것**:
-  - 댓글 섹션 헤더: "💬 댓글 {count}"
-  - 정렬 토글 ("최신순" / "등록순") — 스펙상 명시
-  - 댓글 카드 (`comment_tile.dart`): 32dp 프로필, 닉네임, 상대 시간, 본문, 답글/좋아요 버튼
-  - 대댓글 카드 (`reply_tile.dart`): 좌 40dp 들여쓰기, "@닉네임" 멘션
-  - 삭제된 댓글 placeholder: "삭제된 댓글입니다" (Gray400, italic)
-  - 수정 표시: "(수정됨)" (Caption, Gray500)
-  - 하단 고정 입력창 (`comment_input.dart`): 텍스트 필드 + 전송 아이콘 버튼
-- **사용자가 할 수 있는 액션**:
-  - 댓글 입력 후 전송 ▶ `POST /api/v1/clubs/{clubId}/posts/{postId}/comments` ▶ 목록 갱신 + 새 댓글로 스크롤
-  - "답글" 버튼 탭 ▶ 입력란 포커스 + "@{원댓글작성자}" prefix 자동 입력 ▶ 전송 시 `POST .../comments/{commentId}/replies`
-  - 댓글 롱프레스 ▶ `comment_action_menu.dart` 표시 (작성자: 수정/삭제, ADMIN: 삭제, 일반: 신고)
-  - "수정" 선택 ▶ 입력란 프리필 + 모드 전환 ▶ 전송 시 `PUT .../comments/{commentId}`
-  - "삭제" 선택 ▶ 확인 다이얼로그 ▶ `DELETE .../comments/{commentId}`
-  - 무한 스크롤 도달 ▶ `commentNotifierProvider.loadMore()` (현재 서버 응답이 List이므로 페이지네이션 미사용 — `(클라이언트 측 가상 페이지)`)
-- **상태 분기**:
-  - 로딩: `SkeletonLoader(preset: SkeletonPreset.detail)` (게시글+댓글 모두)
-  - 에러: `AppErrorState(title: '게시글을 불러올 수 없습니다', onRetry: ...)`
-  - 빈 상태: 댓글 0개 일 때 "첫 댓글을 남겨보세요" (compact)
-- **모달/시트/네비게이션**:
-  - 댓글 액션 메뉴: `showModalBottomSheet` (CommentActionMenu)
-  - 삭제 확인: `AppDialog.confirm` (스펙)
-  - 답글 모드: 모달 아님, 화면 내 입력창 상태만 변경 (`_replyToCommentId`)
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. **화면 진입 시**: `postDetailNotifierProvider(clubId, boardId, postId)` ▶ 게시글 상세 + `commentNotifierProvider(clubId, postId)` 트리거 ▶ `ClubCommentRepository.getComments()` ▶ `GET /comments` (List 반환 → 클라이언트 측 그룹핑은 서버에서 이미 완료)
-2. **댓글 작성**: `commentNotifier.addComment(content)` ▶ `POST /comments` ▶ 응답으로 받은 `Comment`를 목록에 prepend (또는 invalidate) ▶ `AppToast.show('댓글이 등록되었습니다')`
-3. **답글 작성**: `commentNotifier.addReply(parentId, content)` ▶ `POST /comments/{parentId}/replies` ▶ 부모 댓글의 `replies`에 append
-4. **수정**: `commentNotifier.updateComment(id, content)` ▶ `PUT /comments/{id}` ▶ 해당 댓글 in-place 갱신
-5. **삭제**: `commentNotifier.deleteComment(id)` ▶ `DELETE /comments/{id}` ▶ 응답 후 invalidate (서버가 자식 답글 유무에 따라 placeholder 처리하므로 낙관적 업데이트 어려움)
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
+| Method | Path | Body | 응답 |
 |---|---|---|---|
-| S1 | 멤버가 게시글에 댓글을 단다 (Happy Path) | 로그인됨, 클럽 MEMBER, 게시글 상세(SCR-CC-003) 진입, 댓글 0개. | ACTIVE 댓글 1개, 게시글 `comment_count = 1`, 입력창 비워짐. |
-| S2 | 다른 멤버 댓글에 답글을 단다 | 게시글 상세, 댓글 5개 표시 중. | 부모 댓글의 `replies` 1개, `comment_count` +1. |
-| S3 | 자기 댓글 수정/삭제 | 댓글 작성자 본인. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | ADMIN이 부적절한 댓글을 삭제 | 다른 멤버의 욕설 댓글이 게시됨. | 멤버에게 푸시 알림은 현재 미발송(서비스 코드 기준). |
-| S5 | 일반 멤버가 남의 댓글 수정/삭제 시도 (Forbidden) | 작성자 아님, ADMIN/OWNER 아님. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 답글의 답글 시도 (Depth 제한) | 호기심 많은 멤버. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 비멤버가 게시글/댓글 접근 | 시드 클럽(`Seoul Weekend Boardgamers`, clubId=1201) 비멤버 사용자로 로그인. | 사용자는 클럽 상세 화면에 머무르며 가입 게이트(F04-02 분기)로 안내된다. |
+| GET | `/posts/{postId}/comments` | 없음 | `List<ClubPostCommentVo>` |
+| POST | `/posts/{postId}/comments` | `ClubCommentAddParam` | 201 `ClubPostCommentVo` |
+| POST | `/posts/{postId}/comments/{commentId}/replies` | `ClubCommentAddParam` | 201 `ClubPostCommentVo` |
+| PUT | `/comments/{commentId}` | `ClubCommentModParam` | 200 `ClubPostCommentVo` |
+| DELETE | `/comments/{commentId}` | 없음 | 204 |
 
-## 7. 정합성 판단
+### 3.1 요청·응답 필드
 
-| 항목 | 확인 기준 | 현재 판단 |
+- `ClubCommentAddParam` / `ClubCommentModParam`
+  - `content: String`
+  - `mentionedUserIds: List<Long>` — 누락 가능. 서버가 빈 목록처럼 처리한다.
+- `ClubPostCommentVo`
+  - `id`, `parentCommentId`, `authorId`, `authorNickname`, `content`
+  - `status: ACTIVE | DELETED`
+  - `createdAt`, `updatedAt`
+  - `replies: List<ClubPostCommentVo>`
+  - `mentions: List<ClubPostCommentMentionVo>`
+- `ClubPostCommentMentionVo`
+  - `userId`
+  - `nickname` — 멘션 생성 시점의 표시용 닉네임 snapshot
+
+목록 응답은 `Page`가 아니라 완성된 1단계 트리의 `List`다. 서버 저장/조회 순서는 `createdAt ASC`이며 현재 페이지네이션은 없다.
+
+## 4. 권한·무결성
+
+- 읽기·댓글 작성·답글·수정은 현재 클럽 멤버만 가능하다.
+- 수정은 댓글 작성자만 가능하다.
+- 삭제는 댓글 작성자 또는 `OWNER`/`ADMIN`만 가능하다.
+- `clubId`, `postId`, `commentId`의 실제 소속 관계를 서버가 확인한다. 다른 클럽 ID를 섞은 직접 호출은 존재를 숨기는 `NOT_FOUND` 계열로 차단한다.
+- 답글 생성 시 부모 댓글을 잠그고, 같은 게시글의 `ACTIVE` 최상위 댓글인지 확인한다.
+- 답글의 답글은 허용하지 않는다. 깊이는 정확히 1단계다.
+- 삭제된 부모에는 새 답글을 달 수 없다.
+- 부모 삭제 후 답글이 남아 있으면 부모는 `DELETED` placeholder로 조회되고, 멘션 정보는 노출하지 않는다.
+
+## 5. 멘션 계약
+
+### 5.1 클라이언트가 보내는 값과 서버가 인정하는 값
+
+앱은 사용자가 후보 목록에서 고른 사용자 ID를 `mentionedUserIds`로 보내지만, 서버는 다음 조건을 모두 만족하는 대상만 실제 멘션으로 저장한다.
+
+1. 자기 자신이 아니다.
+2. 현재 클럽 멤버다.
+3. 본문에 그 사용자의 실제 `@닉네임` 토큰이 있다.
+4. 중복 제거 후 최대 10명이다.
+
+본문의 `@` 시작 위치는 최대 20개까지만 스캔한다. 이를 넘기거나 요청 후보가 10명을 넘으면 `INVALID_INPUT`으로 거절한다.
+
+### 5.2 토큰 판정
+
+- `@` 앞이 문자열 시작 또는 공백 계열 문자일 때만 후보로 본다. 이메일 중간의 `@`는 멘션으로 보지 않는다.
+- 공백을 포함한 닉네임도 전체 닉네임으로 매칭한다.
+- 같은 접두어가 겹치면 가장 긴 닉네임을 우선한다.
+- 클럽 안에 같은 닉네임 사용자가 둘 이상이면 누구인지 안전하게 확정할 수 없으므로 해당 토큰을 멘션으로 저장하지 않는다.
+- 저장된 `nickname`은 표시 안정성을 위한 snapshot이다. 이후 사용자가 닉네임을 바꿔도 기존 댓글의 표시 문자열은 유지된다.
+
+### 5.3 수정·삭제
+
+- 수정 요청은 최종 본문과 전체 `mentionedUserIds`를 다시 보낸다.
+- 서버는 기존 관계와 새 관계를 diff하여 추가·유지·삭제한다.
+- 수정으로 **새로 추가된** 멘션 수신자에게만 알림을 보낸다. 유지된 대상에게는 중복 알림을 보내지 않는다.
+- 댓글 삭제 시 연결된 멘션 관계도 삭제된다.
+- DB는 `(comment_id, mentioned_user_id)`를 유일하게 유지한다.
+
+## 6. 댓글·답글 알림
+
+### 6.1 알림 타입과 수신자
+
+| 우선순위 | `NotificationType` | 수신 조건 |
+|---:|---|---|
+| 1 | `CLUB_POST_COMMENT_MENTION` (101) | 댓글/답글 본문에서 실제 멘션된 현재 멤버 |
+| 2 | `CLUB_POST_COMMENT_REPLY` (103) | 답글의 부모 댓글 작성자 |
+| 3 | `CLUB_POST_COMMENT` (102) | 최상위 댓글이 달린 게시글 작성자 |
+
+한 사용자가 멘션 대상이면서 부모/게시글 작성자이기도 하면 가장 높은 한 종류만 발송한다. 행위자는 언제나 제외한다.
+
+알림 본문 발췌는 줄바꿈을 평탄화하고 최대 50자로 제한한다. payload는 `ClubPostNotificationData`이며 `clubId`, `boardId`, `postId`, `commentId`, `actorUserId`를 담는다. reference는 `CLUB` / `clubId`다.
+
+`NotificationService`의 공통 정책도 그대로 적용된다.
+
+- 행위자와 수신자 사이에 어느 방향이든 사용자 차단이 있으면 인앱·푸시 모두 억제한다.
+- 사용자의 알림 설정에 따라 인앱/푸시 채널을 각각 결정한다.
+- 알림 시점에 클럽에서 탈퇴한 사용자는 수신 대상에서 제외한다.
+
+### 6.2 Flutter 딥링크
+
+세 알림 타입은 모두 다음 경로로 해석된다.
+
+`/clubs/{clubId}/posts/{postId}?boardId={boardId}&commentId={commentId}`
+
+- `boardId` 또는 `postId`가 없으면 클럽 홈으로 안전하게 폴백한다.
+- 라우터가 `commentId`를 `highlightCommentId`로 넘긴다.
+- 게시글 상세가 댓글 목록 로드 후 대상 댓글로 한 번 스크롤하고 약 3초 강조한다.
+- 댓글이 이미 삭제되었거나 목록에 없으면 화면 진입은 유지하고 상단에 머문다.
+
+## 7. Flutter 입력·표시 계약
+
+- `MentionField`는 `@` 입력 뒤 250ms debounce로 클럽 멤버를 검색한다.
+- 자기 자신을 후보에서 제외하고, 후보를 고르면 공백 포함 전체 닉네임을 본문에 삽입한다.
+- 전송 직전에도 본문에 남아 있는 선택 멘션만 ID 목록으로 보낸다.
+- 답글 모드는 부모 댓글을 지정하는 배너/힌트로 표시한다. **부모 작성자의 `@닉네임`을 자동 삽입하지 않는다.** 멘션이 필요하면 사용자가 `@` 후보에서 별도로 선택한다.
+- 수정 다이얼로그는 서버가 내려준 기존 `mentions`를 seed하고 전체 교체 요청을 보낸다.
+- `MentionText`는 본문의 임의 `@단어`가 아니라 서버가 확정해 내려준 `mentions`만 `linkBlue`로 강조한다.
+- 확정 멘션을 탭하면 `/profile/users/{userId}`로 이동한다.
+
+## 8. 현재 확인된 Gap / Risk
+
+| 분류 | 실측 결과 | 영향 |
 |---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후보 | backend.md:17 | > 응답 타입은 **`List<ClubPostCommentVo>`** (Page 아님). `community_app` 측 매핑 시 주의. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:69 | - **사이드 이펙트**: 없음 (스펙상 게시글 작성자에게 FCM 발송이 명시되어 있으나 서비스 코드에는 미구현 — `(미확인)`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:88 | - **사이드 이펙트**: 없음 (스펙상 원댓글 작성자 FCM은 미구현 — `(미확인)`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:33 | - 무한 스크롤 도달 ▶ `commentNotifierProvider.loadMore()` (현재 서버 응답이 List이므로 페이지네이션 미사용 — `(클라이언트 측 가상 페이지)`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:82 | ### S1 보강 — 게시글 상세의 댓글 read surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:92 | ### S2 보강 — 답글 모드 진입 시 입력 영역 카피 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:102 | ### S4 보강 — long-press → 액션 시트의 `'삭제'` 노출 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | Flutter API는 `sort` query를 보내고 Provider는 `latest/oldest`를 토글하지만 서버 Controller에는 해당 파라미터가 없고, 클라이언트도 별도 정렬하지 않는다. | UI 정렬 라벨을 바꿔도 실제 순서는 서버의 `createdAt ASC` 그대로일 수 있다. 서버 정렬 계약을 추가하거나 앱에서 정렬해야 한다. |
+| 범위 확인 | 목록은 `List` 전체 조회이고 `loadMore`는 실질 페이지를 추가하지 않는다. | 댓글이 매우 많은 게시글의 비용 정책은 별도 결정이 필요하다. |
+| 문서 교정 | 과거 문서의 댓글 좋아요/신고·성공 토스트·자동 멘션 prefix 묘사는 현재 댓글 화면의 보장 계약이 아니다. | QA는 실제 노출 위젯과 API만 기준으로 한다. |
 
 ## 9. 수용 기준
 
-- **AC-01. 멤버가 게시글에 댓글을 단다 (Happy Path)**: Given 로그인됨, 클럽 MEMBER, 게시글 상세(SCR-CC-003) 진입, 댓글 0개. When 사용자가 해당 흐름을 실행하면 Then ACTIVE 댓글 1개, 게시글 `comment_count = 1`, 입력창 비워짐.
-- **AC-02. 다른 멤버 댓글에 답글을 단다**: Given 게시글 상세, 댓글 5개 표시 중. When 사용자가 해당 흐름을 실행하면 Then 부모 댓글의 `replies` 1개, `comment_count` +1.
-- **AC-03. 자기 댓글 수정/삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. ADMIN이 부적절한 댓글을 삭제**: Given 다른 멤버의 욕설 댓글이 게시됨. When 사용자가 해당 흐름을 실행하면 Then 멤버에게 푸시 알림은 현재 미발송(서비스 코드 기준).
-- **AC-05. 일반 멤버가 남의 댓글 수정/삭제 시도 (Forbidden)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 답글의 답글 시도 (Depth 제한)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 비멤버가 게시글/댓글 접근**: Given 시드 클럽(`Seoul Weekend Boardgamers`, clubId=1201) 비멤버 사용자로 로그인. When 사용자가 해당 흐름을 실행하면 Then 사용자는 클럽 상세 화면에 머무르며 가입 게이트(F04-02 분기)로 안내된다.
+- **AC-01**: 멤버가 유효한 본문으로 댓글을 작성하면 201과 `ACTIVE` VO를 받고 목록에 반영된다.
+- **AC-02**: 최상위 `ACTIVE` 댓글에만 답글을 만들 수 있고, 답글의 답글은 서버가 거절한다.
+- **AC-03**: 요청 ID가 있어도 본문에 정확한 `@닉네임`이 없거나 대상이 현 멤버가 아니면 멘션으로 저장·알림되지 않는다.
+- **AC-04**: 한 수신자가 멘션과 답글/게시글 작성자 조건을 동시에 만족하면 우선순위가 가장 높은 알림 한 건만 받는다.
+- **AC-05**: 댓글 수정에서 기존 멘션은 재알림하지 않고 새로 추가된 대상만 알린다.
+- **AC-06**: 작성자는 자기 댓글을 수정·삭제하고, `OWNER`/`ADMIN`은 타인의 댓글을 삭제만 할 수 있다.
+- **AC-07**: 알림 탭 시 게시글 상세에 진입하고 대상 댓글이 존재하면 스크롤·강조한다.
+- **AC-08**: 사용자 차단 또는 알림 설정 비활성 상태에서는 공통 알림 정책대로 전달을 억제한다.
+- **AC-09**: 정렬 토글은 현재 실제 순서 변경 수용 기준으로 간주하지 않는다. Gap 해소 후 별도 검증한다.
 
-## 10. 미결정 / 후속
+## 10. 후속
 
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+- 댓글 정렬을 서버 query로 공식 지원할지, 현재 전체 `List`를 앱에서 정렬할지 결정한다.
+- 페이지네이션이 필요하면 서버 반환 타입부터 변경해야 하며, 현재 `List` 계약을 `PageResponse`로 임의 해석하지 않는다.
+- 알림 딥링크의 삭제 댓글 폴백과 긴 댓글 목록 스크롤을 통합/E2E로 지속 검증한다.

@@ -38,8 +38,8 @@
           <a class="card" href="../features/F07-02.html"><div class="eyebrow">F07-02</div><h3>항목 관리</h3><p>작성중 편집, 항목·분담금, 최근 항목, 영수증 첨부.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-03.html"><div class="eyebrow">F07-03</div><h3>활성화·취소</h3><p>작성 중에서 진행 중으로 넘어가는 시점의 납부 알림, 취소·환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-04.html"><div class="eyebrow">F07-04</div><h3>현황·요약·영수증</h3><p>요약 카드, 참여자 상태, 영수증 권한.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F07-05.html"><div class="eyebrow">F07-05</div><h3>분담금 납부</h3><p>포인트·계좌이체·혼합 결제, 재발행·환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F07-06.html"><div class="eyebrow">F07-06</div><h3>이체 확인·일괄 확인·상각</h3><p>수동 확인, 일괄 처리, 완료 전이, 회수불가 상각.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F07-05.html"><div class="eyebrow">F07-05</div><h3>분담금 납부</h3><p>포인트·계좌이체·혼합 결제. 혼합 은행분은 별도 입금 확인 대기.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F07-06.html"><div class="eyebrow">F07-06</div><h3>이체 확인·일괄 확인·상각</h3><p>수취자/정산 생성자의 수기 확인, 송금자 self-confirm 차단, 완료 전이.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-07.html"><div class="eyebrow">F07-07</div><h3>리마인드·마감 연장</h3><p>독촉 대상, 연장 제한, 이력.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-08.html"><div class="eyebrow">F07-08</div><h3>이의제기·처리·감사로그</h3><p>이의 상태, 처리 권한, 감사로그.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F07-09.html"><div class="eyebrow">F07-09</div><h3>선입금·환불·환불규정</h3><p>사전 결제, 확인, 환불률, 결제 상태 알림.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
@@ -94,8 +94,9 @@ stateDiagram-v2
         <div class="diagram">
           <div class="mermaid">
 sequenceDiagram
-    actor H as 호스트
-    actor P as 참가자
+    actor H as 정산 생성자
+    actor P as 송금자
+    actor R as 수취자
     participant S as 정산 화면
     participant W as 지갑·계좌
     participant N as 알림
@@ -107,9 +108,63 @@ sequenceDiagram
     P->>S: 내 분담금 확인
     P->>W: 포인트 또는 계좌이체로 납부
     W-->>S: 납부 상태 반영
-    H->>S: 계좌이체 건 수동 확인
+    alt 혼합결제에 은행분이 있음
+        S-->>R: 입금 확인 요청 (BANK_AWAITING_CONFIRM)
+        R->>R: 외부 입금 내역 직접 확인
+        R->>S: "받았어요" (정산 생성자도 대리 가능)
+    else 일반 계좌이체
+        H->>S: 계좌이체 건 수동 확인
+    end
     S->>N: 완료 또는 미납 알림
           </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>혼합결제의 은행분은 송금 선언만으로 끝나지 않는다</h2>
+        <p class="subtitle">2026-07-29 서버 Controller·Service·DTO·enum과 Flutter CTA/caller를 다시 대조한 현재 계약.</p>
+        <div class="diagram">
+          <div class="mermaid">
+flowchart LR
+    A["송금자: POINT + 은행분 혼합 결제"] --> B{"은행분이 1원 이상인가"}
+    B -->|"아니오"| C["transfer 완료"]
+    B -->|"예"| D["입금 확인 대기<br/>BANK_AWAITING_CONFIRM"]
+    D --> E{"확인자"}
+    E -->|"수취자 또는 정산 생성자<br/>(송금자 아님)"| F["'받았어요'<br/>수기 입금 확인"]
+    E -->|"송금자"| X["SELF_CONFIRM 403"]
+    E -->|"무관 사용자"| Y["NOT_AUTHORIZED 403"]
+    F --> G["transfer 완료 + 완료 시각"]
+    G --> H{"나머지 유효 transfer와<br/>모든 share도 완료됐는가"}
+    H -->|"예"| I["정산 완료"]
+    H -->|"아니오"| J["정산 진행 중 유지"]
+          </div>
+        </div>
+        <div class="callout warn">
+          <span class="label">입금증·영수증을 시스템이 검증하는 흐름이 아니다</span>
+          <p><code>POST .../transfers/{transferId}/confirm-bank-portion</code>에는 요청 body가 없다.
+            영수증, 입금증, 은행 조회 결과를 받지 않고 수취자 또는 정산 생성자의 확인 선언만 기록한다.
+            그래서 Flutter 안내 카드와 되돌릴 수 없는 확인 다이얼로그가
+            <strong>“시스템은 실제 입금을 검증하지 않으므로 입금 내역을 확인한 뒤 진행”</strong>하라고 경고한다.</p>
+          <p>화면의 <strong>받았어요</strong> 버튼도 단순 상태 버튼이 아니다.
+            <code>입금 확인 대기</code>이면서 보는 사람이 송금자가 아니고,
+            수취자 또는 정산 생성자일 때만 나타난다. 송금자가 정산 생성자를 겸해도 버튼은 숨고 서버 역시 거절한다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">현재 금액 표시 한계</span>
+          <p>transfer 응답에는 총액만 있고 POINT/은행 분할 금액은 없다.
+            현재 확인 다이얼로그는 이 총액을 “계좌이체 부분” 금액으로 표시하므로 실제 은행분보다 크게 보일 수 있다.
+            정확한 은행분 표시에는 서버 응답 계약 보강이 필요하다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">2026-07-29 추가 실측 — 일괄 처리와 이체 화면의 구현 공백</span>
+          <ul>
+            <li>일괄 확인은 건별 성공/실패를 집계하지만, 같은 service bean의 트랜잭션 method를 직접 호출해 실제 건별 Spring transaction 경계가 만들어지지 않는다.</li>
+            <li>이체 화면의 “미납자 알림”은 API를 호출하지 않고 성공 토스트만 띄워 실제 발송이 아니다.</li>
+            <li>“대기 금액”은 입금 확인 대기를 제외하고, 일반 BANK 수취자는 서버 권한이 있어도 화면 확인 CTA가 없다.</li>
+            <li>완료된 정산에서도 이체 화면 하단 관리 버튼이 남을 수 있다.</li>
+            <li>재발행하면 원본 EXPIRED transfer는 <code>SUPERSEDED</code>가 되고 새 PENDING row가 생성된다.</li>
+          </ul>
+          <p>세부 근거와 후속 조치는 <a href="../features/F07-06.html">F07-06 이체 확인·일괄 확인·상각</a>을 기준으로 한다.</p>
         </div>
       </section>
 
@@ -177,7 +232,9 @@ sequenceDiagram
             <li><strong>작성 중 상태에서 참가자에게 알림 발송</strong> — 정책상 가장 큰 사고. 첫 알림은 정산 신청 시점에만 나간다 (이의제기 경유 알림까지 2026-06-05에 차단 완료).</li>
             <li><strong>받을 권리가 받는 사람이 아닌 낸 사람에게 귀속되는 경우</strong> — 분담금을 낸 참가자가 그 금액의 출금 자격을 얻으면 안 된다. 권리는 실제로 받는 사람에게, 지갑으로 전환되는 순간 권리 장부는 소거 (2026-06-06).</li>
             <li><strong>작성 중 미리보기 수위를 넘는 노출</strong> — 참가자에게는 총액·상태·내 분담금까지만. 항목 상세·영수증·타인 몫·호스트 메모가 신청 전에 보이면 회귀다.</li>
-            <li><strong>계좌이체 후 호스트 미확인</strong> — 참가자는 “냈다”라고 생각하지만 시스템은 미완료. 자동 확인이 불가능하므로 호스트 액션이 필요함을 명시.</li>
+            <li><strong>계좌이체 후 확인 주체 미행동</strong> — 참가자는 “냈다”라고 생각하지만 시스템은 미완료. 일반 이체는 정산 생성자, 혼합 은행분은 수취자 또는 정산 생성자의 수기 확인이 필요함을 명시.</li>
+            <li><strong>혼합 은행분을 송금자가 스스로 확인</strong> — 정산 생성자를 겸해도 금지. CTA를 숨기는 것과 별개로 서버 SELF_CONFIRM 가드를 유지.</li>
+            <li><strong>입금 확인을 영수증·은행 검증으로 오인</strong> — 현재는 외부 증빙을 받지 않는 신뢰 선언이다. “시스템이 실제 입금을 검증하지 않는다”는 경고를 제거하면 안 됨.</li>
             <li><strong>포인트 vs 계좌이체 즉시성 차이 미안내</strong> — 포인트는 즉시 반영, 계좌이체는 수동 확인. UI에서 분리.</li>
             <li><strong>이의제기 수락/기각 시 금액·상태·알림·감사로그 동시 변경 누락</strong>.</li>
             <li><strong>활성화 전 항목이 비어 있는데 활성화 시도</strong> — 0원 청구는 차단해야 함.</li>

@@ -12,21 +12,21 @@
 
 Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제출/내 이의/호스트 출결 제보)과 운영진용 10화면(콘솔/정책/제보 검토함/제보 상세/이의 검토함/멤버 상세/제재/검토 대상/큐/감사 로그)을 모두 구현했고, enum 미러(`warning_enums.dart`)가 서버 enum과 1:1로 일치한다. 따라서 **조회·제출·운영진 워크플로의 화면-API 정합은 대체로 닫혀 있다**. 다만 (a) 정책 임계치 기본값이 Java 코드(3/6/10/15)와 DDL(1/3/5/7)에서 불일치, **(b) `FORCED_REMOVE` 제재의 실제 클럽 멤버십 제거 연결이 `WarningForcedRemoveEventListener` AFTER_COMMIT `kickMember`로 해소됨(커밋 `0eae1ed`, 2026-05-29)**, **(c) 만료 스케줄러 및 read-time 만료 필터가 활성화되어 해소됨(커밋 `9ba7cd8`, 2026-06-04)**, (d) 통계 화면이 서버의 `period` 파라미터를 전달하지 않음 등 **운영 신뢰성·정산성 Gap 일부가 남아 있다**. 추가로 플랫폼 전역 제재(`PlatformSanction`, 3종)가 신규 도입되어 클럽-스코프 제재를 보완한다(커밋 `0eae1ed`).
 
-이 도메인은 기능 PRD 9개로 구성된다. 도메인 수준 판단은 아래 기능 PRD와 source trace를 따라가며 확정한다.
+이 도메인은 기능 PRD 9개로 구성된다. 현재 기능별 trace source는 총 0개이고, risk 후보는 총 27개다. 도메인 수준 판단은 아래 기능 PRD와 source trace를 따라가며 확정한다.
 
 ## 2. 실사 근거 맵
 
 | ID | 기능 | PRD | 상태 | Trace | Risk 후보 |
 |---|---|---|---|---:|---:|
-| F15-01 | F15-01. 내 경고 현황 & 원장 | [F15-01_warning-overview-ledger_prd.md](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 소스 대조 완료 | 2 | 3 |
-| F15-02 | F15-02. 신고 제출 & 내 신고 관리 | [F15-02_report-submit-manage_prd.md](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 소스 대조 완료 | 3 | 5 |
-| F15-03 | F15-03. 이의제기 (Appeal) | [F15-03_appeal_prd.md](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 소스 대조 완료 | 3 | 3 |
-| F15-04 | F15-04. 경고 정책 & 패널티 유형 설정 | [F15-04_policy-penalty-types_prd.md](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 소스 대조 완료 | 4 | 4 |
-| F15-05 | F15-05. 신고 심사 | [F15-05_report-review_prd.md](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 소스 대조 완료 | 3 | 3 |
-| F15-06 | F15-06. 경고 부여 & 원장 조정 | [F15-06_grant-ledger-adjust_prd.md](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 소스 대조 완료 | 5 | 4 |
-| F15-07 | F15-07. 이의제기 처리 | [F15-07_appeal-resolve_prd.md](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 소스 대조 완료 | 3 | 3 |
-| F15-08 | F15-08. 제재 집행 | [F15-08_sanction-enforcement_prd.md](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 소스 대조 완료 | 4 | 5 |
-| F15-09 | F15-09. 검토 큐 & 대시보드/통계/감사로그 | [F15-09_queue-dashboard-audit_prd.md](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 소스 대조 완료 | 4 | 5 |
+| F15-01 | F15-01. 내 경고 현황 & 원장 | [F15-01_warning-overview-ledger_prd.md](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 소스 대조 완료 | 0 | 2 |
+| F15-02 | F15-02. 신고 제출 & 내 신고 관리 | [F15-02_report-submit-manage_prd.md](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 소스 대조 완료 | 0 | 3 |
+| F15-03 | F15-03. 이의제기 (Appeal) | [F15-03_appeal_prd.md](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 소스 대조 완료 | 0 | 2 |
+| F15-04 | F15-04. 경고 정책 & 패널티 유형 설정 | [F15-04_policy-penalty-types_prd.md](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 소스 대조 완료 | 0 | 3 |
+| F15-05 | F15-05. 신고 심사 | [F15-05_report-review_prd.md](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 소스 대조 완료 | 0 | 2 |
+| F15-06 | F15-06. 경고 부여 & 원장 조정 | [F15-06_grant-ledger-adjust_prd.md](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 소스 대조 완료 | 0 | 3 |
+| F15-07 | F15-07. 이의제기 처리 | [F15-07_appeal-resolve_prd.md](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 소스 대조 완료 | 0 | 2 |
+| F15-08 | F15-08. 제재 집행 | [F15-08_sanction-enforcement_prd.md](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 소스 대조 완료 | 0 | 5 |
+| F15-09 | F15-09. 검토 큐 & 대시보드/통계/감사로그 | [F15-09_queue-dashboard-audit_prd.md](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 소스 대조 완료 | 0 | 5 |
 
 ## 3. 먼저 볼 기능
 
@@ -158,13 +158,13 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 |---|---:|---|
 | [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 5 (P0·P1 다수 해소, 잔여 P1×1+P2×3+P3×1) | ~~`FORCED_REMOVE` 멤버십 미연결~~ **해소**. ~~만료 스케줄러 미활성~~ **해소**. ~~`listActiveByUser` 공개 API 미배선~~ **해소(W14-S6)**. ~~EVENT_HOST_RESTRICT 가드 미배선~~ **해소(W14-S6 6경로+데이팅)**. ~~PlatformSanction admin API 미확인~~ **배선 확인(R-8)**. 잔여: 기활성 데이팅 프로필 매칭 노출(신규 후속), NOTICE/ROLE_RESTRICT outbox 위임 |
 | [F15-09](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 5 | 통계 `period` 미전달, 대시보드/통계 `findAll()` 전체 메모리 집계, 큐 enqueue 호출처 부재 가능성 |
-| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 5 (P1 해소, 잔여 P2×2+P3×2) | ~~익명 누적 반려율 익명 row 미탐지~~ **해소(커밋 `99b755e`)**. 잔여: 자가 제보/중복 에러코드 모호 |
-| [F15-04](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 4 | 임계치 기본값 Java(3/6/10/15) vs DDL(1/3/5/7) 불일치, 단조성 강제 안 함 |
-| [F15-06](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 4 | grant 일괄 부분 성공이 단일 트랜잭션 안 — 부분 성공 의미 모호 |
-| [F15-01](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 3 | 정책 비활성 클럽도 본인 화면 진입 시 summary row 생성 |
-| [F15-03](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 3 | reason blank가 APPEAL_NOT_FOUND로 매핑 (오해 소지) |
-| [F15-05](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 3 | claim/approve 2회 호출 사이 동시성, reason blank가 REPORT_NOT_FOUND로 매핑 |
-| [F15-07](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 3 | allow-resubmit가 DB 컬럼만 기록, 재제기 강제 가드 없음 |
+| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 3 | ~~익명 누적 반려율 익명 row 미탐지~~ **해소(커밋 `99b755e`)**. 잔여: 자가 제보/중복 에러코드 모호 |
+| [F15-04](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 3 | 임계치 기본값 Java(3/6/10/15) vs DDL(1/3/5/7) 불일치, 단조성 강제 안 함 |
+| [F15-06](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 3 | grant 일괄 부분 성공이 단일 트랜잭션 안 — 부분 성공 의미 모호 |
+| [F15-01](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 2 | 정책 비활성 클럽도 본인 화면 진입 시 summary row 생성 |
+| [F15-03](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 2 | reason blank가 APPEAL_NOT_FOUND로 매핑 (오해 소지) |
+| [F15-05](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 2 | claim/approve 2회 호출 사이 동시성, reason blank가 REPORT_NOT_FOUND로 매핑 |
+| [F15-07](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 2 | allow-resubmit가 DB 컬럼만 기록, 재제기 강제 가드 없음 |
 
 ### 접근권한 감사 교정 (2026-07-02)
 

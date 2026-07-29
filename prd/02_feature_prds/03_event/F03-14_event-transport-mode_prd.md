@@ -1,155 +1,101 @@
 # F03-14. 이동수단 공통 베이스 (Transport Mode) PRD
 
-<!-- generated: source-first-event-extensions; updated: 2026-05-22; plan: docs/plan/event-extensions/PLAN.md v4.5 §3, §4 / W4 슬라이스 -->
+<!-- source-measured: 2026-07-29; authority: community_api/community_app current source -->
 
-> 문서 상태: **신규 PRD**. 본 문서는 PLAN.md v4.5의 §3.2(mode 전이 정책)와 §4(이벤트 측 버스 운영)에서 정한 "이동수단 공통 베이스"를 PRD 구조로 정리한 것이다. 카풀 운영 세부는 [F03-15](F03-15_event-carpool_prd.md), 버스 운영 세부는 [F03-16](F03-16_event-bus-charter_prd.md), 차량 카탈로그는 [F03-17](F03-17_vehicle-layout-catalog_prd.md)을 함께 본다. 본 슬라이스는 backend-only 1차 출시이며, Flutter 클라이언트는 후속 슬라이스다.
+> 문서 상태: **현재 소스 실측본**. 과거 `docs/plan/event-extensions/*` 문서는 저장소에서 삭제되었으며 현재 계약의 근거로 사용하지 않는다. 카풀은 [F03-15](F03-15_event-carpool_prd.md), 버스는 [F03-16](F03-16_event-bus-charter_prd.md), 차량 레이아웃은 [F03-17](F03-17_vehicle-layout-catalog_prd.md)을 함께 본다.
 
 ## 1. 결론
 
-이벤트 상세 운영의 새 차원으로 **이동수단 mode(NONE/CARPOOL/BUS)** 를 도입한다. 한 이벤트는 한 mode만 선택할 수 있고(**D2 — 택일**), mode 내부에서만 "개별이동 허용(`allows_self_transport`)" 토글을 둔다. mode는 **`DRAFT` 상태에서만 자유롭게 바꿀 수 있고**(이전 mode 데이터 hard delete), 발행(OPEN) 이후에는 immutable 이다. mode-internal 운영 설정(개별이동 허용 등)은 OPEN 상태에서도 계속 변경 가능하다.
+서버에는 이벤트별 이동수단 모드를 `NONE`, `CARPOOL`, `BUS` 중 하나로 보관하는 공통 설정이 구현되어 있다. 설정이 아직 없으면 조회 시 DB row를 만들지 않고 `mode=NONE`, `allowsSelfTransport=true`를 반환한다. 모드 변경은 이벤트가 `DRAFT`일 때만 가능하며, `CARPOOL` 또는 `BUS`에서 다른 모드로 바꾸면 해당 운영 데이터를 hard delete한다.
 
-호스트의 진입 흐름은 다음을 기준으로 판단한다.
+Flutter 앱에는 이 설정을 조회·수정하는 모델, API, Repository, Provider, 화면이 없다. 따라서 현재 사용자 제품에서 이동수단 모드를 설정하는 완성된 수직 슬라이스는 아니다.
 
-- 이벤트 생성 또는 수정(F03-03/F03-04) ▶ 이동수단 섹션 ▶ mode 선택(NONE/CARPOOL/BUS)
-- mode=CARPOOL 선택 ▶ [F03-15 카풀](F03-15_event-carpool_prd.md) 운영 화면으로 분기
-- mode=BUS 선택 ▶ [F03-16 버스대절](F03-16_event-bus-charter_prd.md) 운영 화면으로 분기
-- mode=NONE은 기본값 — 별도 이동수단 운영 없음 (전원 개별이동)
+## 2. 실측 근거
 
-이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, `event_transport_config` 단일 row가 mode/개별이동 토글을 가지며 어떤 endpoint로 read·write 되는지다. 둘째, mode 변경이 언제 허용/거부되며 데이터 삭제 범위가 어디까지인지다. 셋째, mode immutability가 OPEN 후 어떻게 enforce 되고, mode-internal 토글이 어디서 변경 가능한지다.
-
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Plan | [PLAN.md v4.5 §3.2 / §4.4](../../../../docs/plan/event-extensions/PLAN.md) | 있음 | 데이터 모델, mode 전이 정책, immutable 원칙 |
-| Enum | [ENUM_RESERVATIONS.md](../../../../docs/plan/event-extensions/ENUM_RESERVATIONS.md) | 있음 | `TransportMode/CarpoolStatus/TransportChoice/BusAssignmentMode` 예약 |
-| E2E | [E2E_SCENARIOS.md S3-1, S3-5](../../../../docs/plan/event-extensions/E2E_SCENARIOS.md) | 있음 | mode 설정 + mode 변경 차단 + DRAFT 전환 시 hard delete |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
+| 계층 | 현재 소스 |
 |---|---|
-| `community_api/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java:22` (GET) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java:27` (PUT) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/service/EventTransportService.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/model/EventTransportConfig.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/vo/EventTransportConfigVo.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/param/TransportConfigParam.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/transport/constants/TransportMode.java` | 확인됨 |
+| Controller | `community_api/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java` |
+| Service | `community_api/src/main/java/com/endside/community/event/transport/service/EventTransportService.java` |
+| Model/Repository | `event/transport/model/EventTransportConfig.java`, `event/transport/repository/EventTransportConfigRepository.java` |
+| Param/VO | `TransportConfigParam.java`, `EventTransportConfigVo.java` |
+| Enum | `TransportMode.java` |
+| 공통 권한 | `community_api/src/main/java/com/endside/community/event/service/EventAuthorizationService.java` |
+| DDL | `community_api/src/main/resources/db/migration/V1__init.sql` |
 
-## 3. 전체 동작 흐름
+전용 `EventTransportServiceTest` 또는 Controller 테스트는 현재 소스에서 찾지 못했다.
 
-1. **조회**: 호스트/공동호스트(또는 참가자)가 이벤트 상세 진입 시 `GET /api/v1/events/{eventId}/transport`로 현재 설정 확인. row 없으면 기본값(`{mode:NONE, allowsSelfTransport:true}`)을 가상 반환.
-2. **DRAFT 상태에서 mode 선택**: 호스트가 `PUT /api/v1/events/{eventId}/transport/config` Body `{"mode":"CARPOOL","allowsSelfTransport":true}` 호출.
-3. **DRAFT 상태에서 mode 변경**: 같은 endpoint로 다른 mode 지정 시 이전 mode 데이터(carpool offer/passenger, event_bus, event_bus_seat)는 **hard delete**. 알림·감사 없음(§3.2 PLAN.md).
-4. **이벤트 발행**: `POST /events/{eventId}/publish` 호출 시점 이후 `event.status=OPEN, published_at != NULL` 로 전이되며 이후 mode 변경 불가.
-5. **OPEN 상태에서 토글**: `allowsSelfTransport` 단일 토글만 같은 endpoint로 변경 가능. mode 필드를 보내면 400/409 (PLAN §3.2: `MODE_CHANGE_NOT_ALLOWED`).
-6. **mode-internal 변경**: `event_bus.allow_self_swap`, `event_bus.assignment_mode`는 본 PRD 범위 밖. [F03-16](F03-16_event-bus-charter_prd.md) `§ 동시성`에서 좌석 배정자 0명 조건으로 변경 허용.
+## 3. 서버 계약
 
-## 4. 서버 계약
+| Method | Path | 요청/응답 | 실제 권한과 동작 |
+|---|---|---|---|
+| GET | `/api/v1/events/{eventId}/transport` | `EventTransportConfigVo` | 로그인 필요. 별도 host/attendee 검사와 이벤트 존재 검증 없이 설정을 조회하며, row가 없으면 기본값을 반환 |
+| PUT | `/api/v1/events/{eventId}/transport/config` | `TransportConfigParam` → `EventTransportConfigVo` | 로그인 + Host/CoHost. 이벤트 row를 비관적 잠금으로 읽고 설정을 갱신 |
 
-### 개요
+`TransportConfigParam`:
 
-이동수단 도메인 신규 패키지 `event/transport/`. 단일 row PK = `event_id`인 `event_transport_config` 테이블을 통해 mode + 개별이동 허용 여부를 관리한다. mode 변경 시 carpool/bus 종속 데이터를 cascade-delete 하는 책임은 `EventTransportService.changeMode` (DRAFT 한정).
+- `mode: TransportMode?`
+- `allowsSelfTransport: Boolean?`
 
-### 엔드포인트 요약
+`EventTransportConfigVo`:
 
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/events/{eventId}/transport` | `EventTransportController#getTransport` | 인증 | 현재 mode/`allowsSelfTransport` 조회. row 없으면 기본값 |
-| PUT | `/api/v1/events/{eventId}/transport/config` | `EventTransportController#updateConfig` | 호스트/공동호스트 | DRAFT면 mode 변경 가능. OPEN이면 `allowsSelfTransport`만 변경 가능. mode 변경 시 이전 mode 데이터 hard delete |
+- `eventId: long`
+- `mode: TransportMode`
+- `allowsSelfTransport: boolean`
 
-### 데이터 모델 (W4 신규)
+`TransportMode = NONE | CARPOOL | BUS`.
 
-```sql
-CREATE TABLE event_transport_config (
-  event_id BIGINT NOT NULL PRIMARY KEY,
-  mode ENUM('NONE','CARPOOL','BUS') NOT NULL DEFAULT 'NONE',
-  allows_self_transport TINYINT(1) NOT NULL DEFAULT 1,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
-  CONSTRAINT fk_event_transport_event FOREIGN KEY (event_id) REFERENCES event(id)
-);
-```
+## 4. 상태 전이와 삭제 규칙
 
-`TransportMode` enum (`event/transport/constants/TransportMode.java`): `NONE, CARPOOL, BUS`. PLAN.md `ENUM_RESERVATIONS.md`에 등록.
-
-### 사용자 확정 결정 (관련)
-
-| ID | 결정 |
+| 입력 | 실제 결과 |
 |---|---|
-| D2 | 이동수단 모드 **택일** — CARPOOL/BUS 동시 운영 불가. 한 이벤트는 한 mode만. |
-| D10 | enum 번호 예약은 `docs/plan/event-extensions/ENUM_RESERVATIONS.md`에 명시 |
+| 기존 row 없음 + GET | 저장 없이 `NONE`, `true` 반환 |
+| `mode`가 null이거나 현재 값과 같음 | mode 전이 없음 |
+| `mode`가 달라짐 + 이벤트 `DRAFT` | 새 mode 저장 |
+| `mode`가 달라짐 + 이벤트가 `DRAFT` 아님 | `INVALID_EVENT_STATUS` |
+| `CARPOOL → NONE/BUS` | 해당 이벤트의 passenger를 먼저, offer를 다음에 hard delete |
+| `BUS → NONE/CARPOOL` | 각 bus의 seat를 먼저, bus를 다음에 hard delete |
+| `allowsSelfTransport`만 변경 | 현재 서비스에는 이벤트 상태 가드가 없어 `OPEN`, `CLOSED`, `CANCELED`, `HIDDEN`에서도 변경 가능 |
 
-### mode 전이 정책 (PLAN.md §3.2)
+모드 변경은 event row 잠금 아래 수행되어 같은 이벤트의 동시 변경을 직렬화한다. 다만 설정 변경 audit log와 알림 발행은 구현되어 있지 않다.
 
-| from \ to | NONE | CARPOOL | BUS |
-|---|---|---|---|
-| NONE (DRAFT) | — | 허용 | 허용 |
-| CARPOOL (DRAFT) | 허용 + carpool 데이터 hard delete | — | 허용 + carpool hard delete |
-| BUS (DRAFT) | 허용 + bus 데이터 hard delete | 허용 + bus hard delete | — |
-| 모든 mode (OPEN 이후) | **차단** (`MODE_CHANGE_NOT_ALLOWED`) | 차단 | 차단 |
+`allowsSelfTransport`는 현재 이 서비스의 저장·응답 외 production consumer가 없다. `EventCarpoolService.registerPassenger`도 이 값이 false인지 확인하지 않고 `SELF`/`DRIVER`를 저장하므로, 현재는 이동 정책을 실제로 집행하지 않는 inert flag다.
 
-OPEN 이후에도 변경 가능:
-- `allows_self_transport` 토글 (본 PRD)
-- `event_bus.allow_self_swap`, `assignment_mode` (좌석 배정자 0명 조건, [F03-16](F03-16_event-bus-charter_prd.md))
-- carpool offer 결정 / passenger 배정 / 좌석 배정 등 mode 내부 운영 ([F03-15](F03-15_event-carpool_prd.md), [F03-16](F03-16_event-bus-charter_prd.md))
+## 5. 권한과 경계
 
-### 의존 단위
+- `EventAuthorizationService`의 실제 위치는 `event/service`이며 공개 메서드는 `assertHost(Event, userId)`, `assertHostOrCoHost(Event, userId)` 두 개다.
+- PUT은 `assertHostOrCoHost`를 사용한다.
+- GET은 전역 Security 설정상 인증이 필요하지만 서비스 수준 참가자/호스트 검증은 없다.
+- mode가 `CARPOOL` 또는 `BUS`라는 사실만으로 참가자 API가 자동 노출되는 것은 아니다. 각 하위 서비스의 별도 검사를 따라야 한다.
 
-- **F03-03 이벤트 생성**, **F03-04 이벤트 생명주기** — mode 선택 UI를 호스팅. 발행 시점이 mode immutable 경계.
-- **F03-15 카풀** — mode=CARPOOL일 때만 모든 carpool endpoint 활성 (`assertCarpoolMode` 가드).
-- **F03-16 버스대절** — mode=BUS일 때만 모든 bus endpoint 활성 (mode 가드).
-- **F03-17 차량 레이아웃 카탈로그** — mode=BUS 진입 시 호스트가 read-only로 카탈로그 선택.
-- 외부 시스템: 없음.
+## 6. 프론트 및 알림 실측
 
-## 5. 프론트 계약
+- Flutter에 transport config 전용 API·Repository·Provider·화면·라우트가 없다.
+- `NotificationType`에 교통 관련 값이 존재하는 것과 별개로, mode 변경을 발행하거나 전송하는 생산 코드가 없다.
+- `NotificationRouter`에도 관련 deep link가 없다.
 
-본 슬라이스는 **backend-only 1차 출시**. Flutter 클라이언트는 후속 슬라이스에서 다룬다.
+## 7. 검증 기준
 
-후속에서 다룰 작업 단위(PLAN.md §3.8):
+1. 설정 없는 이벤트 GET은 `NONE/true`를 반환해야 한다.
+2. Host/CoHost가 아닌 사용자의 PUT은 거부되어야 한다.
+3. mode 변경은 `DRAFT`에서만 성공해야 한다.
+4. CARPOOL 또는 BUS에서 이탈하면 해당 모드의 운영 row가 삭제되어야 한다.
+5. `allowsSelfTransport` 단독 변경의 상태 제한 여부는 현 서비스 동작을 기준으로 판단해야 한다.
 
-| 단위 | 작업 |
+## 8. 현재 Gap / Risk
+
+| 우선순위 | 실측 Gap |
 |---|---|
-| 모델 | `event_transport_config_vo.dart`, `transport_config_param.dart` (Freezed) |
-| API | `event_transport_api.dart` (Retrofit) — `getTransport`, `updateConfig` |
-| Repository | `event_transport_repository.dart` |
-| Provider | `domain/providers/event/event_transport_provider.dart` (Riverpod) |
-| Screen | 이벤트 생성/수정 폼 내 "이동수단" 섹션 — mode 토글 + DRAFT 변경 안내 |
-| Router | 별도 라우트 신설 불필요(생성·수정 폼 내 inline) |
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| AC-01 | DRAFT에서 mode=CARPOOL 설정 | 이벤트 DRAFT, transport row 없음 | `event_transport_config(mode=CARPOOL, allowsSelfTransport=true)` row 생성, 호스트 후속 carpool 운영 가능 |
-| AC-02 | DRAFT에서 mode=CARPOOL→BUS 전환 | 이벤트 DRAFT, carpool offer/passenger 존재 | `event_transport_config.mode=BUS`, `event_carpool_offer/passenger` row 0건 (hard delete) |
-| AC-03 | OPEN에서 mode 변경 시도 차단 | 이벤트 OPEN, transport mode=CARPOOL | 400/409 `MODE_CHANGE_NOT_ALLOWED`, mode 변경 없음 |
-| AC-04 | OPEN에서 `allowsSelfTransport` 토글 변경 | 이벤트 OPEN, mode=CARPOOL | 200, `allowsSelfTransport`만 변경됨 |
-| AC-05 | 비호스트가 PUT 시도 | 일반 참가자, 이벤트 OPEN | 403/401 권한 거부, 변경 없음 |
-| AC-06 | row 없는 상태에서 GET | 신규 이벤트, transport row 미생성 | 200, 기본값 `{mode:NONE, allowsSelfTransport:true}` 반환 |
-
-근거: E2E S3-1 (mode 설정 + DRAFT/OPEN 전환 차단), S3-5 (DRAFT 전환 시 stale 데이터 hard delete).
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | `EventTransportController` + `EventTransportService.changeMode` 분기, `event_transport_config` 단일 row 보장 | W4에서 구현 완료. mode 변경 시 cascade-delete는 PLAN.md §3.2 정책 |
-| Enum 예약 | `TransportMode` 등 4개 enum이 `ENUM_RESERVATIONS.md`와 일치 | W4에서 등록 완료. 검증 테스트(`EnumReservationTest`)로 enforce |
-| Mode immutability | OPEN 이후 mode 변경 시 `event.status` 가드로 차단 | PLAN.md §3.2 원칙 — 컨트롤러/서비스 둘 다 가드 필요 |
-| Cross-mode 데이터 격리 | mode=BUS일 때 carpool endpoint 차단, 반대도 동일 | [F03-15](F03-15_event-carpool_prd.md)/[F03-16](F03-16_event-bus-charter_prd.md)의 `assertXxxMode` 가드 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후속 | PLAN.md §3.8 | Flutter 클라이언트(모델/API/Provider/Screen) 미구현 — backend-only 1차 출시 | 후속 슬라이스에서 진행. 본 슬라이스 종료 후 화면 작업 단위 분리 |
-| 후속 | PLAN.md §3.2 | mode 변경 시 cascade-delete 범위 확장 (예: bus 좌석 배정자 알림) — 현재 hard delete만 | 정책 필요 시 별도 슬라이스에서 정의 |
-| Risk | PLAN.md 회귀 위험 6 | "이미 발행한 이벤트의 mode 변경 불가" 사용성 영향 가능. 운영 fallback은 admin API로 강제 reset | 운영 매뉴얼에 admin API 호출 절차 명시 필요 |
+| 높음 | Flutter 수직 슬라이스가 없어 사용자가 이동수단 모드를 조회·설정할 수 없음 |
+| 높음 | `allowsSelfTransport` 단독 변경에는 이벤트 상태 제한이 없어 terminal event도 수정 가능 |
+| 높음 | `allowsSelfTransport=false`를 소비해 SELF/DRIVER 선택을 막는 서비스가 없어 정책 토글이 실제 동작을 바꾸지 않음 |
+| 중간 | GET이 event 존재·참가 자격을 검증하지 않음 |
+| 중간 | mode 전환이 hard delete이며 audit/history 복구 수단이 없음 |
+| 중간 | 전용 서비스/Controller 회귀 테스트를 찾지 못함 |
+| 낮음 | 설정 변경 알림·감사 로그 없음 |
 
 ## 9. 변경 이력
 
-| 일자 | 버전 | 변경 |
+| 날짜 | 버전 | 변경 |
 |---|---|---|
-| 2026-05-22 | v0.1 | 신규 — W4 transport baseline 슬라이스 반영 (PLAN.md v4.5 §3.2/§4 + E2E S3-1/S3-5) |
+| 2026-05-22 | v0.1 | 삭제된 event-extensions 계획 문서를 바탕으로 초안 작성 |
+| 2026-07-29 | v1.0 | 현재 Controller/Service/DTO/Enum/보안/Flutter를 재실측하고 삭제된 계획 참조와 미구현 동작을 제거 |

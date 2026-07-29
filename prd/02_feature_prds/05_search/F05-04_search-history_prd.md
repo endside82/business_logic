@@ -1,12 +1,14 @@
 # F05-04. 최근 검색어 (검색 기록) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/05_search/F05-04_search-history -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/05_search/F05-04_search-history -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/05_search/F05-04_search-history`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 사용자별 검색 기록을 **Redis LIST**에 보관한다 (`search:history:{userId}`). 검색 실행(F05-01)마다 `SearchHistoryService.record`가 자동 호출되어 LPUSH + 중복 제거 + trim(20)을 수행한다. 사용자는 이 기록을 조회·개별 삭제·전체 삭제할 수 있다. 별도의 "저장 API"는 없다.
+
+2026-07-29 재실측 결과, `GET /api/v1/search/people`도 인증 사용자의 `keyword`가 nonblank이면 같은 `SearchHistoryService.record`를 호출한다. Flutter 검색 화면은 한 번의 검색 제출로 이벤트·클럽·플랜과 로그인 시 사람 검색을 함께 실행한 뒤 history provider를 갱신한다. 여러 검색 endpoint가 같은 키워드를 기록해도 Redis 로직이 기존 동일 항목을 제거한 뒤 맨 앞에 한 번만 유지한다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 

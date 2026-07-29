@@ -171,19 +171,18 @@ flowchart TD
 - 권한 없음은 숨김, 비활성, 로그인 유도, 접근 불가 안내 중 하나로 일관되게 표현되어야 한다.
 - 여러 역할을 동시에 가진 사용자의 우선순위를 정의해야 한다.
 
-## v4.5 W1~W7 신규 endpoint 권한 매트릭스 (2026-05-22)
+## 이벤트 선입금·교통 endpoint 권한 매트릭스 (2026-07-29 현재 소스)
 
-> updated: 2026-05-22. 본 절은 `docs/plan/event-extensions/PLAN.md` v4.5의 W1~W7 슬라이스에서 신설되는 endpoint의 권한 결정을 추적한다. 실제 enforcement는 `community_api/src/main/java/com/endside/community/event/auth/EventAuthorizationService.java` 신규 빈에서 단일화한다 (D12 결정 — 기존 `EventService.validateOwnership` private helper를 별도 빈으로 추출).
+> 현재 근거는 각 Controller/Service와 전역 Security 설정이다. 삭제된 event-extensions 계획은 현재 권한 계약이 아니다. 공통 권한 빈의 실제 경로는 `community_api/src/main/java/com/endside/community/event/service/EventAuthorizationService.java`다.
 
-### EventAuthorizationService 신규 빈 (D12)
+### EventAuthorizationService 실제 공개 메서드
 
 | 메서드 | 의미 | 호출자 |
 |---|---|---|
-| `assertHostOrCoHost(eventId, userId)` | 호스트 또는 공동호스트만 통과 | capacity/transport/carpool/bus/prepayment host endpoints |
-| `assertMemberSelf(eventId, userId, targetUserId)` | 본인만 통과 | prepayment 결제·취소, carpool offer 생성 |
-| `assertAttendingOrApproved(eventId, userId)` | ATTENDING 또는 APPROVED_PENDING_PAYMENT만 통과 | 카풀 탑승 요청, 버스 좌석 점유 |
+| `assertHost(Event, userId)` | 주 호스트만 통과 | 일부 event 운영 서비스 |
+| `assertHostOrCoHost(Event, userId)` | 주 호스트 또는 공동호스트만 통과 | transport/carpool/bus/prepayment host endpoint |
 
-기존 EventService 호출은 그대로 유지하되, 내부적으로 새 빈에 위임한다. 신규 facade(`EventPrepaymentService`, `EventCarpoolService`, `EventBusService`, `EventCapacitySettingsService`)는 처음부터 새 빈만 호출한다 (P1#1 해결).
+`assertMemberSelf`, `assertAttendingOrApproved`, eventId overload는 존재하지 않는다. 참가자 본인·참석 상태는 각 도메인 서비스가 application/attendance row를 직접 검증한다.
 
 ### W1 — 정원 초과 허용
 
@@ -195,45 +194,60 @@ flowchart TD
 
 | Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
 |---|---|---|---|---|
-| `/events/{id}/prepayment/wallet-pay` | POST | Member(self) | `assertMemberSelf` | APPROVED_PENDING_PAYMENT 상태에서만. WALLET 즉시 차감 + ATTENDING 전이. |
-| `/events/{id}/prepayment/bank-declare` | POST | Member(self) | `assertMemberSelf` | 참가자가 입금했다고 신고. event_payment.declared_at 갱신, 72 알림. |
-| `/events/{id}/prepayment/cancel` | POST | Member(self) | `assertMemberSelf` | 결제 전 취소 — event_payment.status=CANCELED. |
+| `/events/{id}/prepayment/wallet` | POST | 해당 application의 사용자 | service의 application user 일치 검증 | APPROVED_PENDING_PAYMENT에서 WALLET 즉시 차감 + APPROVED/ATTENDING 전이 |
+| `/events/{id}/prepayment/bank-declare` | POST | 해당 application의 사용자 | service의 application user 일치 검증 | BANK_TRANSFER PENDING 생성. 72는 이벤트 주 호스트 한 명에게만 전송 |
 | `/events/{id}/applications/{appId}/bank-confirm` | POST | HOST, COHOST | `assertHostOrCoHost` | 호스트가 입금 확인. event_payment.status=PAID → application ATTENDING. 73 알림. |
 | `/events/{id}/applications/{appId}/bank-reject` | POST | HOST, COHOST | `assertHostOrCoHost` | 호스트가 입금 미확인 처리. 74 알림. |
-| `/events/{id}/host/payments` | GET | HOST, COHOST | `assertHostOrCoHost` | 호스트 결제 보고서 6 섹션 (W3). |
+| `/events/{id}/applications/{appId}/refund-wallet` | POST | 결제 사용자 또는 HOST/COHOST | participant-or-host 분기 | 정책 카탈로그 기반 WALLET 환불 |
+| `/events/{id}/applications/{appId}/refund-bank-confirm` | POST | HOST/COHOST 또는 club OWNER/`EVENT_REFUND_MANAGER` | refund manager 분기 | 외부 BANK 환불 완료 표시, 증빙 최대 5건 |
+
+`POST /prepayment/cancel`, `GET /host/payments` endpoint는 없다. 참가 취소는 `DELETE /api/v1/events/{eventId}/apply` facade를 따른다. 운영자 강제환불은 인증 public API가 아니라 `X-Internal-Token`으로 보호된 `POST /api/internal/event-payments/{paymentId}/force-refund`를 admin API가 호출한다.
+
+환불 정책 조회도 전역 `anyRequest().authenticated()` 대상이다. `GET /api/v1/refund-policy-templates`는 permitAll이 아니다. 다만 다음 authorization Gap이 있다.
+
+- `POST .../refund-preview`: Controller가 actor를 log만 하고 service에 전달하지 않아 applicationId 기반 IDOR 후보
+- `GET .../no-show-refund`: principal이 없고 path eventId도 service에서 무시해 actor authorization/event scoping 누락
 
 ### W4 — 교통 모드 베이스
 
 | Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
 |---|---|---|---|---|
-| `/events/{id}/transport/config` | PUT | HOST, COHOST | `assertHostOrCoHost` | mode 전이 (NONE/CARPOOL/BUS). DRAFT only hard delete, OPEN immutable (§3.2). |
+| `/events/{id}/transport` | GET | Authenticated | 전역 Security만 | event 존재·참가 자격 service gate 없음 |
+| `/events/{id}/transport/config` | PUT | HOST, COHOST | `assertHostOrCoHost` | mode 변경은 DRAFT only hard delete. `allowsSelfTransport` 단독 변경에는 status gate 없음 |
 
 ### W5 — 카풀 운영
 
 | Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
 |---|---|---|---|---|
-| `/events/{id}/carpool/offer` | POST | Member(ATTENDING 또는 APPROVED) | `assertAttendingOrApproved` | 운전자가 offer 등록. event_carpool_offer.status=OFFERED. |
-| `/events/{id}/carpool/offers/{oid}/decision` | POST | HOST, COHOST | `assertHostOrCoHost` | 호스트가 confirm/reject. 77/78 알림. |
-| `/events/{id}/carpool/passengers/{pid}/assignment` | PUT | HOST, COHOST | `assertHostOrCoHost` | 탑승자 배정/해제. 79/80 알림. swap 시 `event_carpool_assignment_log` 기록. |
-| `/events/{id}/carpool/passengers` | GET | HOST(all rows), Member(본인 row만) | `assertHostOrCoHost` 분기 | 호스트는 전체, 일반 멤버는 본인 1건. |
+| `/events/{id}/carpool/offers` | GET | HOST/COHOST 또는 ATTENDING | service 직접 검사 | full offer 목록과 driver/location 노출 |
+| `/events/{id}/carpool/passengers` | GET | HOST/COHOST=전체, 그 외 인증 사용자=본인 row/빈 목록 | service 분기 | 일반 사용자에는 별도 ATTENDING 검사 없음 |
+| `/events/{id}/carpool/offer` | POST | ATTENDING | attendance 직접 검사 | OPEN + CARPOOL mode, 이벤트당 운전자 1건 |
+| `/events/{id}/carpool/offers/{oid}/decision` | POST | HOST/COHOST | `assertHostOrCoHost` | CONFIRMED/REJECTED만 허용. 77/78 생산 알림은 없음 |
+| `/events/{id}/carpool/offers/{oid}/report` | POST | 운전자가 아닌 ATTENDING | attendance·eventId 직접 검사 | mode/status 가드 없이 공통 ReportService 위임 |
+| `/events/{id}/carpool/passenger` | PUT | ATTENDING | attendance 직접 검사 | CARPOOL mode, 사용자 row upsert |
+| `/events/{id}/carpool/passengers/{pid}/assignment` | PUT | HOST/COHOST | `assertHostOrCoHost` | `offerId` null이면 해제. event lock/정원 검사. assignment log·79/80 알림은 없음 |
 
 ### W6 — 차량 레이아웃 카탈로그
 
 | Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
 |---|---|---|---|---|
 | `/vehicle-layouts/active` | GET | Authenticated | (인증만) | 호스트가 버스 생성 시 활성 레이아웃 read-only 조회. |
-| `/admin/v1/manage/vehicle-layouts` | POST | Admin | Admin 인증 | 관리자 카탈로그 생성. 1차 출시는 admin API만 (Q5 — 관리자 UI는 후속 슬라이스). |
-| `/admin/v1/manage/vehicle-layouts/{id}` | PUT/DELETE | Admin | Admin 인증 | 동일. soft delete 권장. |
-| `/admin/v1/manage/vehicle-layouts/{id}/seats` | PUT | Admin | Admin 인증 | 좌석 JSON 갱신. |
+| `/vehicle-layouts/{id}/seats` | GET | Authenticated | (인증만) | inactive layout도 조회, 없는 ID는 빈 목록 |
+| `/admin/v1/manage/vehicle-layouts` | GET/POST | `MANAGE_EVENT` Admin | principal privilege 검사 | 목록/생성 |
+| `/admin/v1/manage/vehicle-layouts/{id}` | GET/PUT | `MANAGE_EVENT` Admin | principal privilege 검사 | 상세/메타 수정. DELETE 없음 |
+| `/admin/v1/manage/vehicle-layouts/{id}/seats` | POST | `MANAGE_EVENT` Admin | principal privilege 검사 | 좌석맵 전체 교체 |
+| `/admin/v1/manage/vehicle-layouts/{id}/active` | PATCH | `MANAGE_EVENT` Admin | principal privilege 검사 | active 토글 |
 
 ### W7 — 이벤트 측 버스 운영
 
 | Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
 |---|---|---|---|---|
+| `/events/{id}/buses` | GET | Authenticated | 전역 Security만 | event 존재·역할 service gate 없음 |
 | `/events/{id}/buses` | POST | HOST, COHOST | `assertHostOrCoHost` | 버스 인스턴스 생성 (vehicle_layout 참조). |
-| `/events/{id}/buses/{bid}` | PUT/DELETE | HOST, COHOST | `assertHostOrCoHost` | 버스 메타 변경/제거. OPEN 이후 좌석 점유 발생 시 제한. |
-| `/events/{id}/buses/{bid}/seats/{seatNo}` | PUT | HOST, COHOST, 또는 self if `allow_self_swap=true` | `assertHostOrCoHost` 또는 `assertMemberSelf` | FREE 모드는 self 점유 가능. FIXED_BY_HOST는 호스트만. FIRST_COME은 첫 시도자 자동 배정 후 host override. 81/82 알림. |
-| `/events/{id}/buses/{bid}/seats` | GET | ATTENDING 또는 HOST | `assertAttendingOrApproved` 또는 `assertHostOrCoHost` | 호스트는 전체 점유 상태, 참가자는 본인 좌석 + 남은 좌석 카운트. |
+| `/events/{id}/buses/{bid}/seats` | GET | HOST/COHOST 또는 ATTENDING/WAITING | service 직접 검사 | 일반 사용자는 타인 `userId`만 null 마스킹 |
+| `/events/{id}/buses/{bid}/seats/{seatNo}?userId=` | PUT | HOST/COHOST, 또는 `allowSelfSwap=true && userId=actor` | service 분기 | assignmentMode·참석 자격·lockedByHost 미검사. 진짜 swap/unassign·FIRST_COME 자동배정·81/82 알림 없음 |
+
+버스 메타 PUT/DELETE endpoint는 없다.
 
 ### 이벤트 권한 매트릭스 확장 (요약)
 
@@ -247,20 +261,24 @@ flowchart TD
 | 카풀 offer 등록 |  |  |  | O | (대기는 보통 제외) |  |
 | 카풀 offer 확정/거절 |  |  |  |  |  | O |
 | 카풀 탑승자 배정 |  |  |  |  |  | O |
-| 버스 인스턴스 생성/수정 |  |  |  |  |  | O |
-| 버스 좌석 점유 (FREE 모드) |  |  |  | O |  | O |
-| 버스 좌석 변경 (FIXED) |  |  |  |  |  | O |
+| 버스 인스턴스 생성 |  |  |  |  |  | O |
+| 버스 좌석 조회 |  |  |  | O | O | O |
+| 버스 좌석 user 지정 |  | 조건부 self |  | 조건부 self | 조건부 self | O |
 
 조건부 항목:
 - 참가 선입금 결제는 `application.status = APPROVED_PENDING_PAYMENT`일 때만 허용. 승인 전/거절 후/만료 후/이미 결제 완료 상태에서는 차단.
-- 카풀 offer는 본인이 운전자여야 하며 본인 application이 ATTENDING 또는 APPROVED_PENDING_PAYMENT여야 함.
-- 버스 좌석 점유는 `event_bus.assignment_mode=FREE` 또는 호스트일 때만. 좌석 변경(swap)은 `allow_self_swap` 설정 따름.
+- 카풀 offer는 `EventAttendance.status=ATTENDING`이어야 한다. `APPROVED_PENDING_PAYMENT`만으로는 허용되지 않는다.
+- non-host 버스 좌석 지정은 `allowSelfSwap=true`와 `userId=actor`만 검사한다. assignment mode·ATTENDING/WAITING·lockedByHost는 현재 PUT gate에 포함되지 않는다.
 
-### 권한 enforcement 후속 (1차 범위 외)
+### 현재 권한 Gap
 
-- **관리자 SPA** — `/admin/v1/manage/vehicle-layouts/*`의 UI 구현은 후속 슬라이스. 1차는 admin API + 직접 INSERT.
-- **EventAuthorizationService 캐시** — viewer context 배치 조회 시 권한 캐싱은 성능 모니터링 후 후속.
-- **공동호스트(COHOST) 역할 enum** — 현재 host 단일 필드. 공동호스트 다중화는 별도 PRD.
+- transport GET과 bus list GET은 인증만 요구하며 event 존재·참가 관계를 service에서 확인하지 않는다.
+- bus self PUT은 참석 자격·assignment mode·locked seat 검사가 없다.
+- 카풀 passenger GET과 report는 다른 카풀 endpoint보다 mode/참석 gate가 느슨하다.
+- 카풀 결정·탑승선택·배정·신고와 버스 생성·좌석 지정에는 이벤트 상태 gate가 없어 CLOSED/CANCELED 이후에도 쓰기가 가능하다.
+- `allowsSelfTransport=false`를 카풀 SELF/DRIVER 선택과 대조하는 consumer가 없어 권한·정책 토글이 inert하다.
+- refund preview/no-show refund는 actor/eventId scoping이 빠진 IDOR 후보다.
+- 차량 레이아웃 admin API는 구현돼 있지만 전용 권한 회귀 테스트는 찾지 못했다.
 
 ## v5.0 delta 신규 권한 (2026-06-05)
 
@@ -272,7 +290,7 @@ flowchart TD
 
 | 플래그 | 컬럼 | 기본값 | 의미 |
 |---|---|---|---|
-| `canManageAttendance` | `can_manage_attendance` | false | 수동 체크인·참석자 강제 제거·대기열 수동 승급. Gap: 노쇼 확정/뒤집기(`EventNoShowService`)는 이 flag를 미체크하는 불일치 존재. |
+| `canManageAttendance` | `can_manage_attendance` | false | 수동 체크인·참석자 강제 제거·대기열 수동 승급·노쇼 확정/뒤집기. `EventAttendanceManagerGuard`가 체크인과 노쇼에 같은 기준을 적용한다. |
 | `canModerateMessages` | `can_moderate_messages` | false | 타 사용자 이벤트 메시지 삭제(콘텐츠 모더레이션) |
 | `canSendAnnouncement` | `can_send_announcement` | **true** | 공지 일괄 발송 (기존 동작 보존 — 기본 true) |
 | `canHandleRefundIssue` | `can_handle_refund_issue` | false | 환불 처리(은행 환불 확인 등) |
@@ -315,13 +333,15 @@ flowchart TD
 | `canManageAttendance` | 노쇼 관리 | — |
 | `canApproveAppeal` | 이의 승인/거절 | **Gap**: 공개 API endpoint 없음. admin API 소유만. flag는 UI gating용이지만 호스트/공동호스트가 appeal을 UPHELD/REJECTED로 전이하는 공개 endpoint 미구현. |
 
-### 노쇼 확정/뒤집기 권한 (Gap 포함)
+### 노쇼 확정/뒤집기 권한
 
-| 액션 | 권한 | Gap |
+> 2026-07-29 current source: `EventNoShowService`와 `CheckInService`가 `EventAttendanceManagerGuard`를 공유한다. 과거 cohost flag 미검사 Gap은 해소됐다.
+
+| 액션 | 권한 | 서버 가드 |
 |---|---|---|
-| 노쇼 확정(confirm, confirmBatch) | 호스트·cohost·클럽 운영진(canCreateEvent) | `EventNoShowService.validateCheckInManager()`가 `cohost.canManageAttendance` flag를 체크하지 않음 — `existsByEventIdAndUserId`로만 판단. 체크인 관리 권한 없는 cohost가 노쇼 확정/뒤집기 가능한 불일치. |
-| 노쇼 뒤집기(overturn) | 호스트·cohost·클럽 운영진 또는 SYSTEM(id=0) | 동일 Gap |
-| 참가자 소명(appeal) | **본인(row.userId)만** | 호스트/관리자 소명 불가 |
+| 노쇼 확정(confirm, confirmBatch) | 호스트·`canManageAttendance=true` cohost·클럽 OWNER·`EVENT_ATTENDANCE_MANAGER` 보유자·`role.canCreateEvent()` fallback | flag 없는 cohost는 `EVENT_CO_HOST_PERMISSION_DENIED`, 그 외 무권한자는 `EVENT_NOT_OWNER` |
+| 노쇼 뒤집기(overturn) | 위와 동일, 내부 SYSTEM/CS actor(id=0)는 가드 우회 | 회원 뒤집기는 기존 체크인이 없을 때 `NOSHOW_OVERTURN` 정정 체크인 생성 |
+| 참가자 소명(appeal) | **party owner만** — 회원 row는 본인, 게스트 row는 예매 소유자 | canonical `EVENT_NO_SHOW:{noShowId}` + 확정 후 7일 이내 |
 
 ### 클럽 강퇴(kick)/차단(ban) 권한 + 사유코드 의무
 
@@ -341,11 +361,11 @@ flowchart TD
 
 ### (a) 이벤트 서버 능력플래그 — 클라 단일소스 소비
 
-이벤트 도메인의 권한 판정 방식을 전환했다. 기존에는 클라이언트가 `myRole`, `coHostUserIds` 등 원자 데이터에서 권한 boolean을 각 화면마다 각자 재계산(ad-hoc)했다. 교정 후 서버가 **뷰어별 능력플래그 10종**(이벤트 관리, 편집, 출석관리, 공지발송, 참석자열람, 신청승인, 체크인, 메시지삭제, 환불처리, 분쟁처리)을 계산해 EventVo에 포함해 내려준다. 클라이언트는 이 플래그만 소비하고 로컬 재계산을 하지 않는다.
+이벤트 도메인의 권한 판정 방식을 전환했다. 기존에는 클라이언트가 `myRole`, `coHostUserIds` 등 원자 데이터에서 권한 boolean을 각 화면마다 각자 재계산(ad-hoc)했다. 교정 후 서버가 **뷰어별 능력플래그 11종**(이벤트 관리, 편집, 출석관리, 공지발송, 참석자열람, 신청승인, 체크인, 메시지삭제, 환불처리, 분쟁처리, 정원관리)을 계산해 EventVo에 포함해 내려준다. 클라이언트는 이 플래그만 소비하고 로컬 재계산을 하지 않는다.
 
 이 변경은 `ActorPermissionFlags`(분쟁 도메인의 골든 표준)를 이벤트로 확산한 것으로, 공동호스트 플래그 불일치·드리프트·과(過)노출 다수를 일관 해소한다. 이벤트 라우트 가드도 이 플래그 기반으로 재정렬됐다. 기존 5종(v5.0)의 공동호스트 권한 플래그(canManageAttendance 등)는 이 시스템 안에서 그대로 유지된다.
 
-**백로그**: 정원 관리 능력플래그(`canManageCapacity` 서버 캡 신설)는 다음 배치.
+**2026-07-29 실측 완료**: 정원 관리 능력플래그 `canManageCapacity`가 서버 `EventVo`와 `EventViewerContextService`에 추가되었고, Flutter `EventVo`·`eventPermissionProvider`·상세 화면·route guard가 동일 값을 직접 소비한다. 계산식은 기본 정원 설정 서비스의 실제 가드와 같은 `host ∪ any co-host ∪ club member(role.canCreateEvent = ADMIN/OWNER)`다. 단, 별도 고급 초과정원 endpoint `PATCH /events/{id}/capacity-settings`는 아직 host/co-host만 허용하므로 이 capability가 모든 정원 관련 endpoint를 포괄한다고 해석하면 안 된다.
 
 ### (b) 강제환불 (AdminRefund) — ADMIN 전용 강제 (S1 핫픽스)
 

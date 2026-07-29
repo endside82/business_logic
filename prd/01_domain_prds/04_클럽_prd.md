@@ -25,29 +25,29 @@ OWNER/ADMIN이 푸시 알림과 함께 공지를 등록하고, 멤버는 목록�
 OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌로 인출을 요청한다.
 **클럽장(OWNER)이 플랫폼에 운영비를 지불하는 정기 구독.** 사용자 관점의 멤버 구독이 아니라 클럽 단위 운영료. OWNER가 월간/연간 플랜을 선택해 결제하고, 마이페이지에서 상태/이력을 보고 해지·재활성한다.
 
-이 도메인은 기능 PRD 18개로 구성된다(F04-01~16 + F04-17 구성인원 인구통계 2026-05-27 + F04-18 클럽 레퓨테이션 2026-06-05). 현재 기능별 trace source는 총 76개대이고, risk 후보는 총 64개대다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+이 도메인은 기능 PRD 18개로 구성된다(F04-01~16 + F04-17 구성인원 인구통계 2026-05-27 + F04-18 클럽 레퓨테이션 2026-06-05). 현재 기능별 trace source는 총 73개이고, risk 후보는 총 63개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
 
 ## 2. 실사 근거 맵
 
 | ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
 |---|---|---|---|---|---:|---:|
 | F04-01 | F04-01. 클럽 발견 & 탐색 | [F04-01_club-discovery_prd.md](../02_feature_prds/04_club/F04-01_club-discovery_prd.md) | [F04-01_club-discovery](../../units/04_club/F04-01_club-discovery) | 전환 완료 | 1 | 3 |
-| F04-02 | F04-02. 클럽 상세 보기 & 가입/탈퇴 | [F04-02_club-detail-join_prd.md](../02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | [F04-02_club-detail-join](../../units/04_club/F04-02_club-detail-join) | 전환 완료 | 3 | 0 |
+| F04-02 | F04-02. 클럽 상세 보기 & 가입/탈퇴 | [F04-02_club-detail-join_prd.md](../02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | [F04-02_club-detail-join](../../units/04_club/F04-02_club-detail-join) | 갱신 완료 (2026-07-29) | 3 | 2 |
 | F04-03 | F04-03. 클럽 생성/수정/삭제/소유권 이전 | [F04-03_club-crud-transfer_prd.md](../02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md) | [F04-03_club-crud-transfer](../../units/04_club/F04-03_club-crud-transfer) | 전환 완료 | 4 | 11 |
-| F04-04 | F04-04. 멤버 관리 (목록 / 역할 변경 / 추방) | [F04-04_member-management_prd.md](../02_feature_prds/04_club/F04-04_member-management_prd.md) | [F04-04_member-management](../../units/04_club/F04-04_member-management) | 전환 완료 (2026-06-05 kick 정규화 반영) | 3 | 2 |
+| F04-04 | F04-04. 멤버 관리 (목록 / 역할 변경 / 추방) | [F04-04_member-management_prd.md](../02_feature_prds/04_club/F04-04_member-management_prd.md) | [F04-04_member-management](../../units/04_club/F04-04_member-management) | 전환 완료 (2026-06-05 kick 정규화 반영) | 3 | 0 |
 | F04-05 | F04-05. 가입 대기열 승인/거절 & 초대 | [F04-05_waitlist-invitation_prd.md](../02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | [F04-05_waitlist-invitation](../../units/04_club/F04-05_waitlist-invitation) | 전환 완료 | 6 | 1 |
-| F04-06 | F04-06. 차단 관리 | [F04-06_ban-management_prd.md](../02_feature_prds/04_club/F04-06_ban-management_prd.md) | [F04-06_ban-management](../../units/04_club/F04-06_ban-management) | 전환 완료 (2026-06-05 ban 사유코드 반영) | 4 | 2 |
+| F04-06 | F04-06. 차단 관리 | [F04-06_ban-management_prd.md](../02_feature_prds/04_club/F04-06_ban-management_prd.md) | [F04-06_ban-management](../../units/04_club/F04-06_ban-management) | 전환 완료 (2026-06-05 ban 사유코드 반영) | 4 | 0 |
 | F04-07 | F04-07. 내 클럽 / 멤버 통계 | [F04-07_my-clubs-stats_prd.md](../02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md) | [F04-07_my-clubs-stats](../../units/04_club/F04-07_my-clubs-stats) | 전환 완료 | 2 | 6 |
-| F04-08 | F04-08. 게시판 & 게시글 CRUD | [F04-08_board-post-crud_prd.md](../02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | [F04-08_board-post-crud](../../units/04_club/F04-08_board-post-crud) | 전환 완료 (2026-06-10 AUTH-04/06/08+이미지 반영) | 11 | 4 |
+| F04-08 | F04-08. 게시판 & 게시글 CRUD | [F04-08_board-post-crud_prd.md](../02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | [F04-08_board-post-crud](../../units/04_club/F04-08_board-post-crud) | 전환 완료 (2026-06-10 AUTH-04/06/08+이미지 반영) | 0 | 3 |
 | F04-09 | F04-09. 게시글 댓글 & 대댓글 | [F04-09_post-comments_prd.md](../02_feature_prds/04_club/F04-09_post-comments_prd.md) | [F04-09_post-comments](../../units/04_club/F04-09_post-comments) | 전환 완료 | 5 | 7 |
-| F04-10 | F04-10. 공지사항 | [F04-10_announcements_prd.md](../02_feature_prds/04_club/F04-10_announcements_prd.md) | [F04-10_announcements](../../units/04_club/F04-10_announcements) | 전환 완료 (2026-06-10 AUTH-06 예약+고정 락 반영) | 9 | 2 |
+| F04-10 | F04-10. 공지사항 | [F04-10_announcements_prd.md](../02_feature_prds/04_club/F04-10_announcements_prd.md) | [F04-10_announcements](../../units/04_club/F04-10_announcements) | 전환 완료 (2026-06-10 AUTH-06 예약+고정 락 반영) | 3 | 2 |
 | F04-11 | F04-11. 사진첩 (앨범 + 사진) | [F04-11_photo-album_prd.md](../02_feature_prds/04_club/F04-11_photo-album_prd.md) | [F04-11_photo-album](../../units/04_club/F04-11_photo-album) | 전환 완료 (2026-06-10 이미지 completeUpload 필수 반영) | 8 | 1 |
 | F04-12 | F04-12. 클럽 이벤트 & 캘린더 | [F04-12_club-events-calendar_prd.md](../02_feature_prds/04_club/F04-12_club-events-calendar_prd.md) | [F04-12_club-events-calendar](../../units/04_club/F04-12_club-events-calendar) | 전환 완료 | 15 | 7 |
 | F04-13 | F04-13. 기금 현황 & 거래 차트 | [F04-13_fund-overview_prd.md](../02_feature_prds/04_club/F04-13_fund-overview_prd.md) | [F04-13_fund-overview](../../units/04_club/F04-13_fund-overview) | 전환 완료 | 1 | 2 |
 | F04-14 | F04-14. 기부하기 & 기부 내역 | [F04-14_donation_prd.md](../02_feature_prds/04_club/F04-14_donation_prd.md) | [F04-14_donation](../../units/04_club/F04-14_donation) | 전환 완료 | 4 | 6 |
 | F04-15 | F04-15. 기금 인출 요청 | [F04-15_fund-withdrawal_prd.md](../02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md) | [F04-15_fund-withdrawal](../../units/04_club/F04-15_fund-withdrawal) | 전환 완료 | 2 | 2 |
 | F04-16 | F04-16. 클럽 구독 (시작/갱신/해지/재활성) | [F04-16_subscription_prd.md](../02_feature_prds/04_club/F04-16_subscription_prd.md) | [F04-16_subscription](../../units/04_club/F04-16_subscription) | 전환 완료 | 5 | 8 |
-| F04-17 | F04-17. 클럽 구성인원 인구통계 | [F04-17_club-demographics_prd.md](../02_feature_prds/04_club/F04-17_club-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2, Codex sign-off) | 신규 (2026-05-27 도입) | 7 | 1 |
+| F04-17 | F04-17. 클럽 구성인원 인구통계 | [F04-17_club-demographics_prd.md](../02_feature_prds/04_club/F04-17_club-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2, Codex sign-off) | 신규 (2026-05-27 도입) | 4 | 1 |
 | F04-18 | F04-18. 클럽 레퓨테이션 점수 | [F04-18_club-reputation_prd.md](../02_feature_prds/04_club/F04-18_club-reputation_prd.md) | (source-first, 2026-06-05) | 신규 (2026-06-05 도입) | 3 | 1 |
 
 ## 3. 먼저 볼 기능
@@ -60,13 +60,16 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 | [F04-12](../02_feature_prds/04_club/F04-12_club-events-calendar_prd.md) | F04-12. 클럽 이벤트 & 캘린더 | Risk 후보 7 |
 | [F04-07](../02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md) | F04-07. 내 클럽 / 멤버 통계 | Risk 후보 6 |
 | [F04-14](../02_feature_prds/04_club/F04-14_donation_prd.md) | F04-14. 기부하기 & 기부 내역 | Risk 후보 6 |
-| [F04-08](../02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | F04-08. 게시판 & 게시글 CRUD | AUTH-04/06/08+이미지 수정 반영, Flutter PostStatus.SCHEDULED gap 확인 |
+| [F04-08](../02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | F04-08. 게시판 & 게시글 CRUD | Risk 후보 3 + AUTH-04/06/08+이미지 수정 반영, Flutter PostStatus.SCHEDULED gap 확인 |
 | [F04-01](../02_feature_prds/04_club/F04-01_club-discovery_prd.md) | F04-01. 클럽 발견 & 탐색 | Risk 후보 3 |
+| [F04-02](../02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | F04-02. 클럽 상세 보기 & 가입/탈퇴 | Risk 후보 2 |
 | [F04-13](../02_feature_prds/04_club/F04-13_fund-overview_prd.md) | F04-13. 기금 현황 & 거래 차트 | Risk 후보 2 |
 | [F04-15](../02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md) | F04-15. 기금 인출 요청 | Risk 후보 2 |
 | [F04-10](../02_feature_prds/04_club/F04-10_announcements_prd.md) | F04-10. 공지사항 | Risk 후보 2 |
 | [F04-05](../02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | F04-05. 가입 대기열 승인/거절 & 초대 | Risk 후보 1 |
 | [F04-11](../02_feature_prds/04_club/F04-11_photo-album_prd.md) | F04-11. 사진첩 (앨범 + 사진) | Risk 후보 1 |
+| [F04-17](../02_feature_prds/04_club/F04-17_club-demographics_prd.md) | F04-17. 클럽 구성인원 인구통계 | Risk 후보 1 |
+| [F04-18](../02_feature_prds/04_club/F04-18_club-reputation_prd.md) | F04-18. 클럽 레퓨테이션 점수 | Risk 후보 1 |
 
 ## 4. 도메인 기능 목록
 
@@ -86,8 +89,11 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 > 클럽 정보·이벤트 프리뷰·멤버 프리뷰를 보고, 역할/상태에 따른 분기 CTA로 가입/홈 진입한다.
 - **사용자**: 비멤버, MEMBER, OWNER/ADMIN
 - **화면**: SCR-CL-002 클럽 상세
-- **API**: `GET /api/v1/clubs/{id}` (인증 선택), `POST /api/v1/clubs/{id}/join`, `DELETE /api/v1/clubs/{id}/leave`
+- **API**: `GET /api/v1/clubs/{id}` (**인증 필수**), `POST /api/v1/clubs/{id}/join`, `DELETE /api/v1/clubs/{id}/leave`
 - **프론트**: `screens/club_detail_screen.dart`, `widgets/club_detail_header.dart`, `club_join_button.dart`, `club_event_preview.dart`, `club_member_preview.dart`
+- **확인된 Gap**:
+  - Flutter `/home/clubs/:id`는 public prefix지만 상세 GET은 JWT 필수라 게스트가 401 뒤 일반 `"클럽을 찾을 수 없습니다"` 상태에 도달한다.
+  - APPROVAL 가입 화면은 메시지 입력 없이 `joinClub(clubId)`를 호출해 `message=null` 신청을 만든다.
 - **권한별 CTA**:
   - 비멤버: "가입하기" → 자유가입 즉시 멤버 / 승인가입 → 대기열
   - 신청 중: "승인 대기 중" 비활성
@@ -163,16 +169,19 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 - **유효성**: 제목 1~100자, 본문 1~3000자, 이미지 최대 10장 / 5MB, 작성 중 이탈 가드
 
 #### F04-09. 게시글 댓글 & 대댓글
-> 멤버는 게시글에 댓글을 달고 답글로 1뎁스 스레드를 만든다.
+> 멤버는 게시글에 댓글을 달고 답글로 1뎁스 스레드를 만들며, 현재 클럽 멤버를 `@닉네임`으로 멘션한다. 댓글·답글·멘션 알림과 대상 댓글 딥링크까지 서버/앱에 배선돼 있다(2026-07-29 재실측).
 - **사용자**: MEMBER (작성/자기 글 수정·삭제), OWNER/ADMIN (남의 댓글 삭제), 작성자(자기 댓글 수정/삭제)
 - **화면**: SCR-CC-006 댓글/대댓글 (게시글 상세 하단)
 - **API**:
   - 목록: `GET /api/v1/clubs/{clubId}/posts/{postId}/comments` → `List<ClubPostCommentVo>` (Page 아님, **List**)
-  - 작성: `POST /posts/{postId}/comments` (`ClubCommentAddParam`)
-  - 답글: `POST /posts/{postId}/comments/{commentId}/replies`
-  - 수정/삭제: `PUT/DELETE /clubs/{clubId}/comments/{commentId}` (`ClubCommentModParam`)
-- **프론트**: `community/widgets/comment_tile.dart`, `reply_tile.dart`, `comment_input.dart`, `comment_action_menu.dart`
+  - 작성: `POST /posts/{postId}/comments` (`ClubCommentAddParam{content, mentionedUserIds}`)
+  - 답글: `POST /posts/{postId}/comments/{commentId}/replies` (깊이 1 제한)
+  - 수정/삭제: `PUT/DELETE /clubs/{clubId}/comments/{commentId}` (`ClubCommentModParam{content, mentionedUserIds}`)
+- **멘션**: 서버가 ID·현 멤버십·본문의 실제 `@닉네임` 토큰을 교차검증한다. 자기 자신 제외, 중복 제거 후 최대 10명, `@` 스캔 위치 최대 20개. 응답 `mentions[{userId,nickname}]`만 앱에서 링크로 렌더링한다.
+- **알림**: 동일 수신자 기준 `CLUB_POST_COMMENT_MENTION` > `CLUB_POST_COMMENT_REPLY` > `CLUB_POST_COMMENT` 한 건. payload의 `clubId/boardId/postId/commentId`로 게시글 상세의 댓글까지 이동·강조한다.
+- **프론트**: `community/widgets/comment_tile.dart`, `comment_input.dart`, `mention_field.dart`, `mention_text.dart`
 - **삭제 정책**: 대댓글 보존 시 "삭제된 댓글입니다" placeholder, 수정 시 "(수정됨)" 표시
+- **확인된 Gap**: 앱의 최신순/오래된순 토글은 `sort` query를 보내지만 서버가 받지 않고 앱도 재정렬하지 않아 실제 표시 순서를 바꾸지 못한다.
 
 #### F04-10. 공지사항
 > OWNER/ADMIN이 푸시 알림과 함께 공지를 등록하고, 멤버는 목록을 읽는다. AUTH-06으로 예약 공지(AnnouncementStatus.SCHEDULED)와 고정 동시 생성 비관적 락이 추가됐다.
@@ -270,7 +279,7 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 - **OWNER**: 클럽 생성자. 클럽 수정/삭제, 소유권 이전, 기금 인출, 모든 관리 권한.
 - **ADMIN**: OWNER가 임명. 멤버 승인/추방/차단, 게시판 관리, 게시글/댓글 삭제/고정, 공지/이벤트 작성, 앨범 관리.
 - **MEMBER**: 일반 멤버. 게시글/댓글/사진/이벤트 참석, 기부, 자기 글 수정/삭제.
-- **비멤버 (GUEST)**: 클럽 목록/상세 일부 조회 가능 (인증 무관). 가입/탈퇴/커뮤니티/재정 접근 불가.
+- **인증된 비멤버**: 클럽 상세와 가입 CTA를 조회할 수 있다. 가입 전에는 커뮤니티/재정 접근 불가. 미인증 사용자는 목록은 볼 수 있지만 상세 `GET /api/v1/clubs/{id}`에서 401을 받는다.
 
 > 서버 검증 위치: `ClubController#joinClub`은 `JoinResultVo.resultType` 으로 `MEMBER`/`WAITLIST` 분기 — 자유가입/승인가입 흐름 모두 같은 엔드포인트(`POST /api/v1/clubs/{id}/join`).
 
@@ -301,7 +310,7 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 
 ### 횡단 의존
 
-- **인증/권한**: `@AuthenticationPrincipal UserPrincipal` — 클럽 목록/상세/구독 플랜만 비인증 허용.
+- **인증/권한**: 클럽 목록과 구독 플랜은 비인증 허용이지만 클럽 상세 `GET /api/v1/clubs/{id}`는 기본 `anyRequest().authenticated()` 적용 대상이다.
 - **파일 업로드**: `POST /api/v1/files/presigned-url` → S3 직접 PUT (사진/커버 이미지).
 - **결제/지갑**: 기부/구독 → Wallet, AccountingLedger (복식부기).
 - **알림**: 가입/승인/거절/초대/추방/차단/공지/댓글/구독 결제 결과에서 FCM 발송.
@@ -314,6 +323,7 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 
 | 기능 | 제목 | 후보 수 | 처리 기준 |
 |---|---|---:|---|
+| [F04-02](../02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | F04-02. 클럽 상세 보기 & 가입/탈퇴 | 2 | Gap(확정): public 홈 상세와 JWT API 충돌, APPROVAL 가입 메시지 UI 부재 |
 | [F04-03](../02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md) | F04-03. 클럽 생성/수정/삭제/소유권 이전 | 11 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-16](../02_feature_prds/04_club/F04-16_subscription_prd.md) | F04-16. 클럽 구독 (시작/갱신/해지/재활성) | 8 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-09](../02_feature_prds/04_club/F04-09_post-comments_prd.md) | F04-09. 게시글 댓글 & 대댓글 | 7 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
@@ -321,12 +331,14 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 | [F04-07](../02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md) | F04-07. 내 클럽 / 멤버 통계 | 6 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-14](../02_feature_prds/04_club/F04-14_donation_prd.md) | F04-14. 기부하기 & 기부 내역 | 6 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-01](../02_feature_prds/04_club/F04-01_club-discovery_prd.md) | F04-01. 클럽 발견 & 탐색 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F04-08](../02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | F04-08. 게시판 & 게시글 CRUD | 4 | Gap(확정): Flutter PostStatus.SCHEDULED 미포함. 나머지 후보는 source 대조로 확정 필요. |
+| [F04-08](../02_feature_prds/04_club/F04-08_board-post-crud_prd.md) | F04-08. 게시판 & 게시글 CRUD | 3 | Gap(확정): Flutter PostStatus.SCHEDULED 미포함. 나머지 후보는 source 대조로 확정 필요. |
 | [F04-10](../02_feature_prds/04_club/F04-10_announcements_prd.md) | F04-10. 공지사항 | 2 | Gap(확정): 푸시 체크박스가 서버에 미전달. 나머지 후보는 source 대조로 확정 필요. |
 | [F04-13](../02_feature_prds/04_club/F04-13_fund-overview_prd.md) | F04-13. 기금 현황 & 거래 차트 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-15](../02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md) | F04-15. 기금 인출 요청 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-05](../02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md) | F04-05. 가입 대기열 승인/거절 & 초대 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F04-11](../02_feature_prds/04_club/F04-11_photo-album_prd.md) | F04-11. 사진첩 (앨범 + 사진) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F04-17](../02_feature_prds/04_club/F04-17_club-demographics_prd.md) | F04-17. 클럽 구성인원 인구통계 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F04-18](../02_feature_prds/04_club/F04-18_club-reputation_prd.md) | F04-18. 클럽 레퓨테이션 점수 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 
 ## 8. 운영 방법
 

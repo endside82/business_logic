@@ -40,6 +40,16 @@
             흐름 안에서 공식으로 해소하는 방법이다. 처리된 참가자는 정산 통과 조건의 "납부 완료" 명부에
             올라가므로 나머지 참가자들의 일정이 지연되지 않는다.</p>
         </div>
+        <div class="callout warn">
+          <span class="label">2026-07-29 현재 소스 갱신 — 카탈로그 계약의 무료 처리</span>
+          <p>offering/terms가 붙은 배정은 총액 X 권위를 지키기 위해 돈 없는 무료 초대를 항상 금지한다.
+            아직 조건을 제안하지 않은 상품 배정도 같다. 카탈로그에서 참가자를 무료로 초대하려면 호스트
+            대납을 써야 하며, 실제 charge에는 수락된 5% 수수료와 원천징수 정책이 적용된다.
+            FREE_EXCLUDED는 direct 수금액 모드에서만 가능하다. 현재 앱 버튼은
+            <code>serviceFeeGross</code>만 보므로 조건 제안 전 카탈로그 카드에도 무료 제외가 노출되고,
+            제출 뒤 서버에서 거부된다. 두 서버 mutation은 beneficiary의 이벤트 참가자 자격도 직접
+            검사하지 않아 API 직접 호출에 대한 보완이 필요하다.</p>
+        </div>
       </section>
 
       <section>
@@ -59,7 +69,7 @@
           <div class="card">
             <div class="eyebrow">방법 2 — 호스트 대납</div>
             <h3>호스트 지갑에서 참가자 몫을 직접 결제한다</h3>
-            <p>호스트가 무료 초대로 지정한 출석자의 몫을 자신의 지갑에서 대신 납부한다.
+            <p>호스트가 특정 참가자의 몫을 자신의 지갑에서 대신 납부한다.
               제공자는 해당 몫에 대한 수익을 정상적으로 받는다. 나중에 이 참가자에 대해
               환불이 발생하면, 원래 납부자인 호스트에게 금액이 돌아온다.</p>
             <p><strong>언제 쓰는가</strong> — 제공자에게는 정상 수익을 보장하면서도 특정 참가자에게는
@@ -152,7 +162,7 @@ flowchart TD
                 <td><strong>노쇼 귀속</strong></td>
                 <td>참가자 (선결제)</td>
                 <td>노쇼 참가자 선결제분 귀속</td>
-                <td>환불 없음 — 제공자 귀속</td>
+                <td>전환 순간 환불 없음. 정산 전 전액환불 경로는 가능</td>
               </tr>
             </tbody>
           </table>
@@ -213,8 +223,8 @@ flowchart TD
             <h3>같은 참가자를 무료 초대이면서 동시에 대납 처리하려 한다</h3>
             <p>호스트가 이미 무료 초대로 처리한 참가자에게 대납도 걸려고 시도한다.
               시스템이 이를 거부한다. 한 참가자에게는 하나의 처리 방식만 적용된다.
-              먼저 적용된 무료 초대를 취소하고 대납으로 다시 처리하거나,
-              현재 상태를 유지해야 한다.</p>
+              현재 무료 초대 전용 취소 API가 없으므로 이를 취소하고 대납으로 바꾸는 공개 경로도 없다.
+              현재 상태를 유지하거나 배정 전체 취소 등 더 큰 되감기만 가능하다.</p>
           </article>
 
           <article class="card">
@@ -236,8 +246,8 @@ flowchart TD
             <li><strong>무료 초대와 대납은 호스트가 단독으로 결정한다.</strong>
               참가자의 동의를 받을 필요가 없다. 호스트가 실행하면 즉시 기록이 생성된다.</li>
             <li><strong>무료 처리된 참가자는 정산 통과 조건을 충족한다.</strong>
-              무료 초대와 대납 모두 "이 인원의 분담은 해결됐다"로 시스템이 인정한다.
-              정산 전 미납 현황 화면에서는 이 참가자들이 "완료"로 표시된다.</li>
+              무료 초대와 대납 모두 "이 인원의 분담은 해결됐다"로 서버가 인정한다.
+              현재 앱에는 참가자별 완료 목록이 없고 readiness 미통과 시 raw userId만 표시된다.</li>
             <li><strong>총액 보장 방식을 쓰는 호스트는 사전에 안내가 필요하다.</strong>
               이 방식에서 무료 처리를 하려면 호스트가 차액을 대납해야 한다는 점을
               배정 설정 단계에서 미리 알려야 혼선을 막을 수 있다.</li>
@@ -245,9 +255,12 @@ flowchart TD
               운영자나 제공자가 참가자에게 환불을 돌려줄 상황이 생기더라도,
               시스템은 실제 납부자인 호스트의 지갑으로 돌려보낸다.
               호스트와 참가자 사이의 별도 정산은 운영자가 개입할 영역이 아니다.</li>
-            <li><strong>무료 초대는 취소할 수 있지만, 취소 후 해당 참가자는 다시 미납 상태가 된다.</strong>
-              무료 처리를 번복하면 그 참가자의 분담금이 다시 미납으로 남는다.
-              정산이 이미 진행 중이라면 취소 전에 다른 조치가 필요하다.</li>
+            <li><strong>현재 무료 초대 전용 취소 API는 없다.</strong>
+              FREE_EXCLUDED를 잘못 지정했을 때 되돌리는 공개 계약이 없으므로 운영 보완이 필요하다.</li>
+            <li><strong>카탈로그 preterms 카드에는 실패할 무료 제외 버튼이 보일 수 있다.</strong>
+              앱은 serviceFeeGross만 검사하지만 서버는 offering/terms 배정을 항상 거부한다.</li>
+            <li><strong>서버는 beneficiary의 이벤트 참가 여부를 직접 확인하지 않는다.</strong>
+              앱 picker는 참가자를 고르지만 직접 API 호출은 비참가자 coverage를 만들 수 있어 서버 가드가 필요하다.</li>
           </ul>
         </div>
       </section>
@@ -267,7 +280,7 @@ flowchart TD
   - community_api/src/main/java/com/endside/community/curated/ (ServiceAssignmentService)
   - free-exclude: CoverageType.FREE_EXCLUDED, ASSIGNMENT_FREE_NOT_ALLOWED (보장모드 차단)
   - subsidize: CoverageType.HOST_SUBSIDIZED, 호스트 지갑 spendAndJournal, CreatorEarning 적립
-  - dossier: .delta_2026-06-24_curated/00_dossier.md §F21-04
+  - measured 2026-07-29: offering/terms FREE_EXCLUDED prohibition, 5% subsidize leg
 -->
     </main>
   </div>

@@ -1,12 +1,27 @@
 # F11-01. 이벤트 리뷰 작성 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/11_review_report/F11-01_event-review-write -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/11_review_report/F11-01_event-review-write -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/11_review_report/F11-01_event-review-write`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
 참석이 확정되고 종료된 이벤트에 대해 사용자가 별점(1~5)과 텍스트 후기를 남기는 단일 엔드포인트다. 사전 조건(참석 확정 / 종료 시각 경과 / 7일 이내 / 자기-자신 아님 / 중복 없음)을 모두 통과해야 INSERT가 일어나고, 성공 시 호스트 신뢰점수 재계산과 호스트에게 NEW_REVIEW 푸시 알림, `UserInteraction`(EVENT/REVIEW) 누적이 부수적으로 실행된다.
+
+### 2026-07-29 소스 재실측 — 선택형 이벤트 피드백과 분위기 태그
+
+별점/텍스트 `Review`와 별도로, 현재 앱에는 `EventFeedbackController`의 **또 함께하고 싶은 사람 선택** 흐름이 있다. 이 흐름의 제출 계약은 다음과 같다.
+
+- `GET /api/v1/events/{eventId}/feedback/candidates`로 서버가 확정한 후보와 제출 가능 상태를 받고, `POST /api/v1/events/{eventId}/feedback`에 `{ clientRequestId, displayedUserIds, choices, vibeTags }`를 보낸다.
+- 이벤트 종료 후 7일 이내이며 호출자가 증거등급 참석자여야 한다. 체크인이 하나라도 있는 이벤트는 체크인 사용자만, 체크인이 전혀 없으면 `ATTENDING` 중 확정/이의중 노쇼가 아닌 사용자만 인정한다.
+- 차단·본인·게스트를 제외한 후보가 2명 이상이어야 한다. 제출 때 `displayedUserIds`는 직전 후보 응답의 집합과 순서까지 정확히 같아야 한다. 선택은 0명도 가능하고 최대 `min(5, ceil(candidateCount / 2))`명이다.
+- `vibeTags`는 선택 사항이며 최대 3개다. 허용 Enum은 `LIVELY`, `CALM`, `TALKATIVE`, `FOCUSED`, `WELCOMING`, `ORGANIZED`, `FREE_FLOWING`, `DRINKS_CENTERED` 8종이다. null/빈 목록은 허용하고 중복·null 원소·카탈로그 밖 값·4개 이상은 `INVALID_INPUT`이다.
+- `EventFeedbackVo`에는 **내가 제출한** `vibeTags`만 포함된다. 받은 선택, 상대 제출 여부, 상호 선택 여부, 선택받은 횟수는 어떤 조회에도 노출하지 않는다.
+- Flutter `event_feedback_screen.dart`는 8개 한국어 chip을 최대 3개까지 선택하게 하고, 네 번째 선택에서는 현재 상한을 토스트로 알린다.
+
+현재 구현은 분위기 태그를 수집·본인 이력 반환까지만 한다. 집계나 이벤트 상세의 분위기 표시 API는 없다. 또한 `DataExportAsyncWorker.toEventFeedbackMap`은 `impressionTags`까지 내보내지만 `vibeTags`를 누락하므로 사용자 작성 원본의 export 범위 Gap이다.
+
+실측 근거: `EventFeedbackController/Service`, `EventFeedbackSubmitParam`, `EventFeedbackVo`, `VibeTag`, Flutter `event_feedback_api.dart`, `event_feedback_screen.dart` 및 focused tests.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -161,7 +176,9 @@
 
 ## 8. Gap / Risk
 
-> 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
+| 분류 | 근거 | 내용 | 다음 조치 |
+|---|---|---|---|
+| Gap | `DataExportAsyncWorker#toEventFeedbackMap` | 본인이 EventFeedback에 작성한 `vibeTags`는 조회 응답에 보존되지만 데이터 export map에서 누락된다. | event feedback export schema에 `vibeTags`를 추가하고 내보내기 회귀 테스트 보강 |
 
 ## 9. 수용 기준
 

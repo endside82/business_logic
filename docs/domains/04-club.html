@@ -24,7 +24,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">기능</div><div class="value">18</div><div class="hint">도메인 중 최다</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">196</div><div class="hint">기능당 평균 11.5개</div></div>
+          <div class="metric"><div class="label">시나리오</div><div class="value">198</div><div class="hint">기능당 평균 11.0개</div></div>
           <div class="metric"><div class="label">사용자 역할</div><div class="value">4</div><div class="hint">비회원·멤버·관리자·소유자</div></div>
           <div class="metric"><div class="label">민감도</div><div class="value">매우 높음</div><div class="hint">권한·돈 함께 움직임</div></div>
         </div>
@@ -43,7 +43,7 @@
         <h3>가입·권한</h3>
         <div class="cards">
           <a class="card" href="../features/F04-01.html"><div class="eyebrow">F04-01</div><h3>발견·탐색</h3><p>공개·비공개 분기, 멤버십 상태별 카드, 빈 결과.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F04-02.html"><div class="eyebrow">F04-02</div><h3>상세·가입 액션</h3><p>가입/탈퇴/대기/차단 상태별 CTA. 소유자에게는 운영 진입.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F04-02.html"><div class="eyebrow">F04-02</div><h3>상세·가입 액션</h3><p>public 홈 경로와 JWT 상세 API 충돌, APPROVAL 가입 메시지 UI 부재, 상태별 CTA.</p><div class="meta"><span class="pill warn">Gap 2</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-03.html"><div class="eyebrow">F04-03</div><h3>생성·수정·삭제·소유권 이전</h3><p>삭제 보상, 멤버 존재 시 차단, 이전 수락·거절.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-04.html"><div class="eyebrow">F04-04</div><h3>멤버 관리</h3><p>역할 변경·추방. 자기 자신·소유자 보호.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-05.html"><div class="eyebrow">F04-05</div><h3>가입 대기열·초대</h3><p>초대 만료, 중복 신청, 승인 알림.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
@@ -54,7 +54,7 @@
         <h3>콘텐츠</h3>
         <div class="cards">
           <a class="card" href="../features/F04-08.html"><div class="eyebrow">F04-08</div><h3>게시판</h3><p>게시글 생성·수정·삭제, 이미지 업로드 안정화, 고정·삭제 권한. 작성 화면 개선, 예약 게시, 좋아요 지원.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F04-09.html"><div class="eyebrow">F04-09</div><h3>댓글·대댓글</h3><p>답글, 소프트 삭제, 권한별 삭제.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F04-09.html"><div class="eyebrow">F04-09</div><h3>댓글·대댓글</h3><p>1단계 답글, 검증된 @멘션, 댓글·답글·멘션 알림, 대상 댓글 딥링크.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-10.html"><div class="eyebrow">F04-10</div><h3>공지사항</h3><p>관리자·소유자 작성, 고정, 멤버 알림. 예약 공지 및 고정 공지 동시 생성 안전 지원.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-11.html"><div class="eyebrow">F04-11</div><h3>사진첩</h3><p>앨범 생성·수정·삭제, 사진 업로드·삭제 권한. 이미지 업로드 확정 처리 안정화.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
@@ -76,11 +76,23 @@
       </section>
 
       <section>
+        <h2>댓글 대화 계약 — 멘션부터 알림 도착점까지</h2>
+        <div class="callout">
+          <span class="label">2026-07-29 서버·앱 소스 재실측</span>
+          <p>댓글 요청은 본문과 멘션 대상 ID를 함께 보내지만 서버가 현재 클럽 멤버십과 실제
+            <strong>@닉네임</strong> 토큰을 다시 대조한다. 한 댓글 최대 10명이며, 앱은 서버가 확정한 대상만 링크로 보인다.</p>
+          <p>알림은 같은 수신자에게 <strong>멘션 → 답글 → 게시글 댓글</strong> 우선순위로 한 번만 전달된다.
+            탭하면 게시글 상세의 해당 댓글로 스크롤해 강조한다. 단, 화면의 최신순/오래된순 토글은 현재 서버 정렬 계약과
+            연결되지 않아 실제 순서가 바뀌지 않는 확인된 Gap이다.</p>
+        </div>
+      </section>
+
+      <section>
         <h2>권한 4단계</h2>
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    G["게스트<br/>비회원"] --> J["가입 신청"]
+    G["인증된 비멤버"] --> J["가입 신청"]
     J --> M["멤버"]
     M --> A["관리자"]
     A --> O["소유자"]

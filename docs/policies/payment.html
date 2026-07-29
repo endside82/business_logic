@@ -54,13 +54,13 @@
         <h2>유료/무료 분리정산</h2>
         <p class="subtitle">무료 포인트로 프로모션을 운영하되 <strong>무료가 절대 현금이 되지 않도록</strong> 유료/무료를 잔액·결제·정산·인출 전 구간에서 분리한다.</p>
         <ul>
-          <li><strong>핵심 원리</strong>: 지갑·클럽 기금 잔액을 <strong>유료(충전·현금환불로 들어온 인출 가능 잔액)</strong> / <strong>무료(프로모션으로 지급된, 사용은 되지만 현금 인출 불가한 잔액)</strong>로 나눠 관리한다. 결제 시 유료/무료가 나뉘어 빠지지만, 이 구분이 받는 쪽까지 전달되는지는 <strong>사용처 분류(아래 3분류)에 따라 다르다</strong>. <strong>전파형(받는 사람이 있는 흐름)</strong>에서만 무료로 결제하면 <strong>받는 쪽(창작자·호스트·기금)도 무료로 받아</strong> 현금화되지 않는다. <strong>소각형(받는 사람이 없는 흐름)</strong>은 무료분이 받는 쪽 없이 <strong>지갑에서 그대로 차감(소각)</strong>된다. <strong>유료 전용</strong>은 무료 결제 자체를 허용하지 않는다. 이벤트 참가비는 정책상 전파형이 목표이나 <strong>현재 구형 경로라서 아직 이관되지 않았다(보강 예정)</strong>.</li>
+          <li><strong>핵심 원리</strong>: 지갑·클럽 기금 잔액을 <strong>유료(충전·현금환불로 들어온 인출 가능 잔액)</strong> / <strong>무료(프로모션으로 지급된, 사용은 되지만 현금 인출 불가한 잔액)</strong>로 나눠 관리한다. 결제 시 유료/무료가 나뉘어 빠지지만, 이 구분이 받는 쪽까지 전달되는지는 <strong>사용처 분류(아래 3분류)에 따라 다르다</strong>. <strong>전파형(받는 사람이 있는 흐름)</strong>에서만 무료로 결제하면 <strong>받는 쪽(창작자·호스트·기금)도 무료로 받아</strong> 현금화되지 않는다. <strong>소각형(받는 사람이 없는 흐름)</strong>은 무료분이 받는 쪽 없이 <strong>지갑에서 그대로 차감(소각)</strong>된다. <strong>유료 전용</strong>은 무료 결제 자체를 허용하지 않는다. 이벤트 참가비도 현재 표준 지갑 차감·분리정산 flow-through를 사용한다.</li>
         </ul>
         <div class="table-wrap">
           <table>
             <thead><tr><th>사용처 분류</th><th>대상</th><th>무료 처리</th></tr></thead>
             <tbody>
-              <tr><td><strong>전파형</strong><br/>(받는 사람이 있는 흐름)</td><td>마켓 구매, 플랜 직접 구매, 프라이빗 미팅비, 클럽 기부·가입비(→기금), 이벤트 참가비 <em>(정책 목표, 현재 구형 경로 미이관 — 보강 예정)</em></td><td>생산자가 허용하면 무료 결제 가능. 무료분은 받는 쪽·기금에 무료로 적립되고, 유료분만 정산·인출 대상이 된다.</td></tr>
+              <tr><td><strong>전파형</strong><br/>(받는 사람이 있는 흐름)</td><td>마켓 구매, 플랜 직접 구매, 프라이빗 미팅비, 클럽 기부·가입비(→기금), 이벤트 참가비</td><td>생산자가 허용하면 무료 결제 가능. 무료분은 받는 쪽·기금에 무료로 적립되고, 유료분만 정산·인출 대상이 된다.</td></tr>
               <tr><td><strong>소각형</strong><br/>(플랫폼 매출, 받는 사람 없음)</td><td>개인 구독, 클럽 구독, 프라이빗 호스팅비, 호스팅 티켓</td><td>생산자가 허용하면 무료 결제 가능. 무료분은 지갑에서 그대로 차감(소각). <strong>무료분을 마케팅 비용으로 회계에 잡는 처리는 현재 미구현 — 보강 예정</strong></td></tr>
               <tr><td><strong>유료 전용</strong><br/>(개인 간 실제 채무 정산)</td><td>모임 정산 송금·회수·선입금, 충전 취소</td><td>무료 불가 — 실제 채무를 프로모션 포인트로 갚게 두지 않는다</td></tr>
             </tbody>
@@ -120,7 +120,7 @@ flowchart TD
               <tr><td><strong>승인 전 결제 금지</strong></td><td>승인되지 않은 사용자의 돈을 먼저 받지 않는다.</td></tr>
               <tr><td><strong>승인 후 결제 필요</strong></td><td>호스트 승인은 “결제 권한 부여”이지 참석 확정이 아니다.</td></tr>
               <tr><td><strong>결제 전 참석 권한 제한</strong></td><td>체크인·위치 공유·리뷰 자격은 결제 성공 후 열린다.</td></tr>
-              <tr><td><strong>기한 만료 처리</strong></td><td>결제 대기 상태에는 기한이 있고, 만료 시 예약 정원을 반환한다.</td></tr>
+              <tr><td><strong>기한 만료 처리</strong></td><td>Application은 만료되지만 현재 PENDING payment 정리와 75 알림 발행이 빠져 있다.</td></tr>
               <tr><td><strong>서버 검증</strong></td><td>결제 처리는 승인 후 결제 대기 상태인지, 기한이 지나지 않았는지, 이미 결제한 건은 아닌지를 모두 확인한 뒤에만 통과시킨다.</td></tr>
             </tbody>
           </table>
@@ -130,6 +130,15 @@ flowchart TD
           <p>"승인 후 결제 대기"·"결제 기한 만료" 상태와
           "결제 후에만 참석 확정" 원칙은 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 별도 결제 단계로 다룬다.
           승인 전 결제 금지와 승인 즉시 참석 확정 금지 원칙은 그대로 유지된다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">2026-07-29 현재 결제 경계</span>
+          <p>승인 후 결제 대기는 currentCapacity/attendance를 만들지 않지만 pending party size로 용량을 논리 hold한다.
+            INITIAL 결제만 application당 active 1건이고 게스트 증분 결제는 다건이다. BANK는 확인·환불까지 off-ledger이며,
+            사용자가 취소하면 CANCEL_PENDING_REFUND로 capacity를 유지한다.</p>
+          <p>Flutter 사용자는 WALLET만 결제할 수 있다. BANK 운영 화면·알림 deep link는 없고, 만료 payment 누락,
+            이벤트 취소 시 attendance 없는 결제 누락, BANK 환불 완료 오표시, escalation 동시성 위험이 남아 있다.
+            환불 템플릿은 인증이 필요하며 preview/no-show 환불 조회는 actor·event scoping이 빠진 IDOR 후보다.</p>
         </div>
       </section>
 

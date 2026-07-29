@@ -29,15 +29,21 @@
         <div class="metrics">
           <div class="metric"><div class="label">결제 수단</div><div class="value">2</div><div class="hint">지갑 포인트 · 계좌이체 신고</div></div>
           <div class="metric"><div class="label">주요 상태</div><div class="value">5</div><div class="hint">결제 대기 · 결제 완료 · 결제 취소 · 환불 요청 · 환불 완료</div></div>
-          <div class="metric"><div class="label">신규 알림</div><div class="value">7종</div><div class="hint">결제 안내·입금 신고·확인·거부·만료·환불 등</div></div>
+          <div class="metric"><div class="label">알림 enum</div><div class="value">7종</div><div class="hint">생산 연결은 부분 구현</div></div>
         </div>
 
         <div class="callout warn">
           <span class="label">설계 의도 — 승인은 결제 권한이고, 참석 확정은 결제 이후다</span>
           <p>유료 승인제 이벤트에서 호스트가 신청서를 승인해도 바로 참석 확정이 아니다.
-            사용자는 "승인 후 결제 대기" 상태로 들어가고, 결제 또는 입금 확인이 끝나야
-            정원에 자리가 잡히고 참석 확정이 만들어진다. 이 분리를 지키지 않으면
+            사용자는 "승인 후 결제 대기" 상태로 들어가고, 이 단계는 attendance/currentCapacity를 만들지 않지만
+            pending party size로 용량을 논리 hold한다. 결제 또는 입금 확인이 끝나야 참석 확정이 만들어진다. 이 분리를 지키지 않으면
             "승인됐는데 돈을 냈는지", "돈을 냈는데 자리가 확보됐는지"가 흐려진다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">2026-07-29 현재 제품 연결 범위</span>
+          <p>Flutter 사용자가 실제 실행할 수 있는 선입금 동작은 이벤트 상세의 <strong>WALLET 결제 CTA</strong>다.
+            BANK 신고·호스트 확인/거부·BANK 환불 확인 화면과 전용 결제 라우트는 없고, 알림 71~76·83도
+            앱 deep link로 연결되지 않는다. 서버 API의 존재와 앱 기능 완성을 구분해야 한다.</p>
         </div>
       </section>
 
@@ -74,8 +80,8 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">계좌이체</div>
             <h3>입금 신고 후 호스트 확인 대기</h3>
-            <p>참가자가 입금자명 또는 메모를 신고하면 호스트에게 확인 알림이 간다. 호스트가 확인하기 전까지는
-              정원에 자리를 차지하지 않는다.</p>
+            <p>참가자가 입금자명 또는 메모를 신고하면 주 호스트에게 확인 알림이 간다. 호스트 확인 전에는
+              attendance/currentCapacity가 없지만 pending party size가 용량을 논리 hold한다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">입금 거부</div>
@@ -86,15 +92,15 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">만료</div>
             <h3>기한 안에 결제하지 않음</h3>
-            <p>기한이 지나면 신청이 "승인 후 결제 대기"에서 "결제 기한 만료"로 바뀌고,
-              아직 확인되지 않은 입금 신고가 있으면 함께 취소로 정리된다. 정원 변화는 없다.</p>
+            <p>기한이 지나면 신청은 "결제 기한 만료"로 bulk 전이된다. 현재 구현은 연관 PENDING 결제를
+              취소하거나 만료 알림을 발행하지 않아 결제 row가 남을 수 있으며, 이는 운영 Gap이다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">사용자 취소</div>
             <h3>결제 후 참가자가 직접 취소</h3>
             <p>지갑 결제는 이벤트별 환불 정책 카탈로그(기준·엄격·유연 등)에 따라 남은 시간 비율로 환불된다.
-              계좌이체 결제는 호스트 수동 환불이 필요하므로
-              환불 요청 상태로 남고 호스트에게 환불 요청 알림이 간다.</p>
+              계좌이체 결제는 신청을 "취소 후 환불 대기"로 두고 정원을 유지한다. 최초 요청 즉시 알림은 없으며,
+              기본 3일이 지나면 주 호스트에게 escalation 재알림이 간다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">환불 미리보기</div>
@@ -105,26 +111,26 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">이벤트 취소</div>
             <h3>호스트가 이벤트를 취소</h3>
-            <p>선입금 결제가 있으면 이 경로를 우선 환불하고, 없으면 구형 이벤트 결제 환불로
-              넘어간다. 같은 이벤트 안에서 구형 결제와 신형 선입금이 섞인 전환기를 위한 장치다.</p>
+            <p>현재 취소 처리는 ATTENDING/WAITING을 순회해 attendance 없는 결제대기·BANK PENDING을 놓칠 수 있다.
+              BANK PAID도 환불요청 상태인데 완료로 오표시될 수 있어 운영 Gap으로 본다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>참가자·호스트가 할 수 있는 동작</h2>
-        <p class="subtitle">선입금 단계에서 양쪽이 취할 수 있는 행동.</p>
+        <h2>서버 계약과 현재 앱 노출</h2>
+        <p class="subtitle">서버가 제공하는 결제·환불 API 중 현재 Flutter 화면에 연결된 것은 지갑 결제뿐이다.</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th style="width:140px">주체</th><th>동작</th><th>의미</th></tr></thead>
             <tbody>
-              <tr><td><strong>참가자</strong></td><td>지갑으로 선입금 결제</td><td>보유 포인트로 그 자리에서 참석을 확정한다.</td></tr>
-              <tr><td><strong>참가자</strong></td><td>계좌이체 입금 신고</td><td>입금자명·메모를 적어 호스트에게 입금 사실을 알린다.</td></tr>
-              <tr><td><strong>호스트</strong></td><td>입금 확인 / 입금 거부</td><td>들어온 입금을 확인하면 참석 확정, 확인 못 하면 거부해 재신고를 허용한다.</td></tr>
-              <tr><td><strong>참가자</strong></td><td>지갑 결제 취소·환불</td><td>이벤트 환불 정책 카탈로그(6종)에 따라 남은 시간 비율로 환불받는다.</td></tr>
-              <tr><td><strong>호스트</strong></td><td>계좌환불 완료 표시</td><td>계좌이체 결제는 호스트가 직접 송금한 뒤 완료를 표시한다.</td></tr>
+              <tr><td><strong>참가자</strong></td><td>지갑으로 선입금 결제</td><td>서버·Flutter 모두 연결됨. 이벤트 상세 CTA에서 즉시 실행한다.</td></tr>
+              <tr><td><strong>참가자</strong></td><td>계좌이체 입금 신고</td><td>서버 API와 Flutter data layer는 있으나 호출 화면이 없다.</td></tr>
+              <tr><td><strong>호스트</strong></td><td>입금 확인 / 입금 거부</td><td>서버 API와 Flutter data layer는 있으나 호출 화면이 없다.</td></tr>
+              <tr><td><strong>참가자·호스트</strong></td><td>지갑 환불</td><td>서버 API는 있으나 Flutter 직접 호출 화면은 없다. 참가 취소 facade는 별도 흐름이다.</td></tr>
+              <tr><td><strong>호스트·클럽 환불관리자</strong></td><td>계좌환불 완료 표시</td><td>Host/CoHost와 club OWNER/EVENT_REFUND_MANAGER를 서버가 허용. Flutter API 정의와 화면은 없다.</td></tr>
               <tr><td><strong>참가자</strong></td><td>환불 미리보기</td><td>취소 전 예상 환불액·적용 비율·귀책 분류를 미리 확인한다.</td></tr>
-              <tr><td><strong>누구나</strong></td><td>환불 정책 카탈로그 조회</td><td>로그인 없이도 6종 환불 정책 템플릿 목록을 볼 수 있다.</td></tr>
+              <tr><td><strong>인증 사용자</strong></td><td>환불 정책 카탈로그 조회</td><td>전역 Security의 anyRequest authenticated를 통과해야 6종 템플릿을 볼 수 있다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -147,6 +153,11 @@ flowchart TD
           </table>
         </div>
         <p>귀책은 <strong>호스트 귀책 · 불가항력 · 상호 합의 · 일정 변경 거절 · 노쇼 · 참가자 귀책 · 노쇼 사후 조정</strong>의 7가지로 분류된다. 호스트 귀책·불가항력·상호 합의·일정 변경 거절로 취소되면 정책과 무관하게 100% 환불, 수수료 0원이다. 참가자 단순 변심이면 위 남은 시간 구간 비율이 그대로 적용되고, 노쇼는 환불이 거절되며, 노쇼 사후 조정은 호스트가 금액을 직접 정한다.</p>
+        <div class="callout danger">
+          <span class="label">환불 조회 권한 Gap</span>
+          <p>refund-preview는 인증 actor를 service에 전달하지 않아 applicationId를 아는 사용자의 타인 금액 조회 IDOR 후보가 있다.
+            no-show-refund GET은 actor가 없고 path eventId도 무시한다. 두 경로 모두 본인/호스트 권한과 event scoping 보강이 필요하다.</p>
+        </div>
       </section>
 
       <section>
@@ -159,6 +170,8 @@ flowchart TD
             <li><strong>정원은 결제 확정 시점에만 늘어난다.</strong> 결제 대기 인원은 예약 대기 수로 보이지만 참석 확정자는 아니다.</li>
             <li><strong>탈퇴 차단 조건이 생긴다.</strong> 결제 대기·결제 완료·환불 요청 중인 결제가 남아 있으면 계정 비활성화를 막아야 한다.</li>
             <li><strong>F07-09의 모임 정산 선입금과 다르다.</strong> 본 단위는 이벤트 참가비 선입금이고, 정산 선입금은 모임 종료 후 비용 분담 보증금이다.</li>
+            <li><strong>알림 enum과 실제 전송은 다르다.</strong> 만료 알림 75는 publisher가 없고, 83은 최초 환불 요청이 아닌 지연 escalation에 쓰인다. 72는 CoHost가 아니라 주 호스트 한 명에게만 간다.</li>
+            <li><strong>환불 escalation은 완전한 경합 방지가 아니다.</strong> event payment row lock/version이 없어 동시 환불 완료를 stale 환불요청으로 되살릴 위험과 미테스트 Gap이 남아 있다.</li>
             <li><strong>이벤트 결제·환불이 표준 길로 통합됐다 (2026-06-06).</strong> 결제 시 어느 충전분에서 빠졌는지를 정확히 추적하고, 잔액과 추적 기록이 어긋나면 결제를 멈춘다(예전엔 어긋나도 경고만 남기고 진행). 무료 포인트로 낸 참가비는 주최자의 무료 포인트(인출 불가)로 전달되고, 무료 결제만 모인 이벤트도 정산이 생긴다(수수료·세금 0). 환불은 충전 단위까지 되돌리고 유료·무료 각각의 누적 환불이 결제했던 만큼을 넘지 못한다. 더 이상 쓰이지 않는 옛 결제 통로 2개는 막혔다.</li>
           </ul>
         </div>

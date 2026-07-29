@@ -1,18 +1,20 @@
 # F14-02. 위치 공유 중지 (opt-out) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/14_location_directions/F14-02_location-opt-out -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/14_location_directions/F14-02_location-opt-out -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/14_location_directions/F14-02_location-opt-out`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-07-29 현재 소스 갱신: `LocationService#optOut`은 `LocationOptIn.optedIn=false` 저장과 함께 `locationShareRepository.deleteByEventIdAndUserId(eventId, userId)`를 호출한다. 따라서 기존 문서의 “LocationShare 행은 남는다”는 설명은 현재 소스와 반대이며, 성공 즉시 보관 좌표를 삭제하는 계약으로 교정한다.
 
 ## 1. 결론
 
-참석자가 진행 중인 위치 공유를 즉시 중지하는 API. `LocationOptIn` 행의 `optedIn` 필드를 `false` 로 토글하여, 이후 다른 참석자의 `GET /location` 응답에서 본인이 제외되도록 한다. 본 엔드포인트는 `LocationShare` 행을 명시적으로 삭제하지 않지만, opt-in 토글이 false 면 응답 필터에서 자동으로 제외되어 사실상 즉시 비공개 처리된다. UI 스펙에는 "이벤트 종료 후 위치 데이터 즉시 삭제" 라는 정책이 있으나, opt-out 단일 호출이 `LocationShare` 를 직접 DELETE 하지는 않는 점에 주의(서비스 코드 65-83 행).
+참석자가 진행 중인 위치 공유를 즉시 중지하는 API. `LocationOptIn` 행의 `optedIn`을 `false`로 저장하고 해당 이벤트·사용자의 `LocationShare` 행을 삭제한다. 이후 다른 참석자의 `GET /location` 응답에서 본인이 제외된다. 위치 지도 화면에서 끄면 목록 조회와 GPS 전송 타이머를 모두 정지하지만, push로 연 프라이버시 화면에서 끄는 경로는 아래 지도 화면의 타이머를 직접 정지하지 않는다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
 - (1) `EventLocationScreen` (SCR-LD-001)의 시트 안 "위치 공유" 토글 Off
 - (2) `LocationPrivacyScreen` (SCR-LD-003)의 이벤트 카드 토글 Off
-- (3) 이벤트 종료 + 2시간 경과 후 자동 비활성 (서버 측 정책 — 클라이언트가 먼저 인식하지는 못함)
+- 종료 +2시간은 일반 참석자의 GET/update 접근창 종료일 뿐 opt-out 동작이 아니다. `LocationOptIn.optedIn`을 false로 바꾸는 자동 경로는 없다.
 
 현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
 
@@ -37,14 +39,14 @@
 
 1. 토글 Off 액션 → 다이얼로그 → 확인
 2. `EventLocationNotifier.optOut()` → `EventLocationRepository.optOut(eventId)` → POST `/api/v1/events/{eventId}/location/opt-out`
-3. 성공 → notifier 가 내부 `refresh()` 호출 → `GET /api/v1/events/{eventId}/location` 다시 호출 (본인 좌표 응답에서 제외됨 — 응답 자체에는 다른 opt-in 사용자만 남음)
-4. (Privacy 화면 흐름) `LocationPrivacyNotifier.optOut()` → `ref.invalidateSelf()` 로 대시보드 재조회
+3. 성공 → notifier가 내부 `refresh()`를 fire-and-forget으로 호출한다. 일반 참석자는 이제 opt-in이 아니므로 `GET /location`이 `LOCATION_OPT_IN_REQUIRED`로 거절되고 `refresh()`가 예외를 삼켜 기존 state를 유지할 수 있다. 관리자급 조회자만 새 목록을 정상 수신한다.
+4. (Privacy 화면 흐름) 같은 `EventLocationNotifier.optOut()` 성공 후 `ref.invalidate(locationPrivacyProvider(eventId))`로 대시보드를 재조회
 
 ## 4. 서버 계약
 
 ### 개요
 
-참석자가 진행 중인 위치 공유를 즉시 중지하는 API. `LocationOptIn` 행의 `optedIn` 필드를 `false` 로 토글하여, 이후 다른 참석자의 `GET /location` 응답에서 본인이 제외되도록 한다. 본 엔드포인트는 `LocationShare` 행을 명시적으로 삭제하지 않지만, opt-in 토글이 false 면 응답 필터에서 자동으로 제외되어 사실상 즉시 비공개 처리된다. UI 스펙에는 "이벤트 종료 후 위치 데이터 즉시 삭제" 라는 정책이 있으나, opt-out 단일 호출이 `LocationShare` 를 직접 DELETE 하지는 않는 점에 주의(서비스 코드 65-83 행).
+참석자가 진행 중인 위치 공유를 즉시 중지한다. `LocationOptIn` 행은 이력성 토글로 남겨 `optedIn=false`로 바꾸고, 현재 좌표가 든 `LocationShare` 행은 이벤트·사용자 키로 즉시 삭제한다.
 
 ### 엔드포인트 요약
 
@@ -57,7 +59,7 @@
 - **Entity** `LocationOptIn`
   - 행이 한 번 만들어지면 삭제하지 않고 `optedIn` boolean 만 토글하는 설계. 이력성 행이 아니므로 audit 용도는 별도 access log 가 담당.
 - **Entity** `LocationShare`
-  - opt-out 으로 삭제되지 않음. 만료(`expiresAt`) 또는 30일 cleanup 스케줄(`LocationService.cleanupExpiredLocations`, `cron = 0 30 3 * * *`) 에 의해 정리.
+  - opt-out 성공 시 `deleteByEventIdAndUserId`로 즉시 삭제. 남은 만료/30일 초과 행은 매일 03:30 cleanup으로 별도 정리.
 - **Param/VO**: 없음 (요청/응답 body 없음)
 
 ### 의존 단위 / 외부 시스템
@@ -72,7 +74,7 @@
 
 - (1) `EventLocationScreen` (SCR-LD-001)의 시트 안 "위치 공유" 토글 Off
 - (2) `LocationPrivacyScreen` (SCR-LD-003)의 이벤트 카드 토글 Off
-- (3) 이벤트 종료 + 2시간 경과 후 자동 비활성 (서버 측 정책 — 클라이언트가 먼저 인식하지는 못함)
+- 이벤트 종료 +2시간은 일반 참석자 GET/update 시간 게이트다. opt-in 행을 바꾸거나 opt-out API를 자동 호출하지 않으며, 관리자급 GET은 이 시간 게이트도 우회한다.
 
 ### 사용 라우트 & 화면 파일
 
@@ -103,21 +105,23 @@
 
 - **사용자가 보는 것**:
   - 이벤트 정보 카드 + Switch + 상태 텍스트 ("위치 공유 중" green / "위치 비공개" gray)
-  - 안내 박스 (위치 공유 1시간 전부터 활성, 참석 확정자에게만, 종료 후 즉시 삭제)
+  - 안내 박스의 실제 5개 문구: 위치 update 시작 -2시간~종료 +2시간, 참석자 조회 시작 -24시간, ATTENDING 한정, 중단 후 미노출, 접근 기록 30일
 - **사용자가 할 수 있는 액션**:
-  - Switch Off (참석자) → `_toggleOptIn(false)` → `LocationPrivacyNotifier.optOut()` 또는 `EventLocationNotifier.optOut()` (현 구현은 `eventLocationNotifierProvider` 의 `.optOut()` 호출, 173-176 행)
-  - 성공 시 토스트 "위치 공유를 중단했습니다" (`success` 타입), 실패 시 `showApiErrorToast(fallback: '위치 공유 설정에 실패했습니다')`
+  - Switch Off (참석자) → `_toggleOptIn(false)` → `eventLocationNotifierProvider(eventId).notifier.optOut()`; 성공 시 `locationPrivacyProvider(eventId)` invalidate
+  - 성공 시 토스트 "위치 공유를 중단했습니다" (`success` 타입)
+  - notifier가 API 실패를 `false`로 축약하고 화면에 false 분기가 없어 실패는 silent다. `catch/showApiErrorToast`는 예외가 throw될 때만 실행되며 이 repository 실패 경로에는 도달하지 않는다.
+  - 이 화면은 `EventLocationScreen` 위에 push되므로 opt-out 성공 후에도 아래 화면의 30초 목록/GPS 60초 타이머를 직접 중지하지 않는다. 목록 GET은 opt-in 부족으로 실패를 삼키고 GPS update는 실패를 누적한 뒤 중지될 수 있다.
   - (호스트인 경우엔 별도 분기로 `Event.locationShareEnabled` 토글 → F14-04 에서 다룸)
 - **상태 분기**:
   - 처리 중에는 Switch 자리에 `CircularProgressIndicator(strokeWidth: 2)` 표시
-  - 에러 시 `ApiErrorFeedback` 토스트로 fallback 메시지
+  - 참석자 opt-in/out의 일반적인 `Result.failure`는 boolean false로 소실되어 fallback 토스트가 나오지 않는다.
 
 ### API 호출 순서 (Provider/Repository 관점)
 
 1. 토글 Off 액션 → 다이얼로그 → 확인
 2. `EventLocationNotifier.optOut()` → `EventLocationRepository.optOut(eventId)` → POST `/api/v1/events/{eventId}/location/opt-out`
-3. 성공 → notifier 가 내부 `refresh()` 호출 → `GET /api/v1/events/{eventId}/location` 다시 호출 (본인 좌표 응답에서 제외됨 — 응답 자체에는 다른 opt-in 사용자만 남음)
-4. (Privacy 화면 흐름) `LocationPrivacyNotifier.optOut()` → `ref.invalidateSelf()` 로 대시보드 재조회
+3. 성공 → notifier가 `refresh()`를 시도한다. 일반 참석자의 후속 `GET /location`은 opt-in 필수 조건 때문에 실패하고 예외가 화면에 전파되지 않으며, 관리자급 조회자만 새 목록을 정상 수신한다.
+4. (Privacy 화면 흐름) `EventLocationNotifier.optOut()` 성공 → `ref.invalidate(locationPrivacyProvider(eventId))`
 
 ### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
 
@@ -133,13 +137,14 @@
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
-| S1 | 목적지에 도착해서 위치 공유를 끈다 (Happy Path) | `LocationOptIn.optedIn=true`, `LocationShare` 행 존재 (expiresAt = +2h) | - 서버: `optedIn=false`, `LocationShare` 행은 그대로 남아 있음 (expiresAt 만료 또는 30일 cleanup 까지) |
+| S1 | 목적지에 도착해서 위치 공유를 끈다 (Happy Path) | `LocationOptIn.optedIn=true`, `LocationShare` 행 존재 | 서버는 `optedIn=false`로 저장하고 `LocationShare` 행을 즉시 삭제한다. 앱은 30초 목록 조회와 60초 GPS 갱신 타이머를 모두 중지한다. |
 | S2 | 다이얼로그에서 "취소"를 눌러 공유를 유지한다 (취소 분기) | 토글을 잘못 건드린 사용자 | 서버/클라이언트 모두 변화 없음. 폴링 계속 동작 |
-| S3 | 프라이버시 대시보드에서 끄기 (다른 진입점) | 모임 종료 직후 본인 위치 데이터를 빨리 끄고 싶은 사용자 | 서버 동일. 프라이버시 화면이 dispose 되지 않으면 다음 빌드 때 토글이 Off 유지 |
+| S3 | 프라이버시 대시보드에서 끄기 (다른 진입점) | 위치 지도에서 push한 프라이버시 화면 | 서버 좌표 삭제와 privacy 토글 Off는 동일하다. 다만 아래 위치 화면의 목록/GPS 타이머는 직접 중지되지 않아 실패 호출이 잠시 계속될 수 있다 |
 | S4 | 자격 미충족 (네거티브) | 모임에서 강퇴되어 `ATTENDING` 상태가 아닌 사용자 | 서버 변화 없음 |
-| S5 | 호스트가 이벤트 단위로 위치 공유 비활성화 → 모든 참석자 자동 비공개 (간접 opt-out) | 일반 참석자, 호스트가 이벤트 설정에서 `locationShareEnabled=false` 토글 | 본인 옵트인 행은 true 유지, 그러나 update 차단으로 좌표 멈춤 → 다음 GET 응답에선 expiresAt 만료 시점에 자동 제외 |
-| S6 | 이벤트 종료 + 2h 경과 (자동 만료 분기) | 모임이 끝났는데 화면을 켜둔 채로 둔 사용자 | 서버 데이터 점진적 정리, 사용자는 다음 화면 진입 시 에러 상태로 진입 |
-| S7 | opt-out 후 다시 opt-in (재개) | 잠시 끈 뒤 다시 켜는 사용자 | F14-01 S1 종료 상태와 동일 |
+| S5 | `locationShareEnabled=false`인 이벤트 조회 | 일반 참석자 또는 관리자급 viewer, 기존 opt-in/share 존재 | `GET /location`은 즉시 빈 목록을 반환한다. opt-in/share 저장 행은 그대로이고 update는 차단된다. |
+| S6 | 이벤트 종료 + 2h 경과 (일반 참석자 접근창 종료) | 모임이 끝났는데 화면을 켜둔 일반 참석자 | 다음 GET/update는 시간 오류로 차단되지만 opt-in은 true로 남을 수 있다. share 행은 자체 expiresAt 필터와 03:30 cleanup을 따른다. 관리자급 GET은 +2h를 우회한다. |
+| S7 | 위치 지도에서 opt-out 후 다시 opt-in | 같은 위치 지도 인스턴스에서 다시 켜는 사용자 | opt-in 성공 후 첫 좌표 update를 시도하지만 그 성공 여부는 확인하지 않고 두 타이머와 성공 토스트를 시작하므로 동의 true·share row 없음 상태가 가능 |
+| S8 | 프라이버시 화면에서 opt-out 후 다시 opt-in | 프라이버시 토글을 다시 켠 사용자 | opt-in 행만 true가 된다. 이 화면은 GPS 취득·`POST /update`·타이머 시작을 하지 않아 위치 화면에서 좌표를 다시 보낼 때까지 share row가 없다 |
 
 ## 7. 정합성 판단
 
@@ -154,18 +159,24 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:5 | 참석자가 진행 중인 위치 공유를 즉시 중지하는 API. `LocationOptIn` 행의 `optedIn` 필드를 `false` 로 토글하여, 이후 다른 참석자의 `GET /location` 응답에서 본인이 제외되도록 한다. 본 엔드포인트는 `LocationShare` 행을 명시적으로 삭제하지 않지만, opt-in 토글이 false 면 응답 필터에서 자동으로 제외되어 사실상 즉시 비공개 처리된다. UI 스펙에는 "이벤트 종료 후 위치 데이터 즉시 삭제" 라는 정책이 있으나, opt-out 단일 호출이 `LocationShare` 를 직접 DELETE 하지는 않는 점에 주의(서비스 코드 65-83 행). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 | `LocationService#optOut` | 과거 “opt-out 뒤 좌표 잔존” 후보는 해소됐다. 현재 서비스가 `LocationShare`를 즉시 삭제한다. | 삭제 회귀 테스트 유지 |
 | 후보 | scenarios.md:74 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=opt_out) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | `EventLocationNotifier#optOut` / `refresh` | 일반 참석자는 opt-out 직후 목록 조회 자격을 잃는데 notifier가 곧바로 GET을 재시도하고 실패를 숨긴다. 화면의 로컬 토글·타이머는 중지되지만 provider에는 이전 목록이 남을 수 있다. | opt-out 성공 시 state를 비우거나 후속 GET을 생략하는 클라이언트 정책 결정 |
+| Gap | `location_privacy_screen.dart` → `EventLocationNotifier` | 프라이버시 화면의 opt-in/out 실패는 boolean false로 소실되어 사용자 안내가 없고, opt-out은 아래 위치 화면의 실행 중 타이머도 정지하지 않는다. | 실패 원인 보존과 공유 라이프사이클 제어를 한 notifier 상태로 통합 |
+| P1 Gap | 프라이버시 화면 재동의 | 토글 On은 `LocationOptIn`만 true로 바꾸며 GPS update를 하지 않는다. opt-out이 share를 삭제했으므로 동의와 실제 좌표 공유가 분리된다. | opt-in 성공 뒤 좌표 확보/update 또는 위치 화면으로 명시적 이동 |
+| 사실 교정 | `LocationService#getEventLocations` | `locationShareEnabled=false`이면 응답은 즉시 빈 목록이다. 저장된 opt-in/share를 자동 변경·삭제하는 것은 아니다. | “간접 opt-out/만료까지 잔존 응답” 표현 금지 |
+| Gap | 종료 +2h 시간 게이트 | 일반 참석자 GET/update만 차단하며 opt-in을 false로 바꾸지 않는다. privileged viewer는 GET gate를 우회한다. | 접근창 종료와 동의 상태 종료를 UI/정책에서 명확히 구분 |
 
 ## 9. 수용 기준
 
-- **AC-01. 목적지에 도착해서 위치 공유를 끈다 (Happy Path)**: Given `LocationOptIn.optedIn=true`, `LocationShare` 행 존재 (expiresAt = +2h) When 사용자가 해당 흐름을 실행하면 Then - 서버: `optedIn=false`, `LocationShare` 행은 그대로 남아 있음 (expiresAt 만료 또는 30일 cleanup 까지)
+- **AC-01. 목적지에 도착해서 위치 공유를 끈다 (Happy Path)**: Given `LocationOptIn.optedIn=true`, `LocationShare` 행 존재 When 사용자가 중지를 확인하면 Then 서버는 `optedIn=false`를 저장하고 현재 좌표 행을 삭제하며 앱은 두 자동 갱신 타이머를 중지한다
 - **AC-02. 다이얼로그에서 "취소"를 눌러 공유를 유지한다 (취소 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버/클라이언트 모두 변화 없음. 폴링 계속 동작
-- **AC-03. 프라이버시 대시보드에서 끄기 (다른 진입점)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 동일. 프라이버시 화면이 dispose 되지 않으면 다음 빌드 때 토글이 Off 유지
+- **AC-03. 프라이버시 대시보드에서 끄기 (다른 진입점)**: Given 위치 화면 위에 프라이버시 화면이 push된 상태 When opt-out이 성공하면 Then 서버는 좌표를 삭제하고 privacy 토글은 Off가 되지만 아래 위치 화면의 목록/GPS 타이머는 이 경로에서 직접 중지되지 않는다
 - **AC-04. 자격 미충족 (네거티브)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 변화 없음
-- **AC-05. 호스트가 이벤트 단위로 위치 공유 비활성화 → 모든 참석자 자동 비공개 (간접 opt-out)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 본인 옵트인 행은 true 유지, 그러나 update 차단으로 좌표 멈춤 → 다음 GET 응답에선 expiresAt 만료 시점에 자동 제외
-- **AC-06. 이벤트 종료 + 2h 경과 (자동 만료 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 데이터 점진적 정리, 사용자는 다음 화면 진입 시 에러 상태로 진입
-- **AC-07. opt-out 후 다시 opt-in (재개)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then F14-01 S1 종료 상태와 동일
+- **AC-05. 이벤트 단위 위치 공유 비활성 조회**: Given `locationShareEnabled=false`이고 기존 opt-in/share 행이 있을 때 When GET `/location`을 호출하면 Then 즉시 빈 목록이며 저장 행과 opt-in 값은 그대로다
+- **AC-06. 이벤트 종료 +2h 접근창 종료**: Given 일반 참석자의 이벤트가 종료된 지 2시간을 지났을 때 When GET/update를 호출하면 Then 시간 게이트로 차단되지만 `optedIn`은 자동으로 false가 되지 않는다. 관리자급 viewer GET은 이 게이트를 우회한다
+- **AC-07. 위치 지도에서 opt-out 후 다시 opt-in**: Given 같은 위치 지도에서 다시 토글을 켤 때 When opt-in은 성공하지만 첫 좌표 update가 실패하면 Then UI는 성공 토스트와 타이머를 시작할 수 있으나 서버에는 `optedIn=true`만 있고 share row는 없을 수 있다
+- **AC-08. 프라이버시 화면에서 다시 opt-in**: Given opt-out으로 share row가 삭제된 사용자가 프라이버시 토글을 다시 켤 때 When opt-in이 성공하면 Then `optedIn=true`만 저장되고, 위치 화면에서 `POST /update`하기 전까지 좌표는 노출되지 않는다
 
 ## 10. 미결정 / 후속
 

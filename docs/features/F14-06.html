@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F14-06 좌표 → 주소 변환 — community PRD</title>
+  <title>F14-06 주소 ↔ 좌표 변환 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,13 +15,13 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
-          F14-06 좌표 → 주소 변환
+          F14-06 주소 ↔ 좌표 변환
         </div>
-        <h1>F14-06. 좌표 → 주소 변환 (역지오코딩)</h1>
+        <h1>F14-06. 주소 ↔ 좌표 변환 (지오코딩)</h1>
         <p class="lede">
-          위·경도 좌표를 한국식 주소 문자열("서울특별시 강남구 역삼동 ...") 로 바꾸는 보조 인프라.
-          사용자에게 좌표 숫자는 의미가 없으므로 지도에서 위치를 고른 직후나 현재 위치를 표기할 때 본 변환이 일어난다.
-          본 단위는 전용 화면이 없고, 주소 등록·이벤트 장소 등록·길찾기 같은 다른 화면이 호출하는 lookup.
+          위·경도 좌표를 한국식 주소로 바꾸고, 주소 문자열을 저장 가능한 좌표로 확정하는 양방향 보조 인프라.
+          본 단위에는 전용 화면이 없다. 현재 Flutter에서 좌표→주소는 온보딩의 현재 GPS 위치 한 곳,
+          주소→좌표는 온보딩·프로필 주소 폼·이벤트 생성·편집에서 호출한다.
         </p>
       </header>
 
@@ -34,9 +34,11 @@
         </div>
 
         <div class="callout warn">
-          <span class="label">2026-07-08 현재 소스 갱신 — 주소→좌표 추가</span>
+          <span class="label">2026-07-29 현재 소스 갱신 — 일정변경 좌표 동기화와 운영 키 경고</span>
           <p>현재 서버는 좌표→주소뿐 아니라 `GET /api/v1/location/geocode?address=...`로 주소→좌표도 제공한다.
-            Kakao Local address search의 x/y를 longitude/latitude로 매핑하며, Flutter geocoding API/provider가 이를 주소 등록과 길찾기 출발지 선택에 사용한다.</p>
+            Flutter 이벤트 생성·편집·일정변경은 주소 변경 시 좌표를 먼저 확정하고 실패하면 저장을 막는다.
+            운영에서 Kakao 키가 비면 서버는 경고 후 기동을 계속하지만 주소↔좌표 호출은 실패한다.
+            기존 문서의 지도 핀·long-press·길찾기 reverse-geocode 설명은 현재 호출부와 일치하지 않아 제거했다.</p>
         </div>
       </section>
 
@@ -46,21 +48,28 @@
 
         <div class="cards">
           <div class="card">
-            <div class="eyebrow">주소 등록</div>
-            <h3>지도에서 위치 찍기</h3>
-            <p>사용자가 "집 주소 등록" 같은 화면에서 지도 핀을 옮기거나 길게 눌러 좌표를 잡으면 그 좌표가 곧장 한국식 주소로 변환되어 입력 칸에 채워진다.
-              사용자는 변환된 주소를 그대로 쓰거나 한 줄 수정해 등록한다.</p>
+            <div class="eyebrow">온보딩 위치</div>
+            <h3>현재 GPS 위치를 주소로 표시</h3>
+            <p>사용자가 위치 권한을 허용하고 현재 위치를 불러오면 좌표→주소를 호출해 선택 위치에 반영한다.
+              현재 소스에서 확인되는 reverse-geocode 화면 호출자는 이 한 곳이다.</p>
           </div>
           <div class="card">
-            <div class="eyebrow">이벤트 생성</div>
-            <h3>모임 장소 선택</h3>
-            <p>호스트가 이벤트를 만들면서 지도에서 모임 장소를 고르면 동일하게 좌표 → 주소 변환이 일어나 모임 장소 라벨이 자동 채워진다.</p>
+            <div class="eyebrow">온보딩·프로필 주소</div>
+            <h3>검색 주소를 좌표로 확정</h3>
+            <p>온보딩과 프로필 주소 폼은 사용자가 검색 결과를 고르면 주소→좌표를 호출한다.
+              프로필 주소 화면은 reverse geocode가 아니라 이 forward-geocode 흐름을 사용한다.</p>
           </div>
           <div class="card">
-            <div class="eyebrow">현재 위치 라벨</div>
-            <h3>"내 현재 위치"를 사람이 읽을 수 있는 형태로</h3>
-            <p>현재 위치를 잡은 직후 사용자에게 "지금 어디에 있는지"를 주소로 한 번 보여주고 싶을 때 호출된다.</p>
+            <div class="eyebrow">이벤트 생성·편집·일정변경</div>
+            <h3>장소 주소와 좌표를 함께 저장</h3>
+            <p>주소가 바뀌면 저장 전에 주소→좌표를 호출한다. 실패하면 저장을 막고, 성공하면 일정변경 요청의
+              `newLatitude/newLongitude`까지 함께 보내 AUTO 반영과 MAJOR 제안 적용에서 주소·좌표가 어긋나지 않게 한다.</p>
           </div>
+        </div>
+        <div class="callout warn">
+          <span class="label">현재 연결되지 않은 흐름</span>
+          <p>길찾기는 서버의 이벤트 주소·좌표를 그대로 사용한다. 지도 핀 이동, 지도 long-press, 이벤트 핀을
+            좌표→주소로 바꾸는 Flutter 호출부도 현재 없다. 이 동작들은 구현 사실이 아니라 후속 후보로 취급해야 한다.</p>
         </div>
       </section>
 
@@ -76,7 +85,8 @@
             <li><strong>바다·산속·미등록 지역의 좌표는 변환되지 않는다.</strong>
               "주소를 찾을 수 없습니다" 안내가 호출 화면에서 노출되어 사용자가 다른 위치를 선택하도록 유도한다.</li>
             <li><strong>외부 지도 서비스 인증 키 설정이 끊기면 본 변환 전체가 멈춘다.</strong>
-              주소 등록·이벤트 장소 등록 같은 사용자 흐름이 동시에 막힌다 — 운영 환경 키 만료 시점을 모니터링 대상에 포함해야 한다.</li>
+              프로덕션 기동 시 `SecurityConfigValidator`가 경고하지만 fail-fast 하지는 않는다.
+              주소 등록·이벤트 장소 등록·일정변경이 런타임에 막히므로 키 경고를 즉시 대응해야 한다.</li>
           </ul>
         </div>
       </section>
@@ -86,8 +96,8 @@
         <div class="hub-grid">
           <a class="card" href="../domains/14-location.html"><div class="eyebrow">상위 도메인</div><h3>14 위치·길찾기</h3></a>
           <a class="card" href="F14-05.html"><div class="eyebrow">옆 단위</div><h3>F14-05 이벤트 길찾기</h3><p>본 변환의 가까운 형제 — 둘 다 지도 데이터를 사용자 언어로 옮긴다.</p></a>
-          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">사용처</div><h3>13 프로필·설정</h3><p>주소 등록 화면이 본 변환의 주요 호출자.</p></a>
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">사용처</div><h3>03 이벤트</h3><p>모임 장소 등록이 본 변환의 또 다른 호출자.</p></a>
+          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">사용처</div><h3>13 프로필·설정</h3><p>주소 검색 결과를 forward geocode로 좌표화한다.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">사용처</div><h3>03 이벤트</h3><p>이벤트 생성·편집·일정변경에서 주소를 좌표화한다.</p></a>
         </div>
       </section>
 

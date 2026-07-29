@@ -11,7 +11,7 @@
 - **FIXED(고정형)** — 호스트가 사전에 회차 수를 정하고 멤버를 **코스 단위로** 등록·결제·정산한다. 모든 세션에 동일 멤버 명단이 깔리고, 멤버 한 명이 코스 비용을 한 번에 결제하며, 정산도 코스 종료 시 한 번에 발생한다.
 - **VARIABLE(변동형)** — 회차마다 독립된 이벤트로 동작한다. 인원·결제·정산이 **세션 단위로** 바인딩되며, 일반 이벤트 머신을 그대로 재사용한다.
 
-타입이 **인원·정산의 바인딩 레벨을 전환**하는 것이 도메인의 핵심 설계 결정이다. 하위 세션은 모두 `event` 테이블(`eventType=REGULAR_MEETING(3)`) 위에 올라가며, 모임과 세션을 잇는 정션 `regular_meeting_event` 가 순번·교체본·확정 상태를 관리한다. 호스트는 교체 불가.
+타입이 **인원·정산의 바인딩 레벨을 전환**하는 것이 도메인의 핵심 설계 결정이다. 하위 세션은 모두 `event` 테이블(`eventType=REGULAR_MEETING(3)`) 위에 올라가며, 모임과 세션을 잇는 정션 `regular_meeting_event` 가 순번·교체본·확정 상태를 관리한다. 일반 호스트용 이양 경로는 없고, 관리자 internal API에만 결제·정산 귀속을 보존하는 break-glass 이양이 있다.
 
 이 도메인은 기능 PRD 10개로 구성된다(F17-01 ~ F17-10). 백엔드 구현(Phase 1~5)·Flutter(Phase 6)·통합 검증(Phase 7)은 2026-05-28 단일 세션에 완료됐고, Codex 다단 sign-off(금전 영역 100%) 를 거쳤다.
 
@@ -23,7 +23,7 @@
 | F17-02 | 정기모임 상세 조회 | [F17-02_regular-meeting-detail_prd.md](../02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md) | `#get`, `RegularMeetingService#getMeeting`, `RegularMeetingVo` | 구현됨 | 4 |
 | F17-03 | 정기모임 생성 (호스트) | [F17-03_regular-meeting-creation_prd.md](../02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | `#create`, `RegularMeetingAddParam`, `truncateToHundred` 100원 floor | 구현됨 | 3 |
 | F17-04 | 정기모임 생명주기 (publish/close/cancel/reopen) | [F17-04_regular-meeting-lifecycle_prd.md](../02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md) | `RegularMeetingStatus`, `#publish/close/cancel/reopen`, `findByIdForUpdate` | 구현됨 | 5 |
-| F17-05 | 세션 관리 (add/bulk/replace/cancel) | [F17-05_regular-meeting-sessions_prd.md](../02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `#addSession,addSessionsBulk,replaceSession,cancelSession`, `RegularMeetingEventFactory` | 구현됨 | 6 |
+| F17-05 | 세션 관리 (add/generate/bulk/replace/cancel) | [F17-05_regular-meeting-sessions_prd.md](../02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `#addSession,generateSessions,addSessionsBulk,replaceSession,cancelSession`, `RegularMeetingEventFactory` | 구현됨 | 6 |
 | F17-06 | 고정형 등록·승인·대기열 (FIXED) | [F17-06_regular-meeting-enrollment_prd.md](../02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | `RegularMeetingEnrollmentService`, `RegularMeetingMemberStatus` | 구현됨 | 8 |
 | F17-07 | 고정형 결제 (WALLET / BANK_TRANSFER) | [F17-07_regular-meeting-payment_prd.md](../02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | `RegularMeetingPaymentService`, `RegularMeetingPayment.isHostDirect`, `active_member_id` 생성컬럼 | 구현됨 | 6 |
 | F17-08 | 환불 (pro-rata · 트리거별 · FAILED_REFUND) | [F17-08_regular-meeting-refund_prd.md](../02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | `RegularMeetingRefundCalculator`, `RegularMeetingRefundService`, `failed_refund.regular_meeting_id` | 구현됨 | 7 |
@@ -153,7 +153,7 @@
 
 ### 미발행 정기모임 상세·세션 비호스트 접근 차단 (F17-3)
 
-`GET /api/v1/regular-meetings/{id}` 및 `GET .../sessions`가 인증 사용자 누구에게나 DRAFT 상태 또는 발행 전 취소(status=CANCELED && publishedAt=null) 정기모임의 상세와 세션 목록을 노출하는 문제. 직접 링크(ID)를 알면 비호스트도 모임 주소·온라인 URL 등을 열람 가능했다. **수정**: 상태가 OPEN이 아닌 정기모임(미발행 DRAFT, 발행 전 취소 포함)은 호스트가 아닌 요청자에게 NOT_FOUND 응답. 재현 테스트 추가.
+`GET /api/v1/regular-meetings/{id}` 및 `GET .../sessions`가 인증 사용자 누구에게나 DRAFT 상태 또는 발행 전 취소(status=CANCELED && publishedAt=null) 정기모임의 상세와 세션 목록을 노출하는 문제. 직접 링크(ID)를 알면 비호스트도 모임 주소·온라인 URL 등을 열람 가능했다. **수정**: 한 번도 발행되지 않은 정기모임(DRAFT, 또는 `publishedAt=null`인 CANCELED)은 호스트가 아닌 요청자에게 NOT_FOUND 응답. 한 번 공개됐던 CLOSED/CANCELED 상세는 계속 읽을 수 있다. 재현 테스트 추가.
 
 이 원칙은 플랜 마켓(F08-03 getPlan 비공개 게이트)과 동일하다: 발행 전 콘텐츠는 작성자(호스트)만 열람 가능, 직접 링크로도 비호스트 접근 불가.
 
@@ -166,3 +166,54 @@
 ### 잔여 백로그 (비보안, 별도)
 
 호스트 생애주기 UI 도달불가(F17-1 기능 갭)·관리 라우트 딥링크 press-then-error(F17-2)·`/regular-meetings/my` 라우트 크래시(F17-4)는 별도 기능 트랙으로 이연.
+
+## 12. 2026-07-29 서버·Flutter 재실측 갱신
+
+실측 기준은 `community_api` HEAD `be38d128b80d`, `community_app` HEAD `cb21bce8ef08`이다.
+
+### 12.1 가격의 귀속 단위
+
+| 계약 | FIXED | VARIABLE |
+|---|---|---|
+| 본체 가격 | 코스 전체 가격, 100원 미만 절삭 | 서버가 0 강제 |
+| 세션 가격 | 요청값과 무관하게 0 강제 | 세션별 가격, null/0 무료, 양수는 100원 미만 절삭 |
+| 신청·결제 | 정기모임 등록/결제 | 일반 이벤트처럼 세션별 신청/결제 |
+| 유료 세션 환불 | 코스 정책 | 세션별 template, 누락 시 STANDARD |
+
+VARIABLE 세션은 가격을 100원 단위로 절삭한 결과가 양수일 때 `EventPrepayment(required=true, type=CASH)`을 만들고 결제기한은 양수 요청값 또는 24시간 기본을 쓴다. 1~99원 요청은 0원이 되어 무료 처리된다. 단건·bulk·`generate(count 1..26)`·replace가 같은 가격/환불 helper를 공유한다.
+
+### 12.2 썸네일 저장·표시
+
+- 정기모임 생성/수정은 호스트 소유, `COMPLETED`, `EVENT_THUMBNAIL` purpose의 bare key만 저장한다.
+- 만료 URL/외부 절대 URL은 저장값으로 채택하지 않는다.
+- 목록·상세·세션 생성 응답은 bare key를 표시용 presigned URL로 바꾸고 미완료/유실 파일은 null 처리한다.
+- 세션 Event는 정기모임 썸네일 키를 상속하지만 `RegularMeetingEventVo` 자체에는 썸네일 필드가 없다.
+- Flutter 목록·상세는 응답 URL을 표시할 수 있으나 생성·수정 화면에는 썸네일 업로드 입력이 아직 없다.
+
+### 12.3 Flutter authoring/운영 UX
+
+2026-07-10~12 앱 변경으로 다음이 실제 화면에 반영됐다.
+
+- FIXED/VARIABLE 선택 전에 등록·결제·환불·노쇼·정산 단위 차이를 안내한다.
+- FIXED 생성/수정은 날짜, 총 회차, 환불 기준, 노쇼 정책, 승인/선결제를 입력하고 결과 카드를 보여 준다.
+- `LocalDate`는 `yyyy-MM-dd`로 직렬화한다.
+- 세션 추가는 VARIABLE의 정원·참가비·환불 template·결제기한을 받고, cadence와 1..26 횟수로 자동생성할 수 있다.
+- 상세/목록은 타입별 신청 단위를 설명하고 유료 VARIABLE 세션 가격을 표시한다.
+
+### 12.4 새로 확인된 계약 Gap
+
+`features.js`의 전체 F17 Risk 후보 합계는 **43개**다. 이 재실측에서 직접 갱신한
+F17-03은 4개, F17-05는 6개이며 아래 표의 10개 행과 일치한다.
+
+| 우선순위 | 실제 소스 | 판단 |
+|---|---|---|
+| **P0** | 앱 category: `CLASS/STUDY/SPORTS/HOBBY/COOKING/OTHER`; 서버 `Category`: `BOARD_GAME/HIKING/COOKING/BOOK_CLUB/SPORTS/MUSIC/ART/LANGUAGE/TECH/SOCIAL/TRAVEL/PHOTOGRAPHY/FOOD/FITNESS/OTHER` | 기본값 `CLASS`부터 서버에 없어 생성이 역직렬화 단계에서 실패할 수 있다. 앱 옵션을 서버 enum 정본에 맞춰야 한다. |
+| P1 | 서버/Dart param은 `thumbnailUrl`을 지원하지만 생성·수정 UI가 값을 보내지 않음 | 안전한 썸네일 계약은 있으나 authoring 도달 불가. |
+| P1 | 서버 param은 주소·좌표·온라인 URL을 지원하지만 앱은 `locationType`만 선택 | 상세 장소가 비어 있는 초안이 만들어질 수 있다. |
+| P1 | 앱은 FIXED 음수 가격을 막지만 서버 `validateAddParam/validateModParam`에는 `price < 0` 가드가 없음 | 직접 API 요청으로 음수 코스 가격이 저장될 수 있어 서버 검증이 필요하다. |
+| P1 | VARIABLE 세션 1~99원은 100원 절삭 후 0원이 되지만 앱에 최소 유료 금액 안내가 없음 | 호스트가 유료 세션으로 오인할 수 있다. |
+| P1 | bulk/replace API는 있으나 앱 호스트 UI 없음 | 자동생성은 배선됐지만 임의 bulk/대체 운영은 직접 호출만 가능. |
+| P1 | 상세의 회차 카드가 읽기 전용이고 일반 이벤트 상세에 정기모임 회차 라벨이 없음 | `RegularMeetingDetailScreen` 카드에 `onTap`이 없고 `EventDetailScreen`이 `sequenceNo`/정기모임 컨텍스트를 렌더링하지 않는다. 회차별 운영·상세 진입이 끊겨 있다. |
+| P1 | 세션끼리 시간 겹침 검사 없음 | 동일 시각 중복 회차 가능. |
+| P1 | 모집 중 세션 추가 알림 발행·배선 없음 | 기존 참여자가 새 회차를 놓칠 수 있어 별도 알림 정책과 발행 경로가 필요하다. |
+| P2 | Flutter replace 요청이 전용 모델 대신 `RegularMeetingSessionAddParam`을 재사용 | 현재 JSON 필드는 호환되지만 서버 ReplaceParam이 분기되면 compile-time 계약 보호가 약하다. |

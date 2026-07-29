@@ -4,16 +4,16 @@
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-03_block-editor`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 >
-> 2026-07-08 현재 소스 갱신: 여행/플랜 에디터 후속이 반영됐다. 모바일 IME Enter는 블록 분할로 처리되고, URL 입력은 bookmark/link card 제안으로 이어지며, 체크리스트/시간표 업데이트와 controller 정리가 들어갔다. 앱은 course map 렌더링, system share, Kakao plan share를 지원하고, 서버는 공개 preview teaser(텍스트 3 + 이미지 1 + 시간표 1)와 작성자 선택 sample preview(최대 5개)를 내려준다. 발행 준비와 상세/공유 문서는 F08-05/F08-02/F08-10도 함께 확인한다.
+> 2026-07-29 현재 소스 갱신: 여행/플랜 에디터 후속이 반영됐다. 모바일 IME Enter는 블록 분할로 처리되고, URL 입력은 bookmark/link card 제안으로 이어지며, 체크리스트/시간표 업데이트와 controller 정리가 들어갔다. 앱은 course map 렌더링, system share, Kakao plan share를 지원하고, 서버는 공개 preview teaser(텍스트 3 + 이미지 1 + 시간표 1)와 작성자 선택 sample preview(최대 5개)를 내려준다. 발행 준비와 상세/공유 문서는 F08-05/F08-02/F08-10도 함께 확인한다.
 
 ## 1. 결론
 
-플랜의 본문을 트리 구조의 PlanBlock으로 관리한다. 텍스트/제목/이미지/장소/시간표/체크리스트 등 20종 블록을 추가·수정·삭제·복원할 수 있다. 모든 편집 작업은 `status == DRAFT`인 본인 플랜에서만 허용되며, soft delete + restore 패턴을 사용한다.
+플랜의 본문을 트리 구조의 PlanBlock으로 관리한다. 서버와 Flutter 렌더러는 known 블록 20종을 처리하지만, 현재 추가 picker는 목록 두 종류(`BULLETED_LIST`, `NUMBERED_LIST`)를 인라인 서식으로 단일화해 **18종만 직접 생성**한다. 레거시 목록 블록은 렌더·편집 호환을 유지한다. 모든 편집 작업은 `status == DRAFT`인 본인 플랜에서만 허용되며, soft delete + restore 패턴을 사용한다.
 
 AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 다음 capability가 추가되었다.
 
 - **AUTH-02 자동저장 경합 제거**: `DraftSaveController`의 generation token 워터마크로 out-of-order save 완료가 최신 편집을 덮어쓰지 않음. 에디터 전역 dirty/saving/saved/failed/offline 상태가 앱바에 노출되며, 실패 시 retry 재시도 흐름 존재.
-- **AUTH-03 블록 picker 고도화**: 카테고리·검색·최근 사용 섹션을 갖춘 `BlockTypeSheet`로 서버 20종 블록을 전수 노출. **8개 predefined authoring pattern** 삽입 가능(한 번에 복수 블록 트랜잭션-like 생성).
+- **AUTH-03 블록 picker 고도화**: 카테고리·검색·최근 사용 섹션을 갖춘 `BlockTypeSheet`가 직접 생성 가능한 18종을 노출한다. 검색은 블록과 패턴을 함께 찾고 exact/prefix/substring/keyword 순으로 정렬한다. **12개 predefined authoring pattern**(모임 8 + 여행 4)을 삽입할 수 있다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -61,7 +61,7 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
 
 ### 개요
 
-플랜의 본문을 트리 구조의 PlanBlock으로 관리한다. 텍스트/제목/이미지/장소/시간표/체크리스트 등 20종 블록을 추가·수정·삭제·복원할 수 있다. 모든 편집 작업은 `status == DRAFT`인 본인 플랜에서만 허용되며, soft delete + restore 패턴을 사용한다.
+서버 known 타입과 Flutter 렌더러는 20종을 다루며, picker 신규 생성은 인라인 목록으로 대체된 2종을 제외한 18종이다. 모든 편집 작업은 `status == DRAFT`인 본인 플랜에서만 허용되며, soft delete + restore 패턴을 사용한다.
 
 ### 엔드포인트 요약
 
@@ -81,10 +81,11 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
   `PARAGRAPH`, `HEADING_1`, `HEADING_2`, `HEADING_3`, `BULLETED_LIST`, `NUMBERED_LIST`, `TODO`, `TOGGLE`, `QUOTE`, `CALLOUT`, `DIVIDER`, `IMAGE`, `VIDEO`, `TIMETABLE`, `LOCATION`, `FILE`, `CODE`, `TABLE`, `EMBED`, `BOOKMARK`
 - **PlanBlock** 핵심 필드 (`model/PlanBlock.java`):
   - `id`, `planId`, `parentBlockId: Long?`
-  - `blockType: PlanBlockType (NOT NULL, EnumType.STRING, 30자)`
+  - `blockType: String (NOT NULL, 30자)` — known 20종은 정상 저장, 미지 타입은 `rawEnvelope`에 원본을 보존하는 버전 내성 계약
   - `content (TEXT)`, `properties (JSON)`
   - `sortOrder: int NOT NULL`, `depth: int NOT NULL`
   - `deletedAt: LocalDateTime?` — `@SQLRestriction("deleted_at IS NULL")`
+  - `schemaVersion`, `rawEnvelope`
   - 한도 상수: `MAX_BLOCK_COUNT = 200`, `MAX_BLOCK_DEPTH = 3`
 - **에러 코드**:
   - 1500010 PLAN_BLOCK_NOT_FOUND
@@ -95,13 +96,13 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
   - 1500018 PLAN_NOT_EDITABLE
   - 1500019 PLAN_BLOCK_NOT_DELETED
 
-> **AUTH-01 정정(블록 depth 쓰기 검증)**: `PlanBlockService.addBlock`/`updateBlock`은 `validateBlockDepth`를 **호출하지 않는다**. depth 검증은 `move` 경로에서만 실행된다(`PlanBlockService.java:72,90`). 클라이언트가 보낸 `param.depth`는 쓰기 경로에서 서버 신뢰 경계 없이 저장된다. 단, `PlanPublishReadinessService.evaluateBlockDepthValid`가 발행 전에 depth > 3 블록을 BLOCKER로 차단하므로(`PlanPublishReadinessService.java:165`), 비정상 depth를 가진 플랜은 발행이 거부된다. (POST/PATCH 쓰기 시점 depth 검증은 미구현 — Gap 참고.)
+> **2026-07-29 정정(블록 depth 신뢰 경계)**: add 시 depth는 클라이언트 값을 저장하지 않고 `parent.depth + 1`로 서버가 산출한 뒤 최대 깊이를 검증한다. move도 대상 parent 기준으로 재산출한다. 과거의 “POST/PATCH가 임의 depth를 신뢰한다” Gap은 현행 소스에 적용되지 않는다.
 
 ### 의존 단위 / 외부 시스템
 
 - **F08-02**: 화면 구성 시 `PlanVo.isCreatorOwned`로 편집 가능 여부 1차 판단
 - **F08-04**: 같은 PlanBlockController의 `/reorder`, `/move`
-- **File (Unit 미지정 / 횡단)**: 이미지/파일 블록 properties에는 S3 file_key가 들어가지만, 본 단위 API는 properties JSON 문자열을 그대로 저장만 하고 검증은 하지 않음
+- **File (횡단)**: IMAGE/VIDEO/FILE은 `properties.fileId`를 사용한다. 서버는 존재·작성자 소유·`COMPLETED`·`PLAN_BLOCK` purpose를 검증하고 `plan_block_file`에 등록한 뒤, 읽기 권한 게이트 통과 후 표시용 미디어 projection을 붙인다.
 - 외부 PG/FCM 호출 없음
 
 ## 5. 프론트 계약
@@ -211,18 +212,26 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
   - BULLETED_LIST/NUMBERED_LIST → `showListBlockEditDialog`
   - CALLOUT → `showCalloutBlockEditDialog`
   - EMBED/BOOKMARK → `showLinkBlockEditDialog`
-  - 그 외(VIDEO/FILE/TABLE/DIVIDER) → 폴백 `_legacyTextEdit` (TextField only)
+  - VIDEO → `showVideoBlockEditSheet`
+  - FILE → `showFileBlockEditSheet`
+  - TABLE → `showTableBlockEditSheet`
+  - TOGGLE → `showToggleBlockEditSheet`
+  - DIVIDER는 내용 편집 없이 문서 구분선으로 렌더링
 - **+ 블록 추가 시 디폴트**: depth=0, parent 없음, content="" (시트는 sortOrder 안 보내서 끝에 추가)
-- **BlockTypeSheet 구조 (AUTH-03)**: `DraggableScrollableSheet(initialChildSize: 0.7)`. 섹션 순서: 검색바 → 최근 사용(recents) → 패턴(`_PatternSection`) → 카테고리별 블록 목록. `authoringUsageMetadataProvider`로 최근 사용 블록·패턴 id를 추적 (`block_type_sheet.dart:54`)
-- **8개 predefined authoring pattern** (`authoring_pattern.dart:32`):
+- **BlockTypeSheet 구조 (AUTH-03)**: `DraggableScrollableSheet(initialChildSize: 0.7)`. 섹션 순서: 검색바 → 최근 사용(recents) → 패턴(`_PatternSection`) → 카테고리별 블록 목록. 처음에는 최근 사용 우선 추천 5개 패턴을 보이고 “모든 패턴”으로 12개를 펼친다. 검색 결과는 블록과 패턴을 별도 섹션으로 노출하며 exact/prefix/substring/keyword 점수로 정렬한다. `authoringUsageMetadataProvider`로 최근 사용 블록·패턴 id를 추적한다.
+- **12개 predefined authoring pattern** (`authoring_pattern.dart`):
   1. `meeting_intro` — 모임 소개 (HEADING_2 × 1 + PARAGRAPH × 2)
-  2. `target_audience` — 참가 대상 (HEADING_2 × 1 + BULLETED_LIST × 3)
+  2. `target_audience` — 참가 대상 (HEADING_2 × 1 + 인라인 bullet `PARAGRAPH` × 3)
   3. `preparations` — 준비물 (HEADING_2 × 1 + TODO × 3)
   4. `timetable` — 타임테이블 (HEADING_2 × 1 + TIMETABLE × 1)
   5. `location_guide` — 장소 안내 (HEADING_2 × 1 + LOCATION × 1 + PARAGRAPH × 1)
   6. `host_intro` — 진행자 소개 (HEADING_2 × 1 + PARAGRAPH × 1)
-  7. `refund_notice` — 환불/주의사항 (HEADING_2 × 1 + CALLOUT × 1 + BULLETED_LIST × 1)
+  7. `refund_notice` — 환불/주의사항 (HEADING_2 × 1 + CALLOUT × 1 + 인라인 bullet `PARAGRAPH` × 1)
   8. `pre_apply_checklist` — 신청 전 체크리스트 (HEADING_2 × 1 + TODO × 3)
+  9. `travel_overview` — 여행 개요 (HEADING_1 + PARAGRAPH + canonical TABLE)
+  10. `travel_day_section` — Day 일정 (HEADING_2 + TIMETABLE)
+  11. `travel_spot` — 스팟 소개 (HEADING_3 + LOCATION + PARAGRAPH + CALLOUT)
+  12. `travel_packing` — 준비물 체크 (HEADING_2 + TODO × 3)
   - 모든 블록은 depth=0(최상위). 클라이언트 전용 predefined 상수 — 서버 테이블 없음.
 - **권한 가드**: 화면 진입 시 `plan.isCreatorOwned == false`면 즉시 에러 화면 표시 (서버 호출 없이)
 - **재정렬 액션**: 별도 화면(F08-04)으로 push, 본 화면 안에서는 드래그 지원 안 함
@@ -257,10 +266,10 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 확정됨(소스 대조) | `community_api/.../plan/constants/PlanBlockType.java` | 서버 20종 블록 타입 `PARAGRAPH`, `HEADING_1`, `HEADING_2`, `HEADING_3`, `BULLETED_LIST`, `NUMBERED_LIST`, `TODO`, `TOGGLE`, `QUOTE`, `CALLOUT`, `DIVIDER`, `IMAGE`, `VIDEO`, `TIMETABLE`, `LOCATION`, `FILE`, `CODE`, `TABLE`, `EMBED`, `BOOKMARK` — Flutter `plan_block_type.dart` 및 `authoring_pattern.dart`가 동일 값 사용 | 완료 — 불일치 없음 |
+| 확정됨(소스 대조) | `PlanBlockType.java`, `plan_block_type.dart`, `block_category.dart` | 서버·Flutter known 타입은 20종. picker는 `BULLETED_LIST`/`NUMBERED_LIST`를 인라인 목록으로 단일화해 18종만 신규 생성하고 레거시 2종은 렌더·편집만 유지 | 20종 처리와 18종 신규 노출을 구분해 회귀 검증 |
 | 확정됨(소스 대조) | `block_editor_screen.dart` 마크다운 단축키 | `[] ` → TODO — 실제 구현 존재 (`markdown_shortcuts.dart` 참조) | 완료 |
 | 확정됨(소스 대조) | `block_editor_screen.dart:_openTypedEditor` | TODO → `showTodoBlockEditDialog` 매핑 실제 존재 | 완료 |
-| Gap(미해소) | `PlanBlockService.java:72,90` | **addBlock/updateBlock depth 쓰기 검증 부재**: 클라이언트가 임의 depth를 전송해도 서버가 막지 않음. move 경로에서만 `validateBlockDepth` 호출. 단, 발행 전 readiness가 BLOCKER로 차단 | 선택: addBlock/updateBlock 진입부에 `validateBlockDepth` 추가 (DB 신뢰 경계 강화) |
+| 해소(2026-07-29 재실측) | `PlanBlockService#addBlock`, `validateParentBlock`, `validateBlockDepth` | add depth는 parent에서 서버 산출하며 클라이언트 임의 값을 저장하지 않는다. move도 대상 parent 기준으로 검증한다. | 임의 depth 회귀 테스트 유지 |
 | Gap(미해소) | `authoring_pattern.dart:32` | **패턴 삽입 원자성 부재**: 복수 블록 순차 POST 중 중간 실패 시 부분 삽입 상태 발생. 서버에 bulk-insert 트랜잭션 endpoint 없음 | 선택: 부분 삽입된 블록 자동 롤백(삭제) 로직 추가 또는 사용자 안내 개선 |
 | Gap(미해소) | `authoring_pattern.dart:32` | **패턴은 클라이언트 전용 predefined 상수** — 사용자 정의 패턴 저장 서버 테이블 없음 | 후속 슬라이스에서 user-saved template 서버 설계 필요 시 신규 F 추가 |
 | Decision Needed | `block_editor_screen.dart` | TODO 블록 편집 다이얼로그에서 항목 추가(TODO 자체에 children 추가)는 별도 시퀀스 — 현재 `showTodoBlockEditDialog`의 children 추가 흐름이 어떤 방식으로 처리되는지 정확한 구현 확인 필요 | 다음 QA 착수 전에 `todo_block_edit_dialog.dart` 소스 재확인 |
@@ -285,3 +294,55 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
+
+## 11. 2026-07-29 편집·미디어·전환 계약
+
+### 11.1 mutation 직렬화와 revision
+
+- `PlanRepository`는 GET/POST/PATCH/DELETE/restore/reorder/move 응답의 `X-Plan-Block-Tree-Revision`을 읽는다.
+- `PlanBlocksNotifier`는 mutation을 하나의 직렬 queue로 실행해 같은 앱 안의 self-409를 막는다.
+- 요청은 신뢰 중인 revision을 보내고, 409 `CONCURRENT_MODIFICATION`이면 최신 트리/revision을 reconcile한 뒤 부작용이 rollback된 mutation을 한 번만 재시도한다.
+- revision이 건너뛴 경우 expected/server 값을 로그하고 burst당 제한된 경고를 낸다. queue가 idle이 되면 화면 트리를 다시 불러온다.
+- silent autosave 충돌 reconcile은 편집 중인 로컬 텍스트를 provider 값으로 덮지 않는다.
+
+### 11.2 읽기 모드·발행으로 나가기 전 barrier
+
+에디터의 후속 화면 전환은 다음을 모두 통과해야 한다.
+
+1. 전환 잠금 획득
+2. 활성 편집 세션 즉시 flush
+3. 호출 시점까지의 mutation queue 완료 대기
+4. failed block, operation failure, pending save가 없는지 검사
+5. 트리가 준비됐는지 검사
+6. 성공 후에만 읽기 모드/발행 화면 present
+
+실패 유형은 `flushFailed`, `saveFailed`, `operationFailed`, `savePending`, `treeNotReady` 등으로 나뉘며 전환을 중단하고 복구 동선을 유지한다. route leave도 dirty/failed 상태를 경고한다.
+
+### 11.3 파일 업로드와 미디어 수명
+
+- 최대 10MiB를 앱과 서버가 모두 검사한다.
+- `PLAN_BLOCK` MIME: JPEG/PNG/WebP, MP4/WebM/QuickTime, PDF.
+- 앱은 presign → S3 PUT → complete 순서로 처리하고 PUT/complete 실패 시 abort한다.
+- IMAGE/VIDEO/FILE properties는 `fileId`와 `fileKey`를 보존하고, 서버는 `fileId`를 4단 검증해 관계를 등록한다.
+- 블록 조회는 전체 본문 권한을 먼저 확인한 뒤 `media[].presignedUrl`을 붙인다.
+- 삭제된 블록 미디어는 Undo/복원을 위해 30일 보존하고, 복사된 플랜의 미디어 참조도 새 블록에 등록한다.
+- 표시 URL 만료/실패 시 Flutter `MediaRefreshGuard`가 provider를 한 번 invalidate해 새 URL을 요청한다.
+
+### 11.4 preview sample authoring
+
+블록의 `properties.previewSample=true` 토글은 작성자가 판매 preview에 노출할 블록을 지정한다. 서버가 known/non-envelope 블록만 문서 순서대로 최대 5개로 제한하며, 지정이 없으면 자동 티저로 폴백한다.
+
+### 11.5 committed HEAD와 현재 미커밋 worktree
+
+committed HEAD에서 `planBlockTextStyle`의 본문은 14px이고 기존 제목 여백을 쓴다. 현재 worktree는 본문 16px/line-height 1.65, 제목 위 여백 확대, 읽기 표면 최대 폭 680과 `reading` scope를 추가했다. 콘텐츠 역할별 tone, picker category/pattern icon·접근성, 검색 순위, 상태 badge 공통화도 같은 미커밋 작업본에 포함된다. 관련 tests/goldens는 변경됐지만 아직 제품 정본으로 간주하지 않는다.
+
+### 11.6 미커밋 TABLE 호환·쓰기 계약
+
+현재 API/Flutter worktree를 재실측한 결과 TABLE은 다음 경계로 강화되는 중이다.
+
+- 서버 신규/구조 변경 쓰기의 canonical 형식은 `properties.rows: List<List<String>>`다. rows와 각 row는 비어 있지 않고 직사각형이어야 하며 모든 셀은 문자열이다. `header`는 생략하거나 boolean이어야 한다. 미지 sibling key는 허용하고 전체 known payload 64KB 상한을 공유한다.
+- add는 TABLE이면 항상 검증한다. update는 요청이 properties를 공급하거나 blockType이 TABLE로 바뀔 때 effective properties를 검증한다. 기존 legacy TABLE의 content-only 수정은 저장된 비정규 properties 때문에 막지 않는다.
+- Flutter는 canonical rows와 제한된 legacy `properties.columns + content JSON object list`를 dual-read한다. 안전한 legacy는 편집 저장 때 rows로 정규화하고 `columns`를 제거하면서 미지 sibling key를 보존한다.
+- legacy row에 선언되지 않은 key가 있거나 중첩 값·깨진 JSON이면 데이터 유실을 막기 위해 저장을 차단한다. renderer도 raw JSON을 본문으로 재생하지 않고 “표시할 수 없음” 카드를 보여 준다.
+- 작은 표는 가용 폭을 채우고, 열당 최소 96px보다 넓어지면 표 내부만 가로 스크롤한다.
+- `docs/sql/test_queries.sql`에는 canonical/legacy/broken TABLE 재고를 raw content 노출 없이 집계하는 읽기 전용 쿼리가 추가돼 있다. 자동 데이터 migration은 없다.

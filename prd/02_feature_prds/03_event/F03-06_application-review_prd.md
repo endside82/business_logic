@@ -83,7 +83,7 @@
   |---|---|---|
   | `PENDING` | 호스트 심사 대기 | active |
   | `APPROVED` | 승인 완료 (정원 점유) | active |
-  | `APPROVED_PENDING_PAYMENT` | 승인됐으나 선입금 결제 대기 | active, capacity 미점유 |
+  | `APPROVED_PENDING_PAYMENT` | 승인됐으나 선입금 결제 대기 | active. `currentCapacity`·attendance는 미점유지만 `partySize`는 논리 capacity hold |
   | `PAYMENT_EXPIRED` | 결제 기한 만료 | 터미널 |
   | `REJECTED` | 호스트 거절 | 터미널 |
   | `CANCELED` | 정상 취소 (L 한 개 — `CANCELLED` 아님) | 터미널 |

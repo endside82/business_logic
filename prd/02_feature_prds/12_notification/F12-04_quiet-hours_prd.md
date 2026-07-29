@@ -1,8 +1,10 @@
 # F12-04. 방해금지 시간 설정 PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/12_notification/F12-04_quiet-hours -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/12_notification/F12-04_quiet-hours -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/12_notification/F12-04_quiet-hours`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+>
+> 2026-07-29 현재 소스 갱신: `PushService#isQuietHours`가 `daysOfWeek`를 실제 발송 차단에 적용한다. 같은 날 구간은 현재 요일, 자정을 넘는 구간의 새벽 부분은 방해금지가 시작된 전날 요일을 기준으로 판단하며, 시작·종료가 같으면 선택한 요일 전체를 방해금지로 처리한다. `PushServiceTest`의 요일 불일치 발송 및 금요일→토요일 자정 넘김 차단 테스트로 이 분기를 고정한다.
 
 ## 1. 결론
 
@@ -62,7 +64,7 @@
 ### 도메인 모델 / Enum (이 기능 관련)
 
 ### `QuietHoursSetting` 엔티티 (`quiet_hours_setting` 테이블)
-- `userId: long` (1:1, unique 가정)
+- `userId: long` (JPA `unique=true` + canonical V1의 `uk_quiet_hours_user`로 1:1 강제)
 - `enabled: boolean`
 - `startTime: LocalTime`
 - `endTime: LocalTime`
@@ -73,11 +75,14 @@
 
 ### 방해금지 매칭 로직 (`PushService#isQuietHours`)
 - 한국 시간대(`ZoneId.of("Asia/Seoul")`)의 현재 LocalTime을 기준
-- `enabled == true`이고 시간대가 매칭되면 push skip
-- 자정 넘김 처리:
-  - `start.isBefore(end)` 케이스 (예: 09:00~22:00): `now >= start && now < end`
-  - 그 외 케이스 (예: 22:00~07:00): `now >= start || now < end`
-- **현재 구현은 `daysOfWeek` 필터를 PushService 내부에서 적용하지 않음** (시간대 비교만 수행). 요일 필드는 저장은 되지만 발송 차단에 사용되는지는 서비스 레벨에서 미확인 — Step 1 코드 기준 시간 매칭만 사용
+- `enabled == true`이고 선택 요일·시간대가 모두 매칭되면 첫 발송 시도에서 push를 skip
+- `start == end`: 현재 요일이 `daysOfWeek`에 포함되면 그 요일 전체를 방해금지로 처리
+- 같은 날 구간(`start < end`, 예: 09:00~22:00): 현재 요일이 선택되어 있고 `now >= start && now < end`일 때 차단
+- 자정 넘김 구간(`start > end`, 예: 금요일 22:00~토요일 08:00):
+  - 시작 시각 이후 구간은 현재 요일을 기준으로 차단
+  - 종료 시각 전 새벽 구간은 `now.minusDays(1)`의 요일, 즉 시작 요일을 기준으로 차단
+- `QuietHoursSetting#setDaysOfWeekList`는 null/빈 목록을 월~일 전체(`1..7`)로 정규화한다. 서버는 그 밖의 정수 범위를 검증하지 않는다.
+- 소스 검증: `PushServiceTest#sendPush_quietHoursDifferentDay_sendsPush`, `PushServiceTest#sendPush_overnightQuietHoursUsesStartDay_skipsPush`
 
 ### 의존 단위 / 외부 시스템
 
@@ -102,15 +107,16 @@
 ### 방해금지 시간 (`quiet_hours_screen.dart`)
 - **사용자가 보는 것**:
   - `CommunityAppBar(title: '방해금지 시간', showBackButton: true)`
-  - 본문 (`AppSpacing.space5` padding, scrollable):
+  - 본문 (좌·우·상단 `AppSpacing.screenPadding`, 하단 `AppSpacing.space8`, scrollable):
+    - `QuietHoursOutcomeCard`: 요일 적용, 인박스 보존, 차단된 push 미재발송 안내
     - 상단: `_enabled` Switch + 좌측 "방해금지 모드" + "활성화됨"/"비활성화됨" caption
     - 활성화 시 요약 카드: `Icons.schedule` + "HH:mm ~ HH:mm · N일 적용" (primary50 배경, primary700 텍스트)
     - 안내 박스(gray50): 활성화 시 "설정된 시간대에는 푸시 알림이 발송되지 않습니다.\n앱 내 알림은 정상 수신됩니다.", 비활성 시 "방해금지 모드가 꺼져 있습니다..."
     - `AnimatedOpacity`(0.4 dim) + `IgnorePointer` (비활성 시 입력 차단):
       - 시작/종료 시간 picker 2개 (라벨 "시작 시간" / "종료 시간", 박스 안에 큰 24px Pretendard 700 글자 `HH : MM`)
       - 안내 caption "자정을 넘기는 설정이 가능합니다 (예: 22:00 ~ 07:00)"
-      - "적용 요일" 라벨 + 7개 동그란 칩 (월/화/수/목/금/토/일, 40x40, 선택 시 primary500 배경 흰 텍스트, 미선택 시 transparent + borderDefault)
-      - 안내 caption "선택한 요일에만 방해금지 모드가 적용됩니다"
+      - "적용 요일" 라벨 + 7개 동그란 칩 (월/화/수/목/금/토/일, 38x38, 선택 시 primary500 배경 흰 텍스트, 미선택 시 transparent + borderDefault)
+      - 선택이 있으면 "선택한 요일에만 방해금지 모드가 적용됩니다", 0개면 error 색 안내
   - 하단 `bottomNavigationBar`: `AppButton(label: '저장', variant: ButtonVariant.primary, fullWidth: true, loading: _isLoading)`
 - **사용자가 할 수 있는 액션**:
   - 방해금지 모드 Switch ON/OFF (토글만 — 저장 시점은 [저장] 버튼)
@@ -118,7 +124,7 @@
   - 요일 칩 탭 ▶ `_selectedDays` Set 토글
   - "저장" 탭 ▶ `_save()` ▶ `PUT /api/v1/notifications/settings/quiet-hours` → 성공 시 토스트 + `context.pop`
 - **상태 분기**:
-  - 진입 직후 로딩(`!_isInitialized`): `CircularProgressIndicator()`
+  - 진입 직후 로딩(`!_isInitialized`): `AppLoadingState(label: '방해금지 시간을 불러오는 중입니다')`
   - `_isLoading=true`: 저장 버튼 loading 상태 (다른 입력은 막지 않음)
   - 저장 성공: `AppToast.show('저장되었습니다')` + `context.pop`
   - 저장 실패: `AppToast.show('서버 오류가 발생했습니다', type: ToastType.error)` (현재 화면 유지, pop 안 함)
@@ -144,12 +150,12 @@
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
-| S1 | 야간 방해금지 22:00~07:00, 평일만 적용 (Happy Path) | 처음 방해금지 화면 진입(서버 미저장) | 알림 설정 화면 복귀. 평일 22:00~07:00에 발생하는 푸시는 차단(요일 적용은 서버 구현 한계 참고). 인박스는 정상 적재 |
+| S1 | 야간 방해금지 22:00~07:00, 평일만 적용 (Happy Path) | 처음 방해금지 화면 진입(서버 미저장) | 알림 설정 화면 복귀. 월~금에 시작하는 22:00~다음 날 07:00 구간의 푸시는 차단되고 인박스는 정상 적재 |
 | S2 | 방해금지 OFF로 일시 해제 | 야간 방해금지 활성화 상태 | 모든 시간대 푸시 정상 발송 |
 | S3 | 자정 넘김 시간대 정상 동작 확인 (방해금지 시간대 수신) | 22:00~07:00 방해금지 활성화 사용자, 새벽 02:00에 다른 사용자가 채팅 발송 | 야간 푸시 차단, 인박스 데이터는 보존 |
 | S4 | 저장 실패 (네트워크 끊김) | 지하철 사용자 | 서버 미반영, 클라 입력 보존 |
 | S5 | 권한 카테고리(F12-03) OFF + 방해금지 모두 적용 | F12-03에서 PROMOTION pushEnabled=false, F12-04에서 22:00~07:00 ON | PROMOTION/EVENT_REMINDER 둘 다 인박스에 있고 푸시는 미발송. 두 차단은 독립적으로 작동 |
-| S6 | 시간/요일 default + 진입 후 즉시 [저장] (validation 부재) | 호기심 사용자 | 모든 요일 22:00~07:00 방해금지. 클라 validation 없으므로 0개 요일이어도 저장 가능 (의미상 비활성과 동등) |
+| S6 | ON 상태에서 요일을 모두 해제하고 저장 시도 | 호기심 사용자 | Flutter `_save()`가 안내 토스트 후 요청을 보내지 않는다. API를 직접 empty days로 호출해도 서버 entity setter가 1~7(전 요일)로 정규화한다. |
 
 ## 7. 정합성 판단
 
@@ -164,16 +170,18 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:82 | - **현재 구현은 `daysOfWeek` 필터를 PushService 내부에서 적용하지 않음** (시간대 비교만 수행). 요일 필드는 저장은 되지만 발송 차단에 사용되는지는 서비스 레벨에서 미확인 — Step 1 코드 기준 시간 매칭만 사용 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소 | `PushService.java`, `PushServiceTest.java` | 과거 후보였던 요일 미적용은 해소됐다. 요일 불일치 시 발송하고 자정 넘김은 시작 요일 기준으로 다음 날 새벽까지 차단한다. | 회귀 테스트 유지 |
+| Risk | `QuietHoursParam` / `setDaysOfWeekList` | 서버는 요일 정수 범위를 검증하지 않고 null/empty를 전 요일로 바꾼다. 앱은 ON+0요일 저장을 막지만 직접 API의 0·8 같은 값은 저장 가능하다. | service에서 1~7·중복 여부를 검증할지 결정 |
+| Gap | `quiet_hours_screen.dart` AppBar | 현재 도움말 버튼이 본 기능이 아닌 `guideId: 'F15-01'`을 사용한다. | F12-04 가이드로 교정하거나 의도된 공용 가이드인지 확인 |
 
 ## 9. 수용 기준
 
-- **AC-01. 야간 방해금지 22:00~07:00, 평일만 적용 (Happy Path)**: Given 처음 방해금지 화면 진입(서버 미저장) When 사용자가 해당 흐름을 실행하면 Then 알림 설정 화면 복귀. 평일 22:00~07:00에 발생하는 푸시는 차단(요일 적용은 서버 구현 한계 참고). 인박스는 정상 적재
+- **AC-01. 야간 방해금지 22:00~07:00, 평일만 적용 (Happy Path)**: Given 처음 방해금지 화면 진입(서버 미저장) When 사용자가 월~금과 22:00~07:00을 저장하면 Then 월~금에 시작하는 야간 구간의 푸시는 다음 날 07:00 전까지 차단되고 인박스는 정상 적재
 - **AC-02. 방해금지 OFF로 일시 해제**: Given 야간 방해금지 활성화 상태 When 사용자가 해당 흐름을 실행하면 Then 모든 시간대 푸시 정상 발송
 - **AC-03. 자정 넘김 시간대 정상 동작 확인 (방해금지 시간대 수신)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 야간 푸시 차단, 인박스 데이터는 보존
 - **AC-04. 저장 실패 (네트워크 끊김)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 미반영, 클라 입력 보존
 - **AC-05. 권한 카테고리(F12-03) OFF + 방해금지 모두 적용**: Given F12-03에서 PROMOTION pushEnabled=false, F12-04에서 22:00~07:00 ON When 사용자가 해당 흐름을 실행하면 Then PROMOTION/EVENT_REMINDER 둘 다 인박스에 있고 푸시는 미발송. 두 차단은 독립적으로 작동
-- **AC-06. 시간/요일 default + 진입 후 즉시 [저장] (validation 부재)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 모든 요일 22:00~07:00 방해금지. 클라 validation 없으므로 0개 요일이어도 저장 가능 (의미상 비활성과 동등)
+- **AC-06. ON 상태 0요일 저장 차단/정규화**: Given 방해금지가 ON이고 선택 요일이 0개일 때 When 앱에서 저장하면 Then 토스트 후 API를 호출하지 않는다. 직접 API로 empty를 보내면 서버는 전 요일(1~7)로 저장한다
 
 ## 10. 미결정 / 후속
 

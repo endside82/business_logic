@@ -19,8 +19,8 @@
         </div>
         <h1>F03-16. 이벤트 버스대절</h1>
         <p class="lede">
-          이동수단이 "버스"인 이벤트에서 호스트가 버스를 추가하고 좌석을 운영하는 단위. 차량 레이아웃 카탈로그를
-          기반으로 좌석 배치를 만들고, 운영 방식에 따라 자유석, 호스트 지정, 선착순 배정을 분기한다.
+          서버에서 호스트가 버스를 추가하고 좌석을 지정하는 단위. 세 가지 배정 enum은 존재하지만
+          FIRST_COME 자동 배정과 실제 좌석 swap·unassign은 구현되지 않았고 Flutter 운영 화면도 없다.
         </p>
       </header>
 
@@ -28,13 +28,20 @@
         <div class="metrics">
           <div class="metric"><div class="label">전제 방식</div><div class="value">버스</div></div>
           <div class="metric"><div class="label">최대 버스</div><div class="value">3대</div></div>
-          <div class="metric"><div class="label">배정 방식</div><div class="value">3</div><div class="hint">자유석 · 호스트 지정 · 선착순 자율 선택</div></div>
+          <div class="metric"><div class="label">서버 API</div><div class="value">4개</div><div class="hint">목록·좌석·추가·좌석 지정</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 좌석을 단순 목록이 아니라 운영 상태로 관리한다</span>
           <p>버스 대절은 참석자 수만 아는 것으로 충분하지 않다. 좌석이 있는 차량인지, 호스트가 고정 배정하는지,
             참가자가 직접 바꿀 수 있는지, 한 사용자가 두 버스에 중복 배정되지 않는지가 모두 중요하다.</p>
+        </div>
+        <div class="callout danger">
+          <span class="label">현재 구현 경계</span>
+          <p>FIRST_COME도 빈 좌석을 복사할 뿐 자동 배정하지 않는다. SKIP LOCKED 쿼리는 없고,
+            좌석 PUT은 target의 사용자를 덮어쓸 뿐 기존 좌석을 비우거나 두 좌석을 맞바꾸지 않는다.
+            add/assign은 event status를 검사하지 않아 CLOSED/CANCELED에서도 변경 가능하다.
+            81~82 알림은 enum만 있으며 Flutter 버스 기능은 없다.</p>
         </div>
       </section>
 
@@ -48,7 +55,7 @@ flowchart TD
     C --> D{"좌석 배정 방식"}
     D -->|"자유석"| E["좌석 지정 없음<br/>인원 카운트만"]
     D -->|"호스트 지정"| F["호스트가 좌석 지정"]
-    D -->|"선착순 자율 선택"| G["참가 순서로 자동 배정"]
+    D -->|"FIRST_COME"| G["빈 좌석표 생성<br/>현재 자동 배정 없음"]
     F --> H["자리 교체 허용 여부 검사"]
     G --> I["동일 사용자 중복 좌석 방지"]
           </div>
@@ -60,15 +67,15 @@ flowchart TD
         <div class="cards">
           <article class="card">
             <div class="eyebrow">버스 추가</div>
-            <h3>28인승 레이아웃으로 버스 생성</h3>
-            <p>호스트가 차량 레이아웃을 고르면 버스와 좌석이 생성된다. 선착순 자율 선택이면 발행 후 승인 참가자를
-              순서대로 배정할 수 있다.</p>
+            <h3>레이아웃으로 버스 생성</h3>
+            <p>호스트가 vehicleLayoutId를 보내면 선택 가능한 좌석을 복사한다. 기본 28인승 seed는 없고
+              FIRST_COME도 승인 참가자를 자동 배정하지 않는다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">호스트 지정</div>
             <h3>좌석을 직접 배정</h3>
-            <p>호스트 지정 방식에서는 호스트가 참가자를 특정 좌석에 배정한다. 자리 교체를 막아 두면 참가자는
-              자기 좌석을 바꿀 수 없다.</p>
+            <p>호스트는 특정 좌석의 userId를 지정한다. 현재 API는 lockedByHost를 검사하지 않고,
+              이미 좌석이 있는 사용자의 이동은 unique 제약으로 실패할 수 있다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">자유석</div>
@@ -88,21 +95,22 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">동시성</div>
             <h3>한 사용자를 두 버스에 동시에 배정</h3>
-            <p>한 트랜잭션만 성공하고 나머지는 중복 좌석 오류로 실패해야 한다. 당일 탑승 명단의 이중 배정을 막는다.</p>
+            <p>DB unique가 중복을 막고 event lock이 같은 이벤트의 write를 직렬화한다. 다만 오류는 전용 코드가 아닌
+              일반 INVALID_REQUEST로 바뀌며 seat lock/SKIP LOCKED는 없다.</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>사용자·호스트가 할 수 있는 동작</h2>
+        <h2>서버 동작과 현재 제품 노출</h2>
         <div class="table-wrap">
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>버스 목록 보기</td><td>이벤트 참여자</td><td>이 이벤트에 편성된 버스 목록을 확인한다.</td></tr>
-              <tr><td>좌석 배치 보기</td><td>이벤트 참여자</td><td>선택한 버스의 좌석 배치를 확인한다.</td></tr>
-              <tr><td>버스 추가</td><td>호스트</td><td>차량 레이아웃을 골라 버스를 편성한다(최대 3대).</td></tr>
-              <tr><td>좌석 배정·변경</td><td>호스트·참가자</td><td>특정 좌석에 사람을 배정하거나 바꾼다(운영 방식에 따라 권한이 달라짐).</td></tr>
+              <tr><td>버스 목록 GET</td><td>인증 사용자</td><td>서비스 수준 event·역할 가드 없이 조회. Flutter 호출부 없음.</td></tr>
+              <tr><td>좌석 GET</td><td>Host/CoHost 또는 ATTENDING/WAITING</td><td>일반 사용자는 타인 userId가 마스킹됨. Flutter 호출부 없음.</td></tr>
+              <tr><td>버스 추가</td><td>Host/CoHost</td><td>BUS mode, 최대 3대. event status와 layout active를 명시 검증하지 않음.</td></tr>
+              <tr><td>좌석 user 지정</td><td>Host/CoHost 또는 제한적 self</td><td>명시적 unassign·진짜 swap endpoint가 아님.</td></tr>
             </tbody>
           </table>
         </div>
@@ -117,6 +125,9 @@ flowchart TD
             <li><strong>자유석 방식은 좌석 배치가 없다.</strong> 화면이 빈 좌석표를 오류로 해석하면 안 된다.</li>
             <li><strong>한 참가자는 한 이벤트에서 한 좌석만 가진다.</strong> 여러 버스가 있어도 사용자 중복 배정을 막는다.</li>
             <li><strong>이동수단 방식이 "버스"가 아니면 전체 기능이 닫힌다.</strong> 하위 기능은 F03-14의 이동수단 방식을 따른다.</li>
+            <li><strong>목록 GET은 예외다.</strong> 현재 서비스는 mode나 event 존재·역할을 검사하지 않는다.</li>
+            <li><strong>자기 좌석 변경 가드가 부족하다.</strong> 참석 자격·assignment mode·lockedByHost를 검사하지 않는다.</li>
+            <li><strong>SELF_SWAP 테스트도 실제 swap을 보장하지 않는다.</strong> 타인의 target 좌석을 본인으로 덮어쓰는 현재 동작을 성공으로 고정할 뿐 두 좌석 교환은 검증하지 않는다.</li>
           </ul>
         </div>
       </section>

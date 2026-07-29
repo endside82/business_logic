@@ -47,9 +47,9 @@
 | F13-01 | 내 프로필 조회 (마이페이지 허브) | 프로필 카드 + 지갑/이벤트/클럽/신뢰점수 요약 + 하위 메뉴 진입점을 한 화면에서 본다 | 마이페이지 탭 진입, 카드/메뉴 항목 탭 |
 | F13-02 | 프로필 수정 (닉네임·자기소개·사진) | 닉네임/자기소개를 편집하고 프로필 사진을 카메라/앨범에서 골라 S3에 업로드한 뒤 저장한다 | 사진 영역 탭, 닉네임/자기소개 입력, "저장" 탭 |
 | F13-03 | 다중 주소 관리 | 여러 주소(라벨: 집/회사/기타)를 추가·수정·삭제하고 기본 주소를 지정한다 | 주소 관리 진입, "+" 추가, 라벨 선택, 다음 우편번호 검색, "기본설정"/"수정"/"삭제" 탭 |
-| F13-04 | 선호 태그 관리 | 마이페이지에서 내 관심사 태그를 조회·추가·삭제·수정하여 추천 품질을 갱신한다 | 선호 태그 진입, 추천 태그 칩 탭으로 추가, 기존 태그의 X로 삭제 |
+| F13-04 | 선호 태그 관리 | 서버 카탈로그에서 내 관심사 태그를 조회·추가·삭제한다. 서버 PUT은 있지만 현재 편집 UI 호출자는 없다 | 선호 태그 진입, 추천 태그 칩 탭으로 추가, 기존 태그의 X로 삭제 |
 | F13-05 | 데이터 내보내기 (Export) | 내 데이터를 JSON으로 비동기 추출 요청하고, 완료 시 만료 전에 다운로드한다 | "데이터 내보내기 요청" 탭, 진행 상태 새로고침, "다운로드" 탭 |
-| F13-06 | 계정 삭제 요청 (30일 유예) | 계정 삭제를 예약하고, 유예 기간 동안 마이페이지 배너로 인지하며 필요 시 취소한다 | "계정 삭제 요청" 탭 → 확인 다이얼로그, 배너에서 "관리" → "삭제 취소" 탭 |
+| F13-06 | 계정 삭제 요청 (30일 유예) | 개인정보 삭제·익명화를 예약하고 마이페이지 배너로 상태를 본다. 사용자 취소는 PENDING에서만 가능하다 | "계정 삭제 요청" 탭 → 확인 다이얼로그, 배너에서 "관리" → PENDING일 때 "삭제 취소" 탭 |
 | F13-07 | 계정 즉시 비활성화 (탈퇴) | 차단 사유 사전 점검 후, 즉시 계정을 비활성화하고 강제 로그아웃된다 | "계정 탈퇴" 탭 → deactivation-check → (해결 항목 안내) → 최종 확인 |
 
 > M = 7 기능. F13-01은 단위의 "허브 화면" 자체이고, F13-02·F13-03·F13-04는 사용자가 자기 신원·생활권·관심사를 갱신하는 운영 기능이며, F13-05·F13-06·F13-07은 GDPR/개인정보 통제권(데이터 추출, 30일 유예 삭제, 즉시 탈퇴)을 구성한다. 본 단위는 "데이터 통제권" 핵심 흐름에 집중하기 위해 외부 도메인 진입점(앱 설정, 연동 계정, 고객센터, 찜, 정산 계좌, 기기 관리)은 별도 기능으로 분리하지 않는다.
@@ -120,8 +120,9 @@
 - **사용자 가치**: 자기 관심사를 시점에 맞게 갱신하여 추천·검색 도메인의 결과 품질을 지속적으로 조정한다.
 - **주요 화면**:
   - `community_app/lib/presentation/profile/screens/preference_tag_screen.dart` (SCR-PS-006 대응) — 클라 한도 상수 `_maxPreferenceTagCount = 20` (서버 `UserPreferenceTagService.MAX_TAGS_PER_USER = 20`과 일치)
-  - 추천 태그 카테고리(운동/문화/라이프스타일/소셜)는 클라이언트 상수(`_recommendedTags`)로 정의
-- **백엔드 엔드포인트** (모두 `UserPreferenceTagController`, prefix `/api/v1/users/me/preference-tags`):
+  - 추천 태그는 공유 `interestCatalogProvider`가 서버 카탈로그를 조회해 그린다. 현재 카탈로그는 비어 있지 않은 13개 카테고리, 25개 라벨이다.
+- **백엔드 엔드포인트**:
+  - `GET /api/v1/interests/catalog` — 서버 허용 태그 카탈로그
   - `GET /` — `List<UserPreferenceTagVo>`
   - `POST /` — `@RequestBody UserPreferenceTagParam`, 201 + `UserPreferenceTagVo`
   - `PUT /{tagId}` — `@RequestBody UserPreferenceTagParam`, 200
@@ -132,7 +133,8 @@
   - 내 태그의 X 탭: 단건 DELETE → 칩 제거, 카운터 갱신
   - 한도 도달(20): 추천 칩 탭 차단 + "최대 20개까지 선택 가능합니다" 토스트
   - 이미 선택된 추천 태그는 비활성(연한 회색)으로 표시되어 중복 추가 차단
-  - UI 스펙(SCR-PS-006)은 PUT 일괄 업데이트를 가정하지만 실제 컨트롤러는 단건 추가/수정/삭제만 노출 — 클라이언트는 단건 호출 사용
+  - UI 스펙(SCR-PS-006)은 PUT 일괄 업데이트를 가정하지만 서버는 단건 API를 제공하고 현재 화면은 POST/DELETE만 호출한다. 이름·가중치 편집 caller는 없다.
+  - POST/DELETE 실패는 Provider에서 `false`로 접히며 화면이 Future를 await하지 않아 오류 안내와 재동기화가 없다.
 
 ### F13-05 데이터 내보내기 (Data Export)
 
@@ -142,30 +144,33 @@
 - **백엔드 엔드포인트** (`DataPrivacyController`, prefix `/api/v1/users/me`):
   - `POST /data-export` — 비동기 작업 큐잉, 202 Accepted + `DataExportRequestVo`
   - `GET /data-export/status` — 현재 요청 상태 조회 (`DataExportRequestVo`, status: PROCESSING/COMPLETED/EXPIRED/FAILED 등)
+  - 관리자 `MANAGE_PRIVACY`: `/admin/v1/manage/privacy/export-requests/{id}/process|expire|reissue` — `expire`만 수동 EXPIRED 전이, `reissue`는 COMPLETED와 미래 만료 시각을 기록
 - **선결 조건/상태**: 로그인 상태. 진행 중인 요청이 없거나(null), 완료/만료/실패 상태에서 재요청 가능.
 - **결과 상태 변화**:
   - 요청 성공(202): 상태가 PROCESSING으로 전환, 요청 버튼 비활성, 진행 인디케이터 + 경과 시간 + "최대 48시간" 안내 + 새로고침 아이콘 노출
   - COMPLETED + downloadUrl 존재: "다운로드" 버튼 노출(외부 브라우저로 열기), 만료일 D-day 표시
-  - EXPIRED/FAILED: "다시 요청" 버튼 노출
+  - FAILED에서 다시 요청하면 새 PROCESSING row가 생기고 기존 FAILED row는 보존된다. public status는 최신 row 하나만 반환한다.
+  - 실제 EXPIRED 응답: "다시 요청" 버튼 노출. 다만 자연 만료는 status를 바꾸지 않고 `COMPLETED + downloadUrl=null`을 반환하며, EXPIRED는 관리자 `expire`를 실행한 경우에만 도달한다.
   - 알 수 없는 상태값: 현재 상태 그대로 표시 + "다시 요청" 버튼
 
 ### F13-06 계정 삭제 요청 (30일 유예)
 
-- **사용자 가치**: 즉시 비활성화와 별도로, 30일의 유예를 두고 계정을 영구 삭제 예약함으로써 실수 방지와 충분한 데이터 회수 시간을 보장한다(GDPR 잊혀질 권리 + 회복 가능성).
+- **사용자 가치**: 즉시 비활성화와 별도로 30일 유예의 개인정보 삭제·익명화를 예약한다. 거래/정산과 법적 분쟁 기록은 보존 정책에 따라 남을 수 있다.
 - **주요 화면**:
   - `community_app/lib/presentation/profile/screens/data_privacy_screen.dart` 내 `_AccountDeletionSection`
   - `community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart` — 마이페이지 상단 고정 배너 (D-day + "관리" 버튼)
 - **백엔드 엔드포인트** (`DataPrivacyController`, prefix `/api/v1/users/me`):
   - `POST /data-deletion` — 삭제 예약, 202 Accepted + `DataDeletionRequestVo` (서버 status enum 진행 중 값은 PENDING/APPROVED — 코드 주석에 CONFIRMED가 아님이 명시됨)
   - `GET /data-deletion/status` — 현재 요청 상태 조회
-  - `DELETE /data-deletion` — 유예 기간 중 취소, 204
-  - 참고: UI 스펙(SCR-PS-007)에는 비밀번호 재확인이 명시되지만, 컨트롤러는 별도 비밀번호 파라미터를 받지 않음(서비스 레이어 구현에 위임).
-- **선결 조건/상태**: 로그인 상태. 삭제 진행 중 요청이 없거나(null), CANCELLED/COMPLETED 상태에서 신규 요청 가능.
+  - `DELETE /data-deletion` — `PENDING` 요청만 취소, 204
+  - 참고: UI 스펙(SCR-PS-007)의 비밀번호 재확인은 현재 Flutter 화면과 서버에 없다. 컨트롤러는 body 없이 요청하고 서비스도 비밀번호를 검증하지 않는다.
+- **선결 조건/상태**: 로그인 상태이며 진행 중 `PENDING` 요청이 없어야 한다. status 조회는 최신 `PENDING`/`APPROVED`만 반환하고 취소·완료 뒤에는 NOT_FOUND다.
 - **결과 상태 변화**:
-  - 요청 성공: status PENDING/APPROVED 진입 → "삭제까지 N일 남음" 카드 + "삭제 취소" 버튼 노출, 마이페이지 상단 배너 활성화
+  - 요청 성공: status PENDING 진입 → "삭제까지 N일 남음" 카드 + "삭제 취소" 버튼 노출, 마이페이지 상단 배너 활성화. APPROVED도 배너에는 보이지만 취소 버튼은 없다.
   - 취소 성공: DELETE 후 status CANCELLED → "계정 삭제가 취소되었습니다" 토스트, 배너 사라짐
-  - UI 안내: "유예 기간 중 로그인하면 삭제 요청이 취소됩니다" 문구 표시(서버 정책에 따른 자동 취소 안내)
-  - 30일 만료: 서버 워커가 모든 개인정보 영구 삭제 + 계정 비활성화(서버 측 자동 처리)
+  - 로그인은 진행 중 요청을 조회해 배너/관리 동선을 노출할 뿐 삭제 요청을 자동 취소하지 않는다. 취소는 사용자가 `DELETE /data-deletion`을 명시적으로 호출해야 한다.
+  - 30일 만료: 서버 워커가 개인정보를 삭제·익명화하고 계정을 EXIT로 전환한다. 거래/정산은 5년, active legal hold의 분쟁 증거와 종결 분쟁 보존 대상은 별도 정책에 따라 유지한다.
+  - 관리자 `process`는 현재 COMPLETED만 skip해 이미 CANCELLED인 row도 실행할 수 있다. 공개 취소를 우회할 수 있는 상태 가드 Gap이다.
 
 ### F13-07 계정 즉시 비활성화 (탈퇴)
 
@@ -214,3 +219,13 @@
 2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
 3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
+
+## 9. 연결성·성향·개인정보 재실측 (2026-07-29)
+
+F13-01 허브에는 메시지, `/my/met-people`, 성향 검사/리포트가 실제 연결됐다. 만난 사람 API는 증거등급 공동참석자를 사람별로 접어 반환하며 현재 상태·차단·`hideFromSearch`를 매번 다시 적용한다. 성향 API는 문항/세션/제출/내 최신 결과 4개 endpoint이고 V1 기준 활성 11축·24문항이다. 타인 원점수 API는 없으며 이벤트/클럽 fit은 최소 표본과 k-익명 게이트를 통과한 버킷·분포만 보여 준다.
+
+PersonSheet 관계 요약은 공통 관심태그/선호 카테고리/시간대만 제한적으로 보여 주고 커뮤니티 chip에서 데이팅 `MATCHED`를 제거했다. 커뮤니티 채팅은 같은 클럽·이벤트 72시간 유예·미결 의무 자격을 매 전송 재평가하며 `sendableBasis`와 nullable `sendableUntil`을 내려준다.
+
+F13-05 export는 FileStorage key를 저장하고 조회 시 presigned URL을 발급한다. metadata 외 9개 섹션에 데이팅 새 필드, 본인 이벤트/만남 피드백, trait, taste behavior estimate를 포함한다. `vibeTags` 누락, 자연 만료의 자동 EXPIRED 전이/파일 정리 부재, `COMPLETED + URL 없음` UX가 Gap이다. 관리자 `expire`/`reissue`는 수동 상태 전이를 제공한다.
+
+F13-06 삭제는 요청/실행 직전 금융 의무를 이중 검사하고 프로필·관심태그·데이트·취향·이벤트 피드백·trait 개인 데이터를 삭제한다. 법정 거래/분쟁 기록은 보존한다. 차단 의무 상세의 Flutter 손실, 데이팅 사진 FileStorage 실물 삭제 부재, Entity unique 선언과 V1 non-unique index 불일치는 후속 조치가 필요하다.

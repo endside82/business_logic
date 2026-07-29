@@ -1,125 +1,157 @@
-# F17-05. 세션 관리 (add / bulk / replace / cancel) PRD
+# F17-05. 정기모임 세션 추가·자동생성·일괄·대체·취소 PRD
+
+<!-- source-measured: 2026-07-29; api HEAD be38d128b80d; app HEAD cb21bce8ef08 -->
 
 ## 1. 결론
 
-정기모임의 회차(세션)는 모두 `event` 테이블 위 별개 row 로 만들어진다(`eventType=REGULAR_MEETING(3)`). 모임과 세션을 잇는 정션 `regular_meeting_event` 가 순번(`sequenceNo`)·출처(`ORIGINAL/REPLACEMENT`)·materialize·finalization 상태를 잡는다.
+정기모임의 각 회차는 `event` 테이블의 독립 이벤트(`eventType=REGULAR_MEETING`)이며 `regular_meeting_event` 정션이 순번·원본/대체 관계·materialization·출석 확정 상태를 보유한다.
 
-호스트는 4개 액션을 가진다:
-- **add** — 세션 1개 추가 (`POST /events`). 다음 순번 자동 할당.
-- **bulk** — 여러 세션 일괄 추가 (`POST /events/bulk`).
-- **replace** — 취소된 세션의 대체본을 같은 순번으로 추가 (`POST /events/{eventId}/replace`).
-- **cancel** — 세션 취소 (`DELETE /events/{eventId}`).
+가격 단위는 모임 타입에 따라 완전히 갈린다.
 
-**핵심 가드**: RM 세션은 일반 `EventService.publishEvent/cancelEvent`/`EventCapacitySettingsService`/`CapacitySettingsService`/`RecurringEventCreateService` 6개 경로에서 직접 mutation 차단(통합 가드). 세션 상태 전이는 모임 본체에 종속되며 `event.*()` 엔티티 메서드를 직접 호출(도메인이벤트 팬아웃 방지).
+- `FIXED`: 코스 전체 가격은 정기모임 본체에 있고 세션 가격은 서버가 항상 0으로 강제한다. 세션 단독 신청도 차단한다.
+- `VARIABLE`: 정기모임 본체 가격은 0이고 각 세션이 자체 정원·가격·환불정책·결제기한을 갖는다. 유료 세션은 일반 이벤트 신청/사전결제/환불 흐름을 사용한다.
 
-`(meeting_id, sequence_no)` 중복은 허용(원본 취소본 + 대체본). 단 "순번당 활성 세션 1개"는 서비스가 보장한다. `event_id` 는 UNIQUE (한 이벤트 = 최대 1모임).
+Flutter 호스트 화면은 현재 단건 추가와 제한된 반복 자동생성(`count 1..26`)을 지원한다. 서버의 임의 목록 bulk와 취소 회차 replace endpoint는 앱 호스트 UI가 아직 없다. 상세의 회차 카드는 현재 읽기 전용이라 일반 이벤트 상세로 이동하지 않으며, 일반 이벤트 상세도 `sequenceNo`를 이용한 `"정기모임 N회차"` 컨텍스트 라벨을 렌더링하지 않는다.
 
 ## 2. 실사 근거
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
+| 계층 | 확인 소스 | 확인 계약 |
 |---|---|---|
-| Backend Controller | `RegularMeetingController#addSession,addSessionsBulk,sessions,cancelSession,replaceSession` | 5 endpoint |
-| Backend Service | `RegularMeetingService#addSession,addSessionsBulk,replaceSession,cancelSession,getSessions` | factory + 가드 |
-| Backend Factory | `RegularMeetingEventFactory` | event row + 정션 row 동시 생성 |
-| Backend Guard | `RegularMeetingSessionGuard` | EventService 등에서 RM 세션 직접 mutation 차단 |
-| Backend Entity | `RegularMeetingEvent` | `event_id` UNIQUE, sequenceNo 정책 |
-| Backend Param | `RegularMeetingSessionAddParam`, `RegularMeetingSessionBulkParam`, `RegularMeetingSessionReplaceParam` | 시각, 장소, capacity |
-| Flutter Screen | `regular_meeting_session_add_screen.dart` | VARIABLE baseCapacity 분기 + 시각 picker |
+| Controller | `RegularMeetingController`의 `addSession`, `addSessionsBulk`, `generateSessions`, `sessions`, `cancelSession`, `replaceSession` | endpoint/body/response |
+| Param | `RegularMeetingSessionAddParam`, `BulkParam`, `GenerateParam`, `ReplaceParam` | 정확한 필드·타입 |
+| Service | `RegularMeetingService` 세션 구간 | 상태·상한·가격·선결제·replace |
+| Factory | `RegularMeetingEventFactory` | 상속 필드와 세션 고유 필드 |
+| VO | `RegularMeetingEventVo`, `EventVo` | 목록 가격과 생성 응답 |
+| Flutter | `regular_meeting_session_add_screen.dart`, API/repository/models | 단건/자동생성 입력과 표시 |
 
-## 3. 전체 동작 흐름
+## 3. Endpoint 계약
 
-### 3.1 add (`POST /events`)
-1. `assertHost`. DRAFT/OPEN 만.
-2. `RegularMeetingEventFactory.create(meeting, param, origin=ORIGINAL)` → `event` row + 정션 row.
-3. VARIABLE 면 param 의 `baseCapacity/price` 가 세션 row 에 그대로. FIXED 면 모임 본체 값 상속.
-4. 순번 자동 할당: 기존 max(sequenceNo) + 1. FIXED 는 publish 시 정확히 `totalSessionCount` 와 일치해야 함.
-5. `meeting.lastEventCreatedAt = now()` (VARIABLE auto-close 기준).
-6. 응답: `EventVo` (일반 EventVo, RM 컨텍스트 5필드 오버레이).
+기본 경로: `/api/v1/regular-meetings/{id}`
 
-### 3.2 bulk (`POST /events/bulk`)
-- N 개 세션을 한 트랜잭션에 추가. 시각 충돌 검증.
-- FIXED 모임 일괄 setup 에 사용 (e.g. 8회 모임 8개 동시 등록).
+| Method | Path | Body/Query | 응답 | 접근 |
+|---|---|---|---|---|
+| POST | `/events` | `RegularMeetingSessionAddParam` | 201 `EventVo` | 호스트, DRAFT/OPEN, `EVENT_HOST_RESTRICT` 제재 시 차단 |
+| POST | `/events/bulk` | `RegularMeetingSessionBulkParam` | 201 `List<Long>` | 호스트, DRAFT/OPEN, 같은 제재 가드 |
+| POST | `/events/generate` | `RegularMeetingSessionGenerateParam` | 201 `List<Long>` | 호스트, DRAFT/OPEN, 같은 제재 가드 |
+| GET | `/events?includeHistory=false` | boolean | `List<RegularMeetingEventVo>` | 공개 이력 상태는 조회 가능, 미발행은 호스트만 |
+| DELETE | `/events/{eventId}` | 없음 | 204 | 호스트 |
+| POST | `/events/{eventId}/replace` | `RegularMeetingSessionReplaceParam` | 200 `EventVo` | 호스트, 취소된 원본, 같은 제재 가드 |
 
-### 3.3 replace (`POST /events/{eventId}/replace`)
-1. 원본 세션이 정션상 `active=false` (status=CANCELED) 여야 함.
-2. 대체본 정션 row 의 `sequenceNo` 는 원본과 동일. `origin=REPLACEMENT`. `replacedEventId` = 원본 eventId.
-3. `(meeting_id, sequence_no)` 는 중복 가능 (원본 취소 + 대체본 둘 다 row 보존).
-4. FIXED 의 materialize 가 대체본에도 적용됨.
+`GET`까지 전부 host-only라는 과거 문서 서술은 틀리다. DRAFT 또는 한 번도 발행되지 않은 CANCELED만 비호스트에게 `NOT_FOUND`이며, 공개된 모임의 세션 목록은 상세 읽기 표면이다.
 
-### 3.4 cancel (`DELETE /events/{eventId}`)
-1. `assertHost`.
-2. 세션 직접 `event.cancel()` 호출 (`EventService.cancelEvent` 우회 — 도메인이벤트 fanout 방지).
-3. 정션 row 의 `active` 는 query 시점에 계산(`event.status != CANCELED`).
-4. **참가자 환불 책임**: RM 세션은 일반 신청 가드 때문에 직접 신청자 없음. FIXED 의 ATTENDING 자동 등록자(materialize) 는 데이터만 demote, 멤버 본체는 그대로(다른 세션 참가).
+## 4. 요청 필드
 
-### 3.5 sessions list (`GET /events?includeHistory={bool}`)
-- 기본은 active session 만, `includeHistory=true` 면 CANCELED 포함.
-- 정렬: `sequenceNo ASC`, 같은 순번 안에서 active 가 먼저.
+### 4.1 단건·대체
 
-## 4. 서버 계약
+`RegularMeetingSessionAddParam` / `RegularMeetingSessionReplaceParam`:
 
-| 엔드포인트 | Method | Body / Param | 응답 |
-|---|---|---|---|
-| `/api/v1/regular-meetings/{id}/events` | POST | `RegularMeetingSessionAddParam` | 201 `EventVo` |
-| `/api/v1/regular-meetings/{id}/events/bulk` | POST | `RegularMeetingSessionBulkParam` (N 개) | 201 `List<Long>` (eventIds) |
-| `/api/v1/regular-meetings/{id}/events` | GET | `includeHistory: bool` | `List<RegularMeetingEventVo>` |
-| `/api/v1/regular-meetings/{id}/events/{eventId}` | DELETE | — | 204 |
-| `/api/v1/regular-meetings/{id}/events/{eventId}/replace` | POST | `RegularMeetingSessionReplaceParam` | 200 `EventVo` (대체본) |
+- `title:String`
+- `description:String?`
+- `startTime:LocalDateTime`
+- `endTime:LocalDateTime`
+- `baseCapacity:Integer?`
+- `price:BigDecimal?`
+- `refundPolicyCode:String?`
+- `refundDeadlineHours:Integer?`
 
-권한: 전 endpoint host 만.
+장소·좌표·온라인 URL·카테고리·썸네일은 세션 요청 필드가 아니다. 정기모임 본체에서 상속한다.
 
-## 5. 프론트 계약
+### 4.2 자동생성
 
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `Routes.regularMeetingSessionAdd` |
-| Screen | `RegularMeetingSessionAddScreen` |
-| Provider | `regularMeetingSessionsProvider(meetingId)` invalidate 후 갱신 |
-| 입력 | startTime/endTime, locationType, address, onlineUrl, baseCapacity (VARIABLE 만), price (VARIABLE 만) |
-| 호스트 대체본 UI | MVP 우선순위 낮음 — API 는 준비됨, UX 점진 추가 |
+`RegularMeetingSessionGenerateParam`:
 
-## 6. 상태/권한/시나리오 매트릭스
+- 단건 공통 필드 중 `title`, `description`, `baseCapacity`, 가격/환불 필드
+- `firstStartTime`, `firstEndTime`
+- `cadence: DAILY | WEEKLY | BIWEEKLY | MONTHLY`
+- `count: 1..26`
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S5-1 | add (FIXED) | DRAFT FIXED, sessionCount=8 목표, 현재 7 | 201, sequenceNo=8, baseCapacity=모임본체값 |
-| S5-2 | add (VARIABLE) | OPEN VARIABLE, param 에 baseCapacity=10, price=5000 | 201, 세션 row 가 자체 값 보유 |
-| S5-3 | bulk add 8 sessions | DRAFT FIXED | 201, 8개 ids 반환 |
-| S5-4 | cancel session | OPEN, 세션 1개 cancel | 204. `event.status=CANCELED`. FIXED materialize 자동 demote |
-| S5-5 | replace session | 취소된 세션의 대체본 | 200, 정션 row 신규 (origin=REPLACEMENT, sequenceNo=원본과 동일) |
-| S5-6 | sessions list active | `includeHistory=false` | CANCELED 제외, 정렬 sequenceNo ASC |
-| S5-7 | sessions list history | `includeHistory=true` | CANCELED + REPLACEMENT 포함. 같은 sequenceNo 가 2개 row (원본 active=false + 대체본) |
-| S5-8 | RM 세션 직접 mutation 시도 | `EventService.publishEvent(eventId)` 직접 호출 | `RegularMeetingSessionGuard` 가 거절 |
-| S5-9 | RM 세션 직접 신청 시도 | `directApplyBlocked=true`인 RM 세션에 일반 apply | 신청 가드(EventScope) 가 거절 |
+서버는 첫 회차 길이를 유지한 채 cadence만큼 시각을 이동해 목록으로 확장한 뒤, bulk 경로에 위임한다. 따라서 세션 상한과 유료 세션 사전결제 규칙이 동일하게 적용된다.
 
-## 7. 정합성 판단
+## 5. 생성·순번·대체 규칙
 
-| 항목 | 확인 기준 | 현재 판단 |
+- 세션 상태는 모임이 OPEN이면 `OPEN`, DRAFT면 `DRAFT`.
+- 정션 순번은 기존 최대값 + 1부터 자동 할당한다.
+- FIXED는 활성 세션 수가 `totalSessionCount`를 넘을 수 없다. VARIABLE에는 수량 상한이 없다.
+- FIXED 발행/종료 정책은 활성 세션 수와 총 회차 정합성을 사용한다.
+- 취소는 Event를 `CANCELED`로 바꾸고 정션/이력은 보존한다.
+- 대체는 취소된 세션에만 가능하고 원본과 같은 `sequenceNo`, `origin=REPLACEMENT`, `replacedEventId=원본`으로 새 row를 만든다.
+- 같은 순번의 취소 원본과 대체본은 함께 존재할 수 있지만 활성 세션은 하나만 허용한다.
+- `includeHistory=false`는 취소 이력을 제외하고, true는 원본/대체 이력을 함께 돌려준다.
+
+## 6. 가격·결제·환불 계약
+
+### 6.1 FIXED
+
+- 단건/bulk/generate/replace 요청에 `price`가 있어도 서버가 세션 가격을 0으로 강제한다.
+- 정원은 모임의 `baseCapacity`를 사용한다.
+- 코스 등록·결제는 F17-06/F17-07 경로이고 세션 직접 신청은 `directApplyBlocked=true`.
+
+### 6.2 VARIABLE
+
+- `baseCapacity`는 세션별 필수 UI 입력이며 서버는 1 이상을 검증한다.
+- `price == null || price == 0`: 무료 세션. 별도 사전결제/환불정책 row를 만들지 않는다.
+- `price < 0`: `INVALID_INPUT`.
+- `price > 0`: 100원 미만을 아래로 절삭한다. 예: 5,099원 → 5,000원이며 1~99원은 0원이 되어 무료 세션으로 처리된다.
+- 유료 세션은 `EventPrepayment`을 생성한다.
+  - `prepaymentRequired=true`
+  - `prepaymentAmount=절삭 가격`
+  - `prepaymentType=CASH`
+  - 결제기한은 양수 요청값, null/0이면 24시간
+- 환불 template은 요청 `refundPolicyCode`, 누락 시 `STANDARD`.
+- 지원 UI 값은 `STANDARD, FLEXIBLE, STRICT, FULL, NON_REFUNDABLE`; 규칙 본문이 필요한 `CUSTOM`은 이 경로에서 지원하지 않는다.
+
+`RegularMeetingEventVo.price`는 Java `BigDecimal`이며 Flutter는 `double`로 읽는다. 앱 상세는 `price > 0`인 세션에만 금액을 표시한다.
+
+### 6.3 취소
+
+- DRAFT/OPEN 세션만 실제로 `CANCELED` 전이한다. 이미 그 밖의 상태면 endpoint는 별도 전이 없이 끝난다.
+- VARIABLE 세션의 `ATTENDING/WAITING` 대상에게 `EVENT_CANCELLED` 알림을 보내고, 결제한 `ATTENDING`은 전액 환불 또는 수동 환불 요청으로 전환한다. 실패분은 `FailedRefund`와 호스트 `PAYMENT_FAILED` 알림으로 남긴다.
+- FIXED 세션은 세션 자체 가격이 0이라 세션 결제 환불은 없고, 코스 멤버십은 유지된다.
+
+## 7. 썸네일 계약
+
+- 세션 Event row는 정기모임 본체의 bare thumbnail key를 상속한다.
+- 단건 추가/대체 응답 `EventVo`는 표시용 presigned URL로 변환한다.
+- 정기모임 상세의 `sessions: List<RegularMeetingEventVo>`에는 별도 `thumbnailUrl` 필드가 없다. 상단 모임 썸네일은 `RegularMeetingVo.thumbnailUrl`로 표시한다.
+- 따라서 “세션마다 썸네일을 업로드한다”는 UI/Param 계약은 없다.
+
+## 8. Flutter 실제 UX
+
+`RegularMeetingSessionAddScreen`:
+
+- 공통: 제목, 설명, 시작/종료 시각
+- VARIABLE만: 정원, 참가비, 환불정책 template, 결제기한
+- FIXED: 정원·가격 입력을 보내지 않고 코스 등록자용 회차임을 설명
+- 자동생성 스위치:
+  - 꺼짐 → `POST /events`
+  - 켜짐 → cadence + `count(1..26)` 입력 후 `POST /events/generate`
+- 성공하면 상세/세션 provider를 invalidate하고 `"세션 추가 완료"` 또는 `"회차 자동 생성 완료"` 토스트 후 뒤로 간다.
+- 상세 세션 목록은 순번, 상태, materialization, 출석 확정 상태, 시작 시각과 양수 가격을 표시한다.
+- 각 회차 카드는 현재 `onTap`이 없는 읽기 전용 카드다. `EventVo`에는 정기모임 컨텍스트 필드가 있지만 일반 이벤트 상세 화면은 이를 표시하지 않는다.
+
+현재 앱 API의 replace 메서드는 Dart 전용 replace param 대신 구조가 같은 `RegularMeetingSessionAddParam`을 body로 사용한다. 현행 JSON 필드는 서버 ReplaceParam과 일치하지만 서버 계약 분리를 모델 이름으로 표현하지 못한다.
+
+## 9. 확인된 Gap / Risk
+
+| 우선순위 | 실측 결과 | 영향/후속 |
 |---|---|---|
-| event_id UNIQUE | DDL UNIQUE 제약 | 한 이벤트가 두 모임에 속할 수 없음 |
-| `(meeting_id, sequence_no)` 중복 허용 | DDL 비 UNIQUE | 원본 취소+대체본 패턴 보존 |
-| 활성 세션 1개 보장 | 서비스 레벨 (`activeSessions` 필터 후 같은 sequenceNo 중 active=true 가 1개) | 데이터로 검증 |
-| 통합 가드 6개 경로 | `RegularMeetingSessionGuard` 가 EventService 6 + EventCapacitySettingsService + CapacitySettingsService + RecurringEventCreateService 모두에서 호출 | 통합됨 |
-| RM 세션 신청 가드 | `EventScope` 거름망의 `directApplyBlocked` 분기 | OPEN RM 세션에 일반 신청 차단 |
+| P1 | 임의 목록 bulk와 취소 회차 replace의 호스트 UI가 없다. | API 직접 사용만 가능. 관리 화면 추가 필요. |
+| P1 | 세션 간 시간 겹침을 검사하지 않는다. bulk도 각 세션의 시작<종료만 확인한다. | 같은 시각에 중복 회차 생성 가능. 경고 또는 서버 conflict 정책 필요. |
+| P1 | 모집 중 세션 추가 알림이 별도 배선되지 않았다. | 참여자가 새 회차를 놓칠 수 있다. |
+| P1 | 1~99원 VARIABLE 가격은 양수 입력이지만 100원 절삭 후 0원이 된다. | 앱이 최소 유료 금액을 설명/제한하지 않으면 호스트가 유료로 오인할 수 있다. |
+| P1 | 회차 카드에서 일반 이벤트 상세로 들어가는 동작과 `"정기모임 N회차"` 라벨이 없다. | 회차 운영/상세 확인 진입이 끊기고 일반 이벤트 상세를 열더라도 정기모임 문맥을 보장할 수 없다. |
+| P2 | Flutter replace body가 AddParam 모델을 재사용한다. | 현재는 호환되나 서버 필드 분기 시 compile-time 보호가 약하다. |
 
-## 8. Gap / Risk
+## 10. 수용 기준
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 잔여 | 구현 리포트 §9 | bulk/replace 세션 호스트 UI 미신설 — API 는 준비됨 | UX 우선순위 낮음, 후속 |
-| 위험 | OPEN 상태에서 세션 추가 | OPEN 모임에 세션 추가 시 인덱싱·노출 갱신 필요 — `EventScope#publiclyDiscoverable` 즉시 반영 | 검증됨 |
-| 위험 | 세션 cancel 후 FIXED roster | FIXED ATTENDING materialize 자동 demote — 멤버 본체는 영향 없음 | F17-09 참조 |
-
-## 9. 수용 기준
-
-- **AC-01 (S5-1). FIXED 세션 add**: Given DRAFT FIXED + 현재 7세션. When `POST /events`. Then 201, sequenceNo=8, baseCapacity=모임본체.
-- **AC-02 (S5-4). cancel 후 active=false**: Given 활성 세션. When `DELETE`. Then `event.status=CANCELED`. 다음 sessions list 에 `active=false`.
-- **AC-03 (S5-5). replace 같은 순번**: Given 취소된 세션(seq=3). When replace. Then 새 정션 row 의 sequenceNo=3, origin=REPLACEMENT, replacedEventId=원본.
-- **AC-04 (S5-8). 직접 mutation 차단**: Given RM 세션 eventId. When 일반 `EventService.publishEvent` 호출. Then `RegularMeetingSessionGuard` 가 거절.
-
-## 10. 미결정 / 후속
-
-| 항목 | 사유 | 후속 |
-|---|---|---|
-| 호스트 bulk/replace UI | UX 우선순위 낮음 | API 는 준비됨, 후속 슬라이스 |
-| 세션 시각 충돌 자동 검출 | MVP 는 호스트 자율 | 후속에 conflict warning |
+- **AC-01**: FIXED 세션은 어떤 요청 가격에도 저장 가격 0이고 코스 정원을 상속한다.
+- **AC-02**: VARIABLE 유료 세션은 100원 단위 절삭 가격, CASH 사전결제, 지정/기본 환불 template을 만든다.
+- **AC-02a**: VARIABLE 1~99원 요청은 절삭 후 0원이므로 사전결제/환불정책 row를 만들지 않는다.
+- **AC-03**: generate는 1..26과 네 cadence만 허용하고, 생성된 모든 회차가 같은 기간·가격·환불 계약을 갖는다.
+- **AC-04**: FIXED 활성 세션 수는 `totalSessionCount`를 초과하지 못한다.
+- **AC-05**: 취소 원본만 replace할 수 있고 새 정션은 같은 순번과 원본 참조를 보유한다.
+- **AC-06**: 미발행 세션 목록은 비호스트에게 `NOT_FOUND`.
+- **AC-07**: Flutter는 VARIABLE 가격을 `int?`로 보내고 응답 `BigDecimal` 가격을 `double`로 안전하게 읽는다.
+- **AC-08**: 자동생성 성공 후 상세/세션 목록이 invalidate되어 새 회차를 표시한다.
+- **AC-09**: VARIABLE 유료 세션 취소는 참가자 알림과 결제 환불을 실행하고 실패분을 추적한다. FIXED 코스 멤버십은 세션 하나의 취소로 해지되지 않는다.
+- **AC-10 (현재 Gap 기록)**: 상세 회차 카드는 탭 이동을 제공하지 않으며 일반 이벤트 상세의 정기모임 회차 라벨도 아직 구현되지 않았다.

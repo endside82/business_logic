@@ -1,10 +1,12 @@
 # F14-05. 이벤트 길찾기 (경로 + 참석자 거리) PRD
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/14_location_directions/F14-05_event-directions -->
+<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/14_location_directions/F14-05_event-directions -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/14_location_directions/F14-05_event-directions`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 >
 > 2026-07-08 현재 소스 갱신: 길찾기는 현재 위치와 저장 주소 출발지를 모두 앱에서 선택할 수 있고, 서버는 좌표가 없는 도착지/출발지 조합을 null guard로 막는다. 외부 지도 URL 생성도 Kakao/Naver/Google/Apple 인계 기준으로 정리됐다. 주소 선택에서 좌표가 `0.0,0.0`으로 저장되는 위험은 F14-06의 주소→좌표 geocode 추가와 함께 본다.
+>
+> 2026-07-29 현재 소스 갱신: 오프라인 이벤트 상세의 장소 행에 `"길찾기"` CTA가 연결되어 실제 진입 경로가 생겼다. 결과 화면은 서버의 Haversine 근사치를 `"예상 이동 안내"`와 `"직선거리 기준 추정이에요. 정확한 경로는 지도 앱에서 확인하세요."`로 명확히 표시하고, 도보/대중교통/자동차/자전거 중 응답에 존재하는 이동수단을 사용자가 고른 뒤 provider별 외부 링크를 연다.
 
 ## 1. 결론
 
@@ -12,7 +14,7 @@
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
-- 이벤트 상세 → "길찾기" 액션 → `/home/events/:eventId/directions`
+- 오프라인 이벤트 상세의 장소 행 → "길찾기" 액션 → `/home/events/:eventId/directions`
 - (간접) `EventLocationScreen` 참석자 리스트의 거리/소요시간 데이터는 본 단위의 `attendees/distances` API 를 호출하여 결합 — 단, 화면 자체는 F14-01
 
 현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
@@ -85,7 +87,7 @@
 
 ### 진입 경로
 
-- 이벤트 상세 → "길찾기" 액션 → `/home/events/:eventId/directions`
+- 오프라인 이벤트 상세의 장소 행(`event_info_section.dart`) → "길찾기" 액션 → named route `eventDirections`
 - (간접) `EventLocationScreen` 참석자 리스트의 거리/소요시간 데이터는 본 단위의 `attendees/distances` API 를 호출하여 결합 — 단, 화면 자체는 F14-01
 
 ### 사용 라우트 & 화면 파일
@@ -111,24 +113,28 @@
     - 도착지 카드: 이벤트 제목 + `destinationAddress` 작은 글씨
     - 출발지 회색 박스: `Icons.trip_origin` + "출발: {originLabel}" (HOME→집, WORK→회사 한국어 매핑)
     - 거리 카드 (`AppColors.primary50` 배경): 좌측 `Icons.straighten` + "{distanceKm} km / 거리" / 우측 `Icons.schedule` + "약 {estimatedMinutes}분 / 소요시간"
-    - 경로 안내 (`StepList`): 타임라인 아이콘(`Icons.trip_origin` → `Icons.directions_walk` → `Icons.flag`) + step.instruction + 하위 보조 텍스트(거리/시간)
-    - 외부 지도 앱 섹션: provider 그룹별 1개 버튼 (WALK 모드 우선, 없으면 첫 항목) — `_MapLinkButton`
+    - 경로 안내: 제목 `"예상 이동 안내"` + 직선거리 추정 면책 문구 + 타임라인 아이콘/step
+    - 이동수단 칩: 응답 링크에 존재하는 `WALK`, `TRANSIT`, `CAR`, `BIKE`를 도보/대중교통/자동차/자전거로 표시
+    - 외부 지도 앱 섹션: 선택 이동수단으로 provider별 링크를 필터링해 `_MapLinkButton` 표시
 - **사용자가 할 수 있는 액션**:
   - "현재 위치" 칩 탭 → `_fetchWithCurrentLocation()`:
     1. `Geolocator.checkPermission` / `requestPermission`
     2. `Geolocator.getCurrentPosition(timeout: 10s)`
     3. `DirectionsNotifier.fetchWithCoordinates(lat, lng)` → GET `/directions?originLatitude=&originLongitude=`
   - 등록된 주소 칩 탭 → `_selectOrigin('address:42')` → `DirectionsNotifier.fetchWithAddress(42)` → GET `/directions?userAddressId=42`
+  - 이동수단 칩 탭 → `_selectedTravelMode` 로컬 상태 변경 → 해당 모드의 외부 지도 링크 목록 표시
   - 외부 지도 버튼 탭 → `launchUrl(uri, mode: LaunchMode.externalApplication)` (`url_launcher`)
 - **상태 분기**:
   - 위치 가져오는 중: `_isLoadingPosition=true` → 중앙 `CircularProgressIndicator` 32px padding
-  - 초기 상태(`directions == null`): `Icons.directions_outlined` + "출발지를 선택하면 경로를 안내합니다"
+  - 초기 상태(`directions == null`): `"출발지를 선택해주세요"` + `"현재 위치나 저장된 주소를 기준으로 길찾기를 시작합니다."`
   - 로딩(`AsyncLoading`): 중앙 `CircularProgressIndicator`
   - 에러(`AsyncError`): `AppErrorState.fromError(error: ..., onRetry: () => _selectOrigin(_selectedOrigin))`
   - 좌표 미취득: 토스트 "현재 위치를 가져올 수 없습니다"
-  - 외부 지도 앱 미설치: 토스트 "{providerName} 앱을 열 수 없습니다" (canLaunchUrl=false 시)
+  - 카카오/네이버/애플 앱 URL 실행 실패: 같은 이동수단의 Google 링크가 있으면 "{providerName} 앱을 열 수 없어 구글맵으로 엽니다" 토스트 후 자동 fallback
+  - Google 링크 자체 또는 fallback도 실행 불가: 토스트 "{providerName} 앱을 열 수 없습니다"
   - links 비어있음: "이용 가능한 지도 앱이 없습니다"
 - **모달/시트/네비게이션**: 화면 내부에서 모달/시트 없음. 외부 앱 인계는 OS-level transition.
+- **버튼 배치**: `_groupedLinks(...)` 결과를 `Column` 안에서 spread하고 각 항목에 하단 8px padding을 주므로 provider 버튼은 한 줄 가로 배열이 아니라 세로 목록이다.
 
 ### API 호출 순서 (Provider/Repository 관점)
 
@@ -145,16 +151,17 @@
 - 출발지 칩 라벨 매핑: `HOME` → "집", `WORK` → "회사", 그 외엔 그대로 (`_localizeOriginLabel`)
 - 등록 주소 최대 3개만 칩 노출 (`addresses.take(3)`)
 - "현재 위치" 칩은 항상 첫 번째 + 자동 선택 (디폴트 origin)
-- 외부 지도 버튼 그룹화: provider 별 1개 (WALK 모드 우선, 없으면 첫 항목) — 서버는 16개를 모두 보내지만 화면은 4개만 표시
+- 이동수단 우선순위: `WALK`, `TRANSIT`, `CAR`, `BIKE`; 응답에 존재하는 모드만 칩 노출
+- 외부 지도 버튼: 현재 선택한 이동수단으로 링크를 거른 뒤 provider별 표시
 - 외부 지도 launch 모드: `LaunchMode.externalApplication`
 - 거리 단위 포맷: `1000m 미만` → "Nm", `≥ 1000m` → "N.N km"
 - 소요 시간 포맷: `< 60분` → "N분", `≥ 60분` → "N시간 M분" (m=0 면 "N시간")
 - 전체 소요/거리 카드 색상: 배경 `AppColors.primary50`, 텍스트 `AppColors.primary700`, 분리선 `AppColors.primary200`
 - 경로 안내 타임라인 분리선 색상: `AppColors.gray200`, 두께 1.5px
-- 외부 앱 미설치/실패 토스트 문구: "{providerName} 앱을 열 수 없습니다"
+- 외부 앱 미설치/실패 토스트: 비-Google provider는 같은 이동수단 Google 링크로 자동 fallback하며 안내 토스트, Google/fallback도 실패하면 오류 토스트
 - 위치 권한 거부 시: 별도 다이얼로그 없이 `Geolocator.requestPermission()` 만 호출 → 거부 시 좌표 미취득 → 토스트 "현재 위치를 가져올 수 없습니다"
 - 위치 timeout: **10초** (`Duration(seconds: 10)`)
-- 화면 로딩 padding: `EdgeInsets.all(AppSpacing.space5)` = 20 (CLAUDE.md `screenPadding` 16 규칙과 차이 — 본 화면만 space5 사용)
+- 화면 좌우/상단 padding: `AppSpacing.screenPadding`(16), 하단 `AppSpacing.space8`
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -163,12 +170,12 @@
 | S1 | 현재 위치에서 모임 장소 길찾기 (Happy Path) | 로그인됨, 이벤트 ATTENDING (단, 본 API는 인증만 요구), OS 위치 권한 미부여 | 외부 카카오맵 앱에서 상세 경로 안내. 서버 상태 변화 없음. |
 | S2 | 등록된 "집" 주소로 길찾기 (저장 주소 분기) | 매번 "집" 출발지를 사용하는 사용자 | 같음. 외부 앱 호출만 사용자 선택에 따름. |
 | S3 | 다른 사람의 주소 ID 시도 (네거티브, 권한 분기) | 디버그/오용 케이스 | 서버 변화 없음 |
-| S4 | 온라인 이벤트에 길찾기 시도 (도메인 분기) | ZOOM 이벤트 사용자 | 길찾기 미제공 — 도메인 정책상 ONLINE/HYBRID 이벤트는 좌표 없음 |
-| S5 | 위치 권한 거부 + 등록 주소 없음 (사용 불가 분기) | 권한 거부 + 미등록 사용자 | 서버 호출 없음. 사용자는 OS 설정에서 권한 부여하거나 주소 등록 필요 |
-| S6 | 호스트가 참석자 거리 리스트를 본다 (서브 엔드포인트) | 모임 호스트, SCR-LD-001 시트에서 참석자 리스트 닉네임/거리 결합 | 호스트는 모든 참석자 거리 노출 |
-| S7 | 일반 참석자가 참석자 거리 리스트를 호출 (권한 분기) | 호스트 아닌 참석자 | 일반 참석자는 닉네임/프로필 못 봄 (현 구현 한계 — 화면은 marker 만 표시) |
-| S8 | 외부 지도 앱 미설치 (인계 실패) | 카카오맵을 설치하지 않은 사용자 | 사용자는 다른 provider 버튼 (구글맵 등 https://) 으로 시도 가능 |
-| S9 | 모드 자동 결정 — 1.2km 이동 (Walking 분기) | 시나리오 본문 참조 | 거리 임계값 (2km/20km) 에 따라 모드 자동 결정. 사용자가 모드를 명시적으로 바꾸는 UI는 없음 (외부 앱 딥링크는 4개 모드 모두 받지만 화면 버튼은 WALK 우선). |
+| S4 | 온라인 이벤트에 길찾기 시도 (도메인 분기) | `LocationType.ONLINE` 이벤트 | 정상 이벤트 상세에서는 길찾기 CTA가 숨는다. 직접 route를 열면 서버 `EVENT_NOT_OFFLINE`이 일반 `AppErrorState.fromError`로 표시되며 온라인 전용 안내 문구는 없다 |
+| S5 | 위치 권한 거부 + 등록 주소 없음 (사용 불가 분기) | 권한 거부 + 미등록 사용자 | 자동 좌표 호출은 토스트와 함께 실패하지만 "현재 위치" 칩은 계속 보이고 다시 누를 수 있다. 저장 주소 칩만 0개이며 서버 호출은 일어나지 않는다 |
+| S6 | 운영자가 참석자 거리 리스트를 본다 (서브 엔드포인트) | 호스트/cohost/클럽 canCreateEvent 운영자 | ATTENDING 계정 회원 중 opt-in=true·활성 share 존재·미차단인 subset만 거리순으로 노출. 비공개 사용자의 placeholder row는 없음 |
+| S7 | 일반 참석자가 참석자 거리 리스트를 호출 (권한 분기) | 호스트 아닌 참석자 | 서버가 `EVENT_NOT_OWNER`로 거부하므로 참석자 거리 row 자체를 받지 못한다 |
+| S8 | 외부 지도 앱 미설치 (자동 fallback) | 카카오·네이버·애플 URL을 열 수 없는 사용자 | 같은 이동수단의 Google 링크가 있으면 안내 토스트 후 자동 실행한다. Google 링크도 열 수 없으면 오류 토스트 |
+| S9 | 1.2km 이동에서 외부 지도 이동수단 선택 | 경로 응답에 WALK/TRANSIT/CAR/BIKE 링크가 존재 | 서버의 근사 거리·시간은 안내로 표시되고, 사용자는 이동수단 칩을 바꿔 해당 모드의 외부 지도 링크를 연다. |
 
 ## 7. 정합성 판단
 
@@ -183,20 +190,21 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:91 | > 메모: 본 엔드포인트는 화면 SCR-LD-001 의 참석자 리스트 닉네임/프로필 보강용으로도 사용 — F14-01 frontend 의 `attendeeDistancesNotifierProvider`. 본 단위는 F14-01 화면이 의존한다는 점만 표기하고, 데이터 사용 위치는 F14-01 frontend.md 참고. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:105 | > 주의: `DistanceInfoVo.travelMode` 는 String("WALKING"/"TRANSIT"/"DRIVING") 이고, `MapLinkVo.travelMode` 는 enum `TravelMode` (CAR/TRANSIT/WALK/BIKE) — 두 개념이 다른 분류 체계. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| UX gap | `event_detail_screen.dart`, `directions_screen.dart` | ONLINE 이벤트의 정상 CTA는 숨지만 direct route에서는 전용 설명 없이 일반 서버 오류만 보인다. | direct-route guard 또는 `EVENT_NOT_OFFLINE` 전용 문구를 둘지 결정 |
+| 문서 교정 | `directions_screen.dart:_groupedLinks` | 외부 지도 4종은 세로 목록이다. 기존 "한 줄" 기술은 현재 widget tree와 불일치했다. | 화면 변경 시 golden/widget test로 배치 재확인 |
+| 타입 위험 | `DistanceInfoVo`, `MapLinkVo` | 거리 카드의 `travelMode` 문자열 분류와 링크의 `TravelMode` enum(`CAR/TRANSIT/WALK/BIKE`)은 서로 다른 체계다. | 클라이언트 매핑 회귀 테스트 유지 |
 
 ## 9. 수용 기준
 
 - **AC-01. 현재 위치에서 모임 장소 길찾기 (Happy Path)**: Given 로그인됨, 이벤트 ATTENDING (단, 본 API는 인증만 요구), OS 위치 권한 미부여 When 사용자가 해당 흐름을 실행하면 Then 외부 카카오맵 앱에서 상세 경로 안내. 서버 상태 변화 없음.
 - **AC-02. 등록된 "집" 주소로 길찾기 (저장 주소 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 같음. 외부 앱 호출만 사용자 선택에 따름.
 - **AC-03. 다른 사람의 주소 ID 시도 (네거티브, 권한 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 변화 없음
-- **AC-04. 온라인 이벤트에 길찾기 시도 (도메인 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 길찾기 미제공 — 도메인 정책상 ONLINE/HYBRID 이벤트는 좌표 없음
-- **AC-05. 위치 권한 거부 + 등록 주소 없음 (사용 불가 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 호출 없음. 사용자는 OS 설정에서 권한 부여하거나 주소 등록 필요
-- **AC-06. 호스트가 참석자 거리 리스트를 본다 (서브 엔드포인트)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 호스트는 모든 참석자 거리 노출
-- **AC-07. 일반 참석자가 참석자 거리 리스트를 호출 (권한 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 일반 참석자는 닉네임/프로필 못 봄 (현 구현 한계 — 화면은 marker 만 표시)
-- **AC-08. 외부 지도 앱 미설치 (인계 실패)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자는 다른 provider 버튼 (구글맵 등 https://) 으로 시도 가능
-- **AC-09. 모드 자동 결정 — 1.2km 이동 (Walking 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 거리 임계값 (2km/20km) 에 따라 모드 자동 결정. 사용자가 모드를 명시적으로 바꾸는 UI는 없음 (외부 앱 딥링크는 4개 모드 모두 받지만 화면 버튼은 WALK 우선).
+- **AC-04. 온라인 이벤트에 길찾기 시도 (도메인 분기)**: Given `LocationType.ONLINE` 이벤트 When 정상 이벤트 상세를 보면 Then 길찾기 CTA가 숨고, direct route로 호출하면 `EVENT_NOT_OFFLINE`이 일반 오류 화면으로 표시된다. 서버 `LocationType`에는 `HYBRID` 값이 없다
+- **AC-05. 위치 권한 거부 + 등록 주소 없음 (사용 불가 분기)**: Given 위치 권한 거부와 저장 주소 0개 When 화면의 자동 현재 위치 조회가 실패하면 Then 실패 토스트 후 서버 호출 없이 초기 상태가 남고, "현재 위치" 칩은 재시도를 위해 계속 보인다
+- **AC-06. 운영자가 참석자 거리 리스트를 본다 (서브 엔드포인트)**: Given host/cohost/club canCreateEvent 운영자가 호출할 때 When ATTENDING 명단을 계산하면 Then 계정 회원∩opt-in∩활성 share∩미차단 subset만 거리순으로 반환하고 나머지는 row 자체가 없다
+- **AC-07. 일반 참석자가 참석자 거리 리스트를 호출 (권한 분기)**: Given 운영 권한이 없는 참석자 When 참석자 거리 API를 호출하면 Then `EVENT_NOT_OWNER`로 거부되고 거리 row를 받지 못한다
+- **AC-08. 외부 지도 앱 미설치 (자동 fallback)**: Given 카카오·네이버·애플 provider URL을 열 수 없고 같은 이동수단 Google 링크가 있을 때 When 사용자가 provider 버튼을 누르면 Then fallback 안내 토스트 후 Google 링크를 자동 실행하고, fallback도 불가능할 때만 오류 토스트를 표시한다
+- **AC-09. 외부 지도 이동수단 선택**: Given 응답에 여러 이동수단 링크가 있을 때 When 사용자가 도보/대중교통/자동차/자전거 칩 중 하나를 선택하면 Then 해당 모드의 provider 링크만 표시하며, 앱 내부 거리·시간은 직선거리 기반 추정임을 안내한다.
 
 ## 10. 미결정 / 후속
 
