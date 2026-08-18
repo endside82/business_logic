@@ -28,12 +28,14 @@
         </p>
       </header>
 
+      <div class="launch-strip" id="launch-strip"></div>
+
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">문의 단계</div><div class="value">5</div><div class="hint">작성·내 목록·건별 목록·상세·추가 답장</div></div>
           <div class="metric"><div class="label">문의 대상</div><div class="value">7</div><div class="hint">결제·환불·거래·정산·신고·정기모임 2종</div></div>
           <div class="metric"><div class="label">증빙 첨부</div><div class="value">최대 5개</div><div class="hint">앱 화면 미구현</div></div>
-          <div class="metric"><div class="label">앱 지원 대상</div><div class="value">5/7</div><div class="hint">정기모임 2종 누락</div></div>
+          <div class="metric"><div class="label">앱 지원 대상</div><div class="value">7/7</div><div class="hint">정기모임 2종 포함</div></div>
         </div>
 
         <div class="callout">
@@ -169,8 +171,8 @@ stateDiagram-v2
         <div class="callout danger">
           <span class="label">앱 불완전 구현</span>
           <ul>
-            <li><strong>정기모임 결제·정기모임 정산</strong> 두 대상을 앱이 아직 인식하지 못한다.
-              앱에서 정기모임 관련 이슈를 접수하면 엉뚱한 대상으로 접수될 수 있다.</li>
+            <li><strong>정기모임 결제·정기모임 정산</strong> 두 대상도 앱이 인식한다(2026-08-18 확인 — 종전 "미인식" 서술은 해소).
+              일곱 대상 모두 접수 화면에서 고를 수 있다.</li>
             <li><strong>증빙 첨부 기능</strong>이 앱에 없다. 서버는 최대 5개 파일을 받도록 준비돼 있다.</li>
             <li><strong>답변 알림</strong>이 앱으로 실제 전달되는지 확인이 필요하다.</li>
           </ul>
@@ -187,6 +189,7 @@ stateDiagram-v2
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/launch-status.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>

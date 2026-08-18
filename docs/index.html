@@ -31,6 +31,15 @@
           <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
         </div>
 
+        <div class="callout danger">
+          <span class="label">2026-08-18 — 이 문서 모음을 읽기 전에</span>
+          <p>아래 기능 문서들은 <strong>기능이 무엇을 하기로 되어 있는지</strong>를 현재형으로 서술한다.
+          그 문장은 “오늘 그렇게 동작한다”는 보증이 아니다. 무엇이 첫 출시에 실제로 열리고 무엇이 닫히는지,
+          그 사실을 무엇으로 확인했는지는 <a href="qa/launch-status.html">첫 출시 현황</a>과
+          <a href="qa/feature-status.html">기능별 출시 상태</a>에서만 판단한다.
+          현재 판정은 <strong>첫 출시·전 기능 공개·실제 결제 모두 보류</strong>다.</p>
+        </div>
+
         <div class="callout warn">
           <span class="label">2026-07-29 갱신 — API·App·Admin 직접 재실측</span>
           <p>기능 수는 175개로 유지하되 50개 핵심 기능을 실제 Controller/DTO/Service와 Flutter caller까지 다시 대조했다. UI 미배선, 권한·상태 불일치, 알림 설정, path scope와 보안 후보를 완료 표현에서 분리했다. 상세는
@@ -94,6 +103,18 @@ flowchart LR
         <p class="subtitle">목적별로 묶었다. 본인이 어떤 일을 하려고 왔는지 골라 들어가면 된다.</p>
 
         <div class="hub-grid">
+          <a class="card" href="qa/launch-status.html">
+            <div class="eyebrow">출시 현황</div>
+            <h3>첫 출시 현황 — 열린 것과 닫힌 것</h3>
+            <p>첫 출시를 막고 있는 항목, 열리지만 제품이 불완전한 항목, 이번에 닫고 후속으로 넘긴 항목을 한 표로 모았다. 기능 문서와 개발 작업을 잇는 연결표도 여기 있다.</p>
+            <div class="meta"><span class="pill danger">먼저 읽기</span></div>
+          </a>
+          <a class="card" href="qa/feature-status.html">
+            <div class="eyebrow">출시 현황</div>
+            <h3>기능별 출시 상태 175개</h3>
+            <p>기능마다 “첫 출시에 열리는가”와 “무엇으로 확인했는가”를 붙였다. 열린 항목이 있는 기능만, 실계정으로 확인한 기능만 골라 볼 수 있다.</p>
+            <div class="meta"><span class="pill danger">먼저 읽기</span></div>
+          </a>
           <a class="card" href="overview/service.html">
             <div class="eyebrow">제품 이해</div>
             <h3>community가 푸는 문제</h3>

@@ -877,3 +877,34 @@ footer.page-foot a { color: var(--brand); border: none; }
   .mobile-topbar { padding: 8px 12px; min-height: 48px; }
   .mobile-topbar .topbar-brand { font-size: 14.5px; }
 }
+
+/* 첫 출시 상태 띠 — 기능 문서 머리에 붙는 두 축 요약 (assets/launch-status.js 가 채운다) */
+.launch-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 11px 14px;
+  margin: 0 0 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.launch-strip.is-open { border-left-color: var(--brand); }
+.launch-strip.is-partial { border-left-color: var(--warn); }
+.launch-strip.is-sealed { border-left-color: var(--danger); }
+.launch-strip.is-retired { border-left-color: var(--muted-2); }
+.launch-strip .strip-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.launch-strip .strip-note { flex: 1 1 260px; color: var(--muted); font-size: 12.5px; }
+.launch-strip .strip-more { margin-left: auto; font-size: 12.5px; white-space: nowrap; }
+.launch-strip ul { margin: 6px 0 0; padding-left: 18px; flex-basis: 100%; }
+.launch-strip li { font-size: 12.5px; color: var(--muted); }

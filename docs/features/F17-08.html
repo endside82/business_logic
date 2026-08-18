@@ -26,6 +26,8 @@
         </p>
       </header>
 
+      <div class="launch-strip" id="launch-strip"></div>
+
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">트리거</div><div class="value">3</div><div class="hint">멤버 취소·호스트 취소·자격박탈</div></div>
@@ -133,7 +135,7 @@
         <div class="callout danger">
           <span class="label">분쟁이 일어날 수 있는 케이스</span>
           <ul>
-            <li><strong>계좌이체 환불 마감 누락</strong> — 호스트가 송금만 하고 마감 안 누르면 멤버 입장에서 영구 "환불 진행중". 호스트 알림 미배선이라 잊기 쉬움.</li>
+            <li><strong>계좌이체 환불 마감 누락</strong> — 호스트가 송금만 하고 마감 안 누르면 멤버 입장에서 영구 "환불 진행중". 환불 단계 알림은 배선됐으나(2026-08-18 확인), 송금 후 마감을 누르지 않으면 멤버 화면은 계속 진행 중으로 남는다.</li>
             <li><strong>지갑 환불로 음수 잔액 발생</strong> — 사용자가 환불액보다 적은 잔액을 가진 경우 마이너스 잔액이 일시 발생할 수 있음(다음 적립 시 우선 차감).</li>
             <li><strong>"24시간 전 100% 환불" 같은 시간 비례 정책 미적용</strong> — 1차 출시는 회차 단위 차감만. 시간 비례 환불은 후속.</li>
             <li><strong>공결·세션 취소의 환불 정책</strong> — 1차는 멤버 취소 산식과 동일 처리. 약관 검토 후 별도 정책 가능.</li>
@@ -158,6 +160,7 @@
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
+  <script src="../assets/launch-status.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>

@@ -340,6 +340,8 @@
     {
       heading: 'QA & 릴리즈',
       links: [
+        { href: 'qa/launch-status.html', label: '첫 출시 현황' },
+        { href: 'qa/feature-status.html', label: '기능별 출시 상태' },
         { href: 'qa/migration-status.html', label: 'PRD 문서 상태' },
         { href: 'qa/acceptance.html', label: '전체 수용 기준' },
         { href: 'qa/coverage.html',   label: '시나리오 커버리지' },

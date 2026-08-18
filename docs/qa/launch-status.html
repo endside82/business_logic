@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>첫 출시 현황 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>첫 출시 현황</div>
+        <h1>첫 출시 현황 — 무엇이 열려 있고 무엇이 닫혀 있는가</h1>
+        <p class="lede">
+          이 문서 모음의 나머지 페이지는 <strong>기능이 무엇을 하기로 되어 있는지</strong>를 설명한다.
+          이 페이지는 그와 다른 질문 하나에만 답한다 — <strong>그중 무엇이 첫 출시에 실제로 열리고,
+          그 사실을 무엇으로 확인했는가.</strong>
+          설계 서술과 현재 상태를 섞어 읽지 않도록 축을 분리해 둔다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics" id="verdict-metrics"></div>
+        <div class="callout danger">
+          <span class="label">읽기 전에</span>
+          <p>여기 적힌 “개통”은 <strong>첫 출시 범위에 든다</strong>는 뜻이지 지금 당장 고객에게 공개할 수
+            있다는 뜻이 아니다. 공개 여부는 아래 <a href="#gates">출시 관문</a> 다섯 개가 모두 통과해야
+            결정된다. 현재는 통과하지 않았다.</p>
+        </div>
+      </section>
+
+      <section id="axes">
+        <h2>두 개의 축으로만 읽는다</h2>
+        <p>기능 하나를 볼 때 물어야 할 질문은 두 개다. 이 두 축은 서로 독립이라 “열려 있지만 확인은 안 된”
+          기능과 “확인은 됐지만 이번엔 닫는” 기능이 동시에 존재한다.</p>
+        <div class="split">
+          <div>
+            <h3>축 1 — 첫 출시에 열리는가</h3>
+            <div class="table-wrap">
+              <table><thead><tr><th style="width:110px">값</th><th>뜻</th></tr></thead>
+              <tbody id="scope-legend"></tbody></table>
+            </div>
+          </div>
+          <div>
+            <h3>축 2 — 무엇으로 확인했는가</h3>
+            <div class="table-wrap">
+              <table><thead><tr><th style="width:110px">값</th><th>뜻</th></tr></thead>
+              <tbody id="proof-legend"></tbody></table>
+            </div>
+          </div>
+        </div>
+        <div class="callout info">
+          <span class="label">판정 근거</span>
+          <p><strong>축 1</strong>은 운영 배포의 출시 범위 설정과 결제 개통 스위치에서 그대로 가져온다 —
+            사람이 판단한 값이 아니다. <strong>축 2</strong>는 실제 계정으로 실행한 검증 기록 16개
+            시나리오와 그 뒤의 변경 경계 재검증 2건에서만 가져온다. 자동 테스트 통과는 축 2의
+            “실계정 확인”으로 올려 주지 않는다.</p>
+        </div>
+        <p style="color:var(--muted);font-size:13px">기능 175개 각각의 값은
+          <a href="feature-status.html">기능별 출시 상태표</a>에 있다.</p>
+      </section>
+
+      <section id="gates">
+        <h2>출시 관문</h2>
+        <p>다섯 관문이 모두 통과해야 공개 출시를 승인한다. 하나라도 비어 있으면 보류다.</p>
+        <div class="table-wrap">
+          <table><thead><tr><th style="width:150px">관문</th><th style="width:110px">현재</th><th>남은 것</th></tr></thead>
+          <tbody id="gate-rows"></tbody></table>
+        </div>
+      </section>
+
+      <section id="blocking">
+        <h2>첫 출시를 막고 있는 것</h2>
+        <p>기능 코드를 더 만드는 일이 아니다. 아래가 채워지지 않아 출시할 수 없다.</p>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:58px">번호</th><th style="width:110px">종류</th>
+            <th>내용</th><th style="width:150px">관련 기능</th>
+          </tr></thead><tbody id="block-rows"></tbody></table>
+        </div>
+      </section>
+
+      <section id="limiting">
+        <h2>열리지만 제품이 불완전한 것</h2>
+        <p>첫 출시 범위 안에 있고 고객에게 보이지만, 화면이 없거나 버튼이 동작하지 않거나 알림이 가지
+          않는 항목이다. <strong>출시를 막지는 않으나 고객 문의와 운영 부담으로 돌아온다.</strong>
+          각 항목은 해당 기능 문서가 이미 본문에 적어 둔 서술을 한자리에 모은 것이다.</p>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:58px">번호</th><th style="width:110px">종류</th>
+            <th>내용</th><th style="width:150px">관련 기능</th>
+          </tr></thead><tbody id="limit-rows"></tbody></table>
+        </div>
+      </section>
+
+      <section id="next">
+        <h2>이번에 닫고 후속으로 넘긴 것</h2>
+        <p>미완성이라 숨기는 것이 아니라, <strong>범위 결정으로 닫은 것</strong>이다. 화면·앱 링크·직접
+          요청을 모두 막고 다시 노출되지 않는지만 회귀로 지킨다.</p>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:58px">번호</th><th style="width:110px">종류</th>
+            <th>내용</th><th style="width:150px">관련 기능</th>
+          </tr></thead><tbody id="next-rows"></tbody></table>
+        </div>
+        <div class="callout warn">
+          <span class="label">놓치기 쉬운 연쇄</span>
+          <p>지갑에서 돈이 나가는 창구를 하나로 닫았기 때문에, <strong>첫 출시 범위 안에 있는 기능도
+            결제 수단이 지갑이면 함께 닫힌다.</strong> 클럽 기부, 클럽 기금 인출, 클럽 구독 결제,
+            모임 정산의 지갑 납부, 수익 출금이 여기에 해당한다. 각 기능 문서만 읽으면 열려 있는 것처럼
+            보이므로 이 표를 함께 본다. 환불·회수·탈퇴 잔액 정리는 반대로 막지 않는다 — 막으면 고객에게
+            돌아가야 할 돈이 묶인다.</p>
+        </div>
+      </section>
+
+      <section id="tracks">
+        <h2>기능과 개발 작업의 연결</h2>
+        <p>출시 관문과 증거는 개발 작업 단위로 관리되고, 이 문서 모음은 제품 기능 단위로 쓰여 있다.
+          둘 사이에 공통 열쇠가 없어 “이 화면이 지금 왜 막혀 있는지”를 되짚을 수 없었다. 아래 표가 그
+          연결이다.</p>
+        <div class="callout info">
+          <span class="label">추적 코드는 제품 정보가 아니다</span>
+          <p>왼쪽 열의 영문 코드는 엔지니어링 작업판과 증거 폴더를 찾기 위한 열쇠일 뿐이다.
+            우선순위나 중요도를 뜻하지 않으니 기획·사업 판단에는 오른쪽 이름과 상태만 읽으면 된다.</p>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:120px">추적 코드</th><th style="width:170px">작업 이름</th>
+            <th style="width:80px">코드</th><th style="width:180px">실환경 확인</th><th>관련 기능</th>
+          </tr></thead><tbody id="track-rows"></tbody></table>
+        </div>
+      </section>
+
+      <section id="doclimits">
+        <h2>이 문서 모음을 읽을 때의 한계</h2>
+        <p>기능 문서는 대부분 현재형 단정으로 쓰여 있다. 그 문장은 <strong>“이렇게 동작하기로 했다”</strong>는
+          뜻이며, 오늘 그렇게 동작한다는 보증이 아니다. 다음 세 가지를 함께 기억한다.</p>
+        <ul>
+          <li><strong>기능 문서에는 상태 축이 없다.</strong> 그래서 각 기능 문서 맨 위에 이 페이지의 두 축을
+            요약한 띠를 넣었다. 띠와 본문이 어긋나면 띠가 최신이다.</li>
+          <li><strong>문서 상태표는 구현 완료표가 아니다.</strong>
+            <a href="migration-status.html">PRD 문서 상태</a>가 재는 것은 문서를 얼마나 소스와 대조해
+            썼는지이지 제품이 되었는지가 아니다.</li>
+          <li><strong>시나리오 커버리지는 시험 문서의 개수다.</strong>
+            <a href="coverage.html">시나리오 커버리지</a>의 “빈틈 0”은 시험 항목을 다 적었다는 뜻이지
+            실제 환경에서 통과했다는 뜻이 아니다.</li>
+        </ul>
+        <div class="callout warn">
+          <span class="label" id="pending-label">미판정으로 남은 갭 후보</span>
+          <p id="pending-text">불러오는 중…</p>
+        </div>
+      </section>
+
+      <section id="source">
+        <h2>이 페이지의 출처와 갱신 규칙</h2>
+        <ul>
+          <li>출시 판정·관문·외부 증거는 제품 저장소의 <strong>출시 현황 정본</strong>과
+            <strong>출시 증거 보관소</strong>가 단일 출처다. 이 페이지는 그 판정을 기능 단위로 펼친
+            투영이며, 두 문서와 다르면 그쪽이 맞다.</li>
+          <li>노출 여부는 운영 배포 설정에서 기계적으로 읽는다. 설정이 바뀌면 이 페이지도 같은 날 바꾼다.</li>
+          <li>열리지만 불완전한 항목은 각 기능 문서 본문의 서술에서 모았다. 기능 문서에서 그 서술이
+            사라지면 여기서도 지운다.</li>
+          <li>기준일이 오늘과 멀어졌다면 값이 아니라 <strong>기준일을 먼저 의심한다.</strong></li>
+        </ul>
+        <p style="color:var(--muted);font-size:12.5px" id="asof-line"></p>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/launch-status.js"></script>
+  <script>
+    (function () {
+      var L = window.LAUNCH_STATUS;
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+      function pill(text, tone) { return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(text) + '</span>'; }
+      function featureLinks(ids) {
+        if (!ids || !ids.length) return '<span style="color:var(--muted-2)">전체</span>';
+        return ids.map(function (f) {
+          return '<a href="../features/' + f + '.html"><code>' + f + '</code></a>';
+        }).join(' ');
+      }
+
+      document.getElementById('verdict-metrics').innerHTML = L.verdict.map(function (v) {
+        return '<div class="metric"><div class="label">' + esc(v.label) + '</div>' +
+          '<div class="value">' + esc(v.value) + '</div>' +
+          '<div class="hint">' + esc(v.why) + '</div></div>';
+      }).join('');
+
+      function legend(target, map) {
+        document.getElementById(target).innerHTML = Object.keys(map).map(function (k) {
+          return '<tr><td>' + pill(map[k].label, map[k].tone) + '</td><td>' + esc(map[k].desc) + '</td></tr>';
+        }).join('');
+      }
+      legend('scope-legend', L.SCOPE);
+      legend('proof-legend', L.PROOF);
+
+      document.getElementById('gate-rows').innerHTML = L.gates.map(function (g) {
+        return '<tr><td><strong>' + esc(g.name) + '</strong></td><td>' + pill(g.state, g.tone) +
+          '</td><td>' + esc(g.detail) + '</td></tr>';
+      }).join('');
+
+      function rows(target, impact) {
+        var list = L.openItems.filter(function (o) { return o.impact === impact; });
+        document.getElementById(target).innerHTML = list.map(function (o) {
+          return '<tr><td><code>' + esc(o.id) + '</code></td>' +
+            '<td>' + pill(o.kind, impact === 'block' ? 'danger' : (impact === 'limit' ? 'warn' : '')) + '</td>' +
+            '<td><strong>' + esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:13px">' +
+            esc(o.detail) + '</span></td>' +
+            '<td style="font-size:12px">' + featureLinks(o.features) + '</td></tr>';
+        }).join('');
+        return list.length;
+      }
+      rows('block-rows', 'block');
+      rows('limit-rows', 'limit');
+      rows('next-rows', 'next');
+
+      document.getElementById('track-rows').innerHTML = L.tracks.map(function (t) {
+        return '<tr><td><code>' + esc(t.code) + '</code></td>' +
+          '<td>' + esc(t.name) + '</td>' +
+          '<td>' + pill(t.code_state, t.code_state === '완료' ? 'brand' : 'warn') + '</td>' +
+          '<td style="font-size:12.5px">' + esc(t.proof_state) + '</td>' +
+          '<td style="font-size:12px">' + featureLinks(t.features) + '</td></tr>';
+      }).join('');
+
+      document.getElementById('pending-text').textContent =
+        'PRD 쪽 갭 후보 ' + L.pendingTotal + '건이 아직 “소스와 대조한 뒤 확정” 상태로 남아 있다. ' +
+        '이 숫자는 결함 수가 아니라 아직 판정하지 않은 검토 항목의 수다. 위의 “열리지만 불완전한 것”과 ' +
+        '달리 사실 확인이 끝나지 않았으므로, 출시 판단에 그대로 쓰지 않는다. 기능별 잔여 수는 ' +
+        '기능별 출시 상태표에서 확인한다.';
+
+      document.getElementById('asof-line').textContent = '기준일 ' + L.asOf + ' · 이 페이지의 모든 값은 이 날짜의 판정이다.';
+    })();
+  </script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

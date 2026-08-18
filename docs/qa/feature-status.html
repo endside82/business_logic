@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>기능별 출시 상태 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>기능별 출시 상태</div>
+        <h1>기능별 출시 상태 175개</h1>
+        <p class="lede">
+          기능 하나하나에 대해 <strong>첫 출시에 열리는가</strong>와 <strong>무엇으로 확인했는가</strong>를
+          붙인 표다. 기능이 무엇을 하는지는 각 기능 문서가, 문서를 얼마나 잘 썼는지는
+          <a href="migration-status.html">PRD 문서 상태</a>가 담당한다.
+          판정 규칙과 근거는 <a href="launch-status.html">첫 출시 현황</a>에 있다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">첫 출시 개통</div><div class="value" id="m-open">–</div><div class="hint">일부 개통 포함</div></div>
+          <div class="metric"><div class="label">첫 출시 봉인</div><div class="value" id="m-sealed">–</div><div class="hint">후속 출시 대상</div></div>
+          <div class="metric"><div class="label">실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">나머지는 자동 검증만</div></div>
+          <div class="metric"><div class="label">열린 항목 보유</div><div class="value" id="m-gap">–</div><div class="hint">화면 없음·동선 끊김 등</div></div>
+        </div>
+
+        <div class="toolbar">
+          <input id="q" type="search" placeholder="ID·기능명·도메인 검색">
+          <select id="domain-filter" aria-label="도메인 필터"><option value="">전체 도메인</option></select>
+          <label class="chip"><input type="checkbox" id="f-open">개통만</label>
+          <label class="chip"><input type="checkbox" id="f-sealed">봉인만</label>
+          <label class="chip"><input type="checkbox" id="f-real">실계정 확인만</label>
+          <label class="chip"><input type="checkbox" id="f-gap">열린 항목 있는 것만</label>
+        </div>
+        <p class="feature-count" id="count">불러오는 중…</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:76px">ID</th>
+              <th style="width:118px">도메인</th>
+              <th>기능</th>
+              <th style="width:96px">첫 출시</th>
+              <th style="width:104px">확인 수준</th>
+              <th style="width:78px;text-align:right">열린 항목</th>
+              <th style="width:78px;text-align:right">미판정</th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>열 읽는 법</h2>
+        <ul>
+          <li><strong>첫 출시</strong> — 운영 배포의 출시 범위 설정과 결제 개통 스위치에서 그대로 읽은
+            값이다. “일부 개통”은 기능 안에서 일부 경로만 열린다는 뜻이며, 어떤 경로가 닫히는지는
+            행을 펼치면 나온다.</li>
+          <li><strong>확인 수준</strong> — “실계정 확인”은 실제 계정으로 실제 서버를 왕복한 기록이 있는
+            경우에만 붙인다. 자동 테스트 통과는 여기에 해당하지 않는다.</li>
+          <li><strong>열린 항목</strong> — 화면이 없거나 버튼이 동작하지 않거나 알림이 가지 않는 등,
+            이미 알려진 미완성 항목의 수다. 내용은 행을 펼치거나
+            <a href="launch-status.html#limiting">첫 출시 현황</a>에서 본다.</li>
+          <li><strong>미판정</strong> — PRD 쪽에 “소스와 대조한 뒤 확정”으로만 남아 있는 갭 후보 수다.
+            <strong>결함 수가 아니라 아직 판정하지 않은 검토 항목의 수</strong>이며, 클수록 그 기능의
+            문서를 신뢰하기 전에 소스를 다시 열어 봐야 한다는 뜻이다.</li>
+        </ul>
+        <p style="color:var(--muted);font-size:12.5px" id="asof"></p>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/features.js"></script>
+  <script src="../assets/launch-status.js"></script>
+  <script>
+    (function () {
+      var L = window.LAUNCH_STATUS;
+      var F = window.PRD_FEATURES || [];
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+      function pill(t, tone) { return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(t) + '</span>'; }
+
+      var data = F.map(function (f) {
+        var s = L.forFeature(f.id);
+        s.name = f.name; s.domain = f.domain;
+        return s;
+      });
+
+      var doms = [];
+      data.forEach(function (d) { if (doms.indexOf(d.domain) < 0) doms.push(d.domain); });
+      var sel = document.getElementById('domain-filter');
+      doms.forEach(function (d) {
+        var o = document.createElement('option'); o.value = d; o.textContent = d; sel.appendChild(o);
+      });
+
+      document.getElementById('m-open').textContent = data.filter(function (d) { return d.scope === 'open' || d.scope === 'partial'; }).length;
+      document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
+      document.getElementById('m-real').textContent = data.filter(function (d) { return d.proof === 'real'; }).length;
+      document.getElementById('m-gap').textContent = data.filter(function (d) { return d.issues > 0; }).length;
+      document.getElementById('asof').textContent = '기준일 ' + L.asOf + ' · 표의 모든 값은 이 날짜의 판정이다.';
+
+      function detailCell(d) {
+        var out = '<a href="../features/' + d.id + '.html"><strong>' + esc(d.name) + '</strong></a>';
+        var lines = [];
+        if (d.scopeNote) lines.push(esc(d.scopeNote));
+        if (d.proofNote) lines.push('확인 범위 — ' + esc(d.proofNote));
+        d.openItems.forEach(function (o) {
+          lines.push('<span class="pill ' + (o.impact === 'block' ? 'danger' : (o.impact === 'limit' ? 'warn' : '')) +
+            '">' + esc(o.kind) + '</span> ' + esc(o.title));
+        });
+        if (lines.length) {
+          out += '<div style="color:var(--muted);font-size:12.5px;margin-top:4px">' + lines.join('<br>') + '</div>';
+        }
+        return out;
+      }
+
+      function render() {
+        var q = document.getElementById('q').value.trim().toLowerCase();
+        var dom = sel.value;
+        var fOpen = document.getElementById('f-open').checked;
+        var fSealed = document.getElementById('f-sealed').checked;
+        var fReal = document.getElementById('f-real').checked;
+        var fGap = document.getElementById('f-gap').checked;
+
+        var list = data.filter(function (d) {
+          if (dom && d.domain !== dom) return false;
+          if (fOpen && !(d.scope === 'open' || d.scope === 'partial')) return false;
+          if (fSealed && d.scope !== 'sealed') return false;
+          if (fReal && d.proof !== 'real') return false;
+          if (fGap && !d.issues) return false;
+          if (q) {
+            var hay = (d.id + ' ' + d.name + ' ' + d.domain).toLowerCase();
+            if (hay.indexOf(q) < 0) return false;
+          }
+          return true;
+        });
+
+        document.getElementById('rows').innerHTML = list.map(function (d) {
+          var sc = L.SCOPE[d.scope], pr = L.PROOF[d.proof];
+          return '<tr>' +
+            '<td><a href="../features/' + d.id + '.html"><code>' + d.id + '</code></a></td>' +
+            '<td style="font-size:12.5px">' + esc(d.domain) + '</td>' +
+            '<td>' + detailCell(d) + '</td>' +
+            '<td>' + pill(sc.label, sc.tone) + '</td>' +
+            '<td>' + pill(pr.label, pr.tone) + '</td>' +
+            '<td style="text-align:right">' + (d.issues || '–') + '</td>' +
+            '<td style="text-align:right">' + (d.pending || '–') + '</td>' +
+            '</tr>';
+        }).join('');
+        document.getElementById('count').textContent = list.length + '개 기능 표시 중 (전체 ' + data.length + '개)';
+      }
+
+      ['q', 'domain-filter', 'f-open', 'f-sealed', 'f-real', 'f-gap'].forEach(function (id) {
+        var el = document.getElementById(id);
+        el.addEventListener('input', render);
+        el.addEventListener('change', render);
+      });
+      render();
+    })();
+  </script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

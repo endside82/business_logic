@@ -27,6 +27,8 @@
         </p>
       </header>
 
+      <div class="launch-strip" id="launch-strip"></div>
+
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">상태</div><div class="value">4</div><div class="hint">작성 중 · 발행 중 · 숨김 · 삭제</div></div>
@@ -255,7 +257,7 @@ flowchart TD
           <div class="card">
             <div class="eyebrow">미리보기 접근권한</div>
             <h3>상세와 미리보기의 게이트는 같지 않다</h3>
-            <p>미리보기 서비스는 작성 중·숨김 플랜을 “로그인한 사용자”에게 허용하며 사람별 공유 권한은 아직 없다.
+            <p>미리보기는 작성 중·숨김 플랜을 작성자와 숨김 구매자에게만 연다(2026-08-18 확인 — 종전 "로그인한 사용자 전체 허용" 서술은 해소).
               발행 중 플랜의 익명 미리보기를 허용하려는 서비스 분기는 있지만, 현재 전역 보안 설정에 공개 예외가 없어 실제 HTTP에서는 먼저 인증이 필요하다.</p>
           </div>
           <div class="card">
@@ -317,6 +319,7 @@ flowchart TD
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script src="../assets/launch-status.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>
