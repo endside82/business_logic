@@ -28,7 +28,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">결제 방식</div><div class="value">2</div><div class="hint">지갑·계좌이체</div></div>
+          <div class="metric"><div class="label">결제 방식</div><div class="value">2 중 1</div><div class="hint">설계는 지갑·계좌이체 · 첫 출시에 열리는 것은 계좌이체 하나</div></div>
           <div class="metric"><div class="label">결제 기한</div><div class="value">72시간</div><div class="hint">계좌이체 입금 마감</div></div>
           <div class="metric"><div class="label">동시 활성 결제</div><div class="value">1건</div><div class="hint">멤버당</div></div>
         </div>
@@ -38,6 +38,23 @@
           <p><strong>지갑 결제</strong>는 플랫폼이 중개하므로 매출·수수료·정산이 자동으로 잡힌다.
             <strong>계좌이체</strong>는 호스트가 직접 받는 외부 송금이라 회계에 안 잡히고 정산 대상도 아니다(호스트 직거래).
             그래서 환불도 지갑 결제는 자동, 계좌이체는 호스트가 직접 송금하고 "환불 완료"를 눌러야 마감된다.</p>
+        </div>
+
+        <div class="callout danger">
+          <span class="label">2026-08-18 현재 제품 태세 — 회비도 계좌이체만 연다</span>
+          <p>정기모임 회비는 <strong>모임(이벤트) 참가비와 같은 판단</strong>을 따른다. 어느 결제 수단을 보여줄지는
+            서비스가 한 곳에서 정해 앱에 내려주고, 첫 유료 출시에서 열리는 것은 <strong>계좌이체 하나</strong>다.
+            지갑(포인트) 결제는 실제 결제 연동이 열리기 전까지 닫혀 있으므로, 아래 지갑 관련 서술은
+            설계 정본이자 <strong>현재 비활성</strong>으로 읽는다. 앱의 결제 방식 선택지는 종전처럼 두 개를 고정으로
+            그리지 않고 서비스가 내려준 목록대로 그린다(2026-08-18 정정). 이미 접수된 건의 확인·거절·환불은 그대로 열려 있다.</p>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">아직 남은 빈틈 — 회비 계좌 안내가 모임 참가비와 비대칭이다 (P1)</span>
+          <p>모임 참가비 쪽에는 호스트의 수납 계좌를 모임에 묶어 두고 참가자에게 보여주는 화면이 있다.
+            <strong>정기모임 회비에는 그 화면이 아직 없다</strong> — 참가자는 "호스트가 따로 안내한 계좌"로 송금한 뒤
+            입금 신고만 한다. 흐름 자체는 입금자명 신고 → 호스트 확인으로 성립하지만, 계좌를 어디서 알려주는지가
+            서비스 밖(공지·메시지)에 남아 있다. 다음 순번 과제다.</p>
         </div>
       </section>
 
@@ -105,9 +122,9 @@
           <table>
             <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
             <tbody>
-              <tr><td><strong>결제 방식 선택</strong></td><td>"지갑·계좌이체" 라디오. 지갑 선택 시 현재 잔액이 같이 노출.</td><td>잔액이 부족할 때 사용자가 한 번에 인지하게.</td></tr>
+              <tr><td><strong>결제 방식 선택</strong></td><td>서비스가 내려준 목록대로 그려지는 선택지. 지갑을 고를 수 있는 경우 현재 잔액이 같이 노출. 첫 유료 출시에서는 계좌이체 하나만 보인다.</td><td>고를 수 없는 수단을 보여 주면 사용자가 막다른 길로 들어간다. 잔액 노출은 부족을 한 번에 인지하게.</td></tr>
               <tr><td><strong>코스 총액</strong></td><td>"총 80,000원" 큰 글씨. 회차당 가격이 아니라 코스 전체.</td><td>코스 단위 결제임을 강조해, 사용자가 "회차당 가격"으로 오인하지 않게 한다.</td></tr>
-              <tr><td><strong>계좌 정보</strong></td><td>계좌이체 선택 시 호스트가 입력한 계좌·예금주·입금자명 가이드.</td><td>외부 송금이므로 사용자가 자기 송금 책임을 인지하게.</td></tr>
+              <tr><td><strong>계좌 정보</strong></td><td>2026-08-18 정정 — 이 화면은 "호스트가 안내한 계좌로 직접 입금한 뒤 신고하라"는 안내와 입금자명 입력만 제공한다. 계좌번호·예금주를 화면에서 보여주는 기능은 <strong>아직 없다</strong>(위 P1 항목).</td><td>외부 송금이므로 사용자가 자기 송금 책임을 인지해야 한다. 다만 계좌를 어디서 확인하는지가 서비스 밖에 남아 있는 것은 현재의 빈틈이다.</td></tr>
               <tr><td><strong>72시간 카운트다운</strong></td><td>결제 대기 상태에서 실시간 카운트다운.</td><td>기한 만료 = 자리 빼앗김. 시각적 긴급성으로 사용자 행동 유도.</td></tr>
               <tr><td><strong>잔액 부족 안내</strong></td><td>"X원 부족 — 충전하기" 버튼.</td><td>충전 동선을 한 흐름으로 묶어 이탈 방지.</td></tr>
               <tr><td><strong>중복 결제 차단</strong></td><td>이미 살아 있는 결제가 있으면 새 결제 버튼 비활성.</td><td>버튼 단계 차단으로 실수 결제 방지.</td></tr>

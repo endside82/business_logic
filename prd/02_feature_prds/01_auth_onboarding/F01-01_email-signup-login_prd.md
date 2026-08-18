@@ -8,6 +8,8 @@
 
 이메일/비밀번호 기반의 신규 가입과 로그인을 처리한다. 가입 시 사용자 본인 정보·약관 동의·생년월일을 받아 `Users`/`Member`/`Agreement`/`SocialLogin(EMAIL)` 4개 테이블에 동시 INSERT하고, 즉시 JWT Access/Refresh 토큰을 발급한다. 로그인은 자격 증명 검증 후 토큰을 재발급한다. 두 엔드포인트 모두 동일한 `LoginVo`를 반환하므로 클라이언트는 같은 후속 처리를 한다.
 
+**2026-08-18 개정(P0-E2E-02 결정 A)** — 이 단위에 두 가지가 추가됐다. ① **가입 커밋 직후 서버가 첫 인증 메일을 스스로 보낸다**(`AfterCommitExecutor.runSafely`로 격리 — 발송 실패가 가입을 되돌리지 않는다). 종전에는 첫 발송이 없고 앱의 재전송 CTA만 있었다(폐기). ② 가입·로그인은 여전히 `emailVerified`를 **검사하지 않고 성공**하지만, 그렇게 발급된 세션은 인증 전까지 **제한 세션**이다 — 허용 목록 밖 요청은 `403 EMAIL_NOT_VERIFIED(100020)`. 즉 "미인증 계정이 아무 경계 없이 서비스를 쓴다"는 종전 상태는 2026-08-18 결정으로 대체됐다. 경계의 정본 계약은 F01-03 §4.1이다. 근거 소스: `community_api/.../account/service/AuthService.java`·`config/security/EmailVerificationPolicy.java`(api HEAD `d5de51c0`).
+
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
 - 앱 첫 실행 시 토큰 미보유 → `splash_screen.dart` → 로그인 화면
@@ -61,6 +63,8 @@
 
 이메일/비밀번호 기반의 신규 가입과 로그인을 처리한다. 가입 시 사용자 본인 정보·약관 동의·생년월일을 받아 `Users`/`Member`/`Agreement`/`SocialLogin(EMAIL)` 4개 테이블에 동시 INSERT하고, 즉시 JWT Access/Refresh 토큰을 발급한다. 로그인은 자격 증명 검증 후 토큰을 재발급한다. 두 엔드포인트 모두 동일한 `LoginVo`를 반환하므로 클라이언트는 같은 후속 처리를 한다.
 
+**2026-08-18 개정(P0-E2E-02 결정 A)** — 이 단위에 두 가지가 추가됐다. ① **가입 커밋 직후 서버가 첫 인증 메일을 스스로 보낸다**(`AfterCommitExecutor.runSafely`로 격리 — 발송 실패가 가입을 되돌리지 않는다). 종전에는 첫 발송이 없고 앱의 재전송 CTA만 있었다(폐기). ② 가입·로그인은 여전히 `emailVerified`를 **검사하지 않고 성공**하지만, 그렇게 발급된 세션은 인증 전까지 **제한 세션**이다 — 허용 목록 밖 요청은 `403 EMAIL_NOT_VERIFIED(100020)`. 즉 "미인증 계정이 아무 경계 없이 서비스를 쓴다"는 종전 상태는 2026-08-18 결정으로 대체됐다. 경계의 정본 계약은 F01-03 §4.1이다. 근거 소스: `community_api/.../account/service/AuthService.java`·`config/security/EmailVerificationPolicy.java`(api HEAD `d5de51c0`).
+
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
@@ -80,7 +84,7 @@
   - `Agreement`: userId, agreeTerm/agreePrivacy/agreeMarketing (Integer 0/1)
   - `SocialLogin`: userId, providerType (int), socialId — 이메일 가입 시 providerType=0(EMAIL), socialId=이메일
   - `RefreshToken`: id, userId, refreshToken (UUID), expireDatetime
-- **VO** `LoginVo`: accessToken, refreshToken, userId, email, nickname, tokenType, expiresIn, role, isNewUser
+- **VO** `LoginVo`: accessToken, refreshToken, userId, email, nickname, tokenType, expiresIn, role, isNewUser, emailVerified(2026-08-18 추가 — 앱이 로그인 응답만으로 제한 세션 여부를 판정한다)
 
 ### 의존 단위 / 외부 시스템
 
@@ -209,8 +213,8 @@
 
 | ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
 |---|---|---|---|
-| S1 | 신규 회원이 이메일로 가입한다 (Happy Path) | 앱 첫 실행, 토큰 없음, 로그인 화면(SCR-AU-001) | User 레코드 생성 (status=NORMAL, emailVerified=false), Refresh/Access 토큰 저장, 로그인 화면 표시 |
-| S2 | 가입 직후 로그인하여 이메일 인증 화면으로 진입한다 | 로그인 화면, 토큰은 있으나 이메일 미인증 | `loginAt` 설정, `status=NORMAL`, 온보딩 또는 이메일 인증 화면 진입 |
+| S1 | 신규 회원이 이메일로 가입한다 (Happy Path) | 앱 첫 실행, 토큰 없음, 로그인 화면(SCR-AU-001) | User 레코드 생성 (status=NORMAL, emailVerified=false), Refresh/Access 토큰 저장, 로그인 화면 표시. **(2026-08-18) 서버가 첫 인증 메일을 발송한다 — 실패해도 가입은 유지** |
+| S2 | 가입 직후 로그인하여 이메일 인증 화면으로 진입한다 | 로그인 화면, 토큰은 있으나 이메일 미인증 | `loginAt` 설정, `status=NORMAL`, 로그인 자체는 성공. **(2026-08-18) 이 세션은 제한 세션이므로** 앱 라우터가 이메일 인증 화면으로 보내고, 허용 목록 밖 요청은 서버가 `403 EMAIL_NOT_VERIFIED(100020)`로 거부한다 |
 | S3 | 잘못된 비밀번호로 로그인 실패 | 로그인 화면, 정상 이메일 + 잘못된 비밀번호 입력 | 로그인 화면 유지, 토큰 미발급 |
 | S4 | 이메일 중복 가입 시도 | 회원가입 화면 | 회원가입 화면 유지 |
 | S5 | 미성년자(만 19세 미만) 가입 차단 | 회원가입 화면, 모든 필드 입력 완료 | User 레코드 생성 안 됨, 화면 유지 |
@@ -233,8 +237,8 @@
 
 ## 9. 수용 기준
 
-- **AC-01. 신규 회원이 이메일로 가입한다 (Happy Path)**: Given 앱 첫 실행, 토큰 없음, 로그인 화면(SCR-AU-001) When 사용자가 해당 흐름을 실행하면 Then User 레코드 생성 (status=NORMAL, emailVerified=false), Refresh/Access 토큰 저장, 로그인 화면 표시
-- **AC-02. 가입 직후 로그인하여 이메일 인증 화면으로 진입한다**: Given 로그인 화면, 토큰은 있으나 이메일 미인증 When 사용자가 해당 흐름을 실행하면 Then `loginAt` 설정, `status=NORMAL`, 온보딩 또는 이메일 인증 화면 진입
+- **AC-01. 신규 회원이 이메일로 가입한다 (Happy Path)**: Given 앱 첫 실행, 토큰 없음, 로그인 화면(SCR-AU-001) When 사용자가 해당 흐름을 실행하면 Then User 레코드 생성 (status=NORMAL, emailVerified=false), Refresh/Access 토큰 저장, 로그인 화면 표시, **인증 메일 1통이 발송된다(2026-08-18)**
+- **AC-02. 가입 직후 로그인하여 이메일 인증 화면으로 진입한다**: Given 로그인 화면, 토큰은 있으나 이메일 미인증 When 사용자가 해당 흐름을 실행하면 Then `loginAt` 설정, `status=NORMAL`, 로그인 성공. **(2026-08-18) 발급된 세션은 제한 세션이며** 앱은 이메일 인증 화면으로 이동하고 허용 목록 밖 요청은 `403 EMAIL_NOT_VERIFIED(100020)`로 거부된다
 - **AC-03. 잘못된 비밀번호로 로그인 실패**: Given 로그인 화면, 정상 이메일 + 잘못된 비밀번호 입력 When 사용자가 해당 흐름을 실행하면 Then 로그인 화면 유지, 토큰 미발급
 - **AC-04. 이메일 중복 가입 시도**: Given 회원가입 화면 When 사용자가 해당 흐름을 실행하면 Then 회원가입 화면 유지
 - **AC-05. 미성년자(만 19세 미만) 가입 차단**: Given 회원가입 화면, 모든 필드 입력 완료 When 사용자가 해당 흐름을 실행하면 Then User 레코드 생성 안 됨, 화면 유지

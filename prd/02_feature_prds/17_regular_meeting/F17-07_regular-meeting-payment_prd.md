@@ -2,6 +2,10 @@
 
 ## 1. 결론
 
+> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 회비 결제도 이벤트와 **같은 서버 판정**을 쓴다(`GET /api/v1/app/release-scope`의 `enabledPaymentMethods` — 이벤트·정기모임 공통 단일 출처). 지금 열려 있는 수단은 **BANK_TRANSFER 하나**이며 WALLET(포인트 지갑)은 실 PG 개통 전까지 닫혀 있다. 아래 WALLET 서술은 설계 정본이자 현재 비활성으로 읽는다. 앱의 결제수단 라디오는 종전처럼 두 값을 하드코딩하지 않고 서버 목록으로 그려지며(2026-08-18 정정), 목록에 없는 수단으로 보내면 서버가 `400023`으로 거부한다. ⛔ 이미 접수된 건의 확인·거절·환불은 이 판정을 타지 않는다(안전 출구).
+>
+> **후속 Gap (P1)**: 정기모임 계좌이체 회비에는 **호스트 수납 계좌의 결박·안내 표면이 아직 없다**(이벤트 쪽에는 있다). 흐름 자체는 입금자명 신고 → 호스트 확인으로 성립하지만, 참가자가 어느 계좌로 보낼지 안내받는 화면이 비대칭이다.
+
 FIXED 모임에서 멤버가 `APPROVED_PENDING_PAYMENT` 상태일 때 코스 전체 금액을 한 번에 납부한다. 두 가지 방식:
 
 - **WALLET** (포인트 지갑) — `WalletService.payForRegularMeeting` 호출. 즉시 차감 → `PointTransaction(referenceType="REGULAR_MEETING_PAYMENT", referenceId=paymentId)` + 분개(`AccountingLedgerService.recordRegularMeetingPayment`: `USER_WALLET → CREATOR_PAYABLE`). 결제 row `PAID` → 멤버 `ENROLLED` → materialize.

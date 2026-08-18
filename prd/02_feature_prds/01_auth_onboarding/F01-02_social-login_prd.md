@@ -8,6 +8,8 @@
 
 외부 OAuth 제공자(Apple/Google/Kakao/Naver)로부터 받은 access token 또는 identity token을 검증하고, 해당 소셜 ID로 기존 사용자를 찾아 로그인하거나 신규 회원을 즉시 생성한다. 이메일 가입 절차 없이 단 한 번의 API 호출로 가입+로그인이 완료되며, 응답의 `isNewUser` 플래그로 신규 여부를 구분한다.
 
+**2026-08-18 개정(P0-E2E-02 결정 A)** — 이메일 미인증 계정은 제한 세션이 된다(F01-03 §4.1). 소셜 **신규 가입**은 그 대상이 아니다: `SocialLoginService`가 신규 계정을 `emailVerified=true`로 생성한다. 소셜 계정의 `email` 값은 제공자가 준 주소가 아니라 `socialId`로 합성한 내부 식별자(`{socialId}@{provider}`)이므로 인증 메일이 영원히 닿지 않고, 그대로 두면 빠져나올 수 없는 제한 세션에 갇히기 때문이다 — 신원은 제공자 토큰 검증으로 이미 증명됐다. ⛔ **기존 이메일 계정에 소셜을 연결(link)하는 경로에서는 이 승격을 하지 않는다** — 그 계정의 주소는 사용자가 직접 입력한 실제 주소이고 제공자가 그것을 증명한 바 없으므로, 연결로 승격하면 타인 주소로 가입한 계정을 자기 소셜로 인증하는 우회가 된다. 근거 소스: `community_api/.../account/service/SocialLoginService.java`(api HEAD `d5de51c0`).
+
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
 - 로그인 화면(SCR-AU-001) 하단 4종 소셜 버튼 (`SocialLoginButtons`)
@@ -52,6 +54,8 @@
 
 외부 OAuth 제공자(Apple/Google/Kakao/Naver)로부터 받은 access token 또는 identity token을 검증하고, 해당 소셜 ID로 기존 사용자를 찾아 로그인하거나 신규 회원을 즉시 생성한다. 이메일 가입 절차 없이 단 한 번의 API 호출로 가입+로그인이 완료되며, 응답의 `isNewUser` 플래그로 신규 여부를 구분한다.
 
+**2026-08-18 개정(P0-E2E-02 결정 A)** — 이메일 미인증 계정은 제한 세션이 된다(F01-03 §4.1). 소셜 **신규 가입**은 그 대상이 아니다: `SocialLoginService`가 신규 계정을 `emailVerified=true`로 생성한다. 소셜 계정의 `email` 값은 제공자가 준 주소가 아니라 `socialId`로 합성한 내부 식별자(`{socialId}@{provider}`)이므로 인증 메일이 영원히 닿지 않고, 그대로 두면 빠져나올 수 없는 제한 세션에 갇히기 때문이다 — 신원은 제공자 토큰 검증으로 이미 증명됐다. ⛔ **기존 이메일 계정에 소셜을 연결(link)하는 경로에서는 이 승격을 하지 않는다** — 그 계정의 주소는 사용자가 직접 입력한 실제 주소이고 제공자가 그것을 증명한 바 없으므로, 연결로 승격하면 타인 주소로 가입한 계정을 자기 소셜로 인증하는 우회가 된다. 근거 소스: `community_api/.../account/service/SocialLoginService.java`(api HEAD `d5de51c0`).
+
 ### 엔드포인트 요약
 
 | Method | Path | Controller#Method | 인증 | 핵심 동작 |
@@ -64,7 +68,7 @@
 - **Enum** `LoginType`: `EMAIL("email")`, `SOCIAL("social")` — 토큰 발급 시 SOCIAL 사용
 - **Entity 요약**:
   - `SocialLogin`: userId, providerType (int), socialId (String, "google_xxx" 형식)
-  - `Users`: 이메일 가입과 동일 — 단, 비밀번호 null로 생성됨 (소셜 단일 가입자)
+  - `Users`: 이메일 가입과 동일 — 단, 비밀번호 null로 생성됨 (소셜 단일 가입자). email은 `{socialId}@{provider}` 합성 주소이며, `emailVerified=true`로 생성된다(2026-08-18)
 - **VO** `LoginVo`: 동일 구조 (F01-01 참조)
 
 ### 의존 단위 / 외부 시스템
