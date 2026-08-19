@@ -26,8 +26,8 @@
         <div class="metrics">
           <div class="metric"><div class="label">첫 출시 개통</div><div class="value" id="m-open">–</div><div class="hint">일부 개통 포함</div></div>
           <div class="metric"><div class="label">첫 출시 봉인</div><div class="value" id="m-sealed">–</div><div class="hint">후속 출시 대상</div></div>
-          <div class="metric"><div class="label">실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">나머지는 자동 검증만</div></div>
-          <div class="metric"><div class="label">열린 항목 보유</div><div class="value" id="m-gap">–</div><div class="hint">화면 없음·동선 끊김 등</div></div>
+          <div class="metric"><div class="label">로컬 실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">외부 서비스·서명 앱은 별도</div></div>
+          <div class="metric"><div class="label">알려진 문제 보유</div><div class="value" id="m-gap">–</div><div class="hint">화면 없음·동선 끊김 등</div></div>
         </div>
 
         <div class="toolbar">
@@ -35,8 +35,8 @@
           <select id="domain-filter" aria-label="도메인 필터"><option value="">전체 도메인</option></select>
           <label class="chip"><input type="checkbox" id="f-open">개통만</label>
           <label class="chip"><input type="checkbox" id="f-sealed">봉인만</label>
-          <label class="chip"><input type="checkbox" id="f-real">실계정 확인만</label>
-          <label class="chip"><input type="checkbox" id="f-gap">열린 항목 있는 것만</label>
+          <label class="chip"><input type="checkbox" id="f-real">로컬 실계정 확인만</label>
+          <label class="chip"><input type="checkbox" id="f-gap">알려진 문제 있는 것만</label>
         </div>
         <p class="feature-count" id="count">불러오는 중…</p>
 
@@ -47,8 +47,8 @@
               <th style="width:118px">도메인</th>
               <th>기능</th>
               <th style="width:96px">첫 출시</th>
-              <th style="width:104px">확인 수준</th>
-              <th style="width:78px;text-align:right">열린 항목</th>
+              <th style="width:112px">확인 수준</th>
+              <th style="width:78px;text-align:right">알려진 문제</th>
               <th style="width:78px;text-align:right">미판정</th>
             </tr></thead>
             <tbody id="rows"></tbody>
@@ -62,9 +62,10 @@
           <li><strong>첫 출시</strong> — 운영 배포의 출시 범위 설정과 결제 개통 스위치에서 그대로 읽은
             값이다. “일부 개통”은 기능 안에서 일부 경로만 열린다는 뜻이며, 어떤 경로가 닫히는지는
             행을 펼치면 나온다.</li>
-          <li><strong>확인 수준</strong> — “실계정 확인”은 실제 계정으로 실제 서버를 왕복한 기록이 있는
-            경우에만 붙인다. 자동 테스트 통과는 여기에 해당하지 않는다.</li>
-          <li><strong>열린 항목</strong> — 화면이 없거나 버튼이 동작하지 않거나 알림이 가지 않는 등,
+          <li><strong>확인 수준</strong> — “로컬 실계정”은 격리된 로컬 환경에서 신규 계정으로 실제
+            서버 상태기계를 왕복한 기록이 있는 경우에만 붙인다. 실제 외부 서비스나 서명 앱까지
+            통과했다는 뜻은 아니다.</li>
+          <li><strong>알려진 문제</strong> — 화면이 없거나 버튼이 동작하지 않거나 알림이 가지 않는 등,
             이미 알려진 미완성 항목의 수다. 내용은 행을 펼치거나
             <a href="launch-status.html#limiting">첫 출시 현황</a>에서 본다.</li>
           <li><strong>미판정</strong> — PRD 쪽에 “소스와 대조한 뒤 확정”으로만 남아 있는 갭 후보 수다.

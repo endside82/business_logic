@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>첫 출시 현황 — community PRD</title>
+  <title>첫 출시 판단 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -12,28 +12,54 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>첫 출시 현황</div>
-        <h1>첫 출시 현황 — 무엇이 열려 있고 무엇이 닫혀 있는가</h1>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>첫 출시 판단</div>
+        <h1>첫 출시 판단 — 지금 공개할 수 있는가</h1>
         <p class="lede">
-          이 문서 모음의 나머지 페이지는 <strong>기능이 무엇을 하기로 되어 있는지</strong>를 설명한다.
-          이 페이지는 그와 다른 질문 하나에만 답한다 — <strong>그중 무엇이 첫 출시에 실제로 열리고,
-          그 사실을 무엇으로 확인했는가.</strong>
-          설계 서술과 현재 상태를 섞어 읽지 않도록 축을 분리해 둔다.
+          이 페이지는 사업·기획자가 바로 판단할 수 있도록 <strong>첫 출시 범위, 지금까지 끝난 검증,
+          공개 전에 남은 일과 실행 순서</strong>를 한곳에 모은다. 기능 설명 문서에 적힌 “이렇게
+          동작한다”는 약속과 오늘 실제로 확인된 상태를 구분해서 보여 준다.
         </p>
       </header>
 
       <section>
         <div class="metrics" id="verdict-metrics"></div>
         <div class="callout danger">
-          <span class="label">읽기 전에</span>
-          <p>여기 적힌 “개통”은 <strong>첫 출시 범위에 든다</strong>는 뜻이지 지금 당장 고객에게 공개할 수
-            있다는 뜻이 아니다. 공개 여부는 아래 <a href="#gates">출시 관문</a> 다섯 개가 모두 통과해야
-            결정된다. 현재는 통과하지 않았다.</p>
+          <span class="label">현재 결론</span>
+          <p><strong>내부 시연은 가능하지만 외부 고객 공개는 아직 불가능하다.</strong> 로컬 환경의 신규
+            계정으로 첫 출시 흐름은 끝까지 통과했다. 그러나 실제 메일·Google 로그인·모바일 푸시·
+            서명 앱·운영 복구를 확인하지 않았고, 첫 출시에서 닫은 일부 결제 버튼도 앱에 남아 있다.</p>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <h2>현재까지 끝난 검증</h2>
+        <p>서로 다른 검증을 하나의 “완료”로 뭉치지 않는다. 아래 네 결과가 각각 무엇을 증명하고,
+          무엇은 증명하지 않는지 함께 본다.</p>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:180px">검증 범위</th><th style="width:130px">현재 결과</th><th>판단 가능한 것</th>
+          </tr></thead><tbody id="evidence-rows"></tbody></table>
+        </div>
+        <div class="callout info">
+          <span class="label">중요한 구분</span>
+          <p>“로컬 실계정 통과”는 새 계정과 실제 서버 상태기계를 사용했다는 뜻이다. 실제 이메일
+            수신, 외부 로그인, 모바일 푸시, 서명된 Android/iOS 앱까지 통과했다는 뜻은 아니다.</p>
+        </div>
+      </section>
+
+      <section id="actions">
+        <h2>지금 해야 할 일 — 이 순서대로</h2>
+        <p>새로운 대형 기능을 더 만드는 순서가 아니다. 첫 출시에서 약속한 범위를 실제 고객 환경에서
+          안전하게 열기 위한 순서다.</p>
+        <div class="table-wrap">
+          <table><thead><tr>
+            <th style="width:64px">순서</th><th style="width:190px">결과물</th><th>해야 할 일과 완료 기준</th>
+          </tr></thead><tbody id="action-rows"></tbody></table>
         </div>
       </section>
 
       <section id="axes">
-        <h2>두 개의 축으로만 읽는다</h2>
+        <h2>기능별 표를 읽는 두 기준</h2>
         <p>기능 하나를 볼 때 물어야 할 질문은 두 개다. 이 두 축은 서로 독립이라 “열려 있지만 확인은 안 된”
           기능과 “확인은 됐지만 이번엔 닫는” 기능이 동시에 존재한다.</p>
         <div class="split">
@@ -54,10 +80,10 @@
         </div>
         <div class="callout info">
           <span class="label">판정 근거</span>
-          <p><strong>축 1</strong>은 운영 배포의 출시 범위 설정과 결제 개통 스위치에서 그대로 가져온다 —
-            사람이 판단한 값이 아니다. <strong>축 2</strong>는 실제 계정으로 실행한 검증 기록 16개
-            시나리오와 그 뒤의 변경 경계 재검증 2건에서만 가져온다. 자동 테스트 통과는 축 2의
-            “실계정 확인”으로 올려 주지 않는다.</p>
+          <p><strong>첫 출시 포함 여부</strong>는 현재 서버·앱의 출시 범위 설정과 결제 개통 조건에서
+            읽는다. <strong>확인 수준</strong>은 2026-08-19 신규 계정 재검증 20개 시나리오와 실제
+            앱·로컬 API 재검증 기록에서만 올린다. 단위·위젯·자동 회귀 테스트만 통과한 기능을
+            “로컬 실계정 확인”으로 표시하지 않는다.</p>
         </div>
         <p style="color:var(--muted);font-size:13px">기능 175개 각각의 값은
           <a href="feature-status.html">기능별 출시 상태표</a>에 있다.</p>
@@ -73,37 +99,35 @@
       </section>
 
       <section id="blocking">
-        <h2>첫 출시를 막고 있는 것</h2>
-        <p>기능 코드를 더 만드는 일이 아니다. 아래가 채워지지 않아 출시할 수 없다.</p>
+        <h2>공개 출시 전에 반드시 닫아야 하는 것</h2>
+        <p>위에서 아래 순서로 처리한다. 첫 번째는 현재 소스에서 확인된 앱 표면 정리이며, 나머지는
+          외부 계정·실기기·운영·법무·스토어 준비다.</p>
         <div class="table-wrap">
           <table><thead><tr>
-            <th style="width:58px">번호</th><th style="width:110px">종류</th>
-            <th>내용</th><th style="width:150px">관련 기능</th>
+            <th style="width:130px">구분</th><th>내용</th><th style="width:150px">관련 기능</th>
           </tr></thead><tbody id="block-rows"></tbody></table>
         </div>
       </section>
 
       <section id="limiting">
-        <h2>열리지만 제품이 불완전한 것</h2>
-        <p>첫 출시 범위 안에 있고 고객에게 보이지만, 화면이 없거나 버튼이 동작하지 않거나 알림이 가지
-          않는 항목이다. <strong>출시를 막지는 않으나 고객 문의와 운영 부담으로 돌아온다.</strong>
-          각 항목은 해당 기능 문서가 이미 본문에 적어 둔 서술을 한자리에 모은 것이다.</p>
+        <h2>출시 후 보완해도 되는 제품 한계</h2>
+        <p>첫 출시 범위 안에서 고객이 겪을 수 있지만 핵심 여정을 끊지는 않는 항목이다.
+          <strong>출시를 막지는 않지만 고객 문의와 운영 부담은 늘어난다.</strong> 첫 출시 승인 전에는
+          각각 안내 문구나 운영 대응 방법이 준비됐는지 확인한다.</p>
         <div class="table-wrap">
           <table><thead><tr>
-            <th style="width:58px">번호</th><th style="width:110px">종류</th>
-            <th>내용</th><th style="width:150px">관련 기능</th>
+            <th style="width:130px">구분</th><th>내용</th><th style="width:150px">관련 기능</th>
           </tr></thead><tbody id="limit-rows"></tbody></table>
         </div>
       </section>
 
       <section id="next">
-        <h2>이번에 닫고 후속으로 넘긴 것</h2>
-        <p>미완성이라 숨기는 것이 아니라, <strong>범위 결정으로 닫은 것</strong>이다. 화면·앱 링크·직접
-          요청을 모두 막고 다시 노출되지 않는지만 회귀로 지킨다.</p>
+        <h2>이번 출시에서 의도적으로 제외한 기능</h2>
+        <p>출시 전에 모두 구현해야 할 미완성 목록이 아니다. <strong>후속 출시로 넘기기로 결정한
+          범위</strong>이며, 화면·앱 링크·직접 요청에서 다시 노출되지 않는지를 회귀로 지킨다.</p>
         <div class="table-wrap">
           <table><thead><tr>
-            <th style="width:58px">번호</th><th style="width:110px">종류</th>
-            <th>내용</th><th style="width:150px">관련 기능</th>
+            <th style="width:130px">구분</th><th>내용</th><th style="width:150px">관련 기능</th>
           </tr></thead><tbody id="next-rows"></tbody></table>
         </div>
         <div class="callout warn">
@@ -111,8 +135,9 @@
           <p>지갑에서 돈이 나가는 창구를 하나로 닫았기 때문에, <strong>첫 출시 범위 안에 있는 기능도
             결제 수단이 지갑이면 함께 닫힌다.</strong> 클럽 기부, 클럽 기금 인출, 클럽 구독 결제,
             모임 정산의 지갑 납부, 수익 출금이 여기에 해당한다. 각 기능 문서만 읽으면 열려 있는 것처럼
-            보이므로 이 표를 함께 본다. 환불·회수·탈퇴 잔액 정리는 반대로 막지 않는다 — 막으면 고객에게
-            돌아가야 할 돈이 묶인다.</p>
+            보이므로 이 표를 함께 본다. 다만 현재 앱에는 이 중 일부 실행 버튼이 남아 있어
+            <a href="#blocking">공개 출시 전 필수 정리</a>로 따로 올렸다. 환불·회수·탈퇴 잔액 정리는
+            고객에게 돌아가야 할 돈을 묶지 않기 위해 계속 열어 둔다.</p>
         </div>
       </section>
 
@@ -129,7 +154,7 @@
         <div class="table-wrap">
           <table><thead><tr>
             <th style="width:120px">추적 코드</th><th style="width:170px">작업 이름</th>
-            <th style="width:80px">코드</th><th style="width:180px">실환경 확인</th><th>관련 기능</th>
+            <th style="width:80px">코드</th><th style="width:180px">현재 확인 결과</th><th>관련 기능</th>
           </tr></thead><tbody id="track-rows"></tbody></table>
         </div>
       </section>
@@ -149,7 +174,7 @@
             실제 환경에서 통과했다는 뜻이 아니다.</li>
         </ul>
         <div class="callout warn">
-          <span class="label" id="pending-label">미판정으로 남은 갭 후보</span>
+          <span class="label" id="pending-label">아직 소스 대조가 끝나지 않은 문서 후보</span>
           <p id="pending-text">불러오는 중…</p>
         </div>
       </section>
@@ -157,11 +182,14 @@
       <section id="source">
         <h2>이 페이지의 출처와 갱신 규칙</h2>
         <ul>
-          <li>출시 판정·관문·외부 증거는 제품 저장소의 <strong>출시 현황 정본</strong>과
-            <strong>출시 증거 보관소</strong>가 단일 출처다. 이 페이지는 그 판정을 기능 단위로 펼친
-            투영이며, 두 문서와 다르면 그쪽이 맞다.</li>
+          <li>출시 판정·관문·외부 증거는 제품 저장소의 <strong>사업·기획자용 출시 현황</strong>,
+            <strong>출시 가능성 증명 현황</strong>, <strong>실제 계정 실행 기록</strong>,
+            <strong>현재 출시후보 기록</strong>을 함께 대조한다.</li>
+          <li>문서 판정과 현재 소스가 어긋나면 한쪽을 임의로 우선하지 않는다. 실제 고객 동작과 출시
+            승인 기준을 다시 확인하고, 차이를 이 페이지의 필수 정리 항목으로 남긴 뒤 정본 문서도
+            같은 날 맞춘다.</li>
           <li>노출 여부는 운영 배포 설정에서 기계적으로 읽는다. 설정이 바뀌면 이 페이지도 같은 날 바꾼다.</li>
-          <li>열리지만 불완전한 항목은 각 기능 문서 본문의 서술에서 모았다. 기능 문서에서 그 서술이
+          <li>출시 후 보완 항목은 각 기능 문서 본문의 서술에서 모았다. 기능 문서에서 그 서술이
             사라지면 여기서도 지운다.</li>
           <li>기준일이 오늘과 멀어졌다면 값이 아니라 <strong>기준일을 먼저 의심한다.</strong></li>
         </ul>
@@ -189,6 +217,16 @@
           '<div class="hint">' + esc(v.why) + '</div></div>';
       }).join('');
 
+      document.getElementById('evidence-rows').innerHTML = L.evidence.map(function (e) {
+        return '<tr><td><strong>' + esc(e.name) + '</strong></td><td>' + pill(e.state, e.tone) +
+          '</td><td>' + esc(e.detail) + '</td></tr>';
+      }).join('');
+
+      document.getElementById('action-rows').innerHTML = L.nextActions.map(function (a, i) {
+        return '<tr><td><strong>' + (i + 1) + '</strong></td><td><strong>' + esc(a.name) +
+          '</strong></td><td>' + esc(a.detail) + '</td></tr>';
+      }).join('');
+
       function legend(target, map) {
         document.getElementById(target).innerHTML = Object.keys(map).map(function (k) {
           return '<tr><td>' + pill(map[k].label, map[k].tone) + '</td><td>' + esc(map[k].desc) + '</td></tr>';
@@ -205,8 +243,7 @@
       function rows(target, impact) {
         var list = L.openItems.filter(function (o) { return o.impact === impact; });
         document.getElementById(target).innerHTML = list.map(function (o) {
-          return '<tr><td><code>' + esc(o.id) + '</code></td>' +
-            '<td>' + pill(o.kind, impact === 'block' ? 'danger' : (impact === 'limit' ? 'warn' : '')) + '</td>' +
+          return '<tr><td>' + pill(o.kind, impact === 'block' ? 'danger' : (impact === 'limit' ? 'warn' : '')) + '</td>' +
             '<td><strong>' + esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:13px">' +
             esc(o.detail) + '</span></td>' +
             '<td style="font-size:12px">' + featureLinks(o.features) + '</td></tr>';
@@ -226,10 +263,9 @@
       }).join('');
 
       document.getElementById('pending-text').textContent =
-        'PRD 쪽 갭 후보 ' + L.pendingTotal + '건이 아직 “소스와 대조한 뒤 확정” 상태로 남아 있다. ' +
-        '이 숫자는 결함 수가 아니라 아직 판정하지 않은 검토 항목의 수다. 위의 “열리지만 불완전한 것”과 ' +
-        '달리 사실 확인이 끝나지 않았으므로, 출시 판단에 그대로 쓰지 않는다. 기능별 잔여 수는 ' +
-        '기능별 출시 상태표에서 확인한다.';
+        '기능 문서의 후보 ' + L.pendingTotal + '건은 아직 소스 대조 전이다. 이 숫자는 결함 수가 아니라 ' +
+        '검토 대기 문장 수다. 위의 “출시 후 보완해도 되는 제품 한계”와 달리 사실 확인이 끝나지 ' +
+        '않았으므로 출시 판단에 그대로 쓰지 않는다. 기능별 잔여 수는 기능별 출시 상태표에서 확인한다.';
 
       document.getElementById('asof-line').textContent = '기준일 ' + L.asOf + ' · 이 페이지의 모든 값은 이 날짜의 판정이다.';
     })();
