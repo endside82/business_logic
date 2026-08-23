@@ -22,8 +22,9 @@
           호스트가 정기모임 본체를 만드는 면. 무조건 <strong>초안 상태로 먼저 저장</strong>한 뒤, 회차를 다 꾸리고
           가격·정원·정책을 확정한 다음 별도로 발행한다.
           고정형은 코스 전체 회차 수·정원·가격이 필수이고, 변동형은 회차마다 따로 정의되므로 본체에서는 비워둘 수 있다.
-          앱 화면은 타입별 결제·환불·노쇼·정산 결과를 미리 설명하지만, 현재 카테고리 값과 서버 enum 불일치가
-          실제 생성을 막을 수 있어 먼저 교정해야 한다.
+          앱 화면은 타입별 결제·환불·노쇼·정산 결과를 미리 설명한다. 과거에는 앱 카테고리 값이 서버와
+          달라 생성이 실패할 수 있었지만, 현재는 서버의 15개 값을 그대로 사용하고 기본값도
+          <code>SOCIAL</code>로 맞췄다.
         </p>
       </header>
 
@@ -129,13 +130,14 @@
       </section>
 
       <section>
-        <h2>2026-07-29 실제 소스 점검</h2>
-        <div class="callout danger">
-          <span class="label">P0 — 앱 카테고리와 서버 enum이 다르다</span>
-          <p>서버는 <code>BOARD_GAME, HIKING, COOKING, BOOK_CLUB, SPORTS, MUSIC, ART, LANGUAGE,
-            TECH, SOCIAL, TRAVEL, PHOTOGRAPHY, FOOD, FITNESS, OTHER</code>를 받는다.
-            앱은 <code>CLASS, STUDY, SPORTS, HOBBY, COOKING, OTHER</code>를 보여 주며 기본값도
-            서버에 없는 <code>CLASS</code>다. 현재 일치하는 세 값 외 요청은 서버 역직렬화 단계에서 실패할 수 있다.</p>
+        <h2>2026-08-23 실제 소스 재점검</h2>
+        <div class="callout info">
+          <span class="label">해소 — 앱 카테고리와 서버 값이 일치한다</span>
+          <p>2026-07-29 점검에서는 앱이 서버에 없는 <code>CLASS, STUDY, HOBBY</code>를 보내고 기본값도
+            <code>CLASS</code>여서 생성 실패 가능성이 있었다. 현재 앱은 서버의
+            <code>BOARD_GAME, HIKING, COOKING, BOOK_CLUB, SPORTS, MUSIC, ART, LANGUAGE, TECH,
+            SOCIAL, TRAVEL, PHOTOGRAPHY, FOOD, FITNESS, OTHER</code> 15개를 그대로 제공하고 기본값도
+            <code>SOCIAL</code>이다. 이 문제는 출시 잔여에서 제거한다.</p>
         </div>
         <div class="cards">
           <article class="card">
@@ -163,7 +165,6 @@
         <div class="callout danger">
           <span class="label">자주 발생하는 케이스</span>
           <ul>
-            <li><strong>카테고리 enum 불일치</strong> — 앱 기본값 CLASS가 서버에 없어 정상 생성 경로가 막힐 수 있다. 최우선 교정 대상.</li>
             <li><strong>FIXED 음수 가격 서버 가드 누락</strong> — 앱 폼은 막지만 서버 create/update가 음수를 거절하지 않아 직접 요청은 음수 저장이 가능하다.</li>
             <li><strong>가격 절삭 혼동</strong> — 입력값과 저장값이 다르므로 저장 직후 상세에서 절삭된 가격이 노출되어야 한다. 누락 시 호스트가 "왜 가격이 줄었지?" 혼동.</li>
             <li><strong>변동형인데 본체에 가격을 적은 모임</strong> — 사용자가 카드 단계에서 본체 가격을 "코스 총액"으로 오인할 수 있다. 변동형에서는 입력 자체가 막혀야 함.</li>

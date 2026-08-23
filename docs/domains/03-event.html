@@ -53,8 +53,9 @@
         <div class="callout danger">
           <span class="label">2026-07-29 현재 소스 갱신 — 선입금·교통 구현 경계</span>
           <p>선입금 Flutter 사용자 흐름은 WALLET CTA만 연결됐고 BANK 운영 화면과 알림 deep link는 없다.
-            이동수단 설정과 버스는 서버만, 카풀 신고는 route/screen만 있고 인앱 caller가 없다. FIRST_COME 자동 배정과
-            교통 알림 producer는 없으며, 차량 기본 seed도 없다. 반면 차량 레이아웃 관리자 API 6개는 이미 구현돼 있다.</p>
+            이동수단은 그 뒤 구현이 진행돼 설정·카풀·버스 편성·좌석표·배정·이탈·안전 신고와 관련 알림까지
+            앱과 서버에 연결됐다. 남은 운영 공백은 차량 레이아웃 관리자 웹과 기본 데이터이며, 첫 출시에서는
+            신규 이동수단 기능을 닫고 안전한 이탈·신고 출구만 유지한다.</p>
         </div>
       </section>
 
@@ -74,10 +75,10 @@
           <a class="card" href="../features/F03-11.html"><div class="eyebrow">F03-11</div><h3>위시리스트</h3><p>낙관적 토글, 비로그인 분기, 숨김·삭제 이벤트 처리.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-12.html"><div class="eyebrow">F03-12</div><h3>내 이벤트·참석 로그</h3><p>주최/참석/지난 탭. 페이지네이션, 상태별 카드 노출.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-13.html"><div class="eyebrow">F03-13</div><h3>이벤트 참가 선입금</h3><p>서버는 WALLET·BANK를 지원하나 Flutter 사용자 연결은 WALLET CTA뿐. 만료 결제 정리·알림 라우팅 Gap.</p><div class="meta"><span class="pill danger">소스 실측</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-14.html"><div class="eyebrow">F03-14</div><h3>이동수단 공통 베이스</h3><p>서버 mode 3종과 hard delete 전환. Flutter 없음, 자차 허용은 상태 가드·실제 consumer가 없는 inert 토글.</p><div class="meta"><span class="pill">backend</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-15.html"><div class="eyebrow">F03-15</div><h3>이벤트 카풀</h3><p>서버 7개 API. Flutter 신고 route는 인앱 caller가 없고 terminal mutation·lost update·미배선 로그/알림 Gap.</p><div class="meta"><span class="pill">고아 route</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-16.html"><div class="eyebrow">F03-16</div><h3>이벤트 버스대절</h3><p>서버 4개 API. terminal mutation, FIRST_COME 자동배정·진짜 swap/unassign·Flutter·81~82 알림 Gap.</p><div class="meta"><span class="pill danger">Gap 큼</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-17.html"><div class="eyebrow">F03-17</div><h3>차량 레이아웃 카탈로그</h3><p>사용자 read와 관리자 API 구현. seatType은 String, 기본 차량 seed·Flutter 소비는 없음.</p><div class="meta"><span class="pill">무시드</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-14.html"><div class="eyebrow">F03-14</div><h3>이동수단 공통 베이스</h3><p>없음·카풀·버스 설정 화면과 초안 전환 보호. 각자 이동 토글의 카풀 적용 범위는 개통 전 결정.</p><div class="meta"><span class="pill info">앱·서버 연결</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-15.html"><div class="eyebrow">F03-15</div><h3>이벤트 카풀</h3><p>운전자·탑승자·호스트 화면, 배정 이력, 안전 신고와 알림까지 연결. 첫 출시는 신규 이용 봉인.</p><div class="meta"><span class="pill info">핵심 코드 완료</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-16.html"><div class="eyebrow">F03-16</div><h3>이벤트 버스대절</h3><p>버스 편성·좌석 선택·재배정·해제·신고·알림 연결. 플랫폼 차량 카탈로그 화면은 잔여.</p><div class="meta"><span class="pill warn">운영 화면 부분</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-17.html"><div class="eyebrow">F03-17</div><h3>차량 레이아웃 카탈로그</h3><p>호스트 앱 소비와 관리자 API는 완료. 관리자 웹·기본 차량·빈 좌석맵 활성화 가드가 남음.</p><div class="meta"><span class="pill danger">운영 선행 필요</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-18.html"><div class="eyebrow">F03-18</div><h3>구성인원 인구통계</h3><p>k-익명성 3단계 게이트(전체&lt;5/차원&lt;5/버킷&lt;5), 공개 모집·종료 이벤트만 비참가자 노출, 비공개는 호스트·공동호스트·참석 확정자만.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-19.html"><div class="eyebrow">F03-19</div><h3>일정 변경 제안·참가자 합의</h3><p>경미한 변경(60분 미만·장소 유지·가격 동결)은 즉시 반영. 중대한 변경(60분 이상·장소 변경·가격 인상)은 48시간 합의. 거절 시 100% 환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-20.html"><div class="eyebrow">F03-20</div><h3>이벤트 노쇼 관리</h3><p>확정→소명→뒤집기 3단계. 환불 확인 대기 중인 참가자는 노쇼 제외. 노쇼 확정 후에도 호스트 재량 사후 조정 환불. 분쟁 해결 절차와 연계.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>

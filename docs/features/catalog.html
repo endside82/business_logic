@@ -80,6 +80,22 @@
   <script>
     const IMPACT_LABELS = { notification: '알림', money: '돈', calendar: '캘린더', location: '위치', review: '신뢰' };
     const IMPACT_CLASSES = { notification: 'info', money: 'money', calendar: 'brand', location: 'violet', review: 'danger' };
+    // features.js는 PRD 이관 당시의 문서 메타데이터다. 이후 소스 재실측으로 바뀐 핵심 검산 포인트는
+    // 여기서 현재 설명으로 덮어써 카탈로그의 짧은 요약이 상세 문서와 충돌하지 않게 한다.
+    const CURRENT_CHECKS = {
+      'F03-14': '없음·카풀·버스 설정 화면, 초안 전환 시 하위 데이터 정리, 각자 이동 토글 적용 범위',
+      'F03-15': '서버 9 API, 역할별 카풀 화면, 상태·정원·차단·경합 가드, 배정 이력·알림·안전 신고',
+      'F03-16': '서버 7 API, 버스 편성·좌석 이동/해제, 역할별 권한·신원 마스킹, 이력·알림·안전 신고',
+      'F03-17': '호스트 앱 레이아웃 소비, 관리자 API 6개, 관리자 웹·기본 데이터·빈 좌석맵 활성화 가드 잔여',
+      'F04-02': '무료·가입비 클럽 가입, 첫 출시 무료 포인트 전용 차감, 잔액 부족·공개범위·가입 상태',
+      'F04-05': '가입 대기·승인·거절·초대, 가입비 무료 포인트 차감 원자성, 권한·정원·재활성화',
+      'F04-14': '무료 클럽·무료 포인트 전용 기부, 7일 취소·기금 역분개, 앱의 총 잔액·원 단위 표시 잔여',
+      'F04-16': '클럽 기금 우선 구독, 기금 전액 충당 시 개통, 오너 지갑 부족분·외부 결제 봉인',
+      'F06-01': '유료·무료 잔액 분리, 관리자 무료 포인트 지급 화면·권한·한도·사유·중복 요청 방지',
+      'F09-01': 'TOSS/NICE 본인확인 시작·복귀·무결성 검증, 운영 자격 증명·실기기 왕복 잔여',
+      'F09-02': '성인·남녀 본인확인 기반 생성, 사진 3~6장·동시 저장, 5인 신고 숨김·교체·재활성화',
+      'F17-03': '서버와 같은 카테고리 15종·SOCIAL 기본값, FIXED/VARIABLE 가격·정원·환불·노쇼 계약',
+    };
     let FEATURES = [];
 
     function esc(s) {
@@ -163,7 +179,7 @@
 
     function init() {
       const data = window.PRD_FEATURES || [];
-      FEATURES = data;
+      FEATURES = data.map(f => CURRENT_CHECKS[f.id] ? { ...f, checks: CURRENT_CHECKS[f.id] } : f);
       const domains = [...new Set(data.map(f => f.domain))];
       const sel = document.querySelector('#domain-filter');
       domains.forEach(d => {

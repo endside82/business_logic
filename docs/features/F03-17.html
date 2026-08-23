@@ -20,7 +20,8 @@
         <h1>F03-17. 차량 레이아웃 카탈로그</h1>
         <p class="lede">
           버스대절 기능에서 사용할 차량 좌석 구조 카탈로그. 사용자 read API와 관리자 생성·수정·좌석맵 교체·활성화 API가
-          구현되어 있지만 기본 차량 seed와 Flutter 소비 화면은 없다.
+          구현돼 있고 Flutter 버스 추가·좌석표 화면이 활성 레이아웃과 좌석 배치를 실제로 소비한다.
+          다만 플랫폼 운영자가 이 카탈로그를 관리할 관리자 웹 화면과 기본 차량 데이터는 아직 없다.
         </p>
       </header>
 
@@ -39,10 +40,13 @@
             표준 차량을 여러 이벤트에서 같은 방식으로 쓸 수 있고, 좌석 선택 가능 여부도 레이아웃 단위로 통제할 수 있다.</p>
         </div>
         <div class="callout danger">
-          <span class="label">현재 운영 전제</span>
+          <span class="label">이동수단 개통 전 반드시 닫을 운영 공백</span>
           <p>빈 DB에는 28·45·20·8인승 기본 row가 없다. 관리자가 레이아웃을 생성하고 좌석맵을 등록한 뒤
             활성화해야 사용자 active 목록에 나타난다. 단 create body가 active=true를 허용해 좌석맵 없이 즉시
             활성 row를 만들 수도 있다. seatType은 enum이 아니라 6개 허용 문자열이다.</p>
+          <p>현재는 이를 처리할 관리자 API와 감사 기록만 있고 관리자 웹 화면이 없다. 따라서 API를 직접
+            호출하지 않고도 목록·상세·좌석맵·활성 상태를 관리하는 화면을 만들고, 좌석맵이 없는 레이아웃은
+            활성화할 수 없도록 서버에서도 막은 뒤 버스 기능을 개통해야 한다.</p>
         </div>
       </section>
 
@@ -92,9 +96,9 @@ flowchart LR
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>활성 차량 목록</td><td>인증 사용자</td><td>JSON boolean key는 <code>active</code>. Flutter 호출부는 없다.</td></tr>
-              <tr><td>좌석 배치</td><td>인증 사용자</td><td>JSON boolean key는 <code>selectable</code>. inactive ID도 조회되고 없는 ID는 빈 목록이다.</td></tr>
-              <tr><td>레이아웃·좌석 운영</td><td>MANAGE_EVENT 관리자</td><td>생성·메타 수정·좌석 전체 교체·active 토글. DELETE는 없다.</td></tr>
+              <tr><td>활성 차량 목록</td><td>호스트 앱</td><td>버스 추가 시트가 활성 레이아웃의 이름·좌석 수·설명을 보여 주고 하나를 선택하게 한다.</td></tr>
+              <tr><td>좌석 배치</td><td>호스트·참가자 앱</td><td>행·열·좌석 종류·선택 가능 여부를 받아 이벤트 좌석표를 그린다.</td></tr>
+              <tr><td>레이아웃·좌석 운영 API</td><td>MANAGE_EVENT 관리자</td><td>생성·메타 수정·좌석 전체 교체·활성 토글과 감사 기록을 제공한다. 대응하는 관리자 웹은 아직 없다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -103,10 +107,12 @@ flowchart LR
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">관리자 CRUD는 구현됐고 기본 데이터는 없다</span>
+          <span class="label">고객 앱 연결은 완료, 플랫폼 운영 화면은 미완료</span>
           <ul>
             <li><strong>관리자 API는 현재 구현돼 있다.</strong> `MANAGE_EVENT` 권한으로 목록·상세·생성·수정·좌석 전체 교체·활성 토글을 수행한다.</li>
+            <li><strong>관리자 웹 화면은 없다.</strong> 개통 준비에서 API 직접 호출을 운영 절차로 삼지 말고 전용 목록·편집·좌석맵·활성화 화면을 만든다.</li>
             <li><strong>기본 시드는 없다.</strong> 운영 초기화 절차에서 직접 등록해야 한다.</li>
+            <li><strong>빈 좌석맵 활성화를 서버가 막지 않는다.</strong> 화면 가드와 별개로 활성화 API에도 좌석 등록 검사를 넣어야 한다.</li>
             <li><strong>레이아웃은 원본이고 이벤트 좌석은 복사본이다.</strong> 레이아웃이 바뀌어도 이미 생성된 이벤트 좌석표를 소급 변경하지 않는다.</li>
             <li><strong>seatType은 String whitelist다.</strong> NORMAL·DRIVER·GUIDE·FOLDABLE·DISABLED·AISLE만 허용한다.</li>
           </ul>

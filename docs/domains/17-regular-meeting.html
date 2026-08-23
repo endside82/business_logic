@@ -56,7 +56,7 @@
 
         <h3>호스트가 만들고 운영하는 것</h3>
         <div class="cards">
-          <a class="card" href="../features/F17-03.html"><div class="eyebrow">F17-03</div><h3>생성</h3><p>초안으로 먼저 저장하고 타입별 가격·환불·노쇼 결과를 확인한 뒤 발행한다. 카테고리 enum P0 Gap 확인.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-03.html"><div class="eyebrow">F17-03</div><h3>생성</h3><p>초안으로 먼저 저장하고 타입별 가격·환불·노쇼 결과를 확인한 뒤 발행한다. 앱 카테고리는 서버의 15개 값과 일치한다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F17-04.html"><div class="eyebrow">F17-04</div><h3>생명주기</h3><p>발행·종료·취소·재오픈. 종료는 회차 출석이 다 끝나야 통과, 취소는 멤버 전원에게 자동 환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F17-05.html"><div class="eyebrow">F17-05</div><h3>회차 관리</h3><p>앱은 단건 추가·반복 자동생성을 제공한다. 임의 bulk·대체 UI와 회차 카드 상세 이동은 아직 없다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
@@ -136,12 +136,12 @@ flowchart TD
       </section>
 
       <section>
-        <h2>2026-07-29 소스 실측 — 작성·가격·파일 계약</h2>
-        <div class="callout danger">
-          <span class="label">P0 — 생성 화면 카테고리 enum 불일치</span>
-          <p>앱의 기본값 <code>CLASS</code>와 <code>STUDY/HOBBY</code>는 서버 <code>Category</code>에 없다.
-            현재 공통 값은 SPORTS·COOKING·OTHER뿐이며, 그 외 앱 값은 요청 역직렬화 단계에서 생성 실패가 날 수 있다.
-            화면 옵션을 서버 enum 정본으로 맞추는 것이 최우선이다.</p>
+        <h2>2026-08-23 소스 재실측 — 작성·가격·파일 계약</h2>
+        <div class="callout info">
+          <span class="label">해소 — 생성 화면 카테고리를 서버 값에 맞췄다</span>
+          <p>과거 앱 기본값 <code>CLASS</code>와 <code>STUDY/HOBBY</code>는 서버에 없어 생성 실패를 만들 수
+            있었다. 현재 앱은 서버 <code>Category</code> 15개를 그대로 제공하고 기본값도
+            <code>SOCIAL</code>로 바뀌었다. 이 항목은 더 이상 출시 잔여가 아니다.</p>
         </div>
         <div class="cards">
           <article class="card">
@@ -189,7 +189,6 @@ flowchart TD
             <li><strong>계좌이체 환불 마감 무대응</strong> — 호스트가 외부 송금만 하고 "환불 완료"를 안 누르면 멤버 입장에서 영구 "환불 진행중".</li>
             <li><strong>종료된 모임 자가 취소 시도</strong> — 정산 후 환불 위험 때문에 명시적으로 차단했다. 모임이 끝난 뒤 환불은 운영자 중재 경로.</li>
             <li><strong>자격박탈 후 재신청 시도</strong> — 노쇼 한도로 박탈된 멤버는 같은 모임에 다시 들어올 수 없다(영구 차단). 정책으로 안내 필요.</li>
-            <li><strong>생성 카테고리 enum 불일치</strong> — 앱 기본값부터 서버에 없어 생성 실패가 날 수 있다. 배포 전 정본 일치가 필요하다.</li>
             <li><strong>FIXED 음수 가격 서버 검증 누락</strong> — 앱 폼은 막지만 직접 API 요청은 음수 가격을 저장할 수 있어 서버 가드가 필요하다.</li>
             <li><strong>VARIABLE 1~99원 유료 오인</strong> — 100원 절삭 후 무료가 되지만 앱에 최소 유료 금액 안내가 없다.</li>
             <li><strong>썸네일·상세 장소 authoring 공백</strong> — 서버 필드는 있지만 앱 생성·수정 화면에서 값을 만들 수 없다.</li>

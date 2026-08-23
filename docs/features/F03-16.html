@@ -19,8 +19,9 @@
         </div>
         <h1>F03-16. 이벤트 버스대절</h1>
         <p class="lede">
-          서버에서 호스트가 버스를 추가하고 좌석을 지정하는 단위. 세 가지 배정 enum은 존재하지만
-          FIRST_COME 자동 배정과 실제 좌석 swap·unassign은 구현되지 않았고 Flutter 운영 화면도 없다.
+          호스트가 최대 3대의 버스를 편성하고 참가자가 좌석을 확인하거나 정책에 따라 직접 고르는 기능이다.
+          서버의 권한·좌석 상태기계, Flutter의 버스 편성·좌석표·배정·반납·안전 신고 화면, 변경 이력과
+          알림 발행까지 연결돼 있다. 첫 출시에서는 신규 버스 운영을 닫고 좌석 반납·안전 신고 출구만 유지한다.
         </p>
       </header>
 
@@ -30,7 +31,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">전제 방식</div><div class="value">버스</div></div>
           <div class="metric"><div class="label">최대 버스</div><div class="value">3대</div></div>
-          <div class="metric"><div class="label">서버 API</div><div class="value">4개</div><div class="hint">목록·좌석·추가·좌석 지정</div></div>
+          <div class="metric"><div class="label">서버 API</div><div class="value">7개</div><div class="hint">조회·편성·삭제·배정·해제·신고</div></div>
         </div>
 
         <div class="callout">
@@ -38,12 +39,13 @@
           <p>버스 대절은 참석자 수만 아는 것으로 충분하지 않다. 좌석이 있는 차량인지, 호스트가 고정 배정하는지,
             참가자가 직접 바꿀 수 있는지, 한 사용자가 두 버스에 중복 배정되지 않는지가 모두 중요하다.</p>
         </div>
-        <div class="callout danger">
-          <span class="label">현재 구현 경계</span>
-          <p>FIRST_COME도 빈 좌석을 복사할 뿐 자동 배정하지 않는다. SKIP LOCKED 쿼리는 없고,
-            좌석 PUT은 target의 사용자를 덮어쓸 뿐 기존 좌석을 비우거나 두 좌석을 맞바꾸지 않는다.
-            add/assign은 event status를 검사하지 않아 CLOSED/CANCELED에서도 변경 가능하다.
-            81~82 알림은 enum만 있으며 Flutter 버스 기능은 없다.</p>
+        <div class="callout warn">
+          <span class="label">2026-08-23 현재 — 역할별 화면과 좌석 상태기계 완료</span>
+          <p>자유석은 현장에서 정하고, 선착순은 참석자가 빈 좌석을 직접 고르며, 호스트 지정은 운영자가
+            참가자를 배정한다. 좌석 이동은 기존 좌석 해제와 새 좌석 점유를 한 처리로 묶고, 경합 시 한쪽만
+            성공한다. 호스트가 남의 좌석을 바꾸거나 해제하면 사유·변경 이력·알림이 남는다.</p>
+          <p>개통을 위해 남은 핵심은 차량 레이아웃을 등록·활성화하는 플랫폼 관리자 웹 화면과 초기 데이터,
+            실제 기기에서의 다중 역할·알림·신고 검증이다. 호스트 본인을 좌석에 넣는 범위도 확정해야 한다.</p>
         </div>
       </section>
 
@@ -57,9 +59,11 @@ flowchart TD
     C --> D{"좌석 배정 방식"}
     D -->|"자유석"| E["좌석 지정 없음<br/>인원 카운트만"]
     D -->|"호스트 지정"| F["호스트가 좌석 지정"]
-    D -->|"FIRST_COME"| G["빈 좌석표 생성<br/>현재 자동 배정 없음"]
-    F --> H["자리 교체 허용 여부 검사"]
-    G --> I["동일 사용자 중복 좌석 방지"]
+    D -->|"선착순"| G["참석자가 빈 좌석 선택"]
+    F --> H["호스트 배정·재배정·해제"]
+    G --> I["자리 이동 허용 여부 검사"]
+    H --> J["변경 이력·알림"]
+    I --> J
           </div>
         </div>
       </section>
@@ -70,14 +74,12 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">버스 추가</div>
             <h3>레이아웃으로 버스 생성</h3>
-            <p>호스트가 vehicleLayoutId를 보내면 선택 가능한 좌석을 복사한다. 기본 28인승 seed는 없고
-              FIRST_COME도 승인 참가자를 자동 배정하지 않는다.</p>
+            <p>호스트가 앱에서 운영팀이 활성화한 차량 레이아웃과 좌석 운영 방식을 고른다. 자유석을 제외하면 선택 가능한 좌석이 이벤트용 좌석표로 복사된다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">호스트 지정</div>
             <h3>좌석을 직접 배정</h3>
-            <p>호스트는 특정 좌석의 userId를 지정한다. 현재 API는 lockedByHost를 검사하지 않고,
-              이미 좌석이 있는 사용자의 이동은 unique 제약으로 실패할 수 있다.</p>
+            <p>호스트는 참석자를 빈 좌석에 배정하거나 기존 좌석에서 옮기고 해제할 수 있다. 다른 사람에게 영향을 주는 변경은 사유를 필수로 받고 대상자에게 알린다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">자유석</div>
@@ -97,8 +99,7 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">동시성</div>
             <h3>한 사용자를 두 버스에 동시에 배정</h3>
-            <p>DB unique가 중복을 막고 event lock이 같은 이벤트의 write를 직렬화한다. 다만 오류는 전용 코드가 아닌
-              일반 INVALID_REQUEST로 바뀌며 seat lock/SKIP LOCKED는 없다.</p>
+            <p>이벤트 잠금과 사용자당 한 좌석 제약이 중복 배정을 막는다. 같은 좌석이나 같은 사용자를 동시에 옮기면 한 요청만 성공하고, 실패한 요청은 다시 읽어 선택하도록 응답한다.</p>
           </article>
         </div>
       </section>
@@ -109,10 +110,11 @@ flowchart TD
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td>버스 목록 GET</td><td>인증 사용자</td><td>서비스 수준 event·역할 가드 없이 조회. Flutter 호출부 없음.</td></tr>
-              <tr><td>좌석 GET</td><td>Host/CoHost 또는 ATTENDING/WAITING</td><td>일반 사용자는 타인 userId가 마스킹됨. Flutter 호출부 없음.</td></tr>
-              <tr><td>버스 추가</td><td>Host/CoHost</td><td>BUS mode, 최대 3대. event status와 layout active를 명시 검증하지 않음.</td></tr>
-              <tr><td>좌석 user 지정</td><td>Host/CoHost 또는 제한적 self</td><td>명시적 unassign·진짜 swap endpoint가 아님.</td></tr>
+              <tr><td>버스·좌석 조회</td><td>호스트/공동 호스트·참석/대기 참가자</td><td>Flutter 좌석표에 연결된다. 일반 참가자에게는 타인의 식별 정보를 숨기고 점유 여부만 보여 준다.</td></tr>
+              <tr><td>버스 추가·삭제</td><td>호스트·공동 호스트</td><td>버스 방식에서 최대 3대까지 편성한다. 탑승자나 안전 신고가 남은 버스는 먼저 종결하지 않으면 삭제할 수 없다.</td></tr>
+              <tr><td>좌석 선택·이동</td><td>선착순 방식의 참석자</td><td>빈 좌석만 고르고, 자리 이동이 허용된 경우 기존 좌석에서 새 좌석으로 원자적으로 옮긴다. 정책에 따라 자기 좌석을 반납할 수 있다.</td></tr>
+              <tr><td>좌석 배정·해제</td><td>호스트·공동 호스트</td><td>참석 자격을 확인하고 타인 변경 사유를 기록한다. 변경 이력과 좌석 배정·변경 알림이 남는다.</td></tr>
+              <tr><td>좌석 안전 신고</td><td>신고 대상이 아닌 참석자</td><td>좌석을 길게 눌러 신고하고 플랫폼 신고·분쟁 운영 화면에서 사건 맥락을 확인한다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -127,9 +129,10 @@ flowchart TD
             <li><strong>자유석 방식은 좌석 배치가 없다.</strong> 화면이 빈 좌석표를 오류로 해석하면 안 된다.</li>
             <li><strong>한 참가자는 한 이벤트에서 한 좌석만 가진다.</strong> 여러 버스가 있어도 사용자 중복 배정을 막는다.</li>
             <li><strong>이동수단 방식이 "버스"가 아니면 전체 기능이 닫힌다.</strong> 하위 기능은 F03-14의 이동수단 방식을 따른다.</li>
-            <li><strong>목록 GET은 예외다.</strong> 현재 서비스는 mode나 event 존재·역할을 검사하지 않는다.</li>
-            <li><strong>자기 좌석 변경 가드가 부족하다.</strong> 참석 자격·assignment mode·lockedByHost를 검사하지 않는다.</li>
-            <li><strong>SELF_SWAP 테스트도 실제 swap을 보장하지 않는다.</strong> 타인의 target 좌석을 본인으로 덮어쓰는 현재 동작을 성공으로 고정할 뿐 두 좌석 교환은 검증하지 않는다.</li>
+            <li><strong>목록과 좌석은 참여 범위를 확인한다.</strong> 호스트·공동 호스트 또는 참석/대기 행이 있는 사용자만 보며, 일반 참가자의 타인 신원은 숨긴다.</li>
+            <li><strong>좌석 이동·해제는 실제 상태 전이다.</strong> 기존 좌석을 먼저 비우고 새 좌석을 잡으며, 참가자 권한·운영 방식·호스트 잠금·각자 이동 허용을 서버가 검사한다.</li>
+            <li><strong>참가 종료와 좌석 정리가 같이 움직인다.</strong> 취소·강퇴·환불로 참석이 끝나면 좌석도 같은 처리에서 회수돼 유령 좌석을 남기지 않는다.</li>
+            <li><strong>차량 레이아웃 운영 화면이 개통 선행 조건이다.</strong> 관리자 API만 있고 관리자 웹은 없으며 빈 데이터베이스에 기본 차량도 없다.</li>
           </ul>
         </div>
       </section>

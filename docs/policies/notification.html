@@ -67,18 +67,19 @@ flowchart TD
           <table>
             <thead><tr><th>번호</th><th>생산 상태</th><th>수신·라우팅</th></tr></thead>
             <tbody>
-              <tr><td>71, 73, 74, 76</td><td>AFTER_COMMIT 연결</td><td>신청자. Flutter deep link 없음</td></tr>
-              <tr><td>72</td><td>AFTER_COMMIT 연결</td><td>주 호스트 1명, CoHost fanout·Flutter route 없음</td></tr>
-              <tr><td>75</td><td>listener만 있고 publisher 없음</td><td>실제 미전송</td></tr>
-              <tr><td>77~82</td><td>enum만 존재</td><td>카풀·버스 producer/listener/send 없음</td></tr>
-              <tr><td>83</td><td>기본 3일 후 escalation만</td><td>주 호스트 1명. 최초 환불요청 즉시 알림 아님</td></tr>
+              <tr><td>71, 73~76</td><td>결제 상태 커밋 뒤 실제 생산</td><td>신청자에게 보내고 앱의 내 결제 화면으로 연결한다. 결제 기한 만료 알림도 실제 발행된다.</td></tr>
+              <tr><td>72</td><td>입금 신고 직후 실제 생산</td><td>즉시 알림은 주 호스트에게 보내고 확인 큐로 연결한다. 장기 미확인 독촉은 호스트와 공동 호스트 모두에게 보낸다.</td></tr>
+              <tr><td>77~80</td><td>카풀 상태 변경과 같은 처리에서 영속 대기열에 기록</td><td>운행 승인·반려와 탑승자 배정·해제 수신자가 앱 카풀 화면으로 이동한다.</td></tr>
+              <tr><td>81~82</td><td>버스 좌석 변경과 같은 처리에서 영속 대기열에 기록</td><td>좌석 배정·변경 수신자가 해당 버스·좌석을 강조한 좌석표로 이동한다.</td></tr>
+              <tr><td>83</td><td>환불 요청 진입 즉시 + 장기 미처리 재알림</td><td>호스트와 공동 호스트에게 즉시 보내며, 이벤트/정기모임 종류를 구분해 실제 처리 화면으로 연결한다.</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="callout danger">
-          <span class="label">알림 enum은 기능 완료 표식이 아니다</span>
-          <p>Flutter NotificationRouter에는 71~83 case가 모두 없다. 또한 refund escalation은 row lock/version이 없어
-            동시 환불 완료와 경쟁할 위험이 있으며 전용 경합 테스트도 없다.</p>
+        <div class="callout warn">
+          <span class="label">2026-08-23 현재 — 과거의 “enum만 있음” 설명은 폐기</span>
+          <p>71~83은 생산자와 앱 라우팅이 연결돼 있다. 이동수단 알림은 영속 대기열을 사용해 상태만 바뀌고
+            알림이 사라지는 위험을 줄였다. 과거 버스 좌석 탈취 알림은 새로 생산하지 않지만, 이미 저장된 알림이
+            막다른 링크가 되지 않도록 앱 라우팅 호환만 유지한다.</p>
         </div>
       </section>
 
