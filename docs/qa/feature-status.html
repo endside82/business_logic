@@ -65,9 +65,9 @@
           <li><strong>확인 수준</strong> — “로컬 실계정”은 격리된 로컬 환경에서 신규 계정으로 실제
             서버 상태기계를 왕복한 기록이 있는 경우에만 붙인다. 실제 외부 서비스나 서명 앱까지
             통과했다는 뜻은 아니다.</li>
-          <li><strong>알려진 문제</strong> — 화면이 없거나 버튼이 동작하지 않거나 알림이 가지 않는 등,
-            이미 알려진 미완성 항목의 수다. 내용은 행을 펼치거나
-            <a href="launch-status.html#limiting">첫 출시 현황</a>에서 본다.</li>
+          <li><strong>알려진 문제</strong> — 출시 차단, 빠른 화면 배선, 출시 전 결정, 출시 후 개선으로
+            분류된 고객 기능의 미해결 항목 수다. 봉인 해제 계획·폐기 설계·문서 작업은 이 수에 넣지 않는다.
+            내용과 다음 행동은 행을 펼치거나 <a href="launch-status.html#unresolved">첫 출시 현황</a>에서 본다.</li>
           <li><strong>미판정</strong> — PRD 쪽에 “소스와 대조한 뒤 확정”으로만 남아 있는 갭 후보 수다.
             <strong>결함 수가 아니라 아직 판정하지 않은 검토 항목의 수</strong>이며, 클수록 그 기능의
             문서를 신뢰하기 전에 소스를 다시 열어 봐야 한다는 뜻이다.</li>
@@ -111,7 +111,10 @@
         if (d.scopeNote) lines.push(esc(d.scopeNote));
         if (d.proofNote) lines.push('확인 범위 — ' + esc(d.proofNote));
         d.openItems.forEach(function (o) {
-          lines.push('<span class="pill ' + (o.impact === 'block' ? 'danger' : (o.impact === 'limit' ? 'warn' : '')) +
+          var tone = o.impact === 'block' ? 'danger' :
+            (o.impact === 'decision' ? 'warn' :
+              (o.impact === 'wiring' ? 'brand' : (o.impact === 'later' ? 'info' : '')));
+          lines.push('<span class="pill ' + tone +
             '">' + esc(o.kind) + '</span> ' + esc(o.title));
         });
         if (lines.length) {
