@@ -28,11 +28,12 @@
           <p><strong>내부 시연은 가능하지만 외부 고객 공개는 아직 불가능하다.</strong> 로컬 환경의 신규
             계정으로 첫 출시 흐름은 끝까지 통과했다. 그러나 실제 메일·Google 로그인·모바일 푸시·
             서명 앱·운영 복구를 확인하지 않았고, 첫 출시에서 닫은 결제 실행 버튼도 앱에 남아 있다.
-            외부 연동 10개 영역 중 9개는 서버·앱 코드가 완료됐다. 본인확인(NICE)도 고객 앱·서버 배선은
+            외부 연동 10개 영역 중 9개는 연동 어댑터 코드가 완료됐다. 이것이 곧 운영 화면과 실환경 증명까지
+            끝났다는 뜻은 아니다. 본인확인(NICE)도 고객 앱·서버 배선은
             끝났고 계약·자격 증명·실신원/실기기 왕복과 전용 관리자 웹이 남았다. 유일한 코드 예외인 계좌
             1원 인증은 공급자마다 계약별 API가 달라 계약을 먼저 확정한 뒤 실제 어댑터를 작성한다.
-            또한 2026-08-24 마지막 전체 통합검증 이후의 커밋은 저장소별 검증만 끝났으므로,
-            공개 판단 전 현재 소스 전체를 다시 통합검증해야 한다.</p>
+            또한 2026-08-24 과거 전체 통합검증 뒤에 커밋된 수정과 현재 미커밋 작업이 있으므로,
+            작업을 먼저 종결한 뒤 현재 소스 전체를 새 출시후보로 다시 통합검증해야 한다.</p>
         </div>
       </section>
 
@@ -105,9 +106,8 @@
 
       <section id="blocking">
         <h2>공개 출시 전에 반드시 닫아야 하는 것</h2>
-        <p>위에서 아래 순서로 처리한다. 첫 번째는 현재 소스에서 확인된 앱 표면 정리이고, 나머지는
-          외부 계정·실기기·운영·법무·스토어 준비다. 여기에 2026-08-24 이후 변경을 같은 커밋 묶음으로
-          다시 검증해 현재 소스의 통합검증 결과를 새로 남기는 일이 선행된다.</p>
+        <p>현재 소스 통합검증, 앱 화면 문제 2건, 외부 계정·실기기·운영·법무·스토어 준비를 각각
+          구분해 표시한다. 2026-08-24 이후 변경은 먼저 커밋한 뒤 같은 소스 묶음으로 다시 검증해야 한다.</p>
         <div class="table-wrap">
           <table><thead><tr>
             <th style="width:130px">구분</th><th>내용</th><th style="width:150px">관련 기능</th>
@@ -117,9 +117,9 @@
 
       <section id="unresolved">
         <h2>미해결 항목 — 앞으로 할 일의 성격부터 구분한다</h2>
-        <p><strong>아래 항목은 모두 아직 닫히지 않았다.</strong> 다만 같은 “미완성”으로 묶으면 이미 있는
-          코드를 화면에 잇는 일, 제품 결정을 먼저 내려야 하는 일, 대체 동선이 있어 출시 후로 넘길 수 있는
-          일을 구분할 수 없다. 그래서 처리 방식과 완료 조건이 다른 네 목록으로 나눴다.</p>
+        <p><strong>아래 항목은 모두 아직 닫히지 않았다.</strong> 각 행의 첫 라벨에서 구현 중·미커밋,
+          부분 구현, 정책·계약 결정, 기술 설계 결정, 미착수, 재현 필요를 구분한다. 소스에 코드가 보이더라도
+          커밋과 검증 전이면 완료로 세지 않는다. 이미 닫힌 항목은 이 목록에서 제거한다.</p>
         <div class="metrics" id="unresolved-metrics"></div>
       </section>
 
@@ -151,7 +151,7 @@
       </section>
 
       <section id="later">
-        <h2>출시 후 개선으로 넘길 수 있는 미해결 항목</h2>
+        <h2>출시 후 보완 항목</h2>
         <p>이 목록도 <strong>구현이 끝난 기능이 아니다.</strong> 현재 핵심 행동을 끝낼 수 있는 대체 동선이
           있고 돈·권한·안전 상태를 잘못 바꾸지 않아 공개 출시를 직접 막지 않는다는 뜻이다. 담당자·진행 순서·
           완료 기준을 후속 작업판에 등록했을 때만 의도적으로 수용한 과제로 넘긴다.</p>
@@ -268,7 +268,7 @@
         <ul>
           <li>출시 판정·관문·외부 증거는 제품 저장소의 <strong>사업·기획자용 출시 현황</strong>,
             <strong>출시 가능성 증명 현황</strong>, <strong>실제 계정 실행 기록</strong>,
-            <strong>현재 출시후보 기록</strong>을 함께 대조한다.</li>
+            <strong>과거 통합검증 기록</strong>과 <strong>현재 저장소 상태</strong>를 함께 대조한다.</li>
           <li>문서 판정과 현재 소스가 어긋나면 한쪽을 임의로 우선하지 않는다. 실제 고객 동작과 출시
             승인 기준을 다시 확인하고, 차이를 이 페이지의 필수 정리 항목으로 남긴 뒤 정본 문서도
             같은 날 맞춘다.</li>
@@ -342,7 +342,8 @@
       rows('block-rows', 'block');
 
       function ownerAndKind(o, tone) {
-        return (o.owner ? pill(o.owner, 'info') + ' ' : '') + pill(o.kind, tone);
+        return (o.status ? pill(o.status, o.status.indexOf('구현 중') >= 0 ? 'brand' : 'warn') + ' ' : '') +
+          (o.owner ? pill(o.owner, 'info') + ' ' : '') + pill(o.kind, tone);
       }
 
       function actionAndDone(o) {
@@ -380,12 +381,31 @@
         later: actionableRows('later-rows', 'later', 'info', false),
         doc: actionableRows('doc-rows', 'doc', '', false),
       };
+      document.getElementById('wiring').hidden = unresolvedCounts.wiring === 0;
+      document.getElementById('decisions').hidden = unresolvedCounts.decision === 0;
+      var postItems = L.openItems.filter(function (o) { return o.impact === 'later'; });
+      var inProgress = postItems.filter(function (o) {
+        return (o.status || '').indexOf('구현 중') >= 0;
+      }).length;
+      var partial = postItems.filter(function (o) {
+        return (o.status || '').indexOf('부분 구현') >= 0;
+      }).length;
+      var technicalDecision = postItems.filter(function (o) {
+        return (o.status || '').indexOf('기술 설계') >= 0;
+      }).length;
+      var waitingDecision = postItems.filter(function (o) {
+        var status = o.status || '';
+        return status.indexOf('기술 설계') < 0 &&
+          (status.indexOf('결정 대기') >= 0 || status.indexOf('판정 대기') >= 0);
+      }).length;
+      var notStarted = postItems.length - inProgress - partial - technicalDecision - waitingDecision + unresolvedCounts.doc;
       document.getElementById('unresolved-metrics').innerHTML = [
         { label: '공개 출시 차단', value: unresolvedCounts.block + '건', hint: '해소 전에는 출시 불가' },
-        { label: '빠른 화면 배선', value: unresolvedCounts.wiring + '건', hint: '기존 코드 연결 후 테스트' },
-        { label: '출시 전 결정', value: unresolvedCounts.decision + '건', hint: '선택·반영까지 해야 종료' },
-        { label: '출시 후 개선 후보', value: unresolvedCounts.later + '건', hint: '대체 동선 있음·아직 미해결' },
-        { label: '별도 문서 작업', value: unresolvedCounts.doc + '건', hint: '제품 결함 수에서는 제외' },
+        { label: '구현 중·미커밋', value: inProgress + '건', hint: '커밋·전체 회귀 전에는 완료 아님' },
+        { label: '부분 구현', value: partial + '건', hint: '제품·운영 결정까지 남음' },
+        { label: '정책·계약 결정', value: waitingDecision + '건', hint: '선택 효과를 승인한 뒤 구현' },
+        { label: '기술 설계 결정', value: technicalDecision + '건', hint: '구현 방식과 위험을 선택' },
+        { label: '미착수·재현·문서', value: notStarted + '건', hint: '선행관계에 따라 순차 착수' },
       ].map(function (v) {
         return '<div class="metric"><div class="label">' + esc(v.label) + '</div>' +
           '<div class="value">' + esc(v.value) + '</div><div class="hint">' + esc(v.hint) + '</div></div>';

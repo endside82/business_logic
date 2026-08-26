@@ -26,6 +26,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">첫 출시 개통</div><div class="value" id="m-open">–</div><div class="hint">일부 개통 포함</div></div>
           <div class="metric"><div class="label">첫 출시 봉인</div><div class="value" id="m-sealed">–</div><div class="hint">후속 출시 대상</div></div>
+          <div class="metric"><div class="label">설계 철회</div><div class="value" id="m-retired">–</div><div class="hint">현재 제품 범위에서 폐기</div></div>
           <div class="metric"><div class="label">로컬 실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">외부 서비스·서명 앱은 별도</div></div>
           <div class="metric"><div class="label">알려진 문제 보유</div><div class="value" id="m-gap">–</div><div class="hint">화면 없음·동선 끊김 등</div></div>
         </div>
@@ -101,6 +102,7 @@
 
       document.getElementById('m-open').textContent = data.filter(function (d) { return d.scope === 'open' || d.scope === 'partial'; }).length;
       document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
+      document.getElementById('m-retired').textContent = data.filter(function (d) { return d.scope === 'retired'; }).length;
       document.getElementById('m-real').textContent = data.filter(function (d) { return d.proof === 'real'; }).length;
       document.getElementById('m-gap').textContent = data.filter(function (d) { return d.issues > 0; }).length;
       document.getElementById('asof').textContent = '기준일 ' + L.asOf + ' · 표의 모든 값은 이 날짜의 판정이다.';
@@ -114,8 +116,8 @@
           var tone = o.impact === 'block' ? 'danger' :
             (o.impact === 'decision' ? 'warn' :
               (o.impact === 'wiring' ? 'brand' : (o.impact === 'later' ? 'info' : '')));
-          lines.push('<span class="pill ' + tone +
-            '">' + esc(o.kind) + '</span> ' + esc(o.title));
+          lines.push((o.status ? '<span class="pill warn">' + esc(o.status) + '</span> ' : '') +
+            '<span class="pill ' + tone + '">' + esc(o.kind) + '</span> ' + esc(o.title));
         });
         if (lines.length) {
           out += '<div style="color:var(--muted);font-size:12.5px;margin-top:4px">' + lines.join('<br>') + '</div>';

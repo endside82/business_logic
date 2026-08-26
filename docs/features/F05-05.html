@@ -32,6 +32,7 @@
           <div class="metric"><div class="label">사용자당 최대</div><div class="value">10개</div><div class="hint">초과 시 새 저장이 거절된다</div></div>
           <div class="metric"><div class="label">새 결과 알림</div><div class="value">30분 주기</div><div class="hint">서버가 자동 확인 후 푸시</div></div>
           <div class="metric"><div class="label">실행 시 동작</div><div class="value">키워드+필터 복원</div><div class="hint">저장 시점 조건으로 즉시 검색</div></div>
+          <div class="metric"><div class="label">정렬</div><div class="value">최신순·이름순</div><div class="hint">최대 10건을 앱에서 정렬</div></div>
         </div>
 
         <div class="callout">
@@ -68,8 +69,8 @@
           <div class="card">
             <div class="eyebrow">관리</div>
             <h3>이름·알림·필터 수정과 삭제</h3>
-            <p>각 카드에서 이름·알림·필터를 수정하거나 삭제 가능. 마지막 실행 시각 순으로 자동 정렬되어,
-              자주 쓰는 묶음이 항상 맨 위에 보인다.</p>
+            <p>각 카드에서 이름·알림·필터를 수정하거나 삭제 가능. 목록 위 선택기에서 최신순과 이름순을
+              바꿀 수 있다. 최신순은 마지막 실행 시각을 우선하고, 한 번도 실행하지 않은 항목은 만든 시각을 사용한다.</p>
           </div>
         </div>
       </section>
@@ -214,8 +215,9 @@ sequenceDiagram
               빠른 정비가 필요한 결함.</li>
             <li><strong>새 결과 알림은 30분 주기 일괄 처리</strong>다. 새 이벤트가 등록되자마자 사용자가 알림을 받지는 않는다 —
               사용자에게 "최대 30분 안에 알려 드린다"는 약속이 명시되지 않은 점은 후속 검토 대상.</li>
-            <li><strong>정렬은 마지막 실행 시각 기준만 지원한다.</strong>
-              UI 스펙의 "이름순" 정렬은 현재 미구현. 저장 갯수가 10개 안쪽이라 큰 문제는 아니지만 스펙 정정 또는 구현 중 하나가 필요.</li>
+            <li><strong>최신순·이름순 정렬은 구현됐다.</strong>
+              최신순은 최근 활동 내림차순, 이름순은 한글→영문→그 밖의 문자 순으로 정렬한다.
+              최대 10건 전체를 앱에서 정렬하며 동률에서도 순서가 흔들리지 않도록 테스트로 고정했다.</li>
             <li><strong>실행은 카운트만 올리고, 검색은 별도로 호출된다.</strong>
               "실행" 동작이 사용 횟수를 늘리고 조건 묶음을 돌려주면, 화면이 그 묶음으로 다시 검색을 실행한다 —
               두 단계가 분리된 구조라 한쪽 실패가 전체를 무너뜨리지 않는다.</li>
