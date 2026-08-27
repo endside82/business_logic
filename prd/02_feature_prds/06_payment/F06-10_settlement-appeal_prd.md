@@ -69,7 +69,7 @@
 - **사용자가 보는 것**:
   - AppBar `정산 상세`
   - 헤더: 이벤트명(없으면 "이벤트 #N") + "정산 ID: {id}" + 우측 `SettlementStatusBadgeWidget`
-  - `SettlementTimelineWidget` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화)
+  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다(앱 커밋 `4ff10fbf`)
   - 상태별 안내 카드:
     - PAYING: "지급 처리 중" (primary50 + primary500)
     - FAILED: "자동 재시도 중" (warning50, "5일 이내에 처리되지 않으면 관리자 문의")
@@ -164,7 +164,7 @@
 - **사용자가 보는 것**:
   - AppBar `정산 상세`
   - 헤더: 이벤트명(없으면 "이벤트 #N") + "정산 ID: {id}" + 우측 `SettlementStatusBadgeWidget`
-  - `SettlementTimelineWidget` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화)
+  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다(앱 커밋 `4ff10fbf`)
   - 상태별 안내 카드:
     - PAYING: "지급 처리 중" (primary50 + primary500)
     - FAILED: "자동 재시도 중" (warning50, "5일 이내에 처리되지 않으면 관리자 문의")

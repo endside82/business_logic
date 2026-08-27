@@ -148,10 +148,10 @@ GET controller는 `@AuthenticationPrincipal`을 받지 않고 path `eventId`도 
 | reasonCode | String? | DTO annotation 없음. service가 null/blank를 거부 |
 | reasonText | String? | nullable |
 | evidenceVisibility | String? | nullable, null이면 PARTIES. service enum 검증 없음 |
-| evidenceFileIds | List\<String\>? | nullable. service 개수·소유권 검증 없음 |
+| evidenceFileIds | List\<Long\>? | nullable, `file_metadata.id` 목록(N15). `EvidenceFileValidator`가 소유자·업로드 완료·증빙 용도·개수(최대 5)를 service 단에서 강제 — 실패하면 환불 자체가 거부된다 |
 | releaseTicket | Boolean? | nullable |
 
-`NoShowRefundParam`은 Lombok DTO일 뿐 Jakarta validation annotation이 없고 controller도 `@Valid`를 쓰지 않는다. reasonText 500자/evidence 최대 5개/evidenceVisibility 값 집합은 Flutter UI 또는 DB 컬럼에 기대며 service-level 계약으로 강제되지 않는다.
+`NoShowRefundParam`은 Lombok DTO일 뿐 Jakarta validation annotation이 없고 controller도 `@Valid`를 쓰지 않는다. reasonText 500자 상한과 evidenceVisibility 값 집합은 여전히 Flutter UI 또는 DB 컬럼에 기대며 service-level 계약으로 강제되지 않는다. evidenceFileIds만 예외로, `EvidenceFileValidator.validateAndNormalize`가 소유자·업로드 완료·용도·최대 5개를 service 단에서 검사한다 — N15 이전에는 이 자리가 검증 없는 S3 키 문자열 배열이었다.
 
 ### 4-3. NoShowStatus Enum (3값, 소스 직접 확인: `NoShowStatus.java:18-22`)
 
