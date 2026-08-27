@@ -323,6 +323,8 @@
       links: [
         { href: 'features/catalog.html', label: '175개 기능 카탈로그' },
         { href: 'features/impact.html', label: '부수효과 매트릭스' },
+        // 도메인 셋에 걸쳐 있어 단일 기능 번호를 갖지 않는 흐름 문서. 기능 수(175)에는 포함하지 않는다.
+        { href: 'features/private-meeting.html', label: '사적 모임 전 과정' },
         { href: 'reference/numbers.html', label: '비즈니스 수치 레퍼런스' },
       ],
     },
