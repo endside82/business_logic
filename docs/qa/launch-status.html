@@ -111,9 +111,8 @@
       <section id="blocking">
         <h2>공개 출시 전에 반드시 닫아야 하는 것</h2>
         <p>현재 소스 통합검증과 외부 계정·실기기·운영·법무·스토어 준비를 각각 구분해 표시한다.
-          관리자 웹의 본인확인 조회 변경은 원격에 반영됐지만 현재 사용자용 API·앱·관리자 API와 관리자
-          웹에는 각각 진행 중인 미커밋 변경이 남아 있다. 각 작업을 검증·반영한 뒤 정확한 다섯 저장소
-          커밋 묶음을 고정하고 전체 회귀와
+          앱·관리자 API·관리자 웹·실시간 서버는 원격 main과 같은 상태다. 현재 미커밋 변경은 사용자용
+          API의 39파일에만 남아 있다. 이 변경을 검증·반영한 뒤 정확한 다섯 저장소 커밋 묶음을 고정하고 전체 회귀와
           빈 데이터베이스 설치 비교를 실행해야 한다.</p>
         <div class="table-wrap">
           <table><thead><tr>
@@ -160,13 +159,17 @@
 
       <section id="later">
         <h2>출시 후 보완 항목</h2>
-        <p>이 목록도 <strong>구현이 끝난 기능이 아니다.</strong> 현재 핵심 행동을 끝낼 수 있는 대체 동선이
-          있고 돈·권한·안전 상태를 잘못 바꾸지 않아 공개 출시를 직접 막지 않는다는 뜻이다. 담당자·진행 순서·
-          완료 기준을 후속 작업판에 등록했을 때만 의도적으로 수용한 과제로 넘긴다.</p>
+        <p>이 목록은 <strong>코드 작성량과 제품 종결 여부를 따로 본다.</strong> 구현률은 개발 기간을
+          감으로 나눈 값이 아니라 서버 계약·권한 검사·사용자/운영 화면·표적 테스트·저장소 반영과 통합
+          검증을 소스에서 확인한 근사치다. 관측 뒤 제품 결정을 내려야 하는 항목은 선행 코드가 있어도
+          운영 화면과 실제 데이터가 없으면 완료로 올리지 않는다. 현재 5건이던 목록에서 정책과 코드가
+          끝난 2건은 제거했고, 남은 것은 사용자·운영 동선과 통합 검증을 마감할 2건, 운영 관측 기반을
+          보강할 1건이다.</p>
         <div class="table-wrap">
-          <table style="min-width:1150px"><thead><tr>
-            <th style="width:185px">담당·구분</th><th>현재 한계와 가능한 대체 동선</th>
-            <th style="width:390px">다음 행동과 완료 기준</th><th style="width:130px">관련 기능</th>
+          <table style="min-width:1280px"><thead><tr>
+            <th style="width:175px">담당·구분</th><th>현재 한계와 가능한 대체 동선</th>
+            <th style="width:210px">코드 구현 수준과 근거</th>
+            <th style="width:350px">다음 행동과 완료 기준</th><th style="width:120px">관련 기능</th>
           </tr></thead><tbody id="later-rows"></tbody></table>
         </div>
       </section>
@@ -380,13 +383,21 @@
         }).join('') + '</ol>';
       }
 
-      function actionableRows(target, impact, tone, includeChoices) {
+      function codeProgress(o) {
+        if (!o.codeProgress) return '<span style="color:var(--muted-2)">별도 산정 없음</span>';
+        return pill(o.codeProgress, o.codeProgressTone || 'warn') +
+          '<div style="margin-top:8px;color:var(--muted);font-size:12.5px">' +
+          esc(o.codeProgressDetail || '') + '</div>';
+      }
+
+      function actionableRows(target, impact, tone, includeChoices, includeProgress) {
         var list = L.openItems.filter(function (o) { return o.impact === impact; });
         document.getElementById(target).innerHTML = list.map(function (o) {
           var cells = '<td>' + ownerAndKind(o, tone) + '</td>' +
             '<td><strong>' + esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:12.5px">' +
             esc(o.detail) + '</span></td>';
           if (includeChoices) cells += '<td>' + choices(o) + '</td>';
+          if (includeProgress) cells += '<td>' + codeProgress(o) + '</td>';
           cells += '<td>' + actionAndDone(o) + '</td>' +
             '<td style="font-size:12px">' + featureLinks(o.features) + '</td>';
           return '<tr>' + cells + '</tr>';
@@ -396,10 +407,10 @@
 
       var unresolvedCounts = {
         block: L.openItems.filter(function (o) { return o.impact === 'block'; }).length,
-        wiring: actionableRows('wiring-rows', 'wiring', 'brand', false),
-        decision: actionableRows('decision-rows', 'decision', 'warn', true),
-        later: actionableRows('later-rows', 'later', 'info', false),
-        doc: actionableRows('doc-rows', 'doc', '', false),
+        wiring: actionableRows('wiring-rows', 'wiring', 'brand', false, false),
+        decision: actionableRows('decision-rows', 'decision', 'warn', true, false),
+        later: actionableRows('later-rows', 'later', 'info', false, true),
+        doc: actionableRows('doc-rows', 'doc', '', false, false),
       };
       document.getElementById('wiring').hidden = unresolvedCounts.wiring === 0;
       document.getElementById('decisions').hidden = unresolvedCounts.decision === 0;
