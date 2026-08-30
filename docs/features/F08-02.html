@@ -267,12 +267,13 @@ flowchart TD
               별도 상세 조회 없이 구매 시트 노출 여부를 결정하며, 무료 가격이 없으면 플랜 기본가로 폴백한다.</p>
           </div>
         </div>
-        <div class="callout warn">
-          <span class="label">Flutter 작업트리 관찰값 — 아직 확정 제품 계약 아님</span>
-          <p>현재 커밋되지 않은 Flutter 변경은 상세·미리보기·읽기 모드의 본문을 독자용 조판으로 통일하고,
-            본문 폭·글자 크기·행간·제목 간격을 조정하는 중이다. TABLE은 canonical rows와 제한적 legacy columns/content를 함께 읽고,
-            깨진 원문 JSON은 재생하지 않으며 작은 표는 본문 폭을 채우도록 바뀌고 있다. 이 문서는 해당 변경을 “미커밋 제안”으로만 기록하며,
-            커밋된 서버/앱 계약과 섞어 완료 기능으로 간주하지 않는다.</p>
+        <div class="callout">
+          <span class="label">현재 앱 계약 — 독자용 조판과 TABLE 안전 읽기 반영 완료</span>
+          <p>상세·미리보기·읽기 모드는 같은 독자용 조판을 사용한다. TABLE은 표준
+            <code>properties.rows</code>와 제한적으로 허용한 이전 <code>columns + content</code> 형식을
+            함께 읽되, 깨진 원문 JSON은 본문으로 재생하지 않는다. 작은 표는 본문 폭을 활용하고, 사용자가
+            편집해 저장하는 순간 서버의 표준 행 배열 형식으로 변환한다. 이 동작은 현재 앱 커밋과 자동
+            테스트에 반영됐다.</p>
         </div>
       </section>
 

@@ -270,12 +270,13 @@ flowchart TD
             블록 저장 시 서버가 bare key의 소유자·COMPLETED 상태·<code>PLAN_BLOCK</code> 목적을 다시 확인하고 미디어 관계를 적재하므로,
             다른 사용자의 키나 미완료 업로드를 본문에 연결할 수 없다.</p>
         </div>
-        <div class="callout warn">
-          <span class="label">API·Flutter 작업트리 관찰값 — 아직 확정 제품 계약 아님</span>
-          <p>현재 커밋되지 않은 변경은 본문 16px/행간 1.65·읽기 폭 680·콘텐츠 tone과 함께 TABLE 계약을 강화한다.
-            서버는 신규/구조 변경 표에 비어 있지 않은 직사각형 문자열 <code>properties.rows</code>와 optional boolean <code>header</code>를 강제한다.
-            Flutter는 legacy <code>columns + content JSON</code>을 제한적으로 읽어 안전한 경우 저장 시 canonical rows로 바꾸며, 숨은 key·깨진 JSON·중첩 값은 저장과 raw 원문 렌더를 차단한다.
-            SQL에는 canonical/legacy/broken 재고 조회만 있고 자동 migration은 없다. 소스 실측에는 포함하되 커밋된 기능으로 표기하지 않는다.</p>
+        <div class="callout">
+          <span class="label">현재 API·앱 계약 — TABLE 표준 쓰기와 이전 형식 호환 완료</span>
+          <p>서버는 새 표와 구조가 바뀐 표에 비어 있지 않은 직사각형 문자열
+            <code>properties.rows</code>와 선택형 boolean <code>header</code>를 강제한다. 앱은 이전
+            <code>columns + content JSON</code> 형식을 제한적으로 읽고, 안전하게 해석할 수 있을 때만 저장 시
+            표준 rows로 바꾼다. 숨은 키·깨진 JSON·중첩 값·비직사각형 행은 저장과 원문 렌더를 차단한다.
+            기존 데이터는 자동으로 일괄 변경하지 않고 사용자가 편집·저장하는 시점에만 안전하게 전환한다.</p>
         </div>
       </section>
 
