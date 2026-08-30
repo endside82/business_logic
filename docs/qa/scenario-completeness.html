@@ -70,6 +70,8 @@
           <strong id="c-feature-real">–</strong> 기능을 로컬 실계정으로 확인했고 1개는
           설계 철회로 분류한다. 이 174개는 코드 저장소 수준의 확인 결과다. 아래 표의 자동 테스트·통합 여정은
           제품 시나리오 문서가 구체적인 실행 파일을 직접 지목했는지를 더 엄격하게 보여 준다.
+          전체 제품 코드 완성도 약 95%와 첫 출시 범위 코드 100% 판정은 이 연결도와 별개이며,
+          <a href="launch-status.html#code-completeness">첫 출시 현황의 코드 완성도와 출시 가능성</a>에서 근거를 확인한다.
         </div>
 
         <div class="audit-grid">
@@ -82,7 +84,8 @@
           </div>
           <div class="audit-card">
             <h3>검증 연결은 아직 불완전하다</h3>
-            <p>자동 테스트 파일 1,565개와 사용자 여정 파일 231개를 검색했다. 그중 시나리오 문서가 파일을 직접 지목한 자동 검증은
+            <p>자동 테스트 파일 <strong id="c-test-files-inline">–</strong>개와 사용자 여정 파일
+              <strong id="c-journey-files-inline">–</strong>개를 검색했다. 그중 시나리오 문서가 파일을 직접 지목한 자동 검증은
               <strong id="c-auto">–</strong>, 통합·E2E 실행은 <strong id="c-journey">–</strong>다.
               테스트 내부 기능 번호는 각각 <strong id="c-auto-markers">–</strong>, <strong id="c-journey-markers">–</strong>에서
               발견됐지만 의미가 다른 번호도 섞일 수 있어 후보로만 둔다. 문서 연결이 없는 기능은 기존 테스트를 먼저
@@ -213,6 +216,8 @@
       document.getElementById('c-journey').textContent = A.totals.directlyLinkedJourneys + '개 (' + percent(A.totals.directlyLinkedJourneys, A.totals.features) + ')';
       document.getElementById('c-feature-auto').textContent = A.totals.featureLevelAutomatedProof + '개';
       document.getElementById('c-feature-real').textContent = A.totals.localRealAccountProof + '개';
+      document.getElementById('c-test-files-inline').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
+      document.getElementById('c-journey-files-inline').textContent = A.totals.journeyFilesScanned.toLocaleString('ko-KR');
       document.getElementById('c-auto-markers').textContent = A.totals.automatedFeatureMarkers + '개 기능';
       document.getElementById('c-journey-markers').textContent = A.totals.journeyFeatureMarkers + '개 기능';
       document.getElementById('c-trace').textContent = A.totals.traceMarkers;

@@ -66,7 +66,7 @@
         <div class="cards">
           <a class="card" href="../features/F17-06.html"><div class="eyebrow">F17-06</div><h3>등록·승인·대기열</h3><p>승인제·즉시·유료/무료에 따라 8가지 멤버 상태가 갈린다. 자리가 비면 대기자가 자동 승격된다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F17-07.html"><div class="eyebrow">F17-07</div><h3>결제</h3><p>지갑 즉시결제 또는 계좌이체. 멤버 한 명당 동시에 한 결제만 살아 있을 수 있다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F17-08.html"><div class="eyebrow">F17-08</div><h3>환불</h3><p>이미 진행된 회차분만 빼고 환불. 멤버 취소·호스트 취소·자격박탈 세 가지 트리거가 같은 산식을 공유한다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F17-08.html"><div class="eyebrow">F17-08</div><h3>환불</h3><p>이미 진행된 회차분만 빼고 환불한다. 참가자는 자기 환불 이체증을, 호스트는 최근 완료 이력 최대 200건을 다시 볼 수 있다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
 
         <h3>출석과 정산</h3>
@@ -174,6 +174,8 @@ flowchart TD
             <li><strong>일반 호스트는 모임을 직접 이양할 수 없다.</strong> 관리자에게만 CANCELED 이전의 break-glass 이양 경로가 있으며, 이미 결제·정산이 잡힌 세션은 기존 호스트 귀속을 유지한다.</li>
             <li><strong>코스 종료는 출석이 다 확정돼야 통과한다.</strong> 미확정 회차가 남아 있으면 종료 버튼이 막힌다 — 호스트에게 안내가 필요하다.</li>
             <li><strong>계좌이체 환불은 호스트 책임이다.</strong> 외부 송금이라 호스트가 직접 환불한 뒤 "환불 완료"를 눌러야 마감된다. 누락 시 환불 진행중 상태가 계속 남는다.</li>
+            <li><strong>마감된 환불도 화면에서 사라지지 않는다.</strong> 참가자는 자기 결제에서 이체증을 다시 보고,
+              호스트는 진행 중 대기열과 분리된 완료 이력에서 최근 200건의 금액·메모·이체증을 확인한다.</li>
             <li><strong>유료 잔존액만 호스트 수익이다.</strong> 무료 보너스 포인트로 결제된 부분은 플랫폼 보조로 잡혀 호스트 지급 대상이 아니다.</li>
             <li><strong>변동형 자동 종료는 1차 출시에 미적용.</strong> 마지막 회차 생성 시점에서 시간이 흘러도 자동으로 닫히지 않는다 — 후속에서 정책 결정.</li>
           </ul>
@@ -209,7 +211,7 @@ flowchart TD
               <tr><td>06 결제·지갑</td><td><span class="pill brand">강함</span></td><td>지갑 결제는 기존 거래 이력을 재사용. 계좌이체는 외부 송금이라 회계에 잡히지 않는다.</td></tr>
               <tr><td>07 모임 정산</td><td><span class="pill brand">강함</span></td><td>정산 모델이 확장되어 코스 단위 정산을 받아들인다. 유료/무료 잔존액 분리가 추가됐다.</td></tr>
               <tr><td>11 리뷰·신고</td><td><span class="pill">조건부</span></td><td>고정형 회차는 실제 출석 확정자만 리뷰 자격. 매 회차마다 리뷰 가능.</td></tr>
-              <tr><td>12 알림</td><td><span class="pill">조건부</span></td><td>승인/거절/승격/만료/노쇼 알림은 1차 출시에 미배선. 후속에 푸시 라우팅 정의.</td></tr>
+              <tr><td>12 알림</td><td><span class="pill brand">있음</span></td><td>등록 요청·승인·거절·대기 승격, 결제 확인·거절·만료, 환불, 출석·노쇼, 모임 종료·취소와 회차 변경 알림이 서버에 연결돼 있다. 실제 모바일 푸시 수신은 운영 Firebase 실기기 검증이 남았다.</td></tr>
               <tr><td>13 프로필·설정</td><td><span class="pill">있음</span></td><td>탈퇴·계정 비활성 시 활성 결제·운영중 모임·환불 책임이 있으면 차단된다.</td></tr>
             </tbody>
           </table>
