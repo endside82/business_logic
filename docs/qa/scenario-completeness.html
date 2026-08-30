@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>기능별 시나리오 완성도 — community PRD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    .audit-note { color: var(--muted); font-size: 12.5px; line-height: 1.65; }
+    .audit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-top:14px; }
+    .audit-card { border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--surface); }
+    .audit-card h3 { margin:0 0 8px; font-size:15px; }
+    .audit-card p { margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
+    .audit-card strong { color:var(--text); }
+    .path-list { margin:7px 0 0; padding-left:18px; color:var(--muted); font-size:11.5px; }
+    .path-list code { white-space:normal; overflow-wrap:anywhere; }
+    .feature-detail summary { cursor:pointer; color:var(--text); }
+    .feature-detail[open] summary { margin-bottom:7px; }
+    .nowrap { white-space:nowrap; }
+    .stack { display:flex; flex-wrap:wrap; gap:4px; }
+    .toolbar select { min-width:150px; }
+    @media (max-width: 900px) {
+      .scenario-table { min-width:1100px; }
+    }
+  </style>
+</head>
+<body data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>기능별 시나리오 완성도</div>
+        <h1>기능별 시나리오 완성도</h1>
+        <p class="lede">
+          175개 기능을 <strong>제품 시나리오가 정의되어 있는가</strong>, <strong>옛 소스 근거가 현재도 유효한가</strong>,
+          <strong>자동 테스트와 사용자 여정 검증이 어느 기능을 증명하는지 명시되어 있는가</strong>로 나눠 본다.
+          이 표의 “문서 연결 없음”은 곧바로 기능이나 테스트가 없다는 뜻이 아니다. 기존 테스트가 있어도
+          제품 시나리오 문서가 테스트 파일을 직접 가리키지 않으면 무엇을 증명하는지 확정할 수 없으므로 별도로 표시한다.
+          테스트 안에서 발견한 기능 번호는 번호 재사용 오탐이 있어 완료 근거가 아닌 연결 후보로만 센다.
+        </p>
+      </header>
+
+      <section>
+        <div class="metrics">
+          <div class="metric"><div class="label">시나리오 정의</div><div class="value" id="m-defined">–</div><div class="hint">기능 175개 기준</div></div>
+          <div class="metric"><div class="label">기능 수준 자동·실계정 확인</div><div class="value" id="m-feature-proof">–</div><div class="hint">개별 시나리오 통과율과 다름</div></div>
+          <div class="metric"><div class="label">기존 등록 숫자 합</div><div class="value" id="m-scenarios">–</div><div class="hint">통과율 분모 아님</div></div>
+          <div class="metric"><div class="label">상세 시나리오 제목</div><div class="value" id="m-unit-headings">–</div><div class="hint">117개 문서에서 실제 식별</div></div>
+          <div class="metric"><div class="label">검사한 테스트 파일</div><div class="value" id="m-test-files">–</div><div class="hint">다섯 코드 저장소</div></div>
+          <div class="metric"><div class="label">자동 테스트 문서 연결</div><div class="value" id="m-auto">–</div><div class="hint">시나리오 문서가 파일을 직접 지목</div></div>
+          <div class="metric"><div class="label">통합·E2E 문서 연결</div><div class="value" id="m-journey">–</div><div class="hint">시나리오 문서가 실행 파일을 지목</div></div>
+          <div class="metric"><div class="label">로컬 실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">외부 서비스·실기기는 별도</div></div>
+          <div class="metric"><div class="label">검증 근거 3단계 연결</div><div class="value" id="m-chain">–</div><div class="hint">정의 + 자동 + 사용자 여정</div></div>
+          <div class="metric"><div class="label">시나리오 실제 통과율</div><div class="value">미측정</div><div class="hint">항목별 코드·테스트 연결 전</div></div>
+        </div>
+
+        <div class="callout warn" style="margin-top:16px">
+          <strong>1,403개를 “1,403개 테스트 통과”로 읽으면 안 된다.</strong>
+          1,403은 기능 목록에 적혀 있던 숫자의 합일 뿐이다. 상세 시나리오 문서 117개에서 실제 식별한 시나리오
+          제목은 1,086개이며, 그중 49개 기능은 등록 숫자와 제목 수가 다르다. 이번 감사로
+          <strong>정식 시나리오 정의 175/175</strong>는 확보했지만, 실제 통과율은 각 시나리오 ID에 코드·테스트·최근
+          실행 결과를 연결한 뒤에만 계산한다. 아래 33%·67%·100%는 구현률이 아니라 세 종류의 근거가 문서에
+          연결됐는지를 보여 주는 값이다.
+        </div>
+
+        <div class="callout info" style="margin-top:12px">
+          <strong>기능 수준 확인과 개별 시나리오 증명도 다르다.</strong>
+          첫 출시 원장에서는 <strong id="c-feature-auto">–</strong> 기능을 전체 자동 회귀로,
+          <strong id="c-feature-real">–</strong> 기능을 로컬 실계정으로 확인했고 1개는
+          설계 철회로 분류한다. 이 174개는 코드 저장소 수준의 확인 결과다. 아래 표의 자동 테스트·통합 여정은
+          제품 시나리오 문서가 구체적인 실행 파일을 직접 지목했는지를 더 엄격하게 보여 준다.
+        </div>
+
+        <div class="audit-grid">
+          <div class="audit-card">
+            <h3>제품 정의는 채워졌다</h3>
+            <p>시나리오 수가 비어 있던 경고·징계, 마일리지, 분쟁, 클럽 레퓨테이션의 기존 수용 조건을 등록했고,
+              실제 시나리오가 없던 <strong>플랜 마켓 환불 10개</strong>와 <strong>매출 귀속·정산 9개</strong>를
+              현재 코드 기준으로 새로 작성했다. 정본 PRD가 8월 구현을 따라가지 못한 이동수단 4개 기능도
+              <strong>26개 시나리오별 코드·검증·출시 판정</strong>으로 다시 작성했다.</p>
+          </div>
+          <div class="audit-card">
+            <h3>검증 연결은 아직 불완전하다</h3>
+            <p>자동 테스트 파일 1,565개와 사용자 여정 파일 231개를 검색했다. 그중 시나리오 문서가 파일을 직접 지목한 자동 검증은
+              <strong id="c-auto">–</strong>, 통합·E2E 실행은 <strong id="c-journey">–</strong>다.
+              테스트 내부 기능 번호는 각각 <strong id="c-auto-markers">–</strong>, <strong id="c-journey-markers">–</strong>에서
+              발견됐지만 의미가 다른 번호도 섞일 수 있어 후보로만 둔다. 문서 연결이 없는 기능은 기존 테스트를 먼저
+              찾아 매핑하고, 정말 없을 때만 새 테스트를 만든다.</p>
+          </div>
+          <div class="audit-card">
+            <h3>옛 소스 줄 링크는 신뢰할 수 없다</h3>
+            <p>기존 소스 줄 표식 <strong id="c-trace">–</strong>개 중 현재 위치가 맞는 것은
+              <strong id="c-trace-ok">–</strong>개뿐이다. 대부분은 코드가 이동했는데 줄 번호가 갱신되지 않은
+              문서 문제다. 파일 자체가 사라진 2개 표식은 철회된 타 사용자 가용시간 기능에 속한다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>무엇부터 해야 하는가</h2>
+        <ol>
+          <li><strong>첫 출시 범위인데 알려진 문제가 연결된 기능부터</strong> 처리한다. 외부 계정·실기기 문제와
+            코드·화면 문제를 섞지 않고 <a href="launch-status.html#unresolved">첫 출시 현황의 남은 작업</a>에서
+            해소 조건을 확인한다.</li>
+          <li><strong>첫 출시 기능 중 자동 테스트 문서 연결이 없는 기능</strong>은 기존 테스트를 검색해 기능과
+            시나리오를 먼저 연결한다. 테스트가 실제로 없을 때 정상·권한·실패·중복 시나리오를 추가한다.</li>
+          <li><strong>등록 숫자와 실제 제목 수가 다른 상세 시나리오 문서 49개</strong>는 시나리오 ID를 정규화한다.
+            그래야 기능별·도메인별 자동 검증률을 실제 분모로 계산할 수 있다.</li>
+          <li><strong>돈·권한·개인정보·상태 전이가 큰 기능</strong>은 단위 테스트만으로 닫지 않는다. 앱 또는
+            운영자 화면에서 서버 상태가 바뀌는 통합 여정을 추가하고, 실제 계정이나 외부 서비스가 필요한 경계는
+            별도 실환경 검증으로 남긴다.</li>
+          <li><strong>봉인 기능</strong>은 “테스트가 있으니 완료”로 처리하지 않는다. 고객 안내 화면, 운영 조회·처리·복구,
+            외부 계약·키, 봉인 해제 설정, 같은 버전의 회귀 검증까지 한 시나리오로 통과해야 개통할 수 있다.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>도메인별 현황</h2>
+        <p class="subtitle">자동 테스트와 통합·E2E 수치는 시나리오 문서가 해당 파일을 직접 지목한 기능 수다. 기능 번호만 발견된 파일은 포함하지 않는다.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">등록 숫자 합</th><th style="text-align:right">자동 테스트 문서 연결</th><th style="text-align:right">통합·E2E 문서 연결</th><th style="text-align:right">로컬 실계정</th><th style="text-align:right">검증 근거 3단계</th><th style="text-align:right">알려진 문제 보유</th></tr></thead>
+            <tbody id="domain-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>기능 175개 상세</h2>
+        <div class="toolbar">
+          <input id="q" type="search" placeholder="ID·기능명·도메인 검색">
+          <select id="domain-filter" aria-label="도메인 필터"><option value="">전체 도메인</option></select>
+          <select id="scope-filter" aria-label="출시 상태 필터"><option value="">전체 출시 상태</option><option value="open">개통</option><option value="partial">일부 개통</option><option value="sealed">봉인</option><option value="retired">설계 철회</option></select>
+          <label class="chip"><input type="checkbox" id="f-no-auto">자동 테스트 문서 연결 없음</label>
+          <label class="chip"><input type="checkbox" id="f-no-journey">통합·실계정 근거 없음</label>
+          <label class="chip"><input type="checkbox" id="f-chain">검증 근거 3단계 미완료</label>
+          <label class="chip"><input type="checkbox" id="f-count">등록 숫자와 제목 수 불일치</label>
+          <label class="chip"><input type="checkbox" id="f-trace">소스 줄 링크 정비 필요</label>
+          <label class="chip"><input type="checkbox" id="f-gap">알려진 문제 있음</label>
+        </div>
+        <p class="feature-count" id="count">불러오는 중…</p>
+        <div class="table-wrap">
+          <table class="scenario-table">
+            <thead><tr>
+              <th style="width:76px">ID</th>
+              <th style="width:126px">영역</th>
+              <th>기능과 근거</th>
+              <th style="width:92px">첫 출시</th>
+              <th style="width:108px;text-align:right">시나리오</th>
+              <th style="width:104px">검증 근거 연결도</th>
+              <th style="width:122px">옛 서버 줄 링크</th>
+              <th style="width:116px">자동 테스트</th>
+              <th style="width:116px">사용자 여정</th>
+              <th style="width:180px">다음 확인</th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>표 읽는 법</h2>
+        <ul>
+          <li><strong>시나리오</strong>의 큰 숫자는 기존 기능 목록의 등록값이다. 상세 시나리오 문서는 실제 제목 수도
+            함께 표시한다. 두 값이 다르면 정규화가 필요한 문서이며, 어느 값도 자동 테스트 통과 건수가 아니다.</li>
+          <li><strong>검증 근거 연결도</strong>는 제품 정의, 자동 테스트 연결, 통합·E2E 또는 로컬 실계정 근거의
+            세 칸 중 몇 칸이 연결됐는지를 나타낸다. 3/3도 모든 시나리오 통과나 실환경 출시 완료를 뜻하지 않는다.</li>
+          <li><strong>옛 서버 줄 링크</strong>는 옛 문서의 파일·줄 번호가 지금도 맞는지를 기계적으로 확인한 결과다.
+            “정비 필요”는 보통 코드 결함이 아니라 문서 줄 번호 이동이다.</li>
+          <li><strong>자동 테스트 문서 연결</strong>은 시나리오 문서가 테스트 파일을 직접 가리킨다는 뜻이다.
+            테스트 안의 기능 번호는 별도 후보이며, F03-17 번호가 전혀 다른 일정 변경 안내 테스트에서 발견된 사례처럼
+            번호만으로는 완료 근거가 되지 않는다.</li>
+          <li><strong>사용자 여정</strong>은 시나리오 문서가 통합·E2E 실행 파일을 지목했는지와 로컬 신규 계정 왕복 근거가
+            있는지를 각각 보여 준다. 외부 서비스와 서명 앱 실증은 <a href="launch-status.html">첫 출시 현황</a>에서 따로 본다.</li>
+        </ul>
+        <p class="audit-note" id="asof"></p>
+      </section>
+    </main>
+  </div>
+
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/features.js"></script>
+  <script src="../assets/launch-status.js"></script>
+  <script src="../assets/scenario-audit.js"></script>
+  <script>
+    (function () {
+      var A = window.SCENARIO_AUDIT;
+      var L = window.LAUNCH_STATUS;
+      var data = A.features;
+
+      function esc(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+      function pill(text, tone) {
+        return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(text) + '</span>';
+      }
+      function percent(part, total) {
+        return total ? Math.round(part * 100 / total) + '%' : '0%';
+      }
+
+      document.getElementById('m-defined').textContent = A.totals.definedFeatures + '/' + A.totals.features;
+      document.getElementById('m-feature-proof').textContent = A.totals.featureLevelChecked + '/' + A.totals.features;
+      document.getElementById('m-scenarios').textContent = A.totals.documentedScenarioItems.toLocaleString('ko-KR');
+      document.getElementById('m-unit-headings').textContent = A.totals.unitScenarioHeadings.toLocaleString('ko-KR');
+      document.getElementById('m-test-files').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
+      document.getElementById('m-auto').textContent = A.totals.directlyLinkedAutomatedTests + '/' + A.totals.features;
+      document.getElementById('m-journey').textContent = A.totals.directlyLinkedJourneys + '/' + A.totals.features;
+      document.getElementById('m-real').textContent = A.totals.localRealAccountProof + '/' + A.totals.features;
+      document.getElementById('m-chain').textContent = A.totals.completeEvidenceChain + '/' + A.totals.features;
+      document.getElementById('c-auto').textContent = A.totals.directlyLinkedAutomatedTests + '개 (' + percent(A.totals.directlyLinkedAutomatedTests, A.totals.features) + ')';
+      document.getElementById('c-journey').textContent = A.totals.directlyLinkedJourneys + '개 (' + percent(A.totals.directlyLinkedJourneys, A.totals.features) + ')';
+      document.getElementById('c-feature-auto').textContent = A.totals.featureLevelAutomatedProof + '개';
+      document.getElementById('c-feature-real').textContent = A.totals.localRealAccountProof + '개';
+      document.getElementById('c-auto-markers').textContent = A.totals.automatedFeatureMarkers + '개 기능';
+      document.getElementById('c-journey-markers').textContent = A.totals.journeyFeatureMarkers + '개 기능';
+      document.getElementById('c-trace').textContent = A.totals.traceMarkers;
+      document.getElementById('c-trace-ok').textContent = A.totals.currentTraceMarkers;
+      document.getElementById('asof').textContent = '기준일 ' + A.asOf + ' · ' + A.countingNote;
+
+      var domains = [];
+      data.forEach(function (feature) {
+        if (domains.indexOf(feature.domain) < 0) domains.push(feature.domain);
+      });
+      var domainFilter = document.getElementById('domain-filter');
+      domains.forEach(function (domain) {
+        var option = document.createElement('option');
+        option.value = domain;
+        option.textContent = domain;
+        domainFilter.appendChild(option);
+      });
+
+      document.getElementById('domain-rows').innerHTML = domains.map(function (domain) {
+        var list = data.filter(function (feature) { return feature.domain === domain; });
+        return '<tr>' +
+          '<td>' + esc(domain) + '</td>' +
+          '<td style="text-align:right">' + list.length + '</td>' +
+          '<td style="text-align:right">' + list.reduce(function (sum, feature) { return sum + feature.scenarioCount; }, 0) + '</td>' +
+          '<td style="text-align:right">' + list.filter(function (feature) { return feature.automated.directlyLinked; }).length + '/' + list.length + '</td>' +
+          '<td style="text-align:right">' + list.filter(function (feature) { return feature.journey.directlyLinked; }).length + '/' + list.length + '</td>' +
+          '<td style="text-align:right">' + list.filter(function (feature) { return feature.proof === 'real'; }).length + '/' + list.length + '</td>' +
+          '<td style="text-align:right">' + list.filter(function (feature) { return feature.evidenceStage === 3; }).length + '/' + list.length + '</td>' +
+          '<td style="text-align:right">' + list.filter(function (feature) { return feature.knownIssues > 0; }).length + '</td>' +
+          '</tr>';
+      }).join('');
+
+      function traceCell(feature) {
+        var trace = feature.trace;
+        if (trace.state === 'current') return pill('줄 링크 최신', 'brand') + '<div class="audit-note">' + trace.valid + '/' + trace.total + '</div>';
+        if (trace.state === 'partial') return pill('일부 정비 필요', 'warn') + '<div class="audit-note">' + trace.valid + '/' + trace.total + ' 현재 위치</div>';
+        if (trace.state === 'stale') return pill('정비 필요', 'danger') + '<div class="audit-note">0/' + trace.total + ' 현재 위치</div>';
+        return pill('정밀 링크 없음', '') + '<div class="audit-note">PRD·교차표로 확인</div>';
+      }
+
+      function evidenceFiles(title, evidence) {
+        if (!evidence.files.length) return '';
+        return '<div class="audit-note"><strong>' + esc(title) + '</strong><ul class="path-list">' +
+          evidence.files.map(function (file) { return '<li><code>' + esc(file) + '</code></li>'; }).join('') +
+          '</ul></div>';
+      }
+
+      function evidenceMethods(evidence) {
+        var methods = [];
+        if (evidence.scenarioReferenceCount) methods.push('시나리오 문서가 지목한 파일 ' + evidence.scenarioReferenceCount);
+        if (evidence.featureMarkerCount) methods.push('기능 번호 발견 후보 ' + evidence.featureMarkerCount);
+        return methods.length ? '<div class="audit-note">' + esc(methods.join(' · ')) + '</div>' : '';
+      }
+
+      function scenarioCountDetail(feature) {
+        var definition = feature.scenarioDefinition;
+        if (definition.documentScenarioCount == null) {
+          return '<div class="audit-note">기능 PRD 수용 기준</div>';
+        }
+        var tone = definition.registeredCountMatches ? '' : ' · 숫자 정비 필요';
+        return '<div class="audit-note">문서 제목 ' + definition.documentScenarioCount + tone + '</div>';
+      }
+
+      function featureCell(feature) {
+        var scenarioHref = feature.scenarioPath.indexOf('business_logic/') === 0
+          ? '../../' + feature.scenarioPath.slice('business_logic/'.length) : '';
+        var detail = '<div class="audit-note"><a href="' + esc(scenarioHref) + '">제품 시나리오 원문 열기</a> · <code>' + esc(feature.scenarioPath) + '</code></div>';
+        if (feature.trace.backendPath) {
+          var backendHref = feature.trace.backendPath.indexOf('business_logic/') === 0
+            ? '../../' + feature.trace.backendPath.slice('business_logic/'.length) : '';
+          detail += '<div class="audit-note"><a href="' + esc(backendHref) + '">서버 근거 원문 열기</a> · <code>' + esc(feature.trace.backendPath) + '</code></div>';
+        }
+        detail += evidenceFiles('시나리오 문서가 지목한 자동 테스트', feature.automated);
+        detail += evidenceFiles('시나리오 문서가 지목한 통합·E2E', feature.journey);
+        return '<details class="feature-detail"><summary><a href="../features/' + feature.id + '.html"><strong>' + esc(feature.name) + '</strong></a></summary>' + detail + '</details>';
+      }
+
+      function journeyCell(feature) {
+        var parts = [];
+        parts.push(feature.journey.directlyLinked ? pill('통합·E2E 문서 연결', 'brand') : pill('통합·E2E 문서 미연결', ''));
+        if (feature.proof === 'real') parts.push(pill('로컬 실계정', 'info'));
+        return '<div class="stack">' + parts.join('') + '</div>' + evidenceMethods(feature.journey);
+      }
+
+      function evidenceStageCell(feature) {
+        var tone = feature.evidenceStage === 3 ? 'brand' : (feature.evidenceStage === 2 ? 'warn' : '');
+        return pill(feature.evidenceStage + '/3', tone) +
+          '<div class="audit-note">' + Math.round(feature.evidenceStage * 100 / 3) + '% · 문서 근거 연결</div>';
+      }
+
+      function nextAction(feature) {
+        if (feature.launchScope === 'retired') return '철회 기록만 보존한다.';
+        if (feature.knownIssues > 0) return '첫 출시 현황에 연결된 남은 문제 ' + feature.knownIssues + '건을 먼저 해소한다.';
+        if (feature.scenarioDefinition.registeredCountMatches === false) return '시나리오 제목에 고유 ID를 붙이고 등록 숫자를 실제 문서와 맞춘다.';
+        if (!feature.automated.directlyLinked) return '기존 테스트를 찾아 시나리오 문서에 연결하고, 실제 공백만 새로 작성한다.';
+        if (!feature.journey.directlyLinked && feature.proof !== 'real') return '위험도에 맞는 통합 여정을 선택해 직접 연결한다.';
+        if (feature.trace.state === 'stale' || feature.trace.state === 'partial') return '동작 증거는 있으므로 오래된 소스 줄 링크를 갱신한다.';
+        if (feature.launchScope === 'sealed') return '봉인 해제 조건과 운영 화면을 포함한 실환경 여정을 실행한다.';
+        return '현재 연결을 유지하고 기능 변경 때 영향 시나리오를 재실행한다.';
+      }
+
+      function render() {
+        var query = document.getElementById('q').value.trim().toLowerCase();
+        var domain = domainFilter.value;
+        var scope = document.getElementById('scope-filter').value;
+        var noAuto = document.getElementById('f-no-auto').checked;
+        var noJourney = document.getElementById('f-no-journey').checked;
+        var incompleteChain = document.getElementById('f-chain').checked;
+        var countMismatch = document.getElementById('f-count').checked;
+        var trace = document.getElementById('f-trace').checked;
+        var gap = document.getElementById('f-gap').checked;
+
+        var list = data.filter(function (feature) {
+          if (domain && feature.domain !== domain) return false;
+          if (scope && feature.launchScope !== scope) return false;
+          if (noAuto && feature.automated.directlyLinked) return false;
+          if (noJourney && (feature.journey.directlyLinked || feature.proof === 'real')) return false;
+          if (incompleteChain && feature.evidenceStage === 3) return false;
+          if (countMismatch && feature.scenarioDefinition.registeredCountMatches !== false) return false;
+          if (trace && !(feature.trace.state === 'stale' || feature.trace.state === 'partial')) return false;
+          if (gap && !feature.knownIssues) return false;
+          if (query) {
+            var haystack = (feature.id + ' ' + feature.name + ' ' + feature.domain).toLowerCase();
+            if (haystack.indexOf(query) < 0) return false;
+          }
+          return true;
+        });
+
+        document.getElementById('rows').innerHTML = list.map(function (feature) {
+          var scopeMeta = L.SCOPE[feature.launchScope];
+          return '<tr>' +
+            '<td class="nowrap"><a href="../features/' + feature.id + '.html"><code>' + feature.id + '</code></a></td>' +
+            '<td style="font-size:12.5px">' + esc(feature.domain) + '</td>' +
+            '<td>' + featureCell(feature) + '</td>' +
+            '<td>' + pill(scopeMeta.label, scopeMeta.tone) + (feature.knownIssues ? '<div class="audit-note">문제 ' + feature.knownIssues + '건</div>' : '') + '</td>' +
+            '<td style="text-align:right"><strong>등록 ' + feature.scenarioCount + '</strong>' + scenarioCountDetail(feature) + '</td>' +
+            '<td>' + evidenceStageCell(feature) + '</td>' +
+            '<td>' + traceCell(feature) + '</td>' +
+            '<td>' + (feature.automated.directlyLinked ? pill('문서 연결', 'brand') + '<div class="audit-note">' + feature.automated.count + '개 파일</div>' + evidenceMethods(feature.automated) : pill('문서 연결 없음', '') + evidenceMethods(feature.automated)) + '</td>' +
+            '<td>' + journeyCell(feature) + '</td>' +
+            '<td style="font-size:12.5px;line-height:1.55">' + esc(nextAction(feature)) + '</td>' +
+            '</tr>';
+        }).join('');
+        document.getElementById('count').textContent = list.length + '개 기능 표시 중 (전체 ' + data.length + '개)';
+      }
+
+      ['q', 'domain-filter', 'scope-filter', 'f-no-auto', 'f-no-journey', 'f-chain', 'f-count', 'f-trace', 'f-gap'].forEach(function (id) {
+        var element = document.getElementById(id);
+        element.addEventListener('input', render);
+        element.addEventListener('change', render);
+      });
+      render();
+    })();
+  </script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

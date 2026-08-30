@@ -26,8 +26,8 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">업무 도메인</div><div class="value">21</div><div class="hint">7개 줄기로 묶인 책임 분리 영역</div></div>
-          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">175</div><div class="hint">Golden 1 · 실사 기반 115 · source-first 50</div></div>
-          <div class="metric"><div class="label">검증 시나리오</div><div class="value">1275</div><div class="hint">정상·예외·복구 케이스 합계</div></div>
+          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">175</div><div class="hint">기준 예시 1 · 실사 기반 115 · 현재 소스 기준 50</div></div>
+          <div class="metric"><div class="label">시나리오 등록 숫자</div><div class="value">1403</div><div class="hint">목록 숫자의 합 · 통과 건수 아님</div></div>
           <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
         </div>
 
@@ -55,7 +55,7 @@
 
         <div class="callout warn">
           <span class="label">2026-05-20 갱신 — 운영 모델 변경 반영</span>
-          <p>원문 PRD가 <strong>source-first 모델</strong>로 전환됐다. 기능 PRD는 이제 “시나리오 나열”이 아니라
+          <p>원문 PRD가 <strong>현재 소스를 먼저 확인하는 방식</strong>으로 전환됐다. 기능 PRD는 이제 “시나리오 나열”이 아니라
           실제 서버·Flutter 소스를 직접 대조한 판단 문서로 운영된다. 자세한 골자는
           <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 175개 기능의 PRD 문서 상태와 Trace/Risk 후보 수는
           <a href="qa/migration-status.html">PRD 문서 상태표</a>에서 확인한다. 시각화 변경 내역은
@@ -121,6 +121,12 @@ flowchart LR
             <p>기능마다 “첫 출시에 열리는가”와 “무엇으로 확인했는가”를 붙였다. 열린 항목이 있는 기능만, 실계정으로 확인한 기능만 골라 볼 수 있다.</p>
             <div class="meta"><span class="pill danger">먼저 읽기</span></div>
           </a>
+          <a class="card" href="qa/scenario-completeness.html">
+            <div class="eyebrow">검증 근거</div>
+            <h3>기능별 시나리오 완성도</h3>
+            <p>175개 기능의 시나리오 정의, 옛 서버 줄 링크 상태, 자동 테스트, 통합·E2E, 로컬 실계정 근거를 서로 섞지 않고 보여 준다.</p>
+            <div class="meta"><span class="pill info">QA</span></div>
+          </a>
           <a class="card" href="overview/service.html">
             <div class="eyebrow">제품 이해</div>
             <h3>community가 푸는 문제</h3>
@@ -147,14 +153,14 @@ flowchart LR
           </a>
           <a class="card" href="overview/operating-model.html">
             <div class="eyebrow">신규</div>
-            <h3>PRD 운영 모델 (source-first)</h3>
+            <h3>PRD 운영 방식 (현재 소스 우선)</h3>
             <p>2026-05-18부터 적용된 새 PRD 표준. Fact·Derived·Gap·Risk·Decision Needed로 사실과 판단을 분리한다.</p>
             <div class="meta"><span class="pill warn">필독</span></div>
           </a>
           <a class="card" href="qa/migration-status.html">
             <div class="eyebrow">신규</div>
             <h3>175개 PRD 문서 상태표</h3>
-            <p>unit 근거 보유 117개(골든 1 + 실사 기반 전환/갱신 116) · unit 부재 58개(신규 PRD 7 + 실사 기반 신규 1 + source-first 상태 50). 기능별 Trace 수·Risk 후보 수로 우선순위를 잡는다.</p>
+            <p>상세 실사 근거 보유 117개(기준 예시 1 + 실사 기반 전환·갱신 116) · 상세 실사 근거 문서가 없는 58개(신규 PRD 7 + 실사 기반 신규 1 + 현재 소스 기준 50). 기능별 소스 추적 수와 위험 후보 수로 우선순위를 잡는다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="features/catalog.html">
@@ -208,7 +214,7 @@ flowchart LR
           <a class="card" href="qa/coverage.html">
             <div class="eyebrow">QA &amp; 릴리즈</div>
             <h3>시나리오 커버리지</h3>
-            <p>1275개 시나리오를 다 외울 수는 없다. 대신 8개 범주(정상/빈/권한/상태/검증/외부실패/동시성/부수효과) 누락을 본다.</p>
+            <p>기능 목록의 등록 숫자 합 1,403을 통과 건수로 쓰지 않는다. 정상·빈 상태·권한·상태 변화·입력 검증·외부 실패·동시성·부수효과의 누락을 본다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
           </a>
           <a class="card" href="qa/release.html">

@@ -8,3 +8,9 @@
 !/docs/
 !/planner_onboarding/
 !/prd/
+
+# 현재 저장소에서 기능별 시나리오 감사 데이터를 재생성하는 도구 한 파일만 추적한다.
+# verification의 과거 감사 산출물과 캐시는 계속 제외한다.
+!/verification/
+/verification/*
+!/verification/build_scenario_audit_data.mjs

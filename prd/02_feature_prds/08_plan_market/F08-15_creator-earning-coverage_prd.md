@@ -1,16 +1,18 @@
 # F08-15 — 크리에이터 매출 귀속 보정 (Creator Earning Coverage)
 
 > 신규 PRD. 작성일: 2026-05-24
-> 상태: **마켓/플랜 창작자 정산 split 구현됨**. 본 문서가 구현 계약(spec)이며, 아래는 현행 동작 기준으로 읽는다. (EVENT 정산의 earning split도 2026-06-06 이관으로 동일하게 `grossPaid`/`grossFree` 분리·무료분 호스트 무료 포인트 전달이 완성됨 — 정책 PRD §2.6.)
+> 상태: **마켓/플랜 창작자 유료·무료 분리 정산 구현됨**. 본 문서가 구현 계약이며 아래는 현행 동작
+> 기준으로 읽는다. 이벤트 정산도 같은 유료·무료 분리 모델과 무료 포인트 전달을 사용한다. 자세한 공통 원칙은
+> [결제·정산 정책의 돈 흐름 무결성 정책](../../03_policy_prds/payment_settlement_policy_prd.md#26-돈-흐름-무결성-정책-2026-06-06)에서 확인한다.
 > 출처: F08-14(플랜 마켓 환불) 합의 과정에서 codex 페어 리뷰가 짚은 선행 결손. 환불 PRD의 하드 의존 대상이다.
 
 ## 1. 결론
 
-플랜 마켓의 세 가지 구매 소스(`MARKET_ITEM`, `MARKET_BUNDLE`, `PLAN_DIRECT`)는 **모두 크리에이터 매출 원장(`CreatorEarning`)에 잡힌다** — `MarketPurchaseService`가 MARKET_ITEM·MARKET_BUNDLE를, `PlanPurchaseService`가 PLAN_DIRECT를 `grossPaid/gross_free` 분리로 생성하고, `MarketplaceSettlementService`가 세 source type을 모두 정산 대상으로 집계한다(과거 `MARKET_ITEM`만 잡히던 결손은 해소됨). 수수료·원천징수는 유료분에만, 무료분은 무수수료 `free_credit`으로 적립된다. EVENT 정산도 2026-06-06 이관으로 동일 모델이 적용됐다 — `SettlementBatchService`가 `CreatorEarning`에 `grossPaid`/`grossFree`를 분리 적재하고, 무료 매출이 호스트에게 무료 포인트로 전달되며(`recordEventFreeSettlement`), 무료만 모인 이벤트도 수수료·세금 0의 정산이 생성된다(정책 PRD §2.6).
+플랜 마켓의 세 가지 구매 소스(`MARKET_ITEM`, `MARKET_BUNDLE`, `PLAN_DIRECT`)는 **모두 크리에이터 매출 원장(`CreatorEarning`)에 잡힌다** — `MarketPurchaseService`가 MARKET_ITEM·MARKET_BUNDLE를, `PlanPurchaseService`가 PLAN_DIRECT를 `grossPaid/gross_free` 분리로 생성하고, `MarketplaceSettlementService`가 세 source type을 모두 정산 대상으로 집계한다(과거 `MARKET_ITEM`만 잡히던 결손은 해소됨). 수수료·원천징수는 유료분에만, 무료분은 무수수료 `free_credit`으로 적립된다. 이벤트 정산도 같은 모델을 사용해 무료 매출을 호스트의 무료 포인트로 전달하고, 무료 매출만 있는 이벤트도 수수료·세금 0의 정산으로 종결한다.
 
-본 PRD는 F08-14(환불)의 **하드 의존**이다. 본 PRD가 닫히기 전에는 F08-14 백엔드 구현에 들어가지 않는다.
+이 기능은 [플랜 마켓 환불](F08-14_purchase-refund_prd.md)의 회계 선행 조건이며, 현재 두 기능 모두 구현되어 있다.
 
-## 2. 현재 코드 결손 (근거)
+## 2. 현재 구현 현황
 
 | 항목 | 현황 | 근거 |
 |---|---|---|
@@ -90,13 +92,15 @@
 
 ### 3.4a 유료/무료 분리정산 — CreatorEarning split
 
-> 2026-05-24: 포인트 분리정산 반영. 정본은 정책 PRD `03_policy_prds/payment_settlement_policy_prd.md` §2.5.
+> 포인트 분리 정산의 공통 기준은 [결제·정산 정책의 유료·무료 포인트 분리정산 정책](../../03_policy_prds/payment_settlement_policy_prd.md#25-유료무료-포인트-분리정산-정책-point-split-flow-through)이다.
 
 마켓 구매는 flow-through 사용처이므로 결제 시 유료/무료 split이 창작자까지 전파된다. `CreatorEarning`은 유료/무료를 **분리 기록**한다.
 
 - **유료 매출**: 수수료(10%)·원천징수(3.3%)를 차감한 net을 정산 대상(`PENDING`)으로 적재. 정산 시 창작자 paid로 지급.
 - **무료 매출**: 수수료·원천징수를 **부과하지 않고** 무수수료 `free_credit`으로 적재. 창작자 free에 적립되어 **인출 불가**(무료→현금 전환 차단).
-- 따라서 위 3.4의 분개(수수료/원천세 인식)는 **유료분에만** 적용된다. 무료 매출분은 정산 시 `MarketplaceSettlementService`가 `creditMarketplaceSettlement(creator, PointSplit(totalNet, totalFreeCredit))`로 창작자 지갑에 **free_credit 적립만** 한다(구현됨). spend/정산 시점의 프로모션 비용(`PROMOTION_EXPENSE`) 분개는 **미구현 — followup**.
+- 따라서 위 `SpendPolicy 정정`의 수수료·원천세 인식은 **유료분에만** 적용된다. 무료 매출분은 정산 시
+  `MarketplaceSettlementService`가 창작자 지갑의 무료 포인트로 적립하고, 대응 `PROMOTION_EXPENSE`
+  원장도 함께 기록한다.
 
 > **Fact (2026-06-06 돈 흐름 무결성 — H3 해소, 커밋 b7e384b)**: 과거 무료 매출 정산(freeCredit 지급)이 **원장 분개 없이** 지갑에만 입금되어 USER_WALLET 차변 < 실지급으로 장부가 비대칭이던 결함이 해소됨. `MarketplaceSettlementService` 무료분 지급에 대응 원장 분개가 추가되어(`AccountingLedgerService` 확장), 무료 free_credit 지급도 차/대변이 대칭으로 기록된다.
 
@@ -288,17 +292,17 @@ For each item in bundle:
 
 번들 구매 시 구매자에게 즉시 지급되는 보너스 포인트(`MarketPurchaseService.java:165`)는 플랫폼 마케팅 비용이다.
 
-**결정 (잠정, followup 회계 설계)**: 기존 `PROMOTION_EXPENSE` 계정 재사용을 후속 회계 설계로 검토한다. `AccountCode.PROMOTION_EXPENSE`가 이미 "프로모션 무료 포인트 비용"으로 정의되어 있어 번들 보너스도 동일 계열로 자연스럽다.
+**현재 구현**: 기존 `PROMOTION_EXPENSE` 계정을 사용한다. 번들 보너스는 무료 포인트로만 지급할 수 있고,
+`WalletService.creditBonusToWallet`가 지갑 잔액·무료 포인트 사용 묶음·거래 내역·회계 분개를 같은 트랜잭션에서
+기록한다. 유료 포인트 또는 혼합 포인트를 보너스로 넣는 요청은 거절한다.
 
 ```
-(후속 설계 목표 분개)
 차변: PROMOTION_EXPENSE = bonusAmount
 대변: USER_WALLET = bonusAmount (구매자 지갑 입금)
 ```
 
-**현재 구현**: 번들 보너스는 `WalletService.creditBonusToWallet(userId, currencyType, amount, "BUNDLE_BONUS", ...)`(`WalletService.java:600`)로 지급되는데, 이 메서드는 지갑 잔액 입금 + `PointTransaction(type=FREE_POINT_GRANT)` 생성만 하고 **회계 분개(`AccountingLedger`)는 생성하지 않는다**. 위 `PROMOTION_EXPENSE` 분개는 **미구현 — followup**(신규 분개 배선 필요).
-
-신규 계정 `PLATFORM_MARKETING_EXPENSE`로 분리할지는 재무팀이 ROI 분석 필요 시 후속 결정.
+별도 마케팅 비용 계정으로 나눌지는 향후 재무 보고 요구가 생겼을 때의 분류 변경이며, 현재 돈 흐름의
+코드 미완성 항목은 아니다.
 
 ## 7. 환불과의 인터페이스 (F08-14 의존)
 
@@ -312,15 +316,15 @@ F08-14가 본 PRD에 의존하는 인터페이스:
 
 ### 7.1 정산 사이클 회수 흐름 (구현됨)
 
-월간 정산 직전 `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, totalNet)`이 호출되어 `REVERSED` 상태 earning을 가용 정산금으로 회수한다. 본 PRD는 **전액 회수만 지원**한다.
+월간 정산 직전 `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, totalNet)`이 호출되어 `REVERSED`
+상태 매출을 가용 정산금에서 우선 회수한다. 가용 금액이 부족하면 가능한 만큼 부분 회수하고 남은 금액을
+다음 정산 주기로 넘긴다.
 
 | 입력 | 처리 |
 |---|---|
 | `REVERSED` earning 없음 | 회수 0, 정산 그대로 |
 | 가용 정산금 ≥ earning.netAmount | earning을 `PAID`로 전이, 가용금에서 차감, `recordCreatorReceivableOffset` 분개 발행 |
-| 가용 정산금 < earning.netAmount | 회수 안 함 (다음 사이클로 이월) |
-
-부분 회수는 본 라운드 미지원. 향후 결정 사항.
+| 가용 정산금 < earning.netAmount | 가능한 금액만 회수하고 `netAmount`에 남은 미수금을 저장해 다음 사이클로 이월 |
 
 ### 7.2 부분 환불 (F08-14 PARTIAL_ITEM)
 
@@ -373,3 +377,24 @@ F08-14 부분 환불의 경우 선택된 BundleItem의 earning만 상태 전이 
 - 백필 (a) vs (b)
 - 무료 아이템 포함 번들의 배분 정책
 - 큐레이션 수수료 도입 여부 (큐레이터에게 추가 보상)
+
+## 13. 시나리오 기준 수용 조건
+
+아래 9개는 매출 귀속과 정산을 “행이 생성됐다”가 아니라 구매 금액, 유료·무료 구성, 환불, 실제 지급까지
+합계가 어긋나지 않는지로 판정하기 위한 제품 시나리오다. `직접 검증 없음`은 코드 부재가 아니라 해당 경계를
+독립 테스트로 고정하지 못했다는 의미다.
+
+| 번호 | 시작 상황과 처리 | 완료로 인정하는 결과 | 현재 근거 |
+|---:|---|---|---|
+| 1 | 사용자가 단일 마켓 아이템을 구매한다. | 구매 ID를 원천 식별자로 하는 매출 귀속 1행이 생성되고 판매자·총액·상태가 구매 결과와 일치한다. | 서버 단위 테스트 있음 |
+| 2 | 사용자가 유료·무료 포인트가 섞인 플랜을 직접 구매한다. | `PLAN_DIRECT` 매출 귀속이 유료·무료로 분리되고, 수수료·원천징수는 유료분에만 적용되며 구매 원장과 합계가 일치한다. | 서버 단위 테스트 있음 |
+| 3 | 여러 원작자의 아이템을 묶은 번들을 구매한다. | 구매 당시 구성과 정가 비율대로 원작자별 행이 생기고 모든 행의 총액 합이 실제 결제액과 정확히 같다. | 코드 구현 확인. 성공 테스트는 있으나 배분 행 전체 단언은 부분적 |
+| 4 | 번들 정가 합계가 0이거나 나눗셈에서 나머지가 생긴다. | 정가 0은 균등 배분하고 마지막 행이 반올림 잔액을 흡수해 음수 없이 총액을 맞춘다. | 코드 구현 확인. 경계값 직접 검증 없음 |
+| 5 | 유료·무료 포인트가 섞인 번들을 여러 원작자에게 배분한다. | 원작자별 `유료 + 무료 = 배분 총액`, 전체 `유료 합 + 무료 합 = 결제액`이 성립하고 무료분에는 수수료·세금을 부과하지 않는다. | 코드 구현 확인. 다중 원작자 혼합 결제 직접 검증 없음 |
+| 6 | 번들 구매 보너스를 지급한다. | 무료 포인트만 허용하고 지갑·무료 포인트 사용 묶음·거래 내역·`PROMOTION_EXPENSE` 원장을 함께 기록한다. | 지갑·원장 단위 테스트 있음 |
+| 7 | 환불 신청·거절·일부 승인·전액 승인이 발생한다. | 신청 중에는 정산에서 제외하고, 거절 시 다시 정산 가능하게 하며, 일부 환불은 선택한 구성품의 매출 행만 되돌린다. | 환불 서비스 단위 테스트 있음 |
+| 8 | 월간 정산일에 환불 가능 기간이 끝난 매출과 끝나지 않은 매출이 섞여 있다. | 세 구매 유형의 `PENDING` 중 14일이 지난 행만 크리에이터별로 묶고, 한 크리에이터 실패가 다른 지급을 막지 않는다. | 배치·저장소 테스트 있음. 정확한 14일 경계 직접 단언은 부족 |
+| 9 | 이미 지급한 매출이 환불돼 미수금이 생기고 다음 정산금이 부족하거나 충분하다. | 다음 정산금에서 가능한 만큼 먼저 회수하고, 전액 회수한 행만 종결하며, 남은 미수금과 회계 분개가 다음 주기로 이어진다. | 정산 서비스 단위 테스트 있음 |
+
+현재 가장 먼저 보강할 검증은 4번 정가 0·반올림 경계, 5번 다중 원작자 혼합 결제, 8번 14일 컷오프다.
+이 세 묶음을 통과하기 전에는 “모든 매출 배분 경계값 검증 완료”라고 표현하지 않는다.

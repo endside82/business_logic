@@ -1,119 +1,67 @@
-# F03-16. 이벤트 버스대절 (BUS) PRD
+# F03-16. 이벤트 버스대절 PRD
 
-<!-- source-measured: 2026-07-29; authority: community_api/community_app current source -->
+<!-- source-measured: 2026-08-30; authority: community_api/community_app current source -->
 
-> 문서 상태: **현재 소스 실측본**. 삭제된 `docs/plan/event-extensions/*`의 자동 배정·`SKIP LOCKED` 설계는 현재 구현으로 간주하지 않는다. 차량 카탈로그는 [F03-17](F03-17_vehicle-layout-catalog_prd.md)을 함께 본다.
+> 현재 상태: **좌석 상태기계와 고객 앱 구현 완료, 차량 레이아웃 운영 화면이 없어 신규 사용 봉인**. 좌석
+> 반납과 안전 신고는 위험을 줄이는 출구로 유지한다.
 
-## 1. 결론
+## 1. 제품 목적과 현재 결론
 
-서버에는 버스 목록·좌석 조회·버스 추가·좌석 지정의 4개 API가 구현되어 있다. `FIXED_BY_HOST`와 `FIRST_COME`는 버스 생성 시 레이아웃의 선택 가능한 좌석을 복사하지만, 이름과 달리 `FIRST_COME` 자동 배정은 구현되어 있지 않다. 현재 좌석 변경 API는 target seat의 `userId`를 덮어쓰는 단일 동작이며, 이동·swap·명시적 unassign API가 아니다.
+호스트가 이벤트에 최대 3대의 버스를 편성하고, 참석자가 좌석을 확인하거나 운영 방식에 따라 직접 고르는
+기능이다. 현재 서버에는 버스·좌석 조회, 버스 추가·삭제, 좌석 배정·해제, 좌석 안전 신고 7개 API가 있다.
+앱에는 버스 편성, 차량 레이아웃 선택, 좌석표, 호스트 배정·해제, 참가자 좌석 선택·반납, 안전 신고 화면이
+연결돼 있다.
 
-Flutter에는 버스 모델/API/Repository/Provider/좌석 화면이 없다. 알림 81~82도 enum만 있고 생산 배선과 앱 라우팅이 없다.
+과거 PRD에 적힌 “선착순 자동 배정 없음”, “좌석 덮어쓰기식 가짜 교환”, “명시적 해제 없음”, “앱과 알림
+없음”은 현재 소스와 맞지 않는다. 선착순은 서버가 임의 좌석을 자동으로 고르는 방식이 아니라 **참석자가 먼저
+빈 좌석을 선택하는 방식**으로 구현돼 있다. 좌석 이동은 기존 좌석 해제와 새 좌석 점유가 한 트랜잭션으로
+처리되고, 경합 시 한 요청만 성공한다.
 
-## 2. 실측 근거
+## 2. 좌석 운영 방식과 권한
 
-| 계층 | 현재 소스 |
-|---|---|
-| Controller/Service | `event/transport/controller/EventBusController.java`, `event/transport/service/EventBusService.java` |
-| Model | `EventBus.java`, `EventBusSeat.java`, `EventBusSeatLog.java` |
-| Param/VO | `BusSetupParam.java`, `EventBusVo.java`, `EventBusSeatVo.java` |
-| Enum | `BusAssignmentMode.java`, `BusSeatChangeType.java` |
-| Repository | `EventBusRepository.java`, `EventBusSeatRepository.java`, `EventBusSeatLogRepository.java` |
-| Test | `community_api/src/test/java/com/endside/community/event/transport/service/EventBusServiceTest.java` |
-| DDL | `community_api/src/main/resources/db/migration/V1__init.sql` |
-
-## 3. 서버 API
-
-| Method | Path | 요청/응답 | 실제 동작 |
-|---|---|---|---|
-| GET | `/api/v1/events/{eventId}/buses` | `List<EventBusVo>` | 로그인 필요. 서비스 수준 event 존재·역할 검증 없이 eventId 목록 조회 |
-| GET | `/api/v1/events/{eventId}/buses/{busId}/seats` | `List<EventBusSeatVo>` | Host/CoHost 또는 `ATTENDING`/`WAITING`. bus의 eventId 일치 필수 |
-| POST | `/api/v1/events/{eventId}/buses` | `BusSetupParam` → `EventBusVo` (201) | Host/CoHost, mode `BUS`, 이벤트당 최대 3대 |
-| PUT | `/api/v1/events/{eventId}/buses/{busId}/seats/{seatNo}?userId={id}` | `EventBusSeatVo` | Host/CoHost, 또는 `allowSelfSwap=true`이고 `userId=본인`인 인증 사용자 |
-
-삭제, 버스 수정, 자동 배정, 명시적 좌석 해제 endpoint는 없다.
-
-## 4. 데이터와 Enum
-
-`BusSetupParam`:
-
-- `busNo: int` — 1~3
-- `vehicleLayoutId: long`
-- `assignmentMode: BusAssignmentMode`
-- `allowSelfSwap: boolean`
-- `notes: String`
-
-Enum:
-
-- `BusAssignmentMode = FREE | FIXED_BY_HOST | FIRST_COME`
-- `BusSeatChangeType = ASSIGN | REASSIGN | UNASSIGN | SELF_SWAP`
-
-좌석에는 `eventId`, `eventBusId`, `seatNo`, nullable `userId`, `lockedByHost`, `assignedAt`, `assignedBy`가 있다. DB는 `(event_id, user_id)` unique로 한 이벤트에서 같은 사용자의 중복 좌석을 막고, bus와 seat entity는 version 컬럼을 가진다.
-
-## 5. 생성과 좌석 변경의 실제 의미
-
-| 모드 | 버스 생성 시 | 현재 배정 동작 |
+| 방식 | 참가자 | 호스트·공동 호스트 |
 |---|---|---|
-| `FREE` | 좌석 row를 만들지 않음 | 좌석 지정 API가 찾을 row가 없어 사실상 사용할 수 없음 |
-| `FIXED_BY_HOST` | 레이아웃의 `isSelectable=true` 좌석을 복사 | Host/CoHost가 target seat의 user를 지정 |
-| `FIRST_COME` | `FIXED_BY_HOST`와 동일하게 빈 좌석 row 복사 | 자동 배정 없음. 같은 PUT API로 수동 지정 |
+| 자유석 | 좌석 명령 없음. 현장에서 좌석 결정 | 필요하면 운영 가능하지만 이벤트 좌석 행은 만들지 않음 |
+| 선착순 | 실제 참석자가 빈 좌석 선택. `자리 옮기기 허용` 시 빈 좌석으로 이동 | 참석 자격이 있는 대상에게 배정·이동·해제 |
+| 호스트 지정 | 좌석을 직접 선택하거나 반납할 수 없음 | 참석 자격이 있는 대상에게 배정·이동·해제 |
 
-추가 확인 사항:
+일반 참가자는 다른 좌석의 사용자 ID와 배정자를 볼 수 없고 점유 여부만 본다. 호스트가 남을 배정하거나
+밀어내거나 해제할 때는 사유가 필수이며, 이력과 대상자 알림을 남긴다. 한 사용자는 한 이벤트에서 좌석 하나만
+가질 수 있다.
 
-- 버스 추가는 event row 잠금과 host/cohost 검사를 사용한다.
-- add/assign 모두 event status를 검사하지 않아 mode가 BUS로 남아 있는 CLOSED/CANCELED 이벤트에서도 mutation할 수 있다. mode 변경은 DRAFT-only라 이 상태를 transport config로 정리할 수도 없다.
-- layout 존재·활성 여부를 명시적으로 검증하지 않고 repository 결과를 사용한다.
-- non-host는 `allowSelfSwap=true`이고 query `userId`가 본인일 때만 통과하지만, 참석/대기 자격과 `assignmentMode`, `lockedByHost`는 검사하지 않는다.
-- 좌석 PUT은 기존 사용자 좌석을 비우지 않는다. 이미 좌석이 있는 사용자가 다른 좌석으로 이동하면 DB unique 위반이 될 수 있다.
-- API의 `userId`는 primitive `long`이라 null unassign이 불가능하며, `UNASSIGN` 로그 분기는 이 endpoint에서 도달할 수 없다.
-- 다른 사람이 앉은 좌석을 self 요청으로 덮어쓸 수 있어 현재 `SELF_SWAP`은 두 좌석을 맞바꾸는 진짜 swap이 아니다.
-- `DataIntegrityViolationException`은 구체 원인을 구분하지 않고 `INVALID_REQUEST`로 변환한다.
+## 3. 시나리오 기준 수용 조건
 
-## 6. 조회 개인정보와 동시성
+| 시나리오 | 기대 결과 | 코드 | 자동 검증 | 실제 사용자 여정 | 출시 판정 |
+|---|---|---|---|---|---|
+| B-01 호스트가 차량 레이아웃으로 버스 추가 | 버스 방식, 호스트 권한, 1~3호차, 최대 3대, 선택 가능한 좌석이 있는 레이아웃을 확인한다. 자유석 외에는 이벤트 좌석을 복사한다. | 구현 | 빈·운전석 전용·유효 레이아웃은 `EventBusServiceTest.java`에서 확인. 최대 3대 경계는 직접 테스트 없음 | 앱 왕복 미실행 | 운영 화면 선행 |
+| B-02 권한 있는 사용자만 목록·좌석 조회 | 호스트·공동 호스트와 참석·대기자만 보고, 일반 사용자의 타인 신원은 숨기되 점유 여부는 표시한다. | 구현 | 서비스 테스트 통과 | 앱 왕복 미실행 | 봉인 |
+| B-03 자유석 운영 | 이벤트 좌석 행을 만들지 않고 앱은 차량 배치를 참고용으로 보여 주며 좌석 명령을 제공하지 않는다. | 서버·앱 구현 | 참가자 명령 차단 테스트 있음. 앱 자유석 화면 전용 테스트 없음 | 미실행 | 봉인 |
+| B-04 호스트 지정 배정·이동·해제 | 참석 자격을 확인하고 타인 변경 사유를 남긴다. 이동·축출·해제 이력과 알림이 일치한다. | 구현 | 서비스 테스트와 MySQL 통합 테스트 통과 | 실제 알림 미실행 | 봉인 |
+| B-05 선착순 참가자 선택·이동·반납 | 참석자만 빈 좌석을 잡고, 자리 이동 설정·호스트 잠금·각자 이동 허용을 지킨다. 남의 좌석을 빼앗지 못한다. | 구현 | 서비스·앱 widget 테스트 통과 | 앱-서버 왕복 미실행 | 봉인, 반납은 안전 출구 |
+| B-06 동시 좌석 경합과 사용자 중복 배정 | 같은 빈 좌석에는 한 명만 성공하고, 이동 중 충돌하면 기존 좌석 해제까지 롤백한다. 한 사용자의 두 좌석을 DB도 거절한다. | 구현 | `EventBusSeatFlowDataJpaTest.java`와 `EventTransportLifecycleE2ETest.java` 통과 | 실제 두 기기 경합 미실행 | 봉인 |
+| B-07 참가 종료와 버스 삭제 | 참가 취소·강퇴·환불 시 좌석을 회수한다. 탑승자나 좌석 신고가 남은 버스는 삭제하지 못하고, 빈 버스만 좌석부터 삭제한다. | 구현 | 서비스·MySQL·서버 통합 테스트 통과 | 호스트 앱 왕복 미실행 | 봉인 |
+| B-08 좌석 안전 신고와 출시 차단 | 참석자가 타인의 점유 좌석을 신고하고 플랫폼 운영 흐름에서 사건 맥락을 본다. 첫 출시에서는 신규 편성·배정을 막되 반납·신고는 유지한다. | 서버·앱 구현 | 신고 서비스·공유 유효성 검사·앱 route gate·서버 통합 E2E 통과 | 신고 접수→운영 종결·실기기 미실행 | 안전 출구만 개통 |
 
-- Host/CoHost는 모든 seat의 `userId`를 본다.
-- 일반 참가자는 자기 좌석의 `userId`만 보고, 다른 좌석의 `userId`는 null로 마스킹된다.
-- `assignedBy`는 일반 참가자 응답에서도 마스킹되지 않는다.
-- 버스 추가와 좌석 지정은 event row를 잠가 같은 이벤트의 write를 직렬화한다.
-- seat row 전용 비관적 잠금이나 `SELECT ... FOR UPDATE SKIP LOCKED` 쿼리는 없다.
-- `FIRST_COME` 자동 할당과 신청/결제 확정 흐름의 연계도 없다.
+## 4. 완성도 판단
 
-## 7. 로그·알림·Flutter
-
-- 좌석 PUT은 `EventBusSeatLog`를 기록한다.
-- 변경 타입은 기존/새 사용자와 self 여부로 계산하지만, null userId가 불가능해 `UNASSIGN`은 현재 API에서 생성되지 않는다.
-- `BUS_SEAT_ASSIGNED(81)`, `BUS_SEAT_CHANGED(82)` enum은 있으나 발행·listener·send 코드가 없다.
-- Flutter `NotificationRouter`에 81~82 deep link가 없다.
-- Flutter에 버스 운영 기능 파일은 없다.
-
-## 8. 테스트로 확인된 범위
-
-`EventBusServiceTest` 11개는 좌석 조회 권한·타인 userId 마스킹과 좌석 변경 로그 타입을 검증한다. 특히 타인이 앉은 target 좌석을 self 요청으로 덮어쓰는 동작을 `SELF_SWAP` 성공으로 고정하지만, 두 좌석의 실제 swap·참석 자격·locked seat 검증을 의미하지 않는다. 다음 핵심 계약은 확인되지 않았다.
-
-- 최대 3대와 중복 busNo
-- mode·event status·layout 유효성
-- FREE/FIRST_COME 실제 동작
-- 중복 사용자·동시 좌석 경쟁
-- self swap과 locked seat
-- 알림 발행
-
-## 9. 현재 Gap / Risk
-
-| 우선순위 | 실측 Gap |
-|---|---|
-| 높음 | Flutter 버스 운영 수직 슬라이스가 전혀 없음 |
-| 높음 | `FIRST_COME` 자동 배정과 `SKIP LOCKED`는 구현되지 않음 |
-| 높음 | 좌석 PUT이 이동·swap·unassign을 올바르게 모델링하지 않음 |
-| 높음 | self 변경이 참석 자격·assignment mode·lockedByHost를 검사하지 않음 |
-| 높음 | add/assign에 event status 가드가 없어 CLOSED/CANCELED event도 mutation 가능 |
-| 중간 | GET buses에 event 존재·역할 검증이 없음 |
-| 중간 | bus 추가 시 event status 및 layout 존재/활성 검증이 없음 |
-| 중간 | 81~82 알림은 enum만 있고 생산 배선·앱 라우팅이 없음 |
-| 중간 | 핵심 제약과 동시성 회귀 테스트가 부족 |
-
-## 10. 변경 이력
-
-| 날짜 | 버전 | 변경 |
+| 판단 축 | 현재 상태 | 남은 일 |
 |---|---|---|
-| 2026-05-22 | v0.1 | 삭제된 event-extensions 계획을 기준으로 초안 작성 |
-| 2026-07-29 | v1.0 | 실제 4개 API와 권한·좌석 변경·동시성·테스트를 실측하고 자동 배정/SKIP LOCKED/알림 오기 제거 |
+| 제품 시나리오 | 8개 정의 완료 | 호스트 본인을 좌석에 넣는 범위를 개통 정책에 명시 |
+| 코드 구현 | 서버 상태기계·앱 좌석표·알림·신고·참석 종료 정리 완료 | 차량 레이아웃 관리자 웹과 빈 좌석맵 활성화 서버 가드 |
+| 자동 검증 | 권한·마스킹·좌석 모드·원자성·경합·삭제·신고를 폭넓게 검증 | 최대 3대·중복 호차, 앱 자유석·호스트 배정 화면 테스트 보강 |
+| 사용자 여정 | 서버 통합 E2E는 있음. 실제 앱·기기 왕복 없음 | 호스트·참가자·대기자·비참가자로 B-01~B-08 실행 |
+| 출시·운영 | 신규 버스 운영 봉인 | 관리자 마스터데이터 화면·초기 레이아웃·책임 고지·실기기 검증 후 개통 |
+
+## 5. 개통을 막는 실제 공백
+
+- 버스 편성은 차량 레이아웃 카탈로그에 의존하지만 이를 관리할 관리자 웹이 없다.
+- 빈 데이터베이스에는 기본 차량 레이아웃이 없다.
+- 관리자 API가 좌석맵이 없는 레이아웃의 활성화를 막지 않는다.
+- 실제 여러 기기의 좌석 경합, 알림 이동, 신고 접수와 운영 종결은 아직 실행하지 않았다.
+
+## 6. 변경 이력
+
+| 날짜 | 변경 |
+|---|---|
+| 2026-07-29 | 당시 4개 API와 제한된 좌석 변경 동작 실측 |
+| 2026-08-30 | 7개 API, 좌석 상태기계·앱 화면·이력·알림·신고·정리 훅을 반영하고 8개 시나리오별 완성도 재작성 |

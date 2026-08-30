@@ -26,7 +26,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">기능</div><div class="value">15</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">125</div><div class="hint">F08-14/15는 시나리오 매트릭스 미수치화</div></div>
+          <div class="metric"><div class="label">문서화 시나리오</div><div class="value">144</div><div class="hint">15개 기능의 현재 등록 합계</div></div>
           <div class="metric"><div class="label">사용자 역할</div><div class="value">2</div><div class="hint">크리에이터·구매자</div></div>
         </div>
 
@@ -63,8 +63,8 @@
           <a class="card" href="../features/F08-11.html"><div class="eyebrow">F08-11</div><h3>아이템·번들·플랜 구매</h3><p>플랜 PAID/FREE 선택·실제 적용가 스냅샷. 숨김 신규 구매 차단, 기존 구매자 접근 유지.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F08-12.html"><div class="eyebrow">F08-12</div><h3>내 컬렉션</h3><p>활성·비활성·만료 임박. 미리보기.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F08-13.html"><div class="eyebrow">F08-13</div><h3>구매 플랜으로 이벤트 생성·리뷰</h3><p>소유권 확인, 이벤트 정보 자동 복사, 리뷰 중복 차단.</p><div class="meta"><span class="pill">12 시나리오</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F08-14.html"><div class="eyebrow">F08-14</div><h3>플랜 마켓 환불</h3><p>구매자 환불 신청, 판매자 승인·거절, 자동 처리, 사용 흔적 차단, 운영자 중재.</p><div class="meta"><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F08-15.html"><div class="eyebrow">F08-15</div><h3>크리에이터 매출 귀속 보정</h3><p>3개 구매 경로(마켓 아이템·번들·플랜 직접 구매) 모두 창작자 수익으로 잡힘. 유료/무료 분리 정산, 무료분은 무수수료.</p><div class="meta"><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F08-14.html"><div class="eyebrow">F08-14</div><h3>플랜 마켓 환불</h3><p>구매자 환불 신청, 판매자 승인·거절, 자동 처리, 사용 흔적 차단, 운영자 중재.</p><div class="meta"><span class="pill">10 시나리오</span><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F08-15.html"><div class="eyebrow">F08-15</div><h3>크리에이터 매출 귀속 보정</h3><p>3개 구매 경로(마켓 아이템·번들·플랜 직접 구매) 모두 창작자 수익으로 잡힘. 유료/무료 분리 정산, 무료분은 무수수료.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill money">돈</span><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
 
@@ -107,13 +107,13 @@ flowchart LR
         <h2>2026-07-29 소스 실측 핵심</h2>
         <div class="cards">
           <div class="card"><div class="eyebrow">접근</div><h3>숨김은 판매 중단, 구매 회수 아님</h3><p>숨김 플랜의 새 구매는 차단하지만 기존 구매자는 상세·본문·이벤트 생성을 계속 사용할 수 있다.</p></div>
-          <div class="card"><div class="eyebrow">편집</div><h3>revision·파일·표 구조를 서버가 검증</h3><p>블록 mutation은 플랜 단일 revision으로 충돌을 잡고, 파일 key는 소유자·업로드 완료·목적을 확인한다. 미커밋 API 작업본은 TABLE 신규/구조 변경 쓰기에 canonical 직사각형 문자열 rows를 강제한다.</p></div>
+          <div class="card"><div class="eyebrow">편집</div><h3>버전·파일·표 구조를 서버가 검증</h3><p>블록 변경은 플랜의 단일 버전으로 충돌을 잡고, 파일 키는 소유자·업로드 완료·목적을 확인한다. 미커밋 API 작업본은 TABLE 신규 작성과 구조 변경에 표준 직사각형 문자열 행 배열을 강제한다.</p></div>
           <div class="card"><div class="eyebrow">발행·구매</div><h3>무료 포인트 설정부터 적용가까지 연결</h3><p>발행 화면에서 허용 여부와 가격을 선저장하고, 플랜 상세·미리보기에서 PAID/FREE를 선택해 실제 적용가를 구매 스냅샷과 수익 split에 전파한다.</p></div>
         </div>
         <div class="callout warn">
           <span class="label">확인된 Flutter Gap</span>
           <p>플랜 직접 구매의 결제 수단 선택은 구현됐지만 마켓 아이템·번들 경로는 <code>fundingMode</code>를 전달하지 않아 현재 서버 기본 PAID로만 호출한다.
-            또한 API/Flutter 작업트리의 TABLE canonical/legacy 호환, 18종 picker·12종 패턴 검색, 콘텐츠 tone과 독자용 조판 변경은 아직 미커밋 상태이므로 확정 계약으로 취급하지 않는다.</p>
+            또한 API와 Flutter 작업 트리의 TABLE 표준·이전 형식 호환, 18종 선택 창·12종 패턴 검색, 콘텐츠 색조와 독자용 조판 변경은 아직 미커밋 상태이므로 확정 계약으로 취급하지 않는다.</p>
         </div>
       </section>
 

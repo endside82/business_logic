@@ -15,28 +15,30 @@
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>시나리오 커버리지</div>
         <h1>시나리오 커버리지 기준</h1>
         <p class="lede">
-          전체 시나리오는 1275개(시나리오 수치화된 기능 기준). 다 외울 수는 없다.
-          대신 모든 기능 카드가 같은 <strong>8개 범주</strong>를 점검하면 누락을 막을 수 있다.
-          이 페이지는 그 8개 범주의 정의와 도메인별 적용 표다.
+          제품 기능 175개 모두 시나리오 또는 수용 조건을 갖는다. 기능 목록에 적힌 숫자의 합은 1,403이지만
+          동일한 기준으로 센 통과 건수가 아니다. 상세 시나리오 문서 117개에서 식별한 제목은 1,086개이고
+          49개 기능은 등록값과 제목 수가 다르다. 이 페이지는 새 시나리오를 작성할 때 빠뜨리지 않을
+          <strong>8개 범주</strong>를 설명한다. 기능별 실제 연결 상태는
+          <a href="scenario-completeness.html">기능별 시나리오 완성도</a>에서 본다.
         </p>
       </header>
 
       <section>
         <div class="callout danger">
-          <span class="label">2026-08-18 — 이 페이지의 “빈틈 0”이 뜻하지 않는 것</span>
-          <p>이 페이지가 세는 것은 <strong>앱 자체 시험의 범위</strong>다. 아래 “53개 모두 완료”는
-            그 시험들이 실행돼 통과했고 대기 중인 묶음이 없다는 뜻이지만, <strong>실제 메일·로그인 제공자·
-            푸시·지도·파일 저장과 서명된 모바일 앱은 이 축에 들어 있지 않다.</strong> 그래서 이 숫자가 다
-            채워져도 출시 판정은 별개다. 출시 가능 여부는 <a href="launch-status.html">첫 출시 현황</a>에서
-            판단하고, 기능별 확인 수준은 <a href="feature-status.html">기능별 출시 상태</a>에서 본다.</p>
+          <span class="label">2026-08-30 — 시나리오 정의와 시나리오 검증을 구분한다</span>
+          <p>175개 기능 모두 시나리오 또는 수용 조건을 갖지만, 시나리오 문서가 자동 테스트 파일을 직접
+            지목한 것은 59개 기능, 통합·E2E 실행 파일을 직접 지목한 것은 54개 기능이다. 테스트 안에서
+            발견한 기능 번호는 오탐이 있어 완료 근거가 아닌 검색 후보로만 둔다. 문서 연결이 없다는 사실은 테스트 부재를
+            뜻하지 않으며, 현재는 증명 범위를 확정할 수 없다는 뜻이다. 출시 가능 여부는
+            <a href="launch-status.html">첫 출시 현황</a>, 기능별 근거 연결은
+            <a href="scenario-completeness.html">기능별 시나리오 완성도</a>에서 확인한다.</p>
         </div>
 
         <div class="callout warn">
-          <span class="label">2026-07-29 앱 자동 시험 문서 기준</span>
-          <p>앱 시험 현황의 단일 출처는 앱 저장소의 시험 현황·커버리지 대시보드 두 문서다. 현재 기준
-            53개 항목이 모두 통과 상태이며 대기·병합·미작성은 0이다. 소통 기능 실행기는 별도로 존재하지만
-            이 53개에는 아직 포함하지 않는다. <strong>앱과 로컬 서버 범위의 결과이며, 실제 외부 서비스와
-            서명 기기 검증은 별도 축이다.</strong></p>
+          <span class="label">기존 앱 확장 시험 53개를 읽는 법</span>
+          <p>앱 저장소의 확장 대상 53개는 모두 실행됐지만 제품 기능 175개의 부분집합이다. 53/53은 그 목록의
+            작업 대기가 없다는 뜻이며, 제품 전체 커버리지 100%가 아니다. 실제 외부 서비스·서명 기기 검증도
+            별도다.</p>
         </div>
       </section>
 
@@ -79,7 +81,7 @@ flowchart TD
 
       <section>
         <h2>도메인별 시나리오 분포</h2>
-        <p class="subtitle">기능당 평균이 높을수록 카드가 무겁다. 15·16 도메인은 아직 시나리오 수치가 `—`인 source-first 도메인이라 평균 계산에서 제외한다.</p>
+        <p class="subtitle">기존 문서의 등록값을 합산한 참고 수치다. 문서마다 집계 방식이 달라 최소 보장 수로도 사용할 수 없다. 기능당 평균은 문서의 상대적 복잡도를 보는 참고값이며 테스트 통과율이 아니다.</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">시나리오</th><th style="text-align:right">기능당 평균</th><th>우선 확인할 시나리오</th></tr></thead>
@@ -87,21 +89,21 @@ flowchart TD
               <tr><td>01 인증·온보딩</td><td style="text-align:right">8</td><td style="text-align:right">82</td><td style="text-align:right">10.3</td><td>토큰, 메일, 소셜 앱 연동, 계정 상태</td></tr>
               <tr><td>02 홈 피드</td><td style="text-align:right">5</td><td style="text-align:right">38</td><td style="text-align:right">7.6</td><td>부분 실패, 캐시, 비로그인, 카드 라우팅</td></tr>
               <tr><td>03 이벤트</td><td style="text-align:right">20</td><td style="text-align:right">169</td><td style="text-align:right">8.5</td><td>정원, 승인, 유료 승인제, 게스트 동반 예매, 결제, 대기열, 체크인</td></tr>
-              <tr><td>04 클럽</td><td style="text-align:right">18</td><td style="text-align:right">198</td><td style="text-align:right">11.0</td><td>권한, 멤버십, 게시판, 기금, 구독, 레퓨테이션</td></tr>
+              <tr><td>04 클럽</td><td style="text-align:right">18</td><td style="text-align:right">204</td><td style="text-align:right">11.3</td><td>권한, 멤버십, 게시판, 기금, 구독, 레퓨테이션</td></tr>
               <tr><td>05 검색</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td style="text-align:right">8.2</td><td>입력 전·중·결과, 필터, 기록</td></tr>
               <tr><td>06 결제·지갑</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td style="text-align:right">7.1</td><td>결제 대행 실패, 잔액 부족, 유료 승인제, 환불, 자동충전</td></tr>
               <tr><td>07 모임 정산</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td style="text-align:right">8.4</td><td>작성중·진행중, 납부, 이체 확인, 이의</td></tr>
-              <tr><td>08 플랜 마켓</td><td style="text-align:right">15</td><td style="text-align:right">125</td><td style="text-align:right">8.3</td><td>초안·발행, preview/share, 구매 중복, 컬렉션, 리뷰, 환불</td></tr>
+              <tr><td>08 플랜 마켓</td><td style="text-align:right">15</td><td style="text-align:right">144</td><td style="text-align:right">9.6</td><td>초안·발행, 미리보기·공유, 구매 중복, 컬렉션, 리뷰, 환불·정산</td></tr>
               <tr><td>09 프라이빗 데이팅</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td style="text-align:right">8.8</td><td>인증, 매칭, 채팅, 만남, 차단</td></tr>
               <tr><td>10 캘린더</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td style="text-align:right">8.0</td><td>라우팅, 반복, 충돌, 공개 범위</td></tr>
               <tr><td>11 리뷰·신고</td><td style="text-align:right">7</td><td style="text-align:right">43</td><td style="text-align:right">6.1</td><td>작성 자격, 중복, 자기 신고, 신뢰점수, 궁합/핏 피드백</td></tr>
               <tr><td>12 알림</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td style="text-align:right">6.3</td><td>권한, 카테고리, 방해금지, 토큰</td></tr>
               <tr><td>13 프로필·설정</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td style="text-align:right">5.0</td><td>데이터 내보내기, 삭제·비활성화, 주소</td></tr>
               <tr><td>14 위치·길찾기</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td style="text-align:right">7.0</td><td>공유 동의·중지, 위치 권한, 외부 지도</td></tr>
-              <tr><td>15 경고·징계</td><td style="text-align:right">9</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td>신고 심사, 경고, 이의제기, 제재 집행</td></tr>
-              <tr><td>16 마일리지</td><td style="text-align:right">8</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td>정책, 적립·차감, 시즌, 랭킹, 검토 큐</td></tr>
+              <tr><td>15 경고·징계</td><td style="text-align:right">9</td><td style="text-align:right">44</td><td style="text-align:right">4.9</td><td>신고 심사, 경고, 이의제기, 제재 집행</td></tr>
+              <tr><td>16 마일리지</td><td style="text-align:right">8</td><td style="text-align:right">42</td><td style="text-align:right">5.3</td><td>정책, 적립·차감, 시즌, 랭킹, 검토 큐</td></tr>
               <tr><td>17 정기모임</td><td style="text-align:right">10</td><td style="text-align:right">96</td><td style="text-align:right">9.6</td><td>세션, FIXED/VARIABLE, 결제, 환불, 정산</td></tr>
-              <tr><td>18 분쟁 해결</td><td style="text-align:right">5</td><td style="text-align:right">7</td><td style="text-align:right">1.4</td><td>직접 접수, 이의제기, 증빙, 호스트 인박스</td></tr>
+              <tr><td>18 분쟁 해결</td><td style="text-align:right">5</td><td style="text-align:right">24</td><td style="text-align:right">4.8</td><td>직접 접수, 이의제기, 증빙, 호스트 인박스</td></tr>
               <tr><td>19 관심인</td><td style="text-align:right">3</td><td style="text-align:right">14</td><td style="text-align:right">4.7</td><td>관심인 등록, 캘린더, 공개범위</td></tr>
               <tr><td>20 고객지원</td><td style="text-align:right">3</td><td style="text-align:right">16</td><td style="text-align:right">5.3</td><td>1:1 문의, 운영 이슈, FAQ</td></tr>
               <tr><td>21 제공자 배정·정산</td><td style="text-align:right">7</td><td style="text-align:right">66</td><td style="text-align:right">9.4</td><td>제공자 배정, 서비스비, 정산, 계약금, 정기 묶음</td></tr>
@@ -111,8 +113,8 @@ flowchart TD
       </section>
 
       <section>
-        <h2>도메인별 8개 범주 적용 여부</h2>
-        <p class="subtitle">모든 도메인은 모든 범주를 적용해야 한다. 입력 검증이 빈 칸인 경우는 “입력이 거의 없는” 영역(홈 피드)뿐.</p>
+        <h2>도메인별 필수 검토 범주</h2>
+        <p class="subtitle">아래 표의 O는 검증 완료 표시가 아니라 새 시나리오를 작성할 때 반드시 검토할 범주라는 뜻이다. 입력이 거의 없는 홈 피드만 입력 검증을 선택 항목으로 둔다.</p>
         <div class="table-wrap">
           <table class="compact center">
             <thead><tr><th>영역</th><th>정상</th><th>빈</th><th>권한</th><th>상태</th><th>검증</th><th>실패</th><th>중복</th><th>부수효과</th></tr></thead>

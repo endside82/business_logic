@@ -1,7 +1,7 @@
 # 보조 PRD 문서 인덱스
 
-> 업데이트: 2026-07-29. 이 인덱스는 기능 PRD가 아닌 현재 존재 자료 31개
-> (`business_logic` 내부 29개 + 외부 참조 2개)를 추적한다.
+> 업데이트: 2026-08-30. 이 인덱스는 기능 PRD가 아닌 현재 존재 자료 32개
+> (`business_logic` 내부 30개 + 외부 참조 2개)를 추적한다.
 
 ## 읽는 법
 
@@ -33,6 +33,7 @@
 | [04_qa_acceptance/acceptance_criteria_matrix.md](04_qa_acceptance/acceptance_criteria_matrix.md) | 전체 수용 기준 매트릭스 | 수용 기준, 시나리오 커버리지, 릴리즈 체크 |
 | [04_qa_acceptance/release_readiness_checklist.md](04_qa_acceptance/release_readiness_checklist.md) | 릴리즈 준비 체크리스트 | 수용 기준, 시나리오 커버리지, 릴리즈 체크 |
 | [04_qa_acceptance/scenario_coverage_matrix.md](04_qa_acceptance/scenario_coverage_matrix.md) | 시나리오 커버리지 PRD | 수용 기준, 시나리오 커버리지, 릴리즈 체크 |
+| [04_qa_acceptance/scenario_completeness_audit_2026-08-30.md](04_qa_acceptance/scenario_completeness_audit_2026-08-30.md) | 기능별 제품 시나리오 완성도 감사 | 기능 175개의 시나리오 정의, 자동 테스트·사용자 여정 근거 연결, 다음 확인 순서 |
 | [05_planning_artifacts/decision_register.md](05_planning_artifacts/decision_register.md) | 결정 등록부 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/mvp_scope_matrix.md](05_planning_artifacts/mvp_scope_matrix.md) | MVP 범위 매트릭스 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/notion_import_order.md](05_planning_artifacts/notion_import_order.md) | Notion 업로드 순서 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |

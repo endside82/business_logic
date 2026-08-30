@@ -23,7 +23,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">총 기능</div><div class="value" id="metric-total">175</div></div>
-          <div class="metric"><div class="label">총 시나리오</div><div class="value" id="metric-scenarios">1275</div></div>
+          <div class="metric"><div class="label">시나리오 등록 숫자</div><div class="value" id="metric-scenarios">1403</div><div class="hint">목록 숫자의 합 · 통과 건수 아님</div></div>
           <div class="metric"><div class="label">총 도식</div><div class="value" id="metric-diagrams">552</div></div>
           <div class="metric"><div class="label">현재 표시</div><div class="value" id="metric-shown">175</div><div class="hint" id="metric-shown-hint">전체 표시 중</div></div>
         </div>
@@ -71,7 +71,7 @@
           <li><strong>ID</strong> — <code>F도메인번호-순번</code> 형식. 다른 문서·이슈에서 이 ID로 참조한다.</li>
           <li><strong>검산 포인트</strong> — 시나리오 작성 시 절대 빠뜨리면 안 되는 조건 키워드.</li>
           <li><strong>영향</strong> — 이 기능이 변경되면 같이 바뀌는 횡단 영역. 회귀 검토의 기준.</li>
-          <li><strong>시나리오 수</strong> — 정상·예외·복구 케이스 합계. 많을수록 QA 비용이 큰 기능.</li>
+          <li><strong>시나리오 수</strong> — 해당 기능 문서에 등록된 시나리오·수용 조건 수. 과거 집계 방식이 달라 상대적 복잡도를 보는 참고값이며 테스트 통과 건수가 아니다.</li>
         </ul>
       </section>
     </main>

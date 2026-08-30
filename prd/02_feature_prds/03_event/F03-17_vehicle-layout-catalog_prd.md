@@ -1,114 +1,66 @@
-# F03-17. 차량 레이아웃 카탈로그 (Vehicle Layout Catalog) PRD
+# F03-17. 차량 레이아웃 카탈로그 PRD
 
-<!-- source-measured: 2026-07-29; authority: community_api/community_admin_api/community_app current source -->
+<!-- source-measured: 2026-08-30; authority: community_api/community_admin_api/community_admin_front/community_app current source -->
 
-> 문서 상태: **현재 소스 실측본**. 삭제된 `docs/plan/event-extensions/*`에 있던 “기본 시드 4종”과 `VehicleSeatType` enum은 현재 소스에 존재하지 않는다.
+> 현재 상태: **사용자 앱과 서버 API는 구현, 플랫폼 관리자 웹은 미구현**. 이 운영 화면이 없으므로 버스
+> 기능을 개통할 수 없다.
 
-## 1. 결론
+## 1. 제품 목적과 현재 결론
 
-사용자 API에는 활성 레이아웃 목록과 특정 레이아웃 좌석 목록을 읽는 2개 endpoint가 있다. 관리자 API에는 목록·상세·생성·메타 수정·전체 좌석맵 교체·활성 토글이 구현되어 있다. 삭제 endpoint는 없다.
+차량의 좌석 구조를 여러 이벤트에서 재사용하는 운영 마스터데이터다. 사용자 서버는 활성 레이아웃 목록과
+좌석 배치를 읽는 API를 제공하고, 앱의 버스 추가 화면과 좌석표가 이를 실제로 사용한다. 관리자 서버에는
+목록·상세·생성·수정·좌석 전체 교체·활성 상태 변경 6개 API와 감사 기록이 있다.
 
-`seatType`은 Java enum이 아니라 **문자열**이며 관리자 서비스가 6개 허용값을 검증한다. 두 V1 migration과 seed SQL을 실측한 결과 28인승/45인승/20인승/8인승 기본 INSERT는 없다.
+하지만 관리자 웹에는 차량 레이아웃 목록·편집·좌석맵·활성화 화면이 없다. 빈 데이터베이스에 기본 차량
+데이터도 없으므로, 현재 상태에서 버스 기능을 열면 운영자가 앱에서 선택할 차량을 정상적인 화면으로 준비할
+방법이 없다. API 직접 호출을 정식 운영 절차로 삼지 않는다.
 
-## 2. 실측 근거
+## 2. 현재 계약과 미완성 경계
 
-| 범위 | 현재 소스 |
+| 구분 | 현재 상태 |
 |---|---|
-| 사용자 Controller | `community_api/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java` |
-| 사용자 Model/VO | `VehicleLayout.java`, `VehicleLayoutSeat.java`, `VehicleLayoutVo.java`, `VehicleLayoutSeatVo.java` |
-| 관리자 Controller/Service | `community_admin_api/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java`, `.../service/ManageVehicleLayoutService.java` |
-| 관리자 Param/VO | `ManageVehicleLayoutCreateParam.java`, `ManageVehicleLayoutUpdateParam.java`, `ManageVehicleLayoutActiveParam.java`, `ManageVehicleLayoutVo.java`, `ManageVehicleLayoutDetailVo.java` |
-| DDL | 양 서버의 `src/main/resources/db/migration/V1__init.sql` |
+| 사용자 API | `GET /api/v1/vehicle-layouts/active`, `GET /api/v1/vehicle-layouts/{id}/seats` 구현 |
+| 고객 앱 | 활성 목록 선택, 행·열·좌석 종류·선택 가능 여부 기반 좌석표 렌더링 구현 |
+| 관리자 API | `MANAGE_EVENT` 권한으로 목록·상세·생성·수정·좌석 전체 교체·활성 상태 변경 구현 |
+| 관리자 웹 | 미구현. 생성·좌석맵·활성화 운영 화면 없음 |
+| 초기 데이터 | 없음. 두 V1 최초 설치 SQL에 기본 차량 INSERT 없음 |
+| 활성화 안전장치 | 좌석맵이 없거나 `seatCount`와 실제 좌석 수가 달라도 활성화 가능 |
+| 공개 조회 경계 | 좌석 API가 레이아웃 활성 여부와 존재 여부를 확인하지 않아 비활성 ID도 조회되고 없는 ID는 빈 목록 반환 |
 
-사용자·관리자 어느 쪽에서도 차량 레이아웃 전용 테스트는 찾지 못했다.
+좌석 종류는 Java enum이 아니라 `NORMAL`, `DRIVER`, `GUIDE`, `FOLDABLE`, `DISABLED`, `AISLE` 여섯 문자열로
+검증한다. 레이아웃을 나중에 바꿔도 이미 이벤트에 복사된 좌석은 소급 변경하지 않는다.
 
-## 3. 사용자 API
+## 3. 시나리오 기준 수용 조건
 
-Base path: `/api/v1/vehicle-layouts`. 전역 Security 설정상 두 endpoint 모두 로그인 필요다.
+| 시나리오 | 기대 결과 | 코드 | 자동 검증 | 실제 사용자 여정 | 출시 판정 |
+|---|---|---|---|---|---|
+| V-01 운영자가 레이아웃 생성·수정·좌석맵 등록 | 전용 관리자 화면에서 이름·좌석 수·설명과 좌석 좌표·종류·선택 여부를 관리하고 감사 기록을 본다. | 관리자 API만 구현, 웹 미구현 | 관리자 API 전용 테스트 없음 | 실행 불가 | 미완성·개통 차단 |
+| V-02 운영자가 안전하게 활성화·비활성화 | 좌석맵과 좌석 수가 유효한 레이아웃만 활성화하고, 비활성 레이아웃은 신규 버스 선택 목록에서 제외한다. | 목록 필터 구현, 활성화 검증 미구현 | 직접 테스트 없음 | 실행 불가 | 미완성·개통 차단 |
+| V-03 호스트가 활성 레이아웃으로 버스 편성 | 앱이 활성 목록을 보여 주고 선택한 레이아웃에 선택 가능한 좌석이 있어야 버스를 만든다. 빈 목록은 운영 준비 부족으로 안내한다. | 서버·앱 구현 | 와이어 계약과 빈 레이아웃 서버 가드는 테스트. 앱 목록→버스 생성 E2E 없음 | 미실행 | 관리자 준비 뒤 가능 |
+| V-04 참가자가 좌석 배치를 확인 | 앱이 행·열과 좌석 종류를 이용해 좌석표를 그리고 통로·비선택 좌석을 구분한다. 비활성·없는 ID 조회의 서버 응답은 명확해야 한다. | 렌더링 구현, 조회 경계 일부 미완성 | `transport_vo_wire_test.dart`, `bus_seat_grid_test.dart` 통과 | 앱-서버 왕복 미실행 | 조회 경계 보강 필요 |
 
-| Method | Path | 응답 | 실제 동작 |
-|---|---|---|---|
-| GET | `/active` | `List<VehicleLayoutVo>` | active row 전체 조회 |
-| GET | `/{id}/seats` | `List<VehicleLayoutSeatVo>` | layout의 활성 여부를 검사하지 않고 해당 ID 좌석 조회. 없는 ID도 404가 아니라 빈 목록 |
+## 4. 완성도 판단
 
-`VehicleLayoutVo` Java 필드와 JSON wire key:
-
-- Java: `id`, `name`, `seatCount`, `description`, `isActive`, `createdAt`, `updatedAt`
-- JSON: `id`, `name`, `seatCount`, `description`, **`active`**, `createdAt`, `updatedAt`
-
-`VehicleLayoutSeatVo` Java 필드와 JSON wire key:
-
-- Java: `id`, `vehicleLayoutId`, `seatNo`, `rowIndex`, `colIndex`, `seatType: String`, `isSelectable`, `createdAt`, `updatedAt`
-- JSON: `id`, `vehicleLayoutId`, `seatNo`, `rowIndex`, `colIndex`, `seatType`, **`selectable`**, `createdAt`, `updatedAt`
-
-사용자 API는 “호스트 전용” 서비스 가드를 사용하지 않으며 인증 사용자 전체가 호출할 수 있다.
-
-## 4. 관리자 API
-
-Base path: `/admin/v1/manage/vehicle-layouts`. 모든 endpoint는 로그인 관리자에게 `AdminPrivilege.MANAGE_EVENT`를 요구한다.
-
-| Method | Path | 동작 |
+| 판단 축 | 현재 상태 | 남은 일 |
 |---|---|---|
-| GET | `/` | 레이아웃 목록. 각 항목에 등록 좌석 수 포함 |
-| GET | `/{id}` | 메타와 좌석을 포함한 상세 |
-| POST | `/` | 레이아웃 생성 (201) |
-| PUT | `/{id}` | 이름·좌석 수·설명 수정 |
-| POST | `/{id}/seats` | 기존 좌석 전체 삭제 후 요청 좌석맵으로 교체 |
-| PATCH | `/{id}/active` | 활성 상태 토글 |
+| 제품 시나리오 | 4개 정의 완료 | 없음 |
+| 코드 구현 | 사용자 API·앱과 관리자 API 구현, 관리자 웹 없음 | 목록·상세·편집·좌석맵·활성화 관리자 웹, 활성화 서버 검증 |
+| 자동 검증 | 앱 와이어·좌석 렌더링과 버스의 빈 레이아웃 거절만 확인 | 관리자 API CRUD·권한·감사·활성화, 사용자 조회 경계 테스트 추가 |
+| 사용자 여정 | 운영자가 차량을 준비해 호스트가 선택하는 왕복 불가능 | 관리자 생성→좌석 등록→활성화→호스트 버스 생성→참가자 좌석표 실행 |
+| 출시·운영 | `TRANSPORT` 봉인 | 최소 운영 레이아웃 등록과 위 왕복 증명 후 개통 |
 
-관리자 삭제 API는 없다.
+## 5. 구현 선택지와 효과
 
-## 5. 검증 규칙
+1. **관리자 웹 + 서버 활성화 가드 + 운영 초기 데이터 등록**: 운영자가 API를 직접 다루지 않아도 되고 잘못된
+   빈 차량이 고객 앱에 노출되지 않는다. 버스 개통을 위한 권장안이다.
+2. **V1에 고정 시드만 추가**: 빠르게 차량은 생기지만 실제 운영 차량이 바뀔 때 수정·감사할 화면이 없으므로
+   개통 조건을 충족하지 못한다.
+3. **API 직접 호출을 운영 절차로 사용**: 기술적으로는 가능하지만 검증·감사·오입력 방지가 약하고 제품 운영
+   화면이 있어야 한다는 현재 원칙에 맞지 않아 채택하지 않는다.
 
-레이아웃 생성·수정:
+## 6. 변경 이력
 
-- 이름: blank 불가, 최대 100자, unique
-- `seatCount >= 1`
-- 설명: 최대 500자
-- create body에 `active: boolean`이 있어 true로 즉시 생성할 수 있고, 생략 시 primitive 기본값 false
-- 생성 후 메타 수정과 active 토글은 별도 endpoint지만 create에서 active 설정을 금지하지 않음
-
-좌석맵 전체 교체:
-
-- 요청 목록은 비어 있을 수 없음
-- `seatNo`는 최대 10자이며 요청 내 unique
-- `rowIndex`, `colIndex`는 0 이상
-- `seatType`은 최대 20자, 대문자로 정규화
-- null/blank `seatType`은 `NORMAL`
-- 허용 문자열: `NORMAL`, `DRIVER`, `GUIDE`, `FOLDABLE`, `DISABLED`, `AISLE`
-
-현재 서비스는 `seatCount`와 실제 좌석 row 수의 일치, active 전환 전 좌석맵 완성 여부를 검증하지 않는다. create body 자체가 `active=true`를 허용하므로 좌석 0건인 활성 레이아웃도 만들 수 있다.
-
-## 6. 시드·Flutter 실측
-
-- `community_api`와 `community_admin_api`의 단일 `V1__init.sql`에 차량 레이아웃 DDL은 있지만 기본 레이아웃 INSERT는 없다.
-- 기타 SQL에서도 “28인승 A타입”, “45인승”, “20인승”, “8인승” seed를 찾지 못했다.
-- Flutter에는 vehicle layout API·Repository·Provider·좌석 그리드가 없다.
-- 따라서 빈 운영 DB에서는 관리자가 레이아웃을 생성·좌석 등록·활성화하기 전 사용자 `/active`가 빈 목록을 반환할 수 있다.
-
-## 7. 버스 기능과의 경계
-
-- 버스 생성은 `vehicleLayoutId`를 받는다.
-- `FREE`를 제외한 버스는 layout의 `isSelectable=true` 좌석을 event bus seat로 복사한다.
-- 현재 `EventBusService`는 layout 존재·활성 여부를 명시적으로 검증하지 않는다.
-- layout을 나중에 수정해도 이미 복사된 event bus seat가 자동 동기화되지는 않는다.
-
-## 8. 현재 Gap / Risk
-
-| 우선순위 | 실측 Gap |
+| 날짜 | 변경 |
 |---|---|
-| 높음 | 기본 차량 레이아웃 seed가 없어 초기 `/active`가 빈 목록일 수 있음 |
-| 높음 | Flutter 카탈로그 소비·좌석 렌더링 수직 슬라이스가 없음 |
-| 중간 | public seat 조회가 inactive layout도 노출하고 없는 ID를 빈 목록으로 처리 |
-| 중간 | 관리자 active 토글 전에 좌석맵 완성도·seatCount 일치를 검증하지 않음 |
-| 중간 | create가 `active=true`를 허용해 별도 토글 전에 좌석맵 없는 active row 생성 가능 |
-| 중간 | 버스 추가 서비스가 layout 존재·활성 여부를 명시적으로 검증하지 않음 |
-| 중간 | 전용 사용자/관리자 회귀 테스트가 없음 |
-| 낮음 | seatType이 문자열 whitelist라 양 서버·클라이언트 간 compile-time enum 보장이 없음 |
-
-## 9. 변경 이력
-
-| 날짜 | 버전 | 변경 |
-|---|---|---|
-| 2026-05-22 | v0.1 | 삭제된 event-extensions 계획을 기준으로 기본 4종 seed와 후속 관리자 구현을 기술 |
-| 2026-07-29 | v1.0 | 현재 사용자·관리자 API, String seatType, 무시드 상태, Flutter 부재를 실측해 전면 교정 |
+| 2026-07-29 | 사용자·관리자 API와 무시드 상태 실측 |
+| 2026-08-30 | 고객 앱 소비 구현과 관리자 웹 부재를 분리하고 4개 시나리오별 완성도·개통 조건 재작성 |

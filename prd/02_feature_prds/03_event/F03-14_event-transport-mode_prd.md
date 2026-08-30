@@ -1,101 +1,72 @@
-# F03-14. 이동수단 공통 베이스 (Transport Mode) PRD
+# F03-14. 이동수단 공통 설정 PRD
 
-<!-- source-measured: 2026-07-29; authority: community_api/community_app current source -->
+<!-- source-measured: 2026-08-30; authority: community_api/community_app current source -->
 
-> 문서 상태: **현재 소스 실측본**. 과거 `docs/plan/event-extensions/*` 문서는 저장소에서 삭제되었으며 현재 계약의 근거로 사용하지 않는다. 카풀은 [F03-15](F03-15_event-carpool_prd.md), 버스는 [F03-16](F03-16_event-bus-charter_prd.md), 차량 레이아웃은 [F03-17](F03-17_vehicle-layout-catalog_prd.md)을 함께 본다.
+> 현재 상태: **고객 앱과 서버 구현 완료, 첫 출시에서는 봉인**. 개통 조건은
+> [첫 출시 현황의 버스·카풀 해제 계획](../../../docs/qa/launch-status.html#sealed)을 따른다.
 
-## 1. 결론
+## 1. 제품 목적과 현재 결론
 
-서버에는 이벤트별 이동수단 모드를 `NONE`, `CARPOOL`, `BUS` 중 하나로 보관하는 공통 설정이 구현되어 있다. 설정이 아직 없으면 조회 시 DB row를 만들지 않고 `mode=NONE`, `allowsSelfTransport=true`를 반환한다. 모드 변경은 이벤트가 `DRAFT`일 때만 가능하며, `CARPOOL` 또는 `BUS`에서 다른 모드로 바꾸면 해당 운영 데이터를 hard delete한다.
+이 기능은 이벤트마다 이동수단을 `없음`, `카풀`, `버스` 중 하나로 정하고, 카풀과 버스 기능이 동시에
+열리지 않게 하는 공통 설정이다. 호스트와 공동 호스트는 앱의 이동수단 설정 화면에서 값을 조회·변경할 수
+있고, 이벤트 상세에서 현재 방식에 맞는 카풀 또는 버스 화면으로 들어갈 수 있다.
 
-Flutter 앱에는 이 설정을 조회·수정하는 모델, API, Repository, Provider, 화면이 없다. 따라서 현재 사용자 제품에서 이동수단 모드를 설정하는 완성된 수직 슬라이스는 아니다.
+이동수단 방식은 이벤트가 초안일 때만 바꿀 수 있다. 카풀에서 버스로, 또는 버스에서 다른 방식으로 바꾸면
+기존 카풀 지원·탑승자나 버스·좌석 데이터가 삭제되므로 앱이 저장 전에 명시적으로 경고한다. 모집 공개 뒤에는
+이미 참가자에게 안내된 이동 약속을 보존하기 위해 방식 변경을 서버가 거절한다.
 
-## 2. 실측 근거
+`각자 이동 허용`은 모집 공개 뒤에도 바꿀 수 있다. 현재 이 값은 버스 참가자가 자기 좌석을 반납할 수 있는지
+판정하는 데 실제로 쓰인다. 반면 카풀에서는 이 값이 꺼져 있어도 참가자가 `개별 이동`을 선택할 수 있다.
+개통 전에 이 설정을 **버스 좌석 반납 정책으로 좁혀 설명할지**, **카풀 개별 이동에도 강제할지** 결정해야 한다.
 
-| 계층 | 현재 소스 |
+## 2. 현재 제품 진입점
+
+| 계층 | 현재 구현 |
 |---|---|
-| Controller | `community_api/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java` |
-| Service | `community_api/src/main/java/com/endside/community/event/transport/service/EventTransportService.java` |
-| Model/Repository | `event/transport/model/EventTransportConfig.java`, `event/transport/repository/EventTransportConfigRepository.java` |
-| Param/VO | `TransportConfigParam.java`, `EventTransportConfigVo.java` |
-| Enum | `TransportMode.java` |
-| 공통 권한 | `community_api/src/main/java/com/endside/community/event/service/EventAuthorizationService.java` |
-| DDL | `community_api/src/main/resources/db/migration/V1__init.sql` |
+| 서버 조회 | `GET /api/v1/events/{eventId}/transport` |
+| 서버 변경 | `PUT /api/v1/events/{eventId}/transport/config` — 호스트·공동 호스트만 허용 |
+| 앱 설정 | `EventTransportSettingsScreen` — 방식 선택, 삭제 경고, 각자 이동 설정, 버스 편성·카풀 화면 진입 |
+| 앱 상세 진입 | `EventDetailScreen`에서 권한과 현재 방식에 따라 좌석표·카풀·설정 버튼 노출 |
+| 출시 차단 | 운영 출시 범위에 `TRANSPORT`가 없으면 신규 사용 차단. 신고·철회·이탈 같은 안전 출구는 별도 허용 |
 
-전용 `EventTransportServiceTest` 또는 Controller 테스트는 현재 소스에서 찾지 못했다.
+설정 행이 없으면 별도 데이터를 만들지 않고 `없음 + 각자 이동 허용`을 기본값으로 돌려준다. 설정 변경은
+이벤트 행을 잠근 뒤 처리해 같은 이벤트의 동시 변경을 직렬화한다.
 
-## 3. 서버 계약
+## 3. 시나리오 기준 수용 조건
 
-| Method | Path | 요청/응답 | 실제 권한과 동작 |
-|---|---|---|---|
-| GET | `/api/v1/events/{eventId}/transport` | `EventTransportConfigVo` | 로그인 필요. 별도 host/attendee 검사와 이벤트 존재 검증 없이 설정을 조회하며, row가 없으면 기본값을 반환 |
-| PUT | `/api/v1/events/{eventId}/transport/config` | `TransportConfigParam` → `EventTransportConfigVo` | 로그인 + Host/CoHost. 이벤트 row를 비관적 잠금으로 읽고 설정을 갱신 |
+아래 표의 `자동 검증`은 해당 기대 결과를 테스트가 직접 확인하는 범위만 적는다. 파일이 존재한다는 이유만으로
+화면부터 서버까지의 사용자 여정이 통과했다고 간주하지 않는다.
 
-`TransportConfigParam`:
+| 시나리오 | 기대 결과 | 코드 | 자동 검증 | 실제 사용자 여정 | 출시 판정 |
+|---|---|---|---|---|---|
+| T-01 설정이 없는 이벤트 조회 | `없음 + 각자 이동 허용`을 반환하고 조회만으로 설정 행을 만들지 않는다. | 구현 | 서버 동작 직접 검증 없음. 앱 와이어 형식은 `transport_vo_wire_test.dart`에서 확인 | 미실행 | 봉인 |
+| T-02 호스트가 초안 이벤트를 카풀 또는 버스로 설정 | 호스트·공동 호스트만 저장할 수 있고 앱은 저장된 방식을 다시 표시한다. | 서버·앱 구현 | 앱 enum·와이어 계약만 자동 확인, 저장 왕복 테스트 없음 | 미실행 | 봉인 |
+| T-03 권한 없는 사용자가 설정 변경 | 앱 버튼을 우회해 직접 요청해도 서버가 거절한다. | 구현 | 전용 권한 테스트 없음 | 미실행 | 봉인 |
+| T-04 모집 공개 뒤 방식 변경 | 없음·카풀·버스 사이 변경을 서버가 거절하고 기존 운영 데이터를 보존한다. | 구현 | 전용 상태 테스트 없음 | 미실행 | 봉인 |
+| T-05 초안에서 다른 방식으로 전환 | 카풀에서 이탈하면 지원·탑승자, 버스에서 이탈하면 버스·좌석을 같은 처리에서 삭제한다. 앱은 되돌릴 수 없음을 먼저 경고한다. | 서버·앱 구현 | 직접 삭제 회귀 테스트 없음 | 미실행 | 봉인 |
+| T-06 공개 뒤 각자 이동 허용 변경 | 방식은 유지한 채 값을 바꾼다. 버스 자기 좌석 반납에는 적용되고 카풀 개별 이동에는 아직 적용되지 않는다. | 버스 적용 완료·카풀 정책 불일치 | 버스 허용·거절은 `EventBusServiceTest.java`와 `EventTransportLifecycleE2ETest.java`에서 확인 | 앱·서버 왕복 미실행 | 개통 전 제품 결정 필요 |
 
-- `mode: TransportMode?`
-- `allowsSelfTransport: Boolean?`
+## 4. 완성도 판단
 
-`EventTransportConfigVo`:
-
-- `eventId: long`
-- `mode: TransportMode`
-- `allowsSelfTransport: boolean`
-
-`TransportMode = NONE | CARPOOL | BUS`.
-
-## 4. 상태 전이와 삭제 규칙
-
-| 입력 | 실제 결과 |
-|---|---|
-| 기존 row 없음 + GET | 저장 없이 `NONE`, `true` 반환 |
-| `mode`가 null이거나 현재 값과 같음 | mode 전이 없음 |
-| `mode`가 달라짐 + 이벤트 `DRAFT` | 새 mode 저장 |
-| `mode`가 달라짐 + 이벤트가 `DRAFT` 아님 | `INVALID_EVENT_STATUS` |
-| `CARPOOL → NONE/BUS` | 해당 이벤트의 passenger를 먼저, offer를 다음에 hard delete |
-| `BUS → NONE/CARPOOL` | 각 bus의 seat를 먼저, bus를 다음에 hard delete |
-| `allowsSelfTransport`만 변경 | 현재 서비스에는 이벤트 상태 가드가 없어 `OPEN`, `CLOSED`, `CANCELED`, `HIDDEN`에서도 변경 가능 |
-
-모드 변경은 event row 잠금 아래 수행되어 같은 이벤트의 동시 변경을 직렬화한다. 다만 설정 변경 audit log와 알림 발행은 구현되어 있지 않다.
-
-`allowsSelfTransport`는 현재 이 서비스의 저장·응답 외 production consumer가 없다. `EventCarpoolService.registerPassenger`도 이 값이 false인지 확인하지 않고 `SELF`/`DRIVER`를 저장하므로, 현재는 이동 정책을 실제로 집행하지 않는 inert flag다.
-
-## 5. 권한과 경계
-
-- `EventAuthorizationService`의 실제 위치는 `event/service`이며 공개 메서드는 `assertHost(Event, userId)`, `assertHostOrCoHost(Event, userId)` 두 개다.
-- PUT은 `assertHostOrCoHost`를 사용한다.
-- GET은 전역 Security 설정상 인증이 필요하지만 서비스 수준 참가자/호스트 검증은 없다.
-- mode가 `CARPOOL` 또는 `BUS`라는 사실만으로 참가자 API가 자동 노출되는 것은 아니다. 각 하위 서비스의 별도 검사를 따라야 한다.
-
-## 6. 프론트 및 알림 실측
-
-- Flutter에 transport config 전용 API·Repository·Provider·화면·라우트가 없다.
-- `NotificationType`에 교통 관련 값이 존재하는 것과 별개로, mode 변경을 발행하거나 전송하는 생산 코드가 없다.
-- `NotificationRouter`에도 관련 deep link가 없다.
-
-## 7. 검증 기준
-
-1. 설정 없는 이벤트 GET은 `NONE/true`를 반환해야 한다.
-2. Host/CoHost가 아닌 사용자의 PUT은 거부되어야 한다.
-3. mode 변경은 `DRAFT`에서만 성공해야 한다.
-4. CARPOOL 또는 BUS에서 이탈하면 해당 모드의 운영 row가 삭제되어야 한다.
-5. `allowsSelfTransport` 단독 변경의 상태 제한 여부는 현 서비스 동작을 기준으로 판단해야 한다.
-
-## 8. 현재 Gap / Risk
-
-| 우선순위 | 실측 Gap |
-|---|---|
-| 높음 | Flutter 수직 슬라이스가 없어 사용자가 이동수단 모드를 조회·설정할 수 없음 |
-| 높음 | `allowsSelfTransport` 단독 변경에는 이벤트 상태 제한이 없어 terminal event도 수정 가능 |
-| 높음 | `allowsSelfTransport=false`를 소비해 SELF/DRIVER 선택을 막는 서비스가 없어 정책 토글이 실제 동작을 바꾸지 않음 |
-| 중간 | GET이 event 존재·참가 자격을 검증하지 않음 |
-| 중간 | mode 전환이 hard delete이며 audit/history 복구 수단이 없음 |
-| 중간 | 전용 서비스/Controller 회귀 테스트를 찾지 못함 |
-| 낮음 | 설정 변경 알림·감사 로그 없음 |
-
-## 9. 변경 이력
-
-| 날짜 | 버전 | 변경 |
+| 판단 축 | 현재 상태 | 남은 일 |
 |---|---|---|
-| 2026-05-22 | v0.1 | 삭제된 event-extensions 계획 문서를 바탕으로 초안 작성 |
-| 2026-07-29 | v1.0 | 현재 Controller/Service/DTO/Enum/보안/Flutter를 재실측하고 삭제된 계획 참조와 미구현 동작을 제거 |
+| 제품 시나리오 | 6개 정의 완료 | `각자 이동 허용`의 카풀 적용 범위 결정 |
+| 코드 구현 | 서버와 앱 설정 화면 연결 완료 | 결정 결과에 따라 문구만 좁히거나 카풀 서버 가드 추가 |
+| 자동 검증 | 버스에서 토글을 쓰는 하위 시나리오는 검증됨. 공통 설정 자체의 권한·상태·삭제 테스트는 부족 | T-01~T-05 서버 테스트와 설정 화면 테스트 추가 |
+| 사용자 여정 | 역할별 앱·서버 왕복 기록 없음 | 호스트·공동 호스트·참가자 계정으로 설정→하위 화면→변경 차단 실행 |
+| 출시·운영 | `TRANSPORT` 봉인 | 차량 레이아웃 운영 화면, 책임 고지, 실기기 검증 후 개통 |
+
+## 5. 남은 위험과 결정 효과
+
+- 설정 이름을 버스 정책으로 좁히면 구현 변경은 작지만, 카풀 이용자는 계속 개별 이동을 선택할 수 있다.
+- 카풀에도 강제하면 제품 의미는 일관되지만, 기존 카풀 선택·이탈·배정 흐름과 안전 출구를 함께 다시 설계하고
+  회귀 검증해야 한다.
+- 초안 방식 전환은 실제 데이터를 삭제하므로, T-05 자동 검증 없이 개통하면 회귀 시 참가자 배정이 남거나
+  잘못 지워질 위험이 있다.
+
+## 6. 변경 이력
+
+| 날짜 | 변경 |
+|---|---|
+| 2026-07-29 | 당시 서버 구현 기준 실측 |
+| 2026-08-30 | 8월 앱·서버 상태기계 구현을 반영하고 6개 시나리오별 완성도와 남은 제품 결정을 재작성 |
