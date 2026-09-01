@@ -1,8 +1,8 @@
 # 상태 정책 PRD
 
-<!-- supporting-doc-status: 2026-05-22 -->
+<!-- supporting-doc-status: 2026-09-02 -->
 
-> 문서 상태: **보조 문서 + W2/W3 event_payment 상태머신 + APPROVED_PENDING_PAYMENT 진입 조건 통합 (2026-05-22)**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
+> 문서 상태: **보조 문서. 2026-09-02 대절 버스·카풀 통합 차량 상태를 반영했다.** 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 
 이 문서는 화면 설명보다 상태 판단이 중요한 기능만 모은다. 기획자가 버튼 노출, 문구, 알림, 예외 처리를 결정할 때 먼저 확인해야 하는 문서다.
 
@@ -374,7 +374,39 @@ stateDiagram-v2
 
 **회계 분개**: WALLET 결제·환불만 ledger에 기록한다. BANK_TRANSFER는 확인·환불까지 전 과정이 off-ledger다.
 
-### 10.3 event_carpool_offer 상태 값과 실제 전이
+### 10.3 2026-09-02 현재 — 통합 차량과 자리 상태
+
+종전 `event_carpool_offer`와 `event_bus` 상태는 `event_vehicle` 하나로 교체됐다.
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: 참석자가 승용차 제안
+    [*] --> CONFIRMED: 호스트가 대절 버스 등록 또는 참석자가 자차 등록
+    PENDING --> CONFIRMED: 호스트 승인
+    PENDING --> REJECTED: 호스트 거절
+    PENDING --> CANCELLED: 차량 주인 또는 호스트 취소
+    CONFIRMED --> CANCELLED: 차량 주인 또는 호스트 취소
+```
+
+| 차량 종류 | 처음 상태 | 주인 | 종착 처리 |
+| --- | --- | --- | --- |
+| `BUS` | `CONFIRMED` | 없음. 호스트가 운영 | 자리 전부 해제 후 `CANCELLED` |
+| `CAR` | `PENDING` | 제안한 참석자 | 승인 시 `CONFIRMED`; 거절·취소 시 자리를 비우고 주인을 자차로 복귀 |
+| `SELF` | `CONFIRMED` | 등록한 참석자 | 본인 자리 1개·0원. 종료 시 복귀 없이 `CANCELLED` |
+
+자리 지정 여부 `DESIGNATED/UNDESIGNATED`와 배정 주체 `HOST_ASSIGNS/SELF_CLAIMS`는 독립이다.
+비지정 차량도 정원만큼 자리 행을 만들어 실제 탑승자를 센다. 자리 배정·이동·반납은 모임 행 잠금,
+자리 버전, 모임 안 사용자 한 자리 유일 제약으로 보호한다. 이동 중 충돌하면 기존 자리 해제까지 같은
+처리에서 되돌린다.
+
+모임 이동 설정은 사용 여부, 자리 반납 허용, 자차 허용을 따로 저장한다. 살아 있는 차량이 있으면
+사용 중지할 수 없다. 신규 차량·자리 점유는 `TRANSPORT` 출시 범위가 열려야 하지만 운행 취소·자차
+종료·강제 취소·이동 조율 이탈·자리 반납·신고는 봉인 중에도 가능한 안전 출구다.
+
+### 10.4 2026-07-29 이력 — event_carpool_offer 상태
+
+> 아래 종전 카풀·교통 모드·버스 상태와 공백은 통합 전 소스의 이력이다. 현재 제품 판단에는 바로 위
+> 통합 차량 상태와 F03-14~17 기능 PRD를 사용한다.
 
 운전자가 등록하는 카풀 offer 라이프사이클.
 
@@ -395,7 +427,7 @@ stateDiagram-v2
 
 현재 decision 서비스는 입력을 CONFIRMED/REJECTED로 제한하지만 기존 status를 검사하지 않아 재결정할 수 있다. offer 취소, 참석 이탈 cascade, 탑승자 자동 해제, 77~80 알림, `event_carpool_assignment_log` insert는 구현되어 있지 않다.
 
-### 10.4 event_transport_config.mode 전이 정책 ([F03-14](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md))
+### 10.5 2026-07-29 이력 — event_transport_config.mode 전이 정책 ([F03-14](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md))
 
 ```mermaid
 stateDiagram-v2
@@ -418,7 +450,7 @@ stateDiagram-v2
 
 버스의 `allowSelfSwap`·`assignmentMode`를 수정하는 endpoint는 없다. mode 내부 카풀·버스 write는 각 서비스의 개별 상태 검사를 따르며, 일관된 OPEN gate가 있는 것은 아니다.
 
-### 10.5 event_bus 좌석 점유 모델 ([F03-16](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md))
+### 10.6 2026-07-29 이력 — event_bus 좌석 점유 모델 ([F03-16](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md))
 
 `event_bus.assignment_mode` 3종에 따라 좌석 점유 상태머신이 분기.
 
@@ -445,7 +477,7 @@ stateDiagram-v2
 - self 요청은 참석/대기 자격, assignmentMode, `lockedByHost`를 검사하지 않는다.
 - 좌석 변경 log는 기록하지만 81~82 생산 알림은 없다.
 
-### 10.6 현재 상태 Gap
+### 10.7 2026-07-29 당시 상태 공백 — 현재 판단에 사용하지 않음
 
 - 만료 application과 PENDING payment를 같은 트랜잭션에서 정리하고 75 event를 발행해야 한다.
 - 카풀 decision 선행상태, cancel/cascade, assignment log, 77~80 알림이 없다. register는 assignedOfferId를 정리하지 않고 assign과 경합하면 lost update 가능하다.

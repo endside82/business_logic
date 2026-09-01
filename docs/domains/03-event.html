@@ -51,11 +51,13 @@
             k-익명 <code>fit-preview</code>와 “재방문 많은 호스트” 배지도 배선됐다.</p>
         </div>
         <div class="callout danger">
-          <span class="label">2026-07-29 현재 소스 갱신 — 선입금·교통 구현 경계</span>
+          <span class="label">2026-09-02 현재 소스 갱신 — 선입금·이동수단 구현 경계</span>
           <p>선입금 Flutter 사용자 흐름은 WALLET CTA만 연결됐고 BANK 운영 화면과 알림 deep link는 없다.
-            이동수단은 그 뒤 구현이 진행돼 설정·카풀·버스 편성·좌석표·배정·이탈·안전 신고와 관련 알림까지
-            앱과 서버에 연결됐다. 남은 운영 공백은 차량 레이아웃 관리자 웹과 기본 데이터이며, 첫 출시에서는
-            신규 이동수단 기능을 닫고 안전한 이탈·신고 출구만 유지한다.</p>
+            이동수단은 대절 버스·참가자 승용차·자차를 한 차량 모델로 합쳤다. 지정·비지정 자리,
+            호스트 전담·참가자 자기 선택, 승용차 승인·취소, 자차 종료, 안전 신고와 관련 알림이 앱과
+            서버에 연결됐고 표준 차량 9종과 관리자 배치도 화면도 완료됐다. 첫 개통 전에는 서명 앱 다중
+            역할 왕복·실기기 알림/신고·책임 고지를 확인하며, 그동안 신규 이용은 닫고 안전한 이탈·신고
+            출구를 유지한다.</p>
         </div>
       </section>
 
@@ -75,10 +77,10 @@
           <a class="card" href="../features/F03-11.html"><div class="eyebrow">F03-11</div><h3>위시리스트</h3><p>낙관적 토글, 비로그인 분기, 숨김·삭제 이벤트 처리.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-12.html"><div class="eyebrow">F03-12</div><h3>내 이벤트·참석 로그</h3><p>주최/참석/지난 탭. 페이지네이션, 상태별 카드 노출.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-13.html"><div class="eyebrow">F03-13</div><h3>이벤트 참가 선입금</h3><p>서버는 WALLET·BANK를 지원하나 Flutter 사용자 연결은 WALLET CTA뿐. 만료 결제 정리·알림 라우팅 Gap.</p><div class="meta"><span class="pill danger">소스 실측</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-14.html"><div class="eyebrow">F03-14</div><h3>이동수단 공통 베이스</h3><p>없음·카풀·버스 설정 화면과 초안 전환 보호. 각자 이동 토글의 카풀 적용 범위는 개통 전 결정.</p><div class="meta"><span class="pill info">앱·서버 연결</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-15.html"><div class="eyebrow">F03-15</div><h3>이벤트 카풀</h3><p>운전자·탑승자·호스트 화면, 배정 이력, 안전 신고와 알림까지 연결. 첫 출시는 신규 이용 봉인.</p><div class="meta"><span class="pill info">핵심 코드 완료</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-16.html"><div class="eyebrow">F03-16</div><h3>이벤트 버스대절</h3><p>버스 편성·좌석 선택·재배정·해제·신고·알림 연결. 플랫폼 차량 카탈로그 화면은 잔여.</p><div class="meta"><span class="pill warn">운영 화면 부분</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-17.html"><div class="eyebrow">F03-17</div><h3>차량 레이아웃 카탈로그</h3><p>호스트 앱 소비와 관리자 API는 완료. 관리자 웹·기본 차량·빈 좌석맵 활성화 가드가 남음.</p><div class="meta"><span class="pill danger">운영 선행 필요</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-14.html"><div class="eyebrow">F03-14</div><h3>이동수단 공통 설정</h3><p>모임별 이동 운영과 자리 반납·자차 허용 정책을 관리한다.</p><div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-15.html"><div class="eyebrow">F03-15</div><h3>카풀·자차</h3><p>승용차 제안·승인·탑승 배정·취소와 자차 이동을 통합 화면에서 관리한다.</p><div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-16.html"><div class="eyebrow">F03-16</div><h3>대절 버스와 자리 배정</h3><p>지정·비지정 자리, 호스트/참가자 배정, 자리 반납·신고를 제공한다.</p><div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-17.html"><div class="eyebrow">F03-17</div><h3>차량 좌석 배치도</h3><p>표준 차량 9종과 관리자 조회·복제·수정·활성화 화면을 제공한다.</p><div class="meta"><span class="pill brand">운영 화면 완료</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-18.html"><div class="eyebrow">F03-18</div><h3>구성인원 인구통계</h3><p>k-익명성 3단계 게이트(전체&lt;5/차원&lt;5/버킷&lt;5), 공개 모집·종료 이벤트만 비참가자 노출, 비공개는 호스트·공동호스트·참석 확정자만.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-19.html"><div class="eyebrow">F03-19</div><h3>일정 변경 제안·참가자 합의</h3><p>경미한 변경(60분 미만·장소 유지·가격 동결)은 즉시 반영. 중대한 변경(60분 이상·장소 변경·가격 인상)은 48시간 합의. 거절 시 100% 환불.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-20.html"><div class="eyebrow">F03-20</div><h3>이벤트 노쇼 관리</h3><p>확정→직접 소명→인정 또는 기각으로 처리한다. 판단은 해당 모임의 호스트·권한 있는 공동호스트·클럽 운영진이 맡고, 플랫폼 운영팀 접수는 기본적으로 닫혀 있다. 사후 조정 환불도 별도 권한으로 제한된다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>

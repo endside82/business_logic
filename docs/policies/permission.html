@@ -126,10 +126,10 @@ flowchart TD
             <tbody>
               <tr><td>선입금</td><td>본인 WALLET/BANK, Host/CoHost 확인·거부. BANK 환불 확인은 club OWNER/환불관리자도 가능</td><td>Flutter는 WALLET만 사용자 연결</td></tr>
               <tr><td>환불 조회</td><td>템플릿도 인증 필요</td><td>preview/no-show GET은 actor·event scoping이 빠진 IDOR 후보</td></tr>
-              <tr><td>교통 설정</td><td>앱 진입은 Host/CoHost, 변경도 서버에서 Host/CoHost만 허용</td><td>조회 서비스 자체는 event·역할을 검증하지 않고 기본값을 반환할 수 있다. “각자 이동 허용”의 카풀 적용 범위를 개통 전 확정한다.</td></tr>
-              <tr><td>카풀</td><td>지원·탑승·신고는 ATTENDING, 결정·배정은 Host/CoHost, 목록은 Host/CoHost 또는 ATTENDING</td><td>상태·버전·정원·차단 관계·운전자/탑승자 충돌을 서버가 검사한다. 철회·이탈·신고는 운영 중에도 가능한 안전 출구다.</td></tr>
-              <tr><td>버스</td><td>편성은 Host/CoHost, 좌석 조회는 Host/CoHost 또는 ATTENDING/WAITING, 자기 선택·신고는 ATTENDING</td><td>참가자 선택은 선착순·빈 좌석·본인으로 제한한다. 호스트의 타인 재배정·해제는 사유가 필수이고 타인의 신원은 일반 참가자에게 숨긴다.</td></tr>
-              <tr><td>차량 카탈로그</td><td>호스트 앱은 활성 레이아웃을 읽고, 관리자 write는 MANAGE_EVENT</td><td>관리자 API와 감사 기록은 있으나 관리자 웹이 없고, 빈 좌석맵을 활성화하는 서버 가드도 없다.</td></tr>
+              <tr><td>이동 설정</td><td>설정 변경은 Host/CoHost만 허용하고, 차량 목록은 Host/CoHost·ATTENDING·WAITING만 본다.</td><td>서버가 모임 역할을 다시 확인한다. 봉인 중 신규 설정·차량 등록은 막고 안전한 종료 동작은 연다.</td></tr>
+              <tr><td>승용차·자차</td><td>CAR·SELF 등록은 ATTENDING 본인, CAR 결정과 타인 배정은 Host/CoHost, 취소·종료는 차량 주인</td><td>상태·버전·정원·차단 관계·차량 소유자와 다른 차량 탑승 충돌을 서버가 검사한다.</td></tr>
+              <tr><td>대절 버스·자리</td><td>BUS 등록은 Host/CoHost. SELF_CLAIMS면 ATTENDING이 본인 자리를 선택하고, Host/CoHost는 정책과 무관하게 본인을 포함한 참석 자격자를 배정한다.</td><td>타인 재배정·해제는 사유가 필수이고 일반 참가자에게 타인의 신원을 숨긴다.</td></tr>
+              <tr><td>차량 배치도</td><td>호스트 앱은 활성 배치도를 읽고, 관리자 조회·복제·수정·활성화는 MANAGE_EVENT 권한으로 제한한다.</td><td>빈 좌석표 활성화와 사용 중 좌석표 변경을 서버가 막고 관리자 화면이 같은 오류를 표시한다.</td></tr>
             </tbody>
           </table>
         </div>

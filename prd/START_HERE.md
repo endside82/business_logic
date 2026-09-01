@@ -34,10 +34,10 @@
 | ID | 기능 | 현재 기능 PRD | Wave |
 |---|---|---|---|
 | F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | `02_feature_prds/03_event/F03-13_event-prepayment_prd.md` | W2a/W2b/W3 |
-| F03-14 | 교통 모드 베이스 | `02_feature_prds/03_event/F03-14_event-transport-mode_prd.md` | W4 |
-| F03-15 | 카풀 운영 | `02_feature_prds/03_event/F03-15_event-carpool_prd.md` | W5 |
-| F03-16 | 이벤트 측 버스 운영 | `02_feature_prds/03_event/F03-16_event-bus-charter_prd.md` | W7 |
-| F03-17 | 차량 레이아웃 카탈로그 | `02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md` | W6 |
+| F03-14 | 이동수단 공통 설정 | `02_feature_prds/03_event/F03-14_event-transport-mode_prd.md` | W4에서 시작, 2026-09-02 통합 완료 |
+| F03-15 | 카풀·자차 | `02_feature_prds/03_event/F03-15_event-carpool_prd.md` | W5에서 시작, 2026-09-02 통합 완료 |
+| F03-16 | 대절 버스와 자리 배정 | `02_feature_prds/03_event/F03-16_event-bus-charter_prd.md` | W7에서 시작, 2026-09-02 통합 완료 |
+| F03-17 | 차량 좌석 배치도 운영 | `02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md` | W6에서 시작, 2026-09-02 운영 화면 완료 |
 
 enum 번호와 충돌은
 `community_api/src/test/java/com/endside/community/EnumReservationTest.java`가 회귀 검증한다.

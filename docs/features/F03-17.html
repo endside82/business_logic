@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F03-17 차량 레이아웃 카탈로그 — community PRD</title>
+  <title>F03-17 차량 좌석 배치도 운영 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -12,134 +12,49 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb">
-          <a href="../index.html">문서 허브</a><span>›</span>
-          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-17 차량 레이아웃 카탈로그
-        </div>
-        <h1>F03-17. 차량 레이아웃 카탈로그</h1>
-        <p class="lede">
-          버스대절 기능에서 사용할 차량 좌석 구조 카탈로그. 사용자 read API와 관리자 생성·수정·좌석맵 교체·활성화 API가
-          구현돼 있고 Flutter 버스 추가·좌석표 화면이 활성 레이아웃과 좌석 배치를 실제로 소비한다.
-          다만 플랫폼 운영자가 이 카탈로그를 관리할 관리자 웹 화면과 기본 차량 데이터는 아직 없다.
-        </p>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/03-event.html">이벤트</a><span>›</span>F03-17</div>
+        <h1>F03-17. 차량 좌석 배치도 운영</h1>
+        <p class="lede">운영자가 표준 차량 좌석표를 준비하고, 호스트가 활성 배치도를 골라 지정 자리 차량을 만드는 기능이다.</p>
+        <div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">관리자 화면 완료</span><span class="pill brand">표준 차량 9종</span></div>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
       <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">기본 시드</div><div class="value">0종</div><div class="hint">V1·seed SQL에 INSERT 없음</div></div>
-          <div class="metric"><div class="label">사용자 API</div><div class="value">2개</div><div class="hint">활성 목록 · 좌석 조회</div></div>
-          <div class="metric"><div class="label">관리자 API</div><div class="value">6개</div><div class="hint">목록·상세·생성·수정·좌석·활성</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 좌석표를 이벤트마다 새로 그리지 않는다</span>
-          <p>차량 좌석 구조는 반복해서 재사용되는 운영 자산이다. 카탈로그를 별도로 두면 28인승, 45인승 같은
-            표준 차량을 여러 이벤트에서 같은 방식으로 쓸 수 있고, 좌석 선택 가능 여부도 레이아웃 단위로 통제할 수 있다.</p>
-        </div>
-        <div class="callout danger">
-          <span class="label">이동수단 개통 전 반드시 닫을 운영 공백</span>
-          <p>빈 DB에는 28·45·20·8인승 기본 row가 없다. 관리자가 레이아웃을 생성하고 좌석맵을 등록한 뒤
-            활성화해야 사용자 active 목록에 나타난다. 단 create body가 active=true를 허용해 좌석맵 없이 즉시
-            활성 row를 만들 수도 있다. seatType은 enum이 아니라 6개 허용 문자열이다.</p>
-          <p>현재는 이를 처리할 관리자 API와 감사 기록만 있고 관리자 웹 화면이 없다. 따라서 API를 직접
-            호출하지 않고도 목록·상세·좌석맵·활성 상태를 관리하는 화면을 만들고, 좌석맵이 없는 레이아웃은
-            활성화할 수 없도록 서버에서도 막은 뒤 버스 기능을 개통해야 한다.</p>
-        </div>
+        <h2>현재 제공하는 운영 기능</h2>
+        <div class="table-wrap"><table><thead><tr><th>업무</th><th>현재 지원</th></tr></thead><tbody>
+          <tr><td>표준 차량 조회</td><td>25·28·41·45인승 버스와 7·9·11·12·15인승 승합차</td></tr>
+          <tr><td>좌석표 확인</td><td>행·열, 좌석 번호, 일반석·기사석·통로, 선택 가능 여부</td></tr>
+          <tr><td>배치도 복제</td><td>좌석표를 복사한 비활성 배치도 생성</td></tr>
+          <tr><td>이름·설명 수정</td><td>운영상 구분 정보 수정</td></tr>
+          <tr><td>사용 시작·중지</td><td>선택 가능한 좌석이 있을 때만 활성화</td></tr>
+        </tbody></table></div>
       </section>
 
       <section>
-        <h2>조회 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["호스트가 버스 추가"] --> B["활성 레이아웃 목록 조회"]
-    B --> C["레이아웃 선택"]
-    C --> D["좌석 배치 조회"]
-    D --> E["이벤트 버스 좌석 생성"]
-    E --> F["이벤트별 좌석 운영"]
-          </div>
-        </div>
+        <h2>서버가 막는 잘못된 상태</h2>
+        <ul>
+          <li>통로·기사석뿐인 배치도 활성화</li>
+          <li>좌석 번호·좌표 중복과 좌석 수 불일치</li>
+          <li>통로를 선택 가능한 좌석으로 등록</li>
+          <li>이미 차량이 사용하는 배치도의 좌석표 변경</li>
+          <li>같은 이름의 배치도 중복 생성</li>
+        </ul>
       </section>
 
       <section>
-        <h2>사용자 시나리오</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">운영 준비 · 미완성</div>
-            <h3>운영자가 레이아웃과 좌석맵을 만든다</h3>
-            <p>이름·좌석 수·설명과 좌석의 행·열·종류·선택 여부를 전용 관리자 화면에서 관리하고 감사 기록을
-              확인해야 한다. 관리자 API는 있으나 이 화면이 아직 없어 현재는 정상 운영 절차로 실행할 수 없다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">활성화 · 미완성</div>
-            <h3>검증된 레이아웃만 활성화한다</h3>
-            <p>좌석맵이 있고 선언한 좌석 수와 실제 좌석 수가 맞는 레이아웃만 활성화해야 한다. 현재 서버는
-              이 조건을 확인하지 않아 빈 좌석맵도 활성화할 수 있으므로 개통 전에 차단 로직과 테스트가 필요하다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">호스트 · 코드 구현</div>
-            <h3>활성 레이아웃으로 버스를 편성한다</h3>
-            <p>앱이 활성 차량 목록을 보여 주고 호스트가 레이아웃을 선택한다. 선택 가능한 좌석이 없으면 서버가
-              버스 생성을 거절한다. 관리자 준비부터 버스 생성까지 이어지는 앱·서버 왕복 검증은 아직 없다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">참가자 · 일부 보강 필요</div>
-            <h3>좌석 배치를 확인한다</h3>
-            <p>앱은 행·열·좌석 종류·선택 가능 여부를 이용해 좌석표를 그린다. 비활성 레이아웃 ID와 존재하지
-              않는 ID를 직접 조회했을 때의 서버 응답 경계는 더 명확하게 만들고 검증해야 한다.</p>
-          </article>
-        </div>
+        <h2>이번 출시 범위가 아닌 것</h2>
+        <p>표준 9종 외 차량의 좌석 위치를 웹에서 직접 그리는 편집기와 참고용 차량 사진은 별도 제품 확장이다. 현재 대절 버스·카풀을 쓰는 데 필요한 조건이 아니며, 이 때문에 기능을 봉인한 것도 아니다.</p>
+        <div class="callout info"><strong>출시 판단:</strong> 차량 배치도에는 추가 구현이 없다. 관리자 화면→호스트 차량 등록→참가자 자리 선택을 서명 앱과 실제 계정으로 확인하면 된다.</div>
       </section>
 
-      <section>
-        <h2>API가 제공하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
-            <tbody>
-              <tr><td>활성 차량 목록</td><td>호스트 앱</td><td>버스 추가 시트가 활성 레이아웃의 이름·좌석 수·설명을 보여 주고 하나를 선택하게 한다.</td></tr>
-              <tr><td>좌석 배치</td><td>호스트·참가자 앱</td><td>행·열·좌석 종류·선택 가능 여부를 받아 이벤트 좌석표를 그린다.</td></tr>
-              <tr><td>레이아웃·좌석 운영 API</td><td>MANAGE_EVENT 관리자</td><td>생성·메타 수정·좌석 전체 교체·활성 토글과 감사 기록을 제공한다. 대응하는 관리자 웹은 아직 없다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">고객 앱 연결은 완료, 플랫폼 운영 화면은 미완료</span>
-          <ul>
-            <li><strong>관리자 API는 현재 구현돼 있다.</strong> `MANAGE_EVENT` 권한으로 목록·상세·생성·수정·좌석 전체 교체·활성 토글을 수행한다.</li>
-            <li><strong>관리자 웹 화면은 없다.</strong> 개통 준비에서 API 직접 호출을 운영 절차로 삼지 말고 전용 목록·편집·좌석맵·활성화 화면을 만든다.</li>
-            <li><strong>기본 시드는 없다.</strong> 운영 초기화 절차에서 직접 등록해야 한다.</li>
-            <li><strong>빈 좌석맵 활성화를 서버가 막지 않는다.</strong> 화면 가드와 별개로 활성화 API에도 좌석 등록 검사를 넣어야 한다.</li>
-            <li><strong>레이아웃은 원본이고 이벤트 좌석은 복사본이다.</strong> 레이아웃이 바뀌어도 이미 생성된 이벤트 좌석표를 소급 변경하지 않는다.</li>
-            <li><strong>seatType은 String whitelist다.</strong> NORMAL·DRIVER·GUIDE·FOLDABLE·DISABLED·AISLE만 허용한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이어지는 단위</h2>
-        <div class="hub-grid">
-          <a class="card" href="F03-16.html"><div class="eyebrow">사용처</div><h3>F03-16 이벤트 버스대절</h3><p>버스 좌석 배치 생성 원천.</p></a>
-          <a class="card" href="F03-14.html"><div class="eyebrow">전제</div><h3>F03-14 이동수단 공통 베이스</h3><p>버스 방식 설정.</p></a>
-          <a class="card" href="../policies/permission.html"><div class="eyebrow">정책</div><h3>권한·역할</h3><p>호스트 운영 도구 접근.</p></a>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
-  - business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md
--->
+      <section><h2>연결 기능</h2><div class="cards">
+        <a class="card" href="F03-16.html"><div class="eyebrow">사용처</div><h3>대절 버스와 자리</h3><p>활성 배치도를 차량에 복사한다.</p></a>
+        <a class="card" href="F03-14.html"><div class="eyebrow">설정</div><h3>이동수단 공통 설정</h3><p>모임의 이동 운영을 연다.</p></a>
+      </div></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/launch-status.js"></script>
   <script src="../assets/app.js"></script>
 </body>

@@ -1,6 +1,6 @@
 # 알림 정책 PRD
 
-<!-- supporting-doc-status: 2026-05-22 -->
+<!-- supporting-doc-status: 2026-09-02 -->
 
 > 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 
@@ -40,7 +40,29 @@ flowchart TD
 - 알림 딥링크 대상이 삭제/만료/권한 없음 상태일 때의 fallback이 있어야 한다.
 - OS 권한 거부 상태에서도 앱 내 알림함 정책을 분리해서 정의해야 한다.
 
-## 5. NotificationType 71~83 실제 생산 배선 (2026-07-29)
+## 5. 이동수단 알림 현재 계약 (2026-09-02)
+
+통합 차량 모델은 다음 네 알림을 실제로 영속 대기열에 적재한다. 상태 변경과 알림 대기 행을 같은
+트랜잭션에 저장하므로 프로세스가 커밋 직후 종료돼도 스케줄러가 재시도할 수 있다.
+
+| 번호 | 알림 | 발생 시점 | 수신자 | 앱 이동 |
+| ---: | --- | --- | --- | --- |
+| 77 | `CARPOOL_OFFER_CONFIRMED` | 승용차 제안 승인 | 차량 주인 | 해당 모임의 통합 이동수단 화면 |
+| 78 | `CARPOOL_OFFER_REJECTED` | 승용차 제안 거절 | 차량 주인 | 해당 모임의 통합 이동수단 화면 |
+| 81 | `BUS_SEAT_ASSIGNED` | 호스트가 사용자를 새 자리에 배정 | 배정된 사용자 | 해당 차량·자리 화면 |
+| 82 | `BUS_SEAT_CHANGED` | 자리 이동·해제, 차량 취소, 참가 종료 | 영향을 받은 사용자 또는 승용차 주인 | 해당 차량·자리 화면 |
+
+79·80은 통합 전에 발송된 알림 행을 앱이 계속 열 수 있게 enum과 라우팅만 유지하며 새로 발행하지 않는다.
+121도 같은 이유로 해석 호환만 유지한다. 앱은 새 payload의 `vehicleId`를 사용하고, 과거 81·82·121
+행에서는 `busId`도 읽는다. 이동수단 7종은 모두 권한을 다시 검사하는 통합 이동수단 화면으로 연결된다.
+
+관련 검증은 `DurableNotificationOutboxConventionTest`, 이동수단 서비스 테스트,
+`notification_router_dead_end_wiring_test.dart`와 이동수단 알림 테스트에서 수행한다.
+
+## 과거 기록 — NotificationType 71~83 생산 배선 (2026-07-29)
+
+> 아래 생산 상태와 Flutter 라우팅 설명은 2026-07-29 당시 기록이다. 이동수단 알림의 현재 판단에는
+> 바로 위 “이동수단 알림 현재 계약”을 사용한다.
 
 > enum 선언과 production publisher/listener/send, 수신자 fanout, payload, Flutter route를 각각 실측한다. 삭제된 event-extensions 계획은 현재 전송 계약이 아니다.
 
@@ -120,12 +142,12 @@ flowchart TD
 | 74 | `EVENT_PREPAYMENT_BANK_REJECTED` | 연결됨 | 신청자 본인 | reason은 payload가 아닌 message |
 | 75 | `EVENT_PREPAYMENT_EXPIRED` | listener only, publisher 없음 | — | dead wiring |
 | 76 | `EVENT_PREPAYMENT_REFUNDED` | 연결됨 | 신청자 본인 | amount는 message |
-| 77 | `CARPOOL_OFFER_CONFIRMED` | enum only | — | 생산 배선 없음 |
-| 78 | `CARPOOL_OFFER_REJECTED` | enum only | — | 생산 배선 없음 |
-| 79 | `CARPOOL_PASSENGER_ASSIGNED` | enum only | — | 생산 배선 없음 |
-| 80 | `CARPOOL_PASSENGER_UNASSIGNED` | enum only | — | 생산 배선 없음 |
-| 81 | `BUS_SEAT_ASSIGNED` | enum only | — | 생산 배선 없음 |
-| 82 | `BUS_SEAT_CHANGED` | enum only | — | 생산 배선 없음 |
+| 77 | `CARPOOL_OFFER_CONFIRMED` | 승용차 승인 때 영속 대기열 적재 | 차량 주인 | 통합 이동수단 화면 |
+| 78 | `CARPOOL_OFFER_REJECTED` | 승용차 거절 때 영속 대기열 적재 | 차량 주인 | 통합 이동수단 화면 |
+| 79 | `CARPOOL_PASSENGER_ASSIGNED` | 과거 알림 호환 전용 | — | 저장된 과거 행은 통합 이동수단 화면으로 연결 |
+| 80 | `CARPOOL_PASSENGER_UNASSIGNED` | 과거 알림 호환 전용 | — | 저장된 과거 행은 통합 이동수단 화면으로 연결 |
+| 81 | `BUS_SEAT_ASSIGNED` | 호스트의 새 자리 배정 때 영속 대기열 적재 | 배정된 사용자 | 해당 차량·자리 화면 |
+| 82 | `BUS_SEAT_CHANGED` | 자리 이동·해제·차량 취소·참가 종료 때 영속 대기열 적재 | 영향을 받은 사용자 | 해당 차량·자리 화면 |
 | 83 | `EVENT_PREPAYMENT_REFUND_REQUESTED` | 기본 3일 후 escalation | 주 호스트 1명 | 최초 요청 즉시 발송 아님 |
 | 84~95 | `REFUND_*` (12종) | 마켓 환불 플로우 상태 변화 | 환불 당사자 | F08-14 환불 관련 알림 |
 | 96 | `FAVORITE_PERSON_NEW_EVENT` | 관심인이 새 이벤트 발행 | 해당 관심인을 등록한 사용자 | `FavoriteService.isEffectiveFavorite()` 팬아웃 (F19-01) |
@@ -158,6 +180,6 @@ flowchart TD
 | 64/65 MEETING_SETTLEMENT_APPEAL_* | `payment` | 가능 |
 | 66 SUPPORT_ISSUE_UPDATED | `notification` | 가능 (답변 알림이므로 강제 권장) |
 | 67~70 EVENT_PHOTO_* | `event` | 가능 |
-| 71~83 선입금/카풀/버스 | `payment`/`event` | 생산 연결 여부가 혼재하므로 §5.2 실측표 우선 |
+| 71~83 선입금·이동수단 | `payment`/`event` | 이동수단 77·78·81·82는 실제 생산, 79·80은 과거 행 호환 전용. 선입금은 위 과거 실측표와 현재 기능 문서를 함께 확인 |
 | 84~95 REFUND_* | `payment` | 가능 (금전 관련 강제 권장) |
 | 96 FAVORITE_PERSON_NEW_EVENT | `event` | 가능 |

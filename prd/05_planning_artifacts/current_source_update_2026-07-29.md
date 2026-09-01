@@ -1,5 +1,12 @@
 # 2026-07-29 현재 소스 실측 갱신 노트
 
+> **역사 기록:** 이 문서는 2026-07-29 당시 소스를 보존한다. 대절 버스·카풀의 현재 계약은
+> [이동수단 공통 설정](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md),
+> [카풀·자차](../02_feature_prds/03_event/F03-15_event-carpool_prd.md),
+> [대절 버스와 자리 배정](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md),
+> [차량 좌석 배치도 운영](../02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md)의
+> 2026-09-02 갱신 내용을 우선한다.
+
 > 범위: `business_logic`의 2026-07-08 문서 기준선을 현재 `community_api`, `community_app`,
 > `community-realtime`, `community_admin_api` 소스와 다시 대조했다. 신규 도메인·기능 ID는
 > 만들지 않고 기존 21개 도메인·175개 기능 체계 안에서 사실, UI 도달성, 권한, 상태 전이,

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F03-15 이벤트 카풀 — community PRD</title>
+  <title>F03-15 카풀·자차 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -12,158 +12,49 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb">
-          <a href="../index.html">문서 허브</a><span>›</span>
-          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-15 이벤트 카풀
-        </div>
-        <h1>F03-15. 이벤트 카풀</h1>
-        <p class="lede">
-          참석자가 운전자로 지원하거나 탑승을 요청하고, 호스트가 운행을 승인한 뒤 탑승자를 배정하는 기능이다.
-          서버 상태기계와 참가자·운전자·호스트용 Flutter 화면, 안전 신고 진입, 배정 이력과 알림 발행까지 연결돼 있다.
-          다만 첫 출시에서는 이동수단 영역을 개통하지 않으므로 신규 지원·탑승·배정은 닫고, 기존 참여자의
-          운행 철회·카풀 이탈·안전 신고처럼 위험을 줄이는 출구만 유지한다.
-        </p>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/03-event.html">이벤트</a><span>›</span>F03-15</div>
+        <h1>F03-15. 카풀·자차</h1>
+        <p class="lede">참석자가 승용차를 제안하거나 다른 차량에 태워 달라고 요청하고, 호스트가 승인·배정한다. 자차도 본인 자리 하나와 0원 금액을 가진 차량으로 관리한다.</p>
+        <div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">운영 화면 완료</span><span class="pill warn">책임 고지·실기기 검증 뒤 개통</span></div>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
       <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">전제 방식</div><div class="value">카풀</div></div>
-          <div class="metric"><div class="label">서버 API</div><div class="value">9개</div><div class="hint">조회·지원·결정·철회·신고·탑승·배정</div></div>
-          <div class="metric"><div class="label">Flutter 연결</div><div class="value">역할별 화면</div><div class="hint">참가자·운전자·호스트·신고</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 호스트가 이동 리스크를 운영 가능한 표로 만든다</span>
-          <p>카풀은 "누가 탈 수 있나"보다 "누가 누구 차에 배정됐나"가 중요하다. 운전자 지원, 호스트 확정,
-            참가자 배정, 배정 해제, 개별 이동 선택을 모두 분리해야 당일 혼선이 줄어든다.</p>
-        </div>
-        <div class="callout warn">
-          <span class="label">2026-08-30 현재 — 코드는 닫혔지만 출시 개통은 별도 결정</span>
-          <p>운전자 지원·승인/반려·철회, 참가자 이동 선택·이탈, 호스트 배정·해제와 안전 신고가 실제 화면에서
-            서버로 이어진다. 서버는 참석 여부, 호스트 권한, 승인 상태, 좌석 정원, 차단 관계와 동시 변경을
-            검사하고 배정 변경 이력과 알림 의도를 같은 처리 안에 남긴다.</p>
-          <p>남은 일은 기능을 새로 만드는 것이 아니라 개통 조건을 증명하는 일이다. 호스트 본인 좌석 선택의
-            범위를 확정하고, 실제 역할별 계정과 기기에서 재배정·철회·알림·신고를 왕복한 뒤 이동 책임 고지를
-            승인해야 한다.</p>
-        </div>
+        <h2>현재 동작</h2>
+        <div class="table-wrap"><table><thead><tr><th>흐름</th><th>현재 규칙</th></tr></thead><tbody>
+          <tr><td>승용차 제안</td><td>참석자 본인이 등록하면 승인 대기가 되고, 주인은 자기 차량의 첫 자리를 차지한다.</td></tr>
+          <tr><td>승인·거절</td><td>호스트·공동 호스트가 화면에서 본 차량 버전을 대조해 한 번만 결정한다.</td></tr>
+          <tr><td>탑승 배정</td><td>확정 차량·참석 유지·차단 관계·빈자리를 확인하고 한 처리로 재배정한다.</td></tr>
+          <tr><td>거절·취소</td><td>탑승자를 내리고 차량 주인을 자차로 복귀시킨다.</td></tr>
+          <tr><td>자차</td><td>허용된 참석자가 만들고 본인 자리 1개·0원으로 즉시 확정하며 스스로 종료할 수 있다.</td></tr>
+          <tr><td>안전 신고</td><td>차량 ID에서 신고 대상 운전자를 서버가 확정한다.</td></tr>
+        </tbody></table></div>
       </section>
 
       <section>
-        <h2>운영 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["카풀 방식 이벤트"] --> B["운전자 지원 등록"]
-    B --> C{"호스트 심사"}
-    C -->|"확정"| D["운전자 확정"]
-    C -->|"거절"| E["운전자 거절"]
-    D --> F["탑승자 목록"]
-    F --> G{"이동 선택"}
-    G -->|"카풀 배정"| H["배정된 차량 기록"]
-    G -->|"개별 이동"| I["개별 이동 선택"]
-    H --> J["배정 변경 이력"]
-    H -->|"해제"| K["배정 해제"]
-          </div>
-        </div>
+        <h2>안전과 봉인</h2>
+        <p>신규 승용차 제안과 탑승 배정은 <code>TRANSPORT</code>가 열리기 전까지 막는다. 기존 승용차 취소, 자차 종료, 이동 조율 이탈, 차량 신고는 위험을 줄이는 동작이므로 봉인 중에도 사용할 수 있다.</p>
+        <div class="callout warn"><strong>플랫폼 보증 범위:</strong> 참석 자격과 호스트 배정은 확인하지만 운전자 면허·보험·차량 안전을 확인하거나 보증하지 않는다. 이 문구를 제품·법무가 승인한 뒤 개통한다.</div>
       </section>
 
       <section>
-        <h2>사용자 시나리오</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">운전자</div>
-            <h3>참가자가 운전자로 지원</h3>
-            <p>좌석 수와 픽업 가능 인원을 입력해 차량 제공을 신청한다. 호스트가 확정하기 전까지는 배정 대상 차량이 아니다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">호스트</div>
-            <h3>운전자 확정 후 참가자 배정</h3>
-            <p>호스트가 운전자를 확정한 뒤 참가자를 해당 차량에 배정한다. 픽업 가능 인원 초과 배정은 차단된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">참가자</div>
-            <h3>개별 이동 선택</h3>
-            <p>카풀 요청 또는 개별 이동을 화면에서 고른다. 운전자 지원이 살아 있는 사용자는 탑승자로 동시에 등록할 수 없고, 이미 배정된 사용자는 먼저 카풀에서 나와야 선택을 바꿀 수 있다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">권한</div>
-            <h3>참가자는 자기 정보만 본다</h3>
-            <p>일반 참가자가 탑승자 목록을 조회하면 본인 항목만 보인다. 호스트는 전체 탑승자를 보며 운영한다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">방식 가드</div>
-            <h3>카풀이 아닌 이벤트에서 진입</h3>
-            <p>지원·결정·철회·신고·탑승 등록·배정 같은 변경 동작은 이벤트가 카풀 방식인지 확인한다. 첫 출시에서는 출시 범위 게이트가 신규 카풀 사용도 한 번 더 막는다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">초안 단계 전환</div>
-            <h3>카풀 설정 후 버스로 바꿈</h3>
-            <p>초안에서 이동수단 방식을 버스로 바꾸면 더 이상 유효하지 않은 카풀 데이터가 삭제된다. 공개 전 변경이므로 사용자에게 알림은 필요 없다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">안전한 종료</div>
-            <h3>운전자 철회와 참가자 이탈</h3>
-            <p>운전자가 확정 운행을 철회하면 배정된 탑승자가 모두 해제된다. 참가자는 스스로 카풀에서 나갈 수 있고, 참석 종료 때도 유령 운행·배정을 남기지 않는다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">안전 신고</div>
-            <h3>참석자가 운전자를 신고</h3>
-            <p>운행 카드를 길게 눌러 신고한다. 서버는 운행에서 대상 운전자를 확정하고 자기 신고·비참석자·잘못된 사유를 거절한다.</p>
-          </article>
-        </div>
+        <h2>남은 일</h2>
+        <ol>
+          <li>실제 호스트·운전자·탑승자 계정으로 제안→승인/거절→배정→취소→자차 복귀를 왕복한다.</li>
+          <li>실제 푸시가 통합 차량 화면으로 이동하는지 확인한다.</li>
+          <li>차량 신고가 운영 화면에서 조회·처리되는지 확인한다.</li>
+          <li>책임 고지를 승인하고 <code>TRANSPORT</code>를 연다.</li>
+        </ol>
       </section>
 
-      <section>
-        <h2>서버 동작과 현재 Flutter 노출</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
-            <tbody>
-              <tr><td>운전자 지원·철회</td><td>참석자 본인</td><td>화면에서 좌석 수·픽업 정보로 지원하고 철회한다. 이벤트당 활성 운행은 1건이며 철회 시 기존 배정도 안전하게 해제된다.</td></tr>
-              <tr><td>운행 승인·반려</td><td>호스트·공동 호스트</td><td>화면에서 대기 중인 운행만 결정한다. 오래 열린 화면의 늦은 결정을 버전 대조로 거절하고 다시 읽게 한다.</td></tr>
-              <tr><td>이동 선택·배정/해제</td><td>참가자·호스트/공동 호스트</td><td>참가자는 카풀 요청·개별 이동을 저장하고, 호스트는 승인된 차량의 남은 정원 안에서 배정·재배정·해제한다. 모든 변경은 이력으로 남는다.</td></tr>
-              <tr><td>운전자 안전 신고</td><td>신고 대상이 아닌 참석자</td><td>운전자 카드 길게 누르기로 신고 화면에 들어가며, 서버는 이벤트·운행·대상 운전자를 경로에서 확정해 플랫폼 신고 운영 흐름으로 보낸다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">당일 혼선을 줄이는 제약</span>
-          <ul>
-            <li><strong>확정된 운전자만 배정 대상이다.</strong> 지원만 한 운전자의 차량에는 참가자를 배정하지 않는다.</li>
-            <li><strong>픽업 가능 인원을 넘길 수 없다.</strong> 좌석 수와 픽업 가능 인원은 다를 수 있다.</li>
-            <li><strong>운행 결정과 배정 변경은 기록된다.</strong> 배정·재배정·해제 이력이 남고, 운행 승인·반려 및 배정·해제 알림은 영속 전송 대기열에 같은 처리로 기록된다.</li>
-            <li><strong>참석자와 운영자 화면을 분리한다.</strong> 참가자는 자기 이동 선택·운전자 지원·철회·이탈·신고를, 호스트는 운행 심사와 탑승자 배정을 처리한다.</li>
-            <li><strong>역할과 안전 조건을 서버가 다시 확인한다.</strong> 화면을 우회해도 참석 여부, 호스트 권한, 확정 차량, 정원, 차단 관계와 운전자·탑승자 역할 충돌을 거절한다.</li>
-            <li><strong>운영 중 종료 동작은 의도적으로 허용한다.</strong> 모집이 끝난 뒤에도 못 태우는 운행 철회와 위험한 카풀 이탈·신고를 막지 않는다.</li>
-            <li><strong>개통 전 실기기 검증이 남았다.</strong> 호스트·운전자·탑승자의 알림 이동, 재배정, 철회, 신고 종결과 책임 고지를 같은 출시후보에서 확인해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이어지는 단위</h2>
-        <div class="hub-grid">
-          <a class="card" href="F03-14.html"><div class="eyebrow">전제</div><h3>F03-14 이동수단 공통 베이스</h3><p>카풀 방식일 때만 열림.</p></a>
-          <a class="card" href="F03-05.html"><div class="eyebrow">참가자</div><h3>F03-05 이벤트 신청·참석</h3><p>승인된 참가자 기반.</p></a>
-          <a class="card" href="../domains/12-notification.html"><div class="eyebrow">알림</div><h3>12 알림</h3><p>운행 결정과 배정·해제 알림이 영속 전송 경로로 이어짐.</p></a>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
-  - business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md
--->
+      <section><h2>연결 기능</h2><div class="cards">
+        <a class="card" href="F03-14.html"><div class="eyebrow">설정</div><h3>이동수단 공통 설정</h3><p>이동 운영과 자차 허용.</p></a>
+        <a class="card" href="F03-16.html"><div class="eyebrow">형제 기능</div><h3>대절 버스와 자리</h3><p>같은 차량·자리 모델을 사용.</p></a>
+      </div></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/launch-status.js"></script>
   <script src="../assets/app.js"></script>
 </body>

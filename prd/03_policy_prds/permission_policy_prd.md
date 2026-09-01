@@ -1,6 +1,6 @@
 # 권한 정책 PRD
 
-<!-- supporting-doc-status: 2026-05-22 -->
+<!-- supporting-doc-status: 2026-09-02 -->
 
 > 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 
@@ -208,7 +208,32 @@ flowchart TD
 - `POST .../refund-preview`: Controller가 actor를 log만 하고 service에 전달하지 않아 applicationId 기반 IDOR 후보
 - `GET .../no-show-refund`: principal이 없고 path eventId도 service에서 무시해 actor authorization/event scoping 누락
 
-### W4 — 교통 모드 베이스
+### 2026-09-02 현재 — 통합 이동수단 권한
+
+종전 카풀·버스별 권한은 통합 차량 경로로 교체됐다. 현재 권한은 아래처럼 판단한다.
+
+| 업무 | 허용 주체 | 서버 방어 |
+| --- | --- | --- |
+| 이동 설정 조회 | 인증 사용자 | 출시 범위가 닫히면 차단. 민감한 탑승자 정보는 포함하지 않음 |
+| 이동 설정 변경 | 호스트·공동 호스트 | 이벤트 행을 잠그고 권한 재확인. 살아 있는 차량이 있으면 운영 종료 거절 |
+| 차량 목록·자리 조회 | 호스트·공동 호스트, 참석 확정자, 대기자 | 역할을 먼저 확인하고 일반 참가자에게 타인의 식별자·이름을 숨김 |
+| 대절 버스 등록 | 호스트·공동 호스트 | 열린 모임·이동 운영·활성 배치도 또는 유효 정원을 검사 |
+| 승용차·자차 등록 | 참석 확정자 본인 | 차량 주인은 인증 사용자로 고정. 자차 허용·중복 차량·정원을 검사 |
+| 승용차 승인·거절 | 호스트·공동 호스트 | 대기 상태와 화면이 본 버전을 함께 확인 |
+| 자리 배정·이동 | 호스트·공동 호스트 또는 자기 선택 차량의 참석자 본인 | 참석 자격·빈자리·차단 관계·차량 상태·다른 차량 중복 탑승을 확인 |
+| 자리 반납 | 호스트·공동 호스트 또는 허용된 참가자 본인 | 참가자는 자기 자리·자기 선택 차량·자리 반납 허용을 모두 충족해야 함 |
+| 운행 취소·자차 종료·이동 조율 이탈 | 해당 차량 주인 또는 호스트 명령 | 신규 점유를 만들지 않는 안전 출구라 출시 봉인 중에도 허용 |
+| 자리·차량 신고 | 참석 확정자 | 대상 사용자를 본문에서 받지 않고 서버가 자리 점유자·차량 주인으로 확정 |
+| 차량 배치도 운영 | `MANAGE_EVENT` 플랫폼 운영자 | 조회는 읽기 권한, 생성·수정·활성화는 쓰기 권한. 빈 좌석표와 사용 중 변경 차단 |
+
+관련 권한·경합 회귀는 `EventVehicleServiceTest`, `EventVehicleSeatFlowDataJpaTest`,
+`EventVehicleReportServiceTest`, `ManageVehicleLayoutGuardTest`, 앱의 이동수단 접근 테스트에서 확인한다.
+2026-09-02 표적 회귀는 사용자 API 156건·앱 160건·관리자 API 23건·관리자 웹 E2E 3건 실패 0이다.
+
+### 2026-07-29 이력 — W4 교통 모드 베이스
+
+> 아래 W4~W7 표와 당시 권한 공백은 통합 전 소스를 기록한 이력이다. 현재 권한 판단에는 바로 위
+> “2026-09-02 현재 — 통합 이동수단 권한”과 F03-14~17 기능 PRD를 사용한다.
 
 | Endpoint | Method | 허용 역할 | 빈 호출 | 비고 |
 |---|---|---|---|---|
@@ -270,7 +295,7 @@ flowchart TD
 - 카풀 offer는 `EventAttendance.status=ATTENDING`이어야 한다. `APPROVED_PENDING_PAYMENT`만으로는 허용되지 않는다.
 - non-host 버스 좌석 지정은 `allowSelfSwap=true`와 `userId=actor`만 검사한다. assignment mode·ATTENDING/WAITING·lockedByHost는 현재 PUT gate에 포함되지 않는다.
 
-### 현재 권한 Gap
+### 2026-07-29 당시 권한 공백 — 현재 판단에 사용하지 않음
 
 - transport GET과 bus list GET은 인증만 요구하며 event 존재·참가 관계를 service에서 확인하지 않는다.
 - bus self PUT은 참석 자격·assignment mode·locked seat 검사가 없다.

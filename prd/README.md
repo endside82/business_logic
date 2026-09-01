@@ -105,9 +105,9 @@
 | ID | 기능 | Wave |
 |---|---|---|
 | F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | W2a/W2b/W3 |
-| F03-14 | 교통 모드 베이스 (NONE/CARPOOL/BUS) | W4 |
-| F03-15 | 카풀 운영 (offer/passenger/swap) | W5 |
-| F03-16 | 이벤트 측 버스 운영 + 좌석 위젯 | W7 |
-| F03-17 | 차량 레이아웃 카탈로그 (관리자) | W6 |
+| F03-14 | 이동수단 공통 설정 | W4에서 시작, 2026-09-02 통합 완료 |
+| F03-15 | 카풀·자차 | W5에서 시작, 2026-09-02 통합 완료 |
+| F03-16 | 대절 버스와 자리 배정 | W7에서 시작, 2026-09-02 통합 완료 |
+| F03-17 | 차량 좌석 배치도 운영 | W6에서 시작, 2026-09-02 운영 화면 완료 |
 
 영향 받는 보조 문서: `PRD_MIGRATION_STATUS.md`, `SUPPORTING_DOCS_INDEX.md`, `03_policy_prds/notification_policy_prd.md`, `03_policy_prds/permission_policy_prd.md`, `03_policy_prds/state_policy_prd.md`, `00_product_prd.md`.

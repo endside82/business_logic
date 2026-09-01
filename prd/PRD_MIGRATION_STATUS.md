@@ -1,6 +1,6 @@
 # PRD 문서 상태표
 
-> 업데이트: 2026-07-29. `business_logic/prd/02_feature_prds`에 기능 PRD 175개가 등록되어 있다. 상태 컬럼은 각 기능 PRD의 실제 `문서 상태` 문구 또는 source-first 본문을 기준으로 갱신한다. 이 표는 구현 완료표가 아니라, PRD가 어떤 원천과 어느 수준의 소스 대조로 작성됐는지 보여주는 문서 운영 인벤토리다.
+> 업데이트: 2026-09-02. `business_logic/prd/02_feature_prds`에 기능 PRD 175개가 등록되어 있다. 상태 컬럼은 각 기능 PRD의 실제 `문서 상태` 문구 또는 source-first 본문을 기준으로 갱신한다. 이 표는 구현 완료표가 아니라, PRD가 어떤 원천과 어느 수준의 소스 대조로 작성됐는지 보여주는 문서 운영 인벤토리다.
 >
 > v4.5 W1~W7 이벤트 확장 슬라이스에서 PRD 5개(F03-13~17)가 추가됐다.
 > 당시 단일 master plan 등 `docs/plan/event-extensions/` 산출물 3개는 실코드 병합 뒤
@@ -13,16 +13,28 @@
 
 | 항목 | 개수 |
 | --- | ---: |
-| **현재 총 기능 PRD (2026-07-29)** | **175** |
+| **현재 총 기능 PRD (2026-09-02)** | **175** |
 | Golden sample | 1 |
 | 실사 기반 전환본 | 115 |
 | 실사 기반 갱신본 | 1 |
 | 실사 기반 신규 작성 | 1 |
-| 신규 PRD | 7 |
+| 신규 PRD | 3 |
+| 코드·운영 화면 완료 | 4 |
 | source-first 구현 확인 | 42 |
 | source-first PRD | 5 |
 | source-first 부분 구현 | 3 |
 | 누락/확인 필요 | 0 |
+
+## 2026-09-02 — 대절 버스·카풀 통합 완료 반영
+
+F03-14~17은 종전 `NONE/CARPOOL/BUS` 선택, 별도 카풀·버스 표와 “관리자 차량 화면 없음” 계약을 더
+이상 사용하지 않는다. 현재는 `BUS/CAR/SELF` 차량 한 모델, 지정·비지정 자리, 호스트 전담·참가자
+자기 선택, 표준 배치도 9종과 관리자 운영 화면을 기준으로 한다. 네 기능 PRD와 HTML을 현재 소스에 맞춰
+갱신했고 사용자 API 156건·앱 160건·관리자 API 23건·관리자 웹 E2E 3건이 실패 없이 통과했다.
+
+신규 이용은 기능 미구현 때문에 닫힌 것이 아니다. 서명 앱에서 호스트·운전자·탑승자 왕복과 실제
+알림·신고, 책임 고지를 확인한 뒤 `TRANSPORT`를 개통한다. 완료 근거는
+[대절 버스·카풀 통합 기능 완료 근거](../../docs/release-gate/evidence/MOV-01/README.md)를 따른다.
 
 ## 2026-08-18 (2차) — 상태 축 분리와 갭 후보 판정 미완 고지
 
@@ -277,12 +289,28 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 - 별도 vehicle layout seed JSON도 존재하지 않는다.
 - 빈 DB에서는 `GET /api/v1/vehicle-layouts/active`가 빈 목록일 수 있다. 운영자가 관리자 API로 레이아웃 생성 → 좌석맵 전체 등록 → active 설정을 해야 한다.
 
+### 이동수단 현재 계약 (2026-09-02)
+
+위 2026-05~07 스키마·시드 설명은 당시 이력을 보존한 것이다. 현재 V1에는 종전
+`event_carpool_*`·`event_bus*` 대신 아래 통합 표가 들어 있다.
+
+- `event_transport_config`: 이동 운영·자리 반납·자차 허용의 독립 설정
+- `event_vehicle`: `BUS/CAR/SELF`, `DESIGNATED/UNDESIGNATED`,
+  `HOST_ASSIGNS/SELF_CLAIMS`, 차량별 정산 금액과 승용차 승인 상태
+- `event_vehicle_seat`: 지정·비지정 모두의 실제 탑승 자리. 모임 안 사용자 중복 탑승을 유일 제약으로 차단
+- `event_transport_participant`: 승차 위치와 이동 조율 참여 상태
+- `event_vehicle_seat_log`: 배정·이동·반납 이력
+- `vehicle_layout`, `vehicle_layout_seat`: 표준 좌석 배치도와 좌석 정의
+
+두 API 저장소의 반복 기준 데이터에는 25·28·41·45인승 버스와 7·9·11·12·15인승 승합차 9종이
+들어 있다. 관리자 웹은 목록·좌석표·복제·이름/설명 수정·활성화/비활성화를 제공한다.
+
 ### 현재 후속 범위
 
-- **관리자 차량 API** — 이미 `community_admin_api`에 `MANAGE_EVENT` 목록·상세·생성·메타 수정·좌석 전체 교체·active 토글 6개가 구현됨. DELETE는 없음.
-- **Flutter 교통** — transport/bus 수직 슬라이스 없음. 카풀은 신고 API·route·screen만 있으나 presentation에서 해당 route로 이동하는 caller가 없어 direct route/deep-link 수준.
+- **관리자 차량 운영** — `MANAGE_EVENT` 관리자 API와 웹에서 목록·좌석표·복제·이름/설명 수정·활성화/비활성화를 할 수 있다. 임의 좌석 위치 편집기와 삭제 명령은 후속 확장이다.
+- **Flutter 이동수단** — 통합 설정·차량·자리·승차 위치·승용차 결정·취소·자차 종료·자리/차량 신고 화면과 라우팅이 연결됐다.
 - **환불 정책** — 6종 카탈로그와 귀책 기반 계산이 구현됨.
-- **카풀 로그/알림** — assignment log는 쓰지 않고 77~82 알림은 enum only.
+- **이동수단 로그/알림** — 자리 변경 이력을 저장하며 77·78·81·82를 영속 알림 대기열에 기록한다. 79·80은 과거 알림 행 해석용으로만 유지한다.
 - **선입금 만료/환불** — 만료 payment 정리·75 publisher와 escalation 환불 경합 방지가 현재 Gap.
 
 ## v4.5 신규 기능 PRD (별도 등록 — `02_feature_prds/03_event/`)
@@ -290,10 +318,10 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | ID | 도메인 | 예상 PRD 파일 | 주요 기능 | Wave | 상태 |
 | --- | --- | --- | --- | --- | --- |
 | F03-13 | 이벤트 | `F03-13_event-prepayment_prd.md` | 참가 선입금 (서버 WALLET/BANK, Flutter WALLET only) | W2a/W2b/W3 | current source 실측 |
-| F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 교통 모드 베이스 (Flutter 없음) | W4 | current source 실측 |
-| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 카풀 서버 운영 + 고아 신고 route | W5 | current source 실측 |
-| F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 이벤트 버스 서버 운영, 좌석 위젯 없음 | W7 | current source 실측 |
-| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 사용자 read + 관리자 API, 무시드 | W6 | current source 실측 |
+| F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 이동 운영·자리 반납·자차 허용 공통 설정 | W4에서 시작 | 2026-09-02 코드 완료 |
+| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 승용차 제안·결정·취소와 자차·탑승 조율 | W5에서 시작 | 2026-09-02 코드 완료 |
+| F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 대절 버스, 지정·비지정 자리와 배정·반납·신고 | W7에서 시작 | 2026-09-02 코드 완료 |
+| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 표준 9종과 관리자 배치도 운영 | W6에서 시작 | 2026-09-02 코드·운영 화면 완료 |
 
 신규 PRD 5개는 모두 작성 완료 상태다. 세부 구현/클라이언트 후속 범위는 각 기능 PRD의 §8 Gap/Risk를 우선한다.
 
@@ -504,6 +532,6 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 | 2 | 출시 범위 게이트 (P0-SCOPE-01) | 이 배포가 파는 도메인만 열고 나머지 7개 도메인은 서버·앱 양쪽에서 봉인하는 구조. 봉인된 도메인의 기존 건에 대한 조회·취소·환불 등 **안전 출구**는 유지된다는 계약을 포함한다. 앱은 서버가 주는 범위 목록으로 메뉴·라우트를 그린다. | `docs/plan/P0SCOPE_ACCLOCK_EXECUTION_PLAN_2026-08-17.md`, `docs/release-gate/evidence/P0SCOPE-ACCLOCK/` |
 | 3 | 계정 정지·차단의 권리구제 (ACC-LOCK-01) | 정지·차단 계정은 로그인을 거부당하지 않고 **제한된 권한의 세션**을 받는다. 제재 안내 화면, 본인 케이스 결과 확인·이의 제기, 데이터 권리 등 허용 동선 22행이 확정됐다. 현재 인증·프로필 계열 PRD(F01·F13·F15)에는 이 제한 세션 개념 자체가 없다. | `docs/plan/P0SCOPE_ACCLOCK_EXECUTION_PLAN_2026-08-17.md`, `docs/release-gate/evidence/P0SCOPE-ACCLOCK/` |
 | 4 | 분쟁 종결 완결 (DSP-01) | 분쟁 케이스의 자동/수동 종결, 보상 원장, 당사자 명령·동의 종결, 관리자 위임 확정, 종결 고지 단일화. F18-01~05 전체가 이 재설계 이전 기준이다. | `docs/plan/DSP01_DISPUTE_CLOSURE_PLAN_2026-08-16.md`, `docs/release-gate/evidence/DSP-01/` |
-| 5 | 버스·카풀 이동 수단 (MOV-01) | 이벤트 이동 수단(전세버스 좌석 배정 3모드·카풀 상태 흐름)과 좌석 이동·신고 규칙. F03-14~17이 이 착지 이전 기준이다. | `docs/IMPLEMENTATION_WORKBOARD.md`, `docs/plan/FEATURE_IMPLEMENTATION_COMPLETENESS_MATRIX_2026-08-12.md` |
+| 5 | 대절 버스·카풀 이동수단 (`MOV-01`) | **2026-09-02 반영 완료.** F03-14~17과 관련 HTML·정책·색인을 통합 차량 모델, 표준 9종, 관리자 운영 화면과 코드 완료·개통 증명 대기 상태로 갱신했다. | `docs/release-gate/evidence/MOV-01/README.md`, `docs/IMPLEMENTATION_WORKBOARD.md` |
 | 6 | 마일리지 규칙·배지 (MLG-01) | 기본 적립 규칙 3종 시딩, 규칙의 신규 적용 전용 원칙, 서버 계산 권한 게이팅, 배지·등급. F16-01~08이 이 착지 이전 기준이다. | `docs/IMPLEMENTATION_WORKBOARD.md`, `docs/club_activity/mileage/README.md` |
 | 7 | 이메일 인증 제한 세션의 화면 파급 | 2026-08-18 동기화는 F01-03(및 F01-01·F01-02의 모순 서술)만 정정했다. 미인증 상태에서 각 도메인 화면이 무엇을 보여주고 어디로 안내하는지는 아직 각 기능 PRD에 반영되지 않았다. | `docs/plan/PENDING_DECISIONS_2026-08-15.md`, `docs/release-gate/evidence/P0-REAL-ACCOUNT-E2E/`, `docs/release-gate/RC_MANIFEST_2026-08-18_P0_R2.md` |

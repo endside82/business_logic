@@ -1,6 +1,6 @@
 # 03. 이벤트 PRD
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-22; unit: business_logic/units/03_event -->
+<!-- generated: domain-source-first-rollup; updated: 2026-09-02; unit: business_logic/units/03_event -->
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/03_event/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
@@ -14,7 +14,7 @@
 - 프론트 feature: `community_app/lib/presentation/event/` (2026-07-29 실측: 22 screen 파일, 63 widget 파일)
 **프라이빗 모임(eventType=PRIVATE)** 은 SCR-EV-006 + `GET/POST .../private/detail|open|select|complete|cancel` 시리즈로 별도 단계 모델(`WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED`)을 갖는다. 호스팅비 결제·지갑 차감이 결합되므로 본 단위(F03)에서는 **F03-03(생성)/F03-04(생명주기)/F03-06(신청자 선택)** 의 변형으로 다루고, 결제 흐름은 Unit 06(결제 & 지갑)에서 교차 정리한다.
 
-이 도메인은 기능 PRD 20개로 구성된다(F03-01~12 기존 + F03-13~17 확장 + F03-18 구성인원 인구통계 + F03-19 일정 변경 제안·합의 + F03-20 노쇼 관리). F03-14·F03-16의 Flutter 수직 슬라이스는 없고, F03-15는 안전신고 data/route/screen이 있지만 인앱 navigation caller가 없다. F03-17의 관리자 API는 이미 구현됐지만 기본 차량 seed와 Flutter 카탈로그 소비는 없다. 도메인 수준의 현재 판단은 아래 기능 PRD를 우선하고, `units` trace 수·risk 후보 수는 초기 전환 당시의 역사적 계수로만 사용한다.
+이 도메인은 기능 PRD 20개로 구성된다(F03-01~12 기존 + F03-13~17 확장 + F03-18 구성인원 인구통계 + F03-19 일정 변경 제안·합의 + F03-20 노쇼 관리). F03-14~17 이동수단은 2026-09-01 대절 버스·참가자 승용차·자차 통합 모델로 교체됐고 고객 앱·서버·관리자 API·관리자 웹과 표준 차량 9종까지 완료됐다. 신규 이용은 서명 앱 다중 역할·알림·신고와 책임 고지 검증 뒤 연다. 도메인 수준의 현재 판단은 아래 기능 PRD를 우선하고, `units` trace 수·risk 후보 수는 초기 전환 당시의 역사적 계수로만 사용한다.
 
 > **2026-07-29 current source 요약.** F03-02의 유료 승인제 상세은 `APPROVED_PENDING_PAYMENT → PENDING_PAYMENT`, 결제 금액/기한, 예약 정원 수, `POST /prepayment/wallet`, `PAID → APPROVED + ATTENDING`까지 닫혔다. EventVo viewer capability는 `canManageCapacity`를 포함한 11종이며 Flutter 상세/route가 이를 직접 소비한다. 이벤트 상세에는 k-익명 `fit-preview`와 호스트 재방문 배지도 배선됐다. 일정 변경은 주소 변경 좌표를 보존하고, 노쇼 뒤집기는 교정 체크인을 생성해 출석 증거까지 복원한다. 세부 계약과 잔여 Gap은 F03-02/F03-07/F03-19/F03-20을 따른다.
 
@@ -35,10 +35,10 @@
 | F03-11 | F03-11. 위시리스트 (관심 이벤트) | [F03-11_wishlist_prd.md](../02_feature_prds/03_event/F03-11_wishlist_prd.md) | [F03-11_wishlist](../../units/03_event/F03-11_wishlist) | 전환 완료 | 3 | 1 |
 | F03-12 | F03-12. 내 이벤트 관리 & 참석 로그 | [F03-12_my-events_prd.md](../02_feature_prds/03_event/F03-12_my-events_prd.md) | [F03-12_my-events](../../units/03_event/F03-12_my-events) | 전환 완료 | 3 | 7 |
 | F03-13 | F03-13. 이벤트 참가 선입금 (참가자·호스트) | [F03-13_event-prepayment_prd.md](../02_feature_prds/03_event/F03-13_event-prepayment_prd.md) | current server/app source | 서버 6개 API, Flutter WALLET만 사용자 연결 | 17 | 6 |
-| F03-14 | F03-14. 이동수단 공통 베이스 (Transport Mode) | [F03-14_event-transport-mode_prd.md](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md) | current server/app source | 서버 구현, Flutter 없음 | 7 | 3 |
-| F03-15 | F03-15. 이벤트 카풀 (CARPOOL) | [F03-15_event-carpool_prd.md](../02_feature_prds/03_event/F03-15_event-carpool_prd.md) | current server/app source | 서버 7개 API, Flutter 고아 신고 route | 11 | 5 |
-| F03-16 | F03-16. 이벤트 버스대절 (BUS) | [F03-16_event-bus-charter_prd.md](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | current server/app source | 서버 4개 API, Flutter 없음 | 11 | 5 |
-| F03-17 | F03-17. 차량 레이아웃 카탈로그 | [F03-17_vehicle-layout-catalog_prd.md](../02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | current public/admin source | 사용자 read + 관리자 API 구현, 기본 seed 없음 | 6 | 4 |
+| F03-14 | F03-14. 이동수단 공통 설정 | [F03-14_event-transport-mode_prd.md](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md) | current server/app source | 코드·화면 완료, 실기기 개통 증명 대기 | 0 | 0 |
+| F03-15 | F03-15. 카풀·자차 | [F03-15_event-carpool_prd.md](../02_feature_prds/03_event/F03-15_event-carpool_prd.md) | current server/app source | 코드·화면 완료, 책임 고지·실기기 증명 대기 | 0 | 0 |
+| F03-16 | F03-16. 대절 버스와 자리 배정 | [F03-16_event-bus-charter_prd.md](../02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | current server/app source | 코드·표준 차량 완료, 실기기 증명 대기 | 0 | 0 |
+| F03-17 | F03-17. 차량 좌석 배치도 운영 | [F03-17_vehicle-layout-catalog_prd.md](../02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | current public/admin source | 관리자 API·웹·표준 9종 완료 | 0 | 0 |
 | F03-18 | F03-18. 이벤트 구성인원 인구통계 | [F03-18_event-demographics_prd.md](../02_feature_prds/03_event/F03-18_event-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2, Codex sign-off) | 신규 (2026-05-27 도입) | 8 | 1 |
 | F03-19 | F03-19. 이벤트 일정 변경 제안·참가자 합의 | [F03-19_event-reschedule-consent_prd.md](../02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | (RS-002 reschedule response 계획, 2026-06-01 완료) | 신규 (2026-06-05 등재) | — | — |
 | F03-20 | F03-20. 이벤트 노쇼 관리 | [F03-20_event-no-show_prd.md](../02_feature_prds/03_event/F03-20_event-no-show_prd.md) | (D-20/v3 노쇼 확정·소명·뒤집기, 2026-06-04 구현 완료) | 신규 (2026-06-05 등재) | — | — |
@@ -82,10 +82,10 @@
 | F03-10 | 이벤트 ↔ 플랜 연결 (호스트) | 호스트 | SCR-EV-005 (플랜 연결) | `GET/POST/PATCH/DELETE /api/v1/events/{id}/plans[/(mapId)]`, `POST .../plans/{mapId}/toggle-active` |
 | F03-11 | 위시리스트 (관심 이벤트) | 참가자 | SCR-EV-001/SCR-EV-002 하트 토글, 프로필 위시리스트 | `POST /api/v1/events/{id}/wishlist`, `DELETE /api/v1/events/{id}/wishlist`, `GET /api/v1/users/me/wishlist` |
 | F03-12 | 내 이벤트 관리 & 참석 로그 | 참가자 + 호스트 | SCR-EV-008 (내 이벤트), SCR-EA-006 (참석 로그) | `GET /api/v1/events/my`, `GET /api/v1/events/users/me/applications`, `GET .../capacity/logs`, `GET .../attendance/logs` |
-| F03-14 | 이동수단 공통 베이스 (Transport Mode) | 인증 사용자 조회, Host/CoHost 수정 | Flutter 없음 | `GET /api/v1/events/{id}/transport`, `PUT /api/v1/events/{id}/transport/config` |
-| F03-15 | 이벤트 카풀 (CARPOOL) | Host/CoHost + ATTENDING 운전자/탑승자 | Flutter 신고 route/screen은 있으나 인앱 caller 없음 | 실제 7개 endpoint: offers/passengers 조회, offer 생성·결정·신고, passenger upsert·배정 |
-| F03-16 | 이벤트 버스대절 (BUS) | 인증 목록, Host/CoHost/참석자 좌석 | Flutter 없음 | `GET .../buses`, `GET .../buses/{busId}/seats`, `POST .../buses`, `PUT .../seats/{seatNo}?userId=` |
-| F03-17 | 차량 레이아웃 카탈로그 | 인증 사용자 read + `MANAGE_EVENT` 관리자 | Flutter 없음, 관리자 API 구현 | 사용자 read 2개 + 관리자 list/detail/create/update/replace-seats/toggle-active |
+| F03-14 | 이동수단 공통 설정 | Host/CoHost 설정, 권한 있는 사용자 조회 | `event_transport_settings_screen.dart`, `event_transport_screen.dart` | `GET /api/v1/events/{id}/transport`, `PUT /api/v1/events/{id}/transport/config` |
+| F03-15 | 카풀·자차 | Host/CoHost + ATTENDING 운전자/탑승자 | 통합 이동수단 화면·차량 등록/결정/취소·신고 | `/events/{id}/vehicles`, `/transport/participant`, 차량 신고 경로 |
+| F03-16 | 대절 버스와 자리 배정 | Host/CoHost + ATTENDING/WAITING 조회, ATTENDING 자기 선택 | 통합 이동수단 화면·자리 격자/목록·배정/반납·신고 | `/events/{id}/vehicles/{vehicleId}/seats/**` |
+| F03-17 | 차량 좌석 배치도 운영 | 호스트 활성 목록 조회 + `MANAGE_EVENT` 관리자 운영 | 호스트 배치도 선택, 관리자 목록·좌석표·복제·수정·활성화 | 사용자 read 2개 + 관리자 list/detail/create/update/replace-seats/toggle-active |
 | F03-19 | 이벤트 일정 변경 제안·참가자 합의 | 호스트 (reschedule 제안 배치 생성·확인) | 참가자 (동의/거절, 기한 만료 자동 처리) | `GET /api/v1/events/{id}/reschedule-proposals`, `POST .../reschedule-proposals/{batchId}/respond` 등 |
 | F03-20 | 이벤트 노쇼 관리 | 호스트·공동호스트 (노쇼 확정·일괄·사후 환불) | 참가자 (소명 제출) | `POST /api/v1/events/{id}/no-shows`, `POST .../no-shows/batch`, `POST .../no-shows/{noShowId}/appeal`, `POST .../no-shows/{noShowId}/overturn` |
 
@@ -109,10 +109,10 @@
 | F03-10 플랜 연결 | 플랜 추가/순서/활성/삭제 | (조회만, SCR-EV-002 하단 노출) |
 | F03-11 위시리스트 | 자신도 하트 토글 가능 | 하트 토글, 프로필에서 목록 조회 |
 | F03-12 내 이벤트 | "주최 중" 탭 | "참석 예정" / "지난 이벤트" 탭 |
-| F03-14 이동수단 mode | DRAFT에서 mode 선택(NONE/CARPOOL/BUS), `allowsSelfTransport` 단독 변경에는 상태 가드·consumer 없음 | 인증 조회 가능. Flutter 진입 없음 |
-| F03-15 카풀 | offer 확정/거절, 탑승자 배정/해제 (`pickupCapacity` 한도) | ATTENDING 운전자 offer·탑승 의사 등록. Flutter 신고 route는 고아 상태 |
-| F03-16 버스대절 | 버스 추가(최대 3대), 좌석 user 지정 | terminal event mutation 가능. 진짜 swap/unassign·FIRST_COME 자동배정은 없음 |
-| F03-17 차량 카탈로그 | `MANAGE_EVENT` 관리자가 레이아웃·좌석맵·active 운영 | 인증 사용자는 active 목록/좌석 read. Flutter 없음 |
+| F03-14 이동 설정 | 이동 운영·자리 반납·자차 허용 설정, 살아 있는 차량이 있으면 운영 종료 차단 | 권한 있는 사용자는 통합 화면 조회. 신규 이용은 출시 범위로 봉인 |
+| F03-15 카풀·자차 | 승용차 승인/거절·탑승 배정·강제 취소 | ATTENDING이 승용차 제안·취소, 승차 요청·이탈, 자차 생성·종료, 차량 신고 |
+| F03-16 대절 버스·자리 | BUS 등록, 본인을 포함한 참가자 배정·재배정·해제 | 정책이 허용하면 본인 자리 선택·이동·반납, 자리 신고 |
+| F03-17 차량 배치도 | `MANAGE_EVENT` 관리자가 표준 9종 조회·복제·수정·활성화 | 호스트는 활성 배치도 선택, 참가자는 좌석표 확인 |
 
 ### 의존 단위 (Cross-cutting)
 
@@ -132,10 +132,10 @@
 - **ApplicationStatus** (전체 7값, 갱신 2026-06-05, `ApplicationStatus.java:24-36`):
   `PENDING` / `APPROVED` / `APPROVED_PENDING_PAYMENT` (선입금 결제 대기) / `PAYMENT_EXPIRED` (터미널) / `REJECTED` (터미널) / `CANCELED` (L 한 개, 터미널) / `CANCEL_PENDING_REFUND` (계좌이체 취소 후 환불 대기, capacity hold)
 - **PrivateMeetingPhase**: `WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED` / `CANCELLED`
-- **TransportMode** (W4): `NONE / CARPOOL / BUS` — DRAFT only 변경 (hard delete). OPEN 후 immutable.
-- **CarpoolStatus** (W5): `OFFERED → CONFIRMED` / `OFFERED → REJECTED` / `CANCELED` (`event_carpool_offer.status`)
-- **TransportChoice** (W5): `CARPOOL_REQUESTED / CARPOOL_ASSIGNED / SELF / DRIVER` (`event_carpool_passenger.transport_choice`)
-- **BusAssignmentMode** (W7): `FREE / FIXED_BY_HOST / FIRST_COME` — 좌석 배정자 0명일 때만 OPEN에서 변경 가능
+- **VehicleKind**: `BUS / CAR / SELF`
+- **SeatAssignment**: `DESIGNATED / UNDESIGNATED`
+- **ClaimPolicy**: `HOST_ASSIGNS / SELF_CLAIMS`
+- **VehicleStatus**: `PENDING → CONFIRMED` 또는 `REJECTED / CANCELLED`; BUS·SELF는 처음부터 `CONFIRMED`
 - **NoShowStatus** (D-20): `CONFIRMED / APPEALED / OVERTURNED` (`event_no_show.status`)
 - **EventCheckIn 감사 컬럼** (Wave D-1, 갱신 2026-06-05): `manual_actor_id` (MANUAL/CORRECTED 체크인 actor) / `manual_reason_code` (사유 코드) / `corrected_from_check_in_id` (원본 체크인 ID) — 소스: `EventCheckIn.java:41-56`
 
@@ -160,6 +160,9 @@
 | `event_plan_link_screen.dart` | F03-10 |
 | `my_events_screen.dart` | F03-11 (위시리스트 탭 시) / F03-12 |
 | `attendance_log_screen.dart` | F03-12 |
+| `event_transport_settings_screen.dart` | F03-14 |
+| `event_transport_screen.dart` | F03-14/F03-15/F03-16 |
+| `vehicle_seat_report_screen.dart` | F03-16 |
 
 ## 7. Gap / Risk Rollup
 
@@ -186,6 +189,8 @@
 4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
 
 ## 9. 변경 이력
+
+- **2026-09-02 (대절 버스·카풀 통합 완료 반영)**: `BUS/CAR/SELF` 통합 차량 모델, 지정·비지정 자리와 호스트 전담·참가자 자기 선택, 승용차 승인·취소·자차 복귀, 자리·차량 신고, 표준 배치도 9종과 관리자 화면을 현재 계약으로 갱신했다. 사용자 API 156건·앱 160건·관리자 API 23건·관리자 웹 E2E 3건 실패 0을 확인했다. 신규 개통은 서명 앱 다중 역할·알림·신고와 책임 고지 승인 뒤 진행한다.
 
 - **2026-05-22 (이벤트 참가 선입금 도입, [F03-13](../02_feature_prds/03_event/F03-13_event-prepayment_prd.md); 2026-07-29 재실측)**: WALLET/BANK_TRANSFER 결제·환불 facade와 `event_payment`를 도입했다. active INITIAL만 application당 unique, GUEST_INCREMENT는 다건이다. APPROVED_PENDING_PAYMENT는 currentCapacity/attendance 없이 party size를 논리 hold하고 BANK 취소는 `CANCEL_PENDING_REFUND`로 hold를 유지한다. 만료 payment/75, 이벤트 취소 pending 누락·BANK 완료 오표시, refund preview IDOR, non-locking escalation 경합이 Gap이다. 72/83은 주 호스트 한 명, Flutter는 WALLET only이며 BANK 운영·deep link는 없다.
 - **2026-05-22 (v4.5 W1 — 정원 초과 허용 도입)**: `event` 테이블에 `overcapacity_allowed`/`hard_capacity_limit` 두 컬럼 추가. 정원 판정을 `CapacityPolicy.decide(event, attendingCount)` 5-룰 매트릭스로 단일화하여 `apply / approveApplication / attend / confirmAttendanceFromPayment` 진입점이 모두 동일 헬퍼를 호출. 별도 서비스 `EventCapacitySettingsService`(`community_api/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java`)와 신규 엔드포인트 `PATCH /events/{id}/capacity-settings`로 DRAFT/OPEN 운영 중 정원 토글 분리(Q7 — CLOSED 차단). 공통 빈 `EventAuthorizationService` + `EventVoAssembler`(D12/D13) 추출. `ChangeType.OVERCAPACITY_APPROVED(9)` / `CAPACITY_REDUCED(10)` 신규, `ErrorCode.INVALID_HARD_CAPACITY_LIMIT(400013)` + `CAPACITY_FULL_AT_CONFIRMATION(400012)` 추가. EventVo에 `overcapacityAllowed / hardCapacityLimit / exceedingAttendees / reservedPaymentPendingCount` 4개 필드 노출(목록은 N+1 회피 위해 `reservedPaymentPendingCount=0` 고정, 단건만 lazy). 정원 축소 시 기존 ATTENDING은 유지하고 audit log만 기록. 영향 받는 기능: F03-03(생성 시 정원 옵션) / F03-04(생명주기 별도 capacity-settings 위임) / F03-05(신청·결제 확정 매트릭스 위임) / F03-06(승인 매트릭스 위임) / F03-07(정책 본체와 매트릭스 정의 위치). F03-07의 기존 trace ID와 risk 후보 수치는 그대로 유지됨 — W1 변경은 기존 trace를 변경하지 않고 신규 정책 문서만 추가했다.

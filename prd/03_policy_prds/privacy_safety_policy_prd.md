@@ -1,6 +1,6 @@
 # 개인정보·안전 정책 PRD
 
-<!-- supporting-doc-status: 2026-05-18 -->
+<!-- supporting-doc-status: 2026-09-02 -->
 
 > 문서 상태: **보조 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
 
@@ -30,9 +30,9 @@
 
 > 아래 섹션은 2026-06-05 추가분. 소스: `.delta_2026-06-04/` dossier 전수 확인.
 
-## 4. 신고 유형 (ReportType) 전체 8종
+## 4. 신고 유형 (ReportType) 전체 13종
 
-> 소스: `ReportType.java:7-24`
+> 소스: `community_api`의 `ReportType.java`
 
 | 값 (순번) | 설명 | 비고 |
 |---|---|---|
@@ -42,8 +42,13 @@
 | `EVENT_PHOTO(3)` | 이벤트 사진 신고 | legal hold 매칭, UNDER_REPORT 상태 |
 | `EVENT_MESSAGE(4)` | 이벤트 메시지 신고 | legal hold 매칭. soft-delete 중 신고 진행 시 unhide 차단 |
 | `DATE_USER(5)` | 데이트 사용자 안전 신고 | RS-002 P3-A: 차단(`DateBlockParam.fileReport=true`) 시 자동 동시 생성. DateBlock.reportId 백필. |
-| `CARPOOL(6)` | 카풀 운전자 안전 신고 | RS-002 P3-B: POST /api/v1/events/{eventId}/carpool/offers/{offerId}/report. targetId=운전자 userId, contextId=offerId. |
+| `CARPOOL(6)` | 승용차 주인 안전 신고 | `POST /api/v1/events/{eventId}/vehicles/{vehicleId}/report`. 서버가 차량 주인을 대상자로 정하고 `contextId=vehicleId`를 기록한다. |
 | `CLUB(7)` | 클럽 신고 | 2026-06-04 추가(commit 2d28572). v1 집행 서버 수동, 자동제재 USER 전용 유지. |
+| `COMMUNITY_MESSAGE(8)` | 커뮤니티 1:1 메시지 신고 | targetId=messageId, contextId=channelId. |
+| `COMMUNITY_POST(9)` | 클럽 커뮤니티 게시글 신고 | targetId=postId. |
+| `COMMUNITY_COMMENT(10)` | 클럽 커뮤니티 댓글 신고 | targetId=commentId, contextId=postId. |
+| `DATE_PROFILE_PHOTO(11)` | 데이트 프로필 사진 신고 | 서로 다른 유효 사용자 5명의 신고가 모이면 사진을 즉시 숨긴다. |
+| `BUS(12)` | 차량 자리 점유자 안전 신고 | `POST /api/v1/events/{eventId}/vehicles/{vehicleId}/seats/{seatNo}/report`. 서버가 현재 점유자를 대상자로 정하고 `contextId=seatId`를 기록한다. |
 
 **ReportReason 전체 7값** (`ReportReason.java:7-13`): `HARASSMENT(1), INAPPROPRIATE(2), NO_SHOW(3), FRAUD(4), OTHER(5), LATE(6), BAD_MANNER(7)`
 

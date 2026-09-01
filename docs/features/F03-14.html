@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F03-14 이동수단 공통 베이스 — community PRD</title>
+  <title>F03-14 이동수단 공통 설정 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -12,150 +12,48 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb">
-          <a href="../index.html">문서 허브</a><span>›</span>
-          <a href="../domains/03-event.html">03 이벤트</a><span>›</span>
-          F03-14 이동수단 공통 베이스
-        </div>
-        <h1>F03-14. 이동수단 공통 베이스</h1>
-        <p class="lede">
-          이벤트마다 이동수단을 없음·카풀·버스 중 하나로 정하고 하위 기능의 진입을 통제하는 공통 설정이다.
-          호스트용 Flutter 설정 화면과 이벤트 상세 진입 버튼이 서버 계약에 연결돼 있다. 방식 변경은 초안에서만
-          가능하고, 공개 뒤에는 참가자의 기존 배정이 사라지지 않도록 고정한다.
-        </p>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/03-event.html">이벤트</a><span>›</span>F03-14</div>
+        <h1>F03-14. 이동수단 공통 설정</h1>
+        <p class="lede">호스트가 모임의 이동 운영, 참가자 자리 반납, 자차 허용 여부를 관리한다. 대절 버스·참가자 승용차·자차를 같은 모임에서 함께 쓸 수 있다.</p>
+        <div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">운영 화면 완료</span><span class="pill warn">실기기 검증 뒤 개통</span></div>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
       <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">이동수단 방식</div><div class="value">3</div><div class="hint">없음 · 카풀 · 버스</div></div>
-          <div class="metric"><div class="label">변경 가능 시점</div><div class="value">초안</div><div class="hint">모집 공개 이후 고정</div></div>
-          <div class="metric"><div class="label">핵심 토글</div><div class="value">1</div><div class="hint">자차 이동 허용 여부</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 이동수단 기능의 단일 스위치</span>
-          <p>카풀과 버스는 둘 다 참석자의 이동을 바꾸는 기능이라 동시에 켜질 수 없다. 본 단위는 이벤트마다
-            하나의 이동수단 방식을 정하고, 하위 기능이 자기 방식이 아닐 때 동작하지 않도록 막는 공통 가드다.
-            공개 후 방식 변경을 막는 이유는 이미 운전자 지원, 탑승자 선택, 좌석 배정이 시작됐을 수 있기 때문이다.</p>
-        </div>
-        <div class="callout warn">
-          <span class="label">2026-08-30 현재 — 설정 화면까지 연결, 첫 출시는 봉인</span>
-          <p>호스트와 공동 호스트는 이벤트 상세의 “이동수단 설정”에서 방식을 정하고, 버스를 편성하거나 카풀
-            운영 화면으로 이동할 수 있다. 방식을 바꿀 때 기존 카풀·버스 데이터를 지운다는 경고와 확인 절차도 있다.</p>
-          <p>다만 “각자 이동 허용”은 현재 버스 참가자의 자기 좌석 반납 여부에는 실제 적용되지만, 카풀의
-            개별 이동 선택에는 같은 방식으로 적용되지 않는다. 이동수단을 개통하기 전에 이 토글을 버스 정책으로
-            좁혀 설명할지, 카풀에도 강제할지 제품 결정을 맞춰야 한다.</p>
-        </div>
+        <h2>무엇이 달라졌나</h2>
+        <p>종전의 “없음·카풀·버스 중 하나” 구조는 제거됐다. 이제 이동 운영을 켜고, 자리 반납과 자차를 허용할지만 각각 정한다. 살아 있는 차량이 있으면 운영을 끌 수 없어 기존 탑승자가 고립되지 않는다.</p>
+        <div class="table-wrap"><table><thead><tr><th>설정</th><th>제품 효과</th></tr></thead><tbody>
+          <tr><td>이동 운영</td><td>차량 등록·자리 배정·승차 위치 조율 사용 여부</td></tr>
+          <tr><td>자리 반납 허용</td><td>참가자가 자기 자리를 스스로 비울 수 있는지 결정</td></tr>
+          <tr><td>자차 허용</td><td>참가자가 자차로 온다고 등록할 수 있는지 결정</td></tr>
+        </tbody></table></div>
       </section>
 
       <section>
-        <h2>상태 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["초안 이벤트"] --> B{"이동수단 방식 선택"}
-    B -->|"없음"| C["개별 이동만"]
-    B -->|"카풀"| D["카풀 운영 가능"]
-    B -->|"버스"| E["버스 운영 가능"]
-    D -->|"초안에서 버스로 전환"| F["카풀 데이터 완전 삭제"]
-    E -->|"초안에서 카풀로 전환"| G["버스 데이터 완전 삭제"]
-    C --> H["모집 공개"]
-    D --> H
-    E --> H
-    H -->|"방식 변경 시도"| I["차단"]
-    H -->|"자차 이동 허용 여부 변경"| J["허용"]
-          </div>
-        </div>
+        <h2>완료한 시나리오</h2>
+        <ul>
+          <li>설정이 없는 모임은 사용 안 함 기본값을 반환하며 조회만으로 데이터를 만들지 않는다.</li>
+          <li>호스트·공동 호스트만 설정을 바꿀 수 있고 직접 API 호출도 같은 권한을 검사한다.</li>
+          <li>살아 있는 차량이 있으면 이동 운영 종료를 거절한다.</li>
+          <li>자차를 새로 만드는 것은 설정을 따르지만 기존 자차 종료는 봉인 중에도 허용한다.</li>
+        </ul>
       </section>
 
       <section>
-        <h2>사용자 시나리오</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본값</div>
-            <h3>설정하지 않은 이벤트 조회</h3>
-            <p>별도 설정 행이 없어도 이동수단 없음과 각자 이동 허용을 기본값으로 보여 준다. 조회만으로 불필요한 설정 데이터는 만들지 않는다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">초안 단계</div>
-            <h3>호스트가 카풀 이벤트로 설정</h3>
-            <p>이벤트 생성 중 이동수단을 카풀로 바꾸면 이동수단 설정이 만들어지고, 이후 카풀
-              지원·배정 화면이 열릴 수 있다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">전환</div>
-            <h3>카풀에서 버스로 바꾼다</h3>
-            <p>초안 상태에서는 이동수단 방식 전환이 가능하다. 단, 기존 카풀 지원자·탑승자 데이터는 더 이상 유효하지 않으므로
-              삭제된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">모집 공개 후</div>
-            <h3>모집 공개 후 방식 변경 차단</h3>
-            <p>이미 참가자에게 이동 정책이 공개된 뒤에는 없음·카풀·버스 사이 전환이 막힌다. 우회 시도도
-              서버에서 거절된다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">개별 이동</div>
-            <h3>공개 후 개별 이동 허용 여부만 조정</h3>
-            <p>이동수단 방식 자체는 고정되지만, 각자 이동 허용 여부는 운영 상황에 따라 조정할 수 있다. 현재는
-              버스 참가자의 자기 좌석 반납 여부에만 적용되며 카풀의 개별 이동 선택에는 아직 적용되지 않는다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">권한</div>
-            <h3>권한 없는 사용자의 변경 시도</h3>
-            <p>화면에 버튼이 없더라도 직접 요청을 보낼 수 있으므로 서버가 호스트·공동 호스트 권한을 다시 확인하고 거절한다.</p>
-          </article>
-        </div>
+        <h2>출시 판단</h2>
+        <div class="callout info"><strong>기능 미구현 때문에 닫힌 것이 아니다.</strong> 고객 앱과 서버는 완료됐다. 같은 출시후보의 서명 앱에서 실제 호스트·참가자 설정 왕복, 알림·신고와 책임 고지를 확인한 뒤 <code>TRANSPORT</code>를 연다.</div>
+        <p><a href="../../../docs/release-gate/evidence/MOV-01/README.md">대절 버스·카풀 통합 기능 완료 근거</a>에서 전체 검증 결과와 개통 순서를 확인할 수 있다.</p>
       </section>
 
-      <section>
-        <h2>사용자·호스트가 할 수 있는 동작</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
-            <tbody>
-              <tr><td>이동수단 설정 조회</td><td>설정 화면 사용자</td><td>Flutter가 서버에서 방식과 각자 이동 허용 여부를 읽어 현재 설정을 보여 준다.</td></tr>
-              <tr><td>이동수단 설정 변경</td><td>호스트·공동 호스트</td><td>초안에서는 방식과 각자 이동 허용 여부를, 공개 뒤에는 각자 이동 허용 여부만 바꾼다. 화면과 서버가 모두 권한·상태를 확인한다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">이동수단 방식 전환은 데이터 삭제를 동반한다</span>
-          <ul>
-            <li><strong>설정이 없으면 기본값은 이동수단 없음 + 자차 이동 허용.</strong> 신규 이벤트가 이동 기능을 쓰지 않아도 별도 설정이 필요 없다.</li>
-            <li><strong>초안 단계의 방식 전환은 하위 데이터 정리를 포함한다.</strong> 카풀에서 버스로 바꾸면 카풀 지원·탑승자 기록이 제거된다.</li>
-            <li><strong>모집 공개 이후 방식 변경은 정책상 금지다.</strong> 이미 공개된 이동 약속을 뒤집으면 참가자 피해가 크다.</li>
-            <li><strong>각자 이동 허용은 공개 뒤에도 조정할 수 있다.</strong> 현재 버스의 참가자 자기 좌석 반납 허용 여부에 실제 사용된다.</li>
-            <li><strong>카풀에는 토글 의미가 아직 일치하지 않는다.</strong> 토글이 꺼져도 카풀 참가자는 개별 이동을 선택할 수 있으므로, 개통 전에 정책 문구를 좁히거나 서버 집행을 넓힌다.</li>
-            <li><strong>서버 생애주기 E2E와 앱 권한·화면 테스트가 있다.</strong> 첫 개통 전에는 같은 출시후보를 실제 역할별 계정·기기로 다시 왕복한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이어지는 단위</h2>
-        <div class="hub-grid">
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">상위 도메인</div><h3>03 이벤트</h3></a>
-          <a class="card" href="F03-03.html"><div class="eyebrow">설정 진입</div><h3>F03-03 이벤트 생성</h3><p>초안에서 이동수단 방식 선택.</p></a>
-          <a class="card" href="F03-15.html"><div class="eyebrow">하위 기능</div><h3>F03-15 이벤트 카풀</h3><p>카풀 방식일 때만 동작.</p></a>
-          <a class="card" href="F03-16.html"><div class="eyebrow">하위 기능</div><h3>F03-16 이벤트 버스대절</h3><p>버스 방식일 때만 동작.</p></a>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
-  - business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md
--->
+      <section><h2>연결 기능</h2><div class="cards">
+        <a class="card" href="F03-15.html"><div class="eyebrow">F03-15</div><h3>카풀·자차</h3><p>승용차 제안과 자차 이동.</p></a>
+        <a class="card" href="F03-16.html"><div class="eyebrow">F03-16</div><h3>대절 버스와 자리</h3><p>지정·비지정 자리 운영.</p></a>
+        <a class="card" href="F03-17.html"><div class="eyebrow">F03-17</div><h3>차량 좌석 배치도</h3><p>표준 차량과 관리자 운영.</p></a>
+      </div></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/launch-status.js"></script>
   <script src="../assets/app.js"></script>
 </body>

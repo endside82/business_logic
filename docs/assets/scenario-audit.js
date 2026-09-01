@@ -6,8 +6,8 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1403,
     "definedFeatures": 175,
-    "automatedTestFilesScanned": 1570,
-    "journeyFilesScanned": 232,
+    "automatedTestFilesScanned": 1581,
+    "journeyFilesScanned": 233,
     "unitScenarioDocuments": 117,
     "unitScenarioHeadings": 1086,
     "unitRegisteredScenarioItems": 1011,
@@ -15,17 +15,17 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 59,
     "automatedFeatureMarkers": 75,
     "automatedScenarioReferences": 59,
-    "directlyLinkedJourneys": 54,
+    "directlyLinkedJourneys": 56,
     "journeyFeatureMarkers": 46,
-    "journeyScenarioReferences": 54,
+    "journeyScenarioReferences": 56,
     "featureLevelAutomatedProof": 144,
     "localRealAccountProof": 30,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 53,
-    "partialEvidenceChain": 23,
+    "completeEvidenceChain": 55,
+    "partialEvidenceChain": 21,
     "definitionOnlyEvidence": 99,
     "traceMarkers": 302,
-    "currentTraceMarkers": 96,
+    "currentTraceMarkers": 95,
     "missingTraceTargets": 2
   },
   "features": [
@@ -1286,7 +1286,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-14",
       "domain": "이벤트",
-      "name": "이동수단 공통 베이스",
+      "name": "이동수단 공통 설정",
       "scenarioCount": 6,
       "scenarioSource": "기능 PRD 수용 시나리오",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
@@ -1305,25 +1305,28 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 4,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 4,
         "files": [
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventBusServiceTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportLifecycleE2ETest.java",
-          "community_app/test/data/models/event/transport_vo_wire_test.dart"
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportParticipantFlowTest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
+          "community_app/test/data/models/event/transport_vo_wire_test.dart",
+          "community_app/test/unit/transport_entry_access_test.dart"
         ],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/scripts/e2e/README.md"
+        ],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
@@ -1332,7 +1335,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-15",
       "domain": "이벤트",
-      "name": "이벤트 카풀",
+      "name": "카풀·자차",
       "scenarioCount": 8,
       "scenarioSource": "기능 PRD 수용 시나리오",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
@@ -1351,13 +1354,16 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 7,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 7,
         "files": [
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventCarpoolServiceTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportLifecycleE2ETest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/util/TransportReportValidatorTest.java"
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportParticipantFlowTest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleLifecycleDataJpaTest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleReportServiceTest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
+          "community_api/src/test/java/com/endside/community/review/service/ReportServiceTest.java",
+          "community_app/test/core/router/transport_report_route_gate_test.dart"
         ],
         "markerCandidateFiles": []
       },
@@ -1378,7 +1384,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-16",
       "domain": "이벤트",
-      "name": "이벤트 버스대절",
+      "name": "대절 버스와 자리 배정",
       "scenarioCount": 8,
       "scenarioSource": "기능 PRD 수용 시나리오",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
@@ -1397,13 +1403,16 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 6,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 6,
         "files": [
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventBusSeatFlowDataJpaTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventBusServiceTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportLifecycleE2ETest.java"
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleLifecycleE2ETest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleSeatFlowDataJpaTest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleSeatOccupantNameTest.java",
+          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
+          "community_app/test/widget/event/vehicle_seat_grid_test.dart",
+          "community_app/test/widget/event/vehicle_seat_occupant_name_test.dart"
         ],
         "markerCandidateFiles": []
       },
@@ -1424,7 +1433,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F03-17",
       "domain": "이벤트",
-      "name": "차량 레이아웃 카탈로그",
+      "name": "차량 좌석 배치도 운영",
       "scenarioCount": 4,
       "scenarioSource": "기능 PRD 수용 시나리오",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
@@ -1443,26 +1452,29 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 2,
+        "count": 3,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 2,
+        "scenarioReferenceCount": 3,
         "files": [
-          "community_app/test/data/models/event/transport_vo_wire_test.dart",
-          "community_app/test/widget/event/bus_seat_grid_test.dart"
+          "community_admin_api/src/test/java/com/endside/community/event/service/ManageVehicleLayoutGuardTest.java",
+          "community_admin_api/src/test/java/com/endside/community/v1proof/SharedV1SchemaMirrorTest.java",
+          "community_admin_front/e2e/vehicle-layouts.spec.ts"
         ],
         "markerCandidateFiles": [
           "community_app/test/presentation/event/reschedule_proposal_guidance_card_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_admin_front/e2e/vehicle-layouts.spec.ts"
+        ],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
@@ -3881,9 +3893,9 @@ window.SCENARIO_AUDIT = {
         "backendPath": "business_logic/units/08_plan_market/F08-06_market-item-management/backend.md",
         "total": 6,
         "filesPresent": 6,
-        "valid": 6,
+        "valid": 5,
         "missing": 0,
-        "state": "current"
+        "state": "partial"
       },
       "automated": {
         "directlyLinked": false,
