@@ -19,8 +19,8 @@
         </div>
         <h1>F16-04. 마일리지 정책 설정</h1>
         <p class="lede">
-          운영진(정책 담당)이 마일리지 프로그램의 큰 스위치를 다루는 화면. 프로그램 활성화, 포인트 만료일, 랭킹 기준, 시즌 사용 여부를 정하고,
-          정책을 바꾸기 전에 그 변화가 누구에게 영향을 주는지 미리 본다. <strong>활성화 토글이 도메인 전체의 ON/OFF 스위치</strong>다.
+          운영진(정책 담당)이 마일리지 프로그램의 큰 스위치를 다루는 화면. 프로그램 상태(미개설·운영 중·일시 중지), 포인트 만료일, 랭킹 기준, 시즌 사용 여부를 정하고,
+          정책을 바꾸기 전에 그 변화가 누구에게 영향을 주는지 미리 본다. <strong>프로그램 상태가 도메인 전체의 스위치</strong>다.
         </p>
       </header>
 
@@ -34,9 +34,9 @@
         </div>
 
         <div class="callout warn">
-          <span class="label">정책 활성화 = 마스터 스위치</span>
-          <p>정책이 꺼져 있으면 적립·차감·호스트 제안이 전부 막힌다. 등급·규칙·배지를 아무리 정성껏 만들어도 정책이 OFF면 점수가 한 푼도 안 움직인다.
-            "마일리지가 안 쌓인다"는 문의의 첫 번째 점검 포인트가 바로 이 토글이다.</p>
+          <span class="label">제도 상태 = 마스터 스위치</span>
+          <p>제도가 운영 중이 아니면(미개설·일시 중지) 적립·차감·호스트 제안이 전부 막힌다. 등급·규칙·배지를 아무리 정성껏 만들어도 운영 중이 아니면 점수가 한 푼도 안 움직인다.
+            일시 중지 중에도 이미 받은 점수의 만료는 원래 날짜대로 진행된다. "마일리지가 안 쌓인다"는 문의의 첫 번째 점검 포인트가 바로 이 상태다.</p>
         </div>
       </section>
 
@@ -46,7 +46,7 @@
           <table>
             <thead><tr><th>항목</th><th>의미</th><th>기본값</th></tr></thead>
             <tbody>
-              <tr><td><strong>활성화</strong></td><td>프로그램 ON/OFF. OFF면 적립·차감·제안 전면 차단</td><td>꺼짐</td></tr>
+              <tr><td><strong>제도 상태</strong></td><td>미개설·운영 중·일시 중지. 운영 중이 아니면 적립·차감·제안 전면 차단</td><td>미개설</td></tr>
               <tr><td><strong>만료일</strong></td><td>적립분이 며칠 뒤 만료될지. 변경은 향후 적립분에만 적용(소급 없음)</td><td>365일</td></tr>
               <tr><td><strong>랭킹 기준</strong></td><td>잔액 / 누적 적립 / 시즌 적립 중 하나</td><td>잔액</td></tr>
               <tr><td><strong>시즌 사용</strong></td><td>시즌제 운영 여부</td><td>사용 안 함</td></tr>
@@ -110,7 +110,7 @@
         <div class="hub-grid">
           <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
           <a class="card" href="F16-05.html"><div class="eyebrow">다음</div><h3>F16-05 메타 정의 관리</h3><p>규칙·등급·배지·프리셋 생성·수정·삭제.</p></a>
-          <a class="card" href="F16-06.html"><div class="eyebrow">영향받음</div><h3>F16-06 집행</h3><p>정책 OFF면 적립·차감 전면 차단.</p></a>
+          <a class="card" href="F16-06.html"><div class="eyebrow">영향받음</div><h3>F16-06 집행</h3><p>제도가 운영 중이 아니면 적립·차감 전면 차단.</p></a>
         </div>
       </section>
 
