@@ -19,8 +19,9 @@
         </div>
         <h1>F16-06. 적립/차감/정정 집행</h1>
         <p class="lede">
-          운영진(집행 담당)이 마일리지 점수를 실제로 움직이는 핵심 화면. 수동·일괄 적립, 차감, 원장 정정, 배지 부여/회수를 한다.
-          점수가 돈은 아니지만 멤버 입장에선 보상이므로, 중복 실행 방지와 모든 액션의 감사 기록으로 보호된다.
+          클럽의 마일리지 관리자가 수동·일괄 적립과 사용, 원장 정정, 배지 부여·회수를 실행한다.
+          체크인과 후기는 조건을 만족하면 자동 적립되고, 체크인 취소나 후기 삭제 때는 자동 회수된다.
+          핵심 코드와 운영 화면은 완료됐으며 실기기 알림 확인 뒤 마일리지 전체와 함께 개통한다.
         </p>
       </header>
 
@@ -33,9 +34,15 @@
           <div class="metric"><div class="label">중복 방지</div><div class="value">이중 차단</div><div class="hint">같은 요청 두 번 = 한 번 효과</div></div>
         </div>
 
+        <div class="callout info">
+          <span class="label">현재 상태 — 점수 이동과 복구 검증 완료</span>
+          <p>한 명과 여러 명의 적립·사용, 정정, 만료, 자동 적립·회수, 중복 요청과 동시 실행을 검증했다.
+            일괄 처리에서는 한 회원이 실패해도 나머지 회원은 계속 처리되며, 회원별 결과를 운영 화면에서 확인한다.</p>
+        </div>
+
         <div class="callout warn">
           <span class="label">설계 의도 — 점수는 되돌릴 수 없고, 정정으로만 바로잡는다</span>
-          <p>원장은 한 번 쓰면 지우지 않는다(append-only). 잘못 준 점수는 삭제가 아니라 "반대 부호 정정"으로 기록한다.
+          <p>원장은 한 번 쓰면 지우지 않는다. 잘못 준 점수는 삭제가 아니라 반대 방향의 정정 기록을 추가한다.
             그래야 "언제 무엇이 잘못됐고 누가 바로잡았는지"가 그대로 남는다. 일괄 처리는 멤버별로 성공/실패가 갈려도
             전체가 멈추지 않고 부분 성공으로 처리된다.</p>
         </div>
@@ -48,10 +55,31 @@
 flowchart LR
     A["운영진: 적립/차감 요청<br/>(요청 표식 자동 발급)"] --> B{"같은 요청 이미 처리?"}
     B -->|"예"| C["저장된 결과 반환 (중복 방지)"]
-    B -->|"아니오"| D["정책 ON 확인 + 잔액 검증"]
-    D --> E["원장 기록 + 잔액·등급 갱신 + 감사 로그"]
+    B -->|"아니오"| D["제도 운영 중 확인 + 잔액 검증"]
+    D --> E["원장 기록 + 잔액·등급 갱신 + 감사 기록"]
     E --> F["멤버별 성공/실패 결과 반환"]
           </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>자동 적립과 자동 회수</h2>
+        <div class="cards">
+          <article class="card">
+            <div class="eyebrow">자동 적립</div>
+            <h3>체크인·후기</h3>
+            <p>클럽이 켜 둔 규칙과 인정 기간을 만족하면 활동 한 건당 점수를 한 번 적립한다. 적립에 실패해도 체크인이나 후기 자체는 취소하지 않는다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">자동 회수</div>
+            <h3>체크인 취소·후기 삭제</h3>
+            <p>원래 활동이 무효가 되면 해당 점수를 자동으로 되돌린다. 잔액이 부족해 전부 되돌릴 수 없으면 검토 목록으로 보내 운영자가 처리한다.</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">반복 방지</div>
+            <h3>같은 이벤트에서는 한 번만</h3>
+            <p>취소 뒤 다시 체크인해도 같은 이벤트에서 점수를 다시 주지 않아 반복 적립을 막는다.</p>
+          </article>
         </div>
       </section>
 
@@ -61,7 +89,7 @@ flowchart LR
           <article class="card">
             <div class="eyebrow">적립</div>
             <h3>수동·일괄 적립</h3>
-            <p>멤버 한 명 또는 여러 명에게 점수를 준다. 사유 필수. 일괄은 묶음 ID로 한 번에 추적.</p>
+            <p>회원 한 명 또는 여러 명에게 점수를 준다. 사유는 필수이며 일괄 작업도 한 묶음으로 추적한다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">차감</div>
@@ -87,7 +115,7 @@ flowchart LR
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td><strong>적립 (수동·일괄)</strong></td><td>집행 담당</td><td>멤버 한 명 또는 여러 명에게 점수를 준다. 같은 요청을 두 번 보내도 한 번만 적용된다.</td></tr>
+              <tr><td><strong>적립 (수동·일괄)</strong></td><td>집행 담당</td><td>회원 한 명 또는 여러 명에게 점수를 준다. 같은 요청을 두 번 보내도 한 번만 적용된다.</td></tr>
               <tr><td><strong>차감 (수동·일괄)</strong></td><td>집행 담당</td><td>멤버에게서 점수를 뺀다. 같은 요청을 두 번 보내도 한 번만 적용된다.</td></tr>
               <tr><td><strong>원장 정정</strong></td><td>집행 담당</td><td>잘못된 적립·차감을 반대 부호 행으로 바로잡는다. 같은 행을 두 번 정정할 수 없다.</td></tr>
               <tr><td><strong>배지 부여/회수</strong></td><td>집행 담당</td><td>멤버에게 배지를 주거나 회수한다. 회수는 삭제가 아니라 회수 기록으로 남는다.</td></tr>
@@ -98,17 +126,15 @@ flowchart LR
       </section>
 
       <section>
-        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
-        <div class="callout danger">
-          <span class="label">끊긴 연결과 남은 위험</span>
+        <h2>첫 개통에서 감수하는 한계</h2>
+        <div class="callout warn">
+          <span class="label">자동 적립 유실 후보와 수동 종결</span>
           <ul>
-            <li><strong>일괄 결과 화면이 비어 보일 수 있다.</strong> 서버가 일괄 결과를 자유 형식으로 내려주는데 클라이언트가 다른 고정 모델로 받아,
-              영향 멤버·성공/실패 목록이 화면에 안 나타날 수 있다.</li>
-            <li><strong>체크인·후기 자동 적립은 연결됐다.</strong> 체크인·후기가 저장된 직후 서버가 죽으면 그 적립만 예외로 유실될 수 있고,
-              흔치 않은 경우라 사람이 사후 판정한다. 사진 승인 적립은 계속 닫혀 있다.</li>
-            <li><strong>중복 실행은 차단된다.</strong> 같은 요청을 두 번 보내도 점수는 한 번만 움직인다. 네트워크 재시도가 중복 적립을 만들지 않는다.</li>
-            <li><strong>만료 배치가 전체 원장을 훑는다.</strong> 원장이 큰 클럽에서 일일 만료 처리가 느려질 수 있다.</li>
+            <li><strong>활동이 저장된 직후 서버가 중단되는 매우 짧은 구간</strong>에서는 자동 적립 신호와 실패 기록이 모두 남지 않을 수 있다. 매일 점검이 활동은 있는데 적립이 없는 건을 후보로 올리며, 정상 무적립과 구분해야 하므로 사람이 판정한다.</li>
+            <li><strong>자동 회수 때 잔액이 부족한 건</strong>에는 전용 처리 버튼이 없다. 운영자가 수동 정정·사용 도구로 처리한 뒤 근거 메모를 남기고 검토 항목을 닫는다.</li>
+            <li><strong>만료와 정합성 점검은 여러 묶음으로 나누어 처리</strong>하고, 중단되면 마지막 처리 지점부터 이어 간다.</li>
           </ul>
+          <p>사진 승인 적립은 이 기능에 포함되지 않는다. 사진 심사·부정 적립 회수와 운영 화면을 만든 뒤 별도로 연다.</p>
         </div>
       </section>
 
@@ -116,14 +142,15 @@ flowchart LR
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
-          <a class="card" href="F16-05.html"><div class="eyebrow">정의 출처</div><h3>F16-05 메타 정의</h3><p>프리셋·배지·규칙을 먼저 만든다.</p></a>
-          <a class="card" href="F16-08.html"><div class="eyebrow">추적</div><h3>F16-08 감사·대시보드</h3><p>집행 결과가 감사 로그·대시보드에 반영.</p></a>
+          <a class="card" href="F16-05.html"><div class="eyebrow">정의 출처</div><h3>F16-05 보상 기준</h3><p>사용 사유·배지·적립 규칙을 먼저 만든다.</p></a>
+          <a class="card" href="F16-08.html"><div class="eyebrow">추적</div><h3>F16-08 감사·운영 현황</h3><p>처리 결과가 감사 기록과 운영 현황에 반영된다.</p></a>
         </div>
       </section>
 
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md
+  - /Users/kyle/source/09.community/docs/plan/mileage/MILEAGE_RELEASE_PLAN.md
 -->
     </main>
   </div>

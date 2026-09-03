@@ -20,7 +20,8 @@
         <h1>F16-07. 호스트 제안</h1>
         <p class="lede">
           이벤트 호스트가 자기 모임에서 활약한 멤버에게 줄 점수를 제안하고, 운영진이 검토 후 승인하면 적립이 실행되는 흐름.
-          호스트는 직접 점수를 줄 수 없고 제안만 한다 — 점수를 주는 권한과 제안하는 권한을 일부러 분리했다.
+          호스트는 직접 점수를 줄 수 없고 제안만 한다. 제출·조회·승인·반려와 실제 적립까지 코드와 화면 검증을
+          마쳤으며, 실기기 결과 알림 확인 뒤 마일리지 전체와 함께 개통한다.
         </p>
       </header>
 
@@ -28,15 +29,21 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">제안 상태</div><div class="value">2주축</div><div class="hint">제출 → 승인 / 반려</div></div>
+          <div class="metric"><div class="label">처리 결과</div><div class="value">2가지</div><div class="hint">승인 / 반려</div></div>
           <div class="metric"><div class="label">제안 권한</div><div class="value">이벤트 호스트</div><div class="hint">자기 이벤트만</div></div>
           <div class="metric"><div class="label">처리 권한</div><div class="value">집행 담당</div><div class="hint">마일리지 관리자</div></div>
+        </div>
+
+        <div class="callout info">
+          <span class="label">현재 상태 — 실제 적립까지 화면 왕복 완료</span>
+          <p>호스트의 제안 제출과 목록, 운영진의 승인·반려, 승인 점수 조정과 원장 반영을 확인했다.
+            목록에는 대상 회원과 제안자 이름을 표시하고, 동시에 승인과 반려가 들어오면 하나만 성공하도록 보호한다.</p>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 현장을 아는 사람이 제안하고, 책임지는 사람이 승인한다</span>
           <p>누가 모임에서 활약했는지는 호스트가 가장 잘 안다. 하지만 점수를 직접 주게 하면 남용 위험이 있다.
-            그래서 호스트는 "이 멤버에게 이만큼"이라고 제안만 하고, 운영진이 검토 큐에서 승인할 때 비로소 적립이 일어난다.
+            그래서 호스트는 "이 멤버에게 이만큼"이라고 제안만 하고, 운영진이 검토 대기열에서 승인할 때 비로소 적립이 일어난다.
             운영진은 승인 시 점수를 조정할 수도 있다.</p>
         </div>
       </section>
@@ -46,7 +53,7 @@
         <div class="diagram">
           <div class="mermaid">
 flowchart LR
-    A["호스트: 멤버·점수·사유 제안"] --> B["제출 + 검토 큐 적재"]
+    A["호스트: 회원·점수·사유 제안"] --> B["제출 + 검토 대기열 등록"]
     B --> C{"운영진 결정"}
     C -->|"승인"| D["적립 실행 + 승인 처리"]
     C -->|"반려 (사유 필수)"| E["반려 + 기록"]
@@ -60,7 +67,7 @@ flowchart LR
           <article class="card">
             <div class="eyebrow">제안</div>
             <h3>호스트가 활약 멤버를 제안</h3>
-            <p>모임 후 호스트가 "이 멤버에게 50점"을 사유와 함께 제안한다. 제안은 검토 큐에 자동으로 올라간다.</p>
+            <p>모임 후 호스트가 "이 멤버에게 50점"을 사유와 함께 제안한다. 제안은 검토 대기열에 자동으로 올라간다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">권한 가드</div>
@@ -86,7 +93,7 @@ flowchart LR
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td><strong>제안 제출</strong></td><td>이벤트 호스트</td><td>자기 이벤트에서 활약한 멤버에게 줄 점수를 사유와 함께 제안한다. 제안은 검토 큐에 올라간다.</td></tr>
+              <tr><td><strong>제안 제출</strong></td><td>이벤트 호스트</td><td>자기 이벤트에서 활약한 멤버에게 줄 점수를 사유와 함께 제안한다. 제안은 검토 대기열에 올라간다.</td></tr>
               <tr><td><strong>내 제안 목록 보기</strong></td><td>이벤트 호스트</td><td>자기 이벤트에 올린 제안들의 처리 상태를 본다.</td></tr>
               <tr><td><strong>제안 승인</strong></td><td>집행 담당</td><td>제안을 승인하면 적립이 실행된다. 승인 시 점수를 조정할 수 있다.</td></tr>
               <tr><td><strong>제안 반려</strong></td><td>집행 담당</td><td>제안을 반려한다. 사유 없이는 반려할 수 없다.</td></tr>
@@ -98,12 +105,11 @@ flowchart LR
       <section>
         <h2>운영자가 알아야 할 것</h2>
         <div class="callout warn">
-          <span class="label">제안 워크플로의 한계</span>
+          <span class="label">권한과 동시 처리</span>
           <ul>
-            <li><strong>"추가 정보 요청"·"호스트 철회" 상태가 정의만 있고 동작하지 않는다.</strong> 현재는 제출 → 승인/반려만 가능하다.</li>
-            <li><strong>호스트가 결과를 확인할 경로가 제한적이다.</strong> 승인/반려는 운영 화면에서 일어나고, 호스트는 자기 이벤트의 제안 목록만 본다.
-              승인/반려 결과 알림 흐름의 보강이 필요하다.</li>
-            <li><strong>제안 적립도 등급에 반영된다.</strong> 호스트 제안으로 받은 점수가 등급 산정에 포함되는 것이 의도인지 확인이 필요하다.</li>
+            <li><strong>제안할 수 있는 사람은 해당 이벤트 호스트</strong>이고, 실제 적립을 승인하거나 반려하는 사람은 클럽의 마일리지 관리자다.</li>
+            <li><strong>승인 직전에 대상이 현재 클럽 회원인지 다시 확인</strong>한다. 확인 직후부터 원장 잠금 사이에 회원이 탈퇴하는 매우 짧은 경합 가능성은 첫 개통의 알려진 한계다.</li>
+            <li><strong>실제 기기 결과 알림만 남았다.</strong> 서버 알림 생성은 확인했으며, 푸시 수신과 제안 화면 이동을 개통 전에 확인한다.</li>
           </ul>
         </div>
       </section>
@@ -112,7 +118,7 @@ flowchart LR
         <h2>이어지는 단위</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
-          <a class="card" href="F16-08.html"><div class="eyebrow">처리 위치</div><h3>F16-08 검토 큐</h3><p>제안이 검토 큐에서 처리된다.</p></a>
+          <a class="card" href="F16-08.html"><div class="eyebrow">처리 위치</div><h3>F16-08 검토 대기열</h3><p>제안은 전용 처리 화면으로 연결된다.</p></a>
           <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련 도메인</div><h3>03 이벤트</h3><p>호스트 권한·이벤트 참여의 출처.</p></a>
         </div>
       </section>
@@ -120,6 +126,7 @@ flowchart LR
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - business_logic/prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md
+  - /Users/kyle/source/09.community/docs/plan/mileage/MILEAGE_RELEASE_PLAN.md
 -->
     </main>
   </div>

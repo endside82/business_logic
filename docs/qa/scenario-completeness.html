@@ -184,13 +184,30 @@
 
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/features.js"></script>
+  <script src="../assets/mileage-feature-status.js"></script>
   <script src="../assets/launch-status.js"></script>
   <script src="../assets/scenario-audit.js"></script>
   <script>
     (function () {
       var A = window.SCENARIO_AUDIT;
       var L = window.LAUNCH_STATUS;
-      var data = A.features;
+      var featureNames = {};
+      (window.PRD_FEATURES || []).forEach(function (feature) { featureNames[feature.id] = feature.name; });
+      var data = A.features.map(function (feature) {
+        var current = L.forFeature(feature.id);
+        var copied = Object.assign({}, feature, {
+          name: featureNames[feature.id] || feature.name,
+          launchScope: current.scope,
+          proof: current.proof,
+          knownIssues: current.issues,
+        });
+        copied.evidenceStage = 1 +
+          (feature.automated.directlyLinked ? 1 : 0) +
+          ((feature.journey.directlyLinked || current.proof === 'real') ? 1 : 0);
+        return copied;
+      });
+      var localRealAccountProof = data.filter(function (feature) { return feature.proof === 'real'; }).length;
+      var completeEvidenceChain = data.filter(function (feature) { return feature.evidenceStage === 3; }).length;
 
       function esc(value) {
         return String(value == null ? '' : value)
@@ -210,19 +227,20 @@
       document.getElementById('m-test-files').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
       document.getElementById('m-auto').textContent = A.totals.directlyLinkedAutomatedTests + '/' + A.totals.features;
       document.getElementById('m-journey').textContent = A.totals.directlyLinkedJourneys + '/' + A.totals.features;
-      document.getElementById('m-real').textContent = A.totals.localRealAccountProof + '/' + A.totals.features;
-      document.getElementById('m-chain').textContent = A.totals.completeEvidenceChain + '/' + A.totals.features;
+      document.getElementById('m-real').textContent = localRealAccountProof + '/' + A.totals.features;
+      document.getElementById('m-chain').textContent = completeEvidenceChain + '/' + A.totals.features;
       document.getElementById('c-auto').textContent = A.totals.directlyLinkedAutomatedTests + '개 (' + percent(A.totals.directlyLinkedAutomatedTests, A.totals.features) + ')';
       document.getElementById('c-journey').textContent = A.totals.directlyLinkedJourneys + '개 (' + percent(A.totals.directlyLinkedJourneys, A.totals.features) + ')';
       document.getElementById('c-feature-auto').textContent = A.totals.featureLevelAutomatedProof + '개';
-      document.getElementById('c-feature-real').textContent = A.totals.localRealAccountProof + '개';
+      document.getElementById('c-feature-real').textContent = localRealAccountProof + '개';
       document.getElementById('c-test-files-inline').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
       document.getElementById('c-journey-files-inline').textContent = A.totals.journeyFilesScanned.toLocaleString('ko-KR');
       document.getElementById('c-auto-markers').textContent = A.totals.automatedFeatureMarkers + '개 기능';
       document.getElementById('c-journey-markers').textContent = A.totals.journeyFeatureMarkers + '개 기능';
       document.getElementById('c-trace').textContent = A.totals.traceMarkers;
       document.getElementById('c-trace-ok').textContent = A.totals.currentTraceMarkers;
-      document.getElementById('asof').textContent = '기준일 ' + A.asOf + ' · ' + A.countingNote;
+      document.getElementById('asof').textContent = '시나리오·테스트 문서 연결 기준일 ' + A.asOf +
+        ' · 출시 범위·로컬 실계정 확인 기준일 ' + L.asOf + ' · ' + A.countingNote;
 
       var domains = [];
       data.forEach(function (feature) {

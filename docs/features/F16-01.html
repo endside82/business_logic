@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F16-01 내 마일리지 메인·영수증·원장 — community PRD</title>
+  <title>F16-01 내 마일리지·월간 영수증·전체 내역 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -15,12 +15,12 @@
         <div class="breadcrumb">
           <a href="../index.html">문서 허브</a><span>›</span>
           <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
-          F16-01 내 마일리지 메인·영수증·원장
+          F16-01 내 마일리지·월간 영수증·전체 내역
         </div>
-        <h1>F16-01. 내 마일리지 메인 &amp; 월간 영수증 &amp; 원장</h1>
+        <h1>F16-01. 내 마일리지·월간 영수증·전체 내역</h1>
         <p class="lede">
-          멤버가 자기 마일리지를 보는 세 화면. 메인은 "지금 얼마, 무슨 등급, 최근에 뭐가 들어왔나"를 한눈에 보여주고,
-          월간 영수증은 한 달치 적립·차감·만료를 정산서처럼 묶어 주며, 원장은 모든 거래를 필터해 본다.
+          회원이 자기 마일리지를 보는 세 화면이다. 첫 화면은 "지금 얼마, 무슨 등급, 최근에 뭐가 들어왔나"를 한눈에 보여 준다.
+          월간 영수증은 한 달치 적립·차감·만료를 정산서처럼 묶고, 전체 내역은 유형·기간·검색어로 나누어 볼 수 있다.
           모든 점수는 정수이고, 클럽 멤버만 볼 수 있다.
         </p>
       </header>
@@ -29,15 +29,22 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">멤버가 보는 화면</div><div class="value">3개</div><div class="hint">메인 / 영수증 / 원장</div></div>
-          <div class="metric"><div class="label">권한</div><div class="value">클럽 멤버</div><div class="hint">비멤버 접근 차단</div></div>
+          <div class="metric"><div class="label">회원이 보는 화면</div><div class="value">3개</div><div class="hint">요약 / 월간 영수증 / 전체 내역</div></div>
+          <div class="metric"><div class="label">권한</div><div class="value">클럽 회원</div><div class="hint">비회원 접근 차단</div></div>
           <div class="metric"><div class="label">최근 거래</div><div class="value">5건</div><div class="hint">메인에 노출</div></div>
+        </div>
+
+        <div class="callout info">
+          <span class="label">현재 상태 — 코드와 화면 검증 완료, 개통 전</span>
+          <p>회원 메인·월간 영수증·전체 내역이 실제 서버 데이터와 이어지는 화면 왕복을 마쳤다.
+            아직 마일리지 전체가 운영 설정으로 닫혀 있어 고객이 새로 진입할 수는 없다. 실제 기기에서
+            알림을 눌러 메인과 내역으로 이동하는 것을 확인한 뒤 핵심 마일리지와 함께 연다.</p>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 신뢰는 "내 점수가 어떻게 움직였나"에서 온다</span>
-          <p>마일리지는 돈이 아니지만, 멤버 입장에선 자기 노력의 보상이다. 메인 한 화면에서 잔액·등급·다음 등급까지 남은 점수를 보고,
-            의심이 들면 원장에서 한 줄 한 줄 확인할 수 있어야 한다. 월간 영수증은 "이번 달 내가 뭘로 얼마나 모았나"를 정산서로 묶어 준다.</p>
+          <p>마일리지는 돈이 아니지만, 회원 입장에서는 자기 노력의 보상이다. 첫 화면에서 잔액·등급·다음 등급까지 남은 점수를 보고,
+            의문이 생기면 전체 내역에서 각 기록을 확인할 수 있어야 한다. 월간 영수증은 "이번 달 내가 뭘로 얼마나 모았나"를 정산서로 묶어 준다.</p>
         </div>
       </section>
 
@@ -45,7 +52,7 @@
         <h2>세 화면이 보여주는 것</h2>
         <div class="cards">
           <article class="card">
-            <div class="eyebrow">메인</div>
+            <div class="eyebrow">요약</div>
             <h3>잔액·등급·최근 5건</h3>
             <p>현재 잔액, 누적 적립, 현재 등급과 다음 등급까지 남은 점수, 활성 배지, 최근 거래 5건을 한 화면에 모은다.</p>
           </article>
@@ -55,13 +62,13 @@
             <p>해당 월의 적립·차감·만료·정정 합계, 월 시작/종료 잔액, 적립 종류별 합, 그 달에 받은 배지, 시작/종료 등급을 묶는다.</p>
           </article>
           <article class="card">
-            <div class="eyebrow">원장</div>
-            <h3>전체 거래 필터</h3>
-            <p>적립/차감/정정/만료 유형, 기간, 키워드로 본인 거래를 필터해 페이지로 본다. 본인 거래만 — 서버가 본인 ID를 강제한다.</p>
+            <div class="eyebrow">전체 내역</div>
+            <h3>유형·기간·검색어로 나누기</h3>
+            <p>적립·사용·정정·만료 유형, 기간, 키워드로 본인 거래를 나누어 본다. 시스템이 로그인한 본인의 기록만 보여 준다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">빈 상태</div>
-            <h3>아직 적립이 없는 멤버</h3>
+            <h3>아직 적립이 없는 회원</h3>
             <p>제도가 미개설이거나 일시 중지면 화면이 그 상태를 안내한다. 운영 중인 클럽에서 거래가 없으면 잔액 0, 등급 미부여로 표시된다. 둘 다 오류가 아니다.</p>
           </article>
         </div>
@@ -73,27 +80,26 @@
           <table>
             <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
             <tbody>
-              <tr><td><strong>마일리지 메인 보기</strong></td><td>클럽 멤버</td><td>본인의 잔액·등급·배지와 최근 거래 5건을 한 화면에서 본다.</td></tr>
-              <tr><td><strong>월간 영수증 보기</strong></td><td>클럽 멤버</td><td>특정 연·월을 골라 그 달의 적립·차감·만료를 정산서처럼 묶어 본다.</td></tr>
-              <tr><td><strong>원장 보기</strong></td><td>클럽 멤버</td><td>본인의 전체 거래를 유형·기간·키워드로 필터해 페이지로 본다.</td></tr>
+              <tr><td><strong>마일리지 요약 보기</strong></td><td>클럽 회원</td><td>본인의 잔액·등급·배지와 최근 거래 5건을 한 화면에서 본다.</td></tr>
+              <tr><td><strong>월간 영수증 보기</strong></td><td>클럽 회원</td><td>특정 연·월을 골라 그 달의 적립·차감·만료를 정산서처럼 묶어 본다.</td></tr>
+              <tr><td><strong>전체 내역 보기</strong></td><td>클럽 회원</td><td>본인의 모든 점수 기록을 유형·기간·검색어로 나누어 페이지별로 본다.</td></tr>
             </tbody>
           </table>
         </div>
         <div class="callout warn">
           <span class="label">본인 거래만 보장</span>
-          <p>원장은 본인 거래만 보인다. 멤버를 따로 지정하지 않아도 시스템이 로그인한 본인으로 고정하므로
-            남의 원장을 볼 수 없다. 잘못된 월(13월 등)은 거절된다.</p>
+          <p>전체 내역은 본인 기록만 보인다. 회원을 따로 지정하지 않아도 시스템이 로그인한 본인으로 고정하므로
+            다른 회원의 기록을 볼 수 없다. 잘못된 월(13월 등)은 거절된다.</p>
         </div>
       </section>
 
       <section>
-        <h2>운영자가 알아야 할 것</h2>
+        <h2>개통 전에 확인할 것</h2>
         <div class="callout warn">
-          <span class="label">성능 주의</span>
-          <ul>
-            <li><strong>메인의 최근 5건과 일부 집계가 전체 원장을 메모리에 올려 계산한다.</strong> 멤버·거래가 많은 클럽에서 메인 조회가 느려질 수 있다.</li>
-            <li><strong>월간 영수증의 등급은 "추정"이다.</strong> 과거 월이라도 현재 등급 정의를 기준으로 역산하므로, 등급 정의가 바뀐 뒤 과거 월을 보면 다르게 보일 수 있다.</li>
-          </ul>
+          <span class="label">실제 기기 알림과 화면 이동</span>
+          <p>서버가 적립·사용·정정·만료 관련 알림을 만드는 것까지는 확인했다. 남은 것은 실제 기기에서
+            알림을 받고, 알림을 눌렀을 때 이 기능의 메인 또는 전체 내역으로 정확히 이동하는지 확인하는 일이다.
+            이 확인은 푸시 자격 증명과 서명된 앱이 있어야 가능하다.</p>
         </div>
       </section>
 
@@ -102,13 +108,14 @@
         <div class="hub-grid">
           <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">상위 도메인</div><h3>16 마일리지</h3></a>
           <a class="card" href="F16-02.html"><div class="eyebrow">관련</div><h3>F16-02 등급·배지·랭킹</h3><p>메인에서 본 등급·배지의 정의.</p></a>
-          <a class="card" href="F16-06.html"><div class="eyebrow">원천</div><h3>F16-06 적립·차감·정정</h3><p>원장에 거래가 쌓이는 곳.</p></a>
+          <a class="card" href="F16-06.html"><div class="eyebrow">연결 기능</div><h3>F16-06 적립·차감·정정</h3><p>회원의 점수 기록이 생기는 곳.</p></a>
         </div>
       </section>
 
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - business_logic/prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md
+  - /Users/kyle/source/09.community/docs/plan/mileage/MILEAGE_RELEASE_PLAN.md
 -->
     </main>
   </div>
