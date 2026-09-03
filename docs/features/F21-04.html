@@ -43,14 +43,14 @@
             올라가므로 나머지 참가자들의 일정이 지연되지 않는다.</p>
         </div>
         <div class="callout warn">
-          <span class="label">2026-07-29 현재 소스 갱신 — 카탈로그 계약의 무료 처리</span>
+          <span class="label">2026-09-04 현재 상태 — 코드 완료, 개통 전</span>
           <p>offering/terms가 붙은 배정은 총액 X 권위를 지키기 위해 돈 없는 무료 초대를 항상 금지한다.
             아직 조건을 제안하지 않은 상품 배정도 같다. 카탈로그에서 참가자를 무료로 초대하려면 호스트
             대납을 써야 하며, 실제 charge에는 수락된 5% 수수료와 원천징수 정책이 적용된다.
-            FREE_EXCLUDED는 direct 수금액 모드에서만 가능하다. 현재 앱 버튼은
-            <code>serviceFeeGross</code>만 보므로 조건 제안 전 카탈로그 카드에도 무료 제외가 노출되고,
-            제출 뒤 서버에서 거부된다. 두 서버 mutation은 beneficiary의 이벤트 참가자 자격도 직접
-            검사하지 않아 API 직접 호출에 대한 보완이 필요하다.</p>
+            FREE_EXCLUDED는 direct 수금액 모드에서만 가능하다. 앱은 서버가 내려 준 실행 가능 조치만
+            보여 주므로 카탈로그 계약에는 실패할 무료 제외 버튼을 노출하지 않는다. 서버는 무료 제외와
+            대납 모두에서 대상이 실제 참가자인지 확인하고, 무료 제외는 정산 전에 취소해 다시 납부
+            대상으로 돌릴 수 있다. 신규 개통에는 결제 기반과 실계정 지급 확인이 남았다.</p>
         </div>
       </section>
 
@@ -225,8 +225,8 @@ flowchart TD
             <h3>같은 참가자를 무료 초대이면서 동시에 대납 처리하려 한다</h3>
             <p>호스트가 이미 무료 초대로 처리한 참가자에게 대납도 걸려고 시도한다.
               시스템이 이를 거부한다. 한 참가자에게는 하나의 처리 방식만 적용된다.
-              현재 무료 초대 전용 취소 API가 없으므로 이를 취소하고 대납으로 바꾸는 공개 경로도 없다.
-              현재 상태를 유지하거나 배정 전체 취소 등 더 큰 되감기만 가능하다.</p>
+              무료 제외를 취소하면 감사 기록을 남긴 채 참가자가 다시 미처리 상태가 된다. 이후 참가자가
+              직접 납부하거나 모임장이 대납할 수 있다. 정산이 이미 잠긴 뒤에는 이 변경을 거부한다.</p>
           </article>
 
           <article class="card">
@@ -249,7 +249,7 @@ flowchart TD
               참가자의 동의를 받을 필요가 없다. 호스트가 실행하면 즉시 기록이 생성된다.</li>
             <li><strong>무료 처리된 참가자는 정산 통과 조건을 충족한다.</strong>
               무료 초대와 대납 모두 "이 인원의 분담은 해결됐다"로 서버가 인정한다.
-              현재 앱에는 참가자별 완료 목록이 없고 readiness 미통과 시 raw userId만 표시된다.</li>
+              사전점검은 미처리 참가자의 역할·표시 이름·관련 금액과 해결 사유를 보여 준다.</li>
             <li><strong>총액 보장 방식을 쓰는 호스트는 사전에 안내가 필요하다.</strong>
               이 방식에서 무료 처리를 하려면 호스트가 차액을 대납해야 한다는 점을
               배정 설정 단계에서 미리 알려야 혼선을 막을 수 있다.</li>
@@ -257,12 +257,12 @@ flowchart TD
               운영자나 제공자가 참가자에게 환불을 돌려줄 상황이 생기더라도,
               시스템은 실제 납부자인 호스트의 지갑으로 돌려보낸다.
               호스트와 참가자 사이의 별도 정산은 운영자가 개입할 영역이 아니다.</li>
-            <li><strong>현재 무료 초대 전용 취소 API는 없다.</strong>
-              FREE_EXCLUDED를 잘못 지정했을 때 되돌리는 공개 계약이 없으므로 운영 보완이 필요하다.</li>
-            <li><strong>카탈로그 preterms 카드에는 실패할 무료 제외 버튼이 보일 수 있다.</strong>
-              앱은 serviceFeeGross만 검사하지만 서버는 offering/terms 배정을 항상 거부한다.</li>
-            <li><strong>서버는 beneficiary의 이벤트 참가 여부를 직접 확인하지 않는다.</strong>
-              앱 picker는 참가자를 고르지만 직접 API 호출은 비참가자 coverage를 만들 수 있어 서버 가드가 필요하다.</li>
+            <li><strong>무료 제외는 정산 전에만 취소할 수 있다.</strong> 서버는 실행자·사유·시각을 남기고,
+              취소 뒤 같은 참가자를 납부 또는 대납 대상으로 다시 처리할 수 있게 한다.</li>
+            <li><strong>실행 가능한 버튼은 서버가 결정한다.</strong> 카탈로그 계약처럼 무료 제외가 금지된
+              배정에는 앱이 버튼을 표시하지 않고, 직접 API 호출도 서버가 같은 규칙으로 거부한다.</li>
+            <li><strong>대상은 실제 참가자로 제한한다.</strong> 화면 선택 목록뿐 아니라 서버가 이벤트
+              참가 자격을 다시 확인해 비참가자 명의의 처리 기록을 만들지 않는다.</li>
           </ul>
         </div>
       </section>
@@ -282,7 +282,7 @@ flowchart TD
   - community_api/src/main/java/com/endside/community/curated/ (ServiceAssignmentService)
   - free-exclude: CoverageType.FREE_EXCLUDED, ASSIGNMENT_FREE_NOT_ALLOWED (보장모드 차단)
   - subsidize: CoverageType.HOST_SUBSIDIZED, 호스트 지갑 spendAndJournal, CreatorEarning 적립
-  - measured 2026-07-29: offering/terms FREE_EXCLUDED prohibition, 5% subsidize leg
+  - measured 2026-09-04: participant guard, cancel-free-exclude audit, server-driven actions
 -->
     </main>
   </div>

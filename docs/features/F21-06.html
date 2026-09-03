@@ -22,7 +22,8 @@
           호스트가 제공자를 섭외할 때 사전에 약정 금액을 정하고 그 일부를 계약금으로 미리 지불하는 방식이다.
           정산 시점에 계약금과 참가자 분담금의 합계가 약정액과 맞아야 정산이 완료된다.
           배정이 취소되더라도 계약금은 돌아오지 않으며, 총액 보장 방식과는 동시에 사용할 수 없다.
-          서버는 직접 배정과 카탈로그 terms 배정을 모두 지원하지만, 현재 앱의 카탈로그 D&gt;0 결제 CTA는 단절돼 있다.
+          직접 배정과 카탈로그 계약 모두 서버가 확정한 금액을 사용하며, 앱은 계약금 납부 필요 여부와
+          처리 상태에 맞는 버튼을 제공한다.
         </p>
       </header>
 
@@ -46,14 +47,14 @@
         </div>
 
         <div class="callout warn">
-          <span class="label">2026-07-29 현재 소스 갱신 — 계약조건과 계약금 게이트</span>
+          <span class="label">2026-09-04 현재 상태 — 코드 완료, 개통 전</span>
           <p>보장수수료 모드(<code>serviceFeeGross</code>)와 engagement 계약금 모드는 상호 배타다.
-            Flutter는 <code>!hasServiceFee &amp;&amp; !hasEngagement</code>일 때만 계약금 버튼을 노출한다.
             카탈로그에서는 최신 terms의 X/D가 권위이고 D&gt;0 수락 시 결제 전에 engagement가 생긴다.
-            이 때문에 같은 Flutter 조건이 계약금 버튼을 숨겨 서버 결제 API에 도달하지 못한다. 신규 계약의
+            서버는 <code>PAY_DEPOSIT</code>·<code>CANCEL_DEPOSIT</code> 같은 실행 가능 조치를 상태와 함께
+            내려 주고 Flutter는 그 값으로 버튼을 연다. 신규 계약의
             계약금과 이후 charge에는 각각 5.00% 수수료가 leg별 원 단위 HALF_UP으로 적용된다.
-            계약금 취소는 PENDING 상태에서만 가능하고, WALLET 결제는 즉시 PAID가 된다. API/Repository에는
-            취소가 있지만 현재 화면 CTA는 없다.</p>
+            계약금 취소는 PENDING 상태에서만 가능하고, WALLET 결제는 즉시 PAID가 된다. 신규 거래는
+            <code>PROVIDER</code>와 결제 기반이 모두 열리기 전에는 차단되며 기존 계약의 종결만 유지한다.</p>
         </div>
       </section>
 
@@ -99,11 +100,11 @@ flowchart TD
     F -->|"일치"| H["정산 실행<br/>D + 참가자 분담 = X 검증 통과<br/>각 money leg별 fee·tax 스냅샷으로 earning 생성"]
           </div>
         </div>
-        <div class="callout danger">
-          <span class="label">현재 앱 Gap — 카탈로그 D&gt;0 계약은 수락 후 납부 버튼이 사라진다</span>
-          <p>카탈로그 terms 수락은 서버에서 engagement를 먼저 만든다. 서버는 이후 결제에서 그 engagement와
-            수락된 X/D를 재사용하도록 구현돼 있지만, 앱은 engagement가 있으면 계약금 버튼을 숨긴다.
-            따라서 위의 앱 정상 흐름은 engagement가 아직 없는 직접 배정에만 해당한다.</p>
+        <div class="callout">
+          <span class="label">직접 배정과 카탈로그 계약이 같은 화면 규칙을 쓴다</span>
+          <p>카탈로그 조건을 수락해 engagement가 먼저 생겨도, 계약금이 필요하고 아직 납부되지 않았다면
+            서버가 계약금 결제 조치를 내려 준다. 앱은 engagement 존재 여부를 납부 완료로 추측하지 않고
+            이 조치에 따라 결제 버튼을 보여 준다. 금액은 앱이 다시 입력받지 않고 수락된 X/D를 사용한다.</p>
         </div>
       </section>
 
@@ -136,13 +137,12 @@ flowchart TD
           </article>
 
           <article class="card">
-            <div class="eyebrow">카탈로그 terms — 현재 앱 Gap</div>
-            <h3>D&gt;0 조건을 수락했지만 계약금 버튼이 보이지 않는다</h3>
+            <div class="eyebrow">카탈로그 계약금</div>
+            <h3>D&gt;0 조건을 수락하고 계약금을 납부한다</h3>
             <p>최종 수락 시 서버가 engagement와 <code>requiresDeposit=true</code>를 먼저 기록한다.
-              서버 결제 API는 수락된 X/D를 검증해 그 engagement에 계약금을 붙일 수 있다.
-              그러나 앱은 engagement 존재를 이미 납부한 것으로 간주해 계약금 버튼을 숨긴다.</p>
-            <p><strong>현재 결과</strong> — 서버 계약은 존재하지만 앱 사용자는 카탈로그 계약금을 납부할 수 없다.
-              미납 여부를 표현하는 VO와 별도 CTA가 필요하다.</p>
+              서버 결제 API는 수락된 X/D를 다시 검증하고 앱에는 "계약금 결제" 조치를 내려 준다.
+              호스트가 누르면 서버가 확정한 D만 지갑에서 차감하고 같은 engagement에 연결한다.</p>
+            <p><strong>현재 결과</strong> — 직접 배정과 카탈로그 배정 모두 앱에서 계약금 납부까지 도달한다.</p>
           </article>
 
           <article class="card">
@@ -231,8 +231,9 @@ flowchart TD
               두 방식의 정산 검증 기준이 달라서 동시 적용이 허용되지 않는다.
               배정을 만들기 전에 방식을 먼저 결정해야 한다.</li>
             <li><strong>취소 가능 여부는 배정 확정이 아니라 prepayment 상태로 판단한다.</strong>
-              서버는 PENDING만 취소한다. WALLET은 결제 트랜잭션에서 즉시 PAID가 되므로 일반 결제 후에는
-              취소할 수 없고, 현재 Flutter 화면에는 취소 CTA도 없다.</li>
+              서버는 PENDING일 때만 취소 조치를 내려 주며 Flutter도 그때만 버튼을 보여 준다. WALLET은
+              결제 트랜잭션에서 즉시 PAID가 되므로 일반 결제 후에는 취소가 아니라 정산 적용 또는 배정
+              취소 시 제공자 귀속 경로로 간다.</li>
           </ul>
         </div>
       </section>
@@ -251,7 +252,7 @@ flowchart TD
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - community_api/src/main/java/com/endside/community/curated/ (ServiceAssignmentService, ServiceEngagement)
-  - measured 2026-07-29: terms X/D authority and per-leg FEE_V2_5PCT
+  - measured 2026-09-04: server-authoritative X/D, PAY_DEPOSIT/CANCEL_DEPOSIT actions
 -->
     </main>
   </div>

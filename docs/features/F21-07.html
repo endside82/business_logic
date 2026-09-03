@@ -45,12 +45,14 @@
             각 회차의 결과는 개별로 추적되어 어느 회차가 정산됐고 어느 회차에 문제가 있는지 바로 알 수 있다.</p>
         </div>
         <div class="callout warn">
-          <span class="label">2026-07-29 현재 소스 갱신 — 카탈로그·회차 승계 경계</span>
+          <span class="label">2026-09-04 현재 상태 — 코드 완료, 개통 전</span>
           <p>묶음 배정 API는 CATALOG 출처를 거부한다. 수락된 카탈로그 계약의 다음 회차는 상품
             스냅샷과 X/D를 새 terms v1로 복제하되 재수락 전까지 돈 동작을 열지 않는다. direct 또는
-            미수락 계약은 provider id/role만 DRAFT로 복제되지만 현재 DRAFT 재개 API가 없다.
+            미수락 계약은 제공자와 역할만 ASSIGNED 상태로 복제해 제공자가 바로 수락·거절할 수 있다.
             회차 replace는 비종단 assignment의 eventId를 옮기므로 연결 charge/prepayment/terms도
-            assignmentId를 따라간다. 묶음 SETTLED는 earning APPROVED이며 실제 지급은 주간 배치다.</p>
+            assignmentId를 따라간다. 묶음 SETTLED는 earning APPROVED이며 실제 지급은 주간 배치다.
+            묶음 정산 요청은 앱이 결과가 확정될 때까지 같은 요청 고유키를 유지한다. 신규 개통에는
+            플랫폼 결제 기반, 실지급, 법무·세무 승인과 서명 앱 왕복이 남았다.</p>
         </div>
       </section>
 
@@ -254,6 +256,10 @@ flowchart TD
             <li><strong>회차 단위 개별 정산과 묶음 정산은 함께 사용할 수 있다.</strong>
               급한 회차를 먼저 개별 정산으로 처리한 뒤, 나머지를 묶음으로 정산해도 된다.
               이미 처리된 회차는 묶음 정산 시 자동으로 건너뛴다.</li>
+            <li><strong>다음 회차로 이월된 직접 배정은 막다른 초안이 아니다.</strong> ASSIGNED 상태로
+              만들어져 제공자가 수락·거절할 수 있고, 취소·거절된 배정 뒤에는 같은 제공자를 다시
+              배정할 수 있다. 수락된 카탈로그 조건을 이월한 경우에는 새 회차에서 다시 수락해야 돈
+              동작이 열린다.</li>
           </ul>
         </div>
       </section>
@@ -272,7 +278,7 @@ flowchart TD
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - community_api/src/main/java/com/endside/community/curated/ (CuratedSettlementBatchService, BulkSettleStatus)
-  - measured 2026-07-29: no CATALOG bulk, next-occurrence terms copy, replace behavior
+  - measured 2026-09-04: direct ASSIGNED carry, durable bulk-settle key, per-session results
 -->
     </main>
   </div>

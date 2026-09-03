@@ -243,7 +243,7 @@ const unitScenarioCountMismatches = auditFeatures.filter((feature) =>
 ).length;
 
 const payload = {
-  asOf: '2026-08-30',
+  asOf: '2026-09-04',
   countingNote: `${documentedScenarioItems.toLocaleString('ko-KR')}은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 ${unitScenarioDocuments}개에서 실제로 식별한 제목은 ${unitScenarioHeadings.toLocaleString('ko-KR')}개이며 ${unitScenarioCountMismatches}개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.`,
   totals: {
     features: auditFeatures.length,

@@ -33,7 +33,7 @@
           <div class="metric"><div class="label">배정 상태</div><div class="value">7개</div><div class="hint">계약 상태머신 전체 값</div></div>
           <div class="metric"><div class="label">모임 종류</div><div class="value">2가지</div><div class="hint">단일 이벤트·정기모임 모두 가능</div></div>
           <div class="metric"><div class="label">배정 조회 권한</div><div class="value">본인만</div><div class="hint">제공자는 자기 배정만 열람</div></div>
-          <div class="metric"><div class="label">중복 기준</div><div class="value">동일 제공자 불가</div><div class="hint">(모임, 제공자) 조합 유일</div></div>
+          <div class="metric"><div class="label">중복 기준</div><div class="value">활성 배정 1건</div><div class="hint">취소·거절 뒤에는 같은 제공자를 다시 배정 가능</div></div>
         </div>
 
         <div class="callout">
@@ -42,10 +42,16 @@
             얼마를 받는다"는 계약의 시작점이며, 이 확정이 있어야 참가자 서비스비 납부와 정산 지급이 가능해진다.
             반대로 취소도 단계별로 가능해, 호스트나 제공자 어느 쪽도 확정 전에 물러설 수 있다.</p>
         </div>
+        <div class="callout warn">
+          <span class="label">2026-09-04 현재 상태 — 코드 완료, 개통 전</span>
+          <p>직접·카탈로그·정기모임 배정, 계약조건 합의, 제공자 수락·거절, 모임장 확정·취소와
+            봉인 중 기존 계약 종결까지 고객 앱과 서버에 연결돼 있다. 신규 거래는 플랫폼 결제 기반,
+            법무·세무 승인, 실제 지급 대행과 서명 앱 왕복을 마친 뒤 <code>PROVIDER</code>를 개통한다.</p>
+        </div>
       </section>
 
       <section>
-        <h2>2026-07-29 현재 제공자 마켓플레이스</h2>
+        <h2>2026-09-04 현재 제공자 마켓플레이스</h2>
         <div class="cards">
           <article class="card">
             <div class="eyebrow">프로필·검증</div>
@@ -70,9 +76,9 @@
           <article class="card">
             <div class="eyebrow">이행·운영</div>
             <h3>이행 통계와 관리자 심사를 분리한다</h3>
-            <p>terms-managed 정산은 FULFILLED 또는 PARTIALLY_FULFILLED만 허용한다. 관리자 API는
-              심사·문서 열람·상품 제재 권한을 분리한다. 일정 충돌 검증, 관리자 프런트, 검증 결과 알림은
-              아직 연결되지 않았다.</p>
+            <p>terms-managed 정산은 FULFILLED 또는 PARTIALLY_FULFILLED만 허용한다. 관리자 API와 웹은
+              심사·문서 열람·상품 제재 권한을 분리하고 결과를 고객 알림으로 전달한다. 제공자의 다른 일정과
+              겹치는지는 자동 검사하지 않으므로 계약조건을 수락하기 전에 당사자가 확인한다.</p>
           </article>
         </div>
       </section>
@@ -82,9 +88,7 @@
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> 초안 : 다음 회차 direct·미수락 복제
-    초안 --> 배정됨 : 상태 전이는 정의됨\n공개 resume API는 없음
-    [*] --> 배정됨 : direct 또는 카탈로그 배정 생성
+    [*] --> 배정됨 : direct 또는 카탈로그 배정 생성\n다음 회차 direct 이월
     배정됨 --> 수락됨 : direct 수락 또는 최신 조건 수락
     배정됨 --> 거절됨 : 제공자 거절
     수락됨 --> 확정됨 : 호스트 최종 확정
@@ -149,8 +153,9 @@ stateDiagram-v2
             <div class="eyebrow">동일 제공자 중복 방지</div>
             <h3>같은 모임에 같은 제공자를 중복 배정하면</h3>
             <p>이미 배정된 제공자를 같은 모임에 한 번 더 배정하려 하면 시스템이 거부한다.
-              유일성은 같은 모임 전체가 아니라 같은 <strong>(모임, 제공자)</strong> 조합이다.
-              따라서 서로 다른 제공자는 같은 모임에 각각 배정할 수 있다.</p>
+              유일성은 같은 모임 전체가 아니라 같은 <strong>(모임, 제공자)</strong> 활성 조합이다.
+              따라서 서로 다른 제공자는 같은 모임에 각각 배정할 수 있고, 기존 배정이 취소되거나
+              거절되면 같은 제공자를 다시 배정할 수 있다.</p>
           </article>
         </div>
       </section>
@@ -194,9 +199,11 @@ stateDiagram-v2
             <li><strong>제공자는 자기 배정만 본다.</strong> 제공자 본인이 아닌 사람이 그 제공자의 배정을 조회하는 경로는 없다. 호스트라도 다른 모임의 제공자 배정은 볼 수 없다.</li>
             <li><strong>같은 제공자만 중복 배정할 수 없다.</strong> 서로 다른 제공자는 한 모임에 여러 명
               존재할 수 있다. 중복은 서비스가 먼저 409 도메인 오류로 거부하고 DB 유일성은 동시성 방어선으로 남는다.</li>
-            <li><strong>확정·취소 route의 경로 eventId는 현재 실제 owner와 대조하지 않는다.</strong>
-              서비스는 배정에 저장된 실제 eventId의 호스트 권한을 검사하므로 권한 상승은 없지만,
-              path와 배정 owner가 같은지 검증하는 계약은 후속 보완이 필요하다.</li>
+            <li><strong>주소의 모임 번호와 배정의 실제 모임 번호를 함께 검증한다.</strong>
+              다른 모임 번호와 배정 번호를 섞은 직접 호출은 거부하며, 실제 모임의 모임장·공동 운영자
+              권한도 별도로 확인한다.</li>
+            <li><strong>돈을 움직이기 전 제공자 자격을 다시 확인한다.</strong> 프로필이 있고 검증 완료이며
+              정지되지 않은 제공자만 계약조건 수락, 서비스비 설정, 계약금·분담금·대납과 정산을 진행한다.</li>
           </ul>
         </div>
       </section>
@@ -214,7 +221,7 @@ stateDiagram-v2
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - community_api/src/main/java/com/endside/community/curated/
-  - measured 2026-07-29: provider profile/verification/offering/catalog/terms/admin review included
+  - measured 2026-09-04: provider profile/verification/offering/catalog/terms/admin review included
   - AssignmentStatus: DRAFT/ASSIGNED/ACCEPTED/DECLINED/CONFIRMED/SETTLEMENT_LOCKED/CANCELED
 -->
     </main>
