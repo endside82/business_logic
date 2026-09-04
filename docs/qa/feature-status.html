@@ -27,7 +27,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">첫 출시 개통</div><div class="value" id="m-open">–</div><div class="hint">일부 개통 포함</div></div>
+          <div class="metric"><div class="label">출시</div><div class="value" id="m-open">–</div><div class="hint">일부 출시 포함</div></div>
           <div class="metric"><div class="label">첫 출시 봉인</div><div class="value" id="m-sealed">–</div><div class="hint">후속 출시 대상</div></div>
           <div class="metric"><div class="label">설계 철회</div><div class="value" id="m-retired">–</div><div class="hint">현재 제품 범위에서 폐기</div></div>
           <div class="metric"><div class="label">로컬 실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">외부 서비스·서명 앱은 별도</div></div>
@@ -52,15 +52,15 @@
           기능은 코드 공백 때문에 닫혀 있다.
           산정 기준과 남은 코드 묶음은
           <a href="launch-status.html#code-completeness">첫 출시 현황의 코드 완성도와 출시 가능성</a>에서 확인한다.
-          마일리지의 “봉인”은 한 상태가 아니다. 핵심 기능 7개는 코드·운영 화면과 실계정 왕복이 끝나
-          실기기 확인과 운영 설정만 남았고, 시즌은 기능 미완성, 사진 승인 적립·고급 검토·이벤트별 규칙·클럽별 후기 작성 기간은
-          별도 후속 기능으로 분리돼 있다.
+          마일리지 핵심 기능 7개는 코드·운영 화면과 실계정 왕복을 끝내고 2026-09-04 운영 기본 출시
+          목록에 반영했다. 실기기 알림 확인은 출시 후 운영 점검으로 남아 있다. 시즌은 기능 미완성이고,
+          사진 승인 적립·고급 검토·이벤트별 규칙·클럽별 후기 작성 기간은 별도 후속 기능으로 분리돼 있다.
         </div>
 
         <div class="toolbar">
           <input id="q" type="search" placeholder="ID·기능명·도메인 검색">
           <select id="domain-filter" aria-label="도메인 필터"><option value="">전체 도메인</option></select>
-          <label class="chip"><input type="checkbox" id="f-open">개통만</label>
+          <label class="chip"><input type="checkbox" id="f-open">출시만</label>
           <label class="chip"><input type="checkbox" id="f-sealed">봉인만</label>
           <label class="chip"><input type="checkbox" id="f-real">로컬 실계정 확인만</label>
           <label class="chip"><input type="checkbox" id="f-gap">알려진 문제 있는 것만</label>
@@ -86,8 +86,8 @@
       <section>
         <h2>열 읽는 법</h2>
         <ul>
-          <li><strong>첫 출시</strong> — 운영 배포의 출시 범위 설정과 결제 개통 스위치에서 그대로 읽은
-            값이다. “일부 개통”은 기능 안에서 일부 경로만 열린다는 뜻이며, 어떤 경로가 닫히는지는
+          <li><strong>첫 출시</strong> — 운영 배포의 출시 범위 설정과 결제 출시 스위치에서 그대로 읽은
+            값이다. “일부 출시”는 기능 안에서 일부 경로만 열린다는 뜻이며, 어떤 경로가 닫히는지는
             행을 펼치면 나온다.</li>
           <li><strong>확인 수준</strong> — “로컬 실계정”은 격리된 로컬 환경에서 신규 계정으로 실제
             서버 상태기계를 왕복한 기록이 있는 경우에만 붙인다. 실제 외부 서비스나 서명 앱까지

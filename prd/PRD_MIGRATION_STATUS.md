@@ -33,7 +33,7 @@ F03-14~17은 종전 `NONE/CARPOOL/BUS` 선택, 별도 카풀·버스 표와 “�
 갱신했고 사용자 API 156건·앱 160건·관리자 API 23건·관리자 웹 E2E 3건이 실패 없이 통과했다.
 
 신규 이용은 기능 미구현 때문에 닫힌 것이 아니다. 서명 앱에서 호스트·운전자·탑승자 왕복과 실제
-알림·신고, 책임 고지를 확인한 뒤 `TRANSPORT`를 개통한다. 완료 근거는
+알림·신고, 책임 고지를 확인한 뒤 `TRANSPORT`를 출시한다. 완료 근거는
 [대절 버스·카풀 통합 기능 완료 근거](../../docs/release-gate/evidence/MOV-01/README.md)를 따른다.
 
 ## 2026-08-18 (2차) — 상태 축 분리와 갭 후보 판정 미완 고지
@@ -528,10 +528,10 @@ community_api 의 `warning`·`mileage` 도메인(§30 클럽 활동)이 PRD/docs
 
 | # | 미반영 항목 | 내용 요약 | 정본 근거 |
 |---|---|---|---|
-| 1 | 호스트 계좌 직접 수납 전체 플로우 (MNY-03B) | 호스트 수납 계좌 등록·모임 결박, 참가자 입금자명 신고, 호스트 입금 확인/거절, 수동 환불과 수령 확인, 계좌 1원 인증(실 제공자 계약 전에는 인증 없이 개통), 관리자 대행 처리까지의 사용자·운영 동선 전체. 현재 F03-13/F17-07에는 결제수단 판정만 반영돼 있고 계좌 등록·확인 화면 계약은 없다. | `docs/plan/MNY03B_HOST_DIRECT_CASH_PLAN_2026-08-17.md`, `docs/release-gate/evidence/MNY-03B/`, `docs/plan/G0_10_PAID_EVENT_PAYMENT_DECISION_2026-08-11.md` |
+| 1 | 호스트 계좌 직접 수납 전체 플로우 (MNY-03B) | 호스트 수납 계좌 등록·모임 결박, 참가자 입금자명 신고, 호스트 입금 확인/거절, 수동 환불과 수령 확인, 계좌 1원 인증(실 제공자 계약 전에는 인증 없이 출시), 관리자 대행 처리까지의 사용자·운영 동선 전체. 현재 F03-13/F17-07에는 결제수단 판정만 반영돼 있고 계좌 등록·확인 화면 계약은 없다. | `docs/plan/MNY03B_HOST_DIRECT_CASH_PLAN_2026-08-17.md`, `docs/release-gate/evidence/MNY-03B/`, `docs/plan/G0_10_PAID_EVENT_PAYMENT_DECISION_2026-08-11.md` |
 | 2 | 출시 범위 게이트 (P0-SCOPE-01) | 이 배포가 파는 도메인만 열고 나머지 7개 도메인은 서버·앱 양쪽에서 봉인하는 구조. 봉인된 도메인의 기존 건에 대한 조회·취소·환불 등 **안전 출구**는 유지된다는 계약을 포함한다. 앱은 서버가 주는 범위 목록으로 메뉴·라우트를 그린다. | `docs/plan/P0SCOPE_ACCLOCK_EXECUTION_PLAN_2026-08-17.md`, `docs/release-gate/evidence/P0SCOPE-ACCLOCK/` |
 | 3 | 계정 정지·차단의 권리구제 (ACC-LOCK-01) | 정지·차단 계정은 로그인을 거부당하지 않고 **제한된 권한의 세션**을 받는다. 제재 안내 화면, 본인 케이스 결과 확인·이의 제기, 데이터 권리 등 허용 동선 22행이 확정됐다. 현재 인증·프로필 계열 PRD(F01·F13·F15)에는 이 제한 세션 개념 자체가 없다. | `docs/plan/P0SCOPE_ACCLOCK_EXECUTION_PLAN_2026-08-17.md`, `docs/release-gate/evidence/P0SCOPE-ACCLOCK/` |
 | 4 | 분쟁 종결 완결 (DSP-01) | 분쟁 케이스의 자동/수동 종결, 보상 원장, 당사자 명령·동의 종결, 관리자 위임 확정, 종결 고지 단일화. F18-01~05 전체가 이 재설계 이전 기준이다. | `docs/plan/DSP01_DISPUTE_CLOSURE_PLAN_2026-08-16.md`, `docs/release-gate/evidence/DSP-01/` |
-| 5 | 대절 버스·카풀 이동수단 (`MOV-01`) | **2026-09-02 반영 완료.** F03-14~17과 관련 HTML·정책·색인을 통합 차량 모델, 표준 9종, 관리자 운영 화면과 코드 완료·개통 증명 대기 상태로 갱신했다. | `docs/release-gate/evidence/MOV-01/README.md`, `docs/IMPLEMENTATION_WORKBOARD.md` |
+| 5 | 대절 버스·카풀 이동수단 (`MOV-01`) | **2026-09-02 반영 완료.** F03-14~17과 관련 HTML·정책·색인을 통합 차량 모델, 표준 9종, 관리자 운영 화면과 코드 완료·출시 증명 대기 상태로 갱신했다. | `docs/release-gate/evidence/MOV-01/README.md`, `docs/IMPLEMENTATION_WORKBOARD.md` |
 | 6 | 마일리지 규칙·배지 (MLG-01) | 기본 적립 규칙 3종 시딩, 규칙의 신규 적용 전용 원칙, 서버 계산 권한 게이팅, 배지·등급. F16-01~08이 이 착지 이전 기준이다. | `docs/IMPLEMENTATION_WORKBOARD.md`, `docs/club_activity/mileage/README.md` |
 | 7 | 이메일 인증 제한 세션의 화면 파급 | 2026-08-18 동기화는 F01-03(및 F01-01·F01-02의 모순 서술)만 정정했다. 미인증 상태에서 각 도메인 화면이 무엇을 보여주고 어디로 안내하는지는 아직 각 기능 PRD에 반영되지 않았다. | `docs/plan/PENDING_DECISIONS_2026-08-15.md`, `docs/release-gate/evidence/P0-REAL-ACCOUNT-E2E/`, `docs/release-gate/RC_MANIFEST_2026-08-18_P0_R2.md` |

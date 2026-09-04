@@ -6537,7 +6537,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0
@@ -6579,7 +6579,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0
@@ -6663,7 +6663,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0
@@ -6705,7 +6705,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0
@@ -6747,7 +6747,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0
@@ -6789,7 +6789,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0
@@ -6831,7 +6831,7 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "evidenceStage": 2,
-      "launchScope": "sealed",
+      "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
       "pendingReview": 0

@@ -8,7 +8,7 @@
 
 ## 1. 결론
 
-> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 아래 계약은 **두 수단 전체**의 설계다. 지금 실제로 열려 있는 수단은 **BANK_TRANSFER(계좌이체 — 호스트 계좌로 직접 송금)** 하나이며, WALLET(포인트 지갑)은 실 PG 개통 전까지 닫혀 있다. WALLET 관련 서술(즉시 PAID·회계 분개·자동 환불)은 **설계 정본이자 현재 비활성**으로 읽는다. 상세는 §4 `EventPaymentMethod` 절.
+> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 아래 계약은 **두 수단 전체**의 설계다. 지금 실제로 열려 있는 수단은 **BANK_TRANSFER(계좌이체 — 호스트 계좌로 직접 송금)** 하나이며, WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. WALLET 관련 서술(즉시 PAID·회계 분개·자동 환불)은 **설계 정본이자 현재 비활성**으로 읽는다. 상세는 §4 `EventPaymentMethod` 절.
 
 선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에서 참가자가 호스트 승인 또는 자동 승인 후 `APPROVED_PENDING_PAYMENT` 상태에 진입하면, 지정된 `paymentDueAt` 기한 내에 **WALLET(포인트 지갑)** 또는 **BANK_TRANSFER(계좌이체 신고)** 중 한 가지 방식으로 선입금을 납부해 참가를 확정한다. WALLET은 즉시 PAID + capacity++ + 참석 확정이 자동 발생하고, BANK_TRANSFER는 호스트가 입금 확인(`bankConfirm`) 또는 거부(`bankReject`)를 직접 수행해야 결정된다. 환불은 사용자 취소·이벤트 취소·호스트 거부 트리거 각각에 대해 정해진 경로(WALLET 자동 환불 / BANK 호스트 수동 환불 / `REFUND_REQUESTED` 큐)로 정리된다.
 
@@ -115,7 +115,7 @@
   - `refund_evidence_file_ids` json DEFAULT NULL — 호스트 수동 환불 증빙 fileId 배열 (이체증 등, 최대 5건) (`V1__init.sql:1163`)
   - `active_application_id` STORED generated column은 `purpose=INITIAL`이면서 status가 `PENDING/PAID/REFUND_REQUESTED`일 때만 application_id를 만든다. `UNIQUE KEY uk_event_payment_active`는 **초기 결제**의 동시 활성 1건만 보장하며 `GUEST_INCREMENT`는 다건을 허용한다.
 - **Enum `EventPaymentMethod`** (신규): `WALLET, BANK_TRANSFER`
-  - **2026-08-18 개정(P0-PAID-01) — 참가자에게 실제로 열리는 수단은 서버가 정한다.** `GET /api/v1/app/release-scope`의 `enabledPaymentMethods`가 단일 출처이며, 판정은 `WALLET → money.live`, `BANK_TRANSFER → 호스트 직접 수납 스위치 AND 출시 범위(CASH_EVENT)`다. **P0 출시 태세의 실제 값은 `BANK_TRANSFER` 하나**다 — 지갑(포인트) 결제는 실 PG 개통 전까지 닫혀 있고, 그 정책의 이벤트는 애초에 생성 단계에서 막힌다(F03-03 §4 `PrepaymentType` 참조). 앱은 목록에 없는 수단의 버튼을 그리지 않으며, 그래도 보내면 서버가 `400023`으로 거부한다.
+  - **2026-08-18 개정(P0-PAID-01) — 참가자에게 실제로 열리는 수단은 서버가 정한다.** `GET /api/v1/app/release-scope`의 `enabledPaymentMethods`가 단일 출처이며, 판정은 `WALLET → money.live`, `BANK_TRANSFER → 호스트 직접 수납 스위치 AND 출시 범위(CASH_EVENT)`다. **P0 출시 태세의 실제 값은 `BANK_TRANSFER` 하나**다 — 지갑(포인트) 결제는 실 PG 출시 전까지 닫혀 있고, 그 정책의 이벤트는 애초에 생성 단계에서 막힌다(F03-03 §4 `PrepaymentType` 참조). 앱은 목록에 없는 수단의 버튼을 그리지 않으며, 그래도 보내면 서버가 `400023`으로 거부한다.
   - ⛔ 이미 존재하는 결제 건의 확인·거절·취소·환불 경로는 이 판정을 타지 않는다(안전 출구 — 막으면 돈과 좌석이 함께 갇힌다).
 - **Enum `EventPaymentPurpose`**: `INITIAL, GUEST_INCREMENT`
 - **Enum `EventPaymentStatus`**: `PENDING, PAID, REFUND_REQUESTED, REFUNDED, CANCELED`

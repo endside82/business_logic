@@ -27,7 +27,7 @@
 <p>대상 독자: 기획, 운영, CS, 정책 담당자</p>
 <p>목적: 제품 안에서 돈, 유료 포인트, 무료 포인트, 마일리지가 어떤 상황에서 어디로 흘러가고 어디서 끝나는지 시나리오별로 한눈에 확인한다.</p>
 <p>함께 볼 문서: <a class="inline-doc" href="index.html">비즈니스 개요</a>, <a class="inline-doc" href="scenarios.html">상황별 시나리오</a></p>
-<p><strong>2026-08-23 첫 출시 경계:</strong> 현금성 결제·지급 도식은 후속 개통 설계다. 현재는 클럽 가입비·기부의 무료 포인트 전용 경로와 클럽 기금 전액 구독만 열린다.</p>
+<p><strong>2026-08-23 첫 출시 경계:</strong> 현금성 결제·지급 도식은 후속 출시 설계다. 현재는 클럽 가입비·기부의 무료 포인트 전용 경로와 클럽 기금 전액 구독만 열린다.</p>
 </blockquote>
 <h2 id="0-읽는-법">0. 읽는 법</h2>
 <p>이 문서는 내부 구현을 설명하는 문서가 아니다. 기획자가 정책, 화면 문구, 운영 매뉴얼, CS 답변을 만들 때 필요한 “상황별 흐름”과 “최종 상태”만 먼저 보여준다.</p>
@@ -983,7 +983,7 @@ flowchart TD
   D --&gt; H
   E --&gt; F{&quot;기금으로 전액 충당?&quot;}
   F -- &quot;예&quot; --&gt; I[&quot;유료분=구독 매출<br/>무료분=프로모션 비용&quot;]
-  F -- &quot;아니오&quot; --&gt; G{&quot;money.live 개통?&quot;}
+  F -- &quot;아니오&quot; --&gt; G{&quot;money.live 출시?&quot;}
   G -- &quot;아니오&quot; --&gt; T0[&quot;T-FAIL 전체 원복·구독 미생성&quot;]
   G -- &quot;예&quot; --&gt; W[&quot;부족분 오너 지갑 차감&quot;]
   W --&gt; I
@@ -1087,7 +1087,7 @@ flowchart TD
 </tr>
 <tr>
 <td><code>T-SUCCESS 클럽 운영 구독 활성</code></td>
-<td>기금 유료분은 플랫폼 매출, 무료분은 프로모션 비용. 개통 뒤 오너 지갑 유료분도 매출</td>
+<td>기금 유료분은 플랫폼 매출, 무료분은 프로모션 비용. 출시 뒤 오너 지갑 유료분도 매출</td>
 <td>없음</td>
 <td>클럽 기금이 아니라 플랫폼 매출이다.</td>
 </tr>

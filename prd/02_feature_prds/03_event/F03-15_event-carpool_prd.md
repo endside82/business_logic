@@ -3,7 +3,7 @@
 <!-- source-measured: 2026-09-02; authority: community_api/community_app current source -->
 
 > 현재 상태: **코드 완료, 신규 이용 봉인**. 승용차·자차 기능과 고객 화면은 동작하며 실제 역할별
-> 서명 앱 검증과 책임 고지 승인 뒤 개통한다.
+> 서명 앱 검증과 책임 고지 승인 뒤 출시한다.
 
 ## 제품 목적
 
@@ -47,7 +47,7 @@
   `transport_report_route_gate_test.dart`, `vehicle_seat_command_access_test.dart`
 - 2026-09-02 이동수단 표적 회귀: 사용자 API 156건·앱 160건 실패 0
 
-## 개통 전에 남은 일
+## 출시 전에 남은 일
 
 - 실제 호스트·운전자·탑승자 계정으로 제안→승인/거절→배정→취소→자차 복귀를 왕복한다.
 - 실제 푸시가 통합 차량 화면으로 이동하고 차량 신고가 운영 화면에서 조회되는지 확인한다.

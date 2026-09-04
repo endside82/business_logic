@@ -72,7 +72,7 @@
 - **Enum** `EventStatus`: `DRAFT → OPEN`이 publish의 유일한 합법 전이
 - **Enum** `EventType`: `INDEPENDENT(0)`, `CLUB_MEETING(1)`, `PRIVATE(2)` — `hostingCostType`로 자동 결정
 - **Enum** `PrepaymentType`: `POINT`, `CASH`, `MIXED` — 참가비 수납 정책 (Unit 06)
-  - **2026-08-18 개정(P0-PAID-01) — 지금 고를 수 있는 값은 서버가 정한다.** 종전에는 세 값이 모두 상시 선택 가능한 것처럼 서술됐다(폐기). 이제 `MoneyLiveGate.eventPrepaymentTypeAllowed`가 단일 판정 지점이며 `POINT → money.live`, `CASH → 호스트 직접 수납 스위치 AND 출시 범위(CASH_EVENT)`, `MIXED → 둘 다`를 본다. **P0 출시 태세의 실제 값은 `CASH` 하나**다 — 실 PG가 열리기 전까지 `POINT`/`MIXED` 정책 이벤트는 **생성 시점부터** `EVENT_PREPAYMENT_TYPE_NOT_READY(400023)`으로 거부된다. 판정은 생성뿐 아니라 **`DRAFT→OPEN`·비공개→공개 전이**에도 걸린다(`EventPrepaymentReleaseGuard.assertPublishable` — 열려 있을 때 만들어 재워 둔 초안이 닫힌 뒤 공개되는 구멍을 막는다). 별도 스위치는 없다: `money.live`가 열리는 순간 POINT가 자동 재개통된다.
+  - **2026-08-18 개정(P0-PAID-01) — 지금 고를 수 있는 값은 서버가 정한다.** 종전에는 세 값이 모두 상시 선택 가능한 것처럼 서술됐다(폐기). 이제 `MoneyLiveGate.eventPrepaymentTypeAllowed`가 단일 판정 지점이며 `POINT → money.live`, `CASH → 호스트 직접 수납 스위치 AND 출시 범위(CASH_EVENT)`, `MIXED → 둘 다`를 본다. **P0 출시 태세의 실제 값은 `CASH` 하나**다 — 실 PG가 열리기 전까지 `POINT`/`MIXED` 정책 이벤트는 **생성 시점부터** `EVENT_PREPAYMENT_TYPE_NOT_READY(400023)`으로 거부된다. 판정은 생성뿐 아니라 **`DRAFT→OPEN`·비공개→공개 전이**에도 걸린다(`EventPrepaymentReleaseGuard.assertPublishable` — 열려 있을 때 만들어 재워 둔 초안이 닫힌 뒤 공개되는 구멍을 막는다). 별도 스위치는 없다: `money.live`가 열리는 순간 POINT가 자동 재출시된다.
   - ⛔ 봉인은 **새로 나오는 것**에만 걸린다. 이미 존재하는 POINT 건의 조회·취소·환불·정산·노쇼·분쟁 경로는 이 판정을 타지 않는다(안전 출구).
 - **Enum** `HostingCostType` / `PrivateMeetingPhase`: 프라이빗 모임 전용 (PrivateMeetingPhase는 `WAITING_PAYMENT → RECRUITING → MATCHED → COMPLETED`)
 - **Enum** `Category` (15개), `LocationType`, `EventVisibility`, `RefundPolicyType` — F03-02 backend 참고
@@ -139,7 +139,7 @@
 - 위치 공유 `Switch` (오프라인일 때만 표시)
 - 환불 정책 (`RefundPolicyForm`) — 유료 이벤트일 때만, RadioGroup 형태로 NONE/STANDARD/FULL/GRADUATED/CUSTOM
 - CUSTOM 선택 시 환불 마감 시간 입력
-- 사전결제 토글 + 금액/유형 — 선택지는 서버 판정 목록(`GET /api/v1/app/release-scope`의 `enabledPrepaymentTypes`)이 구동한다. 앱은 그 목록에 없는 유형을 **노출하지 않는다**(2026-08-18, fail-closed — 응답을 못 읽으면 빈 목록으로 간주). P0 태세에서 호스트가 실제로 보는 것은 계좌이체(CASH) 하나이며, 포인트는 실 PG 개통 시 서버가 목록에 넣는 순간 앱이 다시 그린다(앱 상수 하드코딩 폐기)
+- 사전결제 토글 + 금액/유형 — 선택지는 서버 판정 목록(`GET /api/v1/app/release-scope`의 `enabledPrepaymentTypes`)이 구동한다. 앱은 그 목록에 없는 유형을 **노출하지 않는다**(2026-08-18, fail-closed — 응답을 못 읽으면 빈 목록으로 간주). P0 태세에서 호스트가 실제로 보는 것은 계좌이체(CASH) 하나이며, 포인트는 실 PG 출시 시 서버가 목록에 넣는 순간 앱이 다시 그린다(앱 상수 하드코딩 폐기)
 - 공동호스트 추가 (`UserSearchInput`)
 
 > UI 경고 (v4.5 W1): `overcapacityAllowed=true && hardCapacityLimit=null && waitlistEnabled=true` 조합은 waitlist 의미가 사라지므로 호스트에게 경고 노출(F03-07 §3-1 매트릭스 R3 참조).
