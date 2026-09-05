@@ -41,8 +41,8 @@
             출시 후 운영 점검으로 관리한다.
             사진 승인 적립은 이후 코드와 클럽 운영 화면까지 완성됐고 2026-09-05 현재 기본 브랜치 전체
             회귀도 통과했다. 역할별 앱↔서버 흐름과 빈 데이터베이스 설치를 확인한 뒤
-            <code>MILEAGE_PHOTO</code>로 따로 출시한다. 시즌·고급 검토·이벤트별 규칙·클럽별
-            후기 작성 기간은 아직 기능이 완성되지 않은 후속 범위다.</p>
+            <code>MILEAGE_PHOTO</code>로 따로 출시한다. 시즌·고급 검토(반복 수동 적립 한 종)·이벤트별 규칙은
+            2026-09-05 권고안대로 결정돼 구현 전이고, 클럽별 후기 작성 기간은 만들지 않기로 확정했다.</p>
           <p>구현 근거와 출시 순서, 감수하는 한계의 정본은
             <a href="../../../docs/plan/mileage/MILEAGE_RELEASE_PLAN.md">클럽 마일리지 출시 계획</a>에서 확인한다.</p>
         </div>
@@ -142,10 +142,10 @@ flowchart LR
             <tbody>
               <tr><td><strong>핵심 마일리지</strong><br>적립·사용·정정·만료·등급·배지·랭킹·호스트 제안·운영 복구</td><td><span class="pill brand">출시</span><br>운영 기본 목록에 <code>MILEAGE</code> 반영</td><td>실기기 알림과 화면 이동을 출시 후 운영 점검으로 확인한다.</td></tr>
               <tr><td><strong>사진 승인 적립</strong></td><td><span class="pill info">코드·현재 회귀 완료·출시 전</span><br>심사·재심·적립·승인 취소·회수와 클럽 운영 화면 완료</td><td>역할별 앱↔서버 흐름과 빈 데이터베이스 설치 비교 뒤 <code>MILEAGE_PHOTO</code>를 출시한다.</td></tr>
-              <tr><td><strong>시즌</strong></td><td><span class="pill danger">기능 미완성</span><br>자동 시작·종료·순위 계산·종료 기록·실패 복구 없음</td><td>시간 흐름과 동점 정책, 종료 기록과 복구를 완성한 뒤 별도 설정으로 연다.</td></tr>
-              <tr><td><strong>고급 검토 여섯 종</strong></td><td><span class="pill danger">핵심 처리 미구현</span><br>이름과 화면 문구만 있고 탐지·처리 효과 없음</td><td>유형별 탐지·판정·오탐 복구를 만든 뒤 별도 설정으로 연다.</td></tr>
-              <tr><td><strong>이벤트별 적립 규칙</strong></td><td><span class="pill danger">기능 미구현</span><br>현재는 클럽 공통 규칙만 적용</td><td>이벤트 시점 규칙 고정과 변경·취소·재처리 우선순위를 정한 뒤 구현한다.</td></tr>
-              <tr><td><strong>클럽별 후기 작성 기간</strong></td><td><span class="pill warn">별도 제품 결정</span><br>현재 후기 작성 기간은 모든 클럽에 공통으로 7일</td><td>클럽별 후기 작성 마감이 필요한지 후기 도메인 범위로 먼저 결정한다. 후기 적립 인정 기간은 이 상한 안에서 이미 클럽별 설정 가능하다.</td></tr>
+              <tr><td><strong>시즌</strong></td><td><span class="pill warn">결정 완료·구현 전</span><br>자동 시작·종료·순위 계산·종료 기록·실패 복구 없음</td><td>2026-09-05 결정대로 먼저 종료 시즌 정정 결함을 고치고, 자동 마감·자동 시작·발생 시각 귀속·순위 확정·부분 마감 복구를 만든 뒤 별도 설정으로 연다.</td></tr>
+              <tr><td><strong>고급 검토(반복 수동 적립 한 종)</strong></td><td><span class="pill warn">결정 완료·구현 전</span><br>이름과 화면 문구만 있고 탐지·처리 코드 없음</td><td>2026-09-05 결정대로 반복 수동 적립 한 종을 만들고 정정 잔액 부족은 자동 회수 검토에 통합한 뒤 별도 설정으로 연다. 나머지 세 유형은 범위 밖이다.</td></tr>
+              <tr><td><strong>이벤트별 적립 규칙</strong></td><td><span class="pill warn">결정 완료·구현 전</span><br>현재는 클럽 공통 규칙만 적용</td><td>2026-09-05 결정대로 공개 시 규칙 고정, 클럽 규칙 끔은 긴급 중지, 클럽 상한(기본 3배) 안 호스트 설정, 이벤트 취소 회수를 만든 뒤 핵심 마일리지에 포함해 연다.</td></tr>
+              <tr><td><strong>클럽별 후기 작성 기간</strong></td><td><span class="pill">만들지 않음(2026-09-05 결정)</span><br>후기 작성 기간은 모든 클럽에 공통 7일</td><td>요구가 확인되면 재검토한다. 마일리지 인정 기간은 지금도 클럽이 정한다.</td></tr>
             </tbody>
           </table>
         </div>
