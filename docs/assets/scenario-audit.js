@@ -6,8 +6,8 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1403,
     "definedFeatures": 175,
-    "automatedTestFilesScanned": 1652,
-    "journeyFilesScanned": 238,
+    "automatedTestFilesScanned": 1691,
+    "journeyFilesScanned": 239,
     "unitScenarioDocuments": 117,
     "unitScenarioHeadings": 1086,
     "unitRegisteredScenarioItems": 1011,
@@ -16,14 +16,15 @@ window.SCENARIO_AUDIT = {
     "automatedFeatureMarkers": 75,
     "automatedScenarioReferences": 59,
     "directlyLinkedJourneys": 56,
-    "journeyFeatureMarkers": 46,
+    "journeyFeatureMarkers": 45,
     "journeyScenarioReferences": 56,
-    "featureLevelAutomatedProof": 137,
+    "featureLevelAutomatedProof": 135,
+    "localServerE2eProof": 2,
     "localRealAccountProof": 37,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 55,
-    "partialEvidenceChain": 28,
-    "definitionOnlyEvidence": 92,
+    "partialEvidenceChain": 29,
+    "definitionOnlyEvidence": 91,
     "traceMarkers": 302,
     "currentTraceMarkers": 95,
     "missingTraceTargets": 2
@@ -2826,31 +2827,26 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 2,
-        "featureMarkerCount": 2,
+        "featureMarkerCount": 1,
         "scenarioReferenceCount": 2,
         "files": [
           "community_app/integration_test/seed_notification_permission_test.dart",
           "community_app/integration_test/seed_wallet_payment_visibility_test.dart"
         ],
         "markerCandidateFiles": [
-          "community_app/integration_test/seed_payment_refund_test.dart",
           "community_app/test/presentation/payment/point_charge_guidance_card_test.dart"
         ]
       },
       "journey": {
         "directlyLinked": true,
         "count": 2,
-        "featureMarkerCount": 3,
+        "featureMarkerCount": 0,
         "scenarioReferenceCount": 2,
         "files": [
           "community_app/integration_test/seed_notification_permission_test.dart",
           "community_app/integration_test/seed_wallet_payment_visibility_test.dart"
         ],
-        "markerCandidateFiles": [
-          "community_app/integration_test/seed_payment_refund_test.dart",
-          "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
-          "community_app/scripts/e2e/run_p70_payment_refund_matrix.sh"
-        ]
+        "markerCandidateFiles": []
       },
       "evidenceStage": 3,
       "launchScope": "sealed",
@@ -3009,7 +3005,7 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 3,
-        "featureMarkerCount": 3,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 3,
         "files": [
           "community_app/integration_test/seed_calendar_availability_mutation_test.dart",
@@ -3017,7 +3013,6 @@ window.SCENARIO_AUDIT = {
           "community_app/integration_test/seed_report_mutation_test.dart"
         ],
         "markerCandidateFiles": [
-          "community_app/integration_test/seed_payment_refund_test.dart",
           "community_app/integration_test/seed_subscription_mutation_test.dart",
           "community_app/test/presentation/payment/transaction_history_guidance_card_test.dart"
         ]
@@ -3025,7 +3020,7 @@ window.SCENARIO_AUDIT = {
       "journey": {
         "directlyLinked": true,
         "count": 4,
-        "featureMarkerCount": 5,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 4,
         "files": [
           "community_app/integration_test/seed_calendar_availability_mutation_test.dart",
@@ -3034,16 +3029,13 @@ window.SCENARIO_AUDIT = {
           "community_app/scripts/e2e/run_p70_payment_refund_matrix.sh"
         ],
         "markerCandidateFiles": [
-          "community_app/integration_test/seed_payment_refund_test.dart",
           "community_app/integration_test/seed_subscription_mutation_test.dart",
-          "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
-          "community_app/scripts/e2e/run_p70_payment_refund_matrix.sh",
           "community_app/scripts/e2e/run_p71_subscription_mutation_matrix.sh"
         ]
       },
       "evidenceStage": 3,
       "launchScope": "partial",
-      "proof": "auto",
+      "proof": "local",
       "knownIssues": 0,
       "pendingReview": 17
     },
@@ -7756,9 +7748,9 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
-      "proof": "auto",
+      "proof": "local",
       "knownIssues": 0,
       "pendingReview": 0
     },

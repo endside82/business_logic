@@ -44,13 +44,14 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">시나리오 정의</div><div class="value" id="m-defined">–</div><div class="hint">기능 175개 기준</div></div>
-          <div class="metric"><div class="label">기능 수준 자동·실계정 확인</div><div class="value" id="m-feature-proof">–</div><div class="hint">개별 시나리오 통과율과 다름</div></div>
+          <div class="metric"><div class="label">기능 수준 확인</div><div class="value" id="m-feature-proof">–</div><div class="hint">자동·로컬 E2E·신규 계정 합계</div></div>
           <div class="metric"><div class="label">기존 등록 숫자 합</div><div class="value" id="m-scenarios">–</div><div class="hint">통과율 분모 아님</div></div>
           <div class="metric"><div class="label">상세 시나리오 제목</div><div class="value" id="m-unit-headings">–</div><div class="hint">117개 문서에서 실제 식별</div></div>
           <div class="metric"><div class="label">검사한 테스트 파일</div><div class="value" id="m-test-files">–</div><div class="hint">다섯 코드 저장소</div></div>
           <div class="metric"><div class="label">자동 테스트 문서 연결</div><div class="value" id="m-auto">–</div><div class="hint">시나리오 문서가 파일을 직접 지목</div></div>
           <div class="metric"><div class="label">통합·E2E 문서 연결</div><div class="value" id="m-journey">–</div><div class="hint">시나리오 문서가 실행 파일을 지목</div></div>
-          <div class="metric"><div class="label">로컬 실계정 확인</div><div class="value" id="m-real">–</div><div class="hint">외부 서비스·실기기는 별도</div></div>
+          <div class="metric"><div class="label">로컬 서버 E2E</div><div class="value" id="m-local">–</div><div class="hint">시드 계정·실제 API 저장 상태</div></div>
+          <div class="metric"><div class="label">로컬 신규 계정</div><div class="value" id="m-real">–</div><div class="hint">외부 서비스·실기기는 별도</div></div>
           <div class="metric"><div class="label">검증 근거 3단계 연결</div><div class="value" id="m-chain">–</div><div class="hint">정의 + 자동 + 사용자 여정</div></div>
           <div class="metric"><div class="label">시나리오 실제 통과율</div><div class="value">미측정</div><div class="hint">항목별 코드·테스트 연결 전</div></div>
         </div>
@@ -66,12 +67,21 @@
 
         <div class="callout info" style="margin-top:12px">
           <strong>기능 수준 확인과 개별 시나리오 증명도 다르다.</strong>
-          첫 출시 원장에서는 <strong id="c-feature-auto">–</strong> 기능을 전체 자동 회귀로,
-          <strong id="c-feature-real">–</strong> 기능을 로컬 실계정으로 확인했고 1개는
+          첫 출시 원장에서는 <strong id="c-feature-auto">–</strong> 기능을 자동 회귀로,
+          <strong id="c-feature-local">–</strong> 기능을 로컬 서버 E2E로,
+          <strong id="c-feature-real">–</strong> 기능을 로컬 신규 계정으로 확인했고 1개는
           설계 철회로 분류한다. 이 174개는 코드 저장소 수준의 확인 결과다. 아래 표의 자동 테스트·통합 여정은
           제품 시나리오 문서가 구체적인 실행 파일을 직접 지목했는지를 더 엄격하게 보여 준다.
-          전체 제품 코드 완성도 약 95%와 첫 출시 범위 코드 100% 판정은 이 연결도와 별개이며,
-          <a href="launch-status.html#code-completeness">첫 출시 현황의 코드 완성도와 출시 가능성</a>에서 근거를 확인한다.
+          출시 상태 문서의 기본 브랜치 반영·자동 회귀·역할별 흐름·출시 설정 판정은 이 연결도와 별개이며,
+          <a href="launch-status.html#code-completeness">첫 출시 현황의 단계별 구현 상태</a>에서 근거를 확인한다.
+        </div>
+
+        <div class="callout warn" style="margin-top:12px">
+          <strong>최신 마일리지 사진 승인은 아직 자동 회귀 단계다.</strong>
+          표적 테스트에 이어 2026-09-05 현재 기본 브랜치 전체 회귀도 통과했다. 그러나 회원 사진
+          업로드→운영진 반려→회원 재심→운영진
+          승인·취소를 실제 앱과 서버로 이어 실행하지 않았으므로 로컬 서버 E2E로 세지 않는다. 이 역할별
+          여정과 빈 데이터베이스 설치 비교를 통과한 뒤 <code>MILEAGE_PHOTO</code>를 출시한다.
         </div>
 
         <div class="audit-grid">
@@ -114,7 +124,7 @@
             운영자 화면에서 서버 상태가 바뀌는 통합 여정을 추가하고, 실제 계정이나 외부 서비스가 필요한 경계는
             별도 실환경 검증으로 남긴다.</li>
           <li><strong>봉인 기능</strong>은 “테스트가 있으니 완료”로 처리하지 않는다. 고객 안내 화면, 운영 조회·처리·복구,
-            외부 계약·키, 봉인 해제 설정, 같은 버전의 회귀 검증까지 한 시나리오로 통과해야 출시할 수 있다.</li>
+            외부 계약·키, 기능 출시 설정, 같은 버전의 회귀 검증까지 한 시나리오로 통과해야 출시할 수 있다.</li>
         </ol>
       </section>
 
@@ -123,7 +133,7 @@
         <p class="subtitle">자동 테스트와 통합·E2E 수치는 시나리오 문서가 해당 파일을 직접 지목한 기능 수다. 기능 번호만 발견된 파일은 포함하지 않는다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">등록 숫자 합</th><th style="text-align:right">자동 테스트 문서 연결</th><th style="text-align:right">통합·E2E 문서 연결</th><th style="text-align:right">로컬 실계정</th><th style="text-align:right">검증 근거 3단계</th><th style="text-align:right">알려진 문제 보유</th></tr></thead>
+            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">등록 숫자 합</th><th style="text-align:right">자동 테스트 문서 연결</th><th style="text-align:right">통합·E2E 문서 연결</th><th style="text-align:right">로컬 서버 E2E</th><th style="text-align:right">로컬 신규 계정</th><th style="text-align:right">검증 근거 3단계</th><th style="text-align:right">알려진 문제 보유</th></tr></thead>
             <tbody id="domain-rows"></tbody>
           </table>
         </div>
@@ -136,7 +146,7 @@
           <select id="domain-filter" aria-label="도메인 필터"><option value="">전체 도메인</option></select>
           <select id="scope-filter" aria-label="출시 상태 필터"><option value="">전체 출시 상태</option><option value="open">출시</option><option value="partial">일부 출시</option><option value="sealed">봉인</option><option value="retired">설계 철회</option></select>
           <label class="chip"><input type="checkbox" id="f-no-auto">자동 테스트 문서 연결 없음</label>
-          <label class="chip"><input type="checkbox" id="f-no-journey">통합·실계정 근거 없음</label>
+          <label class="chip"><input type="checkbox" id="f-no-journey">통합·로컬 계정 근거 없음</label>
           <label class="chip"><input type="checkbox" id="f-chain">검증 근거 3단계 미완료</label>
           <label class="chip"><input type="checkbox" id="f-count">등록 숫자와 제목 수 불일치</label>
           <label class="chip"><input type="checkbox" id="f-trace">소스 줄 링크 정비 필요</label>
@@ -167,15 +177,16 @@
         <ul>
           <li><strong>시나리오</strong>의 큰 숫자는 기존 기능 목록의 등록값이다. 상세 시나리오 문서는 실제 제목 수도
             함께 표시한다. 두 값이 다르면 정규화가 필요한 문서이며, 어느 값도 자동 테스트 통과 건수가 아니다.</li>
-          <li><strong>검증 근거 연결도</strong>는 제품 정의, 자동 테스트 연결, 통합·E2E 또는 로컬 실계정 근거의
+          <li><strong>검증 근거 연결도</strong>는 제품 정의, 자동 테스트 연결, 통합·E2E 또는 로컬 계정 근거의
             세 칸 중 몇 칸이 연결됐는지를 나타낸다. 3/3도 모든 시나리오 통과나 실환경 출시 완료를 뜻하지 않는다.</li>
           <li><strong>옛 서버 줄 링크</strong>는 옛 문서의 파일·줄 번호가 지금도 맞는지를 기계적으로 확인한 결과다.
             “정비 필요”는 보통 코드 결함이 아니라 문서 줄 번호 이동이다.</li>
           <li><strong>자동 테스트 문서 연결</strong>은 시나리오 문서가 테스트 파일을 직접 가리킨다는 뜻이다.
             테스트 안의 기능 번호는 별도 후보이며, F03-17 번호가 전혀 다른 일정 변경 안내 테스트에서 발견된 사례처럼
             번호만으로는 완료 근거가 되지 않는다.</li>
-          <li><strong>사용자 여정</strong>은 시나리오 문서가 통합·E2E 실행 파일을 지목했는지와 로컬 신규 계정 왕복 근거가
-            있는지를 각각 보여 준다. 외부 서비스와 서명 앱 실증은 <a href="launch-status.html">첫 출시 현황</a>에서 따로 본다.</li>
+          <li><strong>사용자 여정</strong>은 시나리오 문서가 통합·E2E 실행 파일을 지목했는지, 시드
+            계정으로 앱과 실제 로컬 API의 저장 상태까지 확인했는지, 새 계정 생성부터 왕복했는지를
+            따로 보여 준다. 외부 서비스와 서명 앱 실증은 <a href="launch-status.html">첫 출시 현황</a>에서 따로 본다.</li>
         </ul>
         <p class="audit-note" id="asof"></p>
       </section>
@@ -199,13 +210,15 @@
           name: featureNames[feature.id] || feature.name,
           launchScope: current.scope,
           proof: current.proof,
+          proofNote: current.proofNote,
           knownIssues: current.issues,
         });
         copied.evidenceStage = 1 +
           (feature.automated.directlyLinked ? 1 : 0) +
-          ((feature.journey.directlyLinked || current.proof === 'real') ? 1 : 0);
+          ((feature.journey.directlyLinked || current.proof === 'local' || current.proof === 'real') ? 1 : 0);
         return copied;
       });
+      var localServerE2eProof = data.filter(function (feature) { return feature.proof === 'local'; }).length;
       var localRealAccountProof = data.filter(function (feature) { return feature.proof === 'real'; }).length;
       var completeEvidenceChain = data.filter(function (feature) { return feature.evidenceStage === 3; }).length;
 
@@ -227,11 +240,13 @@
       document.getElementById('m-test-files').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
       document.getElementById('m-auto').textContent = A.totals.directlyLinkedAutomatedTests + '/' + A.totals.features;
       document.getElementById('m-journey').textContent = A.totals.directlyLinkedJourneys + '/' + A.totals.features;
+      document.getElementById('m-local').textContent = localServerE2eProof + '/' + A.totals.features;
       document.getElementById('m-real').textContent = localRealAccountProof + '/' + A.totals.features;
       document.getElementById('m-chain').textContent = completeEvidenceChain + '/' + A.totals.features;
       document.getElementById('c-auto').textContent = A.totals.directlyLinkedAutomatedTests + '개 (' + percent(A.totals.directlyLinkedAutomatedTests, A.totals.features) + ')';
       document.getElementById('c-journey').textContent = A.totals.directlyLinkedJourneys + '개 (' + percent(A.totals.directlyLinkedJourneys, A.totals.features) + ')';
       document.getElementById('c-feature-auto').textContent = A.totals.featureLevelAutomatedProof + '개';
+      document.getElementById('c-feature-local').textContent = localServerE2eProof + '개';
       document.getElementById('c-feature-real').textContent = localRealAccountProof + '개';
       document.getElementById('c-test-files-inline').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
       document.getElementById('c-journey-files-inline').textContent = A.totals.journeyFilesScanned.toLocaleString('ko-KR');
@@ -240,7 +255,7 @@
       document.getElementById('c-trace').textContent = A.totals.traceMarkers;
       document.getElementById('c-trace-ok').textContent = A.totals.currentTraceMarkers;
       document.getElementById('asof').textContent = '시나리오·테스트 문서 연결 기준일 ' + A.asOf +
-        ' · 출시 범위·로컬 실계정 확인 기준일 ' + L.asOf + ' · ' + A.countingNote;
+        ' · 출시 범위·로컬 E2E·신규 계정 확인 기준일 ' + L.asOf + ' · ' + A.countingNote;
 
       var domains = [];
       data.forEach(function (feature) {
@@ -262,6 +277,7 @@
           '<td style="text-align:right">' + list.reduce(function (sum, feature) { return sum + feature.scenarioCount; }, 0) + '</td>' +
           '<td style="text-align:right">' + list.filter(function (feature) { return feature.automated.directlyLinked; }).length + '/' + list.length + '</td>' +
           '<td style="text-align:right">' + list.filter(function (feature) { return feature.journey.directlyLinked; }).length + '/' + list.length + '</td>' +
+          '<td style="text-align:right">' + list.filter(function (feature) { return feature.proof === 'local'; }).length + '/' + list.length + '</td>' +
           '<td style="text-align:right">' + list.filter(function (feature) { return feature.proof === 'real'; }).length + '/' + list.length + '</td>' +
           '<td style="text-align:right">' + list.filter(function (feature) { return feature.evidenceStage === 3; }).length + '/' + list.length + '</td>' +
           '<td style="text-align:right">' + list.filter(function (feature) { return feature.knownIssues > 0; }).length + '</td>' +
@@ -316,8 +332,10 @@
       function journeyCell(feature) {
         var parts = [];
         parts.push(feature.journey.directlyLinked ? pill('통합·E2E 문서 연결', 'brand') : pill('통합·E2E 문서 미연결', ''));
-        if (feature.proof === 'real') parts.push(pill('로컬 실계정', 'info'));
-        return '<div class="stack">' + parts.join('') + '</div>' + evidenceMethods(feature.journey);
+        if (feature.proof === 'local') parts.push(pill('로컬 서버 E2E', 'info'));
+        if (feature.proof === 'real') parts.push(pill('로컬 신규 계정', 'info'));
+        var note = feature.proofNote ? '<div class="audit-note">' + esc(feature.proofNote) + '</div>' : '';
+        return '<div class="stack">' + parts.join('') + '</div>' + evidenceMethods(feature.journey) + note;
       }
 
       function evidenceStageCell(feature) {
@@ -331,9 +349,9 @@
         if (feature.knownIssues > 0) return '첫 출시 현황에 연결된 남은 문제 ' + feature.knownIssues + '건을 먼저 해소한다.';
         if (feature.scenarioDefinition.registeredCountMatches === false) return '시나리오 제목에 고유 ID를 붙이고 등록 숫자를 실제 문서와 맞춘다.';
         if (!feature.automated.directlyLinked) return '기존 테스트를 찾아 시나리오 문서에 연결하고, 실제 공백만 새로 작성한다.';
-        if (!feature.journey.directlyLinked && feature.proof !== 'real') return '위험도에 맞는 통합 여정을 선택해 직접 연결한다.';
+        if (!feature.journey.directlyLinked && feature.proof !== 'local' && feature.proof !== 'real') return '위험도에 맞는 통합 여정을 선택해 직접 연결한다.';
         if (feature.trace.state === 'stale' || feature.trace.state === 'partial') return '동작 증거는 있으므로 오래된 소스 줄 링크를 갱신한다.';
-        if (feature.launchScope === 'sealed') return '봉인 해제 조건과 운영 화면을 포함한 실환경 여정을 실행한다.';
+        if (feature.launchScope === 'sealed') return '출시 조건과 운영 화면을 포함한 실환경 여정을 실행한다.';
         return '현재 연결을 유지하고 기능 변경 때 영향 시나리오를 재실행한다.';
       }
 
@@ -352,7 +370,7 @@
           if (domain && feature.domain !== domain) return false;
           if (scope && feature.launchScope !== scope) return false;
           if (noAuto && feature.automated.directlyLinked) return false;
-          if (noJourney && (feature.journey.directlyLinked || feature.proof === 'real')) return false;
+          if (noJourney && (feature.journey.directlyLinked || feature.proof === 'local' || feature.proof === 'real')) return false;
           if (incompleteChain && feature.evidenceStage === 3) return false;
           if (countMismatch && feature.scenarioDefinition.registeredCountMatches !== false) return false;
           if (trace && !(feature.trace.state === 'stale' || feature.trace.state === 'partial')) return false;

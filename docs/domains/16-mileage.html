@@ -39,7 +39,10 @@
             서버 실계정 왕복, 앱 화면 왕복과 전체 자동 검증을 마쳤다. 운영 기본 출시 목록에도
             <code>MILEAGE</code>를 반영했다. 실제 기기에서 알림 수신과 올바른 화면 이동을 확인하는 일은
             출시 후 운영 점검으로 관리한다.
-            시즌·사진 승인 적립·고급 검토·이벤트별 규칙·클럽별 후기 작성 기간은 이때 함께 열지 않는다.</p>
+            사진 승인 적립은 이후 코드와 클럽 운영 화면까지 완성됐고 2026-09-05 현재 기본 브랜치 전체
+            회귀도 통과했다. 역할별 앱↔서버 흐름과 빈 데이터베이스 설치를 확인한 뒤
+            <code>MILEAGE_PHOTO</code>로 따로 출시한다. 시즌·고급 검토·이벤트별 규칙·클럽별
+            후기 작성 기간은 아직 기능이 완성되지 않은 후속 범위다.</p>
           <p>구현 근거와 출시 순서, 감수하는 한계의 정본은
             <a href="../../../docs/plan/mileage/MILEAGE_RELEASE_PLAN.md">클럽 마일리지 출시 계획</a>에서 확인한다.</p>
         </div>
@@ -70,8 +73,8 @@
         <h3>운영진이 운영하는 것</h3>
         <div class="cards">
           <a class="card" href="../features/F16-04.html"><div class="eyebrow">F16-04</div><h3>정책 설정</h3><p>제도 시작·일시 중지, 만료일과 현재 랭킹 기준을 관리하고 변경 영향을 미리 본다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-05.html"><div class="eyebrow">F16-05</div><h3>적립 규칙·등급·배지·사용 사유</h3><p>첫 출시에서는 클럽 공통 규칙과 보상 정의를 관리한다. 사진 승인·시즌·이벤트별 규칙은 별도 후속 기능이다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-06.html"><div class="eyebrow">F16-06</div><h3>적립·차감·정정 집행</h3><p>수동/일괄 적립·차감, 원장 정정, 배지 부여. 중복 실행 방지.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F16-05.html"><div class="eyebrow">F16-05</div><h3>적립 규칙·등급·배지·사용 사유</h3><p>출시된 클럽 공통 규칙과 보상 정의를 관리한다. 사진 승인 규칙은 코드 완료·별도 출시 전이다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F16-06.html"><div class="eyebrow">F16-06</div><h3>적립·차감·정정 집행</h3><p>수동·일괄 적립·차감, 원장 정정과 활동 자동 적립·회수. 사진 승인 적립·회수도 코드가 완료됐다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F16-08.html"><div class="eyebrow">F16-08</div><h3>검토 대기열·운영 현황·감사 기록</h3><p>검토 항목 처리, 클럽 운영 현황, 회원 상세와 담당자별 변경 기록.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
       </section>
@@ -138,7 +141,7 @@ flowchart LR
             <thead><tr><th>구분</th><th>현재 상태</th><th>다음 행동</th></tr></thead>
             <tbody>
               <tr><td><strong>핵심 마일리지</strong><br>적립·사용·정정·만료·등급·배지·랭킹·호스트 제안·운영 복구</td><td><span class="pill brand">출시</span><br>운영 기본 목록에 <code>MILEAGE</code> 반영</td><td>실기기 알림과 화면 이동을 출시 후 운영 점검으로 확인한다.</td></tr>
-              <tr><td><strong>사진 승인 적립</strong></td><td><span class="pill danger">기능 미구현</span><br>승인·반려·적립 연결·부정 회수와 운영 화면 없음</td><td>사진 심사와 회수 흐름을 구현·검증한 뒤 별도 설정으로 연다.</td></tr>
+              <tr><td><strong>사진 승인 적립</strong></td><td><span class="pill info">코드·현재 회귀 완료·출시 전</span><br>심사·재심·적립·승인 취소·회수와 클럽 운영 화면 완료</td><td>역할별 앱↔서버 흐름과 빈 데이터베이스 설치 비교 뒤 <code>MILEAGE_PHOTO</code>를 출시한다.</td></tr>
               <tr><td><strong>시즌</strong></td><td><span class="pill danger">기능 미완성</span><br>자동 시작·종료·순위 계산·종료 기록·실패 복구 없음</td><td>시간 흐름과 동점 정책, 종료 기록과 복구를 완성한 뒤 별도 설정으로 연다.</td></tr>
               <tr><td><strong>고급 검토 여섯 종</strong></td><td><span class="pill danger">핵심 처리 미구현</span><br>이름과 화면 문구만 있고 탐지·처리 효과 없음</td><td>유형별 탐지·판정·오탐 복구를 만든 뒤 별도 설정으로 연다.</td></tr>
               <tr><td><strong>이벤트별 적립 규칙</strong></td><td><span class="pill danger">기능 미구현</span><br>현재는 클럽 공통 규칙만 적용</td><td>이벤트 시점 규칙 고정과 변경·취소·재처리 우선순위를 정한 뒤 구현한다.</td></tr>
@@ -166,7 +169,7 @@ flowchart LR
             <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
             <tbody>
               <tr><td>알림</td><td><span class="pill brand">서버 생성 완료</span></td><td>적립·사용·정정·만료·등급·배지·제안 결과 알림은 만들어진다. 실제 기기 수신과 화면 이동은 출시 후 운영 점검으로 확인한다.</td></tr>
-              <tr><td>이벤트</td><td><span class="pill brand">있음</span></td><td>체크인·후기가 자동 적립 조건이다. 사진 승인 적립은 계속 닫혀 있다. 호스트 제안은 이벤트 호스트 권한과 연결된다.</td></tr>
+              <tr><td>이벤트</td><td><span class="pill brand">있음</span></td><td>체크인·후기가 자동 적립 조건이다. 사진 승인 적립은 구현됐지만 별도 출시 전이며, 호스트 제안은 이벤트 호스트 권한과 연결된다.</td></tr>
               <tr><td>결제·정산</td><td><span class="pill">없음</span></td><td>마일리지는 지갑·정산·회계와 연결되지 않는다. 현금화·환불 경로 없음.</td></tr>
               <tr><td>감사</td><td><span class="pill brand">강함</span></td><td>모든 운영 작업이 변경 전·후 내용과 함께 감사 기록(5년 보존)에 남는다.</td></tr>
             </tbody>
@@ -192,7 +195,7 @@ flowchart LR
         <h2>관련 정책·도메인</h2>
         <div class="hub-grid">
           <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 맥락</div><h3>04 클럽</h3><p>마일리지는 클럽 단위로 운영되며 클럽 권한 시스템을 쓴다.</p></a>
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>체크인·후기가 자동 적립 조건이다. 사진 승인 적립은 닫혀 있다. 호스트 제안도 이벤트에서 시작한다.</p></a>
+          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>체크인·후기는 출시된 자동 적립 조건이다. 사진 승인 적립은 코드 완료·별도 출시 전이며, 호스트 제안도 이벤트에서 시작한다.</p></a>
           <a class="card" href="../policies/permission.html"><div class="eyebrow">정책</div><h3>권한 정책</h3><p>정책 관리 권한자 / 마일리지 관리자 권한 분리.</p></a>
         </div>
       </section>

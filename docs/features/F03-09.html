@@ -41,6 +41,15 @@
             그래서 참석 확정자만 볼 수 있고, 일반 사용자는 좋아요·신고·본인 사진 삭제를,
             호스트와 운영자는 커버 지정·숨김·잠금·복구·강제 정리를 수행한다.</p>
         </div>
+        <div class="callout info">
+          <span class="label">2026-09-04 추가 — 사진 승인 마일리지 코드는 완료, 별도 출시 전</span>
+          <p>클럽 이벤트 사진을 올리면 마일리지 심사 항목을 만들고, 사진을 올린 회원은 이 사진첩에서
+            승인·반려 결과와 적립 제외 이유를 확인하며 반려 건에 한 번 재심을 요청할 수 있다. 클럽
+            운영진은 마일리지 콘솔의 전용 사진 심사 화면에서 승인·반려·승인 취소를 처리한다.</p>
+          <p>현재 운영 기본 목록에는 <code>MILEAGE_PHOTO</code>가 없어 이 구획과 심사 화면이 숨겨진다.
+            관련 표적 검증에 이어 2026-09-05 현재 기본 브랜치 전체 회귀도 통과했다. 역할별
+            앱↔서버 흐름과 빈 데이터베이스 설치 비교를 마친 뒤 별도로 출시한다.</p>
+        </div>
       </section>
 
       <section>
@@ -111,6 +120,13 @@ stateDiagram-v2
             <p>잠금 상태에서는 활성 앨범이어도 사진 추가 버튼이 사라진다. 연장은 최대 횟수 안에서만 가능하며, 상태 배너가
               남은 기간과 복구 가능 여부를 알려준다.</p>
           </article>
+          <article class="card">
+            <div class="eyebrow">사진 승인 마일리지 · 출시 전</div>
+            <h3>반려 사유를 보고 한 번 재심 요청</h3>
+            <p>회원은 자기가 올린 사진의 심사 상태를 사진첩에서 본다. 반려됐다면 사유와 재심 버튼이
+              함께 보이고, 재심 뒤 최종 반려된 건에는 다시 요청하는 버튼이 없다. 승인됐지만 규칙 중지나
+              이벤트당 상한 때문에 점수가 나가지 않았다면 그 이유를 따로 표시한다.</p>
+          </article>
         </div>
       </section>
 
@@ -133,6 +149,8 @@ stateDiagram-v2
               <tr><td>업로드 잠금</td><td>운영자</td><td>업로드를 잠그거나 다시 연다.</td></tr>
               <tr><td>만료 앨범 복구</td><td>운영자</td><td>만료된 앨범을 다시 살린다.</td></tr>
               <tr><td>강제 정리</td><td>운영자</td><td>사진첩을 영구적으로 정리한다.</td></tr>
+              <tr><td>내 사진 심사 결과·재심</td><td>사진 업로더</td><td><code>MILEAGE_PHOTO</code> 출시 뒤 반려 사유와 적립 결과를 보고 한 번 재심을 요청한다.</td></tr>
+              <tr><td>사진 마일리지 심사</td><td>클럽 마일리지 운영진</td><td>별도 사진 심사 화면에서 승인·반려·승인 취소를 처리한다. 자기 사진은 직접 심사할 수 없다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -198,6 +216,9 @@ stateDiagram-v2
   - community_api/src/main/java/com/endside/community/event/controller/EventPhotoController.java
   - community_app/lib/data/api/event_photo_api.dart
   - community_app/lib/presentation/event/screens/event_photos_screen.dart
+  - community_api/src/main/java/com/endside/community/mileage/controller/MileagePhotoReviewController.java
+  - community_api/src/main/java/com/endside/community/mileage/controller/MileageAdminPhotoReviewController.java
+  - community_app/lib/presentation/mileage/admin/screens/mileage_photo_review_screen.dart
 -->
     </main>
   </div>

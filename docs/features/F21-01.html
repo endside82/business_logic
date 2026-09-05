@@ -48,6 +48,15 @@
             봉인 중 기존 계약 종결까지 고객 앱과 서버에 연결돼 있다. 신규 거래는 플랫폼 결제 기반,
             법무·세무 승인, 실제 지급 대행과 서명 앱 왕복을 마친 뒤 <code>PROVIDER</code>를 출시한다.</p>
         </div>
+        <div class="callout info">
+          <span class="label">로컬 서버 E2E — 배정 생명주기 1개 확인</span>
+          <p>기존의 빈 목록 확인을 실제 역할별 흐름으로 바꿨다. 모임장 화면에서 배정을 만든 뒤 ‘배정됨’, 제공자 화면에서 수락한 뒤 ‘수락됨’,
+            모임장 화면에서 확정한 뒤 ‘확정됨’, 테스트 정리 뒤 ‘취소됨’ 상태를 서버에서 각각 다시
+            조회했다.</p>
+          <p>이 결과는 제공자 배정의 기본 생명주기를 확인한 것이며 상품 카탈로그, 계약금·분담 결제,
+            수행 기록, 정산·환불·실지급 전체 흐름을 대신하지 않는다. 미리 준비한 로컬 계정을 사용했으므로
+            서명 앱이나 지급 대행 검증도 아니다.</p>
+        </div>
       </section>
 
       <section>
@@ -223,6 +232,8 @@ stateDiagram-v2
   - community_api/src/main/java/com/endside/community/curated/
   - measured 2026-09-04: provider profile/verification/offering/catalog/terms/admin review included
   - AssignmentStatus: DRAFT/ASSIGNED/ACCEPTED/DECLINED/CONFIRMED/SETTLEMENT_LOCKED/CANCELED
+  - community_app/integration_test/seed_post_0615_changed_source_test.dart (P83 curated_assignment_lifecycle, 1/1)
+  - 검증 실행 커밋: app 5bd5ca72, api 0a312b22 (현재 HEAD에 포함)
 -->
     </main>
   </div>

@@ -176,7 +176,8 @@ const auditFeatures = features.map((feature) => {
   const journeyMarkers = filesMentioning(journeyTextIndex, feature.id);
   const journeyDocumentReferences = filesReferencedByDocument(journeyFiles, scenarioText);
   const launch = launchStatus.forFeature(feature.id);
-  const journeyProof = journeyDocumentReferences.length > 0 || launch.proof === 'real';
+  const journeyProof = journeyDocumentReferences.length > 0 ||
+    launch.proof === 'local' || launch.proof === 'real';
   const evidenceStage = 1
     + (automatedDocumentReferences.length > 0 ? 1 : 0)
     + (journeyProof ? 1 : 0);
@@ -268,8 +269,11 @@ const payload = {
       feature.journey.scenarioReferenceCount > 0,
     ).length,
     featureLevelAutomatedProof: auditFeatures.filter((feature) => feature.proof === 'auto').length,
+    localServerE2eProof: auditFeatures.filter((feature) => feature.proof === 'local').length,
     localRealAccountProof: auditFeatures.filter((feature) => feature.proof === 'real').length,
-    featureLevelChecked: auditFeatures.filter((feature) => feature.proof === 'auto' || feature.proof === 'real').length,
+    featureLevelChecked: auditFeatures.filter((feature) =>
+      feature.proof === 'auto' || feature.proof === 'local' || feature.proof === 'real',
+    ).length,
     completeEvidenceChain: auditFeatures.filter((feature) => feature.evidenceStage === 3).length,
     partialEvidenceChain: auditFeatures.filter((feature) => feature.evidenceStage === 2).length,
     definitionOnlyEvidence: auditFeatures.filter((feature) => feature.evidenceStage === 1).length,
