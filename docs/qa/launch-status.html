@@ -62,6 +62,8 @@
             <tr><td><strong>W2 데이트 수동 승인</strong></td><td><span class="pill brand">코드·회귀·로컬 통합 완료</span></td><td>실 파일 저장소·악성코드 검사·관리자 역할·결정 알림과 서명 앱의 실신원·실기기 왕복.</td></tr>
             <tr><td><strong>W3 직접 송금·이동 안내</strong></td><td><span class="pill brand">코드 공백 해소</span></td><td>책임 문구 승인, 서명 앱 역할별 흐름, 알림·신고와 출시 설정.</td></tr>
             <tr><td><strong>W4 사진 승인 마일리지</strong></td><td><span class="pill brand">코드·현재 회귀 완료</span></td><td>역할별 사진 앱↔서버 흐름과 <code>MILEAGE_PHOTO</code> 출시 설정. 빈 DB의 마일리지 22개 표 설치 대조는 완료.</td></tr>
+            <tr><td><strong>마일리지 후속 기능</strong></td><td><span class="pill brand">구현·검증·로컬 통합 완료</span></td><td>시즌·반복 적립 검토의 별도 활성화와 기존 모임 데이터 준비. 이벤트별 규칙은 핵심 마일리지와 함께 배포한다.</td></tr>
+            <tr><td><strong>클럽 스탬프</strong></td><td><span class="pill brand">구현·검증·로컬 통합 완료</span></td><td>같은 출시 대상의 실계정·권한 변경·서명 앱 알림·화면 이동 확인과 별도 활성화. <a href="../features/club-stamp.html">클럽 스탬프 설명</a>에서 운영 범위를 확인한다.</td></tr>
             <tr><td><strong>외부 공개 준비</strong></td><td><span class="pill danger">미완료</span></td><td>메일·로그인·푸시·지도·파일 저장·서명 앱·백업 복구·스토어 자료의 실제 환경 증명.</td></tr>
           </tbody></table>
         </div>
@@ -486,10 +488,8 @@
           '<div class="value">' + esc(v.value) + '</div><div class="hint">' + esc(v.hint) + '</div></div>';
       }).join('');
 
-      function sealStatePill(value) {
-        var complete = value === '코드 완료' || value === '기능 코드 존재' ||
-          value === '핵심 코드 완료' || value === '운영 화면 존재' || value === '어댑터 완료';
-        return pill(value, complete ? 'brand' : 'warn');
+      function sealStatePill(value, ready) {
+        return pill(value, ready === true ? 'brand' : 'warn');
       }
 
       function textList(items) {
@@ -500,11 +500,9 @@
       }
 
       var seals = L.openItems.filter(function (o) { return o.impact === 'next'; });
-      var opsReady = seals.filter(function (o) { return o.opsState === '운영 화면 존재'; }).length;
+      var opsReady = seals.filter(function (o) { return o.operationsReady === true; }).length;
       var buildFirst = seals.filter(function (o) {
-        var codeReady = o.codeState === '코드 완료' || o.codeState === '기능 코드 존재' ||
-          o.codeState === '핵심 코드 완료' || o.codeState === '어댑터 완료';
-        return !codeReady || o.opsState === '운영 화면 부분';
+        return o.implementationReady !== true || o.operationsReady !== true;
       }).length;
       document.getElementById('seal-metrics').innerHTML = [
         { label: '후속 출시 대상', value: seals.length + '개', hint: '폐기 설계는 제외' },
@@ -519,12 +517,12 @@
         var reasonPills = (o.sealReasons || []).map(function (reason) {
           return pill(reason, 'warn');
         }).join(' ');
-        return '<tr>' +
+        return '<tr id="item-' + esc(o.id) + '">' +
           '<td>' + pill(o.kind, 'info') + ' ' + pill(o.sealClass, 'warn') +
             '<br><strong style="display:inline-block;margin-top:7px">' +
             esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:12.5px">' +
             esc(o.detail) + '</span></td>' +
-          '<td>' + sealStatePill(o.codeState) + ' ' + sealStatePill(o.opsState) +
+          '<td>' + sealStatePill(o.codeState, o.implementationReady) + ' ' + sealStatePill(o.opsState, o.operationsReady) +
             '<br><span style="display:inline-block;margin-top:7px;color:var(--muted);font-size:12.5px">' +
             esc(o.opsDetail) + '</span></td>' +
           '<td>' + pill(o.sealCause, o.sealCause === '범위 결정' ? 'info' : 'danger') + ' ' + reasonPills +
@@ -535,7 +533,7 @@
           '<td><strong>출시 준비 순서</strong>' + textList(o.unsealSteps) +
             '<div style="margin-top:9px;padding-top:8px;border-top:1px solid var(--border)"><strong>완료 기준</strong><br>' +
             '<span style="color:var(--muted);font-size:12.5px">' + esc(o.doneWhen) + '</span></div></td>' +
-          '<td style="font-size:12px">' + featureLinks(o.features) + '</td>' +
+          '<td style="font-size:12px">' + (o.docPath ? '<a href="../' + esc(o.docPath) + '">기능 설명</a>' : featureLinks(o.features)) + '</td>' +
           '</tr>';
       }).join('');
 

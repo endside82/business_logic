@@ -1,13 +1,13 @@
 /* 이 파일은 verification/build_scenario_audit_data.mjs가 현재 저장소에서 생성한다. */
 window.SCENARIO_AUDIT = {
-  "asOf": "2026-09-04",
+  "asOf": "2026-09-06",
   "countingNote": "1,403은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 117개에서 실제로 식별한 제목은 1,086개이며 49개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1403,
     "definedFeatures": 175,
-    "automatedTestFilesScanned": 1693,
-    "journeyFilesScanned": 239,
+    "automatedTestFilesScanned": 1822,
+    "journeyFilesScanned": 243,
     "unitScenarioDocuments": 117,
     "unitScenarioHeadings": 1086,
     "unitRegisteredScenarioItems": 1011,
@@ -18,13 +18,13 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedJourneys": 56,
     "journeyFeatureMarkers": 45,
     "journeyScenarioReferences": 56,
-    "featureLevelAutomatedProof": 135,
-    "localServerE2eProof": 2,
+    "featureLevelAutomatedProof": 134,
+    "localServerE2eProof": 3,
     "localRealAccountProof": 37,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 55,
-    "partialEvidenceChain": 29,
-    "definitionOnlyEvidence": 91,
+    "partialEvidenceChain": 30,
+    "definitionOnlyEvidence": 90,
     "traceMarkers": 302,
     "currentTraceMarkers": 95,
     "missingTraceTargets": 2
@@ -6612,9 +6612,9 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
-      "proof": "auto",
+      "proof": "local",
       "knownIssues": 0,
       "pendingReview": 0
     },
