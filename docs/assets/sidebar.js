@@ -499,14 +499,13 @@
   // Scroll the active link into view inside the sidebar so deep feature pages
   // don't require manual scrolling to confirm location.
   const active = sidebarEl.querySelector('a.active');
-  if (active && typeof active.scrollIntoView === 'function') {
-    // Use a microtask so layout has settled.
+  if (active) {
+    // Move only the sidebar; scrolling an ancestor would hide the page title
+    // or displace the section targeted by a direct link.
     setTimeout(() => {
-      try {
-        active.scrollIntoView({ block: 'center', behavior: 'instant' });
-      } catch (_) {
-        active.scrollIntoView();
-      }
+      const linkBox = active.getBoundingClientRect();
+      const sidebarBox = sidebarEl.getBoundingClientRect();
+      sidebarEl.scrollTop += linkBox.top - sidebarBox.top - sidebarEl.clientHeight / 2 + linkBox.height / 2;
     }, 0);
   }
 })();

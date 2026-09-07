@@ -3,556 +3,186 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>첫 출시 판단 — community PRD</title>
+  <title>첫 출시 현황과 남은 준비 — community 제품 문서</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/release-readability.css">
 </head>
-<body data-base="../">
+<body data-base="../" class="release-page">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>첫 출시 판단</div>
-        <h1>첫 출시 판단 — 지금 공개할 수 있는가</h1>
-        <p class="lede">
-          이 페이지는 사업·기획자가 바로 판단할 수 있도록 <strong>첫 출시 범위, 지금까지 끝난 검증,
-          공개 전에 남은 일과 실행 순서</strong>를 한곳에 모은다. 기능 설명 문서에 적힌 “이렇게
-          동작한다”는 약속과 오늘 실제로 확인된 상태를 구분해서 보여 준다.
-        </p>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>출시 준비<span>›</span>첫 출시 현황</div>
+        <h1>첫 출시 현황과 남은 준비</h1>
+        <p class="lede">현재 제공할 범위와 공개 전에 해야 할 일을 정리했다.
+          담당자는 자기 항목의 현재 상태를 확인하고 다음 행동과 완료 조건에 따라 결과를 제출한다.</p>
+        <nav class="release-nav" aria-label="이 페이지 바로가기">
+          <a href="#blocking">공개 전에 할 일</a><a href="#scope">첫 출시 범위</a>
+          <a href="#next">후속 기능 준비</a><a href="#gates">공개 승인 기준</a>
+        </nav>
       </header>
 
-      <section>
-        <div class="metrics" id="verdict-metrics"></div>
-        <div class="callout danger">
-          <span class="label">현재 결론</span>
-          <p><strong>내부 시연은 가능하지만 외부 고객 공개는 아직 불가능하다.</strong>
-            W2까지 포함한 네 저장소의 코드·독립 검토·전체 회귀와 로컬 기본 브랜치 통합을 마쳤다.
-            첫 출시 범위를 직접 막는 것으로 확인된 코드·화면 결함은 0건이다.</p>
-          <p>두 빈 DB의 공유 스키마 대조와 Node 24 관리자 웹 검증도 통과했다. 현재 커밋 조합과
-            자동 검증의 범위는 <a href="../../../docs/release-gate/evidence/W2-DATE-MANUAL/README.md">W2 통합 검증 기록</a>에 있다.
-            원격에 고정한 출시후보, 서명 Android·iOS 앱과 실제 메일·Google·푸시·지도·파일 저장·운영 복구를
-            같은 커밋 조합으로 확인하는 일은 남아 있다.</p>
-          <p><strong>2026-09-04 봉인 기능 감사에서 시작한 네 작업의 상태는 서로 다르다.</strong>
-            W1은 관리자 웹 22개 돈 조치의 재시도 키 보존, 서버 영구 등록부, 등록부 원문 보존 수명주기,
-            정기모임 여섯 조치의 서버 간 명령 결박(15:08 커밋)까지 반영돼 코드로 종결됐다. W2 증빙 기반 데이트 수동 승인·취소도
-            무입력 승인 제거·독립 검토·전체 회귀를 마치고 기본 브랜치에 통합했다. W3 일반·정기모임 직접 송금과
-            이동 책임 안내, W4 마일리지 사진 승인 적립은 코드 공백이 해소되고 현재 기본 브랜치 회귀를
-            통과했지만 역할별 서명 앱 흐름·승인·출시 설정이 남았다.</p>
-          <p>브랜치와 검토 상태, 남은 코드의 정확한 경계는
-            <a href="../../../docs/plan/SEAL_CODE_GAP_EXECUTION_STATUS_2026-09-05.md">봉인 기능 코드 공백
-            보강 — W1~W4 실행 현황</a>을 기준으로 한다. 기간권·시즌·이벤트별 규칙·고급 검토·후기 작성
-            기간의 제품 결정은 <a href="../../../docs/plan/SEAL_CODE_GAP_DECISIONS_2026-09-04.md">봉인 기능의
-            코드 공백 결정 요청</a>이 따로 다룬다. 다섯 건 모두 결정이 끝났고(기간권은 2026-09-04, 나머지 네
-            건은 2026-09-05 권고안 채택), 마일리지 네 건의 실행 계획은
-            <a href="../../../docs/plan/mileage/MILEAGE_FOLLOWUP_PLAN_2026-09-05.md">마일리지 후속 기능 실행
-            계획</a>이다. 두 문서를 섞어 읽지 않는다.</p>
-        </div>
-      </section>
-
       <section id="code-completeness">
-        <h2>구현 상태와 출시 상태를 단계별로 구분한다</h2>
-        <p>근거 없는 구현률 숫자는 사용하지 않는다. 코드가 기본 브랜치에 있는지, 자동 검증을 통과했는지,
-          실제 역할별 흐름을 확인했는지, 운영 출시 목록에 반영했는지를 따로 판정한다.</p>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:210px">판단 대상</th><th style="width:180px">현재 판정</th><th>남은 일</th>
-          </tr></thead><tbody>
-            <tr><td><strong>첫 출시 범위의 코드·화면</strong></td><td><span class="pill brand">확인된 코드 잔여 0건</span></td><td>전체 회귀·빈 DB 마일리지 22개 표 대조·Node 24 관리자 웹 검증을 통과했다. 원격 출시후보·서명 앱·외부 서비스 증거가 남았다.</td></tr>
-            <tr><td><strong>W1 관리자 돈 조치</strong></td><td><span class="pill brand">코드 종결·확정 커밋 회귀 통과</span></td><td>남은 코드 없음. 직접 송금·플랫폼 결제를 출시할 때 응답 유실 재개 흐름을 실환경에서 확인한다.</td></tr>
-            <tr><td><strong>W2 데이트 수동 승인</strong></td><td><span class="pill brand">코드·회귀·로컬 통합 완료</span></td><td>실 파일 저장소·악성코드 검사·관리자 역할·결정 알림과 서명 앱의 실신원·실기기 왕복.</td></tr>
-            <tr><td><strong>W3 직접 송금·이동 안내</strong></td><td><span class="pill brand">코드 공백 해소</span></td><td>책임 문구 승인, 서명 앱 역할별 흐름, 알림·신고와 출시 설정.</td></tr>
-            <tr><td><strong>W4 사진 승인 마일리지</strong></td><td><span class="pill brand">코드·현재 회귀 완료</span></td><td>역할별 사진 앱↔서버 흐름과 <code>MILEAGE_PHOTO</code> 출시 설정. 빈 DB의 마일리지 22개 표 설치 대조는 완료.</td></tr>
-            <tr><td><strong>마일리지 후속 기능</strong></td><td><span class="pill brand">구현·검증·로컬 통합 완료</span></td><td>시즌·반복 적립 검토의 별도 활성화와 기존 모임 데이터 준비. 이벤트별 규칙은 핵심 마일리지와 함께 배포한다.</td></tr>
-            <tr><td><strong>클럽 스탬프</strong></td><td><span class="pill brand">구현·검증·로컬 통합 완료</span></td><td>같은 출시 대상의 실계정·권한 변경·서명 앱 알림·화면 이동 확인과 별도 활성화. <a href="../features/club-stamp.html">클럽 스탬프 설명</a>에서 운영 범위를 확인한다.</td></tr>
-            <tr><td><strong>외부 공개 준비</strong></td><td><span class="pill danger">미완료</span></td><td>메일·로그인·푸시·지도·파일 저장·서명 앱·백업 복구·스토어 자료의 실제 환경 증명.</td></tr>
-          </tbody></table>
-        </div>
-        <div class="callout warn">
-          <span class="label">기능별로 남은 출시 검증</span>
-          <p>W2는 증빙 제출·검사·관리자 승인·취소·결정 알림을 실제 파일 저장소와 관리자 역할,
-            같은 출시 대상의 서명 앱에서 확인해야 한다.</p>
-          <p>W3와 W4에는 2026-09-04 감사에서 지적한 코드 공백이 더 남아 있지 않다. 이 둘의 다음 행동은
-            역할별 흐름 검증, 책임 문구 승인과 출시 설정이다. 빈 DB 마일리지 표 대조는 완료했다.
-            기간권 편성은 별도 실행 계획으로 관리한다. 마일리지 시즌·이벤트별 규칙·반복 수동 적립 검토는
-            2026-09-06 후속 구현·전체 회귀·실제 앱 왕복을 마치고 로컬 기본 브랜치에 통합했다. 현재 결과와 배포 준비는
-            <a href="../../../docs/plan/mileage/MILEAGE_FOLLOWUP_EXECUTION_2026-09-06.md">마일리지 후속 구현 검증 기록</a>을 따른다.
-            클럽별 후기 작성 기간은 만들지 않기로 했다.</p>
-        </div>
-      </section>
-
-      <section id="evidence">
-        <h2>현재까지 끝난 검증</h2>
-        <p>서로 다른 검증을 하나의 “완료”로 뭉치지 않는다. 아래 검증 결과가 각각 무엇을 증명하고,
-          무엇은 증명하지 않는지 함께 본다.</p>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:180px">검증 범위</th><th style="width:130px">현재 결과</th><th>판단 가능한 것</th>
-          </tr></thead><tbody id="evidence-rows"></tbody></table>
-        </div>
-        <div class="callout info">
-          <span class="label">중요한 구분</span>
-          <p>“로컬 서버 E2E”는 미리 준비한 계정으로 앱과 실제 로컬 API를 연결해 저장 상태까지 다시
-            읽었다는 뜻이다. “로컬 신규 계정”은 격리된 데이터베이스에서 새 계정 생성부터 시작한 더
-            넓은 근거다. 둘 다 실제 이메일 수신, 외부 로그인, 모바일 푸시, 서명된 Android/iOS 앱까지
-            통과했다는 뜻은 아니다.</p>
+        <div class="callout danger release-summary">
+          <span class="label">현재 결론</span>
+          <p><strong>공개 보류</strong> 상태다. 첫 출시 기능과 관리자 웹 화면은 구현됐고 자동 검사도 마쳤다.
+            현재 확인된 첫 출시의 개발 차단 항목은 없다.</p>
+          <p>남은 일은 <strong>배포할 버전 확정</strong>, <strong>실제 서비스·휴대전화 검사</strong>,
+            <strong>장애 복구와 공개 승인</strong>이다. 자동 검사 통과가 실제 고객 환경의 확인을 대신하지는 않는다.</p>
         </div>
       </section>
 
       <section id="actions">
-        <h2>지금 해야 할 일 — 이 순서대로</h2>
-        <p>새로운 대형 기능을 더 만드는 순서가 아니다. 첫 출시에서 약속한 범위를 실제 고객 환경에서
-          안전하게 열기 위한 순서다.</p>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:64px">순서</th><th style="width:190px">결과물</th><th>해야 할 일과 완료 기준</th>
-          </tr></thead><tbody id="action-rows"></tbody></table>
-        </div>
-      </section>
-
-      <section id="axes">
-        <h2>기능별 표를 읽는 두 기준</h2>
-        <p>기능 하나를 볼 때 물어야 할 질문은 두 개다. 이 두 축은 서로 독립이라 “열려 있지만 확인은 안 된”
-          기능과 “확인은 됐지만 이번엔 닫는” 기능이 동시에 존재한다.</p>
-        <div class="split">
-          <div>
-            <h3>기준 1 — 첫 출시에 열리는가</h3>
-            <div class="table-wrap">
-              <table><thead><tr><th style="width:110px">값</th><th>뜻</th></tr></thead>
-              <tbody id="scope-legend"></tbody></table>
-            </div>
-          </div>
-          <div>
-            <h3>기준 2 — 무엇으로 확인했는가</h3>
-            <div class="table-wrap">
-              <table><thead><tr><th style="width:110px">값</th><th>뜻</th></tr></thead>
-              <tbody id="proof-legend"></tbody></table>
-            </div>
-          </div>
-        </div>
-        <div class="callout info">
-          <span class="label">판정 근거</span>
-          <p><strong>첫 출시 포함 여부</strong>는 현재 서버·앱의 출시 범위 설정과 결제 출시 조건에서
-            읽는다. <strong>확인 수준</strong>은 자동 회귀, 시드 계정으로 앱·API·저장 상태를 확인한
-            로컬 서버 E2E, 새 계정 생성부터 시작한 로컬 신규 계정으로 나눈다. 단위·위젯·서버 테스트만
-            통과한 기능을 로컬 E2E로 올리지 않고, 시드 계정 E2E를 신규 계정 검증으로 올리지 않는다.</p>
-        </div>
-        <p style="color:var(--muted);font-size:13px">기능 175개 각각의 값은
-          <a href="feature-status.html">기능별 출시 상태표</a>에 있다.</p>
-      </section>
-
-      <section id="gates">
-        <h2>출시 관문</h2>
-        <p>다섯 관문이 모두 통과해야 공개 출시를 승인한다. 하나라도 비어 있으면 보류다.</p>
-        <div class="table-wrap">
-          <table><thead><tr><th style="width:150px">관문</th><th style="width:110px">현재</th><th>남은 것</th></tr></thead>
-          <tbody id="gate-rows"></tbody></table>
-        </div>
+        <h2>무엇부터 해야 하는가</h2>
+        <ol id="action-rows"></ol>
+        <p class="release-note">아래의 담당자는 역할이다. 출시 책임자가 실제 담당자 이름과 제출일을 정해야 한다.
+          서비스 계정·기기 준비는 프로그램 준비와 동시에 진행할 수 있다.</p>
+        <p>관리자 화면이나 서버가 허용되지 않은 네트워크에서도 열리면 서버 운영 담당자는
+          <strong>접근 차단</strong>을 다른 작업보다 먼저 처리한다.</p>
       </section>
 
       <section id="blocking">
-        <h2>공개 출시 전에 반드시 닫아야 하는 것</h2>
-        <p>현재 소스 자동 검증과 외부 계정·실기기·운영·법무·스토어 준비를 각각 구분해 표시한다.
-          W2까지 포함한 현재 로컬 기본 브랜치의 전체 회귀, 빈 데이터베이스의 공유 스키마 대조,
-          Node 24 관리자 웹 검증은 통과했다. 커밋·명령·총계는
-          <a href="../../../docs/release-gate/evidence/W2-DATE-MANUAL/README.md">W2 통합 검증 기록</a>을 따른다.
-          원격에 출시 대상을 고정하고 같은 서버·서명 앱·실제 외부 서비스의 실행 기록을 출시 승인 증거에
-          포함해야 한다.</p>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:130px">구분</th><th>내용</th><th style="width:150px">관련 기능</th>
-          </tr></thead><tbody id="block-rows"></tbody></table>
-        </div>
+        <span id="unresolved"></span><span id="wiring"></span><span id="decisions"></span>
+        <h2>공개 전에 할 일</h2>
+        <p class="subtitle">각 항목은 아직 실제 환경의 확인 또는 승인이 필요하다. 완료 조건을 충족한 기록이 있어야 끝난 일로 처리한다.</p>
+        <div class="release-grid" id="block-rows"></div>
       </section>
 
-      <section id="unresolved">
-        <h2>미해결 항목 — 앞으로 할 일의 성격부터 구분한다</h2>
-        <p><strong>아래 항목은 모두 아직 닫히지 않았다.</strong> 각 행의 첫 라벨에서 구현 중,
-          정책이 확정된 구현 대기, 서버 선행, 미착수와 문서 작업을 구분한다. 완료된 항목은 목록에서
-          제거했다. 첫 출시 코드·화면 작업과 출시 후 보완을 섞지 않고, 현재 소스 통합검증은 별도
-          출시 조건으로 관리한다.</p>
-        <div class="metrics" id="unresolved-metrics"></div>
-      </section>
-
-      <section id="wiring">
-        <h2>화면 연결만 남은 빠른 작업</h2>
-        <p>서버 API와 앱 데이터 계층이 이미 준비됐고 화면 연결만 빠진 항목이다. 새 제품을 설계하는 일이
-          아니므로 대형 후속 작업보다 먼저 닫는다. <strong>화면을 연결하고 표적 화면 테스트를 통과해야
-          완료</strong>이며, “서버가 있다”만으로는 완료가 아니다.</p>
-        <div class="table-wrap">
-          <table style="min-width:1100px"><thead><tr>
-            <th style="width:170px">담당·구분</th><th>현재 문제와 이미 있는 기반</th>
-            <th style="width:390px">다음 행동과 완료 기준</th><th style="width:130px">관련 기능</th>
-          </tr></thead><tbody id="wiring-rows"></tbody></table>
-        </div>
-      </section>
-
-      <section id="decisions">
-        <h2>출시 승인 전에 처리 방식을 결정할 항목</h2>
-        <p>코드를 무조건 더 만드는 목록이 아니다. 제품·운영·개인정보 책임자가 선택지를 승인한 뒤
-          <strong>선택한 결과를 정책, 화면, 서버 또는 운영 절차와 테스트에 반영해야 닫힌다.</strong>
-          결정을 미룬 상태는 완료가 아니며 출시 승인 회의에서 명시적으로 처리해야 한다.</p>
-        <div class="table-wrap">
-          <table style="min-width:1350px"><thead><tr>
-            <th style="width:185px">담당·구분</th><th>왜 결정이 필요한가</th>
-            <th style="width:360px">선택지와 권고</th><th style="width:390px">다음 행동과 완료 기준</th>
-            <th style="width:130px">관련 기능</th>
-          </tr></thead><tbody id="decision-rows"></tbody></table>
-        </div>
-      </section>
-
-      <section id="later">
-        <h2>출시 후 보완 항목</h2>
-        <p>이 목록은 <strong>코드 작성량과 제품 종결 여부를 따로 본다.</strong> 구현률은 개발 기간을
-          감으로 나눈 값이 아니라 서버 계약·권한 검사·사용자/운영 화면·표적 테스트·저장소 반영과 통합
-          검증을 소스에서 확인한 근사치다. 관측 뒤 제품 결정을 내려야 하는 항목은 선행 코드가 있어도
-          운영 화면과 실제 데이터가 없으면 완료로 올리지 않는다. 재실측 전 5건이던 목록에서 끝난 3건은
-          제거했다. 남은 두 건의 코드는 모두 완료됐다. 한 건은 실제 저장 파일 왕복이, 다른 한 건은 실제
-          운영 데이터 관측과 제품 결정이 남았다.</p>
-        <div class="table-wrap">
-          <table style="min-width:1280px"><thead><tr>
-            <th style="width:175px">담당·구분</th><th>현재 한계와 가능한 대체 동선</th>
-            <th style="width:210px">코드 구현 수준과 근거</th>
-            <th style="width:350px">다음 행동과 완료 기준</th><th style="width:120px">관련 기능</th>
-          </tr></thead><tbody id="later-rows"></tbody></table>
-        </div>
-      </section>
-
-      <section id="docwork">
-        <h2>제품 상태와 별도로 처리할 문서 작업</h2>
-        <p>고객 기능의 출시 차단이나 제품 한계로 세지는 않지만, 후속 기능을 다시 열기 전에 제품 전체
-          흐름을 이해할 수 있도록 작성해야 하는 문서 작업이다.</p>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:185px">담당·구분</th><th>문서 공백</th>
-            <th style="width:390px">다음 행동과 완료 기준</th><th style="width:130px">관련 기능</th>
-          </tr></thead><tbody id="doc-rows"></tbody></table>
-        </div>
+      <section id="scope">
+        <h2>첫 출시 범위</h2>
+        <ul>
+          <li><strong>이메일·Google 가입</strong>, 무료 모임, 클럽, 게시글·사진·알림·개인 일정과 신고·이의 처리를 제공한다.</li>
+          <li><strong>핵심 마일리지</strong>의 적립·사용·정정·등급·배지·순위를 포함한다.</li>
+          <li>클럽 가입비·기부는 <strong>무료 포인트</strong>만 사용한다. 클럽 기금으로 구독료 전액을 낼 수 있는 경우도 허용한다.</li>
+          <li>유료 모임·플랫폼 결제·마켓 구매·개인 유료 구독·데이트·버스와 카풀·제공자 거래·스탬프는 <strong>후속 출시</strong> 대상이다.</li>
+          <li>새 이용을 막더라도 기존 이용자의 <strong>환불·해지·신고</strong>는 계속 처리할 수 있어야 한다.</li>
+        </ul>
+        <div id="event-rule"></div>
+        <p>세부 범위는 <a href="feature-status.html">기능별 출시 상태와 다음 할 일</a>에서 확인한다.
+          사적 모임의 결제 구분은 <a href="../features/private-meeting.html">사적 모임 이용과 정산</a>에 있다.</p>
       </section>
 
       <section id="next">
-        <h2>현재 봉인된 기능과 후속 출시 계획</h2>
-        <p><strong>봉인은 “구현하지 않겠다”는 뜻이 아니다.</strong> 기능을 다시 여는 것이 목표이며,
-          지금은 확인된 위험 때문에 정해진 출시 조건으로 신규 사용만 잠시 막은 상태다. 고객 화면만
-          만들어져 있어도 완료가 아니다. 운영자가 상태와 실패를 보고 처리·복구·감사할 화면까지 있어야
-          실제로 출시할 준비가 됐다고 판단한다. 코드 구현과 운영 화면은 서로 다른 상태로 표시하며,
-          고객·서버 코드가 끝났더라도 운영 화면이 부족하면 “코드 완료·운영 화면 부분”으로 남긴다.</p>
-        <p>사적 모임은 개설부터 참가비 보관·완료 확인·분쟁·운영자 복구까지가 한 줄기로 이어져 있고,
-          현재 출시하지 않는 곳은 지갑을 쓰는 두 지점뿐이다. 전 과정과 지점별 출시 조건은
-          <a href="../features/private-meeting.html">사적 모임 전 과정</a>에서 본다.</p>
-        <div class="callout info">
-          <span class="label">봉인으로 인정하는 최소 조건</span>
-          <p>① 현재 코드 상태, ② 운영 화면의 조회·처리·복구·감사 범위, ③ 실제로 막는 설정이나
-            서버 차단 조건, ④ 막은 사유, ⑤ 승인자·결정일·결정서, ⑥ 후속 출시 순서와 완료 근거가 모두
-            적혀 있어야 한다. 하나라도 없으면 임시 봉인이 아니라 미완성 또는 폐기 설계다.
-            사유는 셋 중 하나다. <strong>범위 결정</strong>은 제품이 첫 출시 범위에서 뺀 것이고,
-            <strong>기능 미완성</strong>은 범위와 별개로 아직 만들지 않은 코드나 운영 화면이 남은 것이며,
-            <strong>미해결 결함</strong>은 확인된 결함 때문에 막은 것이다. 둘 다 해당하면 범위 결정을 적고,
-            남은 코드나 운영 화면은 왼쪽 칸의 상태로 읽는다. 현재 목록에 미해결 결함은 없다.
-            승인자·결정일·결정서가 <strong>기록 없음</strong>이면 결정 자체가 문서로 남지 않았다는 뜻이며,
-            출시 조건을 통과하려면 이 칸부터 채워야 한다. <strong>아래 차수는 코드 완성도나 구현
-            난이도가 아니라 선행 기능의 의존 순서다.</strong> 예를 들어 제공자 거래는 고객·서버 코드와
-            운영 화면이 완료됐지만 플랫폼 결제 기반을 먼저 출시해야 하므로 5차에 놓여 있다. 현재 후속
-            출시 순서는
-            <strong>1차 버스·카풀/유료 모임 직접 송금 → 2차 소셜 제공자별 출시 → 3차 데이트 → 4차 실결제 기반 →
-            5차 지갑 의존·구독·마켓·제공자 거래</strong>다.</p>
-        </div>
-        <div class="metrics" id="seal-metrics"></div>
-        <div class="table-wrap">
-          <table style="min-width:1500px"><thead><tr>
-            <th style="width:240px">기능·후속 출시 순서</th>
-            <th style="width:300px">코드와 운영 화면</th>
-            <th style="width:300px">막은 사유·승인 기록과 실제 차단 조건</th>
-            <th>출시 준비 절차와 완료 기준</th>
-            <th style="width:130px">관련 기능</th>
-          </tr></thead><tbody id="next-rows"></tbody></table>
-        </div>
-        <div class="callout warn">
-          <span class="label">함께 확인해야 할 결제 의존 관계</span>
-          <p>일반적인 지갑 차감을 닫았기 때문에, <strong>현금성 포인트나 외부 지급이 필요한 기능은
-            함께 닫힌다.</strong> 클럽 기금 인출, 클럽 구독의 클럽 소유자 지갑 부족분, 모임 정산의 지갑 납부,
-            수익 출금이 여기에 해당한다. 다만 클럽 가입비·기부는 무료 포인트만 쓰는 명시적 예외로
-            열렸고, 클럽 구독도 기금으로 전액 충당되면 열린다. 각 기능 문서만 읽으면 이 경계가 보이지
-            않으므로 이 표를 함께 본다. 현금성 결제 코드는 준비됐지만 실제 계약·키·소액 실거래 확인
-            전에는 실행 경로를 열지 않는다. 닫힌 기능의 버튼은 유지하되, 기능별 제한 사유·남은 준비·
-            출시 조건을 설명하는 안내 화면으로 연결하는 일을
-            <a href="#blocking">공개 출시 전 필수 정리</a>로 올렸다. 환불·회수·탈퇴 잔액 정리는
-            고객에게 돌아가야 할 돈을 묶지 않기 위해 계속 열어 둔다.</p>
-        </div>
+        <h2>후속 기능 준비</h2>
+        <p>아래 기능은 첫 출시를 기다리게 할 이유가 아니다. 담당자는 필요한 개발·검사·승인을 마친 기능부터 따로 공개를 요청한다.
+          <strong>마켓 기간권 판매</strong>와 <strong>추가 로그인의 실패 확인 화면</strong>에는 개발이 남아 있다.</p>
+        <details>
+          <summary>후속 기능의 공개 순서</summary>
+          <ol>
+            <li>주최자 계좌 직접 송금과 버스·카풀을 각각 준비한다.</li>
+            <li>카카오·네이버·Apple 로그인을 제공자별로 준비한다.</li>
+            <li>본인확인과 안전 운영을 확인한 뒤 데이트를 준비한다.</li>
+            <li>실제 계약·거래·복구를 확인한 뒤 플랫폼 결제를 준비한다.</li>
+            <li>플랫폼 결제를 사용하는 인출·개인 구독·마켓·제공자 거래를 준비한다.</li>
+          </ol>
+          <p>시즌·사진 심사 적립·반복 적립 검토와 스탬프는 결제와 독립적으로 준비한다.
+            모임별 적립 점수는 후속 기능이 아니라 첫 출시 검사에 포함한다.</p>
+        </details>
+        <div class="release-grid" id="next-rows"></div>
+      </section>
+
+      <section id="later">
+        <h2>첫 출시와 별도로 진행할 운영 확인</h2>
+        <p class="subtitle">두 항목은 구현이 아니라 실제 파일 확인과 운영 자료에 근거한 제품 판단이 남아 있다.</p>
+        <div class="release-grid" id="later-rows"></div>
+      </section>
+
+      <section id="gates">
+        <h2>공개 승인 기준</h2>
+        <p>출시 책임자는 다음 결과를 확인하고 <strong>승인 또는 보류</strong>를 기록한다. 문서를 고쳤다는 사실만으로 승인되지 않는다.</p>
+        <ul>
+          <li>검사한 앱·서버·관리자 화면과 실제 배포할 프로그램의 <strong>버전이 일치</strong>한다.</li>
+          <li>실제 계정과 Android·iPhone에서 이용·권한 제한·실패 후 재시도를 확인했다.</li>
+          <li>메일·로그인·알림·채팅·지도·파일 서비스와 관리자 접근 제한·장애 경보·복구를 확인했다.</li>
+          <li><strong>중대한 결함</strong>을 해결했고, 예외로 수용할 위험은 사유와 대응 담당자를 기록해 승인했다.</li>
+          <li>개인정보·고객지원·탈퇴 안내와 스토어 설명이 실제 기능과 맞고, 검사한 설치 파일을 제출한다.</li>
+          <li>공개 대상·시점·규모·중단 기준, 공개 전후 7일의 비상 연락 담당자와 고객 공지 담당자가 정해져 있다.</li>
+        </ul>
+        <p><strong>현재는 보류</strong>다. 위 항목의 최종 완료 기록과 공개 승인은 아직 없다.</p>
+      </section>
+
+      <section id="evidence">
+        <span id="axes"></span>
+        <h2>확인한 것과 아직 확인하지 못한 것</h2>
+        <div id="evidence-rows"></div>
+        <p>기능별 확인 범위는 <a href="feature-status.html">기능별 출시 상태와 다음 할 일</a>,
+          검사 근거는 <a href="scenario-completeness.html">기능별 시나리오 완성도</a>에서 확인한다.</p>
       </section>
 
       <section id="retired">
-        <h2>봉인이 아니라 폐기·신규 기획인 기능</h2>
-        <p>아래 항목은 설정을 바꿔 다시 여는 기능이 아니다. 기존 설계를 제거했기 때문에 다시 추진하려면
-          제품 가치·개인정보 권한·운영 책임부터 승인하고 새로운 구현 계획을 세워야 한다. 후속 출시
-          일정이나 완료율에 포함하지 않는다.</p>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:160px">구분</th><th>현재 결정</th><th style="width:150px">관련 기능</th>
-          </tr></thead><tbody id="retired-rows"></tbody></table>
-        </div>
+        <h2>제품에서 제외한 기능</h2>
+        <div id="retired-rows"></div>
       </section>
 
       <section id="tracks">
-        <h2>기능과 개발 작업의 연결</h2>
-        <p>출시 관문과 증거는 개발 작업 단위로 관리되고, 이 문서 모음은 제품 기능 단위로 쓰여 있다.
-          둘 사이에 공통 열쇠가 없어 “이 화면이 지금 왜 막혀 있는지”를 되짚을 수 없었다. 아래 표가 그
-          연결이다.</p>
-        <div class="callout info">
-          <span class="label">추적 코드는 제품 정보가 아니다</span>
-          <p>왼쪽 열의 영문 코드는 엔지니어링 작업판과 증거 폴더를 찾기 위한 열쇠일 뿐이다.
-            우선순위나 중요도를 뜻하지 않으니 기획·사업 판단에는 오른쪽 이름과 상태만 읽으면 된다.</p>
-        </div>
-        <div class="table-wrap">
-          <table><thead><tr>
-            <th style="width:120px">추적 코드</th><th style="width:170px">작업 이름</th>
-            <th style="width:80px">코드</th><th style="width:180px">현재 확인 결과</th><th>관련 기능</th>
-          </tr></thead><tbody id="track-rows"></tbody></table>
-        </div>
-      </section>
-
-      <section id="doclimits">
-        <h2>이 문서 모음을 읽을 때의 한계</h2>
-        <p>기능 문서는 대부분 현재형 단정으로 쓰여 있다. 그 문장은 <strong>“이렇게 동작하기로 했다”</strong>는
-          뜻이며, 오늘 그렇게 동작한다는 보증이 아니다. 다음 세 가지를 함께 기억한다.</p>
-        <ul>
-          <li><strong>기능 문서 본문만으로는 현재 출시 상태를 알 수 없다.</strong> 그래서 각 기능 문서 맨
-            위에 이 페이지의 두 판단 기준을 요약해 표시했다. 요약과 본문이 어긋나면 요약을 최신 상태로
-            본다.</li>
-          <li><strong>문서 상태표는 구현 완료표가 아니다.</strong>
-            <a href="migration-status.html">PRD 문서 상태</a>가 재는 것은 문서를 얼마나 소스와 대조해
-            썼는지이지 제품이 되었는지가 아니다.</li>
-          <li><strong>시나리오 커버리지는 시험 문서의 개수다.</strong>
-            <a href="coverage.html">시나리오 커버리지</a>의 “빈틈 0”은 시험 항목을 다 적었다는 뜻이지
-            실제 환경에서 통과했다는 뜻이 아니다.</li>
-        </ul>
-        <div class="callout warn">
-          <span class="label" id="pending-label">아직 소스 대조가 끝나지 않은 문서 후보</span>
-          <p id="pending-text">불러오는 중…</p>
-        </div>
+        <details>
+          <summary>개발 담당자용 작업 연결표</summary>
+          <p>왼쪽 식별자는 개발 문서를 찾을 때만 사용한다. 현재 판단과 다음 할 일은 위의 업무 이름으로 읽는다.</p>
+          <div class="table-wrap">
+            <table><thead><tr>
+              <th style="width:120px">추적 코드</th><th style="width:170px">작업 이름</th>
+              <th style="width:120px">구현</th><th >현재 확인 결과</th><th style="width:170px">관련 기능</th>
+            </tr></thead><tbody id="track-rows"></tbody></table>
+          </div>
+        </details>
       </section>
 
       <section id="source">
-        <h2>이 페이지의 출처와 갱신 규칙</h2>
-        <ul>
-          <li>출시 판정·관문·외부 증거는 제품 저장소의 <strong>사업·기획자용 출시 현황</strong>,
-            <strong>출시 가능성 증명 현황</strong>, <strong>실제 계정 실행 기록</strong>,
-            <strong>과거 통합검증 기록</strong>과 <strong>현재 저장소 상태</strong>를 함께 대조한다.</li>
-          <li>문서 판정과 현재 소스가 어긋나면 한쪽을 임의로 우선하지 않는다. 실제 고객 동작과 출시
-            승인 기준을 다시 확인하고, 차이를 이 페이지의 필수 정리 항목으로 남긴 뒤 기준 문서도
-            같은 날 맞춘다.</li>
-          <li>노출 여부는 운영 배포 설정에서 기계적으로 읽는다. 설정이 바뀌면 이 페이지도 같은 날 바꾼다.</li>
-          <li>미해결 항목은 기능 문서의 서술을 후보로 삼되 현재 소스의 화면·라우트·서버 계약과 다시
-            대조한 것만 남긴다. 화면 연결, 출시 전 결정, 출시 후 개선, 문서 작업을 분리하고 다음 행동과
-            완료 기준을 함께 기록한다. 소스에서 이미 해소된 항목은 기능 문서가 늦게 바뀌었더라도 이
-            페이지에서 즉시 제거한다.</li>
-          <li>봉인 항목은 코드·운영 화면·실제 차단 조건·봉인 사유·승인 기록·출시 준비 절차·완료 기준을 함께
-            갱신한다.
-            코드와 운영 화면은 따로 판정하며, 운영 화면이나 출시 완료 기준이 비어 있으면 “후속 출시 준비 완료”로
-            표시하지 않는다.</li>
-          <li>기준일이 오늘과 멀어졌다면 값이 아니라 <strong>기준일을 먼저 의심한다.</strong></li>
-        </ul>
-        <p style="color:var(--muted);font-size:12.5px" id="asof-line"></p>
+        <span id="doclimits"></span><span id="docs"></span>
+        <h2>상태를 갱신할 때</h2>
+        <p>담당자는 확인한 날짜·프로그램 버전·실행한 역할·실제 결과·남은 문제와 승인자를 기록한다.
+          실제로 확인하지 않은 내용을 완료로 바꾸지 않는다. 문서의 검토 대기 수는 결함 수와 구분한다.</p>
+        <p id="asof-line" class="release-note"></p>
       </section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>
+  <script src="../assets/features.js"></script>
+  <script src="../assets/mileage-feature-status.js"></script>
   <script src="../assets/launch-status.js"></script>
   <script>
     (function () {
       var L = window.LAUNCH_STATUS;
-      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-      function pill(text, tone) { return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(text) + '</span>'; }
+      var names = {};
+      (window.PRD_FEATURES || []).forEach(function (f) { names[f.id] = f.name; });
+      function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
       function featureLinks(ids) {
-        if (!ids || !ids.length) return '<span style="color:var(--muted-2)">전체</span>';
-        return ids.map(function (f) {
-          return '<a href="../features/' + f + '.html"><code>' + f + '</code></a>';
-        }).join(' ');
+        return (ids || []).map(function (id) {
+          return '<a href="../features/' + esc(id) + '.html">' + esc(names[id] || '기능 설명') + '</a>';
+        }).join(' · ');
       }
-
-      document.getElementById('verdict-metrics').innerHTML = L.verdict.map(function (v) {
-        return '<div class="metric"><div class="label">' + esc(v.label) + '</div>' +
-          '<div class="value">' + esc(v.value) + '</div>' +
-          '<div class="hint">' + esc(v.why) + '</div></div>';
+      function itemCard(o) {
+        var related = o.docPath ? '<a href="../' + esc(o.docPath) + '">클럽 스탬프 설명</a>' : featureLinks(o.features);
+        return '<article class="release-task" id="item-' + esc(o.id) + '">' +
+          '<h3>' + esc(o.title) + '</h3>' +
+          '<p><strong>현재</strong> ' + esc(o.summary) + '</p>' +
+          '<p class="task-action"><strong>' + esc(o.actionLabel) + '</strong><br>' + esc(o.nextAction) + '</p>' +
+          '<p><strong>담당</strong> ' + esc(o.owner) + '</p>' +
+          '<details><summary>완료 조건·관련 기능</summary>' +
+          '<p><strong>완료 조건</strong> ' + esc(o.doneWhen) + '</p>' +
+          (related ? '<p class="task-links">' + related + '</p>' : '') + '</details></article>';
+      }
+      function renderItems(target, predicate) {
+        document.getElementById(target).innerHTML = L.openItems.filter(predicate).map(itemCard).join('');
+      }
+      document.getElementById('action-rows').innerHTML = L.nextActions.map(function (a) {
+        return '<li><strong>' + esc(a.name) + '</strong> — ' + esc(a.detail) + '</li>';
       }).join('');
-
+      renderItems('block-rows', function (o) { return o.impact === 'block'; });
+      renderItems('next-rows', function (o) { return o.impact === 'next' && o.id !== 'N-08-EVENT-RULE'; });
+      renderItems('event-rule', function (o) { return o.id === 'N-08-EVENT-RULE'; });
+      renderItems('later-rows', function (o) { return o.impact === 'later'; });
+      renderItems('retired-rows', function (o) { return o.impact === 'retired'; });
       document.getElementById('evidence-rows').innerHTML = L.evidence.map(function (e) {
-        return '<tr><td><strong>' + esc(e.name) + '</strong></td><td>' + pill(e.state, e.tone) +
-          '</td><td>' + esc(e.detail) + '</td></tr>';
+        return '<p><strong>' + esc(e.state) + '</strong> — ' + esc(e.detail) + '</p>';
       }).join('');
-
-      document.getElementById('action-rows').innerHTML = L.nextActions.map(function (a, i) {
-        return '<tr><td><strong>' + (i + 1) + '</strong></td><td><strong>' + esc(a.name) +
-          '</strong></td><td>' + esc(a.detail) + '</td></tr>';
-      }).join('');
-
-      function legend(target, map) {
-        document.getElementById(target).innerHTML = Object.keys(map).map(function (k) {
-          return '<tr><td>' + pill(map[k].label, map[k].tone) + '</td><td>' + esc(map[k].desc) + '</td></tr>';
-        }).join('');
-      }
-      legend('scope-legend', L.SCOPE);
-      legend('proof-legend', L.PROOF);
-
-      document.getElementById('gate-rows').innerHTML = L.gates.map(function (g) {
-        return '<tr><td><strong>' + esc(g.name) + '</strong></td><td>' + pill(g.state, g.tone) +
-          '</td><td>' + esc(g.detail) + '</td></tr>';
-      }).join('');
-
-      function rows(target, impact) {
-        var list = L.openItems.filter(function (o) { return o.impact === impact; });
-        document.getElementById(target).innerHTML = list.map(function (o) {
-          return '<tr><td>' + pill(o.kind, impact === 'block' ? 'danger' : '') + '</td>' +
-            '<td><strong>' + esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:13px">' +
-            esc(o.detail) + '</span></td>' +
-            '<td style="font-size:12px">' + featureLinks(o.features) + '</td></tr>';
-        }).join('');
-        return list.length;
-      }
-      rows('block-rows', 'block');
-
-      function ownerAndKind(o, tone) {
-        return (o.status ? pill(o.status, o.status.indexOf('구현 중') >= 0 ? 'brand' : 'warn') + ' ' : '') +
-          (o.owner ? pill(o.owner, 'info') + ' ' : '') + pill(o.kind, tone);
-      }
-
-      function actionAndDone(o) {
-        return '<strong>다음 행동</strong><br><span style="color:var(--muted);font-size:12.5px">' +
-          esc(o.nextAction) + '</span><div style="margin-top:9px;padding-top:8px;border-top:1px solid var(--border)">' +
-          '<strong>닫히는 기준</strong><br><span style="color:var(--muted);font-size:12.5px">' +
-          esc(o.doneWhen) + '</span></div>';
-      }
-
-      function choices(o) {
-        if (!o.choices || !o.choices.length) return '<span style="color:var(--muted-2)">선택지 없음</span>';
-        return '<ol style="margin:0;padding-left:20px">' + o.choices.map(function (choice) {
-          return '<li style="margin:4px 0">' + esc(choice) + '</li>';
-        }).join('') + '</ol>';
-      }
-
-      function codeProgress(o) {
-        if (!o.codeProgress) return '<span style="color:var(--muted-2)">별도 산정 없음</span>';
-        return pill(o.codeProgress, o.codeProgressTone || 'warn') +
-          '<div style="margin-top:8px;color:var(--muted);font-size:12.5px">' +
-          esc(o.codeProgressDetail || '') + '</div>';
-      }
-
-      function actionableRows(target, impact, tone, includeChoices, includeProgress) {
-        var list = L.openItems.filter(function (o) { return o.impact === impact; });
-        document.getElementById(target).innerHTML = list.map(function (o) {
-          var cells = '<td>' + ownerAndKind(o, tone) + '</td>' +
-            '<td><strong>' + esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:12.5px">' +
-            esc(o.detail) + '</span></td>';
-          if (includeChoices) cells += '<td>' + choices(o) + '</td>';
-          if (includeProgress) cells += '<td>' + codeProgress(o) + '</td>';
-          cells += '<td>' + actionAndDone(o) + '</td>' +
-            '<td style="font-size:12px">' + featureLinks(o.features) + '</td>';
-          return '<tr>' + cells + '</tr>';
-        }).join('');
-        return list.length;
-      }
-
-      var unresolvedCounts = {
-        block: L.openItems.filter(function (o) { return o.impact === 'block'; }).length,
-        wiring: actionableRows('wiring-rows', 'wiring', 'brand', false, false),
-        decision: actionableRows('decision-rows', 'decision', 'warn', true, false),
-        later: actionableRows('later-rows', 'later', 'info', false, true),
-        doc: actionableRows('doc-rows', 'doc', '', false, false),
-      };
-      document.getElementById('wiring').hidden = unresolvedCounts.wiring === 0;
-      document.getElementById('decisions').hidden = unresolvedCounts.decision === 0;
-      var postItems = L.openItems.filter(function (o) { return o.impact === 'later'; });
-      var inProgress = postItems.filter(function (o) {
-        return (o.status || '').indexOf('구현 중') >= 0;
-      }).length;
-      var partial = postItems.filter(function (o) {
-        return (o.status || '').indexOf('부분 구현') >= 0;
-      }).length;
-      var technicalDecision = postItems.filter(function (o) {
-        return (o.status || '').indexOf('기술 설계') >= 0;
-      }).length;
-      var waitingDecision = postItems.filter(function (o) {
-        var status = o.status || '';
-        return status.indexOf('기술 설계') < 0 &&
-          (status.indexOf('결정 대기') >= 0 || status.indexOf('판정 대기') >= 0);
-      }).length;
-      var notStarted = postItems.length - inProgress - partial - technicalDecision - waitingDecision + unresolvedCounts.doc;
-      document.getElementById('unresolved-metrics').innerHTML = [
-        { label: '공개 출시 차단', value: unresolvedCounts.block + '건', hint: '해소 전에는 출시 불가' },
-        { label: '구현 중', value: inProgress + '건', hint: '코드 변경 중인 항목만 집계' },
-        { label: '부분 구현', value: partial + '건', hint: '제품·운영 결정까지 남음' },
-        { label: '정책·계약 결정', value: waitingDecision + '건', hint: '선택 효과를 승인한 뒤 구현' },
-        { label: '기술 설계 결정', value: technicalDecision + '건', hint: '구현 방식과 위험을 선택' },
-        { label: '미착수·재현·문서', value: notStarted + '건', hint: '선행관계에 따라 순차 착수' },
-      ].map(function (v) {
-        return '<div class="metric"><div class="label">' + esc(v.label) + '</div>' +
-          '<div class="value">' + esc(v.value) + '</div><div class="hint">' + esc(v.hint) + '</div></div>';
-      }).join('');
-
-      function sealStatePill(value, ready) {
-        return pill(value, ready === true ? 'brand' : 'warn');
-      }
-
-      function textList(items) {
-        if (!items || !items.length) return '';
-        return '<ol style="margin:8px 0 0;padding-left:20px">' + items.map(function (item) {
-          return '<li style="margin:4px 0">' + esc(item) + '</li>';
-        }).join('') + '</ol>';
-      }
-
-      var seals = L.openItems.filter(function (o) { return o.impact === 'next'; });
-      var opsReady = seals.filter(function (o) { return o.operationsReady === true; }).length;
-      var buildFirst = seals.filter(function (o) {
-        return o.implementationReady !== true || o.operationsReady !== true;
-      }).length;
-      document.getElementById('seal-metrics').innerHTML = [
-        { label: '후속 출시 대상', value: seals.length + '개', hint: '폐기 설계는 제외' },
-        { label: '운영 화면 완비', value: opsReady + '개', hint: '조회·처리·복구·감사 가능' },
-        { label: '코드·운영 보강 대상', value: buildFirst + '개', hint: '운영 화면 또는 코드 범위 보강' },
-        { label: '코드·운영 기반 있음', value: (seals.length - buildFirst) + '개', hint: '범위·외부·실기기·선행 조건 해결' },
-      ].map(function (v) {
-        return '<div class="metric"><div class="label">' + esc(v.label) + '</div>' +
-          '<div class="value">' + esc(v.value) + '</div><div class="hint">' + esc(v.hint) + '</div></div>';
-      }).join('');
-      document.getElementById('next-rows').innerHTML = seals.map(function (o) {
-        var reasonPills = (o.sealReasons || []).map(function (reason) {
-          return pill(reason, 'warn');
-        }).join(' ');
-        return '<tr id="item-' + esc(o.id) + '">' +
-          '<td>' + pill(o.kind, 'info') + ' ' + pill(o.sealClass, 'warn') +
-            '<br><strong style="display:inline-block;margin-top:7px">' +
-            esc(o.title) + '</strong><br><span style="color:var(--muted);font-size:12.5px">' +
-            esc(o.detail) + '</span></td>' +
-          '<td>' + sealStatePill(o.codeState, o.implementationReady) + ' ' + sealStatePill(o.opsState, o.operationsReady) +
-            '<br><span style="display:inline-block;margin-top:7px;color:var(--muted);font-size:12.5px">' +
-            esc(o.opsDetail) + '</span></td>' +
-          '<td>' + pill(o.sealCause, o.sealCause === '범위 결정' ? 'info' : 'danger') + ' ' + reasonPills +
-            '<br><span style="display:inline-block;margin-top:8px;color:var(--muted);font-size:12.5px">' +
-            '승인자 ' + esc(o.approver) + ' · 결정일 ' + esc(o.decidedOn) + ' · 결정서 ' + esc(o.decisionDoc) +
-            '</span><br><strong style="display:inline-block;margin-top:8px">실제 차단 조건</strong>' +
-            '<br><span style="color:var(--muted);font-size:12.5px">' + esc(o.gate) + '</span></td>' +
-          '<td><strong>출시 준비 순서</strong>' + textList(o.unsealSteps) +
-            '<div style="margin-top:9px;padding-top:8px;border-top:1px solid var(--border)"><strong>완료 기준</strong><br>' +
-            '<span style="color:var(--muted);font-size:12.5px">' + esc(o.doneWhen) + '</span></div></td>' +
-          '<td style="font-size:12px">' + (o.docPath ? '<a href="../' + esc(o.docPath) + '">기능 설명</a>' : featureLinks(o.features)) + '</td>' +
-          '</tr>';
-      }).join('');
-
-      rows('retired-rows', 'retired');
-
       document.getElementById('track-rows').innerHTML = L.tracks.map(function (t) {
-        return '<tr><td><code>' + esc(t.code) + '</code></td>' +
-          '<td>' + esc(t.name) + '</td>' +
-          '<td>' + pill(t.code_state, t.code_state === '완료' ? 'brand' : 'warn') + '</td>' +
-          '<td style="font-size:12.5px">' + esc(t.proof_state) + '</td>' +
-          '<td style="font-size:12px">' + featureLinks(t.features) + '</td></tr>';
+        var build = t.code === 'MKT-01' || t.code === 'AUT-01' ? '추가 개발 필요' : (t.code === 'REL-01' ? '공개 준비 중' : '기능 있음');
+        return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
+          '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-
-      document.getElementById('pending-text').textContent =
-        '기능 문서의 후보 ' + L.pendingTotal + '건은 아직 소스 대조 전이다. 이 숫자는 결함 수가 아니라 ' +
-        '검토 대기 문장 수다. 위의 처리 방식별 미해결 항목과 달리 사실 확인이 끝나지 ' +
-        '않았으므로 출시 판단에 그대로 쓰지 않는다. 기능별 잔여 수는 기능별 출시 상태표에서 확인한다.';
-
-      document.getElementById('asof-line').textContent = '기준일 ' + L.asOf + ' · 이 페이지의 모든 값은 이 날짜의 판정이다.';
+      document.getElementById('asof-line').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-07. 이번 문서 수정에서 배포나 실제 서비스 검사를 새로 수행하지 않았다.';
     })();
   </script>
   <script src="../assets/app.js"></script>

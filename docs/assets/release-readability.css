@@ -1,0 +1,51 @@
+/* 출시 안내 두 페이지에만 적용하는 읽기용 배치 */
+.release-page main { word-break:keep-all; overflow-wrap:anywhere; }
+.release-page .release-summary { font-size:16px; line-height:1.8; }
+.release-page .release-nav { display:flex; flex-wrap:wrap; gap:10px 22px; margin:20px 0 0; }
+.release-page .release-nav a { font-weight:600; }
+.release-page .release-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.release-page details + .release-grid { margin-top:18px; }
+.release-page .release-task { padding:20px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface); min-width:0; scroll-margin-top:78px; }
+.release-page .release-task h3 { margin:0 0 12px; font-size:18px; }
+.release-page .release-task p { font-size:15px; line-height:1.75; margin-bottom:12px; color:var(--ink-soft); }
+.release-page .release-task strong, .release-page .release-table strong { color:var(--ink); font-weight:700; }
+.release-page .release-table a strong { color:var(--brand-deep); }
+.release-page .release-task .task-action { border-left:3px solid var(--brand); padding-left:12px; }
+.release-page details { margin-top:12px; }
+.release-page summary { cursor:pointer; color:var(--brand-deep); font-weight:600; line-height:1.7; }
+.release-page details[open] > summary { margin-bottom:12px; }
+.release-page .release-task details p { font-size:14px; }
+.release-page .release-task .task-links { margin:10px 0 0; font-size:14px; }
+.release-page .release-table { table-layout:fixed; }
+.release-page .release-table th, .release-page .release-table td { font-size:14px; line-height:1.75; overflow-wrap:anywhere; }
+.release-page .release-table th:nth-child(1) { width:22%; }
+.release-page .release-table th:nth-child(2) { width:18%; }
+.release-page .release-table th:nth-child(3) { width:23%; }
+.release-page .release-table p { margin:8px 0 0; color:var(--ink-soft); }
+.release-page .release-table .feature-domain { margin-top:5px; font-size:13px; color:var(--muted); }
+.release-page .release-table ul { padding-left:18px; margin:8px 0; }
+.release-page .release-table details { font-size:13px; }
+.release-page .release-table .pill { white-space:normal; }
+.release-page .release-table .feature-name { font-size:15px; font-weight:700; }
+.release-page .release-toolbar { display:flex; flex-wrap:wrap; }
+.release-page .release-toolbar label { font-size:14px; }
+.release-page .release-toolbar input[type=search] { min-width:220px; flex:1 1 220px; }
+.release-page .release-toolbar select { min-width:0; max-width:100%; flex:1 1 170px; }
+.release-page .release-pagination { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:16px; }
+.release-page .release-pagination button { background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:10px 16px; font:inherit; cursor:pointer; }
+.release-page .release-pagination button:disabled { opacity:.45; cursor:default; }
+.release-page .release-note { font-size:14px; color:var(--ink-soft); }
+.release-page :target, .release-page #count { scroll-margin-top:78px; }
+@media (max-width:800px) {
+  .release-page .release-toolbar { display:grid; grid-template-columns:1fr; }
+  .release-page .release-grid { grid-template-columns:1fr; }
+  .release-page .release-task { padding:18px; }
+  .release-page .release-table, .release-page .release-table tbody { display:block; width:100%; }
+  .release-page .release-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+  .release-page .release-table tr { display:block; border-bottom:2px solid var(--line); padding:14px; }
+  .release-page .release-table tr:last-child { border-bottom:0; }
+  .release-page .release-table td { display:block; padding:8px 0; border:0; width:auto; }
+  .release-page .release-table td::before { content:attr(data-label); display:block; font-size:12px; color:var(--muted); margin-bottom:3px; }
+  .release-page .release-table td:first-child::before { display:none; }
+  .release-page .release-table .feature-name { font-size:18px; }
+}
