@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>community PRD — 서비스 개관</title>
+  <title>community — 제품 문서</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="assets/styles.css">
@@ -14,7 +14,7 @@
     <main>
       <header class="page-head">
         <div class="breadcrumb">community 제품 문서</div>
-        <h1>community PRD 문서 허브</h1>
+        <h1>community 제품 문서</h1>
         <p class="lede">
           이 문서 묶음은 community 플랫폼이 무엇을 풀고 있는지, 어떤 사용자가
           어떤 흐름을 거치는지, 어디서 돈·알림·위치·신뢰가 움직이는지를 한 자리에서
@@ -24,67 +24,30 @@
       </header>
 
       <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">업무 도메인</div><div class="value">21</div><div class="hint">7개 줄기로 묶인 책임 분리 영역</div></div>
-          <div class="metric"><div class="label">기능 인벤토리</div><div class="value">175</div><div class="hint">기준 예시 1 · 실사 기반 115 · 현재 소스 기준 50</div></div>
-          <div class="metric"><div class="label">시나리오 등록 숫자</div><div class="value">1403</div><div class="hint">목록 숫자의 합 · 통과 건수 아님</div></div>
-          <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전 횡단 규칙</div></div>
-        </div>
-
         <div class="callout danger">
-          <span class="label">2026-09-06 — 이 문서 모음을 읽기 전에</span>
-          <p>아래 기능 문서들은 <strong>기능이 무엇을 하기로 되어 있는지</strong>를 현재형으로 서술한다.
-          그 문장은 “오늘 그렇게 동작한다”는 보증이 아니다. 무엇이 첫 출시에 실제로 열리고 무엇이 닫히는지,
-          그 사실을 무엇으로 확인했는지는 <a href="qa/launch-status.html">첫 출시 현황</a>과
-          <a href="qa/feature-status.html">기능별 출시 상태</a>에서만 판단한다.
-          현재 판정은 <strong>내부 시연 가능, 외부 고객 공개 보류</strong>다. 첫 출시 현황에서는
-          미해결 항목을 빠른 화면 배선, 출시 전 결정, 출시 후 개선, 별도 문서 작업으로 나누고 각 항목의
-          다음 행동과 완료 기준을 표시한다.</p>
-          <p><strong>최근 이틀간 반영된 것:</strong> 관리자 돈 조치의 중복 실행 방지, 일반·정기모임의 계좌 직접 송금,
-          이동 책임 안내, 사진 승인 마일리지에 이어 <a href="features/F09-01.html">증빙 기반 본인확인 검토·승인·취소</a>,
-          <a href="domains/16-mileage.html">마일리지 시즌·반복 적립 검토·이벤트별 점수</a>,
-          <a href="features/club-stamp.html">클럽 스탬프</a>의 구현과 로컬 통합을 마쳤다.
-          최신 네 코드 저장소의 전체 회귀와 빈 데이터베이스 공유 정의 대조, Node 24 관리자 웹 검증도 통과했다.
-          커밋·시험 총계와 한계는 <a href="../../docs/release-gate/evidence/W2-DATE-MANUAL/README.md">W2 데이트 수동 검토 통합 검증</a>을 따른다.</p>
-          <p>첫 출시 범위의 알려진 코드·화면 차단 항목은 0건이다. 다만 문서까지 포함한 원격 출시 대상 고정,
-          서명 앱·실계정·외부 서비스·운영 복구 증명은 아직 남아 있다. 제공자 거래도 플랫폼 결제 기반·실지급·
-          법무·세무·서명 앱 확인 뒤 별도로 출시한다.
-          <strong>핵심 마일리지는 코드·운영 화면·로컬 신규 계정 검증을 마쳐 2026-09-04 운영 기본 출시
-          목록에 반영했다.</strong> 실기기 알림은 출시 후 운영 점검이다. 사진 승인 적립은 코드와 현재
-          기본 브랜치 회귀와 빈 데이터베이스 대조를 마쳤고 역할별 앱↔서버 흐름·별도 출시 설정을 기다린다.
-          시즌·반복 적립 검토·스탬프는 구현 완료지만 별도 활성화 전이다. 이벤트별 점수는 별도 스위치가 없어
-          기존 공개 모임의 데이터 준비를 마친 뒤 핵심 마일리지 배포에 함께 포함한다.
-          W1~W4의 브랜치·검토·남은 코드 경계는
-          <a href="../../docs/plan/SEAL_CODE_GAP_EXECUTION_STATUS_2026-09-05.md">W1~W4 실행 현황</a>을 따른다.
-          검증 표에서는 자동 회귀, 시드 계정을 사용해 실제 서버
-          저장 상태까지 확인한 로컬 서버 E2E, 새 계정 생성부터 시작한 로컬 신규 계정을 구분한다.
-          이번 갱신 범위는 <a href="overview/changelog.html#source-sync-2026-09-06">2026-09-06 — 최근 48시간 변경 대조와 사업 문서 동기화</a>에서 확인한다.</p>
+          <span class="label">현재 출시 상태</span>
+          <p><strong>내부 시연은 가능하지만 외부 고객 공개는 보류 중이다.</strong>
+          첫 출시는 무료 모임·클럽과 핵심 마일리지를 중심으로 준비한다.
+          출시할 앱으로 실제 계정·휴대전화·외부 서비스를 확인하고 장애 복구를 연습하는 일이 남아 있다.</p>
+          <p>기능 설명이 있다는 사실만으로 지금 사용할 수 있다는 뜻은 아니다.
+          공개 범위와 남은 준비는 <a href="qa/launch-status.html">첫 출시 현황</a>에서,
+          개별 기능의 준비 상태는 <a href="qa/feature-status.html">기능별 출시 상태</a>에서 확인한다.</p>
         </div>
 
-        <div class="callout warn">
-          <span class="label">2026-07-29 갱신 — API·App·Admin 직접 재실측</span>
-          <p>기능 수는 175개로 유지하되 50개 핵심 기능을 실제 Controller/DTO/Service와 Flutter caller까지 다시 대조했다. UI 미배선, 권한·상태 불일치, 알림 설정, path scope와 보안 후보를 완료 표현에서 분리했다. 상세는
-          <a href="overview/changelog.html">변경 기록</a>과
-          <a href="../prd/05_planning_artifacts/current_source_update_2026-07-29.md">현재 소스 실측 노트</a>에서 확인한다.</p>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">2026-05-20 갱신 — 운영 모델 변경 반영</span>
-          <p>원문 PRD가 <strong>현재 소스를 먼저 확인하는 방식</strong>으로 전환됐다. 기능 PRD는 이제 “시나리오 나열”이 아니라
-          실제 서버·Flutter 소스를 직접 대조한 판단 문서로 운영된다. 자세한 골자는
-          <a href="overview/operating-model.html">PRD 운영 모델</a>에서, 175개 기능의 PRD 문서 상태와 Trace/Risk 후보 수는
-          <a href="qa/migration-status.html">PRD 문서 상태표</a>에서 확인한다. 시각화 변경 내역은
-          <a href="overview/changelog.html">변경 기록</a> 페이지에 있다.</p>
+        <div class="metrics">
+          <div class="metric"><div class="label">업무 영역</div><div class="value">21</div><div class="hint">모임·클럽·결제 등 기능별 책임</div></div>
+          <div class="metric"><div class="label">기능 목록</div><div class="value">175</div><div class="hint">기능 설명과 확인 기준</div></div>
+          <div class="metric"><div class="label">등록된 시나리오</div><div class="value">1403</div><div class="hint">검사 항목 수이며 통과 건수는 아님</div></div>
+          <div class="metric"><div class="label">정책 문서</div><div class="value">6</div><div class="hint">상태·권한·돈·알림·안전의 공통 규칙</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">이 허브를 보는 법</span>
-          <p>왼쪽 사이드바는 “이해 → 도메인(7개 줄기) → 기능 → 정책 → QA” 순서로 정렬돼 있다.
-          도메인은 줄기별로 묶여 있다 — 들여쓰인 항목(정기모임·모임 정산·마일리지·경고)은 큰 줄기(이벤트·클럽)에 속한 위성 도메인이다.
-          처음이라면 <a href="overview/service.html">서비스 정의</a> → <a href="overview/architecture.html">정보구조</a> →
-          <a href="overview/journeys.html">7대 여정</a>을 차례로 읽고, 담당 영역 도메인 페이지로 내려가는 흐름을 권장한다.
-          담당 기능을 직접 다루려면 <a href="overview/operating-model.html">운영 모델</a> →
-          <a href="qa/migration-status.html">PRD 문서 상태표</a> → 해당 기능 PRD 순서로 본다.</p>
+          <span class="label">처음 읽는 순서</span>
+          <p>서비스를 처음 접하는 기획자는 <a href="overview/service.html">서비스 정의</a>,
+          <a href="overview/architecture.html">정보구조</a>,
+          <a href="overview/journeys.html">사용자 여정</a>을 읽고 담당 업무의 문서를 찾는다.
+          기능 문서를 작성하거나 검토할 때는 <a href="overview/operating-model.html">제품 문서 작성·검토 원칙</a>과
+          <a href="qa/migration-status.html">기능 문서 점검 상태</a>를 확인한다.</p>
         </div>
       </section>
 
@@ -167,13 +130,13 @@ flowchart LR
             <div class="meta"><span class="pill brand">여정</span></div>
           </a>
           <a class="card" href="overview/operating-model.html">
-            <div class="eyebrow">신규</div>
-            <h3>PRD 운영 방식 (현재 소스 우선)</h3>
-            <p>2026-05-18부터 적용된 새 PRD 표준. Fact·Derived·Gap·Risk·Decision Needed로 사실과 판단을 분리한다.</p>
+            <div class="eyebrow">문서 작성</div>
+            <h3>제품 문서 작성·검토 원칙</h3>
+            <p>실제 기능을 확인한 사실, 해석, 미구현 항목, 위험과 결정할 일을 구분해 기록하는 방법을 설명한다.</p>
             <div class="meta"><span class="pill warn">필독</span></div>
           </a>
           <a class="card" href="qa/migration-status.html">
-            <div class="eyebrow">신규</div>
+            <div class="eyebrow">문서 점검</div>
             <h3>175개 PRD 문서 상태표</h3>
             <p>상세 실사 근거 보유 117개(기준 예시 1 + 실사 기반 전환·갱신 116) · 상세 실사 근거 문서가 없는 58개(신규 PRD 7 + 실사 기반 신규 1 + 현재 소스 기준 50). 기능별 소스 추적 수와 위험 후보 수로 우선순위를 잡는다.</p>
             <div class="meta"><span class="pill info">QA</span></div>
@@ -185,7 +148,7 @@ flowchart LR
             <div class="meta"><span class="pill brand">전수</span><span class="pill">검색</span></div>
           </a>
           <a class="card" href="reference/numbers.html">
-            <div class="eyebrow">신규</div>
+            <div class="eyebrow">정책 참고</div>
             <h3>비즈니스 수치 레퍼런스</h3>
             <p>이벤트별 환불 정책 템플릿 6종(기준·엄격·유연·전액·환불불가·직접설정), 클럽 구독 FREE 10,000원/월·BUSINESS 30,000원/월, 인출 수수료 5%+원천징수 3.3%, 30일 유예 등 정책 상수 모음.</p>
             <div class="meta"><span class="pill money">돈</span><span class="pill">상수</span></div>
@@ -257,7 +220,7 @@ flowchart LR
       </section>
 
       <footer class="page-foot">
-        모든 문서는 사이드바에서 바로 열 수 있다. 정적 HTML이라서 파일을 직접 더블클릭해도 동작한다.
+        모든 문서는 사이드바에서 바로 열 수 있다. 이전에 달라진 내용은 <a href="overview/changelog.html">주요 변경 기록</a>에서 확인한다.
       </footer>
     </main>
   </div>
