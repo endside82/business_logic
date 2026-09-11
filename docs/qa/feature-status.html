@@ -120,7 +120,7 @@
       document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
       document.getElementById('m-retired').textContent = data.filter(function (d) { return d.scope === 'retired'; }).length;
       document.getElementById('m-journey').textContent = data.filter(function (d) { return d.proof === 'local' || d.proof === 'real'; }).length;
-      document.getElementById('asof').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-07. 이번 문서 수정으로 실제 검사나 공개가 완료된 것은 아니다.';
+      document.getElementById('asof').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-12. 소스 조합은 고정했지만 이것으로 실제 검사나 공개가 완료된 것은 아니다.';
 
       function nextSteps(d) {
         var items = d.openItems.filter(function (o) { return o.impact !== 'doc'; });

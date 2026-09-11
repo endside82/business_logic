@@ -35,11 +35,12 @@
             <code>DEACTIVATION_BLOCKED</code>로 보류한다. 삭제 범위에는 관심태그·데이트 프로필/미팅/
             피드백·취향·이벤트 선택 피드백·trait 개인 세션이 포함되고 거래 5년 보존과 active legal hold
             증거는 유지한다. 로그인 자체가 요청을 자동 취소하는 서버 계약은 없다.</p>
-          <p>현재 Gap은 Flutter가 차단 의무 상세를 일반 실패로 축약하는 점, 데이팅 사진 FileStorage 실물
-            삭제 호출이 없는 점, Entity의 <code>unique=true</code>와 canonical V1의 non-unique index가
-            서로 다른 점이다.</p>
-          <p>공개 취소는 PENDING만 CANCELLED로 바꾸지만 관리자 <code>process</code>는 현재 COMPLETED만 건너뛴다.
-            따라서 이미 CANCELLED인 요청도 내부 삭제 실행으로 이어질 수 있는 상태 가드 공백이 있다.</p>
+          <p>이후 보완된 것 — 데이팅 사진은 기록만 지우는 게 아니라 원본 파일까지 지우고, 실패하면 재시도 장부에
+            남겨 다음 회차가 다시 지운다. 본인확인 신분 증빙과 내보내기 산출물도 같은 방식으로 원본까지 지운다.
+            "진행 중인 요청은 회원당 하나"라는 약속도 저장소가 직접 보장하도록 바뀌었다.</p>
+          <p>취소된 요청이 나중에 실행되는 구멍도 닫혔다. 관리자가 즉시 실행을 눌러도 그 요청이 이미 취소된 건이면
+            실행을 거절하고, 이미 완료된 건이면 조용히 넘긴다. 취소와 실행이 동시에 들어와도 한 번에 하나만 처리한다.</p>
+          <p>남은 것은 사용자 화면 쪽이다 — 금전 의무 때문에 막혔을 때 어떤 항목이 걸렸는지를 앱이 일반 실패로 뭉뚱그린다.</p>
         </div>
       </section>
 
@@ -47,7 +48,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">유예 기간</div><div class="value">30일</div><div class="hint">취소는 PENDING에서만</div></div>
           <div class="metric"><div class="label">실제 삭제 시각</div><div class="value">매일 새벽 4시</div><div class="hint">유예 만료된 요청을 일괄 처리</div></div>
-          <div class="metric"><div class="label">중복 가드</div><div class="value">PENDING만</div><div class="hint">APPROVED는 새 PENDING을 막지 않음</div></div>
+          <div class="metric"><div class="label">중복 가드</div><div class="value">1건</div><div class="hint">진행 중인 요청은 회원당 하나 — 저장소가 보장</div></div>
           <div class="metric"><div class="label">결과 계정 상태</div><div class="value">EXIT</div><div class="hint">즉시 비활성화(F13-07)의 TRYEXIT와 다른 상태</div></div>
         </div>
 
@@ -91,41 +92,39 @@ flowchart LR
     C -->|"예"| D["요청 실패 안내"]
     C -->|"아니오"| E["요청 저장 + 30일 후 시각 기록"]
     E --> F["마이페이지 상단에 남은 일수 배너"]
-    F --> G{"PENDING 중 사용자 행동?"}
+    F --> G{"유예 중 사용자 행동?"}
     G -->|"취소 탭"| H["요청 취소 처리"]
     H --> Z
-    H -->|"관리자 process (현재 상태 가드 공백)"| J
     G -->|"30일 동안 무행동"| I["매일 새벽 4시 서버 작업"]
     I --> J["개인정보 익명화·삭제"]
-    J --> K["계정 상태: EXIT"]
+    J --> K["계정 상태: 탈퇴 완료"]
           </div>
         </div>
       </section>
 
       <section>
         <h2>요청·취소·실행의 라이프사이클</h2>
-        <p class="subtitle">공개 요청은 기존 PENDING만 중복 차단한다. APPROVED와 새 PENDING의 공존 및 CANCELLED 관리자 실행은 현재 상태 불변식 공백이다.</p>
+        <p class="subtitle">진행 중인 요청은 회원당 하나만 존재한다. 취소된 요청은 관리자가 실행하려 해도 거절된다.</p>
         <div class="diagram">
           <div class="mermaid">
 stateDiagram-v2
-    [*] --> PENDING유예: 사용자가 삭제 신청
-    PENDING유예 --> 취소됨: 사용자가 명시적 취소
-    PENDING유예 --> 완료: 30일 경과 후 새벽 작업이 처리
-    취소됨 --> 완료: 관리자 process (현재 상태 가드 공백)
+    [*] --> 삭제예약: 사용자가 삭제 신청
+    삭제예약 --> 취소됨: 사용자가 명시적 취소
+    삭제예약 --> 완료: 30일 경과 후 새벽 작업이 처리
     취소됨 --> [*]
     완료 --> [*]
 
-    note right of PENDING유예
+    note right of 삭제예약
       마이페이지 상단에 남은 일수 배너 노출
       유예 중인 한 동안에는 다시 신청 불가
     end note
     note right of 완료
-      개인정보 익명화·삭제, 계정 상태 EXIT
+      개인정보 익명화·삭제, 계정은 탈퇴 상태로
       거래 기록은 법적 보존에 따라 별도
     end note
     note right of 취소됨
-      공개 API에서는 terminal처럼 보이지만
-      관리자 process는 COMPLETED만 skip
+      되돌릴 수 없는 종결 상태
+      관리자가 즉시 실행을 눌러도 거절된다
     end note
           </div>
         </div>
@@ -175,18 +174,19 @@ stateDiagram-v2
           <article class="card">
             <div class="eyebrow">30일 만료</div>
             <h3>새벽 작업이 실제로 데이터를 정리한다</h3>
-            <p>PENDING 상태로 만료 시각에 도달한 요청은 매일 새벽 4시 작업이 일괄 처리한다.
-              사용자·멤버 정보 익명화, 주소·태그·동의 기록·소셜 로그인·푸시 토큰·결제 자격증명·데이팅 프로필 등이
-              한 번에 정리되고 계정 상태가 EXIT로 바뀐다.</p>
+            <p>진행 중인 상태로 만료 시각에 도달한 요청은 매일 새벽 4시 작업이 일괄 처리한다.
+              회원 정보 익명화, 주소·태그·동의 기록·소셜 로그인·푸시 토큰·결제 자격증명·데이팅 프로필이
+              한 번에 정리되고 계정은 탈퇴 상태로 바뀐다. 데이팅 사진·본인확인 신분 증빙·내보내기 산출물은
+              기록만이 아니라 파일 원본까지 지우며, 한 건이라도 지우지 못하면 재시도 장부에 남겨 다음 회차가 다시 지운다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 거래 기록은 법적 보존 기간(현재 정책상 5년)에 따라 보존된다.
               사용자에게 "거래 기록도 다 사라진다"고 안내하면 약속을 못 지키는 셈이 되므로 정책 안내 문구에 정확히 반영되어야 한다.</p>
           </article>
 
           <article class="card">
             <div class="eyebrow">수동 취소</div>
-            <h3>PENDING 요청만 사용자가 직접 취소한다</h3>
-            <p>로그인은 삭제 요청 상태를 보여 줄 뿐 자동 취소하지 않는다. 사용자가 데이터 프라이버시 화면의
-              삭제 취소 CTA를 눌러 <code>DELETE /api/v1/users/me/data-deletion</code>을 실행해야 한다.</p>
+            <h3>진행 중인 요청만 사용자가 직접 취소한다</h3>
+            <p>로그인은 삭제 요청 상태를 보여 줄 뿐 자동으로 취소하지 않는다. 사용자가 데이터 프라이버시 화면에서
+              삭제 취소를 직접 눌러야 한다. 이미 처리가 끝난 요청은 취소되지 않는다.</p>
           </article>
         </div>
       </section>
@@ -253,12 +253,15 @@ stateDiagram-v2
               특히 음수가 표시되거나 일정 안내 형식이 깨지는 회귀가 자주 나타난다.</li>
             <li><strong>거래 기록(포인트·결제·정산)은 법적 보존에 따라 익명화·삭제에서 빠진다.</strong>
               전량 삭제로 오해시키지 않도록 개인정보 삭제 범위와 법적 보존 범위를 함께 안내해야 한다.</li>
-            <li><strong>로그인 자동 취소는 서버 계약이 아니다.</strong>
-              PENDING 취소 CTA의 204 성공과 provider 상태 초기화가 유일한 사용자 취소 흐름이다.</li>
-            <li><strong>현재 중복 차단은 PENDING만 검사하고 DB도 여러 이력 row를 허용한다.</strong>
-              APPROVED writer가 생기면 APPROVED와 새 PENDING이 공존할 수 있다. 한 건 불변식이 필요하다면 허용 상태와 DB 제약을 함께 정의해야 한다.</li>
-            <li><strong>관리자 process는 CANCELLED도 실행할 수 있다.</strong>
-              사용자가 취소한 요청을 관리자 경로가 완료로 바꾸지 않도록 허용 상태 allowlist가 필요하다.</li>
+            <li><strong>로그인만으로 요청이 취소되지는 않는다.</strong>
+              사용자가 취소 버튼을 직접 눌러야 요청이 풀린다. 상담 응대에서 "로그인했으니 취소됐을 것"이라고 안내하면 안 된다.</li>
+            <li><strong>진행 중인 요청은 회원당 하나뿐이고, 저장소가 그 약속을 지킨다.</strong>
+              여러 기기에서 동시에 눌러도 한 건만 남는다. 종결된 요청은 이력으로 계속 쌓인다.</li>
+            <li><strong>취소된 요청은 관리자도 실행할 수 없다.</strong>
+              사용자가 취소한 요청에 관리자가 즉시 실행을 눌러도 거절되고, 이미 완료된 요청은 다시 실행하지 않고 넘어간다.</li>
+            <li><strong>금전 의무가 남아 있으면 신청 자체가 막힌다.</strong>
+              미정산·미수령 수익·처리 중 결제 같은 항목이 있으면 신청 시점과 실행 직전 두 번 검사해 거절한다.
+              다만 앱이 어떤 항목이 걸렸는지를 일반 실패로 뭉뚱그려 보여 줘, 사용자는 무엇을 정리해야 하는지 알기 어렵다 — 남은 보완 지점.</li>
           </ul>
         </div>
       </section>

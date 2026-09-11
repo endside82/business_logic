@@ -30,14 +30,15 @@
         <div class="metrics">
           <div class="metric"><div class="label">권한</div><div class="value">검토자</div><div class="hint">소유자 자동 통과</div></div>
           <div class="metric"><div class="label">조정 4종</div><div class="value">부여·감경·정정·만료</div><div class="hint">+ 일괄 만료(사면)</div></div>
-          <div class="metric"><div class="label">중복 방지</div><div class="value">이중</div><div class="hint">기록 고유성 + 요청 표식 이중 차단</div></div>
+          <div class="metric"><div class="label">중복 방지</div><div class="value">조정만 이중</div><div class="hint">부여는 요청 표식 한 겹</div></div>
         </div>
 
         <div class="callout">
-          <span class="label">설계 의도 — 같은 작업을 두 번 눌러도 두 번 부여되지 않는다</span>
-          <p>운영 화면은 네트워크 재시도나 더블클릭이 흔하다. 그래서 부여·일괄 만료는 같은 요청이 반복돼도 한 번만 처리된다.
-            원장 자체도 “같은 출처의 같은 건”은 한 번만 들어가도록 고유키로 막혀 있어, 이중으로 중복 부여를 방지한다.
-            감경은 남은 유효 점수를 넘을 수 없고, 정정·만료는 한 경고당 한 번만 가능해 “과하게 깎거나 두 번 무효화”되는 일을 막는다.</p>
+          <span class="label">설계 의도 — 한 경고를 두 번 무효화하거나 과하게 깎을 수 없게 한다</span>
+          <p>운영 화면은 네트워크 재시도가 흔하다. 그래서 같은 요청 표식으로 다시 들어온 부여·일괄 만료는 한 번만 처리된다.
+            감경은 남은 유효 점수를 넘을 수 없고, 정정·만료는 한 경고당 한 번만 가능하다. 이 두 가지는 선조회와 기록 고유성
+            두 겹으로 막혀 있다. 다만 <strong>수동 부여에는 이 두 겹이 걸리지 않는다.</strong> 운영자가 버튼을 다시 누르면
+            앱이 새 요청 표식을 만들어 보내므로 같은 경고가 한 건 더 쌓인다.</p>
         </div>
       </section>
 
@@ -52,7 +53,7 @@
           <article class="card">
             <div class="eyebrow">중복 방지</div>
             <h3>같은 부여 요청이 두 번 도착한다</h3>
-            <p>같은 요청이 다시 들어오면 처음 결과를 그대로 돌려주고 새 경고를 만들지 않는다. 더블클릭·재시도에 안전.</p>
+            <p>네트워크가 같은 요청을 다시 보내면 처음 결과를 그대로 돌려주고 새 경고를 만들지 않는다. 다만 운영자가 버튼을 다시 누르면 새 요청으로 취급돼 경고가 한 건 더 쌓인다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">감경</div>
@@ -75,11 +76,11 @@
       <section>
         <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
         <div class="callout warn">
-          <span class="label">일괄 부여의 부분 성공과 응답 형태</span>
+          <span class="label">부분 성공이 운영자에게 보이지 않고, 수동 부여는 연타에 약하다</span>
           <ul>
-            <li><strong>여러 명 일괄 부여는 “부분 성공”이 가능하다.</strong> 일부 멤버만 부여되고 나머지는 실패 목록으로 돌아올 수 있어, 운영진이 실패한 대상을 다시 처리해야 한다. 실패 목록 처리 UX가 명확해야 한다.</li>
-            <li><strong>부여 결과의 응답이 타입이 느슨하다(dynamic Map).</strong> 필드 오타가 런타임에야 드러날 수 있어 전용 결과 모델로 정리하는 게 좋다.</li>
-            <li><strong>조정 시 사유를 빼먹으면 “유효 점수 초과”라는 엉뚱한 에러가 뜬다.</strong> 실제 원인과 메시지가 다르다.</li>
+            <li><strong>여러 명 일괄 부여는 “부분 성공”이 가능하지만, 운영자는 누가 실패했는지 알 수 없다.</strong> 서버는 성공·실패 대상을 나눠 돌려준다. 그런데 앱 화면은 그 결과를 버리고 “처리되었습니다”만 띄우므로 전원 실패해도 성공처럼 보인다.</li>
+            <li><strong>지금 앱에는 여러 명 일괄 부여 화면 자체가 없다.</strong> 운영진이 앱에서 할 수 있는 것은 한 명씩 부여하는 일뿐이다. 일괄 만료 화면은 있으나 결과 처리는 위와 같다.</li>
+            <li><strong>같은 경고를 두 번 부여하는 실수는 시스템이 막아 주지 않는다.</strong> 운영자가 버튼을 두 번 누르면 두 건이 쌓이므로, 잘못 쌓인 건은 정정으로 되돌려야 한다.</li>
           </ul>
         </div>
       </section>

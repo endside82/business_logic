@@ -28,14 +28,14 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">대상</div><div class="value">활성 GRANT</div><div class="hint">정정·만료된 건 불가</div></div>
+          <div class="metric"><div class="label">대상</div><div class="value">살아있는 경고</div><div class="hint">정정·만료된 건 불가</div></div>
           <div class="metric"><div class="label">진행 중 제한</div><div class="value">1건</div><div class="hint">종결되면 재제기 가능</div></div>
           <div class="metric"><div class="label">철회</div><div class="value">처리 전만</div><div class="hint">제출/검토 중일 때</div></div>
         </div>
 
         <div class="callout">
           <span class="label">설계 의도 — 다툴 수 있는 건 “살아있는 경고”뿐이다</span>
-          <p>이미 정정(REVERSE)되거나 만료(EXPIRE)된 경고는 점수에 영향이 없으므로 다툴 이유가 없다. 그래서 이의는 살아있는 GRANT에만 걸 수 있다.
+          <p>이미 정정되거나 만료된 경고는 점수에 영향이 없으므로 다툴 이유가 없다. 그래서 이의는 아직 점수에 살아 있는 부여 기록에만 걸 수 있다.
             또 같은 경고에 이의가 여러 건 동시에 진행되면 운영진 판단이 충돌하므로 진행 중 1건만 허용한다.
             기각된 뒤에도 새 근거가 생기면 다시 제기할 수 있어, 멤버에게 “한 번 거절되면 끝”이 아닌 길이 열려 있다.</p>
         </div>
@@ -75,11 +75,11 @@
       <section>
         <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
         <div class="callout warn">
-          <span class="label">동시 제출 경합과 SLA 알림</span>
+          <span class="label">동시 제출 경합과 지연 이의 안내</span>
           <ul>
-            <li><strong>진행 중 1건 제한이 동시 제출 경합에 취약할 수 있다.</strong> 같은 순간에 두 번 제출하면 둘 다 들어갈 여지가 있어 동시성 점검이 필요하다.</li>
-            <li><strong>이의가 오래 방치될 때의 알림(14·28일)이 아직 실제로 발송되지 않는다.</strong> SLA 알림 스케줄러가 아직 동작 전 상태다(F15-09와 함께 닫아야 함).</li>
-            <li><strong>내 이의 목록은 페이지네이션이 없다.</strong> 누적되면 응답이 커진다.</li>
+            <li><strong>진행 중 1건 제한은 같은 순간에 들어온 두 건을 막지 못한다.</strong> 신고 제출에는 같은 종류의 방어가 들어갔지만 이의 제출에는 아직 없어, 한 경고에 이의가 두 건 접수될 수 있다.</li>
+            <li><strong>오래 방치된 이의는 매일 새벽 자동으로 다시 올라온다.</strong> 14일이 지나면 운영진 검토 목록에 쌓이고, 28일이 지나면 클럽 소유자에게 따로 알린다. 다만 이 두 안내는 <strong>운영진에게만</strong> 간다. 이의를 낸 회원은 결과가 나올 때까지 아무 소식을 받지 못하고, 기다리는 동안 상태를 알려면 목록을 다시 여는 수밖에 없다.</li>
+            <li><strong>내 이의 목록은 한 번에 전부 내려온다.</strong> 이의가 쌓일수록 화면이 무거워진다.</li>
           </ul>
         </div>
       </section>

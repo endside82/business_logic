@@ -31,7 +31,16 @@
         <div class="metrics">
           <div class="metric"><div class="label">체크인 경로</div><div class="value">3가지</div><div class="hint">큐알 스캔·단축 코드·호스트 수동</div></div>
           <div class="metric"><div class="label">큐알 유효 시간</div><div class="value">5분</div><div class="hint">발급 후 만료, 재발급 시 이전 코드 즉시 무효</div></div>
-          <div class="metric"><div class="label">시간 윈도우</div><div class="value">시작 ±2시간</div><div class="hint">시간 외에는 체크인 차단</div></div>
+          <div class="metric"><div class="label">체크인 가능 시간</div><div class="value">4시간+</div><div class="hint">시작 2시간 전 ~ 종료 2시간 후</div></div>
+        </div>
+
+        <div class="callout info">
+          <span class="label">2026-09-06 추가 — 체크인이 클럽 마일리지 적립을 만든다</span>
+          <p>클럽 모임에서 체크인이 기록되면 그 모임을 공개할 때 확정한 체크인 점수가 회원에게 적립된다.
+            점수는 모임마다 다를 수 있다 — 호스트가 공개 전에 클럽 기본값과 다른 값을 클럽 상한 안에서 정할 수 있고,
+            공개 시점에 그 값이 고정된다. 클럽이 마일리지를 아직 시작하지 않았거나 적립을 중지했으면 점수가 나가지 않는다.
+            체크인을 되돌리면(참석 취소·강제 제거 등) 그 적립도 자동으로 회수된다.
+            자세한 규칙은 <a href="F16-05.html">적립 규칙·등급·배지·사용 사유 관리</a>에서 확인한다.</p>
         </div>
 
         <div class="callout">
@@ -137,7 +146,7 @@
               <tr>
                 <td><strong>호스트 — 통계 탭</strong></td>
                 <td>원형 프로그레스(체크인율) + 총 인원/체크인/미체크인 수치 + 미체크인 사용자 목록.</td>
-                <td>모임 중·후에 호스트가 운영 상황을 한 자리에서 확인. 노쇼 사용자를 신뢰점수 반영 같은 후속 처리로 안내.</td>
+                <td>모임 중·후에 호스트가 운영 상황을 한 자리에서 확인. 끝내 체크인하지 않은 사람은 같은 참석자 화면의 노쇼 관리로 이어진다.</td>
               </tr>
               <tr>
                 <td><strong>참석자 — 스캐너 화면</strong></td>

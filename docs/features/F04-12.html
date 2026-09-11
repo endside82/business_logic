@@ -30,7 +30,7 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">게시 시 자동 참가</div><div class="value">정원만큼</div><div class="hint">가입 순서 먼저 들어가는 사람부터</div></div>
+          <div class="metric"><div class="label">게시 시 자동 참가</div><div class="value">무료 모임만</div><div class="hint">정원만큼, 가입 순서 먼저 들어간 사람부터</div></div>
           <div class="metric"><div class="label">정원 초과</div><div class="value">대기 등록</div><div class="hint">취소 발생 시 자동 승격</div></div>
           <div class="metric"><div class="label">수정·삭제</div><div class="value">게시 전까지</div><div class="hint">게시 후에는 취소만 가능</div></div>
           <div class="metric"><div class="label">유료 이벤트 취소</div><div class="value">자동 환불</div><div class="hint">참가자 지갑으로 즉시</div></div>
@@ -43,6 +43,8 @@
             왜 이렇게 설계되었는가 — 클럽은 "단발 모임에 따로따로 신청하는 사람들의 모임"이 아니라 "정기적으로 함께 모이는 사람들의 모임"이다.
             매번 모든 멤버가 따로 참석을 결정하게 두면 운영자는 매번 출석 확인을 해야 하고, 멤버는 매번 "갈 거냐 말 거냐"를 결정해야 한다.
             자동 참가가 기본값이 되고, 못 가는 사람만 명시적으로 취소하는 방식이 클럽의 일상에 맞다.</p>
+          <p><strong>참가비가 있는 클럽 모임은 자동 참가에서 빠진다.</strong> 돈을 내지 않은 채 참석 확정이 되면
+            공짜 참석이 생기기 때문이다. 참가비가 붙은 모임은 게시 알림만 나가고, 멤버가 직접 신청하며 그 자리에서 결제한다.</p>
         </div>
       </section>
 
@@ -83,6 +85,14 @@ stateDiagram-v2
             <p>관리자가 "한강 러닝 2/15, 정원 20명, 무료" 이벤트를 만들고 "게시하기"를 누른다.
               그 자리에서 클럽 멤버 20명이 가입 순으로 자동 참가자로 등록되고, 본인 제외 모든 멤버 폰에 "새 이벤트가 게시되었습니다" 알림이 도달한다.</p>
             <p><strong>이 흐름이 남기는 것</strong> — 게시와 동시에 사람과 알림이 같이 움직이는 정책. 클럽의 정기성·집단성을 화면이 그대로 반영한다.</p>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow">게시 시점 — 참가비가 있는 모임</div>
+            <h3>참가비 10,000원짜리 클럽 모임을 게시한다</h3>
+            <p>같은 게시 동작이지만 자동 참가는 일어나지 않는다. 전 멤버에게 게시 알림만 나가고, 참석할 사람이 직접 신청해 그 자리에서 낸다.</p>
+            <p><strong>이 흐름이 남기는 것</strong> — 돈을 내지 않은 멤버가 참석 확정으로 잡히면 정원과 정산이 함께 어긋난다.
+              운영자에게는 "참가비를 붙이면 전원 자동 참석이 아니다"가 게시 전에 보여야 한다.</p>
           </article>
 
           <article class="card">

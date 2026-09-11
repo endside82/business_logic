@@ -27,7 +27,7 @@
           <thead><tr><th>행동</th><th>허용 대상</th><th>추가 제한</th></tr></thead>
           <tbody>
             <tr><td>스탬프 만들기·공동 운영</td><td>현재 클럽장·운영진</td><td>클럽장이 만들기를 허용해야 새 판을 만든다. 발행자 잠금은 클럽장에게도 적용되며 자격을 잃은 발행자는 이관으로 복구한다.</td></tr>
-            <tr><td>시즌 준비·마감 재시도</td><td>클럽 정책 담당자</td><td>현재 권한을 다시 확인하고 재시도 이력을 남긴다.</td></tr>
+            <tr><td>시즌 준비·마감 재시도</td><td>클럽 정책 담당자</td><td>현재 권한을 확인하고 재시도 이력을 남긴다.</td></tr>
             <tr><td>반복 수동 적립 판정</td><td>마일리지 검토 담당자</td><td>부정 판정으로 점수를 회수할 때는 점수 집행 권한도 필요하다. 일반 대기열의 처리 버튼으로 대신 승인하지 않는다.</td></tr>
             <tr><td>이벤트별 적립 점수 설정</td><td>해당 이벤트 호스트</td><td>공개 전 클럽 상한 안에서만 수정한다. 클럽 정책 담당자가 상한을 관리한다.</td></tr>
             <tr><td>본인확인 증빙 열람·수동 승인·취소</td><td>권한 있는 플랫폼 관리자</td><td>클럽 운영 권한으로는 처리하지 못한다. 현재 제출물·파일 검사·자격·만료일과 사유를 확인한다.</td></tr>
@@ -131,17 +131,18 @@ flowchart TD
 
       <section>
         <h2>선입금·교통 현재 권한 경계</h2>
-        <div class="callout danger">
-          <span class="label">2026-07-29 소스 실측</span>
-          <p>공통 권한 빈은 <code>event/service/EventAuthorizationService</code>이며 공개 메서드는
-            Host, Host/CoHost 검사 두 개뿐이다. 참가자 본인·ATTENDING 검사는 각 서비스가 직접 수행한다.</p>
+        <div class="callout">
+          <span class="label">2026-09-12 소스 재실측</span>
+          <p>이벤트 권한 판정은 공통 모듈 하나에 모여 있다. 공개된 판정은 호스트 전용, 호스트·공동호스트,
+            호스트·공동호스트·클럽 운영진(조회 전용) 세 가지이고, 확인용과 오류 처리용을 합쳐 총 네 개의
+            판정 함수로 제공된다. 참가자 본인·참석 확정 여부 확인은 각 기능 서비스가 직접 수행한다.</p>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>영역</th><th>실제 허용</th><th>주의할 경계</th></tr></thead>
             <tbody>
               <tr><td>선입금</td><td>본인 WALLET/BANK, Host/CoHost 확인·거부. BANK 환불 확인은 club OWNER/환불관리자도 가능</td><td>Flutter는 WALLET만 사용자 연결</td></tr>
-              <tr><td>환불 조회</td><td>템플릿도 인증 필요</td><td>preview/no-show GET은 actor·event scoping이 빠진 IDOR 후보</td></tr>
+              <tr><td>환불 조회</td><td>템플릿도 인증 필요. 미리보기·노쇼 환불 조회 모두 신청 당사자이거나 환불 처리 권한이 있는 사람만 볼 수 있다</td><td>—</td></tr>
               <tr><td>이동 설정</td><td>설정 변경은 Host/CoHost만 허용하고, 차량 목록은 Host/CoHost·ATTENDING·WAITING만 본다.</td><td>서버가 모임 역할을 다시 확인한다. 봉인 중 신규 설정·차량 등록은 막고 안전한 종료 동작은 연다.</td></tr>
               <tr><td>승용차·자차</td><td>CAR·SELF 등록은 ATTENDING 본인, CAR 결정과 타인 배정은 Host/CoHost, 취소·종료는 차량 주인</td><td>상태·버전·정원·차단 관계·차량 소유자와 다른 차량 탑승 충돌을 서버가 검사한다.</td></tr>
               <tr><td>대절 버스·자리</td><td>BUS 등록은 Host/CoHost. SELF_CLAIMS면 ATTENDING이 본인 자리를 선택하고, Host/CoHost는 정책과 무관하게 본인을 포함한 참석 자격자를 배정한다.</td><td>타인 재배정·해제는 사유가 필수이고 일반 참가자에게 타인의 신원을 숨긴다.</td></tr>

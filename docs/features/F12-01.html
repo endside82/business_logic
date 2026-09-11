@@ -31,7 +31,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">한 번에 받아 오는 알림</div><div class="value">20건</div><div class="hint">스크롤하면 다음 묶음</div></div>
           <div class="metric"><div class="label">정렬</div><div class="value">최신순</div><div class="hint">사용자가 바꾸지 않음</div></div>
-          <div class="metric"><div class="label">우선순위 시각 강조</div><div class="value">9종</div><div class="hint">결제·정산 실패류는 노란 바 + "주의" 칩</div></div>
+          <div class="metric"><div class="label">우선순위 시각 강조</div><div class="value">17종</div><div class="hint">결제·정산 실패류는 노란 바 + "주의" 칩</div></div>
         </div>
 
         <div class="callout">
@@ -197,8 +197,9 @@ flowchart LR
             <li><strong>알림은 인박스(앱 내)와 푸시(단말)에 각각 도달한다.</strong>
               사용자가 푸시 권한을 거부했거나 방해금지 시간대여도 인박스에는 정상 적재된다.
               "알림함 자체가 비어 있다"고 사용자가 인지하면 그건 사고다 — 발송 트리거 자체가 빠졌는지 점검 대상.</li>
-            <li><strong>"주의" 우선순위 9종은 정책 결정이다.</strong>
-              결제 실패·정산 실패·환불 실패·정산 만료·취소·인출 거부·정산 정정 보류 등 사용자가 놓치면 손해가 발생하는 알림에 한해 시각 강조.
+            <li><strong>"주의" 우선순위 17종은 정책 결정이다.</strong>
+              결제·충전 실패, 정산 실패·거절·정정 보류, 출금 거절, 카드사 환불 실패, 정기모임 정산·참가비의 만료·취소·조치 필요 건,
+              분쟁 소명 요청, 데이팅 프로필 사진 숨김처럼 사용자가 놓치면 손해나 불이익이 발생하는 알림에 한해 시각 강조.
               남발하면 강조가 평탄해진다 — 이 묶음을 늘릴 때는 보수적으로.</li>
             <li><strong>도착지가 없는 알림이 늘어나면 알림 카피·발송 정책의 신호다.</strong>
               "이 모임은 종료됐어요" 안내 시트가 자주 뜨면, 모임 종료 후에도 리뷰 알림이 발송되는 등 알림 수명과 콘텐츠 수명이 어긋난다는 신호.</li>

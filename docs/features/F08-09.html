@@ -31,7 +31,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">한 페이지 카드</div><div class="value">20</div><div class="hint">스크롤하면 다음 묶음</div></div>
           <div class="metric"><div class="label">자동 검색</div><div class="value">외부 진입</div><div class="hint">키워드가 박힌 링크면 즉시 실행</div></div>
-          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">결과 카드까지 탐색 가능</div></div>
+          <div class="metric"><div class="label">가입 전 진입</div><div class="value">불가</div><div class="hint">마켓 경로 전체가 로그인 필요</div></div>
         </div>
 
         <div class="callout">
@@ -126,7 +126,9 @@
           <span class="label">검색 결과의 신뢰가 마켓 발견의 신뢰다</span>
           <ul>
             <li><strong>현재 검색은 키워드 한 가지만 사용한다.</strong> 서버는 카테고리·통화·종류·가격대·정렬을 받을 수 있지만,
-              화면에서는 키워드만 보내고 있다. 결과 품질이 떨어진다면 이 옵션들을 노출하는 것이 첫 개선 카드.</li>
+              화면에서는 키워드만 보내고 있어 결과가 사실상 최신순으로 고정된다.
+              정렬과 가격 필터를 쓸 수 있는 곳은 검색이 아니라 마켓 메인의 최신 목록이다.
+              결과 품질이 떨어진다면 이 옵션들을 검색에도 노출하는 것이 첫 개선 카드.</li>
             <li><strong>결과 카운트는 화면에 누적된 카드 수다.</strong> 서버가 알려 주는 전체 건수가 아니다 — 무한 스크롤로 카드를 받을 때마다 숫자가 늘어난다.
               사용자가 "12건"으로 봤다가 스크롤하면 "32건"으로 바뀌는 인지 차이가 생긴다.</li>
             <li><strong>외부 링크 진입 시 키워드는 대소문자·공백까지 그대로 검색 입력에 채워진다.</strong>

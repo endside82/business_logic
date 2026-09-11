@@ -30,6 +30,34 @@
           <div class="metric"><div class="label">사용자 역할</div><div class="value">2</div><div class="hint">크리에이터·구매자</div></div>
         </div>
 
+        <div class="callout warn">
+          <span class="label">2026-09-12 현재 출시 경계 — 마켓 상거래는 봉인, 플랜 저작·열람은 열림</span>
+          <p>운영 기본 출시 목록에 <code>MARKET</code>이 들어 있지 않다. 상품·번들·구매·기간권·컬렉션·리뷰·크리에이터
+            프로필까지 <strong>마켓 상거래 표면 전체</strong>가 닫힌다. 플랜을 쓰고 읽고 발행하는 일(F08-01~F08-05)은
+            첫 출시 범위라 그대로 열려 있다 — 플랜 저작은 마켓과 별개의 기능이다.</p>
+          <p>봉인 중에도 열어 두는 <strong>안전 출구</strong>가 있다. 이미 산 건의 환불 신청·부분 선택·분쟁 제기,
+            그리고 판매자가 자기 상품의 심사 결과(반려 사유)를 보는 두 화면이다. 심사 결과 알림은 봉인과 무관하게
+            도착하므로, 그 경로를 함께 막으면 판매자는 왜 반려됐는지 영영 알 수 없다.</p>
+          <p>여기에 더해 <strong>지갑에서 돈이 나가는 모든 경로</strong>가 플랫폼 실결제 스위치 하나에 함께 걸린다.
+            마켓을 출시 범위에 넣더라도 결제 수단이 지갑인 구매는 그 스위치가 켜지기 전까지 열리지 않는다.
+            값이 0원인 상품만 예외다.</p>
+        </div>
+
+        <div class="callout">
+          <span class="label">기간권은 플랫폼이 파는 상품이다 (2026-09-04 제품 결정)</span>
+          <p>1·3·6개월 <strong>기간권</strong>은 마켓 상품의 네 종류 가운데 하나이고, 사면 프리미엄 혜택 기간이
+            새로 생기거나 기존 기간 뒤에 이어 붙는다. 파는 주체는 크리에이터가 아니라 <strong>플랫폼</strong>이라는 것이
+            2026-09-04 결정이다.</p>
+          <p>이 결정이 정한 것은 네 가지다. ①상품 소유자에 <strong>플랫폼</strong>을 정식으로 더해 기간권 매출을
+            판매자 정산이 아니라 플랫폼 수익으로 분리한다(수수료 10%·원천징수 3.3%·지급 채무가 생기지 않는다).
+            ②편성은 관리자 화면이 사용자용 상품 등록 경로에 위임해, 구매 계약이 두 벌로 갈라지지 않게 한다.
+            ③기존 상품 심사·정지 명령을 그대로 적용한다 — 긴급 판매 중지 경로를 하나로 유지하기 위해서다.
+            ④마켓 목록 노출과 크리에이터 번들 편성을 허용한다.</p>
+          <p>이 결정을 구현하는 <strong>편성 경로·회계 분리·운영 화면은 아직 없다.</strong> 지금은 기간권을 만들 수 있는
+            운영 경로가 없어서, 마켓을 열더라도 기간권은 팔 수 없다. 구매한 뒤의 이행(권리 적립·사용·환불 회수)은
+            이미 구현돼 있다.</p>
+        </div>
+
         <div class="callout">
           <span class="label">한 데이터의 세 얼굴</span>
           <p>같은 “플랜”이 크리에이터에게는 <strong>작성물(편집 대상)</strong>이고, 마켓에서는 <strong>판매 상품(구매 대상)</strong>이고,
@@ -54,7 +82,7 @@
         <h3>구매자 탐색</h3>
         <div class="cards">
           <a class="card" href="../features/F08-08.html"><div class="eyebrow">F08-08</div><h3>마켓 메인</h3><p>카테고리, 인기·최신, 빈 결과.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F08-09.html"><div class="eyebrow">F08-09</div><h3>마켓 검색</h3><p>키워드·정렬·필터.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F08-09.html"><div class="eyebrow">F08-09</div><h3>마켓 검색</h3><p>키워드 한 가지로만 찾는다. 정렬·가격 필터는 마켓 메인 쪽에 있다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F08-10.html"><div class="eyebrow">F08-10</div><h3>아이템 상세</h3><p>커버·설명·리뷰·번들·조회수. 아이템/번들 무료 결제 UI는 미배선이고 플랜 직접 구매만 수단 선택 구현.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
 
@@ -111,11 +139,12 @@ flowchart LR
           <div class="card"><div class="eyebrow">발행·구매</div><h3>무료 포인트 설정부터 적용가까지 연결</h3><p>발행 화면에서 허용 여부와 가격을 선저장하고, 플랜 상세·미리보기에서 PAID/FREE를 선택해 실제 적용가를 구매 스냅샷과 수익 split에 전파한다.</p></div>
         </div>
         <div class="callout warn">
-          <span class="label">확인된 Flutter Gap</span>
-          <p>TABLE 표준 쓰기·이전 형식 제한 읽기, 18종 선택 창·12종 패턴 검색, 콘텐츠 색조와
-            독자용 조판은 현재 API·앱 코드에 반영됐다. 남은 고객 기능 격차는 마켓 아이템·번들 구매
-            화면이 결제 수단을 고르지 않고 <code>fundingMode</code>도 보내지 않아 서버 기본값인 유료
-            포인트로만 호출하는 점이다. 플랜 직접 구매 경로에는 결제 수단 선택이 이미 구현돼 있다.</p>
+          <span class="label">확인된 앱 기능 격차</span>
+          <p>표 블록의 표준 저장과 이전 형식 읽기, 18종 블록 선택 창과 12종 패턴 검색, 콘텐츠 색조와
+            독자용 조판은 현재 서버·앱 코드에 반영됐다. 남은 고객 기능 격차는 마켓 아이템·번들 구매
+            화면에 결제 수단을 고르는 자리가 없어 언제나 유료 포인트 결제로 요청하는 점이다 —
+            무료 포인트를 허용한 아이템이라도 구매자가 무료로 살 방법이 앱에 없다.
+            플랜 직접 구매 경로에는 결제 수단 선택이 이미 구현돼 있다.</p>
         </div>
       </section>
 

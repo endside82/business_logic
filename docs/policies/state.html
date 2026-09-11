@@ -129,11 +129,13 @@ stateDiagram-v2
           승인 즉시 참석 확정으로 만들지 않고, 지갑 결제 또는 계좌이체 확인 이후에만 참석 확정으로 넘어간다.
           자세한 결제 단계별 상태는 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 본다.</p>
         </div>
-        <div class="callout danger">
-          <span class="label">현재 구현에서 함께 봐야 할 Gap</span>
-          <p>결제 성공 시 Application은 APPROVED, 별도 Attendance가 ATTENDING이 된다. BANK 결제 후 취소는
-            CANCEL_PENDING_REFUND로 정원을 논리 hold한 뒤 환불 완료 때 CANCELED가 된다.
-            만료 scheduler는 Application만 바꾸고 PENDING payment와 75 알림을 정리하지 않는다.</p>
+        <div class="callout">
+          <span class="label">결제 성공·취소·만료 처리 상세</span>
+          <p>결제가 성공하면 신청 상태와 참석 상태가 각각 갱신되어 참석이 확정된다. 계좌이체 결제 후 참가자가
+            취소하면 호스트가 외부 환불을 확인할 때까지는 정원을 계속 붙든 채 "환불 대기 중인 취소"로
+            표시하고(노쇼 집계에서는 제외), 호스트가 환불을 확인하면 그때 최종 취소로 넘어간다.
+            결제 기한이 지나면 신청 상태가 자동으로 결제 기한 만료로 바뀌고 신청자에게 알림이 간다.
+            계좌이체 입금 신고가 확인을 기다리는 중이면 만료 처리는 보류된다.</p>
         </div>
       </section>
 

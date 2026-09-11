@@ -31,7 +31,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">신규 결제 수단</div><div class="value">0</div><div class="hint">설계는 지갑 포인트·계좌이체 신고 2종 · 첫 출시는 유료 모임 신규 접수 제외</div></div>
           <div class="metric"><div class="label">주요 상태</div><div class="value">5</div><div class="hint">결제 대기 · 결제 완료 · 결제 취소 · 환불 요청 · 환불 완료</div></div>
-          <div class="metric"><div class="label">알림 enum</div><div class="value">7종</div><div class="hint">생산 연결은 부분 구현</div></div>
+          <div class="metric"><div class="label">결제 단계 알림</div><div class="value">8종</div><div class="hint">결제 요청·입금 신고·확인·거부·만료·환불 요청·환불 완료·확인 지연</div></div>
         </div>
 
         <div class="callout warn">
@@ -100,15 +100,17 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">만료</div>
             <h3>기한 안에 결제하지 않음</h3>
-            <p>기한이 지나면 신청은 "결제 기한 만료"로 bulk 전이된다. 현재 구현은 연관 PENDING 결제를
-              취소하거나 만료 알림을 발행하지 않아 결제 row가 남을 수 있으며, 이는 운영 Gap이다.</p>
+            <p>기한이 지나면 신청이 "결제 기한 만료"로 넘어가고 참가자에게 만료 알림이 간다. 호스트 확인을
+              기다리는 계좌이체 입금 신고가 걸려 있는 신청은 만료 대상에서 빠진다 — 돈을 이미 보낸 사람이
+              기한 때문에 자리를 잃지 않게 한다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">사용자 취소</div>
             <h3>결제 후 참가자가 직접 취소</h3>
             <p>지갑 결제는 이벤트별 환불 정책 카탈로그(기준·엄격·유연 등)에 따라 남은 시간 비율로 환불된다.
-              계좌이체 결제는 신청을 "취소 후 환불 대기"로 두고 정원을 유지한다. 최초 요청 즉시 알림은 없으며,
-              기본 3일이 지나면 주 호스트에게 escalation 재알림이 간다.</p>
+              계좌이체 결제는 신청을 "취소 후 환불 대기"로 두고 정원을 유지한다. 환불 요청이 들어온 즉시
+              호스트와 공동호스트에게 "환불 처리 필요" 알림이 가고, 기본 3일이 지나도 처리되지 않으면 같은
+              알림이 한 번 더 간다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">환불 미리보기</div>
@@ -119,8 +121,10 @@ flowchart TD
           <article class="card">
             <div class="eyebrow">이벤트 취소</div>
             <h3>호스트가 이벤트를 취소</h3>
-            <p>현재 취소 처리는 ATTENDING/WAITING을 순회해 attendance 없는 결제대기·BANK PENDING을 놓칠 수 있다.
-              BANK PAID도 환불요청 상태인데 완료로 오표시될 수 있어 운영 Gap으로 본다.</p>
+            <p>취소는 참석자·대기자뿐 아니라 심사 대기·결제 대기 신청도 함께 정리한다. 취소된 모임에 계속
+              결제를 시도할 수 있는 상태를 남기지 않는다. 참가자에게 가는 문구도 세 갈래로 갈린다 — 지갑 환불이
+              끝났으면 "환불 완료", 호스트가 계좌로 보내야 하는 건이면 "환불 처리 중", 환불이 실패했으면
+              "고객센터 처리 예정"이다.</p>
           </article>
         </div>
       </section>
@@ -161,10 +165,11 @@ flowchart TD
           </table>
         </div>
         <p>귀책은 <strong>호스트 귀책 · 불가항력 · 상호 합의 · 일정 변경 거절 · 노쇼 · 참가자 귀책 · 노쇼 사후 조정</strong>의 7가지로 분류된다. 호스트 귀책·불가항력·상호 합의·일정 변경 거절로 취소되면 정책과 무관하게 100% 환불, 수수료 0원이다. 참가자 단순 변심이면 위 남은 시간 구간 비율이 그대로 적용되고, 노쇼는 환불이 거절되며, 노쇼 사후 조정은 호스트가 금액을 직접 정한다.</p>
-        <div class="callout danger">
-          <span class="label">환불 조회 권한 Gap</span>
-          <p>refund-preview는 인증 actor를 service에 전달하지 않아 applicationId를 아는 사용자의 타인 금액 조회 IDOR 후보가 있다.
-            no-show-refund GET은 actor가 없고 path eventId도 무시한다. 두 경로 모두 본인/호스트 권한과 event scoping 보강이 필요하다.</p>
+        <div class="callout">
+          <span class="label">환불 금액 조회 권한 (2026-08-07 보강)</span>
+          <p>예상 환불액 조회와 노쇼 사후 조정 환불 조회는 모두 요청한 사람이 누구인지 확인한다. 볼 수 있는 사람은
+            해당 신청 당사자와 환불 집행 권한자뿐이고, 주소에 적힌 모임과 실제 기록의 모임이 다르면 조회되지 않는다.
+            예전에는 신청 번호만 바꿔 가며 남의 결제·환불 금액을 볼 수 있었는데, 그 구멍은 닫혔다.</p>
         </div>
       </section>
 
@@ -178,8 +183,11 @@ flowchart TD
             <li><strong>정원은 결제 확정 시점에만 늘어난다.</strong> 결제 대기 인원은 예약 대기 수로 보이지만 참석 확정자는 아니다.</li>
             <li><strong>탈퇴 차단 조건이 생긴다.</strong> 결제 대기·결제 완료·환불 요청 중인 결제가 남아 있으면 계정 비활성화를 막아야 한다.</li>
             <li><strong>F07-09의 모임 정산 선입금과 다르다.</strong> 본 단위는 이벤트 참가비 선입금이고, 정산 선입금은 모임 종료 후 비용 분담 보증금이다.</li>
-            <li><strong>알림 enum과 실제 전송은 다르다.</strong> 만료 알림 75는 publisher가 없고, 83은 최초 환불 요청이 아닌 지연 escalation에 쓰인다. 72는 CoHost가 아니라 주 호스트 한 명에게만 간다.</li>
-            <li><strong>환불 escalation은 완전한 경합 방지가 아니다.</strong> event payment row lock/version이 없어 동시 환불 완료를 stale 환불요청으로 되살릴 위험과 미테스트 Gap이 남아 있다.</li>
+            <li><strong>알림 수신자가 종류마다 다르다.</strong> 결제 기한 만료와 입금 확인·거부·환불 완료는 참가자에게,
+              환불 처리 요청은 호스트와 공동호스트 모두에게 간다. 입금 신고 알림만 아직 주 호스트 한 명에게만 간다 —
+              호스트가 자리를 비우면 공동호스트가 대신 확인하러 들어가야 한다.</li>
+            <li><strong>환불 처리는 같은 건을 두 번 지급하지 못한다.</strong> 모임·신청·결제 기록을 잠근 뒤에 금액을
+              계산하므로, 호스트와 운영자가 동시에 환불 완료를 눌러도 한 번만 반영된다.</li>
             <li><strong>이벤트 결제·환불이 표준 길로 통합됐다 (2026-06-06).</strong> 결제 시 어느 충전분에서 빠졌는지를 정확히 추적하고, 잔액과 추적 기록이 어긋나면 결제를 멈춘다(예전엔 어긋나도 경고만 남기고 진행). 무료 포인트로 낸 참가비는 주최자의 무료 포인트(인출 불가)로 전달되고, 무료 결제만 모인 이벤트도 정산이 생긴다(수수료·세금 0). 환불은 충전 단위까지 되돌리고 유료·무료 각각의 누적 환불이 결제했던 만큼을 넘지 못한다. 더 이상 쓰이지 않는 옛 결제 통로 2개는 막혔다.</li>
           </ul>
         </div>

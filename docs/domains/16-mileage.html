@@ -29,7 +29,7 @@
         <div class="metrics">
           <div class="metric"><div class="label">핵심 코드·운영 화면</div><div class="value">완료</div><div class="hint">네 저장소 구현·검증 완료</div></div>
           <div class="metric"><div class="label">핵심 기능 상태</div><div class="value">출시</div><div class="hint">운영 기본 목록에 MILEAGE 반영</div></div>
-          <div class="metric"><div class="label">권한 단계</div><div class="value">3</div><div class="hint">회원 · 정책 관리 권한자 · 마일리지 관리자</div></div>
+          <div class="metric"><div class="label">권한 단계</div><div class="value">3</div><div class="hint">회원 · 클럽 소유자(정책) · 마일리지 관리자</div></div>
           <div class="metric"><div class="label">현금성</div><div class="value">없음</div><div class="hint">환불·현금화 경로 없음</div></div>
         </div>
 
@@ -87,7 +87,7 @@
           <div class="mermaid">
 flowchart LR
     M["클럽 회원<br/>본인 조회"] --> H["이벤트 호스트<br/>적립 제안"]
-    H --> PO["정책 관리 권한자<br/>규칙·등급·배지 정의"]
+    H --> PO["클럽 소유자<br/>규칙·등급·배지 정의"]
     PO --> MM["마일리지 관리자<br/>적립·차감·검토 집행"]
     M -.->|"잔액·등급·배지·랭킹"| RD["읽기 전용"]
     MM -.->|"감사 기록·중복 실행 방지"| AUD["모든 작업 추적"]
@@ -95,8 +95,9 @@ flowchart LR
         </div>
         <p>멤버는 본인 내역과 허용된 랭킹·프로필을 본다. 호스트는 자기 이벤트의 공개 전 점수를 상한 안에서 정하거나,
         회원에게 줄 수동 적립을 제안한다. 호스트 자격만으로 직접 수동 적립을 집행하지는 못한다.
-        <strong>정책 정의(정책 관리 권한자)와 점수 집행(마일리지 관리자)은 일부러 다른 권한</strong>으로 나뉘어 있어,
-        규칙을 만드는 사람과 점수를 실제로 주는 사람을 분리한다.</p>
+        <strong>정책 정의와 점수 집행은 일부러 다른 권한</strong>으로 나뉘어 있어, 규칙을 만드는 사람과 점수를
+        실제로 주는 사람을 분리한다. 제도·규칙·등급·배지·사용 사유를 정하는 권한은 <strong>클럽 소유자 전용</strong>이라
+        운영진에게 위임되지 않고, 적립·차감·검토 집행은 마일리지 관리자에게 맡길 수 있다.</p>
       </section>
 
       <section>
@@ -199,7 +200,7 @@ flowchart LR
         <div class="hub-grid">
           <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 맥락</div><h3>04 클럽</h3><p>마일리지는 클럽 단위로 운영되며 클럽 권한 시스템을 쓴다.</p></a>
           <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>체크인·후기는 출시된 자동 적립 조건이다. 사진 승인 적립은 코드 완료·별도 출시 전이며, 호스트 제안도 이벤트에서 시작한다.</p></a>
-          <a class="card" href="../policies/permission.html"><div class="eyebrow">정책</div><h3>권한 정책</h3><p>정책 관리 권한자 / 마일리지 관리자 권한 분리.</p></a>
+          <a class="card" href="../policies/permission.html"><div class="eyebrow">정책</div><h3>권한 정책</h3><p>정책은 클럽 소유자 전용, 점수 집행은 마일리지 관리자에게 위임.</p></a>
         </div>
       </section>
 <!--

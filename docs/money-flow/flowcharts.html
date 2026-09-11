@@ -1243,7 +1243,7 @@ flowchart TD
 <td><code>T-OPS 정기모임 환불 보상 필요</code></td>
 <td>FailedRefund 보상 대기</td>
 <td>운영자</td>
-<td>admin 보상 처리 전까지 자동 완료로 보지 않는다.</td>
+<td>운영자 보상 처리 전까지 자동 완료로 보지 않는다.</td>
 </tr>
 <tr>
 <td><code>T-HOLD 정기모임 정산 보류</code></td>
@@ -1618,10 +1618,10 @@ flowchart TD
   A[&quot;운영·시스템성 포인트 또는 회계 이벤트&quot;] --&gt; B{&quot;이벤트 종류&quot;}
 
   B -- &quot;무료 포인트 지급&quot; --&gt; C0[&quot;관리자 웹: 대상·금액·사유 입력&quot;]
-  C0 --&gt; C1[&quot;MANAGE_PAYMENT 권한·금액 재확인<br/>1회 최대 10,000,000P&quot;]
-  C1 --&gt; C2[&quot;보호된 관리자 API + Idempotency-Key&quot;]
-  C2 --&gt; C[&quot;기존 지갑 경로로 무료 포인트 lot 생성&quot;]
-  C --&gt; D[&quot;사용자 free 잔액 증가&quot;]
+  C0 --&gt; C1[&quot;결제 운영 권한·금액 재확인<br/>1회 최대 10,000,000P&quot;]
+  C1 --&gt; C2[&quot;보호된 관리자 창구 + 요청 중복 방지&quot;]
+  C2 --&gt; C[&quot;기존 지갑 경로로 무료 포인트 적립 단위 생성&quot;]
+  C --&gt; D[&quot;사용자 무료 잔액 증가&quot;]
   D --&gt; T1[&quot;T-SUCCESS 무료 포인트 지급 완료&quot;]
 
   B -- &quot;무료 포인트 회수&quot; --&gt; E{&quot;미사용 free 잔액 충분&quot;}
@@ -1900,7 +1900,7 @@ flowchart TD
 <div class="diagram"><div class="mermaid">
 flowchart TD
   A[&quot;운영자가 돈 관련 조치 시도&quot;] --&gt; B{&quot;조치 방식&quot;}
-  B -- &quot;admin에서 지갑 직접 증감&quot; --&gt; T1[&quot;T-FAIL 직접 증감 차단&quot;]
+  B -- &quot;운영 도구에서 지갑 직접 증감&quot; --&gt; T1[&quot;T-FAIL 직접 증감 차단&quot;]
   B -- &quot;internal API 호출&quot; --&gt; C{&quot;internal token 유효&quot;}
   C -- &quot;아니오&quot; --&gt; T2[&quot;T-FAIL internal 호출 거절&quot;]
   C -- &quot;예&quot; --&gt; D{&quot;업무 유형&quot;}
@@ -1928,7 +1928,7 @@ flowchart TD
 <th>종착점</th>
 </tr></thead><tbody>
 <tr>
-<td>admin 지갑 직접 증감</td>
+<td>운영 도구의 지갑 직접 증감</td>
 <td>차단</td>
 <td><code>T-FAIL 직접 증감 차단</code></td>
 </tr>
@@ -1968,7 +1968,7 @@ flowchart TD
 </tr></thead><tbody>
 <tr>
 <td><code>T-FAIL 직접 증감 차단</code></td>
-<td>admin이 임의로 사용자 돈을 바꾸지 못한다.</td>
+<td>운영자가 임의로 사용자 돈을 바꾸지 못한다.</td>
 <td>운영자</td>
 <td>보상·보정은 허용된 internal 경로로만 처리한다.</td>
 </tr>
@@ -2097,7 +2097,7 @@ flowchart TD
 </tr>
 <tr>
 <td><code>PROCESSING</code></td>
-<td>FailedRefund admin 보상</td>
+<td>실패한 환불의 운영자 보상</td>
 <td>처리중</td>
 <td>중복 보상 방지 키</td>
 </tr>

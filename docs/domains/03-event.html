@@ -52,7 +52,10 @@
         </div>
         <div class="callout danger">
           <span class="label">2026-09-02 현재 소스 갱신 — 선입금·이동수단 구현 경계</span>
-          <p>선입금 Flutter 사용자 흐름은 WALLET CTA만 연결됐고 BANK 운영 화면과 알림 deep link는 없다.
+          <p>선입금은 지갑 결제뿐 아니라 호스트 계좌 직접 송금까지 앱 화면이 갖춰졌다. 참가자의 계좌 안내·입금 신고·
+            결제 상태 화면, 호스트의 입금 확인 대기 목록과 환불 증빙이 모두 열려 있고, 결제 단계 알림도 각자의
+            화면으로 바로 연결된다. 다만 유료 모임의 새 접수 자체가 첫 출시 범위 밖이라, 지금 열려 있는 것은
+            이미 접수된 건을 종결하는 동선이다.
             이동수단은 대절 버스·참가자 승용차·자차를 한 차량 모델로 합쳤다. 지정·비지정 자리,
             호스트 전담·참가자 자기 선택, 승용차 승인·취소, 자차 종료, 안전 신고와 관련 알림이 앱과
             서버에 연결됐고 표준 차량 9종과 관리자 배치도 화면도 완료됐다. 첫 출시 전에는 서명 앱 다중
@@ -76,7 +79,7 @@
           <a class="card" href="../features/F03-10.html"><div class="eyebrow">F03-10</div><h3>이벤트-플랜 연결</h3><p>플랜 추가·순서·활성화. 플랜 마켓과의 다리.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-11.html"><div class="eyebrow">F03-11</div><h3>위시리스트</h3><p>낙관적 토글, 비로그인 분기, 숨김·삭제 이벤트 처리.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-12.html"><div class="eyebrow">F03-12</div><h3>내 이벤트·참석 로그</h3><p>주최/참석/지난 탭. 페이지네이션, 상태별 카드 노출.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F03-13.html"><div class="eyebrow">F03-13</div><h3>이벤트 참가 선입금</h3><p>서버는 WALLET·BANK를 지원하나 Flutter 사용자 연결은 WALLET CTA뿐. 만료 결제 정리·알림 라우팅 Gap.</p><div class="meta"><span class="pill danger">소스 실측</span><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F03-13.html"><div class="eyebrow">F03-13</div><h3>이벤트 참가 선입금</h3><p>지갑 결제와 호스트 계좌 직접 송금 두 수단이 앱·서버 모두 연결됐다. 첫 출시에서는 새 접수를 닫고 기존 건의 확인·환불 출구만 연다.</p><div class="meta"><span class="pill warn">신규 접수 제외</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-14.html"><div class="eyebrow">F03-14</div><h3>이동수단 공통 설정</h3><p>모임별 이동 운영과 자리 반납·자차 허용 정책을 관리한다.</p><div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-15.html"><div class="eyebrow">F03-15</div><h3>카풀·자차</h3><p>승용차 제안·승인·탑승 배정·취소와 자차 이동을 통합 화면에서 관리한다.</p><div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F03-16.html"><div class="eyebrow">F03-16</div><h3>대절 버스와 자리 배정</h3><p>지정·비지정 자리, 호스트/참가자 배정, 자리 반납·신고를 제공한다.</p><div class="meta"><span class="pill brand">코드 완료</span><span class="pill brand">상세 →</span></div></a>
@@ -164,7 +167,7 @@ flowchart TD
               <tr><td>결제·정산</td><td><span class="pill brand">강함</span></td><td>유료 이벤트의 결제·환불, 호스트 수익 정산, 클럽 이벤트의 기금 차감.</td></tr>
               <tr><td>캘린더</td><td><span class="pill brand">있음</span></td><td>참석 확정 시 자동 등록, 일정 변경 시 자동 갱신.</td></tr>
               <tr><td>위치</td><td><span class="pill">조건부</span></td><td>위치 공유 이벤트일 때만 위치 도메인이 활성화.</td></tr>
-              <tr><td>리뷰·신뢰</td><td><span class="pill brand">있음</span></td><td>참석 확정 + 종료 후 리뷰 자격이 생긴다. 노쇼는 신뢰점수에 반영.</td></tr>
+              <tr><td>리뷰·신뢰</td><td><span class="pill brand">있음</span></td><td>참석 확정 + 종료 후 리뷰 자격이 생긴다. 노쇼로 기록된 사람은 상호 후기 대상과 "함께 참석했다" 집계에서 빠지고, 판정이 번복되면 다시 들어온다. 신뢰점수는 노쇼가 아니라 확인된 신고 건수로만 깎인다.</td></tr>
             </tbody>
           </table>
         </div>

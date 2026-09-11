@@ -28,8 +28,10 @@
           <span class="label">현재 결론</span>
           <p><strong>공개 보류</strong> 상태다. 첫 출시 기능과 관리자 웹 화면은 구현됐고 자동 검사도 마쳤다.
             현재 확인된 첫 출시의 개발 차단 항목은 없다.</p>
-          <p>남은 일은 <strong>배포할 버전 확정</strong>, <strong>실제 서비스·휴대전화 검사</strong>,
-            <strong>장애 복구와 공개 승인</strong>이다. 자동 검사 통과가 실제 고객 환경의 확인을 대신하지는 않는다.</p>
+          <p><strong>배포할 버전은 2026년 9월 12일에 고정했다.</strong> 다섯 프로그램이 모두 원격 저장소와 같은 상태이고,
+            설치 파일의 지문과 빈 데이터베이스 설치·서버 기동 결과를 같은 후보로 묶었다.</p>
+          <p>남은 일은 그 버전으로 <strong>서명한 배포용 앱을 만들고</strong>, <strong>실제 서비스·휴대전화 검사</strong>와
+            <strong>장애 복구를 거쳐 공개 승인</strong>을 받는 것이다. 자동 검사 통과가 실제 고객 환경의 확인을 대신하지는 않는다.</p>
         </div>
       </section>
 
@@ -182,7 +184,7 @@
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-      document.getElementById('asof-line').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-07. 이번 문서 수정에서 배포나 실제 서비스 검사를 새로 수행하지 않았다.';
+      document.getElementById('asof-line').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-12. 이번 갱신에서는 소스 조합을 고정하고 개발용 환경에서 설치·기동을 확인했다. 실제 서비스 검사나 운영 배포는 하지 않았다.';
     })();
   </script>
   <script src="../assets/app.js"></script>
