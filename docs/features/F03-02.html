@@ -29,6 +29,15 @@
       <div class="launch-strip" id="launch-strip"></div>
 
       <section>
+        <div class="callout">
+          <span class="label">참가자 투표와 일정·장소 결정 투표</span>
+          <p>모임 상세에서 참석자 투표를 열고 선택·결과를 확인하는 경로를 구현했다. 투표로 정하는 무료 클럽 모임은 확정 전 참가 신청 대신 투표로 안내하며,
+            결과가 확정되면 자격을 유지한 해당 투표자를 참가자로 등록한다. <strong>투표는 별도 공개 전</strong>이다.</p>
+          <p>참여 자격·자동 참가·익명 규칙과 남은 준비는 <a href="club-poll.html">게시글·모임 투표</a>에서 확인한다.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="metrics">
           <div class="metric"><div class="label">한 화면에 모이는 정보</div><div class="value">10+영역</div><div class="hint">호스트·일정·정원·가격·환불·플랜·유사 추천</div></div>
           <div class="metric"><div class="label">사용자 역할 분기</div><div class="value">5종</div><div class="hint">호스트·공동호스트·클럽 운영진·참가자·비로그인</div></div>
@@ -291,7 +300,8 @@ flowchart TD
               </tr>
               <tr>
                 <td><strong>호스트 카드</strong></td>
-                <td>호스트 닉네임 + 신뢰점수. 조건을 만족하면 “재방문 많은 호스트” 배지. 공동호스트가 있으면 함께 표시.</td>
+                <td>주최자 닉네임·신뢰점수와 조건에 따른 재방문 배지. <a href="F07-10.html">정산 등급 배지</a>도 표시한다.
+                  정산 이력이 없거나 조회 중·실패일 때는 정산 배지만 숨긴다. 공동주최자가 있으면 함께 표시한다.</td>
                 <td>모임의 신뢰는 호스트의 신뢰. 누가 운영하는지 보이지 않으면 신청 결정의 마지막 한 걸음이 안 떨어진다.</td>
               </tr>
               <tr>

@@ -23,6 +23,16 @@
         </p>
       </header>
 
+      <section>
+        <div class="callout">
+          <span class="label">경고 재시도와 역할 제한의 실제 효력</span>
+          <p>앱은 처리 중 연속 입력을 막고, 응답을 받지 못한 경고 부여를 같은 내용으로 재시도할 때 중복 처리하지 않는다.
+            성공을 확인한 뒤 새로 부여하는 경고와는 구분한다. <a href="../features/F15-06.html">경고 부여·원장 조정</a>에서 처리 결과와 주의점을 확인한다.</p>
+          <p><strong>역할 제한</strong>은 해당 클럽의 운영진·공동주최자 위임 권한을 실제로 정지시킨다.
+            소유자·직접 주최한 모임의 예외와 해제 후 동작은 <a href="../policies/permission.html#role-restriction">역할 제한이 적용되는 권한</a>에 있다.</p>
+        </div>
+      </section>
+
       <div class="launch-strip" id="launch-strip" data-domain="1"></div>
 
 
@@ -111,7 +121,7 @@ flowchart LR
             <tbody>
               <tr><td>공지·주의</td><td>공지/주의</td><td>검토자</td></tr>
               <tr><td>이벤트 신청 제한</td><td>이벤트 신청 차단 (이벤트 신청 시 실시간 검사)</td><td>검토자</td></tr>
-              <tr><td>역할 제한</td><td>기록·통지·자동 만료는 돌지만 <strong>실제 권한은 그대로</strong> (F15-08 참고)</td><td>검토자</td></tr>
+              <tr><td>역할 제한</td><td>유효 기간 동안 해당 클럽의 운영진·공동주최자 위임 권한을 정지한다. 일반 회원 자격은 유지한다. <a href="../policies/permission.html#role-restriction">적용 범위와 예외</a>를 확인한다.</td><td>검토자</td></tr>
               <tr><td>강제 탈퇴</td><td>강제 탈퇴</td><td><span class="pill warn">소유자 단독</span></td></tr>
               <tr><td>수동 잠금 · 수동 해제</td><td>자동 등급 재평가 잠금/해제</td><td>검토자</td></tr>
             </tbody>

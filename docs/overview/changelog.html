@@ -22,14 +22,20 @@
 
       <section id="release-candidate-2026-09-12">
         <div class="callout">
-          <span class="label">2026년 9월 12일 — 배포할 버전을 한 묶음으로 고정했다</span>
-          <p>고객 앱, 고객용 서버, 관리자 서버, 관리자 화면, 채팅 서버 다섯 프로그램이 모두 원격 저장소와 같은 상태가 됐다.
-          그 조합을 여덟 번째 출시후보로 고정하고, 데이터베이스 설치 파일의 지문과 검사 결과를 같은 목록에 묶었다.</p>
-          <p>빈 데이터베이스 두 곳에 고객용 서버와 관리자 서버를 직접 기동해, 설치와 기준 데이터 적재가 양쪽에서 같은 결과를 내는 것을 확인했다.
-          채팅 서버 검사도 이 조합에서 다시 실행했다.</p>
-          <p><strong>제품 범위는 바뀌지 않았다.</strong> 남은 일은 같은 버전으로 서명한 배포용 앱을 만들고,
-          실제 메일·로그인·알림·지도·파일 서비스와 장애 복구를 확인한 뒤 공개 승인을 받는 것이다.
-          현재 준비 상태는 <a href="../qa/launch-status.html">첫 출시 현황</a>에서 확인한다.</p>
+          <span class="label">2026년 9월 — 투표와 클럽 운영 개선</span>
+          <ul>
+            <li><strong>투표:</strong> 게시글 의견 수렴·참가자 투표·무료 클럽 모임의 일정·장소 결정과 자동 참가를 구현했다.
+              임시저장 편집 동선과 공개 검사는 남아 있다. <a href="../features/club-poll.html">게시글·모임 투표</a></li>
+            <li><strong>기금·정산:</strong> 기부·환불의 월별 차트와 모임 상세의 주최자 정산 배지를 연결했다.
+              차트는 클럽 전체 수입·지출이 아니다. <a href="../features/F04-13.html">기금 현황</a> · <a href="../features/F07-10.html">정산 계좌·이력·신뢰도</a></li>
+            <li><strong>클럽 운영:</strong> 역할 제한이 운영진·공동주최자 위임 권한을 실제로 정지시킨다.
+              경고 부여는 응답을 잃은 뒤 같은 내용으로 재시도해도 중복 처리하지 않는다.
+              <a href="../policies/permission.html#role-restriction">역할 제한의 적용 범위</a> · <a href="../features/F15-06.html">경고 부여와 조정</a></li>
+            <li><strong>마켓 상세:</strong> 마켓을 공개한 뒤에는 로그인 없이 판매 중 상품의 기본 상세를 볼 수 있다.
+              구매·리뷰·번들은 로그인이 필요하며, 마켓 자체는 여전히 후속 출시다. <a href="../features/F08-10.html">상품 상세의 이용 범위</a></li>
+          </ul>
+          <p><strong>공개 보류</strong>는 유지한다. 이전에 고정한 검사 대상 이후 코드와 설치 정의가 바뀌었으므로 최신 버전을 함께 정해 재검증해야 한다.
+            담당자와 다음 행동은 <a href="../qa/launch-status.html">첫 출시 현황</a>에서 관리한다.</p>
         </div>
       </section>
 
@@ -143,8 +149,8 @@
           커밋 번호·검사 건수·개발 중간 과정은 이 페이지에 반복하지 않는다.</p>
         <ul>
           <li><a href="../qa/scenario-completeness.html">기능별 시나리오와 검사 근거</a></li>
-          <li><a href="../../../docs/release-gate/evidence/VER-01/README.md">개발 담당자용 버전 확인 기록</a></li>
-          <li><a href="../../../docs/release-gate/evidence/W2-DATE-MANUAL/README.md">통합 기능의 자동 검사 기록</a></li>
+          <li><a href="../qa/launch-status.html#item-VER-01">출시할 앱·서버·관리자 화면 준비</a></li>
+          <li><a href="../qa/launch-status.html#evidence">확인한 것과 아직 확인하지 못한 것</a></li>
         </ul>
         <p>요약에서 생략한 날짜별 원문과 편집 과정은 이 문서 저장소의 버전 관리 이력에 남아 있다.</p>
       </section>

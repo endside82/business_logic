@@ -20,7 +20,7 @@
         <h1>F04-13. 기금 현황·거래 차트</h1>
         <p class="lede">
           클럽 멤버에게 현재 기금 잔액과 누적 후원·누적 지출을 보여 주는 재정 요약 화면.
-          총 잔액과 함께 현금으로 인출할 수 있는 몫과 그렇지 않은 몫을 나눠 적고, 가장 최근 후원 몇 건을 함께 보여 준다.
+          총 잔액과 함께 현금으로 인출할 수 있는 몫과 그렇지 않은 몫을 나눠 적고, 최근 후원과 월별 기부·환불 차트를 보여 준다.
           기부·인출을 한 줄로 이은 통합 거래 타임라인은 이 화면이 아니라 각 하위 화면에 있다.
         </p>
       </header>
@@ -64,6 +64,12 @@
               인출·구독 결제까지 합친 통합 거래 타임라인은 이 화면에 없다.</p>
           </article>
           <article class="card">
+            <div class="eyebrow">월별 차트</div>
+            <h3>최근 6개월의 기부와 환불</h3>
+            <p>이번 달을 포함해 월별 기부금과 실제 환불액을 비교한다. 거래가 없는 달은 0으로 표시한다.
+              <strong>가입비·구독료·기금 인출은 제외</strong>하므로 클럽 전체 수입·지출로 읽으면 안 된다.</p>
+          </article>
+          <article class="card">
             <div class="eyebrow">하단 버튼</div>
             <h3>역할에 따라 다른 두 가지</h3>
             <p>소유자에게는 "인출 신청"과 "후원 내역" 두 버튼이, 일반 멤버에게는 "후원하기" 한 버튼이 놓인다.
@@ -73,7 +79,7 @@
       </section>
 
       <section>
-        <h2>권한별 CTA</h2>
+        <h2>권한별 버튼</h2>
         <div class="table-wrap">
           <table>
             <thead><tr><th>역할</th><th>보이는 액션</th><th>이유</th></tr></thead>
@@ -98,10 +104,13 @@
         </div>
         <div class="callout warn">
           <span class="label">현재 화면에 통합 거래 타임라인은 없다</span>
-          <p>이 화면이 한 번에 받는 것은 기금 요약(총액·유료·무료·누적 후원·누적 지출)과 최근 후원 다섯 건뿐이다.
-            기부·인출·구독 결제를 한 줄로 이어 붙인 월별 차트나 통합 거래 목록은 만들지 않았다.
-            운영자가 돈의 흐름을 따라가려면 기부 내역(F04-14)과 인출 내역(F04-15)을 각각 열어야 한다.</p>
+          <p><strong>월별 차트는 구현됐다.</strong> 기부는 받은 달의 수입으로, 환불은 실제 돌려준 달의 지출로 계산한다.
+            나중에 환불하더라도 과거 기부 월의 수입을 지우지 않는다. 앱은 최근 6개월을 표시하고 서버 조회는 최대 24개월까지 지원한다.</p>
+          <p>차트는 <strong>기부·환불만</strong> 집계한다. 전체 거래를 확인하려면
+            <a href="F04-14.html">기부하기·기부 내역</a>과 <a href="F04-15.html">기금 인출 요청</a>을 각각 확인한다.</p>
           <p>인출 내역은 소유자만 열 수 있다. 그 화면에 소유자의 계좌 정보가 들어 있기 때문이다.</p>
+          <p>월별 환불액은 현재 회원에게 공개된다. 환불이 한 건뿐인 달에는 다른 정보와 합쳐 환불한 사람을 추정할 수 있으므로,
+            <a href="../policies/privacy.html#fund-summary">기금 차트의 정보 공개 범위</a>를 함께 안내한다.</p>
         </div>
       </section>
 
@@ -122,7 +131,8 @@
           <article class="card">
             <div class="eyebrow">빈 상태</div>
             <h3>후원이 한 건도 없는 신규 클럽</h3>
-            <p>잔액은 0원으로 표시하고 최근 후원 영역에는 아직 후원이 없다는 안내가 뜬다. 무료·유료 분리 표시도 보여 줄 것이 없어 생략된다.</p>
+            <p>잔액은 0원으로 표시하고 최근 후원 영역에는 아직 후원이 없다는 안내가 뜬다. 차트도 기간 내 기부·환불이 모두 없으면 빈 상태를 보여 준다.
+              조회에 실패하면 차트 영역에 오류 안내를 표시한다. 무료·유료 분리 표시도 보여 줄 것이 없어 생략된다.</p>
           </article>
           <article class="card">
             <div class="eyebrow">인출 후 갱신</div>
@@ -146,6 +156,9 @@
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md
+  - 2026-09-13 확인: ClubFundService#getMonthlySummary, ClubFundMonthlySummaryVo,
+    ClubDonationQueryRepository, ClubDonationQueryRepositoryTest, ClubFundServiceTest,
+    club_fund_screen.dart, club_fund_chart_test.dart (파일 존재 확인이며 이번 문서 작업에서 재실행하지 않음)
 -->
     </main>
   </div>

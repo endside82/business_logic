@@ -1,0 +1,16 @@
+/* 긴 업무 설명을 담은 표: 좁은 화면에서는 한 항목씩 읽는다. */
+.readable-doc main { word-break:keep-all; overflow-wrap:anywhere; }
+.readable-doc :target { scroll-margin-top:78px; }
+.readable-table { table-layout:fixed; }
+.readable-table th:first-child { width:22%; }
+.readable-table th, .readable-table td { line-height:1.8; overflow-wrap:anywhere; }
+@media (max-width:640px) {
+  .readable-table, .readable-table tbody { display:block; width:100%; }
+  .readable-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+  .readable-table tr { display:block; padding:16px; border-bottom:1px solid var(--line); }
+  .readable-table tr:last-child { border-bottom:0; }
+  .readable-table td { display:block; width:auto; padding:7px 0; border:0; }
+  .readable-table td::before { content:attr(data-label); display:block; color:var(--muted); font-size:12px; }
+  .readable-table td:first-child { font-weight:700; color:var(--ink); }
+  .readable-table td:first-child::before { display:none; }
+}

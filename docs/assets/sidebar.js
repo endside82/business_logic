@@ -326,6 +326,7 @@
         // 도메인 셋에 걸쳐 있어 단일 기능 번호를 갖지 않는 흐름 문서. 기능 수(175)에는 포함하지 않는다.
         { href: 'features/private-meeting.html', label: '사적 모임 전 과정' },
         { href: 'features/club-stamp.html', label: '클럽 스탬프' },
+        { href: 'features/club-poll.html', label: '게시글·모임 투표' },
         { href: 'reference/numbers.html', label: '비즈니스 수치 레퍼런스' },
       ],
     },

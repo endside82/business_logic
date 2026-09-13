@@ -1,12 +1,12 @@
 /* 이 파일은 verification/build_scenario_audit_data.mjs가 현재 저장소에서 생성한다. */
 window.SCENARIO_AUDIT = {
-  "asOf": "2026-09-12",
+  "asOf": "2026-09-13",
   "countingNote": "1,403은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 117개에서 실제로 식별한 제목은 1,086개이며 49개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1403,
     "definedFeatures": 175,
-    "automatedTestFilesScanned": 1822,
+    "automatedTestFilesScanned": 1893,
     "journeyFilesScanned": 243,
     "unitScenarioDocuments": 117,
     "unitScenarioHeadings": 1086,
@@ -2249,7 +2249,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-13",
       "domain": "클럽",
-      "name": "기금 현황 & 거래 차트",
+      "name": "기금 현황",
       "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-13_fund-overview/scenarios.md",

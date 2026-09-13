@@ -26,12 +26,11 @@
       <section id="code-completeness">
         <div class="callout danger release-summary">
           <span class="label">현재 결론</span>
-          <p><strong>공개 보류</strong> 상태다. 첫 출시 기능과 관리자 웹 화면은 구현됐고 자동 검사도 마쳤다.
-            현재 확인된 첫 출시의 개발 차단 항목은 없다.</p>
-          <p><strong>배포할 버전은 2026년 9월 12일에 고정했다.</strong> 다섯 프로그램이 모두 원격 저장소와 같은 상태이고,
-            설치 파일의 지문과 빈 데이터베이스 설치·서버 기동 결과를 같은 후보로 묶었다.</p>
-          <p>남은 일은 그 버전으로 <strong>서명한 배포용 앱을 만들고</strong>, <strong>실제 서비스·휴대전화 검사</strong>와
-            <strong>장애 복구를 거쳐 공개 승인</strong>을 받는 것이다. 자동 검사 통과가 실제 고객 환경의 확인을 대신하지는 않는다.</p>
+          <p><strong>공개 보류</strong> 상태다. 기존 기능의 자동 검사 기록은 있지만, 이후 추가된 기금 차트·정산 배지·권한 제한·경고 재시도와 투표 코드를 포함한 재검증이 필요하다.</p>
+          <p>이전 출시 검증 기준을 정한 뒤 고객 앱과 두 서버가 바뀌었다. 개발 책임자는 최신 변경을 공유하고
+            <strong>함께 검사할 버전을 다시 확정</strong>해야 한다. 투표는 별도 준비 후 공개할 기능이다.</p>
+          <p>그 버전으로 <strong>서명한 배포용 앱</strong>을 만들고, 실제 서비스·휴대전화 검사와 장애 복구 확인을 마친 뒤
+            <strong>공개 승인</strong>을 받는다. 이전 검사 통과가 현재 코드나 실제 고객 환경의 확인을 대신하지는 않는다.</p>
         </div>
       </section>
 
@@ -57,7 +56,7 @@
           <li><strong>이메일·Google 가입</strong>, 무료 모임, 클럽, 게시글·사진·알림·개인 일정과 신고·이의 처리를 제공한다.</li>
           <li><strong>핵심 마일리지</strong>의 적립·사용·정정·등급·배지·순위를 포함한다.</li>
           <li>클럽 가입비·기부는 <strong>무료 포인트</strong>만 사용한다. 클럽 기금으로 구독료 전액을 낼 수 있는 경우도 허용한다.</li>
-          <li>유료 모임·플랫폼 결제·마켓 구매·개인 유료 구독·데이트·버스와 카풀·제공자 거래·스탬프는 <strong>후속 출시</strong> 대상이다.</li>
+          <li>유료 모임·플랫폼 결제·마켓 구매·개인 유료 구독·데이트·버스와 카풀·제공자 거래·스탬프·투표는 <strong>후속 출시</strong> 대상이다.</li>
           <li>새 이용을 막더라도 기존 이용자의 <strong>환불·해지·신고</strong>는 계속 처리할 수 있어야 한다.</li>
         </ul>
         <div id="event-rule"></div>
@@ -68,7 +67,7 @@
       <section id="next">
         <h2>후속 기능 준비</h2>
         <p>아래 기능은 첫 출시를 기다리게 할 이유가 아니다. 담당자는 필요한 개발·검사·승인을 마친 기능부터 따로 공개를 요청한다.
-          <strong>마켓 기간권 판매</strong>와 <strong>추가 로그인의 실패 확인 화면</strong>에는 개발이 남아 있다.</p>
+          <strong>마켓 기간권 판매</strong>, <strong>추가 로그인의 실패 확인 화면</strong>, <strong>임시저장 투표의 편집 동선</strong>에는 개발이 남아 있다.</p>
         <details>
           <summary>후속 기능의 공개 순서</summary>
           <ol>
@@ -78,7 +77,7 @@
             <li>실제 계약·거래·복구를 확인한 뒤 플랫폼 결제를 준비한다.</li>
             <li>플랫폼 결제를 사용하는 인출·개인 구독·마켓·제공자 거래를 준비한다.</li>
           </ol>
-          <p>시즌·사진 심사 적립·반복 적립 검토와 스탬프는 결제와 독립적으로 준비한다.
+          <p>시즌·사진 심사 적립·반복 적립 검토·스탬프·투표는 결제와 독립적으로 준비한다.
             모임별 적립 점수는 후속 기능이 아니라 첫 출시 검사에 포함한다.</p>
         </details>
         <div class="release-grid" id="next-rows"></div>
@@ -155,7 +154,7 @@
         }).join(' · ');
       }
       function itemCard(o) {
-        var related = o.docPath ? '<a href="../' + esc(o.docPath) + '">클럽 스탬프 설명</a>' : featureLinks(o.features);
+        var related = o.docPath ? '<a href="../' + esc(o.docPath) + '">' + esc(o.title) + ' 설명</a>' : featureLinks(o.features);
         return '<article class="release-task" id="item-' + esc(o.id) + '">' +
           '<h3>' + esc(o.title) + '</h3>' +
           '<p><strong>현재</strong> ' + esc(o.summary) + '</p>' +
@@ -184,7 +183,7 @@
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-      document.getElementById('asof-line').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-12. 이번 갱신에서는 소스 조합을 고정하고 개발용 환경에서 설치·기동을 확인했다. 실제 서비스 검사나 운영 배포는 하지 않았다.';
+      document.getElementById('asof-line').textContent = '소스·문서 대조 기준: ' + L.asOf + '. 이번 갱신은 소스 확인과 문서 검증이다. 제품 테스트 재실행·실제 서비스 검사·운영 배포는 하지 않았다.';
     })();
   </script>
   <script src="../assets/app.js"></script>

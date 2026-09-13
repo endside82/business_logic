@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>게시글·모임 투표 — community 제품 문서</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/document-readability.css">
+</head>
+<body data-base="../" class="readable-doc">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="../domains/04-club.html">클럽</a><span>›</span>게시글·모임 투표</div>
+        <h1>게시글·모임 투표</h1>
+        <p class="lede">게시글에서 회원 의견을 모으거나, 모임 참가자에게 질문한다.
+          무료 클럽 모임은 일정이나 장소를 투표로 정할 수도 있다. 이 경우 선택한 후보가 확정되면 <strong>참가자로 자동 등록</strong>된다.</p>
+      </header>
+
+      <section id="current-state">
+        <div class="callout warn">
+          <span class="label">기본 기능 구현 · 별도 공개 전</span>
+          <p>세 가지 투표의 서버 처리와 앱 화면이 로컬 기본 브랜치에 반영됐다. 관리자 서버의 데이터베이스 설치 정의도 맞췄다.
+            운영 기본 설정에서는 <strong>투표 기능이 꺼져 있다</strong>. 게시글과 무료 모임이 첫 출시 범위라고 해서 투표까지 함께 열리는 것은 아니다.</p>
+          <p>현재 버전 조합의 통합 검사와 실제 휴대전화 이용 확인은 남아 있다. 임시저장한 결정 투표의 후보를 고치거나 투표를 떼는 기능은 서버에 있지만 <strong>앱의 편집 경로는 남아 있다</strong>.
+            담당자와 완료 조건은 <a href="../qa/launch-status.html#item-N-11-POLL">투표 기능의 공개 준비</a>에서 확인한다.</p>
+        </div>
+      </section>
+
+      <section id="poll-types">
+        <h2>어떤 투표를 쓰는가</h2>
+        <div class="table-wrap"><table class="readable-table">
+          <thead><tr><th>종류</th><th>만들고 관리하는 사람</th><th>투표할 사람과 결과</th></tr></thead>
+          <tbody>
+            <tr><td><strong>게시글 투표</strong></td><td data-label="만들고 관리하는 사람">게시판에 글을 쓸 권한이 있는 회원이 첨부한다. 글 작성자와 유효한 클럽 운영진이 관리한다.</td><td data-label="투표할 사람과 결과">글을 볼 수 있는 현재 클럽 회원이 의견을 낸다. 모임 참가 여부는 바뀌지 않는다. 게시글당 최대 5개다.</td></tr>
+            <tr><td><strong>모임 참가자 투표</strong></td><td data-label="만들고 관리하는 사람">주최자 또는 공지 발송 권한이 있는 공동주최자가 만든다.</td><td data-label="투표할 사람과 결과">실제로 참석 확정된 사람이 투표한다. 대기자와 비회원 동반자는 투표할 수 없다. 진행 중인 투표는 모임당 최대 5개다.</td></tr>
+            <tr><td><strong>일정·장소 결정 투표</strong></td><td data-label="만들고 관리하는 사람">주최자가 무료 클럽 모임을 만들 때 일정 또는 장소 중 하나를 고른다. 주최자·유효한 공동주최자·클럽 운영진이 후보를 관리하고 확정한다.</td><td data-label="투표할 사람과 결과">주최자를 제외한 현재 클럽 회원이 투표한다. 확정된 후보를 고른 사람 중 참가 자격을 유지한 회원이 참가자로 바뀐다.</td></tr>
+          </tbody>
+        </table></div>
+        <p>역할 제한을 받은 운영진과 공동주최자는 정지된 운영 권한을 쓸 수 없다.
+          상세한 범위는 <a href="../policies/permission.html#role-restriction">역할 제한이 적용되는 권한</a>을 따른다.</p>
+      </section>
+
+      <section id="vote-rules">
+        <h2>투표하고 고치는 규칙</h2>
+        <ul>
+          <li><strong>선택지 2~10개</strong>를 둔다. 질문은 100자, 선택지 이름은 80자까지다. 여러 항목 선택과 익명 여부를 만들 때 정한다.</li>
+          <li>참여자는 마감 전에 선택을 바꾸거나 모두 취소할 수 있다. 결과는 투표 전에도 보인다. 복수 선택의 비율은 참여한 사람 수를 기준으로 하므로 합계가 100%를 넘을 수 있다.</li>
+          <li><strong>표가 남아 있으면</strong> 질문·기존 선택지·익명 여부·복수 선택 설정을 바꾸거나 투표를 삭제할 수 없다. 선택지 추가와 허용 기간 안의 마감 연장만 가능하다.</li>
+          <li>일반 투표는 마감일을 생략하고 관리자가 직접 마감할 수 있다. 만들 때 마감일을 정한다면 생성 시점에서 최소 1시간 뒤, 최대 30일 안이어야 한다. 예약 게시글은 예약 공개 시각을 기준으로 계산하며, 나중에 연장해도 최초 기준의 30일을 넘기지 않는다.</li>
+          <li>임시저장 모임이나 예약 게시글의 투표는 부모 글·모임이 공개된 뒤에 시작한다. 모임 취소 후에는 새 표를 받지 않는다.</li>
+          <li><strong>익명 투표</strong>에서는 주최자와 운영진도 선택지별 참여자 명단을 볼 수 없다. 익명이 아니면 투표를 볼 수 있는 사람이 해당 명단을 열람할 수 있다.</li>
+        </ul>
+      </section>
+
+      <section id="decision-flow">
+        <h2>투표로 일정이나 장소를 정하는 모임</h2>
+        <ol>
+          <li>주최자가 <strong>무료 클럽 모임</strong>에서 일정 또는 장소 후보 2~10개를 입력한다. 유료 모임·독립 모임·정기모임에는 적용하지 않는다. 일정과 장소를 동시에 투표로 정하지 않는다.</li>
+          <li>모임을 공개하면 클럽 회원에게 투표 시작을 알린다. 확정 전에는 일반 참가 신청을 받지 않고 ‘투표하기’로 안내한다.</li>
+          <li>마감 때 1표 이상 받은 <strong>단독 1위</strong>가 있고 시작까지 1시간 이상 남았다면 자동 확정한다. 주최 측은 허용된 후보를 직접 골라 확정할 수도 있다.</li>
+          <li><strong>동률·표 없음</strong>이면 자동 취소하지 않고 주최자와 공동주최자에게 후보 선택을 요청한다. 후보가 모두 지나면 주최자가 모임을 취소해야 한다.</li>
+          <li>확정 시 주최자와 선택된 후보의 투표자를 참가자로 등록한다. 탈퇴·참가 제한·참가 이탈 기록이 있는 사람 등은 제외한다. 필요하면 정원을 늘리며 대기자로 돌리지 않는다.</li>
+        </ol>
+        <p>투표 마감은 가장 이른 후보 시작보다 <strong>최소 2시간 전</strong>이어야 한다. 확정 후 다른 후보로 바꾸는 것은 현재 모임 시작 3시간 전까지만 가능하며, 다른 일정 변경 동의 절차나 체크인이 진행된 경우에는 제한된다.</p>
+        <p>후보를 다시 확정해도 <strong>기존 참가자는 유지</strong>한다. 새 후보를 고른 회원은 자격을 확인해 추가하지만, 이미 참가를 취소한 회원을 강제로 다시 넣지 않는다. 후보 밖 일정으로 옮기려면 일반 일정 변경 절차를 이용한다.</p>
+      </section>
+
+      <section id="privacy-calendar">
+        <h2>회원에게 먼저 알려야 할 것</h2>
+        <ul>
+          <li><strong>투표가 참가로 이어진다.</strong> 익명으로 투표했어도 확정 뒤 참가자 명단에서는 이름이 보일 수 있다. ‘누구에게도 참여 사실이 공개되지 않는다’고 안내하면 안 된다.</li>
+          <li>익명 결정 투표에서는 운영자가 개별 투표자를 골라 자동 참가에서 제외할 수 없다. 회원 탈퇴·참가 제한 같은 공통 자격 검사는 그대로 적용한다.</li>
+          <li><strong>확정 전 일정</strong>은 개인 일정과 일정 파일 내보내기에 넣지 않는다. 클럽 달력에서는 날짜를 정하는 투표 모임을 숨기고, 날짜가 이미 정해진 장소 투표 모임은 표시할 수 있다.</li>
+          <li>모임별 마일리지 점수는 투표 확정 때가 아니라 <strong>모임 공개 때</strong>고정한다.</li>
+        </ul>
+      </section>
+
+      <section id="notifications">
+        <h2>누가 어떤 알림을 받는가</h2>
+        <ul>
+          <li><strong>게시글 투표</strong>는 투표 전용 시작·마감 알림을 보내지 않는다.</li>
+          <li><strong>참가자 투표</strong>는 시작 때 작성자를 제외한 참석자에게, 마감 때 표를 낸 사람에게 알린다. 앱의 ‘이벤트 알림’ 설정을 따른다.</li>
+          <li><strong>결정 투표</strong>는 시작 때 주최자를 제외한 클럽 회원에게 기존 모임 공개 알림을 보낸다. 확정 결과는 참가 전환 여부에 맞춰 안내하며 ‘이벤트 알림’ 설정을 따른다.</li>
+          <li><strong>주최자의 조치가 필요할 때</strong>는 주최자·공동주최자에게 알리고 ‘모임 운영 알림’ 설정을 따른다. 참가자 알림을 끈다고 이 요청까지 꺼지는 것은 아니다.</li>
+        </ul>
+        <p>시작 알림은 기존 클럽 알림 설정을 따른다. 자세한 구분은 <a href="../policies/notification.html#poll-notifications">투표 알림의 수신자와 설정</a>에 있다. 알림 코드가 있다는 사실만으로 실제 휴대전화 수신을 확인한 것은 아니다.</p>
+      </section>
+
+      <section id="release-checks">
+        <h2>공개 전에 남은 일</h2>
+        <ul>
+          <li><strong>개발 담당자:</strong> 임시저장한 결정 투표의 후보 편집·제거 동선을 연결한다. 작성 중 앱을 닫았다가 돌아왔을 때의 입력 복구도 확인한다.</li>
+          <li><strong>품질 확인 담당자:</strong> 주최자·공동주최자·운영진·일반 회원·대기자로 만들기, 선택 변경, 마감, 자동 참가, 재확정, 취소와 권한 제한을 같은 버전에서 검사한다.</li>
+          <li><strong>서버·앱 담당자:</strong> 최신 고객 앱과 두 서버의 설치 정의를 함께 검증한다. 투표 기능을 끄면 직접 요청·공유 링크·알림 진입도 막히고, 기본 게시글·무료 모임은 계속 이용할 수 있는지 확인한다.</li>
+          <li><strong>제품·개인정보 담당자:</strong> 익명 투표와 참가자 명단의 차이를 승인하고, 투표·표의 보존과 회원 데이터 내보내기 범위를 정한다. 현재 회원 데이터 내보내기에는 투표·표가 포함되지 않는다.</li>
+        </ul>
+        <p>기존 175개 기능 목록과 별도로 관리한다. 이 문서를 추가해 기능 수나 검사 통과 수를 늘리지 않는다.</p>
+        <details>
+          <summary>개발 담당자용 확인 근거</summary>
+          <p>소스 확인일: 2026-09-13. 고객용 서버의 투표 처리·권한 검사·모임 확정 처리, 고객 앱의 투표 화면·알림 설정, 관리자 서버의 설치 정의를 대조했다. 이번 문서 갱신에서는 제품 테스트를 새로 실행하지 않았다.</p>
+          <p>운영 기본 설정의 <code>POLL</code> 공개 항목은 비활성이다. 고객용 서버의 기본 브랜치 커밋 <code>d9e8e443</code>·<code>ce8b9bc8</code>·<code>f116894e</code>, 앱 <code>31d233bb</code>·<code>289f489e</code>·<code>54a6ccc0</code>, 관리자 서버 <code>687ece2</code>를 기준으로 작성했다.</p>
+        </details>
+      </section>
+      <!-- 소스: community_api/poll/service/{PollService,PollAccessResolver,EventPollAccessPolicy,EventDecisionAccessPolicy},
+        event/decision/service/{EventDecisionService,EventDecisionRules,EventDecisionNotifier};
+        community_app: presentation/poll, event/screens/event_create_screen.dart,
+        event/screens/event_edit_screen.dart, notification/screens/notification_settings_screen.dart;
+        community_admin_api: V1__init.sql. 계획 문서의 미구현·미병합 표기보다 현재 기본 브랜치 소스를 우선한다. -->
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

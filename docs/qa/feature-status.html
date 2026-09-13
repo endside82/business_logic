@@ -57,8 +57,8 @@
           <span id="page-number" aria-live="polite"></span>
           <button id="next-page" type="button">다음</button>
         </div>
-        <p class="release-note">클럽 스탬프는 기존 기능 목록과 별도로 <a href="../features/club-stamp.html">클럽 스탬프 설명</a>과
-          <a href="launch-status.html#item-N-08-STAMP">클럽 스탬프 준비</a>에서 확인한다.</p>
+        <p class="release-note">기존 175개 목록과 별도로 <a href="../features/club-stamp.html">클럽 스탬프</a>와
+          <a href="../features/club-poll.html">게시글·모임 투표</a>를 설명한다. 투표를 추가했다고 기본 게시글·모임의 첫 출시 범위나 기존 검사 등급을 바꾸지는 않는다.</p>
       </section>
 
       <section id="reading-guide">
@@ -120,7 +120,7 @@
       document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
       document.getElementById('m-retired').textContent = data.filter(function (d) { return d.scope === 'retired'; }).length;
       document.getElementById('m-journey').textContent = data.filter(function (d) { return d.proof === 'local' || d.proof === 'real'; }).length;
-      document.getElementById('asof').textContent = '상태 판단 기준: ' + L.asOf + ' · 문구 정리: 2026-09-12. 소스 조합은 고정했지만 이것으로 실제 검사나 공개가 완료된 것은 아니다.';
+      document.getElementById('asof').textContent = '소스·문서 대조 기준: ' + L.asOf + '. 확인 수준은 기존 실행 기록을 유지했다. 이후 변경된 기능의 재검증과 실제 휴대전화·외부 서비스 검사는 별도로 필요하다.';
 
       function nextSteps(d) {
         var items = d.openItems.filter(function (o) { return o.impact !== 'doc'; });
