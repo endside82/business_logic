@@ -25,7 +25,7 @@
 
       <section>
         <div class="callout warn">
-          <span class="label">2026-08-23 첫 출시 경계 — 무료 포인트 운영 축 출시</span>
+          <span class="label">첫 출시 포함 — 무료 포인트로 클럽 운영</span>
           <p>무료형뿐 아니라 가입비형 클럽도 만들고 가입할 수 있다. 실결제 스위치가 꺼진 동안 가입비와
             무료 클럽 기부는 무료 포인트만 차감하며, 유료 포인트를 건드리지 않는다. 받은 금액은 클럽
             기금의 무료분으로 이어져 운영비에는 쓸 수 있지만 현금으로 인출할 수 없다.</p>
@@ -83,7 +83,7 @@
           <a class="card" href="../features/F04-13.html"><div class="eyebrow">F04-13</div><h3>기금 현황·거래 차트</h3><p>잔액·인출 가능액과 최근 6개월 기부·환불 차트. 가입비·구독료·인출은 차트에서 제외한다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-14.html"><div class="eyebrow">F04-14</div><h3>기부하기·기부 내역</h3><p>첫 출시는 무료 포인트 전용. 취소, 무료 기금 반영, 현금화 차단.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-15.html"><div class="eyebrow">F04-15</div><h3>기금 인출 요청</h3><p>가용 잔액 검증, pending 중복, 승인 위임.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F04-16.html"><div class="eyebrow">F04-16</div><h3>클럽 구독</h3><p>기금 전액 결제는 출시, 오너 지갑 부족분은 봉인. 시작·해지·재활성.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
+          <a class="card" href="../features/F04-16.html"><div class="eyebrow">F04-16</div><h3>클럽 구독</h3><p>기금 전액 결제는 첫 출시 포함, 오너 지갑 부족분은 후속 출시. 시작·해지·재활성.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-17.html"><div class="eyebrow">F04-17</div><h3>구성인원 인구통계</h3><p>멤버 전용 게이트, k-익명성 3단계, Asia/Seoul 기준일.</p><div class="meta"><span class="pill">7 시나리오</span><span class="pill brand">상세 →</span></div></a>
           <a class="card" href="../features/F04-18.html"><div class="eyebrow">F04-18</div><h3>클럽 레퓨테이션 점수</h3><p>마일리지·등급·경고·심각 제재 합산, 4레벨, 운영진 세부 내역 공개.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
         </div>
@@ -228,12 +228,13 @@ flowchart LR
         <div class="callout warn">
           <span class="label">클럽 활동 운영 묶음</span>
           <p>마일리지는 <a href="16-mileage.html">마일리지 도메인과 8개 기능 문서</a>, 경고·이의는
-            <a href="15-warning.html">경고·징계 도메인과 9개 기능 문서</a>로 이미 분리했다. 마일리지 핵심 기능은
-            코드·운영 화면 검증을 마쳐 운영 기본 목록에 포함됐다. 사진 승인 적립도 심사·재심·적립·취소·회수와
-            클럽 운영 화면·전체 회귀·빈 데이터베이스 대조를 마쳤고 역할별 앱↔서버 흐름 뒤 별도로 출시한다.
-            시즌·반복 수동 적립 검토·이벤트별 규칙은 2026-09-06 구현·검증·로컬 통합 완료이며 운영 배포 전이다.
-            <a href="../features/club-stamp.html">클럽 스탬프</a>도 공동 운영·발행자 잠금·칸별 보상·일괄 찍기를 구현했지만
-            실계정·서명 앱 증명과 별도 활성화가 남았다. 운영자 알림 모니터링·권한 설정·클럽 활동 알림 채널처럼 아직 독립 기능 번호가
+            <a href="15-warning.html">경고·징계 도메인과 9개 기능 문서</a>로 이미 분리했다.
+            핵심 마일리지에 시즌·사진 심사 적립·반복 수동 적립 검토·모임별 점수와
+            <a href="../features/club-stamp.html">클럽 스탬프</a>를 더해 <strong>첫 출시 기본 목록</strong>에 포함했다.</p>
+          <p>자동 검사를 통과했고 시즌·반복 적립 판정·모임별 점수는 실제 앱과 서버에서도 확인했다.
+            서버 운영 담당자는 기존 클럽 데이터를 준비하고 두 서버를 배포한다. 품질 확인 담당자는
+            <strong>사진 심사·스탬프의 실제 앱 연결</strong>과 서명 휴대전화 앱의 역할별 이용·알림·화면 이동을 서비스 공개 전에 검사한다.</p>
+          <p>운영자 알림 모니터링·권한 설정·클럽 활동 알림 채널처럼 아직 독립 기능 번호가
             없는 항목만 다음 문서 정리에서 알맞은 기존 기능에 편입하거나 새 기능으로 배정한다.</p>
         </div>
       </section>
@@ -242,8 +243,8 @@ flowchart LR
         <h2>클럽 줄기 — 클럽 안에서 굴러가는 운영 도메인</h2>
         <p class="subtitle">별도 도메인 번호를 받았지만 실제로는 클럽 단위로 설정·운영되는 기능들이다. 보상도 제재도 클럽 운영진의 도구라는 점에서 클럽 줄기로 묶는다.</p>
         <div class="hub-grid">
-          <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">줄기 · 16</div><h3>마일리지</h3><p>클럽 보상 프로그램. 핵심 적립·등급·배지·랭킹·운영은 완료됐고, 시즌은 별도 후속 기능이다.</p></a>
-          <a class="card" href="../features/club-stamp.html"><div class="eyebrow">클럽 활동 · 별도 출시 전</div><h3>클럽 스탬프</h3><p>운영진이 함께 찍는 수동 도장판. 마일리지와 독립이며 보상 지급과 책임은 클럽에 있다.</p></a>
+          <a class="card" href="../domains/16-mileage.html"><div class="eyebrow">줄기 · 16</div><h3>마일리지</h3><p>적립·사용·등급·배지·순위에 시즌·사진 심사 적립·반복 수동 적립 검토를 함께 제공한다.</p></a>
+          <a class="card" href="../features/club-stamp.html"><div class="eyebrow">클럽 활동 · 첫 출시 포함</div><h3>클럽 스탬프</h3><p>운영진이 함께 찍는 수동 도장판. 마일리지와 독립이며 보상 지급과 책임은 클럽에 있다.</p></a>
           <a class="card" href="../features/club-poll.html"><div class="eyebrow">클럽 활동 · 별도 출시 전</div><h3>게시글·모임 투표</h3><p>게시글 의견 수렴, 참가자 투표, 무료 클럽 모임의 일정·장소 결정과 자동 참가.</p></a>
           <a class="card" href="../policies/permission.html#role-restriction"><div class="eyebrow">운영 권한</div><h3>역할 제한의 효력</h3><p>제재 기간에는 운영진·공동주최자 위임 권한을 정지한다. 일반 회원 자격과 해제 후 복구는 구분한다.</p></a>
           <a class="card" href="../domains/15-warning.html"><div class="eyebrow">줄기 · 15</div><h3>경고·징계</h3><p>클럽 운영 제재. 신고 접수·경고 부여·운영진 심사 큐가 클럽 거버넌스의 도구다 (플랫폼 전역 제재 한 축만 횡단).</p></a>

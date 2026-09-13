@@ -26,7 +26,7 @@
       <section id="code-completeness">
         <div class="callout danger release-summary">
           <span class="label">현재 결론</span>
-          <p><strong>공개 보류</strong> 상태다. 기존 기능의 자동 검사 기록은 있지만, 이후 추가된 기금 차트·정산 배지·권한 제한·경고 재시도와 투표 코드를 포함한 재검증이 필요하다.</p>
+          <p><strong>스탬프·마일리지 시즌·반복 수동 적립 검토·사진 심사 적립</strong>을 검사하고 첫 출시 기본 설정에 포함했다. 실제 배포와 휴대전화·외부 서비스 검사는 남아 있어 <strong>공개는 보류</strong>한다.</p>
           <p>이전 출시 검증 기준을 정한 뒤 고객 앱과 두 서버가 바뀌었다. 개발 책임자는 최신 변경을 공유하고
             <strong>함께 검사할 버전을 다시 확정</strong>해야 한다. 투표는 별도 준비 후 공개할 기능이다.</p>
           <p>그 버전으로 <strong>서명한 배포용 앱</strong>을 만들고, 실제 서비스·휴대전화 검사와 장애 복구 확인을 마친 뒤
@@ -54,11 +54,14 @@
         <h2>첫 출시 범위</h2>
         <ul>
           <li><strong>이메일·Google 가입</strong>, 무료 모임, 클럽, 게시글·사진·알림·개인 일정과 신고·이의 처리를 제공한다.</li>
-          <li><strong>핵심 마일리지</strong>의 적립·사용·정정·등급·배지·순위를 포함한다.</li>
+          <li><strong>마일리지</strong>의 적립·사용·정정·등급·배지·순위와 <strong>시즌·반복 수동 적립 검토·사진 심사 적립</strong>을 포함한다. 사진 적립은 클럽이 규칙을 켠 경우에만 적용한다.</li>
+          <li><strong>클럽 스탬프</strong>를 포함한다. 클럽장이 도장판 만들기를 허용한 클럽에서 운영진이 사용한다.</li>
           <li>클럽 가입비·기부는 <strong>무료 포인트</strong>만 사용한다. 클럽 기금으로 구독료 전액을 낼 수 있는 경우도 허용한다.</li>
-          <li>유료 모임·플랫폼 결제·마켓 구매·개인 유료 구독·데이트·버스와 카풀·제공자 거래·스탬프·투표는 <strong>후속 출시</strong> 대상이다.</li>
+          <li>유료 모임·플랫폼 결제·마켓 구매·개인 유료 구독·데이트·버스와 카풀·제공자 거래·투표는 <strong>후속 출시</strong> 대상이다.</li>
           <li>새 이용을 막더라도 기존 이용자의 <strong>환불·해지·신고</strong>는 계속 처리할 수 있어야 한다.</li>
         </ul>
+        <p><strong>첫 출시 포함</strong>은 제공할 범위와 운영 기본 설정을 정했다는 뜻이다. 실제 서비스 배포 완료를 뜻하지 않는다.</p>
+        <div class="release-grid" id="included-rows"></div>
         <div id="event-rule"></div>
         <p>세부 범위는 <a href="feature-status.html">기능별 출시 상태와 다음 할 일</a>에서 확인한다.
           사적 모임의 결제 구분은 <a href="../features/private-meeting.html">사적 모임 이용과 정산</a>에 있다.</p>
@@ -77,8 +80,8 @@
             <li>실제 계약·거래·복구를 확인한 뒤 플랫폼 결제를 준비한다.</li>
             <li>플랫폼 결제를 사용하는 인출·개인 구독·마켓·제공자 거래를 준비한다.</li>
           </ol>
-          <p>시즌·사진 심사 적립·반복 적립 검토·스탬프·투표는 결제와 독립적으로 준비한다.
-            모임별 적립 점수는 후속 기능이 아니라 첫 출시 검사에 포함한다.</p>
+          <p>투표는 결제와 독립적으로 준비한다. 시즌·사진 심사 적립·반복 수동 적립 검토·스탬프와 모임별 점수는
+            후속 기능 목록에서 제외하고 첫 출시 검사에 포함한다.</p>
         </details>
         <div class="release-grid" id="next-rows"></div>
       </section>
@@ -171,6 +174,7 @@
         return '<li><strong>' + esc(a.name) + '</strong> — ' + esc(a.detail) + '</li>';
       }).join('');
       renderItems('block-rows', function (o) { return o.impact === 'block'; });
+      renderItems('included-rows', function (o) { return o.impact === 'included'; });
       renderItems('next-rows', function (o) { return o.impact === 'next' && o.id !== 'N-08-EVENT-RULE'; });
       renderItems('event-rule', function (o) { return o.id === 'N-08-EVENT-RULE'; });
       renderItems('later-rows', function (o) { return o.impact === 'later'; });
@@ -183,7 +187,7 @@
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-      document.getElementById('asof-line').textContent = '소스·문서 대조 기준: ' + L.asOf + '. 이번 갱신은 소스 확인과 문서 검증이다. 제품 테스트 재실행·실제 서비스 검사·운영 배포는 하지 않았다.';
+      document.getElementById('asof-line').textContent = '확인 기준: ' + L.asOf + '. 앱 전체와 기능별 서버 검사를 실행했다. 검사 범위는 위 확인 결과를 따른다. 운영 배포·서명 앱의 휴대전화 검사·공개 승인은 아직 하지 않았다.';
     })();
   </script>
   <script src="../assets/app.js"></script>

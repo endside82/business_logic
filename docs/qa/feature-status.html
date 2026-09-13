@@ -120,7 +120,7 @@
       document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
       document.getElementById('m-retired').textContent = data.filter(function (d) { return d.scope === 'retired'; }).length;
       document.getElementById('m-journey').textContent = data.filter(function (d) { return d.proof === 'local' || d.proof === 'real'; }).length;
-      document.getElementById('asof').textContent = '소스·문서 대조 기준: ' + L.asOf + '. 확인 수준은 기존 실행 기록을 유지했다. 이후 변경된 기능의 재검증과 실제 휴대전화·외부 서비스 검사는 별도로 필요하다.';
+      document.getElementById('asof').textContent = '확인 기준: ' + L.asOf + '. 앱 전체·추가 클럽 기능의 서버 검사를 실행하고, 시즌·반복 적립은 실제 앱 연결도 확인했다. 각 행의 확인 범위를 넘어 실제 휴대전화·외부 서비스까지 통과한 것으로 읽지 않는다.';
 
       function nextSteps(d) {
         var items = d.openItems.filter(function (o) { return o.impact !== 'doc'; });
@@ -128,7 +128,7 @@
           return '<a href="launch-status.html#blocking"><strong>공통 출시 준비</strong></a><p>배포용 앱 검사와 운영 준비를 마친 뒤 공개 승인을 받는다.</p>';
         }
         return items.map(function (o) {
-          var label = o.id === 'N-08-EVENT-RULE' ? '첫 출시 검사' : (o.impact === 'next' ? '후속 공개 준비' : (o.impact === 'later' ? '별도 운영 확인' : ''));
+          var label = o.impact === 'included' || o.id === 'N-08-EVENT-RULE' ? '첫 출시 검사' : (o.impact === 'next' ? '후속 공개 준비' : (o.impact === 'later' ? '별도 운영 확인' : ''));
           return '<div><a href="launch-status.html#item-' + esc(o.id) + '"><strong>' + esc(o.actionLabel) + '</strong></a>' +
             (label ? '<p>' + esc(label) + '</p>' : '') + '<p>' + esc(o.nextAction) + '</p></div>';
         }).join('<hr>');
