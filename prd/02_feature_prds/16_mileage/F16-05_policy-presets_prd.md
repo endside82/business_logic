@@ -1,5 +1,9 @@
 # F16-05. 적립규칙·등급·배지·교환 프리셋 관리 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 `POLICY_OWNER` 운영진이 마일리지 메타 정의 4종을 CRUD 한다 — 자동 적립 규칙(트리거별), 등급(최대 10), 배지 정의(최대 50), 차감 프리셋, 그리고 시즌 CRUD. 서버 `MileageAdminPolicyController`의 각 섹션이 `MileageEarningRuleService`/`MileageGradeService`/`MileageBadgeService`/`MileageRedemptionPresetService`/`MileageSeasonService`로 연결되고, Flutter `mileage_grade_crud_screen.dart`·`mileage_badge_crud_screen.dart`·`mileage_redemption_preset_crud_screen.dart`·`mileage_season_crud_screen.dart`가 표시한다.

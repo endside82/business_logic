@@ -1,5 +1,9 @@
 # F16-06. 적립/차감/정정 집행 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 `MILEAGE_MANAGER` 운영진이 마일리지 점수를 실제로 이동시키는 핵심 쓰기 경로다 — 수동/일괄 적립(`grants`, `grants/bulk`), 차감(`redemptions`, `redemptions/bulk`), 원장 정정(`ledger/{ledgerId}/reverse`), 배지 부여/회수(`badges/{badgeDefId}/awards`, `badge-awards/{awardId}`), 일괄 결과 조회(`batches/{batchId}`). grant/redeem 4종은 `Idempotency-Key` 헤더로 멱등 처리되고, Flutter는 호출마다 UUIDv4 키를 자동 발급한다.

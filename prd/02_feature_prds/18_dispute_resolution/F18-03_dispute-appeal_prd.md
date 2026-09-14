@@ -1,5 +1,9 @@
 # F18-03. 분쟁 이의제기 (DisputeAppeal) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
 <!-- 갱신: 2026-06-06 (W14-S2 `07bdb38`): EVENT_NO_SHOW source 사전검증 추가 — createAppeal이 save 전 기한(confirmedAt+7일)·본인·canonical caseId를 검증하고 실패를 전파(과거 검증 실패를 삼키고 201 반환하던 BLOCKER 해소) -->
 

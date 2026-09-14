@@ -2,6 +2,10 @@
 
 # 15. 경고 & 징계 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > 문서 상태: **소스 우선 신규 작성본**. 이 문서는 `community_api/src/main/java/com/endside/community/warning/` 의 실제 컨트롤러 5개·서비스 11개·VO/Param·enum과 `community_app/lib/.../warning/` 의 API/Repository/Provider/Screen을 직접 대조해, 경고 도메인의 9개 기능 PRD를 어떤 순서로 확인해야 하는지 보여준다.
 
 ## 1. 결론

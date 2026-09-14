@@ -1,5 +1,9 @@
 # F15-08. 제재 집행 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > 최종 갱신: 2026-06-06 (W14-S6 커밋 `6faa833` 반영 — EVENT_HOST_RESTRICT 가드 6경로 확장·DATE_PROFILE_BLOCK 실집행·`GET /api/v1/users/me/sanctions` 신설·PlatformSanction admin grant/revoke 배선 확인(R-8)·D-6 강퇴 구독 정리는 무코드 처분(통념 정정)). 이전: 2026-06-05 (`0eae1ed`/`9ba7cd8`/`c3f95a1` — FORCED_REMOVE 실효 해소, 만료 스케줄러 활성, read-time 필터, PlatformSanction 신규, EventApplyRestrictionGuard 신규)
 
 ## 1. 결론

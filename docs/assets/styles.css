@@ -908,3 +908,5 @@ footer.page-foot a { color: var(--brand); border: none; }
 .launch-strip .strip-more { margin-left: auto; font-size: 12.5px; white-space: nowrap; }
 .launch-strip ul { margin: 6px 0 0; padding-left: 18px; flex-basis: 100%; }
 .launch-strip li { font-size: 12.5px; color: var(--muted); }
+/* 문서 용도와 현재 실행 상태를 혼동하지 않도록 모든 문서에서 공통 표시한다. */
+.document-purpose { border-left:3px solid var(--brand); padding:8px 12px; margin:12px 0 24px; color:var(--ink-soft); font-size:14px; line-height:1.75; }

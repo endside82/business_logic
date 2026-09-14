@@ -8,15 +8,15 @@
   <link rel="stylesheet" href="../assets/styles.css">
   <link rel="stylesheet" href="../assets/release-readability.css">
 </head>
-<body data-base="../" class="release-page">
+<body data-document-kind="current" data-base="../" class="release-page">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>출시 준비<span>›</span>기능별 출시 상태</div>
         <h1>기능별 출시 상태와 다음 할 일</h1>
-        <p class="lede">기능을 찾아 <strong>첫 출시 범위</strong>, <strong>확인한 것</strong>,
-          <strong>다음 할 일</strong>을 읽는다. 작업 이름을 누르면 처리할 메뉴·검사와 완료 조건으로 이동한다.</p>
+        <p class="lede">기능별로 <strong>출시 범위</strong>와 <strong>구현·자동 테스트·실제 환경</strong>을 따로 읽는다.
+          다음 행동을 누르면 준비물과 완료 조건으로 이동한다. 후속 부분의 미구현을 첫 출시 전체의 미구현으로 읽지 않는다.</p>
       </header>
 
       <section>
@@ -41,14 +41,18 @@
           </select>
           <select id="proof-filter" aria-label="확인한 검사">
             <option value="">전체 확인 수준</option><option value="real">새 계정 이용 확인</option>
-            <option value="local">기존 계정 이용 확인</option><option value="auto">자동 검사만 확인</option>
+            <option value="local">기존 계정 이용 확인</option><option value="auto">전체 자동 회귀 기록</option>
           </select>
-          <label class="chip"><input type="checkbox" id="f-gap">확인된 미해결 항목만</label>
+          <select id="work-filter" aria-label="남은 일 성격">
+            <option value="">전체 작업 성격</option><option value="development">추가 개발이 있는 기능</option>
+            <option value="environment">등록된 추가 개발 없이 실제 확인 대기</option>
+          </select>
+          <label class="chip"><input type="checkbox" id="f-gap">개별 준비가 남은 기능만</label>
         </div>
         <p class="feature-count" id="count" aria-live="polite">불러오는 중…</p>
         <div class="table-wrap">
           <table class="release-table">
-            <thead><tr><th>기능</th><th>첫 출시 범위</th><th>확인한 것</th><th>다음 할 일</th></tr></thead>
+            <thead><tr><th>기능</th><th>첫 출시 범위</th><th>구현·테스트·실제 환경</th><th>다음 할 일</th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -64,9 +68,11 @@
       <section id="reading-guide">
         <h2>상태를 읽는 기준</h2>
         <ul>
+          <li><strong>구현 기록 있음</strong>: 해당 범위의 코드가 있다는 기록이다. 모든 시나리오가 검증됐다는 뜻이 아니다. 일부 추가 개발은 빠진 기능의 이름을 따로 적는다.</li>
+          <li><strong>실제 환경 확인 대기</strong>: 배포용 앱·실제 서비스에서 실행한 결과가 없다. 자동 테스트가 없거나 코드가 없다는 뜻은 아니다.</li>
           <li><strong>일부만 포함</strong>: 기능 안에서 제공할 부분과 막아 둘 부분이 다르다. 범위 설명에서 구분한다.</li>
           <li><strong>이용 확인</strong>: 개발용 환경에서 앱을 사용하고 서버 결과를 확인한 기록이다. 새 계정으로 시작했는지, 준비된 계정을 썼는지 구분한다.</li>
-          <li><strong>자동 검사만 확인</strong>: 프로그램의 자동 검사 기록만 있다. 실제 고객의 전체 이용이 통과했다는 뜻은 아니다.</li>
+          <li><strong>전체 자동 회귀 기록</strong>: 앱·서버 전체 테스트 기록이다. 기능별 세부 실행 근거가 연결되지 않은 경우 따로 표시한다. 이를 모든 기능의 시나리오 통과로 해석하거나 새 결함으로 세지 않는다.</li>
           <li><strong>공통 출시 준비</strong>: 배포할 버전·외부 서비스·휴대전화 검사·장애 복구·스토어 자료와 공개 승인을 준비한다.</li>
           <li><strong>문서 검토 후보</strong>: 아직 사실 확인이 끝나지 않은 문장 수다. 확인된 결함 수와 다르며 기능의 검사 범위를 펼치면 볼 수 있다.</li>
         </ul>
@@ -128,7 +134,9 @@
           return '<a href="launch-status.html#blocking"><strong>공통 출시 준비</strong></a><p>배포용 앱 검사와 운영 준비를 마친 뒤 공개 승인을 받는다.</p>';
         }
         return items.map(function (o) {
-          var label = o.impact === 'included' || o.id === 'N-08-EVENT-RULE' ? '첫 출시 검사' : (o.impact === 'next' ? '후속 공개 준비' : (o.impact === 'later' ? '별도 운영 확인' : ''));
+          var linkedDevelopment = o.readiness.work === 'development' && o.developmentFeatures.indexOf(d.id) === -1;
+          var label = linkedDevelopment ? '관련 후속 기능의 개발 · 이 기능의 미구현을 뜻하지 않음' :
+            (o.impact === 'next' ? '후속 범위 · ' : (o.impact === 'included' || o.impact === 'block' ? '첫 출시 · ' : '')) + L.WORK[o.readiness.work];
           return '<div><a href="launch-status.html#item-' + esc(o.id) + '"><strong>' + esc(o.actionLabel) + '</strong></a>' +
             (label ? '<p>' + esc(label) + '</p>' : '') + '<p>' + esc(o.nextAction) + '</p></div>';
         }).join('<hr>');
@@ -138,21 +146,26 @@
         return pill(L.SCOPE[d.scope]) + '<p>' + esc(note) + '</p>';
       }
       function proofCell(d) {
-        return pill(L.PROOF[d.proof]) +
+        return '<p><strong>구현</strong><br>' + esc(d.implementation) + '</p>' +
+          '<p><strong>자동 테스트</strong><br>' + esc(d.automation) + '</p>' +
+          '<p><strong>실제 환경</strong><br>' + esc(d.environment) + '</p>' +
           '<details><summary>확인 범위·검토 항목</summary><p>' + esc(d.proofNote || L.PROOF[d.proof].desc) + '</p>' +
-          '<p>확인된 미해결 항목: ' + d.issues + '건<br>문서 검토 후보: ' + d.pending + '건</p>' +
+          pill(L.PROOF[d.proof]) + '<p>개별 준비 항목: ' + d.issues + '건<br>문서 검토 후보: ' + d.pending + '건 — 결함 수가 아님</p>' +
           '<p>기능 식별자: ' + esc(d.id) + '</p></details>';
       }
       function render() {
         var q = document.getElementById('q').value.trim().toLowerCase();
         var scope = document.getElementById('scope-filter').value;
         var proof = document.getElementById('proof-filter').value;
+        var work = document.getElementById('work-filter').value;
         var gap = document.getElementById('f-gap').checked;
         var list = data.filter(function (d) {
           if (domain.value && d.domain !== domain.value) return false;
           if (scope === 'included' && d.scope !== 'open' && d.scope !== 'partial') return false;
           if (scope && scope !== 'included' && d.scope !== scope) return false;
           if (proof && d.proof !== proof) return false;
+          if (work === 'development' && !d.developmentItems.length) return false;
+          if (work === 'environment' && (d.developmentItems.length || d.scope === 'retired')) return false;
           if (gap && !d.issues) return false;
           return !q || (d.id + ' ' + d.name + ' ' + d.originalName + ' ' + d.domain).toLowerCase().includes(q);
         });
@@ -163,7 +176,7 @@
           return '<tr><td data-label="기능"><a class="feature-name" href="../features/' + esc(d.id) + '.html">' +
             esc(d.name) + '</a><div class="feature-domain">' + esc(d.domain) + '</div></td>' +
             '<td data-label="첫 출시 범위">' + scopeCell(d) + '</td>' +
-            '<td data-label="확인한 것">' + proofCell(d) + '</td>' +
+            '<td data-label="구현·테스트·실제 환경">' + proofCell(d) + '</td>' +
             '<td data-label="다음 할 일">' + nextSteps(d) + '</td></tr>';
         }).join('') || '<tr><td colspan="4">조건에 맞는 기능이 없다. 검색어나 필터를 바꿔 본다.</td></tr>';
         document.getElementById('count').textContent = list.length ? '검색 결과 ' + list.length + '개 중 ' + (start + 1) + '–' + Math.min(start + pageSize, list.length) + '개 표시 · 전체 ' + data.length + '개 기능' : '검색 결과 없음 · 전체 ' + data.length + '개 기능';
@@ -171,7 +184,7 @@
         document.getElementById('previous-page').disabled = page === 1;
         document.getElementById('next-page').disabled = page === totalPages;
       }
-      ['q', 'domain-filter', 'scope-filter', 'proof-filter', 'f-gap'].forEach(function (id) {
+      ['q', 'domain-filter', 'scope-filter', 'proof-filter', 'work-filter', 'f-gap'].forEach(function (id) {
         document.getElementById(id).addEventListener(id === 'q' ? 'input' : 'change', function () { page = 1; render(); });
       });
       function changePage(delta) {

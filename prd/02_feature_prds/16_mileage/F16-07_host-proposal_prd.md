@@ -1,5 +1,9 @@
 # F16-07. 호스트 제안 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 호스트 제안은 이벤트 호스트가 자기 이벤트 참여 멤버에게 줄 적립 점수를 제안하고, 운영진(`MILEAGE_MANAGER`)이 검토 큐에서 승인(적립 실행)/반려하는 두 단계 흐름이다. 제출/조회는 `MileageHostController`(`/api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals`, `isEventHost` 검증), 처리는 `MileageAdminQueueController`(`/admin/.../host-proposals`)에서 이뤄진다.

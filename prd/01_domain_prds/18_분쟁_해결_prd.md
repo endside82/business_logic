@@ -1,5 +1,9 @@
 # 18. 분쟁 해결 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/ -->
 
 > 문서 상태: **신규 도메인 신설본**. 1차 자료는 `community_api/src/main/java/com/endside/community/host/dispute/` 및 `host/` 패키지 실제 소스 (엔티티 2종 · enum 8종 · 서비스 5종 · 컨트롤러 2종 · 엔드포인트 9개 · 스케줄러 2종), `community_app/lib/presentation/dispute/`, `lib/domain/providers/dispute/`, `lib/data/models/dispute/` 직접 확인 결과다.

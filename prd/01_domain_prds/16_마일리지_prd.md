@@ -2,6 +2,10 @@
 
 # 16. 마일리지 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > 문서 상태: **신규 도메인 source-first 작성본**. 이 문서는 `community_api/src/main/java/com/endside/community/mileage/` 전체(컨트롤러 6, 서비스 16, VO 18, param 19, enum 9, model 14)와 `community_app/lib/.../mileage/`(API 6, repository 6, provider 7, screen 22) 실제 소스를 대조해 작성했다. 기능 단위 판단은 아래 F16-01~08 기능 PRD에서 source 대조로 확정한다.
 
 ## 1. 결론

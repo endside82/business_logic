@@ -1,5 +1,9 @@
 # F17-04. 정기모임 생명주기 (publish / close / cancel / reopen) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 `RegularMeetingStatus` 4 상태 머신:

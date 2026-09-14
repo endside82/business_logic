@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
-<body data-base="../">
+<body data-document-kind="reference" data-base="../">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
@@ -22,7 +22,16 @@
         </p>
       </header>
 
-      <div class="launch-strip" id="launch-strip" data-domain="1"></div>
+      <div class="launch-strip" id="launch-strip" data-domain="10"></div>
+
+      <section id="google-sync">
+        <h2>Google Calendar 자동 동기화 — 첫 출시와 별도</h2>
+        <p><strong>구현:</strong> 앱 일정을 Google에 생성·수정·삭제하고 인증 갱신·철회를 처리하는 코드가 있다.</p>
+        <p><strong>자동 테스트:</strong> Google 응답을 모사한 동기화·인증 갱신 14건을 다시 실행해 통과했다. 실제 Google 계정을 사용한 결과가 아니다.</p>
+        <p><strong>실제 환경:</strong> Google 동의 화면·운영 설정·실계정의 동기화와 연결 해제는 미확인이다. 첫 출시는 내부 일정과 일회성 일정 파일 내보내기만 제공한다.</p>
+        <p><strong>다음 행동:</strong> 자동 동기화를 제공하기로 결정한 뒤 실제 계정으로 연결·생성·변경·삭제·갱신·해제를 확인한다.
+          준비물과 완료 조건은 <a href="../qa/launch-status.html#item-N-12-CALENDAR">Google Calendar의 실제 연결 확인</a>을 따른다. 이미 있는 코드를 다시 개발하지 않는다.</p>
+      </section>
 
 
       <section>

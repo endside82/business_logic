@@ -1,5 +1,9 @@
 # F08-14 — 플랜 마켓 환불 (Purchase Refund) · v2
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > 신규 PRD. 작성일 2026-05-24, codex 페어 리뷰 합의 v2 갱신.
 > 상태: **구현됨** (`PurchaseRefundController`/`PurchaseRefundService`). 전액 환불, 번들 구성품 일부 환불,
 > 판매자 심사, 구매자 취소, 분쟁과 운영자 판정까지 코드가 연결되어 있다. 유료·무료 포인트 구성 보존과

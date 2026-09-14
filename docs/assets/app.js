@@ -14,6 +14,20 @@
 
 // Render mermaid diagrams once the DOM is ready
 window.addEventListener('DOMContentLoaded', () => {
+  const kind = document.body.dataset.documentKind;
+  const head = document.querySelector('main .page-head');
+  if (head && kind && kind !== 'current') {
+    const notice = document.createElement('p');
+    notice.className = 'document-purpose';
+    const label = document.createElement('strong');
+    label.textContent = kind === 'history' ? '변경 기록' : '기능·설계 참고 문서';
+    notice.append(label, ' — 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. ');
+    const link = document.createElement('a');
+    link.href = (document.body.dataset.base || './') + 'qa/feature-status.html';
+    link.textContent = '현재 구현·자동 테스트·실제 환경과 다음 행동';
+    notice.append(link);
+    head.after(notice);
+  }
   if (window.mermaid) {
     window.mermaid.initialize({
       startOnLoad: true,

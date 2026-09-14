@@ -1,5 +1,9 @@
 # F09-01. 본인 인증 (Toss) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- generated: source-first-unit-sync; updated: 2026-05-27 (Phase 0 하드닝 + 인구통계 동기화 반영); unit: business_logic/units/09_private_date/F09-01_verification -->
 
 > 문서 상태: **실사 기반 전환본 v2 — 2026-05-27 Phase 0 보안 하드닝 반영.** 시도 단위 세션 테이블 신설(txId 바인딩·일일제한·만료·실패 전이 정확화), Member 인구통계 동기화 훅, Redisson 사용자별 락, 공통 AES 코덱이 추가됐다. 코드 수정/QA 착수 전에는 `community_api/src/main/java/com/endside/community/privatedate/` 와 `community_api/src/main/java/com/endside/community/account/service/MemberService.java` 를 직접 다시 연다.

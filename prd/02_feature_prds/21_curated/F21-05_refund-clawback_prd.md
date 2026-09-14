@@ -1,5 +1,9 @@
 # F21-05. 환불·회수 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + payment/ + community_app curated/ -->
 
 ## 1. 결론

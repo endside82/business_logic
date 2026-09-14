@@ -1,5 +1,9 @@
 # F08-04. 블록 드래그 재정렬 / 계층 이동 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce -->
 
 > 문서 상태: **현재 소스 실측본**. 서버 Controller/Service/Param과 Flutter API/Repository/Provider/화면을 직접 대조했다. 이 기능의 최종 권한·트리 무결성·동시성 판단은 서버가 담당한다.

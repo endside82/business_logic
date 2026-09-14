@@ -6,8 +6,9 @@
   <title>클럽 스탬프 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/stamp-preview.css">
 </head>
-<body data-base="../">
+<body data-document-kind="reference" data-base="../">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
@@ -24,13 +25,29 @@
           <span class="label">첫 출시 포함 — 운영 기본 설정 반영</span>
           <p>공동 운영·발행자 잠금·일괄 찍기·중복 방지와 <strong>권한 제한 직후의 차단·담당자 이관</strong>을
             검사했다. 두 서버의 운영 기본 출시 목록에 포함했으며, 클럽장이 <strong>도장판 만들기</strong>를 허용하면 운영진이 사용한다.</p>
-          <p><strong>운영 배포와 휴대전화 검사</strong>는 아직 남아 있다. 서버 운영 담당자는 실제 출시 목록을 맞춰 배포하고,
-            품질 확인 담당자는 서명 앱의 알림·화면 이동과 역할별 이용을 확인한다.</p>
+          <p><strong>실제 로컬 앱 연결</strong>도 통과했다. 클럽장·운영진·회원의 도장판 생성·일괄 찍기·응답 유실 복구·보상 표시·정정을 서버 결과와 대조했다.
+            남은 것은 <strong>서명 휴대전화·실제 알림·운영 배포</strong>의 확인이다. 별도 담당자 배정은 필요하지 않다.</p>
           <p>현재 판정은 <a href="../qa/launch-status.html#item-N-08-STAMP">첫 출시 현황의 클럽 스탬프 — 운영진이 함께 찍는 도장판</a>을 따른다.</p>
         </div>
         <div class="metrics">
           <div class="metric"><div class="label">진행 도장판</div><div class="value">최대 30개</div><div class="hint">클럽당, 시작 전 도장판 포함</div></div>
           <div class="metric"><div class="label">한 번에 찍기</div><div class="value">최대 100명</div><div class="hint">전원 반영 또는 전원 미반영</div></div>
+        </div>
+      </section>
+
+      <section id="actual-screens">
+        <h2>회원이 보는 실제 화면</h2>
+        <p><strong>종이 도장판과 꽃 인장</strong>으로 참여 기록을 보여준다. 찍힌 수·완료 기준·보상 안내를 나누고,
+          회원은 읽기만 한다. 아래는 시험 계정으로 실제 앱과 로컬 서버를 연결한 화면이며, 서명 휴대전화 검사를 대신하지 않는다.</p>
+        <div class="stamp-preview-gallery">
+          <figure>
+            <img src="../assets/screenshots/stamp/member-card.jpg" width="390" height="844" loading="lazy" alt="열 칸 중 세 칸에 꽃 도장이 찍힌 회원 도장판. 완료 기준은 여덟 개이며 다섯 개가 남았다.">
+            <figcaption>내 도장판 — 진행과 보상 안내</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/screenshots/stamp/member-list.jpg" width="390" height="844" loading="lazy" alt="종이 카드와 인장으로 표현한 진행 중 도장판 목록. 각 카드에 완료 기준과 내 진행 수가 보인다.">
+            <figcaption>도장판 목록 — 참여 중인 카드 찾기</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -83,7 +100,7 @@
 
       <section>
         <h2>출시 전에 확인할 것</h2>
-        <p>실계정의 클럽장·운영진·회원으로 만들기→찍기→보상 표시→정정을 왕복한다. 두 서버가 동시에 동작할 때의
+        <p>로컬 앱의 만들기·찍기·보상 표시·정정 검사는 완료했다. 남은 검사는 서명한 배포용 앱으로 진행한다. 두 서버가 동시에 동작할 때의
           권한 변경, 서명 앱의 실행 중·백그라운드·종료 상태 알림 이동, 대상 정보가 없는 알림,
           탈퇴와 기능 차단도 같은 출시 대상에서 확인한다. 현재 자동 회귀를 이 실기기 증거로 대체하지 않는다.</p>
         <p>역할 변경·제재의 적용 범위는 <a href="../policies/permission.html#role-restriction">역할 제한이 적용되는 권한</a>,

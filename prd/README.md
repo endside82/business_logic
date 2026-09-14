@@ -1,5 +1,9 @@
 # community PRD 문서 묶음
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 이 폴더는 `business_logic` 원문과 기획자 온보딩 문서를 기반으로 생성한 기능형 전체 PRD다.
 
 ## 먼저 볼 문서

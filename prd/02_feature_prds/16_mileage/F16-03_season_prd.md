@@ -1,5 +1,9 @@
 # F16-03. 시즌 (목록·과거 랭킹·내 스냅샷) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 시즌 조회는 멤버가 시즌 목록(`GET /mileage/seasons`, 상태 필터), 종료 시즌의 스냅샷 기반 랭킹(`GET /seasons/{seasonId}/ranking`), 본인 시즌 스냅샷(`GET /seasons/{seasonId}/me`, 없으면 204)을 보는 흐름이다. 서버 `MileageSeasonController`와 Flutter `mileage_seasons_screen.dart` / `mileage_season_ranking_screen.dart`가 연결되어 있다.

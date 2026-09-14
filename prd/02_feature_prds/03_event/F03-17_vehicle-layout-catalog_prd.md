@@ -1,5 +1,9 @@
 # F03-17. 차량 좌석 배치도 운영 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-measured: 2026-09-02; authority: community_api/community_admin_api/community_admin_front/community_app current source -->
 
 > 현재 상태: **첫 출시에 필요한 코드와 운영 화면 완료**. 대절 버스 봉인을 막는 미구현 항목이 아니다.

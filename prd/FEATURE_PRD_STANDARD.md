@@ -1,5 +1,9 @@
 # 실사 기반 기능 PRD 표준
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 목적
 
 이 문서는 `business_logic/prd/02_feature_prds`를 다시 작성할 때 적용할 기준이다.

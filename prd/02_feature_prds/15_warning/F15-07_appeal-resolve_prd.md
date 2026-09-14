@@ -1,5 +1,9 @@
 # F15-07. 이의제기 처리 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 이의제기 처리는 `WARNING_REVIEWER` 권한으로 `WarningAdminActionController`가 제공한다. `GET /appeals`(`Page<WarningAppealVo>`)로 이의를 검색하고, `POST /appeals/{appealId}/resolve`로 인용(`ACCEPTED`)·부분 인용(`PARTIALLY_ACCEPTED`)·기각(`REJECTED`)을 판정한다. 컨트롤러는 resolve 전에 `claimForReview`(SUBMITTED→IN_REVIEW)를 호출한다. 인용은 `WarningLedgerService.insertReverse`로 대상 GRANT를 REVERSE하고, 부분 인용은 `insertMitigate(mitigatePoints)`로 경감하며, 기각은 원장 변화 없이 상태만 바꾼다. 종결된 이의는 `POST /appeals/{appealId}/allow-resubmit`로 재제기를 허용할 수 있다(이의 row에 `resubmitAllowedAt/By`만 기록). 처리 결과는 audit + outbox `WarningAppealResolved`로 발행된다. Flutter `warning_appeal_inbox_screen.dart`가 이를 구현했다.

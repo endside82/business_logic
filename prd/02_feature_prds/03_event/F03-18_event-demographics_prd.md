@@ -1,5 +1,9 @@
 # F03-18. 이벤트 구성인원 인구통계 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- generated: source-first-unit-sync; updated: 2026-05-27; unit: business_logic/units/03_event/F03-18_event-demographics (신규) -->
 
 > 문서 상태: **2026-05-27 신규 기능.** 이벤트 상세 화면 내 "구성 통계" 섹션 — 참석 확정자(host + cohost + ATTENDING)의 성별·나이대·MBTI I·E 비율을 가로 비율 바로 표시한다. 데이터 원천은 `Member.gender/birthDate/mbti`이며 본인인증 동기화([[F09-01]])로 검증값이 반영된다. 프라이버시 3단계 게이트(전체 인원 / 차원 응답수 / 버킷 최소셀)로 소수 셀(개인) 식별을 차단한다.

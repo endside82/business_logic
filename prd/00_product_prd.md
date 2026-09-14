@@ -1,5 +1,9 @@
 # community 전체 제품 요구사항 문서(PRD)
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > 문서 상태: **제품 개요 문서**. 기능별 현재 계약, source trace, Gap/Risk 판단은 `PRD_MIGRATION_STATUS.md`와 `02_feature_prds/`의 기능 PRD를 우선한다. 이 문서는 제품 범위와 전체 구조를 잡는 입구다.
 
 ## 변경 이력

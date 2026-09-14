@@ -1,5 +1,9 @@
 # F11-04. 신고 (이벤트/사용자/리뷰/클럽) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- updated: 2026-06-05; delta: 2026-06-04 dossier 04 §4-1 + 03 §4-D 반영 -->
 
 > 문서 상태: **실사 기반 갱신본**. 2026-06-04 델타 dossier(04_review_moderation.md §4-1, 03_club_moderation.md §4-D)를 반영해 ReportType 전체 8값, Report 엔티티 신규 컬럼 3개, ReportParam/ReportVo 신규 필드, 증빙 첨부 및 자동 플래그 절을 추가했다. 코드 수정이나 QA 착수 전에는 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.

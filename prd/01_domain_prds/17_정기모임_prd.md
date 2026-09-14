@@ -1,5 +1,9 @@
 # 17. 정기모임 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- generated: source-first-regular-meeting; updated: 2026-05-28; source: community_api/src/main/java/com/endside/community/regularmeeting + docs/plan/regular-meeting -->
 
 > 문서 상태: **신규 도메인 신설본**. 본 PRD는 `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md` 와 `community_api/src/main/java/com/endside/community/regularmeeting/` 실제 소스(엔티티 5종 · enum 9종 · 서비스 17종 · 컨트롤러 1종 · 엔드포인트 25개) 를 1차 자료로 작성한다. 계획 문서는 `docs/plan/regular-meeting/` 16개 분할본이 canonical.

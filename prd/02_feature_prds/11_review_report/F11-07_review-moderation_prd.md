@@ -1,5 +1,9 @@
 # F11-07. 호스트 리뷰 모더레이션 (답변 · 임시 숨김) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- created: 2026-06-05; source: 2026-06-04 dossier 04 §2 실사 기반 신규 작성 -->
 
 > 문서 상태: **실사 기반 신규 작성**. community_api HEAD(88feb72) / community_app HEAD(b0dc370) 소스를 직접 확인한 후 작성했다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.

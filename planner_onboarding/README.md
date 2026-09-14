@@ -1,5 +1,9 @@
 # 새 기획자 온보딩 문서 꾸러미
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 이 폴더는 개발 원문을 읽기 전에 서비스 구조를 먼저 이해하기 위한 비개발자용 Markdown 문서다. Notion에 옮겨도 문서 흐름이 깨지지 않도록 표, 짧은 도식, Mermaid 다이어그램을 섞어서 구성했다.
 
 > **범위 주의:** 현재 전체 제품은 **21개 도메인·175개 기능**이다. 이 폴더의 기능 인벤토리와 원문 커버리지 표는 그중 `business_logic/units/` 근거가 있는 **14개 도메인·117개 기능**만 다룬다. 이 표에 없는 추가 7개 도메인과 F03·F04·F08·F11의 신규 기능을 포함한 **총 58개 no-unit 기능**은 실제 소스를 canonical로 삼는 source-first 계열이므로 [전체 기능 정의](../prd/00_prd_items/05_feature_definitions.md)와 [PRD 시작 문서](../prd/START_HERE.md)에서 함께 확인한다.

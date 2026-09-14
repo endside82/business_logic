@@ -1,5 +1,9 @@
 # 20. 고객지원 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-first: community_api/src/main/java/com/endside/community/inquiry/ + support/; updated: 2026-06-05 -->
 
 > 문서 상태: **신규 도메인 신설본**. 서버 소스 (`inquiry/`, `support/`) 및 Flutter 소스 (`data/api/support_issue_api.dart`, `presentation/support/`, `domain/providers/support/`) 를 1차 자료로 작성한다.

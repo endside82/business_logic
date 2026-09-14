@@ -1,5 +1,9 @@
 # F16-01. 내 마일리지 메인 & 월간 영수증 & 원장 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 멤버 본인의 마일리지 조회 3종(메인/월간 영수증/원장)은 서버와 Flutter가 맞물려 구현되어 있다. `GET /api/v1/clubs/{clubId}/mileage/me`가 현재 잔액·누적 적립·등급(현재/다음)·활성 배지·최근 5건 원장을 `MemberMileageMainVo`로 내려주고, Flutter `mileage_main_screen.dart`가 이를 잔액 카드·등급 카드·배지·최근 원장 행으로 표시한다. 월간 영수증과 원장 페이지도 동일하게 연결되어 있다.

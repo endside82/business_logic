@@ -1,5 +1,9 @@
 # 19. 관심인 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-first; 작성일: 2026-06-05; 원천: community_api/src/main/java/com/endside/community/favorite/ + community_app/lib/ 직접 읽기 -->
 
 > 문서 상태: **신규 도메인 신설본**. 본 PRD는 `community_api/src/.../favorite/` 실제 소스(컨트롤러 4종 · 서비스 5종 · 엔티티 2종 · VO 4종 · config 1종 · 엔드포인트 12개)와 `community_app/lib/` Flutter 소스를 1차 자료로 작성한다. 계획 원본은 `docs/plan/FAVORITE_PERSON_CALENDAR_PLAN.md`.

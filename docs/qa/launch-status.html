@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="../assets/styles.css">
   <link rel="stylesheet" href="../assets/release-readability.css">
 </head>
-<body data-base="../" class="release-page">
+<body data-document-kind="current" data-base="../" class="release-page">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
@@ -19,7 +19,7 @@
           운영자 한 사람이 다음 행동과 완료 조건을 확인하며 진행한다. 관리자 업무는 메뉴와 권한으로 나뉘며, 각각 별도 담당자를 두지 않는다.</p>
         <nav class="release-nav" aria-label="이 페이지 바로가기">
           <a href="#blocking">공개 전에 할 일</a><a href="#scope">첫 출시 범위</a>
-          <a href="#next">후속 기능 준비</a><a href="#gates">공개 승인 기준</a>
+          <a href="#next">후속 기능 준비</a><a href="#status-rules">상태 구분</a><a href="#gates">공개 승인 기준</a>
         </nav>
       </header>
 
@@ -27,11 +27,20 @@
         <div class="callout danger release-summary">
           <span class="label">현재 결론</span>
           <p><strong>버스·카풀, 주최자 계좌 직접 송금, 게시글·모임 투표</strong>를 첫 출시 기본 설정에 추가했다. 스탬프·마일리지 시즌·반복 수동 적립 검토·사진 심사 적립도 포함한다. 실제 배포와 휴대전화·외부 서비스 검사는 남아 있어 <strong>공개는 보류</strong>한다.</p>
-          <p>이전 출시 검증 기준을 정한 뒤 고객 앱과 두 서버가 바뀌었다. 운영자는 최신 변경을 반영해
-            <strong>함께 검사할 버전을 다시 확정</strong>해야 한다. 기능을 첫 출시에 포함하는 것과 실제 고객에게 배포하는 것은 구분한다.</p>
-          <p>그 버전으로 <strong>서명한 배포용 앱</strong>을 만들고, 실제 서비스·휴대전화 검사와 장애 복구 확인을 마친 뒤
-            <strong>공개 승인</strong>을 받는다. 이전 검사 통과가 현재 코드나 실제 고객 환경의 확인을 대신하지는 않는다.</p>
+          <p><strong>다음 행동은 배포 설정 전달</strong>이다. 현재 작업 폴더에는 Android 서명 설정이 없고 현재 실행 환경에는 Google·Firebase·운영 주소가 전달되지 않았다. 다른 보관소에 있는지는 미확인이다. 운영자는 보관 위치를 확인해 빌드 환경에 전달한다.</p>
+          <p>첫 출시 추가 기능의 <strong>자동 테스트는 통과</strong>했다. 검사한 소스와 배포할 소스를 연결해 <strong>서명 앱</strong>을 만들고 실제 이용·복구를 확인한다. 문서만 바뀌었다면 같은 코드의 전체 테스트를 반복하지 않는다.</p>
         </div>
+      </section>
+
+      <section id="status-rules">
+        <h2>개발이 남았는지, 실제 확인만 남았는지</h2>
+        <ul>
+          <li><strong>추가 개발</strong>: 없는 서버 기능·화면·연결을 만들어야 한다. 현재 후속 범위의 기간권 판매, 추가 로그인 실패 집계·화면, 계좌 소액 인증 공급자 연결이 해당한다.</li>
+          <li><strong>자동 테스트</strong>: 기록에 적힌 동작만 확인했다. 외부 응답을 모사한 테스트는 실제 서비스 이용과 다르다.</li>
+          <li><strong>실제 환경 확인</strong>: 배포용 앱·실제 계정·서비스로 실행한 결과가 남아 있어야 한다. 미실행을 미구현으로 바꾸거나 통과로 추정하지 않는다.</li>
+          <li><strong>외부 준비</strong>: 실행에 필요한 서명·계정·설정·접근 권한이다. 보관 위치 미확인을 계약이나 계정이 없다는 뜻으로 쓰지 않는다.</li>
+        </ul>
+        <p>각 작업의 <strong>완료 조건</strong>을 충족하면 남은 할 일에서 뺀다. 후속 개발을 마쳐야 첫 출시할 수 있는 것은 아니다.</p>
       </section>
 
       <section id="actions">
@@ -46,7 +55,7 @@
       <section id="blocking">
         <span id="unresolved"></span><span id="wiring"></span><span id="decisions"></span>
         <h2>공개 전에 할 일</h2>
-        <p class="subtitle">각 항목은 아직 실제 환경의 확인 또는 승인이 필요하다. 완료 조건을 충족한 기록이 있어야 끝난 일로 처리한다.</p>
+        <p class="subtitle">아래는 기능 추가 개발 목록이 아니라 배포 준비·실제 이용·운영 확인 목록이다. 준비물과 완료 조건을 보고 실행한다.</p>
         <div class="release-grid" id="block-rows"></div>
       </section>
 
@@ -63,7 +72,7 @@
         </ul>
         <p><strong>첫 출시 포함</strong>은 제공할 범위와 운영 기본 설정을 정했다는 뜻이다. 실제 서비스 배포 완료를 뜻하지 않는다.</p>
         <div class="release-grid" id="included-rows"></div>
-        <div id="event-rule"></div>
+        <span id="event-rule"></span>
         <p>세부 범위는 <a href="feature-status.html">기능별 출시 상태와 다음 할 일</a>에서 확인한다.
           사적 모임의 결제 구분은 <a href="../features/private-meeting.html">사적 모임 이용과 정산</a>에 있다.</p>
       </section>
@@ -71,7 +80,8 @@
       <section id="next">
         <h2>후속 기능 준비</h2>
         <p>아래 기능은 첫 출시를 기다리게 할 이유가 아니다. 운영자는 필요한 개발·검사·승인을 마친 기능부터 공개 여부를 결정한다.
-          <strong>마켓 기간권 판매</strong>와 <strong>추가 로그인의 실패 확인 화면</strong>에는 개발이 남아 있다.</p>
+          <strong>마켓 기간권 판매</strong>, <strong>추가 로그인의 실패 집계·화면</strong>, <strong>계좌 소액 인증 공급자 연결</strong>에는 개발이 남아 있다.
+          <strong>Google Calendar</strong>는 동기화 코드와 모사 응답 테스트가 있고 실제 계정 연결 확인이 남아 있다.</p>
         <details>
           <summary>후속 기능의 공개 순서</summary>
           <ol>
@@ -160,11 +170,15 @@
         var related = o.docPath ? '<a href="../' + esc(o.docPath) + '">' + esc(o.title) + ' 설명</a>' : featureLinks(o.features);
         return '<article class="release-task" id="item-' + esc(o.id) + '">' +
           '<h3>' + esc(o.title) + '</h3>' +
-          '<p><strong>현재</strong> ' + esc(o.summary) + '</p>' +
+          '<p class="work-label"><strong>남은 일</strong> ' + esc(L.WORK[o.readiness.work]) + '</p>' +
+          '<dl class="readiness-axes"><dt>구현</dt><dd>' + esc(o.readiness.implementation) + '</dd>' +
+          '<dt>자동 테스트</dt><dd>' + esc(o.readiness.automation) + '</dd>' +
+          '<dt>실제 환경</dt><dd>' + esc(o.readiness.environment) + '</dd></dl>' +
           '<p class="task-action"><strong>' + esc(o.actionLabel) + '</strong><br>' + esc(o.nextAction) + '</p>' +
-          (o.workArea ? '<p><strong>처리 위치·권한</strong> ' + esc(o.workArea) + '</p>' : '') +
-          '<details><summary>완료 조건·관련 기능</summary>' +
+          '<p><strong>준비물</strong> ' + esc(o.readiness.input) + '</p>' +
           '<p><strong>완료 조건</strong> ' + esc(o.doneWhen) + '</p>' +
+          '<details><summary>기능 설명·처리 메뉴</summary><p>' + esc(o.summary) + '</p>' +
+          (o.workArea ? '<p><strong>처리 위치·권한</strong> ' + esc(o.workArea) + '</p>' : '') +
           (related ? '<p class="task-links">' + related + '</p>' : '') + '</details></article>';
       }
       function renderItems(target, predicate) {
@@ -175,15 +189,14 @@
       }).join('');
       renderItems('block-rows', function (o) { return o.impact === 'block'; });
       renderItems('included-rows', function (o) { return o.impact === 'included'; });
-      renderItems('next-rows', function (o) { return o.impact === 'next' && o.id !== 'N-08-EVENT-RULE'; });
-      renderItems('event-rule', function (o) { return o.id === 'N-08-EVENT-RULE'; });
+      renderItems('next-rows', function (o) { return o.impact === 'next'; });
       renderItems('later-rows', function (o) { return o.impact === 'later'; });
       renderItems('retired-rows', function (o) { return o.impact === 'retired'; });
       document.getElementById('evidence-rows').innerHTML = L.evidence.map(function (e) {
         return '<p><strong>' + esc(e.state) + '</strong> — ' + esc(e.detail) + '</p>';
       }).join('');
       document.getElementById('track-rows').innerHTML = L.tracks.map(function (t) {
-        var build = t.code === 'MKT-01' || t.code === 'AUT-01' ? '추가 개발 필요' : (t.code === 'REL-01' ? '공개 준비 중' : '기능 있음');
+        var build = t.code === 'MKT-01' ? '기간권 판매 추가 개발' : (t.code === 'AUT-01' ? '첫 출시 구현 있음 / 후속 실패 집계 개발 필요' : (t.code === 'REL-01' ? '공개 준비 중' : '구현 기록 있음'));
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');

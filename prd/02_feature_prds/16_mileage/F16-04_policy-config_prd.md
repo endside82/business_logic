@@ -1,5 +1,9 @@
 # F16-04. 마일리지 정책 설정 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 마일리지 정책 설정은 `POLICY_OWNER` 권한 운영진이 프로그램 활성화·만료일·랭킹 기준·시즌 사용을 조회/수정하고, 변경 영향을 미리 보는 흐름이다. 서버 `MileageAdminPolicyController`의 `GET/PUT /config`와 `GET /config/preview`가 `MileageProgramConfigService`로 연결되고, Flutter `mileage_policy_screen.dart` + `mileage_config_preview_dialog.dart`가 이를 표시한다.

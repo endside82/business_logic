@@ -1,5 +1,9 @@
 # F15-05. 신고 심사 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 신고 심사는 `WARNING_REVIEWER` 권한(OWNER 자동 통과)으로 `WarningAdminActionController`가 제공한다. `GET /reports`(`Page<WarningReportVo>`)로 검토함을 검색하고, `POST /reports/{reportId}/approve`(GRANT 부여), `/reject`(반려), `/request-more-info`(보완 요청)으로 처리한다. approve/reject는 컨트롤러가 **먼저 `claimForReview`(SUBMITTED→IN_REVIEW)를 호출한 뒤** 본 처리를 실행하는 2단계 구조다. 승인 시 `WarningReportService.approve`가 `WarningLedgerService.insertGrant`를 호출해 원장 GRANT를 만들고 report에 `resultingLedgerId`를 연결한다. 보완 요청은 `NEEDS_MORE_INFO` + `more_info_request_count++`로, 종결되지 않은 상태에서 반복 가능하다. Flutter `warning_report_inbox_screen.dart`/`warning_report_detail_screen.dart`가 이를 구현했다.

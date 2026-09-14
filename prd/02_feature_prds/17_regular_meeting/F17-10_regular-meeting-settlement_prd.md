@@ -1,5 +1,9 @@
 # F17-10. 호스트 정산 (flow-through) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 FIXED 모임 종료(`CLOSED`) 시 코스당 1건의 `Settlement(regular_meeting_id=...)` 가 생성된다. **flow-through** 모델: WALLET 결제의 retained 유료 포인트 합계만 호스트 수익으로 잡고, retained 무료 포인트 합계는 `freePointSubsidy`(플랫폼 보조, payout 비대상)로 분리한다. BANK_TRANSFER 는 호스트 직접입금(`isHostDirect=true`, off-ledger)이라 payout 대상 아님.

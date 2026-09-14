@@ -1,0 +1,15 @@
+.stamp-preview-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 24px;
+  max-width: 620px;
+}
+.stamp-preview-gallery figure { margin: 0; }
+.stamp-preview-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.stamp-preview-gallery figcaption { margin-top: 8px; color: var(--muted); }

@@ -1,5 +1,9 @@
 # F15-03. 이의제기 (Appeal) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > **범위 경계**: 이 PRD는 **클럽 경고 이의제기(`WarningAppeal`)** 만 다룬다. `WarningAppealStatus`는 6값(`SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN`)이다. v3 통합 분쟁 이의(`DisputeAppeal`, 4값 `PENDING/UPHELD/REJECTED/CLOSED`)는 전혀 다른 도메인이며 `../../01_domain_prds/18_분쟁_해결_prd.md`(병렬 작성 중, 링크만)를 참조한다.
 
 ## 1. 결론

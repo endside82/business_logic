@@ -1,5 +1,9 @@
 # F04-09. 게시글 댓글·대댓글·멘션 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-measured: 2026-07-29; api HEAD be38d128b80d; app HEAD cb21bce8ef08 -->
 
 > 이 문서는 2026-07-29 현재 `community_api`와 `community_app`의 실제 소스를 다시 대조한 계약이다. 과거 unit 문서의 “댓글/답글 알림 미구현”, “답글 선택 시 `@닉네임` 자동 삽입”, “댓글 좋아요”, “정렬 토글이 실제 정렬을 바꿈” 서술은 현행 구현과 다르므로 이 문서가 우선한다.

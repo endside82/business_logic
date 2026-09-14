@@ -1,5 +1,9 @@
 # Unit-backed 기능 인벤토리
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 이 문서는 전체 21개 도메인·175개 기능 중 `business_logic/units/` 근거가 있는 14개 도메인·117개 기능을 모두 펼쳐 놓은 하위 집합 검산표다. 이 표에 없는 추가 7개 도메인과 F03·F04·F08·F11의 신규 기능을 포함한 총 58개 no-unit 기능은 실제 소스를 canonical로 삼는 source-first 계열이므로, 전체 누락 검산에는 [175개 기능 정의](../prd/00_prd_items/05_feature_definitions.md)를 함께 사용한다. 각 기능의 세부 정책은 별도 기능 카드로 확장한다.
 
 ## Unit-backed 커버리지 요약

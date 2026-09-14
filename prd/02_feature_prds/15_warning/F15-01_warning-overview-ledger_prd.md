@@ -1,5 +1,9 @@
 # F15-01. 내 경고 현황 & 원장 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 멤버 본인 경고 화면은 **점수 요약·검토 등급·활성 제재·최근 원장 5건**을 `GET /api/v1/clubs/{clubId}/warnings/me`(`WarningMemberOverviewVo`)로, **전체 원장 페이지**를 `GET .../me/ledger`(`Page<WarningLedgerVo>`)로 내려주며, Flutter `warning_main_screen.dart`/`warning_ledger_screen.dart`가 이를 그대로 소비한다. 두 엔드포인트 모두 `permissionChecker.requireClubMember`로 멤버만 접근하고, 원장 조회는 서버가 `param.setMemberId(principal.getUserId())`로 본인 범위를 강제한다. 응답 VO 필드와 Dart 모델 필드는 일치한다.

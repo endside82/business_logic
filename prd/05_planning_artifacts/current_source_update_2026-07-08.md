@@ -1,5 +1,9 @@
 # 2026-07-08 현재 소스 갱신 노트
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > 범위: 2026-06-24 도메인 21 추가 이후 `community_api`, `community_app`, `community-realtime`, `community_admin_api`, 루트 `docs/plan`에서 확인된 구현분을 `business_logic/prd`와 `business_logic/docs`의 기존 기능 체계에 반영한다. 신규 도메인·기능 ID는 만들지 않는다. 카운트는 21개 도메인, 175개 기능, 1218개 시나리오, 552개 도식으로 유지한다.
 
 ## 반영 원칙

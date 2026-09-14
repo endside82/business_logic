@@ -1,5 +1,9 @@
 # F16-08. 검토 큐 & 대시보드/감사로그 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 `MILEAGE_MANAGER` 운영진의 마일리지 콘솔 기능이다 — 검토 큐 조회/단건/처리(`queue`), 운영 대시보드(`dashboard`), 멤버 운영 상세(`members/{memberId}`), 멤버 등급 이력(`members/{memberId}/grade-history`), 감사 로그(`audit-logs`). 서버 `MileageAdminQueueController`와 Flutter `mileage_console_screen.dart`·`mileage_queue_screen.dart`·`mileage_audit_log_screen.dart`·`mileage_member_detail_screen.dart`가 연결되어 있다.

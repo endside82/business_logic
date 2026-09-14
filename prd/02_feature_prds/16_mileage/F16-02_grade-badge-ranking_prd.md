@@ -1,5 +1,9 @@
 # F16-02. 등급·배지·랭킹·프로필 카드 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 등급/배지/랭킹/프로필 카드 조회는 서버와 Flutter가 맞물려 구현되어 있다. 멤버는 클럽 등급 정의(`GET /grades`), 본인 등급 변경 이력(`GET /me/grade-history`), 활성 배지 정의(`GET /badges`, active=true만), 클럽 랭킹(`GET /ranking`), 다른 멤버 프로필 카드(`GET /members/{memberId}/profile-card`)를 본다.

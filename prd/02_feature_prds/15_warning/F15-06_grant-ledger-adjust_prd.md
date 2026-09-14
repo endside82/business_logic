@@ -1,5 +1,9 @@
 # F15-06. 경고 부여 & 원장 조정 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 운영진(`WARNING_REVIEWER`)은 제보 없이도 점수를 직접 부여하고 부여된 원장 항목을 조정한다. `POST /grants`는 `targetMemberIds` 배열을 받아 멤버별로 `WarningLedgerService.insertGrant`를 호출하고 `{success, ledgerIds, failed, batchId}` Map을 반환한다(Idempotency-Key 헤더 지원). 조정은 `POST /ledger/{ledgerId}/mitigate`(점수 일부 경감, effective 초과 불가), `/reverse`(전체 정정, GRANT당 1회), `/expire`(만료)이며, `POST /ledger/bulk-expire`는 batchId로 여러 GRANT를 일괄 만료한다(AMNESTY, Idempotency-Key 지원). 원장은 append-only이고 `UNIQUE(club_id, member_id, source_type, source_id)`로 멱등하다. 모든 조정은 `WarningMemberSummaryService.recalculateForUpdate`로 점수를 재산정하고 audit + outbox(`WarningGranted/Mitigated/Reversed/Expired`)를 발행한다. Flutter `warning_member_detail_screen.dart`/`warning_reason_dialog.dart`가 이를 구현했다.

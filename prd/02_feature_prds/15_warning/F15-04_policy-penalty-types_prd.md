@@ -1,5 +1,9 @@
 # F15-04. 경고 정책 & 패널티 유형 설정 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 경고 정책 설정은 `POLICY_OWNER` 권한(OWNER 자동 통과)으로 `WarningAdminPolicyController`(`/api/v1/admin/clubs/{clubId}/warnings`)가 제공한다. `GET/PUT /config`로 경고 제도 활성화, 익명 제보 허용, 만료/SLA 안내 텍스트, 검토 임계치 4단계(`attentionMin ≤ monitorMin ≤ restrictionMin ≤ severeMin` 권장)를 관리하고, `GET /config/preview`로 임계치 변경 시 현재/이후 검토 등급 분포를 미리 본다. 패널티 유형은 `GET /penalty-types`로 플랫폼 카탈로그 + 클럽 override를 병합 조회하고, `PUT /penalty-types`로 유형별 ON/OFF·점수를 upsert하며, `GET /penalty-type-catalog`로 시스템 마스터 7행을 본다. Flutter `warning_policy_screen.dart`가 이를 구현했고 enum/VO 필드가 일치한다.

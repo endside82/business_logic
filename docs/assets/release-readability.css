@@ -7,6 +7,10 @@
 .release-page details + .release-grid { margin-top:18px; }
 .release-page .release-task { padding:20px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--surface); min-width:0; scroll-margin-top:78px; }
 .release-page .release-task h3 { margin:0 0 12px; font-size:18px; }
+.release-page .readiness-axes { display:grid; grid-template-columns:86px minmax(0,1fr); gap:8px 12px; margin:12px 0 20px; font-size:14px; line-height:1.7; }
+.release-page .readiness-axes dt { color:var(--ink); font-weight:700; }
+.release-page .readiness-axes dd { margin:0; color:var(--ink-soft); }
+.release-page .work-label { background:var(--surface-2,var(--surface)); padding:8px 10px; border:1px solid var(--line); border-radius:6px; }
 .release-page .release-task p { font-size:15px; line-height:1.75; margin-bottom:12px; color:var(--ink-soft); }
 .release-page .release-task strong, .release-page .release-table strong { color:var(--ink); font-weight:700; }
 .release-page .release-table a strong { color:var(--brand-deep); }

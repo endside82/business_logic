@@ -1,5 +1,9 @@
 # F15-09. 검토 큐 & 대시보드/통계/감사로그 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 운영진 콘솔의 모니터링·검토 레이어는 `WARNING_REVIEWER` 권한으로 `WarningAdminQueueController`가 제공한다. `GET /queue`(`Page<WarningReviewQueueVo>`)·`GET /queue/{queueId}`·`POST /queue/{queueId}/process`(OPEN→PROCESSED/IGNORED)로 검토 큐 inbox를 처리하고, `GET /dashboard`(`WarningDashboardVo`)로 등급별 인원·이번달 신규·대기 제보/이의·큐 OPEN·outbox 헬스를, `GET /statistics`(`WarningStatisticsVo`)로 부여/감경/정정/만료 수·코드별 분포·이의 평균 처리시간을, `GET /members/{memberId}`(`WarningAdminMemberDetailVo`)로 멤버 상세를, `GET /review-targets`(`Page<WarningReviewTargetVo>`)로 검토 대상(`is_under_review=true`)을, `GET /audit-logs`(`Page<WarningAuditLogVo>`)로 감사 로그를 본다. Flutter `warning_console_screen.dart`/`warning_queue_screen.dart`/`warning_review_targets_screen.dart`/`warning_audit_log_screen.dart`가 구현했다.

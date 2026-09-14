@@ -1,5 +1,9 @@
 # 21. 제공자 배정·정산 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + community_admin_api provider/ + community_app curated/ + provider/ -->
 
 > 문서 상태: **2026-07-29 소스 재실측본**. 공개 API의 `curated/`와 `provider/`, 관리자 API의

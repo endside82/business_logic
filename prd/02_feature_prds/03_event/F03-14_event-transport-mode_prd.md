@@ -1,5 +1,9 @@
 # F03-14. 이동수단 공통 설정 PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 <!-- source-measured: 2026-09-02; authority: community_api/community_app current source -->
 
 > 현재 상태: **코드 완료, 신규 이용 봉인**. 고객·서버 기능이 없어서 닫힌 것이 아니라 서명 앱의

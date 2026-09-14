@@ -1,5 +1,9 @@
 # F17-09. 세션 출석 확정·노쇼 (Phase 4) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 FIXED 모임의 호스트가 매 세션 종료 후 ATTENDING 명단(materialize) 의 실제 출석 여부를 일괄 확정한다. 결과는 권위 테이블 `regular_meeting_session_attendance` (`(event_id, user_id)` UNIQUE) 에 영속된다. 결과는 4종: `ATTENDED, NO_SHOW, EXCUSED, SESSION_CANCELED`.

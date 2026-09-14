@@ -1,5 +1,9 @@
 # 2026-07-29 현재 소스 실측 갱신 노트
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 > **역사 기록:** 이 문서는 2026-07-29 당시 소스를 보존한다. 대절 버스·카풀의 현재 계약은
 > [이동수단 공통 설정](../02_feature_prds/03_event/F03-14_event-transport-mode_prd.md),
 > [카풀·자차](../02_feature_prds/03_event/F03-15_event-carpool_prd.md),

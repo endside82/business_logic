@@ -1,5 +1,9 @@
 # F17-08. 환불 (pro-rata · 트리거별 · FAILED_REFUND) PRD
 
+<!-- release-document: reference -->
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+
+
 ## 1. 결론
 
 FIXED 모임 환불은 **진행 세션 차감 pro-rata** 산식 + 3가지 트리거(MEMBER_CANCEL / HOST_CANCEL / FORFEIT)로 분기한다. 모든 트리거가 동일한 `amount × (N − consumed) / N` 골격을 쓰되 `consumed` 정의가 다르다.
