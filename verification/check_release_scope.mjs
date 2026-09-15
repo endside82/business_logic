@@ -8,11 +8,34 @@ import { fileURLToPath } from 'node:url';
 
 const docs = fileURLToPath(new URL('../docs/', import.meta.url));
 const context = { window: {}, document: { readyState: 'loading', addEventListener() {} } };
-for (const name of ['features.js', 'launch-status.js']) {
+for (const name of ['features.js', 'launch-status.js', 'app-tour-data.js', 'app-tour-coverage-data.js']) {
   vm.runInNewContext(fs.readFileSync(path.join(docs, 'assets', name), 'utf8'), context);
 }
 const launch = context.window.LAUNCH_STATUS;
 const features = context.window.PRD_FEATURES;
+const tour = context.window.APP_TOUR;
+const tourCoverage = context.window.APP_TOUR_COVERAGE;
+// These anchors are generated from the same registries as the actual pages.
+// Do not accept arbitrary shot-/feature- prefixes: typos must still fail.
+const renderedAnchors = new Map([
+  [path.join(docs, 'qa/launch-status.html'), new Set(launch.openItems.map(item => `item-${item.id}`))],
+  [path.join(docs, 'qa/screen-review.html'), new Set([
+    ...tour.shots.map(shot => `shot-${shot.id}`),
+    ...tour.groups.filter(group => tour.shots.some(shot => shot.group === group.id)).map(group => `feature-${group.id}`),
+  ])],
+  [path.join(docs, 'tour/index.html'), new Set([
+    ...tour.shots.filter(shot => shot.showcase).map(shot => `shot-${shot.id}`),
+    ...tour.groups.filter(group => tour.shots.some(shot => shot.group === group.id && shot.showcase)).map(group => `feature-${group.id}`),
+  ])],
+  [path.join(docs, 'tour/coverage.html'), new Set([
+    ...features.map(feature => `feature-${feature.id}`),
+    ...tourCoverage.supplemental.map(item => `feature-${item.id}`),
+    ...tourCoverage.areas.map(area => `area-${area.id}`),
+  ])],
+]);
+assert.ok(renderedAnchors.get(path.join(docs, 'qa/screen-review.html')).has('shot-carpool-passenger-my-seat'));
+assert.ok(!renderedAnchors.get(path.join(docs, 'tour/index.html')).has('shot-carpool-passenger-approved-blank-seats'), '검수 전용 사진은 소개 페이지의 링크 대상으로 허용하지 않음');
+assert.ok(!renderedAnchors.get(path.join(docs, 'qa/screen-review.html')).has('shot-does-not-exist'), '없는 사진 링크는 거부');
 assert.equal(features.length, 175);
 const scopes = {};
 for (const feature of features) {
@@ -26,7 +49,7 @@ for (const id of ['N-00', 'N-07', 'N-11-POLL', 'N-08-SEASON', 'N-08-PHOTO', 'N-0
   assert.equal(item?.impact, 'included', id);
   assert.equal(item.owner, '운영자', id);
   assert.ok(item.nextAction && item.doneWhen, id);
-  assert.equal(item.readiness.work, 'environment', id);
+  assert.equal(item.readiness.work, id === 'N-07' ? 'repair' : 'environment', id);
 }
 assert.equal(new Set(launch.openItems.map(item => item.id)).size, launch.openItems.length, '중복 작업 식별자');
 for (const item of launch.openItems) {
@@ -47,6 +70,10 @@ for (const id of ['N-03', 'N-10', 'N-13-BANK']) {
 }
 assert.equal(launch.forFeature('F08-06').developmentItems.length, 1, '기간권 편성·판매 시작은 상품 관리의 추가 개발');
 assert.equal(launch.forFeature('F01-02').developmentItems.length, 1, '추가 로그인 실패 집계·화면');
+assert.equal(launch.forFeature('F03-15').developmentItems.length, 1, '카풀의 알려진 표시·안내 결함을 실제 환경 확인만 남은 것으로 표시하지 않음');
+assert.equal(launch.forFeature('F03-17').developmentItems.length, 0, '해결된 지정 좌석 표시를 미해결 개발로 다시 세지 않음');
+assert.equal(launch.forFeature('F03-17').proof, 'local', '수정 후 실제 개발용 앱 확인을 기록');
+assert.equal(launch.openItems.find(item => item.id === 'N-07').implementationReady, true, '기존 기능의 결함 보완과 기능 미구현을 구분');
 for (const id of ['F08-09', 'F08-12', 'F08-14']) {
   assert.equal(launch.forFeature(id).developmentItems.length, 0, '기간권 판매 개발을 기존 검색·보유함·환불의 미구현으로 확대하지 않음');
 }
@@ -85,9 +112,7 @@ for (const page of pages) {
     if (fragment && target.endsWith('.html')) {
       const anchor = decodeURIComponent(fragment);
       const targetSource = fs.readFileSync(target, 'utf8');
-      const renderedTask = target.endsWith('/qa/launch-status.html') &&
-        launch.openItems.some(item => `item-${item.id}` === anchor);
-      assert.ok(renderedTask || targetSource.includes(`id="${anchor}"`), `${page} → ${href}`);
+      assert.ok(renderedAnchors.get(target)?.has(anchor) || targetSource.includes(`id="${anchor}"`), `${page} → ${href}`);
     }
     checkedLinks++;
   }

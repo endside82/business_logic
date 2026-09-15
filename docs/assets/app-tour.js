@@ -80,6 +80,12 @@
     return '<tr><td>' + (shots.length ? '<a href="#feature-' + escape(group.id) + '">' + escape(group.title) + '</a>' : escape(group.title)) + '</td><td>' + (shots.length ? shots.length + '장 · 일부 촬영' : '촬영 준비') + '</td><td>' + (saved ? '사진별 명시 범위만 확인' : '이번 촬영의 확인 근거 없음') + '</td><td>' + escape(group.next) + '</td></tr>';
   }).join('') + '</tbody></table>';
   const findings = document.getElementById('tour-findings');
-  if (findings) findings.innerHTML = data.findings.map(item => '<article><span class="tour-role">' + escape(item.severity) + '</span><h3>' + escape(item.title) + '</h3><p>' + escape(item.detail) + '</p><p><strong>다음 행동:</strong> ' + escape(item.next) + '</p><a href="#shot-' + escape(item.image) + '">해당 화면 원본과 설명 보기</a></article>').join('');
+  if (findings) {
+    const card = item => '<article><span class="tour-role">' + escape(item.severity) + '</span><h3>' + escape(item.title) + '</h3><p>' + prose(item.detail) + '</p><p><strong>' + (item.status === 'resolved' ? '남은 확인:' : '다음 행동:') + '</strong> ' + prose(item.next) + '</p><a href="#shot-' + escape(item.image) + '">' + (item.status === 'resolved' ? '수정 후 화면과 확인 결과 보기' : '해당 화면 원본과 설명 보기') + '</a>' + (item.previousImage ? ' · <a href="#shot-' + escape(item.previousImage) + '">수정 전 화면 보기</a>' : '') + '</article>';
+    const open = data.findings.filter(item => item.status !== 'resolved');
+    const resolved = data.findings.filter(item => item.status === 'resolved');
+    findings.innerHTML = '<p><strong>남은 보완 ' + open.length + '건</strong></p>' + open.map(card).join('') +
+      (resolved.length ? '<details class="tour-resolved"><summary>수정하고 다시 확인한 항목 ' + resolved.length + '건</summary>' + resolved.map(card).join('') + '</details>' : '');
+  }
   revealLinkedTarget(location.hash);
 })();

@@ -58,6 +58,11 @@ for (const shot of data.shots) {
 for (const finding of data.findings) {
   assert.ok(groups.has(finding.group), 'Unknown finding group');
   assert.ok(ids.has(finding.image), `Broken finding screenshot: ${finding.image}`);
+  assert.ok(['open', 'resolved'].includes(finding.status || 'open'), 'Unknown finding status');
+  if (finding.status === 'resolved') {
+    assert.ok(ids.has(finding.previousImage), 'Resolved finding needs its original failure screenshot');
+    assert.notEqual(finding.previousImage, finding.image, 'Resolved finding needs new verification evidence');
+  }
   for (const key of ['title', 'severity', 'detail', 'next']) assert.ok(finding[key]?.trim(), `Finding missing ${key}`);
 }
 for (const page of ['tour/index.html', 'qa/screen-review.html']) {
@@ -76,4 +81,6 @@ for (const page of ['tour/index.html', 'qa/screen-review.html']) {
 }
 console.log(JSON.stringify({ result: 'PASS', screenshots: ids.size, groupsStarted: new Set(data.shots.map(shot => shot.group)).size,
   groupsPlanned: groups.size, showcase: data.shots.filter(shot => shot.showcase).length, findings: data.findings.length,
+  openFindings: data.findings.filter(item => item.status !== 'resolved').length,
+  resolvedFindings: data.findings.filter(item => item.status === 'resolved').length,
   dimensions: '390x844', bytes: totalBytes }, null, 2));

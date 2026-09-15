@@ -210,7 +210,10 @@ F21-07|회차 묶음과 제공자, 배정 결과, 회차별 정산
     'F03-03': ['event-create-basics', 'event-create-time-place', 'event-create-capacity', 'event-create-preview', 'event-create-location-error'],
     'F03-05': ['showcase-attendance-confirm', 'showcase-attendance-joined', 'event-attendees'],
     'F03-13': ['showcase-transfer-event', 'showcase-transfer-cost-confirm', 'showcase-transfer-bank-instructions', 'showcase-transfer-declare-form', 'showcase-transfer-pending', 'showcase-transfer-host-queue', 'showcase-transfer-host-confirm', 'showcase-transfer-host-completed', 'showcase-transfer-member-completed'],
+    'F03-14': ['carpool-host-settings-confirmed', 'carpool-passenger-confirm'],
+    'F03-15': ['seat-fix-host-before-approval', 'seat-fix-passenger-confirm', 'seat-fix-passenger-my-seat', 'seat-fix-host-passengers', 'carpool-driver-route-form', 'carpool-driver-unassigned-pending', 'carpool-passenger-pending-confirm', 'carpool-passenger-pending-result', 'carpool-host-unassigned-approval', 'carpool-passenger-confirm', 'carpool-passenger-my-seat', 'carpool-host-passengers', 'carpool-driver-cancel-dialog', 'carpool-driver-returned-to-self'],
     'F03-16': ['showcase-transport-options', 'showcase-transport-confirm', 'showcase-transport-my-seat'],
+    'F03-17': ['seat-fix-driver-grid', 'seat-fix-host-before-approval', 'seat-fix-host-approved', 'seat-fix-passenger-available', 'seat-fix-passenger-confirm', 'seat-fix-passenger-my-seat', 'seat-fix-host-passengers', 'carpool-driver-layout-form', 'carpool-passenger-approved-blank-seats'],
     'F04-02': ['showcase-club-introduction'], 'F04-04': ['club-members'],
     'F04-08': ['showcase-community-photo-post'], 'F04-09': ['showcase-community-comments'],
     'F04-11': ['showcase-photo-albums', 'showcase-photo-grid', 'showcase-photo-viewer'],
@@ -234,6 +237,10 @@ F21-07|회차 묶음과 제공자, 배정 결과, 회차별 정산
     'F01-02': 'Google 버튼만 보았습니다. 외부 로그인 왕복은 미확인입니다.',
     'F03-03': '장소 확인 단계의 외부 연결 오류로 공개 완료 장면을 얻지 못했습니다. 현재 입력 주소·지도 연결을 확인한 뒤 재촬영해야 합니다.',
     'F03-13': '가상 신고·주최자 확인까지 촬영했습니다. 실제 송금·계좌 인증·환불은 확인하지 않았습니다.',
+    'F03-14': '주최자의 이동 기능 켜기·저장·재진입과 참가자 안내를 촬영했습니다. 자리 반납·자차 이용을 금지했을 때의 동작은 더 확인해야 합니다.',
+    'F03-15': '지정 좌석은 표시 문제를 수정하고 7인승의 승인·자리 선택·명단·재진입 유지를 확인했습니다. 비지정 제안·승인·자리 확정과 탑승자 없는 운행 취소도 확인했습니다. 남은 코드 보완은 픽업 경로·차량 제목의 운전자 이름, 승인 대기 안내, 취소 버튼 문구입니다. 이후 승차 장소·승객이 탄 운행 취소·신고를 촬영합니다.',
+    'F03-16': '비지정 시험 버스의 자리 선택과 내 자리 반영을 촬영했습니다. 자리 반납·주최자 재배정은 더 확인해야 합니다. 카풀 촬영을 버스 전체 검사로 세지 않습니다.',
+    'F03-17': '서버 응답의 선택 가능 여부·활성 상태 누락을 수정했습니다. 새 검사 8개를 포함한 서버 이동 검사 116개와 앱 검사 76개가 통과했습니다. 실제 7인승의 빈자리·운전자 자리 표시, 주최자 승인, 회원 2번 선택, 주최자 명단과 재진입 유지를 촬영·확인했습니다. 현재 남은 범위는 관리자 배치도 목록·편집과 서명한 휴대전화 앱 확인입니다. 이를 마치기 전에는 업무 전체의 소개 완료로 세지 않습니다.',
     'F04-02': '클럽 소개만 있습니다. 가입 신청·승인 뒤의 회원 화면이 더 필요합니다.',
     'F04-09': '내용이 있는 댓글 조회입니다. 작성 직후 댓글 수 갱신을 별도로 확인해야 합니다.',
     'F08-03': '초안과 기본 항목 저장·재진입 및 채워진 편집 화면이 있습니다. 직접 본문 수정·저장 과정은 더 필요합니다.',
@@ -259,7 +266,7 @@ F21-07|회차 묶음과 제공자, 배정 결과, 회차별 정산
   ];
   // Complete means the listed introduction scenes exist, never all functional tests.
   const complete = ['F13-01', 'F08-02', 'F20-01'];
-  const blocked = ['F03-03', 'F15-05', 'F19-01'];
+  const blocked = ['F03-03', 'F03-15', 'F15-05', 'F19-01'];
   const titles = {
     'F01-05': '로그인 유지와 로그아웃', 'F01-06': '처음 이용할 때의 안내와 설정',
     'F02-01': '홈에서 추천 모임 보기', 'F02-02': '홈 추천 새로고침', 'F02-03': '홈 카드에서 상세 보기',

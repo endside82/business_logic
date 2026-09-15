@@ -36,6 +36,7 @@
         <h2>개발이 남았는지, 실제 확인만 남았는지</h2>
         <ul>
           <li><strong>추가 개발</strong>: 없는 서버 기능·화면·연결을 만들어야 한다. 현재 후속 범위의 기간권 판매, 추가 로그인 실패 집계·화면, 계좌 소액 인증 공급자 연결이 해당한다.</li>
+          <li><strong>기존 기능 보완</strong>: 구현은 있으나 실제 이용 중 발견한 결함을 고쳐야 한다. 카풀의 픽업 경로·차량 제목의 운전자 이름, 승인 대기·취소 문구가 해당한다. 지정 좌석 표시는 수정·재검사 완료다. <a href="screen-review.html#findings">남은 보완과 수정 후 화면</a>에서 확인한다.</li>
           <li><strong>자동 테스트</strong>: 기록에 적힌 동작만 확인했다. 외부 응답을 모사한 테스트는 실제 서비스 이용과 다르다.</li>
           <li><strong>실제 환경 확인</strong>: 배포용 앱·실제 계정·서비스로 실행한 결과가 남아 있어야 한다. 미실행을 미구현으로 바꾸거나 통과로 추정하지 않는다.</li>
           <li><strong>외부 준비</strong>: 실행에 필요한 서명·계정·설정·접근 권한이다. 보관 위치 미확인을 계약이나 계정이 없다는 뜻으로 쓰지 않는다.</li>
@@ -154,7 +155,7 @@
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/features.js"></script>
   <script src="../assets/mileage-feature-status.js"></script>
-  <script src="../assets/launch-status.js"></script>
+  <script src="../assets/launch-status.js?v=20260915-7"></script>
   <script>
     (function () {
       var L = window.LAUNCH_STATUS;
@@ -200,7 +201,7 @@
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-      document.getElementById('asof-line').textContent = '확인 기준: ' + L.asOf + '. 앱 전체와 기능별 서버 검사를 실행했다. 검사 범위는 위 확인 결과를 따른다. 운영 배포·서명 앱의 휴대전화 검사·공개 승인은 아직 하지 않았다.';
+      document.getElementById('asof-line').textContent = '최종 반영: ' + L.asOf + '. 지정 좌석 수정·재검사와 남은 카풀 표시·안내 보완을 구분했다. 다른 기능의 검사 범위는 위 기록을 따르며 운영 배포·서명 앱 검사·공개 승인은 별도로 남아 있다.';
     })();
   </script>
   <script src="../assets/app.js"></script>

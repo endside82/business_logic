@@ -33,6 +33,9 @@ body[data-tour-view] :is(#tour-filter, #coverage, #findings, #captures, .tour-sh
 .tour-review-table td:first-child { min-width: 155px; }
 .tour-findings article { padding: 18px 20px; margin: 16px 0; background: var(--warn-soft); border-radius: var(--radius-md); }
 .tour-findings h3 { margin-top: 0; }
+.tour-resolved { margin-top: 24px; }
+.tour-resolved summary { cursor: pointer; color: var(--brand-deep); }
+.tour-resolved article { background: var(--brand-soft); }
 .tour-empty { padding: 20px; border: 1px dashed var(--line-strong); border-radius: var(--radius-md); }
 @media (max-width: 1100px) {
   body[data-tour-view] :is(#tour-filter, #coverage, #findings, #captures, .tour-shot, .tour-section) { scroll-margin-top: 80px; }

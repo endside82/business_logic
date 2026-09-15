@@ -44,8 +44,8 @@
             <option value="local">기존 계정 이용 확인</option><option value="auto">전체 자동 회귀 기록</option>
           </select>
           <select id="work-filter" aria-label="남은 일 성격">
-            <option value="">전체 작업 성격</option><option value="development">추가 개발이 있는 기능</option>
-            <option value="environment">등록된 추가 개발 없이 실제 확인 대기</option>
+            <option value="">전체 작업 성격</option><option value="development">추가 개발·코드 보완이 있는 기능</option>
+            <option value="environment">등록된 코드 보완 없이 실제 확인 대기</option>
           </select>
           <label class="chip"><input type="checkbox" id="f-gap">개별 준비가 남은 기능만</label>
         </div>
@@ -85,7 +85,7 @@
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/features.js"></script>
   <script src="../assets/mileage-feature-status.js"></script>
-  <script src="../assets/launch-status.js"></script>
+  <script src="../assets/launch-status.js?v=20260915-7"></script>
   <script>
     (function () {
       var L = window.LAUNCH_STATUS;
@@ -126,16 +126,19 @@
       document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
       document.getElementById('m-retired').textContent = data.filter(function (d) { return d.scope === 'retired'; }).length;
       document.getElementById('m-journey').textContent = data.filter(function (d) { return d.proof === 'local' || d.proof === 'real'; }).length;
-      document.getElementById('asof').textContent = '확인 기준: ' + L.asOf + '. 앱 전체·추가 클럽 기능의 서버 검사를 실행하고, 시즌·반복 적립은 실제 앱 연결도 확인했다. 각 행의 확인 범위를 넘어 실제 휴대전화·외부 서비스까지 통과한 것으로 읽지 않는다.';
+      document.getElementById('asof').textContent = '최종 반영: ' + L.asOf + '. 지정 좌석 표시 수정과 개발용 앱의 승인·선택·명단 확인을 반영했다. 다른 기능은 각 행의 기존 검사 범위를 따르며 실제 휴대전화·외부 서비스까지 통과한 것으로 읽지 않는다.';
 
+      function preparationItems(d) {
+        return d.openItems.filter(function (o) { return o.impact !== 'doc'; });
+      }
       function nextSteps(d) {
-        var items = d.openItems.filter(function (o) { return o.impact !== 'doc'; });
+        var items = preparationItems(d);
         if (!items.length) {
           return '<a href="launch-status.html#blocking"><strong>공통 출시 준비</strong></a><p>배포용 앱 검사와 운영 준비를 마친 뒤 공개 승인을 받는다.</p>';
         }
         return items.map(function (o) {
-          var linkedDevelopment = o.readiness.work === 'development' && o.developmentFeatures.indexOf(d.id) === -1;
-          var label = linkedDevelopment ? '관련 후속 기능의 개발 · 이 기능의 미구현을 뜻하지 않음' :
+          var linkedDevelopment = (o.readiness.work === 'development' || o.readiness.work === 'repair') && o.developmentFeatures.indexOf(d.id) === -1;
+          var label = linkedDevelopment ? '연결된 다른 기능의 개발·보완 · 이 기능의 미구현을 뜻하지 않음' :
             (o.impact === 'next' ? '후속 범위 · ' : (o.impact === 'included' || o.impact === 'block' ? '첫 출시 · ' : '')) + L.WORK[o.readiness.work];
           return '<div><a href="launch-status.html#item-' + esc(o.id) + '"><strong>' + esc(o.actionLabel) + '</strong></a>' +
             (label ? '<p>' + esc(label) + '</p>' : '') + '<p>' + esc(o.nextAction) + '</p></div>';
@@ -150,7 +153,7 @@
           '<p><strong>자동 테스트</strong><br>' + esc(d.automation) + '</p>' +
           '<p><strong>실제 환경</strong><br>' + esc(d.environment) + '</p>' +
           '<details><summary>확인 범위·검토 항목</summary><p>' + esc(d.proofNote || L.PROOF[d.proof].desc) + '</p>' +
-          pill(L.PROOF[d.proof]) + '<p>개별 준비 항목: ' + d.issues + '건<br>문서 검토 후보: ' + d.pending + '건 — 결함 수가 아님</p>' +
+          pill(L.PROOF[d.proof]) + '<p>연결된 준비 작업: ' + preparationItems(d).length + '건<br>문서 검토 후보: ' + d.pending + '건 — 결함 수가 아님</p>' +
           '<p>기능 식별자: ' + esc(d.id) + '</p></details>';
       }
       function render() {
@@ -166,7 +169,7 @@
           if (proof && d.proof !== proof) return false;
           if (work === 'development' && !d.developmentItems.length) return false;
           if (work === 'environment' && (d.developmentItems.length || d.scope === 'retired')) return false;
-          if (gap && !d.issues) return false;
+          if (gap && !preparationItems(d).length) return false;
           return !q || (d.id + ' ' + d.name + ' ' + d.originalName + ' ' + d.domain).toLowerCase().includes(q);
         });
         var totalPages = Math.max(1, Math.ceil(list.length / pageSize));
