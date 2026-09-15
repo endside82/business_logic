@@ -321,6 +321,7 @@
     {
       heading: '기능 인벤토리',
       links: [
+        { href: 'tour/index.html', label: '실제 화면으로 앱 둘러보기' },
         { href: 'features/catalog.html', label: '175개 기능 카탈로그' },
         { href: 'features/impact.html', label: '부수효과 매트릭스' },
         // 도메인 셋에 걸쳐 있어 단일 기능 번호를 갖지 않는 흐름 문서. 기능 수(175)에는 포함하지 않는다.
@@ -344,6 +345,7 @@
     {
       heading: 'QA & 릴리즈',
       links: [
+        { href: 'qa/screen-review.html', label: '화면 검수와 남은 촬영' },
         { href: 'qa/launch-status.html', label: '첫 출시 현황' },
         { href: 'qa/feature-status.html', label: '기능별 출시 상태' },
         { href: 'qa/scenario-completeness.html', label: '기능별 시나리오 완성도' },

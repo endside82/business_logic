@@ -9,9 +9,11 @@
 !/planner_onboarding/
 !/prd/
 
-# 기능별 시나리오 재생성과 출시 범위·문서 링크 검사 도구만 추적한다.
+# 기능별 시나리오 재생성, 출시 범위·문서 링크·촬영 원본 검사 도구만 추적한다.
 # verification의 과거 감사 산출물과 캐시는 계속 제외한다.
 !/verification/
 /verification/*
 !/verification/build_scenario_audit_data.mjs
 !/verification/check_release_scope.mjs
+!/verification/check_app_tour.mjs
+!/verification/check_app_tour_coverage.mjs

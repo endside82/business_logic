@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>실제 화면으로 보는 앱 기능 — community</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/app-tour.css?v=20260915-5">
+</head>
+<body data-document-kind="reference" data-base="../" data-tour-view="guide">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>실제 화면으로 보는 앱 기능</div>
+        <h1>함께할 모임을 찾고,<br>함께한 순간을 이어갑니다.</h1>
+        <p class="lede tour-intro">산책 모임을 찾고, 클럽에 모여 이야기를 나누고, 함께한 시간을 기록하는 앱입니다.
+          실제 화면을 따라가며 각 기능이 언제 필요하고 어떻게 이어지는지 자세히 살펴보세요.</p>
+        <p><a href="coverage.html">전체 업무 영역과 촬영 현황</a> · <a href="#tour-filter">촬영한 이용 흐름 보기</a> · <a href="../qa/screen-review.html#captures">전체 촬영본 보기</a></p>
+      </header>
+      <div class="callout"><span class="label">앱 전체는 21개 업무 영역입니다</span><p>아래는 먼저 촬영한 이용 흐름입니다. 정산·경고·분쟁·고객지원·제공자 운영을 포함한 <a href="coverage.html"><strong>175개 등재 기능과 추가 소개 여정</strong></a>을 별도로 대조합니다. 후속 출시 기능도 소개 대상에서 제외하지 않으며, 사진이 일부 있다는 사실을 업무 전체의 소개 완료로 세지 않습니다.</p></div>
+      <section class="tour-story" aria-labelledby="tour-story-title">
+        <div class="tour-story-copy">
+          <span class="label">사진으로 따라가는 한 번의 만남</span>
+          <h2 id="tour-story-title">이번 토요일,<br>함께 걸어 볼까요?</h2>
+          <p>홈에서 산책 사진을 발견한 민준은 모임의 일정과 준비물을 읽고 참가합니다.
+            클럽에서는 다음 코스를 투표하고, 함께한 풍경은 사진첩에 남깁니다.</p>
+          <p>회원이 보는 장면뿐 아니라 <strong>주최자가 준비하고 운영하는 화면</strong>도 함께 소개합니다.</p>
+          <a href="#feature-attendance">모임을 읽고 참가하는 과정 보기 →</a>
+        </div>
+        <a href="../assets/screenshots/app-tour/2026-09-15/showcase-event-cover.jpg" target="_blank" rel="noopener" aria-label="사진이 있는 산책 모임 상세 원본 열기">
+          <img src="../assets/screenshots/app-tour/2026-09-15/showcase-event-cover.jpg" width="390" height="844" alt="한강 산책 사진과 일정·장소·참가비가 있는 실제 앱 화면">
+        </a>
+      </section>
+      <nav class="tour-journeys" aria-label="이용 흐름 바로 보기">
+        <a href="#feature-discovery"><strong>발견하고 참여하기</strong><span>홈·검색, 클럽, 모임 참가</span></a>
+        <a href="#feature-community"><strong>이야기와 추억 나누기</strong><span>사진 게시글, 댓글, 투표, 사진첩</span></a>
+        <a href="#feature-regular"><strong>다음 만남 준비하기</strong><span>정기모임, 함께 이동, 참가비 안내</span></a>
+        <a href="#feature-stamp"><strong>활동을 이어 가기</strong><span>스탬프, 마일리지, 달력과 알림</span></a>
+        <a href="#feature-favorites"><strong>사람을 다시 찾기</strong><span>관심인 등록, 공개 프로필, 가입 클럽</span></a>
+        <a href="#feature-support"><strong>궁금한 점과 문제 해결하기</strong><span>문의·답변, 분쟁 접수, 클럽 제보</span></a>
+      </nav>
+      <section class="tour-intro">
+        <div class="callout">
+          <span class="label">실제 앱 · 가상의 모임과 예시 사진</span>
+          <p>소개를 위해 준비한 모임·회원·사진을 실제 앱에 표시해 촬영했습니다. 사진은 AI로 만든 예시이며 실제 회원의 활동 기록이 아닙니다.</p>
+          <p>이 페이지는 <strong>기능 소개</strong>입니다. 조작 확인 범위와 발견한 문제는 <a href="../qa/screen-review.html">화면 검수</a>, 출시 가능 여부는 <a href="../qa/launch-status.html">출시 현황</a>에서 별도로 확인합니다.</p>
+        </div>
+        <div id="tour-summary" class="tour-summary" aria-live="polite"></div>
+      </section>
+      <nav id="tour-filter" class="tour-filter" aria-label="촬영된 기능 선택"></nav>
+      <div id="tour-content"></div>
+      <section class="tour-pending">
+        <h2>이어지는 기능 소개</h2>
+        <p>아직 소개용 사진이 없는 기능입니다. 각 기능의 일부 장면만 촬영했으며, 모든 동작을 검증했다는 뜻은 아닙니다.</p>
+        <div id="tour-pending"></div>
+      </section>
+      <noscript><p>사진 목록을 표시하려면 JavaScript가 필요합니다. <a href="../features/club-stamp.html#actual-screens">회원이 보는 실제 스탬프 화면</a>도 확인할 수 있습니다.</p></noscript>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+  <script src="../assets/app-tour-data.js?v=20260915-5"></script>
+  <script src="../assets/app-tour.js?v=20260915-5"></script>
+</body>
+</html>
