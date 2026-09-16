@@ -41,9 +41,13 @@ function jpegSize(bytes) {
   throw new Error('JPEG has no supported frame header');
 }
 
-const folder = resolve(root, 'docs/assets/screenshots/app-tour/2026-09-15');
-const files = (await readdir(folder)).filter(file => /\.(?:jpe?g|png|webp)$/i.test(file)).sort();
-assert.deepEqual(files, Array.from(ids, id => id + '.jpg').sort(), 'Files and captions must match exactly');
+const captureRoot = resolve(root, 'docs/assets/screenshots/app-tour');
+for (const date of await readdir(captureRoot)) {
+  assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
+  const files = (await readdir(resolve(captureRoot, date))).filter(file => /\.(?:jpe?g|png|webp)$/i.test(file)).sort();
+  const expected = [...data.shots].filter(shot => (shot.date || '2026-09-15') === date).map(shot => shot.id + '.jpg').sort();
+  assert.deepEqual(files, expected, `${date}: files and captions must match exactly`);
+}
 let totalBytes = 0;
 for (const shot of data.shots) {
   assert.match(shot.id, /^[a-z][a-z0-9-]*$/);
@@ -51,7 +55,9 @@ for (const shot of data.shots) {
   assert.ok(['form', 'read', 'saved'].includes(shot.kind), `${shot.id}: missing evidence boundary`);
   assert.equal(typeof shot.showcase, 'boolean');
   for (const key of ['title', 'role', 'action', 'result']) assert.ok(shot[key]?.trim(), `${shot.id}: missing ${key}`);
-  const bytes = await readFile(resolve(folder, shot.id + '.jpg'));
+  const date = shot.date || '2026-09-15';
+  assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
+  const bytes = await readFile(resolve(captureRoot, date, shot.id + '.jpg'));
   assert.deepEqual(jpegSize(bytes), { width: 390, height: 844 }, `${shot.id}: capture size changed`);
   totalBytes += bytes.length;
 }

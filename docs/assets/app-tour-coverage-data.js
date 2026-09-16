@@ -97,7 +97,7 @@ F07-01|정산할 모임 선택, 제목·기준 입력, 생성된 정산
 F07-02|영수증·비용 항목 입력, 부담 대상, 항목별 금액
 F07-03|회원별 분담액 미리보기, 납부 안내 시작, 취소 안내
 F07-04|전체 납부 현황, 내 분담액, 영수증 상세
-F07-05|분담액·납부 방법, 입금 신고, 내 납부 상태
+F07-05|내 비용 배분, 송금 대상·금액, 입금 확인 전·후 상태
 F07-06|미확인 납부 목록, 개별·일괄 확인, 미회수금 처리 안내
 F07-07|미납 목록, 재안내 메시지, 연장된 기한
 F07-08|분담금 이의 사유, 주최자 검토, 결과와 처리 기록
@@ -204,6 +204,12 @@ F21-06|합의한 계약금, 납부 안내, 계약 상태
 F21-07|회차 묶음과 제공자, 배정 결과, 회차별 정산
 `.trim().split('\n').map(line => { const [id, plan] = line.split('|'); return [id, plan]; });
   const evidence = {
+    'F07-01': ['settlement-start', 'settlement-create', 'settlement-items-saved'],
+    'F07-02': ['settlement-item-entry', 'settlement-item-people', 'settlement-items-saved'],
+    'F07-03': ['settlement-activate', 'settlement-owner-next'],
+    'F07-04': ['settlement-owner-next', 'settlement-member-next', 'settlement-member-shares', 'settlement-owner-progress', 'settlement-completed'],
+    'F07-05': ['settlement-member-shares', 'settlement-member-transfers', 'settlement-completed'],
+    'F07-06': ['settlement-owner-confirm', 'settlement-receiver-confirm', 'settlement-transfers-completed'],
     'F01-01': ['auth-login-options', 'auth-signup-form'], 'F01-02': ['auth-login-options'],
     'F02-01': ['showcase-home-discovery'], 'F02-03': ['showcase-home-discovery', 'showcase-event-cover'],
     'F03-01': ['showcase-search-walk-results'], 'F03-02': ['showcase-event-cover', 'showcase-event-description', 'event-attendees'],
@@ -233,6 +239,12 @@ F21-07|회차 묶음과 제공자, 배정 결과, 회차별 정산
     'F20-01': ['breadth-inquiry-filled', 'breadth-inquiry-received', 'breadth-inquiry-host-reply', 'breadth-inquiry-host-answered', 'breadth-inquiry-member-answer', 'breadth-inquiry-followup', 'breadth-inquiry-closed'],
   };
   const notes = {
+    'F07-01': '직접 송금 방식의 초안과 첫 비용을 앱에서 저장했습니다. 지난 정산 복제·간편 추가는 이번 촬영에 포함하지 않았습니다.',
+    'F07-02': '서로 다른 두 결제자와 항목별 분담 대상, 저장 후 10,000원·40,000원·40,000원 배분을 확인했습니다. 기존 항목 수정 시 원래 배분을 유지하는 기능과 저장 실패 시 입력 보존은 보완이 필요합니다. 영수증 첨부는 미촬영입니다.',
+    'F07-03': '직접 송금 정산 시작과 생성된 송금을 확인했습니다. 시작 직후 요약 갱신은 발견한 결함을 고친 뒤 자동 테스트로 확인했고, 실제 화면 사진은 재진입한 결과입니다. 취소·환불과 항목별 납부 방식의 완료는 미확인입니다.',
+    'F07-04': '개인별 보낼 돈·받을 돈, 항목별 내 몫, 0/3→1/3→3/3 확인 완료, 회원 재진입을 촬영했습니다. 영수증 상세·실제 휴대전화 실행은 별도 확인이 필요합니다.',
+    'F07-05': '민준의 40,000원과 지민·수아에게 각각 20,000원 송금 안내를 확인했습니다. 실제 은행 송금·송금 앱 이동·포인트와 혼합 납부는 실행하지 않았습니다.',
+    'F07-06': '수취인 지민·수아의 개별 입금 확인과 정산 완료를 실제 로컬 앱에서 확인했습니다. 송금자에게 확인 버튼이 없는 것도 확인했습니다. 일괄 확인·미회수금 처리·운영 계좌 대조는 이번 촬영에 포함하지 않았습니다.',
     'F01-01': '양식만 촬영했습니다. 실제 가입·이메일 로그인 성공은 미촬영입니다.',
     'F01-02': 'Google 버튼만 보았습니다. 외부 로그인 왕복은 미확인입니다.',
     'F03-03': '장소 확인 단계의 외부 연결 오류로 공개 완료 장면을 얻지 못했습니다. 현재 입력 주소·지도 연결을 확인한 뒤 재촬영해야 합니다.',

@@ -1,8 +1,17 @@
 // Real captures only. A screenshot is not proof of a complete feature or release.
 window.APP_TOUR = {
   environment: '실제 앱 화면 · 가상의 모임·회원·예시 사진 · 390 × 844',
-  guideOrder: ['discovery', 'club', 'attendance', 'community', 'poll', 'regular', 'transport', 'transfer', 'event-create', 'plan', 'stamp', 'mileage', 'calendar-notifications', 'favorites', 'support', 'dispute', 'warning', 'profile-support', 'auth'],
+  guideOrder: ['settlement', 'discovery', 'club', 'attendance', 'community', 'poll', 'regular', 'transport', 'transfer', 'event-create', 'plan', 'stamp', 'mileage', 'calendar-notifications', 'favorites', 'support', 'dispute', 'warning', 'profile-support', 'auth'],
   introductions: {
+    settlement: {
+      lead: '식사비는 지민이, 택시비는 수아가 냈다면? 누가 먼저 냈는지부터 각자 주고받을 돈까지 한곳에서 정리합니다.',
+      details: [
+        '**먼저 결제한 사람과 함께 나눌 사람**을 비용마다 고릅니다. 식사에 함께한 세 사람과 택시에 탄 두 사람의 비용을 따로 나눌 수 있습니다.',
+        '아래는 **참가자 간 직접 송금** 방식입니다. 회원은 **보낼 돈·받을 돈**과 **비용별 내 몫**을 구분해 봅니다. 먼저 결제한 돈을 반영하므로 항목별 분담금을 다시 각각 내지 않습니다.',
+        '주최자는 **확인할 입금과 확인이 남은 사람**을 살펴봅니다. 받는 참가자도 본인이 받은 돈을 확인할 수 있으며, 보낸 사람은 스스로 입금 확인할 수 없습니다. 앱이 실제 은행 거래를 자동 확인하거나 송금하는 기능은 아닙니다.',
+        '이미 돈을 보냈다면 **다시 보내지 않고 확인을 기다립니다**. 아래 촬영은 가상 회원의 로컬 시험이며 실제 돈은 이동하지 않았습니다.'
+      ]
+    },
     dispute: { lead: '단순한 질문을 넘어 처리 기록이 필요한 문제는, 관련 모임과 사유를 묶어 접수합니다.', details: ['**분쟁 유형과 구체적인 상황**을 적고 필요한 자료를 첨부할 수 있습니다. 예시에서는 모임 안내가 서로 다른 가상 상황을 제출했습니다.', '접수 상세에는 **진행 상태·처리 기록·증빙·대화**가 나뉘어 보입니다. 아래 사진은 접수된 사건까지이며 운영자의 판단이나 해결 완료를 보여 주는 장면은 아닙니다.'] },
     warning: { lead: '클럽 규칙과 관련된 문제를 제보하고, 운영진의 검토와 실제 경고를 구분합니다.', details: ['회원은 **대상과 사유**를 적어 제보합니다. 제보가 접수됐다고 바로 상대에게 경고가 부여되는 것은 아닙니다.', '회원은 **내 제보**에서 제출한 내용과 상태를 다시 봅니다. 아래는 가상 회원과 예시 게시글 상황을 사용합니다. 이번에는 운영진 검토함이 빈 목록으로 보여 승인·반려까지 이어가지 못했습니다.'] },
     support: { lead: '준비물이 궁금하거나 안내를 다시 확인하고 싶을 때, 해당 모임·클럽의 문의로 대화를 이어갑니다.', details: ['회원은 **관련 활동과 질문 내용**을 남기고 접수 상태를 확인합니다. 아래는 토요일 산책의 우천 시 진행 방법을 묻는 가상 문의입니다.', '운영진은 **문의 응대**에서 질문을 읽고 답변합니다. 회원이 답변을 확인한 뒤 추가 질문을 남길 수도 있습니다.', '대화가 끝나면 운영진이 **종결**하고 질문·답변은 함께 남습니다. 촬영에서는 접수부터 답변·추가 대화·종결까지 실제 화면을 조작했습니다.'] },
@@ -33,6 +42,7 @@ window.APP_TOUR = {
     auth: { lead: '처음 온 사람은 가입하고, 이미 계정이 있다면 로그인해서 시작합니다.', details: ['**로그인 화면**에서는 이메일 입력과 Google 로그인 진입을 확인할 수 있습니다.', '**회원가입 양식**에는 이메일·비밀번호·닉네임과 동의 항목이 있습니다. 아래는 입력 화면 소개이며 가입 제출이나 외부 로그인 성공 장면은 아닙니다.'] }
   },
   groups: [
+    { id: 'settlement', title: '함께 쓴 비용 정산하기', purpose: '여러 사람이 먼저 낸 비용을 나누고 각자의 송금과 입금 확인을 정리합니다.', scenes: '초안 만들기, 결제자·분담 대상 선택, 개인별 금액, 입금 확인, 완료', next: '실제 은행 거래·서명 앱 검사는 별도입니다. 영수증 첨부, 재안내·기한 연장, 이의·취소·환불은 추가 촬영합니다.' },
     { id: 'dispute', title: '분쟁 접수·처리 기록', purpose: '관련 활동의 문제를 접수하고 진행 상태와 기록을 확인합니다.', scenes: '유형·사유 입력, 접수 상세, 사건 목록, 증빙·의견, 운영 검토·결과·이의', next: '가상 사건의 사유 입력·접수 상세·기록을 촬영했습니다. 사건 목록, 증빙 업로드·열람, 대화, 운영 검토·결과·이의제기는 추가 촬영합니다.' },
     { id: 'warning', title: '클럽 제보·경고 검토', purpose: '회원의 제보를 운영진이 검토하고 경고와 이의 절차를 구분합니다.', scenes: '회원 제보, 내 접수 목록, 운영진 검토, 결과·경고 이력·이의', next: '회원 제보 입력·제출됨 목록을 촬영했습니다. 서버에는 접수 1건이 있으나 운영진 화면은 빈 목록이어서 검토 동작은 막혔습니다. 목록 조회를 확인한 뒤 승인·반려·보완, 경고 이력·이의 결과를 촬영합니다.' },
     { id: 'support', title: '문의·답변·도움말', purpose: '회원이 활동 관련 질문을 남기고 답변과 처리 결과를 이어서 확인합니다.', scenes: '도움말, 문의 입력·접수, 운영진 답변, 회원 확인·추가 대화, 종결', next: '클럽 문의의 접수·답변·추가 대화·종결을 촬영했습니다. 운영팀 이관, 이슈 신고와 도움말 검색은 추가 촬영합니다.' },
@@ -54,6 +64,21 @@ window.APP_TOUR = {
     { id: 'profile-support', title: '내 정보', purpose: '내 소개와 참여 활동을 확인하고 개인 설정으로 이동합니다.', scenes: '프로필·편집, 개인정보·기기·알림 설정, 탈퇴 안내', next: '사진과 자기소개를 채운 내 정보 화면이 있습니다. 실제 프로필 수정·설정 저장·탈퇴 안내는 추가 촬영합니다.' }
   ],
   shots: [
+    { id: 'settlement-start', date: '2026-09-16', group: 'settlement', title: '모임에서 정산을 시작합니다', role: '주최자', action: '아직 정산이 없는 모임의 정산 화면을 열었습니다.', result: '정산 만들기 버튼이 표시됩니다. 새로고침 때 오류가 나던 문제를 수정한 뒤 촬영했습니다.', kind: 'read', showcase: false },
+    { id: 'settlement-create', date: '2026-09-16', group: 'settlement', title: '주최자가 먼저 낸 식사비로 시작합니다', role: '주최자', action: '식사비 30,000원과 세 사람을 선택했습니다.', result: '각자 10,000원이라는 초안 미리보기가 표시됩니다. 이 사진은 저장 전 입력 화면입니다.', kind: 'form', showcase: true },
+    { id: 'settlement-item-entry', date: '2026-09-16', group: 'settlement', title: '다른 사람이 먼저 낸 비용도 더합니다', role: '주최자', action: '함께 탄 택시 60,000원과 결제자 수아를 입력했습니다.', result: '금액과 결제자가 이름으로 표시됩니다. 영수증은 첨부하지 않은 입력 화면입니다.', kind: 'form', showcase: true },
+    { id: 'settlement-item-people', date: '2026-09-16', group: 'settlement', title: '택시에 탄 두 사람만 비용을 나눕니다', role: '주최자', action: '택시비의 분담 대상으로 수아·민준만 선택했습니다.', result: '지민은 제외하고 두 사람만 체크됩니다. 전체 모임 인원과 항목별 분담 대상을 구분합니다.', kind: 'form', showcase: true },
+    { id: 'settlement-items-saved', date: '2026-09-16', group: 'settlement', title: '두 비용을 저장하면 각자의 몫이 계산됩니다', role: '주최자', action: '식사비와 택시비를 실제 앱에서 저장했습니다.', result: '**지민 10,000원·수아 40,000원·민준 40,000원**이 서버 저장 결과와 일치합니다. 결제자와 분담 대상을 항목마다 다르게 지정한 결과입니다.', kind: 'saved', showcase: true },
+    { id: 'settlement-activate', date: '2026-09-16', group: 'settlement', title: '금액을 검토한 뒤 정산을 시작합니다', role: '주최자', action: '직접 송금 방식의 정산 시작 확인창을 열었습니다.', result: '총 비용 90,000원과 항목 수정 제한을 확인합니다. 이 사진은 실행 전이며, 다음 사진부터 생성된 송금 내역을 보여 줍니다.', kind: 'form', showcase: false },
+    { id: 'settlement-member-next', date: '2026-09-16', group: 'settlement', title: '회원은 내가 보낼 돈부터 확인합니다', role: '참가자 민준', action: '정산 시작 후 내 정산 현황을 열었습니다.', result: '**보낼 돈 40,000원**과 송금 내역으로 가는 버튼이 먼저 보입니다. 이미 보냈다면 다시 보내지 않고 확인을 기다리라는 안내가 있습니다.', kind: 'read', showcase: true },
+    { id: 'settlement-member-shares', date: '2026-09-16', group: 'settlement', title: '내 금액이 어떻게 나뉘었는지 봅니다', role: '참가자 민준', action: '내 분담금 화면을 열었습니다.', result: '식사 **10,000원**, 택시 **30,000원**의 근거를 확인합니다. 직접 송금 방식에서는 이 금액을 차액 송금과 별도로 다시 내지 않습니다.', kind: 'read', showcase: true },
+    { id: 'settlement-member-transfers', date: '2026-09-16', group: 'settlement', title: '누구에게 얼마를 보낼지 정리됩니다', role: '참가자 민준', action: '내 분담금에서 실제로 주고받을 돈 보기를 눌렀습니다.', result: '**지민에게 20,000원·수아에게 20,000원**이 표시됩니다. 보낸 사람에게 입금 확인 버튼은 없습니다. 송금 앱 이동·실제 송금은 실행하지 않았으며, 포인트 납부는 첫 출시에서 제한됩니다.', kind: 'read', showcase: true },
+    { id: 'settlement-owner-next', date: '2026-09-16', group: 'settlement', title: '주최자는 내 금액과 전체 확인 대상을 구분합니다', role: '주최자 지민', action: '정산을 시작한 뒤 현황에 다시 들어왔습니다.', result: '지민이 **받을 돈 20,000원**, 전체 **입금 확인 전 2건·확인 남은 사람 3명**이 보입니다. 받는 사람도 확인을 기다리므로 세 사람을 모두 미납자로 부르지 않습니다.', kind: 'read', showcase: true },
+    { id: 'settlement-owner-confirm', date: '2026-09-16', group: 'settlement', title: '입금 기록을 확인하고 한 건씩 처리합니다', role: '수취자 지민', action: '민준이 지민에게 보내는 20,000원의 입금 확인창을 열었습니다.', result: '실제 은행 입금을 앱이 자동 검증하지 않는다는 주의가 표시됩니다. 이 사진은 확인 전이며, 로컬 시험에서는 가상의 확인 기록만 남겼습니다.', kind: 'form', showcase: true },
+    { id: 'settlement-owner-progress', date: '2026-09-16', group: 'settlement', title: '한 건을 확인하면 남은 일이 줄어듭니다', role: '주최자 지민', action: '지민에게 온 송금을 확인하고 정산 현황으로 돌아왔습니다.', result: '다시 불러오기 없이 **확인 전 1건·남은 사람 2명·1/3 완료**로 갱신됩니다. 지민의 받을 돈은 더 이상 대기 금액에 포함되지 않습니다.', kind: 'saved', showcase: true },
+    { id: 'settlement-receiver-confirm', date: '2026-09-16', group: 'settlement', title: '주최자가 아니어도 내가 받은 돈은 확인합니다', role: '수취자 수아', action: '수아 계정으로 송금 내역을 열었습니다.', result: '지민에게 보낸 건은 완료이고, **수아에게 올 20,000원**에만 입금 확인 버튼이 보입니다. 수아의 확인 전 화면입니다.', kind: 'read', showcase: true },
+    { id: 'settlement-transfers-completed', date: '2026-09-16', group: 'settlement', title: '두 수취인이 확인하면 대기 금액이 사라집니다', role: '수취자 수아', action: '수아가 마지막 송금을 확인했습니다.', result: '**2건·40,000원 확인 완료, 대기 금액 0원**입니다. 서버도 두 송금과 정산을 완료로 반환했습니다. 실제 돈이 이동한 검사는 아닙니다.', kind: 'saved', showcase: true },
+    { id: 'settlement-completed', date: '2026-09-16', group: 'settlement', title: '앱을 다시 열어도 완료 내역이 남습니다', role: '참가자 민준', action: '모든 확인 후 회원 계정으로 정산에 다시 들어왔습니다.', result: '**보낸 돈 40,000원·3/3 완료**와 읽기 전용 상태가 유지됩니다. 비용별 내 몫과 완료 송금 내역을 다시 볼 수 있습니다.', kind: 'saved', showcase: true },
     { id: 'seat-fix-driver-grid', group: 'transport', title: '운전자에게 내 자리와 빈자리 여섯 개가 보입니다', role: '운전자', action: '응답 수정 후 시험용으로 미리 준비한 7인승 지정 좌석 차량을 열었습니다.', result: '승인 대기 차량에서 1번은 내 좌석, 2~7번은 빈자리로 표시됐습니다. 차량 등록은 준비용 서버 요청이며 이 사진을 앱 등록 성공으로 세지 않습니다.', kind: 'read', showcase: false },
     { id: 'seat-fix-host-before-approval', group: 'transport', title: '주최자는 운전자 자리와 배치도를 보고 승인합니다', role: '주최자', action: '7인승 지정 좌석 카풀의 승인 대기 화면을 열었습니다.', result: '1번에 운전자 수아가 표시되고 승인·거절 버튼이 보입니다. 이어서 승인 버튼을 눌러 운행을 확정했습니다.', kind: 'read', showcase: true },
     { id: 'seat-fix-host-approved', group: 'transport', title: '승인 후에도 지정 좌석표가 유지됩니다', role: '주최자', action: '앱의 승인 버튼을 누르고 결과를 확인했습니다.', result: '승인 대기 표시와 승인·거절 버튼이 사라지고 1/7명과 자리표가 유지됐습니다. 서버의 운행 확정 상태도 확인했습니다.', kind: 'saved', showcase: false },

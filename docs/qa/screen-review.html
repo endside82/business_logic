@@ -6,7 +6,7 @@
   <title>화면 검수와 남은 촬영 — community</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
-  <link rel="stylesheet" href="../assets/app-tour.css?v=20260915-7">
+  <link rel="stylesheet" href="../assets/app-tour.css?v=20260916-2">
 </head>
 <body data-document-kind="reference" data-base="../" data-tour-view="review">
   <div class="layout">
@@ -16,17 +16,28 @@
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>화면 검수와 남은 촬영</div>
         <h1>무엇을 보았고,<br>무엇을 더 확인해야 할까요?</h1>
         <p class="lede">사진이 있는 것, 실제 조작·저장 결과를 확인한 것, 실제 휴대전화와 외부 서비스를 확인한 것은 서로 다릅니다.</p>
-        <p><a href="../tour/coverage.html">전체 업무별 촬영 현황</a> · <a href="#findings">확인한 문제와 다음 행동</a> · <a href="#captures">전체 사진 바로 보기</a></p>
+        <p><a href="#settlement-review">정산 확인 결과</a> · <a href="../tour/coverage.html">전체 업무별 촬영 현황</a> · <a href="#findings">확인한 문제와 다음 행동</a> · <a href="#captures">전체 사진 바로 보기</a></p>
       </header>
       <section>
         <div class="callout warn"><span class="label">화면 검수는 출시 승인이 아닙니다</span>
-          <p>모든 사진은 시험 계정의 로컬 웹 실행 결과입니다. 예시 사진은 AI로 만들고 실제 파일 업로드 경로로 등록했습니다. 세션을 준비해 시작했으므로 실제 로그인 검증도 아닙니다.
+          <p>모든 화면 캡처는 시험 계정의 실제 로컬 웹 실행 결과입니다. 앱에 넣은 표지·활동 사진 소재는 AI로 만들고 실제 파일 업로드 경로로 등록했습니다. 화면 자체를 합성한 것은 아닙니다. 세션을 준비해 시작했으므로 실제 로그인 검증도 아닙니다.
             구현·자동 테스트·실제 환경의 출시 판단은 <a href="feature-status.html">기능별 출시 상태</a>를 따릅니다.</p>
         </div>
         <div id="tour-summary" class="tour-summary"></div>
         <p><a href="../tour/index.html">설명과 대표 사진으로 앱 둘러보기</a></p>
       </section>
       <section id="coverage"><h2>촬영한 이용 흐름과 다음 행동</h2><p>이 표는 촬영을 시작한 묶음의 요약이며 전체 업무 목록이 아닙니다. 빠진 영역과 세부 업무는 <a href="../tour/coverage.html">21개 업무 영역의 전체 촬영 현황</a>에서 확인합니다.</p><div id="tour-coverage" class="table-wrap"></div></section>
+      <section id="settlement-review"><h2>정산은 어디까지 확인됐나요?</h2>
+        <p><strong>직접 송금 방식</strong>으로 비용 입력 → 항목별 사람 선택 → 정산 시작 → 송금 안내 → 두 수취인의 입금 확인 → 완료까지 실제 로컬 앱에서 실행했습니다. <a href="#feature-settlement">15장의 원본과 단계별 설명</a>을 연결했습니다. 은행 송금 없이 가상 거래의 확인 기록만 저장한 결과입니다.</p>
+        <div class="table-wrap"><table><thead><tr><th>구분</th><th>확인한 범위</th></tr></thead><tbody>
+          <tr><td>화면·연결 보완</td><td>개인별 <strong>보낼 돈·받을 돈·다음 행동</strong>, 항목별 결제자와 분담 대상, 입금 확인 권한과 남은 인원을 표시합니다. 회원의 송금 내역 접근 차단, 확인창에서 버튼이 멈추는 문제, 조회·갱신 오류를 수정했습니다.</td></tr>
+          <tr><td>자동 테스트</td><td>정산·화면·경로 권한·버튼 동작 <strong>127개 통과</strong>, 변경 범위 정적 분석 통과. 정산 시작 직후의 요약 갱신은 자동 테스트로 확인했습니다. 앱 전체 테스트나 서버 전체 테스트 결과는 아닙니다.</td></tr>
+          <tr><td>실제 로컬 앱</td><td>식사 30,000원은 세 명, 택시 60,000원은 두 명이 나눕니다. 민준은 <strong>지민·수아에게 각각 20,000원</strong>을 보내도록 표시됩니다. 지민의 확인 뒤 새로고침 없이 1/3 완료, 수아의 확인 뒤 3/3 완료와 서버 저장·회원 재진입을 확인했습니다. 정산 시작 직후 화면은 재진입해 촬영했습니다.</td></tr>
+          <tr><td>실제 환경 확인 대기</td><td>서명한 Android·iPhone 앱, 실제 은행 내역 대조, 실제 알림 전달은 확인하지 않았습니다. 포인트·혼합 납부와 실제 돈 이동은 실행하지 않았으며 출시 제한도 변경하지 않았습니다.</td></tr>
+        </tbody></table></div>
+        <p><strong>다음 코드 보완:</strong> 기존 비용을 수정할 때 원래 분담 대상을 불러오도록 서버 응답과 편집 화면을 연결해야 합니다. 현재는 서버 응답에 배분 내역이 없어 사용자가 다시 선택하도록 안내합니다. 저장이 실패해도 입력 내용이 남도록 보완하는 일도 남았습니다.</p>
+        <p><strong>다음 이용 확인:</strong> 항목별 분담금 납부 방식의 완료, 영수증 첨부·열람, 재안내·기한 연장·이의·일괄 확인·취소·환불을 각각 실행하고 결과를 남겨야 합니다. 직접 송금의 자동 완료된 분담 내역은 계산 기준일 뿐이며, <strong>실제 송금 완료와 구분</strong>해 표시합니다.</p>
+      </section>
       <section><h2>카풀은 어디까지 확인됐나요?</h2>
         <p><strong>좌석 비지정 방식</strong>은 운전자 제안 → 주최자 승인 → 탑승자 자리 확정 → 주최자 명단 반영까지 확인했습니다. <a href="#shot-carpool-passenger-my-seat">탑승자의 내 자리</a>와 <a href="#shot-carpool-host-passengers">주최자의 탑승자 명단</a>에서 결과를 비교할 수 있습니다.</p>
         <div class="callout"><span class="label">지정 좌석 표시를 수정하고 선택까지 확인했습니다</span><p>서버의 응답 변환을 수정한 뒤 <a href="#shot-seat-fix-passenger-my-seat"><strong>회원의 2번 내 좌석과 탑승 2/7명</strong></a>, <a href="#shot-seat-fix-host-passengers">주최자의 1번 수아·2번 민준 명단</a>을 확인했습니다. 앱을 다시 열어도 유지됩니다. 서버 이동 검사 116개와 앱 검사 76개도 통과했습니다.</p></div>
@@ -44,7 +55,7 @@
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/app.js"></script>
-  <script src="../assets/app-tour-data.js?v=20260915-7"></script>
-  <script src="../assets/app-tour.js?v=20260915-7"></script>
+  <script src="../assets/app-tour-data.js?v=20260916-1"></script>
+  <script src="../assets/app-tour.js?v=20260916-1"></script>
 </body>
 </html>

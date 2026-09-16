@@ -5,7 +5,10 @@
   const review = document.body.dataset.tourView === 'review';
   const base = document.body.dataset.base || './';
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-  const imagePath = id => base + 'assets/screenshots/app-tour/2026-09-15/' + id + '.jpg';
+  const imagePath = id => {
+    const shot = data.shots.find(item => item.id === id);
+    return base + 'assets/screenshots/app-tour/' + (shot?.date || '2026-09-15') + '/' + id + '.jpg';
+  };
   const prose = value => escape(value).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   const orderedGroups = review ? data.groups : [...data.groups].sort((a, b) =>
     data.guideOrder.indexOf(a.id) - data.guideOrder.indexOf(b.id));
