@@ -231,6 +231,7 @@
       heading: '시작점',
       links: [
         { href: 'index.html', label: '서비스 개관' },
+        { href: 'tour/index.html', label: '실제 화면으로 앱 둘러보기' },
       ],
     },
     {
@@ -321,7 +322,6 @@
     {
       heading: '기능 인벤토리',
       links: [
-        { href: 'tour/index.html', label: '실제 화면으로 앱 둘러보기' },
         { href: 'features/catalog.html', label: '175개 기능 카탈로그' },
         { href: 'features/impact.html', label: '부수효과 매트릭스' },
         // 도메인 셋에 걸쳐 있어 단일 기능 번호를 갖지 않는 흐름 문서. 기능 수(175)에는 포함하지 않는다.
