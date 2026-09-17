@@ -1,9 +1,9 @@
 # community — 제품 문서
 
-### 👉 **[문서 사이트 바로 보기 — endside82.github.io/business_logic](https://endside82.github.io/business_logic/)**
+## [문서 사이트 바로 보기 — endside82.github.io/business_logic](https://endside82.github.io/business_logic/)
 
 이 저장소는 위 링크로 배포되는 **community 제품 문서의 소스**다.
-GitHub에서 파일을 하나씩 열지 말고, **위 링크를 눌러 웹 문서로 읽는 것**을 권한다.
+GitHub에서 파일을 하나씩 열지 말고, 위 주소로 들어가 웹 문서로 읽는 것을 권한다.
 
 <br>
 
@@ -44,25 +44,6 @@ community는 관심사 기반의 모임을 찾고 참여한 뒤, **함께 쓴 �
 - 현재 외부 고객 공개는 보류 중이다. 공개 범위와 남은 준비는 [첫 출시 현황](https://endside82.github.io/business_logic/qa/launch-status.html)에서 확인한다.
 - 문서에 실린 앱 화면은 로컬 시험 서버에 연결해 촬영한 실제 화면이며 합성하지 않았다. 등장하는 모임·회원·사진은 소개를 위해 준비한 **가상 예시**다.
 
-<br>
-
-## 저장소 구조
-
-```
-docs/             # 배포되는 문서 사이트 (GitHub Pages 진입점)
-├── overview/     #   서비스 정의, 정보구조, 사용자 여정
-├── domains/      #   업무 영역별 문서
-├── features/     #   기능 단위 문서와 목록
-├── policies/     #   상태·권한·결제·알림 등 횡단 정책
-├── qa/           #   출시 현황, 기능별 상태, 화면 검수
-├── tour/         #   실제 앱 화면으로 보는 기능 소개
-└── money-flow/   #   돈의 흐름
-
-prd/              # 기능·도메인·정책 PRD 원본
-units/            # 기능별 근거 산출물 (backend / frontend / scenarios / diagrams)
-verification/     # 문서-코드 동기화와 라운드 검증 결과
-archive/          # 루트에서 내린 과거 진행 로그
-```
+---
 
 문서를 직접 편집하거나 PRD 원본을 찾을 때의 진입점은 [`00_README.md`](00_README.md)에 정리했다.
-GitHub Pages가 `main` 브랜치의 `/docs` 폴더를 게시한다.
