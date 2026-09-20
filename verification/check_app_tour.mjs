@@ -61,13 +61,49 @@ for (const shot of data.shots) {
   assert.deepEqual(jpegSize(bytes), { width: 390, height: 844 }, `${shot.id}: capture size changed`);
   totalBytes += bytes.length;
 }
+const reviewHtml = await readFile(resolve(root, 'docs/qa/screen-review.html'), 'utf8');
+const transportReview = reviewHtml.match(/<section id="transport-real-review">([\s\S]*?)<\/section>/)?.[1];
+const transportPhotos = [...(transportReview || '').matchAll(/<img src="\.\.\/assets\/transport-review\/([a-z-]+\.png)"/g)].map(match => match[1]);
+assert.equal(new Set(transportPhotos).size, 6, 'New transport evidence must have six distinct photos');
+for (const file of transportPhotos) {
+  const png = await readFile(resolve(root, 'docs/assets/transport-review', file));
+  assert.equal(png.subarray(1, 4).toString(), 'PNG', 'Transport evidence must be an original PNG');
+  assert.equal(png.readUInt32BE(16), 780, 'Transport capture width changed');
+  assert.equal(png.readUInt32BE(20), 1687, 'Transport capture height changed');
+}
+const layoutReview = reviewHtml.match(/<section id="transport-layout-real-review">([\s\S]*?)<\/section>/)?.[1];
+assert.ok(layoutReview, 'Synthetic layout evidence needs a separate section');
+assert.match(layoutReview, /가상 도면/);
+assert.match(layoutReview, /실제 차량의 배치를 검증한 사진은 아닙니다/);
+const layoutPhotos = [...layoutReview.matchAll(/<img src="\.\.\/assets\/transport-review\/([a-z-]+\.png)"/g)].map(match => match[1]);
+assert.deepEqual(layoutPhotos, ['real-bus-synthetic-layout.png', 'real-participant-seat-change.png']);
+for (const file of layoutPhotos) {
+  const png = await readFile(resolve(root, 'docs/assets/transport-review', file));
+  assert.equal(png.subarray(1, 4).toString(), 'PNG', `Not a PNG: ${file}`);
+  assert.equal(png.readUInt32BE(16), 780, `Unexpected width: ${file}`);
+  assert.equal(png.readUInt32BE(20), 1687, `Unexpected height: ${file}`);
+}
+const adminReview = reviewHtml.match(/<section id="transport-admin-real-review">([\s\S]*?)<\/section>/)?.[1];
+const adminPhotos = [...(adminReview || '').matchAll(/href="\.\.\/assets\/transport-review\/([a-z-]+\.png)"/g)].map(match => match[1]);
+assert.deepEqual(adminPhotos, ['real-admin-requests.png', 'real-admin-privacy-reallocation.png'], 'Administrator proof must remain separate from app captures');
+for (const [index, file] of adminPhotos.entries()) {
+  const png = await readFile(resolve(root, 'docs/assets/transport-review', file));
+  assert.equal(png.subarray(1, 4).toString(), 'PNG', 'Administrator evidence must be an original PNG');
+  assert.equal(png.readUInt32BE(16), 2560, 'Administrator capture width changed');
+  assert.equal(png.readUInt32BE(20), index === 0 ? 3000 : 4514, 'Administrator capture height changed');
+}
 for (const finding of data.findings) {
   assert.ok(groups.has(finding.group), 'Unknown finding group');
   assert.ok(ids.has(finding.image), `Broken finding screenshot: ${finding.image}`);
   assert.ok(['open', 'resolved'].includes(finding.status || 'open'), 'Unknown finding status');
   if (finding.status === 'resolved') {
     assert.ok(ids.has(finding.previousImage), 'Resolved finding needs its original failure screenshot');
-    assert.notEqual(finding.previousImage, finding.image, 'Resolved finding needs new verification evidence');
+    if (finding.verificationAnchor) {
+      assert.equal(finding.verificationAnchor, 'transport-real-review', 'Unknown separate verification gallery');
+      assert.ok(transportReview && transportPhotos.length === 6, 'Separate verification evidence missing');
+    } else {
+      assert.notEqual(finding.previousImage, finding.image, 'Resolved finding needs new verification evidence');
+    }
   }
   for (const key of ['title', 'severity', 'detail', 'next']) assert.ok(finding[key]?.trim(), `Finding missing ${key}`);
 }
@@ -88,5 +124,7 @@ for (const page of ['tour/index.html', 'qa/screen-review.html']) {
 console.log(JSON.stringify({ result: 'PASS', screenshots: ids.size, groupsStarted: new Set(data.shots.map(shot => shot.group)).size,
   groupsPlanned: groups.size, showcase: data.shots.filter(shot => shot.showcase).length, findings: data.findings.length,
   openFindings: data.findings.filter(item => item.status !== 'resolved').length,
-  resolvedFindings: data.findings.filter(item => item.status === 'resolved').length,
+  resolvedFindings: data.findings.filter(item => item.status === 'resolved').length, transportScreenshots: transportPhotos.length,
+  transportAdminScreenshots: adminPhotos.length,
+  transportSyntheticLayoutScreenshots: layoutPhotos.length,
   dimensions: '390x844', bytes: totalBytes }, null, 2));
