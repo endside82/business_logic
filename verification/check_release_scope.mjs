@@ -49,7 +49,7 @@ for (const id of ['N-00', 'N-07', 'N-11-POLL', 'N-08-SEASON', 'N-08-PHOTO', 'N-0
   assert.equal(item?.impact, 'included', id);
   assert.equal(item.owner, '운영자', id);
   assert.ok(item.nextAction && item.doneWhen, id);
-  assert.equal(item.readiness.work, id === 'N-07' ? 'repair' : 'environment', id);
+  assert.equal(item.readiness.work, 'environment', id);
 }
 assert.equal(new Set(launch.openItems.map(item => item.id)).size, launch.openItems.length, '중복 작업 식별자');
 for (const item of launch.openItems) {
@@ -61,7 +61,7 @@ for (const item of launch.openItems) {
   assert.ok(item.nextAction?.trim() && item.doneWhen?.trim(), item.id);
   if (item.readiness.work === 'development') {
     assert.equal(item.implementationReady, false, `${item.id}: 미구현을 구현 완료로 표시하면 안 됨`);
-    assert.equal(item.impact, 'next', `${item.id}: 후속 개발을 첫 출시 차단으로 다시 넣지 않음`);
+    assert.equal(item.impact, item.id === 'N-07' ? 'included' : 'next', `${item.id}: 기존 출시 범위와 추가 개발 상태를 따로 유지`);
   }
 }
 assert.equal(launch.openItems.find(item => item.id === 'N-12-CALENDAR').readiness.work, 'environment');
@@ -70,10 +70,27 @@ for (const id of ['N-03', 'N-10', 'N-13-BANK']) {
 }
 assert.equal(launch.forFeature('F08-06').developmentItems.length, 1, '기간권 편성·판매 시작은 상품 관리의 추가 개발');
 assert.equal(launch.forFeature('F01-02').developmentItems.length, 1, '추가 로그인 실패 집계·화면');
-assert.equal(launch.forFeature('F03-15').developmentItems.length, 1, '카풀의 알려진 표시·안내 결함을 실제 환경 확인만 남은 것으로 표시하지 않음');
-assert.equal(launch.forFeature('F03-17').developmentItems.length, 0, '해결된 지정 좌석 표시를 미해결 개발로 다시 세지 않음');
-assert.equal(launch.forFeature('F03-17').proof, 'local', '수정 후 실제 개발용 앱 확인을 기록');
-assert.equal(launch.openItems.find(item => item.id === 'N-07').implementationReady, true, '기존 기능의 결함 보완과 기능 미구현을 구분');
+for (const id of ['F03-14', 'F03-15', 'F03-16', 'F03-17']) {
+  assert.equal(launch.forFeature(id).developmentItems.length, 0, `${id}: 연결한 차량 조율의 실제 이용 미확인을 미구현으로 표시하지 않음`);
+}
+assert.equal(launch.forFeature('F03-17').proof, 'local', '기존 좌석 표시 수정 후 실제 앱 확인 기록은 보존');
+const transport = launch.openItems.find(item => item.id === 'N-07');
+assert.equal(transport.implementationReady, true, '신규 조율의 코드 연결과 실제 이용 확인을 구분');
+assert.equal(transport.operationsReady, false, '실제 이용·실차 대조를 완료로 올리지 않음');
+assert.equal(transport.readiness.work, 'environment');
+assert.match(transport.readiness.implementation, /서버와 앱 연결/, '연결한 명단·배정·조정 요청을 미구현으로 되돌리지 않음');
+assert.match(transport.readiness.automation, /실제 시험 DB 129개/, '새 조율·개인정보 소거의 실제 DB 검사를 단위 검사와 구분');
+assert.match(transport.readiness.automation, /사용자 서버 224개/, '이번 조율·탈퇴·개인정보 재검사와 과거 실행의 중복 합산을 막음');
+assert.match(transport.readiness.implementation, /의견·처리 사유 소거와 분쟁 보존·재처리 연결/, '구현한 문구 소거·분쟁 보존·재처리를 미구현으로 되돌리지 않음');
+assert.match(transport.readiness.implementation, /탈퇴자 신규 배정·지원 확정 차단 연결/, '신규 대상 계정 검사를 미구현으로 되돌리지 않음');
+assert.match(transport.readiness.automation, /실제 서버 연결 검증이 아님/, '시험 자료 촬영을 실제 앱 이용 완료로 올리지 않음');
+assert.match(transport.readiness.implementation, /교체/, '서버·화면에 연결한 교체 기능을 미구현으로 되돌리지 않음');
+assert.doesNotMatch(transport.nextAction, /이관|백필|백업/, '기존 데이터 작업을 차량 조율의 남은 행동으로 다시 만들지 않음');
+assert.match(transport.nextAction, /도면 후보 4종.*실제 차량/);
+assert.match(transport.readiness.implementation, /제조사 도면 후보 4종 준비/, '좌표 데이터 준비와 실제 차량 확인을 구분');
+assert.match(transport.doneWhen, /배정 필요/);
+assert.match(transport.doneWhen, /최신 기존 배정을 유지/);
+assert.match(transport.doneWhen, /미해결 0명일 때 자동 종료/);
 for (const id of ['F08-09', 'F08-12', 'F08-14']) {
   assert.equal(launch.forFeature(id).developmentItems.length, 0, '기간권 판매 개발을 기존 검색·보유함·환불의 미구현으로 확대하지 않음');
 }

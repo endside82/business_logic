@@ -84,7 +84,7 @@
   }).join('') + '</tbody></table>';
   const findings = document.getElementById('tour-findings');
   if (findings) {
-    const card = item => '<article><span class="tour-role">' + escape(item.severity) + '</span><h3>' + escape(item.title) + '</h3><p>' + prose(item.detail) + '</p><p><strong>' + (item.status === 'resolved' ? '남은 확인:' : '다음 행동:') + '</strong> ' + prose(item.next) + '</p><a href="#shot-' + escape(item.image) + '">' + (item.status === 'resolved' ? '수정 후 화면과 확인 결과 보기' : '해당 화면 원본과 설명 보기') + '</a>' + (item.previousImage ? ' · <a href="#shot-' + escape(item.previousImage) + '">수정 전 화면 보기</a>' : '') + '</article>';
+    const card = item => '<article><span class="tour-role">' + escape(item.severity) + '</span><h3>' + escape(item.title) + '</h3><p>' + prose(item.detail) + '</p><p><strong>' + (item.status === 'resolved' ? '확인 범위·다음 행동:' : '다음 행동:') + '</strong> ' + prose(item.next) + '</p><a href="#' + escape(item.verificationAnchor || 'shot-' + item.image) + '">' + (item.status === 'resolved' ? '수정 후 화면과 확인 결과 보기' : '해당 화면 원본과 설명 보기') + '</a>' + (item.previousImage ? ' · <a href="#shot-' + escape(item.previousImage) + '">수정 전 화면 보기</a>' : '') + '</article>';
     const open = data.findings.filter(item => item.status !== 'resolved');
     const resolved = data.findings.filter(item => item.status === 'resolved');
     findings.innerHTML = '<p><strong>남은 보완 ' + open.length + '건</strong></p>' + open.map(card).join('') +

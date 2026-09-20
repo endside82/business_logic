@@ -6,7 +6,7 @@
   <title>화면 검수와 남은 촬영 — community</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
-  <link rel="stylesheet" href="../assets/app-tour.css?v=20260916-2">
+  <link rel="stylesheet" href="../assets/app-tour.css?v=20260920-transport">
 </head>
 <body data-document-kind="reference" data-base="../" data-tour-view="review">
   <div class="layout">
@@ -16,7 +16,7 @@
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>화면 검수와 남은 촬영</div>
         <h1>무엇을 보았고,<br>무엇을 더 확인해야 할까요?</h1>
         <p class="lede">사진이 있는 것, 실제 조작·저장 결과를 확인한 것, 실제 휴대전화와 외부 서비스를 확인한 것은 서로 다릅니다.</p>
-        <p><a href="#settlement-review">정산 확인 결과</a> · <a href="../tour/coverage.html">전체 업무별 촬영 현황</a> · <a href="#findings">확인한 문제와 다음 행동</a> · <a href="#captures">전체 사진 바로 보기</a></p>
+        <p><a href="#settlement-review">정산 확인 결과</a> · <a href="#transport-real-review">새 차량 조율 실제 화면</a> · <a href="../tour/coverage.html">전체 업무별 촬영 현황</a> · <a href="#findings">확인한 문제와 다음 행동</a> · <a href="#captures">전체 사진 바로 보기</a></p>
       </header>
       <section>
         <div class="callout warn"><span class="label">화면 검수는 출시 승인이 아닙니다</span>
@@ -38,10 +38,59 @@
         <p><strong>다음 코드 보완:</strong> 기존 비용을 수정할 때 원래 분담 대상을 불러오도록 서버 응답과 편집 화면을 연결해야 합니다. 현재는 서버 응답에 배분 내역이 없어 사용자가 다시 선택하도록 안내합니다. 저장이 실패해도 입력 내용이 남도록 보완하는 일도 남았습니다.</p>
         <p><strong>다음 이용 확인:</strong> 항목별 분담금 납부 방식의 완료, 영수증 첨부·열람, 재안내·기한 연장·이의·일괄 확인·취소·환불을 각각 실행하고 결과를 남겨야 합니다. 직접 송금의 자동 완료된 분담 내역은 계산 기준일 뿐이며, <strong>실제 송금 완료와 구분</strong>해 표시합니다.</p>
       </section>
-      <section><h2>카풀은 어디까지 확인됐나요?</h2>
-        <p><strong>좌석 비지정 방식</strong>은 운전자 제안 → 주최자 승인 → 탑승자 자리 확정 → 주최자 명단 반영까지 확인했습니다. <a href="#shot-carpool-passenger-my-seat">탑승자의 내 자리</a>와 <a href="#shot-carpool-host-passengers">주최자의 탑승자 명단</a>에서 결과를 비교할 수 있습니다.</p>
+      <section id="transport-real-review"><h2>새 차량 조율은 실제로 어떻게 동작하나요?</h2>
+        <p>새 시험 모임에서 <strong>실제 앱 조작과 서버 저장을 대조</strong>한 화면입니다. 휴대전화가 아닌 390×844 크기의 웹 실행이며, 로그인은 시험 세션으로 시작했습니다. 아래 여섯 장은 기존 촬영 통계와 별도로 추가했습니다.</p>
+        <div class="tour-shot-grid">
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-host-bus-assigned.png"><img src="../assets/transport-review/real-host-bus-assigned.png" width="780" height="1687" loading="lazy" alt="주최자가 버스에 세 명을 배정한 뒤 승객 3명과 남은 정원 1명을 확인하는 화면"></a>
+            <figcaption><h3>주최자가 차량별로 배정</h3><p>주최자가 세 명을 함께 배정했습니다. <strong>자리 번호가 아니라 사람과 차량</strong>을 기준으로 보고, 버스 승객 3명·남은 정원 1명이 서버 저장과 일치했습니다.</p></figcaption>
+          </figure>
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-adjustment-pending.png"><img src="../assets/transport-review/real-adjustment-pending.png" width="780" height="1687" loading="lazy" alt="현재 카풀 배정은 유지하면서 주최자에게 함께 이동할 사람에 관한 변경 의견을 보낸 화면"></a>
+            <figcaption><h3>의견을 보내도 배정은 유지</h3><p>참가자는 함께 이동할 사람과 희망을 전달합니다. <strong>요청만으로 자리가 비워지지 않으며</strong> 주최자가 처리할 때 배정이 바뀝니다.</p></figcaption>
+          </figure>
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-cancelled-driver.png"><img src="../assets/transport-review/real-cancelled-driver.png" width="780" height="1687" loading="lazy" alt="차량 지원을 취소한 운전자가 자동 개별 이동이 아닌 배정 필요로 표시된 화면"></a>
+            <figcaption><h3>운행을 취소한 운전자도 재배정</h3><p>모임에 남은 전 운전자와 승객 두 명 모두 <strong>배정 필요</strong>로 바뀌었습니다. 자동으로 개별 이동 차량을 만들지 않았습니다.</p></figcaption>
+          </figure>
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-reallocation-open.png"><img src="../assets/transport-review/real-reallocation-open.png" width="780" height="1687" loading="lazy" alt="주최자가 취소 차량의 전 운전자와 두 승객을 함께 보고 남은 인원을 재배정하는 화면"></a>
+            <figcaption><h3>취소 차량의 사람을 빠짐없이 조율</h3><p>주최자는 남은 세 명을 한 화면에서 다시 배정합니다. 이후 세 명을 버스로 옮기자 <strong>묶음이 자동 종료</strong>됐고 처리 기록은 보존됐습니다.</p></figcaption>
+          </figure>
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-distributed-roster.png"><img src="../assets/transport-review/real-distributed-roster.png" width="780" height="1687" loading="lazy" alt="정원을 줄이면서 승객을 다른 차량으로 옮긴 뒤 세 차량의 배정과 운전자 및 조율 종료자를 구분한 전체 명단"></a>
+            <figcaption><h3>정원 감소와 승객 이동을 함께 저장</h3><p>버스 정원을 두 명에서 한 명으로 줄이면서 초과 승객을 다른 버스로 옮겼습니다. <strong>정원과 배정이 함께 반영</strong>됐고, 전체 명단에서 각자의 차량을 확인했습니다.</p></figcaption>
+          </figure>
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-server-conflict.png"><img src="../assets/transport-review/real-server-conflict.png" width="780" height="1687" loading="lazy" alt="다른 조정이 먼저 저장되어 요청이 거절됐지만 입력한 처리 사유를 유지하고 현황 다시 검토 버튼을 보여 주는 화면"></a>
+            <figcaption><h3>저장이 거절돼도 입력은 유지</h3><p>다른 조정이 먼저 저장되면 내용을 덮어쓰지 않습니다. <strong>입력한 사유를 보존</strong>하고 다시 검토하도록 안내합니다. 사진은 거절 직후이며, 이후 재검토와 저장 성공도 확인했습니다.</p></figcaption>
+          </figure>
+        </div>
+        <p>공동 주최자의 차량 교체, 허용된 본인 이동과 허용 종료, 개인 장소 공개 범위·안전 신고·조율 종료도 확인했습니다. 지원 수정·철회·미승인, 의견 수정·철회·반려, 만석 맞교환과 의견 제출 뒤 관련자 종료 안내, 배정 전 이동 의사와 개별 이동 선택도 확인했습니다. <strong>주최자의 배정 해제·배정 후 개별 이동 조정·참가 및 모임 종료 경로</strong>, 휴대전화·실제 푸시·도면의 실차 대조는 남았습니다. <a href="launch-status.html#transport-rework">현재 결과와 다음 확인</a>을 참고하세요.</p>
+      </section>
+      <section id="transport-layout-real-review"><h2>좌석 지정과 변경은 이렇게 보입니다</h2>
+        <p><strong>가상 도면을 사용하는 실제 앱·서버 연결 화면</strong>입니다. 카풀의 좌석 지정과 차량별 배정 사이 전환, 버스 좌석 지정, 다른 도면으로 변경한 뒤 탑승자 유지, 허용된 참가자의 본인 좌석 이동을 확인했습니다. 실제 차량의 배치를 검증한 사진은 아닙니다.</p>
+        <div class="tour-shot-grid">
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-bus-synthetic-layout.png"><img src="../assets/transport-review/real-bus-synthetic-layout.png" width="780" height="1687" loading="lazy" alt="시험용 버스 도면에서 운전석과 통로를 비우고 민준을 A2에 배정한 실제 연결 화면"></a>
+            <figcaption><h3>차량 탑승과 세부 좌석을 따로 관리</h3><p>좌석 지정으로 바꿔도 <strong>탑승자는 유지</strong>됩니다. 운전석·통로는 승객이 선택할 수 없고, 도면에 있는 빈 공간도 그대로 표시합니다.</p></figcaption>
+          </figure>
+          <figure class="tour-shot">
+            <a class="tour-image-link" href="../assets/transport-review/real-participant-seat-change.png"><img src="../assets/transport-review/real-participant-seat-change.png" width="780" height="1687" loading="lazy" alt="주최자가 허용한 참가자가 자신의 A1과 빈 A2를 보고 본인 좌석을 변경하는 화면"></a>
+            <figcaption><h3>허용된 참가자는 본인의 빈 좌석으로 이동</h3><p><strong>주최자가 허용한 경우만</strong> 열립니다. 다른 사람을 옮기거나 자리를 빼앗을 수 없으며, 맞교환이 필요하면 주최자에게 변경 의견을 보냅니다.</p></figcaption>
+          </figure>
+        </div>
+        <p>관리자 웹에서도 사용된 원본의 수정 차단, 복제본의 좌표 편집과 사용 시작을 확인했습니다. 시험 도면만 사용했으며 <strong>실제 사용할 차량과의 대조는 남아 있습니다.</strong></p>
+      </section>
+      <section id="transport-admin-real-review"><h2>관리자에서도 같은 처리 결과를 확인했습니다</h2>
+        <p>앱과 같은 새 시험 모임을 실제 관리자 서버에 연결했습니다. <strong>요청 내용·처리 사유·취소 후 재배정의 자동 종료</strong>가 저장 결과와 일치했습니다. 개인 승차 장소는 가렸으며, 조회 권한이 없는 계정은 기록을 볼 수 없습니다. 관리자가 대신 배정하는 기능을 추가한 것은 아닙니다.</p>
+        <p><a href="../assets/transport-review/real-admin-requests.png">요청과 주최자의 처리 사유 — 실제 관리자 화면</a> · <a href="../assets/transport-review/real-admin-privacy-reallocation.png">이동 의사·개인 장소 비공개·재배정 완료 — 실제 관리자 화면</a></p>
+        <p>이미 배정된 사람의 참여 의사를 ‘배정 필요’로 오해하지 않도록 <strong>‘함께 이동’</strong>으로 고쳤습니다. 위 두 사진은 관리자 웹이며, 휴대전화·실물 도면·좌석 전환을 확인한 사진은 아닙니다.</p>
+      </section>
+      <section><h2>기존 카풀 사진과 구분해 주세요</h2>
+        <p><strong>기존 코드의 촬영 기록</strong>입니다. 좌석 비지정 방식에서 운전자 제안 → 주최자 승인 → 탑승자 자리 확정 → 주최자 명단 반영까지 확인했습니다. <a href="#shot-carpool-passenger-my-seat">탑승자의 내 자리</a>와 <a href="#shot-carpool-host-passengers">주최자의 탑승자 명단</a>은 앞으로 적용할 주최자 최초 배정 화면이 아닙니다.</p>
         <div class="callout"><span class="label">지정 좌석 표시를 수정하고 선택까지 확인했습니다</span><p>서버의 응답 변환을 수정한 뒤 <a href="#shot-seat-fix-passenger-my-seat"><strong>회원의 2번 내 좌석과 탑승 2/7명</strong></a>, <a href="#shot-seat-fix-host-passengers">주최자의 1번 수아·2번 민준 명단</a>을 확인했습니다. 앱을 다시 열어도 유지됩니다. 서버 이동 검사 116개와 앱 검사 76개도 통과했습니다.</p></div>
-        <p><strong>다음 코드 보완</strong>은 픽업 경로·차량 제목의 운전자 이름 표시, 승인 대기 안내, 취소 버튼 문구입니다. 별도로 <strong>승객이 탄 운행 취소·승차 장소·자리 반납·신고·관리자 배치도 편집</strong>을 추가 촬영해야 합니다. 서명한 휴대전화 앱의 검사는 아직 남아 있습니다.</p>
+        <p><a href="#transport-real-review">새 차량 조율의 실제 화면</a>은 위에서 확인할 수 있습니다. 아래 전체 사진 목록의 기존 카풀·좌석 사진을 새 주최자 배정이나 실물 도면의 검증 근거로 사용하지 않습니다.</p>
       </section>
       <section id="findings"><h2>사진에서 확인한 개선점</h2><p>먼저 남은 보완을 표시합니다. 수정하고 다시 확인한 항목은 아래에 접어 두었으며, 기능 전체가 미구현이라는 뜻은 아닙니다.</p><div id="tour-findings" class="tour-findings"></div></section>
       <section id="captures"><h2>촬영 원본과 확인 범위</h2><p>입력 중인 화면은 저장 성공의 근거가 아닙니다. 처리 결과를 확인한 사진에만 그 범위를 적습니다.</p><div id="tour-content"></div></section>
@@ -55,7 +104,7 @@
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/app.js"></script>
-  <script src="../assets/app-tour-data.js?v=20260916-1"></script>
-  <script src="../assets/app-tour.js?v=20260916-1"></script>
+  <script src="../assets/app-tour-data.js?v=20260920-transport-real"></script>
+  <script src="../assets/app-tour.js?v=20260920-transport-real"></script>
 </body>
 </html>
