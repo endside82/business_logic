@@ -62,6 +62,18 @@ for (const shot of data.shots) {
   totalBytes += bytes.length;
 }
 const reviewHtml = await readFile(resolve(root, 'docs/qa/screen-review.html'), 'utf8');
+const followupReview = reviewHtml.match(/<section id="transport-followup-review">([\s\S]*?)<\/section>/)?.[1];
+assert.ok(followupReview, '추가 웹 시나리오 결과 구분 필요');
+assert.match(followupReview, /추가 검사 6개를 통과/);
+assert.match(followupReview, /데스크톱 웹/);
+assert.match(followupReview, /휴대전화·실제 푸시·사용할 실차 도면은 아직 확인하지 않았습니다/);
+const followupPhotos = [...followupReview.matchAll(/href="\.\.\/assets\/transport-review\/(case-[a-z0-9-]+\.jpg)"/g)].map(match => match[1]);
+assert.equal(followupPhotos.length, 7, '여섯 경로의 사진 일곱 장');
+assert.equal(new Set(followupPhotos).size, 7, '중복 사진으로 증거 개수를 늘리지 않음');
+for (const file of followupPhotos) {
+  const bytes = await readFile(resolve(root, 'docs/assets/transport-review', file));
+  assert.deepEqual(jpegSize(bytes), { width: 1322, height: 768 }, `${file}: 실제 데스크톱 원본 크기`);
+}
 const transportReview = reviewHtml.match(/<section id="transport-real-review">([\s\S]*?)<\/section>/)?.[1];
 const transportPhotos = [...(transportReview || '').matchAll(/<img src="\.\.\/assets\/transport-review\/([a-z-]+\.png)"/g)].map(match => match[1]);
 assert.equal(new Set(transportPhotos).size, 6, 'New transport evidence must have six distinct photos');
@@ -125,6 +137,6 @@ console.log(JSON.stringify({ result: 'PASS', screenshots: ids.size, groupsStarte
   groupsPlanned: groups.size, showcase: data.shots.filter(shot => shot.showcase).length, findings: data.findings.length,
   openFindings: data.findings.filter(item => item.status !== 'resolved').length,
   resolvedFindings: data.findings.filter(item => item.status === 'resolved').length, transportScreenshots: transportPhotos.length,
-  transportAdminScreenshots: adminPhotos.length,
+  transportAdminScreenshots: adminPhotos.length, transportFollowupScreenshots: followupPhotos.length,
   transportSyntheticLayoutScreenshots: layoutPhotos.length,
   dimensions: '390x844', bytes: totalBytes }, null, 2));
