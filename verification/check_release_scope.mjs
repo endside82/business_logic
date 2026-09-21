@@ -84,7 +84,7 @@ assert.equal(transport.readiness.work, 'environment');
 assert.match(transport.readiness.implementation, /서버와 앱 연결/, '연결한 명단·배정·조정 요청을 미구현으로 되돌리지 않음');
 assert.match(transport.readiness.automation, /소스 검수 24개 통과/, '소스 판정을 실제 이용 판정과 구분');
 assert.match(transport.readiness.automation, /추가 웹 시나리오 6개.*실제 앱·관리자 화면과 서버·데이터베이스.*통과/, '새 여섯 경로의 확인 방법과 결과');
-assert.match(transport.readiness.automation, /전체 자동 회귀는 아직 재실행하지 않았다/, '개별 확인을 전체 회귀로 확대하지 않음');
+assert.match(transport.readiness.automation, /통합 전 전체 자동 검사를 실행했고.*실패 항목은 수정 후.*재검사해 통과/, '최초 전체 실행과 실패 수정 뒤 재검사를 구분');
 assert.match(transport.readiness.implementation, /의견·처리 사유 소거와 분쟁 보존·재처리 연결/, '구현한 문구 소거·분쟁 보존·재처리를 미구현으로 되돌리지 않음');
 assert.match(transport.readiness.implementation, /탈퇴자 신규 배정·지원 확정 차단 연결/, '신규 대상 계정 검사를 미구현으로 되돌리지 않음');
 assert.match(transport.readiness.automation, /합성 도면은 실차 검증이 아니다/, '합성 도면을 실차 사용 승인으로 올리지 않음');
