@@ -33,7 +33,7 @@
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>기능별 시나리오 완성도</div>
         <h1>기능별 시나리오 완성도</h1>
         <p class="lede">
-          175개 기능을 <strong>제품 시나리오가 정의되어 있는가</strong>, <strong>옛 소스 근거가 현재도 유효한가</strong>,
+          175개 기능을 <strong>제품 시나리오가 정의되어 있는가</strong>, <strong>어떤 코드가 해당 기능을 처리하는가</strong>,
           <strong>자동 테스트와 사용자 여정 검증이 어느 기능을 증명하는지 명시되어 있는가</strong>로 나눠 본다.
           이 표의 “문서 연결 없음”은 곧바로 기능이나 테스트가 없다는 뜻이 아니다. 기존 테스트가 있어도
           제품 시나리오 문서가 테스트 파일을 직접 가리키지 않으면 무엇을 증명하는지 확정할 수 없으므로 별도로 표시한다.
@@ -102,10 +102,10 @@
               찾아 매핑하고, 정말 없을 때만 새 테스트를 만든다.</p>
           </div>
           <div class="audit-card">
-            <h3>옛 소스 줄 링크는 신뢰할 수 없다</h3>
-            <p>기존 소스 줄 표식 <strong id="c-trace">–</strong>개 중 현재 위치가 맞는 것은
-              <strong id="c-trace-ok">–</strong>개뿐이다. 대부분은 코드가 이동했는데 줄 번호가 갱신되지 않은
-              문서 문제다. 파일 자체가 사라진 2개 표식은 철회된 타 사용자 가용시간 기능에 속한다.</p>
+            <h3>문서의 코드 위치를 교정했다</h3>
+            <p>문서에서 설명한 <strong>처리 함수와 호출 주소</strong>를 실제 서버 코드와 대조해 새 위치로 연결했다.
+              철회된 기능은 현재 구현 근거에서 제외했다. <strong>코드 위치 확인과 기능 테스트 통과는 별개</strong>다.
+              <a href="#source-reference-guide">코드 위치 교정 결과</a>에서 확인 범위를 구분한다.</p>
           </div>
         </div>
       </section>
@@ -126,6 +126,41 @@
           <li><strong>봉인 기능</strong>은 “테스트가 있으니 완료”로 처리하지 않는다. 고객 안내 화면, 운영 조회·처리·복구,
             외부 계약·키, 기능 출시 설정, 같은 버전의 회귀 검증까지 한 시나리오로 통과해야 출시할 수 있다.</li>
         </ol>
+      </section>
+
+      <section id="source-reference-guide">
+        <h2>코드 위치 교정 결과</h2>
+        <p>문서에 적힌 코드 위치 <strong id="c-trace">–</strong>개를 모두 대조했다.
+          <strong>파일·처리 함수·요청 방식·전체 호출 주소가 일치하는 코드</strong>를 찾아 링크를 교정했다.
+          단순히 옛 줄 번호 근처에 다른 코드가 있다는 이유로 정상 판정하지 않는다.</p>
+        <p class="audit-note" id="trace-asof"></p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>교정 결과</th><th>기록 수</th><th>이제 어떻게 확인하는가</th></tr></thead>
+            <tbody>
+              <tr><td><strong>현재 코드로 연결 완료</strong></td><td id="c-trace-verified">–</td><td>아래 기능의 <strong>확인한 코드 보기</strong>를 열면 처리 함수·호출 주소와 해당 위치로 바로 이동하는 링크를 볼 수 있다. 제품 요구사항 문서의 코드 위치 표도 교정했다.</td></tr>
+              <tr><td>철회된 기능으로 분리</td><td id="c-trace-retired">–</td><td><a href="../features/F10-05.html#retired-status">타 사용자 가용시간 조회의 철회 안내</a>를 따른다. 같은 파일을 가리켰던 두 기록이며, <strong>복구할 코드나 출시를 막는 결함이 아니다.</strong></td></tr>
+              <tr><td>위치를 확정하지 못한 기록</td><td id="c-trace-unresolved">–</td><td>이번 교정 범위에 남은 위치 확인 작업이다. 기능 전체의 미구현·테스트 누락 건수와는 다르다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>기록 수는 기능 수나 파일 수가 아니다.</strong> 여러 문서가 같은 코드를 가리킬 수 있다.
+          같은 기능 안의 중복 링크는 한 번만 보여 준다. 코드 링크는 확인한 버전에 고정해 이후 줄 이동으로 엉뚱한 위치가 열리지 않게 했다.
+          저장소 접근 권한이 필요할 수 있다.</p>
+        <details class="feature-detail">
+          <summary>단순한 줄 이동 외에 바로잡은 내용</summary>
+          <ul>
+            <li><strong>회원 추방:</strong> 현재 사용하는 요청과 기존 호환용 요청이 서로 다른 함수라는 점을 구분했다.</li>
+            <li><strong>가상계좌 입금 통지:</strong> 공급자별 수신 주소와 기존 호환용 주소를 각각 연결했다. 처리 함수가 없다는 옛 설명도 정정했다. 실제 결제사 연동·출시 승인을 뜻하지는 않는다.</li>
+            <li><strong>반복 모임:</strong> 한 절에 섞여 있던 이후 회차 수정과 취소의 위치를 각각 연결했다.</li>
+          </ul>
+        </details>
+        <details class="feature-detail">
+          <summary>이후 코드가 이동하거나 계약이 바뀌면</summary>
+          <p>문서 생성기는 줄 번호를 그대로 믿지 않고 저장된 처리 함수·요청 방식·주소로 다시 찾는다.
+            같은 기능의 위치만 이동했다면 새 위치를 계산한다. 함수나 주소가 바뀌어 일치하지 않으면 생성을 중단해 개발자가 변경 내용을 확인하도록 한다.</p>
+        </details>
+        <p class="audit-note">이번 완료 범위는 코드 위치 교정이다. 모든 동작·권한·오류 처리에 대한 테스트나 상세 계약 전체의 재검증으로 세지 않는다.</p>
       </section>
 
       <section>
@@ -149,7 +184,7 @@
           <label class="chip"><input type="checkbox" id="f-no-journey">통합·로컬 계정 근거 없음</label>
           <label class="chip"><input type="checkbox" id="f-chain">검증 근거 3단계 미완료</label>
           <label class="chip"><input type="checkbox" id="f-count">등록 숫자와 제목 수 불일치</label>
-          <label class="chip"><input type="checkbox" id="f-trace">소스 줄 링크 정비 필요</label>
+          <label class="chip"><input type="checkbox" id="f-trace">코드 위치 확인됨</label>
           <label class="chip"><input type="checkbox" id="f-gap">알려진 문제 있음</label>
         </div>
         <p class="feature-count" id="count">불러오는 중…</p>
@@ -162,7 +197,7 @@
               <th style="width:92px">첫 출시</th>
               <th style="width:108px;text-align:right">시나리오</th>
               <th style="width:104px">검증 근거 연결도</th>
-              <th style="width:122px">옛 서버 줄 링크</th>
+              <th style="width:160px">확인한 코드 위치</th>
               <th style="width:116px">자동 테스트</th>
               <th style="width:116px">사용자 여정</th>
               <th style="width:180px">다음 확인</th>
@@ -179,8 +214,9 @@
             함께 표시한다. 두 값이 다르면 정규화가 필요한 문서이며, 어느 값도 자동 테스트 통과 건수가 아니다.</li>
           <li><strong>검증 근거 연결도</strong>는 제품 정의, 자동 테스트 연결, 통합·E2E 또는 로컬 계정 근거의
             세 칸 중 몇 칸이 연결됐는지를 나타낸다. 3/3도 모든 시나리오 통과나 실환경 출시 완료를 뜻하지 않는다.</li>
-          <li><strong>옛 서버 줄 링크</strong>는 옛 문서의 파일·줄 번호가 지금도 맞는지를 기계적으로 확인한 결과다.
-            “정비 필요”는 보통 코드 결함이 아니라 문서 줄 번호 이동이다.</li>
+          <li><strong>확인한 코드 위치</strong>는 문서의 처리 함수·요청 방식·호출 주소와 실제 서버 선언을 대조한 결과다.
+            “코드 위치 확인됨” 필터는 이번 범위에서 현행 코드를 연결한 기능만 보여 준다.
+            <a href="#source-reference-guide">코드 위치 교정 결과</a>를 따르며, 기능 테스트 통과와 혼동하지 않는다.</li>
           <li><strong>자동 테스트 문서 연결</strong>은 시나리오 문서가 테스트 파일을 직접 가리킨다는 뜻이다.
             테스트 안의 기능 번호는 별도 후보이며, F03-17 번호가 전혀 다른 일정 변경 안내 테스트에서 발견된 사례처럼
             번호만으로는 완료 근거가 되지 않는다.</li>
@@ -224,7 +260,7 @@
 
       function esc(value) {
         return String(value == null ? '' : value)
-          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       }
       function pill(text, tone) {
         return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(text) + '</span>';
@@ -253,7 +289,11 @@
       document.getElementById('c-auto-markers').textContent = A.totals.automatedFeatureMarkers + '개 기능';
       document.getElementById('c-journey-markers').textContent = A.totals.journeyFeatureMarkers + '개 기능';
       document.getElementById('c-trace').textContent = A.totals.traceMarkers;
-      document.getElementById('c-trace-ok').textContent = A.totals.currentTraceMarkers;
+      document.getElementById('c-trace-verified').textContent = A.totals.verifiedTraceRecords + '개';
+      document.getElementById('c-trace-retired').textContent = A.totals.retiredTraceMarkers + '개';
+      document.getElementById('c-trace-unresolved').textContent = A.totals.unresolvedTraceRecords + '개';
+      document.getElementById('trace-asof').textContent = '코드 위치 확인일 ' + A.asOf +
+        ' · 서버 버전 ' + (A.sourceReferenceCheck.sourceRevision ? A.sourceReferenceCheck.sourceRevision.slice(0, 12) : '미커밋 변경 포함');
       document.getElementById('asof').textContent = '시나리오·테스트 문서 연결 기준일 ' + A.asOf +
         ' · 출시 범위·로컬 E2E·신규 계정 확인 기준일 ' + L.asOf + ' · ' + A.countingNote;
 
@@ -286,10 +326,40 @@
 
       function traceCell(feature) {
         var trace = feature.trace;
-        if (trace.state === 'current') return pill('줄 링크 최신', 'brand') + '<div class="audit-note">' + trace.valid + '/' + trace.total + '</div>';
-        if (trace.state === 'partial') return pill('일부 정비 필요', 'warn') + '<div class="audit-note">' + trace.valid + '/' + trace.total + ' 현재 위치</div>';
-        if (trace.state === 'stale') return pill('정비 필요', 'danger') + '<div class="audit-note">0/' + trace.total + ' 현재 위치</div>';
-        return pill('정밀 링크 없음', '') + '<div class="audit-note">PRD·교차표로 확인</div>';
+        if (feature.launchScope === 'retired') return pill('철회된 기능', '') + '<div class="audit-note">복구 대상 아님</div>';
+        if (!trace.total) return pill('이번 교정 범위 밖', '') + '<div class="audit-note">기능 문서의 별도 코드 근거 참조</div>';
+        return pill('코드 위치 확인', 'brand') + '<div class="audit-note">기록 ' + trace.verified + '/' + trace.total +
+          ' 연결 · 동작 검증과 별개</div>' + traceDetails(feature);
+      }
+
+      function repositoryDocumentHref(file) {
+        return 'https://github.com/endside82/business_logic/blob/main/' +
+          file.slice('business_logic/'.length).split('/').map(encodeURIComponent).join('/');
+      }
+
+      function traceDetails(feature) {
+        var trace = feature.trace;
+        var seen = {};
+        return '<details class="feature-detail"><summary>확인한 코드 보기</summary>' +
+          '<p class="audit-note"><a href="' + esc(repositoryDocumentHref(feature.publishedDocumentPath)) + '">제품 요구사항 원문에서 해당 동작 찾기</a></p>' +
+          '<ul class="path-list">' + trace.entries.map(function (entry) {
+            return entry.endpoints.map(function (endpoint) {
+              var key = endpoint.targetPath + '#' + endpoint.method + ' ' + endpoint.httpMethod + ' ' + endpoint.httpPath;
+              if (seen[key]) return '';
+              seen[key] = true;
+              var label = endpoint.targetPath.split('/').pop() + ':' + endpoint.targetLine;
+              var revision = A.sourceReferenceCheck.sourceRevision;
+              var target = '<code>' + esc(label) + '</code>';
+              if (revision) {
+                var href = 'https://github.com/endside82/community_api/blob/' + revision + '/' +
+                  endpoint.targetPath.slice('community_api/'.length).split('/').map(encodeURIComponent).join('/') + '#L' + endpoint.targetLine;
+                target = '<a href="' + esc(href) + '">' + target + '</a>';
+              }
+              return '<li>' + esc(entry.label) + '<br><code>' + esc(endpoint.controller + '#' + endpoint.method) +
+                '</code><br><code>' + esc(endpoint.httpMethod + ' ' + endpoint.httpPath) + '</code><br>' + target +
+                (entry.note ? '<br>' + esc(entry.note) : '') + '</li>';
+            }).join('');
+          }).join('') + '</ul></details>';
       }
 
       function evidenceFiles(title, evidence) {
@@ -316,13 +386,11 @@
       }
 
       function featureCell(feature) {
-        var scenarioHref = feature.scenarioPath.indexOf('business_logic/') === 0
-          ? '../../' + feature.scenarioPath.slice('business_logic/'.length) : '';
-        var detail = '<div class="audit-note"><a href="' + esc(scenarioHref) + '">제품 시나리오 원문 열기</a> · <code>' + esc(feature.scenarioPath) + '</code></div>';
+        var scenarioHref = repositoryDocumentHref(feature.publishedDocumentPath);
+        var detail = '<div class="audit-note"><a href="' + esc(scenarioHref) + '">제품 요구사항·시나리오 원문 열기 (코드 저장소)</a></div>';
+        detail += '<div class="audit-note">검사한 시나리오 자료 (로컬 경로): <code>' + esc(feature.scenarioPath) + '</code></div>';
         if (feature.trace.backendPath) {
-          var backendHref = feature.trace.backendPath.indexOf('business_logic/') === 0
-            ? '../../' + feature.trace.backendPath.slice('business_logic/'.length) : '';
-          detail += '<div class="audit-note"><a href="' + esc(backendHref) + '">서버 근거 원문 열기</a> · <code>' + esc(feature.trace.backendPath) + '</code></div>';
+          detail += '<div class="audit-note">검사한 개발 메모 (로컬 경로): <code>' + esc(feature.trace.backendPath) + '</code></div>';
         }
         detail += evidenceFiles('시나리오 문서가 지목한 자동 테스트', feature.automated);
         detail += evidenceFiles('시나리오 문서가 지목한 통합·E2E', feature.journey);
@@ -350,7 +418,6 @@
         if (feature.scenarioDefinition.registeredCountMatches === false) return '시나리오 제목에 고유 ID를 붙이고 등록 숫자를 실제 문서와 맞춘다.';
         if (!feature.automated.directlyLinked) return '기존 테스트를 찾아 시나리오 문서에 연결하고, 실제 공백만 새로 작성한다.';
         if (!feature.journey.directlyLinked && feature.proof !== 'local' && feature.proof !== 'real') return '위험도에 맞는 통합 여정을 선택해 직접 연결한다.';
-        if (feature.trace.state === 'stale' || feature.trace.state === 'partial') return '동작 증거는 있으므로 오래된 소스 줄 링크를 갱신한다.';
         if (feature.launchScope === 'sealed') return '출시 조건과 운영 화면을 포함한 실환경 여정을 실행한다.';
         return '현재 연결을 유지하고 기능 변경 때 영향 시나리오를 재실행한다.';
       }
@@ -373,7 +440,7 @@
           if (noJourney && (feature.journey.directlyLinked || feature.proof === 'local' || feature.proof === 'real')) return false;
           if (incompleteChain && feature.evidenceStage === 3) return false;
           if (countMismatch && feature.scenarioDefinition.registeredCountMatches !== false) return false;
-          if (trace && !(feature.trace.state === 'stale' || feature.trace.state === 'partial')) return false;
+          if (trace && !feature.trace.verified) return false;
           if (gap && !feature.knownIssues) return false;
           if (query) {
             var haystack = (feature.id + ' ' + feature.name + ' ' + feature.domain).toLowerCase();

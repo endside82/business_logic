@@ -19,14 +19,25 @@
         </div>
         <h1>F10-05. 타 사용자 가용성 공개 조회</h1>
         <p class="lede">
-          다른 사용자가 공개해 둔 가용 시간을 보고, 그 시간에 이벤트나 만남을 제안할 수 있도록 한다.
-          공개 범위는 두 단계 — "전체 공개"와 "친구만 공개". 본 단위는 캘린더 도메인 안에 자체 화면을 두지 않고,
-          이벤트 제안 폼이나 데이팅 일정 조율 같은 다른 도메인의 화면이 호출해서 쓰는 데이터 소스 역할만 한다.
+          <strong>철회된 기능이다.</strong> 개인 가용시간은 본인만 관리하며 다른 사람의 가용시간을 공개 조회하는 기능은 제공하지 않는다.
+          아래 과거 설계는 현재 기능이나 출시를 위해 구현할 목록이 아니다.
         </p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
+      <section id="retired-status">
+        <h2>타 사용자 가용시간 조회의 철회 안내</h2>
+        <p><strong>전체 공개 조회와 친구 공개 조회를 모두 제거했다.</strong>
+          두 조회를 처리하던 서버 파일 <code>UserAvailabilityController.java</code>도 삭제됐다.
+          옛 문서에 남은 두 위치 기록은 파일 두 개가 아니라 이 파일의 서로 다른 두 줄을 가리킨다.</p>
+        <p>따라서 <strong>코드 누락·장애·복구 대기로 세지 않는다.</strong> 본인의 가용시간 관리는 이 철회와 별개다.
+          현재 제공 범위는 <a href="../qa/feature-status.html">출시 기능별 구현·테스트 현황</a>,
+          문서의 위치 기록을 읽는 방법은 <a href="../qa/scenario-completeness.html#source-reference-guide">코드 위치 교정 결과</a>를 따른다.</p>
+      </section>
+
+      <details>
+        <summary>철회 전 설계 보기 — 현재 제공하지 않는 동작</summary>
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">공개 범위</div><div class="value">2종</div><div class="hint">전체 공개 · 친구 공개</div></div>
@@ -139,6 +150,7 @@
         </div>
       </section>
 
+      </details>
 <!--
   원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
   - business_logic/units/10_calendar/F10-05_other-user-availability/{scenarios,backend,frontend,diagrams}.md

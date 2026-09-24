@@ -30,12 +30,16 @@
 | Scenario | [scenarios.md](../../../units/13_profile_settings/F13-07_account-deactivation/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/13_profile_settings/F13-07_account-deactivation/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/account/controller/UserController.java:64` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/controller/UserController.java:70` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `GET /api/v1/users/me/deactivation-check` | `UserController#checkDeactivation` | [UserController.java:74](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/account/controller/UserController.java#L74) |
+| `DELETE /api/v1/users/me` | `UserController#deleteMyAccount` | [UserController.java:80](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/account/controller/UserController.java#L80) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

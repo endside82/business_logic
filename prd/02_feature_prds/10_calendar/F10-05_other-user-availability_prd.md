@@ -1,5 +1,9 @@
 # F10-05. 타 사용자 가용성 공개 조회 PRD
 
+> **현재 상태: 설계 철회·제품에서 제외.** 개인 가용시간은 본인만 관리하며 타인에게 공개 조회하는 기능은 제공하지 않습니다.
+> 아래 설계·계약은 철회 전 기록입니다. 현재 구현이나 남은 개발 요구사항으로 사용하지 않습니다.
+> [타 사용자 가용시간 조회의 철회 안내](../../../docs/features/F10-05.html#retired-status)를 따릅니다.
+
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
@@ -28,12 +32,11 @@
 | Scenario | [scenarios.md](../../../units/10_calendar/F10-05_other-user-availability/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/10_calendar/F10-05_other-user-availability/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/calendar/controller/UserAvailabilityController.java:27` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/calendar/controller/UserAvailabilityController.java:42` | 확인됨 |
+**설계 철회 — 현행 코드 링크 없음.** 타 사용자 가용시간 조회의 두 옛 기록은 삭제된 같은 파일을 가리킨다. 복구 대상이 아니며 현재 구현 근거에서 제외한다.
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

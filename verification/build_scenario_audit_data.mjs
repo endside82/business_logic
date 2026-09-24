@@ -3,12 +3,15 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { resolveReferences } from './source_references.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const businessRoot = path.resolve(scriptDir, '..');
 const workspaceRoot = path.resolve(businessRoot, '..');
 const outputPath = path.join(businessRoot, 'docs/assets/scenario-audit.js');
+const asOf = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
 
 function read(relativePath) {
   return fs.readFileSync(path.join(workspaceRoot, relativePath), 'utf8');
@@ -63,6 +66,8 @@ if (missingScenarioFeatures.length) {
 const unitFiles = walk('business_logic/units');
 const scenarioFiles = unitFiles.filter((file) => file.endsWith('/scenarios.md'));
 const backendFiles = unitFiles.filter((file) => file.endsWith('/backend.md'));
+const referenceTargets = JSON.parse(fs.readFileSync(path.join(scriptDir, 'source_reference_targets.json'), 'utf8')).references;
+const resolvedReferences = resolveReferences(workspaceRoot, referenceTargets);
 
 function countUnitScenarioHeadings(documentText) {
   return [...documentText.matchAll(
@@ -123,41 +128,15 @@ function unique(files) {
 
 function traceEvidence(featureId) {
   const backendPath = backendFiles.find((file) => file.includes(`/${featureId}_`));
-  if (!backendPath) {
-    return { backendPath: null, total: 0, filesPresent: 0, valid: 0, missing: 0, state: 'not-linked' };
-  }
-
-  const markerPattern = /<!-- traces:\s+(.+):(\d+)\s+-->/g;
-  const backendText = read(backendPath);
-  let marker;
-  let total = 0;
-  let filesPresent = 0;
-  let valid = 0;
-  let missing = 0;
-
-  while ((marker = markerPattern.exec(backendText)) !== null) {
-    total += 1;
-    const targetPath = marker[1];
-    const targetLine = Number(marker[2]);
-    const absoluteTarget = path.join(workspaceRoot, targetPath);
-    if (!fs.existsSync(absoluteTarget)) {
-      missing += 1;
-      continue;
-    }
-    filesPresent += 1;
-    const lines = fs.readFileSync(absoluteTarget, 'utf8').split(/\r?\n/);
-    const mappingIsNearAnchor = [targetLine - 1, targetLine, targetLine + 1].some((lineNumber) =>
-      /@(Get|Post|Put|Patch|Delete|Request)Mapping/.test(lines[lineNumber - 1] ?? ''),
-    );
-    if (mappingIsNearAnchor) valid += 1;
-  }
-
-  let state = 'not-linked';
-  if (total > 0 && valid === total) state = 'current';
-  else if (valid > 0) state = 'partial';
-  else if (total > 0) state = 'stale';
-
-  return { backendPath, total, filesPresent, valid, missing, state };
+  const entries = resolvedReferences.filter((reference) => reference.featureId === featureId)
+    .map(({ id, label, status, note, endpoints }) => ({ id, label, status, note: note ?? '', endpoints }));
+  return {
+    backendPath: backendPath ?? null,
+    total: entries.length,
+    verified: entries.filter((entry) => entry.status === 'verified').length,
+    retired: entries.filter((entry) => entry.status === 'retired').length,
+    entries,
+  };
 }
 
 const auditFeatures = features.map((feature) => {
@@ -189,6 +168,7 @@ const auditFeatures = features.map((feature) => {
     scenarioCount: feature.scenarios,
     scenarioSource: unitScenarioPath ? '상세 시나리오 문서' : '기능 PRD 수용 시나리오',
     scenarioPath,
+    publishedDocumentPath: `business_logic/prd/${feature.prdPath}`,
     scenarioDefinition: {
       formal: formalDefinition,
       documentScenarioCount,
@@ -226,11 +206,22 @@ const auditFeatures = features.map((feature) => {
 const traceTotals = auditFeatures.reduce(
   (sum, feature) => ({
     total: sum.total + feature.trace.total,
-    valid: sum.valid + feature.trace.valid,
-    missing: sum.missing + feature.trace.missing,
+    verified: sum.verified + feature.trace.verified,
+    retired: sum.retired + feature.trace.retired,
   }),
-  { total: 0, valid: 0, missing: 0 },
+  { total: 0, verified: 0, retired: 0 },
 );
+
+if (traceTotals.total !== referenceTargets.length) throw new Error('기능 목록에 연결되지 않은 코드 위치 기록이 있습니다.');
+const sourceFiles = unique(resolvedReferences.flatMap((reference) => reference.endpoints).map((endpoint) => endpoint.targetPath));
+if (sourceFiles.some((file) => !file.startsWith('community_api/'))) {
+  throw new Error('소스 위치 검사 대상 저장소가 추가됐습니다. 버전 기록과 링크 생성을 먼저 보완하세요.');
+}
+const sourceRoot = path.join(workspaceRoot, 'community_api');
+const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: sourceRoot, encoding: 'utf8' }).trim();
+const sourceChanges = execFileSync('git', [
+  'status', '--porcelain', '--untracked-files=all', '--', ...sourceFiles.map((file) => file.slice('community_api/'.length)),
+], { cwd: sourceRoot, encoding: 'utf8' }).trim();
 
 const documentedScenarioItems = auditFeatures.reduce((sum, feature) => sum + feature.scenarioCount, 0);
 const unitScenarioDocuments = auditFeatures.filter((feature) =>
@@ -244,7 +235,12 @@ const unitScenarioCountMismatches = auditFeatures.filter((feature) =>
 ).length;
 
 const payload = {
-  asOf: launchStatus.asOf,
+  asOf,
+  sourceReferenceCheck: {
+    method: 'exact-controller-method-and-http-route',
+    endpointIdentityChecked: true,
+    sourceRevision: sourceChanges ? null : sourceRevision,
+  },
   countingNote: `${documentedScenarioItems.toLocaleString('ko-KR')}은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 ${unitScenarioDocuments}개에서 실제로 식별한 제목은 ${unitScenarioHeadings.toLocaleString('ko-KR')}개이며 ${unitScenarioCountMismatches}개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.`,
   totals: {
     features: auditFeatures.length,
@@ -278,8 +274,9 @@ const payload = {
     partialEvidenceChain: auditFeatures.filter((feature) => feature.evidenceStage === 2).length,
     definitionOnlyEvidence: auditFeatures.filter((feature) => feature.evidenceStage === 1).length,
     traceMarkers: traceTotals.total,
-    currentTraceMarkers: traceTotals.valid,
-    missingTraceTargets: traceTotals.missing,
+    verifiedTraceRecords: traceTotals.verified,
+    unresolvedTraceRecords: traceTotals.total - traceTotals.verified - traceTotals.retired,
+    retiredTraceMarkers: traceTotals.retired,
   },
   features: auditFeatures,
 };

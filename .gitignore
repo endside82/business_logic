@@ -14,6 +14,11 @@
 !/verification/
 /verification/*
 !/verification/build_scenario_audit_data.mjs
+!/verification/check_scenario_audit.mjs
+!/verification/source_references.mjs
+!/verification/source_reference_targets.json
+!/verification/sync_source_reference_docs.mjs
+!/verification/source_references.test.mjs
 !/verification/check_release_scope.mjs
 !/verification/check_app_tour.mjs
 !/verification/check_app_tour_coverage.mjs

@@ -32,19 +32,17 @@
 | Diagram | [diagrams.md](../../../units/09_private_date/F09-01_verification/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 | Plan | `community/docs/plan/VERIFICATION_PROVIDER_PLAN.md` | 있음(v2.2, Codex sign-off) | Phase 0 결정 사항(세션·HMAC·접근권한·게이트) |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java` (/request /verify /status) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/privatedate/service/VerificationService.java` (requestVerification / doRequestVerification / verify / markSessionFailed / isVerified / scheduleDemographicsSync) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/privatedate/model/IdentityVerificationSession.java` (시도 단위 세션) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/privatedate/repository/IdentityVerificationSessionRepository.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/privatedate/util/TxIdHasher.java` (HMAC-SHA256) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/common/util/EncryptedColumnCodec.java` (Base64-as-bytes 규약) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/service/MemberService.java#syncVerifiedDemographics` (REQUIRES_NEW) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/privatedate/service/VerificationBackfillService.java` (기존 VERIFIED 1회성 sync) | 확인됨 |
-| `community_api/src/main/resources/db/migration/V1__init.sql` (member.mbti, identity_verification_session, member.user_id UNIQUE) | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `POST /api/v1/date/verification/request` | `DateVerificationController#requestVerification` | [DateVerificationController.java:39](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java#L39) |
+| `POST /api/v1/date/verification/verify` | `DateVerificationController#verify` | [DateVerificationController.java:99](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java#L99) |
+| `GET /api/v1/date/verification/status` | `DateVerificationController#getStatus` | [DateVerificationController.java:110](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java#L110) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

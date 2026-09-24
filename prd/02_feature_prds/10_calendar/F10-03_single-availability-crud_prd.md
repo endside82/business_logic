@@ -29,15 +29,19 @@
 | Scenario | [scenarios.md](../../../units/10_calendar/F10-03_single-availability-crud/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/10_calendar/F10-03_single-availability-crud/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java:34` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java:42` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java:59` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java:67` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java:76` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `POST /api/v1/availability` | `AvailabilityController#createAvailability` | [AvailabilityController.java:39](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java#L39) |
+| `GET /api/v1/availability` | `AvailabilityController#getAvailabilities` | [AvailabilityController.java:50](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java#L50) |
+| `GET /api/v1/availability/{id}` | `AvailabilityController#getAvailability` | [AvailabilityController.java:69](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java#L69) |
+| `PATCH /api/v1/availability/{id}` | `AvailabilityController#updateAvailability` | [AvailabilityController.java:88](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java#L88) |
+| `DELETE /api/v1/availability/{id}` | `AvailabilityController#deleteAvailability` | [AvailabilityController.java:97](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java#L97) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

@@ -28,12 +28,16 @@
 | Scenario | [scenarios.md](../../../units/12_notification/F12-03_category-settings/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/12_notification/F12-03_category-settings/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java:82` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java:89` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `GET /api/v1/notifications/settings` | `NotificationController#getSettings` | [NotificationController.java:81](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/notification/controller/NotificationController.java#L81) |
+| `PATCH /api/v1/notifications/settings` | `NotificationController#updateSettings` | [NotificationController.java:99](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/notification/controller/NotificationController.java#L99) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

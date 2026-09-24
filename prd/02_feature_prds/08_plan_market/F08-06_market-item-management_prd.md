@@ -30,26 +30,20 @@ AUTH-06(예약 판매시작)으로 크리에이터는 APPROVED/STOP_SELLING 상�
 | Scenario | [scenarios.md](../../../units/08_plan_market/F08-06_market-item-management/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/08_plan_market/F08-06_market-item-management/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:30` | 확인됨 (GET 목록) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:36` | 확인됨 (GET 상세) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:44` | 확인됨 (GET 내 아이템) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:51` | 확인됨 (POST 생성) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:59` | 확인됨 (PUT 수정) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:67` | 확인됨 (POST publish — @Deprecated) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:74` | 확인됨 (POST /on-sale, AUTH-05 신규) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:81` | 확인됨 (POST /stop) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:88` | 확인됨 (GET /review-history, AUTH-05 신규) |
-| `community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java:95` | 확인됨 (DELETE) |
-| `community_api/src/main/java/com/endside/community/plan/constants/ItemStatus.java:1` | 확인됨 (9개 enum 상태) |
-| `community_api/src/main/java/com/endside/community/plan/service/MarketItemService.java:296` | 확인됨 (retrieveItemForUpdate 비관적 락) |
-| `community_api/src/main/java/com/endside/community/plan/service/MarketItemModerationService.java:1` | 확인됨 (AUTH-05 심사 서비스) |
-| `community_admin_api/src/main/java/com/endside/community/plan/controller/ManageMarketItemModerationController.java:1` | 확인됨 (운영자 approve/reject/suspend) |
-| `community_api/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java:1` | 확인됨 (AUTH-06 예약 발행) |
-| `community_api/src/main/java/com/endside/community/authoring/constants/ScheduledPublishTargetType.java:1` | 확인됨 (MARKET_ITEM 포함) |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `POST /api/v1/market/items` | `MarketItemController#createItem` | [MarketItemController.java:61](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L61) |
+| `PUT /api/v1/market/items/{itemId}` | `MarketItemController#updateItem` | [MarketItemController.java:69](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L69) |
+| `POST /api/v1/market/items/{itemId}/publish` | `MarketItemController#publishItem` | [MarketItemController.java:77](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L77) |
+| `POST /api/v1/market/items/{itemId}/stop` | `MarketItemController#stopSelling` | [MarketItemController.java:91](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L91) |
+| `DELETE /api/v1/market/items/{itemId}` | `MarketItemController#removeItem` | [MarketItemController.java:111](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L111) |
+| `GET /api/v1/market/items/my` | `MarketItemController#getMyItems` | [MarketItemController.java:54](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L54) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

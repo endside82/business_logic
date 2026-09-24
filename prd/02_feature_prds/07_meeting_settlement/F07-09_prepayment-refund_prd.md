@@ -10,7 +10,7 @@
 
 ## 1. 결론
 
-이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불 규칙은 **별도 `meeting_refund_rule` 테이블**에 저장(이벤트 시작 N시간 전 환불률 %)되며, 카탈로그 저장 범위 외로 관리된다. 단 계산 엔진은 Phase 4(③)에서 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용한다(저장하지 않음). 가상계좌 입금은 PG의 webhook으로 인입되어 prepayment 상태를 자동 업데이트하도록 설계되어 있으나 **현재 미구현** (서비스 메서드 자체 없음 — 상세는 §8 Gap 참조).
+이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불 규칙은 **별도 `meeting_refund_rule` 테이블**에 저장(이벤트 시작 N시간 전 환불률 %)되며, 카탈로그 저장 범위 외로 관리된다. 단 계산 엔진은 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용한다(저장하지 않음). **가상계좌 입금 통지의 수신·검증·정산 이체 확인 코드는 존재한다.** 처리 함수가 없다는 옛 설명은 잘못이다. 실제 결제사 연결과 운영 입금 통과는 이번 코드 위치 교정에서 확인하지 않았다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -29,17 +29,24 @@
 | Scenario | [scenarios.md](../../../units/07_meeting_settlement/F07-09_prepayment-refund/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/07_meeting_settlement/F07-09_prepayment-refund/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java:31` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java:39` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java:48` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java:56` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java:64` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java:72` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java:25` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `GET /api/v1/events/{eventId}/prepayments` | `MeetingPrepaymentController#getPrepayments` | [MeetingPrepaymentController.java:44](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java#L44) |
+| `POST /api/v1/events/{eventId}/prepayments/pay` | `MeetingPrepaymentController#payPrepayment` | [MeetingPrepaymentController.java:61](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java#L61) |
+| `PATCH /api/v1/events/{eventId}/prepayments/{id}/confirm` | `MeetingPrepaymentController#confirmBankPrepayment` | [MeetingPrepaymentController.java:71](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java#L71) |
+| `POST /api/v1/events/{eventId}/prepayments/{id}/refund` | `MeetingPrepaymentController#refundPrepayment` | [MeetingPrepaymentController.java:79](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java#L79) |
+| `GET /api/v1/events/{eventId}/prepayments/refund-rules` | `MeetingPrepaymentController#getRefundRules` | [MeetingPrepaymentController.java:92](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java#L92) |
+| `POST /api/v1/events/{eventId}/prepayments/refund-rules` | `MeetingPrepaymentController#saveRefundRules` | [MeetingPrepaymentController.java:100](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java#L100) |
+| `POST /webhooks/meeting-settlement/{providerCode}/virtual-account/deposit` | `VirtualAccountWebhookController#onDeposit` | [VirtualAccountWebhookController.java:52](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java#L52) |
+| `POST /webhooks/meeting-settlement/virtual-account/deposit` | `VirtualAccountWebhookController#onDepositLegacy` | [VirtualAccountWebhookController.java:70](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java#L70) |
+
+- 공급자 코드가 있는 경로는 onDeposit, 옛 고정 주소는 onDepositLegacy가 처리한다. 처리 함수가 없다는 옛 설명도 정정했다.
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
@@ -71,7 +78,7 @@
 
 ### 개요
 
-이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불 규칙은 **별도 `meeting_refund_rule` 테이블**에 저장(카탈로그 저장 범위 외)되며, 계산 엔진은 Phase 4(③)에서 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용한다(저장하지 않음). 가상계좌 입금은 PG의 webhook으로 인입되어 prepayment 상태를 자동 업데이트하도록 설계되어 있으나 현재 미구현 (서비스 메서드 자체 없음 — 상세는 §8 Gap 참조).
+이벤트 시작 전 호스트가 참가확정 조건으로 선입금을 받는다. 참가자는 POINT 또는 BANK_TRANSFER로 선입금하고, BANK는 호스트가 수동 확인한다. 환불 규칙은 **별도 `meeting_refund_rule` 테이블**에 저장(카탈로그 저장 범위 외)되며, 계산 엔진은 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용한다(저장하지 않음). 가상계좌 입금 통지는 공급자 확인·서명 검증·전달 이력 저장 뒤 `MeetingSettlementTransferService#confirmVirtualAccountDeposit`으로 연결된다. 기본 모의 공급자의 서명 검증 실패와 실제 공급자의 동작은 구분한다.
 
 ### 엔드포인트 요약
 
@@ -83,14 +90,15 @@
 | POST | /api/v1/events/{eventId}/prepayments/{id}/refund | MeetingPrepaymentController#refundPrepayment | required | 선입금 환불 (참가자 본인) |
 | GET | /api/v1/events/{eventId}/prepayments/refund-rules | MeetingPrepaymentController#getRefundRules | required | 환불 규정 조회 |
 | POST | /api/v1/events/{eventId}/prepayments/refund-rules | MeetingPrepaymentController#saveRefundRules | required | 환불 규정 저장 (호스트) |
-| POST | /webhooks/meeting-settlement/virtual-account/deposit | VirtualAccountWebhookController#onDeposit | 🟠 외부 PG 서명 검증 | 가상계좌 입금 webhook |
+| POST | /webhooks/meeting-settlement/{providerCode}/virtual-account/deposit | VirtualAccountWebhookController#onDeposit | 외부 PG 서명 검증 | 공급자 코드에 해당하는 결제사로 검증·처리 |
+| POST | /webhooks/meeting-settlement/virtual-account/deposit | VirtualAccountWebhookController#onDepositLegacy | 외부 PG 서명 검증 | 기존 주소의 호환 처리. 발급 공급자를 선택해 동일 처리로 위임 |
 
 ### 의존 단위 / 외부 시스템
 
 - Unit 06 (Wallet): `WalletService.deductPaidOnly`, `creditMeetingSettlement` (POINT 결제/환불)
 - Unit 06 (Accounting): `AccountingLedgerService.recordMeetingPrepayment`, `recordMeetingPrepaymentRefund`
 - Unit 03 (Event): `Event.startTime` (환불률 계산용), 호스트 검증
-- 외부 PG (가상계좌): `POST /webhooks/meeting-settlement/virtual-account/deposit` — **PG 계약 선행 필요, D-1~4 미결, 현재 미구현** (§8 Gap 참조). 체크리스트: `community_api/docs/plan/VIRTUAL_ACCOUNT_WEBHOOK_TODO.md`
+- 외부 PG (가상계좌): 위 두 수신 주소와 입금 확인 처리 함수가 있다. 실제 공급자 설정·계약·입금 왕복과 공개 여부는 [첫 출시 현황](../../../docs/qa/launch-status.html)을 따른다. 소스 위치 확인만으로 실거래 완료로 세지 않는다.
 
 ### EVENT_PREPAYMENT 정산 집계 계약 (Fact)
 
@@ -223,7 +231,7 @@ referenceType 2종 통합 의미: 동일 이벤트에 대해 `EVENT_PAYMENT` 레
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| Gap (미구현) | ea906cf (2026-06-04) | **가상계좌 webhook `confirmVirtualAccountDeposit` 서비스 메서드 자체 없음**. `VirtualAccountWebhookController`의 서비스 호출이 주석 처리됨. `VirtualAccountPgProvider` stub(전 요청 401 거부). PG 가상계좌 발급·입금 통지 webhook 지원 PG 사업자 계약 선행 필요. 미결 결정사항 D-1~D-4: (D-1) webhook 적용 범위 MIXED 은행 부분만 vs BANK_TRANSFER 단독 포함; (D-2) 부분입금/초과입금 정책; (D-3) pending appeal 있는 transfer 자동 확인 시 처리 방침; (D-4) 가상계좌 발급 시점. 완료 정의(DoD): 테스트베드 발급→입금→webhook→COMPLETED→정산완료 무인통과 + 중복통지 멱등 + 금액불일치 운영알림 + 서명위조 401. 체크리스트: `community_api/docs/plan/VIRTUAL_ACCOUNT_WEBHOOK_TODO.md` | **PG 계약 체결 후 착수**. D-1~4 결정 전 코드 착수 금지. |
+| 구현 위치 확인 · 실제 환경은 별도 | [확인한 서버 코드 위치](#확인한-서버-코드-위치) | 공급자별·호환용 수신 함수가 공통 검증·전달 이력 저장과 `MeetingSettlementTransferService#confirmVirtualAccountDeposit`을 호출한다. 서비스가 없거나 호출이 주석 처리됐다는 옛 설명은 철회한다. | 실제 결제사 연결·입금·중복 통지·오류 복구의 실행 근거와 공개 여부는 [첫 출시 현황](../../../docs/qa/launch-status.html)에서 판단한다. 이번 위치 교정은 실거래 검증이 아니다. |
 | 후보 | backend.md:82 | - **참고**: BANK_TRANSFER 환불은 환불 금액 계산만 하고 wallet credit은 호출하지 않음 (호스트가 수동으로 외부 환불해야 함 — 현재 코드는 POINT에 한해 자동 환불) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:26 | - 호스트 뷰 + BANK 미확인: "확인" / "환불" 버튼 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:38 | - BANK 미확인 / POINT 완료 / 환불 완료 각각 다른 배지 색 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |

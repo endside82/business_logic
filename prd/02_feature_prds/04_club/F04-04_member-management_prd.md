@@ -28,13 +28,20 @@
 | Scenario | [scenarios.md](../../../units/04_club/F04-04_member-management/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/04_club/F04-04_member-management/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/club/controller/ClubController.java:136` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubController.java:144` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubController.java:154` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:152](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubController.java#L152) |
+| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:160](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubController.java#L160) |
+| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:177](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubController.java#L177) |
+| `DELETE /api/v1/clubs/{id}/members/{userId}` | `ClubController#kickMemberLegacy` | [ClubController.java:190](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubController.java#L190) |
+
+- POST /kick이 현재 요청이며, 옛 DELETE 주소는 kickMemberLegacy로 남아 있다. 두 경로 모두 사유를 전달해야 한다.
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
@@ -81,7 +88,7 @@
 | GET | /api/v1/clubs/{id}/members | ClubController#getMembers | required (멤버) | 역할 필터 + 페이징 |
 | POST | /api/v1/clubs/{id}/members/{userId}/role | ClubController#changeRole | required (OWNER) | 역할 변경 |
 | **POST** | **/api/v1/clubs/{id}/members/{userId}/kick** | **ClubController#kickMember** | required (OWNER/ADMIN) | **추방 (정규 endpoint — 사유 필수)** |
-| DELETE | /api/v1/clubs/{id}/members/{userId} | ClubController#kickMember | required (OWNER/ADMIN) | 추방 (호환용 — body 없으면 `CLUB_KICK_REASON_REQUIRED(400)`) |
+| DELETE | /api/v1/clubs/{id}/members/{userId} | ClubController#kickMemberLegacy | required (OWNER/ADMIN) | 추방 (호환용 — body 없으면 `CLUB_KICK_REASON_REQUIRED(400)`) |
 
 > 앱은 POST kick만 사용한다. DELETE 경로는 하위호환 전용으로 유지되며, body가 없으면 `CLUB_KICK_REASON_REQUIRED(1400033)` 에러를 반환한다.
 

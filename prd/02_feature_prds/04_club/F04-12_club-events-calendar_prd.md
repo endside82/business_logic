@@ -30,25 +30,29 @@
 | Scenario | [scenarios.md](../../../units/04_club/F04-12_club-events-calendar/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/04_club/F04-12_club-events-calendar/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:106` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:120` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:136` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:150` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:165` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:177` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:189` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:205` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:220` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:235` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:249` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:52` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:66` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:80` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java:93` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `POST /api/v1/clubs/{clubId}/events` | `ClubEventController#createClubEvent` | [ClubEventController.java:52](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L52) |
+| `POST /api/v1/clubs/{clubId}/events/{eventId}/publish` | `ClubEventController#publishClubEvent` | [ClubEventController.java:136](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L136) |
+| `POST /api/v1/clubs/{clubId}/events/{eventId}/cancel` | `ClubEventController#cancelClubEvent` | [ClubEventController.java:150](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L150) |
+| `PATCH /api/v1/clubs/{clubId}/events/{eventId}` | `ClubEventController#updateClubEvent` | [ClubEventController.java:106](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L106) |
+| `DELETE /api/v1/clubs/{clubId}/events/{eventId}` | `ClubEventController#deleteClubEvent` | [ClubEventController.java:120](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L120) |
+| `GET /api/v1/clubs/{clubId}/events` | `ClubEventController#getClubEvents` | [ClubEventController.java:66](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L66) |
+| `GET /api/v1/clubs/{clubId}/events/upcoming` | `ClubEventController#getUpcomingClubEvents` | [ClubEventController.java:80](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L80) |
+| `GET /api/v1/clubs/{clubId}/events/{eventId}` | `ClubEventController#getClubEvent` | [ClubEventController.java:93](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L93) |
+| `POST /api/v1/clubs/{clubId}/events/{eventId}/attendees` | `ClubEventController#joinClubEvent` | [ClubEventController.java:165](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L165) |
+| `DELETE /api/v1/clubs/{clubId}/events/{eventId}/attendees/me` | `ClubEventController#leaveClubEvent` | [ClubEventController.java:177](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L177) |
+| `GET /api/v1/clubs/{clubId}/events/{eventId}/attendees` | `ClubEventController#getClubEventAttendees` | [ClubEventController.java:189](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L189) |
+| `GET /api/v1/clubs/{clubId}/events/calendar` | `ClubEventController#getClubEventCalendar` | [ClubEventController.java:205](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L205) |
+| `GET /api/v1/clubs/{clubId}/events/statistics` | `ClubEventController#getClubEventStatistics` | [ClubEventController.java:220](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L220) |
+| `POST /api/v1/clubs/{clubId}/events/recurring` | `ClubEventController#createRecurringEvent` | [ClubEventController.java:235](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L235) |
+| `GET /api/v1/clubs/{clubId}/events/recurring` | `ClubEventController#getRecurringEventTemplates` | [ClubEventController.java:249](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/club/controller/ClubEventController.java#L249) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 

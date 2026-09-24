@@ -30,15 +30,19 @@
 | Scenario | [scenarios.md](../../../units/03_event/F03-10_event-plan-link/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/03_event/F03-10_event-plan-link/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
-### 확인된 소스 trace
+<!-- source-references:start -->
+### 확인한 서버 코드 위치
 
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java:28` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java:35` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java:44` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java:53` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java:62` | 확인됨 |
+2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+
+| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+|---|---|---|
+| `GET /api/v1/events/{eventId}/plans` | `EventPlanMapController#getEventPlans` | [EventPlanMapController.java:30](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L30) |
+| `POST /api/v1/events/{eventId}/plans` | `EventPlanMapController#addPlanToEvent` | [EventPlanMapController.java:37](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L37) |
+| `PATCH /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#updateMapping` | [EventPlanMapController.java:46](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L46) |
+| `DELETE /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#removePlanFromEvent` | [EventPlanMapController.java:55](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L55) |
+| `POST /api/v1/events/{eventId}/plans/{mapId}/toggle-active` | `EventPlanMapController#toggleActive` | [EventPlanMapController.java:64](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L64) |
+<!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
