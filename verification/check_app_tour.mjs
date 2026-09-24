@@ -45,7 +45,7 @@ const captureRoot = resolve(root, 'docs/assets/screenshots/app-tour');
 for (const date of await readdir(captureRoot)) {
   assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
   const files = (await readdir(resolve(captureRoot, date))).filter(file => /\.(?:jpe?g|png|webp)$/i.test(file)).sort();
-  const expected = [...data.shots].filter(shot => (shot.date || '2026-09-15') === date).map(shot => shot.id + '.jpg').sort();
+  const expected = [...data.shots].filter(shot => (shot.date || '2026-09-15') === date).map(shot => shot.id + '.' + (shot.format || 'jpg')).sort();
   assert.deepEqual(files, expected, `${date}: files and captions must match exactly`);
 }
 let totalBytes = 0;
@@ -57,8 +57,19 @@ for (const shot of data.shots) {
   for (const key of ['title', 'role', 'action', 'result']) assert.ok(shot[key]?.trim(), `${shot.id}: missing ${key}`);
   const date = shot.date || '2026-09-15';
   assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
-  const bytes = await readFile(resolve(captureRoot, date, shot.id + '.jpg'));
-  assert.deepEqual(jpegSize(bytes), { width: 390, height: 844 }, `${shot.id}: capture size changed`);
+  const format = shot.format || 'jpg';
+  const ratio = shot.pixelRatio || 1;
+  assert.ok(['jpg', 'png'].includes(format), `${shot.id}: unsupported capture format`);
+  assert.ok([1, 2].includes(ratio), `${shot.id}: unsupported device pixel ratio`);
+  const bytes = await readFile(resolve(captureRoot, date, shot.id + '.' + format));
+  let size;
+  if (format === 'png') {
+    assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', 'Not an original PNG');
+    size = { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+  } else {
+    size = jpegSize(bytes);
+  }
+  assert.deepEqual(size, { width: 390 * ratio, height: 844 * ratio }, `${shot.id}: capture size changed`);
   totalBytes += bytes.length;
 }
 const reviewHtml = await readFile(resolve(root, 'docs/qa/screen-review.html'), 'utf8');
