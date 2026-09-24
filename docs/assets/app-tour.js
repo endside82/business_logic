@@ -7,7 +7,7 @@
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const imagePath = id => {
     const shot = data.shots.find(item => item.id === id);
-    return base + 'assets/screenshots/app-tour/' + (shot?.date || '2026-09-15') + '/' + id + '.jpg';
+    return base + 'assets/screenshots/app-tour/' + (shot?.date || '2026-09-15') + '/' + id + '.' + (shot?.format || 'jpg');
   };
   const prose = value => escape(value).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   const orderedGroups = review ? data.groups : [...data.groups].sort((a, b) =>

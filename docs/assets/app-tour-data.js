@@ -4,12 +4,13 @@ window.APP_TOUR = {
   guideOrder: ['settlement', 'discovery', 'club', 'attendance', 'community', 'poll', 'regular', 'transport', 'transfer', 'event-create', 'plan', 'stamp', 'mileage', 'calendar-notifications', 'favorites', 'support', 'dispute', 'warning', 'profile-support', 'auth'],
   introductions: {
     settlement: {
-      lead: '식사비는 지민이, 택시비는 수아가 냈다면? 누가 먼저 냈는지부터 각자 주고받을 돈까지 한곳에서 정리합니다.',
+      lead: '먼저 낸 비용은 함께 나누고, 내가 보낼 돈과 받을 돈은 여러 모임을 모아 한곳에서 확인합니다.',
       details: [
         '**먼저 결제한 사람과 함께 나눌 사람**을 비용마다 고릅니다. 식사에 함께한 세 사람과 택시에 탄 두 사람의 비용을 따로 나눌 수 있습니다.',
-        '아래는 **참가자 간 직접 송금** 방식입니다. 회원은 **보낼 돈·받을 돈**과 **비용별 내 몫**을 구분해 봅니다. 먼저 결제한 돈을 반영하므로 항목별 분담금을 다시 각각 내지 않습니다.',
+        '**직접 송금**은 먼저 낸 돈과 내 몫의 차액을 주고받고, **항목별 납부**는 각 비용의 결제자에게 내 몫을 보냅니다. 아래 사진은 두 방식을 구분합니다.',
         '주최자는 **확인할 입금과 확인이 남은 사람**을 살펴봅니다. 받는 참가자도 본인이 받은 돈을 확인할 수 있으며, 보낸 사람은 스스로 입금 확인할 수 없습니다. 앱이 실제 은행 거래를 자동 확인하거나 송금하는 기능은 아닙니다.',
-        '이미 돈을 보냈다면 **다시 보내지 않고 확인을 기다립니다**. 아래 촬영은 가상 회원의 로컬 시험이며 실제 돈은 이동하지 않았습니다.'
+        '이미 돈을 보냈다면 **다시 보내지 않고 확인을 기다립니다**. 아래 촬영은 가상 회원의 로컬 시험이며 실제 돈은 이동하지 않았습니다.',
+        '**첫 비용·금액 검토·항목별 입금·내 정산의 월/기간 조회**를 새로 촬영했습니다. 11장의 새 화면은 가상 회원의 실제 웹 조작 결과이며, 과거 월별 내역은 조회용 준비 자료입니다. 휴대전화·은행 송금 검사는 별도입니다.'
       ]
     },
     dispute: { lead: '단순한 질문을 넘어 처리 기록이 필요한 문제는, 관련 모임과 사유를 묶어 접수합니다.', details: ['**분쟁 유형과 구체적인 상황**을 적고 필요한 자료를 첨부할 수 있습니다. 예시에서는 모임 안내가 서로 다른 가상 상황을 제출했습니다.', '접수 상세에는 **진행 상태·처리 기록·증빙·대화**가 나뉘어 보입니다. 아래 사진은 접수된 사건까지이며 운영자의 판단이나 해결 완료를 보여 주는 장면은 아닙니다.'] },
@@ -40,7 +41,7 @@ window.APP_TOUR = {
     auth: { lead: '처음 온 사람은 가입하고, 이미 계정이 있다면 로그인해서 시작합니다.', details: ['**로그인 화면**에서는 이메일 입력과 Google 로그인 진입을 확인할 수 있습니다.', '**회원가입 양식**에는 이메일·비밀번호·닉네임과 동의 항목이 있습니다. 아래는 입력 화면 소개이며 가입 제출이나 외부 로그인 성공 장면은 아닙니다.'] }
   },
   groups: [
-    { id: 'settlement', title: '함께 쓴 비용 정산하기', purpose: '여러 사람이 먼저 낸 비용을 나누고 각자의 송금과 입금 확인을 정리합니다.', scenes: '초안 만들기, 결제자·분담 대상 선택, 개인별 금액, 입금 확인, 완료', next: '실제 은행 거래·서명 앱 검사는 별도입니다. 영수증 첨부, 재안내·기한 연장, 이의·취소·환불은 추가 촬영합니다.' },
+    { id: 'settlement', title: '함께 쓴 비용 정산하기', purpose: '비용을 함께 나누고 여러 모임의 보낼 돈·받을 돈·지난 내역을 한곳에서 봅니다.', scenes: '첫 비용, 금액 검토, 항목별 입금과 완료, 보낼 돈·받을 돈, 월·기간·취소 원본', next: '변경 웹 시나리오 네 가지와 수정 후 묶음 확인을 마쳤습니다. 서명 앱·실제 은행 거래·알림은 별도 확인이 필요합니다. 영수증·재안내·기한 연장·이의·일괄 확인·환불 전체를 이번에 반복 검사하지 않았습니다.' },
     { id: 'dispute', title: '분쟁 접수·처리 기록', purpose: '관련 활동의 문제를 접수하고 진행 상태와 기록을 확인합니다.', scenes: '유형·사유 입력, 접수 상세, 사건 목록, 증빙·의견, 운영 검토·결과·이의', next: '가상 사건의 사유 입력·접수 상세·기록을 촬영했습니다. 사건 목록, 증빙 업로드·열람, 대화, 운영 검토·결과·이의제기는 추가 촬영합니다.' },
     { id: 'warning', title: '클럽 제보·경고 검토', purpose: '회원의 제보를 운영진이 검토하고 경고와 이의 절차를 구분합니다.', scenes: '회원 제보, 내 접수 목록, 운영진 검토, 결과·경고 이력·이의', next: '회원 제보 입력·제출됨 목록을 촬영했습니다. 서버에는 접수 1건이 있으나 운영진 화면은 빈 목록이어서 검토 동작은 막혔습니다. 목록 조회를 확인한 뒤 승인·반려·보완, 경고 이력·이의 결과를 촬영합니다.' },
     { id: 'support', title: '문의·답변·도움말', purpose: '회원이 활동 관련 질문을 남기고 답변과 처리 결과를 이어서 확인합니다.', scenes: '도움말, 문의 입력·접수, 운영진 답변, 회원 확인·추가 대화, 종결', next: '클럽 문의의 접수·답변·추가 대화·종결을 촬영했습니다. 운영팀 이관, 이슈 신고와 도움말 검색은 추가 촬영합니다.' },
@@ -62,6 +63,17 @@ window.APP_TOUR = {
     { id: 'profile-support', title: '내 정보', purpose: '내 소개와 참여 활동을 확인하고 개인 설정으로 이동합니다.', scenes: '프로필·편집, 개인정보·기기·알림 설정, 탈퇴 안내', next: '사진과 자기소개를 채운 내 정보 화면이 있습니다. 실제 프로필 수정·설정 저장·탈퇴 안내는 추가 촬영합니다.' }
   ],
   shots: [
+    {"id":"settlement-first-cost-saved","title":"누가 먼저 냈는지 비용마다 기록합니다","role":"주최자 지민","action":"수아가 결제한 저녁 30,000원과 함께 나눌 세 사람을 저장했습니다.","result":"비용명과 **실제 결제자 수아**, 각자의 부담금 **10,000원**이 유지됩니다. 저장만으로 납부 요청을 보내지 않습니다.","kind":"saved","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-review-request","title":"요청하기 전에 각자의 금액을 검토합니다","role":"주최자 지민","action":"비용 목록에서 금액 검토하기를 눌렀습니다.","result":"먼저 낸 돈은 **수아 30,000원, 지민·민준 0원**입니다. 세 사람의 부담금은 각각 10,000원이며 확인 후 정산 요청을 보냅니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-personal-balances","title":"보낼 돈과 받을 돈을 따로 봅니다","role":"참가자 지민","action":"여러 모임의 정산이 있는 상태에서 내 정산을 열었습니다.","result":"**보낼 돈 10,000원·받을 돈 9,000원**을 서로 차감하지 않습니다. 이미 처리한 기록과 추가 확인이 필요한 기록도 구분합니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-personal-payable","title":"누구에게 얼마를 보내야 하는지 찾습니다","role":"참가자 지민","action":"내 정산에서 보낼 돈을 선택했습니다.","result":"모임·비용명과 **지민 → 수아 10,000원**이 함께 표시됩니다. 이미 보냈다면 중복 송금하지 말고 입금 확인을 기다립니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-personal-receivable","title":"여러 모임에서 받을 돈을 모아 봅니다","role":"수취인 지민","action":"두 모임의 받을 돈 목록을 열었습니다.","result":"모임별 **9,000원 두 건, 합계 18,000원**입니다. 확인할 상대와 금액을 목록에서 구분합니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-personal-month","title":"지난달의 송금 기록을 찾아봅니다","role":"참가자 지민","action":"지난 내역에서 이전 달로 이동했습니다.","result":"8월에 확인된 **40,000원 한 건**만 나옵니다. 과거 날짜 자료는 조회 화면 검사용으로 준비했으며 실제 은행 거래 증거가 아닙니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-personal-period","title":"필요한 기간만 골라 검색합니다","role":"참가자 지민","action":"달력에서 9월 1일부터 10일까지를 선택했습니다.","result":"그 기간에 해당하는 **받은 돈 7,000원 한 건**만 표시됩니다. 상세에서 돌아와도 선택 기간이 유지됩니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-cancelled-original","title":"취소된 내역은 원래 정산으로 확인합니다","role":"참가자 지민","action":"추가 확인 목록에서 취소된 저녁 모임의 내역을 열었습니다.","result":"새 정산이 있어도 **취소된 원본 6,000원**을 보여 줍니다. 환불 확인이 남은 금액을 정상 완료 합계에 넣지 않습니다. 환불 실행 장면은 아닙니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-item-payment-list","title":"내가 먼저 낸 비용의 입금을 확인합니다","role":"수취인 수아","action":"모임 현황에서 본인 항목의 입금 내역을 열었습니다.","result":"실제 확인 대상은 **지민·민준의 각 10,000원**입니다. 수아 자신의 부담금에는 확인 버튼이 없고 송금도 필요하지 않습니다.","kind":"read","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-item-payment-progress","title":"한 건을 확인하면 남은 금액이 줄어듭니다","role":"수취인 수아","action":"지민의 가상 입금 한 건을 확인했습니다.","result":"확인 완료 10,000원과 **남은 한 건 10,000원**이 바로 반영됩니다. 앱이 은행 입금을 자동으로 확인한 결과는 아닙니다.","kind":"saved","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
+    {"id":"settlement-item-payment-completed","title":"마지막 확인 뒤 모임 정산이 완료됩니다","role":"수취인 수아","action":"두 사람의 가상 입금을 확인한 뒤 원래 모임 현황으로 돌아왔습니다.","result":"**3/3 완료·읽기 전용**으로 갱신됩니다. 본인 몫을 별도로 송금하거나 입금 확인할 필요가 없습니다.","kind":"saved","date":"2026-09-24","group":"settlement","format":"png","pixelRatio":2,"showcase":true},
     { id: 'settlement-start', date: '2026-09-16', group: 'settlement', title: '모임에서 정산을 시작합니다', role: '주최자', action: '아직 정산이 없는 모임의 정산 화면을 열었습니다.', result: '정산 만들기 버튼이 표시됩니다. 새로고침 때 오류가 나던 문제를 수정한 뒤 촬영했습니다.', kind: 'read', showcase: false },
     { id: 'settlement-create', date: '2026-09-16', group: 'settlement', title: '주최자가 먼저 낸 식사비로 시작합니다', role: '주최자', action: '식사비 30,000원과 세 사람을 선택했습니다.', result: '각자 10,000원이라는 초안 미리보기가 표시됩니다. 이 사진은 저장 전 입력 화면입니다.', kind: 'form', showcase: true },
     { id: 'settlement-item-entry', date: '2026-09-16', group: 'settlement', title: '다른 사람이 먼저 낸 비용도 더합니다', role: '주최자', action: '함께 탄 택시 60,000원과 결제자 수아를 입력했습니다.', result: '금액과 결제자가 이름으로 표시됩니다. 영수증은 첨부하지 않은 입력 화면입니다.', kind: 'form', showcase: true },
@@ -231,7 +243,8 @@ window.APP_TOUR = {
 
 // Keep earlier captures as evidence; the guide uses the filled-photo examples.
 const replacedGuideShots = new Set(['search-walk-results', 'club-introduction', 'event-open-detail',
-  'event-apply-checklist', 'event-joined', 'community-post-poll', 'poll-voted', 'plan-pattern-saved']);
+  'event-apply-checklist', 'event-joined', 'community-post-poll', 'poll-voted', 'plan-pattern-saved',
+  'settlement-create', 'settlement-item-entry', 'settlement-item-people', 'settlement-items-saved']);
 for (const shot of window.APP_TOUR.shots) if (replacedGuideShots.has(shot.id)) shot.showcase = false;
 // 이전 직접 선택·자동 자차 복귀 화면은 현재 기능 소개에서 제외하고 검수 기록에만 보존한다.
 for (const shot of window.APP_TOUR.shots) if (shot.group === 'transport') shot.showcase = false;
