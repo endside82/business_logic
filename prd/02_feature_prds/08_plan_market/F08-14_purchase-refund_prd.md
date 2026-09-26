@@ -39,7 +39,7 @@
 7. 승인되면 결제 금액이 지갑으로 환불되고, 카드는 보유함에서 사라진다 (또는 "환불 완료" 표시).
 8. 거절되면 사유와 함께 알림이 오고, 카드는 다시 사용 가능 상태로 돌아간다. 구매자는 24시간 후 1회 추가 신청 가능하다 (5.4 참조).
 9. 판매자가 7일 동안 응답하지 않고 사용 흔적이 없으면 자동 승인된다. 사용 흔적이 있으면 운영자 검토로 에스컬레이션된다 (5.3 참조).
-10. 거절·자동 거절에 이의가 있으면 7일 이내 1회 분쟁 신청 가능 (8절 운영자 중재 참조).
+10. 거절·자동 거절에 이의가 있으면 거절 후 7일 이내 1회 분쟁 신청 가능 (8절 운영자 중재 참조). 운영자가 거절을 유지하면 같은 신청으로 다시 분쟁할 수 없다. 운영자가 추가 자료를 요청하면 구매자는 알림을 받고, 요청 시각부터 7일 안에 자료를 보완해 다시 분쟁할 수 있다. 처음 7일이 지났어도 된다.
 
 ### 3.2 판매자 (크리에이터)
 
@@ -94,7 +94,7 @@ REQUESTED ──승인──▶ APPROVED ──지갑환불완료──▶ REFUN
 | `REFUNDED` | 지갑 환불 완료. | 영구 잠금 | 정산 전이면 `REFUNDED`, 정산 후면 `REVERSED` |
 | `REFUNDED_BY_OPERATOR` | 운영자 강제 환불 완료. | 영구 잠금 | 동일 |
 | `FAILED` | 지갑 환불 실패. 운영자 재시도 필요. | 잠금 | `REFUND_HELD` 유지 |
-| `REJECTED` | 판매자 거절. 분쟁 가능 7일. | 잠금 해제 | `PENDING` 복원 |
+| `REJECTED` | 판매자 거절. 거절 후 7일 안에 분쟁 가능. 운영자 자료 요청으로 돌아오면 요청 시각부터 7일 안에 다시 분쟁 가능. 운영자 거절 유지로 돌아오면 분쟁 불가. | 잠금 해제 | `PENDING` 복원 |
 | `ESCALATED` | 사용 흔적 + 자동 처리 대상. 운영자 검토. | 잠금 | `REFUND_HELD` |
 | `DISPUTED` | 구매자가 거절에 분쟁 제기. | 잠금 | `REFUND_HELD` 재진입 |
 | `CANCELED` | 구매자가 결정 전 신청 취소. | 잠금 해제 | `PENDING` 복원 |
@@ -433,10 +433,10 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 
 ### 8.3 분쟁 서비스: `RefundDisputeService`
 
-- `createDispute(buyerUserId, refundId, param)`: `REJECTED` 상태 + 거절 후 7일 이내 + 같은 환불에 열린 분쟁 없음 → `purchase_refund_dispute` INSERT → 환불 상태 `DISPUTED` → 카드 재잠금 → `CreatorEarning.status = REFUND_HELD` 복원
+- `createDispute(buyerUserId, refundId, param)`: `REJECTED` 상태 + 분쟁 기한 이내 + 운영자 거절 유지(분쟁 `UPHELD`) 없음 + 같은 환불에 열린 분쟁 없음 → `purchase_refund_dispute` INSERT → 환불 상태 `DISPUTED` → 카드 재잠금 → `CreatorEarning.status = REFUND_HELD` 복원. 분쟁 기한은 거절 후 7일이고, 운영자가 자료를 요청했으면 요청 시각 + 7일(`redispute_deadline_at`)이다. 처음 기한이 지났어도 새 기한을 쓴다. 거절 유지 뒤의 새 분쟁은 409 `DISPUTE_CASE_ALREADY_CLOSED`(4000003)로 거절한다.
 - `upholdRejection(operatorUserId, disputeId, note)`: 권한 검증 → dispute `UPHELD` → 환불 `REJECTED` 유지 → 카드 잠금 해제 → 양측 알림
 - `forceRefund(operatorUserId, disputeId, note)`: 권한 검증 → dispute `OVERTURNED` → 환불 `REFUNDED_BY_OPERATOR` → 환불 실행(8.2) → 양측 알림 → 판매자 패널티 지표 누적
-- `requestMoreEvidence(operatorUserId, disputeId, note)`: 분쟁 진행 중 자료 요청
+- `requestMoreEvidence(operatorUserId, disputeId, note)`: 권한 검증 → dispute `CLOSED` → 환불 `REJECTED` 로 되돌림 → 카드 잠금 해제 → 재분쟁 기한(`redispute_deadline_at`) = 요청 시각 + 7일 → 커밋 뒤 구매자에게 `REFUND_DISPUTE_EVIDENCE_REQUESTED` 알림(본문에 필요한 자료와 기한). 이 알림은 사용자가 끌 수 없다.
 
 ### 8.4 락 정책
 
@@ -491,6 +491,7 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 - `DISPUTE_CREATED` — 운영자 + 판매자 수신
 - `DISPUTE_UPHELD` — 구매자 수신
 - `DISPUTE_OVERTURNED` — 판매자 + 구매자 수신
+- `REFUND_DISPUTE_EVIDENCE_REQUESTED` — 구매자 수신 (운영자 자료 요청, 필요한 자료와 재분쟁 기한 포함, 끌 수 없음)
 - `CREATOR_RECEIVABLE_OFFSET` — 판매자 수신 (정산에서 회수 시)
 
 각 알림은 딥링크로 해당 상세 화면 진입.
