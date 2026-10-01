@@ -197,7 +197,7 @@ F21-07 6개로 도메인 합계 **41개**다. 아래 표는 같은 후보를 운
 
 ## 9. 관련 문서
 
-- 과거 기준선(참고용): `.delta_2026-06-24_curated/00_dossier.md`
+- 2026-06-24 제공자 정산의 과거 기준선은 외부 백업으로 보관한다. [문서 정리와 보관 위치](../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)를 참고하고 현재 계약은 아래 기능 PRD와 실제 소스를 기준으로 읽는다.
 - F21-01 제공자 배정: `prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md`
 - F21-02 참가자 서비스비 분담 결제: `prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md`
 - F21-03 제공자 정산: `prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md`

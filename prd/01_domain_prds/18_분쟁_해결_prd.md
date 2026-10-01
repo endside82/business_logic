@@ -135,7 +135,7 @@ legal hold(OPEN/IN_REVIEW/ESCALATED) 케이스에 연관된 사용자의 계정 
 
 ## 9. 관련 문서
 
-- 델타 실사: `.delta_2026-06-04/01_dispute_core.md`
+- 2026-06-04 델타 실사 원문은 외부 백업으로 보관한다. [문서 정리와 보관 위치](../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)에서 복원 경로를 확인한다. 현재 계약은 아래 기능 PRD와 실제 소스를 기준으로 읽는다.
 - F15-03 (클럽 경고 이의): `prd/02_feature_prds/15_warning/F15-03_appeal_prd.md`
 - F07-08 (모임 정산 이의): `prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md`
 - F08-14 (플랜 마켓 환불 분쟁): `prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md`

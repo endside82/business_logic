@@ -167,7 +167,7 @@ D-OPEN-2의 마지막 후속(지갑 "내 모임정산 목록" 화면, api c8977c
 
 ## 2026-06-05 — 분쟁 해결 v3 일괄 반영 + 도메인 3개 신설 (17 → 20, 기능 153 → 168)
 
-2026-05-28 베이스라인(community_api a1f1967 / community_app d766ede) 이후의 소스 변경 전부를 9개 영역 병렬 실사(dossier: `.delta_2026-06-04/01~09`) 후 반영했다. 모든 신규 PRD는 source-first(units/ 없음)로 작성했다.
+2026-05-28 베이스라인(community_api a1f1967 / community_app d766ede) 이후의 소스 변경 전부를 9개 영역 병렬 실사([실사 원문의 보관 위치](../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)) 후 반영했다. 모든 신규 PRD는 source-first(units/ 없음)로 작성했다.
 
 | 구분 | 내용 | canonical |
 | --- | --- | --- |

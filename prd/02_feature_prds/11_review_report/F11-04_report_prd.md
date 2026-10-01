@@ -6,7 +6,7 @@
 
 <!-- updated: 2026-06-05; delta: 2026-06-04 dossier 04 §4-1 + 03 §4-D 반영 -->
 
-> 문서 상태: **실사 기반 갱신본**. 2026-06-04 델타 dossier(04_review_moderation.md §4-1, 03_club_moderation.md §4-D)를 반영해 ReportType 전체 8값, Report 엔티티 신규 컬럼 3개, ReportParam/ReportVo 신규 필드, 증빙 첨부 및 자동 플래그 절을 추가했다. 코드 수정이나 QA 착수 전에는 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 문서 상태: **실사 기반 갱신본**. 2026-06-04 리뷰·클럽 신고 델타 실사([원문의 보관 위치](../../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리))를 반영해 ReportType 전체 8값, Report 엔티티 신규 컬럼 3개, ReportParam/ReportVo 신규 필드, 증빙 첨부 및 자동 플래그 절을 추가했다. 코드 수정이나 QA 착수 전에는 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 

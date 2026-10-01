@@ -36,7 +36,7 @@
       <section id="status-rules">
         <h2>개발이 남았는지, 실제 확인만 남았는지</h2>
         <ul>
-          <li><strong>추가 개발</strong>: 없는 서버 기능·화면·연결을 만들어야 한다. 차량 조율의 코드 연결은 끝났으며 역할별 실제 이용 확인은 아래에서 구분한다. 도면 후보의 실차 대조는 개발과 별도로 확인한다. 후속 범위에는 기간권 판매, 추가 로그인 실패 집계·화면, 계좌 소액 인증 공급자 연결이 남아 있다.</li>
+          <li><strong>추가 개발</strong>: 없는 서버 기능·화면·연결을 만들어야 한다. 후속 범위에는 기간권 판매 운영·환불과 계좌 소액 인증 공급자 연결이 남아 있다. 차량 조율과 소셜 로그인 결과 집계·관리자 화면은 구현돼 있으며 실제 환경 확인은 따로 구분한다.</li>
           <li><strong>기존 기능 보완</strong>: 구현된 기능의 결함을 고치는 일이다. 카풀의 이름·경로·취소 안내와 기본 검사 실패는 수정 후 해당 범위를 확인했다. 이를 운영 배포 완료로 읽지 않는다. 다른 기능의 <a href="screen-review.html#findings">남은 보완과 수정 후 화면</a>은 별도로 확인한다.</li>
           <li><strong>자동 테스트</strong>: 기록에 적힌 동작만 확인했다. 외부 응답을 모사한 테스트는 실제 서비스 이용과 다르다.</li>
           <li><strong>실제 환경 확인</strong>: 배포용 앱·실제 계정·서비스로 실행한 결과가 남아 있어야 한다. 미실행을 미구현으로 바꾸거나 통과로 추정하지 않는다.</li>
@@ -52,9 +52,10 @@
           <tr><td>구현·자동 검사</td><td>서버 정산·탈퇴 연결 345건, 서버 규칙 74건, 앱 정산 228건을 통과했습니다. 자기 부담분 제외, 마지막 입금 확인의 동시 처리, 개인 내역의 금액·기간·원본 조회를 확인했습니다. 전체 회귀 결과는 아닙니다.</td></tr>
           <tr><td>실제 화면</td><td><strong>변경 시나리오 네 가지와 수정 후 묶음 확인을 통과</strong>했습니다. 첫 비용부터 요청까지, 항목별 입금과 완료, 내 정산의 월·기간·취소 원본 복귀, 직접 송금 확인 후 금액 갱신입니다. 가상 회원을 사용한 웹 화면이며 <a href="../tour/index.html#feature-settlement">새 소개 사진 11장</a>을 추가했습니다.</td></tr>
           <tr><td>최종 자동 검사</td><td>전체 검사에서 실패·중단된 항목은 <strong>영향 검사로 모두 재확인</strong>했습니다. 최초 전체 명령이 한 번에 통과한 것은 아닙니다. 변경 파일 정적 분석은 지적이 없지만, 전체 분석에는 이번에 바꾸지 않은 파일의 <strong>경고 4건·안내 114건</strong>이 남아 있습니다.</td></tr>
-          <tr><td>다음 행동</td><td>운영 배포 전에 기존 분석 지적의 처리 범위를 별도로 판단하고, 서명한 휴대전화 앱·실제 알림·은행 내역 대조를 확인합니다. 기본 브랜치 반영은 끝났으며 이미 통과한 웹 시나리오와 자동 검사를 처음부터 반복하지 않습니다.</td></tr>
+          <tr><td>9월 26일 추가 보완</td><td>초안 취소·생성 결과 유실 뒤 작성 상태 복구, 늦은 첫 비용 요청의 다른 정산 저장 차단, 직접 송금 미납자 알림 대상을 수정했습니다. 서버 실제 MySQL 알림 검사 3건·항목 검사 2건, 앱 상태 검사 10건·작성 화면 검사 1건의 변경 기록이 있습니다. 이 수치를 9월 24일 검사 건수와 합산하지 않습니다.</td></tr>
+          <tr><td>다음 행동</td><td>추가한 복구·미납 알림 동작의 실제 웹 확인과 서명한 휴대전화 앱·실제 알림·은행 내역 대조가 남아 있습니다. 기존 분석 지적과 화면 배치 개선은 별도로 판단합니다. 이미 통과한 기본 웹 여정의 기록은 해당 범위에서 유지합니다.</td></tr>
         </tbody></table></div>
-        <p>확인 범위는 <a href="screen-review.html#settlement-review">정산 화면 검사</a>, 이용 방식은 <a href="../domains/07-settlement.html#personal-settlement">내 정산과 비용 작성</a>에 정리했습니다. 실제 은행 송금·휴대전화·푸시 확인은 별도입니다.</p>
+        <p>확인 범위는 <a href="screen-review.html#settlement-review">정산 화면 검사</a>, 이용 방식은 <a href="../domains/07-settlement.html#personal-settlement">내 정산과 비용 작성</a>, 최신 보완은 <a href="../domains/07-settlement.html#settlement-recovery">초안 취소 뒤 다시 작성하고, 실제 미납자에게 알립니다</a>에 정리했습니다. 실제 은행 송금·휴대전화·푸시 확인은 별도입니다.</p>
       </section>
 
       <section id="transport-rework">
@@ -120,7 +121,8 @@
       <section id="next">
         <h2>후속 기능 준비</h2>
         <p>아래 기능은 첫 출시를 기다리게 할 이유가 아니다. 운영자는 필요한 개발·검사·승인을 마친 기능부터 공개 여부를 결정한다.
-          <strong>마켓 기간권 판매</strong>, <strong>추가 로그인의 실패 집계·화면</strong>, <strong>계좌 소액 인증 공급자 연결</strong>에는 개발이 남아 있다.
+          <strong>마켓 기간권의 판매 운영·환불</strong>, <strong>계좌 소액 인증 공급자 연결</strong>에는 개발이 남아 있다.
+          <strong>소셜 로그인 실패 집계와 관리자 화면은 구현됐다.</strong> 제공자 설정·실제 계정·서명 앱 확인이 남아 있다.
           <strong>Google Calendar</strong>는 동기화 코드와 모사 응답 테스트가 있고 실제 계정 연결 확인이 남아 있다.</p>
         <details>
           <summary>후속 기능의 공개 순서</summary>
@@ -194,7 +196,7 @@
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/features.js"></script>
   <script src="../assets/mileage-feature-status.js"></script>
-  <script src="../assets/launch-status.js?v=20260921-transport"></script>
+  <script src="../assets/launch-status.js?v=20260926-source-sync"></script>
   <script>
     (function () {
       var L = window.LAUNCH_STATUS;
@@ -236,11 +238,11 @@
         return '<p><strong>' + esc(e.state) + '</strong> — ' + esc(e.detail) + '</p>';
       }).join('');
       document.getElementById('track-rows').innerHTML = L.tracks.map(function (t) {
-        var build = t.code === 'MOV-01' ? t.code_state : (t.code === 'MKT-01' ? '기간권 판매 추가 개발' : (t.code === 'AUT-01' ? '첫 출시 구현 있음 / 후속 실패 집계 개발 필요' : (t.code === 'REL-01' ? '공개 준비 중' : '구현 기록 있음')));
+        var build = ['MOV-01', 'MKT-01', 'AUT-01'].indexOf(t.code) !== -1 ? t.code_state : (t.code === 'REL-01' ? '공개 준비 중' : '구현 기록 있음');
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-      document.getElementById('asof-line').textContent = '최종 반영: ' + L.asOf + '. 버스·카풀의 소스 검수 24개·추가 웹 검사 6개 통과를 반영했다. 휴대전화·실제 푸시·사용할 실차 도면과 운영 배포·공개 승인은 미확인이다. 다른 기능의 검사 범위는 변경하지 않았다.';
+      document.getElementById('asof-line').textContent = '최종 반영: ' + L.asOf + '. 정산 작성 복구·미납 알림, 소셜 로그인 운영 현황, 기간권 구매 기반을 기본 브랜치와 대조했다. 기존 웹 확인과 이후 수정의 자동 검사 범위는 구분한다. 휴대전화·실제 외부 서비스·운영 배포·공개 승인은 미확인이다.';
     })();
   </script>
   <script src="../assets/app.js"></script>

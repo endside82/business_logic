@@ -22,3 +22,9 @@
 !/verification/check_release_scope.mjs
 !/verification/check_app_tour.mjs
 !/verification/check_app_tour_coverage.mjs
+
+# Preserve the selected historical audit originals; .ignore excludes search noise.
+!/archive/
+/archive/*
+!/archive/2026-09-28/
+!/archive/2026-09-28/**

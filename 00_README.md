@@ -4,7 +4,7 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
-> 정리 기준일: 2026-07-29
+> 정리 기준일: 2026-09-28
 
 이 폴더의 루트는 더 이상 과거 진행 로그를 읽는 곳이 아니다. 루트에는 현재 기준 문서로 들어가는 최소 진입점만 둔다.
 
@@ -19,7 +19,7 @@
 | 현재 소스 실측 노트 | [`prd/05_planning_artifacts/current_source_update_2026-07-29.md`](prd/05_planning_artifacts/current_source_update_2026-07-29.md) | API·App·Realtime·Admin의 2026-07-27 기준 소스를 다시 재어 50개 기능의 실제 계약·UI 도달성·Gap을 교정한 범위를 확인한다. |
 | 기능별 근거 문서 | [`units/`](units/) | backend/frontend/scenarios/diagrams 원천 근거를 확인한다. |
 | 검증 자료 | [`verification/`](verification/) | 문서/코드 동기화와 라운드 검증 결과를 확인한다. |
-| 루트 레거시 문서 | [`archive/root_legacy/`](archive/root_legacy/) | 루트에서 제거한 과거 체크리스트, 진행 로그, 의사결정 로그를 보존한다. |
+| 과거 문서 보관·복원 | [문서 정리와 보관 위치](../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리) | 폐기한 체크리스트·델타 노트의 외부 백업과 검증 기록의 보관 위치를 확인한다. |
 
 ## 현재 문서 체계
 
@@ -35,6 +35,6 @@
 ## 정리 원칙
 
 1. 루트에는 최신 기준을 찾는 데 필요한 문서만 둔다.
-2. 과거 라운드별 진행표, 체크리스트, 핸드오버, 종료 평가 문서는 `archive/root_legacy/`로 이동한다.
+2. 재검토할 근거가 남은 과거 검증 기록은 `archive/`에 보관하고 기본 검색에서 제외한다. 대체된 진행표·체크리스트는 원문 백업과 참조 정리를 마친 뒤 제거한다. 절차는 [문서 정리와 보관 위치](../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)를 따른다.
 3. 실제 판단 근거는 `units/`와 `prd/` 안의 현재 문서에서 확인한다.
 4. 기능 상세를 갱신할 때는 `prd/FEATURE_PRD_STANDARD.md`와 `units/<domain>/<feature>/`의 원천 산출물을 함께 확인한다.

@@ -498,7 +498,7 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 
 ## 11. 가이드 문서
 
-F08-11 사용자 가이드(`business_logic/user_guides/08_plan_market/F08-11_purchase.html`)에 환불 섹션 추가. 본 PRD 구현 완료 후 가이드 갱신:
+[F08-11 앱 구매 도움말](../../../../community_app/assets/guides/08_plan_market/F08-11_purchase.html)에 환불 섹션 추가. 본 PRD 구현 완료 후 가이드 갱신:
 
 - 환불 가능 조건 (14일·중복 신청 제한·번들 단일 환불·사용 흔적 차단)
 - 환불 신청 → 판매자 심사 → 결과의 흐름

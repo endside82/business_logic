@@ -65,11 +65,16 @@ for (const item of launch.openItems) {
   }
 }
 assert.equal(launch.openItems.find(item => item.id === 'N-12-CALENDAR').readiness.work, 'environment');
-for (const id of ['N-03', 'N-10', 'N-13-BANK']) {
+for (const id of ['N-03', 'N-13-BANK']) {
   assert.equal(launch.openItems.find(item => item.id === id).readiness.work, 'development', id);
 }
 assert.equal(launch.forFeature('F08-06').developmentItems.length, 1, '기간권 편성·판매 시작은 상품 관리의 추가 개발');
-assert.equal(launch.forFeature('F01-02').developmentItems.length, 1, '추가 로그인 실패 집계·화면');
+assert.equal(launch.forFeature('F01-02').developmentItems.length, 0, '반영된 소셜 로그인 집계·화면을 미구현으로 되돌리지 않음');
+const socialLogin = launch.openItems.find(item => item.id === 'N-10');
+assert.equal(socialLogin.implementationReady, true);
+assert.equal(socialLogin.operationsReady, false, '실제 계정·서명 앱 확인은 아직');
+assert.equal(socialLogin.readiness.work, 'environment');
+assert.equal(launch.forFeature('F01-02').scope, 'partial', '로그인 집계를 만들었다고 추가 제공자를 공개하지 않음');
 for (const id of ['F03-14', 'F03-15', 'F03-16', 'F03-17']) {
   assert.equal(launch.forFeature(id).developmentItems.length, 0, `${id}: 연결한 차량 조율의 실제 이용 미확인을 미구현으로 표시하지 않음`);
 }

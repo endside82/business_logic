@@ -31,8 +31,8 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">아이템 상태</div><div class="value">9</div><div class="hint">작성 중 · 심사 중 · 승인됨 · 반려됨 · 정책 비공개 · 판매 중 · 중지 · 삭제됨 등</div></div>
-          <div class="metric"><div class="label">아이템 종류</div><div class="value">4</div><div class="hint">플랜 · 모임 묶음 · 다운로드 상품 · 기간권 (생성 후 고정)</div></div>
-          <div class="metric"><div class="label">수수료 / 원천세</div><div class="value">10% / 3.3%</div><div class="hint">판매 시 크리에이터 수익 계산 기준</div></div>
+          <div class="metric"><div class="label">회원 판매 상품 종류</div><div class="value">3</div><div class="hint">플랜 · 모임 묶음 · 다운로드 상품. 기간권은 플랫폼 전용</div></div>
+          <div class="metric"><div class="label">수수료 / 원천세</div><div class="value">10% / 3.3%</div><div class="hint">회원 판매자의 유료 매출 기준. 플랫폼 상품은 제외</div></div>
         </div>
 
         <div class="callout">
@@ -41,6 +41,22 @@
             플랜은 그대로 두고 진열만 잠시 내릴 수 있고, 같은 플랜을 다른 가격·설명으로 다시 진열할 수도 있다.
             크리에이터가 자기 콘텐츠의 운영을 더 세밀하게 다룰 수 있는 한 단계 위의 통제권이다.</p>
         </div>
+      </section>
+
+      <section id="platform-period-pass">
+        <h2>플랫폼 기간권의 현재 구현과 남은 일</h2>
+        <p>기간권은 플랫폼이 판매하는 1·3·6개월 프리미엄 상품입니다. <strong>회원의 기간권 작성 폼과 생성 경로는 제거</strong>했습니다.
+          아래는 2026년 9월 26일 기본 브랜치 기준이며 마켓과 기간권 판매 모두 후속 출시입니다.</p>
+        <div class="table-wrap"><table><thead><tr><th>구분</th><th>현재 상태</th></tr></thead><tbody>
+          <tr><td>소유·수익</td><td>회원 상품과 플랫폼 상품의 소유를 구분합니다. 플랫폼 상품의 구매 수익은 별도로 기록하며 회원 판매자 수수료·원천세·지급 채무를 만들지 않습니다.</td></tr>
+          <tr><td>구매한 기간</td><td>구매 때 확정한 혜택과 기간을 보관하고 사용할 때 그 조건을 적용합니다. 이후 상품 조건을 바꿔도 이미 구매한 기간이 바뀌지 않습니다.</td></tr>
+          <tr><td>판매 제한</td><td>마켓 전체와 기간권 판매를 따로 제어합니다. 기간권 판매가 닫히면 단품·포함 번들을 목록에서 제외하고 지갑 차감 전에 구매를 막으며 앱의 기간권 필터도 숨깁니다. 이 별도 제한으로 이미 산 권리를 회수하지 않습니다.</td></tr>
+          <tr><td>기간권 포함 번들</td><td>기간권 구성품별 수량은 1이어야 하고 실제 결제액은 양수여야 합니다. 무료 포인트 가격을 따로 정했다면 그 가격도 양수여야 하며 보너스 포인트가 붙은 번들은 구매를 거부합니다.</td></tr>
+          <tr><td>추가 개발</td><td>기간권 편성·판매 시작의 서버 기능과 관리자 화면, 기간권 환불·매출 집계·앱 표시의 남은 작업입니다. 진행 중인 작업 브랜치의 변경은 아직 기본 브랜치 완료가 아닙니다.</td></tr>
+        </tbody></table></div>
+        <p>소유 구분·구매 조건 보존·판매 제한·플랫폼 구매의 자동 검사 기록은 있습니다.
+          편성부터 구매·사용·환불까지의 운영 전체 흐름과 실제 결제는 미확인입니다.
+          <a href="../qa/launch-status.html#item-N-03">마켓 거래와 기간권 판매의 다음 행동</a>을 따릅니다.</p>
       </section>
 
       <section>
