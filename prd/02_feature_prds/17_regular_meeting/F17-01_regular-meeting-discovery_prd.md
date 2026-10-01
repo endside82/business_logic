@@ -6,9 +6,17 @@
 
 <!-- generated: source-first-regular-meeting; updated: 2026-05-28; source: community_api/src/main/java/com/endside/community/regularmeeting -->
 
+## 참가자 탐색 화면 보완
+
+2026-09-30 `RM-UX-01` 워크트리 구현 범위다. 공개 목록은 운영·결제·노쇼 설명을 먼저 읽게 하지 않고 모임 카드부터 제공한다. 운영 방식 설명은 주최자의 내 모임 목록과 상세 정책에서 확인한다.
+
+카드는 ‘전체 과정 참여’와 ‘회차 선택 참여’를 구별한다. VARIABLE 본체의 가격 0은 무료를 뜻하지 않아 ‘회차별 비용’으로 표시하고, 부모 정원이 없는 경우 ‘회차별 정원’으로 안내한다. FIXED는 전체 과정 참가비를 표시한다. RM-UX-02에서 `nextSessionStartTime`과 실제 공개 회차 수 `publishedSessionCount`를 추가했다. 다음 일정이 없으면 ‘회차 준비 중’과 ‘예정된 회차 없음’을 구별한다. 한 페이지의 요약을 한 SQL로 집계하며, 카드마다 상세 API를 호출하지 않는다. 후기순 정렬은 후속 범위다.
+
+상세 행동은 [참가자가 판단하고 다음 행동으로 이동하는 화면](F17-02_regular-meeting-detail_prd.md#참가자가-판단하고-다음-행동으로-이동하는-화면)에 따른다.
+
 ## 1. 결론
 
-호스트가 발행(OPEN)한 정기모임을 사용자가 찾는 진입점. 서버는 `GET /api/v1/regular-meetings` 단일 검색 엔드포인트와 `GET /api/v1/regular-meetings/my` 내 모임 목록을 제공한다. 응답은 `Page<RegularMeetingSimpleVo>` (Spring `Page`) 로, Flutter 는 `PageResponse<RegularMeetingSimpleVo>` 로 받는다. 검색 결과는 OPEN 상태 모임만 노출하며, 카테고리·지역·타입(FIXED/VARIABLE) 으로 필터한다. 일반 이벤트 검색에서 RM 세션은 `EventScope#publiclyDiscoverable` 거름망에 의해 분류되지만, **모임 본체**의 검색은 본 엔드포인트가 단독 책임을 진다.
+호스트가 발행(OPEN)한 정기모임을 사용자가 찾는 진입점. 서버는 `GET /api/v1/regular-meetings` 단일 검색 엔드포인트와 `GET /api/v1/regular-meetings/my` 내 모임 목록을 제공한다. 응답은 `Page<RegularMeetingSimpleVo>` (Spring `Page`) 로, Flutter 는 `PageResponse<RegularMeetingSimpleVo>` 로 받는다. 검색 결과는 숨김이 아닌 OPEN 상태 모임만 노출하며, 카테고리·지역·타입(FIXED/VARIABLE) 으로 필터한다. 일반 이벤트 검색에서 RM 세션은 `EventScope#publiclyDiscoverable` 거름망에 의해 분류되지만, **모임 본체**의 검색은 본 엔드포인트가 단독 책임을 진다.
 
 Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카드에 `RegularMeetingBadge` (FIXED/VARIABLE 표시) 가 붙는다. 일반 이벤트 카드와 시각적으로 구분된다.
 
@@ -43,11 +51,11 @@ Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카�
 | 항목 | 실제 계약 |
 |---|---|
 | Controller | `RegularMeetingController#search` |
-| 인증 | 불필요(public) |
+| 인증 | 현재 SecurityConfiguration의 인증 기본 규칙 적용. 익명 공개를 새로 추가하지 않음 |
 | Query | `RegularMeetingSearchParam extends PagingParam` — `keyword, category, meetingType, region, page, size` |
 | 응답 | `Page<RegularMeetingSimpleVo>` (Spring Page JSON 직렬화) |
-| 정렬 | `publishedAt DESC` 기본 |
-| 필터 | `status = OPEN` 강제 |
+| 정렬 | `createdAt DESC` 기본 |
+| 필터 | `status = OPEN` 및 `hidden = false` 강제 |
 
 ### `GET /api/v1/regular-meetings/my`
 
@@ -59,7 +67,7 @@ Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카�
 | 응답 | `Page<RegularMeetingSimpleVo>` |
 | 포함 | 호스트(`hostUserId == userId`) + 등록(`regular_meeting_member.user_id == userId AND status occupies seat`) 합산 |
 
-`RegularMeetingSimpleVo` 핵심 필드: `id, hostUserId, hostNickname, title, category, meetingType, status, thumbnailUrl, locationType, regionSummary, startDate, endDate, totalSessionCount, upcomingSessionCount, price, baseCapacity, enrolledCount, publishedAt`.
+`RegularMeetingSimpleVo` 핵심 필드: `id, hostUserId, hostNickname, title, category, meetingType, status, thumbnailUrl, locationType, regionSummary, startDate, endDate, totalSessionCount, upcomingSessionCount, publishedSessionCount, nextSessionStartTime, price, baseCapacity, enrolledCount`.
 
 ## 5. 프론트 계약
 
