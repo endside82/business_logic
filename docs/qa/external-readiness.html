@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>외부 서비스 가입·계약과 출시 준비 — community 제품 문서</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/release-readability.css">
+</head>
+<body data-document-kind="current" data-base="../" class="release-page">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>출시 준비<span>›</span>외부 서비스 준비</div>
+        <h1>외부 서비스 가입·계약과 출시 준비</h1>
+        <p class="lede">운영자가 가입·계약부터 키 발급, 설정 전달, 실제 이용 확인까지 진행하는 체크리스트다.
+          첫 출시 필수 서비스와 기능을 추가 공개할 때 필요한 서비스를 구분한다.</p>
+        <p class="release-note">소스·공식 안내 확인: 2026-10-07. 실제 공급자 콘솔의 계정·계약·키 상태와 운영 환경은 별도 확인 대기다.</p>
+        <nav class="release-nav" aria-label="외부 준비 바로가기">
+          <a href="#order">진행 순서와 완료 상태</a><a href="#required">첫 출시 필수 서비스</a>
+          <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a><a href="#later">후속 기능의 외부 계약</a>
+          <a href="#store-submission">스토어 제출 자료와 공개 확인</a><a href="#evidence">운영자가 남길 완료 기록</a>
+        </nav>
+      </header>
+
+      <section id="order">
+        <h2>진행 순서와 완료 상태</h2>
+        <p>기능 범위와 공개 판단은 <a href="launch-status.html#scope">첫 출시 범위</a>와
+          <a href="launch-status.html#blocking">공개 전에 할 일</a>을 함께 따른다. 문서 작성이나 키 발급만으로 출시 완료가 되지는 않는다.</p>
+        <ol>
+          <li><strong>계정 소유자·배포 방식:</strong> 서비스 명의, 콘솔 소유 계정, 복구 수단, 비용 결제 주체를 확인한다.
+            Apple 가입과 Google Play 계정별 테스트 요건을 먼저 확인하고 iOS 로그인 구성을 결정한다.</li>
+          <li><strong>도메인·운영 환경:</strong> 공개 주소, 검사 서버, 메일 발신 도메인, 파일 저장소, 관리자 허용망을 준비한다.</li>
+          <li><strong>프로젝트·키·권한:</strong> Google·Firebase·지도·메일 자격 증명을 발급하거나 기존 보관 위치를 확인한다.
+            개발·시험·운영 환경을 구분해 빌드와 서버에 전달한다.</li>
+          <li><strong>같은 출시후보로 확인:</strong> Android와 iPhone에 서명 앱을 설치하고 가입·알림·지도·파일·채팅·직접 송금 확인을 수행한다.
+            실패·취소·중복 요청·권한 회수도 같은 이용 흐름에서 확인한다.</li>
+          <li><strong>운영·공개 확인:</strong> 경보 수신·백업 복구·이전 버전 복귀를 확인하고 스토어 자료와 검사한 앱을 대조한다.</li>
+        </ol>
+        <div class="table-wrap"><table>
+          <thead><tr><th>상태</th><th>완료로 기록할 근거</th></tr></thead>
+          <tbody>
+            <tr><td>가입·계약 확인</td><td>운영자에게 콘솔 접근 권한과 해당 서비스의 이용 권한이 있다. 기존 계약이 있다면 새로 가입하지 않는다.</td></tr>
+            <tr><td>발급·설정 확인</td><td>사용 환경·앱 식별자·허용 권한이 맞고 키가 실행 환경에 전달됐다. 키 본문 대신 보관 위치·식별자·만료일을 기록한다.</td></tr>
+            <tr><td>실제 연동 확인</td><td>서명 앱·실제 공급자·역할별 시험 계정의 성공과 실패 결과가 있다. 모사 응답이나 공급자의 접수 성공만으로 완료 처리하지 않는다.</td></tr>
+            <tr><td>운영 준비 확인</td><td>한도·비용·만료·실패 경보를 받을 수 있고 재처리·복구 절차를 수행했다.</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>현재 상태:</strong> 이 문서는 실행할 준비를 정리한 것이다. 콘솔을 조회하지 않은 항목은 <strong>미확인</strong>이며,
+          계정이나 계약이 없다는 뜻이 아니다. 이전 자동 검사 결과와 이번 외부 검증 결과를 합쳐 완료로 표시하지 않는다.</p>
+      </section>
+
+      <section id="required">
+        <h2>첫 출시 필수 서비스</h2>
+        <p>현재 앱은 이메일·Google 로그인, 모임·클럽·직접 송금·이동·투표와 알림·파일 기능을 제공하도록 설정되어 있다.
+          <strong>iOS 공개 전 로그인 구성 판단은 별도 선행 조건</strong>이다. 이 문서를 추가해도 서버나 앱의 활성 기능은 바뀌지 않는다.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>준비 항목</th><th>이번에 확인한 범위</th><th>아직 필요한 확인</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#ios-distribution">iOS 빌드·TestFlight 내부 테스트 절차</a></td><td>fastlane 설정 추가·로컬 실행·격리 검증</td><td>Apple 계정·배포 서명·API 인증·실제 IPA·설치</td></tr>
+            <tr><td><a href="#android-distribution">Android 빌드·Google Play 테스트 절차</a></td><td>기존 fastlane과 릴리스 가이드 있음</td><td>콘솔 권한·실제 서명·업로드·계정별 공개 요건</td></tr>
+            <tr><td><a href="#google-login">Google 로그인 등록과 실제 계정 확인</a></td><td>앱·서버 연결과 설정 검사 있음</td><td>OAuth 운영 설정·양 플랫폼 실제 로그인</td></tr>
+            <tr><td><a href="#firebase-push">Firebase·APNs 푸시 연결</a></td><td>앱 설정·발송·복구 경로 있음</td><td>프로젝트·서버 권한·APNs·실기기 수신</td></tr>
+            <tr><td><a href="#google-maps">Google Maps 앱 지도 설정</a></td><td>Android·iOS 키 주입 경로 있음</td><td>SDK 활성화·결제 계정·키 제한·배포 앱 표시</td></tr>
+            <tr><td><a href="#kakao-local">Kakao Local 주소 변환 설정</a></td><td>서버 주소↔좌표 변환 있음</td><td>사용 권한·REST API 키·실제 주소와 길찾기</td></tr>
+            <tr><td><a href="#email">메일 발송 계약·도메인 인증·실수신</a></td><td>인증 메일 복구·반송 처리 경로 있음</td><td>발송 계정·DNS 인증·실수신·반송 이벤트</td></tr>
+            <tr><td><a href="#file-storage">파일 저장소·검사·삭제 확인</a></td><td>S3·호환 저장소·검사·삭제 경로 있음</td><td>버킷·권한·검사 엔진·실제 파일 생명주기</td></tr>
+            <tr><td><a href="#infrastructure">서버·도메인·경보·복구 준비</a></td><td>프로그램과 운영 설정 경로 있음</td><td>배포 대상·접근 제한·경보 수신·복구 실행</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section id="ios-distribution">
+        <h2>iOS 빌드·TestFlight 내부 테스트 절차</h2>
+        <ol>
+          <li><strong>가입·앱 등록:</strong> <a href="https://developer.apple.com/programs/enroll/">Apple Developer Program 가입 안내</a>에 따라
+            기존 회원 자격·권한을 확인한다. 조직 가입이면 D-U-N-S 등 조직 확인 조건을 준비한다.
+            <a href="https://appstoreconnect.apple.com/">App Store Connect</a>에 앱과 내부 테스트 사용자를 등록한다.</li>
+          <li><strong>서명:</strong> Xcode 계정, Developer Team, Runner의 자동 서명, 배포 인증서·개인 키 또는 Xcode 관리 배포 서명을 준비한다.
+            Push Notifications와 Associated Domains를 앱 Identifier 및 프로비저닝에 반영한다.</li>
+          <li><strong>업로드 인증:</strong> App Store Connect의 Users and Access → Integrations에서 팀 API 키를 발급한다.
+            Key ID·Issuer ID·다운로드한 <code>.p8</code> 파일을 보관하고 앱 업로드 권한을 확인한다.
+            <a href="https://docs.fastlane.tools/app-store-connect-api/">fastlane API 키 인증 안내</a>를 따른다.</li>
+          <li><strong>빌드·설치:</strong> 아래 설정 검사와 IPA 빌드 뒤 업로드를 실행한다. Apple 처리 완료 후 TestFlight 내부 그룹에 빌드를 연결해 iPhone에 설치한다.
+            수출 규정 질문은 앱의 실제 동작에 맞게 답한다.</li>
+        </ol>
+        <p><strong>현재 식별자:</strong> Bundle ID <code>com.endside.community.communityApp</code>, Team <code>GSGHZ76QY5</code>,
+          Scheme <code>Runner</code>. 다른 팀으로 배포한다면 Xcode 프로젝트·fastlane Appfile·ExportOptions의 팀을 함께 맞춘다.</p>
+        <details>
+          <summary>iOS 설정 위치와 실행 명령</summary>
+          <p>원본 구현·상세 가이드는 저장소의 <code>community_app/ios/fastlane/Fastfile</code>과 <code>community_app/docs/IOS_RELEASE.md</code>다.
+            사이트에서도 실행할 수 있도록 필수 절차를 아래에 정리했다.</p>
+          <div class="table-wrap"><table><thead><tr><th>위치</th><th>전달할 설정</th></tr></thead><tbody>
+            <tr><td><code>community_app/ios/fastlane/.env</code></td><td><code>APP_STORE_CONNECT_API_KEY_KEY_ID</code>, <code>APP_STORE_CONNECT_API_KEY_ISSUER_ID</code>, <code>APP_STORE_CONNECT_API_KEY_KEY_FILEPATH</code>. 마지막 값은 ios 기준 키 파일 경로다.</td></tr>
+            <tr><td><code>community_app/ios/Flutter/Secrets.xcconfig</code></td><td><code>GOOGLE_MAPS_API_KEY</code>, <code>GOOGLE_IOS_CLIENT_ID</code>, <code>GOOGLE_IOS_REVERSED_CLIENT_ID</code>, <code>GOOGLE_SERVER_CLIENT_ID</code></td></tr>
+            <tr><td><code>community_app/dart_defines/prod.json</code></td><td>운영 서버 주소, Google OAuth, Firebase iOS 설정. <code>prod.example.json</code>을 기준으로 작성한다.</td></tr>
+          </tbody></table></div>
+          <pre><code># community_app/ios 에서 실행. macOS 시스템 Ruby 대신 Ruby 3.3 이상 사용
+bundle config set --local path vendor/bundle
+bundle install
+cp -n fastlane/.env.example fastlane/.env
+# 위 파일과 Secrets.xcconfig, dart_defines/prod.json에 실제 설정을 채운 뒤 실행
+bundle exec fastlane ios validate_config
+bundle exec fastlane ios validate_key
+bundle exec fastlane ios build
+# TestFlight 업로드가 필요한 시점에 실행
+bundle exec fastlane ios deploy</code></pre>
+          <p><code>build</code>는 IPA 생성만, <code>deploy</code>는 TestFlight 전송까지 수행한다.
+            전송 완료는 Apple 처리·설치 완료와 다르다. 현재 레인은 외부 테스트·베타 심사·App Store 공개 심사를 제출하지 않는다.
+            <code>env:staging</code>을 쓰면 대응 JSON과 native OAuth 설정도 staging으로 맞춘다.</p>
+          <p>버전은 <code>pubspec.yaml</code>의 <code>version: 이름+빌드번호</code>를 사용하며 업로드마다 빌드 번호를 올린다.
+            산출물은 <code>community_app/build/ios/ipa/*.ipa</code>다.
+            내보내기 실패 시 이전 IPA를 업로드하지 않도록 새 파일 생성을 검사한다.</p>
+        </details>
+        <p><strong>키 구분:</strong> App Store Connect 업로드 키, APNs 푸시 키, 앱 배포 서명은 서로 다른 용도다.
+          파일 확장자가 <code>.p8</code>로 같아도 업로드 키를 Firebase APNs 칸에 넣지 않는다.</p>
+        <p><strong>완료 조건:</strong> TestFlight에서 설치한 앱이 실제 서버에 연결되고 로그인·지도·푸시·딥링크가 동작한다.
+          10월 7일 fastlane 작업의 격리 검증 19개는 실제 Apple 호출·서명 빌드가 아니다. 당시 이 Mac의 배포 인증서·API 키·iOS 서비스 설정은 미준비였고,
+          다른 보관소의 가입·계약 상태는 확인하지 않았다.</p>
+      </section>
+
+      <section id="android-distribution">
+        <h2>Android 빌드·Google Play 테스트 절차</h2>
+        <ol>
+          <li><a href="https://play.google.com/console/">Google Play Console</a>의 개발자 계정·본인 또는 조직 확인·앱 등록 상태를 확인한다.</li>
+          <li>패키지명 <code>com.endside.community.community_app</code>을 기준으로 Play App Signing과 업로드 키를 준비한다.
+            Google 로그인에는 스토어가 실제 앱에 사용하는 <strong>앱 서명 인증서 지문</strong>을 등록한다. 업로드 키 지문과 혼동하지 않는다.</li>
+          <li>Google Play Android Developer API를 활성화하고 fastlane 서비스 계정에 해당 앱의 필요한 권한을 부여한다.
+            기존 앱이면 새 앱이나 새 서명 키를 만들지 않고 등록된 구성을 확인한다.</li>
+          <li>첫 AAB는 Console에 수동 등록하고, 이후 기존 fastlane 업로드 레인을 사용한다.
+            내부 테스트 링크로 설치·업데이트한 뒤 계정에 적용되는 프로덕션 접근 조건을 완료한다.</li>
+        </ol>
+        <div class="callout warn">
+          <span class="label">개인 개발자 계정의 비공개 테스트</span>
+          <p>2023년 11월 13일 이후 생성된 개인 개발자 계정은 프로덕션 접근 신청 전에 <strong>12명 이상이 14일 연속 참여하는 비공개 테스트</strong>가 필요하다.
+            내부 테스트 업로드와 별개이며, 기간을 채운 뒤 접근을 신청한다. 계정 유형·생성일과 Console의 현재 요구를 확인한다.
+            <a href="https://support.google.com/googleplay/android-developer/answer/14151465?hl=ko">새로운 개인 개발자 계정의 앱 테스트 요구사항</a></p>
+        </div>
+        <details>
+          <summary>Android 설정 위치와 실행 명령</summary>
+          <p>원본 구현·상세 가이드는 <code>community_app/android/fastlane/Fastfile</code>과 <code>community_app/docs/ANDROID_RELEASE.md</code>다.</p>
+          <ul>
+            <li>서명: <code>community_app/android/key.properties</code>와 업로드 키스토어.</li>
+            <li>API 인증: <code>community_app/android/fastlane/play-service-account.json</code>.</li>
+            <li>빌드 인자: <code>community_app/dart_defines/prod.json</code>. 지도 키는 <code>GOOGLE_MAPS_API_KEY</code> 환경변수 또는 <code>android/local.properties</code>의 <code>googleMapsApiKey</code>.</li>
+          </ul>
+          <pre><code># community_app/android 에서 실행
+bundle config set --local path vendor/bundle
+bundle install
+bundle exec fastlane android validate_key
+bundle exec fastlane android build
+# 내부 테스트 업로드가 필요한 시점에 실행
+bundle exec fastlane android deploy track:internal</code></pre>
+          <p>산출물은 <code>community_app/build/app/outputs/bundle/release/app-release.aab</code>다.
+            초안 앱은 <code>status:draft</code> 업로드 후 Console 처리가 필요할 수 있다.
+            빌드 성공만으로 등록된 업로드 키와 일치한다고 판단하지 않는다.</p>
+        </details>
+        <p><strong>완료 조건:</strong> Play에서 받은 앱의 첫 설치·업데이트·로그인·푸시가 성공하고, 공개에 필요한 계정별 테스트·접근 심사 상태를 기록한다.</p>
+      </section>
+
+      <section id="ios-login-review">
+        <h2>iOS 로그인 구성과 심사 준비</h2>
+        <p><strong>현재 코드:</strong> 앱과 서버의 활성 제공자는 이메일·Google이며 Apple은 비활성이다.
+          이는 구현 설정의 설명이고, 그 조합으로 App Store 심사 요건을 충족했다는 뜻은 아니다.</p>
+        <p><strong>공식 기준:</strong> Google 등 제삼자 로그인으로 주 계정을 만드는 앱은 예외에 해당하지 않는 한,
+          이름·이메일로 수집을 제한하고 이메일 비공개를 지원하며 동의 없는 광고 목적 이용 추적을 하지 않는 동등한 로그인 수단도 제공해야 한다.
+          <a href="https://developer.apple.com/app-store/review/guidelines/#login-services">Apple 로그인 서비스 심사 기준</a>을 따른다.</p>
+        <p><strong>이 제품의 준비 방향:</strong> Google 로그인을 유지한다면 Sign in with Apple을 활성화하는 방안부터 검토한다.
+          일반 이메일 가입이 있다는 것만으로 위 요건을 충족했다고 판단하지 않는다.
+          다른 적합한 로그인 수단이나 예외를 적용하려면 실제 조건과 근거를 기록한다. 이는 심사 승인 보장이 아니다.</p>
+        <ol>
+          <li>Google 유지와 동등한 로그인 추가, 또는 iOS 로그인 범위 변경 중 출시 구성을 정한다. 문서에서 결정 대기를 완료로 바꾸거나 코드를 자동 활성화하지 않는다.</li>
+          <li>Apple을 선택하면 App ID의 Sign in with Apple capability, 서버의 <code>APPLE_CLIENT_ID</code> audience,
+            필요한 웹 인증·토큰 철회용 Service ID·키 설정을 실제 인증 방식에 맞춘다.</li>
+          <li>앱과 서버의 제공자 목록·버튼·직접 호출 제한을 함께 변경·검증한다. 서버 설정 한 줄만 바꾸고 완료 처리하지 않는다.</li>
+          <li>실제 iPhone에서 첫 가입·재로그인·이메일 숨기기·연결 해제·계정 삭제·인증 철회를 확인한다.
+            숨긴 이메일로 메일을 보내면 <a href="https://developer.apple.com/help/account/capabilities/configure-private-email-relay-service/">Apple 비공개 이메일 릴레이 설정 안내</a>에 따라
+            발신 도메인·주소 등록과 SPF·DKIM 인증도 준비한다.</li>
+        </ol>
+        <p><strong>완료 조건:</strong> 선택한 구성의 코드·설정·실계정 결과와 심사 설명이 일치한다.
+          카카오·네이버의 추가 공개는 계속 후속으로 두되, <strong>iOS 로그인 요건 판단 자체는 첫 공개 전에 끝낸다.</strong>
+          기능 설명은 <a href="../features/F01-02.html#ios-launch-policy">현재 로그인 활성 상태와 iOS 공개 전 결정</a>에서 연결한다.</p>
+      </section>
+
+      <section id="google-login">
+        <h2>Google 로그인 등록과 실제 계정 확인</h2>
+        <ol>
+          <li><a href="https://console.cloud.google.com/">Google Cloud Console</a>에서 사용할 프로젝트와 소유 권한을 확인한다.
+            Google Auth Platform에 앱 이름·지원 이메일·운영 도메인·개인정보처리방침·동의 화면을 설정한다.</li>
+          <li>Web·Android·iOS OAuth 클라이언트를 준비한다. Android에는 패키지명과 배포 서명 지문,
+            iOS에는 <code>com.endside.community.communityApp</code>을 사용한다.</li>
+          <li>사용 대상·공개 상태·테스트 사용자를 점검하고 요청 scope에 필요한 검증을 확인한다.
+            Calendar 접근 검증을 기본 로그인과 같은 작업으로 가정하지 않는다.
+            <a href="https://support.google.com/cloud/answer/13464321?hl=en">Google OAuth 검증 요건</a></li>
+        </ol>
+        <p><strong>설정 위치:</strong> 서버의 <code>GOOGLE_CLIENT_ID</code>와 앱 JSON의 <code>GOOGLE_SERVER_CLIENT_ID</code>는 같은 Web 클라이언트다.
+          앱 JSON의 <code>GOOGLE_IOS_CLIENT_ID</code>는 iOS 클라이언트다. iOS native 파일에도 같은 두 값을 넣고 reversed ID를 맞춘다.
+          이 ID들은 비밀번호가 아니며, 서버용 비밀키를 앱에 넣는 작업과 구분한다.</p>
+        <p><strong>완료 조건:</strong> 양 플랫폼의 서명 앱에서 신규·기존 계정 로그인, 취소, 연결·해제, 마지막 로그인 수단 보호를 확인한다.
+          잘못된 audience·만료 토큰이 거부되고 서버와 앱의 계정 결과가 일치해야 한다.</p>
+      </section>
+
+      <section id="firebase-push">
+        <h2>Firebase·APNs 푸시 연결</h2>
+        <ol>
+          <li><a href="https://console.firebase.google.com/">Firebase Console</a>에서 환경별 프로젝트와 Android·iOS 앱을 등록한다.</li>
+          <li>앱 설정의 프로젝트 ID·발신자 ID·플랫폼별 API 키·앱 ID를 확보하고 서버 발송용 서비스 계정 권한을 준비한다.</li>
+          <li>Apple Developer에서 푸시용 APNs 키를 준비하고 Firebase의 iOS 앱에 Key ID·Team ID와 함께 연결한다.
+            앱의 Push Notifications와 Background Modes의 Remote notifications도 확인한다.
+            <a href="https://firebase.google.com/docs/cloud-messaging/flutter/get-started?hl=en">Flutter FCM과 APNs 설정 안내</a></li>
+        </ol>
+        <p><strong>설정 위치:</strong> 앱은 <code>dart_defines/prod.json</code>의 <code>FIREBASE_PROJECT_ID</code>,
+          <code>FIREBASE_MESSAGING_SENDER_ID</code>, <code>FIREBASE_ANDROID_API_KEY</code>, <code>FIREBASE_ANDROID_APP_ID</code>,
+          <code>FIREBASE_IOS_API_KEY</code>, <code>FIREBASE_IOS_APP_ID</code>를 사용한다. iOS Bundle ID를 입력하면 실제 앱과 일치해야 한다.
+          현재 구현은 빌드 인자로 초기화하므로 콘솔에서 받은 JSON·plist 파일만 복사하는 것으로 끝나지 않는다.
+          서버는 <code>FIREBASE_CREDENTIALS_PATH</code>로 서비스 계정 파일을 읽는다.</p>
+        <p><strong>완료 조건:</strong> Android·iPhone 각각 권한 허용·거부·재허용, 전경·백그라운드·종료 상태의 수신과 알림 클릭을 확인한다.
+          계정 전환·로그아웃·무효 토큰·재시도에서 다른 회원에게 알림이 가지 않고 중복 표시가 억제되어야 한다.
+          서버 발송 수락·실제 휴대전화 표시·화면 이동은 따로 기록한다.</p>
+      </section>
+
+      <section id="google-maps">
+        <h2>Google Maps 앱 지도 설정</h2>
+        <p><strong>가입·발급:</strong> Google Cloud 프로젝트에 결제 계정을 연결하고 Maps SDK for Android와 Maps SDK for iOS를 활성화한다.
+          사용하는 플랫폼별 API 키를 만들고 Android 패키지·서명 지문 또는 iOS Bundle ID 및 API 사용 범위를 제한한다.
+          <a href="https://developers.google.com/maps/flutter-package/config">Google Maps Flutter 프로젝트 설정</a></p>
+        <p><strong>설정 위치:</strong> Android는 <code>GOOGLE_MAPS_API_KEY</code> 환경변수 또는 <code>android/local.properties</code>의
+          <code>googleMapsApiKey</code>, iOS는 <code>ios/Flutter/Secrets.xcconfig</code>의 <code>GOOGLE_MAPS_API_KEY</code>다.
+          서로 다른 제한이 필요한 두 플랫폼의 키를 무조건 공용으로 쓰지 않는다.</p>
+        <p><strong>완료 조건:</strong> 스토어 서명 앱에서 지도·장소 마커·위치 공유가 표시되고 위치 권한을 거절해도 안내와 수동 선택 경로가 동작한다.
+          사용량·쿼터·비용 경보 수신처를 정하고 키 제한 오류와 한도 초과 시 안내를 확인한다.</p>
+      </section>
+
+      <section id="kakao-local">
+        <h2>Kakao Local 주소 변환 설정</h2>
+        <p><strong>가입·발급:</strong> <a href="https://developers.kakao.com/">Kakao Developers</a> 앱과 카카오맵·Local API 이용 권한,
+          REST API 키를 준비한다. 적용되는 무료 한도·추가 사용·과금 조건은
+          <a href="https://developers.kakao.com/docs/ko/kakaomap/common">카카오맵 API 이용 안내</a>에서 확인한다.</p>
+        <p><strong>설정 위치:</strong> 서버 <code>KAKAO_MAPS_API_KEY</code>다. Google Maps는 앱 지도 표시,
+          Kakao Local은 서버 주소↔좌표 변환을 담당한다. 카카오 로그인을 켜야만 주소 변환을 쓸 수 있는 구조는 아니다.</p>
+        <p><strong>완료 조건:</strong> 실제 모임 주소와 현재 위치의 정방향·역방향 변환, 검색 결과 없음·시간 초과·한도 초과를 확인한다.
+          길찾기는 링크를 생성하는 현재 구현에 맞춰 Android·iPhone의 지도 앱 설치·미설치와 복귀를 확인한다.
+          별도 유료 경로 탐색 API 계약을 이미 사용 중인 것으로 적지 않는다.</p>
+      </section>
+
+      <section id="email">
+        <h2>메일 발송 계약·도메인 인증·실수신</h2>
+        <ol>
+          <li>운영 발송 공급자·발신 도메인·주소·지원 수신함을 정하고 발송 권한 및 SMTP 인증정보를 준비한다.
+            현재 반송·스팸 신고 수신 구현은 <strong>Amazon SES/SNS</strong>용이다. 다른 공급자를 선택하면 그 이벤트 연동의 호환 여부를 확인한다.</li>
+          <li>DNS에 공급자 안내에 맞는 SPF·DKIM을 적용하고 DMARC 정책과 보고 수신처를 설정한다.
+            발신 도메인 인증과 운영 발송 허용을 별도로 확인한다.</li>
+          <li>SES를 사용하면 사용할 리전에서 샌드박스 해제를 신청하고 발송 한도를 확인한다.
+            <a href="https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html">Amazon SES 운영 발송 승인 절차</a></li>
+          <li>SES configuration set의 배달·지연·반송·스팸 신고를 SNS와 서버의 <code>POST /webhooks/email/ses/events</code>에 연결하고 구독 확인·서명 검증을 확인한다.</li>
+        </ol>
+        <p><strong>설정 위치:</strong> 서버의 <code>MAIL_HOST</code>, <code>MAIL_PORT</code>, <code>MAIL_USERNAME</code>, <code>MAIL_PASSWORD</code>,
+          <code>MAIL_FROM</code>, <code>MAIL_FROM_NAME</code>와 SES 사용 시 <code>MAIL_SES_CONFIGURATION_SET</code>다.
+          인증 링크용 <code>AUTH_MAIL_CURRENT_KEY_ID</code>·<code>AUTH_MAIL_KEYS_*</code>와 수신자 억제 해시용 <code>MAIL_SUPPRESSION_HMAC_SECRET</code>는
+          공급자 발급 키가 아닌 자체 운영 비밀이다. 후자는 전용 키 설정과 현재 대체 키 사용 여부를 확인해 보관·교체한다.</p>
+        <p><strong>완료 조건:</strong> Gmail·네이버·다음 실제 수신함에서 가입 인증·비밀번호 복구 메일을 받고 링크를 처리한다.
+          재전송·오래된 링크·발송 지연·일시 실패·영구 반송·스팸 신고와 재발송 억제도 확인한다.
+          발송 API 성공만으로 수신 성공을 기록하지 않는다.</p>
+      </section>
+
+      <section id="file-storage">
+        <h2>파일 저장소·검사·삭제 확인</h2>
+        <ol>
+          <li><a href="https://console.aws.amazon.com/">AWS Console</a>에서 환경별 S3 버킷과 IAM 권한을 준비한다.
+            IAM Role을 사용하면 장기 Access Key를 별도로 만들 필요가 없다. 호환 저장소를 선택하면 실제 지원 동작을 검증한다.</li>
+          <li>퍼블릭 접근 차단, 필요한 CORS, 암호화, 다운로드 URL 만료, 보존·삭제·백업 정책을 정한다.
+            버저닝과 보존 설정 때문에 개인정보 삭제 약속이 달라지지 않는지 확인한다.</li>
+          <li>업로드 검사 엔진을 준비한다. 현재 서버는 ClamAV의 clamd 연결을 지원하며 직접 운영할 수 있다.
+            별도 유료 검사 계약이 필수인 것으로 가정하지 않는다.</li>
+        </ol>
+        <p><strong>설정 위치:</strong> 서버 <code>AWS_S3_BUCKET</code>, <code>AWS_S3_REGION</code>, 필요 시 <code>AWS_ACCESS_KEY</code>·<code>AWS_SECRET_KEY</code>.
+          호환 저장소는 <code>AWS_S3_ENDPOINT</code>와 필요 시 <code>AWS_S3_PUBLIC_BASE_URL</code>을 지정한다. 모바일이 서명 URL로 접근하므로 기기에서 도달 가능해야 한다.
+          검사 공급자와 접속은 <code>file.scan.provider=clamd</code>, <code>file.scan.clamd.host</code>·<code>port</code> 등 서버 설정으로 전달한다.</p>
+        <p><strong>완료 조건:</strong> 실제 사진·영수증의 업로드·조회·삭제, 서명 URL 만료, 타인 비공개 파일 접근 차단을 확인한다.
+          정상 파일·안전한 검사 시험 파일·검사 시간 초과, 계정 종료·파일 만료·삭제 실패 후 재시도 결과를 저장소에서 대조한다.
+          호환 저장소는 조건부 업로드와 기존 객체 덮어쓰기 차단까지 확인한다.</p>
+      </section>
+
+      <section id="infrastructure">
+        <h2>서버·도메인·경보·복구 준비</h2>
+        <p><strong>가입·설정:</strong> 선택한 호스팅과 도메인·DNS 계정, 서버·MySQL·Redis, HTTPS 인증서,
+          파일·실시간 채팅 주소, 운영 비밀 저장소와 백업 공간을 준비한다. 관리자 화면·API의 허용 네트워크와 로그인 권한도 정한다.</p>
+        <p><strong>설정 위치:</strong> 앱 JSON의 <code>API_BASE_URL</code>, <code>FILE_SERVER_URL</code>, <code>REALTIME_BASE_URL</code>, <code>SHARE_BASE_URL</code>.
+          서버의 DB·Redis 연결, CORS·신뢰 프록시, 백업 설정과 <code>OPERATOR_ALERT_WEBHOOK_URL</code>을 해당 실행 환경에 전달한다.
+          관리자 위임·실시간 내부 토큰, JWT·AES·백업 암호화 키는 자체 생성·보관 대상이다.</p>
+        <p><strong>완료 조건:</strong> 외부 통신망에서 가입 링크·공유 링크·파일·채팅이 열리고 두 기기의 채팅 재연결이 정상이어야 한다.
+          관리자 허용망 밖 접근 차단, 경보 실제 수신, 중복 없는 재처리, 격리 환경의 DB·파일 백업 복구와 이전 버전 복귀를 실행한다.
+          복구 시간·허용 데이터 손실·서비스 중단 기준을 기록한다.</p>
+      </section>
+
+      <section id="later">
+        <h2>후속 기능의 외부 계약</h2>
+        <p>아래 서비스는 해당 기능을 공개하기로 결정했을 때 준비한다. 현재 주최자 계좌 직접 송금은 플랫폼 수납·자동 지급·계좌 인증과 다르다.
+          다만 직접 송금 자체의 계좌 안내·송금 신고·입금 확인·취소·환불은 서명 앱과 은행 내역으로 확인해야 한다.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>공개할 기능</th><th>가입·계약·키와 설정 위치</th><th>실제 연동 완료 조건</th></tr></thead>
+          <tbody>
+            <tr id="payment-contract"><td>플랫폼 결제·충전·저장 카드</td><td>TossPayments 가맹 계약·심사와 결제수단·빌링 이용 범위를 확인한다. 서버 <code>TOSS_SECRET_KEY</code>·<code>TOSS_CLIENT_KEY</code>·<code>TOSS_WEBHOOK_SECRET</code>, 앱 <code>TOSS_CLIENT_KEY</code>, 빌링 공급자 <code>PAYMENT_BILLING_AUTH_PROVIDER</code>를 연결한다.</td><td>소액 승인·취소·부분 환불·응답 유실·중복 요청·웹훅 재전송·장부 대조. 테스트 키 결과를 실결제로 세지 않는다.</td></tr>
+            <tr id="payout-contract"><td>출금·자동 지급</td><td>지급대행 계약·이용 권한·수취인 등록을 확인한다. 서버 <code>WITHDRAWAL_PAYOUT_PROVIDER</code>, <code>TOSS_PAYOUT_SECURITY_KEY</code>와 PG 인증을 연결한다.</td><td>실계좌 지급·실패·재시도·상태 조회·장부 대조. 키 발급만으로 남은 계좌 연결·출금 보완 개발이 완료되지는 않는다.</td></tr>
+            <tr id="identity-contract"><td>데이트 본인확인</td><td>Toss 또는 NICE를 선택해 계약·상품 권한·복귀 주소를 준비한다. 서버 <code>TOSS_CERT_CLIENT_ID</code>·<code>TOSS_CERT_CLIENT_SECRET</code> 또는 <code>NICE_CLIENT_ID</code>·<code>NICE_CLIENT_SECRET</code>·<code>NICE_PRODUCT_ID</code>·<code>NICE_RETURN_URL</code>.</td><td>실제 인증 성공·취소·실패·만료·변조 거부, 비공개 증빙 저장·관리자 확인·채팅·신고. 두 공급자를 모두 계약할 필요는 없다.</td></tr>
+            <tr id="bank-verification"><td>계좌 소액 인증</td><td>공급자와 확인 범위를 결정한 뒤 계약·연결을 개발한다. 현재 <code>BANK_ACCOUNT_VERIFICATION_PROVIDER</code> 기본값은 <code>FAKE</code>다.</td><td>실계좌 인증과 불일치·만료·중복 확인. 미인증 등록 계좌는 계속 인증 전으로 안내하며 첫 출시 직접 송금은 이 계약을 기다리지 않는다.</td></tr>
+            <tr id="extra-login"><td>카카오·네이버 추가 로그인</td><td>제공자 콘솔의 앱 등록·사용 설정·필요한 심사·클라이언트 키·native 설정을 준비한다. 카카오는 앱 <code>KAKAO_NATIVE_KEY</code>와 서버 <code>KAKAO_APP_ID</code>, 플랫폼 서명·복귀 경로를 맞춘다. 네이버는 SDK의 플랫폼별 Client ID·Client Secret·URL scheme 설정을 준비한다. 서버·앱 허용 목록도 함께 반영한다.</td><td>신규·기존·연결·해제·실패 및 카카오 기존 계정 이전·복구. Apple은 <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a>에서 먼저 판단한다.</td></tr>
+            <tr id="google-calendar"><td>Google Calendar 자동 동기화</td><td>Calendar API, OAuth scope·필요한 검증·redirect를 준비한다. 서버 <code>GOOGLE_CALENDAR_CLIENT_ID</code>·<code>GOOGLE_CALENDAR_CLIENT_SECRET</code>·<code>GOOGLE_CALENDAR_REDIRECT_URI</code>, <code>CALENDAR_SYNC_CLIENT</code>.</td><td>재연결·범위 변경의 남은 보완 후 실제 일정 생성·수정·삭제·토큰 갱신·동의 철회를 확인한다. 내부 일정과 파일 내보내기에 이 계약을 요구하지 않는다.</td></tr>
+            <tr id="virtual-account"><td>플랫폼 가상계좌 수납</td><td>별도 제품 결정 후 가상계좌 이용 계약·발급·환불·웹훅 설정을 준비한다. 서버 <code>VIRTUAL_ACCOUNT_PROVIDER</code>와 해당 PG 설정.</td><td>실제 발급·입금·기한 만료·환불·중복 통지·장부 대조. 현재 주최자 계좌 직접 송금과 함께 켜지 않는다.</td></tr>
+          </tbody>
+        </table></div>
+        <p>계약·키의 공식 기준은 <a href="https://docs.tosspayments.com/reference/using-api/api-keys">TossPayments API 키 안내</a>와
+          <a href="https://docs.tosspayments.com/guides/v2/payouts">TossPayments 지급대행 안내</a>를 확인한다.
+          본인확인은 <a href="https://cert.toss.im/">토스 인증</a> 또는 <a href="https://www.niceid.co.kr/">NICE 아이디</a>에서 적용 상품·계약 조건을 확인한다.</p>
+        <p>기존 SOS용 SMS 기능은 제품에서 제외되어 첫 출시 외부 계약 목록에 넣지 않는다.
+          후속 기능별 남은 구현은 <a href="launch-status.html#next">후속 기능 준비</a>와 함께 확인한다.</p>
+      </section>
+
+      <section id="digital-billing">
+        <h2>디지털 상품·구독의 결제 방식 결정</h2>
+        <p>마켓 디지털 콘텐츠·앱 기능 구독·기간권은 판매할 상품과 국가별 배포 방식을 기준으로 스토어 결제 적용 여부를 먼저 결정한다.
+          <strong>PG 계약만으로 모든 앱 내 디지털 판매가 가능한 것으로 가정하지 않는다.</strong>
+          <a href="https://developer.apple.com/app-store/review/guidelines/#in-app-purchase">Apple 앱 내 구입 기준</a>과
+          <a href="https://support.google.com/googleplay/android-developer/answer/9858738?hl=ko">Google Play 결제 정책</a>의 적용 범위·예외·별도 프로그램 조건을 확인한다.</p>
+        <p>스토어 결제를 선택하면 해당 유료 판매 계약·세금·정산 계좌·상품 등록을 준비하고 앱 결제와 서버 구매 검증·권한 지급·갱신·해지·환불 연결을 검사한다.
+          기존 Toss 구현이 스토어 구매 검증까지 제공한다고 표시하지 않는다.
+          <strong>완료 조건:</strong> 상품별 결제 경로의 근거, 필요한 구현, 실제 구매·복원·회수 결과가 일치한다.
+          오프라인 모임 비용의 주최자 직접 수납과 디지털 상품을 한 결제 유형으로 묶지 않는다.</p>
+      </section>
+
+      <section id="store-submission">
+        <h2>스토어 제출 자료와 공개 확인</h2>
+        <ul>
+          <li>운영 도메인의 개인정보처리방침·이용약관·고객지원·탈퇴 안내를 준비하고 앱과 스토어의 링크를 실제로 연다.</li>
+          <li>로그인·위치·사진·알림 등 실제 수집·이용·삭제 동작에 맞춰 개인정보 및 데이터 안전성 응답, 권한 설명, 연령 등급과 스크린샷을 작성한다.</li>
+          <li>심사 계정과 필요한 역할·사용 방법을 제공하고 심사 중 서버에 접속할 수 있게 한다.</li>
+          <li><a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a>,
+            <a href="#android-distribution">Android 빌드·Google Play 테스트 절차</a>,
+            유료 기능이 있다면 <a href="#digital-billing">디지털 상품·구독의 결제 방식 결정</a>을 완료한다.</li>
+          <li>검사한 설치 파일과 제출할 앱의 버전·빌드 번호를 맞추고 공개 대상·시점·중단 기준을 기록한다.</li>
+        </ul>
+        <p>업로드 성공·TestFlight 설치·Google Play 내부 테스트·스토어 공개 승인은 각각 다른 상태다.
+          <a href="launch-status.html#gates">공개 승인 기준</a>을 충족하고 실제 승인 결과가 있을 때만 공개 완료로 기록한다.</p>
+      </section>
+
+      <section id="evidence">
+        <h2>운영자가 남길 완료 기록</h2>
+        <p>운영자 한 사람이 서비스별로 아래 양식을 채운다. 인증·DNS·권한·복구 같은 검증 결과와 비밀 보관 위치를 남기되,
+          비밀번호·키 본문·토큰·OTP·원문 계좌번호·신분증은 문서에 저장하지 않는다.</p>
+        <div class="table-wrap"><table><thead><tr><th>기록할 항목</th><th>작성 내용</th></tr></thead><tbody>
+          <tr><td>서비스·환경·명의</td><td>서비스 이름, 개발/시험/운영 구분, 계약·소유 계정과 운영자 접근 여부</td></tr>
+          <tr><td>준비 상태</td><td>가입·계약 / 키·권한 / 실행 환경 전달 / 실연동 / 운영 복구를 각각 미확인·진행 중·완료·해당 없음으로 기록</td></tr>
+          <tr><td>보관·갱신 정보</td><td>비밀 저장소 항목 경로, 공개 식별자, 만료·갱신 시점, 회수·교체 방법</td></tr>
+          <tr><td>실행 대상</td><td>앱·서버 버전, 기기·OS, 시험 계정 역할, 실행일</td></tr>
+          <tr><td>실제 결과</td><td>성공·실패·취소·중복·복구의 기대 결과와 실제 결과, 개인정보를 가린 증거의 보관 위치</td></tr>
+          <tr><td>남은 조치·판단</td><td>막힌 원인, 다음 행동, 재검사 범위, 해당 기능의 공개 여부와 판단일</td></tr>
+        </tbody></table></div>
+        <p>이 페이지의 완료 상태는 체크리스트 작성 시 자동으로 바뀌지 않는다. 실제 확인 기록이 생긴 뒤
+          <a href="launch-status.html">첫 출시 현황과 남은 준비</a>와 해당 서비스의 상태를 함께 갱신한다.</p>
+      </section>
+
+      <section id="source-basis">
+        <h2>설정 이름과 문서의 확인 근거</h2>
+        <p>2026년 10월 7일 아래 로컬 소스를 대조했다. 경로는 개발 작업 공간의 원본 위치이며,
+          문서 사이트 밖으로 나가는 깨진 파일 링크 대신 실행에 필요한 내용을 이 페이지에 포함했다.</p>
+        <ul>
+          <li>앱 배포: <code>community_app/docs/IOS_RELEASE.md</code>, <code>community_app/docs/ANDROID_RELEASE.md</code>, 두 플랫폼의 <code>fastlane/Fastfile</code>·<code>Appfile</code>.</li>
+          <li>앱 설정: <code>community_app/dart_defines/prod.example.json</code>, <code>lib/core/config/firebase_env_options.dart</code>, <code>ios/Flutter/Secrets.xcconfig.example</code>, Android Gradle·iOS Xcode 프로젝트.</li>
+          <li>서버 설정: <code>community_api/src/main/resources/application-prod.yaml</code>·<code>application-default.yaml</code>, <code>SecurityConfigValidator</code>, <code>FirebaseConfig</code>, <code>S3Configuration</code>, <code>ClamdContentScanProvider</code>.</li>
+          <li>출시 범위·실환경 완료 기준: 작업 공간의 <code>docs/IMPLEMENTATION_WORKBOARD.md</code>, <code>docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md</code>와 서비스별 검사표.</li>
+        </ul>
+        <p>이전 참고 문서에 남은 Firebase 파일 복사 방식·시뮬레이션 상태·전체 PG 키 필수 안내를 현재 소스의 동작으로 그대로 옮기지 않았다.
+          공급자 요건은 각 절의 공식 안내를 사용하며 실제 가입·제출 시 다시 확인한다.</p>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

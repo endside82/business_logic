@@ -64,7 +64,7 @@ for (const item of launch.openItems) {
     assert.equal(item.impact, item.id === 'N-07' ? 'included' : 'next', `${item.id}: 기존 출시 범위와 추가 개발 상태를 따로 유지`);
   }
 }
-assert.equal(launch.openItems.find(item => item.id === 'N-12-CALENDAR').readiness.work, 'environment');
+assert.equal(launch.openItems.find(item => item.id === 'N-12-CALENDAR').readiness.work, 'repair', '재연결·범위 변경 보완을 실제 계정 확인만 남은 것으로 표시하지 않음');
 for (const id of ['N-03', 'N-13-BANK']) {
   assert.equal(launch.openItems.find(item => item.id === id).readiness.work, 'development', id);
 }
@@ -116,8 +116,8 @@ for (const id of ['F06-02', 'F08-07', 'F09-03', 'F21-01']) {
 }
 
 // 이 페이지들은 방문 기록이 아니라 현재 상태를 설명한다. 로컬 파일과 실제 절을 확인한다.
-const pages = execFileSync('git', ['ls-files', '-z', '--', 'docs/*.html'], { cwd: path.dirname(docs), encoding: 'utf8' })
-  .split('\0').filter(Boolean).map(file => file.replace(/^docs\//, ''));
+const pages = [...new Set(execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', 'docs/*.html'], { cwd: path.dirname(docs), encoding: 'utf8' })
+  .split('\0').filter(Boolean).map(file => file.replace(/^docs\//, '')))];
 let checkedLinks = 0;
 for (const page of pages) {
   const source = fs.readFileSync(path.join(docs, page), 'utf8')
@@ -127,6 +127,10 @@ for (const page of pages) {
   if (page === 'qa/launch-status.html') {
     launch.openItems.forEach(item => {
       if (item.docPath) hrefs.push('../' + item.docPath);
+      if (item.preparationPath) {
+        assert.ok(item.preparationLabel?.trim(), `${item.id}: 외부 준비 링크 제목 누락`);
+        hrefs.push('../' + item.preparationPath);
+      }
       (item.features || []).forEach(id => hrefs.push('../features/' + id + '.html'));
     });
   }

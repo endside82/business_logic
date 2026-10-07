@@ -36,14 +36,14 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/auth/send-verification-email` | `AuthController#sendVerificationEmail` | [AuthController.java:113](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/account/controller/AuthController.java#L113) |
-| `GET /api/v1/auth/verify-email` | `AuthController#verifyEmail` | [AuthController.java:119](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/account/controller/AuthController.java#L119) |
-| `POST /api/v1/users/me/email/verify/send` | `AccountController#sendVerificationEmail` | [AccountController.java:28](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/account/controller/AccountController.java#L28) |
-| `POST /api/v1/users/me/email/verify/confirm` | `AccountController#confirmEmailVerification` | [AccountController.java:38](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/account/controller/AccountController.java#L38) |
+| `POST /api/v1/auth/send-verification-email` | `AuthController#sendVerificationEmail` | [AuthController.java:115](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AuthController.java#L115) |
+| `GET /api/v1/auth/verify-email` | `AuthController#verifyEmail` | [AuthController.java:121](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AuthController.java#L121) |
+| `POST /api/v1/users/me/email/verify/send` | `AccountController#sendVerificationEmail` | [AccountController.java:28](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AccountController.java#L28) |
+| `POST /api/v1/users/me/email/verify/confirm` | `AccountController#confirmEmailVerification` | [AccountController.java:38](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AccountController.java#L38) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

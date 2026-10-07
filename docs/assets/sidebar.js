@@ -347,6 +347,7 @@
       links: [
         { href: 'qa/screen-review.html', label: '화면 검수와 남은 촬영' },
         { href: 'qa/launch-status.html', label: '첫 출시 현황' },
+        { href: 'qa/external-readiness.html', label: '외부 서비스 가입·계약' },
         { href: 'qa/feature-status.html', label: '기능별 출시 상태' },
         { href: 'qa/scenario-completeness.html', label: '기능별 시나리오 완성도' },
         { href: 'qa/migration-status.html', label: 'PRD 문서 상태' },

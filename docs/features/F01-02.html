@@ -31,7 +31,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">구현된 제공자</div><div class="value">4종</div><div class="hint">카카오·네이버·구글·애플</div></div>
-          <div class="metric"><div class="label">첫 출시 활성 제공자</div><div class="value">1종(Google)</div><div class="hint">나머지 3종은 제공자별 준비 후 순차 오픈</div></div>
+          <div class="metric"><div class="label">현재 활성 소셜 제공자</div><div class="value">1종(Google)</div><div class="hint">iOS 공개 전 로그인 구성 결정 필요</div></div>
           <div class="metric"><div class="label">최소 가입 연령</div><div class="value">만 19세</div><div class="hint">이메일 가입과 동일하게 강제</div></div>
           <div class="metric"><div class="label">사전 입력</div><div class="value">2가지</div><div class="hint">닉네임·생년월일을 외부 인증 전에 받음</div></div>
         </div>
@@ -44,13 +44,17 @@
             가입이 만들어지는 사고가 발생한다.</p>
         </div>
 
-        <div class="callout">
-          <span class="label">첫 출시 범위 — Google만 열고 나머지는 순차로 연다</span>
-          <p>카카오·네이버·애플 로그인은 코드가 이미 만들어져 있지만, 이번 첫 출시에서 사용자에게 켜 주는 것은 Google 하나뿐이다.
-            로그인 화면에는 활성화된 제공자의 버튼만 나타나므로, 첫 출시 화면에는 이메일 입력과 Google 버튼만 보이고
-            카카오·네이버·애플 버튼은 없다. 세 제공자는 각자의 사업자 심사·정책 동의 같은 준비가 끝나는 대로 한 종류씩 열린다 —
-            "4종 동시 오픈"이 아니라 "코드는 4종, 활성은 그때그때 다른 개수"라는 점이 운영 공지·CS 안내의 기준이 되어야 한다.</p>
-        </div>
+      </section>
+
+      <section id="ios-launch-policy">
+        <h2>현재 로그인 활성 상태와 iOS 공개 전 결정</h2>
+        <p>현재 앱·서버의 활성 제공자는 이메일·Google이다. 카카오·네이버·Apple의 연결 코드는 있지만 버튼과 직접 호출은 비활성이다.
+          이 상태는 구현 설정이며 App Store 심사 요건을 충족했다는 판정이 아니다.</p>
+        <p>iOS에서 Google을 주 계정 로그인으로 유지한다면 Apple 심사 기준에 맞는 동등한 로그인 수단이나 적용 가능한 예외를 확인해야 한다.
+          Sign in with Apple 활성화 방안부터 검토하되, 실제 조건과 선택한 구성을 기록한다. 이메일 가입만으로 충족했다고 간주하지 않는다.</p>
+        <p>카카오·네이버 추가 공개는 후속으로 진행한다. <strong>iOS 로그인 구성 결정은 첫 공개 전에 완료</strong>하고,
+          Apple을 선택하면 설정·버튼·실제 계정·탈퇴와 인증 철회까지 검증한다.
+          가입·설정·완료 기준은 <a href="../qa/external-readiness.html#ios-login-review">iOS 로그인 구성과 심사 준비</a>를 따른다.</p>
       </section>
 
       <section>
@@ -144,7 +148,7 @@ sequenceDiagram
             <tbody>
               <tr>
                 <td><strong>소셜 버튼 영역</strong></td>
-                <td>카카오(노란색)·네이버(녹색)·구글(흰색)·애플(검정) 중 그 시점에 활성화된 제공자의 버튼만 같은 크기로 세로 나열. 첫 출시에는 구글 한 개뿐이다.</td>
+                <td>카카오(노란색)·네이버(녹색)·구글(흰색)·애플(검정) 중 그 시점에 활성화된 제공자의 버튼만 같은 크기로 세로 나열. 현재는 구글 한 개이며 iOS 공개 전 로그인 구성 결정에 맞춰 변경·검증한다.</td>
                 <td>각 브랜드의 표준 디자인을 그대로 따라야 사용자가 1초 안에 "이 버튼이 뭔지" 인지한다. 비활성 제공자는 버튼 자체를 그리지 않아 "눌러도 안 되는 버튼"이 보이지 않게 한다.</td>
               </tr>
               <tr>

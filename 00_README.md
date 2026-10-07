@@ -19,6 +19,8 @@
 | 현재 소스 실측 노트 | [`prd/05_planning_artifacts/current_source_update_2026-07-29.md`](prd/05_planning_artifacts/current_source_update_2026-07-29.md) | API·App·Realtime·Admin의 2026-07-27 기준 소스를 다시 재어 50개 기능의 실제 계약·UI 도달성·Gap을 교정한 범위를 확인한다. |
 | 기능별 근거 문서 | [`units/`](units/) | backend/frontend/scenarios/diagrams 원천 근거를 확인한다. |
 | 검증 자료 | [`verification/`](verification/) | 문서/코드 동기화와 라운드 검증 결과를 확인한다. |
+| 외부 서비스 준비 | [외부 서비스 가입·계약과 출시 준비](docs/qa/external-readiness.html) | 첫 출시·후속 기능의 가입, API 키 발급, iOS·Android 배포와 실연동 완료 조건을 확인한다. |
+| HTML 문서의 최신 변경 추적 | [2026년 10월 7일 원본 변경·반영 위치·검증 기록](verification/document-sync-2026-10-07.json) | 10월 2일 마지막 반영 이후의 저장소별 기준 커밋, 원본 변경 목록과 제품 문서 반영 위치를 확인한다. |
 | 과거 문서 보관·복원 | [문서 정리와 보관 위치](../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리) | 폐기한 체크리스트·델타 노트의 외부 백업과 검증 기록의 보관 위치를 확인한다. |
 
 ## 현재 문서 체계

@@ -1,18 +1,18 @@
 /* 이 파일은 verification/build_scenario_audit_data.mjs가 현재 저장소에서 생성한다. */
 window.SCENARIO_AUDIT = {
-  "asOf": "2026-09-26",
+  "asOf": "2026-10-07",
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "4cbfeef665762f0c5039bddf402962aea0b2a374"
+    "sourceRevision": "79bd8191acb70bda97fb1b49075dc59ee819ce2c"
   },
   "countingNote": "1,403은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 117개에서 실제로 식별한 제목은 1,086개이며 49개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1403,
     "definedFeatures": 175,
-    "automatedTestFilesScanned": 2189,
-    "journeyFilesScanned": 248,
+    "automatedTestFilesScanned": 2516,
+    "journeyFilesScanned": 265,
     "unitScenarioDocuments": 117,
     "unitScenarioHeadings": 1086,
     "unitRegisteredScenarioItems": 1011,
@@ -20,16 +20,16 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 59,
     "automatedFeatureMarkers": 75,
     "automatedScenarioReferences": 59,
-    "directlyLinkedJourneys": 56,
+    "directlyLinkedJourneys": 57,
     "journeyFeatureMarkers": 45,
-    "journeyScenarioReferences": 56,
+    "journeyScenarioReferences": 57,
     "featureLevelAutomatedProof": 124,
     "localServerE2eProof": 13,
     "localRealAccountProof": 37,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 57,
-    "partialEvidenceChain": 34,
-    "definitionOnlyEvidence": 84,
+    "partialEvidenceChain": 35,
+    "definitionOnlyEvidence": 83,
     "traceMarkers": 302,
     "verifiedTraceRecords": 300,
     "unresolvedTraceRecords": 0,
@@ -1690,8 +1690,8 @@ window.SCENARIO_AUDIT = {
                 "method": "generateQrToken",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/check-in/qr",
-                "targetLine": 29,
-                "methodLine": 30
+                "targetLine": 31,
+                "methodLine": 32
               }
             ]
           },
@@ -1707,8 +1707,8 @@ window.SCENARIO_AUDIT = {
                 "method": "checkIn",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/check-in",
-                "targetLine": 36,
-                "methodLine": 37
+                "targetLine": 38,
+                "methodLine": 39
               }
             ]
           },
@@ -1724,8 +1724,8 @@ window.SCENARIO_AUDIT = {
                 "method": "checkInByShortCode",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/check-in/short-code",
-                "targetLine": 46,
-                "methodLine": 47
+                "targetLine": 48,
+                "methodLine": 49
               }
             ]
           },
@@ -1741,8 +1741,8 @@ window.SCENARIO_AUDIT = {
                 "method": "manualCheckIn",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/check-in/{userId}",
-                "targetLine": 56,
-                "methodLine": 57
+                "targetLine": 58,
+                "methodLine": 59
               }
             ]
           },
@@ -1758,8 +1758,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getCheckInStats",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/check-in/stats",
-                "targetLine": 90,
-                "methodLine": 91
+                "targetLine": 92,
+                "methodLine": 93
               }
             ]
           }
@@ -2653,8 +2653,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getClubs",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs",
-                "targetLine": 73,
-                "methodLine": 74
+                "targetLine": 79,
+                "methodLine": 80
               }
             ]
           }
@@ -2774,8 +2774,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createClub",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs",
-                "targetLine": 61,
-                "methodLine": 62
+                "targetLine": 67,
+                "methodLine": 68
               }
             ]
           },
@@ -2791,8 +2791,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateClub",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/clubs/{id}",
-                "targetLine": 101,
-                "methodLine": 102
+                "targetLine": 107,
+                "methodLine": 108
               }
             ]
           },
@@ -2808,8 +2808,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteClub",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}",
-                "targetLine": 110,
-                "methodLine": 111
+                "targetLine": 120,
+                "methodLine": 121
               }
             ]
           },
@@ -2825,8 +2825,8 @@ window.SCENARIO_AUDIT = {
                 "method": "transferOwnership",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/transfer-ownership",
-                "targetLine": 200,
-                "methodLine": 201
+                "targetLine": 211,
+                "methodLine": 212
               }
             ]
           }
@@ -2895,8 +2895,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMembers",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/members",
-                "targetLine": 152,
-                "methodLine": 153
+                "targetLine": 163,
+                "methodLine": 164
               }
             ]
           },
@@ -2912,8 +2912,8 @@ window.SCENARIO_AUDIT = {
                 "method": "changeRole",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/role",
-                "targetLine": 160,
-                "methodLine": 161
+                "targetLine": 171,
+                "methodLine": 172
               }
             ]
           },
@@ -2929,8 +2929,8 @@ window.SCENARIO_AUDIT = {
                 "method": "kickMember",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/kick",
-                "targetLine": 177,
-                "methodLine": 178
+                "targetLine": 188,
+                "methodLine": 189
               },
               {
                 "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
@@ -2938,8 +2938,8 @@ window.SCENARIO_AUDIT = {
                 "method": "kickMemberLegacy",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}",
-                "targetLine": 190,
-                "methodLine": 191
+                "targetLine": 201,
+                "methodLine": 202
               }
             ]
           }
@@ -3013,8 +3013,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getWaitlist",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/waitlist",
-                "targetLine": 272,
-                "methodLine": 273
+                "targetLine": 283,
+                "methodLine": 284
               }
             ]
           },
@@ -3030,8 +3030,8 @@ window.SCENARIO_AUDIT = {
                 "method": "approveApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/waitlist/{waitId}/approve",
-                "targetLine": 280,
-                "methodLine": 281
+                "targetLine": 291,
+                "methodLine": 292
               }
             ]
           },
@@ -3047,8 +3047,8 @@ window.SCENARIO_AUDIT = {
                 "method": "rejectApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/waitlist/{waitId}/reject",
-                "targetLine": 289,
-                "methodLine": 290
+                "targetLine": 300,
+                "methodLine": 301
               }
             ]
           },
@@ -3064,8 +3064,8 @@ window.SCENARIO_AUDIT = {
                 "method": "inviteMember",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/invitations",
-                "targetLine": 300,
-                "methodLine": 301
+                "targetLine": 311,
+                "methodLine": 312
               }
             ]
           },
@@ -3081,8 +3081,8 @@ window.SCENARIO_AUDIT = {
                 "method": "acceptInvite",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/invitations/{invitationId}/accept",
-                "targetLine": 309,
-                "methodLine": 310
+                "targetLine": 320,
+                "methodLine": 321
               }
             ]
           },
@@ -3098,8 +3098,8 @@ window.SCENARIO_AUDIT = {
                 "method": "declineInvite",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/invitations/{invitationId}/decline",
-                "targetLine": 320,
-                "methodLine": 321
+                "targetLine": 331,
+                "methodLine": 332
               }
             ]
           }
@@ -3168,8 +3168,8 @@ window.SCENARIO_AUDIT = {
                 "method": "banMember",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/ban",
-                "targetLine": 335,
-                "methodLine": 336
+                "targetLine": 346,
+                "methodLine": 347
               }
             ]
           },
@@ -3185,8 +3185,8 @@ window.SCENARIO_AUDIT = {
                 "method": "unbanMember",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/ban",
-                "targetLine": 345,
-                "methodLine": 346
+                "targetLine": 356,
+                "methodLine": 357
               }
             ]
           },
@@ -3202,8 +3202,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getBanList",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/bans",
-                "targetLine": 360,
-                "methodLine": 361
+                "targetLine": 371,
+                "methodLine": 372
               }
             ]
           },
@@ -3219,8 +3219,8 @@ window.SCENARIO_AUDIT = {
                 "method": "unbanMemberByBanPath",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/bans/{userId}",
-                "targetLine": 373,
-                "methodLine": 374
+                "targetLine": 384,
+                "methodLine": 385
               }
             ]
           }
@@ -3288,8 +3288,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyClubs",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/my",
-                "targetLine": 118,
-                "methodLine": 119
+                "targetLine": 129,
+                "methodLine": 130
               }
             ]
           },
@@ -3305,8 +3305,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMemberStats",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/members/stats",
-                "targetLine": 384,
-                "methodLine": 385
+                "targetLine": 395,
+                "methodLine": 396
               }
             ]
           }
@@ -3487,8 +3487,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createAnnouncement",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/announcements",
-                "targetLine": 394,
-                "methodLine": 395
+                "targetLine": 405,
+                "methodLine": 406
               }
             ]
           },
@@ -3504,8 +3504,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getAnnouncements",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/announcements",
-                "targetLine": 403,
-                "methodLine": 404
+                "targetLine": 414,
+                "methodLine": 415
               }
             ]
           },
@@ -3521,8 +3521,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteAnnouncement",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/announcements/{announcementId}",
-                "targetLine": 422,
-                "methodLine": 423
+                "targetLine": 433,
+                "methodLine": 434
               }
             ]
           }
@@ -4341,8 +4341,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getFund",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/fund",
-                "targetLine": 467,
-                "methodLine": 468
+                "targetLine": 490,
+                "methodLine": 491
               }
             ]
           }
@@ -4410,8 +4410,8 @@ window.SCENARIO_AUDIT = {
                 "method": "donate",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/donations",
-                "targetLine": 433,
-                "methodLine": 434
+                "targetLine": 449,
+                "methodLine": 450
               }
             ]
           },
@@ -4427,8 +4427,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getDonations",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/donations",
-                "targetLine": 449,
-                "methodLine": 450
+                "targetLine": 472,
+                "methodLine": 473
               }
             ]
           },
@@ -4444,8 +4444,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getDonationSummary",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/donations/summary",
-                "targetLine": 442,
-                "methodLine": 443
+                "targetLine": 465,
+                "methodLine": 466
               }
             ]
           },
@@ -4461,8 +4461,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelDonation",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/donations/{donationId}/cancel",
-                "targetLine": 457,
-                "methodLine": 458
+                "targetLine": 480,
+                "methodLine": 481
               }
             ]
           }
@@ -4532,8 +4532,8 @@ window.SCENARIO_AUDIT = {
                 "method": "requestWithdrawal",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/fund/withdraw",
-                "targetLine": 489,
-                "methodLine": 490
+                "targetLine": 540,
+                "methodLine": 541
               }
             ]
           },
@@ -4549,8 +4549,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getWithdrawalHistory",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/fund/withdrawals",
-                "targetLine": 498,
-                "methodLine": 499
+                "targetLine": 549,
+                "methodLine": 550
               }
             ]
           }
@@ -4618,8 +4618,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSubscriptionPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/subscription/plans",
-                "targetLine": 508,
-                "methodLine": 509
+                "targetLine": 559,
+                "methodLine": 560
               }
             ]
           },
@@ -4635,8 +4635,8 @@ window.SCENARIO_AUDIT = {
                 "method": "subscribe",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/subscription",
-                "targetLine": 516,
-                "methodLine": 517
+                "targetLine": 572,
+                "methodLine": 573
               }
             ]
           },
@@ -4652,8 +4652,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSubscription",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/subscription",
-                "targetLine": 528,
-                "methodLine": 529
+                "targetLine": 589,
+                "methodLine": 590
               }
             ]
           },
@@ -4669,8 +4669,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelSubscription",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/subscription",
-                "targetLine": 536,
-                "methodLine": 537
+                "targetLine": 597,
+                "methodLine": 598
               }
             ]
           },
@@ -4686,8 +4686,8 @@ window.SCENARIO_AUDIT = {
                 "method": "reactivateSubscription",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/subscription/reactivate",
-                "targetLine": 544,
-                "methodLine": 545
+                "targetLine": 605,
+                "methodLine": 606
               }
             ]
           }
@@ -5202,8 +5202,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getWallet",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet",
-                "targetLine": 62,
-                "methodLine": 63
+                "targetLine": 58,
+                "methodLine": 59
               }
             ]
           }
@@ -5281,8 +5281,8 @@ window.SCENARIO_AUDIT = {
                 "method": "charge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge",
-                "targetLine": 73,
-                "methodLine": 74
+                "targetLine": 69,
+                "methodLine": 70
               }
             ]
           },
@@ -5298,8 +5298,8 @@ window.SCENARIO_AUDIT = {
                 "method": "clientConfirmCharge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge/client-confirm",
-                "targetLine": 99,
-                "methodLine": 100
+                "targetLine": 95,
+                "methodLine": 96
               }
             ]
           },
@@ -5315,8 +5315,8 @@ window.SCENARIO_AUDIT = {
                 "method": "confirmCharge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge/confirm",
-                "targetLine": 85,
-                "methodLine": 86
+                "targetLine": 81,
+                "methodLine": 82
               }
             ]
           },
@@ -5332,8 +5332,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelCharge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge/cancel",
-                "targetLine": 111,
-                "methodLine": 112
+                "targetLine": 107,
+                "methodLine": 108
               }
             ]
           }
@@ -5400,8 +5400,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getTransactions",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/transactions",
-                "targetLine": 152,
-                "methodLine": 153
+                "targetLine": 119,
+                "methodLine": 120
               }
             ]
           },
@@ -5417,8 +5417,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getTransaction",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/transactions/{id}",
-                "targetLine": 164,
-                "methodLine": 165
+                "targetLine": 131,
+                "methodLine": 132
               }
             ]
           },
@@ -5708,35 +5708,35 @@ window.SCENARIO_AUDIT = {
         "entries": [
           {
             "id": "F06-06:1",
-            "label": "POST /api/v1/wallet/pay — 포인트 결제",
+            "label": "POST /api/v1/events/{eventId}/prepayment/wallet — 참가비 지갑 결제",
             "status": "verified",
-            "note": "",
+            "note": "2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
-                "controller": "WalletController",
-                "method": "pay",
+                "targetPath": "community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "payByWallet",
                 "httpMethod": "POST",
-                "httpPath": "/api/v1/wallet/pay",
-                "targetLine": 128,
-                "methodLine": 129
+                "httpPath": "/api/v1/events/{eventId}/prepayment/wallet",
+                "targetLine": 100,
+                "methodLine": 102
               }
             ]
           },
           {
             "id": "F06-06:2",
-            "label": "POST /api/v1/wallet/refund — 이벤트 환불",
+            "label": "DELETE /api/v1/events/{eventId}/apply — 본인 신청 취소와 결제 정리",
             "status": "verified",
-            "note": "",
+            "note": "2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
-                "controller": "WalletController",
-                "method": "refund",
-                "httpMethod": "POST",
-                "httpPath": "/api/v1/wallet/refund",
-                "targetLine": 140,
-                "methodLine": 141
+                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "cancelApplication",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}/apply",
+                "targetLine": 269,
+                "methodLine": 270
               }
             ]
           },
@@ -5752,8 +5752,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRefundPolicy",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/refund/policy",
-                "targetLine": 176,
-                "methodLine": 177
+                "targetLine": 143,
+                "methodLine": 144
               }
             ]
           }
@@ -5827,8 +5827,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getAvailableTickets",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/hosting-tickets",
-                "targetLine": 29,
-                "methodLine": 30
+                "targetLine": 31,
+                "methodLine": 32
               }
             ]
           },
@@ -5844,8 +5844,8 @@ window.SCENARIO_AUDIT = {
                 "method": "purchaseTicket",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/hosting-tickets/purchase",
-                "targetLine": 35,
-                "methodLine": 36
+                "targetLine": 42,
+                "methodLine": 43
               }
             ]
           }
@@ -6044,8 +6044,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getEarningsDashboard",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/earnings/dashboard",
-                "targetLine": 185,
-                "methodLine": 186
+                "targetLine": 152,
+                "methodLine": 153
               }
             ]
           }
@@ -6106,8 +6106,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMySettlements",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements",
-                "targetLine": 196,
-                "methodLine": 197
+                "targetLine": 163,
+                "methodLine": 164
               }
             ]
           },
@@ -6123,8 +6123,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMySettlementSummary",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements/summary",
-                "targetLine": 210,
-                "methodLine": 211
+                "targetLine": 177,
+                "methodLine": 178
               }
             ]
           },
@@ -6140,8 +6140,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSettlementDetail",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements/{id}",
-                "targetLine": 220,
-                "methodLine": 221
+                "targetLine": 187,
+                "methodLine": 188
               }
             ]
           },
@@ -6236,8 +6236,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createSettlement",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement",
-                "targetLine": 71,
-                "methodLine": 72
+                "targetLine": 73,
+                "methodLine": 74
               }
             ]
           },
@@ -6253,8 +6253,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cloneSettlement",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/clone",
-                "targetLine": 90,
-                "methodLine": 91
+                "targetLine": 92,
+                "methodLine": 93
               }
             ]
           },
@@ -6270,8 +6270,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getParticipantSuggestions",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/participant-suggestions",
-                "targetLine": 135,
-                "methodLine": 136
+                "targetLine": 137,
+                "methodLine": 138
               }
             ]
           }
@@ -6330,8 +6330,8 @@ window.SCENARIO_AUDIT = {
                 "method": "addItem",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/items",
-                "targetLine": 159,
-                "methodLine": 160
+                "targetLine": 161,
+                "methodLine": 162
               }
             ]
           },
@@ -6347,8 +6347,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateItem",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/events/{eventId}/settlement/items/{itemId}",
-                "targetLine": 196,
-                "methodLine": 197
+                "targetLine": 198,
+                "methodLine": 199
               }
             ]
           },
@@ -6364,8 +6364,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteItem",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/settlement/items/{itemId}",
-                "targetLine": 206,
-                "methodLine": 207
+                "targetLine": 208,
+                "methodLine": 209
               }
             ]
           },
@@ -6441,8 +6441,8 @@ window.SCENARIO_AUDIT = {
                 "method": "activateSettlement",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/activate",
-                "targetLine": 116,
-                "methodLine": 117
+                "targetLine": 118,
+                "methodLine": 119
               }
             ]
           },
@@ -6458,8 +6458,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelSettlement",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/cancel",
-                "targetLine": 126,
-                "methodLine": 127
+                "targetLine": 128,
+                "methodLine": 129
               }
             ]
           }
@@ -6518,8 +6518,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSettlement",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement",
-                "targetLine": 108,
-                "methodLine": 109
+                "targetLine": 110,
+                "methodLine": 111
               }
             ]
           },
@@ -6535,8 +6535,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSettlementSummary",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/summary",
-                "targetLine": 150,
-                "methodLine": 151
+                "targetLine": 152,
+                "methodLine": 153
               }
             ]
           },
@@ -6552,8 +6552,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getReceiptDownloadUrl",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/receipts/{fileId}/download-url",
-                "targetLine": 81,
-                "methodLine": 82
+                "targetLine": 83,
+                "methodLine": 84
               }
             ]
           }
@@ -6612,8 +6612,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyShares",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/my-shares",
-                "targetLine": 143,
-                "methodLine": 144
+                "targetLine": 145,
+                "methodLine": 146
               }
             ]
           },
@@ -6629,8 +6629,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyTransfers",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/me",
-                "targetLine": 245,
-                "methodLine": 246
+                "targetLine": 247,
+                "methodLine": 248
               }
             ]
           },
@@ -6646,8 +6646,8 @@ window.SCENARIO_AUDIT = {
                 "method": "payShare",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/pay",
-                "targetLine": 216,
-                "methodLine": 217
+                "targetLine": 218,
+                "methodLine": 219
               }
             ]
           },
@@ -6663,8 +6663,8 @@ window.SCENARIO_AUDIT = {
                 "method": "confirmBankTransfer",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/confirm",
-                "targetLine": 225,
-                "methodLine": 226
+                "targetLine": 227,
+                "methodLine": 228
               }
             ]
           },
@@ -6680,8 +6680,8 @@ window.SCENARIO_AUDIT = {
                 "method": "payTransferByPoint",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/pay",
-                "targetLine": 266,
-                "methodLine": 267
+                "targetLine": 268,
+                "methodLine": 269
               }
             ]
           },
@@ -6697,8 +6697,8 @@ window.SCENARIO_AUDIT = {
                 "method": "payTransferMixed",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed",
-                "targetLine": 342,
-                "methodLine": 343
+                "targetLine": 344,
+                "methodLine": 345
               }
             ]
           },
@@ -6714,8 +6714,8 @@ window.SCENARIO_AUDIT = {
                 "method": "selfRefundTransfer",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/self-refund",
-                "targetLine": 366,
-                "methodLine": 367
+                "targetLine": 368,
+                "methodLine": 369
               }
             ]
           }
@@ -6774,8 +6774,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getTransfers",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers",
-                "targetLine": 236,
-                "methodLine": 237
+                "targetLine": 238,
+                "methodLine": 239
               }
             ]
           },
@@ -6791,8 +6791,8 @@ window.SCENARIO_AUDIT = {
                 "method": "confirmBankTransfer",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/confirm",
-                "targetLine": 225,
-                "methodLine": 226
+                "targetLine": 227,
+                "methodLine": 228
               }
             ]
           },
@@ -6808,8 +6808,8 @@ window.SCENARIO_AUDIT = {
                 "method": "confirmTransferBankTransfer",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm",
-                "targetLine": 275,
-                "methodLine": 276
+                "targetLine": 277,
+                "methodLine": 278
               }
             ]
           },
@@ -6825,8 +6825,8 @@ window.SCENARIO_AUDIT = {
                 "method": "bulkConfirmTransfers",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/bulk-confirm",
-                "targetLine": 293,
-                "methodLine": 294
+                "targetLine": 295,
+                "methodLine": 296
               }
             ]
           },
@@ -6842,8 +6842,8 @@ window.SCENARIO_AUDIT = {
                 "method": "reissueTransfer",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/reissue",
-                "targetLine": 284,
-                "methodLine": 285
+                "targetLine": 286,
+                "methodLine": 287
               }
             ]
           },
@@ -6859,8 +6859,8 @@ window.SCENARIO_AUDIT = {
                 "method": "writeoffTransfer",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/writeoff",
-                "targetLine": 375,
-                "methodLine": 376
+                "targetLine": 377,
+                "methodLine": 378
               }
             ]
           }
@@ -6923,8 +6923,8 @@ window.SCENARIO_AUDIT = {
                 "method": "remindUnpaid",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/remind",
-                "targetLine": 387,
-                "methodLine": 388
+                "targetLine": 389,
+                "methodLine": 390
               }
             ]
           },
@@ -6940,8 +6940,8 @@ window.SCENARIO_AUDIT = {
                 "method": "extendDeadline",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/extend-deadline",
-                "targetLine": 396,
-                "methodLine": 397
+                "targetLine": 398,
+                "methodLine": 399
               }
             ]
           },
@@ -6957,8 +6957,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRemindHistory",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/remind-history",
-                "targetLine": 404,
-                "methodLine": 405
+                "targetLine": 406,
+                "methodLine": 407
               }
             ]
           }
@@ -7017,8 +7017,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createAppeal",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/appeals",
-                "targetLine": 302,
-                "methodLine": 303
+                "targetLine": 304,
+                "methodLine": 305
               }
             ]
           },
@@ -7034,8 +7034,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getAppeals",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/appeals",
-                "targetLine": 313,
-                "methodLine": 314
+                "targetLine": 315,
+                "methodLine": 316
               }
             ]
           },
@@ -7051,8 +7051,8 @@ window.SCENARIO_AUDIT = {
                 "method": "resolveAppeal",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve",
-                "targetLine": 324,
-                "methodLine": 325
+                "targetLine": 326,
+                "methodLine": 327
               }
             ]
           },
@@ -7068,8 +7068,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getAuditLog",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/audit-log",
-                "targetLine": 333,
-                "methodLine": 334
+                "targetLine": 335,
+                "methodLine": 336
               }
             ]
           }
@@ -7128,8 +7128,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getPrepayments",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/prepayments",
-                "targetLine": 44,
-                "methodLine": 45
+                "targetLine": 45,
+                "methodLine": 46
               }
             ]
           },
@@ -7162,8 +7162,8 @@ window.SCENARIO_AUDIT = {
                 "method": "confirmBankPrepayment",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/{id}/confirm",
-                "targetLine": 71,
-                "methodLine": 72
+                "targetLine": 70,
+                "methodLine": 71
               }
             ]
           },
@@ -7179,8 +7179,8 @@ window.SCENARIO_AUDIT = {
                 "method": "refundPrepayment",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/{id}/refund",
-                "targetLine": 79,
-                "methodLine": 80
+                "targetLine": 78,
+                "methodLine": 79
               }
             ]
           },
@@ -7196,8 +7196,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRefundRules",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/refund-rules",
-                "targetLine": 92,
-                "methodLine": 93
+                "targetLine": 113,
+                "methodLine": 114
               }
             ]
           },
@@ -7213,8 +7213,8 @@ window.SCENARIO_AUDIT = {
                 "method": "saveRefundRules",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/refund-rules",
-                "targetLine": 100,
-                "methodLine": 101
+                "targetLine": 121,
+                "methodLine": 122
               }
             ]
           },
@@ -12122,14 +12122,16 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/scripts/e2e/README.md"
+        ],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,

@@ -1,5 +1,19 @@
 # F06-06. 포인트 결제·환불 PRD
 
+## 2026년 10월 현재 결제·취소 계약
+
+2026-10-03 옛 `POST /api/v1/wallet/pay`와 `POST /api/v1/wallet/refund`를 서버·앱에서 제거했다.
+현재 참가비 지갑 결제는 본문 없는 `POST /api/v1/events/{eventId}/prepayment/wallet`이며 `201 EventPaymentVo`를 반환한다.
+본인 신청 취소는 본문 없는 `DELETE /api/v1/events/{eventId}/apply`이며 `200 ApplicationVo`를 반환하고 결제 정리를 연결한다.
+은행분은 즉시 지갑 반환이 아니라 주최자의 계좌이체 반환 대기로 이어진다. 신규 포인트 결제의 첫 출시 제한은 유지한다.
+
+이 절 뒤의 PaymentParam·WalletRepository.pay/refund와 옛 주소 상세는 이관 전 이력이며 현행 계약이 아니다.
+
+
+현재 서버 위치는 [확인한 서버 코드 위치](#확인한-서버-코드-위치), 이용 규칙은
+[참가비 결제와 환불의 현재 진입](../../../docs/features/F06-06.html#current-payment-entry)을 따른다.
+
+
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
@@ -48,13 +62,15 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-09-24에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/wallet/pay` | `WalletController#pay` | [WalletController.java:128](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/controller/WalletController.java#L128) |
-| `POST /api/v1/wallet/refund` | `WalletController#refund` | [WalletController.java:140](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/controller/WalletController.java#L140) |
-| `GET /api/v1/wallet/refund/policy` | `WalletController#getRefundPolicy` | [WalletController.java:176](https://github.com/endside82/community_api/blob/19e968a1aa128d3cf8b980413e87c397fffe91b3/src/main/java/com/endside/community/payment/controller/WalletController.java#L176) |
+| `POST /api/v1/events/{eventId}/prepayment/wallet` | `EventPrepaymentController#payByWallet` | [EventPrepaymentController.java:100](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java#L100) |
+| `DELETE /api/v1/events/{eventId}/apply` | `EventController#cancelApplication` | [EventController.java:269](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L269) |
+| `GET /api/v1/wallet/refund/policy` | `WalletController#getRefundPolicy` | [WalletController.java:143](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/WalletController.java#L143) |
+
+- 2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
