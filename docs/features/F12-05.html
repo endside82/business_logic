@@ -27,6 +27,14 @@
 
       <div class="launch-strip" id="launch-strip"></div>
 
+      <section id="external-verification-2026-10-12">
+        <h2>Firebase 연결과 Android 수신 확인 — 2026년 10월 12일</h2>
+        <p>Firebase 프로젝트·Android 앱·서버 발송 계정·권한을 연결했다. Android 16 에뮬레이터에서 실제 FCM의 전경·백그라운드·프로세스 종료 수신,
+          알림 클릭 후 문의 목록 이동과 알림 권한 거절·재허용을 확인했다. 격리 DB에 넣은 QA 발송 행으로 검사했으므로 개별 업무 이벤트의 발행 검증은 별도다.</p>
+        <p>iOS/APNs·실제 휴대전화·Play 배포본·계정 전환과 발송 복구 등 남은 조건을 구분한다. 서버 초기화나 발송 수락만으로 기기 수신을 완료로 기록하지 않는다.</p>
+        <p>환경·근거·다음 행동: <a href="../qa/external-readiness.html#firebase-push">Firebase·APNs 푸시 연결</a>.</p>
+      </section>
+
       <section id="delivery-recovery">
         <h2>같은 알림의 재발송</h2>
         <p>전경 배너는 계정과 알림 번호로 중복을 억제합니다. 표시를 억제해도 알림을 눌러 해당 화면으로 이동하는 동작은 유지합니다. 공급자 수락과 모든 기기 표시 완료는 다릅니다.</p>

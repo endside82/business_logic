@@ -20,6 +20,26 @@
         </p>
       </header>
 
+      <section id="external-readiness-2026-10-12">
+        <h2>2026년 10월 12일 — Android 시험 앱의 실제 외부 연동 반영</h2>
+        <ul>
+          <li><a href="../qa/external-readiness.html#android-distribution">Android 빌드·Google Play 테스트 절차</a>: Play 앱 등록·업로드 키·서명 APK와 Android 16 에뮬레이터 설치를 반영했다.</li>
+          <li><a href="../qa/external-readiness.html#google-login">Google 로그인 등록과 실제 계정 확인</a>: Android·Web OAuth, 신규 가입·온보딩·앱 재실행 후 로그인 유지를 확인했다.</li>
+          <li><a href="../qa/external-readiness.html#google-maps">Google Maps 앱 지도 설정</a>과 <a href="../qa/external-readiness.html#kakao-local">Kakao Local 주소 변환 설정</a>: 제한 키·사용 설정, 지도 타일·핀과 서버 주소↔좌표 변환 결과를 연결했다.</li>
+          <li><a href="../qa/external-readiness.html#email">메일 발송 계약·도메인 인증·실수신</a>: Postfix→OCI SMTP, Gmail 시험 수신과 자체 도메인 인증·복구 수신, Android 앱 링크·기존 토큰 무효화를 구분했다. 인증 흐름 보완과 앱 자동 테스트 28개, 메일 제목의 Saisoop 변경도 반영했다.</li>
+          <li><a href="../qa/external-readiness.html#firebase-push">Firebase·APNs 푸시 연결</a>과 <a href="../qa/external-readiness.html#infrastructure">서버·도메인·경보·복구 준비</a>: Firebase 서버·시험 앱 연결과 공개 Tunnel의 HTTPS·소켓 재연결을 반영했다.</li>
+        </ul>
+        <p>기존 진행 기록을 보존하고 문서 허브·출시 현황·기능별 상태·인증 및 알림 문서의 미확인 표현을 갱신했다.
+          실제 검증은 Android 에뮬레이터와 격리 시험 서버 범위다. 파일·메시지 왕복·실기기·iOS·운영 복구·스토어 공개는 별도로 남긴다.</p>
+      </section>
+
+      <section id="remittance-convenience-2026-10-12">
+        <h2>2026년 10월 12일 — 정산 계좌 확인·복사와 송금 알림</h2>
+        <p><a href="../features/F07-05.html#recipient-account-and-bank-sent">받는 사람 계좌 보기·복사와 ‘보냈어요’ — 2026년 10월 12일</a>을 반영했다.
+          미완료 분담·송금의 당사자만 기본 계좌를 보고, 송금 신고·되돌리기와 받는 사람의 입금 확인을 구분한다.
+          알림 중복 방지·재촉 보류와 알려진 경합 한계도 기록했다. 구현·자동 검사 기록이며 실제 은행·기기 확인은 별도다.</p>
+      </section>
+
       <section id="external-readiness-2026-10-07">
         <h2>2026년 10월 7일 — 외부 서비스 가입·계약과 실연동 준비 추가</h2>
         <p><a href="../qa/external-readiness.html">외부 서비스 가입·계약과 출시 준비</a>에 첫 출시 필수 서비스 9개와

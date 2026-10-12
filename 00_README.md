@@ -20,7 +20,7 @@
 | 기능별 근거 문서 | [`units/`](units/) | backend/frontend/scenarios/diagrams 원천 근거를 확인한다. |
 | 검증 자료 | [`verification/`](verification/) | 문서/코드 동기화와 라운드 검증 결과를 확인한다. |
 | 외부 서비스 준비 | [외부 서비스 가입·계약과 출시 준비](docs/qa/external-readiness.html) | 첫 출시·후속 기능의 가입, API 키 발급, iOS·Android 배포와 실연동 완료 조건을 확인한다. |
-| HTML 문서의 최신 변경 추적 | [2026년 10월 7일 원본 변경·반영 위치·검증 기록](verification/document-sync-2026-10-07.json) | 10월 2일 마지막 반영 이후의 저장소별 기준 커밋, 원본 변경 목록과 제품 문서 반영 위치를 확인한다. |
+| HTML 문서의 최신 변경 추적 | [2026년 10월 12일 외부 연동·정산 송금 편의 반영과 문서 검증 기록](verification/document-sync-2026-10-12.json) | Android 시험 앱의 실제 외부 연동과 정산 계좌·송금 신고의 소스, 확인 범위·지문·제품 문서 반영 위치를 확인한다. 앞선 전체 문서 대조는 [2026년 10월 7일 원본 변경·반영 위치·검증 기록](verification/document-sync-2026-10-07.json)에 보존한다. |
 | 과거 문서 보관·복원 | [문서 정리와 보관 위치](../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리) | 폐기한 체크리스트·델타 노트의 외부 백업과 검증 기록의 보관 위치를 확인한다. |
 
 ## 현재 문서 체계

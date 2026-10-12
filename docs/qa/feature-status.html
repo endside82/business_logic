@@ -22,7 +22,8 @@
       <section>
         <div class="callout">
           <span class="label">외부 서비스 준비 절차</span>
-          <p><a href="external-readiness.html">외부 서비스 가입·계약과 출시 준비</a>에서 가입·키 발급·설정 위치와 실연동 완료 조건을 확인한다.
+          <p><a href="external-readiness.html#progress-2026-10-12">10월 12일 진행 결과 — 실제 공급자와 Android 시험 앱 연결</a>을 반영했다.
+            Google 신규 가입·로그인 유지, 지도·Kakao 주소 변환, 인증·복구 메일과 Firebase 연결의 확인 범위를 기능별로 구분한다.
             현재 Apple 로그인 비활성 상태와 별개로 <a href="external-readiness.html#ios-login-review">iOS 로그인 구성과 심사 준비</a>는 첫 공개 전에 끝내야 한다.</p>
         </div>
         <div class="callout warn">
@@ -146,7 +147,7 @@
       document.getElementById('m-sealed').textContent = data.filter(function (d) { return d.scope === 'sealed'; }).length;
       document.getElementById('m-retired').textContent = data.filter(function (d) { return d.scope === 'retired'; }).length;
       document.getElementById('m-journey').textContent = data.filter(function (d) { return d.proof === 'local' || d.proof === 'real'; }).length;
-      document.getElementById('asof').textContent = '최종 반영: ' + L.asOf + '. 정산 작성 복구·미납 알림, 소셜 로그인 운영 현황, 기간권 구매 기반을 실제 소스와 대조했다. 정산의 9월 24일 웹 확인 범위를 기능별로 연결했으며, 이후 수정의 자동 검사를 실제 웹·휴대전화·외부 서비스 확인으로 확대하지 않는다.';
+      document.getElementById('asof').textContent = '최종 반영: ' + L.asOf + '. Android 서명 시험 앱의 Google·지도·인증 메일, 서버 주소 변환과 Firebase 연결 기록을 반영했다. 10월 7일까지의 기능·자동 검사 기록은 보존하며 실기기·iOS·운영 배포 완료로 확대하지 않는다.';
 
       function preparationItems(d) {
         return d.openItems.filter(function (o) { return o.impact !== 'doc'; });

@@ -24,8 +24,24 @@
         </nav>
       </header>
 
+      <section id="external-progress-2026-10-12">
+        <h2>10월 12일 외부 연동 반영과 남은 준비</h2>
+        <p>Android 업로드 키와 staging 서명 APK를 준비하고 실제 Google 신규 가입·온보딩·로그인 유지,
+          Google 지도 표시와 Kakao 주소 변환을 확인했다. SMTP 시험 메일의 Gmail 수신과
+          자체 도메인 시험 수신함의 인증·비밀번호 복구, Android 앱 링크·기존 토큰 무효화를 각각 기록했다.</p>
+        <p>Firebase 발송 계정·권한과 Android 에뮬레이터의 실제 푸시 수신·문의 목록 이동·권한 거절/재허용을 확인했다.
+          공개 Tunnel의 HTTPS·소켓 연결/재연결도 확인했다.
+          상세 결과와 최신 푸시 확인 범위는 <a href="external-readiness.html#progress-2026-10-12">10월 12일 진행 결과 — 실제 공급자와 Android 시험 앱 연결</a>을 따른다.</p>
+        <p><strong>검증 범위:</strong> Android 16 에뮬레이터·격리 시험 서버·실제 공급자다. 파일 저장소·채팅 메시지 왕복·실기기·iOS·운영 서버·스토어 배포·복구 확인은 남아 있다.
+          기존 통과 기록은 보존하고 <a href="external-readiness.html#next-checks">다음 확인 순서</a>의 미확인 범위를 이어간다.</p>
+        <p><strong>같은 날 기능 반영:</strong> <a href="../features/F07-05.html#recipient-account-and-bank-sent">받는 사람 계좌 보기·복사와 ‘보냈어요’ — 2026년 10월 12일</a>도 구현·자동 검사 기록을 반영했다.
+          이 화면의 실제 이용 확인은 외부 로그인·메일·QA 푸시 검증과 별도다.</p>
+      </section>
+
       <section id="document-sync-2026-10-07">
         <h2>이번 문서 반영의 확인 범위와 남은 작업</h2>
+        <p><strong>10월 7일 시점 기록:</strong> 아래 표와 검사 수치는 당시 범위다. 이후 외부 연동 상태는
+          <a href="#external-progress-2026-10-12">10월 12일 외부 연동 반영과 남은 준비</a>에서 갱신했다.</p>
         <p>10월 2일 문서 사이트 반영 이후 10월 7일 조사 시점까지의 원본 변경을 반영했습니다.
           구현·병합 상태는 작업 현황표와 제품 기본 브랜치를 함께 확인했습니다. 이후 진행 중인 변경은 이번 기준에 포함하지 않습니다.</p>
         <div class="table-wrap"><table>
@@ -56,7 +72,9 @@
           <span class="label">현재 결론</span>
           <p><strong>버스·카풀, 주최자 계좌 직접 송금, 게시글·모임 투표</strong>를 첫 출시 기본 설정에 추가했다. 스탬프·마일리지 시즌·반복 수동 적립 검토·사진 심사 적립도 포함한다. 실제 배포와 휴대전화·외부 서비스 검사는 남아 있어 <strong>공개는 보류</strong>한다.</p>
           <p>버스·카풀은 <strong>소스 검수 24개·추가 웹 검사 6개 통과</strong>다. 남은 것은 휴대전화·실제 푸시·좌석 지정에 사용할 실차 도면 확인이다. <a href="#transport-rework">버스·카풀의 확인 결과와 다음 할 일</a>을 따른다.</p>
-          <p>공통 배포 준비로는 <strong>서명·서비스 설정 전달</strong>이 남아 있다. 기존 기록상 Android 서명 설정과 Google·Firebase·운영 주소가 실행 환경에 전달되지 않았으며, 다른 보관소의 위치는 미확인이다. 운영자는 보관 위치를 확인해 빌드 환경에 전달한다. 이번 문서 정정에서 환경을 다시 검사하지는 않았다.</p>
+          <p><strong>Android 서명과 일부 실제 연동은 시험 환경에서 확인했다.</strong> Google·지도·메일 설정을 연결하고 Firebase 발송 준비와 시험 앱 검증을 진행했다.
+            운영 서버·고정 주소·파일 저장소·Play 배포본·iOS·실기기 확인이 남아 있다. 상세 상태는
+            <a href="external-readiness.html#required">첫 출시 필수 서비스</a>를 따른다.</p>
           <p><strong>자동 테스트는 기록에 적힌 기존 범위만 통과</strong>했다. 새 개발은 새 검사 결과를 남기고, 검사한 소스와 배포할 소스를 연결해 <strong>서명 앱</strong>에서 실제 이용·복구를 확인한다.</p>
         </div>
       </section>
@@ -281,7 +299,7 @@
         return '<tr><td><code>' + esc(t.code) + '</code></td><td>' + esc(t.name) + '</td>' +
           '<td>' + esc(build) + '</td><td>' + esc(t.proof_state) + '</td><td>' + featureLinks(t.features) + '</td></tr>';
       }).join('');
-      document.getElementById('asof-line').textContent = '최종 반영: ' + L.asOf + '. 정산 작성 복구·미납 알림, 소셜 로그인 운영 현황, 기간권 구매 기반을 기본 브랜치와 대조했다. 기존 웹 확인과 이후 수정의 자동 검사 범위는 구분한다. 휴대전화·실제 외부 서비스·운영 배포·공개 승인은 미확인이다.';
+      document.getElementById('asof-line').textContent = '최종 반영: ' + L.asOf + '. Android 서명 시험 앱·Google·지도·주소 변환·인증 메일과 Firebase 연결의 진행 기록을 반영했다. 에뮬레이터·실제 공급자에서 확인한 범위와 실기기·iOS·운영 배포·공개 승인의 남은 조건을 구분한다.';
     })();
   </script>
   <script src="../assets/app.js"></script>

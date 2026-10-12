@@ -17,13 +17,33 @@
         <h1>외부 서비스 가입·계약과 출시 준비</h1>
         <p class="lede">운영자가 가입·계약부터 키 발급, 설정 전달, 실제 이용 확인까지 진행하는 체크리스트다.
           첫 출시 필수 서비스와 기능을 추가 공개할 때 필요한 서비스를 구분한다.</p>
-        <p class="release-note">소스·공식 안내 확인: 2026-10-07. 실제 공급자 콘솔의 계정·계약·키 상태와 운영 환경은 별도 확인 대기다.</p>
+        <p class="release-note">진행 상태 반영: 2026-10-12. Android 서명 APK와 임시 시험 서버에서 실제 외부 연동을 일부 확인했다. 실기기·iOS·스토어 배포·운영 환경은 별도 확인이 남아 있다. 가입·심사 절차의 공식 안내 기준은 2026-10-07이다.</p>
         <nav class="release-nav" aria-label="외부 준비 바로가기">
+          <a href="#progress-2026-10-12">10월 12일 진행 결과</a><a href="#next-checks">다음 확인 순서</a>
           <a href="#order">진행 순서와 완료 상태</a><a href="#required">첫 출시 필수 서비스</a>
           <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a><a href="#later">후속 기능의 외부 계약</a>
           <a href="#store-submission">스토어 제출 자료와 공개 확인</a><a href="#evidence">운영자가 남길 완료 기록</a>
         </nav>
       </header>
+
+      <section id="progress-2026-10-12">
+        <h2>10월 12일 진행 결과 — 실제 공급자와 Android 시험 앱 연결</h2>
+        <p><strong>준비한 설정으로 실제 외부 서비스 연결을 일부 확인했다.</strong> 10월 10일 Google Play 앱 등록·업로드 키·Firebase Android 등록에 이어,
+          10월 12일 Google OAuth·지도·Kakao Local·SMTP·FCM을 임시 시험 서버와 서명 APK에 연결했다.
+          Android 16(API 36) 에뮬레이터와 격리 DB·Redis를 사용했으며 운영 서버는 아직 구축 전이다.</p>
+        <ul>
+          <li><strong>Google:</strong> 실제 개인 계정의 신규 가입·필수 동의·온보딩, 강제 종료 후 로그인 유지와 홈 복귀를 확인했다.</li>
+          <li><strong>지도·주소:</strong> Google 지도 타일·팬 이동·핀 재선택을 앱에서 확인했다. Kakao 주소↔좌표 변환은 실제 공급자와 Tunnel 경유 서버에서 확인했다.</li>
+          <li><strong>메일:</strong> SMTP 시험 메일은 Gmail에서, 가입 인증·비밀번호 재설정 메일은 자체 도메인 시험 수신함에서 받았다.
+            앱 링크 인증·복구와 이전 비밀번호·기존 토큰·재사용 링크 거절을 확인했다. 관련 앱 자동 테스트 28개가 통과했다.</li>
+          <li><strong>푸시:</strong> 실제 FCM의 전경·백그라운드·프로세스 종료 수신, 알림 클릭 후 문의 목록 이동과 권한 거절·재허용을 Android 에뮬레이터에서 확인했다.
+            QA 발송 행을 이용한 시험이며 개별 업무 이벤트의 발행 검증은 별도다. <a href="#firebase-push">Firebase·APNs 푸시 연결</a>에 근거와 남은 조건을 기록한다.</li>
+          <li><strong>외부 접속:</strong> 공개 HTTPS 반복 요청 20/20, 채팅 소켓 두 종류의 연결·재연결 3회와 무인증 거절을 확인했다.
+            실제 채팅 메시지 왕복·두 휴대전화·장시간 안정성은 이 결과에 포함하지 않는다.</li>
+        </ul>
+        <p>아래 표의 <strong>부분 확인</strong>은 적힌 환경과 동작만 통과했다는 뜻이다. 서비스별 남은 조건은 계속 추적하며,
+          <a href="launch-status.html#code-completeness">현재 출시 결론</a>의 외부 고객 공개 보류는 유지한다.</p>
+      </section>
 
       <section id="order">
         <h2>진행 순서와 완료 상태</h2>
@@ -48,8 +68,8 @@
             <tr><td>운영 준비 확인</td><td>한도·비용·만료·실패 경보를 받을 수 있고 재처리·복구 절차를 수행했다.</td></tr>
           </tbody>
         </table></div>
-        <p><strong>현재 상태:</strong> 이 문서는 실행할 준비를 정리한 것이다. 콘솔을 조회하지 않은 항목은 <strong>미확인</strong>이며,
-          계정이나 계약이 없다는 뜻이 아니다. 이전 자동 검사 결과와 이번 외부 검증 결과를 합쳐 완료로 표시하지 않는다.</p>
+        <p><strong>현재 상태:</strong> 가입·설정만 끝난 항목, 시험 환경에서 실제 연동을 확인한 항목, 아직 확인하지 않은 항목을 아래에 구분한다.
+          콘솔을 조회하지 않은 항목의 <strong>미확인</strong>은 계정이나 계약이 없다는 뜻이 아니다. 이전 자동 검사와 이번 외부 검증은 각각의 범위로 기록한다.</p>
       </section>
 
       <section id="required">
@@ -60,20 +80,37 @@
           <thead><tr><th>준비 항목</th><th>이번에 확인한 범위</th><th>아직 필요한 확인</th></tr></thead>
           <tbody>
             <tr><td><a href="#ios-distribution">iOS 빌드·TestFlight 내부 테스트 절차</a></td><td>fastlane 설정 추가·로컬 실행·격리 검증</td><td>Apple 계정·배포 서명·API 인증·실제 IPA·설치</td></tr>
-            <tr><td><a href="#android-distribution">Android 빌드·Google Play 테스트 절차</a></td><td>기존 fastlane과 릴리스 가이드 있음</td><td>콘솔 권한·실제 서명·업로드·계정별 공개 요건</td></tr>
-            <tr><td><a href="#google-login">Google 로그인 등록과 실제 계정 확인</a></td><td>앱·서버 연결과 설정 검사 있음</td><td>OAuth 운영 설정·양 플랫폼 실제 로그인</td></tr>
-            <tr><td><a href="#firebase-push">Firebase·APNs 푸시 연결</a></td><td>앱 설정·발송·복구 경로 있음</td><td>프로젝트·서버 권한·APNs·실기기 수신</td></tr>
-            <tr><td><a href="#google-maps">Google Maps 앱 지도 설정</a></td><td>Android·iOS 키 주입 경로 있음</td><td>SDK 활성화·결제 계정·키 제한·배포 앱 표시</td></tr>
-            <tr><td><a href="#kakao-local">Kakao Local 주소 변환 설정</a></td><td>서버 주소↔좌표 변환 있음</td><td>사용 권한·REST API 키·실제 주소와 길찾기</td></tr>
-            <tr><td><a href="#email">메일 발송 계약·도메인 인증·실수신</a></td><td>인증 메일 복구·반송 처리 경로 있음</td><td>발송 계정·DNS 인증·실수신·반송 이벤트</td></tr>
+            <tr><td><a href="#android-distribution">Android 빌드·Google Play 테스트 절차</a></td><td><strong>부분 확인:</strong> Play 앱 등록·업로드 키, staging APK 서명·Android 16 에뮬레이터 설치</td><td>실기기 설치·운영 AAB·Play App Signing·내부 테스트와 계정별 공개 요건</td></tr>
+            <tr><td><a href="#google-login">Google 로그인 등록과 실제 계정 확인</a></td><td><strong>부분 확인:</strong> Android·Web OAuth, 실제 계정 신규 가입·온보딩·앱 재실행 후 로그인 유지</td><td>로그아웃 후 재로그인·연결/해제·iOS·Play 서명 지문·운영 브랜딩</td></tr>
+            <tr><td><a href="#firebase-push">Firebase·APNs 푸시 연결</a></td><td><strong>부분 확인:</strong> Android·서버 연결, 전경·백그라운드·프로세스 종료 수신·문의 목록 이동·권한 거절/재허용</td><td>업무 이벤트별 발행·iOS/APNs·실기기·Play 배포본·계정 전환·무효 토큰·재시도</td></tr>
+            <tr><td><a href="#google-maps">Google Maps 앱 지도 설정</a></td><td><strong>부분 확인:</strong> 결제 계정·Android SDK·제한 키, 앱 지도 타일·팬 이동·핀 재선택</td><td>Play 서명 지문·iOS 키·실기기·위치 권한 거절/재허용·비용 경보</td></tr>
+            <tr><td><a href="#kakao-local">Kakao Local 주소 변환 설정</a></td><td><strong>부분 확인:</strong> API·무료 쿼터·호출 IP 제한, 실제 주소↔좌표 변환과 입력·인증 오류</td><td>앱의 모임 주소·현재 위치, 시간·한도 초과, 길찾기 앱 이동·복귀</td></tr>
+            <tr><td><a href="#email">메일 발송 계약·도메인 인증·실수신</a></td><td><strong>부분 확인:</strong> SMTP·DNS·Gmail 시험 수신, 자체 도메인 인증·복구 수신과 Android 앱 링크·토큰 무효화</td><td>외부 수신함의 인증 메일·iOS·실기기·운영 링크·실제 만료/실패·OCI 반송·신고 이벤트</td></tr>
             <tr><td><a href="#file-storage">파일 저장소·검사·삭제 확인</a></td><td>S3·호환 저장소·검사·삭제 경로 있음</td><td>버킷·권한·검사 엔진·실제 파일 생명주기</td></tr>
-            <tr><td><a href="#infrastructure">서버·도메인·경보·복구 준비</a></td><td>프로그램과 운영 설정 경로 있음</td><td>배포 대상·접근 제한·경보 수신·복구 실행</td></tr>
+            <tr><td><a href="#infrastructure">서버·도메인·경보·복구 준비</a></td><td><strong>부분 확인:</strong> 격리 로컬 서버·공개 Tunnel, HTTPS·접근 차단·소켓 연결/재연결</td><td>운영 서버·고정 주소·관리자 허용망·메시지 왕복·경보·백업 복구·장시간 안정성</td></tr>
           </tbody>
         </table></div>
       </section>
 
+      <section id="next-checks">
+        <h2>다음 확인 순서</h2>
+        <ol>
+          <li><strong>시험 환경의 남은 연동:</strong> 푸시의 남은 권한·복구 시나리오, 파일 업로드·열람·검사·삭제,
+            두 계정의 채팅 메시지 왕복을 확인한다. Firebase 초기화나 소켓 연결만으로 완료 처리하지 않는다.</li>
+          <li><strong>통과한 서비스의 미확인 동작:</strong> Google 재로그인·연결/해제, 외부 수신함의 인증 메일과 만료·반송,
+            앱 주소 변환·위치 권한·길찾기 실패를 확인한다. 동일한 소스·환경의 통과 기록은 재사용한다.</li>
+          <li><strong>배포 환경과 기기:</strong> 운영 서버·고정 HTTPS 주소를 준비하고 Android 실기기·Play 내부 테스트,
+            iOS 서명·TestFlight·로그인 구성·지도·APNs를 확인한다. 임시 주소를 바꾸면 메일 링크와 앱 링크도 함께 맞춘다.</li>
+          <li><strong>출시후보 확정:</strong> 검증한 소스·미커밋 수정·APK 지문을 배포 대상과 대조한다.
+            같은 출시후보의 전체 이용·경보·복구와 스토어 자료를 확인한 뒤 공개 여부를 기록한다.</li>
+        </ol>
+      </section>
+
       <section id="ios-distribution">
         <h2>iOS 빌드·TestFlight 내부 테스트 절차</h2>
+        <p><strong>진행 보류 — 2026-10-12 운영자 확인:</strong> Apple Developer Program 가입이 아직 완료되지 않았다.
+          운영자 지시에 따라 iOS 배포 서명·TestFlight·APNs 연결과 iPhone 검증은 개발자 가입 완료 후 진행한다.
+          그동안 Android와 공통 서버의 외부 연동 검증을 이어간다.</p>
         <ol>
           <li><strong>가입·앱 등록:</strong> <a href="https://developer.apple.com/programs/enroll/">Apple Developer Program 가입 안내</a>에 따라
             기존 회원 자격·권한을 확인한다. 조직 가입이면 D-U-N-S 등 조직 확인 조건을 준비한다.
@@ -123,6 +160,21 @@ bundle exec fastlane ios deploy</code></pre>
 
       <section id="android-distribution">
         <h2>Android 빌드·Google Play 테스트 절차</h2>
+        <p><strong>진행 기록 — 2026-10-10:</strong> 운영자가 Google Play Console에서 앱 등록을 완료했다고 확인했다.
+          앱만 생성했으며 첫 AAB는 아직 업로드하지 않았다. 이 Mac에서 업로드 키와 로컬 서명 설정을 생성하고
+          임시 JAR 서명·검증을 완료했다. 실제 AAB 서명·Play App Signing 연결·내부 테스트 설치는 아직 수행하지 않았다.</p>
+        <p><strong>다음 준비:</strong> Firebase 프로젝트·Android 앱 등록, Google Android·Web OAuth 클라이언트 생성,
+          제한된 Android 지도 키와 로컬 앱 설정 반영은 완료했다. 운영 서버 구축 전에는 로컬 서버와 Cloudflare 임시 Tunnel을
+          연결한 staging 앱으로 외부 연결을 검증하고, 운영 주소·서명 앱 검증은 별도로 기록한다.</p>
+        <p><strong>서명 APK — 2026-10-12:</strong> <code>fastlane android apk env:staging</code>으로
+          <code>community_app/build/app/outputs/flutter-apk/app-release.apk</code>를 생성했다(1.0.0+1, 약 147MB).
+          APK 서명 검증과 업로드 인증서·패키지명 일치, 지도 키·Google Web ID·임시 Tunnel 주소 포함을 확인했다.
+          후속으로 Google Play가 포함된 Android 16(API 36) 에뮬레이터의 임시 세션에 APK를 설치하고 버전 일치를 확인했다.
+          앱 실행과 이메일·Google 로그인 버튼 표시, 재시도 후 Google 계정 선택 화면 진입을 확인했다.
+          첫 Google 요청은 Android 인증 제공자의 응답 시간 초과로 취소됐다. 기존 에뮬레이터에는 회사 관리 계정만 있어
+          계정 설정을 분리할 전용 에뮬레이터를 새로 만들고 같은 APK를 설치했다. 개인 Google 계정 인증과 서버의 토큰 검증을 통과해
+          신규 가입 추가 정보 시트가 표시됐다. 이후 운영자가 가입·온보딩을 완료했고, 앱 재실행 후 로그인 유지와
+          장소 추가 시트의 지도 타일·팬 이동·핀 재선택을 확인했다. 실기기 설치와 Play 업로드는 아직 확인하지 않았다.</p>
         <ol>
           <li><a href="https://play.google.com/console/">Google Play Console</a>의 개발자 계정·본인 또는 조직 확인·앱 등록 상태를 확인한다.</li>
           <li>패키지명 <code>com.endside.community.community_app</code>을 기준으로 Play App Signing과 업로드 키를 준비한다.
@@ -186,6 +238,26 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="google-login">
         <h2>Google 로그인 등록과 실제 계정 확인</h2>
+        <p><strong>진행 기록 — 2026-10-12:</strong> 운영자의 사용자 데이터 정책 동의 후
+          <a href="https://console.cloud.google.com/auth/clients?project=endside-saisoop-prod">Saisoop Google 인증 플랫폼</a>에
+          <code>Saisoop Android - Upload Key</code>와 <code>Saisoop Server - Google Sign-In</code> 클라이언트를 생성했다.
+          Android 클라이언트는 <code>com.endside.community.community_app</code>과 로컬 업로드 키 SHA-1을 사용한다.
+          외부·테스트 중 상태에서 소유자 계정 한 개를 테스트 사용자로 등록하고 이메일·프로필·openid 범위를 저장했다.</p>
+        <p><strong>로그인 계정 범위:</strong> 현재 기본 Google 로그인은 <code>openid</code>·이메일·프로필만 사용하므로
+          테스트 사용자 목록에 없는 Google 계정도 로그인할 수 있다. 개인 Gmail 계정만 사용해야 하는 것은 아니다.
+          회사 계정은 조직의 기기·앱 접근 정책을 충족해야 한다. 이번 에뮬레이터에서 확인된 회사 계정 요구사항은 화면 잠금이었다.
+          <a href="https://support.google.com/cloud/answer/15549945?hl=en">Google 인증 대상과 기본 로그인 예외</a></p>
+        <p><strong>설정 반영:</strong> 로컬 <code>community_app/dart_defines/prod.json</code>의
+          <code>GOOGLE_SERVER_CLIENT_ID</code>에 Web ID를 반영했다. 서버용 <code>GOOGLE_CLIENT_ID</code>는
+          저장소 밖 <code>~/keys/saisoop-api-google.env</code>에 준비했으며 두 값의 일치를 확인했다.
+          임시 Tunnel용 로컬 API에는 같은 Web ID를 적용했다. 운영 서버 반영, Play 앱 서명 지문용 클라이언트,
+          iOS 클라이언트, 공개 브랜딩·도메인·정책 문서는 아직 준비가 필요하다. 클라이언트 비밀키는 앱에 포함하지 않았다.</p>
+        <p><strong>서명 Android 앱 확인:</strong> 개인 Google 계정 인증 후 공개 Tunnel을 통해 서버에 토큰을 전달했다.
+          <code>POST /api/v1/auth/social</code>의 <code>422 SOCIAL_SIGNUP_INFO_REQUIRED</code> 응답과
+          앱의 추가 정보 시트를 확인했다. 운영자가 추가 정보·필수 동의와 온보딩을 마친 뒤 소셜 가입·회원 조회·온보딩 완료 요청이
+          모두 성공했다. 앱을 강제 종료하고 재실행해도 회원 조회 200과 인증된 홈 복귀를 확인했다.
+          근거는 이 Mac의 <code>community_app/build/release-readiness/android-2026-10-12/authenticated-app-results.log</code>와
+          <code>19-after-signup.png</code>·<code>21-session-home.png</code>다. 로그아웃 후 기존 계정 재로그인·연결/해제·iOS는 별도 확인이 필요하다.</p>
         <ol>
           <li><a href="https://console.cloud.google.com/">Google Cloud Console</a>에서 사용할 프로젝트와 소유 권한을 확인한다.
             Google Auth Platform에 앱 이름·지원 이메일·운영 도메인·개인정보처리방침·동의 화면을 설정한다.</li>
@@ -204,6 +276,33 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="firebase-push">
         <h2>Firebase·APNs 푸시 연결</h2>
+        <p><strong>진행 기록 — 2026-10-10:</strong>
+          <a href="https://console.firebase.google.com/project/endside-saisoop-prod/overview">Saisoop Firebase 프로젝트</a>
+          (<code>endside-saisoop-prod</code>)와 Android 앱 <code>com.endside.community.community_app</code>을 CLI로 생성했다.
+          로컬 업로드 키의 SHA-1·SHA-256을 등록하고, SDK 설정의 프로젝트·패키지·앱 ID가 일치함을 확인한 뒤
+          <code>community_app/dart_defines/prod.json</code>에 Android Firebase 설정을 반영했다.
+          Play 앱 서명 지문·iOS 앱/APNs·실기기 수신은 아직 준비 또는 확인이 필요하다.</p>
+        <p><strong>서버 연결 — 2026-10-12:</strong> FCM API 활성 상태를 확인하고 전용 발송 계정
+          <code>saisoop-fcm-sender@endside-saisoop-prod.iam.gserviceaccount.com</code>에
+          <code>roles/firebasecloudmessaging.admin</code>만 부여했다. 서버 키는 저장소 밖
+          <code>~/keys/saisoop-firebase-fcm.json</code>(0600)에 보관하고 임시 API의
+          <code>FIREBASE_CREDENTIALS_PATH</code>에 연결했다. 기존 메일·SES 설정은 유지한다.
+          발송 객체가 Firebase 앱보다 먼저 생성되는 문제를 수정했고, 격리 DB로 실행한 관련 테스트 7개가 통과했다.</p>
+        <p><strong>Android 수신 확인:</strong> Android 16 에뮬레이터의 서명 staging APK와 격리 DB의 전용 QA 계정에서
+          실제 서버 작업자·Firebase를 통한 전경 배너, 백그라운드 알림, 프로세스 종료 후 알림 및
+          각 알림 클릭 → 문의 목록 이동을 확인했다. 알림 권한 거부 시 미표시·재허용 후 표시도 확인했다.
+          종료 시험은 최근 앱 제거·프로세스 종료이며 Android 강제 중지와는 다르다.
+          전경 배너의 Overlay 탐색·글자 스타일 문제와 로그아웃의 기기 토큰 해제 순서를 수정했다.
+          최종 APK의 로그아웃에서 서버 토큰 비활성화와 후속 발송의 <code>NO_ACTIVE_DEVICE</code> 처리를 확인했고
+          관련 Flutter 테스트 28개가 통과했다. QA 알림은 확인 후 삭제했다.
+          서버 발송 수락과 기기 표시 결과는 별도로 저장했다.
+          QA 알림·발송 행을 격리 DB에 직접 적재한 시험이므로 개별 업무 이벤트의 발행 경로 검증은 아니다.
+          근거는 이 Mac의 <code>community_app/build/release-readiness/fcm-2026-10-12/</code>의
+          <code>firebase-setup.json</code>·<code>firebase-startup-fixed.log</code>와 수신·화면 이동 스크린샷이다.
+          최종 전경 배너·문의 목록은 <code>28-foreground-final.png</code>·<code>29-foreground-final-destination.png</code>,
+          관련 앱 자동 검사 28개 통과는 <code>flutter-test-final.log</code>에 남아 있다. 메일 검증의 28개와 별도 실행이며 합산하지 않는다.
+          iOS/APNs·실제 휴대폰·Play 배포본과
+          계정 전환·무효 토큰·재시도 등 나머지 복구 시나리오는 확인이 필요하다.</p>
         <ol>
           <li><a href="https://console.firebase.google.com/">Firebase Console</a>에서 환경별 프로젝트와 Android·iOS 앱을 등록한다.</li>
           <li>앱 설정의 프로젝트 ID·발신자 ID·플랫폼별 API 키·앱 ID를 확보하고 서버 발송용 서비스 계정 권한을 준비한다.</li>
@@ -223,6 +322,23 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="google-maps">
         <h2>Google Maps 앱 지도 설정</h2>
+        <p><strong>진행 기록 — 2026-10-12:</strong> 운영자의 승인 후 <code>endside-saisoop-prod</code>에 활성 결제 계정
+          <code>내 결제 계정 1</code>을 연결하고 <code>Maps SDK for Android</code>를 활성화했다.
+          <a href="https://console.cloud.google.com/apis/credentials/key/6e3f1c22-5c05-48bc-90c3-4a01a232816e?project=endside-saisoop-prod">Saisoop Android Maps - Upload Key</a>를 생성하고
+          <code>com.endside.community.community_app</code>·로컬 업로드 키 SHA-1·Android Maps SDK 한 개로 제한한 저장 결과를 확인했다.
+          키는 이 Mac의 무시되는 <code>community_app/android/local.properties</code>에 반영하고 원본은 저장소 밖
+          <code>~/keys/saisoop-android-maps-key.txt</code>에 소유자 전용 권한으로 보관했다.
+          Play 앱 서명 지문 추가·iOS 지도 키·실기기 지도 표시·비용 경보는 아직 확인이 필요하다.</p>
+        <p><strong>서명 Android 앱 확인:</strong> Android 16 에뮬레이터의 staging APK에서 장소 추가 시트를 열고
+          서울 지도 타일·팬 이동·핀 선택과 재선택 표시를 확인했다. 최초 핀은 팬 이동 후 표시됐고 이후 재선택은 즉시 반영됐다.
+          Maps 인증 실패 로그는 없었다. 시험용 플랜 초안은 검증 후 삭제했고 위치 블록은 저장하지 않았다.
+          근거는 이 Mac의 <code>community_app/build/release-readiness/android-2026-10-12/34-map-marker-reselect.png</code>다.
+          실제 휴대폰·위치 권한 거절/재허용·위치 공유와 Play 배포본 검증은 남아 있다.</p>
+        <p><strong>비용 구분:</strong> 현재 앱은 Google 지도 ID를 지정하지 않는 기본 모바일 지도 표시를 사용한다.
+          2026-10-12 확인한 공식 요금표에서 <code>Maps SDK</code>의 무료 사용량은 무제한이지만 결제 계정 연결은 필요하다.
+          지도 ID를 사용하는 Dynamic Maps, Street View, 별도 Places·Routes API는 과금 조건이 다르다.
+          <a href="https://developers.google.com/maps/billing-and-pricing/pricing">Google Maps 공식 요금표</a> ·
+          <a href="https://developers.google.com/maps/billing-and-pricing/sku-details">지도 기능별 과금 기준</a></p>
         <p><strong>가입·발급:</strong> Google Cloud 프로젝트에 결제 계정을 연결하고 Maps SDK for Android와 Maps SDK for iOS를 활성화한다.
           사용하는 플랫폼별 API 키를 만들고 Android 패키지·서명 지문 또는 iOS Bundle ID 및 API 사용 범위를 제한한다.
           <a href="https://developers.google.com/maps/flutter-package/config">Google Maps Flutter 프로젝트 설정</a></p>
@@ -235,6 +351,17 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="kakao-local">
         <h2>Kakao Local 주소 변환 설정</h2>
+        <p><strong>진행 기록 — 2026-10-12:</strong> 운영자의 무료 쿼터 배정 승인 후
+          <a href="https://developers.kakao.com/console/app/1605024/product/kakao-map">사이숲 앱(ID 1605024)</a>의 카카오맵 API를 활성화하고
+          일간 무료 쿼터 적용을 확인했다. REST 키는 현재 Mac의 외부 IPv4에서만 호출하도록 제한하고,
+          로컬 시험 서버의 <code>KAKAO_MAPS_API_KEY</code>에 적용했다. 외부 IP가 바뀌면 콘솔의 호출 허용 IP도 갱신해야 한다.</p>
+        <p><strong>검증 결과:</strong> 서울시청 주소로 카카오 직접 호출과 공개 Tunnel 경유 서버 호출의 주소→좌표·좌표→주소 변환이 모두 200이었다.
+          서버의 검색 결과 없음은 <code>400 INVALID_COORDINATES</code>, 빈 입력은 <code>400 INVALID_INPUT</code>, 무인증 요청은 403을 확인했다.
+          서버 시험은 격리 DB의 전용 시험 계정으로 진행했으며 임시 인증 상태는 복원하고 로그아웃했다. 실제 메일 인증 검증을 뜻하지 않는다.
+          키는 저장소 밖의 소유자 전용 파일에 보관하며 앱 바이너리에 넣지 않았다.
+          근거는 이 Mac의 <code>community_app/build/release-readiness/kakao-2026-10-12/</code>에 있다.</p>
+        <p><strong>남은 검증:</strong> 앱에서 실제 모임 주소·현재 위치 변환, 시간 초과·한도 초과 대응,
+          Android·iPhone의 길찾기 앱 설치·미설치와 복귀는 아직 확인하지 않았다.</p>
         <p><strong>가입·발급:</strong> <a href="https://developers.kakao.com/">Kakao Developers</a> 앱과 카카오맵·Local API 이용 권한,
           REST API 키를 준비한다. 적용되는 무료 한도·추가 사용·과금 조건은
           <a href="https://developers.kakao.com/docs/ko/kakaomap/common">카카오맵 API 이용 안내</a>에서 확인한다.</p>
@@ -247,6 +374,44 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="email">
         <h2>메일 발송 계약·도메인 인증·실수신</h2>
+        <p><strong>진행 기록 — 2026-10-12:</strong> 운영자가 안내한 기존 Oracle Cloud 메일 구성 문서를 확인했다.
+          <code>mail.saisoop.co.kr:587</code>의 STARTTLS 연결·서버 인증서 검증과
+          <code>contact@saisoop.co.kr</code>의 SMTP 인증(235)·NOOP(250)이 성공했다.
+          MX·SPF·DKIM CNAME·DMARC DNS 레코드도 확인했다. 기존 Postfix가 OCI Email Delivery로 중계하는 구성이며 재사용할 수 있다.</p>
+        <p><strong>서버 적용:</strong> 운영자 지시에 따라 저장소 밖 <code>~/keys/saisoop-mail-smtp.json</code>의 SMTP 설정을
+          <code>~/keys/saisoop-tunnel-env.json</code>에 반영하고 현재 임시 API 서버를 재기동했다.
+          발신자는 <code>사이숲 &lt;contact@saisoop.co.kr&gt;</code>이며 STARTTLS 필수·인증서 호스트 검증을 적용했다.
+          서버 기동 시 메일 연결 검사와 로컬·공개 Tunnel API의 200 응답을 확인했다.
+          기존 AWS SES 설정·SNS 수신 코드는 유지하며 이번 시험 환경에서만 일반 SMTP를 사용한다.
+          근거는 이 Mac의 <code>community_app/build/release-readiness/email-2026-10-12/</code>의
+          <code>smtp-readiness.json</code>과 <code>runtime-apply.json</code>이다.</p>
+        <p><strong>시험 발송:</strong> 운영자 지시에 따라 <code>contact@saisoop.co.kr</code>에서 운영자의 Gmail로
+          <code>[사이숲] 메일 발송 연결 확인</code> 메일 1통을 보냈다. SMTP 접수 250과 Postfix의 OCI 릴레이
+          <code>status=sent (250 Ok)</code>를 확인했고 운영자가 Gmail 실제 수신을 확인했다.
+          이는 SMTP 연결 시험 메일의 수신 결과이며 가입 인증·비밀번호 재설정 메일 시험과는 구분한다.
+          같은 근거 폴더의 <code>send-result.json</code>에 접수 결과·릴레이 로그·운영자 수신 확인을 기록했다.</p>
+        <p><strong>인증·복구 실검증 — 2026-10-12:</strong> 서버의 <code>APP_BASE_URL</code>과 Android의
+          <code>APP_LINK_HOST</code>를 현재 Quick Tunnel에 연결하고 <code>/.well-known/assetlinks.json</code>으로
+          앱 링크 자동 검증 상태 <code>verified</code>를 확인했다. 격리 DB의 전용 <code>dev@saisoop.co.kr</code> 계정으로
+          가입 API·인증 메일 실수신·앱 인증 완료 화면·재로그인 없는 보호 API 200을 확인했다.
+          재설정 메일로 앱을 콜드 스타트해 비밀번호 변경을 완료했고 새 비밀번호 로그인 200, 이전 비밀번호 403,
+          기존 access·refresh 토큰 401, 사용한 복구 링크 400을 확인했다.
+          재발급 전 링크·다른 이메일·용도가 다른 토큰은 거절됐으며 인증 링크 재사용은 <code>409 EMAIL_ALREADY_VERIFIED</code>였다.</p>
+        <p><strong>검증 중 수정:</strong> 인증 안내 화면의 새 토큰 처리, 온보딩 중 인증 링크 보존,
+          Android 기본 링크 처리 중복과 인증 성공 문장의 JSON 해석 오류를 수정했다. 관련 자동 테스트 28개와
+          서명 APK 빌드를 통과했다. 같은 근거 폴더의 <code>auth-flow-results.json</code>,
+          <code>apk-verification-fixed.json</code>, <code>13-verified-success.png</code>, <code>23-reset-success.png</code>로 확인한다.
+          원래 AVD 데이터와 실제 사용자 계정은 보존했다.</p>
+        <p><strong>제목 변경:</strong> 운영자 요청으로 가입 인증과 비밀번호 재설정 메일의 접두어를
+          <code>[Community]</code>에서 <code>[Saisoop]</code>으로 변경하고 현재 시험 서버를 재기동했다.
+          실제 수신함에서 <code>[Saisoop] 비밀번호 재설정 안내</code>를 확인했다.
+          새 비밀번호로 Android 앱 홈 화면 진입도 확인했으며 <code>28-new-password-authenticated.png</code>와
+          <code>verification-summary.json</code>에 최종 결과를 남겼다. 읽기 전용 시험 에뮬레이터는 종료했고
+          API·Tunnel은 계속 실행 중이다.</p>
+        <p><strong>남은 검증:</strong> 인증·복구 메일 수신은 자체 도메인의 dev 수신함에서 확인했다.
+          Gmail·네이버·다음의 인증 메일 실수신, iOS·실기기·브라우저 대체 화면, 운영 도메인·Play App Signing 인증서 연결,
+          실제 만료·지연·발송 실패·반송·스팸 신고는 남아 있다. 현재 SES/SNS 수신부는 OCI 이벤트에 그대로 적용되지 않는다.
+          임시 Tunnel 주소가 바뀌면 메일 링크 주소와 APK의 호스트 설정도 함께 갱신한다.</p>
         <ol>
           <li>운영 발송 공급자·발신 도메인·주소·지원 수신함을 정하고 발송 권한 및 SMTP 인증정보를 준비한다.
             현재 반송·스팸 신고 수신 구현은 <strong>Amazon SES/SNS</strong>용이다. 다른 공급자를 선택하면 그 이벤트 연동의 호환 여부를 확인한다.</li>
@@ -285,6 +450,28 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="infrastructure">
         <h2>서버·도메인·경보·복구 준비</h2>
+        <p><strong>진행 기록 — 2026-10-12:</strong> 운영자가 운영 서버가 아직 없다고 확인했다.
+          앱의 운영용 <code>API_BASE_URL</code>, <code>FILE_SERVER_URL</code>, <code>REALTIME_BASE_URL</code>은 미설정이며
+          호스팅·서버·HTTPS 연결을 준비한 뒤 실제 주소를 반영한다. 운영 서버 적용과 운영용 AAB 검증은 대기 상태다.
+          운영자는 도메인 없는 Cloudflare 임시 Tunnel로 로컬 서버 연결을 먼저 검증하기로 했다.</p>
+        <p><strong>운영 서버 구축 전 시험:</strong> 로컬 API·실시간 서버를 별도 시험 DB·Redis와 전용 인증 키로 실행하고,
+          앱의 staging 설정에 Tunnel의 HTTPS 주소를 연결한다. HTTP 요청·인증 거절·WebSocket 유지·재연결을 먼저 확인한다.
+          파일은 S3 서명 URL에 직접 접근하므로 API Tunnel만으로 파일 저장소 연결까지 검증됐다고 기록하지 않는다.
+          임시 주소는 다시 실행하면 바뀌고 가동 보장이 없으므로 장기 가동률이나 운영 부하 시험의 근거로 삼지 않는다.
+          <a href="https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/">Cloudflare 임시 Tunnel의 사용 조건</a></p>
+        <p><strong>임시 Tunnel 결과 — 2026-10-12:</strong> 별도 MySQL DB·Redis·인증 키로 띄운 로컬 서버를 Cloudflare HTTPS 주소에 연결하고,
+          앱 <code>dart_defines/staging.json</code>에 시험 주소를 반영했다. 이 Mac에서 공개 주소를 경유한 시험 가입·로그인,
+          API 반복 요청 20회, 무인증 요청 거절과 내부·진단 경로 차단을 확인했다. 채팅 소켓 두 종류의 연결과 자동 재연결 3회,
+          65초 관찰 중 heartbeat 4회·예상하지 않은 끊김 0회를 기록했다. 휴대폰 통신망·실제 메시지·파일·장시간 가동은
+          아직 검증하지 않았다. 이후 메일과 푸시는 <a href="#email">메일 발송 계약·도메인 인증·실수신</a>과
+          <a href="#firebase-push">Firebase·APNs 푸시 연결</a>의 결과를 따른다.
+          근거는 이 Mac의 <code>community_app/build/release-readiness/tunnel-2026-10-12/</code>이며
+          지도 키 반영 후 staging 서명 APK 빌드·서명·설정 포함 검증과 Android 16 에뮬레이터 설치까지 완료했다.
+          Google 신규 가입·온보딩·앱 재실행 후 세션 유지와 지도 타일·팬 이동·핀 재선택까지 확인했다.
+          실기기 설치와 운영용 AAB는 대기 중이다.
+          카카오 키 적용을 위한 재시작 중 현재 소스와 시험 DB의 V1 검사값 차이를 발견해,
+          오전 실행 소스 <code>6fe1ca6a3</code>를 별도 <code>api-runtime</code> worktree에 고정했다.
+          DB 변경 없이 Flyway 검증·서버 재기동과 카카오 주소 변환을 확인했으며 재시작은 같은 폴더의 <code>start-api.py</code>를 사용한다.</p>
         <p><strong>가입·설정:</strong> 선택한 호스팅과 도메인·DNS 계정, 서버·MySQL·Redis, HTTPS 인증서,
           파일·실시간 채팅 주소, 운영 비밀 저장소와 백업 공간을 준비한다. 관리자 화면·API의 허용 네트워크와 로그인 권한도 정한다.</p>
         <p><strong>설정 위치:</strong> 앱 JSON의 <code>API_BASE_URL</code>, <code>FILE_SERVER_URL</code>, <code>REALTIME_BASE_URL</code>, <code>SHARE_BASE_URL</code>.
@@ -363,14 +550,27 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="source-basis">
         <h2>설정 이름과 문서의 확인 근거</h2>
-        <p>2026년 10월 7일 아래 로컬 소스를 대조했다. 경로는 개발 작업 공간의 원본 위치이며,
+        <p>설정·절차는 2026년 10월 7일 소스를 기준으로 작성하고, 10월 12일 진행 기록·검증 산출물과 인증·Firebase 변경 소스를 추가 대조했다.
+          경로는 개발 작업 공간의 원본 위치이며,
           문서 사이트 밖으로 나가는 깨진 파일 링크 대신 실행에 필요한 내용을 이 페이지에 포함했다.</p>
         <ul>
           <li>앱 배포: <code>community_app/docs/IOS_RELEASE.md</code>, <code>community_app/docs/ANDROID_RELEASE.md</code>, 두 플랫폼의 <code>fastlane/Fastfile</code>·<code>Appfile</code>.</li>
           <li>앱 설정: <code>community_app/dart_defines/prod.example.json</code>, <code>lib/core/config/firebase_env_options.dart</code>, <code>ios/Flutter/Secrets.xcconfig.example</code>, Android Gradle·iOS Xcode 프로젝트.</li>
           <li>서버 설정: <code>community_api/src/main/resources/application-prod.yaml</code>·<code>application-default.yaml</code>, <code>SecurityConfigValidator</code>, <code>FirebaseConfig</code>, <code>S3Configuration</code>, <code>ClamdContentScanProvider</code>.</li>
           <li>출시 범위·실환경 완료 기준: 작업 공간의 <code>docs/IMPLEMENTATION_WORKBOARD.md</code>, <code>docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md</code>와 서비스별 검사표.</li>
+          <li>10월 12일 실제 결과: <code>community_app/build/release-readiness/</code> 아래
+            <code>android-2026-10-12/report.json</code>, <code>kakao-2026-10-12/report.json</code>,
+            <code>email-2026-10-12/verification-summary.json</code>, <code>email-2026-10-12/auth-flow-results.json</code>,
+            <code>fcm-2026-10-12/firebase-setup.json</code>, <code>tunnel-2026-10-12/report.json</code>.
+            이 Mac의 로컬 근거이며 문서 사이트에 인증 원문·수신함·기기 로그를 공개하지 않는다.</li>
         </ul>
+        <p><strong>검증 소스의 범위:</strong> Tunnel 초기 API는 <code>6fe1ca6a3</code>, 실시간 서버는 <code>f4eb352</code>,
+          초기 앱은 <code>facccdc0</code> 기준이다. 이후 인증 링크·메일 제목·Firebase·배너 보완은 별도 로컬 수정으로 구분한다.
+          메일 최종 검증 당시 APK SHA-256은 <code>6d80d622f6850c88001025411aa654a8f2777ebd7584c22c84deed7a75d706e6</code>이다.
+          같은 출력 경로와 버전 번호로 후속 빌드가 생성될 수 있으므로 이 지문을 현재 APK나 이후 수정 전체의 검증 결과로 사용하지 않는다.</p>
+        <p>이번 문서 동기화의 대조 파일·지문·검사 결과는 작업 공간의
+          <code>business_logic/verification/document-sync-2026-10-12.json</code>에 기록한다.
+          외부 서비스를 다시 실행한 결과가 아니라 기존 실행 근거와 소스를 대조한 문서 갱신 기록이다.</p>
         <p>이전 참고 문서에 남은 Firebase 파일 복사 방식·시뮬레이션 상태·전체 PG 키 필수 안내를 현재 소스의 동작으로 그대로 옮기지 않았다.
           공급자 요건은 각 절의 공식 안내를 사용하며 실제 가입·제출 시 다시 확인한다.</p>
       </section>

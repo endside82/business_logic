@@ -1,0 +1,259 @@
+{
+  "asOf": "2026-10-12T17:04:17.884664+09:00",
+  "scope": "10월 12일 외부 연동 진행 기록과 정산 계좌·송금 신고를 HTML 제품 문서에 동기화",
+  "method": "기존 로컬 실행 결과·진행 기록과 실제 서버·앱 소스 대조. 이번 문서 작업에서 공급자 호출·발송·제품 테스트·배포는 실행하지 않음.",
+  "preexistingEdits": {
+    "path": "docs/qa/external-readiness.html",
+    "preserved": true,
+    "initialSnapshotSha256": "ec86bcc72d0678af966f584510998f6ec3fd991e91794b921e0a2719fead41e7",
+    "note": "시작 전 Google·지도·Kakao·메일·Tunnel 기록을 보존. 작업 중 추가된 FCM 기록을 병합하고 요약·남은 조건을 동기화."
+  },
+  "observedHeads": {
+    "business_logic": "46ba0c91dd6b3d14eef3eeb6888ef1dc72b8069d",
+    "community_app": "cf975c46c0789d621b96e32518381413d66fc7cb",
+    "community_api": "e71238fefe651da4d94ce7a7165102ac07045edc",
+    "community-realtime": "f4eb352eba232b24de86801fe6ba7cbe780f1b84"
+  },
+  "sourceFiles": [
+    {
+      "path": "community_app/build/release-readiness/staging-apk-2026-10-12-verification.json",
+      "sha256": "ab3f2eac3c1c80af0a2adaca158eae7f18e4fbf99c0446694fb11969aa4e24c9"
+    },
+    {
+      "path": "community_app/build/release-readiness/android-2026-10-12/report.json",
+      "sha256": "f3f751c1ccd3a0e22b88ddecffbc4697656a44ac6e98e74c65e1fc54f4c636d2"
+    },
+    {
+      "path": "community_app/build/release-readiness/kakao-2026-10-12/report.json",
+      "sha256": "f122a930ac07b98be18cbaadf2d59c899e035728179b319893c5289f5b8e8f0e"
+    },
+    {
+      "path": "community_app/build/release-readiness/kakao-2026-10-12/direct-results.json",
+      "sha256": "25053902a3868926a9ea298cb13878b98c37118c0852b9f825c2368388af5833"
+    },
+    {
+      "path": "community_app/build/release-readiness/kakao-2026-10-12/tunnel-results.json",
+      "sha256": "461841a799313813df6c6928396c614c30cd263ae51fa0af115c83b76690fad1"
+    },
+    {
+      "path": "community_app/build/release-readiness/email-2026-10-12/verification-summary.json",
+      "sha256": "6a31b4e08b3972a291e982b240737a975f5dcdf7ec9be9bf09315fc1ef4ce1ab"
+    },
+    {
+      "path": "community_app/build/release-readiness/email-2026-10-12/auth-flow-results.json",
+      "sha256": "2ea6b090745cffcce5377cf63dbdb30a35f8d4570814f44ac1bde0924e4f48f6"
+    },
+    {
+      "path": "community_app/build/release-readiness/fcm-2026-10-12/firebase-setup.json",
+      "sha256": "568ff07901ff6e425865a04d4757c6b5e101961cd1a80138ac147b1db8d7a4c6"
+    },
+    {
+      "path": "community_app/build/release-readiness/fcm-2026-10-12/firebase-startup-fixed.log",
+      "sha256": "36ff3c00531ebf0e8ff5e9a16f42a32d555a40e1d4e0d4ee206f3273d4cdeb44"
+    },
+    {
+      "path": "community_app/build/release-readiness/fcm-2026-10-12/firebase-test-after.log",
+      "sha256": "25ad444076ac0ab238e00dc84f15a9077377b64c16e80caea4ea435a7dab412a"
+    },
+    {
+      "path": "community_app/build/release-readiness/fcm-2026-10-12/flutter-test-final.log",
+      "sha256": "b89eb7fb6161c2d4d772a3714624542245d7c10d263002c68b60abd7bba835d7"
+    },
+    {
+      "path": "community_app/build/release-readiness/fcm-2026-10-12/28-foreground-final.png",
+      "sha256": "c394dd1f911bd11a8084f2a49461c720e54ddf96934a8299cac6da679839273a"
+    },
+    {
+      "path": "community_app/build/release-readiness/fcm-2026-10-12/29-foreground-final-destination.png",
+      "sha256": "63eb37f28a4075cd9c0e18ea0f486c8c436bc9fe16662f25dfa3fdf875ecd467"
+    },
+    {
+      "path": "community_app/build/release-readiness/tunnel-2026-10-12/report.json",
+      "sha256": "abc1f7b55b33d9629b37017352d6be459e06b7519283f1c75159031c9288b80c"
+    },
+    {
+      "path": "docs/plan/evidence/DEFECT-FIX-2026-10-09/N81/PROGRESS.md",
+      "sha256": "4da095f4b9b41c3f8857c676253f5a48fe8b811c8ac7806bc457128fab496f00"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+      "sha256": "28966162fe0b6b817cb9c43439c5817a8d9504b70a2d031ebdc6307ba706ce22"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+      "sha256": "fc3c043aa7f0f6d0c5e2a4869375817aa664115808de4dc428f6b67a530c849c"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/config/firebase/FirebaseConfig.java",
+      "sha256": "336dc6a28aa2d96d2cf02e242df04418a70bfb96883e27e9c3d0786553d2e7a0"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/notification/service/AuthMailDeliverySender.java",
+      "sha256": "29a59c9f6c1fe5ba56b8cb72d0a1f6cc0ce783ff1fea6301cc2aa563715c80d1"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+      "sha256": "5dc1101e9586eb993de0acb6e757b157d784bdac696c78a16bb9cbe9a2b5745d"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementBankSentService.java",
+      "sha256": "925b7b3518b525d948b8421a812115a2558aed269062269a6b8b3f64de3fc248"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/meeting/vo/RecipientAccountVo.java",
+      "sha256": "029eb0992880cb9cbce81ff46522dfcf1f2d24ab4e385a4ae2ca5034ec622356"
+    },
+    {
+      "path": "community_app/lib/core/router/app_router.dart",
+      "sha256": "5cdfbbaf871a4acf73a88e8df5519a01db67608e5feb284944f91a7dc0358eb2"
+    },
+    {
+      "path": "community_app/lib/core/services/deep_link_service.dart",
+      "sha256": "d167d428b672f6fe2f143ea3477494cd439eeaeeb0f4a07f7d79efbcd6d1e46d"
+    },
+    {
+      "path": "community_app/lib/data/api/auth_api.dart",
+      "sha256": "fbbc622789993dec1d4954b0960177f3e4496de3bdcb5be60b8015a28a1e187a"
+    },
+    {
+      "path": "community_app/lib/presentation/auth/screens/email_verification_screen.dart",
+      "sha256": "a5051c4763826d57db05a06f5f8f56083e97872e5ad2a5d45e9e151b4ccc6512"
+    },
+    {
+      "path": "community_app/lib/presentation/common/feedback/in_app_notification_banner.dart",
+      "sha256": "bf31593c51caba9593c5a73c8c14b7dc415344fdf0da62b3c7a10c5378c1d805"
+    },
+    {
+      "path": "community_app/lib/presentation/meeting_settlement/widgets/recipient_account_section.dart",
+      "sha256": "74a521b99615d64c8e9cb0d6675b3a3c7748ccbcbb1e1ebe9f15aa22d1f63eed"
+    }
+  ],
+  "externalScope": {
+    "environment": "Android 16(API 36) emulator, signed staging APK, isolated local API/DB/Redis, Cloudflare Quick Tunnel; actual providers",
+    "google": "New signup, onboarding, authenticated cold restart confirmed; relogin/link/unlink/iOS/physical devices pending",
+    "maps": "Google tiles/pan/pin confirmed; Kakao direct and tunneled geocoding confirmed; location permissions/app geocoding/directions pending",
+    "email": "Generic SMTP Gmail receipt and own-domain authentication/reset mailbox receipt distinguished. App Links and old credentials/link rejection confirmed; expiry, external auth mailboxes, OCI bounce/complaint pending",
+    "fcm": "Existing progress record and screenshots: foreground/background/process-terminated display, inquiry-list navigation, permission denial/regrant. QA delivery rows seeded directly; not business-event production or Android force-stop proof",
+    "infrastructure": "HTTPS 20/20 and socket reconnection confirmed; actual message roundtrip, files, long-duration stability, operations/recovery pending",
+    "buildIdentity": "Initial tunnel revisions and email APK SHA recorded on page. Later builds/local code edits are not retroactively covered by earlier results"
+  },
+  "settlement": {
+    "implementation": "받는 사람 기본 계좌 보기·복사, 보냈어요·되돌리기·알림·재촉 보류",
+    "sourceAppCommit": "cf975c46",
+    "evidence": "N81/PROGRESS.md: server targeted 12, app affected 863; earlier groups not summed",
+    "limit": "Actual new-screen/bank/physical-device journey not claimed"
+  },
+  "updatedDocuments": [
+    {
+      "path": "docs/assets/launch-status.js",
+      "sha256": "ac8b7547026cb4941c4fb480d4de0b1a3ac15c284947342dff372fd09fa04b50"
+    },
+    {
+      "path": "docs/domains/07-settlement.html",
+      "sha256": "4689140bd929ef67359ca72579fefdbe5dbf2abed3f47aa812065fd4145798db"
+    },
+    {
+      "path": "docs/features/F01-02.html",
+      "sha256": "508a190534229e4f8687b82ef6d9596c93c3d0ae7c04d4c559e74509f0e5c80c"
+    },
+    {
+      "path": "docs/features/F01-03.html",
+      "sha256": "24b84cbe76d151e00beadfdfc8d3f26e26b2d408dd914d712e6c8591d62593d5"
+    },
+    {
+      "path": "docs/features/F01-04.html",
+      "sha256": "829c26a99c9cf7e2148f8b69fee71a36f7c09ccaf949fbb44caf545eda8b2db8"
+    },
+    {
+      "path": "docs/features/F07-05.html",
+      "sha256": "47e0ebe7a1ab253cd412fcc1d6dc9925bf48ff7681ccb221ecbe5bc85ec4d624"
+    },
+    {
+      "path": "docs/features/F07-06.html",
+      "sha256": "dab72f0d39c9791fd7b135ddac12c0ed667f000a58d54f96fcf524665d7c3478"
+    },
+    {
+      "path": "docs/features/F07-10.html",
+      "sha256": "287c14ae7d29b4e36217f9cb8237167380988023751ac4f8dee8df8dba1a9fe1"
+    },
+    {
+      "path": "docs/features/F12-05.html",
+      "sha256": "18b537adb8d8d31883a76566d9be405aee21b8d4167de1f70da6227522b40d87"
+    },
+    {
+      "path": "docs/features/F14-06.html",
+      "sha256": "e44406e005bd88d006bd88cc8b5397b3cca9d63d5c240274af914310029e49af"
+    },
+    {
+      "path": "docs/index.html",
+      "sha256": "27c201bc2caf9a468d1c9967ebb90b17cc212dd9d1f883575052f7425af217a3"
+    },
+    {
+      "path": "docs/overview/changelog.html",
+      "sha256": "9496158d87a0db4b50f3e1583f747dc3ed5eeea61e6b2d4cabb12428b2d6bb07"
+    },
+    {
+      "path": "docs/policies/notification.html",
+      "sha256": "eac8bb0e3ea36596cc0b25e95c0189334121d5e592421ac02095f1bf35d06661"
+    },
+    {
+      "path": "docs/qa/external-readiness.html",
+      "sha256": "40c53c4704b898c47314235fc226b443759ef3b8d0ed3013576577ffc3dbdefd"
+    },
+    {
+      "path": "docs/qa/feature-status.html",
+      "sha256": "a298534379b478855bc705107410db874bcb92eb9720499cc68b944db0b04d49"
+    },
+    {
+      "path": "docs/qa/launch-status.html",
+      "sha256": "dc8d4b7203c4d260c78e6e871e6806f4c7ee5014782a13541d9e93767f3e1e3a"
+    },
+    {
+      "path": "docs/qa/release.html",
+      "sha256": "2b8a353e40a15608022d602ba50e767c7e5ef1eeb42b994236226fb40e0800b8"
+    }
+  ],
+  "validation": {
+    "javascriptSyntax": {
+      "command": "node --check docs/assets/launch-status.js",
+      "result": "passed"
+    },
+    "releaseScopeAndLinks": {
+      "command": "node verification/check_release_scope.mjs",
+      "result": "passed",
+      "pages": 230,
+      "checkedLinks": 1975,
+      "featureScopes": {
+        "open": 134,
+        "partial": 16,
+        "sealed": 24,
+        "retired": 1
+      },
+      "classifiedTasks": 29
+    },
+    "htmlStructure": {
+      "result": "passed",
+      "changedHtmlPages": 16,
+      "duplicateIds": 0,
+      "unbalancedTags": 0
+    },
+    "whitespace": {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    "inlineJavascript": {
+      "result": "passed",
+      "scripts": 2
+    }
+  },
+  "delivery": "사용자의 후속 요청에 따라 이 문서 묶음을 커밋·푸시한다. 실제 반영은 Git 이력과 원격 브랜치를 기준으로 확인하며, 이 문서 작업에 제품 배포는 포함하지 않는다.",
+  "supportingFiles": [
+    ".gitignore",
+    "00_README.md",
+    "verification/document-sync-2026-10-12.json"
+  ],
+  "preCommitReview": {
+    "at": "2026-10-12T17:15:33.478658+09:00",
+    "includedFollowup": "운영자가 기록한 Apple Developer 가입 완료 전 iOS 진행 보류 안내를 보존하고 문서 지문을 갱신했다."
+  }
+}
