@@ -149,7 +149,7 @@
       ['F12-06', '권한 안내 배너'],
     ],
     '13-profile': [
-      ['F13-01', '마이페이지 허브'],
+      ['F13-01', '내·타인 프로필과 작성 글'],
       ['F13-02', '프로필 수정'],
       ['F13-03', '주소 관리'],
       ['F13-04', '선호 태그'],
@@ -351,6 +351,7 @@
         { href: 'qa/feature-status.html', label: '기능별 출시 상태' },
         { href: 'qa/scenario-completeness.html', label: '기능별 시나리오 완성도' },
         { href: 'qa/migration-status.html', label: 'PRD 문서 상태' },
+        { href: 'qa/completion-criteria.html', label: '출시 완료 기준·승인 기록' },
         { href: 'qa/acceptance.html', label: '전체 수용 기준' },
         { href: 'qa/coverage.html',   label: '시나리오 커버리지' },
         { href: 'qa/exceptions.html', label: '예외·엣지 케이스' },

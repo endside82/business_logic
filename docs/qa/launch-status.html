@@ -23,6 +23,31 @@
           <a href="#transport-rework">버스·카풀 확인 결과</a><a href="#next">후속 기능 준비</a><a href="#status-rules">상태 구분</a><a href="#gates">공개 승인 기준</a>
         </nav>
       </header>
+      <section id="completion-standard"><div class="callout info"><span class="label">2026년 10월 13일 — 출시 완료 판정 기준</span>
+        <p><a href="completion-criteria.html">출시 완료 기준과 승인 기록</a>에서 구현·자동 검사·사용 흐름·실환경·공개 승인 단계를 구분합니다.
+          175개 기능의 구체적인 결과와 권한·실패 조건, 투표·스탬프·프라이빗 모임의 기준을 연결했습니다.
+          현재 상태표와 시나리오 개수는 완료율이 아닙니다.</p></div></section>
+
+      <section id="document-sync-2026-10-13">
+        <h2>10월 13일 구현 반영과 남은 실제 확인</h2>
+        <p>현재 작업 목록·기본 브랜치 소스·기존 검사 기록을 대조했습니다. 아래 구현은 반영됐으며,
+          이 문서 갱신에서 제품 테스트나 외부 연동을 새로 실행한 것은 아닙니다.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>현재 반영된 내용</th><th>남은 확인</th></tr></thead>
+          <tbody>
+            <tr><td>프로필의 클럽 글</td><td>서버 집계·권한 필터·건수와 앱의 20개씩 보기·원문 이동·복귀. 첫 출시 포함</td><td>실제 서버·서명 앱에서 차단·클럽 탈퇴·글 숨김·삭제 뒤 재조회</td></tr>
+            <tr><td>정기모임 후기 이름</td><td>작성자·평가 대상의 사람 미리보기와 프로필 연결, 두 후기 범위의 복귀·차단 후 갱신. 첫 출시 포함</td><td>실제 계정으로 이름 이동·권한 거절·원래 목록 복귀</td></tr>
+            <tr><td>클럽 폐쇄·환불</td><td>통화별 반환·소멸·납부 확인 화면과 금액 재확인, 운영자의 개별 기부·탈퇴 회원 가입비 환불</td><td>서명 앱·관리자 실계정의 처리와 지갑 내역 대조. 첫 출시 무료 포인트 제한 유지</td></tr>
+            <tr><td>출금·지급</td><td>신청 송금처별 수취인 연결·재투입 전후 구분·거래번호 조회</td><td>후속 출시 유지. 공급자 심사·조회 계약과 실지급·남은 복구 보완</td></tr>
+            <tr><td>제재·탈퇴</td><td>관리자 행동 제한 부여·철회, 보관금 포기 동의·판매 내리기·개최권 정리</td><td>실제 계정과 외부 서비스 확인. 추가 경합·구조 개선을 전체 완료로 표시하지 않음</td></tr>
+            <tr><td>홈페이지·앱 링크</td><td>고객 안내 페이지·링크 연결 파일, 앱의 홈페이지 주소·Android 링크 호스트 설정</td><td>운영자 정보·문서 검토, Play 앱 서명 키 지문·스토어 주소·실기기 링크 검증</td></tr>
+          </tbody>
+        </table></div>
+        <p>클럽 글 집계는 실제 MySQL·보안·출시 범위 검사를, 앱은 상태·페이지·탐색 왕복 검사를 통과한 기록이 있습니다.
+          후기 링크도 실제 작성자·평가 대상과 차단·복귀를 검사했습니다. 자동 라우터 시험을 실제 서버·휴대전화 왕복으로 세지 않습니다.</p>
+        <p><a href="../domains/13-profile.html#authored-club-posts">다른 사람의 클럽 글을 내가 볼 수 있는 범위에서 모아 봅니다</a>와
+          <a href="../features/F17-02.html#review-person-links">정기모임 후기의 작성자·평가 대상 이름으로 프로필을 봅니다</a>에서 이용 방법을 확인합니다.</p>
+      </section>
 
       <section id="external-progress-2026-10-12">
         <h2>10월 12일 외부 연동 반영과 남은 준비</h2>
@@ -39,9 +64,10 @@
       </section>
 
       <section id="document-sync-2026-10-07">
-        <h2>이번 문서 반영의 확인 범위와 남은 작업</h2>
-        <p><strong>10월 7일 시점 기록:</strong> 아래 표와 검사 수치는 당시 범위다. 이후 외부 연동 상태는
-          <a href="#external-progress-2026-10-12">10월 12일 외부 연동 반영과 남은 준비</a>에서 갱신했다.</p>
+        <h2>10월 7일 문서 반영 기록</h2>
+        <p><strong>과거 기록:</strong> 아래 표의 미완료 항목과 검사 수치는 10월 7일 당시 상태입니다. 현재 구현은
+          <a href="#document-sync-2026-10-13">10월 13일 구현 반영과 남은 실제 확인</a>을 따르며, 외부 연동은
+          <a href="#external-progress-2026-10-12">10월 12일 외부 연동 반영과 남은 준비</a>를 함께 확인합니다.</p>
         <p>10월 2일 문서 사이트 반영 이후 10월 7일 조사 시점까지의 원본 변경을 반영했습니다.
           구현·병합 상태는 작업 현황표와 제품 기본 브랜치를 함께 확인했습니다. 이후 진행 중인 변경은 이번 기준에 포함하지 않습니다.</p>
         <div class="table-wrap"><table>
@@ -71,7 +97,7 @@
         <div class="callout danger release-summary">
           <span class="label">현재 결론</span>
           <p><strong>버스·카풀, 주최자 계좌 직접 송금, 게시글·모임 투표</strong>를 첫 출시 기본 설정에 추가했다. 스탬프·마일리지 시즌·반복 수동 적립 검토·사진 심사 적립도 포함한다. 실제 배포와 휴대전화·외부 서비스 검사는 남아 있어 <strong>공개는 보류</strong>한다.</p>
-          <p>버스·카풀은 <strong>소스 검수 24개·추가 웹 검사 6개 통과</strong>다. 남은 것은 휴대전화·실제 푸시·좌석 지정에 사용할 실차 도면 확인이다. <a href="#transport-rework">버스·카풀의 확인 결과와 다음 할 일</a>을 따른다.</p>
+          <p>버스·카풀은 <strong>소스 검수 24개·추가 웹 검사 6개 통과</strong>다. 기존 검사 이후 서버 변경이 있어 변경 범위 전체 시나리오와 최종 회귀가 남아 있다. 휴대전화·실제 푸시·좌석 지정에 사용할 실차 도면도 확인한다. <a href="#transport-rework">버스·카풀의 확인 결과와 다음 할 일</a>을 따른다.</p>
           <p><strong>Android 서명과 일부 실제 연동은 시험 환경에서 확인했다.</strong> Google·지도·메일 설정을 연결하고 Firebase 발송 준비와 시험 앱 검증을 진행했다.
             운영 서버·고정 주소·파일 저장소·Play 배포본·iOS·실기기 확인이 남아 있다. 상세 상태는
             <a href="external-readiness.html#required">첫 출시 필수 서비스</a>를 따른다.</p>
@@ -97,7 +123,7 @@
         <div class="table-wrap"><table><thead><tr><th>구분</th><th>확인한 것과 남은 일</th></tr></thead><tbody>
           <tr><td>구현·자동 검사</td><td>서버 정산·탈퇴 연결 345건, 서버 규칙 74건, 앱 정산 228건을 통과했습니다. 자기 부담분 제외, 마지막 입금 확인의 동시 처리, 개인 내역의 금액·기간·원본 조회를 확인했습니다. 전체 회귀 결과는 아닙니다.</td></tr>
           <tr><td>실제 화면</td><td><strong>변경 시나리오 네 가지와 수정 후 묶음 확인을 통과</strong>했습니다. 첫 비용부터 요청까지, 항목별 입금과 완료, 내 정산의 월·기간·취소 원본 복귀, 직접 송금 확인 후 금액 갱신입니다. 가상 회원을 사용한 웹 화면이며 <a href="../tour/index.html#feature-settlement">새 소개 사진 11장</a>을 추가했습니다.</td></tr>
-          <tr><td>최종 자동 검사</td><td>최초 실행의 실패·중단 뒤 영향 검사를 수행했고, 10월 4일 고정 소스의 후속 전체 검사는 <strong>앱 6,392건·공개 서버 11,952건 통과</strong>입니다. 기존 경고는 정리했으며 분석 오류·경고 0건, 정보 수준 지적 112건입니다. 이후 묶음은 <a href="#document-sync-2026-10-07">이번 문서 반영의 확인 범위와 남은 작업</a>에서 별도로 확인합니다.</td></tr>
+          <tr><td>최종 자동 검사</td><td>최초 실행의 실패·중단 뒤 영향 검사를 수행했고, 10월 4일 고정 소스의 후속 전체 검사는 <strong>앱 6,392건·공개 서버 11,952건 통과</strong>입니다. 기존 경고는 정리했으며 분석 오류·경고 0건, 정보 수준 지적 112건입니다. 이후 묶음은 <a href="#document-sync-2026-10-07">10월 7일 문서 반영 기록</a>에서 별도로 확인합니다.</td></tr>
           <tr><td>9월 26일 추가 보완</td><td>초안 취소·생성 결과 유실 뒤 작성 상태 복구, 늦은 첫 비용 요청의 다른 정산 저장 차단, 직접 송금 미납자 알림 대상을 수정했습니다. 서버 실제 MySQL 알림 검사 3건·항목 검사 2건, 앱 상태 검사 10건·작성 화면 검사 1건의 변경 기록이 있습니다. 이 수치를 9월 24일 검사 건수와 합산하지 않습니다.</td></tr>
           <tr><td>다음 행동</td><td>추가한 복구·미납 알림 동작의 실제 웹 확인과 서명한 휴대전화 앱·실제 알림·은행 내역 대조가 남아 있습니다. 기존 분석 지적과 화면 배치 개선은 별도로 판단합니다. 이미 통과한 기본 웹 여정의 기록은 해당 범위에서 유지합니다.</td></tr>
         </tbody></table></div>
@@ -153,6 +179,7 @@
       <section id="scope">
         <h2>첫 출시 범위</h2>
         <ul>
+          <li><a href="../domains/13-profile.html#authored-club-posts">프로필의 클럽 글 모아보기</a>와 <a href="../features/F17-02.html#review-person-links">정기모임 후기의 이름 링크</a>를 포함한다. 구현·자동 검사는 반영했고 실제 서버·서명 앱 확인이 남았다.</li>
           <li><strong>이메일·Google 가입</strong>, 무료 모임, 클럽, 게시글·사진·알림·개인 일정과 신고·이의 처리를 제공한다.</li>
           <li><strong>마일리지</strong>의 적립·사용·정정·등급·배지·순위와 <strong>시즌·반복 수동 적립 검토·사진 심사 적립</strong>을 포함한다. 사진 적립은 클럽이 규칙을 켠 경우에만 적용한다.</li>
           <li><strong>클럽 스탬프</strong>를 포함한다. 클럽장이 도장판 만들기를 허용한 클럽에서 운영진이 사용한다.</li>
@@ -176,7 +203,7 @@
           단, 현재 비활성인 Apple 로그인과 별개로 <a href="external-readiness.html#ios-login-review">iOS 로그인 구성과 심사 준비</a>는 첫 공개 전 결정에 포함한다.
           <strong>마켓 기간권의 판매 운영·환불</strong>, <strong>계좌 소액 인증 공급자 연결</strong>에는 개발이 남아 있다.
           <strong>소셜 로그인 실패 집계와 관리자 화면은 구현됐다.</strong> 제공자 설정·실제 계정·서명 앱 확인이 남아 있다.
-          <strong>Google Calendar</strong>는 동기화 코드와 모사 응답 테스트가 있고 재연결·범위 변경 보완 및 실제 계정 연결 확인이 남아 있다.</p>
+          <strong>Google Calendar</strong>는 동기화 코드와 모사 응답 테스트가 있고 10월 13일 선택·프리미엄 자동 동기화를 반영했다. 연결 경합·권한 철회·업무 실패 격리의 잔여 보완 판정과 실제 계정 확인은 남아 있다.</p>
         <details>
           <summary>후속 기능의 공개 순서</summary>
           <ol>
@@ -275,6 +302,7 @@
           '<p class="task-action"><strong>' + esc(o.actionLabel) + '</strong><br>' + esc(o.nextAction) + '</p>' +
           '<p><strong>준비물</strong> ' + esc(o.readiness.input) + '</p>' +
           '<p><strong>완료 조건</strong> ' + esc(o.doneWhen) + '</p>' +
+          '<p><strong>완료 판정 기록</strong> 버전·역할·환경·기대/실제 결과·증거·검토자를 남긴다. 미실행은 통과로 세지 않는다. <a href="completion-criteria.html#evidence">남길 증거와 승인 방법</a></p>' +
           (o.preparationPath ? '<p class="task-links"><a href="../' + esc(o.preparationPath) + '">' + esc(o.preparationLabel) + '</a></p>' : '') +
           '<details><summary>기능 설명·처리 메뉴</summary><p>' + esc(o.summary) + '</p>' +
           (o.workArea ? '<p><strong>처리 위치·권한</strong> ' + esc(o.workArea) + '</p>' : '') +

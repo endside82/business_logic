@@ -40,11 +40,15 @@
           테스트 안에서 발견한 기능 번호는 번호 재사용 오탐이 있어 완료 근거가 아닌 연결 후보로만 센다.
         </p>
       </header>
+      <section id="completion-standard"><div class="callout info"><span class="label">2026년 10월 13일 — 출시 완료 판정 기준</span>
+        <p><a href="completion-criteria.html">출시 완료 기준과 승인 기록</a>에서 구현·자동 검사·사용 흐름·실환경·공개 승인 단계를 구분합니다.
+          175개 기능의 구체적인 결과와 권한·실패 조건, 투표·스탬프·프라이빗 모임의 기준을 연결했습니다.
+          현재 상태표와 시나리오 개수는 완료율이 아닙니다.</p></div></section>
 
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">시나리오 정의</div><div class="value" id="m-defined">–</div><div class="hint">기능 175개 기준</div></div>
-          <div class="metric"><div class="label">기능 수준 확인</div><div class="value" id="m-feature-proof">–</div><div class="hint">자동·로컬 E2E·신규 계정 합계</div></div>
+          <div class="metric"><div class="label">상태 분류가 있는 기능</div><div class="value" id="m-feature-proof">–</div><div class="hint">과거 검사 분류 · 현재 통과 수 아님</div></div>
           <div class="metric"><div class="label">기존 등록 숫자 합</div><div class="value" id="m-scenarios">–</div><div class="hint">통과율 분모 아님</div></div>
           <div class="metric"><div class="label">상세 시나리오 제목</div><div class="value" id="m-unit-headings">–</div><div class="hint">117개 문서에서 실제 식별</div></div>
           <div class="metric"><div class="label">검사한 테스트 파일</div><div class="value" id="m-test-files">–</div><div class="hint">다섯 코드 저장소</div></div>
@@ -66,22 +70,20 @@
         </div>
 
         <div class="callout info" style="margin-top:12px">
-          <strong>기능 수준 확인과 개별 시나리오 증명도 다르다.</strong>
-          첫 출시 원장에서는 <strong id="c-feature-auto">–</strong> 기능을 자동 회귀로,
-          <strong id="c-feature-local">–</strong> 기능을 로컬 서버 E2E로,
-          <strong id="c-feature-real">–</strong> 기능을 로컬 신규 계정으로 확인했고 1개는
-          설계 철회로 분류한다. 이 174개는 코드 저장소 수준의 확인 결과다. 아래 표의 자동 테스트·통합 여정은
+          <strong>과거 검사 분류와 현재 기능 완료는 다르다.</strong>
+          출시 상태 데이터는 <strong id="c-feature-auto">–</strong> 기능을 과거 자동 검사 기록으로,
+          <strong id="c-feature-local">–</strong> 기능을 기록된 로컬 서버 이용으로,
+          <strong id="c-feature-real">–</strong> 기능을 기록된 신규 계정 이용으로 분류하고 1개는
+          설계 철회로 둔다. 자동 검사 기본 분류에는 해당 기능의 세부 실행 근거가 아직 연결되지 않은 항목도 있다.
+          이 174개를 개별 기능의 현재 테스트 통과 수나 출시 완료 수로 읽지 않는다. 아래 표의 자동 테스트·통합 여정은
           제품 시나리오 문서가 구체적인 실행 파일을 직접 지목했는지를 더 엄격하게 보여 준다.
           출시 상태 문서의 기본 브랜치 반영·자동 회귀·역할별 흐름·출시 설정 판정은 이 연결도와 별개이며,
           <a href="launch-status.html#code-completeness">첫 출시 현황의 단계별 구현 상태</a>에서 근거를 확인한다.
         </div>
 
         <div class="callout warn" style="margin-top:12px">
-          <strong>사진 심사 적립은 첫 출시 포함이지만 실제 앱 연결 확인은 남아 있다.</strong>
-          서버의 승인·재심·취소·회수·동시 승인 상한과 앱 자동 검사를 통과했다. 회원 사진 제출부터 운영진 반려,
-          회원 재심, 운영진 승인·취소까지 실제 앱과 서버를 이어 검사한 것으로 세지는 않는다.
-          시즌·반복 적립 판정·모임별 점수의 실제 앱 검사는 사진 심사 검사를 대신하지 않는다.
-          문서에 등록된 시나리오 수 역시 실제 검사 통과 수가 아니다.
+          <strong>사진 심사 적립의 로컬 앱 왕복은 확인했고, 실제 사진 파일·실기기·운영 배포는 남아 있다.</strong>
+          반려·재심·승인·취소와 점수 회수를 회원·운영진의 앱 및 서버 기록과 대조했다. 사진 기록만 사용했으므로 실제 파일 업로드·열람은 별도로 검증한다. 문서에 등록된 시나리오 수는 실제 검사 통과 수가 아니다.
         </div>
 
         <div class="audit-grid">
@@ -138,7 +140,7 @@
           <table>
             <thead><tr><th>교정 결과</th><th>기록 수</th><th>이제 어떻게 확인하는가</th></tr></thead>
             <tbody>
-              <tr><td><strong>현재 코드로 연결 완료</strong></td><td id="c-trace-verified">–</td><td>아래 기능의 <strong>확인한 코드 보기</strong>를 열면 처리 함수·호출 주소와 해당 위치로 바로 이동하는 링크를 볼 수 있다. 제품 요구사항 문서의 코드 위치 표도 교정했다.</td></tr>
+              <tr><td><strong>현재 코드로 연결 완료</strong></td><td id="c-trace-verified">–</td><td>아래 기능의 <strong>확인한 코드 보기</strong>를 열면 처리 함수·호출 주소와 해당 위치로 바로 이동하는 링크를 볼 수 있다. 현재 서버의 처리 함수·주소와 줄 위치를 대조한 링크다. 관련 요구사항 문서의 과거 확인 날짜와 구분한다.</td></tr>
               <tr><td>철회된 기능으로 분리</td><td id="c-trace-retired">–</td><td><a href="../features/F10-05.html#retired-status">타 사용자 가용시간 조회의 철회 안내</a>를 따른다. 같은 파일을 가리켰던 두 기록이며, <strong>복구할 코드나 출시를 막는 결함이 아니다.</strong></td></tr>
               <tr><td>위치를 확정하지 못한 기록</td><td id="c-trace-unresolved">–</td><td>이번 교정 범위에 남은 위치 확인 작업이다. 기능 전체의 미구현·테스트 누락 건수와는 다르다.</td></tr>
             </tbody>

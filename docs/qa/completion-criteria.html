@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>출시 완료 기준과 승인 기록 — community 제품 문서</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/release-readability.css">
+</head>
+<body data-document-kind="current" data-base="../" class="release-page">
+  <div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+    <header class="page-head">
+      <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>출시 준비<span>›</span>출시 완료 기준</div>
+      <h1>출시 완료 기준과 승인 기록</h1>
+      <p class="lede">2026년 10월 13일 기준. 기능이 만들어진 것, 검사를 통과한 것, 고객에게 공개할 준비가 끝난 것을 따로 판정합니다.
+        175개 번호 기능과 투표·스탬프·프라이빗 모임의 완료 조건을 연결했습니다. 기능 수·시나리오 수·과거 통과 건수로 출시 완료율을 계산하지 않습니다.</p>
+      <nav class="release-nav" aria-label="완료 기준 바로가기"><a href="#stages">완료의 단계</a><a href="#scope">첫 출시 경계</a><a href="#common">공통 확인</a><a href="#sequence">실행 순서</a><a href="#evidence">증거와 승인</a><a href="#domains">기능별 기준</a></nav>
+    </header>
+    <section id="decision">
+      <h2>현재 판정: 구현 반영·일부 실연동 확인, 공개 승인 보류</h2>
+      <p>프로필의 클럽 글과 정기모임 후기 이름 링크는 첫 출시 구현에 반영했습니다. Android 서명 시험 앱의 Google·메일·지도·실제 FCM은 기록된 일부 범위까지 확인했습니다.
+        운영 환경·파일 저장소·실기기·iOS·동일 출시후보의 전체 이용·복구·스토어 공개 조건은 남아 있습니다.</p>
+      <p><a href="launch-status.html#blocking">공개 전에 할 일</a>과 <a href="launch-status.html#scope">첫 출시 포함 기능의 배포 확인</a>이 현재 실행 목록입니다.
+        <a href="external-readiness.html">외부 서비스 가입·계약과 출시 준비</a>의 부분 성공을 전체 기능 통과로 확대하지 않습니다.
+        이 문서의 완료 조건 추가는 제품 테스트 재실행이나 출시 승인이 아닙니다.</p>
+    </section>
+    <section id="stages">
+      <h2>완료를 판정하는 단계</h2>
+      <div class="table-wrap"><table><thead><tr><th>단계</th><th>완료라고 적을 수 있는 근거</th><th>별도로 남는 것</th></tr></thead><tbody>
+        <tr><td>구현 반영</td><td>필요한 서버·앱·관리자 경로가 기본 브랜치에 있고 공개 범위·권한·데이터 정의가 일치한다.</td><td>작업 브랜치·계획서·화면 사진만으로 완료하지 않는다. 알려진 미연결·결함은 별도 표시한다.</td></tr>
+        <tr><td>자동 검사 통과</td><td>검사한 소스·명령·환경·대상·결과가 남고 수정 이후 필요한 검사가 통과한다.</td><td>모사 공급자와 실제 공급자, 특정 기능 검사와 전체 회귀를 구분한다.</td></tr>
+        <tr><td>사용 흐름 확인</td><td>회원·주최자·운영자가 화면에서 행동하고 서버 저장 결과까지 대조한다.</td><td>로컬 웹·시험 계정·에뮬레이터 결과를 실기기나 운영 배포 결과로 바꾸지 않는다.</td></tr>
+        <tr><td>출시 환경 확인</td><td>동일 출시후보의 서명 앱·실제 서버·대상 기기·실제 외부 서비스로 정상/실패/회수를 확인한다.</td><td>키 발급·가입·기동만 끝난 상태, 미실행·실행 차단은 통과가 아니다.</td></tr>
+        <tr><td>공개 승인</td><td>첫 출시 범위의 필수 결과, 운영 복구·고객 안내·스토어 자료와 운영자의 공개 결정을 같은 버전에 연결한다.</td><td>후속 범위는 계속 제한한다. 스토어 제출·승인·실제 공개는 각각 기록한다.</td></tr>
+      </tbody></table></div>
+      <p>과거 관문 문서의 “완료 13개”는 정책 결정 12개와 코드 완료 1개를 뜻하는 당시 분류입니다.
+        서명 출시후보·실환경 증거·승인까지 모두 닫힌 관문 수나 현재 공개 완료 수로 읽지 않습니다. 과거 검사 이후 소스가 바뀌면 변경 영향을 다시 연결합니다.</p>
+    </section>
+    <section id="scope">
+      <h2>첫 출시와 후속 공개의 경계</h2>
+      <div class="table-wrap"><table><thead><tr><th>범위</th><th>이번에 완료해야 할 결과</th></tr></thead><tbody>
+        <tr><td>첫 출시 150개 기능의 전부/일부 범위</td><td>134개 포함·16개 일부 포함입니다. 이메일·Google, 클럽·모임·정산·주최자 직접 송금, 이동 조율, 후기·프로필 탐색, 투표·마일리지·스탬프·운영 권한을 각 공개 범위대로 확인합니다. 숫자는 제공 범위이며 완료 수가 아닙니다.</td></tr>
+        <tr><td>후속 24개 번호 기능과 별도 후속 기능</td><td>플랫폼 결제·출금·개인 구독·마켓·데이트·제공자 거래의 새 이용은 막고 필요한 환불·해지·신고 등 기존 의무 처리 경로를 유지합니다. 실제 거래와 해당 운영 조건을 확인한 뒤 각각 공개합니다.</td></tr>
+        <tr><td>Google Calendar</td><td>10월 13일 선택 전송·프리미엄 자동 전송 코드는 반영됐습니다. 잔여 보완 판정·기존 연결 환경 대조·실계정 증명 뒤 후속 공개합니다. 첫 출시 내부 일정·일회성 파일 내보내기의 완료와 구분합니다.</td></tr>
+        <tr><td>제품에서 제외한 1개</td><td>옛 타인 가용시간 공개 조회입니다. 비공개 본인 가용시간은 유지합니다. 재도입은 새 제품 결정 대상입니다.</td></tr>
+      </tbody></table></div>
+      <p>일부 포함 기능은 포함한 부분만 첫 출시 통과 대상으로 삼습니다. 계좌 소액 인증·후속 PG 계약을 주최자 직접 송금의 선행 조건으로 추가하지 않습니다.
+        최초 빈 설치에는 과거 데이터 이관을 요구하지 않으며, 실제로 유지할 기존 자료가 있을 때만 필요한 보강·복구를 확인합니다.</p>
+    </section>
+    <section id="common">
+      <h2>함께 적용하는 권한·실패·복구 확인</h2>
+      <ul>
+        <li><strong>화면과 저장 결과:</strong> 성공 문구만 보지 않고 다시 조회한 상태·명단·건수·금액·기간이 기대한 결과와 같은지 확인합니다.</li>
+        <li><strong>권한과 회수:</strong> 본인/타인·회원/비회원·주최자/참가자·운영 권한을 구분합니다. 차단·탈퇴·제재·비공개 전환 후 기존 화면과 직접 링크에서도 제한이 적용돼야 합니다.</li>
+        <li><strong>중복과 경합:</strong> 상태를 바꾸는 기능은 연속 누름·응답 유실 후 재시도·동시 처리에서 중복 등록/차감/환불/적립을 만들지 않아야 합니다. 단순 읽기에는 해당 쓰기 조건을 억지로 붙이지 않습니다.</li>
+        <li><strong>실패와 복귀:</strong> 빈 상태·권한 거절·외부 오류·시간 초과를 구분하고 사용자가 다시 시도하거나 이전 화면으로 돌아갈 수 있어야 합니다. 계정 전환 후 이전 응답·비공개 정보를 남기지 않습니다.</li>
+        <li><strong>날짜와 금액:</strong> 해당 기능의 시간대·만료·마감 경계, 반올림·부분 환불·포인트/현금 구분을 확인합니다. 실제 돈 이동은 공급자/은행 기록과 대조합니다.</li>
+        <li><strong>외부 서비스:</strong> 실제 메일·푸시·지도·파일·결제를 사용한 범위와 모사 응답·에뮬레이터 범위를 기록합니다. 제공하지 않는 연동을 이 기능의 필수 조건으로 만들지 않습니다.</li>
+        <li><strong>운영:</strong> 사람이 판단하는 조치는 대상·사유·권한·감사 기록과 실패 재처리 결과를 남깁니다. 운영자 한 사람이 역할별 계정과 메뉴를 바꿔 확인할 수 있습니다.</li>
+      </ul>
+      <p>조건을 충족하지 못하면 <strong>실패</strong>, 아직 실행하지 않으면 <strong>미실행</strong>, 준비물이 없어 실행할 수 없으면 <strong>실행 차단</strong>으로 적습니다.
+        해당하지 않는 검사는 이유와 공개 범위를 기록해 <strong>해당 없음</strong>으로 둡니다. 보류나 해당 없음을 통과 건수에 더하지 않습니다.</p>
+    </section>
+    <section id="known-limits"><h2>본문에 남은 제한의 완료 처리</h2>
+      <p>기본 브랜치에 기능이 있다는 표시는 모든 화면과 예외가 완성됐다는 뜻이 아닙니다. 다음과 같은 본문 한계는 개별 조건과 함께 확인합니다.
+        해결 증거가 없으면 완료로 바꾸지 않고, 첫 출시 영향·기존 대체 경로·후속 공개 범위를 명시적으로 판정합니다.</p>
+      <ul>
+        <li><a href="../features/F12-02.html#release-completion">알림 미읽음 집계와 하단 배지</a>: 집계 결과와 하단 표시 연결을 구분합니다.</li>
+        <li><a href="../features/F15-03.html#release-completion">경고 이의제기의 동시 중복 제출</a>: 진행 중 1건 제한의 경합 확인을 별도로 남깁니다.</li>
+        <li><a href="../features/F15-09.html#release-completion">경고 통계의 운영 화면</a>: 서버 집계가 있다고 화면까지 제공한다고 표시하지 않습니다.</li>
+        <li><a href="../features/F18-04.html#release-completion">분쟁 증빙의 공개 범위</a>: 본인 제출 증빙의 열람·다운로드와 나머지 세부 등급 구현을 구분합니다.</li>
+        <li><a href="../features/F08-06.html#release-completion">기간권 판매 운영</a>: 기존 구매·보유·환불 구현과 아직 남은 편성·판매 경로를 구분합니다.</li>
+        <li><a href="../domains/10-calendar.html#google-sync">Google Calendar의 후속 보완</a>: 새 선택 화면의 완료로 연결 경합·철회·업무 실패 격리를 종결하지 않습니다.</li>
+      </ul>
+    </section>
+    <section id="sequence">
+      <h2>공개 승인까지의 실행 순서</h2>
+      <ol>
+        <li><strong>범위·버전 고정:</strong> 앱·공개 API·관리자 API·관리자 웹·실시간 서버, 설치 정의·출시 설정·서명 파일 지문을 한 기록으로 묶습니다. 홈페이지의 안내·앱 링크 버전도 연결합니다.</li>
+        <li><strong>남은 환경 준비:</strong> 이미 확인한 Android 설정을 유지하며 운영 주소·S3·관리자 허용망·Apple/iOS·Play 설치 조건을 준비합니다. 이미 연결했다고 확인한 Google Calendar 환경은 먼저 대조합니다.</li>
+        <li><strong>기능별 실제 확인:</strong> 아래 개별 결과와 공통 조건을 역할별로 실행합니다. 프로필의 두 신규 기능, 실제 사진 파일·기기 알림을 빠뜨리지 않습니다.</li>
+        <li><strong>변경 영향과 복구:</strong> 이전 검사 뒤 바뀐 코드를 대조하고 실패 수정·영향 검사를 마친 뒤 필요한 최종 회귀를 실행합니다. 차량 조율은 변경 범위 전체 시나리오와 최종 전체 회귀가 남아 있습니다. 문서만 바뀐 경우 제품 전체 검사를 반복하지 않습니다.</li>
+        <li><strong>출시 결정:</strong> 운영 복구·고객 지원·정책/스토어 자료·잔여 항목을 검토하고 공개할 범위와 설치 파일을 승인합니다. 단계 배포 중 관찰 항목·중단 기준·되돌릴 버전을 함께 적습니다.</li>
+      </ol>
+    </section>
+    <section id="profile-required">
+      <h2>첫 출시 필수: 프로필 글과 후기 이름 링크</h2>
+      <p><strong>프로필 글:</strong> 서로 가입 범위가 다른 두 계정·두 클럽·21개 이상 글로 20개 단위 페이지를 확인합니다.
+        최신순·전체 건수·원문 이동/복귀·마지막 페이지 소멸·접근 거부·차단·클럽 탈퇴·작성 글 숨김/삭제·계정 전환을 확인합니다.
+        글 제목뿐 아니라 총건수도 같은 열람 권한을 적용해야 합니다. 작성자가 클럽을 나간 경우와 보는 사람이 클럽을 나간 경우를 혼동하지 않습니다.</p>
+      <p><strong>후기 이름:</strong> 작성자와 평가 대상이 다른 후기를 준비해 두 이름의 실제 목적지를 각각 확인합니다.
+        기록된 평가 대상을 현재 호스트로 대체하지 않습니다. 이름이나 유효한 식별자가 없으면 링크로 만들지 않고,
+        프로필 복귀·차단 뒤 후기 목록·건수·평균을 다시 확인하면서 펼침·페이지·스크롤 상태를 점검합니다.</p>
+      <p><a href="../features/F13-01.html#release-completion">프로필 조회와 작성 글의 완료 기준</a> · <a href="../features/F17-02.html#release-completion">정기모임 상세와 후기 이름의 완료 기준</a></p>
+    </section>
+    <section id="evidence">
+      <h2>버전·환경·결과·승인 기록</h2>
+      <p>아래는 작성 서식이며 실제 완료 기록이 아닙니다. 하나의 증거를 여러 기능이 공유할 수 있지만 각각 확인한 동작을 연결합니다. 비밀키·토큰·원 계좌번호·개인정보 원문을 문서에 붙이지 않습니다.</p>
+      <div class="table-wrap"><table><thead><tr><th>필드</th><th>남길 내용</th></tr></thead><tbody>
+        <tr><td>대상·범위</td><td>기능 이름, 첫 출시/후속 여부, 확인한 행동과 적용하지 않은 조건의 이유</td></tr>
+        <tr><td>버전</td><td>관련 저장소 소스 버전, 서버 배포, 앱 버전·빌드 번호·서명 산출물 지문, 출시 설정</td></tr>
+        <tr><td>환경·역할</td><td>실제/모사 공급자, 로컬/시험/운영 서버, 기기·운영체제·설치 경로, 시험 계정의 역할</td></tr>
+        <tr><td>실행</td><td>일시·담당자, 준비 상태, 실행 행동, 기대 결과와 실제 결과, 화면과 저장 결과의 대조</td></tr>
+        <tr><td>판정</td><td>통과/실패/미실행/실행 차단/해당 없음, 증거 경로, 실패·누락과 재확인 결과</td></tr>
+        <tr><td>승인</td><td>검토자, 승인한 범위·버전·일시, 남은 후속 항목, 공개/보류 결정과 배포 중단·복구 기준</td></tr>
+      </tbody></table></div>
+      <p>현재 검사 기록에서 버전·환경·범위가 빠졌다면 먼저 그 연결을 보완합니다. 과거 서로 다른 소스의 테스트 건수를 합쳐 현재 출시후보 통과 수로 표시하지 않습니다.
+        새 코드·설정·권한·정책 변화가 있으면 영향을 받는 증거를 다시 확인하고, 끝난 작업을 이유 없이 초기 상태로 되돌리지 않습니다.</p>
+    </section>
+    <section id="domains"><h2>기능별 완료 기준</h2><p>각 링크는 해당 기능 문서의 구체적인 사용자 결과와 예외 조건으로 이동합니다. 본문의 알려진 한계와 현재 상태표를 함께 확인합니다.</p>
+
+<section id="domain-01"><h3>인증 &amp; 온보딩 — 8개 기능</h3><ul>
+<li><a href="../features/F01-01.html#release-completion">이메일 회원가입 &amp; 로그인의 완료 기준</a></li>
+<li><a href="../features/F01-02.html#release-completion">소셜 로그인의 완료 기준</a></li>
+<li><a href="../features/F01-03.html#release-completion">이메일 인증의 완료 기준</a></li>
+<li><a href="../features/F01-04.html#release-completion">비밀번호 재설정의 완료 기준</a></li>
+<li><a href="../features/F01-05.html#release-completion">토큰 갱신 &amp; 로그아웃의 완료 기준</a></li>
+<li><a href="../features/F01-06.html#release-completion">온보딩의 완료 기준</a></li>
+<li><a href="../features/F01-07.html#release-completion">관심사 태그 관리의 완료 기준</a></li>
+<li><a href="../features/F01-08.html#release-completion">소셜 계정 연결 해제의 완료 기준</a></li>
+</ul></section>
+<section id="domain-02"><h3>홈 피드 — 5개 기능</h3><ul>
+<li><a href="../features/F02-01.html#release-completion">홈 피드 메인 조회의 완료 기준</a></li>
+<li><a href="../features/F02-02.html#release-completion">홈 피드 새로고침의 완료 기준</a></li>
+<li><a href="../features/F02-03.html#release-completion">섹션 카드 진입의 완료 기준</a></li>
+<li><a href="../features/F02-04.html#release-completion">추천 이벤트 더보기·필터·무한스크롤의 완료 기준</a></li>
+<li><a href="../features/F02-05.html#release-completion">검색·알림 진입점의 완료 기준</a></li>
+</ul></section>
+<section id="domain-03"><h3>이벤트 — 20개 기능</h3><ul>
+<li><a href="../features/F03-01.html#release-completion">이벤트 발견 &amp; 탐색의 완료 기준</a></li>
+<li><a href="../features/F03-02.html#release-completion">이벤트 상세 조회의 완료 기준</a></li>
+<li><a href="../features/F03-03.html#release-completion">이벤트 생성의 완료 기준</a></li>
+<li><a href="../features/F03-04.html#release-completion">이벤트 수정/생명주기 관리의 완료 기준</a></li>
+<li><a href="../features/F03-05.html#release-completion">이벤트 신청 &amp; 참석의 완료 기준</a></li>
+<li><a href="../features/F03-06.html#release-completion">신청서 승인/거절의 완료 기준</a></li>
+<li><a href="../features/F03-07.html#release-completion">정원 &amp; 대기열 관리의 완료 기준</a></li>
+<li><a href="../features/F03-08.html#release-completion">QR 체크인의 완료 기준</a></li>
+<li><a href="../features/F03-09.html#release-completion">이벤트 사진첩의 완료 기준</a></li>
+<li><a href="../features/F03-10.html#release-completion">이벤트-플랜 연결의 완료 기준</a></li>
+<li><a href="../features/F03-11.html#release-completion">위시리스트의 완료 기준</a></li>
+<li><a href="../features/F03-12.html#release-completion">내 이벤트 관리 &amp; 참석 로그의 완료 기준</a></li>
+<li><a href="../features/F03-13.html#release-completion">이벤트 참가 선입금의 완료 기준</a></li>
+<li><a href="../features/F03-14.html#release-completion">이동수단 공통 설정의 완료 기준</a></li>
+<li><a href="../features/F03-15.html#release-completion">카풀·개별 이동의 완료 기준</a></li>
+<li><a href="../features/F03-16.html#release-completion">대절 버스와 자리 배정의 완료 기준</a></li>
+<li><a href="../features/F03-17.html#release-completion">차량 좌석 배치도 운영의 완료 기준</a></li>
+<li><a href="../features/F03-18.html#release-completion">구성인원 인구통계의 완료 기준</a></li>
+<li><a href="../features/F03-19.html#release-completion">일정 변경 제안·참가자 합의의 완료 기준</a></li>
+<li><a href="../features/F03-20.html#release-completion">이벤트 노쇼 관리의 완료 기준</a></li>
+</ul></section>
+<section id="domain-04"><h3>클럽 — 18개 기능</h3><ul>
+<li><a href="../features/F04-01.html#release-completion">클럽 발견 &amp; 탐색의 완료 기준</a></li>
+<li><a href="../features/F04-02.html#release-completion">클럽 상세 보기 &amp; 가입 액션의 완료 기준</a></li>
+<li><a href="../features/F04-03.html#release-completion">클럽 생성·수정·삭제·소유권 이전의 완료 기준</a></li>
+<li><a href="../features/F04-04.html#release-completion">멤버 관리의 완료 기준</a></li>
+<li><a href="../features/F04-05.html#release-completion">가입 대기열 승인/거절 &amp; 초대의 완료 기준</a></li>
+<li><a href="../features/F04-06.html#release-completion">차단 관리의 완료 기준</a></li>
+<li><a href="../features/F04-07.html#release-completion">내 클럽 / 멤버 통계의 완료 기준</a></li>
+<li><a href="../features/F04-08.html#release-completion">게시판 &amp; 게시글 생성/수정/삭제의 완료 기준</a></li>
+<li><a href="../features/F04-09.html#release-completion">게시글 댓글 &amp; 대댓글의 완료 기준</a></li>
+<li><a href="../features/F04-10.html#release-completion">공지사항의 완료 기준</a></li>
+<li><a href="../features/F04-11.html#release-completion">사진첩의 완료 기준</a></li>
+<li><a href="../features/F04-12.html#release-completion">클럽 이벤트 &amp; 캘린더의 완료 기준</a></li>
+<li><a href="../features/F04-13.html#release-completion">기금 현황의 완료 기준</a></li>
+<li><a href="../features/F04-14.html#release-completion">기부하기 &amp; 기부 내역의 완료 기준</a></li>
+<li><a href="../features/F04-15.html#release-completion">기금 인출 요청의 완료 기준</a></li>
+<li><a href="../features/F04-16.html#release-completion">클럽 구독의 완료 기준</a></li>
+<li><a href="../features/F04-17.html#release-completion">구성인원 인구통계의 완료 기준</a></li>
+<li><a href="../features/F04-18.html#release-completion">클럽 레퓨테이션의 완료 기준</a></li>
+</ul></section>
+<section id="domain-05"><h3>검색 — 5개 기능</h3><ul>
+<li><a href="../features/F05-01.html#release-completion">키워드 검색의 완료 기준</a></li>
+<li><a href="../features/F05-02.html#release-completion">자동완성 서제스트의 완료 기준</a></li>
+<li><a href="../features/F05-03.html#release-completion">검색 필터 적용의 완료 기준</a></li>
+<li><a href="../features/F05-04.html#release-completion">최근 검색어의 완료 기준</a></li>
+<li><a href="../features/F05-05.html#release-completion">저장된 검색의 완료 기준</a></li>
+</ul></section>
+<section id="domain-06"><h3>결제 &amp; 지갑 — 10개 기능</h3><ul>
+<li><a href="../features/F06-01.html#release-completion">지갑 메인 조회의 완료 기준</a></li>
+<li><a href="../features/F06-02.html#release-completion">포인트 충전의 완료 기준</a></li>
+<li><a href="../features/F06-03.html#release-completion">거래 내역 조회·필터·내보내기의 완료 기준</a></li>
+<li><a href="../features/F06-04.html#release-completion">결제 수단 관리의 완료 기준</a></li>
+<li><a href="../features/F06-05.html#release-completion">자동 충전 설정의 완료 기준</a></li>
+<li><a href="../features/F06-06.html#release-completion">포인트 결제·환불의 완료 기준</a></li>
+<li><a href="../features/F06-07.html#release-completion">호스팅 티켓 구매의 완료 기준</a></li>
+<li><a href="../features/F06-08.html#release-completion">개인 구독 관리의 완료 기준</a></li>
+<li><a href="../features/F06-09.html#release-completion">수익 대시보드 조회의 완료 기준</a></li>
+<li><a href="../features/F06-10.html#release-completion">정산 조회·요약·이의 제기의 완료 기준</a></li>
+</ul></section>
+<section id="domain-07"><h3>모임 정산 — 10개 기능</h3><ul>
+<li><a href="../features/F07-01.html#release-completion">모임 정산 생성의 완료 기준</a></li>
+<li><a href="../features/F07-02.html#release-completion">정산 항목 관리의 완료 기준</a></li>
+<li><a href="../features/F07-03.html#release-completion">정산 활성화/취소의 완료 기준</a></li>
+<li><a href="../features/F07-04.html#release-completion">정산 현황/요약/영수증 조회의 완료 기준</a></li>
+<li><a href="../features/F07-05.html#release-completion">분담금 납부의 완료 기준</a></li>
+<li><a href="../features/F07-06.html#release-completion">이체 확인/일괄 확인/상각의 완료 기준</a></li>
+<li><a href="../features/F07-07.html#release-completion">미납자 리마인드/마감 연장의 완료 기준</a></li>
+<li><a href="../features/F07-08.html#release-completion">이의제기/처리/감사로그의 완료 기준</a></li>
+<li><a href="../features/F07-09.html#release-completion">선입금/환불/환불규정의 완료 기준</a></li>
+<li><a href="../features/F07-10.html#release-completion">정산 계좌/이력/호스트 신뢰도의 완료 기준</a></li>
+</ul></section>
+<section id="domain-08"><h3>플랜 마켓 — 15개 기능</h3><ul>
+<li><a href="../features/F08-01.html#release-completion">내 플랜 목록 관리의 완료 기준</a></li>
+<li><a href="../features/F08-02.html#release-completion">플랜 상세/작성자용 미리보기의 완료 기준</a></li>
+<li><a href="../features/F08-03.html#release-completion">블록 에디터의 완료 기준</a></li>
+<li><a href="../features/F08-04.html#release-completion">블록 드래그 재정렬의 완료 기준</a></li>
+<li><a href="../features/F08-05.html#release-completion">플랜 발행의 완료 기준</a></li>
+<li><a href="../features/F08-06.html#release-completion">마켓 아이템 관리의 완료 기준</a></li>
+<li><a href="../features/F08-07.html#release-completion">크리에이터 프로필/통계의 완료 기준</a></li>
+<li><a href="../features/F08-08.html#release-completion">마켓 메인 탐색의 완료 기준</a></li>
+<li><a href="../features/F08-09.html#release-completion">마켓 검색의 완료 기준</a></li>
+<li><a href="../features/F08-10.html#release-completion">마켓 아이템 상세의 완료 기준</a></li>
+<li><a href="../features/F08-11.html#release-completion">아이템·번들·플랜 구매의 완료 기준</a></li>
+<li><a href="../features/F08-12.html#release-completion">내 컬렉션의 완료 기준</a></li>
+<li><a href="../features/F08-13.html#release-completion">구매 플랜 -&gt; 이벤트 생성/리뷰의 완료 기준</a></li>
+<li><a href="../features/F08-14.html#release-completion">플랜 마켓 환불 (Purchase Refund)의 완료 기준</a></li>
+<li><a href="../features/F08-15.html#release-completion">크리에이터 매출 귀속 보정의 완료 기준</a></li>
+</ul></section>
+<section id="domain-09"><h3>프라이빗 데이팅 — 8개 기능</h3><ul>
+<li><a href="../features/F09-01.html#release-completion">본인 인증의 완료 기준</a></li>
+<li><a href="../features/F09-02.html#release-completion">데이팅 프로필 관리의 완료 기준</a></li>
+<li><a href="../features/F09-03.html#release-completion">후보자 스와이프 &amp; 매칭 액션의 완료 기준</a></li>
+<li><a href="../features/F09-04.html#release-completion">매칭 목록 조회의 완료 기준</a></li>
+<li><a href="../features/F09-05.html#release-completion">채팅의 완료 기준</a></li>
+<li><a href="../features/F09-06.html#release-completion">만남 제안 &amp; 안전 흐름의 완료 기준</a></li>
+<li><a href="../features/F09-07.html#release-completion">사용자 차단/해제의 완료 기준</a></li>
+<li><a href="../features/F09-08.html#release-completion">내 프로필 조회 이력의 완료 기준</a></li>
+</ul></section>
+<section id="domain-10"><h3>캘린더 — 5개 기능</h3><ul>
+<li><a href="../features/F10-01.html#release-completion">월간/일간 통합 캘린더 조회의 완료 기준</a></li>
+<li><a href="../features/F10-02.html#release-completion">일정 항목 라우팅의 완료 기준</a></li>
+<li><a href="../features/F10-03.html#release-completion">단일 가용 시간 생성/수정/삭제의 완료 기준</a></li>
+<li><a href="../features/F10-04.html#release-completion">반복 가용 시간 규칙 관리의 완료 기준</a></li>
+<li><a href="../features/F10-05.html#release-completion">타 사용자 가용성 공개 조회의 완료 기준</a></li>
+</ul></section>
+<section id="domain-11"><h3>리뷰 &amp; 신고 — 7개 기능</h3><ul>
+<li><a href="../features/F11-01.html#release-completion">이벤트 리뷰 작성의 완료 기준</a></li>
+<li><a href="../features/F11-02.html#release-completion">리뷰 목록 조회의 완료 기준</a></li>
+<li><a href="../features/F11-03.html#release-completion">리뷰 수정 &amp; 삭제의 완료 기준</a></li>
+<li><a href="../features/F11-04.html#release-completion">신고의 완료 기준</a></li>
+<li><a href="../features/F11-05.html#release-completion">신뢰점수 &amp; 변동 이력의 완료 기준</a></li>
+<li><a href="../features/F11-06.html#release-completion">취향 평가 &amp; 취향 프로필의 완료 기준</a></li>
+<li><a href="../features/F11-07.html#release-completion">호스트 리뷰 모더레이션의 완료 기준</a></li>
+</ul></section>
+<section id="domain-12"><h3>알림 — 6개 기능</h3><ul>
+<li><a href="../features/F12-01.html#release-completion">알림 목록 조회 &amp; 읽음 관리의 완료 기준</a></li>
+<li><a href="../features/F12-02.html#release-completion">알림 그룹 보기 &amp; 미읽음 배지의 완료 기준</a></li>
+<li><a href="../features/F12-03.html#release-completion">카테고리별 알림 설정의 완료 기준</a></li>
+<li><a href="../features/F12-04.html#release-completion">방해금지 시간 설정의 완료 기준</a></li>
+<li><a href="../features/F12-05.html#release-completion">푸시 기기 관리의 완료 기준</a></li>
+<li><a href="../features/F12-06.html#release-completion">알림 권한 인라인 안내 배너의 완료 기준</a></li>
+</ul></section>
+<section id="domain-13"><h3>프로필 &amp; 설정 — 7개 기능</h3><ul>
+<li><a href="../features/F13-01.html#release-completion">내·타인 프로필과 작성 글의 완료 기준</a></li>
+<li><a href="../features/F13-02.html#release-completion">프로필 수정의 완료 기준</a></li>
+<li><a href="../features/F13-03.html#release-completion">다중 주소 관리의 완료 기준</a></li>
+<li><a href="../features/F13-04.html#release-completion">선호 태그 관리의 완료 기준</a></li>
+<li><a href="../features/F13-05.html#release-completion">데이터 내보내기의 완료 기준</a></li>
+<li><a href="../features/F13-06.html#release-completion">계정 삭제 요청의 완료 기준</a></li>
+<li><a href="../features/F13-07.html#release-completion">계정 즉시 비활성화의 완료 기준</a></li>
+</ul></section>
+<section id="domain-14"><h3>위치 &amp; 길찾기 — 6개 기능</h3><ul>
+<li><a href="../features/F14-01.html#release-completion">이벤트 참석자 위치 공유의 완료 기준</a></li>
+<li><a href="../features/F14-02.html#release-completion">위치 공유 중지의 완료 기준</a></li>
+<li><a href="../features/F14-03.html#release-completion">위치 공유 만료 연장의 완료 기준</a></li>
+<li><a href="../features/F14-04.html#release-completion">위치 프라이버시 대시보드의 완료 기준</a></li>
+<li><a href="../features/F14-05.html#release-completion">이벤트 길찾기의 완료 기준</a></li>
+<li><a href="../features/F14-06.html#release-completion">역지오코딩의 완료 기준</a></li>
+</ul></section>
+<section id="domain-15"><h3>경고 &amp; 징계 — 9개 기능</h3><ul>
+<li><a href="../features/F15-01.html#release-completion">내 경고 현황 &amp; 원장의 완료 기준</a></li>
+<li><a href="../features/F15-02.html#release-completion">신고 제출 &amp; 내 신고 관리의 완료 기준</a></li>
+<li><a href="../features/F15-03.html#release-completion">이의제기 (Appeal)의 완료 기준</a></li>
+<li><a href="../features/F15-04.html#release-completion">경고 정책 &amp; 패널티 유형 설정의 완료 기준</a></li>
+<li><a href="../features/F15-05.html#release-completion">신고 심사의 완료 기준</a></li>
+<li><a href="../features/F15-06.html#release-completion">경고 부여 &amp; 원장 조정의 완료 기준</a></li>
+<li><a href="../features/F15-07.html#release-completion">이의제기 처리의 완료 기준</a></li>
+<li><a href="../features/F15-08.html#release-completion">제재 집행의 완료 기준</a></li>
+<li><a href="../features/F15-09.html#release-completion">검토 큐 &amp; 대시보드/통계/감사로그의 완료 기준</a></li>
+</ul></section>
+<section id="domain-16"><h3>마일리지 — 8개 기능</h3><ul>
+<li><a href="../features/F16-01.html#release-completion">내 마일리지 메인 &amp; 월간 영수증 &amp; 원장의 완료 기준</a></li>
+<li><a href="../features/F16-02.html#release-completion">등급·배지·랭킹·프로필 카드의 완료 기준</a></li>
+<li><a href="../features/F16-03.html#release-completion">시즌 (목록·과거 랭킹·내 스냅샷)의 완료 기준</a></li>
+<li><a href="../features/F16-04.html#release-completion">마일리지 정책 설정의 완료 기준</a></li>
+<li><a href="../features/F16-05.html#release-completion">적립규칙·등급·배지·교환 프리셋 관리의 완료 기준</a></li>
+<li><a href="../features/F16-06.html#release-completion">적립/차감/정정 집행의 완료 기준</a></li>
+<li><a href="../features/F16-07.html#release-completion">호스트 제안의 완료 기준</a></li>
+<li><a href="../features/F16-08.html#release-completion">검토 큐 &amp; 대시보드/감사로그의 완료 기준</a></li>
+</ul></section>
+<section id="domain-17"><h3>정기모임 — 10개 기능</h3><ul>
+<li><a href="../features/F17-01.html#release-completion">정기모임 발견·탐색의 완료 기준</a></li>
+<li><a href="../features/F17-02.html#release-completion">정기모임 상세 조회의 완료 기준</a></li>
+<li><a href="../features/F17-03.html#release-completion">정기모임 생성 (호스트)의 완료 기준</a></li>
+<li><a href="../features/F17-04.html#release-completion">생명주기 (게시·종료·취소·재개)의 완료 기준</a></li>
+<li><a href="../features/F17-05.html#release-completion">세션 관리 (추가·일괄·대체·취소)의 완료 기준</a></li>
+<li><a href="../features/F17-06.html#release-completion">고정형 등록·승인·대기열의 완료 기준</a></li>
+<li><a href="../features/F17-07.html#release-completion">고정형 결제 (지갑·계좌이체)의 완료 기준</a></li>
+<li><a href="../features/F17-08.html#release-completion">환불 (진행분 차감 · 사유별)의 완료 기준</a></li>
+<li><a href="../features/F17-09.html#release-completion">세션 출석 확정·노쇼의 완료 기준</a></li>
+<li><a href="../features/F17-10.html#release-completion">호스트 정산 (유료분 전달)의 완료 기준</a></li>
+</ul></section>
+<section id="domain-18"><h3>분쟁 해결 — 5개 기능</h3><ul>
+<li><a href="../features/F18-01.html#release-completion">통합 분쟁 케이스 조회의 완료 기준</a></li>
+<li><a href="../features/F18-02.html#release-completion">분쟁 직접 접수의 완료 기준</a></li>
+<li><a href="../features/F18-03.html#release-completion">분쟁 이의제기의 완료 기준</a></li>
+<li><a href="../features/F18-04.html#release-completion">분쟁 증빙·공개범위·보존의 완료 기준</a></li>
+<li><a href="../features/F18-05.html#release-completion">호스트 운영 인박스의 완료 기준</a></li>
+</ul></section>
+<section id="domain-19"><h3>관심인 — 3개 기능</h3><ul>
+<li><a href="../features/F19-01.html#release-completion">관심인 등록·해제·한도의 완료 기준</a></li>
+<li><a href="../features/F19-02.html#release-completion">관심인 캘린더·새 이벤트 알림의 완료 기준</a></li>
+<li><a href="../features/F19-03.html#release-completion">공개범위(프라이버시) 설정의 완료 기준</a></li>
+</ul></section>
+<section id="domain-20"><h3>고객지원 — 3개 기능</h3><ul>
+<li><a href="../features/F20-01.html#release-completion">1:1 문의의 완료 기준</a></li>
+<li><a href="../features/F20-02.html#release-completion">운영 이슈의 완료 기준</a></li>
+<li><a href="../features/F20-03.html#release-completion">FAQ 제안의 완료 기준</a></li>
+</ul></section>
+<section id="domain-21"><h3>제공자 배정·정산 — 7개 기능</h3><ul>
+<li><a href="../features/F21-01.html#release-completion">제공자 배정의 완료 기준</a></li>
+<li><a href="../features/F21-02.html#release-completion">참가자 서비스비 분담 결제의 완료 기준</a></li>
+<li><a href="../features/F21-03.html#release-completion">제공자 정산의 완료 기준</a></li>
+<li><a href="../features/F21-04.html#release-completion">무료초대·호스트 대납의 완료 기준</a></li>
+<li><a href="../features/F21-05.html#release-completion">환불·회수의 완료 기준</a></li>
+<li><a href="../features/F21-06.html#release-completion">계약금 선납의 완료 기준</a></li>
+<li><a href="../features/F21-07.html#release-completion">정기모임 묶음 배정·정산의 완료 기준</a></li>
+</ul></section>
+<section id="additional"><h3>별도 기능 문서</h3><ul>
+<li><a href="../features/club-poll.html#release-completion">게시글·모임 투표의 완료 기준</a></li>
+<li><a href="../features/club-stamp.html#release-completion">클럽 스탬프의 완료 기준</a></li>
+<li><a href="../features/private-meeting.html#release-completion">프라이빗 모임의 후속 공개 기준</a></li>
+<li><a href="../domains/10-calendar.html#google-sync">Google Calendar 선택·프리미엄 자동 동기화의 후속 공개 기준</a></li>
+</ul></section></section>
+</main></div>
+<script src="../assets/sidebar.js"></script><script src="../assets/app.js"></script>
+</body></html>

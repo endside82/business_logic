@@ -17,7 +17,7 @@
         <h1>외부 서비스 가입·계약과 출시 준비</h1>
         <p class="lede">운영자가 가입·계약부터 키 발급, 설정 전달, 실제 이용 확인까지 진행하는 체크리스트다.
           첫 출시 필수 서비스와 기능을 추가 공개할 때 필요한 서비스를 구분한다.</p>
-        <p class="release-note">진행 상태 반영: 2026-10-12. Android 서명 APK와 임시 시험 서버에서 실제 외부 연동을 일부 확인했다. 실기기·iOS·스토어 배포·운영 환경은 별도 확인이 남아 있다. 가입·심사 절차의 공식 안내 기준은 2026-10-07이다.</p>
+        <p class="release-note">문서 대조: 2026-10-13. 외부 연동 실행 기록: 2026-10-12. Android 서명 APK와 임시 시험 서버에서 실제 외부 연동을 일부 확인했다. 실기기·iOS·스토어 배포·운영 환경은 별도 확인이 남아 있다. 가입·심사 절차의 공식 안내 기준은 2026-10-07이다.</p>
         <nav class="release-nav" aria-label="외부 준비 바로가기">
           <a href="#progress-2026-10-12">10월 12일 진행 결과</a><a href="#next-checks">다음 확인 순서</a>
           <a href="#order">진행 순서와 완료 상태</a><a href="#required">첫 출시 필수 서비스</a>
@@ -25,6 +25,19 @@
           <a href="#store-submission">스토어 제출 자료와 공개 확인</a><a href="#evidence">운영자가 남길 완료 기록</a>
         </nav>
       </header>
+
+      <section id="public-pages-2026-10-13">
+        <h2>홈페이지 고객 안내와 앱 링크 준비</h2>
+        <p><strong>10월 13일 반영 기록:</strong> 홈페이지에 <a href="https://saisoop.co.kr/terms">이용약관</a>,
+          <a href="https://saisoop.co.kr/privacy">개인정보처리방침 초안</a>,
+          <a href="https://saisoop.co.kr/account-deletion">계정 삭제 안내</a>,
+          <a href="https://saisoop.co.kr/support">고객 지원</a>과 앱 링크 안내·연결 파일을 준비했습니다.
+          앱의 공유·약관·개인정보·삭제·지원 주소와 iPhone 연결 도메인을 같은 홈페이지에 맞췄습니다.</p>
+        <p>Android 링크 호스트도 빌드 설정으로 받으며 기본값은 <code>saisoop.co.kr</code>입니다.
+          현재 연결 파일의 업로드 키 지문과 Play 앱 서명 키 지문을 구분해야 합니다.
+          Play 앱 서명 키 지문 추가, 스토어 등록 주소, 운영자 정보와 문서 검토, 실제 Android·iPhone의 링크 열기·복귀는 남아 있습니다.
+          10월 12일 임시 Tunnel의 메일 링크 성공을 새 운영 도메인 검증으로 확대하지 않습니다.</p>
+      </section>
 
       <section id="progress-2026-10-12">
         <h2>10월 12일 진행 결과 — 실제 공급자와 Android 시험 앱 연결</h2>
@@ -86,7 +99,7 @@
             <tr><td><a href="#google-maps">Google Maps 앱 지도 설정</a></td><td><strong>부분 확인:</strong> 결제 계정·Android SDK·제한 키, 앱 지도 타일·팬 이동·핀 재선택</td><td>Play 서명 지문·iOS 키·실기기·위치 권한 거절/재허용·비용 경보</td></tr>
             <tr><td><a href="#kakao-local">Kakao Local 주소 변환 설정</a></td><td><strong>부분 확인:</strong> API·무료 쿼터·호출 IP 제한, 실제 주소↔좌표 변환과 입력·인증 오류</td><td>앱의 모임 주소·현재 위치, 시간·한도 초과, 길찾기 앱 이동·복귀</td></tr>
             <tr><td><a href="#email">메일 발송 계약·도메인 인증·실수신</a></td><td><strong>부분 확인:</strong> SMTP·DNS·Gmail 시험 수신, 자체 도메인 인증·복구 수신과 Android 앱 링크·토큰 무효화</td><td>외부 수신함의 인증 메일·iOS·실기기·운영 링크·실제 만료/실패·OCI 반송·신고 이벤트</td></tr>
-            <tr><td><a href="#file-storage">파일 저장소·검사·삭제 확인</a></td><td>S3·호환 저장소·검사·삭제 경로 있음</td><td>버킷·권한·검사 엔진·실제 파일 생명주기</td></tr>
+            <tr><td><a href="#file-storage">파일 저장소·검사·삭제 확인</a></td><td>구현 있음. 운영자는 S3 사용 예정이며 가입·저장소 준비 전이라고 확인</td><td>S3 가입·버킷·권한 준비 후 검사 엔진·실제 파일 생명주기 검증</td></tr>
             <tr><td><a href="#infrastructure">서버·도메인·경보·복구 준비</a></td><td><strong>부분 확인:</strong> 격리 로컬 서버·공개 Tunnel, HTTPS·접근 차단·소켓 연결/재연결</td><td>운영 서버·고정 주소·관리자 허용망·메시지 왕복·경보·백업 복구·장시간 안정성</td></tr>
           </tbody>
         </table></div>
@@ -94,9 +107,14 @@
 
       <section id="next-checks">
         <h2>다음 확인 순서</h2>
+        <p><strong>현재 진행 조건 — 2026-10-12:</strong> 운영자는 에뮬레이터 두 대를 사용하는 채팅 검증을
+          메모리가 넉넉한 환경에서 진행하기로 했다. iOS는 Apple 개발자 가입, 파일·첨부파일은 S3 준비를 기다린다.
+          현재 환경에서는 메일의 남은 서버·실수신 검증, 사용량·비용 경보 설정, 스토어 제출 자료 정리를 먼저 진행할 수 있다.</p>
         <ol>
-          <li><strong>시험 환경의 남은 연동:</strong> 푸시의 남은 권한·복구 시나리오, 파일 업로드·열람·검사·삭제,
-            두 계정의 채팅 메시지 왕복을 확인한다. Firebase 초기화나 소켓 연결만으로 완료 처리하지 않는다.</li>
+          <li><strong>시험 환경의 남은 연동:</strong> 푸시의 남은 복구 시나리오를 확인한다.
+            두 테스트 계정의 텍스트 채팅 메시지 왕복·재접속은 메모리가 넉넉한 환경에서 진행한다.
+            파일 업로드·열람·검사·삭제와 채팅 첨부파일은 S3 가입·버킷·권한 준비 후 검증한다.
+            Firebase 초기화나 소켓 연결만으로 완료 처리하지 않는다.</li>
           <li><strong>통과한 서비스의 미확인 동작:</strong> Google 재로그인·연결/해제, 외부 수신함의 인증 메일과 만료·반송,
             앱 주소 변환·위치 권한·길찾기 실패를 확인한다. 동일한 소스·환경의 통과 기록은 재사용한다.</li>
           <li><strong>배포 환경과 기기:</strong> 운영 서버·고정 HTTPS 주소를 준비하고 Android 실기기·Play 내부 테스트,
@@ -432,6 +450,9 @@ bundle exec fastlane android deploy track:internal</code></pre>
 
       <section id="file-storage">
         <h2>파일 저장소·검사·삭제 확인</h2>
+        <p><strong>외부 준비 대기 — 2026-10-12 운영자 확인:</strong> 파일 저장소는 S3를 사용할 예정이며 아직 가입·저장소 준비가 되지 않았다.
+          S3 계정·버킷·접근 권한이 준비된 뒤 실제 파일 업로드·조회·검사·삭제를 진행한다.
+          기존 구현과 설정은 유지하고, 그동안 저장소가 필요하지 않은 텍스트 채팅 등 공통 서버 검증을 먼저 진행한다.</p>
         <ol>
           <li><a href="https://console.aws.amazon.com/">AWS Console</a>에서 환경별 S3 버킷과 IAM 권한을 준비한다.
             IAM Role을 사용하면 장기 Access Key를 별도로 만들 필요가 없다. 호환 저장소를 선택하면 실제 지원 동작을 검증한다.</li>
@@ -494,7 +515,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
             <tr id="identity-contract"><td>데이트 본인확인</td><td>Toss 또는 NICE를 선택해 계약·상품 권한·복귀 주소를 준비한다. 서버 <code>TOSS_CERT_CLIENT_ID</code>·<code>TOSS_CERT_CLIENT_SECRET</code> 또는 <code>NICE_CLIENT_ID</code>·<code>NICE_CLIENT_SECRET</code>·<code>NICE_PRODUCT_ID</code>·<code>NICE_RETURN_URL</code>.</td><td>실제 인증 성공·취소·실패·만료·변조 거부, 비공개 증빙 저장·관리자 확인·채팅·신고. 두 공급자를 모두 계약할 필요는 없다.</td></tr>
             <tr id="bank-verification"><td>계좌 소액 인증</td><td>공급자와 확인 범위를 결정한 뒤 계약·연결을 개발한다. 현재 <code>BANK_ACCOUNT_VERIFICATION_PROVIDER</code> 기본값은 <code>FAKE</code>다.</td><td>실계좌 인증과 불일치·만료·중복 확인. 미인증 등록 계좌는 계속 인증 전으로 안내하며 첫 출시 직접 송금은 이 계약을 기다리지 않는다.</td></tr>
             <tr id="extra-login"><td>카카오·네이버 추가 로그인</td><td>제공자 콘솔의 앱 등록·사용 설정·필요한 심사·클라이언트 키·native 설정을 준비한다. 카카오는 앱 <code>KAKAO_NATIVE_KEY</code>와 서버 <code>KAKAO_APP_ID</code>, 플랫폼 서명·복귀 경로를 맞춘다. 네이버는 SDK의 플랫폼별 Client ID·Client Secret·URL scheme 설정을 준비한다. 서버·앱 허용 목록도 함께 반영한다.</td><td>신규·기존·연결·해제·실패 및 카카오 기존 계정 이전·복구. Apple은 <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a>에서 먼저 판단한다.</td></tr>
-            <tr id="google-calendar"><td>Google Calendar 자동 동기화</td><td>Calendar API, OAuth scope·필요한 검증·redirect를 준비한다. 서버 <code>GOOGLE_CALENDAR_CLIENT_ID</code>·<code>GOOGLE_CALENDAR_CLIENT_SECRET</code>·<code>GOOGLE_CALENDAR_REDIRECT_URI</code>, <code>CALENDAR_SYNC_CLIENT</code>.</td><td>재연결·범위 변경의 남은 보완 후 실제 일정 생성·수정·삭제·토큰 갱신·동의 철회를 확인한다. 내부 일정과 파일 내보내기에 이 계약을 요구하지 않는다.</td></tr>
+            <tr id="google-calendar-contract"><td>Google Calendar 선택·프리미엄 자동 동기화</td><td>Calendar API, OAuth scope·필요한 검증·redirect를 준비한다. 서버 <code>GOOGLE_CALENDAR_CLIENT_ID</code>·<code>GOOGLE_CALENDAR_CLIENT_SECRET</code>·<code>GOOGLE_CALENDAR_REDIRECT_URI</code>, <code>CALENDAR_SYNC_CLIENT</code>.</td><td>선택·자동 전송은 10월 13일 반영했다. 연결 경합·권한 철회·업무 실패 격리의 잔여 판정과 실계정 확인은 남았다. <a href="#google-calendar">기존 연결 확인과 후속 공개 조건</a>을 따른다. 내부 일정과 파일 내보내기는 이 준비를 기다리지 않는다.</td></tr>
             <tr id="virtual-account"><td>플랫폼 가상계좌 수납</td><td>별도 제품 결정 후 가상계좌 이용 계약·발급·환불·웹훅 설정을 준비한다. 서버 <code>VIRTUAL_ACCOUNT_PROVIDER</code>와 해당 PG 설정.</td><td>실제 발급·입금·기한 만료·환불·중복 통지·장부 대조. 현재 주최자 계좌 직접 송금과 함께 켜지 않는다.</td></tr>
           </tbody>
         </table></div>
@@ -573,6 +594,21 @@ bundle exec fastlane android deploy track:internal</code></pre>
           외부 서비스를 다시 실행한 결과가 아니라 기존 실행 근거와 소스를 대조한 문서 갱신 기록이다.</p>
         <p>이전 참고 문서에 남은 Firebase 파일 복사 방식·시뮬레이션 상태·전체 PG 키 필수 안내를 현재 소스의 동작으로 그대로 옮기지 않았다.
           공급자 요건은 각 절의 공식 안내를 사용하며 실제 가입·제출 시 다시 확인한다.</p>
+      </section>
+<section id="google-calendar">
+        <h2>Google Calendar의 기존 연결 확인과 후속 공개 조건</h2>
+        <p><strong>10월 13일:</strong> 선택 전송·프리미엄 자동 전송의 서버·앱·관리자 설치 정의를 기본 브랜치에 반영했습니다.
+          동기화 정책·계정 결합·화면·설치 정의의 자동 검사 기록은 있으나 실제 Google 계정의 일정 반영을 증명한 결과는 아닙니다.</p>
+        <p><strong>기존 환경부터 대조:</strong> 운영자는 이미 캘린더 연동을 완료했다고 알렸습니다. 이번에 확인한 일부 로컬 환경의 연결 기록이 없다는 사실을 모든 환경의 미연결로 확대하지 않습니다.
+          실제 연결했던 프로젝트·계정·서버를 확인하기 전에는 API 설정이나 연결 권한을 새로 바꾸지 않습니다. Google 로그인 성공도 Calendar 권한·장기 갱신 토큰 확인을 대신하지 않습니다.</p>
+        <ol>
+          <li>기존 연결 환경과 앱/서버의 Google 프로젝트·동의 범위·모바일 복귀 설정을 대조합니다. 토큰이나 비밀키 원문은 증거 문서에 적지 않습니다.</li>
+          <li>남은 연결 경합·Google 권한 철회·원 업무 실패 격리 보완을 판정합니다. 다른 Google 계정으로의 이전은 현재 제공 범위가 아닙니다.</li>
+          <li>서명 앱과 실제 계정으로 미선택 제외·선택 생성/변경/삭제·실패 재시도·내용 변경 뒤 재선택, 자동 전체/지정·구독 만료/재개를 확인합니다.</li>
+          <li>처음 연결과 같은 계정 재연결의 장기 갱신 토큰·토큰 갱신·해제 후 전송 중단·복사본 유지, 앱 계정 전환의 정보 분리를 확인하고 후속 공개를 승인합니다.</li>
+        </ol>
+        <p>첫 출시 내부 캘린더와 일정 파일 내보내기는 이 후속 기능을 기다리지 않습니다.
+          <a href="../domains/10-calendar.html#google-sync">선택·프리미엄 자동 동기화의 상세 범위와 완료 기준</a> · <a href="launch-status.html#item-N-12-CALENDAR">Google Calendar의 남은 작업</a></p>
       </section>
     </main>
   </div>

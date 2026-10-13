@@ -763,6 +763,8 @@ footer.page-foot a { color: var(--brand); border: none; }
 .sidebar-backdrop { display: none; }
 
 @media (max-width: 1100px) {
+  /* Keep linked headings below the mobile navigation bar. */
+  main [id] { scroll-margin-top: 78px; }
   /* The topbar sits sticky at the top of the viewport */
   .mobile-topbar {
     position: sticky;

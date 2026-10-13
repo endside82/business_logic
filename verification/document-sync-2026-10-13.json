@@ -1,0 +1,504 @@
+{
+  "asOf": "2026-10-13T17:09:50.410080+09:00",
+  "scope": "프로필 첫 출시 두 기능과 클럽 폐쇄·운영자 환불·행동 제한·탈퇴·출금의 낡은 상태, 홈페이지 준비를 현재 소스와 대조해 HTML 문서 갱신",
+  "method": "현재 실행표·할 일 정본, main 소스와 기존 검사 기록을 대조했다. 사이트 전체의 링크·상태 데이터는 검사했으나 175개 기능의 제품 소스를 전부 재감사한 기록은 아니다. 제품 테스트·외부 연동·실기기·배포를 새로 실행하지 않았다.",
+  "preexistingEdits": {
+    "path": "docs/qa/external-readiness.html",
+    "initialSnapshotSha256": "7dec309d50a9e3d6f19e718d14df42be09ac44b715a433998728f490ec28e06e",
+    "preserved": true,
+    "preservedAddedLines": 11,
+    "note": "S3 가입·버킷 준비 대기와 메모리가 넉넉한 환경에서의 채팅 확인, Apple 가입 대기를 기록한 기존 미커밋 수정 보존"
+  },
+  "observedHeads": {
+    "docs_workspace": "e2986b374cc28968e6c34c0370dae98eef12a39c",
+    "business_logic": "25a99e111460356d3c73f666f9f94757249b756f",
+    "community_api": "9d0b2bb425eee2b866b65f17e802c8f921a24353",
+    "community_app": "896ab3c1c63732c0f903b2d400142c22128374b6",
+    "community_admin_api": "30ed32efb795aee0a7a2921f26b31ad8aabbdc49",
+    "community_admin_front": "880914845270d3de8ef8045a2e25f20b7eaf3250",
+    "saisoop-web": "853e3e7db0c7b9f7a2403ff434c88ba5df7b9b68"
+  },
+  "sourceFiles": [
+    {
+      "path": "docs/IMPLEMENTATION_WORKBOARD.md",
+      "sha256": "8c1a59d16bb7a8ac35511f83fc801b4c5cb17b28a59153b371b501ae0f1b54a8"
+    },
+    {
+      "path": "docs/plan/NEXT_WORK.md",
+      "sha256": "a6901db1c1e309aeb60fd7b310ff20e3db87d1646f64b23a1f2ae0a5b480fd4a"
+    },
+    {
+      "path": "docs/plan/LAUNCH_BLOCKER_REMEDIATION_PLAN.md",
+      "sha256": "92888586cc5ea306b0ea751b2f6251d548e438bde2094839c2ec9f83a25a1fa4"
+    },
+    {
+      "path": "docs/plan/evidence/DEFECT-FIX-2026-10-09/H182S/PROGRESS.md",
+      "sha256": "9f023661e62aedfe3f2c089d1c30cbc15b60c43fdccc56bcdacfab2cd74c6620"
+    },
+    {
+      "path": "docs/plan/evidence/DEFECT-FIX-2026-10-09/H182A/PROGRESS.md",
+      "sha256": "3ea5e075376d90c1fa747a7b1d0d8a5002f9f2c8d87f73f2c171082aa63f4ce6"
+    },
+    {
+      "path": "docs/plan/evidence/DEFECT-FIX-2026-10-09/H183/PROGRESS.md",
+      "sha256": "5abb2fda1e387acb6e1e645553eac63db4bcd11681622e6c70ef694a316fb1bc"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/club/controller/UserClubPostController.java",
+      "sha256": "7e0c806d1e9f9d4a4f27092b7c8c6f606727a8dc51bcd5235c5cfb6bb21345cd"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/club/service/UserClubPostService.java",
+      "sha256": "9e548c88e6ed2090fdee6a98b8122ba97b5db9bd0e775d574ccf1895356731a3"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/club/repository/query/UserClubPostQueryRepository.java",
+      "sha256": "2548fc5205c149d841bdd255a062d5741fc933e799273bfa4f0f4cb8246dd8b0"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/club/vo/UserClubPostVo.java",
+      "sha256": "de4684a3a3e34ff2dc2a62fb1abd6d85c1576afc86eaa5ff36377e5fc82697f9"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/regularmeeting/vo/RegularMeetingReviewVo.java",
+      "sha256": "93191cff37182c20c792167e1707f39b09774167395bd1ea22e61631c784d5b0"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/regularmeeting/util/RegularMeetingReviewMapper.java",
+      "sha256": "de419018128501d8f6fe046d7ee7da6d8e38533e474375f0e238bf9ff058545c"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingReviewService.java",
+      "sha256": "594692783794e43a463c213e5833b9706c624f9be03eb5587f6fd2d6d0d66bbb"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/club/service/ClubService.java",
+      "sha256": "c09b6e4634532a8ae7f8bb17ebe47faa779ccb8e8f8141fb82a94fd31a903200"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/account/service/AccountClosureEntry.java",
+      "sha256": "06c66b3c83ad5d829364aa6243db8c481fdff88d74809d3b96dc3f8faac5d1f4"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/plan/service/PlanAccountClosure.java",
+      "sha256": "f20980da74678c6639625d663a29c2c3c9379486d3ec47cf40a00c1c272e896f"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/service/HostingTicketAccountClosure.java",
+      "sha256": "cdc28bfc72ec71eadc4427830a6759e05cff047e4ae5fafd80ad6d2ee2170bf6"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/withdrawal/payout/toss/PayoutSellerBinding.java",
+      "sha256": "ee5179e0a01a4d1fdff3246f903d194479e538014d0874c4ed029a147839aac6"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalResolutionService.java",
+      "sha256": "01c668f9d0f910e3a1e8470903eba0fb79224db45f82b9ffa87f67d7050c3d4f"
+    },
+    {
+      "path": "community_api/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalOutboxWorker.java",
+      "sha256": "48e75099d8476aba9b7fa7ab97696605dada70dd6e9cd9ad023b528ef81139f8"
+    },
+    {
+      "path": "community_app/lib/data/api/club_post_api.dart",
+      "sha256": "cd3e6a9815fa2de7e64ce0c341a7614b4d8d480d0941f21493fb95848978dba2"
+    },
+    {
+      "path": "community_app/lib/data/repositories/club_board_repository.dart",
+      "sha256": "89e3e2657b3cf505c165e9000811976479abd88cbc48a81fb4afe0f950efb7bd"
+    },
+    {
+      "path": "community_app/lib/domain/providers/club/user_club_posts_provider.dart",
+      "sha256": "9e2131dc361351dc99f63bbefadead375ff0078ee7b729981903bf9495d2ccd6"
+    },
+    {
+      "path": "community_app/lib/presentation/profile/screens/user_profile_screen.dart",
+      "sha256": "6525dd3e2ba0c675d77a65d30192d31217f3f42b9d33c5ef9b966a29e6e651db"
+    },
+    {
+      "path": "community_app/lib/presentation/profile/widgets/profile_authored_posts.dart",
+      "sha256": "d2a1e6dc92624e3b64a22973cb6c492e4a366dc4bc000bab40a6989d0b069150"
+    },
+    {
+      "path": "community_app/lib/presentation/regular_meeting/widgets/regular_meeting_reviews.dart",
+      "sha256": "7c8facc1b8e832cbe85e927cc56abc8b4a70f53c8e392a054a54a77ab82a5a32"
+    },
+    {
+      "path": "community_app/lib/presentation/club/widgets/club_delete_dialog.dart",
+      "sha256": "98f3804c59775623525d7e464e499edf2c6894dc68fb6de23f9d4d282b7a9ed8"
+    },
+    {
+      "path": "community_app/lib/presentation/profile/screens/data_privacy_screen.dart",
+      "sha256": "54cbbc84942331d65afddebbc1109345d2a01adeb9e2f032a1ba52cc53e141bf"
+    },
+    {
+      "path": "community_app/lib/core/config/app_config.dart",
+      "sha256": "4ebc547768dd4ff9ebb33cdbadbde8dee1a26c6543d4717c2a5900feef61a8a9"
+    },
+    {
+      "path": "community_app/android/app/build.gradle.kts",
+      "sha256": "95de363793ac5941eb3599a88c9407d9879d039e7fa60d2ce9122a43e40efb09"
+    },
+    {
+      "path": "community_admin_api/src/main/java/com/endside/community/club/controller/ManageClubPaymentRefundController.java",
+      "sha256": "929b4ad1c7fdcf4cfe784f18d97cef5a7766492f487015b40280c5e471705eb7"
+    },
+    {
+      "path": "community_admin_api/src/main/java/com/endside/community/warning/service/PlatformSanctionService.java",
+      "sha256": "de4f4b75cb9abf2587eafbd421b372e2b47b899c43b24ab617d119d5a9a75128"
+    },
+    {
+      "path": "community_admin_front/src/features/operations/ui/club-detail-screen.tsx",
+      "sha256": "4ca75f69c48ebd3beed23d3e976e07e50f30e591cfbbcbbd43605099b9416242"
+    },
+    {
+      "path": "community_admin_front/src/features/operations/api/platform-sanctions-api.ts",
+      "sha256": "5c8e1d9bae05a8a6df04b55b8d534605e6eedcde41dc84a2d8ea3ebaaedbf044"
+    },
+    {
+      "path": "community_admin_front/src/features/operations/ui/platform-sanctions-screen.tsx",
+      "sha256": "9d3461a3d109d2c6978bae02a3a750f308b1c518c506021c8d195826e270ae01"
+    }
+  ],
+  "changes": [
+    {
+      "topic": "프로필 작성 클럽 글",
+      "commits": [
+        "community_api a15473f3",
+        "community_app ceba12e7"
+      ],
+      "fact": "현재 가입 클럽·작성자·글 상태와 프로필 공개 정책으로 목록·건수를 함께 제한. 20개씩 최신순·원문 이동·복귀 재조회.",
+      "evidence": "H182S/PROGRESS: 저장소 5·서비스 7·Controller 3·E2E 9 및 출시 범위 검사. H182A/PROGRESS: 표적·영향 앱 1,173건과 분석 기준선 검사 기록.",
+      "limit": "서명 앱·실제 로그인 서버 왕복 미실행. 기존 프로필 탭의 이용 등급을 새 집계 기능의 실제 이용 증거로 확대하지 않음"
+    },
+    {
+      "topic": "정기모임 후기 이름 링크",
+      "commits": [
+        "community_api d0e05196",
+        "community_app 21d0f402"
+      ],
+      "fact": "후기 실제 작성자·평가 대상 각각 연결. 이름 없음·유효하지 않은 ID는 안내만. 차단·복귀 후 두 범위 목록·건수·평균 재조회.",
+      "evidence": "H183/PROGRESS: 서버 서비스 5·Controller 4·저장소 9, 앱 영향 257건 기록. 서버 영향 XML 수는 테스트 수로 합산하지 않음.",
+      "limit": "실제 서버·서명 앱·기기별 뒤로가기 확인은 남음"
+    },
+    {
+      "topic": "클럽 폐쇄·개별 환불",
+      "commits": [
+        "community_api 392c5ccda",
+        "community_app e1e9cd20",
+        "community_api 83bb078b1",
+        "community_admin_front c088fef"
+      ],
+      "fact": "통화별 금액 확인과 변경 시 재확인, 운영자 기부·나간 회원 가입비 환불 반영.",
+      "limit": "실제 지갑 내역·운영 계정 대조 별도. 플랫폼 결제 제한 유지"
+    },
+    {
+      "topic": "제재·탈퇴",
+      "commits": [
+        "community_admin_front e084498",
+        "community_app 7ff00c6a",
+        "community_api 4329fed8c",
+        "community_api 996d834ab"
+      ],
+      "fact": "행동 제한 부여·철회·위임, 보관금 동의·판매 내리기·개최권·권리 정리 소스 확인.",
+      "limit": "추가 경합·구조 개선을 전부 완료로 올리지 않음"
+    },
+    {
+      "topic": "출금·지급",
+      "commits": [
+        "community_api 4d1b33ccd",
+        "community_api 7240a11fa",
+        "community_api 0919f5ee4",
+        "community_api 5f39b2417"
+      ],
+      "fact": "신청 송금처별 수취인 연결·재투입 전후 구분·거래번호 조회 반영.",
+      "limit": "후속 출시 유지. 수취인 심사·조회 계약·실지급과 남은 복구 보완 필요"
+    },
+    {
+      "topic": "홈페이지·앱 링크",
+      "commits": [
+        "saisoop-web 853e3e7",
+        "community_app 304ae172",
+        "community_app 2078287c"
+      ],
+      "fact": "안내 페이지·연결 파일은 홈페이지 반영 기록, 앱 주소·Android APP_LINK_HOST 기본값은 현재 소스로 확인.",
+      "limit": "공개 사이트 재배포·외부 HTTP 검증은 이번에 실행하지 않음. 운영자 정보·문서 검토·Play 앱 서명 키·실기기 링크 확인은 남음"
+    },
+    {
+      "topic": "모바일 문서 절 이동",
+      "fact": "브라우저 확인에서 고정 메뉴가 절 제목을 가려 모바일 앵커 스크롤 여백을 추가함"
+    }
+  ],
+  "updatedDocuments": [
+    {
+      "path": "docs/domains/13-profile.html",
+      "sha256": "a5cacbd8becc98213b90327fcb9aaf1bbc218c126dfff79242b55fa665d9f27b"
+    },
+    {
+      "path": "docs/features/F13-01.html",
+      "sha256": "a406f92dde38e3c19d9b022bffcc65192e8323d1bc4ad6707b1d6243e74bd1a5"
+    },
+    {
+      "path": "docs/features/F17-02.html",
+      "sha256": "8d3d9d8cab7b6332912f54656177f9e34b4d8db1d513d0dea67a630fbbc7b906"
+    },
+    {
+      "path": "docs/features/F11-02.html",
+      "sha256": "7822a274b50a1a3a3b664c7d57d90a76a5c23dfe690b192b7ed9525c9d530038"
+    },
+    {
+      "path": "docs/domains/17-regular-meeting.html",
+      "sha256": "e66bd0d455aa07f34ba25fdd0c65ab1bad7f13868d34feec3cdaf7ff2755b49a"
+    },
+    {
+      "path": "docs/features/F04-08.html",
+      "sha256": "7bcdd18742749816f487670c492c4b4ae3367bdc7c6efe72655616cf9a2d9642"
+    },
+    {
+      "path": "docs/features/F04-03.html",
+      "sha256": "37416c182a0fdc2595c6e7a2eeb1a1a39f53bc921ccc3db037d3d026a22d9f34"
+    },
+    {
+      "path": "docs/features/F04-16.html",
+      "sha256": "dc32a62b6238d41b7f3191115818e51d9178da4fb3d8c4fabe7f413074abe145"
+    },
+    {
+      "path": "docs/features/F04-14.html",
+      "sha256": "873c5a45ae21d72bb2cfcfe39f3db0bf0813e1d05c3d812bd4e8f6fecd9d96a4"
+    },
+    {
+      "path": "docs/features/F13-06.html",
+      "sha256": "f3f0405e5eaeed30d1c8642702d86375ad3a5833d00a7583614e4fc9be71259f"
+    },
+    {
+      "path": "docs/features/F13-07.html",
+      "sha256": "fe10393ed4ac9fa8bdf8746f12f697421052f5c8e5d5b8fe80403d3b94419c07"
+    },
+    {
+      "path": "docs/features/F08-14.html",
+      "sha256": "3b08cbc60be7c5f5770dc55d75f4dc86bc17203753e924409cb89fbbc19dcf6d"
+    },
+    {
+      "path": "docs/features/F15-08.html",
+      "sha256": "57e5f62bfec0c34081a6935d62e98ac650393d1c17d0b3cf6c58b10487c50a5d"
+    },
+    {
+      "path": "docs/qa/launch-status.html",
+      "sha256": "61d060d8d5d724f908312eb566599cafe3a23fc6debdbef0e5b7030d1ed1bb9a"
+    },
+    {
+      "path": "docs/index.html",
+      "sha256": "4357e43149935631f19fe117151cbb8dd58d8e37396d8f81a73e43efc88de601"
+    },
+    {
+      "path": "docs/qa/feature-status.html",
+      "sha256": "2b09e836d46f9ed518c2fae40a2df1d577dcec945c0d0419a5988a929ea36f20"
+    },
+    {
+      "path": "docs/qa/release.html",
+      "sha256": "f90128e98318ad4d9f96aa8dbdd7de2909e45880d18d3b0b90d0a326a4e3e655"
+    },
+    {
+      "path": "docs/overview/changelog.html",
+      "sha256": "465a1bba9db9ec50556b1c81f746486798a61b279c7d83e072f60540856765ea"
+    },
+    {
+      "path": "docs/qa/external-readiness.html",
+      "sha256": "bd407f90cfbc08cdc82016b61544a5a604a326d16d66286b70bcbd7ef58c0414"
+    },
+    {
+      "path": "docs/assets/launch-status.js",
+      "sha256": "311eb69619cf77642ad23c44a16993af64b4eaaa37d950cf53ff1f394ee24109"
+    },
+    {
+      "path": "00_README.md",
+      "sha256": "b4130eeac7fcc5e055f19db772ba39efc505cbd4e4e94badc5547d8d3ca2585a"
+    },
+    {
+      "path": "docs/features/F04-15.html",
+      "sha256": "a152b15e4f50968ffee52b8b9b5af3fd4364b5675008c17932aaea05cf3c00d7"
+    },
+    {
+      "path": "docs/features/F06-09.html",
+      "sha256": "da9bffad9bad51acfe2afb976d1823cc31f2ce37d75d423bc9a224856595e236"
+    },
+    {
+      "path": "docs/features/F07-10.html",
+      "sha256": "1277e60ef2831715c577a743fc9c933c69da44d57ddbf9f73535c85e1d2603a9"
+    },
+    {
+      "path": "docs/assets/styles.css",
+      "sha256": "6eb2c6d1ce88861f863d235e1f6491fd9d38cb3291eba19f10b9f8d51c1ae3ee"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "d63aeaa0562143a6c2bf4acb8bae6d27cec30ee733f64d216d796916aa33697c"
+    }
+  ],
+  "validation": {
+    "releaseScopeAndLinks": {
+      "command": "node verification/check_release_scope.mjs",
+      "result": "passed",
+      "pages": 230,
+      "checkedLinks": 2006,
+      "featureScopes": {
+        "open": 134,
+        "partial": 16,
+        "sealed": 24,
+        "retired": 1
+      },
+      "classifiedTasks": 30
+    },
+    "htmlStructure": {
+      "pages": 22,
+      "inlineScripts": 2,
+      "errors": []
+    },
+    "javascriptSyntax": {
+      "command": "node --check docs/assets/launch-status.js",
+      "result": "passed"
+    },
+    "browser": {
+      "result": "passed",
+      "checks": [
+        {
+          "file": "index.html",
+          "anchor": "source-update-2026-10-13",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "community — 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "qa/launch-status.html",
+          "anchor": "document-sync-2026-10-13",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "첫 출시 현황과 남은 준비 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "qa/launch-status.html",
+          "anchor": "item-N-PROFILE",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "첫 출시 현황과 남은 준비 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "qa/feature-status.html",
+          "anchor": "source-update-2026-10-13",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "기능별 출시 상태와 다음 할 일 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "domains/13-profile.html",
+          "anchor": "authored-club-posts",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "13 프로필·설정 — community PRD",
+          "errors": []
+        },
+        {
+          "file": "features/F17-02.html",
+          "anchor": "review-person-links",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "F17-02 정기모임 상세 조회 — community PRD",
+          "errors": []
+        },
+        {
+          "file": "qa/external-readiness.html",
+          "anchor": "public-pages-2026-10-13",
+          "width": 1440,
+          "status": 200,
+          "scrollWidth": 1440,
+          "title": "외부 서비스 가입·계약과 출시 준비 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "index.html",
+          "anchor": "source-update-2026-10-13",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "community — 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "qa/launch-status.html",
+          "anchor": "document-sync-2026-10-13",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "첫 출시 현황과 남은 준비 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "qa/launch-status.html",
+          "anchor": "item-N-PROFILE",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "첫 출시 현황과 남은 준비 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "qa/feature-status.html",
+          "anchor": "source-update-2026-10-13",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "기능별 출시 상태와 다음 할 일 — community 제품 문서",
+          "errors": []
+        },
+        {
+          "file": "domains/13-profile.html",
+          "anchor": "authored-club-posts",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "13 프로필·설정 — community PRD",
+          "errors": []
+        },
+        {
+          "file": "features/F17-02.html",
+          "anchor": "review-person-links",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "F17-02 정기모임 상세 조회 — community PRD",
+          "errors": []
+        },
+        {
+          "file": "qa/external-readiness.html",
+          "anchor": "public-pages-2026-10-13",
+          "width": 390,
+          "status": 200,
+          "scrollWidth": 390,
+          "title": "외부 서비스 가입·계약과 출시 준비 — community 제품 문서",
+          "errors": []
+        }
+      ],
+      "note": "로컬 docs를 Chromium에서 표시. 1440px·390px에서 페이지 오류·가로 넘침 없음. 화면 이미지는 임시 작업 폴더에 두며 Git에 추가하지 않음."
+    },
+    "whitespace": {
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  },
+  "delivery": "로컬 문서 갱신. 이번 작업에서 커밋·푸시·사이트 배포는 실행하지 않음.",
+  "supportingFiles": [
+    "00_README.md",
+    ".gitignore",
+    "verification/document-sync-2026-10-13.json"
+  ]
+}
