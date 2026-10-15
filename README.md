@@ -35,7 +35,8 @@ community는 관심사 기반의 모임을 찾고 참여한 뒤, **함께 쓴 �
 | 사용자는 어떻게 움직이나 | [사용자 여정](https://endside82.github.io/business_logic/overview/journeys.html) |
 | 기능을 하나씩 찾기 | [기능 목록](https://endside82.github.io/business_logic/features/catalog.html) |
 | 대표 흐름 — 비용 나누기 | [모임 비용 나누기](https://endside82.github.io/business_logic/domains/07-settlement.html) |
-| 지금 어디까지 왔나 | [첫 출시 현황](https://endside82.github.io/business_logic/qa/launch-status.html) · [기능별 출시 상태](https://endside82.github.io/business_logic/qa/feature-status.html) |
+| **무엇부터 해야 하나** | [전체 현황·다음 할 일](https://endside82.github.io/business_logic/) — 출시 흐름·병행 작업·필요한 자원·전체 항목 |
+| 기능 하나의 구현·검사 근거 | [기능별 구현·검사 기록](https://endside82.github.io/business_logic/qa/feature-status.html) |
 | 화면을 실제로 확인했나 | [화면 검수](https://endside82.github.io/business_logic/qa/screen-review.html) |
 
 <br>
@@ -44,7 +45,7 @@ community는 관심사 기반의 모임을 찾고 참여한 뒤, **함께 쓴 �
 
 - 문서는 **구현 / 자동 테스트 / 실제 환경**을 나눠 표시한다. 기능 설명이 있다는 사실만으로 지금 사용할 수 있다는 뜻은 아니다.
 - 등록된 시나리오 수는 **검사 항목 수이며 통과 건수가 아니다.**
-- 현재 외부 고객 공개는 보류 중이다. 공개 범위와 남은 준비는 [첫 출시 현황](https://endside82.github.io/business_logic/qa/launch-status.html)에서 확인한다.
+- 현재 외부 고객 공개는 보류 중이다. 우선순위·선행 조건·브랜딩·로고 결정과 필요한 자원은 [전체 현황·다음 할 일](https://endside82.github.io/business_logic/)에서 확인한다.
 - 문서에 실린 앱 화면은 로컬 시험 서버에 연결해 촬영한 실제 화면이며 합성하지 않았다. 등장하는 모임·회원·사진은 소개를 위해 준비한 **가상 예시**다.
 
 ---

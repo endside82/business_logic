@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>모임 공유·설치 후 복원 계획 — 사이숲 제품 문서</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-document-kind="reference" data-base="../">
+  <div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+    <header class="page-head">
+      <div class="breadcrumb"><a href="../index.html">전체 현황·다음 할 일</a> › 모임 공유</div>
+      <h1>모임 공유·설치 후 복원</h1>
+      <p class="lede">링크나 QR을 받은 사람이 설치·가입을 마친 뒤 원래 모임 또는 클럽 소개로 도착하게 하는 계획입니다. 2026년 10월 15일 조사·설계 기준이며 제품 구현은 미착수입니다.</p>
+    </header>
+    <section id="current">
+      <h2>이미 있는 기반과 먼저 고칠 범위</h2>
+      <p>기존 모임 링크·공유 토큰·웹의 도메인 검증 파일과 미설치 안내는 있습니다. 조사에서는 공유 토큰의 서버 로그 기록, 신규 가입 후 목적지 유실, 플랫폼 링크 설정과 앱의 처리 범위 불일치 등을 확인했습니다.</p>
+      <p><strong>다음 행동은 기존 이용에 노출되는 공백의 수정 범위를 정하는 것</strong>입니다. QR·설치 복원·회원 전달·단체 채팅까지 전체 신규 기능을 첫 출시 필수로 편입한 상태는 아닙니다.</p>
+      <p>초기 링크 유실이나 iOS 중복 이동이 모든 실제 기기에서 발생한다고 입증한 것은 아닙니다. 소스·관측 검사와 서명 기기 여정은 구분합니다.</p>
+    </section>
+    <section id="sequence">
+      <h2>구현할 순서와 얻는 결과</h2>
+      <div class="table-wrap"><table><thead><tr><th>순서</th><th>먼저 필요한 것</th><th>끝냈을 때의 결과</th></tr></thead><tbody>
+        <tr><td>주소·로그 정리</td><td>공개 주소·서명·OS 연결 계약</td><td>공유 증명이 로그에 남지 않고 발신 주소와 수신 범위가 일치</td></tr>
+        <tr><td>링크 수신 통일</td><td>위 주소 계약</td><td>채팅·카카오·외부 링크가 같은 규칙으로 같은 목적지를 해석</td></tr>
+        <tr><td>가입·재시작 복원</td><td>링크 판정과 인증 복귀 계약</td><td>신규 가입·메일 인증·온보딩·앱 재시작 뒤에도 원래 목적지 유지</td></tr>
+        <tr><td>공유 메뉴·QR</td><td>서버가 판정한 발신 권한·목적지</td><td>복사·SNS·QR이 같은 URL을 사용하고 QR 이미지를 저장</td></tr>
+        <tr><td>웹·Android 설치 복원</td><td>웹 안내·전달 정보·Play 설치 경로</td><td>미설치 사용자가 실제 설치와 인증 뒤 원래 목적지 도착</td></tr>
+        <tr><td>회원 지정 전달</td><td>공유 메뉴·현재 메시지 전송 자격</td><td>수신 가능한 회원에게 중복 없이 전달하고 실패한 대상만 재시도</td></tr>
+        <tr><td>최종 기기 확인</td><td>동일 버전의 서버·앱·웹·실시간과 서명 설정</td><td>두 기기의 링크·QR·가입·설치·재연결·권한 회수 결과 기록</td></tr>
+      </tbody></table></div>
+      <p><strong>병행할 일:</strong> iOS 자동 복원은 초기에 작게 실증해 가능한 범위를 정합니다. 원본 링크를 다시 누르는 수동 복원과 추가 행동 없는 자동 복원을 각각 기록합니다.</p>
+      <p><strong>별도 단위:</strong> 클럽 단체 채팅은 방·참여자·읽음·보존·관리 권한부터 설계합니다. 기존 1:1 메시지를 여러 번 보내는 것으로 단체 채팅 완료를 대신하지 않습니다.</p>
+    </section>
+    <section id="resources">
+      <h2>필요한 자원</h2>
+      <ul>
+        <li>공개 도메인과 앱·API·소개 웹에서 사용할 동일한 주소 계약</li>
+        <li>Android·iOS 서명, 도메인 검증 파일, 실제 스토어 주소와 설치 경로</li>
+        <li>Android와 iPhone, 신규·기존 회원과 주최자·클럽 역할별 계정</li>
+        <li>iOS 자동 복원의 실증 방식과 공개할 수신 대상·공유 권한 결정</li>
+      </ul>
+      <p><a href="external-readiness.html#android-distribution">Android 배포 준비</a> · <a href="external-readiness.html#ios-distribution">iOS 배포 준비</a> · <a href="../index.html#view-resources">전체 자원 현황</a></p>
+    </section>
+    <section id="completion">
+      <h2>완료를 판단할 핵심 결과</h2>
+      <p>독립 이벤트는 해당 모임으로, 외부 클럽 모임 링크는 해당 클럽 소개로 도착해야 합니다. 링크를 여는 것만으로 클럽 가입이나 모임 신청이 자동 처리되지는 않습니다.</p>
+      <p>로그아웃·신규 가입·메일 왕복·온보딩·프로세스 종료·실제 스토어 설치를 각각 확인합니다. 토큰 재발급·대상 삭제·차단·권한 회수와 응답 유실 뒤 재시도도 포함합니다. 기기·버전·도착 대상·추가 행동 수와 결과를 남깁니다.</p>
+    </section>
+    <details><summary>상세 설계 원문의 위치</summary>
+      <p>작업공간의 <code>docs/plan/event-sharing/README.md</code>, <code>LINK_CONTRACT.md</code>, <code>EXECUTION_PLAN.md</code>에 소스 진입점·제안 API·수정 파일·단위별 검사 계약이 있습니다. 현재 작업 범위는 <code>docs/plan/NEXT_WORK.md</code>에서 관리합니다.</p>
+    </details>
+  </main></div>
+  <script src="../assets/sidebar.js"></script><script src="../assets/app.js"></script>
+</body>
+</html>

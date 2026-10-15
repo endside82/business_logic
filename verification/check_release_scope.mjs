@@ -15,9 +15,12 @@ const launch = context.window.LAUNCH_STATUS;
 const features = context.window.PRD_FEATURES;
 const tour = context.window.APP_TOUR;
 const tourCoverage = context.window.APP_TOUR_COVERAGE;
+const workPage = fs.readFileSync(path.join(docs, 'index.html'), 'utf8');
+const work = JSON.parse(workPage.match(/<script type="application\/json" id="work-data">([\s\S]*?)<\/script>/)[1]);
 // These anchors are generated from the same registries as the actual pages.
 // Do not accept arbitrary shot-/feature- prefixes: typos must still fail.
 const renderedAnchors = new Map([
+  [path.join(docs, 'index.html'), new Set(work.tasks.map(task => `task-${task.id}`))],
   [path.join(docs, 'qa/launch-status.html'), new Set(launch.openItems.map(item => `item-${item.id}`))],
   [path.join(docs, 'qa/screen-review.html'), new Set([
     ...tour.shots.map(shot => `shot-${shot.id}`),
@@ -124,6 +127,15 @@ for (const page of pages) {
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '')
     .replace(/<!--[\s\S]*?-->/g, '');
   const hrefs = Array.from(source.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g), match => match[1]);
+  if (page === 'index.html') {
+    work.tasks.forEach(task => { hrefs.push(task.source); task.evidenceLinks.forEach(link => hrefs.push(link.href)); });
+    work.resources.forEach(resource => hrefs.push(resource.href));
+    work.plans.forEach(plan => hrefs.push(plan.source, plan.detail));
+    work.dependencies.filter(item => item.href).forEach(item => hrefs.push(item.href));
+    // Sidebar links are generated at runtime, but must obey the same site boundary.
+    const sidebar = fs.readFileSync(path.join(docs, 'assets/sidebar.js'), 'utf8');
+    for (const match of sidebar.matchAll(/href: '([^']+)'/g)) hrefs.push(match[1]);
+  }
   if (page === 'qa/launch-status.html') {
     launch.openItems.forEach(item => {
       if (item.docPath) hrefs.push('../' + item.docPath);

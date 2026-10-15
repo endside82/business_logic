@@ -20,6 +20,7 @@
 !/verification/sync_source_reference_docs.mjs
 !/verification/source_references.test.mjs
 !/verification/check_release_scope.mjs
+!/verification/work_overview.test.mjs
 !/verification/check_app_tour.mjs
 !/verification/check_app_tour_coverage.mjs
 

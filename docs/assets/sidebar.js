@@ -230,7 +230,7 @@
     {
       heading: '시작점',
       links: [
-        { href: 'index.html', label: '서비스 개관' },
+        { href: 'index.html', label: '전체 현황·다음 할 일' },
         { href: 'tour/index.html', label: '실제 화면으로 앱 둘러보기' },
       ],
     },
@@ -343,26 +343,20 @@
       ],
     },
     {
-      heading: 'QA & 릴리즈',
+      heading: '검증·설정 자료',
       links: [
         { href: 'qa/screen-review.html', label: '화면 검수와 남은 촬영' },
-        { href: 'qa/launch-status.html', label: '첫 출시 현황' },
         { href: 'qa/external-readiness.html', label: '외부 서비스 가입·계약' },
-        { href: 'qa/feature-status.html', label: '기능별 출시 상태' },
+        { href: 'qa/feature-status.html', label: '기능별 구현·검사 기록' },
         { href: 'qa/scenario-completeness.html', label: '기능별 시나리오 완성도' },
-        { href: 'qa/migration-status.html', label: 'PRD 문서 상태' },
-        { href: 'qa/completion-criteria.html', label: '출시 완료 기준·승인 기록' },
-        { href: 'qa/acceptance.html', label: '전체 수용 기준' },
-        { href: 'qa/coverage.html',   label: '시나리오 커버리지' },
-        { href: 'qa/exceptions.html', label: '예외·엣지 케이스' },
-        { href: 'qa/release.html',    label: '릴리즈 체크리스트' },
+        { href: 'qa/completion-criteria.html', label: '검증·공개 승인 기준' },
       ],
     },
   ];
 
   // Figure out which domain (if any) the current page belongs to so we can
   // auto-expand its child list.
-  const currentPath = location.pathname.replace(/\\/g, '/');
+  const currentPath = location.pathname.replace(/\\/g, '/').replace(/\/$/, '/index.html');
   let activeDomainSlug = null;
   const domainMatch = currentPath.match(/domains\/([\w-]+)\.html$/);
   if (domainMatch) activeDomainSlug = domainMatch[1];
@@ -415,8 +409,8 @@
   // Mark the active link (works for domain pages and feature pages)
   placeholder.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href') || '';
-    const target = href.split('/').slice(-2).join('/');
-    if (currentPath.endsWith(target) || currentPath.endsWith('/' + target)) {
+    const target = new URL(href, location.href).pathname.replace(/\/$/, '/index.html');
+    if (currentPath === target) {
       a.classList.add('active');
     }
   });

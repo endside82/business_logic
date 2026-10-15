@@ -857,9 +857,9 @@ window.LAUNCH_STATUS = (function () {
     id: 'N-12-CALENDAR', impact: 'next', kind: '기존 기능 보완·실제 연결 확인', owner: '운영자',
     title: 'Google Calendar 선택·프리미엄 자동 동기화', features: [], docPath: 'domains/10-calendar.html#google-sync',
     implementationReady: true,
-    summary: '10월 13일 변경 비교·개별/전체 선택 전송, 프리미엄 전체/지정 자동 동기화와 같은 Google 계정 재연결 보호를 기본 브랜치에 반영했다. 자동 전송은 기본 꺼짐이다. 연결 경합·Google 권한 철회·업무 실패 격리 보완과 실계정 증명은 남았다. 첫 출시는 내부 캘린더·일회성 파일 내보내기만 제공한다.',
-    actionLabel: '기존 연결 환경 대조·잔여 보완 후 실계정 확인',
-    nextAction: '운영자가 이미 연결했다고 확인한 환경을 먼저 찾는다. 기존 설정·권한을 임의로 바꾸지 않는다. 연결 경합·철회·업무 실패 격리의 남은 작업을 판정한 뒤 서명 앱과 실제 Google 계정으로 선택 전송·자동 대상·구독 만료/재개·같은 계정 재연결·앱 계정 전환을 확인한다.',
+    summary: '10월 13일 변경 비교·개별/전체 선택 전송, 프리미엄 전체/지정 자동 동기화와 같은 Google 계정 재연결 보호를 기본 브랜치에 반영했다. 자동 전송은 기본 꺼짐이다. Android 에뮬레이터의 실제 Google 계정으로 생성·변경·삭제·토큰 갱신·해제를 확인했다. 운영 OAuth·물리 기기·iOS와 Google 권한 철회는 남았다. 업무 실패 격리는 출시 뒤 구조 개선이다. 첫 출시는 내부 캘린더·일회성 파일 내보내기만 제공한다.',
+    actionLabel: '운영 OAuth·물리 기기·iOS와 Google 권한 철회 확인',
+    nextAction: '기존 Android 에뮬레이터 실계정 기록을 재사용한다. 운영 OAuth 공개·배포 뒤 물리 기기와 iOS 재연결을 확인하고 Google 측 권한 철회를 보완한다. 업무 실패 격리는 별도 출시 뒤 구조 개선으로 관리한다.',
     doneWhen: '선택하지 않은 일정은 보내지 않고 선택한 생성·변경·삭제만 실제 Google에 한 번 반영된다. 화면을 본 뒤 내용이 바뀌면 다시 선택하며 실패 재시도·계정 전환으로 일정이 섞이지 않는다. 자동 대상과 수동 체크는 독립이고 구독 만료 시 자동만 멈춘다. 해제 시 자동 중지·토큰 제거·Google 복사본 유지와 별도의 권한 철회 정책을 확인한다. 잔여 보완 판정·실계정 증거·공개 승인을 기록한 뒤에만 후속으로 연다.'
   }, {
     id: 'N-13-BANK', impact: 'next', kind: '추가 개발', owner: '운영자',
@@ -901,7 +901,7 @@ window.LAUNCH_STATUS = (function () {
     'N-08-EVENT-RULE': ['environment', '모임별 점수 확정·회수 구현 있음 — 첫 출시 포함', '자동 테스트와 개발용 앱의 공개·점수 안내 확인', '배포 서버·기존 공개 모임을 유지할 때만 누락 점수 확인'],
     'N-10': ['environment', '로그인 연결·제공자별 성공·실패 기록·기간별 집계·관리자 화면 구현', '공개 API 전체 관문·관리자 API·관리자 웹 자동 검사 통과 기록 있음. 실제 공급자 계정은 미확인', '제공자 설정·실계정·서명 앱·기존 카카오 계정의 이전·복구 계획'],
     'N-09': ['decision', '기존 공개 조회 설계 폐기', '폐기된 기능은 검사 대상 아님', '공유 대상·권한·개인정보에 대한 새 제품 결정'],
-    'N-12-CALENDAR': ['repair', '변경 선택·프리미엄 자동 전송·같은 Google 계정 재연결 보호 반영 / 연결 경합·철회·업무 실패 격리는 잔여 판정 필요', '10월 13일 통합 소스의 API 단위 344개·DB/경합 142개, 앱 112개, 관리자 인덱스 1개·스키마 13개 통과 기록. DB에는 모의 Google 응답이 포함되며 실계정 증명이 아님', '이미 연결한 환경 확인·남은 보완 판정·Google 동의/장기 갱신 토큰·서명 앱·시험 구독'],
+    'N-12-CALENDAR': ['repair', '변경 선택·프리미엄 자동 전송·재연결 보호 반영 / Google 권한 철회 보완과 출시 뒤 업무 실패 격리는 남음', '10월 13일 통합 소스의 API 단위 344개·DB/경합 142개, 앱 112개, 관리자 인덱스 1개·스키마 13개 통과 기록. DB에는 모의 Google 응답이 포함되며 실계정 증명이 아님', 'Android 에뮬레이터 실계정 확인 기록 있음 / 운영 OAuth·물리 기기·iOS 재연결·Google 권한 철회 확인'],
     'N-13-BANK': ['development', '내부 흐름 있음 / 실제 공급자 연결 추가 개발 필요', '내부 정책 테스트 있음. 실제 은행 인증 제외', '공급자·확인 범위 결정·계약과 연결 개발']
   };
   var WORK = {
@@ -929,6 +929,7 @@ window.LAUNCH_STATUS = (function () {
     'N-13-BANK': ['later', '후속 기능의 외부 계약']
   };
   var externalEnvironmentById = {
+    'N-12-CALENDAR': 'Android 에뮬레이터 실제 Google 계정의 생성·변경·삭제·토큰 갱신·해제 확인. 운영 OAuth 공개·물리 기기·iOS 재연결 미확인',
     'VER-01': '10월 12일 staging 서명 APK·Android 16 에뮬레이터 확인. 운영 AAB·iOS·전체 출시후보 확정 대기',
     'L-03': '자체 도메인 인증·복구 실수신과 Android 앱 링크·기존 토큰 무효화 통과. 외부 수신함의 인증 메일·실기기·iOS·실제 만료·OCI 이벤트 미확인',
     'L-04': '실제 Google 신규 가입·온보딩·앱 재실행 후 로그인 유지 통과. 재로그인·연결/해제·실기기·iOS 미확인',
@@ -1487,7 +1488,7 @@ window.LAUNCH_STATUS = (function () {
 
     var note = '이 업무 영역의 기능 ' + d.total + '개 중 ' + (d.open + d.partial) + '개가 첫 출시 범위다.';
     if (d.gapFeatures) note += ' ' + d.gapFeatures + '개 기능에 별도로 남은 준비나 운영 확인이 있다.';
-    else if (d.sealed === d.total) note += ' 새 이용은 아직 제공하지 않는다. 현재 구현 상태와 남은 준비는 첫 출시 현황에서 확인한다.';
+    else if (d.sealed === d.total) note += ' 새 이용은 아직 제공하지 않는다. 현재 구현 상태와 남은 준비는 전체 현황에서 확인한다.';
     html += '<span class="strip-note">' + esc(note) + ' 구현·자동 테스트·실제 환경은 기능별 상태에서 따로 확인한다. 본문은 기능 설명이며 출시 완료 기록이 아니다.</span>';
     html += '<span class="strip-more"><a href="' + base + 'qa/feature-status.html">기능별 출시 상태</a></span>';
 
@@ -1527,13 +1528,13 @@ window.LAUNCH_STATUS = (function () {
     var note = s.scopeNote;
     if (!note) {
       if (s.scope === 'open') note = '첫 출시 범위에 든다.';
-      else if (s.scope === 'sealed') note = '새 이용은 아직 제공하지 않는다. 현재 구현 상태와 남은 준비는 첫 출시 현황에서 확인한다.';
+      else if (s.scope === 'sealed') note = '새 이용은 아직 제공하지 않는다. 현재 구현 상태와 남은 준비는 전체 현황에서 확인한다.';
     }
     if (s.proofNote) note += (note ? ' ' : '') + '확인 범위 — ' + s.proofNote + (/[.!?]$/.test(s.proofNote) ? '' : '.');
     if (s.proof === 'auto' && s.scope !== 'sealed') note += (note ? ' ' : '') + '이 기능의 현재 출시후보 실계정·실기기 통과 기록은 이 목록에 연결되지 않았다.';
     if (note) html += '<span class="strip-note">' + esc(note) + '</span>';
 
-    html += '<span class="strip-more"><a href="' + base + 'qa/launch-status.html">첫 출시 현황</a> · <a href="#release-completion">이 기능의 출시 완료 기준</a></span>';
+    html += '<span class="strip-more"><a href="' + base + 'index.html">전체 현황·다음 할 일</a> · <a href="#release-completion">이 기능의 출시 완료 기준</a></span>';
 
     if (s.openItems.length) {
       html += '<ul>' + s.openItems.map(function (o) {
