@@ -1,7 +1,7 @@
 # PRD를 처음 보는 사람을 위한 읽는 법
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 ## 결론
@@ -18,8 +18,8 @@
 5. 제대로 된 기능 PRD 예시를 보고 싶으면 `02_feature_prds/03_event/F03-02_event-detail_prd.md`
 6. 특정 기능을 실제로 파악하려면 `business_logic/units/<domain>/<feature>/`의
    `backend.md`, `frontend.md`, `scenarios.md`, `diagrams.md`
-7. 구현 우선순위와 현재 위험도를 보려면 `../../docs/IMPLEMENTATION_CROSSWALK.md`와
-   `../../docs/IMPLEMENTATION_WORKBOARD.md`
+7. 구현 우선순위와 현재 위험도를 보려면 `../../docs/development/IMPLEMENTATION_CROSSWALK.md`와
+   `../../docs/development/IMPLEMENTATION_WORKBOARD.md`
 8. 기능 175개의 제품 시나리오 정의·자동 테스트·사용자 여정 연결 상태는
    [기능별 제품 시나리오 완성도 감사](04_qa_acceptance/scenario_completeness_audit_2026-08-30.md)
 9. v4.5 이벤트 확장(W1~W7)의 현재 계약은 F03-13~17 기능 PRD와
@@ -52,7 +52,7 @@ enum 번호와 충돌은
 |---|---|---|
 | 신규 기획자 | `00_product_prd.md` -> `00_prd_items/05_feature_definitions.md` | 제품 구조와 175개 기능 이름을 빠르게 잡는다. |
 | 기능 담당 기획자 | `PRD_MIGRATION_STATUS.md` -> 담당 기능 PRD -> 담당 기능의 `units/*` 4개 문서 | 전환 상태와 risk 후보를 먼저 보고 실제 source 기반 근거를 확인한다. |
-| 개발자 | `../../docs/IMPLEMENTATION_CROSSWALK.md` -> 담당 기능의 `units/*/backend.md` -> 실제 서버 소스 | 패키지가 아니라 서버부터 앱까지 이어지는 기능 단위로 구현 범위를 잡는다. |
+| 개발자 | `../../docs/development/IMPLEMENTATION_CROSSWALK.md` -> 담당 기능의 `units/*/backend.md` -> 실제 서버 소스 | 패키지가 아니라 서버부터 앱까지 이어지는 기능 단위로 구현 범위를 잡는다. |
 | Flutter 개발자 | 담당 기능의 `units/*/frontend.md` -> 실제 API/Repository/Provider/Screen | 서버 계약과 화면 분기 사이의 불일치를 찾는다. |
 | QA | 현재 소스 우선 기능 PRD의 `상태·권한 표`, `남은 문제와 위험`, `검증 현황` | 어떤 시나리오가 닫혔고 어디가 미검증인지 본다. |
 | PO/운영 | `05_planning_artifacts/decision_register.md`와 각 기능 PRD의 `미결정 / 후속` | 코드로 닫을 수 없는 정책/운영 결정을 본다. |

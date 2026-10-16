@@ -25,7 +25,7 @@ public enum ApplicationStatus {
   - `DateMeetingController.java:20-52`의 전체 매핑은 `POST /api/v1/date/meetings`, `PATCH /api/v1/date/meetings/{meetingId}`, `GET /api/v1/date/meetings/match/{matchId}`뿐이다.
   - `rg -i "sos|check[-_ ]?in|emergency|SafetyController|EmergencyContact"`를 `community_api/src`에 대해 실행했을 때 데이트용 컨트롤러/서비스 구현은 없고, 이벤트 체크인(`capacity`)이나 문서(`docs`)만 검색된다.
   - 산출물 `F09-06_meeting_proposal/backend.md:68-70`도 `check-in`, `sos`, `emergency-contacts`가 본 컨트롤러에 없다고 적고 있다.
-- 결론: `/api/v1/date/meetings/{meetingId}/sos`, `/check-in`, `/api/v1/date/emergency-contacts`는 실제 코드에 없다. `docs/IMPLEMENTATION_CROSSWALK.md`와 workboard에는 `EmergencyContactController` 언급이 있으나 현재 소스 트리 기준으로는 존재하지 않는 문서 드리프트다.
+- 결론: `/api/v1/date/meetings/{meetingId}/sos`, `/check-in`, `/api/v1/date/emergency-contacts`는 실제 코드에 없다. `docs/development/IMPLEMENTATION_CROSSWALK.md`와 workboard에는 `EmergencyContactController` 언급이 있으나 현재 소스 트리 기준으로는 존재하지 않는 문서 드리프트다.
 
 ### Fail-3 Unit 12 ❌ 항목
 - Claude 판정: ⚠️ 부분 정확 (파일 단위 지목은 오판)
@@ -118,5 +118,5 @@ eventType: (json['eventType'] as num?)?.toInt() ?? 0,
   1. `business_logic/units/03_event/F03-12_my-events/backend.md:55`의 `CANCELLED`를 `CANCELED`로 수정.
   2. `business_logic/units/12_notification/00_overview.md:95`의 `DeviceTokenParam(token, platform, deviceName)`을 `DeviceTokenParam(token, deviceType)`으로 수정.
   3. `business_logic/units/04_club/F04-05_waitlist-invitation/frontend.md:40,73`의 `Unit 02 사용자 검색` 라벨을 account/profile 사용자 검색 소유 단위로 수정.
-  4. `docs/IMPLEMENTATION_CROSSWALK.md`/workboard의 `EmergencyContactController` 언급이 현 소스와 맞는지 정리.
+  4. `docs/development/IMPLEMENTATION_CROSSWALK.md`/workboard의 `EmergencyContactController` 언급이 현 소스와 맞는지 정리.
   5. Flutter `CalendarEventVo.eventType`을 `String?` 또는 서버 enum name에 맞는 enum converter로 정정.

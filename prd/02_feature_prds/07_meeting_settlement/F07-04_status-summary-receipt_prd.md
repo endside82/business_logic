@@ -1,7 +1,7 @@
 # F07-04. 정산 현황 / 요약 / 영수증 (Status & Summary & Receipt) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 <!-- generated: source-first-unit-sync; updated: 2026-06-05 (DRAFT 미리보기 정식화 D-OPEN-2); unit: business_logic/units/07_meeting_settlement/F07-04_status-summary-receipt -->

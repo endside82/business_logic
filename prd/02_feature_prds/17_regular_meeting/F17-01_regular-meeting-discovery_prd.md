@@ -1,14 +1,14 @@
 # F17-01. 정기모임 발견·탐색 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 <!-- generated: source-first-regular-meeting; updated: 2026-05-28; source: community_api/src/main/java/com/endside/community/regularmeeting -->
 
 ## 참가자 탐색 화면 보완
 
-2026-09-30 `RM-UX-01`에서 구현했고, 2026-10-02 현재 API·앱 main에 반영했다. [저장소별 커밋과 검증 소스 대조 기록](../../../../docs/plan/regular-meeting/COMMIT_RECORD.md)에 병합과 검증 근거를 남긴다. 공개 목록은 운영·결제·노쇼 설명을 먼저 읽게 하지 않고 모임 카드부터 제공한다. 운영 방식 설명은 주최자의 내 모임 목록과 상세 정책에서 확인한다.
+2026-09-30 `RM-UX-01`에서 구현했고, 2026-10-02 현재 API·앱 main에 반영했다. 저장소별 커밋과 검증 소스 대조 기록 (Git 이력)에 병합과 검증 근거를 남긴다. 공개 목록은 운영·결제·노쇼 설명을 먼저 읽게 하지 않고 모임 카드부터 제공한다. 운영 방식 설명은 주최자의 내 모임 목록과 상세 정책에서 확인한다.
 
 카드는 ‘전체 과정 참여’와 ‘회차 선택 참여’를 구별한다. VARIABLE 본체의 가격 0은 무료를 뜻하지 않아 ‘회차별 비용’으로 표시하고, 부모 정원이 없는 경우 ‘회차별 정원’으로 안내한다. FIXED는 전체 과정 참가비를 표시한다. RM-UX-02에서 `nextSessionStartTime`과 실제 공개 회차 수 `publishedSessionCount`를 추가했다. 다음 일정이 없으면 ‘회차 준비 중’과 ‘예정된 회차 없음’을 구별한다. 한 페이지의 요약을 한 SQL로 집계하며, 카드마다 상세 API를 호출하지 않는다. 후기순 정렬은 후속 범위다.
 

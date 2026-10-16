@@ -1,7 +1,7 @@
 # F13-02. 프로필 수정 (닉네임·자기소개·사진) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 <!-- generated: source-first-unit-sync; updated: 2026-05-27 (MBTI 선택/명시적 삭제 추가); unit: business_logic/units/13_profile_settings/F13-02_profile-edit -->

@@ -1,7 +1,7 @@
 # 검증 마스터 요약
 
 <!-- release-document: reference -->
-> **문서 구분: 과거 검증 참고 기록.** 현재 할 일은 [출시 실행 계획표](../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 과거 검증 참고 기록.** 현재 할 일은 [출시 실행 계획표](../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 15개 검증 agent (14 단위 + 1 횡단)가 482개 산출물(00_overview 14 + 기능별 산출물 468)을 실제 코드/스펙과 대조 검증한 결과.
 

@@ -1,7 +1,7 @@
 # 상태 전이
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 <!-- supporting-doc-status: 2026-05-18 -->
@@ -272,7 +272,7 @@ flowchart TD
 
 ---
 
-> 아래 섹션은 2026-06-05 신규 상태기계 추가분이다. 근거: 2026-06-04 델타 실사. 원문은 [문서 정리와 보관 위치](../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)의 외부 백업에 보관한다.
+> 아래 섹션은 2026-06-05 신규 상태기계 추가분이다. 근거: 2026-06-04 델타 실사. 원문은 [문서 정리와 보관 위치](../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)의 외부 백업에 보관한다.
 
 ## 10. ApplicationStatus — 참가 신청 상태 (전체 7값, 갱신)
 

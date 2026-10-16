@@ -1,7 +1,7 @@
 # F09-01. 본인 인증 (Toss) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 <!-- generated: source-first-unit-sync; updated: 2026-05-27 (Phase 0 하드닝 + 인구통계 동기화 반영); unit: business_logic/units/09_private_date/F09-01_verification -->
@@ -30,7 +30,7 @@
 | Frontend | [frontend.md](../../../units/09_private_date/F09-01_verification/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
 | Scenario | [scenarios.md](../../../units/09_private_date/F09-01_verification/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/09_private_date/F09-01_verification/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-| Plan | `community/docs/plan/VERIFICATION_PROVIDER_PLAN.md` | 있음(v2.2, Codex sign-off) | Phase 0 결정 사항(세션·HMAC·접근권한·게이트) |
+| Plan | `community/docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` | 있음(v2.2, Codex sign-off) | Phase 0 결정 사항(세션·HMAC·접근권한·게이트) |
 
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
@@ -170,7 +170,7 @@
 
 **잔존(후속):**
 - ⚠️ **staging Toss 검증 필요** — txId 왕복 일치, `birthday` 실제 포맷(yyyyMMdd 가정), 세션 TTL(10분) vs Toss authUrl 유효시간 적정성
-- ⚠️ **NICE 멀티 프로바이더(Phase 2)** — `docs/plan/VERIFICATION_PROVIDER_PLAN.md` 참조. 현재는 Toss 단독, NICE 연동은 계약 후 마지막 단계
+- ⚠️ **NICE 멀티 프로바이더(Phase 2)** — `docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` 참조. 현재는 Toss 단독, NICE 연동은 계약 후 마지막 단계
 - ⚠️ **network-in-tx 잔존** — `requestVerification/verify`가 Toss 네트워크 호출을 트랜잭션 안에서 수행(기존부터 존재). Codex 합의 followup으로 staging 후 별도 리팩터 권장
 - ⚠️ **동시성 엄격화 best-effort** — 사용자별 락은 burst 직렬화에는 충분하나, "단일 PENDING 정책"은 best-effort. `UNIQUE(user_id, provider, tx_id_hash)`는 정확한 중복행만 차단
 - 후속 안내 UX(에러코드별 토스트 메시지 정교화) — 앱 측 일반 처리 중
@@ -191,7 +191,7 @@
 
 ## 10. 미결정 / 후속
 
-- **NICE 연동(Phase 2)** — `docs/plan/VERIFICATION_PROVIDER_PLAN.md` 잔여 결정 Q1(NICE 확정)·Q2(DI 저장 확정), Q3·Q4·Q5는 멀티 프로바이더 도입 시 닫힘.
+- **NICE 연동(Phase 2)** — `docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` 잔여 결정 Q1(NICE 확정)·Q2(DI 저장 확정), Q3·Q4·Q5는 멀티 프로바이더 도입 시 닫힘.
 - **staging Toss 검증** — Phase 0 가정(yyyyMMdd birthday, 10분 세션 TTL)을 실 환경으로 확인.
 - **network-in-tx 분리 리팩터** — staging 확보 후 `request authUrl` / `verify 결과조회` / `DB 상태전이` 트랜잭션 경계 분리.
 - **VerificationBackfillService 운영 트리거** — 1회성 배치 또는 admin 엔드포인트(`community_admin_api`). 실행 시 dry-run + 감사 로그 필수, PII 평문 로그 금지.

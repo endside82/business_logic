@@ -180,5 +180,5 @@
 - [`00_CODEX_ROUND10_AUDIT.md`](00_CODEX_ROUND10_AUDIT.md) — 직전 라운드 (정형 4회차)
 - [`audit_input_stats.sh`](../../../verification/audit_input_stats.sh) — 16차-B 헬퍼 (parser 11차-C-3 정정 적용)
 - [`check_meta_sync.sh`](../../../verification/check_meta_sync.sh) — 16차-A 자동 메타 stale 검출 (17차 확장 후보)
-- 과거 `STATUS_AND_REMAINING.md`([2026-09-28 문서 정리](../../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)에 원문 보관 위치 기록) — §1.6 표 ROUND11 행 추가
-- 과거 `CHECKLIST.md`([2026-09-28 문서 정리](../../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)에 원문 보관 위치 기록) — 7-17 라운드 분류 표 ROUND11 행 추가
+- 과거 `STATUS_AND_REMAINING.md`([2026-09-28 문서 정리](../../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)에 원문 보관 위치 기록) — §1.6 표 ROUND11 행 추가
+- 과거 `CHECKLIST.md`([2026-09-28 문서 정리](../../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)에 원문 보관 위치 기록) — 7-17 라운드 분류 표 ROUND11 행 추가

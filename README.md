@@ -1,7 +1,7 @@
 # community — 제품 문서
 
 <!-- release-document: reference -->
-> **문서 구분: 참고 문서.** 현재 상태와 현재 할 일은 [출시 실행 계획표](../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 참고 문서.** 현재 상태와 현재 할 일은 [출시 실행 계획표](../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 ## [문서 사이트 바로 보기 — endside82.github.io/business_logic](https://endside82.github.io/business_logic/)
 

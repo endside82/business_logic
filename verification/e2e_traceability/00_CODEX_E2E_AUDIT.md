@@ -1,7 +1,7 @@
 # Codex E2E 외부 감사 보고서 (2차 라운드 — 아카이브)
 
 <!-- release-document: reference -->
-> **문서 구분: 과거 검증 참고 기록.** 현재 할 일은 [출시 실행 계획표](../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 과거 검증 참고 기록.** 현재 할 일은 [출시 실행 계획표](../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 > ⚠️ **이 문서는 2차 라운드(E2E 추적 직후) 감사 보고서다.** F09-06 SOS/체크인에 대한 당시 판정("미구현 positive E2E의 RED 상태")은 이후 사용자 확인으로 **"의도적 미운영(이전 결정으로 삭제됨)"**으로 정정되었다. 최종 결론은 [`../00_MASTER_SUMMARY.md`](../00_MASTER_SUMMARY.md), [`00_E2E_MASTER_SUMMARY.md`](00_E2E_MASTER_SUMMARY.md), [`00_CODEX_ROUND3_AUDIT.md`](../../archive/2026-09-28/verification/00_CODEX_ROUND3_AUDIT.md) 참조. 본 문서의 F09-06 관련 표현(`서버 미구현`, `미구현 positive E2E`)은 그 시점의 판정 그대로 보존한다.
 

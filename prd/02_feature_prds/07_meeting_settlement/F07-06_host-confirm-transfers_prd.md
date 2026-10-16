@@ -1,7 +1,7 @@
 # F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
 <!-- generated: source-first-unit-sync; updated: 2026-07-29 (혼합결제 은행분 확인 source-of-truth 재실측); unit: business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers -->

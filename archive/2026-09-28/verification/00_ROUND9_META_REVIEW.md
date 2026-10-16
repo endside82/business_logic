@@ -82,7 +82,7 @@
 
 #### 3.2.1 `SPEC_TEMPLATE.md`
 
-과거 원문의 보관 위치는 [2026-09-28 문서 정리](../../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)를 참고한다.
+과거 원문의 보관 위치는 [2026-09-28 문서 정리](../../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)를 참고한다.
 "## 다중 모델 교차 검증 (Codex)" 절 신설. 산출물 작성 후 호출 권장 시점 / 형식 / 정정 절차의 짧은 요약 + CROSS_MODEL_VERIFICATION_WORKFLOW.md 링크.
 
 #### 3.2.2 [`../00_README.md`](../../../00_README.md)
@@ -90,7 +90,7 @@
 
 #### 3.2.3 `../CHECKLIST.md`
 
-과거 원문의 보관 위치는 [2026-09-28 문서 정리](../../../../docs/DOCUMENTATION_MAINTENANCE_REPORT.md#2026-09-28-문서-정리)를 참고한다.
+과거 원문의 보관 위치는 [2026-09-28 문서 정리](../../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)를 참고한다.
 "7-8 라운드 작업 분류" 표에 9차-C "교차 검증 워크플로 표준화" 행 ✅ 마킹.
 
 ## 4. 본 라운드 검증
