@@ -18,6 +18,9 @@
         <p class="lede">기능별로 <strong>출시 범위</strong>와 <strong>구현·자동 테스트·실제 환경</strong>을 따로 읽는다.
           다음 행동을 누르면 준비물과 완료 조건으로 이동한다. 후속 부분의 미구현을 첫 출시 전체의 미구현으로 읽지 않는다.</p>
       </header>
+<!-- current-work-status:start -->
+<section id="source-update-current"><h2>2026-10-23 최근 구현·검증 반영</h2><p>H-190 책임 분리는 12단계까지 완료했습니다. 다음 중심은 세션·권한·내보내기·편집기 등의 결함 보완과 한 기기 로그인입니다. 운영 환경 준비·실제 기기 확인은 함께 진행합니다.</p><div class="table-wrap"><table><thead><tr><th scope="col">최근 범위</th><th scope="col">상태</th><th scope="col">후속</th></tr></thead><tbody><tr><td>H-476 세션 처리</td><td>부분 병합</td><td>S1e2a 33몸통까지 완료(앱 214aedf1). 다음 S1e2b: 화면 요청 152곳·판단 대상 10곳을 b1~b4, 다시 읽기를 b5로 나눔.</td></tr><tr><td>H-489 한 기기 로그인</td><td>앱 안내 남음</td><td>H489b2 4f6d8bfc4·실시간 H489r 41c7563까지 완료. H489p2 로그인 안내는 S1e2b 뒤.</td></tr><tr><td>H-482 내보내기</td><td>S2d1 완료·후속 남음</td><td>D9 결정 반영: 처리한 쪽에는 사실만 싣고 글·대상 회원 번호·이름을 제외. 참가·출석 11표 병합(b8f2715e4). 다음 S2b·S2d3·S2e·S2d2·S2f1~S2f3.</td></tr><tr><td>H-481 권한 표지</td><td>S3a2 완료·후속 남음</td><td>검수 지적·같은 유형 조사와 사용자 결정 두 가지를 반영해 8eca28ff4 병합. 나간 회원·보이지 않는 행의 명령을 제한하고 운영진 예외 유지. 다음 S3a3 경고 묶음·앱 S3m2.</td></tr></tbody></table></div><p>기존 검사 기록: 앱 전체 12,273 통과·37 실패(12파일), 관리자 분쟁 그래프 1건 실패. 공개 API 최근 S3a2 관문은 단위 13,348·실 DB 1,195건 실패 0. 이번 문서 갱신에서 제품 검사를 새로 실행하지 않았습니다.</p><p>아래 기능별 상세 표는 기존 기능 검사 기록입니다. 위 변경을 모든 기능의 새 검증으로 확대하지 않습니다. <a href="launch-status.html#development-current">최근 개발·병합 현황</a>과 <a href="launch-status.html#validation-current">현재 검사 기록과 남은 실패</a>를 함께 확인합니다.</p></section>
+<!-- current-work-status:end -->
       <p class="document-purpose">전체 우선순위·출시 흐름·준비할 자원은 <a href="../index.html">전체 현황·다음 할 일</a>에서 봅니다. 이 표는 기능 하나의 구현과 검사 근거를 찾을 때 사용합니다.</p>
       <details class="callout"><summary>이전 반영 기록과 확인 범위</summary>
       <section id="completion-standard"><div class="callout info"><span class="label">2026년 10월 13일 — 출시 완료 판정 기준</span>

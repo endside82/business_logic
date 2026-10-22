@@ -12,6 +12,9 @@ body.work-overview{background:var(--bg)}
 #work-dashboard .basis,#work-dashboard .dialog-facts>div{background:#f4f3ee}
 #work-dashboard .resource-card:focus{outline:2px solid var(--blue);outline-offset:3px}
 #work-dashboard .dialog-evidence p{font-size:12px;overflow-wrap:anywhere;margin-top:8px}
+#work-dashboard .status-summary{margin-bottom:20px}
+#work-dashboard .status-summary ul{margin:0 0 14px;padding-left:20px}
+#work-dashboard .status-summary li{margin:8px 0}
 @media(min-width:1101px) and (max-width:1400px){#work-dashboard .resource-grid,#work-dashboard .dependency-map,#work-dashboard .scope-map{grid-template-columns:repeat(2,minmax(0,1fr))}#work-dashboard .flow{gap:16px}#work-dashboard .step{padding:16px 12px}#work-dashboard .step::after{display:none}#work-dashboard .overview-grid{grid-template-columns:1fr}}
 @media(max-width:760px){#work-dashboard{padding:20px 16px 40px}}
 @media print{.work-overview .sidebar,.work-overview .mobile-topbar,.work-overview .sidebar-backdrop{display:none!important}.work-overview .layout{display:block}#work-dashboard{max-width:none;padding:10px}}

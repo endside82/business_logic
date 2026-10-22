@@ -9,7 +9,7 @@
     const resourceName=id=>resources.get(id)?.name||(id==='decision'?'제품 결정':'개발 환경');
     const tasks=new Map(data.tasks.map(t=>[t.id,t]));
     const state={tab:'overview',stage:'prepare',scope:'launch',resource:'all',kind:'all',query:'',stageFilter:null,pathFilter:null};
-    const toneForScope={launch:'wait',now:'ready',feature:'future',later:'future',conditional:'future',candidate:'decision'};
+    const toneForScope={payment:'future',concurrency:'future',completed:'ready',launch:'wait',now:'ready',feature:'future',later:'future',conditional:'future',candidate:'decision'};
     const scopeBadge=id=>`<span class="badge ${toneForScope[id]}">${esc(scopes.get(id).label)}</span>`;
     function setTab(name){
       state.tab=name;
@@ -55,7 +55,7 @@
     }
     function showTask(id){
       const t=tasks.get(id);if(!t)return;
-      const conditionLabel=t.section.startsWith('9.')?'끝났다고 볼 기준':'언제 착수하나';
+      const conditionLabel=t.section.startsWith('9.')?'끝났다고 볼 기준':'진행 상태·다음 조건';
       const resourceLabels=t.resources.map(resourceName).join(' · ');
       const notes=(t.sourceNotes||[]).map(note=>`<p>${esc(note)}</p>`).join('');
       const evidence=t.evidenceLinks.map(link=>`<a href="${esc(link.href)}">${esc(link.label)} ↗</a>`).join('');

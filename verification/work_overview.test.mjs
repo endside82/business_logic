@@ -57,10 +57,15 @@ test('the site can open shared task and view URLs directly', () => {
 test('scopes, dependency paths and resources work in the published script', () => {
   const page = open();
   page.click({ scope: 'conditional' });
-  assert.ok(page.ids().includes('H-186'));
+  assert.ok(page.ids().includes('H-418'));
+  assert.ok(!page.ids().includes('H-186'));
   assert.ok(!page.ids().includes('H-433'));
+  page.click({ scope: 'payment' });
+  assert.ok(page.ids().includes('H-186'));
+  page.click({ scope: 'completed' });
+  assert.deepEqual(page.ids(), ['H-497']);
   page.click({ dependency: data.dependencies.find(d => d.title.includes('Calendar')).id });
-  assert.deepEqual(page.ids().sort(), ['H-426', 'H-427', 'H-348'].sort());
+  assert.deepEqual(page.ids().sort(), ['H-426', 'H-427'].sort());
   page.click({ resource: 'sharing' });
   assert.equal(page.element('plan-work').hidden, false);
   assert.match(page.element('plan-work').innerHTML, /qa\/sharing-plan.html/);
