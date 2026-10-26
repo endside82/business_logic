@@ -1,61 +1,47 @@
 {
-  "date": "2026-10-23",
+  "date": "2026-10-26",
   "scopes": [
     {
-      "id": "now",
-      "label": "사용자 흐름·남은 개발",
-      "note": "우선순위 3·4와 수입별 납부 설계",
-      "flow": "세션·권한·내보내기·편집기 보완 → 검수 → 병합",
-      "resource": "소스 · 시험 DB · 설계"
-    },
-    {
       "id": "launch",
-      "label": "첫 출시 준비",
-      "note": "실제 환경·배포·기기·공개 판단",
+      "label": "첫 출시",
+      "note": "배포와 공개 전에 마칠 준비·확인",
       "flow": "환경 준비 → 배포본 → 실제 이용·복구 → 공개 판단",
-      "resource": "운영 서버 · S3 · 서명 · 기기"
+      "resource": "운영 서버 · S3 · 서명 · 기기 · 로고"
     },
     {
-      "id": "payment",
-      "label": "결제·지급대행 보완",
-      "note": "우선순위 5 · 출시 전 보완, 기능 공개는 별도",
-      "flow": "외부 호출·돈 기록 보완 → 검증 → 공개 조건 확인",
-      "resource": "소스 · 시험 DB · 공급자 계약"
-    },
-    {
-      "id": "concurrency",
-      "label": "경합 구조",
-      "note": "우선순위 6 · 드문 겹침도 출시 전 처리",
-      "flow": "재현·설계 → 공통 구조 보완 → 동시 실행 검사",
-      "resource": "소스 · 시험 DB · 겹친 요청 재현"
-    },
-    {
-      "id": "conditional",
-      "label": "정비·규모 조건",
-      "note": "우선순위 7 · 실제 조건을 확인",
-      "flow": "명세·최적화·Calendar 후속 범위 확인 → 필요한 정비",
-      "resource": "소스 · 명세 · 운영 규모"
+      "id": "now",
+      "label": "지금 조사·정비",
+      "note": "외부 준비 없이 병행 가능한 작업",
+      "flow": "조사·재현 → 영향 범위 확정 → 필요한 보완",
+      "resource": "소스 · 시험 DB · 개발 도구"
     },
     {
       "id": "feature",
-      "label": "외부 답·후속 확인",
-      "note": "계약·기기·연결 시점에 맞춰 확인",
-      "flow": "외부 입력 → 실제 연결 → 개별 기능 공개 판단",
-      "resource": "계약 · 운영 계정 · 기기"
+      "label": "후속 기능 공개·확대",
+      "note": "각 기능을 공개하거나 확대할 때",
+      "flow": "제공할 범위 결정 → 계약·개발 → 실제 서비스 확인",
+      "resource": "결제·인증 공급자 · OAuth · 기기"
+    },
+    {
+      "id": "later",
+      "label": "출시 뒤",
+      "note": "출시 이후 개선·운영 확인",
+      "flow": "운영 결과 확인 → 구조·사용성 개선 → 영향 검사",
+      "resource": "운영 기록 · 소스 · 시험 환경"
+    },
+    {
+      "id": "conditional",
+      "label": "조건이 생기면",
+      "note": "각 항목에 적힌 조건에서만 재평가",
+      "flow": "규모·동시 작업·배포 조건 확인 → 필요할 때 착수",
+      "resource": "실제 실행 환경 · 규모·잠금 측정"
     },
     {
       "id": "candidate",
-      "label": "제품 결정·후속 후보",
-      "note": "로고는 사용자가 나중에 결정 · 채택 전 제안 포함",
-      "flow": "후속 범위 채택 → 조건·설계 확정",
+      "label": "제품 후보",
+      "note": "채택 여부를 정해야 하는 제안",
+      "flow": "이용 수치·제안 검토 → 채택 결정 → 범위 산정",
       "resource": "사용자 결정 · 실제 운영 수치"
-    },
-    {
-      "id": "completed",
-      "label": "완료 기록",
-      "note": "원문 표에 남은 완료 행 · 개발 잔여에 합산하지 않음",
-      "flow": "병합·검증 기록 보존 → 원문 행 정리",
-      "resource": "기존 검증 기록"
     }
   ],
   "stages": [
@@ -100,7 +86,9 @@
         "H-243",
         "H-244",
         "H-341",
-        "H-209"
+        "H-209",
+        "H-476",
+        "H-531"
       ],
       "input": "같은 배포본, 두 물리 기기, 역할별 시험 계정",
       "action": "가입·모임·송금·이동·투표·사진·프로필·알림·탈퇴를 확인합니다. 실패·재시도·권한 변경도 함께 봅니다.",
@@ -147,8 +135,10 @@
         "H-243",
         "H-246"
       ],
-      "href": "qa/external-readiness.html#infrastructure",
-      "link": "서버·도메인·경보·복구 준비"
+      "href": "../../business_logic/docs/qa/external-readiness.html#progress-2026-10-12",
+      "link": "운영 환경의 마지막 확인 기록",
+      "extraHref": "../release-gate/infrastructure/SERVER_HOSTING_COST_COMPARISON_2026-10-15.md",
+      "extraLink": "서버 구성·비용 비교"
     },
     {
       "id": "storage",
@@ -169,8 +159,8 @@
         "H-245",
         "H-250"
       ],
-      "href": "qa/external-readiness.html#file-storage",
-      "link": "파일 저장소·검사·삭제 확인"
+      "href": "../release-gate/checklists/06_s3.md",
+      "link": "파일 저장 검사표"
     },
     {
       "id": "apple",
@@ -192,16 +182,16 @@
         "H-243",
         "H-427"
       ],
-      "href": "qa/external-readiness.html#ios-distribution",
-      "link": "iOS 빌드·TestFlight 내부 테스트 절차"
+      "href": "../../business_logic/docs/qa/external-readiness.html#ios-distribution",
+      "link": "iOS 배포 준비"
     },
     {
       "id": "brand",
       "name": "브랜딩·로고",
-      "state": "나중에 결정",
+      "state": "결정 필요",
       "tone": "decision",
       "owner": "사용자 결정",
-      "current": "10월 21일 결정: 사용자가 나중에 최종 로고를 선택합니다.",
+      "current": "다음 할 일로 등록. 최종안은 아직 확정하지 않음.",
       "need": "브랜드가 전달할 인상, 로고 후보, 기본 색상·사용 형태·원본 파일",
       "unlock": "앱 아이콘 · 화면 로고 · 스토어 자료",
       "stages": [
@@ -211,8 +201,8 @@
       "ids": [
         "H-433"
       ],
-      "href": "index.html#task-H-433",
-      "link": "브랜딩·최종 로고 결정"
+      "href": "NEXT_WORK.md#2-사용자가-정할-것",
+      "link": "로고 결정 범위"
     },
     {
       "id": "android",
@@ -234,8 +224,8 @@
         "H-243",
         "H-341"
       ],
-      "href": "qa/external-readiness.html#android-distribution",
-      "link": "Android 빌드·Google Play 테스트 절차"
+      "href": "../../business_logic/docs/qa/external-readiness.html#progress-2026-10-12",
+      "link": "기존 실제 연동 기록"
     },
     {
       "id": "devices",
@@ -250,16 +240,18 @@
         "journey"
       ],
       "ids": [
+        "H-476",
         "H-209",
         "H-243",
         "H-244",
         "H-341",
+        "H-531",
         "H-245",
         "H-250",
         "H-427"
       ],
-      "href": "qa/completion-criteria.html#common",
-      "link": "함께 적용하는 권한·실패·복구 확인"
+      "href": "../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#배포용-휴대전화에서-고객의-이용-순서를-검사한다",
+      "link": "기기별 이용 확인 순서"
     },
     {
       "id": "access",
@@ -275,14 +267,13 @@
         "release"
       ],
       "ids": [
-        "H-186",
         "H-233",
         "H-240",
         "H-247",
         "H-246"
       ],
-      "href": "qa/external-readiness.html#infrastructure",
-      "link": "서버·접근 제한·복구 준비"
+      "href": "../release-gate/evidence/ADM-01/RUNBOOK.md",
+      "link": "접근 제한·운영 검사"
     },
     {
       "id": "review",
@@ -290,7 +281,7 @@
       "state": "검토 필요",
       "tone": "wait",
       "owner": "사용자·법무 검토",
-      "current": "책임·개인정보 안내와 콘텐츠 삭제·내보내기 범위(H-492)의 검토가 남았습니다.",
+      "current": "이동·직접 송금·개인정보 안내의 확정 검토가 남음.",
       "need": "검토할 문안, 확정한 책임 범위, 고객지원·약관·스토어 자료",
       "unlock": "앱 안내 확정 · 스토어 자료 · 공개 판단",
       "stages": [
@@ -302,8 +293,8 @@
         "H-246",
         "H-340"
       ],
-      "href": "qa/completion-criteria.html#evidence",
-      "link": "공개 판단에 남길 확인·승인 기록"
+      "href": "../policy/README.md",
+      "link": "운영 정책 문서"
     },
     {
       "id": "development",
@@ -311,57 +302,29 @@
       "state": "지금 진행 가능",
       "tone": "ready",
       "owner": "개발",
-      "current": "H-190 구조 정리 완료. 세션·권한·내보내기·편집기 등의 결함 보완과 기존 실패 시험 해소가 남았습니다.",
-      "need": "소스·격리 시험 DB·설계·검수 기록",
-      "unlock": "결함 보완 · 검수 · main 반영",
+      "current": "차수 8 구현·검증을 마쳤습니다. 다음 차수는 연결·잠금 구조, 기기 저장소와 화면 갱신 등 남은 후보를 확인합니다.",
+      "need": "소스·격리 시험 DB, 재현·반증",
+      "unlock": "조사 결과 확정 · 운영 추적 보완 · 후속 개발",
       "stages": [],
       "ids": [
-        "H-441",
-        "H-453",
         "H-487",
-        "H-03",
-        "H-05",
-        "H-08",
-        "NW-m",
-        "H-24",
-        "H-28",
-        "H-90",
-        "H-92",
-        "H-101",
-        "H-474",
-        "H-476",
-        "H-477",
-        "H-480",
-        "H-481",
-        "H-482",
-        "H-483",
-        "H-484",
-        "H-485",
-        "H-486",
-        "H-497",
-        "H-177",
         "H-179",
         "H-180",
-        "H-185",
         "H-187",
-        "H-489",
-        "H-194",
-        "H-418",
         "H-197",
-        "H-199",
         "H-200",
-        "H-356",
-        "H-464",
-        "H-491",
+        "H-507",
+        "H-528",
+        "H-529",
+        "H-530",
         "H-493",
-        "H-496",
-        "H-494",
-        "H-495",
-        "H-230",
-        "H-463"
+        "H-498",
+        "H-505",
+        "H-511",
+        "H-515"
       ],
-      "href": "index.html#next-actions",
-      "link": "지금 먼저 할 것"
+      "href": "WORKLIST.md#다음에-할-일",
+      "link": "권장 개발 점검 순서"
     },
     {
       "id": "contracts",
@@ -375,8 +338,6 @@
       "stages": [],
       "ids": [
         "H-13",
-        "H-18",
-        "NW-p",
         "H-181",
         "H-188",
         "H-225",
@@ -385,8 +346,8 @@
         "H-322",
         "H-340"
       ],
-      "href": "qa/external-readiness.html#later",
-      "link": "후속 기능의 외부 계약"
+      "href": "../release-gate/LAUNCH_ROADMAP.md#첫-출시-이후-기능을-공개하는-순서",
+      "link": "후속 공개의 선행 조건"
     },
     {
       "id": "calendar",
@@ -399,11 +360,10 @@
       "unlock": "Google Calendar 후속 공개",
       "stages": [],
       "ids": [
-        "H-426",
         "H-427"
       ],
-      "href": "qa/external-readiness.html#google-calendar",
-      "link": "Google Calendar의 후속 공개 조건"
+      "href": "../todo/prd/04_google_calendar_sync.md",
+      "link": "Calendar 연결·동기화 계약"
     },
     {
       "id": "decision",
@@ -411,7 +371,7 @@
       "state": "채택·관측 대기",
       "tone": "future",
       "owner": "사용자 결정",
-      "current": "한 기기 로그인·수입별 납부·내보내기 D9는 결정됐습니다. 로고는 나중에, 후속 제품 질문은 해당 기능의 확대 시점에 판단합니다.",
+      "current": "후속 정책 질문과 기능 제안은 첫 출시의 필수 개발에 합산하지 않음.",
       "need": "실제 문의·이용 수치, 정책 선택지, 기능 채택 여부",
       "unlock": "후속 범위 확정 · 관련 설계·개발 착수",
       "stages": [],
@@ -427,8 +387,8 @@
         "H-152",
         "H-189"
       ],
-      "href": "index.html#view-work",
-      "link": "실행 시점별 남은 항목"
+      "href": "NEXT_WORK.md#2-사용자가-정할-것",
+      "link": "제품 결정 후보와 시점"
     },
     {
       "id": "sharing",
@@ -436,35 +396,44 @@
       "state": "기반 있음·보완 필요",
       "tone": "partial",
       "owner": "운영자·개발",
-      "current": "설치 안내 웹·Android 복원 코드는 구현됨. 운영 설정 고정·실제 스토어 설치와 iOS 자동 복원 개발은 남음.",
+      "current": "설치 안내 웹·Android 복원 코드는 구현됨. 운영 설정·실제 스토어 검증은 남음. iOS 신규 설치는 수동 복구로 출시하고 자동 복원은 후속.",
       "need": "공개 주소 계약, 배포 서명 지문, 스토어 주소, 서버·앱·소개 웹의 같은 설정",
       "unlock": "자체 링크 처리 · 설치 안내 · Play 설치 복원 · iOS 복원 실증",
       "stages": [],
       "ids": [],
-      "href": "qa/sharing-plan.html",
-      "link": "모임 공유·설치 후 복원 계획"
+      "href": "event-sharing/README.md",
+      "link": "모임 공유와 링크 체계 상세 조사"
     }
   ],
   "parallel": [
     {
+      "id": "brand",
+      "title": "브랜딩·최종 로고",
+      "ids": [
+        "H-433"
+      ],
+      "flow": "브랜드 인상·후보 비교 → 최종 로고·색상·원본 확정",
+      "due": "앱 아이콘·화면·스토어 자료에 적용하기 전"
+    },
+    {
       "id": "copy",
-      "title": "책임 안내·콘텐츠 정책 검토",
+      "title": "책임 안내·개인정보 문안",
       "ids": [
         "H-248",
         "H-492"
       ],
-      "flow": "책임·개인정보 문안과 콘텐츠 내보내기 범위 검토 → 확정 반영",
-      "due": "해당 안내 적용·공개 판단 전"
+      "flow": "문안 검토 → 책임 범위 확정 → 앱·정책 반영",
+      "due": "해당 안내 적용과 공개 판단 전"
     }
   ],
   "plans": [
     {
       "id": "sharing",
       "title": "모임 공유·설치 후 복원",
-      "state": "main 병합 완료 · 후속 개발·기기 확인 남음",
-      "summary": "10월 21일 공유 구현의 main 통합과 관련 자동 검사·실제 API/소켓 왕복을 확인했습니다. 전체 앱 시험의 기존 실패와 iOS 자동 설치 복원 SDK·운영/기기/스토어 검증·공개 판단이 남았습니다.",
-      "flow": "iOS 후보·SDK와 운영 준비 → 기기·스토어 검증 → 공유 공개·배포",
-      "branches": "iOS 자동 복원 SDK 연동 미완료 · 클럽 단체 채팅 공개는 두 기기 검증 뒤",
+      "state": "주요 구현·자동 검사 완료 · 후속 개발·검증 남음",
+      "summary": "주요 구현·통합 검증을 마쳤고 신규 공유 기능은 첫 출시에 포함합니다(2026-10-26 결정). 운영·기기·스토어 검증과 공개 판단은 남습니다. iOS 신규 설치는 수동 복구로 출시하고 자동 복원은 후속입니다.",
+      "flow": "운영·서명 준비 → 기기·스토어 검증 → 공유 공개·배포",
+      "branches": "iOS 자동 복원 공급자·SDK는 후속 · 클럽 단체 채팅 공개는 두 기기 검증 뒤",
       "resources": "공개 도메인 · 앱 서명 · 스토어 주소 · 두 기기 · 서버·앱·소개 웹",
       "resourceIds": [
         "server",
@@ -485,20 +454,11 @@
       "note": "기간권은 판매 시작 경로를 추가로 개발해야 합니다.",
       "resource": "contracts",
       "ids": [
-        "H-03",
-        "H-05",
         "H-13",
-        "H-18",
-        "NW-m",
-        "NW-p",
-        "H-24",
-        "H-101",
-        "H-177",
         "H-179",
         "H-180",
         "H-188",
         "H-225",
-        "H-230",
         "H-308",
         "H-249",
         "H-250",
@@ -523,7 +483,6 @@
       "note": "Android 에뮬레이터의 실제 계정 확인 기록은 있습니다.",
       "resource": "calendar",
       "ids": [
-        "H-426",
         "H-427"
       ],
       "id": "2"
@@ -562,8 +521,8 @@
       "id": "H-433",
       "title": "브랜딩 방향과 최종 로고 결정",
       "description": "브랜드가 전달할 인상과 로고 후보를 비교해 최종 로고를 결정한다. 기본 색상·사용 형태·원본 파일까지 확정하면 완료로 본다.",
-      "condition": "2026-10-21 결정: 사용자가 나중에 최종 로고를 정함. 먼저 결정을 요구하지 않음.",
-      "scope": "candidate",
+      "condition": "나중에 사용자가 정한다(2026-10-21 사용자 결정, 먼저 묻지 않음)",
+      "scope": "launch",
       "kind": "제품 결정",
       "section": "2. 사용자가 정할 것",
       "stage": null,
@@ -572,11 +531,7 @@
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
       "evidence": "2026-10-15 사용자 요청",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "2026-10-15 사용자 요청"
-      ]
+      "evidenceLinks": []
     },
     {
       "id": "H-139",
@@ -591,11 +546,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "출시 후 보완 항목 — 남은 작업",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "출시 후 보완 항목 — 남은 작업"
+      "evidence": "[출시 후 보완 항목 — 남은 작업](../release-gate/plans/POST_LAUNCH_GAP_CLOSURE_PLAN.md)",
+      "evidenceLinks": [
+        {
+          "label": "출시 후 보완 항목 — 남은 작업",
+          "href": "../release-gate/plans/POST_LAUNCH_GAP_CLOSURE_PLAN.md"
+        }
       ]
     },
     {
@@ -611,11 +567,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "클럽 활동 제도",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "클럽 활동 제도"
+      "evidence": "[클럽 활동 제도](../club_activity/README.md)",
+      "evidenceLinks": [
+        {
+          "label": "클럽 활동 제도",
+          "href": "../club_activity/README.md"
+        }
       ]
     },
     {
@@ -631,11 +588,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계"
+      "evidence": "[마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계](payment/PERIOD_PASS_PLATFORM_OWNER_DESIGN_2026-09-24.md)",
+      "evidenceLinks": [
+        {
+          "label": "마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계",
+          "href": "payment/PERIOD_PASS_PLATFORM_OWNER_DESIGN_2026-09-24.md"
+        }
       ]
     },
     {
@@ -651,11 +609,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
@@ -671,11 +630,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
@@ -691,11 +651,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "사용자 프로필 탐색과 복귀 개선 계획",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "사용자 프로필 탐색과 복귀 개선 계획"
+      "evidence": "[사용자 프로필 탐색과 복귀 개선 계획](profile/USER_PROFILE_EXPLORATION_PLAN_2026-10-02.md)",
+      "evidenceLinks": [
+        {
+          "label": "사용자 프로필 탐색과 복귀 개선 계획",
+          "href": "profile/USER_PROFILE_EXPLORATION_PLAN_2026-10-02.md"
+        }
       ]
     },
     {
@@ -711,11 +672,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "제공자 배정·정산 코드 완료 세부 계획",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "제공자 배정·정산 코드 완료 세부 계획"
+      "evidence": "[제공자 배정·정산 코드 완료 세부 계획](provider/PROVIDER_CODE_CLOSURE_PLAN.md)",
+      "evidenceLinks": [
+        {
+          "label": "제공자 배정·정산 코드 완료 세부 계획",
+          "href": "provider/PROVIDER_CODE_CLOSURE_PLAN.md"
+        }
       ]
     },
     {
@@ -731,11 +693,12 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "동행클럽과 우리 서비스 비교 조사",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "동행클럽과 우리 서비스 비교 조사"
+      "evidence": "[동행클럽과 우리 서비스 비교 조사](../research/DONGHAENG_CLUB_COMPARISON_2026-09-28.md)",
+      "evidenceLinks": [
+        {
+          "label": "동행클럽과 우리 서비스 비교 조사",
+          "href": "../research/DONGHAENG_CLUB_COMPARISON_2026-09-28.md"
+        }
       ]
     },
     {
@@ -751,59 +714,20 @@
         "decision"
       ],
       "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "C1·B25 후속 후보 확인 (2026-10-09)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 2. 사용자가 정할 것",
-        "C1·B25 후속 후보 확인 (2026-10-09)"
-      ]
-    },
-    {
-      "id": "H-441",
-      "title": "목록의 늦은 응답·겹친 요청",
-      "description": "목록 화면의 늦은 응답·겹친 요청 가족(H-441·H-442·H-443 을 2026-10-21 한 줄로 묶음). ① 찜 해제 둘이 겹치고 하나가 실패해 목록을 다시 읽으면, 아직 끝나지 않은 다른 해제의 항목이 목록에 되살아나고 그 해제가 성공해도 갱신되지 않는다. 낙관 반영을 요청별로 보존하는 구조가 필요하다. ② 클럽 게시판 좋아요 요청 둘이 겹치고 그 사이 목록 다시 읽기가 끼면 좋아요 표시가 서버와 어긋날 수 있다. 새로고침을 시작한 뒤 좋아요가 성공하고 그다음 첫 장이 실패하면 성공이 화면에 드러나지 않는다(좋아요는 서버에 남아 다시 시도하면 보임, H199eE1b1 Codex 지적). ③ 스탬프 커서 목록 셋에 세대 검사가 없어, 다음 장을 기다리는 동안 새로고침하면 늦은 응답(성공이면 목록, 실패면 오류 줄)이 새 목록을 덮는다. 2026-10-21 전체 검토 R8 이 같은 꼴 후보 23 을 더 찾았다(알림 목록의 다음 장·읽음, 출석 기록, 호스트 문의함, 검색 번호 없는 검색 등). 공통 목록 조각에 서버 목록·보인 목록·요청별 변경 표·커서 열쇠를 넣는 구조(S9).",
-      "condition": "우선순위 6(경합 구조, 2026-10-09 사용자 결정은 구조로, 2026-10-21 결정은 출시 전·낮은 순위)",
-      "scope": "concurrency",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "H199eE1a 기록·H199eE1b1 기록·H199eE1b3 기록·R8",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "H199eE1a 기록·H199eE1b1 기록·H199eE1b3 기록·R8"
-      ]
-    },
-    {
-      "id": "H-453",
-      "title": "계정·세션 전환 중 늦은 응답",
-      "description": "같은 기기에서 요청이 걸린 채 계정·세션이 바뀌는 가족(H-444·H-453 을 2026-10-21 한 줄로 묶음). ① 클럽 앨범·게시판 댓글을 보내고 응답을 기다리는 사이 다른 계정으로 바꾸고 새 계정에서 댓글 초안을 쓰면, 앞 계정의 늦은 성공 응답이 새 계정의 입력창을 비운다(답글도 같음). ② 같은 기기에서 요청이 걸린 채 세션이 바뀌는 남은 넷(H451 Codex 검수가 짚음): 같은 계정으로 다시 로그인하면 앞 세션의 늦은 사용자 조회가 새 로그인의 역할·프로필을 덮음, 앱 시작 시간 초과 뒤 비로그인과 시작 전이 같은 빈 값이라 늦은 재동의 결과를 받아 다음 신규 가입 계정이 관문을 물려받음, 수동·자동 토큰 갱신이 같은 토큰으로 겹치면 유효한 갱신이 있어도 로그아웃됨, 오류 가로채기가 앞 계정 요청의 늦은 제재·이메일 미인증 403 으로 다음 계정의 관문을 세움. 구조는 요청을 인증 세대에 묶어 이전 세대 응답을 버리는 것. 진행(2026-10-21): ② 셋째(수동·자동 토큰 갱신 겹침)는 S1b 의 세션마다 갱신 하나로 닫혔다(S1b). ①·② 나머지는 S1 묶음이 닫는 몫으로 착수표가 보았고, 닫힘은 S1e2 끝에 다시 확인한다.",
-      "condition": "우선순위 6(경합 구조, 2026-10-09 사용자 결정은 구조로, 2026-10-21 결정은 출시 전·낮은 순위)",
-      "scope": "concurrency",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "H199eE1b3 기록·H451 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "H199eE1b3 기록·H451 기록"
+      "evidence": "[C1·B25 후속 후보 확인 (2026-10-09)](evidence/NEXT-WORK-2026-10-09/C1-B25-CANDIDATES.md)",
+      "evidenceLinks": [
+        {
+          "label": "C1·B25 후속 후보 확인 (2026-10-09)",
+          "href": "evidence/NEXT-WORK-2026-10-09/C1-B25-CANDIDATES.md"
+        }
       ]
     },
     {
       "id": "H-487",
-      "title": "보안 저장소·웹 탭의 드문 저장 경합",
-      "description": "기기 보안 저장소가 멈추거나 웹 탭이 겹칠 때 다음 앱 시작이 이미 끝낸 계정을 되살리는 드문 차례 넷(2026-10-21 S1b 코드 검수 3회차가 짚음, 조정자가 출시 전 낮은 순위로 넘김). ① 웹에서 두 탭이 같은 저장 번호에서 시작해 한쪽 A 로그인·갱신 뒤 다른 쪽 B 로그인이 더 낮은 번호로 저장되면 다시 열 때 A 가 선다. ② 저장 칸 목록 읽기가 실패해 시계 번호로 A 를 저장한 뒤 시계가 거꾸로 가고 읽기가 다시 실패하면 B 가 더 낮은 번호가 된다. ③ 웹은 첫 쓰기만 차례를 지켜, 그 첫 쓰기가 멈추면 로그아웃·B 저장이 그 뒤에서 기다린다. ④ 앱 시작의 첫 저장 칸 읽기가 멈추면 그 실행의 저장이 모두 그 읽기를 기다려, 다시 열 때 B 가 사라진다. 메모리의 세션은 맞게 서고 저장만 어긋난다. 회원 앱이 웹으로 나가지 않으면 ①③ 은 시험 환경 몫이다.",
-      "condition": "우선순위 6(경합 구조). 웹 출시 여부와 함께 정한다",
-      "scope": "concurrency",
+      "title": "기기 보안 저장소의 계정 종료 순서 보완",
+      "description": "기기 보안 저장소가 멈출 때 다음 앱 시작이 이미 끝낸 계정을 되살리는 드문 차례 둘(2026-10-21 S1b 코드 검수 3회차가 짚음, 조정자가 출시 전 낮은 순위로 넘김). ② 저장 칸 목록 읽기가 실패해 시계 번호로 A 를 저장한 뒤 시계가 거꾸로 가고 읽기가 다시 실패하면 B 가 더 낮은 번호가 된다. ④ 앱 시작의 첫 저장 칸 읽기가 멈추면 그 실행의 저장이 모두 그 읽기를 기다려, 다시 열 때 B 가 사라진다. 메모리의 세션은 맞게 서고 저장만 어긋난다. 웹 탭 두 장면(옛 ①·③)은 고객 앱을 웹으로 내지 않으므로(2026-10-24 사용자 결정) 걷었다.",
+      "condition": "우선순위 6(경합 구조)",
+      "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
       "stage": null,
@@ -812,76 +736,12 @@
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
       "evidence": "S1 묶음 병합 기록(H476b)에 지적 원문을 옮긴다",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "S1 묶음 병합 기록(H476b)에 지적 원문을 옮긴다"
-      ]
-    },
-    {
-      "id": "H-03",
-      "title": "충전·복구 중첩 시 이전 상태 판정 보완",
-      "description": "충전 응답과 복구 작업이 겹칠 때 이전 거래 상태로 마감할 수 있는 경로를 보완한다.",
-      "condition": "플랫폼 결제를 공개하기 전",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "B3 세부 계획서: 충전 확인 복구의 마감",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "B3 세부 계획서: 충전 확인 복구의 마감"
-      ]
-    },
-    {
-      "id": "H-05",
-      "title": "자동 충전의 외부 호출과 잠금 분리",
-      "description": "자동 충전이 지갑 잠금과 쓰기 트랜잭션을 잡은 채 결제사를 호출하는 구조를 분리한다.",
-      "condition": "플랫폼 결제를 공개하기 전(돈 게이트를 열 때. 두 단계 설계는 끝남: DESIGN-H05)",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "B20 세부 계획서: 충전 승인에서 청구 여부를 모르는 결제사 오류를 실패로 닫지 않는다",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "B20 세부 계획서: 충전 승인에서 청구 여부를 모르는 결제사 오류를 실패로 닫지 않는다"
-      ]
-    },
-    {
-      "id": "H-08",
-      "title": "예약 작업·경보의 DB 연결 중첩 분리",
-      "description": "출금 대사 예약 작업이 쓰기 트랜잭션 안에서 결제사 조회 셋을 부르고 경보를 독립 트랜잭션으로 쓰는 경로를 트랜잭션 밖 조회와 짧은 쓰기로 나눈다. 네 곳 가운데 셋(충전 보상 실패 기록 경보, 클럽 인출 내역 조회 경보, 출금 작업자 회수·재개)은 H235 로 닫았다.",
-      "condition": "지급대행을 공개하기 전",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "H235 예약 작업 경계 전수 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "H235 예약 작업 경계 전수 기록"
-      ]
+      "evidenceLinks": []
     },
     {
       "id": "H-13",
       "title": "지급 키 없음 응답의 계약 확인",
-      "description": "결제사의 지급 키 없음 응답이 송금 미실행을 확정하는지 확인하고 복구 판정에 반영한다.",
+      "description": "결제사의 지급 키 없음 응답이 송금 미실행을 확정하는지 확인하고 복구 판정에 반영한다. 같은 계약 확인에서 셋을 더 받는다. 셀러 등록의 「같은 참조 번호가 이미 있음」 오류 코드 값(2026-10-25 차수 3 이 빈 상수 집합으로 두어 그동안 중복은 확정 거절과 경보), 셀러 조회 API(등록 응답을 잃고 웹훅도 오지 않아 `REGISTERING` 으로 남은 결박을 닫는 길, 그동안 그 송금처의 지급은 「셀러 등록 실패」 로 막히고 돈은 나가지 않음), 가상계좌 발급 되묻기 상한(지금 30번)을 다시 잴 결제사 처리 시간이다.",
       "condition": "실제 결제사 계약 확인 후",
       "scope": "feature",
       "kind": "기능 보완",
@@ -891,411 +751,41 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "B4 세부 계획서: 출금 대기열 소유와 정산 계좌",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "B4 세부 계획서: 출금 대기열 소유와 정산 계좌"
-      ]
-    },
-    {
-      "id": "H-18",
-      "title": "셀러 등록 직후 승인 알림 유실 보완",
-      "description": "셀러 등록 결과 저장 전에 승인 웹훅이 도착해 버려지는 경로를 보완한다.",
-      "condition": "지급대행을 공개하기 전",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "contracts"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "B18 세부 계획서: 출금 송금이 지금 정산 계좌의 받는 사람으로 가게 하기",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "B18 세부 계획서: 출금 송금이 지금 정산 계좌의 받는 사람으로 가게 하기"
-      ]
-    },
-    {
-      "id": "NW-m",
-      "title": "동시 충전 취소·복구·관측값 경합 보완",
-      "description": "충전 취소의 동시 누계 잠금, 사용자 취소와 복구의 중첩, 관측값 덮어쓰기 세 경로를 보완한다.",
-      "condition": "플랫폼 결제·동시성 후속 작업",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "남은 것 (모두 기존 문제, 이번 변경으로 생기거나 커지지 않음)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "남은 것 (모두 기존 문제, 이번 변경으로 생기거나 커지지 않음)"
-      ]
-    },
-    {
-      "id": "NW-p",
-      "title": "셀러 등록 응답 유실 뒤 연결 복구",
-      "description": "셀러 등록 응답 유실 후 공급자에는 등록됐지만 내부 연결이 없어 재등록이 막히는 경로를 복구한다.",
-      "condition": "지급대행을 공개하기 전",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "contracts"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "남은 것 (모두 기존 문제, 이번 변경으로 생기거나 커지지 않음)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "남은 것 (모두 기존 문제, 이번 변경으로 생기거나 커지지 않음)"
-      ]
-    },
-    {
-      "id": "H-24",
-      "title": "개최권·마켓·출금의 영구 요청 영수증",
-      "description": "개최권 구매·마켓 구매·출금의 요청 식별자를 영구 보관하도록 전환한다. 현재 출시에서 사용하는 돈 명령의 전환은 끝났다.",
-      "condition": "플랫폼 결제를 공개하기 전",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "회원 돈 명령의 전환 범위",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "회원 돈 명령의 전환 범위"
-      ]
-    },
-    {
-      "id": "H-28",
-      "title": "관리자 돈 명령의 실제 동시 실행 입증",
-      "description": "관리자 돈 명령 세 개가 실제로 겹쳐 유일 색인에서 교착할 수 있는지 확인한다.",
-      "condition": "한 운영자의 순차 처리 외 동시 실행이 생길 때, 또는 원격 호출이 재전송 임대 60초를 넘을 때(자동·일괄·복구 경로에는 같은 번호를 두 번 보내는 것이 없음, H235 전수)",
-      "scope": "concurrency",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "B24 세부 계획서: 결박 내부 창구가 잠금 전에 자기 종류의 명령 번호만 받는다",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "B24 세부 계획서: 결박 내부 창구가 잠금 전에 자기 종류의 명령 번호만 받는다"
-      ]
-    },
-    {
-      "id": "H-90",
-      "title": "권한 삭제·역할 연결의 동시 실행 보완",
-      "description": "권한·메뉴 삭제와 역할 연결이 겹칠 때 없는 대상을 가리키는 연결이 남는 경로를 보완한다.",
-      "condition": "동시 관리자 조작을 허용할 때",
-      "scope": "concurrency",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "관리자 권한 삭제 검수",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "관리자 권한 삭제 검수"
-      ]
-    },
-    {
-      "id": "H-92",
-      "title": "관리자 경고 원장의 동시 처리 보완",
-      "description": "관리자 경고 원장의 동시 부여·감경·요약과 일부 실패 처리를 보완한다.",
-      "condition": "기본으로 꺼진 관리자 경고 원장을 켤 때",
-      "scope": "concurrency",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "B11 세부 계획서: 관리자 경고 원장의 무결성 오류 판정과 잠금 실패 응답",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "B11 세부 계획서: 관리자 경고 원장의 무결성 오류 판정과 잠금 실패 응답"
-      ]
-    },
-    {
-      "id": "H-101",
-      "title": "마켓 구매의 계정별 재시도 보관",
-      "description": "마켓 구매의 재시도 식별자를 계정별로 영속 보관한다. 배정 화면 등 첫 출시 관련 보완은 끝났다.",
-      "condition": "마켓 구매를 영구 영수증으로 전환할 때",
-      "scope": "payment",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "회원 돈 명령의 전환 범위",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "회원 돈 명령의 전환 범위"
-      ]
-    },
-    {
-      "id": "H-474",
-      "title": "다음 회차의 제공자 배정 승계 안내",
-      "description": "모임 상세 메뉴의 「이 이벤트로 새로 만들기」 도 「제공자 배정도 이어갈까요?」 를 묻게 한다(2026-10-21 사용자 결정, 권고대로. 내 모임 지난 탭·모임 결과 화면과 같게).",
-      "condition": "우선순위 3, 앱",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "기록"
+      "evidence": "[B4 세부 계획서: 출금 대기열 소유와 정산 계좌](DEFECT_PLAN_2026-09-29/detail/B4.md)·[차수 3 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND3/README.md) 「5순위 돈·임대 규칙 요지」",
+      "evidenceLinks": [
+        {
+          "label": "B4 세부 계획서: 출금 대기열 소유와 정산 계좌",
+          "href": "DEFECT_PLAN_2026-09-29/detail/B4.md"
+        },
+        {
+          "label": "차수 3 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND3/README.md"
+        }
       ]
     },
     {
       "id": "H-476",
-      "title": "로그아웃·계정 전환의 세션 처리",
-      "description": "로그아웃·계정 전환 때 이전 세션의 늦은 응답이나 대화 상자 뒤 요청이 새 계정에 영향을 주지 않게 합니다. 공급자 전환과 화면·업로드 보조 33몸통(S1e2a)은 병합했고, 남은 화면 요청과 다시 읽기를 S1e2b로 정비합니다.",
-      "condition": "S1e2a(214aedf1)까지 병합. 다음 S1e2b: 대화 상자·선택 뒤 요청 152곳과 판단 대상 10곳을 b1~b4 화면 묶음으로, 다시 읽기는 b5로 정비. 이후 H-489 앱 안내.",
-      "scope": "now",
+      "title": "로그아웃·계정 전환의 실기기 확인",
+      "description": "로그아웃·계정 전환 가족(2026-10-21 전체 검토 R3). 세션 끝을 한 자리로 모으고 요청을 세션 세대에 묶는 구조 수리는 끝났다(S1 착수표 S1a~S1e2b5·S1b2·S1d2, 2026-10-21~24, 기록 `evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H476*`·`ROUND1`). 남은 후보 ⓐ 그물 틈·ⓑ 꼴 전수의 다음 자리·ⓕ 세션 걷기 좁히기는 2026-10-25 차수 5 의 A2·A2b·A2c·A3 이 닫았다([차수 5 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md)). 남은 것은 ⓔ 실기기 확인이다: 알림 창 비우기, 오프라인 로그아웃 뒤 재개, 소셜 로그인 창 다녀오기, 알림 창 채널 네이티브 컴파일(`MainActivity.kt`·`AppDelegate.swift`, 이 맥에 Android SDK 가 없고 iOS 가 구성되지 않음), 네이버 SDK 가 남은 토큰으로 창 없이 로그인하는지, FCM 토큰을 지운 뒤 새 토큰이 나오는지, SDK 로그아웃이 돌아오지 않을 때 「그래도 로그인」으로 나아가는지.",
+      "condition": "우선순위 3. 개발 단위는 없고 출시 준비의 실제 이용 확인(서명 앱·실기기)에서 본다",
+      "scope": "launch",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
-      "stage": null,
+      "stage": "journey",
       "resources": [
-        "development"
+        "devices"
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "9c 기록 「남긴 것」 ·재현 기록·R3",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "9c 기록 「남긴 것」 ·재현 기록·R3"
-      ]
-    },
-    {
-      "id": "H-477",
-      "title": "편집기 초안·저장 실패 안내",
-      "description": "글 쓰는 화면의 초안·저장 실패 안내 가족(H-477·H-478·H-479 와 2026-10-21 전체 검토 R7 을 한 줄로 묶음). 끝나지 않은 일(보낼 예약·실패·보류·쓰기 차단·업로드 중)을 적는 자리와 그것을 읽고 다음 동작을 고르는 자리가 다른 값을 본다. 플랜 편집: ① 플랜 편집 화면에서 초안을 복원한 블록 카드의 자동 저장이 전환(읽기 모드·발행) 잠금에 막히면 다시 예약되지 않는다(2026-10-21 재현 시험으로 확인: 30초·60초를 더 기다려도 풀리지 않음). 그러면 읽기 모드·발행이 「저장이 끝나기를 기다리는 중」 안내로 계속 막히고 기다려도 풀리지 않는다. 앞선 저장 실패가 있었으면 다시 시도 단추도 사라진다. 글은 남고, 그 카드에 들어갔다 나오면 풀린다. 근거: 복원 카드는 포커스 없이 300ms 타이머를 건다(앱 block_editor_screen.dart :4593-4595, 저장 뒤 재예약 :5091-5106 도 포커스를 보지 않음), 전환 잠금 중 다른 블록 저장은 markUnsent 뒤 실패로 돌아간다(:4332 근처). H-190 10단계 U10b 착수표 조사가 찾음. U10b 는 고치지 않고 지금 값을 시험 C14 로 고정한다. ② 플랜 편집 화면에서 부모 블록을 복사·복제하거나 여러 블록을 골라 복사할 때, 저장에 실패한 자식 블록의 초안이나 다시 예약되지 않은 복원 초안(H-477)은 보류가 아니라서 막히지 않는다(2026-10-21 재현 시험으로 확인, 오프라인·약한 망에서 바로 생김). 그래서 화면에 보이던 글이 아니라 서버 본문이 복사·복제된다. 초안은 남아 있어 글이 사라지지는 않는다. 오프라인에서는 복제 쓰기도 실패하므로 주로 복사에서 드러난다. H-190 10단계 U10c 착수표 조사가 찾음. U10c 는 고치지 않는다. ③ 플랜 편집 화면에서 쓰기가 개정 확인 필요(428)로 막힌 뒤 복구 조회가 개정 값과 함께 성공하면 쓰기를 한 번 더 보내는데, 그 재전송이 실패하면 실패 안내도 차단 띠도 뜨지 않고 조용히 끝난다(2026-10-21 재현 시험으로 확인. 앱이 늘 개정 토큰을 실어 첫 428 이 드물다). 실패 안내(_toastFailure)는 차단 코드면 토스트를 내지 않고 띠에 맡기는데, 그때 provider 의 토큰 국면이 띠를 세우지 않는다. U10a 의 공통 쓰기 실패 처리에서 나오는 값이라 복제 말고 다른 쓰기도 같을 수 있다. H-190 10단계 U10c 구현이 찾음. 다른 화면(R7 확실 14): 채팅 전송 실패 때 쓴 글이 사라짐, 「등록 + 발행」 에서 공개 실패 뒤 다시 누르면 초안 모임이 하나 더 생김, 장터 아이템을 고친 뒤 심사에 내면 옛 본문이 넘어감, 증빙 업로드 중 제출하면 증빙 없이 접수(4자리), 투표 만들기·수정 실패 때 편집기가 먼저 닫힘 등. 쓰던 글을 두고 나가도 묻지 않는 화면 묶음(기본값: 묻는다). 결정(2026-10-21 사용자, 권고대로): 쓰던 글을 두고 나가면 「작성 중인 내용을 버리고 나갈까요?」 를 묻는다(S5d).",
-      "condition": "S5a 블록별 저장 상태 처리 병합. 다음 S5b 차단 판정 통합과 남은 편집 화면 보완.",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R7 검토·재현 기록·R7",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R7 검토·재현 기록·R7"
-      ]
-    },
-    {
-      "id": "H-480",
-      "title": "명령 뒤 관련 화면 갱신",
-      "description": "명령 뒤 화면 갱신 가족(2026-10-21 전체 검토 R1a·R1b, 확실 59 남짓·후보 25). 명령이 성공해도 그 값을 그리는 다른 화면이 다시 읽히지 않아 옛 값이 남는다. 모임 상세(신청 승인, 비공개 모임 모집 열기·고르기·취소), 지갑 잔액(정산 포인트 결제 셋·스스로 돌려주기·포인트 모임 취소·정기모임 등록 취소·일정 변경 거절 환불·비공개 모임 포인트 열기), 출금 목록, 정기모임 목록 배지, 일정 변경 제안 목록, 클럽 목록·내 클럽(탈퇴·수정·만들기·승인·강퇴·차단), 클럽 댓글 수, 채팅 안 읽은 수·마지막 글, 알림 표지, 마일리지·경고 콘솔 요약, 경고 회원 상세, 내 분쟁 목록, 캘린더 가능 시간, 내 상품 목록, 모임 목록 찜 하트. 원인은 명령과 그 값을 그리는 화면의 짝을 손으로 적고 기계 검사가 「내 모임」 목록 넷만 보는 것. H-475 는 같은 꼴의 한 자리였다.",
-      "condition": "우선순위 3, 구조 수리 S4(갈래별 신호를 명령이 올리고 값을 그리는 공급자가 구독, 저장소 쓰기 전수 표에 올리는 신호 칸)",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R1a·R1b",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R1a·R1b"
-      ]
-    },
-    {
-      "id": "H-481",
-      "title": "서버 권한에 맞는 단추·입구 표지",
-      "description": "서버가 허용하는 행동과 앱의 단추·입구가 일치하도록 같은 판정에서 권한 표지를 만듭니다. S3a1·S3a2는 병합했습니다. 10월 23일 결정으로 나간 회원의 본인 댓글 삭제·기부 취소를 제한하고, 보이지 않는 공지·댓글·초대·앨범의 명령도 좁혔습니다. 운영진의 차단 관계 관리 등 기록된 예외를 유지하며, 경고 묶음과 앱 표지 연결은 후속입니다.",
-      "condition": "S3a1·S3a2(8eca28ff4) 병합 완료. 다음 S3a3 경고 묶음과 앱 S3m2의 행 표지 연결.",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R2a·R2b·R2c·R2d",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R2a·R2b·R2c·R2d"
-      ]
-    },
-    {
-      "id": "H-482",
-      "title": "회원 데이터 내보내기의 누락 보완",
-      "description": "계정·설정·동의·돈·본인 활동 기록의 내보내기 누락을 보완합니다. 회원 콘텐츠·대화·삭제 메시지 원문은 제외하기로 결정했고 S2r에 반영했습니다. D9는 처리한 사람에게 사실만 싣고 글·대상 회원 번호·이름을 빼기로 결정해 S2d1의 참가·출석 11표에 반영했습니다. 후속 범위와 약관·법적 확인은 남습니다.",
-      "condition": "D9 결정·S2d1(b8f2715e4) 반영 완료. 다음 S2b·S2d3·S2e·S2d2·S2f1·S2f2·S2f3.",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R5",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R5"
-      ]
-    },
-    {
-      "id": "H-483",
-      "title": "호스트 이관과 돈 기록 주인",
-      "description": "소유·권한 넘김과 돈 주인 가족(2026-10-21 전체 검토 R6, 확실 4·후보 4). 관리자 정기모임 호스트 넘김 뒤 넘어간 유료 회차의 계좌이체 안내가 이전 호스트 계좌를 가리킴, 넘김 판정이 제공자 배정을 보지 않아 새 호스트가 배정을 취소하면 이전 호스트 계약금이 몰수됨, 이전 호스트에게 남긴 회차를 새 코스 호스트가 취소해 환불이 이전 호스트 몫에서 나감, 공동 호스트가 부담한 부분 환불이 있으면 배정 취소 전체가 실패. 후보: 예약 공지·글이 작성자 강등·강퇴 뒤에도 발행 등. 정할 것: 남긴 회차를 누가 닫는가(권고: 이전 호스트, 넘김 거절 아님). 결정(2026-10-21 사용자, 권고대로): 정기모임 호스트 넘김에서 이전 호스트에게 남긴 회차는 이전 호스트가 닫는다(넘김 자체를 거절하지 않음).",
-      "condition": "설계 3판 검토 완료. S6a0 배정·발행 잠금 차례 구현 기록 있음. 코드 검수·관문·병합은 남음.",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R6",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R6"
-      ]
-    },
-    {
-      "id": "H-484",
-      "title": "참조 종류·번호의 정확한 해석",
-      "description": "다형 참조(종류 + 번호) 해석 가족(2026-10-21 전체 검토 R4, 확실 10·후보 4). 번호 공간이 겹치는 새 DB 에서 운영 화면에 남의 기록이 섞인다. 관리자 돈 흐름 추적(상품 번호로 판매 수익을 찾아 남의 구매 수익이 붙음, 분개를 번호만으로 찾아 클럽·이벤트 분개가 섞임, 분개 종류를 보지 않음), 마일리지 회원 상세(공개·관리자, 대상 번호를 종류 없이 견줌, 본문 거르기 \"memberId\":5 가 51 에도 걸림), 관리자 알림 참조 추적(예약 알림을 번호만으로), 관리자 지원 사건 검색(REPORT 가 표마다 다른 뜻이라 무관한 경고 원장이 연결 후보로 뜸). 분쟁 사건 번호는 H-468·H-470·H-472 로 맞다.",
-      "condition": "S7a1·S7a2·S7b·S7c1 완료. S7c2부터 이어서 관리자 돈 흐름 조회를 완성. S7d2 전 일부 분개 누락은 남음.",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R4",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R4"
-      ]
-    },
-    {
-      "id": "H-485",
-      "title": "목록의 중복 요청 방지",
-      "description": "공통 목록 조각을 쓰지 않는 목록 둘에 진행 중 막기가 없다(2026-10-21 전체 검토 R8 확실 2). 프로필 「나를 본 사람」 목록은 스크롤 신호마다 같은 장을 청해 같은 사람이 여러 번 붙고, 마켓 검색은 신호마다 쪽 번호를 올려 여러 장을 한꺼번에 청해 순서가 섞일 수 있다. 보통 스크롤에서 생긴다.",
-      "condition": "우선순위 3, 구조 수리 S8(두 목록을 공통 목록 조각으로)",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "R8",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "R8"
-      ]
-    },
-    {
-      "id": "H-486",
-      "title": "로그인 복귀 직후 상세 화면 갱신",
-      "description": "로그인한 뒤 같은 공개 모임 상세로 돌아가면 상세 화면이 그리는 도중 계정 범위 공급자를 다시 지어, 그것을 지켜보는 참가 단추 공급자(attendance_action_provider.dart:29 등)가 무효가 되고 riverpod 이 그리기 도중 화면 갱신을 부른다(디버그 단언, event_detail_screen.dart:98·event_detail_provider.dart:23). 앱 main 180dbc12 에서도 재현된다(2026-10-21 S1c 후속 담당 실측, 로그인 전 돌아갈 주소가 있는 판·없는 판 둘 다). 출시 빌드에서는 단언이 없지만 그 틀이 낡은 값으로 그려질 수 있다. 같은 꼴(계정 범위 공급자를 세션이 바뀐 뒤 처음 그리기 도중 지켜보는 화면)이 다른 상세에도 있는지 함께 본다.",
-      "condition": "우선순위 3 끝, S1 묶음 병합 뒤",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "S1 묶음 병합 기록(H476c)에 재현 기록을 옮긴다",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "S1 묶음 병합 기록(H476c)에 재현 기록을 옮긴다"
-      ]
-    },
-    {
-      "id": "H-497",
-      "title": "반복 일정 생성 종료 보장 · 완료",
-      "description": "클럽 반복 이벤트를 주 단위로 요일 없이(또는 월 단위로 날짜 없이) 종료일 없이 만들면 회차 생성이 끝나지 않는다(2026-10-22 H481 S3a1 시험이 40분 넘게 멈춰 찾음, 조정자가 소스로 확인). ClubRecurringEventService.generateRecurringEventInstances 의 안전장치 maxIterations 가 반복 횟수가 아니라 만든 회차 수를 세고, 입력 검증은 빈 요일을 받는다. 클럽 운영진 요청 한 번이 서버 스레드 하나를 날짜가 넘칠 때까지 붙든다. 같은 원인(종료가 만든 결과 수에 기대는 생성 반복) 전수와 구조 수리(안전장치는 반복 횟수로, 생성 전에 반복 종류에 필요한 값 검증)를 함께 한다.",
-      "condition": "2026-10-22 공개 API 4eb863fd7 병합·검증 완료. 원문 표의 행 정리만 대기.",
-      "scope": "completed",
-      "kind": "완료 기록",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-10-22 S3a1 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 3. 고칠 결함",
-        "2026-10-22 S3a1 기록"
-      ]
-    },
-    {
-      "id": "H-177",
-      "title": "가상계좌 발급 중 장기 대기 확인·보완",
-      "description": "가상계좌가 발급 중 상태에 계속 남을 수 있는지 재현하고, 조회 재시도의 상한·경보를 보완한다.",
-      "condition": "플랫폼 가상계좌를 공개하기 전",
-      "scope": "payment",
-      "kind": "검증·보완",
-      "section": "4. 플랫폼 결제를 열기 전에 고칠 것",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#4-플랫폼-결제를-열기-전에-고칠-것",
-      "evidence": "가상계좌 발급 재시도 점검",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 4. 플랫폼 결제를 열기 전에 고칠 것",
-        "가상계좌 발급 재시도 점검"
+      "evidence": "[R3](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/REVIEW-2026-10-21/R3.md)·[차수 5 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md)",
+      "evidenceLinks": [
+        {
+          "label": "R3",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/REVIEW-2026-10-21/R3.md"
+        },
+        {
+          "label": "차수 5 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md"
+        }
       ]
     },
     {
@@ -1303,7 +793,7 @@
       "title": "플랫폼 기간권 편성·판매 시작 경로",
       "description": "플랫폼 기간권 편성·판매 시작·중지와 앱 표시를 만든다. 회원이 기간권을 만드는 경로는 폐쇄돼 현재 판매를 시작할 길이 없다.",
       "condition": "기간권 판매를 채택하고 결제 기반을 준비한 뒤",
-      "scope": "candidate",
+      "scope": "feature",
       "kind": "기능 개발",
       "section": "5. 새 기능",
       "stage": null,
@@ -1311,11 +801,12 @@
         "development"
       ],
       "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계"
+      "evidence": "[마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계](payment/PERIOD_PASS_PLATFORM_OWNER_DESIGN_2026-09-24.md)",
+      "evidenceLinks": [
+        {
+          "label": "마켓 1·3·6개월 기간권: 플랫폼 판매자 구현 설계",
+          "href": "payment/PERIOD_PASS_PLATFORM_OWNER_DESIGN_2026-09-24.md"
+        }
       ]
     },
     {
@@ -1323,7 +814,7 @@
       "title": "마켓 유형별 공개·환불 재시도 연결",
       "description": "마켓을 상품 유형별로 공개하고 결제 제한 안내·환불 재시도 결과를 연결한다.",
       "condition": "마켓을 공개할 때",
-      "scope": "candidate",
+      "scope": "feature",
       "kind": "기능 개발",
       "section": "5. 새 기능",
       "stage": null,
@@ -1331,11 +822,12 @@
         "development"
       ],
       "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서"
+      "evidence": "[마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서](payment/MARKET_COMMERCE_PERIOD_PASS_RELEASE_SEAL_AUDIT_2026-08-30.md)",
+      "evidenceLinks": [
+        {
+          "label": "마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서",
+          "href": "payment/MARKET_COMMERCE_PERIOD_PASS_RELEASE_SEAL_AUDIT_2026-08-30.md"
+        }
       ]
     },
     {
@@ -1351,51 +843,12 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "외부 연동 코드 종결 현황",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "외부 연동 코드 종결 현황"
-      ]
-    },
-    {
-      "id": "H-185",
-      "title": "수입별 납부와 전체 정산 설계",
-      "description": "정산 요청일·분담금 일괄 확인·포인트 원기록 보존은 완료했습니다. 수입별 납부를 개발하기로 결정했으며, 먼저 모임·클럽 정산의 항목과 돈의 방향·확인·취소·환불을 함께 설계합니다.",
-      "condition": "작은 개선 셋은 완료. 수입별 납부는 개발 결정됐으며 지출·수입·배분·취소·환불·클럽 정산을 함께 설계한 뒤 구현.",
-      "scope": "now",
-      "kind": "기능 개발",
-      "section": "5. 새 기능",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "모임 정산 사용성 개선과 내 정산 통합 조회 계획",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "모임 정산 사용성 개선과 내 정산 통합 조회 계획"
-      ]
-    },
-    {
-      "id": "H-186",
-      "title": "관리자 인터넷 공개 전 세션·2단계 인증",
-      "description": "관리자 세션을 HttpOnly 쿠키로 전환하고 2단계 인증을 추가한다.",
-      "condition": "우선순위 5로 세션 쿠키·2단계 인증 보완. 관리자 서비스의 인터넷 전체 공개 여부는 별도.",
-      "scope": "payment",
-      "kind": "기능 개발",
-      "section": "5. 새 기능",
-      "stage": null,
-      "resources": [
-        "access"
-      ],
-      "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "역할·권한·관리자 세션 의사결정 재감사",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "역할·권한·관리자 세션 의사결정 재감사"
+      "evidence": "[외부 연동 코드 종결 현황](../release-gate/plans/CODE_LEVEL_CLOSURE_PLAN_2026-08-09.md)",
+      "evidenceLinks": [
+        {
+          "label": "외부 연동 코드 종결 현황",
+          "href": "../release-gate/plans/CODE_LEVEL_CLOSURE_PLAN_2026-08-09.md"
+        }
       ]
     },
     {
@@ -1403,7 +856,7 @@
       "title": "신뢰 점수·자동 제재 단계 완성",
       "description": "신뢰 점수와 자동 제재 단계를 완성한다. 완성 전에는 점수를 안전 보증에 쓰지 않는다.",
       "condition": "후속 안전 기능 개발",
-      "scope": "candidate",
+      "scope": "later",
       "kind": "기능 개발",
       "section": "5. 새 기능",
       "stage": null,
@@ -1411,11 +864,12 @@
         "development"
       ],
       "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
@@ -1423,7 +877,7 @@
       "title": "출금의 이상 거래·세무·결산 확대",
       "description": "이상 거래 감지·결산·세무·여러 결제사 지원을 만든다.",
       "condition": "출금 기능의 후속 확대",
-      "scope": "candidate",
+      "scope": "feature",
       "kind": "기능 개발",
       "section": "5. 새 기능",
       "stage": null,
@@ -1431,119 +885,41 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "PRD 5 — 외부 송금 Phase 2 (AML / 세무 / 자동 결산 / 다중 PG)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "PRD 5 — 외부 송금 Phase 2 (AML / 세무 / 자동 결산 / 다중 PG)"
+      "evidence": "[PRD 5 — 외부 송금 Phase 2 (AML / 세무 / 자동 결산 / 다중 PG)](../todo/prd/05_withdrawal_phase2.md)",
+      "evidenceLinks": [
+        {
+          "label": "PRD 5 — 외부 송금 Phase 2 (AML / 세무 / 자동 결산 / 다중 PG)",
+          "href": "../todo/prd/05_withdrawal_phase2.md"
+        }
       ]
     },
     {
       "id": "H-189",
       "title": "기능별 후속 제안의 채택 여부",
-      "description": "편집기·교통편·프로필·정기모임·투표와 외부 일정 가져오기의 제안을 검토한다. 채택한 개발 목록이 아니다.",
+      "description": "편집기·교통편·프로필·정기모임·투표와 외부 일정 가져오기의 제안을 검토한다. 차수 7 이 더한 후보 둘: 모임 정원 초과 허용·상한 설정(쓰는 화면이 없어 2026-10-26 조정자 C17 로 `PATCH /events/{id}/capacity-settings` 창구를 닫음, 설정 칸은 기본값으로 남음), 관리자 통신 추적 화면(관리자 저장소 참고 문서 `docs/plan/admin_operational_control_full_scope_plan.md` Track K 의 구상, 화면 없던 창구는 차수 7 M10 이 걷음). 채택한 개발 목록이 아니다.",
       "condition": "사용자가 후속 범위를 채택한 뒤",
       "scope": "candidate",
-      "kind": "기능 개발",
+      "kind": "제안 검토",
       "section": "5. 새 기능",
       "stage": null,
       "resources": [
         "decision"
       ],
       "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "후속 후보별 설계 안내",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "후속 후보별 설계 안내"
-      ]
-    },
-    {
-      "id": "H-426",
-      "title": "Calendar 해제 시 Google 권한 철회",
-      "description": "Calendar 연결 해제 때 Google 측 권한도 철회한다. 현재는 서버 자격 증명 삭제와 자동 동기화 중지만 한다.",
-      "condition": "우선순위 7. Google 로그인 허가까지 함께 철회되는 영향을 설계한 뒤 구현·후속 공개 확인.",
-      "scope": "conditional",
-      "kind": "기능 개발",
-      "section": "5. 새 기능",
-      "stage": null,
-      "resources": [
-        "calendar"
-      ],
-      "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "R8b 구글 캘린더를 연 뒤의 남은 셋(H-73·H-403, H-348 은 범위 밖) 착수표",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "R8b 구글 캘린더를 연 뒤의 남은 셋(H-73·H-403, H-348 은 범위 밖) 착수표"
-      ]
-    },
-    {
-      "id": "H-489",
-      "title": "모바일 한 기기 로그인",
-      "description": "모바일 한 기기 로그인입니다. 새 기기 로그인으로 종료된 세션의 거절 사유, 세션에 묶인 기기 토큰, 토큰 끄기·정리와 연결 종료 전 실시간 알림까지 병합했습니다. 이전 기기의 로그인 화면 안내는 후속입니다.",
-      "condition": "H489a·b·b2와 실시간 H489r(41c7563) 병합. H489p2 로그인 화면 안내는 S1e2b 뒤. 출시 전 완성.",
-      "scope": "now",
-      "kind": "기능 개발",
-      "section": "5. 새 기능",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#5-새-기능",
-      "evidence": "2026-10-21·22 대화",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 5. 새 기능",
-        "2026-10-21·22 대화"
-      ]
-    },
-    {
-      "id": "H-194",
-      "title": "자동 충전의 외부 호출과 잠금 분리",
-      "description": "자동 충전이 호출자의 지갑 잠금을 쥔 채 의도를 새 트랜잭션으로 저장하고 결제사를 부르는 구조를 분리한다(H-05 와 같은 자리, 설계는 끝남). 출석 기록 쪽 회원 외래 키는 H392b-2·H235 로 닫았다.",
-      "condition": "플랫폼 결제를 공개하기 전(돈 게이트를 열 때)",
-      "scope": "payment",
-      "kind": "구조 개선",
-      "section": "6. 구조 개선",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#6-구조-개선",
-      "evidence": "자동 충전 두 단계 설계",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 6. 구조 개선",
-        "자동 충전 두 단계 설계"
-      ]
-    },
-    {
-      "id": "H-418",
-      "title": "대규모 정기모임 취소·종료 최적화",
-      "description": "큰 정기모임의 회차별 후처리와 대기 회원 일괄 마감을 최적화한다. 현재 측정은 200회차 취소 약 5~7.5초다.",
-      "condition": "200회차 취소가 10초 초과, 미래 회차 100개 초과 또는 대기 회원 수천 명일 때",
-      "scope": "conditional",
-      "kind": "구조 개선",
-      "section": "6. 구조 개선",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#6-구조-개선",
-      "evidence": "R6g 코스 생애주기 알림 일괄 적재와 큰 모임 취소의 닫기·명단 일괄화(H-409, H-412) 착수표",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 6. 구조 개선",
-        "R6g 코스 생애주기 알림 일괄 적재와 큰 모임 취소의 닫기·명단 일괄화(H-409, H-412) 착수표"
+      "evidence": "[후속 후보별 설계 안내](README.md#기능별-계약과-설계)",
+      "evidenceLinks": [
+        {
+          "label": "후속 후보별 설계 안내",
+          "href": "README.md#기능별-계약과-설계"
+        }
       ]
     },
     {
       "id": "H-197",
-      "title": "옛 알림 대기열 제거 완료·후속 후보",
-      "description": "옛 알림 실패 대기열(notification_dead_letter)과 예약 작업 둘·옛 PushService·관리자 9경로를 지우고 운영 현황·연락 이력·참조 추적을 새 발송 기록으로 바꿨다. 공개 c28537fb4·관리자 987a16c 병합 끝(2026-10-17, 기록). 관리자 웹 7b01a6d 병합 끝(2026-10-18, 관리자 웹 main 의 Node 24.22.0 맞춤 d7b273c 위로 다시 얹음, 타입·린트·스크립트 시험 다시 통과). 남은 것: 후속 후보(알림 발송 실패 경보, 참조 없는 발송의 추적).",
-      "condition": "공개·관리자 API·관리자 웹 병합 완료. 발송 실패 경보·참조 없는 발송 추적은 필요할 때 후속 후보 검토.",
-      "scope": "candidate",
+      "title": "옛 알림 실패 대기열·예약 작업 통합",
+      "description": "옛 알림 실패 대기열(`notification_dead_letter`)과 예약 작업 둘·옛 `PushService`·관리자 9경로를 지우고 운영 현황·연락 이력·참조 추적을 새 발송 기록으로 바꿨다. 공개 `c28537fb4`·관리자 `987a16c` 병합 끝(2026-10-17, [기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H197/README.md)). 관리자 웹 `7b01a6d` 병합 끝(2026-10-18, 관리자 웹 main 의 Node 24.22.0 맞춤 `d7b273c` 위로 다시 얹음, 타입·린트·스크립트 시험 다시 통과). 남은 것: 후속 후보(알림 발송 실패 경보, 참조 없는 발송의 추적).",
+      "condition": "후속 후보는 필요할 때",
+      "scope": "later",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
       "stage": null,
@@ -1551,38 +927,19 @@
         "development"
       ],
       "source": "NEXT_WORK.md#6-구조-개선",
-      "evidence": "푸시와 인증 메일 발송 기록 구현 계획",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 6. 구조 개선",
-        "푸시와 인증 메일 발송 기록 구현 계획"
-      ]
-    },
-    {
-      "id": "H-199",
-      "title": "앱 공통 처리 완료·미호출 목록 네 자리 후속",
-      "description": "서버 시각 변환·날짜 표기·로딩·사용 중 목록의 실패 표시와 정산·지갑 공통 처리는 완료했습니다. HostingEventsNotifier·PastEventsNotifier·AttendedEventsNotifier·HostInboxNotifier의 미호출 loadMore 네 자리를 후속 정비로 남겼습니다.",
-      "condition": "시각·날짜·로딩·사용 중 목록 처리는 합의 범위 완료. 우선순위 4로 미호출 loadMore 네 자리(D7)의 호출 의도·정비 범위를 확인.",
-      "scope": "now",
-      "kind": "구조 개선",
-      "section": "6. 구조 개선",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#6-구조-개선",
-      "evidence": "설계 품질 향상 프로그램: 배경·현황·방향·의사결정 가이드 (2026-09-14)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 6. 구조 개선",
-        "설계 품질 향상 프로그램: 배경·현황·방향·의사결정 가이드 (2026-09-14)"
+      "evidence": "[푸시와 인증 메일 발송 기록 구현 계획](integrations/W15_PUSH_EMAIL_DELIVERY_PLAN_2026-10-03.md)",
+      "evidenceLinks": [
+        {
+          "label": "푸시와 인증 메일 발송 기록 구현 계획",
+          "href": "integrations/W15_PUSH_EMAIL_DELIVERY_PLAN_2026-10-03.md"
+        }
       ]
     },
     {
       "id": "H-200",
       "title": "확대 시 분쟁 처리 한계 재평가",
-      "description": "분쟁 처리에서 받아들인 한계 네 가지의 개선 필요성을 재평가한다.",
-      "condition": "규모가 커지거나 처리 범위를 확대할 때",
+      "description": "분쟁 처리의 규모 한계 둘이 남았다. 케이스 목록은 최근 500건 창(`DisputeCaseQueryRepository.REGISTRY_WINDOW`)으로 자르고, 당사자 판정의 정본이 인스턴스 행의 JSON 명부라 대량 스캔에 맞지 않는다. 지금 코드로 줄일 몫은 없다. 범위로 남긴 넷(DEC-4·DEC-22)과 닫힌 항목은 2026-10-26 차수 7 D1 이 다시 봤다(계획서 8.4).",
+      "condition": "분쟁 사건이 500 창을 넘거나 처리 범위를 넓힐 때 투영 표를 설계한다",
       "scope": "conditional",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
@@ -1591,17 +948,64 @@
         "development"
       ],
       "source": "NEXT_WORK.md#6-구조-개선",
-      "evidence": "DSP-01 통합 분쟁 최종 종결 실행 계획",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 6. 구조 개선",
-        "DSP-01 통합 분쟁 최종 종결 실행 계획"
+      "evidence": "[DSP-01 통합 분쟁 최종 종결 실행 계획](payment/DSP01_DISPUTE_CLOSURE_PLAN_2026-08-16.md)",
+      "evidenceLinks": [
+        {
+          "label": "DSP-01 통합 분쟁 최종 종결 실행 계획",
+          "href": "payment/DSP01_DISPUTE_CLOSURE_PLAN_2026-08-16.md"
+        }
+      ]
+    },
+    {
+      "id": "H-507",
+      "title": "규모 확대 전 정산 조회 색인 확인",
+      "description": "정산 조회의 규모 과제. 내 정산 목록·건수·합계의 회원 조건이 분담 방향을 가르는 CASE 식이라 회원 번호 색인을 타지 못한다(H-185 S3a, 출시 전 규모라 그대로 둠). 고칠 꼴은 「분담자 = 나」 와 「보유자 = 나」 두 갈래로 나눠 각 색인을 타게 하는 것이고 이득은 실 DB 실행 계획으로만 보인다. 같은 꼴: 차수 7 S1 이 옛 개인 이력에 더한 분담 당사자 질의(분담자 ∪ 보유자, 정산 복사 시트만 부름). 일괄 정산의 연결 쥠은 2026-10-26 차수 7 S6 이 닫았다.",
+      "condition": "회원·정산 수가 늘어 내 정산 응답이 느려질 때(우선순위 7). 단위로 넣으면 실행 계획 전후를 검수표에 둔다",
+      "scope": "conditional",
+      "kind": "구조 개선",
+      "section": "6. 구조 개선",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#6-구조-개선",
+      "evidence": "[차수 3 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND3/README.md)·[차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 3 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND3/README.md"
+        },
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
+      ]
+    },
+    {
+      "id": "H-528",
+      "title": "탈퇴 연결·잠금과 도메인 포트 정리",
+      "description": "차수 7 이 남긴 연결·잠금 구조 셋. ① 탈퇴 셸 넷(공개 `UserService.deactivateAccount`, `DataDeletionExecutionWorker` 둘, `DataDeletionService.executeDeletionByRequestId`)이 `validateAndResolve` 의 평문 조회부터 셸 끝까지 쓰기 연결 하나를 쥔다. 가드 `GuardIsolationArchitectureTest` 가 「NOT_SUPPORTED 셸」 로 고정한 설계라 설계 검토부터 한다. ② 운영 기록 `ModerationActionLogger.log` 의 중복 키 경합 갈래가 다시 읽을 때 바깥 NOT_SUPPORTED 범위에 합류하면 연결을 쥔다(경합 갈래만, 낮음). ③ 가드 격리 동결 기준선(P1(a)·P1(b))에 차수 7 이 기록한 31건(S5 10, S3d 7, S17 5, S25 7, S7b 2)과 기존 기준선을 도메인 포트로 옮긴다(공개 `src/test/resources/archunit/README.md` 끝 절).",
+      "condition": "우선순위 6(경합 구조). ① 은 설계 검토 뒤",
+      "scope": "now",
+      "kind": "구조 개선",
+      "section": "6. 구조 개선",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#6-구조-개선",
+      "evidence": "[차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
       ]
     },
     {
       "id": "H-209",
       "title": "최신 교통편 시나리오 최종 확인",
-      "description": "변경된 교통편의 전체 시나리오를 같은 최종 소스로 한 번 확인한다.",
+      "description": "변경된 교통편의 전체 시나리오를 같은 최종 소스로 한 번 확인한다. 관리자 여정 서버(`TransportAdminJourneyServer`)의 바깥 여정은 2026-10-25 차수 3 의 관리자 세션 쿠키 뒤로 `ADMIN_API_ORIGIN`·`ADMIN_SESSION_COOKIE_SECURE=false` 를 줘야 돈다.",
       "condition": "검사 환경과 출시 후보가 준비된 뒤",
       "scope": "launch",
       "kind": "정비",
@@ -1611,79 +1015,62 @@
         "devices"
       ],
       "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "카풀·버스 검수 계획 — 소스부터 확인하고 실측은 필요한 만큼만",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 7. 정비(제품 동작 아님)",
-        "카풀·버스 검수 계획 — 소스부터 확인하고 실측은 필요한 만큼만"
+      "evidence": "[카풀·버스 검수 계획: 소스부터 확인하고 실측은 필요한 만큼만](transport/TRANSPORT_VERIFICATION_PLAN_2026-09-20.md)",
+      "evidenceLinks": [
+        {
+          "label": "카풀·버스 검수 계획: 소스부터 확인하고 실측은 필요한 만큼만",
+          "href": "transport/TRANSPORT_VERIFICATION_PLAN_2026-09-20.md"
+        }
       ]
     },
     {
-      "id": "H-356",
-      "title": "호스트 환불 미수금 상환·탕감 창구",
-      "description": "유료 모임 호스트의 정산 뒤 환불 미수금을 갚거나 탕감할 창구를 만든다. 지금은 다음 정산 상계뿐이고 그 미수금이 탈퇴를 막는다. 관리자 탈퇴 서비스에 호출자가 없는 것은 첫 커밋부터 연결되지 않은 옛 함수라 닫았다.",
-      "condition": "유료 모임 정산(플랫폼 결제)을 열 때 H-128 과 함께",
-      "scope": "payment",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "H235 예약 작업 경계 전수 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 7. 정비(제품 동작 아님)",
-        "H235 예약 작업 경계 전수 기록"
-      ]
-    },
-    {
-      "id": "H-464",
-      "title": "추적되지 않는 화면 명세의 저장소 정리",
-      "description": "화면 명세(docs/ui-ux/screens/, 공개 API 체크아웃에만 있고 .git/info/exclude 로 빠짐)가 어느 저장소에도 추적되지 않아 작업 자리에서 고칠 수 없다. NW-f 가 명세 33.7(상세 안내 띠·늦게 온 사람 확정 알림)을 고치지 못했다. 명세를 둘 저장소를 정해 옮긴다.",
-      "condition": "정리할 것(docs 저장소로 옮기는 것이 기본)",
-      "scope": "conditional",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "NW-f 서버 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 7. 정비(제품 동작 아님)",
-        "NW-f 서버 기록"
-      ]
-    },
-    {
-      "id": "H-491",
-      "title": "회원 콘텐츠 삭제 규칙 조사",
-      "description": "회원 콘텐츠의 삭제 규칙이 2026-10-21 사용자 방향과 맞는지 확인한다. 방향: 본인이 만든 콘텐츠는 본인이 직접 지우고 나가고, 판매가 일어났거나 등록된 콘텐츠(장터 상품·플랜 등)는 함부로 지우지 못한다(약관에 적음, H-492). 확인할 것: 판매·등록된 콘텐츠를 지우는 길이 앱·서버·관리자에 있는가, 탈퇴 때 남은 콘텐츠를 지금 파기 규칙이 어떻게 하는가. 어긋나면 고칠 범위를 정한다.",
-      "condition": "지금. 소스 확인",
+      "id": "H-529",
+      "title": "차수 7 뒤 낡은 설명·문서 정리",
+      "description": "차수 7(2026-10-26) 뒤 낡은 설명·문서. 공개: `InternalWalletRefundService.java:72~75` 의 `OPERATION_KIND_PREFIXES` 주석이 결박 먼저 전 차례, 시험 문서 `MONEY_RACE_TESTS.md` 의 다른 옛 절(D12a 머리 등, 머리 표지로만 덮음), `WebhookOperatorAlertChannel.send` 주석이 소스와 다름, 인계 `19-gap-analysis-report.md` 99·100·141 의 SOS 「해소」 줄(2026-03 기록), `08-notification.md` 의 없는 `extractAndSetReference` 절과 7.6, `12-privatedate.md` 의 패키지 트리. 관리자: 인계 트리의 새 파일 빠짐(`07-config` 34, `05-user-manage` 51), `10-integration-support` 운영 도메인 목록의 `manage`, `00-overview` 10.2 의 `AWS_KEY_ID`·`AWS_KEY_PASSWORD`(지금 이름 `MAIL_USERNAME`·`MAIL_PASSWORD`). 앱: `api_error.dart:815` 의 판매 시작 거절 문구가 숨긴 플랜 경우와 안 맞음, `market_item_edit_screen.dart:847` 주석의 옛 차례, 계약 `plan/30-app-commons-contracts.md` 4절 본문 관용구가 아직 `ref.keepAlive()`(가드는 `keepAliveForSession` 만 허용), `share_appeal_flow.dart:45` 의 `listenManual` 겹침 장치. 문서 저장소: 화면 명세 `21-meeting-settlement.md:38` 의 `totalPaid`, `13-event.md` 563·632 의 옛 `PATCH …/reschedule`(제안 창구로), `14-event-attendance.md:349` 의 수동 체크인 단건 경로 둘, `15-club.md` 211줄 근처의 차단 응답 `200 OK`(서버 201), `23-plan-editor.md` 74·90·91 의 산 목록 응답 모양(`sourceType`), `00-overview.md:494` 의 관리자 목록(29·99 와 늘어난 화면), 이동 계획 `TRANSPORT_GROUP_FIRST_UX_PLAN_2026-09-19.md:62·289·292·294`·`VEHICLE_SEAT_LAYOUT_PLAN.md:123` 이 지운 앱 파일을 가리킴, `deploy/production/build_images.py:59` 의 `compiled_admin_origin` 이 빌드에 들어가지 않는 값을 적음, 현황판 대본 `scripts/build-work-overview.py` 의 분류(새 번호와 걷은 번호가 맞지 않아 `--check` 가 멈춤, 생성물은 `business_logic` 사이트까지).",
+      "condition": "우선순위 7(정비)",
       "scope": "now",
-      "kind": "조사·확인",
-      "section": "8. 확인할 것",
+      "kind": "정비",
+      "section": "7. 정비(제품 동작 아님)",
       "stage": null,
       "resources": [
         "development"
       ],
-      "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "2026-10-21 대화",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "2026-10-21 대화"
+      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
+      "evidence": "[차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
+      ]
+    },
+    {
+      "id": "H-530",
+      "title": "가드·시험 빈틈과 목록 순서 확인",
+      "description": "차수 7 뒤 가드·시험 빈틈과 목록 차례의 남은 몫. ① 표지 구조 시험 `ClubAbilityGuardStructureTest` 가 가드 쪽 비공개 함수가 `Ability.deny(ErrorCode.X)` 를 만드는 꼴(`WaitlistService.validateHostOrCoHost`)과 이름이 Exception 으로 끝나지 않는 `RestException` 하위형 둘(`RefusedCommand`, `SocialLoginRejection`)을 잡지 않는다. ② 경고 제보 무응답 자동 종결(`WarningReportNoResponseWorker.closeOne`)과 겹친 승인·반려의 실 DB 경합 장면이 없고, 내보내기 쓰는 길 표의 `warning_report.process_reason` 에 `api:WarningReportService#reject` 가 빠졌다(E11 은 적힌 길만 봄). ③ 앱이 첫 장만 읽는 나머지 쪽 목록(관리·경고 등)의 번호 동점 깨기와 추천 점수 정렬(설계부터). ④ 플랜 연결 차례 바꾸기는 행 수만큼 요청한다(결함 아님, 묶음 창구 후보). ⑤ 정산 복사 시트(앱 `clone_settlement_sheet.dart`)가 내가 만들지 않은 정산도 보인다(고르면 서버가 거절, 차수 7 S1 뒤 그런 행이 늘어남, 경미).",
+      "condition": "우선순위 7(정비)",
+      "scope": "now",
+      "kind": "정비",
+      "section": "7. 정비(제품 동작 아님)",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
+      "evidence": "[차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
       ]
     },
     {
       "id": "H-493",
-      "title": "관리자 강제 로그아웃의 실제 세션 연결",
-      "description": "관리자 강제 로그아웃(전체·한 세션)이 공개 API 가 쓰지 않는 빈 표 jwt_record 만 고쳐 실제로는 회원의 어떤 세션도 끊지 않는다(2026-10-21 H488 조사). 관리자 화면이 아직 부르지 않아 지금 보이는 결함은 아니다. 연결할 때 H488 의 세션 번호 해지(갱신 토큰 행·실시간 해지·접근 토큰 블랙리스트)를 쓰게 고친다.",
+      "title": "관리자 회원 세션 종료의 재설계 조건 확인",
+      "description": "관리자 강제 로그아웃(전체·한 세션)이 공개 API 가 쓰지 않는 빈 표 `jwt_record` 만 고쳐 실제로는 회원의 어떤 세션도 끊지 않는다(2026-10-21 H488 조사). 관리자 화면이 아직 부르지 않아 지금 보이는 결함은 아니다. 연결할 때 H488 의 세션 번호 해지(갱신 토큰 행·실시간 해지·접근 토큰 블랙리스트)를 쓰게 고친다.",
       "condition": "관리자 강제 로그아웃을 화면에 연결할 때",
-      "scope": "feature",
+      "scope": "conditional",
       "kind": "조사·확인",
       "section": "8. 확인할 것",
       "stage": null,
@@ -1691,18 +1078,19 @@
         "development"
       ],
       "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "H488 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "H488 기록"
+      "evidence": "[H488 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H488/README.md)",
+      "evidenceLinks": [
+        {
+          "label": "H488 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H488/README.md"
+        }
       ]
     },
     {
-      "id": "H-496",
-      "title": "회원 응답의 운영 내부 메모·번호 노출 조사",
-      "description": "공개 API 의 회원 응답이 운영 내부 칸을 내보낸다(2026-10-21 S2c1 조사): MeetingSettlementTransferVo 가 정산을 읽는 참가자 누구에게나 모든 송금의 note(운영자 표지 [ADMIN:관리자 번호] 와 운영 메모), writeoffReason(운영자 길이 적은 운영 메모), writeoffByUserId(관리자 번호일 수 있음)를 돌려준다. 앱 화면은 그리지 않지만 응답에 실린다. 같은 꼴(회원 응답 VO 가 운영자 메모·관리자 번호·내부 사유를 싣는 자리)을 공개 API 회원 응답 전부에서 전수로 세고, 회원 응답에서 빼거나 보는 사람에 따라 가린다. H-494(회원 이름 칸의 관리자 번호)와 같은 뿌리가 있다.",
-      "condition": "우선순위 3, 서버. 전수 조사부터",
+      "id": "H-498",
+      "title": "사용하지 않는 코드·목록 정리",
+      "description": "부르는 곳 없는 코드와 표의 남은 몫. 2026-10-26 차수 7 이 확인된 공개·관리자·앱 고아, 쓰는 코드 없는 표 넷, 모임 상세의 연결된 플랜, 지원 사건 연결, 더 보기 다섯, 선결제 지갑 환불 창구를 닫았다. 남은 것: 까닭을 확인하지 못한 셋(두 API 모두 쓰지도 읽지도 않는 `admin_audit_log`(H-233 과 함께 본다), 관리자가 읽지 않는 `no_show_refund.dispute_case_id` 꼬리표, 돈 흐름 추적이 모으기만 하는 `referenceIds`·`referenceTypes`), 앱 클럽 통계 `setPage`(`club/club_stats_provider.dart`)·정산 감사 기록 `loadPage`·`EarningsDashboardNotifier.refresh`. 차수 7 이 찾은 것: 공개 옛 차량 본체(S22c 가 창구 열둘만 닫음: `addVehicle`·`decideVehicle`·`deleteVehicle`·`assignSeat`·`releaseSeat`·`joinTransport`·`getSeats`·`releaseAllForUser`·`toActorSeatVo`, 창구를 닫아 고아가 된 `cancelCarByOwner`·`endSelfVehicle`·`forceCancelVehicle`·`leaveTransport`·`getSeatsVo`·`getParticipants`·`ClosedAccountTransportMask.vehicle`·`participants`·`VehicleCommandResponse`·`TransportMapper.toParticipantVo`·응답 모형 둘·요청 모형 셋, 닿는 시험 `EventVehicleServiceTest`·`EventVehicleLifecycle*`·`EventVehicleSeatFlowDataJpaTest`·`EventTransportParticipantFlowTest`·`TransportLegacyCommandControllerTest`·`EventMemberLockOrderRaceCommitTest`·`ClosedAccountTransportMaskCommitTest`), 공개 `ApiIdempotencyKeyService.store`(`5f06a2502` 부터, 지움 권고)·`OperatorAlertService.ack`·`resend`(`0eae1ed37` 부터)·`FrequencyCapService.check`·`canSend`·`getRemainingQuota`(`4cbeb9a34` 부터)와 `BlockQueryService` 의 같은 꼴·`NotificationService.getNotificationsByType`, 관리자 `MileageReviewQueueRepository.findByClubIdAndQueueTypeAndStatus`·`WarningReportService.autoCloseStaleReports`·`AUTO_CLOSE_DAYS`, 앱 플랜 검색 시트의 DELETED 거름(서버 S24 와 겹침). 지우기 전에 연결이 빠진 까닭부터 본다.",
+      "condition": "우선순위 7(정비). 조사부터",
       "scope": "now",
       "kind": "조사·확인",
       "section": "8. 확인할 것",
@@ -1711,51 +1099,16 @@
         "development"
       ],
       "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "S2c1 기록(병합 때 H482c1)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "S2c1 기록(병합 때 H482c1)"
-      ]
-    },
-    {
-      "id": "H-494",
-      "title": "회원·관리자 번호가 섞인 칸 조사",
-      "description": "회원 번호 이름(*_user_id)의 칸에 관리자 번호도 들어가는 자리가 있다(2026-10-21 S2c1 조사: meeting_settlement_appeal.resolved_by_user_id 는 관리자 이의 판정이, meeting_settlement_transfer.writeoff_by_user_id 는 운영자 손실 정리가 관리자 번호를 적음). 회원 파기·익명화 대조표는 *_user_id 를 회원 칸으로 다루므로, 회원 N 을 파기할 때 같은 번호 N 인 관리자의 처리 기록까지 지우거나 익명화할 수 있다. 같은 꼴의 칸을 공개·관리자 쓰기 길 전수로 세고(관리자 번호를 적는 길이 있는 회원 이름 칸), 칸을 나누거나(관리자 칸 따로) 행위자 종류 칸을 둔다.",
-      "condition": "지금. 서버 전수 조사 뒤 크기를 정함",
-      "scope": "now",
-      "kind": "조사·확인",
-      "section": "8. 확인할 것",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "S2c1 기록(병합 때 H482c1)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "S2c1 기록(병합 때 H482c1)"
-      ]
-    },
-    {
-      "id": "H-495",
-      "title": "호스트 답과 운영자 판정 글 구분",
-      "description": "관리자 API 의 정산 이의 판정(APPROVED → RESOLVED)이 호스트가 쓴 답 글(host_response)을 운영자 글로 덮어쓰고 행에 덮은 흔적이 남지 않는다(2026-10-21 S2c1 조사). 호스트 답과 운영자 판정 글을 따로 두어야 하는지 확인한다.",
-      "condition": "H-494 와 함께",
-      "scope": "now",
-      "kind": "조사·확인",
-      "section": "8. 확인할 것",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "S2c1 기록(병합 때 H482c1)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "S2c1 기록(병합 때 H482c1)"
+      "evidence": "[차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로), [H199e FACTS](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H199e/FACTS.md) D7",
+      "evidenceLinks": [
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        },
+        {
+          "label": "H199e FACTS",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H199e/FACTS.md"
+        }
       ]
     },
     {
@@ -1771,31 +1124,12 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "B25-F6b 2단계 자체 의심 목록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "B25-F6b 2단계 자체 의심 목록"
-      ]
-    },
-    {
-      "id": "H-230",
-      "title": "충전 취소·복구의 공급자 중복 호출 조사",
-      "description": "사용자 충전 취소와 복구 작업이 같은 키로 결제사를 함께 호출하는지 확인한다.",
-      "condition": "플랫폼 결제·동시성 후속 작업",
-      "scope": "payment",
-      "kind": "조사·확인",
-      "section": "8. 확인할 것",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "앞으로 할 일(2026-09-28) 열린 항목 재확인 (2026-10-09)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "앞으로 할 일(2026-09-28) 열린 항목 재확인 (2026-10-09)"
+      "evidence": "[B25-F6b 2단계 자체 의심 목록](evidence/DEFECT-EXECUTION-2026-10-01/IMPL/B25/F6b/SUSPICIONS.md)",
+      "evidenceLinks": [
+        {
+          "label": "B25-F6b 2단계 자체 의심 목록",
+          "href": "evidence/DEFECT-EXECUTION-2026-10-01/IMPL/B25/F6b/SUSPICIONS.md"
+        }
       ]
     },
     {
@@ -1803,7 +1137,7 @@
       "title": "관리자 감사 기록의 외부 저장 확인",
       "description": "관리자 감사 기록을 변경 불가능한 외부 저장소에 실제로 전달하는지 확인한다. 소스에서 연결을 찾지 못했다.",
       "condition": "배포 환경 확인 시",
-      "scope": "feature",
+      "scope": "conditional",
       "kind": "조사·확인",
       "section": "8. 확인할 것",
       "stage": null,
@@ -1811,11 +1145,12 @@
         "access"
       ],
       "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "역할·권한·관리자 세션 의사결정 재감사",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "역할·권한·관리자 세션 의사결정 재감사"
+      "evidence": "[역할·권한·관리자 세션 의사결정 재감사](../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md)",
+      "evidenceLinks": [
+        {
+          "label": "역할·권한·관리자 세션 의사결정 재감사",
+          "href": "../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md"
+        }
       ]
     },
     {
@@ -1831,19 +1166,20 @@
         "server"
       ],
       "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "K4 충전 운영",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "K4 충전 운영"
+      "evidence": "[K4 충전 운영](DEFECT_FIX_PLAN_2026-10-09/units/K4.md)",
+      "evidenceLinks": [
+        {
+          "label": "K4 충전 운영",
+          "href": "DEFECT_FIX_PLAN_2026-10-09/units/K4.md"
+        }
       ]
     },
     {
-      "id": "H-463",
-      "title": "회차 생성의 잠금 전 스냅샷 경합 조사",
-      "description": "정기모임 회차 추가·일괄·주기 생성·대체가 제재 평문 조회를 코스 행 잠금보다 먼저 해 REPEATABLE READ 스냅샷이 잠금 전에 잡힌다. 같은 코스에 요청이 겹치면 같은 순번 회차 둘, FIXED 코스 총 회차 초과, 같은 순번 활성 대체 둘이 생길 수 있다(코드 읽기, 실측 안 함). H190U6b 착수표 조사가 찾음.",
-      "condition": "우선순위 6(경합 구조) 설계 때 실제 DB 로 재현해 남길지 가린다",
-      "scope": "concurrency",
+      "id": "H-505",
+      "title": "명령 뒤 화면 갱신의 남은 경로 확인",
+      "description": "명령 뒤 화면 갱신(H-480)의 남은 몫. 2026-10-26 차수 7 이 옛 ①~⑤(자동 폐기 공급자의 기다림 뒤 쓰기, 대화 읽음·보내기의 결과 모름 신호, 푸시 갱신 갈래 표, 콘솔 쓰기를 도메인으로, 투표 마감 신호)와 결과 모름 실패 신호 그물 T9 를 닫았다. 남은 것: ① 신호 그물 T9 의 닫힌 허용 목록 163짝(차수 7 전 쓰기 150짝 58 파일, 그 가운데 콘솔 34짝·클럽 화면 겹침 6짝, 영수증 명령 13짝 `_unknownReceiptLater`)을 비운다. 결과 모름 실패 뒤 화면이 옛 값으로 남는 경미한 결함이고 새 자리는 그물이 막는다. ② 회원 쪽 화면이 저장소를 바로 부른다(마일리지 사진 재심 요청은 성공에서만 다시 읽음, 경고 회원 화면의 신고·이의 제출). ③ 마일리지 도메인 공급자 넷(`recalculateGrades`·`closeAutoRevert`·`decideRepeatedManual`·`retryAutoRevert`)의 결과 모름 판정. ④ 올리는 신호가 없는(계약 칸이 빈) 마일리지 정책 쓰기 뒤 활성 프리셋·회원 등급·뱃지·적립 규칙·회원 시즌·제도 상태 화면이 다시 읽지 않는다. ⑤ 스탬프 콘솔의 화면 직접 쓰기 둘(`stamp_console_screen.dart:118`·`stamp_template_form_screen.dart:339`). ⑥ 경고 신고 승인이 콘솔 갈래만 올려 경고 회원 상세가 낡는다. ⑦ 푸시 갈래 후보: 출금 목록·모임 상세, `POINT_EXPIRATION` 의 착지 화면(호스팅 티켓·마일리지 만료도 지갑 거래 목록으로 감). ⑧ 뱃지·차감 프리셋·시즌 추가에 멱등 키가 없다(유일 제약은 등급·적립 규칙만, 결과 모름 뒤 목록을 다시 읽어 눈으로 막음).",
+      "condition": "우선순위 7(정비)",
+      "scope": "now",
       "kind": "조사·확인",
       "section": "8. 확인할 것",
       "stage": null,
@@ -1851,16 +1187,71 @@
         "development"
       ],
       "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "H190U6b1 기록",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 8. 확인할 것",
-        "H190U6b1 기록"
+      "evidence": "[차수 3 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND3/README.md) 「H-480 명령 뒤 갱신 규칙 요지」, [차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 3 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND3/README.md"
+        },
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
+      ]
+    },
+    {
+      "id": "H-511",
+      "title": "복제본 도입 전 표지·명령 조회 일치 확인",
+      "description": "표지를 싣는 읽기 전용 조회(복제본으로 감)와 그 명령의 가드(주 DB)가 복제 지연 동안 다른 값을 볼 수 있다. 2026-10-26 차수 7 S4·M7 이 「복제본 두지 않음」 을 기동 검사로 지킨다(읽기 풀 주소가 쓰기 풀과 다르면 `datasource.replica.ability-reads-audited` 를 켜지 않는 한 서버가 뜨지 않음). 켜기 전 할 일은 공개·관리자 `DataSourceConfig.routeDataSource` 주석에 있다(표지 조회와 탈퇴 판정의 열린 송금 조회를 주 DB 로). 더할 것: 드라이버 복제 주소(`jdbc:mysql:replication://…`)를 두 풀에 똑같이 넣는 길은 검사가 잡지 못하므로, 그 길을 쓰면 읽기 전용 트랜잭션이 연결에 읽기 전용 표시를 거는지 확인한다.",
+      "condition": "우선순위 6. 복제본을 붙이기 전(첫 출시는 단일 주 DB)",
+      "scope": "conditional",
+      "kind": "조사·확인",
+      "section": "8. 확인할 것",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#8-확인할-것",
+      "evidence": "[차수 5 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md) 「차수 5 규칙 요지」, [차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 5 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md"
+        },
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
+      ]
+    },
+    {
+      "id": "H-515",
+      "title": "외부 확인 뒤 포인트 적립의 탈퇴 판정 확인",
+      "description": "회원 포인트 적립의 남은 확인. 외부 확인 뒤 지갑에 넣는 다른 길(이벤트 선결제 환불, 선입금 지급 `MeetingPrepaymentRelease`, 정기모임 환불, 탈퇴 뒤 남은 신청을 걷는 정리 작업의 환불)이 받는 사람의 탈퇴를 보는지 확인하지 않았다(`isExitedCommitted` 를 쓰는 곳은 자동 충전·개최권 구매·지갑 잠금 도우미와 차수 5 의 충전 확정). 정산 송금의 가상계좌 입금은 활성화와 탈퇴 판정이 막아 「아님」 이다. 영수증 몫은 2026-10-26 차수 7 이 닫았다(회원 돈 되돌림 열여섯이 영구 영수증).",
+      "condition": "플랫폼 결제·포인트를 공개하기 전(우선순위 5). 재현되면 3절로",
+      "scope": "feature",
+      "kind": "조사·확인",
+      "section": "8. 확인할 것",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#8-확인할-것",
+      "evidence": "[차수 5 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md)·[차수 7 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로)",
+      "evidenceLinks": [
+        {
+          "label": "차수 5 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md"
+        },
+        {
+          "label": "차수 7 기록",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md#다음-차수로"
+        }
       ]
     },
     {
       "id": "H-492",
-      "title": "콘텐츠 삭제·내보내기 범위의 약관 확인",
+      "title": "판매 콘텐츠 삭제·개인정보 내보내기 약관 확인",
       "description": "약관에 「판매가 일어났거나 등록된 콘텐츠는 함부로 지울 수 없다」 를 적고, 개인정보 열람·내보내기 범위에서 회원 콘텐츠를 뺀 것(H-482)이 법적으로 맞는지 확인한다.",
       "condition": "약관 문구 확정과 법적 확인 기록",
       "scope": "launch",
@@ -1872,11 +1263,7 @@
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
       "evidence": "2026-10-21 대화",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "2026-10-21 대화"
-      ]
+      "evidenceLinks": []
     },
     {
       "id": "H-239",
@@ -1893,18 +1280,19 @@
         "android"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
       "id": "H-240",
       "title": "메일·S3·관리자 허용망 준비",
-      "description": "운영 메일·S3·관리자 허용망을 준비한다. 저장소의 동일 주소 덮어쓰기 차단도 확인한다.",
-      "condition": "실제 수신·파일 접근 제한·외부 관리자 접근 차단 기록",
+      "description": "운영 메일·S3·관리자 허용망을 준비한다. 저장소의 동일 주소 덮어쓰기 차단도 확인한다. 로컬 프록시·API의 허용망 밖 접근과 전달 IP 위조 차단은 확인했다. 2026-10-25 차수 3 의 관리자 세션 중계 뒤로는 배치 조건을 함께 정한다. 관리자 웹 앞의 믿을 앞단 수 `ADMIN_WEB_TRUSTED_PROXY_HOPS`(기본 0, 0 이면 중계가 브라우저 주소를 넘기지 않음, 관리자 웹 README), 관리자 API 의 `ADMIN_TRUSTED_PROXIES`(웹 서버 주소)와 `ADMIN_TRUSTED_PROXY_HOPS`(중계를 쓰면 1, 관리자 API README)다. 앞단 설정이 없으면 관리자 API 는 웹 서버 주소로 허용망·요청 제한을 판정한다.",
+      "condition": "실제 수신·파일 접근 제한·운영 주소의 관리자 접근 차단 기록, 세 값의 배치 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1915,18 +1303,19 @@
         "access"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
       "id": "H-247",
       "title": "관리자 권한·DB 계정·비밀 교체 확인",
-      "description": "관리자 역할별 접근, 공개·관리자 API의 분리된 DB 계정, 비밀 교체 주기를 확인한다.",
-      "condition": "허용·거부 결과와 운영 절차 기록",
+      "description": "운영 관리자 역할별 접근과 비밀 교체 주기를 확인한다. 분리된 DB 계정·DDL/시스템 계정 조회 거부는 격리 환경에서 확인했으며 운영 계정으로 재확인한다. 관리자 2단계 인증(2026-10-25 차수 3)은 다음 로그인에서 인증 앱을 등록하게 하므로, 아직 등록하지 않은 관리자의 비밀번호를 아는 사람이 먼저 등록할 수 있다. 배포 직후 모든 관리자가 바로 로그인해 인증 앱을 등록한다.",
+      "condition": "허용·거부 결과와 운영 절차 기록, 모든 관리자의 인증 앱 등록 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1935,11 +1324,12 @@
         "access"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "역할·권한·관리자 세션 의사결정 재감사",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "역할·권한·관리자 세션 의사결정 재감사"
+      "evidence": "[역할·권한·관리자 세션 의사결정 재감사](../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md)",
+      "evidenceLinks": [
+        {
+          "label": "역할·권한·관리자 세션 의사결정 재감사",
+          "href": "../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md"
+        }
       ]
     },
     {
@@ -1955,11 +1345,16 @@
         "review"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "봉인 기능 코드 공백 보강 — W1~W4 실행 현황",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "봉인 기능 코드 공백 보강 — W1~W4 실행 현황"
+      "evidence": "[이동 책임 안내](../policy/05_location_safety_copy.md) · [개인정보 추가 문안](../policy/06_privacy_policy_additions.md)",
+      "evidenceLinks": [
+        {
+          "label": "이동 책임 안내",
+          "href": "../policy/05_location_safety_copy.md"
+        },
+        {
+          "label": "개인정보 추가 문안",
+          "href": "../policy/06_privacy_policy_additions.md"
+        }
       ]
     },
     {
@@ -1977,18 +1372,19 @@
         "android"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
       "id": "H-242",
       "title": "빈 DB 새 설치와 두 API 기동",
-      "description": "실제 운영 DB 에 설치하는 날 빈 설치 확인 절차(설치 파일 적용·기준 데이터 재적용·두 API 기동·연결 대상·옛 키 명령 0행)를 한 번 더 돌려 기록한다. 로컬 빈 설치 확인은 2026-10-16 통과(335표, 기준 데이터 3회 적용 멱등, 두 API jar 기동, 예약 작업 265회 오류 0). 옛 데이터 보강은 하지 않는다.",
-      "condition": "운영 DB 와 관리자 필수 환경변수(기록 FOUND 4)·공개 API 운영 필수 환경변수 APP_HMAC_SECRET(H344c 로 더해짐, 2026-10-17. 없으면 운영 프로필 기동이 멈춤)이 준비된 뒤. H-344 는 H344c 로 닫힘(공개 3d28bd1af, 기록)",
+      "description": "실제 운영 DB 에 설치하는 날 빈 설치 확인 절차(설치 파일 적용·기준 데이터 재적용·두 API 기동·연결 대상·옛 키 명령 0행)를 한 번 더 돌려 기록한다. 로컬 빈 설치 확인은 2026-10-16 통과(335표, 기준 데이터 3회 적용 멱등, 두 API jar 기동, 예약 작업 265회 오류 0). 같은 날 배포 도구 리허설에서도 V1 테이블 337개 설치·두 API 기동·기준 데이터 2회 재적용 시 행 수 유지가 통과했다([리허설 재현 절차](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다)). 운영 배포 묶음의 W00·W53 도 그날 확인한다. 옛 데이터 보강은 하지 않는다.",
+      "condition": "운영 DB 와 관리자 필수 환경변수(기록 FOUND 4)·공개 API 운영 필수 환경변수 `APP_HMAC_SECRET`(H344c 로 더해짐, 2026-10-17. 없으면 운영 프로필 기동이 멈춤)이 준비된 뒤. H-344 는 H344c 로 닫힘(공개 `3d28bd1af`, [기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H344c/README.md))",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1997,18 +1393,19 @@
         "server"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "빈 DB 새 설치 확인",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "빈 DB 새 설치 확인"
+      "evidence": "[빈 DB 새 설치 확인](../release-gate/evidence/FRESH-INSTALL-2026-10-16/README.md)",
+      "evidenceLinks": [
+        {
+          "label": "빈 DB 새 설치 확인",
+          "href": "../release-gate/evidence/FRESH-INSTALL-2026-10-16/README.md"
+        }
       ]
     },
     {
       "id": "H-342",
       "title": "읽기·쓰기의 단일 주 DB 확인",
-      "description": "기동한 서버의 읽기·쓰기 연결이 같은 주 DB인지 확인한다.",
-      "condition": "실제 연결 대상 기록. 주소 생략만으로 판단하지 않음",
+      "description": "운영 서버의 읽기·쓰기 연결이 같은 주 DB인지 확인한다. 로컬의 네 실제 연결 풀은 MySQL에서 같은 서버 UUID·스키마로 관측했다.",
+      "condition": "운영 실제 연결 대상 기록. 주소 생략만으로 판단하지 않음",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -2017,18 +1414,19 @@
         "server"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "공수와 출시 구성",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "공수와 출시 구성"
+      "evidence": "[공수와 출시 구성](evidence/CONCURRENCY-PATTERNS-2026-10-09/REVIEW-RESPONSE-2026-10-10.md#공수와-출시-구성)",
+      "evidenceLinks": [
+        {
+          "label": "공수와 출시 구성",
+          "href": "evidence/CONCURRENCY-PATTERNS-2026-10-09/REVIEW-RESPONSE-2026-10-10.md#공수와-출시-구성"
+        }
       ]
     },
     {
       "id": "H-389",
       "title": "프록시의 요청 자동 재전송 확인",
-      "description": "운영 프록시가 실패·시간 초과 요청을 다른 서버로 자동 재전송하지 않는지 확인한다.",
-      "condition": "요청 식별자가 없는 취소·탈퇴 경로의 중복 실행 차단 확인",
+      "description": "실제 운영 프록시에도 자동 재전송 금지가 적용됐는지 확인한다. 생성 설정으로 GET·POST 각각 503·시간 초과·연결 단절 6가지를 시험해 요청당 상류 호출 1회를 확인했다.",
+      "condition": "운영 프록시 경유 취소·탈퇴 경로의 중복 실행 차단 확인",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -2037,11 +1435,12 @@
         "server"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "R1-d 설계 입력: 요청 식별자 없이 회원 돈을 움직이는 창구의 영구 영수증 전환(H-387)과 회원 돈 창구 전수 다시 하기 (2026-10-12, 5판)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "R1-d 설계 입력: 요청 식별자 없이 회원 돈을 움직이는 창구의 영구 영수증 전환(H-387)과 회원 돈 창구 전수 다시 하기 (2026-10-12, 5판)"
+      "evidence": "[R1-d 설계 입력: 요청 식별자 없이 회원 돈을 움직이는 창구의 영구 영수증 전환(H-387)과 회원 돈 창구 전수 다시 하기 (2026-10-12, 5판)](evidence/CONCURRENCY-PATTERNS-2026-10-09/R1-d/INPUT.md)",
+      "evidenceLinks": [
+        {
+          "label": "R1-d 설계 입력: 요청 식별자 없이 회원 돈을 움직이는 창구의 영구 영수증 전환(H-387)과 회원 돈 창구 전수 다시 하기 (2026-10-12, 5판)",
+          "href": "evidence/CONCURRENCY-PATTERNS-2026-10-09/R1-d/INPUT.md"
+        }
       ]
     },
     {
@@ -2061,11 +1460,12 @@
         "devices"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
@@ -2081,11 +1481,12 @@
         "devices"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "블록 에디터 감사 개선 후속 실행 계획",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "블록 에디터 감사 개선 후속 실행 계획"
+      "evidence": "[블록 에디터 감사 개선 후속 실행 계획](../audit/BLOCK_EDITOR_AUDIT_REMEDIATION_PLAN_2026-07-30.md)",
+      "evidenceLinks": [
+        {
+          "label": "블록 에디터 감사 개선 후속 실행 계획",
+          "href": "../audit/BLOCK_EDITOR_AUDIT_REMEDIATION_PLAN_2026-07-30.md"
+        }
       ]
     },
     {
@@ -2102,17 +1503,18 @@
         "devices"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "사용자 결정 대기 목록: 앨범 댓글·게시글 위치·링크 미리보기 구현",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "사용자 결정 대기 목록: 앨범 댓글·게시글 위치·링크 미리보기 구현"
+      "evidence": "[사용자 결정 대기 목록: 앨범 댓글·게시글 위치·링크 미리보기 구현](album-place-linkpreview/DECISIONS_PENDING_2026-09-18.md)",
+      "evidenceLinks": [
+        {
+          "label": "사용자 결정 대기 목록: 앨범 댓글·게시글 위치·링크 미리보기 구현",
+          "href": "album-place-linkpreview/DECISIONS_PENDING_2026-09-18.md"
+        }
       ]
     },
     {
       "id": "H-246",
       "title": "복구 연습과 공개 승인 판단",
-      "description": "경보·재처리·백업 복구·이전 버전 복귀와 고객 안내·스토어 자료를 확인한다.",
+      "description": "경보·재처리·백업 복구·이전 버전 복귀와 고객 안내·스토어 자료를 확인한다. 10월 16일 같은 실행 이미지·분리 DB 계정으로 기존 백업 명령을 시험해 MySQL 자체 서명 인증서 신뢰 실패(종료 2)를 확인했다. 인증서와 백업 계정/권한부터 보완하고 암호화 복구를 검증한다.",
       "condition": "같은 출시 후보에 대한 공개 승인 또는 보류 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -2124,11 +1526,33 @@
         "review"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "기능별 구현·검증 상태"
+      "evidence": "[운영 배포 구성과 빈 DB 리허설 재현 절차](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다)",
+      "evidenceLinks": [
+        {
+          "label": "운영 배포 구성과 빈 DB 리허설 재현 절차",
+          "href": "../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다"
+        }
+      ]
+    },
+    {
+      "id": "H-531",
+      "title": "출시 후보의 앱 통합·관리자 두 창·배포 리허설",
+      "description": "차수 7 이 바꾼 길을 출시 후보에서 실제로 돌린다. 앱 통합 시험 열한 줄(실서버, 이번에는 컴파일·형만 확인: `regular_meeting_content_journey`·`seed_admin_console_surface`·`seed_wallet_monetization_detail`·`seed_lifecycle_state_surface`·`release_core_journey`·`seed_event_application_mutation`·`seed_payment_refund`·`seed_club_mutation`·`seed_regular_meeting_matrix`·`auth_flow`·`seed_post_0615_changed_source`), 관리자 웹 지원 화면 두 창 겹친 연결의 손 검사(실제 관리자 API, 둘째 연결 409), 운영 묶음으로 띄운 공개·관리자 API 의 기동 리허설 둘(`deploy/production/verify_rehearsal.py`, 풀 꼬리표가 다른 두 풀에서 복제본 기동 검사가 지나는지). 차수 8의 공유 publication_blocked 열·운영자 숨김/해제 후 재발행·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본에서 확인한다.",
+      "condition": "출시 후보 묶음과 실서버 시험 환경이 준비된 뒤. 통과 기록",
+      "scope": "launch",
+      "kind": "실제 환경 확인",
+      "section": "9. 출시 준비·외부 입력",
+      "stage": "journey",
+      "resources": [
+        "devices"
+      ],
+      "source": "NEXT_WORK.md#9-출시-준비외부-입력",
+      "evidence": "[차수 7 검수표](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/CHECKLIST.md) 「손으로 확인하는 줄」",
+      "evidenceLinks": [
+        {
+          "label": "차수 7 검수표",
+          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/CHECKLIST.md"
+        }
       ]
     },
     {
@@ -2136,7 +1560,7 @@
       "title": "실제 저장소의 환불 증빙 양쪽 열람",
       "description": "실제 저장소의 정기모임 환불 증빙을 참가자와 호스트가 각각 연다. 코드와 권한 검사는 끝났다.",
       "condition": "저장소 준비 후 양쪽 열람 기록. 첫 출시 필수 개발 아님",
-      "scope": "feature",
+      "scope": "later",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
       "stage": null,
@@ -2145,11 +1569,12 @@
         "devices"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "출시 후 보완 항목 — 남은 작업",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "출시 후 보완 항목 — 남은 작업"
+      "evidence": "[출시 후 보완 항목 — 남은 작업](../release-gate/plans/POST_LAUNCH_GAP_CLOSURE_PLAN.md)",
+      "evidenceLinks": [
+        {
+          "label": "출시 후 보완 항목 — 남은 작업",
+          "href": "../release-gate/plans/POST_LAUNCH_GAP_CLOSURE_PLAN.md"
+        }
       ]
     },
     {
@@ -2165,11 +1590,12 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "앞으로 할 일 (2026-09-28 기준, 옮김)",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "앞으로 할 일 (2026-09-28 기준, 옮김)"
+      "evidence": "[비밀정보 보관 위치 목록](../release-gate/secrets_path_inventory.md)",
+      "evidenceLinks": [
+        {
+          "label": "비밀정보 보관 위치 목록",
+          "href": "../release-gate/secrets_path_inventory.md"
+        }
       ]
     },
     {
@@ -2187,11 +1613,12 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "기능별 구현·검증 상태",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "기능별 구현·검증 상태"
+      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidenceLinks": [
+        {
+          "label": "기능별 구현·검증 상태",
+          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+        }
       ]
     },
     {
@@ -2207,11 +1634,12 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "B18 세부 계획서: 출금 송금이 지금 정산 계좌의 받는 사람으로 가게 하기",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "B18 세부 계획서: 출금 송금이 지금 정산 계좌의 받는 사람으로 가게 하기"
+      "evidence": "[B18 세부 계획서: 출금 송금이 지금 정산 계좌의 받는 사람으로 가게 하기](DEFECT_PLAN_2026-09-29/detail/B18.md)",
+      "evidenceLinks": [
+        {
+          "label": "B18 세부 계획서: 출금 송금이 지금 정산 계좌의 받는 사람으로 가게 하기",
+          "href": "DEFECT_PLAN_2026-09-29/detail/B18.md"
+        }
       ]
     },
     {
@@ -2228,11 +1656,12 @@
         "contracts"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "봉인 기능의 코드 공백 결정 요청 — 기간권·시즌·이벤트별 규칙·고급 검토·후기 작성 기간",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "봉인 기능의 코드 공백 결정 요청 — 기간권·시즌·이벤트별 규칙·고급 검토·후기 작성 기간"
+      "evidence": "[봉인 기능의 코드 공백 결정 요청 — 기간권·시즌·이벤트별 규칙·고급 검토·후기 작성 기간](../archive/decisions/SEAL_CODE_GAP_DECISIONS_2026-09-04.md)",
+      "evidenceLinks": [
+        {
+          "label": "봉인 기능의 코드 공백 결정 요청 — 기간권·시즌·이벤트별 규칙·고급 검토·후기 작성 기간",
+          "href": "../archive/decisions/SEAL_CODE_GAP_DECISIONS_2026-09-04.md"
+        }
       ]
     },
     {
@@ -2250,158 +1679,156 @@
         "calendar"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "Calendar 연결·동기화 계약",
-      "evidenceLinks": [],
-      "sourceNotes": [
-        "e0/docs: docs/plan/NEXT_WORK.md — 9. 출시 준비·외부 입력",
-        "Calendar 연결·동기화 계약"
+      "evidence": "[Calendar 연결·동기화 계약](../todo/prd/04_google_calendar_sync.md)",
+      "evidenceLinks": [
+        {
+          "label": "Calendar 연결·동기화 계약",
+          "href": "../todo/prd/04_google_calendar_sync.md"
+        }
       ]
     }
   ],
   "versions": [
     {
       "name": "공개 API",
-      "commit": "8eca28ff4"
+      "commit": "3246c693a"
     },
     {
       "name": "관리자 API",
-      "commit": "a6fd430"
+      "commit": "0e4025b3"
     },
     {
       "name": "앱",
-      "commit": "214aedf1"
+      "commit": "f570ba40"
     },
     {
       "name": "관리자 웹",
-      "commit": "253d3df"
+      "commit": "2725c73"
     },
     {
       "name": "실시간",
       "commit": "41c7563"
     }
   ],
-  "sourceDigest": "354c6de24ce32ddc331f8a56063a91f9dc9b811b41e5e6d7de4d3447e47fdfca",
+  "sourceDigest": "e0fa6c1e8f00958abcfb45fb8888e617e2678934ef1b127142b96460fb3f2f88",
   "summary": {
-    "lead": "H-190 책임 분리는 12단계까지 완료했습니다. 다음 중심은 세션·권한·내보내기·편집기 등의 결함 보완과 한 기기 로그인입니다. 운영 환경 준비·실제 기기 확인은 함께 진행합니다.",
+    "lead": "차수 8까지 구현·검증하고 로컬 main에 병합했습니다. 운영자 숨김·해제, 정산 반환 완료 알림과 잠금 검사표를 반영했습니다. 다음은 출시 후보 확인 H-531과 남은 구조·정비 후보이며, 운영 환경·서명 기기 준비를 함께 진행합니다.",
     "updates": [
-      "H-190 구조 정리 완료. 기존 큰 주제 9개 중 합의 범위 완료 8개이며, H-199 미호출 네 자리는 후속입니다.",
-      "10월 23일: 앱 S1e2a, 토큰 정리 H489b2, 실시간 H489r, 내보내기 S2d1, 클럽 행 권한 표지 S3a2의 병합을 확인했습니다.",
-      "내보내기 D9는 결정·반영 완료입니다. 다음은 앱 S1e2b(b1~b5), 한 기기 로그인 안내, 경고 표지 S3a3·앱 연결과 이관 S6a0입니다.",
-      "수입별 납부는 전체 정산 설계 뒤 구현합니다. 최종 로고는 사용자가 나중에 결정합니다."
+      "H-525 완료: 운영자가 숨긴 플랜은 제한 해제 뒤 작성자가 재발행합니다. 기존 구매권은 유지하며 해제만으로 판매가 재개되지는 않습니다.",
+      "H-526 완료: 정산 송금·분담의 실제 지갑 반환 완료를 두 당사자에게 알리고 앱 지갑과 취소 내역을 갱신합니다. 수동 은행 잔여분은 별도로 남깁니다.",
+      "H-527 완료: 잠금 검사표를 플랜 → 번들 → 상품의 실제 순서에 맞췄습니다. 출시 후보의 실서버·두 창·배포 리허설은 H-531에 남습니다.",
+      "차수 1~7의 세션·권한·내보내기·편집기·이관·한 기기 로그인 등 구현을 반영했습니다. 다음 차수는 H-528·H-487·H-505·H-498·H-529·H-530의 남은 범위입니다.",
+      "공유 기능은 첫 출시 포함으로 결정했습니다. iOS 신규 설치는 수동 복구로 출시하고 자동 복원은 후속입니다. 운영·실기기·스토어 검증과 최종 로고 결정은 남아 있습니다."
     ],
-    "checks": "기존 검사 기록: 앱 전체 12,273 통과·37 실패(12파일), 관리자 분쟁 그래프 1건 실패. 공개 API 최근 S3a2 관문은 단위 13,348·실 DB 1,195건 실패 0. 이번 문서 갱신에서 제품 검사를 새로 실행하지 않았습니다.",
-    "inventory": "원문 실제 추적 행 84줄: 제품 결정 10 · 결함 26 · 결제 공개 전 1 · 새 기능 10 · 구조 개선 5 · 정비 3 · 확인 후보 10 · 외부 입력 19. H-497 완료 행과 후속 후보를 포함하며 남은 개발 건수나 완료율이 아닙니다.",
+    "checks": "차수 8 기록: 검수표 15줄 완료. 앱 영향·도구 95파일·1,684건은 새 실패 0, 기존 기준선 7건 유지. 코드 검수 고침 뒤 직접 영향 5파일·240건은 새 실패 0. 공개·관리자 실 DB와 관리자 웹 E2E 3건을 확인했습니다. 이번 문서 갱신에서 제품 시험을 새로 실행하지 않았습니다.",
+    "inventory": "정본의 추적 항목 54개: 제품 결정 10 · 결함 3 · 결제 공개 전 0 · 새 기능 6 · 구조 개선 4 · 정비 3 · 확인 후보 8 · 출시 준비·외부 입력 20. 후속 기능·조건부 후보를 포함한 목록이며 출시 전 개발 건수나 완료율이 아닙니다. 공유 계획의 단위는 중복 합산하지 않습니다.",
     "categoryCounts": {
       "2": 10,
-      "3": 26,
-      "4": 1,
-      "5": 10,
-      "6": 5,
+      "3": 3,
+      "4": 0,
+      "5": 6,
+      "6": 4,
       "7": 3,
-      "8": 10,
-      "9": 19
+      "8": 8,
+      "9": 20
     },
     "actions": [
       {
-        "task": "H-476",
-        "title": "화면의 세션 전환 처리 S1e2b를 이어갑니다",
-        "note": "S1e2a 병합 → 화면 묶음 b1~b4와 다시 읽기 b5 → 한 기기 로그인 안내"
-      },
-      {
-        "task": "H-481",
-        "title": "경고 표지·앱 연결과 서버 후속을 진행합니다",
-        "note": "S3a2 병합 → S3a3·앱 S3m2, S6a0 구현, 내보내기 S2d1 뒤 후속"
-      },
-      {
         "task": "H-239",
-        "title": "운영 서버·S3·iOS와 서명 기기를 준비합니다",
-        "note": "기존 부분 확인을 대조 → 동일 배포본의 이용·복구·스토어 검증"
+        "title": "운영 서버·S3·서명 앱의 준비를 확인합니다",
+        "note": "사용할 계정·설정 대조 → 같은 버전의 배포 묶음과 실제 기기 준비"
+      },
+      {
+        "task": "H-531",
+        "title": "준비된 출시 후보로 실제 흐름을 확인합니다",
+        "note": "앱 통합 11파일 → 관리자 두 창 → 배포 리허설 둘·운영자 숨김/해제·완료 푸시"
+      },
+      {
+        "task": "H-528",
+        "title": "차수 9의 구조·정비 후보를 검토합니다",
+        "note": "연결·잠금 구조와 기기 저장소 → 명령 뒤 갱신·미사용 코드·문서·시험 빈틈"
       }
     ],
     "progressRows": [
       [
-        "H-190 책임 분리",
-        "완료",
-        "1~12단계·재측정·보완을 main에 반영. 기존 구조 정리 작업의 종결이며 제품 전체 완료는 아님."
+        "H-525 운영자 숨김·해제",
+        "구현·검증·로컬 병합 완료",
+        "기존 구매권 유지. 운영자 제한 중 작성자의 즉시·예약 발행 차단. 해제는 숨김·판매 중단을 유지하고 작성자가 재발행. 앱 복귀 시 상세·준비도를 함께 갱신."
       ],
       [
-        "H-476 세션 처리",
-        "부분 병합",
-        "S1e2a 33몸통까지 완료(앱 214aedf1). 다음 S1e2b: 화면 요청 152곳·판단 대상 10곳을 b1~b4, 다시 읽기를 b5로 나눔."
+        "H-526 정산 반환 완료 알림",
+        "구현·검증·로컬 병합 완료",
+        "자동 반환·재시도 성공 뒤 두 당사자에게 실제 지갑 이동분만 알림. 돈·상태·알림 의도의 동시 커밋·롤백과 중복 방지 확인. 실제 푸시 수신은 H-531."
       ],
       [
-        "H-489 한 기기 로그인",
-        "앱 안내 남음",
-        "H489b2 4f6d8bfc4·실시간 H489r 41c7563까지 완료. H489p2 로그인 안내는 S1e2b 뒤."
+        "H-527 돈 잠금 검사표",
+        "반영 완료",
+        "플랜 → 번들 → 상품 순서로 검사 메타데이터·시험 정렬. 실제 SQL 잠금 순서는 유지."
       ],
       [
-        "H-482 내보내기",
-        "S2d1 완료·후속 남음",
-        "D9 결정 반영: 처리한 쪽에는 사실만 싣고 글·대상 회원 번호·이름을 제외. 참가·출석 11표 병합(b8f2715e4). 다음 S2b·S2d3·S2e·S2d2·S2f1~S2f3."
+        "H-531 출시 후보 확인",
+        "환경 준비 뒤 실행",
+        "실서버 앱 통합 11파일, 실제 관리자 API 두 창의 충돌 안내, 배포 리허설 둘. 공유 스키마·운영자 숨김/해제·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본으로 확인."
       ],
       [
-        "H-481 권한 표지",
-        "S3a2 완료·후속 남음",
-        "검수 지적·같은 유형 조사와 사용자 결정 두 가지를 반영해 8eca28ff4 병합. 나간 회원·보이지 않는 행의 명령을 제한하고 운영진 예외 유지. 다음 S3a3 경고 묶음·앱 S3m2."
+        "차수 1~7 구조·기능 보완",
+        "합의 범위 구현·검증 완료",
+        "세션·권한·내보내기·편집기·이관·한 기기 로그인·명령 뒤 갱신·목록·다형 참조, 수입별 납부·앱 공통 정비 등을 병합. 실기기 확인과 새로 분리한 후보는 남음."
       ],
       [
-        "H-483 이관·돈 주인",
-        "구현 기록 있음",
-        "설계 3판 검토 완료. S6a0 배정·발행 잠금 차례 구현 기록이며 검수·관문·병합은 남음."
+        "차수 9 후보",
+        "미착수",
+        "H-528·H-487 경합 구조, H-505 화면 갱신, H-498 미사용 코드, H-529 설명·문서, H-530 가드·시험. H-511은 복제본 도입 전, H-507·H-200은 규모 조건에서 재평가."
       ],
       [
-        "H-477·H-480·H-484·H-485",
-        "후속 개발",
-        "편집기 S5a와 참조 S7c1까지 완료. S5b·관련 화면 갱신·S7c2 이후·목록 중복 요청 보완이 남음."
+        "공유·운영 준비",
+        "담당 세션에서 진행",
+        "공유는 첫 출시 포함, iOS 신규 설치 자동 복원은 후속. 운영 도메인·서명·기기·스토어 검증과 AWS 운영 준비의 실행 결과는 별도 확인."
       ],
       [
-        "H-185·H-199",
-        "설계·후속 정비",
-        "정산의 작은 개선 셋과 앱 공통 처리의 합의 범위는 완료. 수입별 납부 전체 설계, 미호출 목록 네 자리는 후속."
-      ],
-      [
-        "H-497 반복 생성",
-        "완료",
-        "종료되지 않던 반복 생성의 입력·안전장치 세 곳 수정(4eb863fd7). 원문 표의 행 정리 대기."
+        "후속 정책·기능 공개",
+        "결정·외부 입력 대기",
+        "후속 정책 질문 아홉과 최종 로고, 콘텐츠 삭제·내보내기 약관 H-492, 결제·인증 계약과 외부 확인. 코드 보완 완료를 기능 공개 승인으로 세지 않음."
       ]
     ],
     "evidenceRows": [
       [
-        "공개 H481 S3a2",
-        "검수 두 회차·같은 유형 조사와 사용자 결정 반영 뒤 관문 단위 13,348건·실 DB 77클래스 1,195건 실패 0. 8eca28ff4 병합.",
-        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H481a2/README.md"
+        "차수 8 공개·관리자 API",
+        "플랜 숨김/판매 경합·제한 해제·기존 구매권, 두 V1 실제 스키마 일치, 돈·알림 의도의 원자성 및 재시도 중복 방지 통과. 전체 관문은 반복하지 않음.",
+        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND8/CHECKLIST.md"
       ],
       [
-        "앱 S1e2a",
-        "전체 시험 12,273 통과·37 실패(기준선과 같은 12파일). analyze 106은 기준선과 같음. 가드 다섯 통과, 기존 가드 실패 3건(repository_write 2·modal_sheet 1), 생성 뒤 변경 0.",
-        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H476e2a/README.md"
+        "차수 8 앱",
+        "영향·도구 95파일·1,684건: 새 실패 0, 기존 기준선 7건 유지. 화면·알림 표적 121건 통과. 복귀 캐시 고침 뒤 5파일·240건 새 실패 0, 변경 파일 analyze 통과.",
+        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND8/README.md"
       ],
       [
-        "공개 H489b2·S2d1",
-        "둘째 묶음 관문 단위 13,329건·실 DB 30클래스 631건 실패 0. 첫 회차의 규약 허용 목록 실패를 보완한 뒤 병합.",
-        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H489b2/README.md"
+        "차수 8 관리자 웹",
+        "타입·변경 파일 lint·메뉴 권한 3건·생성 계약 검사 통과. 숨김→해제·읽기 전용·상태 거절 E2E 3건 통과. 실제 관리자 API 두 창 검사는 H-531.",
+        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND8/CHECKLIST.md"
       ],
       [
-        "관리자 API",
-        "분쟁 그래프 골든 1건의 기존 실패 기록이 남아 있음. 최근 토큰 세션 거울 반영을 전체 검사 통과로 확대하지 않음.",
-        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H488/README.md"
+        "차수 7 마무리 전체 시험",
+        "공개 단위 14,525·실 DB 등 6,503건 실행 중 발견한 실패 3건을 고치고 영향 범위 재검사 통과. 관리자 단위 2,461·commitTest 645건 통과. 앱 전체 14,376건 중 기존 기준선 실패 18건, 새 실패 0. 차수 8 전체 통과 기록으로 확대하지 않음.",
+        "docs/plan/evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND7/README.md"
       ],
       [
-        "모임 공유",
-        "10월 21일 관련 회귀 612건·네이티브 빌드와 실제 API/소켓 왕복 기록. 전체 앱 시험·물리 기기·운영 배포·스토어 설치 완료를 뜻하지 않음.",
-        "docs/plan/event-sharing/PROGRESS.md"
+        "남은 확인·검사 문제",
+        "H-531 실서버·실기기·배포 리허설은 미완료. 차수 8의 기존 앱 도구 기준선 7건과 다른 세션의 공유 문서 검사 문제 5건을 분리해 유지.",
+        "docs/plan/REMAINING_AFTER_ROUND7_2026-10-26.md"
       ]
     ],
-    "decisions": "한 기기 로그인은 출시 전 완성, 수입별 납부는 전체 설계 후 구현으로 결정했습니다. D9는 처리한 쪽에 사실만 남기며 글·대상 회원 번호·이름을 빼기로 결정·반영했습니다. 콘텐츠·대화·삭제 메시지 원문도 내보내기에서 제외했습니다. H-492의 약관·법적 확인은 별도이며, 로고는 사용자가 나중에 정합니다."
+    "decisions": "H-525는 구매권 유지·강제 내림/일괄 환불 없음, 운영자 해제 후 작성자 재발행으로 확정했습니다. H-526은 취소 알림과 실제 지갑 반환 완료 알림을 구분하고, H-527은 잠금 검사표를 실제 순서에 맞췄습니다. 신규 공유는 첫 출시 포함, iOS 신규 설치 자동 복원은 후속입니다. 최종 로고는 사용자가 나중에 정하며 H-492의 약관 확인과 후속 정책 질문 아홉은 남아 있습니다."
   },
   "publication": {
-    "updatedAt": "2026-10-23T01:53:39+09:00",
+    "updatedAt": "2026-10-26T18:05:20+09:00",
     "sourceBranch": "e0/docs",
-    "sourceCommit": "f5eaf58d216a923b8e51747ade6bf5265587c2c5",
+    "sourceCommit": "bc001ce32de1da1d0f308d399a4e728c817df57e",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "354c6de24ce32ddc331f8a56063a91f9dc9b811b41e5e6d7de4d3447e47fdfca",
-    "handoverSha256": "14904ad1f9e2a06dbb5cd7547144682621c04621284cdd4662da328ca7251fb7",
-    "method": "작업 문서·인계·검증 기록과 로컬 main 포함 여부 대조. 제품 테스트·운영 환경은 새로 실행하지 않음.",
+    "sourceSha256": "ea3841bf99503ef6b530c604fec9cad55b989f62e9c967fd2ba7b71b5f6ff084",
+    "handoverPath": "docs/plan/REMAINING_AFTER_ROUND7_2026-10-26.md",
+    "handoverSha256": "895fc6fc6fe8233b6e0eddf91aeda62ab599943fb86b47a8a7dccc64be508f29",
+    "method": "정본·차수 7/8 검증 기록·인계와 로컬 main 대조. 이번 사이트 문서 갱신에서 제품 시험·운영·실기기 확인은 새로 실행하지 않음.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
     "check": "python3 scripts/build-work-overview.py --site-only --check"
   }

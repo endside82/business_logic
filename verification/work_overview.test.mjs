@@ -57,15 +57,17 @@ test('the site can open shared task and view URLs directly', () => {
 test('scopes, dependency paths and resources work in the published script', () => {
   const page = open();
   page.click({ scope: 'conditional' });
-  assert.ok(page.ids().includes('H-418'));
-  assert.ok(!page.ids().includes('H-186'));
+  assert.ok(page.ids().includes('H-511'));
+  assert.ok(!page.ids().includes('H-528'));
   assert.ok(!page.ids().includes('H-433'));
-  page.click({ scope: 'payment' });
-  assert.ok(page.ids().includes('H-186'));
-  page.click({ scope: 'completed' });
-  assert.deepEqual(page.ids(), ['H-497']);
+  page.click({ scope: 'now' });
+  assert.ok(page.ids().includes('H-528'));
+  assert.ok(page.ids().includes('H-505'));
+  page.click({ scope: 'launch' });
+  assert.ok(page.ids().includes('H-531'));
+  assert.ok(!data.tasks.some(task => ['H-497', 'H-525', 'H-526', 'H-527'].includes(task.id)));
   page.click({ dependency: data.dependencies.find(d => d.title.includes('Calendar')).id });
-  assert.deepEqual(page.ids().sort(), ['H-426', 'H-427'].sort());
+  assert.deepEqual(page.ids(), ['H-427']);
   page.click({ resource: 'sharing' });
   assert.equal(page.element('plan-work').hidden, false);
   assert.match(page.element('plan-work').innerHTML, /qa\/sharing-plan.html/);
