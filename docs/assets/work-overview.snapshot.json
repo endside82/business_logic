@@ -50,14 +50,14 @@
       "number": "01",
       "title": "운영 환경 준비",
       "state": "지금 할 일",
-      "summary": "서버·저장소·서명 입력을 준비",
+      "summary": "구축된 서버·S3에서 남은 서명·연동 준비",
       "ids": [
         "H-239",
         "H-240",
         "H-247"
       ],
       "input": "사용할 계정과 권한, 운영 주소, Android·iOS 서명 설정",
-      "action": "운영 환경·S3·iOS/APNs·Play 설정과 관리자 허용망을 준비합니다. 기존 시험 설정은 운영 환경에 맞춰 대조합니다.",
+      "action": "AWS 서버·S3·관리자 허용망은 구축됐습니다. 남은 iOS/APNs·Play 입력과 기존 메일·Google·파일의 실제 이용을 확인합니다.",
       "exit": "주소·권한·서명 설정에 접근할 수 있어 다음 단계에서 배포본을 만들고 설치할 수 있습니다."
     },
     {
@@ -65,7 +65,7 @@
       "number": "02",
       "title": "배포본 고정",
       "state": "준비가 끝나면",
-      "summary": "같은 버전·설정으로 다시 설치 가능하게",
+      "summary": "이전 운영 이미지에서 최신 출시 후보로",
       "ids": [
         "H-241",
         "H-242",
@@ -73,7 +73,7 @@
         "H-389"
       ],
       "input": "운영 환경, 서명 설정, 다섯 프로그램의 버전",
-      "action": "서명 앱과 서버 버전을 묶고 빈 DB에 설치합니다. 읽기·쓰기 주 DB와 프록시 재전송 설정을 확인합니다.",
+      "action": "현재 운영보다 앞선 최신 main으로 서버·서명 앱을 묶습니다. 최신 V1의 격리 빈 DB 설치와 읽기·쓰기 주 DB·프록시 설정을 확인합니다.",
       "exit": "두 기기에 앱을 설치하고, 기록한 버전·설정만으로 같은 앱과 서버를 다시 설치할 수 있습니다."
     },
     {
@@ -112,11 +112,11 @@
     {
       "id": "server",
       "name": "운영 서버·주소",
-      "state": "준비 확인 필요",
-      "tone": "wait",
+      "state": "구축 완료·최신 후보 대기",
+      "tone": "partial",
       "owner": "운영자",
-      "current": "10월 12일 마지막 확인 당시 운영 서버 준비 전. 임시 HTTPS 연결 확인은 있음.",
-      "need": "운영 API·채팅 주소, TLS, 빈 DB·단일 주 DB, 프록시 설정",
+      "current": "10월 26일 AWS 스택 7개·EC2·서비스 7개 정상, 고정 HTTPS·운영 앱 주소 반영. API·관리자 API·관리자 웹은 최신 main보다 이전 버전.",
+      "need": "최신 후보 재배포·최신 V1 격리 설치, 기기 이용·경보·복구 검사",
       "unlock": "배포본 설치 · 실제 채팅 · 복구 검사",
       "stages": [
         "prepare",
@@ -135,19 +135,19 @@
         "H-243",
         "H-246"
       ],
-      "href": "../../business_logic/docs/qa/external-readiness.html#progress-2026-10-12",
-      "link": "운영 환경의 마지막 확인 기록",
-      "extraHref": "../release-gate/infrastructure/SERVER_HOSTING_COST_COMPARISON_2026-10-15.md",
-      "extraLink": "서버 구성·비용 비교"
+      "href": "../../business_logic/docs/qa/external-readiness.html#infrastructure",
+      "link": "현재 운영 환경과 배포 버전",
+      "extraHref": "../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md",
+      "extraLink": "운영 서버 구성 기록"
     },
     {
       "id": "storage",
       "name": "S3 파일 저장소",
-      "state": "준비 확인 필요",
-      "tone": "wait",
+      "state": "구축 완료·실제 파일 검사 남음",
+      "tone": "partial",
       "owner": "운영자",
-      "current": "10월 12일에는 계정·저장소 준비 전으로 확인. 실제 업로드·열람은 남음.",
-      "need": "버킷·권한·서명 URL, 비공개 접근·덮어쓰기 거부 확인",
+      "current": "S3 버킷 2개·인스턴스 역할·공개 차단·암호화 확인. 업로드 버저닝 Suspended, 운영 자료 Enabled. backups/ 객체 0개.",
+      "need": "검사 엔진 연결, 파일 업로드·비공개 열람·덮어쓰기 거부·삭제, 백업 업로드·복구",
       "unlock": "사진 업로드 · 증빙 열람 · 파일 삭제",
       "stages": [
         "prepare",
@@ -168,7 +168,7 @@
       "state": "준비 확인 필요",
       "tone": "wait",
       "owner": "운영자",
-      "current": "iOS 서명·배포·물리 기기·APNs 확인이 남음.",
+      "current": "로컬 iOS 배포 환경 파일이 없고 prod.json의 Google iOS·Firebase App ID·Bundle ID가 비어 있음. 이후 가입·TestFlight 완료 기록 미확인.",
       "need": "서명·배포 권한, 앱 설정, APNs와 iPhone, 공개할 로그인 구성·스토어 제출 조건",
       "unlock": "iPhone 설치 · 실제 푸시 · iOS 로그인",
       "stages": [
@@ -210,8 +210,8 @@
       "state": "시험 환경 확인",
       "tone": "partial",
       "owner": "운영자·개발",
-      "current": "Android 시험 서명·Google·지도·메일·Firebase는 임시 환경에서 일부 확인.",
-      "need": "운영 주소·배포 인증서에 맞춘 설정, Play 배포본과 물리 기기 확인",
+      "current": "Android 시험 서명·실제 연동 기록 유지. 운영 API·채팅·파일·공유 주소와 서버 Google·메일·Firebase 설정 반영.",
+      "need": "Play 앱 서명 지문·최신 AAB·내부 테스트와 물리 기기, Kakao native 등록 확인",
       "unlock": "기존 준비 재사용 · Android 배포·이용 검사",
       "stages": [
         "prepare",
@@ -224,8 +224,8 @@
         "H-243",
         "H-341"
       ],
-      "href": "../../business_logic/docs/qa/external-readiness.html#progress-2026-10-12",
-      "link": "기존 실제 연동 기록"
+      "href": "../../business_logic/docs/qa/external-readiness.html#android-distribution",
+      "link": "Android 배포 준비와 기존 검사"
     },
     {
       "id": "devices",
@@ -259,8 +259,8 @@
       "state": "실제 증명 필요",
       "tone": "wait",
       "owner": "운영자",
-      "current": "승인망 운영으로 결정. 실제 접근 차단·권한 회수·복구 확인은 남음.",
-      "need": "허용 IP·VPN·사설망, 메뉴 권한, 분리 DB 계정, 복구 환경",
+      "current": "허용 IP·분리 DB 계정 적용. CloudWatch 경보·루트 EBS 스냅샷·S3 backups/ 객체 0개. 인증 앱 등록·실제 접근 차단·복구는 확인 필요.",
+      "need": "역할별 접근·2단계 인증 등록, 경보 수신·백업 생성·외부 보관·격리 복구·롤백",
       "unlock": "관리자 운영 · 재처리 · 백업 복구·복귀",
       "stages": [
         "prepare",
@@ -1267,9 +1267,9 @@
     },
     {
       "id": "H-239",
-      "title": "운영 주소·서명·배포 설정 준비",
-      "description": "iOS 서명·APNs, 운영 API·파일·채팅 주소와 Play 배포 설정을 준비한다. iOS 로그인 구성과 스토어 제출·테스트 조건도 확인한다. Android·Google·지도·메일·Firebase의 임시 환경 확인은 끝났다.",
-      "condition": "빌드 환경에서 설정을 읽고 실제 연결할 수 있으며 스토어별 준비 조건을 기록함",
+      "title": "남은 iOS·Play 서명·배포 설정 준비",
+      "description": "운영 API·파일·채팅·공유 주소는 prod.json에 반영됐다. 남은 iOS 서명·Google/Firebase 입력·APNs와 Play 앱 서명 지문·AAB·내부 테스트를 준비한다. iOS 로그인 구성·스토어 조건과 Kakao native 플랫폼 등록도 확인한다. Apple 가입의 마지막 사용자 확인은 10월 12일 미완료이며 이후 완료 기록은 미확인이다.",
+      "condition": "실제 빌드 환경의 입력·권한, 스토어 설치·기기 연결 결과 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1280,19 +1280,19 @@
         "android"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidence": "[플랫폼별 외부 준비](../../business_logic/docs/qa/external-readiness.html#required)",
       "evidenceLinks": [
         {
-          "label": "기능별 구현·검증 상태",
-          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+          "label": "플랫폼별 외부 준비",
+          "href": "../../business_logic/docs/qa/external-readiness.html#required"
         }
       ]
     },
     {
       "id": "H-240",
-      "title": "메일·S3·관리자 허용망 준비",
-      "description": "운영 메일·S3·관리자 허용망을 준비한다. 저장소의 동일 주소 덮어쓰기 차단도 확인한다. 로컬 프록시·API의 허용망 밖 접근과 전달 IP 위조 차단은 확인했다. 2026-10-25 차수 3 의 관리자 세션 중계 뒤로는 배치 조건을 함께 정한다. 관리자 웹 앞의 믿을 앞단 수 `ADMIN_WEB_TRUSTED_PROXY_HOPS`(기본 0, 0 이면 중계가 브라우저 주소를 넘기지 않음, 관리자 웹 README), 관리자 API 의 `ADMIN_TRUSTED_PROXIES`(웹 서버 주소)와 `ADMIN_TRUSTED_PROXY_HOPS`(중계를 쓰면 1, 관리자 API README)다. 앞단 설정이 없으면 관리자 API 는 웹 서버 주소로 허용망·요청 제한을 판정한다.",
-      "condition": "실제 수신·파일 접근 제한·운영 주소의 관리자 접근 차단 기록, 세 값의 배치 기록",
+      "title": "운영 메일·S3·관리자 접근의 실제 확인",
+      "description": "Oracle SMTP·S3 버킷 2개·인스턴스 역할·관리자 허용망은 운영에 적용됐다. 현재 운영 도메인의 메일 실수신과 파일 검사·열람·삭제·덮어쓰기 거부, 허용망 밖 관리자 접근 거부를 확인한다. 운영 Nginx는 관리자 API 경로를 직접 전달하므로 웹 중계 경로의 프록시 홉 수를 일괄 적용하지 않는다. 배치별 ADMIN_WEB_TRUSTED_PROXY_HOPS·ADMIN_TRUSTED_PROXIES·ADMIN_TRUSTED_PROXY_HOPS를 현재 구성과 대조한다.",
+      "condition": "실제 메일·파일·접근 제한 결과와 배치별 신뢰 프록시 기록. 설정 존재만으로 통과하지 않음",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1303,19 +1303,19 @@
         "access"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidence": "[현재 운영 서버 구성](../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md)",
       "evidenceLinks": [
         {
-          "label": "기능별 구현·검증 상태",
-          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+          "label": "현재 운영 서버 구성",
+          "href": "../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md"
         }
       ]
     },
     {
       "id": "H-247",
       "title": "관리자 권한·DB 계정·비밀 교체 확인",
-      "description": "운영 관리자 역할별 접근과 비밀 교체 주기를 확인한다. 분리된 DB 계정·DDL/시스템 계정 조회 거부는 격리 환경에서 확인했으며 운영 계정으로 재확인한다. 관리자 2단계 인증(2026-10-25 차수 3)은 다음 로그인에서 인증 앱을 등록하게 하므로, 아직 등록하지 않은 관리자의 비밀번호를 아는 사람이 먼저 등록할 수 있다. 배포 직후 모든 관리자가 바로 로그인해 인증 앱을 등록한다.",
-      "condition": "허용·거부 결과와 운영 절차 기록, 모든 관리자의 인증 앱 등록 기록",
+      "description": "설치용·공개 API용·관리자 API용 DB 계정 분리와 관리자 허용 IP가 운영에 반영됐다. 실제 역할별 접근·DDL/시스템 계정 조회 거부·비밀 교체 절차는 운영 계정으로 확인한다. 관리자 2단계 인증은 구현돼 있으며 아직 등록하지 않은 계정의 선등록 위험을 막도록 모든 관리자의 인증 앱 등록과 복구 코드 보관을 확인한다.",
+      "condition": "역할별 허용·거부, 인증 앱 등록·복구와 비밀 교체 절차 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1324,11 +1324,11 @@
         "access"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[역할·권한·관리자 세션 의사결정 재감사](../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md)",
+      "evidence": "[관리자 접근·복구 확인](../../business_logic/docs/qa/external-readiness.html#admin-session-security)",
       "evidenceLinks": [
         {
-          "label": "역할·권한·관리자 세션 의사결정 재감사",
-          "href": "../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md"
+          "label": "관리자 접근·복구 확인",
+          "href": "../../business_logic/docs/qa/external-readiness.html#admin-session-security"
         }
       ]
     },
@@ -1360,8 +1360,8 @@
     {
       "id": "H-241",
       "title": "다섯 프로그램과 서명 앱 묶기",
-      "description": "다섯 프로그램의 버전·출시 설정을 묶고 Android·iOS 배포용 앱을 만든다.",
-      "condition": "목록만으로 같은 버전을 다시 설치할 수 있음",
+      "description": "AWS에는 이전 후보가 배포돼 있다. 공개 API 7ddb2ad0f·관리자 API a70c8f6c·관리자 웹 66ad302f를 최신 main 3246c693a·0e4025b3·2725c73과 대조해 새 후보를 만든다. 실시간 41c7563은 일치한다. 앱 f570ba40의 운영 AAB·IPA와 다섯 프로그램의 소스·이미지·설정을 한 목록으로 고정한다.",
+      "condition": "목록만으로 같은 후보를 다시 설치할 수 있고 서명 앱의 서버·이미지가 일치함",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1372,19 +1372,19 @@
         "android"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[기능별 구현·검증 상태](../development/IMPLEMENTATION_WORKBOARD.md)",
+      "evidence": "[현재 배포 버전과 최신 main](../../business_logic/docs/qa/external-readiness.html#infrastructure)",
       "evidenceLinks": [
         {
-          "label": "기능별 구현·검증 상태",
-          "href": "../development/IMPLEMENTATION_WORKBOARD.md"
+          "label": "현재 배포 버전과 최신 main",
+          "href": "../../business_logic/docs/qa/external-readiness.html#infrastructure"
         }
       ]
     },
     {
       "id": "H-242",
       "title": "빈 DB 새 설치와 두 API 기동",
-      "description": "실제 운영 DB 에 설치하는 날 빈 설치 확인 절차(설치 파일 적용·기준 데이터 재적용·두 API 기동·연결 대상·옛 키 명령 0행)를 한 번 더 돌려 기록한다. 로컬 빈 설치 확인은 2026-10-16 통과(335표, 기준 데이터 3회 적용 멱등, 두 API jar 기동, 예약 작업 265회 오류 0). 같은 날 배포 도구 리허설에서도 V1 테이블 337개 설치·두 API 기동·기준 데이터 2회 재적용 시 행 수 유지가 통과했다([리허설 재현 절차](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다)). 운영 배포 묶음의 W00·W53 도 그날 확인한다. 옛 데이터 보강은 하지 않는다.",
-      "condition": "운영 DB 와 관리자 필수 환경변수(기록 FOUND 4)·공개 API 운영 필수 환경변수 `APP_HMAC_SECRET`(H344c 로 더해짐, 2026-10-17. 없으면 운영 프로필 기동이 멈춤)이 준비된 뒤. H-344 는 H344c 로 닫힘(공개 `3d28bd1af`, [기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H344c/README.md))",
+      "description": "10월 26일 운영 최초 설치는 이전 배포 소스로 수행됐다. 최신 후보의 V1·기준 데이터 재적용·두 API 기동·연결 대상·옛 키 명령 0행을 격리 빈 DB에서 다시 기록한다. 10월 16일 로컬 빈 설치·배포 도구 리허설의 성공 기록은 당시 범위로 유지한다. 최신 W00·W53과 필수 환경변수도 확인한다. 운영 DB를 임의로 지우거나 옛 데이터를 보강하지 않는다.",
+      "condition": "최신 후보의 빈 설치·seed 멱등·두 API 기동 기록. 관리자 필수 입력과 공개 APP_HMAC_SECRET 포함",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1393,11 +1393,15 @@
         "server"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[빈 DB 새 설치 확인](../release-gate/evidence/FRESH-INSTALL-2026-10-16/README.md)",
+      "evidence": "[빈 DB 새 설치 확인](../release-gate/evidence/FRESH-INSTALL-2026-10-16/README.md) · [운영 배포 구성과 빈 DB 리허설 재현](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다)",
       "evidenceLinks": [
         {
           "label": "빈 DB 새 설치 확인",
           "href": "../release-gate/evidence/FRESH-INSTALL-2026-10-16/README.md"
+        },
+        {
+          "label": "운영 배포 구성과 빈 DB 리허설 재현",
+          "href": "../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다"
         }
       ]
     },
@@ -1514,8 +1518,8 @@
     {
       "id": "H-246",
       "title": "복구 연습과 공개 승인 판단",
-      "description": "경보·재처리·백업 복구·이전 버전 복귀와 고객 안내·스토어 자료를 확인한다. 10월 16일 같은 실행 이미지·분리 DB 계정으로 기존 백업 명령을 시험해 MySQL 자체 서명 인증서 신뢰 실패(종료 2)를 확인했다. 인증서와 백업 계정/권한부터 보완하고 암호화 복구를 검증한다.",
-      "condition": "같은 출시 후보에 대한 공개 승인 또는 보류 기록",
+      "description": "10월 26일 실조회에서 CloudWatch 경보·루트 EBS 스냅샷·운영 S3 backups/ 객체는 모두 0개다. 경보 수신·재처리·백업 생성·S3 보관·격리 복구·이전 버전 복귀를 실행한다. 10월 16일 로컬 mysqldump TLS 신뢰 실패는 과거 결과이며 최신 후보의 인증서 신뢰·백업 계정/권한·암호화 복원을 다시 검증한다. 인증서 갱신 dry-run·단순 재시작 통과를 복구 성공으로 세지 않는다. 고객 안내·스토어 자료도 확정한다.",
+      "condition": "같은 출시 후보의 경보·복구·롤백 결과와 공개 승인 또는 보류 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1526,11 +1530,11 @@
         "review"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[운영 배포 구성과 빈 DB 리허설 재현 절차](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다)",
+      "evidence": "[운영 복구의 현재 공백](../../business_logic/docs/qa/external-readiness.html#infrastructure)",
       "evidenceLinks": [
         {
-          "label": "운영 배포 구성과 빈 DB 리허설 재현 절차",
-          "href": "../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#운영-배포-구성과-빈-db-리허설을-재현한다"
+          "label": "운영 복구의 현재 공백",
+          "href": "../../business_logic/docs/qa/external-readiness.html#infrastructure"
         }
       ]
     },
@@ -1710,15 +1714,16 @@
       "commit": "41c7563"
     }
   ],
-  "sourceDigest": "e0fa6c1e8f00958abcfb45fb8888e617e2678934ef1b127142b96460fb3f2f88",
+  "sourceDigest": "6d51f348068e36f50323e55cf4ff7b7242ce3ed2a7061a8bc55007ee63922f0b",
   "summary": {
-    "lead": "차수 8까지 구현·검증하고 로컬 main에 병합했습니다. 운영자 숨김·해제, 정산 반환 완료 알림과 잠금 검사표를 반영했습니다. 다음은 출시 후보 확인 H-531과 남은 구조·정비 후보이며, 운영 환경·서명 기기 준비를 함께 진행합니다.",
+    "lead": "차수 8까지의 구현·검증과 AWS 서버·S3 구축을 반영했습니다. 운영 중인 API·관리자 API·관리자 웹은 최신 main보다 이전 버전입니다. 다음은 최신 후보 재배포·서명 앱·H-531 이용 검사와 경보·백업 복구입니다.",
     "updates": [
       "H-525 완료: 운영자가 숨긴 플랜은 제한 해제 뒤 작성자가 재발행합니다. 기존 구매권은 유지하며 해제만으로 판매가 재개되지는 않습니다.",
       "H-526 완료: 정산 송금·분담의 실제 지갑 반환 완료를 두 당사자에게 알리고 앱 지갑과 취소 내역을 갱신합니다. 수동 은행 잔여분은 별도로 남깁니다.",
       "H-527 완료: 잠금 검사표를 플랜 → 번들 → 상품의 실제 순서에 맞췄습니다. 출시 후보의 실서버·두 창·배포 리허설은 H-531에 남습니다.",
       "차수 1~7의 세션·권한·내보내기·편집기·이관·한 기기 로그인 등 구현을 반영했습니다. 다음 차수는 H-528·H-487·H-505·H-498·H-529·H-530의 남은 범위입니다.",
-      "공유 기능은 첫 출시 포함으로 결정했습니다. iOS 신규 설치는 수동 복구로 출시하고 자동 복원은 후속입니다. 운영·실기기·스토어 검증과 최종 로고 결정은 남아 있습니다."
+      "공유 기능은 첫 출시 포함으로 결정했습니다. iOS 신규 설치는 수동 복구로 출시하고 자동 복원은 후속입니다. 운영·실기기·스토어 검증과 최종 로고 결정은 남아 있습니다.",
+      "10월 26일 운영 실조회: AWS 스택 7개·서비스 7개 정상, S3 버킷 2개·HTTPS 구축. 경보·루트 EBS 스냅샷·S3 backups/ 객체는 0개이며 실제 파일·기기·복구 검사는 남습니다."
     ],
     "checks": "차수 8 기록: 검수표 15줄 완료. 앱 영향·도구 95파일·1,684건은 새 실패 0, 기존 기준선 7건 유지. 코드 검수 고침 뒤 직접 영향 5파일·240건은 새 실패 0. 공개·관리자 실 DB와 관리자 웹 E2E 3건을 확인했습니다. 이번 문서 갱신에서 제품 시험을 새로 실행하지 않았습니다.",
     "inventory": "정본의 추적 항목 54개: 제품 결정 10 · 결함 3 · 결제 공개 전 0 · 새 기능 6 · 구조 개선 4 · 정비 3 · 확인 후보 8 · 출시 준비·외부 입력 20. 후속 기능·조건부 후보를 포함한 목록이며 출시 전 개발 건수나 완료율이 아닙니다. 공유 계획의 단위는 중복 합산하지 않습니다.",
@@ -1734,14 +1739,19 @@
     },
     "actions": [
       {
-        "task": "H-239",
-        "title": "운영 서버·S3·서명 앱의 준비를 확인합니다",
-        "note": "사용할 계정·설정 대조 → 같은 버전의 배포 묶음과 실제 기기 준비"
+        "task": "H-241",
+        "title": "기존 운영 환경에 최신 출시 후보를 준비합니다",
+        "note": "이전 운영 이미지와 최신 main 대조 → 서버 재빌드·최신 V1 리허설·최신 서명 앱. iOS·Play 입력은 병행"
       },
       {
         "task": "H-531",
         "title": "준비된 출시 후보로 실제 흐름을 확인합니다",
         "note": "앱 통합 11파일 → 관리자 두 창 → 배포 리허설 둘·운영자 숨김/해제·완료 푸시"
+      },
+      {
+        "task": "H-246",
+        "title": "경보·백업 보관·복구를 실제로 확인합니다",
+        "note": "현재 경보·스냅샷·S3 backups/ 객체 0개 → 경보 수신·백업 생성·외부 보관·격리 복구·롤백"
       },
       {
         "task": "H-528",
@@ -1767,7 +1777,7 @@
       ],
       [
         "H-531 출시 후보 확인",
-        "환경 준비 뒤 실행",
+        "최신 후보·서명 앱 준비 뒤 실행",
         "실서버 앱 통합 11파일, 실제 관리자 API 두 창의 충돌 안내, 배포 리허설 둘. 공유 스키마·운영자 숨김/해제·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본으로 확인."
       ],
       [
@@ -1782,8 +1792,13 @@
       ],
       [
         "공유·운영 준비",
-        "담당 세션에서 진행",
-        "공유는 첫 출시 포함, iOS 신규 설치 자동 복원은 후속. 운영 도메인·서명·기기·스토어 검증과 AWS 운영 준비의 실행 결과는 별도 확인."
+        "공유 첫 출시 포함 / AWS·S3 구축",
+        "iOS 신규 설치는 수동 복구. 운영 서비스 7개 정상이나 API·관리자 API·관리자 웹은 최신 main보다 이전 이미지. iOS·Play·실기기·파일·경보·복구는 남음."
+      ],
+      [
+        "운영 복구 H-246",
+        "실제 백업·경보·복구 미완료",
+        "10월 26일 실조회: CloudWatch 경보 0개, 루트 볼륨 스냅샷 0개, 운영 S3 backups/ 객체 0개. 인증서 갱신·단순 재시작 결과와 구분."
       ],
       [
         "후속 정책·기능 공개",
@@ -1816,19 +1831,24 @@
         "남은 확인·검사 문제",
         "H-531 실서버·실기기·배포 리허설은 미완료. 차수 8의 기존 앱 도구 기준선 7건과 다른 세션의 공유 문서 검사 문제 5건을 분리해 유지.",
         "docs/plan/REMAINING_AFTER_ROUND7_2026-10-26.md"
+      ],
+      [
+        "10월 26일 운영 읽기 전용 조회",
+        "CloudFormation 7개 완료·EC2/SSM 정상·서비스 7개 healthy. S3 설정·백업 객체·경보·스냅샷과 실행 이미지 대조, TLS를 검증한 HTTPS 응답. 실제 기능·실기기·복구 시험은 아님.",
+        "business_logic/docs/qa/external-readiness.html#progress-2026-10-26"
       ]
     ],
     "decisions": "H-525는 구매권 유지·강제 내림/일괄 환불 없음, 운영자 해제 후 작성자 재발행으로 확정했습니다. H-526은 취소 알림과 실제 지갑 반환 완료 알림을 구분하고, H-527은 잠금 검사표를 실제 순서에 맞췄습니다. 신규 공유는 첫 출시 포함, iOS 신규 설치 자동 복원은 후속입니다. 최종 로고는 사용자가 나중에 정하며 H-492의 약관 확인과 후속 정책 질문 아홉은 남아 있습니다."
   },
   "publication": {
-    "updatedAt": "2026-10-26T18:05:20+09:00",
-    "sourceBranch": "e0/docs",
-    "sourceCommit": "bc001ce32de1da1d0f308d399a4e728c817df57e",
+    "updatedAt": "2026-10-26T20:15:50+09:00",
+    "sourceBranch": "main",
+    "sourceCommit": "143ae6409176b0d5485c0e21dc188c4d98aa6034",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "ea3841bf99503ef6b530c604fec9cad55b989f62e9c967fd2ba7b71b5f6ff084",
+    "sourceSha256": "4338fa1f02d83dfe3b6e70428318bb15362a6f9c2f50a720fbe8fc9dd63f1862",
     "handoverPath": "docs/plan/REMAINING_AFTER_ROUND7_2026-10-26.md",
     "handoverSha256": "895fc6fc6fe8233b6e0eddf91aeda62ab599943fb86b47a8a7dccc64be508f29",
-    "method": "정본·차수 7/8 검증 기록·인계와 로컬 main 대조. 이번 사이트 문서 갱신에서 제품 시험·운영·실기기 확인은 새로 실행하지 않음.",
+    "method": "기준 main 위의 현재 정본 수정본을 sourceSha256으로 고정. 차수 7/8 기록·제품 main·AWS 운영 구성·실행 이미지·S3·경보·스냅샷·HTTPS 읽기 전용 대조. 제품 기능 시험·실기기·새 배포·복구는 수행하지 않음.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
     "check": "python3 scripts/build-work-overview.py --site-only --check"
   }

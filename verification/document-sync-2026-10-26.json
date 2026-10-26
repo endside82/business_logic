@@ -22926,5 +22926,504 @@
       "path": "verification/check_release_scope.mjs",
       "sha256": "34a6061b4b3a68994b31427afd58db4dc8330573b00dbdca1abe614fd78ec66e"
     }
-  ]
+  ],
+  "launchReadinessFollowup": {
+    "updatedAt": "2026-10-26T20:23:31+09:00",
+    "purpose": "기존 외부 준비·출시 현황·완료 기준·자원별 카드·정본 작업 목록의 미구축/미정/미완료 서술을 실제 운영 진척에 맞춰 수정",
+    "baseCommits": {
+      "workspace": "143ae6409176b0d5485c0e21dc188c4d98aa6034",
+      "business_logic": "811c46db1009d90580cff18f59385d249d7d4fd5"
+    },
+    "readOnlyInventory": {
+      "checkedAt": "2026-10-26T10:57:10.645712+00:00",
+      "region": "ap-northeast-2",
+      "stacks": [
+        {
+          "name": "prd-an2-s3-saisoop",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:23:52.689000+00:00"
+        },
+        {
+          "name": "prd-an2-r53-saisoop-records",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:22:43.234000+00:00"
+        },
+        {
+          "name": "prd-an2-ec2-saisoop-app",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:22:04.624000+00:00"
+        },
+        {
+          "name": "prd-an2-role-saisoop-app",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:18:55.380000+00:00"
+        },
+        {
+          "name": "prd-an2-r53-saisoop-zone",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:17:17.161000+00:00"
+        },
+        {
+          "name": "prd-an2-sg-saisoop",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:16:38.935000+00:00"
+        },
+        {
+          "name": "prd-an2-vpc-saisoop",
+          "status": "CREATE_COMPLETE",
+          "updatedAt": "2026-10-25T15:13:18.166000+00:00"
+        }
+      ],
+      "instances": [
+        {
+          "state": "running",
+          "type": "t4g.large",
+          "launchTime": "2026-10-25T16:46:07+00:00"
+        }
+      ],
+      "ssmConnection": "Online",
+      "buckets": [
+        "prd-an2-s3-saisoop-ops",
+        "prd-an2-s3-saisoop-uploads"
+      ],
+      "cloudWatchAlarms": {
+        "metricAlarms": [],
+        "compositeAlarms": []
+      }
+    },
+    "storage": {
+      "checkedAt": "2026-10-26T10:59:37.389529+00:00",
+      "buckets": {
+        "prd-an2-s3-saisoop-ops": {
+          "GetPublicAccessBlock": {
+            "PublicAccessBlockConfiguration": {
+              "BlockPublicAcls": true,
+              "IgnorePublicAcls": true,
+              "BlockPublicPolicy": true,
+              "RestrictPublicBuckets": true
+            }
+          },
+          "GetBucketEncryption": {
+            "ServerSideEncryptionConfiguration": {
+              "Rules": [
+                {
+                  "ApplyServerSideEncryptionByDefault": {
+                    "SSEAlgorithm": "AES256"
+                  },
+                  "BucketKeyEnabled": true,
+                  "BlockedEncryptionTypes": {
+                    "EncryptionType": [
+                      "SSE-C"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "GetBucketVersioning": {
+            "Status": "Enabled"
+          },
+          "GetBucketLifecycleConfiguration": {
+            "TransitionDefaultMinimumObjectSize": "all_storage_classes_128K",
+            "Rules": [
+              {
+                "Expiration": {
+                  "Days": 7
+                },
+                "ID": "images-short-lived",
+                "Filter": {
+                  "Prefix": "images/"
+                },
+                "Status": "Enabled",
+                "NoncurrentVersionExpiration": {
+                  "NoncurrentDays": 1
+                }
+              },
+              {
+                "Expiration": {
+                  "Days": 7
+                },
+                "ID": "bundles-short-lived",
+                "Filter": {
+                  "Prefix": "bundles/"
+                },
+                "Status": "Enabled",
+                "NoncurrentVersionExpiration": {
+                  "NoncurrentDays": 1
+                }
+              },
+              {
+                "Expiration": {
+                  "Days": 1
+                },
+                "ID": "tls-one-day",
+                "Filter": {
+                  "Prefix": "tls/"
+                },
+                "Status": "Enabled",
+                "NoncurrentVersionExpiration": {
+                  "NoncurrentDays": 1
+                }
+              },
+              {
+                "Expiration": {
+                  "Days": 90
+                },
+                "ID": "backups-retention",
+                "Filter": {
+                  "Prefix": "backups/"
+                },
+                "Status": "Enabled",
+                "NoncurrentVersionExpiration": {
+                  "NoncurrentDays": 7
+                }
+              },
+              {
+                "ID": "abort-incomplete-multipart",
+                "Filter": {
+                  "Prefix": ""
+                },
+                "Status": "Enabled",
+                "AbortIncompleteMultipartUpload": {
+                  "DaysAfterInitiation": 7
+                }
+              }
+            ]
+          }
+        },
+        "prd-an2-s3-saisoop-uploads": {
+          "GetPublicAccessBlock": {
+            "PublicAccessBlockConfiguration": {
+              "BlockPublicAcls": true,
+              "IgnorePublicAcls": true,
+              "BlockPublicPolicy": true,
+              "RestrictPublicBuckets": true
+            }
+          },
+          "GetBucketEncryption": {
+            "ServerSideEncryptionConfiguration": {
+              "Rules": [
+                {
+                  "ApplyServerSideEncryptionByDefault": {
+                    "SSEAlgorithm": "AES256"
+                  },
+                  "BucketKeyEnabled": true,
+                  "BlockedEncryptionTypes": {
+                    "EncryptionType": [
+                      "SSE-C"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "GetBucketVersioning": {
+            "Status": "Suspended"
+          },
+          "GetBucketLifecycleConfiguration": {
+            "TransitionDefaultMinimumObjectSize": "all_storage_classes_128K",
+            "Rules": [
+              {
+                "ID": "abort-incomplete-multipart",
+                "Filter": {
+                  "Prefix": ""
+                },
+                "Status": "Enabled",
+                "AbortIncompleteMultipartUpload": {
+                  "DaysAfterInitiation": 7
+                }
+              }
+            ]
+          }
+        },
+        "backups": {
+          "ListObjectsV2": {
+            "objectCount": 0,
+            "totalBytes": 0
+          }
+        }
+      },
+      "rootVolumeSnapshots": []
+    },
+    "runningContainers": {
+      "Status": "Success",
+      "ResponseCode": 0,
+      "ExecutionStartDateTime": "2026-10-26T11:01:24.224Z",
+      "ExecutionEndDateTime": "2026-10-26T11:01:24.224Z",
+      "StandardOutputContent": "/opt/saisoop/bundle-20261026T013953\nsaisoop-production-edge-1 | 47928bf67eb6 | Up 18 hours (healthy)\nsaisoop-production-admin-1 | 7296566e9cb0 | Up 18 hours (healthy)\nsaisoop-production-realtime-1 | 0c6e3f7b90b3 | Up 18 hours (healthy)\nsaisoop-production-api-1 | 413d22c1b1fb | Up 18 hours (healthy)\nsaisoop-production-redis-1 | f8548b29a1f1 | Up 18 hours (healthy)\nsaisoop-production-mysql-1 | 76f0358884cb | Up 18 hours (healthy)\nsaisoop-production-admin-web-1 | 53cac0626a15 | Up 18 hours (healthy)\nedge | sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951 | running | healthy\nadmin | sha256:7296566e9cb0468b52f18cf3520835c78f4bdd45071bcc9cf26f2969ec874c49 | running | healthy\nrealtime | sha256:0c6e3f7b90b307e70619d48165538fd6d2b097e429ef2e45c58ab5e0363b62e2 | running | healthy\napi | sha256:413d22c1b1fb9513c03d394fe47f2d8d3983c26ce7bb88f810388530ca49d967 | running | healthy\nmigrate | sha256:9867e6771b699ad9c879adddf44d4ef583e365e8a87530978b0bc230a32a76e5 | exited | n/a\nredis | sha256:f8548b29a1f1cb358b5fcfec1e0126beab57ad15776c1e87623f865579f16c5a | running | healthy\nmysql | sha256:76f0358884cb92d9a086d24e5671c38048d3fef40f2588703d73eb55392d6b69 | running | healthy\nadmin-web | sha256:53cac0626a154dcb6fa758bb117a15bb8967f9cbb35372c43412584cfb13b873 | running | healthy\n",
+      "StandardErrorContent": ""
+    },
+    "deploymentComparison": [
+      {
+        "repository": "community_api",
+        "deployedCommit": "7ddb2ad0f051f2ca76d5be567b23f9feeb7e9a15",
+        "main": "3246c693a77de3321e7e8fa05aa8f9e9ff1a1b58",
+        "commitsNotInDeployment": 51
+      },
+      {
+        "repository": "community_admin_api",
+        "deployedCommit": "a70c8f6c85de9fb8614675a78abb489168a18f07",
+        "main": "0e4025b311e790f4cd299c5d11c18352837861cb",
+        "commitsNotInDeployment": 15
+      },
+      {
+        "repository": "community-realtime",
+        "deployedCommit": "41c75631713b1d2fdd56099bf0aad5ab37efc88b",
+        "main": "41c75631713b1d2fdd56099bf0aad5ab37efc88b",
+        "commitsNotInDeployment": 0
+      },
+      {
+        "repository": "community_admin_front",
+        "deployedCommit": "66ad302f4cda83ee3300a2eeb193dca20c43181e",
+        "main": "2725c7334daadb2a7661b3cc3c0dbc10da963bcb",
+        "commitsNotInDeployment": 5
+      }
+    ],
+    "http": {
+      "checkedAt": "2026-10-26T11:00:09.312082+00:00",
+      "probes": [
+        {
+          "url": "https://api.saisoop.co.kr/actuator/health",
+          "result": "404 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://api.saisoop.co.kr/api/internal/readiness-probe",
+          "result": "404 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://admin.saisoop.co.kr/login",
+          "result": "200 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://chat.saisoop.co.kr/socket.io/?EIO=4&transport=polling",
+          "result": "401 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/terms",
+          "result": "301 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/privacy",
+          "result": "301 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/account-deletion",
+          "result": "301 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/support",
+          "result": "301 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/.well-known/assetlinks.json",
+          "result": "200 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/.well-known/apple-app-site-association",
+          "result": "200 0",
+          "error": "",
+          "exitCode": 0
+        },
+        {
+          "url": "https://saisoop.co.kr/open/",
+          "result": "200 0",
+          "error": "",
+          "exitCode": 0
+        }
+      ]
+    },
+    "httpRedirectFollowup": {
+      "tlsVerificationEnabled": true,
+      "finalStatus": 200,
+      "paths": [
+        "https://saisoop.co.kr/terms/",
+        "https://saisoop.co.kr/privacy/",
+        "https://saisoop.co.kr/account-deletion/",
+        "https://saisoop.co.kr/support/"
+      ],
+      "limits": "HTTP 응답 확인이며 법적 문안 검토·서명 지문·기기 앱 링크 검증은 아님"
+    },
+    "localAppInputs": {
+      "path": "community_app/dart_defines/prod.json",
+      "urls": {
+        "API_BASE_URL": "https://api.saisoop.co.kr",
+        "FILE_SERVER_URL": "https://api.saisoop.co.kr",
+        "REALTIME_BASE_URL": "https://chat.saisoop.co.kr",
+        "SHARE_BASE_URL": "https://saisoop.co.kr",
+        "APP_LINK_HOST": "saisoop.co.kr"
+      },
+      "missingOrEmpty": [
+        "GOOGLE_IOS_CLIENT_ID",
+        "FIREBASE_IOS_APP_ID",
+        "FIREBASE_IOS_BUNDLE_ID"
+      ],
+      "iosFastlaneEnvExists": false,
+      "androidSigningPropertiesExists": true,
+      "limits": "값 본문은 자격정보가 아닌 운영 URL만 기록. 콘솔 가입·권한·배포 완료를 로컬 파일 유무로 단정하지 않음"
+    },
+    "recordOnlyEvidence": [
+      {
+        "path": "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md",
+        "sha256": "94766b849002c38b52517a208b7a7b10045e83e49d42d78b59dbcaf22b77122d",
+        "facts": [
+          "Route 53·HTTPS·관리자 허용 IP·분리 DB 계정",
+          "Oracle SMTP 유지·SES 전환 후속",
+          "Google·Firebase 운영 설정",
+          "Kakao 운영 IP 허용·서버 컨테이너 주소 검색 200",
+          "인증서 갱신 dry-run·서비스 재시작"
+        ]
+      },
+      {
+        "path": "docs/plan/evidence/CONCURRENCY-PATTERNS-2026-10-09/IMPL/B5/H235/README.md",
+        "facts": [
+          "H-348 동기화 표 처리의 커밋 뒤 분리 완료"
+        ],
+        "source": "community_api/src/main/java/com/endside/community/calendar/sync/CalendarSyncEventListener.java"
+      }
+    ],
+    "method": "AWS MCP read APIs and read-only SSM docker ps/inspect; HTTP with TLS verification enabled. No infrastructure, deployment, database, bucket or service settings changed; no customer messages sent.",
+    "limits": [
+      "No mobile device or store console execution",
+      "No new feature, mail delivery, FCM event, file lifecycle, backup restore or rollback test",
+      "Kakao production IP allowance and container search HTTP 200 are from PRODUCTION_SERVER_CONFIG.md, not a new provider call"
+    ],
+    "remaining": [
+      "H-241 최신 후보 재빌드·배포·서명 앱",
+      "H-242 최신 V1 격리 빈 설치·seed 재적용·두 API 기동",
+      "H-239 iOS 입력·서명·APNs·Play AAB·서명 지문·native 콘솔",
+      "H-240 파일 검사 엔진·실제 파일 생명주기·운영 메일·허용망 밖 거부",
+      "H-247 역할별 접근·2단계 인증 등록·권한/비밀 교체",
+      "H-243·H-531 실기기·공유·앱 통합 11파일·관리자 두 창·배포 리허설 둘·완료 알림 뒤 지갑 갱신",
+      "H-246 경보·백업 생성·외부 보관·격리 복구·롤백·공개 판단"
+    ],
+    "checks": {
+      "unitAndParserTests": {
+        "passed": 24,
+        "failed": 0
+      },
+      "releaseScope": {
+        "pages": 233,
+        "checkedLinks": 3423,
+        "tasks": 30,
+        "scopeCounts": {
+          "open": 134,
+          "partial": 16,
+          "sealed": 24,
+          "retired": 1
+        }
+      },
+      "overviewGeneration": {
+        "files": 7,
+        "tasks": 54,
+        "passed": true
+      },
+      "changedRootMarkdownLinks": {
+        "files": 5,
+        "links": 279,
+        "passed": true
+      },
+      "browser": "기존 external-readiness의 현황·필수 표·앵커와 index의 단계·작업·자원 상태를 Chrome에서 확인",
+      "rootAllDocuments": {
+        "passed": false,
+        "existingFailure": "현재 상태 연결 누락: docs/plan/event-sharing/EVENT_HOST_SHARING_DEEP_LINK_PLAN_2026-10-15.md",
+        "ownership": "다른 공유 세션 소유 문서로 수정하지 않음"
+      }
+    },
+    "changedExistingDocuments": {
+      "workspace": [
+        {
+          "path": "docs/development/IMPLEMENTATION_CROSSWALK.md",
+          "sha256": "91ed644d7d2975d504db07d6d6a354c3cb6adde8e31720a1737db430d868c250"
+        },
+        {
+          "path": "docs/development/IMPLEMENTATION_WORKBOARD.md",
+          "sha256": "c6087e5468c395d512d57a7f5bffbb45f41de09c69053fcbd66a890884849d63"
+        },
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "4338fa1f02d83dfe3b6e70428318bb15362a6f9c2f50a720fbe8fc9dd63f1862"
+        },
+        {
+          "path": "docs/plan/WORK_OVERVIEW.html",
+          "sha256": "84e2f0003a296919de017ccc591d7e04dac5df572729fe089331bd1cdb426402"
+        },
+        {
+          "path": "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md",
+          "sha256": "f6cce9a3c0bce928d454dcdede853688c3442fea18d996379fdc23a843c7a4d8"
+        },
+        {
+          "path": "docs/release-gate/LAUNCH_ROADMAP.md",
+          "sha256": "a546c45be18006cf7337eede977424c793a7c1945c872f9efedbe33a1534b93a"
+        },
+        {
+          "path": "scripts/build-work-overview.py",
+          "sha256": "27de8c6dff158b705cea5ec79b73240294c5960e5023870b4f20a2757c857515"
+        },
+        {
+          "path": "scripts/templates/work-overview.html",
+          "sha256": "1faa057f5c149cb9533adca031a42885dad9243cb31eddb4b48a66e6d8188865"
+        },
+        {
+          "path": "scripts/work_overview_site.py",
+          "sha256": "d0942f70c3ad3f114377504f787854edc17c5f5ff3d930c85bd0330151d4375e"
+        }
+      ],
+      "business_logic": [
+        {
+          "path": "docs/assets/launch-status.js",
+          "sha256": "82602034b2cfc92ed44ac875c0fd86bd8ff80f205a10059c3e62d3125ff9e4d3"
+        },
+        {
+          "path": "docs/assets/work-overview.snapshot.json",
+          "sha256": "a40269dc91402868429281183bb6108a0ea0443ae0007f11e965efb8ae5aa7e7"
+        },
+        {
+          "path": "docs/index.html",
+          "sha256": "1497c0c28958bee993d6b3b67ec1d31d5fa695106c9328091dec256ed00fbed4"
+        },
+        {
+          "path": "docs/overview/changelog.html",
+          "sha256": "30f09065552bbccc78742d4db05dcd3cd9a83f0c5c72f825497dd6ff84f63605"
+        },
+        {
+          "path": "docs/qa/completion-criteria.html",
+          "sha256": "00084a31bbe0eefac97f397446cbb135d7a5ca6d7d9ff8abdd96c1554e99454b"
+        },
+        {
+          "path": "docs/qa/external-readiness.html",
+          "sha256": "bd74be1dbf59d15e6dda2cc9dfe0d33e0ca8bf17129fa4e65a5c6d5d8ef6c86b"
+        },
+        {
+          "path": "docs/qa/feature-status.html",
+          "sha256": "714341dc3f91afa0c5af94811f2b6b3d18213055861cc02ddf226fc7e9d1409b"
+        },
+        {
+          "path": "docs/qa/launch-status.html",
+          "sha256": "2141981f201877250d93aaf1d9427bc652bf058a711bfacad1da34bd99f10158"
+        },
+        {
+          "path": "docs/qa/release.html",
+          "sha256": "a9f8d9c696c15bd22f1517677cda50ba3fc3ac588a5b95b920e739c16adcc14d"
+        }
+      ]
+    }
+  }
 }
