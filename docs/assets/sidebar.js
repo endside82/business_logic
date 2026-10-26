@@ -243,6 +243,7 @@
         { href: 'overview/journeys.html', label: '7대 사용자 여정' },
         { href: 'overview/operating-model.html', label: 'PRD 운영 모델' },
         { href: 'overview/changelog.html', label: '변경 기록' },
+        { href: 'qa/changes-since-2026-10-23.html', label: '최근 변경 추적' },
       ],
     },
     // 21개 도메인을 7개 줄기(스토리 그룹)로 묶는다. 도메인 번호·기능 ID는 안정

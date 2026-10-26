@@ -28,6 +28,12 @@
 
       <div class="launch-strip" id="launch-strip"></div>
 
+      <section id="state-current">
+        <h2>실패·복귀·계정 전환 뒤의 동작</h2>
+        <p>이전 계정의 늦은 응답을 현재 계정에 반영하지 않습니다. 추가 목록 읽기의 실패는 기존 결과를 유지하고 재시도하며, 작성·전송 실패에서는 입력을 보존합니다. 완료가 확인된 변경 뒤 관련 목록과 상세를 다시 읽습니다.</p><p><a href="../policies/state.html#session-and-retry">계정 전환·화면 복귀·실패 뒤의 상태를 맞춥니다</a>에서 적용 조건과 예외를 확인합니다.</p>
+      </section>
+
+
       <section id="revoked-session">
         <h2>계정 제한 뒤 열린 채팅 연결을 정리합니다</h2>
         <p>정지·차단·로그아웃·비밀번호 재설정의 세션 해지 이벤트를 받으면 서버가 연결과 방 등록을 정리합니다.
