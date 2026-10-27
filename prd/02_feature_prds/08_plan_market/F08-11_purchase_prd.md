@@ -99,7 +99,6 @@
 
 - **Unit 06 결제·지갑** (필수):
   - `WalletSpendService.spend(MARKET_ITEM/MARKET_BUNDLE/PLAN_PURCHASE, ...)` — 잔액 차감 + 거래 기록(유료/무료 split)
-  - `WalletService.creditBonusToWallet` — 번들 보너스 적립
   - `AccountingLedgerService` — 회계 분개 (`USER_WALLET`, `CREATOR_PAYABLE`, `PLATFORM_FEE_REVENUE`, `WITHHOLDING_TAX_PAYABLE` 등)
   - 잔액 부족: `INSUFFICIENT_BALANCE` 에러를 본 단위가 그대로 클라이언트에 전달
 - **Unit 01 인증**: `@AuthenticationPrincipal UserPrincipal` 필수
@@ -196,7 +195,7 @@
 |---|---|---|---|
 | S1 | 아이템 단건 구매 — 잔액 충분 (Happy Path) | F08-10 마켓 아이템 상세 화면, `status="ON_SALE"`. | 사용자 잔액 -30,000P, `MarketPurchase` 1건, `Collection` 1건 추가, 크리에이터 수익 PENDING 26,109P. |
 | S2 | 잔액 부족 → 충전 분기 | 잔액 5,000P 사용자, 30,000P 아이템 구매 시도. | 결제는 일어나지 않음, `_isPurchasing = false`로 복귀, 사용자가 충전 화면으로 이동. |
-| S3 | 번들 구매 — 보너스 통화 적립 | 3개 아이템 묶음 + 1,000P 보너스가 포함된 번들 구매. | 사용자 컬렉션 +3개, 보너스 포인트 +1,000 적립. |
+| S3 | 번들 구매 — 결제액만 차감 | 3개 아이템을 묶은 번들 구매. | 사용자 컬렉션 +3개, 잔액은 결제액만큼 줄고 덤(보너스) 포인트 적립 없음(차수 10 에서 걷음). |
 | S4 | 같은 마켓 아이템 재구매 | 같은 사용자가 이미 한 번 산 ON_SALE 아이템, 재고·월 한도·잔액 충족 | 새 구매/컬렉션/수익 기록이 한 건 더 생성된다. 플랜 직접 구매의 중복 차단과 다르다. |
 | S5 | 재고 소진 | 시나리오 본문 참조 | 한 명만 구매 성공. |
 | S6 | 월 50건 한도 초과 | 시나리오 본문 참조 | 익월까지 마켓 구매 차단. |
@@ -233,7 +232,7 @@
 
 - **AC-01. 아이템 단건 구매 — 잔액 충분 (Happy Path)**: Given F08-10 마켓 아이템 상세 화면, `status="ON_SALE"`. When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 -30,000P, `MarketPurchase` 1건, `Collection` 1건 추가, 크리에이터 수익 PENDING 26,109P.
 - **AC-02. 잔액 부족 → 충전 분기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 결제는 일어나지 않음, `_isPurchasing = false`로 복귀, 사용자가 충전 화면으로 이동.
-- **AC-03. 번들 구매 — 보너스 통화 적립**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 컬렉션 +3개, 보너스 포인트 +1,000 적립.
+- **AC-03. 번들 구매 — 결제액만 차감**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 컬렉션 +3개, 잔액은 결제액만큼 줄고 덤(보너스) 포인트 적립 없음.
 - **AC-04. 같은 마켓 아이템 재구매**: Given 같은 사용자가 이미 구매한 ON_SALE 아이템이고 재고·월 한도·잔액이 충분 When 다시 구매하면 Then 새 구매·컬렉션·수익 기록이 한 건 더 생성되어야 한다. 플랜 직접 구매는 별도로 중복 차단한다.
 - **AC-05. 재고 소진**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 한 명만 구매 성공.
 - **AC-06. 월 50건 한도 초과**: Given 아이템·번들 구매가 월 50건에 도달 When 추가 마켓 구매 Then 익월까지 해당 구매 차단. 플랜 직접 구매에는 이 한도를 적용하지 않음.

@@ -22,7 +22,7 @@
 |---|---|---|
 | `MARKET_ITEM` 수익 생성 | 있음. `sourceId`는 구매 ID(`marketPurchaseId`)로 정정됨 — 구매 단위로 식별되어 환불·정산 시 "이 구매의 수익 row"를 특정할 수 있다. | `MarketPurchaseService.createCreatorEarning(item.getCreatorId(), "MARKET_ITEM", saved.getPurchaseId(), ...)` |
 | `MARKET_BUNDLE` 수익 생성 | 구현됨. 포함 아이템 원작자에게 정가 비례 배분으로 `CreatorEarning` 생성(`grossPaid/grossFree` 분리). | `MarketPurchaseService.createCreatorEarning(..., "MARKET_BUNDLE", ...)` |
-| `MARKET_BUNDLE` 판매자 모델 | `Bundle`에 `curatorUserId` 존재(환불 권한자 결정에 사용). 매출 귀속은 포함 아이템 원작자 기준. | `Bundle.java`, `PurchaseRefundService.resolveSellerUserId` |
+| `MARKET_BUNDLE` 판매자 모델 | 대표 큐레이터는 `bundle_curator` 의 LEAD 행 하나(번들당 하나, 관리자가 만들 때 앉힘)다. 환불 판매자 결정에 쓰고, 매출 귀속은 포함 아이템 원작자 기준. 채우는 곳 없던 `bundle.curator_user_id` 는 차수 10 에서 걷었다. | `BundleCurator.java`, `MarketRefundCommand.resolveSellerUserId` |
 | `PLAN_DIRECT` 수익 생성 | 구현됨. `PlanPurchaseService`가 `CreatorEarning(sourceType=PLAN_DIRECT)`를 `grossPaid/grossFree` 분리로 생성. | `PlanPurchaseService.createCreatorEarning` |
 | `PLAN_DIRECT` 정책 분류 | `SpendPolicy`에서 `PLAN_PURCHASE = FLOW_THROUGH`로 정정됨(플랜 직접 구매도 크리에이터 정산 대상). | `SpendPolicyRegistry.java:52` |
 | 월간 정산 대상 | `MARKET_ITEM`·`MARKET_BUNDLE`·`PLAN_DIRECT`의 `PENDING` 수익을 모두 정산. | `MarketplaceSettlementService.java:36` |
@@ -76,14 +76,14 @@
 
 채택안 B의 세부:
 
-- `Bundle`에 `curator_user_id` 컬럼 추가 (큐레이션 권한 추적용. 매출 귀속과는 별개)
+- 큐레이션 책임자(대표 큐레이터)는 `bundle_curator` 의 LEAD 행으로 둔다 (큐레이션 권한 추적용. 매출 귀속과는 별개). 처음 설계한 `bundle.curator_user_id` 칸은 채우는 곳이 없어 차수 10 에서 걷었다.
 - 번들 구매 시 포함 아이템별로 다음을 계산:
   - 아이템별 정가 합계 = `sum(item.price * bundleItem.quantity)`
   - 아이템별 비율 = `(item.price * quantity) / 정가 합계`
   - 아이템별 수익 = `bundle.payAmount * 아이템별 비율`
 - 각 아이템 원작자에게 `CreatorEarning` 1행 생성. `sourceType = MARKET_BUNDLE`, `sourceId = marketPurchaseId`, 추가 컬럼으로 `bundleItemId` 또는 분배 메타를 남긴다.
 - 정가 합계가 0이면 균등 배분 (안전망)
-- 보너스 포인트는 플랫폼 비용. `PLATFORM_FEE_REVENUE`에서 차감 또는 별도 마케팅 비용 계정으로 분리. 회계 결정은 본 PRD 6절에서 다룬다.
+- 번들 구매에 덤(보너스) 포인트는 없다. 처음 구현한 덤 포인트는 거는 길이 없어 차수 10 에서 걷었다 (6.4).
 
 ### 3.4 `SpendPolicy` 정정
 
@@ -141,12 +141,9 @@
 
 ### 4.1 `bundle` 테이블
 
-```sql
-ALTER TABLE bundle
-  ADD COLUMN curator_user_id BIGINT NULL AFTER title;
-```
-
-`curator_user_id`는 매출 귀속과 무관하다 (3.3 채택안 B). 큐레이션 책임자 추적용.
+`bundle` 에는 큐레이터 칸을 두지 않는다. 큐레이션 책임자(대표 큐레이터)의 정본은 `bundle_curator` 의 `role = 'LEAD'` 행 하나다
+(번들당 하나, `uk_bundle_curator_lead`). 매출 귀속과 무관하다 (3.3 채택안 B). 처음 설계한 `bundle.curator_user_id` 는 채우는
+곳이 없어 차수 10 에서 걷었다.
 
 ### 4.2 `creator_earning` 테이블
 
@@ -277,8 +274,6 @@ For each item in bundle:
   대변: CREATOR_PAYABLE[creator_i] = allocatedAmount_i × (1 - feeRate - taxRate)
   대변: PLATFORM_FEE_REVENUE = allocatedAmount_i × feeRate
   대변: WITHHOLDING_TAX_PAYABLE = allocatedAmount_i × taxRate
-
-대변: 보너스 포인트 차감 = bonusAmount (별도 처리 — 6.4 참조)
 ```
 
 ### 6.3 `PLAN_DIRECT` 구매 (신규)
@@ -294,19 +289,9 @@ For each item in bundle:
 
 ### 6.4 번들 보너스 포인트
 
-번들 구매 시 구매자에게 즉시 지급되는 보너스 포인트(`MarketPurchaseService.java:165`)는 플랫폼 마케팅 비용이다.
-
-**현재 구현**: 기존 `PROMOTION_EXPENSE` 계정을 사용한다. 번들 보너스는 무료 포인트로만 지급할 수 있고,
-`WalletService.creditBonusToWallet`가 지갑 잔액·무료 포인트 사용 묶음·거래 내역·회계 분개를 같은 트랜잭션에서
-기록한다. 유료 포인트 또는 혼합 포인트를 보너스로 넣는 요청은 거절한다.
-
-```
-차변: PROMOTION_EXPENSE = bonusAmount
-대변: USER_WALLET = bonusAmount (구매자 지갑 입금)
-```
-
-별도 마케팅 비용 계정으로 나눌지는 향후 재무 보고 요구가 생겼을 때의 분류 변경이며, 현재 돈 흐름의
-코드 미완성 항목은 아니다.
+번들 구매에는 덤(보너스) 포인트가 없다. 구매는 결제액만 지갑에서 빼고, 덤 적립이나 그에 따른 `PROMOTION_EXPENSE`
+분개도 없다. 처음 구현한 덤 포인트(`bundle_currency` 표, `WalletService.creditBonusToWallet`, 지갑 참조 `BUNDLE_BONUS`)는
+번들에 덤을 거는 길이 없어 차수 10 에서 걷었다.
 
 ## 7. 환불과의 인터페이스 (F08-14 의존)
 
@@ -360,8 +345,8 @@ F08-14 부분 환불의 경우 선택된 BundleItem의 earning만 상태 전이 
 
 ## 11. 구현 순서
 
-1. **재무·운영 합의**: 6.4 보너스 포인트 회계, 3.6 백필 옵션 (a/b)
-2. **데이터 모델 변경**: `V1__init.sql`에 `bundle.curator_user_id`, `creator_earning` 컬럼·status enum
+1. **재무·운영 합의**: 3.6 백필 옵션 (a/b)
+2. **데이터 모델 변경**: `V1__init.sql`에 `creator_earning` 컬럼·status enum (대표 큐레이터는 `bundle_curator` LEAD 행, 4.1)
 3. **백엔드**:
    - `CreatorEarning` 신규 상태 처리
    - `MarketPurchaseService.purchaseItem` `sourceId` 변경
@@ -377,7 +362,6 @@ F08-14 부분 환불의 경우 선택된 BundleItem의 earning만 상태 전이 
 
 ## 12. 명시되지 않은 결정 사항 (재무팀 합의)
 
-- 보너스 포인트 회계 계정 신설 (`PLATFORM_MARKETING_EXPENSE`)
 - 백필 (a) vs (b)
 - 무료 아이템 포함 번들의 배분 정책
 - 큐레이션 수수료 도입 여부 (큐레이터에게 추가 보상)
@@ -395,7 +379,7 @@ F08-14 부분 환불의 경우 선택된 BundleItem의 earning만 상태 전이 
 | 3 | 여러 원작자의 아이템을 묶은 번들을 구매한다. | 구매 당시 구성과 정가 비율대로 원작자별 행이 생기고 모든 행의 총액 합이 실제 결제액과 정확히 같다. | 코드 구현 확인. 성공 테스트는 있으나 배분 행 전체 단언은 부분적 |
 | 4 | 번들 정가 합계가 0이거나 나눗셈에서 나머지가 생긴다. | 정가 0은 균등 배분하고 마지막 행이 반올림 잔액을 흡수해 음수 없이 총액을 맞춘다. | 코드 구현 확인. 경계값 직접 검증 없음 |
 | 5 | 유료·무료 포인트가 섞인 번들을 여러 원작자에게 배분한다. | 원작자별 `유료 + 무료 = 배분 총액`, 전체 `유료 합 + 무료 합 = 결제액`이 성립하고 무료분에는 수수료·세금을 부과하지 않는다. | 코드 구현 확인. 다중 원작자 혼합 결제 직접 검증 없음 |
-| 6 | 번들 구매 보너스를 지급한다. | 무료 포인트만 허용하고 지갑·무료 포인트 사용 묶음·거래 내역·`PROMOTION_EXPENSE` 원장을 함께 기록한다. | 지갑·원장 단위 테스트 있음 |
+| 6 | 사용자가 번들을 구매한다. | 결제액만 지갑에서 빼고 덤(보너스) 포인트는 적립하지 않는다(차수 10 에서 걷음). | 구매 경로 실 DB 시험(`MarketPurchasePathCommitTest` A2)이 번들 구매의 지갑 접근을 선잠금·차감 둘로 단언 |
 | 7 | 환불 신청·거절·일부 승인·전액 승인이 발생한다. | 신청 중에는 정산에서 제외하고, 거절 시 다시 정산 가능하게 하며, 일부 환불은 선택한 구성품의 매출 행만 되돌린다. | 환불 서비스 단위 테스트 있음 |
 | 8 | 월간 정산일에 환불 가능 기간이 끝난 매출과 끝나지 않은 매출이 섞여 있다. | 세 구매 유형의 `PENDING` 중 14일이 지난 행만 크리에이터별로 묶고, 한 크리에이터 실패가 다른 지급을 막지 않는다. | 배치·저장소 테스트 있음. 정확한 14일 경계 직접 단언은 부족 |
 | 9 | 이미 지급한 매출이 환불돼 미수금이 생기고 다음 정산금이 부족하거나 충분하다. | 다음 정산금에서 가능한 만큼 먼저 회수하고, 전액 회수한 행만 종결하며, 남은 미수금과 회계 분개가 다음 주기로 이어진다. | 정산 서비스 단위 테스트 있음 |
