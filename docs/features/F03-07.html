@@ -97,12 +97,12 @@
           </article>
 
           <article class="card">
-            <div class="eyebrow">연결 공백</div>
-            <h3>모집 마감/재개는 화면에서 실행 불가</h3>
-            <p>서버의 close/reopen endpoint와 Flutter API·Repository·Provider 메서드는 존재한다.
-              그러나 이를 호출하는 screen/widget CTA가 없어 정상 앱 동선에서는 실행할 수 없다.</p>
-            <p><strong>직접 호출 시 결과</strong> — <code>isClosed</code>가 전환되고 Provider는 이벤트 상세를
-              invalidate한다. 이 계약과 실제 사용자 접근 가능성을 구분해야 한다.</p>
+            <div class="eyebrow">모집 마감</div>
+            <h3>호스트가 정원 관리 화면에서 모집을 마감하고 다시 연다</h3>
+            <p>모임을 연 호스트에게만 「모집 마감」·「모집 재개」 단추가 보인다(정기모임 회차 제외). 마감은 확인 창을 거친다.
+              서버는 이벤트 행을 잠근 뒤 호스트인지 확인하고 마감 여부를 바꾼다.</p>
+            <p><strong>결과</strong>. 마감 여부에 따라 단추가 바뀐다. 결과를 모르면 설정을 다시 읽는다.
+              정원 설정 저장은 마감 칸을 싣지 않아 마감한 모임을 조용히 다시 열지 않는다.</p>
           </article>
 
           <article class="card">
@@ -176,8 +176,10 @@
               받을 수 있고, 그때도 절대 한도가 상한이다.</li>
             <li><strong>강제 제거 시 체크인 기록도 같이 정리된다.</strong> 잘못 제거하면 체크인 기록까지 사라지므로,
               제거는 한 번 더 확인 단계를 거친다.</li>
-            <li><strong>모집 마감/재개와 초과정원 설정은 현재 서버 측 기능이다.</strong>
-              전자는 Provider까지만, 후자는 Repository까지만 있어 앱 CTA가 없다.</li>
+            <li><strong>클럽 모임에서 나가도 참석 행은 지우지 않는다.</strong> 행을 취소(CANCELLED)로 남기고 참석 기록을 적으며,
+              이미 한 체크인과 체크인으로 받은 점수를 함께 정리한다. 다시 참가하면 같은 행을 앞 신청·결제 연결 없이 되살린다.</li>
+            <li><strong>모집 마감/재개는 모임을 연 호스트가 정원 관리 화면에서 한다(정기모임 회차 제외).</strong>
+              초과정원 설정은 현재 서버 측 기능이고 Repository까지만 있어 앱 CTA가 없다.</li>
             <li><strong>알림 생성 요청과 도달은 다르다.</strong> in-app/push 설정으로 생략될 수 있고 push는
               비동기이므로 “모두 도달”을 상태 전이의 수용 기준으로 삼지 않는다.</li>
           </ul>
