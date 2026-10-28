@@ -17,7 +17,7 @@
 
 분쟁 해결 도메인은 기존 16개 도메인에 **흩어진 신고·이의·운영 이슈를 단일 통합 케이스 뷰**로 묶는 신규 경량 어댑터 도메인이다. 서버 `DisputeCaseQueryRepository`는 원천 도메인 테이블을 Java-side union으로 읽어 `caseId={prefix}:{sourceId}` 형태의 통합 식별자로 노출한다.
 
-`DisputeSourceType` enum 21값은 케이스의 **컨텍스트 분류(sourceType 필드)** 용도이며, 실제 emit되는 caseId prefix 집합과 1:1 대응하지 않는다. 예: caseId prefix가 `OPERATIONAL_ISSUE`인 케이스의 sourceType은 PAYMENT/REFUND/SETTLEMENT 등으로 매핑된다(`mapOperationalSourceType`). `WARNING_REPORT`/`WARNING_APPEAL`/`SETTLEMENT_APPEAL`/`REFUND_DISPUTE` 등은 enum 값이 아니라 **caseId prefix**다.
+`DisputeSourceType` enum 19값은 케이스의 **컨텍스트 분류(sourceType 필드)** 용도이며, 실제 emit되는 caseId prefix 집합과 1:1 대응하지 않는다. 예: caseId prefix가 `OPERATIONAL_ISSUE`인 케이스의 sourceType은 PAYMENT/REFUND/SETTLEMENT 등으로 매핑된다(`mapOperationalSourceType`). `WARNING_REPORT`/`WARNING_APPEAL`/`SETTLEMENT_APPEAL`/`REFUND_DISPUTE` 등은 enum 값이 아니라 **caseId prefix**다.
 
 실제 emit prefix 범위: 사용자 뷰(`searchByUser`) 7종(OPERATIONAL_ISSUE · WARNING_REPORT · WARNING_APPEAL · REPORT(CARPOOL 제외) · DATE_BLOCK · TRANSPORT · CLUB_MEMBERSHIP_ACTION) + USER_DISPUTE 양측(reporter+target). 호스트 뷰(`searchByHost`) 2종(SETTLEMENT_APPEAL · REFUND_DISPUTE). 미구현(out-of-scope): SETTLEMENT_APPEAL appealer 직접 finder 없음(사용자 뷰에서 미emit), PurchaseRefundDispute buyer finder 없음.
 
@@ -68,7 +68,7 @@ legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케�
 
 | Enum | 값 수 | 용도 |
 |---|---|---|
-| `DisputeSourceType` | 21 | 케이스 컨텍스트 분류(sourceType 필드)용. caseId prefix 집합과 1:1 대응 아님 |
+| `DisputeSourceType` | 19 | 케이스 컨텍스트 분류(sourceType 필드)용. caseId prefix 집합과 1:1 대응 아님 |
 | `DisputeCaseType` | 9 | 분쟁 유형 분류 |
 | `UnifiedDisputeStatus` | 5 | 통합 상태 (OPEN/IN_REVIEW/RESOLVED/CLOSED/ESCALATED) |
 | `DisputeAppealStatus` | 4 | 이의제기 상태 (PENDING/UPHELD/REJECTED/CLOSED) |

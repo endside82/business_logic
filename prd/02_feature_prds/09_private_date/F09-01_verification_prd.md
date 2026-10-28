@@ -69,7 +69,7 @@
 ### 도메인 모델 / Enum
 
 - **Enum `VerificationStatus`** (`PENDING, VERIFIED, FAILED, EXPIRED`) — IdentityVerification·IdentityVerificationSession 공유
-- **Enum `VerificationType`** (`PHONE(0), ID_CARD(1), TOSS_CERT(2)`)
+- **Enum `VerificationType`** (`PHONE(0), TOSS_CERT(2)`. 신분증 `ID_CARD(1)` 은 차수 11 에서 걷었고 번호 1 은 비워 둔다)
 - **Entity `IdentityVerification`** (인증 *결과*, user당 1) — `userId UNIQUE`, `verifiedName/verifiedBirthDate/ci(byte[] AES 암호화)`, `verifiedGender(Integer 1=남/2=여/0=기타)`, `verificationProvider("toss-cert")`, `verifiedAt`, `expiresAt(+1년)`
 - **Entity `IdentityVerificationSession` (신규, 시도 단위)** — `userId`, `provider("toss-cert")`, `tx_id_hash(HMAC-SHA256 hex, varchar128)`, `provider_ref`, `status(PENDING/VERIFIED/FAILED/EXPIRED)`, `failure_code/failure_message`, `requested_at`, `expires_at(+10분)`, `completed_at`. 인덱스: `(user_id, requested_at)`, `(user_id, tx_id_hash)`, `(status, expires_at)`, `UNIQUE(user_id, provider, tx_id_hash)`
 - **VO `TossIdentificationVo`**: `txId, authUrl`

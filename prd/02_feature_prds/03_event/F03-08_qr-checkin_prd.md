@@ -133,7 +133,6 @@ Wave D-1에서 수동/정정 체크인 감사 추적을 위한 3개 컬럼이 �
 |---|---|---|---|
 | `manual_actor_id` | bigint | Y | MANUAL/CORRECTED 체크인 실행 actor. QR/SHORT_CODE 체크인은 null |
 | `manual_reason_code` | varchar(40) | Y | 감사 추적용 사유 코드 (LATE_ARRIVAL, MISTAKEN_NO_SHOW, HOST_OVERRIDE 등) |
-| `corrected_from_check_in_id` | bigint | Y | 정정 체크인인 경우 원본 `event_check_in.id` (노쇼 OVERTURNED 후 사후 체크인 시나리오) |
 
 체크인 `method` 값: `QR_CODE`, `SHORT_CODE`, `MANUAL` (기존) — Wave D-1에서 CORRECTED 논리 추가.  
 체크인 허용 시간: 이벤트 시작 -2h ~ 종료 +2h (`CheckInService.java:323-326`).

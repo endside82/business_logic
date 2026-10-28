@@ -170,7 +170,6 @@
 | 45 | `MEETING_SETTLEMENT_PAID` | 모임정산 | 이벤트 정산 |
 | 46 | `MEETING_SETTLEMENT_COMPLETED` | 모임정산 | 이벤트 정산 |
 | 47 | `MEETING_SETTLEMENT_EXPIRED` | 모임정산 | 이벤트 정산 |
-| 48 | `SETTLEMENT_CORRECTION_PENDING` | 정산 | 정산 상세 |
 | 49 | `SETTLEMENT_CORRECTION_COMPLETED` | 정산 | 정산 상세 |
 | 50 | `MEETING_SETTLEMENT_CANCELLED` | 모임정산 | 이벤트 정산 |
 | 51 | `CLUB_OWNER_CHANGED` | 클럽 | 클럽 홈 |

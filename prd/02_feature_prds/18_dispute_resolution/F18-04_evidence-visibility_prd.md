@@ -8,7 +8,7 @@
 
 ## 1. 결론
 
-분쟁 증빙(`DisputeEvidenceVo`)은 `Visibility` 4값(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY)을 기반으로 서버가 미리 필터링한 결과만 클라이언트에 전달한다. 실제 `filterByActorVisibility`(`DisputeCaseService.java:206-231`)는 **`CS_ONLY`만 제거하고 PARTIES/HOST_ONLY/PUBLIC_SUMMARY는 유지**한다. 현재 builder는 HOST_ONLY를 emit하지 않지만 화이트리스트로 보존한다. 클라이언트는 수신한 증빙 목록을 추가 필터링 없이 그대로 표시한다.
+분쟁 증빙(`DisputeEvidenceVo`)은 `Visibility` 4값(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY)을 기반으로 서버가 미리 필터링한 결과만 클라이언트에 전달한다. 실제 `filterByActorVisibility`(`DisputeCaseService`)는 **`CS_ONLY`를 제거하고, `HOST_ONLY`는 처분 권한이 있는 호스트 쪽 열람자(호스트·공동 주최자·정산 creator·클럽 운영진)에게만 남긴다**(차수 11 S3b). 현재 builder는 HOST_ONLY를 내지 않지만 값은 둔다. 클라이언트는 수신한 증빙 목록을 추가 필터링 없이 그대로 표시한다.
 
 legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케이스에 대해 판정하며, `evidenceFrozen=true` 케이스의 evidence는 삭제가 불가능하다. 계정 삭제·데이터 익명화(`AccountDeactivationService`, `DataDeletionService`)도 이 판정을 통과해야 한다.
 
@@ -37,7 +37,7 @@ legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케�
 ### 증빙 조회 (서버 필터링 포함)
 
 1. 사용자가 케이스 상세(`GET /api/v1/me/dispute-cases/{caseId}`)를 조회한다.
-2. 서버 `filterByActorVisibility`(`DisputeCaseService.java:206-231`)가 **CS_ONLY timeline/evidence 항목을 제거**한 복사본을 반환한다. PARTIES/HOST_ONLY/PUBLIC_SUMMARY는 유지된다(현재 builder는 HOST_ONLY를 emit하지 않음 — 화이트리스트 보존 주석). actor 역할별 정교한 visibility 분기는 설계 의도이나 현재 구현 수준은 CS_ONLY 제거만이다.
+2. 서버 `filterByActorVisibility`(`DisputeCaseService.java:206-231`)가 **CS_ONLY timeline/evidence 항목을 제거**하고, 처분 권한(`actorPermissions.canResolveDispute`)이 없는 당사자 화면에서는 HOST_ONLY 항목도 제거한 복사본을 반환한다. PARTIES/PUBLIC_SUMMARY는 유지된다. 증빙은 붙인 사람 본인에게만 예외로 남긴다.
 3. Flutter가 수신한 `evidence` 목록을 추가 필터 없이 그대로 렌더링한다. 증빙 카드 탭 → `DisputeEvidenceScreen`(전체화면 뷰어). **evidence 삭제 버튼은 없음** — `EvidenceGallery`는 frozen 시 안내 배너만 표시하고 삭제 기능 자체가 미구현이다.
 4. `evidenceFrozen=true`이면 삭제 버튼 숨김.
 
@@ -82,7 +82,7 @@ legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케�
 | `CS_ONLY` | CS/운영자만 열람 | CS, admin |
 | `PUBLIC_SUMMARY` | 요약 형태로 모두 노출 가능 | 전체 (요약 형태) |
 
-실제 `filterByActorVisibility`는 **CS_ONLY만 제거**한다. PARTIES/HOST_ONLY/PUBLIC_SUMMARY는 유지된다. 현재 builder는 HOST_ONLY를 emit하지 않아 사실상 PARTIES/PUBLIC_SUMMARY + CS_ONLY 제거가 적용된다. 클라이언트 추가 필터링 없음.
+실제 `filterByActorVisibility`는 **CS_ONLY를 제거하고, HOST_ONLY는 처분 권한이 있는 호스트 쪽 열람자에게만 남긴다**(차수 11 S3b). 현재 builder는 HOST_ONLY를 내지 않는다. 클라이언트 추가 필터링 없음.
 
 ### `DisputeEvidenceVo` 필드
 
@@ -173,8 +173,8 @@ UNBAN 액션 시 null 전달 → validator short-circuit (빈 목록 처리).
 
 | 시나리오 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
 |---|---|---|---|---|
-| 참가자가 PARTIES 증빙 조회 | `filterByActorVisibility`는 CS_ONLY만 제거. PARTIES/HOST_ONLY/PUBLIC_SUMMARY 유지 | 수신한 목록 그대로 렌더링 | PARTIES/PUBLIC_SUMMARY 증빙 표시 (현재 builder가 HOST_ONLY 미emit) | 일치 |
-| 참가자가 HOST_ONLY 증빙 조회 시도 | 서버 필터(`filterByActorVisibility`)는 HOST_ONLY를 제거하지 않음. 현재 builder가 HOST_ONLY를 emit하지 않아 실질적으로 미포함 | — | 현재 해당 증빙 미표시 (builder 미emit 때문이며, 서버 필터 기준은 CS_ONLY 제거만) | 일치(현행 동작), 향후 builder가 HOST_ONLY emit 시 참가자에게 노출될 수 있음 — Gap |
+| 참가자가 PARTIES 증빙 조회 | `filterByActorVisibility`는 CS_ONLY 제거, 당사자 화면에서는 HOST_ONLY 도 제거. PARTIES/PUBLIC_SUMMARY 유지 | 수신한 목록 그대로 렌더링 | PARTIES/PUBLIC_SUMMARY 증빙 표시 (현재 builder가 HOST_ONLY 미emit) | 일치 |
+| 참가자가 HOST_ONLY 증빙 조회 시도 | 서버 필터(`filterByActorVisibility`)가 처분 권한 없는 당사자 화면에서 HOST_ONLY를 제거(차수 11 S3b) | — | 해당 증빙 미표시 | 일치 |
 | CS_ONLY 증빙 | `filterByActorVisibility`가 CS_ONLY 제거 | — | CS가 아닌 사용자에게는 미노출 | 일치 |
 | evidenceFrozen=true (active case) | OPEN/IN_REVIEW/ESCALATED status | frozen 안내 배너 표시 | 증빙 삭제 불가 (서버 DELETE endpoint 미구현으로 frozen 여부 무관하게 삭제 불가) | 일치(삭제 기능 자체 없음) |
 | evidenceFrozen=false (terminal case) | RESOLVED/CLOSED status | frozen 배너 미표시 | 조회만 가능 (삭제 endpoint 미구현) | 일치(조회 전용) |
@@ -186,7 +186,7 @@ UNBAN 액션 시 null 전달 → validator short-circuit (빈 목록 처리).
 | 항목 | Backend | Frontend | 판단 |
 |---|---|---|---|
 | `evidenceFrozen` boolean | `DisputeCaseDetailVo.evidenceFrozen` | `@Default(false) bool evidenceFrozen` | 일치 |
-| visibility 필터링 실제 동작 | `filterByActorVisibility`: CS_ONLY만 제거, 나머지 3값 유지 | 클라이언트 추가 필터 없음 | 서버 필터가 CS_ONLY 제거에만 작동. HOST_ONLY는 현재 builder가 미emit으로 유지 |
+| visibility 필터링 실제 동작 | `filterByActorVisibility`: CS_ONLY 제거, 당사자 화면은 HOST_ONLY 도 제거 | 클라이언트 추가 필터 없음 | 호스트 쪽 열람자만 HOST_ONLY를 받는다. 현재 builder는 HOST_ONLY를 내지 않음 |
 | `DisputeVisibility` wire value | `Visibility.name()` | `DisputeVisibility.name` | 일치 (prefix는 다름) |
 | evidence 삭제 endpoint | `DisputeCaseController.java` 전체 확인 결과 DELETE endpoint 없음 | `EvidenceGallery` frozen 시 안내 배너만 표시 (`evidence_gallery.dart:37-47`). 삭제 버튼 UI 없음 | 일치(삭제 endpoint 미구현, 화면도 조회 전용) |
 
@@ -253,4 +253,4 @@ Then retention 대상에서 제외된다. (evidence 필드 미보유)
 | 구현 | evidence 첨부 v2 | `DisputeCaseCreateScreen`/`AppealFormScreen`에 업로드 UI 추가 |
 | 구현 | purchase_refund_dispute retention | `evidence_file_group_id` 기반 별도 cleanup 스케줄러 설계 |
 | 구현 | SETTLEMENT_APPEAL appealer + PurchaseRefundDispute buyer legal hold | 두 source에 대한 비호스트/buyer 측 legal hold 판정 finder 추가 |
-| 정책 | CS_ONLY 증빙의 호스트 접근 여부 | HOST_ONLY와 CS_ONLY 경계 제품 정책 명확화 필요. 현재 filterByActorVisibility는 CS_ONLY만 제거 |
+| 정책 | CS_ONLY 증빙의 호스트 접근 여부 | HOST_ONLY와 CS_ONLY 경계 제품 정책 명확화 필요. 현재 filterByActorVisibility는 CS_ONLY를 제거하고 HOST_ONLY는 호스트 쪽 열람자에게만 남긴다 |

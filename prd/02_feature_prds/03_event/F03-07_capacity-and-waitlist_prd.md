@@ -89,7 +89,7 @@
 |---|---|---|---|
 | `overcapacity_allowed` | TINYINT(1) NOT NULL | 0 | true면 호스트가 baseCapacity 이상으로도 참석을 받을 수 있다 |
 | `hard_capacity_limit` | INT NULL | NULL | `CapacityPolicy`를 거치는 신규 참석 확정 경로의 상한. NULL이면 해당 정책 경로에서 무한 |
-| `base_capacity` (기존) | INT NOT NULL | — | 명목 정원. 지금 참석 수보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절 |
+| `base_capacity` (기존) | INT NOT NULL | — | 명목 정원. 참석 수 + 결제 대기 좌석 홀드보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절 |
 
 **Invariant**: `hard_capacity_limit IS NULL OR hard_capacity_limit >= base_capacity`. 위반 시 `ErrorCode.INVALID_HARD_CAPACITY_LIMIT(400013)` 반환. 다만 `WaitlistService.promoteRowManual`은 `CapacityPolicy`와 `hardCapacityLimit`을 검사하지 않고 `currentCapacity + 1`을 저장하므로, 수동 승격에서는 이 상한을 넘어갈 수 있다. 현재 이름과 달리 시스템 전체의 절대 상한은 아니다.
 
@@ -125,7 +125,7 @@
 
 ### 정원 축소는 거절
 
-정원을 지금 참석 수보다 작게 줄이는 요청은 거절한다. 기존 참석을 강제로 취소하지 않고, 감소로 초과 참석이 생기는 일도 없다. 옛 `ChangeType.CAPACITY_REDUCED(10)` 이력은 걷었고 번호는 비워 둔다.
+정원을 참석 수 + 결제 대기 좌석 홀드보다 작게 줄이는 요청은 거절한다(결정 Q2). 모집 마감·재개는 호스트만 `POST registration/close`·`reopen` 으로 하고, `PUT capacity/settings` 에는 마감 칸이 없다. 기존 참석을 강제로 취소하지 않고, 감소로 초과 참석이 생기는 일도 없다. 옛 `ChangeType.CAPACITY_REDUCED(10)` 이력은 걷었고 번호는 비워 둔다.
 
 ### EventVo 노출 신규 필드 (D16)
 
@@ -299,7 +299,7 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | S6 | (호스트) 대기 중이 아닌 사용자를 승격 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | (에러) 권한 없는 일반 사용자 정원 설정 접근 | event 1312 isClosed=false (sample_data.sql:1190 시드값) | event 1312 isClosed=false 복귀, 다른 메타 무변동, **mutation but self-rollback**. **출처: CapacitySettingsService.java:84-104** |
 | S1-1 | (호스트) 정원 초과 허용을 켜는 길이 없다 | 옛 `PATCH /capacity-settings` 걷음(차수 7 S22) | 그 창구가 없고 `overcapacityAllowed` 는 기본값 false 로 남는다. 정원이 차면 새 신청은 대기 또는 `CAPACITY_FULL` |
-| S1-2 | (호스트) 지금 참석 수보다 작게 정원 축소 시도 | baseCapacity=10, currentCapacity=8, OPEN | `PUT /capacity/settings` baseCapacity=5 → 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석 그대로. baseCapacity=8 은 받는다 |
+| S1-2 | (호스트) 참석 수 + 결제 대기 홀드보다 작게 정원 축소 시도 | baseCapacity=10, currentCapacity=8, OPEN | `PUT /capacity/settings` baseCapacity=5 → 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석 그대로. baseCapacity=8 은 받는다 |
 | S1-3 | 하드 상한 | 상한을 두는 입구가 없어 늘 NULL | 정원 바꾸기 본체의 상한 검사(`INVALID_HARD_CAPACITY_LIMIT(400013)`)는 상한이 있을 때만 닿는다 |
 | S1-4 | (호스트) CLOSED 이벤트 정원 조정 차단 (Q7) | event.status=CLOSED | `PUT /capacity/settings` 로 정원 값을 바꾸면 400 `INVALID_EVENT_STATUS` |
 

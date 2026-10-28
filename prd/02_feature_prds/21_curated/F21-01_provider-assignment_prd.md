@@ -34,7 +34,7 @@ Flutter 앱은 `EventAssignmentsNotifier`(호스트 시점), `MyAssignmentsNotif
 | Admin Provider | `community_admin_api/.../provider/` | 심사 큐·상세·판정·문서 URL·상품 정지/해제 8개 |
 | Backend Entity | `curated/model/ServiceAssignment.java` | event/provider 유일성, 상품·조건 버전 포인터, 이행상태, @Version 낙관락 |
 | Backend Enum | `curated/constants/AssignmentStatus.java` | 7값 + `getAllowedTransitions()` 소유, `transitionTo()` ASSIGNMENT_INVALID_STATE |
-| Backend Enum | `curated/constants/AssignmentSource.java` | HOST_MANUAL·HOST_INVITE_ACCEPTED·PROVIDER_APPLY·ADMIN_ASSIGNED·CATALOG (5값) |
+| Backend Enum | `curated/constants/AssignmentSource.java` | HOST_MANUAL·CATALOG (2값. 내는 곳 없던 HOST_INVITE_ACCEPTED·PROVIDER_APPLY·ADMIN_ASSIGNED 는 차수 11 에서 걷음) |
 | Backend Enum | `curated/constants/FulfillmentStatus.java` | PENDING·IN_PROGRESS·FULFILLED·PARTIALLY_FULFILLED·NO_SHOW·DISPUTED (6값) |
 | Backend Port | `curated/port/CuratedEventAccessPort.java` | `assertHostOrCoHost`, `eventExists`, `assertRegularMeetingHost` |
 | Backend VO | `curated/vo/ServiceAssignmentVo.java` | 제공자 identity, source/status/fulfillment, role/fee/engagement, offering snapshot, current/accepted terms version |
@@ -274,7 +274,7 @@ CTA 분기:
 | 항목 | Backend | Frontend | 판단 |
 |---|---|---|---|
 | `AssignmentStatus` enum 7값 | DRAFT·ASSIGNED·ACCEPTED·DECLINED·CONFIRMED·SETTLEMENT_LOCKED·CANCELED | Dart `AssignmentStatus` 7값 verbatim | 일치 |
-| `AssignmentSource` enum 5값 | HOST_MANUAL·HOST_INVITE_ACCEPTED·PROVIDER_APPLY·ADMIN_ASSIGNED·CATALOG | Dart 동일 값 + `unknown` | JSON 호환 |
+| `AssignmentSource` enum 2값 | HOST_MANUAL·CATALOG | Dart 동일 값 + `unknown` | JSON 호환 |
 | `FulfillmentStatus` enum 6값 | PENDING·IN_PROGRESS·FULFILLED·PARTIALLY_FULFILLED·NO_SHOW·DISPUTED | Dart `FulfillmentStatus` 6값 verbatim | 일치 |
 | `ServiceAssignmentVo` 금액 | Java BigDecimal serviceFeeGross | Dart double? serviceFeeGross | 일치 (BigDecimal→double) |
 | 제거된 파생금액 | VO에 platformFee/withholdingTax/netAmount 없음 | 모델에서도 assignment-level 파생금액에 의존하지 않음 | 일치 |

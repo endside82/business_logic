@@ -75,7 +75,7 @@
 
 ### 도메인 모델 / Enum (이 기능 관련)
 
-- **Entity** `TrustScore` (`review/model/TrustScore.java`): `userId`(unique), `reviewScore`, `verificationScore`, `activityScore`, `penaltyScore`, `totalScore`(default 50.0), `grade`(default "BRONZE"), `reviewCount`, `eventCount`, `noShowCount`, `reportCount`. `recalculate`에서 갱신.
+- **Entity** `TrustScore` (`review/model/TrustScore.java`): `userId`(unique), `verificationScore`, `activityScore`, `penaltyScore`, `manualAdjustment`(운영자 수동 조정 누계, 재계산이 덮지 않고 총점에 더함), `totalScore`(default 50.0), `grade`(default "BRONZE"), `reviewCount`, `eventCount`. `recalculate`에서 갱신.
 - **Entity** `ScoreSnapshot` (`review/model/ScoreSnapshot.java`): 일자별 스냅샷. 인덱스 `(user_id, snapshot_date)`.
 - 등급 enum 형태가 아닌 String 상수로 관리(`DIAMOND/PLATINUM/GOLD/SILVER/BRONZE`).
 

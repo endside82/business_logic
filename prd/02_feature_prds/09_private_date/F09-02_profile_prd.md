@@ -97,8 +97,7 @@
 
   | 값 | 설명 | 외부 노출 |
   |---|---|---|
-  | `PENDING` | 업로드 직후 기본값. 수동/자동 검수 대기 | 본인만 |
-  | `APPROVED` | 검수 통과 | 전체 |
+  | `APPROVED` | 업로드 직후 기본값. 사전 검수 없음(검수 대기 값 PENDING 은 차수 11 에서 걷음) | 전체 |
   | `REJECTED` | 검수 거절 (부적절 이미지 등) | 본인만 |
   | `UNDER_REPORT` | 신고 접수 중. hard delete 차단(legal hold) + 노출 보류 | 본인만 |
 
@@ -109,7 +108,7 @@
 - **Entity `DateProfilePhoto`** (Wave D-6 이후 추가 컬럼):
   - `id, profileId, photoUrl(varchar 500, 하위호환 fallback), isPrimary, isVerified, displayOrder, createdAt`
   - `fileId Long` — `file_metadata.id` FK (Wave D-6 이후 업로드는 필수, 이전 row는 NULL 허용)
-  - `moderationStatus varchar(20)` — `DatePhotoModerationStatus.name()`, 기본 `PENDING`
+  - `moderationStatus varchar(20)` — `DatePhotoModerationStatus.name()`, 기본 `APPROVED`
   - `moderatedAt LocalDateTime` — 검수 처리 시각
 - **VO `DateProfileVo`**: gender/preferredGender/visibility를 **String enum 이름으로 직렬화** (서버 코드의 mapper가 변환).
 - **VO `DateProfilePhotoVo`**: `id, profileId, photoUrl, isPrimary, isVerified, displayOrder, createdAt`. Entity의 `fileId`, `moderationStatus`, `moderatedAt`은 서버 VO에도 없어서 Flutter가 검수 상태를 판별할 수 없다.

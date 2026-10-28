@@ -132,7 +132,7 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 | `WarningSanctionType` | `NOTICE`, `EVENT_APPLY_RESTRICT`, `ROLE_RESTRICT`, `FORCED_REMOVE`, `MANUAL_LOCK`, `MANUAL_UNLOCK` |
 | `WarningSanctionStatus` | `ACTIVE`, `ENDED`, `REVOKED` |
 | `WarningReviewLevel` | `NONE`, `ATTENTION`, `MONITOR`, `RESTRICTION_CANDIDATE`, `SEVERE_SANCTION_CANDIDATE` |
-| `WarningReviewQueueType` | `HOST_PROPOSAL_REPORT`, `AUTO_REVERT_REVIEW`, `REPEATED_REPORT`, `BULK_POST_REVIEW`, `REVIEW_LEVEL_ABNORMAL`, `SANCTION_PROPOSAL`, `APPEAL_OVERDUE` |
+| `WarningReviewQueueType` | `REPEATED_REPORT`, `APPEAL_OVERDUE` |
 | `WarningReviewQueueStatus` | `OPEN`, `PROCESSED`, `IGNORED` |
 | `WarningActorRole` | `OWNER`, `ADMIN`, `EVENT_HOST`, `MEMBER`, `SYSTEM`, `PLATFORM_ADMIN` |
 | `PenaltySeverity` | `LIGHT`, `MODERATE`, `SEVERE` |
