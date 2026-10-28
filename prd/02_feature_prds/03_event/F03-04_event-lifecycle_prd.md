@@ -79,9 +79,8 @@
 
 | 변경 항목 | OPEN 이벤트에 미치는 영향 |
 |---|---|
-| `baseCapacity` 증가 | 신청·승인 흐름에서 `CapacityPolicy.decide` R1 적용 좌석 확대. 정원 증가로 인한 대기자 자동 승격 트리거(`WaitlistService`)는 별도 호출 — 본 PRD 범위 외(F03-07) |
-| `baseCapacity` 축소 | 기존 ATTENDING은 강제 취소되지 않음. `exceedingAttendees > 0` 발생, `event_attendance_log.change_type=10 (CAPACITY_REDUCED)` 1행 기록. 신규 apply는 `overcap=false`일 때 `CAPACITY_FULL` |
-| `overcapacityAllowed=true` 전환 | 이후 `apply/approve` 시점 매트릭스 R2(`OVERCAPACITY`) 분기 활성. 자동 승인 이벤트에서는 즉시 ATTENDING 진입(Q6) |
+| `baseCapacity` 증가 | 정원 바꾸기 본체(`EventCapacitySettingsService.applyBaseCapacity`)가 빈자리만큼 대기자를 승격한다(`PROMOTED_CAPACITY_INCREASE`, F03-07). 모집 중 정원은 정원 설정 화면에서 바꾼다 |
+| `baseCapacity` 축소 | 지금 참석 수보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절한다. 같은 값까지는 받는다. 기존 ATTENDING 은 그대로다 |
 | `overcapacityAllowed=false` 전환 | 이미 ATTENDING으로 진입한 초과 인원은 유지. 신규 apply는 baseCapacity 도달 시 매트릭스 R4/R5로 전환 |
 | `hardCapacityLimit` 설정/변경 | invariant `hardCapacityLimit >= baseCapacity` 검증, 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)`. 도달 시 신규 apply는 R5(`FULL`) |
 | `clearHardCapacityLimit=true` | hardCapacityLimit을 NULL로 set — 사실상 무한 |

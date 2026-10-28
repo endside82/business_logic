@@ -190,7 +190,7 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | Risk | `DataDeletionRequest` vs `V1__init.sql` | Entity는 `unique=true`, canonical migration은 non-unique다. 취소/완료 후 신규 row 정책의 스키마 권위를 일치시켜야 한다. | annotation/migration/운영 DB 제약 동기화 |
-| Gap | `data_privacy_provider.dart` | 서버 `DEACTIVATION_BLOCKED` 상세가 사용자에게 전달되지 않고 일반 실패가 된다. | 차단 의무 목록을 보존해 선행 해결 CTA 제공 |
+| 해소 | `data_privacy_screen.dart` | `DEACTIVATION_BLOCKED` 응답 본문의 점검 응답을 읽어 걸린 항목을 차단 창으로 보인다(H-158). | — |
 | Gap | `DataDeletionService` | 데이팅 사진 row 삭제 전 FileStorage 실물 삭제 호출이 없다. | 사진 fileKey별 삭제 및 회귀 테스트 |
 | Risk | admin `process` → internal execute | 관리자 process가 CANCELLED row도 실행할 수 있어 사용자가 취소한 삭제를 완료로 바꿀 수 있다. | process 허용 상태를 PENDING/APPROVED 등 명시적 allowlist로 제한 |
 | 해소 | `app_router.dart`, `my_profile_screen.dart` | `/profile` 허브와 삭제 진행 배너 진입을 확인했다. | — |

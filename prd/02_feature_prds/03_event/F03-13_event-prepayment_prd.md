@@ -148,7 +148,7 @@
 - **Unit 06 회계** — `AccountingLedgerService.recordPayment/recordRefund` 재사용. AccountCode 신규 추가 없음 (D5).
 - **Unit 03 F03-04 이벤트 취소** — 실제 `EventService.tryRefundNewPrepayment`(현재 line 1112 부근)를 사용한다. ATTENDING/WAITING 순회 때문에 attendance 없는 결제가 누락되고 BANK `REFUND_REQUESTED`를 완료로 오표시할 수 있는 Gap이 있다. Club/Recurring 경로도 재검증 대상이다.
 - **Unit 12 알림** — enum 71~76, 83이 모두 존재한다고 해서 모두 생산 연결된 것은 아니다. 71~74와 76은 `EventExtensionNotificationListener`의 after-commit handler가 있다. 75는 listener만 있고 production publisher가 없으며, 83은 최초 환불 요청이 아니라 `RefundRequestEscalationScheduler`의 지연 재알림에 사용된다.
-- **Unit 13 계정 비활성화** — `AccountDeactivationService` (`:493`) `ACTIVE_EVENT_PAYMENT` BlockingItem. PENDING/PAID/REFUND_REQUESTED 상태 보유 시 탈퇴 차단 + `DEACTIVATION_BLOCKED_BY_PAYMENT` (`ErrorCode.java:96`).
+- **Unit 13 계정 비활성화**: `EventAccountClosure` 의 `ACTIVE_EVENT_PAYMENT` 막음 항목. PENDING·REFUND_REQUESTED 와, 모임이 정상 종료(CLOSED)되지 않은 PAID 를 막는다. 정상 종료한 모임의 PAID 는 수단(계좌이체·지갑)과 상관없이 통과한다(U1 ①). 탈퇴 요청이 막히면 400 `DEACTIVATION_BLOCKED`(100036).
 - **외부 PG** — 본 선입금 환불은 paid 금액을 wallet로 복원하고 `pgQueuedPaid=0`으로 고정한다. txId 기반 PG-cancel worker는 구현되지 않았고 기본 비활성이다. PG queue를 현재 재사용한다고 기술하면 안 된다.
 
 ## 5. 프론트 계약
@@ -202,7 +202,7 @@ Flutter `NotificationRouter`에는 71~76·83 case가 없다. 이 알림들은 �
 | S2-8 | 호스트가 이벤트 취소 (ATTENDING WALLET PAID) | `EventService.cancelEvent`, attendance 존재 | `tryRefundNewPrepayment → refundByHostCancel → REFUNDED + CANCELED`. attendance 없는 payment는 loop에서 누락될 수 있음 |
 | S2-9 | 호스트가 이벤트 취소 (ATTENDING BANK PAID) | 동일 트리거 | `event_payment.REFUND_REQUESTED`; caller가 refunded=true/완료 알림으로 오표시하는 Gap. 수동 환불 필요 |
 | S2-10 | 호스트가 이벤트 취소 (legacy `EVENT_PAYMENT` 결제만 존재) | 신규 `event_payment` row 없음, legacy `PointTransaction(referenceType=EVENT_PAYMENT)` 보유 | `tryRefundNewPrepayment` 0건 처리 → `WalletService.refundByHostCancel` legacy fallback 호출. F06-06 기존 환불 흐름 그대로. |
-| S2-11 | 계정 비활성화 시도 (active event_payment 보유) | `event_payment.PENDING/PAID/REFUND_REQUESTED` 보유 사용자 | `AccountDeactivationService` BlockingItem `ACTIVE_EVENT_PAYMENT` 노출 + 400 `DEACTIVATION_BLOCKED_BY_PAYMENT`. WALLET PAID는 "참가 취소·환불 완료 후 탈퇴", BANK는 "호스트 환불 완료 후 탈퇴", PENDING은 "참가 취소 후 탈퇴" 안내. |
+| S2-11 | 계정 비활성화 시도 (active event_payment 보유) | `event_payment.PENDING/REFUND_REQUESTED`, 또는 정상 종료 전 모임의 PAID 보유 사용자 | 점검 응답 `blockingItems` 에 `ACTIVE_EVENT_PAYMENT` 노출, 탈퇴 요청은 400 `DEACTIVATION_BLOCKED`. 정상 종료(CLOSED)한 모임의 PAID 는 수단과 상관없이 막지 않는다(U1 ①). |
 
 ## 7. 정합성 판단
 
@@ -213,7 +213,7 @@ Flutter `NotificationRouter`에는 71~76·83 case가 없다. 이 알림들은 �
 | 중복 차단 | `INITIAL`에 한정된 generated unique + event/application lock + active payment 선조회 | 정상 순차 중복은 `DUPLICATE_PAYMENT`로 거부한다. 성공 결과를 재사용하는 idempotency가 아니며, 새 paymentId 기준 PointTransaction exists 검사는 정상 흐름에서 false다. DB unique 경쟁 예외의 전용 변환 catch도 없다. |
 | 환불 정책 | Phase 4(커밋 c7b4315)에서 `event_refund_policy` 카탈로그 기반 계산기로 전환 완료. D7 "단일 deadline 100%/마감 후 0%" 폐기. GRADUATED는 레거시 STANDARD 매핑. | `RefundPolicyService.computeRefund`(귀책 분기) + `EventPaymentRefundService.refundByWallet` (2026-06-05 해소). |
 | 알림 | enum 선언, publisher, after-commit listener, 실제 send, Flutter route를 각각 확인 | 71~74·76은 listener가 연결됨. 72는 주 호스트 한 명에게만 발송. 75는 publisher가 없어 미전송. 83은 기본 3일 후 escalation용. Flutter는 71~76·83 모두 deep link 미지원. |
-| 탈퇴 통합 | `AccountDeactivationService` BlockingItem `ACTIVE_EVENT_PAYMENT` + `DEACTIVATION_BLOCKED_BY_PAYMENT` | 자동 cancel 허용 케이스(PENDING 결제 없음, APPROVED 무료, APPROVED_PENDING_PAYMENT + 결제 만료) 분기 명문화 |
+| 탈퇴 통합 | `AccountDeactivationService` BlockingItem `ACTIVE_EVENT_PAYMENT` + `DEACTIVATION_BLOCKED` | 자동 cancel 허용 케이스(PENDING 결제 없음, APPROVED 무료, APPROVED_PENDING_PAYMENT + 결제 만료) 분기 명문화 |
 
 ## 7-A. 환불 정책 카탈로그 (갱신 2026-06-05)
 
@@ -347,7 +347,7 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 - **AC-08 (S2-8). 호스트 이벤트 취소 (WALLET PAID 참가자)**: ATTENDING row가 있는 결제는 `tryRefundNewPrepayment → refundByHostCancel`로 환불된다. attendance 없는 pending 결제 누락은 현재 Gap이다.
 - **AC-09 (S2-9). 호스트 이벤트 취소 (BANK PAID 참가자)**: 결제는 `REFUND_REQUESTED`가 되며 수동 환불이 필요하다. caller가 refunded=true/완료 알림으로 오표시하는 것은 현재 Gap이다.
 - **AC-10 (S2-10). legacy fallback**: Given 신규 `event_payment` 없음, legacy `PointTransaction(referenceType=EVENT_PAYMENT)` 존재. When 호스트가 이벤트 취소. Then `tryRefundNewPrepayment` 0건 → `WalletService.refundByHostCancel` legacy 경로로 환불.
-- **AC-11 (S2-11). 탈퇴 차단**: Given `event_payment.PENDING/PAID/REFUND_REQUESTED` 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + `AccountDeactivationCheckVo.blockingItems`에 `ACTIVE_EVENT_PAYMENT` 노출. WALLET 환불 / BANK 호스트 환불 / 참가 취소 완료 후 재시도.
+- **AC-11 (S2-11). 탈퇴 차단**: Given `event_payment.PENDING/REFUND_REQUESTED` 또는 정상 종료 전 모임의 PAID 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED` + 점검 응답 `blockingItems` 에 `ACTIVE_EVENT_PAYMENT` 노출. 정상 종료한 모임의 PAID(계좌이체·지갑)만 남았으면 탈퇴한다(U1 ①).
 
 ## 10. 미결정 / 후속 슬라이스
 

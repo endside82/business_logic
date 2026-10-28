@@ -379,7 +379,7 @@ facade 동작:
 | S2-5 (W2) | 결제 기한 만료 | `APPROVED_PENDING_PAYMENT + paymentDueAt < now()` | `ApplicationPaymentExpiryScheduler`의 bulk update가 `Application=PAYMENT_EXPIRED`만 처리해 논리 hold를 해제한다. 연결된 `event_payment(PENDING)` 취소와 알림 75 발행은 현재 없다. active payment가 남으면 재신청도 차단될 수 있다. |
 | S2-6 (W3) | 사용자 자가 취소 — `cancelMyParticipation` (WALLET PAID) | `event_payment.PAID(WALLET)`, deadline 통과 전 | `DELETE /api/v1/events/{eventId}/apply` → facade가 `refundByWallet` 100% 위임 → `Application=CANCELED + capacity-- + event_payment.REFUNDED`. 알림 76. |
 | S2-7 (W3) | 사용자 자가 취소 — BANK_TRANSFER PAID | `event_payment.PAID(BANK_TRANSFER)` | `event_payment.REFUND_REQUESTED + Application 유지`. 호스트 알림 83. 환불 정리는 호스트 책임. |
-| S2-11 (W3) | 탈퇴 차단 | active `event_payment` 보유 | 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + BlockingItem `ACTIVE_EVENT_PAYMENT`. |
+| S2-11 (W3) | 탈퇴 차단 | active `event_payment` 보유 | 400 `DEACTIVATION_BLOCKED` + BlockingItem `ACTIVE_EVENT_PAYMENT`. |
 
 ## 7. 정합성 판단
 
@@ -436,7 +436,7 @@ facade 동작:
 - **AC-W2-3 (S2-5). 결제 기한 만료**: Given `APPROVED_PENDING_PAYMENT + paymentDueAt < now()`. When `ApplicationPaymentExpiryScheduler` 실행. Then `Application=PAYMENT_EXPIRED`로 논리 hold가 해제된다. 현재 bulk 경로는 `event_payment(PENDING)` 취소와 알림 75를 처리하지 않는다.
 - **AC-W2-4 (S2-6). 사용자 자가 취소 (WALLET PAID) — `cancelMyParticipation`**: Given `event_payment.PAID(WALLET)`. When `DELETE /api/v1/events/{eventId}/apply`. Then facade가 `refundByWallet` 호출 → `Application=CANCELED + capacity-- + event_payment.REFUNDED + 분개 1건`. 알림 76. (환불 facade 자체는 F03-13에서 검증)
 - **AC-W2-5 (S2-7). 사용자 자가 취소 (BANK PAID)**: Given `event_payment.PAID(BANK_TRANSFER)`. When 동일 호출. Then `event_payment.REFUND_REQUESTED + Application 유지`. 알림 83.
-- **AC-W2-6 (S2-11). 탈퇴 차단**: Given active `event_payment` 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED_BY_PAYMENT` + `ACTIVE_EVENT_PAYMENT` BlockingItem.
+- **AC-W2-6 (S2-11). 탈퇴 차단**: Given active `event_payment` 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED` + `ACTIVE_EVENT_PAYMENT` BlockingItem.
 
 ## 10. 미결정 / 후속
 

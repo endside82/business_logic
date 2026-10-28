@@ -10,7 +10,7 @@
 
 ## 1. 결론
 
-이벤트 정원/대기열 정책과 이미 들어와 있는 사람들의 흐름을 운영하는 기능이다. 현재 Flutter 화면에서 직접 수행할 수 있는 범위는 기본 정원·대기열·승인제·게스트 설정, 수동 승격, 강제 제거다. 모집 마감/재개는 서버 API부터 Repository·Provider까지 존재하지만 **호출하는 화면 CTA가 없고**, 초과정원/하드 상한 `PATCH /capacity-settings`도 API·Repository까지만 있어 앱에서 조작할 수 없다. 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 WAITING → ATTENDING)은 서버에서 일어난다. 이벤트 신청 행위 자체는 F03-05 범위다.
+이벤트 정원/대기열 정책과 이미 들어와 있는 사람들의 흐름을 운영하는 기능이다. 현재 Flutter 화면에서 직접 수행할 수 있는 범위는 기본 정원·대기열·승인제·게스트 설정, 수동 승격, 강제 제거다. 모집 마감/재개는 서버 API부터 Repository·Provider까지 존재하지만 **호출하는 화면 CTA가 없다**. 정원 초과 허용·하드 상한은 바꾸는 입구가 없다(옛 `PATCH /capacity-settings` 는 서버·앱 모두 걷음). 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 WAITING → ATTENDING)은 서버에서 일어난다. 이벤트 신청 행위 자체는 F03-05 범위다.
 
 2026-07-29 현재 소스에서 기본 설정 화면(`GET/PUT /capacity/settings`)의 권한은 **host ∪ any co-host ∪ 클럽 ADMIN/OWNER**이고, 서버가 이를 `EventVo.canManageCapacity`로 계산해 Flutter 상세 행과 route guard에 그대로 내려준다. 이 권한은 출석 운영 권한(`canManageAttendance`)과 다르다. 수동 승격·강제 제거·참석 로그는 co-host의 `canManageAttendance`와 클럽 출석관리 권한을 요구한다. 또한 고급 초과정원 endpoint인 `PATCH /capacity-settings`는 여전히 host/co-host만 허용하므로 클럽 운영진 허용 범위가 기본 설정 endpoint와 다르다.
 
@@ -81,7 +81,7 @@
 
 ## 3-1. 정원 초과 허용 정책 (v4.5 W1 신설)
 
-기존 baseCapacity + waitlist 2축 정책 위에 **정원 초과 허용(overcapacity)** 과 **하드 상한(hardCapacityLimit)** 두 축을 더해 호스트가 운영 중인 이벤트의 정원 운영 폭을 직접 조절한다. 본 정책은 W1 슬라이스에서 도입되었고, 정원 판정은 신청 시점이 아니라 **최종 ATTENDING 확정 시점**(`CapacityService.createAttendanceFromApplication` / `attend` / `confirmAttendanceFromPayment`)의 단일 헬퍼 `CapacityPolicy.decide(event, attendingCount)`가 책임진다.
+기존 baseCapacity + waitlist 2축 정책 위에 **정원 초과 허용(overcapacity)** 과 **하드 상한(hardCapacityLimit)** 두 축을 더한 정책이다. 다만 두 칸을 바꾸는 입구는 없다. 호스트의 옛 `PATCH /capacity-settings` 창구는 차수 7 S22(C17)에서 걷었고, 두 칸은 기본값(허용 끔·상한 없음)으로 남는다. 그래서 아래 R2(`OVERCAPACITY`)는 지금 닿지 않는다. 본 정책은 W1 슬라이스에서 도입되었고, 정원 판정은 신청 시점이 아니라 **최종 ATTENDING 확정 시점**(`CapacityService.createAttendanceFromApplication` / `attend` / `confirmAttendanceFromPayment`)의 단일 헬퍼 `CapacityPolicy.decide(event, attendingCount)`가 책임진다.
 
 ### 핵심 컬럼 (event 테이블)
 
@@ -89,7 +89,7 @@
 |---|---|---|---|
 | `overcapacity_allowed` | TINYINT(1) NOT NULL | 0 | true면 호스트가 baseCapacity 이상으로도 참석을 받을 수 있다 |
 | `hard_capacity_limit` | INT NULL | NULL | `CapacityPolicy`를 거치는 신규 참석 확정 경로의 상한. NULL이면 해당 정책 경로에서 무한 |
-| `base_capacity` (기존) | INT NOT NULL | — | 명목 정원. 축소 가능, 단 기존 ATTENDING은 유지 |
+| `base_capacity` (기존) | INT NOT NULL | — | 명목 정원. 지금 참석 수보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절 |
 
 **Invariant**: `hard_capacity_limit IS NULL OR hard_capacity_limit >= base_capacity`. 위반 시 `ErrorCode.INVALID_HARD_CAPACITY_LIMIT(400013)` 반환. 다만 `WaitlistService.promoteRowManual`은 `CapacityPolicy`와 `hardCapacityLimit`을 검사하지 않고 `currentCapacity + 1`을 저장하므로, 수동 승격에서는 이 상한을 넘어갈 수 있다. 현재 이름과 달리 시스템 전체의 절대 상한은 아니다.
 
@@ -105,55 +105,27 @@
 | R4 | `attendingCount >= baseCapacity && !overcapacityAllowed && waitlistEnabled` | `WAITING` | 결제 확정 경로에서는 호출되지 않는다 |
 | R5 | 그 외 | `FULL` | `ErrorCode.CAPACITY_FULL` 또는 결제 확정 경로에서는 `CAPACITY_FULL_AT_CONFIRMATION(400012)` |
 
-> 정책상 경고가 필요한 조합: `overcapacityAllowed=true && hardCapacityLimit=null && waitlistEnabled=true`이면 waitlist가 무의미해진다. 그러나 현재 Flutter `CapacitySettingsScreen`에는 `overcapacityAllowed`/`hardCapacityLimit` 입력이나 이 경고가 없고, 고급 PATCH 호출자도 없다.
+> 정원 초과 허용을 켜는 입구가 없어 `overcapacityAllowed=true` 조합은 생기지 않는다. 앱 `CapacitySettingsScreen` 에도 두 칸 입력이 없다.
 
 ### 자동 승인 이벤트의 즉시 ATTENDING 분기 (Q6)
 
-`approvalRequired=false` + `prepaymentRequired=false` 자동 승인 이벤트에서 `apply`가 호출되면 `CapacityService.createAttendanceFromApplication`이 위 매트릭스를 평가하여 `ATTENDING` 또는 `OVERCAPACITY` 분기에서 즉시 ATTENDING으로 진입한다. `OVERCAPACITY` 분기는 `ChangeType.OVERCAPACITY_APPROVED(9)`로 `event_attendance_log`에 기록된다.
+`approvalRequired=false` + `prepaymentRequired=false` 자동 승인 이벤트에서 `apply`가 호출되면 `CapacityService.createAttendanceFromApplication`이 위 매트릭스를 평가하여 `ATTENDING` 또는 `OVERCAPACITY` 분기에서 즉시 ATTENDING으로 진입한다. `OVERCAPACITY` 분기는 `ChangeType.OVERCAPACITY_APPROVED(9)`로 기록하게 되어 있으나, 초과 허용을 켜는 입구가 없어 지금 닿지 않는다.
 
-### 호스트 정원 조정 엔드포인트 (별도 신설)
+### 호스트 정원 변경 길
 
-기존 `EventService.updateEvent`는 DRAFT만 허용하므로, OPEN 운영 중 정원 토글에는 **별도 서비스**가 필요하다. 신규 서비스는 `community_api/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java`로 분리됨 (D9).
+호스트의 옛 고급 창구 `PATCH /api/v1/events/{eventId}/capacity-settings`(정원 초과 허용·하드 상한까지 바꾸던 길)는 차수 7 S22(C17)에서 서버·앱 모두 걷었다. 운영자 정원 변경 창구도 차수 10 에서 걷었다.
 
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| PATCH | `/api/v1/events/{eventId}/capacity-settings` | `EventController#updateCapacitySettings` (위임 → `EventCapacitySettingsService.updateCapacitySettings`) | 호스트/공동호스트 | DRAFT/OPEN 상태에서만 `baseCapacity / overcapacityAllowed / hardCapacityLimit` 변경 (Q7: CLOSED 불가) |
+호스트가 정원을 바꾸는 네 길(정원 설정 `PUT /capacity/settings`, 모임 수정, 클럽 모임 수정, 반복 일괄 수정)은 모두 정원 바꾸기 본체 `EventCapacitySettingsService.applyBaseCapacity` 하나를 지난다. 본체는 잠근 최신 행으로 판정한다.
 
-요청 바디(`EventCapacitySettingsParam`, `community_api/src/main/java/com/endside/community/event/param/EventCapacitySettingsParam.java`):
+1. 값이 같으면 아무것도 하지 않는다.
+2. `event.status ∈ {DRAFT, OPEN}` 이 아니면 `INVALID_EVENT_STATUS` (Q7).
+3. 하드 상한이 있으면 그보다 크게 두지 않는다(`INVALID_HARD_CAPACITY_LIMIT(400013)`).
+4. 지금 참석 수(`current_capacity`)보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절한다. 같으면 받는다.
+5. 올렸으면 빈자리만큼 대기자를 승격한다(`PROMOTED_CAPACITY_INCREASE`).
 
-```json
-{
-  "baseCapacity": 5,                  // service validation: 1 이상, null이면 변경 안 함
-  "overcapacityAllowed": true,        // null이면 변경 안 함
-  "hardCapacityLimit": 10,            // service validation: 1 이상, null이면 변경 안 함
-  "clearHardCapacityLimit": false     // true면 hardCapacityLimit을 NULL로 set
-}
-```
+### 정원 축소는 거절
 
-검증 순서:
-
-1. `EventAuthorizationService.assertHostOrCoHost(event, userId)` — host/cohost 외 403.
-2. `event.status ∈ {DRAFT, OPEN}` 검증 — 아니면 `INVALID_EVENT_STATUS` (Q7).
-3. hardLimit invariant — `hardCapacityLimit < baseCapacity`이면 `INVALID_HARD_CAPACITY_LIMIT(400013)`.
-4. 변경 적용 후 `EventVoAssembler.assemble(event, hostUserId)`로 응답.
-
-Flutter에는 `EventApi.updateCapacitySettings`와 `EventRepository.updateCapacitySettings` 및 요청 model은 있으나 이를 호출하는 Riverpod provider/screen/widget이 없다. `CapacitySettingsScreen`은 다른 계약인 `CapacitySettingsVo`를 구성해 `PUT /capacity/settings`만 호출하며 초과정원 세 필드를 렌더링하지 않는다. `EventVo.exceedingAttendees` 역시 현재 presentation 소비처가 없어 초과 인원 badge는 표시되지 않는다.
-
-### 정원 축소 시 기존 ATTENDING 유지
-
-`baseCapacity`를 현재 `currentCapacity` 아래로 축소해도 **기존 ATTENDING은 강제 취소되지 않는다**. 이 결과로 `exceedingAttendees = max(0, currentCapacity - baseCapacity)`가 양수가 되며, EventVo에 노출된다. 동시에 `event_attendance_log`에 `ChangeType.CAPACITY_REDUCED(10)` 1행이 호스트 user_id로 기록된다. metadata 예시:
-
-```json
-{"reason":"CAPACITY_REDUCED","prevBase":10,"newBase":5,"exceeding":3}
-```
-
-오버캡 신규 ATTENDING도 동일하게 audit log에 기록된다:
-
-```json
-{"reason":"OVERCAPACITY","baseCapacity":5,"newCount":6}
-```
-
-`ChangeType`은 `community_api/src/main/java/com/endside/community/capacity/constants/ChangeType.java`에 9/10번으로 등록됨.
+정원을 지금 참석 수보다 작게 줄이는 요청은 거절한다. 기존 참석을 강제로 취소하지 않고, 감소로 초과 참석이 생기는 일도 없다. 옛 `ChangeType.CAPACITY_REDUCED(10)` 이력은 걷었고 번호는 비워 둔다.
 
 ### EventVo 노출 신규 필드 (D16)
 
@@ -176,7 +148,7 @@ Flutter에는 `EventApi.updateCapacitySettings`와 `EventRepository.updateCapaci
 
 서버 계약은 기본 설정·초과정원 설정·모집 마감/재개·승격·제거까지 제공한다. 현재 Flutter 사용자 표면은 기본 설정·승격·제거만 연결되어 있고, 초과정원 PATCH와 마감/재개는 앱 UI에 연결되지 않았다. 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 1번 대기자가 ATTENDING)은 서버 side effect다.
 
-v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolicy.decide` 매트릭스로 단일화되었다. baseCapacity·waitlist 외에 `overcapacityAllowed`/`hardCapacityLimit` 두 축이 추가되어 호스트가 운영 중에도 정원 운영 폭을 조절할 수 있다.
+v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolicy.decide` 매트릭스로 단일화되었다. baseCapacity·waitlist 외에 `overcapacityAllowed`/`hardCapacityLimit` 두 축이 판정에 들어가지만 바꾸는 입구는 없다(§3-1).
 
 ### 엔드포인트 요약
 
@@ -200,7 +172,6 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | POST | `/api/v1/events/{eventId}/registration/reopen` | `AttendanceController#reopenEvent` | 호스트 | 동일 (Flutter API/Repository/Provider는 있으나 화면 caller 없음) |
 | GET | `/api/v1/events/{eventId}/capacity/me` | `CapacityController#getMyAttendance` | 인증 | 본인 참석 상태 (ATTENDING/WAITING/CANCELLED) |
 | GET | `/api/v1/events/{eventId}/attendance/me` | `AttendanceController#getMyAttendance` | 같음 | 동일 (플랜 호환 경로) |
-| PATCH | `/api/v1/events/{eventId}/capacity-settings` | `EventController#updateCapacitySettings` → `EventCapacitySettingsService#updateCapacitySettings` | host/공동호스트만 | **v4.5 W1 신설**: DRAFT/OPEN에서만 `baseCapacity / overcapacityAllowed / hardCapacityLimit` 조정. 클럽 운영진은 기본 설정 GET/PUT과 달리 이 endpoint에는 허용되지 않는다. invariant 위반 시 `INVALID_HARD_CAPACITY_LIMIT(400013)`, CLOSED 호출 시 `INVALID_EVENT_STATUS`. 자세한 정책은 §3-1 참조 |
 
 ### 대기열 자동 승급 시 제재 사용자 skip 필터 (갱신 2026-06-05)
 
@@ -327,10 +298,10 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | S5 | (참가자) 자동 승격 | 본인이 대기열 1번 | 참가자 ATTENDING. `WAITLIST_PROMOTED` 생성 요청은 일어나지만 in-app/push 도달은 설정 및 비동기 발송 결과에 따름 |
 | S6 | (호스트) 대기 중이 아닌 사용자를 승격 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | (에러) 권한 없는 일반 사용자 정원 설정 접근 | event 1312 isClosed=false (sample_data.sql:1190 시드값) | event 1312 isClosed=false 복귀, 다른 메타 무변동, **mutation but self-rollback**. **출처: CapacitySettingsService.java:84-104** |
-| S1-1 | (API 직접 호출) 정원 5명 이벤트에서 overcap을 켜 7명까지 승인 (v4.5 W1) | baseCapacity=5, approvalRequired=true, OPEN. 참가자 7명 PENDING | `PATCH /capacity-settings`로 `overcapacityAllowed=true, hardCapacityLimit=10` → U6/U7 승인 시 ATTENDING, `currentCapacity=7, exceedingAttendees=2`, U6/U7 row `change_type=9 (OVERCAPACITY_APPROVED)` 기록. Flutter 설정 화면에서는 이 PATCH를 실행하거나 초과 badge를 볼 수 없음 |
-| S1-2 | (호스트) 정원 축소로 초과 상태 발생 (v4.5 W1) | baseCapacity=10, currentCapacity=8, OPEN | `PATCH /capacity-settings` baseCapacity=5 → `currentCapacity=8` 유지, `exceedingAttendees=3`, `event_attendance_log`에 `change_type=10 (CAPACITY_REDUCED)` + metadata `{"prevBase":10,"newBase":5,"exceeding":3}` |
-| S1-3 | (호스트) hardCapacityLimit invariant + 도달 차단 (v4.5 W1) | baseCapacity=10, currentCapacity=15 | (a) `hardCapacityLimit=3` 시도 → 400 `INVALID_HARD_CAPACITY_LIMIT(400013)`. (b) `hardCapacityLimit=15` 정상 200. (c) 추가 apply → 400 `CAPACITY_FULL` |
-| S1-4 | (호스트) CLOSED 이벤트 정원 조정 차단 (v4.5 W1, Q7) | event.status=CLOSED | `PATCH /capacity-settings` → 400 `INVALID_EVENT_STATUS` |
+| S1-1 | (호스트) 정원 초과 허용을 켜는 길이 없다 | 옛 `PATCH /capacity-settings` 걷음(차수 7 S22) | 그 창구가 없고 `overcapacityAllowed` 는 기본값 false 로 남는다. 정원이 차면 새 신청은 대기 또는 `CAPACITY_FULL` |
+| S1-2 | (호스트) 지금 참석 수보다 작게 정원 축소 시도 | baseCapacity=10, currentCapacity=8, OPEN | `PUT /capacity/settings` baseCapacity=5 → 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석 그대로. baseCapacity=8 은 받는다 |
+| S1-3 | 하드 상한 | 상한을 두는 입구가 없어 늘 NULL | 정원 바꾸기 본체의 상한 검사(`INVALID_HARD_CAPACITY_LIMIT(400013)`)는 상한이 있을 때만 닿는다 |
+| S1-4 | (호스트) CLOSED 이벤트 정원 조정 차단 (Q7) | event.status=CLOSED | `PUT /capacity/settings` 로 정원 값을 바꾸면 400 `INVALID_EVENT_STATUS` |
 
 ## 7. 정합성 판단
 
@@ -348,8 +319,8 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | 사실 교정 | 서버 enum / Flutter parser | 서버 상태는 `WAITING`이며 Flutter parser는 호환 입력 `WAITLISTED`도 `waiting`으로 매핑한다. | 신규 계약/fixture는 서버 canonical 값 `WAITING` 사용 |
 | 사실 교정 | `CapacitySettingsService` / Flutter 폼 | baseCapacity 최소값은 annotation이 아니라 service runtime validation이다. Flutter는 parse 실패 시 0을 전송하고 API 오류 toast를 표시한다. | 문서/테스트에서 `@Min` 근거 제거 |
 | 사실 교정 | `capacity_settings_screen.dart` / `CapacitySettingsParam` | 폼은 기본 정원·대기열·조건부 최대 대기·승인제뿐 아니라 게스트 허용과 조건부 최대 게스트(1~9)도 관리한다. baseCapacity는 0 무제한이 아니라 최소 1이다. | UI surface/E2E 기대 라벨에 게스트 설정과 최소값 포함 |
-| Risk | `CapacitySettingsService` vs `EventCapacitySettingsService` 권한 가드 | 기본 설정 GET/PUT/PATCH 호환 경로는 클럽 ADMIN/OWNER를 허용하지만 고급 `PATCH /capacity-settings`는 host/co-host만 허용 | 클럽 운영진이 기본 설정 화면은 열 수 있지만 별도 고급 초과정원 API는 호출할 수 없다. 제품 의도인지 권한 통일 대상인지 결정 필요 |
-| Gap | Flutter presentation caller 검색 | 모집 close/reopen은 Provider까지만, 고급 초과정원 PATCH는 Repository까지만 연결되어 있다. `overcapacityAllowed`/`hardCapacityLimit`/`exceedingAttendees`의 presentation 소비처도 없다. | CTA와 상태 표시를 구현하기 전까지 서버 전용 기능으로 취급 |
+| 해소 | `CapacitySettingsService` vs `EventCapacitySettingsService` 권한 가드 | 고급 `PATCH /capacity-settings` 를 걷어(차수 7 S22) 호스트 정원 변경 창구는 기본 설정 GET/PUT 하나다 | — |
+| Gap | Flutter presentation caller 검색 | 모집 close/reopen은 Provider까지만 연결되어 있다. 초과정원 PATCH 는 서버·앱 모두 걷었다. `exceedingAttendees` 의 presentation 소비처는 없다. | CTA와 상태 표시를 구현하기 전까지 서버 전용 기능으로 취급 |
 | Risk | `WaitlistService.promoteRowManual` | 수동 승급은 `CapacityPolicy`, baseCapacity, hardCapacityLimit을 모두 검사하지 않고 currentCapacity를 증가시킨다. | hard limit을 진짜 절대 상한으로 둘지, 운영자 override로 명시할지 결정 |
 | Risk | `NotificationService.createNotification` | 승급 서비스는 알림 생성을 호출하지만 in-app/push 설정으로 생략될 수 있고 push는 비동기다. | 수용 기준을 “도달”이 아닌 생성 요청/설정별 결과로 검증 |
 
@@ -362,10 +333,10 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 - **AC-05. (참가자) 자동 승격**: Given 본인이 대기열 1번 When 빈자리가 생기면 Then 참가자 ATTENDING, `WAITLIST_PROMOTED` 생성 요청. 채널 비활성 시 저장/푸시 생략 가능
 - **AC-06. (호스트) 대기 중이 아닌 사용자를 승격 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-07. (에러) 권한 없는 일반 사용자 정원 설정 접근**: Given event 1312 isClosed=false (sample_data.sql:1190 시드값) When 사용자가 해당 흐름을 실행하면 Then event 1312 isClosed=false 복귀, 다른 메타 무변동, **mutation but self-rollback**. **출처: CapacitySettingsService.java:84-104**
-- **AC-S1-1. 정원 초과 API 직접 호출 (v4.5 W1)**: Given baseCapacity=5, approvalRequired=true, OPEN, 참가자 7명 PENDING When host가 API로 `PATCH /capacity-settings`에 `overcapacityAllowed=true, hardCapacityLimit=10`을 적용 후 7명 모두 승인 Then `currentCapacity=7, baseCapacity=5, exceedingAttendees=2, overcapacityAllowed=true`, U6/U7 `event_attendance_log.change_type=9 (OVERCAPACITY_APPROVED)`. Flutter presentation에는 PATCH caller와 "+2명 초과" badge가 모두 없음을 확인.
-- **AC-S1-2. 정원 축소로 초과 상태 발생 (v4.5 W1)**: Given baseCapacity=10, currentCapacity=8, OPEN When 호스트가 `PATCH /capacity-settings`로 `baseCapacity=5` 적용 Then `baseCapacity=5, currentCapacity=8, exceedingAttendees=3` 유지 (기존 ATTENDING 강제 취소 없음), `event_attendance_log`에 `change_type=10 (CAPACITY_REDUCED)` + metadata `{"prevBase":10,"newBase":5,"exceeding":3}` 1행 기록. overcap=false 사용자의 새 apply는 `CAPACITY_FULL` 400.
-- **AC-S1-3. Hard limit 도달 시 차단 + invariant (v4.5 W1)**: Given baseCapacity=10 When `hardCapacityLimit=3` 설정 시도 Then `INVALID_HARD_CAPACITY_LIMIT(400013)` 400. When `hardCapacityLimit=15`로 정상 설정 후 currentCapacity=15 도달 Then 신규 apply는 `CAPACITY_FULL` 400.
-- **AC-S1-4. CLOSED 이벤트 정원 조정 차단 (v4.5 W1, Q7)**: Given event.status=CLOSED When 호스트가 `PATCH /capacity-settings` 호출 Then 400 `INVALID_EVENT_STATUS` (DRAFT/OPEN만 허용).
+- **AC-S1-1. 정원 초과 허용 입구 없음**: Given 옛 `PATCH /capacity-settings` 를 걷음 When 호스트가 정원 설정을 연다 Then 초과 허용·하드 상한 입력이 없고 `overcapacityAllowed=false` 로 남는다.
+- **AC-S1-2. 정원 축소 거절**: Given baseCapacity=10, currentCapacity=8, OPEN When 호스트가 `PUT /capacity/settings` 로 `baseCapacity=5` 를 보낸다 Then 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석은 그대로이고 참석 이력에 새 행이 없다. `baseCapacity=8` 은 받는다.
+- **AC-S1-3. 하드 상한 검사**: Given 하드 상한이 있는 옛 행 When 상한보다 큰 정원을 보낸다 Then 400 `INVALID_HARD_CAPACITY_LIMIT(400013)`. 새 행은 상한이 NULL 이라 이 검사에 닿지 않는다.
+- **AC-S1-4. CLOSED 이벤트 정원 조정 차단 (Q7)**: Given event.status=CLOSED When 호스트가 `PUT /capacity/settings` 로 정원 값을 바꾼다 Then 400 `INVALID_EVENT_STATUS` (DRAFT/OPEN만 허용).
 
 ## 10. 미결정 / 후속
 

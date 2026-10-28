@@ -86,15 +86,15 @@
   - 무한 스크롤 — `position.maxScrollExtent - 200` 도달 시 `attendanceLogNotifier.loadMore()`
   - 풀투리프레시 → `refresh()`
 - **타임라인 이벤트 유형 매핑** (`AttendanceLogType` enum + `.label`):
-  - `APPLIED_ATTENDING` → "참석 신청" (positive)
+  - `APPLIED_ATTENDING` → "참석 확정" (positive). 대기로 들어간 신청(`newStatus=WAITING`)은 "대기열 등록" 으로 그린다
   - `APPLIED_WAITING` → "대기열 등록" (neutral)
   - `CANCELLED_BY_USER` → "참석 취소" (negative)
   - `PROMOTED_AUTO` → "자동 승격" (positive)
-  - `PROMOTED_CAPACITY_INCREASE` → "정원 확대 승격" (positive)
-  - `PROMOTED_MANUAL` → "수동 승격" (system)
-  - `REJECTED_BY_HOST` → "신청 거절" (negative)
-  - `WAITLIST_ORDER_CHANGED` → 순번 변경 (neutral)
-  - `REMOVED_BY_HOST` → "강제 제거" (negative)
+  - `PROMOTED_CAPACITY_INCREASE` → "정원 증가 승격" (positive)
+  - `PROMOTED_MANUAL` → "수동 승격" (positive)
+  - `REMOVED_BY_HOST` → "호스트 제거" (negative)
+  - `OVERCAPACITY_APPROVED` → "정원 초과 승인" (neutral). 지금 이 값을 쓰는 길은 없다
+  - 옛 `REJECTED_BY_HOST`(호스트 거절)·`WAITLIST_ORDER_CHANGED`(순번 변경)·`CAPACITY_REDUCED`(정원 축소)는 걷었다. 신청 거절은 신청 결정 이력이 남긴다
 - **상태 분기**: 로딩 / 에러(`AppErrorState`) / 빈 상태 / 데이터
 
 ## 4. 서버 계약
@@ -188,15 +188,15 @@
   - 무한 스크롤 — `position.maxScrollExtent - 200` 도달 시 `attendanceLogNotifier.loadMore()`
   - 풀투리프레시 → `refresh()`
 - **타임라인 이벤트 유형 매핑** (`AttendanceLogType` enum + `.label`):
-  - `APPLIED_ATTENDING` → "참석 신청" (positive)
+  - `APPLIED_ATTENDING` → "참석 확정" (positive). 대기로 들어간 신청(`newStatus=WAITING`)은 "대기열 등록" 으로 그린다
   - `APPLIED_WAITING` → "대기열 등록" (neutral)
   - `CANCELLED_BY_USER` → "참석 취소" (negative)
   - `PROMOTED_AUTO` → "자동 승격" (positive)
-  - `PROMOTED_CAPACITY_INCREASE` → "정원 확대 승격" (positive)
-  - `PROMOTED_MANUAL` → "수동 승격" (system)
-  - `REJECTED_BY_HOST` → "신청 거절" (negative)
-  - `WAITLIST_ORDER_CHANGED` → 순번 변경 (neutral)
-  - `REMOVED_BY_HOST` → "강제 제거" (negative)
+  - `PROMOTED_CAPACITY_INCREASE` → "정원 증가 승격" (positive)
+  - `PROMOTED_MANUAL` → "수동 승격" (positive)
+  - `REMOVED_BY_HOST` → "호스트 제거" (negative)
+  - `OVERCAPACITY_APPROVED` → "정원 초과 승인" (neutral). 지금 이 값을 쓰는 길은 없다
+  - 옛 `REJECTED_BY_HOST`(호스트 거절)·`WAITLIST_ORDER_CHANGED`(순번 변경)·`CAPACITY_REDUCED`(정원 축소)는 걷었다. 신청 거절은 신청 결정 이력이 남긴다
 - **상태 분기**: 로딩 / 에러(`AppErrorState`) / 빈 상태 / 데이터
 
 ## 6. 상태/권한/시나리오 매트릭스
