@@ -37,15 +37,17 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/{eventId}/check-in/qr` | `CheckInController#generateQrToken` | [CheckInController.java:31](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L31) |
-| `POST /api/v1/events/{eventId}/check-in` | `CheckInController#checkIn` | [CheckInController.java:38](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L38) |
-| `POST /api/v1/events/{eventId}/check-in/short-code` | `CheckInController#checkInByShortCode` | [CheckInController.java:48](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L48) |
-| `POST /api/v1/events/{eventId}/check-in/{userId}` | `CheckInController#manualCheckIn` | [CheckInController.java:58](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L58) |
-| `GET /api/v1/events/{eventId}/check-in/stats` | `CheckInController#getCheckInStats` | [CheckInController.java:92](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L92) |
+| `GET /api/v1/events/{eventId}/check-in/qr` | `CheckInController#generateQrToken` | [CheckInController.java:32](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L32) |
+| `POST /api/v1/events/{eventId}/check-in` | `CheckInController#checkIn` | [CheckInController.java:39](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L39) |
+| `POST /api/v1/events/{eventId}/check-in/short-code` | `CheckInController#checkInByShortCode` | [CheckInController.java:49](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L49) |
+| `POST /api/v1/events/{eventId}/check-in/batch` | `CheckInController#batchManualCheckIn` | [CheckInController.java:63](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L63) |
+| `GET /api/v1/events/{eventId}/check-in/stats` | `CheckInController#getCheckInStats` | [CheckInController.java:73](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L73) |
+
+- 수동 체크인은 참가 행 번호 목록의 일괄 요청이다. 옛 사용자 번호 단건 입구는 제거됐다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
@@ -120,7 +122,7 @@
 | GET | `/api/v1/events/{eventId}/check-in/qr` | `CheckInController#generateQrToken` | 호스트/공동호스트 | QR JWT + 6자리 shortCode 발급 (TTL 5분, Redis) |
 | POST | `/api/v1/events/{eventId}/check-in` | `CheckInController#checkIn` | 인증 | QR 토큰 검증 + 본인 체크인 |
 | POST | `/api/v1/events/{eventId}/check-in/short-code` | `CheckInController#checkInByShortCode` | 인증 | 6자리 코드로 본인 체크인 |
-| POST | `/api/v1/events/{eventId}/check-in/{userId}` | `CheckInController#manualCheckIn` | 호스트/공동호스트 | 수동 체크인 (호스트가 참석자 선택) |
+| POST | `/api/v1/events/{eventId}/check-in/batch` | `CheckInController#batchManualCheckIn` | 호스트/공동호스트 | 수동 체크인 (호스트가 참석자 선택) |
 | GET | `/api/v1/events/{eventId}/check-in/stats` | `CheckInController#getCheckInStats` | 호스트/공동호스트 | 체크인율 + 미체크인 사용자 ID 목록 |
 
 ### EventCheckIn 엔티티 — Wave D-1 감사 추적 컬럼 (갱신 2026-06-05)

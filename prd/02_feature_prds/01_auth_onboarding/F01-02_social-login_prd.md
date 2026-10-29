@@ -1,226 +1,55 @@
-# F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) PRD
+# F01-02. 소셜 로그인 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
+> 2026-10-29 현재 소스 대조: 공개 API `9f9928876`, 앱 `9472ab98`. 현재 할 일은 [다음 작업](../../../../docs/plan/NEXT_WORK.md), 설계 근거는 [이메일 번호 인증](../../../../docs/plan/auth/EMAIL_CODE_AUTH_2026-10-29.md)을 따른다.
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/01_auth_onboarding/F01-02_social-login -->
+현재 활성 소셜 제공자는 Google이다. 외부 인증 후 기존 사용자·신규 사용자·같은 이메일의 기존 계정 연결을 구분한다. 카카오·네이버·Apple의 코드는 남아 있지만 활성화와 실제 사용 확인은 별도다.
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/01_auth_onboarding/F01-02_social-login`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+## Google 인증 뒤 세 갈래
 
-## 1. 결론
+이미 연결된 Google 계정이면 로그인한다. 처음 보는 Google 신원이고 같은 이메일 계정도 없으면 그때 닉네임·생년월일·약관을 받고 가입한다. 같은 이메일의 기존 계정이 있으면 계정 연결 확인 화면으로 안내한다. 재방문 사용자에게 가입 정보를 먼저 다시 묻지 않는다.
 
-외부 OAuth 제공자(Apple/Google/Kakao/Naver)로부터 받은 access token 또는 identity token을 검증하고, 해당 소셜 ID로 기존 사용자를 찾아 로그인하거나 신규 회원을 즉시 생성한다. 이메일 가입 절차 없이 단 한 번의 API 호출로 가입+로그인이 완료되며, 응답의 `isNewUser` 플래그로 신규 여부를 구분한다.
+## 기존 계정에 Google 연결
 
-**2026-08-18 개정(P0-E2E-02 결정 A)** — 이메일 미인증 계정은 제한 세션이 된다(F01-03 §4.1). 소셜 **신규 가입**은 그 대상이 아니다: `SocialLoginService`가 신규 계정을 `emailVerified=true`로 생성한다. 소셜 계정의 `email` 값은 제공자가 준 주소가 아니라 `socialId`로 합성한 내부 식별자(`{socialId}@{provider}`)이므로 인증 메일이 영원히 닿지 않고, 그대로 두면 빠져나올 수 없는 제한 세션에 갇히기 때문이다 — 신원은 제공자 토큰 검증으로 이미 증명됐다. ⛔ **기존 이메일 계정에 소셜을 연결(link)하는 경로에서는 이 승격을 하지 않는다** — 그 계정의 주소는 사용자가 직접 입력한 실제 주소이고 제공자가 그것을 증명한 바 없으므로, 연결로 승격하면 타인 주소로 가입한 계정을 자기 소셜로 인증하는 우회가 된다. 근거 소스: `community_api/.../account/service/SocialLoginService.java`(api HEAD `d5de51c0`).
+서버는 SOCIAL_ACCOUNT_LINK_REQUIRED 응답과 가린 이메일·30분 유효한 linkToken을 준다. 사용자가 연결에 동의한 뒤 기존 계정 이메일로 번호를 보내고, 6자리 번호를 확인하면 그 계정에 Google을 연결하고 로그인한다. 이메일 문자열이 같다는 이유만으로 자동 연결하지 않는다. 별도 계정도 만들지 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 연결 중 상태가 바뀐 경우
 
-- 로그인 화면(SCR-AU-001) 하단 4종 소셜 버튼 (`SocialLoginButtons`)
-- 회원가입 화면 → "소셜로 시작하기" 흐름은 본 프로젝트에서 별도 화면 없음 (로그인 화면이 가입 진입점 역할)
+연결 확정 시 계정을 잠그고 이메일·계정 상태·기존 소셜 연결을 다시 검사한다. 다른 Google 계정이 이미 연결됐거나 정지·차단 등 이용 제한이 있으면 해당 정책을 따른다. 탈퇴 대기 계정은 안내 대상으로 처리하며 일반 연결 성공으로 취급하지 않는다. 연결 표는 한 번만 사용할 수 있다.
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 신규 가입과 취소
 
-## 2. 실사 근거
+신규 사용자에게만 만 19세 이상·필수 약관·닉네임을 확인한다. 검증된 Google 이메일로 가입한 계정은 이메일 인증 완료로 만든다. 외부 인증이나 추가 정보 입력을 취소하면 로그인 화면에 남고 계정을 만들지 않는다. 공급자 오류와 사용자가 취소한 경우를 구분한다.
 
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/01_auth_onboarding/F01-02_social-login/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/01_auth_onboarding/F01-02_social-login/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/01_auth_onboarding/F01-02_social-login/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/01_auth_onboarding/F01-02_social-login/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+## 현재 로그인 활성 상태와 iOS 공개 전 결정
+
+이메일·Google이 현재 활성 상태다. iOS 공개 전 로그인 구성 결정은 아직 남아 있다. Apple을 선택하면 설정·이메일 숨기기·실제 로그인·탈퇴와 인증 철회까지 확인한다. 카카오·네이버는 후속 공개 범위다. 구체 준비는 외부 준비 현황의 iOS 로그인 구성과 심사 준비를 따른다.
+
+## 서버 계약
+
+| 메서드·주소 | 요청과 응답 |
+| --- | --- |
+| `POST /api/v1/auth/social` | SocialLoginParam → LoginVo; 기존 이메일 연결 필요 시 409 + linkToken/maskedEmail |
+| `POST /api/v1/auth/social/existing-account/email-code` | SocialLinkCodeParam: linkToken → EmailCodeSentVo |
+| `POST /api/v1/auth/social/existing-account/link` | SocialLinkConfirmParam: linkToken, code → LoginVo |
+
+## 출시 확인
+
+- Google 기존 로그인·신규 가입·기존 이메일 연결 세 경로와 취소를 실제 계정으로 확인한다.
+- 연결 동의 전 메일을 보내지 않고, 다른 번호·만료 표·동시 연결·정지 또는 탈퇴 대기 상태를 확인한다.
+- Android 새 패키지의 OAuth·서명과 iOS 로그인 구성을 갖춘 뒤 물리 기기·배포본에서 재검사한다.
+
+이전 링크 방식의 10월 12일 실수신 결과를 번호 인증의 통과 기록으로 사용하지 않는다. [외부 준비 현황](../../../docs/qa/external-readiness.html)에서 운영 메일·새 패키지·물리 기기·iOS의 남은 검증을 확인한다.
 
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/auth/social` | `AuthController#socialLogin` | [AuthController.java:68](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AuthController.java#L68) |
+| `POST /api/v1/auth/social` | `AuthController#socialLogin` | [AuthController.java:95](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/AuthController.java#L95) |
+| `POST /api/v1/auth/social/existing-account/email-code` | `AuthController#requestSocialLinkCode` | [AuthController.java:102](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/AuthController.java#L102) |
+| `POST /api/v1/auth/social/existing-account/link` | `AuthController#linkSocialToExistingAccount` | [AuthController.java:108](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/AuthController.java#L108) |
 <!-- source-references:end -->
-
-## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
-1. 사용자 소셜 버튼 탭
-2. `SocialLoginInfoSheet.show()` → 닉네임/생년월일/약관 수집
-3. `SocialAuthFactory.create(provider).signIn()` → SDK 토큰 획득
-4. `ref.read(authNotifierProvider.notifier).socialLogin(request)`
-5. `AuthRepository.socialLogin(request)` → `_authApi.socialLogin(request)` → `POST /api/v1/auth/social`
-6. 응답 `LoginResponse(isNewUser=true/false)` → `tokenStorage.saveTokens(...)`
-7. `_syncOnboardingStateAfterLogin(isNewUser)`:
-   - `isNewUser=true` → onboarding storage clear + onboardingRoute refresh (다음 단계 미리 캐싱)
-   - `isNewUser=false` → markOnboardingDone + onboardingRoute = `/home`
-8. `_fetchAndSetUser(requireOnboarding: isNewUser)` → `GET /api/v1/users/me`
-9. `AuthState` 전이 → 라우터 redirect
-
-## 4. 서버 계약
-
-### 개요
-
-외부 OAuth 제공자(Apple/Google/Kakao/Naver)로부터 받은 access token 또는 identity token을 검증하고, 해당 소셜 ID로 기존 사용자를 찾아 로그인하거나 신규 회원을 즉시 생성한다. 이메일 가입 절차 없이 단 한 번의 API 호출로 가입+로그인이 완료되며, 응답의 `isNewUser` 플래그로 신규 여부를 구분한다.
-
-**2026-08-18 개정(P0-E2E-02 결정 A)** — 이메일 미인증 계정은 제한 세션이 된다(F01-03 §4.1). 소셜 **신규 가입**은 그 대상이 아니다: `SocialLoginService`가 신규 계정을 `emailVerified=true`로 생성한다. 소셜 계정의 `email` 값은 제공자가 준 주소가 아니라 `socialId`로 합성한 내부 식별자(`{socialId}@{provider}`)이므로 인증 메일이 영원히 닿지 않고, 그대로 두면 빠져나올 수 없는 제한 세션에 갇히기 때문이다 — 신원은 제공자 토큰 검증으로 이미 증명됐다. ⛔ **기존 이메일 계정에 소셜을 연결(link)하는 경로에서는 이 승격을 하지 않는다** — 그 계정의 주소는 사용자가 직접 입력한 실제 주소이고 제공자가 그것을 증명한 바 없으므로, 연결로 승격하면 타인 주소로 가입한 계정을 자기 소셜로 인증하는 우회가 된다. 근거 소스: `community_api/.../account/service/SocialLoginService.java`(api HEAD `d5de51c0`).
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | /api/v1/auth/social | `AuthController#socialLogin` | 불필요 | 소셜 토큰 검증 + 자동 가입/로그인 (200) |
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **Enum** `ProviderType`: `EMAIL(0)`, `KAKAO(1)`, `NAVER(2)`, `GOOGLE(3)`, `APPLE(4)` — 소셜은 1~4
-- **Enum** `LoginType`: `EMAIL("email")`, `SOCIAL("social")` — 토큰 발급 시 SOCIAL 사용
-- **Entity 요약**:
-  - `SocialLogin`: userId, providerType (int), socialId (String, "google_xxx" 형식)
-  - `Users`: 이메일 가입과 동일 — 단, 비밀번호 null로 생성됨 (소셜 단일 가입자). email은 `{socialId}@{provider}` 합성 주소이며, `emailVerified=true`로 생성된다(2026-08-18)
-- **VO** `LoginVo`: 동일 구조 (F01-01 참조)
-
-### 의존 단위 / 외부 시스템
-
-- 다른 Unit 의존: 없음 — 자체 진입 지점
-- 후속 호출: F01-06 (신규 사용자 온보딩)
-- 외부 시스템:
-  - Google ID Token Verifier (`https://www.googleapis.com/oauth2/v3/certs` 키 캐싱)
-  - Kakao API (`https://kapi.kakao.com/v2/user/me`)
-  - Naver API (`https://openapi.naver.com/v1/nid/me`)
-  - Apple JWKS (`https://appleid.apple.com/auth/keys`)
-- 환경 변수: `social.google.client-id` (Google audience 검증용)
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 로그인 화면(SCR-AU-001) 하단 4종 소셜 버튼 (`SocialLoginButtons`)
-- 회원가입 화면 → "소셜로 시작하기" 흐름은 본 프로젝트에서 별도 화면 없음 (로그인 화면이 가입 진입점 역할)
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen / Widget 파일 | 역할 |
-|---|---|---|
-| `/auth/login` | `lib/presentation/auth/screens/login_screen.dart` | 소셜 버튼 호스트 |
-| (모달) | `lib/presentation/auth/widgets/social_login_buttons.dart` | 4종 소셜 버튼 그룹 |
-| (모달) | `lib/presentation/auth/widgets/social_login_info_sheet.dart` | 추가 정보 입력 바텀시트 (닉네임/생년월일/약관) |
-
-### 화면별 구성 요소 & 액션
-
-### `SocialLoginButtons`
-- **사용자가 보는 것**: 4개의 52px 높이 버튼, 10px 간격으로 세로 배치
-  - 카카오로 시작하기 (배경 #FEE500, 글자 #191919, 채팅 아이콘)
-  - 네이버로 시작하기 (배경 #03C75A, 흰색)
-  - Google로 시작하기 (배경 흰색, 보더 default, 검정 글자)
-  - Apple로 시작하기 (배경 검정, 흰색)
-- **사용자가 할 수 있는 액션**:
-  - 버튼 탭 → 부모 위젯의 `onSocialLogin(String provider)` 콜백 (provider="kakao"/"naver"/"google"/"apple")
-
-### `SocialLoginInfoSheet` (바텀시트)
-- **사용자가 보는 것**:
-  - 상단 핸들 (`#D0CFCC`, 40×4px, r=2)
-  - 제목 "추가 정보 입력" (heading2)
-  - 설명 "서비스 이용을 위해 추가 정보를 입력해주세요." (body2, textSecondary)
-  - 닉네임 입력 (`AppTextInput`, maxLength=16, 인라인 에러)
-  - 생년월일 picker (탭하여 `showDatePicker` 모달, 1950 ~ today)
-  - 약관 동의 카드 (`#F5F4F1` 배경, r=12, p=16)
-    - "전체 동의" (16px)
-    - "이용약관 동의 (필수)" + chevron
-    - "개인정보 처리방침 동의 (필수)" + chevron
-    - "마케팅 수신 동의 (선택)" (textSecondary)
-  - "시작하기" 기본 버튼 (`ButtonVariant.primary`)
-- **사용자가 할 수 있는 액션**:
-  - 닉네임 입력 → 2~16자 검증
-  - 생년월일 선택
-  - 약관 체크
-  - "시작하기" 탭 → `Navigator.pop(SocialLoginInfo)` (닉네임/생년월일/약관 동의 결과 반환)
-  - 시트 외부 탭 또는 드래그-다운 → `null` 반환 (취소)
-- **상태 분기**: `_isFormValid`(닉네임 2~16자 + 생년월일 + 필수 약관 2개 모두) → "시작하기" 버튼 활성화
-
-### 로그인 화면의 `_handleSocialLogin` 흐름
-- **사용자가 할 수 있는 액션**:
-  1. 소셜 버튼 탭 → `_handleSocialLogin(provider)` 호출
-  2. **추가 정보 시트** 먼저 띄우기 — `SocialLoginInfoSheet.show(context, provider)` await
-  3. 사용자가 시트 닫으면(취소) early return
-  4. 시트 결과(`SocialLoginInfo`) 받으면 `_isLoading = true`로 전환 → `LoadingOverlay` 효과
-  5. **소셜 SDK 인증** — `SocialAuthFactory.create(provider).signIn()`
-     - Apple: `apple_auth_provider.dart` (sign_in_with_apple)
-     - Google: `google_auth_provider.dart`
-     - Kakao: `kakao_auth_provider.dart` (kakao_flutter_sdk)
-     - Naver: `naver_auth_provider.dart` (flutter_naver_login)
-  6. 사용자가 SDK 화면에서 취소 → `authResult == null` → 로딩 해제 후 종료
-  7. **서버 호출** — `authNotifierProvider.notifier.socialLogin(SocialLoginRequest(...))`
-  8. 성공 시: 토큰 저장, `AuthState.authenticated` 또는 `AuthState.onboarding` 전이, 라우터가 자동 화면 이동
-  9. 실패 시:
-     - `unauthorized` → "소셜 로그인에 실패했습니다"
-     - `conflict` → "이미 가입된 계정입니다"
-     - 그 외 → `resolveApiErrorMessage(e)` 일반 메시지
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 사용자 소셜 버튼 탭
-2. `SocialLoginInfoSheet.show()` → 닉네임/생년월일/약관 수집
-3. `SocialAuthFactory.create(provider).signIn()` → SDK 토큰 획득
-4. `ref.read(authNotifierProvider.notifier).socialLogin(request)`
-5. `AuthRepository.socialLogin(request)` → `_authApi.socialLogin(request)` → `POST /api/v1/auth/social`
-6. 응답 `LoginResponse(isNewUser=true/false)` → `tokenStorage.saveTokens(...)`
-7. `_syncOnboardingStateAfterLogin(isNewUser)`:
-   - `isNewUser=true` → onboarding storage clear + onboardingRoute refresh (다음 단계 미리 캐싱)
-   - `isNewUser=false` → markOnboardingDone + onboardingRoute = `/home`
-8. `_fetchAndSetUser(requireOnboarding: isNewUser)` → `GET /api/v1/users/me`
-9. `AuthState` 전이 → 라우터 redirect
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- 4종 소셜 버튼 시각 디자인 (배경색, 아이콘, 텍스트 색상)
-- 시트의 약관 카드 배경색 `#F5F4F1` (`AppSemanticColors.surfaceBackground`)
-- 닉네임을 시트에서 사전 수집 (서버는 nickname 옵션이지만 UX상 항상 받음)
-- 시트 표시 → SDK 호출 → 서버 호출의 순서 결정 (다른 앱은 SDK 먼저, 신규 분기 후 시트 표시할 수도 있음. 본 프로젝트는 무조건 시트 먼저)
-- 토스트 카피 "이미 가입된 계정입니다" (서버는 일반 conflict이지만 클라이언트가 사용자 친화 메시지 매핑)
-- SDK 취소 vs 서버 실패의 구분 (`authResult == null`이면 토스트 미표시, 서버 실패만 토스트)
-- 카카오 SDK iOS/Android 별 KAKAO_APP_KEY 등 빌드 설정 (빌드 시점에 dart-define으로 주입, 본 단위 외부)
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 신규 회원이 카카오로 가입+로그인 완료 | 로그인 화면(SCR-AU-001) | 새 사용자 생성, 온보딩 진입 |
-| S2 | 기존 카카오 사용자 재로그인 | 로그인 화면, 토큰 만료/없음 | 메인 피드 진입, 입력했던 닉네임/약관 정보는 무시됨 (기존 사용자라 변경 안 함) |
-| S3 | 사용자가 SDK 인증 화면에서 취소 | 시트 작성 완료, SDK 인증 진행 중 | 변화 없음 |
-| S4 | Apple 토큰 검증 실패 (개발자 설정 오류) | Apple Sign-In 완료, 서버 호출 직전 | 로그인 화면 유지 |
-| S5 | 미성년자 신규 소셜 가입 차단 | 시트에서 2010년 입력 | 가입 차단 |
-| S6 | 동일 카카오 ID이지만 socialId 형식 변경 이슈 | 과거 SHA-256 해시 방식으로 가입한 사용자 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 차단된(BAN) 기존 소셜 사용자 | 운영자가 차단한 사용자 | 로그인 거부 |
-| S8 | 잘못된 provider 문자열 전송 (개발 실수) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후보 | backend.md:35 | - **Kakao**: `RestTemplate` GET `https://kapi.kakao.com/v2/user/me` Bearer → response body `id` (Long) → `"kakao_" + id`. 주의: 과거 SHA-256 해시 방식에서 변경됨, 기존 계정은 신규로 인식될 수 있음 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-
-## 9. 수용 기준
-
-- **AC-01. 신규 회원이 카카오로 가입+로그인 완료**: Given 로그인 화면(SCR-AU-001) When 사용자가 해당 흐름을 실행하면 Then 새 사용자 생성, 온보딩 진입
-- **AC-02. 기존 카카오 사용자 재로그인**: Given 로그인 화면, 토큰 만료/없음 When 사용자가 해당 흐름을 실행하면 Then 메인 피드 진입, 입력했던 닉네임/약관 정보는 무시됨 (기존 사용자라 변경 안 함)
-- **AC-03. 사용자가 SDK 인증 화면에서 취소**: Given 시트 작성 완료, SDK 인증 진행 중 When 사용자가 해당 흐름을 실행하면 Then 변화 없음
-- **AC-04. Apple 토큰 검증 실패 (개발자 설정 오류)**: Given Apple Sign-In 완료, 서버 호출 직전 When 사용자가 해당 흐름을 실행하면 Then 로그인 화면 유지
-- **AC-05. 미성년자 신규 소셜 가입 차단**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가입 차단
-- **AC-06. 동일 카카오 ID이지만 socialId 형식 변경 이슈**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 차단된(BAN) 기존 소셜 사용자**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 로그인 거부
-- **AC-08. 잘못된 provider 문자열 전송 (개발 실수)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

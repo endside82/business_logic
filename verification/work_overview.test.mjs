@@ -58,11 +58,12 @@ test('scopes, dependency paths and resources work in the published script', () =
   const page = open();
   page.click({ scope: 'conditional' });
   assert.ok(page.ids().includes('H-511'));
-  assert.ok(!page.ids().includes('H-528'));
+  assert.ok(page.ids().includes('H-528'));
   assert.ok(!page.ids().includes('H-433'));
   page.click({ scope: 'now' });
-  assert.ok(page.ids().includes('H-528'));
-  assert.ok(page.ids().includes('H-505'));
+  assert.ok(page.ids().includes('H-542'));
+  assert.ok(!data.tasks.some(task => task.id === 'H-505'), '완료된 푸시 갱신 작업을 다음 개발로 되돌리지 않음');
+  assert.ok(!page.ids().includes('H-528'));
   page.click({ scope: 'launch' });
   assert.ok(page.ids().includes('H-531'));
   assert.ok(!data.tasks.some(task => ['H-497', 'H-525', 'H-526', 'H-527'].includes(task.id)));

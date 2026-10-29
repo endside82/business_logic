@@ -29,17 +29,26 @@
 | Scenario | [scenarios.md](../../../units/03_event/F03-03_event-creation/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/03_event/F03-03_event-creation/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
+
+## 2026-10-29 현재 계약 대조
+
+### 응답이 끊긴 생성 요청은 같은 요청으로 확인합니다
+
+차수 10에서 모임 생성 다섯 경로·플랜 생성·정기모임 생성·개인 반복 생성에 요청 고유키를 연결했다. 같은 키·같은 본문 재전송은 앞 결과를 돌려주며 다른 본문 재사용은 거절한다. 저장 결과를 모르는 동안 새 생성으로 바꾸지 않는다. 화면 재진입·계정 전환 뒤 이전 사용자의 미확정 요청을 현재 계정으로 보내지 않는지도 확인한다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/events` | `EventController#createEvent` | [EventController.java:80](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L80) |
-| `POST /api/v1/events/{eventId}/publish` | `EventController#publishEvent` | [EventController.java:216](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L216) |
-| `POST /api/v1/events/{eventId}/recurring` | `EventController#createRecurringEvents` | [EventController.java:340](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L340) |
-| `GET /api/v1/events/{eventId}/recurring` | `EventController#getRecurringGroup` | [EventController.java:371](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L371) |
+| `POST /api/v1/events` | `EventController#createEvent` | [EventController.java:94](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L94) |
+| `POST /api/v1/events/{eventId}/publish` | `EventController#publishEvent` | [EventController.java:248](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L248) |
+| `POST /api/v1/events/{eventId}/recurring` | `EventController#createRecurringEvents` | [EventController.java:386](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L386) |
+| `GET /api/v1/events/{eventId}/recurring` | `EventController#getRecurringGroup` | [EventController.java:424](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L424) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

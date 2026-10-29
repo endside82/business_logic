@@ -19,6 +19,8 @@
           지금 제공할 기능과 남은 준비는 <a href="../qa/launch-status.html">첫 출시 현황</a>에서 확인한다.
         </p>
       </header>
+      <section id="update-2026-10-29"><h2>2026-10-29 — 차수 9~11·번호 인증·현재 운영 배포 대조</h2><p>10월 26일 문서 기준 이후의 제품 커밋과 현재 소스·검수 기록을 대조해 기존 기능·정책·PRD와 출시 상태표를 갱신했다. 소스 위치 표의 갱신과 기능 동작 검증은 구분한다.</p><ul><li><a href="../domains/01-auth.html">인증·온보딩</a>: 가입 전 6자리 번호, Google 기존 이메일 계정 연결, 번호 기반 비밀번호 재설정과 기존 세션 종료. 미인증 제한과 옛 링크 메일 제거.</li><li><a href="../features/F05-04.html">최근 검색어</a>의 계정별 기기 저장, <a href="../policies/payment.html#free-point-expiry">무료 포인트 지급 단위 만료</a>, <a href="../features/F13-07.html#exit-money-resolution">탈퇴 뒤 돈 보류·운영 종결</a>을 본문에 반영.</li><li>생성 요청 고유키·연결 플랜 일괄 정렬·정산 복사·노쇼 조정 알림·반복 회차·출석 확정·관리자 권한·마일리지 검토 규칙을 해당 기능과 PRD에 반영.</li><li><a href="../qa/external-readiness.html#progress-2026-10-29">외부 준비 현황</a>: 오늘 서버 배포 이미지·서비스 7개 정상, iOS 식별자·입력 진척 확인. 새 Android 패키지·실제 번호 메일·서명 앱·스토어·파일·경보·복구 확인은 별도 유지.</li><li><a href="../qa/launch-status.html#validation-current">검사 기록과 남은 실패</a>: 차수 11 자동 240줄·손 확인 38줄 통과, 손 확인 3줄 미실행. 다음 개발은 H-542 재정비부터 정한다.</li></ul><p>추적 근거: <code>verification/document-sync-2026-10-29.json</code>. 이번 문서 갱신에서 제품 전체 시험·운영 변경·메일 발송은 수행하지 않았다.</p></section>
+
       <section id="operating-readiness-2026-10-26">
         <h2>2026년 10월 26일 — 운영 구축 결과와 첫 출시의 남은 일 갱신</h2>
         <p><a href="../qa/external-readiness.html#progress-2026-10-26">외부 서비스 준비 현황</a>의 기존 서비스별 설명·필수 준비 표·다음 확인 순서를 운영 구성과 AWS 실조회 결과로 고쳤습니다. AWS 서버·S3·고정 HTTPS·관리자 허용망은 구축됐고 Google·Firebase·Oracle SMTP 설정과 Kakao REST의 운영 IP 허용 기록이 있습니다.</p>

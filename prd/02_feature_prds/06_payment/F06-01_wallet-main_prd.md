@@ -31,14 +31,23 @@
 | Scenario | [scenarios.md](../../../units/06_payment/F06-01_wallet-main/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/06_payment/F06-01_wallet-main/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
+
+## 2026-10-29 현재 계약 대조
+
+### 무료 포인트는 지급 단위별로 만료됩니다
+
+무료 포인트는 지급일부터 1년 유효하며 지급 단위의 남은 무료 잔액만 만료시킨다. 이미 사용한 몫을 다시 차감하지 않는다. 무료 포인트 환불은 원래 만료일을 유지하되 반환일부터 최소 30일을 보장한다. 유료 포인트에는 이 무료 만료 규칙을 적용하지 않는다. 만료 대상은 주기 작업과 지갑 사용 전 정리에서 같은 규칙으로 처리한다. 원거래를 EXPIRED로 바꾸지 않고 거래 완료 이력과 지급 단위 만료를 구분한다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/wallet` | `WalletController#getWallet` | [WalletController.java:58](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/WalletController.java#L58) |
+| `GET /api/v1/wallet` | `WalletController#getWallet` | [WalletController.java:69](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/controller/WalletController.java#L69) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

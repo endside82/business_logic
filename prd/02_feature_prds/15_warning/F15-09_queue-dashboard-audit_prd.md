@@ -4,6 +4,14 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
+## 2026-10-29 현재 계약 대조
+
+### 신고 검토 목록의 정렬을 서버에서 적용합니다
+
+최신순·오래된순을 서버 정렬로 처리한다. 오래된순과 중복되던 오래 대기한 순 선택은 제거했다. 목록에 나타난 단건이 삭제되거나 사라지면 상세는 없음으로 처리하며, 빈 성공 응답을 정상 사건으로 보이지 않는다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 ## 1. 결론
 
 운영진 콘솔의 모니터링·검토 레이어는 `WARNING_REVIEWER` 권한으로 `WarningAdminQueueController`가 제공한다. `GET /queue`(`Page<WarningReviewQueueVo>`)·`GET /queue/{queueId}`·`POST /queue/{queueId}/process`(OPEN→PROCESSED/IGNORED)로 검토 큐 inbox를 처리하고, `GET /dashboard`(`WarningDashboardVo`)로 등급별 인원·이번달 신규·대기 제보/이의·큐 OPEN·outbox 헬스를, `GET /statistics`(`WarningStatisticsVo`)로 부여/감경/정정/만료 수·코드별 분포·이의 평균 처리시간을, `GET /members/{memberId}`(`WarningAdminMemberDetailVo`)로 멤버 상세를, `GET /review-targets`(`Page<WarningReviewTargetVo>`)로 검토 대상(`is_under_review=true`)을, `GET /audit-logs`(`Page<WarningAuditLogVo>`)로 감사 로그를 본다. Flutter `warning_console_screen.dart`/`warning_queue_screen.dart`/`warning_review_targets_screen.dart`/`warning_audit_log_screen.dart`가 구현했다.

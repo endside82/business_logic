@@ -1,261 +1,53 @@
-# F01-01. 이메일 회원가입 & 로그인 PRD
+# F01-01. 이메일 가입·로그인 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
+> 2026-10-29 현재 소스 대조: 공개 API `9f9928876`, 앱 `9472ab98`. 현재 할 일은 [다음 작업](../../../../docs/plan/NEXT_WORK.md), 설계 근거는 [이메일 번호 인증](../../../../docs/plan/auth/EMAIL_CODE_AUTH_2026-10-29.md)을 따른다.
 
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/01_auth_onboarding/F01-01_email-signup-login -->
+이메일 소유를 먼저 확인한 뒤 계정을 만든다. 가입을 마치면 바로 로그인되고 온보딩으로 이어진다. 2026년 10월 29일 번호 인증 전환을 반영한 현재 동작이다.
 
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/01_auth_onboarding/F01-01_email-signup-login`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+## 가입 순서
 
-## 1. 결론
+이메일 입력 → 인증번호 받기 → 6자리 번호 확인 → 비밀번호·닉네임·생년월일·필수 약관 입력 → 가입 완료와 로그인 → 온보딩이다. 번호 확인만으로 계정이 생성되지는 않는다. 확인된 이메일은 가입 정보 화면에서 바꾸지 않는다.
 
-이메일/비밀번호 기반의 신규 가입과 로그인을 처리한다. 가입 시 사용자 본인 정보·약관 동의·생년월일을 받아 `Users`/`Member`/`Agreement`/`SocialLogin(EMAIL)` 4개 테이블에 동시 INSERT하고, 즉시 JWT Access/Refresh 토큰을 발급한다. 로그인은 자격 증명 검증 후 토큰을 재발급한다. 두 엔드포인트 모두 동일한 `LoginVo`를 반환하므로 클라이언트는 같은 후속 처리를 한다.
+## 가입 검증과 중복 요청
 
-**2026-08-18 개정(P0-E2E-02 결정 A)** — 이 단위에 두 가지가 추가됐다. ① **가입 커밋 직후 서버가 첫 인증 메일을 스스로 보낸다**(`AfterCommitExecutor.runSafely`로 격리 — 발송 실패가 가입을 되돌리지 않는다). 종전에는 첫 발송이 없고 앱의 재전송 CTA만 있었다(폐기). ② 가입·로그인은 여전히 `emailVerified`를 **검사하지 않고 성공**하지만, 그렇게 발급된 세션은 인증 전까지 **제한 세션**이다 — 허용 목록 밖 요청은 `403 EMAIL_NOT_VERIFIED(100020)`. 즉 "미인증 계정이 아무 경계 없이 서비스를 쓴다"는 종전 상태는 2026-08-18 결정으로 대체됐다. 경계의 정본 계약은 F01-03 §4.1이다. 근거 소스: `community_api/.../account/service/AuthService.java`·`config/security/EmailVerificationPolicy.java`(api HEAD `d5de51c0`).
+번호를 확인하면 60분 동안 유효한 가입 표(signupToken)를 받는다. 가입 시 이메일이 그 표와 일치해야 하고 이메일·닉네임 중복, 만 19세 이상, 이용약관·개인정보 동의, 비밀번호 규칙을 검사한다. 가입 표는 계정 생성이 커밋된 뒤 소모하므로 닉네임 충돌 등으로 실패하면 수정해 다시 제출할 수 있다. 동시에 제출해도 같은 이메일의 계정은 하나만 만든다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 비밀번호와 선택 정보
 
-- 앱 첫 실행 시 토큰 미보유 → `splash_screen.dart` → 로그인 화면
-- 로그아웃 후 자동 이동
-- 회원가입 완료 후 토스트 + 로그인 화면 복귀
-- 라우터 가드: `AuthState.unauthenticated`이면 `/auth/login`로 강제 이동
+가입과 비밀번호 재설정은 영문·숫자·특수문자를 포함한 8~20자 규칙을 공유한다. 공백은 특수문자로 세지 않는다. 휴대전화·성별은 선택 항목이며 마케팅 동의는 필수 약관과 분리한다.
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 기존 계정 로그인
 
-## 2. 실사 근거
+이메일·비밀번호를 검증하고 정지·차단·탈퇴 등 계정 상태에 맞게 처리한다. 잘못된 이메일과 비밀번호에는 같은 자격 증명 오류를 표시한다. 신규 가입 뒤 다시 로그인 화면에서 비밀번호를 입력하게 하지 않는다. 기존 emailVerified 값이 거짓이라는 이유만으로 로그인 이후 서비스를 막는 제한 세션은 제거됐다.
 
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/01_auth_onboarding/F01-01_email-signup-login/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/01_auth_onboarding/F01-01_email-signup-login/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/01_auth_onboarding/F01-01_email-signup-login/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/01_auth_onboarding/F01-01_email-signup-login/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+## 기기와 복구
+
+다른 기기에서 새로 로그인하면 기존 세션을 종료한다. 비밀번호를 잊었다면 비밀번호 찾기에서 메일 번호를 확인하고 새 비밀번호를 설정한다. 변경 후에는 이전 비밀번호와 기존 세션으로 접근할 수 없다.
+
+## 서버 계약
+
+| 메서드·주소 | 요청과 응답 |
+| --- | --- |
+| `POST /api/v1/auth/signup` | SignupParam: email, password, nickname, birthDate, mobile?, gender?, agreeTerm, agreePrivacy, agreeMarketing, signupToken → LoginVo (201) |
+| `POST /api/v1/auth/login` | LoginParam → LoginVo (200) |
+
+## 출시 확인
+
+- 실제 메일 번호를 확인하기 전에는 계정이 만들어지지 않고, 확인 뒤 가입·자동 로그인·온보딩으로 이어진다.
+- 가입 표 만료·이메일 불일치·닉네임 충돌·중복 제출·미성년·필수 동의 누락·비밀번호 오류를 확인한다.
+- 정상 로그인과 정지·탈퇴·다른 기기 세션 종료를 운영 설정의 서명 앱에서 확인한다.
+
+이전 링크 방식의 10월 12일 실수신 결과를 번호 인증의 통과 기록으로 사용하지 않는다. [외부 준비 현황](../../../docs/qa/external-readiness.html)에서 운영 메일·새 패키지·물리 기기·iOS의 남은 검증을 확인한다.
 
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/auth/signup` | `AuthController#signup` | [AuthController.java:43](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AuthController.java#L43) |
-| `POST /api/v1/auth/login` | `AuthController#login` | [AuthController.java:49](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/AuthController.java#L49) |
+| `POST /api/v1/auth/signup` | `AuthController#signup` | [AuthController.java:65](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/AuthController.java#L65) |
+| `POST /api/v1/auth/login` | `AuthController#login` | [AuthController.java:71](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/AuthController.java#L71) |
 <!-- source-references:end -->
-
-## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
-### 로그인
-1. 사용자 "로그인" 탭
-2. `LoginScreen._handleLogin()` → `ref.read(authNotifierProvider.notifier).login(LoginRequest)`
-3. `AuthNotifier.login` → `_repo.login(request)` (`AuthRepository.login`)
-4. `AuthRepository.login` → `_authApi.login(request)` (`POST /api/v1/auth/login`)
-5. 응답 수신: `_tokenStorage.saveTokens(accessToken, refreshToken)` (Secure Storage)
-6. `_syncOnboardingStateAfterLogin(response.isNewUser)` — `isNewUser=true`면 onboarding storage clear, false면 markOnboardingDone
-7. `_fetchAndSetUser(requireOnboarding: response.isNewUser)` → `GET /api/v1/users/me`
-8. 응답에 따라 `AuthState.authenticated(user)` 또는 `AuthState.onboarding(user)` 전이
-9. 라우터 redirect가 자동으로 화면 전환
-
-### 회원가입
-1. 사용자 "가입하기" 탭
-2. `SignupScreen._handleSignup()` → `ref.read(authNotifierProvider.notifier).signup(SignupRequest)`
-3. `AuthNotifier.signup` → `_repo.signup(request)` (`AuthRepository.signup`)
-4. `AuthRepository.signup` → `_authApi.signup(request)` (`POST /api/v1/auth/signup`)
-5. 성공 시: 토큰 저장 (자동 로그인 됨) — 그러나 현재 구현은 토스트 후 `context.pop()`으로 로그인 화면 복귀 (사용자가 명시적으로 다시 로그인하도록 유도)
-
-## 4. 서버 계약
-
-### 개요
-
-이메일/비밀번호 기반의 신규 가입과 로그인을 처리한다. 가입 시 사용자 본인 정보·약관 동의·생년월일을 받아 `Users`/`Member`/`Agreement`/`SocialLogin(EMAIL)` 4개 테이블에 동시 INSERT하고, 즉시 JWT Access/Refresh 토큰을 발급한다. 로그인은 자격 증명 검증 후 토큰을 재발급한다. 두 엔드포인트 모두 동일한 `LoginVo`를 반환하므로 클라이언트는 같은 후속 처리를 한다.
-
-**2026-08-18 개정(P0-E2E-02 결정 A)** — 이 단위에 두 가지가 추가됐다. ① **가입 커밋 직후 서버가 첫 인증 메일을 스스로 보낸다**(`AfterCommitExecutor.runSafely`로 격리 — 발송 실패가 가입을 되돌리지 않는다). 종전에는 첫 발송이 없고 앱의 재전송 CTA만 있었다(폐기). ② 가입·로그인은 여전히 `emailVerified`를 **검사하지 않고 성공**하지만, 그렇게 발급된 세션은 인증 전까지 **제한 세션**이다 — 허용 목록 밖 요청은 `403 EMAIL_NOT_VERIFIED(100020)`. 즉 "미인증 계정이 아무 경계 없이 서비스를 쓴다"는 종전 상태는 2026-08-18 결정으로 대체됐다. 경계의 정본 계약은 F01-03 §4.1이다. 근거 소스: `community_api/.../account/service/AuthService.java`·`config/security/EmailVerificationPolicy.java`(api HEAD `d5de51c0`).
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | /api/v1/auth/signup | `AuthController#signup` | 불필요 | 신규 회원 생성 + 토큰 발급 (201 Created) |
-| POST | /api/v1/auth/login | `AuthController#login` | 불필요 | 자격 증명 검증 + 토큰 재발급 (200 OK) |
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **Enum** `UserStatus`: `NORMAL`, `LOGOUT`, `STOP`, `BAN`, `TRYEXIT`, `EXIT`
-- **Enum** `UserRole`: `USER(0)`, `HOST(1)`, `ADMIN(2)`
-- **Enum** `LoginType`: `EMAIL("email")`, `SOCIAL("social")`
-- **Enum** `ProviderType`: `EMAIL(0)`, `KAKAO(1)`, `NAVER(2)`, `GOOGLE(3)`, `APPLE(4)` — 가입 시 `EMAIL` 사용
-- **Entity 요약**:
-  - `Users`: userId, status, password (BCrypt), email, emailVerified, mobile, nickname, userRole, identityStatus, banReason, banUntil, deletedAt, createdAt, updatedAt, loginAt, logoutAt
-  - `Member`: userId, birthDate, gender, locale (1:1 with Users)
-  - `Agreement`: userId, agreeTerm/agreePrivacy/agreeMarketing (Integer 0/1)
-  - `SocialLogin`: userId, providerType (int), socialId — 이메일 가입 시 providerType=0(EMAIL), socialId=이메일
-  - `RefreshToken`: id, userId, refreshToken (UUID), expireDatetime
-- **VO** `LoginVo`: accessToken, refreshToken, userId, email, nickname, tokenType, expiresIn, role, isNewUser, emailVerified(2026-08-18 추가 — 앱이 로그인 응답만으로 제한 세션 여부를 판정한다)
-
-### 의존 단위 / 외부 시스템
-
-- 다른 Unit 의존: 없음 — 이 단위가 시발점
-- 후속 호출: F01-03 (이메일 인증), F01-06 (온보딩 진입)
-- 외부 시스템: 없음 — 모든 처리가 자체 DB
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 앱 첫 실행 시 토큰 미보유 → `splash_screen.dart` → 로그인 화면
-- 로그아웃 후 자동 이동
-- 회원가입 완료 후 토스트 + 로그인 화면 복귀
-- 라우터 가드: `AuthState.unauthenticated`이면 `/auth/login`로 강제 이동
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 | 역할 |
-|---|---|---|
-| `/auth/login` | `lib/presentation/auth/screens/login_screen.dart` | 이메일/비밀번호 로그인 (SCR-AU-001) |
-| `/auth/signup` | `lib/presentation/auth/screens/signup_screen.dart` | 신규 회원가입 (SCR-AU-002) |
-| `/` (splash) | `lib/presentation/auth/screens/splash_screen.dart` | 토큰 검사 + 분기 |
-
-### 화면별 구성 요소 & 액션
-
-### 로그인 (`login_screen.dart`)
-- **사용자가 보는 것**:
-  - 상단: 64×64 그린 정사각형 로고 + "Community" 28pt + 태그라인 "함께하는 즐거움을 발견하세요"
-  - 이메일 입력 (`AppTextInput`, keyboardType=email)
-  - 비밀번호 입력 (`AppTextInput`, obscureText 토글 가능)
-  - "로그인" 기본 버튼 (`AppButton`, `ButtonVariant.primary`)
-  - "비밀번호 찾기" 우측 정렬 텍스트 링크
-  - "또는" 디바이더 + 4종 소셜 버튼 (`SocialLoginButtons`) — F01-02 진입점
-  - "계정이 없으신가요? 회원가입" 링크
-  - DEV 환경에서는 "DEV 바이패스 로그인" 버튼 추가
-- **사용자가 할 수 있는 액션**:
-  - 이메일 입력 → 정규식 `^[^@]+@[^@]+\.[^@]+`로 즉시 검증, 실패 시 인라인 에러
-  - 비밀번호 입력 → 8자 미만이면 인라인 에러 "비밀번호는 최소 8자 이상이어야 합니다"
-  - "로그인" 탭 → `authNotifierProvider.notifier.login(LoginRequest)` ▶ `POST /api/v1/auth/login`
-  - 성공 시: 라우터 가드가 자동으로 `/home` 또는 온보딩 분기로 이동
-  - 실패 시: `ApiError` 매핑하여 `AppToast.show()`로 에러 메시지
-    - `unauthorized` → "이메일 또는 비밀번호가 올바르지 않습니다"
-    - `rateLimited` → "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요"
-- **상태 분기**:
-  - 로딩: `_isLoading` 상태로 버튼 spinner
-  - 폼 유효성: `_isFormValid`가 false면 버튼 disabled
-- **모달/시트/네비게이션**:
-  - "회원가입" 탭 → `context.push('/auth/signup')` (push, 뒤로 가능)
-  - "비밀번호 찾기" 탭 → `context.push('/auth/password-reset')` (F01-04)
-
-### 회원가입 (`signup_screen.dart`)
-- **사용자가 보는 것**:
-  - `CommunityAppBar(title: '회원가입')` 뒤로 버튼 포함
-  - 이메일 입력
-  - 비밀번호 입력 + 강도 인디케이터 (3-bar: 약함/보통/강함, 색상: error500/주황/success500)
-  - 비밀번호 확인 입력 + 일치 여부
-  - 닉네임 입력 (maxLength=16, 카운터 표시)
-  - 생년월일 picker (showDatePicker)
-  - 휴대폰 번호 입력 (선택)
-  - 성별 선택 (남성/여성/선택안함 — 3분할 토글 카드)
-  - 약관 동의 카드 (white card, r=12, p=16)
-    - "전체 동의" (bold)
-    - "이용약관 동의 (필수)" + chevron
-    - "개인정보 처리방침 동의 (필수)" + chevron
-    - "마케팅 수신 동의 (선택)"
-  - "가입하기" 기본 버튼
-  - "이미 계정이 있으신가요? 로그인" 링크
-- **사용자가 할 수 있는 액션**:
-  - 각 필드 실시간 검증:
-    - 이메일 정규식
-    - 비밀번호 8자 이상 + 영문/숫자 포함
-    - 비밀번호 확인 일치
-    - 닉네임 2~16자
-  - "가입하기" 탭 → `authNotifierProvider.notifier.signup(SignupRequest)` ▶ `POST /api/v1/auth/signup`
-  - 성공 시: `AppToast.show(context, message: '회원가입이 완료되었습니다. 로그인해주세요.', type: ToastType.success)` + `context.pop()`로 로그인 화면 복귀
-  - 실패 시: `showApiErrorToast(context, e)` (409 EMAIL/NICKNAME 중복 메시지 포함)
-- **상태 분기**:
-  - `_isFormValid`가 false면 "가입하기" 버튼 disabled (이메일 + 8자+ 비밀번호 + 일치 + 닉네임 2자+ + 생년월일 + 필수 약관 2개 모두)
-  - `_isLoading` 시 버튼 spinner
-- **모달/시트/네비게이션**:
-  - 생년월일: `showDatePicker` 모달 (locale='ko', 기본 2000-01-01)
-  - 약관 chevron 탭: 약관 상세 (별도 단위, 본 단위 외부)
-
-### 스플래시 (`splash_screen.dart`)
-- **사용자가 보는 것**: 64×64 그린 아이콘 + "Community" + spinner
-- **사용자가 할 수 있는 액션**: 없음 (수동적)
-- **자동 처리**: `AuthNotifier.checkAuthStatus()` 실행 → 토큰 검증 → 라우터 redirect
-
-### API 호출 순서 (Provider/Repository 관점)
-
-### 로그인
-1. 사용자 "로그인" 탭
-2. `LoginScreen._handleLogin()` → `ref.read(authNotifierProvider.notifier).login(LoginRequest)`
-3. `AuthNotifier.login` → `_repo.login(request)` (`AuthRepository.login`)
-4. `AuthRepository.login` → `_authApi.login(request)` (`POST /api/v1/auth/login`)
-5. 응답 수신: `_tokenStorage.saveTokens(accessToken, refreshToken)` (Secure Storage)
-6. `_syncOnboardingStateAfterLogin(response.isNewUser)` — `isNewUser=true`면 onboarding storage clear, false면 markOnboardingDone
-7. `_fetchAndSetUser(requireOnboarding: response.isNewUser)` → `GET /api/v1/users/me`
-8. 응답에 따라 `AuthState.authenticated(user)` 또는 `AuthState.onboarding(user)` 전이
-9. 라우터 redirect가 자동으로 화면 전환
-
-### 회원가입
-1. 사용자 "가입하기" 탭
-2. `SignupScreen._handleSignup()` → `ref.read(authNotifierProvider.notifier).signup(SignupRequest)`
-3. `AuthNotifier.signup` → `_repo.signup(request)` (`AuthRepository.signup`)
-4. `AuthRepository.signup` → `_authApi.signup(request)` (`POST /api/v1/auth/signup`)
-5. 성공 시: 토큰 저장 (자동 로그인 됨) — 그러나 현재 구현은 토스트 후 `context.pop()`으로 로그인 화면 복귀 (사용자가 명시적으로 다시 로그인하도록 유도)
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- 비밀번호 강도 인디케이터 3단계 색상 (error500/주황 #D8A85B/success500)
-- 비밀번호 강도 측정 규칙: 8자+ → 1, 영문+숫자 조합 → +1, 특수문자 → +1
-- 회원가입 후 동작: 토큰을 저장했음에도 `context.pop()`으로 로그인 화면 복귀 (UX 결정)
-- 검증 토스트 메시지: 한국어 직접 작성
-- DEV 환경 바이패스 로그인 버튼 노출 (production 미노출)
-- 소셜 로그인 버튼 4개 표시 순서: 카카오 → 네이버 → 구글 → 애플
-- "Community" 로고 텍스트, "함께하는 즐거움을 발견하세요" 카피
-- `AppToast` 사용 (SnackBar 직접 사용 금지)
-- Padding: 본 화면은 `EdgeInsets.all(24)` 사용 (.pen 디자인 따름) — 일반 `AppSpacing.screenPadding`(16)이 아님
-- 입력 필드 사이 간격 12~20px
-- 약관 동의 카드 라운드 12, 패딩 16
-- 체크박스 크기 22×22, 라운드 6
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 신규 회원이 이메일로 가입한다 (Happy Path) | 앱 첫 실행, 토큰 없음, 로그인 화면(SCR-AU-001) | User 레코드 생성 (status=NORMAL, emailVerified=false), Refresh/Access 토큰 저장, 로그인 화면 표시. **(2026-08-18) 서버가 첫 인증 메일을 발송한다 — 실패해도 가입은 유지** |
-| S2 | 가입 직후 로그인하여 이메일 인증 화면으로 진입한다 | 로그인 화면, 토큰은 있으나 이메일 미인증 | `loginAt` 설정, `status=NORMAL`, 로그인 자체는 성공. **(2026-08-18) 이 세션은 제한 세션이므로** 앱 라우터가 이메일 인증 화면으로 보내고, 허용 목록 밖 요청은 서버가 `403 EMAIL_NOT_VERIFIED(100020)`로 거부한다 |
-| S3 | 잘못된 비밀번호로 로그인 실패 | 로그인 화면, 정상 이메일 + 잘못된 비밀번호 입력 | 로그인 화면 유지, 토큰 미발급 |
-| S4 | 이메일 중복 가입 시도 | 회원가입 화면 | 회원가입 화면 유지 |
-| S5 | 미성년자(만 19세 미만) 가입 차단 | 회원가입 화면, 모든 필드 입력 완료 | User 레코드 생성 안 됨, 화면 유지 |
-| S6 | 잠금/탈퇴 상태 사용자의 로그인 시도 | 로그인 화면 | 로그인 거부, 화면 유지 |
-| S7 | 닉네임 중복으로 가입 실패 | 이미 사용 중인 닉네임을 선택한 신규 회원 | 가입 실패, 사용자가 닉네임 변경하여 재시도 |
-| S8 | 비밀번호 검증 정책 위반 (8자 미만 또는 조합 부족) | 앱 콜드 스타트, 토큰/저장소 비어있음, splash → 로그인 화면 도달 직후 | 가입 차단 |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
-## 8. Gap / Risk
-
-> 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
-
-## 9. 수용 기준
-
-- **AC-01. 신규 회원이 이메일로 가입한다 (Happy Path)**: Given 앱 첫 실행, 토큰 없음, 로그인 화면(SCR-AU-001) When 사용자가 해당 흐름을 실행하면 Then User 레코드 생성 (status=NORMAL, emailVerified=false), Refresh/Access 토큰 저장, 로그인 화면 표시, **인증 메일 1통이 발송된다(2026-08-18)**
-- **AC-02. 가입 직후 로그인하여 이메일 인증 화면으로 진입한다**: Given 로그인 화면, 토큰은 있으나 이메일 미인증 When 사용자가 해당 흐름을 실행하면 Then `loginAt` 설정, `status=NORMAL`, 로그인 성공. **(2026-08-18) 발급된 세션은 제한 세션이며** 앱은 이메일 인증 화면으로 이동하고 허용 목록 밖 요청은 `403 EMAIL_NOT_VERIFIED(100020)`로 거부된다
-- **AC-03. 잘못된 비밀번호로 로그인 실패**: Given 로그인 화면, 정상 이메일 + 잘못된 비밀번호 입력 When 사용자가 해당 흐름을 실행하면 Then 로그인 화면 유지, 토큰 미발급
-- **AC-04. 이메일 중복 가입 시도**: Given 회원가입 화면 When 사용자가 해당 흐름을 실행하면 Then 회원가입 화면 유지
-- **AC-05. 미성년자(만 19세 미만) 가입 차단**: Given 회원가입 화면, 모든 필드 입력 완료 When 사용자가 해당 흐름을 실행하면 Then User 레코드 생성 안 됨, 화면 유지
-- **AC-06. 잠금/탈퇴 상태 사용자의 로그인 시도**: Given 로그인 화면 When 사용자가 해당 흐름을 실행하면 Then 로그인 거부, 화면 유지
-- **AC-07. 닉네임 중복으로 가입 실패**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가입 실패, 사용자가 닉네임 변경하여 재시도
-- **AC-08. 비밀번호 검증 정책 위반 (8자 미만 또는 조합 부족)**: Given 앱 콜드 스타트, 토큰/저장소 비어있음, splash → 로그인 화면 도달 직후 When 사용자가 해당 흐름을 실행하면 Then 가입 차단
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

@@ -32,16 +32,16 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/{eventId}/settlement/transfers` | `MeetingSettlementController#getTransfers` | [MeetingSettlementController.java:238](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L238) |
-| `PATCH /api/v1/events/{eventId}/settlement/shares/{shareId}/confirm` | `MeetingSettlementController#confirmBankTransfer` | [MeetingSettlementController.java:227](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L227) |
-| `PATCH /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm` | `MeetingSettlementController#confirmTransferBankTransfer` | [MeetingSettlementController.java:277](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L277) |
-| `PATCH /api/v1/events/{eventId}/settlement/transfers/bulk-confirm` | `MeetingSettlementController#bulkConfirmTransfers` | [MeetingSettlementController.java:295](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L295) |
-| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/reissue` | `MeetingSettlementController#reissueTransfer` | [MeetingSettlementController.java:286](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L286) |
-| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/writeoff` | `MeetingSettlementController#writeoffTransfer` | [MeetingSettlementController.java:377](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L377) |
+| `GET /api/v1/events/{eventId}/settlement/transfers` | `MeetingSettlementController#getTransfers` | [MeetingSettlementController.java:353](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L353) |
+| `PATCH /api/v1/events/{eventId}/settlement/shares/{shareId}/confirm` | `MeetingSettlementController#confirmBankTransfer` | [MeetingSettlementController.java:275](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L275) |
+| `PATCH /api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm` | `MeetingSettlementController#confirmTransferBankTransfer` | [MeetingSettlementController.java:405](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L405) |
+| `PATCH /api/v1/events/{eventId}/settlement/transfers/bulk-confirm` | `MeetingSettlementController#bulkConfirmTransfers` | [MeetingSettlementController.java:425](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L425) |
+| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/reissue` | `MeetingSettlementController#reissueTransfer` | [MeetingSettlementController.java:414](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L414) |
+| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/writeoff` | `MeetingSettlementController#writeoffTransfer` | [MeetingSettlementController.java:539](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L539) |
 <!-- source-references:end -->
 
 ### 2026-07-29 직접 재실측 trace

@@ -31,16 +31,15 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:163](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/club/controller/ClubController.java#L163) |
-| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:171](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/club/controller/ClubController.java#L171) |
-| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:188](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/club/controller/ClubController.java#L188) |
-| `DELETE /api/v1/clubs/{id}/members/{userId}` | `ClubController#kickMemberLegacy` | [ClubController.java:201](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/club/controller/ClubController.java#L201) |
+| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:194](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/club/controller/ClubController.java#L194) |
+| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:213](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/club/controller/ClubController.java#L213) |
+| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:234](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/club/controller/ClubController.java#L234) |
 
-- POST /kick이 현재 요청이며, 옛 DELETE 주소는 kickMemberLegacy로 남아 있다. 두 경로 모두 사유를 전달해야 한다.
+- 옛 DELETE 강퇴는 제거됐다. 현재 POST 명령과 요청 고유키를 사용한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
@@ -88,7 +87,7 @@
 | GET | /api/v1/clubs/{id}/members | ClubController#getMembers | required (멤버) | 역할 필터 + 페이징 |
 | POST | /api/v1/clubs/{id}/members/{userId}/role | ClubController#changeRole | required (OWNER) | 역할 변경 |
 | **POST** | **/api/v1/clubs/{id}/members/{userId}/kick** | **ClubController#kickMember** | required (OWNER/ADMIN) | **추방 (정규 endpoint — 사유 필수)** |
-| DELETE | /api/v1/clubs/{id}/members/{userId} | ClubController#kickMemberLegacy | required (OWNER/ADMIN) | 추방 (호환용 — body 없으면 `CLUB_KICK_REASON_REQUIRED(400)`) |
+| DELETE | /api/v1/clubs/{id}/members/{userId} | ClubController#kickMember | required (OWNER/ADMIN) | 추방 (호환용 — body 없으면 `CLUB_KICK_REASON_REQUIRED(400)`) |
 
 > 앱은 POST kick만 사용한다. DELETE 경로는 하위호환 전용으로 유지되며, body가 없으면 `CLUB_KICK_REASON_REQUIRED(1400033)` 에러를 반환한다.
 

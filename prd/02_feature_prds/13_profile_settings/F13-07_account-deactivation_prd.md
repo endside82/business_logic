@@ -30,15 +30,24 @@
 | Scenario | [scenarios.md](../../../units/13_profile_settings/F13-07_account-deactivation/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/13_profile_settings/F13-07_account-deactivation/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
+
+## 2026-10-29 현재 계약 대조
+
+### 탈퇴 뒤 도착한 돈은 운영 보류로 처리합니다
+
+끝난 결제 이력만으로 탈퇴를 막지 않는다. 진행 중 돈 의무를 정리한 뒤 탈퇴하며, 탈퇴 뒤 외부·자동 처리가 보내는 돈은 탈퇴 회원 지갑 대신 보류 행에 기록한다. 운영자는 새 계좌 재지급 또는 외부 지급 증빙으로 종결한다. 늦게 도착한 지급 증빙은 거래별로 검토하며 미검토 증빙이 있으면 재지급·외부 종결을 막는다. 원출금 지급 확정·지급되지 않음 판정을 먼저 할 수 있다. 중복 지급 손실 처리의 제품 결정(H-543)은 별도로 남아 있다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/users/me/deactivation-check` | `UserController#checkDeactivation` | [UserController.java:74](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/UserController.java#L74) |
-| `DELETE /api/v1/users/me` | `UserController#deleteMyAccount` | [UserController.java:80](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/account/controller/UserController.java#L80) |
+| `GET /api/v1/users/me/deactivation-check` | `UserController#checkDeactivation` | [UserController.java:77](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/UserController.java#L77) |
+| `DELETE /api/v1/users/me` | `UserController#deleteMyAccount` | [UserController.java:83](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/account/controller/UserController.java#L83) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

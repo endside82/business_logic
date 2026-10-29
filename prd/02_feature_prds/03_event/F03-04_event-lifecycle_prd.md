@@ -32,20 +32,21 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `PATCH /api/v1/events/{eventId}` | `EventController#updateEvent` | [EventController.java:197](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L197) |
-| `DELETE /api/v1/events/{eventId}` | `EventController#deleteEvent` | [EventController.java:206](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L206) |
-| `POST /api/v1/events/{eventId}/publish` | `EventController#publishEvent` | [EventController.java:216](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L216) |
-| `POST /api/v1/events/{eventId}/close` | `EventController#closeEvent` | [EventController.java:224](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L224) |
-| `POST /api/v1/events/{eventId}/cancel` | `EventController#cancelEvent` | [EventController.java:232](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L232) |
-| `PATCH /api/v1/events/{eventId}/reschedule` | `EventController#rescheduleEvent` | [EventController.java:250](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L250) |
-| `POST /api/v1/events/{eventId}/announce` | `EventController#announceToAttendees` | [EventController.java:400](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L400) |
-| `PATCH /api/v1/events/{eventId}/recurring` | `EventController#updateFutureEvents` | [EventController.java:350](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L350) |
-| `DELETE /api/v1/events/{eventId}/recurring` | `EventController#cancelAllFutureEvents` | [EventController.java:362](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L362) |
+| `PATCH /api/v1/events/{eventId}` | `EventController#updateEvent` | [EventController.java:229](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L229) |
+| `DELETE /api/v1/events/{eventId}` | `EventController#deleteEvent` | [EventController.java:238](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L238) |
+| `POST /api/v1/events/{eventId}/publish` | `EventController#publishEvent` | [EventController.java:248](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L248) |
+| `POST /api/v1/events/{eventId}/close` | `EventController#closeEvent` | [EventController.java:256](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L256) |
+| `POST /api/v1/events/{eventId}/cancel` | `EventController#cancelEvent` | [EventController.java:271](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L271) |
+| `POST /api/v1/events/{eventId}/reschedule-proposals` | `RescheduleProposalController#createProposal` | [RescheduleProposalController.java:54](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java#L54) |
+| `POST /api/v1/events/{eventId}/announce` | `EventController#announceToAttendees` | [EventController.java:453](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L453) |
+| `PATCH /api/v1/events/{eventId}/recurring` | `EventController#updateFutureEvents` | [EventController.java:401](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L401) |
+| `DELETE /api/v1/events/{eventId}/recurring` | `EventController#cancelAllFutureEvents` | [EventController.java:415](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L415) |
 
+- 옛 reschedule PATCH는 제거됐으며 일정 변경 제안 생성으로 연결한다.
 - 같은 절에 함께 적힌 수정·취소 위치를 각각 연결했다.
 <!-- source-references:end -->
 
@@ -97,7 +98,7 @@
 | POST | /api/v1/events/{eventId}/publish | EventController#publishEvent | required | DRAFT → OPEN |
 | POST | /api/v1/events/{eventId}/close | EventController#closeEvent | required | OPEN → CLOSED |
 | POST | /api/v1/events/{eventId}/cancel | EventController#cancelEvent | required | OPEN/DRAFT → CANCELED + 환불 + 알림 |
-| PATCH | /api/v1/events/{eventId}/reschedule | EventController#rescheduleEvent | required | 일정 변경 (OPEN만) — 내부에서 RS-002 제안 흐름으로 위임. **상세는 F03-19** |
+| PATCH | /api/v1/events/{eventId}/reschedule | RescheduleProposalController#createProposal | required | 일정 변경 (OPEN만) — 내부에서 RS-002 제안 흐름으로 위임. **상세는 F03-19** |
 | POST | /api/v1/events/{eventId}/reschedule-proposals | RescheduleProposalController | required | 직접 제안 생성 (newPrice/hostMessage 포함). **상세는 F03-19** |
 | GET | /api/v1/events/{eventId}/reschedule-proposals/{batchId} | RescheduleProposalController | required | 호스트 batch 현황 |
 | POST | /api/v1/events/{eventId}/reschedule-proposals/{batchId}/apply | RescheduleProposalController | required | batch 확정 |

@@ -32,13 +32,13 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/{eventId}/applications` | `EventController#getApplications` | [EventController.java:279](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L279) |
-| `POST /api/v1/events/{eventId}/applications/{applicationId}/approve` | `EventController#approveApplication` | [EventController.java:294](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L294) |
-| `POST /api/v1/events/{eventId}/applications/{applicationId}/reject` | `EventController#rejectApplication` | [EventController.java:305](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventController.java#L305) |
+| `GET /api/v1/events/{eventId}/applications` | `EventController#getApplications` | [EventController.java:319](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L319) |
+| `POST /api/v1/events/{eventId}/applications/{applicationId}/approve` | `EventController#approveApplication` | [EventController.java:334](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L334) |
+| `POST /api/v1/events/{eventId}/applications/{applicationId}/reject` | `EventController#rejectApplication` | [EventController.java:345](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventController.java#L345) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

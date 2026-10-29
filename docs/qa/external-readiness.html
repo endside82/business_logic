@@ -17,18 +17,24 @@
         <h1>외부 서비스 가입·계약과 출시 준비</h1>
         <p class="lede">운영자가 가입·계약부터 키 발급, 설정 전달, 실제 이용 확인까지 진행하는 체크리스트다.
           첫 출시 필수 서비스와 기능을 추가 공개할 때 필요한 서비스를 구분한다.</p>
-        <p class="release-note">현재 상태 대조: 2026-10-26. 운영 구성 기록과 AWS 실조회·HTTPS 응답·실행 컨테이너를 대조했다. AWS 실행 상태 조회는 19:57~20:02 KST에 수행했다. 운영 서버·고정 주소·S3는 구축됐으며, 최신 코드 배포·실기기·스토어·경보·백업 복구는 남아 있다. 10월 12일 시험 결과는 당시 환경의 기록으로 유지한다. 아래 가입·심사 안내는 기존 작성 기준이며 제출 시 공식 안내를 다시 확인한다.</p>
+        <p class="release-note">현재 상태 대조: 2026-10-29. 제품 main·배포 목록·AWS 실행 이미지를 대조했다. 16:21~16:28 KST 읽기 전용 조회에서 오늘 배포 묶음과 서비스 7개 정상 상태를 확인했다. 번호 인증의 실제 메일·서명 앱·물리 기기·스토어·파일·경보·백업 복구는 별도 확인이 남는다. 이전 시험 결과는 당시 환경의 기록이며 현재 방식의 검증으로 확대하지 않는다. 가입·심사 절차는 제출 시 공식 안내를 다시 확인한다.</p>
         <nav class="release-nav" aria-label="외부 준비 바로가기">
-          <a href="#progress-2026-10-26">10월 26일 운영 준비 현황</a><a href="#progress-2026-10-12">10월 12일 시험 기록</a><a href="#next-checks">다음 확인 순서</a>
+          <a href="#progress-2026-10-29">10월 29일 운영 준비 현황</a><a href="#progress-2026-10-12">10월 12일 시험 기록</a><a href="#next-checks">다음 확인 순서</a>
           <a href="#order">진행 순서와 완료 상태</a><a href="#required">첫 출시 필수 서비스</a>
           <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a><a href="#later">후속 기능의 외부 계약</a>
           <a href="#store-submission">스토어 제출 자료와 공개 확인</a><a href="#evidence">운영자가 남길 완료 기록</a>
         </nav>
       </header>
 
-      <section id="progress-2026-10-26">
-        <h2>10월 26일 운영 준비 현황</h2>
-        <p><strong>AWS 운영 서버와 S3는 구축됐다.</strong> CloudFormation 스택 7개가 완료 상태이고 서울 리전의 EC2에서 Nginx·공개 API·관리자 API·실시간 서버·관리자 웹·MySQL·Redis 7개 서비스가 정상 상태다. DNS·HTTPS와 앱의 운영 주소도 반영됐다. 다만 실행 중인 API·관리자 API·관리자 웹은 차수 8까지 반영된 최신 main보다 이전 버전이다.</p>
+
+
+
+
+      <section id="progress-2026-10-29"><h2>10월 29일 운영 준비 현황</h2><p>운영 묶음 <code>bundle-20261029T161033</code>에서 API·관리자 API·실시간 서버·관리자 웹의 실행 이미지가 오늘 빌드 목록과 일치했다. Nginx·MySQL·Redis를 포함해 7개 서비스가 healthy다. 번호 인증·차수 9~11 코드의 배포 진척은 확인했으며 사용자 여정 통과로 판정하지 않는다.</p><div class="table-wrap"><table><thead><tr><th>대상</th><th>확인한 진척</th><th>남은 확인</th></tr></thead><tbody><tr><td>서버 배포</td><td>공개 API 9f9928876 · 관리자 API 714d49b6 · 관리자 웹 4d60e28 · 실시간 41c7563</td><td>현재 후보의 앱 통합 11파일·관리자 두 창·배포 리허설 둘(H-531), 최신 V1의 격리 설치 기록</td></tr><tr><td>iOS</td><td>Bundle ID com.endside.saisoop.app · Team X8ACG93N8U · App Store ID 6827137270. 로컬 운영 Google/Firebase 입력 존재</td><td>설정값의 실제 권한·APNs·서명·TestFlight·iPhone 설치와 로그인 구성 결정</td></tr><tr><td>Android</td><td>새 패키지 com.endside.saisoop.app 전환 작업 확인</td><td>새 Firebase 앱·OAuth·지도 제한·연결 파일의 배포 및 실기기 Google 로그인, Play 서명·스토어 설치</td></tr><tr><td>메일</td><td>가입·복구·Google 연결을 6자리 번호로 전환한 서버 배포</td><td>현재 번호 메일 실수신·지연·실패·만료·재시도. 옛 링크 실수신 기록으로 대체 불가</td></tr><tr><td>운영 복구</td><td>AWS 스택 7개 완료·서비스 7개 정상</td><td>CloudWatch 경보·로그 그룹 0개, 계정 소유 서울 리전 EBS 스냅샷 0개, 운영 S3 backups/ 객체 0개. 백업 생성·보관·격리 복구·경보 수신</td></tr></tbody></table></div><p>조회 결과는 <code>verification/document-sync-2026-10-29.json</code>에 고정한다. 운영 배포는 다른 세션의 작업이며 이번 문서 갱신에서 배포·DB 변경·메일 발송은 수행하지 않았다.</p></section>
+
+      <details><summary>10월 26일 구축 당시 기록 펼치기</summary><section id="progress-2026-10-26">
+        <h2>10월 26일 운영 준비 기록 — 현재 상태는 위의 10월 29일 확인을 따릅니다</h2>
+        <p><strong>AWS 운영 서버와 S3는 구축됐다.</strong> CloudFormation 스택 7개가 완료 상태이고 서울 리전의 EC2에서 Nginx·공개 API·관리자 API·실시간 서버·관리자 웹·MySQL·Redis 7개 서비스가 정상 상태다. DNS·HTTPS와 앱의 운영 주소도 반영됐다. 당시 API·관리자 API·관리자 웹은 최신 main보다 이전 버전이었다. 이 차이는 10월 29일 배포로 갱신됐다.</p>
         <div class="table-wrap"><table>
           <thead><tr><th>항목</th><th>확인한 진척</th><th>남은 일</th></tr></thead>
           <tbody>
@@ -40,7 +46,7 @@
           </tbody>
         </table></div>
         <p>구축 여부와 실제 이용 통과를 나눠 기록한다. <a href="#infrastructure">서버·도메인·경보·복구 준비</a>에서 배포 버전을, <a href="#next-checks">다음 확인 순서</a>에서 남은 실행 순서를 확인한다. <a href="launch-status.html#code-completeness">첫 공개 보류</a>는 유지한다.</p>
-      </section>
+      </section></details>
 
       <section id="admin-session-security">
         <h2>관리자 로그인·재인증의 배포 환경 확인</h2>
@@ -121,17 +127,17 @@
             <tr><td><a href="#kakao-local">Kakao Local</a></td><td>운영 서버 IP 허용과 컨테이너 주소 검색 200 기록</td><td>native 플랫폼 등록·실제 앱 주소 변환·시간/한도 초과·길찾기 복귀</td></tr>
             <tr><td><a href="#email">메일</a></td><td>Oracle SMTP를 운영 서버에 적용. 기존 Gmail 시험 메일·자체 도메인 인증/복구 수신 기록</td><td>현재 운영 주소의 외부 수신함·iOS·실제 만료/실패·OCI 반송·신고 이벤트. SES 전환은 후속</td></tr>
             <tr><td><a href="#file-storage">파일 저장소</a></td><td>S3 버킷·역할·공개 차단·암호화 구축 및 실조회</td><td>검사 엔진 연결과 실제 파일 생명주기·권한·덮어쓰기 거부·삭제 재시도</td></tr>
-            <tr><td><a href="#infrastructure">서버·경보·복구</a></td><td>AWS 배포·고정 HTTPS·관리자 허용망·서비스 7개 정상</td><td>최신 후보 배포·기기 채팅 왕복·허용망 밖 거부·경보·백업 복구·롤백</td></tr>
+            <tr><td><a href="#infrastructure">서버·경보·복구</a></td><td>AWS 배포·고정 HTTPS·관리자 허용망·서비스 7개 정상</td><td>최신 후보 배포 확인 뒤 기기 채팅 왕복·허용망 밖 거부·경보·백업 복구·롤백</td></tr>
           </tbody>
         </table></div>
       </section>
 
       <section id="next-checks">
         <h2>다음 확인 순서</h2>
-        <p><strong>현재 진행 조건 — 2026-10-26:</strong> 서버·도메인·S3 개설 대기는 해소됐다. 기존 운영 자원을 사용해 최신 배포본과 실제 이용을 확인할 차례다. iOS·Play 준비, 브랜딩·책임 안내 검토는 병행한다.</p>
+        <p><strong>현재 진행 조건 — 2026-10-29:</strong> AWS·S3와 최신 서버 배포가 반영됐다. 현재 번호 인증·새 앱 식별자에 맞춘 서명 앱과 실제 이용 검사, 경보·복구 확인을 진행할 차례다. 다음 개발 차수는 H-542의 불변식·출시 여정 재정비부터 정한다.</p>
         <ol>
-          <li><strong>최신 출시 후보 고정:</strong> 운영 중인 이전 이미지와 현재 main의 차이를 반영해 서버·관리자 웹을 빌드하고 소스·이미지·설정을 함께 기록한다(H-241). 최신 V1의 빈 DB 설치·seed 재적용·두 API 기동은 격리 리허설로 재확인한다(H-242). 현재 운영 DB를 임의로 비우는 절차가 아니다.</li>
-          <li><strong>기존 자원에서 실제 연동:</strong> S3 파일 업로드·검사·비공개 열람·덮어쓰기 거부·삭제와 메일 수신·운영 링크를 확인한다(H-240). 관리자 허용망 밖 거부·역할·2단계 인증 등록도 확인한다(H-247). 두 계정 채팅·첨부파일과 푸시는 기기 결과까지 기록한다.</li>
+          <li><strong>최신 출시 후보 고정:</strong> 오늘 서버·관리자 웹 배포의 소스·이미지 목록을 기준으로 서명 앱까지 같은 후보로 고정한다(H-241). 최신 V1의 빈 DB 설치·seed 재적용·두 API 기동은 격리 리허설로 재확인한다(H-242). 현재 운영 DB를 임의로 비우는 절차가 아니다.</li>
+          <li><strong>기존 자원에서 실제 연동:</strong> S3 파일 업로드·검사·비공개 열람·덮어쓰기 거부·삭제와 현재 번호 메일 수신을 확인한다(H-240). 관리자 허용망 밖 거부·역할·2단계 인증 등록도 확인한다(H-247). 두 계정 채팅·첨부파일과 푸시는 기기 결과까지 기록한다.</li>
           <li><strong>서명 앱·스토어:</strong> Play 앱 서명 지문·최신 AAB·내부 테스트와 iOS 권한·서명·Google/Firebase·지도·APNs 입력을 마친다(H-239). Kakao native 플랫폼 등록과 홈페이지 연결 파일·스토어 주소를 같은 서명 앱에 맞춘다.</li>
           <li><strong>최종 이용 검사:</strong> Android·iPhone의 첫 출시 여정과 모임 공유·설치 후 복귀를 확인한다(H-243). H-531의 실서버 앱 통합 11파일, 관리자 두 창, 배포 리허설 둘을 실행하고 운영자 숨김/해제·반환 완료 알림 뒤 지갑 갱신까지 같은 후보로 기록한다.</li>
           <li><strong>운영 복구·공개 판단:</strong> CloudWatch 경보 수신, 암호화 백업 생성·S3 보관·격리 복구·이전 버전 복귀를 실행한다(H-246). 최종 로고·문안·스토어 자료·중단 기준을 맞추고 공개 또는 보류를 기록한다.</li>
@@ -140,7 +146,7 @@
 
       <section id="ios-distribution">
         <h2>iOS 빌드·TestFlight 내부 테스트 절차</h2>
-        <p><strong>마지막 가입 확인은 2026-10-12:</strong> 당시 Apple Developer Program 가입 미완료로 iOS 진행을 보류했다. 10월 26일 로컬 확인에서는 ios/fastlane/.env가 없고 prod.json의 GOOGLE_IOS_CLIENT_ID·FIREBASE_IOS_APP_ID·FIREBASE_IOS_BUNDLE_ID가 비어 있다. 이후 가입·서명·TestFlight 설치를 완료한 기록은 확인하지 못했다. 콘솔의 현재 권한을 확인하고 남은 입력·APNs·iPhone 검증을 진행한다.</p>
+        <p><strong>로컬 입력 확인 — 2026-10-29:</strong> Xcode의 Bundle ID는 <code>com.endside.saisoop.app</code>, Team은 <code>X8ACG93N8U</code>이며 App Store 식별자 <code>6827137270</code>이 반영됐다. prod.json의 Google iOS 클라이언트·Firebase iOS 앱·번들 입력도 채워졌다. 이전의 가입·입력 없음 표시는 더 이상 현재 상태가 아니다. 다만 이번에는 콘솔 권한·서명 유효성·APNs·TestFlight 설치를 확인하지 않았으므로 실제 배포·수신은 남겨 둔다.</p>
         <ol>
           <li><strong>가입·앱 등록:</strong> <a href="https://developer.apple.com/programs/enroll/">Apple Developer Program 가입 안내</a>에 따라
             기존 회원 자격·권한을 확인한다. 조직 가입이면 D-U-N-S 등 조직 확인 조건을 준비한다.
@@ -153,7 +159,7 @@
           <li><strong>빌드·설치:</strong> 아래 설정 검사와 IPA 빌드 뒤 업로드를 실행한다. Apple 처리 완료 후 TestFlight 내부 그룹에 빌드를 연결해 iPhone에 설치한다.
             수출 규정 질문은 앱의 실제 동작에 맞게 답한다.</li>
         </ol>
-        <p><strong>현재 식별자:</strong> Bundle ID <code>com.endside.community.communityApp</code>, Team <code>GSGHZ76QY5</code>,
+        <p><strong>현재 식별자:</strong> Bundle ID <code>com.endside.saisoop.app</code>, Team <code>X8ACG93N8U</code>,
           Scheme <code>Runner</code>. 다른 팀으로 배포한다면 Xcode 프로젝트·fastlane Appfile·ExportOptions의 팀을 함께 맞춘다.</p>
         <details>
           <summary>iOS 설정 위치와 실행 명령</summary>
@@ -190,6 +196,10 @@ bundle exec fastlane ios deploy</code></pre>
 
       <section id="android-distribution">
         <h2>Android 빌드·Google Play 테스트 절차</h2>
+        <p><strong>패키지 변경 — 2026-10-26:</strong> Android 소스와 공유 링크 설정의 패키지명을
+          <code>com.endside.saisoop.app</code>으로 변경했다. 아래 Firebase·Google 로그인·지도 확인 기록은 이전 패키지 기준이다.
+          새 패키지의 Firebase 앱·Android OAuth 클라이언트·Maps 키 제한 등록, 로컬 Firebase 설정 갱신,
+          앱 링크 파일 배포와 실제 앱 검증이 남았다.</p>
         <p><strong>진행 기록 — 2026-10-10:</strong> 운영자가 Google Play Console에서 앱 등록을 완료했다고 확인했다.
           앱만 생성했으며 첫 AAB는 아직 업로드하지 않았다. 이 Mac에서 업로드 키와 로컬 서명 설정을 생성하고
           임시 JAR 서명·검증을 완료했다. 실제 AAB 서명·Play App Signing 연결·내부 테스트 설치는 아직 수행하지 않았다.</p>
@@ -206,7 +216,7 @@ bundle exec fastlane ios deploy</code></pre>
           장소 추가 시트의 지도 타일·팬 이동·핀 재선택을 확인했다. 실기기 설치와 Play 업로드는 아직 확인하지 않았다.</p>
         <ol>
           <li><a href="https://play.google.com/console/">Google Play Console</a>의 개발자 계정·본인 또는 조직 확인·앱 등록 상태를 확인한다.</li>
-          <li>패키지명 <code>com.endside.community.community_app</code>을 기준으로 Play App Signing과 업로드 키를 준비한다.
+          <li>패키지명 <code>com.endside.saisoop.app</code>을 기준으로 Play App Signing과 업로드 키를 준비한다.
             Google 로그인에는 스토어가 실제 앱에 사용하는 <strong>앱 서명 인증서 지문</strong>을 등록한다. 업로드 키 지문과 혼동하지 않는다.</li>
           <li>Google Play Android Developer API를 활성화하고 fastlane 서비스 계정에 해당 앱의 필요한 권한을 부여한다.
             기존 앱이면 새 앱이나 새 서명 키를 만들지 않고 등록된 구성을 확인한다.</li>
@@ -403,9 +413,11 @@ bundle exec fastlane android deploy track:internal</code></pre>
           별도 유료 경로 탐색 API 계약을 이미 사용 중인 것으로 적지 않는다.</p>
       </section>
 
+      <section id="auth-code-current"><h2>현재 메일은 링크 대신 6자리 번호를 보냅니다</h2><p>10월 29일 서버·앱은 가입 전 번호 확인, 비밀번호 찾기 번호 확인, Google 기존 이메일 계정 연결 번호 확인으로 바뀌었다. 번호는 10분·5회 오입력 제한, 재발송 60초·목적과 이메일별 24시간 10회다. 가입 표 60분·재설정 표 15분·Google 연결 표 30분을 별도로 검사한다. 운영 번호 인증 우회는 반드시 꺼져 있어야 한다.</p><p>현재 메일 제목은 <code>[사이숲] 회원가입 인증번호</code>, <code>[사이숲] 비밀번호 재설정 인증번호</code>, <code>[사이숲] 계정 연결 인증번호</code>다. Google 전용 계정의 비밀번호 찾기는 로그인 안내 메일을 보낸다. 10월 12일 링크 시험은 이 번호 방식의 실수신 증명이 아니다.</p></section>
+
       <section id="email">
         <h2>메일 발송 계약·도메인 인증·실수신</h2>
-        <p><strong>운영 적용 — 2026-10-26:</strong> AWS API도 기존 Oracle의 mail.saisoop.co.kr:587 SMTP 중계와 STARTTLS를 사용한다. 메일 서버는 Oracle에 유지하며 SES 전환은 후속이다. 운영 자격정보 배치와 실제 고객 인증 메일 수신은 별개이므로, 현재 운영 도메인에서 수신·링크·반송·신고를 확인한다.</p>
+        <p><strong>운영 적용 — 2026-10-26:</strong> AWS API도 기존 Oracle의 mail.saisoop.co.kr:587 SMTP 중계와 STARTTLS를 사용한다. 메일 서버는 Oracle에 유지하며 SES 전환은 후속이다. 운영 자격정보 배치와 실제 고객 인증 메일 수신은 별개이므로, 현재 운영 도메인에서 번호 메일 수신·만료·반송·신고를 확인한다.</p>
         <p><strong>진행 기록 — 2026-10-12:</strong> 운영자가 안내한 기존 Oracle Cloud 메일 구성 문서를 확인했다.
           <code>mail.saisoop.co.kr:587</code>의 STARTTLS 연결·서버 인증서 검증과
           <code>contact@saisoop.co.kr</code>의 SMTP 인증(235)·NOOP(250)이 성공했다.
@@ -440,10 +452,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           새 비밀번호로 Android 앱 홈 화면 진입도 확인했으며 <code>28-new-password-authenticated.png</code>와
           <code>verification-summary.json</code>에 최종 결과를 남겼다. 읽기 전용 시험 에뮬레이터는 종료했고
           당시 API·Tunnel은 유지했다. 현재 실행 여부나 운영 환경의 근거로 삼지 않는다.</p>
-        <p><strong>남은 검증:</strong> 인증·복구 메일 수신은 자체 도메인의 dev 수신함에서 확인했다.
-          Gmail·네이버·다음의 인증 메일 실수신, iOS·실기기·브라우저 대체 화면, 운영 도메인·Play App Signing 인증서 연결,
-          실제 만료·지연·발송 실패·반송·스팸 신고는 남아 있다. 현재 SES/SNS 수신부는 OCI 이벤트에 그대로 적용되지 않는다.
-          임시 Tunnel 주소가 바뀌면 메일 링크 주소와 APK의 호스트 설정도 함께 갱신한다.</p>
+        <p><strong>현재 남은 검증:</strong> Gmail·네이버·다음과 자체 도메인 수신함에서 새 가입·복구·Google 연결 번호 메일을 확인한다. 10분 만료·5회 오입력·재발송·발송 실패, 실제 Android·iOS 이용을 검사한다. OCI 반송·스팸 신고 이벤트는 SES/SNS 수신부에 자동 호환되지 않으므로 별도 연결·검증이 필요하다. 옛 앱 링크의 정리는 공유 작업 W1에 남으며 현재 번호 메일은 링크 복귀를 요구하지 않는다.</p>
         <ol>
           <li>운영에 적용한 Oracle SMTP의 발신 주소·지원 수신함·권한과 실패 처리 경로를 확인한다.
             현재 반송·스팸 신고 수신 구현은 <strong>Amazon SES/SNS</strong>용이다. 다른 공급자를 선택하면 그 이벤트 연동의 호환 여부를 확인한다.</li>
@@ -455,10 +464,9 @@ bundle exec fastlane android deploy track:internal</code></pre>
         </ol>
         <p><strong>설정 위치:</strong> 서버의 <code>MAIL_HOST</code>, <code>MAIL_PORT</code>, <code>MAIL_USERNAME</code>, <code>MAIL_PASSWORD</code>,
           <code>MAIL_FROM</code>, <code>MAIL_FROM_NAME</code>와 SES 사용 시 <code>MAIL_SES_CONFIGURATION_SET</code>다.
-          인증 링크용 <code>AUTH_MAIL_CURRENT_KEY_ID</code>·<code>AUTH_MAIL_KEYS_*</code>와 수신자 억제 해시용 <code>MAIL_SUPPRESSION_HMAC_SECRET</code>는
-          공급자 발급 키가 아닌 자체 운영 비밀이다. 후자는 전용 키 설정과 현재 대체 키 사용 여부를 확인해 보관·교체한다.</p>
-        <p><strong>완료 조건:</strong> Gmail·네이버·다음 실제 수신함에서 가입 인증·비밀번호 복구 메일을 받고 링크를 처리한다.
-          재전송·오래된 링크·발송 지연·일시 실패·영구 반송·스팸 신고와 재발송 억제도 확인한다.
+          옛 인증 링크용 <code>AUTH_MAIL_CURRENT_KEY_ID</code>·<code>AUTH_MAIL_KEYS_*</code>는 제거됐다. 번호 저장 해시는 <code>APP_HMAC_SECRET</code>에서 EMAIL_CODE 목적 키를 파생한다. 수신자 억제용 <code>MAIL_SUPPRESSION_HMAC_SECRET</code>도 별도 운영 비밀로 보관·교체한다.</p>
+        <p><strong>완료 조건:</strong> Gmail·네이버·다음 실제 수신함에서 가입·복구·Google 연결 번호 메일을 받고 앱에 번호를 입력한다.
+          재전송·이전 번호·발송 지연·일시 실패·영구 반송·스팸 신고와 재발송 억제도 확인한다.
           발송 API 성공만으로 수신 성공을 기록하지 않는다.</p>
       </section>
 
@@ -481,22 +489,24 @@ bundle exec fastlane android deploy track:internal</code></pre>
         <p><strong>완료 조건:</strong> 실제 사진·영수증의 생성부터 검사·조회·권한 회수·삭제까지 앱·API·S3 결과가 일치한다. 버킷 구축이나 암호화 설정만으로 이 이용 검사를 통과 처리하지 않는다.</p>
       </section>
 
+      <section id="deployment-inputs-current"><h2>이번 배포에서 함께 관리할 입력과 확인</h2><p>차수 11에서 DB 시각 열 27개를 DATETIME으로 정리하고 JDBC 세션 시간대를 +09:00으로 고정했다. 마케팅 발신자 이름·연락 이메일·전화·주소 네 입력을 배포 검사와 API 기동에서 요구한다(H-546). 오늘 정상 기동만으로 입력 내용의 정확성이나 광고 메일 실수신을 승인하지 않는다. 처리 결과 통지·2년마다 동의 확인·주간 요약의 수신 거부까지 운영 내용으로 확인한다.</p><p>출시 전 광고 푸시·인앱 광고 입구를 새로 만들지는 않는다. 법적 문안 확인(H-544), 지급 증빙과 중복 지급 처리 결정(H-543), H-531의 실제 이용·배포 리허설은 별도 작업으로 남아 있다.</p></section>
+
       <section id="infrastructure">
         <h2>서버·도메인·경보·복구 준비</h2>
-        <p><strong>현재 운영 환경:</strong> 서울 리전의 ARM EC2 한 대에서 Nginx·공개 API·관리자 API·실시간 서버·관리자 웹·MySQL·Redis를 실행한다. 10월 26일 20:01 KST 읽기 전용 조회에서 7개 서비스가 모두 healthy였다. SSH 대신 SSM으로 관리하며, 관리자 허용 IP와 설치용·API용·관리자용 DB 계정을 분리했다.</p>
+        <p><strong>현재 운영 환경:</strong> 서울 리전의 ARM EC2 한 대에서 Nginx·공개 API·관리자 API·실시간 서버·관리자 웹·MySQL·Redis를 실행한다. 10월 29일 16:28 KST 읽기 전용 조회에서 7개 서비스가 모두 healthy였다. SSH 대신 SSM으로 관리하며, 관리자 허용 IP와 설치용·API용·관리자용 DB 계정을 분리했다.</p>
         <p><strong>주소·인증서:</strong> API <code>https://api.saisoop.co.kr</code>, 관리자 <code>https://admin.saisoop.co.kr</code>, 채팅 <code>https://chat.saisoop.co.kr</code>을 AWS에 연결했다. 홈페이지·공유 주소 <code>https://saisoop.co.kr</code>와 메일 서버는 Oracle에 유지한다. Route 53과 HTTPS를 적용했고 앱 <code>dart_defines/prod.json</code>의 운영 주소도 일치한다. 운영 구성 기록에는 인증서 갱신 dry-run과 재시작 후 정상 기동이 남아 있다.</p>
         <p><strong>직접 확인한 응답:</strong> TLS 검증을 켠 외부 요청에서 API의 <code>/actuator/health</code>·내부 진단 경로는 404, 관리자 로그인은 현재 허용된 망에서 200, 무인증 Socket.IO는 401이었다. 허용망 밖 접근 차단·로그인한 채팅 왕복·실기기 이용은 이번 조회로 증명하지 않았다.</p>
         <div class="table-wrap"><table>
           <thead><tr><th>프로그램</th><th>현재 운영 이미지의 소스</th><th>대조한 최신 main</th><th>남은 일</th></tr></thead>
           <tbody>
-            <tr><td>공개 API</td><td><code>7ddb2ad0f</code></td><td><code>3246c693a</code></td><td>차수 7·8 변경을 포함한 후보 재빌드·배포·검사</td></tr>
-            <tr><td>관리자 API</td><td><code>a70c8f6c</code></td><td><code>0e4025b3</code></td><td>최신 관리 명령·스키마를 같은 후보에 반영</td></tr>
-            <tr><td>관리자 웹</td><td><code>66ad302f</code></td><td><code>2725c73</code></td><td>최신 화면 배포와 실제 관리자 API 두 창 검사</td></tr>
+            <tr><td>공개 API</td><td><code>9f9928876</code></td><td><code>cf4497208</code> (공유 연결 파일 변경 포함)</td><td>소스·이미지 일치. 현재 번호 인증과 출시 여정 검사</td></tr>
+            <tr><td>관리자 API</td><td><code>714d49b6</code></td><td><code>714d49b6</code></td><td>소스·이미지 일치. 보류·경보·관리 명령 실제 이용 검사</td></tr>
+            <tr><td>관리자 웹</td><td><code>4d60e28</code></td><td><code>4d60e28</code></td><td>최신 화면 배포 확인. 실제 관리자 API 두 창 검사</td></tr>
             <tr><td>실시간 서버</td><td><code>41c7563</code></td><td><code>41c7563</code></td><td>소스 일치. 후보 앱과 두 기기 메시지·재접속 검사</td></tr>
-            <tr><td>고객 앱</td><td>최신 운영 서명 앱의 배포 기록 미확인</td><td><code>f570ba40</code></td><td>최신 AAB·IPA, 스토어 설치·실기기 검사</td></tr>
+            <tr><td>고객 앱</td><td>최신 운영 서명 앱의 배포 기록 미확인</td><td><code>fd32b5939</code></td><td>최신 AAB·IPA, 스토어 설치·실기기 검사</td></tr>
           </tbody>
         </table></div>
-        <p>실행 이미지 ID를 로컬 배포 목록과 대조했다. 현재 묶음은 <code>bundle-20261026T013953</code>·이미지 태그 <code>prd-20261026a</code>다. 운영 DB 최초 설치는 이 이전 소스로 수행됐다. 최신 V1의 빈 설치·seed 재적용·기동 검사는 H-242·H-531에 남으며 현재 DB를 지우지 않는다. 플랫폼 실거래·자동 지급·Calendar는 계속 닫혀 있다.</p>
+        <p>실행 이미지 ID를 로컬 배포 목록 <code>deploy/production/.runtime/aws/images.prd.json</code>과 대조했다. 현재 묶음은 <code>bundle-20261029T161033</code>이다. 서비스 정상 기동은 확인했지만 최신 V1 격리 설치·seed 재적용·복구 리허설 결과까지 확인한 것은 아니다. 플랫폼 실거래·자동 지급·Calendar의 공개 범위는 별도 출시 설정을 따른다.</p>
         <p><strong>복구 준비의 공백:</strong> AWS 실조회에서 CloudWatch metric/composite 경보는 0개, 이 인스턴스의 루트 볼륨 스냅샷은 0개, 운영 S3의 backups/ 객체는 0개였다. 백업 설정이 켜져 있다는 사실과 실제 백업 성공을 구분한다. 10월 16일 로컬 리허설의 mysqldump TLS 신뢰 실패는 과거 결과이며, 현재 후보의 인증서·백업 계정 권한과 암호화 복원 성공을 다시 확인해야 한다.</p>
         <p><strong>완료 조건:</strong> H-241·H-242의 최신 후보와 서명 앱을 고정하고, H-531의 앱 통합·관리자 두 창·배포 리허설, H-246의 경보 수신·재처리·격리 복구·이전 버전 복귀를 실행한다. 서비스 healthy·인증서 갱신·단순 재시작은 이용 검사나 복원·롤백의 완료 근거가 아니다.</p>
         <details><summary>이전 임시 서버 확인 기록</summary><p>10월 12일에는 격리 DB·Redis와 Cloudflare 임시 Tunnel을 사용했다. 공개 HTTPS 반복 20/20, 소켓 연결·재연결 3회, Android 에뮬레이터 서명 APK의 일부 외부 연동 결과는 <a href="#progress-2026-10-12">10월 12일 진행 결과</a>에 보존한다. 원본은 로컬 community_app/build/release-readiness/tunnel-2026-10-12/다. 이를 현재 운영 버전의 검증으로 사용하지 않는다.</p></details>

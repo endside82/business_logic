@@ -4,6 +4,14 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
+## 2026-10-29 현재 계약 대조
+
+### 체크인 기록을 출석 확정의 초깃값으로 씁니다
+
+출석 확정 미리보기는 체크인 기록을 반영하고 참석·노쇼·사유 인정 값을 조정할 수 있게 한다. 검토가 필요한 사람은 사유 인정(EXCUSED)에서 시작해 호스트가 판정한다. 시작 전 생성 실패 회차는 운영자가 재생성할 수 있다. 자동 정산 생성이 반복 실패하면 운영자 경보를 남기며 같은 실패를 무한히 새 경보로 쌓지 않는다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 ## 1. 결론
 
 FIXED 모임 종료(`CLOSED`) 시 코스당 1건의 `Settlement(regular_meeting_id=...)` 가 생성된다. **flow-through** 모델: WALLET 결제의 retained 유료 포인트 합계만 호스트 수익으로 잡고, retained 무료 포인트 합계는 `freePointSubsidy`(플랫폼 보조, payout 비대상)로 분리한다. BANK_TRANSFER 는 호스트 직접입금(`isHostDirect=true`, off-ledger)이라 payout 대상 아님.

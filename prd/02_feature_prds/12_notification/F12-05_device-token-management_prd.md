@@ -32,15 +32,15 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/device-tokens` | `DeviceTokenController#getMyDevices` | [DeviceTokenController.java:29](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L29) |
-| `POST /api/v1/device-tokens` | `DeviceTokenController#registerToken` | [DeviceTokenController.java:35](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L35) |
-| `PUT /api/v1/device-tokens/token` | `DeviceTokenController#refreshToken` | [DeviceTokenController.java:43](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L43) |
-| `DELETE /api/v1/device-tokens/{deviceId}` | `DeviceTokenController#removeDevice` | [DeviceTokenController.java:51](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L51) |
-| `DELETE /api/v1/device-tokens` | `DeviceTokenController#removeToken` | [DeviceTokenController.java:59](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L59) |
+| `GET /api/v1/device-tokens` | `DeviceTokenController#getMyDevices` | [DeviceTokenController.java:31](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L31) |
+| `POST /api/v1/device-tokens` | `DeviceTokenController#registerToken` | [DeviceTokenController.java:37](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L37) |
+| `PUT /api/v1/device-tokens/token` | `DeviceTokenController#refreshToken` | [DeviceTokenController.java:45](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L45) |
+| `DELETE /api/v1/device-tokens/{deviceId}` | `DeviceTokenController#removeDevice` | [DeviceTokenController.java:53](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L53) |
+| `DELETE /api/v1/device-tokens` | `DeviceTokenController#removeToken` | [DeviceTokenController.java:61](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java#L61) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

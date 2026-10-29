@@ -37,15 +37,15 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/wallet/settlements` | `WalletController#getMySettlements` | [WalletController.java:163](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/WalletController.java#L163) |
-| `GET /api/v1/wallet/settlements/summary` | `WalletController#getMySettlementSummary` | [WalletController.java:177](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/WalletController.java#L177) |
-| `GET /api/v1/wallet/settlements/{id}` | `WalletController#getSettlementDetail` | [WalletController.java:187](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/WalletController.java#L187) |
-| `POST /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#createAppeal` | [SettlementAppealController.java:29](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L29) |
-| `GET /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#getAppeal` | [SettlementAppealController.java:45](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L45) |
+| `GET /api/v1/wallet/settlements` | `WalletController#getMySettlements` | [WalletController.java:237](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/controller/WalletController.java#L237) |
+| `GET /api/v1/wallet/settlements/summary` | `WalletController#getMySettlementSummary` | [WalletController.java:251](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/controller/WalletController.java#L251) |
+| `GET /api/v1/wallet/settlements/{id}` | `WalletController#getSettlementDetail` | [WalletController.java:261](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/controller/WalletController.java#L261) |
+| `POST /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#createAppeal` | [SettlementAppealController.java:29](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L29) |
+| `GET /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#getAppeal` | [SettlementAppealController.java:48](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L48) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

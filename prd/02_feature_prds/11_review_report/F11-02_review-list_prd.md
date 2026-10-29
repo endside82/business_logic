@@ -31,15 +31,24 @@
 | Scenario | [scenarios.md](../../../units/11_review_report/F11-02_review-list/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/11_review_report/F11-02_review-list/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
+
+## 2026-10-29 현재 계약 대조
+
+### 삭제한 리뷰의 재작성은 허용하지 않습니다
+
+삭제한 리뷰도 작성 여부 판정에 포함한다. 화면의 작성 입구와 서버의 중복 판정을 맞춰 같은 모임·대상에 다시 작성할 수 있다고 안내하지 않는다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/{eventId}/reviews` | `ReviewController#getReviewsByEvent` | [ReviewController.java:44](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/review/controller/ReviewController.java#L44) |
-| `GET /api/v1/users/{userId}/reviews` | `ReviewController#getReviewsByUser` | [ReviewController.java:52](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/review/controller/ReviewController.java#L52) |
+| `GET /api/v1/events/{eventId}/reviews` | `ReviewController#getReviewsByEvent` | [ReviewController.java:44](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/review/controller/ReviewController.java#L44) |
+| `GET /api/v1/users/{userId}/reviews` | `ReviewController#getReviewsByUser` | [ReviewController.java:52](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/review/controller/ReviewController.java#L52) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

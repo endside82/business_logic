@@ -30,18 +30,27 @@
 | Scenario | [scenarios.md](../../../units/03_event/F03-10_event-plan-link/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/03_event/F03-10_event-plan-link/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
 
+
+## 2026-10-29 현재 계약 대조
+
+### 연결 플랜 순서는 한 번에 저장합니다
+
+연결 목록의 순서 변경은 모임의 전체 연결 번호 목록을 한 번에 보낸다. 비활성 연결도 빠뜨리지 않고 서버가 모임 잠금 아래에서 전체 목록을 확인해 저장한다. 같은 모임의 연결 추가·제거·순서 변경은 함께 직렬화한다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-07에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/{eventId}/plans` | `EventPlanMapController#getEventPlans` | [EventPlanMapController.java:30](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L30) |
-| `POST /api/v1/events/{eventId}/plans` | `EventPlanMapController#addPlanToEvent` | [EventPlanMapController.java:37](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L37) |
-| `PATCH /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#updateMapping` | [EventPlanMapController.java:46](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L46) |
-| `DELETE /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#removePlanFromEvent` | [EventPlanMapController.java:55](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L55) |
-| `POST /api/v1/events/{eventId}/plans/{mapId}/toggle-active` | `EventPlanMapController#toggleActive` | [EventPlanMapController.java:64](https://github.com/endside82/community_api/blob/79bd8191acb70bda97fb1b49075dc59ee819ce2c/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L64) |
+| `GET /api/v1/events/{eventId}/plans` | `EventPlanMapController#getEventPlans` | [EventPlanMapController.java:31](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L31) |
+| `POST /api/v1/events/{eventId}/plans` | `EventPlanMapController#addPlanToEvent` | [EventPlanMapController.java:38](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L38) |
+| `PATCH /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#updateMapping` | [EventPlanMapController.java:47](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L47) |
+| `DELETE /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#removePlanFromEvent` | [EventPlanMapController.java:68](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L68) |
+| `POST /api/v1/events/{eventId}/plans/{mapId}/toggle-active` | `EventPlanMapController#toggleActive` | [EventPlanMapController.java:77](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L77) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

@@ -4,6 +4,14 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
+## 2026-10-29 현재 계약 대조
+
+### 마일리지 운영 명령과 검토 대기열
+
+수동 적립·차감, 배지 부여·해제, 차감 프리셋과 시즌 작업은 요청 고유키를 사용해 중복 실행을 막는다. 반복 사용 검토는 REPEATED_REDEMPTION 유형으로 남긴다. 쓰지 않는 시간당 수동 처리·승인 횟수 경보를 운영 정책으로 약속하지 않는다. 등급 변경 통지는 24시간에 한 번으로 합치고 마지막 결과를 반영하며, 박탈·강등은 즉시 알린다.
+
+기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+
 ## 1. 결론
 
 `MILEAGE_MANAGER` 운영진의 마일리지 콘솔 기능이다 — 검토 큐 조회/단건/처리(`queue`), 운영 대시보드(`dashboard`), 멤버 운영 상세(`members/{memberId}`), 멤버 등급 이력(`members/{memberId}/grade-history`), 감사 로그(`audit-logs`). 서버 `MileageAdminQueueController`와 Flutter `mileage_console_screen.dart`·`mileage_queue_screen.dart`·`mileage_audit_log_screen.dart`·`mileage_member_detail_screen.dart`가 연결되어 있다.
