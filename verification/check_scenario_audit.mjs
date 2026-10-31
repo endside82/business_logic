@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveReferences } from './source_references.mjs';
+import { API_REPO, loadApiModules } from './api_modules.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const workspace = path.resolve(root, '..');
@@ -34,7 +35,8 @@ for (const [, script] of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
 const audit = sandbox.window.SCENARIO_AUDIT;
 const entries = audit.features.flatMap((feature) => feature.trace.entries);
 const targets = JSON.parse(fs.readFileSync(new URL('./source_reference_targets.json', import.meta.url), 'utf8')).references;
-const resolved = new Map(resolveReferences(workspace, targets).map((entry) => [entry.id, entry]));
+const apiModules = loadApiModules(path.join(workspace, API_REPO));
+const resolved = new Map(resolveReferences(apiModules, targets).map((entry) => [entry.id, entry]));
 assert.equal(audit.sourceReferenceCheck.endpointIdentityChecked, true);
 assert.equal(entries.length, audit.totals.traceMarkers);
 assert.equal(entries.filter((entry) => entry.status === 'verified').length, audit.totals.verifiedTraceRecords);
@@ -47,7 +49,7 @@ for (const feature of audit.features) {
     assert.equal(entry.status, resolved.get(entry.id).status);
     assert.equal(JSON.stringify(entry.endpoints), JSON.stringify(resolved.get(entry.id).endpoints));
     for (const endpoint of entry.endpoints) {
-      const lines = fs.readFileSync(path.join(workspace, endpoint.targetPath), 'utf8').split(/\r?\n/);
+      const lines = fs.readFileSync(apiModules.fromRepoPath(endpoint.targetPath), 'utf8').split(/\r?\n/);
       assert.match(lines[endpoint.targetLine - 1], /@(Get|Post|Put|Patch|Delete|Request)Mapping/);
       assert.ok(lines[endpoint.methodLine - 1].includes(endpoint.method + '('), '다른 함수 위치: ' + entry.id);
     }
@@ -97,7 +99,7 @@ const tracked = (repo) => new Set(execFileSync('git', ['ls-files'], {
   cwd: repo, encoding: 'utf8',
 }).trim().split('\n'));
 const documents = tracked(root);
-const sources = tracked(path.join(workspace, 'community_api'));
+const sources = tracked(apiModules.root);
 const staticHtml = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '');
 const links = new Set([...`${staticHtml}\n${rendered}`.matchAll(/href="([^"]+)"/g)]
   .map(([, href]) => href.replaceAll('&amp;', '&')));

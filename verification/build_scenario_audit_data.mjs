@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveReferences } from './source_references.mjs';
+import { API_REPO, Kind, loadApiModules } from './api_modules.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const businessRoot = path.resolve(scriptDir, '..');
@@ -67,7 +68,8 @@ const unitFiles = walk('business_logic/units');
 const scenarioFiles = unitFiles.filter((file) => file.endsWith('/scenarios.md'));
 const backendFiles = unitFiles.filter((file) => file.endsWith('/backend.md'));
 const referenceTargets = JSON.parse(fs.readFileSync(path.join(scriptDir, 'source_reference_targets.json'), 'utf8')).references;
-const resolvedReferences = resolveReferences(workspaceRoot, referenceTargets);
+const apiModules = loadApiModules(path.join(workspaceRoot, API_REPO));
+const resolvedReferences = resolveReferences(apiModules, referenceTargets);
 
 function countUnitScenarioHeadings(documentText) {
   return [...documentText.matchAll(
@@ -81,7 +83,8 @@ function hasFormalPrdScenarioSection(documentText) {
 }
 
 const automatedTestFiles = [
-  ...walk('community_api/src/test'),
+  ...apiModules.walk((file) => /(?:Test|Tests)\.java$/.test(file), [apiModules.bootModule()],
+    Kind.TEST_JAVA, Kind.TEST_RESOURCES, Kind.TEST_FIXTURES_JAVA, Kind.TEST_FIXTURES_RESOURCES).map((file) => apiModules.repoPath(file)),
   ...walk('community_app/test'),
   ...walk('community_app/integration_test'),
   ...walk('community-realtime/src/test'),
@@ -217,7 +220,7 @@ const sourceFiles = unique(resolvedReferences.flatMap((reference) => reference.e
 if (sourceFiles.some((file) => !file.startsWith('community_api/'))) {
   throw new Error('소스 위치 검사 대상 저장소가 추가됐습니다. 버전 기록과 링크 생성을 먼저 보완하세요.');
 }
-const sourceRoot = path.join(workspaceRoot, 'community_api');
+const sourceRoot = apiModules.root;
 const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: sourceRoot, encoding: 'utf8' }).trim();
 const sourceChanges = execFileSync('git', [
   'status', '--porcelain', '--untracked-files=all', '--', ...sourceFiles.map((file) => file.slice('community_api/'.length)),

@@ -4,12 +4,14 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveReferences } from './source_references.mjs';
+import { API_REPO, loadApiModules } from './api_modules.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const workspace = path.resolve(root, '..');
 const targets = JSON.parse(fs.readFileSync(new URL('./source_reference_targets.json', import.meta.url), 'utf8')).references;
-const references = resolveReferences(workspace, targets);
-const sourceRoot = path.join(workspace, 'community_api');
+const apiModules = loadApiModules(path.join(workspace, API_REPO));
+const references = resolveReferences(apiModules, targets);
+const sourceRoot = apiModules.root;
 const revision = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: sourceRoot, encoding: 'utf8' }).trim();
 const sourceFiles = [...new Set(references.flatMap((reference) => reference.endpoints.map((endpoint) =>
   endpoint.targetPath.slice('community_api/'.length),

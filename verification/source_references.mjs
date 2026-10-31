@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path from 'node:path';
+import { Kind } from './api_modules.mjs';
 
 // 위치를 보존하면서 주석만 가린다. 문자열 안의 URL·주석 기호는 건드리지 않는다.
 export function withoutComments(source) {
@@ -70,7 +70,9 @@ export function parseController(source, sourcePath) {
   });
 }
 
-export function resolveReferences(workspaceRoot, targets) {
+// binding.targetPath 는 모듈과 무관한 꼴(main 자바 뿌리 기준, com/…/X.java)이다. 파일은 모듈 목록으로 찾고,
+// 결과의 targetPath 는 찾은 파일의 작업 공간 기준 저장소 상대 경로(community_api/…)다.
+export function resolveReferences(apiModules, targets) {
   const sources = new Map();
   const ids = new Set();
   return targets.map((target) => {
@@ -82,12 +84,12 @@ export function resolveReferences(workspaceRoot, targets) {
     }
     if (target.status !== 'active') throw new Error('확정되지 않은 코드 위치 기록: ' + target.id);
     const endpoints = target.bindings.map((binding) => {
-      if (!binding.targetPath.startsWith('community_api/src/main/java/') || binding.targetPath.includes('..')) {
+      if (binding.targetPath.startsWith('/') || binding.targetPath.split('/').includes('..')) {
         throw new Error('검사 대상 밖의 서버 경로: ' + binding.targetPath);
       }
       if (!sources.has(binding.targetPath)) {
-        const text = fs.readFileSync(path.join(workspaceRoot, binding.targetPath), 'utf8');
-        sources.set(binding.targetPath, parseController(text, binding.targetPath));
+        const file = apiModules.file(binding.targetPath, Kind.MAIN_JAVA);
+        sources.set(binding.targetPath, parseController(fs.readFileSync(file, 'utf8'), apiModules.repoPath(file)));
       }
       const matches = sources.get(binding.targetPath).filter((endpoint) =>
         endpoint.controller === binding.controller && endpoint.method === binding.method &&
