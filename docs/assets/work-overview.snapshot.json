@@ -1919,7 +1919,7 @@
     },
     {
       "name": "앱",
-      "commit": "4370748f"
+      "commit": "032b4f72"
     },
     {
       "name": "관리자 웹",
@@ -1930,7 +1930,7 @@
       "commit": "41c756317"
     }
   ],
-  "sourceDigest": "29f03e5a62c3fe5edbc3dfcd0c7d6e9dad3562388b20aa093df544f22f76df5f",
+  "sourceDigest": "4037ac59cb0a107ee376210ac7cfc69391bea6b052b17924ceee1e689902090a",
   "summary": {
     "lead": "2026-10-31 출시 기록을 반영했습니다. Android 내부 테스트 빌드 4와 iOS 서명 IPA, 외부 설정·로고는 준비됐습니다. TestFlight·정식 공개·실기기 검증은 별도이며 후보 고정·복구 규약은 아직 진행하지 않습니다. 개발 순서는 구조 재정비 현황을 따릅니다.",
     "updates": [
@@ -2056,7 +2056,7 @@
     "sourceBaseCommit": "02b2f0d702c28bf68446da054a9b89d21896a91a",
     "sourcePath": "docs/plan/NEXT_WORK.md",
     "sourceSha256": "12b739ac83f1733db6a7cedf486d7b2f7da3000b42887de0df84d5a296058fc6",
-    "worklistSha256": "aeef35aea52bb04a266247782faecf2baafdce53ea6643e5c80b15f6395f58e6",
+    "worklistSha256": "fb472c6f34675edb9ee8e1b7524413d0b59f4c8cefd571755168180b12a25862",
     "method": "2026-10-31 Codex 출시 세션·현재 설정·검증 산출물·운영 문서 대조. sourceCommit은 NEXT_WORK.md 정본 커밋이며 병행 앱 작업을 반영한 WORKLIST는 별도 해시와 sourceDigest로 고정. 새 배포·스토어 제출·기기 검사 없음.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
     "check": "python3 scripts/build-work-overview.py --site-only --check",
