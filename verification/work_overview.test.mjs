@@ -43,10 +43,10 @@ function open(hash = '') {
 }
 
 test('the site can open shared task and view URLs directly', () => {
-  const page = open('#task-H-433');
+  const page = open('#task-H-248');
   assert.equal(page.element('task-dialog').open, true);
-  assert.match(page.element('dialog-content').innerHTML, /브랜딩 방향과 최종 로고/);
-  assert.match(page.element('dialog-content').innerHTML, /index.html#task-H-433/);
+  assert.match(page.element('dialog-content').innerHTML, /이동.*책임|개인정보/);
+  assert.match(page.element('dialog-content').innerHTML, /index.html#task-H-248/);
   page.route('#view-resources');
   assert.equal(page.element('task-dialog').open, false);
   assert.equal(page.element('view-resources').hidden, false);
@@ -59,7 +59,7 @@ test('scopes, dependency paths and resources work in the published script', () =
   page.click({ scope: 'conditional' });
   assert.ok(page.ids().includes('H-511'));
   assert.ok(page.ids().includes('H-528'));
-  assert.ok(!page.ids().includes('H-433'));
+  assert.ok(!page.ids().includes('H-248'));
   page.click({ scope: 'now' });
   assert.ok(page.ids().includes('H-542'));
   assert.ok(!data.tasks.some(task => task.id === 'H-505'), '완료된 푸시 갱신 작업을 다음 개발로 되돌리지 않음');

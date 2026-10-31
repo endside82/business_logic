@@ -17,7 +17,7 @@
         <h1>외부 서비스 가입·계약과 출시 준비</h1>
         <p class="lede">운영자가 가입·계약부터 키 발급, 설정 전달, 실제 이용 확인까지 진행하는 체크리스트다.
           첫 출시 필수 서비스와 기능을 추가 공개할 때 필요한 서비스를 구분한다.</p>
-        <p class="release-note">현재 상태 대조: 2026-10-29. 제품 main·배포 목록·AWS 실행 이미지를 대조했다. 16:21~16:28 KST 읽기 전용 조회에서 오늘 배포 묶음과 서비스 7개 정상 상태를 확인했다. 번호 인증의 실제 메일·서명 앱·물리 기기·스토어·파일·경보·백업 복구는 별도 확인이 남는다. 이전 시험 결과는 당시 환경의 기록이며 현재 방식의 검증으로 확대하지 않는다. 가입·심사 절차는 제출 시 공식 안내를 다시 확인한다.</p>
+        <p class="release-note">현재 상태 대조: 2026-10-31. Codex 출시 세션·현재 로컬 설정·검증 산출물과 운영 기록을 대조했다. Android 내부 테스트 빌드 4와 iOS 서명 IPA, 기존 외부 앱·키·로고는 준비됐다. 최종 후보 고정은 아직 하지 않으며 백업·복구 규약은 운영 서버 확정 때 다룬다. Android 실기기는 나중에 연결한다. 내부 테스트·빌드 성공을 정식 공개·전체 기기 검증으로 보지 않는다.</p>
         <nav class="release-nav" aria-label="외부 준비 바로가기">
           <a href="#progress-2026-10-29">10월 29일 운영 준비 현황</a><a href="#progress-2026-10-12">10월 12일 시험 기록</a><a href="#next-checks">다음 확인 순서</a>
           <a href="#order">진행 순서와 완료 상태</a><a href="#required">첫 출시 필수 서비스</a>
@@ -30,10 +30,20 @@
 
 
 
-      <section id="progress-2026-10-29"><h2>10월 29일 운영 준비 현황</h2><p>운영 묶음 <code>bundle-20261029T161033</code>에서 API·관리자 API·실시간 서버·관리자 웹의 실행 이미지가 오늘 빌드 목록과 일치했다. Nginx·MySQL·Redis를 포함해 7개 서비스가 healthy다. 번호 인증·차수 9~11 코드의 배포 진척은 확인했으며 사용자 여정 통과로 판정하지 않는다.</p><div class="table-wrap"><table><thead><tr><th>대상</th><th>확인한 진척</th><th>남은 확인</th></tr></thead><tbody><tr><td>서버 배포</td><td>공개 API 9f9928876 · 관리자 API 714d49b6 · 관리자 웹 4d60e28 · 실시간 41c7563</td><td>현재 후보의 앱 통합 11파일·관리자 두 창·배포 리허설 둘(H-531), 최신 V1의 격리 설치 기록</td></tr><tr><td>iOS</td><td>Bundle ID com.endside.saisoop.app · Team X8ACG93N8U · App Store ID 6827137270. 로컬 운영 Google/Firebase 입력 존재</td><td>설정값의 실제 권한·APNs·서명·TestFlight·iPhone 설치와 로그인 구성 결정</td></tr><tr><td>Android</td><td>새 패키지 com.endside.saisoop.app 전환 작업 확인</td><td>새 Firebase 앱·OAuth·지도 제한·연결 파일의 배포 및 실기기 Google 로그인, Play 서명·스토어 설치</td></tr><tr><td>메일</td><td>가입·복구·Google 연결을 6자리 번호로 전환한 서버 배포</td><td>현재 번호 메일 실수신·지연·실패·만료·재시도. 옛 링크 실수신 기록으로 대체 불가</td></tr><tr><td>운영 복구</td><td>AWS 스택 7개 완료·서비스 7개 정상</td><td>CloudWatch 경보·로그 그룹 0개, 계정 소유 서울 리전 EBS 스냅샷 0개, 운영 S3 backups/ 객체 0개. 백업 생성·보관·격리 복구·경보 수신</td></tr></tbody></table></div><p>조회 결과는 <code>verification/document-sync-2026-10-29.json</code>에 고정한다. 운영 배포는 다른 세션의 작업이며 이번 문서 갱신에서 배포·DB 변경·메일 발송은 수행하지 않았다.</p></section>
+      <section id="progress-2026-10-29"><span id="progress-2026-10-31"></span><h2>10월 31일 출시 준비 인계</h2>
+        <div class="table-wrap"><table><thead><tr><th>대상</th><th>확인한 완료</th><th>남은 범위</th></tr></thead><tbody>
+          <tr><td>서버</td><td>10월 29일 bundle-20261029T161033, API 9f9928876·관리자 714d49b6·관리자 웹 4d60e28·실시간 41c7563, 서비스 7개 확인</td><td>최종 후보 고정은 사용자 결정으로 아직 보류. 후보 확정 때 같은 소스·이미지·서명 앱과 격리 설치·실제 이용 확인</td></tr>
+          <tr><td>Android</td><td>Play 앱 4972659134664533462, com.endside.saisoop.app. 10월 30일 1.0.0 (4) 내부 트랙 completed. 서비스 계정·Play OAuth·Firebase·Maps 서명 반영</td><td>정식 공개·스토어 입력·실기기 여정, App Links의 Play SHA-256 추가</td></tr>
+          <tr><td>iOS</td><td>Apple 앱 6827137270, Team X8ACG93N8U. 앱 등록·API 인증·Google/Maps/Firebase·배포 서명 완료, 10월 27일 1.0.0 (1) IPA 검증</td><td>사이숲 TestFlight 업로드·설치·APNs 실제 연결·iPhone 여정·정식 심사</td></tr>
+          <tr><td>운영 관측·복구</td><td>10월 30일 경보 8개·스냅샷 정책·백업 외부 보관 타이머 적용, 31일 메일 구독 확인 기록</td><td>DB 백업 생성 실패 수정의 운영 반영·실제 복구는 미완료. 운영 서버 확정 때 규약·검증 재개</td></tr>
+          <tr><td>안내·홈페이지</td><td>10월 30일 한·영 약관·개인정보·계정 삭제 안내, 사진·앱 화면 배포. 내부 요청과 AI/bot/unknown 요청 분리 적용</td><td>운영자 실제 정보·법무 판단. 실제 GA4 측정 ID가 비어 있어 수집은 꺼짐</td></tr>
+        </tbody></table></div>
+        <p>근거: 앱의 Android·iOS 배포 가이드, build/ios/ipa/verification.json, 로컬 saisoop-ops/android/saisoop-1.0.0+4-validation, 운영 서버 구성과 웹 검증 기록. 앱 소스 버전 1.0.0+4와 이전 iOS IPA 빌드 1을 혼동하지 않는다. 빌드 4의 관련 130건 통과를 빌드 3 전체 검사 79건 실패 해소로 해석하지 않는다.</p>
+      </section>
+      <section id="brand-ready"><h2>선택·반영된 브랜드 로고</h2><p>사용자 선택 logo-bilingual-v2로 앱 아이콘·시작·로그인·홈·온보딩과 웹을 갱신했다. 최종 로고를 다시 묻거나 기본 아이콘 교체를 미완료로 등록하지 않는다. 스토어별 이미지 등록과 실제 설치 화면 확인은 별도다.</p></section>
 
       <details><summary>10월 26일 구축 당시 기록 펼치기</summary><section id="progress-2026-10-26">
-        <h2>10월 26일 운영 준비 기록 — 현재 상태는 위의 10월 29일 확인을 따릅니다</h2>
+        <h2>10월 26일 운영 준비 기록 — 현재 상태는 위의 10월 31일 인계를 따릅니다</h2>
         <p><strong>AWS 운영 서버와 S3는 구축됐다.</strong> CloudFormation 스택 7개가 완료 상태이고 서울 리전의 EC2에서 Nginx·공개 API·관리자 API·실시간 서버·관리자 웹·MySQL·Redis 7개 서비스가 정상 상태다. DNS·HTTPS와 앱의 운영 주소도 반영됐다. 당시 API·관리자 API·관리자 웹은 최신 main보다 이전 버전이었다. 이 차이는 10월 29일 배포로 갱신됐다.</p>
         <div class="table-wrap"><table>
           <thead><tr><th>항목</th><th>확인한 진척</th><th>남은 일</th></tr></thead>
@@ -134,26 +144,26 @@
 
       <section id="next-checks">
         <h2>다음 확인 순서</h2>
-        <p><strong>현재 진행 조건 — 2026-10-29:</strong> AWS·S3와 최신 서버 배포가 반영됐다. 현재 번호 인증·새 앱 식별자에 맞춘 서명 앱과 실제 이용 검사, 경보·복구 확인을 진행할 차례다. 다음 개발 차수는 H-542의 불변식·출시 여정 재정비부터 정한다.</p>
+        <p><strong>현재 진행 조건 — 2026-10-31:</strong> 서명·스토어 초기 설정과 Android 내부 테스트는 준비됐다. 남은 APNs·TestFlight·정식 스토어 입력을 확인한다. 최종 후보·운영 복구 규약은 아직 진행하지 않으며 Android 실기기는 추후 연결한다. 개발 순서는 별도 재정비 현황을 따른다.</p>
         <ol>
           <li><strong>최신 출시 후보 고정:</strong> 오늘 서버·관리자 웹 배포의 소스·이미지 목록을 기준으로 서명 앱까지 같은 후보로 고정한다(H-241). 최신 V1의 빈 DB 설치·seed 재적용·두 API 기동은 격리 리허설로 재확인한다(H-242). 현재 운영 DB를 임의로 비우는 절차가 아니다.</li>
           <li><strong>기존 자원에서 실제 연동:</strong> S3 파일 업로드·검사·비공개 열람·덮어쓰기 거부·삭제와 현재 번호 메일 수신을 확인한다(H-240). 관리자 허용망 밖 거부·역할·2단계 인증 등록도 확인한다(H-247). 두 계정 채팅·첨부파일과 푸시는 기기 결과까지 기록한다.</li>
-          <li><strong>서명 앱·스토어:</strong> Play 앱 서명 지문·최신 AAB·내부 테스트와 iOS 권한·서명·Google/Firebase·지도·APNs 입력을 마친다(H-239). Kakao native 플랫폼 등록과 홈페이지 연결 파일·스토어 주소를 같은 서명 앱에 맞춘다.</li>
+          <li><strong>서명 앱·스토어:</strong> 기존 Android 내부 테스트·iOS 서명·Google/Firebase·지도 입력을 재사용하고 APNs·TestFlight·스토어 잔여 입력을 확인한다(H-239). Kakao native 플랫폼 등록과 홈페이지 연결 파일·스토어 주소를 같은 서명 앱에 맞춘다.</li>
           <li><strong>최종 이용 검사:</strong> Android·iPhone의 첫 출시 여정과 모임 공유·설치 후 복귀를 확인한다(H-243). H-531의 실서버 앱 통합 11파일, 관리자 두 창, 배포 리허설 둘을 실행하고 운영자 숨김/해제·반환 완료 알림 뒤 지갑 갱신까지 같은 후보로 기록한다.</li>
-          <li><strong>운영 복구·공개 판단:</strong> CloudWatch 경보 수신, 암호화 백업 생성·S3 보관·격리 복구·이전 버전 복귀를 실행한다(H-246). 최종 로고·문안·스토어 자료·중단 기준을 맞추고 공개 또는 보류를 기록한다.</li>
+          <li><strong>운영 복구·공개 판단:</strong> CloudWatch 경보 수신, 암호화 백업 생성·S3 보관·격리 복구·이전 버전 복귀를 실행한다(H-246). 선택한 로고를 재사용하고 남은 문안·스토어 자료·중단 기준을 맞추고 공개 또는 보류를 기록한다.</li>
         </ol>
       </section>
 
       <section id="ios-distribution">
         <h2>iOS 빌드·TestFlight 내부 테스트 절차</h2>
-        <p><strong>로컬 입력 확인 — 2026-10-29:</strong> Xcode의 Bundle ID는 <code>com.endside.saisoop.app</code>, Team은 <code>X8ACG93N8U</code>이며 App Store 식별자 <code>6827137270</code>이 반영됐다. prod.json의 Google iOS 클라이언트·Firebase iOS 앱·번들 입력도 채워졌다. 이전의 가입·입력 없음 표시는 더 이상 현재 상태가 아니다. 다만 이번에는 콘솔 권한·서명 유효성·APNs·TestFlight 설치를 확인하지 않았으므로 실제 배포·수신은 남겨 둔다.</p>
+        <p><strong>서명 IPA 확인 — 2026-10-31 대조:</strong> 앱 6827137270·Bundle ID com.endside.saisoop.app·Team X8ACG93N8U, API 인증·Google/Maps/Firebase 입력과 수동 배포 서명 완료. 10월 27일 1.0.0 (1) IPA 서명 검증을 통과했다. TestFlight 업로드·설치·APNs 실제 연결·iPhone 검증은 아직 완료하지 않았다.</p>
         <ol>
           <li><strong>가입·앱 등록:</strong> <a href="https://developer.apple.com/programs/enroll/">Apple Developer Program 가입 안내</a>에 따라
             기존 회원 자격·권한을 확인한다. 조직 가입이면 D-U-N-S 등 조직 확인 조건을 준비한다.
             <a href="https://appstoreconnect.apple.com/">App Store Connect</a>에 앱과 내부 테스트 사용자를 등록한다.</li>
-          <li><strong>서명:</strong> Xcode 계정, Developer Team, Runner의 자동 서명, 배포 인증서·개인 키 또는 Xcode 관리 배포 서명을 준비한다.
+          <li><strong>서명:</strong> Xcode 계정, Developer Team, Runner Release의 수동 서명과 기존 Apple Distribution 인증서·개인키, Saisoop App Store 프로파일을 사용한다.
             Push Notifications와 Associated Domains를 앱 Identifier 및 프로비저닝에 반영한다.</li>
-          <li><strong>업로드 인증:</strong> App Store Connect의 Users and Access → Integrations에서 팀 API 키를 발급한다.
+          <li><strong>업로드 인증:</strong> 기존 ios/fastlane/.env와 AuthKey_SASLFFL57J.p8의 팀 API 인증을 사용한다. 새 환경에서만 필요한 인증정보를 안전하게 전달한다.
             Key ID·Issuer ID·다운로드한 <code>.p8</code> 파일을 보관하고 앱 업로드 권한을 확인한다.
             <a href="https://docs.fastlane.tools/app-store-connect-api/">fastlane API 키 인증 안내</a>를 따른다.</li>
           <li><strong>빌드·설치:</strong> 아래 설정 검사와 IPA 빌드 뒤 업로드를 실행한다. Apple 처리 완료 후 TestFlight 내부 그룹에 빌드를 연결해 iPhone에 설치한다.
@@ -196,15 +206,8 @@ bundle exec fastlane ios deploy</code></pre>
 
       <section id="android-distribution">
         <h2>Android 빌드·Google Play 테스트 절차</h2>
-        <p><strong>패키지 변경 — 2026-10-26:</strong> Android 소스와 공유 링크 설정의 패키지명을
-          <code>com.endside.saisoop.app</code>으로 변경했다. 아래 Firebase·Google 로그인·지도 확인 기록은 이전 패키지 기준이다.
-          새 패키지의 Firebase 앱·Android OAuth 클라이언트·Maps 키 제한 등록, 로컬 Firebase 설정 갱신,
-          앱 링크 파일 배포와 실제 앱 검증이 남았다.</p>
-        <p><strong>진행 기록 — 2026-10-10:</strong> 운영자가 Google Play Console에서 앱 등록을 완료했다고 확인했다.
-          앱만 생성했으며 첫 AAB는 아직 업로드하지 않았다. 이 Mac에서 업로드 키와 로컬 서명 설정을 생성하고
-          임시 JAR 서명·검증을 완료했다. 실제 AAB 서명·Play App Signing 연결·내부 테스트 설치는 아직 수행하지 않았다.</p>
-        <p><strong>다음 준비:</strong> Firebase 프로젝트·Android 앱 등록, Google Android·Web OAuth 클라이언트 생성,
-          제한된 Android 지도 키와 로컬 앱 설정 반영은 완료했다. 10월 26일에는 운영 서버와 prod.json의 API·파일·채팅·공유 주소가 준비돼 있다. 이제 최신 운영 AAB와 Play 앱 서명 지문을 맞춰 내부 테스트·실기기를 확인한다. 10월 10일 이후 실제 Play 업로드·설치의 새 근거는 확인하지 못했다.</p>
+        <p><strong>내부 테스트 완료 — 2026-10-30:</strong> 현재 패키지 com.endside.saisoop.app, Play 앱 4972659134664533462의 1.0.0 (4)를 내부 트랙에 출시하고 completed를 API로 확인했다. 다른 트랙은 비어 있었다. Firebase·OAuth·Maps Play 서명과 배포 서비스 계정도 연결했다.</p>
+        <p>Google 로그인은 10월 29일 사용자 성공 확인. 지도 수정 후 표시와 현재 번호 인증·사진·푸시·채팅은 실기기 검증을 남긴다. 10월 31일 운영 assetlinks.json의 패키지는 현재 값이지만 Play 앱 서명 SHA-256이 빠져 있다. 새 빌드는 원격 트랙 확인 후 5 이상의 번호를 사용한다. 아래 10월 10~12일 임시 환경 기록을 현재 미준비 목록으로 사용하지 않는다.</p>
         <p><strong>서명 APK — 2026-10-12:</strong> <code>fastlane android apk env:staging</code>으로
           <code>community_app/build/app/outputs/flutter-apk/app-release.apk</code>를 생성했다(1.0.0+1, 약 147MB).
           APK 서명 검증과 업로드 인증서·패키지명 일치, 지도 키·Google Web ID·임시 Tunnel 주소 포함을 확인했다.

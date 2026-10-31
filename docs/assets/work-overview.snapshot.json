@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-29",
+  "date": "2026-10-31",
   "scopes": [
     {
       "id": "launch",
@@ -50,7 +50,7 @@
       "number": "01",
       "title": "운영 환경 준비",
       "state": "지금 할 일",
-      "summary": "구축된 서버·S3에서 남은 서명·연동 준비",
+      "summary": "기존 서명·스토어 설정 재사용, 설치·실제 연동 확인",
       "ids": [
         "H-239",
         "H-240",
@@ -66,7 +66,7 @@
       "number": "02",
       "title": "배포본 고정",
       "state": "준비가 끝나면",
-      "summary": "이전 운영 이미지에서 최신 출시 후보로",
+      "summary": "사용자가 후보를 확정할 때 소스·배포본 고정",
       "ids": [
         "H-241",
         "H-242",
@@ -100,7 +100,7 @@
       "number": "04",
       "title": "복구·공개 판단",
       "state": "이용 확인 뒤",
-      "summary": "복구할 수 있는지 확인하고 공개 결정",
+      "summary": "운영 서버 확정 때 복구 규약·공개 판단",
       "ids": [
         "H-246"
       ],
@@ -116,8 +116,8 @@
       "state": "구축 완료·최신 후보 대기",
       "tone": "partial",
       "owner": "운영자",
-      "current": "10월 26일 AWS 스택 7개·EC2·서비스 7개 정상, 고정 HTTPS·운영 앱 주소 반영. API·관리자 API·관리자 웹은 최신 main보다 이전 버전.",
-      "need": "최신 후보 재배포·최신 V1 격리 설치, 기기 이용·경보·복구 검사",
+      "current": "10월 29일 서버 묶음·서비스 7개 확인. 30일 경보 8개·스냅샷 정책·백업 외부 보관 타이머 적용, 31일 메일 구독 확인 기록.",
+      "need": "최종 후보 고정은 아직 보류. 기기 이용은 추후 Android부터, 백업·복구 규약은 운영 서버 확정 때 재개",
       "unlock": "배포본 설치 · 실제 채팅 · 복구 검사",
       "stages": [
         "prepare",
@@ -167,11 +167,11 @@
     {
       "id": "apple",
       "name": "iOS 서명·APNs",
-      "state": "준비 확인 필요",
-      "tone": "wait",
+      "state": "서명 IPA 완료·설치 대기",
+      "tone": "partial",
       "owner": "운영자",
-      "current": "로컬 iOS 배포 환경 파일이 없고 prod.json의 Google iOS·Firebase App ID·Bundle ID가 비어 있음. 이후 가입·TestFlight 완료 기록 미확인.",
-      "need": "서명·배포 권한, 앱 설정, APNs와 iPhone, 공개할 로그인 구성·스토어 제출 조건",
+      "current": "Apple 앱 6827137270, API 인증·Google/Maps/Firebase 입력·배포 인증서·프로파일 준비. 10월 27일 1.0.0 (1) IPA 서명 검증 완료. TestFlight 업로드 안 함.",
+      "need": "기존 설정 재사용, APNs·TestFlight 업로드·iPhone 설치, 로그인 구성·스토어 잔여 입력",
       "unlock": "iPhone 설치 · 실제 푸시 · iOS 로그인",
       "stages": [
         "prepare",
@@ -190,30 +190,28 @@
     {
       "id": "brand",
       "name": "브랜딩·로고",
-      "state": "결정 필요",
-      "tone": "decision",
-      "owner": "사용자 결정",
-      "current": "다음 할 일로 등록. 최종안은 아직 확정하지 않음.",
-      "need": "브랜드가 전달할 인상, 로고 후보, 기본 색상·사용 형태·원본 파일",
-      "unlock": "앱 아이콘 · 화면 로고 · 스토어 자료",
+      "state": "선택·반영 완료",
+      "tone": "partial",
+      "owner": "운영자·개발",
+      "current": "사용자 선택 logo-bilingual-v2로 앱 아이콘·시작·로그인·홈·온보딩과 웹에 반영했다.",
+      "need": "기존 원본 재사용. 스토어별 자료 등록은 앱 배포 항목에서 확인",
+      "unlock": "기존 브랜드로 배포 자료 준비",
       "stages": [
         "bundle",
         "release"
       ],
-      "ids": [
-        "H-433"
-      ],
-      "href": "NEXT_WORK.md#2-사용자가-정할-것",
-      "link": "로고 결정 범위"
+      "ids": [],
+      "href": "../../community_app/docs/IOS_RELEASE.md#앱-로고와-시작-화면",
+      "link": "선택한 로고와 생성 방법"
     },
     {
       "id": "android",
       "name": "Android·기존 연동",
-      "state": "시험 환경 확인",
+      "state": "Play 내부 테스트 빌드 4 완료",
       "tone": "partial",
       "owner": "운영자·개발",
-      "current": "Android 시험 서명·실제 연동 기록 유지. 운영 API·채팅·파일·공유 주소와 서버 Google·메일·Firebase 설정 반영.",
-      "need": "Play 앱 서명 지문·최신 AAB·내부 테스트와 물리 기기, Kakao native 등록 확인",
+      "current": "10월 30일 1.0.0 (4) 내부 트랙 completed. Play API 계정·OAuth/Firebase/Maps 서명 반영, Google 로그인 사용자 확인.",
+      "need": "App Links의 Play SHA-256 추가, 지도·번호 인증·사진·푸시·채팅 기기 검사, 정식 스토어 입력·공개",
       "unlock": "기존 준비 재사용 · Android 배포·이용 검사",
       "stages": [
         "prepare",
@@ -323,6 +321,8 @@
         "H-547",
         "H-553",
         "H-554",
+        "H-557",
+        "H-558",
         "H-493",
         "H-511",
         "H-534",
@@ -416,15 +416,6 @@
     }
   ],
   "parallel": [
-    {
-      "id": "brand",
-      "title": "브랜딩·최종 로고",
-      "ids": [
-        "H-433"
-      ],
-      "flow": "브랜드 인상·후보 비교 → 최종 로고·색상·원본 확정",
-      "due": "앱 아이콘·화면·스토어 자료에 적용하기 전"
-    },
     {
       "id": "copy",
       "title": "책임 안내·개인정보 문안",
@@ -528,22 +519,6 @@
     }
   ],
   "tasks": [
-    {
-      "id": "H-433",
-      "title": "브랜딩 방향과 최종 로고 결정",
-      "description": "브랜드가 전달할 인상과 로고 후보를 비교해 최종 로고를 결정한다. 기본 색상·사용 형태·원본 파일까지 확정하면 완료로 본다.",
-      "condition": "나중에 사용자가 정한다(2026-10-21 사용자 결정, 먼저 묻지 않음)",
-      "scope": "launch",
-      "kind": "제품 결정",
-      "section": "2. 사용자가 정할 것",
-      "stage": null,
-      "resources": [
-        "brand"
-      ],
-      "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "2026-10-15 사용자 요청",
-      "evidenceLinks": []
-    },
     {
       "id": "H-139",
       "title": "제재 계정의 새 문의 허용 여부",
@@ -782,7 +757,7 @@
     {
       "id": "H-476",
       "title": "로그아웃·계정 전환의 실기기 확인",
-      "description": "로그아웃·계정 전환 가족(2026-10-21 전체 검토 R3). 세션 끝을 한 자리로 모으고 요청을 세션 세대에 묶는 구조 수리는 끝났다(S1 착수표 S1a~S1e2b5·S1b2·S1d2, 2026-10-21~24, 기록 `evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H476*`·`ROUND1`). 남은 후보 ⓐ 그물 틈·ⓑ 꼴 전수의 다음 자리·ⓕ 세션 걷기 좁히기는 2026-10-25 차수 5 의 A2·A2b·A2c·A3 이 닫았다([차수 5 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md)). 남은 것은 ⓔ 실기기 확인이다: 알림 창 비우기, 오프라인 로그아웃 뒤 재개, 소셜 로그인 창 다녀오기, 알림 창 채널 네이티브 컴파일(`MainActivity.kt`·`AppDelegate.swift`, 이 맥에 Android SDK 가 없고 iOS 가 구성되지 않음), 네이버 SDK 가 남은 토큰으로 창 없이 로그인하는지, FCM 토큰을 지운 뒤 새 토큰이 나오는지, SDK 로그아웃이 돌아오지 않을 때 「그래도 로그인」으로 나아가는지.",
+      "description": "로그아웃·계정 전환 가족(2026-10-21 전체 검토 R3). 세션 끝을 한 자리로 모으고 요청을 세션 세대에 묶는 구조 수리는 끝났다(S1 착수표 S1a~S1e2b5·S1b2·S1d2, 2026-10-21~24, 기록 `evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/H476*`·`ROUND1`). 남은 후보 ⓐ 그물 틈·ⓑ 꼴 전수의 다음 자리·ⓕ 세션 걷기 좁히기는 2026-10-25 차수 5 의 A2·A2b·A2c·A3 이 닫았다([차수 5 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND5/README.md)). 남은 것은 ⓔ 실기기 확인이다: 알림 창 비우기, 오프라인 로그아웃 뒤 재개, 소셜 로그인 창 다녀오기, 알림 창 채널 네이티브 컴파일(`MainActivity.kt`·`AppDelegate.swift`, 현재 이 Mac의 Android·iOS 빌드 도구와 서명 빌드는 준비됨. 이 알림 시나리오의 기기 확인은 별도), 네이버 SDK 가 남은 토큰으로 창 없이 로그인하는지, FCM 토큰을 지운 뒤 새 토큰이 나오는지, SDK 로그아웃이 돌아오지 않을 때 「그래도 로그인」으로 나아가는지.",
       "condition": "우선순위 3. 개발 단위는 없고 출시 준비의 실제 이용 확인(서명 앱·실기기)에서 본다",
       "scope": "launch",
       "kind": "기능 보완",
@@ -1042,8 +1017,8 @@
     {
       "id": "H-542",
       "title": "차수 11 진단에 따른 재정비",
-      "description": "재정비. 차수 11 은 결함 대부분이 만들 때 생겨(불변식·상태표 없는 구현, 좁은 완료 기준, 반쪽 단위, 출시 때 켜지지 않는 길까지 범위, 새 발견을 곧바로 일로 바꿈) 2026-10-29 새벽 멈췄다. 다음 차수 계획은 진단의 요구 아홉에 답해 새로 짠다. ① 출시 표면의 도메인마다 불변식과 상태 전이표를 먼저 쓰고 한 번 검토해 얼린다. 불변식 검사는 단위 층에서 실제로 도는 시험으로 함께 만들고, 끝 기준은 「불변식과 출시 여정이 운영 설정으로 통과」 다. ② 만들 때의 완료 기준은 전체 컴파일, 구조·규약 시험 묶음, 바꾼 곳 시험, 표를 바꾸면 그 표를 쓰는 고정물·거울·범위표 전수다. 실 DB 는 마지막 검수에서 한 번. ③ 조정자가 상한 안에서 끝까지 만들 수 있게 단위를 미리 자르고 반만 하고 넘기는 지시를 하지 않는다. ④ 기준선·전수 목록·생성 파일을 고치는 단위는 차례로 쌓고 쌓을 때마다 구조 시험을 돌린다. ⑤ 운영 설정과 출시 범위 표식으로 첫 출시에 닿는 창구·작업을 기계적으로 뽑고, 꺼진 기능은 차단 장치만 확인해 「열 때 다시 설계·검증」 으로 얼린다. ⑥ 새 발견은 불변식이나 출시 여정을 깨는 것만 이번에 고치고 나머지는 기록한다. 설계·코드 검토는 2회차에서 닫는다. ⑦ 관리자·앱·웹 사본(열거·오류 코드·계약)을 공개 정의에서 생성할 수 있는지 따져 고침 하나가 단위 하나로 끝나게 한다. ⑧ 출시 때 주 기능에 닿는가 → 법 요구 → 드문 겹침 → 기능 완성 → 내부 정합 차례로 가르고, 출시 여정 시험으로 주 기능을 먼저 잰다. ⑨ 앱 자리 차림(iOS 플러그인 폴더, 옆 공개 링크)을 자리 만들기 도구에 넣는다. 사용자 결정(2026-10-29): 불변식으로 바꾸는 것은 반드시 필요하고, 마지막에 검수를 한 번에 하는 것은 그대로다. 차수 11 이 넘긴 줄(H-543~H-555)의 차례도 재정비가 다시 가른다.",
-      "condition": "다음 일의 맨 앞. 재정비 계획을 사용자와 정한 뒤 다음 차수를 연다",
+      "description": "구조 재정비(사용자 결정 2026-10-29·30). 내용·차수·진행 상태는 [구조 재정비](STRUCTURE_REBUILD_2026-10-30/README.md) 폴더가 정본이고 여기에 베끼지 않는다. 차수 11 이 넘긴 줄(H-543~H-555)의 자리도 그 폴더의 작업 단위에 있다",
+      "condition": "다음 일의 맨 앞",
       "scope": "now",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
@@ -1052,15 +1027,11 @@
         "development"
       ],
       "source": "NEXT_WORK.md#6-구조-개선",
-      "evidence": "[차수 11 진단](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND11/PROBLEMS.md#4-재정비가-답해야-할-것결정-아님-요구)·[차수 11 기록](evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND11/README.md#교훈)",
+      "evidence": "[현황](STRUCTURE_REBUILD_2026-10-30/02_STATUS.md)",
       "evidenceLinks": [
         {
-          "label": "차수 11 진단",
-          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND11/PROBLEMS.md#4-재정비가-답해야-할-것결정-아님-요구"
-        },
-        {
-          "label": "차수 11 기록",
-          "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND11/README.md#교훈"
+          "label": "현황",
+          "href": "STRUCTURE_REBUILD_2026-10-30/02_STATUS.md"
         }
       ]
     },
@@ -1130,7 +1101,7 @@
     {
       "id": "H-553",
       "title": "사본·시험·주석 정비",
-      "description": "사본·시험·주석 정비. ① 같은 이름 열거 `BoardType`·`InquiryCategory`·`LoginType`·`Purpose`·`TransactionType` 의 공개·관리자 값이 다르다. 뜻이 같은지 확인한다. ② 운영자 경보 요약 셈 질의(`retryableFailedCount`·`exhaustedFailedCount`)의 실 DB 장면이 없다. ③ 관리자 웹 대사 탭의 e2e 장면이 없고 `e2e/finance-workflows.spec.ts:154` 가 옛 대사 응답을 흉내 낸다. ④ 관리자 `ManageProviderEventService.java:57` 주석이 걷은 처리 상태 REJECTED 를 말한다. ⑤ 차수 11 FX1 이 정기모임 결제 경합 장면(`TransportParticipationEndStaleJudgmentRaceCommitTest` K3①)의 전제를 고친 뒤, 그 장면이 잡던 무력화 (g)(정기모임 결제 막힘 판정 풀기)를 더는 잡지 않는다. 그 규칙을 지키는 다른 시험이 있는지 보고 없으면 만든다. ⑥ 차수 11 검수표 손 확인 줄 가운데 돌리지 않은 셋: 여정 서버 기동 도구가 TestJdbcUrls 주소로 DB 를 만들고 뜨는지(M19, 공개 ScenarioJourneyServer 류), 개발 DB bootRun 뒤 shedlock 행 시각(M20), 이동 관리자 여정 서버(M24). 출시 여정 시험(H-542)을 차릴 때 함께 돌린다.",
+      "description": "사본·시험·주석 정비. ① 같은 이름 열거 `BoardType`·`InquiryCategory`·`LoginType`·`Purpose`·`TransactionType` 의 공개·관리자 값이 다르다. 뜻이 같은지 확인한다. ② 운영자 경보 요약 셈 질의(`retryableFailedCount`·`exhaustedFailedCount`)의 실 DB 장면이 없다. ③ 관리자 웹 대사 탭의 e2e 장면이 없고 `e2e/finance-workflows.spec.ts:154` 가 옛 대사 응답을 흉내 낸다. ④ 관리자 `ManageProviderEventService.java:57` 주석이 걷은 처리 상태 REJECTED 를 말한다. ⑤ 정기모임 결제 막힘 판정을 지키는 단위층 시험은 구조 재정비 차수 14 U0 에서 끝(2026-10-31). ⑥ 차수 11 검수표 손 확인 셋(M19·M20·M24)은 구조 재정비 차수 13 에서 끝(2026-10-31).",
       "condition": "우선순위 7",
       "scope": "now",
       "kind": "정비",
@@ -1168,6 +1139,38 @@
           "href": "evidence/POSTLAUNCH-BIG-WORKS-2026-10-16/ROUND11/README.md#다음-차수로"
         }
       ]
+    },
+    {
+      "id": "H-557",
+      "title": "판 최신화",
+      "description": "판 최신화. 판은 늘 가능하면 최신으로 둔다(2026-10-30 사용자). 같은 날 앱 Flutter 고정을 3.44.8 에서 최신 안정판 3.47.9(Dart 3.13.7)로 올렸다(앱 `37e2b9db`, 이 맥 Flutter 도 3.47.9, 윈도 도구 자리는 `flutter-3.47.9` 로 바꿔야 `audit/app_quality/verify_sdk_lock.py` 가 통과). 남은 것(2026-10-30 조사): ① 세 서버 Spring Boot 4.0.7 → 4.1.2. ② Gradle 8.14 → 9.8.2(세 서버). ③ JDK 21 → 새 Gradle 이 돌리는 최신 판(이 맥은 21.0.13, JDK 27 은 Gradle 8.14 가 못 돌림). ④ 앱 직접 의존 33개가 최신보다 뒤(같은 주 판 안에서 오르는 것 스물넷, 주 판이 바뀌는 것 아홉: cached_network_image 4·그 platform_interface 5·cupertino_icons 2·firebase_core 5·firebase_messaging 17·flutter_secure_storage 11·go_router 18·image_cropper 13·shimmer 4). 개발 의존은 따로 본다. ⑤ 아직 안 본 것: 서버 라이브러리(Boot 가 관리하지 않는 것), 관리자 웹 npm, 실시간 서버 Socket.IO. 판마다 바뀐 점을 읽고 저장소마다 한 단위로 올린다",
+      "condition": "구조 재정비 차수를 막지 않는다(차수 앞에 끼우지 않음, 2026-10-31 사용자 지적). 그 저장소를 고치는 차수가 진행 중이 아닐 때 차수 사이에. 주 판이 바뀌는 것은 바뀐 점을 읽은 뒤",
+      "scope": "now",
+      "kind": "정비",
+      "section": "7. 정비(제품 동작 아님)",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
+      "evidence": "사용자 결정 2026-10-30",
+      "evidenceLinks": []
+    },
+    {
+      "id": "H-558",
+      "title": "앱 정적 검사 지적 넷",
+      "description": "앱 main 정적 검사 오류 1·경고 3(Flutter 3.47.9 로 올리며 `flutter analyze` 에서 찾음, 판과 무관하게 main 에 있음). ① 통합 시험 `integration_test/seed_club_mutation_test.dart:873` 의 `createPost` 부름에 필수 이름 인자 `requestKey` 가 없어 컴파일되지 않는다(앱 `8c0e68e2` 가 필수로 바꿈). ② `lib/domain/providers/event/event_create_provider.dart` 1252·1282·1587 줄이 try 안에서 Future 를 await 없이 돌려준다(`unawaited_return_in_try_block`, 앱 `9dc6610b`). 그 Future 의 예외는 그 try 의 catch 를 거치지 않는다. 사용자가 보는 결과가 바뀌는지는 확인 전",
+      "condition": "그 코드를 쓴 세션이 맡는다(2026-10-30 오늘 커밋). 끝나지 않으면 우선순위 7",
+      "scope": "now",
+      "kind": "정비",
+      "section": "7. 정비(제품 동작 아님)",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
+      "evidence": "2026-10-30 판 올리기 확인",
+      "evidenceLinks": []
     },
     {
       "id": "H-493",
@@ -1390,7 +1393,7 @@
     {
       "id": "H-552",
       "title": "관리자·정원의 작은 판단 셋",
-      "description": "작은 판단 셋. ① 관리자 감사 기록 목록 `GET /audit-logs` 를 경보 권한에도 `targetType=OPERATOR_ALERT` 로 열지(운영자 한 사람이라 지금은 권한 나눔의 실익이 작다). ② 관리자 알림 틀의 채널 선택지에 IN_APP 을 둘지. ③ 정원 초과 허용으로 참석이 정원보다 많은 모임(참석 8·정원 5)은 정원을 6으로 올리는 것도 거절된다. 정원 본체가 올리는 값도 지금 참석 수보다 작으면 거절하기 때문이고(「정원 ≥ 점유」 규칙과는 맞음), 정원 초과 허용 입구는 지금 없다(H-189).",
+      "description": "작은 판단 셋. ① 관리자 감사 기록 목록 `GET /audit-logs` 를 경보 권한에도 `targetType=OPERATOR_ALERT` 로 열지(운영자 한 사람이라 지금은 권한 나눔의 실익이 작다). ② 관리자 알림 틀의 채널 선택지에 IN_APP 을 둘지. ③ 정원 초과 허용으로 참석이 정원보다 많은 모임(참석 8·정원 5)은 정원을 6으로 올리는 것도 거절된다(2026-10-31 사용자 「올리는 것은 받음」, 구조 재정비 차수 17 에서 고침). 정원 본체가 올리는 값도 지금 참석 수보다 작으면 거절하기 때문이고(「정원 ≥ 점유」 규칙과는 맞음), 정원 초과 허용 입구는 지금 없다(H-189).",
       "condition": "판단부터. 바꾸기로 하면 그 순위에",
       "scope": "now",
       "kind": "조사·확인",
@@ -1426,9 +1429,9 @@
     },
     {
       "id": "H-239",
-      "title": "남은 iOS·Play 서명·배포 설정 준비",
-      "description": "운영 API·파일·채팅·공유 주소는 prod.json에 반영됐다. iOS Bundle ID com.endside.saisoop.app·Team X8ACG93N8U·App Store ID 6827137270과 운영 Google/Firebase 입력이 10월 29일 로컬에 반영됐음을 확인했다. 남은 서명·설정 유효성·APNs와 Play 앱 서명 지문·AAB·내부 테스트를 준비한다. iOS 로그인 구성·스토어 조건과 Kakao native 플랫폼 등록도 확인한다. 콘솔 권한·TestFlight 설치·물리 기기 결과는 별도 확인이 남아 있다. iOS 출시 검사(`ios/fastlane/Fastfile` 의 `RELEASE_DEFINES`)와 `docs/IOS_RELEASE.md` 표의 `IOS_APP_STORE_ID` 두 줄(차수 10 보류 가지)은 2026-10-29 다른 세션이 앱 이름 바꾸기와 함께 앱 main 에 합쳤다(`57bcefd7`, 병합 `197ec509`). 문서 보류 가지(앱 업데이트 안내 명세)는 2026-10-29 문서 main 에 합쳤다(인증 화면 명세 10.10).",
-      "condition": "실제 빌드 환경의 입력·권한, 스토어 설치·기기 연결 결과 기록",
+      "title": "기존 배포 설정 재사용과 TestFlight·스토어·실기기 확인",
+      "description": "Android `1.0.0 (4)` 내부 트랙 완료·Play API 인증, iOS 앱 등록·API 키·Google/Maps/Firebase·수동 배포 서명과 `1.0.0 (1)` IPA까지 확인했다. 남은 것은 사이숲 TestFlight 업로드·설치, APNs 실제 연결, 스토어 정책·메타데이터와 iOS 로그인 구성 조건, 지도·푸시·번호 인증 등의 기기 검증이다. 운영 App Links는 현재 패키지지만 Play 앱 서명 SHA-256 추가가 필요하다. 기존 키·앱·프로파일을 다시 만들지 않는다. Android 실기기는 사용자 결정대로 나중에 연결한다.",
+      "condition": "플랫폼별 업로드·처리·설치·실제 여정·공개 심사를 구분해 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1439,11 +1442,15 @@
         "android"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[플랫폼별 외부 준비](../../business_logic/docs/qa/external-readiness.html#required)",
+      "evidence": "[앱 배포 준비와 남은 확인](../../community_app/docs/DEPLOYMENT_CHECKLIST.md) · [출시 작업 인계](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#다른-세션이-이어받을-출시-상태)",
       "evidenceLinks": [
         {
-          "label": "플랫폼별 외부 준비",
-          "href": "../../business_logic/docs/qa/external-readiness.html#required"
+          "label": "앱 배포 준비와 남은 확인",
+          "href": "../../community_app/docs/DEPLOYMENT_CHECKLIST.md"
+        },
+        {
+          "label": "출시 작업 인계",
+          "href": "../release-gate/LAUNCH_COMPLETION_OVERVIEW.md#다른-세션이-이어받을-출시-상태"
         }
       ]
     },
@@ -1494,7 +1501,7 @@
     {
       "id": "H-248",
       "title": "이동·직접 송금·개인정보 문안 검토",
-      "description": "이동·직접 송금 책임 안내와 개인정보 추가 문안의 법무 검토를 마친다. 위치 동의도 함께 묻는다(2026-10-28 사용자 결정 16: 동의 칸 `agreement.agree_location` 은 답까지 둔다). 법무 질문 다섯: ① 이 서비스가 위치기반서비스사업 신고 대상인가(특히 참석자 사이 실시간 위치 공유와 현재 위치로 거리 점수를 매기는 추천). ② 개인위치정보 수집·이용 동의를 위치기반서비스 이용약관으로 따로 받아야 하는가, OS 권한과 모임별 opt-in 으로 갈음되는가. ③ 모임 위치 공유가 개인위치정보의 제3자 제공에 해당해 제공할 때마다 알려야 하는가. ④ 수집·이용·제공 사실 확인자료에 법이 정한 보관 기간이 있는가, 지금 30일 삭제(정책 05 §7)와 맞는가. ⑤ 동네 설정처럼 기기 좌표에서 얻은 주소·좌표를 계속 보관하는 것이 개인위치정보 보관에 해당하는가. 근거 사실: 앱의 네 길(동네 설정, 추천·검색·거르기 건수, 길찾기, 모임 위치 공유)이 모두 좌표를 서버로 보내고, 동네 설정과 위치 공유는 서버에 보관하며, 위치 공유 좌표는 opt-in 한 다른 참석자에게 보인다. iOS 위치 권한 문구에는 참석자 위치 공유가 빠져 있다. 답이 「따로 동의 필요」 면 동의 원장에 위치 약관 종류를 더하고 가입·재동의 화면에 항목을 두며 위치를 처음 쓰는 화면에서 묻는다, 「필요 없음」 이면 칸을 걷는다. 어느 쪽이든 iOS 권한 문구를 함께 고친다.",
+      "description": "10월 30일 한·영 약관·개인정보·계정 삭제 안내와 앱 책임 문구를 보완했고 공개 웹에 배포했다. 운영자 실제 정보·시행일과 법무 판단은 아직 확정하지 않았다. 이동·직접 송금 책임 안내와 개인정보 추가 문안의 법무 검토를 마친다. 위치 동의도 함께 묻는다(2026-10-28 사용자 결정 16: 동의 칸 `agreement.agree_location` 은 답까지 둔다). 법무 질문 다섯: ① 이 서비스가 위치기반서비스사업 신고 대상인가(특히 참석자 사이 실시간 위치 공유와 현재 위치로 거리 점수를 매기는 추천). ② 개인위치정보 수집·이용 동의를 위치기반서비스 이용약관으로 따로 받아야 하는가, OS 권한과 모임별 opt-in 으로 갈음되는가. ③ 모임 위치 공유가 개인위치정보의 제3자 제공에 해당해 제공할 때마다 알려야 하는가. ④ 수집·이용·제공 사실 확인자료에 법이 정한 보관 기간이 있는가, 지금 30일 삭제(정책 05 §7)와 맞는가. ⑤ 동네 설정처럼 기기 좌표에서 얻은 주소·좌표를 계속 보관하는 것이 개인위치정보 보관에 해당하는가. 근거 사실: 앱의 네 길(동네 설정, 추천·검색·거르기 건수, 길찾기, 모임 위치 공유)이 모두 좌표를 서버로 보내고, 동네 설정과 위치 공유는 서버에 보관하며, 위치 공유 좌표는 opt-in 한 다른 참석자에게 보인다. iOS 위치 권한 문구에는 참석자 위치 공유가 빠져 있다. 답이 「따로 동의 필요」 면 동의 원장에 위치 약관 종류를 더하고 가입·재동의 화면에 항목을 두며 위치를 처음 쓰는 화면에서 묻는다, 「필요 없음」 이면 칸을 걷는다. 어느 쪽이든 iOS 권한 문구를 함께 고친다.",
       "condition": "확정한 문안을 앱·정책에 반영",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1519,7 +1526,7 @@
     {
       "id": "H-241",
       "title": "다섯 프로그램과 서명 앱 묶기",
-      "description": "10월 29일 16:28 KST 읽기 전용 조회에서 AWS 묶음 bundle-20261029T161033의 공개 API 9f9928876·관리자 API 714d49b6·관리자 웹 4d60e28·실시간 41c7563 실행 이미지가 로컬 배포 목록과 일치하고 서비스 7개가 healthy였다. 번호 인증이 반영된 앱 main의 운영 AAB·IPA까지 포함해 다섯 프로그램의 소스·이미지·설정을 한 목록으로 고정하고 실제 이용을 검증한다. 차수 9 부터 마일리지 뱃지·차감 프리셋·시즌 추가는 서버가 `Idempotency-Key` 를 필수로 받으므로 공개 API 와 앱을 같은 후보로 낸다(서버만 먼저 나가면 옛 앱의 추가가 400). 차수 10 에도 짝이 있다. 모임 만들기 멱등 열쇠와 검색 기록 창구 걷기는 앱이 먼저, 새 알림 종류 183~191 은 서버가 먼저다. 첫 설치는 둘을 함께 올리고, 출시 뒤라면 두 단계로 나눈다. 차수 11 은 운영 DB 접속 주소에 세션 시간대 고정 인자(`connectionTimeZone=%2B09:00&forceConnectionTimeZoneToSession=true`)가 있어야 하고 배포 도구가 넣는다(빠지면 DB 기본값 시각이 9시간 어긋남). 배포 입력은 H-546.",
+      "description": "사용자 2026-10-31: 출시 후보 고정은 아직이다. 10월 29일 16:28 KST 읽기 전용 조회에서 AWS 묶음 bundle-20261029T161033의 공개 API 9f9928876·관리자 API 714d49b6·관리자 웹 4d60e28·실시간 41c7563 실행 이미지가 로컬 배포 목록과 일치하고 서비스 7개가 healthy였다. 번호 인증이 반영된 앱 main의 운영 AAB·IPA까지 포함해 다섯 프로그램의 소스·이미지·설정을 한 목록으로 고정하고 실제 이용을 검증한다. 차수 9 부터 마일리지 뱃지·차감 프리셋·시즌 추가는 서버가 `Idempotency-Key` 를 필수로 받으므로 공개 API 와 앱을 같은 후보로 낸다(서버만 먼저 나가면 옛 앱의 추가가 400). 차수 10 에도 짝이 있다. 모임 만들기 멱등 열쇠와 검색 기록 창구 걷기는 앱이 먼저, 새 알림 종류 183~191 은 서버가 먼저다. 첫 설치는 둘을 함께 올리고, 출시 뒤라면 두 단계로 나눈다. 차수 11 은 운영 DB 접속 주소에 세션 시간대 고정 인자(`connectionTimeZone=%2B09:00&forceConnectionTimeZoneToSession=true`)가 있어야 하고 배포 도구가 넣는다(빠지면 DB 기본값 시각이 9시간 어긋남). 배포 입력은 H-546.",
       "condition": "목록만으로 같은 후보를 다시 설치할 수 있고 서명 앱의 서버·이미지가 일치함",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1542,7 +1549,7 @@
     {
       "id": "H-242",
       "title": "빈 DB 새 설치와 두 API 기동",
-      "description": "10월 26일 운영 최초 설치는 이전 배포 소스로 수행됐다. 최신 후보의 V1·기준 데이터 재적용·두 API 기동·연결 대상·옛 키 명령 0행을 격리 빈 DB에서 다시 기록한다. 10월 16일 로컬 빈 설치·배포 도구 리허설의 성공 기록은 당시 범위로 유지한다. 최신 W00·W53과 필수 환경변수도 확인한다. 운영 DB를 임의로 지우거나 옛 데이터를 보강하지 않는다.",
+      "description": "사용자 2026-10-31: 출시 후보 고정은 아직이라 그때 한다. 10월 26일 운영 최초 설치는 이전 배포 소스로 수행됐다. 최신 후보의 V1·기준 데이터 재적용·두 API 기동·연결 대상·옛 키 명령 0행을 격리 빈 DB에서 다시 기록한다. 10월 16일 로컬 빈 설치·배포 도구 리허설의 성공 기록은 당시 범위로 유지한다. 최신 W00·W53과 필수 환경변수도 확인한다. 운영 DB를 임의로 지우거나 옛 데이터를 보강하지 않는다.",
       "condition": "최신 후보의 빈 설치·seed 멱등·두 API 기동 기록. 관리자 필수 입력과 공개 APP_HMAC_SECRET 포함",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1609,7 +1616,7 @@
     {
       "id": "H-243",
       "title": "서명 앱으로 실제 이용 확인",
-      "description": "서명 앱으로 모임·송금·이동·투표·사진·마일리지·스탬프·프로필·알림·채팅·탈퇴를 확인한다.",
+      "description": "사용자 2026-10-31: 나중에 Android 실기기를 연결해 한다. 서명 앱으로 모임·송금·이동·투표·사진·마일리지·스탬프·프로필·알림·채팅·탈퇴를 확인한다.",
       "condition": "기기·역할·버전·실제 결과를 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1634,7 +1641,7 @@
     {
       "id": "H-244",
       "title": "실기기 편집기·한글 입력 확인",
-      "description": "빈 DB와 실기기에서 편집기의 표·한글 입력·글자 크기를 확인한다.",
+      "description": "사용자 2026-10-31: 나중에 Android 실기기를 연결해 한다. 빈 DB와 실기기에서 편집기의 표·한글 입력·글자 크기를 확인한다.",
       "condition": "편집기 검사 계획의 기기 확인 조건 충족",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1655,7 +1662,7 @@
     {
       "id": "H-341",
       "title": "세 지도 앱의 목적지 확인",
-      "description": "카카오맵·네이버지도·구글지도에서 장소 링크를 연다. 운영 설정을 별도 지정하면 장소 기능도 포함한다.",
+      "description": "사용자 2026-10-31: 나중에 Android 실기기를 연결해 한다. 카카오맵·네이버지도·구글지도에서 장소 링크를 연다. 운영 설정을 별도 지정하면 장소 기능도 포함한다.",
       "condition": "기기별로 세 앱의 목적지 확인",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1677,8 +1684,8 @@
     {
       "id": "H-246",
       "title": "복구 연습과 공개 승인 판단",
-      "description": "10월 26일 실조회에서 CloudWatch 경보·루트 EBS 스냅샷·운영 S3 backups/ 객체는 모두 0개다. 경보 수신·재처리·백업 생성·S3 보관·격리 복구·이전 버전 복귀를 실행한다. 10월 16일 로컬 mysqldump TLS 신뢰 실패는 과거 결과이며 최신 후보의 인증서 신뢰·백업 계정/권한·암호화 복원을 다시 검증한다. 인증서 갱신 dry-run·단순 재시작 통과를 복구 성공으로 세지 않는다. 고객 안내·스토어 자료도 확정한다.",
-      "condition": "같은 출시 후보의 경보·복구·롤백 결과와 공개 승인 또는 보류 기록",
+      "description": "사용자 2026-10-31: 지금 운영 서버는 임시에 가까워 백업·복구 규약은 운영 서버를 굳힐 때 정한다. 기존 구축은 유지한다: 10월 30일 경보 8개·스냅샷 정책·백업 외부 보관 타이머 적용, 31일 경보 메일 구독 확인. 공개 API의 백업 클라이언트 인증 플러그인 오류 수정 `bc390a944`는 운영 미반영이며 S3 backups/는 31일 01시 확인 때 비어 있었다. 서버 확정 후 실제 백업 생성·외부 보관·격리 복구·이전 버전 복귀를 검증한다.",
+      "condition": "운영 서버 확정 후 재개. 설정·healthy·단순 재시작을 복구 성공으로 세지 않음",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1689,18 +1696,18 @@
         "review"
       ],
       "source": "NEXT_WORK.md#9-출시-준비외부-입력",
-      "evidence": "[운영 복구의 현재 공백](../../business_logic/docs/qa/external-readiness.html#infrastructure)",
+      "evidence": "[현재 운영 서버 구성](../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md)",
       "evidenceLinks": [
         {
-          "label": "운영 복구의 현재 공백",
-          "href": "../../business_logic/docs/qa/external-readiness.html#infrastructure"
+          "label": "현재 운영 서버 구성",
+          "href": "../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md"
         }
       ]
     },
     {
       "id": "H-531",
       "title": "출시 후보의 앱 통합·관리자 두 창·배포 리허설",
-      "description": "차수 7 이 바꾼 길을 출시 후보에서 실제로 돌린다. 앱 통합 시험 열한 줄(실서버, 이번에는 컴파일·형만 확인: `regular_meeting_content_journey`·`seed_admin_console_surface`·`seed_wallet_monetization_detail`·`seed_lifecycle_state_surface`·`release_core_journey`·`seed_event_application_mutation`·`seed_payment_refund`·`seed_club_mutation`·`seed_regular_meeting_matrix`·`auth_flow`·`seed_post_0615_changed_source`), 관리자 웹 지원 화면 두 창 겹친 연결의 손 검사(실제 관리자 API, 둘째 연결 409), 운영 묶음으로 띄운 공개·관리자 API 의 기동 리허설 둘(`deploy/production/verify_rehearsal.py`, 풀 꼬리표가 다른 두 풀에서 복제본 기동 검사가 지나는지). 차수 8의 공유 publication_blocked 열·운영자 숨김/해제 후 재발행·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본에서 확인한다. 차수 10 이 바꾼 길의 앱 통합·e2e 시험 여섯 파일(검수표 줄 다섯: `integration_test/seed_event_authoring_surface_test.dart`·`seed_event_application_mutation_test.dart`, `seed_regular_meeting_matrix_test.dart`, `seed_search_memory_surface_test.dart`, `bulk_screen_smoke_test.dart`, `seed_login_flow_test.dart` 의 앱 버전 검사)도 같은 출시 후보 전체 실행에서 한 번 돌린다(앱 시험은 맥 전체에서 하나씩). 차수 11 VD 의 기기 확인 넷(정산 이의 알림 64·65 를 누르면 이의 화면, 모집 마감 뒤 정원 설정을 저장해도 마감 유지, 플랜 모임 만들기에 반복 토글 없음, 클럽 반복을 오늘 시작·종료일 지정으로 만들면 오늘 늦은 회차와 종료일 당일 회차)과 관리자 대사 화면의 정산 합계도 같은 출시 후보에서 본다(VD 검수표 손 확인 M3~M7).",
+      "description": "사용자 2026-10-31: 출시 후보 고정은 아직이라 그때 한다. 차수 7 이 바꾼 길을 출시 후보에서 실제로 돌린다. 앱 통합 시험 열한 줄(실서버, 이번에는 컴파일·형만 확인: `regular_meeting_content_journey`·`seed_admin_console_surface`·`seed_wallet_monetization_detail`·`seed_lifecycle_state_surface`·`release_core_journey`·`seed_event_application_mutation`·`seed_payment_refund`·`seed_club_mutation`·`seed_regular_meeting_matrix`·`auth_flow`·`seed_post_0615_changed_source`), 관리자 웹 지원 화면 두 창 겹친 연결의 손 검사(실제 관리자 API, 둘째 연결 409), 운영 묶음으로 띄운 공개·관리자 API 의 기동 리허설 둘(`deploy/production/verify_rehearsal.py`, 풀 꼬리표가 다른 두 풀에서 복제본 기동 검사가 지나는지). 차수 8의 공유 publication_blocked 열·운영자 숨김/해제 후 재발행·실제 완료 푸시 뒤 지갑 갱신도 같은 배포본에서 확인한다. 차수 10 이 바꾼 길의 앱 통합·e2e 시험 여섯 파일(검수표 줄 다섯: `integration_test/seed_event_authoring_surface_test.dart`·`seed_event_application_mutation_test.dart`, `seed_regular_meeting_matrix_test.dart`, `seed_search_memory_surface_test.dart`, `bulk_screen_smoke_test.dart`, `seed_login_flow_test.dart` 의 앱 버전 검사)도 같은 출시 후보 전체 실행에서 한 번 돌린다(앱 시험은 맥 전체에서 하나씩). 차수 11 VD 의 기기 확인 넷(정산 이의 알림 64·65 를 누르면 이의 화면, 모집 마감 뒤 정원 설정을 저장해도 마감 유지, 플랜 모임 만들기에 반복 토글 없음, 클럽 반복을 오늘 시작·종료일 지정으로 만들면 오늘 늦은 회차와 종료일 당일 회차)과 관리자 대사 화면의 정산 합계도 같은 출시 후보에서 본다(VD 검수표 손 확인 M3~M7).",
       "condition": "출시 후보 묶음과 실서버 시험 환경이 준비된 뒤. 통과 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1750,7 +1757,7 @@
     {
       "id": "H-546",
       "title": "광고 메일 전송자 정보 배포 입력",
-      "description": "운영 배포 입력 `external.marketing_sender_name`·`marketing_contact_email`·`marketing_phone`·`marketing_address` 를 넣는다. 주간 요약 광고 메일 본문 끝과 처리 결과 통지에 싣는 전송자 명칭·연락처·주소다. 비면 배포 검사(`deploy/production/deploy.py`)와 공개 API 기동이 거부한다(차수 11 S7b·S16, 문서 배포 커밋 `01802a06`).",
+      "description": "운영 배포 입력 `external.marketing_sender_name`·`marketing_contact_email`·`marketing_phone`·`marketing_address`에는 10월 29일 사용자 지시의 임시 값이 들어 있다. 실제 상호·전화·주소로 확정하고 교체한다. 주간 요약 광고 메일 본문 끝과 처리 결과 통지에 싣는 전송자 명칭·연락처·주소다. 비면 배포 검사(`deploy/production/deploy.py`)와 공개 API 기동이 거부한다(차수 11 S7b·S16, 문서 배포 커밋 `01802a06`).",
       "condition": "운영 배포 입력을 준비할 때. 배포 검사 통과 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1904,15 +1911,15 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "cf4497208"
+      "commit": "131170f3b"
     },
     {
       "name": "관리자 API",
-      "commit": "714d49b64"
+      "commit": "74808139"
     },
     {
       "name": "앱",
-      "commit": "fd32b5939"
+      "commit": "4370748f"
     },
     {
       "name": "관리자 웹",
@@ -1923,49 +1930,48 @@
       "commit": "41c756317"
     }
   ],
-  "sourceDigest": "2015d9fd583062d1e7d6d8f83398ba258979168c009f55d763f440972c6d8048",
+  "sourceDigest": "29f03e5a62c3fe5edbc3dfcd0c7d6e9dad3562388b20aa093df544f22f76df5f",
   "summary": {
-    "lead": "차수 11과 10월 29일 번호 인증 변경을 반영했습니다. 현재 서버·관리자 웹 배포는 확인했으며, 다음 개발은 H-542 재정비부터 정합니다. 서명 앱·실제 이용·파일·경보·백업 복구는 남아 있습니다.",
+    "lead": "2026-10-31 출시 기록을 반영했습니다. Android 내부 테스트 빌드 4와 iOS 서명 IPA, 외부 설정·로고는 준비됐습니다. TestFlight·정식 공개·실기기 검증은 별도이며 후보 고정·복구 규약은 아직 진행하지 않습니다. 개발 순서는 구조 재정비 현황을 따릅니다.",
     "updates": [
-      "가입은 6자리 이메일 번호 확인 뒤 계정 생성·자동 로그인으로 바뀌었습니다. 비밀번호 찾기와 Google 기존 이메일 계정 연결에도 번호를 사용하고 옛 미인증 제한·메일 링크 인증을 제거했습니다.",
-      "차수 9~11에서 생성·관리 명령의 중복 처리, 계정별 기기 검색 기록, 무료 포인트 만료, 탈퇴 뒤 돈 보류·운영 종결, 정원·출석·이동·광고 동의와 운영 경보를 보완했습니다.",
-      "차수 11 자동 검수 240줄과 손 확인 38줄의 통과 기록을 대조했습니다. 손 확인 3줄은 미실행으로 H-553에 남고 앱 기준선·번호 인증 범위 밖 실패도 구분합니다.",
-      "10월 29일 16:28 KST: 최신 API·관리자 API·실시간·관리자 웹 이미지와 실행 상태를 확인했습니다. 서비스 7개 healthy는 실제 고객 이용 통과를 뜻하지 않습니다.",
-      "iOS 앱 식별자·스토어 번호와 로컬 Google/Firebase 입력이 채워졌습니다. Android 새 패키지 설정, 두 플랫폼 서명·스토어 설치·실기기 확인은 남습니다.",
-      "CloudWatch 경보·로그 그룹, 서울 리전 계정 소유 EBS 스냅샷, 운영 S3 backups/ 객체는 0개입니다. 경보 수신·백업 생성·보관·격리 복구를 완료해야 합니다."
+      "Android 1.0.0 (4) 내부 트랙 completed, Play API 계정과 Google·Firebase·Maps 서명 반영. Google 로그인 사용자 성공 확인.",
+      "사이숲 iOS 앱·API 인증·Google/Maps/Firebase·수동 서명과 IPA 1.0.0 (1) 검증 완료. TestFlight 업로드·설치는 미완료.",
+      "사용자가 선택한 logo-bilingual-v2를 앱·웹에 반영해 H-433은 완료 목록으로 옮겼습니다. 10월 30일 공개 안내·홈페이지 사진과 앱 화면도 배포했습니다.",
+      "10월 31일 사용자 결정: 후보 고정은 아직, 백업·복구 규약은 운영 서버 확정 때, Android 실기기는 나중에 연결.",
+      "개발은 구조 재정비 세션에서 진행합니다. 차수 13·14와 결정 지점을 마쳤고 장치 차수 14b 준비 상태는 작업 목록·재정비 현황을 따릅니다."
     ],
-    "checks": "기존 실행 기록 대조: 차수 11 자동 240줄·손 확인 38줄 통과, 손 확인 3줄 미실행. 관리자 웹 E2E 636·노드 195 통과. 번호 인증 공개 실 DB 22클래스 351건 등 별도 검증 기록. 이번 문서 갱신은 소스·문서·AWS 읽기 전용 대조와 문서 검사를 수행하며 제품 전체 시험을 새로 실행한 기록이 아닙니다.",
-    "inventory": "정본의 추적 항목 63개: 제품 결정 11 · 결함 2 · 결제 공개 전 0 · 새 기능 7 · 구조·품질 5 · 도구·시험 5 · 출시 확인 11 · 조건부 22. 후속·조건부 항목을 포함하므로 출시 전 개발 건수나 완료율로 사용하지 않습니다.",
+    "checks": "기존 검증 기록 대조: Android 빌드 4 관련 130건 통과, 빌드 3 전체 검사 79건 실패는 해결로 처리하지 않음. iOS 서명 IPA 검증·미업로드 기록, 홀덤과 별도 앱임을 확인. 이번 작업은 문서·설정·산출물 대조와 문서 검사이며 새 제품 전체 시험·기기 시험·스토어 제출이 아닙니다.",
+    "inventory": "정본의 추적 항목 64개. 완료된 H-433·H-556은 현재 작업에서 제외했습니다. 후속·조건부 항목을 포함하므로 출시 전 개발 건수나 완료율로 사용하지 않습니다.",
     "categoryCounts": {
-      "2": 11,
+      "2": 10,
       "3": 2,
+      "4": 0,
       "5": 7,
       "6": 5,
-      "7": 5,
+      "7": 7,
       "8": 11,
-      "9": 22,
-      "4": 0
+      "9": 22
     },
     "actions": [
       {
         "task": "H-542",
-        "title": "불변식과 출시 여정으로 다음 작업을 재정비합니다",
-        "note": "출시 표면·상태 전이·완료 기준과 단위 크기를 먼저 정하고 H-543~H-555의 차례를 다시 가릅니다."
+        "title": "진행 중인 구조 재정비 순서를 따릅니다",
+        "note": "차수 13·14 이후 장치 차수 14b 준비. 재정비 현황이 정본이며 출시 문서 정리가 그 개발 순서를 바꾸지 않습니다."
       },
       {
         "task": "H-239",
-        "title": "현재 서버와 맞는 서명 앱·스토어 입력을 확인합니다",
-        "note": "새 Android 패키지 설정과 iOS 서명·APNs·TestFlight·Play 설치. 번호 인증·Google 연결을 실제 기기에서 확인합니다."
+        "title": "기존 서명·배포 설정에서 남은 입력을 확인합니다",
+        "note": "사이숲 APNs·TestFlight·정식 스토어 입력, App Links Play 지문이 남습니다. 이미 완료한 앱·키·프로파일 생성과 내부 테스트 업로드를 반복하지 않습니다."
       },
       {
         "task": "H-531",
         "title": "같은 출시 후보로 실제 이용과 충돌·복구를 확인합니다",
-        "note": "실서버 앱 통합 11파일·관리자 두 창·배포 리허설 둘. 손 확인 미실행 3줄은 H-553과 함께 준비합니다."
+        "note": "후보 확정·실서버 환경 준비 후 같은 소스의 이용·충돌 검증. Android 실기기는 추후 연결합니다."
       },
       {
         "task": "H-246",
-        "title": "경보·백업·격리 복구의 실행 증거를 남깁니다",
-        "note": "설정 존재를 성공으로 세지 않고 실제 경보 수신·백업 외부 보관·복구·이전 버전 복귀를 확인합니다."
+        "title": "운영 서버 확정 때 백업·복구 규약을 정합니다",
+        "note": "10월 31일 사용자 결정으로 지금 진행하지 않습니다. 경보·타이머 구축과 실제 백업·복구 성공을 구분합니다."
       }
     ],
     "progressRows": [
@@ -1980,14 +1986,14 @@
         "생성 요청 고유키·최근 검색 기기 저장·무료 포인트 만료·탈퇴자 돈 보류·정원·반복 출석·이동·분쟁·광고 동의·경보. 기능 공개 범위는 별도 유지."
       ],
       [
-        "다음 개발 H-542",
-        "재정비가 먼저",
-        "불변식·상태표·출시 여정·구현 완료 기준을 정해 새 작업 순서를 합의. 차수 12 자동 착수나 H-528 단독 재설계를 뜻하지 않음."
+        "구조 재정비 H-542",
+        "장치 차수 14b 준비",
+        "차수 13·14와 결정 지점은 완료. 현재 범위·순서는 별도 재정비 현황을 따른다."
       ],
       [
         "외부 설정·운영 배포",
-        "오늘 서버 배포와 iOS 입력 진척 확인",
-        "API 9f9928876·관리자 714d49b6·웹 4d60e28·실시간 41c7563. 새 Android 식별자 설정·iOS 서명·스토어·물리 기기·실제 메일은 남음."
+        "서버와 앱별 완료 범위 확인",
+        "서버는 10월 29일 묶음, Android는 내부 테스트 빌드 4, iOS는 서명 IPA 빌드 1. TestFlight·정식 공개·기기 전체 확인은 별도."
       ],
       [
         "H-531 출시 후보 확인",
@@ -2001,13 +2007,13 @@
       ],
       [
         "H-246 운영 복구",
-        "미완료",
-        "10월 29일 조회: CloudWatch 경보·로그 그룹·EBS 스냅샷·S3 backups/ 객체 0개. healthy와 단순 재시작은 복구 시험이 아님."
+        "운영 서버 확정 때 재개",
+        "10월 30일 경보 8개·스냅샷 정책·외부 보관 타이머, 31일 메일 구독 확인. DB 백업 생성 실패 수정의 운영 반영·실제 복구는 미완료."
       ],
       [
         "제품·문안·배포 판단",
         "결정 또는 확인 대기",
-        "H-543 지급 증빙·손실 처리, H-544 법적 문안, H-546 마케팅 발신자 입력 내용 확인. 최종 로고·iOS 로그인 구성과 후속 계약은 별도."
+        "브랜드 로고 선택·반영과 공개 안내 보완 배포는 완료. 운영자 실제 정보·법무 판단·스토어 잔여 입력은 별도이며 후보 고정·복구 규약은 보류."
       ]
     ],
     "evidenceRows": [
@@ -2035,18 +2041,25 @@
         "10월 29일 운영 읽기 전용 조회",
         "AWS 스택 7개 완료·실행 컨테이너 7개 healthy·배포 이미지 일치. 백업 객체·경보·로그 그룹·스냅샷 0개. 실제 기능·기기·격리 복구 시험 아님.",
         "business_logic/verification/document-sync-2026-10-29.json"
+      ],
+      [
+        "10월 31일 출시 기록 대조",
+        "플랫폼 가이드·로컬 서명 산출물·Play 조회 결과와 공개 연결 파일을 대조. 앱 등록·서명·내부 테스트와 정식 공개를 구분.",
+        "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md"
       ]
     ],
-    "decisions": "H-525~H-527의 운영자 제한 해제 뒤 작성자 재발행·실제 지갑 반환 완료 알림·돈 잠금 순서 정렬은 유지합니다. 차수 10·11의 무료 포인트 만료·계정별 기기 검색 기록·탈퇴 뒤 돈 보류·정원 감소 판정·광고 수신 동의와 번호 인증 전환을 반영했습니다. 후속 기능 공개 승인이나 법적 문안 확인까지 완료한 것으로 보지 않습니다."
+    "decisions": "H-525~H-527의 운영자 제한 해제 뒤 작성자 재발행·실제 지갑 반환 완료 알림·돈 잠금 순서 정렬은 유지합니다. 차수 10·11의 무료 포인트 만료·계정별 기기 검색 기록·탈퇴 뒤 돈 보류·정원 감소 판정·광고 수신 동의와 번호 인증 전환을 반영했습니다. 후속 기능 공개 승인이나 법적 문안 확인까지 완료한 것으로 보지 않습니다. 10월 31일 후보 고정 보류·운영 서버 확정 시 복구 규약·추후 Android 실기기 연결 결정을 유지합니다. 로고 선택은 완료됐으며 이미 준비한 키·서명·외부 앱은 재사용합니다."
   },
   "publication": {
-    "updatedAt": "2026-10-29T16:42:29+09:00",
-    "sourceBranch": "main",
-    "sourceCommit": "8b373df3e50518197f2aa70b5616011c624b762d",
+    "updatedAt": "2026-10-31T14:43:58.458341+09:00",
+    "sourceBranch": "w/rel-release-doc-sync",
+    "sourceBaseCommit": "02b2f0d702c28bf68446da054a9b89d21896a91a",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "bfe4804d86a172006a797e0772756ef61dfa05565a8967ebc614c0f2a53db26f",
-    "method": "차수 9~11·번호 인증 기록과 현재 소스, 기존 문서, 오늘 배포 이미지와 AWS 읽기 전용 조회 대조. 현재 정본 수정본을 SHA-256으로 고정. 제품 전체 시험·새 배포·메일 발송·복구는 수행하지 않음.",
+    "sourceSha256": "12b739ac83f1733db6a7cedf486d7b2f7da3000b42887de0df84d5a296058fc6",
+    "worklistSha256": "aeef35aea52bb04a266247782faecf2baafdce53ea6643e5c80b15f6395f58e6",
+    "method": "2026-10-31 Codex 출시 세션·현재 설정·검증 산출물·운영 문서 대조. sourceCommit은 NEXT_WORK.md 정본 커밋이며 병행 앱 작업을 반영한 WORKLIST는 별도 해시와 sourceDigest로 고정. 새 배포·스토어 제출·기기 검사 없음.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
-    "check": "python3 scripts/build-work-overview.py --site-only --check"
+    "check": "python3 scripts/build-work-overview.py --site-only --check",
+    "sourceCommit": "35333d6932ec1658bc289ab5268afad3bd6bb0a1"
   }
 }
