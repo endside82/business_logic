@@ -36,9 +36,9 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/calendar/monthly` | `CalendarIntegrationController#getMonthlyCalendar` | [CalendarIntegrationController.java:33](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java#L33) |
-| `GET /api/v1/calendar/daily` | `CalendarIntegrationController#getDailyCalendar` | [CalendarIntegrationController.java:42](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java#L42) |
-| `GET /api/v1/calendar/range` | `CalendarIntegrationController#getRangeCalendar` | [CalendarIntegrationController.java:50](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java#L50) |
+| `GET /api/v1/calendar/monthly` | `CalendarIntegrationController#getMonthlyCalendar` | [CalendarIntegrationController.java:33](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java#L33) |
+| `GET /api/v1/calendar/daily` | `CalendarIntegrationController#getDailyCalendar` | [CalendarIntegrationController.java:42](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java#L42) |
+| `GET /api/v1/calendar/range` | `CalendarIntegrationController#getRangeCalendar` | [CalendarIntegrationController.java:50](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java#L50) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

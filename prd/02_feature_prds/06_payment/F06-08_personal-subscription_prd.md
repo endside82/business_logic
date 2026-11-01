@@ -36,11 +36,11 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/subscriptions/plans` | `SubscriptionController#getPlans` | [SubscriptionController.java:33](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L33) |
-| `GET /api/v1/subscriptions/me` | `SubscriptionController#getMySubscription` | [SubscriptionController.java:49](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L49) |
-| `POST /api/v1/subscriptions/subscribe` | `SubscriptionController#subscribe` | [SubscriptionController.java:57](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L57) |
-| `POST /api/v1/subscriptions/cancel` | `SubscriptionController#cancelAutoRenew` | [SubscriptionController.java:65](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L65) |
-| `POST /api/v1/subscriptions/reactivate` | `SubscriptionController#reactivate` | [SubscriptionController.java:73](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L73) |
+| `GET /api/v1/subscriptions/plans` | `SubscriptionController#getPlans` | [SubscriptionController.java:33](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L33) |
+| `GET /api/v1/subscriptions/me` | `SubscriptionController#getMySubscription` | [SubscriptionController.java:49](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L49) |
+| `POST /api/v1/subscriptions/subscribe` | `SubscriptionController#subscribe` | [SubscriptionController.java:57](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L57) |
+| `POST /api/v1/subscriptions/cancel` | `SubscriptionController#cancelAutoRenew` | [SubscriptionController.java:65](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L65) |
+| `POST /api/v1/subscriptions/reactivate` | `SubscriptionController#reactivate` | [SubscriptionController.java:73](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java#L73) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

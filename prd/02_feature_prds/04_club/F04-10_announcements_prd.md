@@ -41,9 +41,9 @@ OWNER/ADMIN이 모든 멤버에게 일괄 알림을 보내는 단방향 게시 �
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/clubs/{id}/announcements` | `ClubController#createAnnouncement` | [ClubController.java:471](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L471) |
-| `GET /api/v1/clubs/{id}/announcements` | `ClubController#getAnnouncements` | [ClubController.java:480](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L480) |
-| `DELETE /api/v1/clubs/{id}/announcements/{announcementId}` | `ClubController#deleteAnnouncement` | [ClubController.java:499](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L499) |
+| `POST /api/v1/clubs/{id}/announcements` | `ClubController#createAnnouncement` | [ClubController.java:471](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L471) |
+| `GET /api/v1/clubs/{id}/announcements` | `ClubController#getAnnouncements` | [ClubController.java:480](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L480) |
+| `DELETE /api/v1/clubs/{id}/announcements/{announcementId}` | `ClubController#deleteAnnouncement` | [ClubController.java:499](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L499) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

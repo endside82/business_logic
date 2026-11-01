@@ -35,8 +35,8 @@ JWT Access Token이 만료(1시간)되어 401을 받으면 클라이언트가 �
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/auth/refresh` | `AuthController#refreshToken` | [AuthController.java:77](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L77) |
-| `POST /api/v1/auth/logout` | `AuthController#logout` | [AuthController.java:87](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L87) |
+| `POST /api/v1/auth/refresh` | `AuthController#refreshToken` | [AuthController.java:77](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L77) |
+| `POST /api/v1/auth/logout` | `AuthController#logout` | [AuthController.java:87](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L87) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

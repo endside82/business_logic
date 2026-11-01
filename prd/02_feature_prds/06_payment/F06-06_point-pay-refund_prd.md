@@ -66,9 +66,9 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/events/{eventId}/prepayment/wallet` | `EventPrepaymentController#payByWallet` | [EventPrepaymentController.java:126](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java#L126) |
-| `DELETE /api/v1/events/{eventId}/apply` | `EventController#cancelApplication` | [EventController.java:314](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L314) |
-| `GET /api/v1/wallet/refund/policy` | `WalletController#getRefundPolicy` | [WalletController.java:217](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L217) |
+| `POST /api/v1/events/{eventId}/prepayment/wallet` | `EventPrepaymentController#payByWallet` | [EventPrepaymentController.java:126](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java#L126) |
+| `DELETE /api/v1/events/{eventId}/apply` | `EventController#cancelApplication` | [EventController.java:314](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L314) |
+| `GET /api/v1/wallet/refund/policy` | `WalletController#getRefundPolicy` | [WalletController.java:217](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L217) |
 
 - 2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.
 <!-- source-references:end -->

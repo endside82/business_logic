@@ -35,10 +35,10 @@ OWNER/ADMIN이 멤버를 차단(BAN)하면 자동 추방되고 재가입이 불�
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/clubs/{id}/members/{userId}/ban` | `ClubController#banMember` | [ClubController.java:404](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L404) |
-| `DELETE /api/v1/clubs/{id}/members/{userId}/ban` | `ClubController#unbanMember` | [ClubController.java:422](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L422) |
-| `GET /api/v1/clubs/{id}/bans` | `ClubController#getBanList` | [ClubController.java:437](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L437) |
-| `DELETE /api/v1/clubs/{id}/bans/{userId}` | `ClubController#unbanMemberByBanPath` | [ClubController.java:450](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L450) |
+| `POST /api/v1/clubs/{id}/members/{userId}/ban` | `ClubController#banMember` | [ClubController.java:404](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L404) |
+| `DELETE /api/v1/clubs/{id}/members/{userId}/ban` | `ClubController#unbanMember` | [ClubController.java:422](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L422) |
+| `GET /api/v1/clubs/{id}/bans` | `ClubController#getBanList` | [ClubController.java:437](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L437) |
+| `DELETE /api/v1/clubs/{id}/bans/{userId}` | `ClubController#unbanMemberByBanPath` | [ClubController.java:450](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L450) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

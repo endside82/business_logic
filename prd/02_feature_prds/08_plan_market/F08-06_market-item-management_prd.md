@@ -37,12 +37,12 @@ AUTH-06(예약 판매시작)으로 크리에이터는 APPROVED/STOP_SELLING 상�
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/market/items` | `MarketItemController#createItem` | [MarketItemController.java:61](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L61) |
-| `PUT /api/v1/market/items/{itemId}` | `MarketItemController#updateItem` | [MarketItemController.java:69](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L69) |
-| `POST /api/v1/market/items/{itemId}/publish` | `MarketItemController#publishItem` | [MarketItemController.java:77](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L77) |
-| `POST /api/v1/market/items/{itemId}/stop` | `MarketItemController#stopSelling` | [MarketItemController.java:91](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L91) |
-| `DELETE /api/v1/market/items/{itemId}` | `MarketItemController#removeItem` | [MarketItemController.java:111](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L111) |
-| `GET /api/v1/market/items/my` | `MarketItemController#getMyItems` | [MarketItemController.java:54](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L54) |
+| `POST /api/v1/market/items` | `MarketItemController#createItem` | [MarketItemController.java:61](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L61) |
+| `PUT /api/v1/market/items/{itemId}` | `MarketItemController#updateItem` | [MarketItemController.java:69](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L69) |
+| `POST /api/v1/market/items/{itemId}/publish` | `MarketItemController#publishItem` | [MarketItemController.java:77](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L77) |
+| `POST /api/v1/market/items/{itemId}/stop` | `MarketItemController#stopSelling` | [MarketItemController.java:91](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L91) |
+| `DELETE /api/v1/market/items/{itemId}` | `MarketItemController#removeItem` | [MarketItemController.java:111](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L111) |
+| `GET /api/v1/market/items/my` | `MarketItemController#getMyItems` | [MarketItemController.java:54](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java#L54) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

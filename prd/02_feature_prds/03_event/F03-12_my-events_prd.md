@@ -37,9 +37,9 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/my` | `EventController#listMyEvents` | [EventController.java:182](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L182) |
-| `GET /api/v1/events/users/me/applications` | `EventController#getMyApplications` | [EventController.java:336](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L336) |
-| `GET /api/v1/events/{eventId}/capacity/logs` | `CapacityController#getLogs` | [CapacityController.java:137](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L137) |
+| `GET /api/v1/events/my` | `EventController#listMyEvents` | [EventController.java:182](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L182) |
+| `GET /api/v1/events/users/me/applications` | `EventController#getMyApplications` | [EventController.java:336](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L336) |
+| `GET /api/v1/events/{eventId}/capacity/logs` | `CapacityController#getLogs` | [CapacityController.java:137](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L137) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

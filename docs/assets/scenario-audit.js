@@ -1,37 +1,37 @@
 /* 이 파일은 verification/build_scenario_audit_data.mjs가 현재 저장소에서 생성한다. */
 window.SCENARIO_AUDIT = {
-  "asOf": "2026-10-13",
+  "asOf": "2026-11-01",
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "9d0b2bb425eee2b866b65f17e802c8f921a24353"
+    "sourceRevision": "3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3"
   },
-  "countingNote": "1,403은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 117개에서 실제로 식별한 제목은 1,086개이며 49개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "1,403은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 117개에서 실제로 식별한 제목은 1,068개이며 53개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1403,
     "definedFeatures": 175,
-    "automatedTestFilesScanned": 2872,
-    "journeyFilesScanned": 277,
+    "automatedTestFilesScanned": 4052,
+    "journeyFilesScanned": 308,
     "unitScenarioDocuments": 117,
-    "unitScenarioHeadings": 1086,
+    "unitScenarioHeadings": 1068,
     "unitRegisteredScenarioItems": 1011,
-    "unitScenarioCountMismatches": 49,
-    "directlyLinkedAutomatedTests": 59,
+    "unitScenarioCountMismatches": 53,
+    "directlyLinkedAutomatedTests": 56,
     "automatedFeatureMarkers": 66,
-    "automatedScenarioReferences": 59,
-    "directlyLinkedJourneys": 57,
+    "automatedScenarioReferences": 56,
+    "directlyLinkedJourneys": 53,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 57,
-    "featureLevelAutomatedProof": 122,
+    "journeyScenarioReferences": 53,
+    "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
-    "localRealAccountProof": 39,
+    "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 57,
-    "partialEvidenceChain": 36,
-    "definitionOnlyEvidence": 82,
-    "traceMarkers": 302,
-    "verifiedTraceRecords": 300,
+    "completeEvidenceChain": 54,
+    "partialEvidenceChain": 34,
+    "definitionOnlyEvidence": 87,
+    "traceMarkers": 303,
+    "verifiedTraceRecords": 301,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -46,8 +46,8 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5,
+        "registeredCountMatches": false
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/backend.md",
@@ -57,65 +57,59 @@ window.SCENARIO_AUDIT = {
         "entries": [
           {
             "id": "F01-01:1",
-            "label": "POST /api/v1/auth/signup — 이메일 회원가입",
+            "label": "POST /api/v1/auth/signup — 이메일 가입·로그인",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "signup",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/signup",
-                "targetLine": 43,
-                "methodLine": 44
+                "targetLine": 65,
+                "methodLine": 66
               }
             ]
           },
           {
             "id": "F01-01:2",
-            "label": "POST /api/v1/auth/login — 이메일 로그인",
+            "label": "POST /api/v1/auth/login — 이메일 가입·로그인",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "login",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/login",
-                "targetLine": 49,
-                "methodLine": 50
+                "targetLine": 71,
+                "methodLine": 72
               }
             ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/auth_flow_test.dart",
-          "community_app/integration_test/seed_login_flow_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/auth_flow_test.dart",
-          "community_app/integration_test/seed_login_flow_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
-      "proof": "real",
+      "proof": "auto",
       "knownIssues": 1,
       "pendingReview": 0
     },
@@ -129,29 +123,63 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5,
+        "registeredCountMatches": false
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-02_social-login/backend.md",
-        "total": 1,
-        "verified": 1,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
             "id": "F01-02:1",
-            "label": "POST /api/v1/auth/social — 소셜 로그인/가입",
+            "label": "POST /api/v1/auth/social — 소셜 로그인",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "socialLogin",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/social",
-                "targetLine": 68,
-                "methodLine": 69
+                "targetLine": 95,
+                "methodLine": 96
+              }
+            ]
+          },
+          {
+            "id": "F01-02:2",
+            "label": "POST /api/v1/auth/social/existing-account/email-code — 소셜 로그인",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "controller": "AuthController",
+                "method": "requestSocialLinkCode",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/auth/social/existing-account/email-code",
+                "targetLine": 102,
+                "methodLine": 103
+              }
+            ]
+          },
+          {
+            "id": "F01-02:3",
+            "label": "POST /api/v1/auth/social/existing-account/link — 소셜 로그인",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "controller": "AuthController",
+                "method": "linkSocialToExistingAccount",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/auth/social/existing-account/link",
+                "targetLine": 108,
+                "methodLine": 109
               }
             ]
           }
@@ -173,9 +201,9 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 1,
       "launchScope": "partial",
-      "proof": "real",
+      "proof": "auto",
       "knownIssues": 1,
       "pendingReview": 1
     },
@@ -189,108 +217,70 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5,
+        "registeredCountMatches": false
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-03_email-verification/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
         "entries": [
           {
             "id": "F01-03:1",
-            "label": "POST /api/v1/auth/send-verification-email — 인증 메일 발송",
+            "label": "POST /api/v1/auth/signup/email-code — 이메일 인증",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
-                "method": "sendVerificationEmail",
+                "method": "requestSignupCode",
                 "httpMethod": "POST",
-                "httpPath": "/api/v1/auth/send-verification-email",
-                "targetLine": 115,
-                "methodLine": 116
+                "httpPath": "/api/v1/auth/signup/email-code",
+                "targetLine": 54,
+                "methodLine": 55
               }
             ]
           },
           {
             "id": "F01-03:2",
-            "label": "GET /api/v1/auth/verify-email?token={token} — 토큰 인증",
+            "label": "POST /api/v1/auth/signup/email-code/verify — 이메일 인증",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
-                "method": "verifyEmail",
-                "httpMethod": "GET",
-                "httpPath": "/api/v1/auth/verify-email",
-                "targetLine": 121,
-                "methodLine": 122
-              }
-            ]
-          },
-          {
-            "id": "F01-03:3",
-            "label": "POST /api/v1/users/me/email/verify/send",
-            "status": "verified",
-            "note": "",
-            "endpoints": [
-              {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AccountController.java",
-                "controller": "AccountController",
-                "method": "sendVerificationEmail",
+                "method": "verifySignupCode",
                 "httpMethod": "POST",
-                "httpPath": "/api/v1/users/me/email/verify/send",
-                "targetLine": 28,
-                "methodLine": 29
-              }
-            ]
-          },
-          {
-            "id": "F01-03:4",
-            "label": "POST /api/v1/users/me/email/verify/confirm?token={token}",
-            "status": "verified",
-            "note": "",
-            "endpoints": [
-              {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AccountController.java",
-                "controller": "AccountController",
-                "method": "confirmEmailVerification",
-                "httpMethod": "POST",
-                "httpPath": "/api/v1/users/me/email/verify/confirm",
-                "targetLine": 38,
-                "methodLine": 39
+                "httpPath": "/api/v1/auth/signup/email-code/verify",
+                "targetLine": 60,
+                "methodLine": 61
               }
             ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_auth_recovery_onboarding_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_auth_recovery_onboarding_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
-      "proof": "real",
+      "proof": "auto",
       "knownIssues": 1,
       "pendingReview": 1
     },
@@ -304,74 +294,87 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5,
+        "registeredCountMatches": false
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-04_password-reset/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
             "id": "F01-04:1",
-            "label": "POST /api/v1/auth/password-reset/request — 재설정 요청",
+            "label": "POST /api/v1/auth/password-reset/request — 비밀번호 재설정",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "requestPasswordReset",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/password-reset/request",
-                "targetLine": 102,
-                "methodLine": 103
+                "targetLine": 141,
+                "methodLine": 142
               }
             ]
           },
           {
             "id": "F01-04:2",
-            "label": "POST /api/v1/auth/password-reset/confirm — 새 비밀번호 설정",
+            "label": "POST /api/v1/auth/password-reset/verify — 비밀번호 재설정",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "controller": "AuthController",
+                "method": "verifyPasswordResetCode",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/auth/password-reset/verify",
+                "targetLine": 148,
+                "methodLine": 149
+              }
+            ]
+          },
+          {
+            "id": "F01-04:3",
+            "label": "POST /api/v1/auth/password-reset/confirm — 비밀번호 재설정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "confirmPasswordReset",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/password-reset/confirm",
-                "targetLine": 109,
-                "methodLine": 110
+                "targetLine": 153,
+                "methodLine": 154
               }
             ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_auth_recovery_onboarding_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_auth_recovery_onboarding_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
-      "proof": "real",
+      "proof": "auto",
       "knownIssues": 1,
       "pendingReview": 1
     },
@@ -401,13 +404,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "refreshToken",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/refresh",
-                "targetLine": 55,
-                "methodLine": 56
+                "targetLine": 77,
+                "methodLine": 78
               }
             ]
           },
@@ -418,13 +421,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "logout",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/auth/logout",
-                "targetLine": 61,
-                "methodLine": 62
+                "targetLine": 87,
+                "methodLine": 88
               }
             ]
           }
@@ -578,13 +581,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
                 "controller": "AuthController",
                 "method": "unlinkSocial",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/auth/social/{providerType}",
-                "targetLine": 79,
-                "methodLine": 80
+                "targetLine": 118,
+                "methodLine": 119
               }
             ]
           }
@@ -764,13 +767,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getRecommendations",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/recommend",
-                "targetLine": 186,
-                "methodLine": 187
+                "targetLine": 218,
+                "methodLine": 219
               }
             ]
           },
@@ -781,7 +784,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/TrendingController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/TrendingController.java",
                 "controller": "TrendingController",
                 "method": "getTrending",
                 "httpMethod": "GET",
@@ -887,13 +890,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "listOpenEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events",
-                "targetLine": 141,
-                "methodLine": 142
+                "targetLine": 173,
+                "methodLine": 174
               }
             ]
           },
@@ -904,13 +907,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getRecommendations",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/recommend",
-                "targetLine": 186,
-                "methodLine": 187
+                "targetLine": 218,
+                "methodLine": 219
               }
             ]
           },
@@ -921,13 +924,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getSimilarEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/similar",
-                "targetLine": 329,
-                "methodLine": 330
+                "targetLine": 378,
+                "methodLine": 379
               }
             ]
           }
@@ -1031,13 +1034,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "createEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events",
-                "targetLine": 80,
-                "methodLine": 81
+                "targetLine": 94,
+                "methodLine": 95
               }
             ]
           },
@@ -1048,13 +1051,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "publishEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/publish",
-                "targetLine": 216,
-                "methodLine": 217
+                "targetLine": 257,
+                "methodLine": 258
               }
             ]
           },
@@ -1065,13 +1068,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "createRecurringEvents",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 340,
-                "methodLine": 341
+                "targetLine": 395,
+                "methodLine": 396
               }
             ]
           },
@@ -1082,13 +1085,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getRecurringGroup",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 373,
-                "methodLine": 374
+                "targetLine": 433,
+                "methodLine": 434
               }
             ]
           }
@@ -1151,13 +1154,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "updateEvent",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}",
-                "targetLine": 197,
-                "methodLine": 198
+                "targetLine": 229,
+                "methodLine": 230
               }
             ]
           },
@@ -1168,13 +1171,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "deleteEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}",
-                "targetLine": 206,
-                "methodLine": 207
+                "targetLine": 247,
+                "methodLine": 248
               }
             ]
           },
@@ -1185,13 +1188,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "publishEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/publish",
-                "targetLine": 216,
-                "methodLine": 217
+                "targetLine": 257,
+                "methodLine": 258
               }
             ]
           },
@@ -1202,13 +1205,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "closeEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/close",
-                "targetLine": 224,
-                "methodLine": 225
+                "targetLine": 265,
+                "methodLine": 266
               }
             ]
           },
@@ -1219,30 +1222,30 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "cancelEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/cancel",
-                "targetLine": 232,
-                "methodLine": 233
+                "targetLine": 280,
+                "methodLine": 281
               }
             ]
           },
           {
             "id": "F03-04:6",
-            "label": "PATCH /api/v1/events/{eventId}/reschedule — 일정 변경",
+            "label": "POST /api/v1/events/{eventId}/reschedule-proposals",
             "status": "verified",
-            "note": "",
+            "note": "옛 reschedule PATCH는 제거됐으며 일정 변경 제안 생성으로 연결한다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
-                "controller": "EventController",
-                "method": "rescheduleEvent",
-                "httpMethod": "PATCH",
-                "httpPath": "/api/v1/events/{eventId}/reschedule",
-                "targetLine": 250,
-                "methodLine": 251
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "createProposal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/reschedule-proposals",
+                "targetLine": 59,
+                "methodLine": 60
               }
             ]
           },
@@ -1253,13 +1256,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "announceToAttendees",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/announce",
-                "targetLine": 402,
-                "methodLine": 403
+                "targetLine": 462,
+                "methodLine": 463
               }
             ]
           },
@@ -1270,13 +1273,13 @@ window.SCENARIO_AUDIT = {
             "note": "같은 절에 함께 적힌 수정·취소 위치를 각각 연결했다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "updateFutureEvents",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 350,
-                "methodLine": 351
+                "targetLine": 410,
+                "methodLine": 411
               }
             ]
           },
@@ -1287,13 +1290,13 @@ window.SCENARIO_AUDIT = {
             "note": "같은 절에 함께 적힌 수정·취소 위치를 각각 연결했다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "cancelAllFutureEvents",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 364,
-                "methodLine": 365
+                "targetLine": 424,
+                "methodLine": 425
               }
             ]
           }
@@ -1356,13 +1359,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
                 "controller": "CapacityController",
                 "method": "attend",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/capacity",
-                "targetLine": 37,
-                "methodLine": 38
+                "targetLine": 44,
+                "methodLine": 45
               }
             ]
           },
@@ -1373,13 +1376,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
                 "controller": "CapacityController",
                 "method": "cancel",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/capacity",
-                "targetLine": 47,
-                "methodLine": 48
+                "targetLine": 56,
+                "methodLine": 57
               }
             ]
           },
@@ -1390,13 +1393,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
                 "controller": "CapacityController",
                 "method": "getMyAttendance",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/capacity/me",
-                "targetLine": 152,
-                "methodLine": 153
+                "targetLine": 166,
+                "methodLine": 167
               }
             ]
           },
@@ -1407,13 +1410,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "applyToEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/apply",
-                "targetLine": 260,
-                "methodLine": 261
+                "targetLine": 296,
+                "methodLine": 297
               }
             ]
           },
@@ -1424,13 +1427,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "cancelApplication",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/apply",
-                "targetLine": 269,
-                "methodLine": 270
+                "targetLine": 314,
+                "methodLine": 315
               }
             ]
           },
@@ -1441,13 +1444,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getMyApplications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/users/me/applications",
-                "targetLine": 287,
-                "methodLine": 288
+                "targetLine": 336,
+                "methodLine": 337
               }
             ]
           }
@@ -1456,13 +1459,14 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 1,
-        "featureMarkerCount": 1,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 1,
         "files": [
           "community_app/integration_test/seed_event_list_badge_matrix_test.dart"
         ],
         "markerCandidateFiles": [
-          "community_app/test/presentation/event/event_attendance_guidance_cards_test.dart"
+          "community_app/test/presentation/event/event_attendance_guidance_cards_test.dart",
+          "community_app/test/widget/event/event_action_bar_payment_cta_test.dart"
         ]
       },
       "journey": {
@@ -1507,13 +1511,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getApplications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/applications",
-                "targetLine": 279,
-                "methodLine": 280
+                "targetLine": 328,
+                "methodLine": 329
               }
             ]
           },
@@ -1524,13 +1528,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "approveApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/approve",
-                "targetLine": 294,
-                "methodLine": 295
+                "targetLine": 343,
+                "methodLine": 344
               }
             ]
           },
@@ -1541,13 +1545,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "rejectApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/reject",
-                "targetLine": 305,
-                "methodLine": 306
+                "targetLine": 354,
+                "methodLine": 355
               }
             ]
           }
@@ -1656,7 +1660,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
                 "controller": "CheckInController",
                 "method": "generateQrToken",
                 "httpMethod": "GET",
@@ -1673,7 +1677,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
                 "controller": "CheckInController",
                 "method": "checkIn",
                 "httpMethod": "POST",
@@ -1690,7 +1694,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
                 "controller": "CheckInController",
                 "method": "checkInByShortCode",
                 "httpMethod": "POST",
@@ -1702,18 +1706,18 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F03-08:4",
-            "label": "POST /api/v1/events/{eventId}/check-in/{userId} — 수동 체크인 (호스트)",
+            "label": "POST /api/v1/events/{eventId}/check-in/batch",
             "status": "verified",
-            "note": "",
+            "note": "수동 체크인은 참가 행 번호 목록의 일괄 요청이다. 옛 사용자 번호 단건 입구는 제거됐다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
                 "controller": "CheckInController",
-                "method": "manualCheckIn",
+                "method": "batchManualCheckIn",
                 "httpMethod": "POST",
-                "httpPath": "/api/v1/events/{eventId}/check-in/{userId}",
-                "targetLine": 59,
-                "methodLine": 60
+                "httpPath": "/api/v1/events/{eventId}/check-in/batch",
+                "targetLine": 63,
+                "methodLine": 64
               }
             ]
           },
@@ -1724,13 +1728,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
                 "controller": "CheckInController",
                 "method": "getCheckInStats",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/check-in/stats",
-                "targetLine": 94,
-                "methodLine": 95
+                "targetLine": 73,
+                "methodLine": 74
               }
             ]
           }
@@ -1792,7 +1796,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
                 "controller": "EventPhotoController",
                 "method": "getPhotos",
                 "httpMethod": "GET",
@@ -1809,7 +1813,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
                 "controller": "EventPhotoController",
                 "method": "uploadPhoto",
                 "httpMethod": "POST",
@@ -1826,7 +1830,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
                 "controller": "EventPhotoController",
                 "method": "deletePhoto",
                 "httpMethod": "DELETE",
@@ -1892,13 +1896,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
                 "controller": "EventPlanMapController",
                 "method": "getEventPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/plans",
-                "targetLine": 30,
-                "methodLine": 31
+                "targetLine": 31,
+                "methodLine": 32
               }
             ]
           },
@@ -1909,13 +1913,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
                 "controller": "EventPlanMapController",
                 "method": "addPlanToEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/plans",
-                "targetLine": 37,
-                "methodLine": 38
+                "targetLine": 38,
+                "methodLine": 39
               }
             ]
           },
@@ -1926,13 +1930,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
                 "controller": "EventPlanMapController",
                 "method": "updateMapping",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/plans/{mapId}",
-                "targetLine": 46,
-                "methodLine": 47
+                "targetLine": 47,
+                "methodLine": 48
               }
             ]
           },
@@ -1943,13 +1947,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
                 "controller": "EventPlanMapController",
                 "method": "removePlanFromEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/plans/{mapId}",
-                "targetLine": 55,
-                "methodLine": 56
+                "targetLine": 68,
+                "methodLine": 69
               }
             ]
           },
@@ -1960,13 +1964,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
                 "controller": "EventPlanMapController",
                 "method": "toggleActive",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/plans/{mapId}/toggle-active",
-                "targetLine": 64,
-                "methodLine": 65
+                "targetLine": 77,
+                "methodLine": 78
               }
             ]
           }
@@ -2024,7 +2028,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/WishlistController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java",
                 "controller": "WishlistController",
                 "method": "add",
                 "httpMethod": "POST",
@@ -2041,13 +2045,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/WishlistController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java",
                 "controller": "WishlistController",
                 "method": "remove",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/wishlist",
-                "targetLine": 44,
-                "methodLine": 45
+                "targetLine": 46,
+                "methodLine": 47
               }
             ]
           },
@@ -2058,13 +2062,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/WishlistController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java",
                 "controller": "WishlistController",
                 "method": "getMyWishlist",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/users/me/wishlist",
-                "targetLine": 52,
-                "methodLine": 53
+                "targetLine": 54,
+                "methodLine": 55
               }
             ]
           }
@@ -2129,13 +2133,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "listMyEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/my",
-                "targetLine": 150,
-                "methodLine": 151
+                "targetLine": 182,
+                "methodLine": 183
               }
             ]
           },
@@ -2146,13 +2150,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "getMyApplications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/users/me/applications",
-                "targetLine": 287,
-                "methodLine": 288
+                "targetLine": 336,
+                "methodLine": 337
               }
             ]
           },
@@ -2163,13 +2167,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
                 "controller": "CapacityController",
                 "method": "getLogs",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/capacity/logs",
-                "targetLine": 127,
-                "methodLine": 128
+                "targetLine": 137,
+                "methodLine": 138
               }
             ]
           }
@@ -2227,7 +2231,7 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 1,
         "scenarioReferenceCount": 1,
         "files": [
-          "community_api/src/test/java/com/endside/community/payment/repository/query/PointTransactionQueryRepositoryDataJpaTest.java"
+          "community_api/api-app/src/test/java/com/endside/community/payment/repository/query/PointTransactionQueryRepositoryDataJpaTest.java"
         ],
         "markerCandidateFiles": [
           "community_app/test/presentation/event/event_payment_policy_guidance_card_test.dart"
@@ -2269,12 +2273,11 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 4,
+        "count": 3,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 4,
+        "scenarioReferenceCount": 3,
         "files": [
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportParticipantFlowTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
+          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
           "community_app/test/data/models/event/transport_vo_wire_test.dart",
           "community_app/test/unit/transport_entry_access_test.dart"
         ],
@@ -2318,16 +2321,15 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 7,
+        "count": 5,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 7,
+        "scenarioReferenceCount": 5,
         "files": [
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventTransportParticipantFlowTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleLifecycleDataJpaTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleReportServiceTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
-          "community_api/src/test/java/com/endside/community/review/service/ReportServiceTest.java",
-          "community_app/test/core/router/transport_report_route_gate_test.dart"
+          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleReportServiceTest.java",
+          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
+          "community_api/domain/src/test/java/com/endside/community/review/service/ReportServiceTest.java",
+          "community_app/test/core/router/transport_report_route_gate_test.dart",
+          "community_app/test/widget/event/vehicle_seat_command_access_test.dart"
         ],
         "markerCandidateFiles": []
       },
@@ -2367,14 +2369,11 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 6,
+        "count": 3,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 6,
+        "scenarioReferenceCount": 3,
         "files": [
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleLifecycleE2ETest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleSeatFlowDataJpaTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleSeatOccupantNameTest.java",
-          "community_api/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
+          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
           "community_app/test/widget/event/vehicle_seat_grid_test.dart",
           "community_app/test/widget/event/vehicle_seat_occupant_name_test.dart"
         ],
@@ -2417,7 +2416,7 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 3,
-        "featureMarkerCount": 1,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 3,
         "files": [
           "community_admin_api/src/test/java/com/endside/community/event/service/ManageVehicleLayoutGuardTest.java",
@@ -2425,6 +2424,7 @@ window.SCENARIO_AUDIT = {
           "community_admin_front/e2e/vehicle-layouts.spec.ts"
         ],
         "markerCandidateFiles": [
+          "community_api/api-app/src/test/java/com/endside/community/event/transport/service/TransportCoordinationDataJpaTest.java",
           "community_app/test/presentation/event/reschedule_proposal_guidance_card_test.dart"
         ]
       },
@@ -2467,10 +2467,11 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": false,
         "count": 0,
-        "featureMarkerCount": 1,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 0,
         "files": [],
         "markerCandidateFiles": [
+          "community_app/test/presentation/async_value_samples/support_inquiry_dispute_samples_test.dart",
           "community_app/test/presentation/curated/service_assignment_guidance_cards_test.dart"
         ]
       },
@@ -2602,13 +2603,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getClubs",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs",
-                "targetLine": 80,
-                "methodLine": 81
+                "targetLine": 89,
+                "methodLine": 90
               }
             ]
           }
@@ -2723,13 +2724,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "createClub",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs",
-                "targetLine": 68,
-                "methodLine": 69
+                "targetLine": 77,
+                "methodLine": 78
               }
             ]
           },
@@ -2740,13 +2741,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "updateClub",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/clubs/{id}",
-                "targetLine": 108,
-                "methodLine": 109
+                "targetLine": 117,
+                "methodLine": 118
               }
             ]
           },
@@ -2757,13 +2758,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "deleteClub",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}",
-                "targetLine": 121,
-                "methodLine": 122
+                "targetLine": 130,
+                "methodLine": 131
               }
             ]
           },
@@ -2774,13 +2775,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "transferOwnership",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/transfer-ownership",
-                "targetLine": 220,
-                "methodLine": 221
+                "targetLine": 252,
+                "methodLine": 253
               }
             ]
           }
@@ -2844,13 +2845,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getMembers",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/members",
-                "targetLine": 172,
-                "methodLine": 173
+                "targetLine": 194,
+                "methodLine": 195
               }
             ]
           },
@@ -2861,39 +2862,30 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "changeRole",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/role",
-                "targetLine": 180,
-                "methodLine": 181
+                "targetLine": 213,
+                "methodLine": 214
               }
             ]
           },
           {
             "id": "F04-04:3",
-            "label": "회원 추방 — 현재 요청과 기존 호환 요청",
+            "label": "POST /api/v1/clubs/{id}/members/{userId}/kick",
             "status": "verified",
-            "note": "POST /kick이 현재 요청이며, 옛 DELETE 주소는 kickMemberLegacy로 남아 있다. 두 경로 모두 사유를 전달해야 한다.",
+            "note": "옛 DELETE 강퇴는 제거됐다. 현재 POST 명령과 요청 고유키를 사용한다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "kickMember",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/kick",
-                "targetLine": 197,
-                "methodLine": 198
-              },
-              {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
-                "controller": "ClubController",
-                "method": "kickMemberLegacy",
-                "httpMethod": "DELETE",
-                "httpPath": "/api/v1/clubs/{id}/members/{userId}",
-                "targetLine": 210,
-                "methodLine": 211
+                "targetLine": 234,
+                "methodLine": 235
               }
             ]
           }
@@ -2962,13 +2954,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getWaitlist",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/waitlist",
-                "targetLine": 292,
-                "methodLine": 293
+                "targetLine": 324,
+                "methodLine": 325
               }
             ]
           },
@@ -2979,13 +2971,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "approveApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/waitlist/{waitId}/approve",
-                "targetLine": 300,
-                "methodLine": 301
+                "targetLine": 332,
+                "methodLine": 333
               }
             ]
           },
@@ -2996,13 +2988,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "rejectApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/waitlist/{waitId}/reject",
-                "targetLine": 309,
-                "methodLine": 310
+                "targetLine": 341,
+                "methodLine": 342
               }
             ]
           },
@@ -3013,13 +3005,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "inviteMember",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/invitations",
-                "targetLine": 320,
-                "methodLine": 321
+                "targetLine": 352,
+                "methodLine": 353
               }
             ]
           },
@@ -3030,13 +3022,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "acceptInvite",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/invitations/{invitationId}/accept",
-                "targetLine": 329,
-                "methodLine": 330
+                "targetLine": 361,
+                "methodLine": 362
               }
             ]
           },
@@ -3047,13 +3039,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "declineInvite",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/invitations/{invitationId}/decline",
-                "targetLine": 340,
-                "methodLine": 341
+                "targetLine": 372,
+                "methodLine": 373
               }
             ]
           }
@@ -3117,13 +3109,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "banMember",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/ban",
-                "targetLine": 355,
-                "methodLine": 356
+                "targetLine": 404,
+                "methodLine": 405
               }
             ]
           },
@@ -3134,13 +3126,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "unbanMember",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/members/{userId}/ban",
-                "targetLine": 365,
-                "methodLine": 366
+                "targetLine": 422,
+                "methodLine": 423
               }
             ]
           },
@@ -3151,13 +3143,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getBanList",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/bans",
-                "targetLine": 380,
-                "methodLine": 381
+                "targetLine": 437,
+                "methodLine": 438
               }
             ]
           },
@@ -3168,13 +3160,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "unbanMemberByBanPath",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/bans/{userId}",
-                "targetLine": 393,
-                "methodLine": 394
+                "targetLine": 450,
+                "methodLine": 451
               }
             ]
           }
@@ -3237,13 +3229,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getMyClubs",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/my",
-                "targetLine": 130,
-                "methodLine": 131
+                "targetLine": 139,
+                "methodLine": 140
               }
             ]
           },
@@ -3254,13 +3246,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getMemberStats",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/members/stats",
-                "targetLine": 404,
-                "methodLine": 405
+                "targetLine": 461,
+                "methodLine": 462
               }
             ]
           }
@@ -3436,13 +3428,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "createAnnouncement",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/announcements",
-                "targetLine": 414,
-                "methodLine": 415
+                "targetLine": 471,
+                "methodLine": 472
               }
             ]
           },
@@ -3453,13 +3445,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getAnnouncements",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/announcements",
-                "targetLine": 423,
-                "methodLine": 424
+                "targetLine": 480,
+                "methodLine": 481
               }
             ]
           },
@@ -3470,13 +3462,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "deleteAnnouncement",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/announcements/{announcementId}",
-                "targetLine": 442,
-                "methodLine": 443
+                "targetLine": 499,
+                "methodLine": 500
               }
             ]
           }
@@ -3538,13 +3530,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "getAlbums",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums",
-                "targetLine": 33,
-                "methodLine": 34
+                "targetLine": 35,
+                "methodLine": 36
               }
             ]
           },
@@ -3555,13 +3547,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "createAlbum",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums",
-                "targetLine": 49,
-                "methodLine": 50
+                "targetLine": 51,
+                "methodLine": 52
               }
             ]
           },
@@ -3572,13 +3564,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "updateAlbum",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}",
-                "targetLine": 58,
-                "methodLine": 59
+                "targetLine": 60,
+                "methodLine": 61
               }
             ]
           },
@@ -3589,13 +3581,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "deleteAlbum",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}",
-                "targetLine": 68,
-                "methodLine": 69
+                "targetLine": 70,
+                "methodLine": 71
               }
             ]
           },
@@ -3606,13 +3598,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "getPhotos",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos",
-                "targetLine": 77,
-                "methodLine": 78
+                "targetLine": 79,
+                "methodLine": 80
               }
             ]
           },
@@ -3623,13 +3615,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "uploadPhoto",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos",
-                "targetLine": 86,
-                "methodLine": 87
+                "targetLine": 88,
+                "methodLine": 89
               }
             ]
           },
@@ -3640,13 +3632,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "deletePhoto",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/{photoId}",
-                "targetLine": 96,
-                "methodLine": 97
+                "targetLine": 104,
+                "methodLine": 105
               }
             ]
           },
@@ -3657,13 +3649,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "batchDeletePhotos",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/batch-delete",
-                "targetLine": 106,
-                "methodLine": 107
+                "targetLine": 114,
+                "methodLine": 115
               }
             ]
           },
@@ -3674,13 +3666,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
                 "controller": "ClubPhotoAlbumController",
                 "method": "batchDeletePhotos",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/batch-delete",
-                "targetLine": 106,
-                "methodLine": 107
+                "targetLine": 114,
+                "methodLine": 115
               }
             ]
           }
@@ -3744,13 +3736,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "createClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events",
-                "targetLine": 52,
-                "methodLine": 53
+                "targetLine": 62,
+                "methodLine": 63
               }
             ]
           },
@@ -3761,13 +3753,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "publishClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/publish",
-                "targetLine": 136,
-                "methodLine": 137
+                "targetLine": 150,
+                "methodLine": 151
               }
             ]
           },
@@ -3778,13 +3770,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "publishClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/publish",
-                "targetLine": 136,
-                "methodLine": 137
+                "targetLine": 150,
+                "methodLine": 151
               }
             ]
           },
@@ -3795,13 +3787,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "cancelClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/cancel",
-                "targetLine": 150,
-                "methodLine": 151
+                "targetLine": 169,
+                "methodLine": 170
               }
             ]
           },
@@ -3812,13 +3804,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "cancelClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/cancel",
-                "targetLine": 150,
-                "methodLine": 151
+                "targetLine": 169,
+                "methodLine": 170
               }
             ]
           },
@@ -3829,13 +3821,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "updateClubEvent",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}",
-                "targetLine": 106,
-                "methodLine": 107
+                "targetLine": 120,
+                "methodLine": 121
               }
             ]
           },
@@ -3846,13 +3838,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "updateClubEvent",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}",
-                "targetLine": 106,
-                "methodLine": 107
+                "targetLine": 120,
+                "methodLine": 121
               }
             ]
           },
@@ -3863,13 +3855,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "deleteClubEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}",
-                "targetLine": 120,
-                "methodLine": 121
+                "targetLine": 134,
+                "methodLine": 135
               }
             ]
           },
@@ -3880,13 +3872,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "deleteClubEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}",
-                "targetLine": 120,
-                "methodLine": 121
+                "targetLine": 134,
+                "methodLine": 135
               }
             ]
           },
@@ -3897,13 +3889,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events",
-                "targetLine": 66,
-                "methodLine": 67
+                "targetLine": 80,
+                "methodLine": 81
               }
             ]
           },
@@ -3914,13 +3906,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events",
-                "targetLine": 66,
-                "methodLine": 67
+                "targetLine": 80,
+                "methodLine": 81
               }
             ]
           },
@@ -3931,13 +3923,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getUpcomingClubEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/upcoming",
-                "targetLine": 80,
-                "methodLine": 81
+                "targetLine": 94,
+                "methodLine": 95
               }
             ]
           },
@@ -3948,13 +3940,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getUpcomingClubEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/upcoming",
-                "targetLine": 80,
-                "methodLine": 81
+                "targetLine": 94,
+                "methodLine": 95
               }
             ]
           },
@@ -3965,13 +3957,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEvent",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}",
-                "targetLine": 93,
-                "methodLine": 94
+                "targetLine": 107,
+                "methodLine": 108
               }
             ]
           },
@@ -3982,13 +3974,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEvent",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}",
-                "targetLine": 93,
-                "methodLine": 94
+                "targetLine": 107,
+                "methodLine": 108
               }
             ]
           },
@@ -3999,13 +3991,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "joinClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/attendees",
-                "targetLine": 165,
-                "methodLine": 166
+                "targetLine": 188,
+                "methodLine": 189
               }
             ]
           },
@@ -4016,13 +4008,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "joinClubEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/attendees",
-                "targetLine": 165,
-                "methodLine": 166
+                "targetLine": 188,
+                "methodLine": 189
               }
             ]
           },
@@ -4033,13 +4025,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "leaveClubEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/attendees/me",
-                "targetLine": 177,
-                "methodLine": 178
+                "targetLine": 202,
+                "methodLine": 203
               }
             ]
           },
@@ -4050,13 +4042,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "leaveClubEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/attendees/me",
-                "targetLine": 177,
-                "methodLine": 178
+                "targetLine": 202,
+                "methodLine": 203
               }
             ]
           },
@@ -4067,13 +4059,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEventAttendees",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/attendees",
-                "targetLine": 189,
-                "methodLine": 190
+                "targetLine": 214,
+                "methodLine": 215
               }
             ]
           },
@@ -4084,13 +4076,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEventAttendees",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/attendees",
-                "targetLine": 189,
-                "methodLine": 190
+                "targetLine": 214,
+                "methodLine": 215
               }
             ]
           },
@@ -4101,13 +4093,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEventCalendar",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/calendar",
-                "targetLine": 205,
-                "methodLine": 206
+                "targetLine": 230,
+                "methodLine": 231
               }
             ]
           },
@@ -4118,13 +4110,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEventCalendar",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/calendar",
-                "targetLine": 205,
-                "methodLine": 206
+                "targetLine": 230,
+                "methodLine": 231
               }
             ]
           },
@@ -4135,13 +4127,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEventStatistics",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/statistics",
-                "targetLine": 220,
-                "methodLine": 221
+                "targetLine": 245,
+                "methodLine": 246
               }
             ]
           },
@@ -4152,13 +4144,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getClubEventStatistics",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/statistics",
-                "targetLine": 220,
-                "methodLine": 221
+                "targetLine": 245,
+                "methodLine": 246
               }
             ]
           },
@@ -4169,13 +4161,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "createRecurringEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/recurring",
-                "targetLine": 235,
-                "methodLine": 236
+                "targetLine": 263,
+                "methodLine": 264
               }
             ]
           },
@@ -4186,13 +4178,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "createRecurringEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/events/recurring",
-                "targetLine": 235,
-                "methodLine": 236
+                "targetLine": 263,
+                "methodLine": 264
               }
             ]
           },
@@ -4203,13 +4195,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getRecurringEventTemplates",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/recurring",
-                "targetLine": 249,
-                "methodLine": 250
+                "targetLine": 281,
+                "methodLine": 282
               }
             ]
           },
@@ -4220,13 +4212,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
                 "controller": "ClubEventController",
                 "method": "getRecurringEventTemplates",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{clubId}/events/recurring",
-                "targetLine": 249,
-                "methodLine": 250
+                "targetLine": 281,
+                "methodLine": 282
               }
             ]
           }
@@ -4290,13 +4282,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getFund",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/fund",
-                "targetLine": 496,
-                "methodLine": 497
+                "targetLine": 565,
+                "methodLine": 566
               }
             ]
           }
@@ -4359,13 +4351,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "donate",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/donations",
-                "targetLine": 458,
-                "methodLine": 459
+                "targetLine": 515,
+                "methodLine": 516
               }
             ]
           },
@@ -4376,13 +4368,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getDonations",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/donations",
-                "targetLine": 478,
-                "methodLine": 479
+                "targetLine": 535,
+                "methodLine": 536
               }
             ]
           },
@@ -4393,13 +4385,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getDonationSummary",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/donations/summary",
-                "targetLine": 471,
-                "methodLine": 472
+                "targetLine": 528,
+                "methodLine": 529
               }
             ]
           },
@@ -4410,13 +4402,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "cancelDonation",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/donations/{donationId}/cancel",
-                "targetLine": 486,
-                "methodLine": 487
+                "targetLine": 549,
+                "methodLine": 550
               }
             ]
           }
@@ -4481,13 +4473,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "requestWithdrawal",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/fund/withdraw",
-                "targetLine": 546,
-                "methodLine": 547
+                "targetLine": 615,
+                "methodLine": 616
               }
             ]
           },
@@ -4498,13 +4490,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getWithdrawalHistory",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/fund/withdrawals",
-                "targetLine": 555,
-                "methodLine": 556
+                "targetLine": 624,
+                "methodLine": 625
               }
             ]
           }
@@ -4567,13 +4559,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getSubscriptionPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/subscription/plans",
-                "targetLine": 565,
-                "methodLine": 566
+                "targetLine": 634,
+                "methodLine": 635
               }
             ]
           },
@@ -4584,13 +4576,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "subscribe",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/subscription",
-                "targetLine": 579,
-                "methodLine": 580
+                "targetLine": 648,
+                "methodLine": 649
               }
             ]
           },
@@ -4601,13 +4593,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "getSubscription",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/clubs/{id}/subscription",
-                "targetLine": 593,
-                "methodLine": 594
+                "targetLine": 662,
+                "methodLine": 663
               }
             ]
           },
@@ -4618,13 +4610,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "cancelSubscription",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{id}/subscription",
-                "targetLine": 601,
-                "methodLine": 602
+                "targetLine": 670,
+                "methodLine": 671
               }
             ]
           },
@@ -4635,13 +4627,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
                 "controller": "ClubController",
                 "method": "reactivateSubscription",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{id}/subscription/reactivate",
-                "targetLine": 614,
-                "methodLine": 615
+                "targetLine": 683,
+                "methodLine": 684
               }
             ]
           }
@@ -4746,7 +4738,7 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 0,
         "scenarioReferenceCount": 1,
         "files": [
-          "community_api/src/test/java/com/endside/community/club/reputation/service/ReputationScoreServiceTest.java"
+          "community_api/domain/src/test/java/com/endside/community/club/reputation/service/ReputationScoreServiceTest.java"
         ],
         "markerCandidateFiles": []
       },
@@ -4834,13 +4826,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
                 "controller": "SearchController",
                 "method": "suggest",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/search/suggest",
-                "targetLine": 109,
-                "methodLine": 110
+                "targetLine": 92,
+                "methodLine": 93
               }
             ]
           }
@@ -4904,13 +4896,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
                 "controller": "SearchController",
                 "method": "searchEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/search",
-                "targetLine": 49,
-                "methodLine": 50
+                "targetLine": 47,
+                "methodLine": 48
               }
             ]
           },
@@ -4921,13 +4913,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
                 "controller": "SearchController",
                 "method": "getFilterHints",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/search/filter-hints",
-                "targetLine": 103,
-                "methodLine": 104
+                "targetLine": 86,
+                "methodLine": 87
               }
             ]
           }
@@ -5023,7 +5015,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
                 "controller": "SavedSearchController",
                 "method": "getSavedSearches",
                 "httpMethod": "GET",
@@ -5040,7 +5032,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
                 "controller": "SavedSearchController",
                 "method": "createSavedSearch",
                 "httpMethod": "POST",
@@ -5057,7 +5049,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
                 "controller": "SavedSearchController",
                 "method": "updateSavedSearch",
                 "httpMethod": "PUT",
@@ -5074,7 +5066,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
                 "controller": "SavedSearchController",
                 "method": "deleteSavedSearch",
                 "httpMethod": "DELETE",
@@ -5091,7 +5083,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
                 "controller": "SavedSearchController",
                 "method": "executeSavedSearch",
                 "httpMethod": "POST",
@@ -5151,13 +5143,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getWallet",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet",
-                "targetLine": 65,
-                "methodLine": 66
+                "targetLine": 69,
+                "methodLine": 70
               }
             ]
           }
@@ -5213,7 +5205,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
                 "controller": "AutoChargeController",
                 "method": "getChargePresets",
                 "httpMethod": "GET",
@@ -5230,13 +5222,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "charge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge",
-                "targetLine": 108,
-                "methodLine": 109
+                "targetLine": 143,
+                "methodLine": 144
               }
             ]
           },
@@ -5247,13 +5239,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "clientConfirmCharge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge/client-confirm",
-                "targetLine": 134,
-                "methodLine": 135
+                "targetLine": 169,
+                "methodLine": 170
               }
             ]
           },
@@ -5264,13 +5256,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "confirmCharge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge/confirm",
-                "targetLine": 120,
-                "methodLine": 121
+                "targetLine": 155,
+                "methodLine": 156
               }
             ]
           },
@@ -5281,13 +5273,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "cancelCharge",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/wallet/charge/cancel",
-                "targetLine": 146,
-                "methodLine": 147
+                "targetLine": 181,
+                "methodLine": 182
               }
             ]
           }
@@ -5349,13 +5341,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getTransactions",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/transactions",
-                "targetLine": 158,
-                "methodLine": 159
+                "targetLine": 193,
+                "methodLine": 194
               }
             ]
           },
@@ -5366,13 +5358,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getTransaction",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/transactions/{id}",
-                "targetLine": 170,
-                "methodLine": 171
+                "targetLine": 205,
+                "methodLine": 206
               }
             ]
           },
@@ -5383,7 +5375,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/TransactionExportController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/TransactionExportController.java",
                 "controller": "TransactionExportController",
                 "method": "exportTransactions",
                 "httpMethod": "GET",
@@ -5443,7 +5435,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
                 "controller": "PaymentMethodController",
                 "method": "getPaymentMethods",
                 "httpMethod": "GET",
@@ -5460,7 +5452,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
                 "controller": "PaymentMethodController",
                 "method": "createPaymentMethod",
                 "httpMethod": "POST",
@@ -5477,7 +5469,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
                 "controller": "PaymentMethodController",
                 "method": "deletePaymentMethod",
                 "httpMethod": "DELETE",
@@ -5494,7 +5486,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
                 "controller": "PaymentMethodController",
                 "method": "setDefault",
                 "httpMethod": "PATCH",
@@ -5554,7 +5546,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
                 "controller": "AutoChargeController",
                 "method": "getAutoChargeConfig",
                 "httpMethod": "GET",
@@ -5571,7 +5563,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
                 "controller": "AutoChargeController",
                 "method": "updateAutoChargeConfig",
                 "httpMethod": "PUT",
@@ -5588,7 +5580,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
                 "controller": "AutoChargeController",
                 "method": "disableAutoCharge",
                 "httpMethod": "DELETE",
@@ -5605,7 +5597,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
                 "controller": "AutoChargeController",
                 "method": "getChargePresets",
                 "httpMethod": "GET",
@@ -5667,13 +5659,13 @@ window.SCENARIO_AUDIT = {
             "note": "2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
                 "controller": "EventPrepaymentController",
                 "method": "payByWallet",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/prepayment/wallet",
-                "targetLine": 108,
-                "methodLine": 110
+                "targetLine": 126,
+                "methodLine": 128
               }
             ]
           },
@@ -5684,13 +5676,13 @@ window.SCENARIO_AUDIT = {
             "note": "2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/event/controller/EventController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
                 "controller": "EventController",
                 "method": "cancelApplication",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/apply",
-                "targetLine": 269,
-                "methodLine": 270
+                "targetLine": 314,
+                "methodLine": 315
               }
             ]
           },
@@ -5701,13 +5693,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getRefundPolicy",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/refund/policy",
-                "targetLine": 182,
-                "methodLine": 183
+                "targetLine": 217,
+                "methodLine": 218
               }
             ]
           }
@@ -5772,13 +5764,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/HostingTicketController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketController.java",
                 "controller": "HostingTicketController",
                 "method": "getAvailableTickets",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/hosting-tickets",
-                "targetLine": 31,
-                "methodLine": 32
+                "targetLine": 32,
+                "methodLine": 33
               }
             ]
           },
@@ -5789,13 +5781,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/HostingTicketController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketController.java",
                 "controller": "HostingTicketController",
                 "method": "purchaseTicket",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/hosting-tickets/purchase",
-                "targetLine": 42,
-                "methodLine": 43
+                "targetLine": 47,
+                "methodLine": 48
               }
             ]
           }
@@ -5851,7 +5843,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
                 "controller": "SubscriptionController",
                 "method": "getPlans",
                 "httpMethod": "GET",
@@ -5868,7 +5860,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
                 "controller": "SubscriptionController",
                 "method": "getMySubscription",
                 "httpMethod": "GET",
@@ -5885,7 +5877,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
                 "controller": "SubscriptionController",
                 "method": "subscribe",
                 "httpMethod": "POST",
@@ -5902,7 +5894,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
                 "controller": "SubscriptionController",
                 "method": "cancelAutoRenew",
                 "httpMethod": "POST",
@@ -5919,7 +5911,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
                 "controller": "SubscriptionController",
                 "method": "reactivate",
                 "httpMethod": "POST",
@@ -5987,13 +5979,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getEarningsDashboard",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/earnings/dashboard",
-                "targetLine": 191,
-                "methodLine": 192
+                "targetLine": 226,
+                "methodLine": 227
               }
             ]
           }
@@ -6049,13 +6041,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getMySettlements",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements",
-                "targetLine": 202,
-                "methodLine": 203
+                "targetLine": 237,
+                "methodLine": 238
               }
             ]
           },
@@ -6066,13 +6058,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getMySettlementSummary",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements/summary",
-                "targetLine": 216,
-                "methodLine": 217
+                "targetLine": 251,
+                "methodLine": 252
               }
             ]
           },
@@ -6083,13 +6075,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
                 "controller": "WalletController",
                 "method": "getSettlementDetail",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements/{id}",
-                "targetLine": 226,
-                "methodLine": 227
+                "targetLine": 261,
+                "methodLine": 262
               }
             ]
           },
@@ -6100,7 +6092,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java",
                 "controller": "SettlementAppealController",
                 "method": "createAppeal",
                 "httpMethod": "POST",
@@ -6117,13 +6109,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java",
                 "controller": "SettlementAppealController",
                 "method": "getAppeal",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/wallet/settlements/{settlementId}/appeal",
-                "targetLine": 45,
-                "methodLine": 46
+                "targetLine": 48,
+                "methodLine": 49
               }
             ]
           }
@@ -6179,13 +6171,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "createSettlement",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement",
-                "targetLine": 76,
-                "methodLine": 77
+                "targetLine": 86,
+                "methodLine": 87
               }
             ]
           },
@@ -6196,13 +6188,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "cloneSettlement",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/clone",
-                "targetLine": 95,
-                "methodLine": 96
+                "targetLine": 105,
+                "methodLine": 106
               }
             ]
           },
@@ -6213,13 +6205,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getParticipantSuggestions",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/participant-suggestions",
-                "targetLine": 140,
-                "methodLine": 141
+                "targetLine": 169,
+                "methodLine": 170
               }
             ]
           }
@@ -6273,13 +6265,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "addItem",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/items",
-                "targetLine": 166,
-                "methodLine": 167
+                "targetLine": 195,
+                "methodLine": 196
               }
             ]
           },
@@ -6290,13 +6282,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "updateItem",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/events/{eventId}/settlement/items/{itemId}",
-                "targetLine": 203,
-                "methodLine": 204
+                "targetLine": 232,
+                "methodLine": 233
               }
             ]
           },
@@ -6307,13 +6299,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "deleteItem",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/settlement/items/{itemId}",
-                "targetLine": 213,
-                "methodLine": 214
+                "targetLine": 242,
+                "methodLine": 243
               }
             ]
           },
@@ -6324,7 +6316,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/RecentSettlementItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/RecentSettlementItemController.java",
                 "controller": "RecentSettlementItemController",
                 "method": "getRecentSettlementItems",
                 "httpMethod": "GET",
@@ -6384,13 +6376,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "activateSettlement",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/{settlementId}/activate",
-                "targetLine": 121,
-                "methodLine": 122
+                "targetLine": 131,
+                "methodLine": 132
               }
             ]
           },
@@ -6401,13 +6393,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "cancelSettlement",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/{settlementId}/cancel",
-                "targetLine": 131,
-                "methodLine": 132
+                "targetLine": 148,
+                "methodLine": 149
               }
             ]
           }
@@ -6461,13 +6453,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getSettlement",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement",
-                "targetLine": 113,
-                "methodLine": 114
+                "targetLine": 123,
+                "methodLine": 124
               }
             ]
           },
@@ -6478,13 +6470,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getSettlementSummary",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/summary",
-                "targetLine": 155,
-                "methodLine": 156
+                "targetLine": 184,
+                "methodLine": 185
               }
             ]
           },
@@ -6495,13 +6487,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getReceiptDownloadUrl",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/receipts/{fileId}/download-url",
-                "targetLine": 86,
-                "methodLine": 87
+                "targetLine": 96,
+                "methodLine": 97
               }
             ]
           }
@@ -6555,13 +6547,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getMyShares",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/my-shares",
-                "targetLine": 148,
-                "methodLine": 149
+                "targetLine": 177,
+                "methodLine": 178
               }
             ]
           },
@@ -6572,13 +6564,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getMyTransfers",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/me",
-                "targetLine": 312,
-                "methodLine": 313
+                "targetLine": 364,
+                "methodLine": 365
               }
             ]
           },
@@ -6589,13 +6581,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "payShare",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/pay",
-                "targetLine": 223,
-                "methodLine": 224
+                "targetLine": 258,
+                "methodLine": 259
               }
             ]
           },
@@ -6606,13 +6598,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "confirmBankTransfer",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/confirm",
-                "targetLine": 232,
-                "methodLine": 233
+                "targetLine": 275,
+                "methodLine": 276
               }
             ]
           },
@@ -6623,13 +6615,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "payTransferByPoint",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/pay",
-                "targetLine": 335,
-                "methodLine": 336
+                "targetLine": 388,
+                "methodLine": 389
               }
             ]
           },
@@ -6640,13 +6632,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "payTransferMixed",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed",
-                "targetLine": 411,
-                "methodLine": 412
+                "targetLine": 487,
+                "methodLine": 488
               }
             ]
           },
@@ -6657,13 +6649,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "selfRefundTransfer",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/self-refund",
-                "targetLine": 435,
-                "methodLine": 436
+                "targetLine": 522,
+                "methodLine": 523
               }
             ]
           }
@@ -6717,13 +6709,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getTransfers",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers",
-                "targetLine": 301,
-                "methodLine": 302
+                "targetLine": 353,
+                "methodLine": 354
               }
             ]
           },
@@ -6734,13 +6726,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "confirmBankTransfer",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/confirm",
-                "targetLine": 232,
-                "methodLine": 233
+                "targetLine": 275,
+                "methodLine": 276
               }
             ]
           },
@@ -6751,13 +6743,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "confirmTransferBankTransfer",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm",
-                "targetLine": 344,
-                "methodLine": 345
+                "targetLine": 405,
+                "methodLine": 406
               }
             ]
           },
@@ -6768,13 +6760,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "bulkConfirmTransfers",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/bulk-confirm",
-                "targetLine": 362,
-                "methodLine": 363
+                "targetLine": 425,
+                "methodLine": 426
               }
             ]
           },
@@ -6785,13 +6777,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "reissueTransfer",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/reissue",
-                "targetLine": 353,
-                "methodLine": 354
+                "targetLine": 414,
+                "methodLine": 415
               }
             ]
           },
@@ -6802,13 +6794,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "writeoffTransfer",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/writeoff",
-                "targetLine": 444,
-                "methodLine": 445
+                "targetLine": 539,
+                "methodLine": 540
               }
             ]
           }
@@ -6866,13 +6858,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "remindUnpaid",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/remind",
-                "targetLine": 456,
-                "methodLine": 457
+                "targetLine": 551,
+                "methodLine": 552
               }
             ]
           },
@@ -6883,13 +6875,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "extendDeadline",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/extend-deadline",
-                "targetLine": 465,
-                "methodLine": 466
+                "targetLine": 560,
+                "methodLine": 561
               }
             ]
           },
@@ -6900,13 +6892,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getRemindHistory",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/remind-history",
-                "targetLine": 473,
-                "methodLine": 474
+                "targetLine": 568,
+                "methodLine": 569
               }
             ]
           }
@@ -6960,13 +6952,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "createAppeal",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/settlement/appeals",
-                "targetLine": 371,
-                "methodLine": 372
+                "targetLine": 439,
+                "methodLine": 440
               }
             ]
           },
@@ -6977,13 +6969,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getAppeals",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/appeals",
-                "targetLine": 382,
-                "methodLine": 383
+                "targetLine": 454,
+                "methodLine": 455
               }
             ]
           },
@@ -6994,13 +6986,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "resolveAppeal",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve",
-                "targetLine": 393,
-                "methodLine": 394
+                "targetLine": 465,
+                "methodLine": 466
               }
             ]
           },
@@ -7011,13 +7003,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
                 "controller": "MeetingSettlementController",
                 "method": "getAuditLog",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/settlement/audit-log",
-                "targetLine": 402,
-                "methodLine": 403
+                "targetLine": 474,
+                "methodLine": 475
               }
             ]
           }
@@ -7071,7 +7063,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
                 "controller": "MeetingPrepaymentController",
                 "method": "getPrepayments",
                 "httpMethod": "GET",
@@ -7088,7 +7080,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
                 "controller": "MeetingPrepaymentController",
                 "method": "payPrepayment",
                 "httpMethod": "POST",
@@ -7105,7 +7097,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
                 "controller": "MeetingPrepaymentController",
                 "method": "confirmBankPrepayment",
                 "httpMethod": "PATCH",
@@ -7122,13 +7114,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
                 "controller": "MeetingPrepaymentController",
                 "method": "refundPrepayment",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/{id}/refund",
-                "targetLine": 90,
-                "methodLine": 91
+                "targetLine": 96,
+                "methodLine": 97
               }
             ]
           },
@@ -7139,13 +7131,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
                 "controller": "MeetingPrepaymentController",
                 "method": "getRefundRules",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/refund-rules",
-                "targetLine": 125,
-                "methodLine": 126
+                "targetLine": 137,
+                "methodLine": 138
               }
             ]
           },
@@ -7156,13 +7148,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
                 "controller": "MeetingPrepaymentController",
                 "method": "saveRefundRules",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/prepayments/refund-rules",
-                "targetLine": 133,
-                "methodLine": 134
+                "targetLine": 145,
+                "methodLine": 146
               }
             ]
           },
@@ -7173,7 +7165,7 @@ window.SCENARIO_AUDIT = {
             "note": "공급자 코드가 있는 경로는 onDeposit, 옛 고정 주소는 onDepositLegacy가 처리한다. 처리 함수가 없다는 옛 설명도 정정했다.",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
                 "controller": "VirtualAccountWebhookController",
                 "method": "onDeposit",
                 "httpMethod": "POST",
@@ -7182,7 +7174,7 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 53
               },
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
                 "controller": "VirtualAccountWebhookController",
                 "method": "onDepositLegacy",
                 "httpMethod": "POST",
@@ -7288,13 +7280,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
                 "controller": "PlanController",
                 "method": "getMyCreatedPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/plans/my/created",
-                "targetLine": 164,
-                "methodLine": 165
+                "targetLine": 178,
+                "methodLine": 179
               }
             ]
           },
@@ -7305,13 +7297,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
                 "controller": "PlanController",
                 "method": "getMyPurchasedPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/plans/my/purchased",
-                "targetLine": 156,
-                "methodLine": 157
+                "targetLine": 170,
+                "methodLine": 171
               }
             ]
           },
@@ -7322,13 +7314,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
                 "controller": "PlanController",
                 "method": "createPlan",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/plans",
-                "targetLine": 42,
-                "methodLine": 43
+                "targetLine": 46,
+                "methodLine": 47
               }
             ]
           }
@@ -7387,7 +7379,7 @@ window.SCENARIO_AUDIT = {
         "scenarioReferenceCount": 0,
         "files": [],
         "markerCandidateFiles": [
-          "community_api/src/test/java/com/endside/community/plan/service/PlanBlockServiceTest.java"
+          "community_api/domain/src/test/java/com/endside/community/plan/service/PlanBlockServiceTest.java"
         ]
       },
       "journey": {
@@ -7431,7 +7423,7 @@ window.SCENARIO_AUDIT = {
         "scenarioReferenceCount": 0,
         "files": [],
         "markerCandidateFiles": [
-          "community_api/src/test/java/com/endside/community/plan/service/PlanServiceTest.java"
+          "community_api/domain/src/test/java/com/endside/community/plan/service/PlanServiceTest.java"
         ]
       },
       "journey": {
@@ -7558,7 +7550,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "createItem",
                 "httpMethod": "POST",
@@ -7575,7 +7567,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "updateItem",
                 "httpMethod": "PUT",
@@ -7592,7 +7584,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "publishItem",
                 "httpMethod": "POST",
@@ -7609,7 +7601,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "stopSelling",
                 "httpMethod": "POST",
@@ -7626,7 +7618,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "removeItem",
                 "httpMethod": "DELETE",
@@ -7643,7 +7635,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "getMyItems",
                 "httpMethod": "GET",
@@ -7703,7 +7695,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/CreatorController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CreatorController.java",
                 "controller": "CreatorController",
                 "method": "getCreatorProfile",
                 "httpMethod": "GET",
@@ -7720,7 +7712,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/CreatorController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CreatorController.java",
                 "controller": "CreatorController",
                 "method": "getMyStats",
                 "httpMethod": "GET",
@@ -7784,7 +7776,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketCategoryController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketCategoryController.java",
                 "controller": "MarketCategoryController",
                 "method": "getCategories",
                 "httpMethod": "GET",
@@ -7801,7 +7793,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
                 "controller": "MarketSearchController",
                 "method": "getPopularItems",
                 "httpMethod": "GET",
@@ -7818,7 +7810,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
                 "controller": "MarketItemController",
                 "method": "getMarketItems",
                 "httpMethod": "GET",
@@ -7878,7 +7870,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
                 "controller": "MarketSearchController",
                 "method": "searchItems",
                 "httpMethod": "GET",
@@ -8026,7 +8018,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/CollectionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java",
                 "controller": "CollectionController",
                 "method": "getMyCollection",
                 "httpMethod": "GET",
@@ -8043,7 +8035,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/CollectionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java",
                 "controller": "CollectionController",
                 "method": "activateItem",
                 "httpMethod": "POST",
@@ -8060,7 +8052,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/CollectionController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java",
                 "controller": "CollectionController",
                 "method": "getExpiringItems",
                 "httpMethod": "GET",
@@ -8077,13 +8069,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
                 "controller": "PlanController",
                 "method": "getPreview",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/plans/{planId}/preview",
-                "targetLine": 67,
-                "methodLine": 68
+                "targetLine": 71,
+                "methodLine": 72
               }
             ]
           }
@@ -8140,13 +8132,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
                 "controller": "PlanController",
                 "method": "createEventFromPlan",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/plans/{planId}/create-event",
-                "targetLine": 144,
-                "methodLine": 145
+                "targetLine": 154,
+                "methodLine": 155
               }
             ]
           },
@@ -8157,7 +8149,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
                 "controller": "MarketItemReviewController",
                 "method": "createReview",
                 "httpMethod": "POST",
@@ -8174,7 +8166,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
                 "controller": "MarketItemReviewController",
                 "method": "updateReview",
                 "httpMethod": "PUT",
@@ -8191,7 +8183,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
                 "controller": "MarketItemReviewController",
                 "method": "deleteReview",
                 "httpMethod": "DELETE",
@@ -8250,11 +8242,12 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": false,
         "count": 0,
-        "featureMarkerCount": 2,
+        "featureMarkerCount": 3,
         "scenarioReferenceCount": 0,
         "files": [],
         "markerCandidateFiles": [
-          "community_api/src/test/java/com/endside/community/payment/service/SellerEscalatedOperatorDecisionCommitTest.java",
+          "community_api/api-app/src/test/java/com/endside/community/payment/service/PlanLinkRefundRequestRaceCommitTest.java",
+          "community_api/api-app/src/test/java/com/endside/community/payment/service/SellerEscalatedOperatorDecisionCommitTest.java",
           "community_app/test/core/utils/notification_router_dead_end_wiring_test.dart"
         ]
       },
@@ -8299,7 +8292,7 @@ window.SCENARIO_AUDIT = {
         "scenarioReferenceCount": 0,
         "files": [],
         "markerCandidateFiles": [
-          "community_api/src/test/java/com/endside/community/plan/service/MarketPurchaseServiceTest.java",
+          "community_api/domain/src/test/java/com/endside/community/plan/service/MarketPurchaseServiceTest.java",
           "community_app/test/presentation/market/market_refund_guidance_cards_test.dart"
         ]
       },
@@ -8343,7 +8336,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
                 "controller": "DateVerificationController",
                 "method": "requestVerification",
                 "httpMethod": "POST",
@@ -8360,7 +8353,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
                 "controller": "DateVerificationController",
                 "method": "verify",
                 "httpMethod": "POST",
@@ -8377,7 +8370,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
                 "controller": "DateVerificationController",
                 "method": "getStatus",
                 "httpMethod": "GET",
@@ -8523,7 +8516,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateMatchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMatchController.java",
                 "controller": "DateMatchController",
                 "method": "getMatches",
                 "httpMethod": "GET",
@@ -8540,7 +8533,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateMatchController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMatchController.java",
                 "controller": "DateMatchController",
                 "method": "getMatch",
                 "httpMethod": "GET",
@@ -8600,7 +8593,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
                 "controller": "DateChatController",
                 "method": "getChatRooms",
                 "httpMethod": "GET",
@@ -8617,7 +8610,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
                 "controller": "DateChatController",
                 "method": "getMessages",
                 "httpMethod": "GET",
@@ -8634,7 +8627,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
                 "controller": "DateChatController",
                 "method": "sendMessage",
                 "httpMethod": "POST",
@@ -8651,7 +8644,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateChatController.java",
                 "controller": "DateChatController",
                 "method": "markAsRead",
                 "httpMethod": "PATCH",
@@ -8761,7 +8754,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateBlockController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateBlockController.java",
                 "controller": "DateBlockController",
                 "method": "listBlocks",
                 "httpMethod": "GET",
@@ -8778,7 +8771,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateBlockController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateBlockController.java",
                 "controller": "DateBlockController",
                 "method": "blockUser",
                 "httpMethod": "POST",
@@ -8795,7 +8788,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateBlockController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateBlockController.java",
                 "controller": "DateBlockController",
                 "method": "unblockUser",
                 "httpMethod": "DELETE",
@@ -8855,7 +8848,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
                 "controller": "DateProfileController",
                 "method": "getProfileViews",
                 "httpMethod": "GET",
@@ -8915,7 +8908,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
                 "controller": "CalendarIntegrationController",
                 "method": "getMonthlyCalendar",
                 "httpMethod": "GET",
@@ -8932,7 +8925,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
                 "controller": "CalendarIntegrationController",
                 "method": "getDailyCalendar",
                 "httpMethod": "GET",
@@ -8949,7 +8942,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
                 "controller": "CalendarIntegrationController",
                 "method": "getRangeCalendar",
                 "httpMethod": "GET",
@@ -9055,7 +9048,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "createAvailability",
                 "httpMethod": "POST",
@@ -9072,13 +9065,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "getAvailabilities",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability",
-                "targetLine": 50,
-                "methodLine": 51
+                "targetLine": 51,
+                "methodLine": 52
               }
             ]
           },
@@ -9089,13 +9082,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "getAvailability",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability/{id}",
-                "targetLine": 69,
-                "methodLine": 70
+                "targetLine": 70,
+                "methodLine": 71
               }
             ]
           },
@@ -9106,13 +9099,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "updateAvailability",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/availability/{id}",
-                "targetLine": 88,
-                "methodLine": 89
+                "targetLine": 89,
+                "methodLine": 90
               }
             ]
           },
@@ -9123,13 +9116,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "deleteAvailability",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/availability/{id}",
-                "targetLine": 97,
-                "methodLine": 98
+                "targetLine": 98,
+                "methodLine": 99
               }
             ]
           }
@@ -9195,13 +9188,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "createRecurringAvailability",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/availability/recurring",
-                "targetLine": 106,
-                "methodLine": 107
+                "targetLine": 107,
+                "methodLine": 108
               }
             ]
           },
@@ -9212,13 +9205,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "getRecurrenceRule",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability/recurring/{ruleId}",
-                "targetLine": 114,
-                "methodLine": 115
+                "targetLine": 115,
+                "methodLine": 116
               }
             ]
           },
@@ -9229,13 +9222,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "updateRecurrenceRule",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/availability/recurring/{ruleId}",
-                "targetLine": 122,
-                "methodLine": 123
+                "targetLine": 123,
+                "methodLine": 124
               }
             ]
           },
@@ -9246,13 +9239,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "deleteRecurrenceRule",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/availability/recurring/{ruleId}",
-                "targetLine": 131,
-                "methodLine": 132
+                "targetLine": 132,
+                "methodLine": 133
               }
             ]
           },
@@ -9263,13 +9256,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
                 "controller": "AvailabilityController",
                 "method": "expandRecurrence",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability/expand",
-                "targetLine": 142,
-                "methodLine": 143
+                "targetLine": 143,
+                "methodLine": 144
               }
             ]
           }
@@ -9436,7 +9429,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/review/controller/ReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
                 "controller": "ReviewController",
                 "method": "getReviewsByEvent",
                 "httpMethod": "GET",
@@ -9453,7 +9446,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/review/controller/ReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
                 "controller": "ReviewController",
                 "method": "getReviewsByUser",
                 "httpMethod": "GET",
@@ -9513,7 +9506,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/review/controller/ReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
                 "controller": "ReviewController",
                 "method": "updateReview",
                 "httpMethod": "PATCH",
@@ -9530,7 +9523,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/review/controller/ReviewController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
                 "controller": "ReviewController",
                 "method": "deleteReview",
                 "httpMethod": "DELETE",
@@ -9600,7 +9593,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/review/controller/ReportController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReportController.java",
                 "controller": "ReportController",
                 "method": "createReport",
                 "httpMethod": "POST",
@@ -9617,7 +9610,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/review/controller/ReportController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReportController.java",
                 "controller": "ReportController",
                 "method": "getMyReports",
                 "httpMethod": "GET",
@@ -9823,7 +9816,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "getNotifications",
                 "httpMethod": "GET",
@@ -9840,7 +9833,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "getUnreadCount",
                 "httpMethod": "GET",
@@ -9857,7 +9850,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "markAsRead",
                 "httpMethod": "PATCH",
@@ -9874,7 +9867,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "markAllAsRead",
                 "httpMethod": "PATCH",
@@ -9891,7 +9884,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "deleteNotification",
                 "httpMethod": "DELETE",
@@ -9960,7 +9953,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "getGroupedNotifications",
                 "httpMethod": "GET",
@@ -9977,7 +9970,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "getUnreadCount",
                 "httpMethod": "GET",
@@ -10045,7 +10038,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "getSettings",
                 "httpMethod": "GET",
@@ -10062,7 +10055,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "updateSettings",
                 "httpMethod": "PATCH",
@@ -10130,7 +10123,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "getQuietHours",
                 "httpMethod": "GET",
@@ -10147,7 +10140,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
                 "method": "updateQuietHours",
                 "httpMethod": "PUT",
@@ -10211,13 +10204,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
                 "controller": "DeviceTokenController",
                 "method": "getMyDevices",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/device-tokens",
-                "targetLine": 29,
-                "methodLine": 30
+                "targetLine": 31,
+                "methodLine": 32
               }
             ]
           },
@@ -10228,13 +10221,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
                 "controller": "DeviceTokenController",
                 "method": "registerToken",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/device-tokens",
-                "targetLine": 35,
-                "methodLine": 36
+                "targetLine": 37,
+                "methodLine": 38
               }
             ]
           },
@@ -10245,13 +10238,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
                 "controller": "DeviceTokenController",
                 "method": "refreshToken",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/device-tokens/token",
-                "targetLine": 43,
-                "methodLine": 44
+                "targetLine": 45,
+                "methodLine": 46
               }
             ]
           },
@@ -10262,13 +10255,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
                 "controller": "DeviceTokenController",
                 "method": "removeDevice",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/device-tokens/{deviceId}",
-                "targetLine": 51,
-                "methodLine": 52
+                "targetLine": 53,
+                "methodLine": 54
               }
             ]
           },
@@ -10279,13 +10272,13 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
                 "controller": "DeviceTokenController",
                 "method": "removeToken",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/device-tokens",
-                "targetLine": 59,
-                "methodLine": 60
+                "targetLine": 61,
+                "methodLine": 62
               }
             ]
           }
@@ -10447,7 +10440,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
                 "controller": "UserController",
                 "method": "updateMyProfile",
                 "httpMethod": "PATCH",
@@ -10518,7 +10511,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
                 "controller": "UserAddressController",
                 "method": "getAddresses",
                 "httpMethod": "GET",
@@ -10535,7 +10528,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
                 "controller": "UserAddressController",
                 "method": "getAddress",
                 "httpMethod": "GET",
@@ -10552,7 +10545,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
                 "controller": "UserAddressController",
                 "method": "createAddress",
                 "httpMethod": "POST",
@@ -10569,7 +10562,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
                 "controller": "UserAddressController",
                 "method": "updateAddress",
                 "httpMethod": "PUT",
@@ -10586,7 +10579,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
                 "controller": "UserAddressController",
                 "method": "deleteAddress",
                 "httpMethod": "DELETE",
@@ -10774,7 +10767,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
                 "controller": "UserController",
                 "method": "checkDeactivation",
                 "httpMethod": "GET",
@@ -10791,7 +10784,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/account/controller/UserController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
                 "controller": "UserController",
                 "method": "deleteMyAccount",
                 "httpMethod": "DELETE",
@@ -10851,7 +10844,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/LocationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
                 "controller": "LocationController",
                 "method": "optIn",
                 "httpMethod": "POST",
@@ -10868,7 +10861,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/LocationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
                 "controller": "LocationController",
                 "method": "updateLocation",
                 "httpMethod": "POST",
@@ -10885,7 +10878,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/LocationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
                 "controller": "LocationController",
                 "method": "getEventLocations",
                 "httpMethod": "GET",
@@ -10957,7 +10950,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/LocationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
                 "controller": "LocationController",
                 "method": "optOut",
                 "httpMethod": "POST",
@@ -11022,7 +11015,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/LocationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
                 "controller": "LocationController",
                 "method": "extendShare",
                 "httpMethod": "POST",
@@ -11087,7 +11080,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/LocationController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
                 "controller": "LocationController",
                 "method": "getPrivacyDashboard",
                 "httpMethod": "GET",
@@ -11156,7 +11149,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/directions/controller/DirectionsController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/directions/controller/DirectionsController.java",
                 "controller": "DirectionsController",
                 "method": "getDirections",
                 "httpMethod": "GET",
@@ -11173,7 +11166,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/directions/controller/DirectionsController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/directions/controller/DirectionsController.java",
                 "controller": "DirectionsController",
                 "method": "getAttendeeDistances",
                 "httpMethod": "GET",
@@ -11233,7 +11226,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java",
                 "controller": "GeocodingController",
                 "method": "reverseGeocode",
                 "httpMethod": "GET",
@@ -11250,7 +11243,7 @@ window.SCENARIO_AUDIT = {
             "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java",
                 "controller": "GeocodingController",
                 "method": "geocode",
                 "httpMethod": "GET",
@@ -12071,16 +12064,14 @@ window.SCENARIO_AUDIT = {
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/scripts/e2e/README.md"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,

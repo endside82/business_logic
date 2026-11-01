@@ -41,11 +41,11 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/events/{eventId}/check-in/qr` | `CheckInController#generateQrToken` | [CheckInController.java:32](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L32) |
-| `POST /api/v1/events/{eventId}/check-in` | `CheckInController#checkIn` | [CheckInController.java:39](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L39) |
-| `POST /api/v1/events/{eventId}/check-in/short-code` | `CheckInController#checkInByShortCode` | [CheckInController.java:49](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L49) |
-| `POST /api/v1/events/{eventId}/check-in/batch` | `CheckInController#batchManualCheckIn` | [CheckInController.java:63](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L63) |
-| `GET /api/v1/events/{eventId}/check-in/stats` | `CheckInController#getCheckInStats` | [CheckInController.java:73](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L73) |
+| `GET /api/v1/events/{eventId}/check-in/qr` | `CheckInController#generateQrToken` | [CheckInController.java:32](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L32) |
+| `POST /api/v1/events/{eventId}/check-in` | `CheckInController#checkIn` | [CheckInController.java:39](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L39) |
+| `POST /api/v1/events/{eventId}/check-in/short-code` | `CheckInController#checkInByShortCode` | [CheckInController.java:49](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L49) |
+| `POST /api/v1/events/{eventId}/check-in/batch` | `CheckInController#batchManualCheckIn` | [CheckInController.java:63](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L63) |
+| `GET /api/v1/events/{eventId}/check-in/stats` | `CheckInController#getCheckInStats` | [CheckInController.java:73](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java#L73) |
 
 - 수동 체크인은 참가 행 번호 목록의 일괄 요청이다. 옛 사용자 번호 단건 입구는 제거됐다.
 <!-- source-references:end -->

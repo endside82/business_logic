@@ -37,10 +37,10 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/market/collection` | `CollectionController#getMyCollection` | [CollectionController.java:28](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java#L28) |
-| `POST /api/v1/market/collection/{id}/activate` | `CollectionController#activateItem` | [CollectionController.java:38](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java#L38) |
-| `GET /api/v1/market/collection/expiring` | `CollectionController#getExpiringItems` | [CollectionController.java:46](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java#L46) |
-| `GET /api/v1/plans/{planId}/preview` | `PlanController#getPreview` | [PlanController.java:71](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L71) |
+| `GET /api/v1/market/collection` | `CollectionController#getMyCollection` | [CollectionController.java:28](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java#L28) |
+| `POST /api/v1/market/collection/{id}/activate` | `CollectionController#activateItem` | [CollectionController.java:38](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java#L38) |
+| `GET /api/v1/market/collection/expiring` | `CollectionController#getExpiringItems` | [CollectionController.java:46](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/CollectionController.java#L46) |
+| `GET /api/v1/plans/{planId}/preview` | `PlanController#getPreview` | [PlanController.java:71](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L71) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

@@ -36,10 +36,10 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/wallet/auto-charge` | `AutoChargeController#getAutoChargeConfig` | [AutoChargeController.java:33](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L33) |
-| `PUT /api/v1/wallet/auto-charge` | `AutoChargeController#updateAutoChargeConfig` | [AutoChargeController.java:39](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L39) |
-| `DELETE /api/v1/wallet/auto-charge` | `AutoChargeController#disableAutoCharge` | [AutoChargeController.java:46](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L46) |
-| `GET /api/v1/wallet/charge/presets` | `AutoChargeController#getChargePresets` | [AutoChargeController.java:27](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L27) |
+| `GET /api/v1/wallet/auto-charge` | `AutoChargeController#getAutoChargeConfig` | [AutoChargeController.java:33](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L33) |
+| `PUT /api/v1/wallet/auto-charge` | `AutoChargeController#updateAutoChargeConfig` | [AutoChargeController.java:39](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L39) |
+| `DELETE /api/v1/wallet/auto-charge` | `AutoChargeController#disableAutoCharge` | [AutoChargeController.java:46](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L46) |
+| `GET /api/v1/wallet/charge/presets` | `AutoChargeController#getChargePresets` | [AutoChargeController.java:27](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java#L27) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

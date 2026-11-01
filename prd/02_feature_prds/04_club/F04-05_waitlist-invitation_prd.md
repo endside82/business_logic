@@ -37,12 +37,12 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/clubs/{id}/waitlist` | `ClubController#getWaitlist` | [ClubController.java:324](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L324) |
-| `POST /api/v1/clubs/{id}/waitlist/{waitId}/approve` | `ClubController#approveApplication` | [ClubController.java:332](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L332) |
-| `POST /api/v1/clubs/{id}/waitlist/{waitId}/reject` | `ClubController#rejectApplication` | [ClubController.java:341](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L341) |
-| `POST /api/v1/clubs/{id}/invitations` | `ClubController#inviteMember` | [ClubController.java:352](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L352) |
-| `POST /api/v1/clubs/{id}/invitations/{invitationId}/accept` | `ClubController#acceptInvite` | [ClubController.java:361](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L361) |
-| `POST /api/v1/clubs/{id}/invitations/{invitationId}/decline` | `ClubController#declineInvite` | [ClubController.java:372](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L372) |
+| `GET /api/v1/clubs/{id}/waitlist` | `ClubController#getWaitlist` | [ClubController.java:324](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L324) |
+| `POST /api/v1/clubs/{id}/waitlist/{waitId}/approve` | `ClubController#approveApplication` | [ClubController.java:332](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L332) |
+| `POST /api/v1/clubs/{id}/waitlist/{waitId}/reject` | `ClubController#rejectApplication` | [ClubController.java:341](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L341) |
+| `POST /api/v1/clubs/{id}/invitations` | `ClubController#inviteMember` | [ClubController.java:352](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L352) |
+| `POST /api/v1/clubs/{id}/invitations/{invitationId}/accept` | `ClubController#acceptInvite` | [ClubController.java:361](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L361) |
+| `POST /api/v1/clubs/{id}/invitations/{invitationId}/decline` | `ClubController#declineInvite` | [ClubController.java:372](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L372) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

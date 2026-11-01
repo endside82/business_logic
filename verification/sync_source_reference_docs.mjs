@@ -62,15 +62,24 @@ for (const [documentPath, group] of groups) {
 const identities = new Map(references.flatMap((reference) => reference.endpoints).map((endpoint) =>
   [endpoint.targetPath + ' ' + endpoint.controller + '#' + endpoint.method + ' ' + endpoint.httpMethod + ' ' + endpoint.httpPath, endpoint],
 ));
+// 파일이 같은 꾸러미 경로째 다른 모듈로 옮겨졌으면(2026-11-01 공개 API 를 domain·api-app 으로 나눔) 저장소 안 자리만 다르다.
+// 같은 자바 파일(src/main/java 아래 경로)·함수·주소의 위치가 하나뿐일 때만 그 자리로 옮겨 적는다(원래 결함 K6).
+const sourceRelative = (file) => file.slice(file.indexOf('/src/main/java/') + 1);
+const moved = Map.groupBy(identities.values(), (endpoint) =>
+  sourceRelative(endpoint.targetPath) + ' ' + endpoint.controller + '#' + endpoint.method + ' ' + endpoint.httpMethod + ' ' + endpoint.httpPath);
 for (const backendPath of new Set(targets.map((target) => target.backendPath))) {
   const absolute = path.join(workspace, backendPath);
   if (!fs.existsSync(absolute)) continue; // 로컬 전용 자료는 Git 저장소에 포함되지 않는다.
   const text = fs.readFileSync(absolute, 'utf8');
   const updated = text.replace(/<!-- traces: ([^\n]+):(\d+) -->\n<!-- source-target: (\w+#\w+) (GET|POST|PATCH|PUT|DELETE) ([^\n]+) -->/g,
     (match, file, line, method, verb, route) => {
-      const endpoint = identities.get(file + ' ' + method + ' ' + verb + ' ' + route);
+      let endpoint = identities.get(file + ' ' + method + ' ' + verb + ' ' + route);
+      if (!endpoint) {
+        const candidates = moved.get(sourceRelative(file) + ' ' + method + ' ' + verb + ' ' + route) ?? [];
+        if (candidates.length === 1) endpoint = candidates[0];
+      }
       if (!endpoint) throw new Error('로컬 기록의 함수·주소를 확인할 수 없음: ' + backendPath);
-      return match.replace(file + ':' + line, file + ':' + endpoint.targetLine);
+      return match.replace(file + ':' + line, endpoint.targetPath + ':' + endpoint.targetLine);
     });
   if (updated !== text) { updates.push({ absolute, updated }); localUpdates += 1; }
 }

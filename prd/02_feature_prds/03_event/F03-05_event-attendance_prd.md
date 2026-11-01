@@ -40,12 +40,12 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/events/{eventId}/capacity` | `CapacityController#attend` | [CapacityController.java:44](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L44) |
-| `DELETE /api/v1/events/{eventId}/capacity` | `CapacityController#cancel` | [CapacityController.java:56](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L56) |
-| `GET /api/v1/events/{eventId}/capacity/me` | `CapacityController#getMyAttendance` | [CapacityController.java:166](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L166) |
-| `POST /api/v1/events/{eventId}/apply` | `EventController#applyToEvent` | [EventController.java:296](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L296) |
-| `DELETE /api/v1/events/{eventId}/apply` | `EventController#cancelApplication` | [EventController.java:314](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L314) |
-| `GET /api/v1/events/users/me/applications` | `EventController#getMyApplications` | [EventController.java:336](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L336) |
+| `POST /api/v1/events/{eventId}/capacity` | `CapacityController#attend` | [CapacityController.java:44](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L44) |
+| `DELETE /api/v1/events/{eventId}/capacity` | `CapacityController#cancel` | [CapacityController.java:56](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L56) |
+| `GET /api/v1/events/{eventId}/capacity/me` | `CapacityController#getMyAttendance` | [CapacityController.java:166](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L166) |
+| `POST /api/v1/events/{eventId}/apply` | `EventController#applyToEvent` | [EventController.java:296](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L296) |
+| `DELETE /api/v1/events/{eventId}/apply` | `EventController#cancelApplication` | [EventController.java:314](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L314) |
+| `GET /api/v1/events/users/me/applications` | `EventController#getMyApplications` | [EventController.java:336](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L336) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

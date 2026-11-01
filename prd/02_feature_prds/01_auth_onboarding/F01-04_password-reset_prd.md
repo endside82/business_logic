@@ -48,7 +48,7 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/auth/password-reset/request` | `AuthController#requestPasswordReset` | [AuthController.java:141](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L141) |
-| `POST /api/v1/auth/password-reset/verify` | `AuthController#verifyPasswordResetCode` | [AuthController.java:148](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L148) |
-| `POST /api/v1/auth/password-reset/confirm` | `AuthController#confirmPasswordReset` | [AuthController.java:153](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L153) |
+| `POST /api/v1/auth/password-reset/request` | `AuthController#requestPasswordReset` | [AuthController.java:141](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L141) |
+| `POST /api/v1/auth/password-reset/verify` | `AuthController#verifyPasswordResetCode` | [AuthController.java:148](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L148) |
+| `POST /api/v1/auth/password-reset/confirm` | `AuthController#confirmPasswordReset` | [AuthController.java:153](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L153) |
 <!-- source-references:end -->

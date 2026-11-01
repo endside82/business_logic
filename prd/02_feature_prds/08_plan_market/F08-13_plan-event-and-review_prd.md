@@ -43,10 +43,10 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/plans/{planId}/create-event` | `PlanController#createEventFromPlan` | [PlanController.java:154](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L154) |
-| `POST /api/v1/market/items/{itemId}/reviews` | `MarketItemReviewController#createReview` | [MarketItemReviewController.java:29](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java#L29) |
-| `PUT /api/v1/market/items/{itemId}/reviews/{reviewId}` | `MarketItemReviewController#updateReview` | [MarketItemReviewController.java:47](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java#L47) |
-| `DELETE /api/v1/market/items/{itemId}/reviews/{reviewId}` | `MarketItemReviewController#deleteReview` | [MarketItemReviewController.java:56](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java#L56) |
+| `POST /api/v1/plans/{planId}/create-event` | `PlanController#createEventFromPlan` | [PlanController.java:154](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L154) |
+| `POST /api/v1/market/items/{itemId}/reviews` | `MarketItemReviewController#createReview` | [MarketItemReviewController.java:29](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java#L29) |
+| `PUT /api/v1/market/items/{itemId}/reviews/{reviewId}` | `MarketItemReviewController#updateReview` | [MarketItemReviewController.java:47](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java#L47) |
+| `DELETE /api/v1/market/items/{itemId}/reviews/{reviewId}` | `MarketItemReviewController#deleteReview` | [MarketItemReviewController.java:56](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java#L56) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

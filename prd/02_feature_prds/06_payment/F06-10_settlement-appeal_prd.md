@@ -41,11 +41,11 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/wallet/settlements` | `WalletController#getMySettlements` | [WalletController.java:237](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L237) |
-| `GET /api/v1/wallet/settlements/summary` | `WalletController#getMySettlementSummary` | [WalletController.java:251](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L251) |
-| `GET /api/v1/wallet/settlements/{id}` | `WalletController#getSettlementDetail` | [WalletController.java:261](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L261) |
-| `POST /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#createAppeal` | [SettlementAppealController.java:29](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L29) |
-| `GET /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#getAppeal` | [SettlementAppealController.java:48](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L48) |
+| `GET /api/v1/wallet/settlements` | `WalletController#getMySettlements` | [WalletController.java:237](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L237) |
+| `GET /api/v1/wallet/settlements/summary` | `WalletController#getMySettlementSummary` | [WalletController.java:251](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L251) |
+| `GET /api/v1/wallet/settlements/{id}` | `WalletController#getSettlementDetail` | [WalletController.java:261](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java#L261) |
+| `POST /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#createAppeal` | [SettlementAppealController.java:29](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L29) |
+| `GET /api/v1/wallet/settlements/{settlementId}/appeal` | `SettlementAppealController#getAppeal` | [SettlementAppealController.java:48](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java#L48) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

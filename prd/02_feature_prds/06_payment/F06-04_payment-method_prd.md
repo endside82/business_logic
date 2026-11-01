@@ -36,10 +36,10 @@ PG(Toss)에서 발급된 빌링키(billingKey) 기반 카드 결제수단을 등
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/wallet/payment-methods` | `PaymentMethodController#getPaymentMethods` | [PaymentMethodController.java:29](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L29) |
-| `POST /api/v1/wallet/payment-methods` | `PaymentMethodController#createPaymentMethod` | [PaymentMethodController.java:42](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L42) |
-| `DELETE /api/v1/wallet/payment-methods/{id}` | `PaymentMethodController#deletePaymentMethod` | [PaymentMethodController.java:50](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L50) |
-| `PATCH /api/v1/wallet/payment-methods/{id}/default` | `PaymentMethodController#setDefault` | [PaymentMethodController.java:58](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L58) |
+| `GET /api/v1/wallet/payment-methods` | `PaymentMethodController#getPaymentMethods` | [PaymentMethodController.java:29](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L29) |
+| `POST /api/v1/wallet/payment-methods` | `PaymentMethodController#createPaymentMethod` | [PaymentMethodController.java:42](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L42) |
+| `DELETE /api/v1/wallet/payment-methods/{id}` | `PaymentMethodController#deletePaymentMethod` | [PaymentMethodController.java:50](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L50) |
+| `PATCH /api/v1/wallet/payment-methods/{id}/default` | `PaymentMethodController#setDefault` | [PaymentMethodController.java:58](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java#L58) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

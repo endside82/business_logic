@@ -36,9 +36,9 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `POST /api/v1/events/{eventId}/settlement/remind` | `MeetingSettlementController#remindUnpaid` | [MeetingSettlementController.java:551](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L551) |
-| `PATCH /api/v1/events/{eventId}/settlement/extend-deadline` | `MeetingSettlementController#extendDeadline` | [MeetingSettlementController.java:560](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L560) |
-| `GET /api/v1/events/{eventId}/settlement/remind-history` | `MeetingSettlementController#getRemindHistory` | [MeetingSettlementController.java:568](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L568) |
+| `POST /api/v1/events/{eventId}/settlement/remind` | `MeetingSettlementController#remindUnpaid` | [MeetingSettlementController.java:551](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L551) |
+| `PATCH /api/v1/events/{eventId}/settlement/extend-deadline` | `MeetingSettlementController#extendDeadline` | [MeetingSettlementController.java:560](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L560) |
+| `GET /api/v1/events/{eventId}/settlement/remind-history` | `MeetingSettlementController#getRemindHistory` | [MeetingSettlementController.java:568](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L568) |
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

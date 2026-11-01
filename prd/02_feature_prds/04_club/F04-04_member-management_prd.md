@@ -35,9 +35,9 @@
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:194](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L194) |
-| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:213](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L213) |
-| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:234](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L234) |
+| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:194](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L194) |
+| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:213](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L213) |
+| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:234](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L234) |
 
 - 옛 DELETE 강퇴는 제거됐다. 현재 POST 명령과 요청 고유키를 사용한다.
 <!-- source-references:end -->
