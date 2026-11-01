@@ -31,13 +31,13 @@
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
 
-2026-10-29에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
 
 | 호출 주소 | 처리 함수 | 확인한 코드 위치 |
 |---|---|---|
-| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:194](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/club/controller/ClubController.java#L194) |
-| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:213](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/club/controller/ClubController.java#L213) |
-| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:234](https://github.com/endside82/community_api/blob/cf4497208fb99585b4455b2b8ba392857fbcce24/src/main/java/com/endside/community/club/controller/ClubController.java#L234) |
+| `GET /api/v1/clubs/{id}/members` | `ClubController#getMembers` | [ClubController.java:194](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L194) |
+| `POST /api/v1/clubs/{id}/members/{userId}/role` | `ClubController#changeRole` | [ClubController.java:213](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L213) |
+| `POST /api/v1/clubs/{id}/members/{userId}/kick` | `ClubController#kickMember` | [ClubController.java:234](https://github.com/endside82/community_api/blob/8b7fb272da5322c653aa99904cf59fd2ec8ba186/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L234) |
 
 - 옛 DELETE 강퇴는 제거됐다. 현재 POST 명령과 요청 고유키를 사용한다.
 <!-- source-references:end -->
