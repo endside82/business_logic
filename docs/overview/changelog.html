@@ -19,6 +19,11 @@
           지금 제공할 기능과 남은 준비는 <a href="../qa/launch-status.html">첫 출시 현황</a>에서 확인한다.
         </p>
       </header>
+      <section id="current-2026-11-02"><h2>2026년 11월 2일 — 현재 메뉴·구현·배포 상태 대조</h2>
+        <p>첫 화면에 <a href="architecture.html#app-navigation">현재 앱 메뉴</a>·기능 찾기·구현 검증·배포 준비 바로가기를 두고 다음 행동을 먼저 표시했습니다. 정본의 추적 표 67개를 반영했으며 항목 수를 미완료 개발 건수로 해석하지 않습니다.</p>
+        <ul><li>Android 내부 테스트 빌드 8과 이후 로컬 main 변경, iOS 서명 IPA 빌드 1을 구분했습니다.</li><li>홈·이벤트·모임·채팅·마이 탭, 상단 검색·알림 배지·전체 메뉴, 모임별 메뉴와 지도 핀을 반영했습니다.</li><li>장소는 선택 입력, 장소 단독 변경은 즉시 적용·알림으로 고쳤습니다. 큰 시간 변경·가격 인상 합의는 유지합니다.</li><li>공개 API 모듈 분리·앱 서버 값 생성 완료와 관리자 이전 준비 16a-2 완료·16a-3 단계을 반영했습니다.</li><li>이전 촬영 사진의 시점과 검증 한계를 표시하고, 정본·추가 근거가 바뀌면 감지하는 검사를 더했습니다.</li></ul>
+        <p>근거와 범위는 <a href="../qa/launch-status.html#validation-current">현재 검사 기록과 남은 실패</a>를 따릅니다. 기존 사진을 최신 화면으로 바꾸거나 모든 기능의 전체 재검증을 수행한 작업은 아닙니다.</p>
+      </section>
       <section id="update-2026-10-29"><h2>2026-10-29 — 차수 9~11·번호 인증·현재 운영 배포 대조</h2><p>10월 26일 문서 기준 이후의 제품 커밋과 현재 소스·검수 기록을 대조해 기존 기능·정책·PRD와 출시 상태표를 갱신했다. 소스 위치 표의 갱신과 기능 동작 검증은 구분한다.</p><ul><li><a href="../domains/01-auth.html">인증·온보딩</a>: 가입 전 6자리 번호, Google 기존 이메일 계정 연결, 번호 기반 비밀번호 재설정과 기존 세션 종료. 미인증 제한과 옛 링크 메일 제거.</li><li><a href="../features/F05-04.html">최근 검색어</a>의 계정별 기기 저장, <a href="../policies/payment.html#free-point-expiry">무료 포인트 지급 단위 만료</a>, <a href="../features/F13-07.html#exit-money-resolution">탈퇴 뒤 돈 보류·운영 종결</a>을 본문에 반영.</li><li>생성 요청 고유키·연결 플랜 일괄 정렬·정산 복사·노쇼 조정 알림·반복 회차·출석 확정·관리자 권한·마일리지 검토 규칙을 해당 기능과 PRD에 반영.</li><li><a href="../qa/external-readiness.html#progress-2026-10-29">외부 준비 현황</a>: 오늘 서버 배포 이미지·서비스 7개 정상, iOS 식별자·입력 진척 확인. 새 Android 패키지·실제 번호 메일·서명 앱·스토어·파일·경보·복구 확인은 별도 유지.</li><li><a href="../qa/launch-status.html#validation-current">검사 기록과 남은 실패</a>: 차수 11 자동 240줄·손 확인 38줄 통과, 손 확인 3줄 미실행. 다음 개발은 H-542 재정비부터 정한다.</li></ul><p>추적 근거: <code>verification/document-sync-2026-10-29.json</code>. 이번 문서 갱신에서 제품 전체 시험·운영 변경·메일 발송은 수행하지 않았다.</p></section>
 
       <section id="operating-readiness-2026-10-26">

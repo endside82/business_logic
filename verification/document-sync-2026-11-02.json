@@ -1,0 +1,157 @@
+{
+  "date": "2026-11-02",
+  "recordedAt": "2026-11-02T15:08:46+09:00",
+  "scope": "문서 현황·탐색 효율 개선과 확인한 최근 계약 갱신. 전체 기능 재감사나 제품 검증 실행은 아님.",
+  "publication": {
+    "updatedAt": "2026-11-02T15:08:46+09:00",
+    "sourceBranch": "main",
+    "sourceBaseCommit": "8d0978c15b3e3d38a44279fb5d42e13c2a6d9b7c",
+    "sourceCommit": "a7ce5f96b745e74e46bf29e7dbbbfa0fcd476d43",
+    "sourcePath": "docs/plan/NEXT_WORK.md",
+    "sourceSha256": "24a3f40d217213fb50c0b2afeb45c8ce74c2d0ebae99f923e9038fd74f6e2f9d",
+    "worklistSha256": "188f92e409afab457453b0ec7d13bec1e37aee7a64684c31e6a03219c93e51da",
+    "evidenceSha256": {
+      "docs/plan/STRUCTURE_REBUILD_2026-10-30/02_STATUS.md": "abaadac1aaa0820bd899e738d0867cd2f1f94fe9073a097acf4d07bd6f53ce37",
+      "docs/plan/APP_NAVIGATION_2026-11-02/README.md": "c26b2df93b3fa8b481e496fc0e8b7b9937029f6ce54be0edcc550f9eca5a2ac7",
+      "docs/ui-ux/02-navigation.md": "b47b4ac4f6b7dbde1b39eda0269ed4305a6ef7f3b87c40f4bea66a14796fe4f4",
+      "community_app/docs/ANDROID_RELEASE.md": "8aee38246c8d4ca81f4fbc1e45e91e2c37541079567c60400325f59b2734a5ab",
+      "community_app/docs/DEPLOYMENT_CHECKLIST.md": "87c7767521b9e4f0e3b6322547b5d7303c36df17acf1b0d9671d3dc3a050f7c9"
+    },
+    "method": "2026-11-02 정본·재정비 현황·앱 길 안내·플랫폼 배포 가이드와 실제 로컬 main 대조. 작업 목록보다 최근인 실시간 main도 직접 확인. 운영·스토어 재조회, 배포, 제품·기기 시험은 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
+    "regenerate": "python3 scripts/build-work-overview.py --site-only",
+    "check": "python3 scripts/build-work-overview.py --site-only --check --check-source"
+  },
+  "reviewedLocalMain": [
+    {
+      "name": "공개 API",
+      "commit": "fc5a69144"
+    },
+    {
+      "name": "관리자 API",
+      "commit": "a999b7142"
+    },
+    {
+      "name": "앱",
+      "commit": "4f80511fb"
+    },
+    {
+      "name": "관리자 웹",
+      "commit": "8d473b91a"
+    },
+    {
+      "name": "실시간",
+      "commit": "30df50d68"
+    }
+  ],
+  "releaseEvidence": {
+    "android": "1.0.0 (8), 2026-11-02 배포 가이드의 internal completed 기록",
+    "ios": "1.0.0 (1) 서명 IPA, TestFlight 미업로드 기록",
+    "afterBuild8": "모임 홈·지도 핀·장소 규칙은 로컬 main, 새 배포·기기 확인 별도",
+    "remoteCheckedThisRun": false
+  },
+  "changes": [
+    "첫 화면에 현재 앱 메뉴·기능·검증·배포 문서 바로가기, 다음 행동을 우선 배치하고 상세 변경 기록은 접음",
+    "현재 추적 표 67행과 신규 H-561·H-562·H-563 반영, 미완료 총계로 사용하지 않음",
+    "다섯 탭·전체 메뉴·알림 배지·역할별 입구와 보류된 서버 계약 구분",
+    "장소 선택 입력·지도 핀·장소 단독 변경 즉시 적용 및 알림, 큰 시간 변경·가격 인상 합의 유지",
+    "공개 API 모듈 분리·앱 서버 값 생성 완료와 관리자 이전 준비 16a-2 완료·16a-3 단계 구분",
+    "이전 촬영 사진에 촬영 시점 안내, 현재 메뉴 문서 연결",
+    "정본·추가 근거 변경 감지 --check-source 추가, 실제 정본 변경 뒤 실패와 재대조 뒤 통과 확인",
+    "고정 출시 근거의 옮겨진 API 소스 링크 7개 복구(기존 결과는 변경하지 않음)"
+  ],
+  "changedBusinessFiles": [
+    ".gitignore",
+    "00_README.md",
+    "docs/assets/features.js",
+    "docs/assets/launch-status.js",
+    "docs/assets/sidebar.js",
+    "docs/assets/work-overview.css",
+    "docs/assets/work-overview.snapshot.json",
+    "docs/domains/02-home.html",
+    "docs/domains/03-event.html",
+    "docs/domains/04-club.html",
+    "docs/domains/12-notification.html",
+    "docs/domains/13-profile.html",
+    "docs/domains/14-location.html",
+    "docs/domains/20-support.html",
+    "docs/features/F02-05.html",
+    "docs/features/F03-03.html",
+    "docs/features/F03-04.html",
+    "docs/features/F03-19.html",
+    "docs/features/F04-01.html",
+    "docs/features/F12-02.html",
+    "docs/features/F17-02.html",
+    "docs/index.html",
+    "docs/overview/architecture.html",
+    "docs/overview/changelog.html",
+    "docs/overview/service.html",
+    "docs/qa/completion-criteria.html",
+    "docs/qa/external-readiness.html",
+    "docs/qa/feature-status.html",
+    "docs/qa/launch-status.html",
+    "docs/tour/index.html"
+  ],
+  "sourceSha256": {
+    "docs/plan/NEXT_WORK.md": "24a3f40d217213fb50c0b2afeb45c8ce74c2d0ebae99f923e9038fd74f6e2f9d",
+    "docs/plan/WORKLIST.md": "188f92e409afab457453b0ec7d13bec1e37aee7a64684c31e6a03219c93e51da",
+    "docs/plan/STRUCTURE_REBUILD_2026-10-30/02_STATUS.md": "abaadac1aaa0820bd899e738d0867cd2f1f94fe9073a097acf4d07bd6f53ce37",
+    "docs/ui-ux/02-navigation.md": "b47b4ac4f6b7dbde1b39eda0269ed4305a6ef7f3b87c40f4bea66a14796fe4f4",
+    "docs/plan/APP_NAVIGATION_2026-11-02/club-home/README.md": "26a92a14c82278ae318ba82fcb2fbe18b060dc625a02ff3278a95aad103fcb95",
+    "community_app/docs/ANDROID_RELEASE.md": "8aee38246c8d4ca81f4fbc1e45e91e2c37541079567c60400325f59b2734a5ab",
+    "community_app/docs/DEPLOYMENT_CHECKLIST.md": "87c7767521b9e4f0e3b6322547b5d7303c36df17acf1b0d9671d3dc3a050f7c9",
+    "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart": "7e80551cccec61285f76506e2c3b7f1bb76d9e83b7159ec61148e880aa80b43b",
+    "community_api/modules.txt": "84d0bb45b21747b039bcce9dacd3a71af5859f29ed8862ba28a53b7130eb5992",
+    "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java": "0734c789dd61bf52bcab498e8f216e9fd72979fc27ddc18b4aee38992c872cd8",
+    "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java": "59197bcba6063b4b997226864d545f0535bf420f417f9ca0bdc25ec7755ad907",
+    "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/RescheduleClassifierService.java": "e1ef7fc0c17a7ab089da078b75bf07b7d4ff8ed68afeb05754c1f44b5041fac0",
+    "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/EventRescheduleProposalService.java": "7ef322aafee2de4765e4cdcf4c8e1bb35ff03f96795391b44f00bca35e5668f7",
+    "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingCourseCommandService.java": "11bd89b3f76c35ab14ccc7c682fba8f663481c1108ad296a5e211f65f263cbf3",
+    "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingPlaceParam.java": "9b47d5c35cdb270f295d45923cede5ec56e27d8621d4ed9c6786dd7b7e8af85a"
+  },
+  "validation": [
+    {
+      "command": "python3 scripts/build-work-overview.py --check --check-source",
+      "result": "pass",
+      "generatedFiles": 7,
+      "tasks": 67
+    },
+    {
+      "command": "node --test scripts/tests/work-overview.test.mjs business_logic/verification/work_overview.test.mjs",
+      "result": "pass",
+      "tests": 16
+    },
+    {
+      "command": "node scripts/check-release-docs.mjs",
+      "result": "pass",
+      "currentLinks": 610
+    },
+    {
+      "command": "node business_logic/verification/check_release_scope.mjs",
+      "result": "pass",
+      "pages": 233,
+      "links": 3472
+    },
+    {
+      "command": "node --check business_logic/docs/assets/launch-status.js; node --check business_logic/docs/assets/sidebar.js",
+      "result": "pass"
+    },
+    {
+      "check": "변경 HTML ID 중복·다음 행동 위치·현재 배포 항목",
+      "result": "pass",
+      "htmlPages": 23
+    },
+    {
+      "command": "git diff --check; git -C business_logic diff --check",
+      "result": "pass"
+    }
+  ],
+  "visualReview": {
+    "status": "not_run",
+    "reason": "Browser access host unavailable; no browser profile could be verified. Browser work stopped."
+  },
+  "notPerformed": [
+    "전체 기능 재감사",
+    "제품 시험·실기기 여정",
+    "스토어·운영 원격 조회"
+  ]
+}

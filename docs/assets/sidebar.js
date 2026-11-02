@@ -231,6 +231,7 @@
       heading: '시작점',
       links: [
         { href: 'index.html', label: '전체 현황·다음 할 일' },
+        { href: 'overview/architecture.html#app-navigation', label: '현재 앱 메뉴와 기능 찾기' },
         { href: 'tour/index.html', label: '실제 화면으로 앱 둘러보기' },
       ],
     },
@@ -243,7 +244,7 @@
         { href: 'overview/journeys.html', label: '7대 사용자 여정' },
         { href: 'overview/operating-model.html', label: 'PRD 운영 모델' },
         { href: 'overview/changelog.html', label: '변경 기록' },
-        { href: 'qa/changes-since-2026-10-23.html', label: '최근 변경 추적' },
+        { href: 'qa/changes-since-2026-10-23.html', label: '10월 23~26일 변경 근거' },
       ],
     },
     // 21개 도메인을 7개 줄기(스토리 그룹)로 묶는다. 도메인 번호·기능 ID는 안정
