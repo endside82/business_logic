@@ -31,7 +31,7 @@ Flutter 앱은 `EventAssignmentsNotifier`(호스트 시점), `MyAssignmentsNotif
 | Backend Service | `curated/service/ServiceAssignmentService.java` | `createAssignment`, `confirm`, `cancel`, `accept`, `decline`, `getEventAssignments`, `getProviderAssignments` |
 | Backend Provider | `provider/controller/*`, `provider/service/*` | 프로필 8개, 상품 소유자 8개, 공개 카탈로그 2개 엔드포인트 |
 | Backend Terms | `CatalogAssignmentService`, `ServiceAssignmentTermsService`, `PlatformFeePolicy` | 카탈로그 배정 1개 + 조건 제안/견적/수락/조회 4개, 버전·수수료 스냅샷 |
-| Admin Provider | `community_admin_api/.../provider/` | 심사 큐·상세·판정·문서 URL·상품 정지/해제 8개 |
+| Admin Provider | `community_api/admin-app/.../provider/` | 심사 큐·상세·판정·문서 URL·상품 정지/해제 8개 |
 | Backend Entity | `curated/model/ServiceAssignment.java` | event/provider 유일성, 상품·조건 버전 포인터, 이행상태, @Version 낙관락 |
 | Backend Enum | `curated/constants/AssignmentStatus.java` | 7값 + `getAllowedTransitions()` 소유, `transitionTo()` ASSIGNMENT_INVALID_STATE |
 | Backend Enum | `curated/constants/AssignmentSource.java` | HOST_MANUAL·CATALOG (2값. 내는 곳 없던 HOST_INVITE_ACCEPTED·PROVIDER_APPLY·ADMIN_ASSIGNED 는 차수 11 에서 걷음) |

@@ -82,13 +82,19 @@ function hasFormalPrdScenarioSection(documentText) {
     .test(documentText);
 }
 
+// 관리자 시험은 공개 뿌리의 관리자 모듈(modules.txt 의 admin 줄)의 시험 종류 뿌리에서 읽는다. 훑기는 관리자 모듈을 보지 않는다.
+const adminModule = apiModules.adminModule();
+if (!adminModule) throw new Error('모듈 목록에 관리자 모듈(admin 줄)이 없다');
+const adminTestRoot = path.relative(workspaceRoot, apiModules.kindRoot(adminModule, Kind.TEST_JAVA)).split(path.sep).join('/');
+if (!walk(adminTestRoot).length) throw new Error(`관리자 시험을 하나도 읽지 못했다: ${adminTestRoot} (비면 감사 자료가 관리자 시험 없이 헛돌아간다)`);
+
 const automatedTestFiles = [
   ...apiModules.walk((file) => /(?:Test|Tests)\.java$/.test(file), [apiModules.bootModule()],
     Kind.TEST_JAVA, Kind.TEST_RESOURCES, Kind.TEST_FIXTURES_JAVA, Kind.TEST_FIXTURES_RESOURCES).map((file) => apiModules.repoPath(file)),
   ...walk('community_app/test'),
   ...walk('community_app/integration_test'),
   ...walk('community-realtime/src/test'),
-  ...walk('community_admin_api/src/test'),
+  ...walk(adminTestRoot),
   ...walk('community_admin_front/e2e'),
 ].filter((file) =>
   /(?:Test|Tests)\.java$|_test\.dart$|\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file),
