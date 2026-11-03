@@ -71,7 +71,7 @@ const negatives = [
   ['중복', { list: '.\tboot\n.\n' }, /같은 모듈이 두 줄이다: \./],
   ['boot 없음', { list: '.\n' }, /boot 줄은 정확히 하나여야 하는데 0 개다/],
   ['boot 둘', { list: 'a\tboot\nb\tboot\n', folders: ['a', 'b'] }, /boot 줄은 정확히 하나여야 하는데 2 개다/],
-  ['줄 꼴', { list: '.\tmain\n' }, /줄 꼴은 `<폴더>` 또는 `<폴더><탭>boot` 다/],
+  ['줄 꼴', { list: '.\tmain\n' }, /줄 꼴은 `<폴더>`, `<폴더><탭>boot`, `<폴더><탭>admin` 가운데 하나다/],
   ['셋 칸', { list: '.\tboot\textra\n' }, /줄 꼴은/],
   ['`.` 없는데 뿌리 src 남음', { list: 'api-app\tboot\n', folders: ['api-app'], rootSrc: true }, /에 `\.` 이 없는데 저장소 뿌리에 옛 소스 .* 가 남아 있다/],
   ['settings.gradle 없음', { settings: false }, /settings\.gradle 이 있는 저장소 뿌리를 .* 위로 찾지 못했다/],
@@ -90,4 +90,30 @@ test('N4h 옆 공개 저장소가 있으면 실제 모듈 목록을 읽고 main 
   assert.equal(modules.modules.filter((m) => m.boot).length, 1);
   const main = modules.walk((file) => file.endsWith('Controller.java'), [modules.bootModule()], Kind.MAIN_JAVA);
   assert.ok(main.length > 0);
+});
+
+test('admin 줄을 받는다: 찾기에는 들고 훑기에서는 뺀다(AM11·AM13)', (t) => {
+  const { root } = repo(t, {
+    list: 'domain\napi-app\tboot\nadmin-app\tadmin\n',
+    folders: ['domain', 'api-app', 'admin-app'],
+    files: ['domain/src/main/java/a/A.java', 'admin-app/src/main/java/a/Adm.java', 'api-app/src/main/java/a/B.java'],
+  });
+  const modules = loadApiModules(root);
+  assert.equal(modules.adminModule().name, 'admin-app');
+  assert.equal(modules.bootModule().name, 'api-app');
+  assert.deepEqual(modules.modules.map((m) => m.name), ['domain', 'api-app', 'admin-app']);
+  assert.equal(modules.repoPath(modules.file('a/Adm.java', Kind.MAIN_JAVA)), 'community_api/admin-app/src/main/java/a/Adm.java');
+  const all = modules.walk((file) => file.endsWith('.java'), modules.modules, Kind.MAIN_JAVA);
+  assert.deepEqual(all.map((file) => modules.repoPath(file)), ['community_api/domain/src/main/java/a/A.java', 'community_api/api-app/src/main/java/a/B.java']);
+  assert.throws(() => modules.walk(() => true, [modules.adminModule()], Kind.MAIN_JAVA), /관리자 모듈 \[admin-app\] 을 보지 않는다/);
+});
+
+test('admin 줄이 없으면 adminModule 은 없고, 둘이거나 모르는 값이면 오류다(AM11)', (t) => {
+  const none = repo(t, { list: 'api-app\tboot\n', folders: ['api-app'] });
+  assert.equal(loadApiModules(none.root).adminModule(), undefined);
+  assert.equal(loadApiModules(repo(t, {}).root).adminModule(), undefined);
+  const two = repo(t, { list: 'api-app\tboot\na\tadmin\nb\tadmin\n', folders: ['api-app', 'a', 'b'] });
+  assert.throws(() => loadApiModules(two.root), /admin 줄은 많아야 하나인데 2 개다/);
+  const unknown = repo(t, { list: 'api-app\tboot\na\tadmim\n', folders: ['api-app', 'a'] });
+  assert.throws(() => loadApiModules(unknown.root), /줄 꼴은/);
 });

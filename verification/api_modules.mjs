@@ -38,20 +38,24 @@ function parse(root, list) {
     if (!line.trim() || line.startsWith('#')) return;
     const where = `${list}:${index + 1} `;
     const cells = line.split('\t');
-    const boot = cells.length === 2 && cells[1] === 'boot';
-    if (cells.length > 2 || (cells.length === 2 && !boot)) {
-      throw new Error(`${where}줄 꼴은 \`<폴더>\` 또는 \`<폴더><탭>boot\` 다: ${line}`);
+    const role = cells.length === 2 ? cells[1] : null;
+    if (cells.length > 2 || ![null, 'boot', 'admin'].includes(role)) {
+      throw new Error(`${where}줄 꼴은 \`<폴더>\`, \`<폴더><탭>boot\`, \`<폴더><탭>admin\` 가운데 하나다: ${line}`);
     }
+    const boot = role === 'boot';
+    const admin = role === 'admin';
     const name = cells[0];
     if (names.has(name)) throw new Error(`${where}같은 모듈이 두 줄이다: ${name}`);
     names.add(name);
     const dir = name === '.' ? root : path.resolve(root, name);
     if (!isDirectory(dir)) throw new Error(`${where}적힌 모듈 폴더가 없다: ${dir}`);
-    modules.push({ name, dir, boot });
+    modules.push({ name, dir, boot, admin });
   });
   if (!modules.length) throw new Error(`${list} 에 설명 말고 모듈 줄이 없다`);
   const boots = modules.filter((module) => module.boot).length;
   if (boots !== 1) throw new Error(`${list} 의 boot 줄은 정확히 하나여야 하는데 ${boots} 개다`);
+  const admins = modules.filter((module) => module.admin).map((module) => module.name);
+  if (admins.length > 1) throw new Error(`${list} 의 admin 줄은 많아야 하나인데 ${admins.length} 개다: [${admins.join(', ')}]`);
   if (!names.has('.') && exists(path.join(root, 'src'))) {
     throw new Error(`${list} 에 \`.\` 이 없는데 저장소 뿌리에 옛 소스 ${path.join(root, 'src')} 가 남아 있다`);
   }
@@ -76,7 +80,7 @@ export function loadApiModules(start) {
     root = parent;
   }
   const list = path.join(root, LIST_FILE);
-  const modules = exists(list) ? parse(root, list) : [{ name: '.', dir: root, boot: true }];
+  const modules = exists(list) ? parse(root, list) : [{ name: '.', dir: root, boot: true, admin: false }];
   return new ApiModules(root, modules);
 }
 
@@ -88,6 +92,11 @@ export class ApiModules {
 
   bootModule() {
     return this.modules.find((module) => module.boot);
+  }
+
+  // admin 줄의 관리자 모듈. 그 줄이 없으면(목록 파일이 없을 때도) undefined.
+  adminModule() {
+    return this.modules.find((module) => module.admin);
   }
 
   kindRoot(module, kind) {
@@ -112,16 +121,21 @@ export class ApiModules {
     return found[0];
   }
 
-  // 모든 모듈의 종류 뿌리를 훑는다. filter 는 종류 뿌리 기준 상대 경로를 받는다. mustFind 모듈에 맞는 파일이 없으면 실패한다.
+  // 공개 소스 훑기: 관리자 모듈(admin 줄)을 뺀 모든 모듈의 종류 뿌리를 훑는다(불변식 AM13). 관리자 소스는 adminModule() 의 종류 뿌리로 읽는다. filter 는 종류 뿌리 기준 상대 경로를 받는다. mustFind 모듈에 맞는 파일이 없으면 실패한다.
   walk(filter, mustFind, ...kinds) {
     requireKinds(kinds);
     if (!mustFind.length) throw new Error('비면 안 되는 모듈을 하나 이상 밝힌다(모든 모듈이면 modules)');
     for (const module of mustFind) {
       if (!this.modules.includes(module)) throw new Error('모듈 목록에 없는 모듈이다: ' + module.name);
     }
+    const scanned = this.modules.filter((module) => !module.admin);
+    if (!mustFind.some((module) => scanned.includes(module))) {
+      throw new Error(`훑기는 관리자 모듈 [${mustFind.map((module) => module.name).join(', ')}] 을 보지 않는다. 공개 모듈을 하나 이상 밝히고, `
+        + '관리자 소스는 adminModule() 의 종류 뿌리로 읽는다');
+    }
     const result = [];
     const empty = [];
-    for (const module of this.modules) {
+    for (const module of scanned) {
       const before = result.length;
       for (const kind of kinds) {
         const base = this.kindRoot(module, kind);
