@@ -11,7 +11,7 @@
 ```
 DRAFT → OPEN | CANCELED
 OPEN  → CLOSED | CANCELED
-CLOSED → OPEN          (VARIABLE 자동종료 재개 reopen)
+CLOSED → OPEN          (VARIABLE 재개 reopen, 수동 종료와 자동 종료 모두)
 CANCELED → (종료)
 ```
 
@@ -52,9 +52,15 @@ CANCELED → (종료)
 5. CANCELED 는 terminal — 재개 불가.
 
 ### 3.4 reopen (CLOSED → OPEN)
-1. VARIABLE 자동종료(`lastEventCreatedAt + 90일` 등) 또는 수동 종료한 모임을 다시 OPEN.
+1. VARIABLE 자동 종료(3.5) 또는 수동 종료한 모임을 다시 OPEN. 재개 사건이 기준 시각 `lastEventCreatedAt` 을 재개 시각으로 적으므로 재개 뒤 두 달은 자동 종료되지 않는다.
 2. `closedAt = null` 복귀. 기존 세션은 되살리지 않음(취소된 세션은 그대로).
 3. FIXED 도 호출은 가능하나 close 가드 때문에 다시 close 하려면 세션 finalize 재확정 필요.
+
+### 3.5 VARIABLE 자동 종료(매일 한 번)
+1. 후보: 공개(OPEN) VARIABLE 코스 가운데 기준 시각 `lastEventCreatedAt` 에서 두 달이 지난 것. 기준 시각은 마지막으로 회차를 만든 때·처음 공개한 때·닫혔다가 다시 연 때 가운데 가장 늦은 때다(발행·재개 사건과 회차 만들기가 적는다).
+2. 코스마다 새 트랜잭션에서 코스 행을 잠근 뒤 다시 판정한다: 공개·VARIABLE·기준 두 달·남긴 회차 없음·앞으로 열릴 회차 없음(취소 아닌 회차 가운데 초안·공개이면서 종료 시각이 지금 뒤인 회차가 없음). 어긋나면 그 코스를 건너뛴다.
+3. 호스트 종료와 같은 본체로 닫는다: 초안 회차는 취소, 시작이 지났고 닫지 않은 공개 회차는 모임 종료 본체(선입금 지급).
+4. 호스트에게 종료 알림(`REGULAR_MEETING_CLOSED`)을 한 번 보낸다. 중복 키에 코스 버전이 들어 배치를 다시 돌려도 한 번이다. 회차 참가자에게는 코스 종료 알림을 보내지 않는다.
 
 ### 3.5 update (DRAFT only)
 - `PATCH /api/v1/regular-meetings/{id}` 는 DRAFT 만. OPEN/CLOSED/CANCELED 는 `REGULAR_MEETING_INVALID_STATUS`.
@@ -133,5 +139,5 @@ CANCELED → (종료)
 
 | 항목 | 사유 | 후속 |
 |---|---|---|
-| VARIABLE 자동종료 정책 | 1차는 수동 reopen 만 | 후속에 lastEventCreatedAt 기준 N일 후 auto-close 스케줄러 검토 |
+| VARIABLE 자동 종료 정책 | 기준 시각에서 두 달, 앞으로 열릴 회차가 없으면 매일 배치가 닫음(3.5) | 호스트는 언제든 reopen 할 수 있다 |
 | close 후 환불 약관 노출 | UI 미정 | F17-08 환불 정책 안내와 묶어 통합 modal |
