@@ -56,7 +56,7 @@ finalize 는 단일 트랜잭션: 모임 잠금 → 정션 FINALIZED 재확정 �
    - ATTENDING roster 로드 (materialize 된 EventAttendance).
    - 각 attendee 에 대해:
      - 결과 결정: param 에 override 있으면 그 결과, 없으면 정책 (`RegularMeetingAttendancePolicy`) — 기본은 EventCheckIn 존재=ATTENDED, 없으면 NO_SHOW.
-     - `regular_meeting_session_attendance` row 생성 (`event_id, user_id, member_id, result, finalized_by, finalized_at`).
+     - `regular_meeting_session_attendance` row 생성 (`event_id, user_id, member_id, result, enrolled_at_finalize, finalized_by, finalized_at`).
      - 결과별 부작용:
        - ATTENDED: `member.recordAttended(now)`.
        - NO_SHOW: EventAttendance demote + `member.recordNoShow(now)`. 한도 + policy=FORFEIT_ON_LIMIT 면 `markForfeited` + FORFEIT 환불 trigger (F17-08).
