@@ -2051,7 +2051,7 @@
     {
       "id": "H-239",
       "title": "TestFlight 업로드와 스토어 정책·기기 검증 마치기",
-      "description": "최신 내부 트랙은 Android `1.0.0 (13)`이다(2026-11-06). Play API 인증, iOS 앱 등록·API 키·Google/Maps/Firebase·수동 배포 서명과 `1.0.0 (1)` IPA까지 확인했다. 사이숲 TestFlight 업로드·설치가 남았다. APNs 실제 연결이 남았다. 스토어 정책·메타데이터와 iOS 로그인 구성 조건이 남았다. 지도·푸시·번호 인증 등의 기기 검증이 남았다. 운영 App Links는 현재 패키지다. Play 앱 서명 SHA-256 을 2026-11-07 소스(`saisoop-web/src/deeplinks.mjs`, 공개 API 정적 파일)에 더했다. 소개 웹 운영 파일은 사용자가 그 파일 하나만 올리고, API 사본은 다음 서버 배포에 나간다. 앱 링크 호스트가 `saisoop.co.kr` 이라 소개 웹 쪽이 먼저다. 실제 판정은 Play 에서 받은 앱으로 본다(`adb shell pm get-app-links com.endside.saisoop.app` 또는 링크 열기). 합격 조건은 [공유 실행 계획](event-sharing/EXECUTION_PLAN.md)에 있다. 기존 키·앱·프로파일을 다시 만들지 않는다. Android 실기기는 사용자 결정대로 나중에 연결한다. 6자리 인증으로 바꾼 뒤 옛 인증 링크 계약 정리와 실제 설치 앱 복귀가 남았다. 앱에 옛 주소 처리(`core/links/public_link_parser.dart`, `core/links/incoming_link.dart`, `core/network/auth_interceptor.dart`)가 남아 있는데 지워도 되는지 본다([출시 인계](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md)).",
+      "description": "최신 내부 트랙은 Android `1.0.0 (13)`이다(2026-11-06). Play API 인증, iOS 앱 등록·API 키·Google/Maps/Firebase·수동 배포 서명과 `1.0.0 (1)` IPA까지 확인했다. 사이숲 TestFlight 업로드·설치가 남았다. APNs 실제 연결이 남았다. 스토어 정책·메타데이터와 iOS 로그인 구성 조건이 남았다. 지도·푸시·번호 인증 등의 기기 검증이 남았다. 운영 App Links는 현재 패키지다. Play 앱 서명 SHA-256 을 2026-11-07 소스(`saisoop-web/src/deeplinks.mjs`, 공개 API 정적 파일)와 운영 `saisoop.co.kr` 파일에 더했다. Google 공개 확인 창구(`assetlinks:check`)가 두 지문 모두 연결됨으로 답한다. API 사본은 다음 서버 배포에 나간다(앱 링크 호스트는 `saisoop.co.kr` 이다). 남은 것은 Play 에서 받은 앱의 실제 판정이다(`adb shell pm get-app-links com.endside.saisoop.app` 또는 링크 열기). 합격 조건은 [공유 실행 계획](event-sharing/EXECUTION_PLAN.md)에 있다. 기존 키·앱·프로파일을 다시 만들지 않는다. Android 실기기는 사용자 결정대로 나중에 연결한다. 6자리 인증으로 바꾼 뒤 옛 인증 링크 계약 정리와 실제 설치 앱 복귀가 남았다. 앱에 옛 주소 처리(`core/links/public_link_parser.dart`, `core/links/incoming_link.dart`, `core/network/auth_interceptor.dart`)가 남아 있는데 지워도 되는지 본다([출시 인계](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md)).",
       "condition": "플랫폼별 업로드·처리·설치·실제 여정·공개 심사를 구분해 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -2539,13 +2539,13 @@
       "commit": "4faf491b2"
     }
   ],
-  "sourceDigest": "087be4f1c22a2062787b34b701266ea8a4749f39dafaca5d86ca9c287bfd0274",
+  "sourceDigest": "dd2facded02e6acde9d4a4221208cb2eb42feb9a232affafeeccadf2e56dc7b5",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261106c)와 Android 내부 테스트 빌드 13이 나가 있습니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
       "개발: 구조 재정비는 정한 범위를 11월 6일 끝냈고 그 밖의 재정비는 하지 않습니다. 앱 시험 실패는 0이고, 앱 전체 시험은 매일 한 번 main에서 자동으로 돕니다. 지금 진행 중인 개발은 없습니다.",
       "배포: 11월 6일 밤 서버 네 가지와 Android 1.0.0 (13)을 내부 트랙에 배포했고, 이어서 관리자 웹 거르기·경보 기본 거르기·정산 생성 잠금 고침을 prd-20261106c로 올렸습니다.",
-      "운영 공개 값 확인(11월 7일): 출시 범위와 로그인 제공자는 배포 입력과 같습니다. 도메인 이전 때 빠진 메일 DKIM 레코드는 11월 7일 되살렸습니다. 앱 링크 파일의 Play 서명 지문은 소스에 넣었고 운영 파일 반영이 남았습니다.",
+      "운영 공개 값 확인(11월 7일): 출시 범위와 로그인 제공자는 배포 입력과 같습니다. 도메인 이전 때 빠진 메일 DKIM 레코드는 11월 7일 되살렸습니다. 앱 링크 파일의 Play 서명 지문도 운영에 넣었습니다. 설치 앱의 실제 판정이 남았습니다.",
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 6일 밤 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [13]이 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
@@ -2574,7 +2574,7 @@
       {
         "task": "H-239",
         "title": "내부 테스트 13을 휴대폰에서 확인하고 iOS 준비를 잇습니다",
-        "note": "휴대폰 확인은 사용자 몫이고, 문제가 나오면 그것부터 고칩니다. iOS는 서명 IPA 빌드 1까지입니다. TestFlight·APNs·스토어 입력과 App Links의 Play 서명 추가가 남았습니다."
+        "note": "휴대폰 확인은 사용자 몫이고, 문제가 나오면 그것부터 고칩니다. iOS는 서명 IPA 빌드 1까지입니다. TestFlight·APNs·스토어 입력이 남았습니다."
       }
     ],
     "progressRows": [
@@ -2596,7 +2596,7 @@
       [
         "운영 공개 값",
         "11월 7일 대조",
-        "출시 범위와 로그인 제공자는 입력과 같습니다. 메일 DKIM 레코드는 되살렸고 실제 서명 확인이 남았습니다. 앱 링크의 Play 서명 지문은 소스에 넣었고 운영 파일 반영이 남았습니다."
+        "출시 범위와 로그인 제공자는 입력과 같습니다. 메일 DKIM 레코드는 되살렸고 실제 서명 확인이 남았습니다. 앱 링크의 Play 서명 지문은 운영에 넣었고 설치 앱의 실제 판정이 남았습니다."
       ],
       [
         "판 최신화",
@@ -2649,12 +2649,12 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T00:51:17+09:00",
+    "updatedAt": "2026-11-07T00:52:04+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "0c6e64368837c8f6ce71e84dcf49c28bef813017",
+    "sourceCommit": "33363f6698fd50a7e471fab17483b3417bd23f4e",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "3cf1dd7d1040a5a550a37799655d64af3f61e931686729e0b8e2fa1d8fb5a334",
+    "sourceSha256": "af454f431818751d107227c2b6d029402d96c42705a5ce397e8e7c355cf43303",
     "worklistSha256": "5e62ec173b62a11dbf02b662fb0909816f66eecc0de2adc9371c7c36922603c4",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
@@ -2662,7 +2662,7 @@
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
       "docs/plan/WORKLIST.md": "5e62ec173b62a11dbf02b662fb0909816f66eecc0de2adc9371c7c36922603c4",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "90c518702d6c6d81f45b06858f2a42439c2fba289f11a8866c00d82eb3be13e9",
-      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "9f38523c2e4b65d7adc331e4a9b3d7dbb5d01d3f02299357dbdcfc46f674cfeb"
+      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "fcc9d13cf1cf0f8faaa4c6b21cf05a2f5743dc3ceb1d15fd331c9a1ab98a74e2"
     },
     "method": "2026-11-07 정본과 11월 6일 배포 기록, 공개 주소의 읽기 전용 조회, 코드 읽기 대조. 제품·기기 시험과 운영 쓰기는 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
