@@ -17,7 +17,7 @@
 
 타입이 **인원·정산의 바인딩 레벨을 전환**하는 것이 도메인의 핵심 설계 결정이다. 하위 세션은 모두 `event` 테이블(`eventType=REGULAR_MEETING(3)`) 위에 올라가며, 모임과 세션을 잇는 정션 `regular_meeting_event` 가 순번·교체본·확정 상태를 관리한다. 일반 호스트용 이양 경로는 없고, 관리자 internal API에만 결제·정산 귀속을 보존하는 break-glass 이양이 있다.
 
-이 도메인은 기능 PRD 10개로 구성된다(F17-01 ~ F17-10). 백엔드 구현(Phase 1~5)·Flutter(Phase 6)·통합 검증(Phase 7)은 2026-05-28 단일 세션에 완료됐고, Codex 다단 sign-off(금전 영역 100%) 를 거쳤다.
+이 도메인은 기능 PRD 10개로 구성된다(F17-01 ~ F17-10). 백엔드 구현(Phase 1~5)·Flutter(Phase 6)·통합 검증(Phase 7)은 2026-05-28 단일 세션에 완료됐고.
 
 ## 2. 실사 근거 맵
 
@@ -118,21 +118,6 @@
 - `SettlementService.doCreditAndRecord` 의 `existsByReferenceTypeAndReferenceId("SETTLEMENT", id)` 멱등
 - `reservedRefund > 0` 게이트 (`completeSettlement` 내부, retry scheduler 우회 불가)
 
-## 8. 진행 상태 (2026-05-28 기준)
-
-| Phase | 범위 | 상태 | Codex |
-|---|---|---|---|
-| Pre-1 | Event 분류 정리(EventScope, 디스커버리 8표면) | 완료 | ✅ sign-off |
-| Phase 1 | RM 코어 + VARIABLE happy path · 정션 · 통합 가드 | 완료 | ✅ sign-off |
-| Phase 2 | 고정형 인원 + materialize + 출석 정책 | 완료 | ✅ sign-off |
-| Phase 3a | RM 결제 (regular_meeting_payment, WALLET/BANK, 회계) | 완료 | ✅ sign-off |
-| Phase 3b | 환불 pro-rata + failed_refund 확장 | 완료 | ✅ sign-off |
-| Phase 3c | 호스트 정산 (Settlement 확장 · flow-through · close afterCommit) | 완료 | ✅ **금전 sign-off** |
-| Phase 4 | 노쇼/출석 확정 + FORFEIT 환불 + close FINALIZED 가드 | 완료 | ✅ **금전 sign-off** |
-| Phase 5 | 계정삭제 가드 (결정 L) | 완료 | ✅ sign-off |
-| Phase 6 | Flutter 데이터 레이어 + 10 화면 + 라우터 + smoke test | 완료 | — UI 영역 |
-| Phase 7 | 전체 회귀 검증 | 완료 | — 누적 sign-off |
-
 ## 9. 잔여 후속 (서버 확장 필요)
 
 | 항목 | 차단 사유 |
@@ -153,7 +138,7 @@
 
 ## 11. 접근권한 감사 교정 (2026-07-02)
 
-접근권한 전수 감사(F17 정기모임)에서 확인된 동작 변경 사항을 반영한다. Codex 2R GO 완료·커밋·푸시.
+접근권한 전수 감사(F17 정기모임)에서 확인된 동작 변경 사항을 반영한다.
 
 ### 미발행 정기모임 상세·세션 비호스트 접근 차단 (F17-3)
 

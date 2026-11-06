@@ -170,7 +170,7 @@ flowchart TD
 
 ### 6.3 분쟁 알림 딥링크 Gap
 
-**부분 해소(2026-06-06, W14 S1)** — `REFUND_DISPUTE_CREATED(92)/UPHELD(93)/OVERTURNED(94)` 3종은 **배선 완료**: `data.disputeId`로 `REFUND_DISPUTE:{id}` caseId 조립 후 `/me/disputes/:caseId`로 이동(앱 `NotificationType` enum에도 3종 등재, community_app `3cb12ac`). **사실 정정**: 그 외 분쟁 케이스 도메인(USER_DISPUTE/CLUB_MEMBERSHIP_ACTION/DATE_BLOCK 등)은 서버 분쟁 caseId prefix로만 존재하며 **사용자 알림 NotificationType(분쟁 계열은 92~94 REFUND_DISPUTE 3종뿐)·발송 경로 자체가 서버에 없다** — `DomainOutboxEventMapper`가 `case DISPUTE -> unsupported()`로 skip 처리하고, SLA 스캐너는 `OperatorAlertService`로 운영자 경보만 발행한다. 즉 클라이언트 `notification_router.dart`에 라우팅이 빠진 "잔존 미배선 딥링크"가 아니라, **애초에 그 분쟁들에 대한 사용자 알림이 발화되지 않는다**.
+**부분 해소(2026-06-06)** — `REFUND_DISPUTE_CREATED(92)/UPHELD(93)/OVERTURNED(94)` 3종은 **배선 완료**: `data.disputeId`로 `REFUND_DISPUTE:{id}` caseId 조립 후 `/me/disputes/:caseId`로 이동(앱 `NotificationType` enum에도 3종 등재). **사실 정정**: 그 외 분쟁 케이스 도메인(USER_DISPUTE/CLUB_MEMBERSHIP_ACTION/DATE_BLOCK 등)은 서버 분쟁 caseId prefix로만 존재하며 **사용자 알림 NotificationType(분쟁 계열은 92~94 REFUND_DISPUTE 3종뿐)·발송 경로 자체가 서버에 없다** — `DomainOutboxEventMapper`가 `case DISPUTE -> unsupported()`로 skip 처리하고, SLA 스캐너는 `OperatorAlertService`로 운영자 경보만 발행한다. 즉 클라이언트 `notification_router.dart`에 라우팅이 빠진 "잔존 미배선 딥링크"가 아니라, **애초에 그 분쟁들에 대한 사용자 알림이 발화되지 않는다**.
 
 해결 필요: 라우팅 추가에 **선행하여** 서버에 해당 분쟁 사용자 알림 타입·발송 경로를 신설해야 한다. 그 후 `notification_router.dart`에 dispute case 딥링크 라우팅(`/me/disputes/:caseId`, `/host/disputes/:caseId`)을 연결한다.
 

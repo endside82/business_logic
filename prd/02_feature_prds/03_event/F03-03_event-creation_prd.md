@@ -255,7 +255,7 @@
 |---|---|---|---|
 | 후보 | frontend.md:68 | - 임시저장 데이터 (있다면) — 현재 코드에는 로컬 저장소 백업이 명시 미구현, 폼 state는 메모리 상에서만 유지 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:107 | - **임시저장**: 현재 코드 기준 별도 로컬 저장 미구현 — 화면 이탈 시 state 초기화될 위험. 임시저장 버튼은 UI에 있으나 실제 동작은 미확인. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:133 | - `calculateOccurrencesMultiDay(startTime, "WEEKLY", null, [MON,WED,FRI])` → 시작 주의 월·수·금(시작 시각 이후) + 다음 주 월·수·금 + ... `MAX_CHILD_EVENTS=52` 까지 펼침. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 확정 | `RecurringEventCreateService` | 반복 생성 본문의 `daysOfWeek`(MON~SUN, 영문 약어·2글자·전체 이름 모두 받음)는 WEEKLY/BIWEEKLY 에서 여러 요일을 한 번에 지정한다. 비우면 원본 시작 요일 하나다. 값 중복은 합치고 월~일 순으로 정렬하며, 모르는 요일 값은 `INVALID_INPUT` 이다. 회차는 시작 주 월요일부터 주 단위로 펼쳐 시작 시각 이전은 뺀다. 규칙 문자열은 `BYDAY=MO,WE,FR` 꼴이다. 회차 계산의 상한 `MAX_CHILD_EVENTS=52` 는 원본 회차를 포함한 목록 크기라, 시작 요일이 지정 요일에 들어 있으면 실제 만드는 자식은 최대 51개다. 시작이 이미 지난 회차는 만들지 않고 남는 회차가 없으면 `INVALID_INPUT` 이다. | 여러 요일 지정이 반복 생성 시험(P21/P72류)에 있는지는 따로 확인한다. |
 
 ## 9. 수용 기준
 

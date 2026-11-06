@@ -181,7 +181,7 @@
 | 후보 | frontend.md:38 | - 1회 1,000,000원 이하 (스펙) — 서버 검증 없음, 클라이언트 가드 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:97 | ### S1 보강 — 기부 화면 라벨 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:109 | ### S10 보강 — 비멤버 기부 라우트 진입 → 클럽 detail로 redirect + 가입 안내 카피 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 해소 (2026-06-06) | ClubDonationService.java (커밋 251c460·b635078), ClubFundService.java:194-230 | **기부 취소·폐쇄 환불 split 보존(H1) + 기금 drain 장부 대칭(H5)** — 기부 취소 환불(251c460)과 클럽 폐쇄 환불(b635078)이 건별 원결제 split을 독립 보존하도록 재설계(전액 paid 복원 제거). 폐쇄 시 `drainFund(clubId, alreadyRefundedPaid)`가 "이미 환불 분개된 paid"를 제외한 잔여만 forfeit 분개해 CLUB_FUND 과대계상(과거 무원장 영구 잔류) 해소. `deleteClub`은 무조건 drain. | 없음 |
+| 해소 (2026-06-06) | ClubDonationService.java , ClubFundService.java:194-230 | **기부 취소·폐쇄 환불 split 보존(H1) + 기금 drain 장부 대칭(H5)** — 기부 취소 환불과 클럽 폐쇄 환불이 건별 원결제 split을 독립 보존하도록 재설계(전액 paid 복원 제거). 폐쇄 시 `drainFund(clubId, alreadyRefundedPaid)`가 "이미 환불 분개된 paid"를 제외한 잔여만 forfeit 분개해 CLUB_FUND 과대계상(과거 무원장 영구 잔류) 해소. `deleteClub`은 무조건 drain. | 없음 |
 
 ## 9. 수용 기준
 

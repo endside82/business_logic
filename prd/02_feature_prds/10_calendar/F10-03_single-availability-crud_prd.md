@@ -214,8 +214,6 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 후보 | scenarios.md:92 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P65 매트릭스 모드 모음 — `seed_calendar_availability_mutation_test.dart`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:129 | - **잔여물 정리 (8차 보강)**: 모든 모드는 `testWidgets` `addTearDown` 에서 setup 단계의 슬롯/규칙을 `AvailabilityRepository.deleteAvailability(force=true)` 로 직접 정리한다. `delete_single` 처럼 UI 가 이미 삭제한 항목은 `untrackAvailability` 로 추적 해제하여 teardown 의 404 충돌을 막는다. `update` / `delete_single` 의 setup 도 UI POST 대신 Repository 직접 호출로 ID 를 정확히 확보한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:132 | `scripts/e2e/run_p65_calendar_availability_mutation_matrix.sh` — 5 modes 일괄 실행 (`create_single`, `update`, `delete_single`, `create_recurring`, `delete_recurring`). 단일 케이스만 실행하려면 인자로 모드명 전달. (8차 라운드 — `recurring_scope_ui_absence` → `delete_recurring` 으로 보강: ruleId 추적 + 실제 DELETE mutation 까지 수행, scope 분기 UI 부재 검증은 삭제 다이얼로그 단계로 이전.) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
 

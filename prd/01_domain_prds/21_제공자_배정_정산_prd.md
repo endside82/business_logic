@@ -39,15 +39,15 @@
 
 ## 2. 실사 근거 맵
 
-| ID | 기능 | PRD | 핵심 소스 | 상태 | Codex |
-|---|---|---|---|---|---|
-| F21-01 | 제공자 프로필·카탈로그·배정·계약조건 | [F21-01_provider-assignment_prd.md](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | `ProviderProfileController`, `OfferingController`, `OfferingCatalogController`, `CatalogAssignmentService`, `ServiceAssignmentTermsService`, `ServiceAssignmentController` | 구현됨 | ✅ 실측 |
-| F21-02 | 참가자 서비스비 분담 결제 | [F21-02_participant-fee-charge_prd.md](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | `ServiceAssignmentController#{charge,topup,chargeMyShare,myChargeStatus,setServiceFee}`, `ServiceAssignmentChargeService`, `WalletLedgerFacade`, `CoverageType(4)` | 서버 구현·앱 정보 축약 | ⚠️ 실측 |
-| F21-03 | 제공자 정산 | [F21-03_provider-settlement_prd.md](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | `ServiceAssignmentController#{settle,settlementReadiness}`, `ServiceAssignmentSettlementService`, `CuratedProviderSettlementPort`, `CuratedSettlementBatchService` | 서버 구현·앱 UX 공백 | ⚠️ 실측 |
-| F21-04 | 무료초대·호스트 대납 | [F21-04_free-invite-host-subsidy_prd.md](../02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | `ServiceAssignmentController#{freeExclude,subsidize}`, `CoverageType.FREE_EXCLUDED/HOST_SUBSIDIZED`, `ASSIGNMENT_FREE_NOT_ALLOWED` | 생성 구현·undo 없음 | ⚠️ 실측 |
-| F21-05 | 환불·회수 | [F21-05_refund-clawback_prd.md](../02_feature_prds/21_curated/F21-05_refund-clawback_prd.md) | `ServiceAssignmentController#{refund,partialRefund,clawback,noshowForfeit}`, `ServiceAssignmentRefund`, `AssignmentRefundType(2)` | 구현됨·경로별 멱등 상이 | ⚠️ 실측 |
-| F21-06 | 계약금 선납(engagement) | [F21-06_engagement-prepayment_prd.md](../02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | `ServiceAssignmentController#{payPrepaymentByWallet,cancelPrepayment}`, `ServiceEngagement`, `ServiceAssignmentPrepaymentService`, `PrepaymentApplicationType(2)` | 직접 구현·카탈로그 앱 단절 | ⚠️ 실측 |
-| F21-07 | 정기모임 묶음 배정·정산 | [F21-07_regular-meeting-bulk_prd.md](../02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | `ServiceAssignmentController#{bulkAssignToRegularMeeting,bulkSettleRegularMeeting}`, `BulkSettleStatus(6)`, `CuratedEventAccessPort#{assertRegularMeetingHost,getRegularMeetingSessionEventIds}` | 핵심 구현·DRAFT/bulk cancel 공백 | ⚠️ 실측 |
+| ID | 기능 | PRD | 핵심 소스 | 상태 |
+|---|---|---|---|---|
+| F21-01 | 제공자 프로필·카탈로그·배정·계약조건 | [F21-01_provider-assignment_prd.md](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | `ProviderProfileController`, `OfferingController`, `OfferingCatalogController`, `CatalogAssignmentService`, `ServiceAssignmentTermsService`, `ServiceAssignmentController` | 구현됨 |
+| F21-02 | 참가자 서비스비 분담 결제 | [F21-02_participant-fee-charge_prd.md](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | `ServiceAssignmentController#{charge,topup,chargeMyShare,myChargeStatus,setServiceFee}`, `ServiceAssignmentChargeService`, `WalletLedgerFacade`, `CoverageType(4)` | 서버 구현·앱 정보 축약 |
+| F21-03 | 제공자 정산 | [F21-03_provider-settlement_prd.md](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | `ServiceAssignmentController#{settle,settlementReadiness}`, `ServiceAssignmentSettlementService`, `CuratedProviderSettlementPort`, `CuratedSettlementBatchService` | 서버 구현·앱 UX 공백 |
+| F21-04 | 무료초대·호스트 대납 | [F21-04_free-invite-host-subsidy_prd.md](../02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | `ServiceAssignmentController#{freeExclude,subsidize}`, `CoverageType.FREE_EXCLUDED/HOST_SUBSIDIZED`, `ASSIGNMENT_FREE_NOT_ALLOWED` | 생성 구현·undo 없음 |
+| F21-05 | 환불·회수 | [F21-05_refund-clawback_prd.md](../02_feature_prds/21_curated/F21-05_refund-clawback_prd.md) | `ServiceAssignmentController#{refund,partialRefund,clawback,noshowForfeit}`, `ServiceAssignmentRefund`, `AssignmentRefundType(2)` | 구현됨·경로별 멱등 상이 |
+| F21-06 | 계약금 선납(engagement) | [F21-06_engagement-prepayment_prd.md](../02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | `ServiceAssignmentController#{payPrepaymentByWallet,cancelPrepayment}`, `ServiceEngagement`, `ServiceAssignmentPrepaymentService`, `PrepaymentApplicationType(2)` | 직접 구현·카탈로그 앱 단절 |
+| F21-07 | 정기모임 묶음 배정·정산 | [F21-07_regular-meeting-bulk_prd.md](../02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | `ServiceAssignmentController#{bulkAssignToRegularMeeting,bulkSettleRegularMeeting}`, `BulkSettleStatus(6)`, `CuratedEventAccessPort#{assertRegularMeetingHost,getRegularMeetingSessionEventIds}` | 핵심 구현·DRAFT/bulk cancel 공백 |
 
 ## 3. 먼저 볼 기능
 
@@ -143,18 +143,17 @@ admin에는 프런트 화면은 아직 없지만 관리자 API가 존재한다. 
 
 ## 7. 진행 상태 (2026-07-29 기준)
 
-| Phase | 범위 | 상태 | Codex |
-|---|---|---|---|
-| P0 | 3개 포트/어댑터 설계 + 부패방지경계 | 완료 | ✅ PASS |
-| F21-01 | 프로필·검증·상품 카탈로그·카탈로그 배정·버전형 계약조건·이행통계 + 기존 배정 상태머신 | 완료 | ✅ 실측 |
-| F21-02 | 참가자 과금(PAID_ONLY + 멱등 + per-charge earning) + my-share N분의1 | 서버 완료·앱 상세값 축약 | ⚠️ 실측 |
-| F21-03 | 완납 게이트(집합 동일성) + 보장모드 Σ검증 + 검증형 포트 승인 + 주간 배치 | 서버 완료·readiness/provider UI 공백 | ⚠️ 실측 |
-| F21-04 | 무료초대(FREE_EXCLUDED) + 호스트 대납(HOST_SUBSIDIZED) | 생성 완료·undo/participant 검증 공백 | ⚠️ 실측 |
-| F21-05 | 환불(전액/부분/clawback) + 경로별 멱등 계약 + 노쇼 forfeit | 서버 완료·앱 액션 구현 | ⚠️ 실측 |
-| F21-06 | 계약금 선납(engagement) + applyDepositIfPresent + forfeitOnCancel | 직접 배정 완료·카탈로그 결제 CTA 단절 | ⚠️ 실측 |
-| F21-07 | 정기모임 direct 일괄 배정·묶음 정산(BulkSettleStatus 6값) | 핵심 완료·DRAFT resume/bulk cancel 없음 | ⚠️ 실측 |
-| Flutter | curated 5화면 + provider 7화면, 관련 라우트 13개 + API/Repository/Providers | 구현됨(아래 도달성 Gap 존재) | ⚠️ 실측 |
-| 실측 HEAD | api `be38d128` · admin `e507ab9` · app `cb21bce8` | 완료 | — |
+| Phase | 범위 | 상태 |
+|---|---|---|
+| P0 | 3개 포트/어댑터 설계 + 부패방지경계 | 완료 |
+| F21-01 | 프로필·검증·상품 카탈로그·카탈로그 배정·버전형 계약조건·이행통계 + 기존 배정 상태머신 | 완료 |
+| F21-02 | 참가자 과금(PAID_ONLY + 멱등 + per-charge earning) + my-share N분의1 | 서버 완료·앱 상세값 축약 |
+| F21-03 | 완납 게이트(집합 동일성) + 보장모드 Σ검증 + 검증형 포트 승인 + 주간 배치 | 서버 완료·readiness/provider UI 공백 |
+| F21-04 | 무료초대(FREE_EXCLUDED) + 호스트 대납(HOST_SUBSIDIZED) | 생성 완료·undo/participant 검증 공백 |
+| F21-05 | 환불(전액/부분/clawback) + 경로별 멱등 계약 + 노쇼 forfeit | 서버 완료·앱 액션 구현 |
+| F21-06 | 계약금 선납(engagement) + applyDepositIfPresent + forfeitOnCancel | 직접 배정 완료·카탈로그 결제 CTA 단절 |
+| F21-07 | 정기모임 direct 일괄 배정·묶음 정산(BulkSettleStatus 6값) | 핵심 완료·DRAFT resume/bulk cancel 없음 |
+| Flutter | curated 5화면 + provider 7화면, 관련 라우트 13개 + API/Repository/Providers | 구현됨(아래 도달성 Gap 존재) |
 
 ## 7-A. 접근권한 감사 교정 (2026-07-02)
 

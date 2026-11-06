@@ -77,7 +77,7 @@
 - **사용자가 보는 것**:
   - AppBar `정산 상세`
   - 헤더: 이벤트명(없으면 "이벤트 #N") + "정산 ID: {id}" + 우측 `SettlementStatusBadgeWidget`
-  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다(앱 커밋 `4ff10fbf`)
+  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다
   - 상태별 안내 카드:
     - PAYING: "지급 처리 중" (primary50 + primary500)
     - FAILED: "자동 재시도 중" (warning50, "5일 이내에 처리되지 않으면 관리자 문의")
@@ -172,7 +172,7 @@
 - **사용자가 보는 것**:
   - AppBar `정산 상세`
   - 헤더: 이벤트명(없으면 "이벤트 #N") + "정산 ID: {id}" + 우측 `SettlementStatusBadgeWidget`
-  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다(앱 커밋 `4ff10fbf`)
+  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다
   - 상태별 안내 카드:
     - PAYING: "지급 처리 중" (primary50 + primary500)
     - FAILED: "자동 재시도 중" (warning50, "5일 이내에 처리되지 않으면 관리자 문의")
@@ -213,10 +213,10 @@ W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount
 |---|---|---|
 | 정산 완료 triple-entry | 정산 완료 분개가 `CREATOR_PAYABLE`를 **gross 전액**(net + fee + tax)으로 소거하도록 통일됨(api `AccountingLedgerService.recordSettlementTripleEntry`). admin 운영 정산도 동일 분개를 community_api에 위임(admin `ManageAccountingService`/`SettlementService` 직접 net-only 분개 제거). 과거 admin net-only 분개(fee+tax≈gross 12.97% 영구 잔류)는 H0으로 해소. | 호스트 net 지급은 변동 없음. 매출·원천세가 정확히 인식됨. |
 | 원천세 예수금 방향 정정 | 원천세 예수금(`WITHHOLDING_TAX_PAYABLE`, 부채)을 **정방향**으로 적립하도록 정정 — 적립 시 `DR PLATFORM_CASH(tax) / CR WITHHOLDING_TAX_PAYABLE(tax)`(신설 `AccountCode.PLATFORM_CASH` 플랫폼 현금성 자산, 소스: `payment/constants/AccountCode.java:22`, `AccountingLedgerService.java:99-141`). 과거 적립이 차변(방향 역)이라 운영 원천세 리포트가 과소집계되던 버그(MED) 해소. | 호스트 영향 없음. 운영 원천세 리포트 신뢰성 확보. |
-| 원천세 납부(소거) | `recordWithholdingRemittance`(`AccountingLedgerService.java:683-`) 분개 신설 — 납부 시 `DR WITHHOLDING_TAX_PAYABLE / CR PLATFORM_CASH`로 한 라이프사이클의 예수금·현금 순잔액이 0으로 수렴. 운영 액션은 admin `POST /admin/v1/manage/accounting/withholding-tax/remit`(`ManageAccountingController.java:124`) — AdminIdempotency 멱등 + 전 기간 누적 초과 거부 가드. ledger-only `TransactionType.WITHHOLDING_REMITTANCE(30)`(PointTransaction row 미생성). 동시성: `accounting_remit_lock` 단일행 비관락 + `WHT-REMIT:{key}` 결정적 referenceId 영구 백스톱(crash-takeover 재실행 안전, api `5cb386e`/admin `aba730e`). | 호스트 영향 없음. 운영자가 예수금을 실제 납부로 소거. |
+| 원천세 납부(소거) | `recordWithholdingRemittance`(`AccountingLedgerService.java:683-`) 분개 신설 — 납부 시 `DR WITHHOLDING_TAX_PAYABLE / CR PLATFORM_CASH`로 한 라이프사이클의 예수금·현금 순잔액이 0으로 수렴. 운영 액션은 admin `POST /admin/v1/manage/accounting/withholding-tax/remit`(`ManageAccountingController.java:124`) — AdminIdempotency 멱등 + 전 기간 누적 초과 거부 가드. ledger-only `TransactionType.WITHHOLDING_REMITTANCE(30)`(PointTransaction row 미생성). 동시성: `accounting_remit_lock` 단일행 비관락 + `WHT-REMIT:{key}` 결정적 referenceId 영구 백스톱(crash-takeover 재실행 안전). | 호스트 영향 없음. 운영자가 예수금을 실제 납부로 소거. |
 | 정산 FAILED 감시 | `SettlementRetryScheduler`가 FAILED 정산 5일 경과 시 멱등 운영자 경보(`OperatorAlertType.SETTLEMENT_FAILED_STALE`, 키 `SETTLEMENT_FAILED:{id}`) 발화 — 과거 무제한 재시도+로그만이던 사각지대 해소. 자동 만료·자동 중단은 없음(돈 in-flight는 사람이 처리). | 화면의 "5일 이내 미처리 시 관리자 문의" 안내(§169)와 정합. |
 | 지급명세서 환불 반영 | admin 지급명세서가 정산 후 전액환불의 net 회수를 반영 — `netPaid = CREATOR_SETTLEMENT(DR−CR) − withheldTax − netRecovery`(전액환불 시 netPaid=0). | 호스트 지급명세서 정확성. |
-| 이벤트 무료 매출 호스트 지급 (2026-06-06) | 이벤트 결제는 무료분이 호스트의 `CREATOR_PAYABLE` 보조금 residue로 남아 있었으나, 이제 정산 완료 시 호스트에게 **무료 포인트로 실지급**한다(`AccountingLedgerService.recordEventFreeSettlement` — `DR USER_WALLET(host) / CR CREATOR_PAYABLE(host)`로 residue 0 수렴). 유료분은 기존 triple-entry로 `CREATOR_PAYABLE` 유료분을 소거. 무료 포인트는 현금화 불가(freeBalance 적립). admin 운영 정산도 동일 미러(`270b1f9`). | 호스트가 무료 매출분을 무료 포인트로 받는다(인출 불가). |
+| 이벤트 무료 매출 호스트 지급 (2026-06-06) | 이벤트 결제는 무료분이 호스트의 `CREATOR_PAYABLE` 보조금 residue로 남아 있었으나, 이제 정산 완료 시 호스트에게 **무료 포인트로 실지급**한다(`AccountingLedgerService.recordEventFreeSettlement` — `DR USER_WALLET(host) / CR CREATOR_PAYABLE(host)`로 residue 0 수렴). 유료분은 기존 triple-entry로 `CREATOR_PAYABLE` 유료분을 소거. 무료 포인트는 현금화 불가(freeBalance 적립). admin 운영 정산도 동일 미러. | 호스트가 무료 매출분을 무료 포인트로 받는다(인출 불가). |
 | free-only 정산 생성 (2026-06-06) | 유료 매출이 0이라도 무료 매출이 있으면 정산이 생성된다(`SettlementBatchService` — 순 매출 0 이하면 스킵, 유료 음수면 스킵, paid==0 & free>0 이면 수수료·세금 0의 free-only 정산 생성). `CreatorEarning`에 `grossPaid`/`grossFree`를 분리 적재. 정산 완료 알림은 "무료 포인트 N 지급"으로 분기. | 무료 결제만 모인 이벤트의 호스트도 정산을 받는다(무료 포인트). |
 | 정산 후 무료분 환불 흡수 (2026-06-06) | 정산 완료 후 무료분 환불은 호스트에게서 회수하지 않고 **플랫폼 비용(`PROMOTION_EXPENSE`)으로 흡수**한다(`recordEventRefundFreeAfterSettlement` — `DR USER_WALLET(participant) / CR PROMOTION_EXPENSE`). 정산 시 무료분이 이미 호스트에 실지급되어 residue가 0이므로 residue 환원 불가 → 정책상 플랫폼 흡수. | 호스트의 무료 적립을 사후 환불로 빼앗지 않는다(정책). |
 
@@ -252,7 +252,7 @@ W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount
 | 후보 | frontend.md:87 | - **이의 제출 다이얼로그 디자인**: 사유 텍스트 입력 (max 1000자 가드 — 서버 `@Size(max=1000)`과 일치 권장), 첨부 파일은 UI/UX에는 있지만 서버 미구현 → 현재 화면도 텍스트만 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:87 | **종료 상태**: 빠른 클라이언트 필터로 사용자 결정 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 해소 (2026-06-06) | AccountingLedgerService.java:99-141, ManageAccountingController.java:124 | **정산 회계 무결성 해소** — H0(admin net-only 분개 → triple-entry 위임), 원천세 적립 방향 정정 + 납부 분개·운영 액션 신설(MED), 정산 FAILED 5일 감시 경보(MED). 호스트 net 지급 정확성·운영 리포트 신뢰성 확보. | 없음 |
-| 해소 (2026-06-06) | SettlementBatchService.java, SettlementService.java, AccountingLedgerService.java | **이벤트 무료 매출 정산 미전달 해소** — 이벤트 무료분이 호스트 `CREATOR_PAYABLE` residue로만 남던 것을 정산 완료 시 무료 포인트로 실지급(`recordEventFreeSettlement`, residue 0 수렴). 유료 매출 0 + 무료 매출 있는 이벤트도 free-only 정산 생성(fee/tax 0, `grossPaid`/`grossFree` 분리 적재). 정산 후 무료 환불은 `PROMOTION_EXPENSE` 흡수. admin 정산 완료도 동일 미러(`270b1f9`). | 없음 — flow-through 완성. 정책 PRD §2.6 |
+| 해소 (2026-06-06) | SettlementBatchService.java, SettlementService.java, AccountingLedgerService.java | **이벤트 무료 매출 정산 미전달 해소** — 이벤트 무료분이 호스트 `CREATOR_PAYABLE` residue로만 남던 것을 정산 완료 시 무료 포인트로 실지급(`recordEventFreeSettlement`, residue 0 수렴). 유료 매출 0 + 무료 매출 있는 이벤트도 free-only 정산 생성(fee/tax 0, `grossPaid`/`grossFree` 분리 적재). 정산 후 무료 환불은 `PROMOTION_EXPENSE` 흡수. admin 정산 완료도 동일 미러. | 없음 — flow-through 완성. 정책 PRD §2.6 |
 | Risk (PG 게이트) | NoopPayoutProvider.java:21,28 | **실 payout(출금) provider 미구현(NOOP)** — dev/default mock이며 prod 부팅 시 `@PostConstruct guardAgainstProd` 예외로 차단. 정산 → 외부 송금(PAYING→PAID 실 지급)은 PG/출금 provider 계약 후에만 검증 가능. release-gate `05_pg.md` 등재. | PG 계약 시 검증 |
 
 ## 9. 수용 기준

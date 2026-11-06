@@ -4,7 +4,7 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
-<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce; unit: business_logic/units/08_plan_market/F08-05_plan-publish -->
+<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; unit: business_logic/units/08_plan_market/F08-05_plan-publish -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-05_plan-publish`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -298,7 +298,7 @@ DRAFT/HIDDEN 상태의 플랜을 PUBLISHED로 전환한다. AUTH-01로 발행 �
 | 확정됨(소스 대조) | `PlanController.java:110` | 즉시 발행 후 사이드 이펙트(FCM/이메일/마켓 자동 등록) 없음 — `publishPlan`은 상태 전환만 수행. 구매자 알림 등은 별도 도메인에서 처리. | 현재 설계 의도적 — 추가 필요 시 신규 슬라이스 |
 | Risk(미해소) | `plan_publish_screen.dart:165` | SCR-PE-005 스펙은 "발행 후 마켓 아이템 상세로 이동"을 명시하지만 현재 코드는 `Navigator.pop`만 수행. | Decision Needed: 스펙 갱신 또는 라우팅 수정 |
 | Risk(AUTH-06) | `ScheduledPublishService.java:53` | 예약 시각 최소 리드타임이 1분이어서 폴링 주기(기본 60초) 내 실행이 보장되지 않음. 실제 발행은 최대 2분 지연 가능. | 허용 범위 여부 UX 결정 필요 |
-| 확정-OK (AUTH-06 Slice 2b) | `ScheduledPublishScheduler.java:92`, app `0056d89` | CLUB_POST/CLUB_ANNOUNCEMENT는 폴러 대상집합에 포함돼 실행되며, 앱 작성 화면도 `scheduledAt`을 전달해 `SCHEDULED` 상태로 생성하는 경로까지 구현됨(`schedule_publish_section.dart` → 게시글/공지 작성 화면). | 해소됨 — 상세는 F04-08·F04-10 |
+| 확정-OK (AUTH-06 Slice 2b) | `ScheduledPublishScheduler.java:92` | CLUB_POST/CLUB_ANNOUNCEMENT는 폴러 대상집합에 포함돼 실행되며, 앱 작성 화면도 `scheduledAt`을 전달해 `SCHEDULED` 상태로 생성하는 경로까지 구현됨(`schedule_publish_section.dart` → 게시글/공지 작성 화면). | 해소됨 — 상세는 F04-08·F04-10 |
 | 해소됨(2026-07 실측) | `plan_publish_screen.dart:296,623,726` | 무료 포인트 허용/가격 UI 위치가 미결정이라는 과거 기록과 달리 가격 섹션에 스위치·가격 입력·검증이 구현됐고, 즉시/예약 발행 모두 먼저 PATCH한다. | 완료 |
 | 확인된 차이 | `PlanService.validateFreePointPriceCrossField`, `plan_publish_screen.dart:93` | 서버는 `freePointPrice=null` 기본가 폴백을 허용하지만 앱 발행 화면은 허용 스위치 ON 시 값을 필수화한다. | 앱의 엄격한 UX를 유지할지 정책 결정 |
 
@@ -324,7 +324,7 @@ DRAFT/HIDDEN 상태의 플랜을 PUBLISHED로 전환한다. AUTH-01로 발행 �
 - 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
 - **발행 후 라우팅**: SCR-PE-005 스펙의 "마켓 아이템 상세로 이동" vs 현재 코드의 `Navigator.pop`(단순 상세로 복귀) — 어떤 UX가 맞는지 결정 필요.
 - **예약 발행 리드타임 UX**: 최소 1분 리드타임 + 폴링 주기(60초) = 실제 발행 최대 2분 지연. 사용자에게 이를 고지할 방법(시트 내 안내 문구 등) 결정 필요.
-- **클럽 글/공지 예약 발행(AUTH-06 Slice 2b) — 구현됨**: `CLUB_POST`/`CLUB_ANNOUNCEMENT` targetType 예약 생성·폴러 실행(서버)에 더해, 앱 작성 화면이 `scheduledAt`을 전달해 `SCHEDULED` 상태로 생성하는 경로까지 구현됨(`schedule_publish_section.dart` → `post_create_screen.dart`/`announcement_create_screen.dart`, 커밋 app `0056d89`). 상세는 F04-08·F04-10 참조.
+- **클럽 글/공지 예약 발행(AUTH-06 Slice 2b) — 구현됨**: `CLUB_POST`/`CLUB_ANNOUNCEMENT` targetType 예약 생성·폴러 실행(서버)에 더해, 앱 작성 화면이 `scheduledAt`을 전달해 `SCHEDULED` 상태로 생성하는 경로까지 구현됨(`schedule_publish_section.dart` → `post_create_screen.dart`/`announcement_create_screen.dart`). 상세는 F04-08·F04-10 참조.
 - **무료 포인트 폴백 정책 정렬**: 서버는 `freePointPrice=null`이면 기본가 FREE 결제를 허용하지만 앱 발행 화면은 가격 입력을 필수화한다. 어느 계약을 제품 표준으로 삼을지 결정한다.
 - **예약 목록 화면 — 구현됨**: `GET /api/v1/authoring/schedules` 서버 조회 + 앱 내 예약 목록 화면(`scheduled_publish_list_screen.dart`, 라우트 `/authoring/schedules`, `app_router.dart` 배선)으로 작성자가 자기 예약을 조회·취소할 수 있다.
 - QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

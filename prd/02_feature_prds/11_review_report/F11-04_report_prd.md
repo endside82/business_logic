@@ -19,7 +19,7 @@
 - 이벤트 상세 → 우상단 메뉴 "신고" → `context.push('/report', extra: {'targetType': 'EVENT', 'targetId': eventId})`
 - 사용자 프로필 → "신고" 메뉴 → `targetType: 'USER'`
 - 리뷰 카드(F11-02 이벤트별 모드)의 신고 아이콘 → `targetType: 'REVIEW', targetId: review.id`
-- 클럽 상세 → "신고" 메뉴 → `targetType: 'CLUB', targetId: clubId` — 커밋 527b6ec(2026-06-04)에서 실배선 완료. 오너 본인 클럽은 메뉴 숨김.
+- 클럽 상세 → "신고" 메뉴 → `targetType: 'CLUB', targetId: clubId` —(2026-06-04)에서 실배선 완료. 오너 본인 클럽은 메뉴 숨김.
 - 카풀 오퍼 → `POST /api/v1/events/{eventId}/carpool/offers/{offerId}/report` — 전용 `CarpoolReportParam`(reason, description) 사용, `contextId=offerId`는 서버 자동 배선.
 
 `ReportScreen`은 `targetType: String`, `targetId: int`, 선택적 `targetTitle`을 받는다.
@@ -186,7 +186,7 @@
 - 이벤트 상세 → 우상단 메뉴 "신고" → `context.push('/report', extra: {'targetType': 'EVENT', 'targetId': eventId})`
 - 사용자 프로필 → "신고" 메뉴 → `targetType: 'USER'`
 - 리뷰 카드(F11-02 이벤트별 모드)의 신고 아이콘 → `targetType: 'REVIEW', targetId: review.id`
-- 클럽 상세 → "신고" 메뉴 → `targetType: 'CLUB', targetId: clubId` — 커밋 527b6ec(2026-06-04) 실배선 완료. 오너 본인 클럽은 `myRole == ClubRole.owner` 조건으로 메뉴 숨김. (`club_detail_screen.dart:582-599`)
+- 클럽 상세 → "신고" 메뉴 → `targetType: 'CLUB', targetId: clubId` —(2026-06-04) 실배선 완료. 오너 본인 클럽은 `myRole == ClubRole.owner` 조건으로 메뉴 숨김. (`club_detail_screen.dart:582-599`)
 - 카풀 오퍼 → `Routes.eventCarpoolReport` → `carpool_report_screen.dart` → `CarpoolReportParam(reason, description)` → `EventCarpoolApi.reportCarpool(eventId, offerId, param)` (`event_carpool_api.dart:13`)
 
 `ReportScreen`은 `targetType: String`, `targetId: int`, 선택적 `targetTitle`을 받는다.
@@ -217,7 +217,7 @@
   - `CommunityAppBar(title: '신고하기')`
   - 대상 정보 카드: 좌측 라벨 배지(`AppColors.primary500` 배경, 흰색 텍스트, "이벤트"/"사용자"/"리뷰"/"클럽"/"콘텐츠") + 우측 `targetTitle` 또는 "$_targetTypeLabel 신고"
   - "신고 유형" 섹션: `ReportReason.values` 7개를 라디오 리스트(원형 보더 + 선택 시 안에 작은 흰 점, primary500 배경)로 노출. 각 항목은 `reason.label`("괴롭힘/협박", "부적절한 콘텐츠", "노쇼", "사기/사칭", "기타", "지각", "나쁜 매너")
-  - "상세 설명 ("기타" 선택 시 "필수", 외에는 "선택")" 라벨 + `AppTextArea(maxLength: 500, showCharCount: true, minLines: 3, maxLines: 6)` placeholder "상세한 신고 사유를 입력해주세요" (서버 `ReportParam.description @Size(max=500)` 와 일치 — 11차-B 적용)
+  - "상세 설명 ("기타" 선택 시 "필수", 외에는 "선택")" 라벨 + `AppTextArea(maxLength: 500, showCharCount: true, minLines: 3, maxLines: 6)` placeholder "상세한 신고 사유를 입력해주세요" (서버 `ReportParam.description @Size(max=500)` 와 일치)
   - 인라인 에러: `OTHER` 선택 + 입력 1자 이상 + 10자 미만일 때 "신고 사유를 10자 이상 입력해주세요" (error500)
   - `bottomNavigationBar`: `AppButton(label: '신고', variant: ButtonVariant.danger, size: ButtonSize.lg, fullWidth: true, disabled: !_isValid, loading: _isSubmitting)` (SafeArea + screenPadding)
 - **사용자가 할 수 있는 액션**:
@@ -232,9 +232,9 @@
   | 케이스 | 처리 |
   |---|---|
   | 성공(201) | `AppDialog.alert("신고 접수 완료", "검토 후 적절한 조치를 취하겠습니다.", "확인")` → `_closeScreen()`(canPop ? pop : `context.go('/')`) |
-  | 400 badRequest (`INVALID_INPUT` — 자기 신고) | 토스트 "본인을 신고할 수 없습니다" + `_closeScreen()` (12차-A1) |
-  | 400 badRequest (`REPORT_INVALID_TARGET` — 잘못된 targetType/reason enum) | 토스트 "신고 대상이 올바르지 않습니다" + `_closeScreen()` (12차-A1) |
-  | 400 badRequest (default — Bean Validation 등) | 토스트 (서버 message 또는 "신고 처리에 실패했습니다") + 화면 유지 (사용자 재시도 가능) (12차-A1) |
+  | 400 badRequest (`INVALID_INPUT` — 자기 신고) | 토스트 "본인을 신고할 수 없습니다" + `_closeScreen()` |
+  | 400 badRequest (`REPORT_INVALID_TARGET` — 잘못된 targetType/reason enum) | 토스트 "신고 대상이 올바르지 않습니다" + `_closeScreen()` |
+  | 400 badRequest (default — Bean Validation 등) | 토스트 (서버 message 또는 "신고 처리에 실패했습니다") + 화면 유지 (사용자 재시도 가능) |
   | 401 unauthorized | 토스트 "로그인이 필요합니다" |
   | 403 forbidden | 토스트 (서버 메시지 또는 "권한이 없습니다") |
   | 404 notFound (`REPORT_NOT_FOUND` — `resolveReport` 의 reportId 부재) | 토스트 "신고 대상을 찾을 수 없습니다" + `_closeScreen()` |
@@ -263,7 +263,7 @@
 - `OTHER` 선택 시 description 필수 + 10자 이상 정책 (서버는 별도 검증 없음 — 서버는 `description`을 옵션으로만 처리)
 - 성공 시 풀스크린 알럿 → 단순 닫기로 이전 화면 복귀
 - 신고 사유 7개 노출 순서(현재 enum 정의 순서: HARASSMENT/INAPPROPRIATE/NO_SHOW/FRAUD/OTHER/LATE/BAD_MANNER) — UI 스펙 표(SCR-RR-003)와 다름
-- CLUB 신고 진입은 클럽 상세에서 실배선 완료(527b6ec, 2026-06-04). 오너 본인은 메뉴 숨김.
+- CLUB 신고 진입은 클럽 상세에서 실배선 완료(2026-06-04). 오너 본인은 메뉴 숨김.
 - description 최대 500자(클라/서버 일치) — `report_screen.dart` `maxLength: 500` ↔ 서버 `ReportParam.java` `@Size(max = 500)`
 - 댄저 색상 버튼(`ButtonVariant.danger`)으로 행동 강조
 
@@ -294,7 +294,7 @@
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| CLOSED | CLUB 신고 서버 미지원 | 커밋 2d28572 (2026-06-04) `ReportType.CLUB(7)` 서버 추가, 527b6ec 앱 실배선 완료 | 해소됨 — v1 운영자 수동 집행. 자동 제재 없음. | — |
+| CLOSED | CLUB 신고 서버 미지원 | (2026-06-04) `ReportType.CLUB(7)` 서버 추가, 앱 실배선 완료 | 해소됨 — v1 운영자 수동 집행. 자동 제재 없음. | — |
 | Gap | `ReportParam.contextId` 앱 미배선 | `report_param.dart`에 `contextId` 필드 없음. 서버 `ReportParam.contextId(Long?)` 존재. | CARPOOL 신고는 전용 `CarpoolReportParam`(carpool_report_param.dart)으로 처리하므로 report_screen 경로에서는 contextId 불필요. 단, 다른 신고 경로에서 contextId가 필요한 경우 Flutter 모델 추가 필요. | 현재는 영향 없음. carpool_report_screen이 별도 전용 경로를 타므로 누락 없음. |
 | Gap | DDL 주석 불일치 | `V1__init.sql:1505` target_type COMMENT에 CLUB(7) 누락 | enum 소스 기준이 정답이므로 런타임 영향 없으나 DB 문서 정합성 훼손 | V1__init.sql COMMENT 갱신 |
 | Risk | `OTHER` description 클라이언트 10자 강제 — 서버 미검증 | `report_screen.dart` `_selectedReason == OTHER → description.trim().length >= 10` | 클라이언트 우회 시 서버는 빈 description으로 저장. 운영자 처리 시 사유 파악 불가. | 서버에서 `OTHER` 선택 시 description 최소 길이 검증 추가 검토 |

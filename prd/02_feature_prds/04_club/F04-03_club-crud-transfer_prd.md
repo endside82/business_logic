@@ -75,7 +75,7 @@
 | DELETE | /api/v1/clubs/{id} | ClubController#deleteClub | required (OWNER) | 클럽 폐쇄 + 환불 + 알림 |
 | POST | /api/v1/clubs/{id}/transfer-ownership | ClubController#transferOwnership | required (OWNER) | 소유권 이전 + **구 오너 구독 즉시 해지** |
 
-### 소유권 이전 사이드이펙트 (5f70d1b, 2026-06-04)
+### 소유권 이전 사이드이펙트 (2026-06-04)
 
 소스: `ClubService.java:354-408`
 

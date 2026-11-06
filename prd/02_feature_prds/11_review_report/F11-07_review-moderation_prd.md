@@ -6,7 +6,7 @@
 
 <!-- created: 2026-06-05; source: 2026-06-04 dossier 04 §2 실사 기반 신규 작성 -->
 
-> 문서 상태: **실사 기반 신규 작성**. community_api HEAD(88feb72) / community_app HEAD(b0dc370) 소스를 직접 확인한 후 작성했다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+> 문서 상태: **실사 기반 신규 작성**. community_api HEAD / community_app HEAD 소스를 직접 확인한 후 작성했다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 

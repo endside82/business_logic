@@ -51,7 +51,7 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 | F04-14 | F04-14. 기부하기 & 기부 내역 | [F04-14_donation_prd.md](../02_feature_prds/04_club/F04-14_donation_prd.md) | [F04-14_donation](../../units/04_club/F04-14_donation) | 전환 완료 | 4 | 6 |
 | F04-15 | F04-15. 기금 인출 요청 | [F04-15_fund-withdrawal_prd.md](../02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md) | [F04-15_fund-withdrawal](../../units/04_club/F04-15_fund-withdrawal) | 전환 완료 | 2 | 2 |
 | F04-16 | F04-16. 클럽 구독 (시작/갱신/해지/재활성) | [F04-16_subscription_prd.md](../02_feature_prds/04_club/F04-16_subscription_prd.md) | [F04-16_subscription](../../units/04_club/F04-16_subscription) | 전환 완료 | 5 | 8 |
-| F04-17 | F04-17. 클럽 구성인원 인구통계 | [F04-17_club-demographics_prd.md](../02_feature_prds/04_club/F04-17_club-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2, Codex sign-off) | 신규 (2026-05-27 도입) | 4 | 1 |
+| F04-17 | F04-17. 클럽 구성인원 인구통계 | [F04-17_club-demographics_prd.md](../02_feature_prds/04_club/F04-17_club-demographics_prd.md) | (DEMOGRAPHICS_STATS_PLAN.md v2) | 신규 (2026-05-27 도입) | 4 | 1 |
 | F04-18 | F04-18. 클럽 레퓨테이션 점수 | [F04-18_club-reputation_prd.md](../02_feature_prds/04_club/F04-18_club-reputation_prd.md) | (source-first, 2026-06-05) | 신규 (2026-06-05 도입) | 3 | 1 |
 
 ## 3. 먼저 볼 기능
@@ -353,7 +353,7 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 
 ## 9. 접근권한 감사 교정 (2026-07-02)
 
-접근권한 전수 감사(F04 클럽)에서 확인된 동작 변경 사항을 반영한다. 모두 Codex GO 완료·커밋·푸시.
+접근권한 전수 감사(F04 클럽)에서 확인된 동작 변경 사항을 반영한다.
 
 ### 클럽 정보 수정 권한 완화 (D-F04-1)
 

@@ -47,7 +47,7 @@
 | `EVENT_MESSAGE(4)` | 이벤트 메시지 신고 | legal hold 매칭. soft-delete 중 신고 진행 시 unhide 차단 |
 | `DATE_USER(5)` | 데이트 사용자 안전 신고 | RS-002 P3-A: 차단(`DateBlockParam.fileReport=true`) 시 자동 동시 생성. DateBlock.reportId 백필. |
 | `CARPOOL(6)` | 승용차 주인 안전 신고 | `POST /api/v1/events/{eventId}/vehicles/{vehicleId}/report`. 서버가 차량 주인을 대상자로 정하고 `contextId=vehicleId`를 기록한다. |
-| `CLUB(7)` | 클럽 신고 | 2026-06-04 추가(commit 2d28572). v1 집행 서버 수동, 자동제재 USER 전용 유지. |
+| `CLUB(7)` | 클럽 신고 | 2026-06-04 추가. v1 집행 서버 수동, 자동제재 USER 전용 유지. |
 | `COMMUNITY_MESSAGE(8)` | 커뮤니티 1:1 메시지 신고 | targetId=messageId, contextId=channelId. |
 | `COMMUNITY_POST(9)` | 클럽 커뮤니티 게시글 신고 | targetId=postId. |
 | `COMMUNITY_COMMENT(10)` | 클럽 커뮤니티 댓글 신고 | targetId=commentId, contextId=postId. |

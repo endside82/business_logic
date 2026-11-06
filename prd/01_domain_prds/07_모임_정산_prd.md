@@ -8,7 +8,7 @@
 
 > 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/07_meeting_settlement/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 
-> **2026-06-05 DRAFT 미리보기 정식화(D-OPEN-2 해소).** 준비 중(DRAFT) 정산의 참가자 노출이 "설계되지 않은 노출"에서 **공식 미리보기 기능**으로 확정됐다 (결정 DEC-V1~V9, canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md`, 서버 426c26d·94c4869 + 앱 7ba69c0). 핵심: ① **차등 노출(서버 강제)** — DRAFT && 비호스트는 총액·상태·내 분담금만(note 마스킹/summary 본인 행만/items 빈 목록/영수증 URL 거부), ② **DRAFT 이의제기 차단** — 유일하게 잠기지 않았던 문을 닫아 "확정 전 무행동" 완성, ③ **열람 자격 확장** — ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트(`validateSettlementReadAccess` 신설, 기존 술어 보존), ④ **호스트 평판 집계에서 DRAFT 제외**, ⑤ **지갑 모임정산 목록 DRAFT 포함+마스킹** — 같은 날 후속 슬라이스(api c8977c5/app 8c60999)로 지갑 모임정산 목록 화면(SCR-PA-005)까지 완성, ⑥ **이벤트 상세 "모임 정산" 입구 신설**(호스트‖ATTENDING 항상 노출, 정산 없으면 빈 상태/생성 CTA — 발견 경로는 이 입구와 지갑 목록 둘). 알림은 현행대로 "정산 신청" 시점에만(준비 중 알림 신설 없음). 상세: [F07-04 §7-A](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md), [F07-08 §7-A](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md), [F07-10 §7-A](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md).
+> **2026-06-05 DRAFT 미리보기 정식화(D-OPEN-2 해소).** 준비 중(DRAFT) 정산의 참가자 노출이 "설계되지 않은 노출"에서 **공식 미리보기 기능**으로 확정됐다 (결정 DEC-V1~V9, canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md`). 핵심: ① **차등 노출(서버 강제)** — DRAFT && 비호스트는 총액·상태·내 분담금만(note 마스킹/summary 본인 행만/items 빈 목록/영수증 URL 거부), ② **DRAFT 이의제기 차단** — 유일하게 잠기지 않았던 문을 닫아 "확정 전 무행동" 완성, ③ **열람 자격 확장** — ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트(`validateSettlementReadAccess` 신설, 기존 술어 보존), ④ **호스트 평판 집계에서 DRAFT 제외**, ⑤ **지갑 모임정산 목록 DRAFT 포함+마스킹** — 같은 날 후속 슬라이스로 지갑 모임정산 목록 화면(SCR-PA-005)까지 완성, ⑥ **이벤트 상세 "모임 정산" 입구 신설**(호스트‖ATTENDING 항상 노출, 정산 없으면 빈 상태/생성 CTA — 발견 경로는 이 입구와 지갑 목록 둘). 알림은 현행대로 "정산 신청" 시점에만(준비 중 알림 신설 없음). 상세: [F07-04 §7-A](../02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md), [F07-08 §7-A](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md), [F07-10 §7-A](../02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md).
 
 > **2026-07-29 혼합결제 은행분 확인 재실측.** `pay-mixed`에서 은행분이 1원 이상이면 transfer는 즉시 완료되지 않고 `BANK_AWAITING_CONFIRM`에 머문다. `POST .../transfers/{transferId}/confirm-bank-portion`은 **수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`)**만 호출할 수 있고, 송금자(`fromUserId`)는 정산 생성자이기도 해도 self-confirm 가드에 먼저 차단된다. Flutter도 `bankAwaitingConfirm && !sender && (recipient || settlement creator)`일 때만 `받았어요` CTA를 넘긴다. 이 확인은 요청 body·영수증·은행 조회가 없는 수기 신뢰 선언이므로 화면은 “시스템이 실제 입금을 검증하지 않는다”는 경고를 노출한다.
 
@@ -248,7 +248,7 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 
 ### TransferStatus 전체값 (Fact)
 
-> 소스: `payment/meeting/constants/TransferStatus.java` (커밋 985f586, 2026-06-04). 상세 계약은 [F07-06](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) §4 참조.
+> 소스: `payment/meeting/constants/TransferStatus.java` (2026-06-04). 상세 계약은 [F07-06](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) §4 참조.
 
 | 값 | 의미 |
 |---|---|
@@ -261,7 +261,7 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 | `REVERSAL_FAILED` | 역분개 실패 |
 | `PENDING_MANUAL_REFUND` | 역분개 실패 후 수동 환불 대기 (limbo 대상) |
 
-> **DDL 정정 (해소 — 985f586)**: `status` 컬럼 varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자라 구 스키마에서 strict mode 영속 실패 잠재 버그 → 정정 완료.
+> **DDL 정정 (해소)**: `status` 컬럼 varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자라 구 스키마에서 strict mode 영속 실패 잠재 버그 → 정정 완료.
 
 ### limbo SLA 운영 정책 요약
 

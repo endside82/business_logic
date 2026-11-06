@@ -25,8 +25,8 @@
 | **AUTH-02/03 블록 에디터 자동저장 + picker/패턴** | F08-03 | 블록 편집 시 debounce 자동저장. 서버·renderer known 20종, 신규 picker 18종(목록 2종은 인라인), predefined pattern 12종. Draft generation token 발급(`draftToken`). | `PlanBlockController.java`, `block_type_sheet.dart` |
 | **AUTH-05 마켓 아이템 운영자 moderation (Option B)** | F08-06 | 판매 전 `REVIEW_PENDING` 상태 추가. admin에서 승인/반려. `on-sale`/`review-history` 엔드포인트 신설. `community_admin_api` admin 배선. | `MarketItemController.java:53,61`, `MarketItemModerationService.java` |
 | **AUTH-06 예약 발행** | F08-05, F08-06 공통 | 플랜/마켓 아이템 미래 시점 자동 발행 스케줄 등록(`POST /api/v1/authoring/schedules`). 플랜/마켓/클럽 발행을 단일 스케줄링 코어로 통합. | `community_api/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java`, `ScheduledPublishService.java` |
-| **AUTH-06 Slice 3 초안 미리보기 로그인 게이트** | F08-02 | `getPreview`: DRAFT/HIDDEN 미리보기는 로그인 필수(익명→401). DELETED→404. PUBLISHED 공개 유지. | `PlanService.java:159-173` (커밋 `90de4ed`) |
-| **AUTH-08 상세 조회수 수집 + 크리에이터 대시보드 환류** | F08-02, F08-10, F08-07 | `plan.view_count`/`market_item.view_count` 컬럼 신설. 비소유자 조회 시 원자 증가(`ViewCountIncrementService`, REQUIRES_NEW). 대시보드 `planViewTotal`/`marketItemViewTotal` 집계 표시. | `Plan.java:74`, `MarketItem.java:82`, `ViewCountIncrementService.java:36,43`, `CreatorStatsQueryRepository.java:127,141` (커밋 `eed2867`/`ee95483`) |
+| **AUTH-06 Slice 3 초안 미리보기 로그인 게이트** | F08-02 | `getPreview`: DRAFT/HIDDEN 미리보기는 로그인 필수(익명→401). DELETED→404. PUBLISHED 공개 유지. | `PlanService.java:159-173`  |
+| **AUTH-08 상세 조회수 수집 + 크리에이터 대시보드 환류** | F08-02, F08-10, F08-07 | `plan.view_count`/`market_item.view_count` 컬럼 신설. 비소유자 조회 시 원자 증가(`ViewCountIncrementService`, REQUIRES_NEW). 대시보드 `planViewTotal`/`marketItemViewTotal` 집계 표시. | `Plan.java:74`, `MarketItem.java:82`, `ViewCountIncrementService.java:36,43`, `CreatorStatsQueryRepository.java:127,141`  |
 
 ## 2. 실사 근거 맵
 
@@ -101,8 +101,8 @@
 - **사용자 가치**: 작성한 플랜의 블록 구성, 상태(DRAFT/PUBLISHED), 메타데이터를 검토하고 편집·발행·복사 진입점 제공
 - **화면**: SCR-PE-002 / `plan_detail_screen.dart`, `plan_preview_screen.dart`
 - **API**:
-  - `GET /api/v1/plans/{planId}` (PlanController.getPlan) — **AUTH-08**: 인증된 비소유자 조회 시 `view_count` +1 원자 증가 (`PlanService.java:148`, 커밋 api `eed2867`)
-  - `GET /api/v1/plans/{planId}/preview` (PlanController.getPreview) — **AUTH-06 Slice 3**: DRAFT/HIDDEN 미리보기 익명→401, DELETED→404 게이트 (`PlanService.java:159-173`, 커밋 api `90de4ed`)
+  - `GET /api/v1/plans/{planId}` (PlanController.getPlan) — **AUTH-08**: 인증된 비소유자 조회 시 `view_count` +1 원자 증가 (`PlanService.java:148`)
+  - `GET /api/v1/plans/{planId}/preview` (PlanController.getPreview) — **AUTH-06 Slice 3**: DRAFT/HIDDEN 미리보기 익명→401, DELETED→404 게이트 (`PlanService.java:159-173`)
   - `PATCH /api/v1/plans/{planId}` (PlanController.updatePlan, 메타 수정)
   - `DELETE /api/v1/plans/{planId}` (PlanController.deletePlan)
   - `POST /api/v1/plans/{planId}/copy` (PlanController.copyPlan, 복사본 DRAFT 생성)
@@ -160,7 +160,7 @@
 #### F08-07. 크리에이터 프로필 / 내 통계
 - **사용자 가치**: 크리에이터로서 등록 플랜 수, 평균 별점, 총 판매·매출 등 자신의 활동 성과를 확인 (본인 프로필이면 통계 섹션 추가)
 - **화면**: SCR-MK-004 / `creator_profile_screen.dart`, `creator_stats_screen.dart`
-- **AUTH-08 대시보드 환류 (2026-06-09)**: `CreatorStatsVo`에 `planViewTotal`(플랜 전체 조회수 합산) + `marketItemViewTotal`(마켓 아이템 전체 조회수 합산) 추가. Flutter `CreatorProfileVo` 동기 (`creator_profile_vo.dart:47-48`). 앱 크리에이터 성과 대시보드 화면에서 표시 (커밋 app `ee95483`).
+- **AUTH-08 대시보드 환류 (2026-06-09)**: `CreatorStatsVo`에 `planViewTotal`(플랜 전체 조회수 합산) + `marketItemViewTotal`(마켓 아이템 전체 조회수 합산) 추가. Flutter `CreatorProfileVo` 동기 (`creator_profile_vo.dart:47-48`). 앱 크리에이터 성과 대시보드 화면에서 표시.
 - **API**:
   - `GET /api/v1/creators/{creatorId}` (CreatorController.getCreatorProfile, 공개 프로필 + 판매 아이템)
   - `GET /api/v1/creators/me/stats` (CreatorController.getMyStats, 본인만 — `planViewTotal`/`marketItemViewTotal` 포함)
@@ -190,7 +190,7 @@
 #### F08-10. 마켓 아이템 상세 (커버 / 설명 / 크리에이터 / 리뷰 / 번들)
 - **사용자 가치**: 구매 결정에 필요한 모든 정보(이미지, 설명, 크리에이터, 평점, 리뷰, 번들 옵션)를 한 화면에서 확인
 - **화면**: SCR-MK-002 / `market_item_detail_screen.dart`
-- **AUTH-08 (2026-06-09)**: `GET /api/v1/market/items/{itemId}` 조회 시 인증된 비소유자는 `market_item.view_count` 원자 증가. 집계는 F08-07 `marketItemViewTotal`로 환류 (`MarketItemService.java:77`, 커밋 api `eed2867`).
+- **AUTH-08 (2026-06-09)**: `GET /api/v1/market/items/{itemId}` 조회 시 인증된 비소유자는 `market_item.view_count` 원자 증가. 집계는 F08-07 `marketItemViewTotal`로 환류 (`MarketItemService.java:77`).
 - **API**:
   - `GET /api/v1/market/items/{itemId}` (MarketItemController.getMarketItem — AUTH-08: 비소유자 조회수 증가)
   - `GET /api/v1/market/items/{itemId}/reviews` (MarketItemReviewController.getReviews, PageResponse)

@@ -88,7 +88,7 @@
 
 ## 2.6 돈 흐름 무결성 정책 (2026-06-06)
 
-> 2026-06-05 돈·포인트 흐름 전수 감사(`docs/audit/money-flow-2026-06-05/REPORT.md`)에서 확정된 CRITICAL 6·HIGH 20·MED 11·LOW 3을 라운드 1·2 + MED 백로그로 처리했다. 근본 원인은 wallet/lot/ledger/admin이 하나의 원자적 회계 facade로 묶이지 않은 것이었으며, **돈 변이지점부터 점진적으로** facade(`WalletRefundService.refundByTransaction`, internal 위임)를 도입해 닫았다. 커밋 범위: community_api `a7876aa..2e0ba2a`, community_admin_api `9eafc0e..aba730e`.
+> 2026-06-05 돈·포인트 흐름 전수 감사(`docs/audit/money-flow-2026-06-05/REPORT.md`)에서 확정된 CRITICAL 6·HIGH 20·MED 11·LOW 3을 라운드 1·2 + MED 백로그로 처리했다. 근본 원인은 wallet/lot/ledger/admin이 하나의 원자적 회계 facade로 묶이지 않은 것이었으며, **돈 변이지점부터 점진적으로** facade(`WalletRefundService.refundByTransaction`, internal 위임)를 도입해 닫았다.
 
 ### 정책 결정 (확정)
 
@@ -182,7 +182,7 @@ BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫�
 
 ### D7. 환불 정책 카탈로그 일원화 (2026-06-04 D-1 업데이트)
 
-> **D-1 (커밋 419e050 + c7b4315)으로 D7 내용 갱신**: 이벤트 참가 선입금의 환불은 더 이상 "단일 deadline 100% / 마감 후 0%" 고정이 아니며, `event_refund_policy` 카탈로그(6종 템플릿) 기반으로 전환 완료됨.
+> **D-1 으로 D7 내용 갱신**: 이벤트 참가 선입금의 환불은 더 이상 "단일 deadline 100% / 마감 후 0%" 고정이 아니며, `event_refund_policy` 카탈로그(6종 템플릿) 기반으로 전환 완료됨.
 
 - `EventPaymentRefundService.refundByWallet`/`refundByHostCancel` 은 `payment/refundpolicy/service/RefundPolicyService.computeRefund` 를 통해 `event_refund_policy` 카탈로그 규칙을 사용
 - 호스트 이벤트 취소(`refundByHostCancel`) 시에는 귀책 분류 `HOST_FAULT` 경로로 카탈로그 계산기에 위임 → 100% 환불 + 수수료 0 보장 (`RefundPolicyService.computeRefund:132-140` HOST_FAULT 분기)

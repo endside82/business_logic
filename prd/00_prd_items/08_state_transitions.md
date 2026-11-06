@@ -452,7 +452,7 @@ applyBatch 조건: `pendingCount == 0 && withdrawnCount == 0` (readyToApply=true
 | 상태 | 의미 | 비고 |
 |---|---|---|
 | `PENDING` | 이체 대기 | — |
-| `BANK_AWAITING_CONFIRM` | 혼합결제의 은행 부분 확인 대기 | 21자 — varchar(32)로 정정 완료 (985f586). limbo SLA 스케줄러 재알림 대상 |
+| `BANK_AWAITING_CONFIRM` | 혼합결제의 은행 부분 확인 대기 | 21자 — varchar(32)로 정정 완료. limbo SLA 스케줄러 재알림 대상 |
 | `COMPLETED` | 이체 완료 | — |
 | `CANCELLED` | 취소됨 | — |
 | `EXPIRED` | 만료됨 | — |

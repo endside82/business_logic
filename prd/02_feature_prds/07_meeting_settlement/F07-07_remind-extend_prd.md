@@ -157,7 +157,7 @@
 
 ### limbo 상태 자동 재알림 정책 (기존 deadline 리마인드와 별도)
 
-> **Fact (2026-06-04, 커밋 985f586)**. 이 정책은 본 기능의 호스트 수동 리마인드(§4)와 다른 별도 스케줄러 흐름이다.
+> **Fact (2026-06-04)**. 이 정책은 본 기능의 호스트 수동 리마인드(§4)와 다른 별도 스케줄러 흐름이다.
 
 `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 상태 transfer가 SLA(`meeting-settlement.limbo-escalation-days`, 기본 3일) 경과 시 자동 재알림이 발화된다. 호스트의 명시적 독촉 없이 백엔드가 자동으로 관련 행위자에게 알린다.
 
@@ -171,7 +171,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 해소 | limbo 상태 장기 방치 | BANK_AWAITING_CONFIRM/PENDING_MANUAL_REFUND 상태 transfer에 자동 재알림 없었음 | **해소** — 985f586 (2026-06-04): limbo SLA 자동 재알림 + 운영알림 승급 구현 완료 (상세: F07-06 §4 limbo SLA) |
+| 해소 | limbo 상태 장기 방치 | BANK_AWAITING_CONFIRM/PENDING_MANUAL_REFUND 상태 transfer에 자동 재알림 없었음 | **해소** (2026-06-04): limbo SLA 자동 재알림 + 운영알림 승급 구현 완료 (상세: F07-06 §4 limbo SLA) |
 | 후보 | frontend.md:27 | ### 마감 연장 진입 (현재 UI 미구현 — 백엔드 엔드포인트만 존재) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:30 | ### 리마인드 이력 화면 (현재 UI 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:59 | - **customMessage 입력 UI** (옵션): 현재 미구현, 향후 200자 입력 + 미리보기 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |

@@ -41,7 +41,6 @@
 - 앱: `EventTransportSettingsScreen`, `EventTransportScreen`
 - 주요 검증: `EventVehicleServiceTest.java`, `EventTransportParticipantFlowTest.java`,
   `transport_entry_access_test.dart`, `transport_vo_wire_test.dart`
-- 2026-09-02 이동수단 표적 회귀: 사용자 API 156건·앱 160건 실패 0
 
 ## 출시 전에 남은 일
 

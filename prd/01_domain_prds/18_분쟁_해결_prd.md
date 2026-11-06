@@ -27,7 +27,7 @@
 
 legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케이스를 기준으로 판정하고, 계정 삭제·데이터 익명화를 차단한다. evidence는 케이스 종결(RESOLVED/CLOSED) + 1년 후 `DisputeCaseRetentionScheduler`가 정리한다.
 
-5개 기능 PRD (F18-01~F18-05) 전체는 백엔드 커밋 `0eae1ed`(2026-05-29)와 `86356e5`·`e148309`(2026-06-02)에서 구현됐다. Flutter는 `c3bfdc8`·`f4109a0`·`95e0c5f`(2026-05-29~06-02)에서 배선됐다.
+5개 기능 PRD (F18-01~F18-05) 전체는 백엔드(2026-05-29)와 (2026-05-29~06-02)에 구현됐다. Flutter는 같은 기간에 배선됐다.
 
 ## 2. 실사 근거 맵
 
@@ -100,19 +100,6 @@ legal hold(OPEN/IN_REVIEW/ESCALATED) 케이스에 연관된 사용자의 계정 
 | 11 리뷰·신고 | REPORT(EVENT type만, reporter), OPERATIONAL_ISSUE union. REVIEW·POST·COMMENT·PHOTO_ALBUM은 enum에만 있고 emit 안 됨 |
 | 15 경고·징계 | WARNING_REPORT(reporter), WARNING_APPEAL(member) source union. WarningAppeal은 F15-03 canonical |
 | 13 프로필·설정 | `AccountDeactivationService`: legal hold 활성 시 계정 삭제 차단 |
-
-## 7. 진행 상태 (2026-06-04 기준)
-
-| Phase | 범위 | 상태 | Codex |
-|---|---|---|---|
-| Wave A | DisputeSourceType enum 21값(분류용) 설계, caseId prefix 계약 | 완료 | ✅ sign-off |
-| Wave B-1 | DisputeCaseController 9 endpoint, DisputeCaseQueryRepository | 완료 | ✅ sign-off |
-| Wave B-2 | DisputeLegalHoldService, evidenceFrozen | 완료 | ✅ sign-off |
-| Wave C-1 | HostInboxController + HostInboxService 8-source | 완료 | ✅ sign-off |
-| Wave D-3 | DisputeAppeal side-table, EVENT_NO_SHOW sync, withdraw | 완료 | ✅ sign-off |
-| ⑤ | USER_DISPUTE persistent source, POST /me/dispute-cases, rate-limit/dedup | 완료 | ✅ sign-off |
-| Flutter | 7 화면 + providers + 37 라우트 + 모델 전체 | 완료 | — UI 영역 |
-| RS-002 P3 | DATE_BLOCK·TRANSPORT·CLUB_MEMBERSHIP_ACTION 확장 | 완료 | ✅ sign-off |
 
 ## 7-A. 접근권한 감사 교정 (2026-07-02)
 

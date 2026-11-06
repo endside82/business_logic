@@ -30,7 +30,7 @@
 | Frontend | [frontend.md](../../../units/09_private_date/F09-01_verification/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
 | Scenario | [scenarios.md](../../../units/09_private_date/F09-01_verification/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
 | Diagram | [diagrams.md](../../../units/09_private_date/F09-01_verification/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-| Plan | `community/docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` | 있음(v2.2, Codex sign-off) | Phase 0 결정 사항(세션·HMAC·접근권한·게이트) |
+| Plan | `community/docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` | 있음(v2.2) | Phase 0 결정 사항(세션·HMAC·접근권한·게이트) |
 
 <!-- source-references:start -->
 ### 확인한 서버 코드 위치
@@ -171,7 +171,7 @@
 **잔존(후속):**
 - ⚠️ **staging Toss 검증 필요** — txId 왕복 일치, `birthday` 실제 포맷(yyyyMMdd 가정), 세션 TTL(10분) vs Toss authUrl 유효시간 적정성
 - ⚠️ **NICE 멀티 프로바이더(Phase 2)** — `docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` 참조. 현재는 Toss 단독, NICE 연동은 계약 후 마지막 단계
-- ⚠️ **network-in-tx 잔존** — `requestVerification/verify`가 Toss 네트워크 호출을 트랜잭션 안에서 수행(기존부터 존재). Codex 합의 followup으로 staging 후 별도 리팩터 권장
+- ⚠️ **network-in-tx 잔존** — `requestVerification/verify`가 Toss 네트워크 호출을 트랜잭션 안에서 수행(기존부터 존재). staging 후 별도 리팩터 권장
 - ⚠️ **동시성 엄격화 best-effort** — 사용자별 락은 burst 직렬화에는 충분하나, "단일 PENDING 정책"은 best-effort. `UNIQUE(user_id, provider, tx_id_hash)`는 정확한 중복행만 차단
 - 후속 안내 UX(에러코드별 토스트 메시지 정교화) — 앱 측 일반 처리 중
 

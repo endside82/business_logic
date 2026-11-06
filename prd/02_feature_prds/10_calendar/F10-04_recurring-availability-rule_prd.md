@@ -206,9 +206,7 @@
 | 후보 | frontend.md:79 | - **저장 버튼 disabled 조건**: `_selectedDays.isEmpty` 만 검사. (시간 30분 검증은 프론트 미구현 — 서버 검증 의존.) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:85 | **종료 상태**: 등록 실패. UI/UX 검증으로 막아야 하는 케이스가 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:89 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P65 매트릭스 모드 모음 — `seed_calendar_availability_mutation_test.dart`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:106 | **모드 변천 (8차 라운드 보강)**: 6차 라운드까지의 `recurring_scope_ui_absence` 는 ruleId 추적이 없어 실제 DELETE 호출을 하지 않았다. 8차에서 `AvailabilityRepository.createRecurringRule` 을 setup 단계에 직접 호출해 `ruleId` 를 확보하고, 편집 모드 진입 → "삭제" 액션 → 확인 다이얼로그 → DELETE 까지 완전 수행하도록 보강하여 mutation E2E 로 전환했다. 동시에 다이얼로그가 단일 "삭제/취소" 두 버튼만 노출하고 scope 분기 텍스트가 없음도 함께 검증한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:126 | \| `forward` (이후 전체) \| 미지원. `effectiveUntil` 패치로 부분 우회 가능 (코드 미구현) \| 본 단위 미커버, 향후 추가 \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:132 | - **잔여물 정리 (8차 보강)**: 모든 모드는 `testWidgets` `addTearDown` 에서 setup 으로 만든 availability/rule 을 `AvailabilityRepository` 로 직접 삭제하여 alice 계정 누적을 방지한다. `delete_recurring` 모드는 UI 가 이미 DELETE 했으므로 cleanup 추적에서 제외(`untrackRule`). `RecurringAvailabilityExtensionScheduler` 가 무기한 규칙을 3개월 단위로 연장하므로 setup 후 즉시 정리 필수. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
 

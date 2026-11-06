@@ -14,7 +14,7 @@
 
 서버는 권한을 **클럽 permission flag** 로 격리한다. 멤버 화면은 `requireClubMember`, 정책 설정은 `POLICY_OWNER`, 검토/액션/큐는 `WARNING_REVIEWER`(OWNER 자동 통과), `FORCED_REMOVE`는 서비스 레이어에서 OWNER 단독으로 다시 검증한다. 모든 쓰기는 `warning_audit_log`(5년 보존)와 `domain_outbox`(WARNING 도메인 이벤트)를 같은 트랜잭션에 묶어 감사·알림 일관성을 보장한다. 원장은 `UNIQUE(club_id, member_id, source_type, source_id)`로 멱등이고, grant/forced-remove/bulk-expire는 `Idempotency-Key` 헤더를 추가 지원한다.
 
-Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제출/내 이의/호스트 출결 제보)과 운영진용 10화면(콘솔/정책/제보 검토함/제보 상세/이의 검토함/멤버 상세/제재/검토 대상/큐/감사 로그)을 모두 구현했고, enum 미러(`warning_enums.dart`)가 서버 enum과 1:1로 일치한다. 따라서 **조회·제출·운영진 워크플로의 화면-API 정합은 대체로 닫혀 있다**. 다만 (a) 정책 임계치 기본값이 Java 코드(3/6/10/15)와 DDL(1/3/5/7)에서 불일치, **(b) `FORCED_REMOVE` 제재의 실제 클럽 멤버십 제거 연결이 `WarningForcedRemoveEventListener` AFTER_COMMIT `kickMember`로 해소됨(커밋 `0eae1ed`, 2026-05-29)**, **(c) 만료 스케줄러 및 read-time 만료 필터가 활성화되어 해소됨(커밋 `9ba7cd8`, 2026-06-04)**, (d) 통계 화면이 서버의 `period` 파라미터를 전달하지 않음 등 **운영 신뢰성·정산성 Gap 일부가 남아 있다**. 추가로 플랫폼 전역 제재(`PlatformSanction`, 3종)가 신규 도입되어 클럽-스코프 제재를 보완한다(커밋 `0eae1ed`).
+Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제출/내 이의/호스트 출결 제보)과 운영진용 10화면(콘솔/정책/제보 검토함/제보 상세/이의 검토함/멤버 상세/제재/검토 대상/큐/감사 로그)을 모두 구현했고, enum 미러(`warning_enums.dart`)가 서버 enum과 1:1로 일치한다. 따라서 **조회·제출·운영진 워크플로의 화면-API 정합은 대체로 닫혀 있다**. 다만 (a) 정책 임계치 기본값이 Java 코드(3/6/10/15)와 DDL(1/3/5/7)에서 불일치, **(b) `FORCED_REMOVE` 제재의 실제 클럽 멤버십 제거 연결이 `WarningForcedRemoveEventListener` AFTER_COMMIT `kickMember`로 해소됨(2026-05-29)**, **(c) 만료 스케줄러 및 read-time 만료 필터가 활성화되어 해소됨(2026-06-04)**, (d) 통계 화면이 서버의 `period` 파라미터를 전달하지 않음 등 **운영 신뢰성·정산성 Gap 일부가 남아 있다**. 추가로 플랫폼 전역 제재(`PlatformSanction`, 3종)가 신규 도입되어 클럽-스코프 제재를 보완한다.
 
 이 도메인은 기능 PRD 9개로 구성된다. 현재 기능별 trace source는 총 0개이고, risk 후보는 총 27개다. 도메인 수준 판단은 아래 기능 PRD와 source trace를 따라가며 확정한다.
 
@@ -36,9 +36,9 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 
 | 먼저 볼 기능 | 기능 | 이유 |
 |---|---|---|
-| [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | F15-08. 제재 집행 | ~~`FORCED_REMOVE`가 실제 멤버십 제거로 닫히지 않음~~ **해소됨(커밋 `0eae1ed`)**. ~~만료 스케줄러 미활성~~ **해소됨(커밋 `9ba7cd8`)**. ~~PlatformSanction listActiveByUser 미배선~~ **해소(W14-S6 `GET /api/v1/users/me/sanctions`)**. ~~EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 가드 미배선~~ **해소(W14-S6 6경로+데이팅 집행)**. ~~구독 정리 미확인~~ **D-6 무코드 처분(ClubSubscription 오너 전용 — 멤버 구독 부재)**. 잔여: 기활성 데이팅 프로필 매칭 노출(W14-S6 신규 후속) / 내 제재 앱 화면 후속 |
+| [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | F15-08. 제재 집행 | ~~`FORCED_REMOVE`가 실제 멤버십 제거로 닫히지 않음~~ **해소됨**. ~~만료 스케줄러 미활성~~ **해소됨**. ~~PlatformSanction listActiveByUser 미배선~~ **해소(`GET /api/v1/users/me/sanctions`)**. ~~EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 가드 미배선~~ **해소(6경로+데이팅 집행)**. ~~구독 정리 미확인~~ **D-6 무코드 처분(ClubSubscription 오너 전용 — 멤버 구독 부재)**. 잔여: 기활성 데이팅 프로필 매칭 노출(신규 후속) / 내 제재 앱 화면 후속 |
 | [F15-09](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | F15-09. 검토 큐 & 대시보드/통계 | 스케줄러 placeholder, 통계 period 미전달, 전체 ledger 메모리 집계 |
-| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | F15-02. 신고 제출 & 내 신고 관리 | ~~익명 제보 차단 로직이 익명 reporter_user_id NULL 설계와 부분 충돌~~ **해소됨(커밋 `99b755e`)**. 잔여: 자가 제보 에러코드 모호 |
+| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | F15-02. 신고 제출 & 내 신고 관리 | ~~익명 제보 차단 로직이 익명 reporter_user_id NULL 설계와 부분 충돌~~ **해소됨**. 잔여: 자가 제보 에러코드 모호 |
 | [F15-06](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | F15-06. 경고 부여 & 원장 조정 | grant 일괄 처리 부분 성공 의미, 멱등 키와 원장 멱등 키 이중 구조 |
 | [F15-04](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | F15-04. 경고 정책 & 패널티 유형 설정 | 임계치 기본값 Java/DDL 불일치, 대규모 클럽 분포 스킵 |
 | [F15-01](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | F15-01. 내 경고 현황 & 원장 | 정책 비활성 클럽의 본인 화면 진입 시 자동 row 생성 |
@@ -150,7 +150,7 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 ### 횡단 의존
 
 - **클럽 권한**: `ClubMemberPermissionChecker` (`isOwner`/`isAdmin`/`isEventHost`/`getPermissionFlags`/`requireClubMember`).
-- **이벤트 도메인**: 이벤트 신청 시 `EventApplyRestrictionGuard`(클럽-스코프 `WarningSanctionService.isApplyRestricted` + 플랫폼 전역 `PlatformSanctionService.isRestricted(EVENT_APPLY_RESTRICT)`) 2축 동시 검사. 17개 진입점에 적용(커밋 `c3f95a1`). 출결 이벤트(`LATE`/`SAME_DAY_CANCEL`/`NO_SHOW`/`REPEATED_CANCEL`)가 `autoGrantFromAttendance` 자동 GRANT 트리거.
+- **이벤트 도메인**: 이벤트 신청 시 `EventApplyRestrictionGuard`(클럽-스코프 `WarningSanctionService.isApplyRestricted` + 플랫폼 전역 `PlatformSanctionService.isRestricted(EVENT_APPLY_RESTRICT)`) 2축 동시 검사. 17개 진입점에 적용. 출결 이벤트(`LATE`/`SAME_DAY_CANCEL`/`NO_SHOW`/`REPEATED_CANCEL`)가 `autoGrantFromAttendance` 자동 GRANT 트리거.
 - **플랫폼 전역 제재**: `PlatformSanction`(3종: `EVENT_APPLY_RESTRICT`/`EVENT_HOST_RESTRICT`/`DATE_PROFILE_BLOCK`) — 클럽 외부(개인 호스트 이벤트, 데이팅) 포함 플랫폼 전체에 적용. CS_ADMIN/SYSTEM 부과, 04:10 KST 만료 스케줄러(`PlatformSanctionExpiryScheduler`).
 - **알림/통합**: 모든 쓰기가 `domain_outbox`(DomainType.WARNING)로 이벤트 발행 — 실제 FCM/알림 전환은 outbox consumer 책임(이 도메인 밖).
 - **감사**: 모든 쓰기가 `warning_audit_log`(5년 보존, before/after JSON)에 기록.
@@ -160,9 +160,9 @@ Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제�
 
 | 기능 | 후보 수 | 대표 항목 |
 |---|---:|---|
-| [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 5 (P0·P1 다수 해소, 잔여 P1×1+P2×3+P3×1) | ~~`FORCED_REMOVE` 멤버십 미연결~~ **해소**. ~~만료 스케줄러 미활성~~ **해소**. ~~`listActiveByUser` 공개 API 미배선~~ **해소(W14-S6)**. ~~EVENT_HOST_RESTRICT 가드 미배선~~ **해소(W14-S6 6경로+데이팅)**. ~~PlatformSanction admin API 미확인~~ **배선 확인(R-8)**. 잔여: 기활성 데이팅 프로필 매칭 노출(신규 후속), NOTICE/ROLE_RESTRICT outbox 위임 |
+| [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 5 (P0·P1 다수 해소, 잔여 P1×1+P2×3+P3×1) | ~~`FORCED_REMOVE` 멤버십 미연결~~ **해소**. ~~만료 스케줄러 미활성~~ **해소**. ~~`listActiveByUser` 공개 API 미배선~~ **해소**. ~~EVENT_HOST_RESTRICT 가드 미배선~~ **해소(6경로+데이팅)**. ~~PlatformSanction admin API 미확인~~ **배선 확인(R-8)**. 잔여: 기활성 데이팅 프로필 매칭 노출(신규 후속), NOTICE/ROLE_RESTRICT outbox 위임 |
 | [F15-09](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 5 | 통계 `period` 미전달, 대시보드/통계 `findAll()` 전체 메모리 집계, 큐 enqueue 호출처 부재 가능성 |
-| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 3 | ~~익명 누적 반려율 익명 row 미탐지~~ **해소(커밋 `99b755e`)**. 잔여: 자가 제보/중복 에러코드 모호 |
+| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 3 | ~~익명 누적 반려율 익명 row 미탐지~~ **해소**. 잔여: 자가 제보/중복 에러코드 모호 |
 | [F15-04](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 3 | 임계치 기본값 Java(3/6/10/15) vs DDL(1/3/5/7) 불일치, 단조성 강제 안 함 |
 | [F15-06](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 3 | grant 일괄 부분 성공이 단일 트랜잭션 안 — 부분 성공 의미 모호 |
 | [F15-01](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 2 | 정책 비활성 클럽도 본인 화면 진입 시 summary row 생성 |

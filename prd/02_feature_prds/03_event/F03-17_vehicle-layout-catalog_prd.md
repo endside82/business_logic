@@ -50,7 +50,6 @@
 - 기준 데이터: 두 API 저장소의 `R__seed_reference_data.sql`
 - 주요 검증: `ManageVehicleLayoutGuardTest.java`, `SharedV1SchemaMirrorTest.java`,
   `vehicle-layouts.spec.ts`
-- 2026-09-02 검증: 관리자 API 23건, 관리자 웹 E2E 3건 실패 0
 
 ## 이번 출시 범위가 아닌 것
 

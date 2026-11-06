@@ -84,7 +84,7 @@
 - **F04-03 소유권 이전**: 소유권 이전 시 구 오너 활성 구독 즉시 CANCELLED + `autoRenew=false`. 신 오너 구독 자동 생성 없음. `club.subscriptionExpiresAt` 폴백으로 기간 내 혜택 유지.
 - **외부**: PG 직접 결제 미연동. 모든 결제는 ClubFund/지갑 잔액에서. (스펙 SCR-CF-005에는 "신용/체크카드", "간편결제(카카오페이)" 옵션이 있으나 서버 미구현 — `(서버 미연동)`)
 
-### processAutoRenewals owner-mismatch 가드 (5f70d1b, 2026-06-04)
+### processAutoRenewals owner-mismatch 가드 (2026-06-04)
 
 소스: `ClubSubscriptionService.java:210-234`
 
@@ -194,12 +194,12 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| **해소** | dossier §4-E / 5f70d1b (2026-06-04) | **소유권 이전 시 구 오너 구독 처리** — `ClubService.transferOwnership`에서 구 오너 활성 구독 즉시 CANCELLED + autoRenew=false. processAutoRenewals owner-mismatch stale row 가드 추가. **구현 완료** (5f70d1b, 2026-06-04) | 완료 |
+| **해소** | dossier §4-E (2026-06-04) | **소유권 이전 시 구 오너 구독 처리** — `ClubService.transferOwnership`에서 구 오너 활성 구독 즉시 CANCELLED + autoRenew=false. processAutoRenewals owner-mismatch stale row 가드 추가. **구현 완료** (2026-06-04) | 완료 |
 | 후보 | backend.md:136 | **외부 PG 미연동**: PG 직접 결제 미연동. 모든 결제는 ClubFund/지갑 잔액에서. (스펙 SCR-CF-005에는 "신용/체크카드", "간편결제(카카오페이)" 옵션이 있으나 서버 미구현) | Decision Needed: PG 연동 여부 결정 |
 | 후보 | frontend.md:41 | **결제 이력 조회 미확인**: 서버 GET /subscription 응답에 결제 이력 별도 없음 → 클라이언트가 거래 내역(별 Unit) 또는 별도 API로 조립 필요 | 실제 소스 대조 확인 |
 | 후보 | frontend.md:45 | **플랜 변경 차액 처리 미구현**: 월간→연간 변경 시 잔여 월간 환불 없이 풀가격 청구. 클라이언트 안내 필요 | Decision Needed: 차액 처리 정책 결정 |
 | 정보 | G5 (dossier) | **신 오너 구독 없음 + subscriptionExpiresAt 폴백**: 소유권 이전 후 신 오너에게 즉시 구독 안내 화면 없음. 앱 구독 관리 화면은 별도 진입 필요 | 신 오너 대상 구독 안내 UX 추가 검토 |
-| 해소 (2026-06-06) | community_admin_api ManageClubSubscriptionService.java:108-180 (29e6430), api ClubSubscriptionStatus.java:14 | **클럽구독 환불 정합(C3/C4/H1) 해소** — admin 클럽구독 환불이 ① **지갑 부담분(`walletPaidAmount`) 기준 일할 환불**(`walletTransactionId==null`/`walletPaidAmount==0`이면 거부), ② community_api internal 위임(`refunds/by-transaction`)으로 split·lot·매출 역분개 정합, ③ 환불 중 `ClubSubscriptionStatus.REFUNDING` 선점으로 동시 중복 환불·취소 차단(멱등키 resume), ④ C4 잔여 멱등 적용. 과거 admin 전액-paid 직접 입금(split 파괴) 제거. | 없음 |
+| 해소 (2026-06-06) | community_admin_api ManageClubSubscriptionService.java:108-180, api ClubSubscriptionStatus.java:14 | **클럽구독 환불 정합(C3/C4/H1) 해소** — admin 클럽구독 환불이 ① **지갑 부담분(`walletPaidAmount`) 기준 일할 환불**(`walletTransactionId==null`/`walletPaidAmount==0`이면 거부), ② community_api internal 위임(`refunds/by-transaction`)으로 split·lot·매출 역분개 정합, ③ 환불 중 `ClubSubscriptionStatus.REFUNDING` 선점으로 동시 중복 환불·취소 차단(멱등키 resume), ④ C4 잔여 멱등 적용. 과거 admin 전액-paid 직접 입금(split 파괴) 제거. | 없음 |
 
 ## 9. 수용 기준
 

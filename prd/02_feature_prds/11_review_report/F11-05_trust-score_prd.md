@@ -92,7 +92,7 @@
 | `grade` | String | N | BRONZE/SILVER/GOLD/PLATINUM/DIAMOND |
 | `badges` | List | Y | |
 | `breakdown` | Map | Y | 갈래별 점수 |
-| `nextGradeScore` | Double | Y | **신규 (커밋 88feb72)** — 다음 등급 도달 임계. 최고 등급(DIAMOND) 시 null. |
+| `nextGradeScore` | Double | Y | **신규 ** — 다음 등급 도달 임계. 최고 등급(DIAMOND) 시 null. |
 
 소스: `review/vo/TrustScoreVo.java:19-23`
 
@@ -106,7 +106,7 @@
 | 40 ≤ x < 60 | SILVER | 60.0 |
 | 40 미만 | BRONZE | 40.0 |
 
-`determineGrade`와 `determineNextGradeScore` 두 메서드가 동일 임계값을 사용하므로 서버가 단일 출처다. 클라이언트(`trust_score_screen.dart:392-398`, 커밋 b0dc370)는 `score.nextGradeScore` 서버 값을 직접 소비하며 하드코딩이 제거됐다.
+`determineGrade`와 `determineNextGradeScore` 두 메서드가 동일 임계값을 사용하므로 서버가 단일 출처다. 클라이언트(`trust_score_screen.dart:392-398`)는 `score.nextGradeScore` 서버 값을 직접 소비하며 하드코딩이 제거됐다.
 
 ### 의존 단위 / 외부 시스템
 
@@ -171,7 +171,7 @@
 
 - 원형 게이지 시작 각도 -135°(`-π·0.75`), 스윕 270°(`π·1.5`) — 클라이언트 페인팅 정책
 - 등급별 색상/아이콘 매핑 (5등급 중 DIAMOND는 클라이언트 매핑 미정 → 폴백)
-- **"다음 등급까지 N점"**: 커밋 b0dc370(2026-06-04)에서 클라이언트 하드코딩 제거. `score.nextGradeScore`(서버 값) 기준으로 전환. `_nextLevelPoints = (nextThreshold - score.trustScore).ceil()`. DIAMOND에서는 null 반환 → 라벨 미노출. (`trust_score_screen.dart:392-398`)
+- **"다음 등급까지 N점"**: 클라이언트 하드코딩 제거(2026-06-04). `score.nextGradeScore`(서버 값) 기준으로 전환. `_nextLevelPoints = (nextThreshold - score.trustScore).ceil()`. DIAMOND에서는 null 반환 → 라벨 미노출. (`trust_score_screen.dart:392-398`)
 - "변동 이력" 섹션은 본인 모드에서만 노출 — 타인 점수는 점수/등급/구성만 노출
 - 기간 셀렉터 옵션 7/30/90일 — UI 정책. 서버는 `days` 1~365 허용
 - 변동 이력 카드의 점수는 항상 "+" 부호로 표시(델타가 아닌 totalScore 그대로)되며 색상은 항상 primary500 — 서버 응답에 delta 필드 없음, totalScore만
@@ -204,7 +204,7 @@
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| CLOSED | 클라이언트 등급 임계 하드코딩 불일치 (GOLD 80, DIAMOND 미노출) | 커밋 b0dc370 (2026-06-04): `trust_score_screen.dart:392-398`에서 서버 `nextGradeScore` 값으로 전환. 클라 하드코딩 제거 완료. | 해소됨. 이제 서버 임계가 단일출처. | — |
+| CLOSED | 클라이언트 등급 임계 하드코딩 불일치 (GOLD 80, DIAMOND 미노출) | (2026-06-04): `trust_score_screen.dart:392-398`에서 서버 `nextGradeScore` 값으로 전환. 클라 하드코딩 제거 완료. | 해소됨. 이제 서버 임계가 단일출처. | — |
 | Info | 등급 경계 PRD 오기 정정 | 기존 문서 "GOLD 80"이 오기. 서버 실제 GOLD 경계는 60+. `TrustScoreService.java:119-125` 기준. | 이 문서를 소비하는 팀에 정확한 임계 전달. | 이미 위 §4 도메인 모델 테이블에 정정 반영됨. |
 | Risk | breakdown 키 매핑 불일치 | 클라 `attendance/review/good_review/hosting/base` vs 서버 `activityScore/verificationScore/penaltyScore/...` | 매핑 안 된 키가 그대로 영문 키 이름으로 노출됨 | 클라 breakdown 키 매핑 서버 응답 키와 정렬 필요 |
 | Risk | `ScoreHistoryController`, `ScoreHistoryService` | UI는 이력을 본인에게만 보이게 하지만 서버는 임의 비차단 `userId`의 history/changeReason을 반환한다. | 민감한 변동 사유가 직접 API 호출로 노출될 수 있음 | owner-only 또는 명시적 공개 범위 정책 결정 후 서버 권한 적용 |

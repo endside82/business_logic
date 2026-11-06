@@ -120,7 +120,7 @@
   - `CLOSED, CANCELED, HIDDEN → {}` (terminal)
 - **Enum** `NotificationType` (Unit 12): `EVENT_UPDATED`, `EVENT_CANCELLED`, `EVENT_ANNOUNCE`, `PAYMENT_FAILED`
   - `EVENT_UPDATED` dataJson 서브타입: `type:"RESCHEDULE"` (AUTO), `type:"RESCHEDULE_PROPOSAL"` (MAJOR 제안, proposalId+batchId 포함), `type:"RESCHEDULE_APPLIED"` (확정 완료, batchId 포함)
-  - `EventNotificationData`에 `proposalId`, `batchId` 필드 추가됨 (RS-002 커밋 86356e5)
+  - `EventNotificationData`에 `proposalId`, `batchId` 필드 추가됨 (RS-002)
 - **Enum** `FailedRefundStatus` (Unit 06): `PENDING`, `RETRY`, `RESOLVED`
 - **Enum** `RescheduleChangeType` (RS-002): `TIME, PLACE, PRICE, MULTI`
 - **Enum** `RescheduleClassification` (RS-002): `AUTO, MAJOR`
@@ -273,7 +273,6 @@
 |---|---|---|---|
 | 후보 | backend.md:152 | - **비즈니스 로직**: `RecurringEventUpdateService#updateFutureEvents` / `RecurringEventCreateService#cancelAllFutureEvents` (서비스 구현 미확인 — 본 단위에서는 진입점만) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:22 | [E2E 보강: seed_event_authoring_surface_test.dart::event_edit_host_surface / ::event_edit_open_lock_notice — 수정 화면 진입 시 "이벤트 수정" 헤더 + 안내 배너 두 줄("수정 시 참여자에게 알림이 발송됩니다", "모집이 시작된 이벤트는 일정과 정원을 변경할 수 없습니다") + "이벤트 제목 *", "카테고리 *" 라벨 노출. 즉 OPEN 상태에서는 일정/정원 필드가 lock 안내와 함께 readonly로 표시.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:172 | > 21차-C P72 가 "F03-04 publish 는 시드 라이프사이클 결정성 약화 위험" 으로 후속 라운드 후보로 명시했던 영역을 22차-B 에서 idempotent via state branching 패턴으로 흡수. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
 

@@ -200,7 +200,7 @@ SLA 스케줄러는 8개 source를 매일 06:00 KST에 독립 격리 스캔하�
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P1 — 부분 해소(2026-06-06, W14 S1) | **dispute 딥링크**: REFUND_DISPUTE_CREATED(92)/UPHELD(93)/OVERTURNED(94)는 앱 라우터에 **배선 완료** — `data.disputeId`→`REFUND_DISPUTE:{id}` caseId 조립→`/me/disputes/:caseId` 상세(앱 enum 3종 등재, community_app `3cb12ac`). **사실 정정**: USER_DISPUTE/CLUB_MEMBERSHIP_ACTION 등은 서버 caseId prefix로만 존재하고 사용자 알림 NotificationType·발송 경로가 없다(`DomainOutboxEventMapper` `case DISPUTE -> unsupported()`, SLA 스캐너는 `OperatorAlertService` 운영자 경보만) — 즉 FCM 알림 자체가 발화되지 않으며 "홈 fall-through 잔존"이 아니라 서버 알림 신설이 선행돼야 하는 영역 | `notification_router.dart`(refund 3종 배선됨) / `DomainOutboxEventMapper`(DISPUTE unsupported) | 해당 분쟁들은 사용자 알림 미발화라 라우팅만으로는 진입 불가 | (선행) 서버 분쟁 사용자 알림 타입·발송 경로 신설 → 이후 `myDisputeDetail`(`/me/disputes/:caseId`) 라우트 연결 |
+| P1 — 부분 해소(2026-06-06) | **dispute 딥링크**: REFUND_DISPUTE_CREATED(92)/UPHELD(93)/OVERTURNED(94)는 앱 라우터에 **배선 완료** — `data.disputeId`→`REFUND_DISPUTE:{id}` caseId 조립→`/me/disputes/:caseId` 상세(앱 enum 3종 등재). **사실 정정**: USER_DISPUTE/CLUB_MEMBERSHIP_ACTION 등은 서버 caseId prefix로만 존재하고 사용자 알림 NotificationType·발송 경로가 없다(`DomainOutboxEventMapper` `case DISPUTE -> unsupported()`, SLA 스캐너는 `OperatorAlertService` 운영자 경보만) — 즉 FCM 알림 자체가 발화되지 않으며 "홈 fall-through 잔존"이 아니라 서버 알림 신설이 선행돼야 하는 영역 | `notification_router.dart`(refund 3종 배선됨) / `DomainOutboxEventMapper`(DISPUTE unsupported) | 해당 분쟁들은 사용자 알림 미발화라 라우팅만으로는 진입 불가 | (선행) 서버 분쟁 사용자 알림 타입·발송 경로 신설 → 이후 `myDisputeDetail`(`/me/disputes/:caseId`) 라우트 연결 |
 | P1 | **canApproveAppeal 공개 endpoint 부재**: `ActorPermissionFlags.canApproveAppeal=true`이지만 호스트/클럽 staff가 appeal을 UPHELD/REJECTED로 전이하는 공개 API 없음. admin API 소유만. | `DisputeAppealService.java`: `withdrawAppeal`만 구현. `approve/reject` 없음 | 호스트 앱에서 이의 승인/거절 액션 불가. UI 버튼만 존재 | appeal 공개 전이 endpoint 추가 또는 admin API 경로 UX 설계 |
 | P2 | **sourceTypeCounts Dart 타입 안전성**: `HostInboxStats.sourceTypeCounts`가 `Map<String, int>`로 역직렬화되어 `HostInboxSourceType` enum key 보장 없음 | `host_inbox_stats.dart` | 잘못된 key 무시됨 | `Map<HostInboxSourceType, int>` 또는 parser 추가 |
 | P2 | **caseId prefix와 DisputeSourceType 비대응**: `DisputeCaseQueryRepository`가 `OPERATIONAL_ISSUE:`, `SETTLEMENT_APPEAL:`, `EVENT_NO_SHOW:` 등 enum에 없는 prefix를 emit. Dart는 `DisputeSourceType.fromWire`로 파싱 실패 시 null | 소스 Javadoc + dossier §2-A | 신규 prefix 추가 시 Dart enum 갱신 필요. 현재는 알려진 21값만 처리 | Dart fallback 처리 또는 서버-클라 prefix 동기화 문서화 |
@@ -248,7 +248,7 @@ Then CLOSED 케이스만 반환된다.
 
 | 분류 | 항목 | 결정/작업 |
 |---|---|---|
-| 구현 | dispute 딥링크 | refund 3종(92/93/94)은 W14 S1 배선 완료. USER_DISPUTE/CLUB_MEMBERSHIP_ACTION은 서버 사용자 알림 타입·발송 경로 부재 — 라우팅에 앞서 서버 알림 신설 선행 필요(`DomainOutboxEventMapper` DISPUTE unsupported) |
+| 구현 | dispute 딥링크 | refund 3종(92/93/94)은 배선 완료. USER_DISPUTE/CLUB_MEMBERSHIP_ACTION은 서버 사용자 알림 타입·발송 경로 부재 — 라우팅에 앞서 서버 알림 신설 선행 필요(`DomainOutboxEventMapper` DISPUTE unsupported) |
 | 구현 | appeal 승인/거절 공개 endpoint | 호스트용 `POST /host/dispute-cases/{caseId}/appeals/{appealId}/approve(reject)` 추가 여부 결정 |
 | 운영 | SLA 알림 수신 경로 | 운영자 대시보드 또는 슬랙 등 알림 수신 채널 명시 필요 |
 | 테스트 | union 정합성 검증 | 실제 emit source(사용자 7종+USER_DISPUTE / 호스트 2종) 각각에 대해 `caseId`, `status` 매핑, visibility 필터 시나리오 테스트 없음 |

@@ -49,7 +49,7 @@
 | START_HERE.md | 사람용 PRD 읽는 법 | 신규 기획자, 개발자, QA, PO | 역할별로 무엇을 먼저 봐야 하는지 |
 | PRD_MIGRATION_STATUS.md | 175개 기능 PRD 문서 상태표 | 문서 운영자, 기능 담당자, QA | 기준 예시·전환본·현재 소스 우선 문서·추적 근거·위험 후보 현황 |
 | SUPPORTING_DOCS_INDEX.md | 보조 PRD 문서 27개 인덱스 | 문서 운영자, PO, QA | 인벤토리/정책/QA/운영 문서의 역할 구분 |
-| 05_planning_artifacts/current_source_update_2026-07-29.md | 현재 소스 실측 노트 | 문서 운영자, 기능 담당자, QA | 기준 커밋, 50개 재실측 기능, UI 미배선·권한·보안 Gap과 검증 결과 |
+| 05_planning_artifacts/current_source_update_2026-07-29.md | 현재 소스 실측 노트 | 문서 운영자, 기능 담당자, QA | 50개 재실측 기능의 UI 미배선·권한·보안 Gap과 실측 원칙 |
 | 00_product_prd.md | 제품 전체 PRD | PO, 신규 기획자, 이해관계자 | 제품 범위, 사용자 유형, 전체 여정, 미결정 항목 |
 | FEATURE_PRD_STANDARD.md | 실사 기반 기능 PRD 작성 표준 | PRD 작성자, 리뷰어 | 현재 소스 우선 작성 절차, 금지 패턴, 품질 체크 |
 | 00_prd_items/ | PRD 작성 가능 항목별 독립 문서 12개 | 신규 기획자, 문서 운영자 | 서비스 개요, persona, 정보구조, 기능 정의, 상태/권한/QA 기준 |

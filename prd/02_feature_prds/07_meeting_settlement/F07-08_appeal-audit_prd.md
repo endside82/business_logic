@@ -193,7 +193,7 @@
 
 ### 통합 분쟁 케이스 union 연결 (Fact)
 
-> **Fact (v3 dispute, 커밋 0eae1ed + 86356e5, 2026-05-29/06-02)**: 본 기능의 `MeetingSettlementAppeal` 이의제기 레코드는 v3 통합 분쟁 케이스 union에서 `SETTLEMENT_APPEAL:{id}` caseId로 노출된다. 소스: `DisputeCaseQueryRepository`, `DisputeLegalHoldService.java`. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
+> **Fact (v3 dispute, 2026-05-29/06-02)**: 본 기능의 `MeetingSettlementAppeal` 이의제기 레코드는 v3 통합 분쟁 케이스 union에서 `SETTLEMENT_APPEAL:{id}` caseId로 노출된다. 소스: `DisputeCaseQueryRepository`, `DisputeLegalHoldService.java`. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
 
 - **조회**: 참가자가 `GET /api/v1/me/dispute-cases?caseType=SETTLEMENT` 또는 `GET /api/v1/me/dispute-cases/{caseId}` 로 `SETTLEMENT_APPEAL:{id}` 케이스 조회 가능 (`DisputeCaseVo` 형태로 반환).
 - **처리(resolution)**: 이의 처리 endpoint는 기존 `PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve` 그대로 유지. 통합 분쟁 경로에서 별도 처리 endpoint 없음.
@@ -201,11 +201,11 @@
 
 ### 7-A. DRAFT 이의 차단 (Fact, 2026-06-05)
 
-> **Fact (D-OPEN-2 해소의 일부, 서버 커밋 426c26d + 앱 커밋 7ba69c0, 2026-06-05)**: 그동안 DRAFT 정산은 **이의제기만 잠기지 않은 유일한 문**이었다 — 결제·확정·재발행·상각은 전부 ACTIVE 전용 가드가 있었지만 appeal 생성은 status 미검사로 접수되고 호스트 알림까지 발생했다. 호스트가 항목을 고치면 이의의 대상 자체가 사라지는데, 처리 안 된 PENDING 이의는 활성화 후 해당 결제를 차단해 장애가 됐다.
+> **Fact (D-OPEN-2 해소의 일부, 2026-06-05)**: 그동안 DRAFT 정산은 **이의제기만 잠기지 않은 유일한 문**이었다 — 결제·확정·재발행·상각은 전부 ACTIVE 전용 가드가 있었지만 appeal 생성은 status 미검사로 접수되고 호스트 알림까지 발생했다. 호스트가 항목을 고치면 이의의 대상 자체가 사라지는데, 처리 안 된 PENDING 이의는 활성화 후 해당 결제를 차단해 장애가 됐다.
 
 - **서버(DEC-V4)**: `MeetingSettlementAppealService` 생성 진입부에 `status == DRAFT → MEETING_SETTLEMENT_NOT_ACTIVE` 가드 — **저장과 호스트 알림 발송 이전에 차단**해 "정산 신청 전 알림 침묵" 원칙을 완성. COMPLETED에서의 이의 허용은 현행 유지(DRAFT만 명시 차단). 운영 DB에 DRAFT 단계 이의 데이터 없음 확인(2026-06-04) — 기존 데이터 영향 0.
-- **앱**: `MySettlementSharesScreen` 이의 버튼을 **3상태 가드**로 변경 — status 확정 + 비DRAFT + 비호스트일 때만 노출. status를 모르는 동안(로딩/에러)은 안전 기본값으로 숨겨, 분담금 목록이 정산 상세보다 먼저 로드될 때 DRAFT 정산에서 버튼이 잠깐 보이는 레이스를 봉합(Codex 7차 MAJOR 반영).
-- 결정·검토 이력 canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V4, Codex 1차 BLOCKER ①).
+- **앱**: `MySettlementSharesScreen` 이의 버튼을 **3상태 가드**로 변경 — status 확정 + 비DRAFT + 비호스트일 때만 노출. status를 모르는 동안(로딩/에러)은 안전 기본값으로 숨겨, 분담금 목록이 정산 상세보다 먼저 로드될 때 DRAFT 정산에서 버튼이 잠깐 보이는 레이스를 봉합.
+- 결정·검토 이력 canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V4).
 
 ## 8. Gap / Risk
 

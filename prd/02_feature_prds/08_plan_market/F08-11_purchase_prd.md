@@ -4,7 +4,7 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
-<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce; unit: business_logic/units/08_plan_market/F08-11_purchase -->
+<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; unit: business_logic/units/08_plan_market/F08-11_purchase -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-11_purchase`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -223,7 +223,7 @@
 | 후보 | frontend.md:83 | - **확인 다이얼로그 노출 여부**: 현재 구현은 별도 사전 확인 시트 없이 즉시 API 호출 (스펙 문서의 "구매 확인 바텀시트"는 미구현 — 향후 일관성 확보 필요) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:94 | - **충전 후 복귀 정책**: 현 구현은 단순 push (충전 화면에서 뒤로 가면 상세로 복귀). 자동 재시도는 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:72 | 4. 클라이언트: 일반 400 핸들러로 폴백 (현 구현은 INSUFFICIENT_BALANCE와 동일하게 다이얼로그를 띄울 가능성 — `_handlePurchaseError`의 badRequest 분기) — 명시적 라벨 미구현 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 해소 (2026-06-06) | MarketPurchaseService.java:53,115,214-222 (커밋 0c9f337) | **구매 동시성 직렬화(H16)** — 동일 유저 동시 구매를 구매자 users-row 비관락(`lockBuyer` → wallet-row보다 먼저 획득, 락 순서 규약 주석)으로 직렬화해 재고(`findForUpdateByItemId`/`findForUpdateByBundleId`)·월 한도·번들 보너스 경합과 paid 보너스 과지급을 차단. 과거 비관락·@Version 부재로 한도 우회 가능하던 결함 해소. | 없음 |
+| 해소 (2026-06-06) | MarketPurchaseService.java:53,115,214-222  | **구매 동시성 직렬화(H16)** — 동일 유저 동시 구매를 구매자 users-row 비관락(`lockBuyer` → wallet-row보다 먼저 획득, 락 순서 규약 주석)으로 직렬화해 재고(`findForUpdateByItemId`/`findForUpdateByBundleId`)·월 한도·번들 보너스 경합과 paid 보너스 과지급을 차단. 과거 비관락·@Version 부재로 한도 우회 가능하던 결함 해소. | 없음 |
 | 해소됨(플랜 직접 구매) | `plan_funding_choice_sheet.dart`, `plan_preview_screen.dart`, `market_plan_detail_screen.dart` | 플랜의 `allowFreePoints/freePointPrice`를 이용한 `PAID/FREE` 선택과 query 전달이 구현됐다. | 없음 |
 | Gap(아이템/번들 Flutter) | `market_api.dart:82`, `market_repository.dart:213` | 서버는 아이템/번들의 fundingMode를 받지만 앱 API/repository/provider는 이를 노출하지 않아 기본 `PAID`만 호출한다. | `currencyType/freePointPrice` 표시·선택·query 배선 필요 |
 | Gap(오류 카피) | `market_item_detail_screen.dart#_handlePurchaseError` | 앱의 일반 409 문구는 “이미 구매한 아이템입니다”지만 서버의 아이템 단건 정책은 재구매를 허용한다. 다른 409가 생기면 잘못된 이유로 안내할 수 있다. | errorCode별 문구로 분기하거나 현재 중복 정책에 맞게 일반 충돌 문구로 교체 |

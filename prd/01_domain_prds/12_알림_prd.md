@@ -132,7 +132,7 @@
   - 토큰 등록/갱신 자체는 화면 없음 — 앱 실행/토큰 변경 시 백그라운드 자동 호출 (`PushNotificationService` 등 외부 단위)
 - **백엔드 엔드포인트** (`DeviceTokenController`, prefix `/api/v1/device-tokens`):
   - `GET /api/v1/device-tokens` — 내 기기 목록 (`List<DeviceTokenVo>`)
-  - `POST /api/v1/device-tokens` — `DeviceTokenParam`(token, deviceType)으로 신규 등록 — 실제 서버 필드는 2개 (Codex 감사 발견)
+  - `POST /api/v1/device-tokens` — `DeviceTokenParam`(token, deviceType)으로 신규 등록 — 실제 서버 필드는 2개 
   - `PUT /api/v1/device-tokens/token` — `DeviceTokenRefreshParam`(oldToken, newToken)으로 토큰 교체
   - `DELETE /api/v1/device-tokens/{deviceId}` — 특정 기기 ID로 삭제 (기기 관리 화면에서 사용)
   - `DELETE /api/v1/device-tokens?token=xxx` — 토큰 문자열로 삭제 (로그아웃 시점에 사용)

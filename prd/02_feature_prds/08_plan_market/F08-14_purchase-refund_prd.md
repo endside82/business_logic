@@ -58,7 +58,7 @@
 4. 강제 환불은 판매자 승인 환불과 동일한 회계 경로를 탄다. 다만 `decision_source = OPERATOR` 메타가 남는다.
 5. 결정은 양측에 알림으로 통지된다. 판매자 측 정산·노출 패널티는 누적되어 별도 정책으로 추적된다.
 
-> **Fact (v3 dispute union, 커밋 86356e5, 2026-06-02)**: `purchase_refund_dispute` 레코드는 v3 통합 분쟁 케이스 view에서 `REFUND_DISPUTE:{id}` caseId로 조회된다. 구매자가 `GET /api/v1/me/dispute-cases?sourceType=REFUND` 로 조회하면 `DisputeCaseVo` 형태로 포함됨. `DisputeLegalHoldService`가 `RefundDisputeStatus(OPEN→OPEN/UPHELD/OVERTURNED→RESOLVED/CLOSED→CLOSED)` 매핑을 통해 legal hold 적용 — active 상태(OPEN)이면 evidence 삭제 차단, 증거 파일 1년 보존 retention 스케줄러 대상. SLA 스케줄러(`DisputeSlaExceededScheduler`) 7일 초과 시 `DISPUTE_SLA_EXCEEDED HIGH` 운영알림 대상. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
+> **Fact (v3 dispute union, 2026-06-02)**: `purchase_refund_dispute` 레코드는 v3 통합 분쟁 케이스 view에서 `REFUND_DISPUTE:{id}` caseId로 조회된다. 구매자가 `GET /api/v1/me/dispute-cases?sourceType=REFUND` 로 조회하면 `DisputeCaseVo` 형태로 포함됨. `DisputeLegalHoldService`가 `RefundDisputeStatus(OPEN→OPEN/UPHELD/OVERTURNED→RESOLVED/CLOSED→CLOSED)` 매핑을 통해 legal hold 적용 — active 상태(OPEN)이면 evidence 삭제 차단, 증거 파일 1년 보존 retention 스케줄러 대상. SLA 스케줄러(`DisputeSlaExceededScheduler`) 7일 초과 시 `DISPUTE_SLA_EXCEEDED HIGH` 운영알림 대상. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
 
 ## 4. 상태 모델
 
@@ -534,10 +534,10 @@ CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
 
 ### 13.1 돈 흐름 무결성 해소 (2026-06-06)
 
-- **이중환불 차단 (C5 해소 — 커밋 1f37cd3)**: 환불 신규 신청 차단 상태 목록(`PURCHASE_REFUND_BLOCKING_STATUSES`, `PurchaseRefundService.java:81-89`)에 `REFUNDED`/`REFUNDED_BY_OPERATOR`(완료된 환불)를 포함해 1구매당 full refund 2회(환불 > 결제액)를 차단. 지갑층 누적환불 가드가 백스톱. 과거 완료 상태가 차단 조건에서 빠져 있던 결함 해소.
-- **환불 split 보존 + 회계-지갑 일치 (H1/H7 해소 — 커밋 2494654)**: 환불이 원결제 PointTransaction을 역참조(`resolveOriginalPointTransactionId` → `WalletRefundService.refundByTransaction`, `PurchaseRefundService.java:190-193`)해 유료/무료 split을 복원하며, 지갑 입금과 원장 환원이 같은 split 기준으로 일치(과거: wallet 전액 paid 입금 vs 원장 free 분리의 불일치) — 분해 컬럼 신설 없이 역참조로 해결.
-- **claw-back 부분회수 (H17 해소 — 커밋 5407508)**: 정산 후 환불의 `MarketplaceSettlementService.offsetCreatorReceivable`이 차기 net < owed인 경우에도 가능한 만큼 부분 회수하도록 변경(과거 `if applied>=owed`로 부분 net이면 REVERSED earning 영구 미회수=플랫폼 손실).
-- **무료분 정산 장부 (H3 해소 — 커밋 b7e384b)**: `MarketplaceSettlementService` 무료 매출 정산(freeCredit 지급)에 원장 분개를 기록(과거 무원장 → USER_WALLET 차변 < 실지급). 자세한 원칙은 [크리에이터 매출 귀속 보정의 유료·무료 분리정산](F08-15_creator-earning-coverage_prd.md#34a-유료무료-분리정산--creatorearning-split)에서 확인한다.
+- **이중환불 차단 (C5 해소)**: 환불 신규 신청 차단 상태 목록(`PURCHASE_REFUND_BLOCKING_STATUSES`, `PurchaseRefundService.java:81-89`)에 `REFUNDED`/`REFUNDED_BY_OPERATOR`(완료된 환불)를 포함해 1구매당 full refund 2회(환불 > 결제액)를 차단. 지갑층 누적환불 가드가 백스톱. 과거 완료 상태가 차단 조건에서 빠져 있던 결함 해소.
+- **환불 split 보존 + 회계-지갑 일치 (H1/H7 해소)**: 환불이 원결제 PointTransaction을 역참조(`resolveOriginalPointTransactionId` → `WalletRefundService.refundByTransaction`, `PurchaseRefundService.java:190-193`)해 유료/무료 split을 복원하며, 지갑 입금과 원장 환원이 같은 split 기준으로 일치(과거: wallet 전액 paid 입금 vs 원장 free 분리의 불일치) — 분해 컬럼 신설 없이 역참조로 해결.
+- **claw-back 부분회수 (H17 해소)**: 정산 후 환불의 `MarketplaceSettlementService.offsetCreatorReceivable`이 차기 net < owed인 경우에도 가능한 만큼 부분 회수하도록 변경(과거 `if applied>=owed`로 부분 net이면 REVERSED earning 영구 미회수=플랫폼 손실).
+- **무료분 정산 장부 (H3 해소)**: `MarketplaceSettlementService` 무료 매출 정산(freeCredit 지급)에 원장 분개를 기록(과거 무원장 → USER_WALLET 차변 < 실지급). 자세한 원칙은 [크리에이터 매출 귀속 보정의 유료·무료 분리정산](F08-15_creator-earning-coverage_prd.md#34a-유료무료-분리정산--creatorearning-split)에서 확인한다.
 
 ## 14. 구현 순서
 

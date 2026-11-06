@@ -101,7 +101,7 @@
 
 | 항목 | 근거 | 우선순위 |
 |---|---|---|
-| Flutter `NotificationType.FAVORITE_PERSON_NEW_EVENT` | 2026-06-06 W14 S1에서 enum 등재와 이벤트 상세 딥링크가 완료됐다. Risk 후보에서 제외한다. | 완료 |
+| Flutter `NotificationType.FAVORITE_PERSON_NEW_EVENT` | 2026-06-06 에서 enum 등재와 이벤트 상세 딥링크가 완료됐다. Risk 후보에서 제외한다. | 완료 |
 | `FavoritePersonCalendarProvider`(개별 뷰) 없음 | `FavoriteCalendarController.getFavoritePersonMonthly` 구현됨, Flutter에 `FavoriteCalendarNotifier`는 집계 뷰만 있고 개별 뷰 Provider·화면 진입 CTA 미구현. | P1 |
 | 타인 프로필 화면 UserClubs 섹션 — 구현 완료 | `userClubsProvider(userId)` + `UserProfileScreen` 가입 클럽 섹션 구현됨(숨김 시 빈 상태 "공개된 가입 클럽이 없습니다." 표시). | 완료 |
 | `isEffectiveFavorite` N+1 성능 | `FavoriteService.java:145-147` — owner별 전체 목록 로드 후 contains. 팔로워가 많은 host 시 성능 저하. | P2 |

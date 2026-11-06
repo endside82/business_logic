@@ -87,7 +87,7 @@
 - 매퍼: `ReviewMapper.updateReviewToVo(Review)` 단일 변환 + `updateReviewToVoWithUserInfo(Review, Map<Long, String[]>)` 닉네임/이미지 채움.
 - 평균 별점·분포·정렬은 본 단위 백엔드에서 계산하지 않는다 (클라이언트 책임).
 
-**ReviewVo 신규 필드** (커밋 0eae1ed/86356e5, 소스: `review/vo/ReviewVo.java:10-27`):
+**ReviewVo 신규 필드** (소스: `review/vo/ReviewVo.java:10-27`):
 
 | 필드 | 타입 | nullable | 비고 |
 |---|---|---|---|

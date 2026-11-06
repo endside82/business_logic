@@ -4,13 +4,13 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
-> 최종 갱신: 2026-06-05 (커밋 `99b755e` 반영 — 익명 표적 제보 방어, dedup_key, 신규 ErrorCode 3종)
+> 최종 갱신: 2026-06-05 (반영 — 익명 표적 제보 방어, dedup_key, 신규 ErrorCode 3종)
 
 ## 1. 결론
 
 경고 제보는 **멤버 제보**(`POST /api/v1/clubs/{clubId}/warnings/reports`)와 **이벤트 호스트 출결 연계 제보**(`POST /api/v1/clubs/{clubId}/events/{eventId}/warning-reports`) 두 경로로 들어온다. 두 경로 모두 `WarningReportService.submit`을 호출하지만 호스트 경로는 `requireAttendanceLinkableActive`로 `attendance_linkable=true` 패널티 유형만 허용하고 `eventId`를 강제한다. 제출 전 검증은 (1) 정책 활성 → (2) 익명 허용 여부 → (3) 자가 제보 차단 → (4) **대상 클럽 멤버 검증** → (5) **eventId 클럽 정합 검증** → (6) **신고자 일일 캡(멤버 20/호스트 100)** → (7) **5분 dedup(실명·익명 분리)** → (8) **dedup_key DB unique race 방어** → (9) 익명 남용 차단(24h/반려율) 순으로 진행되며 통과 시 `SUBMITTED`로 저장된다. 첨부 파일은 `EvidenceFileValidator.validateAndNormalize`로 소유권 검증(최대 5개)한다. 본인 제보 목록은 `List<WarningReportVo>`(Page 아님)로 내려오고, 미처리 제보는 철회(`WITHDRAWN`)할 수 있다. Flutter는 `report_submit_screen.dart`/`host_report_submit_screen.dart`/`my_reports_screen.dart`로 이를 구현했고 응답 VO 필드가 일치한다.
 
-판정: **제출/조회/철회의 화면-API 정합은 닫혀 있다**. (a) 익명 반려율 남용 차단이 익명 row를 못 잡던 구조적 결함은 `anonymous_reporter_id` 기반 count 쿼리로 **해소됨(커밋 `99b755e`, 2026-06-03)**. 잔여 Risk는 (b) 자가 제보가 `WARNING_REPORT_NOT_FOUND`로 매핑되어 사용자가 원인을 분간하기 어려운 점, (c) 호스트 제보 목록이 전체 본인 제보를 메모리 필터하는 점이다.
+판정: **제출/조회/철회의 화면-API 정합은 닫혀 있다**. (a) 익명 반려율 남용 차단이 익명 row를 못 잡던 구조적 결함은 `anonymous_reporter_id` 기반 count 쿼리로 **해소됨(2026-06-03)**. 잔여 Risk는 (b) 자가 제보가 `WARNING_REPORT_NOT_FOUND`로 매핑되어 사용자가 원인을 분간하기 어려운 점, (c) 호스트 제보 목록이 전체 본인 제보를 메모리 필터하는 점이다.
 
 ## 2. 실사 근거
 
@@ -182,7 +182,6 @@ INDEX `idx_warning_report_event`         (`event_id`)
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| ~~P1~~ **해소** | ~~익명 누적 반려율 남용 차단이 익명 row를 못 잡음~~ | 커밋 `99b755e` (2026-06-03): `anonymous_reporter_id` 기반 count 쿼리로 교체 (`WarningReportRepository.java:82-95`) | 해소됨 | — |
 | P2 | 자가 제보가 `WARNING_REPORT_NOT_FOUND`로 매핑 | `submit`에서 self-report 시 NOT_FOUND throw | 사용자가 "왜 막혔는지" 알 수 없음 | 전용 에러코드(예: SELF_REPORT) 또는 메시지 분리 |
 | P2 | 5분 중복 차단 dedup_key에 eventId 미포함 | `raw` 키에 eventId를 의도적으로 제외 (우회 공격 차단 목적) — description도 무관 | 정당한 추가 제보가 5분 내 막힐 수 있으나 설계 의도임 | 정책 문서화 완료 |
 | P2 | `saveAndFlush` unique 위반 판정이 문자열 매칭 의존 | `isDedupKeyViolation`이 MySQL 벤더 메시지 문자열로 `uk_warning_report_dedup` 판정 | MySQL 벤더 메시지 변경 시 다른 위반도 ALREADY_PROCESSED로 삼킬 위험 | 제약명 기반 판정 방식으로 강화 검토 |
@@ -215,7 +214,6 @@ Then 상태가 `WITHDRAWN`이 되고, 이미 APPROVED/REJECTED면 `WARNING_REPOR
 
 | 분류 | 항목 | 결정/작업 |
 |---|---|---|
-| ~~구현~~ **완료** | ~~익명 남용 차단 정확화~~ | 커밋 `99b755e` (2026-06-03) 해소. `anonymous_reporter_id` 기반 count. |
 | UX/정책 | 차단 사유 식별성 | self-report 에러를 사용자가 분간하도록 전용 에러코드/메시지 분리 검토 |
 | 구현 | 내 제보/호스트 제보 목록 | 페이징·event 범위 쿼리 도입 |
 | 구현 | dedup_key unique 판정 | MySQL 벤더 메시지 의존 → 제약명 기반 판정 방식 강화 |

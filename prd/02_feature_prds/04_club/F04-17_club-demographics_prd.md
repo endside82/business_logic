@@ -23,7 +23,7 @@
 
 | 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
 |---|---|---|---|
-| Plan | `community/docs/plan/DEMOGRAPHICS_STATS_PLAN.md` | 있음(v2, Codex sign-off) | 게이트/접근권한/대상 정의 |
+| Plan | `community/docs/plan/DEMOGRAPHICS_STATS_PLAN.md` | 있음(v2) | 게이트/접근권한/대상 정의 |
 | Backend | (신규 — units 미생성, 본 PRD가 임시 origin) | — | 아래 trace 참조 |
 | Frontend | (신규) | — | 아래 trace 참조 |
 

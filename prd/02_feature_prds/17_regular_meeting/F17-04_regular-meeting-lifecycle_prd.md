@@ -116,7 +116,7 @@ CANCELED → (종료)
 | 락 순서 | meeting → member → payment → wallet (RegularMeetingPaymentService 주석 C9/C10) | 일관 |
 | close afterCommit | `TransactionSynchronizationManager.registerSynchronization(...)` + `tryCreateSettlement` REQUIRES_NEW | orphan 차단 확인됨 |
 | failsafe 스케줄러 | `RegularMeetingSettlementScheduler` 1h 간격, CLOSED 모임 중 정산 미생성 재시도 | 백업 경로 |
-| cancel 락 | `findByIdForUpdate` (Codex BLOCKING 6 해소) | close 정산 스냅샷과 경합 차단 |
+| cancel 락 | `findByIdForUpdate`  | close 정산 스냅샷과 경합 차단 |
 | close FIXED 가드 일관성 | `activeSessionCount == totalSessionCount` + 모든 정션 FINALIZED | finalize 안 끝나면 close 불가 → 정산 후 환불 위험 0 |
 
 ## 8. Gap / Risk

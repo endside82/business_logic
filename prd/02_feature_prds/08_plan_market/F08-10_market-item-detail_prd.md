@@ -4,7 +4,7 @@
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
 
-<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; api HEAD be38d128; app HEAD cb21bce; unit: business_logic/units/08_plan_market/F08-10_market-item-detail -->
+<!-- generated: source-first-unit-sync; source-measured: 2026-07-29; unit: business_logic/units/08_plan_market/F08-10_market-item-detail -->
 
 > 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/08_plan_market/F08-10_market-item-detail`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
@@ -12,7 +12,7 @@
 
 마켓 아이템 한 건의 상세 정보, 리뷰 목록, 연계 번들 옵션을 한 번에 노출하기 위한 다중 GET 엔드포인트 묶음. 사용자는 아이템 정보·리뷰·번들 할인까지 모두 비교한 뒤 구매 결정을 내린다 (구매 자체는 F08-11에서 처리).
 
-**AUTH-08(2026-06-09 커밋 api `eed2867` / app `ee95483`)**: 마켓 아이템 상세 조회 시 **인증된 비소유자(non-owner)** 조회에 한해 `market_item.view_count` 원자 증가. 소유자(크리에이터) 본인 조회와 익명 조회는 카운트 제외. 집계 합산은 크리에이터 대시보드(F08-07 `marketItemViewTotal`)로 환류.
+**AUTH-08(2026-06-09)**: 마켓 아이템 상세 조회 시 **인증된 비소유자(non-owner)** 조회에 한해 `market_item.view_count` 원자 증가. 소유자(크리에이터) 본인 조회와 익명 조회는 카운트 제외. 집계 합산은 크리에이터 대시보드(F08-07 `marketItemViewTotal`)로 환류.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 

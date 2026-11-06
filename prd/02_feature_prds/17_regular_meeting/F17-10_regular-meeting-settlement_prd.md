@@ -131,12 +131,12 @@ netAmount = gross − platformFee − withholdingTax
 | 산식 flow-through | retained = orig.paid - refund.paid (PAID + REFUNDED 둘 다 순회) | 확정 |
 | `freePointSubsidy` 분리 | retainedFree 가 별도 컬럼 | 호스트 payout 비대상 |
 | 멱등 보장 | `uk_settlement_rm` + `existsByRegularMeetingId` + `existsByReferenceTypeAndReferenceId("SETTLEMENT", id)` | 3중 보장 |
-| afterCommit 분리 | `TransactionSynchronization` + REQUIRES_NEW | orphan 차단 (Codex BLOCKING 1) |
+| afterCommit 분리 | `TransactionSynchronization` + REQUIRES_NEW | orphan 차단  |
 | fail-closed | tx 누락시 throw → failsafe 재시도 | 데이터 무결성 보호 |
 | CLOSED 가드 | scheduler 진입 시 `meeting.status != CLOSED` → skip | scheduler 우회 방지 |
 | reservedRefund 게이트 | `completeSettlement` 내부에 `reservedRefund.signum() > 0` → `return false` retry 보류 | 미정리 환불 있을 때 지급 안 됨 |
 | Settlement 단일 컬럼 either-or | DDL `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))` | event Settlement vs RM Settlement 양립 불가 |
-| `WalletQueryService.toSettlementDetailVo` + `AccountDeactivationService.loadEventTitles` | RM 행 이벤트뷰 NPE 방지 — null 필터 + RM 분기 (Codex BLOCKING 3) | 안전 |
+| `WalletQueryService.toSettlementDetailVo` + `AccountDeactivationService.loadEventTitles` | RM 행 이벤트뷰 NPE 방지 — null 필터 + RM 분기  | 안전 |
 
 ## 8. Gap / Risk
 

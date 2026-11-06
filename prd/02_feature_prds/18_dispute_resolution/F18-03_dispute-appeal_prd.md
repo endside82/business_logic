@@ -5,13 +5,13 @@
 
 
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
-<!-- 갱신: 2026-06-06 (W14-S2 `07bdb38`): EVENT_NO_SHOW source 사전검증 추가 — createAppeal이 save 전 기한(confirmedAt+7일)·본인·canonical caseId를 검증하고 실패를 전파(과거 검증 실패를 삼키고 201 반환하던 BLOCKER 해소) -->
+<!-- 갱신: 2026-06-06 (`07bdb38`): EVENT_NO_SHOW source 사전검증 추가 — createAppeal이 save 전 기한(confirmedAt+7일)·본인·canonical caseId를 검증하고 실패를 전파(과거 검증 실패를 삼키고 201 반환하던 BLOCKER 해소) -->
 
 ## 1. 결론
 
 `DisputeAppeal`은 `dispute_appeal` 테이블에 저장되는 통합 이의제기 side-table이다. 사용자는 `POST /api/v1/me/dispute-cases/{caseId}/appeals`로 이의를 제기하고, `UNIQUE(case_id, appellant_user_id)` 제약으로 케이스당 본인 이의 1건이 보장된다. 이의 상태는 `PENDING` → `UPHELD`/`REJECTED` 전이는 admin API가 소유하며, 공개 API에서는 `POST .../withdraw`로 PENDING→CLOSED(철회) 전이만 가능하다.
 
-이의제기 시 `DisputeAppealService.createAppeal`(:104-152)은 **대부분의 prefix에 대해 케이스 존재/가시성 검증 없이 `dispute_appeal` insert**를 수행한다. 사전 가시성 검증은 `CLUB_MEMBERSHIP_ACTION` prefix(`DisputeAppealService.java:119-127` — 영향받은 멤버 본인 여부 확인)와 `EVENT_NO_SHOW` prefix(W14-S2 추가)에 한해서만 수행되며, 나머지 prefix는 audit-only로 검증 없음이다. **`EVENT_NO_SHOW` source는 2026-06-06(W14-S2)부터 `dispute_appeal` insert(save) 이전에 사전검증을 수행한다** — `EventNoShowService.validateAppealable`을 공유해 ① noShowId 존재, ② 본인(row.userId), ③ 소명 기한(`confirmedAt + 7일`) 이내, ④ canonical caseId(`EVENT_NO_SHOW:{noShowId}`) 일치를 확인하고, 실패하면 그대로 전파해 appeal을 만들지 않는다(과거: 검증 실패를 삼키고 201을 반환하던 BLOCKER — Codex 적발·해소). 검증 통과 후 `EventNoShowService#appeal` sync로 노쇼 status를 APPEALED로 전이한다. `EVENT_NO_SHOW` 외 prefix는 **audit-only**다(`dispute_appeal` insert만 발생하고 원본 도메인 status는 변경되지 않음).
+이의제기 시 `DisputeAppealService.createAppeal`(:104-152)은 **대부분의 prefix에 대해 케이스 존재/가시성 검증 없이 `dispute_appeal` insert**를 수행한다. 사전 가시성 검증은 `CLUB_MEMBERSHIP_ACTION` prefix(`DisputeAppealService.java:119-127` — 영향받은 멤버 본인 여부 확인)와 `EVENT_NO_SHOW` prefix(추가)에 한해서만 수행되며, 나머지 prefix는 audit-only로 검증 없음이다. **`EVENT_NO_SHOW` source는 2026-06-06부터 `dispute_appeal` insert(save) 이전에 사전검증을 수행한다** — `EventNoShowService.validateAppealable`을 공유해 ① noShowId 존재, ② 본인(row.userId), ③ 소명 기한(`confirmedAt + 7일`) 이내, ④ canonical caseId(`EVENT_NO_SHOW:{noShowId}`) 일치를 확인하고, 실패하면 그대로 전파해 appeal을 만들지 않는다(과거에는 검증 실패를 삼키고 201을 반환했다). 검증 통과 후 `EventNoShowService#appeal` sync로 노쇼 status를 APPEALED로 전이한다. `EVENT_NO_SHOW` 외 prefix는 **audit-only**다(`dispute_appeal` insert만 발생하고 원본 도메인 status는 변경되지 않음).
 
 `DisputeAppealStatus.isClosed()` 판단은 `this != PENDING`으로 정의된다(`DisputeAppealStatus.java:17`). UPHELD/REJECTED/CLOSED 모두 종결이며, PENDING 상태에서만 철회가 가능하다.
 
@@ -44,7 +44,7 @@
 5. 서버 `DisputeAppealService.createAppeal(caseId, userId, param)`:
    - sourceType dispatcher: caseId prefix 파싱.
      - `CLUB_MEMBERSHIP_ACTION` prefix → 사전 가시성 검증(영향받은 멤버 본인 여부, 비본인 403).
-     - `EVENT_NO_SHOW` prefix → **insert 이전 사전검증(W14-S2)**: `validateAppealable`로 noShowId 존재·본인·기한(`confirmedAt+7일`)·canonical caseId 일치 확인. 실패 시 전파(appeal 미생성). 통과 시 `EventNoShowService#appeal`로 노쇼 status를 APPEALED로 전이.
+     - `EVENT_NO_SHOW` prefix → **insert 이전 사전검증**: `validateAppealable`로 noShowId 존재·본인·기한(`confirmedAt+7일`)·canonical caseId 일치 확인. 실패 시 전파(appeal 미생성). 통과 시 `EventNoShowService#appeal`로 노쇼 status를 APPEALED로 전이.
      - 나머지 prefix → audit-only (검증 없이 insert만).
    - `UNIQUE(case_id, appellant_user_id)` 위반 → 409.
    - `DisputeAppeal` insert, status=PENDING.
@@ -160,7 +160,7 @@ REJECTED
 | 조건 | 동작 | 소스 |
 |---|---|---|
 | `caseId` prefix = `CLUB_MEMBERSHIP_ACTION` | 사전 가시성 검증: 영향받은 멤버 본인(action.userId == appellant) 여부 확인. 비본인 → 403 | `DisputeAppealService.java:119-127` |
-| `caseId` prefix = `EVENT_NO_SHOW` | **사전검증(W14-S2, `07bdb38`)**: insert 이전에 `validateAppealable`로 noShowId 존재·본인·기한(`confirmedAt+7일`, 초과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 409)·canonical caseId(`EVENT_NO_SHOW:{noShowId}`) 일치 확인 → 실패 시 전파(appeal 미생성). 통과 후 `EventNoShowService#appeal`로 노쇼 status APPEALED 전이 | `DisputeAppealService.java`(W14-S2) |
+| `caseId` prefix = `EVENT_NO_SHOW` | **사전검증(`07bdb38`)**: insert 이전에 `validateAppealable`로 noShowId 존재·본인·기한(`confirmedAt+7일`, 초과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 409)·canonical caseId(`EVENT_NO_SHOW:{noShowId}`) 일치 확인 → 실패 시 전파(appeal 미생성). 통과 후 `EventNoShowService#appeal`로 노쇼 status APPEALED 전이 | `DisputeAppealService.java` |
 | 나머지 모든 prefix | audit-only: 케이스 존재/가시성 검증 없이 `dispute_appeal` insert만. 원본 도메인 status 변경 없음 | `DisputeAppealService.java:163-164` |
 
 ## 5. 프론트 계약
@@ -195,8 +195,8 @@ REJECTED
 | UPHELD/REJECTED 이의 철회 시도 | `isClosed()=true` → 409 | `canWithdraw=false` → 버튼 숨김 | 철회 불가 | 일치 |
 | 비본인 철회 시도 | 403 | — | 에러 toast | 일치 |
 | 비PENDING 철회 시도 | 409 CONFLICT | `canWithdraw=false` | 차단됨 | 일치 |
-| `EVENT_NO_SHOW` 이의 (기한 내·본인) | 사전검증 통과 → `EventNoShowVo.status=APPEALED` | `NoShowStatus.APPEALED` 반영 | 노쇼 화면에서 APPEALED 표시 | 일치(W14-S2 사전검증) |
-| `EVENT_NO_SHOW` 이의 (기한 초과/타인/없는 noShowId) | `validateAppealable` 실패 전파 → appeal 미생성 (409/403/404) | 에러 toast | 소명 불가 | 일치(W14-S2 — 과거 201로 삼키던 BLOCKER 해소) |
+| `EVENT_NO_SHOW` 이의 (기한 내·본인) | 사전검증 통과 → `EventNoShowVo.status=APPEALED` | `NoShowStatus.APPEALED` 반영 | 노쇼 화면에서 APPEALED 표시 | 일치(사전검증) |
+| `EVENT_NO_SHOW` 이의 (기한 초과/타인/없는 noShowId) | `validateAppealable` 실패 전파 → appeal 미생성 (409/403/404) | 에러 toast | 소명 불가 | 일치(— 과거 201로 삼키던 BLOCKER 해소) |
 | EVENT_NO_SHOW 외 prefix 이의 | audit-only — 원본 도메인 status 불변 | appeal 배지 표시만 | 원본 케이스 변화 없음 | Gap(의도적) |
 | admin 인용/기각 | UPHELD/REJECTED — admin API | `AppealStatus.UPHELD/REJECTED` 배지 | 결과 표시 | 일치(read-only) |
 
@@ -216,9 +216,9 @@ REJECTED
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
 | P1 | **appeal 승인/거절 공개 API 부재**: `canApproveAppeal=true` flag 있으나 `DisputeAppealService`에 `approve/reject` 메서드 없음. admin API 소유. | `DisputeAppealService.java`: `withdrawAppeal`만 구현 | 호스트 앱에서 이의 결과 처리 불가. UI flag만 존재 | 호스트용 공개 전이 endpoint 추가 또는 admin API 접근 UX 설계 |
-| P1 | **audit-only prefix 가시성 검증 없음**: `createAppeal`은 `CLUB_MEMBERSHIP_ACTION`·`EVENT_NO_SHOW`(W14-S2) 외 prefix에 대해 케이스 존재/본인 가시성 검증 없이 `dispute_appeal` insert. 제3자가 임의 caseId로 appeal row를 만들 수 있음. | `DisputeAppealService.java` — CLUB_MEMBERSHIP_ACTION·EVENT_NO_SHOW만 가시성/사전검증, 나머지 audit-only | 비관련 당사자의 이의 insert 가능. 현재 UNIQUE(case_id, appellant_user_id) 제약이 1차 방어이나 case 가시성 보장은 없음(EVENT_NO_SHOW는 해소) | audit-only prefix에 대해서도 case 조회 가능 여부 선검증 추가 검토 |
+| P1 | **audit-only prefix 가시성 검증 없음**: `createAppeal`은 `CLUB_MEMBERSHIP_ACTION`·`EVENT_NO_SHOW` 외 prefix에 대해 케이스 존재/본인 가시성 검증 없이 `dispute_appeal` insert. 제3자가 임의 caseId로 appeal row를 만들 수 있음. | `DisputeAppealService.java` — CLUB_MEMBERSHIP_ACTION·EVENT_NO_SHOW만 가시성/사전검증, 나머지 audit-only | 비관련 당사자의 이의 insert 가능. 현재 UNIQUE(case_id, appellant_user_id) 제약이 1차 방어이나 case 가시성 보장은 없음(EVENT_NO_SHOW는 해소) | audit-only prefix에 대해서도 case 조회 가능 여부 선검증 추가 검토 |
 | P2 | **audit-only dispatcher**: EVENT_NO_SHOW 제외 모든 prefix는 이의제기 시 원본 도메인 status가 변경되지 않음. UPHELD/REJECTED 후에도 원본 케이스 status 변경은 admin이 별도로 처리해야 함. | `DisputeAppealService.java:162-164` | appeal 결과가 원본 도메인(예: 정산 이의, 차단 이의)에 자동 반영되지 않음 | 향후 도메인별 sync dispatcher 추가 wave 필요 |
-| ~~P2~~ **EVENT_NO_SHOW 해소(W14-S2, `07bdb38`)** | ~~appeal 기한 미구현~~: EVENT_NO_SHOW source는 `confirmedAt + 7일`(D-2 확정) 기한을 `createAppeal` 사전검증에서 적용(초과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 409). 다른 source는 여전히 source별 기한 정책 미결. | `DisputeAppealService.java`(W14-S2), `EventNoShowService.validateAppealable` | EVENT_NO_SHOW 무기한 소명 차단. 그 외 source 기한은 후속. | EVENT_NO_SHOW 완료. 그 외 source별 기한 정책 결정 |
+| ~~P2~~ **EVENT_NO_SHOW 해소** | ~~appeal 기한 미구현~~: EVENT_NO_SHOW source는 `confirmedAt + 7일`(D-2 확정) 기한을 `createAppeal` 사전검증에서 적용(초과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 409). 다른 source는 여전히 source별 기한 정책 미결. | `DisputeAppealService.java`, `EventNoShowService.validateAppealable` | EVENT_NO_SHOW 무기한 소명 차단. 그 외 source 기한은 후속. | EVENT_NO_SHOW 완료. 그 외 source별 기한 정책 결정 |
 | P2 | **TRANSPORT(RS-002 P3-B) id-space**: `DisputeLegalHoldService`가 TRANSPORT prefix를 `reportRepository.findById(id)`로 조회. source row가 report를 전제. `DisputeSourceType.TRANSPORT`와 id-space 충돌 잠재. | `DisputeLegalHoldService.java:148-151` | TRANSPORT caseId로 이의제기 시 legal hold 조회 오류 가능 | TRANSPORT source id 정책 명확화 필요 |
 
 ## 9. 수용 기준
@@ -247,13 +247,13 @@ Given 이의 status가 UPHELD 또는 REJECTED다.
 When 사용자가 철회를 시도한다.
 Then 서버가 409를 반환한다. Flutter는 `canWithdraw=false`이므로 철회 버튼을 표시하지 않는다.
 
-### AC-05. EVENT_NO_SHOW 사전검증 + sync **(W14-S2 갱신)**
+### AC-05. EVENT_NO_SHOW 사전검증 + sync **(갱신)**
 
 Given 케이스 caseId가 canonical `EVENT_NO_SHOW:{noShowId}` 형식이고, 소명자가 본인이며 `confirmedAt + 7일` 이내다.
 When 이의제기를 제출한다.
 Then 사전검증(존재·본인·기한·canonical) 통과 후 `dispute_appeal` insert가 성공하고 `EventNoShow.status`가 APPEALED로 전환된다.
 
-### AC-05-B. EVENT_NO_SHOW 사전검증 실패 차단 **(W14-S2)**
+### AC-05-B. EVENT_NO_SHOW 사전검증 실패 차단 ****
 
 Given caseId의 noShowId가 존재하지 않거나, 소명자가 본인이 아니거나, `confirmedAt + 7일`이 경과했거나, caseId가 canonical 형식과 불일치한다.
 When 이의제기를 제출한다.
@@ -277,6 +277,6 @@ Then `WarningAppeal` 엔티티에 저장되고 `WarningAppealStatus`(SUBMITTED �
 |---|---|---|
 | 구현 | appeal 승인/거절 공개 endpoint | 호스트용 전이 endpoint 설계 및 구현 |
 | 구현 | audit-only source sync dispatcher | 정산 이의, 경고 이의 등 원본 도메인 sync 추가 wave |
-| ~~정책~~ EVENT_NO_SHOW 완료(W14-S2, D-2=7일) / 그 외 후속 | 이의제기 기한 | EVENT_NO_SHOW=`confirmedAt+7일` 적용. 그 외 source별 이의 가능 기한 정의는 후속 |
+| ~~정책~~ EVENT_NO_SHOW 완료(D-2=7일) / 그 외 후속 | 이의제기 기한 | EVENT_NO_SHOW=`confirmedAt+7일` 적용. 그 외 source별 이의 가능 기한 정의는 후속 |
 | 정책 | TRANSPORT source id-space | TRANSPORT caseId가 report.id를 가리키는지 명확화 |
 | 테스트 | best-effort sync 실패 시나리오 | sync 실패해도 appeal insert 유지되는지 검증 |

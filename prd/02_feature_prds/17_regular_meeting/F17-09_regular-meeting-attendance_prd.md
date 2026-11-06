@@ -104,9 +104,9 @@ finalize 는 단일 트랜잭션: 모임 잠금 → 정션 FINALIZED 재확정 �
 
 | 항목 | 확인 기준 | 현재 판단 |
 |---|---|---|
-| endTime 가드 | `endTime != null && endTime ≤ now` (Codex BLOCKING 1 해소) | 미종료 NO_SHOW 조기 발생 차단 |
-| scheduler 기본 OFF | `@Value("${regular-meeting.auto-finalize.enabled:false}")` (Codex BLOCKING 2 해소) | opt-in 강제 |
-| EXCUSED/SESSION_CANCELED 연속 리셋 | `recordExcusedOrCanceled` (Codex BLOCKING 3 해소) | 멤버 귀책 아님이라 consecutive 끊음 |
+| endTime 가드 | `endTime != null && endTime ≤ now`  | 미종료 NO_SHOW 조기 발생 차단 |
+| scheduler 기본 OFF | `@Value("${regular-meeting.auto-finalize.enabled:false}")`  | opt-in 강제 |
+| EXCUSED/SESSION_CANCELED 연속 리셋 | `recordExcusedOrCanceled`  | 멤버 귀책 아님이라 consecutive 끊음 |
 | 권위 테이블 단일 진실 | `regular_meeting_session_attendance` UK | EventCheckIn 은 입력 신호일 뿐 |
 | member_id FK CASCADE 안전 | member_id 는 generated col base 아님 → CASCADE OK | 사전존재 버그 1과 별도 |
 | close 가드 통합 | F17-04 §3.2 가 모든 정션 FINALIZED 요구 | 정산 후 환불 위험 0 (§7 도메인) |

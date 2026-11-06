@@ -102,7 +102,7 @@
 
 ### EVENT_PREPAYMENT 정산 집계 계약 (Fact)
 
-> **Fact (2026-06-04, 커밋 6c5988e)**: 결제 CTA가 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)에서 `EventPrepaymentService.payByWallet`(referenceType=`EVENT_PREPAYMENT`)로 이관된 이후, 정산 집계가 `EVENT_PREPAYMENT` 거래를 포함하도록 4종 메서드가 업데이트되었다. 소스: `PointTransactionQueryRepositoryDataJpaTest.java:41-185` (배포 게이트 테스트).
+> **Fact (2026-06-04)**: 결제 CTA가 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)에서 `EventPrepaymentService.payByWallet`(referenceType=`EVENT_PREPAYMENT`)로 이관된 이후, 정산 집계가 `EVENT_PREPAYMENT` 거래를 포함하도록 4종 메서드가 업데이트되었다. 소스: `PointTransactionQueryRepositoryDataJpaTest.java:41-185` (배포 게이트 테스트).
 
 | 메서드 | 계약 |
 |---|---|

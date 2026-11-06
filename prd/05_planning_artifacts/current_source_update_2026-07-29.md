@@ -1,4 +1,4 @@
-# 2026-07-29 현재 소스 실측 갱신 노트
+# 현재 소스 실측 노트 (2026-07-29 기준 Gap/Risk)
 
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
@@ -16,23 +16,6 @@
 > 만들지 않고 기존 21개 도메인·175개 기능 체계 안에서 사실, UI 도달성, 권한, 상태 전이,
 > Gap/Risk를 교정한다.
 
-## 1. 기준점
-
-| 저장소 | 실측 기준 | 기준 시각/설명 |
-| --- | --- | --- |
-| `business_logic` | `58d160d434e0` | 2026-07-08 문서 동기화 커밋을 갱신 전 기준선으로 사용 |
-| `community_api` | `be38d128b80d` | 2026-07-27 제공자 이행 통계·계약 정리까지 포함 |
-| `community_app` | `cb21bce8ef08` | 2026-07-27 제공자 통계·가용성 고지까지 포함 |
-| `community-realtime` | `2d9215e56781` | `/community-chat` 분리 namespace와 차단 퇴장 동작 확인 |
-| `community_admin_api` | `e507ab96a9fe` | 제공자 심사 큐·서류 presign·상품 운영 endpoint 확인 |
-
-`community_app`에는 작업 시작 전부터 플랜 renderer/screen/test/golden 관련 변경이 있었고,
-동기화 중 `community_api`와 `community_app`의 플랜 소스·테스트·SQL 문서에도 병렬 작업 변경이
-추가됐다. 두 소스 worktree는 문서 실측의 읽기 입력으로만 사용했고 이 작업에서
-수정·format·restore하지 않았다. F08 문서는 위 HEAD 기준과 최종 통합 시점의 dirty worktree를
-다시 대조해, 커밋 기준 사실과 미커밋 TABLE canonical validator/dual-read·조판 변경의 경계를
-명시한다.
-
 ## 2. 실측 원칙
 
 1. 서버 Controller의 실제 path/method/param/response를 먼저 읽고 Service, DTO/VO, enum,
@@ -47,56 +30,6 @@
 6. `units/**`는 `business_logic/.gitignore`의 `/*/` 규칙 때문에 Git 추적 대상은 아니지만,
    기존 PRD가 링크하는 로컬 원천 자료다. 이번에 교정한 tracked PRD/HTML과 모순하지 않도록
    해당 feature의 backend/frontend/scenarios/diagrams와 overview도 파일시스템 기준으로 역동기화한다.
-
-## 3. 반영 범위
-
-기능 수는 바꾸지 않았다. 아래 50개 기능의 PRD와 HTML, 15개 도메인 요약, 공통 정책을
-현재 소스로 다시 대조했다.
-
-| 묶음 | 기능 | 실측해 반영한 현재 계약 |
-| --- | --- | --- |
-| 인증·관심 태그 | F01-07 | 태그명 교집합, 사람 추천 `COMMON_GROUND`, 양쪽 동의가 있을 때만 쓰는 데이팅 Jaccard와 weight 소비 범위를 분리 |
-| 홈·검색 | F02-01, F05-01, F05-04 | 인증 사용자 사람 추천 섹션, 공유 맥락 안의 사람 검색, `Page<PersonSearchVo>`, `hideFromSearch`, 중복 제거 검색 기록을 실제 caller까지 확인 |
-| 이벤트 운영 | F03-02, F03-07 | 상태별 상세 body와 capability, clone/delete 계약, 기본 정원 폼, 마감/재개·고급 초과정원 미배선, 수동 승급 상한 우회를 반영 |
-| 선입금·이동수단 | F03-13~17 | 논리 capacity hold와 환불 권한·취소 Gap, transport 2/carpool 7/bus 4/user layout 2/Admin layout 6 API를 재작성. Flutter는 WALLET 결제 CTA만 연결되고 BANK·교통 운영은 미배선이며, 카풀 신고 API/screen/route는 있지만 인앱 caller가 없다. 무시드·String seat type도 반영 |
-| 일정 변경·노쇼 | F03-19, F03-20 | MAJOR proposal의 48시간 응답, late response rollback, DECLINED 취소 best-effort, no-show party owner/7일/정정 체크인, 환불 계약·보안 후보를 교정 |
-| 클럽 | F04-02, F04-09 | 멤버 전용 k-익명성 fit preview, 댓글/답글/멘션 검증, 알림 우선순위와 댓글 딥링크를 현재 구현으로 교정 |
-| 모임 정산 | F07-05, F07-06 | 혼합결제의 `BANK_AWAITING_CONFIRM` 2단계, 수취인/정산 생성자 확인, 수기 신뢰 기반 은행분 확인과 완료 전이를 반영 |
-| 플랜·마켓 | F08-02/03/04/05/10/11 | preview/detail/body 권한 분리, block tree revision·직렬 queue·서버 cycle/depth 검증, 미디어 projection, 발행·구매의 무료 포인트 금액 계약을 교정. 병렬 dirty 작업본의 known block 20종/picker 18종·pattern 12종과 TABLE canonical rows validator·legacy dual-read도 별도 경계로 반영 |
-| 데이팅 | F09-02, F09-03, F09-06 | community-data 양쪽 동의, 동의 철회 시 재계산, profile/candidate/meeting feedback의 실제 소비 경계를 반영 |
-| 리뷰·신뢰·핏 | F11-01, F11-05, F11-06 | 선택형 이벤트 피드백, `VibeTag` 8값, 받은 선택 비노출, 이벤트 피드백 기반 taste rebuild, 행동 근사 style과 trait privacy를 반영 |
-| 알림 | F12-04 | 요일 필터, 자정 넘김의 시작 요일, `start==end` 하루 전체 차단, 앱의 0요일 저장 차단과 서버 empty 정규화를 반영 |
-| 프로필·개인정보 | F13-01/04/05/06, F19-03 | 만난 사람/trait 진입, 태그 downstream 소비, 비동기 export presign·schema, 삭제 전 금융 gate·보존, `hideFromStrangers`와 `hideFromSearch` 의미를 분리 |
-| 위치·길찾기 | F14-01~06 | 실시간 공유의 실제 timer/권한/데이터 노출, 즉시 opt-out, 연장 scheduler, raw access log, 외부 지도 fallback, geocode/reverse-geocode caller를 교정 |
-| 정기모임 | F17-03, F17-05 | 생성 enum/기본값 계약, FIXED·VARIABLE 가격 단위, 단건/자동생성 UI와 bulk/replace 미배선을 반영 |
-| 관심인 정책 | F19-03 | 무료 토글 2종과 premium 토글 2종, 프로필 직접 열람과 검색·추천 후보 제외의 차이를 반영 |
-| 제공자 마켓 | F21-01~07 | 공개 프로필·상품·심사, versioned terms, fee snapshot, fulfillment gate, 환불/회수, 계약금, 정기 회차 복제/재수락 계약을 API·App·Admin에서 확인 |
-
-tracked 반영 영역은 다음과 같다.
-
-- `prd/01_domain_prds/`: 01, 02, 03, 04, 05, 07, 08, 09, 11, 12, 13, 14, 17, 19, 21
-  (06은 선입금 환불의 폐기 executor 경로를 바로잡고, 15는 catalog Trace/Risk 롤업을
-  교정하는 교차 갱신 추가)
-- `prd/02_feature_prds/`: 위 표의 50개 기능 전체 재실측 + F03-05, F03-06, F03-08,
-  F06-06, F08-14, F17-01, F17-02의 논리 hold·이동 source trace·현행 라벨 교차 갱신 7건
-- `prd/03_policy_prds/`: permission, privacy/safety, notification, payment/settlement, state,
-  planning QA
-- `docs/domains/`: 위 15개 도메인
-- `docs/features/`: 위 50개 기능 + F03-08 현행 라벨 교정 1건
-- `docs/policies/`: permission, privacy, notification, payment, state
-- `docs/assets/features.js`: 위 50개 기능의 현재 실측 표식과 핵심 점검 항목
-- `planner_onboarding/`: 제품 전체 21개 도메인·175개 기능과 unit-backed
-  14개 도메인·117개 기능·1011개 시나리오 부분집합의 경계를 명시
-- 기능 metadata 재검산으로 F03/F04/F08/F17/F19/F21의 시나리오 수를 바로잡고, 현재 허브·제품·QA·카탈로그의
-  총 시나리오 1275개와 Risk 후보 598개를 같은 값으로 동기화했다. 과거 changelog/2026-07-08
-  갱신 노트의 당시 1218개 수치는 역사 기록으로 보존했다.
-
-Git에서 ignore되는 canonical 원천은 33개 feature 디렉터리의
-`backend/frontend/scenarios/diagrams.md` 132개와 관련 도메인 `00_overview.md` 12개,
-총 144개 파일을 같은 사실로 역동기화했다. 전역 source-path 검사에서 찾은 F06-06의 이동된
-`RefundPolicyService` package trace와 F06-10의 이동된 `settlement_status.dart` trace도
-별도 unit 문서에서 교정해, ignore 영역의 실제 수정은 146개 파일이다. source-first 운영
-기능에는 새 `units/` 폴더를 만들지 않았다.
 
 ## 4. 확정한 대표 Gap/Risk
 
@@ -205,46 +138,10 @@ Git에서 ignore되는 canonical 원천은 33개 feature 디렉터리의
 - 묶음 취소 API는 없고, `SKIPPED_NOT_READY`는 미납이 아니라 미CONFIRMED/회차 미종료만 뜻한다.
   미수금·terms·fulfillment 실패는 `BLOCKED`로 분류된다.
 
-## 5. 검증
-
-문서만 수정했고 서버·Flutter·Realtime·Admin 소스는 수정하지 않았다.
-
-- 연결성/검색/핏/프로필 묶음: 서버 관련 182 tests, Flutter 관련 64 tests 통과.
-- F04 클럽 상세·댓글 unit 재검증: API 선택 테스트 150개, Flutter 선택 테스트 31개 통과.
-- 제공자 marketplace 묶음: API/App/Admin의 관련 service/controller 테스트 통과.
-- 은행분 확인: `MeetingSettlementTransferServiceTest`,
-  `MeetingSettlementControllerTest`, `MeetingSettlementServiceTest.confirmBankPortion_rejectedWhenDraft`
-  통과; Flutter 관련 provider/card/guidance 17 tests 통과.
-- F03-07 정원·대기열: 관련 서버 54 tests 통과.
-- F03-13~17 결제·이동수단 독립 역검증: 선입금·환불·취소·결제 E2E·카풀·버스
-  6 suites 89 tests 통과. `EnumReservationTest`도 별도 BUILD SUCCESSFUL.
-- F08 최종 dirty 재실측 회귀: API `PlanBlockService`·TABLE rows validator 57 tests,
-  Flutter block editor/renderer/type sheet 관련 6파일 129 tests 통과.
-- F12-04 방해금지: `PushServiceTest`, `NotificationSettingServiceTest` BUILD SUCCESSFUL;
-  Flutter guidance card 3 tests 통과.
-- F13 프로필·내보내기·삭제: API 관련 64 tests, Admin 관련 2 tests,
-  Flutter privacy guidance 3 tests 통과.
-- 전체 스캔은 952개 파일(Markdown 728, HTML 221), Mermaid fence 620개, 상대 링크 3629개,
-  실제 소스 경로 819개를 검사해 오류 0건으로 통과했다. HTML은 `xmllint` 구조 검사도 포함한다.
-- 카탈로그는 175개 고유 ID, 2026-07-29 실측 표식 50개, 시나리오 1275, 도식 552,
-  Trace 565, Risk 후보 598로 재계산했다. 변경 metadata는 50개 ID의
-  `checks/statusDetail/scenarios/risk` 안으로 한정됐고, 마이그레이션 상세표 175행과
-  status/Trace/Risk가 전부 일치한다.
-- unit-backed 117개와 unit 부재 source-first 58개를 분리 검산했다. 전자의 기획자 온보딩
-  부분집합은 시나리오 1011, 도식 508이며, 2026-07-29에 수정된 ignore unit 파일은 146개다.
-- Git에 보이는 산출물은 기존 추적 파일 183개 갱신과 이 노트 1개 신규이며, ignore unit 원천
-  146개까지 합치면 파일시스템 기준 동기화 대상은 330개다.
-- 최종 `git diff --check`와 폐기된 source path·현행 stale 수치 검색을 통과했다.
-  소스 저장소 HEAD는 기준점과 같다. 읽기 입력의 기존 `git status --short` 항목은
-  API 8개(수정 6·미추적 2), App 42개(수정 36·미추적 경로 6)이며 Realtime·Admin은 0개다.
-  App의 미추적 디렉터리를 실제 파일로 펼치면 전체 dirty 파일은 45개다.
-
 ## 6. 유지한 경계
 
 - 기능 ID와 문서 인벤토리 수는 바꾸지 않았다.
 - server/controller에 없는 endpoint, DTO에 없는 field, enum에 없는 값을 만들지 않았다.
 - 현재 `units/`가 없는 source-first 계열 58개 기능(F03-13~20, F04-17/18, F08-14/15,
   F11-07, F15~21의 해당 기능)에 억지로 원천 폴더를 만들지 않았다.
-- 보안/권한/미배선 후보는 문서에만 기록했고 제품 소스를 고치지 않았다.
-- 이전 기준과 배경은 [2026-07-08 현재 소스 갱신 노트](current_source_update_2026-07-08.md)에
-  보존한다.
+- 이전 기준의 계약 사실은 [2026-07-08 현재 소스 계약 노트](current_source_update_2026-07-08.md)에 있다.

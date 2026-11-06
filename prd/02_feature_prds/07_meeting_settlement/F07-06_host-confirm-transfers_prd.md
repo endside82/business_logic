@@ -111,7 +111,7 @@
 
 ### TransferStatus 전체값 (Fact)
 
-> 소스: `payment/meeting/constants/TransferStatus.java` (커밋 985f586, 2026-06-04)
+> 소스: `payment/meeting/constants/TransferStatus.java` (2026-06-04)
 
 | 값 | 의미 |
 |---|---|
@@ -124,7 +124,7 @@
 | `REVERSAL_FAILED` | 역분개 실패 |
 | `PENDING_MANUAL_REFUND` | 역분개 실패 후 수동 환불 대기 (21자 — 동일 varchar(32) 정정 완료) |
 
-> **DDL 정정 (해소 — 985f586, 2026-06-04)**: `meeting_settlement_transfer.status` varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자로 구 스키마에서 strict mode 영속 실패 잠재 버그 해소.
+> **DDL 정정 (해소, 2026-06-04)**: `meeting_settlement_transfer.status` varchar(20) → varchar(32). `BANK_AWAITING_CONFIRM`/`PENDING_MANUAL_REFUND` 모두 21자로 구 스키마에서 strict mode 영속 실패 잠재 버그 해소.
 
 ### 혼합결제 은행분 확인 계약 (Fact, 2026-07-29)
 
@@ -160,7 +160,7 @@
 
 ### limbo SLA 정책 (Fact)
 
-> 소스: `MeetingSettlementExpirationScheduler.java:139-275` (커밋 985f586, 2026-06-04). 이 스케줄러는 05:00 만료 스캔과 별도로 동작한다.
+> 소스: `MeetingSettlementExpirationScheduler.java:139-275` (2026-06-04). 이 스케줄러는 05:00 만료 스캔과 별도로 동작한다.
 
 **대상 상태**: `BANK_AWAITING_CONFIRM`, `PENDING_MANUAL_REFUND` — 실제 돈이 움직였을 수 있는 중간 상태(limbo). 자동 만료 전이 금지(코드 주석 라인 112-122: "자동 EXPIRED 전이는 위험").
 
@@ -183,14 +183,14 @@
 - idempotencyKey: `"SETTLEMENT_TRANSFER_LIMBO:{transferId}:{escalationCount}"`
 - orphan 케이스(BANK_AWAITING_CONFIRM이지만 settlement가 비ACTIVE): 즉시 운영알림, idempotencyKey: `"SETTLEMENT_TRANSFER_LIMBO_ORPHAN:{transferId}"`
 
-**DB 변경 (해소 — 985f586)**:
+**DB 변경 (해소)**:
 - 신규 컬럼: `limbo_escalated_at DATETIME DEFAULT NULL`, `limbo_escalation_count INT NOT NULL DEFAULT 0`
 - 신규 인덱스: `idx_mst_limbo (status, limbo_escalated_at)`
 - 상태 전이 없음: `limboEscalatedAt`/`limboEscalationCount` 갱신만 수행
 
 ### 송금 제안 반올림 + 운영 수동 처리 (2026-06-06 돈 흐름 무결성)
 
-> **Fact (H19 해소 — 커밋 0bfe19e)**: 호스트 일괄 수금 송금 제안(`MeetingSettlementCalculator.suggestHostCollectTransfers`)이 10원 단위로 독립 반올림하면서 송금 채무 합 ≠ share 합이 되던 결함이 수정되어, 제안 송금액 합이 보존된다.
+> **Fact (H19 해소)**: 호스트 일괄 수금 송금 제안(`MeetingSettlementCalculator.suggestHostCollectTransfers`)이 10원 단위로 독립 반올림하면서 송금 채무 합 ≠ share 합이 되던 결함이 수정되어, 제안 송금액 합이 보존된다.
 
 > **Fact (운영 수동 처리 — admin)**: limbo/실패 상태의 운영 복구 경로가 배선되었다. 소스: `community_admin_api ManageMeetingSettlementService.java:53-187`, `ManageMeetingSettlementController`.
 > - **POINT_COMPENSATION 실입금(H12)**: 과거 "보상" 라벨인데 실 입금이 0이던 결함을 정정 — admin `resolveManualRefund(method=POINT_COMPENSATION)`이 수취자에게 실제 포인트를 입금(referenceType `MEETING_SETTLEMENT_POINT_COMPENSATION`, 멱등키 `MEETING_SETTLEMENT_POINT_COMPENSATION:{transferId}`).
@@ -330,8 +330,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 해소 | V1__init.sql:3002 | `meeting_settlement_transfer.status` varchar(20) — `BANK_AWAITING_CONFIRM`(21자)/`PENDING_MANUAL_REFUND`(21자) strict mode 영속 실패 잠재 버그 | **해소** — 985f586 (2026-06-04): varchar(32) 정정 완료 |
-| 해소 | MeetingSettlementExpirationScheduler 없음 | limbo 상태(BANK_AWAITING_CONFIRM/PENDING_MANUAL_REFUND) 장기 방치 시 자동 알림·운영 에스컬레이션 없음 | **해소** — 985f586 (2026-06-04): 05:10 cron + ShedLock + 3일 SLA + 2회 이상 미해소 시 SETTLEMENT_TRANSFER_LIMBO HIGH 운영알림 구현 |
+| 해소 | V1__init.sql:3002 | `meeting_settlement_transfer.status` varchar(20) — `BANK_AWAITING_CONFIRM`(21자)/`PENDING_MANUAL_REFUND`(21자) strict mode 영속 실패 잠재 버그 | **해소** (2026-06-04): varchar(32) 정정 완료 |
+| 해소 | MeetingSettlementExpirationScheduler 없음 | limbo 상태(BANK_AWAITING_CONFIRM/PENDING_MANUAL_REFUND) 장기 방치 시 자동 알림·운영 에스컬레이션 없음 | **해소** (2026-06-04): 05:10 cron + ShedLock + 3일 SLA + 2회 이상 미해소 시 SETTLEMENT_TRANSFER_LIMBO HIGH 운영알림 구현 |
 | Risk | `MeetingSettlementExpirationScheduler.java:120-122` | `BANK_AWAITING_CONFIRM` 첫 발송 앵커가 전용 진입 컬럼 없이 `createdAt` 폴백 사용. 결제가 transfer 생성보다 늦으면 첫 알림이 다소 이르게 발화 가능 (무해하나 인지 필요) | 인지 필요 — 영향 없음 |
 | 해소 (2026-07-29 재확인) | `community_app/.../transfer_status.dart` | 서버 `BANK_AWAITING_CONFIRM`·`SUPERSEDED`를 Flutter enum과 badge/switch가 소비 | 현 enum 동기화 유지 |
 | Risk (2026-07-29 실측) | Controller `confirmTransferBankPortion` | URL의 `eventId`는 Controller가 받지만 service 호출에는 전달하지 않는다. 실제 대상·권한은 `transferId → settlementId`로만 결정되어 URL event context 불일치를 검증하지 않음 | service에 eventId를 전달해 transfer의 settlement event와 일치 검증하거나 공통 scope validator 적용 |
@@ -340,7 +340,7 @@
 | Risk (2026-07-29 실측) | `bulkConfirmBankTransfers` self-invocation | 응답은 건별 성공/실패를 집계하지만 주석과 달리 건별 service transaction이 생성되지 않아 한 건 내부 원자성이 불명확 | 명시적 건별 transaction 경계 도입 + 후반 side-effect 실패 회귀 테스트 |
 | Gap (2026-07-29 실측) | `_notifyUnpaid` | 실제 알림 호출 없이 성공 토스트만 표시 | 실제 remind API에 연결하거나 버튼/성공 문구 제거 |
 | Gap (2026-07-29 실측) | `_TransferSummaryStats`, `canConfirmBank`, `_TransferBottomActions` | 대기 합계가 BANK_AWAITING_CONFIRM 제외, 일반 BANK 수취자 CTA 누락, 완료 후 하단 액션 잔존 가능 | 서버 권한·상태와 표시식을 동기화 |
-| 해소 (2026-06-06) | MeetingSettlementCalculator.suggestHostCollectTransfers (0bfe19e), ManageMeetingSettlementService.java:53-187 | **송금 제안 반올림 합 보존(H19)·POINT_COMPENSATION 실입금(H12)·BANK_AWAITING admin 전이(H13)·REVERSAL 소진 재처리+경보(MED) 해소** — §4 "송금 제안 반올림 + 운영 수동 처리" 참조. | 없음 |
+| 해소 (2026-06-06) | MeetingSettlementCalculator.suggestHostCollectTransfers, ManageMeetingSettlementService.java:53-187 | **송금 제안 반올림 합 보존(H19)·POINT_COMPENSATION 실입금(H12)·BANK_AWAITING admin 전이(H13)·REVERSAL 소진 재처리+경보(MED) 해소** — §4 "송금 제안 반올림 + 운영 수동 처리" 참조. | 없음 |
 
 ## 9. 수용 기준
 

@@ -22,7 +22,7 @@
 
 | 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
 |---|---|---|---|
-| Plan | `community/docs/plan/DEMOGRAPHICS_STATS_PLAN.md` | 있음(v2, Codex sign-off) | 게이트/접근권한/대상 정의 |
+| Plan | `community/docs/plan/DEMOGRAPHICS_STATS_PLAN.md` | 있음(v2) | 게이트/접근권한/대상 정의 |
 | Backend | (신규 — units 미생성, 본 PRD가 임시 origin) | — | 아래 trace 참조 |
 | Frontend | (신규 — units 미생성, 본 PRD가 임시 origin) | — | 아래 trace 참조 |
 
@@ -148,7 +148,7 @@ otherwise                 → event.hostUserId == userId
 ## 8. Gap / Risk
 
 - ⚠️ **나이대 버킷 경계** — `Period.between` 기준 만나이. 시간대(timezone) 경계일 처리 미세 차이는 `event.timezone` 기반으로 보정. 사용자 거주지 시간대와 다를 수 있음(허용 범위).
-- ⚠️ **APPROVED→ATTENDING 매핑** — `getEvent(eventId, userId)`가 `myAttendanceStatus`에 APPROVED를 ATTENDING으로 표현하는지는 EventService 구현 의존(Codex 확인). 추후 EventService 리팩터 시 정합 재확인.
+- ⚠️ **APPROVED→ATTENDING 매핑** — `getEvent(eventId, userId)`가 `myAttendanceStatus`에 APPROVED를 ATTENDING으로 표현하는지는 EventService 구현 의존. 추후 EventService 리팩터 시 정합 재확인.
 - ⚠️ **UI/UX 스펙 부재** — 본 기능은 `docs/ui-ux/screens/13-event.md`에 명시 없음(net-new). 디자인 토큰만 사용해 일관성 유지.
 
 ## 9. 수용 기준

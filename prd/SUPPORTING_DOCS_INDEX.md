@@ -43,8 +43,8 @@
 | [05_planning_artifacts/notion_import_order.md](05_planning_artifacts/notion_import_order.md) | Notion 업로드 순서 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/ppt_feature_intro_outline_draft.md](05_planning_artifacts/ppt_feature_intro_outline_draft.md) | community 기능 소개 PPT 항목 초안 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/prd_review_workshop.md](05_planning_artifacts/prd_review_workshop.md) | PRD 리뷰 워크숍 가이드 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
-| [05_planning_artifacts/current_source_update_2026-07-29.md](05_planning_artifacts/current_source_update_2026-07-29.md) | 2026-07-29 현재 소스 실측 갱신 노트 | 기준 커밋과 병렬 dirty 입력, 50개 기능의 source/UI 교차 실측, 확정 Gap/Risk, 테스트·문서 검증 결과 |
-| [05_planning_artifacts/current_source_update_2026-07-08.md](05_planning_artifacts/current_source_update_2026-07-08.md) | 2026-07-08 현재 소스 갱신 노트 | 2026-06-24 이후 구현된 게스트 동반 예매·궁합/핏·플랜 에디터·위치/길찾기·커뮤니티 메시지 변경을 기존 175개 기능 체계에 흡수한 기준 |
+| [05_planning_artifacts/current_source_update_2026-07-29.md](05_planning_artifacts/current_source_update_2026-07-29.md) | 현재 소스 실측 노트 (2026-07-29 기준) | 50개 기능의 source/UI 교차 실측 원칙과 확정 Gap/Risk |
+| [05_planning_artifacts/current_source_update_2026-07-08.md](05_planning_artifacts/current_source_update_2026-07-08.md) | 현재 소스 계약 노트 (2026-07-08 기준) | 2026-06-24 이후 구현된 게스트 동반 예매·궁합/핏·플랜 에디터·위치/길찾기·커뮤니티 메시지 변경을 기존 175개 기능 체계에 흡수한 기준 |
 | [../../docs/plan/regular-meeting/README.md](../../docs/plan/regular-meeting/README.md) | 정기모임 구현 계획 (16분할) | GLOSSARY · 16개 분할본(요구/결제·환불/노쇼/예외/Flutter/Phase 등) + NEXT_SESSION을 담은 2026-05-28 설계 배경. 현재 계약은 F17 PRD와 실제 API/App 소스가 우선한다. |
 | [../../community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md](../../community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md) | 정기모임 구현 리포트 | Pre-1 → Phase 1~7 구현 당시의 스냅샷. 현재 endpoint·상태·Flutter 도달성 판단에는 실제 소스를 우선한다. |
 

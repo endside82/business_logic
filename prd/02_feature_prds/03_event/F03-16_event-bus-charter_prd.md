@@ -49,7 +49,6 @@
 - 주요 검증: `EventVehicleServiceTest.java`, `EventVehicleSeatFlowDataJpaTest.java`,
   `EventVehicleLifecycleE2ETest.java`, `EventVehicleSeatOccupantNameTest.java`,
   `vehicle_seat_grid_test.dart`, `vehicle_seat_occupant_name_test.dart`
-- 2026-09-02 이동수단 표적 회귀: 사용자 API 156건·앱 160건 실패 0
 
 ## 출시 전에 남은 일
 
