@@ -1,0 +1,179 @@
+{
+  "date": "2026-11-06",
+  "recordedAt": "2026-11-06T23:49:54+09:00",
+  "scope": "business_logic/docs의 사진 첨부·용도별 관리 규칙과 현황판·출시 현황 갱신. 기존 기능 175개 수는 유지하며 공통 안내 페이지를 연결한다. 전체 기능 재감사나 제품 시험이 아니다.",
+  "baseCommit": "e3abf7220c1f34c96b3817963099d764705f4fc3",
+  "publication": {
+    "updatedAt": "2026-11-06T23:49:11+09:00",
+    "sourceBranch": "main",
+    "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
+    "sourceCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
+    "sourcePath": "docs/plan/NEXT_WORK.md",
+    "sourceSha256": "438812d02bc2ebb60398904f0ad5a644a66847ffee7cef2a08679b8bb4d322f9",
+    "worklistSha256": "7457d03ab29cce6a3261e4f223bbbe2f22a406198ad10fbc908acbd284d668dc",
+    "evidenceSha256": {
+      "docs/development/IMPLEMENTATION_WORKBOARD.md": "c7055cfa5f501a440f92ad684ee058c37a5d214d64a174e494a1471991750f86",
+      "docs/plan/SESSION_LANES.md": "deeba768bb719a25f40f05021390ea0882d8d782deab8b067179e32ac47652d8",
+      "docs/ui-ux/02-navigation.md": "e47f4c569c213f8add53b7524dce7deffcdaca260dc327c613b2b09f7539816b",
+      "community_api/modules.txt": "cf0b3d5330677ce9a92d0abf3f4d88576053a7a37f3c5c7f6b5c31b4795eba64",
+      "community_app/docs/ANDROID_RELEASE.md": "dea8863d70169f66f9eaabe3c8092a3eb1f7ac698af12b2b6172888cc364e904",
+      "community_app/docs/DEPLOYMENT_CHECKLIST.md": "40c044d24c812d6d45c247cdd484aff1b24eebf520da543abdae20870d23fdb7",
+      "community_app/audit/app_quality/PHOTO-INTEGRATION-20261103.json": "c1bc478a4aa2539dddc4d8dd3c6844d92d117bd3cec329c87f7cb78fae188697",
+      "docs/release-gate/evidence/API-ANDROID-RELEASE-20261103.json": "bb58857feacae8a830104624041648aa6b5781c419f0e6b672ca5ce559244abc",
+      "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106.json": "b782eaa618fcce46389e3b7ca650c9b0c2dcef5c9448c26937a88faac8b66dce",
+      "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
+      "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801"
+    },
+    "method": "현재 정본·서버와 앱 소스·플랫폼 배포 기록을 대조했다. sourceCommit은 작업 시작 기준이며 이번 갱신의 정본 내용은 파일 해시로 고정한다. 현재 프로그램 버전은 실제 로컬 main을 직접 읽었고 관리자 API는 공개 저장소와 같은 버전이다. 운영·스토어 재조회, 제품 시험·실기기·배포는 실행하지 않았다.",
+    "regenerate": "python3 scripts/build-work-overview.py --site-only",
+    "check": "python3 scripts/build-work-overview.py --site-only --check --check-source"
+  },
+  "reviewedLocalMain": [
+    {
+      "name": "공개 API",
+      "commit": "1e699d4da"
+    },
+    {
+      "name": "관리자 API",
+      "commit": "1e699d4da"
+    },
+    {
+      "name": "앱",
+      "commit": "40bc1e375"
+    },
+    {
+      "name": "관리자 웹",
+      "commit": "fcd915ad6"
+    },
+    {
+      "name": "실시간",
+      "commit": "4faf491b2"
+    }
+  ],
+  "changes": [
+    "공지·모임·반복 모임·상품 설명과 게시글의 사진 용도·최대 장수·순서·실패·초안·복구 규칙",
+    "관리자 사용처·연결 순서·파일 상태 추적과 기존 파일 호환·수집 범위 한계",
+    "현재 추적 항목 86개, 구조 재정비 완료와 관리자 API 소스 이동",
+    "사진 기능의 11월 3일 운영·빌드 10 반영, 11월 6일 서버 묶음 c·Android 13 배포와 남은 실제 이용 확인 구분",
+    "최근 기록의 앱 전체 18,304 통과·실패 0은 당시 main의 결과로만 인용"
+  ],
+  "sourceSha256": {
+    "community_api/modules.txt": "cf0b3d5330677ce9a92d0abf3f4d88576053a7a37f3c5c7f6b5c31b4795eba64",
+    "community_api/domain/src/main/java/com/endside/community/file/constants/FilePurpose.java": "8730a704da2543167beedc43a8b124151879ad5e1f7c6c5c45cb258d2e1a093f",
+    "community_api/domain/src/main/java/com/endside/community/file/service/ContentPhotoService.java": "997f5b38e45d5d0b5e23612e34c8c7eb8d6c638ab3c47b9f9fc9193cf03c3d5c",
+    "community_api/domain/src/main/java/com/endside/community/file/constants/ContentPhotoTarget.java": "31109f86cff4d5e711246b98946a9ba7ced27107a3c3db806fa0372b8ab9315c",
+    "community_api/domain/src/main/java/com/endside/community/file/vo/ContentPhotoVo.java": "a75f037a3d0b4c0dcbd16fa6b3a2afa701b3178c0adfb27a58b31aa42b721799",
+    "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+    "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java": "e221610d3d08d79083e93a1c6a6f440a5e014c554df37d8513614fcce7547fc2",
+    "community_api/domain/src/main/java/com/endside/community/event/param/EventModParam.java": "e2c3a81a32714cdab482944ccf7b1187174d2371c3b62e49c0a2777103a9fd53",
+    "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemService.java": "5432ac51c4be398bf1133517576f55f82257ced085875efa07afb21d307932c5",
+    "community_api/admin-app/src/main/java/com/endside/community/file/service/ManageFileTraceService.java": "7a1d239d59cb179b7396fb82e0b98eaa0b23890834be781781e2e9b8bea90e84",
+    "community_app/lib/presentation/common/media/content_photo_editor.dart": "af62f4be8537ddae5ac01e9676377d317f50ce1e4a0e241b343f9dec669e34bf",
+    "community_app/lib/domain/providers/event/event_edit_provider.dart": "f727f178ffd75cca34fde39c80e734c4233aca5919b9a60b06b55ec1469f5e88",
+    "community_app/lib/presentation/market/screens/market_item_edit_screen.dart": "b2564e6fb71b223cb9d25d7ba696ef575a96e397e5bb82f91f8048b7235de2de",
+    "docs/ui-ux/screens/13-event.md": "aa870bb82e5c113bbc34ff95b4c42ff0a1a889ba3dc0ae4bf08956d13e3a991d",
+    "docs/ui-ux/screens/16-club-community.md": "cf54fa2d4125182c28536385b2f8c429a91986e8297ef03204735cba261529e7",
+    "docs/ui-ux/screens/17-club-finance.md": "bf4d751f4f86b635fffdf2c88e704faac65e6724029947668057db4abf1fc445",
+    "docs/ui-ux/screens/22-plan-market.md": "92c86fe1dc832952a809cf965ad8768a0db556444a6d9fb10d0487f3edfa9ef3"
+  },
+  "changedBusinessFiles": [
+    "00_README.md",
+    "docs/assets/features.js",
+    "docs/assets/launch-status.js",
+    "docs/assets/sidebar.js",
+    "docs/assets/work-overview.snapshot.json",
+    "docs/domains/03-event.html",
+    "docs/domains/04-club.html",
+    "docs/domains/08-plan-market.html",
+    "docs/features/F03-02.html",
+    "docs/features/F03-03.html",
+    "docs/features/F03-04.html",
+    "docs/features/F04-08.html",
+    "docs/features/F04-10.html",
+    "docs/features/F04-12.html",
+    "docs/features/F08-06.html",
+    "docs/features/F08-10.html",
+    "docs/features/catalog.html",
+    "docs/features/content-photos.html",
+    "docs/index.html",
+    "docs/overview/architecture.html",
+    "docs/overview/changelog.html",
+    "docs/qa/completion-criteria.html",
+    "docs/qa/external-readiness.html",
+    "docs/qa/feature-status.html",
+    "docs/qa/launch-status.html",
+    "verification/work_overview.test.mjs"
+  ],
+  "validation": [
+    {
+      "command": "node verification/check_release_scope.mjs",
+      "result": "passed",
+      "pages": 234,
+      "links": 3516
+    },
+    {
+      "command": "node --test verification/work_overview.test.mjs",
+      "result": "passed",
+      "tests": 4
+    },
+    {
+      "command": "node --check docs/assets/features.js / sidebar.js / launch-status.js (각각 실행)",
+      "result": "passed"
+    },
+    {
+      "check": "HTML parser: Korean document, viewport, exactly one h1 and main, unique IDs",
+      "result": "passed",
+      "pages": [
+        "docs/domains/03-event.html",
+        "docs/domains/04-club.html",
+        "docs/domains/08-plan-market.html",
+        "docs/features/F03-02.html",
+        "docs/features/F03-03.html",
+        "docs/features/F03-04.html",
+        "docs/features/F04-08.html",
+        "docs/features/F04-10.html",
+        "docs/features/F04-12.html",
+        "docs/features/F08-06.html",
+        "docs/features/F08-10.html",
+        "docs/features/catalog.html",
+        "docs/index.html",
+        "docs/overview/architecture.html",
+        "docs/overview/changelog.html",
+        "docs/qa/completion-criteria.html",
+        "docs/qa/external-readiness.html",
+        "docs/qa/feature-status.html",
+        "docs/qa/launch-status.html",
+        "docs/features/content-photos.html"
+      ],
+      "passed": 20,
+      "duplicate_ids": 0
+    },
+    {
+      "check": "정본·추가 근거 파일 해시 대조",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/check-release-docs.mjs (문서 작업 공간과 연결된 저장소)",
+      "result": "passed",
+      "currentLinks": 477
+    },
+    {
+      "check": "현황판 생성 결과 재현·정본 지문 일치",
+      "result": "passed",
+      "siteFiles": 6,
+      "workspaceOverview": 1,
+      "canonicalTasks": 86
+    },
+    {
+      "command": "git diff --check (business_logic·문서 저장소)",
+      "result": "passed"
+    }
+  ],
+  "limits": [
+    "이 문서 작업에서 제품 전체 시험·실기기·운영 조회·실제 사진 업로드·배포는 수행하지 않았다.",
+    "문서의 현재 상태는 위 파일 해시의 대조 시점을 뜻한다. 이후 다른 세션의 main 변경은 별도다.",
+    "새 공통 안내는 기존 CSS와 문서 구조를 사용했다. 브라우저 렌더링 검수는 이번 작업에서 수행하지 않았다.",
+    "기존 날짜별 검사·배포 기록은 당시 증거로 유지하며 현재 완료율이나 전체 통과 수로 합산하지 않는다."
+  ],
+  "integration_note": "다른 세션의 작업 분류 개편과 현황판 갱신을 보존하고, 서버 묶음 c의 배포까지 반영했다. 현재 정본의 86개 추적 항목과 공통 사진 첨부 규칙을 함께 대조했다."
+}

@@ -23,7 +23,7 @@
 | 외부 서비스 준비 | [외부 서비스 가입·계약과 출시 준비](docs/qa/external-readiness.html) | 첫 출시·후속 기능의 가입, API 키 발급, iOS·Android 배포와 실연동 완료 조건을 확인한다. |
 | 10월 12일 외부 연동 변경 추적 | [2026년 10월 12일 외부 연동·정산 송금 편의 반영과 문서 검증 기록](verification/document-sync-2026-10-12.json) | Android 시험 앱의 실제 외부 연동과 정산 계좌·송금 신고의 소스, 확인 범위·지문·제품 문서 반영 위치를 확인한다. 앞선 전체 문서 대조는 [2026년 10월 7일 원본 변경·반영 위치·검증 기록](verification/document-sync-2026-10-07.json)에 보존한다. |
 | 출시 완료 기준 상세 검증 | [2026년 10월 13일 출시 정보·완료 기준 상세 갱신 기록](verification/document-release-detail-2026-10-13.json) | 175개 기능 기준·30개 준비 항목·302개 소스 참조 대조와 HTML·모바일 화면 검사 결과를 확인한다. |
-| HTML 문서의 최신 변경 추적 | [2026년 11월 2일 현재 메뉴·구현·배포 상태](docs/overview/changelog.html#current-2026-11-02) · [현재 현황 스냅샷](docs/assets/work-overview.snapshot.json) · [대조·검사 기록](verification/document-sync-2026-11-02.json) | Android 빌드 8과 로컬 최신 변경, 앱 메뉴·장소 규칙, 관리자 이전 준비 상태를 구분한다. 정본·추가 근거 변경은 `python3 ../scripts/build-work-overview.py --check-source`로 확인한다. |
+| HTML 문서의 최신 변경 추적 | [2026년 11월 6일 사진 첨부·현재 구현·배포 상태](docs/overview/changelog.html#current-2026-11-06) · [현재 현황 스냅샷](docs/assets/work-overview.snapshot.json) · [대조·검사 기록](verification/document-sync-2026-11-06.json) | 공통 사진 첨부·용도별 추적, 현재 추적 항목 86개, 서버 배포·Android 내부 테스트 13과 이후 main 변경을 구분한다. 정본 변경은 `python3 ../scripts/build-work-overview.py --check-source`로 확인한다. |
 | 과거 문서 보관·복원 | [문서 정리와 보관 위치](../docs/development/DOCUMENTATION_GUIDE.md#완료-문서-정리-원칙) | 참조가 끝난 과거 문서의 삭제 기준과 Git 이력 복원 방법을 확인한다. 이전 외부 백업은 삭제됐다. |
 
 ## 현재 문서 체계

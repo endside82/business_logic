@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>본문 아래 사진 첨부와 용도별 관리 — community 제품 문서</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-document-kind="reference" data-base="../">
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main>
+      <header class="page-head">
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span><a href="catalog.html">기능 목록</a><span>›</span>공통 사진 첨부</div>
+        <h1>본문 아래 사진 첨부와 용도별 관리</h1>
+        <p class="lede">글을 쓴 다음 아래에 사진을 최대 10장 붙인다. 읽는 화면에서도 본문 다음에 사진이 저장한 순서대로 나온다. 작성 화면이 사진의 용도를 자동으로 지정하고, 관리자는 어느 공지·모임·상품에서 사용하는지 추적한다.</p>
+      </header>
+
+      <section id="where"><h2>어디에 적용하는가</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">작성 대상</th><th scope="col">작성·표시 규칙</th></tr></thead>
+          <tbody>
+            <tr><td><a href="F04-10.html">클럽 공지</a></td><td>공지 작성·수정에서 본문 아래에 첨부하고, 상세에서도 본문 다음에 표시한다. 작성·수정 권한은 기존 공지 권한을 따른다.</td></tr>
+            <tr><td><a href="F03-03.html">일반·클럽 모임</a></td><td>설명 아래에 사진을 첨부한다. 공개 뒤에도 수정 권한이 있으면 사진만 바꾸거나 모두 제거할 수 있다. 열람이 제한된 설명의 첨부 사진도 가린다.</td></tr>
+            <tr><td><a href="F04-12.html">반복 모임</a></td><td>생성·앞으로 회차 수정·복사에 사진을 연결한다. 한 회차에서 사진을 빼도 다른 회차의 사진은 유지된다.</td></tr>
+            <tr><td><a href="F08-06.html">상품 설명</a></td><td>설명 다음에 사진을 보여준다. 사진 변경은 상품 재심사 판단에 포함한다. 마켓 공개 여부는 기존 출시 제한을 따른다.</td></tr>
+          </tbody>
+        </table></div>
+        <p><a href="F04-08.html">클럽 게시글</a>은 기존 본문 아래 사진 영역을 사용하며 새 업로드는 게시글 전용 용도로 구분한다. <a href="F08-03.html">플랜 편집기</a>의 이미지 블록과 모임·클럽 사진첩은 각자의 편집·권한 규칙을 유지한다.</p>
+      </section>
+
+      <section id="editing"><h2>사진을 붙이고 저장하는 흐름</h2>
+        <ol>
+          <li>본문을 작성하고 사진을 고른다. 완료된 사진과 새 사진을 합쳐 최대 10장이다.</li>
+          <li>미리보기를 확인하고 길게 눌러 순서를 바꾸거나 불필요한 사진을 뺀다.</li>
+          <li>사진을 올리는 동안 저장은 막힌다. 일부가 실패하면 완료한 사진을 유지하고, 남은 사진을 재시도하거나 제외한다.</li>
+          <li>저장한 글의 상세에서 본문 아래 사진과 순서를 확인한다. 사진을 건드리지 않은 수정은 기존 첨부를 유지하고, 전부 제거한 수정은 사진 없이 저장한다.</li>
+        </ol>
+        <p>임시저장이 있는 공지·모임 작성 및 모임 수정은 업로드를 마친 사진과 순서를 복구한다. 아직 올리지 못한 선택 파일은 앱이 강제 종료되면 다시 골라야 할 수 있다. 상품과 반복 모임 작성에 새로운 장기 임시저장 기능을 추가한 것은 아니다.</p>
+        <p>공개 모임에서 사진 저장은 성공했지만 일정 변경 요청이 실패한 경우, 다시 열어 재시도할 때 저장된 사진을 중복 전송하지 않는다.</p>
+      </section>
+
+      <section id="purposes"><h2>어떤 용도로 구분하는가</h2>
+        <p>아래 용도는 업로드하는 화면에서 정한다. 파일 목록에서 용도를 확인할 수 있으며, 공지·모임·상품의 설명 사진은 각각 해당 용도로 올린 파일만 연결할 수 있다.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">구분</th><th scope="col">개별 용도</th><th scope="col">관리할 때 보는 차이</th></tr></thead>
+          <tbody>
+            <tr><td>본문 첨부</td><td>클럽 공지 · 모임 설명 · 상품 설명 · 클럽 게시글</td><td>어느 글의 설명에 붙은 사진인지 구분한다.</td></tr>
+            <tr><td>대표 이미지</td><td>모임 · 클럽 · 플랜 · 상품 대표 이미지</td><td>목록·대표 영역의 사진을 본문 첨부와 구분한다.</td></tr>
+            <tr><td>사람</td><td>회원 프로필 · 데이트 프로필</td><td>일반 프로필과 데이트 프로필의 이용 목적을 나눈다.</td></tr>
+            <tr><td>활동 기록</td><td>후기 · 클럽 사진첩 · 모임 사진첩 · 스탬프</td><td>각 기능의 열람·삭제·심사 규칙을 따른다.</td></tr>
+            <tr><td>자료·거래</td><td>플랜 블록 · 제공 서비스 사진 · 판매 다운로드 원본</td><td>설명용 사진과 구매자에게 전달할 원본을 구분한다.</td></tr>
+            <tr><td>비공개 증빙</td><td>신고·분쟁 등 증빙 · 제공자 검증 서류 · 본인확인 서류</td><td>비공개 열람 권한과 문서 제출 목적을 확인한다.</td></tr>
+          </tbody>
+        </table></div>
+        <p>기존 파일의 용도를 추측해 일괄 변경하지 않는다. 이전 방식으로 저장한 대표 이미지·데이트 프로필·게시글 사진의 호환은 유지한다. 대표 이미지 용도가 정의됐다는 사실만으로 모든 대표 이미지 작성 화면을 새로 제공한다는 뜻은 아니다.</p>
+      </section>
+
+      <section id="trace"><h2>관리자는 무엇을 추적하는가</h2>
+        <p>파일 자체의 업로더·원본 이름·형식·크기·용도·처리 상태·시각을 보고, 파일 상세와 삭제 확인에서 연결된 대상의 종류·번호·사진 순서·연결 시각을 확인한다. 새 본문 첨부의 사용처는 한 곳에 기록한다.</p>
+        <ul>
+          <li>새 첨부는 작성자 소유이며 해당 용도, 업로드 완료, 파일 검사 통과, 이미지 형식 조건을 만족해야 한다.</li>
+          <li>공동 편집자는 수정 권한이 있는 글에 이미 연결된 사진을 유지하거나 순서를 바꿀 수 있다.</li>
+          <li>복사한 모임과 각 반복 회차는 연결을 따로 가진다. 한 글에서 제거해도 다른 글이 사용하는 원본을 바로 지우지 않는다.</li>
+          <li>다른 대상이 사용하는 파일은 삭제를 막고, 글에 연결되지 못한 새 첨부는 기존 정리 작업에서 확인한다.</li>
+        </ul>
+        <p>새 본문 첨부의 추적을 추가한 범위다. 과거 모든 대표 이미지의 사용처를 새로 수집하거나 운영 파일 전체를 재분류한 결과는 아니다.</p>
+      </section>
+
+      <section id="verification"><h2>확인한 범위와 실제 이용 확인</h2>
+        <p>2026년 11월 6일 현재 서버·앱·관리자 소스를 대조했다. 첨부 순서·권한·복사·제거·업로드 실패·초안·수정 복구의 로컬 검사 기록이 있다. 사진 순서 저장에 필요한 운영 변경과 사진 기능을 포함한 Android 빌드 10 배포는 11월 3일 기록에서 확인된다.</p>
+        <p>이번 문서 갱신에서 실제 휴대전화 사진 선택·권한 거절·운영 저장소 업로드·로그인 사용자 간 열람을 다시 실행하지 않았다. <a href="../qa/launch-status.html#validation-current">현재 검사 기록과 남은 확인</a> 및 <a href="../qa/external-readiness.html#file-storage">파일 저장소의 실제 이용 확인</a>을 함께 따른다.</p>
+      </section>
+    </main>
+  </div>
+  <script src="../assets/sidebar.js"></script>
+  <script src="../assets/app.js"></script>
+</body>
+</html>

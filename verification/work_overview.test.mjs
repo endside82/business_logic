@@ -61,7 +61,8 @@ test('scopes, dependency paths and resources work in the published script', () =
   assert.ok(page.ids().includes('H-528'));
   assert.ok(!page.ids().includes('H-248'));
   page.click({ scope: 'now' });
-  assert.ok(page.ids().includes('H-542'));
+  assert.ok(page.ids().includes('H-568'));
+  assert.ok(!data.tasks.some(task => task.id === 'H-542'), '완료한 구조 재정비를 남은 작업으로 되돌리지 않음');
   assert.ok(!data.tasks.some(task => task.id === 'H-505'), '완료된 푸시 갱신 작업을 다음 개발로 되돌리지 않음');
   assert.ok(!page.ids().includes('H-528'));
   page.click({ scope: 'launch' });
