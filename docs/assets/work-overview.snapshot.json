@@ -844,7 +844,7 @@
     {
       "id": "H-13",
       "title": "결제사 계약으로 지급 키 없음 응답 등 일곱 가지 확인·반영하기",
-      "description": "① 결제사의 지급 키 없음 응답이 송금 미실행을 확정하는지 확인하고 복구 판정에 반영한다. ② 같은 계약 확인에서 셀러 등록의 「같은 참조 번호가 이미 있음」 오류 코드 값을 받는다(2026-10-25 차수 3 이 빈 상수 집합으로 두어 그동안 중복은 확정 거절과 경보). ③ 같은 계약 확인에서 셀러 조회 API 를 받는다(등록 응답을 잃고 웹훅도 오지 않아 `REGISTERING` 으로 남은 결박을 닫는 길, 그동안 그 송금처의 지급은 「셀러 등록 실패」 로 막히고 돈은 나가지 않음). ④ 같은 계약 확인에서 가상계좌 발급 되묻기 상한(지금 30번)을 다시 잴 결제사 처리 시간을 받는다. ⑤ 출금 요청이 얼마나 늦게 지급대행에 닿을 수 있는지 받는다. 코드는 마지막 전송 뒤 30분(`WithdrawalOutbox.SEND_SETTLE`) 동안 운영자의 복원·FAILED 해소를 막는다. 그보다 늦게 닿으면 지갑 환불과 송금이 함께 일어날 수 있고 경보만 난다(모델 `WithdrawalPayout` 의 `late-restore`, `late-closedfailed`). 잃어버린 요청과 늦는 요청은 구별되지 않아 코드로 없앨 수 없다. 이중 송금은 이 경우에도 없다. ⑥ 지급 키 조회가 그 키의 지급을 모두 돌려주는지 받는다. 재투입과 실패 답 재확인이 여기에 기댄다. ⑦ 토스 샌드박스에서 앞서 승인된 결제 키를 다른 주문에 낸 승인(`confirm(k, 다른 주문)`)의 실제 응답을 본다. 코드는 그 답과 상관없이 응답의 주문번호를 대조해 막는다(API `docs/testing/FORMAL_MODELS.md`).",
+      "description": "① 결제사의 지급 키 없음 응답이 송금 미실행을 확정하는지 확인하고 복구 판정에 반영한다. ② 같은 계약 확인에서 셀러 등록의 「같은 참조 번호가 이미 있음」 오류 코드 값을 받는다(2026-10-25 차수 3 이 빈 상수 집합으로 두어 그동안 중복은 확정 거절과 경보). ③ 같은 계약 확인에서 셀러 조회 API 를 받는다(등록 응답을 잃고 웹훅도 오지 않아 `REGISTERING` 으로 남은 결박을 닫는 길, 그동안 그 송금처의 지급은 「셀러 등록 실패」 로 막히고 돈은 나가지 않음). ④ 같은 계약 확인에서 가상계좌 발급 되묻기 상한(지금 30번)을 다시 잴 결제사 처리 시간을 받는다. ⑤ 출금 요청이 얼마나 늦게 지급대행에 닿을 수 있는지 상한을 받아 `withdrawal.payout.landing-bound-minutes` 에 넣는다. 넣기 전에는 지급대행이 답하지 않은 지급의 복원과 FAILED 해소를 받지 않아 그 회원의 출금 예약이 묶인다(`PayoutLandingPolicy`). 넣으면 마지막 전송에서 그 시간이 지난 뒤 운영자 확인과 함께 풀린다. 지급대행이 상한을 어기고 더 늦게 지급하면 지갑 환불과 송금이 함께 일어날 수 있고 경보만 난다(모델 `WithdrawalPayout` 의 `beyond-bound-restore`, `beyond-bound-closedfailed`). 이중 송금은 이 경우에도 없다. ⑥ 지급 키 조회가 그 키의 지급을 모두 돌려주는지 받는다. 재투입과 실패 답 재확인이 여기에 기댄다. ⑦ 토스 샌드박스에서 앞서 승인된 결제 키를 다른 주문에 낸 승인(`confirm(k, 다른 주문)`)의 실제 응답을 본다. 코드는 그 답과 상관없이 응답의 주문번호를 대조해 막는다(API `docs/testing/FORMAL_MODELS.md`).",
       "condition": "실제 결제사 계약 확인 후",
       "scope": "feature",
       "kind": "기능 보완",
@@ -1630,7 +1630,7 @@
     {
       "id": "H-611",
       "title": "모델 검사 수리를 운영 서버에 올리며 표 두 칸 더하기",
-      "description": "서버 결함 17건의 수리는 `V1__init.sql` 에 칸 둘을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 이 뒤 30분은 운영자의 복원·재투입·FAILED 해소를 받지 않는다' AFTER resolve_outcome;` 겹친 취소 옛 자료 점검: `SELECT user_id, COUNT(*) c FROM wallet_spend_lock WHERE status='ACTIVE' GROUP BY user_id HAVING c > 1;` 운영자에게 알릴 동작 변화: 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절, 취소 조회 연속 실패는 경보만 내고 계속 묻는다, 출금 처리 중 답이 세 번이면 사람 대조, 응답을 잃은 출금은 약 45분 뒤 사람 대조, 마지막 전송 뒤 30분은 복원·재투입·FAILED 해소 거절, 지급을 시작한 출금은 재투입으로 다시 보내지 않으니(지급이 있으면 조회로 돌아간다) 복원한 뒤 회원이 새로 신청. 관리자 웹이 거래번호 없는 FAILED 복원에 확인 값을 보내는지는 보지 못했다.",
+      "description": "서버 결함 17건의 수리는 `V1__init.sql` 에 칸 둘을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 닿는 상한과 견줘 운영자의 복원·FAILED 해소를 막는다' AFTER resolve_outcome;` 겹친 취소 옛 자료 점검: `SELECT user_id, COUNT(*) c FROM wallet_spend_lock WHERE status='ACTIVE' GROUP BY user_id HAVING c > 1;` 운영자에게 알릴 동작 변화: 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절, 취소 조회 연속 실패는 경보만 내고 계속 묻는다, 출금 처리 중 답이 세 번이면 사람 대조, 응답을 잃은 출금은 약 45분 뒤 사람 대조, 실제 지급대행을 켠 뒤 상한을 넣기 전에는 지급대행이 답하지 않은 출금의 복원·FAILED 해소 거절(H-13 ⑤), 지급을 시작한 출금은 재투입으로 다시 보내지 않는다(지급이 있으면 조회로 돌아간다). 관리자 웹이 거래번호 없는 FAILED 복원에 확인 값을 보내는지는 보지 못했다.",
       "condition": "다음 서버 배포 때 ALTER 를 먼저",
       "scope": "now",
       "kind": "정비",
@@ -2571,7 +2571,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "4fa3ab35c"
+      "commit": "ff8df35e5"
     },
     {
       "name": "관리자 API",
@@ -2590,7 +2590,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "c26171379c1d48b810ca4ba581190d33d42eb67bd1ffecd06d8c873390650ac0",
+  "sourceDigest": "3553aa605bb4356e6dd65c335b34e87edca2cbdb52994ba90fba97ec6acb77af",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2700,18 +2700,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T03:40:27+09:00",
+    "updatedAt": "2026-11-07T04:03:43+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "f97393f012110eb47ea0dcf31016bd006eb7f38a",
+    "sourceCommit": "9aff4bcb1dc1f96f9501593e797f3ef22368d656",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "5efd62f6376cbb3ed28fcd4a2a5b16d04222da96ca1cb12b05e22ea71bbb2131",
-    "worklistSha256": "22b24f801cd0efc254786afb2e9270ee6e5dd866f2f6e3ebe0b98677341a3be8",
+    "sourceSha256": "d28eace668facb2126f78005c65df1e31c5444cb2a4f2d6d5a09efe2bc9b66b2",
+    "worklistSha256": "b8ccf50f9c92bfb56b2124941ccfc139ee493a493d5e2a1c07b76f35d86bff04",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "22b24f801cd0efc254786afb2e9270ee6e5dd866f2f6e3ebe0b98677341a3be8",
+      "docs/plan/WORKLIST.md": "b8ccf50f9c92bfb56b2124941ccfc139ee493a493d5e2a1c07b76f35d86bff04",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
