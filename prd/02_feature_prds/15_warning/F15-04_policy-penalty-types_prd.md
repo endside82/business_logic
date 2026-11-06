@@ -3,27 +3,15 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 경고 정책 설정은 `POLICY_OWNER` 권한(OWNER 자동 통과)으로 `WarningAdminPolicyController`(`/api/v1/admin/clubs/{clubId}/warnings`)가 제공한다. `GET/PUT /config`로 경고 제도 활성화, 익명 제보 허용, 만료/SLA 안내 텍스트, 검토 임계치 4단계(`attentionMin ≤ monitorMin ≤ restrictionMin ≤ severeMin` 권장)를 관리하고, `GET /config/preview`로 임계치 변경 시 현재/이후 검토 등급 분포를 미리 본다. 패널티 유형은 `GET /penalty-types`로 플랫폼 카탈로그 + 클럽 override를 병합 조회하고, `PUT /penalty-types`로 유형별 ON/OFF·점수를 upsert하며, `GET /penalty-type-catalog`로 시스템 마스터 7행을 본다. Flutter `warning_policy_screen.dart`가 이를 구현했고 enum/VO 필드가 일치한다.
 
 판정: **설정 조회·갱신·프리뷰의 화면-API 정합은 닫혀 있다**. 핵심 Gap은 (a) 정책 기본 임계치가 Java `WarningProgramConfigService.initialize()`(attention=3/monitor=6/restriction=10/severe=15)와 DDL `warning_program_config` 기본값(1/3/5/7)이 **서로 다름** — getOrCreate가 row를 만드는 경로에 따라 클럽마다 기본값이 달라질 수 있음, (b) 임계치 단조 증가를 서버가 강제하지 않고 경고(`THRESHOLD_NOT_MONOTONIC`)로만 표시, (c) 대규모 클럽(≥100,000명)은 분포 계산을 스킵하고 `LARGE_CLUB_DISTRIBUTION_SKIPPED`만 반환, (d) `previewConfig`가 GET인데 `@Valid WarningProgramConfigUpdateParam`을 쿼리로 받으므로 `text` 필드 길이 검증이 쿼리스트링에 적용되는 점이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `WarningAdminPolicyController.java` | `@RequiresClubPermission(POLICY_OWNER)`, config/preview/penalty-types/penalty-type-catalog |
-| Backend Service | `WarningProgramConfigService.java#getOrCreate/update/previewImpact/initialize/requireActive` | 기본값, 영향 미리보기, 분포 투영, 단조성 경고 |
-| Backend Service | `WarningPenaltyTypeConfigService.java#listMerged/upsert/resolvePoints/requireAttendanceLinkableActive` | catalog+override 병합, upsert 멱등, 점수 결정 우선순위 |
-| Backend Param | `WarningProgramConfigUpdateParam.java`, `ClubPenaltyTypeConfigUpdateParam.java` | nullable 부분 갱신, `@Min(0)`, `typeCode@NotBlank`, `active@NotNull` |
-| Backend VO | `WarningProgramConfigVo`, `WarningConfigPreviewVo`, `ClubPenaltyTypeMergedVo`, `PenaltyTypeCatalogVo` | 응답 필드/분포 Map |
-| Backend Enum | `PenaltySeverity`(LIGHT/MODERATE/SEVERE), `PenaltyApprover`(ADMIN/OWNER), `WarningReviewLevel`(5값) | 카탈로그/등급 |
-| Backend DDL | `V1__init.sql` `warning_program_config`(기본 1/3/5/7), `penalty_type_catalog`, `club_penalty_type_config`(UNIQUE club_id+type_code) | 컬럼 기본값/제약 |
-| Frontend API | `warning_admin_policy_api.dart` | 5엔드포인트, preview는 `@Queries()` |
-| Frontend Screen | `presentation/warning/admin/warning_policy_screen.dart` | 설정/유형 화면 |
-| Verification | (해당 없음) | 전용 자동화 테스트 미확인 |
+계약의 정본은 코드다. 서버: `WarningAdminPolicyController`, `WarningProgramConfigService`, `WarningPenaltyTypeConfigService`, `WarningProgramConfigUpdateParam`, `ClubPenaltyTypeConfigUpdateParam`. 앱: `warning_policy_screen.dart`, `warning_admin_policy_api.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -33,49 +21,10 @@
 4. 저장: `PUT /config`(`updateConfig`) → `WarningProgramConfigService.update`가 변경 필드만 적용(MapStruct, null 무시), before/after 스냅샷을 audit log + outbox `PolicyChanged`로 기록.
 5. 패널티 유형 토글/점수: `PUT /penalty-types`(`ClubPenaltyTypeConfigUpdateParam`) → `upsert`가 카탈로그 존재·available 검증 후 클럽 override INSERT/UPDATE(멱등), audit `PENALTY_TYPE_CONFIG_UPDATED` + outbox `PenaltyTypeConfigChanged`.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /config` / `PUT /config`
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `WarningAdminPolicyController#getConfig/updateConfig` |
-| 권한 | `POLICY_OWNER` (클래스 레벨) |
-| GET 응답 | `WarningProgramConfigVo` (없으면 `getOrCreate`가 기본 row 생성) |
-| PUT Body | `WarningProgramConfigUpdateParam`(전부 nullable, 변경 필드만 적용) |
-| Side effect | audit `POLICY_UPDATED`(before/after) + outbox `PolicyChanged` |
-
-`WarningProgramConfigVo`: `clubId`, `active:boolean`, `allowAnonymousReport:boolean`, `expiryPolicyText`, `slaText`, `attentionMin:int`, `monitorMin:int`, `restrictionMin:int`, `severeMin:int`, `createdAt`, `updatedAt`.
-
-### `GET /config/preview`
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `WarningAdminPolicyController#previewConfig` |
-| Query | `@Valid WarningProgramConfigUpdateParam`(GET이므로 쿼리 바인딩) |
-| 응답 | `WarningConfigPreviewVo` |
-| 동작 | 현재 분포(`countByReviewLevelDistribution`) + 이후 분포(`projectNextDistribution`), warnings: `LARGE_CLUB_DISTRIBUTION_SKIPPED`/`PROGRAM_DEACTIVATION_BLOCKS_FUTURE_GRANTS`/`ANONYMOUS_REPORT_DISABLED_FOR_NEW_SUBMISSIONS`/`THRESHOLD_NOT_MONOTONIC` |
-| 실패 | config 없으면 `WARNING_PROGRAM_NOT_FOUND` |
-
-### `GET/PUT /penalty-types`, `GET /penalty-type-catalog`
-| 항목 | 실제 계약 |
-|---|---|
-| GET penalty-types | `List<ClubPenaltyTypeMergedVo>` — catalog(available=true) + override 병합. `configured=false`이면 `active=false`, `points=null` |
-| PUT penalty-types | `ClubPenaltyTypeConfigUpdateParam{typeCode@NotBlank, active@NotNull, points?@Min(0)}`, 응답 `void`(200) |
-| GET catalog | `List<PenaltyTypeCatalogVo>`(findAll) |
-| upsert 실패 | catalog 없음 → `PENALTY_TYPE_NOT_FOUND`, available=false → `PENALTY_TYPE_INACTIVE` |
-
-`ClubPenaltyTypeMergedVo`: `typeCode`, `defaultLabelKo/En`, `defaultPoints:int`, `severity:PenaltySeverity`, `attendanceLinkable:boolean`, `recommendedApprover:PenaltyApprover`, `defaultDescription`, `configured:boolean`, `active:boolean`, `points:Integer?`.
-
-점수 결정 우선순위(`resolvePoints`): override 파라미터 > 클럽 설정 points > catalog `default_points`. 클럽 override가 있고 active=false면 `PENALTY_TYPE_INACTIVE`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `policy` (`Routes.adminWarningPolicy`, 운영 콘솔 하위) |
-| Screen | `WarningPolicyScreen(clubId, role)` |
-| Repository | `WarningAdminPolicyRepository` |
-| Retrofit | `WarningAdminPolicyApi.getConfig/updateConfig/previewConfig/getPenaltyTypes/updatePenaltyType/getPenaltyTypeCatalog` |
-| 진입 가드 | 콘솔에서 `WarningConsoleScope`가 permission flag 처리 |
+- 부여 점수는 직접 지정한 점수, 클럽이 정한 점수, 기본 점수 순으로 먼저 있는 것을 쓴다. 클럽이 끈 유형은 부여할 수 없다.
+- 클럽이 아직 설정하지 않은 유형은 목록에서 꺼진 상태로 보이고 점수가 비어 있다.
 
 ## 6. 상태/권한 매트릭스
 

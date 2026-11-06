@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 FIXED 모임 환불은 **진행 세션 차감 pro-rata** 산식 + 3가지 트리거(MEMBER_CANCEL / HOST_CANCEL / FORFEIT)로 분기한다. 모든 트리거가 동일한 `amount × (N − consumed) / N` 골격을 쓰되 `consumed` 정의가 다르다.
@@ -16,17 +15,9 @@ FIXED 모임 환불은 **진행 세션 차감 pro-rata** 산식 + 3가지 트리
 
 환불 실패(예: PG 큐 실패, 사용자 잔액 음수 clawback) 시 `failed_refund` 테이블에 row 생성. `failed_refund.event_id` nullable + `failed_refund.regular_meeting_id` 추가 (결정 K) 라서 RM 환불 실패도 추적된다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Service | `RegularMeetingRefundService` | 트리거별 분기 + FAILED_REFUND 기록 |
-| Backend Calculator | `RegularMeetingRefundCalculator` | pro-rata 산식. `RefundReason {MEMBER_CANCEL, HOST_CANCEL, FORFEIT}` |
-| Backend Entity | `RegularMeetingPayment.refundAmount,refundPointTxId,refundReason,refundedAt` | 환불 결과 영속 |
-| Backend Model | `FailedRefund` — `event_id` nullable + `regular_meeting_id` | RM 실패 추적 |
-| Backend Refund 트리거 | `RegularMeetingEnrollmentService#cancelEnrollment` (MEMBER), `RegularMeetingService#cancel` (HOST), `RegularMeetingSessionAttendanceService#finalizeSession` FORFEIT_ON_LIMIT (FORFEIT) | 3 진입점 |
-| Wallet | `WalletService` 의 `refundFromRegularMeeting...` 추정 (paid + free 분리) | 분개 + lot |
-| ErrorCode | `REGULAR_MEETING_REFUND_*` 2700015~ | 실패 코드 |
+계약의 정본은 코드다. 서버: `RegularMeetingRefundService`, `RegularMeetingEnrollmentService`, `RegularMeetingService`, `RegularMeetingSessionAttendanceService`, `WalletService`.
 
 ## 3. 전체 동작 흐름
 
@@ -77,21 +68,9 @@ refundAmount = floorToHundred(raw)  # 100원 단위 절삭, 0 clamp
 
 > **Fact (2026-06-06 돈 흐름 무결성 — RM failed_refund 실금액 기록)**: 과거 RM 환불 실패가 `failed_refund.amount=0`으로 기록되어 운영 재시도/보상이 실금액을 모르던 오라우팅(감사 MED/LOW)이 해소되었다. `RegularMeetingRefundService.recordFailedRefund(meeting, member, reason, amount)`(`:119-137`)가 **실제 환불 실패 금액**을 기록하고, `sendRefundFailedAlert`(`:157-174`)가 `OperatorAlertType` REFUND_FAILED 운영자 경보(멱등키 `REFUND_FAILED:REGULAR_MEETING:{failedRefundId}`)를 발화한다. 복구 경로 = 스케줄러 재시도 + 운영자 경보 기반 수동 처리(자동 만료 없음).
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-본 기능은 endpoint 가 cancel 흐름(F17-04/06) 안에 합쳐져 있음. 추가 endpoint:
-
-| 엔드포인트 | Method | 응답 | 가드 |
-|---|---|---|---|
-| `/payment/{paymentId}/refund-confirm` | POST | `RegularMeetingPaymentVo` (REFUNDED) | host + REFUND_REQUESTED |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| MEMBER_CANCEL UX | F17-06 cancel CTA 안에 confirmation modal — "{remaining}/{total} 세션 환불됩니다. {refundAmount}원" |
-| HOST_CANCEL UX | F17-04 cancel CTA — "전 멤버에게 미진행 세션 분 환불됩니다" |
-| BANK REFUND_REQUESTED 표기 | 멤버 상세에 "환불 진행중 (호스트 계좌환불 대기)" 라벨 |
+- 계좌이체 환불 요청이 3일 넘게 처리되지 않으면 호스트에게 다시 알리고, 두 번 알려도 풀리지 않으면 운영자에게 알린다. 환불을 자동으로 만료하거나 회수하지는 않는다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -123,8 +102,6 @@ refundAmount = floorToHundred(raw)  # 100원 단위 절삭, 0 clamp
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 해소 (2026-06-06) | RefundRequestEscalationScheduler.java, RegularMeetingPayment.java:99,103 | **BANK REFUND_REQUESTED 무SLA 해소(MED)** — 신규 `RefundRequestEscalationScheduler`(이벤트+RM 양쪽)가 `refund-request.escalation-days`(기본 3일) 경과 RM `REFUND_REQUESTED` 결제에 호스트 재알림 → 2회 후 `OperatorAlertType.BANK_REFUND_STALE` 운영자 경보. 신규 컬럼 `refund_escalated_at`/`refund_escalation_count`. 자동 만료 없음(limbo 원칙). | 없음 |
-| 해소 (2026-06-06) | RegularMeetingRefundService.java:119-174  | **RM 환불 실패 실금액 기록 + 복구 경로** — `failed_refund.amount`에 실금액 기록 + REFUND_FAILED 운영자 경보(§3.6). 과거 amount=0 오라우팅 해소. | 없음 |
 | 위험 | clawback (음수 잔액) | 사용자 잔액이 환불액보다 작아 마이너스 잔액 가능 | wallet 정책: 마이너스 허용 + 적립 시 우선 차감 |
 | 잔여 | reservedRefund | FORFEIT 환불은 settlement reservedRefund 에 예약분 반영 (F17-10 §7) | 검증됨 |
 

@@ -74,7 +74,7 @@ enum 번호와 충돌은
 예를 들어 `F03-05 이벤트 신청 & 참석`을 본다면:
 
 1. `PRD_MIGRATION_STATUS.md`에서 `F03-05`의 PRD, unit 근거, trace/risk 후보 수를 확인한다.
-2. `02_feature_prds/03_event/F03-05_event-attendance_prd.md`의 `결론`, `실사 근거`, `Gap/Risk`를 먼저 본다.
+2. `02_feature_prds/03_event/F03-05_event-attendance_prd.md`의 `결론`, `제품 규칙`, `Gap/Risk`를 먼저 본다. 계약은 `코드 위치` 줄을 따라 코드에서 읽는다.
 3. `business_logic/units/03_event/F03-05_event-attendance/backend.md`를 읽는다.
 4. `business_logic/units/03_event/F03-05_event-attendance/frontend.md`를 읽는다.
 5. 실제 서버 Controller/Service/VO/Enum을 확인한다.

@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; 작성일: 2026-06-05 -->
 
 ## 1. 결론
@@ -16,20 +15,9 @@
 
 알림 딥링크(`notification_router.dart` :50)는 `FAVORITE_PERSON_NEW_EVENT` 케이스가 이벤트 상세로 배선되어 있어 탭 시 정상 이동한다. Flutter `NotificationType` enum(`notification_type.dart`) 미등재 Gap은 **해소(2026-06-06)** — `FAVORITE_PERSON_NEW_EVENT`가 분쟁 3종과 함께 enum에 등재되어 타입 안전성을 확보했다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `FavoriteCalendarController.java:14-40` | endpoint 2개, @RequestParam |
-| Backend Service | `FavoriteCalendarService.java:27-112` | 필터 체인, 집계/개별 뷰 로직 |
-| Backend Notifier | `FavoriteEventNotifier.java:28-70` | 팬아웃 조건, AFTER_COMMIT, REQUIRES_NEW |
-| Backend QueryRepo | `FavoriteQueryRepository.java:61-122` | HOSTING/ATTENDING 쿼리, EventScope 필터 |
-| Backend VO | `CalendarEventVo.java:18-68` | ownerUserId/ownerNickname 추가 필드 |
-| Frontend API | `favorite_api.dart:54-66` | Retrofit endpoint 2개, Query params |
-| Frontend Model | `data/models/calendar/calendar_event_vo.dart` | ownerUserId/ownerNickname nullable |
-| Frontend Provider | `favorite_calendar_provider.dart` | FavoriteCalendarNotifier(year, month) |
-| Frontend Screen | `monthly_calendar_screen.dart:14,49,62,123-530` | 오버레이 토글, ownerNickname 표시 |
-| Verification | 없음 (테스트 자산 미확인) | — |
+계약의 정본은 코드다. 서버: `FavoriteCalendarController`, `FavoriteCalendarService`, `FavoriteEventNotifier`, `FavoriteQueryRepository`, `CalendarEventVo`. 앱: `monthly_calendar_screen.dart`, `favorite_api.dart`, `calendar_event_vo.dart`, `favorite_calendar_provider.dart`, `notification_router.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -62,85 +50,6 @@
    - host를 관심등록한 owner 중 유효+비차단 필터 → `ownerIds`.
    - `createBatchNotifications(ownerIds, FAVORITE_PERSON_NEW_EVENT, ...)` → FCM 푸시 + in-app 알림.
 3. Flutter `notification_router.dart` :50에 `FAVORITE_PERSON_NEW_EVENT` 케이스가 이벤트 상세로 배선되어 있다. 딥링크는 정상 동작한다.
-
-## 4. 서버 계약
-
-### Endpoints
-
-| HTTP | 경로 | 요청 | 응답 | 성공 상태 |
-|---|---|---|---|---|
-| GET | `/api/v1/calendar/favorites/monthly` | `@RequestParam int year, int month` | `List<CalendarEventVo>` | 200 |
-| GET | `/api/v1/calendar/favorites/{targetUserId}/monthly` | `@PathVariable long targetUserId`, `@RequestParam int year, int month` | `List<CalendarEventVo>` | 200 |
-
-> 소스: `FavoriteCalendarController.java:22-40`
-
-### CalendarEventVo 추가 필드 (관심인 오버레이 전용)
-
-| 필드 | 타입 | 비고 |
-|---|---|---|
-| `ownerUserId` | `Long` (nullable) | 관심 대상 userId. 본인 캘린더 응답에서는 null |
-| `ownerNickname` | `String` (nullable) | 관심 대상 닉네임. `userRepository.findByUserIdIn` 조인 |
-| `itemType` | `CalendarItemType` | `HOSTING` 또는 `ATTENDING` |
-| `isPast` | `boolean` | startTime < now |
-
-> 소스: `CalendarEventVo.java:41-48`, `FavoriteCalendarService.java:79-104`
-
-### 이벤트 필터 조건 (QueryDSL)
-
-```
-EventScope.publicClassification(event):
-  event.clubId IS NULL
-  AND event.eventType IN (INDEPENDENT, REGULAR_MEETING)
-  AND event.visibility IN (PUBLIC, APPROVAL)
-AND event.status IN (OPEN, CLOSED)
-AND event.startTime >= from AND event.startTime < to
-```
-
-참가 쿼리는 Application APPROVED가 아닌 `EventAttendance.status == ATTENDING` 기반.
-
-> 소스: `FavoriteQueryRepository.java:56-121`
-
-### 에러코드 (개별 뷰)
-
-| 코드 | HTTP | 조건 |
-|---|---|---|
-| `FORBIDDEN` | 403 | 차단 관계 |
-| `FAVORITE_NOT_FOUND` | 404 | 유효 관심인 아님(미등록 또는 dormant) |
-| `CALENDAR_PRIVATE` | 403 | 대상이 캘린더 비공개 설정 |
-
-> 소스: `FavoriteCalendarService.java:39-49`
-
-### 알림 팬아웃 조건
-
-| 조건 | 행동 |
-|---|---|
-| `!EventScope.isPublicClassification` | 팬아웃 제외 |
-| host `isCalendarPrivateToFavorites` | 팬아웃 제외 |
-| owner가 유효 N명 내가 아닌 경우 | 제외(`isEffectiveFavorite` false) |
-| owner와 host 사이 차단 관계 | 제외 |
-| 위 모두 통과 | `FAVORITE_PERSON_NEW_EVENT(96)` 배치 발송 |
-
-> 소스: `FavoriteEventNotifier.java:39-67`
-
-## 5. 프론트 계약
-
-| 항목 | 값 | 소스 |
-|---|---|---|
-| 오버레이 진입 | 캘린더 화면 하트 토글 | `monthly_calendar_screen.dart:62` |
-| Provider(집계) | `favoriteCalendarNotifierProvider(year, month)` | `favorite_calendar_provider.dart` |
-| API(집계) | `FavoriteApi.getFavoritesMonthly(year, month)` | `favorite_api.dart:55-59` |
-| API(개별) | `FavoriteApi.getFavoritePersonMonthly(targetUserId, year, month)` | `favorite_api.dart:61-66` |
-| ownerNickname 표시 | `entry.value.first.ownerNickname ?? '관심인 #${entry.key}'` | `monthly_calendar_screen.dart:518` |
-| 딥링크(알림) | 배선 완료 (이벤트 상세) | `notification_router.dart:50` |
-
-### Flutter CalendarEventVo 모델
-
-| 서버 필드 | Dart 필드 | 매핑 | 판단 |
-|---|---|---|---|
-| `Long ownerUserId` | `int? ownerUserId` | nullable | 정합 |
-| `String ownerNickname` | `String? ownerNickname` | nullable | 정합 |
-| `CalendarItemType itemType` | `String itemType` | `@Default('AVAILABILITY')` | 정합(서버 enum → String) |
-| `boolean isPast` | `bool isPast` | `@JsonProperty("isPast")` / `@Default(false)` | 정합 |
 
 ## 6. 상태/권한 매트릭스
 

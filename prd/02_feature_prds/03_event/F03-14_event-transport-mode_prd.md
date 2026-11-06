@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-measured: 2026-09-02; authority: community_api/community_app current source -->
 
 > 현재 상태: **코드 완료, 신규 이용 봉인**. 고객·서버 기능이 없어서 닫힌 것이 아니라 서명 앱의
@@ -51,10 +50,3 @@
 
 상세 근거는 [대절 버스·카풀 통합 기능 완료 근거](../../../../docs/release-gate/evidence/MOV-01/README.md)를
 따른다.
-
-## 변경 이력
-
-| 날짜 | 변경 |
-| --- | --- |
-| 2026-08-30 | 종전 없음·카풀·버스 단일 선택 구조 기준으로 작성 |
-| 2026-09-02 | 통합 차량 모델의 세 독립 설정과 코드 완료·출시 증명 대기 상태로 전면 갱신 |

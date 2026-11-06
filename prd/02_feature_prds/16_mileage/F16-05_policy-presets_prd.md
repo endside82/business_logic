@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 `POLICY_OWNER` 운영진이 마일리지 메타 정의 4종을 CRUD 한다 — 자동 적립 규칙(트리거별), 등급(최대 10), 배지 정의(최대 50), 차감 프리셋, 그리고 시즌 CRUD. 서버 `MileageAdminPolicyController`의 각 섹션이 `MileageEarningRuleService`/`MileageGradeService`/`MileageBadgeService`/`MileageRedemptionPresetService`/`MileageSeasonService`로 연결되고, Flutter `mileage_grade_crud_screen.dart`·`mileage_badge_crud_screen.dart`·`mileage_redemption_preset_crud_screen.dart`·`mileage_season_crud_screen.dart`가 표시한다.
@@ -12,19 +11,9 @@
 
 판정: **CRUD는 사용 가능**. 등급 검증 에러 코드가 사유별로 구분되지 않아 사용자 메시지가 모호한 것이 주요 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageAdminPolicyController.java` | earning-rules/grades/badges/redemption-presets/seasons CRUD 엔드포인트 |
-| Backend Service | `MileageEarningRuleService.java` | `upsertRule`(트리거별), `modifyRule` |
-| Backend Service | `MileageGradeService.java` | MAX_GRADES=10, FORBIDDEN_KEYWORDS, threshold 단조/중복, 모두 `MILEAGE_GRADE_LIMIT_EXCEEDED` |
-| Backend Service | `MileageBadgeService.java` | MAX_BADGES=50, 정의 CRUD |
-| Backend Service | `MileageRedemptionPresetService.java` | 삭제 불가·`deactivate`만, `requireActivePreset` |
-| Backend Service | `MileageSeasonService.java` | 시즌 CRUD, 기간 중복 금지, close |
-| Backend VO/Param/Enum | `MileageEarningRuleVo`·`...AddParam/ModParam`, `MileageGradeVo`·param, `MileageBadgeDefinitionVo`·param, `MileageRedemptionPresetVo`·param, `MileageSeasonVo`·param, `constants/EarningTriggerType.java` | 필드·검증 |
-| Frontend | `mileage_admin_policy_api.dart`, `mileage_admin_policy_repository.dart`, `mileage_admin_policy_providers.dart`, `presentation/mileage/admin/screens/mileage_grade_crud_screen.dart`, `mileage_badge_crud_screen.dart`, `mileage_redemption_preset_crud_screen.dart`, `mileage_season_crud_screen.dart` | route·CRUD CTA |
-| DB | `V1__init.sql` `mileage_earning_rule`, `mileage_grade`, `mileage_badge_definition`, `mileage_redemption_preset`, `mileage_season` | 컬럼·제약 |
+계약의 정본은 코드다. 서버: `MileageAdminPolicyController`, `MileageEarningRuleService`, `MileageGradeService`, `MileageBadgeService`, `MileageRedemptionPresetService`, `MileageSeasonService`, `EarningTriggerType`. 앱: `mileage_grade_crud_screen.dart`, `mileage_badge_crud_screen.dart`, `mileage_redemption_preset_crud_screen.dart`, `mileage_season_crud_screen.dart`, `mileage_admin_policy_api.dart`, `mileage_admin_policy_repository.dart`, `mileage_admin_policy_providers.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -35,37 +24,6 @@
 5. **차감 프리셋**: `POST /redemption-presets` 생성(active=true), `PUT` 수정, `DELETE`는 실제 삭제가 아니라 `deactivate`(active=false). 차감(F16-06) 시 `requireActivePreset`이 비활성 프리셋을 `MILEAGE_PRESET_INACTIVE`로 차단.
 6. **시즌**: `POST /seasons` 생성 시 startAt<endAt·기간 중복(CLOSED 제외) 검증, 현재 시각 기준 SCHEDULED/ACTIVE 자동 결정. `PUT`로 수정(CLOSED 시즌은 수정 불가), `POST /seasons/{seasonId}/close`로 마감(상태 CLOSED + 다음 SCHEDULED→ACTIVE).
 7. 모든 쓰기는 actorRole 결정 후 audit log(`MILEAGE_*_CREATED/UPDATED/DELETED/DEACTIVATED/SEASON_CLOSED`) + outbox 발행.
-
-## 4. 서버 계약
-
-### 적립 규칙
-- `GET /earning-rules` → `List<MileageEarningRuleVo>`(id/triggerType/active/points/reviewDeadlineDays/photoAutoApprove).
-- `POST /earning-rules`(upsert, 201) / `PUT /earning-rules/{ruleId}`. `EarningTriggerType{EVENT_CHECKIN,EVENT_REVIEW,EVENT_PHOTO_APPROVED}`.
-
-### 등급
-- `GET /grades` → `List<MileageGradeVo>`. `POST`(201)/`PUT/{gradeId}`/`DELETE/{gradeId}`(204).
-- `MileageGradeAddParam`: name(≤20, 금전성 단어 금지), threshold(≥0, 단조/중복 금지), colorToken(≤50), iconKey(≤50), displayOrder.
-- 위반(≥10 / 금전성 단어 / threshold 중복 / 이름 중복) → 모두 `MILEAGE_GRADE_LIMIT_EXCEEDED`. 미존재 → `MILEAGE_GRADE_NOT_FOUND`.
-
-### 배지 정의
-- `GET /badges` → 전체(active 포함). `POST`(201, active=true)/`PUT/{badgeDefId}`. ≥50 → `MILEAGE_BADGE_LIMIT_EXCEEDED`. 미존재 → `MILEAGE_BADGE_NOT_FOUND`.
-
-### 차감 프리셋
-- `GET /redemption-presets` → 전체(displayOrder asc). `POST`(201, active=true)/`PUT/{presetId}`/`DELETE/{presetId}`(204=deactivate).
-- `MileageRedemptionPresetAddParam`: label(≤50), defaultAmount(Positive), displayOrder. 미존재 → `MILEAGE_PRESET_NOT_FOUND`.
-
-### 시즌
-- `GET /seasons`(운영, 전체) / `POST`(201) / `PUT/{seasonId}` / `POST /{seasonId}/close`.
-- `MileageSeasonAddParam`: name(≤50), startAt/endAt 필수. 시작≥종료 또는 기간 중복 → `MILEAGE_SEASON_OVERLAP`. CLOSED 수정/close 대상 미충족 → `MILEAGE_SEASON_NOT_FOUND`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `adminMileagePolicyGrades`(`grades`), `adminMileagePolicyBadges`(`badges`), `adminMileagePolicyPresets`(`presets`), `adminMileagePolicySeasons`(`seasons`) |
-| Screen | `MileageGradeCrudScreen`, `MileageBadgeCrudScreen`, `MileageRedemptionPresetCrudScreen`, `MileageSeasonCrudScreen` |
-| Repository/API | `MileageAdminPolicyRepository` (earning-rule/grade/badge/preset/season CRUD) |
-| Model | `MileageEarningRuleVo`·`...AddParam/ModParam`, `MileageGradeVo`·param, `MileageBadgeDefinitionVo`·param, `MileageRedemptionPresetVo`·param, `MileageSeasonVo`·param, `EarningTriggerType` enum |
 
 ## 6. 상태/권한 매트릭스
 

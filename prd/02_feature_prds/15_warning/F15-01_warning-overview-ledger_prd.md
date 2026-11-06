@@ -3,27 +3,15 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 멤버 본인 경고 화면은 **점수 요약·검토 등급·활성 제재·최근 원장 5건**을 `GET /api/v1/clubs/{clubId}/warnings/me`(`WarningMemberOverviewVo`)로, **전체 원장 페이지**를 `GET .../me/ledger`(`Page<WarningLedgerVo>`)로 내려주며, Flutter `warning_main_screen.dart`/`warning_ledger_screen.dart`가 이를 그대로 소비한다. 두 엔드포인트 모두 `permissionChecker.requireClubMember`로 멤버만 접근하고, 원장 조회는 서버가 `param.setMemberId(principal.getUserId())`로 본인 범위를 강제한다. 응답 VO 필드와 Dart 모델 필드는 일치한다.
 
 판정: **조회·권한·본인 범위 격리는 사용 가능**. 다만 (a) 정책이 비활성(`is_active=false`)인 클럽에서도 본인 화면 진입 시 `warning_member_summary` row가 0값으로 생성되고, (b) `effectiveScore`/`reviewLevel`은 캐시값이라 원장과 일시적으로 불일치할 수 있으며, (c) Flutter 원장 검색 파라미터가 서버 필터 컬럼과 어디까지 맞물리는지 PRD에서 확정 못 한 부분이 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `warning/controller/WarningMemberController.java` | `GET /me`, `GET /me/ledger`, `requireClubMember`, `param.setMemberId` |
-| Backend Service | `warning/service/WarningQueryService.java#getMemberOverview`, `#searchLedger` | summary + 최근 5건 + 활성 제재 합성, ledger 페이징 |
-| Backend Service | `warning/service/WarningMemberSummaryService.java#getOrInitialize`, `#doRecalculate` | row 없으면 0값 생성, effective/qualified/raw 산정 |
-| Backend VO | `WarningMemberOverviewVo`, `WarningMemberSummaryVo`, `WarningLedgerVo`, `WarningSanctionVo` | 실제 응답 필드/타입/enum |
-| Backend DDL | `V1__init.sql` `warning_member_summary`, `warning_ledger` | 컬럼/PK/인덱스 |
-| Frontend API | `data/api/warning/warning_member_api.dart` | `getMyOverview`(VO), `getMyLedger`(PageResponse) |
-| Frontend Provider | `domain/providers/warning/warning_member_providers.dart` | `warningMemberOverviewProvider`, `warningMyLedgerProvider` |
-| Frontend Model | `data/models/warning/warning_member_overview_vo.dart`, `warning_member_summary_vo.dart`, `warning_ledger_vo.dart` | 필드 일치 |
-| Frontend Screen | `presentation/warning/screens/warning_main_screen.dart`, `warning_ledger_screen.dart`, `widgets/warning_ledger_row.dart`, `warning_severity_chip.dart` | 진입/표시 |
-| Verification | (해당 없음) | warning 도메인 전용 자동화 테스트 자산 미확인 — 검증 공백 |
+계약의 정본은 코드다. 서버: `WarningMemberController`, `WarningQueryService`, `WarningMemberSummaryService`. 앱: `warning_main_screen.dart`, `warning_ledger_screen.dart`, `warning_member_api.dart`, `warning_member_providers.dart`, `warning_member_overview_vo.dart`, `warning_member_summary_vo.dart`, `warning_ledger_vo.dart`, `warning_ledger_row.dart`, `warning_severity_chip.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -35,43 +23,10 @@
 6. "전체 원장 보기" → `ledger`(Routes.clubWarningLedger) route → `WarningLedgerScreen` → `warningMyLedgerProvider(clubId, param)` → `GET .../me/ledger`.
 7. 서버는 `param.setMemberId(principal.getUserId())`로 본인 범위를 덮어쓰고 `WarningQueryService.searchLedger`로 `Page<WarningLedgerVo>`를 반환한다. Flutter는 `PageResponse<WarningLedgerVo>`로 받아 페이지네이션한다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /api/v1/clubs/{clubId}/warnings/me`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `WarningMemberController#getMyMain` |
-| 인증/권한 | Bearer 필수, `permissionChecker.requireClubMember(clubId, userId)` |
-| Path | `clubId: long` |
-| 응답 | `WarningMemberOverviewVo` |
-| Side effect | summary row 없으면 `getOrInitialize`가 0값 INSERT — `WarningQueryService.getMemberOverview`에 `@Transactional(rollbackFor={Exception.class})` 적용(2026-06-04 readOnly tx 500 버그 수정) |
-
-`WarningMemberOverviewVo`: `summary: WarningMemberSummaryVo`, `recentLedger: List<WarningLedgerVo>`(최대 5), `activeSanctions: List<WarningSanctionVo>`.
-
-`WarningMemberSummaryVo` 핵심: `clubId`, `memberId`, `effectiveScore:int`, `qualifiedScore:int`, `rawScore:int`, `effectiveCount:int`, `countBySeverity:String(JSON)`, `countByPenaltyType:String(JSON)`, `lastGrantAt:LocalDateTime?`, `underReview:boolean`(JSON key `underReview`), `reviewLevel:WarningReviewLevel`, `reviewTriggeredAt:LocalDateTime?`, `manualLock:boolean`(JSON key `manualLock`), `manualLockReason:String?`, `updatedAt`.
-
-`WarningLedgerVo` 핵심: `id`, `clubId`, `memberId`, `ledgerType:WarningLedgerType`, `penaltyTypeCode:String?`, `points:int`, `targetGrantLedgerId:Long?`, `sourceType`, `sourceId`, `reasonCode`, `reason`, `actorId`, `batchId`, `reportId`, `eventId`, `createdAt`.
-
-### `GET /api/v1/clubs/{clubId}/warnings/me/ledger`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `WarningMemberController#getMyLedger` |
-| 인증/권한 | Bearer 필수, `requireClubMember` |
-| Query | `WarningLedgerSearchParam`(`@ModelAttribute`) extends PagingParam; 서버가 `memberId`를 본인으로 덮어씀 |
-| 응답 | `Page<WarningLedgerVo>` |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `warnings` (`Routes.clubWarnings`), `ledger` (`Routes.clubWarningLedger`) — 클럽 하위 |
-| Screen | `WarningMainScreen`, `WarningLedgerScreen` |
-| Provider | `warningMemberOverviewProvider(clubId)`, `warningMyLedgerProvider(clubId, param)` |
-| Repository | `WarningMemberRepository.getMyOverview`, `getMyLedger` |
-| Retrofit | `WarningMemberApi.getMyOverview`(VO), `getMyLedger`(PageResponse) |
-| Widget | `warning_ledger_row.dart`, `warning_severity_chip.dart` |
+- 내 경고 화면은 그 클럽 멤버만 볼 수 있고, 요약과 최근 원장 5건, 지금 적용 중인 제재를 보여 준다.
+- 목록 조회는 본인 기록만 보인다.
 
 ## 6. 상태/권한 매트릭스
 

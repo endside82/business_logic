@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + payment/ + community_app curated/ -->
 
 ## 1. 결론
@@ -35,21 +34,9 @@ end-to-end 경로는 직접 배정에만 닫혀 있다. 호스트가 제공자�
 - 계약금 취소 API/Repository는 존재하지만 Flutter 화면에서 호출하는 CTA는 없다. 또한 WALLET 결제는
   같은 트랜잭션에서 즉시 PAID가 되어 `cancelPending`의 PENDING 조건을 일반 사용자 흐름에서 충족하지 않는다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `ServiceAssignmentController.java` | `POST .../prepayment/wallet`, `POST .../prepayment/{prepaymentId}/cancel` |
-| Backend Service | `ServiceAssignmentPrepaymentService.java` | `payByWallet`, `cancelPending` |
-| Backend Settlement | `ServiceAssignmentSettlementService.java` | `applyDepositIfPresent`, `forfeitOnAssignmentCancel` |
-| Backend Model | `ServiceEngagement.java` | `agreedProviderFee`, `status(ServiceEngagementStatus)`, `hostUserId`, `providerUserId` |
-| Backend Model | `ServiceAssignmentPrepayment.java` | `engagementId`, `amount`, `method`, `status`, `applicationType`, `pointTxId`, `creatorEarningId` |
-| Backend Model | `ServiceAssignment.java` | `engagementId`, `requiresDeposit`, `serviceFeeGross` |
-| Backend Enum | `ServicePrepaymentMethod.java`, `ServicePrepaymentStatus.java`, `PrepaymentApplicationType.java`, `ServiceEngagementStatus.java` | WALLET·PAID·CANCELED·APPLIED_TO_PROVIDER·FORFEIT_TO_PROVIDER·DRAFT |
-| Frontend API | `service_assignment_api.dart` | `createPrepayment`, `cancelPrepayment` |
-| Frontend Repository | `service_assignment_repository.dart` | `ServiceAssignmentPrepaymentCreateParam` |
-| Frontend Screen | `event_assignments_screen.dart` | `canPrepay = !hasServiceFee && !hasEngagement`, `_createPrepayment` 바텀시트 |
-| Verification | 서버 유닛 테스트 + 앱 소스 실측 | X 검증·forfeit·authority XOR, 카탈로그 결제 CTA 단절 |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentPrepaymentService`, `ServiceAssignmentSettlementService`, `ServiceEngagement`, `ServiceAssignmentPrepayment`, `ServiceAssignment`, `ServicePrepaymentMethod`, `ServicePrepaymentStatus`, `PrepaymentApplicationType`, `ServiceEngagementStatus`. 앱: `event_assignments_screen.dart`, `service_assignment_api.dart`, `service_assignment_repository.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -103,65 +90,6 @@ end-to-end 경로는 직접 배정에만 닫혀 있다. 호스트가 제공자�
 ### 3-D. PENDING 계약금 취소(cancelPending — 드묾)
 
 WALLET 결제는 즉시 PAID라 이 경로는 거의 실행되지 않는다. PENDING 상태인 경우에만 취소 가능.
-
-## 4. 서버 계약
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/wallet`
-
-| 항목 | 값 |
-|---|---|
-| Controller | `ServiceAssignmentController#payPrepaymentByWallet` |
-| 인증/권한 | 필수, 호스트/co-host |
-| Request Body | `ServiceAssignmentPrepaymentCreateParam` — `agreedProviderFee: long`, `depositAmount: long`, `method: ServicePrepaymentMethod` |
-| 응답 | `ServiceAssignmentPrepaymentVo` (HTTP 201) |
-| 가드 | ACCEPTED\|CONFIRMED · 0<D<X · WALLET only · 자전거래 차단 · authority XOR · 활성 계약금 1건 가드 |
-| Side effect | `service_engagement` 생성(또는 확인) + `service_assignment_prepayment` INSERT + 호스트 지갑 차감 + 청산계정 분개 + `assignment.engagementId` 설정 |
-| 에러 | `ASSIGNMENT_NOT_FOUND`, `ASSIGNMENT_INVALID_STATE`, `ASSIGNMENT_PREPAYMENT_METHOD_UNSUPPORTED`, `ASSIGNMENT_PREPAYMENT_INVALID_AMOUNT`, `ASSIGNMENT_SELF_CHARGE`, `ASSIGNMENT_FEE_AUTHORITY_CONFLICT`, `ASSIGNMENT_PREPAYMENT_ALREADY_EXISTS`, `ASSIGNMENT_FEE_MISMATCH`(X 불일치) |
-
-### `POST .../prepayment/{prepaymentId}/cancel`
-
-| 항목 | 값 |
-|---|---|
-| 응답 | `void` (200) |
-| 가드 | PENDING 상태만(`ASSIGNMENT_PREPAYMENT_NOT_CANCELABLE` — PAID는 비환불) |
-| Side effect | `prepayment.status = CANCELED` |
-
-### service-fee와 engagement 상호배타(authority XOR)
-
-| 모드 | `serviceFeeGross` | `engagementId` | 적용 게이트 |
-|---|---|---|---|
-| 수금액 모드 | 0 | null | 제한 없음 |
-| 보장수수료 모드 | > 0 | null | F3 완납 게이트: Σcharge == X |
-| 계약금 모드 | 0 (강제) | not null | F3 게이트: Σcharge + D == X |
-| 충돌 | > 0 | not null | `ASSIGNMENT_FEE_AUTHORITY_CONFLICT` — 두 모드 동시 불가 |
-
-### ServicePrepaymentStatus enum(소스: `ServicePrepaymentStatus.java`)
-
-| 값 | 의미 |
-|---|---|
-| PENDING | 결제 대기(WALLET은 즉시 PAID) |
-| PAID | 지갑 차감 완료, 청산계정 대기 |
-| CANCELED | PENDING 취소(PAID는 취소 불가) |
-
-### PrepaymentApplicationType enum(소스: `PrepaymentApplicationType.java`)
-
-| 값 | 의미 |
-|---|---|
-| `APPLIED_TO_PROVIDER` | 정산 시 제공자 earning으로 적용됨 |
-| `FORFEIT_TO_PROVIDER` | 배정 취소 시 제공자 forfeit 귀속 |
-
-## 5. 프론트 계약
-
-| 항목 | 구현 |
-|---|---|
-| Screen | `EventAssignmentsScreen._AssignmentCard._HostActions` |
-| 계약금 버튼 노출 조건 | `canPrepay = !hasServiceFee && !hasEngagement` (보장모드/engagement 둘 다 숨김) |
-| 클라 사전 검증 | `fee > 0 && deposit > 0 && deposit < fee` — 서버 게이트와 정확히 일치 |
-| Repository 메서드 | `ServiceAssignmentRepository.createPrepayment(eventId, assignmentId, ServiceAssignmentPrepaymentCreateParam)` |
-| 응답 VO | `ServiceAssignmentPrepaymentVo` — Freezed, 필드: `id`, `engagementId`, `amount`, `method`, `status`, `paidAt` |
-| 취소 | API/Repository의 `cancelPrepayment(...)`만 존재. Screen 호출/CTA 없음 |
-| 계약금 후 버튼 숨김 | `item.engagementId != null`이면 `hasEngagement=true` → `canPrepay=false`로 버튼 숨김(2026-06-24 해소) |
-| 카탈로그 D>0 | terms 수락 단계에서 이미 `engagementId`가 생겨 같은 숨김 조건이 결제 전부터 적용됨 — 결제 CTA 없음 |
 
 ## 6. 상태/권한 매트릭스
 

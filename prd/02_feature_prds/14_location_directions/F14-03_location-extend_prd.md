@@ -3,45 +3,25 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/14_location_directions/F14-03_location-extend -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/14_location_directions/F14-03_location-extend`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
-옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장하는 API. 기본 요청은 30분이고 각 요청값을 1~120분으로 클램프한다. 누적 만료 상한이나 재탭 제한은 없어 반복 호출하면 계속 연장할 수 있다. `LocationShareExpiringScheduler`는 매분 잔여 25~31분 범위의 share를 찾아 `LOCATION_SHARE_EXPIRING` 알림 생성을 시도하며, 실제 인앱/푸시 도달은 사용자 채널 설정과 비동기 발송 결과에 따른다.
+옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장하는 API. 기본 요청은 30분이고 각 요청값을 1~120분으로 클램프한다. 횟수 제한은 없지만 연장된 만료는 모임 종료 시각을 넘지 못한다. `LocationShareExpiringScheduler`는 매분 잔여 25~31분 범위의 share를 찾아 `LOCATION_SHARE_EXPIRING` 알림 생성을 시도하며, 실제 인앱/푸시 도달은 사용자 채널 설정과 비동기 발송 결과에 따른다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
 - (1) `EventLocationScreen` (SCR-LD-001)의 시트 안 카운트다운 행에 노출되는 "+ 30분 연장" 버튼
 - (2) `LOCATION_SHARE_EXPIRING` 푸시 알림 탭 → `notification_router` 가 이벤트 위치 화면으로 인계 (UI/UX 스펙 SCR-LD-001/003에 별도 진입점 표기는 없으나 컨트롤러 주석 G-01에 명시)
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/14_location_directions/F14-03_location-extend/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/14_location_directions/F14-03_location-extend/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/14_location_directions/F14-03_location-extend/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/14_location_directions/F14-03_location-extend/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `LocationController`. 앱: `event_location_screen.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/events/{eventId}/location/extend` | `LocationController#extendShare` | [LocationController.java:75](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/location/controller/LocationController.java#L75) |
+서버 창구: `LocationController#extendShare`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 1. 사용자가 "+ 30분 연장" 탭 → `EventLocationNotifier.extend(extendMinutes: 30)` 호출
 2. `EventLocationRepository.extendShare(eventId, 30)` → POST `/api/v1/events/{eventId}/location/extend?extendMinutes=30`
 3. 성공 → notifier 가 내부 `refresh()` 호출 → `GET /location` → 응답의 `LocationVo.expiresAt` 이 갱신된 값으로 들어옴
@@ -50,91 +30,12 @@
 
 > 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조).
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-옵트인 상태로 위치 공유 중인 사용자의 `LocationShare.expiresAt` 시각을 분 단위로 연장한다. 기본 요청은 30분이며 한 요청의 값만 1~120분으로 클램프된다. 기존 `expiresAt`에 매번 더하므로 반복 요청에 대한 누적 상한은 없다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | /api/v1/events/{eventId}/location/extend?extendMinutes=30 | LocationController#extendShare | required | LocationShare.expiresAt 을 분 단위 연장 |
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **Entity** `LocationShare`
-  - `expiresAt: LocalDateTime?` — 연장의 단일 진실 출처
-  - 컨트롤러 주석 (G-01) 에 "최대 120분" 명시. 서비스 클램프 로직과 일치.
-- **Enum**: 본 기능 전용 enum 없음.
-- **외부 알림 producer**: `LocationShareExpiringScheduler`
-  - `@Scheduled(fixedRate = 60000)` — 정상 실행 cadence 매분
-  - 윈도우: `[now + 25m, now + 31m]` (lookback 5m + lookahead 1m). 정확히 30분 전 1회라는 시간 보장은 아님
-  - dedupe TTL 35분, key 에 `expiresAt` 포함 → 연장 시 새 슬롯 자동 발급
-  - opt-out 사용자에게는 발송 스킵
-  - NotificationSetting에서 in-app 비활성 시 생성 자체를 return하고, push 비활성 시 인앱만 저장한다. push 허용 시에도 FCM 발송은 비동기다.
-
-### 의존 단위 / 외부 시스템
-
-- **Unit 03 (event/capacity)**: 자격 검증 의존. Event/Attendance 미존재 시 차단.
-- **Unit 12 (notification)**: `LOCATION_SHARE_EXPIRING` (NotificationType.id=56) 발송 — 본 API 호출을 유도하는 진입점이 되는 알림.
-- **외부**: Redisson (Redis) — dedupe key 로 동일 (shareId, expiresAt) 조합 알림 중복 발송 방지.
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- (1) `EventLocationScreen` (SCR-LD-001)의 시트 안 카운트다운 행에 노출되는 "+ 30분 연장" 버튼
-- (2) `LOCATION_SHARE_EXPIRING` 푸시 알림 탭 → `notification_router` 가 이벤트 위치 화면으로 인계 (UI/UX 스펙 SCR-LD-001/003에 별도 진입점 표기는 없으나 컨트롤러 주석 G-01에 명시)
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 (lib/presentation/...) | 역할 |
-|---|---|---|
-| `/home/events/:eventId/location` | `location/screens/event_location_screen.dart` | 시트 내 "+ 30분 연장" 버튼 (`_CountdownRow` 익스텐션) |
-
-별도 화면/모달 없음 — 시트 내 인라인 액션.
-
-### 화면별 구성 요소 & 액션
-
-### 이벤트 위치 지도 — 카운트다운 행 (`event_location_screen.dart` `_buildCountdownRow`)
-
-- **표시 조건**: `_isOptedIn == true` && `myLocation?.expiresAt != null`
-- **사용자가 보는 것**:
-  - 좌측: 시계 아이콘 (`Icons.schedule_outlined`) + 텍스트 "N분 M초 후 종료" (만료 시 "공유 종료됨", 색은 `AppColors.error500`)
-  - 우측: `AppButton` (label "+ 30분 연장", `ButtonVariant.secondary`, `ButtonSize.sm`, `loading: _isExtending`)
-  - 1초마다 좌측 텍스트만 rebuild (`ValueNotifier<DateTime> _nowTick` + `ValueListenableBuilder`) — 지도/시트/거리 위젯은 rebuild 되지 않음 (G01-D1 최적화)
-- **사용자가 할 수 있는 액션**:
-  - "+ 30분 연장" 탭 → `_extendShare()` → POST `/api/v1/events/{eventId}/location/extend?extendMinutes=30`
-  - 성공 시 토스트 "+ 30분 연장됨"
-  - 실패 시 토스트 "연장에 실패했습니다" (`ToastType.error`)
-- **상태 분기**:
-  - 로딩: 버튼 자체에 `loading: true` 로 인디케이터 표기
-  - 만료 직전 텍스트는 검정 → 만료 시점 즉시 빨강 + "공유 종료됨"
-  - 비-옵트인 또는 `expiresAt == null` 일 땐 카운트다운 행 자체가 렌더되지 않음
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 사용자가 "+ 30분 연장" 탭 → `EventLocationNotifier.extend(extendMinutes: 30)` 호출
-2. `EventLocationRepository.extendShare(eventId, 30)` → POST `/api/v1/events/{eventId}/location/extend?extendMinutes=30`
-3. 성공 → notifier 가 내부 `refresh()` 호출 → `GET /location` → 응답의 `LocationVo.expiresAt` 이 갱신된 값으로 들어옴
-4. UI: `myLocation.expiresAt` 이 다음 빌드에서 새 값으로 반영 → 카운트다운 텍스트 즉시 증가
-5. (백그라운드) 서버 측 스케줄러가 새 expiresAt 기준 잔여 25~31분 window에서 다시 알림 생성을 시도할 수 있음
-
-> 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조).
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- 클라이언트 기본 연장값: **30분** (`extendMinutes: 30`)
-- 사용자에게 노출되는 연장 단위/슬라이더 UI는 없음 — 단일 "+ 30분" 버튼
-- 카운트다운 표시 포맷: `"${remaining.inMinutes}분 ${remaining.inSeconds % 60}초 후 종료"`
-- 만료 후 텍스트: "공유 종료됨" (빨강)
-- tick 주기: 1초 (`Timer.periodic(Duration(seconds: 1))`)
-- 토스트 문구: 성공 "+ 30분 연장됨", 실패 "연장에 실패했습니다"
-- `_isExtending` 가드로 더블 탭 방지
-- 카운트다운 행은 시트 안에서 토글 행과 Divider 사이에 위치
-- invalidate 대신 in-place `refresh()` 사용하여 폴링 Timer 보존
+- 연장은 지금 공유 중인 사람만 할 수 있다. 공유가 이미 만료됐으면 연장되지 않고(`LOCATION_SHARE_EXPIRED`), 공유를 다시 켜서 좌표를 새로 올려야 한다. 호스트는 opt-in 없이도 연장할 수 있지만 본인 좌표를 한 번도 올리지 않았으면 연장할 공유가 없다.
+- 연장 결과는 모임 종료 시각을 넘지 못한다. 한 번에 1~120분(기본 30분)만 늘 수 있고 횟수 제한은 없다.
+- 만료 30분 전 알림은 그 사람이 opt-in 중일 때만 가고, 연장하면 새 만료 시각 기준으로 다시 간 수 있다. 앱 알림을 끈 사람에게는 알림이 만들어지지 않고, 푸시를 끈 사람은 앱 안 알림만 받는다. 푸시는 늦게 도착할 수 있어 정확히 30분 전은 약속하지 않는다.
+- 위치 지도 시트에는 공유 중이고 만료 시각이 있을 때만 남은 시간(`N분 M초 후 종료`)과 `+ 30분 연장` 버튼이 보인다. 만료되면 `공유 종료됨` 이 빨갛게 뜬다. 성공은 `+ 30분 연장됨`, 실패는 `연장에 실패했습니다` 이고 처리 중에는 버튼이 눌리지 않는다. 연장 슬라이더 같은 단위 선택은 없다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -148,15 +49,6 @@
 | S6 | opt-out 후 알림 발송 차단 (알림 producer 분기) | 사용자가 opt-out 한 상태인데 expiresAt 이 30분 후로 다가옴 | opt-out 사용자는 만료 알림을 받지 않음 (스케줄러 79-83 행) |
 | S7 | 미참가자가 연장 시도 (자격 분기) | ATTENDING 아닌 사용자 | 서버 변화 없음 |
 
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
@@ -164,7 +56,6 @@
 | 후보 | frontend.md:42 | > 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:76 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=extend) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:106 | - 클램프(1~120분) 검증은 본 E2E 에서 미커버 — 서비스 단위 테스트로 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 정책 Gap | `LocationService#extendShare` | 120분은 요청 1회 clamp일 뿐이다. 기존 만료에 반복 가산하므로 누적 상한·재탭 제한·이벤트 종료 상한이 없다. | 총 공유 종료 상한이 필요한지 결정하고 서버에서 enforce |
 | 전달 한계 | `LocationShareExpiringScheduler`, `NotificationService` | 잔여 25~31분 window에서 알림 생성을 시도하며 채널 설정에 따라 skip된다. push는 비동기라 정확히 30분 전 도달을 보장하지 않는다. | 문구를 근사 알림으로 유지하고 trace/설정별 테스트 |
 | UX Gap | `_CountdownRow` | 만료 여부로 연장 버튼을 disable하지 않는다. 다음 GET 전에 stale `myLocation`이 남으면 `"공유 종료됨"` 옆 버튼이 활성이고 누르면 서버 실패 토스트가 날 수 있다. | `expiresAt <= now`에서 버튼 숨김/비활성화 |
 
@@ -174,12 +65,6 @@
 - **AC-02. 시트에서 직접 연장 (알림 없이 능동적으로)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 위 S1 의 7~9 단계와 동일
 - **AC-03. 호스트가 본인 위치 공유 없이 연장 시도 (호스트 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 호스트는 본인 좌표를 한 번이라도 update 한 후에야 연장 가능
 - **AC-04. 이미 만료된 공유를 연장 시도 (만료 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자는 옵트인 토글을 다시 켜고 update 호출하여 새로 시작해야 함 (`POST /update` 가 `expiresAt = now+2h` 로 재설정)
-- **AC-05. 요청 1회 클램프**: Given 200분·0분 같은 값을 보낼 때 When 연장 서비스가 처리하면 Then 해당 요청만 120분·1분으로 클램프한다. 반복 호출 누적 만료에는 상한이 없다
+- **AC-05. 요청 1회 클램프**: Given 200분·0분 같은 값을 보낼 때 When 연장 서비스가 처리하면 Then 해당 요청만 120분·1분으로 클램프한다. 반복 호출해도 만료는 모임 종료 시각까지만 늘어난다
 - **AC-06. opt-out 후 알림 발송 차단 (알림 producer 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then opt-out 사용자는 만료 알림을 받지 않음 (스케줄러 79-83 행)
 - **AC-07. 미참가자가 연장 시도 (자격 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 변화 없음
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

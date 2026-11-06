@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-measured: 2026-07-29 -->
 
 > 문서 상태: **현재 소스 실측본**. 서버 Controller/Service/Param과 Flutter API/Repository/Provider/화면을 직접 대조했다. 이 기능의 최종 권한·트리 무결성·동시성 판단은 서버가 담당한다.
@@ -32,62 +31,10 @@
 | Flutter 상태 | `domain/providers/plan/plan_block_provider.dart` |
 | Flutter 화면/모델 | `presentation/plan/screens/block_reorder_screen.dart`, `block_reorder_model.dart` |
 
-## 3. 서버 계약
+## 3. 제품 규칙
 
-### 3.1 엔드포인트
-
-| Method | Path | 요청 | 응답 |
-|---|---|---|---|
-| `PUT` | `/api/v1/plans/{planId}/blocks/reorder` | `PlanBlockReorderParam` | `List<PlanBlockVo>` + `X-Plan-Block-Tree-Revision` |
-| `PATCH` | `/api/v1/plans/{planId}/blocks/{blockId}/move` | `PlanBlockMoveParam` | `PlanBlockVo` + `X-Plan-Block-Tree-Revision` |
-
-`PlanBlockReorderParam`:
-
-- 신규 계약: `parentBlockId: Long?`, `siblingIds: List<Long>`, `revision: Long?`
-- 구앱 호환 계약: `blockIds: List<Long>`, `revision: Long?`
-- `siblingIds`가 있으면 부모 범위 계약을 우선한다.
-
-`PlanBlockMoveParam`:
-
-- `parentBlockId: Long?`
-- `sortOrder: int`
-- `depth: int` — 전송 필드는 남아 있으나 서버의 권위값이 아니다.
-- `revision: Long?`
-
-### 3.2 편집 권한
-
-- 플랜이 존재해야 한다.
-- 요청자는 `creatorId`와 같아야 한다.
-- 상태는 `DRAFT`여야 한다.
-- 미지원 버전의 `rawEnvelope`를 가진 읽기 전용 블록은 개별 move할 수 없다.
-
-### 3.3 reorder 불변식
-
-부모 범위 계약은 해당 `parentBlockId` 아래 살아 있는 전체 자식 ID와 `siblingIds`가 정확히 같은 집합이어야 한다.
-
-- 중복 ID: 거절
-- 일부 형제 누락: 거절
-- 다른 부모/플랜의 ID 포함: 거절
-- 통과 시 기존 형제들이 사용하던 `sortOrder` 슬롯을 정렬해 요청 순서대로 재배치
-
-레거시 `blockIds` 계약도 플랜 전체 살아 있는 블록 집합과 set-equality를 강제한다.
-
-### 3.4 move 불변식
-
-- 새 부모는 같은 플랜의 유효 블록이어야 한다.
-- 자기 자신 또는 자신의 자손을 부모로 지정하면 `PLAN_BLOCK_INVALID_PARENT`로 거절한다.
-- 루트 depth는 `0`, 자식은 `parent.depth + 1`로 서버가 계산한다.
-- 이동된 루트의 모든 자손 depth도 재계산한다.
-- 재계산 결과 `MAX_BLOCK_DEPTH = 3`을 넘으면 트랜잭션 전체를 롤백한다.
-- `sortOrder`는 음수일 수 없고 대상 부모의 현재 형제 최대값 `+1`보다 클 수 없다.
-
-### 3.5 동시성
-
-- 각 mutation 시작 시 플랜 행을 `SELECT ... FOR UPDATE` 성격의 저장소 호출로 잠근다.
-- revision 제공 시 현재 토큰과 일치할 때만 `+1`하며, 불일치는 `409 CONCURRENT_MODIFICATION`이다.
-- `plan.editor.revision-fail-closed=false`이면 revision 없는 구앱 요청도 허용하되 토큰은 무조건 증가한다.
-- fail-closed가 켜지면 revision 미제공 요청은 `428 PLAN_BLOCK_REVISION_REQUIRED`다.
-- 성공 응답은 새 revision을 `X-Plan-Block-Tree-Revision` 헤더로 돌려준다.
+- 이동 위치는 음수일 수 없고 옮겨 갈 부모의 현재 형제 수 범위를 넘지 못한다.
+- 옛 앱이 개정 토큰 없이 보내는 요청은 서버 설정에 따라 받거나(토큰은 올린다) 428 PLAN_BLOCK_REVISION_REQUIRED 로 거절한다.
 
 ## 4. Flutter 계약
 

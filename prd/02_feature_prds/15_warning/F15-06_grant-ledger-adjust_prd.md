@@ -3,30 +3,15 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 운영진(`WARNING_REVIEWER`)은 제보 없이도 점수를 직접 부여하고 부여된 원장 항목을 조정한다. `POST /grants`는 `targetMemberIds` 배열을 받아 멤버별로 `WarningLedgerService.insertGrant`를 호출하고 `{success, ledgerIds, failed, batchId}` Map을 반환한다(Idempotency-Key 헤더 지원). 조정은 `POST /ledger/{ledgerId}/mitigate`(점수 일부 경감, effective 초과 불가), `/reverse`(전체 정정, GRANT당 1회), `/expire`(만료)이며, `POST /ledger/bulk-expire`는 batchId로 여러 GRANT를 일괄 만료한다(AMNESTY, Idempotency-Key 지원). 원장은 append-only이고 `UNIQUE(club_id, member_id, source_type, source_id)`로 멱등하다. 모든 조정은 `WarningMemberSummaryService.recalculateForUpdate`로 점수를 재산정하고 audit + outbox(`WarningGranted/Mitigated/Reversed/Expired`)를 발행한다. Flutter `warning_member_detail_screen.dart`/`warning_reason_dialog.dart`가 이를 구현했다.
 
 판정: **부여·경감·정정·만료·일괄만료의 정합과 멱등은 닫혀 있다**. Gap은 (a) `grant`의 일괄 처리가 단일 컨트롤러 트랜잭션이 아니라 멤버별 try-catch 부분 성공이라 "성공 N건/실패 M건"의 의미와 트랜잭션 경계가 모호, (b) Idempotency-Key 캐시(`ApiIdempotencyKeyService`)와 원장 source UNIQUE의 이중 멱등 구조, (c) mitigate/reverse/expire의 reason blank가 `WARNING_MITIGATE_EXCEEDS_EFFECTIVE`로 매핑되어 의미 불일치인 점이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `WarningAdminActionController.java#grant/mitigate/reverse/expire/bulkExpire`, `#idempotent` | Map 응답, Idempotency-Key, ledgerId path |
-| Backend Service | `WarningLedgerService.java#insertGrant/insertMitigate/insertReverse/insertExpire/bulkExpire/autoGrantFromAttendance/getInvalidationStatus` | 멱등, effective 초과 검사, REVERSE/EXPIRE 1회, 출결 자동 매핑 |
-| Backend Service | `WarningMemberSummaryService.java#recalculateForUpdate/doRecalculate` | REVERSE/EXPIRE 제외, MITIGATE 차감, review_level 재평가 |
-| Backend Service | `WarningPenaltyTypeConfigService#resolvePoints` | 점수 결정 우선순위 |
-| Backend Param | `WarningGrantAddParam`, `WarningMitigateParam`, `WarningReverseParam`, `WarningExpireParam`, `WarningBulkExpireParam` | 배열 부여, points/reason/batchId |
-| Backend VO | `WarningLedgerVo.java` | 원장 row 응답 |
-| Backend Enum | `WarningLedgerType.java` | GRANT/MITIGATE/REVERSE/EXPIRE |
-| Backend Error | `ErrorCode.java` | `WARNING_LEDGER_NOT_FOUND`, `WARNING_LEDGER_ALREADY_REVERSED/EXPIRED`, `WARNING_MITIGATE_EXCEEDS_EFFECTIVE` |
-| Backend DDL | `V1__init.sql` `warning_ledger` | `uk_warning_ledger_idem`, `target_grant_ledger_id` FK |
-| Backend Infra | `common/idempotency/ApiIdempotencyKeyService` | Idempotency-Key 저장/조회 |
-| Frontend API | `warning_admin_action_api.dart#grant/mitigate/reverse/expire/bulkExpire` | Map(dynamic) 응답, Idempotency-Key 헤더 |
-| Frontend Screen | `admin/warning_member_detail_screen.dart`, `widgets/warning_reason_dialog.dart` | 조정 액션 |
-| Verification | (해당 없음) | 전용 자동화 테스트 미확인 |
+계약의 정본은 코드다. 서버: `WarningAdminActionController`, `WarningLedgerService`, `WarningMemberSummaryService`, `WarningLedgerVo`, `WarningLedgerType`, `ErrorCode`, `WarningPenaltyTypeConfigService`, `ApiIdempotencyKeyService`. 앱: `warning_member_detail_screen.dart`, `warning_admin_action_api.dart`, `warning_reason_dialog.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -37,56 +22,6 @@
 5. **만료**: `POST /ledger/{ledgerId}/expire` → 기존 EXPIRE/REVERSE 있으면 거절. EXPIRE row(points=0) 생성.
 6. **일괄 만료**: `POST /ledger/bulk-expire`(`WarningBulkExpireParam{grantLedgerIds, reasonCode, reason, batchId?}`, Idempotency-Key) → batchId 발급 후 각 GRANT를 `insertExpire`, 실패는 `failed` 누적, `{batchId, success, failed}` 반환.
 7. 모든 조정 후 `recalculateForUpdate`가 effective/qualified/raw/count와 review_level을 갱신하고, 등급 변화 시 outbox `MemberReviewLevelChanged` 발행.
-
-## 4. 서버 계약
-
-### `POST /grants`
-| 항목 | 실제 계약 |
-|---|---|
-| 권한 | `WARNING_REVIEWER` |
-| Header | `Idempotency-Key`(선택) → `ApiIdempotencyKeyService` 캐시 |
-| Body | `WarningGrantAddParam` (`targetMemberIds@NotNull`, `penaltyTypeCode@NotBlank@Size(40)`, `pointsOverride?@Min(0)`, `reasonCode?`, `reason@NotBlank@Size(4000)`, `eventId?`, `batchId?@Size(36)`) |
-| 응답 | `Map{success:int, ledgerIds:List<Long>, failed:List<Long>, batchId:String}` |
-| 멱등 | source UNIQUE(`MANUAL_GRANT`+sourceId) + Idempotency-Key 이중 |
-| 부분 성공 | 멤버별 try-catch (개별 실패가 전체 롤백하지 않음) |
-
-### `POST /ledger/{ledgerId}/mitigate`
-| 항목 | 실제 계약 |
-|---|---|
-| 검증 | 대상 GRANT, 미-REVERSE·미-EXPIRE, `points>0`, `points ≤ (points − mitigateSum)` |
-| 실패 | `WARNING_LEDGER_NOT_FOUND`(비GRANT/없음), `WARNING_LEDGER_ALREADY_REVERSED/EXPIRED`, `WARNING_MITIGATE_EXCEEDS_EFFECTIVE`(초과/points≤0/reason blank) |
-| 응답 | `WarningLedgerVo`(MITIGATE row) |
-
-### `POST /ledger/{ledgerId}/reverse`
-| 항목 | 실제 계약 |
-|---|---|
-| 검증 | 대상 GRANT, 기존 REVERSE/EXPIRE 없음 |
-| 실패 | `WARNING_LEDGER_NOT_FOUND`, `WARNING_LEDGER_ALREADY_REVERSED/EXPIRED` |
-| 응답 | `WarningLedgerVo`(REVERSE, points=0) |
-
-### `POST /ledger/{ledgerId}/expire`
-| 항목 | 실제 계약 |
-|---|---|
-| 검증 | 대상 GRANT, 기존 EXPIRE/REVERSE 없음 |
-| 응답 | `WarningLedgerVo`(EXPIRE, points=0) |
-
-### `POST /ledger/bulk-expire`
-| 항목 | 실제 계약 |
-|---|---|
-| Header | `Idempotency-Key`(선택) |
-| Body | `WarningBulkExpireParam{grantLedgerIds, reasonCode, reason, batchId?}` |
-| 응답 | `Map{batchId, success, failed}` |
-| 멱등 | batchId 미지정 시 새 UUID, 각 GRANT EXPIRE는 source UNIQUE 멱등 |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `members/:memberId`(`Routes.adminWarningMemberDetail`) |
-| Screen | `WarningMemberDetailScreen`, `widgets/warning_reason_dialog.dart` |
-| Repository | `WarningAdminActionRepository` |
-| Retrofit | `WarningAdminActionApi.grant`(dynamic Map)/`mitigate`/`reverse`/`expire`/`bulkExpire`(dynamic Map) |
-| 멱등 헤더 | `@Header('Idempotency-Key') String?` (grant, bulkExpire) |
 
 ## 6. 상태/권한 매트릭스
 

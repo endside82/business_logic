@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
 <!-- 갱신: 2026-06-06 (`07bdb38`): EVENT_NO_SHOW source 사전검증 추가 — createAppeal이 save 전 기한(confirmedAt+7일)·본인·canonical caseId를 검증하고 실패를 전파(과거 검증 실패를 삼키고 201 반환하던 BLOCKER 해소) -->
 
@@ -17,21 +16,9 @@
 
 **도메인 경계**: `WarningAppeal` (F15-03, `POST /api/v1/clubs/{clubId}/warnings/appeals`)와 본 기능은 완전히 별개다. 서버 enum, endpoint, 엔티티, 상태값 모두 다르다. `WarningAppealStatus`(SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN) vs `DisputeAppealStatus`(PENDING/UPHELD/REJECTED/CLOSED)는 이름이 유사해 혼동 위험이 높다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `host/dispute/controller/DisputeCaseController.java:getMyAppeals,createAppeal,withdrawAppeal` | 3개 endpoint, 권한 검증, 에러 코드 |
-| Backend Service | `host/dispute/service/DisputeAppealService.java` | `createAppeal`, `withdrawAppeal`, `listMyAppealsForCase`, sourceType dispatcher, best-effort sync |
-| Backend Entity | `host/dispute/model/DisputeAppeal.java`, `V1__init.sql:4576` | 컬럼 전체, UNIQUE(case_id, appellant_user_id) |
-| Backend Enum | `DisputeAppealStatus.java` | 4값, `isClosed()` 정의 |
-| Backend Param | `host/dispute/param/AppealCreateParam.java` | `reasonCode @NotBlank`, `reasonText @NotBlank` min 20 max 1000, `evidenceFileIds` |
-| Backend VO | `host/dispute/vo/AppealVo.java` | id, caseId, reasonCode, reasonText, evidenceFileIds, status, createdAt |
-| Backend Error | `DisputeAppealService.java:108,144,217,220,226,230` | INVALID_REQUEST, CONFLICT, NOT_FOUND, FORBIDDEN |
-| Flutter Screen | `lib/presentation/dispute/screens/appeal_form_screen.dart` | SCR-DP-004, reasonCode 드롭다운 + reasonText |
-| Flutter Provider | `lib/domain/providers/dispute/appeal_create_provider.dart` | 폼 상태, submit, withdraw |
-| Flutter Model | `lib/data/models/dispute/appeal_vo.dart`, `appeal_create_param.dart`, `dispute_enums.dart:AppealStatus,AppealReasonCode` | Freezed 모델, 상태 enum |
-| Verification | 검증 없음 | — |
+계약의 정본은 코드다. 서버: `DisputeCaseController`, `DisputeAppealService`, `DisputeAppeal`, `DisputeAppealStatus`, `AppealCreateParam`, `AppealVo`, `EventNoShowService`. 앱: `appeal_form_screen.dart`, `appeal_create_provider.dart`, `appeal_vo.dart`, `appeal_create_param.dart`, `dispute_enums.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -63,127 +50,6 @@
 2. `appealCreateProvider(caseId).withdraw(appealId)` → `POST /api/v1/me/dispute-cases/{caseId}/appeals/{appealId}/withdraw`.
 3. 서버: appealId 미존재 → 404, caseId 불일치 → 404, 비본인 → 403, 비PENDING → 409.
 4. 성공 시 `AppealVo(status=CLOSED)` 반환.
-
-## 4. 서버 계약
-
-### `GET /api/v1/me/dispute-cases/{caseId}/appeals`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `DisputeCaseController#getMyAppeals` |
-| 인증 | JWT 필수 |
-| Response | `List<AppealVo>` (UNIQUE 제약상 0~1건) |
-
-### `POST /api/v1/me/dispute-cases/{caseId}/appeals`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `DisputeCaseController#createAppeal` |
-| 인증 | JWT 필수 |
-| Request | `@Valid @RequestBody AppealCreateParam` |
-| Response | `AppealVo`, HTTP 201 |
-| 에러 | UNIQUE(case_id, appellantUserId) 위반 → 409 CONFLICT |
-
-### `POST /api/v1/me/dispute-cases/{caseId}/appeals/{appealId}/withdraw`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `DisputeCaseController#withdrawAppeal` |
-| 인증 | JWT 필수 |
-| Path | `caseId: String`, `appealId: Long` |
-| Response | `AppealVo(status=CLOSED)` |
-| 에러 | appealId 미존재 → 404, caseId 불일치 → 404, 비본인(appellantUserId != userId) → 403, 비PENDING → 409 |
-
-### `AppealCreateParam` 필드
-
-| 필드 | 타입 | 필수 | 제약 |
-|---|---|---|---|
-| `reasonCode` | String | Y (`@NotBlank`) | max 40자. **서버는 임의 문자열(≤40자) 허용** (`AppealCreateParam.java:19-20` — @NotBlank @Size(max=40), enum whitelist 없음). 클라이언트 드롭다운 관행 5값: `FACT_INCORRECT/EVIDENCE_MISSING/PROCEDURE_UNFAIR/CIRCUMSTANCE_OVERRIDE/OTHER` (javadoc 주석) |
-| `reasonText` | String | Y (`@NotBlank`) | min 20, max 1000자 |
-| `evidenceFileIds` | List\<Long\> | N | 최대 5개 |
-
-### `AppealVo` 필드
-
-| 필드 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| `id` | Long | N | PK |
-| `caseId` | String | N | 통합 케이스 id |
-| `reasonCode` | String | N | |
-| `reasonText` | String | N | |
-| `evidenceFileIds` | List\<Long\> | Y | |
-| `status` | DisputeAppealStatus | N | |
-| `createdAt` | LocalDateTime | N | |
-
-### `dispute_appeal` 테이블
-
-| 컬럼 | 타입 | NOT NULL | 비고 |
-|---|---|---|---|
-| `id` | bigint AI PK | Y | |
-| `case_id` | varchar(80) | Y | `{prefix}:{sourceId}` |
-| `source_type` | varchar(40) | Y | caseId prefix parsed |
-| `source_id` | bigint | Y | caseId suffix |
-| `appellant_user_id` | bigint | Y | |
-| `reason_code` | varchar(40) | Y | |
-| `reason_text` | varchar(1000) | Y | |
-| `evidence_file_ids` | json | N | |
-| `status` | varchar(20) DEFAULT 'PENDING' | Y | |
-| `processed_by_user_id` | bigint | N | |
-| `processed_at` | datetime | N | |
-| `processed_note` | varchar(1000) | N | |
-| `created_at`, `updated_at` | datetime | Y | |
-
-UNIQUE: `(case_id, appellant_user_id)` — 동일 케이스 본인 이의 1건 보장
-INDEX: `(case_id)`, `(appellant_user_id, status)`
-
-### `DisputeAppealStatus` 상태기계
-
-```
-PENDING (생성)
-  ↓ 본인 철회 (POST .../withdraw, 공개 API)
-CLOSED
-
-PENDING
-  ↓ admin UPHELD 전이 (admin API 소유)
-UPHELD
-
-PENDING
-  ↓ admin REJECTED 전이 (admin API 소유)
-REJECTED
-```
-
-`isClosed() = this != PENDING` (소스: `DisputeAppealStatus.java:17`)
-
-비가역: UPHELD/REJECTED/CLOSED → 재전이 불가.
-
-### sourceType dispatcher 정책
-
-| 조건 | 동작 | 소스 |
-|---|---|---|
-| `caseId` prefix = `CLUB_MEMBERSHIP_ACTION` | 사전 가시성 검증: 영향받은 멤버 본인(action.userId == appellant) 여부 확인. 비본인 → 403 | `DisputeAppealService.java:119-127` |
-| `caseId` prefix = `EVENT_NO_SHOW` | **사전검증(`07bdb38`)**: insert 이전에 `validateAppealable`로 noShowId 존재·본인·기한(`confirmedAt+7일`, 초과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 409)·canonical caseId(`EVENT_NO_SHOW:{noShowId}`) 일치 확인 → 실패 시 전파(appeal 미생성). 통과 후 `EventNoShowService#appeal`로 노쇼 status APPEALED 전이 | `DisputeAppealService.java` |
-| 나머지 모든 prefix | audit-only: 케이스 존재/가시성 검증 없이 `dispute_appeal` insert만. 원본 도메인 status 변경 없음 | `DisputeAppealService.java:163-164` |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| 라우트 | `/me/disputes/:caseId/appeal` (`Routes.myDisputeAppeal`) |
-| Screen | `AppealFormScreen` (SCR-DP-004) |
-| Provider | `appealCreateProvider(caseId)` |
-| API | `DisputeCaseApi.createAppeal(caseId, AppealCreateParam)` → `AppealVo` |
-| API(조회) | `DisputeCaseApi.getMyAppeals(caseId)` → `List<AppealVo>` |
-| API(철회) | `POST .../withdraw` (별도 Retrofit 메서드) |
-| reasonCode 드롭다운 | `AppealReasonCode` 5값(클라 드롭다운): FACT_INCORRECT/EVIDENCE_MISSING/PROCEDURE_UNFAIR/CIRCUMSTANCE_OVERRIDE/OTHER. 서버는 임의 문자열(≤40자) 허용 |
-| reasonText 제약 | 20~1000자 (UI 강제) |
-| 성공 | 케이스 상세 `disputeCaseDetailProvider` invalidate 후 pop |
-| 상태 배지 | `AppealStatus` Dart enum 4값. `AppealStatus.canWithdraw = this == PENDING` |
-
-### Dart enum 정합
-
-| 서버 | Dart | wire value | 판단 |
-|---|---|---|---|
-| `DisputeAppealStatus` | `AppealStatus` | `name()` (클래스명 불일치, wire 일치) | 일치 |
-| `reasonCode` 값 목록 | `AppealReasonCode` 5값 (Dart 전용 enum) | `name()` → String 전송 | 일치 |
 
 ## 6. 상태/권한 매트릭스
 

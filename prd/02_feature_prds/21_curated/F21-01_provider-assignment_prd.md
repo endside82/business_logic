@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + community_admin_api provider/ + community_app curated/ + provider/ -->
 
 ## 1. 결론
@@ -23,26 +22,9 @@ Flutter 앱은 `EventAssignmentsNotifier`(호스트 시점), `MyAssignmentsNotif
 분리해 배정 목록과 액션을 관리한다. 핵심 경로는 구현돼 있으나 confirm/cancel의 path `eventId` 소유
 불변은 아래 Gap처럼 비어 있다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `curated/controller/ServiceAssignmentController.java` | POST `/events/{eventId}/assignments`, GET 목록, `/confirm`, `/cancel`, GET `/me/assignments`, POST `/me/assignments/{id}/accept`, POST `/me/assignments/{id}/reject` |
-| Backend Service | `curated/service/ServiceAssignmentService.java` | `createAssignment`, `confirm`, `cancel`, `accept`, `decline`, `getEventAssignments`, `getProviderAssignments` |
-| Backend Provider | `provider/controller/*`, `provider/service/*` | 프로필 8개, 상품 소유자 8개, 공개 카탈로그 2개 엔드포인트 |
-| Backend Terms | `CatalogAssignmentService`, `ServiceAssignmentTermsService`, `PlatformFeePolicy` | 카탈로그 배정 1개 + 조건 제안/견적/수락/조회 4개, 버전·수수료 스냅샷 |
-| Admin Provider | `community_api/admin-app/.../provider/` | 심사 큐·상세·판정·문서 URL·상품 정지/해제 8개 |
-| Backend Entity | `curated/model/ServiceAssignment.java` | event/provider 유일성, 상품·조건 버전 포인터, 이행상태, @Version 낙관락 |
-| Backend Enum | `curated/constants/AssignmentStatus.java` | 7값 + `getAllowedTransitions()` 소유, `transitionTo()` ASSIGNMENT_INVALID_STATE |
-| Backend Enum | `curated/constants/AssignmentSource.java` | HOST_MANUAL·CATALOG (2값. 내는 곳 없던 HOST_INVITE_ACCEPTED·PROVIDER_APPLY·ADMIN_ASSIGNED 는 차수 11 에서 걷음) |
-| Backend Enum | `curated/constants/FulfillmentStatus.java` | PENDING·IN_PROGRESS·FULFILLED·PARTIALLY_FULFILLED·NO_SHOW·DISPUTED (6값) |
-| Backend Port | `curated/port/CuratedEventAccessPort.java` | `assertHostOrCoHost`, `eventExists`, `assertRegularMeetingHost` |
-| Backend VO | `curated/vo/ServiceAssignmentVo.java` | 제공자 identity, source/status/fulfillment, role/fee/engagement, offering snapshot, current/accepted terms version |
-| Frontend API | `data/api/service_assignment_api.dart` | Retrofit 엔드포인트 전 목록, `ServiceAssignmentCreateParam`, `ServiceAssignmentCancelParam` |
-| Frontend Model | `data/models/curated/service_assignment_vo.dart` | 서버 enum 값 + 역호환용 client-only `unknown` sentinel |
-| Frontend Providers | `domain/providers/curated/service_assignment_provider.dart` | `EventAssignmentsNotifier`, `MyAssignmentsNotifier`, keepAlive: true API/Repository 체인 |
-| Frontend Screens | `presentation/curated/screens/assignment_create_screen.dart`, `event_assignments_screen.dart`, `my_assignments_screen.dart` | 화면 진입·CTA |
-| Verification | `community_api` 테스트 `ServiceAssignmentServiceTest` 계열 | 상태 전이·IDOR·자기배정 동작 확인 |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentService`, `ServiceAssignment`, `AssignmentStatus`, `AssignmentSource`, `FulfillmentStatus`, `CuratedEventAccessPort`, `ServiceAssignmentVo`, `CatalogAssignmentService`, `ServiceAssignmentTermsService`. 앱: `assignment_create_screen.dart`, `event_assignments_screen.dart`, `my_assignments_screen.dart`, `service_assignment_api.dart`, `service_assignment_vo.dart`, `service_assignment_provider.dart`, `assignment_design.dart`, `assignment_pickers.dart`.
 
 ## 2-A. 2026-07-29 제공자 마켓플레이스 실측
 
@@ -145,117 +127,6 @@ confirm/charge/subsidize/prepayment/settle/noshow는 accepted version이 current
 3. 서버가 상태 전이 검증 후 →CANCELED(terminal). SETTLEMENT_LOCKED 이후는 취소 불가.
 4. 취소는 기존 money charge를 자동 역분개한다. engagement의 PAID 미적용 계약금은
    `forfeitOnAssignmentCancel()`로 제공자에게 귀속한다.
-
-## 4. 서버 계약
-
-### `POST /api/v1/events/{eventId}/assignments`
-
-| 항목 | 계약 |
-|---|---|
-| 인증 | 필수 (`@AuthenticationPrincipal UserPrincipal`) |
-| 권한 | `CuratedEventAccessPort.assertHostOrCoHost(eventId, userId)` |
-| Request body | `ServiceAssignmentCreateParam` — `providerUserId: long`, `assignmentSource: AssignmentSource`, `providerRole: String?` |
-| 응답 | `ServiceAssignmentVo` 201 |
-| 중복 제약 | 서비스가 `(eventId, providerUserId)` 기존 배정을 먼저 조회해 `ASSIGNMENT_ALREADY_EXISTS`(409)로 거부. DB `UNIQUE(event_id, provider_user_id)`는 동시성 방어선 |
-| 자기 배정 | providerUserId==caller → status=ACCEPTED (자동 수락) |
-| 외부 배정 | providerUserId≠caller → status=ASSIGNED (수락 대기) |
-| 출처 제한 | 이 direct API에서 `CATALOG`를 보내면 거부. 카탈로그 전용 엔드포인트 사용 |
-
-### `GET /api/v1/events/{eventId}/assignments`
-
-| 항목 | 계약 |
-|---|---|
-| 권한 | `CuratedEventAccessPort.assertHostOrCoHost(eventId, userId)` |
-| 응답 | `List<ServiceAssignmentVo>` (PageResponse 아님) |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/confirm`
-
-| 항목 | 계약 |
-|---|---|
-| 권한 | `assertHostOrCoHost` |
-| path scope | controller가 path `eventId`를 서비스에 전달하지 않는다. 서비스는 assignment의 실제 eventId로 권한을 검사하므로 타 이벤트 권한 상승은 없지만 path-owner 일치 검증은 없음 |
-| 전이 | ACCEPTED → CONFIRMED (`AssignmentStatus.getAllowedTransitions()`) |
-| 실패 | ACCEPTED 아닌 상태에서 호출 시 `ASSIGNMENT_INVALID_STATE` |
-| 응답 | `ServiceAssignmentVo` 200 |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/cancel`
-
-| 항목 | 계약 |
-|---|---|
-| 권한 | `assertHostOrCoHost` |
-| path scope | confirm과 동일하게 path `eventId`는 무시되고 assignment 실제 eventId가 권한·처리 기준 |
-| 전이 | DRAFT·ASSIGNED·ACCEPTED·CONFIRMED → CANCELED. SETTLEMENT_LOCKED·DECLINED·CANCELED → 불가 |
-| 부수 효과 | 계약금 PAID 배정: `forfeitOnAssignmentCancel` 호출(계약금 제공자 귀속) |
-| Request body | `ServiceAssignmentCancelParam(reason: String?)` |
-| 응답 | `ServiceAssignmentVo` 200 |
-
-### `GET /api/v1/me/assignments`
-
-| 항목 | 계약 |
-|---|---|
-| 접근 | 인증된 사용자 본인만. IDOR-safe: principal 고정 |
-| 응답 | `List<ServiceAssignmentVo>` (나에게 온 배정만) |
-
-### `POST /api/v1/me/assignments/{assignmentId}/accept`
-
-| 항목 | 계약 |
-|---|---|
-| 권한 | `assignmentId`의 `providerUserId == principal.userId` (서버 검증) |
-| 전이 | direct 배정의 ASSIGNED → ACCEPTED. offeringId가 있는 카탈로그 배정은 거부 |
-| 응답 | `ServiceAssignmentVo` 200 |
-
-### `POST /api/v1/me/assignments/{assignmentId}/reject`
-
-| 항목 | 계약 |
-|---|---|
-| 권한 | `assignmentId`의 `providerUserId == principal.userId` |
-| 전이 | ASSIGNED → DECLINED (terminal) |
-| 응답 | `ServiceAssignmentVo` 200 |
-
-### `ServiceAssignmentVo` 핵심 필드
-
-| 필드 | Java 타입 | Dart 타입 | 비고 |
-|---|---|---|---|
-| `id` | `Long` | `int?` | 생성 전 null |
-| `hostUserId` | `long` | `int` | |
-| `providerUserId` | `long` | `int` | |
-| `eventId` | `long` | `int` | owner 단일 grain |
-| `assignmentSource` | `AssignmentSource` | `AssignmentSource` enum | 서버 5값 + client unknown |
-| `status` | `AssignmentStatus` | `AssignmentStatus` enum | 7값 verbatim |
-| `fulfillmentStatus` | `FulfillmentStatus` | `FulfillmentStatus` enum | 6값 verbatim |
-| `providerRole` | `String?` | `String?` | taxonomy 미확정 |
-| `serviceFeeGross` | `BigDecimal` | `double?` | 과금 전 null |
-| `engagementId` | `Long?` | `int?` | 계약금 모드 식별자 |
-| `offeringId` / `offeringTitle` | `Long?` / `String?` | `int?` / `String?` | 카탈로그 상품 스냅샷 |
-| `currentTermsVersion` / `acceptedTermsVersion` | `Integer?` | `int?` | `termsUpToDate`와 함께 금전 게이트 판단 |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| 호스트 목록 Provider | `EventAssignmentsNotifier(eventId)` — `@riverpod` auto-dispose |
-| 제공자 목록 Provider | `MyAssignmentsNotifier` — `@riverpod` |
-| API 체인 | `serviceAssignmentApiProvider`(keepAlive) → `serviceAssignmentRepositoryProvider`(keepAlive) → Notifier |
-| 배정 생성 화면 | `AssignmentCreateScreen` |
-| 호스트 배정 목록 화면 | `EventAssignmentsScreen` |
-| 제공자 배정 목록 화면 | `MyAssignmentsScreen` |
-| 제공자 센터/카탈로그 | profile 진입 `/me/provider`; 프로필·문서·상품목록·상품편집·카탈로그·상품상세 7화면 |
-| 디자인 | `presentation/curated/widgets/assignment_design.dart` |
-| 피커 | `presentation/curated/widgets/assignment_pickers.dart` |
-| 에러 | `Result.failure(ApiError)` → `AppErrorState(title:)` |
-
-CTA 분기:
-
-| 사용자/상태 | 표시 CTA |
-|---|---|
-| 호스트 + ASSIGNED | 취소(cancel) |
-| 호스트 + ACCEPTED | 확정(confirm) / 취소(cancel) |
-| 호스트 + CONFIRMED | 서비스비 설정(service-fee) / 과금(charge) / 정산(settle) / 취소(cancel) |
-| 호스트 + SETTLEMENT_LOCKED | (터미널, 액션 없음) |
-| 제공자 + direct ASSIGNED | 수락(accept) / 거절(reject) |
-| 제공자 + catalog ASSIGNED | 조건 제안/견적 확인·terms 수락 / 거절 |
-| 제공자 + ACCEPTED | (확정 대기) |
-| 제공자 + CONFIRMED | (정산 대기) |
 
 ## 6. 상태/권한 매트릭스
 

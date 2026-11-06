@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 2026-10-29 현재 계약 대조
 
 ### 신고 검토 목록의 정렬을 서버에서 적용합니다
@@ -18,21 +17,9 @@
 
 판정: **조회·큐 처리의 화면-API 정합은 닫혀 있다**. 그러나 운영 신뢰성 Risk가 크다: (a) 통계 화면(`getStatistics`)이 서버가 지원하는 `period` 쿼리 파라미터를 **전달하지 않아** 항상 전체 기간만 본다, (b) 대시보드 `newThisMonthCount`/통계가 `warningLedgerRepository.findAll()` 전체를 메모리로 가져와 클럽 필터링 — 대규모 데이터에서 성능/메모리 위험, (c) `severe30dCount`가 "최근 30일"이 아니라 현재 SEVERE 등급 인원으로 근사(주석도 인정), (d) 큐 enqueue 호출처가 도메인 내부 서비스에 한정되어 실제로 어떤 흐름이 큐를 채우는지 검증 필요, (e) `processQueueItem`의 APPROVE/REJECT가 상태만 바꾸고 별도 액션을 트리거하지 않는 점이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `WarningAdminQueueController.java#searchQueue/getQueueItem/processQueueItem/getDashboard/getAdminMemberDetail/getReviewTargets/searchAuditLogs/getStatistics` | 8엔드포인트, `period` 쿼리 |
-| Backend Service | `WarningReviewQueueService.java#search/findById/enqueue/process/markProcessed/buildDashboard/buildStatistics/searchReviewTargets` | 큐 멱등 enqueue, OPEN→PROCESSED/IGNORED, findAll 집계 |
-| Backend Service | `WarningQueryService.java#getAdminMemberDetail/searchLedger/searchAuditLogs` | 멤버 상세 합성, 감사 로그 페이징 |
-| Backend Param | `WarningReviewQueueProcessParam`(Decision APPROVE/REJECT/IGNORE), `WarningReviewQueueSearchParam`, `WarningReviewTargetSearchParam`, `WarningAuditLogSearchParam` | 처리/검색 파라미터 |
-| Backend VO | `WarningReviewQueueVo`, `WarningDashboardVo`, `WarningStatisticsVo`, `WarningAdminMemberDetailVo`, `WarningReviewTargetVo`, `WarningAuditLogVo` | 응답 필드 |
-| Backend Enum | `WarningReviewQueueType`(7값), `WarningReviewQueueStatus`(OPEN/PROCESSED/IGNORED), `WarningReviewLevel`(5값) | 큐/등급 |
-| Backend Error | `ErrorCode.java` | `WARNING_QUEUE_ITEM_NOT_FOUND` |
-| Backend DDL | `V1__init.sql` `warning_review_queue`, `warning_audit_log`(5년 보존), `domain_outbox` | 컬럼/인덱스 |
-| Frontend API | `warning_admin_queue_api.dart` | 8엔드포인트, `getStatistics`는 **period 미전달** |
-| Frontend Screen | `admin/warning_console_screen.dart`, `warning_queue_screen.dart`, `warning_review_targets_screen.dart`, `warning_audit_log_screen.dart`, `warning_member_detail_screen.dart` | 콘솔/큐/대상/로그/멤버 상세 |
-| Verification | (해당 없음) | 전용 자동화 테스트 미확인 |
+계약의 정본은 코드다. 서버: `WarningAdminQueueController`, `WarningReviewQueueService`, `WarningQueryService`, `ErrorCode`. 앱: `warning_console_screen.dart`, `warning_queue_screen.dart`, `warning_review_targets_screen.dart`, `warning_audit_log_screen.dart`, `warning_member_detail_screen.dart`, `warning_admin_queue_api.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -43,46 +30,6 @@
 5. **통계**: `GET /statistics?period=...`(서버 지원) → `WarningStatisticsVo`. **현재 Flutter는 period 미전달 → 항상 "ALL"**.
 6. **감사 로그**: `audit-logs`(`Routes.adminWarningAuditLogs`) → `GET /audit-logs` → `Page<WarningAuditLogVo>`(before/after JSON, actor/role/flags).
 7. 큐는 다른 경고 서비스(`enqueue`)가 채우거나, `markProcessed`로 비즈니스 트랜잭션 안에서 자동 처리된다.
-
-## 4. 서버 계약
-
-### `GET /queue` / `GET /queue/{queueId}` / `POST /queue/{queueId}/process`
-| 항목 | 실제 계약 |
-|---|---|
-| 권한 | `WARNING_REVIEWER` |
-| search 응답 | `Page<WarningReviewQueueVo>` |
-| 단건 | clubId 불일치/없음 → `WARNING_QUEUE_ITEM_NOT_FOUND` |
-| process Body | `WarningReviewQueueProcessParam{decision@NotNull(APPROVE/REJECT/IGNORE), note?}` |
-| process 동작 | OPEN 아니면 멱등 반환, IGNORE→IGNORED 그 외→PROCESSED, outbox `WarningReviewQueueProcessed` |
-
-`WarningReviewQueueVo`: `id`, `clubId`, `queueType:WarningReviewQueueType`, `targetType`, `targetId`, `summary`, `status:WarningReviewQueueStatus`, `assignedTo`, `processedBy`, `processedAt`, `processedNote`, `createdAt`.
-
-### `GET /dashboard`
-`WarningDashboardVo`: `clubId`, `reviewTargetsByLevel:Map<String,Long>`(ATTENTION/MONITOR/RESTRICTION_CANDIDATE/SEVERE_SANCTION_CANDIDATE), `newThisMonthCount`(findAll 집계), `severe30dCount`(현재 SEVERE 인원 근사), `pendingReports`(SUBMITTED+IN_REVIEW+NEEDS_MORE_INFO), `pendingAppeals`(SUBMITTED+IN_REVIEW), `queueOpenCount`, `outboxMetric:Map`(pending/failed/skipped).
-
-### `GET /statistics`
-| 항목 | 실제 계약 |
-|---|---|
-| Query | `period`(선택, ALL/7D/30D/90D/MONTH/YEAR) — `@RequestParam(required=false)` |
-| 응답 | `WarningStatisticsVo{period, grantCount, mitigateCount, reverseCount, expireCount, grantsByPenaltyCode:Map, appealAverageHandlingHours, appealResolvedCount, reviewTargetTotal}` |
-| 집계 | `warningLedgerRepository.findAll()` 전체 → clubId/기간 필터 (메모리) |
-
-### `GET /members/{memberId}` / `GET /review-targets` / `GET /audit-logs`
-| 항목 | 실제 계약 |
-|---|---|
-| 멤버 상세 | `WarningAdminMemberDetailVo`(summary + 최근 20 ledger + 활성 제재) |
-| 검토 대상 | `Page<WarningReviewTargetVo>{clubId, memberId, reviewLevel, effectiveScore, effectiveCount, lastGrantAt, reviewTriggeredAt, manualLock}` |
-| 감사 로그 | `Page<WarningAuditLogVo>{id, clubId, actorId, actorRole, actorPermissionFlags, actionType, targetType, targetId, beforeData, afterData, reason, reasonCode, batchId, requestIp, userAgent, createdAt}` |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `queue`/`review-targets`/`audit-logs`/`members/:memberId` (운영 콘솔 하위) |
-| Screen | `WarningConsoleScreen`, `WarningQueueScreen`, `WarningReviewTargetsScreen`, `WarningAuditLogScreen`, `WarningMemberDetailScreen` |
-| Repository | `WarningAdminQueueRepository` |
-| Retrofit | `WarningAdminQueueApi.searchQueue/getQueueItem/processQueueItem/getDashboard/getAdminMemberDetail/getReviewTargets/searchAuditLogs/getStatistics` |
-| 누락 | `getStatistics(clubId)` — **period 파라미터 없음** |
 
 ## 6. 상태/권한 매트릭스
 

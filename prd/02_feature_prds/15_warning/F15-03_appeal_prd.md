@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 > **범위 경계**: 이 PRD는 **클럽 경고 이의제기(`WarningAppeal`)** 만 다룬다. `WarningAppealStatus`는 6값(`SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN`)이다. v3 통합 분쟁 이의(`DisputeAppeal`, 4값 `PENDING/UPHELD/REJECTED/CLOSED`)는 전혀 다른 도메인이며 `../../01_domain_prds/18_분쟁_해결_prd.md`(병렬 작성 중, 링크만)를 참조한다.
 
 ## 1. 결론
@@ -12,23 +11,9 @@
 
 판정: **제출/조회/철회 정합은 닫혀 있다**. Gap은 (a) 제출 시 `description`만 필수이고 reason blank가 아니라 description blank를 `@NotBlank`로 막는데, 운영진 처리(F15-07)의 reason 누락은 `WARNING_APPEAL_NOT_FOUND`로 매핑되어 오해 소지, (b) 본인 이의 목록이 List라 페이지네이션 부재, (c) 14/28일 SLA 알림 스케줄러가 placeholder인 점이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `WarningMemberController.java#submitAppeal/getMyAppeals/withdrawAppeal` | 멤버 이의 3엔드포인트 |
-| Backend Service | `WarningAppealService.java#submit/getMyAppeals/withdraw/notifyOverdueAppeals` | 활성 GRANT 검증, 진행 중 1건, 철회, outbox `WarningAppealSubmitted` |
-| Backend Service | `WarningLedgerService.java#getInvalidationStatus` | REVERSE/EXPIRE 무력화 검사 |
-| Backend Param | `WarningAppealAddParam.java` | `targetGrantLedgerId@NotNull`, `description@NotBlank@Size(4000)`, `attachments?` |
-| Backend VO | `WarningAppealVo.java` | 응답 필드, `resubmitAllowedAt/By` |
-| Backend Enum | `WarningAppealStatus.java` | SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN |
-| Backend Error | `ErrorCode.java` | `WARNING_APPEAL_NO_TARGET_GRANT`, `WARNING_APPEAL_DUPLICATE`, `WARNING_APPEAL_NOT_FOUND`, `WARNING_APPEAL_ALREADY_PROCESSED`, `WARNING_LEDGER_ALREADY_REVERSED/EXPIRED` |
-| Backend DDL | `V1__init.sql` `warning_appeal` | FK `target_grant_ledger_id` → `warning_ledger`, 인덱스 |
-| Backend Scheduler | `warning/scheduler/WarningAppealOverdueScheduler.java` | SLA 알림 스케줄 존재 여부 |
-| Frontend API | `warning_member_api.dart#submitAppeal/getMyAppeals/withdrawAppeal` | 경로/메서드/List 반환 |
-| Frontend Screen | `appeal_submit_screen.dart`, `my_appeals_screen.dart`, `widgets/warning_appeal_dialog.dart` | 제출/목록/철회 |
-| Frontend Provider | `warning_member_providers.dart#warningMyAppeals` | List 구독 |
-| Verification | (해당 없음) | 전용 자동화 테스트 미확인 |
+계약의 정본은 코드다. 서버: `WarningMemberController`, `WarningAppealService`, `WarningLedgerService`, `WarningAppealAddParam`, `WarningAppealVo`, `WarningAppealStatus`, `ErrorCode`, `WarningAppealOverdueScheduler`. 앱: `appeal_submit_screen.dart`, `my_appeals_screen.dart`, `warning_member_api.dart`, `warning_appeal_dialog.dart`, `warning_member_providers.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -38,42 +23,6 @@
 4. audit log `APPEAL_SUBMITTED` + outbox `WarningAppealSubmitted` 발행, 201로 `WarningAppealVo` 반환.
 5. `my-appeals`(`Routes.clubWarningMyAppeals`) → `MyAppealsScreen` → `warningMyAppealsProvider(clubId)` → `GET /warnings/me/appeals` → `List<WarningAppealVo>`(생성일 내림차순).
 6. 철회: `POST /warnings/appeals/{appealId}/withdraw` → 본인 + 상태 ∈ {SUBMITTED, IN_REVIEW}일 때만 `WITHDRAWN`.
-
-## 4. 서버 계약
-
-### `POST /api/v1/clubs/{clubId}/warnings/appeals`
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `WarningMemberController#submitAppeal` |
-| 권한 | `requireClubMember` + 대상 GRANT 본인·클럽 소유 검증 |
-| Body | `WarningAppealAddParam` |
-| 응답 | `WarningAppealVo`, 201 CREATED |
-| 검증 | GRANT 타입 / 본인·클럽 일치 / 미-REVERSE·미-EXPIRE / 진행 중 1건 |
-| 실패 | `WARNING_APPEAL_NO_TARGET_GRANT`, `WARNING_LEDGER_ALREADY_REVERSED`, `WARNING_LEDGER_ALREADY_EXPIRED`, `WARNING_APPEAL_DUPLICATE` |
-
-### `GET /api/v1/clubs/{clubId}/warnings/me/appeals`
-| 항목 | 실제 계약 |
-|---|---|
-| 응답 | `List<WarningAppealVo>` (**Page 아님**) — `findByClubIdAndMemberIdOrderByCreatedAtDesc` |
-
-### `POST /api/v1/clubs/{clubId}/warnings/appeals/{appealId}/withdraw`
-| 항목 | 실제 계약 |
-|---|---|
-| 조건 | 본인 + 상태 ∈ {SUBMITTED, IN_REVIEW} |
-| 실패 | 비본인 → `WARNING_APPEAL_NOT_FOUND`, 종결 → `WARNING_APPEAL_ALREADY_PROCESSED` |
-
-`WarningAppealVo` 핵심: `id`, `clubId`, `memberId`, `targetGrantLedgerId`, `description`, `attachments`, `status:WarningAppealStatus`, `assignedTo`, `processedBy`, `processedAt`, `processReason`, `resultingLedgerId`, `resubmitAllowedAt`, `resubmitAllowedBy`, `createdAt`, `updatedAt`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `appeals/submit`, `my-appeals` (클럽 하위) |
-| Screen | `AppealSubmitScreen`, `MyAppealsScreen` |
-| Provider | `warningMyAppealsProvider(clubId)` (List) |
-| Repository | `WarningMemberRepository.submitAppeal/getMyAppeals/withdrawAppeal` |
-| Retrofit | `WarningMemberApi.submitAppeal/getMyAppeals/withdrawAppeal` |
-| Widget | `warning_appeal_dialog.dart` |
 
 ## 6. 상태/권한 매트릭스
 

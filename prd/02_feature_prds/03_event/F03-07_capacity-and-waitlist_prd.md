@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/03_event/F03-07_capacity-and-waitlist -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-07_capacity-and-waitlist`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 이벤트 정원/대기열 정책과 이미 들어와 있는 사람들의 흐름을 운영하는 기능이다. 현재 Flutter 화면에서 직접 수행할 수 있는 범위는 기본 정원·대기열·승인제·게스트 설정, 수동 승격, 강제 제거다. 모집 마감/재개는 서버 API부터 Repository·Provider까지 존재하지만 **호출하는 화면 CTA가 없다**. 정원 초과 허용·하드 상한은 바꾸는 입구가 없다(옛 `PATCH /capacity-settings` 는 서버·앱 모두 걷음). 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 WAITING → ATTENDING)은 서버에서 일어난다. 이벤트 신청 행위 자체는 F03-05 범위다.
@@ -25,44 +20,11 @@
   - 이벤트 상세 → 참석자 프리뷰 → "참석자 목록" (참가자도 ATTENDING 만 조회)
   - 본인이 대기열인 경우 상단에 "대기 N번째" 카드 노출
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/03_event/F03-07_capacity-and-waitlist/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/03_event/F03-07_capacity-and-waitlist/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/03_event/F03-07_capacity-and-waitlist/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/03_event/F03-07_capacity-and-waitlist/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:108` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:120` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:131` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:142` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:153` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:74` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/AttendanceController.java:85` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:107` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:115` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:124` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:48` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:64` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:73` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:82` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:91` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/controller/CapacityController.java:99` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/capacity/service/CapacitySettingsService.java` | 기본 설정 GET/PUT 권한: host ∪ any co-host ∪ 클럽 ADMIN/OWNER |
-| `community_api/src/main/java/com/endside/community/event/service/EventViewerContextService.java` | `canManageCapacity`를 위 기본 설정 권한과 같은 식으로 계산 |
-| `community_app/lib/core/router/app_router.dart`, `event_detail_screen.dart` | route guard와 `수용인원 설정` 행이 `canManageCapacity` 직접 소비 |
+계약의 정본은 코드다. 서버: `AttendanceController`, `CapacityController`, `CapacitySettingsService`, `EventViewerContextService`, `WaitlistService`, `EventCapacitySettingsService`, `NotificationService`. 앱: `event_detail_screen.dart`, `attendee_list_screen.dart`, `waitlist_screen.dart`, `capacity_settings_screen.dart`, `attendance_log_screen.dart`, `app_router.dart`, `attendance_api.dart`.
 
 ## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
 
 1. 화면 진입 시:
    - `attendeeListNotifierProvider(eventId)` ▶ `AttendanceRepository.getAttendees(eventId)` ▶ `GET /api/v1/events/{id}/capacity/attendees` (Flutter 의 `attendance_api.dart` 는 `getHostAttendees` / `getAttendees` 두 메서드를 두지만 둘 다 같은 List<AttendanceVo> 응답)
@@ -142,150 +104,35 @@
 
 선입금 흐름(W2와 공유)에서 결제 확정 시점에 정원이 이미 가득 차 있을 race를 대비해, `CapacityService.confirmAttendanceFromPayment`도 동일 매트릭스를 적용한다. `WAITING/FULL` 결정이 떨어지면 `ErrorCode.CAPACITY_FULL_AT_CONFIRMATION(400012)`을 던지고, WALLET 경로는 트랜잭션 전체 롤백(지갑 차감 안 됨), BANK_TRANSFER 경로는 `event_payment.status=REFUND_REQUESTED` 전환 후 호스트 수동 환불을 유도한다. 자세한 결제 facade 동작은 F03-05의 `2.2 결제 확정 race` 참고.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
+### 권한
+| 할 일 | 누가 |
+|---|---|
+| 정원 설정 보기·저장 | 호스트, 활성 공동호스트, 클럽 ADMIN·OWNER. 임의 로그인 사용자는 못 본다 |
+| 참석자·대기 목록 | 위에 더해 클럽 출석 관리자, 참석 행이 있는 사람 |
+| 승격·제거·참석 로그 | 호스트, 출석 권한이 있는 공동호스트, 클럽 출석 관리자 |
+| 모집 마감·재개 | 모임을 연 호스트만. 공동호스트·클럽 운영진은 정원 설정을 열어도 못 한다. 정기모임 회차는 안 된다 |
 
-서버 계약은 기본 설정·초과정원 설정·모집 마감/재개·승격·제거까지 제공한다. 현재 Flutter 사용자 표면은 기본 설정·승격·제거만 연결되어 있고, 초과정원 PATCH와 마감/재개는 앱 UI에 연결되지 않았다. 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 1번 대기자가 ATTENDING)은 서버 side effect다.
+### 정원 설정 저장
+- DRAFT·OPEN 에서만 저장한다. 그 밖은 `INVALID_EVENT_STATUS` 다.
+- 정원은 1 이상, 최대 대기 수는 0 이상이다.
+- 대기를 끄거나 승인제를 꺼도 이미 있는 대기와 심사 대기 신청은 그대로다. 새 신청에만 적용한다.
+- 모집 마감 여부는 이 저장으로 바꾸지 않고 마감·재개 명령으로만 바꾼다.
+- 정원을 늘려 승격돼도 별도 안내는 없고, 현재 인원이 갱신되어 보인다.
 
-v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolicy.decide` 매트릭스로 단일화되었다. baseCapacity·waitlist 외에 `overcapacityAllowed`/`hardCapacityLimit` 두 축이 판정에 들어가지만 바꾸는 입구는 없다(§3-1).
+### 수동 승격
+- 정원 판정을 본다. 자리가 없으면 `CAPACITY_FULL` 이다. 승격도 상한을 넘기지 못한다.
+- 제재 중인 회원은 거절한다. 게스트 행은 데려온 회원이 `ATTENDING` 일 때만 올린다(`GUEST_OWNER_NOT_ATTENDING`).
+- 종료·취소 모임은 `EVENT_NOT_OPEN` 이고, 모집 마감한 OPEN 모임은 받는다. 다른 운영자가 먼저 올린 행은 `CONFLICT` 다.
 
-### 엔드포인트 요약
+### 자동 승격과 제재
+- 제재 대상은 건너뛰고 대기에 남긴다. 앞사람이 제재 중이어도 뒷사람은 승격한다. 제재가 풀리면 다음 승격 때 다시 후보가 된다.
+- 종료·취소 모임에서는 승격하지 않는다.
 
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/events/{eventId}/capacity/settings` | `CapacityController#getSettings` | host/공동호스트/클럽 ADMIN·OWNER | 정원/대기열 정책 조회. 임의 로그인 사용자 조회는 차단 |
-| PUT | `/api/v1/events/{eventId}/capacity/settings` | `CapacityController#updateSettings` | host/공동호스트/클럽 ADMIN·OWNER | 정원·대기열·승인제 설정 변경 (정원 증가 시 대기열 자동 승격) |
-| PATCH | `/api/v1/events/{eventId}/capacity` | `AttendanceController#updateCapacity` | host/공동호스트/클럽 ADMIN·OWNER | 같은 `CapacitySettingsService`를 쓰는 플랜 호환 경로 |
-| GET | `/api/v1/events/{eventId}/capacity/attendees` | `CapacityController#getAttendees` | host/공동호스트/클럽 출석관리자/attendance 행 보유자 | ATTENDING 참석자 목록 (닉네임 N+1 최적화) |
-| GET | `/api/v1/events/{eventId}/attendees` | `AttendanceController#getAttendees` | 같음 | 동일 (플랜 호환 경로) |
-| GET | `/api/v1/events/{eventId}/capacity/waitlist` | `CapacityController#getWaitlist` | host/공동호스트/클럽 출석관리자/attendance 행 보유자 | WAITING 대기자 목록 (waitlistOrder 정렬) |
-| GET | `/api/v1/events/{eventId}/waitlist` | `AttendanceController#getWaitlist` | 같음 | 동일 (플랜 호환 경로) |
-| POST | `/api/v1/events/{eventId}/capacity/{userId}/promote` | `CapacityController#promoteManual` | host/co-host(`canManageAttendance`)/클럽 출석관리자 | 대기자 → ATTENDING 수동 승격. base/hard 상한을 검사하지 않고 알림 생성을 요청 |
-| POST | `/api/v1/events/{eventId}/attendees/{userId}/promote` | `AttendanceController#promoteManual` | 같음 | 동일 (플랜 호환 경로) |
-| DELETE | `/api/v1/events/{eventId}/capacity/{userId}` | `CapacityController#removeByHost` | host/co-host(`canManageAttendance`)/클럽 출석관리자 | 참석자/대기자 강제 제거. 활성 결제·환불 대기자는 money guard가 별도 차단 |
-| GET | `/api/v1/events/{eventId}/capacity/logs` | `CapacityController#getLogs` | host/co-host(`canManageAttendance`)/클럽 출석관리자 | 참석 변경 로그 페이지네이션 |
-| GET | `/api/v1/events/{eventId}/attendance/logs` | `AttendanceController#getLogs` | 같음 | 동일 (플랜 호환 경로) |
-| POST | `/api/v1/events/{eventId}/capacity/close` | `CapacityController#closeEvent` | 호스트 | 모집 마감 (`isClosed=true`), Flutter API 없음 |
-| POST | `/api/v1/events/{eventId}/capacity/reopen` | `CapacityController#reopenEvent` | 호스트 | 모집 재개 (`isClosed=false`), Flutter API 없음 |
-| POST | `/api/v1/events/{eventId}/registration/close` | `AttendanceController#closeEvent` | 호스트 | 동일 (Flutter API/Repository/Provider는 있으나 화면 caller 없음) |
-| POST | `/api/v1/events/{eventId}/registration/reopen` | `AttendanceController#reopenEvent` | 호스트 | 동일 (Flutter API/Repository/Provider는 있으나 화면 caller 없음) |
-| GET | `/api/v1/events/{eventId}/capacity/me` | `CapacityController#getMyAttendance` | 인증 | 본인 참석 상태 (ATTENDING/WAITING/CANCELLED) |
-| GET | `/api/v1/events/{eventId}/attendance/me` | `AttendanceController#getMyAttendance` | 같음 | 동일 (플랜 호환 경로) |
-
-### 대기열 자동 승급 시 제재 사용자 skip 필터 (갱신 2026-06-05)
-
-> 소스: `WaitlistService.java:161, 230`.
-
-대기열 자동 승급(`autoPromoteNextWaiting`, `autoPromoteAll`) 시 `EventApplyRestrictionGuard.isRestricted(userId, clubId)` 를 호출하여 제재 사용자는 자동 승급 대상에서 건너뛴다(skip). 제재 상태가 해제되면 다음 승급 주기에 정상 포함된다.
-
-- `assertNotRestricted` (throw): `promoteToAttending` (수동 승격 경로) — `WaitlistService.java:101`
-- `isRestricted` (skip): `autoPromoteNextWaiting` — `WaitlistService.java:161`
-- `isRestricted` (skip): `autoPromoteAll` — `WaitlistService.java:230`
-
-### 의존 단위 / 외부 시스템
-
-- **F03-05 신청 & 참석** — `attend`/`cancel` 흐름 자체는 F03-05 (신청). 본 단위는 그 결과에 대한 호스트 측 관리 + 자동 승격 트리거.
-- **Unit 12 알림** — 자동·수동·정원 증가 승격 모두 `NotificationService.createNotification(WAITLIST_PROMOTED)`을 호출한다. 실제 in-app 저장과 비동기 FCM 발송은 사용자 채널 설정에 따라 생략될 수 있으므로 도달을 보장하지 않는다.
-- **F03-08 QR 체크인** — 강제 제거 시 `event_check_in` 행 삭제 (잠재적 잘못된 체크인 데이터 방지)
-- 외부: 없음 (Redis는 F03-08 만 사용)
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 호스트 관점:
-  - 이벤트 상세(`SCR-EV-002`) 의 호스트 액션바 / 더보기 메뉴 → "참석자 관리"
-  - 동일 화면 → "대기열" 탭
-  - 동일 화면 → "정원 설정"
-  - 동일 화면 → "참석 로그" (F03-12 와 같은 화면 사용 — 호스트는 변경 로그 전체, 일반은 본인 관련만)
-- 참가자 관점:
-  - 이벤트 상세 → 참석자 프리뷰 → "참석자 목록" (참가자도 ATTENDING 만 조회)
-  - 본인이 대기열인 경우 상단에 "대기 N번째" 카드 노출
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 (`lib/presentation/event/screens/`) | 역할 |
-|---|---|---|
-| `/home/events/:eventId/attendees` | `attendee_list_screen.dart` | 참석자 목록 + 호스트 액션 (승격/제거) |
-| `/home/events/:eventId/waitlist` | `waitlist_screen.dart` | 대기자 목록 + 수동 승격 |
-| `/home/events/:eventId/capacity-settings` | `capacity_settings_screen.dart` | 정원·대기열·승인제 설정 폼 |
-
-정원 설정 route는 `_redirectEventAccess`의 `_EventRequiredAccess.manageCapacity`가 `EventVo.canManageCapacity`를 직접 검사한다. 참석자·대기열 route는 각각 서버 capability/참가 상태에 맞는 별도 access mode를 사용한다.
-
-모집 마감/재개는 `CapacitySettingsNotifier`에 메서드만 있고 위 화면을 포함한 presentation caller가 없다. 초과정원 PATCH는 API/Repository까지만 구현되어 provider·화면·CTA가 없다.
-
-### 화면별 구성 요소 & 액션
-
-### 참석자 목록 (`attendee_list_screen.dart`)
-
-- **사용자가 보는 것**:
-  - 상단 헤더: "참석자 N / M명" — 현재 참석자 수 / `event.baseCapacity`
-  - 본인 상태 카드 (`_buildMyStatusCard`): 본인이 attendees 목록에 있을 때 — 아이콘 + "내 상태: 참석 중/대기 중/취소" + 상태색
-  - 닉네임 검색 텍스트필드 (클라이언트 사이드, 디바운스 없음)
-  - 상태 필터 ChoiceChip 행: 전체 / 참석 / 대기 / 취소 / 거절 (서버는 ATTENDING 만 반환하지만 추후 확장 대비)
-  - 참석자 카드 리스트 (`AttendeeCard`) — 아바타, 닉네임, 호스트/공동호스트 뱃지, 신청 일시
-  - `permission.canManageAttendance`일 때 각 카드에 "승격" / "제거" 버튼
-  - 우상단 "로그 >"도 `canManageAttendance` 기준 → `/home/events/:eventId/log`
-- **사용자가 할 수 있는 액션**:
-  - 검색어 입력 → 클라이언트 필터링 (`a.userNickname.contains(query)`)
-  - 상태 칩 탭 → 클라이언트 필터링
-  - "승격" 탭 → `attendeeListNotifier.promote(userId)` → `POST /api/v1/events/{id}/capacity/{userId}/promote` → 성공 시 `AppToast.show("참석자를 승격했습니다", success)`
-  - "제거" 탭 → `AppDialog.confirm(title: '참석자 제거', isDangerous: true)` → 확인 시 `attendeeListNotifier.remove(userId)` → `DELETE /api/v1/events/{id}/capacity/{userId}` → 토스트 "참석자를 제거했습니다"
-  - 풀투리프레시 → `attendeeListNotifier.refresh()`
-- **상태 분기**: 로딩 (CircularProgressIndicator) / 에러 (`AppErrorState(title: '참석자 목록을 불러올 수 없습니다', onRetry: invalidate)`) / 빈 상태 (`AppEmptyState(title: '아직 참석자가 없습니다')`) / 검색 결과 0 (`AppEmptyState(icon: search_off_outlined, title: '검색 결과가 없습니다')`)
-- **행 액션/로그 가드**: 서버 `canManageAttendance`를 그대로 소비한다. host ∪ flag 보유 cohost ∪ 클럽 출석관리자에게 열리고 그 외에는 숨긴다.
-- **실패 피드백**: `showApiErrorToast(context, error, fallback: '참석자 승격에 실패했습니다')`
-
-### 대기열 (`waitlist_screen.dart`)
-
-- **사용자가 보는 것**:
-  - 상단 warning 색 배너 — "대기열 (N명)" with hourglass 아이콘
-  - 본인이 대기열일 때 상단 카드: "내 대기 순번: N번"
-  - `WaitlistItem` 리스트 — 순번 NumberBadge + 아바타 + 닉네임 + 대기 시작일시
-  - `permission.canManageAttendance`일 때 각 아이템 우측 "승격" 버튼
-- **사용자가 할 수 있는 액션**:
-  - 풀투리프레시 → `waitlistNotifier.refresh()`
-  - "승격" 탭 → `waitlistNotifier.promote(userId)` → `POST .../capacity/{userId}/promote` → 성공 시 `waitlistNotifierProvider` + `eventDetailNotifierProvider` 둘 다 invalidate (현재 인원 갱신) → 토스트 "대기열 사용자를 승격했습니다"
-- **상태 분기**: 로딩 / 에러(`AppErrorState(title:'대기열을 불러올 수 없습니다')`) / 빈 상태 (`AppEmptyState(title: '대기열이 비어있습니다')`)
-
-### 정원 설정 (`capacity_settings_screen.dart`)
-
-- **사용자가 보는 것**:
-  - "기본 수용인원" NumberInput — placeholder "최소 1명"
-  - 안내 캡션 "서버는 1명 이상만 허용합니다. 정원을 늘리면 대기자가 자동 승격될 수 있습니다."
-  - "대기열 활성화" SwitchListTile + 부연 설명
-  - (대기열 ON 일 때만 노출) "최대 대기인원" NumberInput
-  - "승인제 참석" SwitchListTile + "호스트가 참석 신청을 승인해야 참석이 확정됩니다"
-  - "게스트 동반 허용" SwitchListTile
-  - (게스트 ON일 때만) "예매당 최대 게스트 수" NumberInput(1~9)
-  - 하단 "저장" `AppButton(fullWidth: true)`
-- **사용자가 할 수 있는 액션**:
-  - 폼 작성 → "저장" → `CapacitySettingsVo(baseCapacity, waitlistEnabled, maxWaitlist, approvalRequired, allowGuests, maxGuestsPerBooking)` → `PUT .../capacity/settings`
-  - 성공 시 `AppToast.show("설정이 저장되었습니다", success)` + `Navigator.pop`
-  - 정원이 늘어났다면 서버에서 자동 승격 트리거 (사용자에게는 별도 표시 없음 — invalidate 시 detail 갱신으로 currentCapacity 변동 노출)
-- **상태 분기**: 로딩 / 에러 / 데이터 (`_initialized` 플래그로 controller 초기화 1회만)
-- **검증**: Flutter는 숫자 파싱 실패를 0으로 보내고 서버 `CapacitySettingsService.validateCapacitySettingsParam`이 baseCapacity<1, maxWaitlist<0을 런타임 검증한다(annotation 아님). `GuestPolicy`는 allowGuests=true일 때 maxGuestsPerBooking 1~9를 강제한다.
-
-### 참석 로그 (F03-12 와 화면 공유 — `attendance_log_screen.dart`)
-
-본 단위에서는 **호스트 시점** 의 변경 로그 통계로 사용. 화면 자체 분석은 F03-12 frontend.md 참조.
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 화면 진입 시:
-   - `attendeeListNotifierProvider(eventId)` ▶ `AttendanceRepository.getAttendees(eventId)` ▶ `GET /api/v1/events/{id}/capacity/attendees` (Flutter 의 `attendance_api.dart` 는 `getHostAttendees` / `getAttendees` 두 메서드를 두지만 둘 다 같은 List<AttendanceVo> 응답)
-   - `waitlistNotifierProvider(eventId)` ▶ `AttendanceRepository.getWaitlist(eventId)` ▶ `GET /api/v1/events/{id}/waitlist`
-   - `capacitySettingsNotifierProvider(eventId)` ▶ `AttendanceRepository.getCapacitySettings(eventId)` ▶ `GET /api/v1/events/{id}/capacity/settings`
-2. 승격 (`canManageAttendance` 운영자):
-   - `attendeeListNotifier.promote(userId)` ▶ `POST /api/v1/events/{id}/capacity/{userId}/promote` ▶ 응답으로 attendee 목록 invalidate, eventDetail invalidate
-3. 제거 (`canManageAttendance` 운영자):
-   - `attendeeListNotifier.remove(userId)` ▶ `DELETE /api/v1/events/{id}/capacity/{userId}` ▶ list invalidate
-4. 정원 설정 변경:
-   - `capacitySettingsNotifier.updateSettings(vo)` ▶ `PUT /api/v1/events/{id}/capacity/settings` ▶ 결과 state 갱신 + `eventDetailNotifierProvider(eventId)` invalidate
-5. 모집 마감/재개:
-   - `capacitySettingsNotifier.closeRegistration() / reopenRegistration()` ▶ `POST /api/v1/events/{id}/registration/close|reopen` ▶ eventDetail invalidate
-   - presentation caller가 없으므로 이 순서는 직접 Provider 메서드를 호출할 때만 성립한다.
+### 호스트의 제거
+- 결제가 살아 있거나(입금 신고·결제 완료·환불 대기) `CANCEL_PENDING_REFUND` 인 참가자와 일행은 제거하지 못한다(`EVENT_ATTENDEE_REMOVE_REQUIRES_REFUND`). 환불 경로로 먼저 정리한다. 보관금이 열린 비공개 선정자도 같다.
+- 제거하면 그 참가자의 체크인 기록을 지우고, 그 체크인으로 나간 점수도 되돌린다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -303,15 +150,6 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | S1-3 | 하드 상한 | 상한을 두는 입구가 없어 늘 NULL | 정원 바꾸기 본체의 상한 검사(`INVALID_HARD_CAPACITY_LIMIT(400013)`)는 상한이 있을 때만 닿는다 |
 | S1-4 | (호스트) CLOSED 이벤트 정원 조정 차단 (Q7) | event.status=CLOSED | `PUT /capacity/settings` 로 정원 값을 바꾸면 400 `INVALID_EVENT_STATUS` |
 
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
@@ -319,7 +157,6 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 | 사실 교정 | 서버 enum / Flutter parser | 서버 상태는 `WAITING`이며 Flutter parser는 호환 입력 `WAITLISTED`도 `waiting`으로 매핑한다. | 신규 계약/fixture는 서버 canonical 값 `WAITING` 사용 |
 | 사실 교정 | `CapacitySettingsService` / Flutter 폼 | baseCapacity 최소값은 annotation이 아니라 service runtime validation이다. Flutter는 parse 실패 시 0을 전송하고 API 오류 toast를 표시한다. | 문서/테스트에서 `@Min` 근거 제거 |
 | 사실 교정 | `capacity_settings_screen.dart` / `CapacitySettingsParam` | 폼은 기본 정원·대기열·조건부 최대 대기·승인제뿐 아니라 게스트 허용과 조건부 최대 게스트(1~9)도 관리한다. baseCapacity는 0 무제한이 아니라 최소 1이다. | UI surface/E2E 기대 라벨에 게스트 설정과 최소값 포함 |
-| 해소 | `CapacitySettingsService` vs `EventCapacitySettingsService` 권한 가드 | 고급 `PATCH /capacity-settings` 를 걷어(차수 7 S22) 호스트 정원 변경 창구는 기본 설정 GET/PUT 하나다 | — |
 | Gap | Flutter presentation caller 검색 | 모집 close/reopen은 Provider까지만 연결되어 있다. 초과정원 PATCH 는 서버·앱 모두 걷었다. `exceedingAttendees` 의 presentation 소비처는 없다. | CTA와 상태 표시를 구현하기 전까지 서버 전용 기능으로 취급 |
 | Risk | `WaitlistService.promoteRowManual` | 수동 승급은 `CapacityPolicy`, baseCapacity, hardCapacityLimit을 모두 검사하지 않고 currentCapacity를 증가시킨다. | hard limit을 진짜 절대 상한으로 둘지, 운영자 override로 명시할지 결정 |
 | Risk | `NotificationService.createNotification` | 승급 서비스는 알림 생성을 호출하지만 in-app/push 설정으로 생략될 수 있고 push는 비동기다. | 수용 기준을 “도달”이 아닌 생성 요청/설정별 결과로 검증 |
@@ -337,15 +174,3 @@ v4.5 W1 도입 이후, 정원 정책은 위 §3-1에서 정의한 `CapacityPolic
 - **AC-S1-2. 정원 축소 거절**: Given baseCapacity=10, currentCapacity=8, OPEN When 호스트가 `PUT /capacity/settings` 로 `baseCapacity=5` 를 보낸다 Then 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석은 그대로이고 참석 이력에 새 행이 없다. `baseCapacity=8` 은 받는다.
 - **AC-S1-3. 하드 상한 검사**: Given 하드 상한이 있는 옛 행 When 상한보다 큰 정원을 보낸다 Then 400 `INVALID_HARD_CAPACITY_LIMIT(400013)`. 새 행은 상한이 NULL 이라 이 검사에 닿지 않는다.
 - **AC-S1-4. CLOSED 이벤트 정원 조정 차단 (Q7)**: Given event.status=CLOSED When 호스트가 `PUT /capacity/settings` 로 정원 값을 바꾼다 Then 400 `INVALID_EVENT_STATUS` (DRAFT/OPEN만 허용).
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
-
-## 11. 변경 이력
-
-- **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `overcapacity_allowed`/`hard_capacity_limit` 두 컬럼을 `event` 테이블에 추가하고, `CapacityPolicy.decide` 5-룰 매트릭스(§3-1)를 도입. 별도 서비스 `EventCapacitySettingsService`(`community_api/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java`)와 `PATCH /events/{id}/capacity-settings` 엔드포인트로 DRAFT/OPEN 운영 중 정원 토글이 가능하도록 분리(Q7: CLOSED 차단). `ChangeType.OVERCAPACITY_APPROVED(9)`/`CAPACITY_REDUCED(10)` 추가, `ErrorCode.INVALID_HARD_CAPACITY_LIMIT(400013)` + `CAPACITY_FULL_AT_CONFIRMATION(400012)` 신설. EventVo에 `overcapacityAllowed / hardCapacityLimit / exceedingAttendees / reservedPaymentPendingCount` 4개 필드 노출. 자동 승인 이벤트에서 `overcap=true`이면 `apply` 시점에 즉시 ATTENDING으로 진입(Q6). 정원 축소 시 기존 ATTENDING은 유지. 시나리오 S1-1~S1-4 추가.
-- **2026-06-05 (D-20 / v3 — 대기열 자동 승급 제재 skip)**: `WaitlistService.autoPromoteNextWaiting`(`:161`), `autoPromoteAll`(`:230`)에 `EventApplyRestrictionGuard.isRestricted` skip 로직 추가. 제재 사용자는 자동 승급에서 건너뛰어 다음 비제재 사용자가 승급됨. 수동 승격(`promoteToAttending`)은 `assertNotRestricted` — 제재 사용자 시도 시 throw. 상세는 §대기열 자동 승급 시 제재 사용자 skip 필터 절 참조.
-- **2026-07-29 (current source 재실측)**: `canManageCapacity` capability를 서버 `EventVo`→Flutter model/provider/detail/route 전 구간에서 확인했다. 기본 설정 GET/PUT의 실제 권한을 host·공동호스트·클럽 ADMIN/OWNER로 교정하고, 출석 운영(`canManageAttendance`) 및 고급 `PATCH /capacity-settings` 권한과의 차이를 명시했다. 참석자/대기열 행 액션·로그의 실제 `canManageAttendance` 게이트, baseCapacity 최소 1 service validation, 게스트 허용/최대 게스트 폼을 추가 교정했다. 또한 close/reopen 및 고급 PATCH의 presentation caller 부재, 초과 상태 UI 미소비, 수동 승급의 hard limit 우회, 알림 설정/비동기 발송 조건을 확정했다.

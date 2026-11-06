@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first: community_api/src/main/java/com/endside/community/support/; updated: 2026-06-05 -->
 
 ## 1. 결론
@@ -16,28 +15,9 @@ Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `
 
 증빙 첨부(`evidenceFileIds` 최대 5개)와 증빙 가시성(`evidenceVisibility: PARTIES/HOST_ONLY/CS_ONLY`)이 서버는 지원하지만 **Flutter `OperationalIssueCreateParam`에 `evidenceFileIds` 필드가 없어 첨부 UI가 불가**한 상태다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `support/controller/OperationalIssueController.java:1-72` | 5개 endpoint 전수 |
-| Backend Service | `support/service/OperationalIssueService.java:59-458` | createIssue, 소유권 검증, relatedHostUserId 해석, evidence 검증, FAQ 연동 |
-| Backend Entity | `support/model/OperationalIssue.java`, `OperationalIssueMessage.java` | 컬럼 전체 |
-| Backend Enum | `OperationalIssueStatus.java`, `OperationalIssueSourceType.java`, `OperationalIssueAuthorRole.java`, `OperationalIssueEvidenceVisibility.java` | 전체 값 |
-| Backend Param | `OperationalIssueCreateParam.java`, `OperationalIssueMessageParam.java` | 요청 필드 |
-| Backend VO | `OperationalIssueVo.java`, `OperationalIssueMessageVo.java`, `SupportIssueNotificationData.java` | 응답 필드, 알림 데이터 |
-| Backend ErrorCode | `ErrorCode.java:543-547` | OPERATIONAL_ISSUE_* 5개 |
-| Frontend API | `data/api/support_issue_api.dart` | 5 endpoint Retrofit |
-| Frontend Model | `data/models/support/operational_issue.dart` | Freezed OperationalIssue, OperationalIssueSourceType enum |
-| Frontend Param | `data/models/support/operational_issue_create_param.dart` | Freezed Param |
-| Frontend Repository | `data/repositories/support_issue_repository.dart` | Result<T> 래핑 |
-| Frontend Provider | `domain/providers/support/support_issue_provider.dart` | mySupportIssues, detail, mutation |
-| Frontend Screen | `presentation/support/screens/support_issue_screens.dart` | MySupportIssuesScreen, SupportIssueDetailScreen, SupportIssueCreateScreen |
-| Frontend Router | `core/router/app_router.dart:2921-2956` | profileSupportIssueCreate/Detail/Issues 라우트 |
-| Frontend Routes | `core/router/routes.dart:171-179` | profileSupport, profileSupportIssues, profileSupportIssueDetail, profileSupportIssueCreate |
-| DB | `V1__init.sql:1533-1573` | `operational_issue`, `operational_issue_message` DDL |
-| Notification | `NotificationType.java:129` — `SUPPORT_ISSUE_UPDATED(66)` | 답변 알림 코드 |
-| Verification | **테스트 없음** | 검증 공백 |
+계약의 정본은 코드다. 서버: `OperationalIssueController`, `OperationalIssueService`, `OperationalIssue`, `OperationalIssueMessage`, `OperationalIssueStatus`, `OperationalIssueSourceType`, `OperationalIssueAuthorRole`, `OperationalIssueEvidenceVisibility`, `OperationalIssueCreateParam`, `OperationalIssueMessageParam`. 앱: `support_issue_api.dart`, `operational_issue.dart`, `operational_issue_create_param.dart`, `support_issue_repository.dart`, `support_issue_provider.dart`, `support_issue_screens.dart`, `app_router.dart`, `routes.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -61,160 +41,11 @@ Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `
 2. `OperationalIssueMessage`(authorRole=OPERATOR) 추가 + `status` IN_PROGRESS/RESOLVED/REJECTED 변경.
 3. `NotificationType.SUPPORT_ISSUE_UPDATED(66)` 알림 emit — community_api `OperationalIssueService`에는 없음. admin_api에만 있을 것으로 추정. **확인 필요(Gap)**.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `POST /api/v1/support/issues`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `OperationalIssueController#createIssue` (`OperationalIssueController.java:29-34`) |
-| 인증 | 필수 |
-| Body | `OperationalIssueCreateParam` |
-| 응답 | `OperationalIssueVo` (201 Created) |
-| 에러 | `OPERATIONAL_ISSUE_SOURCE_NOT_OWNED(403)`, `OPERATIONAL_ISSUE_SOURCE_NOT_FOUND(404)`, `OPERATIONAL_ISSUE_EVIDENCE_TOO_MANY(400)`, `OPERATIONAL_ISSUE_EVIDENCE_FILE_INVALID(400)`, `OPERATIONAL_ISSUE_EVIDENCE_FILE_NOT_OWNED(403)` |
-
-`OperationalIssueCreateParam` 필드:
-
-| 필드 | 타입 | 제약 | 설명 |
-|---|---|---|---|
-| `sourceType` | `OperationalIssueSourceType` | `@NotNull` | 소스 타입 |
-| `sourceId` | `Long` | `@NotNull` | 소스 객체 ID |
-| `title` | `String` | nullable, max 120 | null 시 sourceType별 기본 제목 자동 설정 |
-| `content` | `String` | `@NotBlank, max 2000` | 첫 메시지 내용 |
-| `evidenceFileIds` | `List<Long>` | nullable, max 5 | 증빙 파일 ID 목록 |
-| `evidenceVisibility` | `OperationalIssueEvidenceVisibility` | nullable | null 시 sourceType별 기본값 적용 |
-
-**자동 제목 매핑** (`OperationalIssueService.resolveTitle()`, `java:396-409`):
-
-| sourceType | 자동 제목 |
-|---|---|
-| REFUND | "환불 문의" |
-| PAYMENT | "결제 문의" |
-| WALLET_TRANSACTION | "거래 문의" |
-| SETTLEMENT | "정산 문의" |
-| REPORT | "신고 문의" |
-| REGULAR_MEETING_PAYMENT | "정기모임 결제 문의" |
-| REGULAR_MEETING_SETTLEMENT | "정기모임 정산 문의" |
-
-### `GET /api/v1/support/issues/my`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `OperationalIssueController#getMyIssues` (`OperationalIssueController.java:36-43`) |
-| 인증 | 필수 |
-| Query | `PagingParam (page, size)` |
-| 응답 | `Page<OperationalIssueVo>` (updatedAt DESC 정렬) |
-| 주의 | Flutter는 `PageResponse<OperationalIssue>` 로 받아 `page.content` 추출 |
-
-### `GET /api/v1/support/issues/my/by-source`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `OperationalIssueController#getMyIssuesBySource` (`OperationalIssueController.java:45-53`) |
-| 인증 | 필수 |
-| Query | `sourceType: OperationalIssueSourceType`, `sourceId: long` |
-| 소유권 재검증 | 서버가 `validateSourceOwnership()` 재호출 |
-| 응답 | `List<OperationalIssueVo>` |
-
-### `GET /api/v1/support/issues/{issueId}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `OperationalIssueController#getMyIssue` (`OperationalIssueController.java:55-61`) |
-| 인증 | 필수 |
-| 소유권 | `findByIdAndReporterUserId` — reporter 본인만 가능 |
-| 응답 | `OperationalIssueVo` (messages 포함, userVisible=true인 메시지만) |
-| 에러 | `NOT_FOUND(404)` (소유권 없거나 없는 경우 동일 처리) |
-
-### `POST /api/v1/support/issues/{issueId}/messages`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `OperationalIssueController#addMessage` (`OperationalIssueController.java:63-71`) |
-| 인증 | 필수 |
-| Body | `OperationalIssueMessageParam { content: @NotBlank max 2000 }` |
-| 에러 | `NOT_FOUND(404)`, `INVALID_INPUT(400)` (status.isClosed() 시) |
-| 사이드이펙트 | `issue.lastMessageAt = now()` |
-| 응답 | `OperationalIssueVo` |
-
-### OperationalIssueVo 필드
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| `id` | `Long` | 이슈 ID |
-| `sourceType` | `String` | OperationalIssueSourceType.name() |
-| `sourceId` | `Long` | 소스 객체 ID |
-| `reporterUserId` | `Long` | 작성자 |
-| `assigneeUserId` | `Long` | nullable |
-| `status` | `String` | OperationalIssueStatus.name() |
-| `title` | `String` | 제목 |
-| `lastMessageAt` | `LocalDateTime` | nullable |
-| `resolvedAt` | `LocalDateTime` | nullable |
-| `createdAt` | `LocalDateTime` | nullable |
-| `updatedAt` | `LocalDateTime` | nullable |
-| `messages` | `List<OperationalIssueMessageVo>` | userVisible=true 필터 |
-| `evidenceFileIds` | `List<Long>` | nullable 또는 빈 리스트 |
-| `evidenceVisibility` | `String` | nullable |
-
-`OperationalIssueMessageVo`: `{ id, issueId, authorUserId, authorRole(USER/OPERATOR), content, userVisible, createdAt }`
-
-### 소유권 검증 매트릭스
-
-| sourceType | 검증 로직 (`OperationalIssueService.java:157-212`) |
-|---|---|
-| WALLET_TRANSACTION | `PointTransaction.userId == userId` |
-| PAYMENT | `PointTransaction.userId == userId` |
-| REFUND | `PointTransaction.userId == userId` |
-| REGULAR_MEETING_PAYMENT | `PointTransaction.userId == userId` |
-| SETTLEMENT | `MeetingSettlement.creatorUserId == userId` OR `MeetingSettlementItem.holderUserId == userId` OR `MeetingSettlementShare.userId == userId` |
-| REGULAR_MEETING_SETTLEMENT | 동일 (SETTLEMENT과 동일 로직) |
-| REPORT | `Report.reporterId == userId` |
-
-### evidenceVisibility 기본값 매트릭스
-
-| sourceType | 기본 visibility (`OperationalIssueEvidenceVisibility.java:24-33`) |
-|---|---|
-| WALLET_TRANSACTION/PAYMENT/REFUND/SETTLEMENT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT | `PARTIES` |
-| REPORT | `CS_ONLY` |
-
-### relatedHostUserId 자동 해석
-
-| sourceType | 해석 경로 (`OperationalIssueService.java:222-256`) |
-|---|---|
-| SETTLEMENT/REGULAR_MEETING_SETTLEMENT | `MeetingSettlement.creatorUserId` |
-| PAYMENT/REFUND | PointTransaction → Event → `Event.hostUserId` |
-| REGULAR_MEETING_PAYMENT | PointTransaction → RegularMeetingPayment → RegularMeeting → `RegularMeeting.hostUserId` |
-| WALLET_TRANSACTION/REPORT | null (라우팅 불가) |
-
-## 5. 프론트 계약
-
-| 항목 | 구현 상태 |
-|---|---|
-| Route `/profile/support-issues` | `Routes.profileSupportIssues` → `MySupportIssuesScreen` |
-| Route `/profile/support-issues/new?sourceType=X&sourceId=Y` | `Routes.profileSupportIssueCreate` → `SupportIssueCreateScreen` |
-| Route `/profile/support-issues/:issueId` | `Routes.profileSupportIssueDetail` → `SupportIssueDetailScreen` |
-| API | `SupportIssueApi` — 5 endpoint 정확히 매핑 |
-| Model | `OperationalIssue`, `OperationalIssueMessage` (Freezed) |
-| Repository | `SupportIssueRepository` (Result<T> 패턴) |
-| Provider | `mySupportIssuesProvider`, `supportIssueDetailProvider(id)`, `supportIssuesBySourceProvider(type, id)`, `supportFaqSuggestionsProvider(type, id, query)`, `SupportIssueMutation` |
-| 목록 갱신 | `mySupportIssuesProvider.invalidate()` on RefreshIndicator |
-| 상세 갱신 | 15초 polling timer (`Timer.periodic(15s)`) |
-| 에러 처리 | `showApiErrorToast(context, error, fallback: ...)` |
-| CTA | 문의 목록 카드 탭 → 상세. 상세에서 추가 메시지(status.isClosed 시 입력창 숨김). |
-
-Flutter `OperationalIssueSourceType` enum 현재 값:
-
-```dart
-// operational_issue.dart:7-24
-enum OperationalIssueSourceType {
-  walletTransaction('WALLET_TRANSACTION'),
-  payment('PAYMENT'),
-  refund('REFUND'),
-  settlement('SETTLEMENT'),
-  report('REPORT');
-  // REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT 없음 — Gap
-}
-```
+- 대상 소유 확인: 지갑 거래, 결제, 환불, 정기모임 결제는 본인 거래만, 정산과 정기모임 정산은 정산 호스트이거나 정산 항목을 받는 사람, 신고는 신고한 본인만 접수할 수 있다.
+- 제목을 비우면 종류에 맞춰 "환불 문의", "결제 문의" 같은 기본 제목이 붙는다. 증빙은 5개까지이고 공개 범위 기본값은 신고만 운영자 전용, 나머지는 당사자 공개이다.
+- 내용은 2000자까지이다. 접수한 본인만 자기 건을 볼 수 있고, 남의 건이나 없는 건은 똑같이 없음으로 응답한다. 운영자가 사용자에게 숨긴 메모는 보이지 않는다. 종결된 건에는 메시지를 더할 수 없다.
 
 ## 6. 상태/권한 매트릭스
 

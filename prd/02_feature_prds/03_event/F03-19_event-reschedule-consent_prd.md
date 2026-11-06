@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- 작성일: 2026-06-05 -->
 <!-- 소스 기준 갱신: 2026-07-29 community_api/community_app current source -->
 
@@ -15,26 +14,9 @@
 
 앱은 `EventEditNotifier`에서 `rescheduleProposalRepository.createProposal()`을 직접 호출해 `POST /api/v1/events/{eventId}/reschedule-proposals`(직접 POST 경로)를 사용한다. `RescheduleProposalCreateParam`에 newStartTime/newEndTime/newAddress/newAddressDetail/**newLatitude/newLongitude**/changeReason/hostMessage(=changeReason과 동일값)를 채우며, **newPrice는 채우지 않는다** — 가격 변경 입력 UI 자체가 없어 가격 변경 제안은 현재 불가(G-1). 주소가 바뀌면 저장 전에 서버 geocoding API로 좌표를 다시 구하고, 실패하면 저장을 막는다. 두 서버 경로(`PATCH /reschedule`과 `POST /reschedule-proposals`)가 공존하며 PATCH는 서버 내부에서 위임/하위호환 경로로 유지된다(G-7). apply 후 이벤트 상세 캐시 무효화(G-2), 전원 응답 전 확정 차단(G-5), RESCHEDULE_APPLIED 알림 전용 라우팅 미구현(G-6)이 미완 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `community_api/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java` | 7개 endpoint, 권한, 응답 타입 |
-| Backend Service | `event/reschedule/service/EventRescheduleProposalService.java` | 상태 전이 조건, 환불 연계, 스케줄러 연결, 알림 발송 |
-| Backend Classifier | `event/reschedule/service/RescheduleClassifierService.java:37-105` | AUTO/MAJOR 분류 조건 코드 직접 확인 |
-| Backend Enum | `constants/RescheduleChangeType.java`, `RescheduleClassification.java`, `RescheduleResponseStatus.java` | 4값/2값/5값 직접 확인 |
-| Backend Param | `event/param/EventRescheduleParam.java`, `reschedule/param/RescheduleProposalCreateParam.java`, `param/RescheduleResponseParam.java` | 7/9필드 계약, nullable 좌표 pair 검증 |
-| Backend VO | `vo/RescheduleProposalResultVo.java`, `vo/RescheduleProposalBatchVo.java`, `vo/RescheduleProposalViewVo.java`, `vo/RescheduleResponseResultVo.java`, `vo/RescheduleChangeDiffVo.java`, `vo/RescheduleEventMetaVo.java` | 응답 필드 구조 |
-| Backend Scheduler | `scheduler/EventRescheduleProposalScheduler.java:31` | fixedDelay 3600000ms=1h |
-| Backend Entity | `model/EventRescheduleProposal.java:41-102`, `V1__init.sql:4545-4568` | 테이블 컬럼, 인덱스, UNIQUE |
-| Frontend API | `community_app/lib/data/api/reschedule_proposal_api.dart` | Retrofit endpoint 배선 |
-| Frontend Models | `lib/data/models/reschedule/`, `models/event/event_reschedule_param.dart` | Dart 모델 필드, newLatitude/newLongitude, @JsonValue 매핑 |
-| Frontend Geocoding | `event_edit_provider.dart`, `geocoding_repository.dart`, `geocoding_api.dart` | 주소 dirty 시 저장 전 강제 재지오코딩, 실패 시 저장 차단 |
-| Frontend Screens | `presentation/event/screens/reschedule_proposal_batch_screen.dart`, `reschedule_proposal_response_screen.dart`, `my_reschedule_proposals_screen.dart`, `event_edit_screen.dart:549-573` | 화면 역할, 분기 조건 |
-| Frontend Providers | `community_app/lib/domain/providers/reschedule/reschedule_proposal_providers.dart:19-176` | Provider 6개 |
-| Frontend Router | `core/router/routes.dart:338-350`, `app_router.dart:498-526` | 경로 상수, 화면 연결 |
-| Frontend Notification | `core/utils/notification_router.dart:34-39, 382-389` | EVENT_UPDATED 서브타입 딥링크 |
-| Verification | `EventRescheduleProposalService.java` 내 respond/markExpiredAsAutoAccepted/withdraw 메서드 | 상태 전이 조건 직접 확인 |
+계약의 정본은 코드다. 서버: `RescheduleProposalController`, `EventRescheduleProposalService`, `RescheduleClassifierService`, `RescheduleChangeType`, `RescheduleClassification`, `RescheduleResponseStatus`, `RescheduleProposalCreateParam`, `RescheduleResponseParam`, `RescheduleProposalResultVo`, `RescheduleProposalBatchVo`. 앱: `reschedule_proposal_batch_screen.dart`, `reschedule_proposal_response_screen.dart`, `my_reschedule_proposals_screen.dart`, `event_edit_screen.dart`, `reschedule_proposal_api.dart`, `event_edit_provider.dart`, `geocoding_repository.dart`, `geocoding_api.dart`, `reschedule_proposal_providers.dart`, `routes.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -78,282 +60,47 @@
 2. QueryDSL bulk UPDATE: `WHERE status=PENDING AND response_deadline_at < now` → AUTO_ACCEPTED 전이.
 3. 마감 후 늦은 응답 시도 시: `respond()`가 PENDING row를 AUTO_ACCEPTED로 저장한 뒤 `RESCHEDULE_RESPONSE_DEADLINE_PASSED(409)`를 던지지만 메서드가 `rollbackFor=Exception.class`이므로 이 인라인 저장은 롤백된다. 영속 AUTO_ACCEPTED 전이는 스케줄러 bulk update 경로에서만 일어난다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 4-1. Endpoint 표
+### 분류
+- 큰 변경(MAJOR)은 시작 시각 60분 이상 변경 또는 가격 인상이다. 나머지는 작은 변경(AUTO)이다.
+- 장소 변경은 동의를 받지 않는다. 바로 적용하고 참가자에게 알린다(2026-11-02 사용자 결정). 변경 종류 기록(`PLACE`·`MULTI`)에만 쓴다.
+- 장소 이름만 바뀌어도 장소 변경으로 적는다. 공백뿐인 이름은 없음과 같다. 좌표만 바뀐 것은 장소 변경이 아니다.
 
-| Method | Path | 권한 | Request | Response | 용도 |
-|---|---|---|---|---|---|
-| `PATCH` | `/api/v1/events/{eventId}/reschedule` | host/cohost | `EventRescheduleParam` (7필드) | `EventVo` | 기존 호환 진입점 → 내부 위임 (앱 미사용, 서버 하위호환) |
-| `POST` | `/api/v1/events/{eventId}/reschedule-proposals` | host/cohost | `RescheduleProposalCreateParam` (9필드) | `RescheduleProposalResultVo` 201 | 직접 제안 생성 (**앱 사용 경로**) |
-| `GET` | `/api/v1/events/{eventId}/reschedule-proposals/{batchId}` | host/cohost | — | `RescheduleProposalBatchVo` | 호스트 batch 현황 |
-| `POST` | `/api/v1/events/{eventId}/reschedule-proposals/{batchId}/apply` | host/cohost | — | `RescheduleProposalBatchVo` | batch 확정 |
-| `DELETE` | `/api/v1/events/{eventId}/reschedule-proposals/{batchId}` | host/cohost | — | 204 | batch 철회(soft) |
-| `POST` | `/api/v1/reschedule-proposals/{proposalId}/response` | 해당 참가자 | `RescheduleResponseParam` | `RescheduleResponseResultVo` | 참가자 응답 |
-| `GET` | `/api/v1/me/reschedule-proposals/{proposalId}` | 본인 | — | `RescheduleProposalViewVo` | 참가자 단건 상세 |
-| `GET` | `/api/v1/me/reschedule-proposals` | 본인 | `?status=&page=&size=` | `Page<RescheduleProposalViewVo>` | 참가자 목록 |
+### 입력
+- 새 시작·종료는 필수이고 시작은 현재 이후, 종료는 시작 이후다. 변경 사유는 필수이고 200자, 호스트 메시지는 500자까지다.
+- 좌표는 둘 다 비우면 기존 값을 유지한다. 한쪽만 주거나 범위를 벗어나거나 (0,0) 이면 `INVALID_COORDINATES` 다.
 
-소스: `RescheduleProposalController.java:49-114`
+### 대상과 묶음
+- 동의 대상은 계정이 있는 참석·대기자와, 참석 행 없이 돈을 냈거나 입금을 신고한 참가자다. 큰 변경이라도 대상이 0명이면 바로 적용한다.
+- 같은 모임에 적용도 철회도 안 된 묶음이 있으면 새 제안을 받지 않는다.
+- 철회는 이미 적용된 묶음이면 `RESCHEDULE_BATCH_ALREADY_APPLIED` 다. 모임 상태는 보지 않아 취소된 모임의 제안도 정리한다.
+- 호스트 철회는 이미 응답한 행까지 `WITHDRAWN` 으로 바꾸고 행은 기록으로 남기며, 참석자에게 철회 알림을 보낸다. 거절자의 자동 취소는 되돌리지 않는다. 다시 철회해도 오류 없이 아무 일도 하지 않는다.
+- 거절(`DECLINED`)은 확정을 막지 않는다. 거절한 사람은 자동 취소로 빠진다.
+- 끝난 모임의 응답은 거절한다. 거절 응답 결과에는 취소 상태만 있고 환불 금액은 없다.
 
-### 4-2. 이중 계약 — POST vs PATCH
+### 가격
+- 가격이 바뀌는 적용은 선결제 금액도 함께 맞춰 환불액이 실제 결제액과 어긋나지 않게 한다.
+- 무료에서 유료로 바뀌면 결제 수단을 지금 열린 수단에서 고르고, 고를 수 없으면 거절한다(F03-03 §4.1).
 
-`RescheduleProposalCreateParam` (직접 POST 경로, **앱 사용 중** — `event_edit_provider.dart:349-361`):
-
-| 필드 | 타입 | 제약 | 앱 전송값 |
-|---|---|---|---|
-| newStartTime | LocalDateTime | DTO annotation 없음; service에서 non-null·현재 이후 검증 | startTime |
-| newEndTime | LocalDateTime | DTO annotation 없음; service에서 non-null·start 이후 검증 | endTime |
-| newAddress | String | nullable | address (변경된 경우만) |
-| newAddressDetail | String | nullable | addressDetail (변경된 경우만) |
-| **newLatitude** | Double | nullable pair, -90..90, `(0,0)` 금지 | address가 변경된 경우 geocoding 결과 |
-| **newLongitude** | Double | nullable pair, -180..180, `(0,0)` 금지 | address가 변경된 경우 geocoding 결과 |
-| **newPrice** | BigDecimal | nullable | **미전송** (가격 변경 UI 부재) |
-| changeReason | String | DTO annotation 없음; service에서 nonblank·최대 200 | reason |
-| **hostMessage** | String | DTO annotation 없음; service에서 nullable·최대 500 | reason (changeReason과 동일값) |
-
-`EventRescheduleParam` (기존 PATCH 경로, **서버 내부 위임/하위호환 — 앱 미사용**):
-
-| 필드 | 타입 | 제약 |
-|---|---|---|
-| newStartTime | LocalDateTime | DTO annotation 없음; `EventService` runtime 검증 |
-| newEndTime | LocalDateTime | DTO annotation 없음; `EventService` runtime 검증 |
-| newAddress | String | nullable |
-| newAddressDetail | String | nullable |
-| newLatitude | Double | nullable pair, 미동봉 시 기존 좌표 유지 |
-| newLongitude | Double | nullable pair, 미동봉 시 기존 좌표 유지 |
-| changeReason | String | DTO annotation 없음; `EventService`에서 nonblank·최대 200 |
-
-소스: `EventRescheduleParam.java`, `RescheduleProposalCreateParam.java`
-
-좌표 공통 검증은 `EventService.validateOptionalCoordinates`를 재사용한다. 둘 다 null은 허용하고, 한쪽만 전달·위경도 범위 초과·`(0,0)` pair는 `INVALID_COORDINATES`다. AUTO는 즉시 event 좌표를 바꾸고, MAJOR는 before/after JSON snapshot에 좌표를 보존했다가 `applyBatch`에서 복원한다.
-
-### 4-3. Enum 전체값 (소스 직접 확인)
-
-`RescheduleChangeType` (4값, `RescheduleChangeType.java`):
-```
-TIME, PLACE, PRICE, MULTI
-```
-
-`RescheduleClassification` (2값, `RescheduleClassification.java`):
-```
-AUTO, MAJOR
-```
-
-`RescheduleResponseStatus` (5값, `RescheduleResponseStatus.java`):
-```
-PENDING, ACCEPTED, DECLINED, AUTO_ACCEPTED, WITHDRAWN
-```
-
-### 4-4. 분류기 규칙 (소스 직접 확인: `RescheduleClassifierService.java:37-104`)
-
-| 조건 | 분류 |
+### 알림
+| 때 | 받는 사람 |
 |---|---|
-| `|Δstart| ≥ 60분` (`Math.abs(Duration.between(oldTime, newTime).toMinutes()) >= 60`) | MAJOR |
-| address 또는 addressDetail 변경 (`newAddress != null && !equals(old, new)`) | MAJOR |
-| `newPrice > oldPrice` (가격 인상, `newPrice.compareTo(effectiveOld) > 0`) | MAJOR |
-| 위 조건 **모두** 미해당 | AUTO |
+| 큰 변경 제안 | 참가자 각각, 응답 화면으로 바로 |
+| 묶음 확정 | 동의·자동 동의한 참가자 |
+| 작은 변경 적용 | 참가자 전원 |
 
-ChangeType 결정: 2개 이상 변경 → MULTI, 단일 → 해당 타입(TIME/PLACE/PRICE). 변경 없음에 가까운 경우 안전 기본값 TIME 반환.
+### 화면
+- 호스트 현황은 자동으로 갱신되지 않는다. 처리하거나 다시 시도할 때 새로 읽는다.
+- 응답 기한은 절대 시각으로 보이고 남은 시간 카운트다운은 없다.
 
-### 4-5. 응답 VO 핵심 필드
-
-`RescheduleProposalResultVo` (제안 생성 응답):
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| classification | RescheduleClassification | AUTO or MAJOR |
-| applied | boolean | AUTO이면 true, MAJOR이면 false |
-| batchId | String? | AUTO이면 null, MAJOR이면 UUID |
-| proposalCount | int | AUTO이면 0 |
-
-`RescheduleProposalBatchVo` (호스트 batch 현황):
-
-| 필드 | 타입 |
+### 오류의 뜻
+| 코드 | 뜻 |
 |---|---|
-| batchId | String |
-| eventId | Long |
-| totalCount | int |
-| acceptedCount | int |
-| declinedCount | int |
-| autoAcceptedCount | int |
-| pendingCount | int |
-| withdrawnCount | int |
-| readyToApply | boolean (`pending==0 && withdrawn==0`) |
-| proposals | `List<RescheduleProposalDetailVo>` |
-
-`RescheduleProposalViewVo` (참가자 시점):
-
-| 필드 | 타입 | nullable |
-|---|---|---|
-| id | Long | no |
-| batchId | String | no |
-| eventId | Long | no |
-| changeType | RescheduleChangeType | no |
-| status | RescheduleResponseStatus | no |
-| hostMessage | String | yes |
-| responseNote | String | yes |
-| responseDeadlineAt | LocalDateTime | yes |
-| respondedAt | LocalDateTime | yes |
-| createdAt | LocalDateTime | yes |
-| diff | RescheduleChangeDiffVo | yes (before/after 각 필드 + 3개 boolean flag) |
-| event | RescheduleEventMetaVo | yes |
-| canRespond | boolean | no (파생) |
-| deadlinePassed | boolean | no (파생) |
-
-`RescheduleResponseResultVo` (참가자 응답 결과):
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| proposal | RescheduleProposalViewVo | 응답 직후 상태 |
-| autoCancelTriggered | boolean | DECLINED → 자동 취소 시도 여부 |
-| cancelStatus | ApplicationStatus? | CANCELED / CANCEL_PENDING_REFUND / null |
-| autoCancelFailed | boolean | 취소 예외 발생 여부 |
-
-환불 금액은 `RescheduleResponseResultVo`에 노출 없음(`cancelStatus`만 반환).
-
-### 4-6. 상태기계 — 전이 조건·행위자
-
-```
-PENDING
-  → ACCEPTED      : 참가자 accept=true 응답 (respond(), 마감 전)
-  → DECLINED      : 참가자 accept=false 응답 (respond(), 마감 전) → 100% 정책 자동 취소 시도 + best-effort ticket release
-  → AUTO_ACCEPTED : 스케줄러 bulk UPDATE (deadline < now, status=PENDING 조건부 원자 update)
-                    ※ 마감 후 늦은 응답의 인라인 save는 409 예외와 함께 트랜잭션 rollback
-  → WITHDRAWN     : 호스트 batch 철회 (withdraw(), 이미 응답한 row 포함 일괄)
-
-ACCEPTED / AUTO_ACCEPTED / DECLINED : 응답 완료 (변경 불가)
-WITHDRAWN : 소프트 삭제 (행 보존, audit 용)
-```
-
-applyBatch 조건: `pendingCount==0 && withdrawnCount==0` (readyToApply=true). 위반 시 `RESCHEDULE_BATCH_NOT_READY_FOR_APPLY(400)`.
-
-소스: `EventRescheduleProposalService.java:229-283(respond)`, `markExpiredAsAutoAccepted:454-463`, `applyBatch:309-313`
-
-### 4-7. 환불 연계
-
-DECLINED 시 `EventParticipationCancellationService.cancelMyParticipation`을 `RefundFaultCategory.RESCHEDULE_DECLINED`로 호출한다. 이 호출 예외는 잡아서 `autoCancelFailed=true`로 반환하므로 DECLINED 자체는 유지될 수 있다.
-
-`RESCHEDULE_DECLINED` 환불 정책은 100%·수수료 0이다. 실제 취소 결과는 CANCELED/CANCEL_PENDING_REFUND/null일 수 있고, hosting ticket release는 실패를 응답에 반영하지 않는 best-effort다.
-
-소스: `EventRescheduleProposalService.java:534-537`, `RefundFaultCategory.java:31`, `EventPaymentRefundService.java:371,392`
-
-> **Fact (2026-06-06 돈 흐름 무결성 — H9 해소)**: 일정 변경이 가격을 바꾸는 경우(`newPrice ≠ oldPrice`) 이벤트 가격과 **선결제 금액(prepaymentAmount)을 동기화**하도록 `EventRescheduleProposalService`(apply 경로)가 정정되었다. 과거에는 `EventService.cancelEvent`/`reschedule` 시 `prepaymentAmount`가 미동기되어 `FailedRefund.amount`(→ admin `compensatePoints` 적립 구동)가 원금초과/과소 환불을 유발하던 불변식 위반(H9). 이제 가격 변경 apply가 선결제 금액 불변식을 보존해 환불액이 실제 결제액과 일치한다. (단 가격 인상 입력 UI 부재(G-1)로 앱에서 newPrice 제안 자체는 현재 불가 — 본 동기화는 서버 경로/admin 강제 변경 시 보호.)
-
-### 4-8. 알림 구조
-
-| 트리거 | NotificationType | dataJson | 수신자 |
-|---|---|---|---|
-| MAJOR 제안 생성 | EVENT_UPDATED(11) | `{eventId, type:"RESCHEDULE_PROPOSAL", proposalId:<id>, batchId:<uuid>}` | 참가자 개별 |
-| batch apply | EVENT_UPDATED(11) | `{eventId, type:"RESCHEDULE_APPLIED", batchId}` | ACCEPTED+AUTO_ACCEPTED 참가자 |
-| AUTO 경로 | EVENT_UPDATED(11) | `{eventId, type:"RESCHEDULE"}` | 참가자 전원 |
-
-소스: `EventNotificationData.java:19,49-54`, `EventRescheduleProposalService.java:191-207,320-334,481-501`
-
-### 4-9. ErrorCode
-
-| Code | HTTP | 코드번호 | 설명 |
-|---|---|---|---|
-| RESCHEDULE_PROPOSAL_NOT_FOUND | 404 | 300020 | 존재하지 않는 proposal |
-| RESCHEDULE_ALREADY_RESPONDED | 409 | 300021 | 이미 응답한 proposal |
-| RESCHEDULE_BATCH_NOT_READY_FOR_APPLY | 400 | 300022 | PENDING 있어 apply 불가 |
-| RESCHEDULE_BATCH_PENDING_EXISTS | 409 | 300023 | 동일 이벤트 PENDING batch 이미 존재 |
-| RESCHEDULE_RESPONSE_DEADLINE_PASSED | 409 | 300024 | 마감 후 응답 시도 |
-| RESCHEDULE_BATCH_WITHDRAWN | 409 | 300025 | 철회된 batch 응답/apply 시도 |
-
-소스: `ErrorCode.java:83-90`
-
-### 4-10. 테이블 컬럼 (event_reschedule_proposal)
-
-DDL: `V1__init.sql:4545-4568`
-
-| 컬럼 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| id | bigint PK AI | N | |
-| batch_id | varchar(36) | N | UUID, 같은 제안 묶음 |
-| event_id | bigint | N | FK events |
-| attendee_user_id | bigint | N | ATTENDING+WAITING 대상 |
-| change_type | varchar(20) | N | TIME/PLACE/PRICE/MULTI |
-| before_json | json | N | {startTime,endTime,address,addressDetail,price,latitude,longitude} |
-| after_json | json | N | 동일 구조. 새 좌표 미동봉이면 기존 좌표 snapshot 보존 |
-| host_message | varchar(500) | Y | |
-| status | varchar(20) | N | PENDING/.../WITHDRAWN |
-| response_deadline_at | datetime | N | created_at + 48h |
-| responded_at | datetime | Y | |
-| response_note | varchar(500) | Y | |
-| created_at | datetime | N | |
-| updated_at | datetime | N | |
-
-인덱스: `idx_reschedule_batch(batch_id)`, `idx_reschedule_event_status(event_id, status)`, `idx_reschedule_attendee_status(attendee_user_id, status)`, `idx_reschedule_deadline(status, response_deadline_at)`
-
-## 5. 프론트 계약
-
-### 5-1. 라우트 및 화면
-
-| 라우트 상수 | 경로 | 화면 | 역할 |
-|---|---|---|---|
-| `rescheduleProposalBatch` | `/events/:eventId/reschedule-proposals/:batchId` | `RescheduleProposalBatchScreen` | 호스트 batch 현황 및 확정/철회 |
-| `myRescheduleProposals` | `/me/reschedule-proposals` | `MyRescheduleProposalsScreen` | 참가자 수신 목록 |
-| `myRescheduleProposal` | `/me/reschedule-proposals/:proposalId` | `RescheduleProposalResponseScreen` | 참가자 단건 응답 |
-
-소스: `routes.dart:338-350`, `app_router.dart:498-526`
-
-### 5-2. 화면별 역할
-
-**`RescheduleProposalBatchScreen` (호스트)**
-- `rescheduleProposalBatchProvider(eventId, batchId)`로 batch 현황 표시.
-- readyToApply=true이면 "확정" 버튼 활성 → `rescheduleProposalActionNotifierProvider.applyBatch`.
-- "철회" 버튼 → `withdrawBatch`.
-- 화면 진입 시 FutureProvider GET 한 번이며 Timer·polling·socket refresh는 없다. action 성공 또는 명시 retry 때만 invalidate한다.
-- 배너의 “거절 또는 대기 중인 응답이 있으면 바로 확정할 수 없습니다”는 서버 `readyToApply=pending==0 && withdrawn==0`과 어긋난다. DECLINED는 확정을 막지 않는다.
-
-**`RescheduleProposalResponseScreen` (참가자)**
-- `myRescheduleProposalProvider(proposalId)`로 단건 조회.
-- typed diff(before/after 시간/장소/가격), 이벤트 메타 표시.
-- `canRespond=false` 시 상태 표시만.
-- 거절 시 `cancelStatus` 결과 표시 (환불 금액 미노출).
-- 알림 탭(type=RESCHEDULE_PROPOSAL) 직접 진입 가능.
-- 응답 기한은 `yyyy.MM.dd HH:mm` 절대 시각으로만 표시하며 Timer 기반 남은 시간 countdown은 없다.
-
-**`MyRescheduleProposalsScreen` (참가자)**
-- 본인 수신 proposal 목록(무한 페이징, status 필터).
-- 프로필 화면 "일정 변경 요청" 메뉴로 진입(`/me/reschedule-proposals`).
-- 탭 시 `RescheduleProposalResponseScreen` 이동.
-
-**`EventEditScreen` — reschedule 분기**
-- 주소가 변경된 오프라인 이벤트는 저장 전 주소→좌표 변환이 성공해야 한다. 실패하면 address error를 표시하고 API 호출을 하지 않는다.
-- 새 좌표는 `newLatitude/newLongitude` pair로 proposal에 동봉한다. 주소 미변경이면 두 필드를 null로 보내 서버가 기존 event 좌표를 유지한다.
-- `POST /events/{eventId}/reschedule-proposals` 성공 후 `lastRescheduleProposalResult` 분기:
-  - `applied=true` → 토스트 "경미한 변경으로 바로 반영됐습니다"
-  - `applied=false && batchId != null` → `pushReplacement` → BatchScreen.
-- OPEN 편집 화면은 합의 기준 안내·3개 chip을 항상 보여 주지만 현재 입력 변화에 맞춘 “장소 변경 포함 — 큰 변경” 동적 배너는 없다.
-
-소스: `event_edit_screen.dart:549-573`
-
-### 5-3. Provider
-
-| Provider | 타입 | 역할 |
-|---|---|---|
-| `rescheduleProposalApiProvider` | keepAlive | API 인스턴스 |
-| `rescheduleProposalRepositoryProvider` | keepAlive | Repository |
-| `rescheduleProposalBatchProvider(eventId, batchId)` | auto-dispose FutureProvider | 호스트 batch 조회 |
-| `myRescheduleProposalProvider(proposalId)` | auto-dispose FutureProvider | 참가자 단건 |
-| `myRescheduleProposalsProvider(status,page,size)` | auto-dispose FutureProvider | 참가자 목록 |
-| `rescheduleProposalActionNotifierProvider` | auto-dispose AsyncNotifier | 모든 쓰기 액션 |
-
-소스: `reschedule_proposal_providers.dart:19-176`
-
-### 5-4. 알림 딥링크 배선
-
-`notification_router.dart:34-39, 382-389`
-
-- `EVENT_UPDATED` + `dataJson.type == "RESCHEDULE_PROPOSAL"` + `proposalId` 있음 → `Routes.myRescheduleProposalPath(proposalId)` 직행.
-- `type == "RESCHEDULE"` (AUTO) / `type == "RESCHEDULE_APPLIED"` (확정) → 기존 이벤트 상세 fallback.
-
-### 5-5. Dart 모델 특이사항
-
-- `cancelStatus`는 `String?`으로 수신 후 `RescheduleResponseResultVoX.cancelApplicationStatus`에서 `ApplicationStatus.fromString()`으로 변환.
-- `RescheduleEventMetaVo.eventStatus`는 `String?` (EventStatus 직접 enum 매핑 아님).
-- Enum은 모두 `@JsonValue`로 서버 값과 1:1 매핑 확인됨.
+| `RESCHEDULE_ALREADY_RESPONDED` | 이미 응답함 |
+| `RESCHEDULE_RESPONSE_DEADLINE_PASSED` | 응답 기한 지남 |
+| `RESCHEDULE_BATCH_PENDING_EXISTS` | 진행 중인 제안이 있음 |
+| `RESCHEDULE_BATCH_WITHDRAWN` | 철회된 제안 |
 
 ## 6. 상태/권한 매트릭스
 
@@ -471,7 +218,3 @@ Then `newLatitude/newLongitude`가 pair로 전송되고, AUTO면 즉시 event에
 | 테스트 | AUTO/MAJOR 분류기 경계값 | 60분 정확히 = MAJOR인지 59분 = AUTO인지 경계 테스트. |
 | 테스트 | 동시성 — 같은 batch 복수 apply 시도 | pessimistic lock + applyBatch 경합 시나리오 검증. |
 | cross-ref | 분쟁 소명 연계 | 일정 변경으로 인한 취소 분쟁은 `../18_dispute_resolution/F18-03_dispute-appeal_prd.md` 참조. |
-
-## 11. 변경 이력
-
-- **2026-07-29 (주소-좌표 재동기화 current source 실측)**: `EventRescheduleParam` 7필드, `RescheduleProposalCreateParam` 9필드로 교정했다. Flutter가 주소 dirty 시 강제 geocoding하고 좌표 pair를 보내며, 서버가 AUTO 즉시 적용/MAJOR snapshot round-trip/기존 좌표 유지/`INVALID_COORDINATES`를 처리하는 계약과 테스트를 반영했다. G-1 영향도 “무동의 가격 인상”이 아니라 “앱 가격 변경 제안 부재”로 정정했다.

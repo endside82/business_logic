@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 > **2026-08-18 P0 출시 태세(P0-PAID-01)**: 회비 결제도 이벤트와 **같은 서버 판정**을 쓴다(`GET /api/v1/app/release-scope`의 `enabledPaymentMethods` — 이벤트·정기모임 공통 단일 출처). 지금 열려 있는 수단은 **BANK_TRANSFER 하나**이며 WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. 아래 WALLET 서술은 설계 정본이자 현재 비활성으로 읽는다. 앱의 결제수단 라디오는 종전처럼 두 값을 하드코딩하지 않고 서버 목록으로 그려지며(2026-08-18 정정), 목록에 없는 수단으로 보내면 서버가 `400023`으로 거부한다. ⛔ 이미 접수된 건의 확인·거절·환불은 이 판정을 타지 않는다(안전 출구).
@@ -19,19 +18,9 @@ FIXED 모임에서 멤버가 `APPROVED_PENDING_PAYMENT` 상태일 때 코스 전
 
 PG queue/외부 결제는 본 도메인에서 사용 안 함 — WALLET 의 lot 처리는 inline(F17-08 환불 facade 가 wallet 만 다룸). BigDecimal 금액은 `EventPayment.amount` 미러 — long(KRW) 정수.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `RegularMeetingController#pay,confirmPayment,rejectPayment,confirmRefund` | 4 endpoint |
-| Backend Service | `RegularMeetingPaymentService#pay,confirm,reject,confirmRefund` | 분기 + lock 순서 |
-| Backend Wallet | `WalletService#payForRegularMeeting` | 멱등 + 분개 |
-| Backend Entity | `RegularMeetingPayment` — `active_member_id` STORED + uk | 활성 1건 보장 |
-| Backend Enum | `EventPaymentMethod`, `EventPaymentStatus` 재사용 | WALLET, BANK_TRANSFER, PENDING/PAID/CANCELED/REFUND_REQUESTED/REFUNDED |
-| Expiry 스케줄러 | `RegularMeetingPaymentExpiryScheduler` | paymentDueAt 만료 처리 |
-| Flutter API | `regular_meeting_api.dart` | Retrofit pay/confirm/reject |
-| Flutter Param | `regular_meeting_pay_param.dart` (method) | WALLET / BANK_TRANSFER radio |
-| Flutter Screen | `regular_meeting_payment_screen.dart` | WALLET/BANK_TRANSFER 라디오 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingPaymentService`, `WalletService`. 앱: `regular_meeting_payment_screen.dart`, `regular_meeting_api.dart`, `regular_meeting_pay_param.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -77,25 +66,6 @@ PG queue/외부 결제는 본 도메인에서 사용 안 함 — WALLET 의 lot 
 
 ### 3.6 confirmRefund (BANK 환불 호스트 확정, `POST /payment/{paymentId}/refund-confirm`)
 - F17-08 환불 흐름 참조 (REFUND_REQUESTED → REFUNDED).
-
-## 4. 서버 계약
-
-| 엔드포인트 | Method | Body | 응답 | 가드 |
-|---|---|---|---|---|
-| `/payment/pay` | POST | `RegularMeetingPayParam(method)` | 200 `RegularMeetingPaymentVo` | FIXED+OPEN+member.APPROVED_PENDING_PAYMENT |
-| `/payment/{paymentId}/confirm` | POST | — | 200 `RegularMeetingPaymentVo` (PAID) | host + BANK_TRANSFER+PENDING |
-| `/payment/{paymentId}/reject` | POST | `?reason=...` | 200 `RegularMeetingPaymentVo` (CANCELED) | host + BANK_TRANSFER+PENDING |
-| `/payment/{paymentId}/refund-confirm` | POST | — | 200 `RegularMeetingPaymentVo` (REFUNDED) | host + REFUND_REQUESTED |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `Routes.regularMeetingPayment(:id)` |
-| Screen | `RegularMeetingPaymentScreen` — WALLET/BANK_TRANSFER 라디오 |
-| Provider | `myRegularMeetingMembershipProvider` invalidate + walletNotifier invalidate |
-| BANK 안내 | 호스트가 별도로 알려준 계좌 + 입금자명 가이드 |
-| 잔액 부족 | `INSUFFICIENT_POINT` 에러 → 충전 화면 prefill (F06-02 와 동일 패턴) |
 
 ## 6. 상태/권한/시나리오 매트릭스
 

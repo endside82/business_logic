@@ -3,14 +3,13 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
 
 ## 1. 결론
 
 `DisputeCaseQueryRepository`가 원천 도메인 테이블을 Java-side union으로 읽어 `caseId={prefix}:{sourceId}` 형태의 통합 식별자로 단일 뷰를 제공한다. 각 원천 도메인의 고유 상태를 `UnifiedDisputeStatus` 5값으로 매핑하는 변환 헬퍼는 서버 측에서만 수행하며 클라이언트는 결과만 수신한다.
 
-`DisputeSourceType` enum 21값은 케이스의 **컨텍스트 분류(sourceType 필드)** 용도이며, caseId prefix 집합과 1:1 대응하지 않는다. 실제 emit 범위는 아래 §4 "조회 범위"를 참조한다. `EVENT_NO_SHOW`는 enum에 존재하지 않는 **appeal dispatcher 전용 prefix**다.
+`DisputeSourceType` enum 21값은 케이스의 **컨텍스트 분류(sourceType 필드)** 용도이며, caseId prefix 집합과 1:1 대응하지 않는다. 실제 emit 범위는 아래 §4 제품 규칙의 조회 범위를 참조한다. `EVENT_NO_SHOW`는 enum에 존재하지 않는 **appeal dispatcher 전용 prefix**다.
 
 참가자 시점(`GET /api/v1/me/dispute-cases`)과 호스트 시점(`GET /api/v1/host/dispute-cases`) 두 뷰를 제공하며, 동일 케이스도 조회 주체에 따라 다른 timeline/evidence visibility 필터가 적용된다.
 
@@ -18,21 +17,9 @@ SLA 스케줄러는 8개 source를 매일 06:00 KST에 독립 격리 스캔하�
 
 **주의**: `DisputeCaseQueryRepository`가 caseId를 emit할 때 `OPERATIONAL_ISSUE:`, `WARNING_REPORT:`, `WARNING_APPEAL:`, `SETTLEMENT_APPEAL:`, `REFUND_DISPUTE:`, `EVENT_NO_SHOW:` 등 `DisputeSourceType` enum값과 다른 prefix도 사용된다. enum `DisputeSourceType`과 실제 caseId prefix는 1:1 대응이 아니다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `community_api/.../host/dispute/controller/DisputeCaseController.java` | GET 4개 endpoint, `@ModelAttribute DisputeCaseSearchParam`, `@PathVariable String caseId` |
-| Backend Service | `host/dispute/service/DisputeCaseService.java` | `getMyCases`, `getHostCases`, `getDetail` |
-| Backend Query | `host/dispute/repository/query/DisputeCaseQueryRepository.java` | union adapter, caseId prefix 매핑 |
-| Backend Enum | `DisputeSourceType.java`, `UnifiedDisputeStatus.java`, `DisputeCaseType.java` | DisputeSourceType enum 21값(컨텍스트 분류용), UnifiedDisputeStatus 5값 |
-| Backend VO | `DisputeCaseVo.java`, `DisputeCaseDetailVo.java`, `ActorPermissionFlags.java` | 응답 필드 전체 |
-| Backend Scheduler | `DisputeSlaExceededScheduler.java` | cron, SLA_DAYS=7, 8 source |
-| Flutter API | `community_app/lib/data/api/dispute_case_api.dart` | Retrofit 4개 GET endpoint |
-| Flutter Model | `lib/data/models/dispute/dispute_case_vo.dart`, `dispute_case_detail_vo.dart`, `dispute_enums.dart` | Dart enum mirror, JSON key 매핑 |
-| Flutter Provider | `lib/domain/providers/dispute/my_dispute_cases_provider.dart`, `host_dispute_cases_provider.dart`, `dispute_case_detail_provider.dart` | 무한스크롤, 상세 조회 |
-| Flutter Screen | `lib/presentation/dispute/screens/my_dispute_cases_screen.dart`, `dispute_case_detail_screen.dart` | 목록/상세 화면 |
-| Verification | 검증 없음 (단위/통합 테스트 미확인) | — |
+계약의 정본은 코드다. 서버: `DisputeCaseController`, `DisputeCaseService`, `DisputeCaseQueryRepository`, `DisputeSourceType`, `UnifiedDisputeStatus`, `DisputeCaseType`, `DisputeCaseVo`, `DisputeCaseDetailVo`, `ActorPermissionFlags`, `DisputeSlaExceededScheduler`. 앱: `my_dispute_cases_screen.dart`, `dispute_case_detail_screen.dart`, `dispute_case_api.dart`, `dispute_case_vo.dart`, `dispute_case_detail_vo.dart`, `dispute_enums.dart`, `my_dispute_cases_provider.dart`, `host_dispute_cases_provider.dart`, `dispute_case_detail_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -44,142 +31,19 @@ SLA 스케줄러는 8개 source를 매일 06:00 KST에 독립 격리 스캔하�
 6. 케이스 카드 탭 → `GET /api/v1/me(또는 host)/dispute-cases/{caseId}` → `DisputeCaseDetailVo` 수신.
 7. 상세 화면이 `actorPermissions` flag를 기반으로 호스트/참가자 액션 패널을 분기하고, `evidenceFrozen=true`이면 증빙 삭제 버튼을 숨긴다. 타임라인 항목은 서버가 이미 visibility 필터링한 결과만 포함된다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /api/v1/me/dispute-cases`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `DisputeCaseController#getMyCases` |
-| 인증 | JWT 필수 |
-| Request | `@ModelAttribute DisputeCaseSearchParam` — `status?(UnifiedDisputeStatus)`, `caseType?(DisputeCaseType)`, `sourceType?(DisputeSourceType)`, `page/size(int, PagingParam 기본값)` |
-| Response | `Page<DisputeCaseVo>` |
-| 조회 범위 (source별 finder 기준) | ① OPERATIONAL_ISSUE: reporter, 최대 200건 ② WARNING_REPORT: reporter(target은 club 권한 필요로 미emit) ③ WARNING_APPEAL: member(작성자) ④ REPORT(공개): reporter, CARPOOL 제외 ⑤ DATE_BLOCK: blocker, reportId≠null인 안전신고 동반 차단만 ⑥ TRANSPORT: CARPOOL report, reporter ⑦ CLUB_MEMBERSHIP_ACTION: 영향받은 멤버(KICK/BAN만, UNBAN 제외) ⑧ USER_DISPUTE: reporter측+target측 양쪽. **미구현**: SETTLEMENT_APPEAL appealer 직접 finder 없음(호스트 경로만), PurchaseRefundDispute buyer finder 없음 |
-
-### `GET /api/v1/host/dispute-cases`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `DisputeCaseController#getHostCases` |
-| 인증 | JWT 필수 |
-| Request | `@ModelAttribute DisputeCaseSearchParam` (동일) |
-| Response | `Page<DisputeCaseVo>` |
-| 조회 범위 | ① SETTLEMENT_APPEAL: creator의 settlement 산하 appeal 전체 ② REFUND_DISPUTE: seller, status OPEN/UPHELD/OVERTURNED/CLOSED. 공개 Report host 시점 out-of-scope(기존 HostInboxService 소관) |
-
-### `GET /api/v1/me/dispute-cases/{caseId}` / `GET /api/v1/host/dispute-cases/{caseId}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `DisputeCaseController#getMyCaseDetail` / `#getHostCaseDetail` |
-| 인증 | JWT 필수 |
-| Path | `caseId`: String (`{prefix}:{id}` 형식, URL-encoded) |
-| Response | `DisputeCaseDetailVo` |
-| 에러 | caseId 형식 오류 또는 미존재 시 404, 비권한 접근 시 403 |
-
-### `DisputeCaseVo` 필드
-
-| 필드 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| `caseId` | String | N | `{prefix}:{sourceId}` |
-| `caseType` | DisputeCaseType | N | 9종 분류 |
-| `sourceType` | DisputeSourceType | N | 케이스 컨텍스트 분류 (enum 21값) |
-| `sourceId` | long | N | 원천 row PK |
-| `eventId` | Long | Y | 관련 이벤트 |
-| `clubId` | Long | Y | 관련 클럽 |
-| `settlementId` | Long | Y | 관련 정산 |
-| `paymentId` | Long | Y | 관련 결제 |
-| `reporterUserId` | Long | Y | 신고자 |
-| `targetUserId` | Long | Y | 피신고자 |
-| `ownerHostUserId` | Long | Y | 책임 호스트 |
-| `status` | UnifiedDisputeStatus | N | 통합 상태 5값 |
-| `reasonCode` | String | Y | 분쟁 사유 코드 |
-| `summary` | String | Y | 요약 |
-| `createdAt` | LocalDateTime | N | |
-| `updatedAt` | LocalDateTime | N | |
-| `closedAt` | LocalDateTime | Y | 종결 시각 |
-
-### `DisputeCaseDetailVo` 추가 필드
-
-| 필드 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| `responsibleActorId` | Long | Y | 처리 담당자 |
-| `resolutionCode` | String | Y | 처리 결과 코드 |
-| `resolutionNote` | String | Y | 처리 메모 |
-| `timeline` | List\<DisputeTimelineEntryVo\> | Y | visibility 필터링 후 타임라인 |
-| `evidence` | List\<DisputeEvidenceVo\> | Y | visibility 필터링 후 증빙 |
-| `actorPermissions` | ActorPermissionFlags | N | 7개 boolean gating |
-| `evidenceFrozen` | boolean | N | legal hold 중 여부 |
-
-### `ActorPermissionFlags`
-
-| 필드 | 설명 |
-|---|---|
-| `canResolveDispute` | 분쟁 해결(승인/거절) 가능 |
-| `canEscalateToCs` | CS 에스컬레이션 가능 |
-| `canSendNote` | 보완 요청 노트 전송 가능 (case participant 기본 true) |
-| `canModerateMessages` | 메시지/사진 hide 등 콘텐츠 운영 |
-| `canHandleRefundIssue` | 환불 분쟁 처리 |
-| `canManageAttendance` | 출결/노쇼 관리 |
-| `canApproveAppeal` | appeal 승인 (호스트/클럽 staff 한정) |
-
-### `UnifiedDisputeStatus` 원천 매핑 규칙 (서버 `DisputeCaseQueryRepository`)
-
-| 원천 도메인 | 원본 상태 → UnifiedDisputeStatus |
-|---|---|
-| OperationalIssue | OPEN→OPEN, IN_PROGRESS→IN_REVIEW, RESOLVED→RESOLVED, REJECTED→CLOSED |
-| WarningReport | SUBMITTED→OPEN, IN_REVIEW/NEEDS_MORE_INFO→IN_REVIEW, APPROVED/REJECTED→RESOLVED, WITHDRAWN→CLOSED |
-| WarningAppeal | SUBMITTED→OPEN, IN_REVIEW→IN_REVIEW, ACCEPTED/PARTIALLY_ACCEPTED/REJECTED→RESOLVED, WITHDRAWN→CLOSED |
-| MeetingSettlementAppeal | PENDING→OPEN, APPROVED/REJECTED→RESOLVED, RESOLVED→CLOSED |
-| Report(public) | PENDING→OPEN, IN_REVIEW→IN_REVIEW, RESOLVED/DISMISSED→RESOLVED, ESCALATED→ESCALATED |
-| PurchaseRefundDispute | OPEN→OPEN, UPHELD/OVERTURNED→RESOLVED, CLOSED→CLOSED |
-| DATE_BLOCK | 연결 report status로 파생 (reportId=null → hold 없음) |
-| TRANSPORT(carpool) | source row = report, 동일 mapReport |
-| CLUB_MEMBERSHIP_ACTION | DisputeAppeal 없으면 OPEN, PENDING→IN_REVIEW, UPHELD/REJECTED→RESOLVED, CLOSED→CLOSED |
-| USER_DISPUTE | UnifiedDisputeStatus native (admin API가 전이 소유) |
-
-### DisputeSlaExceededScheduler
-
-| 항목 | 값 |
-|---|---|
-| cron | `0 0 6 * * *` (KST 06:00, `zone = "Asia/Seoul"` 명시) |
-| ShedLock | 최대 20분 |
-| SLA_DAYS | 7일 |
-| scanOne 8회 호출 (source→active status set) | ① OPERATIONAL_ISSUE: OPEN+IN_PROGRESS ② WARNING_REPORT: SUBMITTED+IN_REVIEW (NEEDS_MORE_INFO 제외 — unified IN_REVIEW 매핑이지만 SLA set 미포함) ③ WARNING_APPEAL: SUBMITTED+IN_REVIEW ④ SETTLEMENT_APPEAL: PENDING(1개) ⑤ PUBLIC_REPORT: PENDING+IN_REVIEW (ESCALATED 제외) ⑥ REFUND_DISPUTE: OPEN(1개) ⑦ USER_DISPUTE: OPEN+IN_REVIEW+ESCALATED ⑧ DISPUTE_APPEAL: PENDING(1개, P3-C CLUB_MEMBERSHIP_ACTION 등 appeal-파생 source) |
-| 알림 | `OperatorAlertType.DISPUTE_SLA_EXCEEDED`, severity=HIGH |
-| idempotency_key | `DISPUTE_SLA_EXCEEDED:{SOURCE}:{id}` |
-| 격리 | 각 source 독립 try/catch. 한 source 실패가 나머지 차단 않음. alert send도 case 단위 격리 |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| 라우트(참가자) | `/me/disputes` → `MyDisputeCasesScreen(asHost: false)` |
-| 라우트(호스트) | `/host/disputes` → `MyDisputeCasesScreen(asHost: true)` |
-| 라우트(상세) | `/me/disputes/:caseId` 또는 `/host/disputes/:caseId` → `DisputeCaseDetailScreen` |
-| 목록 Provider | `myDisputeCasesProvider` (참가자, 무한스크롤), `hostDisputeCasesProvider` (호스트) |
-| 상세 Provider | `disputeCaseDetailProvider(caseId, asHost)` |
-| API | `DisputeCaseApi.getMyCases` / `getHostCases` / `getMyCaseDetail` / `getHostCaseDetail` |
-| 필터 칩 | `UnifiedDisputeStatus.isOpen` / `isClosed` 그룹. `DisputeSourceType` 선택 필터 |
-| 상세 분기 | `actorPermissions` flag로 호스트/참가자 액션 패널 분기 |
-| evidenceFrozen | `true`이면 증빙 삭제 UI 숨김 |
-| 타임라인 | 서버가 visibility 필터링한 결과만 `DisputeTimelineTile` 렌더링 |
-
-### Dart enum 정합
-
-| 서버 클래스 | Dart 클래스 | wire value | 판단 |
-|---|---|---|---|
-| `UnifiedDisputeStatus` | `UnifiedDisputeStatus` | `name()` | 일치 |
-| `DisputeCaseType` | `DisputeCaseType` | `name()` | 일치 |
-| `DisputeSourceType` | `DisputeSourceType` | `name()` | 일치 |
-| `AuthorRole` | `AuthorRole` | `name()` | 일치 |
-| `Visibility` | `DisputeVisibility` | `name()` (prefix 불일치, wire 일치) | 일치 |
-| `DisputeAppealStatus` | `AppealStatus` | `name()` (클래스명 불일치, wire 일치) | 일치 |
+- 조회 범위(참가자): 내가 접수한 운영 문의(최근 200건), 내가 낸 경고 제보(제보 대상자는 클럽 권한이 필요해 제외), 내 경고 이의, 내가 낸 공개 신고(카풀 제외), 신고가 붙은 안전 차단, 내가 낸 카풀 신고, 클럽에서 강퇴·영구 차단된 내 건(차단 해제는 제외), 사용자 분쟁(신고자와 상대 양쪽). 정산 이의를 낸 사람 본인과 환불 분쟁의 구매자는 아직 이 목록에서 보이지 않는다.
+- 조회 범위(호스트): 내 정산에 걸린 이의 전체, 내가 판매자인 환불 분쟁. 공개 신고의 호스트 쪽은 호스트 인박스가 맡는다.
+- 케이스 번호가 잘못됐거나 없으면 찾을 수 없음, 권한이 없으면 접근 거절이다.
+- 통합 상태는 접수, 검토 중, 상향, 해결, 종결 다섯 가지이다. 원천 상태는 대기·제출은 접수, 처리 중·추가 정보 요청은 검토 중, 승인·기각·인용·부분 인용은 해결, 철회와 운영자 마무리는 종결로 옮겨 보인다.
+- 7일 넘게 해결되지 않은 케이스는 매일 오전 6시(한국 시간)에 운영자에게 알린다. 추가 정보 요청 중인 경고 제보와 상향된 공개 신고는 이 검사에서 뺀다. 한 종류의 검사가 실패해도 나머지는 계속한다.
 
 ## 6. 상태/권한 매트릭스
 
 | 시나리오 | 서버 근거 | 프론트 분기 | 사용자 결과 |
 |---|---|---|---|
-| 참가자가 본인 케이스 목록 조회 | source별 finder 기준(§4 조회 범위 표) | `myDisputeCasesProvider` | source별 reporter/member/blocker/영향받은멤버/양측 기준으로 케이스 표시 |
+| 참가자가 본인 케이스 목록 조회 | source별 finder 기준(§4 제품 규칙의 조회 범위) | `myDisputeCasesProvider` | source별 reporter/member/blocker/영향받은멤버/양측 기준으로 케이스 표시 |
 | 호스트가 관련 케이스 목록 조회 | SETTLEMENT_APPEAL(creator) + REFUND_DISPUTE(seller) | `hostDisputeCasesProvider` | 자신이 creator 또는 seller인 케이스 표시 |
 | `evidenceFrozen=true` 상세 | legal hold(OPEN/IN_REVIEW/ESCALATED) | 증빙 삭제 UI 숨김 | 증빙 파일 삭제 불가 |
 | `canApproveAppeal=true` | 호스트/클럽 staff | 호스트 액션 패널 appeal 승인 버튼 | 서버 전이 endpoint 부재(Gap) — 버튼만 존재 |

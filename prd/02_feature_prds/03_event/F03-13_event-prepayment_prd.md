@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-measured: 2026-07-29; authority: community_api/community_app current source -->
 
 > 문서 상태: **현재 소스 실측본**. 삭제된 `docs/plan/event-extensions/*`와 존재하지 않는 `business_logic/units/...` 경로는 역사적 작성 배경일 뿐 현재 계약의 근거가 아니다. 현재 Controller·Service·DTO·DDL·테스트와 Flutter 호출부를 기준으로 판단한다. F03-05(참가 신청), F06-06(포인트 결제·환불), F07-09(모임 정산 선입금)와 분리되는 `event_payment` 결제 객체를 다룬다.
@@ -12,7 +11,7 @@
 
 ## 1. 결론
 
-> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 아래 계약은 **두 수단 전체**의 설계다. 지금 실제로 열려 있는 수단은 **BANK_TRANSFER(계좌이체 — 호스트 계좌로 직접 송금)** 하나이며, WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. WALLET 관련 서술(즉시 PAID·회계 분개·자동 환불)은 **설계 정본이자 현재 비활성**으로 읽는다. 상세는 §4 `EventPaymentMethod` 절.
+> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 아래 계약은 **두 수단 전체**의 설계다. 지금 실제로 열려 있는 수단은 **BANK_TRANSFER(계좌이체 — 호스트 계좌로 직접 송금)** 하나이며, WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. WALLET 관련 서술(즉시 PAID·회계 분개·자동 환불)은 **설계 정본이자 현재 비활성**으로 읽는다. 상세는 §4 결제 수단 절.
 
 선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에서 참가자가 호스트 승인 또는 자동 승인 후 `APPROVED_PENDING_PAYMENT` 상태에 진입하면, 지정된 `paymentDueAt` 기한 내에 **WALLET(포인트 지갑)** 또는 **BANK_TRANSFER(계좌이체 신고)** 중 한 가지 방식으로 선입금을 납부해 참가를 확정한다. WALLET은 즉시 PAID + capacity++ + 참석 확정이 자동 발생하고, BANK_TRANSFER는 호스트가 입금 확인(`bankConfirm`) 또는 거부(`bankReject`)를 직접 수행해야 결정된다. 환불은 사용자 취소·이벤트 취소·호스트 거부 트리거 각각에 대해 정해진 경로(WALLET 자동 환불 / BANK 호스트 수동 환불 / `REFUND_REQUESTED` 큐)로 정리된다.
 
@@ -27,38 +26,9 @@
 - BANK 신고·호스트 확인·거부·BANK 환불 확인 API는 서버에 있으나 Flutter 호출 UI는 없다.
 - 알림 enum 71~76·83은 존재하지만 생산 배선과 Flutter 라우팅 범위가 서로 다르므로 §7의 실측표를 따른다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 현재 원천 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | `community_api/src/main/java/com/endside/community/event/prepayment/...` | 구현됨 | Controller, Service, VO, Enum, repository, listener |
-| 참가 취소/만료 | `community_api/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java`, `event/service/ApplicationService.java`, `event/service/ApplicationPaymentExpiryScheduler.java` | 구현됨 | BANK 환불 대기와 만료의 실제 상태 전이 |
-| DDL/Enum | `V1__init.sql`, `EventPayment*.java`, `ApplicationStatus.java`, `NotificationType.java` | 구현됨 | 제약과 값 목록 |
-| Backend tests | `EventPrepaymentServiceTest`, `EventPaymentRefundServiceTest`, `EventParticipationCancellationServiceTest`, `EventPartyServiceTest`, `PaidApprovalFlowE2ETest` | 구현됨 | 결제·환불·게스트·통합 회귀 |
-| Flutter | `event_prepayment_api.dart`, `event_prepayment_repository.dart`, `attendance_action_provider.dart`, 이벤트 상세/마이 이벤트 UI | WALLET만 사용자 연결 | 실제 호출 가능한 사용자 흐름 |
-| 삭제된 계획 | `docs/plan/event-extensions/*` | 현재 저장소에 없음 | 역사적 배경으로만 취급 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java:33` (POST `/api/v1/events/{eventId}/prepayment/wallet`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java:41` (POST `/api/v1/events/{eventId}/prepayment/bank-declare`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java:50` (POST `/api/v1/events/{eventId}/applications/{applicationId}/bank-confirm`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java:59` (POST `/api/v1/events/{eventId}/applications/{applicationId}/bank-reject`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java:71` (POST `/api/v1/events/{eventId}/applications/{applicationId}/refund-wallet`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java:81` (POST `/api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java:68` (`payByWallet`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java:124` (`bankDeclare`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java:159` (`bankConfirm`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java:211` (`bankReject`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPaymentRefundService.java:68` (`refundByWallet`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPaymentRefundService.java:153` (`refundByBankConfirm`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventPaymentRefundService.java:203` (`refundByHostCancel`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java:44` (`cancelMyParticipation`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/payment/service/WalletService.java:189` (`payForApplication`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/service/EventService.java` (`tryRefundNewPrepayment`, 현재 line 1112 부근) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/service/AccountDeactivationService.java:493` (`ACTIVE_EVENT_PAYMENT` BlockingItem) | 확인됨 |
+계약의 정본은 코드다. 서버: `EventPrepaymentController`, `EventController`, `EventParticipationCancellationService`, `ApplicationService`, `ApplicationPaymentExpiryScheduler`, `ApplicationStatus`, `NotificationType`, `EventPrepaymentService`, `EventPaymentRefundService`, `WalletService`. 앱: `event_prepayment_api.dart`, `event_prepayment_repository.dart`, `attendance_action_provider.dart`, `cancel_attendance_sheet.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -94,99 +64,30 @@
    - 실제 scheduler는 `event/service/ApplicationPaymentExpiryScheduler`이며 `ApplicationService.expirePendingPayments()`를 호출해 `APPROVED_PENDING_PAYMENT → PAYMENT_EXPIRED`를 bulk update한다. currentCapacity/attendance 변화는 없다.
    - 현재 bulk update는 연관된 `event_payment.PENDING`을 취소하지 않고 `ApplicationPaymentExpiredEvent`도 발행하지 않는다. listener와 enum 75는 존재하지만 생산 publisher가 없어 만료 알림 75는 실제 전송되지 않는다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
+### 결제 수단
+- 참가자에게 열리는 수단은 서버 목록이 정한다. `WALLET` 은 실결제 스위치, `BANK_TRANSFER` 는 호스트 직접 수납 스위치와 출시 범위(`CASH_EVENT`)를 본다. 첫 출시 태세의 실제 값은 `BANK_TRANSFER` 하나다.
+- 앱은 목록에 없는 수단의 버튼을 그리지 않는다. 그래도 보내면 서버가 `EVENT_PREPAYMENT_TYPE_NOT_READY` 로 거절한다. 그런 정책의 모임은 만들 때부터 막힌다(F03-03 §4.1).
+- 이미 있는 결제의 확인·거절·취소·환불은 이 판정을 지나지 않는다. 막으면 돈과 좌석이 함께 갇힌다.
 
-선입금이 활성화된 이벤트에 대해 `event_payment` row를 application당 활성 최대 1건(D6) 유지하면서 결제·환불 트랜잭션 전체를 facade로 통제한다. WALLET은 회계 분개를 동반(`AccountingLedgerService.recordPayment/recordRefund`, F06-06 기존 경로 재사용)하고, BANK_TRANSFER는 분개를 발생시키지 않고 audit만 남긴다(D5). 결제 진입점·환불 진입점·이벤트 단위 취소 진입점이 각각 분리되어 있으므로 `event_payment` 상태머신을 단일 source-of-truth로 두고 모든 진입점에서 일관 적용한다.
+### 결제 행
+- 신청마다 첫 결제(`INITIAL`)의 살아 있는 행은 하나다. 살아 있는 상태는 `PENDING`·`PAID`·`REFUND_REQUESTED` 다. 일행 추가 결제(`GUEST_INCREMENT`)는 여러 건일 수 있다.
+- 중복 결제는 거절한다. 다시 보내도 지난 성공을 돌려주는 방식이 아니다.
 
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | `/api/v1/events/{eventId}/prepayment/wallet` | EventPrepaymentController#payByWallet | required (본인) | WALLET 선입금 결제 facade |
-| POST | `/api/v1/events/{eventId}/prepayment/bank-declare` | EventPrepaymentController#bankDeclare | required (본인) | BANK_TRANSFER 신고 |
-| POST | `/api/v1/events/{eventId}/applications/{applicationId}/bank-confirm` | EventPrepaymentController#bankConfirm | required (Host/CoHost) | 입금 확인 |
-| POST | `/api/v1/events/{eventId}/applications/{applicationId}/bank-reject` | EventPrepaymentController#bankReject | required (Host/CoHost) | 입금 미확인 거부 |
-| POST | `/api/v1/events/{eventId}/applications/{applicationId}/refund-wallet` | EventPrepaymentController#refundByWallet | required (본인 또는 Host/CoHost) | WALLET 환불 (카탈로그 기반 환불율 — PARTICIPANT_FAULT by_time%, HOST_FAULT 100%) |
-| POST | `/api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm` | EventPrepaymentController#refundByBankConfirm | required (Host/CoHost 또는 club OWNER/EVENT_REFUND_MANAGER) | BANK 수동 환불 완료 표시 |
-| DELETE | `/api/v1/events/{eventId}/apply` | EventController#cancelApplication → `EventParticipationCancellationService.cancelMyParticipation` | required (본인) | 참가 취소 (결제 정리 선행) |
-
-### 도메인 모델 / Enum
-
-- **`event_payment` 테이블** (현재 `V1__init.sql`):
-  - `id, event_id, user_id, application_id, amount, method, status, purpose, bank_transfer_memo, host_confirmed_at, host_confirmed_by, point_tx_id, refund_point_tx_id, paid_at, refunded_at, refund_amount, refund_reason, refund_failure_reason`
-  - `refund_evidence_file_ids` json DEFAULT NULL — 호스트 수동 환불 증빙 fileId 배열 (이체증 등, 최대 5건) (`V1__init.sql:1163`)
-  - `active_application_id` STORED generated column은 `purpose=INITIAL`이면서 status가 `PENDING/PAID/REFUND_REQUESTED`일 때만 application_id를 만든다. `UNIQUE KEY uk_event_payment_active`는 **초기 결제**의 동시 활성 1건만 보장하며 `GUEST_INCREMENT`는 다건을 허용한다.
-- **Enum `EventPaymentMethod`** (신규): `WALLET, BANK_TRANSFER`
-  - **2026-08-18 개정(P0-PAID-01) — 참가자에게 실제로 열리는 수단은 서버가 정한다.** `GET /api/v1/app/release-scope`의 `enabledPaymentMethods`가 단일 출처이며, 판정은 `WALLET → money.live`, `BANK_TRANSFER → 호스트 직접 수납 스위치 AND 출시 범위(CASH_EVENT)`다. **P0 출시 태세의 실제 값은 `BANK_TRANSFER` 하나**다 — 지갑(포인트) 결제는 실 PG 출시 전까지 닫혀 있고, 그 정책의 이벤트는 애초에 생성 단계에서 막힌다(F03-03 §4 `PrepaymentType` 참조). 앱은 목록에 없는 수단의 버튼을 그리지 않으며, 그래도 보내면 서버가 `400023`으로 거부한다.
-  - ⛔ 이미 존재하는 결제 건의 확인·거절·취소·환불 경로는 이 판정을 타지 않는다(안전 출구 — 막으면 돈과 좌석이 함께 갇힌다).
-- **Enum `EventPaymentPurpose`**: `INITIAL, GUEST_INCREMENT`
-- **Enum `EventPaymentStatus`**: `PENDING, PAID, REFUND_REQUESTED, REFUNDED, CANCELED`
-- **Enum `ApplicationStatus`**: `PENDING, APPROVED, APPROVED_PENDING_PAYMENT, PAYMENT_EXPIRED, REJECTED, CANCELED, CANCEL_PENDING_REFUND`
-- **Enum `TransactionType` 26**: `EVENT_PREPAYMENT_REFUND`
-- **Enum `NotificationType` 신규**: 71 `EVENT_PREPAYMENT_REQUIRED`, 72 `EVENT_PREPAYMENT_BANK_DECLARED`, 73 `EVENT_PREPAYMENT_BANK_CONFIRMED`, 74 `EVENT_PREPAYMENT_BANK_REJECTED`, 75 `EVENT_PREPAYMENT_EXPIRED`, 76 `EVENT_PREPAYMENT_REFUNDED`, 83 `EVENT_PREPAYMENT_REFUND_REQUESTED`.
-- **EventVo 신규 필드** (단건 응답): `myPaymentRequired, myPayableAmount, myPaymentDueAt, reservedPaymentPendingCount`. EventSimpleVo는 `reservedPaymentPendingCount` 제외(D16, 목록 응답은 항상 0).
-- **`EventViewerContextService.ViewerContext` 결제 필드**: `payableAmount, paymentDueAt, paymentRequired`
-
-### 회계 분개
-
-| 트리거 | 결제 방식 | 분개 호출 | 사용 계정 |
-|---|---|---|---|
-| `payByWallet` | WALLET | `WalletSpendService.spend(EVENT_PREPAYMENT, PAID_FIRST)`로 차감(유료우선·충전 단위 필수 추적·부족 시 롤백) 후 wrapper가 `AccountingLedgerService.recordPayment(txId, userId, eventId, hostId, amount)` 호출(gross 전액 CREATOR_PAYABLE 적립) | `USER_WALLET → CREATOR_PAYABLE` 등 |
-| `bankConfirm` | BANK_TRANSFER | **분개 없음** (호스트 직접 수취) | off-ledger audit 데이터로만 기록 |
-| `refundByWallet`(사용자 자가 취소 / 호스트 이벤트 취소) | WALLET | 지갑 복원은 표준 환불 헬퍼 `WalletRefundService.refundByTransaction`(명시 split 오버로드 — 환불 정책 산식 보존 + 원결제 충전 단위 복원 + 유료/무료 각각의 통화별 누적 환불 한도 강제)로 수렴(2026-06-06). 정산 후처리는 공통 `EventRefundSettlementService.applyRefundToSettlement(…, paidRefund, 0L, freeRefund)` — pgQueuedPaid=0 고정, PG queue 미경유. 정산 완료(PAID) 후 무료분 환불은 호스트 회수 없이 플랫폼 비용(`PROMOTION_EXPENSE`)으로 흡수. | type=`EVENT_PREPAYMENT_REFUND(26)` |
-| `refundByBankConfirm` | BANK_TRANSFER | **분개 없음** (D5) | audit log만 (`event_payment.refund_amount, refund_reason, refunded_at`) |
-| `bankReject` | BANK_TRANSFER | 분개 없음 | `event_payment.status=CANCELED, refund_reason=<host_reason>` |
-
-> `EventRefundSettlementService`로 분개 + 정산 후처리가 일원화됐다. 선입금 경로는 `pgQueuedPaid=0` 고정이며 PG queue/PG-cancel worker를 사용하지 않는다.
-
-### 의존 단위 / 외부 시스템
-
-- **Unit 03 F03-05** — `Application` 상태머신을 공유. `APPROVED_PENDING_PAYMENT` 진입은 F03-05의 apply/approve 분기에서 이루어지고, 본 단위는 그 상태에서만 결제 진입 허용.
-- **Unit 06 F06-06** — 결제는 표준 차감 경로 `WalletSpendService.spend(EVENT_PREPAYMENT, PAID_FIRST)`를 직접 호출한다. application/event lock + active payment 선조회 + DB unique로 중복을 거부하며, 재시도에 이전 성공을 반환하는 idempotency 계약은 아니다. 구식 `WalletService.pay`/`payForApplication` 본체는 차단됐다.
-- **Unit 06 회계** — `AccountingLedgerService.recordPayment/recordRefund` 재사용. AccountCode 신규 추가 없음 (D5).
-- **Unit 03 F03-04 이벤트 취소** — 실제 `EventService.tryRefundNewPrepayment`(현재 line 1112 부근)를 사용한다. ATTENDING/WAITING 순회 때문에 attendance 없는 결제가 누락되고 BANK `REFUND_REQUESTED`를 완료로 오표시할 수 있는 Gap이 있다. Club/Recurring 경로도 재검증 대상이다.
-- **Unit 12 알림** — enum 71~76, 83이 모두 존재한다고 해서 모두 생산 연결된 것은 아니다. 71~74와 76은 `EventExtensionNotificationListener`의 after-commit handler가 있다. 75는 listener만 있고 production publisher가 없으며, 83은 최초 환불 요청이 아니라 `RefundRequestEscalationScheduler`의 지연 재알림에 사용된다.
-- **Unit 13 계정 비활성화**: `EventAccountClosure` 의 `ACTIVE_EVENT_PAYMENT` 막음 항목. PENDING·REFUND_REQUESTED 와, 모임이 정상 종료(CLOSED)되지 않은 PAID 를 막는다. 정상 종료한 모임의 PAID 는 수단(계좌이체·지갑)과 상관없이 통과한다(U1 ①). 탈퇴 요청이 막히면 400 `DEACTIVATION_BLOCKED`(100036).
-- **외부 PG** — 본 선입금 환불은 paid 금액을 wallet로 복원하고 `pgQueuedPaid=0`으로 고정한다. txId 기반 PG-cancel worker는 구현되지 않았고 기본 비활성이다. PG queue를 현재 재사용한다고 기술하면 안 된다.
-
-## 5. 프론트 계약
-
-### 현재 구현된 사용자 흐름
-
-1. 이벤트 상세의 viewer 상태가 결제 대기이면 하단 CTA를 **“결제하고 참석 확정”**으로 표시한다.
-2. CTA는 별도 결제 화면으로 이동하지 않고 `AttendanceActionNotifier.payForApprovedApplication()`을 호출한다.
-3. notifier는 `EventPrepaymentRepository.payByWallet(eventId)`만 호출한다.
-4. 성공 시 토스트와 관련 provider 갱신을 수행하고, 잔액 부족이면 지갑 충전 흐름으로 연결한다.
-5. 마이 이벤트의 결제 대기 항목은 이벤트 상세로 이동한다.
-
-### Flutter API 구현 범위
-
-`event_prepayment_api.dart`와 Repository에는 다음 5개 호출이 있다.
-
-| 서버 API | Flutter 정의 | 실제 화면 호출 |
+### 장부
+| 일 | 수단 | 장부 |
 |---|---|---|
-| `POST .../prepayment/wallet` | 있음 | **있음** — 이벤트 상세 CTA |
-| `POST .../prepayment/bank-declare` | 있음 | 없음 |
-| `POST .../applications/{applicationId}/bank-confirm` | 있음 | 없음 |
-| `POST .../applications/{applicationId}/bank-reject` | 있음 | 없음 |
-| `POST .../applications/{applicationId}/refund-wallet` | 있음 | 없음 |
-| `POST .../applications/{applicationId}/refund-bank-confirm` | **없음** | 없음 |
+| 결제 | 지갑 | 유료 포인트부터 차감, 충전 단위가 모자라면 전체 되돌림. 총액을 호스트 미지급금으로 적립 |
+| 입금 확인·거부·환불 확인 | 계좌이체 | 분개 없음, 호스트가 직접 받으므로 기록만 남김. 거부는 결제 `CANCELED` + 호스트 사유 |
+| 환불 | 지갑 | 원결제의 충전 단위로 복원, 유료·무료 각각 누적 한도를 지킴. 카드 취소 대기열을 쓰지 않고 지갑으로 돌림 |
 
-다음 파일과 라우트는 현재 저장소에 없다.
+- 정산 완료 뒤 무료 포인트분 환불은 호스트에게서 회수하지 않고 플랫폼 비용으로 처리한다.
+- 호스트 수동 환불에는 이체증 같은 증빙을 5건까지 붙인다.
+- 환불 예상액은 서버 미리보기를 따른다. 앱이 따로 계산하지 않는다.
 
-- `event_participation_payment_screen.dart`
-- `event_participation_payment_bank_declare_screen.dart`
-- `host_participation_payment_pending_screen.dart`
-- `event_payment_status_section.dart`
-- `/events/:eventId/participation-payment` 계열 라우트
-
-서버에도 `GET /prepayment/policy`, `GET /prepayment/bank-pending` endpoint는 없다. 환불 예상액은 별도 `POST /api/v1/events/{eventId}/applications/{applicationId}/refund-preview`로 조회하며 `cancel_attendance_sheet.dart`가 실제 사용한다.
-
-### 알림 라우팅
-
-Flutter `NotificationRouter`에는 71~76·83 case가 없다. 이 알림들은 현재 `_ => null`로 처리되어 deep link가 생성되지 않으며 navigable type 목록에도 포함되지 않는다.
+### 권한
+- 입금 확인·거부는 호스트·공동호스트다. 은행 환불 확인은 여기에 클럽 OWNER·환불 담당을 더한다. 지갑 환불은 본인 또는 환불 권한자다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -324,14 +225,12 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 현재 계약 | `EventPaymentRefundService`, `WalletRefundService` | 선입금 환불은 wallet 복원 + `pgQueuedPaid=0`; txId 기반 PG-cancel worker와 별도 executor class는 없음 | PG 연계가 필요하면 신규 계약으로 설계 |
-| 해소 | 현재 refund policy 서비스 | ~~단일 deadline 100%/마감 후 0%~~ → `event_refund_policy` 카탈로그 계산기로 전환 완료. GRADUATED는 레거시 STANDARD로 매핑. | 해소 2026-06-05 |
 | 높음 | Flutter current source | 사용자 연결은 WALLET CTA 하나뿐. BANK 신고·호스트 확인/거부·BANK 환불 확인 화면이 없고 `refund-bank-confirm` API 정의도 없음 | 결제 수단·호스트 운영 수직 슬라이스 구현 |
 | 높음 | `ApplicationPaymentExpiryScheduler`, `ApplicationService` | 만료 bulk update가 PENDING `event_payment`를 취소하지 않고 event도 발행하지 않아 75 알림이 dead wiring이며 active payment가 남을 수 있음 | application/payment를 같은 트랜잭션에서 정리하고 event 발행 테스트 추가 |
 | 높음 | `NotificationRouter` | 71~76·83 전부 deep link가 없어 수신 알림에서 화면 이동 불가 | 실제 화면 범위와 함께 라우팅 추가 |
 | 높음 | refund preview/no-show refund Controller | actor가 service에 전달되지 않거나 eventId가 무시되어 applicationId 기반 IDOR 후보 | 본인/host 권한 + eventId scoping 테스트 |
 | 높음 | Event/Club/Recurring cancel | attendance 없는 pending payment 누락, BANK REFUND_REQUESTED 완료 오표시 | payment row 기준 순회와 상태별 결과/알림 분리 |
 | 위험 | `EventPrepaymentService.bankConfirm` | capacity/restriction fail → `event_payment.REFUND_REQUESTED` 전이. 호스트가 별도 환불 후 `refundByBankConfirm` 호출해야 정리 | 호스트 UI와 미정리 row 모니터링 필요 |
-| 해소 (2026-06-06) | EventPrepaymentService.java, EventPaymentRefundService.java, SettlementBatchService.java | **EVENT 결제·환불 표준 경로 이관 + flow-through 완성** — WALLET 선입금 결제가 표준 차감 경로 `spend(EVENT_PREPAYMENT, PAID_FIRST)`를 직접 호출(충전 단위 필수 추적·부족 시 결제 롤백, 이전엔 경고만 남기고 진행). 지갑 환불은 `refundByTransaction`(명시 split·충전 단위 복원·통화별 누적 한도)로 수렴. 구식 결제 메서드 2개(`pay`/`payForApplication`) 본체 차단. 정산: 무료 매출이 호스트에 무료 포인트로 실지급되고 무료만 모인 이벤트도 fee/tax 0 정산 생성, 정산 후 무료 환불은 `PROMOTION_EXPENSE` 흡수. admin 정산 미러. | 없음 — 정책 PRD §2.6 |
 | 높음 | `RefundRequestEscalationScheduler`, `EventPayment`/DDL | 기본 3일 재알림은 구현됐지만 event payment 조회/저장이 non-locking이고 version이 없어 동시 REFUNDED를 stale REFUND_REQUESTED로 되살릴 경쟁 위험. 전용 경합 테스트 없음 | row lock/version/조건부 update와 race test |
 | Decision Needed | 현재 account/application 서비스 | `APPROVED_PENDING_PAYMENT`와 active payment가 어긋난 상태의 탈퇴·만료 정리 정책 | 운영 정책과 회귀 매트릭스 확정 |
 
@@ -362,11 +261,3 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 | 호스트 정산 보고서 BANK 운영 UI | 백엔드 audit 데이터와 별개로 Flutter 운영 화면은 확인되지 않음 | F06-09/F06-10과 실제 소스 재검증 |
 
 현재 계약의 1차 자료는 `community_api/src/main/java/com/endside/community/event/prepayment/...`, 참가 신청·취소·만료 서비스, `V1__init.sql`, 관련 테스트와 `community_app` 호출부다. 삭제된 event-extensions 계획 문서는 현재 구현 판단에 사용하지 않는다.
-
-## 11. 변경 이력
-
-- **2026-05-22 (v4.5 W2/W3 — 이벤트 참가 선입금 + 환불 + 호스트 cancel 통합)**: 최초 신설. WALLET/BANK_TRANSFER 결제 facade, 결제 상태기계, 회계 분개, 알림 71~76·83, 탈퇴 차단 BlockingItem 상세.
-- **2026-06-05 (Phase 4/5 — 환불 정책 카탈로그 일원화)**: §1 "단일 deadline 100%/마감 후 0%" 표현을 `event_refund_policy` 카탈로그 기반 다단계 환불로 전면 교체. GRADUATED Gap 해소 표기. §7-A 신규 — 환불 정책 카탈로그(6종 템플릿), 귀책 매트릭스(7종), refund-preview API, BANK 귀책 인지형 상한(inferBankRefundFault + BANK_REFUND_EXCEEDS_POLICY 300014), EVENT_PREPAYMENT 정산 집계 계약. `event_payment.refund_evidence_file_ids` 컬럼 추가. S2-6 AC-06 환불율 표현 갱신. §10 호스트 UI Gap/레거시 섹션 병렬 모순 Gap 추가.
-- **2026-06-06 (— 환불 템플릿 호스트 폼 교체)**: §10 "호스트 환불 정책 설정 UI" Gap·"환불 preview + 레거시 섹션 병렬 표시 모순" Gap 해소. 호스트 폼이 카탈로그 6종 picker로 교체(STRICT/FLEXIBLE 선택 불가 해소), 전송 권위=`refundPolicyConfig.templateCode`, 상세·신청 확인 표시가 `effectiveRulesJson`(by_time)로 전환(§5 모달 문구 레거시 100/50/30 추정 제거), 취소 시트는 서버 preview 단일 출처, 앱이 `EventVo.refundPolicyConfig` read-back 모델링.
-- **2026-06-06 (EVENT 결제 표준화 — flow-through 완성)**: WALLET 결제가 표준 차감 경로 `spend(EVENT_PREPAYMENT, PAID_FIRST)`를 직접 호출하도록 이관(충전 단위 필수 추적·부족 시 롤백, 중복 결제 차단·결제 기록·분개는 wrapper 처리). 성공 재사용형 idempotency가 아니라 active payment 중복 거부다. 지갑 환불은 split 보존 표준 경로로 수렴했고 구식 결제 메서드 본체는 차단됐다.
-- **2026-07-29 (현재 소스 재실측)**: 삭제된 계획·존재하지 않는 unit/class 경로를 현재 근거에서 제거. `INITIAL`/`GUEST_INCREMENT` 관계, 논리 capacity hold, `CANCEL_PENDING_REFUND`, 실제 만료 scheduler의 미정리 payment/미발행 75, 83 escalation 경합, 주 호스트 단독 72 fanout, Flutter WALLET-only, refund preview IDOR 후보, 이벤트 취소 누락/오표시, PG queue 미연결을 교정.

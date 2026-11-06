@@ -3,50 +3,27 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-06-05; unit: business_logic/units/04_club/F04-03_club-crud-transfer -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/04_club/F04-03_club-crud-transfer`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
-클럽 메타정보(이름·카테고리·소개·규칙·가입방식·커버 이미지)를 OWNER가 만들고 관리한다. 생성 시 OWNER 멤버 자동 등록 + 기본 게시판 3개(공지/자유/가입인사) + ClubFund가 자동 생성된다. 삭제는 단순 행 제거가 아니라 활성 구독 일할 환불, 진행 중 이벤트 취소, 멤버 가입비 환불, 기금 잔여분 일괄 환불, 알림 발송까지 묶이는 복합 처리다. 소유권 이전은 두 멤버의 역할을 OWNER↔ADMIN으로 swap한다.
+클럽 메타정보(이름·카테고리·소개·규칙·가입방식·커버 이미지)를 OWNER가 만들고, 정보 수정은 OWNER·ADMIN이 한다. 생성 시 OWNER 멤버 자동 등록 + 기본 게시판 3개(공지/자유/가입인사) + ClubFund가 자동 생성된다. 삭제는 단순 행 제거가 아니라 활성 구독 일할 환불, 진행 중 이벤트 취소, 멤버 가입비 환불, 기금 잔여분 일괄 환불, 알림 발송까지 묶이는 복합 처리다. 소유권 이전은 받는 회원이 7일 안에 수락해야 효력이 생기고, 그때 두 멤버의 역할이 OWNER↔ADMIN으로 바뀐다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
 - 생성: 클럽 목록 (`/clubs`) FAB(+) — F04-01에서 push.
-- 수정: 클럽 상세(`/clubs/:id`) > 설정 톱니 > "클럽 정보 수정" — OWNER만.
+- 수정: 클럽 상세(`/clubs/:id`) > 설정 톱니 > "클럽 정보 수정" (OWNER·ADMIN).
 - 삭제: 클럽 수정 화면 하단 위험 영역 → 다이얼로그 → 호출.
 - 소유권 이전: 클럽 설정 메뉴 (별도 화면 — 본 단위 명시 컴포넌트 없음. 멤버 목록 길게 누르기 등에서 진입 가능).
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/04_club/F04-03_club-crud-transfer/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/04_club/F04-03_club-crud-transfer/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/04_club/F04-03_club-crud-transfer/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/04_club/F04-03_club-crud-transfer/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `ClubController`, `ClubService`, `AccountingLedgerService`, `ClubFundService`, `ClubDonationService`, `ClubBoardService`, `NotificationService`. 앱: `club_create_screen.dart`, `club_edit_screen.dart`, `club_form.dart`, `club_delete_dialog.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/clubs` | `ClubController#createClub` | [ClubController.java:77](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L77) |
-| `PATCH /api/v1/clubs/{id}` | `ClubController#updateClub` | [ClubController.java:117](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L117) |
-| `DELETE /api/v1/clubs/{id}` | `ClubController#deleteClub` | [ClubController.java:130](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L130) |
-| `POST /api/v1/clubs/{id}/transfer-ownership` | `ClubController#transferOwnership` | [ClubController.java:252](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/club/controller/ClubController.java#L252) |
+서버 창구: `ClubController#createClub`, `ClubController#updateClub`, `ClubController#deleteClub`, `ClubController#transferOwnership`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 1. **생성**:
    - 진입: `clubFormNotifierProvider.build()` → 빈 폼.
    - 사용자 입력 → notifier 업데이트.
@@ -60,140 +37,19 @@
 4. **소유권 이전** (스펙 SCR-CL-004 위험영역 또는 별도 메뉴):
    - `clubRepository.transferOwnership(id, TransferOwnershipParam(newOwnerId))` → `POST /api/v1/clubs/:id/transfer-ownership` → 성공 시 detail/myClubs 모두 invalidate.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-클럽 메타정보(이름·카테고리·소개·규칙·가입방식·커버 이미지)를 OWNER가 만들고 관리한다. 생성 시 OWNER 멤버 자동 등록 + 기본 게시판 3개(공지/자유/가입인사) + ClubFund가 자동 생성된다. 삭제는 단순 행 제거가 아니라 활성 구독 일할 환불, 진행 중 이벤트 취소, 멤버 가입비 환불, 기금 잔여분 일괄 환불, 알림 발송까지 묶이는 복합 처리다. 소유권 이전은 두 멤버의 역할을 OWNER↔ADMIN으로 swap한다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | /api/v1/clubs | ClubController#createClub | required | 클럽 생성 (max-owned-clubs 제한) |
-| PATCH | /api/v1/clubs/{id} | ClubController#updateClub | required (OWNER) | 메타 부분 수정 |
-| DELETE | /api/v1/clubs/{id} | ClubController#deleteClub | required (OWNER) | 클럽 폐쇄 + 환불 + 알림 |
-| POST | /api/v1/clubs/{id}/transfer-ownership | ClubController#transferOwnership | required (OWNER) | 소유권 이전 + **구 오너 구독 즉시 해지** |
-
-### 소유권 이전 사이드이펙트 (2026-06-04)
-
-소스: `ClubService.java:354-408`
-
-1. 기존 OWNER → ADMIN 역할 변경
-2. 신규 OWNER 설정 + `club.ownerId` 갱신
-3. **구 오너 활성 구독 즉시 해지**: `findActiveSubscription(currentOwnerId, clubId)` → `sub.cancel()` + `sub.setAutoRenew(false)`
-   - 환불 없음 (정책: "이전 시 환불 없음")
-   - 신 오너 구독 자동 생성 없음
-4. **신 오너 구독 폴백**: `club.subscriptionExpiresAt` 유지 → 신 오너는 구독 화면에 진입하기 전까지 기간 내 혜택을 자동 수혜 (소스: `ClubService.java:385-396`)
-5. `CLUB_OWNER_CHANGED` FCM 알림
-
-### deleteClub 구독 환불 기준
-
-소스: `ClubService.java:261-347`
-
-- 활성 구독 전체 cancel
-- **잔여 기간 일할 환불 대상**: `subscription.userId == club.ownerId` 인 경우만 — 즉 현재 ownerId와 일치하는 구독
-- 소유권 이전으로 넘어온 구 오너의 CANCELLED 구독은 환불 제외 (이미 이전 시 해지됨)
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- `JoinType`: `APPROVAL`, `FREE`.
-- `ClubStatus`: `ACTIVE`, `INACTIVE`, `SUSPENDED`.
-- `ClubType`: `FREE`, `BUSINESS`.
-- `MemberRole`: `MEMBER`, `ADMIN`, `OWNER`.
-- BoardType (생성 시 기본 게시판): `NOTICE`, `FREE`, `INTRODUCTION`.
-
-### 의존 단위 / 외부 시스템
-
-- **Unit 03 (event)**: `EventRepository.findByClubId`, `event.transitionTo(CANCELED)` — 폐쇄 시 진행 이벤트 정리.
-- **Unit 06 (payment/wallet)**: `WalletRefundService.refundByTransaction`(원결제 split 복원 — `refundToWallet`는 2026-06-06 해소·본체 차단), `AccountingLedgerService.recordSubscriptionRefund` — 구독 일할 환불(`ClubService.java:323`).
-- **F04-13~14 (이 단위 후반)**: `ClubFundService.getOrCreateFund`, `ClubDonationService.refundDonationsOnClosure` — 기금 자동 생성/잔액 환불.
-- **F04-08**: `ClubBoardService.createDefaultBoards` — 기본 게시판 3개 자동 생성.
-- **Unit 11 (notification)**: `NotificationService` — `CLUB_CLOSED`, `CLUB_OWNER_CHANGED` FCM.
-- **외부**: 썸네일 업로드는 별도 `POST /api/v1/files/presigned-url` (file 도메인) → S3 직접 PUT.
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 생성: 클럽 목록 (`/clubs`) FAB(+) — F04-01에서 push.
-- 수정: 클럽 상세(`/clubs/:id`) > 설정 톱니 > "클럽 정보 수정" — OWNER만.
-- 삭제: 클럽 수정 화면 하단 위험 영역 → 다이얼로그 → 호출.
-- 소유권 이전: 클럽 설정 메뉴 (별도 화면 — 본 단위 명시 컴포넌트 없음. 멤버 목록 길게 누르기 등에서 진입 가능).
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 | 파일 | 역할 |
-|---|---|---|
-| `/clubs/create` | `screens/club_create_screen.dart` | 신규 생성 |
-| `/clubs/:id/settings` (또는 edit) | `screens/club_edit_screen.dart` | 수정 + 위험 영역 |
-| `widgets/club_form.dart` | `widgets/club_form.dart` | 생성/수정 공용 폼 |
-| `widgets/club_delete_dialog.dart` | `widgets/club_delete_dialog.dart` | 삭제 확인 다이얼로그 (클럽명 입력형) |
-
-### 화면별 구성 요소 & 액션
-
-### 클럽 생성 (`club_create_screen.dart` + `club_form.dart`)
-
-- **사용자가 보는 것**:
-  - AppBar "클럽 만들기"
-  - 커버 이미지 선택 (180dp ImagePicker, 5MB↓ JPG/PNG)
-  - 클럽 이름 TextField (2~30자, 0/30 카운터)
-  - 카테고리 Dropdown (서버 Category enum 기반)
-  - 지역 Dropdown (선택 사항 — 현 구현은 클럽 모델에 직접 저장 없이 description에 포함되거나 미사용)
-  - 클럽 소개 TextArea (10~500자, 0/500 카운터)
-  - 가입 방식 RadioGroup (자유/승인, 기본 FREE)
-  - 최대 멤버 수 Dropdown (스펙 명시이지만 서버 ClubAddParam에는 maxMember 필드 없음 → UI만 표시 가능, 또는 서버 미지원 안내)
-  - 하단 BottomCTA "클럽 만들기"
-- **사용자가 할 수 있는 액션**:
-  - 입력 변경 ▶ `clubFormNotifier.update*` 메서드들 → state 업데이트
-  - 이미지 선택 ▶ `image_picker` → `updateThumbnailFile`
-  - "클럽 만들기" ▶ `createClub` ▶ 1) 썸네일이 파일이면 `presigned-url` + S3 PUT 후 fileKey, 2) `POST /api/v1/clubs` ▶ 성공 시 `context.go('/clubs/{newId}')`
-- **상태 분기**:
-  - validation 실패 (`name`/`category`/`description`) → 필드별 에러 메시지
-  - submit 중 → `isSubmitting` → 버튼 비활성 + 스피너
-  - 서버 에러 → `errors['submit']` (resolveApiErrorMessage)
-- **모달/시트/네비게이션**: 이미지 picker 시트, 카테고리/지역 Dropdown.
-
-### 클럽 수정 (`club_edit_screen.dart`)
-
-- **사용자가 보는 것**:
-  - 동일 폼 (`club_form.dart`) — `initFromClub(club)`로 프리필
-  - 위험 영역: "🔴 클럽 삭제" 카드, 텍스트 빨강.
-- **사용자가 할 수 있는 액션**:
-  - "저장" ▶ `clubFormNotifier.updateClub(clubId)` ▶ `PATCH /api/v1/clubs/:id`
-  - "클럽 삭제" 탭 ▶ `ClubDeleteDialog` 노출 → 클럽명 정확 입력 → `clubDetailNotifier.deleteClub` ▶ `DELETE /api/v1/clubs/:id` ▶ 성공 시 `context.go('/clubs')` + 토스트
-- **상태 분기**:
-  - hasChanges 없으면 저장 비활성 (스펙 SCR-CL-004)
-  - 삭제 다이얼로그에서 클럽명 미일치 → 확인 버튼 비활성
-- **모달/시트/네비게이션**:
-  - 삭제 확인 다이얼로그 (입력형 가드)
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. **생성**:
-   - 진입: `clubFormNotifierProvider.build()` → 빈 폼.
-   - 사용자 입력 → notifier 업데이트.
-   - 제출: `validate()` → 통과 시 (썸네일 파일이면 `fileRepository.generatePresignedUrl` → `uploadFile`) → `clubRepository.createClub(ClubAddParam)` → `POST /api/v1/clubs` → `Result<ClubDetail>`.
-   - 성공: `context.go('/clubs/${club.id}')` + `clubListNotifier` invalidate.
-2. **수정**:
-   - 진입: `clubFormNotifier.initFromClub(detail)` 호출.
-   - 제출: `updateClub(clubId)` → `PATCH /api/v1/clubs/:id` → 성공 시 `clubDetailNotifier.refresh()` + pop.
-3. **삭제**:
-   - 다이얼로그 → `clubDetailNotifier.deleteClub()` → `DELETE /api/v1/clubs/:id` → 성공 시 `context.go('/clubs')` + `myClubsNotifier.refresh()` + `clubListNotifier` invalidate.
-4. **소유권 이전** (스펙 SCR-CL-004 위험영역 또는 별도 메뉴):
-   - `clubRepository.transferOwnership(id, TransferOwnershipParam(newOwnerId))` → `POST /api/v1/clubs/:id/transfer-ownership` → 성공 시 detail/myClubs 모두 invalidate.
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- **글자수 제약**: 이름 2~30, 소개 10~500 (스펙 SCR-CL-003 + form provider validate 로직)
-- **이미지 5MB 제한**: 클라이언트가 사전 검사 + 알림
-- **MIME 매핑**: 확장자→`image/jpeg|png|gif|webp`
-- **Presigned URL 업로드 흐름**: 1) `generatePresignedUrl(purpose=CLUB_PHOTO)` 2) S3 PUT 3) fileKey 반환 후 본 API 호출
-- **카테고리 Dropdown 항목**: 서버 Category enum 한글 매핑 (`ClubCategoryMapper`)
-- **삭제 다이얼로그 가드**: 클럽명 정확 입력 시에만 활성화
-- **위험 영역 색상**: 빨강 텍스트, 경고 카드
-- **서버에 없는 항목**: 최대 멤버 수 Dropdown은 스펙에 있으나 `ClubAddParam`에 해당 필드가 없다 — UI만 두거나 적용하지 않거나 둘 중 선택 (현 구현은 미적용, 차후 서버 추가 시 연결)
-- **소유권 이전 진입 UX**: 멤버 목록에서 멤버 선택 후 "OWNER로 변경" 흐름은 현 화면 명세 외 → 향후 통합 시 멤버 목록(F04-04) 액션 시트에 노출 가능
+- 소유 한도: 한 사람이 소유하는 클럽은 기본 5개(설정값)다.
+- 입력: 이름 2~30자, 소개 10~500자는 화면이 막는다(서버 상한은 이름 100자, 소개 500자). 커버 이미지는 5MB 이하다.
+- 권한: 정보 수정은 OWNER·ADMIN, 삭제와 소유권 이전은 OWNER만 한다.
+- 소유권 이전은 즉시 바뀌지 않는다. 클럽장이 재인증하고 제안하면 받는 회원이 7일 안에 책임 내용을 확인하고 재인증해 수락해야 효력이 생긴다. 받는 회원은 거절, 클럽장은 취소할 수 있고, 7일이 지나면 만료된다. 클럽당 진행 중 제안은 하나다.
+- 받는 회원은 이 클럽 회원이고 활성 계정이며 서로 차단이 없어야 한다.
+- 진행 중 인출, 미정산, 기금으로 상계하고도 남는 미수금이 있으면 수락할 수 없다. 신고·분쟁·제재·예정 모임은 막지 않고 책임 내용으로 보여 준다.
+- 수락하면 같은 통화의 기금으로 미수금을 먼저 상계하고, 옛 클럽장은 ADMIN 이 되며 위임 권한 비트를 잃고, 옛 클럽장 구독은 환불 없이 끝난다.
+- 받는 회원의 갱신은 수락 때 고른다. 자동 갱신은 남은 기간이 있으면 잇고 결제하지 않으며, 없으면 고른 요금제로 바로 첫 기간을 결제한다. 수동 갱신은 결제 없이 넘겨받는다.
+- 운영자 비상 승계는 받는 회원의 동의·재인증·청구 없이 하고 보류 조건은 같다. 진행 중 제안을 닫고 두 회원에게 알린다.
+- 폐쇄 불가: 진행 중 강퇴·차단 분쟁, 끝나지 않은 인출. 미수금이 있으면 금액을 맞춰 확인해야 한다.
+- 폐쇄의 돈 순서(통화마다): 구독 잔여 환불, 가입비 환불, 기부 반환, 남은 기금 상계, 클럽장 납부, 몰수. 앞 클럽장의 지갑 몫은 돌려주지 않는다. 진행 중 소유권 제안은 끝나고 받는 회원에게 알린다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -207,15 +63,6 @@
 | S6 | 소유권 이전 | OWNER가 직장 사정으로 ADMIN 박민수에게 이전. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | 자기 자신에게 이전 시도 / 비멤버 이전 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S8 | 비활성 클럽 이전 시도 | 시드 클럽(`Seoul Weekend Boardgamers`, clubId=1201). | 사용자는 클럽 상세에 머무르며 OWNER/ADMIN 전용 surface(`screen.club.settings`)에 접근할 수 없다. |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
 ## 8. Gap / Risk
 
@@ -243,9 +90,3 @@
 - **AC-06. 소유권 이전**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-07. 자기 자신에게 이전 시도 / 비멤버 이전**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-08. 비활성 클럽 이전 시도**: Given 시드 클럽(`Seoul Weekend Boardgamers`, clubId=1201). When 사용자가 해당 흐름을 실행하면 Then 사용자는 클럽 상세에 머무르며 OWNER/ADMIN 전용 surface(`screen.club.settings`)에 접근할 수 없다.
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

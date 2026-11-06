@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first: community_api/src/main/java/com/endside/community/inquiry/; updated: 2026-06-05 -->
 
 ## 1. 결론
@@ -14,21 +13,9 @@
 
 Flutter 측에서는 `SupportIssueApi`가 OperationalIssue 전용으로 구현되어 있고, Inquiry 전용 Flutter 데이터 레이어·화면은 **2026-06-06에 풀스택 구현 완료**되었다. 목록/상세 스레드/작성 화면 + `/profile/inquiries` 라우트 + 마이페이지 진입 메뉴가 서버 4개 endpoint를 소비한다. 다만 **v1 작성 화면은 위의 `sourceType`을 `NONE`으로 고정**하며(컨텍스트 분기 미구현 — `inquiry_screens.dart:204`), EVENT/CLUB/SETTLEMENT 컨텍스트 지정은 후속이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `inquiry/controller/InquiryController.java:29-57` | POST/GET 4개 endpoint 전수 |
-| Backend Service | `inquiry/service/InquiryService.java:67-214` | 생성, 조회, 메시지 추가, sourceType 소유권 검증 |
-| Backend Entity | `inquiry/model/Inquiry.java:21-92` | 테이블 컬럼, sourceType/sourceId/host_response_at |
-| Backend Enum | `InquiryStatus.java`, `InquirySourceType.java`, `InquiryCategory.java`, `InquirySenderType.java` | 상태·카테고리·소스타입·발신자 타입 |
-| Backend Param | `inquiry/param/InquiryAddParam.java:10-31` | 생성 요청 필드 |
-| Backend VO | `InquiryVo.java`, `InquiryDetailVo.java`, `InquiryMessageVo.java` | 응답 필드 |
-| Backend ErrorCode | `ErrorCode.java:495-501` | INQUIRY_* 7개 에러 |
-| Frontend API | **구현 완료(2026-06-06)** — `InquiryApi` 신설, 서버 4 endpoint 소비 | 해소 |
-| Frontend Model | **구현 완료(2026-06-06)** — `data/models/inquiry/` 신설(InquiryVo 등) | 해소 |
-| DB | `V1__init.sql:2385-2422` | `inquiry`, `inquiry_message` 테이블 DDL |
-| Verification | 위젯 테스트 8건(`community_app/test/inquiry/inquiry_screens_test.dart`) | 목록/상세/작성 화면 위젯 검증 |
+계약의 정본은 코드다. 서버: `InquiryController`, `InquiryService`, `Inquiry`, `InquiryStatus`, `InquirySourceType`, `InquiryCategory`, `InquirySenderType`, `InquiryAddParam`, `InquiryVo`, `InquiryDetailVo`. 앱: `inquiry_screens_test.dart`, `support_issue_api.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -40,106 +27,11 @@ Flutter 측에서는 `SupportIssueApi`가 OperationalIssue 전용으로 구현�
 6. 관리자가 `CLOSED` 처리하면 이후 사용자 메시지 추가 불가(`INQUIRY_CLOSED` 400).
 7. 사용자가 `GET /api/v1/inquiries/my` 로 목록(최신순), `GET /api/v1/inquiries/{inquiryId}` 로 상세+스레드 조회.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `POST /api/v1/inquiries`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `InquiryController#createInquiry` (`InquiryController.java:29-35`) |
-| 인증 | 필수 (`@AuthenticationPrincipal UserPrincipal`) |
-| Body | `InquiryAddParam` |
-| 응답 | `InquiryDetailVo` (201 Created) |
-| 에러 | `INQUIRY_INVALID_CATEGORY(400)`, `INQUIRY_SOURCE_NOT_FOUND(404)`, `INQUIRY_SOURCE_NOT_OWNED(403)`, `INQUIRY_SOURCE_ID_REQUIRED(400)` |
-
-`InquiryAddParam` 필드:
-
-| 필드 | 타입 | 제약 | 설명 |
-|---|---|---|---|
-| `category` | `String` | `@NotNull` | `InquiryCategory.name()` — ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC |
-| `title` | `String` | `@NotBlank, max 200` | 제목 |
-| `content` | `String` | `@NotBlank, max 2000` | 첫 번째 메시지 내용 |
-| `sourceType` | `InquirySourceType` | nullable | 기본 NONE. EVENT/CLUB/SETTLEMENT 지정 시 sourceId 필수 |
-| `sourceId` | `Long` | nullable | event.id / club.id / settlement.id |
-
-### `GET /api/v1/inquiries/my`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `InquiryController#getMyInquiries` (`InquiryController.java:37-41`) |
-| 인증 | 필수 |
-| 응답 | `List<InquiryVo>` (lastMessageAt DESC 정렬) |
-
-### `GET /api/v1/inquiries/{inquiryId}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `InquiryController#getInquiry` (`InquiryController.java:43-48`) |
-| 인증 | 필수 |
-| 에러 | `INQUIRY_NOT_FOUND(404)`, `INQUIRY_ACCESS_DENIED(403)` |
-| 응답 | `InquiryDetailVo` (스레드 포함, id ASC) |
-
-### `POST /api/v1/inquiries/{inquiryId}/messages`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `InquiryController#addMessage` (`InquiryController.java:50-56`) |
-| 인증 | 필수 |
-| Body | `InquiryMessageParam { content: @NotBlank max 2000 }` |
-| 에러 | `INQUIRY_NOT_FOUND(404)`, `INQUIRY_ACCESS_DENIED(403)`, `INQUIRY_CLOSED(400)` |
-| 응답 | `InquiryDetailVo` (업데이트된 스레드) |
-| 사이드이펙트 | `inquiry.status = OPEN`, `inquiry.lastMessageAt = now()` |
-
-### InquiryVo 필드
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| `id` | `long` | 문의 ID |
-| `userId` | `long` | 작성자 |
-| `category` | `InquiryCategory` | 카테고리 |
-| `title` | `String` | 제목 |
-| `status` | `InquiryStatus` | OPEN/ANSWERED/CLOSED |
-| `assigneeAdminId` | `Long` | nullable |
-| `lastMessageAt` | `LocalDateTime` | nullable |
-| `answeredAt` | `LocalDateTime` | nullable |
-| `closedAt` | `LocalDateTime` | nullable |
-| `sourceType` | `InquirySourceType` | NONE/EVENT/CLUB/SETTLEMENT |
-| `sourceId` | `Long` | nullable |
-| `hostResponseAt` | `LocalDateTime` | nullable (v1 미사용) |
-| `createdAt` | `LocalDateTime` | nullable |
-
-### InquiryDetailVo
-
-```java
-// InquiryDetailVo.java:13-16
-{ inquiry: InquiryVo, messages: List<InquiryMessageVo> }
-```
-
-`InquiryMessageVo`: `{ id, senderType(USER/ADMIN), senderId, content, createdAt }`
-
-### sourceType 소유권 검증 로직
-
-| sourceType | 검증 조건 (`InquiryService.java:144-196`) |
-|---|---|
-| `NONE` | 검증 없음 |
-| `EVENT` | event 존재 + (hostUserId == userId) OR EventCoHost OR Application.status IN (APPROVED, APPROVED_PENDING_PAYMENT, CANCEL_PENDING_REFUND) |
-| `CLUB` | club 존재 + (ownerId == userId) OR ClubMember 존재 |
-| `SETTLEMENT` | settlement 존재 + settlement.hostUserId == userId |
-
-## 5. 프론트 계약
-
-**2026-06-06에 풀스택 구현 완료**. 아래는 구현된 계약이다.
-
-| 항목 | 현재 상태(2026-06-06) | 구현 내용 |
-|---|---|---|
-| Route | 구현 완료 | `/profile/inquiries`, `/profile/inquiries/new`, `/profile/inquiries/:id` |
-| Screen | 구현 완료 | 목록(MyInquiriesScreen)·상세 스레드(InquiryDetailScreen)·작성(InquiryCreateScreen) |
-| API | 구현 완료 | `InquiryApi` (Retrofit), 서버 4 endpoint 소비 |
-| Repository | 구현 완료 | `InquiryRepository` |
-| Provider | 구현 완료 | `myInquiriesProvider`, `inquiryDetailProvider`, `inquiryMutationProvider` |
-| Model | 구현 완료 | `InquiryVo` (Freezed), `InquiryAddParam`, `InquiryMessageParam` |
-
-> Fact: `community_app/lib/data/api/support_issue_api.dart`는 OperationalIssue 전용으로 남아 있고, 1:1 문의는 별도 신설된 `InquiryApi`가 담당한다. 마이페이지 진입 메뉴도 추가됨.
+- 카테고리는 계정, 결제, 이벤트, 클럽, 신고, 기타 여섯 가지이다. 제목은 200자, 내용과 추가 메시지는 각 2000자까지이다.
+- 이벤트, 클럽, 정산을 연결하려면 연결 대상이 있어야 하고 본인과 관련이 있어야 한다. 이벤트는 호스트, 공동 호스트, 승인된 참가자, 클럽은 소유자와 멤버, 정산은 그 정산의 호스트만 쓸 수 있다.
+- 종결된 문의에는 메시지를 더할 수 없다. 사용자가 메시지를 더하면 문의는 다시 접수 상태가 된다.
 
 ## 6. 상태/권한 매트릭스
 

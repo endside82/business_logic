@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + event listeners + community_app curated/ -->
 
 ## 1. 결론
@@ -27,21 +26,9 @@
 - bulk 결과 `SETTLED`는 회차 배정 잠금 + earning APPROVED이며 즉시 지갑 지급이 아니다. 실지급은
   주간 배치에서 처리한다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `ServiceAssignmentController.java` | `POST /api/v1/regular-meetings/{meetingId}/assignments`, `POST .../settlements` |
-| Backend Service (배정) | `ServiceAssignmentService.java` → `bulkAssignToRegularMeeting` | 권한·중복 skip·독립 생성 |
-| Backend Service (정산) | `ServiceAssignmentService.java` → `bulkSettleRegularMeeting` | `NOT_SUPPORTED` 전파 격리·회차별 result·classifyBulkSettle |
-| Backend Enum | `BulkSettleStatus.java` | `SETTLED`, `ALREADY_SETTLED`, `NO_ASSIGNMENT`, `SKIPPED_NOT_READY`, `BLOCKED`, `FAILED` |
-| Backend Model | `ServiceAssignment.java` | `eventId`(회차 owner), `status` |
-| Backend Port | `CuratedEventAccessPort.java` | `assertRegularMeetingHost`, `getRegularMeetingSessionEventIds` |
-| Frontend API | `service_assignment_api.dart` | `createBulkAssignments`, `bulkSettle` |
-| Frontend Repository | `service_assignment_repository.dart` | `Result<List<...>>` |
-| Frontend Screen | `regular_meeting_bulk_settle_screen.dart` | `RegularMeetingBulkSettleScreen`, `_ResultCard`, `BLOCKED needsHostAction` → 이동 |
-| Frontend Model | `service_assignment_bulk_settle_result_vo.dart` | `eventId`, `assignmentId`, `status`, `reason` |
-| Verification | 서버 유닛 테스트 + 서버/Flutter 소스 실측 | 부분 성공·권한 게이트·DRAFT/bulk cancel/UI Gap |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentService`, `BulkSettleStatus`, `ServiceAssignment`, `CuratedEventAccessPort`. 앱: `regular_meeting_bulk_settle_screen.dart`, `service_assignment_api.dart`, `service_assignment_repository.dart`, `service_assignment_bulk_settle_result_vo.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -79,82 +66,6 @@ terms 재수락 대기 또는 이행 확인 미완료.
 1. 호스트가 결과 화면에서 BLOCKED 회차의 "분담금 현황" 버튼을 누른다.
 2. `EventAssignmentsScreen(eventId, focusAssignmentId: assignmentId)`로 이동, 해당 배정 카드가 강조(파란 테두리).
 3. 호스트가 과금·무료제외·대납 등 액션으로 완납 게이트를 충족시킨 후 재정산 트리거 가능.
-
-## 4. 서버 계약
-
-### `POST /api/v1/regular-meetings/{meetingId}/assignments`
-
-| 항목 | 값 |
-|---|---|
-| Controller | `ServiceAssignmentController#bulkAssignToRegularMeeting` |
-| 인증/권한 | 필수, 정기모임 호스트(`assertRegularMeetingHost`) |
-| Path | `meetingId: long` — `RegularMeetingVo.id` |
-| Request Body | `ServiceAssignmentCreateParam` — `providerUserId: long`, `assignmentSource: AssignmentSource`, `providerRole: String?` |
-| 응답 | `List<ServiceAssignmentVo>` (HTTP 201) — 이번에 새로 생성된 배정만 |
-| 중복 처리 | 이미 배정된 회차는 skip(응답에 미포함, 에러 아님) |
-| 트랜잭션 | 단일 `@Transactional` — 한 회차 실패 시 전체 롤백 |
-
-### `POST /api/v1/regular-meetings/{meetingId}/settlements`
-
-| 항목 | 값 |
-|---|---|
-| Controller | `ServiceAssignmentController#bulkSettleRegularMeeting` |
-| 인증/권한 | 필수, 정기모임 호스트 |
-| Request Body | `ServiceAssignmentBulkSettleParam` — `providerUserId: long` |
-| 응답 | `List<ServiceAssignmentBulkSettleResultVo>` (HTTP 200) |
-| 트랜잭션 | `@Transactional(NOT_SUPPORTED)` — 회차별 독립 트랜잭션(부분 성공 허용) |
-
-### BulkSettleStatus enum(소스: `BulkSettleStatus.java`)
-
-| 값 | 의미 | 호스트 조치 필요 |
-|---|---|---|
-| `SETTLED` | 정산 락+APPROVED 완료 | 없음 |
-| `ALREADY_SETTLED` | 이미 정산됨(SETTLEMENT_LOCKED) — 멱등 | 없음 |
-| `NO_ASSIGNMENT` | 해당 회차에 이 provider 배정 없음 | 배정 생성 |
-| `SKIPPED_NOT_READY` | 회차 미종료·CONFIRMED 아님 — 나중에 재트리거 | 없음 |
-| `BLOCKED` | 완납 게이트 미충족 — 과금·무료처리·대납 필요 | 해당 회차 배정 화면에서 조치 |
-| `FAILED` | 경합(`@Version`)·인프라·commit 예외 | 재시도 |
-
-### ServiceAssignmentBulkSettleResultVo 필드
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| `eventId` | long | 회차 event id |
-| `assignmentId` | Long? | 배정 id(NO_ASSIGNMENT면 null) |
-| `status` | BulkSettleStatus | 회차별 결과 |
-| `reason` | String? | BLOCKED/FAILED 시 ErrorCode name |
-
-### classifyBulkSettle 분류 로직(소스: `ServiceAssignmentService.java`)
-
-| ErrorCode | BulkSettleStatus |
-|---|---|
-| `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_EVENT_NOT_ENDED` | `SKIPPED_NOT_READY` |
-| `ASSIGNMENT_NOT_FULLY_COLLECTED`, `ASSIGNMENT_FEE_MISMATCH`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`, `ASSIGNMENT_BENEFICIARY_ATTENDED`, `ASSIGNMENT_PREPAYMENT_REQUIRED`, `ASSIGNMENT_TERMS_STALE`, `ASSIGNMENT_FULFILLMENT_INVALID_STATE` | `BLOCKED` |
-| 그 외 | `FAILED` |
-
-## 5. 프론트 계약
-
-| 항목 | 구현 |
-|---|---|
-| 묶음 배정 Screen | 정기모임 화면 인라인 CTA (별도 라우트 없음) |
-| 묶음 정산 Screen | `RegularMeetingBulkSettleScreen(meetingId)` |
-| Route | `Routes.regularMeetingBulkSettle(meetingId)` |
-| 제공자 선택 | `ProviderPickerSheet.show(context)` |
-| 정산 실행 | `ref.read(serviceAssignmentRepositoryProvider).bulkSettle(meetingId, param)` — Repository를 그 provider로 접근하는 단발(one-shot) 변이 패턴(목록상태 Notifier 아님). 동형 선례: `bulkSettle`/`charge` 등 단발 액션. 정상(규칙 위반 아님). |
-| 결과 렌더링 | `_ResultCard` — `AppStateBadge(label, tone, icon)` + reason 한글화(`resolveApiErrorMessage`) |
-| 회차 식별 | 카드 제목은 현재 `회차 #${eventId}`. sequenceNo/날짜/제목은 결과 VO와 화면에 없음 |
-| BLOCKED CTA | `Routes.eventAssignmentsFor(eventId, focusAssignmentId: assignmentId)` 이동, 배정 카드 강조 |
-| 성공 집계 | `results.where((r) => r.status.isSuccess).length` |
-
-### BulkSettleStatus Flutter 확장(`service_assignment_bulk_settle_result_vo.dart` 추정)
-
-| 속성 | 의미 |
-|---|---|
-| `isSuccess` | `SETTLED` 또는 `ALREADY_SETTLED` |
-| `needsHostAction` | `BLOCKED` — "분담금 현황" 버튼 노출 조건 |
-| `label` | 한글 라벨 |
-| `tone` | `StateTone` |
-| `icon` | `IconData?` |
 
 ## 6. 상태/권한 매트릭스
 

@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 마일리지 정책 설정은 `POLICY_OWNER` 권한 운영진이 프로그램 활성화·만료일·랭킹 기준·시즌 사용을 조회/수정하고, 변경 영향을 미리 보는 흐름이다. 서버 `MileageAdminPolicyController`의 `GET/PUT /config`와 `GET /config/preview`가 `MileageProgramConfigService`로 연결되고, Flutter `mileage_policy_screen.dart` + `mileage_config_preview_dialog.dart`가 이를 표시한다.
@@ -12,16 +11,9 @@
 
 판정: **조회/수정/미리보기는 사용 가능**. config preview가 `Map<String,Object>`(Flutter `dynamic`)로 내려와 typed 모델이 없고, preview의 GRADE_THRESHOLD 분포가 in-memory/대규모 클럽 분기를 가진다는 점이 Gap/Risk다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageAdminPolicyController.java` | `@RequiresClubPermission(POLICY_OWNER)`, `GET/PUT /config`, `GET /config/preview` |
-| Backend Service | `MileageProgramConfigService.java` | `getOrInitConfig`, `updateConfig`, `setActive`, `previewImpact`, `requireActive` |
-| Backend VO/Param/Enum | `MileageProgramConfigVo.java`, `MileageProgramConfigModParam.java`, `constants/RankingBasis.java` | 응답 필드·부분 갱신·랭킹 기준 |
-| Backend 기본값 | `MileageProgramConfigService` 상수 | `DEFAULT_EXPIRY_DAYS=365`, `DEFAULT_RANKING_BASIS=BALANCE`, preview 임계치 `BIG_BATCH_THRESHOLD=50`, `LARGE_CLUB_MEMBER_THRESHOLD=100000` |
-| Frontend | `mileage_admin_policy_api.dart`, `mileage_admin_policy_repository.dart`, `mileage_admin_policy_providers.dart`, `presentation/mileage/admin/screens/mileage_policy_screen.dart`, `widgets/mileage_config_preview_dialog.dart`, `mileage_policy_row.dart` | route·preview dialog |
-| DB | `V1__init.sql` `mileage_program_config` | club_id PK, active/expiry_days/ranking_basis/season_enabled |
+계약의 정본은 코드다. 서버: `MileageAdminPolicyController`, `MileageProgramConfigService`, `MileageProgramConfigVo`, `MileageProgramConfigModParam`, `RankingBasis`. 앱: `mileage_policy_screen.dart`, `mileage_admin_policy_api.dart`, `mileage_admin_policy_repository.dart`, `mileage_admin_policy_providers.dart`, `mileage_config_preview_dialog.dart`, `mileage_policy_row.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -35,35 +27,6 @@
    - `GRADE_THRESHOLD`: 현재 등급 분포 추정(`qualifiedLifetimeEarned` 버킷). 멤버 ≥100,000이면 분포 생략(`LARGE_CLUB_DISTRIBUTION_SKIPPED`).
    - `BIG_BATCH_BULK`: 대상 인원 수(value) 안내. ≥50이면 `LARGE_BATCH_DETECTED`.
 6. 다른 서비스가 적립/차감/제안 시 `requireActive(clubId)`를 호출 — config 없으면 `MILEAGE_PROGRAM_NOT_FOUND`, active=false면 `MILEAGE_NOT_ACTIVATED`.
-
-## 4. 서버 계약
-
-### `GET /api/v1/admin/clubs/{clubId}/mileage/config`
-- 권한: `POLICY_OWNER`. 응답 `MileageProgramConfigVo`: `clubId`, `active`(boolean), `expiryDays`(int), `rankingBasis`(RankingBasis), `seasonEnabled`(boolean), `createdAt/updatedAt`.
-- 없으면 기본값 생성 후 반환(active=false, expiryDays=365, rankingBasis=BALANCE, seasonEnabled=false).
-
-### `PUT /api/v1/admin/clubs/{clubId}/mileage/config`
-- Body `MileageProgramConfigModParam`: `active`(Boolean), `expiryDays`(Integer, ≥0), `rankingBasis`(RankingBasis), `seasonEnabled`(Boolean) — 모두 nullable 부분 갱신.
-- side effect: `MILEAGE_POLICY_UPDATED` audit, `PolicyChanged` outbox.
-
-### `GET /api/v1/admin/clubs/{clubId}/mileage/config/preview`
-- Query `changeType`(EXPIRY_DAYS/TRIGGER_OFF/GRADE_THRESHOLD/BIG_BATCH_BULK), `value`(String). 둘 다 nullable.
-- 응답 `Map<String,Object>`: `clubId/changeType/value/estimatedAffectedMembers/summary/warnings`, changeType별 추가 키(`currentExpiryDays`, `currentGradeDistribution`, `totalMembers`, `largeClub` 등).
-
-### `requireActive` 게이트 (다른 기능에서 호출)
-- config 없음 → `MILEAGE_PROGRAM_NOT_FOUND`(404). active=false → `MILEAGE_NOT_ACTIVATED`(400).
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `adminMileagePolicy`(`policy`) |
-| Screen/Widget | `MileagePolicyScreen`, `MileageConfigPreviewDialog`, `MileagePolicyRow` |
-| Repository/API | `MileageAdminPolicyRepository.getConfig / updateConfig / getConfigPreview` |
-| Model | `MileageProgramConfigVo`, `MileageProgramConfigModParam`, `RankingBasis` enum |
-| Preview 응답 | `getConfigPreview`는 `Future<dynamic>` → repository가 JSON map으로 파싱 |
-
-Flutter `getConfigPreview`는 query 파라미터(`changeType`/`value`)를 API 시그니처에 노출하지 않음 — repository/dialog 호출 방식 확인 필요(현재 시그니처는 clubId만).
 
 ## 6. 상태/권한 매트릭스
 

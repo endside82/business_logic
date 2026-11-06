@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 2026-10-29 현재 계약 대조
 
 ### 마일리지 운영 명령과 검토 대기열
@@ -20,17 +19,9 @@
 
 판정: **큐 처리·감사 로그는 사용 가능**. 그러나 ① **대시보드가 서버 `Map`인데 Flutter `getDashboard`는 Map으로 받지만 멤버 상세(`getMemberDetail`)는 서버 `Map`을 typed `MemberMileageMainVo`로 받아 파싱 깨짐** ② 대시보드/멤버 상세 집계가 `findAll()` in-memory가 핵심 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageAdminQueueController.java` | `@RequiresClubPermission(MILEAGE_MANAGER)`, queue/dashboard/members/audit-logs |
-| Backend Service | `MileageReviewQueueService.java` | `enqueue`(idempotent), `process`(APPROVE/REJECT/IGNORE), `markProcessed` |
-| Backend Service | `MileageQueryService.java` | `buildDashboard`(Map), `buildAdminMemberDetail`(Map: main/ledger/auditTrail/openQueueItems), `findGradeChanges` |
-| Backend Service | `MileageAuditService.java`(호출), `MileageAuditLogQueryRepository.searchAuditLogs`(호출) | audit 기록·검색 |
-| Backend VO/Param/Enum | `MileageReviewQueueVo.java`, `MileageAuditLogVo.java`, `MileageGradeChangeVo.java`, `MileageReviewQueueSearchParam`/`...ProcessParam`, `MileageAuditLogSearchParam`, `constants/ReviewQueueType.java`, `ReviewQueueStatus.java` | 필드·enum·Decision |
-| Frontend | `mileage_admin_queue_api.dart`, `mileage_admin_queue_repository.dart`, `mileage_admin_queue_providers.dart`, `presentation/mileage/admin/screens/mileage_console_screen.dart`, `mileage_queue_screen.dart`, `mileage_audit_log_screen.dart`, `mileage_member_detail_screen.dart`, `widgets/mileage_console_card.dart` | route·Map vs VO 수신 |
-| DB | `V1__init.sql` `mileage_review_queue`, `mileage_audit_log` | 컬럼·상태·인덱스(5년 보존) |
+계약의 정본은 코드다. 서버: `MileageAdminQueueController`, `MileageReviewQueueService`, `MileageQueryService`, `MileageAuditService`, `MileageReviewQueueVo`, `MileageAuditLogVo`, `MileageGradeChangeVo`, `ReviewQueueType`, `ReviewQueueStatus`. 앱: `mileage_console_screen.dart`, `mileage_queue_screen.dart`, `mileage_audit_log_screen.dart`, `mileage_member_detail_screen.dart`, `mileage_admin_queue_api.dart`, `mileage_admin_queue_repository.dart`, `mileage_admin_queue_providers.dart`, `mileage_console_card.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -41,38 +32,6 @@
 5. 멤버 운영 상세 → `getMemberDetail` → `GET /members/{memberId}` → `buildAdminMemberDetail`가 `main`(buildMemberMain VO) + `ledger`(최근 50 Page) + `auditTrail`(멤버 관련 audit 20) + `openQueueItems`를 `Map`으로 반환.
 6. 멤버 등급 이력 → `getMemberGradeHistory` → `GET /members/{memberId}/grade-history` → `List<MileageGradeChangeVo>`.
 7. 감사 로그 → `listAuditLogs` → `GET /audit-logs`(`MileageAuditLogSearchParam`: actorId/actorRole/actionType/targetType/targetId/batchId/from/to) → `Page<MileageAuditLogVo>`.
-
-## 4. 서버 계약
-
-### `GET /queue`, `GET /queue/{queueId}`, `POST /queue/{queueId}/process`
-- list Query `MileageReviewQueueSearchParam`(queueType, status, assignedTo). 응답 `Page<MileageReviewQueueVo>`(id/queueType/targetType/targetId/summary/status/assignedTo/processedBy/processedAt/processedNote/createdAt).
-- process Body `MileageReviewQueueProcessParam`(decision NotNull: APPROVE/REJECT/IGNORE, note). 204. OPEN 아니면 no-op.
-- 미존재 → `MILEAGE_QUEUE_ITEM_NOT_FOUND`.
-
-### `GET /dashboard`
-- 응답 **`Map<String,Object>`**: `clubId, activeMembers, earnedThisMonth, redeemedThisMonth, expiredThisMonth, prevMonthDelta, pendingQueueCount, recentActions[], currentSeason{name/start/end/daysRemaining}, outboxMetric{pending/failed/skipped}`.
-
-### `GET /members/{memberId}`
-- 응답 **`Map<String,Object>`**: `main`(MemberMileageMainVo), `ledger`(Page\<MileageLedgerVo\>), `auditTrail[]`, `openQueueItems[]`.
-
-### `GET /members/{memberId}/grade-history`
-- Query `limit`(default 50). 응답 `List<MileageGradeChangeVo>`.
-
-### `GET /audit-logs`
-- Query `MileageAuditLogSearchParam`. 응답 `Page<MileageAuditLogVo>`(id/actorId/actorRole/actorPermissionFlags/actionType/targetType/targetId/beforeJson/afterJson/reason/reasonCode/batchId/requestIp/userAgent/createdAt).
-
-### enum
-`ReviewQueueType{HOST_PROPOSAL, AUTO_REVERT_REVIEW, REPEATED_MANUAL, REPEATED_REDEMPTION, BULK_POST_REVIEW, GRADE_ABNORMAL, NEGATIVE_BALANCE_REVERSE_RISK}`, `ReviewQueueStatus{OPEN, PROCESSED, IGNORED}`, `Decision{APPROVE, REJECT, IGNORE}`, `ActorRole`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `adminClubMileage`(`mileage`, 콘솔), `adminMileageQueue`(`queue`), `adminMileageAuditLogs`(`audit-logs`), `adminMileageMemberDetail`(`members/:memberId`), `adminMileageMemberGradeHistory` |
-| Screen/Widget | `MileageConsoleScreen`, `MileageQueueScreen`, `MileageAuditLogScreen`, `MileageMemberDetailScreen`, `MileageConsoleCard` |
-| Repository/API | `MileageAdminQueueRepository.listQueue/getQueueItem/processQueue/getDashboard/getMemberDetail/getMemberGradeHistory/listAuditLogs` |
-| Map 처리 | `getDashboard`는 `Future<dynamic>` → `asJsonMap`으로 Map 파싱(정합), `getMemberDetail`은 `MemberMileageMainVo` typed 수신(불일치) |
-| Model | `MileageReviewQueueVo`, `MileageAuditLogVo`, `MileageGradeChangeVo`, `MileageReviewQueueProcessParam`, enum들 |
 
 ## 6. 상태/권한 매트릭스
 

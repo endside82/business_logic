@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-measured: 2026-07-29 -->
 
 ## 2026-10-29 현재 계약 대조
@@ -24,65 +23,9 @@
 
 Flutter 생성/수정 화면은 2026-07-10 이후 타입별 결과와 환불·노쇼·정산 영향을 설명하는 authoring guidance까지 갖췄다. 다만 실제 소스 대조 결과 **앱 카테고리 enum 세 값이 서버에 없고 기본값도 그중 하나라 생성 자체를 막을 수 있는 P0 계약 불일치**가 있다. 또한 서버는 안전한 썸네일 키를 지원하지만 앱 생성·수정 화면에는 썸네일 선택/업로드 입력이 없다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 계층 | 확인 소스 | 확인 계약 |
-|---|---|---|
-| Controller | `RegularMeetingController#create`, `update`, `delete`, `createFromEvent` | path, method, 응답 |
-| Param | `RegularMeetingAddParam`, `RegularMeetingModParam` | 정확한 필드와 Java 타입 |
-| Enum | `Category`, `LocationType`, `RegularMeetingType`, `RefundPolicyType`, no-show enums | 허용 문자열 |
-| Service / Entity | `RegularMeetingService#createMeeting/updateMeeting`, `RegularMeeting#setPrice` | 타입별 강제값, DRAFT, 100원 절삭 |
-| File | `FileStorageService#validateAndNormalizeImageKeyForWrite` | 썸네일 소유권·상태·purpose |
-| Flutter model | `regular_meeting_add_param.dart`, `regular_meeting_mod_param.dart` | Freezed body, `LocalDate` 직렬화 |
-| Flutter screen | `regular_meeting_create_screen.dart`, `regular_meeting_edit_screen.dart` | 실제 입력·가이드·누락 입력 |
-
-## 3. 서버 계약
-
-### 3.1 Endpoint
-
-| Method | Path | Body | 응답 | 권한/상태 |
-|---|---|---|---|---|
-| POST | `/api/v1/regular-meetings` | `RegularMeetingAddParam` | 201 `RegularMeetingVo` | 인증 사용자, `EVENT_HOST_RESTRICT` 제재 시 차단 |
-| POST | `/api/v1/regular-meetings/from-event/{eventId}` | 없음 | 201 `RegularMeetingVo` | 원본 이벤트 호스트 |
-| PATCH | `/api/v1/regular-meetings/{id}` | `RegularMeetingModParam` | 200 `RegularMeetingVo` | 호스트 + DRAFT |
-| DELETE | `/api/v1/regular-meetings/{id}` | 없음 | 204 | 호스트 + DRAFT |
-
-Controller에는 `@Valid`가 없고 Service가 핵심 값을 직접 검증한다. 따라서 문서/클라이언트는 Bean Validation annotation을 계약으로 가정하지 않는다.
-
-### 3.2 Add/Mod 필드
-
-`RegularMeetingAddParam`:
-
-- 공통: `title:String`, `description:String?`, `category:Category`, `meetingType:RegularMeetingType`, `locationType:LocationType`
-- 장소: `address`, `addressDetail`, `latitude:Double`, `longitude:Double`, `onlineUrl`
-- FIXED 코스: `startDate:LocalDate`, `endDate:LocalDate`, `totalSessionCount:Integer`, `price:BigDecimal`, `prepaymentRequired:boolean`, `refundPolicy:RefundPolicyType`, `refundDeadlineHours:Integer`, `baseCapacity:int`, `approvalRequired:boolean`
-- 노쇼: `noShowPolicy`, `noShowLimit`, `noShowCountMode`
-- 미디어: `thumbnailUrl:String`
-
-`RegularMeetingModParam`은 `meetingType`을 제외한 같은 필드를 nullable로 받는다. null은 기존값 유지이며 수정은 DRAFT에서만 허용된다.
-
-### 3.3 타입별 저장 규칙
-
-| 항목 | FIXED | VARIABLE |
-|---|---|---|
-| 등록/결제 단위 | 정기모임 코스 전체 | 각 세션 이벤트 |
-| `totalSessionCount` | 1 이상 필수 | 서버가 null 강제 |
-| `baseCapacity` | 1 이상 필수 | 서버가 0 강제 |
-| 본체 `price` | 앱은 0 이상을 검증하고 서버는 100원 단위 아래 절삭. 서버 직접 요청의 음수 거절은 현재 누락 | 서버가 0 강제 |
-| 본체 날짜 | 요청값 저장 | 서버가 null 강제 |
-| 선결제/승인 | 요청값 적용 | 서버가 false 강제 |
-| 본체 환불 | 요청값, null이면 `FULL` | `FULL` 강제, deadline null |
-
-예: FIXED `price=12,345`는 `12,300`으로 저장된다. VARIABLE의 금액은 본체가 아니라 F17-05 세션 param에서 받는다.
-
-### 3.4 썸네일 쓰기·읽기
-
-- 쓰기 값은 만료되는 URL이 아니라 bare file key여야 한다.
-- 서버는 호스트 소유, `COMPLETED`, `EVENT_THUMBNAIL` purpose인 파일만 저장한다.
-- 절대 `http(s)` URL은 새 키로 저장하지 않는다. 생성에서는 null이 되고, 수정에서는 기존 썸네일을 유지한다.
-- 존재하지 않음/타인 소유/미완료/다른 purpose는 각각 파일 오류로 거절한다.
-- 상세·목록 응답 시 bare key를 표시용 presigned URL로 바꾼다. 미완료/유실 파일은 null로 내려 앱 폴백을 유도한다.
-- `createFromEvent`는 원본 이벤트의 썸네일 키를 복사하지만 같은 호스트 소유 검증을 다시 통과해야 한다.
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`, `FileStorageService`. 앱: `regular_meeting_create_screen.dart`, `regular_meeting_edit_screen.dart`, `regular_meeting_add_param.dart`, `regular_meeting_mod_param.dart`.
 
 ## 4. Flutter 실제 화면 계약
 
@@ -162,6 +105,11 @@ Flutter 생성 화면은 음수 가격을 폼 검증으로 막지만, `RegularMe
 - 한 번 공개됐던 CLOSED/CANCELED는 기존 공개 이력이 있으므로 상세 조회를 유지한다.
 - `meetingType`은 생성 뒤 변경하지 않는다.
 - 일반 호스트용 이양 API는 없다. 다만 관리자 백엔드에는 internal token으로 호출하는 `POST /api/internal/regular-meetings/{id}/transfer-host` break-glass 경로가 있고, CANCELED가 아니면 본체 호스트와 결제·정산이 없는 미래 세션의 호스트를 이관한다.
+
+### 제품 규칙
+
+- 정기모임 만들기는 이벤트 주최 제한 제재를 받는 동안 막힌다.
+- 기존 이벤트에서 정기모임을 만들 수 있는 사람은 그 원본 이벤트의 호스트뿐이다.
 
 ## 7. 수용 기준
 

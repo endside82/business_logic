@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 > 2026-07-29 현재 소스 갱신: 재사용 경험 루프 보강으로 정기모임 상세는 단일 모임 본체 조회뿐 아니라 이전 회차 결과·다음 회차/세션으로 이어지는 진입점과 함께 봐야 한다. 특히 유료 VARIABLE 세션, 세션별 선결제, 클럽 recurrence, host cost type, 비공개 clone 안전장치는 F17 결제/정산 PRD 및 F03 이벤트 반복 문서와 함께 확인한다. 신규 기능 ID는 만들지 않고 기존 F17 상세·세션·결제 흐름에 흡수한다.
 
 ## 소개 재사용·본인용 선호·준비 안내 자동화
@@ -15,7 +14,6 @@
 - 이미 답한 관심 분야·시간대·인원 선호를 본인만 비교한다. 수정·해제·건너뛰기를 제공하고 성향 검사를 필수화하거나 원점수를 공개하지 않는다. 모임별 목적 수집·호스트 공유는 이번에 추가하지 않는다.
 - 확정 직후 준비, D-7 필수 준비, 기존 24H/1H 시작 안내, 후기·선택 피드백과 다음 회차를 연결한다. 취소·만료·일정 변경은 전달 직전 재검사하고 재시도·종료 후 안내는 내구성 중복 원장으로 조정한다.
 - 직원 인터뷰·대표 후기 선정·준비 검수·개별 독촉을 추가하지 않는다. 실제 앱/HTTP 자동 왕복과 기존 데이터 보존형 적용을 통과했다. 수동 브라우저 접근 제한, 렌더링 시각 점검과 출시 검증의 구분은 전체 완료 점검 (Git 이력)을 따른다.
-
 
 ## 참가자가 판단하고 다음 행동으로 이동하는 화면
 
@@ -55,18 +53,9 @@
 
 Flutter `RegularMeetingDetailScreen` 은 status (DRAFT/OPEN/CLOSED/CANCELED) 와 viewer (host/member/guest) 분기로 하단 CTA 를 결정한다. 호스트는 "멤버 관리", "세션 출석 확정", "정산 보기" 진입, 멤버는 "취소", "결제" (APPROVED_PENDING_PAYMENT), 게스트는 "참가 신청" CTA.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `RegularMeetingController#get,sessions,myMembership` | `GET /api/v1/regular-meetings/{id}`, `/events`, `/members/me` |
-| Backend Service | `RegularMeetingService#getMeeting,getSessions` | DRAFT 가드, 세션 정렬, 활성/취소 분리 |
-| Backend VO | `RegularMeetingVo`, `RegularMeetingEventVo`, `RegularMeetingMemberVo` | 본인 멤버 응답에 nullable `paymentDueAt` 포함 |
-| Backend ErrorCode | `ErrorCode.REGULAR_MEETING_NOT_FOUND(2700001)` | DRAFT 마스킹 |
-| Flutter API | `regular_meeting_api.dart` | Retrofit getDetail/getSessions/getMyMembership |
-| Flutter Provider | `community_app/lib/domain/providers/regular_meeting/regular_meeting_detail_provider.dart` | `regularMeetingDetail`, `regularMeetingSessions`, `myRegularMeetingMembership`가 한 파일에 통합된 `@riverpod` 3종 |
-| Flutter Screen | `regular_meeting_detail_screen.dart` | 헤더·세션·status별 CTA 분기 |
-| Flutter VO | `regular_meeting_vo.dart` | `isHost` → `@JsonKey(name: 'host')`, `directApplyBlocked` 그대로 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`. 앱: `regular_meeting_detail_screen.dart`, `regular_meeting_api.dart`, `regular_meeting_detail_provider.dart`, `regular_meeting_vo.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -82,49 +71,6 @@ Flutter `RegularMeetingDetailScreen` 은 status (DRAFT/OPEN/CLOSED/CANCELED) 와
    - 멤버 + ENROLLED → "취소"
    - 멤버 + APPROVED_PENDING_PAYMENT → "결제하기" (F17-07)
 6. 세션 카드 탭 → `event_id` 로 일반 이벤트 상세(F03-02) 이동. 단 RM 컨텍스트 5필드(`regularMeetingId/Title/Type, sequenceNo, directApplyBlocked`)가 EventVo 에 오버레이됨.
-
-## 4. 서버 계약
-
-### `GET /api/v1/regular-meetings/{id}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `RegularMeetingController#get` |
-| 인증 | Controller는 nullable principal. HTTP 접근은 현재 보안 설정의 인증 기본 규칙 적용 |
-| Path | `id: long` |
-| 응답 | `RegularMeetingVo` (sessions 포함) |
-| DRAFT 접근 | 호스트만. 그 외 `REGULAR_MEETING_NOT_FOUND` |
-
-`RegularMeetingVo` 핵심 필드: `id, hostUserId, hostNickname, title, category, meetingType, status, thumbnailUrl, locationType, regionSummary, startDate, endDate, totalSessionCount, upcomingSessionCount, price, baseCapacity, enrolledCount, description, address, addressDetail, latitude, longitude, onlineUrl, prepaymentRequired, refundPolicy, refundDeadlineHours, approvalRequired, isHost(JSON: "host"), sessions: List<RegularMeetingEventVo>, noShowPolicy, noShowLimit, noShowCountMode, publishedAt, closedAt, canceledAt, createdAt`.
-
-### `GET /api/v1/regular-meetings/{id}/events?includeHistory={bool}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `RegularMeetingController#sessions` |
-| Query | `includeHistory: bool, default false` (true 면 CANCELED 세션 포함) |
-| 응답 | `List<RegularMeetingEventVo>` — `eventId, sequenceNo, origin, replacedEventId, active, materializationStatus, attendanceFinalizationStatus, title, description, startTime, endTime, status, locationType, address, onlineUrl, baseCapacity, currentCapacity` |
-| 정렬 | `sequenceNo ASC` (replacement 는 원본 옆에) |
-
-### `GET /api/v1/regular-meetings/{id}/members/me`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `RegularMeetingController#myMembership` |
-| 인증 | 필수 |
-| 응답 | `RegularMeetingMemberVo`. 미등록은 400 `ENROLLMENT_INVALID_STATUS`(2700009). `paymentDueAt`은 결제 대기일 때만 서버 저장 기한을 반환 |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `Routes.regularMeetingDetail = /regular-meetings/:id` |
-| Screen | `RegularMeetingDetailScreen` |
-| Detail Provider | `regularMeetingDetailProvider(id)` |
-| Sessions Provider | `regularMeetingSessionsProvider(id, includeHistory)` |
-| Membership Provider | `myRegularMeetingMembershipProvider(id)` |
-| CTA 위젯 | `RegularMeetingParticipation` (참가자 본문·하단 행동), 주최자는 상세의 관리 영역 |
-| RM 컨텍스트 표기 | `DirectApplyBlockedNotice` — `directApplyBlocked=true` 일 때 "이 모임은 일반 신청이 막혀 있습니다" 안내 |
 
 ## 6. 상태/권한/시나리오 매트릭스
 

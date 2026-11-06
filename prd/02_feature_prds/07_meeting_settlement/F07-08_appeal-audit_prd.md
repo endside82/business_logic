@@ -3,16 +3,11 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-06-05 (DRAFT 이의 차단 DEC-V4 반영); unit: business_logic/units/07_meeting_settlement/F07-08_appeal-audit -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-08_appeal-audit`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 참가자가 본인의 분담 또는 이체에 이의를 제기하면 PENDING appeal이 생성되고 해당 subject에 대한 결제·확인이 차단된다. 호스트(=정산 생성자)가 APPROVED/REJECTED/RESOLVED 중 하나로 처리해야 차단이 해제된다. 모든 정산 변경은 감사 로그(audit log)로 기록되어 페이지네이션 조회된다.
 
-**2026-06-05부터 DRAFT(준비 중) 정산에는 이의제기를 서버가 차단한다(DEC-V4)** — 비확정 금액에 대한 이의는 혼란과 활성화 후 결제 장애(미처리 PENDING appeal의 결제 차단)만 만들기 때문. 정산 신청(ACTIVE) 이후부터 이의 가능하며, COMPLETED에서의 현행 허용은 유지된다. 상세는 §7-A Fact 참조.
+**2026-06-05부터 DRAFT(준비 중) 정산에는 이의제기를 서버가 차단한다(DEC-V4)** — 비확정 금액에 대한 이의는 혼란과 활성화 후 결제 장애(미처리 PENDING appeal의 결제 차단)만 만들기 때문. 정산 신청(ACTIVE) 이후부터 이의 가능하며, COMPLETED에서의 현행 허용은 유지된다.
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -22,34 +17,16 @@
 - **이의 관리 / 감사 로그**:
   - 정산 현황 화면 manager PopupMenu → "이의제기 관리" / "감사 로그"
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/07_meeting_settlement/F07-08_appeal-audit/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/07_meeting_settlement/F07-08_appeal-audit/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/07_meeting_settlement/F07-08_appeal-audit/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/07_meeting_settlement/F07-08_appeal-audit/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `MeetingSettlementController`, `MeetingSettlementAppealService`, `UserService`. 앱: `settlement_appeals_screen.dart`, `settlement_audit_log_screen.dart`, `settlement_appeal_dialog.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/events/{eventId}/settlement/appeals` | `MeetingSettlementController#createAppeal` | [MeetingSettlementController.java:439](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L439) |
-| `GET /api/v1/events/{eventId}/settlement/appeals` | `MeetingSettlementController#getAppeals` | [MeetingSettlementController.java:454](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L454) |
-| `PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve` | `MeetingSettlementController#resolveAppeal` | [MeetingSettlementController.java:465](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L465) |
-| `GET /api/v1/events/{eventId}/settlement/audit-log` | `MeetingSettlementController#getAuditLog` | [MeetingSettlementController.java:474](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L474) |
+서버 창구: `MeetingSettlementController#createAppeal`, `MeetingSettlementController#getAppeals`, `MeetingSettlementController#resolveAppeal`, `MeetingSettlementController#getAuditLog`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 이의제기 관리 화면 진입 시:
 1. `appealsProvider(eventId)` ▶ `GET .../appeals`
 2. `settlementDetailProvider(eventId)` ▶ host 권한 판정
@@ -68,104 +45,10 @@
 1. `auditLogProvider(eventId)` ▶ `GET .../audit-log?page=0&size=30`
 2. (스크롤 페이지네이션) 다음 페이지 로딩
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-참가자가 본인의 분담 또는 이체에 이의를 제기하면 PENDING appeal이 생성되고 해당 subject에 대한 결제·확인이 차단된다. 호스트(=정산 생성자)가 APPROVED/REJECTED/RESOLVED 중 하나로 처리해야 차단이 해제된다. 모든 정산 변경은 감사 로그(audit log)로 기록되어 페이지네이션 조회된다. **DRAFT 정산에는 이의 생성이 차단된다(DEC-V4)** — `MeetingSettlementAppealService` 생성 진입부에서 status==DRAFT면 `MEETING_SETTLEMENT_NOT_ACTIVE` 거부. COMPLETED 이의 허용은 현행 유지(DRAFT만 명시 차단).
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | /api/v1/events/{eventId}/settlement/appeals | MeetingSettlementController#createAppeal | required | 이의 생성 (참가자/호스트) — settlement DRAFT면 `MEETING_SETTLEMENT_NOT_ACTIVE` 거부(저장·호스트 알림 이전 가드, 2026-06-05) |
-| GET | /api/v1/events/{eventId}/settlement/appeals | MeetingSettlementController#getAppeals | required | 정산의 모든 이의 리스트 |
-| PATCH | /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve | MeetingSettlementController#resolveAppeal | required | 이의 처리 (호스트) |
-| GET | /api/v1/events/{eventId}/settlement/audit-log | MeetingSettlementController#getAuditLog | required | 감사 로그 페이지네이션 |
-
-### 의존 단위 / 외부 시스템
-
-- Unit 0 (Account): `UserService.getUserBasicInfoMap` — appealer/actor 이름 enrich
-- Unit 12 (Notification): 본 기능 자체는 알림 발송 X (다른 기능에서 audit 발행 시 부가적으로 알림 발송됨)
-- 외부 시스템: 없음
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- **이의 생성**:
-  - `MySettlementSharesScreen` 카드의 "이의 제기" 버튼 (참가자, F07-05) — DRAFT 또는 status 미확정(로딩/에러) 동안은 버튼 숨김(3상태 가드, 2026-06-05)
-  - `TransferListScreen` 카드의 "이의 제기" 버튼 (참가자/호스트) — transfer는 활성화 시점에 생성되므로 DRAFT에서는 진입 자체가 없음
-- **이의 관리 / 감사 로그**:
-  - 정산 현황 화면 manager PopupMenu → "이의제기 관리" / "감사 로그"
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 | 역할 |
-|---|---|---|
-| `/home/events/:eventId/settlement/appeals` | `settlement_appeals_screen.dart` | 이의 리스트 + 호스트 처리 |
-| `/home/events/:eventId/settlement/audit-log` | `settlement_audit_log_screen.dart` | 감사 로그 타임라인 |
-| (모달) | `presentation/payment/widgets/settlement_appeal_dialog.dart` | 이의 입력 다이얼로그 (공통) |
-
-### 화면별 구성 요소 & 액션
-
-### 이의제기 관리 화면 (`settlement_appeals_screen.dart`)
-- **사용자가 보는 것**:
-  - `CommunityAppBar` "정산 이의제기"
-  - 이의 카드 리스트 (createdAt desc):
-    - subjectType 배지 (SHARE/ITEM/TRANSFER), subjectId
-    - appealerUserName + reason (멀티라인 표시)
-    - status 배지 (PENDING=노랑, APPROVED/REJECTED/RESOLVED=각각 색상)
-    - PENDING + 호스트일 때: "승인" / "기각" / "처리 완료" 버튼 + hostResponse 입력
-    - resolvedAt 표시 (resolved 시)
-  - 빈 상태 `AppEmptyState(icon: report_gmailerrorred, title: '이의제기 내역이 없습니다')`
-- **사용자가 할 수 있는 액션**:
-  - 호스트 PENDING 카드 액션 ▶ 다이얼로그 (status 선택 + hostResponse 입력 max 2000자) ▶ `PATCH .../appeals/{id}/resolve`
-  - 풀투리프레시 ▶ `invalidate(appealsProvider(eventId))`
-- **상태 분기**: 로딩/빈/에러
-
-### 감사 로그 화면 (`settlement_audit_log_screen.dart`)
-- **사용자가 보는 것**:
-  - `CommunityAppBar` "정산 감사 로그"
-  - 로그 카드 리스트 (createdAt desc, 페이지네이션):
-    - action 배지 (한국어 라벨 + 색상 매핑)
-    - subjectType + subjectId
-    - actorRole(USER/HOST/SYSTEM/ADMIN) + actorUserName
-    - createdAt (`yyyy.MM.dd HH:mm:ss`)
-    - 펼치면 beforeSnapshot/afterSnapshot/payload JSON 표시 (선택)
-  - 빈 상태 `AppEmptyState(icon: history, title: '감사 로그가 없습니다')`
-- **사용자가 할 수 있는 액션**:
-  - 풀투리프레시 ▶ `invalidate(auditLogProvider(eventId))`
-  - 무한스크롤 (PageResponse 기반)
-
-### 이의 입력 다이얼로그 (공통 — `SettlementAppealDialog`)
-- **사용자가 보는 것**:
-  - 안내 문구 "이 이체 건에 이의를 제기합니다.\n호스트가 검토 전까지는 해당 이체의 결제·확인이 차단됩니다.\n\n금액: N원"
-  - 사유 입력 `TextField(maxLength: 2000, maxLines: 4)`
-  - "취소" / "제기" 버튼
-- **사용자가 할 수 있는 액션**:
-  - 사유가 빈 문자열이면 "제기" 무효
-  - 제출 ▶ `appealsProvider.createAppeal(subjectType, subjectId, reason)`
-
-### API 호출 순서 (Provider/Repository 관점)
-
-이의제기 관리 화면 진입 시:
-1. `appealsProvider(eventId)` ▶ `GET .../appeals`
-2. `settlementDetailProvider(eventId)` ▶ host 권한 판정
-
-이의 생성 액션 (다른 화면에서):
-1. `SettlementAppealDialog` 표시 → reason 입력
-2. `appealsProvider(eventId).createAppeal(subjectType, subjectId, reason)` ▶ `POST .../appeals`
-3. invalidate appealsProvider + transferList(또는 myShares) — 결제 차단 표시 갱신
-
-이의 처리 액션 (호스트):
-1. PENDING 카드의 액션 → status 선택 + hostResponse 입력
-2. `appealsProvider(eventId).resolveAppeal(appealId, status, hostResponse)` ▶ `PATCH .../appeals/{id}/resolve`
-3. invalidate appealsProvider + transferList/summary (차단 해제)
-
-감사 로그 화면 진입 시:
-1. `auditLogProvider(eventId)` ▶ `GET .../audit-log?page=0&size=30`
-2. (스크롤 페이지네이션) 다음 페이지 로딩
+- 이의 대상은 분담(SHARE), 항목(ITEM), 송금(TRANSFER)이다. 사유는 비울 수 없고, 사유와 호스트 답변은 2000자까지다.
+- 감사 기록의 행위자 역할은 USER, HOST, SYSTEM, ADMIN 이다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -181,31 +64,6 @@
 | S8 | (엣지 · ALREADY_RESOLVED) 이미 처리된 이의를 다시 처리 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S9 | (엣지 · INVALID_STATUS) status에 PENDING으로 resolve 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S10 | (엣지 · DRAFT 이의 차단) 준비 중 정산에 이의제기 시도 (UI 우회 포함) | settlement DRAFT, 본인 share 존재 | `MEETING_SETTLEMENT_NOT_ACTIVE` 거부, appeal row 미생성, 호스트 알림 0건. 앱은 버튼 자체를 숨김 (2026-06-05) |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
-### 통합 분쟁 케이스 union 연결 (Fact)
-
-> **Fact (v3 dispute, 2026-05-29/06-02)**: 본 기능의 `MeetingSettlementAppeal` 이의제기 레코드는 v3 통합 분쟁 케이스 union에서 `SETTLEMENT_APPEAL:{id}` caseId로 노출된다. 소스: `DisputeCaseQueryRepository`, `DisputeLegalHoldService.java`. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
-
-- **조회**: 참가자가 `GET /api/v1/me/dispute-cases?caseType=SETTLEMENT` 또는 `GET /api/v1/me/dispute-cases/{caseId}` 로 `SETTLEMENT_APPEAL:{id}` 케이스 조회 가능 (`DisputeCaseVo` 형태로 반환).
-- **처리(resolution)**: 이의 처리 endpoint는 기존 `PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve` 그대로 유지. 통합 분쟁 경로에서 별도 처리 endpoint 없음.
-- **상태 매핑**: `MeetingSettlementAppeal.AppealStatus(PENDING/APPROVED/REJECTED/RESOLVED)` → `UnifiedDisputeStatus(OPEN/RESOLVED/RESOLVED/CLOSED)` 로 파생.
-
-### 7-A. DRAFT 이의 차단 (Fact, 2026-06-05)
-
-> **Fact (D-OPEN-2 해소의 일부, 2026-06-05)**: 그동안 DRAFT 정산은 **이의제기만 잠기지 않은 유일한 문**이었다 — 결제·확정·재발행·상각은 전부 ACTIVE 전용 가드가 있었지만 appeal 생성은 status 미검사로 접수되고 호스트 알림까지 발생했다. 호스트가 항목을 고치면 이의의 대상 자체가 사라지는데, 처리 안 된 PENDING 이의는 활성화 후 해당 결제를 차단해 장애가 됐다.
-
-- **서버(DEC-V4)**: `MeetingSettlementAppealService` 생성 진입부에 `status == DRAFT → MEETING_SETTLEMENT_NOT_ACTIVE` 가드 — **저장과 호스트 알림 발송 이전에 차단**해 "정산 신청 전 알림 침묵" 원칙을 완성. COMPLETED에서의 이의 허용은 현행 유지(DRAFT만 명시 차단). 운영 DB에 DRAFT 단계 이의 데이터 없음 확인(2026-06-04) — 기존 데이터 영향 0.
-- **앱**: `MySettlementSharesScreen` 이의 버튼을 **3상태 가드**로 변경 — status 확정 + 비DRAFT + 비호스트일 때만 노출. status를 모르는 동안(로딩/에러)은 안전 기본값으로 숨겨, 분담금 목록이 정산 상세보다 먼저 로드될 때 DRAFT 정산에서 버튼이 잠깐 보이는 레이스를 봉합.
-- 결정·검토 이력 canonical: `community_api/docs/plan/DRAFT_SETTLEMENT_VISIBILITY_PLAN.md` (DEC-V4).
 
 ## 8. Gap / Risk
 
@@ -223,9 +81,3 @@
 - **AC-08. (엣지 · ALREADY_RESOLVED) 이미 처리된 이의를 다시 처리 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-09. (엣지 · INVALID_STATUS) status에 PENDING으로 resolve 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-10. (엣지 · DRAFT 이의 차단) 준비 중 정산에 이의제기 시도**: Given settlement DRAFT, 본인 share 존재 When 참가자가 이의 생성을 호출하면(UI 우회 포함) Then `MEETING_SETTLEMENT_NOT_ACTIVE`로 거부되고 appeal이 저장되지 않으며 호스트 알림도 발생하지 않는다
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

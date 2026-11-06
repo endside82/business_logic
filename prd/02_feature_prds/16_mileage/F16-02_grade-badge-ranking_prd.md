@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 등급/배지/랭킹/프로필 카드 조회는 서버와 Flutter가 맞물려 구현되어 있다. 멤버는 클럽 등급 정의(`GET /grades`), 본인 등급 변경 이력(`GET /me/grade-history`), 활성 배지 정의(`GET /badges`, active=true만), 클럽 랭킹(`GET /ranking`), 다른 멤버 프로필 카드(`GET /members/{memberId}/profile-card`)를 본다.
@@ -12,19 +11,9 @@
 
 판정: **조회/표시는 사용 가능**. 등급 이력이 audit log JSON 파싱에 의존하고, 프로필 카드 점수 노출이 정책에 따라 null이 되는 점이 Gap/Risk다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageMemberController.java` | `GET /grades`, `/badges`, `/ranking`, `/members/{memberId}/profile-card`, `/me/grade-history` |
-| Backend Service | `MileageGradeService.java` | 등급 정의·`resolveGradeForQualified`(threshold ≤ qualified) |
-| Backend Service | `MileageBadgeService.java` | `listDefinitions`, `listActiveAwards` |
-| Backend Service | `MileageMemberSummaryService.java` | `recalcGrade` → `MILEAGE_MEMBER_GRADE_CHANGED` audit 기록, `GradeChangeDirection` 결정 |
-| Backend Service | `MileageQueryService.java` | `buildProfileCard`, `searchRanking`, `findGradeChanges` |
-| Backend Query | `MileageAuditLogQueryRepository.findGradeChangesByMember`(호출), `MileageRankingQueryRepository.searchRanking`(호출) | 등급 이력 파싱·랭킹 정렬 |
-| Backend VO/Enum | `MileageGradeVo.java`, `MileageGradeChangeVo.java`, `MileageRankingEntryVo.java`, `MemberProfileCardVo.java`, `MileageBadgeDefinitionVo.java`, `MileageBadgeAwardVo.java`, `constants/RankingBasis.java`, `GradeChangeDirection.java` | 응답 필드·enum |
-| Frontend | `mileage_member_api.dart`, `mileage_member_repository.dart`, `mileage_member_providers.dart`, `presentation/mileage/screens/mileage_grade_list_screen.dart`, `mileage_badge_list_screen.dart`, `mileage_ranking_screen.dart`, `mileage_grade_history_screen.dart` | route·상태·CTA |
-| DB | `V1__init.sql` `mileage_grade`, `mileage_badge_definition`, `mileage_badge_award`, `mileage_member_summary`, `mileage_audit_log` | 컬럼·인덱스 |
+계약의 정본은 코드다. 서버: `MileageMemberController`, `MileageGradeService`, `MileageBadgeService`, `MileageMemberSummaryService`, `MileageQueryService`, `MileageGradeVo`, `MileageGradeChangeVo`, `MileageRankingEntryVo`, `MemberProfileCardVo`, `MileageBadgeDefinitionVo`. 앱: `mileage_grade_list_screen.dart`, `mileage_badge_list_screen.dart`, `mileage_ranking_screen.dart`, `mileage_grade_history_screen.dart`, `mileage_member_api.dart`, `mileage_member_repository.dart`, `mileage_member_providers.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -35,37 +24,6 @@
 5. `GET /ranking?basis=&page=` → `searchRanking`이 basis null이면 정책 `rankingBasis`(없으면 `BALANCE`)로 결정 후 `MileageRankingQueryRepository.searchRanking` → `Page<MileageRankingEntryVo>`.
 6. `GET /members/{memberId}/profile-card` → `buildProfileCard`가 대상 멤버의 현재 등급·활성 배지와, 정책 rankingBasis에 따라 `currentSeasonEarned`(SEASON_EARNED일 때만) 또는 `qualifiedLifetimeEarned`(LIFETIME_EARNED일 때만) 중 하나를 공개. 둘 다 아니면 둘 다 null.
 7. 등급 산정 자체는 적립/차감/정정 시점에 `MileageMemberSummaryService.recalcGrade`가 수행하고, 등급이 실제 변경되면 audit 행을 남긴다(이 기능은 그 결과를 읽기만 함).
-
-## 4. 서버 계약
-
-### `GET /api/v1/clubs/{clubId}/mileage/grades`
-- `List<MileageGradeVo>`(id/clubId/name/threshold/colorToken/iconKey/displayOrder/createdAt/updatedAt). threshold 오름차순.
-
-### `GET /api/v1/clubs/{clubId}/mileage/badges`
-- `List<MileageBadgeDefinitionVo>`(id/name/description/iconKey/colorToken/active...). 컨트롤러가 `isActive()`만 필터.
-
-### `GET /api/v1/clubs/{clubId}/mileage/me/grade-history`
-- Query `limit`(default 50). 응답 `List<MileageGradeChangeVo>`.
-- `MileageGradeChangeVo`: `auditLogId`, `gradeId`(null이면 등급 박탈), `gradeName`, `colorToken`, `iconKey`, `threshold`, `changedAt`, `previousGradeId`(null이면 INITIAL), `previousGradeName`, `direction`(INITIAL/UP/DOWN).
-
-### `GET /api/v1/clubs/{clubId}/mileage/ranking`
-- Query `MileageRankingSearchParam`(basis=RankingBasis nullable, seasonId nullable, page/size). 응답 `Page<MileageRankingEntryVo>`.
-- `MileageRankingEntryVo`: `rank`, `memberId`, `nickname`, `profileImageUrl`, `score`(basis에 따라 의미 다름), `currentBalance`, `gradeName/gradeColorToken/gradeIconKey`.
-
-### `GET /api/v1/clubs/{clubId}/mileage/members/{memberId}/profile-card`
-- 응답 `MemberProfileCardVo`: `memberId`, `nickname`, `profileImageUrl`, `currentGrade`(CurrentGradeVo), `badges`, `currentSeasonEarned`(Integer nullable), `qualifiedLifetimeEarned`(Integer nullable).
-- 점수 노출 규칙: rankingBasis==SEASON_EARNED → currentSeasonEarned만, ==LIFETIME_EARNED → qualifiedLifetimeEarned만, 그 외(BALANCE) → 둘 다 null.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `clubMileageGrades`(`grades`), `clubMileageBadges`(`badges`), `clubMileageRanking`(`ranking`), `clubMileageGradeHistory`(`me/grade-history`) |
-| Screen | `MileageGradeListScreen`, `MileageBadgeListScreen`, `MileageRankingScreen`, `MileageGradeHistoryScreen` |
-| Repository/API | `MileageMemberRepository.getGrades / getBadgeDefinitions / getRanking / getMemberProfileCard / getMyGradeHistory` |
-| Model | `MileageGradeVo`, `MileageBadgeDefinitionVo`, `MileageRankingEntryVo`, `MemberProfileCardVo`, `MileageGradeChangeVo`, `RankingBasis`/`GradeChangeDirection` enum |
-
-Flutter `getRanking`은 `basis`를 `String?`으로 전달(미지정 가능). `RankingBasis` enum 값(BALANCE/LIFETIME_EARNED/SEASON_EARNED)이 서버와 1:1 일치.
 
 ## 6. 상태/권한 매트릭스
 

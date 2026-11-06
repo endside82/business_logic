@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 `RegularMeetingStatus` 4 상태 머신:
@@ -19,17 +18,9 @@ CANCELED → (종료)
 
 **머니 안전 핵심**: close 는 `findByIdForUpdate` 잠금 + FIXED 가드(미래 OPEN 세션 무 + `activeSessionCount == totalSessionCount` + 모든 정션 FINALIZED) + 정산 생성을 **afterCommit REQUIRES_NEW** 로 분리한다. cancel 역시 `findByIdForUpdate` 잠금 후 호스트 일괄 환불을 트리거(pro-rata HOST_CANCEL, F17-08).
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `RegularMeetingController#publish,close,cancel,reopen,update,delete` | 4 endpoint |
-| Backend Service | `RegularMeetingService#publish,close,cancel,reopen,updateMeeting,deleteMeeting` | 락 + 가드 + afterCommit |
-| Backend Entity | `RegularMeeting#transitionTo,publish,close,cancel,reopen` | 도메인 머신 |
-| Backend Constants | `RegularMeetingStatus#getAllowedTransitions,canTransitionTo` | 머신 정의 |
-| Backend Query | `RegularMeetingQueryRepository#findByIdForUpdate` | 비관적 잠금 |
-| Settlement 후크 | `RegularMeetingService#close → afterCommit → RegularMeetingSettlementService.tryCreateSettlement(REQUIRES_NEW)` + failsafe 스케줄러 | F17-10 트리거 |
-| Refund 후크 | `RegularMeetingService#cancel → RegularMeetingRefundService.refundAllForHostCancel` | F17-08 트리거 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`, `RegularMeetingSettlementService`, `RegularMeetingRefundService`.
 
 ## 3. 전체 동작 흐름
 
@@ -67,31 +58,6 @@ CANCELED → (종료)
 
 ### 3.6 delete (DRAFT only)
 - `DELETE /api/v1/regular-meetings/{id}` 는 DRAFT 만. 데이터 hard delete.
-
-## 4. 서버 계약
-
-| 엔드포인트 | Method | 응답 | 상태 가드 |
-|---|---|---|---|
-| `/api/v1/regular-meetings/{id}/publish` | POST | `RegularMeetingVo` (status=OPEN) | DRAFT 만 |
-| `/api/v1/regular-meetings/{id}/close` | POST | `RegularMeetingVo` (status=CLOSED) | OPEN 만 + FIXED 가드 |
-| `/api/v1/regular-meetings/{id}/cancel` | POST | `RegularMeetingVo` (status=CANCELED) | DRAFT/OPEN |
-| `/api/v1/regular-meetings/{id}/reopen` | POST | `RegularMeetingVo` (status=OPEN) | CLOSED 만 |
-| `/api/v1/regular-meetings/{id}` | PATCH | `RegularMeetingVo` | DRAFT 만 |
-| `/api/v1/regular-meetings/{id}` | DELETE | 204 | DRAFT 만 |
-
-권한: 위 모두 `accessService.assertHost(meeting, principal.userId)` → 비호스트는 `REGULAR_MEETING_FORBIDDEN`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | 상세에서 호출 |
-| Provider | `regularMeetingDetailProvider` invalidate 후 새 상태 노출 |
-| 발행 CTA | DRAFT + 세션 추가 완료 후 노출 |
-| 종료 CTA | OPEN + 호스트, FIXED 의 경우 finalize 안내 modal 동반 |
-| 취소 CTA | DRAFT/OPEN + 호스트 + 확인 dialog ("멤버에게 전액 환불됩니다") |
-| 재개 CTA | CLOSED + 호스트 + VARIABLE 만 표시 |
-| 수정 화면 | `RegularMeetingEditScreen` — DRAFT 만 진입 가능. 5 필드 수정 (title/description/category/price/baseCapacity 등) |
 
 ## 6. 상태/권한/시나리오 매트릭스
 

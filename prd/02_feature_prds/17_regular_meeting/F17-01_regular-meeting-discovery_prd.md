@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- generated: source-first-regular-meeting; updated: 2026-05-28; source: community_api/src/main/java/com/endside/community/regularmeeting -->
 
 ## 참가자 탐색 화면 보완
@@ -20,20 +19,9 @@
 
 Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카드에 `RegularMeetingBadge` (FIXED/VARIABLE 표시) 가 붙는다. 일반 이벤트 카드와 시각적으로 구분된다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `community_api/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java:80,86` | `GET /api/v1/regular-meetings`, `GET /api/v1/regular-meetings/my` |
-| Backend Service | `RegularMeetingService#search,findMyMeetings` | OPEN 필터, 호스트 닉네임 주입 |
-| Backend Query | `RegularMeetingQueryRepository` | QueryDSL 동적 조건(키워드/카테고리/타입/지역) |
-| Backend VO/Param | `RegularMeetingSimpleVo`, `RegularMeetingSearchParam extends PagingParam` | 응답 필드, 페이징 |
-| Discovery 거름망 | `event/util/EventScope` | RM 세션(eventType=REGULAR_MEETING)을 일반 검색·홈·트렌딩·관심인 8표면에서 분류 |
-| Flutter API | `community_app/lib/data/api/regular_meeting_api.dart` | Retrofit endpoint |
-| Flutter Repository | `regular_meeting_repository.dart` | `Result<PageResponse<RegularMeetingSimpleVo>>` |
-| Flutter Provider | `community_app/lib/domain/providers/regular_meeting/regular_meeting_list_provider.dart` | `regularMeetingList`, `myRegularMeetings`가 한 파일에 통합된 `@riverpod` 2종 |
-| Flutter Screen | `presentation/regular_meeting/screens/regular_meeting_list_screen.dart` | 검색 카드 + FIXED/VARIABLE 뱃지 |
-| Flutter Widget | `widgets/regular_meeting_badge.dart` | 카드 상단 뱃지 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`. 앱: `regular_meeting_list_screen.dart`, `regular_meeting_api.dart`, `regular_meeting_repository.dart`, `regular_meeting_list_provider.dart`, `regular_meeting_badge.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -44,41 +32,9 @@ Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카�
 5. 카드 탭 → `Routes.regularMeetingDetail.path(id)` → F17-02.
 6. "내 모임" 진입 시 `GET /api/v1/regular-meetings/my` (호스팅+등록 합산). 미로그인은 가드.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /api/v1/regular-meetings`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `RegularMeetingController#search` |
-| 인증 | 현재 SecurityConfiguration의 인증 기본 규칙 적용. 익명 공개를 새로 추가하지 않음 |
-| Query | `RegularMeetingSearchParam extends PagingParam` — `keyword, categories: List<String>, meetingType, status, region, sortType, page, size`. 공개 검색은 전달된 status와 무관하게 OPEN만 조회 |
-| 응답 | `Page<RegularMeetingSimpleVo>` (Spring Page JSON 직렬화) |
-| 정렬 | `createdAt DESC` 기본 |
-| 필터 | `status = OPEN` 및 `hidden = false` 강제 |
-
-### `GET /api/v1/regular-meetings/my`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `RegularMeetingController#myMeetings` |
-| 인증 | 필수 (`@AuthenticationPrincipal UserPrincipal`) |
-| Query | `PagingParam` |
-| 응답 | `Page<RegularMeetingSimpleVo>` |
-| 포함 | 호스트(`hostUserId == userId`) + 등록(`regular_meeting_member.user_id == userId AND status occupies seat`) 합산 |
-
-`RegularMeetingSimpleVo` 핵심 필드: `id, hostUserId, hostNickname, title, category, meetingType, status, thumbnailUrl, locationType, regionSummary, startDate, endDate, totalSessionCount, upcomingSessionCount, publishedSessionCount, nextSessionStartTime, price, baseCapacity, enrolledCount`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `/regular-meetings` (목록), `/regular-meetings/my` (내 모임) |
-| Screen | `RegularMeetingListScreen` |
-| Provider | `regularMeetingListProvider(filter)`, `myRegularMeetingsProvider` |
-| Repository | `RegularMeetingRepository.search(...)` → `Result<PageResponse<RegularMeetingSimpleVo>>` |
-| 뱃지 | `RegularMeetingBadge(meetingType)` — FIXED/VARIABLE 색상 구분 |
-| 빈 결과 | `AppErrorState(title: '정기모임이 없습니다')` |
+- 공개 검색은 요청한 상태와 상관없이 모집 중인 정기모임만, 숨김 처리된 것은 빼고 보여 준다. 정렬은 최근 등록순이다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 

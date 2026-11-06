@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- 작성일: 2026-06-05 -->
 <!-- 갱신: 2026-06-06: cohost 권한 버그(G-6) 해소, 소명 기한 7일(G-3) 해소, 앱 소명/번복/일괄 배선(G-1) 해소 -->
 <!-- 갱신: 2026-07-08 (게스트 동반 예매 반영): 계정 없는 게스트 노쇼는 attendance row 기준으로 남기되 소유자(owner_user_id)의 최근 노쇼/제재 신호에 합산한다. -->
@@ -31,32 +30,9 @@
 
 게스트는 자체 계정이 없으므로 서버가 소명/제재의 주체를 `partyOwnerUserId`(회원=`userId`, 게스트=`ownerUserId`)로 본다. 노쇼 row는 attendance를 기준으로 식별하고 `countRecentNoShows`와 제재·신뢰 신호는 owner에게 합산한다. 다만 Flutter의 본인 CTA 선택은 여전히 `row.userId == currentUserId`라 소유 게스트 row를 고르지 못하고, 단일 확정 UI도 `attendanceId`가 아니라 `targetUserId`만 보내므로 게스트 단일 확정 동선이 없다(G-10).
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller (노쇼) | `community_api/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java` | 5개 endpoint, `appeal`/`overturn`에서 path eventId 미사용, 응답 타입 |
-| Backend Service (노쇼) | `capacity/service/EventNoShowService.java` | 상태 전이 조건, 권한 검증, 멱등성, 게스트 귀속, 번복 정정 체크인, 제재 카운트 |
-| Backend Permission | `capacity/service/EventAttendanceManagerGuard.java` | host ∪ cohost(flag) ∪ club attendance manager 권한 단일 진실원 |
-| Backend Enum (노쇼) | `capacity/constants/NoShowStatus.java:18-22` | CONFIRMED/APPEALED/OVERTURNED 3값 직접 확인 |
-| Backend Model (노쇼) | `capacity/model/EventNoShow.java`, `V1__init.sql`의 `event_no_show` | 회원/게스트 컬럼, user/attendance UNIQUE KEY |
-| Backend Check-in | `capacity/model/EventCheckIn.java`, `EventNoShowService.createCorrectionCheckInIfNeeded` | OVERTURNED 회원의 `NOSHOW_OVERTURN` 정정 체크인 |
-| Backend Param | `capacity/param/NoShowConfirmParam.java`, `NoShowAppealParam.java`, `NoShowOverturnParam.java` | 필드 목록 |
-| Backend Controller (환불) | `payment/refundpolicy/controller/RefundPolicyController.java` | no-show-refund 2 endpoint, GET의 principal/eventId 미사용 |
-| Backend Service (환불) | `payment/refundpolicy/service/NoShowRefundService.java` | application lock, 권한, 누적 상한, paid/free 분할, 노쇼 row 미검증, 알림 부작용 부재 |
-| Backend Param/VO (환불) | `payment/refundpolicy/param/NoShowRefundParam.java`, `vo/NoShowRefundVo.java` | DTO 필드와 annotation 부재, 실제 service-level 검증 |
-| Backend Model (환불) | `payment/refundpolicy/model/NoShowRefund.java`, `V1__init.sql`의 `no_show_refund` | no_show_refund 테이블 컬럼과 applicationId 비고유 인덱스 |
-| Backend Enum (환불) | `payment/refundpolicy/constants/RefundFaultCategory.java:38` | NO_SHOW_POST_ADJUSTMENT 값 |
-| Backend ApplicationStatus | `event/constants/ApplicationStatus.java:24-36` | CANCEL_PENDING_REFUND 노쇼 제외 |
-| Frontend API | `lib/data/api/event_no_show_api.dart` | 서버의 노쇼 endpoint 5개 전부 배선 |
-| Frontend Models | `lib/data/models/dispute/event_no_show_vo.dart`, `no_show_confirm_param.dart` | 회원/게스트 VO와 userId/attendanceId 선택 요청 계약 |
-| Frontend Attendance UI | `attendee_list_screen.dart`, `no_show_manage_section.dart`, `no_show_overturn_sheet.dart` | 관리자 일괄/번복, 회원 CTA 선택과 기한 미반영 |
-| Frontend Dispute UI | `dispute_case_detail_screen.dart`, `host_action_bar.dart` | 단일 confirm의 유일한 UI 호출부, 환불 화면의 유일한 호출부와 sourceId 변환 |
-| Frontend Screen | `lib/presentation/dispute/screens/no_show_refund_screen.dart` | 0원 허용, originalPaidAmount=0 처리, 조회·알림 동작 부재 |
-| Frontend Router | `lib/core/router/routes.dart`, `app_router.dart` (hostNoShowRefund) | `eventId`/`paidAmount` query 계약과 기본값 0 |
-| Frontend Provider | `lib/domain/providers/dispute/no_show_refund_form_provider.dart` | 노쇼 환불 Form 상태 |
-| Backend Tests | `EventNoShowServiceTest`, `EventNoShowServiceGuestPartyTest`, `NoShowRefundServiceTest` | actor role, cohost attendance flag, party owner, 7일 경계, 누적 상한, 0원, paid/free 분할 |
-| UI/UX Spec | `community_api/docs/ui-ux/screens/30-dispute-host.md` §30.4-30.5, `31-dispute-participant.md` §31.5 | source와 다른 진입·0원·조회·알림 기대를 Gap으로 분리 |
+계약의 정본은 코드다. 서버: `EventNoShowController`, `RefundPolicyController`, `EventNoShowService`, `EventAttendanceManagerGuard`, `NoShowStatus`, `EventNoShow`, `EventCheckIn`, `NoShowConfirmParam`, `NoShowAppealParam`, `NoShowOverturnParam`. 앱: `attendee_list_screen.dart`, `dispute_case_detail_screen.dart`, `no_show_refund_screen.dart`, `event_no_show_api.dart`, `event_no_show_vo.dart`, `no_show_confirm_param.dart`, `no_show_manage_section.dart`, `no_show_overturn_sheet.dart`, `host_action_bar.dart`, `routes.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -112,251 +88,40 @@
 10. 이 흐름은 `EventNoShowRepository`를 의존하지 않아 대상 application의 노쇼 row 존재/상태를 검증하지 않는다. 참가자 알림이나 notification outbox 호출도 없다.
 11. `NoShowRefundVo`를 201로 반환한다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 4-1. 노쇼 Endpoint 표
+### 확정
+- 개최된 모임만 확정한다. OPEN·CLOSED 이고 시작 시각이 지나야 하며, 아니면 `EVENT_NO_SHOW_NOT_ALLOWED` 다. 권한 없는 사람에게 개최 여부를 먼저 알리지 않는다.
+- 한 건 확정은 회원 번호나 참석 행 번호 중 하나가 필요하고, 둘 다 오면 참석 행 번호를 쓴다. 사유 글은 500자, 증빙은 5개까지다.
+- 참가자는 본인과 자기가 데려온 게스트의 노쇼만 본다. 운영자는 전체를 본다.
 
-기본 경로: `/api/v1/events/{eventId}/no-shows`
-
-소스: `EventNoShowController.java:35-97`
-
-| HTTP | Path | 인증 | 권한 | Request 필드 | Response |
-|---|---|---|---|---|---|
-| POST | `/api/v1/events/{eventId}/no-shows` | required | 호스트·cohost(canManageAttendance)·클럽 운영진 — `EventAttendanceManagerGuard` | `NoShowConfirmParam{userId?, attendanceId?, reasonCode?, reasonText?, evidenceFileIds?, evidenceVisibility?}` | `EventNoShowVo` |
-| POST | `/api/v1/events/{eventId}/no-shows/batch` | required | 동일 | body 없음 | `List<EventNoShowVo>` |
-| GET | `/api/v1/events/{eventId}/no-shows` | required | 관리자=전체 / 참가자=본인 회원 row+소유 게스트 row (`partyOwnerUserId`) | — | `List<EventNoShowVo>` |
-| POST | `/api/v1/events/{eventId}/no-shows/{noShowId}/appeal` | required | **party owner만**(회원 본인/게스트 예매자), `confirmedAt+7일` 이내 | `NoShowAppealParam{appealCaseId}` — service가 nonblank+canonical 강제 | `EventNoShowVo` |
-| POST | `/api/v1/events/{eventId}/no-shows/{noShowId}/overturn` | required | 호스트·cohost(canManageAttendance)·클럽 운영진 or SYSTEM(id=0) | `NoShowOverturnParam{reason}` — service가 nonblank 강제 | `EventNoShowVo` |
-
-`NoShowConfirmParam`에는 Jakarta validation annotation이 없고 controller도 `@Valid`를 쓰지 않는다. `userId`와 `attendanceId`는 둘 다 `Long` nullable이지만 `validateConfirmParam`이 최소 하나를 요구한다. 둘 다 전달하면 `attendanceId` 경로가 우선한다. `reasonText` 최대 500자, `evidenceFileIds` 최대 5개도 service가 검사한다.
-
-`confirmedByRole`의 실제 저장 분기는 다음과 같다.
-
-| actor | `confirmedByRole` |
-|---|---|
-| event.hostUserId | `EVENT_HOST` |
-| 권한 있는 cohost 또는 club staff | `ADMIN` |
-| 내부 SYSTEM actorUserId=0 | `SYSTEM` |
-
-`appeal`과 `overturn` controller는 path `eventId`를 받지만 service 호출에는 `noShowId`와 actor/param만 넘긴다. 따라서 row.eventId와 path eventId의 일치 검증은 없다(G-11).
-
-### 4-2. 노쇼 사후 조정 환불 Endpoint 표
-
-소스: `RefundPolicyController.java:53-68`
-
-| HTTP | Path | 인증 | 권한 | Request 필드 | Response |
-|---|---|---|---|---|---|
-| POST | `/api/v1/events/{eventId}/applications/{applicationId}/no-show-refund` | required | 호스트·**모든 cohost(존재만 검사)**·클럽 OWNER/EVENT_REFUND_MANAGER | `NoShowRefundParam` | `NoShowRefundVo` (201) |
-| GET | `/api/v1/events/{eventId}/applications/{applicationId}/no-show-refund` | required(전역 security) | **객체 권한 검사 없음** | — | `NoShowRefundVo` |
-
-GET controller는 `@AuthenticationPrincipal`을 받지 않고 path `eventId`도 사용하지 않는다. service는 `findByApplicationId(applicationId)`만 호출하므로 인증 사용자가 다른 applicationId를 알면 타 이벤트의 환불 사유·금액·참가자/호스트 ID를 조회할 수 있는 IDOR/BOLA 후보(G-13)다.
-
-`NoShowRefundParam` 필드:
-
-| 필드 | 타입 | 제약 |
+### 상태 전이
+| 지금 | 다음 | 조건 |
 |---|---|---|
-| refundAmount | Long? | DTO annotation 없음. service가 null/음수를 거부하고 0은 허용 |
-| reasonCode | String? | DTO annotation 없음. service가 null/blank를 거부 |
-| reasonText | String? | nullable |
-| evidenceVisibility | String? | nullable, null이면 PARTIES. service enum 검증 없음 |
-| evidenceFileIds | List\<Long\>? | nullable, `file_metadata.id` 목록(N15). `EvidenceFileValidator`가 소유자·업로드 완료·증빙 용도·개수(최대 5)를 service 단에서 강제 — 실패하면 환불 자체가 거부된다 |
-| releaseTicket | Boolean? | nullable |
+| 없음 | `CONFIRMED` | 호스트, 출석 권한 공동호스트, 클럽 운영진 |
+| `CONFIRMED` | `APPEALED` | 소명 주체가 확정 뒤 7일 안에 |
+| `CONFIRMED`·`APPEALED` | `OVERTURNED` | 호스트, 출석 권한 공동호스트, 클럽 운영진 또는 시스템. 사유 필수 |
+| `OVERTURNED` | 없음 | 끝. 제재 셈에서 빠짐 |
 
-`NoShowRefundParam`은 Lombok DTO일 뿐 Jakarta validation annotation이 없고 controller도 `@Valid`를 쓰지 않는다. reasonText 500자 상한과 evidenceVisibility 값 집합은 여전히 Flutter UI 또는 DB 컬럼에 기대며 service-level 계약으로 강제되지 않는다. evidenceFileIds만 예외로, `EvidenceFileValidator.validateAndNormalize`가 소유자·업로드 완료·용도·최대 5개를 service 단에서 검사한다 — N15 이전에는 이 자리가 검증 없는 S3 키 문자열 배열이었다.
+- 번복 입구에서 상세나 출석 권한이 없으면 없는 노쇼와 같은 답이다(`EVENT_NO_SHOW_NOT_FOUND`).
+- 번복의 정정 체크인은 회원에게만 만들고, 이미 체크인이 있으면 새로 만들지 않는다. 게스트는 대상이 아니다.
 
-### 4-3. NoShowStatus Enum (3값, 소스 직접 확인: `NoShowStatus.java:18-22`)
+### 사후 조정 환불
+- 실제 노쇼에게만 받고 신청 한 건에 한 번이다. 호스트가 넣은 금액을 쓰는 수동 조정이라 귀책 환불 정책을 타지 않는다.
+- 금액은 비우거나 음수면 거절하고 0은 받는다. 사유 코드는 필수다.
+- 증빙은 집행자 본인이 올린 업로드 완료 파일, 증빙 용도, 5개까지다. 어기면 환불 자체를 거절한다.
+- 증빙 공개 범위는 `PARTIES`(기본, 당사자), `HOST_ONLY`, `ALL`(분쟁 때 운영자도)이다.
+- 권한은 호스트, 공동호스트, 클럽 OWNER·환불 담당이다.
 
-```
-CONFIRMED  — 호스트 또는 시스템 자동 확정
-APPEALED   — 참가자 소명 진행 중 (dispute_case 연결)
-OVERTURNED — CS/호스트가 결정 뒤집음 (제재 카운트 제외)
-```
-
-### 4-4. 상태기계 — 전이 조건·행위자·기한
-
-```
-[없음]
-  ↓  호스트·cohost·클럽 운영진 confirm() 또는 confirmBatch()
-CONFIRMED
-  ↓  party owner(회원 본인/게스트 예매자)만 appeal(noShowId, appealCaseId)
-  |  ※ appealCaseId는 canonical EVENT_NO_SHOW:{noShowId}; 통합 endpoint가 같은 문자열로 dispute_appeal 저장
-APPEALED
-  ↓  호스트·cohost·클럽 운영진 또는 SYSTEM(id=0) overturn(reason)
-OVERTURNED  ← 터미널. countRecentNoShows 제외.
-               회원은 기존 체크인이 없을 때 NOSHOW_OVERTURN 정정 체크인 생성.
-```
-
-추가 전이 경로:
-- `CONFIRMED → OVERTURNED` 직접 가능 (overturn은 OVERTURNED만 차단, 중간 상태 검사 없음).
-- `APPEALED → APPEALED` 금지: `EVENT_NO_SHOW_ALREADY_APPEALED(409)`.
-- `OVERTURNED → *` 금지: `EVENT_NO_SHOW_ALREADY_OVERTURNED(409)`.
-
-**소명 기한 (해소됨 / D-2 확정=7일)**: `confirmedAt + 7일`이 경과한 CONFIRMED 노쇼는 소명할 수 없다 — `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED`(409, 400036) 거부. 기한 검사는 `validateAppealable`(read-only) 헬퍼로 추출되어 `appeal()`과 통합 분쟁 경로(`DisputeAppealService.createAppeal` EVENT_NO_SHOW source)가 공유한다.
-
-소스: `EventNoShowService.validateAppealable`, `DisputeAppealService.createAppeal`
-
-### 4-5. 노쇼 산정 제외 조건
-
-`CANCEL_PENDING_REFUND` 상태 참가자는 체크인 통계 분모(`getCheckInStats`)와 `confirmBatch` 대상에서 제외된다. 게스트는 party owner의 application 상태를 따른다. 다만 단일 `confirm`은 application 상태를 검사하지 않아 이 제외 규칙이 적용되지 않는다(G-8).
-
-소스: `CheckInService.java:239-249`, `ApplicationStatus.java`의 `CANCEL_PENDING_REFUND` 주석
-
-### 4-6. 제재 카운트 연계
-
-`EventNoShowService.countRecentNoShows(userId, withinDays)`: `CONFIRMED+APPEALED` 합산, `OVERTURNED` 제외.
-
-소스: `EventNoShowService.java:343-348`
-
-### 4-7. 뒤집기 정정 체크인 계약
-
-`EventNoShowService.createCorrectionCheckInIfNeeded`는 회원 row의 OVERTURNED 전이와 같은 트랜잭션에서 아래 행을 저장한다.
-
-| 필드 | 저장값 |
+### 오류의 뜻
+| 코드 | 뜻 |
 |---|---|
-| eventId | no-show row의 eventId |
-| userId | no-show row의 userId |
-| attendanceId | no-show row의 attendanceId(nullable legacy) |
-| method | `NOSHOW_OVERTURN` |
-| manualActorId | actorUserId, SYSTEM(0)이면 null |
-
-`existsByEventIdAndUserId` 또는 `existsByAttendanceId`가 true이면 새 행을 만들지 않는다. 게스트 row(`userId=null`)도 생성 대상이 아니다. `EventNoShowServiceTest`가 회원 생성, SYSTEM actor, 두 멱등 분기, 게스트 제외를 각각 검증한다.
-
-### 4-8. EventNoShow 엔티티 컬럼
-
-소스: `EventNoShow.java`, `V1__init.sql`의 `event_no_show`
-
-| 컬럼 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| id | bigint PK AUTO_INCREMENT | N | |
-| event_id | bigint | N | |
-| user_id | bigint | Y | 계정 회원. 게스트 row는 NULL |
-| attendance_id | bigint | Y | 참가 행 id. 게스트 멱등 키, 레거시 회원은 NULL 가능 |
-| owner_user_id | bigint | Y | 게스트 예매 소유자·패널티/소명 귀속 |
-| guest_name | varchar(40) | Y | 게스트 표시 이름 스냅샷 |
-| application_id | bigint | Y | attendance 직접 생성 케이스는 NULL |
-| confirmed_at | datetime | N | |
-| confirmed_by_user_id | bigint | N | SYSTEM=0 |
-| confirmed_by_role | varchar(20) | N | WarningActorRole |
-| status | varchar(20) | N | NoShowStatus |
-| appeal_case_id | varchar(80) | Y | dispute_case 연결 |
-| appealed_at | datetime | Y | |
-| overturned_at | datetime | Y | |
-| overturned_reason | varchar(500) | Y | |
-| created_at | datetime | N | @CreatedDate |
-| updated_at | datetime | N | @LastModifiedDate |
-
-UNIQUE KEY: `(event_id, user_id)`, `(attendance_id)` — 회원/게스트 confirm 멱등성 보장
-INDEX: `idx_event_no_show_user_status`, `idx_event_no_show_owner_status`
-
-### 4-9. no_show_refund 엔티티 컬럼
-
-소스: `NoShowRefund.java`, `V1__init.sql`의 `no_show_refund`
-
-| 컬럼 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| id | bigint PK | N | |
-| event_id | bigint | N | |
-| application_id | bigint | N | UNIQUE 미설정, existsByApplicationId 서비스 체크 |
-| host_user_id | bigint | N | |
-| applicant_user_id | bigint | N | |
-| refund_amount | bigint | N | |
-| reason_code | varchar(40) | N | |
-| reason_text | varchar(500) | Y | |
-| evidence_visibility | varchar(20) DEFAULT 'PARTIES' | N | PARTIES/HOST_ONLY/ALL |
-| evidence_file_ids | json | Y | |
-| ticket_released | tinyint(1) DEFAULT 0 | N | |
-| dispute_case_id | varchar(80) | Y | HOST_ACTION_REVIEW-{UUID} 식별자 문자열 자동 생성(통합 case row 생성 아님) |
-| created_at | datetime | N | @CreatedDate |
-
-### 4-10. 사후 조정 환불 계산 경로
-
-`NoShowRefundService`는 `RefundFaultCategory`/`computeRefund`를 사용하지 않는다. 실제 경로:
-
-1. 원 결제를 legacy `EVENT_PAYMENT/userId+eventId`에서 찾고, 없으면 active `EventPayment/applicationId`의 `pointTxId`로 `EVENT_PREPAYMENT` 결제를 찾는다.
-2. `grossPaid = payTx.amount`다. 이 값은 **paidAmount + freeAmount의 총 결제액**이며 유료 잔액만 뜻하지 않는다. 결제가 없으면 grossPaid=0이다.
-3. 동일 사용자의 완료된 `EVENT_REFUND/eventId`를 합산하고, 선결제면 완료된 `EVENT_PREPAYMENT_REFUND/prepaymentId`도 합산한다. `refundAmount > grossPaid - alreadyRefunded`면 `NO_SHOW_REFUND_EXCEEDS_PAID(400)`로 거부한다.
-4. 양수 요청은 원 결제 비율을 기준으로 `paidRefund=floor(refundAmount×paidAmount/(paidAmount+freeAmount))`, `freeRefund=refundAmount-paidRefund`로 분리한다(BigInteger 오버플로 방어). 이전 환불 후 남은 bucket 비율을 다시 계산하는 방식은 아니다.
-5. 지갑에 paid/free 별도 입금하고 `PointTransaction(type=REFUND, referenceType=EVENT_REFUND)`을 기록한다. 원 PaymentRecord가 있으면 charge lot도 같은 paid/free 금액으로 복구한다.
-6. `eventRefundSettlementService.applyRefundToSettlement(eventId, hostUserId, applicantUserId, txId, paidRefund, 0L, freeRefund)`를 호출해 회계 분개와 정산 상태별 후처리(claw-back/PAYING-block)를 적용한다.
-7. `refundAmount=0`은 유효하다. wallet/PointTransaction/PaymentRecord/정산 helper를 건너뛰고 `no_show_refund` row만 저장한다.
-8. `releaseTicket=true`이면 hosting ticket release를 시도한다.
-
-`NoShowRefundParam`에 `faultCategory` 필드가 없다. 호스트 입력 `refundAmount`가 `[0, grossPaid-alreadyRefunded]` 범위 내 manual 조정값이다. `NoShowRefundServiceTest`가 일반·선결제 원결제, 교차 경로 누적 차단, 0원, 50/50 paid/free 분할, 정산 helper 위임을 각각 검증한다.
-
-### 4-11. ErrorCode
-
-| ErrorCode | HTTP | 내부 코드 | 설명 |
-|---|---|---|---|
-| EVENT_NO_SHOW_NOT_FOUND | 404 | 400017 | |
-| EVENT_NO_SHOW_ALREADY_APPEALED | 409 | 400018 | |
-| EVENT_NO_SHOW_ALREADY_OVERTURNED | 409 | 400019 | |
-| EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED | 409 | 400036 | `confirmedAt + 7일` 경과 후 소명 차단 (D-2=7일) |
-| EVENT_CO_HOST_PERMISSION_DENIED | 403 | 300030 | cohost 자격은 있으나 `canManageAttendance` flag 미보유 (외부인 EVENT_NOT_OWNER와 분리) |
-| NO_SHOW_REFUND_NOT_FOUND | 404 | 3200004 | |
-| NO_SHOW_REFUND_DUPLICATE | 409 | 3200005 | |
-| NO_SHOW_REFUND_EXCEEDS_PAID | 400 | 3200006 | refundAmount가 paid+free 원결제 총액에서 완료된 기존 환불을 뺀 잔액 초과 |
-
-소스: `ErrorCode.java`
-
-## 5. 프론트 계약
-
-### 5-1. 배선된 Endpoint (앱에 실제 존재)
-
-`lib/data/api/event_no_show_api.dart`에는 서버 5개 노쇼 endpoint의 Retrofit 정의와 repository 래핑이 모두 있다.
-
-| 배선된 endpoint | 메서드 시그니처 |
-|---|---|
-| `POST /api/v1/events/{eventId}/no-shows` | `confirm(eventId, NoShowConfirmParam)` → `EventNoShowVo` |
-| `POST /api/v1/events/{eventId}/no-shows/batch` | `confirmBatch(eventId)` → `List<EventNoShowVo>` |
-| `GET /api/v1/events/{eventId}/no-shows` | `list(eventId)` → `List<EventNoShowVo>` |
-| `POST .../no-shows/{noShowId}/appeal` | `appeal(eventId, noShowId, NoShowAppealParam)` → `EventNoShowVo` |
-| `POST .../no-shows/{noShowId}/overturn` | `overturn(eventId, noShowId, NoShowOverturnParam)` → `EventNoShowVo` |
-
-`NoShowAppealParam`/`NoShowOverturnParam` Dart 모델 및 repository 래핑도 존재한다. 실제 화면 호출은 다음처럼 분리된다.
-
-- `NoShowManageSection`: `list` 조회, `confirmBatch`, `overturn`. **단일 confirm과 appeal UI는 없다.**
-- `DisputeCaseDetailScreen` 호스트 액션 시트: `confirm`의 유일한 UI 호출부. `userId=targetUserId`만 보내므로 `attendanceId` 게스트 단일 확정은 못 한다.
-- `_MyNoShowNotice`: direct `appeal` API 대신 `Routes.myDisputeAppealFor('EVENT_NO_SHOW:{noShowId}')`의 통합 분쟁 endpoint를 사용한다.
-- `EventNoShowList.appeal`: direct appeal의 폴백 메서드는 존재하지만 current UI 호출부는 없다.
-
-### 5-2. 미배선 Endpoint
-
-| 서버 Endpoint | 앱 배선 여부 |
-|---|---|
-| `GET .../no-show-refund` | API 정의 자체가 없음. 이력 조회 UI도 없음(G-2), 서버 endpoint는 객체 권한 미검사(G-13) |
-
-`POST .../no-show-refund`는 `NoShowRefundScreen`에서 배선됨.
-
-### 5-3. 화면 및 라우트
-
-**`NoShowRefundScreen`** (`lib/presentation/dispute/screens/no_show_refund_screen.dart`)
-- 라우트: `/host/disputes/:caseId/no-show-refund/:applicationId` (`Routes.hostNoShowRefund`)
-- Provider: `NoShowRefundForm` (`lib/domain/providers/dispute/no_show_refund_form_provider.dart`)
-- POST `no-show-refund` 배선 완료.
-- GET `no-show-refund` 미배선 (기존 제출 내역 확인 불가).
-- 유일한 caller는 `DisputeCaseDetailScreen._openNoShowRefund`다. UI spec에 적힌 참석자 목록 노쇼 long-press caller는 없다.
-- caller는 APPLICATION/ATTENDANCE/CHECK_IN의 `sourceId`를 모두 applicationId로 간주한다. attendance/check-in → application 변환 조회가 없어 잘못된 id가 전달될 수 있다.
-- caller가 `paidAmount`를 넘기지 않아 라우트 기본값 0으로 진입한다. 원 결제 조회도 하지 않아 “원 결제액 정보 없음 (0원 또는 무료 모임)”으로 표시하고 client-side 상한을 적용하지 못한다.
-- form은 0원을 유효하게 제출한다. 이는 current server/test와 일치하지만 UI/UX spec §30.5의 “금액 0이면 확인 비활성”과는 불일치한다.
-- 성공 후 toast만 표시하고 pop한다. 화면 문구는 “참가자에게 안내됩니다”라고 하지만 서버·앱에 notification 발송 호출은 없다.
-
-**참석자 목록 노쇼 UI**
-- 관리자: `permission.canManageAttendance`일 때 `NoShowManageSection` 노출. 모든 row, 게스트 이름, **일괄 확정, 기존 row 번복**을 제공한다. 개별 확정 버튼은 없다.
-- 일반 참가자: GET 결과가 본인 및 소유 게스트 row로 필터된다. `_MyNoShowNotice`는 현재 `row.userId == currentUserId`만 찾으므로 회원 본인 CTA는 보이지만 소유 게스트 row의 소명 CTA는 보이지 않는다(G-10).
-- `_MyNoShowNotice`는 status만 보고 CONFIRMED이면 CTA를 표시한다. `confirmedAt+7일` 계산이나 deadline 필드가 없어 기한이 지나도 CTA가 사라지거나 비활성화되지 않는다(G-12).
-
-### 5-4. Dart 모델 정합성
-
-`EventNoShowVo` (`lib/data/models/dispute/event_no_show_vo.dart`):
-- `NoShowStatus` enum: CONFIRMED/APPEALED/OVERTURNED — 서버 mirror 정확 (소스 직접 확인).
-- `confirmedByRole`: `String?` (서버는 `WarningActorRole` enum 직렬화 → 오타/미지원 값 silent null 위험, G-7).
-
-`NoShowConfirmParam` (`lib/data/models/dispute/no_show_confirm_param.dart`):
-- `userId` int?, `attendanceId` int?, `reasonCode` String?, `reasonText` String?, `evidenceFileIds` List\<int\>[], `evidenceVisibility` String? — 서버 DTO 타입과 일치. 최소 하나 필요/attendanceId 우선 규칙은 Dart 타입 자체로 강제하지 않는다.
-
-`NoShowConfirmReasonCode` (클라 전용 enum): ATTENDEE_ABSENT, LATE_NO_CONTACT, OTHER — 서버는 String으로 받으므로 UI 목적의 클라 전용 enum.
-
-`NoShowRefundReasonCode` (클라 전용 enum): LATE_CONFIRM/CIRCUMSTANCES/HOST_CHECKIN_MISSED/OTHER — 서버 `reasonCode`는 자유 String, 공식 wire 계약 없음(G-5).
+| `EVENT_NO_SHOW_ALREADY_APPEALED` | 이미 소명함 |
+| `EVENT_NO_SHOW_ALREADY_OVERTURNED` | 이미 번복됨 |
+| `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` | 소명 기한 7일 지남 |
+| `EVENT_CO_HOST_PERMISSION_DENIED` | 공동호스트지만 출석 권한 없음 |
+| `NO_SHOW_REFUND_DUPLICATE` | 이미 조정 환불함 |
+| `NO_SHOW_REFUND_EXCEEDS_PAID` | 원결제 총액에서 받은 환불을 뺀 잔액 초과 |
 
 ## 6. 상태/권한 매트릭스
 
@@ -515,7 +280,3 @@ Then paidRefund=3,000, freeRefund=3,000으로 지갑·lot·정산 helper에 동�
 | 테스트 | 배치 필터 검증 | CANCEL_PENDING_REFUND 사용자가 batch에서 제외되는지 확인. |
 | cross-ref | 분쟁 소명 연계 | 소명 흐름(APPEALED 상태)은 통합 분쟁 유니온 EVENT_NO_SHOW source인 `../18_dispute_resolution/F18-03_dispute-appeal_prd.md`에서 상세 다룸. |
 | cross-ref | 환불 정책 | 노쇼 사후 환불은 F03-13 계산기·귀책 매트릭스를 사용하지 않는다(수동 금액 입력 + paid/free gross에서 기존 환불을 뺀 상한 + 원 결제 비율 분리 + 정산 후처리 `applyRefundToSettlement`만 공유). `RefundFaultCategory.NO_SHOW_POST_ADJUSTMENT`는 enum 값으로만 존재. |
-
-## 11. 변경 이력
-
-- **2026-07-29 (current source 재실측)**: OVERTURNED 회원의 `NOSHOW_OVERTURN` 정정 체크인과 멱등/게스트 제외 테스트를 반영했다. 단일 confirm이 `DisputeCaseDetailScreen`, 일괄/번복이 `NoShowManageSection`에 있다는 실제 UI 소유 경계를 교정했다. `NoShowConfirmParam`의 nullable userId/attendanceId 최소-one 계약과 actor role 분기를 명시했다. 소명 party owner/7일 서버 가드와 앱의 상시 CTA를 구분했다. 환불은 paid+free gross에서 기존 환불을 뺀 상한·원 결제 비례 분할·0원 허용으로 교정하고, GET IDOR 후보, no-show row 미검증, cohost refund scope 미검사, 유일 caller의 applicationId/paidAmount=0 문제, 알림·실제 dispute case 부작용 부재를 Gap으로 추가했다.

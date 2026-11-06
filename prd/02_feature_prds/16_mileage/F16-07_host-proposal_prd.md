@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 호스트 제안은 이벤트 호스트가 자기 이벤트 참여 멤버에게 줄 적립 점수를 제안하고, 운영진(`MILEAGE_MANAGER`)이 검토 큐에서 승인(적립 실행)/반려하는 두 단계 흐름이다. 제출/조회는 `MileageHostController`(`/api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals`, `isEventHost` 검증), 처리는 `MileageAdminQueueController`(`/admin/.../host-proposals`)에서 이뤄진다.
@@ -12,17 +11,9 @@
 
 판정: **제출·승인·반려는 사용 가능**. `HostProposalStatus`의 `NEEDS_MORE_INFO`/`WITHDRAWN` 전환 경로가 없고, 제안 경로(클럽+이벤트)와 처리 경로(admin)의 권한·컨트롤러가 분리되어 호스트가 자기 제안의 처리 결과를 직접 조회할 화면 흐름이 제한적인 것이 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageHostController.java` | `isEventHost` 검증, `POST/GET .../mileage-proposals` |
-| Backend Controller | `MileageAdminQueueController.java` | `host-proposals` 목록·`/approve`·`/reject` |
-| Backend Service | `MileageEarningService.java` | `submitProposal`(큐 적재), `approveProposal`(적립 실행), `rejectProposal`(사유 필수) |
-| Backend Service | `MileageReviewQueueService.java` | `enqueue`(HOST_PROPOSAL), `markProcessed` |
-| Backend VO/Param/Enum | `MileageHostProposalVo.java`, `MileageHostProposalAddParam.java`, `MileageHostProposalProcessParam.java`, `MileageHostProposalSearchParam.java`, `constants/HostProposalStatus.java` | 필드·상태 |
-| Frontend | `mileage_host_api.dart`, `mileage_host_repository.dart`, `mileage_host_providers.dart`, `mileage_admin_queue_api.dart`(approve/reject), `mileage_admin_queue_repository.dart`, `presentation/mileage/screens/mileage_host_proposal_screen.dart` | route·CTA |
-| DB | `V1__init.sql` `mileage_host_proposal`, `mileage_review_queue` | 컬럼·상태·인덱스 |
+계약의 정본은 코드다. 서버: `MileageHostController`, `MileageAdminQueueController`, `MileageEarningService`, `MileageReviewQueueService`, `MileageHostProposalVo`, `MileageHostProposalAddParam`, `MileageHostProposalProcessParam`, `MileageHostProposalSearchParam`, `HostProposalStatus`. 앱: `mileage_host_proposal_screen.dart`, `mileage_host_api.dart`, `mileage_host_repository.dart`, `mileage_host_providers.dart`, `mileage_admin_queue_api.dart`, `mileage_admin_queue_repository.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -34,37 +25,6 @@
 6. **승인**: `POST /host-proposals/{proposalId}/approve`(`MileageHostProposalProcessParam`: overridePoints?, processReason?). `approveProposal`이 SUBMITTED/NEEDS_MORE_INFO만 처리, finalPoints(override 우선) 검증, ACTIVE 시즌 id로 `insertEarn`(sourceType=`HOST_PROPOSAL`, sourceId=`HOST_PROPOSAL-{id}`) → 제안 `APPROVED`+processedBy/resultingLedgerId, 큐 markProcessed, audit+outbox.
 7. **반려**: `POST /host-proposals/{proposalId}/reject`. processReason 필수(없으면 `MILEAGE_REASON_REQUIRED`), 제안 `REJECTED`, 큐 markProcessed.
 8. 이미 처리된 제안 재처리 시 `MILEAGE_PROPOSAL_ALREADY_PROCESSED`.
-
-## 4. 서버 계약
-
-### `POST /api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals`
-- 권한: `isEventHost(eventId, userId)`(아니면 `CLUB_PERMISSION_DENIED`).
-- Body `MileageHostProposalAddParam`: targetMemberId(NotNull), points(Positive), reason, attachmentIds(List\<Long\>→JSON).
-- 응답 201 `MileageHostProposalVo`. 정책 OFF → `MILEAGE_NOT_ACTIVATED`, points≤0 → `MILEAGE_AMOUNT_INVALID`.
-
-### `GET /api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals`
-- 응답 `List<MileageHostProposalVo>`(eventId + proposerUserId 필터, 본인 제안).
-
-### `GET /api/v1/admin/clubs/{clubId}/mileage/host-proposals`
-- 권한 `MILEAGE_MANAGER`. Query `MileageHostProposalSearchParam`(status, eventId, proposerUserId). 응답 `Page<MileageHostProposalVo>`.
-
-### `POST .../host-proposals/{proposalId}/approve`, `/reject`
-- Body `MileageHostProposalProcessParam`(overridePoints?, processReason?). 응답 `MileageHostProposalVo`.
-- approve: SUBMITTED/NEEDS_MORE_INFO만, 적립 실행 + APPROVED + resultingLedgerId.
-- reject: processReason 필수, REJECTED.
-- 이미 처리됨 → `MILEAGE_PROPOSAL_ALREADY_PROCESSED`, 미존재 → `MILEAGE_PROPOSAL_NOT_FOUND`.
-
-### `MileageHostProposalVo` 필드
-`id`, `clubId`, `eventId`, `proposerUserId`, `targetMemberId`, `points`, `reason`, `attachments`, `status`(HostProposalStatus), `processedBy`, `processedAt`, `processReason`, `resultingLedgerId`, `createdAt`, `updatedAt`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `eventMileageProposals`(`mileage-proposals`), 운영 처리는 `adminMileageQueue`/host-proposals 경로 |
-| Screen | `MileageHostProposalScreen`(제출/조회), 승인·반려는 `MileageQueueScreen`(F16-08)에서 |
-| Repository/API | 호스트: `MileageHostRepository.submitProposal/getMyProposals` / 운영: `MileageAdminQueueRepository.listHostProposals/approveHostProposal/rejectHostProposal` |
-| Model | `MileageHostProposalVo`, `MileageHostProposalAddParam`, `MileageHostProposalProcessParam`, `HostProposalStatus` enum |
 
 ## 6. 상태/권한 매트릭스
 

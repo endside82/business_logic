@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/03_event/F03-11_wishlist -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-11_wishlist`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 사용자가 관심 있는 이벤트에 하트 토글로 찜을 추가/해제하고, 프로필 → "찜한 이벤트" 에서 모아 볼 수 있는 기능. add/remove 모두 idempotent — 같은 호출 반복해도 에러 없음. 단 OPEN 이외 상태(취소/종료/DRAFT/HIDDEN) 또는 PRIVATE visibility 의 비-멤버 이벤트는 찜 차단.
@@ -20,33 +15,16 @@
 - **목록 진입점**:
   - 프로필 탭 → "찜한 이벤트" → `/profile/wishlist` (`Routes.profileWishlist`)
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/03_event/F03-11_wishlist/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/03_event/F03-11_wishlist/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/03_event/F03-11_wishlist/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/03_event/F03-11_wishlist/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `WishlistController`, `EventViewerContextService`. 앱: `profile_wishlist_screen.dart`, `wishlist_heart_button.dart`, `event_card.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/events/{eventId}/wishlist` | `WishlistController#add` | [WishlistController.java:36](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java#L36) |
-| `DELETE /api/v1/events/{eventId}/wishlist` | `WishlistController#remove` | [WishlistController.java:46](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java#L46) |
-| `GET /api/v1/users/me/wishlist` | `WishlistController#getMyWishlist` | [WishlistController.java:54](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java#L54) |
+서버 창구: `WishlistController#add`, `WishlistController#remove`, `WishlistController#getMyWishlist`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 ### 위시리스트 목록 (`profile_wishlist_screen.dart`)
 
 - **사용자가 보는 것**:
@@ -69,70 +47,11 @@
 - **isWishlisted=false** → `Icons.favorite_border` (회색 `AppColors.gray400` 또는 outline 색상 prop)
 - 카드 위에 올릴 때 `backgroundColor` prop 으로 화이트 배경 + outline 색상 흰색
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-사용자가 관심 있는 이벤트에 하트 토글로 찜을 추가/해제하고, 프로필 → "찜한 이벤트" 에서 모아 볼 수 있는 기능. add/remove 모두 idempotent — 같은 호출 반복해도 에러 없음. 단 OPEN 이외 상태(취소/종료/DRAFT/HIDDEN) 또는 PRIVATE visibility 의 비-멤버 이벤트는 찜 차단.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | `/api/v1/events/{eventId}/wishlist` | `WishlistController#add` | 인증 | 위시리스트 추가 (idempotent) |
-| DELETE | `/api/v1/events/{eventId}/wishlist` | `WishlistController#remove` | 인증 | 위시리스트 제거 (idempotent) |
-| GET | `/api/v1/users/me/wishlist` | `WishlistController#getMyWishlist` | 인증 | 내 찜 목록 페이지 (`Page<EventSimpleVo>`) |
-
-### 의존 단위 / 외부 시스템
-
-- **F03-01 발견 & 탐색** — 이벤트 카드의 하트 토글에서 호출. `EventSimpleVo.isWishlisted` 가 viewer context 단계에서 채워짐.
-- **F03-02 이벤트 상세** — `EventVo.isWishlisted` + 위시리스트 카운트(`wishlistCount`) 표시. Toggle 후 detail invalidate 로 동기화.
-- **EventViewerContextService** — wishlist 응답에 viewer 별 컨텍스트 (참석여부/역할/멤버십) 일괄 부여. 본 단위 자체 로직은 아니지만 응답 형태에 영향.
-- 외부: 없음
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- **하트 토글 진입점** (Add/Remove):
-  - 이벤트 카드 (`EventCard.showWishlist=true, isWishlisted, onWishlistTap`) 가 표시되는 모든 화면 — 홈 피드, 검색 결과, 위시리스트 자체, 추천 등
-  - 이벤트 상세 화면 우상단 하트 (event_detail_screen 의 `_toggleWishlist` 콜백)
-- **목록 진입점**:
-  - 프로필 탭 → "찜한 이벤트" → `/profile/wishlist` (`Routes.profileWishlist`)
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 | 파일 | 역할 |
-|---|---|---|
-| `/profile/wishlist` | `presentation/profile/screens/profile_wishlist_screen.dart` | 내 찜 이벤트 목록 (페이지네이션, 토글, 카드 탭 진입) |
-
-위젯:
-- `presentation/event/widgets/wishlist_heart_button.dart` — 하트 IconButton (`isWishlisted` ? 빨간 favorite : 회색 favorite_border)
-- `presentation/common/widgets/event_card.dart` — `showWishlist` prop 으로 우상단 하트 노출
-
-### 화면별 구성 요소 & 액션
-
-### 위시리스트 목록 (`profile_wishlist_screen.dart`)
-
-- **사용자가 보는 것**:
-  - AppBar "찜한 이벤트"
-  - 빈 상태 (`AppEmptyState(icon: favorite_border, title: '관심 이벤트가 여기 모입니다', description: '마음에 드는 이벤트를 찜하면 한 곳에서 볼 수 있어요')`)
-  - 페이지네이션 카드 리스트 (`EventCard` 세로 배열)
-  - 무한 스크롤 → 마지막 200px 도달 시 `loadMore()`
-  - 다음 페이지 로딩 중 하단 `CircularProgressIndicator`
-- **사용자가 할 수 있는 액션**:
-  - 풀투리프레시 → `myWishlistNotifier.refresh()` (페이지 0부터 재시작)
-  - 카드 탭 → `context.push('/home/events/${event.id}')`
-  - 카드 하트 탭 → `_onToggle(event.id, event.isWishlisted)`
-    - 현재 isWishlisted=true 이므로 항상 remove 액션
-    - 성공: 토스트 "찜 해제했어요" (success)
-    - 실패: 토스트 "잠시 후 다시 시도해주세요" (error)
-
-### 하트 토글 (`WishlistHeartButton`)
-
-- **isWishlisted=true** → `Icons.favorite` (빨강 `AppColors.error500`)
-- **isWishlisted=false** → `Icons.favorite_border` (회색 `AppColors.gray400` 또는 outline 색상 prop)
-- 카드 위에 올릴 때 `backgroundColor` prop 으로 화이트 배경 + outline 색상 흰색
+- 찜 거절 차례: 상세를 읽지 못하면 `EVENT_NOT_FOUND`(공유 토큰 없는 링크 전용 포함), 취소, 마감, 새 참가를 받지 않음(DRAFT·운영자 숨김), 초대 전용은 호스트나 그 클럽 회원이 아니면 `FORBIDDEN`.
+- 해제는 어떤 상태에서도 된다.
+- 내 찜 목록은 지금 상세를 읽지 못하는 모임을 가린다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -147,15 +66,6 @@
 | S7 | 무한 스크롤로 다음 페이지 로드 | 위시리스트 100건 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S8 | 풀투리프레시 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S9 | 토글 도중 네트워크 단절 | 로그인 완료, `/home/events/1312` 진입, 사전 정리로 wishlist OFF 보장 | wishlist 1행, UI 하트 빨강, 성공 토스트 1회 |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
 ## 8. Gap / Risk
 
@@ -174,9 +84,3 @@
 - **AC-07. 무한 스크롤로 다음 페이지 로드**: Given 위시리스트 100건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-08. 풀투리프레시**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-09. 토글 도중 네트워크 단절**: Given 로그인 완료, `/home/events/1312` 진입, 사전 정리로 wishlist OFF 보장 When 사용자가 해당 흐름을 실행하면 Then wishlist 1행, UI 하트 빨강, 성공 토스트 1회
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

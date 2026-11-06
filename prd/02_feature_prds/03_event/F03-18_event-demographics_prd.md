@@ -3,9 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-27; unit: business_logic/units/03_event/F03-18_event-demographics (신규) -->
-
 > 문서 상태: **2026-05-27 신규 기능.** 이벤트 상세 화면 내 "구성 통계" 섹션 — 참석 확정자(host + cohost + ATTENDING)의 성별·나이대·MBTI I·E 비율을 가로 비율 바로 표시한다. 데이터 원천은 `Member.gender/birthDate/mbti`이며 본인인증 동기화([[F09-01]])로 검증값이 반영된다. 프라이버시 3단계 게이트(전체 인원 / 차원 응답수 / 버킷 최소셀)로 소수 셀(개인) 식별을 차단한다.
 
 ## 1. 결론
@@ -18,28 +15,9 @@
 - **프라이버시 3단계 게이트**: (1) 전체 인원<5 → 전체 숨김, (2) 차원 응답수<5 → 해당 차원 숨김, (3) 0이 아닌 모든 버킷 count≥5 → 차원 표시(그렇지 않으면 차원 숨김). 노출 카운트는 항상 ≥5라 비율로부터 역산해도 개인 식별 불가(k-익명성, k=5).
 - **접근권한**: `PUBLIC` 가시성이면서 `OPEN/CLOSED` 상태는 인증 사용자 누구나 / 그 외(PRIVATE, LINK, APPROVAL, DRAFT, CANCELED, HIDDEN)는 host·cohost·ATTENDING만.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Plan | `community/docs/plan/DEMOGRAPHICS_STATS_PLAN.md` | 있음(v2) | 게이트/접근권한/대상 정의 |
-| Backend | (신규 — units 미생성, 본 PRD가 임시 origin) | — | 아래 trace 참조 |
-| Frontend | (신규 — units 미생성, 본 PRD가 임시 origin) | — | 아래 trace 참조 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/event/controller/EventController.java#getEventDemographics` (`GET /api/v1/events/{eventId}/demographics`) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/event/service/EventDemographicsService.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/service/DemographicsService.java` (공용 집계 + 3단계 게이트) | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/vo/{DemographicsStatsVo,RatioItemVo,IeRatioVo}.java` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/constants/{AgeGroup,Mbti}.java` | 확인됨 |
-| `community_app/lib/data/api/event_api.dart#getEventDemographics` | 확인됨 |
-| `community_app/lib/data/models/common/demographics_stats_vo.dart` | 확인됨 |
-| `community_app/lib/presentation/common/data/demographics_section.dart` (`DemographicsSection`, `_RatioBar`) | 확인됨 |
-| `community_app/lib/presentation/event/widgets/event_demographics_section.dart` (Consumer wrapper) | 확인됨 |
-| `community_app/lib/domain/providers/event/event_detail_provider.dart#eventDemographicsProvider` | 확인됨 |
+계약의 정본은 코드다. 서버: `EventController`, `EventDemographicsService`, `DemographicsService`. 앱: `event_api.dart`, `demographics_stats_vo.dart`, `demographics_section.dart`, `event_demographics_section.dart`, `event_detail_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -52,76 +30,11 @@
    - `DemographicsService.aggregate(userIds, referenceDate)` — 기준일은 `event.timezone` 기반(없으면 `Asia/Seoul`).
 4. 응답 `DemographicsStatsVo` → 앱이 게이트 결과에 따라 차원별 비율 바 렌더(또는 "구성원이 적어 통계를 표시하지 않습니다" 안내).
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | /api/v1/events/{eventId}/demographics | EventController#getEventDemographics | required | host+cohost+ATTENDING 대상 인구통계 집계(공개+OPEN/CLOSED는 모두, 그 외는 참가자만) |
-
-### 응답 VO `DemographicsStatsVo`
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| totalCount | int | 대상 인원(host+cohost+ATTENDING distinct) |
-| visible | bool | 전체 게이트 통과 여부(>=5) |
-| threshold | int | 임계값(=5) |
-| genderVisible / ageVisible / ieVisible | bool | 차원별 게이트 결과 |
-| genderDistribution | List&lt;RatioItemVo&gt; | `{code: '1'\|'2', label: '남성'\|'여성', ratio: double}` (게이트 미통과 시 빈 배열) |
-| ageGroupDistribution | List&lt;RatioItemVo&gt; | `{code: UNDER_TEENS/TWENTIES/.../FIFTIES_AND_OVER, label, ratio}` (UNKNOWN 제외) |
-| ieDistribution | IeRatioVo? | `{ratioI, ratioE, coverageRatio}` (게이트 미통과 시 null) |
-| mbtiCoverageRatio | double | MBTI 입력률(=MBTI 입력자/전체) |
-
-**원시 카운트는 응답에 포함되지 않는다.** 게이트로 노출 버킷 count는 항상 ≥threshold이므로 비율·총수로 역산해도 개인 식별 불가(k-익명성, k=5).
-
-### 접근권한 (EventDemographicsService#canView)
-
-```
-PUBLIC + (OPEN | CLOSED)  → 인증 사용자 누구나
-otherwise                 → event.hostUserId == userId
-                          OR event.coHostUserIds.contains(userId)
-                          OR event.myAttendanceStatus == "ATTENDING"
-```
-
-### 도메인 모델
-
-- **공용 `DemographicsService.aggregate(List<Long> userIds, LocalDate referenceDate)`** (`account.service`):
-  - userIds distinct → `MemberRepository.findByUserIdIn` → userId당 1 row 보장.
-  - 카운트: gender ∈ {1,2}, birthDate non-null(만나이 → AgeGroup), mbti non-null(I/E).
-  - 게이트: 전체<5 → hidden / 차원응답<5 → 차원 숨김 / 0아닌 모든 버킷<threshold → 차원 숨김.
-- **`AgeGroup` enum**: `UNDER_TEENS(10대 이하), TWENTIES, THIRTIES, FORTIES, FIFTIES_AND_OVER, UNKNOWN`.
-- **나이 계산**: `Period.between(birthDate, referenceDate).getYears()`. referenceDate는 `LocalDate.now(zone)` — 이벤트는 `event.timezone` 기반(파싱 실패 시 `Asia/Seoul`).
-
-### 의존 단위
-
-- **[[F09-01 verification]]** — Member.gender/birthDate의 검증 신뢰도 원천(afterCommit 동기화).
-- **[[F13-02 profile-edit]]** — Member.mbti의 입력 원천(I·E 분포 데이터).
-- **F03-05 event-attendance / F03-06 application-review** — ATTENDING 상태가 대상에 포함되는 기준.
-- **F03-02 event-detail** — 이 섹션이 호스팅되는 화면.
-
-## 5. 프론트 계약
-
-### 라우트 & 화면
-
-- 별도 라우트 없음. 이벤트 상세 화면 내부 섹션이다.
-- `presentation/event/widgets/event_demographics_section.dart` (ConsumerWidget) → `presentation/common/data/demographics_section.dart` (`DemographicsSection`, `_DimensionBlock`, `_RatioBar`).
-
-### 화면 구성 요소
-
-- **헤더**: "구성 통계" 텍스트.
-- **차원 블록** × 최대 3개(성별/나이대/MBTI 성향) — 게이트 통과한 차원만 표시.
-- **비율 바**: 라벨(64w) + `LinearProgressIndicator(value, minHeight 6, gray200 배경, 토큰 색상 valueColor)` + `${(ratio*100).round()}%` (40w 우측).
-- **색상**:
-  - 성별: 남=`AppColors.linkBlue`, 여=`AppColors.datingPink`.
-  - 나이대: `AppColors.primary500`.
-  - I/E: I=`AppColors.primary500`, E=`AppColors.warning500`.
-- **빈 상태**: 전체 게이트 미통과 또는 모든 차원 숨김 시 `surfaceSunken` 카드 + info 아이콘 + "구성원이 적어 통계를 표시하지 않습니다."
-- **MBTI 차원 보조 캡션**: "MBTI 입력 N%" (coverageRatio).
-
-### 로딩/에러 처리
-
-- 보조 정보이므로 로딩 시 `SizedBox.shrink()`(공백), 에러 시도 동일. 화면 본문 렌더를 막지 않는다.
+- 대상은 호스트·공동호스트·참석자의 중복 없는 계정이다. 계정 없는 게스트는 뺀다. 나이대를 알 수 없는 사람은 분포에서 뺀다.
+- 숨긴 모임은 공개 분기를 타지 않는다. 참가자 판정은 실제 참석 행으로 하여, 빠져나간 사람에게 통계가 열리지 않는다.
+- 로딩·오류 때 섹션은 비우고 본문을 막지 않는다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 

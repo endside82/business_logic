@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + community_app curated/ -->
 
 ## 1. 결론
@@ -36,27 +35,9 @@
   또한 직접 route로 진입하면 `chargeable`, 기존 coverage, cap 잔여와 무관하게 결제/my-share 버튼을
   렌더링하므로 서버 거부가 최종 방어선이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `curated/controller/ServiceAssignmentController.java` | `charge`, `topup`, `chargeMyShare`, `myChargeStatus`, `setServiceFee` 메서드 |
-| Backend Service | `curated/service/ServiceAssignmentChargeService.java` | `chargeParticipant`, `topupParticipantChargeOnEvent`, `chargeMyShareOnEvent`, `getMyChargeStatus`, `markHostSubsidized` |
-| Backend Service | `curated/service/CuratedChargeSplitCalculator.java` | N-split 계산기 — `chargeMyShare` 분담액 산정 |
-| Backend Entity | `curated/model/ServiceAssignmentCharge.java` | `assignmentId/beneficiaryUserId/payerUserId/coverageType/chargeOrigin/chargeOrder/amount/transactionId/creatorEarningId/@Version` |
-| Backend Enum | `curated/constants/CoverageType.java` | SELF_PAID·FREE_EXCLUDED·HOST_SUBSIDIZED·NOSHOW_FORFEIT (4값) |
-| Backend Enum | `curated/constants/ChargeOrigin.java` | PREPAID·POSTPAID (2값) |
-| Backend Payment | `payment/facade/WalletLedgerFacade.java` | `spendAndJournal(SpendCommand, BiConsumer)` — PAID_ONLY 차감 + earning 적립 원자 |
-| Backend Port | `curated/port/CuratedProviderEarningPort.java` | `recordServiceChargeEarning`, `applyPrepaymentEarning` |
-| Backend Port | `curated/port/CuratedEventAccessPort.java` | `assertEventParticipant`, `isEventEnded`, `getActualAttendeeIds` |
-| Backend VO | `curated/vo/ParticipantAssignmentChargeStatusVo.java` | 기존 8필드 + `agreedGross`, `participantCap` |
-| Backend VO | `curated/vo/ServiceAssignmentChargeResultVo.java` | `transactionId: Long` |
-| Frontend API | `data/api/service_assignment_api.dart` | `charge`, `topupCharge`, `chargeMyShare`(Idempotency-Key 헤더), `myChargeStatus`, `setServiceFee` |
-| Frontend Model | `data/models/curated/participant_assignment_charge_status_vo.dart` | 기존 8필드만 구현. 서버 additive `agreedGross`, `participantCap` 누락 |
-| Frontend Model | `data/models/curated/service_assignment_charge_result_vo.dart` | `ServiceAssignmentChargeResultVo(transactionId)` Freezed |
-| Frontend Screen | `presentation/curated/screens/participant_service_fee_charge_screen.dart` | 참가자 과금 진입 화면 |
-| Frontend Providers | `domain/providers/curated/service_assignment_provider.dart` | `ParticipantChargeStatusNotifier`, 관련 charge action |
-| Verification | `ServiceAssignmentChargeServiceTest` 계열 | PAID_ONLY 게이트, 자전거래 차단, 멱등 동작 |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentChargeService`, `CuratedChargeSplitCalculator`, `ServiceAssignmentCharge`, `CoverageType`, `ChargeOrigin`, `WalletLedgerFacade`, `CuratedProviderEarningPort`, `CuratedEventAccessPort`, `ParticipantAssignmentChargeStatusVo`. 앱: `participant_service_fee_charge_screen.dart`, `service_assignment_api.dart`, `participant_assignment_charge_status_vo.dart`, `service_assignment_charge_result_vo.dart`, `service_assignment_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -92,94 +73,6 @@
 1. 참가자가 `serviceFeeGross=100,000원`인 보장모드 배정에서 본인 과금 시 `Σ기존 수금+amount > 100,000원`인 경우.
 2. 서버가 추가 payload 없는 `ASSIGNMENT_CHARGE_EXCEEDS_FEE` 에러를 반환한다. Flutter는 공통 에러 메시지를 토스트로 표시하며 실제 잔여액을 계산해 보여 주지 않는다.
 3. 참가자는 cap 잔여액 이하로만 납부할 수 있지만 현재 화면에서 그 잔여액을 직접 확인할 수 없다.
-
-## 4. 서버 계약
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/service-fee`
-
-| 항목 | 계약 |
-|---|---|
-| 권한 | `assertHostOrCoHost(eventId, userId)` |
-| Request body | `ServiceAssignmentServiceFeeParam(serviceFeeGross: BigDecimal)` |
-| 응답 | `ServiceAssignmentVo` 200 — `engagementId!=null`에는 authority conflict, `offeringId!=null` 또는 terms가 붙은 배정에는 구 API 사용 거부 |
-| 모드 | `serviceFeeGross>0` = 보장수수료(완납게이트 Σ==X 강제), `=0` = 수금액 |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/charge`
-
-| 항목 | 계약 |
-|---|---|
-| 인증 | 필수(caller=payer) |
-| 헤더 | `Idempotency-Key: String` — 필수(`required = true`) |
-| Request body | `ServiceAssignmentChargeParam(amount: long)` |
-| 게이트 | status ∈ {ACCEPTED, CONFIRMED} · payer≠provider · 미납(beneficiary 첫 charge 없음) · 보장모드 cap 잔여 |
-| 응답 | `ServiceAssignmentChargeResultVo(transactionId: Long)` 200 |
-| 부수 효과 | `WalletLedgerFacade.spendAndJournal(PAID_ONLY)` + `CreatorEarning` 즉시 적립 |
-| 실패 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_SELF_CHARGE`, `ASSIGNMENT_ALREADY_CHARGED`, `ASSIGNMENT_CHARGE_EXCEEDS_FEE` |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/charge/topup`
-
-| 항목 | 계약 |
-|---|---|
-| 헤더 | `Idempotency-Key: String` — 필수 |
-| Request body | `ServiceAssignmentChargeParam(amount: long)` |
-| 게이트 | 기존 SELF_PAID charge ≥1 있어야 함(첫 과금 `/charge` 먼저 필수) |
-| 응답 | `ServiceAssignmentChargeResultVo(transactionId)` 200 |
-| 내부 동작 | `chargeOrder = 기존max+1`인 새 SELF_PAID charge 행 생성 |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/charge/my-share`
-
-| 항목 | 계약 |
-|---|---|
-| 헤더 | `Idempotency-Key: String` — 필수. 멱등 키에 `#u={userId}` 접미사로 principal-scope 재생 차단 |
-| Body | 없음(서버 산정) |
-| 게이트 | `isEventEnded=true` · 권위 participant cap 존재(non-engagement X 또는 terms engagement X-D) · caller∈(실출석−provider) · CONFIRMED 상태 · 기존 first charge 없음 |
-| 응답 | `ServiceAssignmentChargeResultVo(transactionId)` 200 |
-| 분담액 | `CuratedChargeSplitCalculator`가 `(실출석 − provider)` 인원수로 균등 분할 산정 |
-
-### `GET /api/v1/events/{eventId}/assignments/my-charge-status`
-
-| 항목 | 계약 |
-|---|---|
-| 인증 | 필수(caller = 조회 대상) |
-| 응답 | `List<ParticipantAssignmentChargeStatusVo>` — caller 본인의 coverage만 노출(IDOR-safe) |
-| `chargeable` | status=CONFIRMED + participant cap 존재 + caller money-backed coverage 없음 + caller≠provider + cap 잔여 → true |
-| `suggestedShare` | 회차 종료 + participant cap 존재 + caller∈(실출석−provider) → 서버 산정 1/N. 그 외 null |
-| 돈/상태 | 변경 없음(읽기 전용) |
-
-### `ParticipantAssignmentChargeStatusVo` 필드
-
-| 필드 | Java 타입 | Dart 타입 | 비고 |
-|---|---|---|---|
-| `assignmentId` | `long` | `int` | |
-| `providerRole` | `String?` | `String?` | taxonomy 미확정 |
-| `status` | `String` | `String` | AssignmentStatus name |
-| `serviceFeeGross` | `BigDecimal` | `double` | 0=수금액 모드 |
-| `myCoverageType` | `String?` | `String?` | CoverageType name. 미납=null |
-| `myPaidAmount` | `long` | `int` | 내가 payer로 낸 비-FREE_EXCLUDED 합계. 미납=0 |
-| `chargeable` | `boolean` | `bool` | Jackson: JSON key `chargeable` |
-| `suggestedShare` | `BigDecimal?` | `double?` | null=산정 조건 미충족 |
-| `agreedGross` | `BigDecimal?` | **현재 모델 누락** | 권위 총액 X |
-| `participantCap` | `BigDecimal?` | **현재 모델 누락** | 참가자 수금 상한 X 또는 X-D |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| 참가자 과금 화면 | `ParticipantServiceFeeChargeScreen` |
-| 과금 현황 Provider | `ParticipantChargeStatusNotifier(eventId)` — `@riverpod` |
-| Retrofit API | `ServiceAssignmentApi.charge`, `topupCharge`, `chargeMyShare`, `myChargeStatus`, `setServiceFee` |
-| Idempotency-Key | `@Header('Idempotency-Key') String?` — charge/topup/chargeMyShare 3개 엔드포인트 |
-| 금액 표시 | `serviceFeeGross`, aggregate `myPaidAmount`, `suggestedShare`만 표시. 개별 납부 이력·일시·잔여액·`agreedGross`·`participantCap`은 표시하지 않음 |
-| 화면 자체 CTA | `suggestedShare != null`이면 `/charge/my-share`, 그 외에는 `/charge`와 `/topup` 두 버튼을 항상 표시. `chargeable`/coverage/cap으로 자체 비활성화하지 않음 |
-| 에러 | `Result.failure(ApiError)` → `AppErrorState(title:)` |
-
-참가자 CTA 분기:
-
-| 조건 | CTA |
-|---|---|
-| `suggestedShare==null` | 직접 금액 입력 + `/charge`와 `/topup` 버튼 모두 표시 |
-| `suggestedShare!=null` | `suggestedShare` 표시 + `/charge/my-share` 버튼 |
-| `chargeable=false`, 기존 coverage 존재 또는 status row 없음 | 화면 자체는 별도 완료/무료 상태로 닫지 않고 결제 버튼을 표시하며, 제출 시 서버가 거부 |
 
 ## 6. 상태/권한 매트릭스
 

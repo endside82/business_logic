@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 FIXED 모임만의 멤버 8 상태 머신:
@@ -27,18 +26,9 @@ ENROLLED → CANCELED(취소+환불) | FORFEITED(노쇼 한도, 무환불)
 - 종료(CANCELED/REJECTED/PAYMENT_EXPIRED) 후 재신청은 동일 row 재사용 (UNIQUE `(meeting_id, user_id)`)
 - CLOSED/CANCELED 모임에서는 자발 취소 금지 (`REGULAR_MEETING_INVALID_STATUS`) — 클로백 갭/중복 환불 방지
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `RegularMeetingController#enroll,cancelEnrollment,members,myMembership,approveEnrollment,rejectEnrollment` | 6 endpoint |
-| Backend Service | `RegularMeetingEnrollmentService#enroll,cancelEnrollment,approve,reject,getMembers,getMyMembership` | 좌석·대기열·승격 |
-| Backend Entity | `RegularMeetingMember` | 카운터(`attended/noShow/consecutiveNoShow`) + `markEnrolled/markForfeited` |
-| Backend Constants | `RegularMeetingMemberStatus#occupiesSeat,isTerminal` | 상태 정책 |
-| Backend Param | `RegularMeetingEnrollParam(message)`, `EnrollmentDecisionParam(decisionMessage)` | 메시지 |
-| Backend ErrorCode | `HOST_CANNOT_ENROLL`, `ENROLLMENT_FORFEITED`, `ALREADY_ENROLLED`, `ENROLLMENT_INVALID_STATUS`, `ENROLLMENT_DENIED` | 분기 코드 |
-| Materialization 연동 | `RegularMeetingMaterializationService#syncMemberAdded,syncMemberRemoved` | ATTENDING catch-up + demote |
-| Flutter Screen | `regular_meeting_enroll_screen.dart`, `regular_meeting_members_screen.dart` | 승인제·즉시 분기, 호스트 PENDING 승인/거절 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingEnrollmentService`, `RegularMeetingMaterializationService`. 앱: `regular_meeting_enroll_screen.dart`, `regular_meeting_members_screen.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -83,27 +73,6 @@ ENROLLED → CANCELED(취소+환불) | FORFEITED(노쇼 한도, 무환불)
 
 ### 3.6 getMyMembership (`GET /members/me`)
 - 인증 필수. 없으면 404 (silent for Flutter).
-
-## 4. 서버 계약
-
-| 엔드포인트 | Method | Body | 응답 | 가드 |
-|---|---|---|---|---|
-| `/enroll` | POST | `RegularMeetingEnrollParam(message?)` optional | 201 `RegularMeetingMemberVo` | FIXED + OPEN + 호스트 아님 |
-| `/enroll` | DELETE | — | 200 `RegularMeetingMemberVo` (CANCELED) | non-terminal + 모임 ∉ {CLOSED, CANCELED} |
-| `/members` | GET | `PagingParam` | `Page<RegularMeetingMemberVo>` | 호스트만 |
-| `/members/me` | GET | — | `RegularMeetingMemberVo` or 404 | 인증 |
-| `/members/{memberId}/approve` | POST | `EnrollmentDecisionParam(decisionMessage?)` | 200 `RegularMeetingMemberVo` | 호스트 + PENDING |
-| `/members/{memberId}/reject` | POST | `EnrollmentDecisionParam(decisionMessage?)` | 200 `RegularMeetingMemberVo` | 호스트 + PENDING |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Routes | `regularMeetingEnroll`, `regularMeetingMembers` |
-| Enroll Screen | `RegularMeetingEnrollScreen` — 승인제(message 입력) / 즉시 분기 |
-| Host Members Screen | `RegularMeetingMembersScreen` — PENDING 승인/거절 + 결정 메시지 |
-| Provider | `myRegularMeetingMembershipProvider(id)`, members page provider |
-| 승격 UX | invalidate 후 사용자에게 자동 토스트("대기열에서 승격되었습니다") — 후속에서 푸시 통합 |
 
 ## 6. 상태/권한/시나리오 매트릭스
 

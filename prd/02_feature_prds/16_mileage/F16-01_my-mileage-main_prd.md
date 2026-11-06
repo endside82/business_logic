@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 2026-10-29 현재 계약 대조
 
 ### 마일리지 운영 명령과 검토 대기열
@@ -20,20 +19,9 @@
 
 판정: **조회/권한/표시는 사용 가능**. 다만 메인 화면의 최근 원장 5건과 일부 집계가 서버에서 `ledgerRepository.findAll()` 후 in-memory 필터로 계산되어 대규모 클럽에서 성능 Risk가 있고, 원장 검색 `keyword`가 멤버 API에서 인덱스 없이 동작한다는 점이 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `mileage/controller/MileageMemberController.java` | `GET /me`, `GET /me/receipts/{year}/{month}`, `GET /me/ledger` 엔드포인트·인증·반환타입 |
-| Backend Service | `mileage/service/MileageQueryService.java` | `buildMemberMain`, `buildMonthlyReceipt`, `searchLedger` 합성 로직 |
-| Backend Service | `mileage/service/MileageLedgerService.java` | 원장 row 구조, EARN/REDEEM/REVERSE/EXPIRE 의미 |
-| Backend Query | `mileage/repository/query/MileageMonthlyReceiptQueryRepository.java`(인터페이스 호출), `MileageLedgerQueryRepository` | 영수증 집계·원장 페이징 |
-| Backend VO/Enum | `MemberMileageMainVo.java`, `MileageMonthlyReceiptVo.java`, `MileageLedgerVo.java`, `constants/LedgerType.java` | 응답 필드·타입, ledger type |
-| Backend Param | `param/MileageLedgerSearchParam.java` | `type/from/to/keyword/memberId` 필터 |
-| Frontend API/Repo | `data/api/mileage/mileage_member_api.dart`, `data/repositories/mileage/mileage_member_repository.dart` | Retrofit endpoint·`Result<T>` |
-| Frontend Model | `data/models/mileage/member_mileage_main_vo.dart`, `mileage_monthly_receipt_vo.dart`, `mileage_ledger_vo.dart`, `mileage_enums.dart` | 클라이언트 필드·enum |
-| Frontend Provider/Screen | `domain/providers/mileage/mileage_member_providers.dart`, `presentation/mileage/screens/mileage_main_screen.dart`, `mileage_ledger_screen.dart`, `mileage_monthly_receipt_screen.dart` | route 진입·상태 분기 |
-| DB | `db/migration/V1__init.sql` `mileage_ledger`, `mileage_member_summary` | 컬럼·UNIQUE·인덱스 |
+계약의 정본은 코드다. 서버: `MileageMemberController`, `MileageQueryService`, `MileageLedgerService`, `MileageMonthlyReceiptQueryRepository`, `MemberMileageMainVo`, `MileageMonthlyReceiptVo`, `MileageLedgerVo`, `LedgerType`, `MileageLedgerSearchParam`. 앱: `mileage_main_screen.dart`, `mileage_ledger_screen.dart`, `mileage_monthly_receipt_screen.dart`, `mileage_member_api.dart`, `mileage_member_repository.dart`, `member_mileage_main_vo.dart`, `mileage_monthly_receipt_vo.dart`, `mileage_ledger_vo.dart`, `mileage_enums.dart`, `mileage_member_providers.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -45,51 +33,10 @@
 6. 멤버가 "전체 원장"으로 이동하면 `mileage_ledger_screen.dart`가 `getMyLedger`(`GET /me/ledger`)를 `MileageLedgerSearchParam`(type/from/to/keyword/page/size)로 호출. 서버는 `searchParam.setMemberId(userId)`로 본인 ID를 강제 주입한다.
 7. 월간 영수증 진입(`receipts/:year/:month`)은 `getMyMonthlyReceipt(clubId, year, month)` → `GET /me/receipts/{year}/{month}` → `buildMonthlyReceipt`가 해당 월 원장 합계·시작/종료 잔액·sourceType별 EARN 합·부여 배지·시작/종료 등급명을 합성.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /api/v1/clubs/{clubId}/mileage/me`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `MileageMemberController#getMyMileage` |
-| 인증/권한 | `@AuthenticationPrincipal` + `requireClubMember(clubId, userId)` |
-| 응답 | `MemberMileageMainVo` |
-| 실패 | 비멤버 시 클럽 권한 예외 |
-
-`MemberMileageMainVo` 필드: `currentBalance`(int), `lifetimeEarnedRaw`(int), `qualifiedLifetimeEarned`(int), `currentSeasonEarned`(int), `currentSeasonBalance`(int), `currentGrade`(CurrentGradeVo: id/name/colorToken/iconKey/threshold), `nextGrade`(NextGradeVo: id/name/threshold/deltaToReach), `badges`(List\<MileageBadgeAwardVo\>), `recentLedger`(List\<MileageLedgerVo\>).
-
-### `GET /api/v1/clubs/{clubId}/mileage/me/receipts/{year}/{month}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `MileageMemberController#getMyMonthlyReceipt` |
-| Path | `year:int`, `month:int` (month 1~12, 범위 밖이면 `INVALID_INPUT`) |
-| 응답 | `MileageMonthlyReceiptVo` |
-
-`MileageMonthlyReceiptVo` 필드: `earnedTotal/redeemedTotal/expiredTotal/reversedTotal`(절대값 기준 합), `netDelta`(=earned−redeemed−expired, REVERSE 제외), `startBalance/endBalance`, `byType`(Map\<String,Integer\> = sourceType별 EARN 합), `badgesAwarded`, `gradeStart/gradeEnd`(등급명 추정), `ledgerRowCount`.
-
-### `GET /api/v1/clubs/{clubId}/mileage/me/ledger`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `MileageMemberController#getMyLedger` |
-| Query | `MileageLedgerSearchParam`(type=LedgerType, from/to=LocalDateTime, keyword, page, size). `memberId`는 서버가 principal로 강제 |
-| 응답 | `Page<MileageLedgerVo>` (Spring Page → Flutter `PageResponse`) |
-
-`MileageLedgerVo` 필드: `id`, `clubId`, `memberId`, `ledgerType`(EARN/REDEEM/REVERSE/EXPIRE), `amount`(부호 포함 int), `sourceType`, `sourceId`, `reversesLedgerId`, `reason`, `presetId`, `actorId`, `batchId`, `seasonId`, `earnedAt`, `expiresAt`, `createdAt`, `consumptions`(운영진 응답에만 포함 — 멤버 응답은 보통 null).
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `Routes.clubMileage`(`mileage`), `clubMileageLedger`(`ledger`), `clubMileageMonthlyReceipt`(`receipts/:year/:month`) |
-| Screen | `MileageMainScreen`, `MileageLedgerScreen`, `MileageMonthlyReceiptScreen` |
-| Provider | `mileage_member_providers.dart` |
-| Repository | `MileageMemberRepository.getMyMileage / getMyLedger / getMyMonthlyReceipt` |
-| Retrofit | `MileageMemberApi.getMyMileage / getMyLedger / getMyMonthlyReceipt` |
-| Model | `MemberMileageMainVo`, `MileageMonthlyReceiptVo`, `MileageLedgerVo`, `LedgerType` enum |
-
-Flutter `getMyLedger`는 `type` 등 쿼리를 `String?`으로 직접 전달하고 `memberId`는 보내지 않는다(서버가 principal로 강제 주입하므로 정합).
+- 월 영수증: 달은 1~12만 받는다. 적립 합계, 차감 합계, 만료 합계, 정정 합계를 따로 보여 주고, 순증은 적립에서 차감과 만료를 뺀 값이며 정정은 넣지 않는다. 적립은 종류별 합도 보여 준다.
+- 월 영수증의 등급 이름은 그 달의 누적 적립을 지금의 등급 기준에 대어 본 추정값이다.
 
 ## 6. 상태/권한 매트릭스
 

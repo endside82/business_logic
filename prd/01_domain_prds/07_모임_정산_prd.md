@@ -271,7 +271,7 @@ Meeting Settlement(모임 정산)은 사용자에게 노출되는 **DRAFT/ACTIVE
 2. 2회 이상 미해소 시 `OperatorAlertType.SETTLEMENT_TRANSFER_LIMBO HIGH` 운영알림 자동 승급
 3. 자동 만료(EXPIRED 전이) **없음** — 실제 돈이 움직였을 수 있어 자동 상태 전이 위험
 
-상세: [F07-06 §4 limbo SLA 정책](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md), [F07-07 §8 limbo 재알림](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md).
+상세: [F07-06 §4 limbo SLA 정책](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md), [F07-06 §4 limbo 재알림](../02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md).
 
 ## 4-B. 접근권한 감사 교정 (2026-07-02)
 

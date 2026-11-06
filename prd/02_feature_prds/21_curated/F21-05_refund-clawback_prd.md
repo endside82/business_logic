@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + payment/ + community_app curated/ -->
 
 ## 1. 결론
@@ -26,19 +25,9 @@
 - NOSHOW_FORFEIT은 irreversible 상태가 아니다. 정산 전 CONFIRMED 동안 전액환불 경로가 money-backed
   row를 환불·삭제할 수 있다. noshow-forfeit 자체는 헤더 없이 같은 상태 재호출을 성공 no-op으로 끝낸다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `ServiceAssignmentController.java` | `refund`, `partial-refund`, `clawback`, `noshow-forfeit` 엔드포인트 |
-| Backend Service | `ServiceAssignmentChargeService.java` | `refundParticipantCharge`, `partialRefundHostAbsorbed`, `clawbackAfterSettlement`, `markNoShowForfeit`, `reverseChargesOnTermination` |
-| Backend Model | `ServiceAssignmentRefund.java`, `ServiceAssignmentCharge.java` | `refundType`, `amount`, `originalNet`, `recoveredAmount`, `refundTransactionId` |
-| Backend Enum | `AssignmentRefundType.java` | `PARTIAL_HOST_ABSORBED`, `CLAWBACK` (2값) — `NOSHOW_FORFEIT`은 `CoverageType` 값(별개 enum) |
-| Backend Port | `CuratedProviderEarningPort.java` | `refundServiceChargeEarning`, `partialHostAbsorbedRefund`, `clawbackFromProvider` |
-| Frontend API | `service_assignment_api.dart` | `refund`, `partialRefund`, `clawback`, `noshowForfeit` |
-| Frontend Repository | `service_assignment_repository.dart` | partial-refund/clawback에만 `ClientMessageId.generate()` 자동 멱등키 |
-| Frontend Screen | `event_assignments_screen.dart` | `_refund`, `_partialRefund`, `_clawback`, `_noshowForfeit`, `CoverageBeneficiaryPickerSheet` |
-| Verification | 서버 유닛 테스트 + 서버/Flutter 소스 실측 | 경로별 멱등 범위·분기별 earning·현재 앱 액션 |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentChargeService`, `ServiceAssignmentRefund`, `ServiceAssignmentCharge`, `AssignmentRefundType`, `CuratedProviderEarningPort`. 앱: `event_assignments_screen.dart`, `service_assignment_api.dart`, `service_assignment_repository.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -88,74 +77,6 @@
    - beneficiary가 실제 출석자면 `ASSIGNMENT_BENEFICIARY_ATTENDED` 거부
    - SELF_PAID rows를 `NOSHOW_FORFEIT`으로 전환 (돈/earning 불변)
 4. F3 완납 게이트가 NOSHOW_FORFEIT beneficiary를 `expectedBeneficiaries`에 더해 "출석 면제·커버됨"으로 인정 → 정산 통과, 제공자 수령.
-
-## 4. 서버 계약
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/refund`
-
-| 항목 | 값 |
-|---|---|
-| 인증/권한 | 필수, 호스트/co-host |
-| Request Body | `ServiceAssignmentRefundParam` — `beneficiaryUserId: long` |
-| 응답 | `void` (200) |
-| Idempotency-Key | 없음. 성공 뒤 coverage가 삭제되어 같은 대상 재호출은 동일 결과 재생이 아니라 도메인 에러 |
-| 가드 | CONFIRMED·money rows 존재·부분환불 이력 없는 행만·FREE_EXCLUDED 대상 아님 |
-| Side effect | 납부자(payer)에게 전액 복원 + earning REFUNDED + coverage 행 DELETE |
-| 에러 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`, `ASSIGNMENT_REFUND_AMBIGUOUS` |
-
-### `POST .../partial-refund` (Idempotency-Key 필수)
-
-| 항목 | 값 |
-|---|---|
-| Request Header | `Idempotency-Key: String` (필수, Reserve-Before-Execute) |
-| Request Body | `ServiceAssignmentPartialRefundParam` — `beneficiaryUserId: long`, `partialAmount: long` |
-| 응답 | `ServiceAssignmentRefundVo` — `refundType`, `recoveredAmount`, `refundTransactionId` (`hostRecoveryTransactionId`는 엔티티에만 존재, VO 미노출) |
-| 가드 | CONFIRMED·SELF_PAID·단일 money row·over-refund 불가 |
-| Side effect | 참가자 partialAmount 복원 + 호스트 지갑 partialAmount 차감 + `service_assignment_refund` INSERT |
-| 에러 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_REFUND_AMBIGUOUS`, `ASSIGNMENT_REFUND_EXCEEDS_CHARGE`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING` |
-
-### `POST .../clawback` (Idempotency-Key 필수)
-
-| 항목 | 값 |
-|---|---|
-| Request Header | `Idempotency-Key: String` (필수) |
-| Request Body | `ServiceAssignmentClawbackParam` — `beneficiaryUserId: long` |
-| 응답 | `ServiceAssignmentRefundVo` — `refundType=CLAWBACK`, `originalGross`, `originalNet`, `recoveredAmount`, `refundTransactionId` |
-| 가드 | SETTLEMENT_LOCKED·money-backed coverage·earning PENDING/APPROVED/PAID·CLAWBACK audit 행 부재·단일 money row |
-| Side effect | 납부자 gross 복원. 미지급 earning은 REFUNDED/회수 0, PAID는 provider net 회수(clamp)+부족분 미수금. `service_assignment_refund` INSERT |
-| 에러 | `ASSIGNMENT_NOT_SETTLED`, `ASSIGNMENT_REFUND_AMBIGUOUS`, `ASSIGNMENT_REFUND_ALREADY_PROCESSED`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING` |
-
-### `POST .../noshow-forfeit`
-
-| 항목 | 값 |
-|---|---|
-| Request Body | `ServiceAssignmentRefundParam` — `beneficiaryUserId: long` |
-| 응답 | `void` (200) |
-| Idempotency-Key | 없음. 이미 모든 money row가 NOSHOW_FORFEIT이면 성공 no-op |
-| 가드 | CONFIRMED·회차 종료·SELF_PAID rows 존재·실제 노쇼(출석자면 거부) |
-| Side effect | coverage_type SELF_PAID → NOSHOW_FORFEIT 전환 (돈/earning 불변) |
-| 에러 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_EVENT_NOT_ENDED`, `ASSIGNMENT_BENEFICIARY_ATTENDED`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING` |
-
-### AssignmentRefundType enum(소스: `AssignmentRefundType.java`)
-
-| 값 | 의미 |
-|---|---|
-| `PARTIAL_HOST_ABSORBED` | 정산 전 부분환불. 제공자 전액 유지, 호스트가 참가자 복원액과 같은 금액 부담 |
-| `CLAWBACK` | 정산 잠금 후 환불. 미지급은 earning 취소, PAID는 provider net 회수(clamp)·부족분 미수금 |
-
-## 5. 프론트 계약
-
-| 항목 | 구현 |
-|---|---|
-| Screen | `EventAssignmentsScreen` |
-| 환불 대상 선택 | `CoverageBeneficiaryPickerSheet.show(eventId, assignmentId)` — 기본: 전체 coverage |
-| 부분환불/노쇼 대상 선택 | `CoverageBeneficiaryPickerSheet.show(filter: CoveragePickerFilter.selfPaidOnly)` |
-| 멱등키 | `ServiceAssignmentRepository.partialRefund/clawback`에서만 `ClientMessageId.generate()` 자동 발급. refund/noshow-forfeit에는 키 없음 |
-| refund Repository | `Result<void>` |
-| partial-refund Repository | `Result<ServiceAssignmentRefundVo>` |
-| clawback Repository | `Result<ServiceAssignmentRefundVo>` |
-| noshow-forfeit Repository | `Result<void>` |
-| 노출 조건 | 환불·부분환불·노쇼귀속: 배정 `CONFIRMED`만 / 정산후환불: `settlementLocked`만 |
 
 ## 6. 상태/권한 매트릭스
 

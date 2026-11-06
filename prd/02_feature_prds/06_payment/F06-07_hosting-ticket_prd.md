@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/06_payment/F06-07_hosting-ticket -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-07_hosting-ticket`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 프라이빗 모임 개최 권리(호스팅 티켓)를 보유 포인트로 구매한다. 단가는 서버 상수 `TICKET_PRICE = 3,000원`이며 사용자는 한 번에 1~100장 구매 가능. 결제는 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)`로 차감(무료 미허용 시 유료만 차감) 후 6개월 만료 티켓 1행을 생성. 보유 티켓은 만료 전 + 잔여 수량 > 0인 항목만 노출.
@@ -18,32 +13,16 @@
 - 프라이빗 모임 개최 시작 화면(Unit 09) ▶ 티켓 부족 시 본 화면으로 분기
 - 결제 완료 모달의 후속 추천 (호스트 활동 시작 가이드)
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/06_payment/F06-07_hosting-ticket/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/06_payment/F06-07_hosting-ticket/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/06_payment/F06-07_hosting-ticket/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/06_payment/F06-07_hosting-ticket/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `HostingTicketController`, `HostingTicket`, `HostingTicketService`. 앱: `hosting_ticket_screen.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `GET /api/v1/hosting-tickets` | `HostingTicketController#getAvailableTickets` | [HostingTicketController.java:32](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketController.java#L32) |
-| `POST /api/v1/hosting-tickets/purchase` | `HostingTicketController#purchaseTicket` | [HostingTicketController.java:47](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketController.java#L47) |
+서버 창구: `HostingTicketController#getAvailableTickets`, `HostingTicketController#purchaseTicket`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 ### 호스팅 티켓 (`hosting_ticket_screen.dart`)
 
 - **사용자가 보는 것**:
@@ -51,88 +30,26 @@
   - 활성 티켓이 있으면 "현재 티켓 / N 이용중 / 다음 결제일: -" 배너 (#E8F5E9 r=12 p=16)
   - 만료 임박 배너 (3일/7일 이내 차등 색상 — `_getTicketExpirationInfo`)
   - 만료된 티켓 안내 (gray50 배경, "만료된 티켓 N건이 있습니다")
-  - 티어 카드 (UI/UX 20에 정의된 3개 티어 — Basic 3,000원 / Standard 8,000원 / Premium 15,000원). **클라가 자체 정의** (서버 `hosting-tickets` API는 보유 티켓 목록만 반환, 티어 메타는 클라 하드코딩 `TicketTier.tiers`)
-  - 각 카드: 티켓명 + 가격 + 유효기간 + 혜택 체크리스트 + "구매하기" 버튼
+  - 남은 장수와 가장 먼저 끝나는 만료일. 값은 1장 3,000원 하나이고 등급 카드는 없다.
 - **사용자가 할 수 있는 액션**:
   - 풀투리프레시 ▶ `ref.refresh(hostingTicketNotifierProvider.future)` ▶ `GET /api/v1/hosting-tickets`
-  - 티어 카드 "구매하기" 탭 ▶ `_showPurchaseDialog(...)` → `TicketPurchaseDialog`
-  - 다이얼로그 "구매" 탭 ▶ `hostingTicketNotifier.purchase(1)` ▶ `POST /api/v1/hosting-tickets/purchase { count: 1 }`
+  - 수량을 정해 구매 확인 창을 연다.
+  - 확인 창 "구매" 탭 ▶ 고른 수량으로 구매하고 "이벤트 개설권 N장을 구매했습니다"를 보여 준다.
   - 잔액 부족(`INSUFFICIENT_PAID_BALANCE`) ▶ 다이얼로그/토스트 안내 → 충전 화면 분기
   - 다이얼로그 "취소" ▶ 모달 닫기
 - **상태 분기**:
   - 로딩: `SkeletonLoader(preset: SkeletonPreset.list)`
   - 에러: `Center(... '티켓 정보를 불러올 수 없습니다' + 다시 시도)`
-  - 빈 보유 상태: 활성 배너/만료 배너 없음, 티어 카드만 노출
+  - 빈 보유 상태: 활성 배너/만료 배너 없음, 구매 영역만 노출
 - **모달/시트/네비게이션**:
-  - `TicketPurchaseDialog(tier, balance, onConfirm)` — 잔액 비교 + 결제 확인
+  - 구매 확인 창: 수량, 금액, 잔액 비교.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-프라이빗 모임 개최 권리(호스팅 티켓)를 보유 포인트로 구매한다. 단가는 서버 상수 `TICKET_PRICE = 3,000원`이며 사용자는 한 번에 1~100장 구매 가능. 결제는 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)`로 차감(무료 미허용 시 유료만 차감) 후 6개월 만료 티켓 1행을 생성. 보유 티켓은 만료 전 + 잔여 수량 > 0인 항목만 노출.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | /api/v1/hosting-tickets | HostingTicketController#getAvailableTickets | required | 사용자의 사용 가능 티켓 목록 |
-| POST | /api/v1/hosting-tickets/purchase | HostingTicketController#purchaseTicket | required | 포인트 차감 후 티켓 구매 (201) |
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **상수**: `HostingTicketService.TICKET_PRICE = 3000L` (서버 단가). 다른 단가는 본 코드에 없음.
-- **만료 정책**: 구매 시점 + 6개월 (`now.plusMonths(6)`)
-- 핵심 도메인 객체:
-  - `HostingTicket` (`payment/model/HostingTicket.java`) — userId, totalCount, remainCount, purchasedAt, expiresAt, createdAt/updatedAt
-  - 사용/반환 메서드: `useOne()` (잔량 -1), `restoreOne()` (반환 +1)
-- 추가 서비스: `HostingTicketExpirationScheduler` — 만료 티켓을 주기적으로 정리 (본 단위 외)
-
-> **유료/무료 분리정산 — free-burn** (2026-05-24 반영): 호스팅 티켓은 수취자가 없는 **플랫폼 매출**이라 사용처 분류상 **free-burn**이다. 결제는 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)`로 차감된다. opt-in으로 무료 결제를 허용하면 무료분은 수취자 없이 지갑에서 차감(소각)된다(별도 수취자에게 전파되지 않음). **단 spend 시점 프로모션 비용(PROMOTION_EXPENSE) 분개는 현재 미구현 — followup.** 정본은 정책 PRD §2.5.
-
-### 의존 단위 / 외부 시스템
-
-- **Private Date Unit (09)**: 호스팅 티켓은 프라이빗 모임 개최 시 `useTicket(userId)`로 1장 소비, 모임 취소 시 `releaseTicket`으로 복원. 본 단위는 구매·조회만 다룸.
-- 외부: 없음. PG 직접 호출 없음. (잔액 부족 시 사용자가 충전 → 잔액 보충 후 본 API 재호출)
-- 알림: 없음 (UI/UX 19~20에 명시된 알림 없음)
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 프로필/지갑 메뉴 ▶ "호스팅 티켓" 진입 (`/profile/wallet/hosting-tickets`)
-- 프라이빗 모임 개최 시작 화면(Unit 09) ▶ 티켓 부족 시 본 화면으로 분기
-- 결제 완료 모달의 후속 추천 (호스트 활동 시작 가이드)
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 | Screen 파일 | 역할 |
-|---|---|---|
-| `/profile/wallet/hosting-tickets` | `payment/screens/hosting_ticket_screen.dart` | 호스팅 티어 카드 목록 + 구매 다이얼로그 |
-
-### 화면별 구성 요소 & 액션
-
-### 호스팅 티켓 (`hosting_ticket_screen.dart`)
-
-- **사용자가 보는 것**:
-  - AppBar `호스팅 티켓`
-  - 활성 티켓이 있으면 "현재 티켓 / N 이용중 / 다음 결제일: -" 배너 (#E8F5E9 r=12 p=16)
-  - 만료 임박 배너 (3일/7일 이내 차등 색상 — `_getTicketExpirationInfo`)
-  - 만료된 티켓 안내 (gray50 배경, "만료된 티켓 N건이 있습니다")
-  - 티어 카드 (UI/UX 20에 정의된 3개 티어 — Basic 3,000원 / Standard 8,000원 / Premium 15,000원). **클라가 자체 정의** (서버 `hosting-tickets` API는 보유 티켓 목록만 반환, 티어 메타는 클라 하드코딩 `TicketTier.tiers`)
-  - 각 카드: 티켓명 + 가격 + 유효기간 + 혜택 체크리스트 + "구매하기" 버튼
-- **사용자가 할 수 있는 액션**:
-  - 풀투리프레시 ▶ `ref.refresh(hostingTicketNotifierProvider.future)` ▶ `GET /api/v1/hosting-tickets`
-  - 티어 카드 "구매하기" 탭 ▶ `_showPurchaseDialog(...)` → `TicketPurchaseDialog`
-  - 다이얼로그 "구매" 탭 ▶ `hostingTicketNotifier.purchase(1)` ▶ `POST /api/v1/hosting-tickets/purchase { count: 1 }`
-  - 잔액 부족(`INSUFFICIENT_PAID_BALANCE`) ▶ 다이얼로그/토스트 안내 → 충전 화면 분기
-  - 다이얼로그 "취소" ▶ 모달 닫기
-- **상태 분기**:
-  - 로딩: `SkeletonLoader(preset: SkeletonPreset.list)`
-  - 에러: `Center(... '티켓 정보를 불러올 수 없습니다' + 다시 시도)`
-  - 빈 보유 상태: 활성 배너/만료 배너 없음, 티어 카드만 노출
-- **모달/시트/네비게이션**:
-  - `TicketPurchaseDialog(tier, balance, onConfirm)` — 잔액 비교 + 결제 확인
+- 개설권은 프라이빗 모임을 열 때 1장 쓰고, 모임이 취소되면 그 모임이 쓴 개설권으로 되돌린다.
+- 값은 1장 3,000원 하나이고 등급은 없다. 한 번에 1장 이상 100장 이하로 산다.
+- 유료 잔액으로만 산다. 무료 포인트는 쓰지 못한다.
+- 돈 이동이 닫혀 있으면 구매 영역만 안내로 바뀌고, 보유 개설권과 만료 안내는 그대로 보인다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -144,15 +61,6 @@
 | S4 | 만료된 티켓 안내 | 사용 안 한 티켓이 만료됨 | UI 안내만. 환불 없음. |
 | S5 | 다른 도메인에서 티켓 사용 | 프라이빗 모임 개최 시작 화면(Unit 09)에서 티켓 1장 자동 사용 | F06-07 단위 입장에서는 외부 호출 영향만 받음. 직접 노출되는 화면은 본 화면. |
 | S6 | 비정상 count (101장 시도) | 잘못된 클라이언트 | 변경 없음. |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
 ## 8. Gap / Risk
 
@@ -170,9 +78,3 @@
 - **AC-04. 만료된 티켓 안내**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then UI 안내만. 환불 없음.
 - **AC-05. 다른 도메인에서 티켓 사용**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then F06-07 단위 입장에서는 외부 호출 영향만 받음. 직접 노출되는 화면은 본 화면.
 - **AC-06. 비정상 count (101장 시도)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변경 없음.
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

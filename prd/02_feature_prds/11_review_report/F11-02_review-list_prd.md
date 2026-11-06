@@ -3,10 +3,7 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- updated: 2026-06-05; delta: 2026-06-04 dossier 04 §4-3 반영 (ReviewVo 5 신규 필드, 호스트 모더레이션 CTA, 숨김 표시) -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/11_review_report/F11-02_review-list`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 
 ## 1. 결론
 
@@ -20,17 +17,13 @@
 
 `ReviewListScreen`은 `eventId` 또는 `userId` 둘 중 하나만 받으며 둘 다 null이면 assert 실패.
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
+계약의 정본은 코드다. 서버: `ReviewController`, `ReviewVo`, `ReviewService`, `UserService`. 앱: `review_list_screen.dart`, `routes.dart`, `review_card.dart`.
 
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/11_review_report/F11-02_review-list/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/11_review_report/F11-02_review-list/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/11_review_report/F11-02_review-list/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/11_review_report/F11-02_review-list/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-
+<!-- source-references:start -->
+서버 창구: `ReviewController#getReviewsByEvent`, `ReviewController#getReviewsByUser`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
 ## 2026-10-29 현재 계약 대조
 
@@ -53,8 +46,6 @@
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 1. 이벤트별 진입: `eventReviewListNotifierProvider(eventId)` watch
    → `ReviewRepository.getReviewsByEvent(eventId)`
    → `ReviewApi.getReviewsByEvent` (`GET /api/v1/events/{eventId}/reviews`)
@@ -66,118 +57,14 @@
 3. 풀투리프레시: 각 provider invalidate → 빌드 함수 재실행 → 동일 GET 재호출.
 4. 신고 클릭: F11-04 라우트로 push (별도 API 호출은 신고 화면에서 발생).
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-이벤트 단위 또는 사용자 단위로 작성·수신된 리뷰 목록을 단일 리스트로 반환하는 두 개의 GET 엔드포인트다. 응답은 페이지 응답이 아닌 단순 `List<ReviewVo>`이며, 평균 별점·총 개수·별점 분포는 클라이언트가 응답으로부터 산출한다. N+1 방지를 위해 `Review.reviewerId` 집합에 대해 한 번에 사용자 기본정보를 조회(`UserService.getUserBasicInfoMap`)한 뒤 매퍼가 닉네임/이미지 필드를 채워준다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/events/{eventId}/reviews` | `ReviewController#getReviewsByEvent` | 정책상 공개(가드 미강제) | 이벤트 작성된 리뷰 전체 리스트 |
-| GET | `/api/v1/users/{userId}/reviews` | `ReviewController#getReviewsByUser` | 정책상 공개 | 해당 사용자가 받은 리뷰 전체 리스트 |
-
-> 서비스에는 페이지네이션 지원 오버로드(`getReviewsByEvent(long, Pageable)` / `getReviewsByUser(long, Pageable)`)가 정의되어 있으나 컨트롤러에서 노출되지 않는다. (서비스 구현은 존재, 컨트롤러 미노출)
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **Entity** `Review` (재사용, F11-01 참조). 조회 조건은 `deleted_at IS NULL` 필터.
-- 매퍼: `ReviewMapper.updateReviewToVo(Review)` 단일 변환 + `updateReviewToVoWithUserInfo(Review, Map<Long, String[]>)` 닉네임/이미지 채움.
-- 평균 별점·분포·정렬은 본 단위 백엔드에서 계산하지 않는다 (클라이언트 책임).
-
-**ReviewVo 신규 필드** (소스: `review/vo/ReviewVo.java:10-27`):
-
-| 필드 | 타입 | nullable | 비고 |
-|---|---|---|---|
-| `temporarilyHidden` | boolean | N | 호스트 임시 숨김 여부 (default false) |
-| `hiddenReasonCode` | String | Y | `ReviewHideReasonCode.name()` — HARASSMENT/DEFAMATION/SPAM/OFF_TOPIC/FAKE_REVIEW/OTHER |
-| `hiddenReasonText` | String | Y | 호스트 자유 기재 |
-| `hiddenAt` | LocalDateTime | Y | 숨김 시각 |
-| `reply` | ReviewReplyVo | Y | 호스트 답변. 없으면 null. |
-
-`getReviewsByEvent` / `getReviewsByUser` 응답에 항상 포함됨. N+1 방지: `attachReplies()` 메서드가 답변 배치 조회 1회 + 호스트 닉네임 배치 조회 1회 (`ReviewService.java:223-246`).
-
-상세 모더레이션(답변/숨김) 흐름은 **F11-07** 참조.
-
-### 의존 단위 / 외부 시스템
-
-- **Account 도메인**: `UserService.getUserBasicInfoMap(List<Long>)` — 닉네임/프로필 이미지 일괄 조회 (호출만)
-- **F11-01 / F11-03**: 동일한 `Review` 엔티티 라이프사이클을 공유. 본 기능은 INSERT/UPDATE/DELETE를 일으키지 않음.
-- 외부 시스템: 없음
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 이벤트 상세(F03 도메인)의 "리뷰" 탭/액션 → `context.push('/reviews?eventId=$id')`
-- 사용자 프로필(F-프로필)의 "리뷰" 탭 → `context.push('/reviews?userId=$id')`
-- F11-01 리뷰 작성 완료 후 호출자가 invalidate 또는 push로 이동
-
-`ReviewListScreen`은 `eventId` 또는 `userId` 둘 중 하나만 받으며 둘 다 null이면 assert 실패.
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | 라우트 상수 | Screen 파일 | 역할 |
-|---|---|---|---|
-| `/reviews?eventId=...&userId=...` | `Routes.reviewList` (`core/router/routes.dart:170`) | `presentation/review/screens/review_list_screen.dart` | 이벤트별/사용자별 리뷰 목록 분기 |
-
-내부적으로 `ReviewListScreen`이 `eventId != null`이면 `_EventReviewList`, 아니면 `_UserReviewList`로 분기한다.
-
-### 화면별 구성 요소 & 액션
-
-### 이벤트별 리뷰 목록 (`_EventReviewList`)
-
-- **사용자가 보는 것**:
-  - `CommunityAppBar(title: '리뷰')`
-  - 헤더 영역(첫 ListView 항목): `RatingSummaryWidget(averageRating, totalCount, distribution)` — 큰 평균 숫자 + 별 + "리뷰 N개" + 5점→1점 분포 막대그래프 (warning500 색상)
-  - 정렬 라벨 "최신순 ▼" (현재 정적 텍스트, 실제 정렬 변경 미구현)
-  - 리뷰 카드 리스트 (`ReviewCard`): 작성자 아바타/닉네임, 별점, 상대 시간, 본문 텍스트, 우측 신고 아이콘
-  - **임시 숨김 상태**: `review.temporarilyHidden=true`이면 본문 대신 `_HiddenReviewNotice(reasonText)` 표시, `_HiddenBadge(reasonCode)` 뱃지 노출 (`review_card.dart:44-48, 189-196`)
-  - **호스트 답변**: `review.reply != null && reply.content.isNotEmpty`이면 `_HostReply(reply)` 녹색 카드 노출
-- **사용자가 할 수 있는 액션**:
-  - 풀투리프레시 → `ref.invalidate(eventReviewListNotifierProvider(eventId))`
-  - 리뷰 카드의 신고 아이콘 탭 → `context.push('/report', extra: {'targetType': 'REVIEW', 'targetId': review.id})` → F11-04
-  - (정렬 옵션 탭 — 라벨은 있으나 동작은 미구현)
-  - **호스트 전용 더보기 CTA** (`review_list_screen.dart:262-264`): `review.revieweeId == currentUserId` 조건으로 활성화. 더보기 메뉴: "답변하기" / "임시 숨김" / "숨김 해제". 상세 흐름은 F11-07 참조.
-- **상태 분기**:
-  - 데이터: 위 구성 그대로
-  - 빈 상태: `AppEmptyState(icon: Icons.rate_review_outlined, title: '아직 리뷰가 없습니다')`
-  - 로딩: `CircularProgressIndicator`
-  - 에러: `AppErrorState.fromError(error, onRetry)` (재시도 시 invalidate)
-
-### 사용자별 리뷰 목록 (`_UserReviewList`)
-
-- **사용자가 보는 것**: 평균 별점 카드 + (분포 차트 없음) + 사용자가 받은 리뷰 카드 리스트. 리뷰 카드는 신고 아이콘 미노출(`onReport` 미전달).
-- **액션**: 풀투리프레시만. 신고는 카드의 `onReport`가 null이라 아이콘 자체가 보이지 않음.
-- **상태 분기**: 동일 (loading/error/empty + 데이터)
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 이벤트별 진입: `eventReviewListNotifierProvider(eventId)` watch
-   → `ReviewRepository.getReviewsByEvent(eventId)`
-   → `ReviewApi.getReviewsByEvent` (`GET /api/v1/events/{eventId}/reviews`)
-   → 성공: `List<ReviewVo>`. 클라이언트가 `totalCount`/`avgRating`/`distribution` 계산.
-2. 사용자별 진입: `userReviewListNotifierProvider(userId)` watch
-   → `ReviewRepository.getReviewsByUser(userId)`
-   → `ReviewApi.getReviewsByUser` (`GET /api/v1/users/{userId}/reviews`)
-   → 성공: `List<ReviewVo>`. `distribution` 미사용.
-3. 풀투리프레시: 각 provider invalidate → 빌드 함수 재실행 → 동일 GET 재호출.
-4. 신고 클릭: F11-04 라우트로 push (별도 API 호출은 신고 화면에서 발생).
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- 평균 별점 = `reviews.fold(rating합) / count` — 클라이언트 산출
-- 별점 분포 맵 = 1~5 별 별 개수 — 클라이언트 산출 (이벤트 모드만)
-- 정렬 라벨 "최신순 ▼" — 정적 텍스트, 동작은 서버 응답 순서에 의존(서버는 정렬 보장 미명시 — `findByEventIdAndDeletedAtIsNull` 메서드 시그니처 기반)
-- 빈 상태 카피("아직 리뷰가 없습니다")
-- 상대 시간 포맷("N분 전"/"N시간 전"/"N일 전"/"MM/DD") — `ReviewCard._formatDate`
-- 사용자별 모드에서 분포 막대 미표시 정책
-- 신고 아이콘은 이벤트 모드에서만 노출
-- 한 번 호출로 전체 리스트를 받기 때문에 페이지네이션 미사용 (서버 페이지 오버로드는 컨트롤러 미노출)
-- 풀투리프레시 → `ref.invalidate`로 단순 재요청
-- AppBar는 단일 타이틀 "리뷰" (사용자/이벤트 구분 없음)
+- 이벤트별 목록은 누구나 볼 수 있고, 사용자별 목록은 그 사용자가 받은 후기만 보여 준다. 삭제된 후기는 나오지 않는다.
+- 한 번에 전체를 받고 쪽 나누기는 없다. 평균 별점과 별점 분포는 앱이 받은 목록으로 계산하며, 분포 막대는 이벤트별 목록에만 있다.
+- 정렬 선택은 아직 없고 서버가 주는 순서를 따른다.
+- 임시 숨김된 후기는 본문 대신 숨김 안내와 사유 배지를 보여 준다. 호스트 답변이 있으면 후기 아래에 답변 카드가 붙는다.
+- 신고 아이콘은 이벤트별 목록에서만 보인다. 후기를 받은 호스트에게만 답변·숨김 메뉴가 보인다.
+- 목록은 아래로 당겨 새로 고친다. 후기가 없으면 빈 상태 안내가 나온다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -189,15 +76,6 @@
 | S4 | 리뷰 카드의 신고 아이콘 탭 (이벤트별 모드 한정) | 이벤트별 모드에서 리뷰 카드가 보이는 상태. | 신고 화면으로 이동 (이 시나리오에서 신고 자체는 F11-04에서 다룸). |
 | S5 | 사용자 프로필에서 받은 리뷰 보기 | 프로필의 "리뷰" 탭 진입. | 화면이 채워짐. |
 | S6 | 에러 — 서버 500 | 진입. | 정상 응답이 오면 데이터 화면으로 전환, 실패 지속 시 에러 화면 유지. |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
 ## 8. Gap / Risk
 
@@ -214,9 +92,3 @@
 - **AC-04. 리뷰 카드의 신고 아이콘 탭 (이벤트별 모드 한정)**: Given 이벤트별 모드에서 리뷰 카드가 보이는 상태. When 사용자가 해당 흐름을 실행하면 Then 신고 화면으로 이동 (이 시나리오에서 신고 자체는 F11-04에서 다룸).
 - **AC-05. 사용자 프로필에서 받은 리뷰 보기**: Given 프로필의 "리뷰" 탭 진입. When 사용자가 해당 흐름을 실행하면 Then 화면이 채워짐.
 - **AC-06. 에러 — 서버 500**: Given 진입. When 사용자가 해당 흐름을 실행하면 Then 정상 응답이 오면 데이터 화면으로 전환, 실패 지속 시 에러 화면 유지.
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

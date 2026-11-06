@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 > 최종 갱신: 2026-06-06 (EVENT_HOST_RESTRICT 가드 6경로 확장·DATE_PROFILE_BLOCK 실집행·`GET /api/v1/users/me/sanctions` 신설·PlatformSanction admin grant/revoke 배선 확인(R-8)·D-6 강퇴 구독 정리는 무코드 처분(통념 정정)). 이전: 2026-06-05 (FORCED_REMOVE 실효 해소, 만료 스케줄러 활성, read-time 필터, PlatformSanction 신규, EventApplyRestrictionGuard 신규)
 
 ## 1. 결론
@@ -12,30 +11,9 @@
 
 판정: **클럽-스코프 제재 생성·철회·잠금 토글·이벤트 신청 차단 연동의 정합은 닫혀 있다**. 2026-06-06에 플랫폼 전역 제재의 집행 사각 3건이 추가로 닫혔다: (1) `EVENT_HOST_RESTRICT`가 일반 이벤트 생성에만 적용되던 것을 이벤트 생성 전 경로 6곳(클럽 이벤트·클럽 레거시 반복·정기모임 생성·정기모임 세션 3경로 단일관문·플랜 기반·일반 반복 자식)으로 확장, (2) `DATE_PROFILE_BLOCK`을 데이팅 프로필 생성·활성 전환에서 실집행(`DATE_PROFILE_BLOCKED_BY_SANCTION` 403, 1600028 — 비활성화는 허용), (3) `GET /api/v1/users/me/sanctions`(`UserSanctionController`) 신설로 사용자가 본인 활성 전역 제재를 확인할 수 있다(축약 VO `UserPlatformSanctionVo` — 내부 처리자/철회 필드 미노출). 잔여 Risk는 (a) NOTICE/ROLE_RESTRICT의 실효(역할 변경/공지 발송)가 outbox consumer 위임이고, (b) **기활성 데이팅 프로필의 매칭 노출** — DATE_PROFILE_BLOCK 부여 시 프로필 신규 생성·활성 전환은 막지만 이미 활성인 프로필의 즉시 비활성화는 수행하지 않는다(신규 후속 — 후속 결정 대상). **(과거 Risk였던 "강퇴 후 유료 클럽 구독 정리 미확인"은 D-6 조사에서 허구로 정정됐다 — ClubSubscription은 오너 전용이라 멤버가 구독을 보유하는 구조 자체가 없고, 멤버 금전 결속(가입비)은 기존 전액 환불로 이미 완결. §8·§10 참조.)**
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `WarningAdminActionController.java#applyNotice/applyEventRestrict/applyRoleRestrict/applyForcedRemove/revokeSanction/manualLock/manualUnlock` | 6유형, OWNER 전용 forced-remove, Idempotency-Key |
-| Backend Service | `WarningSanctionService.java#apply/revoke/isApplyRestricted/listActive/listActiveByMember/closeExpiredSanctions` | OWNER 검증, manual_lock 토글, 만료 종료, 신청 차단 |
-| Backend Service | `WarningMemberSummaryService#setManualLock` | manual_lock 즉시 반영 |
-| Backend Param | `WarningSanctionAddParam`, `WarningSanctionRevokeParam` | `memberId@NotNull`, `sanctionType@NotNull`, `reason@NotBlank`, `startAt?`, `endAt?`, `relatedGrantLedgerIds?` |
-| Backend VO | `WarningSanctionVo.java` | 응답 필드, status/actorRole |
-| Backend Enum | `WarningSanctionType`(6값), `WarningSanctionStatus`(ACTIVE/ENDED/REVOKED), `WarningActorRole` | 유형/상태/역할 |
-| Backend Error | `ErrorCode.java` | `WARNING_SANCTION_OWNER_ONLY`, `WARNING_SANCTION_NOT_FOUND`, `WARNING_REASON_REQUIRED` |
-| Backend DDL | `V1__init.sql` `warning_sanction` | `start_at`/`end_at`/`status`/`related_grant_ledger_ids`, 인덱스 |
-| Backend Scheduler | `warning/scheduler/WarningSanctionExpiryScheduler.java` | 만료 종료 스케줄러 04:00 KST 활성, ShedLock PT20M |
-| Backend Scheduler | `warning/scheduler/PlatformSanctionExpiryScheduler.java` | 플랫폼 제재 만료 스케줄러 04:10 KST 활성, ShedLock PT20M |
-| Backend Event Listener | `warning/event/WarningForcedRemoveEventListener.java` | AFTER_COMMIT 강퇴 집행, 실패 시 audit+WARN+OperatorAlert |
-| Backend Service | `warning/service/EventApplyRestrictionGuard.java` | 클럽-스코프+플랫폼 전역 2축 통합 가드, 17개 진입점 (EVENT_APPLY 전용) |
-| Backend Service | `warning/service/PlatformSanctionService.java` | 플랫폼 전역 제재 CRUD, `isRestricted`/`listActiveByUser`/`listActiveSelfByUser`/`grant`/`revoke`/`closeExpiredSanctions` |
-| Backend Controller (신규) | `warning/controller/UserSanctionController.java` | `GET /api/v1/users/me/sanctions` — 본인 활성 전역 제재 조회 |
-| Backend VO (신규) | `warning/vo/UserPlatformSanctionVo.java` | 축약 VO (내부 처리자/철회 필드 미노출) |
-| Backend (EVENT_HOST_RESTRICT 6경로) | `ClubEventService.java`·`ClubRecurringEventService.java`·`RecurringEventCreateService.java`·`PlanService.java`·`RegularMeetingService.java`(생성+세션 단일관문) | 이벤트 생성 전 경로 호스트 제한 가드 |
-| Backend (DATE_PROFILE_BLOCK 집행) | `privatedate/service/DateProfileService.java` | 프로필 생성·활성 전환 차단 (`DATE_PROFILE_BLOCKED_BY_SANCTION` 1600028) |
-| Frontend API | `warning_admin_action_api.dart#applyNotice/applyEventRestrict/applyRoleRestrict/applyForcedRemove/revokeSanction/manualLock/manualUnlock` | 경로/메서드/Idempotency-Key |
-| Frontend Screen | `admin/warning_sanction_screen.dart`, `widgets/warning_forced_remove_dialog.dart`, `warning_sanction_action_row.dart` | 제재 집행 UI |
-| Verification | (해당 없음) | 전용 자동화 테스트 미확인 |
+계약의 정본은 코드다. 서버: `WarningAdminActionController`, `UserSanctionController`, `WarningSanctionService`, `WarningSanctionVo`, `ErrorCode`, `WarningSanctionExpiryScheduler`, `PlatformSanctionExpiryScheduler`, `WarningForcedRemoveEventListener`, `EventApplyRestrictionGuard`, `PlatformSanctionService`. 앱: `warning_sanction_screen.dart`, `warning_admin_action_api.dart`, `warning_forced_remove_dialog.dart`, `warning_sanction_action_row.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -51,53 +29,6 @@
 4. 철회: `POST /sanctions/{sanctionId}/revoke`(`WarningSanctionRevokeParam`) → ACTIVE만(`WARNING_SANCTION_NOT_FOUND`), FORCED_REMOVE는 OWNER만 → `status=REVOKED`, MANUAL_LOCK 철회 시 unlock + outbox `WarningSanctionRevoked`.
 5. **이벤트 신청 차단**: 클럽-스코프(`WarningSanctionService.isApplyRestricted`) + 플랫폼 전역(`PlatformSanctionService.isRestricted(EVENT_APPLY_RESTRICT)`) 2축 동시 검사가 17개 진입점에 적용 — 16곳은 `EventApplyRestrictionGuard` 경유, `ApplicationService.apply`는 직접 호출(상세는 §4-B 참조).
 6. **만료 자동 종료**: `WarningSanctionExpiryScheduler` 매일 04:00 KST가 `closeExpiredSanctions(now)`를 호출해 `end_at ≤ now`인 ACTIVE 제재를 ENDED로 전이. `listActive`/`listActiveByMember`에도 read-time 필터 적용(스케줄러 실행 전 ~24h 갭 해소).
-
-## 4. 서버 계약
-
-### `POST /sanctions/notice|event-apply-restrict|role-restrict`
-| 항목 | 실제 계약 |
-|---|---|
-| 권한 | `WARNING_REVIEWER` |
-| Body | `WarningSanctionAddParam{memberId@NotNull, sanctionType@NotNull, reason@NotBlank@Size(4000), startAt?, endAt?, relatedGrantLedgerIds?}` |
-| 처리 | `apply` → ACTIVE row, audit + outbox `WarningSanctionApplied` |
-| 응답 | `WarningSanctionVo`, 201 CREATED |
-| 실패 | reason blank → `WARNING_REASON_REQUIRED` |
-
-### `POST /sanctions/forced-remove`
-| 항목 | 실제 계약 |
-|---|---|
-| Header | `Idempotency-Key`(선택) |
-| 권한 재검증 | 서비스가 actorRole==OWNER 아니면 `WARNING_SANCTION_OWNER_ONLY` |
-| 후속 **(해소됨)** | `WarningForcedRemoveEventListener`(AFTER_COMMIT) → `ClubMembershipService.kickMember` → 멤버 삭제+카운트 감소+유료 가입비 환불(RefundReason.KICKED)+강퇴 알림. 실패 시 audit `SANCTION_FORCED_REMOVE_FAILED` + WARN 로그 + OperatorAlert(LOG 채널, idempotencyKey=`SANCTION_FORCED_REMOVE_FAILED:{sanctionId}`) |
-
-### `POST /members/{memberId}/manual-lock` / `manual-unlock`
-| 항목 | 실제 계약 |
-|---|---|
-| 강제 | 컨트롤러가 `sanctionType=MANUAL_LOCK`/`MANUAL_UNLOCK` 설정 |
-| 부수 | `setManualLock(true/false)` → `warning_member_summary.manual_lock` 즉시 토글 |
-
-### `POST /sanctions/{sanctionId}/revoke`
-| 항목 | 실제 계약 |
-|---|---|
-| 조건 | ACTIVE만(아니면 `WARNING_SANCTION_NOT_FOUND`), FORCED_REMOVE 철회는 OWNER |
-| 부수 | `status=REVOKED`, MANUAL_LOCK이면 unlock, outbox `WarningSanctionRevoked` |
-
-### 내부: `closeExpiredSanctions(cutoff)` **(해소됨)**
-| 항목 | 실제 계약 |
-|---|---|
-| 동작 | `status=ACTIVE && end_at ≤ cutoff`를 ENDED로, audit `SANCTION_ENDED`(SYSTEM) |
-| 호출처 | `WarningSanctionExpiryScheduler` — 매일 04:00 KST, ShedLock `lockAtMostFor=PT20M` 활성 동작 |
-
-### 내부: `listActive(clubId)` / `listActiveByMember(clubId, memberId)` **(read-time 만료 필터 추가)**
-| 항목 | 실제 계약 |
-|---|---|
-| 필터 | `.filter(s -> s.getEndAt() == null \|\| s.getEndAt().isAfter(now))` |
-| 경계 | `endAt == now`는 만료 처리 (가드 `isApplyRestricted`와 동일 경계) |
-| 예약 제재 | `startAt > now`인 예약 제재는 필터하지 않음 — 운영진이 예약 제재 확인 가능 |
-
-`WarningSanctionVo`: `id`, `clubId`, `memberId`, `sanctionType`, `actorId`, `actorRole`, `reason`, `startAt`, `endAt`, `status`, `revokedBy`, `revokedReason`, `revokedAt`, `relatedGrantLedgerIds`, `createdAt`.
-
----
 
 ## 4-A. PlatformSanction — 플랫폼 전역 제재 (신규)
 
@@ -209,16 +140,6 @@ public boolean isRestricted(Long clubId, long userId)      // boolean 경로(자
 ※ `ApplicationService.approveApplication`은 Guard 미사용 — 호스트가 승인하는 경로. 참가자 제재 재검사는 `createAttendanceFromApplication`에서 수행.
 
 ---
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `sanction`(`Routes.adminWarningSanction`) + 멤버 상세 액션 |
-| Screen | `WarningSanctionScreen`, `widgets/warning_forced_remove_dialog.dart`, `warning_sanction_action_row.dart` |
-| Repository | `WarningAdminActionRepository` |
-| Retrofit | `WarningAdminActionApi.applyNotice/applyEventRestrict/applyRoleRestrict/applyForcedRemove/revokeSanction/manualLock/manualUnlock` |
-| 멱등 | forced-remove `@Header('Idempotency-Key')` |
 
 ## 6. 상태/권한 매트릭스
 

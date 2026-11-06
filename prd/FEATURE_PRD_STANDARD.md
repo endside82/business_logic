@@ -8,9 +8,9 @@
 
 이 문서는 `business_logic/prd/02_feature_prds`를 다시 작성할 때 적용할 기준이다.
 
-기능 PRD는 기능명과 시나리오 수를 나열하는 문서가 아니다. `backend.md`,
-`frontend.md`, 실제 서버/Flutter 소스를 대조해서 제품, 개발, QA가 같은
-사실을 보고 같은 판단을 내리게 하는 문서여야 한다.
+기능 PRD는 제품 내용만 적는다(2026-11-07 사용자 결정). 결론, 흐름, 제품 규칙, 상태·권한 표, Gap, 수용 기준을 두고, 서버·앱 계약은 코드가 정본이므로 옮겨 적지 않는다. 쓰기 전에는 실제 소스를 읽어 같은 사실을 보고 판단하게 한다.
+
+옛 전환본의 상투 문장(「코드 수정이나 QA 착수 전에는 trace 의 실제 소스를 다시 열어 확인한다」, 「Gap 후보를 그대로 믿지 말고 재현 여부를 확인한다」, 「QA 는 시나리오의 종료 상태를 기준으로 시험이 있는지 확인한다」)은 모든 기능 PRD에 적용하는 규칙으로 여기에 한 번만 둔다.
 
 ## 작성 원칙
 
@@ -53,13 +53,9 @@
 현재 구현이 어느 범위까지 닫혀 있는지 3~5문장으로 쓴다.
 겉보기 화면, 서버 계약, 비동기/외부 운영 축을 구분한다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend | Controller/Service/VO/Enum | endpoint, response, 상태, 에러 |
-| Frontend | API/Repository/Provider/Screen/Widget | route, 상태 분기, CTA |
-| Verification | unit/integration/E2E | 증명하는 동작 |
+계약의 정본은 코드다. 서버 창구·서비스와 앱 화면 이름을 한 줄로 적는다. 서버 창구 줄은 `verification/sync_source_reference_docs.mjs` 가 고친다.
 
 ## 3. 전체 동작 흐름
 
@@ -72,23 +68,15 @@
 5. Flutter가 그 field를 어떤 상태/CTA로 바꾼다.
 6. 부수 효과와 실패 처리를 적는다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-실제 Controller 기준 endpoint, 요청, 응답, enum, 에러, side effect를 적는다.
-
-## 5. 프론트 계약
-
-실제 route, provider, repository, screen, widget, CTA, toast/dialog를 적는다.
+위 흐름과 아래 표에 없는 권한, 상태 전이, 한도와 값, 사용자가 겪는 동작을 짧은 항목으로 적는다.
+엔드포인트, 요청·응답 필드, 라우트, 클래스·파일 이름은 코드가 정본이라 옮겨 적지 않는다. 없으면 절을 두지 않는다.
 
 ## 6. 상태/권한 매트릭스
 
 | 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
 |---|---|---|---|---|
-
-## 7. 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
 
 ## 8. Gap / Risk
 
@@ -116,7 +104,7 @@ Given/When/Then 또는 명확한 관찰 가능 조건으로 쓴다.
 |---|---|
 | Backend source | Controller, Service, VO/DTO, enum 중 해당 기능 관련 파일을 직접 확인했다. |
 | Frontend source | API, Repository, Provider, Screen/Widget 중 해당 기능 관련 파일을 직접 확인했다. |
-| Contract comparison | 서버 응답 필드와 클라이언트 소비 필드를 비교했다. |
+| Contract comparison | 서버 응답 필드와 클라이언트 소비 필드를 비교했다. 비교 결과는 Gap 에만 적는다. |
 | State matrix | 상태/권한별 CTA 또는 차단 동작이 표로 정리되어 있다. |
 | Gap/Risk | 발견된 불일치, 미구현, 미검증이 숨겨지지 않고 등급이 붙어 있다. **모든 행의 등급이 판정값이며, "확정해야 한다"류의 지시문이 등급 칸이나 판단 칸에 남아 있지 않다.** |
 | 출시 상태 | 고객이 체감하는 미완성 항목은 `docs/qa/launch-status.html` 등록부에도 올렸다. 이 PRD는 설계 정본이고 그 등록부가 현재 상태다. |

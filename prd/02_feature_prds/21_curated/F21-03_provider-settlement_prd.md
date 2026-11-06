@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + payment/ + community_app curated/ -->
 
 ## 1. 결론
@@ -36,27 +35,9 @@
 - terms 미리보기는 X 전체에 한 번 반올림하지만 실제 원장은 charge/deposit별로 반올림하므로 합산 결과와
   최대 charge 행 수만큼 원 단위 차이가 날 수 있다. 정산의 진실은 각 earning 원장이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `curated/controller/ServiceAssignmentController.java` | `settle`, `settlementReadiness` 메서드 |
-| Backend Service | `curated/service/ServiceAssignmentSettlementService.java` | `lockAndSettle`, `getSettlementReadiness`, `forfeitOnAssignmentCancel`, `applyDepositIfPresent` |
-| Backend Batch | `curated/service/CuratedSettlementBatchService.java` | `processWeeklySettlements`, cron `0 0 3 * * MON`, Redisson lock `curated:settlement:weekly:lock` |
-| Backend Port | `curated/port/CuratedProviderSettlementPort.java` | `approveAssignmentEarnings(providerUserId, earningIds, validSourceIds)`, `findProvidersWithApprovedServiceEarnings`, `payApprovedServiceEarnings(providerUserId)` |
-| Backend Port | `curated/port/CuratedEventAccessPort.java` | `assertHostOrCoHost`, `assertEventEnded`, `getActualAttendeeIds`, `isEventEnded` |
-| Backend Port | `curated/port/CuratedProviderEarningPort.java` | `applyPrepaymentEarning` (F21-06 계약금 leg) |
-| Backend Entity | `curated/model/ServiceAssignment.java` | `serviceFeeGross`, `engagementId`, `requiresDeposit`, `@Version` 낙관락 |
-| Backend Entity | `curated/model/ServiceAssignmentCharge.java` | `coverageType`, `creatorEarningId`, `transactionId` — earning 링크 완결 검증 기준 |
-| Backend Enum | `curated/constants/AssignmentStatus.java` | CONFIRMED→SETTLEMENT_LOCKED 전이, isTerminal() |
-| Backend Enum | `curated/constants/CoverageType.java` | FREE_EXCLUDED(money 없음), NOSHOW_FORFEIT(출석 면제+커버됨) |
-| Backend VO | `curated/vo/ServiceAssignmentSettlementReadinessVo.java` | `ready/notReadyReason/missingBeneficiaryIds/unexpectedBeneficiaryIds` record |
-| Frontend API | `data/api/service_assignment_api.dart` | `settle`, `settlementReadiness` Retrofit 계약 |
-| Frontend Model | `data/models/curated/service_assignment_settlement_readiness_vo.dart` | `ServiceAssignmentSettlementReadinessVo` Freezed |
-| Frontend Screen | `presentation/curated/screens/event_assignments_screen.dart` | 호스트 정산 CTA |
-| Frontend Screen | `presentation/curated/screens/regular_meeting_bulk_settle_screen.dart` | 정기모임 묶음 정산 화면 |
-| Frontend Provider | `domain/providers/curated/service_assignment_provider.dart` | `SettlementReadinessNotifier`, settle action |
-| Verification | `ServiceAssignmentSettlementServiceTest` 계열 | 집합 동일성 게이트, 보장모드 금액 검증 |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentSettlementService`, `CuratedSettlementBatchService`, `CuratedProviderSettlementPort`, `CuratedEventAccessPort`, `CuratedProviderEarningPort`, `ServiceAssignment`, `ServiceAssignmentCharge`, `AssignmentStatus`, `CoverageType`. 앱: `event_assignments_screen.dart`, `regular_meeting_bulk_settle_screen.dart`, `service_assignment_api.dart`, `service_assignment_settlement_readiness_vo.dart`, `service_assignment_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -116,87 +97,6 @@
    - `SKIPPED_NOT_READY`: 회차 미종료 또는 CONFIRMED 아님
    - `BLOCKED`: 완납 게이트 미충족 — 호스트 조치 필요
    - `FAILED`: 경합/인프라 오류 — 재시도 대상
-
-## 4. 서버 계약
-
-### `GET /api/v1/events/{eventId}/assignments/{assignmentId}/settlement-readiness`
-
-| 항목 | 계약 |
-|---|---|
-| 인증 | 필수 |
-| 권한 | `assertHostOrCoHost(eventId, userId)` |
-| 응답 | `ServiceAssignmentSettlementReadinessVo` 200 |
-| 돈/상태 | 변경 없음(읽기 전용) |
-| `ready=false` 사유 | `ASSIGNMENT_BENEFICIARY_ATTENDED` · `ASSIGNMENT_NOT_FULLY_COLLECTED` · `ASSIGNMENT_FEE_MISMATCH` (우선순위 순) |
-| `missingBeneficiaryIds` | expected − covered, 정렬됨 |
-| `unexpectedBeneficiaryIds` | covered − expected, 정렬됨 |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/settle`
-
-| 항목 | 계약 |
-|---|---|
-| 인증 | 필수 |
-| 권한 | `assertHostOrCoHost(eventId, userId)` |
-| 게이트 1 | `assertEventEnded(eventId)` — 회차 미종료 차단 |
-| 게이트 2 | `status == CONFIRMED` — 아니면 `ASSIGNMENT_NOT_CONFIRMED` |
-| 게이트 3 | terms-managed: 최신 terms 수락(`acceptedTermsVersion == currentTermsVersion`) |
-| 게이트 4 | terms-managed: fulfillment ∈ {FULFILLED, PARTIALLY_FULFILLED} |
-| 게이트 5 | 완납 게이트: `coveredBeneficiaries.equals(expectedBeneficiaries)` |
-| 게이트 6 | earning 링크 완결: 모든 money 행의 `creatorEarningId != null && transactionId != null` |
-| 게이트 7 | 보장모드(non-engagement, serviceFeeGross>0): `Σmoney == serviceFeeGross` |
-| 게이트 8 | engagement: PAID·미적용 계약금 존재 및 `Σparticipant charge + D == X` |
-| 부수 효과 | `transitionTo(SETTLEMENT_LOCKED)` + `approveAssignmentEarnings(...)` (검증형 포트) |
-| 응답 | `Void` 200 |
-| 실패 | `ASSIGNMENT_NOT_CONFIRMED`, `ASSIGNMENT_NOT_FULLY_COLLECTED`, `ASSIGNMENT_BENEFICIARY_ATTENDED`, `ASSIGNMENT_SETTLEMENT_INVALID_EARNING`, `ASSIGNMENT_FEE_MISMATCH`, `ASSIGNMENT_PREPAYMENT_REQUIRED` |
-
-### `ServiceAssignmentSettlementReadinessVo` 필드
-
-| 필드 | Java 타입 | Dart 타입 | 비고 |
-|---|---|---|---|
-| `ready` | `boolean` | `bool` | true=집합 동일+보장모드 정합 |
-| `notReadyReason` | `String?` | `String?` | `ErrorCode` name. ready=true면 null |
-| `missingBeneficiaryIds` | `List<Long>` | `List<int>` | 추가 과금/무료 필요 출석자 |
-| `unexpectedBeneficiaryIds` | `List<Long>` | `List<int>` | 환불/노쇼처리 필요 과커버 |
-
-### `CuratedProviderSettlementPort.approveAssignmentEarnings` 검증 계약
-
-| 검증 항목 | 규칙 |
-|---|---|
-| earning source 타입 | 전부 `SERVICE_ASSIGNMENT` |
-| earning 상태 | 전부 `PENDING` |
-| earning provider | 전부 동일 `providerUserId` |
-| sourceId 링크 | 각 earning의 sourceId ∈ `validSourceIds`(chargeId ∪ prepaymentId) |
-| 위반 시 | 부분 지급·오지급 방지로 전체 거부 |
-
-### `CuratedSettlementBatchService` 계약
-
-| 항목 | 값 |
-|---|---|
-| 기본 cron | `0 0 3 * * MON` (매주 월요일 03:00 스케줄러/JVM 기본 시간대 — zone 미지정, UTC/KST 단정 금지, 설정 override 가능) |
-| 분산락 | Redisson key `curated:settlement:weekly:lock`, tryLock 5초, watchdog 자동 갱신 |
-| 지급 격리 | `payApprovedServiceEarnings(providerUserId)` REQUIRES_NEW — 1건 실패가 전체 배치 롤백 안 함 |
-| 대상 | APPROVED + SERVICE_ASSIGNMENT earning을 가진 provider(distinct) |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| readiness UX | `EventAssignmentsScreen`의 "정산" 액션이 선조회. not-ready면 사유와 raw `#userId` 목록 alert |
-| 묶음 정산 화면 | `RegularMeetingBulkSettleScreen` |
-| Readiness Provider | `SettlementReadinessNotifier(eventId, assignmentId)` — `@riverpod` |
-| Settle Action | `EventAssignmentsNotifier.settle(assignmentId)` |
-| Retrofit | `ServiceAssignmentApi.settlementReadiness`, `settle` |
-| 성공 후 | 배정 목록 갱신 (status = SETTLEMENT_LOCKED) |
-| 에러 | `ASSIGNMENT_NOT_FULLY_COLLECTED` → 미커버/과커버 raw ID alert. 이름·금액·행별 조치 CTA 없음 |
-
-readiness 화면 분기:
-
-| `ready` | `missingBeneficiaryIds` | `unexpectedBeneficiaryIds` | 표시 |
-|---|---|---|---|
-| true | 빈 배열 | 빈 배열 | 확인 dialog 뒤 settle 호출 |
-| false | 비어있지 않음 | (무관) | 사유 + `"미커버 출석자: #id"` alert |
-| false | 빈 배열 | 비어있지 않음 | 사유 + `"과커버: #id"` alert |
-| false | (보장모드 금액 불일치) | — | `ASSIGNMENT_FEE_MISMATCH` 안내 |
 
 ## 6. 상태/권한 매트릭스
 

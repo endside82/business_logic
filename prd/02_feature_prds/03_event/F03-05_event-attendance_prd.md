@@ -3,9 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-22; unit: business_logic/units/03_event/F03-05_event-attendance -->
-
 > 문서 상태: **실사 기반 전환본 + W1/W2/W3 신규 분기 통합 (2026-05-22)**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-05_event-attendance`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
 >
 > 2026-05-22 W2/W3 추가: 선입금 활성 이벤트의 `APPROVED_PENDING_PAYMENT`/`PAYMENT_EXPIRED` 분기와 `EventParticipationCancellationService.cancelMyParticipation` facade가 `apply`/`approveApplication`/`DELETE .../apply` 흐름에 통합되었다. 선입금 결제·환불 자체의 facade·회계·환불 매트릭스는 **F03-13 (이벤트 참가 선입금)** 으로 분리. 본 PRD는 신청·취소 사용자 액션과 상태 전이까지만 다룬다.
@@ -22,35 +19,15 @@
 - 마이 이벤트(F03-12) "참석 예정" 카드 ▶ 상세 진입 후 액션바
 - 알림(F12) 승인/거절/자동 승급 푸시 ▶ 상세
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/03_event/F03-05_event-attendance/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/03_event/F03-05_event-attendance/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/03_event/F03-05_event-attendance/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/03_event/F03-05_event-attendance/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `CapacityController`, `EventController`, `AttendanceController`, `EventParticipationCancellationService`, `ApplicationStatus`, `ChangeType`, `EventVo`, `EventApplyRestrictionGuard`, `ApplicationService`, `CheckInService`. 앱: `event_detail_screen.dart`, `my_events_screen.dart`, `attendance_apply_sheet.dart`, `event_apply_confirm_sheet.dart`, `cancel_attendance_sheet.dart`, `event_action_bar.dart`, `event_viewer_status.dart`, `application_card.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/events/{eventId}/capacity` | `CapacityController#attend` | [CapacityController.java:44](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L44) |
-| `DELETE /api/v1/events/{eventId}/capacity` | `CapacityController#cancel` | [CapacityController.java:56](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L56) |
-| `GET /api/v1/events/{eventId}/capacity/me` | `CapacityController#getMyAttendance` | [CapacityController.java:166](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L166) |
-| `POST /api/v1/events/{eventId}/apply` | `EventController#applyToEvent` | [EventController.java:296](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L296) |
-| `DELETE /api/v1/events/{eventId}/apply` | `EventController#cancelApplication` | [EventController.java:314](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L314) |
-| `GET /api/v1/events/users/me/applications` | `EventController#getMyApplications` | [EventController.java:336](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L336) |
+서버 창구: `CapacityController#attend`, `CapacityController#cancel`, `CapacityController#getMyAttendance`, `EventController#applyToEvent`, `EventController#cancelApplication`, `EventController#getMyApplications`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
 
 1. 액션바 상태: `eventDetailNotifierProvider(eventId).valueOrNull?.myAttendanceStatus` 기반 분기
 2. 결제 필요 여부: `event.price > 0 && event.prepaymentRequired` (UI 결정)
@@ -73,289 +50,52 @@
    - `eventDetailNotifierProvider.invalidate()`
 7. 내 신청 목록(F03-12 위임): `myApplicationsProvider` ▶ `GET /api/v1/events/users/me/applications` (List 반환, Page 아님!)
 
-## 4. 서버 계약
-
-### 개요
-
-참가자가 OPEN 이벤트에 참석/대기열 등록/취소하거나, 승인 필요(`approvalRequired` 또는 `visibility=APPROVAL`) 이벤트에 신청서를 제출한다. 두 경로(`capacity` / `apply`)가 있고 `EventAttendance` (참석 row)와 `Application` (신청 row)는 분리되어 저장된다. 정원 초과 + 대기열 활성 시 `WAITING` 상태로 들어가고 호스트가 ATTENDING을 취소하면 `WaitlistService`가 다음 대기자를 자동 승급시킨다. 본 단위는 참가자의 직접 액션만 다룬다 (호스트의 승인/거절은 F03-06, 정원 설정은 F03-07).
-
-### 유료 + 승인제 조합 정책
-
-유료 이벤트(`event.price > 0`)와 승인제(`approvalRequired=true` 또는 `visibility=APPROVAL`)는 제품상 동시에 허용해야 한다. 단, 신청 시점 결제는 금지한다. 권장 상태 흐름은 다음과 같다.
-
-1. 참가자 신청: `POST /apply` → `Application=PENDING`, 결제 없음.
-2. 호스트 승인: `Application=APPROVED_PENDING_PAYMENT` 또는 별도 payment hold 상태로 전환하고 결제 요청 알림 발송.
-3. 참가자 결제: `POST /wallet/pay` 성공 후 `EventAttendance=ATTENDING`, `currentCapacity++`, 체크인/위치/리뷰 자격 오픈.
-4. 호스트 거절: `Application=REJECTED`, 결제 없음, 환불 없음.
-5. 결제 기한 만료/사용자 취소: 결제 대기 상태 해제, 예약 정원 반환, 재신청 가능 여부 표시.
-
-현재 서버 코드는 이 목표 흐름을 완성하지 못한다. `ApplicationService.approveApplication`은 승인 즉시 `capacityService.createAttendanceFromApplication`을 호출해 ATTENDING을 만든다. `WalletService.pay`는 가격과 중복 결제만 검증하고 신청/승인 상태를 확인하지 않는다. 따라서 유료 승인제는 문서상 정책과 구현 보강 대상이 함께 추적되어야 한다.
-
-> **2026-05-22 W2 갱신**: 위 "현재 코드 미완" 문구는 선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에 한해서 해결됨. `ApplicationService.apply`/`approveApplication`이 선입금 활성을 감지하면 즉시 `APPROVED_PENDING_PAYMENT + paymentDueAt` 상태로 진입하고 capacity는 점유하지 않는다(D4). 결제 facade(F03-13)가 결제 완료 시 `confirmPaymentAndAttend`를 통해 `APPROVED + ATTENDING + capacity++`로 전이한다. 선입금 미활성 유료 이벤트의 미해결 흐름은 별도 후속 슬라이스로 추적.
-
-### 2.0 W2 선입금 분기 (자동 승인 + 승인 필요 두 경로)
-
-PLAN.md §1.4.1과 §2.10·§2.14를 본 단위 흐름에 반영하면 다음과 같다.
-
-**`apply` (자동 승인 + 선입금 활성)** — `ApplicationService.apply`가 `EventPrepayment.prepaymentRequired=true`를 감지하면:
-- `Application.status = APPROVED_PENDING_PAYMENT`
-- `Application.paymentDueAt = now() + (policy.paymentDeadlineHours || 24h)`
-- `currentCapacity`·attendance는 결제 전까지 늘지 않지만, `APPROVED_PENDING_PAYMENT.partySize`는 정원 검사에서 **논리 좌석 hold**로 점유
-- `ApplicationPendingPaymentEvent` 발행 (after-commit) → 알림 `EVENT_PREPAYMENT_REQUIRED(71)`
-- 자동 승인 무료 이벤트만 기존 `APPROVED + createAttendanceFromApplication` 흐름
-
-**`approveApplication` (승인 필요 + 선입금 활성)** — 호스트 승인 시:
-- `Application.status = APPROVED_PENDING_PAYMENT + paymentDueAt`로 전이 (`currentCapacity`·attendance 물리 점유는 없지만 `partySize` 논리 hold는 시작)
-- `ApplicationApprovedEvent` 미발행 — 캘린더 sync 등은 `confirmPaymentAndAttend`(`:437`)에서 1회만 발행
-- 알림 71 발송 (after-commit)
-
-**중복 차단 강화** — `apply`의 재신청 케이스에서 다음 상태는 active로 간주해 `APPLICATION_ALREADY_EXISTS` 차단:
-- `PENDING, APPROVED, APPROVED_PENDING_PAYMENT`
-
-`PAYMENT_EXPIRED` 재신청은 active `event_payment` row가 없을 때만 허용. 있으면 `PAYMENT_PENDING` 에러.
-
-### 2.6 사용자 자가 취소 facade (`DELETE /api/v1/events/{eventId}/apply`) — W2 변경
-
-기존 `EventController.cancelApplication`이 직접 호출하던 `ApplicationService.cancelApplication`은 **`EventParticipationCancellationService.cancelMyParticipation`** 으로 라우팅 변경 (PLAN.md §2.14, 위치 `community_api/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java:44`).
-
-facade 동작:
-1. lock 순서 `event → application → event_payment` 준수 (§0.4)
-2. active `event_payment` 조회 후 상태별 분기:
-   - `event_payment.PENDING` → `event_payment(CANCELED)` + 내부 `cancelApplication` 호출 → `Application=CANCELED`
-   - `event_payment.PAID + WALLET` → `EventPaymentRefundService.refundByWallet`(100% 환불, 분개 1건) → 내부 cancelApplication → `Application=CANCELED + capacity--`
-   - `event_payment.PAID + BANK_TRANSFER` → `event_payment(REFUND_REQUESTED)` + 호스트 알림 `EVENT_PREPAYMENT_REFUND_REQUESTED(83)`. **Application은 유지** — 호스트가 별도 환불 후 `refundByBankConfirm` 호출해야 `Application=CANCELED` 전이
-   - `event_payment.REFUND_REQUESTED` → `REFUND_ALREADY_REQUESTED` 에러
-   - active 결제 없음 → 기존 cancelApplication 흐름 그대로
-3. 응답: `ApplicationVo` (status는 위 분기에 따라 `CANCELED` 또는 미변경)
-
-> `ApplicationService.cancelApplication`은 그대로 두되 public API 라우팅에서 제거. 내부 호출자(환불 facade, AccountDeactivation 등)만 사용.
-
-### 2.7 결제 만료 스케줄러
-
-`ApplicationPaymentExpiryScheduler`가 기본 initial delay 60초, fixed delay 300초로 `Application.paymentDueAt < now()`인 `APPROVED_PENDING_PAYMENT` row를 `PAYMENT_EXPIRED`로 bulk 전이한다. 이때 `partySize` 논리 hold는 상태 집계에서 빠지지만 `currentCapacity`·attendance는 원래 생성되지 않아 물리 변화가 없다. 현재 bulk 경로는 동일 application의 active `event_payment(PENDING)`을 `CANCELED`로 정리하지 않고 알림 `EVENT_PREPAYMENT_EXPIRED(75)`도 발행하지 않는다.
-
-### 2.1 정원 판정 흐름 (v4.5 W1 — CapacityPolicy 매트릭스 위임)
-
-`apply`(직접 참석) 경로는 더 이상 사전 정원 체크를 단순 `currentCapacity >= baseCapacity`로 하지 않는다. 사전 체크는 **명백한 FULL만** 차단(`hardCapacityLimit` 도달 또는 `baseCapacity` 도달 + `!waitlistEnabled` + `!overcapacityAllowed`)하고, 나머지 분기는 `CapacityService.createAttendanceFromApplication`이 호출하는 `CapacityPolicy.decide(event, attendingCount)` 5-룰 매트릭스에 위임된다(F03-07 §3-1 참조).
-
-- 매트릭스가 `OVERCAPACITY` 분기로 결정하면 `apply` 또는 `attend`로 들어온 직접 참석자도 즉시 `ATTENDING`으로 진입한다 (자동 승인 이벤트 + `overcapacityAllowed=true` 조합, Q6). `event_attendance_log`에는 `ChangeType.OVERCAPACITY_APPROVED(9)`가 기록된다.
-- 매트릭스가 `WAITING`을 반환하면 기존 대기열 흐름 그대로(`AttendanceStatus.WAITING`).
-- 매트릭스가 `FULL`을 반환하면 `ErrorCode.CAPACITY_FULL`을 던진다.
-
-신규 ErrorCode:
-- `INVALID_HARD_CAPACITY_LIMIT(400013)` — F03-07의 capacity-settings 엔드포인트에서 invariant 위반 시 (apply 경로 자체는 던지지 않음).
-- `CAPACITY_FULL_AT_CONFIRMATION(400012)` — W2와 공유. 결제 확정 시점 race에서만 사용.
-
-### 2.2 결제 확정 race (v4.5 W1 + W2 공유)
-
-선입금 흐름에서 사용자가 결제(`POST /events/{id}/prepayment/wallet` 또는 BANK_TRANSFER `bank-confirm`)를 호출한 시점에 이미 다른 사용자가 정원을 채워버린 race가 발생할 수 있다. `CapacityService.confirmAttendanceFromPayment`는 W1 이후 동일 매트릭스를 적용하며, `WAITING/FULL`이면 `ErrorCode.CAPACITY_FULL_AT_CONFIRMATION(400012)`을 던진다.
-
-- WALLET 경로: 결제 facade(`EventPrepaymentService.payByWallet`) 트랜잭션 안에서 catch되어 **전체 롤백** — 지갑 차감/`event_payment` insert 모두 되돌려짐. 사용자에게 "정원 초과로 결제 실패" 응답.
-- BANK_TRANSFER 경로: 호스트의 `bank-confirm` 시점에 fail. `event_payment.status=REFUND_REQUESTED` 전환 + 호스트에게 수동 환불 알림.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| POST | /api/v1/events/{eventId}/capacity | CapacityController#attend | required | 즉시 참석 등록 (또는 대기열) |
-| POST | /api/v1/events/{eventId}/attend | AttendanceController#attend | required | 위와 동일 (플랜 호환 경로) |
-| DELETE | /api/v1/events/{eventId}/capacity | CapacityController#cancel | required | 참석/대기 취소 |
-| DELETE | /api/v1/events/{eventId}/attend | AttendanceController#cancel | required | 위와 동일 |
-| GET | /api/v1/events/{eventId}/capacity/me | CapacityController#getMyAttendance | required | 내 참석 상태 조회 |
-| GET | /api/v1/events/{eventId}/attendance/me | AttendanceController#getMyAttendance | required | 위와 동일 |
-| POST | /api/v1/events/{eventId}/apply | EventController#applyToEvent | required | 신청서 제출 (승인 필요 이벤트) |
-| DELETE | /api/v1/events/{eventId}/apply | EventController#cancelApplication | required | 신청 취소 |
-| GET | /api/v1/events/users/me/applications | EventController#getMyApplications | required | 내 신청 목록 |
-
-> Capacity / Attendance 경로는 동일한 `CapacityService`를 호출하는 alias. 클라이언트는 Capacity 경로를 사용한다.
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **Enum** `AttendanceStatus`: `ATTENDING(0)`, `WAITING(1)`, `CANCELLED(2)`, `REJECTED(3)`
-  - 클라이언트 enum 생성 시 서버 그대로 사용 (`WAITLISTED`가 아닌 `WAITING`임에 주의)
-- **Enum** `ApplicationStatus` (전체 7값, `ApplicationStatus.java:24-36`):
-  - `PENDING` — 호스트 심사 대기
-  - `APPROVED` — 승인 완료 (정원 점유)
-  - `APPROVED_PENDING_PAYMENT` — 승인됐으나 선입금 결제 대기
-  - `PAYMENT_EXPIRED` — 결제 기한 만료 (터미널)
-  - `REJECTED` — 호스트 거절 (터미널)
-  - `CANCELED` — 정상 취소 완료 (터미널, L 한 개 — `CANCELLED` 아님)
-  - `CANCEL_PENDING_REFUND` — 계좌이체 취소 후 호스트 환불 확인 대기 (정원 hold 유지, 노쇼 제외)
-  - `occupiesCapacity()`: APPROVED \| APPROVED_PENDING_PAYMENT \| CANCEL_PENDING_REFUND
-  - `isTerminated()`: CANCELED \| REJECTED \| PAYMENT_EXPIRED
-- **Enum** `ChangeType` (event_attendance_log): `APPLIED_ATTENDING`, `APPLIED_WAITING`, `CANCELLED_BY_USER`, `REMOVED_BY_HOST`, `PROMOTED_AUTO`, `PROMOTED_MANUAL`, ... (전체 목록은 `capacity/constants/ChangeType.java` 참조)
-- **Enum** `EventVisibility`: `APPROVAL`이면 신청서 필요
-- 도메인 객체:
-  - `Event#approvalRequired: boolean`
-  - `Event#waitlistEnabled: boolean`
-  - `Event#maxWaitlist: int` (0이면 baseCapacity * 2)
-  - `Event#currentCapacity: int`
-  - **v4.5 W1**: `Event#overcapacityAllowed: boolean`, `Event#hardCapacityLimit: Integer (nullable)`
-  - `EventAttendance` 필드: `id, eventId, userId, status, waitlistOrder, promotedFromWaitlist, manuallyPromoted, createdAt`
-
-#### EventVo 노출 필드 (v4.5 W1)
-
-`community_api/src/main/java/com/endside/community/event/vo/EventVo.java`는 다음 정원 관련 필드를 노출한다(`EventVoAssembler.assemble`이 채움).
-
-| 필드 | 타입 | 조회 위치 |
-|---|---|---|
-| `overcapacityAllowed` | `boolean` | 단건/목록 모두 |
-| `hardCapacityLimit` | `Integer` (nullable) | 단건/목록 모두 |
-| `exceedingAttendees` | `int` | 단건/목록 모두 — `max(0, currentCapacity - baseCapacity)` |
-| `reservedPaymentPendingCount` | `int` | **단건 응답에만 lazy 조회**, EventSimpleVo와 목록에서는 항상 0 (D16, N+1 회피) |
-
-참가자 시점 UI(상세 액션바, 참석자 카운트)는 `exceedingAttendees`로 "+N명 초과" 뱃지를 표시한다. `reservedPaymentPendingCount`는 호스트 시점 결제 대기 인원 추적용.
-
-### 제재 가드 (EventApplyRestrictionGuard)
-
-> **갱신일**: 2026-06-05. 소스: `EventApplyRestrictionGuard.java:32-63`, `ApplicationService.java:83-93`.
-
-신청(`apply`) 및 참석 확정(`attend`, `confirmAttendanceFromPayment`) 진입점에서 `EventApplyRestrictionGuard.assertNotRestricted(userId, clubId)` 를 호출하여 참가자 제재 여부를 검사한다.
-
-| 검사 축 | 서비스 | 에러 코드 |
-|---|---|---|
-| 클럽 스코프 제재 | `WarningSanctionService.isApplyRestricted(userId, clubId)` | `USER_RESTRICTED_FROM_EVENT_APPLY(403, 2900001)` |
-| 플랫폼 전역 제재 | `PlatformSanctionService.isRestricted(userId, EVENT_APPLY_RESTRICT)` | 동일 |
-
-- 신청 경로(`apply`): Guard throw — 즉시 403 반환 (`ApplicationService.java:87-93`)
-- 참석 경로(`attend`, `createAttendanceFromApplication`, `confirmAttendanceFromPayment`): Guard throw — 트랜잭션 롤백
-- 제재 사용자에 대한 **대기열 자동 승급 skip** 정책은 F03-07 §제재 우회 차단 절 참조
-
-### CANCEL_PENDING_REFUND 상태 정책
-
-`CANCEL_PENDING_REFUND`(계좌이체 취소 후 호스트 환불 확인 대기) 상태는 다음 특징을 가진다:
-
-- 정원(capacity)을 **hold 상태로 유지** — 환불 확인 전까지 다른 참가자가 해당 자리를 점유하지 못함
-- **노쇼 통계 제외** — `CheckInService.getCheckInStats()`에서 `pendingRefundUserIds` 필터로 분모·분자 모두에서 제외 (`CheckInService.java:237-255`)
-- 호스트가 환불을 확인하면 `CANCELED` 전이 + `capacity--`
-
-### 의존 단위 / 외부 시스템
-
-- **Unit 06 결제 & 지갑** — 유료 이벤트 참가비/사전결제 차감은 `WalletService` 위임. 본 엔드포인트는 결제 처리를 하지 않음. 승인 불필요 유료 이벤트는 신청/참석 전 결제 확인 다이얼로그 후 별도 API 호출이 필요하고, 승인제 유료 이벤트는 승인 후 결제 확정 흐름을 사용해야 한다. 자가 취소 시 환불 정책은 F03-13의 `event_refund_policy` 카탈로그 기반으로 산출 (2026-06-05 카탈로그 일원화 이후, 상세는 F03-13).
-- **유료 승인제** — `APPROVED_PENDING_PAYMENT` 상태 및 결제 확정 흐름은 구현 완료 (2026-06-05 해소). 선입금 활성 이벤트는 F03-13의 선입금 facade를 사용한다.
-- **Unit 07 모임 정산** — 사전결제 항목은 정산 흐름과 연결 (참가자 신청 시점에 settlement_item 등록).
-- **Unit 12 알림** — `NEW_APPLICATION` (호스트), `APPLICATION_APPROVED/REJECTED` (참가자, F03-06), 자동 승급 알림 (`WaitlistService` 발송).
-- **Unit 04 클럽** — `clubMemberRepository.existsByClubIdAndUserId` 멤버십 검증.
-- **Redis** — `TrendingService.recordRegistration` (인기순 정렬용 카운트).
-- **외부**: FCM (Unit 12 위임).
-- **노쇼 관리** — 이벤트 노쇼 확정·소명·뒤집기·사후 환불의 상세 계약은 F03-20 (이벤트 노쇼 관리) 참조 (F03-20은 병렬 작성 중 — `./F03-20_event-no-show_prd.md`).
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 이벤트 상세(F03-02) ▶ 하단 액션바 "참석 신청" / "대기열 등록" / "참석 취소"
-- 마이 이벤트(F03-12) "참석 예정" 카드 ▶ 상세 진입 후 액션바
-- 알림(F12) 승인/거절/자동 승급 푸시 ▶ 상세
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 (lib/presentation/event/) | 역할 |
-|---|---|---|
-| `/home/events/:eventId` | `screens/event_detail_screen.dart` | 액션바 + 신청 시트 진입점 |
-| (모달) | `widgets/attendance_apply_sheet.dart` | 참석 신청 시트 |
-| (모달) | `widgets/event_apply_confirm_sheet.dart` | 결제 확인 시트 (유료 이벤트) |
-| (모달) | `widgets/cancel_attendance_sheet.dart` | 참석 취소 시트 |
-| `/home/my-events` | `screens/my_events_screen.dart` (F03-12) | 내 신청/참석 목록 |
-
-본 단위는 화면 파일이 거의 없고 액션바 + 모달 시트로 구성된다.
-
-### 화면별 구성 요소 & 액션
-
-### 액션바 (`event_action_bar.dart`)
-
-- **사용자가 보는 것**:
-  - viewer 상태에 따라 버튼 라벨/색상 변경:
-    - null + OPEN + 정원 미달 → "참석 신청" (primary500)
-    - null + OPEN + 정원 초과 + waitlistEnabled → "대기열 등록" (warning500)
-    - null + OPEN + 정원 초과 + !waitlistEnabled → "마감" disabled
-    - null + approvalRequired → "신청서 작성"
-    - ATTENDING → "참석 취소" (gray-outlined)
-    - WAITING → "대기 취소 (N번째)"
-    - PENDING → "심사 중" disabled + "신청 취소"
-    - APPROVED → "참석 확정" (회색 disabled, 취소는 가능)
-    - REJECTED/CANCELED → "다시 신청"
-- **사용자가 할 수 있는 액션**:
-  - "참석 신청" 탭 → `AttendanceActionNotifier.attend()`:
-    1. `event.approvalRequired || visibility == APPROVAL` 체크
-    2. true → `_apply` (신청서 시트 + `POST .../apply`)
-    3. false → `_directAttend` (`POST .../capacity`)
-  - 유료 + 승인 불필요 이벤트 → `EventApplyConfirmSheet` (결제 확인 시트, Unit 06 위임) 선행 후 직접 참석
-  - 유료 + 승인제 이벤트 → 결제 선행 금지. 먼저 신청서를 제출하고, 호스트 승인 후 "결제하고 참석 확정" CTA로 전환
-  - "참석 취소" 탭 → `CancelAttendanceSheet` 확인 → `AttendanceActionNotifier.cancel()`
-  - 비로그인 → 로그인 화면 redirect
-
-### 신청 시트 (`attendance_apply_sheet.dart`)
-
-- 신청 메시지 입력 (`AppTextArea`, optional)
-- 본인 정보 표시 (자동입력)
-- "제출" 탭 → `ApplicationParam(message: ...)` ▶ `POST .../apply` ▶ status=PENDING
-- 성공 → 토스트 "신청이 접수되었습니다. 호스트 승인을 기다려주세요" + 시트 dismiss + 액션바 갱신
-
-### 결제/신청 확인 시트 (`event_apply_confirm_sheet.dart`)
-
-- 가격, 환불 정책 미리보기, 잔액 표시
-- 승인 불필요 유료 이벤트: "결제 후 신청" → Wallet 차감 (Unit 06) → 참석 확정
-- 승인제 유료 이벤트: "신청하기" → 결제 없이 `Application=PENDING` 생성. 승인 전 결제받지 않음
-- 승인제 유료 이벤트에서 승인 알림을 받은 뒤: "결제하고 참석 확정" → Wallet 차감 → 참석 확정
-- 잔액 부족 → 충전 화면(Unit 06)으로 이동 (PaymentShortfall)
-
-### 취소 시트 (`cancel_attendance_sheet.dart`)
-
-- 환불 정책 안내 (유료 이벤트의 경우)
-- "취소 확인" → `DELETE .../capacity` 또는 `DELETE .../apply`
-- 환불 실제 처리는 서버의 `event_prepayment.refundPolicyType` 기반 (Unit 06 위임)
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 액션바 상태: `eventDetailNotifierProvider(eventId).valueOrNull?.myAttendanceStatus` 기반 분기
-2. 결제 필요 여부: `event.price > 0 && event.prepaymentRequired` (UI 결정)
-3. 일반 신청 (승인 불필요):
-   - `AttendanceActionNotifier.attend()` ▶ `_directAttend`
-   - `AttendanceRepository.attend(eventId)` ▶ `POST /api/v1/events/{id}/capacity`
-   - 응답 200/201 → `eventDetailNotifierProvider.invalidate()` (currentCapacity 갱신, viewer status 갱신)
-4. 신청서 (승인 필요):
-   - `AttendanceActionNotifier._apply()`
-   - `ApplicationRepository.apply(eventId, ApplicationParam)` ▶ `POST /api/v1/events/{id}/apply`
-   - 응답 → status=PENDING으로 표기, viewer 갱신
-5. 유료 + 승인제:
-   - 신청 시점에는 결제 API를 호출하지 않는다.
-   - 호스트 승인 후 사용자는 `approvedApplication` 또는 `approvedPendingPayment` 상태를 보고 결제 CTA를 누른다.
-   - 결제 성공 후에만 `event_attendance=ATTENDING`으로 확정되어 체크인/위치/리뷰 자격이 열린다.
-   - **`APPROVED_PENDING_PAYMENT` + `paymentDueAt` 구현 완료** (해소 2026-06-05): `confirmPaymentAndAttend`에서 결제 확정 시 `APPROVED + ATTENDING`으로 전이 (`ApplicationService.java:150-165`).
-6. 취소:
-   - approvalRequired → `ApplicationRepository.cancelApplication` ▶ `DELETE .../apply`
-   - 일반 → `AttendanceRepository.cancel` ▶ `DELETE .../capacity`
-   - `eventDetailNotifierProvider.invalidate()`
-7. 내 신청 목록(F03-12 위임): `myApplicationsProvider` ▶ `GET /api/v1/events/users/me/applications` (List 반환, Page 아님!)
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- **버튼 라벨 한글**: "참석 신청" / "대기열 등록" / "신청서 작성" / "심사 중" / "참석 취소" / "대기 취소 (N번째)"
-- **viewer 상태 → UI 매핑** (`event_viewer_status.dart` enum, 클라이언트 정의):
-  - `attending`, `waitlisted`, `pendingApplication`, `approvedApplication`, `rejectedApplication`, `notAttending`
-  - 서버 `myAttendanceStatus`/`myApplicationStatus` 두 필드를 합쳐 결정
-- **유료 이벤트 결제 확인 시트**: 결제 흐름은 Unit 06 위임이지만, "신청 전 결제 확인" 다이얼로그 노출 정책은 화면 결정
-- **취소 환불 정책 표시**: `event.prepaymentRefundPolicyType`/`refundDeadlineHours`에 따른 안내 문구
-- **자동 승급 강조**: `event.myPromotedFromWaitlist == true && !promotedSeenProvider.contains(eventId)` 조건에서 1회성 강조 표시 → dismiss 후 `promotedSeenProvider.add(eventId)`
-- **에러 메시지 매핑**:
-  - `EVENT_CANNOT_APPLY` → "신청할 수 없는 모임입니다"
-  - `EVENT_ALREADY_CLOSED` → "모집이 마감되었습니다"
-  - `CAPACITY_FULL` → "정원이 가득 찼습니다"
-  - `WAITLIST_FULL` → "대기열이 가득 찼습니다"
-  - `ALREADY_ATTENDING` → "이미 신청한 모임입니다"
-  - `APPROVAL_REQUIRED` → "이 모임은 호스트 승인이 필요합니다"
-  - `CLUB_MEMBERSHIP_REQUIRED` → "클럽 멤버만 참석할 수 있습니다" + 클럽 가입 CTA
-  - `APPLICATION_ALREADY_EXISTS` → "이미 신청한 모임입니다"
-  - `CAPACITY_FULL_AT_CONFIRMATION` (400012, v4.5 W1) → "결제 처리 중 정원이 초과되어 참석 확정에 실패했습니다. 결제가 되돌려졌습니다" + 환불 안내
-  - `PaymentShortfall` (Unit 06) → "잔액이 부족합니다" + 충전 CTA
-- **신청 메시지 글자수**: 서버 제한 미확인 (DB column 길이 기준, 화면에서 500자 권장)
-- **AttendanceStatus enum 매핑** (서버 그대로): `ATTENDING`, `WAITING`, `CANCELLED`, `REJECTED` — `WAITLISTED` 아님!
-- **ApplicationStatus enum 매핑** (전체 7값): `PENDING`, `APPROVED`, `APPROVED_PENDING_PAYMENT`, `PAYMENT_EXPIRED`, `REJECTED`, `CANCELED` (L 한 개), `CANCEL_PENDING_REFUND` — 서버 `ApplicationStatus.java:24-36` mirror. Flutter: `application_card.dart:1-93`에서 `cancelPendingRefund` 포함 확인됨
-- **결제 확인 시트 디자인**: 잔액·금액·환불 정책을 한 화면에 표시
-- **취소 확인 시트**: "정말 취소하시겠습니까?" + 환불 안내
-- **`EventViewerBadge`**: 카드/상세에 viewer 상태 라벨 (참석 중/대기 N번째/심사 중)
-- **유료 승인제 상태 라벨**: 승인 전 "심사 중", 승인 후 결제 전 "결제 필요", 결제 후 "참석 확정"을 구분해야 한다.
+## 4. 제품 규칙
+
+### 2.0 선입금 갈래
+- 유료인데 선입금이 꺼져 있으면 신청·승인을 받지 않는다(`EVENT_REQUIRES_PREPAYMENT`). 결제 없는 참석을 만들지 않기 위해서다.
+- 자동 승인 + 선입금은 신청 즉시, 승인 필요 + 선입금은 호스트가 승인할 때 `APPROVED_PENDING_PAYMENT` 와 결제 기한이 붙는다. 자동 승인 무료만 바로 `APPROVED` + 참석이다.
+- 결제 기한은 호스트가 정한 결제창(1~168시간, 기본 24시간)이다.
+- 결제 대기 동안 참석 수와 참석 행은 늘지 않지만 일행 수만큼 좌석을 논리로 잡는다. 결제 요청 알림은 커밋 뒤에 간다.
+- 캘린더 동기화 같은 승인 후속은 결제가 확정될 때 한 번만 한다.
+- 다시 신청: 지난 신청이 `PENDING`·`APPROVED`·`APPROVED_PENDING_PAYMENT` 이면 `APPLICATION_ALREADY_EXISTS` 다. `CANCEL_PENDING_REFUND` 이거나 은행 환불 대기 결제가 남았으면 `APPLICATION_REFUND_PENDING` 이고 환불이 끝난 뒤에만 받는다. `PAYMENT_EXPIRED`·`REJECTED`·`CANCELED` 는 받되, 입금 신고·결제 완료가 남았으면 이미 신청한 것으로 거절한다.
+
+### 2.6 본인 취소
+- 끝난 모임은 `EVENT_ALREADY_CLOSED`, 시작 시각이 지난 OPEN 모임은 `EVENT_ALREADY_STARTED` 로 거절한다(2026-10-24 사용자 결정: 시작 뒤 빠져나가 노쇼 판정과 점수 회수를 비켜 가지 못하게). 그 뒤는 호스트 처리로만 된다.
+- 취소된 모임은 환불 회수를 위해 받는다. 일정 변경 거절의 자동 취소는 끝난 모임만 거절한다.
+- 이미 `CANCELED`·`REJECTED`·`CANCEL_PENDING_REFUND` 인 신청은 `APPLICATION_INVALID_STATUS` 다. 보관금이 열린 비공개 모임 선정자도 스스로 나가지 못한다.
+
+| 활성 결제 | 결과 |
+|---|---|
+| 없음 | 신청 `CANCELED`, 참석 행이 있으면 좌석 해제 |
+| 지갑, 결제 전 | 결제 `CANCELED`, 신청 `CANCELED` |
+| 지갑, 결제 완료 | 환불 정책대로 즉시 지갑 환불, 신청 `CANCELED`. 돌려줄 돈이 0원이면 `REFUND_NOT_ALLOWED`, 시작 뒤 일행이 체크인했으면 `EVENT_REFUND_NOT_ALLOWED_AFTER_CHECKIN` |
+| 계좌이체, 입금 신고 | 신고액 전액을 은행 환불 대기로, 신청 `CANCELED`. 참가자가 이미 보냈을 수 있어 추적 행을 남긴다 |
+| 계좌이체, 입금 확인 | 결제 `REFUND_REQUESTED`, 신청 `CANCEL_PENDING_REFUND`, 호스트에게 바로 알림. 호스트가 환불을 확인하면 `CANCELED` + 좌석 해제. 정책 상한이 0원이면 거절 |
+| 이미 환불 대기 | `APPLICATION_INVALID_STATUS` |
+
+### 2.7 결제 기한 만료
+- 5분 주기로 기한 지난 결제 대기를 `PAYMENT_EXPIRED` 로 바꾸고, 결정 이력(`AUTO_REJECT`)과 만료 알림을 남긴다. 잡았던 좌석은 풀리고 참석 수는 변하지 않는다.
+- 호스트 확인을 기다리는 입금 신고가 있으면 기한이 지나도 만료하지 않는다. 기한이 지난 결제·신고는 배치 전이라도 거절한다.
+
+### 2.1 정원과 신청 조건
+- 사전 판정은 어느 갈래로도 들 수 없는 경우만 막고, 나머지는 F03-07 §3-1 매트릭스가 정한다.
+- 대기열 상한은 최대 대기 수이고 0이면 정원×2 다. 닿으면 `WAITLIST_FULL` 이다.
+- 승인 필요는 승인제, 공개 범위 `APPROVAL`, 비공개 모임이다. 호스트 본인은 신청하지 못한다. 클럽 모임은 그 클럽 회원만 받는다.
+
+### 신청 상태
+- 좌석을 잡는 상태: `APPROVED`, `APPROVED_PENDING_PAYMENT`, `CANCEL_PENDING_REFUND`. 끝난 상태: `CANCELED`, `REJECTED`, `PAYMENT_EXPIRED`.
+- `CANCEL_PENDING_REFUND` 는 취소로만 간다. 환불 확인 전까지 자리를 잡고 체크인은 거절되며 노쇼 산정에서 빠진다.
+- 참석 상태 값은 `ATTENDING`, `WAITING`, `CANCELLED`, `REJECTED` 다. 신청의 `CANCELED` 와 철자가 다르다.
+
+### 제재
+- 클럽 제재와 플랫폼 제재를 함께 본다. 제재 중이면 신청·참석이 `USER_RESTRICTED_FROM_EVENT_APPLY` 로 막힌다. 승인 뒤 참석을 만들 때 다시 본다. 대기열 처리는 F03-07 §4 를 따른다.
+
+### 사용자가 보는 것
+- 유료 승인제는 승인 전(심사 중), 승인 후 결제 전(결제 버튼 "결제하고 참석 확정"), 결제 뒤(참석 확정)를 구분해 보인다.
+- 대기에서 승격한 사람에게 상세에서 한 번만 강조하고, 닫으면 다시 보이지 않는다.
+- 잔액이 모자라면 충전으로 안내한다.
+- 오류의 뜻: `EVENT_CANNOT_APPLY` 신청할 수 없는 모임, `EVENT_ALREADY_CLOSED` 모집 마감, `CAPACITY_FULL` 정원 가득, `ALREADY_ATTENDING`·`APPLICATION_ALREADY_EXISTS` 이미 신청함, `APPROVAL_REQUIRED` 승인 필요, `CLUB_MEMBERSHIP_REQUIRED` 클럽 회원만(가입 안내), `CAPACITY_FULL_AT_CONFIRMATION` 결제 처리 중 정원 초과.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -381,15 +121,6 @@ facade 동작:
 | S2-7 (W3) | 사용자 자가 취소 — BANK_TRANSFER PAID | `event_payment.PAID(BANK_TRANSFER)` | `event_payment.REFUND_REQUESTED + Application 유지`. 호스트 알림 83. 환불 정리는 호스트 책임. |
 | S2-11 (W3) | 탈퇴 차단 | active `event_payment` 보유 | 400 `DEACTIVATION_BLOCKED` + BlockingItem `ACTIVE_EVENT_PAYMENT`. |
 
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
@@ -402,7 +133,6 @@ facade 동작:
 | 후보 | backend.md:122 | - 재신청 처리 (HIGH #8): 기존 row가 PENDING/APPROVED면 `APPLICATION_ALREADY_EXISTS`. CANCELED/REJECTED면 status 재설정해서 재사용. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | backend.md:153 | - 클라이언트 enum 생성 시 서버 그대로 사용 (`WAITLISTED`가 아닌 `WAITING`임에 주의) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | backend.md:167 | - **유료 승인제 주의** — 승인제 이벤트에서는 신청 전 결제가 아니라 승인 후 결제 확정이 되어야 한다. 현재 `ApplicationStatus`에는 결제 대기 상태가 없고 `WalletService.pay`도 신청 상태를 검증하지 않으므로, `APPROVED_PENDING_PAYMENT`/결제기한/정원 예약 중 하나의 서버 source-of-truth를 추가해야 한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 해소 | frontend.md:83 | ~~현재 코드에는 `APPROVED_PENDING_PAYMENT` 또는 결제 대기 전용 필드가 없으므로 구현 보강이 필요하다.~~ → `APPROVED_PENDING_PAYMENT` + `paymentDueAt` + `confirmPaymentAndAttend` 구현 완료 | 해소 2026-06-05, `ApplicationService.java:150-165` |
 | 후보 | frontend.md:109 | - **신청 메시지 글자수**: 서버 제한 미확인 (DB column 길이 기준, 화면에서 500자 권장) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:39 | [E2E 보강: seed_event_list_badge_matrix_test.dart::waitlist_detail_cancel_surface — 본인이 WAITING 인 클럽 이벤트 상세 진입 시 액션바/배지 영역에 "현재 대기열에 등록되어 있습니다" + "클럽 가입 후 참석 가능"(클럽 멤버십 게이트 안내, S8 cross-ref) 라벨이 동시 노출됨. 즉 waitlist 상태와 클럽 가드는 시각적으로 결합되어 표시.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:119 | [E2E 보강 (cross-ref S2): seed_event_list_badge_matrix_test.dart::waitlist_detail_cancel_surface — 클럽 이벤트 상세에서 "클럽 가입 후 참석 가능" 라벨 노출. WAITING 상태와 동시 노출 가능.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
@@ -437,14 +167,3 @@ facade 동작:
 - **AC-W2-4 (S2-6). 사용자 자가 취소 (WALLET PAID) — `cancelMyParticipation`**: Given `event_payment.PAID(WALLET)`. When `DELETE /api/v1/events/{eventId}/apply`. Then facade가 `refundByWallet` 호출 → `Application=CANCELED + capacity-- + event_payment.REFUNDED + 분개 1건`. 알림 76. (환불 facade 자체는 F03-13에서 검증)
 - **AC-W2-5 (S2-7). 사용자 자가 취소 (BANK PAID)**: Given `event_payment.PAID(BANK_TRANSFER)`. When 동일 호출. Then `event_payment.REFUND_REQUESTED + Application 유지`. 알림 83.
 - **AC-W2-6 (S2-11). 탈퇴 차단**: Given active `event_payment` 보유. When 탈퇴 요청. Then 400 `DEACTIVATION_BLOCKED` + `ACTIVE_EVENT_PAYMENT` BlockingItem.
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.
-
-## 11. 변경 이력
-
-- **2026-05-22 (v4.5 W1 — 정원 초과 허용)**: `apply` 사전 정원 체크를 명백한 FULL만 차단하도록 완화하고, 분기 결정은 `CapacityService.createAttendanceFromApplication`(및 결제 확정 경로 `confirmAttendanceFromPayment`)이 호출하는 `CapacityPolicy.decide` 5-룰 매트릭스에 위임(§2.1). 자동 승인 이벤트 + `overcapacityAllowed=true` 조합에서는 `attend/apply`가 즉시 `ATTENDING + OVERCAPACITY_APPROVED(9)` 분기로 진입(Q6). 결제 확정 시점 race에는 `CAPACITY_FULL_AT_CONFIRMATION(400012)` ErrorCode 도입 — WALLET은 전체 롤백, BANK는 `REFUND_REQUESTED` 전환(§2.2). EventVo에 `overcapacityAllowed / hardCapacityLimit / exceedingAttendees / reservedPaymentPendingCount` 4개 필드 노출(`reservedPaymentPendingCount`는 단건 lazy 조회, 목록은 0).
-- **2026-06-05 (D-20 / v3 — ApplicationStatus 전체 7값 + 제재 가드 + CANCEL_PENDING_REFUND)**: `ApplicationStatus` enum 7값 전체 명시 — `CANCEL_PENDING_REFUND` 추가(`ApplicationStatus.java:24-36`). stale "APPROVED_PENDING_PAYMENT 미구현" 문구 제거 (이미 구현됨). `EventApplyRestrictionGuard` 신규 컴포넌트 — 클럽-스코프+플랫폼 전역 2축 제재 검사, `apply`/`attend`/`createAttendanceFromApplication`/`confirmAttendanceFromPayment` 진입점 적용. `CANCEL_PENDING_REFUND` 노쇼 통계 제외 정책 (`CheckInService.java:237-255`). 노쇼 관리 상세는 F03-20 링크 추가.

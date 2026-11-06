@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-27 (MBTI 선택/명시적 삭제 추가); unit: business_logic/units/13_profile_settings/F13-02_profile-edit -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/13_profile_settings/F13-02_profile-edit`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 프로필 수정 API는 사용자가 다른 사람에게 보이는 닉네임, 자기소개, 프로필 이미지, **MBTI**를 갱신하는 기능이다. 닉네임 변경 시 중복 여부를 검사하고 변경 이력을 남기며, 자기소개·이미지 URL·MBTI는 멤버 상세 정보에 저장한다. 이미지 파일 업로드 자체는 file 도메인 의존이며 본 account 컨트롤러에는 포함되지 않는다.
@@ -19,31 +14,16 @@
 - 마이페이지 허브에서 `프로필 편집` 메뉴를 탭해 진입한다.
 - 화면은 현재 authenticated user 값을 초기 폼 값으로 사용한다.
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/13_profile_settings/F13-02_profile-edit/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/13_profile_settings/F13-02_profile-edit/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/13_profile_settings/F13-02_profile-edit/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/13_profile_settings/F13-02_profile-edit/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `UserController`, `UserService`. 앱: `profile_edit_screen.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `PATCH /api/v1/users/me` | `UserController#updateMyProfile` | [UserController.java:69](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/UserController.java#L69) |
+서버 창구: `UserController#updateMyProfile`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 1. 화면 초기화: `authNotifierProvider`의 authenticated user를 읽어 `_nicknameController`, `_bioController`, `_profileImageUrl`에 반영한다.
 2. 사진 선택: `ImagePicker.pickImage(source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 85)`.
 3. 사진 업로드: `uploadImageFile(ref: ref, file: file, purpose: 'PROFILE')` ▶ file 도메인 API `(본 범위 밖)`.
@@ -51,102 +31,14 @@
 5. 저장 성공: `authNotifierProvider.notifier.checkAuthStatus()`로 전역 인증 사용자 정보를 재조회/동기화한다.
 6. 저장 성공 후 화면 종료: `AppToast.show(... '프로필이 수정되었습니다')` ▶ `context.pop()`.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-프로필 수정 API는 사용자가 다른 사람에게 보이는 닉네임, 자기소개, 프로필 이미지를 갱신하는 기능이다. 닉네임 변경 시 중복 여부를 검사하고 변경 이력을 남기며, 자기소개와 이미지 URL은 멤버 상세 정보에 저장한다. 이미지 파일 업로드 자체는 file 도메인 의존이며 본 account 컨트롤러에는 포함되지 않는다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| PATCH | `/api/v1/users/me` | `UserController#updateMyProfile` | required | 현재 사용자의 프로필 필드 부분 갱신 |
-
-### 도메인 모델 / Enum (이 기능 관련)
-
-- **Param** `UserModParam`: `nickname`, `bio`, `profileImageUrl`, `locale`, **`mbti` (Mbti enum, nullable)**, **`clearMbti` (boolean, default false)**
-- **VO** `UserProfileVo`: 프로필 카드와 편집 완료 후 화면 동기화 기준 (`mbti(Mbti)` 노출 추가)
-- **VO** `UserProfileViewVo`: 타인 프로필 — SELF·MATCHED·SAME_CLUB에서 `mbti` 노출, THIRD_PARTY는 미노출
-- **Entity** `Users`: `email`, `nickname`, `status`, `user_role`
-- **Entity** `Member`: `name`, `birthDate`, `gender`, `bio`, `profileImageUrl`, `locale`, **`mbti (Mbti)` (varchar(4))**. `user_id`에 UNIQUE 제약 추가(Users-Member 1:1).
-- **Entity** `NicknameHistory`: 닉네임 변경 이력 저장, 필드 상세는 본 기능의 필수 응답이 아니라 요약만 표기
-- **Enum** `UserStatus`: `NORMAL`, `LOGOUT`, `STOP`, `BAN`, `TRYEXIT`, `EXIT`
-- **Enum** `Mbti` (신규, `account.constants.Mbti`): `INTJ, INTP, ENTJ, ENTP, INFJ, INFP, ENFJ, ENFP, ISTJ, ISFJ, ESTJ, ESFJ, ISTP, ISFP, ESTP, ESFP` (16). `isIntrovert() == name().charAt(0)=='I'`.
-- **서비스 로직** (`UserService.updateProfile`): `if (mbti!=null) setMbti(mbti)` else if `clearMbti` then `setMbti(null)`. 둘 다 미지정이면 미변경.
-
-### 의존 단위 / 외부 시스템
-
-- 다른 Unit 의존:
-  - 이미지 파일 업로드: file 도메인 `uploadImageFile` helper가 호출하는 API. Controller/Service 상세는 본 탐색 범위 밖이라 `(미확인)`.
-  - 인증 상태 갱신: 프론트에서 저장 성공 후 `authNotifierProvider.checkAuthStatus()` 호출. Unit 01 인증 상태 동기화에 의존.
-- 외부:
-  - S3 또는 파일 저장소 사용 여부는 UI 스펙에는 언급되지만 account 코드에는 없음. 실제 업로드 외부 시스템은 `(미확인)`.
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 마이페이지 허브에서 `프로필 편집` 메뉴를 탭해 진입한다.
-- 화면은 현재 authenticated user 값을 초기 폼 값으로 사용한다.
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 (lib/presentation/...) | 역할 |
-|---|---|---|
-| `/profile/edit` | `profile/screens/profile_edit_screen.dart` | 닉네임, 자기소개, 프로필 사진 수정 |
-
-### 화면별 구성 요소 & 액션
-
-### 프로필 수정 (`profile_edit_screen.dart`)
-- **사용자가 보는 것**:
-  - 앱바 제목 `프로필 수정`
-  - 앱바 우측 `저장` 텍스트 액션
-  - 원형 프로필 사진 또는 기본 아이콘
-  - 카메라 오버레이 아이콘
-  - `사진 변경` 텍스트 버튼
-  - 닉네임 입력 필드
-  - 닉네임 안내 문구 `2~30자, 한글/영문/숫자` (서버 `UserModParam.nickname @Size(min=2, max=30)` 와 일치)
-  - 자기소개 입력 영역
-  - 자기소개 maxLength 200
-  - **MBTI 선택 영역** — `ChoiceChip` 16개(INTJ…ESFP) Wrap. 선택 시 강조, 재탭 시 해제.
-- **사용자가 할 수 있는 액션**:
-  - 사진 영역 또는 `사진 변경` 탭 ▶ 갤러리 picker 실행
-  - 이미지 선택 ▶ `uploadImageFile(ref, file, purpose: 'PROFILE')`
-  - 닉네임/자기소개 수정 ▶ `_hasChanges` 갱신
-  - MBTI 칩 선택/변경 ▶ `_selectedMbti` 갱신, `_hasChanges` 반영
-  - MBTI 칩 재탭으로 해제 ▶ `_selectedMbti=null` → 저장 시 `clearMbti=true` 동반 전송으로 서버에서 명시 삭제
-  - 저장 탭 ▶ `authRepositoryProvider.updateProfile(UserModParam(..., mbti, clearMbti))` ▶ `PATCH /api/v1/users/me`
-  - 뒤로가기 ▶ 변경 사항이 있으면 폐기 확인 다이얼로그
-- **상태 분기**:
-  - `_hasChanges == false`: 저장 액션 비활성 색상
-  - `_isSaving == true`: 저장 액션 비활성, 사진 업로드/저장 중 상태
-  - 닉네임 trim 길이 2 미만: `AppToast` error `닉네임은 2자 이상이어야 합니다`
-  - 사진 업로드 실패: `AppToast` error `사진 업로드에 실패했습니다`
-  - 프로필 수정 실패: `AppToast` error `프로필 수정에 실패했습니다`
-- **모달/시트/네비게이션**:
-  - 코드상 카메라/앨범 바텀시트는 없음. 현재 구현은 갤러리 `ImagePicker.pickImage`만 사용한다.
-  - 변경 사항이 있는 뒤로가기는 `AlertDialog`로 `취소`/`나가기`를 선택한다.
-  - 저장 성공 시 `프로필이 수정되었습니다` 토스트 후 `context.pop()`.
-
-### API 호출 순서 (Provider/Repository 관점)
-
-1. 화면 초기화: `authNotifierProvider`의 authenticated user를 읽어 `_nicknameController`, `_bioController`, `_profileImageUrl`에 반영한다.
-2. 사진 선택: `ImagePicker.pickImage(source: ImageSource.gallery, maxWidth: 512, maxHeight: 512, imageQuality: 85)`.
-3. 사진 업로드: `uploadImageFile(ref: ref, file: file, purpose: 'PROFILE')` ▶ file 도메인 API `(본 범위 밖)`.
-4. 저장: `authRepositoryProvider.updateProfile(UserModParam(nickname, bio, profileImageUrl))` ▶ `PATCH /api/v1/users/me`.
-5. 저장 성공: `authNotifierProvider.notifier.checkAuthStatus()`로 전역 인증 사용자 정보를 재조회/동기화한다.
-6. 저장 성공 후 화면 종료: `AppToast.show(... '프로필이 수정되었습니다')` ▶ `context.pop()`.
-
-### 백엔드만으로는 알 수 없는 정보 (이 화면에서만 결정되는 것)
-
-- 프로필 사진은 갤러리에서만 선택한다. UI 스펙의 카메라 촬영/기본 이미지/크롭 화면은 현재 profile 화면 코드에서 확인되지 않는다.
-- 이미지 picker는 512x512, quality 85로 제한한다.
-- 저장 활성화는 서버 응답이 아니라 로컬 `_hasChanges` 비교로 결정한다.
-- 닉네임 입력 UI는 maxLength 30 (서버 `UserModParam.nickname @Size(min=2, max=30)` 과 일치 — 6차 라운드 정정). 실제 저장 전 클라 가드는 최소 2자만 검사한다.
-- 자기소개 입력 UI는 maxLength 200이지만 서버 Bean Validation은 확인되지 않는다.
-- 성공/실패 메시지는 `AppToast`로 표시한다.
-- `AppSpacing.screenPadding` 대신 이 화면 일부 padding은 `AppSpacing.space5`를 사용한다. 기존 구현 사실만 기록하며 수정 대상 아님.
+- 닉네임은 2자 이상 30자 이하다(서버가 강제). 앞뒤 공백을 뺀 길이가 2자 미만이면 앱이 저장 전에 `닉네임은 2자 이상이어야 합니다` 로 막는다. 이미 쓰는 닉네임이면 서버가 거절하고 기존 프로필이 유지된다.
+- 자기소개는 입력창에서 200자로 제한한다.
+- 프로필 사진은 갤러리에서만 고른다(카메라 촬영, 기본 이미지, 자르기 화면은 없다). 10MB를 넘으면 `프로필 사진은 10MB 이하로 선택해 주세요` 로 막는다. 업로드 실패는 `사진 업로드에 실패했습니다`, 저장 실패는 `프로필 수정에 실패했습니다` 오류 안내가 뜬다.
+- MBTI는 16종 중 하나이거나 비어 있다. 같은 칩을 다시 누르면 선택이 해제되고, 해제 후 저장하면 값이 지워진다. 건드리지 않고 저장하면 기존 값이 그대로다. 타인 프로필에는 본인, 서로 매칭된 사이, 같은 클럽 사이에만 MBTI가 보이고 제3자에게는 보이지 않는다.
+- 저장 버튼은 바뀐 값이 있고 저장 중이 아닐 때만 켜진다. 바뀐 값이 있는 채 뒤로 가면 `취소`/`나가기` 확인 창이 뜨고 나가면 입력은 버려진다.
+- 저장에 성공하면 `프로필이 수정되었습니다` 안내 뒤 화면을 닫고 마이페이지의 표시 정보가 새 값으로 바뀐다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -160,15 +52,6 @@
 | S6 | MBTI를 선택하여 저장한다 | 기존 `member.mbti=null` 또는 다른 값 | `member.mbti = <선택값>` 저장, 응답 VO의 `mbti` 갱신, 인구통계의 I·E 분포에 반영 |
 | S7 | MBTI를 ChoiceChip 재탭으로 해제 후 저장한다 | 기존 `member.mbti != null` | `clearMbti=true` 동반 전송 → `member.mbti=null` 저장 |
 | S8 | MBTI 변경 없이 저장한다 | `_selectedMbti`가 초기값과 동일 | `_hasChanges` 미증가 → 서버 호출 시 `mbti=null + clearMbti=false`로 미변경 처리(다른 필드만 갱신) |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
 ## 8. Gap / Risk
 
@@ -188,9 +71,3 @@
 - **AC-05. 변경 사항이 있는 상태로 나가기를 시도한다**: Given `_hasChanges == true` When 사용자가 해당 흐름을 실행하면 Then 취소 시 변경 중 상태 유지, 나가기 시 저장하지 않은 값은 폐기된다.
 - **AC-06. MBTI 신규 선택/변경**: Given `_selectedMbti=INTJ`(기존 null) When 저장하면 Then `member.mbti=INTJ`, 응답 `UserProfileVo.mbti=INTJ`.
 - **AC-07. MBTI 명시적 삭제**: Given `member.mbti=INTJ`인 상태에서 ChoiceChip 재탭으로 해제(`_selectedMbti=null`) When 저장하면 Then 서버가 `clearMbti=true`를 받아 `member.mbti=null` 저장. 단순 미선택 상태(`clearMbti=false + mbti=null`)와 구분된다.
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

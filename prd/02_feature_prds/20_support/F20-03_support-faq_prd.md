@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first: community_api/src/main/java/com/endside/community/support/controller/SupportFaqController.java + SupportFaqSuggestionService.java; updated: 2026-06-05 -->
 
 ## 1. 결론
@@ -14,17 +13,9 @@
 
 **관리자가 FAQ를 추가하거나 편집하는 어드민 CRUD 기능은 구현되어 있지 않다.** FAQ 문구를 바꾸려면 서버 코드를 직접 수정해야 한다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `support/controller/SupportFaqController.java:18-30` | `GET /api/v1/support/faq/suggestions` |
-| Backend Service | `support/service/SupportFaqSuggestionService.java:15-79` | `getSuggestions()`, `baseSuggestions()`, keyword 필터, 최대 5개 |
-| Backend VO | `support/vo/SupportFaqSuggestionVo.java` | `{ id, title, answer, sourceType, priority }` |
-| Frontend API | `data/api/support_issue_api.dart:42-48` | `getFaqSuggestions()` Retrofit |
-| Frontend Model | `data/models/support/support_faq_suggestion.dart` | Freezed `SupportFaqSuggestion` |
-| Frontend Widget | `presentation/support/screens/support_issue_screens.dart:304-380` | `_FaqSuggestionsSection` |
-| Frontend Provider | `domain/providers/support/support_issue_provider.dart:59-77` | `supportFaqSuggestionsProvider(sourceType, sourceId, query)` |
+계약의 정본은 코드다. 서버: `SupportFaqController`, `SupportFaqSuggestionService`, `SupportFaqSuggestionVo`. 앱: `support_issue_api.dart`, `support_faq_suggestion.dart`, `support_issue_screens.dart`, `support_issue_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -32,79 +23,6 @@
 2. `supportFaqSuggestionsProvider(sourceType, sourceId, null)` → `SupportIssueRepository.getFaqSuggestions()` → `GET /api/v1/support/faq/suggestions?sourceType=PAYMENT&sourceId=123`.
 3. 서버 `SupportFaqSuggestionService.getSuggestions()` → `baseSuggestions(sourceType)` → keyword 필터(비어 있으면 전체 통과) → priority 오름차순 → 최대 5개 반환.
 4. Flutter가 결과가 있으면 "추천 도움말" 섹션 카드 표시. 없거나 오류이면 `SizedBox.shrink()`.
-
-## 4. 서버 계약
-
-### `GET /api/v1/support/faq/suggestions`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `SupportFaqController#getSuggestions` (`SupportFaqController.java:22-29`) |
-| 인증 | **불필요** (공개 endpoint) |
-| Query | `sourceType: OperationalIssueSourceType` (required), `sourceId: Long` (optional), `query: String` (optional, keyword 필터) |
-| 응답 | `List<SupportFaqSuggestionVo>` (최대 5개, priority ASC) |
-| 에러 | sourceType 없거나 잘못된 경우 400 |
-
-### SupportFaqSuggestionVo 필드
-
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| `id` | `String` | 제안 식별자 (예: "refund-status") |
-| `title` | `String` | 도움말 제목 |
-| `answer` | `String` | 도움말 답변 텍스트 |
-| `sourceType` | `String` | OperationalIssueSourceType.name() |
-| `priority` | `int` | 정렬 우선순위 (낮을수록 먼저) |
-
-### sourceType별 하드코딩 제안 목록
-
-| sourceType | id | priority | 제목 |
-|---|---|---|---|
-| REFUND | refund-status | 1 | 환불 상태 확인 |
-| REFUND | refund-policy | 2 | 환불 가능 조건 |
-| PAYMENT/WALLET_TRANSACTION | payment-failed | 1 | 결제 실패 확인 |
-| PAYMENT/WALLET_TRANSACTION | payment-record | 2 | 거래 기록 보존 |
-| SETTLEMENT | settlement-appeal | 1 | 정산 이의 제기 |
-| SETTLEMENT | settlement-status | 2 | 정산 처리 상태 |
-| REPORT | report-status | 1 | 신고 처리 상태 |
-| REPORT | report-evidence | 2 | 추가 증빙 전달 |
-| REGULAR_MEETING_PAYMENT | rm-payment-bank | 1 | 계좌이체 입금 확인 |
-| REGULAR_MEETING_PAYMENT | rm-payment-status | 2 | 결제↔등록 상태 점검 |
-| REGULAR_MEETING_SETTLEMENT | rm-settlement-pending | 1 | 정기모임 정산 누락 |
-| REGULAR_MEETING_SETTLEMENT | rm-settlement-detail | 2 | 정산 매출 분해 |
-
-소스: `SupportFaqSuggestionService.java:28-54`
-
-### keyword 필터 로직
-
-- `query` 파라미터 비어 있으면 전체 통과 (`matches(suggestion, "")` = true).
-- `query` 있으면 `(title + " " + answer).toLowerCase().contains(query.toLowerCase())` 체크.
-- 소스: `SupportFaqSuggestionService.java:57-64`
-
-## 5. 프론트 계약
-
-| 항목 | 구현 상태 |
-|---|---|
-| API 호출 | `SupportIssueApi.getFaqSuggestions(sourceType, sourceId, query)` |
-| Provider | `supportFaqSuggestionsProvider(sourceType, sourceId, query)` |
-| Widget 표시 | `_FaqSuggestionsSection` — `maybeWhen(data:)` 성공 시만 표시, 실패/로딩 시 `SizedBox.shrink()` |
-| 카드 구조 | 제목(`body2Medium`) + 답변(`caption/textSecondary`) 2줄 카드 |
-| query 파라미터 | 현재 provider 호출 시 `null` 고정 (실시간 검색 미구현) |
-
-Flutter `SupportFaqSuggestion` 모델:
-
-```dart
-// support_faq_suggestion.dart
-@freezed
-class SupportFaqSuggestion with _$SupportFaqSuggestion {
-  const factory SupportFaqSuggestion({
-    required String id,
-    required String title,
-    required String answer,
-    required String sourceType,
-    required int priority,
-  }) = _SupportFaqSuggestion;
-}
-```
 
 ## 6. 상태/권한 매트릭스
 

@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-06-05 -->
 
 ## 1. 결론
@@ -16,21 +15,9 @@
 
 현재 판정: **프로덕션 사용 가능. 서버·클라이언트 정합. 단, breakdown 조회 API 미노출 Gap(이력/시간축) 한 건 존재.**
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `community_api/src/.../club/reputation/controller/ReputationScoreController.java` | endpoint 2개, 권한 분기, breakdown 포함 여부 |
-| Backend Service | `community_api/src/.../club/reputation/service/ReputationScoreService.java` | 점수 공식, 원천 5개, clamp 범위 |
-| Backend VO | `community_api/src/.../club/reputation/vo/ReputationScoreVo.java` | 응답 필드 4개 + breakdown nullable |
-| Backend Enum | `community_api/src/.../club/reputation/constants/ReputationLevel.java` | 4단계 레벨 구간 |
-| Backend Test | `ReputationScoreServiceTest.java` | 점수 공식 회귀 테스트 존재 |
-| Flutter API | `community_app/lib/data/api/reputation/reputation_score_api.dart` | Retrofit 2 endpoint |
-| Flutter Model | `community_app/lib/data/models/reputation/reputation_score_vo.dart`, `reputation_level.dart` | 서버 VO 1:1 매핑, fromName 파서 |
-| Flutter Repository | `community_app/lib/data/repositories/reputation/reputation_score_repository.dart` | Result<T> 래핑 |
-| Flutter Provider | `community_app/lib/domain/providers/reputation/reputation_providers.dart` | DI 체인, `reputationScoreProvider` |
-| Flutter Widget | `community_app/lib/presentation/reputation/widgets/reputation_score_card.dart` | 표시 UI, breakdown 토글, 레벨 색상 |
-| F07-10 경계 | `community_api/src/.../payment/meeting/controller/HostSettlementReputationController.java` | 다른 패키지(payment/meeting), 다른 endpoint, 다른 점수 |
+계약의 정본은 코드다. 서버: `ReputationScoreController`, `HostSettlementReputationController`, `ReputationScoreService`, `ReputationScoreVo`, `ReputationLevel`, `ReputationScoreServiceTest`. 앱: `reputation_score_api.dart`, `reputation_score_vo.dart`, `reputation_level.dart`, `reputation_score_repository.dart`, `reputation_providers.dart`, `reputation_score_card.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -42,80 +29,11 @@
 6. Flutter는 `asyncScore.when(data: _buildContent)`로 `ReputationScoreCard`를 렌더한다.
 7. breakdown이 있으면 우상단 토글 아이콘이 나타나고, 탭 시 5개 항목 breakdown 행을 펼친다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 엔드포인트
-
-| Method | Path | 인증 | breakdown 포함 조건 |
-|---|---|---|---|
-| GET | `/api/v1/clubs/{clubId}/reputation/me` | required (클럽 멤버) | 항상 포함 |
-| GET | `/api/v1/clubs/{clubId}/reputation/members/{memberId}` | required (조회자 + 대상 모두 클럽 멤버) | 조회자가 본인이거나 운영진(OWNER/ADMIN)이면 포함, 그 외 null |
-
-### 점수 공식 (0~100 clamp)
-
-소스: `ReputationScoreService.java:41-48`
-
-| 원천 | 계산 | 상한/하한 |
-|---|---|---|
-| `base` | 고정 50 | — |
-| `mileage` | `qualifiedLifetimeEarned / 100` | cap +40 |
-| `grade` | 현재 등급 `displayOrder * 2` | cap +10 |
-| `warning` | `effectiveScore * -3` | cap -30 |
-| `severe` | 활성 SEVERE GRANT 1건 이상 시 -20 | — |
-
-최종 점수 = 5개 합산 후 `Math.max(0, Math.min(100, raw))`
-
-> 마일리지 summary 미존재 시 mileage=0, grade=0. 경고 summary 미존재 시 warning=0, severe=0. 기본 점수 50 반환.
-
-### ReputationScoreVo 응답 필드
-
-소스: `ReputationScoreVo.java`
-
-| 필드 | Java 타입 | Dart 타입 | 설명 |
-|---|---|---|---|
-| `clubId` | `long` | `int` | 클럽 ID |
-| `memberId` | `long` | `int` | 멤버 사용자 ID |
-| `score` | `int` | `int` | 0~100 정수 |
-| `level` | `ReputationLevel` (enum) | `ReputationLevel` (enum) | LOW/MEDIUM/HIGH/EXCELLENT |
-| `breakdown` | `Map<String, Integer>` | `Map<String, int>?` | 운영진/본인만 비null. key: base/mileage/grade/warning/severe |
-
-### ReputationLevel enum
-
-소스: `ReputationLevel.java`
-
-| 값 | 점수 구간 | Dart enum | 표시 |
-|---|---|---|---|
-| `LOW` | 0~30 | `ReputationLevel.low` | 낮음 |
-| `MEDIUM` | 31~60 | `ReputationLevel.medium` | 보통 |
-| `HIGH` | 61~85 | `ReputationLevel.high` | 높음 |
-| `EXCELLENT` | 86~100 | `ReputationLevel.excellent` | 최상 |
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 멤버 목록/카드/상세 화면에 `ReputationScoreCard` 위젯 삽입 형태 (독립 스크린 없음)
-- 본인 조회: `ReputationScoreCard(clubId: X)` (memberId 생략)
-- 타 멤버 조회: `ReputationScoreCard(clubId: X, memberId: Y)`
-
-### 파일 목록
-
-| 파일 | 역할 |
-|---|---|
-| `data/api/reputation/reputation_score_api.dart` | Retrofit — 2 endpoint |
-| `data/models/reputation/reputation_score_vo.dart` | Freezed VO (breakdown `Map<String, int>?`) |
-| `data/models/reputation/reputation_level.dart` | ReputationLevel enum + `fromName()` 파서 |
-| `data/repositories/reputation/reputation_score_repository.dart` | Result<T> 래핑 |
-| `domain/providers/reputation/reputation_providers.dart` | DI chain + `reputationScoreProvider` |
-| `presentation/reputation/widgets/reputation_score_card.dart` | 표시 위젯 — score/level/breakdown 토글 |
-
-### 위젯 구성 요소
-
-- 레벨 배지 (LOW=error500/빨강, MEDIUM=warning500/주황, HIGH=primary500/초록, EXCELLENT=linkBlue/파랑)
-- score 숫자 + "/100" 레이블
-- breakdown 토글 아이콘 (breakdown 미포함이면 미표시)
-- breakdown 5개 행 (기본/마일리지/등급/경고/심각 제재; 양수=초록, 음수=빨강, 0=회색)
-- 에러 시 "신뢰도 점수를 불러올 수 없습니다." + "다시 시도" 버튼
+- 점수 = 합산 뒤 0~100 으로 자른다. 기본 50, 마일리지 누적/100(최대 +40), 등급 순서×2(최대 +10), 경고 점수×-3(최대 -30), 활성 중대 제재 있으면 -20.
+- 마일리지 요약이 없으면 마일리지·등급 0, 경고 요약이 없으면 경고·중대 0 이다.
+- 등급: 낮음 0~30, 보통 31~60, 높음 61~85, 최상 86~100.
 
 ## 6. 상태/권한 매트릭스
 

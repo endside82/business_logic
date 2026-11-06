@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-07-29; unit: business_logic/units/01_auth_onboarding/F01-07_preference-tags -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/01_auth_onboarding/F01-07_preference-tags`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 서버는 사용자의 관심사 태그를 단건 CRUD 한다. 각 태그는 서버 카탈로그의 라벨과 가중치(0.1~5.0)를 가지며 사용자별 최대 20개까지 저장된다. 온보딩은 POST를 순차 호출하고, 현재 프로필 화면은 조회·추가·삭제만 연결한다. PUT과 Retrofit 선언은 존재하지만 이름·가중치를 편집하는 화면/Provider/Repository 호출자는 없다.
@@ -29,94 +24,11 @@
 
 본 파일은 본 단위 코드 범위(`presentation/auth/`, `data/api/user_preference_tag_api.dart`, `data/repositories/auth_repository.dart` 부분) 안에서 다루는 흐름만 기술한다.
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/01_auth_onboarding/F01-07_preference-tags/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/01_auth_onboarding/F01-07_preference-tags/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/01_auth_onboarding/F01-07_preference-tags/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/01_auth_onboarding/F01-07_preference-tags/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
-
-### 확인된 소스 trace
-
-| 소스 trace | 파일 존재 |
-|---|---|
-| `community_api/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java:27` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java:34` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java:42` | 확인됨 |
-| `community_api/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java:51` | 확인됨 |
+계약의 정본은 코드다. 서버: `UserPreferenceTagController`, `InterestCatalogController`, `RelationshipService`, `PersonRecommendationService`, `MatchScoringService`. 앱: `onboarding_interests_screen.dart`, `preference_tag_screen.dart`, `user_preference_tag_api.dart`, `auth_repository.dart`.
 
 ## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
-### 신규 일괄 등록 (`onboarding_interests_screen.dart`)
-F01-06 frontend.md에서 자세히 다룸. 본 파일에서는 API 호출 측면만 정리:
-- 사용자가 N개 태그 선택 후 "다음" 탭
-- `AuthRepository.addPreferenceTags(List<String> tagNames)` 호출 (본 단위 자체 메서드)
-- 내부 동작:
-  ```dart
-  for (final tagName in tagNames) {
-    await _userPreferenceTagApi.addTag(
-      UserPreferenceTagParam(tagName: tagName),
-    );
-  }
-  return const Result.success(null);
-  ```
-- `UserPreferenceTagParam`은 `tagName`만 명시 → `weight` 기본값 1.0 사용
-- 첫 실패 시 즉시 throw → `Result.failure(ApiError)`
-- 클라이언트 측 한도(20개) 검증 없음 — 서버에 위임
-
-## 4. 서버 계약
-
-### 개요
-
-서버는 사용자의 관심사 태그를 단건 CRUD 한다. 각 태그는 서버 카탈로그의 라벨과 가중치(0.1~5.0)를 가지며 사용자별 최대 20개까지 저장된다. 현재 Flutter는 온보딩의 추가와 프로필 화면의 조회·추가·삭제를 연결하며 PUT 편집은 연결하지 않는다.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | /api/v1/interests/catalog | `InterestCatalogController#getCatalog` | required | 25개 허용 라벨을 카테고리별 반환 |
-| GET | /api/v1/users/me/preference-tags | `UserPreferenceTagController#getMyTags` | required | 내 태그 목록 (List) |
-| POST | /api/v1/users/me/preference-tags | `UserPreferenceTagController#addTag` | required | 태그 1건 추가 (201) |
-| PUT | /api/v1/users/me/preference-tags/{tagId} | `UserPreferenceTagController#updateTag` | required | 태그명/가중치 변경 |
-| DELETE | /api/v1/users/me/preference-tags/{tagId} | `UserPreferenceTagController#deleteTag` | required | 태그 삭제 (204) |
-
-### 의존 단위 / 외부 시스템
-
-- 다른 Unit 의존: 없음 (자체 도메인)
-- 사용처:
-  - F01-06 (온보딩 신규 등록 진입점)
-  - Unit 13 프로필 화면에서 조회/추가/삭제
-  - `RelationshipService`, `PersonRecommendationService`, `MatchScoringService`가 공통점·사람 추천·양측 동의 데이팅 점수 입력으로 실제 사용
-- 외부 시스템: 없음
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- **신규 등록**: 온보딩 Step 3 (`/onboarding/interests`) — F01-06에서 다룬 화면
-- **운영 중 조회/추가/삭제**: `/profile/tags`의 프로필 화면에서 사용
-- **수정**: 서버 PUT과 Retrofit 선언만 있고 현재 Flutter 사용자 경로는 없음
-
-본 파일은 본 단위 코드 범위(`presentation/auth/`, `data/api/user_preference_tag_api.dart`, `data/repositories/auth_repository.dart` 부분) 안에서 다루는 흐름만 기술한다.
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 | 역할 |
-|---|---|---|
-| `/onboarding/interests` | `lib/presentation/auth/screens/onboarding_interests_screen.dart` | 신규 일괄 등록 |
-| `/profile/tags` | `lib/presentation/profile/screens/preference_tag_screen.dart` | 조회·추가·삭제 — 이름/가중치 편집 없음 |
-
-| API 클래스 | 파일 |
-|---|---|
-| `UserPreferenceTagApi` | `lib/data/api/user_preference_tag_api.dart` |
-
-### 화면별 구성 요소 & 액션
 
 ### 신규 일괄 등록 (`onboarding_interests_screen.dart`)
 F01-06 frontend.md에서 자세히 다룸. 본 파일에서는 API 호출 측면만 정리:
@@ -150,15 +62,6 @@ F01-06 frontend.md에서 자세히 다룸. 본 파일에서는 API 호출 측면
 | S9 | 가중치 범위 초과 | 시나리오 본문 참조 | 변경 거부 |
 | S10 | 태그 삭제 | 시나리오 본문 참조 | 태그 제거, 추천 입력값 변동 |
 
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
@@ -179,9 +82,3 @@ F01-06 frontend.md에서 자세히 다룸. 본 파일에서는 API 호출 측면
 - **AC-08. 가중치만 변경 API**: Given 본인 tagId와 범위 내 weight When PUT을 직접 호출하면 Then 서버에서는 가중치와 다음 조회 정렬이 갱신된다. 현재 Flutter 화면 호출자는 없다.
 - **AC-09. 가중치 범위 초과**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변경 거부
 - **AC-10. 태그 삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 태그 제거, 추천 입력값 변동
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

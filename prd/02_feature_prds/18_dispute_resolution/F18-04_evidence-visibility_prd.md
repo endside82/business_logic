@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
 
 ## 1. 결론
@@ -16,21 +15,9 @@ legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케�
 
 `EvidenceFileValidator`는 증빙 파일 첨부 시 소유권·용도·상태를 검증하며, `UserDisputeCase`, `DisputeAppeal`, `ClubMembershipAction` 등 증빙을 받는 도메인에서 공통으로 호출된다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Enum | `host/dispute/constants/Visibility.java` | 4값 + 각 값 의미 |
-| Backend VO | `host/dispute/vo/DisputeEvidenceVo.java` | 필드 전체 (fileId, mimeType, fileSize, visibility 등) |
-| Backend Service | `host/dispute/service/DisputeLegalHoldService.java` | `hasActiveLegalHold`, `isCaseEvidenceFrozen`, `isActive` 판정 |
-| Backend Scheduler | `host/dispute/scheduler/DisputeCaseRetentionScheduler.java` | cron, RETENTION_YEARS=1, 7개 source, partial-success 구조 |
-| Backend Validator | `EvidenceFileValidator` (소스는 `DisputeAppealService.java` 참조) | 소유권/용도/상태 검증 |
-| Backend Detail VO | `host/dispute/vo/DisputeCaseDetailVo.java:evidenceFrozen` | `boolean evidenceFrozen` 필드 |
-| Flutter Screen | `lib/presentation/dispute/screens/dispute_evidence_screen.dart` | 증빙 전체화면 뷰어 |
-| Flutter Screen | `lib/presentation/dispute/screens/dispute_case_detail_screen.dart` | `evidenceFrozen` 처리, 증빙 섹션 |
-| Flutter Model | `lib/data/models/dispute/dispute_evidence_vo.dart` | Freezed 모델, `@Default(false) bool evidenceFrozen` |
-| Flutter Enum | `lib/data/models/dispute/dispute_enums.dart:DisputeVisibility` | 4값, Dart prefix `DisputeVisibility` |
-| Verification | 검증 없음 | — |
+계약의 정본은 코드다. 서버: `Visibility`, `DisputeEvidenceVo`, `DisputeLegalHoldService`, `DisputeCaseRetentionScheduler`, `DisputeAppealService`, `DisputeCaseDetailVo`, `DisputeCaseQueryRepository`. 앱: `dispute_evidence_screen.dart`, `dispute_case_detail_screen.dart`, `dispute_evidence_vo.dart`, `dispute_enums.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -70,104 +57,6 @@ legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케�
 3. 각 케이스의 `evidence_file_ids` JSON 파싱 → `FileStorageService.delete(fileId)` 호출.
 4. 삭제 성공한 ID만 JSON에서 제거. 일부 실패 시 해당 ID 유지(재시도 보장).
 5. `meeting_settlement_appeal`(evidence 필드 미보유)과 `purchase_refund_dispute`(`evidence_file_group_id` 구조)는 처리 제외.
-
-## 4. 서버 계약
-
-### `Visibility` 4값
-
-| 값 | 서버 정의 | 적용 대상 actor |
-|---|---|---|
-| `PARTIES` | 분쟁 양측(신고자/피신고자, 또는 양 거래자) 노출 | 신고자, 피신고자, 호스트, 참가자 |
-| `HOST_ONLY` | 호스트(또는 정산 creator)만 열람 | 호스트, 정산 creator, CS |
-| `CS_ONLY` | CS/운영자만 열람 | CS, admin |
-| `PUBLIC_SUMMARY` | 요약 형태로 모두 노출 가능 | 전체 (요약 형태) |
-
-실제 `filterByActorVisibility`는 **CS_ONLY를 제거하고, HOST_ONLY는 처분 권한이 있는 호스트 쪽 열람자에게만 남긴다**(차수 11 S3b). 현재 builder는 HOST_ONLY를 내지 않는다. 클라이언트 추가 필터링 없음.
-
-### `DisputeEvidenceVo` 필드
-
-| 필드 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| `id` | long | N | 도메인 row id |
-| `caseId` | String | N | 통합 케이스 id |
-| `fileId` | long | N | `file_metadata.id` |
-| `fileName` | String | N | |
-| `mimeType` | String | N | |
-| `fileSize` | long | N | bytes |
-| `submittedByUserId` | Long | Y | 제출자 |
-| `submittedByRole` | AuthorRole | N | USER/HOST/CO_HOST/CLUB_STAFF/CS/SYSTEM |
-| `evidenceType` | String | N | IMAGE/RECEIPT/CHAT/PHOTO/LOCATION/PAYMENT/OTHER |
-| `visibility` | Visibility | N | 4값 |
-| `createdAt` | LocalDateTime | N | |
-
-### `DisputeLegalHoldService` 계약
-
-| 메서드 | 인자 | 반환 | 설명 |
-|---|---|---|---|
-| `hasActiveLegalHold(userId)` | `long userId` | `boolean` | `existsActiveCaseByUserId(userId)`에 위임. source별 제한 finder 사용 |
-| `isCaseEvidenceFrozen(caseId)` | `String caseId` | `boolean` | case status가 OPEN/IN_REVIEW/ESCALATED이면 true |
-
-legal hold active 기준: `OPEN | IN_REVIEW | ESCALATED`
-
-`existsActiveCaseByUserId` source별 finder 범위 (`DisputeCaseQueryRepository.java:131-234`):
-
-| source | finder 기준 |
-|---|---|
-| OperationalIssue | reporter만 (page=0, size=50) |
-| WarningReport | reporter만 (target은 club-scoped이라 hold 판정 제외) |
-| WarningAppeal | member(작성자) |
-| MeetingSettlementAppeal | 호스트(settlement.creatorUserId) 경로로 검출 (appealer 직접 finder 없음) |
-| Report(공개) | reporter, CARPOOL 제외 |
-| PurchaseRefundDispute | seller만 (buyer 직접 finder 없음) |
-| DateBlock | blocker, reportId≠null |
-| CARPOOL Report | reporter |
-| CLUB_MEMBERSHIP_ACTION | 영향받은 멤버(action.userId, KICK/BAN only) |
-| USER_DISPUTE | reporter측+target측 양쪽 |
-terminal (evidence 정리 대상): `RESOLVED | CLOSED`
-
-`isCaseEvidenceFrozen` 내부: caseId prefix 파싱 → source repo 조회 → `UnifiedDisputeStatus` 매핑 → `isActive` 판정. caseId 형식 오류 또는 미존재 시 `false` 반환.
-
-### `EvidenceFileValidator` 검증 체계
-
-증빙 파일 첨부 시(`DisputeAppealService`, `UserDisputeCase` 생성, `ClubMembershipAction` 저장) 호출되는 공통 validator.
-
-| 검증 항목 | 실패 시 에러 |
-|---|---|
-| 최대 파일 개수 초과 (>5) | `EVIDENCE_FILE_TOO_MANY` |
-| 파일 소유권 불일치 (file_metadata.uploadedBy != userId) | 소유권 에러 |
-| 파일 용도 부적합 (이미 다른 케이스에 사용 중) | 용도 에러 |
-| 파일 상태 부적합 (삭제됨 등) | 상태 에러 |
-
-UNBAN 액션 시 null 전달 → validator short-circuit (빈 목록 처리).
-
-### `DisputeCaseRetentionScheduler`
-
-| 항목 | 값 |
-|---|---|
-| cron | `0 0 5 * * *` (매일 05:00 — `zone` 미지정으로 JVM 기본 타임존. SLA 스케줄러 `DisputeSlaExceededScheduler`는 `Asia/Seoul` 명시와 대조적) |
-| `RETENTION_YEARS` | 1년 |
-| 처리 source (7개) | OperationalIssue(resolved_at), WarningReport(processed_at), WarningAppeal(processed_at), DATE_BLOCK(연결 report.processed_at + terminal status), CLUB_MEMBERSHIP_ACTION(appeal.processed_at + non-PENDING), USER_DISPUTE(resolved_at + RESOLVED/CLOSED), Report(evidence_file_ids + terminal) |
-| 제외 source | `meeting_settlement_appeal`(evidence 필드 미보유), `purchase_refund_dispute`(`evidence_file_group_id` 구조 다름) |
-| partial-success | 전부 삭제 성공 시에만 evidence_file_ids JSON 비움. 일부 실패 시 해당 ID 유지 → 재시도 보장 |
-| 동작 범위 | evidence file_metadata + S3 파일 삭제만. case row 자체 익명화/삭제는 각 원천 도메인 책임 |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| 증빙 뷰어 라우트 | `/me/disputes/:caseId/evidence` (`Routes.myDisputeEvidence`) |
-| 증빙 뷰어 화면 | `DisputeEvidenceScreen` |
-| 증빙 섹션 | `DisputeCaseDetailScreen` 내 evidence 리스트 |
-| evidenceFrozen | `@Default(false) bool evidenceFrozen` (Dart Freezed) — `true`이면 삭제 버튼 숨김 |
-| Visibility enum | `DisputeVisibility` (prefix 불일치. 서버 `Visibility` wire값과는 일치) |
-| 서버 필터링 신뢰 | 클라는 수신한 목록 그대로 렌더링. 추가 필터링 없음 |
-
-### Dart enum 정합
-
-| 서버 | Dart | wire value | 판단 |
-|---|---|---|---|
-| `Visibility` | `DisputeVisibility` | `name()` (prefix 불일치, wire 일치) | 일치 |
-| `AuthorRole` | `AuthorRole` | `name()` | 일치 |
 
 ## 6. 상태/권한 매트릭스
 

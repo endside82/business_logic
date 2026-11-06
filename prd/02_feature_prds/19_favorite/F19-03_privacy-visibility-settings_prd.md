@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29 -->
 
 ## 1. 결론
@@ -24,22 +23,9 @@
   멘션 텍스트 등 실제 화면에서 호출한다. 따라서 `hideFromStrangers`는 직접 route에서도 서버 프로필
   조회 결과로 강제되며, 미사용 route를 전제로 설명하면 안 된다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller(프라이버시) | `PrivacySettingController.java` | endpoint 5개, PUT 요청 body |
-| Backend Controller(클럽보기) | `UserClubController.java:18-28` | endpoint 1개 |
-| Backend Service(프라이버시) | `PrivacySettingService.java:19-71` | 프리미엄 게이트, upsert, 게터 |
-| Backend Service(클럽보기) | `UserClubService.java:19-38` | 차단·숨김 필터 |
-| Backend Model | `UserPrivacySetting.java` | 테이블 구조, 공개범위 컬럼 4개 |
-| Backend VO | `UserPrivacySettingVo.java`, `UserJoinedClubVo.java` | 응답 필드 |
-| Backend Param | `CalendarPrivacyParam`, `ClubPrivacyParam`, `HideFromStrangersParam`, `HideFromSearchParam` | 요청 필드 |
-| Frontend API | `favorite_api.dart` | privacy 조회/갱신과 타인 클럽 조회 |
-| Frontend Model | `user_privacy_setting_vo.dart`, `user_joined_club_vo.dart`, `privacy_param.dart` | Freezed 모델 |
-| Frontend Provider | `privacy_setting_provider.dart`, `user_clubs_provider.dart` | 상태 관리 |
-| Frontend Screen | `privacy_settings_screen.dart:19-225` | 토글 UI, 업셀 다이얼로그 |
-| Verification | `PrivacySettingServiceTest`, `UserQueryRepositoryTest`, `PersonSearchQueryRepositoryTest`, `EventAttendanceQueryRepositoryTest` | 신규 boolean 저장과 전역 검색·사람 검색·만난 사람/추천 제외 검증. Flutter 전용 테스트는 별도 확인되지 않음 |
+계약의 정본은 코드다. 서버: `PrivacySettingController`, `UserClubController`, `PrivacySettingService`, `UserClubService`, `UserPrivacySetting`, `UserPrivacySettingVo`, `UserJoinedClubVo`. 앱: `privacy_settings_screen.dart`, `favorite_api.dart`, `user_privacy_setting_vo.dart`, `user_joined_club_vo.dart`, `privacy_param.dart`, `privacy_setting_provider.dart`, `user_clubs_provider.dart`, `app_router.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -83,90 +69,6 @@
    - 본인 조회 → 항상 전체 목록.
    - 통과 시 `ClubMemberQueryRepository.findJoinedClubsForViewer(targetUserId)` → `List<UserJoinedClubVo>`.
 3. 타인 프로필 화면(`UserProfileScreen`)에 가입 클럽 섹션이 구현되어 있다. `userClubsProvider(userId)` watch → clubs 목록 표시. 숨김 설정 시 빈 상태 "공개된 가입 클럽이 없습니다." 표시(`user_profile_screen.dart:54-131`).
-
-## 4. 서버 계약
-
-### Endpoints
-
-| HTTP | 경로 | 요청 | 응답 | 성공 상태 |
-|---|---|---|---|---|
-| GET | `/api/v1/users/me/privacy` | — | `UserPrivacySettingVo` | 200 |
-| PUT | `/api/v1/users/me/privacy/calendar` | `@RequestBody CalendarPrivacyParam { boolean privateToFavorites }` | `UserPrivacySettingVo` | 200 |
-| PUT | `/api/v1/users/me/privacy/clubs` | `@RequestBody ClubPrivacyParam { boolean hideClubs }` | `UserPrivacySettingVo` | 200 |
-| PUT | `/api/v1/users/me/privacy/strangers` | `@RequestBody HideFromStrangersParam { boolean hideFromStrangers }` | `UserPrivacySettingVo` | 200 |
-| PUT | `/api/v1/users/me/privacy/search-visibility` | `@RequestBody HideFromSearchParam { boolean hideFromSearch }` | `UserPrivacySettingVo` | 200 |
-| GET | `/api/v1/users/{targetUserId}/clubs` | `@PathVariable long targetUserId` | `List<UserJoinedClubVo>` | 200 |
-
-> 소스: `PrivacySettingController.java:23-42`, `UserClubController.java:22-28`
-
-### UserPrivacySettingVo (응답)
-
-| 필드 | 타입 | 기본값 | 비고 |
-|---|---|---|---|
-| `calendarPrivateToFavorites` | `boolean` | `false` | row 없으면 false |
-| `hideClubs` | `boolean` | `false` | row 없으면 false |
-| `hideFromStrangers` | `boolean` | `false` | 무료. 무맥락 직접 프로필 열람 제한 |
-| `hideFromSearch` | `boolean` | `false` | 무료. 사람 발견 표면에서 제외 |
-
-> 소스: `UserPrivacySettingVo.java:13-18`
-
-### UserJoinedClubVo (응답)
-
-| 필드 | 타입 | 비고 |
-|---|---|---|
-| `clubId` | `Long` | |
-| `name` | `String` | |
-| `thumbnailUrl` | `String` (nullable) | |
-| `category` | `Category` (enum) | |
-| `memberCount` | `int` | |
-| `clubType` | `ClubType` | FREE/BUSINESS |
-| `role` | `MemberRole` | OWNER/ADMIN/MEMBER |
-| `joinedAt` | `LocalDateTime` (nullable) | |
-
-> 소스: `UserJoinedClubVo.java:13-30`
-
-### 에러코드
-
-| 코드 | HTTP | 조건 |
-|---|---|---|
-| `PREMIUM_REQUIRED` | 403 | 비프리미엄이 토글 ON 시도 |
-| `FORBIDDEN` | 403 | 차단 관계에서 타인 클럽 조회 |
-
-> 소스: `PrivacySettingService.java:36-38, 45-47`, `UserClubService.java:30-32`
-
-### DB 저장소
-
-`user_privacy_setting` 테이블. row 없으면 upsert(retrieveOrCreate 패턴). Unique: `user_id`. 공개범위 값은 `calendar_private_to_favorites`, `hide_clubs`, `hide_from_strangers`, `hide_from_search` 네 개다.
-
-> 소스: `PrivacySettingService.java:67-70`, `UserPrivacySetting.java:24-64`
-
-## 5. 프론트 계약
-
-| 항목 | 값 | 소스 |
-|---|---|---|
-| Route | `/profile/privacy-settings` | `Routes.profilePrivacySettings`, `app_router.dart` |
-| 통합 타인 프로필 Route | `/profile/users/:userId` | `Routes.userProfile`, `app_router.dart`; 즐겨찾기 목록·사람 시트·멘션에서 호출 |
-| Screen | `PrivacySettingsScreen` | `privacy_settings_screen.dart:19` |
-| Provider(설정) | `privacySettingNotifierProvider` | `privacy_setting_provider.dart` |
-| Provider(클럽) | `userClubsProvider(userId)` | `user_clubs_provider.dart` |
-| 업셀 경로 | `/profile/wallet/subscription` | `privacy_settings_screen.dart:142` |
-| 프리미엄 판단 | `sub.status=='ACTIVE' && sub.planType=='PREMIUM'` | `privacy_settings_screen.dart:22-25` |
-
-### Freezed 모델 — 서버 대비 확인
-
-| 서버 필드 | Dart 필드 | 매핑 | 판단 |
-|---|---|---|---|
-| `boolean calendarPrivateToFavorites` | `bool calendarPrivateToFavorites` | `@Default(false)` | 정합 |
-| `boolean hideClubs` | `bool hideClubs` | `@Default(false)` | 정합 |
-| `boolean hideFromStrangers` | `bool hideFromStrangers` | `@Default(false)` | 정합 |
-| `boolean hideFromSearch` | `bool hideFromSearch` | `@Default(false)` | 정합 |
-| `boolean privateToFavorites`(param) | `bool privateToFavorites` | 직접 | 정합 |
-| `boolean hideClubs`(param) | `bool hideClubs` | 직접 | 정합 |
-| `boolean hideFromStrangers`(param) | `bool hideFromStrangers` | 직접 | 정합 |
-| `boolean hideFromSearch`(param) | `bool hideFromSearch` | 직접 | 정합 |
-| `Category category`(club) | `String category` | `@Default('')` | 정합(enum → String) |
-| `ClubType clubType`(club) | `String clubType` | `@Default('FREE')` | 정합(enum → String) |
-| `MemberRole role`(club) | `String role` | `@Default('')` | 정합(enum → String) |
 
 ## 6. 상태/권한 매트릭스
 

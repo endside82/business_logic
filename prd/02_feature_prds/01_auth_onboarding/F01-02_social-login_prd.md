@@ -25,14 +25,6 @@
 
 이메일·Google이 현재 활성 상태다. iOS 공개 전 로그인 구성 결정은 아직 남아 있다. Apple을 선택하면 설정·이메일 숨기기·실제 로그인·탈퇴와 인증 철회까지 확인한다. 카카오·네이버는 후속 공개 범위다. 구체 준비는 외부 준비 현황의 iOS 로그인 구성과 심사 준비를 따른다.
 
-## 서버 계약
-
-| 메서드·주소 | 요청과 응답 |
-| --- | --- |
-| `POST /api/v1/auth/social` | SocialLoginParam → LoginVo; 기존 이메일 연결 필요 시 409 + linkToken/maskedEmail |
-| `POST /api/v1/auth/social/existing-account/email-code` | SocialLinkCodeParam: linkToken → EmailCodeSentVo |
-| `POST /api/v1/auth/social/existing-account/link` | SocialLinkConfirmParam: linkToken, code → LoginVo |
-
 ## 출시 확인
 
 - Google 기존 로그인·신규 가입·기존 이메일 연결 세 경로와 취소를 실제 계정으로 확인한다.
@@ -42,13 +34,5 @@
 이전 링크 방식의 10월 12일 실수신 결과를 번호 인증의 통과 기록으로 사용하지 않는다. [외부 준비 현황](../../../docs/qa/external-readiness.html)에서 운영 메일·새 패키지·물리 기기·iOS의 남은 검증을 확인한다.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/auth/social` | `AuthController#socialLogin` | [AuthController.java:95](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L95) |
-| `POST /api/v1/auth/social/existing-account/email-code` | `AuthController#requestSocialLinkCode` | [AuthController.java:102](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L102) |
-| `POST /api/v1/auth/social/existing-account/link` | `AuthController#linkSocialToExistingAccount` | [AuthController.java:108](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L108) |
+서버 창구: `AuthController#socialLogin`, `AuthController#requestSocialLinkCode`, `AuthController#linkSocialToExistingAccount`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->

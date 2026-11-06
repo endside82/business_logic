@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 2026-10-29 현재 계약 대조
 
 ### 체크인 기록을 출석 확정의 초깃값으로 씁니다
@@ -30,20 +29,9 @@ finalize 는 단일 트랜잭션: 모임 잠금 → 정션 FINALIZED 재확정 �
 
 **안전망 스케줄러**: `@Value("${regular-meeting.auto-finalize.enabled:false}")` 기본 OFF + endTime+24h grace + Redisson lock. 호스트가 무대응이면 자동 처리(opt-in).
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `RegularMeetingController#finalizeSession` | `POST /events/{eventId}/finalize` |
-| Backend Service | `RegularMeetingSessionAttendanceService#finalizeSession` | 단일 트랜잭션 로직 |
-| Backend Entity | `RegularMeetingSessionAttendance` — `(event_id, user_id)` UK + member_id/result/manual_reason/finalized_by/finalized_at, FK CASCADE | 권위 테이블 |
-| Backend Enum | `RegularMeetingSessionAttendanceResult` (ATTENDED/NO_SHOW/EXCUSED/SESSION_CANCELED) | 결과 종류 |
-| Member 카운터 | `RegularMeetingMember#recordAttended,recordNoShow,recordExcusedOrCanceled,reachesNoShowLimit,markForfeited` | 도메인 메서드 |
-| FORFEIT 환불 | `RegularMeetingRefundCalculator.calculate(reason=FORFEIT)` | 산식 (F17-08) |
-| Scheduler | `RegularMeetingAttendanceFinalizeScheduler` (`auto-finalize.enabled` opt-in) | grace 24h |
-| Param | `RegularMeetingSessionFinalizeParam` (per-attendee override) | optional roster |
-| Policy | `RegularMeetingAttendancePolicy` | EventCheckIn 기준 ATTENDED 추정 |
-| Flutter Screen | `regular_meeting_session_finalize_screen.dart` | 일괄 확정 + 노쇼정책 안내 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingSessionAttendanceService`. 앱: `regular_meeting_session_finalize_screen.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -64,26 +52,6 @@ finalize 는 단일 트랜잭션: 모임 잠금 → 정션 FINALIZED 재확정 �
    - event.currentCapacity 재계산 (ATTENDING 카운트).
    - 정션 `attendanceFinalizationStatus = FINALIZED`.
 4. 응답: 204 No Content.
-
-## 4. 서버 계약
-
-| 엔드포인트 | Method | Body | 응답 | 가드 |
-|---|---|---|---|---|
-| `/regular-meetings/{id}/events/{eventId}/finalize` | POST | `RegularMeetingSessionFinalizeParam?` (per-attendee override 옵션) | 204 | host + FIXED + endTime≤now + 정션 미확정 |
-
-`RegularMeetingSessionFinalizeParam` (optional):
-- `List<AttendeeOverride>`: `{ userId, result, manualReason }` — 특정 사용자만 override (미지정자는 정책 기본값 적용).
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `Routes.regularMeetingSessionFinalize(:id, :eventId)` |
-| Screen | `RegularMeetingSessionFinalizeScreen` |
-| 노쇼정책 안내 | 모임의 `noShowPolicy` (NONE/WARN/FORFEIT_ON_LIMIT) + `noShowLimit` + `noShowCountMode` 표시 |
-| 일괄 확정 | 디폴트 — 체크인 기준 자동 판정 후 호스트 confirm |
-| per-attendee override UI | 1차 미신설 (서버 roster list endpoint 부재로 보류) — F17-09 §10 후속 |
-| Provider | `regularMeetingSessionsProvider(id)` + `regularMeetingDetailProvider(id)` invalidate (FINALIZED 표시 갱신) |
 
 ## 6. 상태/권한/시나리오 매트릭스
 

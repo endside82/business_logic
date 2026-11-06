@@ -25,13 +25,6 @@
 
 다른 기기에서 새로 로그인하면 기존 세션을 종료한다. 비밀번호를 잊었다면 비밀번호 찾기에서 메일 번호를 확인하고 새 비밀번호를 설정한다. 변경 후에는 이전 비밀번호와 기존 세션으로 접근할 수 없다.
 
-## 서버 계약
-
-| 메서드·주소 | 요청과 응답 |
-| --- | --- |
-| `POST /api/v1/auth/signup` | SignupParam: email, password, nickname, birthDate, mobile?, gender?, agreeTerm, agreePrivacy, agreeMarketing, signupToken → LoginVo (201) |
-| `POST /api/v1/auth/login` | LoginParam → LoginVo (200) |
-
 ## 출시 확인
 
 - 실제 메일 번호를 확인하기 전에는 계정이 만들어지지 않고, 확인 뒤 가입·자동 로그인·온보딩으로 이어진다.
@@ -41,12 +34,5 @@
 이전 링크 방식의 10월 12일 실수신 결과를 번호 인증의 통과 기록으로 사용하지 않는다. [외부 준비 현황](../../../docs/qa/external-readiness.html)에서 운영 메일·새 패키지·물리 기기·iOS의 남은 검증을 확인한다.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/auth/signup` | `AuthController#signup` | [AuthController.java:65](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L65) |
-| `POST /api/v1/auth/login` | `AuthController#login` | [AuthController.java:71](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L71) |
+서버 창구: `AuthController#signup`, `AuthController#login`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->

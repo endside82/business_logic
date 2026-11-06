@@ -25,13 +25,6 @@
 
 인증번호 메일은 요청 중 발송한다. 발송에 실패하면 오류를 안내하고 재시도한다. 이전 링크 메일의 아웃박스 재처리 정책을 번호 메일에 적용하지 않는다. 운영 환경의 번호 인증 우회는 꺼져 있어야 하며, 실제 외부 수신함·물리 기기·iOS에서 지연·재발송·만료를 별도로 확인해야 한다.
 
-## 서버 계약
-
-| 메서드·주소 | 요청과 응답 |
-| --- | --- |
-| `POST /api/v1/auth/signup/email-code` | EmailCodeRequestParam: email → EmailCodeSentVo |
-| `POST /api/v1/auth/signup/email-code/verify` | EmailCodeVerifyParam: email, code → SignupTokenVo |
-
 ## 출시 확인
 
 - 새 번호 메일을 실제 외부 수신함에서 받아 10분 안에 확인하고 가입으로 이어진다.
@@ -41,12 +34,5 @@
 이전 링크 방식의 10월 12일 실수신 결과를 번호 인증의 통과 기록으로 사용하지 않는다. [외부 준비 현황](../../../docs/qa/external-readiness.html)에서 운영 메일·새 패키지·물리 기기·iOS의 남은 검증을 확인한다.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/auth/signup/email-code` | `AuthController#requestSignupCode` | [AuthController.java:54](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L54) |
-| `POST /api/v1/auth/signup/email-code/verify` | `AuthController#verifySignupCode` | [AuthController.java:60](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L60) |
+서버 창구: `AuthController#requestSignupCode`, `AuthController#verifySignupCode`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->

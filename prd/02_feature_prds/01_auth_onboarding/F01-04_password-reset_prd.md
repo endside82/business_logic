@@ -25,14 +25,6 @@
 
 잘못된 번호는 같은 화면에서 고친다. 만료되거나 시도 횟수를 넘기면 새 번호를 받는다. 가입·재설정·계정 연결용 확인 표가 만료되거나 이미 사용됐다면 이메일 또는 Google 인증부터 다시 시작한다. 메일이 늦게 도착했을 때에는 마지막으로 요청한 번호만 사용한다.
 
-## 서버 계약
-
-| 메서드·주소 | 요청과 응답 |
-| --- | --- |
-| `POST /api/v1/auth/password-reset/request` | PasswordResetRequestParam: email → EmailCodeSentVo |
-| `POST /api/v1/auth/password-reset/verify` | EmailCodeVerifyParam: email, code → PasswordResetTokenVo |
-| `POST /api/v1/auth/password-reset/confirm` | PasswordResetParam: email, token, newPassword → 빈 성공 응답 (200) |
-
 ## 출시 확인
 
 - 비밀번호 계정·Google 전용 계정·미가입 이메일의 안내와 실제 발송을 구분해 확인한다.
@@ -42,13 +34,5 @@
 이전 링크 방식의 10월 12일 실수신 결과를 번호 인증의 통과 기록으로 사용하지 않는다. [외부 준비 현황](../../../docs/qa/external-readiness.html)에서 운영 메일·새 패키지·물리 기기·iOS의 남은 검증을 확인한다.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/auth/password-reset/request` | `AuthController#requestPasswordReset` | [AuthController.java:141](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L141) |
-| `POST /api/v1/auth/password-reset/verify` | `AuthController#verifyPasswordResetCode` | [AuthController.java:148](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L148) |
-| `POST /api/v1/auth/password-reset/confirm` | `AuthController#confirmPasswordReset` | [AuthController.java:153](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/account/controller/AuthController.java#L153) |
+서버 창구: `AuthController#requestPasswordReset`, `AuthController#verifyPasswordResetCode`, `AuthController#confirmPasswordReset`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->

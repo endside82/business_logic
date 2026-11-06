@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 시즌 조회는 멤버가 시즌 목록(`GET /mileage/seasons`, 상태 필터), 종료 시즌의 스냅샷 기반 랭킹(`GET /seasons/{seasonId}/ranking`), 본인 시즌 스냅샷(`GET /seasons/{seasonId}/me`, 없으면 204)을 보는 흐름이다. 서버 `MileageSeasonController`와 Flutter `mileage_seasons_screen.dart` / `mileage_season_ranking_screen.dart`가 연결되어 있다.
@@ -14,17 +13,9 @@
 
 판정: **목록·내 스냅샷·기본 랭킹은 사용 가능, basis 지정 랭킹은 Gap**.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageSeasonController.java` | `GET /seasons`(?status), `/seasons/{seasonId}/ranking`(ModelAttribute basis), `/seasons/{seasonId}/me`(204) |
-| Backend Service | `MileageSeasonService.java` | `listSeasons(status)`, `getSeasonRanking(basis)`, `getMySeasonSnapshot`, `close`(스냅샷·자동 ACTIVE 전환), `recordMemberSnapshot` |
-| Backend Query | `MileageSeasonSnapshotQueryRepository.java` | basis별 정렬: `BALANCE`→rankByBalance, 그 외→rankByEarned. nullsLast |
-| Backend Param | `MileageSeasonRankingSearchParam.java` | `basis : RankingBasis`(주석은 BY_EARNED/BY_BALANCE) |
-| Backend VO/Enum | `MileageSeasonVo.java`, `MileageSeasonSnapshotVo.java`, `constants/SeasonStatus.java`, `RankingBasis.java` | 응답 필드·enum 값 |
-| Frontend | `mileage_season_api.dart`, `mileage_season_repository.dart`, `mileage_season_providers.dart`, `presentation/mileage/screens/mileage_seasons_screen.dart`, `mileage_season_ranking_screen.dart` | route·basis 전달·204 처리 |
-| DB | `V1__init.sql` `mileage_season`, `mileage_season_snapshot` | rank_by_earned/rank_by_balance 컬럼 |
+계약의 정본은 코드다. 서버: `MileageSeasonController`, `MileageSeasonService`, `MileageSeasonSnapshotQueryRepository`, `MileageSeasonRankingSearchParam`, `MileageSeasonVo`, `MileageSeasonSnapshotVo`, `SeasonStatus`, `RankingBasis`. 앱: `mileage_seasons_screen.dart`, `mileage_season_ranking_screen.dart`, `mileage_season_api.dart`, `mileage_season_repository.dart`, `mileage_season_providers.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -33,36 +24,6 @@
 3. basis가 `BALANCE`면 `rankByBalance asc nullsLast → seasonBalance desc`, 그 외(null 포함)면 `rankByEarned asc nullsLast → seasonEarned desc`로 정렬.
 4. 본인 시즌 기록은 `getMySeasonSnapshot(clubId, seasonId, memberId)` → `GET /seasons/{seasonId}/me`. 스냅샷이 있으면 `MileageSeasonSnapshotVo`, 없으면 204 → Flutter는 null로 받아 빈 상태 표시.
 5. 스냅샷 자체는 운영진 시즌 마감(`MileageSeasonService.close`, F16-05) 시 생성된다. `close`는 상태를 CLOSED로 바꾸고 `closedAt`을 찍은 뒤 다음 SCHEDULED(시작시각 도래) 시즌을 ACTIVE로 전환한다.
-
-## 4. 서버 계약
-
-### `GET /api/v1/clubs/{clubId}/mileage/seasons`
-- 인증/권한: `requireClubMember`.
-- Query: `status`(SeasonStatus, nullable). 응답 `List<MileageSeasonVo>`(id/clubId/name/startAt/endAt/status/createdAt/closedAt).
-
-### `GET /api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/ranking`
-- Query: `MileageSeasonRankingSearchParam`(basis=RankingBasis nullable, page/size). 응답 `Page<MileageSeasonSnapshotVo>`.
-- `MileageSeasonSnapshotVo`: `id/clubId/seasonId/memberId/seasonEarned/seasonBalance/rankByEarned(Integer)/rankByBalance(Integer)/createdAt`.
-- 시즌 미존재(소속 클럽 불일치 포함) 시 `MILEAGE_SEASON_NOT_FOUND`.
-
-### `GET /api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/me`
-- 응답 `MileageSeasonSnapshotVo` 또는 **204 No Content**(스냅샷 없음).
-
-### 시즌 상태 머신 (운영 close는 F16-05)
-- `SCHEDULED`(시작 전) / `ACTIVE`(진행) / `CLOSED`(마감, 스냅샷 확정).
-- `close`: ACTIVE → CLOSED + `closedAt` + 다음 SCHEDULED(시작 도래) → ACTIVE.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `clubMileageSeasons`(`seasons`), `clubMileageSeasonRanking`(`:seasonId`) |
-| Screen | `MileageSeasonsScreen`, `MileageSeasonRankingScreen` |
-| Repository/API | `MileageSeasonRepository.listSeasons / getSeasonRanking / getMySeasonSnapshot` |
-| Model | `MileageSeasonVo`, `MileageSeasonSnapshotVo`, `SeasonStatus` enum |
-| 204 처리 | `getMySeasonSnapshot` 반환 타입 `MileageSeasonSnapshotVo?` (null 허용) |
-
-Flutter `getSeasonRanking`은 `basis`를 `String?`으로 전달하며 API doc 주석은 `BY_EARNED(default)/BY_BALANCE`로 표기.
 
 ## 6. 상태/권한 매트릭스
 

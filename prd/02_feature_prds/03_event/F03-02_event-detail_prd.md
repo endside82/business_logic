@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 이벤트 상세 조회는 현재 **일반 상세 조회, DRAFT 비공개 마스킹, 클럽 비멤버 제한, 서버 능력플래그 기반 운영 CTA, 유료 승인제 결제 대기, .ics 내보내기**까지 실제 서버와 Flutter 소스가 맞물려 있다. 서버는 `GET /api/v1/events/{eventId}`에서 `EventVo`와 viewer context를 내려주고, Flutter는 `/home/events/:eventId`에서 이를 바탕으로 상세 화면과 하단 CTA를 결정한다. 다만 상태별 렌더링과 이벤트 복제·삭제 CTA는 서버 계약과 완전히 맞지 않는다.
@@ -12,22 +11,9 @@
 
 현재 판정은 **상세 조회/권한/기본 CTA/유료 승인제 결제 경로/개인화 핏 프리뷰 사용 가능, 삭제·복제 lifecycle CTA는 정합성 Gap**이다. 상세 본문에는 증거등급 참석 이력을 k-익명성 규칙으로 가공한 “나와의 핏”과 원점수를 숨긴 “재방문 많은 호스트” 배지도 실제 배선돼 있다. `CANCELED`는 응답을 받은 뒤 화면 전체를 `AppBlockedState`로 교체하고, `CLOSED`는 흐릿한 오버레이 없이 정상 본문에 `종료` 배지만 붙인다. 가장 큰 현재 위험은 Flutter가 서버에서 유일하게 삭제 가능한 `DRAFT`에는 삭제 버튼을 주지 않고, 삭제 불가능한 `CLOSED`에는 삭제 버튼을 노출하는 상태 역전이다. 복제도 Flutter는 host-only·PRIVATE 숨김인데 서버는 co-host도 받고 PRIVATE를 허용하며, 반대로 Flutter가 노출하는 `CLUB_MEETING`은 서버가 거부한다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `community_api/src/main/java/com/endside/community/event/controller/EventController.java` | `GET /api/v1/events/{eventId}`, `POST /api/v1/events/{eventId}/next-occurrence`, `DELETE /api/v1/events/{eventId}`, calendar/similar |
-| Backend Service | `community_api/src/main/java/com/endside/community/event/service/EventService.java` | DRAFT 조회 guard, Redis 조회수 증가, `createNextOccurrence`, DRAFT-only `deleteEvent`, `validateOwnership` |
-| Backend Viewer Context | `community_api/src/main/java/com/endside/community/event/service/EventViewerContextService.java` | 멤버십/참석/신청/결제 상태와 11개 viewer capability 주입 |
-| Backend VO/Enum | `EventVo.java`, `ApplicationStatus.java`, `EventStatus.java`, `EventType.java`, `EventVisibility.java`, `LocationType.java` | 실제 응답 필드, enum 값, Jackson boolean key |
-| Backend Payment Boundary | `EventPrepaymentController.java`, `EventPrepaymentService.java`, `ApplicationService.java`, `CapacityService.java` | 이벤트 선결제 전용 endpoint, 결제·분개·신청/참석 확정 트랜잭션 |
-| Backend Connectivity | `EventFitPreviewController.java`, `EventFitPreviewService.java`, `TraitFitPreviewService.java`, `EventHostCardService.java` | 증거등급 로스터, k-익명 버킷/비율/축 분포, 호스트 재방문 배지 |
-| Flutter API/Repository | `community_app/lib/data/api/event_api.dart`, `community_app/lib/data/repositories/event_repository.dart` | Retrofit endpoint와 `Result<T>` wrapping |
-| Flutter Model | `community_app/lib/data/models/event/event_vo.dart`, `event_status.dart`, `event_viewer_status.dart` | 클라이언트가 기대하는 JSON field와 상태 parser |
-| Flutter Provider | `community_app/lib/domain/providers/event/event_detail_provider.dart`, `domain/providers/attendance/attendance_action_provider.dart` | 상세 조회, 유사 이벤트, .ics export, 이벤트 선결제 호출과 참석 상태 갱신 |
-| Flutter Screen/Widget | `event_detail_screen.dart`, `event_action_bar.dart`, `event_info_section.dart`, `event_more_menu.dart` | CANCELED full-block, CLOSED badge, 역할별 액션바, 복제·삭제 caller |
-| Flutter Fit/Host UI | `event_fit_preview_section.dart`, `event_host_card.dart` | 로딩·오류·전 신호 부재 시 숨김, coarse 신호와 재방문 배지 표시 |
-| Verification | `PaidApprovalFlowE2ETest.java`, `EventPrepaymentServiceTest.java`, `seed_event_detail_role_controls_test.dart`, `seed_event_list_badge_matrix_test.dart`, `seed_event_payment_authoring_test.dart`, 관련 E2E runner | 승인 전/후 결제, 중복·만료·정원·제재 가드와 상세 권한/정보 surface |
+계약의 정본은 코드다. 서버: `EventController`, `EventPrepaymentController`, `EventFitPreviewController`, `EventService`, `EventViewerContextService`, `EventVo`, `ApplicationStatus`, `EventStatus`, `EventType`, `EventVisibility`. 앱: `event_detail_screen.dart`, `event_api.dart`, `event_repository.dart`, `event_vo.dart`, `event_status.dart`, `event_viewer_status.dart`, `event_detail_provider.dart`, `attendance_action_provider.dart`, `event_action_bar.dart`, `event_info_section.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -51,149 +37,27 @@
 18. 더보기의 `이 이벤트로 새로 만들기`는 `isHost && eventType != PRIVATE`일 때만 보이고, `POST /api/v1/events/{eventId}/next-occurrence` 성공 시 새 DRAFT의 `/edit-event/{id}`로 이동한다. 서버와 달리 co-host·PRIVATE에는 숨고, `CLUB_MEETING`에는 잘못 노출된다.
 19. `EventActionBar`는 host/co-host에게 DRAFT=`수정·발행`, OPEN=`수정·종료·취소`, 그 밖의 상태=`삭제`를 만든다. 화면 상단 차단을 고려하면 실제 상세에서 삭제가 보이는 정상 경로는 `CLOSED` host/co-host뿐이다. 그러나 서버 `DELETE`는 DRAFT만 허용하므로 이 버튼은 400이 되고, 정작 삭제 가능한 DRAFT에는 진입점이 없다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /api/v1/events/{eventId}`
+### 4.1 나와의 핏(개인 식별 막기)
+- 근거 명단: 체크인이 한 건이라도 있으면 체크인한 회원, 없으면 참석자에서 노쇼 확정·소명 중을 뺀 회원이다. 호스트·공동호스트·게스트·나와 차단 관계인 사람은 개인화 모수에서 뺀다.
+- 아는 사람·비슷한 성향 신호는 호스트·공동호스트·참석자만 받는다.
+- 단골·초면 비율은 모수 5명 이상이고 0이 아닌 쪽이 각각 5명 이상일 때만 10% 단위로 보인다.
+- 비슷한 성향은 최신 제출 점수에서 공통 축 4개 이상, 평균 절대차 20 이하다. 점수가 있는 후보가 5명 미만이면 내지 않는다.
+- 성향 축 분포는 LOW 0~33, MID 34~66, HIGH 67~100 이다. 축 모수 5명 이상이고 0이 아닌 구간이 각각 5명 이상일 때만 그 축을 보인다.
+- 구성 분포는 공개이고 OPEN·CLOSED 이며 숨기지 않은 모임이면 로그인 사용자 누구나, 그 밖은 호스트·공동호스트·참석자만 본다.
+- 원점수·원인원은 내지 않는다. 신호가 모두 없거나 로딩·오류면 섹션을 조용히 숨긴다.
 
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `EventController#getEvent` |
-| 인증 | optional. `@AuthenticationPrincipal(errorOnInvalidType = false)` |
-| Path | `eventId: long` |
-| 응답 | `EventVo` |
-| DRAFT 접근 | host 또는 co-host만 허용. 그 외 `EVENT_NOT_FOUND` |
-| 다른 상태 접근 | `OPEN`, `CLOSED`, `CANCELED`, `HIDDEN`에는 별도 조회 차단이 없어 응답 조립까지 진행 |
-| Side effect | Redis 조회수 증가, 로그인 사용자 view interaction 기록 |
-| 실패 | 이벤트 없음 또는 DRAFT 비권한 접근 시 `EVENT_NOT_FOUND` |
+### 4.2 다음 회차 만들기
+- 호스트 또는 공동호스트가 부를 수 있다. 새 모임의 호스트는 부른 사람이 아니라 원본 호스트다.
+- 원본이 취소됐거나 숨겨졌으면 거절한다. 독립·비공개 모임만 되고 클럽 모임과 정기모임 회차는 안 된다. 주최 제한 제재 중이면 거절한다.
+- 시작을 주지 않으면 원본 시작 + 7일이고 길이는 원본과 같다. 시작이 과거면 거절한다.
+- 결과는 새 DRAFT 다. 선입금·환불 정책·플랜 연결·공동호스트는 새로 만들어 옮기고, 참가자·결제·정산·후기·사진은 옮기지 않는다.
 
-`EventVo` 핵심 필드:
-
-| 필드 | 타입 | 판단 |
-|---|---|---|
-| `id`, `hostUserId`, `clubId`, `hostNickname` | long/Long/String | 소유자와 클럽 관계 판단에 사용 |
-| `title`, `description`, `thumbnailUrl` | String | 상세 본문 표시 |
-| `category`, `eventType`, `status`, `visibility`, `locationType` | enum | 상태/유형/노출 판단 |
-| `address`, `addressDetail`, `latitude`, `longitude`, `onlineUrl` | String/Double | 위치/온라인 정보 |
-| `startTime`, `endTime`, `timezone`, `publishedAt`, `createdAt` | LocalDateTime/String | 일정 표시 |
-| `baseCapacity`, `currentCapacity`, `reservedPaymentPendingCount`, `waitlistEnabled`, `approvalRequired`, `isClosed` | int/boolean | 하단 참석 CTA 판단. `reservedPaymentPendingCount`는 APPROVED_PENDING_PAYMENT 신청 **건수**이며 좌석 가중치가 아님 |
-| `price`, `refundPolicy`, `prepaymentRefundPolicyType`, `refundDeadlineHours` | BigDecimal/enum/int | 유료/환불 안내 |
-| `coHostUserIds` | List<Long> | 공동주최자 권한 판단 |
-| `privateMeetingDetail` | PrivateMeetingDetailVo? | private event 섹션 |
-| `plans` | List<EventPlanMapVo> | 연결 플랜 섹션 |
-| `myMembershipStatus`, `myRole` | String? | 클럽 멤버/운영진 판단 |
-| `myAttendanceStatus`, `myApplicationStatus` | String? | 본인 참석/신청 상태 |
-| `myPaymentRequired`, `myPayableAmount`, `myPaymentDueAt` | boolean/Long/LocalDateTime? | 승인 후 선결제 필요 여부·서버 확정 금액·기한 |
-| `myPromotedFromWaitlist` | boolean | 대기열 승격 1회성 강조 |
-| `isWishlisted` | boolean, JSON key `wishlisted` | 찜 하트 상태 |
-| `isClosed` | boolean, JSON key `closed` | 모집 마감 CTA |
-| `canEditEvent` 등 capability 11종 | boolean | 서버 액션 가드를 화면/라우터가 그대로 소비. 정원 설정은 `canManageCapacity` |
-
-### `GET /api/v1/events/{eventId}/calendar`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `EventController#exportCalendar` |
-| 인증 | 없음 |
-| 응답 | `byte[]`, `Content-Type: text/calendar; charset=utf-8` |
-| 파일명 | `event-{eventId}.ics` |
-| 실패 | 이벤트 없음 시 404 계열 |
-
-### `GET /api/v1/events/{eventId}/similar`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `EventController#getSimilarEvents` |
-| 인증 | optional |
-| Query | `limit`, default `5` |
-| 응답 | `List<SearchVo>` |
-| Flutter 처리 | 실패 시 빈 리스트로 숨김 |
-
-### `GET /api/v1/events/{eventId}/fit-preview`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `EventFitPreviewController#getFitPreview` |
-| 인증 | 필수. Security matcher가 이 경로를 `authenticated()`로 고정 |
-| 상세 gate | 내부에서 `EventService#getEvent(eventId, viewerId)` 재사용. 존재하지 않음/DRAFT 비권한 접근은 상세와 동일 |
-| 응답 | `EventFitPreviewVo`: `knownAttendeesBucket?`, `returningRatioPercent?`, `firstTimerRatioPercent?`, `similarTraitBucket?`, `traitAxisDistribution` |
-| 증거 로스터 | 체크인 1건 이상이면 check-in userId. 아니면 ATTENDING 중 CONFIRMED/APPEALED 노쇼 제외. host/co-host/차단 관계는 개인화 pool에서 제외 |
-| 로스터 개인화 가시성 | host/co-host/ATTENDING만 아는 사람·비슷한 성향 신호를 받음 |
-| 단골/초면 비율 | pool 5명 이상이고 0이 아닌 각 bucket이 5명 이상일 때만 10% 단위 반올림 |
-| 성향 유사 | 최신 SUBMITTED 점수, 공통 축 4개 이상, 평균 절대차 20 이하. 점수 보유 후보 5명 미만이면 키 생략 |
-| 성향 축 분포 | LOW 0~33/MID 34~66/HIGH 67~100. 축 모수 5명 이상이고 0이 아닌 band가 각각 5명 이상일 때만 축 노출 |
-| 구성 분포 가시성 | PUBLIC OPEN/CLOSED는 모든 인증 사용자. 그 외 visibility/status 조합은 host/co-host/ATTENDING |
-| 비노출 계약 | nullable 신호는 `@JsonInclude(NON_NULL)`로 키 자체 생략. `traitAxisDistribution`은 빈 배열 가능. 원점수·원인원은 비노출 |
-
-### `POST /api/v1/events/{eventId}/next-occurrence`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `EventController#createNextOccurrence`, 성공 `201 Created` |
-| 인증/요청 | 인증 필수. body `NextOccurrenceParam`은 optional이며 `newStartTime?`, `carryProviderAssignments`를 받음 |
-| 소유권 | `validateOwnership`을 사용하므로 source host **또는 임의 co-host**. 새 이벤트의 `hostUserId`는 requester가 아니라 원본 host로 고정 |
-| 상태 | `CANCELED`, `HIDDEN`은 `INVALID_EVENT_STATUS`; `DRAFT`, `OPEN`, `CLOSED`는 통과 |
-| 유형 | 서버는 `INDEPENDENT`, `PRIVATE`를 허용하고 `CLUB_MEETING`은 `INVALID_REQUEST` |
-| 추가 guard | 정기모임 session은 차단. hosting 제한 제재 사용자는 `USER_RESTRICTED_FROM_HOSTING` |
-| 기본 일정 | body가 없으면 원본 시작일 `+7일`, 종료는 원본 duration 보존. 계산된 시작이 이미 과거면 `INVALID_INPUT` |
-| 결과 | 새 `DRAFT`, 원본 host/club/type/config 보존. prepayment·refund policy·plan map·co-host는 새 row로 만들고 참가자·결제·정산·후기·사진은 이관하지 않음 |
-
-### `DELETE /api/v1/events/{eventId}`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `EventController#deleteEvent`, 성공 `204 No Content` |
-| 소유권 | `validateOwnership`: host 또는 임의 co-host |
-| 상태 | **DRAFT만 허용**. 그 외 `EVENT_INVALID_STATUS_TRANSITION` 400 |
-| 추가 guard | 정기모임 session 차단 |
-| 변경 | co-host row 삭제 후 event hard delete |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `/home/events/:eventId` |
-| Screen | `EventDetailScreen` |
-| 상세 Provider | `eventDetailNotifierProvider(eventId)` |
-| 유사 이벤트 Provider | `similarEventsProvider(eventId)` |
-| .ics Provider | `exportEventCalendarProvider(eventId)` |
-| Repository | `EventRepository.getEventDetail`, `getSimilarEvents`, `exportCalendar` |
-| Retrofit | `EventApi.getEventDetail`, `getSimilarEvents`, `exportCalendar` |
-| Error UI | not found는 `AppBlockedState`, 나머지는 `AppErrorState.fromError` |
-
-화면 주요 분기:
-
-| 분기 | Flutter 판단 |
-|---|---|
-| host | `currentUserId == event.hostUserId` |
-| co-host | `event.coHostUserIds.contains(currentUserId)` |
-| club staff | `event.myRole == OWNER/ADMIN` |
-| club member | `event.myMembershipStatus == ACTIVE` |
-| restricted club viewer | `clubId != null && !host && !coHost && !staff && !clubMember && !applicant && !attending` |
-| photos allowed | `permission.canViewPhotos` = host/co-host/staff/attending. 일반 ACTIVE club member만으로는 열리지 않음 |
-| manage applications | `permission.canManageApplications` = host/co-host. club staff는 제외 |
-| check-in | 관리 화면은 `canManageAttendance`, 본인 체크인은 attending. co-host는 attendance flag가 있어야 관리 가능 |
-| location view | host/co-host/attending |
-| 수용인원 설정 | `event.canManageCapacity` — host ∪ any co-host ∪ 클럽 ADMIN/OWNER |
-| lifecycle action bar | identity `isHost || isCoHost`를 사용. club staff는 `canManageEvent=true`여도 lifecycle bar를 받지 않음 |
-| DRAFT host/co-host action | `수정`, `발행`만 표시. 서버가 허용하는 `삭제`는 없음 |
-| CLOSED host/co-host action | `삭제` 표시. 서버는 CLOSED 삭제를 거부 |
-| CANCELED/HIDDEN | `Scaffold(body: AppBlockedState)`로 조기 반환해 본문·더보기·하단바 모두 없음 |
-| clone | `isHost && event.eventType != 'PRIVATE'`; 호출은 `createNextOccurrence` 후 새 DRAFT edit route |
-| 나와의 핏 | 인증 사용자에게 별도 provider 호출. 신호 전부 부재/로딩/오류면 섹션을 조용히 숨김 |
-| 재방문 많은 호스트 | `EventHostCardVo.hostRevisitBadge`가 true일 때만 태그 표시 |
-| 모임 정산 입구 | `isHost \|\| isAttendingViewer` — 항상 노출 (2026-06-05 신설, DEC-V8). 정산 부재 시 정산 화면이 참가자 빈 상태/호스트 생성 CTA로 분기 ([F07-04](../07_meeting_settlement/F07-04_status-summary-receipt_prd.md)) |
-| bottom CTA capacity full | `currentCapacity + reservedPaymentPendingCount >= baseCapacity` |
-| promoted notice | `myPromotedFromWaitlist && !promotedSeen && viewerStatus == attending` |
-
-역할별 서버 capability 실측:
-
-| 역할 | lifecycle/신청/공지 | 출석·모더레이션 | 정원·기타 |
-|---|---|---|---|
-| host | 11개 관리 capability 전부 true | 전부 true | `canManageCapacity=true` |
-| co-host | `canEditEvent`, `canManageApplications`, `canSendAnnouncement`, 환불/분쟁/명단은 co-host row 존재만으로 true | 출석·모더레이션만 각각 `canManageAttendance`/`canModerateMessages` flag 필요 | `canManageCapacity=true` |
-| club OWNER, 비host | 편집·신청관리·공지 false | 출석·명단·모더레이션·환불·분쟁 true | `canManageCapacity=true`; lifecycle bar/clone 없음 |
-| club ADMIN, 비host | 편집·신청관리·공지 false | 출석·명단 true, 모더레이션/환불/분쟁은 해당 permission flag별 | `canManageCapacity=true`; lifecycle bar/clone 없음 |
-| 일반 참가자 | 관리 capability false | attendance row가 있으면 명단 열람만 true | 본인 CTA만 |
+### 4.3 역할별 권한
+- 클럽 OWNER·ADMIN(호스트 아님)은 수정·신청 관리·공지를 못 한다. 출석·명단 관리와 정원 설정은 된다. 생명주기 버튼과 복제는 받지 않는다.
+- 공동호스트의 출석·모더레이션 등 세부 권한은 F03-03 §12 표를 따른다.
+- 일반 참가자는 참석 행이 있으면 명단만 본다. 일반 클럽 회원이라는 것만으로는 사진첩이 열리지 않는다.
 
 ## 6. 상태/권한 매트릭스
 
@@ -375,8 +239,3 @@ Then 양쪽이 같은 역할과 `EventType` 집합을 허용해야 한다.
 | 정책 | 결제 하드 마감 | 정상 운용 시 약 5분 주기인 soft grace(상한 아님)를 허용할지, `payByWallet`에서 dueAt을 인라인 검증할지 결정 |
 | 테스트 | payment pending 상세 | 승인 후 결제 대기 CTA·기한 만료 재신청·결제 성공 후 화면 갱신의 Flutter E2E 근거를 연결 |
 | 테스트 | restricted club detail | 서버 field redaction과 Flutter restricted notice를 같은 시나리오에서 검증 |
-
-## 12. 변경 이력
-
-- **2026-07-29 (상태·권한·lifecycle CTA 재실측)**: `CANCELED`는 `AppBlockedState` 조기 반환, `CLOSED`는 overlay 없는 정상 본문+badge임을 교정했다. DRAFT-only 서버 삭제와 CLOSED 삭제 CTA의 상태 역전, host-only/non-PRIVATE Flutter 복제 gate와 host/co-host+INDEPENDENT/PRIVATE 서버 gate의 불일치, co-host/club operator capability 실제 계산을 Controller/Service/Flutter caller 기준으로 추가했다.
-- **2026-07-29 (current source 재실측)**: 과거 Gap으로 남아 있던 유료 승인제 결제 대기 필드·viewer status·전용 선결제 endpoint·결제 후 참석 확정 흐름이 구현되어 있음을 Controller/Service/VO/Flutter provider에서 확인했다. `reservedPaymentPendingCount`는 좌석 수가 아니라 신청 건수라 guest party 가중치 Gap이 있음을 분리했다. `canManageCapacity` 서버 capability와 Flutter 상세/route 소비, k-익명 `fit-preview`, 호스트 재방문 배지를 추가했다. 결제 만료 fixedDelay 5분은 하드 상한이 아니라 정상 cadence로 교정했다.

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveReferences } from './source_references.mjs';
 import { API_REPO, loadApiModules } from './api_modules.mjs';
@@ -11,17 +10,7 @@ const workspace = path.resolve(root, '..');
 const targets = JSON.parse(fs.readFileSync(new URL('./source_reference_targets.json', import.meta.url), 'utf8')).references;
 const apiModules = loadApiModules(path.join(workspace, API_REPO));
 const references = resolveReferences(apiModules, targets);
-const sourceRoot = apiModules.root;
-const revision = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: sourceRoot, encoding: 'utf8' }).trim();
-const sourceFiles = [...new Set(references.flatMap((reference) => reference.endpoints.map((endpoint) =>
-  endpoint.targetPath.slice('community_api/'.length),
-)))];
-const changedSources = execFileSync('git', ['status', '--porcelain', '--untracked-files=all', '--', ...sourceFiles], {
-  cwd: sourceRoot, encoding: 'utf8',
-}).trim();
-if (changedSources) throw new Error('참조할 서버 파일에 미커밋 변경이 있습니다. 버전 고정 링크를 만들지 않습니다.');
 const groups = Map.groupBy(references, (reference) => reference.documentPath);
-const date = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
 const updates = [];
 let localUpdates = 0;
 for (const [documentPath, group] of groups) {
@@ -30,20 +19,15 @@ for (const [documentPath, group] of groups) {
   const unique = new Map(group.flatMap((reference) => reference.endpoints).map((endpoint) =>
     [endpoint.targetPath + '#' + endpoint.method + ' ' + endpoint.httpMethod + ' ' + endpoint.httpPath, endpoint],
   ));
-  let block = '<!-- source-references:start -->\n### 확인한 서버 코드 위치\n\n';
+  // 표에 줄 번호와 고정 링크를 적으면 코드가 움직일 때마다 낡는다. 처리 함수 이름 한 줄만 적고, 함수·주소 대조는 대상 목록으로 한다.
+  let block = '<!-- source-references:start -->\n';
   if (unique.size) {
-    block += `${date}에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. ` +
-      '아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.\n\n';
-    block += '| 호출 주소 | 처리 함수 | 확인한 코드 위치 |\n|---|---|---|\n';
-    for (const endpoint of unique.values()) {
-      const source = endpoint.targetPath.slice('community_api/'.length);
-      const url = `https://github.com/endside82/community_api/blob/${revision}/${source}#L${endpoint.targetLine}`;
-      block += `| \`${endpoint.httpMethod} ${endpoint.httpPath}\` | \`${endpoint.controller}#${endpoint.method}\` | [${path.basename(source)}:${endpoint.targetLine}](${url}) |\n`;
-    }
+    const handlers = [...new Set([...unique.values()].map((endpoint) => `\`${endpoint.controller}#${endpoint.method}\``))];
+    block += `서버 창구: ${handlers.join(', ')}. 함수·주소 대조는 \`verification/source_reference_targets.json\` 이 한다.\n`;
     const notes = [...new Set(group.map((reference) => reference.note).filter(Boolean))];
-    if (notes.length) block += '\n' + notes.map((note) => '- ' + note).join('\n') + '\n';
+    if (notes.length) block += notes.map((note) => '- ' + note).join('\n') + '\n';
   } else {
-    block += '**설계 철회 — 현행 코드 링크 없음.** 타 사용자 가용시간 조회의 두 옛 기록은 삭제된 같은 파일을 가리킨다. 복구 대상이 아니며 현재 구현 근거에서 제외한다.\n';
+    block += '**설계 철회.** 타 사용자 가용시간 조회의 두 옛 기록은 삭제된 같은 파일을 가리킨다. 복구 대상이 아니며 현재 구현 근거에서 제외한다.\n';
   }
   block += '<!-- source-references:end -->';
   let updated;

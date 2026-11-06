@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 1. 결론
 
 `MILEAGE_MANAGER` 운영진이 마일리지 점수를 실제로 이동시키는 핵심 쓰기 경로다 — 수동/일괄 적립(`grants`, `grants/bulk`), 차감(`redemptions`, `redemptions/bulk`), 원장 정정(`ledger/{ledgerId}/reverse`), 배지 부여/회수(`badges/{badgeDefId}/awards`, `badge-awards/{awardId}`), 일괄 결과 조회(`batches/{batchId}`). grant/redeem 4종은 `Idempotency-Key` 헤더로 멱등 처리되고, Flutter는 호출마다 UUIDv4 키를 자동 발급한다.
@@ -12,20 +11,9 @@
 
 판정: **적립/차감/정정/배지 집행은 사용 가능**. 단 ① **일괄 결과 조회의 type 불일치**(서버 `Map`, Flutter `GrantResultVo`) ② **자동 적립 트리거 호출처 부재**(`triggerAutoEarn`을 호출하는 이벤트 도메인 연동이 mileage 패키지 내에 없음)가 핵심 Gap이다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `MileageAdminActionController.java` | `@RequiresClubPermission(MILEAGE_MANAGER)`, Idempotency-Key, grants/redemptions/reverse/awards/batches |
-| Backend Service | `MileageLedgerService.java` | `insertEarn/insertRedeem/insertReverse/insertExpire`, FEFO `allocateFefo`, `computeEarnRemaining`, summary 락 |
-| Backend Service | `MileageEarningService.java` | `grantManual`(단일/일괄, 부분 성공), `triggerAutoEarn`(트리거 적립) |
-| Backend Service | `MileageRedemptionService.java` | `redeem`(부분 성공), `reverseLedger` |
-| Backend Service | `MileageBadgeService.java` | `award`(단일/일괄), `revoke` |
-| Backend Service | `MileageMemberSummaryService.java` | `lockOrInit`, `recalcGrade` |
-| Backend Service | `MileageQueryService.java` | `findBatchResult`(Map: ledgerRows/badgeRows/totalAffectedMembers/succeeded/failed) |
-| Backend VO/Param/Enum | `GrantResultVo.java`, `MileageLedgerVo.java`, `MileageBadgeAwardVo.java`, `MileageGrantParam`/`MileageRedeemParam`/`MileageReverseParam`/`MileageBadgeAwardAddParam`/`MileageBadgeRevokeParam`, `constants/LedgerType.java`, `ActorRole.java` | 요청/응답·enum |
-| Frontend | `mileage_admin_action_api.dart`, `mileage_admin_action_repository.dart`, `mileage_admin_action_providers`(di), `presentation/mileage/admin/screens/mileage_action_screen.dart`, `mileage_batch_result_screen.dart`, `widgets/mileage_bulk_confirm_dialog.dart`, `mileage_batch_result_row.dart` | route·멱등·부분 결과 표시 |
-| DB | `V1__init.sql` `mileage_ledger`(UNIQUE idem), `mileage_ledger_consumption`, `mileage_member_summary` | 멱등 제약·FEFO |
+계약의 정본은 코드다. 서버: `MileageAdminActionController`, `MileageLedgerService`, `MileageEarningService`, `MileageRedemptionService`, `MileageBadgeService`, `MileageMemberSummaryService`, `MileageQueryService`, `GrantResultVo`, `MileageLedgerVo`, `MileageBadgeAwardVo`. 앱: `mileage_action_screen.dart`, `mileage_batch_result_screen.dart`, `mileage_admin_action_api.dart`, `mileage_admin_action_repository.dart`, `mileage_bulk_confirm_dialog.dart`, `mileage_batch_result_row.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -51,36 +39,6 @@
 
 ### 일괄 결과 조회
 1. `getBatchResult` → `GET /batches/{batchId}` → `MileageQueryService.findBatchResult`가 batchId의 ledger row를 모아 `Map`(`ledgerRows`, `badgeRows`(빈 리스트), `totalAffectedMembers`, `succeeded`, `failed`(audit FAIL 행))으로 반환.
-
-## 4. 서버 계약
-
-### `POST /grants`, `/grants/bulk`
-- 권한 `MILEAGE_MANAGER`. Header `Idempotency-Key`(선택). Body `MileageGrantParam`(memberIds NotEmpty, points Positive, reason). 응답 `GrantResultVo`(batchId nullable, results: Row{memberId, success, ledgerId, newBalance, errorReason}).
-
-### `POST /redemptions`, `/redemptions/bulk`
-- Body `MileageRedeemParam`(memberIds, points Positive, reason, presetId?). 응답 `GrantResultVo`. 잔액 부족 → row.errorReason=`MILEAGE_INSUFFICIENT_BALANCE`.
-
-### `POST /ledger/{ledgerId}/reverse`
-- Body `MileageReverseParam`(reason NotBlank). 응답 `MileageLedgerVo`(reversed row). 이미 정정됨 → `MILEAGE_LEDGER_ALREADY_REVERSED`(409), 원 row 없음 → `MILEAGE_LEDGER_NOT_FOUND`(404).
-
-### `POST /badges/{badgeDefId}/awards`, `DELETE /badge-awards/{awardId}`
-- award Body `MileageBadgeAwardAddParam`(memberIds, awardedReason), 응답 `List<MileageBadgeAwardVo>`(201). revoke Body `MileageBadgeRevokeParam`(revokedReason NotBlank), 204.
-
-### `GET /batches/{batchId}`
-- 응답 **`Map<String,Object>`**: `clubId, batchId, ledgerRows[], badgeRows[](빈), totalAffectedMembers, succeeded, failed[]`.
-
-### 공통 enum/제약
-- `LedgerType{EARN,REDEEM,REVERSE,EXPIRE}`, `ActorRole`(액션 시 `isOwner ? OWNER : ADMIN`). 멱등: ledger UNIQUE(club, member, sourceType, sourceId) + API Idempotency-Key. points≤0 → `MILEAGE_AMOUNT_INVALID`, reason 누락 → `MILEAGE_REASON_REQUIRED`, 정책 OFF → `MILEAGE_NOT_ACTIVATED`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `adminMileageAction`(`action`), `adminMileageBatchDetail`(`batches/:batchId`) |
-| Screen/Widget | `MileageActionScreen`, `MileageBatchResultScreen`, `MileageBulkConfirmDialog`, `MileageBatchResultRow` |
-| Repository/API | `MileageAdminActionRepository.grant/grantBulk/redeem/redeemBulk/reverseLedger/awardBadge/revokeBadge/getBatchResult` |
-| 멱등 | repository가 `ClientMessageId.generate()`로 UUIDv4 Idempotency-Key 자동 발급(override 가능) |
-| Model | `GrantResultVo`, `MileageLedgerVo`, `MileageBadgeAwardVo`, 각 Param, `LedgerType`/`ActorRole` enum |
 
 ## 6. 상태/권한 매트릭스
 

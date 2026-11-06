@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-measured: 2026-07-29 -->
 
 ## 2026-10-29 현재 계약 대조
@@ -25,16 +24,9 @@
 
 Flutter 호스트 화면은 현재 단건 추가와 제한된 반복 자동생성(`count 1..26`)을 지원한다. 서버의 임의 목록 bulk와 취소 회차 replace endpoint는 앱 호스트 UI가 아직 없다. 상세의 회차 카드는 현재 읽기 전용이라 일반 이벤트 상세로 이동하지 않으며, 일반 이벤트 상세도 `sequenceNo`를 이용한 `"정기모임 N회차"` 컨텍스트 라벨을 렌더링하지 않는다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 계층 | 확인 소스 | 확인 계약 |
-|---|---|---|
-| Controller | `RegularMeetingController`의 `addSession`, `addSessionsBulk`, `generateSessions`, `sessions`, `cancelSession`, `replaceSession` | endpoint/body/response |
-| Param | `RegularMeetingSessionAddParam`, `BulkParam`, `GenerateParam`, `ReplaceParam` | 정확한 필드·타입 |
-| Service | `RegularMeetingService` 세션 구간 | 상태·상한·가격·선결제·replace |
-| Factory | `RegularMeetingEventFactory` | 상속 필드와 세션 고유 필드 |
-| VO | `RegularMeetingEventVo`, `EventVo` | 목록 가격과 생성 응답 |
-| Flutter | `regular_meeting_session_add_screen.dart`, API/repository/models | 단건/자동생성 입력과 표시 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`. 앱: `regular_meeting_session_add_screen.dart`.
 
 ## 3. Endpoint 계약
 

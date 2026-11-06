@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 ## 2026-10-29 현재 계약 대조
 
 ### 체크인 기록을 출석 확정의 초깃값으로 씁니다
@@ -44,18 +43,9 @@ netAmount = gross − platformFee − withholdingTax
 
 `fail-closed`: 참조 결제/환불 PointTransaction 이 없으면 `TRANSACTION_NOT_FOUND` 던지고 중단 → 다음 failsafe 주기에 데이터 보정 후 재시도.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `RegularMeetingController#settlement` | `GET /regular-meetings/{id}/settlement` (204 if not yet) |
-| Backend Service | `RegularMeetingSettlementService#tryCreateSettlement,getSettlement` | flow-through 산식 + afterCommit + scheduler |
-| Backend Trigger | `RegularMeetingService#close → TransactionSynchronization` 등록 → `tryCreateSettlement(REQUIRES_NEW)` | 1h failsafe 스케줄러 동반 |
-| Backend Scheduler | `RegularMeetingSettlementScheduler` | CLOSED 모임 중 정산 미생성 재시도 |
-| Backend Entity | `Settlement.event_id` `Long` nullable + `regular_meeting_id` + `reserved_refund` BigDecimal | DDL 확장 |
-| Settlement DDL | `uk_settlement_rm(regular_meeting_id)` + `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))` | 양립 불가 |
-| Backend VO | `RegularMeetingSettlementVo` | 호스트 응답 필드 |
-| Complete 경로 | `SettlementService.completeSettlement` 재사용 (codex B안) + `reservedRefund > 0` 게이트 추가 | 멱등 + retry 보류 |
+계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingSettlementService`, `RegularMeetingService`, `SettlementService`.
 
 ## 3. 전체 동작 흐름
 
@@ -88,26 +78,6 @@ netAmount = gross − platformFee − withholdingTax
 ### 3.4 후속 approve → completeSettlement (기존 파이프라인)
 - 이벤트 정산과 동일 — `SettlementService.completeSettlement` 재사용.
 - `reservedRefund > 0` 게이트 — 미정리 환불(예: FORFEIT 환불 실패) 있을 때 retry 보류.
-
-## 4. 서버 계약
-
-| 엔드포인트 | Method | 응답 | 가드 |
-|---|---|---|---|
-| `/regular-meetings/{id}/settlement` | GET | `RegularMeetingSettlementVo` 또는 204 | host. CLOSED 이고 정산 생성됨 |
-
-내부 호출 (no endpoint):
-- `RegularMeetingSettlementService.tryCreateSettlement(meetingId)` — `@Transactional(REQUIRES_NEW)`.
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| Route | `Routes.regularMeetingSettlement(:id)` |
-| Screen | `RegularMeetingSettlementScreen` |
-| Provider | `regularMeetingSettlementProvider(id)` |
-| 표시 | retained paid / fee / tax / net / freeSubsidy / reservedRefund breakdown |
-| 미생성 (204) | "정산 준비중입니다" + 새로고침 안내 (scheduler 가 1h 재시도) |
-| 진입 가드 | host 만, CLOSED 후 |
 
 ## 6. 상태/권한/시나리오 매트릭스
 

@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-07-29 (혼합결제 은행분 확인 source-of-truth 재실측); unit: business_logic/units/07_meeting_settlement/F07-05_pay-share -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/07_meeting_settlement/F07-05_pay-share`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체**, 또는 **POINT+계좌이체 혼합**으로 납부한다. POINT는 즉시 완료되지만 혼합 결제에 은행분이 있으면 transfer가 `BANK_AWAITING_CONFIRM`에 머물고, 수취자 또는 정산 생성자가 실제 입금 내역을 수기로 확인해야 `COMPLETED`가 된다. 또한 `PENDING_MANUAL_REFUND` 상태의 transfer에 대해 수취자가 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED transfer는 정산 생성자가 재발행(reissue)할 수 있다.
@@ -18,46 +13,15 @@
 - 정산 현황 → 이체 내역 화면(`TransferListScreen`) "내 이체" 탭
 - 환불 필요 알림(`MEETING_SETTLEMENT_REFUND_REQUIRED`) 탭 → transfer list로 이동
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/07_meeting_settlement/F07-05_pay-share/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/07_meeting_settlement/F07-05_pay-share/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/07_meeting_settlement/F07-05_pay-share/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/07_meeting_settlement/F07-05_pay-share/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `MeetingSettlementController`, `MeetingSettlementTransferService`, `WithdrawalService`, `WalletSpendService`, `WalletService`, `AccountingLedgerService`. 앱: `transfer_list_screen.dart`, `my_settlement_shares_screen.dart`, `meeting_settlement_api.dart`, `meeting_settlement_repository.dart`, `transfer_list_provider.dart`, `transfer_card_widget.dart`, `transfer_actions_provider_test.dart`, `transfer_card_widget_test.dart`, `my_share_row_card.dart`, `transfer_status_badge_widget.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `GET /api/v1/events/{eventId}/settlement/my-shares` | `MeetingSettlementController#getMyShares` | [MeetingSettlementController.java:177](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L177) |
-| `GET /api/v1/events/{eventId}/settlement/transfers/me` | `MeetingSettlementController#getMyTransfers` | [MeetingSettlementController.java:364](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L364) |
-| `POST /api/v1/events/{eventId}/settlement/shares/{shareId}/pay` | `MeetingSettlementController#payShare` | [MeetingSettlementController.java:258](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L258) |
-| `PATCH /api/v1/events/{eventId}/settlement/shares/{shareId}/confirm` | `MeetingSettlementController#confirmBankTransfer` | [MeetingSettlementController.java:275](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L275) |
-| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay` | `MeetingSettlementController#payTransferByPoint` | [MeetingSettlementController.java:388](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L388) |
-| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/pay-mixed` | `MeetingSettlementController#payTransferMixed` | [MeetingSettlementController.java:487](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L487) |
-| `POST /api/v1/events/{eventId}/settlement/transfers/{transferId}/self-refund` | `MeetingSettlementController#selfRefundTransfer` | [MeetingSettlementController.java:522](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java#L522) |
+서버 창구: `MeetingSettlementController#getMyShares`, `MeetingSettlementController#getMyTransfers`, `MeetingSettlementController#payShare`, `MeetingSettlementController#confirmBankTransfer`, `MeetingSettlementController#payTransferByPoint`, `MeetingSettlementController#payTransferMixed`, `MeetingSettlementController#selfRefundTransfer`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-### 2026-07-29 직접 재실측 trace
-
-| 계층 | 실제 소스 |
-|---|---|
-| 서버 endpoint | `MeetingSettlementController.confirmTransferBankPortion` — `POST .../transfers/{transferId}/confirm-bank-portion`, body 없음, `200 Void` |
-| 서버 상태·권한 | `MeetingSettlementTransferService.payTransferMixed`, `confirmBankPortion`, `checkAndCompleteSettlement`; `TransferStatus`, `MeetingPaymentMethod`, `MeetingSettlementTransferVo` |
-| 서버 회귀 테스트 | `MeetingSettlementTransferServiceTest.ConfirmBankPortionTest`, `MeetingSettlementServiceTest.confirmBankPortion_rejectedWhenDraft`, `MeetingSettlementControllerTest.confirmTransferBankPortion_success` |
-| Flutter caller | `meeting_settlement_api.dart` → `meeting_settlement_repository.dart` → `transfer_list_provider.dart` → `transfer_list_screen.dart` → `transfer_card_widget.dart` |
-| Flutter 테스트 | `transfer_actions_provider_test.dart`, `transfer_card_widget_test.dart` |
-
 ## 3. 전체 동작 흐름
-
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
 
 내 분담금 화면 진입 시:
 1. `mySharesProvider(eventId)` ▶ `MeetingSettlementRepository.getMyShares` ▶ `GET .../my-shares`
@@ -88,134 +52,14 @@ self-refund 액션:
 share 결제 액션 (my_shares에서):
 1. `mySharesProvider.payShare(shareId)` ▶ `POST .../shares/{id}/pay`
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체**, 또는 **POINT+계좌이체 혼합**으로 납부한다. POINT는 즉시 완료되고, 은행분이 있는 혼합 결제는 `BANK_AWAITING_CONFIRM`에서 별도 확인을 기다린다. `PENDING_MANUAL_REFUND` transfer의 수취자는 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED transfer는 정산 생성자가 재발행(reissue)할 수 있다.
-
-> 본 기능은 **참가자 관점**에서 본 결제 흐름. 호스트의 계좌이체 확인은 F07-06에서 다룬다. 단, `confirmBankTransfer` (Share)는 본인 결제 의사 표시(=확인 요청) 시 호출되며, 동일 엔드포인트가 호스트의 확인에도 쓰인다 (양쪽에서 모두 호출 가능, F07-06 참조).
-
-> **2026-06-05 (D-OPEN-2 슬라이스)**: ① `GET .../transfers/me`에 인가 검증이 누락돼 있던 것을 수정 — 본인 것만 반환돼 정보 유출은 없었으나 다른 조회와 잠금 수준이 달랐다(DEC-V3). ② read 계열(`my-shares`, `transfers/me`)의 열람 자격이 `validateSettlementReadAccess`(ATTENDING ∪ 해당 정산 share/transfer 당사자 ∪ 호스트)로 확장 — 참석을 취소했어도 내 돈이 걸려 있으면 본인 분담금을 볼 수 있다. 결제(쓰기) 가드는 무변경 — DRAFT 결제·확정·재발행·상각 8경로 거부는 회귀 테스트로 고정. 상세는 [F07-04 §7-A](F07-04_status-summary-receipt_prd.md).
-
-### 혼합결제 은행분 상태·확인 경계 (Fact, 2026-07-29)
-
-- `payTransferMixed`는 transfer가 `PENDING`, 호출자가 `fromUserId`, settlement가 `ACTIVE`, PENDING appeal 없음, 두 금액이 음수가 아니고 합계가 transfer 총액과 같을 때만 처리한다.
-- `pointAmount > 0`인 부분은 유료 POINT로 즉시 차감·수취자 입금·회계 분개한다.
-- `bankTransferAmount > 0`이면 `paymentMethod=MIXED`, `status=BANK_AWAITING_CONFIRM`로 저장하고 `completedAt`은 확인 시점까지 기록하지 않는다. 이 상태는 `COMPLETED`가 아니므로 정산 완료를 막는다.
-- `POST .../confirm-bank-portion`은 요청 body가 없고, `BANK_AWAITING_CONFIRM` 상태에서 수취자(`toUserId`) 또는 정산 생성자(`creatorUserId`)만 허용한다. 송금자(`fromUserId`) 검사를 먼저 하므로 송금자이면서 생성자인 경우도 self-confirm으로 403이다.
-- 성공하면 transfer `COMPLETED` + `completedAt`, `TRANSFER_BANK_PORTION_CONFIRMED` 감사로그, 송금자 알림을 남기고 정산 완료 조건을 재검사한다.
-- 이 endpoint는 영수증/입금증이나 은행 조회 결과를 받지 않는다. 실제 입금 여부를 검증하지 않는 **수기 신뢰 확인**이다.
-
-### 의존 단위 / 외부 시스템
-
-- Unit 06 (Wallet): `WalletSpendService.spend(... CurrencyPolicy.PAID_ONLY ...)`, `WalletService.creditMeetingSettlement`. (정산 취소 역분개 환불은 split-보존 `WalletRefundService.refundByTransaction` 경로)
-- Unit 06 (Accounting): `AccountingLedgerService.recordMeetingSettlementPayment`(납부자 측), `recordMeetingSettlementReceiptCredit`(수취자 RECEIVABLE 소거 — clearing), `recordMeetingSettlementReversal`
-
-> **Fact (2026-06-06 돈 흐름 무결성 — C1/C2/H1 해소)**: 모임정산 분개 주체가 정정되었다. 소스: `payment/meeting/service/MeetingSettlementTransferService.java:97-111,201-207,369-374`.
-> - **C2 분개 주체 분리**: 과거 RECEIVABLE 차/대변이 둘 다 **납부자**에 기록되어 분담금 낸 사람이 그 금액만큼 현금 출금자격을 획득하던 결함을 정정 — 이제 납부자 측은 `recordMeetingSettlementPayment`, 수취자 측은 `creditMeetingSettlement`(지갑 입금) + `recordMeetingSettlementReceiptCredit`(`DR USER_WALLET / CR RECEIVABLE` — RECEIVABLE=clearing 계정으로 소거)을 **같은 트랜잭션**에서 기록. 수취 credit이 무원장이던 것도 해소.
-> - **C1 출금자격 수취자 귀속**: 출금 가능액 게이트가 PointTransaction referenceType 누계가 아닌 **원장 RECEIVABLE-leg 분개 기반**(Σ수취 − Σ회수)으로 전환되어, 출금자격이 실제 수취자에게만 귀속된다(`WithdrawalService.java:447-461`). selfRefund/선입금환불 credit이 출금 권리로 오인되지 않는다.
-> - **역분개 환불 split 복원(H1)**: 정산 취소 시 reversal 환불도 `refundByTransaction` 경로로 원결제 split을 보존(무료→유료 세탁 차단). `refundToWallet` 본체는 차단(@Deprecated+throw).
-- Unit 12 (Notification): `MEETING_SETTLEMENT_PAID`, `MEETING_SETTLEMENT_REFUND_COMPLETED`
-- F07-08 (Appeal): `appealService.hasPendingAppeal(SHARE/ITEM/TRANSFER, id)` — PENDING appeal 있으면 결제 차단
-- 외부 시스템: FCM (수취자 알림)
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- 정산 활성화 푸시 알림 탭 → 정산 현황 화면 → "내 분담금 보기" → `MySettlementSharesScreen`
-- 정산 현황 → 이체 내역 화면(`TransferListScreen`) "내 이체" 탭
-- 환불 필요 알림(`MEETING_SETTLEMENT_REFUND_REQUIRED`) 탭 → transfer list로 이동
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 (GoRouter) | Screen 파일 | 역할 |
-|---|---|---|
-| `/home/events/:eventId/settlement/my-shares` | `my_settlement_shares_screen.dart` | 본인 분담 리스트 (E-01c) |
-| `/home/events/:eventId/settlement/transfers` | `transfer_list_screen.dart` | 이체 리스트 (표시 문구 "참여자"/"최근 이체", 내부적으로 전체/내 이체 로드) |
-| (위젯) | `widgets/my_share_row_card.dart` | 분담 카드 (영수증/이의제기) |
-| (위젯) | `widgets/transfer_card_widget.dart` | 이체 카드 (액션 버튼 분기) |
-| (위젯) | `widgets/transfer_status_badge_widget.dart` | 상태 배지 (PENDING/COMPLETED/CANCELLED/EXPIRED 등) |
-| (유틸) | `utils/remit_url_builder.dart` | 토스/카카오페이 송금 딥링크 빌더 |
-
-### 화면별 구성 요소 & 액션
-
-### 내 분담금 화면 (`my_settlement_shares_screen.dart`)
-- **사용자가 보는 것**:
-  - `CommunityAppBar` "내 분담금"
-  - 분담금 카드 리스트 (`MyShareRowCard`)
-    - itemTitle, shareAmount(천단위), 결제 상태(완료/대기), `paymentMethod`, 영수증 미리보기 아이콘
-    - **DRAFT(준비 중) 정산이면**: '준비 중' 뱃지 + "준비 중 — 금액이 바뀔 수 있어요" 캡션 (`isDraft` 분기, 2026-06-05) — 비확정 금액임을 명시
-  - 빈 상태 (`AppEmptyState(icon: receipt_long_outlined, title: '분담금이 없습니다')`)
-- **사용자가 할 수 있는 액션**:
-  - 영수증 보기 ▶ `context.push('/home/events/:eventId/settlement/receipts/$fileId')`
-  - "이의제기" 탭 ▶ `SettlementAppealDialog` ▶ `appealsProvider.createAppeal(subjectType:'SHARE', subjectId, reason)` ▶ 토스트
-  - 풀투리프레시 ▶ `invalidate(mySharesProvider(eventId))`
-- **상태 분기**:
-  - `mySharesProvider` 로딩/에러 분기
-  - **호스트 본인은 자기 share 이의제기 불가** — 호스트 자기 appeal로 자동 완료 차단 방지
-  - **이의제기 버튼 3상태 가드 (2026-06-05, DEC-V4 쌍)**: status 확정 + 비DRAFT + 비호스트일 때만 노출. status 미확정(로딩/에러) 동안은 안전 기본값으로 숨김 — shares가 정산 상세보다 먼저 로드될 때 DRAFT 정산에서 버튼이 잠깐 보이는 레이스 봉합. '준비 중' 뱃지는 status 확정된 DRAFT일 때만(버튼만 엄격, 뱃지는 관대)
-
-### 이체 내역 화면 (`transfer_list_screen.dart`, SCR-MS-005)
-- **사용자가 보는 것**:
-  - `TabBar` 표시 문구는 "참여자" / "최근 이체"이며, 내부 동작은 각각 `loadAllTransfers` / `loadMyTransfers`
-  - 상단 `SettlementTransferGuidanceCard`: POINT는 즉시 완료, 계좌/혼합 은행분은 실제 입금 확인 후 완료, 시스템은 실제 입금을 검증하지 않는다고 안내
-  - 이체 카드 리스트 (`TransferCardWidget`):
-    - 송금자→수취자 아바타·이름, 금액, `TransferStatusBadgeWidget`(`PENDING/BANK_AWAITING_CONFIRM/COMPLETED/CANCELLED/EXPIRED/SUPERSEDED/REVERSAL_FAILED/PENDING_MANUAL_REFUND`)
-    - 송금자(`fromUserId == currentUser`)일 때:
-      - PENDING: "포인트 결제" / "송금 앱으로 보내기" / "이의 제기"
-      - BANK_AWAITING_CONFIRM: `받았어요` 미노출. 정산 생성자이기도 해도 송금자 우선 차단
-    - 수취자(`toUserId == currentUser`)일 때:
-      - BANK_AWAITING_CONFIRM: 송금자가 아니면 "받았어요"
-      - PENDING_MANUAL_REFUND: "포인트 환불(self-refund)"
-    - 정산 생성자(`settlementDetail.creatorUserId == currentUser`)일 때:
-      - PENDING: "이체 확인"
-      - BANK_AWAITING_CONFIRM: 송금자가 아니면 수취자 대신 "받았어요"
-      - EXPIRED: "재요청" / "포기(writeoff)"
-- **사용자가 할 수 있는 액션 (참가자/송금자 관점)**:
-  - "포인트로 결제" ▶ 확인 다이얼로그 ▶ `transferListProvider.payTransfer(transferId)` ▶ `POST .../transfers/{id}/pay` ▶ 토스트 "결제 완료"
-  - "송금 앱 열기" ▶ 바텀시트 (토스/카카오 선택) ▶ `RemitUrlBuilder.tossRemit(amount, msg)` 또는 `kakaoPayRemit()` ▶ `launchUrl(externalApplication)` ▶ 사용자가 외부 앱에서 송금 후 돌아옴
-  - "이의 제기" ▶ AlertDialog (사유 입력 maxLength 2000) ▶ `appealsProvider.createAppeal(subjectType:'TRANSFER', subjectId, reason)`
-  - "포인트 환불(self-refund)" (수취자) ▶ `AppDialog.confirm("환불 후 되돌릴 수 없습니다")` ▶ `transferListProvider.selfRefundTransfer(transferId)` ▶ `POST .../transfers/{id}/self-refund`
-  - "받았어요" (수취자 또는 정산 생성자, 송금자 제외) ▶ 되돌릴 수 없는 확인 다이얼로그 ▶ `transferListProvider.confirmBankPortion(transferId)` ▶ `POST .../confirm-bank-portion` ▶ 현재 탭 재조회 + `settlementDetailProvider` invalidate
-- **상태 분기**:
-  - 탭 인덱스 0 → loadAllTransfers, 1 → loadMyTransfers
-  - 이체 0건 → AppEmptyState
-  - PENDING_MANUAL_REFUND 별도 강조 색상
-
-### API 호출 순서 (Provider/Repository 관점)
-
-내 분담금 화면 진입 시:
-1. `mySharesProvider(eventId)` ▶ `MeetingSettlementRepository.getMyShares` ▶ `GET .../my-shares`
-2. `settlementDetailProvider(eventId)` ▶ host vs 일반사용자 분기
-
-이체 내역 화면 진입 시:
-1. `transferListProvider(eventId)` 초기 로드 — 탭 0 시 `getTransfers`, 탭 1 시 `getMyTransfers`
-2. `appealsProvider(eventId)` ▶ PENDING appeal 표시
-
-POINT 결제 액션:
-1. `AppDialog.confirm` 확인
-2. `transferListProvider.payTransfer(transferId)` ▶ `POST .../transfers/{id}/pay`
-3. 현재 탭 목록 재조회 + `settlementDetailProvider` invalidate
-
-혼합 결제 data/provider 액션 (현재 presentation caller 없음):
-1. `MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`
-2. `transferListProvider.payTransferMixed(transferId, param)` ▶ `POST .../transfers/{id}/pay-mixed`
-
-혼합결제 은행분 확인 액션:
-1. 화면이 `bankAwaitingConfirm && !isSender && (isRecipient || isSettlementCreator)`를 계산
-2. `TransferCardWidget`에 callback이 있을 때만 `받았어요` 노출
-3. 확인 다이얼로그가 “실제 입금 여부는 시스템이 검증하지 않음”을 경고
-4. `transferListProvider.confirmBankPortion(transferId)` ▶ `POST .../confirm-bank-portion`
-5. 성공 시 현재 탭 재조회 + `settlementDetailProvider` invalidate, 실패 시 이전 목록 유지 후 오류 토스트
-
-self-refund 액션:
-1. `AppDialog.confirm` ("환불 후 되돌릴 수 없습니다")
-2. `transferListProvider.selfRefundTransfer(transferId)` ▶ `POST .../transfers/{id}/self-refund`
-
-share 결제 액션 (my_shares에서):
-1. `mySharesProvider.payShare(shareId)` ▶ `POST .../shares/{id}/pay`
+- 포인트 납부는 유료 포인트만 쓴다(무료 포인트 불가).
+- 출금 자격은 실제로 받은 사람에게만 생긴다. 분담금을 낸 사람은 낸 것으로 출금 자격을 얻지 않고, 자체 환불·선입금 환불로 받은 돈도 출금 권리가 아니다.
+- 정산 취소 되돌림은 원결제의 유료·무료 몫을 되살려, 무료가 유료로 바뀌지 않는다.
+- 참석을 취소해도 내 돈이 걸려 있으면 내 분담금을 볼 수 있다. 결제는 그대로 막아, DRAFT 에서는 결제·확정·재발행·상각을 거절한다.
+- DRAFT 분담금에는 「준비 중」 표시와 금액이 바뀔 수 있다는 안내가 붙는다.
+- 이의 버튼은 정산 상태를 확인한 뒤 DRAFT 가 아니고 호스트가 아닐 때만 보인다. 호스트는 자기 분담에 이의할 수 없다(자기 이의로 완료를 막지 않게). 이의 사유는 2000자까지다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -233,15 +77,6 @@ share 결제 액션 (my_shares에서):
 | S8 | (엣지 · PENDING appeal 차단) 본인 transfer에 이의가 걸린 상태에서 결제 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S9 | (엣지 · settlement 완료 트리거) 마지막 transfer 결제 시 정산 자동 COMPLETED | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
-
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
@@ -251,7 +86,6 @@ share 결제 액션 (my_shares에서):
 | Gap (2026-07-29 실측) | `transfer_list_provider.dart:111`, presentation 전체 caller 검색 | `pay-mixed` API/Repository/Provider는 있으나 현재 Flutter presentation에서 호출하는 CTA/다이얼로그가 없어 사용자가 혼합 결제를 시작할 수 없음 | 혼합 결제 입력 CTA를 배선하거나 미지원 기능으로 명시 |
 | Risk (2026-07-29 실측) | `MeetingSettlementTransferVo`, `transfer_list_screen.dart:_confirmBankPortion` | transfer 응답에는 혼합 결제의 point/bank 분할 금액이 없고 총액 `amount`만 있다. 확인 다이얼로그는 총액을 “계좌이체 부분” 확인 금액으로 표시해 실제 은행분보다 크게 보일 수 있음 | 서버 VO에 분할 금액을 보존·노출하거나 다이얼로그에서 금액 단정을 제거 |
 | Fact (2026-07-29 실측) | `confirmBankPortion`, `canConfirmBankPortion` | 서버와 Flutter 모두 송금자 self-confirm을 막고 수취자/정산 생성자만 은행분 확인 가능. 실제 입금 자동 검증은 없음 | 현 신뢰 경계와 경고 문구 유지 |
-| 해소 (2026-06-06) | MeetingSettlementTransferService.java:97-111, WithdrawalService.java:447-461 | **모임정산 출금자격 오귀속·수취 무원장(C1/C2) + 역분개 환불 split 미보존(H1) 해소** — 분개 주체 납부자/수취자 분리(RECEIVABLE clearing), 출금 게이트 원장화, reversal 환불 split 복원. 분담금 납부자의 부당 출금자격·수취자 이중 현금화 경로 제거. | 없음 |
 
 ## 9. 수용 기준
 
@@ -266,9 +100,3 @@ share 결제 액션 (my_shares에서):
 - **AC-07. (엣지 · 이미 완료된 transfer) 중복 결제 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-08. (엣지 · PENDING appeal 차단) 본인 transfer에 이의가 걸린 상태에서 결제 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-09. (엣지 · settlement 완료 트리거) 마지막 transfer 결제 시 정산 자동 COMPLETED**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/ -->
 
 ## 1. 결론
@@ -18,22 +17,9 @@
 
 실시간 업데이트(WebSocket/polling)는 미배선이다. Flutter `HostInboxScreen`의 `RefreshIndicator`는 `hostInboxNotifierProvider.refresh()`를 호출하며(`host_inbox_screen.dart:217`), pull-to-refresh만 지원한다. 화면 재진입 시 자동 invalidate 서술은 부정확하다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `host/controller/HostInboxController.java` | `GET /api/v1/host/inbox`, `GET /api/v1/host/inbox/stats` |
-| Backend Service | `host/service/HostInboxService.java` | 8-source 통합, EVENT_MESSAGE 미응답 판정, DISPUTE_CASE 카드 |
-| Backend Enum | `host/constants/HostInboxSourceType.java` | 8값 + 각 값 설명 |
-| Backend Enum | `host/constants/HostInboxStatus.java` | NEEDS_RESPONSE/IN_PROGRESS/DONE |
-| Backend Param | `host/param/HostInboxSearchParam.java` | 검색 파라미터 |
-| Backend VO | `host/vo/HostInboxItemVo.java` | 필드 전체 |
-| Backend VO | `host/vo/HostInboxStatsVo.java` | 필드 전체 |
-| Flutter Screen | `lib/presentation/host/screens/host_inbox_screen.dart` | 3탭(NEEDS_RESPONSE/IN_PROGRESS/DONE), 카드 분기 |
-| Flutter Model | `lib/data/models/host/host_inbox_item.dart` | `HostInboxItem` Freezed, `HostInboxSourceType` Dart enum |
-| Flutter Model | `lib/data/models/host/host_inbox_stats.dart` | `HostInboxStats` Freezed |
-| Flutter Provider | `lib/domain/providers/host/host_inbox_provider.dart` | 조회 Provider |
-| Verification | 검증 없음 | — |
+계약의 정본은 코드다. 서버: `HostInboxController`, `HostInboxService`, `HostInboxSourceType`, `HostInboxStatus`, `HostInboxSearchParam`, `HostInboxItemVo`, `HostInboxStatsVo`. 앱: `host_inbox_screen.dart`, `host_inbox_item.dart`, `host_inbox_stats.dart`, `host_inbox_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -47,118 +33,10 @@
 8. 상단 헤더에서 `hostInboxStatsProvider` → `GET /api/v1/host/inbox/stats` 호출. `needsResponseCount`, `responseRatePercent`, `sourceTypeCounts` 등 표시.
 9. 화면에서 pull-to-refresh 시 `refresh()`를 호출하여 최신 데이터를 재조회한다. 화면 재진입 시 자동 invalidate는 없다 (실시간 업데이트 미배선).
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `GET /api/v1/host/inbox`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `HostInboxController#getInbox` |
-| 인증 | JWT 필수 |
-| Request | `@ModelAttribute HostInboxSearchParam` |
-| Response | `Page<HostInboxItemVo>` |
-
-### `GET /api/v1/host/inbox/stats`
-
-| 항목 | 실제 계약 |
-|---|---|
-| Controller | `HostInboxController#getStats` |
-| 인증 | JWT 필수 |
-| Request | 없음 (인증 userId 기반) |
-| Response | `HostInboxStatsVo` |
-
-### `HostInboxSourceType` 8값
-
-| 값 | 설명 | 미응답 판정 방식 |
-|---|---|---|
-| `EVENT_MESSAGE` | 이벤트 문의 스레드 (참가자→호스트) | 스레드 단위 미응답 판정 → `unansweredCount` |
-| `APPLICATION` | 참가 신청 (PENDING / CANCEL_PENDING_REFUND) | status 기반 |
-| `MEETING_SETTLEMENT_APPEAL` | 모임 정산 이의 제기 | status 기반 |
-| `REPORT` | 호스트 이벤트(EVENT type만) target 공개 신고. EVENT_PHOTO 매칭은 후속 wave 미구현 | status 기반 |
-| `PAYMENT_ISSUE` | OperationalIssue (PAYMENT/WALLET_TRANSACTION, relatedHostUserId=host) | status 기반 |
-| `REFUND_ISSUE` | OperationalIssue (REFUND) + failed_refund 호스트 이벤트 entry | status 기반 |
-| `OPERATIONAL_ISSUE` | OperationalIssue (SETTLEMENT/REGULAR_MEETING_SETTLEMENT, 호스트=정산 creator) | status 기반 |
-| `DISPUTE_CASE` | Wave B-1 DisputeCaseQueryRepository#searchByHost 5개 도메인 통합 | `disputeCaseId` 경유 케이스 상세 이동 |
-
-### `HostInboxItemVo` 필드
-
-| 필드 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| `id` | String | N | 인박스 항목 식별자 |
-| `sourceType` | HostInboxSourceType | N | 8종 |
-| `sourceId` | Long | N | 원천 row id |
-| `eventId` | Long | Y | 관련 이벤트 |
-| `clubId` | Long | Y | 관련 클럽 |
-| `settlementId` | Long | Y | 관련 정산 |
-| `transactionId` | Long | Y | 관련 트랜잭션 |
-| `title` | String | N | 카드 제목 |
-| `preview` | String | Y | 카드 미리보기 텍스트 |
-| `actorUserId` | Long | Y | 액션 사용자 id |
-| `actorNickname` | String | Y | 액션 사용자 닉네임 |
-| `status` | HostInboxStatus | N | NEEDS_RESPONSE/IN_PROGRESS/DONE |
-| `sensitive` | boolean | N | 민감 정보 마스킹 여부 |
-| `createdAt` | LocalDateTime | Y | |
-| `updatedAt` | LocalDateTime | Y | |
-| `deepLinkType` | String | Y | 딥링크 타입 힌트 |
-| `unansweredCount` | Integer | Y | EVENT_MESSAGE 전용: 미응답 메시지 수 |
-| `disputeCaseId` | String | Y | DISPUTE_CASE 전용: 케이스 상세 이동용 caseId |
-
-### `HostInboxStatsVo` 필드
-
-| 필드 | 타입 | nullable | 설명 |
-|---|---|---|---|
-| `needsResponseCount` | int | N | NEEDS_RESPONSE 항목 수 |
-| `inProgressCount` | int | N | IN_PROGRESS 항목 수 |
-| `doneCount` | int | N | DONE 항목 수 |
-| `totalCount` | long | N | 전체 항목 수 |
-| `responseRatePercent` | int | N | 응답률 (%) |
-| `averageResponseMinutes` | Long | Y | 평균 응답 시간 (분) |
-| `sourceTypeCounts` | Map\<HostInboxSourceType, Long\> | N | source별 항목 수 |
-
-### `HostInboxStatus` 3값
-
-| 값 | 설명 |
-|---|---|
-| `NEEDS_RESPONSE` | 호스트 응답 필요 |
-| `IN_PROGRESS` | 처리 중 |
-| `DONE` | 완료 |
-
-## 5. 프론트 계약
-
-| 항목 | 실제 구현 |
-|---|---|
-| 라우트 | `/host/inbox` (`Routes.hostInbox`) |
-| Screen | `HostInboxScreen` |
-| Provider(목록) | `hostInboxProvider` |
-| Provider(통계) | `hostInboxStatsProvider` |
-| API(목록) | `GET /api/v1/host/inbox` |
-| API(통계) | `GET /api/v1/host/inbox/stats` |
-| 탭 | NEEDS_RESPONSE / IN_PROGRESS / DONE (3탭) |
-| EVENT_MESSAGE 카드 | `unansweredCount > 0`이면 "미응답 N" 배지 표시 |
-| DISPUTE_CASE 카드 | `Routes.hostDisputeDetailFor(item.disputeCaseId ?? item.id)` → `/host/disputes/:caseId` |
-| 통계 헤더 | `sourceTypeCounts` Map 기반 source별 카운트 배지 |
-| 갱신 방법 | pull-to-refresh → `refresh()` 호출. 화면 재진입 시 자동 invalidate 없음 |
-
-### Dart enum 정합 (`HostInboxSourceType`)
-
-서버 `HostInboxSourceType`은 `SCREAMING_SNAKE_CASE`이며, Dart는 `@JsonEnum(valueField: 'value')`를 사용해 `camelCase` → `SCREAMING_SNAKE_CASE` wire 매핑한다.
-
-| 서버 값 | Dart enum 값 | JSON wire | 판단 |
-|---|---|---|---|
-| `EVENT_MESSAGE` | `HostInboxSourceType.eventMessage` | `'EVENT_MESSAGE'` | 일치 |
-| `APPLICATION` | `HostInboxSourceType.application` | `'APPLICATION'` | 일치 |
-| `MEETING_SETTLEMENT_APPEAL` | `HostInboxSourceType.meetingSettlementAppeal` | `'MEETING_SETTLEMENT_APPEAL'` | 일치 |
-| `REPORT` | `HostInboxSourceType.report` | `'REPORT'` | 일치 |
-| `PAYMENT_ISSUE` | `HostInboxSourceType.paymentIssue` | `'PAYMENT_ISSUE'` | 일치 |
-| `REFUND_ISSUE` | `HostInboxSourceType.refundIssue` | `'REFUND_ISSUE'` | 일치 |
-| `OPERATIONAL_ISSUE` | `HostInboxSourceType.operationalIssue` | `'OPERATIONAL_ISSUE'` | 일치 |
-| `DISPUTE_CASE` | `HostInboxSourceType.disputeCase` | `'DISPUTE_CASE'` | 일치 |
-
-`HostInboxStatus`도 동일 패턴: `needsResponse`→`'NEEDS_RESPONSE'`, `inProgress`→`'IN_PROGRESS'`, `done`→`'DONE'`.
-
-### `sourceTypeCounts` 타입 불일치
-
-서버: `Map<HostInboxSourceType, Long>`. Dart: `Map<String, int>`. host_inbox_screen에서 `stats.sourceTypeCounts[sourceType.value]`로 String key 조회.
+- 인박스는 다음을 한 곳에 모은다. 이벤트 문의(스레드 단위로 미응답을 센다), 참가 신청(승인 대기와 취소 환불 대기), 모임 정산 이의, 내 이벤트를 대상으로 한 신고, 결제 문제, 환불 문제(환불 실패 포함), 정산 운영 문제, 분쟁 케이스.
+- 항목은 응답 필요, 처리 중, 완료 세 탭으로 나뉜다.
 
 ## 6. 상태/권한 매트릭스
 

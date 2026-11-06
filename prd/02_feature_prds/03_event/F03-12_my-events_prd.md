@@ -3,11 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
-<!-- generated: source-first-unit-sync; updated: 2026-05-18; unit: business_logic/units/03_event/F03-12_my-events -->
-
-> 문서 상태: **실사 기반 전환본**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/03_event/F03-12_my-events`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 아래 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
-
 ## 1. 결론
 
 사용자가 자신과 관련된 이벤트를 한 데 모아 보는 기능. 두 가지 시점이 결합됨:
@@ -19,33 +14,16 @@
 - **내 이벤트**: 프로필 탭 → "내 이벤트" → `/profile/my-events`
 - **참석 로그** (호스트 시점): 이벤트 상세 또는 참석자 목록(F03-07) 의 우상단 "로그 >" → `/home/events/:eventId/log`
 
-현재 이 PRD에서 바로 봐야 할 것은 세 가지다. 첫째, 서버가 실제로 제공하는 endpoint/상태/side effect다. 둘째, Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지다. 셋째, 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것이다.
+## 2. 코드 위치
 
-## 2. 실사 근거
-
-| 구분 | 원천 문서 | 상태 | 이 PRD에서 쓰는 근거 |
-|---|---|---|---|
-| Backend | [backend.md](../../../units/03_event/F03-12_my-events/backend.md) | 있음 | Controller, Service, VO/DTO, enum, DB/side effect 근거 |
-| Frontend | [frontend.md](../../../units/03_event/F03-12_my-events/frontend.md) | 있음 | Route, Screen, Provider, Repository, API, CTA 근거 |
-| Scenario | [scenarios.md](../../../units/03_event/F03-12_my-events/scenarios.md) | 있음 | 상태/권한/실패/수용 기준 근거 |
-| Diagram | [diagrams.md](../../../units/03_event/F03-12_my-events/diagrams.md) | 있음 | 상태 전이와 흐름 검증 보조 |
+계약의 정본은 코드다. 서버: `EventController`, `CapacityController`, `AttendanceController`, `EventService`. 앱: `my_events_screen.dart`, `attendance_log_screen.dart`, `my_events_tab_view.dart`, `timeline_node.dart`, `date_divider.dart`, `event_card.dart`.
 
 <!-- source-references:start -->
-### 확인한 서버 코드 위치
-
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
-
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `GET /api/v1/events/my` | `EventController#listMyEvents` | [EventController.java:182](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L182) |
-| `GET /api/v1/events/users/me/applications` | `EventController#getMyApplications` | [EventController.java:336](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L336) |
-| `GET /api/v1/events/{eventId}/capacity/logs` | `CapacityController#getLogs` | [CapacityController.java:137](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java#L137) |
+서버 창구: `EventController#listMyEvents`, `EventController#getMyApplications`, `CapacityController#getLogs`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름
 
-아래 흐름은 원천 frontend 문서의 Provider/Repository/API 호출 순서와 backend 문서의 endpoint 계약을 합쳐 읽는다. 화면이 먼저 상태를 결정하는 것처럼 보여도 최종 기준은 서버 Controller/Service/VO/enum이다.
-
 ### 내 이벤트 (`my_events_screen.dart`)
 
 - **AppBar 제목**: "내 이벤트", `TabBar` 3개 탭: "참석 예정" / "주최 중" / "지난 이벤트"
@@ -97,107 +75,13 @@
   - 옛 `REJECTED_BY_HOST`(호스트 거절)·`WAITLIST_ORDER_CHANGED`(순번 변경)·`CAPACITY_REDUCED`(정원 축소)는 걷었다. 신청 거절은 신청 결정 이력이 남긴다
 - **상태 분기**: 로딩 / 에러(`AppErrorState`) / 빈 상태 / 데이터
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### 개요
-
-사용자가 자신과 관련된 이벤트를 한 데 모아 보는 기능. 두 가지 시점이 결합됨:
-- **참가자 시점**: 내가 신청한 이벤트 (`Application` 기준) → "참석 예정" 탭 (APPROVED + 미래)
-- **호스트 시점**: 내가 주최하는 이벤트 (`Event.hostUserId == 본인`) → "주최 중" / "지난 이벤트" 탭
-
-또한 같은 단위 안에 **참석 변경 로그**(F03-07 의 호스트용 로그 화면) 가 묶여 있다 — UX 상 호스트 본인의 이벤트 운영 흐름 파악과 묶어서 표시되기 때문.
-
-### 엔드포인트 요약
-
-| Method | Path | Controller#Method | 인증 | 핵심 동작 |
-|---|---|---|---|---|
-| GET | `/api/v1/events/my` | `EventController#listMyEvents` | 인증 | 내가 호스트인 이벤트 페이지 (PagingParam) |
-| GET | `/api/v1/events/users/me/applications` | `EventController#getMyApplications` | 인증 | 내 신청 목록 (List, 페이지네이션 없음) |
-| GET | `/api/v1/events/{eventId}/capacity/logs` | `CapacityController#getLogs` | 호스트/공동호스트 | 참석 변경 로그 페이지 (F03-07 backend 도 참조) |
-| GET | `/api/v1/events/{eventId}/attendance/logs` | `AttendanceController#getLogs` | 같음 | 동일 (플랜 호환 경로) |
-
-> **주의**: `EventController#listMyEvents` 시그니처는 `@ModelAttribute PagingParam pagingParam` 만 받음. UI 스펙 문서의 `?status=DRAFT,OPEN` 쿼리는 Flutter 측에서 보내고는 있으나 컨트롤러가 PagingParam (`page`/`size`) 만 처리하므로 status 파라미터는 서버에서 무시됨 — 실제 status 필터는 **클라이언트 사이드** 또는 EventService 의 listMyEvents 내부 로직에 의존.
-
-### 의존 단위 / 외부 시스템
-
-- **F03-05 신청 & 참석** — `Application` 도메인 소유. 본 단위는 GET 만, 신청 생성은 F03-05.
-- **F03-06 신청서 승인/거절** — Application status 전이를 만드는 곳, 본 단위는 결과(APPROVED/REJECTED)를 표시.
-- **F03-03 ~ 04 이벤트 생성/생명주기** — `Event.status` 전이가 "주최 중" / "지난 이벤트" 분류의 기준.
-- **F03-07 정원/대기열** — 참석 로그 화면 (`AttendanceLogVo`) 데이터 소스. 본 단위 frontend 가 같은 화면을 재사용.
-- 외부: 없음
-
-## 5. 프론트 계약
-
-### 진입 경로
-
-- **내 이벤트**: 프로필 탭 → "내 이벤트" → `/profile/my-events`
-- **참석 로그** (호스트 시점): 이벤트 상세 또는 참석자 목록(F03-07) 의 우상단 "로그 >" → `/home/events/:eventId/log`
-
-### 사용 라우트 & 화면 파일
-
-| 라우트 | 파일 | 역할 |
-|---|---|---|
-| `/profile/my-events` | `presentation/event/screens/my_events_screen.dart` | 3-탭 (참석 예정 / 주최 중 / 지난 이벤트) |
-| `/home/events/:eventId/log` | `presentation/event/screens/attendance_log_screen.dart` | 참석 변경 타임라인 (호스트용) |
-
-위젯:
-- `presentation/event/widgets/my_events_tab_view.dart` — 탭별 데이터 fetch + 카드 리스트
-- `presentation/event/widgets/timeline_node.dart` — 타임라인 한 노드 (아이콘 + 텍스트 + 시간)
-- `presentation/event/widgets/date_divider.dart` — 날짜별 구분선
-- `presentation/common/widgets/event_card.dart` — 공통 카드
-
-### 화면별 구성 요소 & 액션
-
-### 내 이벤트 (`my_events_screen.dart`)
-
-- **AppBar 제목**: "내 이벤트", `TabBar` 3개 탭: "참석 예정" / "주최 중" / "지난 이벤트"
-- `DefaultTabController(length: 3)` + `TabBarView` — 각 탭 콘텐츠는 `MyEventsTabView(tabIndex: 0|1|2)`
-
-#### 탭 0: "참석 예정" (`_UpcomingTab`)
-
-- **데이터**: `upcomingEventsNotifierProvider` ▶ `eventRepository.getMyApplications()` ▶ `GET /api/v1/events/users/me/applications`
-- 클라이언트 측 필터: `status == APPROVED` 만
-- 카드: `EventCard` — 제목/썸네일/시작시간/주소/`_ApplicationBadge(status)` (APPROVED 표시)
-- 이벤트 status (`eventStatus`) 가 CLOSED / CANCELED 면 `EventCardVariant.disabled` + statusLabel 노출
-- 빈 상태: `_EmptyMessage(message: '참석 예정인 이벤트가 없습니다', actionLabel: '이벤트 탐색')`
-- 풀투리프레시 활성
-
-#### 탭 1: "주최 중" (`_HostingTab`)
-
-- **데이터**: `hostingEventsNotifierProvider` ▶ `eventRepository.getMyEvents(status: 'DRAFT,OPEN', page, size: 20)` ▶ `GET /api/v1/events/my?page=N&size=20` (`status` 쿼리는 서버 미사용, 클라이언트가 status 분류 의도 표시 — 백엔드는 모두 hostUserId 기반 조회)
-- 무한 스크롤 (`loadMore`), 페이지 사이즈 20
-- 카드: 정원/현재인원/가격 표시 + DRAFT 인 경우 회색 "임시저장" 뱃지
-- 빈 상태: "주최 중인 이벤트가 없습니다" + "이벤트 생성" 안내
-
-#### 탭 2: "지난 이벤트" (`_PastTab`)
-
-- **데이터**: `pastEventsNotifierProvider` ▶ `getMyEvents(status: 'CLOSED,CANCELED', ...)` 동일 엔드포인트
-- 카드는 항상 `EventCardVariant.disabled` + statusLabel
-- 무한 스크롤
-- 빈 상태: "지난 이벤트가 없습니다"
-
-### 참석 로그 (`attendance_log_screen.dart`)
-
-- **사용자가 보는 것**:
-  - AppBar "참석 로그"
-  - 시간순 세로 타임라인 (최신 상단)
-  - 날짜별 `DateDivider` 자동 삽입 (이전 항목과 다른 날짜인 경우)
-  - 각 노드: `TimelineNode(logType, message: logType.label, userNickname, createdAt, isFirst, isLast)`
-  - 빈 상태: `AppEmptyState(title: '아직 참석 기록이 없습니다')`
-- **사용자가 할 수 있는 액션**:
-  - 무한 스크롤 — `position.maxScrollExtent - 200` 도달 시 `attendanceLogNotifier.loadMore()`
-  - 풀투리프레시 → `refresh()`
-- **타임라인 이벤트 유형 매핑** (`AttendanceLogType` enum + `.label`):
-  - `APPLIED_ATTENDING` → "참석 확정" (positive). 대기로 들어간 신청(`newStatus=WAITING`)은 "대기열 등록" 으로 그린다
-  - `APPLIED_WAITING` → "대기열 등록" (neutral)
-  - `CANCELLED_BY_USER` → "참석 취소" (negative)
-  - `PROMOTED_AUTO` → "자동 승격" (positive)
-  - `PROMOTED_CAPACITY_INCREASE` → "정원 증가 승격" (positive)
-  - `PROMOTED_MANUAL` → "수동 승격" (positive)
-  - `REMOVED_BY_HOST` → "호스트 제거" (negative)
-  - `OVERCAPACITY_APPROVED` → "정원 초과 승인" (neutral). 지금 이 값을 쓰는 길은 없다
-  - 옛 `REJECTED_BY_HOST`(호스트 거절)·`WAITLIST_ORDER_CHANGED`(순번 변경)·`CAPACITY_REDUCED`(정원 축소)는 걷었다. 신청 거절은 신청 결정 이력이 남긴다
-- **상태 분기**: 로딩 / 에러(`AppErrorState`) / 빈 상태 / 데이터
+- 참석 예정 탭은 승인된 신청을 보인다. 결제 대기 신청은 결제 기한을 함께 보이고, 누르면 상세로 가서 결제한다.
+- 모임이 종료·취소됐으면 참석 예정 카드는 흐리게, 상태 라벨과 함께 보인다.
+- 주최 중 탭은 DRAFT·OPEN, 지난 이벤트 탭은 CLOSED·CANCELED 이고 20개씩 불러온다. DRAFT 에는 임시저장 표시가 붙는다.
+- 빈 탭 안내: "참석 예정인 이벤트가 없습니다", "주최 중인 이벤트가 없습니다", "지난 이벤트가 없습니다".
+- 참석 로그는 최신이 위인 타임라인이고 날짜가 바뀌면 구분선을 넣는다. 볼 수 있는 사람은 F03-07 §4 를 따른다.
 
 ## 6. 상태/권한/시나리오 매트릭스
 
@@ -212,15 +96,6 @@
 | S7 | 참석 예정 0건일 때 "이벤트 탐색" 안내 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S8 | 풀투리프레시로 페이지 초기화 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S9 | 호스트가 아닌 사용자가 참석 로그 URL 직접 접근 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | backend 원천 문서의 Controller/Service/VO/Enum 및 trace | 위 trace가 실제 소스에 존재하는지 먼저 확인하고, endpoint/path/body/response를 기준으로 확정 |
-| 프론트 계약 | frontend 원천 문서의 Route/API/Repository/Provider/Screen/Widget | Flutter가 서버 필드와 enum을 그대로 소비하는지 모델/parser에서 재확인 |
-| 상태/권한 | scenarios 원천 문서의 시작 상태, 종료 상태, 우회/실패 흐름 | 시나리오별 종료 상태가 서버 응답과 화면 CTA에 동시에 반영되는지 확인 |
-| 외부 영향 | 결제, 알림, 위치, 캘린더, 리뷰/신뢰 등 cross-unit 의존 | 원천 문서에 명시된 의존 단위와 정책 PRD를 함께 확인 |
 
 ## 8. Gap / Risk
 
@@ -245,9 +120,3 @@
 - **AC-07. 참석 예정 0건일 때 "이벤트 탐색" 안내**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-08. 풀투리프레시로 페이지 초기화**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-09. 호스트가 아닌 사용자가 참석 로그 URL 직접 접근**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-
-## 10. 미결정 / 후속
-
-- 이 문서는 원천 unit 문서의 실사 내용을 PRD 구조로 옮긴 전환본이다. 최종 구현 판단 전에는 trace source를 직접 열어 backend/frontend 계약을 다시 대조한다.
-- Gap/Risk 후보가 있는 경우, 후보 문장을 그대로 믿지 말고 실제 Controller/Service/VO/Flutter model/provider/screen에서 재현 여부를 확인한다.
-- QA는 위 시나리오 매트릭스의 종료 상태를 기준으로 E2E 또는 integration test가 있는지 확인하고, 없으면 검증 공백으로 등록한다.

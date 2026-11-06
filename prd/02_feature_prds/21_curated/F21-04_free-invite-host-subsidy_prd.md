@@ -3,7 +3,6 @@
 <!-- release-document: reference -->
 > **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
 
-
 <!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + community_app curated/ -->
 
 ## 1. 결론
@@ -20,20 +19,9 @@
 - direct/legacy 수금액 모드(`serviceFeeGross=0`, offering/terms 없음)만 돈 없는 FREE_EXCLUDED가
   가능하다. direct 보장총액 X>0은 종전과 같이 금지된다.
 
-## 2. 실사 근거
+## 2. 코드 위치
 
-| 구분 | 확인한 소스 | 이 문서에서 쓰는 근거 |
-|---|---|---|
-| Backend Controller | `community_api/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java` | `POST .../free-exclude`, `POST .../subsidize` |
-| Backend Service (free-exclude) | `ServiceAssignmentService.java` → `markFreeExcluded` | 권한·보장모드 가드·coverage 행 INSERT |
-| Backend Service (subsidize) | `ServiceAssignmentChargeService.java` → `markHostSubsidized` | 호스트 지갑 차감·제공자 earning·자전거래 가드 |
-| Backend Enum | `CoverageType.java` | `FREE_EXCLUDED`, `HOST_SUBSIDIZED`, `SELF_PAID`, `NOSHOW_FORFEIT` |
-| Backend Model | `ServiceAssignment.java`, `ServiceAssignmentCharge.java` | `serviceFeeGross`, `engagementId`, `coverageType`, `payerUserId` |
-| Frontend API | `service_assignment_api.dart` | `freeExclude`, `subsidize` |
-| Frontend Repository | `service_assignment_repository.dart` | `Result<void>` 래핑 |
-| Frontend Screen | `event_assignments_screen.dart` | `_freeExclude`, `_subsidize`, `canFreeExclude`, `canPrepay` 분기 |
-| Frontend Provider | `service_assignment_provider.dart` | `freeExclude`, `subsidize` 메서드 |
-| Verification | 서버 유닛 테스트 + 서버/Flutter 소스 실측 | 생성 경로 구현, undo·participant 검증·catalog CTA Gap |
+계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentService`, `ServiceAssignmentChargeService`, `CoverageType`, `ServiceAssignment`, `ServiceAssignmentCharge`. 앱: `event_assignments_screen.dart`, `service_assignment_api.dart`, `service_assignment_repository.dart`, `service_assignment_provider.dart`.
 
 ## 3. 전체 동작 흐름
 
@@ -69,53 +57,9 @@
 6. charge에 `transactionId`, `creatorEarningId` 갱신.
 7. F3 정산 시 HOST_SUBSIDIZED charge도 `moneyRows`에 포함되어 제공자 지급 대상이 된다. 환불 시에는 `payer=호스트`에게 복원된다.
 
-## 4. 서버 계약
+## 4. 제품 규칙
 
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/free-exclude`
-
-| 항목 | 값 |
-|---|---|
-| Controller | `ServiceAssignmentController#freeExclude` |
-| 인증 | 필수(`@AuthenticationPrincipal`) |
-| 권한 | 호스트 또는 co-host(`assertHostOrCoHost`) |
-| Request Body | `ServiceAssignmentFreeExcludeParam` — `beneficiaryUserId: long`, `reason: String?` |
-| 응답 | `void` (HTTP 200) |
-| 핵심 가드 | CONFIRMED 상태·중복 커버 불가·serviceFeeGross>0 또는 offering/terms 배정 불가(`ASSIGNMENT_FREE_NOT_ALLOWED`). beneficiary 참가자 자격은 미검증 |
-| Side effect | `service_assignment_charge` 행 INSERT(`FREE_EXCLUDED`, amount=0, payer=null) |
-
-### `POST /api/v1/events/{eventId}/assignments/{assignmentId}/subsidize`
-
-| 항목 | 값 |
-|---|---|
-| Controller | `ServiceAssignmentController#subsidize` |
-| 인증 | 필수 |
-| 권한 | 호스트 또는 co-host |
-| Request Body | `ServiceAssignmentSubsidizeParam` — `beneficiaryUserId: long`, `amount: long` |
-| 응답 | `void` (HTTP 200) |
-| 핵심 가드 | CONFIRMED·최신 terms·participant cap·자전거래 차단·중복 커버 불가. beneficiary 참가자 자격은 미검증 |
-| Side effect | 호스트 지갑 차감(PAID_ONLY) + 제공자 `CreatorEarning` 적립 + `service_assignment_charge` INSERT(`HOST_SUBSIDIZED`) |
-
-### CoverageType 4종 의미(소스: `CoverageType.java`)
-
-| 값 | payer | amount | earning | F3 완납게이트 |
-|---|---|---|---|---|
-| `SELF_PAID` | beneficiary(참가자) | > 0 | 있음 | money-backed 커버 |
-| `FREE_EXCLUDED` | null | 0 | 없음 | "커버됨"으로 인정(돈 無 audit) |
-| `HOST_SUBSIDIZED` | hostUserId | > 0 | 있음(제공자 수령) | money-backed 커버 |
-| `NOSHOW_FORFEIT` | 원 납부자 | > 0 | 있음(기존 유지) | 출석 면제 + 커버됨 인정 |
-
-## 5. 프론트 계약
-
-| 항목 | 구현 |
-|---|---|
-| Screen | `EventAssignmentsScreen` |
-| 무료 제외 노출 조건 | `canFreeExclude = !hasServiceFee` — 보장수수료 모드에서 숨김 |
-| 대납 노출 조건 | 배정 상태 `CONFIRMED`, 보장수수료 모드에서도 노출 |
-| 대상 선택 | `ParticipantPickerSheet.show(context, eventId)` |
-| Repository 메서드 | `ServiceAssignmentRepository.freeExclude`, `.subsidize` |
-| Provider 메서드 | `EventAssignmentsNotifier.freeExclude`, `.subsidize` |
-| 성공 토스트 | `AppToast.show(context, message: '무료 제외 처리되었습니다')` / `'대납 처리되었습니다'` |
-| 실패 | `AppToast.show(type: ToastType.error, message: error.displayMessage)` |
+- 참가자 커버 상태 네 가지: 직접 납부(참가자가 돈을 냄), 무료 제외(돈 없이 커버됨으로 인정, 기록만 남음), 호스트 대납(호스트 지갑에서 냄, 제공자에게 수익 발생), 노쇼 귀속(납부했지만 불참한 사람의 돈을 환불 없이 유지, 출석 면제로 커버됨 인정).
 
 ## 6. 상태/권한 매트릭스
 
