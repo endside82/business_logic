@@ -111,7 +111,7 @@
       "state": "구축 완료·다음 배포 대기",
       "tone": "partial",
       "owner": "운영자",
-      "current": "11월 6일 밤 서버 묶음 prd-20261106b와 서비스 7개를 확인했습니다. 10월 30일 경보 8개·스냅샷 정책·백업 외부 보관 타이머를 적용했고 31일 메일 구독 확인 기록이 있습니다.",
+      "current": "11월 6일 밤 서버 묶음 prd-20261106c와 서비스 7개를 확인했습니다. 10월 30일 경보 8개·스냅샷 정책·백업 외부 보관 타이머를 적용했고 31일 메일 구독 확인 기록이 있습니다.",
       "need": "다음 배포는 DB 변경 없이 서버만 올립니다. 최종 후보 고정은 아직 보류입니다. 기기 이용은 추후 Android부터, 백업·복구 규약은 운영 서버를 확정할 때 재개합니다.",
       "unlock": "배포본 설치 · 실제 채팅 · 복구 검사",
       "stages": [
@@ -2211,12 +2211,12 @@
       "commit": "4faf491b2"
     }
   ],
-  "sourceDigest": "f9092315d2841d7743ca232ef815b68411ff4375d28011a45ff34a40950c8d4f",
+  "sourceDigest": "4c8bac953d81cd07868a85dce033bcc51a26723597023f7c44b666684b426193",
   "summary": {
     "lead": "11월 6일 기준, 구조 재정비는 정한 범위를 모두 끝냈고 서버와 Android 내부 테스트 빌드 13을 배포했습니다. 번호 표시 고침과 미룬 기능 여섯, 판 최신화가 이 배포로 나갔습니다. 다음은 관리자 웹 거르기·경보 기본 거르기·정산 생성 잠금 고침의 서버 배포입니다.",
     "updates": [
       "개발: 구조 재정비는 정한 범위를 11월 6일 끝냈고 그 밖의 재정비는 하지 않습니다. 앱 시험 실패는 0이고, 앱 전체 시험은 매일 한 번 main에서 자동으로 돕니다. 지금 진행 중인 개발은 없습니다.",
-      "배포: 11월 6일 밤 공개 API·관리자 API·실시간·관리자 웹을 prd-20261106b로 올리고 Android 1.0.0 (13)을 내부 트랙에 배포했습니다. 운영 DB는 백업한 뒤 표 하나와 칸 하나를 더했습니다.",
+      "배포: 11월 6일 밤 공개 API·관리자 API·실시간·관리자 웹을 prd-20261106b로 올리고 Android 1.0.0 (13)을 내부 트랙에 배포했습니다. 이어서 관리자 웹 거르기·경보 기본 거르기·정산 생성 잠금 고침을 prd-20261106c로 올렸습니다. 운영 DB는 백업한 뒤 표 하나와 칸 하나를 더했습니다.",
       "다음 배포: 관리자 웹에서 거르기 두 칸을 잇달아 바꾸면 앞 칸이 사라지던 것, 운영자 경보 목록의 기본 거르기, 정산 생성과 정기모임 넘김의 겹침을 고친 것이 main에 있고 운영 전입니다. 앱 변경과 DB 변경은 없습니다.",
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
@@ -2289,7 +2289,7 @@
     "evidenceRows": [
       [
         "서버·Android 배포",
-        "11월 6일 밤 서버 묶음 prd-20261106b와 Android 1.0.0 (13)의 기록입니다. 컨테이너 7개 정상, 운영 공개 확인 14건, Play 내부 트랙 [13]이 적혀 있습니다. 로그인 여정·실기기는 보지 않았습니다.",
+        "11월 6일 밤 서버 묶음 prd-20261106b·prd-20261106c와 Android 1.0.0 (13)의 기록입니다. 컨테이너 7개 정상, 운영 공개 확인 14건, Play 내부 트랙 [13]이 적혀 있습니다. 로그인 여정·실기기는 보지 않았습니다.",
         "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json"
       ],
       [
@@ -2321,20 +2321,20 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-06T23:42:20+09:00",
+    "updatedAt": "2026-11-06T23:47:16+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "8d0978c15b3e3d38a44279fb5d42e13c2a6d9b7c",
-    "sourceCommit": "a243ac3281b1925d7b1629b1c0355d6d5e528420",
+    "sourceCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "3995877652e778eaa614daec9bb28d28ba2c48d5178b9fae885bc4d45b607665",
-    "worklistSha256": "32f5d7cc1c31c5c384e6163d2affef43267130036097394843be26bd1ba79ce7",
+    "sourceSha256": "438812d02bc2ebb60398904f0ad5a644a66847ffee7cef2a08679b8bb4d322f9",
+    "worklistSha256": "e41949f0df78d65cfe4da6e1d6713863c030076bb47f7a5a406549da64db5eba",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
-      "docs/plan/NEXT_WORK.md": "3995877652e778eaa614daec9bb28d28ba2c48d5178b9fae885bc4d45b607665",
+      "docs/plan/NEXT_WORK.md": "438812d02bc2ebb60398904f0ad5a644a66847ffee7cef2a08679b8bb4d322f9",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "ce63f0e852bfc235ab51c6469d98d750e515f8e42399a9ec049901cac7eafb85",
-      "docs/plan/WORKLIST.md": "32f5d7cc1c31c5c384e6163d2affef43267130036097394843be26bd1ba79ce7",
-      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "73573ab9a991228310430d0d693c62d2417b3aecbf1c682a8d8bb50a4f33be09",
-      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "8ae5143293b0d5579bb20d177d8e440ff36943cee9f13712575e3aaf856b7edd"
+      "docs/plan/WORKLIST.md": "e41949f0df78d65cfe4da6e1d6713863c030076bb47f7a5a406549da64db5eba",
+      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "9ff9716eaddcbeba3436f71fa66e39b6a10e3d86b96b70826b2c9ad9b5a2b6d2",
+      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "062ae6b4dc1f014382f27af106e82a89a8b71cc8c2b8dbf9bc5ab1cb23985836"
     },
     "method": "2026-11-06 정본과 11월 6일 배포 기록·판 최신화 결과·저장소별 main 대조. 운영·스토어 재조회, 배포, 제품·기기 시험은 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
