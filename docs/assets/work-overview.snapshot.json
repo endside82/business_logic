@@ -112,7 +112,7 @@
       "tone": "partial",
       "owner": "운영자",
       "current": "11월 6일 밤 서버 묶음 prd-20261106c와 서비스 7개를 확인했습니다. 10월 30일 경보 8개·스냅샷 정책·백업 외부 보관 타이머를 적용했고 31일 메일 구독 확인 기록이 있습니다.",
-      "need": "메일 DKIM 레코드를 되살립니다. 최종 후보 고정은 아직 보류입니다. 기기 이용은 추후 Android부터, 백업·복구 규약은 운영 서버를 확정할 때 재개합니다.",
+      "need": "최종 후보 고정은 아직 보류입니다. 기기 이용은 추후 Android부터, 백업·복구 규약은 운영 서버를 확정할 때 재개합니다.",
       "unlock": "배포본 설치 · 실제 채팅 · 복구 검사",
       "stages": [
         "prepare",
@@ -2060,8 +2060,8 @@
     },
     {
       "id": "H-240",
-      "title": "메일 DKIM 복구와 실수신, 파일·관리자 접근 제한 확인",
-      "description": "현재 운영 도메인의 가입·복구·Google 연결 6자리 번호 메일 실수신을 확인한다. 현재 운영 도메인의 파일 검사·열람·삭제·덮어쓰기 거부를 확인한다. 허용망 밖 관리자 접근 거부를 확인한다. 운영 Nginx는 관리자 API 경로를 직접 전달하므로 웹 중계 경로의 프록시 홉 수를 일괄 적용하지 않는다. 배치별 ADMIN_WEB_TRUSTED_PROXY_HOPS·ADMIN_TRUSTED_PROXIES·ADMIN_TRUSTED_PROXY_HOPS를 현재 구성과 대조한다. 메일 DKIM 레코드가 도메인에 없다(2026-11-07 공개 조회). 10월 12일 기록에 있던 CNAME `saisoop-yny-202610._domainkey.saisoop.co.kr` 이 Route 53 과 `deploy/production/aws/35_route53/zone.yaml` 에 없어 옮기면서 빠진 것으로 보인다. Oracle 쪽 공개키는 살아 있다. 레코드를 되살리고 받은 메일 머리글로 서명을 확인한다. SPF 와 DMARC(`p=none`)는 있다. 지도 쿼터를 넘으면 지도가 멈추는데 일일 한도, 과금 경보, 장애 안내가 정해져 있지 않다. 셋을 정해 운영 구성에 적는다. 같이 확인: 운영에 `KAKAO_MAPS_API_KEY`·`TOSS_CERT_CLIENT_ID/SECRET` 값이 들어갔는지(운영 yaml 기본값이 비어 있다), 소개 웹 `deploy/content-links.nginx.conf` 가 운영 Nginx 에 반영됐는지와 `/open/`·`.well-known` 응답 형식, 지도 키 없음·권한 오류·쿼터 초과를 준비 상태와 경보에서 구분하는지. 반송·스팸 신고가 서버로 들어오는 길이 없다. 서버 수신구(`SesEventWebhookController`)는 SES 전용인데 운영 메일은 Oracle 이다. Oracle 의 알림을 잇거나 Oracle 억제 목록으로 갈음하는 쪽으로 정한다.",
+      "title": "메일 DKIM 서명과 실수신, 파일·관리자 접근 제한 확인",
+      "description": "현재 운영 도메인의 가입·복구·Google 연결 6자리 번호 메일 실수신을 확인한다. 현재 운영 도메인의 파일 검사·열람·삭제·덮어쓰기 거부를 확인한다. 허용망 밖 관리자 접근 거부를 확인한다. 운영 Nginx는 관리자 API 경로를 직접 전달하므로 웹 중계 경로의 프록시 홉 수를 일괄 적용하지 않는다. 배치별 ADMIN_WEB_TRUSTED_PROXY_HOPS·ADMIN_TRUSTED_PROXIES·ADMIN_TRUSTED_PROXY_HOPS를 현재 구성과 대조한다. 메일 DKIM 레코드를 2026-11-07 되살렸다. 2026-10-26 Route 53 이전 때 빠진 CNAME `saisoop-yny-202610._domainkey.saisoop.co.kr` 을 템플릿(`deploy/production/aws/35_route53/zone.yaml`)에 넣고 사용자가 적용했으며, 네임서버 넷과 공개 해석기 둘에서 공개키까지 읽힌다. 남은 것은 실제 서명 확인이다. 앱에서 인증번호 메일을 받아 머리글의 `DKIM-Signature` 에 `s=saisoop-yny-202610` 이 있고 `Authentication-Results` 가 `dkim=pass` 인지 본다. 레코드 이름은 대상 주소 꼴에서 옮긴 것이고 Oracle 콘솔의 DKIM 상태는 보지 못했으니, 서명이 없거나 실패면 콘솔부터 본다. SPF 와 DMARC(`p=none`)는 있다. 지도 쿼터를 넘으면 지도가 멈추는데 일일 한도, 과금 경보, 장애 안내가 정해져 있지 않다. 셋을 정해 운영 구성에 적는다. 같이 확인: 운영에 `KAKAO_MAPS_API_KEY`·`TOSS_CERT_CLIENT_ID/SECRET` 값이 들어갔는지(운영 yaml 기본값이 비어 있다), 소개 웹 `deploy/content-links.nginx.conf` 가 운영 Nginx 에 반영됐는지와 `/open/`·`.well-known` 응답 형식, 지도 키 없음·권한 오류·쿼터 초과를 준비 상태와 경보에서 구분하는지. 반송·스팸 신고가 서버로 들어오는 길이 없다. 서버 수신구(`SesEventWebhookController`)는 SES 전용인데 운영 메일은 Oracle 이다. Oracle 의 알림을 잇거나 Oracle 억제 목록으로 갈음하는 쪽으로 정한다.",
       "condition": "실제 메일·파일·접근 제한 결과와 배치별 신뢰 프록시 기록. 설정 존재만으로 통과하지 않음",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -2522,13 +2522,13 @@
       "commit": "4faf491b2"
     }
   ],
-  "sourceDigest": "21df724140554a4bc795623daf7e53448c82d9e2c79e485f10bc6e8c49caf9c9",
+  "sourceDigest": "4a028c5d1ac1716b54873da2c0fe252c9d522c0d2f339f6289efac2136942b83",
   "summary": {
-    "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261106c)와 Android 내부 테스트 빌드 13이 나가 있습니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 빠져 있는 메일 DKIM 레코드 복구, 자동 백업 결과 확인, 휴대폰 확인입니다.",
+    "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261106c)와 Android 내부 테스트 빌드 13이 나가 있습니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
       "개발: 구조 재정비는 정한 범위를 11월 6일 끝냈고 그 밖의 재정비는 하지 않습니다. 앱 시험 실패는 0이고, 앱 전체 시험은 매일 한 번 main에서 자동으로 돕니다. 지금 진행 중인 개발은 없습니다.",
       "배포: 11월 6일 밤 서버 네 가지와 Android 1.0.0 (13)을 내부 트랙에 배포했고, 이어서 관리자 웹 거르기·경보 기본 거르기·정산 생성 잠금 고침을 prd-20261106c로 올렸습니다.",
-      "운영 공개 값 확인(11월 7일): 출시 범위와 로그인 제공자는 배포 입력과 같습니다. 메일 DKIM 레코드가 도메인에 없고 앱 링크 파일에 Play 서명 지문이 없습니다. 둘 다 첫 출시 전에 고칩니다.",
+      "운영 공개 값 확인(11월 7일): 출시 범위와 로그인 제공자는 배포 입력과 같습니다. 도메인 이전 때 빠진 메일 DKIM 레코드는 11월 7일 되살렸습니다. 앱 링크 파일에 Play 서명 지문이 없어 첫 출시 전에 고칩니다.",
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 6일 밤 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [13]이 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
@@ -2546,8 +2546,8 @@
     "actions": [
       {
         "task": "H-240",
-        "title": "메일 DKIM 레코드를 되살리고 실수신을 확인합니다",
-        "note": "10월 12일에 있던 DKIM 레코드가 도메인 이전 때 빠진 것으로 보입니다. 운영 도메인 설정을 고친 뒤 받은 메일 머리글로 서명을 봅니다. 반송·스팸 신고가 서버로 들어오는 길도 정합니다."
+        "title": "되살린 메일 DKIM 의 서명과 실수신을 확인합니다",
+        "note": "도메인 이전 때 빠진 DKIM 레코드를 11월 7일 되살렸고 공개 조회로 확인했습니다. 받은 메일 머리글로 실제 서명을 봅니다. 반송·스팸 신고가 서버로 들어오는 길도 정합니다."
       },
       {
         "task": "H-246",
@@ -2579,7 +2579,7 @@
       [
         "운영 공개 값",
         "11월 7일 대조",
-        "출시 범위와 로그인 제공자는 입력과 같습니다. 메일 DKIM 레코드와 앱 링크의 Play 서명 지문이 빠져 있습니다."
+        "출시 범위와 로그인 제공자는 입력과 같습니다. 메일 DKIM 레코드는 되살렸고 실제 서명 확인이 남았습니다. 앱 링크의 Play 서명 지문이 빠져 있습니다."
       ],
       [
         "판 최신화",
@@ -2632,19 +2632,19 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T00:31:02+09:00",
+    "updatedAt": "2026-11-07T00:38:33+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "59efc7d600417484051c87ba02f5b864585a3fc2",
+    "sourceCommit": "2020592d5ccf01b72d4b4b0a03fcdb02f7406624",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "09035935a99083487cbaad3cc5a0a4bca902e8b65854eb6bf5949d653d95a37d",
+    "sourceSha256": "9b844c8a73e85f1fb00729df4d29e15e81b7caa9b88cdba238bd6d7f4342fe98",
     "worklistSha256": "8a4de96038bbb05dbee2ec97aa2613b46177f67f069a62c95a17ec9feab7c79a",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
       "docs/plan/WORKLIST.md": "8a4de96038bbb05dbee2ec97aa2613b46177f67f069a62c95a17ec9feab7c79a",
-      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "9ff9716eaddcbeba3436f71fa66e39b6a10e3d86b96b70826b2c9ad9b5a2b6d2",
+      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "90c518702d6c6d81f45b06858f2a42439c2fba289f11a8866c00d82eb3be13e9",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "a600e77e0d5d9b4488358deb70c1b03a1288fbcd6c330bbf9ce3e9678c83c18a"
     },
     "method": "2026-11-07 정본과 11월 6일 배포 기록, 공개 주소의 읽기 전용 조회, 코드 읽기 대조. 제품·기기 시험과 운영 쓰기는 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
