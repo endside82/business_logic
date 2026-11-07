@@ -359,7 +359,6 @@
         "H-588",
         "H-593",
         "H-511",
-        "H-493",
         "H-552",
         "H-595",
         "H-596",
@@ -1011,7 +1010,7 @@
     {
       "id": "H-179",
       "title": "플랫폼 기간권 편성·판매 시작·중지와 앱 표시 만들기",
-      "description": "① 플랫폼 기간권 편성·판매 시작·중지와 앱 표시를 만든다. 회원이 기간권을 만드는 경로는 폐쇄돼 현재 판매를 시작할 길이 없다. ② 켤 때 앱 기간권 활성화 실패 문구도 고친다. `collection_provider.dart` 가 서버 오류를 `false` 로 줄여 스냅샷 오류도 「활성화에 실패했습니다」 로만 보인다(설계 13절 6번). 설계 문서에 남은 몫: 대사·집계 남은 몫(`unpaidCreatorEarningGross` 회원 필터, 대사 두 조회, 관리자 일일 대사 줄, 플랫폼 매출 보고), 관리자 번들 저장·수정·판매 시작의 기간권 검사 I12·I13, 관리자 웹의 새로고침에도 남는 멱등 키. 운영자 환불 심사는 이미 있다(`/api/internal/market-refunds`, 관리자 `market-refund-escalations`). 열 때 `release.scope.enabled-domains` 에 `MARKET_PERIOD_PASS` 와 `MARKET` 을 둘 다 넣는다. `MARKET` 을 빼면 열리지 않고, 결제 기반을 열기 전에는 넣지 않는다(설계 8절).",
+      "description": "플랫폼 기간권 편성·판매 시작·중지와 앱 표시를 만든다. 회원이 기간권을 만드는 경로는 폐쇄돼 현재 판매를 시작할 길이 없다. 설계 문서에 남은 몫: 대사·집계 남은 몫(`unpaidCreatorEarningGross` 회원 필터, 대사 두 조회, 관리자 일일 대사 줄, 플랫폼 매출 보고), 관리자 번들 저장·수정·판매 시작의 기간권 검사 I12·I13, 관리자 웹의 새로고침에도 남는 멱등 키. 운영자 환불 심사는 이미 있다(`/api/internal/market-refunds`, 관리자 `market-refund-escalations`). 열 때 `release.scope.enabled-domains` 에 `MARKET_PERIOD_PASS` 와 `MARKET` 을 둘 다 넣는다. `MARKET` 을 빼면 열리지 않고, 결제 기반을 열기 전에는 넣지 않는다(설계 8절).",
       "condition": "기간권 판매를 채택하고 결제 기반을 준비한 뒤",
       "scope": "feature",
       "kind": "기능 개발",
@@ -1032,7 +1031,7 @@
     {
       "id": "H-180",
       "title": "마켓 유형별 공개, 결제 안내·환불 결과 연결, 결함 고치기",
-      "description": "마켓을 상품 유형별로 공개한다. 결제 제한 안내·환불 재시도 결과를 연결한다. 판매 현황 판정과 유료 구매 판정은 서버가 없어 미뤘고 마켓을 열 때 만든다. 열 때 아래를 함께 고치고, 재현 시험부터 다시 쓴다. ① 결함: 마켓 검색 주소가 검색어를 인코딩하지 않는다(`lib/presentation/market/screens/market_main_screen.dart` 의 `/market/search?keyword=$query`). 재현 입력: 「캠핑&바베큐」 → 「캠핑」, 「C# 입문」 → 「C」, 「C++」 → 「C」 로 검색된다. ② 결함: 환불 신청 경로를 이동 값 없이 열면 구매 번호 0 으로 신청된다(`lib/core/router/feature_routes/plan_market_routes.dart` 의 `purchaseId ?? 0`, 서버 신청 본문에 번호 검증 없음). 앱 안 두 입구는 늘 번호를 넘기지만 이 경로는 닫혀도 열리는 예외다. 재현 입력: 이동 값 없이 그 경로를 연다. ③ 받은 환불 요청(`/market/refunds/incoming`)으로 들어가는 입구가 앱 안에 없고, 알림은 판매자에게도 내 환불 상세로 보낸다. ④ 「검색 결과 {n}건」·「총 {n}건」 이 전체가 아니라 지금 실린 줄 수다(20줄씩 읽는 목록이라 20건 넘으면 「20건」, 서버 전체 수 안 씀). ⑤ 기간권 설계 2.11 의 넷을 고친다. ⑤-1 관리자 통계 `activeItems` 가 `READY` 를 센다. ⑤-2 앱 상세가 모든 400 을 포인트 부족으로 보인다. ⑤-3 앱 번들 구매 단추에 자기 구매·로그인·결제 개통 검사가 없다. ⑤-4 관리자 웹 `transitionBundle` 이 멱등 키를 보내지 않는다. ⑥ 판매 중 번들 구성 변경과 기간권 봉인 선확인의 경합(설계 13절 8번, 완전히 막으려면 판매 중 구성 변경을 금지하는 운영 정책)을 고친다. 판매자 쪽 작은 것: 마켓 `difficulty` 거르기는 받기만 하고 적용하지 않는다(`MarketItem` 에 칸 없음, 코드 확인). 디지털 상품은 마지막에 연다. 실제 파일 저장소를 잇고 업로드·구매·다운로드, 저장소 장애, 다운로드 주소 만료, 권리 회수 뒤 새 주소 거부를 확인한다.",
+      "description": "마켓을 상품 유형별로 공개한다. 결제 제한 안내·환불 재시도 결과를 연결한다. 판매 현황 판정과 유료 구매 판정은 서버가 없어 미뤘고 마켓을 열 때 만든다. 열 때 아래를 함께 고치고, 재현 시험부터 다시 쓴다. ① 결함: 마켓 검색 주소가 검색어를 인코딩하지 않는다(`lib/presentation/market/screens/market_main_screen.dart` 의 `/market/search?keyword=$query`). 재현 입력: 「캠핑&바베큐」 → 「캠핑」, 「C# 입문」 → 「C」, 「C++」 → 「C」 로 검색된다. ② 결함: 환불 신청 경로를 이동 값 없이 열면 구매 번호 0 으로 신청된다(`lib/core/router/feature_routes/plan_market_routes.dart` 의 `purchaseId ?? 0`, 서버 신청 본문에 번호 검증 없음). 앱 안 두 입구는 늘 번호를 넘기지만 이 경로는 닫혀도 열리는 예외다. 재현 입력: 이동 값 없이 그 경로를 연다. ③ 받은 환불 요청(`/market/refunds/incoming`)으로 들어가는 입구가 앱 안에 없고, 알림은 판매자에게도 내 환불 상세로 보낸다. ④ 「검색 결과 {n}건」·「총 {n}건」 이 전체가 아니라 지금 실린 줄 수다(20줄씩 읽는 목록이라 20건 넘으면 「20건」, 서버 전체 수 안 씀). ⑤ 기간권 설계 2.11 의 셋을 고친다. ⑤-1 관리자 통계 `activeItems` 가 `READY` 를 센다. ⑤-2 앱 번들 구매 단추에 자기 구매·로그인·결제 개통 검사가 없다. ⑤-3 관리자 웹 `transitionBundle` 이 멱등 키를 보내지 않는다. ⑥ 판매 중 번들 구성 변경과 기간권 봉인 선확인의 경합(설계 13절 8번, 완전히 막으려면 판매 중 구성 변경을 금지하는 운영 정책)을 고친다. 판매자 쪽 작은 것: 마켓 `difficulty` 거르기는 받기만 하고 적용하지 않는다(`MarketItem` 에 칸 없음, 코드 확인). 디지털 상품은 마지막에 연다. 실제 파일 저장소를 잇고 업로드·구매·다운로드, 저장소 장애, 다운로드 주소 만료, 권리 회수 뒤 새 주소 거부를 확인한다.",
       "condition": "마켓을 공개할 때",
       "scope": "feature",
       "kind": "기능 개발",
@@ -1948,22 +1947,6 @@
       "evidenceLinks": []
     },
     {
-      "id": "H-493",
-      "title": "관리자 강제 로그아웃이 실제 세션을 끊게 고치기",
-      "description": "관리자 강제 로그아웃(전체·한 세션)이 공개 API 가 쓰지 않는 빈 표 `jwt_record` 만 고쳐 실제로는 회원의 어떤 세션도 끊지 않는다(2026-10-21 H488 조사). 관리자 화면이 아직 부르지 않아 지금 보이는 결함은 아니다. 연결할 때 H488 의 세션 번호 해지(갱신 토큰 행·실시간 해지·접근 토큰 블랙리스트)를 쓰게 고친다.",
-      "condition": "관리자 강제 로그아웃을 화면에 연결할 때",
-      "scope": "feature",
-      "kind": "조사·확인",
-      "section": "8. 확인할 것",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#8-확인할-것",
-      "evidence": "H488 기록",
-      "evidenceLinks": []
-    },
-    {
       "id": "H-225",
       "title": "카드 거절·삭제 뒤 남는 빌링키의 삭제 계약 확인",
       "description": "카드 등록 거절·삭제 뒤 공급자에 남는 빌링키의 삭제 계약을 확인한다. 청구가 생기는 문제는 아니다.",
@@ -2656,7 +2639,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "7415f5d95e1cdb49b3205ccc601174e5944a5db5a298c92ef487e2341ac89ac9",
+  "sourceDigest": "9bb78aa338189f7f02dc8b4e4f24ad1db9eb08a9976bf3cfdb5b2cf7439374da",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2666,7 +2649,7 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 108개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 107개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 10,
       "3": 11,
@@ -2674,7 +2657,7 @@
       "5": 14,
       "6": 10,
       "7": 14,
-      "8": 23,
+      "8": 22,
       "9": 24
     },
     "actions": [
@@ -2766,18 +2749,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T17:52:39+09:00",
+    "updatedAt": "2026-11-07T18:25:03+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "16a1d70615bdbee7a3bf6d144771e0400ca038ae",
+    "sourceCommit": "e5b2565a6a02acb3711828177dd54b90ec4cf413",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "4b379ad8d9f4a768c7c12ba6744f94b8e6fd8be0b3ce2be158cdf2f1c6545df9",
-    "worklistSha256": "1e4d16d6c59e8866f62049df03480851909b3e8b3c34acd6e818a609750e1044",
+    "sourceSha256": "3a5011e611de500a93a4788362cbb4a18b76abd2503595b66446386dabfcc92e",
+    "worklistSha256": "922dcf765f3c1d89ccb16037ea8e6cbd289234b2ae1b05e101a3f98087d7e48b",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "1e4d16d6c59e8866f62049df03480851909b3e8b3c34acd6e818a609750e1044",
+      "docs/plan/WORKLIST.md": "922dcf765f3c1d89ccb16037ea8e6cbd289234b2ae1b05e101a3f98087d7e48b",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
