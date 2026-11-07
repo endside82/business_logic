@@ -21,8 +21,8 @@
 확정 Gap/Risk:
 
 1. (해소) 앱은 `DEACTIVATION_BLOCKED` 응답의 점검 내용을 읽어 걸린 항목을 차단 창으로 보인다.
-2. `DateProfilePhotoRepository.deleteAllByProfileId`는 DB row를 지우지만 각 데이팅 사진의 FileStorage 실물을 삭제하는 호출은 확인되지 않는다.
-3. Entity는 `user_id unique=true`를 선언하지만 canonical `V1__init.sql`은 non-unique 복합 index만 둔다. 서비스는 취소/완료 후 새 row INSERT 방식이므로 스키마 선언을 일치시켜야 한다.
+2. (해소) 데이트 사진은 행을 지우기 전에 사진마다 파일 소거 표시를 같은 트랜잭션에 남기고, 파일 번호 없는 옛 키는 재시도 티켓으로 지운다(파기 실행기 8단계, 2026-11-08 확인).
+3. (해소) 진행 중 요청은 회원당 하나다. V1 의 생성열 `active_key` 와 유일 키 `uk_deletion_request_user_active` 가 지키고, 엔티티는 `unique` 를 선언하지 않는다. 유일 키에 진 요청은 「이미 요청됨」 으로 답한다(2026-11-08 확인, 시험 더함).
 
 프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
 
@@ -64,9 +64,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| Risk | `DataDeletionRequest` vs `V1__init.sql` | Entity는 `unique=true`, canonical migration은 non-unique다. 취소/완료 후 신규 row 정책의 스키마 권위를 일치시켜야 한다. | annotation/migration/운영 DB 제약 동기화 |
-| Gap | `DataDeletionService` | 데이팅 사진 row 삭제 전 FileStorage 실물 삭제 호출이 없다. | 사진 fileKey별 삭제 및 회귀 테스트 |
-| Risk | admin `process` → internal execute | 관리자 process가 CANCELLED row도 실행할 수 있어 사용자가 취소한 삭제를 완료로 바꿀 수 있다. | process 허용 상태를 PENDING/APPROVED 등 명시적 allowlist로 제한 |
+| 해소 | `DataDeletionRequest` vs `V1__init.sql` | 진행 중 요청 회원당 하나를 생성열과 유일 키가 지키고 엔티티는 unique 를 선언하지 않는다. | 없음(2026-11-08 시험 더함) |
+| 해소 | `DataDeletionService` | 데이팅 사진 행을 지우기 전에 파일 소거 표시·옛 키 재시도 티켓을 남긴다. | 없음 |
+| 해소 | admin `process` → internal execute | 취소된 요청은 세 겹에서 막힌다: 관리자 사전 판정(원격 호출 전), 공개 셸(정리 전), 러너의 잠금 뒤 재판정. | 없음(2026-11-08 러너 재판정 시험 더함) |
 | 후보 | frontend.md:34 | - 비밀번호 재확인 다이얼로그는 현재 코드에 없음. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
