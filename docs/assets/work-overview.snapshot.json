@@ -305,6 +305,7 @@
       "ids": [
         "H-568",
         "H-615",
+        "H-629",
         "H-617",
         "H-543",
         "H-620",
@@ -789,6 +790,22 @@
           "href": "stamp/CLUB_STAMP_PLAN_2026-09-05.md"
         }
       ]
+    },
+    {
+      "id": "H-629",
+      "title": "비공개 모임 신청자에게 신청자 수를 보이는 조회를 열지 정하기",
+      "description": "선정 전 신청자에게 지금 몇 명이 신청했는지 보여 주는 자리가 앱에 있지만 늘 숨겨진다. 서버 응답에 그 값이 없고, 상세 조회가 호스트와 선정된 참가자만 받아 값을 더해도 신청자에게 닿지 않는다(`PrivateMeetingService#getDetail`). 신청자에게 줄인 조회를 열지 먼저 정한다. 안 보여 주기로 하면 앱의 자리를 걷는다(2026-11-07 코드 대조).",
+      "condition": "상세 조회가 호스트·선정된 참가자만 받는다. 안 보이기로 하면 앱의 자리를 걷는다",
+      "scope": "now",
+      "kind": "기능 보완",
+      "section": "3. 고칠 결함",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#3-고칠-결함",
+      "evidence": "2026-11-07 코드 대조 · 업무 규칙 `business_logic/docs/features/private-meeting.html` 9절",
+      "evidenceLinks": []
     },
     {
       "id": "H-617",
@@ -2534,7 +2551,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "0b8b8401e205ad7772a02f8f9acc0755ce3e86e042f468536fce297acb3469ec",
+  "sourceDigest": "4e87140e61d481d3774e67266e1b219c9bfb1e1e0443d7e03b6181d1e11afa41",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2544,10 +2561,10 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 103개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 104개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
-      "3": 5,
+      "3": 6,
       "4": 5,
       "5": 14,
       "6": 9,
@@ -2644,18 +2661,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-08T00:05:29+09:00",
+    "updatedAt": "2026-11-08T00:13:46+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "5caad990a07d0b42c27b54f19cb4c368ebabed62",
+    "sourceCommit": "456c631af33797c5483eaad4553ca64876eeb6d3",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "c2921b83fd6352755f663e8bdd8a5c7983458d69b97609a5ce39ad9276d7d8dc",
-    "worklistSha256": "82ca7145902ca9e4e38e5c03a390df1fd02531154b088096f8bc825fb1a03f63",
+    "sourceSha256": "aff67157fbf8dbac20c4f4f537625d5d554bc9c9acf1287fdb6e98b60c11d81d",
+    "worklistSha256": "0f572cd1923dabf8c79d6bd28247482e1ac0a6859eb33c06cd0ad3762de7cd30",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "82ca7145902ca9e4e38e5c03a390df1fd02531154b088096f8bc825fb1a03f63",
+      "docs/plan/WORKLIST.md": "0f572cd1923dabf8c79d6bd28247482e1ac0a6859eb33c06cd0ad3762de7cd30",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
