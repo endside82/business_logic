@@ -312,7 +312,13 @@
         "H-617",
         "H-606",
         "H-572",
+        "H-618",
+        "H-619",
+        "H-622",
         "H-573",
+        "H-543",
+        "H-620",
+        "H-621",
         "H-609",
         "H-179",
         "H-180",
@@ -423,7 +429,6 @@
       "unlock": "후속 범위 확정 · 관련 설계·개발 착수",
       "stages": [],
       "ids": [
-        "H-543",
         "H-139",
         "H-140",
         "H-141",
@@ -557,22 +562,6 @@
     }
   ],
   "tasks": [
-    {
-      "id": "H-543",
-      "title": "이중 지급 회수 명령과 지급 증빙 즉시 경보를 둘지 정하기",
-      "description": "출금 지급 공급자를 켜기 전에 정할 것이 둘 있다. ① 운영자가 바깥에서 이미 지급한(`EXTERNALLY_SETTLED`) 탈퇴 회원 보류에 늦은 결제사 성공까지 와서 실제로 두 번 나간 경우를 끝내는 길이 없다. 회수 대상과 손실 처리 명령(분개 포함)을 둘지 정한다. ② 작업자 대체 길에서 결과 반영과 한 트랜잭션 창구가 둘 다 실패하고 그 출금 칸에 이미 다른 번호가 있으면 늦은 지급 증빙이 오류 로그에만 남는다(종전과 같은 노출). 트랜잭션 밖 즉시 경보 자리를 둘지 정한다. 첫 출시는 출금 지급 공급자가 꺼져 있어(`withdrawal.payout.provider=disabled`) 두 갈래가 일어나지 않는다.",
-      "condition": "늦어도 출금 지급 공급자를 켜기 전",
-      "scope": "now",
-      "kind": "제품 결정",
-      "section": "2. 사용자가 정할 것",
-      "stage": null,
-      "resources": [
-        "decision"
-      ],
-      "source": "NEXT_WORK.md#2-사용자가-정할-것",
-      "evidence": "차수 11 항목 대장",
-      "evidenceLinks": []
-    },
     {
       "id": "H-139",
       "title": "제재 계정의 새 1:1 문의를 허용할지 정하기",
@@ -963,8 +952,8 @@
       "id": "H-572",
       "title": "미등록 회원이 제공자 등록 양식을 열 수 있게 고치기",
       "description": "닫힌 제공자 기능의 결함이다. 미등록 회원이 「제공자 등록하기」 를 누르면 센터로 되돌아와 등록 양식을 못 연다. 그 입구가 가는 `/me/provider/edit`(`lib/core/router/feature_routes/event_host_routes.dart`)의 가드 `redirectProviderOnly`(`lib/core/router/route_guards.dart`)가 프로필이 없으면 제공자 센터로 되돌리기 때문이다. 재현 입력: 제공자 프로필이 없는 회원으로 「제공자 등록하기」 를 누른다. 닫힌 기능이라 첫 출시에는 보이지 않는다.",
-      "condition": "제공자 거래를 공개할 때. 재현 시험부터 다시 쓴다",
-      "scope": "feature",
+      "condition": "바로 할 수 있다. 재현 시험부터 쓴다. 제공자 공개는 공개 때",
+      "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
       "stage": null,
@@ -976,10 +965,63 @@
       "evidenceLinks": []
     },
     {
+      "id": "H-618",
+      "title": "마켓 결함 고치기",
+      "description": "닫힌 마켓의 결함이다. 2026-11-07 사용자 결정으로 공개 전에 고친다. 재현 시험부터 쓴다. ① 결함: 마켓 검색 주소가 검색어를 인코딩하지 않는다(`lib/presentation/market/screens/market_main_screen.dart` 의 `/market/search?keyword=$query`). 재현 입력: 「캠핑&바베큐」 → 「캠핑」, 「C# 입문」 → 「C」, 「C++」 → 「C」 로 검색된다. ② 결함: 환불 신청 경로를 이동 값 없이 열면 구매 번호 0 으로 신청된다(`lib/core/router/feature_routes/plan_market_routes.dart` 의 `purchaseId ?? 0`, 서버 신청 본문에 번호 검증 없음). 앱 안 두 입구는 늘 번호를 넘기지만 이 경로는 닫혀도 열리는 예외다. 재현 입력: 이동 값 없이 그 경로를 연다. ③ 받은 환불 요청(`/market/refunds/incoming`)으로 들어가는 입구가 앱 안에 없고, 알림은 판매자에게도 내 환불 상세로 보낸다. ④ 「검색 결과 {n}건」·「총 {n}건」 이 전체가 아니라 지금 실린 줄 수다(20줄씩 읽는 목록이라 20건 넘으면 「20건」, 서버 전체 수 안 씀). ⑤ 기간권 설계 2.11 의 둘을 고친다. ⑤-1 앱 번들 구매 단추에 자기 구매·로그인·결제 개통 검사가 없다. ⑤-2 관리자 웹 `transitionBundle` 이 멱등 키를 보내지 않는다. ⑥ 마켓 `difficulty` 거르기는 받기만 하고 적용하지 않는다(`MarketItem` 에 칸 없음, 앱도 이 값을 보내지 않음, 코드 확인).",
+      "condition": "재현 시험부터 쓴다. 마켓 공개는 공개 때",
+      "scope": "now",
+      "kind": "기능 보완",
+      "section": "3. 고칠 결함",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#3-고칠-결함",
+      "evidence": "[마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서](payment/MARKET_COMMERCE_PERIOD_PASS_RELEASE_SEAL_AUDIT_2026-08-30.md)",
+      "evidenceLinks": [
+        {
+          "label": "마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서",
+          "href": "payment/MARKET_COMMERCE_PERIOD_PASS_RELEASE_SEAL_AUDIT_2026-08-30.md"
+        }
+      ]
+    },
+    {
+      "id": "H-619",
+      "title": "비공개 모임·데이트 결함 고치기",
+      "description": "닫힌 비공개 모임과 데이트의 결함이다. 2026-11-07 사용자 결정으로 공개 전에 고친다. 재현 시험부터 쓴다. 비공개 선정이 결정 기록을 남기지 않는다(차수 13 F1). 비공개 모임 취소 길에 일반 취소의 취소 알림이 없으니 고친다. 검색 캐시 비움도 없지만 공개 검색이 PRIVATE 를 싣지 않아 영향은 없다(2026-11-07 코드 대조). 비공개 모임 열기(`PrivateMeetingOpenEntryService#payHostingCostAndOpen`)에 재전송 식별자가 없어 응답을 잃고 다시 보내면 이미 열렸는데도 `INVALID_EVENT_STATUS` 다(돈은 두 번 빠지지 않음, 차수 17 P1-9). 옛 역할 감사가 남았다고 적은 선정 때 참석·정원 행 생성과 앱 채팅 단추 연결이 끝났는지 본다([역할 감사](../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md)). 데이트 사진 신고 입구가 후보 카드(`candidate_card_screen.dart`)뿐이니 명세 SCR-SR-003 의 채팅방 상대 프로필 입구를 본다. 프로필 방문자 줄의 오른쪽 화살표는 누르는 동작이 없다(`lib/presentation/date/screens/profile_viewers_screen.dart`).",
+      "condition": "재현 시험부터 쓴다. 데이트 공개는 공개 때",
+      "scope": "now",
+      "kind": "기능 보완",
+      "section": "3. 고칠 결함",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#3-고칠-결함",
+      "evidence": "차수 13·17 기록, 2026-11-07 코드 대조",
+      "evidenceLinks": []
+    },
+    {
+      "id": "H-622",
+      "title": "운영자 정기모임 회원 명령 바로잡기",
+      "description": "2026-11-07 사용자 결정으로 감독 스위치를 켜기 전에 고친다. 스위치는 그대로 닫아 둔다. ① 운영자 정기모임 회원 명령 넷이 정원을 보지 않고 결정 기록이 없다. 승격은 코스 상태를 보지만 명령 번호가 없고, 복원과 몰수 되돌림은 코스 상태도 명령 번호도 없으며, 정합 고침은 명령 번호가 있고 취소된 코스만 거절한다(2026-11-07 코드 대조). ② 운영자 몰수 되돌림은 몰수 환불 뒤의 결제도 보지 않고 등록으로 돌린다(차수 14 F5 뒷절, `RegularMeetingEnrollmentService#forfeitReverseByAdmin`).",
+      "condition": "감독 스위치는 닫아 둔 채 고친다",
+      "scope": "now",
+      "kind": "기능 보완",
+      "section": "3. 고칠 결함",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#3-고칠-결함",
+      "evidence": "차수 14 기록, 2026-11-07 코드 대조",
+      "evidenceLinks": []
+    },
+    {
       "id": "H-573",
       "title": "내역별 문의의 결제·환불·정기모임 결제 출처 가르기",
-      "description": "내역별 문의의 결제·환불·정기모임 결제 출처를 가른다. 입구는 거래 상세·정산 항목 상세에 더해 2026-11-04 신고·정기모임 정산을 넣었고, 결제·환불·정기모임 결제에는 아직 없다.",
-      "condition": "플랫폼 결제를 열 때",
+      "description": "내역별 문의의 결제·환불·정기모임 결제 출처를 가른다. 입구는 거래 상세·정산 항목 상세에 더해 2026-11-04 신고·정기모임 정산을 넣었고, 결제·환불·정기모임 결제에는 아직 없다. 내역별 문의 상세·접수 화면이 로그인 상태가 바뀌면 빈 화면이다.",
+      "condition": "바로 할 수 있다",
       "scope": "now",
       "kind": "검증·보완",
       "section": "4. 플랫폼 결제를 열기 전에 고칠 것",
@@ -990,6 +1032,59 @@
       "source": "NEXT_WORK.md#4-플랫폼-결제를-열기-전에-고칠-것",
       "evidence": "2026-11-03 설계 틈 확인 C5",
       "evidenceLinks": []
+    },
+    {
+      "id": "H-543",
+      "title": "이중 지급 회수 명령과 지급 증빙 즉시 경보 만들기",
+      "description": "2026-11-07 사용자 결정으로 둘 다 출시 전에 만든다. ① 운영자가 바깥에서 이미 지급한(`EXTERNALLY_SETTLED`) 탈퇴 회원 보류에 늦은 결제사 성공까지 와서 실제로 두 번 나간 경우를 끝내는 길이 없다. 회수 대상과 손실 처리 명령(분개 포함)을 만든다. ② 작업자 대체 길에서 결과 반영과 한 트랜잭션 창구가 둘 다 실패하고 그 출금 칸에 이미 다른 번호가 있으면 늦은 지급 증빙이 오류 로그에만 남는다(종전과 같은 노출). 트랜잭션 밖 즉시 경보 자리를 만든다. 첫 출시는 출금 지급 공급자가 꺼져 있어(`withdrawal.payout.provider=disabled`) 두 갈래가 일어나지 않는다.",
+      "condition": "회수 대상과 분개부터 정한다",
+      "scope": "now",
+      "kind": "검증·보완",
+      "section": "4. 플랫폼 결제를 열기 전에 고칠 것",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#4-플랫폼-결제를-열기-전에-고칠-것",
+      "evidence": "차수 11 항목 대장",
+      "evidenceLinks": []
+    },
+    {
+      "id": "H-620",
+      "title": "플랫폼 결제·지갑·출금 결함 고치기",
+      "description": "닫힌 플랫폼 돈의 결함이다. 2026-11-07 사용자 결정으로 공개 전에 고친다. ① 정산 뒤 환불로 되돌린 판매자 수익의 미수금을 회수하지 못할 때 손실로 처리하는 명령이 없다. 관리자 API `ManageCreatorEarningController` 는 조회 둘뿐이고 관리자 웹 Receivables 탭도 읽기 전용이다(`docs/ui-ux/admin/37-admin-accounting.md`). 손실 처리 명령을 분개와 함께 만든다. ② 환불 카드, 영수증 시트, 결제 오류 안내(`RefundPolicyCard`, `MoneyReceiptSheet`, `pg_error_action_dialog`)를 화면에 잇는다. 최종 문구는 결제사 오류 코드와 법무·세무 승인 뒤에 정한다(H-575). 환불 카드는 연결하면 `[법무 검토 필요]` 글이 회원에게 그대로 보인다(`refund_policy_card.dart`). ③ 환불·정산 예정일과 재시도 남은 횟수, 수수료 분해를 화면에 보이려면 서버 응답 칸(`Settlement.expectedSettledAt`, `Settlement.expectedTransferredAt`, `RefundRequest.estimatedCompletedAt`, `RefundLedgerFailure.nextRetryAt`·`attempts`·`maxAttempts`, `Payment.fees`)이 더 있어야 한다. 지금은 없어 회원이 언제 들어오는지 화면에서 볼 수 없다. 송금 되돌림 상태는 `TransferStatus` 와 `MeetingSettlementTransferVo` 로 이미 내려간다(2026-11-07 코드 대조)([돈 흐름 계획](../../community_app/plan/cross-cutting/31-money-flow-playbook.md) 9절). ④ 관리자 분쟁 되돌리기의 환불 갈래는 정책이 정해지지 않아 501 이다(`DisputeReverseActionType`). 환불 정책을 먼저 정한다. ⑤ 충전 확인 사건의 「결제사대로 정산」 조건을 공개 선점 문장(`ChargeConfirmIndeterminateQueryRepository#casClaimResolution`)과 관리자 표지(`ManageChargeConfirmService#availableModes`)가 손으로 같게 적는다. 사례 표 `api-app/src/test/resources/contracts/charge-confirm-settle-claim-cases.tsv` 는 공개 쪽 시험만 돌고, 관리자 표지를 그 표에 견주던 `ManageChargeConfirmSettleClaimCasesMirrorTest` 는 2026-11-04 관리자 이전 때 지워졌다(공개 `784458dea`). 표지가 공개 판정을 부르게 바꾸거나 시험을 되살린다. ⑥ 실결제 전환 절차를 빠뜨려도 막는 기동 검사나 명령이 없다(`MoneyLiveGate` 는 공급자 네 축만 본다). 막는 장치를 만든다. 절차를 실행하는 일은 켤 때다(H-575).",
+      "condition": "바로 할 수 있는 것부터. 정책이나 문구가 먼저인 것은 세부에 적었다",
+      "scope": "now",
+      "kind": "검증·보완",
+      "section": "4. 플랫폼 결제를 열기 전에 고칠 것",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#4-플랫폼-결제를-열기-전에-고칠-것",
+      "evidence": "2026-11-05 구조 재정비 범위 결정, 2026-11-07 코드 대조",
+      "evidenceLinks": []
+    },
+    {
+      "id": "H-621",
+      "title": "닫힌 돈 기능의 겹침 셋 고치기",
+      "description": "닫힌 돈 기능에서 드물게 겹칠 때만 생기는 일이다. 2026-11-07 사용자 결정으로 경합 구조 차례에 고친다. ① 원장 마감 확인(`SettlementTaxKernel#assertPeriodOpen`)이 잠금 없는 평문 읽기라 운영자가 이번 달을 마감하는 순간과 겹친 분개가 마감 뒤에 들어갈 수 있다. 코드 읽기로 나온 것이고 재현하지 않았다. 재현 대본을 쓰고 잠근다([돈 핵심 표](evidence/MONEY-CORE-TABLES-2026-09-25.md) 7절). ② 판매 중 번들 구성 변경과 기간권 봉인 선확인의 경합(설계 13절 8번, 완전히 막으려면 판매 중 구성 변경을 금지하는 운영 정책)을 고친다. ③ 충전 복구가 실패로 닫은 뒤 결제사 승인이 늦게 성공하는 틈이 남는다(유예 10분). 유예 값은 결제사 처리 시간(H-13 ⑧)을 받아 정한다.",
+      "condition": "경합 구조 차례. 재현 대본부터 쓴다",
+      "scope": "now",
+      "kind": "검증·보완",
+      "section": "4. 플랫폼 결제를 열기 전에 고칠 것",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#4-플랫폼-결제를-열기-전에-고칠-것",
+      "evidence": "[돈 핵심 표](evidence/MONEY-CORE-TABLES-2026-09-25.md) 7절, 기간권 설계 13절 8번, 2026-11-07 코드 대조",
+      "evidenceLinks": [
+        {
+          "label": "돈 핵심 표",
+          "href": "evidence/MONEY-CORE-TABLES-2026-09-25.md"
+        }
+      ]
     },
     {
       "id": "H-609",
@@ -1030,8 +1125,8 @@
     },
     {
       "id": "H-180",
-      "title": "마켓 유형별 공개, 결제 안내·환불 결과 연결, 결함 고치기",
-      "description": "마켓을 상품 유형별로 공개한다. 결제 제한 안내·환불 재시도 결과를 연결한다. 판매 현황 판정과 유료 구매 판정은 서버가 없어 미뤘고 마켓을 열 때 만든다. 열 때 아래를 함께 고치고, 재현 시험부터 다시 쓴다. ① 결함: 마켓 검색 주소가 검색어를 인코딩하지 않는다(`lib/presentation/market/screens/market_main_screen.dart` 의 `/market/search?keyword=$query`). 재현 입력: 「캠핑&바베큐」 → 「캠핑」, 「C# 입문」 → 「C」, 「C++」 → 「C」 로 검색된다. ② 결함: 환불 신청 경로를 이동 값 없이 열면 구매 번호 0 으로 신청된다(`lib/core/router/feature_routes/plan_market_routes.dart` 의 `purchaseId ?? 0`, 서버 신청 본문에 번호 검증 없음). 앱 안 두 입구는 늘 번호를 넘기지만 이 경로는 닫혀도 열리는 예외다. 재현 입력: 이동 값 없이 그 경로를 연다. ③ 받은 환불 요청(`/market/refunds/incoming`)으로 들어가는 입구가 앱 안에 없고, 알림은 판매자에게도 내 환불 상세로 보낸다. ④ 「검색 결과 {n}건」·「총 {n}건」 이 전체가 아니라 지금 실린 줄 수다(20줄씩 읽는 목록이라 20건 넘으면 「20건」, 서버 전체 수 안 씀). ⑤ 기간권 설계 2.11 의 둘을 고친다. ⑤-1 앱 번들 구매 단추에 자기 구매·로그인·결제 개통 검사가 없다. ⑤-2 관리자 웹 `transitionBundle` 이 멱등 키를 보내지 않는다. ⑥ 판매 중 번들 구성 변경과 기간권 봉인 선확인의 경합(설계 13절 8번, 완전히 막으려면 판매 중 구성 변경을 금지하는 운영 정책)을 고친다. 판매자 쪽 작은 것: 마켓 `difficulty` 거르기는 받기만 하고 적용하지 않는다(`MarketItem` 에 칸 없음, 앱도 이 값을 보내지 않음, 코드 확인). 디지털 상품은 마지막에 연다. 실제 파일 저장소를 잇고 업로드·구매·다운로드, 저장소 장애, 다운로드 주소 만료, 권리 회수 뒤 새 주소 거부를 확인한다.",
+      "title": "마켓 유형별 공개와 결제 안내·환불 결과 연결",
+      "description": "마켓을 상품 유형별로 공개한다. 결제 제한 안내·환불 재시도 결과를 연결한다. 판매 현황 판정과 유료 구매 판정은 서버가 없어 미뤘고 마켓을 열 때 만든다. 디지털 상품은 마지막에 연다. 실제 파일 저장소를 잇고 업로드·구매·다운로드, 저장소 장애, 다운로드 주소 만료, 권리 회수 뒤 새 주소 거부를 확인한다.",
       "condition": "마켓을 공개할 때",
       "scope": "feature",
       "kind": "기능 개발",
@@ -1414,8 +1509,8 @@
     {
       "id": "H-576",
       "title": "구조 재정비에서 남긴 도메인 경계·관리자 명령·돈 쓰기 바로잡기",
-      "description": "구조 재정비가 고칠 일이 생길 때 보는 줄로 남긴 것이다. 차수 14 몫은 감독 스위치를 켤 때 본다(사용자 2026-10-31 「스위치를 켤 때 다시 본다」). ① 순환·허용 간선(M0·M0b)을 본다. ② 관리자 DB 계정을 줄이는 일을 본다. ③ 관리자 웹 사본(손 이름표 265·오류 번호 124종)을 본다. ④ 운영자 정기모임 회원 명령 넷이 정원을 보지 않고 결정 기록이 없다. 승격은 코스 상태를 보지만 명령 번호가 없고, 복원과 몰수 되돌림은 코스 상태도 명령 번호도 없으며, 정합 고침은 명령 번호가 있고 취소된 코스만 거절한다(2026-11-07 코드 대조). ⑤ 상태 쓰기 규약의 칸 찾기가 이름만 Status 인 칸을 잡지 않는다(차수 13 F6, 그 칸을 옮길 때 더함). ⑥ 운영자 몰수 되돌림은 몰수 환불 뒤의 결제도 보지 않고 등록으로 돌린다(차수 14 F5 뒷절, `RegularMeetingEnrollmentService#forfeitReverseByAdmin`). ⑦ 돈 규칙 모듈 밖에 돈·정산 밖 `e.getMessage()` 글자 로그가 남았다. ⑧ 돈 규칙 모듈 밖에 club·event·curated·정기모임 경로의 모듈 밖 돈 쓰기가 남았다. ⑨ 돈 규칙 모듈 밖에 관리자 API 의 원장 직접 쓰기(차지백·원천세)와 구독 상태 열이 남았다. ⑦~⑨ 의 종료 조건은 [돈 규칙 모듈 계획](architecture/ROOT_CAUSE_FIX_AND_MONEY_CORE_PLAN_2026-09-25.md) 에 있다. ⑩ 플랜 승격 교착 K14: 플랜 구매가 플랜 행을 첫 문장에서 배타로 잡아 코드에서 승격이 없어졌다(2026-11-07 코드 대조). 실제 DB 로 증명한다. ⑪ 노쇼 참조 범위 K15: 노쇼 환불 본문은 이벤트 행을 먼저 잡고 참조 범위 잠금이 없다. 지갑 환불 안쪽은 아직 보지 않았다(2026-11-07 코드 대조). 실제 DB 로 증명한다. ⑫ 옛 `payment_record_id` 경로 충전 원천 복원을 `LOT_RESTORE_NO_CONSUMPTION` 으로 바꿀지 정한다(플랜·이벤트 도메인 이전 때 보기로 했는데 그 이전이 따로 오지 않는다). ⑬ 도메인 책임 분리의 실행 순서 1~3·5·6·8~11 단계를 본다([계획](architecture/DOMAIN_BOUNDARY_IMPROVEMENT_PLAN_2026-10-04.md)). 나중에 켤 구조 규칙 M2·M3·M5 는 아직 꺼져 있다(M4·M8 은 켜져 있다, 2026-11-07 시험 확인). 그 자리를 고칠 때 본다([구조 재정비 설계](STRUCTURE_REBUILD_2026-10-30/03_DESIGN.md)). `EarningTransitions` 주석의 배정 행 뜻 통일(REVERSED 원금 뜻과 종결 표지, 전액 회수 행, 두 번째 회수 거부)은 「배정 도메인 이전」 때로 적혀 있었는데 그 차수가 없다. 그 자리를 고칠 때 한다. 감독 스위치를 켜면 운영자 호스트 승계, 클럽 비상 승계, 임시 권한 부여 명령을 부를 관리자 웹 입구도 함께 만든다. 지금은 관리자 API 에만 있고 `community.club.platform-oversight-enabled` 기본 닫힘으로 410 을 내며 관리자 웹에 입구가 없다(2026-10-27 결정 5, `docs/ui-ux/screens/13-event.md`, `docs/ui-ux/screens/15-club.md`).",
-      "condition": "그 자리를 고칠 때. 운영자 정기모임 회원 명령은 감독 스위치를 켤 때",
+      "description": "구조 재정비가 고칠 일이 생길 때 보는 줄로 남긴 것이다. 차수 14 몫은 2026-11-07 사용자 결정으로 H-622 로 옮겼다. ① 순환·허용 간선(M0·M0b)을 본다. ② 관리자 DB 계정을 줄이는 일을 본다. ③ 관리자 웹 사본(손 이름표 265·오류 번호 124종)을 본다. ⑤ 상태 쓰기 규약의 칸 찾기가 이름만 Status 인 칸을 잡지 않는다(차수 13 F6, 그 칸을 옮길 때 더함). ⑦ 돈 규칙 모듈 밖에 돈·정산 밖 `e.getMessage()` 글자 로그가 남았다. ⑧ 돈 규칙 모듈 밖에 club·event·curated·정기모임 경로의 모듈 밖 돈 쓰기가 남았다. ⑨ 돈 규칙 모듈 밖에 관리자 API 의 원장 직접 쓰기(차지백·원천세)와 구독 상태 열이 남았다. ⑦~⑨ 의 종료 조건은 [돈 규칙 모듈 계획](architecture/ROOT_CAUSE_FIX_AND_MONEY_CORE_PLAN_2026-09-25.md) 에 있다. ⑩ 플랜 승격 교착 K14: 플랜 구매가 플랜 행을 첫 문장에서 배타로 잡아 코드에서 승격이 없어졌다(2026-11-07 코드 대조). 실제 DB 로 증명한다. ⑪ 노쇼 참조 범위 K15: 노쇼 환불 본문은 이벤트 행을 먼저 잡고 참조 범위 잠금이 없다. 지갑 환불 안쪽은 아직 보지 않았다(2026-11-07 코드 대조). 실제 DB 로 증명한다. ⑫ 옛 `payment_record_id` 경로 충전 원천 복원을 `LOT_RESTORE_NO_CONSUMPTION` 으로 바꿀지 정한다(플랜·이벤트 도메인 이전 때 보기로 했는데 그 이전이 따로 오지 않는다). ⑬ 도메인 책임 분리의 실행 순서 1~3·5·6·8~11 단계를 본다([계획](architecture/DOMAIN_BOUNDARY_IMPROVEMENT_PLAN_2026-10-04.md)). 나중에 켤 구조 규칙 M2·M3·M5 는 아직 꺼져 있다(M4·M8 은 켜져 있다, 2026-11-07 시험 확인). 그 자리를 고칠 때 본다([구조 재정비 설계](STRUCTURE_REBUILD_2026-10-30/03_DESIGN.md)). `EarningTransitions` 주석의 배정 행 뜻 통일(REVERSED 원금 뜻과 종결 표지, 전액 회수 행, 두 번째 회수 거부)은 「배정 도메인 이전」 때로 적혀 있었는데 그 차수가 없다. 그 자리를 고칠 때 한다. 감독 스위치를 켜면 운영자 호스트 승계, 클럽 비상 승계, 임시 권한 부여 명령을 부를 관리자 웹 입구도 함께 만든다. 지금은 관리자 API 에만 있고 `community.club.platform-oversight-enabled` 기본 닫힘으로 410 을 내며 관리자 웹에 입구가 없다(2026-10-27 결정 5, `docs/ui-ux/screens/13-event.md`, `docs/ui-ux/screens/15-club.md`).",
+      "condition": "그 자리를 고칠 때",
       "scope": "conditional",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
@@ -1430,7 +1525,7 @@
     {
       "id": "H-575",
       "title": "돈·구독·마켓·데이트·강사 기능을 켤 때 상태와 명령 다시 만들기",
-      "description": "꺼진 기능을 켤 때의 재정비다. 꺼진 모듈 안의 상태 칸·명령을 전이 주인과 부품으로 다시 만들고 결제사 계약과 실제 공급자 동작으로 검증한다. 켜기 1(플랫폼 돈)에 넣는다: 지갑·충전·PG·출금 지급·탈퇴 회원 보류(늦은 지급 증빙 포함, H-543). 켜기 1(플랫폼 돈)에 넣는다: 관리자 돈 운영(회계 분개 하나로, 지불 거절, 구독 행, 세금계산서, 결제사 대사, 수수료 정책). 켜기 1(플랫폼 돈)에 넣는다: 결제사 지급 키 없음 응답(H-13). 켜기 1(플랫폼 돈)에 넣는다: 정기모임 지갑 결제의 잠금 순서를 실제 DB 로 증명한다. 코드는 코스 → 회차 선잠금 → 회원 공유 → 지갑 차례로 바뀌어 지갑 뒤에 회차를 처음 잡지 않는다(2026-11-07 코드 대조). 지갑 뒤 참석 행 쓰기는 그대로다. 켜기 2~5 는 개인 구독, 마켓, 데이트, 강사·업체다. 켜기 4(데이트)에 넣는다: 비공개 선정이 결정 기록을 남기지 않는다(차수 13 F1). 켜기 4(데이트)에 넣는다: 비공개 모임 취소 길에 일반 취소의 취소 알림이 없으니 고친다. 검색 캐시 비움도 없지만 공개 검색이 PRIVATE 를 싣지 않아 영향은 없다(2026-11-07 코드 대조). 켜기 4(데이트)에 넣는다: 비공개 모임 열기(`PrivateMeetingOpenEntryService#payHostingCostAndOpen`)에 재전송 식별자가 없어 응답을 잃고 다시 보내면 이미 열렸는데도 `INVALID_EVENT_STATUS` 다(돈은 두 번 빠지지 않음, 차수 17 P1-9). 켜진 흐름이 꺼진 코드를 부르는 자리 187 주입(꺼진 기능의 경계 M1)도 그 기능을 켤 때 본다. 켜기 1 에 넣을 것: 플랫폼 돈의 겹침 고침(H-03·H-05·H-08·H-18·NW-m·NW-p)은 2026-11-07 코드를 읽어 잠금과 복구가 있음을 확인했다. 재현 시험이 있는지와 통과했는지는 보지 않았으니 켤 때 실제 DB 로 증명한다. H-03 에는 복구가 실패로 닫은 뒤 결제사 승인이 늦게 성공하는 작은 틈이 남는다(유예 10분). 개최권·마켓·출금의 영수증 전환(H-24)과 마켓 구매의 다시 보낼 식별자(H-101)도 코드에 필수 키와 영수증이 있고 앱이 키를 보낸다(2026-11-07 코드 대조). 이것도 켤 때 함께 증명한다. H-13 의 계약 값은 그 줄에 있다. 켜기 1 에 넣을 것: 환불 카드, 영수증 시트, 결제 오류 안내(`RefundPolicyCard`, `MoneyReceiptSheet`, `pg_error_action_dialog`)를 잇고 결제사 오류 코드 표와 법무·세무 문구(청약철회, 현금영수증)를 정한다. 환불 카드는 연결하면 `[법무 검토 필요]` 글이 회원에게 그대로 보인다(`refund_policy_card.dart`). 켜기 1 에 더할 것: 운영 큐 아홉 가운데 출금·가상계좌·불확정 취소 밖 여섯(G3-03), 지갑 감소 우회 경로를 창구로 흡수, 사용자 요청 부분 취소, 런타임 자격 만료와 대사 실패의 0원 처리, 출금 고객 상태 투영을 알림·목록·상세·관리자 조치가 모두 쓰게 하기, 클럽 기금 인출의 실제 은행 송금과 결제 취소 연동, 개인 구독 출시 증명(최초 구독, 동시 재시도, 자동 갱신 실패, 기간권 연장, 직접 결제 환불), 통합 분쟁의 실계정 왕복. 결제를 열 때 받을 문구: 실제 PG 오류 코드 목록으로 앱 안내 분류 바꾸기(`pg_error_action_dialog.dart` 의 임시 판별), 영수증·환불 정책 카드의 사업자·세금·청약철회 문구 승인(`money_receipt_sheet.dart`, `refund_policy_card.dart`). 켜기 4(데이트)에 더할 것: 경찰 요청 로그 제공 절차(권한 확인·최소 추출·승인·감사·보존 충돌). 큐레이션을 열 때: 참가자 부분 예약금과 취소 뒤 재과금. 켜기 1 에 넣을 것: 정산 뒤 환불로 되돌린 판매자 수익의 미수금을 회수하지 못할 때 손실로 처리하는 명령이 없다. 관리자 API `ManageCreatorEarningController` 는 조회 둘뿐이고 관리자 웹 Receivables 탭도 읽기 전용이다(`docs/ui-ux/admin/37-admin-accounting.md`). 손실 처리를 둘지 분개와 함께 정한다. 켜기 3(마켓)·켜기 4(데이트)에 넣는다: 닫힌 화면(마켓 첫 화면, 데이트 매칭 목록)의 앱 메뉴 표 줄과 데이트 프로필·데이트 차단 목록 출구를 그때 정한다(`docs/ui-ux/02-navigation.md`). 켜기 4(데이트)에 넣는다: 데이트 사진 신고 입구가 후보 카드(`candidate_card_screen.dart`)뿐이니 명세 SCR-SR-003 의 채팅방 상대 프로필 입구를 본다. 켜기 4(데이트)에 넣는다: 차단 창구의 옛 query `reason` 길을 걷을지 본다. 서버 `DateBlockController` 가 본문 없는 요청을 이 길로 받고, 앱 `date_match_repository.dart` 는 본문과 함께 같은 값을 query 로도 보낸다. 켜기 1(플랫폼 돈)에 넣는다: 원장 마감 확인(`SettlementTaxKernel#assertPeriodOpen`)이 잠금 없는 평문 읽기라 운영자가 이번 달을 마감하는 순간과 겹친 분개가 마감 뒤에 들어갈 수 있다. 코드 읽기로 나온 것이고 재현하지 않았다. 잠글지 그대로 둘지 그때 정한다([돈 핵심 표](evidence/MONEY-CORE-TABLES-2026-09-25.md) 7절). 켜기 1 에 넣을 것: 실결제 스위치 전환 절차를 실행한다. 대기열 조사·소진, 무검증 빌링키 폐기, 자동 충전 끄기, 건수 검증은 [MNY-02 증거](../release-gate/evidence/MNY-02/README.md) 4절에 있다. 안 하면 막는 기동 검사나 명령은 없다. 자동 충전은 `customerKey` 없는 옛 행을 건너뛰므로, 빠뜨리면 `customerKey` 가 있는 행으로 나간다. 구독 등 다른 저장 카드 청구 길은 보지 않았다(2026-11-07 코드 대조)([MNY-01·02 계획](payment/MNY01_MNY02_EXECUTION_PLAN_2026-08-10.md) D13, 6절). 켜기 1 에 넣을 것: 빌링키 검증 상태 저장(실제 결제사 계약 뒤, 같은 계획 8.4절). 켜기 1 에 넣을 것: `/webhooks/**` 앞단의 IP·ASN 차단과 WAF, 결제사 계약 뒤의 mTLS·IP 허용 목록([MNY-03 계획](payment/MNY03_EXECUTION_PLAN_2026-08-11.md) 8.4절). 켜기 1 에 넣을 것: 환불·정산 예정일과 재시도 남은 횟수, 수수료 분해를 화면에 보이려면 서버 응답 칸(`Settlement.expectedSettledAt`, `Settlement.expectedTransferredAt`, `RefundRequest.estimatedCompletedAt`, `RefundLedgerFailure.nextRetryAt`·`attempts`·`maxAttempts`, `Payment.fees`)이 더 있어야 한다. 지금은 없어 회원이 언제 들어오는지 화면에서 볼 수 없다. 송금 되돌림 상태는 `TransferStatus` 와 `MeetingSettlementTransferVo` 로 이미 내려간다(2026-11-07 코드 대조)([돈 흐름 계획](../../community_app/plan/cross-cutting/31-money-flow-playbook.md) 9절). 켜기 1 에 넣을 것: 분쟁 룰북의 자동 환불 상한과 일일 손실 한도, 운영팀·법무 워크숍(분류와 과거 문의 대조), 영업일 정의를 정한다([분쟁 룰북](../../community_app/plan/cross-cutting/32-dispute-resolution-rulebook.md) 14·16절). 켜기 1 에 넣을 것: 관리자 분쟁 되돌리기의 환불 갈래는 정책이 정해지지 않아 501 이다(`DisputeReverseActionType`). 켜기 4(데이트)에 넣는다: 옛 역할 감사가 남았다고 적은 선정 때 참석·정원 행 생성과 앱 채팅 단추 연결이 끝났는지 본다([역할 감사](../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md)). 켜기 1 에 넣을 것: 충전 확인 사건의 「결제사대로 정산」 조건을 공개 선점 문장(`ChargeConfirmIndeterminateQueryRepository#casClaimResolution`)과 관리자 표지(`ManageChargeConfirmService#availableModes`)가 손으로 같게 적는다. 사례 표 `api-app/src/test/resources/contracts/charge-confirm-settle-claim-cases.tsv` 는 공개 쪽 시험만 돌고, 관리자 표지를 그 표에 견주던 `ManageChargeConfirmSettleClaimCasesMirrorTest` 는 2026-11-04 관리자 이전 때 지워졌다(공개 `784458dea`). 표지가 공개 판정을 부르게 바꾸거나 시험을 되살린다. 켜기 1 에 넣을 것: 클럽 출금의 운영 열거 값과 상태별 동작이 서버와 맞는지 본다. 클럽 출금 이력은 개인과 같은 고객용 상태(`unifiedStatus`)를 이미 읽는다. `WithdrawalStatusProjection` 의 클럽 옛 상태 갈래는 승인 전을 지급 진행으로 보여 쓰지 않는다(2026-11-07 코드 대조).",
+      "description": "꺼진 기능을 켤 때의 재정비다. 꺼진 모듈 안의 상태 칸·명령을 전이 주인과 부품으로 다시 만들고 결제사 계약과 실제 공급자 동작으로 검증한다. 켜기 1(플랫폼 돈)에 넣는다: 지갑·충전·PG·출금 지급·탈퇴 회원 보류. 켜기 1(플랫폼 돈)에 넣는다: 관리자 돈 운영(회계 분개 하나로, 지불 거절, 구독 행, 세금계산서, 결제사 대사, 수수료 정책). 켜기 1(플랫폼 돈)에 넣는다: 결제사 지급 키 없음 응답(H-13). 켜기 1(플랫폼 돈)에 넣는다: 정기모임 지갑 결제의 잠금 순서를 실제 DB 로 증명한다. 코드는 코스 → 회차 선잠금 → 회원 공유 → 지갑 차례로 바뀌어 지갑 뒤에 회차를 처음 잡지 않는다(2026-11-07 코드 대조). 지갑 뒤 참석 행 쓰기는 그대로다. 켜기 2~5 는 개인 구독, 마켓, 데이트, 강사·업체다. 켜진 흐름이 꺼진 코드를 부르는 자리 187 주입(꺼진 기능의 경계 M1)도 그 기능을 켤 때 본다. 켜기 1 에 넣을 것: 플랫폼 돈의 겹침 고침(H-03·H-05·H-08·H-18·NW-m·NW-p)은 2026-11-07 코드를 읽어 잠금과 복구가 있음을 확인했다. 재현 시험이 있는지와 통과했는지는 보지 않았으니 켤 때 실제 DB 로 증명한다. H-03 의 남은 틈은 H-621 로 옮겼다. 개최권·마켓·출금의 영수증 전환(H-24)과 마켓 구매의 다시 보낼 식별자(H-101)도 코드에 필수 키와 영수증이 있고 앱이 키를 보낸다(2026-11-07 코드 대조). 이것도 켤 때 함께 증명한다. H-13 의 계약 값은 그 줄에 있다. 켜기 1 에 더할 것: 운영 큐 아홉 가운데 출금·가상계좌·불확정 취소 밖 여섯(G3-03), 지갑 감소 우회 경로를 창구로 흡수, 사용자 요청 부분 취소, 런타임 자격 만료와 대사 실패의 0원 처리, 출금 고객 상태 투영을 알림·목록·상세·관리자 조치가 모두 쓰게 하기, 클럽 기금 인출의 실제 은행 송금과 결제 취소 연동, 개인 구독 출시 증명(최초 구독, 동시 재시도, 자동 갱신 실패, 기간권 연장, 직접 결제 환불), 통합 분쟁의 실계정 왕복. 결제를 열 때 받을 문구: 실제 PG 오류 코드 목록으로 앱 안내 분류 바꾸기(`pg_error_action_dialog.dart` 의 임시 판별), 영수증·환불 정책 카드의 사업자·세금·청약철회 문구 승인(`money_receipt_sheet.dart`, `refund_policy_card.dart`). 켜기 4(데이트)에 더할 것: 경찰 요청 로그 제공 절차(권한 확인·최소 추출·승인·감사·보존 충돌). 큐레이션을 열 때: 참가자 부분 예약금과 취소 뒤 재과금. 켜기 3(마켓)·켜기 4(데이트)에 넣는다: 닫힌 화면(마켓 첫 화면, 데이트 매칭 목록)의 앱 메뉴 표 줄과 데이트 프로필·데이트 차단 목록 출구를 그때 정한다(`docs/ui-ux/02-navigation.md`). 켜기 4(데이트)에 넣는다: 차단 창구의 옛 query `reason` 길을 걷을지 본다. 서버 `DateBlockController` 가 본문 없는 요청을 이 길로 받고, 앱 `date_match_repository.dart` 는 본문과 함께 같은 값을 query 로도 보낸다. 켜기 1 에 넣을 것: 실결제 스위치 전환 절차를 실행한다. 대기열 조사·소진, 무검증 빌링키 폐기, 자동 충전 끄기, 건수 검증은 [MNY-02 증거](../release-gate/evidence/MNY-02/README.md) 4절에 있다. 안 하면 막는 장치는 H-620 에서 만든다. 자동 충전은 `customerKey` 없는 옛 행을 건너뛰므로, 빠뜨리면 `customerKey` 가 있는 행으로 나간다. 구독 등 다른 저장 카드 청구 길은 보지 않았다(2026-11-07 코드 대조)([MNY-01·02 계획](payment/MNY01_MNY02_EXECUTION_PLAN_2026-08-10.md) D13, 6절). 켜기 1 에 넣을 것: 빌링키 검증 상태 저장(실제 결제사 계약 뒤, 같은 계획 8.4절). 켜기 1 에 넣을 것: `/webhooks/**` 앞단의 IP·ASN 차단과 WAF, 결제사 계약 뒤의 mTLS·IP 허용 목록([MNY-03 계획](payment/MNY03_EXECUTION_PLAN_2026-08-11.md) 8.4절). 켜기 1 에 넣을 것: 분쟁 룰북의 자동 환불 상한과 일일 손실 한도, 운영팀·법무 워크숍(분류와 과거 문의 대조), 영업일 정의를 정한다([분쟁 룰북](../../community_app/plan/cross-cutting/32-dispute-resolution-rulebook.md) 14·16절). 켜기 1 에 넣을 것: 클럽 출금의 운영 열거 값과 상태별 동작이 서버와 맞는지 본다. 클럽 출금 이력은 개인과 같은 고객용 상태(`unifiedStatus`)를 이미 읽는다. `WithdrawalStatusProjection` 의 클럽 옛 상태 갈래는 승인 전을 지급 진행으로 보여 쓰지 않는다(2026-11-07 코드 대조).",
       "condition": "그 기능을 켤 때",
       "scope": "feature",
       "kind": "구조 개선",
@@ -1450,10 +1545,10 @@
     },
     {
       "id": "H-73",
-      "title": "구글 캘린더를 열 때 예약 작업을 견고하게 고치기",
-      "description": "예약 작업을 견고하게 만드는 남은 몫이다(G4b). 남은 몫의 목록이 기록에 없어 열 때 다시 본다. 지금 작업자에는 예약 잠금, 회차 예산, 오래된 요청 경보, 포기 경보가 있다(2026-11-07 코드 대조). 구글 캘린더 연동을 열 때 함께 고친다(2026-10-09 사용자 결정). 구글 연결 경합과 업무 트랜잭션 실패 격리는 코드가 바뀌었으니 열 때 실제 왕복으로 증명한다. 저장은 회원 행과 토큰 행을 잠근 뒤 판정하고, 업무에는 요청 행 INSERT 한 줄만 들어가며 그 INSERT 가 실패하면 업무도 롤백된다(2026-11-07 코드 대조). [Calendar 연결·동기화 계약](../todo/prd/04_google_calendar_sync.md)이 「이번 화면 구현만으로 종결하지 않는다」 고 적었고 [동시성 개선 설계](POST_LAUNCH_CONCURRENCY_PLAN_2026-10-09/README.md) R8 이 캘린더 연결 차수를 둔다.",
-      "condition": "구글 캘린더를 열 때",
-      "scope": "feature",
+      "title": "구글 캘린더 예약 작업의 남은 몫 고치기",
+      "description": "예약 작업을 견고하게 만드는 남은 몫이다(G4b). 남은 몫의 목록이 기록에 없어 열 때 다시 본다. 지금 작업자에는 예약 잠금, 회차 예산, 오래된 요청 경보, 포기 경보가 있다(2026-11-07 코드 대조). 2026-11-07 사용자 결정으로 캘린더를 열기 전에 고친다(2026-10-09 결정을 대신). 구글 연결 경합과 업무 트랜잭션 실패 격리는 코드가 바뀌었으니 열 때 실제 왕복으로 증명한다. 저장은 회원 행과 토큰 행을 잠근 뒤 판정하고, 업무에는 요청 행 INSERT 한 줄만 들어가며 그 INSERT 가 실패하면 업무도 롤백된다(2026-11-07 코드 대조). [Calendar 연결·동기화 계약](../todo/prd/04_google_calendar_sync.md)이 「이번 화면 구현만으로 종결하지 않는다」 고 적었고 [동시성 개선 설계](POST_LAUNCH_CONCURRENCY_PLAN_2026-10-09/README.md) R8 이 캘린더 연결 차수를 둔다.",
+      "condition": "남은 몫의 목록부터 다시 잰다. 캘린더 공개는 공개 때",
+      "scope": "now",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
       "stage": null,
@@ -1785,7 +1880,7 @@
     {
       "id": "H-579",
       "title": "정기모임 결제·대기자 승격·후기·문의 화면의 후보 아홉 확인",
-      "description": "구조 재정비와 설계 틈 확인이 남긴 작은 확인 거리다(결함으로 확정하지 않음). ① `RegularMeetingPaymentService#confirmByAdminBound` 에 공개 `confirm` 의 제재 갈래가 없다(정기모임 결제 칸이 범위 밖이라 그대로 뒀다). ② 결제 대기가 끝난 뒤 남은 대기자의 자동 승격은 없고, 다음 승격 계기나 호스트 수동 승격이 받는다(알고 남긴 한계). ③ 응답을 잃은 정기모임 명령의 남은 틈 둘: 결과를 모른 채 그 자료를 한 번도 못 보고 회차가 넘어가면 재생이 한 번 성공으로 보이고 다음 누름에서 풀린다. 그 재생이 표지 없는 404 면(행이 사라짐) 세션이 바뀔 때까지 같은 답이다. ④ 화면이 결제 번호를 넘기는지 가르는 시험이 없고(소스로 확인), 직접 송금 탈퇴 경합은 단위 시험의 잠금 차례로만 지킨다(커밋형 장면 없음). ⑤ `ClubWaitlistService` 주석의 「미인증 계정 정리」 가 지금 코드와 맞는지 확인하지 않았다. `RefundAccessPolicyTest` 의 역할 차리기 줄은 지워도 시험이 초록이다. ⑥ 업무 규칙 시나리오 감사 자료를 다시 만들지 않아 옛 경로 2줄이 생성 자료에 남았을 수 있다. ⑦ 호스트가 낯선 사람 숨김을 켜면 맥락 없는 조회자에게 그 호스트를 평가한 모집 후기도 숨는다(호스트 설정 존중, 답과 다르게 읽힐 수 있어 사용자에게 알렸다). ⑧ 규모 한계 둘: 정기모임 멤버·결제 관리가 멤버를 `size=100` 한 쪽만 읽어 101번째부터 안 보이고, `GET /api/v1/inquiries/my` 가 쪽 넘김 없이 전부 준다. ⑨ 내역별 문의 상세·접수 화면이 로그인 상태가 바뀌면 빈 화면이고, 프로필 방문자 줄의 오른쪽 화살표는 누르는 동작이 없다(경로가 데이트 범위라 첫 출시엔 안 보임). ⑧ 에 더함: 게시글 댓글 조회 `GET /api/v1/clubs/{clubId}/posts/{postId}/comments` 도 쪽 넘김 없이 전부 준다. 앱 `lib/data/api/club_comment_api.dart` 의 `sort` 칸은 서버가 받지 않는다.",
+      "description": "구조 재정비와 설계 틈 확인이 남긴 작은 확인 거리다(결함으로 확정하지 않음). ① `RegularMeetingPaymentService#confirmByAdminBound` 에 공개 `confirm` 의 제재 갈래가 없다(정기모임 결제 칸이 범위 밖이라 그대로 뒀다). ② 결제 대기가 끝난 뒤 남은 대기자의 자동 승격은 없고, 다음 승격 계기나 호스트 수동 승격이 받는다(알고 남긴 한계). ③ 응답을 잃은 정기모임 명령의 남은 틈 둘: 결과를 모른 채 그 자료를 한 번도 못 보고 회차가 넘어가면 재생이 한 번 성공으로 보이고 다음 누름에서 풀린다. 그 재생이 표지 없는 404 면(행이 사라짐) 세션이 바뀔 때까지 같은 답이다. ④ 화면이 결제 번호를 넘기는지 가르는 시험이 없고(소스로 확인), 직접 송금 탈퇴 경합은 단위 시험의 잠금 차례로만 지킨다(커밋형 장면 없음). ⑤ `ClubWaitlistService` 주석의 「미인증 계정 정리」 가 지금 코드와 맞는지 확인하지 않았다. `RefundAccessPolicyTest` 의 역할 차리기 줄은 지워도 시험이 초록이다. ⑥ 업무 규칙 시나리오 감사 자료를 다시 만들지 않아 옛 경로 2줄이 생성 자료에 남았을 수 있다. ⑦ 호스트가 낯선 사람 숨김을 켜면 맥락 없는 조회자에게 그 호스트를 평가한 모집 후기도 숨는다(호스트 설정 존중, 답과 다르게 읽힐 수 있어 사용자에게 알렸다). ⑧ 규모 한계 둘: 정기모임 멤버·결제 관리가 멤버를 `size=100` 한 쪽만 읽어 101번째부터 안 보이고, `GET /api/v1/inquiries/my` 가 쪽 넘김 없이 전부 준다. ⑧ 에 더함: 게시글 댓글 조회 `GET /api/v1/clubs/{clubId}/posts/{postId}/comments` 도 쪽 넘김 없이 전부 준다. 앱 `lib/data/api/club_comment_api.dart` 의 `sort` 칸은 서버가 받지 않는다.",
       "condition": "그 자리를 고칠 때. 재현되면 고칠 결함으로 옮긴다. 규모 한계는 그 수가 찰 때",
       "scope": "now",
       "kind": "조사·확인",
@@ -1891,7 +1986,7 @@
     {
       "id": "H-593",
       "title": "앨범·장소 구현 때 남긴 동작의 남은 항목 정리하기",
-      "description": "앨범·장소·링크 미리보기 결정 목록의 「고치지 않고 남긴 기존 동작」 표를 2026-11-07 코드로 다시 쟀다. 끝난 행은 표에서 지웠고 아래가 남았다. 재현은 하지 않았다. ① 클럽에서 차단된 사용자가 공개 앨범을 보고 신고할 수 있다(1행, `ClubAlbumViewerResolver`, `ReportJurisdictionResolver`). 막을지 정한다. ② 공용 신고 화면이 410 오류의 서버 문구를 그대로 띄운다(7행, `error_interceptor.dart`, `report_screen.dart`). ③ 길찾기 좌표 검증이 NaN 과 음의 영점 쌍을 통과시킨다. 무한대는 막힌다. 요청 쪽 검증은 없다(17행, `MapDirectionsService`, `DirectionsParam`). ④ 앨범 목록이 커버 주소를 앨범마다 따로 발급한다(5행, `ClubPhotoAlbumService`). ⑤ 투표 예약 발행의 자식 행 잠금을 본다(9행, `EventDecisionSchedulerWorker`). 행이 없을 때의 본문은 읽지 않았다. ⑥ 앱 공통 처리 셋을 본다. 클럽 상세 캐시가 사용자 변경을 보지 않고(23행), 앨범 댓글 명령의 세션 경계가 사용자 번호 비교이며(24행), 앨범 댓글 화면이 공통 처리 신호를 쓰지 않는다(26행). ⑦ `club_photo.file_key` 는 유일 제약이 없어 같은 업로더가 같은 키를 두 사진에 붙일 수 있다. 사진을 지워도 참조를 풀고 소거 예정만 표시해 원본은 지킨다. 커버 쪽은 보지 않았다. ⑧ 댓글 언급 표 둘(`club_post_comment_mention`, `club_photo_album_comment_mention`)의 `display_nickname` 은 작성 때 닉네임 사본이고 탈퇴·파기 때 지우지 않는다. 조회는 사본을 그대로 실어(`ClubPostCommentService#loadMentions`) 파기한 회원의 닉네임이 남의 댓글 언급에 남는다. 본문의 @표기와 함께 두 표를 익명화할지 정한다([앨범 댓글 계획](album-place-linkpreview/ALBUM_COMMENT_VISIBILITY_PLAN_2026-09-17.md) 137줄). 기능을 켤 때 볼 것: 플랜으로 모임 만들 때 장소 이름 칸(10행, `CONTENT_PLACE`), 링크 미리보기의 gzip 첫 멤버만 풂(20행), 상대가 보낸 링크를 내 기기가 자동으로 읽어 상대 사이트가 내 접속 주소·시각을 아는 것(15행, 데이트 채팅 제외), 카드가 붙으면 글 말풍선이 최대 너비로 늘어나는 모양을 둘지(12행, 모두 `LINK_PREVIEW`).",
+      "description": "앨범·장소·링크 미리보기 결정 목록의 「고치지 않고 남긴 기존 동작」 표를 2026-11-07 코드로 다시 쟀다. 끝난 행은 표에서 지웠고 아래가 남았다. 재현은 하지 않았다. ① 클럽에서 차단된 사용자가 공개 앨범을 보고 신고할 수 있다(1행, `ClubAlbumViewerResolver`, `ReportJurisdictionResolver`). 2026-11-07 사용자 결정으로 막는다. ② 공용 신고 화면이 410 오류의 서버 문구를 그대로 띄운다(7행, `error_interceptor.dart`, `report_screen.dart`). ③ 길찾기 좌표 검증이 NaN 과 음의 영점 쌍을 통과시킨다. 무한대는 막힌다. 요청 쪽 검증은 없다(17행, `MapDirectionsService`, `DirectionsParam`). ④ 앨범 목록이 커버 주소를 앨범마다 따로 발급한다(5행, `ClubPhotoAlbumService`). ⑤ 투표 예약 발행의 자식 행 잠금을 본다(9행, `EventDecisionSchedulerWorker`). 행이 없을 때의 본문은 읽지 않았다. ⑥ 앱 공통 처리 셋을 본다. 클럽 상세 캐시가 사용자 변경을 보지 않고(23행), 앨범 댓글 명령의 세션 경계가 사용자 번호 비교이며(24행), 앨범 댓글 화면이 공통 처리 신호를 쓰지 않는다(26행). ⑦ `club_photo.file_key` 는 유일 제약이 없어 같은 업로더가 같은 키를 두 사진에 붙일 수 있다. 사진을 지워도 참조를 풀고 소거 예정만 표시해 원본은 지킨다. 커버 쪽은 보지 않았다. ⑧ 댓글 언급 표 둘(`club_post_comment_mention`, `club_photo_album_comment_mention`)의 `display_nickname` 은 작성 때 닉네임 사본이고 탈퇴·파기 때 지우지 않는다. 조회는 사본을 그대로 실어(`ClubPostCommentService#loadMentions`) 파기한 회원의 닉네임이 남의 댓글 언급에 남는다. 본문의 @표기와 함께 두 표를 익명화할지 정한다([앨범 댓글 계획](album-place-linkpreview/ALBUM_COMMENT_VISIBILITY_PLAN_2026-09-17.md) 137줄). 출시 전에 고친다: 링크 미리보기의 gzip 첫 멤버만 풂(20행, 여러 멤버 응답으로 먼저 재현), 카드가 붙으면 글 말풍선이 최대 너비로 늘어나는 모양(12행, 모두 `LINK_PREVIEW`). 계획에서 받아들인 동작이라 그대로 둔다: 상대가 보낸 링크를 내 기기가 자동으로 읽어 상대 사이트가 내 접속 주소·시각을 아는 것(15행, 데이트 채팅 제외). 기능을 켤 때 볼 것: 플랜으로 모임 만들 때 장소 이름 칸(10행, `CONTENT_PLACE`).",
       "condition": "재현되면 고칠 결함으로 옮긴다",
       "scope": "now",
       "kind": "조사·확인",
@@ -2639,7 +2734,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "8e9ede27d92a80f2c75f59caea52f650f88c7b6afae6d033ef674603d3c0f89e",
+  "sourceDigest": "b01e5345be337b2a45bc65807360b4467857a26620788d226ca1798835e30e81",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2649,11 +2744,11 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 107개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 112개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
-      "2": 10,
-      "3": 11,
-      "4": 2,
+      "2": 9,
+      "3": 14,
+      "4": 5,
       "5": 14,
       "6": 10,
       "7": 14,
@@ -2749,18 +2844,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T19:00:29+09:00",
+    "updatedAt": "2026-11-07T19:18:15+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "c627a15657169c3202635e7fa58cd9e24303bf60",
+    "sourceCommit": "5b37317135c6360d9910eca31bcb59c8ba27b4f6",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "184078a6258c80232b908a58cb4c75b346b1761a64af4902dd3458a48a7013fd",
-    "worklistSha256": "922dcf765f3c1d89ccb16037ea8e6cbd289234b2ae1b05e101a3f98087d7e48b",
+    "sourceSha256": "cefe06c286cb92c94a427e2ab6ca95ea18c048836bfcb1f6628e173239915da3",
+    "worklistSha256": "1208c5ad5f1feb3d0ded6422d8a71fe801c3751258c08fbd549e7276cd9ec624",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "922dcf765f3c1d89ccb16037ea8e6cbd289234b2ae1b05e101a3f98087d7e48b",
+      "docs/plan/WORKLIST.md": "1208c5ad5f1feb3d0ded6422d8a71fe801c3751258c08fbd549e7276cd9ec624",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
