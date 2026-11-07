@@ -305,8 +305,6 @@
       "ids": [
         "H-568",
         "H-607",
-        "H-613",
-        "H-614",
         "H-615",
         "H-616",
         "H-617",
@@ -800,52 +798,10 @@
       ]
     },
     {
-      "id": "H-613",
-      "title": "일정 강행에 참가자가 이의를 내는 입구 잇기",
-      "description": "일정 강행 이의(RS-004)는 첫 출시에 열린 일정 변경에서 참가자가 겪는다. 호스트가 합의 없이 일정을 강행했을 때 참가자가 그 모임을 달아 이의를 낼 화면(SCR-RS-004)이 앱에 없고, 모임 상세의 「변경 사항에 이의 있어요」 입구도 없다. 지금 길은 내 분쟁 목록의 「분쟁 접수」(`lib/presentation/dispute/screens/my_dispute_cases_screen.dart`)뿐이고 모임 번호 없이 열린다. `Routes.myDisputeCreate` 의 다른 호출은 호스트 직접 결제 분쟁(`event_bank_payment_screen.dart`)이다. 서버 `POST /api/v1/me/dispute-cases` 는 `caseType`, `eventId`, `reasonCode`, `summary`(10~2000자)를 이미 받고(`DisputeCaseCreateParam`), 앱 `DisputeCaseCreateScreen` 도 `eventId` 를 받는다. 입구와 명세의 사유 코드 넷(`NO_CONSENT_REQUEST`, `CONSENT_PROCESS_UNFAIR`, `CIRCUMSTANCE_OVERRIDE`, `OTHER`)을 잇는다. 모임 번호만 실은 자발적 분쟁은 호스트 받은 함에 오르지 않는다. 당사자가 신고자와 상대뿐이고 호스트 역할이 없으며(`DisputeCaseService#createUserDispute`), 호스트 목록은 호스트 역할로 찾는다(`DisputeCaseQueryRepository#searchByHost`).",
-      "condition": "바로 할 수 있다. 서버 접수는 있고, 입구·사유 넷·호스트 받은 함을 잇는다",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-07 코드 대조 · [앱 분쟁 설계](../../community_app/plan/28-dispute-v3-design-refinement-workboard.md)",
-      "evidenceLinks": [
-        {
-          "label": "앱 분쟁 설계",
-          "href": "../../community_app/plan/28-dispute-v3-design-refinement-workboard.md"
-        }
-      ]
-    },
-    {
-      "id": "H-614",
-      "title": "주최 중 카드가 장소 투표 모임의 확정 날짜를 가리지 않게 하기",
-      "description": "「내 모임(주최 중)」 카드가 장소 투표 중인 모임의 확정 날짜까지 가린다. 결정 축은 `EventDecisionQueryService#attachSummaries` 만 채우는데 클럽 모임 목록과 찜 목록만 이를 부르고, 내 모임 목록(`GET /api/v1/events/my`)은 부르지 않는다. 앱은 축을 모르면 날짜를 감춘다(`lib/presentation/poll/decision_copy.dart`).",
-      "condition": "바로 할 수 있다",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-07 코드 대조 · [투표 인계](poll/POLL_HANDOVER_2026-09-13.md) 2절",
-      "evidenceLinks": [
-        {
-          "label": "투표 인계",
-          "href": "poll/POLL_HANDOVER_2026-09-13.md"
-        }
-      ]
-    },
-    {
       "id": "H-615",
-      "title": "회원 선택 창에 이름 검색과 차단 회원을 고르는 길 넣기",
-      "description": "도장을 찍을 회원을 고르는 창(`MileageMemberPickerSheet`)에 이름 검색이 없어 큰 클럽은 「멤버 더 보기」 로 넘기며 고른다. 서버와 앱 API 는 `keyword` 를 이미 받는다. 서로 차단한 회원에게 첫 도장을 찍을 길이 없다. 서버 도장 명령은 차단을 보지 않지만(스탬프 결정 D21) 회원 목록이 차단 관계를 뺀다(`ClubMembershipService#getMembers`). 차단 관계 회원을 목록에서 서로 숨기는 결정을 지키면서 고르게 할 방법을 먼저 정한다. 같은 창을 마일리지 뱃지·적립·차감과 호스트 제안도 쓴다.",
-      "condition": "이름 검색은 바로 할 수 있다. 차단 회원은 숨김 결정과 맞출 방법을 먼저 정한다",
+      "title": "회원 선택 창에서 차단 회원을 고르는 길 넣기",
+      "description": "서로 차단한 회원에게 첫 도장을 찍을 길이 없다. 서버 도장 명령은 차단을 보지 않지만(스탬프 결정 D21) 회원 목록이 차단 관계를 뺀다(`ClubMembershipService#getMembers`). 차단 관계 회원을 목록에서 서로 숨기는 결정을 지키면서 고르게 할 방법을 먼저 정한다. 같은 창을 마일리지 뱃지·적립·차감과 호스트 제안도 쓴다.",
+      "condition": "차단 관계 숨김 결정과 맞출 방법을 먼저 정한다",
       "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
@@ -2715,7 +2671,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "d1bda701e"
+      "commit": "95ca922e4"
     },
     {
       "name": "관리자 API",
@@ -2723,7 +2679,7 @@
     },
     {
       "name": "앱",
-      "commit": "29fa4500"
+      "commit": "2d439401"
     },
     {
       "name": "관리자 웹",
@@ -2734,7 +2690,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "b01e5345be337b2a45bc65807360b4467857a26620788d226ca1798835e30e81",
+  "sourceDigest": "5b3a447af33068e00f54068bd2c80a0e0a2b16a8262fda221a65f23a7b4736ce",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2744,10 +2700,10 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 112개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 110개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
-      "3": 14,
+      "3": 12,
       "4": 5,
       "5": 14,
       "6": 10,
@@ -2844,18 +2800,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T19:18:15+09:00",
+    "updatedAt": "2026-11-07T19:48:57+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "5b37317135c6360d9910eca31bcb59c8ba27b4f6",
+    "sourceCommit": "7c3e6faed698cd913167366273754cb333f53979",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "cefe06c286cb92c94a427e2ab6ca95ea18c048836bfcb1f6628e173239915da3",
-    "worklistSha256": "1208c5ad5f1feb3d0ded6422d8a71fe801c3751258c08fbd549e7276cd9ec624",
+    "sourceSha256": "31c5a1346c6e5dbbb52e1ebbda13448b60968197f575fc9ca7207e0ed773717b",
+    "worklistSha256": "6257395b46c9fe290dc6c0d5a2df6ebe1ba58e5fe3a0358df50b50e2bc3425a2",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "1208c5ad5f1feb3d0ded6422d8a71fe801c3751258c08fbd549e7276cd9ec624",
+      "docs/plan/WORKLIST.md": "6257395b46c9fe290dc6c0d5a2df6ebe1ba58e5fe3a0358df50b50e2bc3425a2",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
