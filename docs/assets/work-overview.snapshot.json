@@ -305,12 +305,13 @@
       "ids": [
         "H-568",
         "H-615",
+        "H-624",
+        "H-625",
         "H-617",
         "H-606",
         "H-618",
         "H-619",
         "H-622",
-        "H-573",
         "H-543",
         "H-620",
         "H-621",
@@ -812,6 +813,38 @@
       ]
     },
     {
+      "id": "H-624",
+      "title": "로그인이 바뀌면 입력 화면이 빈 화면이 되는 것 고치기",
+      "description": "세션이 끝나면 화면이 Scaffold 없이 `SizedBox.shrink()` 를 그려 회원에게 빈 화면이 보인다. 내역별 문의 상세·접수는 2026-11-07 고쳤고 같은 원인이 네 곳 더 있다. `lib/presentation/dispute/screens/dispute_case_create_screen.dart`, `lib/presentation/dispute/screens/appeal_form_screen.dart` 와 후기 쪽 화면 등. 전체 목록은 같은 꼴을 찾아 함께 고친다.",
+      "condition": "바로 할 수 있다",
+      "scope": "now",
+      "kind": "기능 보완",
+      "section": "3. 고칠 결함",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#3-고칠-결함",
+      "evidence": "2026-11-07 내역별 문의 수리",
+      "evidenceLinks": []
+    },
+    {
+      "id": "H-625",
+      "title": "경고 제도에서 새로 나온 결함 셋 고치기",
+      "description": "① 28일 넘은 이의가 남아 있으면 `WarningAppealOverdueScheduler` 가 날마다 `WarningAppealEscalated` 를 다시 내 알림이 되풀이될 수 있다. ② `grantManual` 의 대상 목록에 같은 회원이 여러 번 들어오면 경고가 그 수만큼 들어간다. 출처 값이 나노초라 멱등이 막지 않는다. ③ `severe30dCount` 는 이름과 달리 30일 셈이 아니라 지금 중대 후보 인원이다.",
+      "condition": "바로 할 수 있다",
+      "scope": "now",
+      "kind": "기능 보완",
+      "section": "3. 고칠 결함",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#3-고칠-결함",
+      "evidence": "2026-11-07 경고 감시 구현, 코드 읽기로 나온 것이라 재현부터 한다",
+      "evidenceLinks": []
+    },
+    {
       "id": "H-617",
       "title": "계좌이체 참가자의 결제 뒤 일행 추가 열기",
       "description": "계좌이체로 낸 참가자는 결제 뒤 일행을 앱에서 늘릴 수 없다. 서버는 `EVENT_PARTY_CHANGE_LOCKED` 로 거절하고(`EventPartyService`) 앱은 「계좌이체 이벤트는 앱에서 일행을 늘릴 수 없어요. 호스트에게 문의해 주세요」 를 보인다(`party_manage_sheet.dart`). 지갑 결제는 증분 결제로 늘릴 수 있어 결제 수단에 따라 길이 다르다. 호스트가 문의를 받아 대신 늘리는 길이 있는지는 보지 못했다. 2026-08-11 설계(D19)는 이 범위를 명시적으로 빼고 확장을 후속으로 적었다. 첫 출시에 직접 송금이 들어가 지금 회원이 겪는다.",
@@ -829,9 +862,9 @@
     },
     {
       "id": "H-606",
-      "title": "운영진 감시·재가입 차단 등 경고 제도 넷 만들기",
-      "description": "첫 출시에 열려 있는 경고의 설계 가운데 서버에 없는 것이다. 2026-11-07 사용자 결정으로 모두 출시 전에 만든다. 반복 취소 검토와 마일리지 제도 재인증은 끝났다. 반복 취소 검토에서 남은 판단: 운영진이 처리하거나 무시한 뒤 30일 안에 또 취소하면 수가 여전히 3 이상이라 다시 올라온다. 처리한 뒤부터 다시 셀지 정한다. 마일리지 설계와 코드가 다른 둘: 활성화 기본 만료는 `policy.md` 가 「없음」, 코드가 365일이다. `admin-workflow.md` 4.2·9절의 제도 비활성화 영향 미리보기 강제는 서버에 그 미리보기 종류가 없다. 어느 쪽으로 맞출지 정한다. ② 강제 탈퇴 재시도 알림: 같은 운영진이 24시간에 2회 이상 시도하면 OWNER 에게 알린다고 적었으나 알림 종류가 없다([남용 방지](../club_activity/shared/abuse-prevention.md) 3절). 열린 강제 탈퇴는 회원마다 하나뿐이라 겹친 시도는 막힌다. ③ 운영진 본인 부여 감시: `self_action`·`peer_action` 표시와 월 10건 초과 OWNER 알림이 없다. `warning_audit_log` 에 칸이 없다. ④ 이상 패턴 대시보드: 반복 패턴 발생 건수, 운영진별 `self_action` 누적, 종류별 미처리 큐, 익명 신고자 반복 패턴, 강제 탈퇴 추이 카드가 없다. 콘솔 요약은 `WarningDashboardVo.queueOpenCount` 와 `MileageAdminDashboardVo.pendingQueueCount` 합계뿐이다. 결정 147 은 반복 패턴 12종이라 적었고 표는 7줄이다. ⑤ 강제 탈퇴의 재가입 차단 옵션(영구, N일, 없음, 결정 114)과 영구 차단 30일 뒤 유지 확인 알림(결정 115): `warning_sanction` 과 `WarningSanctionAddParam` 에 칸이 없다. 앱은 강제 탈퇴에 재가입 차단이 들어 있지 않다고 안내하고(`local_report_detail_screen.dart`), 재가입은 클럽 차단으로 따로 막는다([제재 문서](../club_activity/warnings/sanctions.md) 7·11절, [신고 처리 증거](../release-gate/evidence/SAF-01/README.md) 5절).",
-      "condition": "넷을 나눠 차례를 정한다",
+      "title": "강제 탈퇴의 재가입 차단 옵션 만들기",
+      "description": "첫 출시에 열려 있는 경고의 설계 가운데 서버에 없는 것이다. 2026-11-07 사용자 결정으로 모두 출시 전에 만든다. 반복 취소 검토, 마일리지 제도 재인증, 강제 탈퇴 재시도 알림, 본인 부여 감시, 이상 패턴 카드는 끝났다. 반복 취소 검토에서 남은 판단: 운영진이 처리하거나 무시한 뒤 30일 안에 또 취소하면 수가 여전히 3 이상이라 다시 올라온다. 처리한 뒤부터 다시 셀지 정한다. 마일리지 설계와 코드가 다른 둘: 활성화 기본 만료는 `policy.md` 가 「없음」, 코드가 365일이다. `admin-workflow.md` 4.2·9절의 제도 비활성화 영향 미리보기 강제는 서버에 그 미리보기 종류가 없다. 어느 쪽으로 맞출지 정한다. 경고 감시에서 남은 판단: 강제 탈퇴 「시도」 는 설계에 정의가 없어 새 처분과 실패 처분을 다시 연 것만 센다. 이상 패턴 카드는 설계가 OWNER 콘솔이라 적었지만 기존 콘솔 권한을 따라 경고 검토 담당도 본다. 본인 부여 표시는 경고 부여에만 붙였고 설계는 「모든 액션」 이다. 결정 147 의 반복 패턴 12종과 표 7줄이 어긋나 표에 있는 것만 만들었다. ⑤ 강제 탈퇴의 재가입 차단 옵션(영구, N일, 없음, 결정 114)과 영구 차단 30일 뒤 유지 확인 알림(결정 115): `warning_sanction` 과 `WarningSanctionAddParam` 에 칸이 없다. 앱은 강제 탈퇴에 재가입 차단이 들어 있지 않다고 안내하고(`local_report_detail_screen.dart`), 재가입은 클럽 차단으로 따로 막는다([제재 문서](../club_activity/warnings/sanctions.md) 7·11절, [신고 처리 증거](../release-gate/evidence/SAF-01/README.md) 5절).",
+      "condition": "바로 할 수 있다. 클럽 차단과의 관계를 먼저 읽는다",
       "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
@@ -894,9 +927,9 @@
     },
     {
       "id": "H-619",
-      "title": "비공개 모임·데이트 결함 고치기",
-      "description": "닫힌 비공개 모임과 데이트의 결함이다. 2026-11-07 사용자 결정으로 공개 전에 고친다. 재현 시험부터 쓴다. 비공개 선정이 결정 기록을 남기지 않는다(차수 13 F1). 비공개 모임 취소 길에 일반 취소의 취소 알림이 없으니 고친다. 검색 캐시 비움도 없지만 공개 검색이 PRIVATE 를 싣지 않아 영향은 없다(2026-11-07 코드 대조). 비공개 모임 열기(`PrivateMeetingOpenEntryService#payHostingCostAndOpen`)에 재전송 식별자가 없어 응답을 잃고 다시 보내면 이미 열렸는데도 `INVALID_EVENT_STATUS` 다(돈은 두 번 빠지지 않음, 차수 17 P1-9). 옛 역할 감사가 남았다고 적은 선정 때 참석·정원 행 생성과 앱 채팅 단추 연결이 끝났는지 본다([역할 감사](../audit/ROLE_PERMISSION_REAUDIT_2026-08-07.md)). 데이트 사진 신고 입구가 후보 카드(`candidate_card_screen.dart`)뿐이니 명세 SCR-SR-003 의 채팅방 상대 프로필 입구를 본다. 프로필 방문자 줄의 오른쪽 화살표는 누르는 동작이 없다(`lib/presentation/date/screens/profile_viewers_screen.dart`).",
-      "condition": "재현 시험부터 쓴다. 데이트 공개는 공개 때",
+      "title": "비공개 선정의 승인 알림이 빠졌는지 보기",
+      "description": "닫힌 비공개 모임과 데이트의 결함 여섯은 2026-11-07 고쳤고 하나를 더 본다. `selectApplicant` 를 부르는 쪽에 선정된 신청자에게 보내는 승인 알림이 없다. `createAttendanceFromApplication` 안은 보지 않았다.",
+      "condition": "코드로 가린 뒤 빠졌으면 고친다. 데이트 공개는 공개 때",
       "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
@@ -905,13 +938,13 @@
         "development"
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "차수 13·17 기록, 2026-11-07 코드 대조",
+      "evidence": "2026-11-07 비공개 모임 결함 수리",
       "evidenceLinks": []
     },
     {
       "id": "H-622",
-      "title": "운영자 정기모임 회원 명령 바로잡기",
-      "description": "2026-11-07 사용자 결정으로 감독 스위치를 켜기 전에 고친다. 스위치는 그대로 닫아 둔다. ① 운영자 정기모임 회원 명령 넷이 정원을 보지 않고 결정 기록이 없다. 승격은 코스 상태를 보지만 명령 번호가 없고, 복원과 몰수 되돌림은 코스 상태도 명령 번호도 없으며, 정합 고침은 명령 번호가 있고 취소된 코스만 거절한다(2026-11-07 코드 대조). ② 운영자 몰수 되돌림은 몰수 환불 뒤의 결제도 보지 않고 등록으로 돌린다(차수 14 F5 뒷절, `RegularMeetingEnrollmentService#forfeitReverseByAdmin`).",
+      "title": "운영자 정기모임 승인·거절 명령 번호 더하기",
+      "description": "운영자 승격, 복원, 몰수 되돌림, 정합 고침은 2026-11-07 고쳤다(코스 상태, 정원, 명령 번호, 환불 판정). 같은 스위치 뒤에 아래가 남았다. ① 운영자 승인·거절(`approveByAdmin`, `rejectByAdmin`)에 명령 번호가 없다. 승인은 정원을 보지 않고 거절은 코스 상태를 보지 않는다. ② 승격·복원이 대기자 차례를 보지 않아 운영자가 앞사람을 건너뛸 수 있다. 정할 것: 돈이 돌아간 몰수 회원은 되돌릴 길이 없어 거절로 뒀다. 0원 몰수 환불은 되돌림을 허용해 결제 행은 닫힌 채 회원만 등록이 된다.",
       "condition": "감독 스위치는 닫아 둔 채 고친다",
       "scope": "now",
       "kind": "기능 보완",
@@ -921,23 +954,7 @@
         "development"
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "차수 14 기록, 2026-11-07 코드 대조",
-      "evidenceLinks": []
-    },
-    {
-      "id": "H-573",
-      "title": "내역별 문의의 결제·환불·정기모임 결제 출처 가르기",
-      "description": "내역별 문의의 결제·환불·정기모임 결제 출처를 가른다. 입구는 거래 상세·정산 항목 상세에 더해 2026-11-04 신고·정기모임 정산을 넣었고, 결제·환불·정기모임 결제에는 아직 없다. 내역별 문의 상세·접수 화면이 로그인 상태가 바뀌면 빈 화면이다.",
-      "condition": "바로 할 수 있다",
-      "scope": "now",
-      "kind": "검증·보완",
-      "section": "4. 플랫폼 결제를 열기 전에 고칠 것",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#4-플랫폼-결제를-열기-전에-고칠-것",
-      "evidence": "2026-11-03 설계 틈 확인 C5",
+      "evidence": "2026-11-07 운영자 정기모임 명령 수리",
       "evidenceLinks": []
     },
     {
@@ -1717,8 +1734,8 @@
     },
     {
       "id": "H-611",
-      "title": "모델 검사 수리를 운영 서버에 올리며 표 세 칸 더하기",
-      "description": "서버 결함 17건과 갱신 응답 유실의 수리는 `V1__init.sql` 에 칸 셋을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 닿는 상한과 견줘 운영자의 복원·FAILED 해소를 막는다' AFTER resolve_outcome;` `ALTER TABLE refresh_token ADD COLUMN previous_refresh_token varchar(100) DEFAULT NULL COMMENT '직전 리프레쉬토큰. 새 접근 토큰이 처음 쓰이기 전까지만 남아 응답을 잃은 갱신을 받는다' AFTER refresh_token, ADD UNIQUE KEY uk_refresh_token_previous (previous_refresh_token);` 겹친 취소 옛 자료 점검: `SELECT user_id, COUNT(*) c FROM wallet_spend_lock WHERE status='ACTIVE' GROUP BY user_id HAVING c > 1;` 운영자에게 알릴 동작 변화: 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절, 취소 조회 연속 실패는 경보만 내고 계속 묻는다, 출금 처리 중 답이 세 번이면 사람 대조, 응답을 잃은 출금은 약 45분 뒤 사람 대조, 실제 지급대행을 켠 뒤 상한을 넣기 전에는 지급대행이 답하지 않은 출금의 복원·FAILED 해소 거절(H-13 ⑤), 지급을 시작한 출금은 재투입으로 다시 보내지 않는다(지급이 있으면 조회로 돌아간다). 회원 쪽 변화: 갱신 응답을 잃어도 로그아웃되지 않는다. 앱과 서버 어느 쪽을 먼저 올려도 된다. 관리자 웹이 거래번호 없는 FAILED 복원에 확인 값을 보내는지는 보지 못했다.",
+      "title": "다음 서버 배포 때 운영 표에 칸을 더하고 함께 올리기",
+      "description": "서버 결함 17건과 갱신 응답 유실의 수리는 `V1__init.sql` 에 칸 셋을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 닿는 상한과 견줘 운영자의 복원·FAILED 해소를 막는다' AFTER resolve_outcome;` `ALTER TABLE refresh_token ADD COLUMN previous_refresh_token varchar(100) DEFAULT NULL COMMENT '직전 리프레쉬토큰. 새 접근 토큰이 처음 쓰이기 전까지만 남아 응답을 잃은 갱신을 받는다' AFTER refresh_token, ADD UNIQUE KEY uk_refresh_token_previous (previous_refresh_token);` `ALTER TABLE warning_audit_log ADD COLUMN self_action tinyint(1) NOT NULL DEFAULT 0 COMMENT '운영진이 자기에게 준 경고(abuse-prevention 4절)' AFTER user_agent, ADD COLUMN peer_action tinyint(1) NOT NULL DEFAULT 0 COMMENT '운영진이 다른 운영진에게 준 경고(abuse-prevention 4절)' AFTER self_action, ADD INDEX idx_warning_audit_self_action (club_id, self_action, actor_id);` 없으면 경고 감사 쓰기가 전부 실패한다. 함께 올릴 것: 공개 서버와 관리자 서버(정기모임 내부 명령 셋이 명령 번호 필수), 서버와 앱(마일리지 재인증, 비공개 모임 열기 키), 서버와 관리자 웹(번들 판매 시작·중지 키). 겹친 취소 옛 자료 점검: `SELECT user_id, COUNT(*) c FROM wallet_spend_lock WHERE status='ACTIVE' GROUP BY user_id HAVING c > 1;` 운영자에게 알릴 동작 변화: 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절, 취소 조회 연속 실패는 경보만 내고 계속 묻는다, 출금 처리 중 답이 세 번이면 사람 대조, 응답을 잃은 출금은 약 45분 뒤 사람 대조, 실제 지급대행을 켠 뒤 상한을 넣기 전에는 지급대행이 답하지 않은 출금의 복원·FAILED 해소 거절(H-13 ⑤), 지급을 시작한 출금은 재투입으로 다시 보내지 않는다(지급이 있으면 조회로 돌아간다). 회원 쪽 변화: 갱신 응답을 잃어도 로그아웃되지 않는다. 앱과 서버 어느 쪽을 먼저 올려도 된다. 관리자 웹이 거래번호 없는 FAILED 복원에 확인 값을 보내는지는 보지 못했다.",
       "condition": "다음 서버 배포 때 ALTER 를 먼저",
       "scope": "now",
       "kind": "정비",
@@ -2622,7 +2639,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "e36a79d7b"
+      "commit": "4b7eb7579"
     },
     {
       "name": "관리자 API",
@@ -2630,7 +2647,7 @@
     },
     {
       "name": "앱",
-      "commit": "2fadaf99"
+      "commit": "3c95a5be"
     },
     {
       "name": "관리자 웹",
@@ -2641,7 +2658,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "aeab94dfd85f80280343bd0d2a0893064cb8e9b5556c3e4ddccc17402ef3825f",
+  "sourceDigest": "4bc37ad11b7aed7240e155c5a97264726cae17f23425adf8484e697b01e8c821",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2651,11 +2668,11 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 108개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 109개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 10,
-      "3": 9,
-      "4": 5,
+      "3": 11,
+      "4": 4,
       "5": 14,
       "6": 10,
       "7": 14,
@@ -2751,18 +2768,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T20:55:55+09:00",
+    "updatedAt": "2026-11-07T21:38:30+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "b8ca9f6bd2dfc41ecf69bec10519e8693369b9d4",
+    "sourceCommit": "a048f391d3b15fc7016a19858bf6c49f11ede7ad",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "b4e96d68cdaeef111d10cd21e144341951d064a6e487e04ece6803266fd89056",
-    "worklistSha256": "2fa59720dcbf02902df1d173316c949b2a36292a84ba6ea98265247003c2bdf5",
+    "sourceSha256": "9e124b13cf72dc4c2a7b3333c2ef81b42ac6a3a876a530ae25a2bac32bfec7c8",
+    "worklistSha256": "340a86731376529a3efd55d1177bc2c9ea8d5f826cdaa59b919b20c24c28995b",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "2fa59720dcbf02902df1d173316c949b2a36292a84ba6ea98265247003c2bdf5",
+      "docs/plan/WORKLIST.md": "340a86731376529a3efd55d1177bc2c9ea8d5f826cdaa59b919b20c24c28995b",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
