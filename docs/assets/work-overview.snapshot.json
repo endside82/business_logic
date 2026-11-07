@@ -305,7 +305,6 @@
       "ids": [
         "H-568",
         "H-607",
-        "H-612",
         "H-572",
         "H-573",
         "H-609",
@@ -854,22 +853,6 @@
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
       "evidence": "B4 세부 계획서: 출금 대기열 소유와 정산 계좌·차수 3 기록 「5순위 돈·임대 규칙 요지」",
-      "evidenceLinks": []
-    },
-    {
-      "id": "H-612",
-      "title": "앱 모델 검사가 찾은 결함 열둘 고치기",
-      "description": "서버 결함 17건은 2026-11-07 고쳤고, 앱 쪽 재현 시험과 모델은 앱 `main` 에 있다. 재현 시험 4건은 `skip` 이다. 결함별 재현 순서와 수리 후보는 앱 `plan/FORMAL_VERIFY_FIX_HANDOVER_2026-11-07.md`, 번호는 앱 `docs/testing/FORMAL_MODELS.md` 를 따른다. 첫 차례 #1, #2(갱신 응답 유실 뒤 로그아웃)는 서버가 직전 토큰을 짧은 유예 동안 받는 수리가 필요하고 도난 탐지와 맞바꾸는 보안 판단이 든다.",
-      "condition": "앱 저장소 인계 문서의 차례대로. 첫 차례 둘은 서버 수리와 보안 판단이 필요하다",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-07 모델 검사",
       "evidenceLinks": []
     },
     {
@@ -1628,8 +1611,8 @@
     },
     {
       "id": "H-611",
-      "title": "모델 검사 수리를 운영 서버에 올리며 표 두 칸 더하기",
-      "description": "서버 결함 17건의 수리는 `V1__init.sql` 에 칸 둘을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 닿는 상한과 견줘 운영자의 복원·FAILED 해소를 막는다' AFTER resolve_outcome;` 겹친 취소 옛 자료 점검: `SELECT user_id, COUNT(*) c FROM wallet_spend_lock WHERE status='ACTIVE' GROUP BY user_id HAVING c > 1;` 운영자에게 알릴 동작 변화: 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절, 취소 조회 연속 실패는 경보만 내고 계속 묻는다, 출금 처리 중 답이 세 번이면 사람 대조, 응답을 잃은 출금은 약 45분 뒤 사람 대조, 실제 지급대행을 켠 뒤 상한을 넣기 전에는 지급대행이 답하지 않은 출금의 복원·FAILED 해소 거절(H-13 ⑤), 지급을 시작한 출금은 재투입으로 다시 보내지 않는다(지급이 있으면 조회로 돌아간다). 관리자 웹이 거래번호 없는 FAILED 복원에 확인 값을 보내는지는 보지 못했다.",
+      "title": "모델 검사 수리를 운영 서버에 올리며 표 세 칸 더하기",
+      "description": "서버 결함 17건과 갱신 응답 유실의 수리는 `V1__init.sql` 에 칸 셋을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 닿는 상한과 견줘 운영자의 복원·FAILED 해소를 막는다' AFTER resolve_outcome;` `ALTER TABLE refresh_token ADD COLUMN previous_refresh_token varchar(100) DEFAULT NULL COMMENT '직전 리프레쉬토큰. 새 접근 토큰이 처음 쓰이기 전까지만 남아 응답을 잃은 갱신을 받는다' AFTER refresh_token, ADD UNIQUE KEY uk_refresh_token_previous (previous_refresh_token);` 겹친 취소 옛 자료 점검: `SELECT user_id, COUNT(*) c FROM wallet_spend_lock WHERE status='ACTIVE' GROUP BY user_id HAVING c > 1;` 운영자에게 알릴 동작 변화: 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절, 취소 조회 연속 실패는 경보만 내고 계속 묻는다, 출금 처리 중 답이 세 번이면 사람 대조, 응답을 잃은 출금은 약 45분 뒤 사람 대조, 실제 지급대행을 켠 뒤 상한을 넣기 전에는 지급대행이 답하지 않은 출금의 복원·FAILED 해소 거절(H-13 ⑤), 지급을 시작한 출금은 재투입으로 다시 보내지 않는다(지급이 있으면 조회로 돌아간다). 회원 쪽 변화: 갱신 응답을 잃어도 로그아웃되지 않는다. 앱과 서버 어느 쪽을 먼저 올려도 된다. 관리자 웹이 거래번호 없는 FAILED 복원에 확인 값을 보내는지는 보지 못했다.",
       "condition": "다음 서버 배포 때 ALTER 를 먼저",
       "scope": "now",
       "kind": "정비",
@@ -2549,7 +2532,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "ff8df35e5"
+      "commit": "d1bda701e"
     },
     {
       "name": "관리자 API",
@@ -2557,7 +2540,7 @@
     },
     {
       "name": "앱",
-      "commit": "44fbc181"
+      "commit": "9bf435de"
     },
     {
       "name": "관리자 웹",
@@ -2568,7 +2551,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "b43febc752a60b8cdcf82f2250cd3a7270d63eadf4315641dc963f18d348f70f",
+  "sourceDigest": "f146618617083cefc7848066a90649b2ee3959a003d2657735a32de1c588cb3e",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2578,10 +2561,10 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 104개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 103개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 11,
-      "3": 6,
+      "3": 5,
       "4": 2,
       "5": 14,
       "6": 10,
@@ -2678,18 +2661,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T07:27:40+09:00",
+    "updatedAt": "2026-11-07T09:01:30+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "e36843ee55faf16e1e85a2a24584c0ec7ff6fef7",
+    "sourceCommit": "40a8f4669436f520c9a76e3c4514a22a2f3a1963",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "dec84b4dd48e693467e49ec1133926e7785569df9e29a4d2a449143098dfabc1",
-    "worklistSha256": "aeab1c5712db24c806cceafe62100ad42db7dd61dd6d6f932949524f083de624",
+    "sourceSha256": "8871443cd901b8589ca84a9ca041da40d886f4aede2c99a991726e46003e8313",
+    "worklistSha256": "686167d5ac0e595c755e3da0fb9c39def7a19485294ddd88fb4d1dcc68a28bd9",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "aeab1c5712db24c806cceafe62100ad42db7dd61dd6d6f932949524f083de624",
+      "docs/plan/WORKLIST.md": "686167d5ac0e595c755e3da0fb9c39def7a19485294ddd88fb4d1dcc68a28bd9",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
