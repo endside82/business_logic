@@ -304,9 +304,7 @@
       "stages": [],
       "ids": [
         "H-568",
-        "H-607",
         "H-615",
-        "H-616",
         "H-617",
         "H-606",
         "H-572",
@@ -436,6 +434,7 @@
         "H-146",
         "H-147",
         "H-152",
+        "H-623",
         "H-189"
       ],
       "href": "NEXT_WORK.md#2-사용자가-정할-것",
@@ -745,6 +744,22 @@
       "evidenceLinks": []
     },
     {
+      "id": "H-623",
+      "title": "환불 고정 수수료가 참가비를 넘지 못하게 막을지 정하기",
+      "description": "호스트가 직접 설정 환불에 고정 수수료를 넣을 수 있게 됐다(2026-11-07). 서버에 상한이 없어 참가비보다 큰 수수료를 넣으면 환불액이 0 으로 판정된다. 「100% 환불」 구간이 있어도 어느 시점에도 환불되지 않는다. 막으면 서버와 앱에 함께 둔다.",
+      "condition": "사용자 답을 받는다",
+      "scope": "candidate",
+      "kind": "제품 결정",
+      "section": "2. 사용자가 정할 것",
+      "stage": null,
+      "resources": [
+        "decision"
+      ],
+      "source": "NEXT_WORK.md#2-사용자가-정할-것",
+      "evidence": "2026-11-07 환불 규칙 여러 구간 구현",
+      "evidenceLinks": []
+    },
+    {
       "id": "H-476",
       "title": "로그아웃·계정 전환을 실기기에서 일곱 가지 확인하기",
       "description": "로그아웃·계정 전환 가족(2026-10-21 전체 검토 R3)에서 남은 것은 실기기 확인이다. ① 알림 창 비우기를 실기기에서 확인한다. ② 오프라인 로그아웃 뒤 재개를 실기기에서 확인한다. ③ 소셜 로그인 창 다녀오기를 실기기에서 확인한다. ④ 알림 창 채널 네이티브 컴파일을 실기기에서 확인한다(`MainActivity.kt`·`AppDelegate.swift`, 현재 이 Mac의 Android·iOS 빌드 도구와 서명 빌드는 준비됨. 이 알림 시나리오의 기기 확인은 별도). ⑤ 네이버 SDK 가 남은 토큰으로 창 없이 로그인하는지 실기기에서 확인한다. ⑥ FCM 토큰을 지운 뒤 새 토큰이 나오는지 실기기에서 확인한다. ⑦ SDK 로그아웃이 돌아오지 않을 때 「그래도 로그인」으로 나아가는지 실기기에서 확인한다.",
@@ -777,27 +792,6 @@
       "evidenceLinks": []
     },
     {
-      "id": "H-607",
-      "title": "클럽 사진첩 목록이 20개까지만 보이는 것 고치기",
-      "description": "클럽 사진첩 목록은 첫 쪽만 읽는다. 앱 `lib/domain/providers/club/photo_album_provider.dart` 의 `PhotoAlbumNotifier.build` 가 `page.content` 만 돌려주고, 화면 `photo_album_list_screen.dart` 에 다음 쪽 읽기가 없다. 서버 기본 쪽 크기는 20 이라(`PagingParam`, `ClubPhotoAlbumController#getAlbums`) 앨범이 21개를 넘으면 21번째부터 목록에서 보이지 않는다. 사진 올리기 화면 `photo_upload_screen.dart` 도 같은 공급자를 쓴다. 재현 입력: 앨범이 21개인 클럽에서 사진첩 탭을 연다. 공통 목록 조각(`lib/domain/providers/common/paged_list.dart`)으로 옮긴다. 같은 꼴 후보를 함께 본다. 내 클럽(`my_clubs_provider.dart`)과 클럽 차단 목록(`club_ban_provider.dart`)도 인자 없이 첫 쪽만 읽는다. 이 둘의 서버 쪽 크기는 확인하지 않았다.",
-      "condition": "바로 할 수 있다. 같은 꼴의 내 클럽·클럽 차단 목록을 함께 본다",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "[앨범 댓글 계획](album-place-linkpreview/ALBUM_COMMENT_VISIBILITY_PLAN_2026-09-17.md) 8.6절, 2026-11-06 코드 확인",
-      "evidenceLinks": [
-        {
-          "label": "앨범 댓글 계획",
-          "href": "album-place-linkpreview/ALBUM_COMMENT_VISIBILITY_PLAN_2026-09-17.md"
-        }
-      ]
-    },
-    {
       "id": "H-615",
       "title": "회원 선택 창에서 차단 회원을 고르는 길 넣기",
       "description": "서로 차단한 회원에게 첫 도장을 찍을 길이 없다. 서버 도장 명령은 차단을 보지 않지만(스탬프 결정 D21) 회원 목록이 차단 관계를 뺀다(`ClubMembershipService#getMembers`). 차단 관계 회원을 목록에서 서로 숨기는 결정을 지키면서 고르게 할 방법을 먼저 정한다. 같은 창을 마일리지 뱃지·적립·차감과 호스트 제안도 쓴다.",
@@ -815,27 +809,6 @@
         {
           "label": "스탬프 계획",
           "href": "stamp/CLUB_STAMP_PLAN_2026-09-05.md"
-        }
-      ]
-    },
-    {
-      "id": "H-616",
-      "title": "앱에서 환불 규칙을 여러 구간으로 정하게 하기",
-      "description": "환불 규칙 직접 편집기(SCR-RP-002)를 만든다. 명세는 1~6 구간과 고정 수수료를 적지만, 앱은 환불 마감 시간 한 칸으로 「N시간 전 100%」 한 구간만 보내고 고정 수수료는 보내지 않는다(`lib/data/models/refund_policy/refund_policy_config_mapper.dart`). 서버는 `refundPolicyConfig.customRules.segments` 로 1~6 구간을 이미 받는다.",
-      "condition": "바로 할 수 있다. 서버는 1~6 구간을 이미 받는다",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-07 코드 대조 · [환불 정책 화면 명세](../ui-ux/screens/32-refund-policy-catalog.md)",
-      "evidenceLinks": [
-        {
-          "label": "환불 정책 화면 명세",
-          "href": "../ui-ux/screens/32-refund-policy-catalog.md"
         }
       ]
     },
@@ -2671,7 +2644,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "95ca922e4"
+      "commit": "201908542"
     },
     {
       "name": "관리자 API",
@@ -2679,7 +2652,7 @@
     },
     {
       "name": "앱",
-      "commit": "2d439401"
+      "commit": "3a66fc4b"
     },
     {
       "name": "관리자 웹",
@@ -2690,7 +2663,7 @@
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "5b3a447af33068e00f54068bd2c80a0e0a2b16a8262fda221a65f23a7b4736ce",
+  "sourceDigest": "18686ec543bb9fd33ad83943cfa8c0f194ca1d531b5b7e33c2828ebbeb5137d4",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2700,10 +2673,10 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 110개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 109개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
-      "2": 9,
-      "3": 12,
+      "2": 10,
+      "3": 10,
       "4": 5,
       "5": 14,
       "6": 10,
@@ -2800,18 +2773,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T19:48:57+09:00",
+    "updatedAt": "2026-11-07T20:16:10+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "7c3e6faed698cd913167366273754cb333f53979",
+    "sourceCommit": "78d2b4f3a2f104963ec97f52759ba09386922c6a",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "31c5a1346c6e5dbbb52e1ebbda13448b60968197f575fc9ca7207e0ed773717b",
-    "worklistSha256": "6257395b46c9fe290dc6c0d5a2df6ebe1ba58e5fe3a0358df50b50e2bc3425a2",
+    "sourceSha256": "cc7b47a9949eefb712eb04f60c1a5f46aa845d9e05b44bcbb92cf9049ddb644c",
+    "worklistSha256": "087f3bb37d867884823cbcde570379221416c111595e731a4c472608771ad608",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "6257395b46c9fe290dc6c0d5a2df6ebe1ba58e5fe3a0358df50b50e2bc3425a2",
+      "docs/plan/WORKLIST.md": "087f3bb37d867884823cbcde570379221416c111595e731a4c472608771ad608",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
