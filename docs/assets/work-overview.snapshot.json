@@ -307,7 +307,6 @@
         "H-615",
         "H-617",
         "H-606",
-        "H-572",
         "H-618",
         "H-619",
         "H-622",
@@ -830,9 +829,9 @@
     },
     {
       "id": "H-606",
-      "title": "반복 취소 검토·운영진 감시·재가입 차단 만들기",
-      "description": "첫 출시에 열려 있는 경고·마일리지의 설계 가운데 서버에 없는 것이다. 2026-11-07 사용자 결정으로 여섯 모두 출시 전에 만든다. ① 반복 취소 검토: 30일에 3회 이상 취소한 회원을 감지해 운영진 검토 큐에 올린다고 적었다([패널티 유형](../club_activity/warnings/penalty-types.md) 5.2절). 큐 종류는 `REPEATED_REPORT`·`APPEAL_OVERDUE` 둘뿐이고(`WarningReviewQueueType`) 감지 작업이 없다. 운영진은 자주 취소하는 회원을 목록에서 볼 수 없고 `REPEATED_CANCEL` 경고는 제보나 직접 부여로만 준다. ② 강제 탈퇴 재시도 알림: 같은 운영진이 24시간에 2회 이상 시도하면 OWNER 에게 알린다고 적었으나 알림 종류가 없다([남용 방지](../club_activity/shared/abuse-prevention.md) 3절). 열린 강제 탈퇴는 회원마다 하나뿐이라 겹친 시도는 막힌다. ③ 운영진 본인 부여 감시: `self_action`·`peer_action` 표시와 월 10건 초과 OWNER 알림이 없다. `warning_audit_log` 에 칸이 없다. ④ 이상 패턴 대시보드: 반복 패턴 발생 건수, 운영진별 `self_action` 누적, 종류별 미처리 큐, 익명 신고자 반복 패턴, 강제 탈퇴 추이 카드가 없다. 콘솔 요약은 `WarningDashboardVo.queueOpenCount` 와 `MileageAdminDashboardVo.pendingQueueCount` 합계뿐이다. 결정 147 은 반복 패턴 12종이라 적었고 표는 7줄이다. ⑤ 강제 탈퇴의 재가입 차단 옵션(영구, N일, 없음, 결정 114)과 영구 차단 30일 뒤 유지 확인 알림(결정 115): `warning_sanction` 과 `WarningSanctionAddParam` 에 칸이 없다. 앱은 강제 탈퇴에 재가입 차단이 들어 있지 않다고 안내하고(`local_report_detail_screen.dart`), 재가입은 클럽 차단으로 따로 막는다([제재 문서](../club_activity/warnings/sanctions.md) 7·11절, [신고 처리 증거](../release-gate/evidence/SAF-01/README.md) 5절). ⑥ 제도 켜기·끄기의 클럽장 재인증: 결정 63 은 권장이고 구현은 별도 보안 작업으로 미뤘다. `MileageProgramConfigModParam` 에 칸이 없고 `mileage_policy_screen.dart` 에 비밀번호 확인이 없다([마일리지 운영](../club_activity/mileage/admin-workflow.md)).",
-      "condition": "여섯을 나눠 차례를 정한다",
+      "title": "운영진 감시·재가입 차단 등 경고 제도 넷 만들기",
+      "description": "첫 출시에 열려 있는 경고의 설계 가운데 서버에 없는 것이다. 2026-11-07 사용자 결정으로 모두 출시 전에 만든다. 반복 취소 검토와 마일리지 제도 재인증은 끝났다. 반복 취소 검토에서 남은 판단: 운영진이 처리하거나 무시한 뒤 30일 안에 또 취소하면 수가 여전히 3 이상이라 다시 올라온다. 처리한 뒤부터 다시 셀지 정한다. 마일리지 설계와 코드가 다른 둘: 활성화 기본 만료는 `policy.md` 가 「없음」, 코드가 365일이다. `admin-workflow.md` 4.2·9절의 제도 비활성화 영향 미리보기 강제는 서버에 그 미리보기 종류가 없다. 어느 쪽으로 맞출지 정한다. ② 강제 탈퇴 재시도 알림: 같은 운영진이 24시간에 2회 이상 시도하면 OWNER 에게 알린다고 적었으나 알림 종류가 없다([남용 방지](../club_activity/shared/abuse-prevention.md) 3절). 열린 강제 탈퇴는 회원마다 하나뿐이라 겹친 시도는 막힌다. ③ 운영진 본인 부여 감시: `self_action`·`peer_action` 표시와 월 10건 초과 OWNER 알림이 없다. `warning_audit_log` 에 칸이 없다. ④ 이상 패턴 대시보드: 반복 패턴 발생 건수, 운영진별 `self_action` 누적, 종류별 미처리 큐, 익명 신고자 반복 패턴, 강제 탈퇴 추이 카드가 없다. 콘솔 요약은 `WarningDashboardVo.queueOpenCount` 와 `MileageAdminDashboardVo.pendingQueueCount` 합계뿐이다. 결정 147 은 반복 패턴 12종이라 적었고 표는 7줄이다. ⑤ 강제 탈퇴의 재가입 차단 옵션(영구, N일, 없음, 결정 114)과 영구 차단 30일 뒤 유지 확인 알림(결정 115): `warning_sanction` 과 `WarningSanctionAddParam` 에 칸이 없다. 앱은 강제 탈퇴에 재가입 차단이 들어 있지 않다고 안내하고(`local_report_detail_screen.dart`), 재가입은 클럽 차단으로 따로 막는다([제재 문서](../club_activity/warnings/sanctions.md) 7·11절, [신고 처리 증거](../release-gate/evidence/SAF-01/README.md) 5절).",
+      "condition": "넷을 나눠 차례를 정한다",
       "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
@@ -878,26 +877,10 @@
       "evidenceLinks": []
     },
     {
-      "id": "H-572",
-      "title": "미등록 회원이 제공자 등록 양식을 열 수 있게 고치기",
-      "description": "닫힌 제공자 기능의 결함이다. 미등록 회원이 「제공자 등록하기」 를 누르면 센터로 되돌아와 등록 양식을 못 연다. 그 입구가 가는 `/me/provider/edit`(`lib/core/router/feature_routes/event_host_routes.dart`)의 가드 `redirectProviderOnly`(`lib/core/router/route_guards.dart`)가 프로필이 없으면 제공자 센터로 되돌리기 때문이다. 재현 입력: 제공자 프로필이 없는 회원으로 「제공자 등록하기」 를 누른다. 닫힌 기능이라 첫 출시에는 보이지 않는다.",
-      "condition": "바로 할 수 있다. 재현 시험부터 쓴다. 제공자 공개는 공개 때",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-03 설계 틈 확인 E1",
-      "evidenceLinks": []
-    },
-    {
       "id": "H-618",
-      "title": "마켓 결함 고치기",
-      "description": "닫힌 마켓의 결함이다. 2026-11-07 사용자 결정으로 공개 전에 고친다. 재현 시험부터 쓴다. ① 결함: 마켓 검색 주소가 검색어를 인코딩하지 않는다(`lib/presentation/market/screens/market_main_screen.dart` 의 `/market/search?keyword=$query`). 재현 입력: 「캠핑&바베큐」 → 「캠핑」, 「C# 입문」 → 「C」, 「C++」 → 「C」 로 검색된다. ② 결함: 환불 신청 경로를 이동 값 없이 열면 구매 번호 0 으로 신청된다(`lib/core/router/feature_routes/plan_market_routes.dart` 의 `purchaseId ?? 0`, 서버 신청 본문에 번호 검증 없음). 앱 안 두 입구는 늘 번호를 넘기지만 이 경로는 닫혀도 열리는 예외다. 재현 입력: 이동 값 없이 그 경로를 연다. ③ 받은 환불 요청(`/market/refunds/incoming`)으로 들어가는 입구가 앱 안에 없고, 알림은 판매자에게도 내 환불 상세로 보낸다. ④ 「검색 결과 {n}건」·「총 {n}건」 이 전체가 아니라 지금 실린 줄 수다(20줄씩 읽는 목록이라 20건 넘으면 「20건」, 서버 전체 수 안 씀). ⑤ 기간권 설계 2.11 의 둘을 고친다. ⑤-1 앱 번들 구매 단추에 자기 구매·로그인·결제 개통 검사가 없다. ⑤-2 관리자 웹 `transitionBundle` 이 멱등 키를 보내지 않는다. ⑥ 마켓 `difficulty` 거르기는 받기만 하고 적용하지 않는다(`MarketItem` 에 칸 없음, 앱도 이 값을 보내지 않음, 코드 확인).",
-      "condition": "재현 시험부터 쓴다. 마켓 공개는 공개 때",
+      "title": "마켓 환불 알림의 받는 사람 가르기",
+      "description": "닫힌 마켓의 결함 일곱은 2026-11-07 고쳤고 둘이 남았다. ① 환불 승인·거절 알림(`REFUND_APPROVED`·`REFUND_REJECTED`)은 운영팀 판정 때 판매자도 받는데, 서버 알림 자료로 받는 사람을 가를 수 없어 내 환불 쪽으로 간다. 상세는 열리지만 뒤로 가면 내 환불 내역이다. ② 번들 구성 상품 주인은 판정자가 아닌데 환불 알림을 받아, 눌러도 상세에서 권한 오류가 난다.",
+      "condition": "서버 알림 자료에 받는 사람 칸을 더한다. 마켓 공개는 공개 때",
       "scope": "now",
       "kind": "기능 보완",
       "section": "3. 고칠 결함",
@@ -906,13 +889,8 @@
         "development"
       ],
       "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "[마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서](payment/MARKET_COMMERCE_PERIOD_PASS_RELEASE_SEAL_AUDIT_2026-08-30.md)",
-      "evidenceLinks": [
-        {
-          "label": "마켓 상거래와 1·3·6개월 기간권 출시 봉인 실측 보고서",
-          "href": "payment/MARKET_COMMERCE_PERIOD_PASS_RELEASE_SEAL_AUDIT_2026-08-30.md"
-        }
-      ]
+      "evidence": "2026-11-07 마켓 결함 수리",
+      "evidenceLinks": []
     },
     {
       "id": "H-619",
@@ -2644,7 +2622,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "201908542"
+      "commit": "e36a79d7b"
     },
     {
       "name": "관리자 API",
@@ -2652,18 +2630,18 @@
     },
     {
       "name": "앱",
-      "commit": "3a66fc4b"
+      "commit": "2fadaf99"
     },
     {
       "name": "관리자 웹",
-      "commit": "fb7081692"
+      "commit": "7f2a3c3"
     },
     {
       "name": "실시간",
       "commit": "ba2de4362"
     }
   ],
-  "sourceDigest": "18686ec543bb9fd33ad83943cfa8c0f194ca1d531b5b7e33c2828ebbeb5137d4",
+  "sourceDigest": "aeab94dfd85f80280343bd0d2a0893064cb8e9b5556c3e4ddccc17402ef3825f",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2673,10 +2651,10 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 109개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 108개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 10,
-      "3": 10,
+      "3": 9,
       "4": 5,
       "5": 14,
       "6": 10,
@@ -2773,18 +2751,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-07T20:16:10+09:00",
+    "updatedAt": "2026-11-07T20:55:55+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "78d2b4f3a2f104963ec97f52759ba09386922c6a",
+    "sourceCommit": "b8ca9f6bd2dfc41ecf69bec10519e8693369b9d4",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "cc7b47a9949eefb712eb04f60c1a5f46aa845d9e05b44bcbb92cf9049ddb644c",
-    "worklistSha256": "087f3bb37d867884823cbcde570379221416c111595e731a4c472608771ad608",
+    "sourceSha256": "b4e96d68cdaeef111d10cd21e144341951d064a6e487e04ece6803266fd89056",
+    "worklistSha256": "2fa59720dcbf02902df1d173316c949b2a36292a84ba6ea98265247003c2bdf5",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "087f3bb37d867884823cbcde570379221416c111595e731a4c472608771ad608",
+      "docs/plan/WORKLIST.md": "2fa59720dcbf02902df1d173316c949b2a36292a84ba6ea98265247003c2bdf5",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "6f08cf2d26fd6119fe986007c717f862384c570bc6359de1016e1ecf8e33456d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
