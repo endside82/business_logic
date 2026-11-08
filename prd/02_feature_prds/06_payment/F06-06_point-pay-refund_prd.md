@@ -9,7 +9,7 @@
 
 이 절 뒤의 PaymentParam·WalletRepository.pay/refund와 옛 주소 상세는 이관 전 이력이며 현행 계약이 아니다.
 
-현재 서버 위치는 [확인한 서버 코드 위치](#확인한-서버-코드-위치), 이용 규칙은
+현재 서버 위치는 [확인한 서버 코드 위치](#2-코드-위치), 이용 규칙은
 [참가비 결제와 환불의 현재 진입](../../../docs/features/F06-06.html#current-payment-entry)을 따른다.
 
 <!-- release-document: reference -->

@@ -38,7 +38,7 @@
 ## 3. 정기모임(Regular Meeting) 확정 결정 로그
 
 > **2026-05-27 일괄 확정 완료** (A~T + J·K + 시뮬레이션 결정 C8·C11·P2·P3 + 정합성 접근 B = 미확정 0).
-> Canonical: [docs/plan/regular-meeting/03-design-decisions.md](../../../docs/plan/regular-meeting/03-design-decisions.md) — 결정 식별자(A~T)는 분할 후에도 **불변**. namespace 변환(D-11 등) 안 함.
+> Canonical: `docs/plan/regular-meeting/03-design-decisions.md`(2026-08-10 문서 저장소에서 지움, Git 이력에 있음) — 결정 식별자(A~T)는 분할 후에도 **불변**. namespace 변환(D-11 등) 안 함.
 > 본 표는 요약·교차 참조 인덱스. 결정 본문/근거/검증 조건은 canonical에서 본다.
 
 | ID | 주제 | 결정 요약 | 영향 |

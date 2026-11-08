@@ -73,7 +73,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 구현 위치 확인 · 실제 환경은 별도 | [확인한 서버 코드 위치](#확인한-서버-코드-위치) | 공급자별·호환용 수신 함수가 공통 검증·전달 이력 저장과 `MeetingSettlementTransferService#confirmVirtualAccountDeposit`을 호출한다. 서비스가 없거나 호출이 주석 처리됐다는 옛 설명은 철회한다. | 실제 결제사 연결·입금·중복 통지·오류 복구의 실행 근거와 공개 여부는 [첫 출시 현황](../../../docs/qa/launch-status.html)에서 판단한다. 이번 위치 교정은 실거래 검증이 아니다. |
+| 구현 위치 확인 · 실제 환경은 별도 | [확인한 서버 코드 위치](#2-코드-위치) | 공급자별·호환용 수신 함수가 공통 검증·전달 이력 저장과 `MeetingSettlementTransferService#confirmVirtualAccountDeposit`을 호출한다. 서비스가 없거나 호출이 주석 처리됐다는 옛 설명은 철회한다. | 실제 결제사 연결·입금·중복 통지·오류 복구의 실행 근거와 공개 여부는 [첫 출시 현황](../../../docs/qa/launch-status.html)에서 판단한다. 이번 위치 교정은 실거래 검증이 아니다. |
 | 후보 | backend.md:82 | - **참고**: BANK_TRANSFER 환불은 환불 금액 계산만 하고 wallet credit은 호출하지 않음 (호스트가 수동으로 외부 환불해야 함 — 현재 코드는 POINT에 한해 자동 환불) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:26 | - 호스트 뷰 + BANK 미확인: "확인" / "환불" 버튼 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:38 | - BANK 미확인 / POINT 완료 / 환불 완료 각각 다른 배지 색 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
