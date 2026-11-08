@@ -2466,10 +2466,10 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다."
   },
   "publication": {
-    "updatedAt": "2026-11-08T13:56:01+09:00",
+    "updatedAt": "2026-11-08T14:02:52+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "e4d48f6b97198cb5f84ef62530b94c0f5aa8b4cb",
+    "sourceCommit": "3f7020c151eecf97fe178123f820ee9a1bc08492",
     "sourcePath": "docs/plan/NEXT_WORK.md",
     "sourceSha256": "66b37fa91eacdea2494cb56d2e070c7541f28d5708d57d3e68218fecdab4b7f0",
     "worklistSha256": "13d147d106aebe3f2a15b8d360154269ff9760e56feaddf9fe211d0a44506987",
