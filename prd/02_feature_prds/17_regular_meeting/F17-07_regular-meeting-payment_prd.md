@@ -7,9 +7,9 @@
 
 > **2026-08-18 P0 출시 태세(P0-PAID-01)**: 회비 결제도 이벤트와 **같은 서버 판정**을 쓴다(`GET /api/v1/app/release-scope`의 `enabledPaymentMethods` — 이벤트·정기모임 공통 단일 출처). 지금 열려 있는 수단은 **BANK_TRANSFER 하나**이며 WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. 아래 WALLET 서술은 설계 정본이자 현재 비활성으로 읽는다. 앱의 결제수단 라디오는 종전처럼 두 값을 하드코딩하지 않고 서버 목록으로 그려지며(2026-08-18 정정), 목록에 없는 수단으로 보내면 서버가 `400023`으로 거부한다. ⛔ 이미 접수된 건의 확인·거절·환불은 이 판정을 타지 않는다(안전 출구).
 >
-> **후속 Gap (P1)**: 정기모임 계좌이체 회비에는 **호스트 수납 계좌의 결박·안내 표면이 아직 없다**(이벤트 쪽에는 있다). 흐름 자체는 입금자명 신고 → 호스트 확인으로 성립하지만, 참가자가 어느 계좌로 보낼지 안내받는 화면이 비대칭이다.
+> 정기모임 계좌이체 회비는 코스를 공개할 때 결박한 호스트의 받을 계좌로 받는다. 회원은 결제 화면의 납부 안내(`GET /payment/bank-instructions`)에서 계좌를 보고, 등록하지 않은 회원에게는 계좌를 보이지 않는다(400 `ENROLLMENT_INVALID_STATUS`, 2026-11-08 현금 정기모임 여정으로 확인).
 
-FIXED 모임에서 멤버가 `APPROVED_PENDING_PAYMENT` 상태일 때 코스 전체 금액을 한 번에 납부한다. 두 가지 방식:
+FIXED 모임에서 멤버가 `APPROVED_PENDING_PAYMENT` 상태일 때 코스 전체 금액을 한 번에 납부한다. 회비 납부와 계좌이체 신고·호스트 입금 확인은 고정형(전체 과정 참여)만 받고, 변동형(일정 골라 참여)은 400 `REGULAR_MEETING_INVALID_STATUS`(2700004)다. 두 가지 방식:
 
 - **WALLET** (포인트 지갑) — `WalletService.payForRegularMeeting` 호출. 즉시 차감 → `PointTransaction(referenceType="REGULAR_MEETING_PAYMENT", referenceId=paymentId)` + 분개(`AccountingLedgerService.recordRegularMeetingPayment`: `USER_WALLET → CREATOR_PAYABLE`). 결제 row `PAID` → 멤버 `ENROLLED` → materialize.
 - **BANK_TRANSFER** (호스트 직접입금, off-ledger) — `isHostDirect=true`. PENDING 으로 만들고 paymentDueAt=now+72h. 회계 분개 없음(payout 비대상). 호스트가 입금 확인 후 `POST /payment/{paymentId}/confirm` → PAID → ENROLLED. 거부 시 `reject(reason)` → 결제 CANCELED + 멤버 APPROVED_PENDING_PAYMENT 유지(재결제 허용).
@@ -79,7 +79,7 @@ PG queue/외부 결제는 본 도메인에서 사용 안 함 — WALLET 의 lot 
 | S7-6 | BANK paymentDueAt 만료 | paymentDueAt < now, status=PENDING | scheduler: payment=CANCELED, member=PAYMENT_EXPIRED, WAITING 승격 |
 | S7-7 | 활성 결제 중복 시도 | 이미 PENDING payment 보유 | 400 — `assertNoActivePayment` + uk_payment_active 가 차단 |
 | S7-8 | price=0 결제 시도 | 모임 price=0 | 400 `INVALID_PAYMENT_AMOUNT` (price>0 모임만 결제 단계) |
-| S7-9 | VARIABLE 모임 결제 시도 | meetingType=VARIABLE | 400 — `lockPayableMeeting` 가 `REGULAR_MEETING_NOT_FIXED` |
+| S7-9 | VARIABLE 모임 결제 시도 | meetingType=VARIABLE | 400 `REGULAR_MEETING_INVALID_STATUS`(2700004) |
 | S7-10 | CANCELED 후 재결제 | 이전 payment CANCELED | 신규 payment row 생성 가능 (active_member_id NULL → UNIQUE 우회) |
 
 ## 7. 정합성 판단

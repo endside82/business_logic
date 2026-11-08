@@ -51,7 +51,7 @@
 |---|---|---|---|
 | `overcapacity_allowed` | TINYINT(1) NOT NULL | 0 | true면 호스트가 baseCapacity 이상으로도 참석을 받을 수 있다 |
 | `hard_capacity_limit` | INT NULL | NULL | `CapacityPolicy`를 거치는 신규 참석 확정 경로의 상한. NULL이면 해당 정책 경로에서 무한 |
-| `base_capacity` (기존) | INT NOT NULL | — | 명목 정원. 참석 수 + 결제 대기 좌석 홀드보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절 |
+| `base_capacity` (기존) | INT NOT NULL | — | 명목 정원. 참석 수 + 좌석 홀드(결제 대기 일행과 호스트가 확인하기 전의 계좌이체 일행 늘리기 신고 인원)보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절 |
 
 **Invariant**: `hard_capacity_limit IS NULL OR hard_capacity_limit >= base_capacity`. 위반 시 `ErrorCode.INVALID_HARD_CAPACITY_LIMIT(400013)` 반환. 다만 `WaitlistService.promoteRowManual`은 `CapacityPolicy`와 `hardCapacityLimit`을 검사하지 않고 `currentCapacity + 1`을 저장하므로, 수동 승격에서는 이 상한을 넘어갈 수 있다. 현재 이름과 달리 시스템 전체의 절대 상한은 아니다.
 
@@ -82,12 +82,12 @@
 1. 값이 같으면 아무것도 하지 않는다.
 2. `event.status ∈ {DRAFT, OPEN}` 이 아니면 `INVALID_EVENT_STATUS` (Q7).
 3. 하드 상한이 있으면 그보다 크게 두지 않는다(`INVALID_HARD_CAPACITY_LIMIT(400013)`).
-4. 지금 참석 수(`current_capacity`)보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절한다. 같으면 받는다.
+4. 지금 참석 수(`current_capacity`)에 좌석 홀드(결제 대기 일행과 호스트가 확인하기 전의 계좌이체 일행 늘리기 신고 인원)를 더한 점유 좌석보다 작게 줄이면 `CAPACITY_BELOW_ATTENDING`(409)로 거절한다. 같으면 받는다.
 5. 올렸으면 빈자리만큼 대기자를 승격한다(`PROMOTED_CAPACITY_INCREASE`).
 
 ### 정원 축소는 거절
 
-정원을 참석 수 + 결제 대기 좌석 홀드보다 작게 줄이는 요청은 거절한다(결정 Q2). 모집 마감·재개는 호스트만 `POST registration/close`·`reopen` 으로 하고, `PUT capacity/settings` 에는 마감 칸이 없다. 기존 참석을 강제로 취소하지 않고, 감소로 초과 참석이 생기는 일도 없다. 옛 `ChangeType.CAPACITY_REDUCED(10)` 이력은 걷었고 번호는 비워 둔다.
+정원을 참석 수 + 결제 대기 좌석 홀드 + 호스트가 확인하기 전의 계좌이체 일행 늘리기 신고 인원보다 작게 줄이는 요청은 거절한다(결정 Q2, 신고 인원은 2026-11-08 부터 센다). 이 좌석 홀드는 유료 잔여석, 정원 확대 자동 승격, 손 승격, 신청서 승인·신청 표지와 같은 한 셈이다. 모집 마감·재개는 호스트만 `POST registration/close`·`reopen` 으로 하고, `PUT capacity/settings` 에는 마감 칸이 없다. 기존 참석을 강제로 취소하지 않고, 감소로 초과 참석이 생기는 일도 없다. 옛 `ChangeType.CAPACITY_REDUCED(10)` 이력은 걷었고 번호는 비워 둔다.
 
 ### EventVo 노출 신규 필드 (D16)
 
@@ -125,10 +125,11 @@
 - 정원 판정을 본다. 자리가 없으면 `CAPACITY_FULL` 이다. 승격도 상한을 넘기지 못한다.
 - 제재 중인 회원은 거절한다. 게스트 행은 데려온 회원이 `ATTENDING` 일 때만 올린다(`GUEST_OWNER_NOT_ATTENDING`).
 - 종료·취소 모임은 `EVENT_NOT_OPEN` 이고, 모집 마감한 OPEN 모임은 받는다. 다른 운영자가 먼저 올린 행은 `CONFLICT` 다.
-- 유료 모임(참가비 > 0 이거나 선입금 정책이 켜짐)은 손 승격이 없다. 결제를 마친 사람은 대기에 두지 않으므로, 남은 대기 행을 손으로 올리면 결제 없는 참석이 된다. 409 `WAITLIST_PROMOTION_PAID_EVENT`(400043)로 거절하고 승격 표지도 거절이다. 무료 모임의 손 승격은 자리를 「참석 수 + 결제 대기로 잡아 둔 자리」 로 센다(2026-11-08).
+- 유료 모임(참가비 > 0 이거나 선입금 정책이 켜짐)은 손 승격이 없다. 결제를 마친 사람은 대기에 두지 않으므로, 남은 대기 행을 손으로 올리면 결제 없는 참석이 된다. 409 `WAITLIST_PROMOTION_PAID_EVENT`(400043)로 거절하고 승격 표지도 거절이다. 무료 모임의 손 승격은 자리를 「참석 수 + 결제 대기로 잡아 둔 자리」 로 센다(2026-11-08). 잡아 둔 자리는 좌석 홀드(결제 대기 일행과 호스트가 확인하기 전의 계좌이체 일행 늘리기 신고 인원)다.
 - 대기 명단에 사람이 있으면 모임을 유료로 바꿀 수 없다. 모임 수정·클럽 모임 수정의 선입금 정책 켜기, 포인트 결제 전환, 참가비를 적용하는 일정 변경(제안을 만들 때 포함)이 409 `EVENT_PAID_CONVERSION_WAITLIST_EXISTS`(400042)로 거절한다. 호스트가 대기자를 먼저 정리한다(2026-11-08).
 
 ### 자동 승격과 제재
+- 유료 모임은 대기 없음이다. 결제한 사람은 대기에 두지 않고, 대기자가 있는 모임은 유료로 바꾸지 못한다. 그래서 결제 대기가 기한으로 끝나 풀린 자리는 대기자에게 넘기지 않고 다음 신청이 받는다(2026-11-08).
 - 제재 대상은 건너뛰고 대기에 남긴다. 앞사람이 제재 중이어도 뒷사람은 승격한다. 제재가 풀리면 다음 승격 때 다시 후보가 된다.
 - 종료·취소 모임에서는 승격하지 않는다.
 
@@ -148,7 +149,7 @@
 | S6 | (호스트) 대기 중이 아닌 사용자를 승격 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | (에러) 권한 없는 일반 사용자 정원 설정 접근 | event 1312 isClosed=false (sample_data.sql:1190 시드값) | event 1312 isClosed=false 복귀, 다른 메타 무변동, **mutation but self-rollback**. **출처: CapacitySettingsService.java:84-104** |
 | S1-1 | (호스트) 정원 초과 허용을 켜는 길이 없다 | 옛 `PATCH /capacity-settings` 걷음(차수 7 S22) | 그 창구가 없고 `overcapacityAllowed` 는 기본값 false 로 남는다. 정원이 차면 새 신청은 대기 또는 `CAPACITY_FULL` |
-| S1-2 | (호스트) 참석 수 + 결제 대기 홀드보다 작게 정원 축소 시도 | baseCapacity=10, currentCapacity=8, OPEN | `PUT /capacity/settings` baseCapacity=5 → 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석 그대로. baseCapacity=8 은 받는다 |
+| S1-2 | (호스트) 참석 수 + 좌석 홀드(결제 대기 일행·확인 전 계좌이체 일행 늘리기 신고)보다 작게 정원 축소 시도 | baseCapacity=10, currentCapacity=8, OPEN | `PUT /capacity/settings` baseCapacity=5 → 409 `CAPACITY_BELOW_ATTENDING`, 정원·참석 그대로. baseCapacity=8 은 받는다 |
 | S1-3 | 하드 상한 | 상한을 두는 입구가 없어 늘 NULL | 정원 바꾸기 본체의 상한 검사(`INVALID_HARD_CAPACITY_LIMIT(400013)`)는 상한이 있을 때만 닿는다 |
 | S1-4 | (호스트) CLOSED 이벤트 정원 조정 차단 (Q7) | event.status=CLOSED | `PUT /capacity/settings` 로 정원 값을 바꾸면 400 `INVALID_EVENT_STATUS` |
 
