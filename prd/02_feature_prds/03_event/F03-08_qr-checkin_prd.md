@@ -112,7 +112,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | scenarios.md:103 | [E2E 보강: seed_event_attendance_state_test.dart::event_qr_expired_refresh_surface — `QrTokenVo.expiresAt` 가 과거인 상태로 호스트가 `screenEventCheckin` 진입 시 "새 QR 코드 받기" 텍스트 + `screenEventCheckinQrRefresh` semantics 버튼이 함께 노출되어 새 토큰 발급 진입점 보장. 만료 표시는 화면 분기 — 자동으로 새로 발급하지 않고 명시적 사용자 액션 필요.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 만료된 QR | QR 이 만료되면 호스트 화면이 「새 QR 코드 받기」 단추를 보이고, 누를 때만 새로 받는다. 시험 보강 기록이다 | 없음 |
 
 ## 9. 수용 기준
 

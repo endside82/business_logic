@@ -29,7 +29,7 @@
   - AppBar `수익 대시보드`
   - `EarningsSummaryCardWidget` — 이번 달 수익 카드 (.pen primary500, r=16, h=100)
   - `EarningsChartWidget` — `monthlyChart` 시리즈 기반 라인/바 차트 (white r=12 h=180)
-  - 평균 객단가 박스 (#F0F0ED, r=12, p=16) — "평균 객단가 / ₩{totalEarnings}" + "지난달 대비 +12%" (현재 +12% 문자열은 프로토타입 상수, 추후 서버 보강 영역)
+  - 요약 카드: 누적 실수령액과 누적 수익. 지난달 대비 증감 표시는 없다
   - `EarningsEventListWidget` — `recentSettlements` 리스트 (이벤트별 행, 상단 "전체 수익 내역 보기 →" 액션)
 - **사용자가 할 수 있는 액션**:
   - 풀투리프레시 ▶ `ref.refresh(earningsDashboardNotifierProvider.future)` ▶ `GET /api/v1/wallet/earnings/dashboard`
@@ -63,9 +63,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:23 | - 평균 객단가 박스 (#F0F0ED, r=12, p=16) — "평균 객단가 / ₩{totalEarnings}" + "지난달 대비 +12%" (현재 +12% 문자열은 프로토타입 상수, 추후 서버 보강 영역) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:49 | - **"지난달 대비 +12%"**: 현재 코드에 하드코딩된 상수 (UI/UX 20의 증감률 정책. 서버는 제공하지 않음 — 추후 서버 보강 영역) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:44 | **종료 상태**: 화면 변동 없이 인지 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 지난달 대비 | 수익 화면 요약 카드는 누적 실수령액과 누적 수익을 보인다. 지난달 대비 증감 표시는 없다 | 없음 |
+| 해소됨 | 시나리오 조각 | 시나리오 종료 상태 문장 조각이라 판정할 내용이 없다 | 없음 |
 
 ## 9. 수용 기준
 

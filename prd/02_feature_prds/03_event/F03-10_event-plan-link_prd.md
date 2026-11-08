@@ -92,9 +92,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:60 | - **override_*` 필드들의 UI 노출**: 현재 화면은 sortOrder/isActive/삭제만 다루며, `overrideLocation`/시간 필드는 미노출 (서버 API 는 지원하지만 UI 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:62 | 4. Flutter: 토스트(현재 화면은 명시적 토스트 미구현 — Provider error 로 처리) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:80 | [E2E 보강: seed_event_authoring_surface_test.dart::event_plan_link_member_gate — 비호스트가 `/home/events/{id}/plans` 직접 진입 시 라우터 redirect로 `screenEventPlanLink` 미마운트, 대신 `screenEventDetail`로 복귀. 즉 backend 403보다 먼저 client-side router guard가 동작.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | 장소·준비 시간 덮어쓰기 | 서버는 플랜을 모임에 연결할 때 장소·준비 시작·끝 시각 덮어쓰기를 받고, 플랜 카드는 그 값을 보인다. 연결 화면에는 그 값을 넣는 칸이 없다 | 입력 칸을 둘지, 명세에서 뺄지 정한다 |
+| 해소됨 | 연결 실패 안내 | 연결·해제·켜고 끄기·차례 바꾸기가 실패하면 화면이 안내한다 | 없음 |
+| 해소됨 | 시험 보강 기록 | 호스트가 아닌 회원이 플랜 연결 화면을 바로 열면 모임 상세로 돌려보내는 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

@@ -53,9 +53,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:42 | > 주의: `ref.invalidate(eventLocationNotifierProvider(eventId))` 를 호출하면 Notifier 가 dispose 되어 30s 자동 갱신 Timer 가 영구 정지된다. 따라서 `extend()` 가 내부에서 `refresh()` 만 호출하고, 화면은 invalidate 호출하지 않는다 (현 구현 G01-D2 코멘트 참조). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:76 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=extend) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:106 | - 클램프(1~120분) 검증은 본 E2E 에서 미커버 — 서비스 단위 테스트로 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 연장 뒤 자동 갱신 | 연장이 성공하면 위치 목록을 그 자리에서 다시 읽고 30초 자동 갱신은 그대로 돈다. 오류 화면의 「다시 시도」 만 목록을 새로 만들고, 목록이 다시 보이면 자동 갱신을 다시 켠다 | 없음 |
+| 해소됨 | 시험 보강 기록 | 위치 공유 연장의 시험 보강 기록이다. 결함이 아니다 | 없음 |
+| Gap | 연장 상한 시험 | 서버는 한 번 연장을 1~120분으로 자르고 모임 끝 시각을 넘기지 않는다. 앱은 늘 30분만 보낸다. 모임 끝 상한과 공유 시간 밖 거절은 단위 시험이 지키지만, 120분 자르기와 1분 올리기는 시험이 없다 | 120분 넘는 값과 1분 밑 값을 자르는 단위 시험을 더한다 |
 | 전달 한계 | `LocationShareExpiringScheduler`, `NotificationService` | 잔여 25~31분 window에서 알림 생성을 시도하며 채널 설정에 따라 skip된다. push는 비동기라 정확히 30분 전 도달을 보장하지 않는다. | 문구를 근사 알림으로 유지하고 trace/설정별 테스트 |
 | UX Gap | `_CountdownRow` | 만료 여부로 연장 버튼을 disable하지 않는다. 다음 GET 전에 stale `myLocation`이 남으면 `"공유 종료됨"` 옆 버튼이 활성이고 누르면 서버 실패 토스트가 날 수 있다. | `expiresAt <= now`에서 버튼 숨김/비활성화 |
 

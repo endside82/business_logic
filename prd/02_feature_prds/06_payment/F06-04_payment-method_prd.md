@@ -60,7 +60,7 @@ PG(Toss)에서 발급된 빌링키(billingKey) 기반 카드 결제수단을 등
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:24 | - **응답**: `List<PaymentMethodVo>` (배열, **PageResponse 아님 — 주의**) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 결제 수단 목록 | 결제 수단 목록은 쪽 나눔 없는 배열이고 앱도 배열로 받는다 | 없음 |
 
 ## 9. 수용 기준
 

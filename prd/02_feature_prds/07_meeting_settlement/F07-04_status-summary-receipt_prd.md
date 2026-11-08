@@ -59,8 +59,7 @@ status 화면 진입 시:
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:83 | - **참가자 카드 탭**: 해당 참가자의 transfer 상세로 이동 (현재 코드에선 my-shares로 이동) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:23 | 3. 자기 카드 강조 표시 (현재 코드는 별도 강조 없음, 카드만 노출) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 현황 화면 입구 | 정산 현황 화면은 실제로 주고받을 돈 목록과 내 몫 화면으로 가는 입구를 둔다. 내 몫은 따로 보인다 | 없음 |
 | ~~Gap (P2)~~ 해소 (2026-06-05) | `app_router.dart` 정산 read 게이트 재구성 | ~~비ATTENDING share/transfer 당사자 앱 진입 불가~~ → read 게이트가 **캐시된 이벤트 상세로만 빠른 통과**(게이트의 이벤트 상세 fetch 부작용 — 조회수 기록·DRAFT 이벤트 404 차단 — 제거) + **부작용 없는 BE 판정 폴백**(`getMyShares` → `validateSettlementReadAccess`)으로 변경. 지갑 모임정산 목록(SCR-PA-005)이 해당 사용자의 진입 경로 | 완료 — hostOnly 분기는 보수적 통과 유지 |
 | ~~Gap (P3)~~ 해소 (2026-06-06) | `MeetingSettlementDraftCleanupScheduler` (신규) | ~~오래된 DRAFT 자동 정리 없음~~ → DRAFT 30일 방치 시 `CANCELLED` 전이(삭제 아님 — 복구 여지 보존, audit + 호스트 알림)+PENDING 수동 transfer 동반 취소. D-3=30일. 상세는 F07-03 §4 | 완료 |
 

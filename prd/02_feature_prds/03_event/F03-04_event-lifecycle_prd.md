@@ -69,8 +69,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:152 | - **비즈니스 로직**: `RecurringEventUpdateService#updateFutureEvents` / `RecurringEventCreateService#cancelAllFutureEvents` (서비스 구현 미확인 — 본 단위에서는 진입점만) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:22 | [E2E 보강: seed_event_authoring_surface_test.dart::event_edit_host_surface / ::event_edit_open_lock_notice — 수정 화면 진입 시 "이벤트 수정" 헤더 + 안내 배너 두 줄("수정 시 참여자에게 알림이 발송됩니다", "모집이 시작된 이벤트는 일정과 정원을 변경할 수 없습니다") + "이벤트 제목 *", "카테고리 *" 라벨 노출. 즉 OPEN 상태에서는 일정/정원 필드가 lock 안내와 함께 readonly로 표시.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 반복 모임 이후 회차 | 반복 모임의 이후 회차 일괄 수정과 이후 회차 일괄 취소가 서버에 있고 시험이 있다 | 없음 |
+| 해소됨 | 공개 뒤 수정 화면 | 공개한 모임은 결제 수단을 폼에서 바꿀 수 없다. 일정은 변경 절차로 바꾸며, 시간이 1시간 넘게 바뀌거나 참가비가 오르면 참가자 동의를 받는다. 옛 시험 기록의 안내 두 줄은 지금 화면에 없다 | 없음 |
 
 ## 9. 수용 기준
 

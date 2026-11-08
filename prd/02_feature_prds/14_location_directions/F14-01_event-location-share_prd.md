@@ -76,8 +76,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | scenarios.md:77 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=opt_in/update 모음) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:104 | ### update mode 결정적 분기 보강 (silent → 명확 분기) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 위치 공유 켜기와 좌표 올리기의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 | Gap | `LocationService#validateEventParticipant` / `updateLocation` | 공동호스트는 opt-in 자격에는 포함되지만, 좌표 update 쓰기 권한은 호스트 또는 ATTENDING만 검사한다. 공동호스트가 ATTENDING 행이 없으면 opt-in 뒤 update가 `UNAUTHORIZED`로 거절될 수 있다. | 권한 기준 통일 여부 결정 및 회귀 테스트 추가 |
 | P0 Gap | `EventLocationNotifier.build` + `LocationService#getEventLocations` | 공유 활성 이벤트에서 일반 참석자는 GET 전에 opt-in해야 하지만 opt-in 토글은 GET 성공 content 안에 있다. 공유 비활성 이벤트만 빈 data로 우연히 content에 도달하며 update는 다시 차단된다. | GET을 미opt-in viewer에게 empty+상태로 허용하거나 opt-in CTA를 AsyncError/data 밖으로 분리 |
 | P1 Gap | `_toggleOptIn` / `_updateMyLocation` | OS 권한은 initState에서만 확인하고, 토글은 opt-in 저장 후 update 결과를 확인하지 않은 채 로컬 On·타이머·성공 토스트를 진행한다. | 토글 시 권한 재검증, opt-in+첫 update 결과 분리 UX 및 실패 rollback/명시 안내 결정 |

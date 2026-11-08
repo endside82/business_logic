@@ -64,7 +64,7 @@
 | P1 Gap | `_toggleOptIn` / `EventLocationNotifier` | 참석자 opt-in/out 실패가 false로 축약되고 UI에 false 실패 안내 분기가 없다. | 실패 원인을 보존하고 명시적 toast/상태 rollback |
 | P1 Gap | `_toggleOptIn(true)` | 프라이버시 화면은 opt-in만 저장하고 GPS 취득·첫 update·타이머를 시작하지 않는다. opt-out으로 share가 삭제된 뒤 토글을 다시 켜도 좌표는 보이지 않는다. | 실제 share 생성까지 연결하거나 동의/좌표 상태를 분리 표시 |
 | 분석 한계 | `LocationAccessLog` 생성부 | 30초 자동 GET마다 대상별 행을 추가하고 dedupe하지 않아 `totalAccesses`가 고유 사용자나 의도적 조회 수처럼 보일 수 있다. | 고유 접근자 집계/세션 집계 또는 raw polling hit라는 UI 설명 |
-| 후보 | scenarios.md:64 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=privacy_dashboard) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 위치 공개 현황 화면의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

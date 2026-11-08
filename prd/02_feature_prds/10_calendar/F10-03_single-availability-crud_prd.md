@@ -62,7 +62,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | scenarios.md:92 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P65 매트릭스 모드 모음 — `seed_calendar_availability_mutation_test.dart`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 가능 시간 등록·수정·삭제의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

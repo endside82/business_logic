@@ -74,8 +74,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:76 | - 클라이언트 측 파일 크기/형식 제약: 코드에서 명시 검증 없음 — `mime` 으로 type 추정 후 그대로 업로드, 서버/S3 가 차단 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:27 | [E2E 보강: seed_event_post_attendance_surfaces_test.dart::photo_gallery_surface (E2E_EXPECT_PHOTOS_ACCESS=true) — 참석 확정 사용자가 상세에서 "사진첩" CTA 탭 → `screenEventPhotos`로 진입, 헤더 "사진첩" 노출. 권한 게이트는 라우터 redirect로 처리되어 ATTENDING 사용자는 직접 진입 가능.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 사진 크기·형식 | 앱은 고를 때 사진을 줄이고(가로 1920, 품질 85) 올리기 전에 10MB 상한을 본다. 형식은 확장자로 정해 보내고 서버가 크기와 형식을 다시 본다 | 없음 |
+| 해소됨 | 시험 보강 기록 | 참석 확정 회원의 사진첩 입구의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

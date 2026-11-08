@@ -129,9 +129,7 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | Gap (확정) | `community_app/lib/data/models/club/community/post_status.dart:3-14` / `post.dart:24` | Flutter `PostStatus` enum에 `SCHEDULED`가 없고 `PostStatus.fromString` 미매핑. 단, `post.dart`의 `Post` 모델은 `status`를 `String?`으로 직접 보관하므로(`post.dart:24`) 서버가 SCHEDULED를 반환해도 String 그대로 저장됨 — `PostStatus.fromString` 자체는 미사용. **실질 gap은 예약 상태 enum/표시/관리 UI 부재**: 목록·상세·수정 화면이 `SCHEDULED`를 인지·표시·취소할 수 없음. `active` 폴백은 `PostStatus.fromString` 호출처가 있는 경우에만 발생. | `post_status.dart`에 `scheduled('SCHEDULED')` 추가 + 목록/상세 예약 상태 표시 + 작성자 취소 CTA 추가 |
-| 후보 | scenarios.md:106 | ### S1 보강 — 게시글 작성 화면 라벨 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:118 | ### S4 보강 — 게시글 수정 화면 프리필 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:127 | - 프리필 검증은 폼 dirty 검증(S4의 변경 필드만 PUT) 사전 조건이다. 프리필 누락 시 PUT body가 빈 값으로 전송되어 데이터 손실 위험. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 게시글 작성·수정 화면 문구의 시험 보강 기록이다. 수정 화면은 기존 제목과 본문을 미리 채운다 | 없음 |
 
 ## 9. 수용 기준
 

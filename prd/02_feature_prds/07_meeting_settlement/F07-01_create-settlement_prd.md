@@ -77,8 +77,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:24 | - `note: String` — 정산 메모 (검증 없음, nullable) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:65 | **검증 위치**: 클라이언트 (`_selectedUserIds.length >= 2`). 백엔드는 별도 최소 인원 검증 없음 — 활성화 시점에 `MEETING_SETTLEMENT_NO_ITEMS` 또는 `INVALID_INPUT`(빈 share)로 차단됨. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 정산 메모 | 정산 메모는 선택이고 길이 제한 없는 글 칸이다. 메모를 쓴 회원을 함께 남겨 내 정보 내보내기에는 본인 메모만 싣는다 | 없음 |
+| 해소됨 | 최소 인원 | 정산 만들기는 정산 방식(항목별 납부·주고받을 돈만 송금)과 메모만 받는다. 나눌 사람은 항목마다 고른다. 항목이 없으면 정산을 시작할 수 없다 | 없음 |
 
 ## 9. 수용 기준
 

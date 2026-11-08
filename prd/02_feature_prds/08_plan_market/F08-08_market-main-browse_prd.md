@@ -29,7 +29,7 @@
    - `marketCategoriesNotifierProvider` ▶ `MarketRepository.getCategories()` ▶ `GET /api/v1/market/categories`
    - `popularItemsNotifierProvider` ▶ `MarketRepository.getPopularItems(limit: 10)` ▶ `GET /api/v1/market/items/popular?limit=10`
    - `_loadLatestItems()` ▶ `MarketRepository.getMarketItems(itemType, sort, minPrice, maxPrice, page, size)` ▶ `GET /api/v1/market/items?...`
-2. 카테고리 변경 시: `_loadLatestItems()` 재호출 (page=0부터)
+2. 카테고리를 고르면 분류로 거를 수 있는 검색 요청으로 첫 쪽부터 다시 읽는다. 분류를 고르지 않으면 최신 목록 요청을 쓴다
 3. 정렬/필터 변경 시: 동일하게 `_loadLatestItems()` 재호출
 4. 무한 스크롤: `_loadMoreLatest()` ▶ 같은 API에 `page++`로 호출 → 결과 누적
 5. 카드 탭: 라우터 push만 (이 화면 내 추가 API 호출 없음)
@@ -55,8 +55,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:62 | - **비즈니스 로직**: `MarketItemService.getPopularItems(limit)` — 일반적으로 `purchaseCount` 기준 정렬, `ON_SALE` 상태만 노출 (서비스 구현 미확인 — 컨트롤러까지만 추적). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:83 | - **비즈니스 로직**: `MarketItemService.getMarketItems(searchParam)` — `ItemStatus.ON_SALE` 한정 + 필터/정렬 적용 후 페이지 반환 (서비스 구현 미확인). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 인기 플랜 고르기 | 인기 목록은 판매 중이고 판매가 닫히지 않은 종류의 상품만 구매 수가 많은 순으로 준다. 구매 수가 같으면 나중에 등록한 상품이 앞이다. 기본 10개, 최대 50개다 | 없음 |
+| 해소됨 | 최신 목록 거르기 | 최신 목록은 판매 중이고 판매가 닫히지 않은 종류의 상품만 준다. 상품 종류, 가격 범위, 난이도로 거르고 최신, 인기, 낮은 가격, 높은 가격 순으로 정렬한다. 정렬 값이 없거나 모르는 값이면 최신순이다. 분류를 고르면 앱은 분류로 거를 수 있는 검색 요청으로 읽는다 | 없음 |
 
 ## 9. 수용 기준
 

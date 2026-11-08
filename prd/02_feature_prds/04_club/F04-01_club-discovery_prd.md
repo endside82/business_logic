@@ -51,9 +51,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | scenarios.md:61 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, 인라인 검증 포인트 모음) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:65 | ### S2 보강 — OWNER 배지 텍스트 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:74 | > 본 surface 검증은 별도 새 시나리오를 만들 정도가 아니므로 S2의 종료 상태 보강으로 둔다. 라벨 변경 시 `ClubMembershipBadge` 코드와 본 시나리오/E2E 모두 동기화해야 한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 클럽장 배지 문구의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

@@ -71,8 +71,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:43 | - 요청 생성 중 repository 저장 실패 등 일반 예외 응답은 `(미확인)` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:44 | - 인증 실패 응답은 `(미확인)` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 내보내기 요청 실패 응답 | 요청 저장이 실패하면 요청 행과 실행이 함께 남지 않고, 서버는 공용 오류 형식으로 잠금 충돌 409, 그 밖의 오류 500 을 돌려준다. 탈퇴 중인 계정은 403, 로그인 없이 부르면 401 이다. 앱은 「요청에 실패했습니다」 를 보인다 | 없음 |
 | Gap | `DataExportAsyncWorker#toEventFeedbackMap` | 본인이 작성한 `vibeTags`가 export에서 빠진다. | feedback schema에 vibeTags 추가 및 테스트 보강 |
 | Gap | `DataExportService#getExportStatus`, admin `expire` | 자연 만료는 자동 EXPIRED 전이/파일 정리 없이 `COMPLETED + downloadUrl=null`이 되고, 관리자 수동 expire만 EXPIRED를 만든다. | 자동 만료·관리자 전이·artifact retention·Flutter 재요청 UX를 한 계약으로 정렬 |
 | 확정 | request repository/status 조회 | 재요청은 새 row를 만들고 기존 FAILED row를 보존하며, public status는 `createdAt DESC` 최신 row 하나를 반환한다. | 문서 계약으로 유지 |

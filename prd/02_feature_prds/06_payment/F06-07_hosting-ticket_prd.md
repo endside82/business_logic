@@ -29,7 +29,7 @@
   - AppBar `호스팅 티켓`
   - 활성 티켓이 있으면 "현재 티켓 / N 이용중 / 다음 결제일: -" 배너 (#E8F5E9 r=12 p=16)
   - 만료 임박 배너 (3일/7일 이내 차등 색상 — `_getTicketExpirationInfo`)
-  - 만료된 티켓 안내 (gray50 배경, "만료된 티켓 N건이 있습니다")
+  - 개설권마다 만료 시각과 만료 안내(만료되면 「이벤트 개설권이 만료되었습니다 (남은 개설권 N장)」)
   - 남은 장수와 가장 먼저 끝나는 만료일. 값은 1장 3,000원 하나이고 등급 카드는 없다.
 - **사용자가 할 수 있는 액션**:
   - 풀투리프레시 ▶ `ref.refresh(hostingTicketNotifierProvider.future)` ▶ `GET /api/v1/hosting-tickets`
@@ -66,9 +66,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:66 | > 주의: `WalletService.deductPaidOnly`의 거래 타입은 `TransactionType.MEETING_SETTLEMENT`로 통일되어 있고, 호스팅 티켓 구매 식별은 `referenceType=HOSTING_TICKET_PURCHASE`로 한다. UI/거래 내역에서는 `referenceType` 또는 description으로 호스팅 티켓을 분리 노출해야 한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:49 | - 단, 현재 서버 `purchaseTicket`은 `count`만 받아 단가 × count로 차감하므로 UI에서 "Standard 8,000원 = 단가 8,000 × 1장"을 의도하면 `count`로는 표현 불가. 실제 서버 호출은 항상 `count: 1` (단가 3,000원). UI/UX 20의 티어 가격은 **현재 서버 구현과 정합되지 않음** (서비스 미확인 영역). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:47 | 2. 단, 클라 화면이 별도 hosting_tickets 전체 조회 등을 통해 만료 정보를 가지고 있다면 "만료된 티켓 N건이 있습니다" 안내 (현재 코드는 같은 응답에서 `remainCount==0 && expiresAt!=null`인 것만 카운트하지만 서버는 조건상 그런 행을 빼므로 실제로는 0건일 가능성) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 개설권 구매 거래 | 개설권 구매는 유료 포인트로만 내고 거래 내역에 「이벤트 개설권 구매 (N장)」 으로 남는다. 개설권은 산 날부터 6개월 뒤 만료된다 | 없음 |
+| 해소됨 | 개설권 가격 | 개설권은 장당 3,000원 한 가지이고 수량을 골라 산다. 등급별 가격은 없다. 앱 표시와 서버 차감이 같은 단가다 | 없음 |
+| 해소됨 | 만료 안내 | 개설권마다 만료 시각과 만료 안내(남은 장 수 포함)를 보인다 | 없음 |
 
 ## 9. 수용 기준
 

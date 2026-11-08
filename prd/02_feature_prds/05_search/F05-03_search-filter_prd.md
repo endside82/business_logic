@@ -63,8 +63,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:4 | 필터는 별도 엔드포인트가 아니라 **F05-01의 `GET /api/v1/search` 엔드포인트의 query 파라미터로 통합**된다. 즉 `EventSearchParam`의 카테고리/날짜/거리/가격/지역/시간 등 필드가 필터 역할을 한다. 추가로 지역 기반 추천 태그/통계를 제공하는 `GET /api/v1/search/filter-hints` 가 별도로 존재한다. 최소 정원(`minCapacity`) 필터는 서버가 이벤트 정원 기준으로 적용한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:40 | **키워드 sanitize**: `EventSearchParam.getSanitizedKeyword()` 가 HTML/script 태그를 strip 한다 (S-M-01). 단 `EventSearchRepository.searchEvents`는 raw `keyword`를 사용하고 sanitize는 호출되지 않는다 (현재 코드 기준). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 필터 창구 | 필터는 검색 창구의 조건 값이고, 지역 추천 태그를 주는 창구가 따로 있다 | 없음 |
+| 해소됨 | 검색어 정리 | 검색어는 입력한 글자 그대로 찾는다. 검색어는 조회 값으로만 쓰이고 화면에 HTML 로 그리지 않는다 | 없음 |
 
 ## 9. 수용 기준
 

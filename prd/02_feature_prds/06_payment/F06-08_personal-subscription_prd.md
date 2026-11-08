@@ -80,9 +80,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | scenarios.md:162 | ## P71 매트릭스 한계 및 향후 보강 (보강 메모) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:164 | 본 절은 본 라운드 시점의 P71 미커버 시나리오와 그 사유를 기록한다. 5필드 시나리오 형식이 아닌 운영 메모이므로 check_format `보강 메모` 화이트리스트 적용. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:167 | - **S4 (잔액 부족)**: 클라 사전 가드가 서버 호출 전 차단. Provider 통한 직접 호출 매트릭스에서는 UI 가드를 우회하나, 서버 INSUFFICIENT_BALANCE 분기 자체는 P70 `pay_insufficient_prefill` 가 같은 코드 경로 (`walletService.deductFromWallet`) 로 이미 검증. 본 단위 별도 mode 보강은 alice 잔액 사전 소진 setup 이 필요 — 향후 보강 후보. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 구독 시나리오 묶음의 덮지 못한 경우(잔액 부족 등)를 적은 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

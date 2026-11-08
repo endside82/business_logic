@@ -61,7 +61,7 @@ OWNER/ADMIN이 모든 멤버에게 일괄 알림을 보내는 단방향 게시 �
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | Gap (확정) | `community_api/.../club/service/ClubAnnouncementService.java:100-103` | **푸시 알림 체크박스 의미**: 앱 작성 화면에 "푸시 알림으로 전체 멤버에게 전송" 체크박스가 있지만, 서버 `ClubAnnouncementParam`에 해당 필드가 없고 서비스는 즉시 게시 시 항상 배치 알림 발송. UI의 체크박스가 서버에 전달되지 않아 misleading. `(서버 처리 미구현)` | 서버에 `sendPush` 파라미터 추가하거나, UI에서 체크박스 제거/비활성화 처리 결정 필요. Decision Needed. |
-| 후보 | scenarios.md:72 | ### S1 보강 — 공지 작성 화면의 푸시 토글 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 공지 작성 화면 푸시 토글의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

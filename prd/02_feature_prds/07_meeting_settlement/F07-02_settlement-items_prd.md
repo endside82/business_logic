@@ -62,8 +62,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:101 | - Unit 11 (File): `receiptFileId`는 file 도메인에서 업로드 후 받은 ID — 별도 검증 없음 (영수증 다운로드는 F07-04에서 settlement-scope 검증) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:55 | **주의**: ACTIVE 진입 후 수정 시도 시 400 `MEETING_SETTLEMENT_NOT_DRAFT`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 영수증 첨부 | 영수증은 호스트 본인이 올린 업로드 완료 증빙 파일만 붙는다. 항목이 가리키는 동안 원본을 지울 수 없다 | 없음 |
+| 해소됨 | 시작 뒤 항목 수정 | 시작한 정산의 항목을 고치면 400 으로 거절한다 | 없음 |
 
 ## 9. 수용 기준
 

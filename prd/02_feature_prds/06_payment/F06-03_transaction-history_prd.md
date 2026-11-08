@@ -81,10 +81,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:56 | - 3) `relatedEventId` 보강: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:99 | - 다른 Unit 의존: 거래 상세에서 `Settlement.eventId`(F06-10), `MeetingSettlement.eventId`(Unit 07) 보강 조회. 이벤트/클럽 모델은 referenceId만 노출, 상세 페이지 진입은 클라 라우팅 책임. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:54 | - "충전 취소" 탭 ▶ `AppDialog.confirm` (위험 스타일) → `chargeCancelNotifier.cancelCharge(tx.id)` ▶ `POST /charge/cancel` (F06-02 참조) ▶ 성공 토스트 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:61 | ## 3. 거래 상세 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 거래 상세 보강 메모 | 거래 상세의 관련 모임 번호를 채우는 개발 메모와 절 제목 조각이다. 제품 판정 대상이 아니다 | 없음 |
+| 해소됨 | 충전 취소 | 거래 상세의 충전 취소는 확인 창 뒤 충전 취소를 보내고 결과를 알린다 | 없음 |
 
 ## 9. 수용 기준
 

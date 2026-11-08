@@ -127,10 +127,9 @@ W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:85 | - `reason: String` `@NotBlank @Size(max=1000)` (UI/UX 20에는 첨부 파일도 명시되어 있으나 서버 Param에는 없음 — 서버 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:134 | - **Event Unit (03)**: `eventTitle` 보강을 위해 `eventRepository.findById` 호출 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:87 | - **이의 제출 다이얼로그 디자인**: 사유 텍스트 입력 (max 1000자 가드 — 서버 `@Size(max=1000)`과 일치 권장), 첨부 파일은 UI/UX에는 있지만 서버 미구현 → 현재 화면도 텍스트만 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:87 | **종료 상태**: 빠른 클라이언트 필터로 사용자 결정 보강 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | 이의 첨부 파일 | 이의 제기는 사유 글만 받는다(1,000자까지, 서버와 앱 모두 검사). 화면 명세의 첨부 파일은 서버와 앱 모두 없다 | 첨부를 만들지, 명세에서 뺄지 정한다 |
+| 해소됨 | 모임 제목 보강 메모 | 이의 목록에 모임 제목을 붙이는 개발 메모라 제품 판정 대상이 아니다 | 없음 |
+| 해소됨 | 시나리오 조각 | 시나리오 종료 상태 문장 조각이라 판정할 내용이 없다 | 없음 |
 | Risk (PG 게이트) | NoopPayoutProvider.java:21,28 | **실 payout(출금) provider 미구현(NOOP)** — dev/default mock이며 prod 부팅 시 `@PostConstruct guardAgainstProd` 예외로 차단. 정산 → 외부 송금(PAYING→PAID 실 지급)은 PG/출금 provider 계약 후에만 검증 가능. release-gate `05_pg.md` 등재. | PG 계약 시 검증 |
 
 ## 9. 수용 기준

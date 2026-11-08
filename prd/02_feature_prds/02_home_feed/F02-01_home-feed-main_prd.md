@@ -66,9 +66,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:97 | - `latitude: Double?`, `longitude: Double?` — **현재 서버 코드(HomeService#getUpcomingEvents)에서는 사용하지 않음.** 파라미터는 받지만 거리 정렬/필터에 반영하지 않는다(미확인 — 확장 슬롯). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:118 | ### `GET /api/v1/search/trending` — 트렌딩 이벤트(보강용) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:69 | - **디자인 토큰**: 섹션 간격 `AppSpacing.sectionGap`, 카드 패딩 `AppSpacing.screenPadding`, 메인 컬러 `AppColors.primary500`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 홈 예정 모임 정렬 | 홈 예정 모임은 시작 시각이 가까운 순이다. 위치 값을 받지만 정렬과 거르기에 쓰지 않는다 | 없음 |
+| 해소됨 | 인기 모임 절 제목 | 원문 절 제목 조각이다. 인기 모임 창구는 있다 | 없음 |
+| 해소됨 | 디자인 토큰 메모 | 간격·색 토큰 메모라 제품 판정 대상이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

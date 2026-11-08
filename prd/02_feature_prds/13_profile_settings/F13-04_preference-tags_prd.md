@@ -55,7 +55,7 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 확정 | `UserPreferenceTagService`, `SecurityConfiguration` | 인증은 기본 `anyRequest().authenticated()`이고 Param/Controller에는 Bean Validation이 없다. 입력 검증은 Service 수동 분기다. | 문서 계약으로 유지 |
-| 후보 | frontend.md:46 | - 클라이언트 한도는 20개이며 서버 `MAX_TAGS_PER_USER = 20`과 일치한다. UI 스펙의 10개 한도는 현재 코드와 불일치한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 태그 한도 | 태그는 서버와 앱 모두 20개까지다. 화면 위에 「내 태그 (현재/20)」 이 보이고 20개에서 더 누르면 「최대 20개까지 선택 가능합니다」 가 뜬다. 화면 명세의 10개는 옛 값이다 | 없음 |
 | Gap | `preference_tag_provider.dart`, `preference_tag_screen.dart` | mutation 실패를 `false`로 흡수하고 화면이 await하지 않아 POST/DELETE 오류 안내와 재동기화가 없다. | 실패 toast와 목록 재조회/복구 정책 추가 |
 
 ## 9. 수용 기준

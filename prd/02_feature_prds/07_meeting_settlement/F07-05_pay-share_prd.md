@@ -81,8 +81,8 @@ share 결제 액션 (my_shares에서):
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:38 | - **권한**: `@AuthenticationPrincipal` 필수 (별도 검증 없음 — 본인 transfer만 조회 SQL 단에서 필터) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:62 | 1. my-shares 화면에서 share 카드 액션 (현재 코드에선 view만 노출, 결제 버튼 미노출 — `payShareByPoint`는 가능하지만 UI에서 기본은 transfer 결제 흐름) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 송금 조회 권한 | 송금 조회는 로그인 회원 본인 것만 돌려준다 | 없음 |
+| 해소됨 | 내 몫 화면 | 내 몫 화면은 항목별 몫을 보이고 「실제로 주고받을 돈 보기」 로 송금 목록에 간다. 내는 일은 송금 목록에서 한다 | 없음 |
 | Gap (2026-07-29 실측) | `transfer_list_provider.dart:111`, presentation 전체 caller 검색 | `pay-mixed` API/Repository/Provider는 있으나 현재 Flutter presentation에서 호출하는 CTA/다이얼로그가 없어 사용자가 혼합 결제를 시작할 수 없음 | 혼합 결제 입력 CTA를 배선하거나 미지원 기능으로 명시 |
 | Risk (2026-07-29 실측) | `MeetingSettlementTransferVo`, `transfer_list_screen.dart:_confirmBankPortion` | transfer 응답에는 혼합 결제의 point/bank 분할 금액이 없고 총액 `amount`만 있다. 확인 다이얼로그는 총액을 “계좌이체 부분” 확인 금액으로 표시해 실제 은행분보다 크게 보일 수 있음 | 서버 VO에 분할 금액을 보존·노출하거나 다이얼로그에서 금액 단정을 제거 |
 | Fact (2026-07-29 실측) | `confirmBankPortion`, `canConfirmBankPortion` | 서버와 Flutter 모두 송금자 self-confirm을 막고 수취자/정산 생성자만 은행분 확인 가능. 실제 입금 자동 검증은 없음 | 현 신뢰 경계와 경고 문구 유지 |

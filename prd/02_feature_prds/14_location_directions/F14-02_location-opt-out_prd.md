@@ -55,7 +55,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | scenarios.md:74 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P64 매트릭스 mode=opt_out) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 위치 공유 끄기의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 | Gap | `EventLocationNotifier#optOut` / `refresh` | 일반 참석자는 opt-out 직후 목록 조회 자격을 잃는데 notifier가 곧바로 GET을 재시도하고 실패를 숨긴다. 화면의 로컬 토글·타이머는 중지되지만 provider에는 이전 목록이 남을 수 있다. | opt-out 성공 시 state를 비우거나 후속 GET을 생략하는 클라이언트 정책 결정 |
 | Gap | `location_privacy_screen.dart` → `EventLocationNotifier` | 프라이버시 화면의 opt-in/out 실패는 boolean false로 소실되어 사용자 안내가 없고, opt-out은 아래 위치 화면의 실행 중 타이머도 정지하지 않는다. | 실패 원인 보존과 공유 라이프사이클 제어를 한 notifier 상태로 통합 |
 | P1 Gap | 프라이버시 화면 재동의 | 토글 On은 `LocationOptIn`만 true로 바꾸며 GPS update를 하지 않는다. opt-out이 share를 삭제했으므로 동의와 실제 좌표 공유가 분리된다. | opt-in 성공 뒤 좌표 확보/update 또는 위치 화면으로 명시적 이동 |
