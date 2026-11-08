@@ -300,7 +300,6 @@
       "unlock": "조사 결과 확정 · 운영 추적 보완 · 후속 개발",
       "stages": [],
       "ids": [
-        "H-658",
         "H-568",
         "H-621",
         "H-609",
@@ -725,27 +724,6 @@
       "source": "NEXT_WORK.md#3-고칠-결함",
       "evidence": "R3·차수 5 기록",
       "evidenceLinks": []
-    },
-    {
-      "id": "H-658",
-      "title": "웹에서 24.8일보다 먼 모임의 상세가 모임 조회를 쉬지 않고 다시 보내는 것 고치기",
-      "description": "웹에서 24.8일보다 먼 모임의 상세를 참가 영역이 보이는 회원이 열면 모임 조회(`GET /api/v1/events/{id}`)를 쉬지 않고 다시 보낸다. 2026-11-08 밤 늦게 발송 실패 운영 복구 여정(H-592 ③)에서 찾았다. 30일 뒤 모임의 상세가 10초 동안 1,678번을 보냈고 그중 1,617번이 요청 한도 초과(429)라 본문이 그려지지 않았다. 원인: 모임 시각 경계 위젯(`event_time_boundary.dart`, 2026-11-03 부터)이 다음 경계까지 Dart `Timer` 를 건다. 웹의 Dart Timer 는 지연을 브라우저 `setTimeout` 에 그대로 넘기고, 브라우저는 2^31−1 밀리초(약 24.8일)보다 긴 지연을 넘쳐 곧바로 부른다. 그래서 열자마자 깨어 상세를 무효화하고, 다시 걸어 또 깨는 고리가 된다. 정산 404 와 씨앗의 참가 행은 원인이 아니었다. 고침(2026-11-09 새벽, 앱 `a93f42000`): 하루보다 긴 지연을 하루씩 이어 기다리는 공용 긴 타이머(`lib/core/utils/long_timer.dart`)로 날짜에서 나온 타이머 넷을 바꿨다. 시각 경계 위젯(같은 위젯을 쓰는 QR 체크인·정산 검토·참석자 위치 화면 포함), 개인 구독 만료(30일 남은 구독이 구독과 관심을 쉬지 않고 다시 읽던 같은 고리), 정기모임 납부 기한(화면 다시 그리기 고리), 채널 보내기 만료(한 번 일찍 깨어 만료 전환을 놓침)다. 재현 시험 넷은 옛 코드에서 10초 조회 101번·구독 읽기 201번으로 빨강이었고 고친 뒤 1번이다. 고친 뒤 여정에서 모임 조회는 1번, 429 는 0번이었다. 여정 마지막 확인(H-592 ③)은 장면 쪽(상세의 제목 구획이 스크롤 아래)을 고친 뒤 다시 돌린다. 통과하면 닫는다.",
-      "condition": "고쳤다(2026-11-09 새벽, 앱 `a93f42000`). 발송 복구 여정(H-592 ③)의 마지막 확인을 장면 쪽 고침 뒤 다시 돌려 통과하면 닫는다",
-      "scope": "now",
-      "kind": "기능 보완",
-      "section": "3. 고칠 결함",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#3-고칠-결함",
-      "evidence": "2026-11-08·09 발송 실패 운영 복구 여정 실행 기록(앱 `build/e2e-notification-recovery-journey/`), [현재 적용하는 결정](#현재-적용하는-결정) 「날짜로 거는 앱 타이머」",
-      "evidenceLinks": [
-        {
-          "label": "현재 적용하는 결정",
-          "href": "#현재-적용하는-결정"
-        }
-      ]
     },
     {
       "id": "H-568",
@@ -1292,7 +1270,7 @@
     {
       "id": "H-592",
       "title": "발송 실패 운영 복구 앱 여정 만들기",
-      "description": "①②④ 는 끝났다(앱 `d6d91550c`, 서버 시험 고정물 `13761118d`): 격리 여정 서버의 프로필 탐색·복귀, 투표로 정하는 모임, 실제 파일 업로드(시험용 S3 대역) 여정과 실행 대본 `run_release_gap_journeys.sh`. [앱 시나리오 감사](../audit/E2E_SCENARIO_AUDIT_2026-10-10.md) 표에 실행 파일을 이었다. ③ 발송 실패 운영 복구 여정의 서버 몫은 2026-11-08 밤 끝났다(공개 API `d586ada0f`, 시험 소스와 대본만): 여정 서버의 시험용 FCM 대역(토큰마다 첫 발송을 403 `SENDER_ID_MISMATCH` 로 실패시켜 발송 행이 FAILED 가 되고 그 뒤로는 받아 준다), 모임 참석 수신자의 기기 토큰과 `EVENT_UPDATED` 알림을 실제 서비스로 만드는 사례 `notification_recovery`, 2단계 인증을 마친 운영자 씨앗, 실행 대본 `community_api/scripts/run-notification-recovery-journey-server.sh`(새 DB, 공개 :38782, 관리자 :38784, Redis :46593, S3 대역 :38789). 대본은 운영자 로그인(비밀번호 → TOTP, CSRF 이중 제출) 뒤 FAILED 를 기다려 `POST /admin/v1/manage/notifications/deliveries/{id}/retry`(권한 `MANAGE_NOTIFICATION`, `Idempotency-Key` 필수)로 다시 보내고, ACCEPTED 가 되면 `NOTIFICATION_RECOVERY_READY` 를 찍고 두 서버를 띄워 둔다. 실제 기동으로 끝까지 통과하는 것을 확인했다. 앱 장면과 실행 대본은 2026-11-08 밤 늦게 만들었다(앱 `11ea9493c`). 장면 `integration_test/notification_recovery_journey_test.dart` 는 READY 뒤 고정물의 수신자(`cases.notification_recovery` 의 `E2E_RECIPIENT_*`)로 로그인해, 서버에서 그 알림이 `EVENT_UPDATED`·안 읽음인지, 알림함에 제목·내용·안 읽은 줄이 보이는지, 누르면 `/home/events/<E2E_EVENT_ID>` 로 가는지, 읽음이 서버에 저장되고 안 읽은 수가 하나 주는지, 상세에 모임 이름이 보이는지 본다. 대본 `scripts/e2e/run_notification_recovery_journey.sh` 가 서버 대본을 새 고정물로 띄우고 READY 뒤 웹 3254 에서 장면을 돌린 다음 서버를 내린다. 고정물 맨 위는 `API_BASE_URL=http://localhost:38782`, `ADMIN_API_BASE_URL=http://localhost:38784`, `E2E_JOURNEY_MODE=notify` 다. 앱 문서 셋(시나리오 색인·대시보드·현황)에 notify 포트(공개 38782, 관리자 38784, Redis 46593, S3 대역 38789)를 적었다. 남은 것은 마지막 확인이다. 2026-11-08 밤 늦게 두 번 돌린 여정은 서버 쪽 통과, 앱 장면은 알림함·목적지·읽음 저장·안 읽은 수 감소까지 통과하고 상세에서 멈췄다. 모임 상세가 모임 조회를 쉬지 않고 다시 보낸 결함(H-658)을 고친 뒤 2026-11-09 새벽 다시 돌리자 반복 조회는 사라졌지만(모임 조회 1번, 429 0번) 상세에서 모임 제목을 찾지 못했다. 상세 맨 위 그림이 넓은 창을 채워 제목 구획이 아직 그려지지 않은 것으로 보인다(확인 못 함). 장면이 제목까지 스크롤해 찾게 고친 뒤 다시 돌려 통과하면 닫는다. 2026-11-09 새벽부터 고치는 중이다. 격리 시험 서버 `money` 모드 기동과 브라우저 여정(P71·P72·현금·투표, P75 묶음) 실행 기록은 출시 후보 검수 때 남긴다.",
+      "description": "①②④ 는 끝났다(앱 `d6d91550c`, 서버 시험 고정물 `13761118d`): 격리 여정 서버의 프로필 탐색·복귀, 투표로 정하는 모임, 실제 파일 업로드(시험용 S3 대역) 여정과 실행 대본 `run_release_gap_journeys.sh`. [앱 시나리오 감사](../audit/E2E_SCENARIO_AUDIT_2026-10-10.md) 표에 실행 파일을 이었다. ③ 발송 실패 운영 복구 여정의 서버 몫은 2026-11-08 밤 끝났다(공개 API `d586ada0f`, 시험 소스와 대본만): 여정 서버의 시험용 FCM 대역(토큰마다 첫 발송을 403 `SENDER_ID_MISMATCH` 로 실패시켜 발송 행이 FAILED 가 되고 그 뒤로는 받아 준다), 모임 참석 수신자의 기기 토큰과 `EVENT_UPDATED` 알림을 실제 서비스로 만드는 사례 `notification_recovery`, 2단계 인증을 마친 운영자 씨앗, 실행 대본 `community_api/scripts/run-notification-recovery-journey-server.sh`(새 DB, 공개 :38782, 관리자 :38784, Redis :46593, S3 대역 :38789). 대본은 운영자 로그인(비밀번호 → TOTP, CSRF 이중 제출) 뒤 FAILED 를 기다려 `POST /admin/v1/manage/notifications/deliveries/{id}/retry`(권한 `MANAGE_NOTIFICATION`, `Idempotency-Key` 필수)로 다시 보내고, ACCEPTED 가 되면 `NOTIFICATION_RECOVERY_READY` 를 찍고 두 서버를 띄워 둔다. 실제 기동으로 끝까지 통과하는 것을 확인했다. 앱 장면과 실행 대본은 2026-11-08 밤 늦게 만들었다(앱 `11ea9493c`). 장면 `integration_test/notification_recovery_journey_test.dart` 는 READY 뒤 고정물의 수신자(`cases.notification_recovery` 의 `E2E_RECIPIENT_*`)로 로그인해, 서버에서 그 알림이 `EVENT_UPDATED`·안 읽음인지, 알림함에 제목·내용·안 읽은 줄이 보이는지, 누르면 `/home/events/<E2E_EVENT_ID>` 로 가는지, 읽음이 서버에 저장되고 안 읽은 수가 하나 주는지, 상세에 모임 이름이 보이는지 본다. 대본 `scripts/e2e/run_notification_recovery_journey.sh` 가 서버 대본을 새 고정물로 띄우고 READY 뒤 웹 3254 에서 장면을 돌린 다음 서버를 내린다. 고정물 맨 위는 `API_BASE_URL=http://localhost:38782`, `ADMIN_API_BASE_URL=http://localhost:38784`, `E2E_JOURNEY_MODE=notify` 다. 앱 문서 셋(시나리오 색인·대시보드·현황)에 notify 포트(공개 38782, 관리자 38784, Redis 46593, S3 대역 38789)를 적었다. 마지막 확인까지 통과했다(2026-11-09 새벽, 앱 `7d395eaa2`). 장면이 상세 화면을 끌어 올리며 모임 이름을 찾게 고친 뒤 다시 돌린 여정은 서버 쪽 통과, 앱 장면 다섯 단계(알림함 표시·목적지 이동·읽음 저장·안 읽은 수 감소·상세의 모임 이름) 통과, 모임 조회 1번·요청 한도 초과 0번이었다. 그 사이 찾은 모임 상세 반복 조회(웹의 긴 타이머 넘침)는 공용 긴 타이머로 고쳤다([현재 적용하는 결정](#현재-적용하는-결정) 「날짜로 거는 앱 타이머」). ③ 은 끝났고 여정 DB 는 다른 여정처럼 남긴다. 격리 시험 서버 `money` 모드 기동과 브라우저 여정(P71·P72·현금·투표, P75 묶음) 실행 기록은 출시 후보 검수 때 남긴다.",
       "condition": "서버 대본·앱 장면·실행 대본은 끝났다. 마지막 확인(상세의 모임 제목)을 장면 쪽에서 고쳐 다시 돌리는 중(2026-11-09 새벽부터, 앱 갈래)",
       "scope": "now",
       "kind": "정비",
@@ -2040,7 +2018,7 @@
     },
     {
       "name": "앱",
-      "commit": "78286a383"
+      "commit": "ef46ba76d"
     },
     {
       "name": "관리자 웹",
@@ -2051,7 +2029,7 @@
       "commit": "8b45fbb"
     }
   ],
-  "sourceDigest": "ae1f6a00234a7848600fae973e8302bbb68d4f2e9c8c1c7ec88e73341fcedbc2",
+  "sourceDigest": "39b52892a3abc5032b68539b363cd4fce754b2fb20b984d72c80b95414c94c3b",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2061,10 +2039,10 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 77개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 76개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
-      "3": 4,
+      "3": 3,
       "4": 2,
       "5": 15,
       "6": 6,
@@ -2161,18 +2139,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다. 11월 8일 관리자 API 계약 결정 68~72 를 권고대로 정했습니다(목록은 Page 하나, 셈 창구와 옛 목록 경로 걷기, 돈·장부·재시도 명령의 다시 보내기 키 필수, 일괄 처리 꼴 하나). 관리자 웹과 서버는 같은 배포로 올립니다. 같은 날 밤 결정 73~81 도 권고대로 정했습니다(이용 제한 계정의 삭제 요청·내보내기 열기, 클럽 기부 한 번 1,000,000원 상한과 기부·취소 알림, 기부 메시지와 마일리지 메모 저장, 정산 이의 첨부는 명세에서 빼기, 플랜 연결 장소·준비 시간 칸과 정산 다시 알림의 덧붙일 말 칸, 감사 기록의 쓰지 않던 접속 IP·브라우저 칸 걷기). 같은 밤 늦게 고치며 정한 것: 목록 쪽 값의 범위 밖은 잘못된 입력, 데이트 방 닫힘은 만남 예정 시각까지 활동, 판정 되돌린 환불 분쟁도 끝난 분쟁, 무결성의 CHECK·모르는 위반은 서버 오류, 글 길이는 이모지를 2자로 세는 보수적 셈, 28일 넘은 미처리 이의는 배포 때 알린 것으로 표시. 그 뒤 고치며 정한 것: 준비 시작·끝은 끝이 시작보다 뒤(같은 시각도 거절, 82 닫음), 열쇠를 쥔 명령의 410 은 열쇠를 지킴, 안 읽은 알림 수는 차단한 상대를 빼되 1,000건 넘으면 그대로, 옛 알림 쪽 조회 둘은 커서로 읽는 앱 판이 나간 뒤 걷기."
   },
   "publication": {
-    "updatedAt": "2026-11-09T00:14:08+09:00",
+    "updatedAt": "2026-11-09T00:32:26+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "9c859150fde1ba4d317d87feaa57c24029f39070",
+    "sourceCommit": "9246ead3e6f24f3116775ed4a01a76b4d1a87d35",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "06fd723a3365912d22c37b45a06c0512e269b82b3904361c437f1dcc064cb1f1",
-    "worklistSha256": "3543cd89a4e761550c0be6024ee7d6fe7a28774ddf5cec689d56e614905982e2",
+    "sourceSha256": "683b886de788d10f26fb1ae16e5891be8b54cfa520cd53852fd2bbd76bd3752f",
+    "worklistSha256": "36eb90720476a751597b7843544b9084441884fb44d55101a51b3399ef5624d1",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "cfbc686242f23d821760eff6e39d36b60eee48eff0d36653c6043e6af53d27a8",
-      "docs/plan/WORKLIST.md": "3543cd89a4e761550c0be6024ee7d6fe7a28774ddf5cec689d56e614905982e2",
+      "docs/plan/WORKLIST.md": "36eb90720476a751597b7843544b9084441884fb44d55101a51b3399ef5624d1",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "d8d59ee9af5fb856e210e06fa972c5a828415f773666a67fb979fe68a3364aec",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
