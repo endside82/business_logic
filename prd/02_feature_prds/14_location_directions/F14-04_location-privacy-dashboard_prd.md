@@ -60,7 +60,7 @@
 | 사실 | `LocationPrivacyService#getPrivacyDashboard(userId,eventId)` | 응답은 현재 이벤트에서 내 위치가 목록 응답에 포함될 때 쌓인 최근 30일 raw 로그이며, 다중 이벤트 목록 API가 아니다. | "고유 열람자/의도적 조회"로 해석하지 않도록 표시 |
 | Gap | `location_privacy_screen.dart` | UI/UX 스펙의 여러 이벤트 일괄 카드 목록은 없고 단일 이벤트만 제공한다. | 다중 이벤트 허브 필요 여부 결정 |
 | Gap | `location_privacy_screen.dart` | 접근자를 닉네임/프로필 없이 raw 사용자 ID로 표시하고 AppBar 도움말이 잘못된 `F12-01`을 가리킨다. | 사용자 식별 VO 확장 및 guideId 교정 |
-| P0 Gap | `_toggleEventLocationShare` → `EventService.updateEvent` | 화면은 운영 중 호스트 제어처럼 보이지만 범용 PATCH는 DRAFT-only다. OPEN/진행 이벤트에서는 토글이 항상 실패한다. | 운영 상태에서도 허용하는 전용 locationShareEnabled endpoint 또는 이벤트 수정 정책 분리 |
+| Decision Needed | `_toggleEventLocationShare` → `EventService.updateEvent` | 화면은 운영 중 호스트 제어처럼 보이지만 범용 PATCH는 DRAFT-only다. 2026-11-08 부터 앱은 초안이 아니면 호스트 스위치를 막고 「모임을 공개한 뒤에는 위치 공유 허용을 바꿀 수 없어요」 를 보인다(늘 실패하던 것은 막았다). 공개 뒤에도 호스트가 바꾸게 할지는 사용자 답을 기다린다 | 문서 저장소 앞으로 할 일의 결정 84(권고: 호스트·공동 호스트 전용 창구, 끌 때 공유 종료와 알림). 이 절의 계약 불일치 문단은 답을 받은 뒤 고친다 |
 | P1 Gap | `_toggleOptIn` / `EventLocationNotifier` | 참석자 opt-in/out 실패가 false로 축약되고 UI에 false 실패 안내 분기가 없다. | 실패 원인을 보존하고 명시적 toast/상태 rollback |
 | P1 Gap | `_toggleOptIn(true)` | 프라이버시 화면은 opt-in만 저장하고 GPS 취득·첫 update·타이머를 시작하지 않는다. opt-out으로 share가 삭제된 뒤 토글을 다시 켜도 좌표는 보이지 않는다. | 실제 share 생성까지 연결하거나 동의/좌표 상태를 분리 표시 |
 | 분석 한계 | `LocationAccessLog` 생성부 | 30초 자동 GET마다 대상별 행을 추가하고 dedupe하지 않아 `totalAccesses`가 고유 사용자나 의도적 조회 수처럼 보일 수 있다. | 고유 접근자 집계/세션 집계 또는 raw polling hit라는 UI 설명 |
