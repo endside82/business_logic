@@ -65,6 +65,7 @@
 |---|---|---|---|
 | UX gap | `event_detail_screen.dart`, `directions_screen.dart` | ONLINE 이벤트의 정상 CTA는 숨지만 direct route에서는 전용 설명 없이 일반 서버 오류만 보인다. | direct-route guard 또는 `EVENT_NOT_OFFLINE` 전용 문구를 둘지 결정 |
 | 문서 교정 | `directions_screen.dart:_groupedLinks` | 외부 지도 4종은 세로 목록이다. 기존 "한 줄" 기술은 현재 widget tree와 불일치했다. | 화면 변경 시 golden/widget test로 배치 재확인 |
+| 해소됨 | 출발 안내 문장 | 이름 없는 저장 주소에서 출발하면 서버가 「CUSTOM에서 출발」 을 만들던 것을 2026-11-08 밤 고쳤다. 출발지 말은 주소 이름, 주소 글, 「출발지」 차례로 고른다(예: 「서울시 마포구 월드컵로 240에서 출발」). 응답의 `originLabel` 은 그대로이고 앱이 집·회사·기타 주소로 바꿔 보인다 | 없음 |
 | 타입 위험 | `DistanceInfoVo`, `MapLinkVo` | 거리 카드의 `travelMode` 문자열 분류와 링크의 `TravelMode` enum(`CAR/TRANSIT/WALK/BIKE`)은 서로 다른 체계다. | 클라이언트 매핑 회귀 테스트 유지 |
 
 ## 9. 수용 기준
