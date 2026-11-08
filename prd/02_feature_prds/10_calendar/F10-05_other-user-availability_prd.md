@@ -9,12 +9,7 @@
 
 ## 1. 결론
 
-다른 사용자가 공개해 둔 가용 시간을 조회해 "그 시간에 이벤트를 제안하거나 만남을 잡을 수 있는지" 사전 확인하는 읽기 전용 API다. 두 가지 공개 범위가 있다. `public`은 비로그인 진입도 가능한 단순 공개 슬롯, `friends`는 호출자가 대상의 친구일 때만 응답한다(친구 정의는 같은 이벤트에 ATTENDING으로 함께 참석한 이력 또는 상호 리뷰 존재). `PRIVATE` 가용성은 어떤 경우에도 외부에 노출되지 않는다.
-
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
-
-- **다른 사용자의 프로필 / 매칭·이벤트 제안 흐름에서 "가용 시간 보기"** — 본 유닛 코드 범위에는 명시적 진입 화면이 없다. `availability_api.dart`에 `getPublicAvailabilities`, `getFriendsAvailabilities` 메서드가 정의되어 있고, `availability_repository.dart`에 동일 메서드가 래핑되어 있다. 호출 책임은 **타 도메인(이벤트 제안 폼, 데이팅 만남 일정 조율 등)**에 있다.
-- 즉 본 유닛 입장에서는 "데이터 소스/Provider 미연결" 상태 — 호출자 도메인이 자체 화면에서 Repository를 주입받아 사용해야 한다.
+다른 회원의 가능 시간을 보는 서버 주소와 앱 호출은 없다(설계 철회, 2절 표시와 같음). 가능 시간은 나만 보는 기록이다. 6·9절의 S1~S8·AC 는 철회된 설계의 기록이다.
 
 ## 2. 코드 위치
 
@@ -26,13 +21,7 @@
 
 ## 3. 전체 동작 흐름
 
-본 유닛에는 호출용 전용 Notifier가 정의되어 있지 않다. 타 도메인이 다음 패턴으로 사용해야 한다:
-
-1. 호출자 화면이 `ref.read(availabilityRepositoryProvider)` 획득.
-2. `repo.getPublicAvailabilities(targetUserId, "YYYY-MM-DD", "YYYY-MM-DD")` 호출 → `AvailabilityApi.getPublicAvailabilities` → `GET /api/v1/users/{userId}/availabilities/public`.
-3. 또는 `repo.getFriendsAvailabilities(targetUserId, from, to)` → `GET /api/v1/users/{userId}/availabilities/friends`.
-4. `Result<AvailabilitySimpleVo>`를 받아 `items: List<AvailabilityVo>`를 화면에 매핑.
-5. `AvailabilityVo`의 `id`는 호출자 도메인에서 그대로 노출되며, `userId`는 대상자, `visibility` 필드는 응답에 포함됨(PUBLIC만 노출).
+다른 회원의 가능 시간을 부르는 흐름은 없다(설계 철회).
 
 ## 6. 상태/권한/시나리오 매트릭스
 

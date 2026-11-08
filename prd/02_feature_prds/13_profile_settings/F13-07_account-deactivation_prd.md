@@ -50,7 +50,7 @@
 5. 차단 항목이 있으면 `_showBlockingDialog`로 최대 3개 상세와 `외 N건`을 표시한다.
 6. 차단 항목이 없고 자동 처리 항목이 있으면 confirm message에 `- title count건 (action)` 목록을 넣는다.
 7. 사용자가 최종 확인하면 `authNotifierProvider.notifier.deactivateAccount()`를 호출한다.
-8. notifier 내부에서 `DELETE /api/v1/users/me` 호출과 인증 상태 정리를 수행하는 것으로 보이나 내부 구현은 허용 범위 밖이라 `(미확인)`.
+8. 인증 상태 관리가 `DELETE /api/v1/users/me` 를 부르고, 성공하면 그 계정을 기기에서 지운다(토큰·저장 정보).
 
 ## 4. 제품 규칙
 
