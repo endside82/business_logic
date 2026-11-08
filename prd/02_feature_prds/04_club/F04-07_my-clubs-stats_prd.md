@@ -75,10 +75,7 @@
 |---|---|---|---|
 | 후보 | backend.md:73 | - "기간 필터(1/3/6/12개월)" 역시 서버 파라미터 미존재 — 클라 측 시각화 가공으로 대응 또는 미구현 표기. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:70 | - **신규(이번달), 평균 참석률, 멤버 증감, 역할 분포**: 서버 응답에 직접 없음 → 클라 가공 또는 미구현 placeholder 표시 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:71 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, 인라인 검증 포인트 모음) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:75 | ### S1 보강 — 마이페이지 → 내 클럽 → 상세 진입 + 운영진 메뉴 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:88 | ### S3 보강 — 멤버 통계 화면 라벨 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:103 | S5(비OWNER/ADMIN 진입 시도 가드)의 surface 보강: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 화면 문구·입구를 적은 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

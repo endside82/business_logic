@@ -82,7 +82,7 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 후보 | backend.md:46 | - 인증 principal이 없는 경우의 HTTP 응답은 보안 설정 영역이라 이 범위에서는 `(미확인)` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:11 | \| 하단 탭 마이페이지 (`/profile` 추정, 실제 등록 미확인) \| `profile/screens/my_profile_screen.dart` \| 프로필 카드, 요약 그리드, 메뉴 허브 \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 원문 조각 | 원문 표·그림의 줄바꿈 조각이라 판정할 내용이 없다 | 없음 |
 | 후보 | frontend.md:62 | 1. 인증 상태: `authNotifierProvider`의 authenticated user를 화면에서 직접 사용한다. `GET /api/v1/users/me` 호출 자체는 인증 provider/repository 내부 구현으로 보이며 profile 화면 범위 밖이라 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:45 | **종료 상태**: 사용자 정보가 준비되면 허브가 표시된다. 인증 실패 리다이렉트는 라우터/인증 가드 영역이라 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 

@@ -77,9 +77,7 @@
 | 후보 | backend.md:41 | - **에러 분기**: 체크 자체의 명시적 에러는 코드상 없음. 외부 repository 예외 응답은 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | backend.md:71 | - walletService 또는 외부 도메인 자동 해결 실패 응답은 `(미확인)` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | backend.md:100 | - 클럽 대기열은 실제 삭제 메서드가 있으나 리포트 항목에는 건수 미확인 주석으로 제외됨 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:35 | - 성공 후 로그인 화면 이동/토큰 정리는 `authNotifierProvider.deactivateAccount()` 내부 동작이라 profile 화면 범위에서는 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:45 | 8. notifier 내부에서 `DELETE /api/v1/users/me` 호출과 인증 상태 정리를 수행하는 것으로 보이나 내부 구현은 허용 범위 밖이라 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:52 | - 즉시 탈퇴 성공 후 실제 라우팅은 auth notifier 내부 구현에 위임되어 profile 화면 코드만으로는 `(미확인)`. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 탈퇴 뒤 정리 | 앱의 탈퇴 명령이 `DELETE /api/v1/users/me` 를 부르고, 성공하면 그 계정을 기기에서 지운다(토큰·저장 정보). 화면 범위 밖이라 적었던 미확인 메모는 닫는다 | 없음 |
 | 후보 | scenarios.md:63 | **종료 상태**: 계정은 비활성화되지 않는다. 앱은 실패 응답의 점검 내용을 읽어 차단 창을 다시 보인다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준

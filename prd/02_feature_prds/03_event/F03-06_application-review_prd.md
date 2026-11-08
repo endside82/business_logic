@@ -81,14 +81,10 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:77 | #### 유료 승인제 승인 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:114 | - **반환 타입**: `getApplicationsByEvent`는 **List**. CR-04 history에서 `PageResponse`로 잘못 매핑한 사례가 있어 주의. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:28 | - 유료 승인제 보강 상태: `APPROVED_PENDING_PAYMENT` 또는 결제 대기 필드가 도입되면 "승인됨 · 결제 대기" 뱃지와 결제 기한 표시 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:46 | - 거절 시 사유 입력 (선택) — 현재 코드는 사유 없이 거절만 가능 (서버는 reason 받지 않음). UI에서 입력받아 클라이언트 노트로만 저장하는 정책은 미정. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:30 | [E2E 보강: seed_event_application_lifecycle_test.dart (E2E_EXPECT_MANAGE_CONTROLS=true) — 호스트가 상세에서 "신청서 관리" CTA 진입 후 `screenEventApplications`로 들어가면 4개 탭 헤더("전체", "심사중", "승인", "거절")가 노출되고, 각 탭에서 seed pendingNickname / approvedNickname / rejectedNickname 카드가 분류되어 보이는지 검증. (탭 구현은 `screenEventApplicationsTabPending/Approved/Rejected` semantics ID로 라우팅.) seed_event_detail_role_controls_test.dart (host) — 호스트가 신청서 관리 진입 후 "전체" 탭이 기본 활성으로 노출되는지 surface 검증.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:155 | **현재 구현 갭**: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:162 | - 결제 전 사용자가 체크인 대상, 리뷰 대상, 위치공유 대상에 포함되면 실패로 본다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:163 | - 결제 기한 만료 후 결제 API가 성공하면 실패로 본다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 유료 승인제 승인 | 선입금 모임에서 승인은 결제 대기(`APPROVED_PENDING_PAYMENT`)까지만 만들고 참석 행·정원·체크인·후기·위치 공유 대상은 결제 확정 때 생긴다. 신청 관리 화면은 전체·심사중·결제 대기·승인·거절 다섯 탭이고, 결제 대기 카드에 기한과 금액을, 기한이 지난 신청에는 그 사유를 보인다. 기한 지난 결제·입금 신고는 잠금 뒤에 거절한다 | 없음 |
+| 해소됨 | 목록 반환형 메모 | 반환형 주의는 개발 메모라 제품 판정 대상이 아니다. 계약은 서버 창구가 정본이다 | 없음 |
+| 해소됨 | 거절 사유 | 거절은 사유 코드가 필수이고 상세 사유 글을 함께 보낼 수 있다(없으면 `APPLICATION_REJECT_REASON_REQUIRED`). 승인은 안내 글을 붙일 수 있다. 앱은 단건·일괄 모두 승인 안내·거절 사유 시트를 열고 서버 결과를 본 뒤 닫는다 | 없음 |
+| 해소됨 | 탭 시험 기록 | 탭은 이제 다섯(결제 대기 추가)이다. 시험 보강 기록이라 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

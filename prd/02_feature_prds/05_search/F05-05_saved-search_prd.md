@@ -63,7 +63,7 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:145 | \| 정렬 \| 최신순/이름순 \| `lastUsedAt DESC` 만 \| 이름순 옵션 미구현 \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 원문 조각 | 원문 표·그림의 줄바꿈 조각이라 판정할 내용이 없다 | 없음 |
 | 후보 | frontend.md:6 | - 푸시 알림 (`SAVED_SEARCH_NEW_RESULTS`, Unit 12) → 딥링크 (현 코드 기준 별도 라우트는 미확인) → `/search/saved` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:102 | > UI/UX 스펙은 "최신순/이름순" 옵션을 명시하지만 현재 서버는 lastUsedAt DESC만 지원. 이름순 정렬은 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 

@@ -55,12 +55,10 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:45 | - **사이드 이펙트**: 결제 Unit의 트랜잭션 처리; 알림 발송은 현재 코드에 미구현 (스펙 명시 없음). | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:64 | - **캐시**: 서비스에서 `@CacheEvict` 사용; 명시적 `@Cacheable`은 `(미확인)`이지만 `clubDonationSummary` 영역 사용 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:6 | - 알림(자기 기부 영수증/취소 등 — 현재 미구현) 탭 ▶ 화면 진입 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:38 | - 1회 1,000,000원 이하 (스펙) — 서버 검증 없음, 클라이언트 가드 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:97 | ### S1 보강 — 기부 화면 라벨 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:109 | ### S10 보강 — 비멤버 기부 라우트 진입 → 클럽 detail로 redirect + 가입 안내 카피 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Decision Needed | 기부 알림 | 기부와 기부 취소는 알림을 만들지 않아 알림에서 들어갈 입구도 없다 | 기부 영수증·취소 알림을 둘지 정한다 |
+| 해소됨 | 캐시 메모 | 캐시 적용 여부는 개발 메모라 제품 판정 대상이 아니다 | 없음 |
+| Decision Needed | 1회 기부 상한 | 서버는 100원 이상인지만 보고 상한이 없다. 앱도 상한을 두지 않는다. 지금 한도는 지갑 잔액뿐이다 | 1회 상한(옛 명세 1,000,000원)을 둘지 정한다 |
+| 해소됨 | 시험 보강 기록 | 기부 화면 문구와 비회원 기부 진입(클럽 상세로 돌려보내고 가입 안내)의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

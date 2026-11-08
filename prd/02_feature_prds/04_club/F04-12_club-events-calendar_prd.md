@@ -60,9 +60,7 @@
 | 후보 | backend.md:254 | - **로직**: 위임 `ClubRecurringEventService#createRecurringEvent` (서비스 구현 미확인 — 본 문서는 컨트롤러 시그니처 기반) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:81 | 2. `POST /events/recurring` → 서비스가 12개 Event 인스턴스 생성 (서비스 구현 미확인 — 컨트롤러 시그니처 기반) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:89 | 4. 기간 필터 변경 시 재호출 (현재 서버는 기간 파라미터 미지원 — 클라이언트 표시 결정) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:99 | ### S2 보강 — 캘린더 다음달 chevron 네비게이션 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:110 | ### S9 보강 — 이벤트 통계 화면 헤더 라벨 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:118 | - S9에서 명시한 4개 개요 카드 / 참석률 / TOP 5 / 요일별 차트는 surface 단계에서 본 E2E가 직접 검증하지 않으나, 화면 진입 자체와 핵심 헤더 노출은 본 보강이 보장한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 달력 다음 달 넘기기와 통계 화면 머리 문구의 시험 보강 기록이다. 결함이 아니다 | 없음 |
 
 ## 9. 수용 기준
 

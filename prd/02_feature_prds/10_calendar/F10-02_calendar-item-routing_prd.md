@@ -46,14 +46,8 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:30 | - 데이팅 만남 상세 — Unit 09 화면(SCR-PD-006)에서 정의되는 별도 API (본 유닛에서 시그니처 미확인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:14 | \| 데이팅 만남 상세 라우트 \| (Unit 09) \| HOSTING_PRIVATE 위임 대상 — 본 코드에는 라우팅 미구현 (TODO) \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:34 | - `itemType == 'HOSTING_PRIVATE'` ▶ 현재 코드상 별도 라우팅이 없음(주석 `// HOSTING_PRIVATE → dating detail (if needed)`). 사용자 입장에서는 탭이 무시됨. (UI/UX 스펙 SCR-PD-006 연동은 향후 작업.) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:43 | 2. 코드상 주석으로 남겨진 TODO("HOSTING_PRIVATE → dating detail (if needed)")로 인해 아무 동작 없음. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:18 | D -->\|블록 탭<br/>itemType=HOSTING_PRIVATE\| TODO[🔴 미구현 - 탭 무시] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:24 | class TODO,IGN error | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:34 | B -->\|HOSTING_PRIVATE\| E[🔴 처리 없음<br/>TODO 주석] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:77 | \| HOSTING_PRIVATE \| — \| (현재 미구현) \| — \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| Gap | 비공개 만남 일정 누름 | 달력의 비공개 만남(소개팅) 일정은 눌러도 아무 화면도 열지 않는다. 일 달력은 이 블록을 누를 수 있는 모양으로 그리지 않고, 월 달력은 그날 만남이 있다는 표시만 한다. 데이트 묶음은 첫 출시에 닫혀 있다 | 데이트 묶음을 열 때 만남 상세로 잇는다 |
+| 해소됨 | 그림·이음 줄 | 흐름 그림의 줄바꿈 조각이라 판정할 내용이 없다. 모임 주최·참석 일정은 모임 상세로, 가용 시간은 가용 시간 편집으로 간다 | 없음 |
 
 ## 9. 수용 기준
 

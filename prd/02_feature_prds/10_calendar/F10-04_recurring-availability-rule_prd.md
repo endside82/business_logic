@@ -66,8 +66,8 @@
 | 후보 | frontend.md:6 | - UI/UX 스펙(SCR-CA-004)의 "SCR-CA-003에서 반복 토글 → SCR-CA-004 진입"은 이 코드 구현과 다르다(현재 코드는 반복 토글이 인라인 폼). `recurring_rule_screen.dart`는 별도 화면으로 존재하지만 진입 트리거가 라우트로만 노출. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:79 | - **저장 버튼 disabled 조건**: `_selectedDays.isEmpty` 만 검사. (시간 30분 검증은 프론트 미구현 — 서버 검증 의존.) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:85 | **종료 상태**: 등록 실패. UI/UX 검증으로 막아야 하는 케이스가 미구현. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:89 | ## E2E-derived 보강 메모 (5필드 시나리오 형식 미준수, P65 매트릭스 모드 모음 — `seed_calendar_availability_mutation_test.dart`) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:126 | \| `forward` (이후 전체) \| 미지원. `effectiveUntil` 패치로 부분 우회 가능 (코드 미구현) \| 본 단위 미커버, 향후 추가 \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 시험 보강 기록 | 화면 문구·입구를 적은 시험 보강 기록이다. 결함이 아니다 | 없음 |
+| 해소됨 | 원문 조각 | 원문 표·그림의 줄바꿈 조각이라 판정할 내용이 없다 | 없음 |
 
 ## 9. 수용 기준
 

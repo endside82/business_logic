@@ -7,7 +7,15 @@
 
 마일리지 정책 설정은 `POLICY_OWNER` 권한 운영진이 프로그램 활성화·만료일·랭킹 기준·시즌 사용을 조회/수정하고, 변경 영향을 미리 보는 흐름이다. 서버 `MileageAdminPolicyController`의 `GET/PUT /config`와 `GET /config/preview`가 `MileageProgramConfigService`로 연결되고, Flutter `mileage_policy_screen.dart` + `mileage_config_preview_dialog.dart`가 이를 표시한다.
 
-정책 조회는 없으면 기본값(`active=false`, `expiryDays=365`, `rankingBasis=BALANCE`, `seasonEnabled=false`)으로 생성 후 반환한다. **정책의 `active`가 핵심 게이트다** — `requireActive(clubId)`가 false면 적립(F16-06 grant)·차감(redeem)·호스트 제안 제출(F16-07)이 전부 `MILEAGE_NOT_ACTIVATED`로 막힌다. 즉 정책 활성화는 도메인 전체의 ON/OFF 스위치다.
+정책 조회는 없으면 기본값(제도 상태 `NOT_STARTED`, `expiryDays=365`, `rankingBasis=BALANCE`, `seasonEnabled=false`)으로 생성 후 반환한다. **제도 상태가 핵심 게이트다** — 미개설·운영 중·일시 중지 셋이고, 운영 중이 아니면 적립(F16-06 grant)·차감(redeem)·호스트 제안 제출(F16-07)이 막힌다. 전이는 시작(미개설 → 운영 중), 일시 중지, 재개뿐이고 미개설로 돌아가는 길은 없다. 일시 중지 중에도 만료는 그대로 돈다(멈춤과 재개로 만료일을 미루지 못하게).
+
+### 기본 적립 규칙과 신규 적용 원칙
+
+- 클럽의 정책이 처음 만들어질 때 기본 적립 규칙 셋을 넣는다: 출석 체크인 10점(켜짐), 후기 5점(켜짐, 후기 마감 7일), 사진 승인 3점(꺼짐, 자동 승인 없음). 이미 있는 규칙은 건드리지 않는다. 제도가 미개설이면 규칙이 켜져 있어도 한 점도 쌓이지 않는다.
+- 사진 승인 규칙은 사진 승인 적립 묶음이 열린 뒤에만 켤 수 있다.
+- 규칙은 트리거마다 하나다. 이미 있는 트리거를 다시 만들면 409 로 거절하고, 값 변경은 수정으로만 한다.
+- 규칙 변경은 앞으로 공개하는 모임에만 적용한다. 클럽 모임을 공개할 때 체크인·후기 두 규칙의 점수·켜짐·후기 마감을 그 모임에 고정해 두고, 회원 상세와 적립은 그 고정값만 쓴다. 공개 전에는 호스트가 모임 점수를 고를 수 있고, 상한은 규칙에 정한 모임 상한(없으면 기본 점수의 세 배)이다. 공개 때 제도가 미개설이면 0점으로 고정한다.
+- 만료일 변경은 새로 쌓이는 점수에만 적용하고 소급하지 않는다.
 
 판정: **조회/수정/미리보기는 사용 가능**. config preview가 `Map<String,Object>`(Flutter `dynamic`)로 내려와 typed 모델이 없고, preview의 GRADE_THRESHOLD 분포가 in-memory/대규모 클럽 분기를 가진다는 점이 Gap/Risk다.
 

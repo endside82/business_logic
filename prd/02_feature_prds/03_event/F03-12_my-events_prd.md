@@ -101,13 +101,10 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:20 | > **주의**: `EventController#listMyEvents` 시그니처는 `@ModelAttribute PagingParam pagingParam` 만 받음. UI 스펙 문서의 `?status=DRAFT,OPEN` 쿼리는 Flutter 측에서 보내고는 있으나 컨트롤러가 PagingParam (`page`/`size`) 만 처리하므로 status 파라미터는 서버에서 무시됨 — 실제 status 필터는 **클라이언트 사이드** 또는 EventService 의 listMyEvents 내부 로직에 의존. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:34 | - `eventQueryRepository.listMyEvents(userId, pageable)` — QueryDSL 로 hostUserId == 본인 인 이벤트 페이지 (정확한 정렬 등은 Service 내부 — 서비스 구현 미확인 상세는 audit 필요) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:47 | - 본인 userId 의 모든 Application 조회 후 매핑 (서비스 구현 상세 미확인 — `ApplicationService` 본 단위 외 영역) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:89 | - **참가자 시점의 "지난 이벤트"** (참석했던 종료된 이벤트) 는 별도 미구현 — 추후 audit 가능 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:119 | Type --> P1[APPLIED_ATTENDING<br>참석 신청<br>🔵 positive 초록] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:120 | Type --> P2[PROMOTED_AUTO<br>자동 승격<br>🔵 positive 초록] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:132 | class P1,P2,P3,Sys,Neu1,Neu2 screen | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 상태 필터 | 내 모임 목록 창구는 상태 목록(쉼표로 이은 값, 예: 주최 중은 DRAFT·OPEN, 지난 모임은 CLOSED·CANCELED)을 받아 서버에서 거른다. 빈 값이면 전체다 | 없음 |
+| 해소됨 | 서비스 상세 미확인 메모 | 개발 메모라 제품 판정 대상이 아니다. 주최 목록은 내가 주최한 모임을 쪽으로 나눈 목록이다 | 없음 |
+| 해소됨 | 참가자 지난 모임 | 내 모임 화면은 참석 예정·주최 중·지난 이벤트 세 탭이다. 서버에 지난 모임 기록 창구와 참석했던 모임 창구가 따로 있다 | 없음 |
+| 해소됨 | 그림 줄 | 흐름 그림의 마디·색 지정 줄이라 판정할 내용이 없다 | 없음 |
 
 ## 9. 수용 기준
 

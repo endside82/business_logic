@@ -59,7 +59,7 @@
 | 후보 | frontend.md:25 | - 우측: "갱신하기" (orange `0xFFD89575`) 텍스트 (현 구현은 액션 미정 — 갱신 화면 미구현) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:85 | - **갱신하기 버튼**: 액션 미구현 (`// Navigate to renewal`) — 향후 재구매 흐름 또는 동일 아이템 재구매로 라우팅 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | scenarios.md:54 | 4. 사용자 "갱신하기" 탭 → 현 구현은 액션 미구현 (TODO 주석만 있음, 기획상 재구매 또는 동일 아이템 상세로 이동 예정) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:23 | Collection -->\|만료 배너 갱신하기\| Renewal[🔵 (TODO) 갱신 흐름] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 원문 조각 | 원문 표·그림의 줄바꿈 조각이라 판정할 내용이 없다 | 없음 |
 
 ## 9. 수용 기준
 

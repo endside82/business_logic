@@ -126,26 +126,16 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | backend.md:17 | 현재 서버 코드는 이 목표 흐름을 완성하지 못한다. `ApplicationService.approveApplication`은 승인 즉시 `capacityService.createAttendanceFromApplication`을 호출해 ATTENDING을 만든다. `WalletService.pay`는 가격과 중복 결제만 검증하고 신청/승인 상태를 확인하지 않는다. 따라서 유료 승인제는 문서상 정책과 구현 보강 대상이 함께 추적되어야 한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:85 | - **체크인 기록 삭제**: `eventCheckInRepository.deleteByEventIdAndUserId` (MEDIUM #10) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:87 | - 이벤트가 CLOSED/CANCELED면 대기열 승급 스킵 (MEDIUM #9) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:117 | - `event.isClosed()` → `EVENT_ALREADY_CLOSED` (HIGH #6) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:121 | - 승인 필요 결정 (HIGH #7): `event.approvalRequired \|\| visibility == APPROVAL` → 초기 status=PENDING. 아니면 자동 APPROVED + `capacityService.createAttendanceFromApplication` | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:122 | - 재신청 처리 (HIGH #8): 기존 row가 PENDING/APPROVED면 `APPLICATION_ALREADY_EXISTS`. CANCELED/REJECTED면 status 재설정해서 재사용. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:153 | - 클라이언트 enum 생성 시 서버 그대로 사용 (`WAITLISTED`가 아닌 `WAITING`임에 주의) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:167 | - **유료 승인제 주의** — 승인제 이벤트에서는 신청 전 결제가 아니라 승인 후 결제 확정이 되어야 한다. 현재 `ApplicationStatus`에는 결제 대기 상태가 없고 `WalletService.pay`도 신청 상태를 검증하지 않으므로, `APPROVED_PENDING_PAYMENT`/결제기한/정원 예약 중 하나의 서버 source-of-truth를 추가해야 한다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:109 | - **신청 메시지 글자수**: 서버 제한 미확인 (DB column 길이 기준, 화면에서 500자 권장) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:39 | [E2E 보강: seed_event_list_badge_matrix_test.dart::waitlist_detail_cancel_surface — 본인이 WAITING 인 클럽 이벤트 상세 진입 시 액션바/배지 영역에 "현재 대기열에 등록되어 있습니다" + "클럽 가입 후 참석 가능"(클럽 멤버십 게이트 안내, S8 cross-ref) 라벨이 동시 노출됨. 즉 waitlist 상태와 클럽 가드는 시각적으로 결합되어 표시.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:119 | [E2E 보강 (cross-ref S2): seed_event_list_badge_matrix_test.dart::waitlist_detail_cancel_surface — 클럽 이벤트 상세에서 "클럽 가입 후 참석 가능" 라벨 노출. WAITING 상태와 동시 노출 가능.] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:177 | **현재 구현 갭**: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:184 | - 승인 전 결제 거래가 생성되면 실패로 본다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:185 | - 거절된 신청자에게 결제 CTA가 노출되면 실패로 본다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:186 | - 승인 후 결제 전 사용자가 체크인/리뷰/위치공유 대상자로 보이면 실패로 본다. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:122 | Apply --> P1[⚪ INSERT applications PENDING] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:123 | P1 --> P2[🟠 FCM → 호스트/coHost] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:124 | P2 --> Hold[🔵 심사 중 표시<br/>승인 후 결제 CTA 대기] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:142 | class P1,F1,F2 storage | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:143 | class P2 external | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 유료 승인제 순서 | 승인이 필요한 모임의 신청은 대기(PENDING)로 들어가고 호스트·공동 호스트에게 알린다. 승인되면 선입금 모임은 결제 대기(`APPROVED_PENDING_PAYMENT`)가 되고 참석 행·정원·체크인 대상은 결제가 확정될 때 생긴다. 승인이 필요 없는 유료 모임은 바로 결제 대기다. 결제 단추는 결제 대기 신청자에게만 보이고 결제는 선입금 경로로만 한다 | 없음 |
+| 해소됨 | 체크인 기록 정리 | 참석 취소·내보내기·일행 정리 때 그 사람과 그 참석 행의 체크인 기록을 함께 지운다 | 없음 |
+| 해소됨 | 끝난 모임의 대기 승급 | 종료·취소된 모임에서는 자리가 비어도 대기자를 올리지 않는다 | 없음 |
+| 해소됨 | 마감 모임 참석 | 새 참석을 받지 않는 모임(숨긴 모임 포함)은 `EVENT_NOT_OPEN`, 마감된 모임은 `EVENT_ALREADY_CLOSED` 로 거절한다. 신청도 같은 모집 중 판정으로 거절한다 | 없음 |
+| 해소됨 | 승인 필요 판정 | 승인 표시가 켜졌거나 승인 공개 범위이거나 비공개 만남이면 대기로 시작한다. 아니면 유료는 결제 대기, 무료는 바로 승인과 참석 등록이다 | 없음 |
+| 해소됨 | 다시 신청 | 살아 있는 신청이 있으면 거절한다. 끝난 신청(취소·거절·만료) 행은 다시 신청할 때 그 행을 다시 쓰고 결정 기록 번호를 하나 올린다 | 없음 |
+| 해소됨 | 대기 상태 이름 | 앱 열거는 서버와 같은 `WAITING` 을 쓰고 옛 표기 `WAITLISTED` 는 받지 않는다 | 없음 |
+| Risk | 신청 메시지 길이 | 서버는 신청 메시지 길이를 검사하지 않고 저장 칸은 500자다. 500자를 넘는 요청은 입력 오류가 아니라 저장 실패로 끝난다 | 서버 입력 검증에 500자 상한을 둔다 |
+| 해소됨 | 대기 중 클럽 모임 상세 | 대기 중인 클럽 모임 상세는 대기 안내와 「클럽 가입 후 참석 가능」 라벨을 함께 보일 수 있다. 화면 기록이고 결함이 아니다 | 없음 |
+| 해소됨 | 그림 꾸밈 줄 | 흐름 그림의 색 지정 줄이라 판정할 내용이 없다 | 없음 |
 
 ## 9. 수용 기준
 

@@ -37,7 +37,7 @@
 - `docs/qa/feature-status.html` — 175개 기능 각각의 두 축(첫 출시에 열리는가 / 무엇으로 확인했는가)
 
 **갭 후보는 아직 판정이 끝나지 않았다.** 기능 PRD의 `## 8. Gap / Risk` 표에서 2026-11-08 기준
-**234행(74개 기능)이 "실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정"** 상태로 남아 있다(2026-08-18 기준 286행 중 280행). 이 문장은
+**144행(66개 기능)이 "실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정"** 상태로 남아 있다(2026-08-18 기준 286행 중 280행, 2026-11-08 낮 234행). 이 문장은
 결론이 아니라 아직 수행하지 않은 작업 지시다. 따라서 다음을 지킨다.
 
 1. 갭 후보 수를 결함 수로 읽지 않는다. 출시 판단에 그대로 쓰지 않는다.
@@ -48,9 +48,11 @@
 4. 판정을 마친 후보 중 고객이 체감하는 것은 같은 날 `docs/qa/launch-status.html` 등록부와 해당 기능
    HTML에도 반영한다.
 
-미판정 후보가 남아 있는 기능은 74개이며, 기능별 잔여 수는 `docs/qa/feature-status.html`의 "미판정"
-열에서 확인한다. 상위 집중 구간은 F03-05(20) · F04-03(11) · F02-04(9) · F03-06(8) · F10-02(8) ·
-F03-12(7) · F04-12(7) · F07-09(7) · F13-07(7)이다. F06-06 은 2026-11-08 에 모두 판정했다.
+미판정 후보가 남아 있는 기능은 66개이며, 기능별 잔여 수는 `docs/qa/feature-status.html`의 "미판정"
+열에서 확인한다. 남은 것은 기능마다 4행 이하다: F04-12 · F06-03 · F06-10 · F07-09 · F08-09 · F10-04 ·
+F13-02 · F13-03 · F13-07(각 4), F02-01 · F03-10 · F04-01 · F04-08 · F06-07 · F06-08 · F06-09 · F08-11 ·
+F08-12 · F09-03 · F09-06 · F09-08 · F12-02 · F13-01 · F14-03(각 3), 그 밖 42개 기능(2행 이하).
+F06-06 · F03-05 · F04-03 · F02-04 · F03-06 · F10-02 · F03-12 · F04-14 · F07-10 은 2026-11-08 에 모두 판정했다.
 
 ## 2026-11-08 코드 대조 기록
 
@@ -76,11 +78,11 @@ F03-12(7) · F04-12(7) · F07-09(7) · F13-07(7)이다. F06-06 은 2026-11-08 �
 
 | 항목 | 지금 코드 | PRD | 근거 |
 | --- | --- | --- | --- |
-| 호스트 직접 수납 | 들어감 | 일부 반영(입금 신고·확인·거절·환불 확인은 F03-05·F03-07·F03-13·F17-02·F17-05·F17-07). 받을 계좌 등록·인증 화면 계약은 아직 | `event/prepayment/service/EventHostBankAccountService.java`, `BankAccountVerification*.java`, `HostDirectCashBootGuard.java`, 설정 `payment.host-direct-cash` |
-| 출시 범위 관문 | 들어감 | 일부 반영(F02-01·F03-03·F03-13·F03-17 에 언급). 범위 목록·안전 출구 계약은 아직 | `ReleaseScope*.java`(도메인 `P0`·`CASH_EVENT`·`MARKET`·`MARKET_PERIOD_PASS` …), `RELEASE_SCOPE_DISABLED` |
-| 계정 정지 제한 세션 | 들어감 | 없음(F01·F13·F15) | `JwtProperties.java:22-27`(`SCOPE_RESTRICTED`), `api-app/.../config/security/JwtAuthorizationFilter.java:126,183`, `AccountSanctionService.java:42` |
-| 분쟁 종결 | 들어감 | 없음(F18) | `DisputeCompensationLedger*.java`, `DisputeCompensationCommand.java` |
-| 마일리지 규칙·배지 | 들어감 | 배지는 F16-01·02·05·06·08 에 있음. 기본 규칙 셋과 신규 적용 원칙은 아직 | `MileageBadge*.java` |
+| 호스트 직접 수납 | 들어감 | 반영. 입금 신고·확인·거절·환불 확인은 F03-05·F03-07·F03-13·F17-02·F17-05·F17-07, 받을 계좌 등록·인증과 인증 강제를 끈 지금 상태는 F07-10 4절 | `event/prepayment/service/EventHostBankAccountService.java`, `BankAccountVerification*.java`, `HostDirectCashBootGuard.java`, 설정 `payment.host-direct-cash` |
+| 출시 범위 관문 | 들어감 | 반영. 묶음 목록·상위 의존·운영 기본값·410·안전 출구는 권한 정책 PRD 「출시 범위와 안전 출구」 | `ReleaseScope*.java`(도메인 `P0`·`CASH_EVENT`·`MARKET`·`MARKET_PERIOD_PASS` …), `RELEASE_SCOPE_DISABLED` |
+| 계정 정지 제한 세션 | 들어감 | 반영. F15-08 4-C(허용 목록·앱 화면 목록·토큰과 상태), F01-01 1절, F13-06 1절 | `JwtProperties.java:22-27`(`SCOPE_RESTRICTED`), `api-app/.../config/security/JwtAuthorizationFilter.java:126,183`, `AccountSanctionService.java:42` |
+| 분쟁 종결 | 들어감 | 반영. F18-01 4절 「종결과 보상」(진행 상태 여섯, 당사자 명령, 보상 원장과 종결 차단) | `DisputeCompensationLedger*.java`, `DisputeCompensationCommand.java` |
+| 마일리지 규칙·배지 | 들어감 | 반영. 배지는 F16-01·02·05·06·08, 제도 상태 셋·기본 규칙 셋·공개 때 고정(신규 적용)은 F16-04 1절 | `MileageBadge*.java` |
 | 이메일 인증 제한 세션의 화면 파급 | 제한 세션 자체가 2026-10-29 에 없어짐(가입 전 번호 확인) | 해당 없음. F01-03 이 이미 반영 | `EmailCodePurpose.java`(`SIGNUP`·`PASSWORD_RESET`·`SOCIAL_LINK`), `EmailCodeService.java` |
 | 플랜 읽기 조판·TABLE(옛 「미커밋 Flutter 작업본」) | 앱·서버 main 에 들어감 | F08-02 11.3, F08-03 11.5·11.6, 08 도메인 9.6 을 지금 계약으로 고침 | 앱 `presentation/plan/screens/plan_reading_mode_screen.dart:33,68,77,114-126`, `presentation/plan/theme/plan_block_text_styles.dart:11,50-53,110`, `presentation/plan/widgets/block_renderer.dart:1730,1823`, `presentation/plan/widgets/block_type_sheet.dart:132-148`, `data/models/plan/table_block_adapter.dart:83`, 서버 `PlanBlockTableRowsValidator.java` |
 | 여러 요일 반복 생성 시험 | 있음 | F03-03 다음 조치 칸을 고침 | `domain/src/test/.../event/service/RecurringEventCreateSourceGateTest.java:210,249,316`, `domain/src/test/.../club/service/ClubRecurringEventServiceTest.java:302,419` |
@@ -97,9 +99,33 @@ F03-12(7) · F04-12(7) · F07-09(7) · F13-07(7)이다. F06-06 은 2026-11-08 �
 | 보관 설명 문서의 기부 취소 7일 | 맞음 | `club/service/ClubDonationService.java:262,286` |
 | 보관 설명 문서의 무료 포인트 180일 만료 | 틀림. 무료 지급은 원천과 상관없이 지급일부터 1년이고 유료 포인트는 기한이 없다. 환불로 되돌린 무료 몫의 남은 기한이 30일 미만이면 되돌린 날부터 30일짜리 새 묶음으로 뗀다 | `payment/service/WalletCreditService.java:30-31,157-161`, `payment/service/ChargeLotConsumptionService.java:32-34,43` |
 
+### 미반영 다섯 들이기의 근거
+
+| PRD | 들인 내용 | 근거 |
+| --- | --- | --- |
+| F07-10 4절 | 등록·기본 계좌·같은 계좌 재등록, 모임 결박과 고치기·지우기 막기, 1원 인증 창(4자리·10분·5번), 정보를 바꾸면 확인 풀림, 지금은 인증 강제 끔 | `payment/meeting/service/SettlementBankAccountService.java:101-227,381-472`, `event/service/EventHostBankAccountService.java:24-53,113-169`, `payment/meeting/constants/BankAccountVerificationStatus.java`, api-app `payment/meeting/controller/SettlementBankAccountController.java`, `application-prod.yaml` `payment.host-direct-cash.require-verified-account`(기본 false)·`bank-account-verification` |
+| 권한 정책 「출시 범위와 안전 출구」 | 묶음 목록·상위 의존·운영 기본값·앱 범위 응답·410·안전 출구·미분류 창구 기동 거부 | `config/release/ReleaseScopeDomain.java`, `ReleaseScope.java`, `ReleaseScopeVo.java`, api-app `config/release/ReleaseScopeController.java`(`GET /api/v1/app/release-scope`), `application-prod.yaml` `release.scope.enabled-domains`, 시험 자원 `api-app/src/test/resources/release-scope/classification-snapshot.txt`(안전 출구 79, 봉인 215) |
+| F15-08 4-C, F01-01, F13-06 | 제한 토큰 발급·허용 목록·앱 화면 목록·상태가 권한을 정함·삭제 요청과 내보내기는 닫힘 | `account/service/TokenService.java:56-99,171-188`, `account/service/AuthService.java:160-180,230-232`, api-app `config/security/AccountLockPolicy.java`, `config/security/JwtAuthorizationFilter.java:73-75,120-212`, 앱 `core/router/account_lock_routes.dart`, `presentation/auth/screens/account_blocked_screen.dart` |
+| F18-01 4절 | 진행 상태 여섯과 전이, 결과 확인·종결 동의·이관·소명 대화, 보상 명령과 원장 상태, 대기·실패면 종결 막음 | `host/dispute/constants/DisputeWorkflowStatus.java`, `DisputeCompensationCommand.java`, `DisputeCompensationStatus.java`, api-app `host/dispute/controller/DisputeCasePartyController.java` |
+| F16-04 1절 | 제도 상태 셋과 전이, 기본 규칙 셋(체크인 10·후기 5·사진 3 꺼짐), 공개 때 모임 규칙 고정과 상한 | `mileage/constants/MileageProgramStatus.java`, `mileage/service/MileageEarningRuleService.java:99-159`, `mileage/service/MileageEventRuleService.java:47-145`, `mileage/constants/MileageEventRulePolicy.java` |
+
+### 2026-11-08 갭 후보 판정(90행)
+
+| PRD | 판정 | 근거 |
+| --- | --- | --- |
+| F03-05(20) | 유료 승인제 순서·체크인 정리·끝난 모임 승급 건너뜀·마감 거절·승인 필요 판정·재신청·`WAITING` 은 해소됨. 신청 메시지 길이 검증 없음은 Risk | `event/service/ApplicationEntryService.java:115-192`, `capacity/service/CapacityService.java:205-214,432-442,417,561,996`, V1 `application.message varchar(500)`, `event/param/ApplicationParam.java`, 앱 `data/models/attendance/attendance_status.dart`, `presentation/event/widgets/event_action_bar.dart:63-85,695` |
+| F04-03(11) | 삭제·넘기기 입구와 확인 창 해소됨 | 앱 `presentation/club/screens/club_edit_screen.dart:91,395-412`, `presentation/club/widgets/club_delete_dialog.dart` |
+| F02-04(9) | 기기에서 거르는 필터는 Risk, 점수·트렌딩·다음 쪽 실패 안내는 해소됨 | 앱 `domain/providers/home/recommend_events_provider.dart:57-159`, `presentation/home/screens/recommend_events_screen.dart:85-95` |
+| F03-06(8) | 결제 대기 탭·기한 표시·거절 사유 필수 해소됨 | 앱 `presentation/event/screens/application_list_screen.dart:68,145`, `presentation/event/widgets/application_card.dart:136-229`, `event/param/ApplicationDecisionParam.java` |
+| F10-02(8) | 비공개 만남 일정 누름 없음은 Gap(데이트 묶음은 첫 출시에 닫힘) | 앱 `presentation/calendar/screens/daily_calendar_screen.dart:485-503`, `monthly_calendar_screen.dart:538-545` |
+| F03-12(7) | 상태 필터 서버 처리·세 탭 해소됨 | api-app `event/controller/EventController.java:184-216`, `event/param/MyEventSearchParam.java`, 앱 `presentation/event/screens/my_events_screen.dart:26-28` |
+| F04-14(6) | 기부 알림·1회 상한은 Decision Needed | `club/service/ClubDonationService.java:55,123` |
+| F07-10(3) | 내 정산 카드 누름·신뢰도 배지 해소됨 | 앱 `presentation/meeting_settlement/screens/my_settlement_entries_screen.dart:25-60,300-345`, `widgets/host_reputation_badge.dart:83-92`, `presentation/event/widgets/event_host_card.dart:112` |
+| F07-09·F13-07·F04-12·F04-07·F10-04·F05-05·F08-12·F13-01 일부(18) | 계좌이체 환불 마무리, 탈퇴 뒤 기기 정리는 해소됨. 나머지는 그림 줄·원문 조각·시험 보강 기록 | 앱 `domain/providers/auth_provider.dart:840-874`, 분류 스냅숏의 계좌이체 안전 출구 |
+
 ### 다음에 이어 갈 것
 
-8절 갭 후보 234행(위 상위 집중 구간부터). 미반영 여섯 가운데 넷(호스트 직접 수납의 받을 계좌 등록·인증, 출시 범위 관문의 범위 목록·안전 출구, 계정 정지 제한 세션, 분쟁 종결)과 마일리지 기본 규칙을 해당 기능 PRD 에 들이는 일.
+8절 갭 후보 144행(66 기능, 위 「상태 축 분리와 갭 후보 판정 미완 고지」 의 목록). 판정한 행 가운데 고객이 체감하는 것(F02-04 기기 필터, F10-02 비공개 만남 일정, F04-14 기부 알림·상한, F03-05 신청 메시지 길이)을 `docs/qa/launch-status.html` 등록부와 기능 HTML 에 올리는 일.
 
 ## 이동수단 현재 계약
 
@@ -334,6 +360,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 ## 2026-08 미반영 백로그 (2026-11-08 코드 대조는 위 「미반영 여섯과 그 밖의 확인」)
 
 > 이 저장소의 마지막 전면 동기화는 2026-07-30이다. 그 이후 루트 워크스페이스에 착지한 아래 항목들은 **아직 이 저장소의 PRD/시각화에 반영되지 않았다**. 2026-08-18 동기화는 ①이메일 인증 제한 세션(F01-03 한정) ②P0 결제 태세(포인트 유예·계좌이체 개방) 두 축만 반영했다. 나머지는 다음 동기화 wave의 작업 목록이다. 각 항목의 정본 근거는 루트 `docs/` 경로를 병기한다(이 저장소 기준 `../../docs/`).
+>
+> 2026-11-08: 1·2·3·4·6 은 위 「미반영 다섯 들이기의 근거」 대로 기능·정책 PRD 에 들였다. 7 은 제한 세션이 없어져 닫았다.
 >
 > 새 기능 ID를 만들지 않는다는 원칙은 유지한다 — 대부분 기존 기능(F03·F06·F13·F17·F18)의 내용 확장이며, 반영 시점에 어느 기능 PRD에 흡수할지 먼저 정한다.
 

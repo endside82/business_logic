@@ -70,17 +70,9 @@
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| 후보 | frontend.md:7 | - 삭제: 클럽 수정 화면 하단 위험 영역 → 다이얼로그 → 호출. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:15 | \| `/clubs/:id/settings` (또는 edit) \| `screens/club_edit_screen.dart` \| 수정 + 위험 영역 \| | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:47 | - 위험 영역: "🔴 클럽 삭제" 카드, 텍스트 빨강. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:69 | 4. **소유권 이전** (스펙 SCR-CL-004 위험영역 또는 별도 메뉴): | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | frontend.md:80 | - **위험 영역 색상**: 빨강 텍스트, 경고 카드 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:40 | 1. 수정 화면 위험 영역 → "클럽 삭제" → 다이얼로그 → 클럽명 정확 입력 → "삭제하기". | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:80 | ### S1 보강 — 생성 폼 라벨 / 가입 방식 옵션 / 검증 카피 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:93 | ### S3 보강 — 설정 화면 필드 라벨 + 위험 영역 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:101 | - 위험 영역에 `'🔴 클럽 삭제'` 텍스트 1개 + `'삭제 시 모든 데이터가 복구 불가능합니다'` 안내 1개. (이모지 `🔴` 포함 — 디자인 토큰화 시 동기 갱신 필요) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:104 | ### S5 보강 — 삭제 확인 다이얼로그 카피 surface | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:15 | Edit -->\|위험영역\| DelDialog[🔵 클럽 삭제 다이얼로그<br/>클럽명 입력 가드] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 클럽 삭제 입구 | 클럽 설정 화면 아래에 빨간 글씨 「클럽 삭제」 줄이 있고, 서버가 삭제를 허락할 때만 보인다(분쟁이나 인출이 남아 있으면 숨는다). 누르면 확인 창이 정리될 돈(0보다 큰 통화만)을 보이고 클럽 이름을 그대로 입력해야 삭제한다. 옛 이모지 문구는 쓰지 않는다 | 없음 |
+| 해소됨 | 소유권 이전 입구 | 같은 화면의 「클럽 넘기기」 줄이 새 클럽장을 고르고 본인 확인을 한 뒤 넘겨받기 요청을 보낸다. 서버의 이전 제안 표지가 참일 때만 보인다 | 없음 |
+| 해소됨 | 생성 폼 문구 기록 | 생성 폼 라벨·가입 방식·검증 문구를 적은 시험 보강 머리줄이다. 판정할 결함이 없다 | 없음 |
 
 ## 9. 수용 기준
 

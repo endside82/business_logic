@@ -74,12 +74,11 @@
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
 | 구현 위치 확인 · 실제 환경은 별도 | [확인한 서버 코드 위치](#2-코드-위치) | 공급자별·호환용 수신 함수가 공통 검증·전달 이력 저장과 `MeetingSettlementTransferService#confirmVirtualAccountDeposit`을 호출한다. 서비스가 없거나 호출이 주석 처리됐다는 옛 설명은 철회한다. | 실제 결제사 연결·입금·중복 통지·오류 복구의 실행 근거와 공개 여부는 [첫 출시 현황](../../../docs/qa/launch-status.html)에서 판단한다. 이번 위치 교정은 실거래 검증이 아니다. |
-| 후보 | backend.md:82 | - **참고**: BANK_TRANSFER 환불은 환불 금액 계산만 하고 wallet credit은 호출하지 않음 (호스트가 수동으로 외부 환불해야 함 — 현재 코드는 POINT에 한해 자동 환불) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 계좌이체 환불 | 계좌이체로 낸 참가비는 플랫폼이 돌려주지 않는다. 호스트가 바깥에서 보낸 뒤 앱에서 환불을 확인하고, 참가자가 받았음을 확인한다. 지갑(포인트)으로 낸 몫만 지갑으로 바로 돌아간다. 이 마무리 창구들은 계좌이체 묶음이 닫혀도 열려 있다 | 없음 |
 | 후보 | frontend.md:26 | - 호스트 뷰 + BANK 미확인: "확인" / "환불" 버튼 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:38 | - BANK 미확인 / POINT 완료 / 환불 완료 각각 다른 배지 색 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 | 후보 | frontend.md:95 | - 결제대기(BANK 미확인) — 회색 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:155 | I -- 예 --> P0[🟡 percentage = 0] | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | diagrams.md:177 | class B,C,D,H,I,J,M,P100,P0,PM,PL,R,S,Skip logic | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 그림 줄 | 흐름 그림의 마디·색 지정 줄이라 판정할 내용이 없다 | 없음 |
 | 후보 | diagrams.md:191 | Pending --> Refunded : POST /refund (BANK 미확인 환불 — 본인) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
 
 ## 9. 수용 기준
