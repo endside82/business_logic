@@ -330,7 +330,7 @@
         "H-653",
         "H-654",
         "H-655",
-        "H-656",
+        "H-657",
         "H-534",
         "H-578",
         "H-579",
@@ -1107,8 +1107,8 @@
     {
       "id": "H-563",
       "title": "서버가 글자로 주고받는 값을 열거로 바꿀지 정하기",
-      "description": "앱 서버 값 갈래가 넘긴 서버 쪽 일이다. ① 서버가 열거가 아닌 글자로 주고받는 41칸을 열거로 바꿀지 정한다(칸별 목록 [서버가 열거가 아닌 글자로 주고받는 값](APP_SERVER_VALUES_2026-10-31/SERVER_PLAIN_STRINGS.md), 앱은 그동안 허용 목록에 서버 자리와 함께 둔다). ④ 실시간 서버의 클럽 채팅 거절 코드 셋이 열거 없는 글자다(데이트·커뮤니티 채팅은 열거). 서버가 바꾸면 앱 생성 목록·허용 목록을 같은 단위에서 고친다.",
-      "condition": "그 도메인을 고칠 때 칸별로 정한다",
+      "description": "앱 서버 값 갈래가 넘긴 서버 쪽 일이다. ① 서버가 열거가 아닌 글자로 주고받는 41칸을 열거로 바꿀지 정한다(칸별 목록 [서버가 열거가 아닌 글자로 주고받는 값](APP_SERVER_VALUES_2026-10-31/SERVER_PLAIN_STRINGS.md), 앱은 그동안 허용 목록에 서버 자리와 함께 둔다). ④ 실시간 서버의 클럽 채팅 거절 코드 셋이 열거 없는 글자다(데이트·커뮤니티 채팅은 열거). 2026-11-08 밤 늦게부터 고치는 중이다. 서버가 바꾸면 앱 생성 목록·허용 목록을 같은 단위에서 고친다.",
+      "condition": "① 은 그 도메인을 고칠 때 칸별로 정한다. ④ 는 고치는 중(2026-11-08 밤 늦게부터)",
       "scope": "now",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
@@ -1128,8 +1128,8 @@
     {
       "id": "H-582",
       "title": "앱 공통 처리를 스켈레톤·채팅 시각·저장소 catch-all 로 넓히기",
-      "description": "앱 공통 처리를 넓힌다. ④ 상세 화면 6곳 스켈레톤을 공통 처리로 옮긴다. ⑤ 채팅 낙관 메시지 시각을 공통 처리로 옮긴다. ⑥ 저장소 catch-all 을 통합한다(기준선을 실제로 좁히기). 9월 문서에 적힌 범위라 일부는 끝났을 수 있으니 착수 때 코드로 다시 잰다. 일정 변경·취소 푸시를 받은 다른 회원 기기의 홈 카드와 참석 예정은 당겨서 새로 고칠 때까지 옛 값이다. 푸시 `EVENT_UPDATED` 가 모임 갈래만 올리고 홈 피드는 카드 갈래만 듣는다(`push_refresh_branches.dart`, `home_feed_provider.dart`). 내 기기는 끝났다. 코드만 따라갔고 재현하지 않았다. 플랜 삭제의 상세 화면 무효화는 화면이 성공 뒤 살아 있을 때만 한다(`plan_detail_screen.dart`, 영향 작음). 모임 신청과 클럽 승인은 명령 쪽 한 곳에서 다시 읽어 끝났다. 우리 본문 판정의 형식 휴리스틱도 같은 계획에 남았다.",
-      "condition": "그 화면·저장소를 고칠 때",
+      "description": "앱 공통 처리를 넓힌다. ①②③ 은 2026-11-08 밤 끝났고 ④⑤⑥ 을 2026-11-08 밤 늦게부터 고치는 중이다. ④ 상세 화면 6곳 스켈레톤을 공통 처리로 옮긴다. ⑤ 채팅 낙관 메시지 시각을 공통 처리로 옮긴다. ⑥ 저장소 catch-all 을 통합한다(기준선을 실제로 좁히기). 9월 문서에 적힌 범위라 일부는 끝났을 수 있으니 착수 때 코드로 다시 잰다. 일정 변경·취소 푸시를 받은 다른 회원 기기의 홈 카드와 참석 예정은 당겨서 새로 고칠 때까지 옛 값이다. 푸시 `EVENT_UPDATED` 가 모임 갈래만 올리고 홈 피드는 카드 갈래만 듣는다(`push_refresh_branches.dart`, `home_feed_provider.dart`). 내 기기는 끝났다. 코드만 따라갔고 재현하지 않았다. 플랜 삭제의 상세 화면 무효화는 화면이 성공 뒤 살아 있을 때만 한다(`plan_detail_screen.dart`, 영향 작음). 모임 신청과 클럽 승인은 명령 쪽 한 곳에서 다시 읽어 끝났다. 우리 본문 판정의 형식 휴리스틱도 같은 계획에 남았다.",
+      "condition": "④⑤⑥ 을 고치는 중(2026-11-08 밤 늦게부터)",
       "scope": "now",
       "kind": "구조 개선",
       "section": "6. 구조 개선",
@@ -1276,8 +1276,8 @@
     {
       "id": "H-557",
       "title": "앱을 새 화면 패키지로 옮기고 밀린 라이브러리 판 올리기",
-      "description": "판 최신화의 남은 몫이다. 지난 판 올리기의 결과는 [결과](VERSION_UPDATE_2026-11-06/README.md) 에 있다. ① 앱을 `material_ui`·`cupertino_ui` 패키지로 옮기고 go_router 를 18.1.3 으로 올린다. 둘은 한 커밋이어야 한다. go_router 17.5 는 옛 `MaterialApp` 만, 18 은 새 패키지의 `MaterialApp` 만 앱으로 알아봐, 한쪽만 하면 앱 경로 332개 가운데 `pageBuilder` 를 직접 쓰는 15개 밖은 화면 전환 효과와 iOS 뒤로 밀기를 잃는다. ① 의 타당성은 2026-11-08 밤 확인했다. material_ui 1.10.0·cupertino_ui 1.1.6 은 지금 Flutter·Dart 에 맞는다. 외부 패키지 가운데 flutter_quill 만 옛 테마를 읽어 `MaterialUiCompatibilityBridge` 로 `MaterialApp.builder` 를 한 번 감싸 잇는다. 가져오기를 바꾼 뒤 분석 오류 21 은 지역화 이름 겹침 하나에서 나와 `hide GlobalMaterialLocalizations` 로 풀린다. 옮기기와 go_router 18 올리기를 골든 전부, 화면 전환을 지키는 시험 하나와 함께 하는 중이다. ② html 0.15.6 은 flutter_html 이 맞출 때까지 앞선 패키지를 기다린다. ③ build_runner 2.16 은 riverpod_generator 가 맞출 때까지 앞선 패키지를 기다린다. ④ TypeScript 6.0 은 typescript-eslint 가 맞출 때까지 앞선 패키지를 기다린다. ⑤ JDK 27 은 LTS 가 아니라 다음 판이 나오면 6개월 안에 올린다. ⑤ 에 더함: JDK 27 실행 로그에 Netty 의 네이티브 접근 경고가 남는다. 지금 동작에는 영향이 없고, 막히는 판이 오면 `--enable-native-access` 를 더한다.",
-      "condition": "앱 옮기기는 미룬 기능 뒤 별도 단위. 다른 셋은 그 패키지가 맞추면",
+      "description": "판 최신화의 남은 몫이다. 지난 판 올리기의 결과는 [결과](VERSION_UPDATE_2026-11-06/README.md) 에 있다. ① 앱을 `material_ui`·`cupertino_ui` 패키지로 옮기고 go_router 를 18.1.3 으로 올린다. 둘은 한 커밋이어야 한다. go_router 17.5 는 옛 `MaterialApp` 만, 18 은 새 패키지의 `MaterialApp` 만 앱으로 알아봐, 한쪽만 하면 앱 경로 332개 가운데 `pageBuilder` 를 직접 쓰는 15개 밖은 화면 전환 효과와 iOS 뒤로 밀기를 잃는다. ① 의 타당성은 2026-11-08 밤 확인했다. material_ui 1.10.0·cupertino_ui 1.1.6 은 지금 Flutter·Dart 에 맞는다. 외부 패키지 가운데 flutter_quill 만 옛 테마를 읽어 `MaterialUiCompatibilityBridge` 로 `MaterialApp.builder` 를 한 번 감싸 잇는다. 가져오기를 바꾼 뒤 분석 오류 21 은 지역화 이름 겹침 하나에서 나와 `hide GlobalMaterialLocalizations` 로 풀린다. 두 패키지 옮기기와 go_router 18.1.3 올리기를 한 커밋으로, 골든 전부와 화면 전환을 지키는 시험 하나와 함께 2026-11-08 밤 늦게부터 하는 중이다. ② html 0.15.6 은 flutter_html 이 맞출 때까지 앞선 패키지를 기다린다. ③ build_runner 2.16 은 riverpod_generator 가 맞출 때까지 앞선 패키지를 기다린다. ④ TypeScript 6.0 은 typescript-eslint 가 맞출 때까지 앞선 패키지를 기다린다. ⑤ JDK 27 은 LTS 가 아니라 다음 판이 나오면 6개월 안에 올린다. ⑤ 에 더함: JDK 27 실행 로그에 Netty 의 네이티브 접근 경고가 남는다. 지금 동작에는 영향이 없고, 막히는 판이 오면 `--enable-native-access` 를 더한다.",
+      "condition": "① 앱 옮기기와 go_router 18 은 고치는 중(2026-11-08 밤 늦게부터). 다른 셋은 그 패키지가 맞추면",
       "scope": "now",
       "kind": "정비",
       "section": "7. 정비(제품 동작 아님)",
@@ -1292,8 +1292,8 @@
     {
       "id": "H-592",
       "title": "발송 실패 운영 복구 앱 여정 만들기",
-      "description": "①②④ 는 끝났다(앱 `d6d91550c`, 서버 시험 고정물 `13761118d`): 격리 여정 서버의 프로필 탐색·복귀, 투표로 정하는 모임, 실제 파일 업로드(시험용 S3 대역) 여정과 실행 대본 `run_release_gap_journeys.sh`. [앱 시나리오 감사](../audit/E2E_SCENARIO_AUDIT_2026-10-10.md) 표에 실행 파일을 이었다. 남은 것은 ③ 발송 실패 운영 복구 여정의 앱 장면이다. 서버 몫은 2026-11-08 밤 끝났다(공개 API `d586ada0f`, 시험 소스와 대본만): 여정 서버의 시험용 FCM 대역(토큰마다 첫 발송을 403 `SENDER_ID_MISMATCH` 로 실패시켜 발송 행이 FAILED 가 되고 그 뒤로는 받아 준다), 모임 참석 수신자의 기기 토큰과 `EVENT_UPDATED` 알림을 실제 서비스로 만드는 사례 `notification_recovery`, 2단계 인증을 마친 운영자 씨앗, 실행 대본 `community_api/scripts/run-notification-recovery-journey-server.sh`(새 DB, 공개 :38782, 관리자 :38784, Redis :46593, S3 대역 :38789). 대본은 운영자 로그인(비밀번호 → TOTP, CSRF 이중 제출) 뒤 FAILED 를 기다려 `POST /admin/v1/manage/notifications/deliveries/{id}/retry`(권한 `MANAGE_NOTIFICATION`, `Idempotency-Key` 필수)로 다시 보내고, ACCEPTED 가 되면 `NOTIFICATION_RECOVERY_READY` 를 찍고 두 서버를 띄워 둔다. 실제 기동으로 끝까지 통과하는 것을 확인했다. 앱 장면은 READY 뒤 고정물의 수신자(`cases.notification_recovery` 의 `E2E_RECIPIENT_*`)로 알림함에서 `E2E_NOTIFICATION_ID` 를 눌러 `E2E_EVENT_ID` 상세가 열리는지 본다. 고정물 맨 위는 `API_BASE_URL=http://localhost:38782`, `ADMIN_API_BASE_URL=http://localhost:38784`, `E2E_JOURNEY_MODE=notify` 다. [앱 갈래](lanes/APP_LANE_2026-11-08.md)가 맡는다. 격리 시험 서버 `money` 모드 기동과 브라우저 여정(P71·P72·현금·투표, P75 묶음) 실행 기록은 출시 후보 검수 때 남긴다. 앱 저장소 문서(`community_app/docs/testing/SCENARIO_TEST_STATUS_CURRENT.md`·`SCENARIO_COVERAGE_DASHBOARD_CURRENT.md`, `scripts/e2e/SCENARIO_MATRIX_INDEX.md` 격리 실행 절)에 새 여정과 S3 대역 포트(release 38589, money 38689), 발송 복구 여정의 notify 포트(공개 38782, 관리자 38784, Redis 46593, S3 대역 38789)를 적는 일은 이 줄과 함께 앱 갈래가 한다.",
-      "condition": "서버 시험 소스와 대본은 끝났다. 앱 장면을 쓴다(앱 갈래)",
+      "description": "①②④ 는 끝났다(앱 `d6d91550c`, 서버 시험 고정물 `13761118d`): 격리 여정 서버의 프로필 탐색·복귀, 투표로 정하는 모임, 실제 파일 업로드(시험용 S3 대역) 여정과 실행 대본 `run_release_gap_journeys.sh`. [앱 시나리오 감사](../audit/E2E_SCENARIO_AUDIT_2026-10-10.md) 표에 실행 파일을 이었다. 남은 것은 ③ 발송 실패 운영 복구 여정의 앱 장면이다. 서버 몫은 2026-11-08 밤 끝났다(공개 API `d586ada0f`, 시험 소스와 대본만): 여정 서버의 시험용 FCM 대역(토큰마다 첫 발송을 403 `SENDER_ID_MISMATCH` 로 실패시켜 발송 행이 FAILED 가 되고 그 뒤로는 받아 준다), 모임 참석 수신자의 기기 토큰과 `EVENT_UPDATED` 알림을 실제 서비스로 만드는 사례 `notification_recovery`, 2단계 인증을 마친 운영자 씨앗, 실행 대본 `community_api/scripts/run-notification-recovery-journey-server.sh`(새 DB, 공개 :38782, 관리자 :38784, Redis :46593, S3 대역 :38789). 대본은 운영자 로그인(비밀번호 → TOTP, CSRF 이중 제출) 뒤 FAILED 를 기다려 `POST /admin/v1/manage/notifications/deliveries/{id}/retry`(권한 `MANAGE_NOTIFICATION`, `Idempotency-Key` 필수)로 다시 보내고, ACCEPTED 가 되면 `NOTIFICATION_RECOVERY_READY` 를 찍고 두 서버를 띄워 둔다. 실제 기동으로 끝까지 통과하는 것을 확인했다. 앱 장면은 READY 뒤 고정물의 수신자(`cases.notification_recovery` 의 `E2E_RECIPIENT_*`)로 알림함에서 `E2E_NOTIFICATION_ID` 를 눌러 `E2E_EVENT_ID` 상세가 열리는지 본다. 고정물 맨 위는 `API_BASE_URL=http://localhost:38782`, `ADMIN_API_BASE_URL=http://localhost:38784`, `E2E_JOURNEY_MODE=notify` 다. [앱 갈래](lanes/APP_LANE_2026-11-08.md)가 맡아 2026-11-08 밤 늦게부터 쓰는 중이다. 격리 시험 서버 `money` 모드 기동과 브라우저 여정(P71·P72·현금·투표, P75 묶음) 실행 기록은 출시 후보 검수 때 남긴다. 앱 저장소 문서(`community_app/docs/testing/SCENARIO_TEST_STATUS_CURRENT.md`·`SCENARIO_COVERAGE_DASHBOARD_CURRENT.md`, `scripts/e2e/SCENARIO_MATRIX_INDEX.md` 격리 실행 절)에 새 여정과 S3 대역 포트(release 38589, money 38689), 발송 복구 여정의 notify 포트(공개 38782, 관리자 38784, Redis 46593, S3 대역 38789)를 적는 일은 이 줄과 함께 앱 갈래가 한다.",
+      "condition": "서버 시험 소스와 대본은 끝났다. 앱 장면을 쓰는 중(2026-11-08 밤 늦게부터, 앱 갈래)",
       "scope": "now",
       "kind": "정비",
       "section": "7. 정비(제품 동작 아님)",
@@ -1382,8 +1382,8 @@
     {
       "id": "H-655",
       "title": "관리자 웹을 실제 관리자 서버에 붙여 계약 시험하기",
-      "description": "관리자 웹 품질 자동화(오류 경계, API 클라이언트·인증·주소·숫자·폼 변환 단위 시험, 운영 의존성 감사, Docker 이미지 판 고정과 빌드 확인)는 2026-11-08 밤 끝났다. 남은 하나가 실제 서버 계약 시험이다. 할 것: 관리자 서버를 시험 DB 로 띄우고, 저장된 계약(`openapi/admin-api.json`)의 경로 변수 없는 GET 을 로그인 세션으로 불러 응답 칸과 형을 계약 스키마와 대조하는 대본 하나. 출시 후보에서 한 번 돌린다. 같은 때 함께 본다: 집계 창구의 상태별 묶음 셈 두 질의를 실제 MySQL 에서 돌려 보기, 결제 대사 재대조 확인 창에 결과를 모르는 앞 요청 표시가 없는 것(본문이 없는 명령이라 새 값이 앞 키에 실릴 일은 없다).",
-      "condition": "출시 후보 관문 때 조정 세션이 돌린다",
+      "description": "관리자 웹 품질 자동화(오류 경계, API 클라이언트·인증·주소·숫자·폼 변환 단위 시험, 운영 의존성 감사, Docker 이미지 판 고정과 빌드 확인)는 2026-11-08 밤 끝났다. 남은 하나가 실제 서버 계약 시험이다. 할 것: 관리자 서버를 시험 DB 로 띄우고, 저장된 계약(`openapi/admin-api.json`)의 경로 변수 없는 GET 을 로그인 세션으로 불러 응답 칸과 형을 계약 스키마와 대조하는 대본 하나. 출시 후보에서 한 번 돌린다. 대본은 2026-11-08 밤 늦게부터 만드는 중이다. 같은 때 함께 본다: 집계 창구의 상태별 묶음 셈 두 질의를 실제 MySQL 에서 돌려 보기, 결제 대사 재대조 확인 창에 결과를 모르는 앞 요청 표시가 없는 것(본문이 없는 명령이라 새 값이 앞 키에 실릴 일은 없다).",
+      "condition": "대본을 만드는 중(2026-11-08 밤 늦게부터). 출시 후보 관문 때 조정 세션이 돌린다",
       "scope": "now",
       "kind": "정비",
       "section": "7. 정비(제품 동작 아님)",
@@ -1396,10 +1396,10 @@
       "evidenceLinks": []
     },
     {
-      "id": "H-656",
-      "title": "같은 회원의 위치 공유 끄기·첫 위치 올리기가 겹치면 한쪽이 유일 키 위반으로 실패하는 것 고치기",
-      "description": "행이 없으면 넣는 위치 공유 쓰기가 같은 회원의 동시 요청에서 둘 다 행이 없다고 읽고 넣어, 유일 키에 걸린 쪽 요청이 오류로 끝난다. 참가자 쓰기의 모임 행 공유 잠금(2026-11-08 밤, 공개 API `f0eb69c36`)은 호스트가 끄는 것과의 겹침만 막고 공유 잠금끼리는 서로 막지 않는다. 동의 켜기는 2026-11-08 밤 고쳤다. 모임 행 공유 잠금 바로 다음에 회원 행을 배타로 잡아(차례 모임 → 회원) 같은 회원의 켜기 둘이 줄 서고, 뒤 요청은 앞 요청이 넣은 행을 찾아 켜진 채로 둔다(실 DB 장면 하나). 유일 키 위반을 트랜잭션 안에서 잡는 길과 없는 행 잠금 조회는 쓰지 않는다(롤백 전용이 되거나 빈 구간 잠금 교착). 남은 둘: 끄기(`optOut`)는 동의 행이 없으면 꺼짐으로 넣어 켜기·끄기가 동시면 같은 위반(`uk_location_opt_in_event_user`)이 난다. 끄기는 모임 행을 잠그지 않아 차례를 먼저 정한다. 위치 올리기(`updateLocation`)는 공유 위치 행이 없으면 넣어 같은 회원의 첫 위치 올리기 둘이 동시면 `uk_location_share_event_user` 로 500 이다.",
-      "condition": "켜기와 같은 꼴로 고친다. 끄기는 모임 행 잠금 차례부터 정한다",
+      "id": "H-657",
+      "title": "앱 시험 가운데 이미지 해독을 고정 횟수 기다리는 셋을 상태까지 기다리게 고치기",
+      "description": "앱 시험이 실제 입출력을 고정 횟수(정해진 실제 시간)만큼 기다리면 기계가 바쁠 때 덜 끝나 실패한다. 사진·파일을 고르는 시험 열둘은 2026-11-08 밤 늦게 고쳤다(앱 `2ede29f51`): 기다리던 상태가 될 때까지 실제 30초 한도로 기다리고(시험 공용 `pumpUntilRealIo`), 클럽 글 초안 저장의 정적 줄을 시험마다 비운다(`resetQueuesForTest`). 남은 셋은 파일 입출력이 아니라 이미지 해독을 고정 실제 시간으로 기다린다: `club_home_visual`(50ms 여덟 번), `app_network_image`(30~50ms 한 번씩), 골든 `q0_editor_golden`. 정적 줄이 없어 뒤 시험이 멈추지는 않지만 바쁠 때 실패할 수 있다. 같은 꼴로 상태까지 한도 있는 기다림으로 바꾼다([현재 적용하는 결정](#현재-적용하는-결정)). 2026-11-08 밤 늦게부터 고치는 중이다.",
+      "condition": "고치는 중(2026-11-08 밤 늦게부터). 끝나면 닫는다",
       "scope": "now",
       "kind": "정비",
       "section": "7. 정비(제품 동작 아님)",
@@ -1408,7 +1408,7 @@
         "development"
       ],
       "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "2026-11-08 위치 공유 쓰기 잠금",
+      "evidence": "2026-11-08 밤 앱 시험 멈춤 조사(첨부 재시작 시험 하나가 실패한 뒤 같은 파일의 뒤 시험 여섯이 하나에 10분씩 멈춤)",
       "evidenceLinks": []
     },
     {
@@ -2027,15 +2027,15 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "36e9de201"
+      "commit": "4d06c7a72"
     },
     {
       "name": "관리자 API",
-      "commit": "36e9de201"
+      "commit": "4d06c7a72"
     },
     {
       "name": "앱",
-      "commit": "cfb2af92c"
+      "commit": "2ede29f51"
     },
     {
       "name": "관리자 웹",
@@ -2046,7 +2046,7 @@
       "commit": "6e19d97"
     }
   ],
-  "sourceDigest": "d99209d0279675f1ed4d795005e63d284d189e5c706b9fd7cbb5d9fe04f2c01b",
+  "sourceDigest": "763ccada7b0af5d9c1d1ffe07af246922da31da9c67deeefba8c34d525c84a23",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2156,18 +2156,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다. 11월 8일 관리자 API 계약 결정 68~72 를 권고대로 정했습니다(목록은 Page 하나, 셈 창구와 옛 목록 경로 걷기, 돈·장부·재시도 명령의 다시 보내기 키 필수, 일괄 처리 꼴 하나). 관리자 웹과 서버는 같은 배포로 올립니다. 같은 날 밤 결정 73~81 도 권고대로 정했습니다(이용 제한 계정의 삭제 요청·내보내기 열기, 클럽 기부 한 번 1,000,000원 상한과 기부·취소 알림, 기부 메시지와 마일리지 메모 저장, 정산 이의 첨부는 명세에서 빼기, 플랜 연결 장소·준비 시간 칸과 정산 다시 알림의 덧붙일 말 칸, 감사 기록의 쓰지 않던 접속 IP·브라우저 칸 걷기). 같은 밤 늦게 고치며 정한 것: 목록 쪽 값의 범위 밖은 잘못된 입력, 데이트 방 닫힘은 만남 예정 시각까지 활동, 판정 되돌린 환불 분쟁도 끝난 분쟁, 무결성의 CHECK·모르는 위반은 서버 오류, 글 길이는 이모지를 2자로 세는 보수적 셈, 28일 넘은 미처리 이의는 배포 때 알린 것으로 표시. 그 뒤 고치며 정한 것: 준비 시작·끝은 끝이 시작보다 뒤(같은 시각도 거절, 82 닫음), 열쇠를 쥔 명령의 410 은 열쇠를 지킴, 안 읽은 알림 수는 차단한 상대를 빼되 1,000건 넘으면 그대로, 옛 알림 쪽 조회 둘은 커서로 읽는 앱 판이 나간 뒤 걷기."
   },
   "publication": {
-    "updatedAt": "2026-11-08T23:20:22+09:00",
+    "updatedAt": "2026-11-08T23:38:30+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "06511adec12dc4ad691e6ddc8f90bf17dfc477e8",
+    "sourceCommit": "514ae9c7cb5cfb318bf1777e1822a6716ffac58e",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "04de405652739087fab505a9bb4e762efaccac55235f37ff7282991b2e6e4756",
-    "worklistSha256": "48c8c7df565a13b28a98e7dccf1bf905061f244b00e653c8b248b96e0b4c1323",
+    "sourceSha256": "942f9d425a05dbadbabc00bf8a06a5e34ebd5650009b0198b57e59cfe4d94426",
+    "worklistSha256": "e36ad63f67d8ad34a3edde8250879c17c63cb11d591ab4f7d35c55a3ecadc0a9",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "3b0e67782ca7aa5b1887ab7b2fb468cf763543ccda5f821843f4c10faced2b2e",
-      "docs/plan/WORKLIST.md": "48c8c7df565a13b28a98e7dccf1bf905061f244b00e653c8b248b96e0b4c1323",
+      "docs/plan/WORKLIST.md": "e36ad63f67d8ad34a3edde8250879c17c63cb11d591ab4f7d35c55a3ecadc0a9",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "d8d59ee9af5fb856e210e06fa972c5a828415f773666a67fb979fe68a3364aec",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
     },
