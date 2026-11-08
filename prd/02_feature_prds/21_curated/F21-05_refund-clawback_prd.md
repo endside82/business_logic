@@ -51,7 +51,8 @@
    - over-refund 가드: 기존 부분환불 누적 + 이번 금액 ≤ charge.amount
    - `providerEarningPort.partialHostAbsorbedRefund`: 참가자에게 partialAmount 복원, 호스트 지갑에서 partialAmount 차감
    - `service_assignment_refund` 행 INSERT(`PARTIAL_HOST_ABSORBED`, `hostRecoveryTransactionId` 포함)
-4. coverage/earning은 불변 — 제공자 전액 수령 유지. 배정 취소 시 `reverseChargesOnTermination`이 `hostAbsorbed` 역환불로 분할 처리.
+4. coverage/earning은 불변 — 제공자 전액 수령 유지.
+5. 환불 처리 위임이 없는 공동 호스트는 부분 환불을 할 수 없다. 배정 응답의 행동 표지 `PARTIAL_REFUND` 가 「불가」(`EVENT_CO_HOST_PERMISSION_DENIED`, 「호스트에게 환불 처리 권한을 받은 공동 호스트만 할 수 있습니다.」)로 와서 앱 단추가 감춰지고, 명령도 같은 위임 판정으로 상태보다 먼저 거절한다. 돈은 부른 사람이 아니라 모임 호스트 지갑에서 나간다(2026-11-08). 배정 취소 시 `reverseChargesOnTermination`이 `hostAbsorbed` 역환불로 분할 처리.
 
 ### 3-C. 정산 잠금 후 회수(clawback)
 

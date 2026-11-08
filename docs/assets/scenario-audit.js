@@ -4,18 +4,18 @@ window.SCENARIO_AUDIT = {
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "828917c837d33f46f6a703f98d99968f4ac89067"
+    "sourceRevision": "0011ce912ab81419df96bd9f85de3b55b368ca8c"
   },
   "countingNote": "시나리오 1,068개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1068,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4498,
-    "journeyFilesScanned": 313,
+    "automatedTestFilesScanned": 4518,
+    "journeyFilesScanned": 317,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 55,
-    "automatedFeatureMarkers": 67,
+    "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 55,
     "directlyLinkedJourneys": 53,
     "journeyFeatureMarkers": 34,
@@ -7883,10 +7883,12 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": false,
         "count": 0,
-        "featureMarkerCount": 0,
+        "featureMarkerCount": 1,
         "scenarioReferenceCount": 0,
         "files": [],
-        "markerCandidateFiles": []
+        "markerCandidateFiles": [
+          "community_app/test/presentation/market/market_item_purchase_error_test.dart"
+        ]
       },
       "journey": {
         "directlyLinked": false,
@@ -9704,8 +9706,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getNotifications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications",
-                "targetLine": 35,
-                "methodLine": 36
+                "targetLine": 38,
+                "methodLine": 39
               }
             ]
           },
@@ -9721,8 +9723,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getUnreadCount",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/unread-count",
-                "targetLine": 52,
-                "methodLine": 53
+                "targetLine": 80,
+                "methodLine": 81
               }
             ]
           },
@@ -9738,8 +9740,8 @@ window.SCENARIO_AUDIT = {
                 "method": "markAsRead",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/notifications/{notificationId}/read",
-                "targetLine": 58,
-                "methodLine": 59
+                "targetLine": 86,
+                "methodLine": 87
               }
             ]
           },
@@ -9755,8 +9757,8 @@ window.SCENARIO_AUDIT = {
                 "method": "markAllAsRead",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/notifications/read-all",
-                "targetLine": 66,
-                "methodLine": 67
+                "targetLine": 94,
+                "methodLine": 95
               }
             ]
           },
@@ -9772,8 +9774,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteNotification",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/notifications/{notificationId}",
-                "targetLine": 73,
-                "methodLine": 74
+                "targetLine": 101,
+                "methodLine": 102
               }
             ]
           }
@@ -9840,8 +9842,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getGroupedNotifications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/grouped",
-                "targetLine": 43,
-                "methodLine": 44
+                "targetLine": 59,
+                "methodLine": 60
               }
             ]
           },
@@ -9857,8 +9859,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getUnreadCount",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/unread-count",
-                "targetLine": 52,
-                "methodLine": 53
+                "targetLine": 80,
+                "methodLine": 81
               }
             ]
           }
@@ -9867,13 +9869,14 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 1,
-        "featureMarkerCount": 1,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 1,
         "files": [
           "community_app/integration_test/seed_notification_mutation_test.dart"
         ],
         "markerCandidateFiles": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
+          "community_app/integration_test/seed_notification_mutation_test.dart",
+          "community_app/test/domain/providers/notification/grouped_notification_paging_test.dart"
         ]
       },
       "journey": {
@@ -9924,8 +9927,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSettings",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/settings",
-                "targetLine": 81,
-                "methodLine": 82
+                "targetLine": 109,
+                "methodLine": 110
               }
             ]
           },
@@ -9941,8 +9944,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateSettings",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/notifications/settings",
-                "targetLine": 99,
-                "methodLine": 100
+                "targetLine": 127,
+                "methodLine": 128
               }
             ]
           }
@@ -10008,8 +10011,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getQuietHours",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/settings/quiet-hours",
-                "targetLine": 107,
-                "methodLine": 108
+                "targetLine": 135,
+                "methodLine": 136
               }
             ]
           },
@@ -10025,8 +10028,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateQuietHours",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/notifications/settings/quiet-hours",
-                "targetLine": 113,
-                "methodLine": 114
+                "targetLine": 141,
+                "methodLine": 142
               }
             ]
           }
