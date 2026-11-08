@@ -59,13 +59,10 @@ if (!Array.isArray(features) || features.length !== 175) {
   throw new Error(`기능 목록이 175개가 아닙니다: ${features?.length ?? '읽기 실패'}`);
 }
 
-const missingScenarioFeatures = features.filter((feature) => !feature.scenarios);
-if (missingScenarioFeatures.length) {
-  throw new Error(`시나리오가 없는 기능: ${missingScenarioFeatures.map((feature) => feature.id).join(', ')}`);
-}
-
 const unitFiles = walk('business_logic/units');
 const scenarioFiles = unitFiles.filter((file) => file.endsWith('/scenarios.md'));
+// 단위 문서는 이 저장소에 올리지 않는 로컬 자료다. 없는 자리에서 돌리면 모든 기능이 시나리오 0 으로 헛돌아가니 멈춘다.
+if (!scenarioFiles.length) throw new Error('상세 시나리오 문서(business_logic/units/*/scenarios.md)를 하나도 읽지 못했다');
 const backendFiles = unitFiles.filter((file) => file.endsWith('/backend.md'));
 const referenceTargets = JSON.parse(fs.readFileSync(path.join(scriptDir, 'source_reference_targets.json'), 'utf8')).references;
 const apiModules = loadApiModules(path.join(workspaceRoot, API_REPO));
@@ -75,11 +72,6 @@ function countUnitScenarioHeadings(documentText) {
   return [...documentText.matchAll(
     /^#{2,4}\s+(?:(?:S|SC)-?\d+\b|E2E-derived\s+시나리오|시나리오\s*\d+|\d+\.\s)/gmi,
   )].length;
-}
-
-function hasFormalPrdScenarioSection(documentText) {
-  return /^#{2,4}\s+.*(?:시나리오 기준 수용 조건|상태\/권한\/시나리오 매트릭스|수용 기준)/m
-    .test(documentText);
 }
 
 // 관리자 시험은 공개 뿌리의 관리자 모듈(modules.txt 의 admin 줄)의 시험 종류 뿌리에서 읽는다. 훑기는 관리자 모듈을 보지 않는다.
@@ -148,16 +140,16 @@ function traceEvidence(featureId) {
   };
 }
 
+// 시나리오는 단위 시나리오 문서(units/*/scenarios.md)로만 센다. 기능 PRD 는 제품 내용만 담아 시나리오 절이 없고(2026-11-07 사용자
+// 결정), 기능 목록에 적힌 옛 등록 숫자도 쓰지 않는다. 단위 문서가 없는 기능은 시나리오 0 이고, 시험 연결만 기능 PRD 에 적힌 파일
+// 이름으로 찾는다.
 const auditFeatures = features.map((feature) => {
   const unitScenarioPath = scenarioFiles.find((file) => file.includes(`/${feature.id}_`)) ?? null;
   const scenarioPath = unitScenarioPath ?? `business_logic/prd/${feature.prdPath}`;
   const scenarioText = read(scenarioPath);
   const documentScenarioCount = unitScenarioPath ? countUnitScenarioHeadings(scenarioText) : null;
-  const formalDefinition = unitScenarioPath
-    ? documentScenarioCount > 0
-    : hasFormalPrdScenarioSection(scenarioText);
-  if (!formalDefinition) {
-    throw new Error(`${feature.id}의 정식 시나리오 또는 수용 기준을 ${scenarioPath}에서 찾지 못했습니다.`);
+  if (documentScenarioCount === 0) {
+    throw new Error(`${feature.id}의 상세 시나리오 문서 ${scenarioPath}에서 시나리오 제목을 찾지 못했습니다.`);
   }
   const automatedMarkers = filesMentioning(automatedTextIndex, feature.id);
   const automatedDocumentReferences = filesReferencedByDocument(automatedTestFiles, scenarioText);
@@ -174,16 +166,13 @@ const auditFeatures = features.map((feature) => {
     id: feature.id,
     domain: feature.domain,
     name: feature.name,
-    scenarioCount: feature.scenarios,
-    scenarioSource: unitScenarioPath ? '상세 시나리오 문서' : '기능 PRD 수용 시나리오',
+    scenarioCount: documentScenarioCount ?? 0,
+    scenarioSource: unitScenarioPath ? '상세 시나리오 문서' : '상세 시나리오 문서 없음',
     scenarioPath,
     publishedDocumentPath: `business_logic/prd/${feature.prdPath}`,
     scenarioDefinition: {
-      formal: formalDefinition,
+      formal: unitScenarioPath != null,
       documentScenarioCount,
-      registeredCountMatches: documentScenarioCount == null
-        ? null
-        : documentScenarioCount === feature.scenarios,
     },
     trace: traceEvidence(feature.id),
     automated: {
@@ -236,12 +225,6 @@ const documentedScenarioItems = auditFeatures.reduce((sum, feature) => sum + fea
 const unitScenarioDocuments = auditFeatures.filter((feature) =>
   feature.scenarioDefinition.documentScenarioCount != null,
 ).length;
-const unitScenarioHeadings = auditFeatures.reduce((sum, feature) =>
-  sum + (feature.scenarioDefinition.documentScenarioCount ?? 0), 0,
-);
-const unitScenarioCountMismatches = auditFeatures.filter((feature) =>
-  feature.scenarioDefinition.registeredCountMatches === false,
-).length;
 
 const payload = {
   asOf,
@@ -250,7 +233,7 @@ const payload = {
     endpointIdentityChecked: true,
     sourceRevision: sourceChanges ? null : sourceRevision,
   },
-  countingNote: `${documentedScenarioItems.toLocaleString('ko-KR')}은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 ${unitScenarioDocuments}개에서 실제로 식별한 제목은 ${unitScenarioHeadings.toLocaleString('ko-KR')}개이며 ${unitScenarioCountMismatches}개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.`,
+  countingNote: `시나리오 ${documentedScenarioItems.toLocaleString('ko-KR')}개는 상세 시나리오 문서 ${unitScenarioDocuments}개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 ${auditFeatures.length - unitScenarioDocuments}개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.`,
   totals: {
     features: auditFeatures.length,
     documentedScenarioItems,
@@ -258,11 +241,6 @@ const payload = {
     automatedTestFilesScanned: automatedTestFiles.length,
     journeyFilesScanned: journeyFiles.length,
     unitScenarioDocuments,
-    unitScenarioHeadings,
-    unitRegisteredScenarioItems: auditFeatures
-      .filter((feature) => feature.scenarioDefinition.documentScenarioCount != null)
-      .reduce((sum, feature) => sum + feature.scenarioCount, 0),
-    unitScenarioCountMismatches,
     directlyLinkedAutomatedTests: auditFeatures.filter((feature) => feature.automated.directlyLinked).length,
     automatedFeatureMarkers: auditFeatures.filter((feature) => feature.automated.featureMarkerCount > 0).length,
     automatedScenarioReferences: auditFeatures.filter((feature) =>

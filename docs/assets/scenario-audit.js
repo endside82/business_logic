@@ -1,24 +1,21 @@
 /* 이 파일은 verification/build_scenario_audit_data.mjs가 현재 저장소에서 생성한다. */
 window.SCENARIO_AUDIT = {
-  "asOf": "2026-11-07",
+  "asOf": "2026-11-08",
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "2dbac0ae216d85651cfbcc9505d45eb2f4e4ced0"
+    "sourceRevision": "828917c837d33f46f6a703f98d99968f4ac89067"
   },
-  "countingNote": "1,403은 기존 기능 목록에 적힌 숫자의 합이다. 상세 시나리오 문서 117개에서 실제로 식별한 제목은 1,068개이며 53개 기능은 등록 숫자와 제목 수가 다르다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,068개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1403,
-    "definedFeatures": 175,
-    "automatedTestFilesScanned": 4291,
-    "journeyFilesScanned": 311,
+    "documentedScenarioItems": 1068,
+    "definedFeatures": 117,
+    "automatedTestFilesScanned": 4498,
+    "journeyFilesScanned": 313,
     "unitScenarioDocuments": 117,
-    "unitScenarioHeadings": 1068,
-    "unitRegisteredScenarioItems": 1011,
-    "unitScenarioCountMismatches": 53,
     "directlyLinkedAutomatedTests": 55,
-    "automatedFeatureMarkers": 66,
+    "automatedFeatureMarkers": 67,
     "automatedScenarioReferences": 55,
     "directlyLinkedJourneys": 53,
     "journeyFeatureMarkers": 34,
@@ -40,14 +37,13 @@ window.SCENARIO_AUDIT = {
       "id": "F01-01",
       "domain": "인증 & 온보딩",
       "name": "이메일 회원가입 & 로그인",
-      "scenarioCount": 10,
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": false
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/backend.md",
@@ -117,14 +113,13 @@ window.SCENARIO_AUDIT = {
       "id": "F01-02",
       "domain": "인증 & 온보딩",
       "name": "소셜 로그인",
-      "scenarioCount": 8,
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-02_social-login/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": false
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-02_social-login/backend.md",
@@ -205,20 +200,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F01-03",
       "domain": "인증 & 온보딩",
       "name": "이메일 인증",
-      "scenarioCount": 10,
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-03_email-verification/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": false
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-03_email-verification/backend.md",
@@ -282,20 +276,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F01-04",
       "domain": "인증 & 온보딩",
       "name": "비밀번호 재설정",
-      "scenarioCount": 10,
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-04_password-reset/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": false
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-04_password-reset/backend.md",
@@ -376,7 +369,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F01-05",
@@ -388,8 +381,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 15,
-        "registeredCountMatches": true
+        "documentScenarioCount": 15
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-05_token-refresh-logout/backend.md",
@@ -477,8 +469,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": true
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-06_onboarding/backend.md",
@@ -511,20 +502,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F01-07",
       "domain": "인증 & 온보딩",
       "name": "관심사 태그 관리",
-      "scenarioCount": 10,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-07_preference-tags/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-07_preference-tags/backend.md",
@@ -565,8 +555,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-08_social-unlink/backend.md",
@@ -613,20 +602,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F02-01",
       "domain": "홈 피드",
       "name": "홈 피드 메인 조회",
-      "scenarioCount": 8,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/02_home_feed/F02-01_home-feed-main/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-01_home-feed-main/backend.md",
@@ -655,7 +643,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F02-02",
@@ -667,8 +655,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/backend.md",
@@ -697,7 +684,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F02-03",
@@ -709,8 +696,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-03_section-card-entry/backend.md",
@@ -739,20 +725,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F02-04",
       "domain": "홈 피드",
       "name": "추천 이벤트 더보기·필터·무한스크롤",
-      "scenarioCount": 11,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/02_home_feed/F02-04_recommend-events-more/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-04_recommend-events-more/backend.md",
@@ -819,8 +804,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 9
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F02-05",
@@ -832,8 +817,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-05_search-notification-entry/backend.md",
@@ -862,7 +846,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 10
+      "pendingReview": 0
     },
     {
       "id": "F03-01",
@@ -874,8 +858,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-01_event-discovery/backend.md",
@@ -964,20 +947,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F03-02",
       "domain": "이벤트",
       "name": "이벤트 상세 조회",
-      "scenarioCount": 8,
+      "scenarioCount": 15,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-02_event-detail/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 15,
-        "registeredCountMatches": false
+        "documentScenarioCount": 15
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-02_event-detail/backend.md",
@@ -1006,7 +988,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F03-03",
@@ -1018,8 +1000,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-03_event-creation/backend.md",
@@ -1126,20 +1107,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F03-04",
       "domain": "이벤트",
       "name": "이벤트 수정/생명주기 관리",
-      "scenarioCount": 11,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-04_event-lifecycle/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-04_event-lifecycle/backend.md",
@@ -1261,8 +1241,8 @@ window.SCENARIO_AUDIT = {
                 "method": "announceToAttendees",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/announce",
-                "targetLine": 550,
-                "methodLine": 551
+                "targetLine": 561,
+                "methodLine": 562
               }
             ]
           },
@@ -1331,7 +1311,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F03-05",
@@ -1343,8 +1323,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 13,
-        "registeredCountMatches": true
+        "documentScenarioCount": 13
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-05_event-attendance/backend.md",
@@ -1484,20 +1463,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 20
+      "pendingReview": 0
     },
     {
       "id": "F03-06",
       "domain": "이벤트",
       "name": "신청서 승인/거절",
-      "scenarioCount": 11,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-06_application-review/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-06_application-review/backend.md",
@@ -1587,20 +1565,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 8
+      "pendingReview": 0
     },
     {
       "id": "F03-07",
       "domain": "이벤트",
       "name": "정원 & 대기열 관리",
-      "scenarioCount": 11,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-07_capacity-and-waitlist/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": false
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-07_capacity-and-waitlist/backend.md",
@@ -1645,8 +1622,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-08_qr-checkin/backend.md",
@@ -1769,7 +1745,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F03-09",
@@ -1781,8 +1757,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-09_event-photos/backend.md",
@@ -1869,7 +1844,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F03-10",
@@ -1881,8 +1856,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-10_event-plan-link/backend.md",
@@ -2000,21 +1974,20 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 3
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F03-11",
       "domain": "이벤트",
       "name": "위시리스트",
-      "scenarioCount": 9,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-11_wishlist/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-11_wishlist/backend.md",
@@ -2106,7 +2079,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F03-12",
@@ -2118,8 +2091,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-12_my-events/backend.md",
@@ -2204,20 +2176,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 7
+      "pendingReview": 0
     },
     {
       "id": "F03-13",
       "domain": "이벤트",
       "name": "이벤트 참가 선입금",
-      "scenarioCount": 11,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2256,14 +2227,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-14",
       "domain": "이벤트",
       "name": "이동수단 공통 설정",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2304,14 +2274,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-15",
       "domain": "이벤트",
       "name": "카풀·개별 이동",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2352,14 +2321,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-16",
       "domain": "이벤트",
       "name": "대절 버스와 자리 배정",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2398,14 +2366,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-17",
       "domain": "이벤트",
       "name": "차량 좌석 배치도 운영",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2448,14 +2415,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-18",
       "domain": "이벤트",
       "name": "구성인원 인구통계",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2493,14 +2459,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-19",
       "domain": "이벤트",
       "name": "일정 변경 제안·참가자 합의",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2537,14 +2502,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-20",
       "domain": "이벤트",
       "name": "이벤트 노쇼 관리",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -2556,10 +2520,11 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": false,
         "count": 0,
-        "featureMarkerCount": 1,
+        "featureMarkerCount": 2,
         "scenarioReferenceCount": 0,
         "files": [],
         "markerCandidateFiles": [
+          "community_api/api-app/src/test/java/com/endside/community/event/service/EventChatRoomCommitTest.java",
           "community_app/test/presentation/event/event_message_guidance_card_test.dart"
         ]
       },
@@ -2581,14 +2546,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-01",
       "domain": "클럽",
       "name": "클럽 발견 & 탐색",
-      "scenarioCount": 8,
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-01_club-discovery/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-01_club-discovery_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": false
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-01_club-discovery/backend.md",
@@ -2643,20 +2607,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F04-02",
       "domain": "클럽",
       "name": "클럽 상세 보기 & 가입 액션",
-      "scenarioCount": 9,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-02_club-detail-join/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-02_club-detail-join_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-02_club-detail-join/backend.md",
@@ -2702,14 +2665,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-03",
       "domain": "클럽",
       "name": "클럽 생성·수정·삭제·소유권 이전",
-      "scenarioCount": 13,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-03_club-crud-transfer/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-03_club-crud-transfer/backend.md",
@@ -2817,7 +2779,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 11
+      "pendingReview": 0
     },
     {
       "id": "F04-04",
@@ -2829,8 +2791,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": true
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-04_member-management/backend.md",
@@ -2932,14 +2893,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-05",
       "domain": "클럽",
       "name": "가입 대기열 승인/거절 & 초대",
-      "scenarioCount": 13,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-05_waitlist-invitation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-05_waitlist-invitation/backend.md",
@@ -3081,20 +3041,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F04-06",
       "domain": "클럽",
       "name": "차단 관리",
-      "scenarioCount": 12,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-06_ban-management/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-06_ban-management/backend.md",
@@ -3207,14 +3166,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-07",
       "domain": "클럽",
       "name": "내 클럽 / 멤버 통계",
-      "scenarioCount": 11,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-07_my-clubs-stats/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-07_my-clubs-stats/backend.md",
@@ -3288,8 +3246,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 6
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F04-08",
@@ -3301,8 +3259,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 17,
-        "registeredCountMatches": true
+        "documentScenarioCount": 17
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-08_board-post-crud/backend.md",
@@ -3346,20 +3303,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F04-09",
       "domain": "클럽",
       "name": "게시글 댓글 & 대댓글",
-      "scenarioCount": 12,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-09_post-comments/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-09_post-comments/backend.md",
@@ -3406,14 +3362,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-10",
       "domain": "클럽",
       "name": "공지사항",
-      "scenarioCount": 11,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-10_announcements/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-10_announcements_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-10_announcements/backend.md",
@@ -3502,20 +3457,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F04-11",
       "domain": "클럽",
       "name": "사진첩",
-      "scenarioCount": 11,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-11_photo-album/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-11_photo-album_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-11_photo-album/backend.md",
@@ -3637,8 +3591,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deletePhoto",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/{photoId}",
-                "targetLine": 104,
-                "methodLine": 105
+                "targetLine": 107,
+                "methodLine": 108
               }
             ]
           },
@@ -3654,8 +3608,8 @@ window.SCENARIO_AUDIT = {
                 "method": "batchDeletePhotos",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/batch-delete",
-                "targetLine": 114,
-                "methodLine": 115
+                "targetLine": 117,
+                "methodLine": 118
               }
             ]
           },
@@ -3671,8 +3625,8 @@ window.SCENARIO_AUDIT = {
                 "method": "batchDeletePhotos",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/photos/batch-delete",
-                "targetLine": 114,
-                "methodLine": 115
+                "targetLine": 117,
+                "methodLine": 118
               }
             ]
           }
@@ -3708,20 +3662,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F04-12",
       "domain": "클럽",
       "name": "클럽 이벤트 & 캘린더",
-      "scenarioCount": 13,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-12_club-events-calendar/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-12_club-events-calendar/backend.md",
@@ -4254,20 +4207,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 7
+      "pendingReview": 0
     },
     {
       "id": "F04-13",
       "domain": "클럽",
       "name": "기금 현황",
-      "scenarioCount": 10,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-13_fund-overview/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": false
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-13_fund-overview/backend.md",
@@ -4323,20 +4275,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F04-14",
       "domain": "클럽",
       "name": "기부하기 & 기부 내역",
-      "scenarioCount": 16,
+      "scenarioCount": 15,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-14_donation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 15,
-        "registeredCountMatches": false
+        "documentScenarioCount": 15
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-14_donation/backend.md",
@@ -4444,21 +4395,20 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 6
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F04-15",
       "domain": "클럽",
       "name": "기금 인출 요청",
-      "scenarioCount": 10,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-15_fund-withdrawal/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": false
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-15_fund-withdrawal/backend.md",
@@ -4531,20 +4481,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F04-16",
       "domain": "클럽",
       "name": "클럽 구독",
-      "scenarioCount": 13,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-16_subscription/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-16_subscription/backend.md",
@@ -4674,14 +4623,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-17",
       "domain": "클럽",
       "name": "구성인원 인구통계",
-      "scenarioCount": 7,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -4716,14 +4664,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-18",
       "domain": "클럽",
       "name": "클럽 레퓨테이션",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -4758,14 +4705,13 @@ window.SCENARIO_AUDIT = {
       "id": "F05-01",
       "domain": "검색",
       "name": "키워드 검색",
-      "scenarioCount": 8,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-01_keyword-search/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-01_keyword-search/backend.md",
@@ -4797,20 +4743,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F05-02",
       "domain": "검색",
       "name": "자동완성 서제스트",
-      "scenarioCount": 7,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-02_autocomplete-suggest/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-02_autocomplete-suggest/backend.md",
@@ -4867,7 +4812,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F05-03",
@@ -4879,8 +4824,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-03_search-filter_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-03_search-filter/backend.md",
@@ -4944,20 +4888,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F05-04",
       "domain": "검색",
       "name": "최근 검색어",
-      "scenarioCount": 9,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-04_search-history/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-04_search-history_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-04_search-history/backend.md",
@@ -4998,8 +4941,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-05_saved-search_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-05_saved-search/backend.md",
@@ -5114,7 +5056,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 4
+      "pendingReview": 0
     },
     {
       "id": "F06-01",
@@ -5126,8 +5068,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-01_wallet-main/backend.md",
@@ -5188,8 +5129,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-02_point-charge/backend.md",
@@ -5324,8 +5264,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-03_transaction-history/backend.md",
@@ -5406,7 +5345,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 4
+      "pendingReview": 0
     },
     {
       "id": "F06-04",
@@ -5418,8 +5357,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-04_payment-method/backend.md",
@@ -5517,7 +5455,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F06-05",
@@ -5529,8 +5467,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-05_auto-charge/backend.md",
@@ -5636,14 +5573,13 @@ window.SCENARIO_AUDIT = {
       "id": "F06-06",
       "domain": "결제 & 지갑",
       "name": "포인트 결제·환불",
-      "scenarioCount": 10,
+      "scenarioCount": 20,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-06_point-pay-refund/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 20,
-        "registeredCountMatches": false
+        "documentScenarioCount": 20
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-06_point-pay-refund/backend.md",
@@ -5735,7 +5671,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "local",
       "knownIssues": 0,
-      "pendingReview": 17
+      "pendingReview": 0
     },
     {
       "id": "F06-07",
@@ -5747,8 +5683,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-07_hosting-ticket/backend.md",
@@ -5814,20 +5749,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F06-08",
       "domain": "결제 & 지갑",
       "name": "개인 구독 관리",
-      "scenarioCount": 7,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-08_personal-subscription/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": false
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-08_personal-subscription/backend.md",
@@ -5950,7 +5884,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F06-09",
@@ -5962,8 +5896,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-09_earnings-dashboard/backend.md",
@@ -6012,7 +5945,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F06-10",
@@ -6024,8 +5957,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-10_settlement-appeal/backend.md",
@@ -6141,8 +6073,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 4
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F07-01",
@@ -6154,8 +6086,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-01_create-settlement/backend.md",
@@ -6236,7 +6167,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F07-02",
@@ -6248,8 +6179,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-02_settlement-items/backend.md",
@@ -6347,7 +6277,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F07-03",
@@ -6359,8 +6289,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-03_activate-cancel/backend.md",
@@ -6424,7 +6353,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F07-04",
@@ -6436,8 +6365,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-04_status-summary-receipt/backend.md",
@@ -6518,7 +6446,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F07-05",
@@ -6530,8 +6458,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-05_pay-share/backend.md",
@@ -6680,20 +6607,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F07-06",
       "domain": "모임 정산",
       "name": "이체 확인/일괄 확인/상각",
-      "scenarioCount": 8,
+      "scenarioCount": 13,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 13,
-        "registeredCountMatches": false
+        "documentScenarioCount": 13
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers/backend.md",
@@ -6841,8 +6767,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-07_remind-extend/backend.md",
@@ -6922,8 +6847,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 3
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F07-08",
@@ -6935,8 +6860,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-08_appeal-audit/backend.md",
@@ -7046,8 +6970,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": true
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/backend.md",
@@ -7207,7 +7130,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "partial",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 7
+      "pendingReview": 0
     },
     {
       "id": "F07-10",
@@ -7219,8 +7142,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-10_account-history-reputation/backend.md",
@@ -7251,7 +7173,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F08-01",
@@ -7263,8 +7185,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-01_my-plan-list/backend.md",
@@ -7349,20 +7270,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F08-02",
       "domain": "플랜 마켓",
       "name": "플랜 상세/작성자용 미리보기",
-      "scenarioCount": 13,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-02_plan-detail/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-02_plan-detail/backend.md",
@@ -7405,8 +7325,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-03_block-editor_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": true
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-03_block-editor/backend.md",
@@ -7443,14 +7362,13 @@ window.SCENARIO_AUDIT = {
       "id": "F08-04",
       "domain": "플랜 마켓",
       "name": "블록 드래그 재정렬",
-      "scenarioCount": 7,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-04_block-reorder/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": false
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-04_block-reorder/backend.md",
@@ -7485,14 +7403,13 @@ window.SCENARIO_AUDIT = {
       "id": "F08-05",
       "domain": "플랜 마켓",
       "name": "플랜 발행",
-      "scenarioCount": 14,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-05_plan-publish/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-05_plan-publish/backend.md",
@@ -7533,8 +7450,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-06_market-item-management/backend.md",
@@ -7678,8 +7594,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-07_creator-profile-stats/backend.md",
@@ -7759,8 +7674,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-08_market-main-browse/backend.md",
@@ -7841,7 +7755,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F08-09",
@@ -7853,8 +7767,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-09_market-search/backend.md",
@@ -7905,20 +7818,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 4
+      "pendingReview": 0
     },
     {
       "id": "F08-10",
       "domain": "플랜 마켓",
       "name": "마켓 아이템 상세",
-      "scenarioCount": 9,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-10_market-item-detail/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-10_market-item-detail/backend.md",
@@ -7959,8 +7871,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": true
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-11_purchase/backend.md",
@@ -7988,8 +7899,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "sealed",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 3
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F08-12",
@@ -8001,8 +7912,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-12_my-collection_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-12_my-collection/backend.md",
@@ -8103,7 +8013,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 4
+      "pendingReview": 0
     },
     {
       "id": "F08-13",
@@ -8115,8 +8025,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12,
-        "registeredCountMatches": true
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-13_plan-event-and-review/backend.md",
@@ -8216,20 +8125,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F08-14",
       "domain": "플랜 마켓",
       "name": "플랜 마켓 환불 (Purchase Refund)",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -8268,14 +8176,13 @@ window.SCENARIO_AUDIT = {
       "id": "F08-15",
       "domain": "플랜 마켓",
       "name": "크리에이터 매출 귀속 보정",
-      "scenarioCount": 9,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -8319,8 +8226,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-01_verification/backend.md",
@@ -8340,8 +8246,8 @@ window.SCENARIO_AUDIT = {
                 "method": "requestVerification",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/date/verification/request",
-                "targetLine": 39,
-                "methodLine": 40
+                "targetLine": 38,
+                "methodLine": 39
               }
             ]
           },
@@ -8357,8 +8263,8 @@ window.SCENARIO_AUDIT = {
                 "method": "verify",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/date/verification/verify",
-                "targetLine": 99,
-                "methodLine": 100
+                "targetLine": 98,
+                "methodLine": 99
               }
             ]
           },
@@ -8374,8 +8280,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getStatus",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/date/verification/status",
-                "targetLine": 110,
-                "methodLine": 111
+                "targetLine": 109,
+                "methodLine": 110
               }
             ]
           }
@@ -8415,8 +8321,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-02_profile/backend.md",
@@ -8457,8 +8362,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-03_candidate_swipe/backend.md",
@@ -8486,8 +8390,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "sealed",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 3
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F09-04",
@@ -8499,8 +8403,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-04_match_list/backend.md",
@@ -8576,8 +8479,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-05_chat/backend.md",
@@ -8675,7 +8577,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F09-06",
@@ -8687,8 +8589,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-06_meeting_proposal/backend.md",
@@ -8722,8 +8623,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "sealed",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 6
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F09-07",
@@ -8735,8 +8636,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-07_block/backend.md",
@@ -8829,8 +8729,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-08_profile_views_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": true
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-08_profile_views/backend.md",
@@ -8877,7 +8776,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F10-01",
@@ -8889,8 +8788,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-01_unified-calendar-view/backend.md",
@@ -8973,7 +8871,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F10-02",
@@ -8985,8 +8883,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-02_calendar-item-routing/backend.md",
@@ -9016,8 +8913,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 8
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F10-03",
@@ -9029,8 +8926,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-03_single-availability-crud/backend.md",
@@ -9050,8 +8946,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createAvailability",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/availability",
-                "targetLine": 41,
-                "methodLine": 42
+                "targetLine": 42,
+                "methodLine": 43
               }
             ]
           },
@@ -9067,8 +8963,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getAvailabilities",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability",
-                "targetLine": 53,
-                "methodLine": 54
+                "targetLine": 54,
+                "methodLine": 55
               }
             ]
           },
@@ -9084,8 +8980,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getAvailability",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability/{id}",
-                "targetLine": 72,
-                "methodLine": 73
+                "targetLine": 75,
+                "methodLine": 76
               }
             ]
           },
@@ -9101,8 +8997,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateAvailability",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/availability/{id}",
-                "targetLine": 91,
-                "methodLine": 92
+                "targetLine": 94,
+                "methodLine": 95
               }
             ]
           },
@@ -9118,8 +9014,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteAvailability",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/availability/{id}",
-                "targetLine": 100,
-                "methodLine": 101
+                "targetLine": 103,
+                "methodLine": 104
               }
             ]
           }
@@ -9157,7 +9053,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F10-04",
@@ -9169,8 +9065,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-04_recurring-availability-rule/backend.md",
@@ -9190,8 +9085,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createRecurringAvailability",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/availability/recurring",
-                "targetLine": 109,
-                "methodLine": 110
+                "targetLine": 112,
+                "methodLine": 113
               }
             ]
           },
@@ -9207,8 +9102,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRecurrenceRule",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability/recurring/{ruleId}",
-                "targetLine": 124,
-                "methodLine": 125
+                "targetLine": 127,
+                "methodLine": 128
               }
             ]
           },
@@ -9224,8 +9119,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateRecurrenceRule",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/availability/recurring/{ruleId}",
-                "targetLine": 132,
-                "methodLine": 133
+                "targetLine": 135,
+                "methodLine": 136
               }
             ]
           },
@@ -9241,8 +9136,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteRecurrenceRule",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/availability/recurring/{ruleId}",
-                "targetLine": 141,
-                "methodLine": 142
+                "targetLine": 144,
+                "methodLine": 145
               }
             ]
           },
@@ -9258,8 +9153,8 @@ window.SCENARIO_AUDIT = {
                 "method": "expandRecurrence",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/availability/expand",
-                "targetLine": 152,
-                "methodLine": 153
+                "targetLine": 155,
+                "methodLine": 156
               }
             ]
           }
@@ -9296,8 +9191,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 1,
-      "pendingReview": 8
+      "knownIssues": 2,
+      "pendingReview": 0
     },
     {
       "id": "F10-05",
@@ -9309,8 +9204,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-05_other-user-availability/backend.md",
@@ -9356,20 +9250,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "retired",
       "proof": "none",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F11-01",
       "domain": "리뷰 & 신고",
       "name": "이벤트 리뷰 작성",
-      "scenarioCount": 6,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-01_event-review-write/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-01_event-review-write_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-01_event-review-write/backend.md",
@@ -9410,8 +9303,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-02_review-list/backend.md",
@@ -9481,14 +9373,13 @@ window.SCENARIO_AUDIT = {
       "id": "F11-03",
       "domain": "리뷰 & 신고",
       "name": "리뷰 수정 & 삭제",
-      "scenarioCount": 6,
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-03_review-edit-delete/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": false
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-03_review-edit-delete/backend.md",
@@ -9562,20 +9453,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F11-04",
       "domain": "리뷰 & 신고",
       "name": "신고",
-      "scenarioCount": 6,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-04_report/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-04_report_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-04_report/backend.md",
@@ -9657,14 +9547,13 @@ window.SCENARIO_AUDIT = {
       "id": "F11-05",
       "domain": "리뷰 & 신고",
       "name": "신뢰점수 & 변동 이력",
-      "scenarioCount": 7,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-05_trust-score/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-05_trust-score_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": false
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-05_trust-score/backend.md",
@@ -9701,14 +9590,13 @@ window.SCENARIO_AUDIT = {
       "id": "F11-06",
       "domain": "리뷰 & 신고",
       "name": "취향 평가 & 취향 프로필",
-      "scenarioCount": 8,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-06_taste-profile/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-06_taste-profile_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11,
-        "registeredCountMatches": false
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-06_taste-profile/backend.md",
@@ -9747,14 +9635,13 @@ window.SCENARIO_AUDIT = {
       "id": "F11-07",
       "domain": "리뷰 & 신고",
       "name": "호스트 리뷰 모더레이션",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -9791,14 +9678,13 @@ window.SCENARIO_AUDIT = {
       "id": "F12-01",
       "domain": "알림",
       "name": "알림 목록 조회 & 읽음 관리",
-      "scenarioCount": 6,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-01_notification-list-read/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-01_notification-list-read_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": false
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-01_notification-list-read/backend.md",
@@ -9928,14 +9814,13 @@ window.SCENARIO_AUDIT = {
       "id": "F12-02",
       "domain": "알림",
       "name": "알림 그룹 보기 & 미읽음 배지",
-      "scenarioCount": 6,
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-02_notification-grouped-badge/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-02_notification-grouped-badge_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": false
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-02_notification-grouped-badge/backend.md",
@@ -10006,21 +9891,20 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 3
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F12-03",
       "domain": "알림",
       "name": "카테고리별 알림 설정",
-      "scenarioCount": 6,
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-03_category-settings/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-03_category-settings_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": false
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-03_category-settings/backend.md",
@@ -10092,20 +9976,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F12-04",
       "domain": "알림",
       "name": "방해금지 시간 설정",
-      "scenarioCount": 6,
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-04_quiet-hours/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-04_quiet-hours_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": false
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-04_quiet-hours/backend.md",
@@ -10185,8 +10068,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-05_device-token-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": true
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-05_device-token-management/backend.md",
@@ -10325,8 +10207,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-06_permission-banner_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6,
-        "registeredCountMatches": true
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-06_permission-banner/backend.md",
@@ -10373,14 +10254,13 @@ window.SCENARIO_AUDIT = {
       "id": "F13-01",
       "domain": "프로필 & 설정",
       "name": "내·타인 프로필과 작성 글",
-      "scenarioCount": 5,
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-01_profile-hub/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": false
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-01_profile-hub/backend.md",
@@ -10409,7 +10289,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
-      "pendingReview": 4
+      "pendingReview": 0
     },
     {
       "id": "F13-02",
@@ -10421,8 +10301,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-02_profile-edit/backend.md",
@@ -10479,8 +10358,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 4
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F13-03",
@@ -10492,8 +10371,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-03_address-management/backend.md",
@@ -10607,21 +10485,20 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 5
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F13-04",
       "domain": "프로필 & 설정",
       "name": "선호 태그 관리",
-      "scenarioCount": 5,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-04_preference-tags/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": false
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-04_preference-tags/backend.md",
@@ -10650,20 +10527,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F13-05",
       "domain": "프로필 & 설정",
       "name": "데이터 내보내기",
-      "scenarioCount": 5,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-05_data-export/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-05_data-export/backend.md",
@@ -10692,20 +10568,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F13-06",
       "domain": "프로필 & 설정",
       "name": "계정 삭제 요청",
-      "scenarioCount": 5,
+      "scenarioCount": 13,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-06_account-deletion/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 13,
-        "registeredCountMatches": false
+        "documentScenarioCount": 13
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-06_account-deletion/backend.md",
@@ -10735,8 +10610,8 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
-      "pendingReview": 1
+      "knownIssues": 1,
+      "pendingReview": 0
     },
     {
       "id": "F13-07",
@@ -10748,8 +10623,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5,
-        "registeredCountMatches": true
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-07_account-deactivation/backend.md",
@@ -10813,7 +10687,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 7
+      "pendingReview": 0
     },
     {
       "id": "F14-01",
@@ -10825,8 +10699,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7,
-        "registeredCountMatches": true
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-01_event-location-share/backend.md",
@@ -10919,20 +10792,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 2
+      "pendingReview": 0
     },
     {
       "id": "F14-02",
       "domain": "위치 & 길찾기",
       "name": "위치 공유 중지",
-      "scenarioCount": 7,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-02_location-opt-out/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": false
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-02_location-opt-out/backend.md",
@@ -10984,20 +10856,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F14-03",
       "domain": "위치 & 길찾기",
       "name": "위치 공유 만료 연장",
-      "scenarioCount": 7,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-03_location-extend/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": false
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-03_location-extend/backend.md",
@@ -11027,12 +10898,14 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 1,
-        "featureMarkerCount": 0,
+        "featureMarkerCount": 1,
         "scenarioReferenceCount": 1,
         "files": [
           "community_app/integration_test/seed_location_share_mutation_test.dart"
         ],
-        "markerCandidateFiles": []
+        "markerCandidateFiles": [
+          "community_api/domain/src/test/java/com/endside/community/location/service/LocationServiceTest.java"
+        ]
       },
       "journey": {
         "directlyLinked": true,
@@ -11049,20 +10922,19 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 3
+      "pendingReview": 0
     },
     {
       "id": "F14-04",
       "domain": "위치 & 길찾기",
       "name": "위치 프라이버시 대시보드",
-      "scenarioCount": 6,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10,
-        "registeredCountMatches": false
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/backend.md",
@@ -11118,7 +10990,7 @@ window.SCENARIO_AUDIT = {
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
-      "pendingReview": 1
+      "pendingReview": 0
     },
     {
       "id": "F14-05",
@@ -11130,8 +11002,7 @@ window.SCENARIO_AUDIT = {
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9,
-        "registeredCountMatches": true
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-05_event-directions/backend.md",
@@ -11201,14 +11072,13 @@ window.SCENARIO_AUDIT = {
       "id": "F14-06",
       "domain": "위치 & 길찾기",
       "name": "역지오코딩",
-      "scenarioCount": 6,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-06_reverse-geocoding/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8,
-        "registeredCountMatches": false
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-06_reverse-geocoding/backend.md",
@@ -11278,14 +11148,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-01",
       "domain": "경고 & 징계",
       "name": "내 경고 현황 & 원장",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11322,14 +11191,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-02",
       "domain": "경고 & 징계",
       "name": "신고 제출 & 내 신고 관리",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11364,14 +11232,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-03",
       "domain": "경고 & 징계",
       "name": "이의제기 (Appeal)",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11406,14 +11273,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-04",
       "domain": "경고 & 징계",
       "name": "경고 정책 & 패널티 유형 설정",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11448,14 +11314,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-05",
       "domain": "경고 & 징계",
       "name": "신고 심사",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11490,14 +11355,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-06",
       "domain": "경고 & 징계",
       "name": "경고 부여 & 원장 조정",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11532,14 +11396,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-07",
       "domain": "경고 & 징계",
       "name": "이의제기 처리",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11574,14 +11437,13 @@ window.SCENARIO_AUDIT = {
       "id": "F15-08",
       "domain": "경고 & 징계",
       "name": "제재 집행",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11609,21 +11471,20 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 2,
       "launchScope": "open",
       "proof": "real",
-      "knownIssues": 0,
+      "knownIssues": 1,
       "pendingReview": 0
     },
     {
       "id": "F15-09",
       "domain": "경고 & 징계",
       "name": "검토 큐 & 대시보드/통계/감사로그",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11658,14 +11519,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-01",
       "domain": "마일리지",
       "name": "내 마일리지 메인 & 월간 영수증 & 원장",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11700,14 +11560,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-02",
       "domain": "마일리지",
       "name": "등급·배지·랭킹·프로필 카드",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11742,14 +11601,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-03",
       "domain": "마일리지",
       "name": "시즌 (목록·과거 랭킹·내 스냅샷)",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-03_season_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-03_season_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11784,14 +11642,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-04",
       "domain": "마일리지",
       "name": "마일리지 정책 설정",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11826,14 +11683,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-05",
       "domain": "마일리지",
       "name": "적립규칙·등급·배지·교환 프리셋 관리",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11868,14 +11724,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-06",
       "domain": "마일리지",
       "name": "적립/차감/정정 집행",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11910,14 +11765,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-07",
       "domain": "마일리지",
       "name": "호스트 제안",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11952,14 +11806,13 @@ window.SCENARIO_AUDIT = {
       "id": "F16-08",
       "domain": "마일리지",
       "name": "검토 큐 & 대시보드/감사로그",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -11994,14 +11847,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-01",
       "domain": "정기모임",
       "name": "정기모임 발견·탐색",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12036,14 +11888,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-02",
       "domain": "정기모임",
       "name": "정기모임 상세 조회",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12078,14 +11929,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-03",
       "domain": "정기모임",
       "name": "정기모임 생성 (호스트)",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12120,14 +11970,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-04",
       "domain": "정기모임",
       "name": "생명주기 (게시·종료·취소·재개)",
-      "scenarioCount": 11,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12162,14 +12011,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-05",
       "domain": "정기모임",
       "name": "세션 관리 (추가·일괄·대체·취소)",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12204,14 +12052,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-06",
       "domain": "정기모임",
       "name": "고정형 등록·승인·대기열",
-      "scenarioCount": 14,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12246,14 +12093,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-07",
       "domain": "정기모임",
       "name": "고정형 결제 (지갑·계좌이체)",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12288,14 +12134,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-08",
       "domain": "정기모임",
       "name": "환불 (진행분 차감 · 사유별)",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12330,14 +12175,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-09",
       "domain": "정기모임",
       "name": "세션 출석 확정·노쇼",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12372,14 +12216,13 @@ window.SCENARIO_AUDIT = {
       "id": "F17-10",
       "domain": "정기모임",
       "name": "호스트 정산 (유료분 전달)",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12414,14 +12257,13 @@ window.SCENARIO_AUDIT = {
       "id": "F18-01",
       "domain": "분쟁 해결",
       "name": "통합 분쟁 케이스 조회",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12456,14 +12298,13 @@ window.SCENARIO_AUDIT = {
       "id": "F18-02",
       "domain": "분쟁 해결",
       "name": "분쟁 직접 접수",
-      "scenarioCount": 5,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12498,14 +12339,13 @@ window.SCENARIO_AUDIT = {
       "id": "F18-03",
       "domain": "분쟁 해결",
       "name": "분쟁 이의제기",
-      "scenarioCount": 3,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12540,14 +12380,13 @@ window.SCENARIO_AUDIT = {
       "id": "F18-04",
       "domain": "분쟁 해결",
       "name": "분쟁 증빙·공개범위·보존",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12582,14 +12421,13 @@ window.SCENARIO_AUDIT = {
       "id": "F18-05",
       "domain": "분쟁 해결",
       "name": "호스트 운영 인박스",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12624,14 +12462,13 @@ window.SCENARIO_AUDIT = {
       "id": "F19-01",
       "domain": "관심인",
       "name": "관심인 등록·해제·한도",
-      "scenarioCount": 3,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12666,14 +12503,13 @@ window.SCENARIO_AUDIT = {
       "id": "F19-02",
       "domain": "관심인",
       "name": "관심인 캘린더·새 이벤트 알림",
-      "scenarioCount": 3,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12708,14 +12544,13 @@ window.SCENARIO_AUDIT = {
       "id": "F19-03",
       "domain": "관심인",
       "name": "공개범위(프라이버시) 설정",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12750,14 +12585,13 @@ window.SCENARIO_AUDIT = {
       "id": "F20-01",
       "domain": "고객지원",
       "name": "1:1 문의",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12794,14 +12628,13 @@ window.SCENARIO_AUDIT = {
       "id": "F20-02",
       "domain": "고객지원",
       "name": "운영 이슈",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12836,14 +12669,13 @@ window.SCENARIO_AUDIT = {
       "id": "F20-03",
       "domain": "고객지원",
       "name": "FAQ 제안",
-      "scenarioCount": 4,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12878,14 +12710,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-01",
       "domain": "제공자 배정·정산",
       "name": "제공자 배정",
-      "scenarioCount": 14,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12920,14 +12751,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-02",
       "domain": "제공자 배정·정산",
       "name": "참가자 서비스비 분담 결제",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -12962,14 +12792,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-03",
       "domain": "제공자 배정·정산",
       "name": "제공자 정산",
-      "scenarioCount": 11,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -13004,14 +12833,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-04",
       "domain": "제공자 배정·정산",
       "name": "무료초대·호스트 대납",
-      "scenarioCount": 6,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -13046,14 +12874,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-05",
       "domain": "제공자 배정·정산",
       "name": "환불·회수",
-      "scenarioCount": 10,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -13088,14 +12915,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-06",
       "domain": "제공자 배정·정산",
       "name": "계약금 선납",
-      "scenarioCount": 8,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,
@@ -13130,14 +12956,13 @@ window.SCENARIO_AUDIT = {
       "id": "F21-07",
       "domain": "제공자 배정·정산",
       "name": "정기모임 묶음 배정·정산",
-      "scenarioCount": 7,
-      "scenarioSource": "기능 PRD 수용 시나리오",
+      "scenarioCount": 0,
+      "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
       "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": null,
-        "registeredCountMatches": null
+        "formal": false,
+        "documentScenarioCount": null
       },
       "trace": {
         "backendPath": null,

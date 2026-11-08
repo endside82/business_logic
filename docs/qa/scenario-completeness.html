@@ -47,10 +47,9 @@
 
       <section>
         <div class="metrics">
-          <div class="metric"><div class="label">시나리오 정의</div><div class="value" id="m-defined">–</div><div class="hint">기능 175개 기준</div></div>
+          <div class="metric"><div class="label">시나리오 정의</div><div class="value" id="m-defined">–</div><div class="hint">상세 시나리오 문서가 있는 기능</div></div>
           <div class="metric"><div class="label">상태 분류가 있는 기능</div><div class="value" id="m-feature-proof">–</div><div class="hint">과거 검사 분류 · 현재 통과 수 아님</div></div>
-          <div class="metric"><div class="label">기존 등록 숫자 합</div><div class="value" id="m-scenarios">–</div><div class="hint">통과율 분모 아님</div></div>
-          <div class="metric"><div class="label">상세 시나리오 제목</div><div class="value" id="m-unit-headings">–</div><div class="hint">117개 문서에서 실제 식별</div></div>
+          <div class="metric"><div class="label">시나리오 수</div><div class="value" id="m-scenarios">–</div><div class="hint">상세 시나리오 문서의 제목 · 통과율 분모 아님</div></div>
           <div class="metric"><div class="label">검사한 테스트 파일</div><div class="value" id="m-test-files">–</div><div class="hint">다섯 코드 저장소</div></div>
           <div class="metric"><div class="label">자동 테스트 문서 연결</div><div class="value" id="m-auto">–</div><div class="hint">시나리오 문서가 파일을 직접 지목</div></div>
           <div class="metric"><div class="label">통합·E2E 문서 연결</div><div class="value" id="m-journey">–</div><div class="hint">시나리오 문서가 실행 파일을 지목</div></div>
@@ -61,10 +60,9 @@
         </div>
 
         <div class="callout warn" style="margin-top:16px">
-          <strong>1,403개를 “1,403개 테스트 통과”로 읽으면 안 된다.</strong>
-          1,403은 기능 목록에 적혀 있던 숫자의 합일 뿐이다. 상세 시나리오 문서 117개에서 실제 식별한 시나리오
-          제목은 1,086개이며, 그중 49개 기능은 등록 숫자와 제목 수가 다르다. 이번 감사로
-          <strong>정식 시나리오 정의 175/175</strong>는 확보했지만, 실제 통과율은 각 시나리오 ID에 코드·테스트·최근
+          <strong>시나리오 수를 “테스트 통과 수”로 읽으면 안 된다.</strong>
+          시나리오 수는 상세 시나리오 문서에서 식별한 제목 수일 뿐이다. 기능 PRD는 제품 내용만 담으므로 상세 시나리오
+          문서가 없는 기능은 0으로 센다. 실제 통과율은 각 시나리오 ID에 코드·테스트·최근
           실행 결과를 연결한 뒤에만 계산한다. 아래 33%·67%·100%는 구현률이 아니라 세 종류의 근거가 문서에
           연결됐는지를 보여 주는 값이다.
         </div>
@@ -120,7 +118,7 @@
             해소 조건을 확인한다.</li>
           <li><strong>첫 출시 기능 중 자동 테스트 문서 연결이 없는 기능</strong>은 기존 테스트를 검색해 기능과
             시나리오를 먼저 연결한다. 테스트가 실제로 없을 때 정상·권한·실패·중복 시나리오를 추가한다.</li>
-          <li><strong>등록 숫자와 실제 제목 수가 다른 상세 시나리오 문서 49개</strong>는 시나리오 ID를 정규화한다.
+          <li><strong>상세 시나리오 문서의 시나리오 제목</strong>에 고유 ID를 붙여 정규화한다.
             그래야 기능별·도메인별 자동 검증률을 실제 분모로 계산할 수 있다.</li>
           <li><strong>돈·권한·개인정보·상태 전이가 큰 기능</strong>은 단위 테스트만으로 닫지 않는다. 앱 또는
             운영자 화면에서 서버 상태가 바뀌는 통합 여정을 추가하고, 실제 계정이나 외부 서비스가 필요한 경계는
@@ -170,7 +168,7 @@
         <p class="subtitle">자동 테스트와 통합·E2E 수치는 시나리오 문서가 해당 파일을 직접 지목한 기능 수다. 기능 번호만 발견된 파일은 포함하지 않는다.</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">등록 숫자 합</th><th style="text-align:right">자동 테스트 문서 연결</th><th style="text-align:right">통합·E2E 문서 연결</th><th style="text-align:right">로컬 서버 E2E</th><th style="text-align:right">로컬 신규 계정</th><th style="text-align:right">검증 근거 3단계</th><th style="text-align:right">알려진 문제 보유</th></tr></thead>
+            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">시나리오 수</th><th style="text-align:right">자동 테스트 문서 연결</th><th style="text-align:right">통합·E2E 문서 연결</th><th style="text-align:right">로컬 서버 E2E</th><th style="text-align:right">로컬 신규 계정</th><th style="text-align:right">검증 근거 3단계</th><th style="text-align:right">알려진 문제 보유</th></tr></thead>
             <tbody id="domain-rows"></tbody>
           </table>
         </div>
@@ -185,7 +183,6 @@
           <label class="chip"><input type="checkbox" id="f-no-auto">자동 테스트 문서 연결 없음</label>
           <label class="chip"><input type="checkbox" id="f-no-journey">통합·로컬 계정 근거 없음</label>
           <label class="chip"><input type="checkbox" id="f-chain">검증 근거 3단계 미완료</label>
-          <label class="chip"><input type="checkbox" id="f-count">등록 숫자와 제목 수 불일치</label>
           <label class="chip"><input type="checkbox" id="f-trace">코드 위치 확인됨</label>
           <label class="chip"><input type="checkbox" id="f-gap">알려진 문제 있음</label>
         </div>
@@ -212,8 +209,8 @@
       <section>
         <h2>표 읽는 법</h2>
         <ul>
-          <li><strong>시나리오</strong>의 큰 숫자는 기존 기능 목록의 등록값이다. 상세 시나리오 문서는 실제 제목 수도
-            함께 표시한다. 두 값이 다르면 정규화가 필요한 문서이며, 어느 값도 자동 테스트 통과 건수가 아니다.</li>
+          <li><strong>시나리오</strong>의 숫자는 상세 시나리오 문서에서 식별한 제목 수다. 상세 시나리오 문서가 없는
+            기능은 0이며, 어느 값도 자동 테스트 통과 건수가 아니다.</li>
           <li><strong>검증 근거 연결도</strong>는 제품 정의, 자동 테스트 연결, 통합·E2E 또는 로컬 계정 근거의
             세 칸 중 몇 칸이 연결됐는지를 나타낸다. 3/3도 모든 시나리오 통과나 실환경 출시 완료를 뜻하지 않는다.</li>
           <li><strong>확인한 코드 위치</strong>는 문서의 처리 함수·요청 방식·호출 주소와 실제 서버 선언을 대조한 결과다.
@@ -274,7 +271,6 @@
       document.getElementById('m-defined').textContent = A.totals.definedFeatures + '/' + A.totals.features;
       document.getElementById('m-feature-proof').textContent = A.totals.featureLevelChecked + '/' + A.totals.features;
       document.getElementById('m-scenarios').textContent = A.totals.documentedScenarioItems.toLocaleString('ko-KR');
-      document.getElementById('m-unit-headings').textContent = A.totals.unitScenarioHeadings.toLocaleString('ko-KR');
       document.getElementById('m-test-files').textContent = A.totals.automatedTestFilesScanned.toLocaleString('ko-KR');
       document.getElementById('m-auto').textContent = A.totals.directlyLinkedAutomatedTests + '/' + A.totals.features;
       document.getElementById('m-journey').textContent = A.totals.directlyLinkedJourneys + '/' + A.totals.features;
@@ -381,10 +377,9 @@
       function scenarioCountDetail(feature) {
         var definition = feature.scenarioDefinition;
         if (definition.documentScenarioCount == null) {
-          return '<div class="audit-note">기능 PRD 수용 기준</div>';
+          return '<div class="audit-note">상세 시나리오 문서 없음</div>';
         }
-        var tone = definition.registeredCountMatches ? '' : ' · 숫자 정비 필요';
-        return '<div class="audit-note">문서 제목 ' + definition.documentScenarioCount + tone + '</div>';
+        return '<div class="audit-note">상세 시나리오 문서 제목</div>';
       }
 
       function featureCell(feature) {
@@ -417,7 +412,6 @@
       function nextAction(feature) {
         if (feature.launchScope === 'retired') return '철회 기록만 보존한다.';
         if (feature.knownIssues > 0) return '첫 출시 현황에 연결된 남은 문제 ' + feature.knownIssues + '건을 먼저 해소한다.';
-        if (feature.scenarioDefinition.registeredCountMatches === false) return '시나리오 제목에 고유 ID를 붙이고 등록 숫자를 실제 문서와 맞춘다.';
         if (!feature.automated.directlyLinked) return '기존 테스트를 찾아 시나리오 문서에 연결하고, 실제 공백만 새로 작성한다.';
         if (!feature.journey.directlyLinked && feature.proof !== 'local' && feature.proof !== 'real') return '위험도에 맞는 통합 여정을 선택해 직접 연결한다.';
         if (feature.launchScope === 'sealed') return '출시 조건과 운영 화면을 포함한 실환경 여정을 실행한다.';
@@ -431,7 +425,6 @@
         var noAuto = document.getElementById('f-no-auto').checked;
         var noJourney = document.getElementById('f-no-journey').checked;
         var incompleteChain = document.getElementById('f-chain').checked;
-        var countMismatch = document.getElementById('f-count').checked;
         var trace = document.getElementById('f-trace').checked;
         var gap = document.getElementById('f-gap').checked;
 
@@ -441,7 +434,6 @@
           if (noAuto && feature.automated.directlyLinked) return false;
           if (noJourney && (feature.journey.directlyLinked || feature.proof === 'local' || feature.proof === 'real')) return false;
           if (incompleteChain && feature.evidenceStage === 3) return false;
-          if (countMismatch && feature.scenarioDefinition.registeredCountMatches !== false) return false;
           if (trace && !feature.trace.verified) return false;
           if (gap && !feature.knownIssues) return false;
           if (query) {
@@ -458,7 +450,7 @@
             '<td style="font-size:12.5px">' + esc(feature.domain) + '</td>' +
             '<td>' + featureCell(feature) + '</td>' +
             '<td>' + pill(scopeMeta.label, scopeMeta.tone) + (feature.knownIssues ? '<div class="audit-note">문제 ' + feature.knownIssues + '건</div>' : '') + '</td>' +
-            '<td style="text-align:right"><strong>등록 ' + feature.scenarioCount + '</strong>' + scenarioCountDetail(feature) + '</td>' +
+            '<td style="text-align:right"><strong>' + feature.scenarioCount + '</strong>' + scenarioCountDetail(feature) + '</td>' +
             '<td>' + evidenceStageCell(feature) + '</td>' +
             '<td>' + traceCell(feature) + '</td>' +
             '<td>' + (feature.automated.directlyLinked ? pill('문서 연결', 'brand') + '<div class="audit-note">' + feature.automated.count + '개 파일</div>' + evidenceMethods(feature.automated) : pill('문서 연결 없음', '') + evidenceMethods(feature.automated)) + '</td>' +
@@ -469,7 +461,7 @@
         document.getElementById('count').textContent = list.length + '개 기능 표시 중 (전체 ' + data.length + '개)';
       }
 
-      ['q', 'domain-filter', 'scope-filter', 'f-no-auto', 'f-no-journey', 'f-chain', 'f-count', 'f-trace', 'f-gap'].forEach(function (id) {
+      ['q', 'domain-filter', 'scope-filter', 'f-no-auto', 'f-no-journey', 'f-chain', 'f-trace', 'f-gap'].forEach(function (id) {
         var element = document.getElementById(id);
         element.addEventListener('input', render);
         element.addEventListener('change', render);
