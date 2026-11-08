@@ -7,7 +7,7 @@
 
 경고 정책 설정은 `POLICY_OWNER` 권한(OWNER 자동 통과)으로 `WarningAdminPolicyController`(`/api/v1/admin/clubs/{clubId}/warnings`)가 제공한다. `GET/PUT /config`로 경고 제도 활성화, 익명 제보 허용, 만료/SLA 안내 텍스트, 검토 임계치 4단계(`attentionMin ≤ monitorMin ≤ restrictionMin ≤ severeMin` 권장)를 관리하고, `GET /config/preview`로 임계치 변경 시 현재/이후 검토 등급 분포를 미리 본다. 패널티 유형은 `GET /penalty-types`로 플랫폼 카탈로그 + 클럽 override를 병합 조회하고, `PUT /penalty-types`로 유형별 ON/OFF·점수를 upsert하며, `GET /penalty-type-catalog`로 시스템 마스터 7행을 본다. Flutter `warning_policy_screen.dart`가 이를 구현했고 enum/VO 필드가 일치한다.
 
-판정: **설정 조회·갱신·프리뷰의 화면-API 정합은 닫혀 있다**. 핵심 Gap은 (a) 정책 기본 임계치가 Java `WarningProgramConfigService.initialize()`(attention=3/monitor=6/restriction=10/severe=15)와 DDL `warning_program_config` 기본값(1/3/5/7)이 **서로 다름** — getOrCreate가 row를 만드는 경로에 따라 클럽마다 기본값이 달라질 수 있음, (b) 임계치 단조 증가를 서버가 강제하지 않고 경고(`THRESHOLD_NOT_MONOTONIC`)로만 표시, (c) 대규모 클럽(≥100,000명)은 분포 계산을 스킵하고 `LARGE_CLUB_DISTRIBUTION_SKIPPED`만 반환, (d) `previewConfig`가 GET인데 `@Valid WarningProgramConfigUpdateParam`을 쿼리로 받으므로 `text` 필드 길이 검증이 쿼리스트링에 적용되는 점이다.
+판정: **설정 조회·갱신·프리뷰의 화면-API 정합은 닫혀 있다**. 정책 기본 임계치는 Java `WarningProgramConfigService.initialize()` 와 DDL `warning_program_config` 기본값이 모두 attention=3/monitor=6/restriction=10/severe=15 로 같다(2026-11-08 확인, 옛 글의 「DDL 1/3/5/7」 은 지금 V1 과 다르다). 핵심 Gap은 (b) 임계치 단조 증가를 서버가 강제하지 않고 경고(`THRESHOLD_NOT_MONOTONIC`)로만 표시, (c) 대규모 클럽(≥100,000명)은 분포 계산을 스킵하고 `LARGE_CLUB_DISTRIBUTION_SKIPPED`만 반환, (d) `previewConfig`가 GET인데 `@Valid WarningProgramConfigUpdateParam`을 쿼리로 받으므로 `text` 필드 길이 검증이 쿼리스트링에 적용되는 점이다.
 
 ## 2. 코드 위치
 
@@ -46,14 +46,13 @@
 | config 응답 형태 | `WarningProgramConfigVo` | VO | 일치 |
 | penalty-types 응답 | `List<ClubPenaltyTypeMergedVo>` | List | 일치 |
 | preview 쿼리 바인딩 | GET + `@Valid` param | Flutter `@Queries()` | 일치 |
-| 기본 임계치 | Java 3/6/10/15 vs DDL 1/3/5/7 | 화면은 서버값 표시 | **불일치(서버 내부)** |
+| 기본 임계치 | Java·DDL 모두 3/6/10/15 | 화면은 서버값 표시 | 일치(2026-11-08 확인) |
 | `configured=false` 표현 | active=false, points=null | Dart `points: int?` | 일치 |
 
 ## 8. Gap / Risk
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P1 | 정책 기본 임계치 Java/DDL 불일치 | `initialize()` 3/6/10/15 vs `warning_program_config` DDL 1/3/5/7 | row가 어느 경로로 생기느냐에 따라 클럽 기본 등급 경계가 달라짐 → 같은 점수가 클럽마다 다른 등급 | 기본값 단일화(Java↔DDL 동기화) 후 마이그레이션 검토 |
 | P2 | 임계치 단조성 미강제 | `update`가 단조성 검사 없이 저장, preview만 경고 | restriction<monitor 같은 역전 설정 시 등급 평가 왜곡 가능 | 저장 시 단조성 강제 또는 명시적 확인 UX |
 | P2 | preview가 GET 쿼리로 text 필드 받음 | `@Valid WarningProgramConfigUpdateParam`에 `expiryPolicyText@Size(4000)` 포함 | 긴 텍스트를 쿼리스트링으로 보내면 URL 길이 제한·인코딩 이슈 | preview body 전환 또는 text 필드 제외 검토 |
 | P3 | `updatePenaltyType` 응답 void | PUT 후 클라이언트가 즉시 재조회 필요 | 화면 동기화 추가 라운드트립 | 변경 결과 VO 반환 검토 |
