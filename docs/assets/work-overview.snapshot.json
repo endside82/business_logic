@@ -324,7 +324,6 @@
         "H-529",
         "H-557",
         "H-592",
-        "H-611",
         "H-650",
         "H-653",
         "H-654",
@@ -1289,26 +1288,10 @@
       ]
     },
     {
-      "id": "H-611",
-      "title": "다음 서버 배포 때 운영 표에 칸을 더하고 함께 올리기",
-      "description": "배포 대본: [`deploy/production/aws/sql/2026-11-08-prelaunch-schema.sql`](../../deploy/production/aws/sql/2026-11-08-prelaunch-schema.sql) 이 아래 바꿈 전부를 배포 전(`@h611_phase = 'pre'`)과 배포 뒤(`'post'`) 두 번으로 묶는다. 이미 된 것은 건너뛰고, 끝에서 칸·색인·검사·새 표를 V1 과 대조해 다르면 오류로 멈춘다. 운영 판(서버 2dbac0ae2) V1 과 main V1 의 차이 전부를 담아, 아래에 없던 MCP 인가 서버 표 여덟(`agent_*`)과 `warning_review_queue.queue_type` 설명도 들어 있다. 옛 V1 로 깐 DB 에 두 단계를 돌린 결과가 main V1 새 설치와 표·칸·색인·제약까지 같음을 로컬 MySQL 8.4 에서 확인했다(2026-11-08). 배포 묶음 준비(2026-11-09 새벽, 사용자 「1 번을 진행하고 배포를 준비해」): 앱 전체 시험을 그 자리에서 한 번 돌려 19,101건 통과·실패 0 을 확인한 뒤, 이미지 다섯을 태그 `prd-20261109a` 로 지었다(공개·관리자 `f2cac3ee3`, 실시간 `8b45fbb`, 관리자 웹 `461b631`. DB 도구는 설치 기록과 맞는 옛 이미지 그대로). 대본에 1-8 절(돈 명령 등록부 `result_ref`, 정기모임 결제 `cancel_refund_attempts`, 정산 마감 연장 알림 글 시드 둘, 관리자 역할 설명)을 더하고 도착점을 적었으며, 옛 운영 V1 로 깐 DB 에 두 단계를 돌린 결과가 main V1 새 설치와 표 341·칸 4,156·색인·제약·외래 키·시드 행까지 같음을 로컬 MySQL 8.4 에서 다시 확인했다. 격리 리허설(합성 비밀)은 일곱 컨테이너 healthy 와 대표 경로 넷을 통과했다. 리허설 확인 대본은 11-08 관리자 API 계약 변화(옛 `/list` 걷음, 재시도 명령의 멱등 키 필수)를 반영하지 않아 두 번 멈췄고 고쳤다. 앱은 내부 테스트 `1.0.0 (15)` 판 번호를 적었다(앱 `42ff6482e`). 실행 대본은 `~/saisoop-ops/releases/20261109a/` 의 `deploy-server.sh`(읽기 점검 → 이미지 적재 → 묶음 → DB 백업과 배포 전 SQL → 묶음 배포 → 배포 뒤 SQL → 바깥 확인 → 감시 스택·호스트 타이머) 다음 `deploy-android.sh` 이고 운영 서버 조작은 자동 권한 검사가 막아 사용자가 `!` 로 돌린다. 읽기 점검은 정산 선입금의 환불 안 된 행이 있으면 멈춘다(봉인 결정 85-3′). 배포 뒤 운영 서버 구성 문서와 근거 기록을 고친다. 대본 머리 주석의 도착점은 prd-20261109a(공개 API `f2cac3ee3`)다. 배포 전에 main 이 더 움직이면 그 판의 V1 과 다시 대조한다. 2026-11-08 밤 늦게 합친 서버 고침(목록 쪽 값 거르기, 배정 부분 환불 표지, 플랜 연결 덮어쓰기 지우기, 묶음 알림·알림함 커서 조회, 안 읽은 알림 수의 차단 거르기, 준비 시작·끝의 앞뒤 검사)은 표를 바꾸지 않았다. 정산 마감 연장 알림 글은 알림 글 시드 두 줄(한국어·영어)만 더했다. 서버 결함 17건과 갱신 응답 유실의 수리는 `V1__init.sql` 에 칸 셋을 더했다. 운영 DB 에는 배포 전에 넣는다. `ALTER TABLE charge_cancel_indeterminate ADD COLUMN inquiry_defer_streak int NOT NULL DEFAULT 0 COMMENT '조회가 답을 주지 못해 유예한 연속 횟수 (한도부터 경보)' AFTER not_canceled_streak;` `ALTER TABLE withdrawal_outbox ADD COLUMN last_send_at datetime DEFAULT NULL COMMENT '지급대행에 마지막으로 보낸 시각. 닿는 상한과 견줘 운영자의 복원·FAILED 해소를 막는다' AFTER resolve_outcome;` `ALTER TABLE refresh_token ADD COLUMN previous_refresh_token varchar(100) DEFAULT NULL COMMENT '직전 리프레쉬토큰. 새 접근 토큰이 처음 쓰이기 전까지만 남아 응답을 잃은 갱신을 받는다' AFTER refresh_token, ADD UNIQUE KEY uk_refresh_token_previous (previous_refresh_token);` `ALTER TABLE warning_audit_log ADD COLUMN self_action tinyint(1) NOT NULL DEFAULT 0 COMMENT '운영진이 자기에게 준 경고(abuse-prevention 4절)' AFTER user_agent, ADD COLUMN peer_action tinyint(1) NOT NULL DEFAULT 0 COMMENT '운영진이 다른 운영진에게 준 경고(abuse-prevention 4절)' AFTER self_action, ADD INDEX idx_warning_audit_self_action (club_id, self_action, actor_id);` 없으면 경고 감사 쓰기가 전부 실패한다. 2026-11-07 밤 수리가 V1 에 더한 것(같은 배포에 올린다):",
-      "condition": "다음 서버 배포 때 ALTER 를 먼저",
-      "scope": "now",
-      "kind": "정비",
-      "section": "7. 정비(제품 동작 아님)",
-      "stage": null,
-      "resources": [
-        "development"
-      ],
-      "source": "NEXT_WORK.md#7-정비제품-동작-아님",
-      "evidence": "",
-      "evidenceLinks": []
-    },
-    {
       "id": "H-650",
       "title": "서버의 옛 알림 쪽 조회 둘 걷기",
       "description": "앱은 2026-11-08 부터 알림함과 묶음 보기를 커서 조회(`GET /api/v1/notifications/cursor`, `GET /api/v1/notifications/grouped/cursor`)로 읽고 옛 쪽 조회 둘(`GET /api/v1/notifications`, `GET /api/v1/notifications/grouped`)을 부르지 않는다. 내부 테스트에 나간 Android 1.0.0 (14) 는 옛 쪽 조회를 쓰므로 서버에서 바로 걷지 않는다. 커서로 읽는 앱 판이 내부 테스트에 나간 뒤 서버의 두 창구와 그 시험, 알림 명세의 옛 줄을 걷는다. 옛 묶음 쪽 조회도 그때까지 차단한 상대의 알림을 거른다.",
-      "condition": "커서로 읽는 앱 판이 내부 테스트에 나간 뒤",
+      "condition": "조건 충족(2026-11-09 앱 1.0.0 (15) 내부 테스트). 시험 기기가 15 로 올라간 뒤 걷는다",
       "scope": "now",
       "kind": "정비",
       "section": "7. 정비(제품 동작 아님)",
@@ -2018,7 +2001,7 @@
     },
     {
       "name": "앱",
-      "commit": "42ff6482e"
+      "commit": "65c720564"
     },
     {
       "name": "관리자 웹",
@@ -2029,7 +2012,7 @@
       "commit": "8b45fbb"
     }
   ],
-  "sourceDigest": "805d68ce92273cac89f632c79fc4c9c9c5e89b27f6d524c83a0bb32597ead1a8",
+  "sourceDigest": "c84655001b0224da4adbb7e29157815c7e09bc9d3d56dbde7d9b24a3c8f554b5",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2039,14 +2022,14 @@
       "출시: iOS는 서명 IPA 빌드 1까지이며 TestFlight·기기 설치·정식 공개는 남았습니다. 자동 백업 고침은 운영에 올라갔고 11월 7일 새벽 3시 결과를 확인합니다. 후보 고정·운영 복구 규약의 보류 결정은 유지합니다."
     ],
     "checks": "기존 기록과 공개 주소의 읽기 전용 조회를 대조했습니다. 11월 7일 배포 기록에는 컨테이너 7개 정상, Play 내부 트랙 [14]가 적혀 있습니다. 로그인 계정 여정과 실제 푸시 수신, 실기기는 보지 않았습니다. 서로 다른 시점의 결과를 전체 통과로 합치지 않습니다. 이번 갱신은 문서 대조와 코드 읽기이며 제품·기기 시험을 새로 돌리지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 76개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
+    "inventory": "현재 정본의 추적 항목 75개를 반영했습니다. 조건부 작업·제품 후보·외부 확인을 함께 포함하므로 미완료 개발 건수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
       "3": 3,
       "4": 2,
       "5": 15,
       "6": 6,
-      "7": 9,
+      "7": 8,
       "8": 9,
       "9": 23
     },
@@ -2139,20 +2122,20 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다. 11월 8일 관리자 API 계약 결정 68~72 를 권고대로 정했습니다(목록은 Page 하나, 셈 창구와 옛 목록 경로 걷기, 돈·장부·재시도 명령의 다시 보내기 키 필수, 일괄 처리 꼴 하나). 관리자 웹과 서버는 같은 배포로 올립니다. 같은 날 밤 결정 73~81 도 권고대로 정했습니다(이용 제한 계정의 삭제 요청·내보내기 열기, 클럽 기부 한 번 1,000,000원 상한과 기부·취소 알림, 기부 메시지와 마일리지 메모 저장, 정산 이의 첨부는 명세에서 빼기, 플랜 연결 장소·준비 시간 칸과 정산 다시 알림의 덧붙일 말 칸, 감사 기록의 쓰지 않던 접속 IP·브라우저 칸 걷기). 같은 밤 늦게 고치며 정한 것: 목록 쪽 값의 범위 밖은 잘못된 입력, 데이트 방 닫힘은 만남 예정 시각까지 활동, 판정 되돌린 환불 분쟁도 끝난 분쟁, 무결성의 CHECK·모르는 위반은 서버 오류, 글 길이는 이모지를 2자로 세는 보수적 셈, 28일 넘은 미처리 이의는 배포 때 알린 것으로 표시. 그 뒤 고치며 정한 것: 준비 시작·끝은 끝이 시작보다 뒤(같은 시각도 거절, 82 닫음), 열쇠를 쥔 명령의 410 은 열쇠를 지킴, 안 읽은 알림 수는 차단한 상대를 빼되 1,000건 넘으면 그대로, 옛 알림 쪽 조회 둘은 커서로 읽는 앱 판이 나간 뒤 걷기."
   },
   "publication": {
-    "updatedAt": "2026-11-09T01:54:00+09:00",
+    "updatedAt": "2026-11-09T02:13:40+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "f53debb7628688120882bca7c2fc38b028e20a74",
+    "sourceCommit": "c71b15cbdfb97a4369a754c5b0ac4ce7ed34b3cc",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "17e9862a41722087ccf1ed7f0e1ab4bf29aa23b10253a46e9c8eb6acd149cbc4",
-    "worklistSha256": "cbba541e7d99af6dbcbe7a96215d1fa8da4973f6d99fd1c103ecf20b3a53d0f2",
+    "sourceSha256": "4f477f7ef6809b1e4e129920ccd57e1c94ee7420c240f7cc3e7c5e8566993298",
+    "worklistSha256": "ff3e1ac8827e650840611566f8b063815d4f6263855c747ea4863850a3126e78",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "cfbc686242f23d821760eff6e39d36b60eee48eff0d36653c6043e6af53d27a8",
-      "docs/plan/WORKLIST.md": "cbba541e7d99af6dbcbe7a96215d1fa8da4973f6d99fd1c103ecf20b3a53d0f2",
-      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "d8d59ee9af5fb856e210e06fa972c5a828415f773666a67fb979fe68a3364aec",
-      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "1fd2484048680657e5a37b75aeaa24b7858681523120714df174092f0d24cc1d"
+      "docs/plan/WORKLIST.md": "ff3e1ac8827e650840611566f8b063815d4f6263855c747ea4863850a3126e78",
+      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "a7bbfb0342253ae0153ea2eea1cb995e3870724915988859c8a3ebfe0242bfa1",
+      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "0b28032a06ec5e9226bfc6777ad8ce678c077d0f65faf862e35bc5446d2eeaf7"
     },
     "method": "2026-11-07 정본과 11월 6일 배포 기록, 공개 주소의 읽기 전용 조회, 코드 읽기 대조. 제품·기기 시험과 운영 쓰기는 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
