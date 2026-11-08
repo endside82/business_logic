@@ -61,8 +61,9 @@
    - 호스트가 이벤트 취소 → 실제 진입점은 `EventService.tryRefundNewPrepayment`이며 존재하지 않는 별도 coordinator가 아니다. 현재 취소 loop가 ATTENDING/WAITING만 순회해 attendance 없는 `APPROVED_PENDING_PAYMENT`와 BANK PENDING payment는 정리에서 누락될 수 있다. BANK PAID는 `REFUND_REQUESTED`로만 전이하지만 caller가 refunded=true/완료 알림으로 오표시하는 Gap이 있고 Club/Recurring 취소도 같은 계열이다.
    - 호스트 BANK 수동 환불 → `POST /api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm` → `refundByBankConfirm(amount, memo)`. Host/CoHost 외 club OWNER/`EVENT_REFUND_MANAGER`도 허용하며 회계 분개는 없다.
 7. **만료**:
-   - 실제 scheduler는 `event/service/ApplicationPaymentExpiryScheduler`이며 `ApplicationService.expirePendingPayments()`를 호출해 `APPROVED_PENDING_PAYMENT → PAYMENT_EXPIRED`를 bulk update한다. currentCapacity/attendance 변화는 없다.
-   - 현재 bulk update는 연관된 `event_payment.PENDING`을 취소하지 않고 `ApplicationPaymentExpiredEvent`도 발행하지 않는다. listener와 enum 75는 존재하지만 생산 publisher가 없어 만료 알림 75는 실제 전송되지 않는다.
+   - 5분 주기로 기한 지난 결제 대기 후보를 모아, 신청 하나마다 짧은 트랜잭션 하나로 `APPROVED_PENDING_PAYMENT → PAYMENT_EXPIRED` 를 조건부로 바꾼다. currentCapacity/attendance 변화는 없다.
+   - 호스트가 아직 확인하지 않은 계좌이체 입금 신고가 있는 신청은 만료하지 않는다. 그래서 만료된 신청에 확인 대기 결제가 남지 않는다.
+   - 바꾼 쪽만 결정 이력(`AUTO_REJECT`, 사유 `PAYMENT_TIMEOUT`)을 남기고, 같은 트랜잭션에 만료 알림 75(`EVENT_PREPAYMENT_EXPIRED`, 「결제 기한 만료」)를 기록한다.
 
 ## 4. 제품 규칙
 
@@ -97,7 +98,7 @@
 | S2-2 | 승인 필요 + 선입금 활성 신청 → 호스트 승인 후 WALLET 결제 | OPEN, `approvalRequired=true`, `prepaymentRequired=true` | `Application=PENDING → APPROVED_PENDING_PAYMENT(+paymentDueAt)`. 호스트 승인 시 알림 71 발송. 참가자 결제 후 `APPROVED + ATTENDING + event_payment.PAID(WALLET)`. |
 | S2-3 | 선입금 활성 + BANK_TRANSFER 신고 → 호스트 확인 | `Application=APPROVED_PENDING_PAYMENT` | `bankDeclare` 후 `event_payment.PENDING(BANK_TRANSFER)`. 호스트 `bankConfirm` 후 `event_payment.PAID + Application=APPROVED + ATTENDING + capacity++`. 분개 없음(D5). 알림 72/73. |
 | S2-4 | BANK 신고 → 호스트 거부 (`bankReject`) | `event_payment.PENDING(BANK_TRANSFER)` | `event_payment.CANCELED + refund_reason=<reason>`. `Application=APPROVED_PENDING_PAYMENT` 유지. 알림 74. 참가자 재신고 가능 (UNIQUE 제약은 active 상태에서만 적용). |
-| S2-5 | `paymentDueAt` 만료 | `Application=APPROVED_PENDING_PAYMENT, paymentDueAt < now()` | `ApplicationPaymentExpiryScheduler` → bulk update로 `Application=PAYMENT_EXPIRED`. currentCapacity/attendance 변화 없음. 현재는 연관 `event_payment.PENDING` 취소와 만료 event 발행이 없어 75 알림이 전송되지 않는 갭이 있음. |
+| S2-5 | `paymentDueAt` 만료 | `Application=APPROVED_PENDING_PAYMENT, paymentDueAt < now()` | `ApplicationPaymentExpiryScheduler` → bulk update로 `Application=PAYMENT_EXPIRED`. currentCapacity/attendance 변화 없음. 확인 대기 계좌이체 신고가 있는 신청은 만료하지 않고, 만료한 신청에는 결정 이력과 만료 알림 75를 같은 트랜잭션에 남김. |
 | S2-6 | 참가자 자가 취소 (WALLET PAID 상태) | `event_payment.PAID(WALLET)`, 취소 시점 | `DELETE /api/v1/events/{eventId}/apply` → `cancelMyParticipation` → `refundByWallet` (`event_refund_policy` 카탈로그 기반 환불율 — PARTICIPANT_FAULT by_time%, HOST_FAULT 100%) → `event_payment.REFUNDED + Application=CANCELED + capacity--`. `PointTransaction(type=EVENT_PREPAYMENT_REFUND)` 1건 + 분개 1건. 알림 76. |
 | S2-7 | 참가자 자가 취소 (BANK_TRANSFER PAID 상태) | `event_payment.PAID(BANK_TRANSFER)` | `event_payment.REFUND_REQUESTED + Application=CANCEL_PENDING_REFUND`. capacity hold. 호스트가 수동 환불 후 `refundByBankConfirm`을 호출하면 `REFUNDED + Application=CANCELED + capacity--`. 83은 최초 요청 즉시가 아니라 기본 3일 후 escalation 재알림에 사용. |
 | S2-8 | 호스트가 이벤트 취소 (ATTENDING WALLET PAID) | `EventService.cancelEvent`, attendance 존재 | `tryRefundNewPrepayment → refundByHostCancel → REFUNDED + CANCELED`. attendance 없는 payment는 loop에서 누락될 수 있음 |
@@ -113,7 +114,7 @@
 | 회계 분개 | WALLET 결제·환불만 `AccountingLedgerService` 진입. BANK는 분개 없음 (D5). | 결제는 표준 차감 경로 `spend(EVENT_PREPAYMENT)`로 차감 후 wrapper가 `recordPayment`(gross 전액 CREATOR_PAYABLE 적립). 정산 완료 시 무료분은 호스트에 무료 포인트로 실지급(`recordEventFreeSettlement`, residue 0 수렴), 무료만 모인 이벤트도 fee/tax 0 정산 생성. 2026-06-06 이관(정책 PRD §2.6). |
 | 중복 차단 | `INITIAL`에 한정된 generated unique + event/application lock + active payment 선조회 | 정상 순차 중복은 `DUPLICATE_PAYMENT`로 거부한다. 성공 결과를 재사용하는 idempotency가 아니며, 새 paymentId 기준 PointTransaction exists 검사는 정상 흐름에서 false다. DB unique 경쟁 예외의 전용 변환 catch도 없다. |
 | 환불 정책 | Phase 4에서 `event_refund_policy` 카탈로그 기반 계산기로 전환 완료. D7 "단일 deadline 100%/마감 후 0%" 폐기. GRADUATED는 레거시 STANDARD 매핑. | `RefundPolicyService.computeRefund`(귀책 분기) + `EventPaymentRefundService.refundByWallet` (2026-06-05 해소). |
-| 알림 | enum 선언, publisher, after-commit listener, 실제 send, Flutter route를 각각 확인 | 71~74·76은 listener가 연결됨. 72는 주 호스트 한 명에게만 발송. 75는 publisher가 없어 미전송. 83은 기본 3일 후 escalation용. Flutter는 71~76·83 모두 deep link 미지원. |
+| 알림 | enum 선언, publisher, after-commit listener, 실제 send, Flutter route를 각각 확인 | 71~74·76은 listener가 연결됨. 72는 주 호스트 한 명에게만 발송. 75는 결제 기한 만료 처리가 같은 트랜잭션에 기록해 보낸다. 83은 기본 3일 후 escalation용. Flutter는 71~76·83 모두 deep link 미지원. |
 | 탈퇴 통합 | `AccountDeactivationService` BlockingItem `ACTIVE_EVENT_PAYMENT` + `DEACTIVATION_BLOCKED` | 자동 cancel 허용 케이스(PENDING 결제 없음, APPROVED 무료, APPROVED_PENDING_PAYMENT + 결제 만료) 분기 명문화 |
 
 ## 7-A. 환불 정책 카탈로그 (갱신 2026-06-05)
@@ -226,7 +227,6 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 |---|---|---|---|
 | 현재 계약 | `EventPaymentRefundService`, `WalletRefundService` | 선입금 환불은 wallet 복원 + `pgQueuedPaid=0`; txId 기반 PG-cancel worker와 별도 executor class는 없음 | PG 연계가 필요하면 신규 계약으로 설계 |
 | 높음 | Flutter current source | 사용자 연결은 WALLET CTA 하나뿐. BANK 신고·호스트 확인/거부·BANK 환불 확인 화면이 없고 `refund-bank-confirm` API 정의도 없음 | 결제 수단·호스트 운영 수직 슬라이스 구현 |
-| 높음 | `ApplicationPaymentExpiryScheduler`, `ApplicationService` | 만료 bulk update가 PENDING `event_payment`를 취소하지 않고 event도 발행하지 않아 75 알림이 dead wiring이며 active payment가 남을 수 있음 | application/payment를 같은 트랜잭션에서 정리하고 event 발행 테스트 추가 |
 | 높음 | `NotificationRouter` | 71~76·83 전부 deep link가 없어 수신 알림에서 화면 이동 불가 | 실제 화면 범위와 함께 라우팅 추가 |
 | 높음 | refund preview/no-show refund Controller | actor가 service에 전달되지 않거나 eventId가 무시되어 applicationId 기반 IDOR 후보 | 본인/host 권한 + eventId scoping 테스트 |
 | 높음 | Event/Club/Recurring cancel | attendance 없는 pending payment 누락, BANK REFUND_REQUESTED 완료 오표시 | payment row 기준 순회와 상태별 결과/알림 분리 |
@@ -240,7 +240,7 @@ Flutter: `cancel_attendance_sheet.dart`에서 `POST .../refund-preview` 호출 (
 - **AC-02 (S2-2). 승인 필요 + WALLET 결제**: Given 승인 필요 + 선입금 활성. When 호스트 승인 → 참가자 결제. Then 동일 종료 상태. `paymentDueAt`이 응답에 노출되며 알림 71 발송(after-commit).
 - **AC-03 (S2-3). BANK 신고 → 호스트 확인**: Given `Application=APPROVED_PENDING_PAYMENT`. When `bankDeclare → bankConfirm`. Then `event_payment.PAID + ATTENDING + capacity++`, 분개 없음(D5), 알림 72/73.
 - **AC-04 (S2-4). BANK 호스트 거부**: Given BANK_TRANSFER PENDING. When `bankReject(reason)`. Then `event_payment.CANCELED + Application 유지`. 알림 74. 참가자가 다시 신고 가능.
-- **AC-05 (S2-5). 결제 기한 만료 — 현재 관찰값**: Given `Application=APPROVED_PENDING_PAYMENT, paymentDueAt < now()`. When `ApplicationPaymentExpiryScheduler` 실행. Then `Application=PAYMENT_EXPIRED`, currentCapacity/attendance 변화 없음. 현재 PENDING `event_payment` 취소와 75 알림은 발생하지 않으며 이는 Gap이다.
+- **AC-05 (S2-5). 결제 기한 만료**: Given `Application=APPROVED_PENDING_PAYMENT, paymentDueAt < now()` 이고 확인 대기 계좌이체 신고가 없다. When 결제 만료 주기 작업 실행. Then `Application=PAYMENT_EXPIRED`, currentCapacity/attendance 변화 없음, 결정 이력 `AUTO_REJECT` 와 만료 알림 75가 같은 트랜잭션에 남는다. 확인 대기 신고가 있으면 만료하지 않는다.
 - **AC-06 (S2-6). 사용자 자가 취소 (WALLET PAID)**: Given `event_payment.PAID(WALLET)`. When `DELETE /api/v1/events/{eventId}/apply`. Then `cancelMyParticipation → refundByWallet` (카탈로그 기반 환불율 — PARTICIPANT_FAULT by_time%, HOST_FAULT 100%) + `Application=CANCELED + capacity--`. `PointTransaction(type=EVENT_PREPAYMENT_REFUND)` + 분개 1건. 알림 76.
 - **AC-07 (S2-7). 사용자 자가 취소 (BANK_TRANSFER PAID)**: Given `event_payment.PAID(BANK_TRANSFER)`. When 동일 호출. Then `event_payment.REFUND_REQUESTED + Application=CANCEL_PENDING_REFUND`, capacity hold. 호스트가 환불 후 `refundByBankConfirm` 호출 시 `REFUNDED + Application=CANCELED + capacity--`. 83은 기본 3일 경과 후 escalation에서 사용.
 - **AC-08 (S2-8). 호스트 이벤트 취소 (WALLET PAID 참가자)**: ATTENDING row가 있는 결제는 `tryRefundNewPrepayment → refundByHostCancel`로 환불된다. attendance 없는 pending 결제 누락은 현재 Gap이다.

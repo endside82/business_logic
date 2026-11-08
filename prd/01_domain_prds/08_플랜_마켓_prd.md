@@ -287,11 +287,9 @@
 
 ## 9. 2026-07-29 서버·Flutter 소스 실측 갱신
 
-실측 기준:
+9.6 의 읽기 조판·TABLE 계약은 2026-11-08 서버·앱 main 으로 다시 확인했다.
 
-- `community_api` committed HEAD: `be38d128b80d`
-- `community_app` committed HEAD: `cb21bce8ef08`
-- API와 Flutter 작업 디렉터리에는 TABLE canonical write/legacy dual-read, picker 검색·시각 체계, 읽기 조판과 관련 테스트 변경이 별도로 존재한다. 아래 “미커밋 작업본” 항목만 그 상태를 설명하며, 나머지 계약은 committed HEAD 기준이다.
+- TABLE 표준 쓰기와 옛 형식 함께 읽기, 블록 고르기 검색·시각 체계, 읽기 조판은 아래 9.6 이 설명한다.
 
 ### 9.1 상세·블록·이벤트 생성의 상태/소유권
 
@@ -347,17 +345,12 @@ preview는 별도 노출 계약이다. 서버 Service는 PUBLISHED 익명, DRAFT
 - 이미지/영상/파일 블록은 업로드 전에 10MiB와 허용 형식을 검사하고, 만료 미디어 표시 실패 시 provider를 한 번 invalidate해 새 URL을 받는다.
 - `moveBlock.sortOrder`는 서버가 대상 부모의 살아 있는 형제 범위 `0..maxSibling+1`로 검증한다.
 
-### 9.6 미커밋 Flutter 작업본 — 출시 계약 아님
+### 9.6 읽기 조판과 TABLE 계약
 
-현재 worktree의 다음 변경은 committed HEAD와 구분한다.
-
-- `plan_reading_mode_screen.dart`: 커버·제목·작성자 header, 본문 최대 폭 680.
-- `plan_block_text_styles.dart`: 본문 14→16, line-height 1.65, 제목 위 여백 확대.
-- `block_renderer.dart`: 읽기 표면 여백 소유권과 여러 블록 padding 조정.
-- 상세/preview가 `reading:true`를 전달하고 관련 tests/goldens가 변경됨.
-- picker는 18개 생성 타입과 12개 pattern을 구분하고, 검색 결과를 블록/패턴별 exact→prefix→substring 순으로 정렬한다.
-- 콘텐츠 역할별 tone·아이콘·접근성 semantics와 공통 상태 badge를 적용한다.
+- 읽기 모드: 커버·제목·작성자 머리, 본문 최대 폭 680.
+- 본문 16px, 줄간 1.65, 제목 위 여백 확대. 편집기와 뷰어가 같은 값을 쓴다.
+- 상세·preview 가 `reading:true` 를 넘기고 읽기 표면이 여백을 맡는다.
+- 블록 고르기는 생성 블록 종류와 작성 패턴을 나누고, 검색 결과를 블록·패턴별 점수 순으로 정렬한다.
+- 콘텐츠 역할별 색조·아이콘·접근성 의미와 공통 상태 배지를 쓴다.
 - API는 TABLE 신규/구조 변경 쓰기에 비어 있지 않은 직사각형 문자열 `properties.rows`와 optional boolean `header`를 강제한다.
-- Flutter는 legacy `columns + content JSON`을 제한적으로 읽어 안전하면 canonical rows로 저장하고, 깨진/손실 위험 표는 저장 및 raw JSON 렌더를 차단한다. SQL에는 canonical/legacy/broken 재고 조회만 추가됐고 자동 migration은 없다.
-
-이 변경은 아직 커밋되지 않았으므로 현재 제품 정본·수용 기준으로 단정하지 않는다. 문서에는 “진행 중인 조판 제안”으로만 취급한다.
+- Flutter는 옛 `columns + content JSON`을 제한적으로 읽어 안전하면 표준 rows로 저장하고, 깨지거나 잃을 위험이 있는 표는 저장과 원문 JSON 렌더를 막는다. 자동 데이터 이전은 없다.

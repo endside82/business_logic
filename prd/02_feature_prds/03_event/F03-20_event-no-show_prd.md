@@ -22,7 +22,7 @@
 
 `NoShowStatus`는 CONFIRMED/APPEALED/OVERTURNED 3값이다. **서버 소명 기한은 확정 후 7일**이며(`confirmedAt + 7일`을 지난 경우 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED`(409, 400036)), 뒤집기 성공 시 OVERTURNED가 제재 카운트에서 빠진다. 그러나 Flutter의 `_MyNoShowNotice`는 CONFIRMED이면 확정시각과 관계없이 CTA를 계속 표시하므로, 기한 초과 사용자는 이의제기 화면까지 들어간 뒤 제출 시 서버에서 거절된다(G-12). 회원 노쇼를 뒤집을 때는 `method=NOSHOW_OVERTURN`인 정정 `EventCheckIn`을 같은 트랜잭션에서 멱등 생성한다. 따라서 노쇼 카운트뿐 아니라 체크인 기반 공동참석 증거·핏 미리보기·재방문 배지 집계에도 다시 포함된다. 게스트는 계정 주체가 없어 정정 체크인을 만들지 않는다.
 
-`CANCEL_PENDING_REFUND` 제외는 **일괄 확정과 체크인 통계**에 적용된다. 단일 `confirm`은 ATTENDING·미체크인만 검사하며 application 상태를 별도로 보지 않는다(G-8). 서버와 앱 모두 “이벤트 종료 후”라는 UX 문구를 사용하지만 confirm/confirmBatch 자체에는 종료시각 검사가 없다(G-9).
+`CANCEL_PENDING_REFUND` 제외는 **일괄 확정과 체크인 통계**에 적용된다. 단일 `confirm`은 ATTENDING·미체크인만 검사하며 application 상태를 별도로 보지 않는다(G-8). 단일·일괄 확정은 모두 모임이 개최됐을 때만 받는다. 상태가 OPEN·CLOSED 이고 시작 시각이 지나야 하며, 아니면 `EVENT_NO_SHOW_NOT_ALLOWED` 다. 종료 뒤 확정이 보통 흐름이라 종료 시각 상한은 두지 않는다. 앱의 일괄 확정 단추는 같은 판정을 담은 서버 표지가 참일 때만 보인다.
 
 노쇼 사후 조정 환불의 상한은 유료 포인트만이 아니라 원 결제의 `amount`(**paid+free 총액**)에서 동일 원결제에 대해 이미 완료된 일반/선결제 환불 누계를 뺀 잔액이다. 요청액은 원 결제의 paid/free 비율로 분리되고 `EventRefundSettlementService.applyRefundToSettlement`를 통해 정산 상태별 claw-back을 적용한다. 0원도 유효하며 이때 지갑·정산 변동 없이 기록만 만든다. 반면 이 서비스는 대상 application에 대응하는 `event_no_show` row의 존재·상태를 전혀 검증하지 않고(G-14), 공동호스트는 `canHandleRefundIssue` 없이도 공동호스트 row 존재만으로 환불할 수 있다(G-15).
 
@@ -140,7 +140,7 @@
 | 기한 초과 소명 (confirmedAt+7일 경과) | `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED(409)` | CONFIRMED이면 CTA 계속 노출, 제출 후 에러 | 서버 차단·앱 사전 게이트 없음 | Gap G-12 |
 | CANCEL_PENDING_REFUND 참가자 일괄 확정 | batch 대상 제외 | confirmBatch() 배선 | batch에서 자동 제외 | 일치 |
 | CANCEL_PENDING_REFUND 참가자 단일 확정 | application 상태 미검사 | 단일 confirm 호출 가능 | 노쇼 row 생성 가능 | Gap G-8 |
-| 이벤트 종료 전 확정 | 종료시각 미검사 | 관리자 UI 버튼도 상태별 숨김 없음 | 노쇼 row 생성 가능 | Gap G-9 |
+| 시작 전 확정 | OPEN·CLOSED 이고 시작 시각이 지났을 때만(`EVENT_NO_SHOW_NOT_ALLOWED`) | 일괄 확정 단추는 서버 표지가 참일 때만 노출 | 시작 전에는 노쇼 row 를 만들 수 없음 | 일치 |
 | 제재 카운트 — OVERTURNED | countRecentNoShows에서 제외 | 앱에서 직접 사용 안함 | 서버 정확 | 일치 |
 | 노쇼 환불 — POST | host·모든 cohost·club refund manager, no-show row 미검증 | detail caller만, paidAmount=0 | 동작하지만 권한·대상·진입 데이터 Gap | G-14/G-15/G-16 |
 | 노쇼 환불 — 0원 | service가 허용, 기록만 생성 | form도 허용 | money side effect 없이 row 생성 | source 일치/spec 불일치 |
@@ -180,7 +180,7 @@
 | P2 | **G-5. NoShowRefundReasonCode wire 계약 없음** | 서버 `reasonCode`는 free String. 클라 4값 enum과 공식 매핑 없음. | 향후 서버에서 `reasonCode` 기반 필터링/보고 시 클라 값과 불일치 가능. | 서버에 `NoShowRefundReasonCode` enum 정의 및 검증 추가. |
 | P2 | **G-7. confirmedByRole String? 역직렬화** | Dart `EventNoShowVo.confirmedByRole`가 `String?`인데, 서버는 `WarningActorRole` enum 직렬화. | 오타/미지원 값 수신 시 silent null. UI에서 actor role 표시 오류 가능. | Dart enum으로 타입 강화 또는 fallback 처리 명시. |
 | P1 | **G-8. 단일 confirm의 CANCEL_PENDING_REFUND 제외 누락** | `confirmBatch`는 owner application의 환불대기를 제외하지만 `confirm`은 ATTENDING·미체크인만 검사한다. | 동일 참가자가 일괄에서는 제외되지만 단일 확정으로는 노쇼 처리될 수 있다. | 단일 confirm에도 batch와 같은 application 상태 가드 공유. |
-| P1 | **G-9. 이벤트 종료 전 노쇼 확정 가능** | 서비스에 event.endTime/status 검사가 없고 관리자 UI의 일괄 버튼도 이벤트 상태로 숨기지 않는다. | 시작 전·진행 중 참가자를 확정할 수 있다. | 서버 종료시각 가드를 단일/일괄 공통 적용하고 UI도 capability로 게이트. |
+| 해소됨 | **G-9. 시작 전 노쇼 확정** | 단일·일괄 확정이 같은 개최 판정(상태 OPEN·CLOSED, 시작 시각 경과)을 거치고, 앱의 일괄 단추도 그 판정을 담은 서버 표지를 따른다. 진행 중 확정은 허용이다(종료 시각 상한 없음). | 시작 전·초안·취소 모임에는 노쇼를 새길 수 없다. | 없음 |
 | P2 | **G-10. 소유 게스트 소명 CTA 미노출** | 서버 GET/appeal은 owner 귀속을 지원하지만 `_MyNoShowNotice`는 `row.userId == currentUserId`만 선택한다. | 예매자가 본인 게스트 노쇼를 앱에서 소명할 수 없다. | ownerUserId가 본인인 게스트 row 목록과 대상명을 소명 UI에 노출. |
 | P2 | **G-11. appeal/overturn path eventId 미검증** | Controller가 path의 eventId를 service에 전달하지 않고, service는 noShowId의 실제 eventId만 사용한다. | 잘못된 이벤트 path로도 다른 이벤트 row가 처리되어 URL 자원 의미·감사 추적이 어긋난다(실제 row 기준 권한 검사는 수행됨). | service에 eventId를 전달해 row.eventId 일치 검증. |
 | P2 | **G-12. 7일 경과 후에도 소명 CTA 상시 노출** | `_MyNoShowNotice`는 CONFIRMED 여부만 보고 `canAppeal=true`; confirmedAt/deadline을 계산하지 않는다. | 사용자가 긴 폼을 작성한 뒤 제출 시에야 409를 받아 불필요한 실패 경험이 생긴다. | 서버가 `appealDeadlineAt/canAppeal`을 내려주거나 앱이 confirmedAt+7일을 표시·gate하고 서버 에러를 구체 안내. |
@@ -270,7 +270,7 @@ Then paidRefund=3,000, freeRefund=3,000으로 지갑·lot·정산 helper에 동�
 |---|---|---|
 | 구현 | G-2/G-13 노쇼 환불 GET | 먼저 eventId+principal 객체 권한을 강제한 뒤 NoShowRefundScreen에 기존 이력 조회를 배선. |
 | 서버 | G-5 reasonCode enum 화 | 서버에 `NoShowRefundReasonCode` enum 도입 여부 결정. |
-| 서버 | G-8/G-9 확정 공통 가드 | 단일·일괄에 환불대기 제외와 종료시각 검사를 같은 helper로 적용. |
+| 서버 | G-8 단일 확정의 환불대기 제외 | 일괄 확정처럼 단일 확정도 환불 대기 참가자를 뺄지 정한다(시작 전 확정은 개최 판정으로 막혔다). |
 | 앱 | G-10/G-12 소명 CTA | ownerUserId 기준 게스트 노쇼 대상 UI와 7일 deadline 표시/게이트 추가. |
 | 서버 | G-11 path-row 정합 | appeal/overturn에 eventId 전달 후 row.eventId 비교. |
 | 서버 | G-14/G-15 환불 불변식·권한 | no-show row와 applicationId를 결박해 허용 상태를 검증하고 cohost `canHandleRefundIssue`를 강제. |

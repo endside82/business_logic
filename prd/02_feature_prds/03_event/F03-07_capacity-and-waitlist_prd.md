@@ -5,7 +5,7 @@
 
 ## 1. 결론
 
-이벤트 정원/대기열 정책과 이미 들어와 있는 사람들의 흐름을 운영하는 기능이다. 현재 Flutter 화면에서 직접 수행할 수 있는 범위는 기본 정원·대기열·승인제·게스트 설정, 수동 승격, 강제 제거다. 모집 마감/재개는 서버 API부터 Repository·Provider까지 존재하지만 **호출하는 화면 CTA가 없다**. 정원 초과 허용·하드 상한은 바꾸는 입구가 없다(옛 `PATCH /capacity-settings` 는 서버·앱 모두 걷음). 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 WAITING → ATTENDING)은 서버에서 일어난다. 이벤트 신청 행위 자체는 F03-05 범위다.
+이벤트 정원/대기열 정책과 이미 들어와 있는 사람들의 흐름을 운영하는 기능이다. 현재 Flutter 화면에서 직접 수행할 수 있는 범위는 기본 정원·대기열·승인제·게스트 설정, 수동 승격, 강제 제거, 모집 마감·재개다. 모집 마감·재개는 정원 설정 화면 아래 「모집 상태」 구역에서 모임을 연 호스트에게만 보이고(정기모임 회차는 안 보임), 마감은 확인 창을 거친다. 정원 초과 허용·하드 상한은 바꾸는 입구가 없다(옛 `PATCH /capacity-settings` 는 서버·앱 모두 걷음). 참석자 자동 승격(다른 사용자 취소 또는 정원 증가 시 WAITING → ATTENDING)은 서버에서 일어난다. 이벤트 신청 행위 자체는 F03-05 범위다.
 
 2026-07-29 현재 소스에서 기본 설정 화면(`GET/PUT /capacity/settings`)의 권한은 **host ∪ any co-host ∪ 클럽 ADMIN/OWNER**이고, 서버가 이를 `EventVo.canManageCapacity`로 계산해 Flutter 상세 행과 route guard에 그대로 내려준다. 이 권한은 출석 운영 권한(`canManageAttendance`)과 다르다. 수동 승격·강제 제거·참석 로그는 co-host의 `canManageAttendance`와 클럽 출석관리 권한을 요구한다. 또한 고급 초과정원 endpoint인 `PATCH /capacity-settings`는 여전히 host/co-host만 허용하므로 클럽 운영진 허용 범위가 기본 설정 endpoint와 다르다.
 
@@ -39,7 +39,7 @@
    - 화면 진입 행과 route redirect는 모두 서버 `EventVo.canManageCapacity`를 사용한다. host, 공동호스트, 클럽 ADMIN/OWNER가 통과한다.
 5. 모집 마감/재개:
    - `capacitySettingsNotifier.closeRegistration() / reopenRegistration()` ▶ `POST /api/v1/events/{id}/registration/close|reopen` ▶ eventDetail invalidate
-   - 위 Provider 메서드를 호출하는 Flutter screen/widget은 현재 없다. 따라서 앱의 정상 UI만으로는 마감/재개할 수 없다.
+   - 정원 설정 화면의 「모집 상태」 구역이 이 명령을 부른다. 모집 중이면 「모집 마감」(확인 창 「모집을 마감할까요?」 뒤 전송), 마감했으면 「모집 다시 시작」 이다. 구역은 모임을 연 호스트이고 정기모임 회차가 아닐 때만 그린다. 공동 호스트·클럽 운영진도 정원 설정 화면은 열지만 이 구역은 보이지 않는다(서버도 `EVENT_NOT_OWNER`·`EVENT_IN_REGULAR_MEETING` 으로 거절).
 
 ## 3-1. 정원 초과 허용 정책 (v4.5 W1 신설)
 
@@ -144,7 +144,7 @@
 | S1 | (호스트) 정원이 차서 대기열이 쌓인 후, 한 명을 수동 승격 | - 이벤트 status=OPEN, baseCapacity=10, currentCapacity=10 | 단골 사용자 ATTENDING + manuallyPromoted, 대기열 2명 남음, 호스트 화면 갱신 |
 | S2 | (호스트) 정원을 늘려서 대기자 자동 승격 | - baseCapacity=10, ATTENDING=10, 대기열 8명 | 5명 자동 승격, 대기열 3명 남음, 5명 각각에 `WAITLIST_PROMOTED` 알림 생성 요청. 저장/비동기 push는 채널 설정에 따름 |
 | S3 | (호스트) 노쇼 우려 사용자를 강제 제거 | - baseCapacity=10, ATTENDING=10 (그 중 노쇼 사용자 포함) | 노쇼 사용자 CANCELLED, 1번 대기자가 ATTENDING + promotedFromWaitlist=true |
-| S4 | (서버/Provider 직접 호출) 모집 조기 마감 후 재개 | host가 close/reopen endpoint 또는 Provider 메서드를 직접 호출 | `isClosed` 전환과 eventDetail invalidate. 현재 Flutter 화면에는 실행 CTA가 없음 |
+| S4 | 모집 조기 마감 후 재개 | host가 정원 설정 화면의 「모집 마감」 을 확인 창에서 확정한 뒤 「모집 다시 시작」 을 누름 | `isClosed` 전환과 eventDetail invalidate. 공동 호스트·클럽 운영진과 정기모임 회차에는 구역이 보이지 않음 |
 | S5 | (참가자) 자동 승격 | 본인이 대기열 1번 | 참가자 ATTENDING. `WAITLIST_PROMOTED` 생성 요청은 일어나지만 in-app/push 도달은 설정 및 비동기 발송 결과에 따름 |
 | S6 | (호스트) 대기 중이 아닌 사용자를 승격 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
 | S7 | (에러) 권한 없는 일반 사용자 정원 설정 접근 | event 1312 isClosed=false (sample_data.sql:1190 시드값) | event 1312 isClosed=false 복귀, 다른 메타 무변동, **mutation but self-rollback**. **출처: CapacitySettingsService.java:84-104** |
@@ -169,7 +169,7 @@
 - **AC-01. (호스트) 정원이 차서 대기열이 쌓인 후, 한 명을 수동 승격**: Given - 이벤트 status=OPEN, baseCapacity=10, currentCapacity=10 When 사용자가 해당 흐름을 실행하면 Then 단골 사용자 ATTENDING + manuallyPromoted, 대기열 2명 남음, 호스트 화면 갱신
 - **AC-02. (호스트) 정원을 늘려서 대기자 자동 승격**: Given - baseCapacity=10, ATTENDING=10, 대기열 8명 When 사용자가 해당 흐름을 실행하면 Then 5명 자동 승격, 대기열 3명 남음, 5명 각각에 `WAITLIST_PROMOTED` 생성 요청. 실제 in-app/push 결과는 알림 설정에 따름
 - **AC-03. (호스트) 노쇼 우려 사용자를 강제 제거**: Given - baseCapacity=10, ATTENDING=10 (그 중 노쇼 사용자 포함) When 사용자가 해당 흐름을 실행하면 Then 노쇼 사용자 CANCELLED, 1번 대기자가 ATTENDING + promotedFromWaitlist=true
-- **AC-04. (서버/Provider 직접 호출) 모집 조기 마감 후 재개**: Given host 인증 When close 후 reopen endpoint/Provider를 직접 호출하면 Then `isClosed`가 true 후 false로 복귀하고 eventDetail이 invalidate된다. Flutter 화면 CTA는 없음을 별도로 검증한다.
+- **AC-04. 모집 조기 마감 후 재개**: Given 모임을 연 host 인증 When 정원 설정 화면에서 「모집 마감」 을 확인 창에서 확정한 뒤 「모집 다시 시작」 을 누르면 Then `isClosed`가 true 후 false로 복귀하고 eventDetail이 invalidate된다. 공동 호스트·클럽 운영진·정기모임 회차에는 이 구역이 보이지 않는다.
 - **AC-05. (참가자) 자동 승격**: Given 본인이 대기열 1번 When 빈자리가 생기면 Then 참가자 ATTENDING, `WAITLIST_PROMOTED` 생성 요청. 채널 비활성 시 저장/푸시 생략 가능
 - **AC-06. (호스트) 대기 중이 아닌 사용자를 승격 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
 - **AC-07. (에러) 권한 없는 일반 사용자 정원 설정 접근**: Given event 1312 isClosed=false (sample_data.sql:1190 시드값) When 사용자가 해당 흐름을 실행하면 Then event 1312 isClosed=false 복귀, 다른 메타 무변동, **mutation but self-rollback**. **출처: CapacitySettingsService.java:84-104**

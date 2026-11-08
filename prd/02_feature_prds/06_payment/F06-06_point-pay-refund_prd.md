@@ -38,10 +38,9 @@
   - 호스팅 티켓(F06-07) ▶ 구매 다이얼로그 → 내부적으로 `walletSpendService.spend(HOSTING_TICKET_PURCHASE, ...)` 호출(별도 엔드포인트 `/hosting-tickets/purchase`)
   - 개인 구독(F06-08) ▶ 구독 시작 → 내부 `walletSpendService.spend(SUBSCRIPTION, ...)`
 - 환불 호출 진입점:
-  - 이벤트 상세(Unit 03)/내 신청 화면 ▶ "참여 취소" → 환불 정책 안내 모달 → `POST /api/v1/wallet/refund`
+  - 이벤트 상세/내 신청 화면 ▶ "참여 취소" → 환불 정책 안내 → 모임 참여 취소 명령이 결제 건 환불을 함께 처리한다. 지갑에 따로 환불을 요청하는 창구는 없다.
 - 환불 정책 안내(`GET /refund/policy`) 모달:
   - 결제 직전 "환불 규정 보기" 링크
-  - 거래 상세에서 환불 거래 진입 시 PG sub-status 카드 보강 (F06-03)
 
 ## 2. 코드 위치
 
@@ -107,41 +106,41 @@
 | S1 | 이벤트 참여비 결제 (Happy Path) | 이벤트 상세 화면, 잔액 충분 | 잔액 42,000P, 거래 내역 1행 추가, 호스트는 정산 대상으로 `Settlement.grossAmount`에 누적될 예정. |
 | S2 | 잔액 부족 + 자동 충전 ON → 자동 충전 후 결제 성공 | 잔액 4,500P, 8,000원 결제, 자동충전 활성(임계 5,000 / 충전 30,000) | 사용자가 충전 화면을 거치지 않고 결제 성공. 거래 내역에 `자동 충전 +30,000P` + `결제 -8,000P` 두 행. |
 | S3 | 잔액 부족 + 자동 충전 OFF → 충전 화면 prefill 분기 | 잔액 4,500P, 8,000원 결제, 자동 충전 OFF | 충전 1건 + 결제 1건. 사용자 명시적 결정으로 진행. |
-| S4 | 24시간 전 환불 (전액) | 결제 거래 1건 존재 | 사용자 잔액 즉시 복구. PG 환불 가능 lot + paymentKey 보유 + `refund.pg-queue.enabled`(기본 false) 모두 충족 시에만 원수단(카드) 환불 큐 대기; 그 외에는 paidRefund도 지갑으로 즉시 복원. |
+| S4 | 24시간 전 환불 (전액) | 결제 거래 1건 존재 | 사용자 잔액 즉시 복구. 유료·무료 환불분 모두 지갑으로 바로 돌아가고, 카드로 되돌리는 대기열은 없다. |
 | S5 | 12시간 전 환불 (50%) | 모임 시작 18시간 전 취소 | 부분 환불 완료. 거래 내역에 환불 1건 + 잔액 부분 복구. |
 | S6 | 12시간 미만 환불 시도 → 거절 | 모임 1시간 전 취소 | 잔액 변동 없음. 사용자가 모임 참여 또는 노쇼 결정. |
 | S7 | 이중 결제 시도 (이미 결제한 이벤트 재결제) | 결제 직후 푸시 지연으로 다시 탭한 사용자 | 이중 차감 없음. 사용자 화면이 정확한 상태로 정렬. |
-| S8 | 가격 조작 시도 (클라 amount=1) | 비정상 클라이언트가 8,000원 이벤트를 1원으로 결제 시도 | 가격 조작 차단. 이벤트는 결제되지 않음. |
-| S9 | PG 측 카드 환불 실패 → 수동 대사 | PG 환불 가능 lot + paymentKey 보유 + `refund.pg-queue.enabled` 활성 조건 충족 후 PG 환불 큐 진입 시 PG 측에서 실패 | 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시. (조건 미충족이면 paidRefund도 지갑 즉시 복원이므로 본 시나리오는 PG queue 활성화 운영 환경에서만 발생.) |
+| S8 | 가격 조작 시도 (클라 amount=1) | 비정상 클라이언트가 8,000원 이벤트를 1원으로 결제 시도 | 지갑 결제 창구는 금액을 받지 않는다. 서버가 정한 금액으로만 결제되고 보낸 금액은 쓰이지 않는다. |
+| S9 | 충전 취소의 결과를 모름 → 조회로 해소 | 사용자가 충전을 취소했는데 결제사 응답을 잃음 | 결제 건마다 결과 모름 사건 한 행이 남고, 결과가 확정될 때까지 결제사에 다시 묻는다. 같은 지갑의 둘째 충전 취소는 앞 취소가 닫힐 때까지 거절한다. 모임 참가비 환불은 지갑으로 바로 돌아가므로 이 흐름과 상관없다. |
 | S10 | 유료 승인제(선입금) 이벤트 — 승인 후 결제 확정 | `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. | alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (`type=PAY`, referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 중복 가드 `existsByUserIdAndReferenceTypeAndReferenceId(userId, "EVENT_PREPAYMENT", eventPaymentId)`로 DUPLICATE_PAYMENT 409). |
 
 ## 8. Gap / Risk
 
 | 분류 | 근거 | 내용 | 다음 조치 |
 |---|---|---|---|
-| Risk (PG 게이트) | ChargeService.java:347-463 | **충전취소(cancelCharge) 응답유실 엣지** — DB-first→PG cancel 순서에서 PG 성공+응답유실 시 DB 롤백으로 지갑 미환불+PG 환불됨 불일치 가능. 실 PG(Toss) 연동 전까지 잠재. release-gate `05_pg.md`에 등재됨(코드 무변경, PG 계약 시 일괄 검증). | PG 계약 시 webhook TODO와 함께 검증 |
+| 해소됨 | 충전 취소 | **충전 취소 응답 유실** — 응답을 잃으면 결제 건마다 결과 모름 사건 한 행을 남기고 결과가 확정될 때까지 결제사에 다시 묻는다(연속 실패는 경보만 내고 계속 묻는다). 같은 지갑의 둘째 취소는 앞 취소가 닫힐 때까지 거절한다. | 실제 결제사 연동 때 실거래로 한 번 확인 |
 | Risk | WalletController.java:190 | `GET /api/v1/wallet/refund/policy`는 24h=100%/12h=50%/0% 하드코딩 값을 반환. 실제 환불 계산과 무관하지만 클라이언트가 이 값을 정책 기준으로 표시하면 실제 카탈로그와 불일치. Deprecation 계획 미결정. | 신규 환불 UI는 `GET /api/v1/refund-policy-templates` 카탈로그 응답 기반으로 전환 검토 |
-| 후보 | backend.md:48 | #### 유료 승인제 결제 검증 보강 필요 | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | backend.md:117 | - **Enum** `RefundPgStatus` (응답 보강용): `PENDING`, `PROCESSING`, `SUCCESS`, `FAILED`, `CANCELLED`, `MANUAL_REQUIRED` (정확 값은 `payment/constants/RefundPgStatus.java` 참조) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 유료 승인제 결제 | 승인 뒤 결제 대기(`APPROVED_PENDING_PAYMENT`) 상태가 생겼고 결제는 선입금 경로로만 한다 | 없음 |
+| 해소됨 | 환불 PG 상태 | 카드 환불 대기열과 그 상태 열거를 걷었다. 환불은 지갑으로 바로 돌아간다 | 없음 |
 | 후보 | backend.md:129 | - **F03-05/F03-06 유료 승인제**: 승인 후 결제 대기 상태에서만 결제를 허용해야 한다. 현재 서버에는 이 상태가 없어 보강 필요. | 2026-06-06 확정: 인용 속 `WalletService.pay` 직접 결제 경로는 EVENT spend 이관으로 **차단됨** — 과거 E2E 라운드 기록으로는 유효하나, P70 매트릭스의 pay 직접호출 모드는 재실행 불가(매트릭스 재설계 필요). 현행 결제는 선입금 facade 경유 |
-| 후보 | frontend.md:16 | - 거래 상세에서 환불 거래 진입 시 PG sub-status 카드 보강 (F06-03) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:136 | **현재 구현 갭**: | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 거래 상세 PG 진행 카드 | 카드 환불 대기열이 없어 보일 진행 상태가 없다 | 없음 |
+| 해소됨 | 유료 승인제 구현 갭 | 가리키던 갭(승인 뒤 결제 대기 상태 없음)은 위 행처럼 닫혔다 | 없음 |
 | 후보 | scenarios.md:143 | - 결제 실패 시 `EventAttendance`가 생성되면 실패로 본다. | 2026-06-06 확정: 인용 속 `WalletService.pay` 직접 결제 경로는 EVENT spend 이관으로 **차단됨** — 과거 E2E 라운드 기록으로는 유효하나, P70 매트릭스의 pay 직접호출 모드는 재실행 불가(매트릭스 재설계 필요). 현행 결제는 선입금 facade 경유 |
-| 후보 | scenarios.md:252 | 4. 만약 시드 보강으로 startTime 이 미래로 조정된 경우엔: RefundPolicyService 통과 → alreadyRefunded false → `findByUserIdAndReferenceTypeAndReferenceId(3, EVENT_PAYMENT, 1303)` Optional.empty() → throw RestException(TRANSACTION_NOT_FOUND) | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:291 | - **C 확정**: 본 흐름은 D-02 v2 dormant infra ("v3에서 paid 환불 정책 결정 후 실제 가동", `RefundRequestWorker.java:31`) 로 명시된 **architectural placeholder** 영역. 현재 코드 사실 상 E2E mutation 으로 도달 불가능한 dead branch 검증을 매트릭스에 강제하면 false-green 위험만 도입. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
-| 후보 | scenarios.md:294 | 2. (1) 충족 후 P70 매트릭스에 `refund_async_worker_success` / `refund_pg_failure_retry` 2 mode 보강 — 단, mutation 전제이므로 `pg_payment_key` / `charge_lot.pg_refundable=true` 시드 보강 + sample_data 재초기화 의존성 명시 필요. | 실제 소스 대조 후 Gap/Risk/Decision Needed 중 하나로 확정 |
+| 해소됨 | 옛 지갑 환불 창구의 시드 시나리오 | 지갑 환불 창구(`POST /api/v1/wallet/refund`)가 없어지고 환불은 참여 취소 명령이 한다 | 없음 |
+| 해소됨 | 잠든 환불 요청 작업기 | 그 작업기를 걷었다. 도달할 수 없는 경로가 남지 않았다 | 없음 |
+| 해소됨 | 비동기 환불·PG 재시도 시험 | 비동기 환불과 PG 환불 재시도를 걷어 시험할 경로가 없다 | 없음 |
 
 ## 9. 수용 기준
 
 - **AC-01. 이벤트 참여비 결제 (Happy Path)**: Given 이벤트 상세 화면, 잔액 충분 When 사용자가 해당 흐름을 실행하면 Then 잔액 42,000P, 거래 내역 1행 추가, 호스트는 정산 대상으로 `Settlement.grossAmount`에 누적될 예정.
 - **AC-02. 잔액 부족 + 자동 충전 ON → 자동 충전 후 결제 성공**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 충전 화면을 거치지 않고 결제 성공. 거래 내역에 `자동 충전 +30,000P` + `결제 -8,000P` 두 행.
 - **AC-03. 잔액 부족 + 자동 충전 OFF → 충전 화면 prefill 분기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 충전 1건 + 결제 1건. 사용자 명시적 결정으로 진행.
-- **AC-04. 24시간 전 환불 (전액)**: Given 결제 거래 1건 존재 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 즉시 복구. PG 환불 가능 lot + paymentKey 보유 + `refund.pg-queue.enabled`(기본 false) 모두 충족 시에만 원수단(카드) 환불 큐 대기; 그 외에는 paidRefund도 지갑으로 즉시 복원.
+- **AC-04. 24시간 전 환불 (전액)**: Given 결제 거래 1건 존재 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 즉시 복구. 유료·무료 환불분 모두 지갑으로 바로 돌아간다.
 - **AC-05. 12시간 전 환불 (50%)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 부분 환불 완료. 거래 내역에 환불 1건 + 잔액 부분 복구.
 - **AC-06. 12시간 미만 환불 시도 → 거절**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 잔액 변동 없음. 사용자가 모임 참여 또는 노쇼 결정.
 - **AC-07. 이중 결제 시도 (이미 결제한 이벤트 재결제)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 이중 차감 없음. 사용자 화면이 정확한 상태로 정렬.
 - **AC-08. 가격 조작 시도 (클라 amount=1)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가격 조작 차단. 이벤트는 결제되지 않음.
-- **AC-09. PG 측 카드 환불 실패 → 수동 대사**: Given PG 환불 가능 lot + paymentKey 보유 + `refund.pg-queue.enabled` 활성 조건 모두 충족 When PG 측에서 환불 실패 Then 사용자 잔액은 영향 없이 환불 완료, PG 측 카드 환불만 비동기로 보정. 거래 상세에서 진행 상황 표시. (조건 미충족이면 paidRefund도 지갑 즉시 복원이므로 본 시나리오는 PG queue 활성화 환경에서만 발생.)
+- **AC-09. 충전 취소의 결과를 모름**: Given 충전 취소 중 결제사 응답을 잃음 When 사용자가 같은 지갑의 다른 충전을 취소하면 Then 앞 취소가 닫힐 때까지 거절되고, 결과 모름 사건은 결과가 확정될 때까지 결제사 조회로 해소된다.
 - **AC-10. 유료 승인제(선입금) 이벤트 — 승인 후 결제 확정**: Given `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT` 또는 동등한 결제 대기 상태, `paymentDueAt` 미만료, 사용자는 아직 `EventAttendance=ATTENDING` 아님. When 사용자가 해당 흐름을 실행하면 Then alice 잔액 12,200P, totalSpent 37,800P, point_transaction 신규 행 1건 (`type=PAY`, referenceType=`EVENT_PREPAYMENT`, referenceId=`eventPaymentId`). payment_record 신규 행 1건. **mutation 발생** — 매트릭스 재실행 전 sample_data.sql 재초기화 필요(재실행 시 중복 가드로 DUPLICATE_PAYMENT 409). (선입금 경로 검증 세부는 AC-W2-1 참조)
 - **AC-W2-1 (S2-1). 결제 경로 happy path (2026-06-06 spend 이관 갱신)**: Given `EventPrepayment.prepaymentRequired=true`, `Application=APPROVED_PENDING_PAYMENT`, 잔액 충분. When facade(`EventPrepaymentService.payByWallet`)가 표준 차감 진입점 `WalletSpendService.spend(EVENT_PREPAYMENT, PAID_FIRST)` 호출(구 `WalletService.payForApplication`은 진입 즉시 차단됨 — deprecate+throw). Then `PointTransaction(type=PAY, referenceType=EVENT_PREPAYMENT, referenceId=eventPaymentId, paid/free split 기록)` 신규 1건 + charge lot 소비(`point_transaction_id` 키, 부족 시 전체 롤백) + `PaymentRecord` 신규 1건 + `AccountingLedger.recordPayment` 분개 1건. 잔액 = before - amount.
 - **AC-W2-2. 중복 차단 (유지)**: Given 동일 `eventPaymentId`로 이미 PAY 트랜잭션 존재. When `payByWallet` 재호출. Then 즉시 `DUPLICATE_PAYMENT` 409 (wrapper 멱등 가드 — spend 미호출). wallet 변동 없음.

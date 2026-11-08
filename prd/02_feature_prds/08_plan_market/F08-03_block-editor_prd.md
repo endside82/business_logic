@@ -126,13 +126,13 @@ AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 �
 
 블록의 `properties.previewSample=true` 토글은 작성자가 판매 preview에 노출할 블록을 지정한다. 서버가 known/non-envelope 블록만 문서 순서대로 최대 5개로 제한하며, 지정이 없으면 자동 티저로 폴백한다.
 
-### 11.5 committed HEAD와 현재 미커밋 worktree
+### 11.5 조판과 블록 고르기
 
-committed HEAD에서 `planBlockTextStyle`의 본문은 14px이고 기존 제목 여백을 쓴다. 현재 worktree는 본문 16px/line-height 1.65, 제목 위 여백 확대, 읽기 표면 최대 폭 680과 `reading` scope를 추가했다. 콘텐츠 역할별 tone, picker category/pattern icon·접근성, 검색 순위, 상태 badge 공통화도 같은 미커밋 작업본에 포함된다. 관련 tests/goldens는 변경됐지만 아직 제품 정본으로 간주하지 않는다.
+`planBlockTextStyle` 의 본문은 16px, 줄간 1.65 이고 제목 위 여백이 넓다. 편집기와 뷰어가 같은 값을 쓴다. 읽기 표면은 최대 폭 680과 `reading` 범위를 쓴다. 콘텐츠 역할별 색조, 블록 고르기의 분류·패턴 아이콘과 접근성, 상태 배지 공통화가 들어가 있다. 블록 고르기 검색은 블록 종류와 작성 패턴을 각각 점수로 매겨 정렬한다.
 
-### 11.6 미커밋 TABLE 호환·쓰기 계약
+### 11.6 TABLE 호환·쓰기 계약
 
-현재 API/Flutter worktree를 재실측한 결과 TABLE은 다음 경계로 강화되는 중이다.
+TABLE 은 다음 경계를 지킨다.
 
 - 서버 신규/구조 변경 쓰기의 canonical 형식은 `properties.rows: List<List<String>>`다. rows와 각 row는 비어 있지 않고 직사각형이어야 하며 모든 셀은 문자열이다. `header`는 생략하거나 boolean이어야 한다. 미지 sibling key는 허용하고 전체 known payload 64KB 상한을 공유한다.
 - add는 TABLE이면 항상 검증한다. update는 요청이 properties를 공급하거나 blockType이 TABLE로 바뀔 때 effective properties를 검증한다. 기존 legacy TABLE의 content-only 수정은 저장된 비정규 properties 때문에 막지 않는다.

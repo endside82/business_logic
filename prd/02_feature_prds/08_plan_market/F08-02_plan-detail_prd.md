@@ -104,18 +104,13 @@
 - 구매한 비작성자는 전체 본문을 쓰므로 `sampleBlocks=[]`; 작성자는 실제 판매 preview 검수용으로 티저를 받는다.
 - 이미지 projection은 접근 게이트 통과 뒤 붙인다.
 
-### 11.3 committed 읽기 UX와 미커밋 작업본 구분
+### 11.3 읽기 조판
 
-committed HEAD `cb21bce8ef08`에서 상세는 별도 block provider로 전체 트리를 읽고, preview는 서버 `sampleBlocks`를 렌더링하며, 구매자는 이벤트 생성 CTA를 본다. committed 본문 기본 스타일은 14px이고 기존 제목 여백을 사용한다.
+상세는 별도 block provider로 전체 트리를 읽고, preview는 서버 `sampleBlocks`를 렌더링하며, 구매자는 이벤트 생성 CTA를 본다. 문서로 읽히는 표면(상세·읽기 모드)은 통독 조판을 쓴다.
 
-현재 Flutter worktree에는 별도 미커밋 변경이 있다.
-
-- 읽기 모드에 커버·제목·작성자 header와 최대 폭 680 추가
-- 본문 16px/line-height 1.65, 제목 위 여백 확대
-- `BlockRenderer(reading:true)`와 읽기/편집 여백 소유권 분리
-- TABLE canonical rows와 제한적 legacy `columns + content JSON` dual-read. 깨진 표는 raw JSON 대신 안전 안내 카드로 표시
-- 2열 같은 작은 표는 가용 폭을 채우고 열당 96px를 넘으면 표 내부 가로 스크롤
-- 콘텐츠 역할별 tone과 링크/장소/파일/코드/영상 카드 표현 보강
-- tests/goldens 갱신
-
-이 미커밋 렌더링·TABLE 호환 작업은 진행 중 제안이며 출시 계약이나 수용 기준으로 간주하지 않는다.
+- 읽기 모드는 커버·제목·작성자 머리를 세우고 본문 폭을 최대 680으로 묶는다.
+- 본문은 16px, 줄간 1.65 이고 제목 위 여백이 넓다. 편집기와 같은 글자 크기·줄간을 쓴다.
+- `BlockRenderer(reading:true)` 가 읽기 표면의 여백을 맡고 편집 표면과 나눈다.
+- TABLE 은 표준 `rows` 와 옛 `columns + content JSON` 을 함께 읽는다. 읽을 수 없는 표는 원문 JSON 대신 「이 표를 표시할 수 없습니다.」 카드로 보인다.
+- 2열 같은 작은 표는 가용 폭을 채우고, 열당 최소 96px보다 넓어지면 표 안만 가로로 넘긴다.
+- 콘텐츠 역할별 색조와 링크·장소·파일·코드·영상 카드 표현을 쓴다.

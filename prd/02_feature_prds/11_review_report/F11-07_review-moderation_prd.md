@@ -78,7 +78,7 @@
 | 항목 | Backend | Frontend | 판단 |
 |---|---|---|---|
 | POST /reply 경로 | ReviewController:89 — 호스트 검증, 1회 제한, ReviewReplyVo 반환 | review_api.dart createReply → ReviewReplyNotifier | 정합 |
-| PUT /reply 경로 | ReviewController:100 — 24h 윈도우 검증 | review_api.dart updateReply → ReviewReplyNotifier.updateReply 존재 | 서버 OK, 앱 화면 미배선(Gap) |
+| PUT /reply 경로 | 24h 윈도우 검증, 지나면 `REVIEW_REPLY_EDIT_WINDOW_EXPIRED` | 답변이 있고 수정 가능 시각 안일 때만 카드 더보기에 「답변 수정」 이 보이고, 수정 시트(「답변 수정하기」)가 `updateReply` 를 부른다 | 정합 |
 | ReviewHideParam.autoEscalate | 서버 기본 false | 앱 기본 true, 사용자가 체크박스로 해제 가능(해제 시 false 전송) | 앱 초기값 true이나 사용자가 명시적으로 해제 가능. 서버 기본값은 false. |
 | 답변 알림 | 답변 저장 시 후기 작성자에게 후기 답변 알림 발송 | 없음 | 구현됨 |
 | ReviewHideReasonCode 6값 | 서버 6값 (HARASSMENT/DEFAMATION/SPAM/OFF_TOPIC/FAKE_REVIEW/OTHER) | review_hide_reason_code.dart 6값 | 정합 |

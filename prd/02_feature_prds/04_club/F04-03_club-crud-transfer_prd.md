@@ -35,7 +35,9 @@
 3. **삭제**:
    - 다이얼로그 → `clubDetailNotifier.deleteClub()` → `DELETE /api/v1/clubs/:id` → 성공 시 `context.go('/clubs')` + `myClubsNotifier.refresh()` + `clubListNotifier` invalidate.
 4. **소유권 이전** (스펙 SCR-CL-004 위험영역 또는 별도 메뉴):
-   - `clubRepository.transferOwnership(id, TransferOwnershipParam(newOwnerId))` → `POST /api/v1/clubs/:id/transfer-ownership` → 성공 시 detail/myClubs 모두 invalidate.
+   - 제안: 클럽장이 재인증한 뒤 `POST /api/v1/clubs/:id/transfer-ownership` → 201 과 승계 행(`PROPOSED`, 7일 유효). 이때 역할은 바뀌지 않는다.
+   - 받는 회원: `GET /api/v1/clubs/ownership-transfers/me`·`/{transferId}` 로 받은 제안을 보고, 책임 내용을 확인하고 재인증해 `POST .../{transferId}/accept` 로 수락한다. 수락한 처리 안에서 바로 효력이 생겨(`EFFECTIVE`) 두 멤버의 역할이 OWNER↔ADMIN 으로 바뀌고 응답의 새로 읽기 표지가 켜진다. 거절은 `.../decline`, 클럽장의 취소는 `.../cancel` 이다.
+   - 7일 안에 수락하지 않으면 만료 작업이 `EXPIRED` 로 닫는다. 상태는 `PROPOSED`·`EFFECTIVE`·`DECLINED`·`EXPIRED`·`CANCELLED` 이고, `ACCEPTED` 는 수락 처리 안의 중간 단계라 저장되지 않는다. 운영자 비상 승계는 바로 `EFFECTIVE` 행을 남긴다.
 
 ## 4. 제품 규칙
 

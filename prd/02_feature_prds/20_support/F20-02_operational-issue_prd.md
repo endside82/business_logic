@@ -11,9 +11,9 @@
 
 `OperationalIssueSourceType` 7개 값(WALLET_TRANSACTION/PAYMENT/REFUND/SETTLEMENT/REPORT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT)은 어떤 객체에 대한 이슈인지와 소유권 검증 방식을 결정한다. 접수 시점에 서버가 호스트 매핑 가능한 source(PAYMENT/REFUND/SETTLEMENT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT)에 한해 자동으로 `relatedHostUserId`를 채워 HostInbox에서 source별 라우팅이 가능하게 한다. WALLET_TRANSACTION과 REPORT는 단일 호스트로 환원되지 않아 null(CS 직접 처리)이다.
 
-Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `SupportIssueRepository` → `SupportIssueMutation/Detail/List` Provider → 3개 화면(목록·상세·작성)이 모두 존재하고 프로필 탭 라우터에 연결되어 있다. 단 **Flutter `OperationalIssueSourceType` enum에 `REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT`가 없어** 정기모임 관련 운영 이슈 접수 화면을 진입하면 enum 파싱 fallback이 발동한다.
+Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `SupportIssueRepository` → `SupportIssueMutation/Detail/List` Provider → 3개 화면(목록·상세·작성)이 모두 존재하고 프로필 탭 라우터에 연결되어 있다. Flutter `OperationalIssueSourceType` 은 서버 7종을 모두 갖고(정기모임 결제·정산 문의 포함), 모르는 값은 `unknown` 으로 읽는다.
 
-증빙 첨부(`evidenceFileIds` 최대 5개)와 증빙 가시성(`evidenceVisibility: PARTIES/HOST_ONLY/CS_ONLY`)이 서버는 지원하지만 **Flutter `OperationalIssueCreateParam`에 `evidenceFileIds` 필드가 없어 첨부 UI가 불가**한 상태다.
+증빙 첨부(`evidenceFileIds` 최대 5개)와 증빙 가시성(`evidenceVisibility: PARTIES/HOST_ONLY/CS_ONLY`)을 서버가 지원하고, 앱은 접수와 스레드 메시지에 올린 증빙 id 를 보낸다. 가시성은 앱이 보내지 않아 서버의 sourceType 별 기본값을 따른다.
 
 ## 2. 코드 위치
 
@@ -53,7 +53,7 @@ Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `
 |---|---|---|---|---|
 | 로그인 + 유효한 sourceType + 소유권 있음 | `validateSourceOwnership` 통과 | `SupportIssueCreateScreen` 문의 생성 | 접수 성공 | 일치 |
 | 로그인 + 소유권 없음 | `OPERATIONAL_ISSUE_SOURCE_NOT_OWNED(403)` | `showApiErrorToast` | 에러 toast | 일치 |
-| 로그인 + sourceType=REGULAR_MEETING_PAYMENT | 서버 처리 가능 | Flutter enum 없음 → fallback → `walletTransaction`으로 파싱 | 잘못된 sourceType 전달 가능 | **Gap** |
+| 로그인 + sourceType=REGULAR_MEETING_PAYMENT | 서버 처리 가능 | Flutter enum `regularMeetingPayment`(「정기모임 결제 문의」) | 정기모임 결제 문의로 접수 | 일치 |
 | 로그인 + RESOLVED/REJECTED 이슈 메시지 추가 | `status.isClosed() → INVALID_INPUT(400)` | `!status.isClosed` 조건 → 입력창 숨김 | 입력창 표시 안 됨 | 일치 |
 | 비로그인 | 모든 endpoint 401 | Auth guard | 로그인 화면 redirect | 일치 |
 | 상세 타인 접근 | `findByIdAndReporterUserId` 실패 → NOT_FOUND | `AppErrorState` | 에러 화면 | 일치 |
@@ -64,9 +64,9 @@ Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `
 |---|---|---|---|
 | 5 endpoint | 완전 구현 | SupportIssueApi 5 method 정확 매핑 | 일치 |
 | OperationalIssueStatus 4종 | OPEN/IN_PROGRESS/RESOLVED/REJECTED | Dart enum 4종 label 포함 | 일치 |
-| sourceType 7종 | 서버 7종 | Flutter 5종 (REGULAR_MEETING_* 2종 누락) | **불일치** |
-| evidenceFileIds | 서버 지원 (max 5) | Flutter CreateParam에 없음 | **불일치** |
-| evidenceVisibility | 서버 응답에 포함 | Flutter OperationalIssue 모델에 없음 | Gap |
+| sourceType 7종 | 서버 7종 | Flutter 7종 + 모르는 값 `unknown` | 일치 |
+| evidenceFileIds | 서버 지원 (max 5) | Flutter CreateParam·OperationalIssue 에 있음. 접수와 스레드 메시지에 올린 증빙 id 를 보낸다 | 일치 |
+| evidenceVisibility | 서버 응답에 포함, 접수 때 비우면 sourceType 별 기본값 | 앱은 보내지 않고 모델에도 칸이 없음(서버 기본값을 따름) | 표시하지 않음 |
 | 목록 반환 타입 | `Page<OperationalIssueVo>` (Spring Page) | `PageResponse<OperationalIssue>` | 일치 |
 | 메시지 필터 | `userVisible=true` 필터 | Flutter는 서버가 내려주는 대로 렌더링 | 일치 |
 | 알림 emit | `SUPPORT_ISSUE_UPDATED(66)` 코드 있으나 community_api emit 없음 | Flutter NotificationRouter에 라우팅 설계 필요 | Gap |
@@ -75,8 +75,8 @@ Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P0 | Flutter OperationalIssueSourceType enum에 REGULAR_MEETING_* 2종 누락 | `operational_issue.dart:7-24` — enum 5종, 서버 7종 | 정기모임 관련 운영 이슈 접수 시 잘못된 sourceType 전달로 소유권 검증 실패 또는 엉뚱한 이슈 생성 | `REGULAR_MEETING_PAYMENT('REGULAR_MEETING_PAYMENT')`, `REGULAR_MEETING_SETTLEMENT('REGULAR_MEETING_SETTLEMENT')` Flutter enum에 추가 |
-| P1 | Flutter OperationalIssueCreateParam에 evidenceFileIds 없음 | `operational_issue_create_param.dart:10-16` — 4필드, 서버는 evidenceFileIds/evidenceVisibility 지원 | 증빙 첨부 UI 불가. 분쟁 수준 이슈 접수 시 증빙 전달 불가 | Param에 `List<int>? evidenceFileIds` 추가 |
+| 해소됨 | Flutter OperationalIssueSourceType 의 정기모임 2종 | 앱 열거가 서버 7종을 모두 갖는다 | 정기모임 결제·정산 문의가 제 종류로 접수된다 | 없음 |
+| 해소됨 | Flutter 접수의 증빙 첨부 | 접수 요청과 스레드 메시지가 올린 증빙 id(최대 5)를 보낸다. 서버가 업로더 본인·업로드 완료·용도를 검증한다 | 증빙을 함께 접수할 수 있다 | 없음 |
 | P1 | Flutter OperationalIssue 모델에 evidenceVisibility 없음 | `operational_issue.dart:63-82` — evidenceVisibility 필드 없음 | 서버 응답의 visibility 정보 무시 | 모델에 `String? evidenceVisibility` 추가 |
 | P2 | SUPPORT_ISSUE_UPDATED 알림 emit 위치 불명 | `OperationalIssueService` emit 코드 없음. `SupportIssueNotificationData` VO는 존재 | 운영자 답변 시 사용자 push 알림 미수신 가능 | admin_api 답변 처리 경로 확인 및 emit 추가 |
 | P3 | 상세 15초 polling — 서버 부하 | `SupportIssueDetailScreen._refreshTimer = Timer.periodic(15s)` | 이슈 상세를 오래 열어두면 불필요한 API 호출 발생 | WebSocket 또는 long polling으로 교체 검토 |
@@ -123,8 +123,6 @@ Then 서버는 소유권 재검증 후 해당 settlement 관련 이슈 목록을
 
 | 분류 | 항목 | 결정/작업 |
 |---|---|---|
-| 구현 | Flutter REGULAR_MEETING_* enum 추가 | `operational_issue.dart` enum 2종 추가 후 build_runner |
-| 구현 | Flutter evidenceFileIds 첨부 UI | CreateParam + Screen 파일 선택기 추가 |
 | 구현 | Flutter evidenceVisibility 모델 필드 추가 | `OperationalIssue.dart` 필드 추가 |
 | 운영 | SUPPORT_ISSUE_UPDATED emit 경로 확인 | community_admin_api OperationalIssueAdminService에서 emit 여부 확인 |
 | 성능 | 상세 화면 polling 교체 | 15초 polling → SSE/WebSocket 또는 pull-to-refresh만 사용 검토 |

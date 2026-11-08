@@ -109,7 +109,8 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 > OWNER는 클럽 메타정보(이름, 카테고리, 지역, 소개, 가입방식, 정원, 커버 이미지)를 만들고 관리한다.
 - **사용자**: 로그인 사용자(생성), OWNER(수정/삭제/이전), ADMIN(수정 일부 — 스펙상 SCR-CL-004 수정은 OWNER/ADMIN 모두 진입)
 - **화면**: SCR-CL-003 생성, SCR-CL-004 수정 (위험 영역에 클럽 삭제)
-- **API**: `POST /api/v1/clubs`, `PATCH /api/v1/clubs/{id}`, `DELETE /api/v1/clubs/{id}` (Owner 전용 204), `POST /api/v1/clubs/{id}/transfer-ownership`
+- **API**: `POST /api/v1/clubs`, `PATCH /api/v1/clubs/{id}`, `DELETE /api/v1/clubs/{id}` (Owner 전용 204), `POST /api/v1/clubs/{id}/transfer-ownership`(이전 제안), `GET /api/v1/clubs/ownership-transfers/me`·`/{transferId}`, `POST /api/v1/clubs/ownership-transfers/{transferId}/accept`·`decline`·`cancel`
+- **소유권 이전**: 바로 바뀌지 않는다. 클럽장이 재인증해 제안하면 받는 회원이 7일 안에 책임 내용을 확인하고 재인증해 수락해야 효력이 생기고, 그때 두 멤버의 역할이 OWNER↔ADMIN 으로 바뀐다. 받는 회원은 거절, 클럽장은 취소할 수 있고 7일이 지나면 만료된다. 클럽당 진행 중 제안은 하나다.
 - **프론트**: `screens/club_create_screen.dart`, `club_edit_screen.dart`, `widgets/club_form.dart`, `club_delete_dialog.dart`
 - **유효성**: 이름 2~30자(중복 검사), 소개 10~500자, 커버 5MB↓, 가입방식 JOIN_FREE/JOIN_APPROVAL
 
@@ -357,7 +358,7 @@ OWNER만 수수료(5%)+원천징수(3.3%) 차감을 미리 보고 외부 계좌�
 
 ### 클럽 정보 수정 권한 완화 (D-F04-1)
 
-기존 스펙·PRD는 클럽 수정 화면(SCR-CL-004)을 OWNER/ADMIN 모두 진입 가능으로 기술하면서 서버는 OWNER 전용으로 구현된 불일치가 있었다. **결정: 서버를 완화**하여 `PATCH /api/v1/clubs/{id}`(클럽 메타정보 수정)는 소유자(OWNER)∪관리자(ADMIN) 모두 허용. 단 `DELETE /api/v1/clubs/{id}`(삭제)와 `POST /api/v1/clubs/{id}/transfer-ownership`(소유권 이전)은 소유자 전용으로 유지. §4의 F04-03·§5 권한 매트릭스 F04-03 행의 수정 범위도 이를 반영한다.
+기존 스펙·PRD는 클럽 수정 화면(SCR-CL-004)을 OWNER/ADMIN 모두 진입 가능으로 기술하면서 서버는 OWNER 전용으로 구현된 불일치가 있었다. **결정: 서버를 완화**하여 `PATCH /api/v1/clubs/{id}`(클럽 메타정보 수정)는 소유자(OWNER)∪관리자(ADMIN) 모두 허용. 단 `DELETE /api/v1/clubs/{id}`(삭제)와 `POST /api/v1/clubs/{id}/transfer-ownership`(소유권 이전 제안)은 소유자 전용으로 유지. §4의 F04-03·§5 권한 매트릭스 F04-03 행의 수정 범위도 이를 반영한다.
 
 ### 가입 대기열 열람 범위 조정 (D-F04-3)
 

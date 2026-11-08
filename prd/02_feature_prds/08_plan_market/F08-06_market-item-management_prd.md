@@ -53,10 +53,10 @@ AUTH-06(예약 판매시작)으로 크리에이터는 APPROVED/STOP_SELLING 상�
 | S4 | APPROVED → ON_SALE 판매 시작 (AUTH-05) | 운영자 승인으로 status=APPROVED | 크리에이터 "판매 시작" → status=ON_SALE, 마켓 노출 |
 | S5 | ON_SALE → STOP_SELLING (판매 중지) | status=ON_SALE | 마켓에서 비노출. 재개 시 /on-sale로 ON_SALE 복구 |
 | S6 | STOP_SELLING → ON_SALE 예약 재개 (AUTH-06) | status=STOP_SELLING | ScheduledPublishAction 생성, 예약 시각 도달 시 ON_SALE |
-| S7 | 메타 수정 (가격/설명/재고) | 임의 비-REMOVED 상태 | 가격/설명 갱신. 마켓 노출 정보 변경 |
+| S7 | 메타 수정 (가격/설명/재고) | 임의 비-REMOVED 상태 | 값이 갱신된다. 승인 뒤(APPROVED·ON_SALE·STOP_SELLING)에 제목·설명·본문·가격·무료 가격·할인·기간·썸네일·본문 사진을 바꾸면 SUBMITTED 로 돌아가 재심사를 받고 마켓에서 내려간다. 재고와 표시 순서만 바꾸면 상태가 그대로다 |
 | S8 | 비소유자 수정/상태전이 시도 | 다른 사용자 | 차단 (UNAUTHORIZED) |
 | S9 | REMOVED 아이템 수정 시도 | status=REMOVED | 차단 (INVALID_REQUEST). 편집 화면은 삭제됨 처리해야 함 |
-| S10 | 아이템 삭제 (Soft Remove) | 임의 소유 아이템 | 마켓 비노출. 같은 itemId 재진입 시도하면 REMOVED 상태로 응답 |
+| S10 | 아이템 삭제 (Soft Remove) | 판매된 적 없는 소유 아이템 | REMOVED 가 되어 마켓에서 사라지고 담긴 묶음 상품도 함께 정리된다. 작성자는 같은 itemId 로 들어가면 REMOVED 상태를 보고, 다른 사람에게는 `NOT_FOUND` 다. 판매된 적 있으면(환불·묶음 구매 포함) `MARKET_ITEM_SOLD_NOT_DELETABLE` 로 거절하고 판매 중지만 남는다 |
 | S11 | 비공개 아이템 크리에이터 재판매 시도 (AUTH-05) | status=SUSPENDED | 화면에서 "정책 비공개" 배너 노출, 1차 액션 없음. 서버도 activateSale 차단 |
 | S12 | 동시 activate vs suspend 경합 (AUTH-05) | 크리에이터 ON_SALE 시도 + 운영자 SUSPEND 동시 요청 | 비관적 락으로 직렬화 — 한 쪽만 성공 |
 | S13 | 무료 상품 등록 | currencyType=ANY_POINT, amount=0 | 무료 아이템 등록 성공 |
@@ -79,7 +79,7 @@ AUTH-06(예약 판매시작)으로 크리에이터는 APPROVED/STOP_SELLING 상�
 - **AC-09. 운영자 비공개 (AUTH-05)**: Given status=APPROVED/ON_SALE/STOP_SELLING When 운영자가 suspend(reason 필수) Then status=SUSPENDED, 크리에이터 화면에서 정책 비공개 배너 노출
 - **AC-10. 예약 판매시작 등록 (AUTH-06)**: Given status=APPROVED/STOP_SELLING When 크리에이터가 예약 시각 설정 Then ScheduledPublishAction 생성(targetType=MARKET_ITEM, status=SCHEDULED)
 - **AC-11. 예약 취소 (AUTH-06)**: Given 예약 status=SCHEDULED When 크리에이터가 취소 Then status=CANCELLED
-- **AC-12. 메타 수정**: Given 임의 비-REMOVED 상태 When 크리에이터가 수정 저장 Then 가격/설명 갱신
+- **AC-12. 메타 수정**: Given 임의 비-REMOVED 상태 When 크리에이터가 수정 저장 Then 값이 갱신되고, 승인 뒤 심사 대상 칸을 바꿨으면 SUBMITTED 로 돌아가 재심사를 받는다(재고·표시 순서만 바꾸면 상태 유지)
 - **AC-13. 비소유자 수정/상태전이 시도**: Given 타인 아이템 When 수정/상태전이 요청 Then 403 UNAUTHORIZED
 - **AC-14. REMOVED 아이템 수정 시도**: Given status=REMOVED When 수정 요청 Then 400 INVALID_REQUEST
 - **AC-15. 동시 경합 직렬화 (AUTH-05)**: Given 크리에이터 activateSale + 운영자 suspend 동시 요청 When 비관적 락 적용 Then 한 쪽만 성공, last-write-wins 없음

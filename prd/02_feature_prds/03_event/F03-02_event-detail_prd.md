@@ -33,7 +33,7 @@
 14. 호스트 또는 참석확정(ATTENDING) 사용자에게 "모임 정산" 네비게이션 행이 노출된다(`/home/events/:id/settlement` push, [F07-04](../07_meeting_settlement/F07-04_status-summary-receipt_prd.md) 참조).
 15. `.ics` 내보내기는 `exportEventCalendarProvider`가 `GET /api/v1/events/{eventId}/calendar`를 호출하고, Flutter가 임시 파일로 저장한 뒤 share sheet를 연다.
 16. 유사 이벤트는 `similarEventsProvider`가 `GET /api/v1/events/{eventId}/similar?limit=5`를 호출한다. 실패 시 빈 리스트로 숨긴다.
-17. 상태를 파싱한 직후 Flutter는 `CANCELED`와 `HIDDEN`을 본문·하단바가 없는 `AppBlockedState`로 반환한다. `DRAFT`는 `canEditEvent=false`일 때 같은 방식으로 막지만, 정상 서버 경로에서는 비권한 DRAFT가 이미 `EVENT_NOT_FOUND`이므로 보통 not-found 분기로 간다. `CLOSED`는 차단하지 않고 전체 본문을 렌더하며 `EventInfoSection`의 `종료` 배지와 종료 후 전용 행만 추가한다.
+17. 상태를 파싱한 직후 Flutter는 `CANCELED`를 본문·하단바가 없는 `AppBlockedState`로 반환한다. 모임 상태는 `DRAFT`·`OPEN`·`CLOSED`·`CANCELED` 넷이고, 운영자 숨김은 상태가 아니라 따로 둔 표지라 이 차단과 상관없다(아래 숨김 행). `DRAFT`는 `canEditEvent=false`일 때 같은 방식으로 막지만, 정상 서버 경로에서는 비권한 DRAFT가 이미 `EVENT_NOT_FOUND`이므로 보통 not-found 분기로 간다. `CLOSED`는 차단하지 않고 전체 본문을 렌더하며 `EventInfoSection`의 `종료` 배지와 종료 후 전용 행만 추가한다.
 18. 더보기의 `이 이벤트로 새로 만들기`는 `isHost && eventType != PRIVATE`일 때만 보이고, `POST /api/v1/events/{eventId}/next-occurrence` 성공 시 새 DRAFT의 `/edit-event/{id}`로 이동한다. 서버와 달리 co-host·PRIVATE에는 숨고, `CLUB_MEETING`에는 잘못 노출된다.
 19. `EventActionBar`는 host/co-host에게 DRAFT=`수정·발행`, OPEN=`수정·종료·취소`, 그 밖의 상태=`삭제`를 만든다. 화면 상단 차단을 고려하면 실제 상세에서 삭제가 보이는 정상 경로는 `CLOSED` host/co-host뿐이다. 그러나 서버 `DELETE`는 DRAFT만 허용하므로 이 버튼은 400이 되고, 정작 삭제 가능한 DRAFT에는 진입점이 없다.
 
@@ -74,7 +74,7 @@
 | `CLOSED` 일반/참석자 | 서버 상세 응답 | 정상 본문 + `종료` 배지, 참석자는 후기/피드백/사진첩 | 오버레이 없이 회고 surface 유지 | 일치 |
 | `CLOSED` host/co-host | 서버 상세 응답, DELETE는 DRAFT-only | 액션바 `삭제` | 탭하면 400 | 불일치 |
 | `CANCELED` 모든 역할 | 서버는 상세 응답 가능 | screen에서 즉시 `AppBlockedState` 반환 | 본문·환불정보·더보기·하단바 모두 없음 | 제품/서버 노출 정책 불일치 |
-| `HIDDEN` | 서버 `getEvent`에 HIDDEN guard 없음 | screen에서 `AppBlockedState` | 본문 전체 차단 | 서버 차단 여부 결정 필요 |
+| 운영자가 숨긴 모임 | 상태와 따로 둔 숨김 표지. 호스트·활성 공동 호스트·참석/대기·끝나지 않은 신청·클럽 회원·끝나지 않은 결제가 걸린 회원만 상세를 열고, 그 밖은 `EVENT_NOT_FOUND`(공유 링크로도 열지 않음). 호스트·활성 공동 호스트에게만 `operatorHidden=true` | 본문 위에 운영자 숨김 안내 | 본문 유지, 새 신청·참석·찜은 받지 않음 | 일치 |
 | clone host + INDEPENDENT | 서버 허용 | 메뉴 노출 | 새 DRAFT edit route | 일치 |
 | clone co-host + INDEPENDENT | 서버 `validateOwnership`상 허용 | 메뉴 숨김 | 호출 진입점 없음 | 불일치 |
 | clone host + PRIVATE | 서버 허용 | 메뉴 숨김 | 호출 진입점 없음 | 불일치 |
@@ -86,7 +86,7 @@
 
 | 항목 | Backend | Frontend | 판단 |
 |---|---|---|---|
-| `EventStatus` | `DRAFT`, `OPEN`, `CLOSED`, `CANCELED`, `HIDDEN` | parser가 `CANCELED`/`CANCELLED` 모두 처리 | 일치 |
+| `EventStatus` | `DRAFT`, `OPEN`, `CLOSED`, `CANCELED`(운영자 숨김은 상태와 따로 둔 표지) | 네 값을 읽고 모르는 값은 `unknown` | 일치 |
 | `EventType` | `INDEPENDENT`, `CLUB_MEETING`, `PRIVATE` | String으로 수신 | 일치 |
 | `isClosed` JSON key | Java field `isClosed` -> Jackson key `closed` | `@JsonKey(name: 'closed')` | 일치 |
 | `isWishlisted` JSON key | Java field `isWishlisted` -> Jackson key `wishlisted` | `@JsonKey(name: 'wishlisted')` | 일치 |
@@ -103,17 +103,17 @@
 | 다음 회차 권한 | host/co-host | host-only 메뉴 | co-host UI 누락 |
 | 다음 회차 유형 | INDEPENDENT/PRIVATE 허용, CLUB_MEETING 거부 | PRIVATE 숨김, CLUB_MEETING 노출 | **유형 gate 반전** |
 | 결제 기한 집행 | 5분 주기 scheduler가 `PAYMENT_EXPIRED` 전환. `payByWallet` 자체에는 dueAt 비교 없음 | 기기 시계가 dueAt 경과를 보면 CTA 차단 후 상세 재조회 | 정책 시점 차이 |
-| `HIDDEN` 직접 조회 | 서버 guard 없음 | UI blocked state | 서버 정책 결정 필요 |
+| 운영자 숨김 모임 직접 조회 | 당사자 밖은 404 `EVENT_NOT_FOUND` | 당사자에게 본문, 호스트·공동 호스트에게 숨김 안내 | 일치 |
 | similar events failure | 서버 optional auth + list 반환 | 실패를 빈 리스트로 숨김 | UX는 안정적이나 장애 탐지 약함 |
 
 ## 8. Gap / Risk
 
 | 등급 | 항목 | 근거 | 영향 | 다음 조치 |
 |---|---|---|---|---|
-| P0 | 삭제 CTA 상태가 서버와 반대로 배치됨 | 서버는 DRAFT-only인데 `EventActionBar`는 DRAFT에 수정/발행, CLOSED에 삭제를 렌더. CANCELED/HIDDEN은 상위 화면에서 차단 | 유효한 DRAFT를 앱에서 삭제할 수 없고 CLOSED 삭제는 매번 400 | DRAFT host/co-host에 확인형 삭제 CTA를 두고 CLOSED/CANCELED/HIDDEN에서는 제거. 같은 매트릭스의 widget test 추가 |
+| P0 | 삭제 CTA 상태가 서버와 반대로 배치됨 | 서버는 DRAFT-only인데 `EventActionBar`는 DRAFT에 수정/발행, CLOSED에 삭제를 렌더. CANCELED는 상위 화면에서 차단 | 유효한 DRAFT를 앱에서 삭제할 수 없고 CLOSED 삭제는 매번 400 | DRAFT host/co-host에 확인형 삭제 CTA를 두고 CLOSED/CANCELED에서는 제거. 같은 매트릭스의 widget test 추가 |
 | P1 | 복제 권한·유형 gate가 서버와 다름 | 서버 host/co-host + INDEPENDENT/PRIVATE, Flutter host-only + non-PRIVATE(따라서 CLUB_MEETING 포함) | co-host/PRIVATE는 기능 누락, CLUB_MEETING은 press-then-error | 제품 정책을 정한 뒤 서버·Flutter gate를 같은 capability/enum으로 통일 |
 | P1 | CANCELED 상세 정책이 서버와 Flutter에서 다름 | 서버는 full `EventVo`를 반환하지만 Flutter는 역할과 무관하게 즉시 `AppBlockedState` | 환불/운영 정보 진입점이 사라지고 API에는 본문이 이미 노출 | 취소 상세을 정말 막을지 결정하고 서버 redaction 또는 취소 전용 요약 surface로 통일 |
-| P1 | `HIDDEN` 이벤트가 서버에서 직접 조회될 수 있음 | `EventService#getEvent`는 DRAFT만 guard하고 HIDDEN은 guard하지 않음 | 숨김 상태의 본문 데이터가 API response로 내려갈 수 있음. UI는 차단하지만 네트워크 응답은 이미 받은 뒤임 | HIDDEN의 제품 의미를 결정하고 서버 guard 추가 여부 판단 |
+| 해소됨 | 운영자가 숨긴 모임의 직접 조회 | 숨김은 상태가 아니라 운영자 표지다. 상세 열람 판정이 숨김·취소 모임을 당사자에게만 열고 그 밖은 `EVENT_NOT_FOUND` 로 존재를 숨긴다. 공유 링크로도 열지 않는다 | 당사자 밖에는 본문이 내려가지 않는다 | 없음 |
 | P1 | 결제 기한 직후 서버 API에 soft grace가 있음 | `payByWallet`은 `paymentDueAt`을 직접 비교하지 않고 fixedDelay 5분 만료 scheduler가 상태를 바꾼 뒤에야 거부 | 정상 스케줄러 운용이면 기한 뒤 약 다음 5분 주기 내외까지 결제될 수 있다. 실행 지연·실패가 가능해 5분은 하드 상한이 아니며 Flutter의 즉시 차단 시점과 다르다. | 하드 마감이 정책이면 잠금 획득 후 dueAt 인라인 검증 추가 |
 | P1 | 결제 대기 좌석 가중치가 EventVo에 없음 | `reservedPaymentPendingCount`는 신청 건수, 실제 server reservation은 party size 합계 | 게스트 동반 신청에서 상세 CTA가 남은 좌석을 실제보다 크게 볼 수 있음 | `reservedPaymentPendingSeatCount` 등 weighted 값을 서버에서 내려 CTA에 사용 |
 | P2 | 유사 이벤트 실패가 사용자/QA에게 드러나지 않음 | `similarEventsProvider`는 failure를 `[]`로 반환 | 추천 장애가 빈 상태처럼 보임 | 로그/telemetry 또는 QA-only evidence 필요 |
@@ -226,16 +226,15 @@ Then 양쪽이 같은 역할과 `EventType` 집합을 허용해야 한다.
 | `EventServiceTest` | 다음 회차 딥카피 happy path, DRAFT 삭제 성공, OPEN 삭제 거부, co-host 수정 권한 | 서버 핵심 단위 근거 있음. clone 유형/권한 edge와 CLOSED/CANCELED 삭제는 별도 테스트 없음 |
 | `EventViewerContextServiceTest` | host/co-host/club OWNER/ADMIN/참가자 capability matrix | 서버 역할 계산 단위 검증됨 |
 | Flutter lifecycle 상태 widget test | DRAFT/CLOSED/CANCELED 액션바와 clone gate | 현재 전용 테스트 파일을 찾지 못함 |
-| HIDDEN direct 조회 테스트 | 서버가 숨김 이벤트를 직접 조회 차단하는지 | 검증 없음. 정책 결정 필요 |
+| 운영자 숨김 직접 조회 테스트 | 숨긴 모임을 당사자 밖에서 404 로 막는지 | 정책은 정해짐(당사자만 연다). 이 판정만 보는 전용 시험 파일은 이름으로 찾지 못함 |
 
 ## 11. 미결정 / 후속
 
 | 분류 | 항목 | 결정/작업 |
 |---|---|---|
-| 구현 | 삭제 CTA | DRAFT에만 노출하고 확인 후 호출; CLOSED delete 제거. CANCELED/HIDDEN 정책과 별도 처리 |
+| 구현 | 삭제 CTA | DRAFT에만 노출하고 확인 후 호출; CLOSED delete 제거. CANCELED 정책과 별도 처리 |
 | 정책/구현 | 다음 회차 | co-host 및 PRIVATE 허용 여부, CLUB_MEETING 지원 여부를 결정하고 서버/Flutter gate 통일 |
 | 정책 | CANCELED 상세 | full-block, read-only 요약, 환불/운영 전용 surface 중 하나로 확정하고 API 노출과 맞춤 |
-| 정책 | `HIDDEN` 조회 | 숨김 이벤트를 API에서 404 마스킹할지, UI 차단만 할지 결정 |
 | 정책 | 결제 하드 마감 | 정상 운용 시 약 5분 주기인 soft grace(상한 아님)를 허용할지, `payByWallet`에서 dueAt을 인라인 검증할지 결정 |
 | 테스트 | payment pending 상세 | 승인 후 결제 대기 CTA·기한 만료 재신청·결제 성공 후 화면 갱신의 Flutter E2E 근거를 연결 |
 | 테스트 | restricted club detail | 서버 field redaction과 Flutter restricted notice를 같은 시나리오에서 검증 |
