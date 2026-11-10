@@ -1572,9 +1572,9 @@
     },
     {
       "id": "H-247",
-      "title": "비밀 교체 절차와 관리자 계정 절차, 작업 PC DB 접속 예외의 스택 반영",
-      "description": "2026-11-10 운영 대조(읽기만, [근거](../release-gate/evidence/OPS-CHECK-2026-11-10.txt)): 역할별 DB 계정과 2단계 인증 등록은 확인이 끝났다. 공개 API·관리자 API 계정은 `saisoop` 스키마의 읽기·쓰기 넷뿐이고 설치용 계정만 전체 권한이며, 두 운영 계정으로 표 만들기와 시스템 스키마 조회가 거부된다(1142). 관리자 계정은 최고 관리자 하나이고 인증 앱이 등록돼 있으며 안 쓴 복구 코드가 열 개다. 복구 코드 보관은 사용자가 확인하고, 관리자를 더 만들면 그때마다 등록을 본다. 같은 대조에서 운영 DB 에 작업 PC 한 주소만 받는 개인 계정과, 보안 그룹에 그 주소로 DB 포트를 여는 손 규칙이 보였다. 사용자 결정(2026-11-10 「DB문-2」): 걷지 않고 예외로 둔다. 템플릿(`deploy/production/aws/30_security_groups/sg.yaml` 의 `WorkstationDbCidr`)과 [운영 서버 구성 4절](../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md#4-네트워크와-보안-그룹)에 예외로 적었다. 남은 것은 둘이다. 실제 스택을 템플릿에 맞춘다(손 규칙을 걷고 매개변수로 다시 넣음, 대본 `~/saisoop-ops/checks/20261110/adopt-db-rule.sh`, 사용자 실행). 개인 계정의 권한과 TLS 요구를 읽어 기록한다(대본 `read-db-account.sh`, 읽기만). 운영 묶음은 DB 포트를 호스트에 열지 않아 지금은 그 주소에서도 닿지 않는다. 비밀 교체 절차를 운영 계정으로 확인한다. 운영 비밀의 교체 주기와 담당을 정한다. 지금 값은 옛 제안과 TBD 뿐이다(`docs/release-gate/secrets_path_inventory.md`). 개인정보 쓰기 키 교체의 운영 차례·주체·주기와 보존 절차는 아직 가정으로만 있다(재암호화 코드는 있다, [칼럼 암호화 목록](architecture/COLUMN_ENCRYPTION_INVENTORY.md)). 같이 확인: 새 DB 의 첫 관리자 계정을 만드는 절차(저장소에 시드 파일이 없다), 권한별 실계정으로 메뉴 숨김·403·버튼 비활성·계정과 역할 교차 권한(지금 실계정 기록은 최고 관리자뿐), 휴면 계정 자동 정지·비상 접근 계정 보관과 사용 경보·허용 IP 변경 승인·퇴사 회수.",
-      "condition": "비밀 교체 절차·주기·담당, 첫 관리자 생성과 권한별 실계정 기록, 예외 규칙의 스택 반영과 개인 계정 권한 기록",
+      "title": "비밀 교체 절차와 관리자 계정 절차",
+      "description": "2026-11-10 운영 대조(읽기만, [근거](../release-gate/evidence/OPS-CHECK-2026-11-10.txt)): 역할별 DB 계정과 2단계 인증 등록은 확인이 끝났다. 공개 API·관리자 API 계정은 `saisoop` 스키마의 읽기·쓰기 넷뿐이고 설치용 계정만 전체 권한이며, 두 운영 계정으로 표 만들기와 시스템 스키마 조회가 거부된다(1142). 관리자 계정은 최고 관리자 하나이고 인증 앱이 등록돼 있으며 안 쓴 복구 코드가 열 개다. 복구 코드 보관은 사용자가 확인하고, 관리자를 더 만들면 그때마다 등록을 본다. 작업 PC 한 주소에서 운영 DB 로 들어오는 길은 사용자 결정(2026-11-10 「DB문-2」)으로 예외다. 보안 그룹 템플릿과 실제 스택, [운영 서버 구성 4절](../release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md#4-네트워크와-보안-그룹)에 반영이 끝났다. 그 길의 개인 DB 계정은 암호화 접속이 필수이고 서비스 스키마 권한을 전부 가진다(표 지우기 포함). 보기만 할 거면 읽기 권한으로 줄일지 정한다. 운영 묶음은 DB 포트를 호스트에 열지 않아 지금은 그 주소에서도 닿지 않는다. 비밀 교체 절차를 운영 계정으로 확인한다. 운영 비밀의 교체 주기와 담당을 정한다. 지금 값은 옛 제안과 TBD 뿐이다(`docs/release-gate/secrets_path_inventory.md`). 개인정보 쓰기 키 교체의 운영 차례·주체·주기와 보존 절차는 아직 가정으로만 있다(재암호화 코드는 있다, [칼럼 암호화 목록](architecture/COLUMN_ENCRYPTION_INVENTORY.md)). 같이 확인: 새 DB 의 첫 관리자 계정을 만드는 절차(저장소에 시드 파일이 없다), 권한별 실계정으로 메뉴 숨김·403·버튼 비활성·계정과 역할 교차 권한(지금 실계정 기록은 최고 관리자뿐), 휴면 계정 자동 정지·비상 접근 계정 보관과 사용 경보·허용 IP 변경 승인·퇴사 회수.",
+      "condition": "비밀 교체 절차·주기·담당, 첫 관리자 생성과 권한별 실계정 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1958,7 +1958,7 @@
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "bdd5574dda2f5817855acb681265e95592cc2386aea5c10eb2634dc588cc7124",
+  "sourceDigest": "55799007661711de797dd82259eaddef8e95fb7cf1e404d5b6df289217af0d63",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2068,19 +2068,19 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다. 11월 8일 관리자 API 계약 결정 68~72 를 권고대로 정했습니다(목록은 Page 하나, 셈 창구와 옛 목록 경로 걷기, 돈·장부·재시도 명령의 다시 보내기 키 필수, 일괄 처리 꼴 하나). 관리자 웹과 서버는 같은 배포로 올립니다. 같은 날 밤 결정 73~81 도 권고대로 정했습니다(이용 제한 계정의 삭제 요청·내보내기 열기, 클럽 기부 한 번 1,000,000원 상한과 기부·취소 알림, 기부 메시지와 마일리지 메모 저장, 정산 이의 첨부는 명세에서 빼기, 플랜 연결 장소·준비 시간 칸과 정산 다시 알림의 덧붙일 말 칸, 감사 기록의 쓰지 않던 접속 IP·브라우저 칸 걷기). 같은 밤 늦게 고치며 정한 것: 목록 쪽 값의 범위 밖은 잘못된 입력, 데이트 방 닫힘은 만남 예정 시각까지 활동, 판정 되돌린 환불 분쟁도 끝난 분쟁, 무결성의 CHECK·모르는 위반은 서버 오류, 글 길이는 이모지를 2자로 세는 보수적 셈, 28일 넘은 미처리 이의는 배포 때 알린 것으로 표시. 그 뒤 고치며 정한 것: 준비 시작·끝은 끝이 시작보다 뒤(같은 시각도 거절, 82 닫음), 열쇠를 쥔 명령의 410 은 열쇠를 지킴, 안 읽은 알림 수는 차단한 상대를 빼되 1,000건 넘으면 그대로, 옛 알림 쪽 조회 둘은 커서로 읽는 앱 판이 나간 뒤 걷기."
   },
   "publication": {
-    "updatedAt": "2026-11-10T09:08:23+09:00",
+    "updatedAt": "2026-11-10T09:12:37+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "847a1e9c807b3895c796e0e0e2ab7ce6cb39114b",
+    "sourceCommit": "1f56343be467a94c0e9aa97ef650e10e4018a8cf",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "7c6b228e670ee95237d0fdf4ec80916624a67b7fb4e4433390d7542af401a5cb",
-    "worklistSha256": "0061fb20a4bcfc7824bd5d48fe73d0620135eb150eaf22dc53c35fc0dbd2e776",
+    "sourceSha256": "fd6de89830e6b4e6438b9273a58c9543262f9083ca7075faaa004ef6264fe023",
+    "worklistSha256": "1592099e750186f65f52db4c5b6674d39d75bf52d46f0b2957ec8c60e55d3118",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "cfbc686242f23d821760eff6e39d36b60eee48eff0d36653c6043e6af53d27a8",
-      "docs/plan/WORKLIST.md": "0061fb20a4bcfc7824bd5d48fe73d0620135eb150eaf22dc53c35fc0dbd2e776",
-      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "4923022ec38b19d2e4483cf6f5c06987f88707a2f24390916e14080c004314c7",
+      "docs/plan/WORKLIST.md": "1592099e750186f65f52db4c5b6674d39d75bf52d46f0b2957ec8c60e55d3118",
+      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "631916fca51506aabacb15010444f62d7ba0c03686703210ef91d64c198ec88d",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "0b28032a06ec5e9226bfc6777ad8ce678c077d0f65faf862e35bc5446d2eeaf7"
     },
     "method": "2026-11-07 정본과 11월 6일 배포 기록, 공개 주소의 읽기 전용 조회, 코드 읽기 대조. 제품·기기 시험과 운영 쓰기는 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
