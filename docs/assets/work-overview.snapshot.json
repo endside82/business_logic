@@ -1545,7 +1545,7 @@
     {
       "id": "H-239",
       "title": "TestFlight 업로드와 스토어 정책·기기 검증 마치기",
-      "description": "최신 내부 트랙은 Android `1.0.0 (15)`다(2026-11-09, 임시 결제 포함). 같은 날 Play 설치 실기기에서 결제 흐름 일부를 확인했다([실기 시험 근거](../release-gate/evidence/TEMPORARY-PAYMENT-DEVICE-20261109a.json)). Play API 인증, iOS 앱 등록·API 키·Google/Maps/Firebase·수동 배포 서명과 `1.0.0 (1)` IPA까지 확인했다. 사이숲 TestFlight 업로드·설치가 남았다. APNs 실제 연결이 남았다. 스토어 정책·메타데이터와 iOS 로그인 구성 조건이 남았다. 지도·푸시·번호 인증 등의 기기 검증이 남았다. 운영 App Links는 현재 패키지다. Play 앱 서명 SHA-256 을 2026-11-07 소스(`saisoop-web/src/deeplinks.mjs`, 공개 API 정적 파일)와 운영 `saisoop.co.kr` 파일에 더했다. Google 공개 확인 창구(`assetlinks:check`)가 두 지문 모두 연결됨으로 답한다. API 사본은 다음 서버 배포에 나간다(앱 링크 호스트는 `saisoop.co.kr` 이다). 2026-11-07 Play 에서 받은 내부 테스트 12 를 Android 15 기기에서 확인했다. 앱의 실제 서명이 `CF:85:…:8C:E5` 이고 다시 검증하니 `verified` 이며 공개 주소가 앱으로 풀린다. 그 전 설치는 실패 상태(`1024`)가 남아 있었으니, 파일을 올리기 전에 깐 다른 기기는 앱 갱신이나 재설치 뒤 다시 본다. iOS 는 별도다. 합격 조건은 [공유 실행 계획](event-sharing/EXECUTION_PLAN.md)에 있다. 기존 키·앱·프로파일을 다시 만들지 않는다. Android 실기기는 2026-11-09 연결했다. 결제 흐름 일부를 확인했으며 지도·푸시·번호 인증 등 나머지 실기 검증은 별개다. 6자리 인증으로 바꾼 뒤 옛 인증 링크 계약 정리와 실제 설치 앱 복귀가 남았다. 앱에 옛 주소 처리(`core/links/public_link_parser.dart`, `core/links/incoming_link.dart`, `core/network/auth_interceptor.dart`)가 남아 있는데 지워도 되는지 본다([출시 인계](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md)).",
+      "description": "최신 내부 트랙은 Android `1.0.0 (16)`다(2026-11-12, 임시 결제 포함). 앞선 15번은 2026-11-09 Play 설치 실기기에서 결제 흐름 일부를 확인했다([실기 시험 근거](../release-gate/evidence/TEMPORARY-PAYMENT-DEVICE-20261109a.json)). 2026-11-12 사용자 지시로 무료 플랜의 「무료로 시작하기」 본문 이동과 기존 구매자 전체 보기를 고친 Android `1.0.0 (16)`을 내부 테스트에 배포했다. 충전 예상 잔액·클럽 기금 출금 안내 수정도 포함한다. 09:52 KST Play API에서 내부 트랙 `[16]`·`completed`, 한국어 출시 노트와 원격 파일 해시 일치를 확인했다. **운영 계정 실기 재확인은 남았다**([빌드 16 배포 검증](../../community_app/audit/app_quality/evidence/RELEASE-1.0.0-16.json)). Play API 인증, iOS 앱 등록·API 키·Google/Maps/Firebase·수동 배포 서명과 `1.0.0 (1)` IPA까지 확인했다. 사이숲 TestFlight 업로드·설치가 남았다. APNs 실제 연결이 남았다. 스토어 정책·메타데이터와 iOS 로그인 구성 조건이 남았다. 지도·푸시·번호 인증 등의 기기 검증이 남았다. 운영 App Links는 현재 패키지다. Play 앱 서명 SHA-256 을 2026-11-07 소스(`saisoop-web/src/deeplinks.mjs`, 공개 API 정적 파일)와 운영 `saisoop.co.kr` 파일에 더했다. Google 공개 확인 창구(`assetlinks:check`)가 두 지문 모두 연결됨으로 답한다. API 사본은 다음 서버 배포에 나간다(앱 링크 호스트는 `saisoop.co.kr` 이다). 2026-11-07 Play 에서 받은 내부 테스트 12 를 Android 15 기기에서 확인했다. 앱의 실제 서명이 `CF:85:…:8C:E5` 이고 다시 검증하니 `verified` 이며 공개 주소가 앱으로 풀린다. 그 전 설치는 실패 상태(`1024`)가 남아 있었으니, 파일을 올리기 전에 깐 다른 기기는 앱 갱신이나 재설치 뒤 다시 본다. iOS 는 별도다. 합격 조건은 [공유 실행 계획](event-sharing/EXECUTION_PLAN.md)에 있다. 기존 키·앱·프로파일을 다시 만들지 않는다. Android 실기기는 2026-11-09 연결했다. 결제 흐름 일부를 확인했으며 지도·푸시·번호 인증 등 나머지 실기 검증은 별개다. 6자리 인증으로 바꾼 뒤 옛 인증 링크 계약 정리와 실제 설치 앱 복귀가 남았다. 앱에 옛 주소 처리(`core/links/public_link_parser.dart`, `core/links/incoming_link.dart`, `core/network/auth_interceptor.dart`)가 남아 있는데 지워도 되는지 본다([출시 인계](../release-gate/LAUNCH_COMPLETION_OVERVIEW.md)).",
       "condition": "플랫폼별 업로드·처리·설치·실제 여정·공개 심사를 구분해 기록",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1572,7 +1572,7 @@
     {
       "id": "H-240",
       "title": "메일 DKIM 서명과 실수신, 파일 접근 제한 확인",
-      "description": "현재 운영 도메인의 가입·복구·Google 연결 6자리 번호 메일 실수신을 확인한다. 현재 운영 도메인의 파일 검사·열람·삭제·덮어쓰기 거부를 확인한다. 메일 DKIM 레코드를 2026-11-07 되살렸다. 2026-10-26 Route 53 이전 때 빠진 CNAME `saisoop-yny-202610._domainkey.saisoop.co.kr` 을 템플릿(`deploy/production/aws/35_route53/zone.yaml`)에 넣고 사용자가 적용했으며, 네임서버 넷과 공개 해석기 둘에서 공개키까지 읽힌다. 남은 것은 실제 서명 확인이다. 앱에서 인증번호 메일을 받아 머리글의 `DKIM-Signature` 에 `s=saisoop-yny-202610` 이 있고 `Authentication-Results` 가 `dkim=pass` 인지 본다. 레코드 이름은 대상 주소 꼴에서 옮긴 것이고 Oracle 콘솔의 DKIM 상태는 보지 못했으니, 서명이 없거나 실패면 콘솔부터 본다. SPF 와 DMARC(`p=none`)는 있다. 지도 쿼터를 넘으면 지도가 멈추는데 일일 한도, 과금 경보, 장애 안내가 정해져 있지 않다. 셋을 정해 운영 구성에 적는다. 같이 확인: 지도 키 없음·권한 오류·쿼터 초과를 준비 상태와 경보에서 구분하는지. 반송·스팸 신고가 서버로 들어오는 길이 없다. 서버 수신구(`SesEventWebhookController`)는 SES 전용인데 운영 메일은 Oracle 이다. Oracle 의 알림을 잇거나 Oracle 억제 목록으로 갈음하는 쪽으로 정한다. 2026-11-10 소개 웹에 공유 링크 규칙을 넣었다(사용자 실행, [근거](../release-gate/evidence/WEB-SHARE-RULE-2026-11-10.txt)). `/events/{id}`·`/clubs/{id}` 는 설치 안내 페이지를 저장 금지·검색 제외 머리와 함께 주고 접근 로그에 남지 않는다. 옛 메일 링크 `/verify-email`·`/password-reset/confirm` 은 404 다. 저장소 빌드보다 낡았던 앱 안내 화면과 iOS 앱 링크 확인 파일도 저장소 판으로 맞췄다. `.well-known` 두 파일은 `application/json` 으로 나간다. 설치 안내 페이지는 운영 API 주소 없이 빌드된 판이라 모임 제목·사진·QR 대신 준비 중 문구를 보인다(앱 열기·링크 복사는 된다). 운영 API 는 소개 웹에서 온 조회 요청에 정상으로 답한다. API 주소와 스토어 주소를 빌드에 넣는 일은 [공유 기능의 남은 작업](event-sharing/PROGRESS.md) 몫이다. 2026-11-10 운영 대조(읽기만, [근거](../release-gate/evidence/OPS-CHECK-2026-11-10.txt)): 관리자 접근 제한과 신뢰 프록시는 확인이 끝났다. 허용망 밖에서 `/admin/hello`·`/login` 이 403 이고 전달 머리를 꾸며도 403, 허용망 안에서는 200 이다. 두 API 는 앞단 주소 하나만 믿고(홉 1, 전달 머리 전략 none) 관리자 웹의 홉 수는 비어 있어 0 이다(운영 Nginx 가 관리자 API 경로를 직접 전달해 웹 중계를 타지 않으므로 맞다). 지도 키는 들어 있다. 본인확인 키(`TOSS_CERT_CLIENT_ID/SECRET`)는 없는데, 데이트 도메인이 봉인된 동안은 키 없이 뜨게 돼 있어(`application-prod.yaml` 본인확인 절) 맞고 데이트를 열 때 넣는다. 남은 것은 메일 서명·실수신, 파일 거부, 지도 한도 셋, 반송 길이다.",
+      "description": "현재 운영 도메인의 가입·복구·Google 연결 6자리 번호 메일 실수신을 확인한다. 현재 운영 도메인의 파일 검사·열람·삭제·덮어쓰기 거부를 확인한다. 메일 DKIM 레코드를 2026-11-07 되살렸다. 2026-10-26 Route 53 이전 때 빠진 CNAME `saisoop-yny-202610._domainkey.saisoop.co.kr` 을 템플릿(`deploy/production/aws/35_route53/zone.yaml`)에 넣고 사용자가 적용했으며, 네임서버 넷과 공개 해석기 둘에서 공개키까지 읽힌다. 남은 것은 실제 서명 확인이다. 앱에서 인증번호 메일을 받아 머리글의 `DKIM-Signature` 에 `s=saisoop-yny-202610` 이 있고 `Authentication-Results` 가 `dkim=pass` 인지 본다. 레코드 이름은 대상 주소 꼴에서 옮긴 것이고 Oracle 콘솔의 DKIM 상태는 보지 못했으니, 서명이 없거나 실패면 콘솔부터 본다. SPF 와 DMARC(`p=none`)는 있다. 지도 쿼터를 넘으면 지도가 멈추는데 일일 한도, 과금 경보, 장애 안내가 정해져 있지 않다. 셋을 정해 운영 구성에 적는다. 같이 확인: 지도 키 없음·권한 오류·쿼터 초과를 준비 상태와 경보에서 구분하는지. 반송·스팸 신고가 서버로 들어오는 길이 없다. 서버 수신구(`SesEventWebhookController`)는 SES 전용인데 운영 메일은 Oracle 이다. Oracle 의 알림을 잇거나 Oracle 억제 목록으로 갈음하는 쪽으로 정한다. 2026-11-10 소개 웹에 공유 링크 규칙을 넣었다(사용자 실행, [근거](../release-gate/evidence/WEB-SHARE-RULE-2026-11-10.txt)). `/events/{id}`·`/clubs/{id}` 는 설치 안내 페이지를 저장 금지·검색 제외 머리와 함께 주고 접근 로그에 남지 않는다. 옛 메일 링크 `/verify-email`·`/password-reset/confirm` 은 404 다. 저장소 빌드보다 낡았던 앱 안내 화면과 iOS 앱 링크 확인 파일도 저장소 판으로 맞췄다. `.well-known` 두 파일은 `application/json` 으로 나간다. 2026-11-12 설치 안내 페이지에 운영 API 주소를 넣었다(사용자 결정 「공유주소-2」, 사용자 실행, [근거](../release-gate/evidence/WEB-SHARE-API-ORIGIN-2026-11-12.txt)). 앱 없는 사람에게 모임·클럽 제목과 사진, QR 을 보이고 없는 번호는 「지금은 이 초대를 열 수 없어요」 로 답한다. 스토어 주소를 빌드에 넣는 일과 두 기기 확인은 [공유 기능의 남은 작업](event-sharing/PROGRESS.md) 몫이다. 2026-11-10 운영 대조(읽기만, [근거](../release-gate/evidence/OPS-CHECK-2026-11-10.txt)): 관리자 접근 제한과 신뢰 프록시는 확인이 끝났다. 허용망 밖에서 `/admin/hello`·`/login` 이 403 이고 전달 머리를 꾸며도 403, 허용망 안에서는 200 이다. 두 API 는 앞단 주소 하나만 믿고(홉 1, 전달 머리 전략 none) 관리자 웹의 홉 수는 비어 있어 0 이다(운영 Nginx 가 관리자 API 경로를 직접 전달해 웹 중계를 타지 않으므로 맞다). 지도 키는 들어 있다. 본인확인 키(`TOSS_CERT_CLIENT_ID/SECRET`)는 없는데, 데이트 도메인이 봉인된 동안은 키 없이 뜨게 돼 있어(`application-prod.yaml` 본인확인 절) 맞고 데이트를 열 때 넣는다. 남은 것은 메일 서명·실수신, 파일 거부, 지도 한도 셋, 반송 길이다.",
       "condition": "실제 메일·파일 결과. 설정 존재만으로 통과하지 않음",
       "scope": "launch",
       "kind": "실제 환경 확인",
@@ -1969,7 +1969,7 @@
     },
     {
       "name": "앱",
-      "commit": "ce058a397"
+      "commit": "aba2ca234"
     },
     {
       "name": "관리자 웹",
@@ -1980,7 +1980,7 @@
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "63c5b6ba8963c0bb055354cea47417721831e740a4542ff1e52840d67a2a3135",
+  "sourceDigest": "5b73951ed73f6708d1f2eacf6db5c2c64a13c41fda6dc88423850007e0567ae6",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2090,20 +2090,20 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다. 11월 8일 관리자 API 계약 결정 68~72 를 권고대로 정했습니다(목록은 Page 하나, 셈 창구와 옛 목록 경로 걷기, 돈·장부·재시도 명령의 다시 보내기 키 필수, 일괄 처리 꼴 하나). 관리자 웹과 서버는 같은 배포로 올립니다. 같은 날 밤 결정 73~81 도 권고대로 정했습니다(이용 제한 계정의 삭제 요청·내보내기 열기, 클럽 기부 한 번 1,000,000원 상한과 기부·취소 알림, 기부 메시지와 마일리지 메모 저장, 정산 이의 첨부는 명세에서 빼기, 플랜 연결 장소·준비 시간 칸과 정산 다시 알림의 덧붙일 말 칸, 감사 기록의 쓰지 않던 접속 IP·브라우저 칸 걷기). 같은 밤 늦게 고치며 정한 것: 목록 쪽 값의 범위 밖은 잘못된 입력, 데이트 방 닫힘은 만남 예정 시각까지 활동, 판정 되돌린 환불 분쟁도 끝난 분쟁, 무결성의 CHECK·모르는 위반은 서버 오류, 글 길이는 이모지를 2자로 세는 보수적 셈, 28일 넘은 미처리 이의는 배포 때 알린 것으로 표시. 그 뒤 고치며 정한 것: 준비 시작·끝은 끝이 시작보다 뒤(같은 시각도 거절, 82 닫음), 열쇠를 쥔 명령의 410 은 열쇠를 지킴, 안 읽은 알림 수는 차단한 상대를 빼되 1,000건 넘으면 그대로, 옛 알림 쪽 조회 둘은 커서로 읽는 앱 판이 나간 뒤 걷기."
   },
   "publication": {
-    "updatedAt": "2026-11-12T02:08:31+09:00",
+    "updatedAt": "2026-11-12T20:57:15+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "7274b054eb0cae3cafe0a541bb46de872b454beb",
+    "sourceCommit": "0604033d90006407e5021d56936a18088111d83a",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "2fdba84d79cb883860aeac9088c4111c76d8b188ce3ada02077589f7fdb0d424",
-    "worklistSha256": "d2c728824b26cc9e57c21b3133f9584c98f60bd47f3d5420a32d38a96c58ab7c",
+    "sourceSha256": "c1eb359a3b47f41a514d556233fb123cf3346edcca8185c852f3901db25cf423",
+    "worklistSha256": "a0ab567363682455e3ffc6d98bd6a94f6e171e313caafccc4da8fa7b9ded5865",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "cfbc686242f23d821760eff6e39d36b60eee48eff0d36653c6043e6af53d27a8",
-      "docs/plan/WORKLIST.md": "d2c728824b26cc9e57c21b3133f9584c98f60bd47f3d5420a32d38a96c58ab7c",
-      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "1d19dc01948e2cb0d7d79b2b3ce0380afcc7f8f4dda3a6aec246ce1323349092",
-      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "607c96e78170f3cfdbcab2c1e6688d137b815a6bd3a278b39d090810f0aa4b2e"
+      "docs/plan/WORKLIST.md": "a0ab567363682455e3ffc6d98bd6a94f6e171e313caafccc4da8fa7b9ded5865",
+      "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "8652a91a9e41dc405a2471a79c5537237e5b80dcfbc563900f68d8c0586fcdd3",
+      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "c71d7b2cc71fb92cd250309045ead000ee2b5f912f076847cf8cce5350674259"
     },
     "method": "2026-11-07 정본과 11월 6일 배포 기록, 공개 주소의 읽기 전용 조회, 코드 읽기 대조. 제품·기기 시험과 운영 쓰기는 실행하지 않음. 정본의 작업 중 내용은 파일 해시로 고정했으며 sourceCommit은 기준 커밋이다.",
     "regenerate": "python3 scripts/build-work-overview.py --site-only",
