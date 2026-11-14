@@ -1324,8 +1324,8 @@
     },
     {
       "id": "H-663",
-      "title": "원래부터 실패하는 서버 시험 여섯과 앱 도구 시험 둘을 고치고 빠진 시험 둘 채우기",
-      "description": "서버 여섯은 2026-11-15 main 에서 다시 돌려 지금도 실패한다(각 1건). 2026-11-14~15 작업이 낸 실패가 아니다. `ClubAbilityGuardStructureTest`(마켓 상품 후기 서비스가 `MARKET_REVIEW_ALREADY_EXISTS` 를 직접 던진다), `ClubFundTransactionTypeTest`(분류되지 않은 번호표 종류가 일곱 이상), `ClubMemberExitCommandCharacterizationTest`(X6 차단 순서), `ApiIdempotencyDefaultVariantCallersTest`(H-620 ④ 의 부르는 곳), `AppErrorCodeMirrorTest`(앱 목록에 `SETTLEMENT_CORRECTION_ABANDONED` 등이 없다), `EventActionPairTest`(`everyEventResponseCarryingFlagsIsCovered`). 앱 도구 시험 둘은 다른 세션의 변경 뒤로 실패한다. 버튼 동작 이름 시험(`button_action_id`, 2026-11-12 무료 플랜 본문 열기 변경 뒤)과 `profile_exploration_router_test`(네 건)다. 2026-11-15 에는 다시 돌리지 않았다. 2026-11-14 작업 중 main 에서 실패로 본 창구 시험 넷(400 을 기대하는 것)도 2026-11-15 에는 다시 돌리지 않았다. 빠진 시험 둘: 관리자 돈 추적 창구의 권한 없음 거절 시험, 정기모임 강제 환불 미리보기의 무료 복원 기준 시각이 원천 만료 30일 경계에 걸릴 때의 되돌리기 회귀 시험.",
+      "title": "원래부터 실패하는 서버 시험 여섯·창구 시험 넷과 앱 도구 시험 둘을 고치고 빠진 시험 둘 채우기",
+      "description": "서버 여섯은 2026-11-15 main 에서 다시 돌려 지금도 실패한다(각 1건). 2026-11-14~15 작업이 낸 실패가 아니다. `ClubAbilityGuardStructureTest`(마켓 상품 후기 서비스가 `MARKET_REVIEW_ALREADY_EXISTS` 를 직접 던진다), `ClubFundTransactionTypeTest`(분류되지 않은 번호표 종류가 일곱 이상), `ClubMemberExitCommandCharacterizationTest`(X6 차단 순서), `ApiIdempotencyDefaultVariantCallersTest`(H-620 ④ 의 부르는 곳), `AppErrorCodeMirrorTest`(앱 목록에 `SETTLEMENT_CORRECTION_ABANDONED` 등이 없다), `EventActionPairTest`(`everyEventResponseCarryingFlagsIsCovered`). 앱 도구 시험 둘은 2026-11-15 다시 돌려 지금도 실패한다. 버튼 동작 이름 시험(`button_action_id`, 2026-11-12 무료 플랜 본문 열기 변경 뒤) 1건은 두 화면(`market_plan_detail_screen.dart:133`·`plan_preview_screen.dart:326`)에서 걸린다. `profile_exploration_router_test` 4건은 NavigationBar 를 찾지 못하고, 기대 '/profile/support' 에 실제 '/profile' 인 것이 두 건, `Bad state: No element` 다. 창구 시험 넷도 2026-11-15 다시 돌려 지금도 실패한다. `TransportLayoutControllerTest`·`TransportLegacyControllerTest`·`TransportReplacementControllerTest`·`RegularMeetingContentControllerTest` 의 다섯 건이 400 을 기대하는데 200 을 받는다(H-644 가 입력 검사 `@Valid` 를 걷은 뒤). 빠진 시험 둘: 관리자 돈 추적 창구의 권한 없음 거절 시험, 정기모임 강제 환불 미리보기의 무료 복원 기준 시각이 원천 만료 30일 경계에 걸릴 때의 되돌리기 회귀 시험.",
       "condition": "출시 후보 관문 전에. 앱 둘은 그 변경을 낸 세션이 맡는다",
       "scope": "now",
       "kind": "정비",
@@ -1430,8 +1430,8 @@
     },
     {
       "id": "H-662",
-      "title": "관리자 운영 기능 작업이 남긴 후보 여섯 확인하기",
-      "description": "2026-11-14~15 관리자 운영 기능·구조 작업에서 본 후보다. 재현하지 않았다. ① 관리자 전역 예외 처리기의 스프링 표준 예외 갈래(`AdminGlobalExceptionHandler` 의 `handleExceptionInternal` → `exceptionResponse`)가 예외 글을 응답 본문에 그대로 싣는다. 공개 처리기에 있는 DB 오류 막음(H-588 ②)이 관리자에는 없다. 다만 관리자는 open-in-view 가 꺼져 있어 DB 문장이 이 갈래로 실리는 창구는 찾지 못했고, 실제로 실리는 것은 요청 본문 해석 오류 같은 문장이다(2026-11-15 코드 확인, 재현은 하지 않았다). 그 밖의 일반 예외 갈래는 상태 이름만 싣는다. ② 본인 인증 실패 기록 칸(`failure_message`)은 막혔다(우리 오류 문장 또는 형식 이름만 남는다). 로그에는 두 길이 남았다(2026-11-15 코드 확인). 토스 연동의 `log.error(…, e)` 세 곳이 예외 전체를 남겨 응답 본문 해석 실패 때 본문 조각이 실릴 수 있고, 토스 SDK 복호화 예외는 다시 던져져 공개 전역 처리기가 원문을 로그에 남긴다. 전부터 있던 것이다. ③ 관리자 웹 회계 화면의 「Stuck days」 칸은 숫자가 아닌 값을 조용히 3 으로 바꿔 조회한다(`accounting-screen.tsx`). ④ 관리자 웹 회계 화면의 「지난달」 범위 함수 둘(`accounting-ledger-panels.tsx` 의 `previousMonthRange`·`previousMonth`)이 브라우저 시간대로 달을 자른다. ⑤ 원천징수 내보내기 CSV 의 번호·금액 칸에는 수식 무력화가 없다(정기모임 결제 CSV 는 글 칸에 있다). ⑥ 추천 신호 어댑터(`RecommendationSignalAdapter`)는 한 어댑터가 도메인 셋(account·capacity·review)을 허용받는다. 서비스 도메인을 닫으며 다른 어댑터는 도메인마다 나눴다.",
+      "title": "관리자 운영 기능 작업이 남긴 후보 일곱 확인하기",
+      "description": "2026-11-14~15 관리자 운영 기능·구조 작업에서 본 후보다. ①·⑦ 은 2026-11-15 재현했고, 나머지는 재현하지 않았다. ① 관리자 전역 예외 처리기의 스프링 표준 예외 갈래(`AdminGlobalExceptionHandler` 의 `handleExceptionInternal` → `exceptionResponse`)가 예외 글을 응답 본문에 그대로 싣는다. 공개 처리기에 있는 DB 오류 막음(H-588 ②)이 관리자에는 없다. 다만 관리자는 open-in-view 가 꺼져 있어 DB 문장이 이 갈래로 실리는 창구는 찾지 못했고, 실제로 실리는 것은 요청 본문 해석 오류 같은 문장이다. 2026-11-15 재현했다: 관리자 창구에 깨진 JSON 을 보내면 400·11400 에 `message` 로 해석기 원문(\"JSON parse error: Unexpected character …\")이 그대로 실린다. open-in-view 는 관리자 설정 둘과 배포 대본에서 false 라 응답 직렬화 중 DB 를 읽지 않는다. 엔티티를 그대로 내보내는 관리자 응답이 있는지는 전수하지 않았다. 그 밖의 일반 예외 갈래는 상태 이름만 싣는다. ② 본인 인증 실패 기록 칸(`failure_message`)은 막혔다(우리 오류 문장 또는 형식 이름만 남는다). 로그에는 두 길이 남았다(2026-11-15 코드 확인). 토스 연동의 `log.error(…, e)` 세 곳이 예외 전체를 남겨 응답 본문 해석 실패 때 본문 조각이 실릴 수 있고, 토스 SDK 복호화 예외는 다시 던져져 공개 전역 처리기가 원문을 로그에 남긴다. 전부터 있던 것이다. ③ 관리자 웹 회계 화면의 「Stuck days」 칸은 숫자가 아닌 값을 조용히 3 으로 바꿔 조회한다(`accounting-screen.tsx`). ④ 관리자 웹 회계 화면의 「지난달」 범위 함수 둘(`accounting-ledger-panels.tsx` 의 `previousMonthRange`·`previousMonth`)이 브라우저 시간대로 달을 자른다. ⑤ 원천징수 내보내기 CSV 의 번호·금액 칸에는 수식 무력화가 없다(정기모임 결제 CSV 는 글 칸에 있다). ⑥ 추천 신호 어댑터(`RecommendationSignalAdapter`)는 한 어댑터가 도메인 셋(account·capacity·review)을 허용받는다. 서비스 도메인을 닫으며 다른 어댑터는 도메인마다 나눴다. ⑦ 관리자 돈 명령이 공개 서버의 오류 번호를 버린다(2026-11-15 시험으로 확인). 공개 서버의 500·10008 은 관리자에서 502·144606(`EXTERNAL_SERVICE_ERROR`)이 되고, 관리자 돈 명령 기록은 「결과 모름」·실패 코드 `RestException` 으로만 남는다. 운영자가 결과 모름 건을 다룰 때 공개 쪽 실패 원인을 볼 수 없다(결정 112 의 상황과 같은 자리).",
       "condition": "그 자리를 고칠 때. 재현되면 고칠 결함으로 옮긴다",
       "scope": "now",
       "kind": "조사·확인",
@@ -1948,11 +1948,11 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "328dded6c"
+      "commit": "77f5ccfb9"
     },
     {
       "name": "관리자 API",
-      "commit": "328dded6c"
+      "commit": "77f5ccfb9"
     },
     {
       "name": "앱",
@@ -1967,7 +1967,7 @@
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "48237627d5411fd28b701de0a3e5f15e2d3bfd8fcb3ed6d198c9b4d7e8ac0f26",
+  "sourceDigest": "45aea5d241f54f80a57ce3f8f75674453d911d147f444cbf1d885a10438b5fca",
   "summary": {
     "lead": "11월 7일 기준, 구조 재정비는 끝났고 서버(prd-20261107a)와 Android 내부 테스트 빌드 14가 나가 있습니다. 내부 테스트용 임시 결제를 켜서 실제 돈 없이 충전부터 대사까지 시험합니다. 설계 문서와 미확인 항목을 전수로 대조해 남은 일을 다시 정리했습니다. 먼저 할 일은 되살린 메일 DKIM 의 실제 서명 확인, 자동 백업 결과 확인, 휴대폰 확인입니다.",
     "updates": [
@@ -2077,18 +2077,18 @@
     "decisions": "11월 6일 미룬 기능의 결정을 반영했습니다. 채팅 푸시에는 보낸 사람 이름까지만 보이고, 비로그인에게는 상세 주소와 온라인 주소를 가립니다. 구조 재정비는 11월 5일 정한 범위에서 끝내고 그 밖은 하지 않습니다. 플랫폼 결제·데이트·추가 로그인 등 후속 공개 범위는 유지하며, main 구현이나 내부 테스트 배포를 정식 공개로 표시하지 않습니다. 후보 고정은 아직, 복구 규약은 운영 서버 확정 때, Android 실기기는 추후 연결한다는 결정을 유지합니다. 11월 8일 관리자 API 계약 결정 68~72 를 권고대로 정했습니다(목록은 Page 하나, 셈 창구와 옛 목록 경로 걷기, 돈·장부·재시도 명령의 다시 보내기 키 필수, 일괄 처리 꼴 하나). 관리자 웹과 서버는 같은 배포로 올립니다. 같은 날 밤 결정 73~81 도 권고대로 정했습니다(이용 제한 계정의 삭제 요청·내보내기 열기, 클럽 기부 한 번 1,000,000원 상한과 기부·취소 알림, 기부 메시지와 마일리지 메모 저장, 정산 이의 첨부는 명세에서 빼기, 플랜 연결 장소·준비 시간 칸과 정산 다시 알림의 덧붙일 말 칸, 감사 기록의 쓰지 않던 접속 IP·브라우저 칸 걷기). 같은 밤 늦게 고치며 정한 것: 목록 쪽 값의 범위 밖은 잘못된 입력, 데이트 방 닫힘은 만남 예정 시각까지 활동, 판정 되돌린 환불 분쟁도 끝난 분쟁, 무결성의 CHECK·모르는 위반은 서버 오류, 글 길이는 이모지를 2자로 세는 보수적 셈, 28일 넘은 미처리 이의는 배포 때 알린 것으로 표시. 그 뒤 고치며 정한 것: 준비 시작·끝은 끝이 시작보다 뒤(같은 시각도 거절, 82 닫음), 열쇠를 쥔 명령의 410 은 열쇠를 지킴, 안 읽은 알림 수는 차단한 상대를 빼되 1,000건 넘으면 그대로, 옛 알림 쪽 조회 둘은 커서로 읽는 앱 판이 나간 뒤 걷기."
   },
   "publication": {
-    "updatedAt": "2026-11-15T02:57:37+09:00",
+    "updatedAt": "2026-11-15T03:28:24+09:00",
     "sourceBranch": "main",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "6f61f5390b30682be49511df5242fe9e51ee1c52",
+    "sourceCommit": "a870dd75bc8a0f63381200fb56231abb1e3ef034",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "0df59d254c3f5e4b138080b4c57bcbf09d36a2272705fd744c480f8d7a8e94c5",
-    "worklistSha256": "b3db72b98753c7dc00b651e50eeabce7944f0e4502e572b327058ac349ae4aad",
+    "sourceSha256": "15380a77043020fbe6653ef204576cd04a48fab7f2756be80a9a009f0ee39972",
+    "worklistSha256": "277b6dcdfcee5dd3e3e364dc6c30591fcd38f29a39234ee39bdab9e9f61cc7ff",
     "evidenceSha256": {
       "docs/release-gate/evidence/API-ANDROID-RELEASE-20261106b.json": "7270cd01a449bf5d22effeec5b8af27754d21ba265ece042846084da6a2e6336",
       "docs/release-gate/evidence/API-RELEASE-20261106c.json": "d93f6aa821b6c801a48009d14cb58759702e3e0b4482a256971e3e9bd033d801",
       "docs/plan/VERSION_UPDATE_2026-11-06/README.md": "cfbc686242f23d821760eff6e39d36b60eee48eff0d36653c6043e6af53d27a8",
-      "docs/plan/WORKLIST.md": "b3db72b98753c7dc00b651e50eeabce7944f0e4502e572b327058ac349ae4aad",
+      "docs/plan/WORKLIST.md": "277b6dcdfcee5dd3e3e364dc6c30591fcd38f29a39234ee39bdab9e9f61cc7ff",
       "docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md": "f7efdeb1f3802ebcd4a779bda7bd0f14cf2c01ea954dffb4079a03ad30db64bd",
       "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "b6af68643938b94cbc7d82f6233399709d030ee9136db518f7c9d117df1d74c0"
     },
