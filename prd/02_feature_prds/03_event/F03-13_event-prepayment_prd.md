@@ -11,11 +11,11 @@
 
 ## 1. 결론
 
-> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 아래 계약은 **두 수단 전체**의 설계다. 지금 실제로 열려 있는 수단은 **BANK_TRANSFER(계좌이체 — 호스트 계좌로 직접 송금)** 하나이며, WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. WALLET 관련 서술(즉시 PAID·회계 분개·자동 환불)은 **설계 정본이자 현재 비활성**으로 읽는다. 상세는 §4 결제 수단 절.
+> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 아래 계약은 **두 수단 전체**의 설계다. 지금 실제로 열려 있는 수단은 **BANK_TRANSFER(계좌이체 — 호스트 계좌로 직접 송금)** 하나이며, WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. WALLET 관련 서술(즉시 PAID·회계 분개·자동 환불)은 **설계 정본이자 현재 비활성**으로 읽는다. 상세는 §4 결제 수단 섹션.
 
 선입금 활성 이벤트(`EventPrepayment.prepaymentRequired=true`)에서 참가자가 호스트 승인 또는 자동 승인 후 `APPROVED_PENDING_PAYMENT` 상태에 진입하면, 지정된 `paymentDueAt` 기한 내에 **WALLET(포인트 지갑)** 또는 **BANK_TRANSFER(계좌이체 신고)** 중 한 가지 방식으로 선입금을 납부해 참가를 확정한다. WALLET은 즉시 PAID + capacity++ + 참석 확정이 자동 발생하고, BANK_TRANSFER는 호스트가 입금 확인(`bankConfirm`) 또는 거부(`bankReject`)를 직접 수행해야 결정된다. 환불은 사용자 취소·이벤트 취소·호스트 거부 트리거 각각에 대해 정해진 경로(WALLET 자동 환불 / BANK 호스트 수동 환불 / `REFUND_REQUESTED` 큐)로 정리된다.
 
-**환불 정책 (2026-06-05 카탈로그 기반 갱신)**: 환불율은 이벤트별 `event_refund_policy` 카탈로그(6종 템플릿 — STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM)에 기반한 by_time 다단계 비율로 산출된다. 귀책(RefundFaultCategory)에 따라 최대 100% ~ 0% 범위에서 결정된다. 레거시 "단일 deadline 100%/마감 후 0%" 규칙은 Phase 4에서 `event_refund_policy` 카탈로그 계산기로 전환되어 폐기됨 (상세는 §환불 정책 카탈로그 절 참조).
+**환불 정책 (2026-06-05 카탈로그 기반 갱신)**: 환불율은 이벤트별 `event_refund_policy` 카탈로그(6종 템플릿 — STANDARD/STRICT/FLEXIBLE/FULL/NON_REFUNDABLE/CUSTOM)에 기반한 by_time 다단계 비율로 산출된다. 귀책(RefundFaultCategory)에 따라 최대 100% ~ 0% 범위에서 결정된다. 레거시 "단일 deadline 100%/마감 후 0%" 규칙은 Phase 4에서 `event_refund_policy` 카탈로그 계산기로 전환되어 폐기됨 (상세는 §환불 정책 카탈로그 섹션 참조).
 
 본 단위는 F03-05와 분리한다. F03-05는 신청·취소의 사용자 진입 흐름을 다루고, F03-13은 그 신청이 결제로 확정되는 별도 트랜잭션과 회계·환불 흐름을 다룬다. `INITIAL` 목적의 활성 결제는 application당 최대 1건이지만, 결제 후 게스트 추가는 같은 application에 여러 `GUEST_INCREMENT` 결제가 생길 수 있으므로 전체 관계를 단순한 1:0..1로 표현하면 안 된다.
 

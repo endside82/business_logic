@@ -20,7 +20,7 @@
 <!-- source-references:start -->
 서버 창구: `EventController#updateEvent`, `EventController#deleteEvent`, `EventController#publishEvent`, `EventController#closeEvent`, `EventController#cancelEvent`, `RescheduleProposalController#createProposal`, `EventController#announceToAttendees`, `EventController#updateFutureEvents`, `EventController#cancelAllFutureEvents`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 - 옛 reschedule PATCH는 제거됐으며 일정 변경 제안 생성으로 연결한다.
-- 같은 절에 함께 적힌 수정·취소 위치를 각각 연결했다.
+- 같은 섹션에 함께 적힌 수정·취소 위치를 각각 연결했다.
 <!-- source-references:end -->
 
 ## 3. 전체 동작 흐름

@@ -9,7 +9,7 @@
 > 문서 상태: **도메인 전환본 + W2 신규 결제 경로 통합 (2026-05-22)**. 이 문서는 `business_logic/units/06_payment/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
 >
 > 2026-05-22 변경 이력:
-> - **F06-06 갱신** — 신규 결제 경로 `WalletService.payForApplication`(referenceType=`EVENT_PREPAYMENT`) 추가. 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)는 변경 없음 (D8). 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 도입. 자세한 내용은 F06-06 §4.2 W2 절 참조.
+> - **F06-06 갱신** — 신규 결제 경로 `WalletService.payForApplication`(referenceType=`EVENT_PREPAYMENT`) 추가. 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)는 변경 없음 (D8). 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 도입. 자세한 내용은 F06-06 §4.2 W2 섹션 참조.
 > - **F06-10 갱신** — BANK_TRANSFER 선입금은 호스트 직접 수취(D5)로 회계 분개 발생 없음. 호스트 정산 보고서에 6 섹션 별도 노출 (§5.1 W2 추가).
 > - **F03-13 신설** (이벤트 도메인) — `WalletService.payForApplication`의 facade 호출자. 결제·환불 흐름은 03_이벤트_prd 도메인 rollup 참조.
 >

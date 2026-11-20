@@ -113,7 +113,7 @@ public detail 조회(`DisputeCaseDetailVo` 빌더)에서 **CS_ONLY 항목만 제
 
 ## 8. 익명 표적 제보 방어 (USER_DISPUTE anti-abuse)
 
-> (아래 9절은 2026-07-02 추가분)
+> (아래 9번 섹션은 2026-07-02 추가분)
 
 > 소스: `UserDisputeCase` 엔티티, `user_dispute_case.active_dedup_key`
 

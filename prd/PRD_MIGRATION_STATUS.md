@@ -70,11 +70,11 @@
 
 | 항목 | 지금 코드 | PRD | 근거 |
 | --- | --- | --- | --- |
-| 호스트 직접 수납 | 들어감 | 반영. 입금 신고·확인·거절·환불 확인은 F03-05·F03-07·F03-13·F17-02·F17-05·F17-07, 받을 계좌 등록·인증과 인증 강제를 끈 지금 상태는 F07-10 4절 | `event/prepayment/service/EventHostBankAccountService.java`, `BankAccountVerification*.java`, `HostDirectCashBootGuard.java`, 설정 `payment.host-direct-cash` |
+| 호스트 직접 수납 | 들어감 | 반영. 입금 신고·확인·거절·환불 확인은 F03-05·F03-07·F03-13·F17-02·F17-05·F17-07, 받을 계좌 등록·인증과 인증 강제를 끈 지금 상태는 F07-10 4번 섹션 | `event/prepayment/service/EventHostBankAccountService.java`, `BankAccountVerification*.java`, `HostDirectCashBootGuard.java`, 설정 `payment.host-direct-cash` |
 | 출시 범위 관문 | 들어감 | 반영. 묶음 목록·상위 의존·운영 기본값·410·안전 출구는 권한 정책 PRD 「출시 범위와 안전 출구」 | `ReleaseScope*.java`(도메인 `P0`·`CASH_EVENT`·`MARKET`·`MARKET_PERIOD_PASS` …), `RELEASE_SCOPE_DISABLED` |
-| 계정 정지 제한 세션 | 들어감 | 반영. F15-08 4-C(허용 목록·앱 화면 목록·토큰과 상태), F01-01 1절, F13-06 1절 | `JwtProperties.java:22-27`(`SCOPE_RESTRICTED`), `api-app/.../config/security/JwtAuthorizationFilter.java:126,183`, `AccountSanctionService.java:42` |
-| 분쟁 종결 | 들어감 | 반영. F18-01 4절 「종결과 보상」(진행 상태 여섯, 당사자 명령, 보상 원장과 종결 차단) | `DisputeCompensationLedger*.java`, `DisputeCompensationCommand.java` |
-| 마일리지 규칙·배지 | 들어감 | 반영. 배지는 F16-01·02·05·06·08, 제도 상태 셋·기본 규칙 셋·공개 때 고정(신규 적용)은 F16-04 1절 | `MileageBadge*.java` |
+| 계정 정지 제한 세션 | 들어감 | 반영. F15-08 4-C(허용 목록·앱 화면 목록·토큰과 상태), F01-01 1번 섹션, F13-06 1번 섹션 | `JwtProperties.java:22-27`(`SCOPE_RESTRICTED`), `api-app/.../config/security/JwtAuthorizationFilter.java:126,183`, `AccountSanctionService.java:42` |
+| 분쟁 종결 | 들어감 | 반영. F18-01 4번 섹션 「종결과 보상」(진행 상태 여섯, 당사자 명령, 보상 원장과 종결 차단) | `DisputeCompensationLedger*.java`, `DisputeCompensationCommand.java` |
+| 마일리지 규칙·배지 | 들어감 | 반영. 배지는 F16-01·02·05·06·08, 제도 상태 셋·기본 규칙 셋·공개 때 고정(신규 적용)은 F16-04 1번 섹션 | `MileageBadge*.java` |
 | 이메일 인증 제한 세션의 화면 파급 | 제한 세션 자체가 2026-10-29 에 없어짐(가입 전 번호 확인) | 해당 없음. F01-03 이 이미 반영 | `EmailCodePurpose.java`(`SIGNUP`·`PASSWORD_RESET`·`SOCIAL_LINK`), `EmailCodeService.java` |
 | 플랜 읽기 조판·TABLE(옛 「미커밋 Flutter 작업본」) | 앱·서버 main 에 들어감 | F08-02 11.3, F08-03 11.5·11.6, 08 도메인 9.6 을 지금 계약으로 고침 | 앱 `presentation/plan/screens/plan_reading_mode_screen.dart:33,68,77,114-126`, `presentation/plan/theme/plan_block_text_styles.dart:11,50-53,110`, `presentation/plan/widgets/block_renderer.dart:1730,1823`, `presentation/plan/widgets/block_type_sheet.dart:132-148`, `data/models/plan/table_block_adapter.dart:83`, 서버 `PlanBlockTableRowsValidator.java` |
 | 여러 요일 반복 생성 시험 | 있음 | F03-03 다음 조치 칸을 고침 | `domain/src/test/.../event/service/RecurringEventCreateSourceGateTest.java:210,249,316`, `domain/src/test/.../club/service/ClubRecurringEventServiceTest.java:302,419` |
@@ -95,11 +95,11 @@
 
 | PRD | 들인 내용 | 근거 |
 | --- | --- | --- |
-| F07-10 4절 | 등록·기본 계좌·같은 계좌 재등록, 모임 결박과 고치기·지우기 막기, 1원 인증 창(4자리·10분·5번), 정보를 바꾸면 확인 풀림, 지금은 인증 강제 끔 | `payment/meeting/service/SettlementBankAccountService.java:101-227,381-472`, `event/service/EventHostBankAccountService.java:24-53,113-169`, `payment/meeting/constants/BankAccountVerificationStatus.java`, api-app `payment/meeting/controller/SettlementBankAccountController.java`, `application-prod.yaml` `payment.host-direct-cash.require-verified-account`(기본 false)·`bank-account-verification` |
+| F07-10 4번 섹션 | 등록·기본 계좌·같은 계좌 재등록, 모임 결박과 고치기·지우기 막기, 1원 인증 창(4자리·10분·5번), 정보를 바꾸면 확인 풀림, 지금은 인증 강제 끔 | `payment/meeting/service/SettlementBankAccountService.java:101-227,381-472`, `event/service/EventHostBankAccountService.java:24-53,113-169`, `payment/meeting/constants/BankAccountVerificationStatus.java`, api-app `payment/meeting/controller/SettlementBankAccountController.java`, `application-prod.yaml` `payment.host-direct-cash.require-verified-account`(기본 false)·`bank-account-verification` |
 | 권한 정책 「출시 범위와 안전 출구」 | 묶음 목록·상위 의존·운영 기본값·앱 범위 응답·410·안전 출구·미분류 창구 기동 거부 | `config/release/ReleaseScopeDomain.java`, `ReleaseScope.java`, `ReleaseScopeVo.java`, api-app `config/release/ReleaseScopeController.java`(`GET /api/v1/app/release-scope`), `application-prod.yaml` `release.scope.enabled-domains`, 시험 자원 `api-app/src/test/resources/release-scope/classification-snapshot.txt`(안전 출구 79, 봉인 215) |
 | F15-08 4-C, F01-01, F13-06 | 제한 토큰 발급·허용 목록·앱 화면 목록·상태가 권한을 정함·삭제 요청과 내보내기는 닫힘 | `account/service/TokenService.java:56-99,171-188`, `account/service/AuthService.java:160-180,230-232`, api-app `config/security/AccountLockPolicy.java`, `config/security/JwtAuthorizationFilter.java:73-75,120-212`, 앱 `core/router/account_lock_routes.dart`, `presentation/auth/screens/account_blocked_screen.dart` |
-| F18-01 4절 | 진행 상태 여섯과 전이, 결과 확인·종결 동의·이관·소명 대화, 보상 명령과 원장 상태, 대기·실패면 종결 막음 | `host/dispute/constants/DisputeWorkflowStatus.java`, `DisputeCompensationCommand.java`, `DisputeCompensationStatus.java`, api-app `host/dispute/controller/DisputeCasePartyController.java` |
-| F16-04 1절 | 제도 상태 셋과 전이, 기본 규칙 셋(체크인 10·후기 5·사진 3 꺼짐), 공개 때 모임 규칙 고정과 상한 | `mileage/constants/MileageProgramStatus.java`, `mileage/service/MileageEarningRuleService.java:99-159`, `mileage/service/MileageEventRuleService.java:47-145`, `mileage/constants/MileageEventRulePolicy.java` |
+| F18-01 4번 섹션 | 진행 상태 여섯과 전이, 결과 확인·종결 동의·이관·소명 대화, 보상 명령과 원장 상태, 대기·실패면 종결 막음 | `host/dispute/constants/DisputeWorkflowStatus.java`, `DisputeCompensationCommand.java`, `DisputeCompensationStatus.java`, api-app `host/dispute/controller/DisputeCasePartyController.java` |
+| F16-04 1번 섹션 | 제도 상태 셋과 전이, 기본 규칙 셋(체크인 10·후기 5·사진 3 꺼짐), 공개 때 모임 규칙 고정과 상한 | `mileage/constants/MileageProgramStatus.java`, `mileage/service/MileageEarningRuleService.java:99-159`, `mileage/service/MileageEventRuleService.java:47-145`, `mileage/constants/MileageEventRulePolicy.java` |
 
 ### 2026-11-08 갭 후보 판정(90행)
 
@@ -137,9 +137,9 @@
 | F09-06(3) | 해소됨 1, Risk 1행(2건) | privatedate/constants/MeetingStatus.java(PROPOSED·CONFIRMED·CANCELLED·COMPLETED); lib/data/server/server_enums.dart:1698-1702; 명세 docs/ui-ux/screens/24-private-date.md:527(같은 넷), :643(위치 공유는 제품에서 제거, 제공 기능처럼 노출 금지); location/model/LocationShare.java(eventId 만, 데이트 만남 위치 공유 없음); lib/presentation/date/screens/meeting_proposal_screen.dart:591-600(「미팅 시작 1시간 전부터 종료까지 자동으로 위치가 공유됩니다」), :720(위치 공유 안내 단추), :845(확정 카드 「만남 시작 1시간 전부터 위치가 공유됩니다」) |
 | F09-08(3) | 해소됨 3 | privatedate/service/DateProfileService.java:475-491(recordProfileView: 본인·프로필 없음 제외, 24시간 중복 제거); java-class-refs: recordProfileView 는 DateMatchingService(좋아요·넘김 처리)에서만 부름, getProfileByProfileIdWithView 는 없음(0건); lib/presentation/date/screens/profile_viewers_screen.dart:99-105(빈 상태 아이콘·제목·설명, 단추 없음), :108-195(방문자 줄에 누름 동작·화살표 없음) |
 | F10-01(1) | 해소됨. 달력 관련 알림은 구글 연결 끊김 하나, 통합 달력 여는 알림 없음 | `core/utils/notification_router.dart:628-629`, `core/router/routes.dart:318-336`, `core/router/app_redirect.dart:127-129` |
-| F10-03(1) | 해소됨. 시험 보강 기록 | PRD 원문 절 제목 |
+| F10-03(1) | 해소됨. 시험 보강 기록 | PRD 원문 섹션 제목 |
 | F10-04(4) | 입구 둘 해소됨. 시간 검사·실패 안내 둘은 Gap | 입구 `presentation/calendar/screens/monthly_calendar_screen.dart:107`, `presentation/calendar/screens/recurring_rule_list_screen.dart:71,137`, `presentation/calendar/screens/availability_screen.dart:288-297`; Gap `presentation/calendar/screens/recurring_rule_screen.dart:189`(저장 단추 조건), `:538-552`(자정 넘김 길이), `:580-590`(분 제한 없는 시각 고르기), `:723-750`(저장·수정 실패 무안내), `:786-793`(삭제 실패 무안내), `domain/providers/calendar/availability_provider.dart:121-150`(실패면 null/false 만), 서버 domain `calendar/service/AvailabilityService.java:99-102,541-561`(끝>시작, 30~480분, 30분 단위), 명세 `docs/ui-ux/screens/25-calendar.md:359-376`(실패 토스트). 단건 화면은 30분 검사·실패 안내가 있다 `availability_screen.dart:435-457,626-653` |
-| F10-05(2) | 해소됨. 다른 회원 가능 시간 주소 자체가 없음(설계 철회) | api-app `calendar/controller/AvailabilityController.java:33-155`(회원별 공개 조회 경로 없음), `data/api/availability_api.dart:18-50`, PRD 2절 철회 표시, 명세 `25-calendar.md:354-355`(나만 보는 기록) |
+| F10-05(2) | 해소됨. 다른 회원 가능 시간 주소 자체가 없음(설계 철회) | api-app `calendar/controller/AvailabilityController.java:33-155`(회원별 공개 조회 경로 없음), `data/api/availability_api.dart:18-50`, PRD 2번 섹션 철회 표시, 명세 `25-calendar.md:354-355`(나만 보는 기록) |
 | F11-03(1) | 해소됨. 서버 확인 뒤 다시 읽기 | `domain/providers/review/review_write_provider.dart:153-176`, `presentation/review/screens/review_list_screen.dart:77-100` |
 | F12-02(3) | Gap. 묶음 보기는 최근 20건만, 이어 불러오기 없음, 건수도 20건 안 | domain `notification/service/NotificationService.java:617-639`, `data/repositories/notification_repository.dart:40-46`, `domain/providers/notification/notification_list_provider.dart:140-148`, `presentation/notification/screens/notification_list_screen.dart:611,648,820-858`, 명세 `docs/ui-ux/screens/27-notification.md:75` |
 | F12-03(1) | 해소됨. 즉시 한 요청 저장, 실패면 그 변경만 되돌림, 명세에 늦춰 보내기 없음 | `presentation/notification/screens/notification_settings_screen.dart:503-537`, `domain/providers/notification/notification_settings_provider.dart:55-80`, 명세 `27-notification.md` SCR-NT-002 표(카테고리 토글 줄) |
@@ -150,10 +150,10 @@
 | F13-05(2) | 해소됨. 공용 오류 응답, 커밋 뒤에만 실행 기동 | domain `account/service/DataExportService.java:32-55`, `presentation/profile/screens/data_privacy_screen.dart:182-191`, 공용 근거 |
 | F13-06(1) | 해소됨. 확인 창만, 서버도 비밀번호 받지 않음, 명세도 확인 창만 | api-app `account/controller/DataPrivacyController.java:45-51`, domain `account/param/DeactivationConsentParam.java`(동의 판 번호·보관금 건만), `presentation/profile/screens/data_privacy_screen.dart:636`, 명세 `docs/ui-ux/screens/28-profile-settings.md:525,542,855-861`. 참고: 재인증 장치는 클럽 소유권 넘기기·마일리지 설정에만 쓰인다(`account/service/AccountReauthenticationService` 참조 둘). 즉시 탈퇴도 재인증이 없다 |
 | F13-07(4) | 해소됨 넷 | domain `account/service/AccountDeactivationService.java:188-244`(점검 읽기만), `:379-407`(막히면 탈퇴 불가 번호), `:669-718`(신청 취소 실패는 남김), `:418-420`(탈퇴 뒤 정리), `:866-876`(판매 내리기 실패 → 잠금 뒤 판정), `:898-952`(클럽 나가기 실패 → 막음 항목), `:557-575`(잠금 뒤 대기 기록 수), `account/service/AccountDeactivationResolutionWorker.java:73-82`, `club/service/ClubAccountClosure.java:83-92,134-150`, `club/constants/WaitType.java`(신청·초대·차단), `account/service/UserDeactivationFinalizer.java:82-86`; 앱 `presentation/profile/screens/data_privacy_screen.dart:651-712` |
-| F14-01(2) | 해소됨. 시험 보강 기록 | PRD 원문 절 제목 |
-| F14-02(1) | 해소됨. 시험 보강 기록 | PRD 원문 절 제목 |
+| F14-01(2) | 해소됨. 시험 보강 기록 | PRD 원문 섹션 제목 |
+| F14-02(1) | 해소됨. 시험 보강 기록 | PRD 원문 섹션 제목 |
 | F14-03(3) | 갱신·보강 둘 해소됨. 120분 자르기 시험 Gap | domain `location/service/LocationService.java:240-272`(1~120 자르기, 모임 끝 상한), api-app `location/controller/LocationController.java:75-83`, 시험 domain test `location/service/LocationServiceTest.java:1095-1104`(모임 끝 상한만), `:1075-1093`(공유 시간 밖 거절); 앱 `domain/providers/location/event_location_provider.dart:144-157`, `presentation/location/screens/event_location_screen.dart:413-428,529-538,616-622` |
-| F14-04(1) | 해소됨. 시험 보강 기록 | PRD 원문 절 제목 |
+| F14-04(1) | 해소됨. 시험 보강 기록 | PRD 원문 섹션 제목 |
 
 본문 고친 곳: F06-07 만료 안내, F06-09 요약 카드, F08-08 분류 고르기, F08-11 409 문구(이미 판정된 Gap 행도 해소됨으로), F08-12 S5 갱신하기, F08-13 후기 뒤 다시 읽기·참가비·한 번짜리 모임, F09-06 위치 공유 문구, F09-08 방문 기록이 쌓이는 곳·빈 상태·누름 없음.
 
