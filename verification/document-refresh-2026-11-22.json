@@ -2750,9 +2750,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "6da569da40913bcb62cbfe1bf8c06ed68951cf4f70902550825d244d533f27af",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "carpool_20261122"
+      ],
+      "reviewedSha256": "535a344ae33ee3af62e95af44a3df7c39c732671f0489b9099583529010a1369"
     },
     {
       "path": "docs/features/F03-16.html",
@@ -4917,7 +4920,8 @@
       "disposition": "partially_updated",
       "evidence": [
         "demographics_20261122",
-        "transport_policy_20261122"
+        "transport_policy_20261122",
+        "carpool_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5616,10 +5620,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d362592b5f27e50c0a91683ec40e6d3f5483db2ed1a03fc9f0a51d3bd7303065",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "carpool_20261122"
+      ],
+      "reviewedSha256": "d42329b306b225e07f6abf3cb9b4aa4fd50a8ce6b0ba0c8da3043d2c42c9c176"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
@@ -7583,7 +7589,8 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "transport_policy_20261122"
+        "transport_policy_20261122",
+        "carpool_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -14702,6 +14709,32 @@
         }
       },
       "scope": "현재 조율 공통 설정·실제 참석 권한·구형 쓰기 종료·배정 보존·동일 요청 확인과 개정/갱신 대조. 목록의 해당 행만 부분 갱신. 생성 도구의 표 열 수 조건을 보완해 기능 Wave/상태와 참조/위험 수를 구분. 새 제품 시험·운영 환경·실제 앱 실행 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-15: source-reference sync and 11 tests; scenario audit; reviewed paths/digests; scoped source/canonical digests; original HTML IDs; Markdown fragments; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 2,
+        "partialDocuments": 2,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 104,
+        "sourceRecords": 423,
+        "verifiedRecords": 421,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1603,
+        "derivedSourceDigests": 205,
+        "currentSourceAndCanonicalDigests": 28,
+        "retainedHtmlPages": 1,
+        "markdownFragments": 2,
+        "incomingMarkdownAnchors": 0,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 341,
+          "historical_retained": 33,
+          "pending": 628
+        }
+      },
+      "scope": "지원과 배정의 분리·승인 후 운전자/동승 자리·개별 이동·운행 취소/전원 교체·개인 장소·고지/신고를 소스 대조. 목록 해당 행만 부분 갱신. 새 제품 시험·모든 참가 종료 연동·실제 기기·운영·법률 검토 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -20498,6 +20531,228 @@
           "id": "F03-14:4",
           "change": "added",
           "reason": "현재 조율 조회/저장과 기존 조회/종료 오류 창구를 각각 연결"
+        }
+      ]
+    },
+    "carpool_20261122": {
+      "kind": "source_review",
+      "scope": "F03-15 현재 지원·배정 분리, 승인/취소/개별 이동/전원 교체/안전 안내/신고를 대조. 공통 복구는 정책 그룹 재사용. 상세 배정 전체·새 제품 시험·실제 기기·운영·법률 검토 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleOfferController.java",
+          "sha256": "d273f3118e0d8750bc775df6c2a17cb86096bee3c1b6aa6fb6824c2b43c13cfe",
+          "reviewScope": "지원 목록·생성·수정·철회·결정의 실제 경로/타입과 철회 안전 출구."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/VehicleOfferService.java",
+          "sha256": "a4beeea58c64a3f7ddfc20823d8caee3a53e33ddb888f66915c5688fdf84010b",
+          "reviewScope": "getOffers/save/withdraw/decide/approveWithinCommand/confirmVehicle 및 권한·상태 보조 함수: 지원과 배정 분리·현재 배정 해제·운전자 별도·동승 정원·기존 SELF 보존."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/VehicleOfferParam.java",
+          "sha256": "7f3563b2520b126ab7e6a4e578701e4717c87da1ec38925f1fe3688b8c2f6303",
+          "reviewScope": "동승 정원·선택 경로/안내/비용과 미정의 입력 필드 거절."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/model/EventVehicleOffer.java",
+          "sha256": "e965d538b77aa0b3955d434d5534cb4bf45eba704d86141abf70896ad855032a",
+          "reviewScope": "PENDING 기본 상태·지원 정보·승인 차량/교체/구형 연결·결정 이력."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/vo/EventVehicleOfferVo.java",
+          "sha256": "48776c85b1d6db02665da7bd06650c0a7342d999e34dc2d183342519e1257e12",
+          "reviewScope": "지원 목록의 상태·정원·선택 비용·승인/교체/구형 연결·사유 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/constants/VehicleOfferStatus.java",
+          "sha256": "6e4f4a5a09f72ba37ebe166251ebd80459c4c72fe55d48679317e9eb6e3ca78b",
+          "reviewScope": "PENDING/APPROVED/REJECTED/WITHDRAWN/PARTICIPATION_ENDED 정확한 값."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportReplacementService.java",
+          "sha256": "47e5cc857c10f7504cfd95931fe6571bc5639c0fcf9f54b92f856faec041eda7",
+          "reviewScope": "replace/validatePlan의 현재 확정 차량·대기 지원·전원 결과·정원·한 명령 취소/승인/재배정. 위임된 배정 알고리즘 전체 감사 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportLifecycleController.java",
+          "sha256": "dcab95b14812464a115bbe9a4d23c81c8c5b54cafab7d397fafce74b766cb91b",
+          "reviewScope": "운행 취소와 조율 종료 POST 창구·안전 출구·공통 명령 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportLifecycleService.java",
+          "sha256": "429fe256c6ee4010b0105baab0932052cfa9ec020671a922b770498f86d3f394",
+          "reviewScope": "cancel/leave/participationEnded/cancelForReplacementWithinCommand/terminate 및 assertCanCancel/Leave: 현재 배정 정리·이력·재배정·사유·자격. 모든 외부 참가 종료 호출부 실행 검증 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportReallocationService.java",
+          "sha256": "c8358928eee2e4920d480f0aa3d3766ab643e0540674b22f8b91247a248b5b0f",
+          "reviewScope": "record 56–76·markNeedsAssignment·eligibleUsers 276–283: 남은 현재 회원/주최자·종료 후 보관·운전자 정보. 전체 후속 재계산 알고리즘 감사 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventVehicleReportController.java",
+          "sha256": "0df6235b805b49477138543a83cb6aca9ca73b24c32587f74510bd5be0bc7572",
+          "reviewScope": "차량 신고 실제 경로·HTTP201 ReportVo·출시 범위 안전 출구."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/EventVehicleReportService.java",
+          "sha256": "05b6241f1e6440eacaa826a597c1071f8dd9deefcac0b6b9656a77757af81c14",
+          "reviewScope": "reportVehicle 125–158 실제 참석·같은 모임 CAR·소유자·본인/예상대상 불일치 거절 및 신고 위임. 관리자 처리 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/transport/service/VehicleOfferServiceTest.java",
+          "sha256": "abcda6dd5c2814c1ed37186493359930e66ceecef2630e749a5fa3a82d99e286",
+          "reviewScope": "110–142 지원/수정/거절/철회 때 배정 미변경·비용null·SELF미생성,167–190 승인 때 최신자리 해제·운전자/동승3자리 단언. 실행 안 함."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_assignment_form.dart",
+          "sha256": "035f4c2dbb33681bc156cb99b9c28c27b7f19a9dac97607c911e70f4e1f06a04",
+          "reviewScope": "833–875 교체 현재 지원·전 운전자 포함 전원/정원 검사,1069–1078 교체 요청과1119–1122 명령 연결. 전체 배정 폼 검수 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_liability_notice.dart",
+          "sha256": "731e7ded18b65377095c324288c460e5aaea2ab72ce013cb7d7ef0a8335d7152",
+          "reviewScope": "현재 고지의 면허/보험/차량 확인·안전보증 부재·귀책/법령·운영자 책임 비배제 문구 존재. 법률 검토 아님."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportPreferencesService.java",
+          "sha256": "ebe1b30142722a1a9c4b360afd7248a9985f7ca504a5beda21a2bdbacf6231d6",
+          "reviewScope": "intent 57–94의 상세/대상 자격·OPEN/사용·새 개별 이동·배정된 차량·기존 SELF·개인 승차 장소 처리."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "transportCommandOpen·offerCarNoOwnedCar/NoPendingOffer·individualTravelFromVehicle/Allowed의 실제 조건."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportCommandInputCheck.java",
+          "sha256": "9ad8cfcdee48f645714feb504c61de44b944b2ab22792fb444729b30fe20f560",
+          "reviewScope": "지원 정원1~99·경로/안내500·선택 비용0~10억·승차 장소200·결정 bool/사유 상한. 전체 명령 검증 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportRosterService.java",
+          "sha256": "4a6d6f9cbb196774fe2598fc5f1afba1216ef4a4e7e543510ed51869d46aaaf8",
+          "reviewScope": "114–142 개인 승차 장소 공개 조건·확정 공동 차량·본인/주최자 지원 공개. 전체 차단/탈퇴 마스킹 감사 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+          "sha256": "c9fd3b16f1bb24cb7ff9a0e606f3cf16c97d24035e3a7288d236dd5ebb15502e",
+          "reviewScope": "intent와replace의 현재 입력·응답·경로."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_coordination_forms.dart",
+          "sha256": "2f94e4a2e0a74b2a5284a28d2e0efb288d3f135b733622a394a0627adf03fd2c",
+          "reviewScope": "지원/버스 공용 폼 중 지원 분기14–168, 이동 의사173–264, 확인 폼337–483: 입력/비용/공용안내·개인장소·정리 명령의 구분."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/transport_coordination_screen.dart",
+          "sha256": "c2f53e7b2702bf8d65cb196be79497a2846149afcf12d417f80b5e9dfc21f5e8",
+          "reviewScope": "597–645 차량 교체·취소 입구,801–894 관리자 대기지원/본인 처리결과·구형 정리/역할/사용조건별 버튼. 실제 렌더 검수 아님."
+        },
+        {
+          "path": "community_app/lib/data/models/event/transport_coordination_param.dart",
+          "sha256": "55a700c0f5b176d0b3a1ba1dced5ac35ddcff8f72f9c63e6ce2bb92a4c4f142d",
+          "reviewScope": "지원/결정/취소/의사/교체 DTO 실제 필드·nullability·목록 기본값."
+        },
+        {
+          "path": "community_app/lib/data/api/transport_coordination_api.dart",
+          "sha256": "ff85dff71c1ae3465c334c79f453b635394f43b416a61284dfcaff9c31192167",
+          "reviewScope": "지원 생성/수정/철회/결정·교체·운행 취소·조율 종료 API 연결."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+          "sha256": "10d32aa1a2ab7323f883fa5b95200e3ebf108f8a14f9d60f6b0037d9324caaf6",
+          "reviewScope": "169–218 교체·지원·운행 취소·조율 종료의 공통_run 연결. 공통 재시도 증거는 transport_policy 그룹 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportCommandGate.java",
+          "sha256": "e370c154011036424e74731ed8373aacc63c307b8d5c58a17da4eca6a89084aa",
+          "reviewScope": "transport_policy 그룹의 동일 SHA execute/fingerprint 공통 명령·현재 권한·개정/동일 요청 처리 재사용."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_editor_frame.dart",
+          "sha256": "6cf0dc46aa7832e9c62a2325a837ff6cf5d755aa479d53bb8c8c58f0e0078bbc",
+          "reviewScope": "transport_policy 그룹의 동일 SHA 미확정 요청 보관/동일 요청 확인·확정 오류 현황 재검토·계정 변경 처리 재사용."
+        }
+      ],
+      "reuses": [
+        "event_plan_link_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
+          "sha256": "d42329b306b225e07f6abf3cb9b4aa4fd50a8ce6b0ba0c8da3043d2c42c9c176"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-15.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-7",
+          "transport-notice-current",
+          "current-9",
+          "current-limits",
+          "current-11",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-15:1",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:2",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:3",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:4",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:5",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:6",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:7",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:8",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:9",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        },
+        {
+          "id": "F03-15:10",
+          "change": "added",
+          "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
         }
       ]
     }

@@ -200,7 +200,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | --- | --- | --- | --- | --- | --- |
 | F03-13 | 이벤트 | `F03-13_event-prepayment_prd.md` | 참가 선입금 (서버 WALLET/BANK, Flutter WALLET only) | W2a/W2b/W3 | current source 실측 |
 | F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 이동 조율·개별 이동·배정 후 본인 변경 정책과 요청 재확인 | W4에서 시작 | 2026-11-22 현재 소스 대조; 실제 기기 확인 별도 |
-| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 승용차 제안·결정·취소와 자차·탑승 조율 | W5에서 시작 | 2026-09-02 코드 완료 |
+| F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 배정과 독립된 차량 지원·승인·운행 취소·전원 교체·개별 이동 | W5에서 시작 | 2026-11-22 현재 소스 대조; 실제 기기 확인 별도 |
 | F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 대절 버스, 지정·비지정 자리와 배정·반납·신고 | W7에서 시작 | 2026-09-02 코드 완료 |
 | F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 표준 9종과 관리자 배치도 운영 | W6에서 시작 | 2026-09-02 코드·운영 화면 완료 |
 
@@ -248,7 +248,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-12 | 이벤트 | [F03-12_my-events_prd.md](02_feature_prds/03_event/F03-12_my-events_prd.md) | `F03-12_my-events` | 실사 기반 전환본 | 5 | 6 |
 | F03-13 | 이벤트 | [F03-13_event-prepayment_prd.md](02_feature_prds/03_event/F03-13_event-prepayment_prd.md) | `source-first` | 신규 PRD | 14 | 8 |
 | F03-14 | 이벤트 | [F03-14_event-transport-mode_prd.md](02_feature_prds/03_event/F03-14_event-transport-mode_prd.md) | `source-first` | 신규 PRD | 4 | 4 |
-| F03-15 | 이벤트 | [F03-15_event-carpool_prd.md](02_feature_prds/03_event/F03-15_event-carpool_prd.md) | `source-first` | 신규 PRD | 7 | 6 |
+| F03-15 | 이벤트 | [F03-15_event-carpool_prd.md](02_feature_prds/03_event/F03-15_event-carpool_prd.md) | `source-first` | 신규 PRD | 10 | 4 |
 | F03-16 | 이벤트 | [F03-16_event-bus-charter_prd.md](02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | `source-first` | 신규 PRD | 6 | 6 |
 | F03-17 | 이벤트 | [F03-17_vehicle-layout-catalog_prd.md](02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | `source-first` | 신규 PRD | 2 | 2 |
 | F03-18 | 이벤트 | [F03-18_event-demographics_prd.md](02_feature_prds/03_event/F03-18_event-demographics_prd.md) | `source-first` | 신규 PRD | 1 | 4 |

@@ -14,9 +14,9 @@ window.SCENARIO_AUDIT = {
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 60,
+    "directlyLinkedAutomatedTests": 59,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 60,
+    "automatedScenarioReferences": 59,
     "directlyLinkedJourneys": 32,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 32,
@@ -24,11 +24,11 @@ window.SCENARIO_AUDIT = {
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 40,
-    "partialEvidenceChain": 51,
+    "completeEvidenceChain": 39,
+    "partialEvidenceChain": 52,
     "definitionOnlyEvidence": 84,
-    "traceMarkers": 413,
-    "verifiedTraceRecords": 411,
+    "traceMarkers": 423,
+    "verifiedTraceRecords": 421,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3311,23 +3311,188 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 10,
+        "verified": 10,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-15:1",
+            "label": "GET /api/v1/events/{eventId}/transport/offers — 지원 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleOfferController.java",
+                "controller": "VehicleOfferController",
+                "method": "list",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/transport/offers",
+                "targetLine": 24,
+                "methodLine": 25
+              }
+            ]
+          },
+          {
+            "id": "F03-15:2",
+            "label": "POST /api/v1/events/{eventId}/transport/offers — 지원 생성",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleOfferController.java",
+                "controller": "VehicleOfferController",
+                "method": "create",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/offers",
+                "targetLine": 30,
+                "methodLine": 31
+              }
+            ]
+          },
+          {
+            "id": "F03-15:3",
+            "label": "PUT /api/v1/events/{eventId}/transport/offers/{offerId} — 지원 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleOfferController.java",
+                "controller": "VehicleOfferController",
+                "method": "update",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/events/{eventId}/transport/offers/{offerId}",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          },
+          {
+            "id": "F03-15:4",
+            "label": "POST /api/v1/events/{eventId}/transport/offers/{offerId}/withdraw — 지원 철회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleOfferController.java",
+                "controller": "VehicleOfferController",
+                "method": "withdraw",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/offers/{offerId}/withdraw",
+                "targetLine": 42,
+                "methodLine": 44
+              }
+            ]
+          },
+          {
+            "id": "F03-15:5",
+            "label": "POST /api/v1/events/{eventId}/transport/offers/{offerId}/decision — 지원 결정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleOfferController.java",
+                "controller": "VehicleOfferController",
+                "method": "decide",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/offers/{offerId}/decision",
+                "targetLine": 49,
+                "methodLine": 50
+              }
+            ]
+          },
+          {
+            "id": "F03-15:6",
+            "label": "PUT /api/v1/events/{eventId}/transport/coordination/my-intent — 이동 의사",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "intent",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/my-intent",
+                "targetLine": 42,
+                "methodLine": 43
+              }
+            ]
+          },
+          {
+            "id": "F03-15:7",
+            "label": "POST /api/v1/events/{eventId}/transport/vehicles/{vehicleId}/cancel — 운행 취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportLifecycleController.java",
+                "controller": "TransportLifecycleController",
+                "method": "cancel",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/vehicles/{vehicleId}/cancel",
+                "targetLine": 21,
+                "methodLine": 23
+              }
+            ]
+          },
+          {
+            "id": "F03-15:8",
+            "label": "POST /api/v1/events/{eventId}/transport/leave — 이동 조율 종료",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportLifecycleController.java",
+                "controller": "TransportLifecycleController",
+                "method": "leave",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/leave",
+                "targetLine": 28,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F03-15:9",
+            "label": "POST /api/v1/events/{eventId}/transport/coordination/vehicles/{vehicleId}/replacement — 지원 차량 교체",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "replace",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/vehicles/{vehicleId}/replacement",
+                "targetLine": 66,
+                "methodLine": 67
+              }
+            ]
+          },
+          {
+            "id": "F03-15:10",
+            "label": "POST /api/v1/events/{eventId}/vehicles/{vehicleId}/report — 차량 소유자 신고",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventVehicleReportController.java",
+                "controller": "EventVehicleReportController",
+                "method": "reportVehicle",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/vehicles/{vehicleId}/report",
+                "targetLine": 50,
+                "methodLine": 51
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 5,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 5,
-        "files": [
-          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleReportServiceTest.java",
-          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
-          "community_api/domain/src/test/java/com/endside/community/review/service/ReportServiceTest.java",
-          "community_app/test/core/router/transport_report_route_gate_test.dart",
-          "community_app/test/widget/event/vehicle_seat_command_access_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -3338,7 +3503,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
