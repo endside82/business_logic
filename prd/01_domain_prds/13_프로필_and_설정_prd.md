@@ -140,22 +140,14 @@
   - UI 스펙(SCR-PS-006)은 PUT 일괄 업데이트를 가정하지만 서버는 단건 API를 제공하고 현재 화면은 POST/DELETE만 호출한다. 이름·가중치 편집 caller는 없다.
   - POST/DELETE 실패는 Provider에서 `false`로 접히며 화면이 Future를 await하지 않아 오류 안내와 재동기화가 없다.
 
-### F13-05 데이터 내보내기 (Data Export)
+### F13-05 데이터 내보내기
 
-- **사용자 가치**: 자기 데이터의 사본을 JSON으로 받아 다른 곳에 보관·검토할 수 있게 함으로써 데이터 이동권/투명성을 보장한다(GDPR 데이터 이동권 구현).
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/data_privacy_screen.dart` 내 `_DataExportSection`
-- **백엔드 엔드포인트** (`DataPrivacyController`, prefix `/api/v1/users/me`):
-  - `POST /data-export` — 비동기 작업 큐잉, 202 Accepted + `DataExportRequestVo`
-  - `GET /data-export/status` — 현재 요청 상태 조회 (`DataExportRequestVo`, status: PROCESSING/COMPLETED/EXPIRED/FAILED 등)
-  - 관리자 `MANAGE_PRIVACY`: `/admin/v1/manage/privacy/export-requests/{id}/process|expire|reissue` — `expire`만 수동 EXPIRED 전이, `reissue`는 COMPLETED와 미래 만료 시각을 기록
-- **선결 조건/상태**: 로그인 상태. 진행 중인 요청이 없거나(null), 완료/만료/실패 상태에서 재요청 가능.
-- **결과 상태 변화**:
-  - 요청 성공(202): 상태가 PROCESSING으로 전환, 요청 버튼 비활성, 진행 인디케이터 + 경과 시간 + "최대 48시간" 안내 + 새로고침 아이콘 노출
-  - COMPLETED + downloadUrl 존재: "다운로드" 버튼 노출(외부 브라우저로 열기), 만료일 D-day 표시
-  - FAILED에서 다시 요청하면 새 PROCESSING row가 생기고 기존 FAILED row는 보존된다. public status는 최신 row 하나만 반환한다.
-  - 실제 EXPIRED 응답: "다시 요청" 버튼 노출. 다만 자연 만료는 status를 바꾸지 않고 `COMPLETED + downloadUrl=null`을 반환하며, EXPIRED는 관리자 `expire`를 실행한 경우에만 도달한다.
-  - 알 수 없는 상태값: 현재 상태 그대로 표시 + "다시 요청" 버튼
+- **사용자 가치와 입구:** 전체 메뉴 → 설정 → 데이터 내보내기·탈퇴에서 자기 자료의 JSON 사본을 요청한다. 자료 포함·제외와 법률 검토는 구분한다.
+- **요청·조회:** 서버가 새 요청을 접수하면 처리 중으로 표시한다. 화면은 최신 요청 하나를 읽고 수동 새로고침으로 결과를 확인한다. 요청 없음과 조회 실패를 구분하며 오류 때는 재조회한다.
+- **완료·실패:** 주소가 있는 완료 요청은 외부 앱에서 다운로드한다. 실패·만료에서는 새 요청을 만들며 알 수 없는 상태는 ‘상태 확인 필요’로 표시한다. 완료인데 주소가 없는 경우와 외부 열기 실패 안내는 아직 부족하다.
+- **기한·정리:** 기한은 요청일부터 30일이다. 자동 복구와 만료 정리 작업이 있으며, 요청 만료·파일 삭제 요청 기록과 실제 저장소 삭제는 별도 단계다. 관리자 수동 만료만 존재한다는 과거 설명은 정정한다.
+- **현재 제약:** 최대 48시간 안내의 처리 보장, 요청 중복·응답 유실, 관리자 재발급과 회원 다운로드의 일치를 구분해 확인한다. 세부 흐름·근거·현재 차이는 [데이터 내보내기 PRD](../02_feature_prds/13_profile_settings/F13-05_data-export_prd.md)가 정본이다.
+- **검토 범위:** 이 항목은 2026-11-22 소스 대조를 반영했다. 전체 프로필 도메인의 나머지 항목과 실제 외부 파일 수령은 별도 검토 대상이다.
 
 ### F13-06 계정 삭제 요청 (30일 유예)
 

@@ -2523,8 +2523,10 @@
       "document": true,
       "baselineSha256": "28caf8484660f731e38ae637ff8895bdb841e39f1c5f2da9000841ffb38c1aad",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "event_detail_lifecycle_20261122"
+      ]
     },
     {
       "path": "docs/features/F03-03.html",
@@ -4657,7 +4659,9 @@
       "baselineSha256": "414496769b12cd72449e1f2139b542a751ab0ae4cf0d3f6722accdd512df2782",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "data_export_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -4967,7 +4971,9 @@
       "baselineSha256": "325cd1e470a837cce1be944e517120e2f925583031a74b160617e3fbaf290fac",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "data_export_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -5216,7 +5222,9 @@
       "baselineSha256": "962c994938fce6619f99247d9e9a55e4a295d24106e344386938a5fee62b01fd",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "event_detail_lifecycle_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -7003,9 +7011,10 @@
       "disposition": "updated",
       "evidence": [
         "notification_domain_20261122",
-        "notification_delivery_20261122"
+        "notification_delivery_20261122",
+        "data_export_20261122"
       ],
-      "reviewedSha256": "9c7c54d9e4cb5c585cff0aaf4f64a5ecf5c3a1e0d0c2e13632f36124b659f1c6"
+      "reviewedSha256": "342a08df4f0d35e14a356875f5fd726cc693f0d6e5cd36479a6fdf02bc570329"
     },
     {
       "path": "prd/03_policy_prds/payment_settlement_policy_prd.md",
@@ -13605,6 +13614,68 @@
         {
           "path": "docs/plan/NEXT_WORK.md",
           "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportAsyncWorker.java",
+          "sha256": "3db78785e13e5295374cd59a1db10c801c0f316e986e2786c32010d45ca2d434"
+        }
+      ]
+    },
+    "event_detail_lifecycle_20261122": {
+      "kind": "partial_source_review",
+      "scope": "F03-02 삭제·다음 회차·취소 후 복구 입구. 결제·핏·클럽 상세·사진 등 전체 범위와 로컬 units는 미완료. 시험은 소스/목적만 확인, 재실행 기록 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventService.java",
+          "sha256": "0d3cfd4f4e5fcd048ff6eaab97f06d628c0971122e9d9ad410ebe733af79eb98"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventEntryService.java",
+          "sha256": "c8de4906deab9c12d477f05c1d1c9c9cb653fc018010a35385ed517828c0d81c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCommandSupport.java",
+          "sha256": "5e260233add5b7c20e5c8559eff2ec791fb2b538ec237a95d64e09e5764bd775"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventDetailQueryService.java",
+          "sha256": "16806f0195009dcb3ae72777b50bb7538434ea6f72a46841d5ac5ebf673f317b"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_action_bar.dart",
+          "sha256": "ca884a211727c6a93716dea6927961126643fac44ebdab0a07aca904fa2e838f"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_more_menu.dart",
+          "sha256": "252a612d862f754cb53a45bf76f6cafc68bf9c8cc3b84fb126afb4217a1c16ee"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/next_occurrence_flow.dart",
+          "sha256": "0c4ef54dc40b1ef1a8f80378fbf1bd3b84ee8a6eee466152ae7444bd4d999709"
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_type.dart",
+          "sha256": "ce1d9b19c05a22c41ee6151937f20e22220c50c48364db7797e0d106413b8108"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_lifecycle_provider.dart",
+          "sha256": "686d3bc87801a938da2ae219d015f236c7208f30fcf4ee666b6d3705a6e789da"
+        },
+        {
+          "path": "community_app/test/widget/event/event_detail_draft_delete_menu_test.dart",
+          "sha256": "43874fbb211f5b07237b61ef8376be3a8ad762d8cf6f3daa0d0379c9b520e954"
+        },
+        {
+          "path": "community_app/test/audit/entry_paths_event_delete_result_test.dart",
+          "sha256": "342dcc44813bd988c0ed55a50e62b75c0d25594cc081e805b3bd3918c2114ba0"
         }
       ]
     }
