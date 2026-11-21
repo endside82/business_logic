@@ -3661,9 +3661,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "170ce2c3914569613b0bec5bb18d4badde7c675dd603b9ab0ca3d8243e2f6b41",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "4c51b4bed80e343b4f162ec143dbf6bd8841845f26d0136e47f28e22b6644ee2"
     },
     {
       "path": "docs/features/F13-07.html",
@@ -3671,9 +3674,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5b135615610b09890e94b361c11f91cab5339acc2cfaeb0379bb4994db722f4f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "89c48fafedfcc4bdd7a113730e33c01aaa8568aefe508221cdd9f9610c7df58a"
     },
     {
       "path": "docs/features/F14-01.html",
@@ -6494,10 +6500,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "cb1dd0bb6f94bd1f7e5beb0ae7b73022863cd7a952640a77c3c0b6424d84473c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
@@ -6505,10 +6513,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "3f53c799afe5b7fed1cc87c192ddb2fc34b3169c998cf9976a6eca850d37653d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
@@ -12338,9 +12348,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "51bf9a45b93d3531f4c288c1a2d2b1938fdc39059b71e556159acd9691f9beb9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "3524f9655e2e4590f1a6e560804db6edfcf9d194b79aefd25b83535e540c5156"
     },
     {
       "path": "units/13_profile_settings/F13-06_account-deletion/diagrams.md",
@@ -12348,9 +12361,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "dd5fe5834cf0fcaabd7d4db6162aa187d4c0f6d85e4df60701314e18b0b5ae21",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "397546257d2fb59ba16a0d812a92041cba10019f0ea61baf70bb48c09d5161d4"
     },
     {
       "path": "units/13_profile_settings/F13-06_account-deletion/frontend.md",
@@ -12358,9 +12374,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2cc2c3957f09c9e24d679c456a3ee9ddd453af4ed0603a9ebe66f38a0dc00d92",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "79b1311498f5995d2c957a9be9fb7d5b88f5b68c842931f59451b3704be16280"
     },
     {
       "path": "units/13_profile_settings/F13-06_account-deletion/scenarios.md",
@@ -12368,9 +12387,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7c5c95f97e741baddfe8c2e1a8648cba8e3bef1e82e410ac731f6b65e3c0012f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "c4f07d94ca85dde45d6d4c25f55319e39f2a43459f699baead040678a6fd0258"
     },
     {
       "path": "units/13_profile_settings/F13-07_account-deactivation/backend.md",
@@ -12378,9 +12400,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cabd67b83951223c465b8a1a68c22842ad51507a9171b1fa30aa78d0ce843e90",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "741b86fb837fec59b73854f297a09d12700cb1bb86bf54d3ffaf9dc53ddd5436"
     },
     {
       "path": "units/13_profile_settings/F13-07_account-deactivation/diagrams.md",
@@ -12388,9 +12413,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1c796e20f5da5683de7ca3402ad904005f000f142d1b0a7358b53f5625d593e3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "57bd51c05c222b479fad5a710742f3bba5e36b5c434a39a8d1d98c5fa10dc96e"
     },
     {
       "path": "units/13_profile_settings/F13-07_account-deactivation/frontend.md",
@@ -12398,9 +12426,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "66f7c78e0b954ba414022d47c25e6167d761013558a552bd8a70790666bd224a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "d378a9db2f78eb55a54b14d1bdb30b4e3276da225edd36bf3718ddf44956166f"
     },
     {
       "path": "units/13_profile_settings/F13-07_account-deactivation/scenarios.md",
@@ -12408,9 +12439,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "072cd0b63d5e70bc5e786886fecd8f276dd13907f65aa552cfc828b23f4d890a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "account_closure_20261122"
+      ],
+      "reviewedSha256": "0c13b3b7a72fbdc849e486214b9efbf6f8a46c93189a17b28e52fe852c2ea5af"
     },
     {
       "path": "units/14_location_directions/00_overview.md",
@@ -13621,7 +13655,23 @@
         "localSourceLocations": 329,
         "reviewedDocumentRelativePaths": 536
       },
-      "scope": "문서·근거·생성 자료 검사. 인증 8개 기능과 영역 설명의 소스 대조이며 제품 시험·실계정·메일·기기 검증 아님. 출시 범위 날짜 관문은 별도 미해결. 과거 검증은 external-integration 섹션을 보존하며 release-completion의 현재 판정 조건과 구분한다."
+      "scope": "문서·근거·생성 자료 검사. 인증 8개 기능과 영역 설명의 소스 대조이며 제품 시험·실계정·메일·기기 검증 아님. 출시 범위 날짜 관문은 별도 미해결. 과거 검증은 external-verification-2026-10-12 섹션을 보존하며 release-completion의 현재 판정 조건과 구분한다."
+    },
+    {
+      "command": "F13-06/07: source_references tests; sync_source_reference_docs; check_scenario_audit; reviewed paths/digests; derived source digests; current source digests; existing HTML IDs; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 90,
+        "sourceRecords": 332,
+        "verifiedRecords": 330,
+        "retiredRecords": 2,
+        "localSourceLocations": 333,
+        "reviewedDocumentRelativePaths": 575,
+        "derivedSourceDigests": 69,
+        "currentBatchSourceDigests": 49
+      },
+      "scope": "계정 삭제 예약·즉시 탈퇴의 문서와 생성 자료 검사. 소스와 시험 목적·일부 본문 대조이며 새 제품 시험·실기기·운영 파기·법적 적합성·파일 소거·실제 송금 완료의 검증 아님. 출시 범위 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -14589,6 +14639,208 @@
         {
           "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md",
           "sha256": "4783a96eca43a387b31bba9834f034720c852664ed0ff4a616501909e115ebba"
+        }
+      ]
+    },
+    "account_closure_20261122": {
+      "kind": "source_review",
+      "scope": "F13-06/07의 서버·앱 진입, 선택 동의 본문, 상태·권한·잠금 재판정·부분 정리·파기 및 외부 완료 경계. 관련 함수·선언·시험 목적과 일부 본문 대조이며 새 실행·법적 적합성·운영 삭제·실제 송금 검증 아님. 개인정보 하위 소거기의 모든 외부 실행을 확인했다고 확대하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/modules.txt",
+          "sha256": "d72efed4d47bafe20fe5ca35210aa257939e1f383b11fcb05be8f0480db4a924"
+        },
+        {
+          "path": "docs/ui-ux/screens/28-profile-settings.md",
+          "sha256": "628e4876e3ae0a3044fe8f3925332a938ba5f8596dec8a3474fab84d4670e2f9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AccountClosureEntry.java",
+          "sha256": "72a635da365e00a173e5fce91bf74de13f6421024fb6796e8bb9a35f70c9515f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AccountDeactivationService.java",
+          "sha256": "ad3d00dba0f13baa29a1e0e0472af06895c31e71c7f476c7c2fab62f2b4efc36"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataDeletionService.java",
+          "sha256": "7d29e4cae9064b59f56eac04eea20bef66d5043c715ba71e0aa924684e35a1dc"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataDeletionExecutionWorker.java",
+          "sha256": "b2db88c8b8c88b83ba712bb5cedafe817328e890bd88dbc03840df4d9aab2a9f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataDeletionLockedRunner.java",
+          "sha256": "5f176f003124ce2327a02a7ef0ccceaee77828ed84cd4894d04bbd37eeab08fe"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserDeactivationFinalizer.java",
+          "sha256": "2a3e4f54bd9941981ea9377d9fbe7ac567b2db905be2a25d628e77ee257c95ef"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/EscrowForfeitConsent.java",
+          "sha256": "398f3391668e4d64fe76e3d704638ea41f223f9d9b0809250fb0b84f59d84aa9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/EscrowForfeitNotice.java",
+          "sha256": "fc656a67c32200989c44f24052d5598e0e21b26e3171ccc3d207335cd97dbbc3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/MemberProfileEraser.java",
+          "sha256": "05bdf48dcb5213d85cdb53e46325f0f06af9f34161261c6f3b45074e71bcd04f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/closure/ClosureKind.java",
+          "sha256": "90d3a5802c08eac66b072f6445c1cd4507e8f5c675965010228cbfa993aae16f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/DeactivationCheckVo.java",
+          "sha256": "6a4b4ad1177d0e34e76d76df72f9f5e1edaf0f283e9e105260ec001e71e54aa4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/DataDeletionRequestVo.java",
+          "sha256": "0252db1b0dcc27a85e7d20e06a3c9bd3369449b86f5e6cf35d77167b8fac854f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/DeactivationConsentParam.java",
+          "sha256": "4aac41a4b0141e83b9556271188561d5830e473b7b950118cf233680d987bb83"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/constants/DataDeletionStatus.java",
+          "sha256": "e008a6acb9ffe72ed3e9e16525587cd6799ca63ccd112ab64580efcaf89d22cb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/model/DataDeletionRequest.java",
+          "sha256": "b9a5a0ac27575d4f440cffe3b0c2954bb8d9d86c5fe025bab6b66da05caedd32"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+          "sha256": "b6d27393d41e998f3439604fa31b0479d47a17c403eb9c0b280148dd24c7907c"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+          "sha256": "26920610289d0b5e1fd758db6e73a61b732f90222a865cc3c84b54bd17d3f30d"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/AccountLockPolicy.java",
+          "sha256": "8594e360d2639332af9cb4c58b7b551315598dd80e891f9e71a630fd55a62178"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/privacy/controller/ManageDataPrivacyController.java",
+          "sha256": "9b237bf1f3d00d7a80c6f53c708f1e8555403d29d2715e1ab7c9ea9ac253057b"
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/V1__init.sql",
+          "sha256": "65cd46eb4295dc2bede2b38643ee2339a9d044c8a1bdfa78a52d7f3eea7fb289"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PaymentAccountEraser.java",
+          "sha256": "d0841622de0fe15755ce8a00e6160dd240007d1bb69b2c3247230f5a772e2cd6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalService.java",
+          "sha256": "87d7ac9b8d2bd2b5eb7d1ef944dc703d14996e84b78de1fe9ea1d4ff51635e59"
+        },
+        {
+          "path": "community_app/lib/data/api/auth_api.dart",
+          "sha256": "fbf3456370f5487a1e7589dc42b369520ca2319f3b17c56168de762ae63d4997"
+        },
+        {
+          "path": "community_app/lib/data/api/data_privacy_api.dart",
+          "sha256": "7f58e744335cab82d1a455b85e3fefeea505acc03252a83ce5d1ec11e86364b8"
+        },
+        {
+          "path": "community_app/lib/data/models/user/deactivation_check_vo.dart",
+          "sha256": "ae638a920ece5e7f8f4faa90e46bc3cf7417345d23400aa77dd7acd320dcb7d1"
+        },
+        {
+          "path": "community_app/lib/data/models/user/deactivation_consent_param.dart",
+          "sha256": "3b841efc06f19859014b8bcb41e011b91c10473424400001ae66229811b464f4"
+        },
+        {
+          "path": "community_app/lib/data/repositories/auth_repository.dart",
+          "sha256": "ccac24fb541bb9502f79f41da5da7ebfa70a7237b95ae158fc7abc97a2084459"
+        },
+        {
+          "path": "community_app/lib/data/repositories/profile_repository.dart",
+          "sha256": "962fc3786f158195eceab5feafb20038302c799db3dfe88a8c6f9ee53bab71e2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/data_privacy_provider.dart",
+          "sha256": "4f4b1387472c5ef632c4bfa86c3392fc142a76dc2882b0dfb7caa876592b27ac"
+        },
+        {
+          "path": "community_app/lib/domain/providers/auth_provider.dart",
+          "sha256": "1f74f344223be3e7843561067bd4c8a7bcaf370a6b6eba8e7c8cfaf66db98204"
+        },
+        {
+          "path": "community_app/lib/core/storage/withdrawn_account_device_storage.dart",
+          "sha256": "a137dcd6e45985935592dd814649e7326a0d0b07908858c2a09711adb1bef2ec"
+        },
+        {
+          "path": "community_app/lib/core/router/account_lock_routes.dart",
+          "sha256": "55388cf994113432264a46eff65b35a535040a6f25d49b9261d960cb9d2db8bc"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/data_privacy_screen.dart",
+          "sha256": "b7e53669a5aeb8b02f041b0cd263761b52097afcaa33332df24cad826eff3837"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/app_settings_screen.dart",
+          "sha256": "634d923ab037f0508ace2303b8e81cd0d7cd48dbad5ef346bc7941307f37a888"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart",
+          "sha256": "b67e9ec438f7d0dde9c9b2bbe5b49a616ea4a473b81ad9d09684cb0193c7bb2a"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/account_blocked_screen.dart",
+          "sha256": "46778cb1107b37e22b8f0a70c16ef7023a5df50248fdffc59044a4673cda1473"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/DataDeletionServiceTest.java",
+          "sha256": "e9e1a3d2ccb3e57e62eb286404d53958fcd0b1a4e13de62bf8beb0e404990e44"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/AccountDeactivationServiceTest.java",
+          "sha256": "82fd920ab477cc70e8d99103bea7700073bad13a1683a93936f9b72982f31d6e"
+        },
+        {
+          "path": "community_app/test/presentation/profile/data_privacy_deactivation_gate_test.dart",
+          "sha256": "064d87f69490e794be5f585fae35a418fa59917e7d39363fd00a16501202ff4b"
+        },
+        {
+          "path": "community_app/test/domain/providers/auth/account_deactivation_invalidation_test.dart",
+          "sha256": "d06b7b32ab2a692354ec7384d0fc4d54af335c39d47f621b4dd9efd6e1e41656"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/hold/service/ExitMoneyHoldBook.java",
+          "sha256": "93e443b2d5e4b1c4a1e158b90875ffa3f840fb9c39e69be937c13203783d9a9c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/hold/service/ExitMoneyHoldOperatorCommands.java",
+          "sha256": "696324cbe0bb1f60d1891af9785ca98b0c2739b04eccbd33357e4c0ee26a6876"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/hold/constants/ExitMoneyHoldStatus.java",
+          "sha256": "83ad20d50600cb55056dec852586ce01eaa9e459c50434a2fd64f4ba3c0ecad3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/hold/constants/ExitMoneyHoldSourceType.java",
+          "sha256": "0c65b09981df7a7f611913a8de421e0df53ced8067a343d45d54d6ab951bc82f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingPrepaymentService.java",
+          "sha256": "49ef28ba5282c90cb984925d3b35984fb376bb5122fbe491579b94146a690953"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingPrepaymentRelease.java",
+          "sha256": "541be3db3d432bd7b598652ce26128906ca70269b99fd3b4c2294a35ee530756"
         }
       ]
     }

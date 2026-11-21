@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,063개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,065개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1063,
+    "documentedScenarioItems": 1065,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 49,
     "partialEvidenceChain": 34,
     "definitionOnlyEvidence": 92,
-    "traceMarkers": 328,
-    "verifiedTraceRecords": 326,
+    "traceMarkers": 332,
+    "verifiedTraceRecords": 330,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10985,21 +10985,90 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F13-06",
       "domain": "프로필 & 설정",
-      "name": "계정 삭제 요청",
-      "scenarioCount": 13,
+      "name": "계정 삭제 요청과 취소",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-06_account-deletion/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 13
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-06_account-deletion/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F13-06:1",
+            "label": "GET /api/v1/users/me/deactivation-check — 삭제 예약·점검·상태·취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "checkDeactivation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/deactivation-check",
+                "targetLine": 77,
+                "methodLine": 78
+              }
+            ]
+          },
+          {
+            "id": "F13-06:2",
+            "label": "POST /api/v1/users/me/data-deletion — 삭제 예약·점검·상태·취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+                "controller": "DataPrivacyController",
+                "method": "requestDeletion",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/data-deletion",
+                "targetLine": 45,
+                "methodLine": 46
+              }
+            ]
+          },
+          {
+            "id": "F13-06:3",
+            "label": "GET /api/v1/users/me/data-deletion/status — 삭제 예약·점검·상태·취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+                "controller": "DataPrivacyController",
+                "method": "getDeletionStatus",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/data-deletion/status",
+                "targetLine": 53,
+                "methodLine": 54
+              }
+            ]
+          },
+          {
+            "id": "F13-06:4",
+            "label": "DELETE /api/v1/users/me/data-deletion — 삭제 예약·점검·상태·취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+                "controller": "DataPrivacyController",
+                "method": "cancelDeletion",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/users/me/data-deletion",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -11028,14 +11097,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F13-07",
       "domain": "프로필 & 설정",
-      "name": "계정 즉시 비활성화",
-      "scenarioCount": 5,
+      "name": "계정 즉시 탈퇴",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-07_account-deactivation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-07_account-deactivation/backend.md",

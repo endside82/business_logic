@@ -19,6 +19,8 @@
 
 인증·온보딩 기능 8개는 [인증과 온보딩 영역의 현재 동작과 확인 범위](01_domain_prds/01_인증_and_온보딩_prd.md)에 종합했다. 아래 인증 행의 코드 참조·확인 항목 수는 2026-11-22 대조를 반영하며, 전환 상태는 문서 작성 계보를 유지한다. 소스 대조를 새 시험 실행이나 실제 계정·기기 검증으로 계산하지 않는다.
 
+계정 삭제 예약·즉시 탈퇴 두 기능도 2026-11-22 대조를 반영했다. [삭제 예약의 현재 흐름과 지연 조건](02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md)과 [즉시 탈퇴의 동의·부분 정리·돈 처리 경계](02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md)를 기준으로 관련 행의 참조·확인 항목 수를 갱신했다.
+
 ## 요약
 
 | 항목 | 개수 |
@@ -341,8 +343,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F13-03 | 프로필 & 설정 | [F13-03_address-management_prd.md](02_feature_prds/13_profile_settings/F13-03_address-management_prd.md) | `F13-03_address-management` | 실사 기반 전환본 | 5 | 5 |
 | F13-04 | 프로필 & 설정 | [F13-04_preference-tags_prd.md](02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | `F13-04_preference-tags` | 실사 기반 전환본 | 4 | 7 |
 | F13-05 | 프로필 & 설정 | [F13-05_data-export_prd.md](02_feature_prds/13_profile_settings/F13-05_data-export_prd.md) | `F13-05_data-export` | 실사 기반 전환본 | 2 | 6 |
-| F13-06 | 프로필 & 설정 | [F13-06_account-deletion_prd.md](02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | `F13-06_account-deletion` | 실사 기반 전환본 | 3 | 4 |
-| F13-07 | 프로필 & 설정 | [F13-07_account-deactivation_prd.md](02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | `F13-07_account-deactivation` | 실사 기반 전환본 | 2 | 7 |
+| F13-06 | 프로필 & 설정 | [F13-06_account-deletion_prd.md](02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | `F13-06_account-deletion` | 실사 기반 전환본 | 4 | 6 |
+| F13-07 | 프로필 & 설정 | [F13-07_account-deactivation_prd.md](02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | `F13-07_account-deactivation` | 실사 기반 전환본 | 2 | 4 |
 | F14-01 | 위치 & 길찾기 | [F14-01_event-location-share_prd.md](02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md) | `F14-01_event-location-share` | 실사 기반 전환본 | 3 | 2 |
 | F14-02 | 위치 & 길찾기 | [F14-02_location-opt-out_prd.md](02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md) | `F14-02_location-opt-out` | 실사 기반 전환본 | 1 | 2 |
 | F14-03 | 위치 & 길찾기 | [F14-03_location-extend_prd.md](02_feature_prds/14_location_directions/F14-03_location-extend_prd.md) | `F14-03_location-extend` | 실사 기반 전환본 | 1 | 3 |
