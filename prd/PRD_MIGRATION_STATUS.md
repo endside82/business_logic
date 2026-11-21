@@ -243,7 +243,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-07 | 이벤트 | [F03-07_capacity-and-waitlist_prd.md](02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | `F03-07_capacity-and-waitlist` | 실사 기반 전환본 | 8 | 6 |
 | F03-08 | 이벤트 | [F03-08_qr-checkin_prd.md](02_feature_prds/03_event/F03-08_qr-checkin_prd.md) | `F03-08_qr-checkin` | 실사 기반 전환본 | 5 | 8 |
 | F03-09 | 이벤트 | [F03-09_event-photos_prd.md](02_feature_prds/03_event/F03-09_event-photos_prd.md) | `F03-09_event-photos` | 실사 기반 전환본 | 14 | 11 |
-| F03-10 | 이벤트 | [F03-10_event-plan-link_prd.md](02_feature_prds/03_event/F03-10_event-plan-link_prd.md) | `F03-10_event-plan-link` | 실사 기반 전환본 | 5 | 3 |
+| F03-10 | 이벤트 | [F03-10_event-plan-link_prd.md](02_feature_prds/03_event/F03-10_event-plan-link_prd.md) | `F03-10_event-plan-link` | 실사 기반 전환본 | 6 | 6 |
 | F03-11 | 이벤트 | [F03-11_wishlist_prd.md](02_feature_prds/03_event/F03-11_wishlist_prd.md) | `F03-11_wishlist` | 실사 기반 전환본 | 3 | 3 |
 | F03-12 | 이벤트 | [F03-12_my-events_prd.md](02_feature_prds/03_event/F03-12_my-events_prd.md) | `F03-12_my-events` | 실사 기반 전환본 | 5 | 6 |
 | F03-13 | 이벤트 | [F03-13_event-prepayment_prd.md](02_feature_prds/03_event/F03-13_event-prepayment_prd.md) | `source-first` | 신규 PRD | 14 | 8 |

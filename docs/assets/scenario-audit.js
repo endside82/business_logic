@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,138개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,144개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1138,
+    "documentedScenarioItems": 1144,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 61,
+    "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 61,
-    "directlyLinkedJourneys": 33,
+    "automatedScenarioReferences": 60,
+    "directlyLinkedJourneys": 32,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 33,
+    "journeyScenarioReferences": 32,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 41,
+    "completeEvidenceChain": 40,
     "partialEvidenceChain": 51,
-    "definitionOnlyEvidence": 83,
-    "traceMarkers": 406,
-    "verifiedTraceRecords": 404,
+    "definitionOnlyEvidence": 84,
+    "traceMarkers": 407,
+    "verifiedTraceRecords": 405,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -2772,18 +2772,18 @@ window.SCENARIO_AUDIT = {
       "id": "F03-10",
       "domain": "이벤트",
       "name": "이벤트-플랜 연결",
-      "scenarioCount": 8,
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-10_event-plan-link/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-10_event-plan-link/backend.md",
-        "total": 5,
-        "verified": 5,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
         "entries": [
           {
@@ -2870,30 +2870,43 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 78
               }
             ]
+          },
+          {
+            "id": "F03-10:6",
+            "label": "PUT /api/v1/events/{eventId}/plans/order — 전체 연결 순서 저장",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+                "controller": "EventPlanMapController",
+                "method": "reorderPlans",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/events/{eventId}/plans/order",
+                "targetLine": 60,
+                "methodLine": 61
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_authoring_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_authoring_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,

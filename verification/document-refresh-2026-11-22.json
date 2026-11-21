@@ -2688,9 +2688,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "4af68c06af083afb3691198afef0d2c7460024b050a1ad177760e2ca659983cd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_plan_link_20261122"
+      ],
+      "reviewedSha256": "f883b1f1d7241f10b21da7556d8651a7e57ce43d24f01a1fbea4e34cc1b7746c"
     },
     {
       "path": "docs/features/F03-11.html",
@@ -5538,10 +5541,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c1f49357b006a6cb6ff8311ae8d90404a0d41ea78d8f79d3a301af6f693123a5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_plan_link_20261122"
+      ],
+      "reviewedSha256": "38bc9c707a7ad291c7e8f84fae8419bdf9f03b1f0a7457e0cd4f7b12671b23bf"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
@@ -9001,9 +9006,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "164708610a7c44842246be8fffc3966c9c3f1a63cdb405369a24dff4070c295b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_plan_link_20261122"
+      ],
+      "reviewedSha256": "4734a2d758ca49c14d13c1ae604b5e641f6dacb889723edaa64dcfd46dda41ea"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/diagrams.md",
@@ -9011,9 +9019,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6017c8328cdff1f251f635d39cd6a5578dec1d905965cd89d8ce7206fe64ba49",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_plan_link_20261122"
+      ],
+      "reviewedSha256": "e2092ce4151ccc3d2d0eb85b8448790c4560c29188e555c76a67fc7b0a211386"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/frontend.md",
@@ -9021,9 +9032,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3a071ccda334621b0d8ae4d81e8db21c0a56238e08bd8af2d477065518e151a3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_plan_link_20261122"
+      ],
+      "reviewedSha256": "17379e10737c9659537a7f06e0262ebb504ec9fbde21aa84fc3f58551c8a5c7b"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/scenarios.md",
@@ -9031,9 +9045,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5f75bd87a202a7f45c7d9077e8b26d8dca86fa654580218bc4724d50658f6536",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_plan_link_20261122"
+      ],
+      "reviewedSha256": "0d225a95abcc2b8bfbf7cf615633aba04bd23bba0d0463943458e9b1dc5e7b54"
     },
     {
       "path": "units/03_event/F03-11_wishlist/backend.md",
@@ -14591,6 +14608,29 @@
         }
       },
       "scope": "찜의 추가/해제·조회·실패와 네 이벤트 목록·참석 기록의 조건/권한/표시를 대조. 새 제품 시험·실DB·기기·통신 단절·다음 일정 생성·정산 실행은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-10: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; scoped source/canonical digests; original HTML IDs; incoming Markdown anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 6,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 100,
+        "sourceRecords": 407,
+        "verifiedRecords": 405,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1544,
+        "derivedSourceDigests": 201,
+        "currentSourceAndCanonicalDigests": 29,
+        "retainedHtmlPages": 1,
+        "incomingMarkdownAnchors": 0,
+        "reviewCounts": {
+          "source_verified": 333,
+          "historical_retained": 33,
+          "pending": 636
+        }
+      },
+      "scope": "플랜 연결 권한·사용 권리·관리/상세 목록·전체 순서·장소와 준비 시각·실패 후 처리를 대조. 새 제품 시험·실DB 경합·구매/환불·실제 앱 이용은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -19791,6 +19831,182 @@
           "id": "F03-12:5",
           "change": "added",
           "reason": "지난 주최와 참석 이력의 실제 별도 조회 연결"
+        }
+      ]
+    },
+    "event_plan_link_20261122": {
+      "kind": "source_review",
+      "scope": "F03-10 플랜 연결의 실제 입구·관리/사용 권리·상세 노출·전체 순서 저장·덮어쓰기·실패 뒤 동작 대조. 새 제품 시험·실DB 경합·구매/환불·실제 앱 이용 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java",
+          "sha256": "a7321829e737b513f43267d80ee065b7d7ef6264b4f56c232386bf9e51b65b54",
+          "reviewScope": "24–82 관리 조회·추가·수정·순서 일괄 저장·삭제·활성 반전의 공개 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPlanMapService.java",
+          "sha256": "a8cb26dc93b87d7d8a0309d82f6dffd44e9e47c0135e753c10163143224dd26b",
+          "reviewScope": "52–299 모든 연결 관리·상세 활성/열람 필터·사용 권리·중복·순서·구매 번호 연결·덮어쓰기·모임/연결 잠금·관리 권한·검증."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/port/EventPlanCatalogAdapter.java",
+          "sha256": "2725f6815bcbcfe78380812118eabb8fc422896d729476068439da2239363936",
+          "reviewScope": "29–42 원본 제목 조회와 뷰어의 planVisible에 따른 상세 자료 제목 필터."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/util/EventPlanMapMapper.java",
+          "sha256": "58ef8520cc9bbb7241406dbce0a0b16ad99d6d611c587db5daaf873d2abc1d57",
+          "reviewScope": "14–22 원본 연결 필드·active·제목 응답 매핑."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPlanMapAddParam.java",
+          "sha256": "9ffc0dca682139bac89d24dc26b84f88a77b321fb398aa75010d53bd47536a2b",
+          "reviewScope": "추가 요청의 플랜 번호·선택 순서·장소·하루 안 준비 시각."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPlanMapModParam.java",
+          "sha256": "6905fcfece0f598899ab351de5059a3abf8419d0a2e77c95519e76d9664b0a5f",
+          "reviewScope": "수정 요청의 nullable 값·활성 지정·장소/시각 지우기 표지."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPlanMapOrderParam.java",
+          "sha256": "d8d494518965d0bd77dc443f636e9ccacefc49bfe4852b98c0e48c301fff57a1",
+          "reviewScope": "전체 연결 번호 목록 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPlanMapVo.java",
+          "sha256": "8e28a2603cec1e2dab9a021574b99da964d11aba89f5018d3dd8054d81d35fc7",
+          "reviewScope": "id/eventId/planId/title/order/active/override 응답 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/policy/MarketAbilityPolicy.java",
+          "sha256": "7941077ab3596e9d4feff3b6e4345b872abbda654e4288c47f06271ed0f7ff95",
+          "reviewScope": "176–184 플랜 열람, 220–244 열람+작성/구매 권리와 활성 호스트 폴백."
+        },
+        {
+          "path": "community_app/lib/data/api/event_plan_api.dart",
+          "sha256": "ac8296dd2f1b4f246dbafc620f0ce01828f0dbbfcfcbb610274a8baae85a1512",
+          "reviewScope": "15–50 공개 여섯 요청·List/단건/void 응답."
+        },
+        {
+          "path": "community_app/lib/data/repositories/event_plan_repository.dart",
+          "sha256": "f544be175386e86730a449b6da86d30ce15a0f1c3c884384d3b817081139f44a",
+          "reviewScope": "14–63 여섯 요청의 Result 경계."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_plan_provider.dart",
+          "sha256": "65408063f4c2c60c30fb85446edbb111531742c8bb4887d2f35f7435100b93b4",
+          "reviewScope": "41–234 목록·명령 성공/불확실 실패 뒤 갱신·드래그의 개별 변경/전송 대기열/전체 번호·잘못된 요청 재조회."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_plan_link_screen.dart",
+          "sha256": "1f4accd9ab9b2bfba622df8ea54399643cb62d154596a55f6ed31ded9078c6a6",
+          "reviewScope": "36–251 관리 목록/빈/오류·추가/수정 창·현재 세션·오류 안내·스위치/해제/순서 콜백, 255–289 빈 목록 추가 버튼."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/plan_search_sheet.dart",
+          "sha256": "23bb8f04d06cd7e39416c8fb37a7d93205149228b62300b765fc7fcf63658187",
+          "reviewScope": "29–108 두 페이지 소스·추가 읽기·선택 뒤 닫기, 167–267 제목 포함 검색·연결/중복 제외·작성 먼저·구매 제목 없음 제외·빈/실패/추가 페이지 재시도."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_plan_override_sheet.dart",
+          "sha256": "59bb6da8537dacfb84c28b7c12ed114d3d92530d24e162fad4e589235fc28825",
+          "reviewScope": "19–62 값/지우기 전송 변환, 98–193 기존 값·부분 시각 지우기 제한·시각 순서·완료 전에 창 닫기, 230–299 길이 제한·오류시 저장 차단·이탈 안내."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+          "sha256": "b14be8c7439a8765c0af1573db6efcd839680ea27d749c74060575f7d78cc7b5",
+          "reviewScope": "50–131 제목 대체값·표시 순서·활성 스위치·수정/해제·연결별 장소/시각 표시."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_plan_map_add_param.dart",
+          "sha256": "bebd9140da42228a78ac8803147b4bcfb60bb1aad6a878fdef996083634075af",
+          "reviewScope": "추가 요청의 nullable 순서/장소/시각."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_plan_map_mod_param.dart",
+          "sha256": "7eb72340928ab0c4f50d58712348cb1cbd3c6d8e9fa6e8cd6359c259ad9adacc",
+          "reviewScope": "9–32 값과 지우기 동시 전송 방지 assert·isActive 명시·null 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_plan_map_order_param.dart",
+          "sha256": "ee4b6b19b08e09e81b3c1b45e1fefd0231841ad8ec33814aca96acf740f6912a",
+          "reviewScope": "mapIds 전체 연결 번호 요청."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_plan_map_vo.dart",
+          "sha256": "ceea73c0cbcff3ecad16e04ac14140d8baa1162271c49b40442c46991f1f82e8",
+          "reviewScope": "id를 mapId, active를 isActive로 매핑하고 nullable 제목/덮어쓰기 사용."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/service/EventPlanMapServiceTest.java",
+          "sha256": "84ca46c76a5aa19d61dbdb570d130a098224f0c44c590f190102920b7e64dc9c",
+          "reviewScope": "316–337 모임→연결 잠금 접근 순서, 359–384 비활성 포함 전체 순서·활성 유지·번호순 잠금 단언을 읽음. 실행 안 함."
+        },
+        {
+          "path": "community_app/test/domain/providers/event/event_plan_reorder_test.dart",
+          "sha256": "5994576ec1e10edc5d232147ed93aea2e2ede4013128c306f09aa646541facf3",
+          "reviewScope": "118–148 한 요청·개별 PATCH 미사용·거절 복귀, 151–173 반영/미반영 양쪽 응답 유실 뒤 재조회 단언. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanService.java",
+          "sha256": "16616bfb18da0a9bbb7ff422b1f47a716581288a1a6c0b3640b9df5aa3c0c1c8",
+          "reviewScope": "203–205 플랜 열람 정책 연결, 929–943 호출자와 활성 호스트의 연결 사용 권리. 플랜 CRUD·구매 전체 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "795–797 플랜 관리 허용은 호스트/활성 공동호스트/클럽 운영진 판정."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventVoAssembler.java",
+          "sha256": "4a0a73a1deacf6100ab45bbfb980f60797196c52868e869c231684af9f2ffcba",
+          "reviewScope": "132–135 상세 자료를 채운 뒤 클럽·비로그인 가림을 적용하는 순서. 가림 함수 내부의 새 감사 아님."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "129–143 플랜 관리 화면의 manageEventPlans 가드."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "229–239 클럽 제한·플랜 관리 허용, 393–398 연결 관리 입구와 상세 자료 수 표시, 916–934 자료 제목과 플랜 상세 이동. 참가자 카드에 덮어쓴 값 표시 없음."
+        },
+        {
+          "path": "docs/ui-ux/screens/13-event.md",
+          "sha256": "5fe0f5e626623050f1bf37f9fbea5fc58f66396158fdc36aff7c26a599d82914",
+          "reviewScope": "1215–1270 플랜 연결 명세. 현재 입구·관리자 권한 및 순서/덮어쓰기 규칙 대조."
+        }
+      ],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "search_workflows_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
+          "sha256": "38bc9c707a7ad291c7e8f84fae8419bdf9f03b1f0a7457e0cd4f7b12671b23bf"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-10.html": [
+          "sidebar",
+          "launch-strip",
+          "linked-plan-order",
+          "connected-plans-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-10:6",
+          "change": "added",
+          "reason": "현재 앱의 전체 연결 순서 일괄 저장 창구 연결"
         }
       ]
     }

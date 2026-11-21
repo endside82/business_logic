@@ -1,109 +1,102 @@
-# F03-10. 이벤트 ↔ 플랜 연결 PRD
+# F03-10. 이벤트와 플랜 연결
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 소스 대조이며 새 제품 시험·실제 앱 이용 결과가 아니다.
 
-## 1. 결론
+## 결론
 
-호스트가 자기 이벤트에 미리 만들어둔 "플랜"(Unit 08 — 진행 시나리오/타임테이블) 을 N개 연결하고, 순서를 정하고, 활성/비활성 토글하는 기능. 같은 플랜을 여러 이벤트에 재사용할 수 있다. 본 단위는 매핑 CRUD 만 다룸 — 플랜 자체의 생성/편집은 Unit 08 영역. 매핑 시 `override_*` 필드로 이 이벤트에서만 다른 시간/장소를 적용할 수도 있다.
+모임 운영자가 작성하거나 사용할 권리가 있는 플랜을 모임 자료에 연결하고, 연결 순서·활성 여부·이 모임에서 쓸 장소와 준비 시각을 관리한다. 연결 해제는 플랜 원본 삭제와 다르다. 연결했다고 참석자에게 구매 권리나 모든 플랜 내용의 열람 권한이 생기지는 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 코드 위치
 
-- 호스트: 이벤트 상세 (`SCR-EV-002`) 의 호스트 더보기 메뉴 또는 액션바 → "플랜 연결" → `/home/events/:eventId/plans`
-- 라우터 가드: `_redirectEventAccess(hostOrStaff)` — 호스트/공동호스트/클럽 staff 만
-
-> 일반 참가자가 이벤트 상세에서 보는 "이 모임 진행 플랜" 미리보기는 본 화면이 아니라 `EventVo.plans` 필드로 함께 받아서 표시 — F03-02 영역.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `EventPlanMapController`. 앱: `event_plan_link_screen.dart`, `event_plan_card.dart`, `plan_search_sheet.dart`.
+서버: EventPlanMapController·EventPlanMapService·EventPlanCatalogAdapter·EventPlanMapMapper, 연결 추가/수정/순서 요청과 EventPlanMapVo, PlanService의 planEventUse·planVisible 및 MarketAbilityPolicy, EventActionPolicy의 manageEventPlans. 앱: event_plan_api.dart·event_plan_repository.dart·event_plan_provider.dart, event_plan_link_screen.dart·plan_search_sheet.dart·event_plan_override_sheet.dart·event_plan_card.dart와 연결 모델, 모임 상세와 홈 라우터.
 
 <!-- source-references:start -->
-서버 창구: `EventPlanMapController#getEventPlans`, `EventPlanMapController#addPlanToEvent`, `EventPlanMapController#updateMapping`, `EventPlanMapController#removePlanFromEvent`, `EventPlanMapController#toggleActive`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `EventPlanMapController#getEventPlans`, `EventPlanMapController#addPlanToEvent`, `EventPlanMapController#updateMapping`, `EventPlanMapController#removePlanFromEvent`, `EventPlanMapController#toggleActive`, `EventPlanMapController#reorderPlans`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 2026-10-29 현재 계약 대조
+## 실제 입구와 관리 권한
 
-### 연결 플랜 순서는 한 번에 저장합니다
+모임 상세의 ‘플랜 연결 관리’에서 `/home/events/:eventId/plans`로 이동한다. 상세는 현재 플랜 관리 허용 값과 클럽 상세 제한을 사용하고, 경로도 플랜 관리 허용 값을 다시 검사한다. 예전 문서의 ‘호스트 더보기 메뉴 또는 액션바’라는 포괄적 설명을 현재 입구의 증거로 쓰지 않는다.
 
-연결 목록의 순서 변경은 모임의 전체 연결 번호 목록을 한 번에 보낸다. 비활성 연결도 빠뜨리지 않고 서버가 모임 잠금 아래에서 전체 목록을 확인해 저장한다. 같은 모임의 연결 추가·제거·순서 변경은 함께 직렬화한다.
+서버의 관리 권한은 호스트, 활성 공동호스트, 해당 클럽의 관리자 판정 중 하나다. 일반 참석자나 임의의 클럽 회원에게 허용되는 기능이 아니다. 조회·추가·수정·해제·활성 반전·전체 순서 변경에 같은 관리 판정을 사용한다. 이 서비스는 별도의 DRAFT·OPEN 제한을 두지 않으므로 종료·취소 모임의 관리까지 일률적으로 불가하다고 설명하지 않는다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+관리 화면에는 연결 수·사용 중 수·순서·제목·활성 스위치·장소/준비 시각 고치기·연결 해제를 표시한다. 로딩·조회 오류와 재시도가 있으며, 연결이 없어도 ‘플랜 연결하기’와 하단 추가 입구가 있다.
 
-<!-- source-references:start -->
-### 확인한 서버 코드 위치
+## 관리 목록과 모임 자료의 차이
 
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+관리 조회는 모든 연결을 순서 값 오름차순, 같은 순서이면 연결 번호 오름차순으로 반환한다. 비활성 연결도 포함한다. 원본을 찾지 못하는 연결 행이 남아 있으면 제목은 없을 수 있고, 현재 관리 카드는 ‘플랜’으로 대신 표시한다. 이 조회가 남은 연결을 자동 삭제하는 것은 아니다.
 
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `GET /api/v1/events/{eventId}/plans` | `EventPlanMapController#getEventPlans` | [EventPlanMapController.java:31](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L31) |
-| `POST /api/v1/events/{eventId}/plans` | `EventPlanMapController#addPlanToEvent` | [EventPlanMapController.java:38](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L38) |
-| `PATCH /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#updateMapping` | [EventPlanMapController.java:47](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L47) |
-| `DELETE /api/v1/events/{eventId}/plans/{mapId}` | `EventPlanMapController#removePlanFromEvent` | [EventPlanMapController.java:68](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L68) |
-| `POST /api/v1/events/{eventId}/plans/{mapId}/toggle-active` | `EventPlanMapController#toggleActive` | [EventPlanMapController.java:77](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventPlanMapController.java#L77) |
-<!-- source-references:end -->
+모임 상세의 자료 목록은 활성 연결 중 현재 보는 사람이 해당 플랜을 열람할 수 있는 것만 반환한다. 플랜이 없거나 삭제 상태이면 제외하며, 게시 상태가 아닌 플랜은 작성자 또는 숨김 플랜의 유효 구매자 등 현재 열람 판정을 적용한다. 이후 모임 상세의 클럽·비로그인 정보 가림도 별도로 적용한다.
 
-## 3. 전체 동작 흐름
+앱의 ‘모임 자료’ 카드는 제목을 누르면 플랜 상세로 이동한다. 현재 이 카드에는 연결별 장소·준비 시각을 표시하지 않는다. 관리 카드에 저장값이 보인다는 사실을 모든 참석자의 상세 화면에서도 보인다는 의미로 확대하지 않는다.
 
-### 플랜 연결 (`event_plan_link_screen.dart`)
+## 후보 선택과 연결 조건
 
-- **사용자가 보는 것**:
-  - AppBar "플랜 연결"
-  - 빈 상태 (매핑 0건): 가운데 안내 — 아이콘(article_outlined, gray300), "연결된 플랜이 없습니다", `AppButton('플랜 연결하기')`
-  - 매핑 ≥ 1: `ReorderableListView.builder` — 각 항목 `EventPlanCard`
-    - 제목 (planTitle)
-    - 활성 Switch (`isActive`)
-    - 삭제 IconButton
-  - 하단 고정 영역: `AppButton(variant: outline, label: '플랜 추가', icon: Icons.add, fullWidth: true)`
-- **사용자가 할 수 있는 액션**:
-  - 드래그로 순서 변경 → `eventPlanNotifier.reorder(oldIndex, newIndex)` — 내부적으로 PATCH 로 sortOrder 업데이트하거나 클라이언트에서 일괄 처리 (Provider 구현체가 결정)
-  - 토글 → `eventPlanNotifier.toggleActive(mapId)` → `POST /api/v1/events/{id}/plans/{mapId}/toggle-active`
-  - 삭제 → `eventPlanNotifier.deletePlan(mapId)` → `DELETE /api/v1/events/{id}/plans/{mapId}`
-  - "플랜 추가" → `PlanSearchSheet.show(onSelect: (planId, _) => addPlan(planId))`
-  - 추가 → `eventPlanNotifier.addPlan(planId)` → `POST /api/v1/events/{id}/plans` body `EventPlanMapAddParam{planId, sortOrder: null/last}`
-- **상태 분기**: 로딩 (Spinner) / 에러 (`AppErrorState.fromError`) / 빈 상태 (위 inline 안내) / 데이터 (ReorderableListView)
+검색 창은 현재 사용자가 만든 플랜과 구매한 플랜을 읽는다. 이미 연결된 플랜과 중복 번호를 제외하고 제목의 포함 검색을 한다. 만든 플랜을 먼저 계속 읽고 그 목록이 끝나면 구매한 플랜을 표시·추가 조회한다. 아직 다음 페이지가 남아 있거나 실패했다면 곧바로 ‘검색 결과 없음’으로 확정하지 않으며, 실패한 목록에는 재시도를 제공한다. 제목이 없는 구매 항목은 선택 후보에 표시하지 않는다.
 
-### 플랜 검색 BottomSheet (`plan_search_sheet.dart`)
+후보를 고르면 검색 창을 닫고 이 모임의 장소·준비 시각 입력 창을 연다. 취소하면 연결을 요청하지 않는다. 입력을 확정하면 연결 요청을 보내며 성공 뒤 관리 목록과 모임 상세 자료를 다시 읽게 한다.
 
-- 검색어 입력 → Unit 08 의 plan 검색 API 호출
-- 결과 카드 탭 → onSelect(planId, planTitle) 콜백 → 부모 화면이 추가 액션 수행
-- 본 단위는 호출 측만 — sheet 내부 구현은 plan 도메인
+서버는 모임을 잠근 뒤 관리 권한과 플랜 사용 권리를 판정한다. 먼저 요청한 사람의 플랜 열람 및 작성자·유효 구매 권리를 확인하고, 그것으로 허용되지 않으면 활성 계정인 모임 호스트의 권리로도 판정한다. 공개된 플랜이라고 누구나 연결할 수 있는 것은 아니다. 새 연결은 켜진 상태이며, 순서를 생략하면 기존 최대 순서 다음에 붙인다. 같은 모임에 같은 플랜을 다시 연결하면 중복 오류로 거절한다. 다른 모임에서 같은 플랜을 사용하는 것과 구분한다.
 
-## 4. 제품 규칙
+연결 시 유효한 구매가 있으면 그 구매 번호를 함께 기록하는 경로가 있다. 이를 새 구매·과금 또는 원본 편집으로 설명하지 않는다. 구매·환불의 전체 처리는 해당 기능의 검토 범위다.
 
-- 플랜 연결의 조회·추가·수정·토글·해제는 호스트, 활성 공동호스트, 클럽 운영진만 한다. 아니면 `EVENT_NOT_OWNER` 다.
-- 이 권한과 달리 모임 상세를 읽는 사람은 연결된 플랜을 함께 받는다. 비활성 연결을 가리는 것은 앱이 정한다.
+## 이 모임의 장소·준비 시각
 
-## 6. 상태/권한/시나리오 매트릭스
+장소는 선택 입력이며 최대 500자다. 준비 시작·끝은 날짜 없는 하루 안의 시각이다. 두 값이 모두 있으면 끝이 시작보다 뒤여야 하며, 같거나 앞이면 앱에서 저장을 막고 서버도 거절한다. 자정을 넘는 구간을 같은 날의 두 시각으로 저장할 수 있다고 쓰지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 호스트가 첫 플랜 연결 | 이벤트 status=DRAFT, `event_plan_map` 0건 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S2 | 두 번째 플랜 연결 + 순서 변경 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | 플랜 비활성 토글 | 호스트가 사정상 이번 회차에는 특정 플랜을 진행하지 않기로 함 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | 매핑 삭제 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | 동일 플랜 중복 매핑 시도 | 이미 `(eventId=10, planId=7)` 매핑 존재 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 플랜이 삭제된 후 매핑 조회 | planId=7 이 plan 도메인에서 삭제됨, 그러나 `event_plan_map` 행은 남아있음 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 권한 없는 사용자 직접 호출 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | 일반 참가자가 이벤트 상세에서 플랜 미리보기 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+| 조작 | 현재 처리 |
+| --- | --- |
+| 추가 시 빈 장소·시각 | 연결별 덮어쓰기 값을 만들지 않음 |
+| 수정에서 해당 값 생략 또는 null | 기존 값을 유지 |
+| 저장된 장소를 앱에서 비움 | 장소 지우기 표지를 보내 연결별 장소를 null로 변경 |
+| 저장된 준비 시각 지우기 | 시작·끝을 함께 지우는 표지를 사용. 앱도 기존 시각이 있으면 둘을 함께 비움 |
+| 지우기 표지와 같은 항목의 새 값을 함께 전송 | INVALID_INPUT으로 거절 |
+| 시각 한쪽만 수정 | 서버는 저장된 다른 쪽과 합쳐 순서를 검사 |
+| 기존 시각 한쪽을 지우고 다른 쪽을 남김 | 현재 앱은 양쪽을 다시 고르도록 안내하고 저장 차단 |
 
-## 8. Gap / Risk
+앱은 장소의 앞뒤 공백을 제거하며, 수정 창을 완료하지 않고 나가려 하면 변경 여부를 사용해 이탈을 안내한다. 지우기 표지는 연결에 저장한 덮어쓰기 값을 없애는 것이며 플랜 원본을 바꾸거나 원본 값을 복사해 저장하지 않는다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 장소·준비 시간 덮어쓰기 | 연결 화면에서 플랜을 고른 뒤와 카드의 고치기에서 이 모임만의 장소(500자)와 준비 시작·끝 시각을 넣는다. 비우면 플랜 값이다(결정 76-1, 2026-11-08 앱). 서버는 고치기에서 덮어쓴 값을 지우는 표지 `clearOverrideLocation`·`clearOverrideSetupTime` 을 받는다(같은 칸의 값과 함께면 400) | 앱 고치기 창이 비운 칸을 지우기 표지로 보낸다 |
-| 해소됨 | 준비 시작이 끝보다 늦음 | 앱 덮어쓰기 창은 끝이 시작보다 뒤가 아니면(같은 시각 포함) 저장을 막는다. 서버도 2026-11-08 부터 플랜과 플랜 연결의 만들기·고치기에서 준비 시작·끝이 둘 다 있고 끝이 시작보다 뒤가 아니면 400 `INVALID_INPUT` 으로 거절한다. 고치기에서 한 칸만 오면 저장된 다른 칸과 합쳐 보고, 지우기 표지면 보지 않는다(결정 82 는 앱 규칙에 맞춰 묻지 않고 닫음) | 없음 |
-| 해소됨 | 연결 실패 안내 | 연결·해제·켜고 끄기·차례 바꾸기가 실패하면 화면이 안내한다 | 없음 |
-| 해소됨 | 시험 보강 기록 | 호스트가 아닌 회원이 플랜 연결 화면을 바로 열면 모임 상세로 돌려보내는 시험 보강 기록이다. 결함이 아니다 | 없음 |
+## 연결 순서의 일괄 저장
 
-## 9. 수용 기준
+앱에서 드래그하면 먼저 화면 순서를 바꾸고, 비활성 연결을 포함한 **모든 연결 번호**를 새 순서로 한 번 보낸다. 플랜 번호 목록이나 각 행을 차례로 고치는 요청이 아니다. 연속 드래그의 전송은 앞 요청이 끝난 다음에 보내되, 화면에는 뒤 조작도 반영한다.
 
-- **AC-01. 호스트가 첫 플랜 연결**: Given 이벤트 status=DRAFT, `event_plan_map` 0건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-02. 두 번째 플랜 연결 + 순서 변경**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. 플랜 비활성 토글**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. 매핑 삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. 동일 플랜 중복 매핑 시도**: Given 이미 `(eventId=10, planId=7)` 매핑 존재 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 플랜이 삭제된 후 매핑 조회**: Given planId=7 이 plan 도메인에서 삭제됨, 그러나 `event_plan_map` 행은 남아있음 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 권한 없는 사용자 직접 호출**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. 일반 참가자가 이벤트 상세에서 플랜 미리보기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+서버는 모임 잠금 아래에서 현재 연결 번호 집합과 요청 집합을 비교한다. 누락·다른 모임 번호·추가 번호·중복·null 번호가 있으면 거절한다. 일치하면 연결 행을 번호 순서로 잠그고, 요청 순서대로 0부터 순서 값을 매긴다. 연결 추가·해제 등도 같은 모임 잠금을 사용한다. 순서 변경은 한 트랜잭션의 전체 변경이며 활성 상태는 유지한다.
+
+성공하면 목록과 모임 상세를 다시 읽는다. 실패하면 해당 드래그 변경을 취소한다. 결과가 불확실한 통신 오류 또는 연결 집합 변경으로 인한 잘못된 요청은 목록도 다시 읽는다. 서버가 확실히 거절한 일반 권한 오류를 저장 성공으로 바꾸지 않는다. 개별 수정 창구에 순서 필드가 남아 있다는 사실과 앱 드래그의 일괄 전송은 구분한다.
+
+## 켜기·끄기·해제와 실패 후 동작
+
+스위치는 서버의 현재 활성 값을 반전한다. 연결을 끄면 관리 목록에는 남고 상세 자료 목록에서는 빠진다. 해제는 해당 모임의 연결 행만 지우며 원본 플랜은 유지한다. 다른 모임의 연결 번호를 보내거나 없는 연결을 수정·반전·해제하면 연결 없음으로 거절한다.
+
+추가·수정·해제·반전 성공은 목록과 상세를 갱신한다. 서버 반영 여부가 불확실한 실패도 다시 읽으며, 화면에서는 공용 거절 처리로 오류를 안내한다. 순서 변경 외의 명령을 모두 낙관적 변경으로 설명하거나 실패하면 자동 재전송된다고 쓰지 않는다. 입력 창과 순서 변경 대기는 작업을 시작한 세션 범위로 감싼다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인 근거 | 현재 차이·영향 | 후속 확인 |
+| --- | --- | --- | --- |
+| Gap | 모임 상세의 연결 수·getDetailPlans | 관리 입구의 수는 상세의 활성·열람 가능 목록 수라서 비활성 등을 포함한 관리 목록 전체 수와 다를 수 있음 | 입구의 수가 뜻하는 범위를 명시하거나 전체 수와 구분 |
+| Gap | PlanSearchSheet·planEventUse | 서버는 활성 호스트의 작성/구매 권리로도 연결을 허용하지만, 현재 선택 창은 요청한 사람의 목록만 읽음 | 공동호스트가 호스트만 보유한 플랜을 선택할 제품 경로 확인 |
+| Gap | 입력 창 완료·_runPlanCommand | 장소·시각 창을 먼저 닫고 서버 요청을 보내므로 실패 후 같은 입력을 다시 여는 복원 경로를 확인하지 못함 | 실패 후 입력 보존·재시도 동작 확인·보완 |
+| Risk | toggleActive | 원하는 활성 값을 지정하는 명령이 아니라 현재 값 반전. 결과 불확실 후 같은 요청을 무조건 반복하면 다시 뒤집힐 수 있음 | 재조회한 현재 값을 확인한 뒤 조작하는 흐름 검증 |
+| Gap | 상위 화면 명세·관리 서비스 | 상위 명세의 호스트 전용/호스트·공동호스트 설명은 클럽 관리자 판정을 포함하지 않음 | 상위 명세와 현재 권한 구분 일치 |
+| 미검증 | 소스와 선택한 기존 시험 단언 | 동시 DB 연결/해제/순서 변경·실제 구매 권리 변화·기기 조작은 이번에 실행하지 않음 | 해당 환경의 실행 증거를 별도로 확보 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 관리 입구:** 모임 상세의 플랜 연결 관리와 직접 경로는 현재 플랜 관리 허용 값을 적용한다. 호스트·활성 공동호스트·클럽 관리자와 일반 참석자를 구분한다.
+- **AC-02 관리·상세 구분:** 관리 목록은 비활성 연결까지 포함하고, 상세 자료는 활성 및 현재 플랜 열람 조건을 충족한 연결만 표시한다.
+- **AC-03 선택 후보:** 만든 플랜·구매한 플랜에서 이미 연결한 번호와 중복을 제외하고 제목 검색을 적용한다. 다음 페이지가 남았거나 실패한 상태를 최종 검색 없음으로 확정하지 않는다.
+- **AC-04 사용 권리:** 선택 후 연결은 요청자 또는 활성 호스트의 현재 작성/구매 권리로 다시 판정한다. 공개 목록에 있다는 이유만으로 연결 권리가 있다고 간주하지 않는다.
+- **AC-05 추가·중복:** 정상 추가는 활성 상태와 기본 마지막 순서로 저장하고, 같은 모임의 같은 플랜 중복은 거절한다. 취소한 입력 창에서는 추가 요청을 보내지 않는다.
+- **AC-06 장소·시각:** 500자 초과 장소와 시작보다 늦지 않은 종료 시각을 거절한다. 한쪽 시각 수정은 기존 반대쪽 값을 포함해 검사한다.
+- **AC-07 값 지우기:** 수정의 null은 유지이며, 장소 또는 준비 시각 지우기는 전용 표지를 사용한다. 지우기 표지와 값을 함께 보내지 않고, 준비 시각은 둘을 함께 비운다.
+- **AC-08 전체 순서:** 드래그는 비활성 연결을 포함한 모든 연결 번호를 한 번 보내고, 정상 응답 뒤 새 순서와 기존 활성 상태를 유지한다.
+- **AC-09 잘못된 순서:** 현재 연결 집합과 다른 목록·중복·null 번호는 전체 변경 전에 거절하고, 앱은 잘못된 요청이면 현재 목록을 다시 읽는다.
+- **AC-10 연속 순서 조작:** 앞 요청 응답을 기다린 뒤 다음 요청을 보내며, 앞 요청의 결과가 뒤 조작의 화면 순서를 임의로 되돌리지 않도록 개별 변경을 처리한다.
+- **AC-11 응답 불확실:** 서버가 반영했을 수 있는 오류는 성공이나 전체 미반영으로 단정하지 않고 목록과 상세를 재조회한다. 활성 반전을 무조건 재전송하지 않는다.
+- **AC-12 끄기·해제:** 비활성은 관리 목록에 남고 상세 자료에서 빠진다. 해제는 연결 행만 지우고 플랜 원본을 삭제하지 않는다.
+- **AC-13 다른 모임 연결:** 다른 모임의 연결 번호 또는 없는 연결에 대한 수정·해제·반전은 연결 없음으로 거절한다.
+- **AC-14 저장값의 표시 범위:** 관리 카드의 장소·시각 표시와 일반 상세의 제목·플랜 이동을 구분하고, 원본을 찾지 못한 연결을 실제로 열 수 있다고 안내하지 않는다.
+
+검증 근거: EventPlanMapServiceTest의 모임→연결 잠금 순서와 전체 순서·활성 유지 단언, event_plan_reorder_test의 한 번 전송·개별 PATCH 미사용 및 응답 유실 후 서버 순서 재조회 단언을 읽었다. 위 수용 기준의 새 실행이나 실DB 경합·실제 앱 검수 통과 기록이 아니다.
