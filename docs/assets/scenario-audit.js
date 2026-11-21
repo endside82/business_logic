@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,061개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,058개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1061,
+    "documentedScenarioItems": 1058,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 51,
     "partialEvidenceChain": 32,
     "definitionOnlyEvidence": 92,
-    "traceMarkers": 306,
-    "verifiedTraceRecords": 304,
+    "traceMarkers": 313,
+    "verifiedTraceRecords": 311,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -953,20 +953,140 @@ window.SCENARIO_AUDIT = {
       "id": "F03-02",
       "domain": "이벤트",
       "name": "이벤트 상세 조회",
-      "scenarioCount": 15,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-02_event-detail/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 15
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-02_event-detail/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 7,
+        "verified": 7,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-02:1",
+            "label": "GET /api/v1/events/{eventId} — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getEvent",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}",
+                "targetLine": 142,
+                "methodLine": 143
+              }
+            ]
+          },
+          {
+            "id": "F03-02:2",
+            "label": "DELETE /api/v1/events/{eventId} — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "deleteEvent",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}",
+                "targetLine": 270,
+                "methodLine": 271
+              }
+            ]
+          },
+          {
+            "id": "F03-02:3",
+            "label": "POST /api/v1/events/{eventId}/next-occurrence — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "createNextOccurrence",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/next-occurrence",
+                "targetLine": 123,
+                "methodLine": 124
+              }
+            ]
+          },
+          {
+            "id": "F03-02:4",
+            "label": "GET /api/v1/events/{eventId}/calendar — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "exportCalendar",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/calendar",
+                "targetLine": 474,
+                "methodLine": 475
+              }
+            ]
+          },
+          {
+            "id": "F03-02:5",
+            "label": "GET /api/v1/events/{eventId}/similar — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getSimilarEvents",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/similar",
+                "targetLine": 487,
+                "methodLine": 488
+              }
+            ]
+          },
+          {
+            "id": "F03-02:6",
+            "label": "GET /api/v1/events/{eventId}/fit-preview — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/EventFitPreviewController.java",
+                "controller": "EventFitPreviewController",
+                "method": "getFitPreview",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/fit-preview",
+                "targetLine": 30,
+                "methodLine": 31
+              }
+            ]
+          },
+          {
+            "id": "F03-02:7",
+            "label": "POST /api/v1/events/{eventId}/prepayment/wallet — 이벤트 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "payByWallet",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/wallet",
+                "targetLine": 128,
+                "methodLine": 130
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

@@ -248,7 +248,8 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "data_export_20261122"
+        "data_export_20261122",
+        "event_detail_complete_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -291,7 +292,8 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "data_export_20261122"
+        "data_export_20261122",
+        "event_detail_complete_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2192,8 +2194,10 @@
       "document": true,
       "baselineSha256": "2308729c1ce508f09ba94f4dd19384f13cce62fdd4af8c0d7a0e5f379cf149d2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "event_detail_complete_20261122"
+      ]
     },
     {
       "path": "docs/domains/04-club.html",
@@ -2522,11 +2526,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "28caf8484660f731e38ae637ff8895bdb841e39f1c5f2da9000841ffb38c1aad",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "event_detail_lifecycle_20261122"
-      ]
+        "event_detail_complete_20261122"
+      ],
+      "reviewedSha256": "1ef9791213ff5494b51ee5780b4eb2cd9348f5449695408f9dace9f6ceda05f9"
     },
     {
       "path": "docs/features/F03-03.html",
@@ -4660,7 +4665,8 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "data_export_20261122"
+        "data_export_20261122",
+        "event_detail_complete_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4859,7 +4865,9 @@
       "baselineSha256": "95dbf38cea86789fd8df991b9f861844c8f30b20b101e794d2e0403c55cc0f1d",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "event_detail_complete_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -5220,12 +5228,13 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "962c994938fce6619f99247d9e9a55e4a295d24106e344386938a5fee62b01fd",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "event_detail_lifecycle_20261122"
+        "event_detail_complete_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료",
+      "reviewedSha256": "1d6ab9ac555188045fb69f313258bb664b0bbf5da0f42e1b55267a8fd04f50a9"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
@@ -7475,7 +7484,8 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "data_export_20261122"
+        "data_export_20261122",
+        "event_detail_complete_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -8158,9 +8168,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1b6baf25172d1d04e63ba5cd655c1a4e9b0a024f686076dbae6c4b18aafcc6e6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_detail_complete_20261122"
+      ],
+      "reviewedSha256": "934296dcb6a4d23bdb25bfd7ccc357e473fcbb8979c51b2036193fc049f59730"
     },
     {
       "path": "units/03_event/F03-02_event-detail/diagrams.md",
@@ -8168,9 +8181,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0f79cc3b51876c825e9b6a00953a2eb93e3424c3a1981daf81fef4828f0137de",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_detail_complete_20261122"
+      ],
+      "reviewedSha256": "b2d96a8c58eefda3bff06483709aabe27d8797098cf61d3accf1ac5d70935fa4"
     },
     {
       "path": "units/03_event/F03-02_event-detail/frontend.md",
@@ -8178,9 +8194,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ab090503d2b726d8bd9b732da7245d248a45cc0553583e0015e2a3e94b2b0564",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_detail_complete_20261122"
+      ],
+      "reviewedSha256": "9d5b6ba90678b9e149dbf67809f414a6a2954b3d2fe1927f79b2d8e6cb7cc95e"
     },
     {
       "path": "units/03_event/F03-02_event-detail/scenarios.md",
@@ -8188,9 +8207,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0ea43218209872bc32061f93c53454a298b9172ed8b5ec3d54097f3ea1ca48c4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_detail_complete_20261122"
+      ],
+      "reviewedSha256": "4235577917b5013fd694e2d81db864326f30ffcf28c45cc13c2089c633c16a1d"
     },
     {
       "path": "units/03_event/F03-03_event-creation/backend.md",
@@ -13371,6 +13393,19 @@
       "command": "F13-05 HTML 이전 앵커·중복 ID·Markdown 잔여 확인; git diff --check",
       "result": "PASS",
       "scope": "개인정보 내보내기 문서 동기화 구조 검사"
+    },
+    {
+      "command": "F03-02: source_references tests; sync_source_reference_docs; check_scenario_audit; changed-document paths/anchors/digests; git diff --check",
+      "result": {
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 87,
+        "sourceRecords": 313,
+        "verifiedRecords": 311,
+        "retiredRecords": 2,
+        "relativePathsChecked": 139,
+        "status": "PASS"
+      },
+      "scope": "이벤트 상세의 문서·근거·생성 데이터 일치. 제품 시험·외부 앱 결과 확인 아님. 기존 출시 범위 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -13676,6 +13711,135 @@
         {
           "path": "community_app/test/audit/entry_paths_event_delete_result_test.dart",
           "sha256": "342dcc44813bd988c0ed55a50e62b75c0d25594cc081e805b3bd3918c2114ba0"
+        }
+      ]
+    },
+    "event_detail_complete_20261122": {
+      "kind": "source_review",
+      "scope": "현재 F03-02 제품 본문: 진입·권한·역할·결제 기한/수단·삭제/다음 회차·개인화·사진·캘린더·실패/복귀. 선행 lifecycle 근거의 파일 지문 불변 확인. 시험은 소스의 목적만 확인했고 실행·외부 결과 미검증은 명시. 하위 업무 전체의 구현 검증을 대신하지 않음.",
+      "reuses": [
+        "event_detail_lifecycle_20261122"
+      ],
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventViewerContextService.java",
+          "sha256": "0a62d3c6529fbde8d119cc52db394dfba44698a55a53d213e28a485ef9a73d0d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventVoAssembler.java",
+          "sha256": "4a0a73a1deacf6100ab45bbfb980f60797196c52868e869c231684af9f2ffcba"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java",
+          "sha256": "6b8a2cfc6c945aede2a7e96522c54d7c63d57c5637957044741c75528ad40c8a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPayerRoster.java",
+          "sha256": "a06aa99567d5ded34631bf6cde112a4fed64f3780ad4943ef68d6efd6a029ad2"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/CalendarExportService.java",
+          "sha256": "9427f97d0b8a94f93ef27f1d618e82e419da08c633a69f0827d96f7ac2230da5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/EventFitPreviewService.java",
+          "sha256": "080452ca185d884e87da675b4aa3d6a15dac27c2064bba943a451f94cd4d34b3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/TraitFitPreviewService.java",
+          "sha256": "895978b0d9210773163e509b02221e0ba4c9426324921ed00af025945b03818b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/EventHostCardService.java",
+          "sha256": "1adcaf0c4808a888afaa3ca76703378417571e32d97e8a54f24b0305c2ba0b9d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventDemographicsService.java",
+          "sha256": "b7a61017aeae5fe54b1f2b494c550d3791c2106ff9fb6110cc344f48c2b59b20"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventStatus.java",
+          "sha256": "d62c8612d5befab331dcaa5abed461ca92dc8894b21bd68b44402bd75d1b7877"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventType.java",
+          "sha256": "f6612a87f7d2d861ba231f1ecb94c5e011730e2f8751938b5363db90745b06f1"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/EventFitPreviewController.java",
+          "sha256": "15588b196716eefb090aca13250b6c6882a24b4ade3ecead4343d93cd7de102f"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+          "sha256": "381045f124ec5a62325fe558276174538ffbe312557f6bf110b26d88057c4682"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/prepayment/service/EventPrepaymentServiceTest.java",
+          "sha256": "0187ddd8d7988c8802d8b295df1c887b8d5169b024e33336a9479ba1117bd4a3"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_permission_provider.dart",
+          "sha256": "9372d2935e8ed13031e769a3124f9f1c3548e59e1da3b8d286bd913ce735ae64"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_detail_provider.dart",
+          "sha256": "be0016afe58e84a6b273bbd9c2ecdd04d53ef074b5dc39810a4fa47ddf2854e2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendance_action_provider.dart",
+          "sha256": "bcd5def8aa7369363637a1ba8f2bc42a3847d600b484b83b6481ee1966ca600c"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/event_fit_preview_provider.dart",
+          "sha256": "00676c5e6264b60646a66bbec501fb17dff47375cfdbb3b9a3de0fca50989e59"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/event_host_card_provider.dart",
+          "sha256": "32af1774ad62109491a9d23171113c0ec40a7c358d2b2e9798882e459b726405"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart",
+          "sha256": "2cc52ee234bdb2d638855f1482db06515aaaf08742234efde821ac77057e69ec"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_host_card.dart",
+          "sha256": "b1d8fc445a36e297c83ce2d03c9ed7a44c0445df45a8da72e90d66f332107988"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_description.dart",
+          "sha256": "1e971a1219ef72fdfac93f3ad5f72763517ab34c05a3b63c0a021d150d7c8b24"
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_prepayment_gate.dart",
+          "sha256": "10770736db0b936bc06518886cec051f1f1d6476400cc39728b865ebc8732a53"
+        },
+        {
+          "path": "community_app/lib/data/repositories/event_repository.dart",
+          "sha256": "277a0a59230e8cd8415ae0c79f8f5bd61e2dc7fd00ebaea676a3ac0547807fa9"
+        },
+        {
+          "path": "community_app/lib/data/api/event_api.dart",
+          "sha256": "8571e82942da46e026411406040124aa33183130b790c764a2fbd019461772fd"
+        },
+        {
+          "path": "community_app/test/widget/event/event_detail_next_occurrence_entry_test.dart",
+          "sha256": "897b65bb789708ffd5bbfc08684860320f47408abc6500263d26ebe3480a0580"
+        },
+        {
+          "path": "community_app/test/unit/event_detail_entry_access_test.dart",
+          "sha256": "e4510d45db2877bf8783aee2525f68b2deb6605e1fa59e7002df094e45f2a77a"
+        },
+        {
+          "path": "community_app/test/widget/event/event_action_bar_payment_cta_test.dart",
+          "sha256": "aec3f9aa0629a9d894976ef2af14b2c582ac02f1b953680bcbe0ff24f4147e9a"
+        },
+        {
+          "path": "docs/ui-ux/screens/13-event.md",
+          "sha256": "5fe0f5e626623050f1bf37f9fbea5fc58f66396158fdc36aff7c26a599d82914"
         }
       ]
     }

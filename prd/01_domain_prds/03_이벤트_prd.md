@@ -20,7 +20,7 @@
 
 이 도메인은 기능 PRD 20개로 구성된다(F03-01~12 기존 + F03-13~17 확장 + F03-18 구성인원 인구통계 + F03-19 일정 변경 제안·합의 + F03-20 노쇼 관리). F03-14~17 이동수단은 2026-09-01 대절 버스·참가자 승용차·자차 통합 모델로 교체됐고 고객 앱·서버·관리자 API·관리자 웹과 표준 차량 9종까지 완료됐다. 신규 이용은 서명 앱 다중 역할·알림·신고와 책임 고지 검증 뒤 연다. 도메인 수준의 현재 판단은 아래 기능 PRD를 우선하고, `units` trace 수·risk 후보 수는 초기 전환 당시의 역사적 계수로만 사용한다.
 
-> **2026-07-29 current source 요약.** F03-02의 유료 승인제 상세은 `APPROVED_PENDING_PAYMENT → PENDING_PAYMENT`, 결제 금액/기한, 예약 정원 수, `POST /prepayment/wallet`, `PAID → APPROVED + ATTENDING`까지 닫혔다. EventVo viewer capability는 `canManageCapacity`를 포함한 11종이며 Flutter 상세/route가 이를 직접 소비한다. 이벤트 상세에는 k-익명 `fit-preview`와 호스트 재방문 배지도 배선됐다. 일정 변경은 주소 변경 좌표를 보존하고, 노쇼 뒤집기는 교정 체크인을 생성해 출석 증거까지 복원한다. 세부 계약과 잔여 Gap은 F03-02/F03-07/F03-19/F03-20을 따른다.
+> **2026-11-22 이벤트 상세 대조.** 초안 하단은 수정·공개, 삭제는 더보기 한 곳이다. 결제 기한은 서버가 직접 검사하고, 클럽 비회원 상세는 차단한다. 예약 좌석 표시·링크 전용 캘린더 전달의 남은 차이는 [이벤트 상세의 현재 설명과 검증 범위](../02_feature_prds/03_event/F03-02_event-detail_prd.md)를 따른다. 일정 변경·노쇼 등 다른 기능의 이전 조사 내용은 각 기능 대조에서 별도로 확인한다.
 
 ## 2. 실사 근거 맵
 
@@ -58,7 +58,7 @@
 | [F03-10](../02_feature_prds/03_event/F03-10_event-plan-link_prd.md) | F03-10. 이벤트 ↔ 플랜 연결 | Risk 후보 3 |
 | [F03-04](../02_feature_prds/03_event/F03-04_event-lifecycle_prd.md) | F03-04. 이벤트 수정/생명주기 관리 (호스트) | Risk 후보 3 |
 | [F03-07](../02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | F03-07. 정원 & 대기열 관리 | Risk 후보 3 |
-| [F03-02](../02_feature_prds/03_event/F03-02_event-detail_prd.md) | F03-02. 이벤트 상세 조회 | Risk 후보 2 |
+| [F03-02](../02_feature_prds/03_event/F03-02_event-detail_prd.md) | F03-02. 이벤트 상세 조회 | 현재 차이·위험 4 |
 | [F03-01](../02_feature_prds/03_event/F03-01_event-discovery_prd.md) | F03-01. 이벤트 발견 & 탐색 | Risk 후보 2 |
 | [F03-09](../02_feature_prds/03_event/F03-09_event-photos_prd.md) | F03-09. 이벤트 사진첩 | Risk 후보 2 |
 | [F03-11](../02_feature_prds/03_event/F03-11_wishlist_prd.md) | F03-11. 위시리스트 (관심 이벤트) | Risk 후보 1 |
@@ -102,7 +102,7 @@
 | 기능 ID | 호스트 액션 | 참가자 액션 |
 |---|---|---|
 | F03-01 발견 | (해당 없음 — 자신은 다른 호스트의 이벤트 탐색 가능) | 검색·필터·추천 카드로 진입 |
-| F03-02 상세 | 액션 바가 "수정/삭제/종료/취소"로 교체 | "참석 신청" / "대기열 등록" / "참석 취소" |
+| F03-02 상세 | 초안 하단 수정·공개, 더보기 삭제. 공개 뒤 수정은 관리 구역, 종료는 하단. 종결 상태에는 삭제 없음 | 신청·대기·참석·납부 상태와 서버의 허용 행동에 맞는 입구 |
 | F03-03 생성 | 4-step 폼 진행, DRAFT→OPEN 발행 | 없음 |
 | F03-04 생명주기 | publish/close/cancel/reschedule/announce/delete | (영향만 받음, FCM 알림 수신) |
 | F03-05 신청 | 없음 | `POST .../capacity` 또는 `POST .../apply` |
@@ -180,7 +180,7 @@
 | [F03-07](../02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | F03-07. 정원 & 대기열 관리 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F03-10](../02_feature_prds/03_event/F03-10_event-plan-link_prd.md) | F03-10. 이벤트 ↔ 플랜 연결 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F03-01](../02_feature_prds/03_event/F03-01_event-discovery_prd.md) | F03-01. 이벤트 발견 & 탐색 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F03-02](../02_feature_prds/03_event/F03-02_event-detail_prd.md) | F03-02. 이벤트 상세 조회 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F03-02](../02_feature_prds/03_event/F03-02_event-detail_prd.md) | F03-02. 이벤트 상세 조회 | 4 | 현재 PRD의 「남은 차이와 위험」에서 근거·실행 미검증을 구분 |
 | [F03-09](../02_feature_prds/03_event/F03-09_event-photos_prd.md) | F03-09. 이벤트 사진첩 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F03-08](../02_feature_prds/03_event/F03-08_qr-checkin_prd.md) | F03-08. QR 체크인 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F03-11](../02_feature_prds/03_event/F03-11_wishlist_prd.md) | F03-11. 위시리스트 (관심 이벤트) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
