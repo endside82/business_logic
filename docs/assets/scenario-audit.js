@@ -14,9 +14,9 @@ window.SCENARIO_AUDIT = {
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 59,
+    "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 59,
+    "automatedScenarioReferences": 60,
     "directlyLinkedJourneys": 32,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 32,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 39,
-    "partialEvidenceChain": 52,
-    "definitionOnlyEvidence": 84,
-    "traceMarkers": 447,
-    "verifiedTraceRecords": 445,
+    "partialEvidenceChain": 53,
+    "definitionOnlyEvidence": 83,
+    "traceMarkers": 459,
+    "verifiedTraceRecords": 457,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -4130,17 +4130,224 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 12,
+        "verified": 12,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-20:1",
+            "label": "POST /api/v1/events/{eventId}/no-shows — 단건 확정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "confirm",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/no-shows",
+                "targetLine": 48,
+                "methodLine": 49
+              }
+            ]
+          },
+          {
+            "id": "F03-20:2",
+            "label": "POST /api/v1/events/{eventId}/no-shows/batch — 일괄 확정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "confirmBatch",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/no-shows/batch",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F03-20:3",
+            "label": "GET /api/v1/events/{eventId}/no-shows — 조회자별 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "list",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/no-shows",
+                "targetLine": 70,
+                "methodLine": 71
+              }
+            ]
+          },
+          {
+            "id": "F03-20:4",
+            "label": "POST /api/v1/events/{eventId}/no-shows/{noShowId}/appeal — 모임 안 직접 소명",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "appeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/no-shows/{noShowId}/appeal",
+                "targetLine": 82,
+                "methodLine": 83
+              }
+            ]
+          },
+          {
+            "id": "F03-20:5",
+            "label": "GET /api/v1/events/{eventId}/no-shows/{noShowId}/appeal-evidence/{fileId}/download-url — 소명 자료",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "appealEvidenceDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/no-shows/{noShowId}/appeal-evidence/{fileId}/download-url",
+                "targetLine": 100,
+                "methodLine": 101
+              }
+            ]
+          },
+          {
+            "id": "F03-20:6",
+            "label": "POST /api/v1/events/{eventId}/no-shows/{noShowId}/overturn — 확정 취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "overturn",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/no-shows/{noShowId}/overturn",
+                "targetLine": 116,
+                "methodLine": 117
+              }
+            ]
+          },
+          {
+            "id": "F03-20:7",
+            "label": "POST /api/v1/events/{eventId}/no-shows/{noShowId}/appeal/reject — 소명 거절",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+                "controller": "EventNoShowController",
+                "method": "rejectAppeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/no-shows/{noShowId}/appeal/reject",
+                "targetLine": 136,
+                "methodLine": 137
+              }
+            ]
+          },
+          {
+            "id": "F03-20:8",
+            "label": "POST /api/v1/events/{eventId}/applications/{applicationId}/no-show-refund — 사후 조정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "createNoShowRefund",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/no-show-refund",
+                "targetLine": 68,
+                "methodLine": 69
+              }
+            ]
+          },
+          {
+            "id": "F03-20:9",
+            "label": "GET /api/v1/events/{eventId}/applications/{applicationId}/no-show-refund — 권한 있는 조정 조회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "getNoShowRefund",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/no-show-refund",
+                "targetLine": 84,
+                "methodLine": 85
+              }
+            ]
+          },
+          {
+            "id": "F03-20:10",
+            "label": "GET /api/v1/events/{eventId}/no-show-refund/me — 본인 조정 기록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "getMyNoShowAdjustment",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/no-show-refund/me",
+                "targetLine": 100,
+                "methodLine": 101
+              }
+            ]
+          },
+          {
+            "id": "F03-20:11",
+            "label": "GET /api/v1/events/{eventId}/no-show-refund/me/evidence/{fileId}/download-url — 본인 공개 자료",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "getMyNoShowAdjustmentEvidenceDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/no-show-refund/me/evidence/{fileId}/download-url",
+                "targetLine": 111,
+                "methodLine": 112
+              }
+            ]
+          },
+          {
+            "id": "F03-20:12",
+            "label": "POST /api/v1/events/{eventId}/applications/{applicationId}/refund-preview — 조정 상한 미리보기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "preview",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/refund-preview",
+                "targetLine": 49,
+                "methodLine": 50
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 2,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/widget/event/attendee_no_show_appeal_entry_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_api/api-app/src/test/java/com/endside/community/event/service/EventChatRoomCommitTest.java",
           "community_app/test/presentation/event/event_message_guidance_card_test.dart"
@@ -4154,7 +4361,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,

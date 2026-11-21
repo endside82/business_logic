@@ -2815,9 +2815,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "bf8373cd9676e83f2312c61cc221c6472e483c60bce0d00cca3bdce74af1c290",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "no_show_20261122"
+      ],
+      "reviewedSha256": "d52afaa3882b50759667bfcdc9f35380ca37b022026103db755c76fcd7099851"
     },
     {
       "path": "docs/features/F04-01.html",
@@ -4933,7 +4936,8 @@
         "carpool_20261122",
         "bus_allocation_20261122",
         "layout_catalog_20261122",
-        "reschedule_20261122"
+        "reschedule_20261122",
+        "no_show_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5697,10 +5701,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bea70e5dd9bcfc0bad7b33ae74a445754d853969485325deef89906e95e7fd7b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "no_show_20261122"
+      ],
+      "reviewedSha256": "4da44066b2bea91a5c87daf303c4a4cf045bd7bd8b1afa1213515c767c849e58"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-01_club-discovery_prd.md",
@@ -7611,7 +7617,8 @@
         "carpool_20261122",
         "bus_allocation_20261122",
         "layout_catalog_20261122",
-        "reschedule_20261122"
+        "reschedule_20261122",
+        "no_show_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -14834,6 +14841,31 @@
         }
       },
       "scope": "일정 변경의 현재 소스와 선택된 시험 단언 대조. 기한 경과 저장·취소 재시도·소속/재전송·앱 갱신의 옛 미구현 주장 정리, 남은 문구/입력/직접 호출 조건 차이 기록. 제품 시험·실제 앱·푸시·환불·스케줄러 실행 아님. 전체 최신화와 최종 전달은 미완료."
+    },
+    {
+      "command": "F03-20: source-reference sync/11 tests; scenario audit; reviewed paths/derived digests; scoped source hashes; retained HTML IDs and incoming Markdown anchor; git diff --check",
+      "result": {
+        "status": "PASS",
+        "newlyReviewedDocuments": 2,
+        "partialDocuments": 2,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 108,
+        "sourceRecords": 459,
+        "verifiedRecords": 457,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1669,
+        "derivedSourceDigests": 209,
+        "sourceAndCanonicalDigests": 50,
+        "retainedHtmlPages": 1,
+        "incomingMarkdownAnchors": 1,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 349,
+          "pending": 620,
+          "historical_retained": 33
+        }
+      },
+      "scope": "노쇼 확정/소명/거절/번복·권한·기한·환불대기 제외·실제미참석·사후조정 원결제별 잔여배정·0원/개최권·알림/본인조회 문서 대조. 과거 위험 중 해소와 남은 앱 입구/조회 차이를 구분. 선택시험 단언만 읽음; 제품 시험·실제 지갑/정산·동시성·앱/푸시·운영설정 확인 아님. 전체 문서·최종 전달 미완료."
     }
   ],
   "evidenceGroups": {
@@ -21536,6 +21568,342 @@
           "id": "F03-19:7",
           "change": "added",
           "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        }
+      ]
+    },
+    "no_show_20261122": {
+      "kind": "source_review",
+      "scope": "F03-20 노쇼 단건/일괄·본인/게스트 직접소명·기한/거절/번복·출석정정·환불세부권한·미참석자격·원결제별잔여배정·0원/개최권·알림/조회·현재앱입구. 소스와 선택시험 단언 대조이며 제품시험·실제금전처리·앱/푸시·운영설정 검증 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/EventNoShowController.java",
+          "sha256": "e64647f546d550c3f624e67a1d5d836bd837362c004a2c6c7060c7f9516b7d0c",
+          "reviewScope": "35–166 기본 경로·7개 창구·소명/번복/거절의 선택 키와 기록 번호 재생."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventNoShowResponseService.java",
+          "sha256": "848656d5cd389d0786f04467881dd666c05bdce3c5110ce0fac2ed722f58e2fa",
+          "reviewScope": "31–75 명령 뒤 조회자별 VO 매핑과 재생 권한 재조회."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventNoShowService.java",
+          "sha256": "15c8d5eb741721ed9da152a9520b21d09050e885865d21ea8c4c5a2c4b4b9ef5",
+          "reviewScope": "85–103 제한값;173–659 회원/게스트 단건·일괄·최신 환불대기 제외·감사;681–976 소명 권리/기한/상태/소속/증빙;992–1065 알림;1117–1334 번복/거절/정정체크인/횟수/목록/재생;1354–1462 플랫폼발행/입력/소속;1495–1512 운영자번복 가드. 새 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/NoShowTransitions.java",
+          "sha256": "41ba7f7025b35e9b75b28d7734fff65a04357a09c083ae0e4e7eb7a5d36d5190",
+          "reviewScope": "38–98 CONFIRMED 생성, 소명/거절/번복 상태와 기록 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/NoShowPlatformDecisionGuard.java",
+          "sha256": "a23747c1214c9413b9db28a8db579b44f53ed60b0b2b88a4a61c6c1d2b17416a",
+          "reviewScope": "52–133 기본 false의 사건 발행·운영자 번복·통합 소명 접수 제한. 운영환경 값은 확인 안 함."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/param/NoShowConfirmParam.java",
+          "sha256": "67dcc7a8291989495da6d19075d46e28446a581d4ddfa08a8128bf870364a562",
+          "reviewScope": "13–43 nullable 회원/참석행과 사유/증빙/공개범위."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/param/NoShowAppealParam.java",
+          "sha256": "6f7349939d5cde308521e92e7ca1a0bec7adc7fb9a90df36322cc59105896034",
+          "reviewScope": "19–33 식별자·필수 사유(서비스검사)·자료."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/EventNoShowVo.java",
+          "sha256": "b7705a4d6e55463c05a6f603bd76591f8b07761ae9dc687e3946729dc3826281",
+          "reviewScope": "27–134 신분·신청·상태·소명 사유/자료/거절·canAppeal/기한 매핑."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/constants/NoShowStatus.java",
+          "sha256": "0f723aedb576b3f1b1c3a9e99af4bd58a33f8e0b3150c21d699c29a23b9856a6",
+          "reviewScope": "26–52 세 상태·거절시 CONFIRMED 전이·최종 OVERTURNED."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/constants/NoShowAppealState.java",
+          "sha256": "5cc7b0c4bce91103dd606283e2073c55c824b1e6b6e316fbc7c14925eb629dc2",
+          "reviewScope": "10–20 OPEN/APPEALED/OVERTURNED/REJECTED/DEADLINE_PASSED 표시 상태."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/constants/NoShowEvidenceVisibility.java",
+          "sha256": "e5ea500553b6110028d798346468908e16becaf74ffafcf0b40c2019d269d273",
+          "reviewScope": "공개범위 enum 값 대조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/NoShowRefundService.java",
+          "sha256": "01e690fa7bfe3469cb985ff661b41a8cd33988c0536feddff467f7034292b1c1",
+          "reviewScope": "113–308 입력·모임/신청잠금·환불권한·실제미참석·중복·최초/추가원결제 잔여배정·지갑/정산/누계·0원·개최권·기록;311–465 조회권한·본인공개자료·재생·양수/0원알림·VO. 내부 지갑/정산 구현 전체 재검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/port/EventNoShowEligibilityAdapter.java",
+          "sha256": "7ec565171a4d04b95779cc0141537e71726ccd3fb66494352139c0928145d81f",
+          "reviewScope": "47–92 개최·APPROVED·실제참석/체크인과 본인/게스트 소명상태 매핑. 확정 행 존재를 필수로 검사하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/port/NoShowRefundEventAdapter.java",
+          "sha256": "93fe7f7133ca228076608969c8eaf1df528abf12b78b57eac5bfed98354c2a3b",
+          "reviewScope": "32–60 모임/신청조회와 RefundAccessPolicy 위임·본인신청번호."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/RefundAccessPolicy.java",
+          "sha256": "9d8c45069b0dec1ebc8a322322e32c5c8eb766f140bed97af8254dcdfa5b267b",
+          "reviewScope": "49–86 호스트·세부환불권한·클럽환불권한과 본인조회."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/port/RefundAccessEventAdapter.java",
+          "sha256": "b744d6e2572070edcf7aefbbcd6d6524d6746a95a3536a916958321931d83e6a",
+          "reviewScope": "26–34 EventCoHostService HANDLE_REFUND_ISSUE 판정 호출."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCoHostService.java",
+          "sha256": "27f9e3a4a3768726b32d95fee5279e58be5cd6609d2acc5cd943bc6257ff7003",
+          "reviewScope": "232–255 세부 플래그와 위임 권한 제한."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/model/PointSplit.java",
+          "sha256": "13e6e971fa5b99d91f46e1fa7a74106ea5e772e1c4f51132d219ef54f68dbe44",
+          "reviewScope": "39–55 유료 버림·나머지 무료와 정수 계산."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/EvidenceFileValidator.java",
+          "sha256": "720eae0e72db85717e755e11f9dc65d9a65c72c824acf9a4b83455077e5cefcb",
+          "reviewScope": "87–158 ID정리·소유·완료·개수·EVIDENCE/REVIEW 허용 검사."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/param/NoShowRefundParam.java",
+          "sha256": "f36d7c5a2155131dfcf43aeba7cb12049f3221415651a474e8c428665d338f08",
+          "reviewScope": "22–43 Long금액·String사유/범위·자료·Boolean개최권."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/vo/MyNoShowAdjustmentVo.java",
+          "sha256": "2a2cda4cc4159796112069a504a7560aa04c2d223c8a76d89320e279d9113a6a",
+          "reviewScope": "29–55 본인 조정필드·공개자료·노쇼 목록."
+        },
+        {
+          "path": "community_app/lib/data/api/event_no_show_api.dart",
+          "sha256": "339c0af7b9d35b05e55eeb4af607519c1a401597bf9621b20d77d36d15b85834",
+          "reviewScope": "21–81 서버7창구·선택키·다운로드 URL 응답."
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/event_no_show_provider.dart",
+          "sha256": "90e6df56aefda57b4849bc37b8e2645d9096bc1c39c20397cac24a5cc69c25b2",
+          "reviewScope": "25–163 세션 메모리키·본인직접소명 식별자·명령과 목록갱신. 다른 모임 데이터 전체갱신으로 확대하지 않음."
+        },
+        {
+          "path": "community_app/lib/data/models/dispute/event_no_show_vo.dart",
+          "sha256": "13a1b49c55b74cc129e37f2d31d60bf419ef6afb21fdaf6600264fc0be78bc16",
+          "reviewScope": "15–116 nullable회원/게스트·canAppeal·기한·소명/거절·UNKNOWN·partyOwner."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/no_show_manage_section.dart",
+          "sha256": "c485438d6a7e634bc90b58b1a1718614d099eafc4ecc440d66d50b93afa3bf1d",
+          "reviewScope": "45–54 서버 일괄표지;156–228 행별 번복/거절/실제applicationId 환불경로와 복귀갱신. 게스트단건 선택 없음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/no_show_appeal_sheet.dart",
+          "sha256": "9b52faebe94c6588ae9877808bebef2f0a25494e72db862a5459e1e8dcbef3c7",
+          "reviewScope": "53–83 사유/첨부와 성공 대기·실패입력 유지;111–136 500자·자료 첨부·업로드 상태."
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "sha256": "da46dc46487816f138213294f70c87e20051cad47d0254f78ab38a2bdfe38aab",
+          "reviewScope": "316–345 회원 단건 확정 호출의 userId/사유/자료. 게스트 attendanceId 단건 UI로 확대하지 않음."
+        },
+        {
+          "path": "community_app/lib/domain/providers/dispute/no_show_refund_form_provider.dart",
+          "sha256": "d97b9018467115f5b509cbbd112b00b1e80f211e36f13466054ac9b81cdab459",
+          "reviewScope": "24–209 서버상한 미리보기·grossPaid만 소비·입력조건·금전키·결과/지갑/개최권 갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart",
+          "sha256": "ac0c39e4715823815ebd0d1e4d71f0e8304c999d622e2b4c046387ec3ada597d",
+          "reviewScope": "119–158 제출결과·조회실패 재시도/상한없을때 폼 미표시;347–365 실제자료공개 선택지 PARTIES/HOST_ONLY."
+        },
+        {
+          "path": "community_app/lib/data/models/dispute/no_show_refund_param.dart",
+          "sha256": "39fa7b03bbe56a7971a6cd7eb25fb69bde56e88237d797d317df4598cde15ff4",
+          "reviewScope": "23–89 입력필드·사유4종·공개범위3값/라벨."
+        },
+        {
+          "path": "community_app/lib/domain/providers/dispute/my_no_show_adjustment_provider.dart",
+          "sha256": "71688e233c8770d9c7f1d82b484c8d24faa76be6527e2c7e99e31b6338c60d33",
+          "reviewScope": "36–109 본인조정 특정notfound만 빈상태·직접소명 후 두조회 갱신·상세진입 조회시작조건."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/no_show_adjustment_screen.dart",
+          "sha256": "c702e6b1b14fd7b33dad9c9d1f6ea53323be2b0c0ef2233bf89157aba54cbb02",
+          "reviewScope": "47–109 빈상태/실패/새로고침/본인행;164–227 양수와0원 표시·공개자료 다운로드. 소명버튼 appealOpen 분기 검색대조."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_participation_hub.dart",
+          "sha256": "96cf97df18a7ffb734d81275fd454b8e1ee72c4ea9016778fa09516b0affc321",
+          "reviewScope": "169–177 본인 조정 기록 입구·오류부제·경로."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/dispute_routes.dart",
+          "sha256": "90af41cc27d928aa619826b54486a7e6d21de61ca124a3364c94476de502148a",
+          "reviewScope": "125–150 사후환불 route의 handleRefund 접근 검사·실제applicationId."
+        },
+        {
+          "path": "community_app/lib/data/api/dispute_case_api.dart",
+          "sha256": "906237e55807cfc631d0dcfbc55765befd836efc798c91c7a7da9eea2a65964c",
+          "reviewScope": "172–197 사후조정POST필수키·본인GET·자료GET. 앱 API 폴더 검색상 호스트 신청별GET미연결."
+        },
+        {
+          "path": "community_api/api-app/src/test/java/com/endside/community/capacity/service/NoShowRefundPendingRecheckCommitTest.java",
+          "sha256": "b4715bbf3b49bb52d05396d87b8d64ea128d9e264812ac23192f1a9100c4a16a",
+          "reviewScope": "105–137 잠금대기 중 환불대기 전환의 회원·게스트 단건거절/일괄제외 단언 읽기. 실행 안 함."
+        },
+        {
+          "path": "community_app/test/widget/event/attendee_no_show_appeal_entry_test.dart",
+          "sha256": "7907ccde080a7769a58b269ef6881395f4b30c52e92271aed61e6285a62ae47e",
+          "reviewScope": "261–310 본인게스트와회원의 같은 직접소명시트 제출 단언 읽기. 실행 안 함."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeAppealService.java",
+          "sha256": "1fd9e6cb0e2910297c0d53305641030de5b272197979f1153f3a41060c9c657c",
+          "reviewScope": "181–187 통합 소명 접수에서 NoShowPlatformDecisionGuard를 실제 호출. 다른 소명 흐름 전체 검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseService.java",
+          "sha256": "ca4449bf66645c822e14b68ceb641f46983a03e989176ebae790bf849d47072a",
+          "reviewScope": "380–395 사용자 분쟁 생성에서 노쇼 출처의 플랫폼 접수 가드를 실제 호출."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventAttendanceManagerGuard.java",
+          "sha256": "306a09ed8b1104b3329368acf1372f24b7adeca4b4e44201866d9756a8fbd5c7",
+          "reviewScope": "59–99 호스트·출석 플래그 공동호스트·위임제한·클럽 출석 권한."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventAttendanceActions.java",
+          "sha256": "85b7f91d6d1fdbca456f28248a6f47659c2c1d28ebf64a6f3135c5c258d36612",
+          "reviewScope": "387–392 상세 열람+출석 권한의 노쇼 행 명령 판정."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "62–69 OPEN/CLOSED와 시작 도달의 개최 조건."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/ParticipationRowLock.java",
+          "sha256": "b70cc459b2845fd4372fd83e9268152743ee77197496272af34b7ace42a1e07b",
+          "reviewScope": "113–115 일행 전체 체크인 SQL;158–220 잠금뒤 상태/환불대기/중복 체크인·노쇼환불 자격·정정체크인. 전체 다른 잠금 흐름 검토 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+          "sha256": "324eb35492888c29c6b241b41076e4ea2ab49a7a91920e573c1796dd64cdab3c",
+          "reviewScope": "49–58 미리보기;68–117 환불필수키·신청별GET·본인조정/자료GET."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/ApplicationRefundPreviewService.java",
+          "sha256": "112975da8c69834d5a99e7e837219de045e5efdbd533309d43595816ab78df4e",
+          "reviewScope": "102–125 NO_SHOW_POST_ADJUSTMENT 자격·공통배정·grossPaid=상한;238–269 최초/추가 잔여 합과 표시결과."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/RefundPolicyService.java",
+          "sha256": "7095cc117ec2b3bba4606722cea744fad3190134af23db6fd71b72c88c181888",
+          "reviewScope": "271–309 남은 원결제별 상한 합·거래번호 순서 배정·잔여 유료비율."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+          "sha256": "d4f1cd059fa25f61dcb8ab8d75f39a969c490e64cc0583d8250bd07fce4c2c11",
+          "reviewScope": "232–254 출석 관리자 영역;499–505 본인과 소유게스트 선택;782–897 소명기한/거절/상태·직접시트 제출."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "288–296 본인조정 조회와 기록/최초오류 입구보존;816–817 허브 전달."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "126–163 확정/소명/거절/취소는 참석자 목록, 양수/0원 조정은 본인 조정기록."
+        }
+      ],
+      "reuses": [
+        "event_capacity_waitlist_20261122",
+        "event_checkin_20261122",
+        "event_payment_cancel_refund_20261122",
+        "reschedule_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
+          "sha256": "4da44066b2bea91a5c87daf303c4a4cf045bd7bd8b1afa1213515c767c849e58"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-20.html": [
+          "sidebar",
+          "launch-strip",
+          "adjustment-notification",
+          "no-show-refund-cap",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-20:1",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:2",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:3",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:4",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:5",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:6",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:7",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:8",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:9",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:10",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:11",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-20:12",
+          "change": "added",
+          "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
         }
       ]
     }
