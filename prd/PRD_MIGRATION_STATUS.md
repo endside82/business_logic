@@ -65,7 +65,7 @@
 | PRD | 코드가 말하는 것 | 근거 |
 | --- | --- | --- |
 | F03-02·F03-11 숨김 | 모임 상태는 넷이고 운영자 숨김은 따로 둔 표지다. 숨긴 모임은 당사자만 상세를 열고 그 밖은 `EVENT_NOT_FOUND`, 공유 링크로도 열지 않는다. 새 신청·참석·찜을 받지 않는다. 호스트·공동 호스트에게만 숨김 안내 | `event/constants/EventStatus.java`, `event/model/Event.java:78-84,360-363`, `event/service/EventViewerContextService.java:790-824,843-848`, `event/service/WishlistService.java:76-87`, 앱 `presentation/event/screens/event_detail_screen.dart:283-290,336` |
-| F03-07 모집 마감 화면 | 정원 설정 화면의 「모집 상태」 구역이 마감(확인 창)·다시 시작을 부른다. 모임을 연 호스트이고 정기모임 회차가 아닐 때만 보인다 | 앱 `presentation/event/screens/capacity_settings_screen.dart:169-180,220-227,384-385,406-432` |
+| F03-07 모집 마감 화면 | 8 | 6 |
 | F03-05·F03-13 결제 만료 알림 | 만료는 신청 하나씩 조건부로 바꾸고 결정 이력과 알림 75(`EVENT_PREPAYMENT_EXPIRED`)를 같은 트랜잭션에 남긴다. 확인 대기 계좌이체 신고가 있으면 만료하지 않는다 | `event/service/ApplicationService.java:566-608`, `event/service/ApplicationTransitions.java:465-490`, `event/repository/query/ApplicationQueryRepository.java:302-316`, `event/prepayment/service/EventPrepaymentNotices.java:35-39` |
 | F03-19 변경 대상 | 동의 대상은 계정 있는 참석·대기자, 돈을 냈거나 입금 신고한 진행 중 신청자, 결제 행 없는 진행 중 신청자다. 0명이면 같은 트랜잭션에서 바로 적용 | `event/reschedule/service/EventRescheduleProposalService.java:245-279`, `capacity/service/EventChangeConsentRoster.java:15-45` |
 | F03-20 시작 전 확정 | 단일·일괄 노쇼 확정은 OPEN·CLOSED 이고 시작 시각이 지났을 때만 받는다. 종료 시각 상한은 없다. 앱 일괄 단추는 같은 판정의 서버 표지를 따른다 | `capacity/service/EventNoShowService.java:289-308`, 앱 `presentation/event/widgets/no_show_manage_section.dart:28,44-50` |
@@ -240,7 +240,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-04 | 이벤트 | [F03-04_event-lifecycle_prd.md](02_feature_prds/03_event/F03-04_event-lifecycle_prd.md) | `F03-04_event-lifecycle` | 실사 기반 전환본 | 9 | 3 |
 | F03-05 | 이벤트 | [F03-05_event-attendance_prd.md](02_feature_prds/03_event/F03-05_event-attendance_prd.md) | `F03-05_event-attendance` | 실사 기반 전환본 | 6 | 6 |
 | F03-06 | 이벤트 | [F03-06_application-review_prd.md](02_feature_prds/03_event/F03-06_application-review_prd.md) | `F03-06_application-review` | 실사 기반 전환본 | 3 | 5 |
-| F03-07 | 이벤트 | [F03-07_capacity-and-waitlist_prd.md](02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | `F03-07_capacity-and-waitlist` | 실사 기반 전환본 | 16 | 3 |
+| F03-07 | 이벤트 | [F03-07_capacity-and-waitlist_prd.md](02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | `F03-07_capacity-and-waitlist` | 실사 기반 전환본 | 8 | 6 |
 | F03-08 | 이벤트 | [F03-08_qr-checkin_prd.md](02_feature_prds/03_event/F03-08_qr-checkin_prd.md) | `F03-08_qr-checkin` | 실사 기반 전환본 | 5 | 1 |
 | F03-09 | 이벤트 | [F03-09_event-photos_prd.md](02_feature_prds/03_event/F03-09_event-photos_prd.md) | `F03-09_event-photos` | 실사 기반 전환본 | 8 | 4 |
 | F03-10 | 이벤트 | [F03-10_event-plan-link_prd.md](02_feature_prds/03_event/F03-10_event-plan-link_prd.md) | `F03-10_event-plan-link` | 실사 기반 전환본 | 5 | 3 |

@@ -2649,9 +2649,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "4bfe4388aad598c2501a8a6c7e7c346f4d104b923b66fcd714fa5b184c47f7b3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_capacity_waitlist_20261122"
+      ],
+      "reviewedSha256": "a3d2f485c7687351d6331a13e52419bc4d2a52f51ccc7c4ff9fb42f765766be4"
     },
     {
       "path": "docs/features/F03-08.html",
@@ -5484,10 +5487,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "e6dcaab1839e048063ecf4af738dbce3382de25ad59d156f38d2066015e330e0",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_capacity_waitlist_20261122"
+      ],
+      "reviewedSha256": "53f273ed2e7db28c4fad27e7a6ba2046f60d4ac6f0b13274bdf0844476cc8274"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
@@ -8820,9 +8825,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "186ea5ad10021af23e59300d44df715b44e167fae98832e2535234d7d837053e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_capacity_waitlist_20261122"
+      ],
+      "reviewedSha256": "a5689986add79a5c3052902bc3edc530b0cb68a19b49eb5c3615983a4fd0f292"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/diagrams.md",
@@ -8830,9 +8838,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5461aa565a0473f00f289b3351fdb943bb507d3fc3f802bc74de26ef1ab584e8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_capacity_waitlist_20261122"
+      ],
+      "reviewedSha256": "832e6b116ee7741df7bbd5b521c7cbc2382111f013aa0d15ea740b89e34fb9e6"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/frontend.md",
@@ -8840,9 +8851,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "358ed5f5d1443c32dfd85b68efa9b0ce52d266d72e568226e4e52fab7be1c069",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_capacity_waitlist_20261122"
+      ],
+      "reviewedSha256": "3ec58e620059ffe8cda5498fe3933063fceee6ee415fe5179ea48895ac65e50c"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/scenarios.md",
@@ -8850,9 +8864,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "467298c3e9917148fe6f2a5223faf8ad588984dc0233cec12b66a981bdcd36ac",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_capacity_waitlist_20261122"
+      ],
+      "reviewedSha256": "e18da391146750d270f46553ef40d3894e64abe77b85ee578d487bc289e60bd6"
     },
     {
       "path": "units/03_event/F03-08_qr-checkin/backend.md",
@@ -14410,6 +14427,32 @@
         }
       },
       "scope": "이벤트 신청·참석·심사의 문서 내용·파생 문서·코드 참조 검증. 기존 모의 제품 시험 단언을 읽었고 새 제품 시험·실DB·실제 화면·결제·알림 수신 검증은 하지 않음."
+    },
+    {
+      "command": "F03-07: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; source/canonical fingerprints; retained HTML IDs; incoming Markdown anchor scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 6,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 100,
+        "sourceRecords": 393,
+        "verifiedRecords": 391,
+        "retiredRecords": 2,
+        "localSourceLocations": 383,
+        "localLinks": 183,
+        "repositoryLinks": 517,
+        "reviewedRelativePaths": 1445,
+        "derivedSourceDigests": 181,
+        "currentSourceAndCanonicalDigests": 42,
+        "retainedHtmlPages": 1,
+        "incomingMarkdownAnchors": 0,
+        "reviewCounts": {
+          "source_verified": 303,
+          "historical_retained": 33,
+          "pending": 666
+        }
+      },
+      "scope": "정원·대기열·모집 관리 문서와 파생 문서·소스 참조 검사. 기존 모의 시험 단언을 읽었고 새 제품 시험·실DB·기기·반환 송금·알림 수신 검증 아님."
     }
   ],
   "evidenceGroups": {
@@ -18437,6 +18480,276 @@
           "id": "F03-05:4",
           "change": "clarified",
           "reason": "신청 경로는 심사 필요뿐 아니라 자동 승인 선입금도 사용하므로 설명 수정. 실제 창구 바인딩은 변경 없음."
+        }
+      ]
+    },
+    "event_capacity_waitlist_20261122": {
+      "kind": "source_review",
+      "scope": "F03-07 정원 설정·대기 정보 공개·수동/자동 승격·회원 제거의 결제 정리 입구·모집 마감/재개를 해당 서버/앱 함수로 대조. 이전 참석/결제·공통 명령 근거는 지문 불변 확인 후 재사용. 기존 모의 시험의 명시한 단언을 읽었으며 새 제품 시험·실DB 동시 실행·실제 화면·반환 송금·알림 수신 검수는 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/WaitlistService.java",
+          "sha256": "23840f39b1c9be514494b99171424b68ce769bd26c399745196a1adefbe6923e",
+          "reviewScope": "87–523 대기 조회의 공개·차단 필터, 회원/행 수동 승격, 취소 뒤 자동 승격, 정원 증가, 제재·소유자 조건, 알림 저장·순번 재정렬."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacitySettingsService.java",
+          "sha256": "7ddb6c427a3650fdfa6a655e1ccf970756a9d5e8173aa66c265f0fedab1e7b9c",
+          "reviewScope": "조회·전체 설정 저장·모집 변경·정원 재계산·권한·입력 검사. 재계산 배치 실행은 하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCapacitySettingsService.java",
+          "sha256": "77d6ae51e968cf3b7978227f659dc643f75c0f45566fcb7c597a9619d2beaddb",
+          "reviewScope": "정원 변경·하드 상한·축소 점유 기준·확대 승격, 호스트 모집 표지 변경."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventRegistrationCommandExecutor.java",
+          "sha256": "9f223e403d288a1f06723725a7a2eac2c9b39f487cbe1580eade18222416d6db"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/param/CapacitySettingsParam.java",
+          "sha256": "6bc2353d256b1fd3ee76d0731f4d1ca6b29e116e9453d26e72f9ff77a6037fba"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/CapacitySettingsVo.java",
+          "sha256": "8198d30edf41ea42ef1b22a9959054a46224caa7955410c6dc6f4276b376bed8"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/WaitlistVo.java",
+          "sha256": "8e41b658a2317bd29006adb8ca5bbf7e2e7013c27c462a840bebda7727238a54"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/port/CapacityEventAdapter.java",
+          "sha256": "9d706b69ce29f4704482903f4675b3cb0b38bf33bc6eaff29ba1a2763002f187",
+          "reviewScope": "62–120 명단 관리 권한 위임·현재 설정 전달·상태 검사·저장·설정 VO 연결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventAttendanceManagerGuard.java",
+          "sha256": "306a09ed8b1104b3329368acf1372f24b7adeca4b4e44201866d9756a8fbd5c7",
+          "reviewScope": "59–99 수동 승격의 호스트·공동호스트 출석 관리 허용·위임 정지·클럽 출석 관리자 판정."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPartyService.java",
+          "sha256": "9e64a77573c7d66e2fc1e94675a5c5f5e847c0a203e02ae3bc7ed1425127772e",
+          "reviewScope": "290–334 공개 회원 제거 진입의 권한·자기 제거 거절·지갑 PAID 호스트 귀책 환불·일반 제거 전달. 개별 게스트 추가·삭제 전체는 범위 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventAuthorizationService.java",
+          "sha256": "5f27b7133a29189c88eb74b09ef6356946d02e1b00921eab5e0fd79035c4e897",
+          "reviewScope": "46–60 공개 제거의 선행 호스트 또는 활성 공동호스트 권한."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/CapacityCounter.java",
+          "sha256": "f85d664bed08782c9eeb4d3e9faae6363d16c7cf63370297388f19c967f810e0",
+          "reviewScope": "78–108 재계산과 종료 여부 판정의 연결. 전체 회계·정원 쓰기 경로 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventTransitions.java",
+          "sha256": "6b9200bcb1da938399b9dc6c332ffb8a55fa8717120d784cd6f440aeb2dcd52d",
+          "reviewScope": "87–127 정원·모집·설정 필드 변경. 생명주기 전체 전이 감사 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/AttendanceController.java",
+          "sha256": "170e7a44e0e9fa2eb11e8fccbedd06ff27d1a0371494935cd7f0755bea55b2dd",
+          "reviewScope": "대기 조회와 모집 마감·재개 창구 및 공통 실행기 연결. 다른 별칭은 요청 번호 공통 경계 확인 범위."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/capacity/service/WaitlistServiceTest.java",
+          "sha256": "85e000f81f9965c85cbcdc94243845d8c3c7ab37042896e9088e9f92d70011e7",
+          "reviewScope": "688–753 기본 정원·하드 상한 거절, 903–945 결제 대기·계좌이체 일행 추가 예약 반영, 1344–1355 본인 행·원래 순번 단언. 시험 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/capacity/service/CapacitySettingsServiceUpdateSettingsTest.java",
+          "sha256": "816f35a6a713b0834249a69bf689f97fac283f85ed1f2ccebac128f33b82b38e",
+          "reviewScope": "149–176 종료/취소 설정 저장 거절, 204–220 대기·승인제 해제 뒤 기존 행 유지 단언. 시험 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/service/EventCapacitySettingsServiceTest.java",
+          "sha256": "6adc4c30ce208aa63f88a74518115d52763dc4949a0b9f3317c1b5be5fc44298",
+          "reviewScope": "84–105 참석+예약 합보다 작은 축소 거절과 같은 값 허용 단언. 시험 실행 아님."
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/capacity_settings_provider.dart",
+          "sha256": "22f0cad7e1e56259b3fe39ab9c51e84e04997390631ba00c171e84d334fe256f"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/waitlist_provider.dart",
+          "sha256": "e7e2a8009adf3d246a61a5dc86e93b20598af783ee3fa5b4a78b8a6c7c7a8fdf"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/capacity_settings_screen.dart",
+          "sha256": "0847e9874a490372d570815dc7632d6cee194a8f2e1bfc152c6ab7a0196087b2"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/waitlist_screen.dart",
+          "sha256": "3b550cd66a298e05a38ef6668027696dcde009f7e86e099d1ed70f070ce4615a"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/capacity_settings_vo.dart",
+          "sha256": "50ad6cef1a1effbc9f18164ff0c410b65576d6177df22c18ae0047855f4aac20"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/waitlist_vo.dart",
+          "sha256": "858e9bb799cf2eaffc999bf6370b1b313783a0a9179c148683fe7314f7b62974"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendee_list_provider.dart",
+          "sha256": "487761e3190bc6ccc937160a4931e903dbb0bf31076b2cd368fe99cf631d1d77",
+          "reviewScope": "125–167 회원 제거의 공통 요청·성공/반영 가능 오류 재조회 범위."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+          "sha256": "d4f1cd059fa25f61dcb8ab8d75f39a969c490e64cc0583d8250bd07fce4c2c11",
+          "reviewScope": "601–652 회원 제거 확인·현재 목록 복귀·환불 필요 안내. 전체 명단/게스트 제거 기능 검수 아님."
+        },
+        {
+          "path": "community_app/test/widget/event/capacity_settings_save_rejection_test.dart",
+          "sha256": "d7c0daf222eae4ffd56112b839699a9224d6510a3c8388e5f9f23be209fdc048",
+          "reviewScope": "175–212 모의 저장 거절 뒤 폼과 입력값 유지 단언. 시험 실행 아님."
+        }
+      ],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+          "sha256": "accdbd266bcc4aee3ce15153f3a11b3c09b8b0dd644f52b683ecc8d5603b6ea0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacityService.java",
+          "sha256": "0735a5827e73de7b55a7deb8b1dfff84d4cf50fbbe134060d51a5835a3b964e4",
+          "reviewScope": "직접 참석·본인 취소·본인 상태 재조회·무료 승인 참석 생성·결제 확정 참석·placeRow의 해당 함수. 수동 승격·강제 제거·정기모임 전체 구현은 이번 범위 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacityPolicy.java",
+          "sha256": "420bb0b72b55a661b5ce1a63fd8d1439d1c89365c9a5427ae9c4724403cb29ee"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/GuestPolicy.java",
+          "sha256": "6d5e3d59e66d2986295c6c8e6c7380f3d4a18ea4dd58c1078e3f0327a8d14b77"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/Event.java",
+          "sha256": "17b9bd033fa423c591ef9a91b3b9613977b2905ce4ae18aaec3dc552e3a01216",
+          "reviewScope": "369–371 신규 참가 허용은 OPEN이고 숨김 아님이라는 판정."
+        },
+        {
+          "path": "community_app/lib/data/api/attendance_api.dart",
+          "sha256": "9f569c69f94e9eb626b9b3130af4dd7ca2578464c2a1b838cc6d8ab58679715f",
+          "reviewScope": "직접 참석·취소의 계약을 비교. 나머지 명단·일행 관리 전체 확인 아님."
+        },
+        {
+          "path": "community_app/lib/data/repositories/attendance_repository.dart",
+          "sha256": "7df9eb7f27db9d485d5674f69ac986a64cb904478c4022dda1e7ed40d7ea748b",
+          "reviewScope": "직접 참석·취소 전달과 Result 처리의 해당 함수."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "173–189 신청 관리 경로의 관리 권한 가드·화면 연결."
+        },
+        {
+          "path": "docs/ui-ux/screens/14-event-attendance.md",
+          "sha256": "240a1cf6b7a8ab98908fd40e1b77e7a60d7f9d69a3a6af4281fecb524b7a3be3",
+          "reviewScope": "신청 명단의 사람 링크, 322–367 신청 목록과 메시지 펼치기 명세, 949–974 승인 기반 신청 흐름. 현재 앱과 다른 명세는 Gap으로 유지."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPayerRoster.java",
+          "sha256": "a06aa99567d5ded34631bf6cde112a4fed64f3780ad4943ef68d6efd6a029ad2"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPaymentRefundService.java",
+          "sha256": "b65956091d62afd8d83f4af5881af7ac84bf6669fa7df999d246b3aeb93c6377"
+        }
+      ],
+      "additionalReusedSourceReview": {
+        "CapacityController.java": "104–185 회원·참석 행 승격과 공개 제거, 198–266 모집 별칭·정원 조회/저장 계약.",
+        "CapacityService.java": "476–576 무료 회원 제거·일행/좌석/후속, 1482–1486 환불 의무, 1648–1670 하위 참석 관리 권한. 기존 직접 참석·취소·배치는 선행 근거 재사용.",
+        "GuestPolicy.java": "65–69 게스트 허용 시 1~9명 설정 조건.",
+        "Event.java": "352 종료 상태 위임, 412–427 모집 표지와 설정 필드 변경. 종료 상태·모집 표지를 구분.",
+        "EventActionPolicy.java": "420–469 수동 승격 모임·유료·행·소유자·정원 조건.",
+        "EventPayerRoster.java": "127–137 좌석 예약은 결제 대기 일행 + 미확인 계좌이체 일행 추가 신고 합.",
+        "home_branch_routes.dart": "358–374 정원 관리 접근 가드와 화면 연결.",
+        "event_detail_screen.dart": "425–447 대기 명단·수용인원 설정 입구의 권한 조건.",
+        "attendance_api.dart": "115–155 대기·정원 설정·모집 변경의 앱 계약.",
+        "attendance_repository.dart": "169–225 대기·정원·모집 명령 전달과 요청 번호.",
+        "14-event-attendance.md": "149–185 정원/모집 흐름, 269–319 대기 명단·선택 승격 확인·수동 승격 예약 조건 명세."
+      },
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "53f273ed2e7db28c4fad27e7a6ba2046f60d4ac6f0b13274bdf0844476cc8274"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-07.html": [
+          "sidebar",
+          "launch-strip",
+          "cancellation-and-waitlist",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-07:1",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:2",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:3",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:4",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:5",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:6",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:7",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
+        },
+        {
+          "id": "F03-07:8",
+          "change": "added",
+          "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
         }
       ]
     }

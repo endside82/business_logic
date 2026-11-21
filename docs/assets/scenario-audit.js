@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,112개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,117개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1112,
+    "documentedScenarioItems": 1117,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,9 +17,9 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 63,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 63,
-    "directlyLinkedJourneys": 38,
+    "directlyLinkedJourneys": 37,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 38,
+    "journeyScenarioReferences": 37,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 45,
     "partialEvidenceChain": 49,
     "definitionOnlyEvidence": 81,
-    "traceMarkers": 385,
-    "verifiedTraceRecords": 383,
+    "traceMarkers": 393,
+    "verifiedTraceRecords": 391,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -2160,20 +2160,175 @@ window.SCENARIO_AUDIT = {
       "id": "F03-07",
       "domain": "이벤트",
       "name": "정원 & 대기열 관리",
-      "scenarioCount": 9,
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-07_capacity-and-waitlist/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-07_capacity-and-waitlist/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-07:1",
+            "label": "GET /api/v1/events/{eventId}/capacity/settings — 정원 설정 조회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "getSettings",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/capacity/settings",
+                "targetLine": 259,
+                "methodLine": 260
+              }
+            ]
+          },
+          {
+            "id": "F03-07:2",
+            "label": "PUT /api/v1/events/{eventId}/capacity/settings — 정원 설정 저장",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "updateSettings",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/events/{eventId}/capacity/settings",
+                "targetLine": 241,
+                "methodLine": 242
+              }
+            ]
+          },
+          {
+            "id": "F03-07:3",
+            "label": "GET /api/v1/events/{eventId}/waitlist — 권한에 맞는 대기 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/AttendanceController.java",
+                "controller": "AttendanceController",
+                "method": "getWaitlist",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/waitlist",
+                "targetLine": 125,
+                "methodLine": 126
+              }
+            ]
+          },
+          {
+            "id": "F03-07:4",
+            "label": "POST /api/v1/events/{eventId}/capacity/{userId}/promote — 회원 수동 승격",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "promoteManual",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/capacity/{userId}/promote",
+                "targetLine": 144,
+                "methodLine": 145
+              }
+            ]
+          },
+          {
+            "id": "F03-07:5",
+            "label": "POST /api/v1/events/{eventId}/capacity/attendance/{attendanceId}/promote — 게스트 참석 행 수동 승격",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "promoteManualByAttendanceId",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/capacity/attendance/{attendanceId}/promote",
+                "targetLine": 168,
+                "methodLine": 169
+              }
+            ]
+          },
+          {
+            "id": "F03-07:6",
+            "label": "DELETE /api/v1/events/{eventId}/capacity/{userId} — 참가자 제거와 결제 정리",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "removeByHost",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}/capacity/{userId}",
+                "targetLine": 119,
+                "methodLine": 120
+              }
+            ]
+          },
+          {
+            "id": "F03-07:7",
+            "label": "POST /api/v1/events/{eventId}/registration/close — 모집 마감",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/AttendanceController.java",
+                "controller": "AttendanceController",
+                "method": "closeEvent",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/registration/close",
+                "targetLine": 192,
+                "methodLine": 193
+              },
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "closeEvent",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/capacity/close",
+                "targetLine": 207,
+                "methodLine": 208
+              }
+            ]
+          },
+          {
+            "id": "F03-07:8",
+            "label": "POST /api/v1/events/{eventId}/registration/reopen — 모집 다시 시작",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/AttendanceController.java",
+                "controller": "AttendanceController",
+                "method": "reopenEvent",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/registration/reopen",
+                "targetLine": 204,
+                "methodLine": 205
+              },
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+                "controller": "CapacityController",
+                "method": "reopenEvent",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/capacity/reopen",
+                "targetLine": 217,
+                "methodLine": 218
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
@@ -2181,18 +2336,16 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 0,
         "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_event_operational_surface_test.dart"
+          "community_app/test/widget/event/capacity_settings_save_rejection_test.dart"
         ],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_operational_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "evidenceStage": 3,
