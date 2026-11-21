@@ -1,81 +1,75 @@
-# F19-01. 관심인 등록·해제·한도 PRD
+# F19-01. 관심 있는 사람 등록·해제·한도 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 서버·앱 소스와 기존 시험 위치를 대조했다. 새 시험·실기기·외부 알림 검증 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; 작성일: 2026-06-05 -->
+## 결론
 
-## 1. 결론
+관심 있는 사람은 내가 관리하는 단방향 목록이다. 상대에게 등록 알림을 보내거나 누가 자신을 등록했는지 조회하는 회원 흐름은 이 기능에 없다. 기본 설정은 무료 3명·프리미엄 10명이며 실제 한도는 서버 응답을 사용한다. 구독이 끝나도 등록을 지우지 않고 등록 시각·번호 순의 현재 한도 안에서만 유효하게 계산한다.
 
-사용자는 다른 사용자를 단방향·비공개로 "관심인"으로 등록하고, 한도 내에서 자유롭게 해제할 수 있다. 등록 관계는 owner에게만 비공개 — 대상에게는 누가 자신을 관심등록했는지 알림·조회를 일절 제공하지 않는다. 한도는 설정값 기반(무료 3명 / PREMIUM 10명)이며, PREMIUM 구독 유무로 실시간 판별한다. 한도 초과·중복·자기자신·차단 관계·비존재 대상은 서버에서 거절한다. 다운그레이드 시 등록 row는 보존되고 등록순 최초 N명만 "유효(active)" 처리되어 캘린더·알림에서만 효력을 발휘한다 — 목록 화면에는 dormant 배지로 표시되고, 해제 후 재등록하거나 PREMIUM 재가입 시 자동 복원된다.
+등록되어 있다는 것과 상세 프로필·캘린더를 볼 권한은 별개다. 관심인 등록이 공유 관계나 상대의 비공개 설정을 우회하지 않는다.
 
-서버와 Flutter 양쪽 구현이 완료되어 있으며, 서버-Flutter 계약 정합성이 높다.
+## 실제 입구와 행동의 차이
 
-## 2. 코드 위치
+| 입구 | 현재 행동·복귀 |
+|---|---|
+| 전체 메뉴 → 활동 → 관심 있는 사람 | 목록·한도를 각각 읽고 현재 등록과 한도를 표시함. 하단 마이 카드 메뉴에 있다는 예전 설명은 사용하지 않음 |
+| 목록의 추가 | 한도를 확인한 뒤 닉네임 검색 아래 창을 엶. 검색 결과 선택이 바로 등록 요청이며 별도 확인창은 없음 |
+| 목록 항목 | 해당 사람의 상세 프로필로 이동함. 현재 열람 권한은 그 화면에서 다시 확인 |
+| 목록 항목의 빼기 | 확인 후 해제. 취소하면 그대로 유지, 성공·실패 안내 뒤 목록과 한도를 갱신 |
+| 사람 상세의 공통 관심인 버튼 | 현재 등록·한도를 읽어 추가 또는 빼기를 바로 요청함. 목록의 빼기 확인창과 달리 별도 확인 없이 처리함 |
+| 상세의 한도 초과·비활성 관심인 | 관리 화면으로 가는 입구를 제공함. 본인 프로필과 비로그인 상태에는 공통 버튼을 표시하지 않음 |
 
-계약의 정본은 코드다. 서버: `FavoriteController`, `FavoriteService`, `FavoritePolicyProperties`, `FavoritePersonVo`, `FavoriteLimitVo`, `FavoriteAddParam`, `FavoritePersonRepository`, `FavoriteQueryRepository`. 앱: `favorite_list_screen.dart`, `favorite_api.dart`, `favorite_person_vo.dart`, `favorite_limit_vo.dart`, `favorite_list_provider.dart`, `favorite_limit_provider.dart`, `app_router.dart`.
+목록과 한도 조회는 독립적이다. 한도가 준비되지 않았으면 추가 대신 확인 중을 표시하고, 한도 실패는 **한도 다시 확인**으로 재조회한다. 이전 프리미엄 한도를 그대로 사용해 등록을 허용하지 않는다. 목록 조회 실패의 다시 시도는 목록을 다시 읽는다.
 
-## 3. 전체 동작 흐름
+## 검색·등록·실패
 
-### 등록 흐름
-1. 사용자가 마이페이지 메뉴 "관심인" → `/profile/favorites`(`FavoriteListScreen`) 진입.
-2. `FavoriteListScreen`이 `FavoriteListNotifier`(`.getFavorites()`)와 `FavoriteLimitNotifier`(`.getLimit()`)를 동시 watch.
-3. FAB "추가" 탭 → `FavoriteAddSheet` 바텀시트 오픈(닉네임 검색 피커 — `/api/v1/users/search?nickname=` 재사용).
-4. 대상 선택 → `FavoriteListNotifier.add(targetUserId)` → `POST /api/v1/favorites`.
-5. 서버 `FavoriteService.addFavorite`: 자기자신 → `FAVORITE_SELF_NOT_ALLOWED`; 차단 → `FORBIDDEN`; 중복 → `FAVORITE_ALREADY_EXISTS`; 한도 초과 → `FAVORITE_LIMIT_EXCEEDED`. 모두 통과 시 `favorite_person` row 저장 → `FavoritePersonVo` 반환(201).
-6. 성공 시 `favoriteListNotifierProvider`·`favoriteLimitNotifierProvider` 모두 invalidate. 실패 시 `AppToast.show` 오류 메시지.
+닉네임 검색은 앞뒤 공백을 제거하고 빈 입력이면 결과를 비운다. 서버는 본인·양방향 차단·활동 불가 계정·검색 숨김·낯선 사람 숨김을 제외하고 최대 20명을 반환한다. 이 전역 선택기는 이미 관계가 있는 사람을 찾는 별도 사람 검색과 조건이 다르다.
 
-### 해제 흐름
-1. 목록의 타일 우측 × 버튼 → `AppDialog.confirm`.
-2. `FavoriteListNotifier.remove(targetUserId)` → `DELETE /api/v1/favorites/{targetUserId}`.
-3. 서버: row 없으면 `FAVORITE_NOT_FOUND`. 성공 시 204.
-4. 성공/실패 토스트 표시.
+추가 창에서 한 명을 선택한 동안 다른 결과 선택을 막는다. 등록 성공이면 창을 닫고 안내하며, 실패이면 창을 유지해 오류를 알린다. 서버는 대상 식별자·본인 여부·대상의 활동 가능 상태·차단·중복·현재 한도를 다시 검사하고 등록한다. 요청 잠금을 얻지 못한 경우도 성공으로 처리하지 않는다.
 
-### 한도 초과 선제 업셀
-- FAB 탭 시 `limit.currentCount >= limit.maxCount`이면 `AppDialog.alert`(프리미엄이면) 또는 `AppDialog.confirm`("프리미엄으로 더 많은 관심인" + 구독 화면 이동)(비프리미엄이면).
+등록 응답은 관계 정보이고 닉네임·사진이 없는 경우가 있다. 앱은 이 응답만으로 완성된 목록 행을 만들지 않고 목록·한도를 다시 읽는다. 서버·통신 오류를 “미등록”이라는 정상 결과로 바꾸지 않는다.
 
-## 6. 상태/권한 매트릭스
+## 한도·구독·유효 등록
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 |
-|---|---|---|---|
-| 무료(무구독) · 한도 미만 | maxFor=3, count<3 | FAB 활성 | 등록 가능 |
-| 무료 · 한도 도달(3명) | maxFor=3, count>=3 | FAB 탭 → 업셀 다이얼로그 | 구독 안내 후 이동 불가 |
-| PREMIUM · 한도 미만 | maxFor=10 | FAB 활성 | 등록 가능 |
-| PREMIUM · 한도 도달(10명) | maxFor=10, count>=10 | FAB 탭 → 알림 다이얼로그 | "최대 10명" 안내 |
-| 자기자신 등록 시도 | `FAVORITE_SELF_NOT_ALLOWED` | ToastType.error | 오류 토스트 |
-| 차단된 사용자 등록 시도 | `FORBIDDEN` | ToastType.error("등록할 수 없는 사용자") | 오류 토스트 |
-| 중복 등록 시도 | `FAVORITE_ALREADY_EXISTS`(409) | conflict → "이미 등록된 관심인" | 오류 토스트 |
-| PREMIUM → 무료 다운그레이드 후 기존 관심인 | active=false (서비스 레이어) | dormant 배지 표시, 반투명 | 목록 잔존, 캘린더/알림 비활성 |
+- 서버 설정과 혜택 카탈로그가 한도를 정한다. 현재 기본 설정은 무료 3명·프리미엄 10명이며 화면의 한도 안내는 서버 값을 사용한다.
+- 한도를 채운 무료 사용자는 개인 구독 기능이 열린 범위에서 구독 안내를 받을 수 있다. 이미 프리미엄이거나 구독 기능이 닫혀 있으면 현재 최대 인원 안내만 표시한다.
+- 구독 종료 후에도 초과 등록은 목록에 남는다. 현재 한도를 넘는 항목은 흐리게 표시하고 비활성 안내를 한다. 이때 새 등록은 전체 등록 수가 한도 아래가 되어야 가능하다.
+- 유효 등록은 등록 시각·번호 순으로 다시 계산한다. 오래된 등록을 해제하면 뒤의 등록이 한도 안에 들어올 수 있다. 해제 후 재등록은 끝에 새로 등록하는 것이며 원하는 사람을 항상 활성화하는 방법이라고 안내하지 않는다.
+- 목록의 유효 표시는 한도 판정이다. 목록 조회 자체에는 상대의 현재 차단·검색 숨김·상태를 제외하는 조건이 없으므로, 이를 현재 프로필 공개 가능 표시로 해석하지 않는다. 후속 상세 열람·캘린더·알림은 각자의 판정을 적용한다.
 
-## 7. 정합성 판단
+## 해제·계정 변경·복귀
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 한도(무료) | `defaultMax=3` (`FavoritePolicyProperties.java:18`) | `limit.maxCount` 표시 + 업셀 | 정합 |
-| 한도(프리미엄) | `premiumMax=10` (`FavoritePolicyProperties.java:20`) | `limit.maxCount` 표시 | 정합 |
-| `premium` JSON key | Jackson `isPremium` → `premium` | `@JsonKey(name: 'premium')` | 정합 |
-| 등록 응답 201 | `ResponseEntity.status(201).body(vo)` | Retrofit `Future<FavoritePersonVo>` | 정합 |
-| 해제 응답 204 | `ResponseEntity.noContent().build()` | `Future<void>` | 정합 |
-| dormant 로직 | `active` 서비스 레이어 세팅 | `@Default(true) bool active` | 정합 (서버가 세팅, Flutter 수신) |
+해제는 로그인한 소유자의 해당 등록을 지운다. 이미 없으면 찾을 수 없음으로 실패하며 앱의 목록 화면은 일반 실패 안내를 한다. 상세 공통 버튼은 변경 실패 뒤 목록·한도를 다시 읽도록 하고 현재 결과를 재확인하라고 안내한다.
 
-## 8. Gap / Risk
+변경 성공은 같은 계정의 목록·한도·관심인 캘린더 등을 다시 읽게 한다. 상세 공통 버튼은 계정·대상·요청이 바뀌면 이전 응답으로 새 화면을 바꾸지 않는다. 목록 화면의 명령은 공통 계정 세션 범위로 실행한다. 목록에서 다른 화면을 둘러봤다고 이미 성공한 등록·해제를 취소하지 않는다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| Gap-P1 | 테스트 자산 미확인 | 단위/통합 테스트 파일 미확인 | 회귀 검증 공백 | 테스트 파일 확인 후 보강 |
-| Gap-P2 | `isEffectiveFavorite` N+1 | `FavoriteService.java:145-147` — owner별 전체 row 로드 후 contains | 관심인 많은 대형 host 알림 팬아웃 시 성능 저하 | 단일 rank 쿼리 최적화 후속 |
-| Risk | Redisson 잠금 실패 시 UX | `TOO_MANY_REQUESTS` 오류 코드 클라 미분기 처리 | "관심인 등록에 실패했습니다" 범용 메시지 노출 | orElse 분기는 현재 적절, 메시지 정제 고려 |
+## 현재 제한과 확인 범위
 
-## 9. 수용 기준
+| 판정 | 항목 | 영향·다음 확인 |
+|---|---|---|
+| Gap | 검색 응답 순서 | 현재 검색 공급자에는 검색어 세대·취소 비교가 없어 이전 검색 응답이 새 검색이나 입력 지움 뒤 늦게 표시될 수 있음 |
+| Risk | 목록의 유효 표시와 공개 권한 | 등록순 유효 여부를 대상의 정상 상태·미차단·상세 공개 허용으로 오인하지 않아야 함 |
+| Risk | 등록 경합·응답 불명 | 현재 잠금과 서버 한도 검사를 확인했으나 동시 요청·잠금 만료·커밋·응답 유실의 실제 결과는 별도 확인 필요 |
+| 미검증 | 구독 전환·실계정 왕복 | 기존 시험 파일은 존재함. 새 실결제·두 계정·실기기 등록·해제 검증을 수행한 것은 아님 |
 
-- **AC-01 (무료 한도)**: Given 무료 사용자 + 관심인 3명 등록됨 When FAB 탭 Then 구독 안내 다이얼로그 표시, "프리미엄 보기" 탭 시 `/profile/wallet/subscription` 이동.
-- **AC-02 (등록 성공)**: Given 무료 사용자 + 관심인 0명 When targetUserId 선택 → 확인 Then 201 응답, 목록에 새 항목, 한도 카운트 +1.
-- **AC-03 (해제)**: Given 관심인 1명 이상 등록됨 When × 탭 → 확인 Then 204 응답, 목록에서 제거, 카운트 -1, "해제했어요" 토스트.
-- **AC-04 (중복 방지)**: Given 이미 등록된 대상 When 동일 targetUserId 재등록 Then 409 → "이미 등록된 관심인" 토스트.
-- **AC-05 (dormant 배지)**: Given PREMIUM→무료 다운그레이드 후 관심인 4~N명 등록됨 When 목록 조회 Then 4번째 이후 항목에 "프리미엄 시 활성" 배지 + 반투명 표시.
+## 수용 기준과 검증 근거
 
-## 10. 미결정 / 후속
+- **AC-01 진입:** 전체 메뉴에서 목록을 열고 목록 타일과 상세의 공통 버튼을 구분한다.
+- **AC-02 조회:** 목록·한도의 로딩과 실패를 따로 처리하고 한도 실패는 다시 확인한다.
+- **AC-03 검색:** 공백·빈 검색·현재 숨김·차단·본인 제외·20명 상한과 늦은 응답을 확인한다.
+- **AC-04 등록:** 결과 선택 즉시 요청·중복 제출 방지·성공 시 창 닫기·실패 시 유지가 일치한다.
+- **AC-05 서버 거절:** 자기 등록·활동 불가 대상·차단·중복·한도·잠금 실패를 성공으로 표시하지 않는다.
+- **AC-06 한도 안내:** 현재 서버 한도와 구독 기능 공개 범위에 따라 안내와 구독 이동을 구분한다.
+- **AC-07 구독 종료:** 등록은 유지하되 현재 등록순 한도만 유효하고 초과 등록을 따로 표시한다.
+- **AC-08 해제:** 목록의 확인·취소와 상세 버튼의 즉시 해제를 구분하고 실패·이미 없음은 재확인한다.
+- **AC-09 재등록:** 해제 뒤 재등록 순서와 다른 등록의 활성 전환을 확인한다.
+- **AC-10 계정과 공개:** 늦은 응답·계정 변경·프로필 공개 판정·캘린더 제한을 등록 여부와 구분한다.
 
-- 단위/통합 테스트 파일 존재 여부 확인 필요.
-- `FavoriteAddSheet` 내부 닉네임 검색 UX(검색 제한·공백 처리 등) 상세 확인 미완.
-- 프리미엄 업셀 후 구독 완료 시 자동으로 관심인 목록 fresh 여부 — 현재 미검증.
+기존 `FavoriteServiceTest`, `favorite_list_screen_test.dart`, `favorite_person_http_test.dart`, 저장소·모델 시험이 있다. 과거의 ‘시험 자산 미확인’은 현재 파일 존재와 구분하며, 이번 대조를 새 실행 통과로 표기하지 않는다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `FavoriteController#addFavorite`, `FavoriteController#getFavorites`, `FavoriteController#removeFavorite`, `FavoriteController#getLimit`, `UserController#searchUsers`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->

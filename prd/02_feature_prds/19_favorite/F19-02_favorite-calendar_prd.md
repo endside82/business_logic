@@ -1,98 +1,86 @@
-# F19-02. 관심인 캘린더 뷰·새 이벤트 알림 PRD
+# F19-02. 관심인 캘린더 표시와 새 이벤트 알림 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 서버·앱 소스와 기존 시험 위치를 대조했다. 새 시험·실기기·외부 알림 검증 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; 작성일: 2026-06-05 -->
+## 결론
 
-## 1. 결론
+현재 앱은 내 월간 캘린더 위에 유효 관심인들의 주최·참석 이벤트를 함께 표시하는 집계 보기를 제공한다. 상단 하트로 켜고 끄며 초기값은 꺼짐이다. 특정 관심인 한 사람의 월간 조회는 서버·앱 API와 저장소에 있지만 이를 여는 앱 화면·공급자·버튼은 아직 없다.
 
-관심인 캘린더는 두 개의 뷰를 제공한다. **집계 뷰**(`GET /api/v1/calendar/favorites/monthly`)는 유효 관심인 전원의 이벤트를 월간 캘린더에 오버레이로 보여주고, **개별 뷰**(`GET /api/v1/calendar/favorites/{targetUserId}/monthly`)는 특정 관심인 한 명의 일정만 단독으로 보여준다.
+표시·알림에는 등록 한도, 차단, 상대 캘린더 숨김과 이벤트 공개 분류를 적용한다. 등록한 사람의 모든 일정이나 이미 받은 푸시를 회수하는 기능으로 설명하지 않는다.
 
-표시 대상은 독립 공개 이벤트만(클럽 이벤트·PRIVATE 제외, `EventScope.isPublicClassification` 거름망), status `OPEN` 또는 `CLOSED`이며 주최(HOSTING)와 참가(ATTENDING, EventAttendance 기준) 모두 포함한다. 차단 관계이거나 대상이 캘린더를 비공개로 설정한 경우 해당 대상 이벤트는 조회에서 제외된다.
+## 실제 입구와 화면 흐름
 
-알림은 관심인이 독립 공개 이벤트를 발행(DRAFT→OPEN)할 때 `FAVORITE_PERSON_NEW_EVENT(96)` 타입으로, 그 host를 유효하게(등록순 N명 내) 관심등록한 사용자에게 팬아웃된다. 무료·프리미엄 구분 없이 전원 수신.
+1. 마이의 **내 일정** 바로가기 또는 전체 메뉴의 내 일정에서 월간 캘린더를 연다.
+2. **상단 하트**를 누르면 선택한 연·월의 관심인 집계 목록을 조회해 내 일정과 함께 표시한다. 오른쪽 아래 전환 버튼이라는 과거 설명은 현재 배치와 다르다.
+3. 날짜에는 관심인 일정 표시를 더하며, 날짜를 고르면 내 일정과 관심인별 닉네임 묶음을 구분한다. 닉네임을 받지 못하면 대체 이름을 표시한다.
+4. 주최·참석 이벤트 카드는 해당 이벤트 상세로 이동한다. 당시의 상세 열람 권한을 다시 확인하며, 캘린더에 있었다는 이유로 열람을 보장하지 않는다.
+5. 하트를 끄면 집계 일정을 화면에서 빼며 등록 해제나 상대 설정 변경은 하지 않는다. 월을 바꾸면 해당 월의 목록을 조회한다.
 
-알림 딥링크(`notification_router.dart` :50)는 `FAVORITE_PERSON_NEW_EVENT` 케이스가 이벤트 상세로 배선되어 있어 탭 시 정상 이동한다. Flutter `NotificationType` enum(`notification_type.dart`) 미등재 Gap은 **해소(2026-06-06)** — `FAVORITE_PERSON_NEW_EVENT`가 분쟁 3종과 함께 enum에 등재되어 타입 안전성을 확보했다.
+관심인 집계 조회는 내 일정 조회와 별도다. 현재 화면은 관심인 결과의 값만 합치며 집계 전용 로딩·오류·재시도 영역을 제공하지 않는다. 내 일정은 보이지만 관심인 조회 실패가 빈 결과처럼 보일 수 있다.
 
-## 2. 코드 위치
+## 어떤 일정이 포함되는가
 
-계약의 정본은 코드다. 서버: `FavoriteCalendarController`, `FavoriteCalendarService`, `FavoriteEventNotifier`, `FavoriteQueryRepository`, `CalendarEventVo`. 앱: `monthly_calendar_screen.dart`, `favorite_api.dart`, `calendar_event_vo.dart`, `favorite_calendar_provider.dart`, `notification_router.dart`.
+| 조건 | 현재 판정 |
+|---|---|
+| 등록 | 조회자의 등록 시각·번호 순 현재 한도 안에 있는 관심인 |
+| 공개 범위 | 상대 캘린더 숨김이 꺼지고 양방향 차단이 없는 대상 |
+| 이벤트 분류 | 클럽에 속하지 않은 독립 이벤트 또는 정기모임이며 공개 또는 승인제 공개 |
+| 제외 | 클럽 소속·링크 전용·비공개 분류, 숨김 처리된 이벤트, 초안·취소 등 대상 밖 상태 |
+| 상태·기간 | 공개 또는 종료 상태이며 시작 시각이 조회 월의 시작 이상·다음 달 시작 미만 |
+| 역할 | 주최와 실제 참석 상태를 각각 조회해 합침. 신청 승인 목록과 같은 기준이라고 가정하지 않음 |
+| 정렬·지난 일정 | 시작 시각 오름차순. 지난 일정 표시는 시작 시각이 이미 지났는지로 계산하며 모임 종료 확정과 다름 |
 
-## 3. 전체 동작 흐름
+여러 관심인이 같은 이벤트에 참가하거나 주최·참석 조회에 함께 걸리면 결과를 합친다. 전체를 이벤트 하나로 중복 제거하는 계약은 아니다. 월 경계를 걸친 일정도 시작 시각을 기준으로 해당 월에 포함한다. 캘린더 응답에는 대상 식별자·닉네임을 담아 사람별로 묶는다.
 
-### 집계 오버레이 뷰
-1. 사용자가 캘린더 화면(`monthly_calendar_screen.dart`) 진입.
-2. 우측 하단 하트 토글 아이콘 탭 → `_showFavorites = true`.
-3. `favoriteCalendarNotifierProvider(year, month)` watch → `GET /api/v1/calendar/favorites/monthly?year=&month=`.
-4. 서버 `FavoriteCalendarService.getAllFavoritesCalendar`:
-   - `effectiveTargetIds(ownerId)` — 유효 N명.
-   - 그중 `!isCalendarPrivateToFavorites` && `!isBlockedBetween` 필터.
-   - 남은 targetIds IN 쿼리 → HOSTING + ATTENDING 이벤트 조회(EventScope.publicClassification, OPEN/CLOSED).
-   - ownerNickname 채움, isPast 세팅, startTime 정렬 → `List<CalendarEventVo>` 반환.
-5. 캘린더 날짜 셀에 관심인 이벤트 마커 오버레이(ownerNickname별 그룹 표시).
+## 개별 조회가 준비된 범위
 
-### 개별 뷰
-1. 관심인 목록 타일 탭 → 타인 프로필 화면 `/profile/users/{targetUserId}`.
-2. 프로필 화면의 "캘린더 보기" → `GET /api/v1/calendar/favorites/{targetUserId}/monthly?year=&month=`.
-3. 서버 `FavoriteCalendarService.getFavoritePersonCalendar`:
-   - `isBlockedBetween` → `FORBIDDEN`.
-   - `isEffectiveFavorite` → `FAVORITE_NOT_FOUND`(유효 N명 밖이면 차단).
-   - `isCalendarPrivateToFavorites` → `CALENDAR_PRIVATE`.
-   - 통과 시 단일 targetId IN 쿼리 → 응답.
-4. **Gap**: 서버 endpoint(`GET /api/v1/calendar/favorites/{targetUserId}/monthly`)와 Flutter API 메서드(`FavoriteApi.getFavoritePersonMonthly`)는 구현되어 있으나, 개별 뷰 전용 Provider와 화면에서의 진입 CTA가 미구현이다. `FavoriteCalendarNotifier`는 집계 뷰만 구현하며, 특정 관심인 개별 캘린더를 단독으로 보여주는 Provider·화면 흐름이 없다.
+서버의 한 사람 조회는 차단이면 거절하고, 현재 유효 등록이 아니면 찾을 수 없음, 상대가 캘린더를 숨겼으면 비공개로 거절한다. 통과하면 집계와 같은 이벤트 조건으로 조회한다.
 
-### 알림 팬아웃
-1. 호스트가 독립 이벤트 발행(`EventService.publishEvent`) → `EventPublishedEvent` 발행.
-2. `FavoriteEventNotifier.onEventPublished` (AFTER_COMMIT, REQUIRES_NEW):
-   - `EventScope.isPublicClassification` false면 조기 종료.
-   - host가 캘린더 비공개 설정이면 조기 종료.
-   - host를 관심등록한 owner 중 유효+비차단 필터 → `ownerIds`.
-   - `createBatchNotifications(ownerIds, FAVORITE_PERSON_NEW_EVENT, ...)` → FCM 푸시 + in-app 알림.
-3. Flutter `notification_router.dart` :50에 `FAVORITE_PERSON_NEW_EVENT` 케이스가 이벤트 상세로 배선되어 있다. 딥링크는 정상 동작한다.
+현재 앱에서 관심인 목록 타일은 상세 프로필로 이동하며 그 화면에 개별 캘린더 입구는 없다. API·저장소 함수 존재만으로 ‘프로필에서 캘린더 보기까지 완료’라고 판정하지 않는다.
 
-## 6. 상태/권한 매트릭스
+## 새 이벤트 알림
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 |
-|---|---|---|---|
-| 오버레이 OFF | — | `!_showFavorites` | 관심인 이벤트 비표시 |
-| 유효 관심인 0명 | `visibleTargetIds.isEmpty()` → `List.of()` | 빈 목록 | 오버레이 켜도 마커 없음 |
-| 관심인 있으나 모두 비공개 설정 | `isCalendarPrivateToFavorites` 필터 후 0명 | 빈 목록 | 동일 |
-| 개별 뷰 — 차단 관계 | `FORBIDDEN` | 에러 처리 필요 | 403 |
-| 개별 뷰 — dormant 관심인 | `FAVORITE_NOT_FOUND` | 에러 처리 필요 | 404 |
-| 개별 뷰 — 비공개 설정 대상 | `CALENDAR_PRIVATE` | 에러 처리 필요 | 403 |
-| 알림 수신(무료) | ownerIds 포함 | — | FAVORITE_PERSON_NEW_EVENT 수신 |
-| 알림 탭 | notification_router.dart :50 배선 완료 | 이벤트 상세 이동 | 정상 동작. NotificationType enum 등재 완료(2026-06-06) |
+클럽에 속하지 않은 독립 이벤트·정기모임이 공개 또는 승인제 공개 분류로 발행되면 관심인 알림 대상을 만든다. 발행 때 호스트가 캘린더를 숨겼으면 만들지 않는다. 현재 처리는 한 번에 모든 사용자에게 즉시 전송하는 예전 설명과 다르며, 발행 결정 시각을 기준으로 등록 후보를 나누어 읽는 공통 알림 처리에 맡긴다.
 
-## 7. 정합성 판단
+각 후보 처리에서도 현재 유효 등록·양방향 차단·호스트의 캘린더 숨김을 다시 검사한다. 무료 사용자도 현재 한도 안의 유효 등록이면 대상이 될 수 있다. 알림 생성·개인 알림 설정·전송 예약·외부 푸시 수신은 서로 다른 단계다. 생성 또는 함수 연결만으로 실제 수신까지 성공했다고 기록하지 않는다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 집계 API endpoint | `GET /api/v1/calendar/favorites/monthly` | `@GET('/api/v1/calendar/favorites/monthly')` | 정합 |
-| 개별 API endpoint | `GET /api/v1/calendar/favorites/{targetUserId}/monthly` | `@GET('/api/v1/calendar/favorites/{targetUserId}/monthly')` | 정합 |
-| ownerNickname | 서버 채움 | Flutter null-safe `?? '관심인 #'` 대체 | 정합 |
-| ATTENDING 기준 | `EventAttendance.ATTENDING` | — (서버 처리) | 정합 |
-| 알림 타입 96 | `NotificationType.FAVORITE_PERSON_NEW_EVENT(96)` | router 배선 완료. enum 등재 완료 | 딥링크 정상. 타입 안전성 확보 |
+앱 알림 경로는 해당 이벤트 식별자로 상세 화면에 연결한다. 이미 취소·숨김·삭제되었거나 열람 권한이 바뀐 경우의 결과는 현재 상세 조회를 따른다. 식별자가 없는 알림을 임의의 이벤트로 연결하지 않는다.
 
-## 8. Gap / Risk
+## 변경과 재조회
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| ~~P1~~ 해소(2026-06-06) | Flutter `NotificationType` enum에 `FAVORITE_PERSON_NEW_EVENT` ~~미등재~~ → **등재 완료** | `notification_type.dart` enum에 분쟁 3종과 함께 등재됨 → 타입 안전성 확보 | enum fromString 정상 매핑 | 완료 |
-| **P1** | 개별 뷰 Provider·CTA 미구현 | 서버 endpoint·Flutter API 메서드(`FavoriteApi.getFavoritePersonMonthly`) 구현됨, Flutter Provider·화면 진입 CTA 없음 | 특정 관심인 캘린더 개별 조회 화면 미지원 | `FavoritePersonCalendarNotifier(targetUserId, year, month)` Provider 추가 + 관심인 프로필 화면 CTA 연결 |
-| **P2** | `isEffectiveFavorite` N+1 | `FavoriteService.java:145-147` 전체 목록 로드 후 contains | 팬아웃 시 대형 host 성능 | rank 쿼리 최적화 |
-| Risk | 본인 캘린더 참가 이벤트 누락 | 계획서 §5.3 메모 — `CalendarQueryRepository.findAttendingEvents`는 Application APPROVED 기반(EventAttendance 미사용). 관심인 캘린더는 EventAttendance 기반이라 이중 기준 존재. | 본인 캘린더 참가 이벤트 일부 누락 가능성 | 별도 후속 검토 |
+같은 계정에서 등록·해제·공개 설정·구독 조건이 바뀌면 관심인 자료 갱신 신호를 받아 다시 읽는다. 다만 월간 화면의 복귀·앱 재개용 명시적 재조회 대상으로 등록된 것은 내 일정 공급자이며, 관심인 집계는 그 목록에 포함되어 있지 않다. 다른 기기에서 바뀐 상대 공개 설정이 복귀만으로 즉시 반영된다고 보장하지 않는다.
 
-## 9. 수용 기준
+상대의 공개 범위는 [공개 범위 설정](F19-03_privacy-visibility-settings_prd.md), 유효 등록과 한도는 [관심 있는 사람 등록과 해제](F19-01_favorite-manage_prd.md)를 따른다.
 
-- **AC-01 (집계 오버레이)**: Given 관심인 2명 등록(공개 설정), 각 1개 이상 이벤트 주최 When 캘린더 오버레이 ON Then 해당 날짜에 ownerNickname별 마커 표시.
-- **AC-02 (비공개 필터)**: Given 관심인 A=비공개, B=공개 When 오버레이 ON Then A 이벤트 비표시, B 이벤트 표시.
-- **AC-03 (차단 필터)**: Given 차단된 관심인 C When 오버레이 ON Then C 이벤트 비표시.
-- **AC-04 (알림 발화)**: Given 유효 관심인 등록자 존재 When 관심인이 독립 공개 이벤트 발행 Then FAVORITE_PERSON_NEW_EVENT(96) 알림 수신.
-- **AC-05 (딥링크)**: Given 알림 수신 When 탭 Then 이벤트 상세 화면으로 이동. (배선 완료 — 현재 동작함)
+## 현재 제한과 확인 범위
 
-## 10. 미결정 / 후속
+| 판정 | 항목 | 영향·다음 확인 |
+|---|---|---|
+| Gap | 개별 캘린더 입구 | 서버·앱 API와 저장소만 있고 앱 공급자·화면 흐름이 없음 |
+| Gap | 집계 오류·재시도 | 관심인 전용 로딩·오류 안내가 없어 일정 없음과 조회 실패를 구분하기 어려움 |
+| Gap | 복귀·앱 재개 후 집계 재조회 | 명시적 복귀 재조회 목록에는 내 일정만 있어 다른 기기의 변경 반영을 별도로 확인해야 함 |
+| Risk | 유효 등록과 계정·일정 의미 | 한도 안이라는 표시는 상대 계정 상태·상세 열람·결제 완료·모임 종료의 증명이 아님 |
+| Risk | 큰 알림 대상의 조회 비용 | 후보를 나누어 처리하지만 각 후보의 유효 등록·차단을 다시 조회함. 과거 전체 대상 일괄 처리 설명은 바꾸되 규모별 성능이 검증됐다고 주장하지 않음 |
+| 미검증 | 실제 캘린더·외부 알림 | 소스·기존 시험 위치를 대조했으며 실제 두 계정·기기·알림 수신을 새로 실행한 것이 아님 |
 
-- 참가 이벤트 알림(Phase 4.5) 범위 및 시점 결정.
-- 개별 뷰 Provider 구현 우선순위 결정.
-- 본인 캘린더 참가 이벤트 Application vs EventAttendance 기준 통일 여부 결정.
+## 수용 기준과 검증 근거
+
+- **AC-01 입구:** 내 일정의 상단 하트로 집계를 켜고 끄며 등록 자체는 유지한다.
+- **AC-02 포함 범위:** 독립·정기모임, 공개·승인제, 클럽·링크·비공개와 숨김 상태를 구분한다.
+- **AC-03 기간과 역할:** 조회 월 시작 경계·주최·참석·지난 일정 표시와 여러 사람의 같은 이벤트를 확인한다.
+- **AC-04 상대 공개:** 유효 한도·캘린더 숨김·차단을 적용하고 원래 등록 전체와 구분한다.
+- **AC-05 상세 이동:** 사람별 목록에서 해당 이벤트를 열고 현재 권한·취소·숨김·찾을 수 없음을 구분한다.
+- **AC-06 집계 실패:** 내 일정 성공과 관심인 조회 실패를 따로 판정하고 현재 안내 누락을 완료로 처리하지 않는다.
+- **AC-07 개별 조회:** 서버의 차단·유효 등록·비공개 거절과 앱 입구 부재를 구분한다.
+- **AC-08 알림 대상:** 발행 분류·시각 기준 후보·유효 등록·차단·공개 설정 재확인을 확인한다.
+- **AC-09 알림 결과:** 생성·개인 설정·전송·수신·탭 후 실제 상세 결과를 각각 기록한다.
+- **AC-10 갱신과 계정:** 같은 계정 변경·다른 기기 변경·월 이동·화면 복귀·계정 교체의 집계 최신성을 확인한다.
+
+기존 `FavoriteCalendarServiceTest`와 관심인 공급자·저장소 시험이 있다. 이번 소스 대조는 시험을 새로 실행한 결과가 아니다. 개인 캘린더의 다른 기능 전체는 이 문서의 검토 범위가 아니다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `FavoriteCalendarController#getFavoritesMonthly`, `FavoriteCalendarController#getFavoritePersonMonthly`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->

@@ -60,11 +60,11 @@
     },
     {
       "name": "도메인·제품·QA·온보딩 동기화",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "name": "HTML·PDF·앱 투어 동기화",
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "name": "검사·완료 감사·커밋",
@@ -2366,9 +2366,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "9e572e62254e1b28cfc48cae9e84edcf5dac4ab53929c9209726d68a8dc512df",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "favorite_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "f01d4e317215d4ab318bc48dd27b533d18fbc94ddb8e19d2754ce81b8825d661"
     },
     {
       "path": "docs/domains/20-support.html",
@@ -4083,9 +4086,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e19dd8a1d04ac9c5f40115f9b259a62e8ac0a8d8a26fa115aaf027c65d14f669",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "favorite_management_calendar_20261122"
+      ],
+      "reviewedSha256": "bd2a7458cbfc05eec0b5e67a56ea95f74fefec5d02c7ebf9f3c5429f4bdf0cbf"
     },
     {
       "path": "docs/features/F19-02.html",
@@ -4093,9 +4099,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2a9c84cc65660224b0ea35c7045af2d2396b79a51464a7332a6981ff0f7578d6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "favorite_management_calendar_20261122"
+      ],
+      "reviewedSha256": "b26f3e9f449d51645dc7cd200c2b6b9a2aa67105d581ed881d2af2e7f1f2c186"
     },
     {
       "path": "docs/features/F19-03.html",
@@ -4106,9 +4115,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "privacy_visibility_20261122"
+        "privacy_visibility_20261122",
+        "favorite_management_calendar_20261122"
       ],
-      "reviewedSha256": "fde16c34e1b72fd664f6ed37c949bc6c86105e2496ebbe743d329a5aee62d6db"
+      "reviewedSha256": "d2a2a2ac53a7c6a599d74299a1def4fb0349fa776ab274cfcf123f7542718a87"
     },
     {
       "path": "docs/features/F20-01.html",
@@ -5115,10 +5125,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "e592c0ca247380a64b07564da69b02b7db238a89a0d8831b66328a5e107b2d81",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "favorite_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "64538d4f60d2208afc6bb92bed683f534551624ac2af38d1167920cb28d97a6a"
     },
     {
       "path": "prd/01_domain_prds/20_고객지원_prd.md",
@@ -6974,10 +6986,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "fedd2ffe4d45708af1c288991b0c58b3a017de296c4a55c05a6afa45caffc00f",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "favorite_management_calendar_20261122"
+      ],
+      "reviewedSha256": "004665f027eff9c79832cb1e2fdf99f35b4f66ea9c9cff8e4ab2e7772ad994df"
     },
     {
       "path": "prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
@@ -6985,10 +6999,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d68272a7f68a92dbc1ffe9a5a0d3139944b8f40ca845f5aafae1bd59de9b4102",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "favorite_management_calendar_20261122"
+      ],
+      "reviewedSha256": "c46b3114183089cde5286ad6144a80b82aca6d0a537b26c34a54c0daed523a62"
     },
     {
       "path": "prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
@@ -6999,9 +7015,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "privacy_visibility_20261122"
+        "privacy_visibility_20261122",
+        "favorite_management_calendar_20261122"
       ],
-      "reviewedSha256": "ea9713966781d1c92a55254d1d65a9708e1cb6b4b829d635b30c53d3ec736f4f"
+      "reviewedSha256": "0faf5770fd509d49880a12c6016d4aa9f328dd8fb1ff0a90b6648f405af1b130"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
@@ -13819,6 +13836,23 @@
         "sourceFirstBindingsWithoutLocalBackend": 6
       },
       "scope": "공개 설정 문서와 근거 생성 검사. 단위 폴더를 새로 만들지 않고 기존 source-first 문서에도 서버 함수 연결을 검사한다. 개인정보 공통 정책은 검토한 절만 반영했으며 다른 안전 정책의 전체 검토는 미완료. 새 제품 시험·두 계정·실결제·외부 알림 검증 아님."
+    },
+    {
+      "command": "F19-01/02 and domain: source references and tests; scenario audit; reviewed paths/digests; current and reused source digests; retained HTML IDs; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 95,
+        "sourceRecords": 361,
+        "verifiedRecords": 359,
+        "retiredRecords": 2,
+        "localSourceLocations": 349,
+        "reviewedDocumentRelativePaths": 768,
+        "derivedSourceDigests": 86,
+        "currentBatchSourceAndCanonicalDigests": 39,
+        "reusedSourceDigests": 35
+      },
+      "scope": "관심인 등록·해제·한도·집계·개별 조회 입구 부재·알림 후보 처리의 문서 검사. 공용 공개 분류에서 정기모임과 승인제를 확인해 F19-03 설명도 정정. 새 제품 시험·실구독·실기기·외부 수신 검증은 아님."
     }
   ],
   "evidenceGroups": {
@@ -15500,6 +15534,182 @@
         {
           "path": "community_api/domain/src/main/java/com/endside/community/club/service/UserClubPostService.java",
           "sha256": "ddbe5e88c2e480cf2d5b70115bbf73a8038e9fb7a43afdde2fc6b6604b726c7e"
+        }
+      ]
+    },
+    "favorite_management_calendar_20261122": {
+      "kind": "source_review",
+      "scope": "F19-01/02 등록·해제·검색·한도·현재 입구와 관심인 집계/개별 API·공개 분류·알림 후보 재판정. 기존 시험 파일 존재·일부 시험 목적만 확인했으며 새 시험 실행·실구독·실기기·외부 수신 검증 아님. F19-03의 공개 분류를 공통 도우미에 맞춰 정정.",
+      "reuses": [
+        "privacy_visibility_20261122"
+      ],
+      "reusedSourceDigestCount": 35,
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteController.java",
+          "sha256": "d7d4c30e420129b0d33afb05f77e284561157556ef5b8d01db40bbc8ffee7a41"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/FavoriteService.java",
+          "sha256": "66ef30609444aa6c52c2ba047000879bb88ce1b7d3dabad9e436be48f4a6c351"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/repository/query/FavoriteQueryRepository.java",
+          "sha256": "75a7fa68301a382b459c6887fc715b3216d35ca1005cc8927910c8ba68ca9eca"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/vo/FavoritePersonVo.java",
+          "sha256": "c67557ed4389acca18cc1d394413a68f5ddf7f59105006537bdcfef5d8085867"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/vo/FavoriteLimitVo.java",
+          "sha256": "3ecdc1bd627dfe99543addc114d353c6a3c6b95cc8d811a133a1630a76468161"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/param/FavoriteAddParam.java",
+          "sha256": "8be77034343bd2e88605d5d6722e61f11bc0eb86e47a4b9384c1f7ecaf59cb76"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/config/FavoritePolicyProperties.java",
+          "sha256": "a0dde7ed2f76b143f5dd2a95d85d7d9f660e6d10cf6b90e0604c5fd76805fb7a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/port/FavoriteAccountAdapter.java",
+          "sha256": "2823dc258adef7eba3f482e6ef7a4e020794fd2ebe3fd8b734e10966b79ba9d6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/subscription/benefit/SubscriptionBenefitCatalog.java",
+          "sha256": "0a7096a76c3eeb55a4ee2103b0fe95c90e0580e9bff2436fe4c21b60fe22611d"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+          "sha256": "26920610289d0b5e1fd758db6e73a61b732f90222a865cc3c84b54bd17d3f30d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserService.java",
+          "sha256": "fd0e8c2f8ae89ecb4653a5a47a45a201a8ee8afe4e5c06f10873d7c96f49f9bb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/repository/query/UserQueryRepository.java",
+          "sha256": "de2dad195091a2301216907cbbb23ec834b2779a74e41e37c0e3e0c730575dcd"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteCalendarController.java",
+          "sha256": "c42f334f5579eece4255b19747485670ee062c1d7b8bb052510a9c56982c5402"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/FavoriteCalendarService.java",
+          "sha256": "5d6bb0c51fc12cf71345813eb6784ac269800537c7512941acbcb10ed515e3e4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/vo/CalendarEventVo.java",
+          "sha256": "f92f3141fc9c8fd5c19be97763d93794c0cce93e98ddcb0609a4d88a7eb6e9ee"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/util/EventScope.java",
+          "sha256": "05fe1879bc701b17f35b3570df3617ce79e6c29680a7eecf4a140b44925e3041"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/FavoriteEventNotifier.java",
+          "sha256": "9e3dadd33977ce6600ba1b3ab749ce539277833c95596c55a75a7655ab39e5ba"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/FavoriteFollowersFanOutAudience.java",
+          "sha256": "a3876bd66692c422907108f9c4fe72e31bdd2cbb358937b9b9f60dea94c4b939"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/repository/query/FavoriteFollowersQueryRepository.java",
+          "sha256": "b33b2d16f34b18fc7ee4b0903f2a4d4f0b30a7a2e7502b145515f24e796ad2f2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/favorite/favorite_providers.dart",
+          "sha256": "413e5d2f2f74dea8f48e06e3ab6c06845e205e161d066d0d6585056cc04613b1"
+        },
+        {
+          "path": "community_app/lib/domain/providers/favorite/favorite_list_provider.dart",
+          "sha256": "0875c4e38fd0db761443a21f64b8da6e543f4892a37a9f6dfa8f3694af5656db"
+        },
+        {
+          "path": "community_app/lib/domain/providers/favorite/favorite_limit_provider.dart",
+          "sha256": "4ad86e6fafefbd2498e319ccf421a261ab4ca6f5a4fd7bc42f36eaba3a91d0d8"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/favorite_list_screen.dart",
+          "sha256": "8d853881a7f32f36d3ce65c3f0553d9eb8a6b4713a7f89ad7b95996ee7c0fba6"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/widgets/favorite_add_sheet.dart",
+          "sha256": "95a2b799721037fdc7ea64bf78f7ef4b0a44c043eeb97f2d1a766417c2e34e9c"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/user_search_provider.dart",
+          "sha256": "8b15cc27a86e91103c411e1dc55cbd26fc8f420919c1795707d8749cabb1321a"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/favorite_person_button.dart",
+          "sha256": "dd12aa4cd5c52ca8e3f2e185e18d833c61adc50aba7bdc4ee1a1e692c296f774"
+        },
+        {
+          "path": "community_app/lib/domain/providers/favorite/favorite_calendar_provider.dart",
+          "sha256": "91a5bfddb8187c86a4a46b29e06f59764d5006bcd613664facb3aefc9e0f490e"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/screens/monthly_calendar_screen.dart",
+          "sha256": "7e7a2c98b9ffe9f2720bc28ddaef1a64eed5a6aba19c0a69082e8075ff4b71e6"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67"
+        },
+        {
+          "path": "community_app/lib/data/api/favorite_api.dart",
+          "sha256": "f404d8fdf036284d10f8541afdcab2819934988ed8a4e124d721b185afca2c56"
+        },
+        {
+          "path": "community_app/lib/data/repositories/favorite_repository.dart",
+          "sha256": "5e3e6e4dfbbc08910bf344eb85c9e4453219410fa0b4ea4850767e15af4d0d65"
+        },
+        {
+          "path": "community_app/lib/data/models/favorite/favorite_person_vo.dart",
+          "sha256": "f1e8c392801137671ba3a84bdeeee4f875fd74e3067123fbc9b073ebb79d5e93"
+        },
+        {
+          "path": "community_app/lib/data/models/favorite/favorite_limit_vo.dart",
+          "sha256": "d7fbaf824608d6d01c8971d3a81bf5b38a8de5404dfebc5da4ae234f099f8497"
+        },
+        {
+          "path": "community_app/lib/data/models/calendar/calendar_event_vo.dart",
+          "sha256": "a48c34ac2e862bb761d9a9575386da7063a4b4936056179303d0dcb57316c610"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc"
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/application-default.yaml",
+          "sha256": "669d36d4edd211b763b78619d7f2ab65ec690bed2a47e0d1b7a0902ac7490736"
+        }
+      ]
+    },
+    "favorite_domain_rollup_20261122": {
+      "kind": "source_review",
+      "scope": "관심인 3개 기능의 현재 제품 설명·제한·연결을 기능 PRD와 소스 근거로 요약. 새 제품 실행 또는 공개 완료 판정 아님.",
+      "reuses": [
+        "favorite_management_calendar_20261122",
+        "privacy_visibility_20261122"
+      ],
+      "sources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
+          "sha256": "0faf5770fd509d49880a12c6016d4aa9f328dd8fb1ff0a90b6648f405af1b130"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md",
+          "sha256": "004665f027eff9c79832cb1e2fdf99f35b4f66ea9c9cff8e4ab2e7772ad994df"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
+          "sha256": "c46b3114183089cde5286ad6144a80b82aca6d0a537b26c34a54c0daed523a62"
         }
       ]
     }

@@ -1,137 +1,64 @@
 # 19. 관심인 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 기능 PRD와 소스를 대조한 요약이다. 새 제품 시험·실결제·실기기·외부 알림 검증은 아니다. 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 결론과 정본
 
-<!-- source-first; 작성일: 2026-06-05; 원천: community_api/src/main/java/com/endside/community/favorite/ + community_app/lib/ 직접 읽기 -->
+관심인은 내가 관리하는 단방향 목록이다. 상대의 공개 이벤트·정기모임을 내 월간 캘린더에 함께 표시하고 새 발행 알림을 받을 수 있다. 등록이 상대의 상세 열람 권한을 만들지는 않으며, 현재 유효 한도·차단·공개 설정·이벤트 분류를 각각 적용한다.
 
-> 문서 상태: **신규 도메인 신설본**. 본 PRD는 `community_api/src/.../favorite/` 실제 소스(컨트롤러 4종 · 서비스 5종 · 엔티티 2종 · VO 4종 · config 1종 · 엔드포인트 12개)와 `community_app/lib/` Flutter 소스를 1차 자료로 작성한다. 계획 원본은 `docs/plan/FAVORITE_PERSON_CALENDAR_PLAN.md`.
+| 기능 정본 | 현재 범위 | 연결 근거 | 제한·위험 항목 |
+|---|---|---:|---:|
+| [관심 있는 사람 등록·해제·한도](../02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md) | 전체 메뉴의 목록, 닉네임 검색과 상세 버튼, 서버 한도·등록순 유효 여부 | 5 | 4 |
+| [관심인 캘린더 표시와 새 이벤트 알림](../02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md) | 집계 보기와 알림 처리. 한 사람 조회는 서버만 있고 앱 입구는 없음 | 2 | 6 |
+| [공개 범위 설정](../02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md) | 네 토글, 서버 켜기 허용·구독 종료 뒤 유지, 검색·직접 프로필·가입 클럽의 구분 | 6 | 4 |
 
-## 1. 결론
+등록한 연결 근거 13개에는 공용 닉네임 검색도 포함한다. 제한·위험 표의 14개 항목은 미검증 범위도 포함하며 결함 총수나 시험 실패 수가 아니다. 기존에 단위 메모가 없는 영역이므로 기능 PRD와 실제 소스로 검산한다.
 
-사용자가 다른 사용자를 **단방향 비공개**로 "관심인"으로 등록하고, 그 사람의 공개 이벤트를 자신의 캘린더에 오버레이로 보는 신규 경량 도메인이다.
+## 사용자 흐름과 메뉴
 
-관계는 owner에게만 비공개 — 대상에게 "누가 나를 관심등록했는지" 알림·조회를 일절 노출하지 않는다. 한도는 설정값 기반(무료 3명 / PREMIUM 10명, `FavoritePolicyProperties` 기본값). 프리미엄 기능은 두 가지다: ① 한도 확장(3→10) ② 내 캘린더·가입클럽을 관심인에게 숨기는 프라이버시 토글 2종.
+- **전체 메뉴 → 활동 → 관심 있는 사람**에서 목록을 관리한다. 목록의 추가는 한도를 확인한 뒤 검색 창을 열고, 결과 선택으로 바로 등록한다. 목록의 빼기는 확인을 거친다.
+- 사람 상세의 공통 버튼에서도 추가·빼기를 할 수 있다. 이 버튼은 별도 해제 확인 없이 실행하며 한도를 채웠거나 비활성인 경우 관리 화면으로 연결한다. 본인에게 같은 행동을 표시하지 않는다.
+- **마이 → 내 일정** 또는 전체 메뉴의 내 일정에서 월간 캘린더를 열고 **상단 하트**로 집계 표시를 켠다. 목록 타일이나 상세 프로필에 개별 캘린더 버튼이 있다고 설명하지 않는다.
+- 공개 범위는 **전체 메뉴 → 설정 → 공개 범위** 또는 본인 상세의 공개 설정에서 바꾼다. 토글별 즉시 저장이며 뒤로 가기로 성공한 저장을 취소하지 않는다.
 
-알림은 관심인이 독립 공개 이벤트를 발행할 때 `FAVORITE_PERSON_NEW_EVENT(96)` 타입으로 전원(무료 포함) 유효 관심등록자에게 팬아웃된다.
+## 무료·프리미엄과 구독 종료
 
-서버 구현과 Flutter 데이터 레이어·화면은 2026-05-27 구현 완료됐으나 PRD/docs에 등재되지 않아 이 문서가 그 기록이 된다.
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | 핵심 소스 | 상태 |
-|---|---|---|---|---|
-| F19-01 | 관심인 등록·해제·한도 | [F19-01_favorite-manage_prd.md](../02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md) | `FavoriteController`, `FavoriteService`, `FavoritePolicyProperties` | 구현됨 |
-| F19-02 | 관심인 캘린더 뷰·알림 | [F19-02_favorite-calendar_prd.md](../02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md) | `FavoriteCalendarController`, `FavoriteCalendarService`, `FavoriteEventNotifier` | 구현됨 |
-| F19-03 | 프라이버시 공개범위 설정 | [F19-03_privacy-visibility-settings_prd.md](../02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md) | `PrivacySettingController`, `PrivacySettingService`, `UserClubController`, `UserClubService` | 구현됨 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 이유 |
+| 항목 | 현재 규칙 |
 |---|---|
-| [F19-01](../02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md) | 등록 한도(3/10)와 프리미엄 게이팅이 F19-02·F19-03의 유효성 판정 기반 |
-| [F19-02](../02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md) | 캘린더 필터 체인(차단→유효성→비공개)이 관심인 신뢰 경계를 정의 |
-| [F19-03](../02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md) | 네 공개범위 중 캘린더·클럽 2종은 PREMIUM, 낯선 사람·검색 숨김 2종은 무료 안전 설정 |
+| 등록 한도 | 기본 서버 설정은 무료 3명·프리미엄 10명. 앱은 응답한 현재 한도를 사용 |
+| 캘린더 집계·새 발행 알림 | 무료도 현재 한도 안의 유효 등록과 각 공개 조건을 충족하면 대상 |
+| 캘린더·가입 클럽 숨기기 | 켜기만 서버 프리미엄 허용을 검사. 이미 켠 값은 구독 종료 뒤에도 유지하며 언제든 끌 수 있음 |
+| 낯선 사람·검색 숨김 | 구독과 무관하게 각각 저장 |
+| 구독 종료 뒤 등록 | 등록 행은 유지하고 현재 등록순 한도 안만 유효. 새 등록은 전체 등록 수가 한도 아래여야 가능 |
+| 구독 안내 | 개인 구독 기능이 열린 범위에서만 구독 화면으로 연결. 닫힌 범위는 한도·유료 켜기 안내만 제공 |
 
-## 4. 핵심 데이터·인프라
+초과 등록이 10명인 상태에서 한 명만 빼면 무료 한도 아래가 되는 것은 아니다. 해제 후 재등록도 끝에 새로 들어가므로 활성화 순서를 보장하지 않는다. 구독 종료 뒤 숨김 유지가 미결정이라는 과거 설명은 현재 서버 동작·화면 안내로 대체한다.
 
-### 4.1 신규 테이블 2종 (V1__init.sql 통합)
+## 캘린더 공개와 알림 경계
 
-| 테이블 | 책임 | 핵심 제약 |
-|---|---|---|
-| `favorite_person` | 단방향 owner→target 관계 | `uk_favorite_person(owner_id, target_id)` UNIQUE, CASCADE ON DELETE |
-| `user_privacy_setting` | 프라이버시 토글 단일 출처 | `uk_user_privacy_setting_user(user_id)` UNIQUE, CASCADE. row 없으면 전부 false(공개) |
+관심인 집계는 클럽에 속하지 않은 독립 이벤트·정기모임 중 공개·승인제 공개를 대상으로 한다. 공개·종료 상태, 숨김 제외, 조회 월에 시작한 일정, 주최·실제 참석 상태를 적용한다. 클럽·링크 전용·비공개 일정은 제외한다. 여러 사람이나 역할로 같은 이벤트가 포함될 수 있다. 지난 일정 표시는 시작 시각이 지났다는 뜻이며 종료·결제 완료의 증명이 아니다.
 
-### 4.2 설정값
+새 발행 알림은 같은 공개 분류와 호스트 캘린더 공개 여부를 확인한 뒤 공통 알림 처리에 넘긴다. 후보를 나눠 읽고 현재 유효 등록·차단·호스트 숨김을 다시 확인한다. 생성·개인 알림 설정·전송·수신·탭 후 상세 조회는 각각 다른 증거다. 알림 경로가 연결되어 있다는 사실만으로 실제 수신을 완료로 기록하지 않는다.
 
-| 키 | 기본값 | 위치 |
-|---|---|---|
-| `favorite.default-max` | `3` | `FavoritePolicyProperties.java:18` |
-| `favorite.premium-max` | `10` | `FavoritePolicyProperties.java:20` |
+## 현재 공개 범위
 
-### 4.3 프리미엄 판별
+상세 프로필은 본인·같은 클럽·참가가 확정된 같은 이벤트의 관계와 차단·계정 상태를 적용한다. 낯선 사람 숨김·검색 숨김·가입 클럽 숨김은 서로 다른 조건이다. 데이팅 매칭을 커뮤니티 상세 공개의 근거로 삼지 않는다.
 
-`SubscriptionService.isPremium(long userId)` — 활성 PREMIUM 구독 존재 여부. `FavoriteLimitVo.premium` 필드(`boolean`, Jackson `isPremium` → JSON key `premium`)로 클라이언트에 전달.
+관심인 목록의 유효 표시는 한도 순위이며 현재 대상 상태·차단·상세 열람 허용 표시가 아니다. 가입 클럽과 프로필 작성 글도 각 조회의 권한과 숨김을 적용한다. 이미 다른 기기에 전달된 정보를 설정 저장 순간 회수한다고 보장하지 않는다.
 
-### 4.4 알림 타입
+## 남은 차이와 검증 범위
 
-`NotificationType.FAVORITE_PERSON_NEW_EVENT(96)` — 관심인 새 이벤트 팬아웃. `referenceType=EVENT`, `referenceId=eventId`로 딥링크.
+- 개별 관심인 캘린더의 서버·앱 API와 저장소는 있지만 앱 입구·공급자가 없다.
+- 집계 전용 오류·재시도 안내가 없고, 월간 화면의 명시적 복귀 재조회 대상에는 내 일정만 들어 있다. 다른 기기의 공개 설정 변경과 재조회 중 표시를 확인해야 한다.
+- 검색 공급자는 이전 검색 응답이 늦게 오는 경우를 검색어 세대로 분리하지 않는다. 등록 경합과 응답 유실도 실제 실행 결과를 별도로 확인한다.
+- 후보를 나눈 알림 처리에도 대상별 유효 등록·차단 조회가 있어 규모별 비용을 별도로 확인한다. 본인 캘린더의 전체 참석 기준은 해당 캘린더 기능의 검토 범위다.
+- 기존 서버·앱 시험 파일이 있다. 과거 ‘시험 자산 미확인’과 ‘알림 enum 미등재’ 설명을 현재 미구현으로 반복하지 않는다. 다만 파일 존재·소스 대조는 이번 실행 통과가 아니다.
 
-### 4.5 동시성 보호
+## 관련 업무와 근거
 
-`addFavorite` 내부: Redisson `RLock("lock:favorite:add:{ownerId}")`, waitTime=3s, leaseTime=10s. count→insert 레이스 조건 방어.
-
-## 5. 컨트롤러 전수 목록 (12 endpoints)
-
-| 컨트롤러 | 기본 경로 | Endpoint 수 |
-|---|---|---|
-| `FavoriteController` | `/api/v1/favorites` | 4 |
-| `FavoriteCalendarController` | `/api/v1/calendar/favorites` | 2 |
-| `PrivacySettingController` | `/api/v1/users/me/privacy` | 5 |
-| `UserClubController` | `/api/v1/users` | 1 |
-
-> `UserClubController`는 타인 가입 클럽 보기 엔드포인트 1개만 담당. "나를 관심등록한 사람 목록" 조회 엔드포인트는 설계 원칙(비공개 관계)상 존재하지 않는다.
-
-## 6. 도메인 외부 영향
-
-| 도메인 | 영향 | 이유 |
-|---|---|---|
-| 03 이벤트 | **강함** | `EventPublishedEvent` 발행 훅(독립 이벤트 publish 시). `EventScope.isPublicClassification` 공용 거름망 사용. |
-| 06 결제·지갑 | **있음** | `SubscriptionService.isPremium` 의존. 관심인 한도·프라이버시 토글의 게이팅 판정 기반. |
-| 09 데이팅 | **있음** | `DateBlockRepository` 양방향 차단 검사(`BLOCKED` 상태 필터). 차단 관계면 등록·캘린더·클럽 보기 모두 차단. |
-| 10 캘린더 | **있음** | `CalendarEventVo`에 `ownerUserId`·`ownerNickname` 필드 추가(nullable). 본인 캘린더에서는 null — 기존 응답 무영향. |
-| 12 알림 | **있음** | `NotificationType.FAVORITE_PERSON_NEW_EVENT(96)` 신규. `notification_router.dart`에 이벤트 상세 딥링크 배선 완료. 단 Flutter `NotificationType` enum에 전용 값이 미등재(문자열 직접 처리로 동작하나 타입 안전성 없음). |
-| 13 프로필·설정 | **있음** | 마이페이지 진입점 2개 추가(관심인 `/profile/favorites`, 프라이버시 설정 `/profile/privacy-settings`). |
-
-## 7. 진행 상태 (2026-05-27 기준)
-
-| 레이어 | 상태 |
-|---|---|
-| 서버 (Java Spring Boot) | 구현 완료. 컨트롤러 4 · 서비스 5 · 리포지토리 3 · 엔티티 2 |
-| Flutter 데이터 레이어 | 구현 완료. Freezed 모델 6 · Retrofit API 1 · Repository 1 · Provider 5 |
-| Flutter 화면 | 구현 완료. `FavoriteListScreen`, `PrivacySettingsScreen`. 캘린더 오버레이 토글 통합. |
-| 라우터 | 구현 완료. `/profile/favorites`, `/profile/privacy-settings` 등록. |
-| PRD/docs | 이 문서가 최초 등재. |
-
-## 8. 잔여 후속 (Gap 정리)
-
-`features.js` 기준 Risk 후보는 F19-01 3개, F19-02 2개, F19-03 2개로
-도메인 합계 **7개**다. 공통 N+1 후보는 F19-01에 한 번만 귀속한다.
-
-| 항목 | 근거 | 우선순위 |
-|---|---|---|
-| Flutter `NotificationType.FAVORITE_PERSON_NEW_EVENT` | 2026-06-06 에서 enum 등재와 이벤트 상세 딥링크가 완료됐다. Risk 후보에서 제외한다. | 완료 |
-| `FavoritePersonCalendarProvider`(개별 뷰) 없음 | `FavoriteCalendarController.getFavoritePersonMonthly` 구현됨, Flutter에 `FavoriteCalendarNotifier`는 집계 뷰만 있고 개별 뷰 Provider·화면 진입 CTA 미구현. | P1 |
-| 타인 프로필 화면 UserClubs 섹션 — 구현 완료 | `userClubsProvider(userId)` + `UserProfileScreen` 가입 클럽 섹션 구현됨(숨김 시 빈 상태 "공개된 가입 클럽이 없습니다." 표시). | 완료 |
-| `isEffectiveFavorite` N+1 성능 | `FavoriteService.java:145-147` — owner별 전체 목록 로드 후 contains. 팔로워가 많은 host 시 성능 저하. | P2 |
-| 본인 캘린더와 관심인 캘린더의 참가 이벤트 권위 불일치 | 본인 캘린더는 Application APPROVED, 관심인 캘린더는 EventAttendance를 사용해 같은 참가 사실이 다르게 보일 수 있다. | P2 |
-| F19-01 테스트 자산 미확인 | 등록·해제·한도·동시성의 단위/통합 테스트 파일이 기능 PRD에서 확인되지 않았다. | P1 |
-| Redisson 잠금 실패 UX | `TOO_MANY_REQUESTS`가 클라이언트에서 범용 등록 실패 메시지로만 노출된다. | P2 |
-| PREMIUM 오류 분기 과대 처리 | 서버는 403 `PREMIUM_REQUIRED`만 반환하지만 앱은 `unprocessable`도 업셀로 처리한다. | P2 |
-| 구독 만료 후 비공개 토글 유지 정책 미결정 | premium 토글이 true인 채 구독이 끝나도 서버 저장값과 비공개 효과가 유지된다. | P1 |
-
-## 9. 관련 문서
-
-- 계획 원본: `docs/plan/FAVORITE_PERSON_CALENDAR_PLAN.md`
-- 구독 게이팅: `prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md`
-- 캘린더: `prd/01_domain_prds/10_캘린더_prd.md`
-- 알림 정책: `prd/03_policy_prds/notification_policy_prd.md`
-
-## 10. 프라이버시 공개범위 확장 재실측 (2026-07-29)
-
-`user_privacy_setting`은 기존 프리미엄 `calendarPrivateToFavorites`, `hideClubs`에 무료 `hideFromStrangers`, `hideFromSearch`를 더해 네 boolean을 관리한다. row가 없으면 모두 false다.
-
-- `hideFromStrangers`: 통합 타인 프로필에서 SELF/MATCHED/같은 클럽/증거등급 공동참석/host-participant 맥락이 없는 뷰어에게 leak-safe `USER_NOT_FOUND`
-- `hideFromSearch`: `/search/people`, `/users/search`, `/users/me/met-people`, `/users/me/people-recommendations` 후보에서 제외; 직접 프로필 URL은 차단하지 않음
-- `/users/search` 전역 선택기는 두 신규 값이 모두 false인 사용자만 반환
-
-신규 endpoint는 `PUT /api/v1/users/me/privacy/strangers`와 `PUT /api/v1/users/me/privacy/search-visibility`다. Flutter `PrivacySettingsScreen`과 Freezed/Retrofit/Provider에 네 토글이 모두 연결됐다. 캘린더·클럽 숨김의 PREMIUM 게이트는 그대로이며 두 신규 토글에는 적용하지 않는다.
-
-Flutter의 통합 타인 프로필 route는 `/profile/users/:userId`이며 즐겨찾기 목록, 사람 시트, 멘션
-텍스트에서 실제 호출한다. `hideFromStrangers`는 이 직접 route의 서버 조회에서도 강제된다.
-신규 boolean 저장과 전역 사용자 검색·사람 검색·만난 사람·추천 제외는
-`PrivacySettingServiceTest`, `UserQueryRepositoryTest`, `PersonSearchQueryRepositoryTest`,
-`EventAttendanceQueryRepositoryTest`에서 검증된다. Flutter 전용 공개범위 테스트는 별도 확인되지 않았다.
-
-<!-- 접근권한 감사 검증 (2026-07-02): 관심인 관계는 단방향·owner에게만 비공개(대상에 역조회 미노출), 팔로워/팔로잉 목록 자체 없음, self-scoped — 이슈 없음. -->
+- [프로필과 설정](13_프로필_and_설정_prd.md): 본인·타인 메뉴와 상세·후기·작성 글의 복귀.
+- [캘린더](10_캘린더_prd.md): 개인 캘린더의 나머지 기능과 동기화.
+- [개인 구독](../02_feature_prds/06_payment/F06-08_personal-subscription_prd.md): 구독 구매·기간·혜택의 별도 업무.
+- [알림 정책](../03_policy_prds/notification_policy_prd.md): 생성·개인 설정·전송·수신과 과거 증거의 구분.
+- [문서 갱신 검토 기록](../../verification/document-refresh-2026-11-22.json): 현재 버전·검토 지문·문서 상태. 이 요약은 운영 공개 승인 기록이 아니다.

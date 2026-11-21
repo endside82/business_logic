@@ -14,9 +14,9 @@ window.SCENARIO_AUDIT = {
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 49,
+    "directlyLinkedAutomatedTests": 50,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 49,
+    "automatedScenarioReferences": 50,
     "directlyLinkedJourneys": 45,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 45,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 48,
-    "partialEvidenceChain": 34,
-    "definitionOnlyEvidence": 93,
-    "traceMarkers": 354,
-    "verifiedTraceRecords": 352,
+    "partialEvidenceChain": 35,
+    "definitionOnlyEvidence": 92,
+    "traceMarkers": 361,
+    "verifiedTraceRecords": 359,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -13222,17 +13222,106 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F19-01:1",
+            "label": "POST /api/v1/favorites — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteController.java",
+                "controller": "FavoriteController",
+                "method": "addFavorite",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/favorites",
+                "targetLine": 30,
+                "methodLine": 31
+              }
+            ]
+          },
+          {
+            "id": "F19-01:2",
+            "label": "GET /api/v1/favorites — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteController.java",
+                "controller": "FavoriteController",
+                "method": "getFavorites",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/favorites",
+                "targetLine": 38,
+                "methodLine": 39
+              }
+            ]
+          },
+          {
+            "id": "F19-01:3",
+            "label": "DELETE /api/v1/favorites/{targetUserId} — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteController.java",
+                "controller": "FavoriteController",
+                "method": "removeFavorite",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/favorites/{targetUserId}",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
+          },
+          {
+            "id": "F19-01:4",
+            "label": "GET /api/v1/favorites/limit — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteController.java",
+                "controller": "FavoriteController",
+                "method": "getLimit",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/favorites/limit",
+                "targetLine": 52,
+                "methodLine": 53
+              }
+            ]
+          },
+          {
+            "id": "F19-01:5",
+            "label": "GET /api/v1/users/search — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "searchUsers",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/search",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/profile/favorite_person_http_test.dart",
+          "community_app/test/widget/favorite/favorite_list_screen_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -13243,7 +13332,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -13263,10 +13352,45 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F19-02:1",
+            "label": "GET /api/v1/calendar/favorites/monthly — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteCalendarController.java",
+                "controller": "FavoriteCalendarController",
+                "method": "getFavoritesMonthly",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/calendar/favorites/monthly",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          },
+          {
+            "id": "F19-02:2",
+            "label": "GET /api/v1/calendar/favorites/{targetUserId}/monthly — 관심인 흐름",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/FavoriteCalendarController.java",
+                "controller": "FavoriteCalendarController",
+                "method": "getFavoritePersonMonthly",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/calendar/favorites/{targetUserId}/monthly",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
