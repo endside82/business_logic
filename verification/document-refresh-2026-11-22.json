@@ -2192,9 +2192,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2af1b2fc45f62c4058aa13ac694de1f126aed726e6b4fef0d947e14678e8698d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "eadc22dc1a15d2586ecd5178bbfc9ee157097cc348718a49ac0de55b8f202425"
     },
     {
       "path": "docs/domains/03-event.html",
@@ -2509,9 +2512,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a64e5cb0fdc97b38e24f0c69fee90563b1a413c4bc30876139303ea1e93dab0e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "43a0e11f22602f9bb046801ac95fdede2e1e4b8812cf07928505278d042194bb"
     },
     {
       "path": "docs/features/F02-02.html",
@@ -2519,9 +2525,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1d7beef2fa2d5e3d630ee3bfbf683f0b3a7eff4ebf8e9c0108842858d56125ac",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "1a7006766c78a50b4e30686fb602f3a39f2d586669b9652388ffcf477d6e95cd"
     },
     {
       "path": "docs/features/F02-03.html",
@@ -2529,9 +2538,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ae8ae559d9de007fdcbf7156b18e36c0d2fa9e0a41bdd68010c9df33eeae52d2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "675567419be33a59f355eb597e58f11607635f4eecf97391588ca8e1f9021f98"
     },
     {
       "path": "docs/features/F02-04.html",
@@ -2539,9 +2551,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "8316e8da61106365cab190c2a158f8fdaefe1291163f2dce545960c27d12d789",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "9fa44c9b8e9eeb605689e3df78f744ee4e1edd9a15d9f9f0b3245821fd808dbf"
     },
     {
       "path": "docs/features/F02-05.html",
@@ -4955,10 +4970,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "6cc13114ca278b918fa11f14e976ef419f90e40889d3321aabfd1091e5056dd4",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "b47888b92c10ee7746e6f7c62aa8d7368486b6b82c420ac875afed8c7e21ec88"
     },
     {
       "path": "prd/01_domain_prds/03_이벤트_prd.md",
@@ -5289,10 +5306,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f160ad7214a27a2b556f6c0ce5b3c5e6dccea2bdea2e1645bb8c291389680048",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "a2fcc5c2331105a72223639cfaedb6b81303f50527db4d6cb1962d428a06624e"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
@@ -5300,10 +5319,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5316d0691ba0ab976f502edaa5ecd240b2b899c36ae0dd51811156e81591322c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "bbd459650b18a8a0dfc943ac5b93688179bb42f463456604cf92bfc151d2fc7a"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
@@ -5311,10 +5332,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "dbf725bdce02b43a66ed8d24b43a576c03c2b247ea7fa40bdb2c74c6b66d2e47",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "f69096cf78b713e25acba928e13aab50f61f9ce268237a65633e27ee9e849c5a"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
@@ -5322,10 +5345,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "62c9a9338c64573462bc5aa30fbcc6f4b86e9858e383789f656a7699e19c28f9",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "8dbf6d3a5b6e6c8c8f4b5304f0ef26c3dd88c198299dc1781a3ebcba5679d7b7"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
@@ -8168,9 +8193,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5915b22d2e98fb2d76499dee96b8a7f49a94c63c7cfc7c86b7ecd0b78aa8dce0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "8e5bcdb7a9adb2d07329d2e3d10078dbd4526625ae3c0e73be3729f670bf51da"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/backend.md",
@@ -8178,9 +8206,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "325747ea970ee7952eddb1d8eb20745b9bcf8cf64a932dae1f5163379eaad3a7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "1c9467799f645dbe75cf7dd681d0d92ed067827a5bb96cf9ec134a4c9e213483"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/diagrams.md",
@@ -8188,9 +8219,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8ea4dc22597da3d00c7b2e337e87c3798cfbfafb96970a5bface99a4594b2d60",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "b6dd0338dff0792dd931e2b9565b16e0a7275b997331082cde696d12d8048276"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/frontend.md",
@@ -8198,9 +8232,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4d25b45777332fd4de6fad457b7e94b61ebd44d28e10ec8e595b9a622ccdc1ab",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "bde3ddc4d36a5c0e71af0385a09d8b5f5eb959b23db8c9c0c69b1c2b9606eaca"
     },
     {
       "path": "units/02_home_feed/F02-01_home-feed-main/scenarios.md",
@@ -8208,9 +8245,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "13572e0d8c7b3c90c3b5db0a1962dae9149649cff1c04f645cbfe7d7585dfeb6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "c23a8807bd471fe42ffd10273d0b8aff97611c6c469bdf645964bb0708986f33"
     },
     {
       "path": "units/02_home_feed/F02-02_home-feed-refresh/backend.md",
@@ -8218,9 +8258,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d0c557dc0f16082e56638ac48c1145e08255a16bc49725248f7cf828f0d56d01",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "4477c3eafe9c8e8cf6e7eb808fa095ec2981a7b1240038b786872e38a1b13978"
     },
     {
       "path": "units/02_home_feed/F02-02_home-feed-refresh/diagrams.md",
@@ -8228,9 +8271,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cba7c417f5627c95e19814409d6452f8b0238859adb4cb04258d7e9d027938e5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "17c694c0f13a1d65c0666c45ee348935af682dca7ec13b55c727f3ea730ca503"
     },
     {
       "path": "units/02_home_feed/F02-02_home-feed-refresh/frontend.md",
@@ -8238,9 +8284,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "25f1df702320fa543c6b6ecff710d6e94ce5a52d1e12fb14def2dad1ef32dbcf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "3ee0de1f5389db52c49b152d8022025325a432d634496014db4ccbed61574c1b"
     },
     {
       "path": "units/02_home_feed/F02-02_home-feed-refresh/scenarios.md",
@@ -8248,9 +8297,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "69b425700cd6c75ed5f94aaf231cf6df452b743c11a6aee09abb126a69d38b1a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "1afce90dd6a40f980a23771d787ac0da7a791ddfb8b6c8a5029a0af77bddb7ee"
     },
     {
       "path": "units/02_home_feed/F02-03_section-card-entry/backend.md",
@@ -8258,9 +8310,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "03113b0a94b7813d11258102a995edf1483254e75f89c2472ae4c81a60729ea8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "c1763f3f819bb04591b80c1ef381f254a3af4484896301a20d360d54170e627a"
     },
     {
       "path": "units/02_home_feed/F02-03_section-card-entry/diagrams.md",
@@ -8268,9 +8323,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f51528d338fc087afdb823c27edf42b9b4b2ee23ee1c85a4983ccaa55643fa90",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "800be919d34fab54c84bad439072c6612035bbb0fa23bed07d0fcf0ee72dd079"
     },
     {
       "path": "units/02_home_feed/F02-03_section-card-entry/frontend.md",
@@ -8278,9 +8336,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "61cc3aa5a4a1903dd0cd8b725244cfec226273dcbe22d9ff55966f3bbc6a488b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "68fb153064314b33f56e3a2dc3e15636b6a9aff19bec6300d515e5e2a48b98b3"
     },
     {
       "path": "units/02_home_feed/F02-03_section-card-entry/scenarios.md",
@@ -8288,9 +8349,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "44ec2e2b0c0e23fdd888a1ddccef2622ed5cdb21e6d8eaa803d5679dcc875cd5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "23afc2907c59c68aa4dd58e292b2ec8f6a9f91bcfa518608d7ddf99f30317cce"
     },
     {
       "path": "units/02_home_feed/F02-04_recommend-events-more/backend.md",
@@ -8298,10 +8362,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d3c86331d84630d61e932d6133e49aaea699a9e88bc6abe2051e82c8c777c960",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "fdc3f149f8ded71bde06a030e4add374852b561ee513c11f39f53c2b9ac5c71f"
     },
     {
       "path": "units/02_home_feed/F02-04_recommend-events-more/diagrams.md",
@@ -8309,9 +8375,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0c0d5c7529224a7d1eb2b8e520afdee27cdb0eb1f4ba0fe12549f68fd1c242fd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "eac3c9ff0f4d46ae5c9fbe0f6482a892a89df6851d934407aded1ede3efb8999"
     },
     {
       "path": "units/02_home_feed/F02-04_recommend-events-more/frontend.md",
@@ -8319,9 +8388,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3844351da93daa5a1b83157fe4c5e7cbfafca681556f8070dc0e322c226eb367",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "dc7d6d1509c8c3d5dc56ab5aee9b5fcf68cd2d3dfd3412ec7008ba368aac3f03"
     },
     {
       "path": "units/02_home_feed/F02-04_recommend-events-more/scenarios.md",
@@ -8329,9 +8401,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b89ca096a23353e4add9ab587a7b6886053c0b632de74956d6ed5eac2158b7f3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_feed_core_20261122"
+      ],
+      "reviewedSha256": "a6b7a7b9982afcbd087dce8bbb85dce2eb50f3d592202c3b52a9299c9b569463"
     },
     {
       "path": "units/02_home_feed/F02-05_search-notification-entry/backend.md",
@@ -14012,6 +14087,23 @@
         "currentTurnSourceAndCanonicalDigests": 71
       },
       "scope": "공통 상단의 검색·알림·전체 메뉴와 인증·배지·복귀의 문서 검사. 검색과 알림의 기존 근거를 재사용했으며 새 제품 시험·실제 앱/푸시 검증 아님."
+    },
+    {
+      "command": "F02-01..04 and home domain: source reference sync and 11 tests; scenario audit; reviewed paths/digests; source/canonical digests; retained HTML IDs and incoming Markdown fragment scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 99,
+        "sourceRecords": 379,
+        "verifiedRecords": 377,
+        "retiredRecords": 2,
+        "localSourceLocations": 367,
+        "reviewedRelativePaths": 1098,
+        "derivedSourceDigests": 128,
+        "currentSourceAndCanonicalDigests": 64,
+        "retainedHtmlPages": 5
+      },
+      "scope": "홈 핵심·보조 자료·갱신·카드/더보기·추천 목록과 관련 문서의 검사. 쓰지 않는 트렌딩 연결 한 개를 이 기능에서만 제거했으며 API 자체는 유지. 새 제품 시험·실제 기기/GPS/외부 수신 검증 아님."
     }
   ],
   "evidenceGroups": {
@@ -16267,6 +16359,325 @@
           "sha256": "1965329c76ccfae53f6fa8db99b6f6e1cc4ef789e210fc31253e6f5844be7123"
         }
       ]
+    },
+    "home_feed_core_20261122": {
+      "kind": "source_review",
+      "scope": "홈 네 기능과 영역 요약의 실제 구역·핵심 묶음/보조 자료·공개/위치·캐시·부분 실패·카드와 더보기·추천 상세·페이지 필터/정렬·배지 문구를 해당 함수와 대조. 관련 시험은 파일 존재·명시된 목적 확인이며 새 제품 실행·실기기·GPS·외부 수신 검증 아님.",
+      "reuses": [
+        "home_search_notification_entry_20261122",
+        "search_workflows_20261122"
+      ],
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+          "sha256": "040a0f013cde89996a8c88120aa77e228c73573b9b300a59843a8c8bf6a2e074"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/main/service/HomeService.java",
+          "sha256": "32d447d27eff864c10e177b2aca803284edef0410502f883853abe178e955a67"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/main/port/HomeEventAdapter.java",
+          "sha256": "bd72bd6ddf05ec200535871121b8fbd90f79ade85c93f1ddb0198c9450e101cd"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/main/port/HomeClubAdapter.java",
+          "sha256": "2de7690388be79b38bd98561c83920736db160fd971d073a6dfac939f9b4bfea"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/main/port/HomePlanAdapter.java",
+          "sha256": "ccac3b6d739a3e2df76fe7b4a14e19a4a27346bab9511e01a4d124ebaadde165"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java",
+          "sha256": "8d8ff3928c078df5b67ccbd56eecaf0e70e18d89807f8ed1a6197e3d76da73da"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/repository/query/EventQueryRepository.java",
+          "sha256": "e5e129bf297970ee4960e11d226048aca780efdb87884a384fb192d1196f7bbf"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/RecommendationService.java",
+          "sha256": "a6aa6347df2eb002197c3cfc49860c72260626df71cc13b6f8c88783b17264f0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/vo/RecommendationVo.java",
+          "sha256": "a52dc099f8a415175a9a4e346b50a3c256192a53d3c844b9379f5756fef0d782"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/PersonRecommendationController.java",
+          "sha256": "5f3d54930444ffaccb5485c596aa2a0b46d521739451b8496b4c5460b1b98931"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/PersonRecommendationService.java",
+          "sha256": "9d258185e17a1823210502a812de677483d5730db800c07ac5efc76df0a28eae"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/port/PersonRelationAttendanceAdapter.java",
+          "sha256": "39f6d4343b8dbcf4e5c2d7213da0e6b2aeb25ba9d597f784badd54300b5e5cd1"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/repository/query/EventAttendanceQueryRepository.java",
+          "sha256": "f3194ce62f3158bdfbd3a826232471bdcabdb0d0bc1d4c793c8c13f764eb6fa8"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationService.java",
+          "sha256": "4bf144955a40f618b6435ac2a55cfa799bf17581628ec1edda0b3fc32cf3fffe"
+        },
+        {
+          "path": "community_app/lib/domain/providers/home/home_feed_provider.dart",
+          "sha256": "d387089be168eb807b00bf7783e026a3d14a58cc3f8b092ab91286ff449c3d9c"
+        },
+        {
+          "path": "community_app/lib/domain/providers/home/home_feed_refresh.dart",
+          "sha256": "35e7ad043ce8b90722c1ee13b2f43a2ae0f20afbb3c869d64f7fa60ec4e44fff"
+        },
+        {
+          "path": "community_app/lib/data/repositories/home_repository.dart",
+          "sha256": "8f8babdd5c7919802ec65b7a2af86987a430944bf6156e806c774a28968b78d7"
+        },
+        {
+          "path": "community_app/lib/data/api/home_api.dart",
+          "sha256": "924c23982d4bc007f9f396061d4b37655941586bba48c95b9f941a1a01fb86f5"
+        },
+        {
+          "path": "community_app/lib/data/models/home/home_feed_state.dart",
+          "sha256": "641a551881d682daa2caa5cb3668f51b04c56889d775f9e767f035155bd9a234"
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/home_feed_screen.dart",
+          "sha256": "6d0a3faf2f4a3f314bb4a493a0690c783a2087dbcdcaf108236c8a2d37c27c3a"
+        },
+        {
+          "path": "community_app/lib/domain/providers/home/recommend_events_provider.dart",
+          "sha256": "d0da21b6565628061f78c91e118d8d2bcee1d36c0fe7bd7cd08c0781125b84c3"
+        },
+        {
+          "path": "community_app/lib/data/models/home/recommend_filter.dart",
+          "sha256": "f62697b158c7ec0b8904151a9aa61657e7660d30db41cf3cce6cb3a7b9c91c12"
+        },
+        {
+          "path": "community_app/lib/data/models/home/recommend_event.dart",
+          "sha256": "3e1488e9f41aea993c6a5f7eac47c3ee4fd2ca8e3d20c2e144f53b9130cbfd66"
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/recommend_events_screen.dart",
+          "sha256": "578a9e5afd9ecdecb38e8d6cdd40d39bf9e84d9090a8383bd777bd01528cf24f"
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/recommend_detail_screen.dart",
+          "sha256": "d84f53be4525482b3ca44b3dd54f1608a9f7dc41a8339fd74b836cc8060b6e39"
+        },
+        {
+          "path": "community_app/lib/domain/providers/home/recommend_detail_provider.dart",
+          "sha256": "772cd5cc40e10872eb5c80c4ec516cb859ef9a23083ec3479a96cdf706ac8a40"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/recommend_reason_list.dart",
+          "sha256": "03691ca1c42b0e282f629e4cbe2bda0276ce819787488cbb2b4207118f8f777c"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/recommend_badge.dart",
+          "sha256": "75f99bfcece409eb057d8b36eaee1ef70630c949da0656ae074a0d5da1b3eb2a"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/recommend_event_section.dart",
+          "sha256": "6bee91e42f191cca3364b6cd593d4267c01189b15dbb37147b143373f0c434a2"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/upcoming_event_section.dart",
+          "sha256": "ef2a5b77ce99eb741503533cbf0ff5b2380882dcf8019ab7929864e85b5f6098"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/popular_club_section.dart",
+          "sha256": "0d349336733dcc2333bcdb10811c6efa200c085069d76946ce05e0c411ac9eb7"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/new_plan_section.dart",
+          "sha256": "a2275a4d3fe11015d9fec309ebca80d099b0f397289a8809ea951d73f52fb33f"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/my_upcoming_section.dart",
+          "sha256": "ab9f80a841a695b6f59d1685d728ed23f951e1e8381cd31ffdc48391f50b0c62"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/wishlist_section.dart",
+          "sha256": "79a28f141d6b6b64a2599b28b10c61ee29d6a7ac4f8e024a5aec226969d6544d"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/recently_viewed_event_section.dart",
+          "sha256": "db43aee8cb1969aedd71d01cd93ea9bc795d58d6a065ec993b098c24bb69ab3b"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/people_recommend_section.dart",
+          "sha256": "243d4a25ccd0ca4246bb74f2835dd134ea64b03703ac6dca3fb60363bc6de64b"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/similar_event_section.dart",
+          "sha256": "95791ab1746b14bf6939b5e52d8fda2970799008298ddbf1fc6c59f38a80f87d"
+        },
+        {
+          "path": "community_app/lib/presentation/home/widgets/location_permission_banner.dart",
+          "sha256": "d236d02fcbb01f617e236d1655255006e91bb29625166a6d5bd21bfb6b47eb8a"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/my_events_provider.dart",
+          "sha256": "0bec76d879d611c525b2cab2d191bfc3aeda3fd8d2d7c5bc81a1316a5d18e283"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/recently_viewed_event_provider.dart",
+          "sha256": "0382d52b44bfb7170c1b532979993fc60e021e034b1db43f59ffed29bd374b4c"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/people_recommendation_provider.dart",
+          "sha256": "39a428b2e39b2729643d746163de8bb3dab777c423c12154ce970c6d0c32eec2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/wishlist/wishlist_provider.dart",
+          "sha256": "6ad481a379d0abdd5de0d3bea1c2f97b74daafe36f54f9f7e02486c62c12c6da"
+        },
+        {
+          "path": "community_app/lib/domain/providers/common/paged_list.dart",
+          "sha256": "2d1127a27d97744281b6e892d84087a27d93f7637207f7a981b2207b396a4a5b"
+        },
+        {
+          "path": "community_app/lib/presentation/common/layout/paged_scroll_listener.dart",
+          "sha256": "42e34d109ea0f2048dca353b7f418401b87589d2f7af4c3a893bf8727135188c"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae"
+        },
+        {
+          "path": "community_app/lib/data/api/event_api.dart",
+          "sha256": "8571e82942da46e026411406040124aa33183130b790c764a2fbd019461772fd"
+        },
+        {
+          "path": "community_app/lib/data/api/connectivity_api.dart",
+          "sha256": "29d280fba3d2a3a28b73863e1c5936f5d22a6120707c5a2195abb5db00ae9568"
+        },
+        {
+          "path": "community_app/lib/data/api/wishlist_api.dart",
+          "sha256": "8bf6b1f30ef6d2dee7c589e31bbe64dc0c17aaca387660727e60993bd9d9232b"
+        },
+        {
+          "path": "community_app/test/data/repositories/home_repository_cache_test.dart",
+          "sha256": "6e5b3ccaa1b4721c9d7a725bd68c637a492fd3828078420910680c16bd4767c0"
+        },
+        {
+          "path": "community_app/test/presentation/home/home_nav_test.dart",
+          "sha256": "5421264c84d20c1fdb05a4e98c896978b19d0a763f6420ee67fe3e47cff9a6d5"
+        },
+        {
+          "path": "community_app/test/presentation/home/people_recommend_section_rebuild_test.dart",
+          "sha256": "3195938707f8de052df759f849a00a799850371ac84a66d12956d9a6d7bfacc9"
+        },
+        {
+          "path": "community_app/test/presentation/plan_recommend_wall_clock_test.dart",
+          "sha256": "bee163491a7032185134ca21dad604096c01b039972c237091dad36bbae1c4b6"
+        },
+        {
+          "path": "community_app/test/widget/scope/home_feed_market_scope_test.dart",
+          "sha256": "90fa5a13385bf358ed4e2b598daf4c56c7c8caed98b323b8720edda62443514f"
+        },
+        {
+          "path": "docs/ui-ux/screens/12-home-feed.md",
+          "sha256": "acc5ef4dc835460749b23ec8aab9c6cd77fcacb40ccc85c2b5d2c751349de677"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart",
+          "sha256": "97ca9f0de94269cb16d3c682c518a779624d9382d4102c3a62ca452acfb20d5b"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9"
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/port/SearchEventAdapter.java",
+          "sha256": "c2e5654fbbef3a524a601ae4bedd6e3055b46e991e0b59ec3dd78c12fd899765"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
+          "sha256": "bbd459650b18a8a0dfc943ac5b93688179bb42f463456604cf92bfc151d2fc7a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
+          "sha256": "a2fcc5c2331105a72223639cfaedb6b81303f50527db4d6cb1962d428a06624e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
+          "sha256": "f69096cf78b713e25acba928e13aab50f61f9ce268237a65633e27ee9e849c5a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
+          "sha256": "0aa967b4b7126f20bb6b7ea6ccd3d01fc7ce94edc6d2fea72a36eba779c78bd8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
+          "sha256": "8dbf6d3a5b6e6c8c8f4b5304f0ef26c3dd88c198299dc1781a3ebcba5679d7b7"
+        }
+      ],
+      "removedAssociation": {
+        "removed": [
+          {
+            "id": "F02-04:2",
+            "featureId": "F02-04",
+            "label": "GET /api/v1/search/trending — 트렌딩 시그널 (보강)",
+            "backendPath": "business_logic/units/02_home_feed/F02-04_recommend-events-more/backend.md",
+            "documentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
+            "status": "active",
+            "bindings": [
+              {
+                "targetPath": "com/endside/community/search/controller/TrendingController.java",
+                "controller": "TrendingController",
+                "method": "getTrending",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/search/trending"
+              }
+            ]
+          }
+        ],
+        "reason": "추천 더보기는 TrendingController를 호출하지 않음. 창구 자체는 검색의 인기 모임 제목 기능에서 계속 사용하므로 API 폐기로 표시하지 않음."
+      },
+      "retainedHtmlIds": {
+        "docs/features/F02-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F02-02.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F02-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F02-04.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/domains/02-home.html": [
+          "sidebar",
+          "state-current",
+          "launch-strip"
+        ]
+      }
     }
   },
   "currentSourceVersions": {

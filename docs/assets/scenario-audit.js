@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,083개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,090개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1083,
+    "documentedScenarioItems": 1090,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 54,
+    "directlyLinkedAutomatedTests": 57,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 54,
-    "directlyLinkedJourneys": 44,
+    "automatedScenarioReferences": 57,
+    "directlyLinkedJourneys": 43,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 44,
+    "journeyScenarioReferences": 43,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 48,
-    "partialEvidenceChain": 38,
-    "definitionOnlyEvidence": 89,
-    "traceMarkers": 366,
-    "verifiedTraceRecords": 364,
+    "partialEvidenceChain": 40,
+    "definitionOnlyEvidence": 87,
+    "traceMarkers": 379,
+    "verifiedTraceRecords": 377,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -859,17 +859,270 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-01_home-feed-main/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F02-01:1",
+            "label": "GET /api/v1/home/clubs",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+                "controller": "HomeController",
+                "method": "getPopularClubs",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/home/clubs",
+                "targetLine": 49,
+                "methodLine": 51
+              }
+            ]
+          },
+          {
+            "id": "F02-01:2",
+            "label": "GET /api/v1/home/plans",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+                "controller": "HomeController",
+                "method": "getNewPlans",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/home/plans",
+                "targetLine": 64,
+                "methodLine": 66
+              }
+            ]
+          },
+          {
+            "id": "F02-01:3",
+            "label": "GET /api/v1/home/events",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+                "controller": "HomeController",
+                "method": "getUpcomingEvents",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/home/events",
+                "targetLine": 79,
+                "methodLine": 81
+              }
+            ]
+          },
+          {
+            "id": "F02-01:4",
+            "label": "GET /api/v1/events/recommend",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getRecommendations",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/recommend",
+                "targetLine": 228,
+                "methodLine": 229
+              }
+            ]
+          },
+          {
+            "id": "F02-01:5",
+            "label": "GET /api/v1/users/me/people-recommendations",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/PersonRecommendationController.java",
+                "controller": "PersonRecommendationController",
+                "method": "getPeopleRecommendations",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/people-recommendations",
+                "targetLine": 31,
+                "methodLine": 32
+              }
+            ]
+          },
+          {
+            "id": "F02-01:6",
+            "label": "GET /api/v1/events/users/me/applications",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getMyApplications",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/users/me/applications",
+                "targetLine": 416,
+                "methodLine": 417
+              }
+            ]
+          },
+          {
+            "id": "F02-01:7",
+            "label": "GET /api/v1/users/me/wishlist",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java",
+                "controller": "WishlistController",
+                "method": "getMyWishlist",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/wishlist",
+                "targetLine": 54,
+                "methodLine": 55
+              }
+            ]
+          },
+          {
+            "id": "F02-01:8",
+            "label": "GET /api/v1/events/{eventId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getEvent",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}",
+                "targetLine": 142,
+                "methodLine": 143
+              }
+            ]
+          }
+        ]
       },
       "automated": {
+        "directlyLinked": true,
+        "count": 2,
+        "featureMarkerCount": 0,
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/home/home_nav_test.dart",
+          "community_app/test/widget/scope/home_feed_market_scope_test.dart"
+        ],
+        "markerCandidateFiles": []
+      },
+      "journey": {
         "directlyLinked": false,
         "count": 0,
         "featureMarkerCount": 0,
         "scenarioReferenceCount": 0,
         "files": [],
+        "markerCandidateFiles": []
+      },
+      "evidenceStage": 3,
+      "launchScope": "open",
+      "proof": "real",
+      "knownIssues": 0,
+      "pendingReview": 0
+    },
+    {
+      "id": "F02-02",
+      "domain": "홈 피드",
+      "name": "홈 피드 새로고침",
+      "scenarioCount": 10,
+      "scenarioSource": "상세 시나리오 문서",
+      "scenarioPath": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/scenarios.md",
+      "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
+      "scenarioDefinition": {
+        "formal": true,
+        "documentScenarioCount": 10
+      },
+      "trace": {
+        "backendPath": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/backend.md",
+        "total": 4,
+        "verified": 4,
+        "retired": 0,
+        "entries": [
+          {
+            "id": "F02-02:1",
+            "label": "GET /api/v1/home/clubs",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+                "controller": "HomeController",
+                "method": "getPopularClubs",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/home/clubs",
+                "targetLine": 49,
+                "methodLine": 51
+              }
+            ]
+          },
+          {
+            "id": "F02-02:2",
+            "label": "GET /api/v1/home/plans",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+                "controller": "HomeController",
+                "method": "getNewPlans",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/home/plans",
+                "targetLine": 64,
+                "methodLine": 66
+              }
+            ]
+          },
+          {
+            "id": "F02-02:3",
+            "label": "GET /api/v1/home/events",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/main/controller/HomeController.java",
+                "controller": "HomeController",
+                "method": "getUpcomingEvents",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/home/events",
+                "targetLine": 79,
+                "methodLine": 81
+              }
+            ]
+          },
+          {
+            "id": "F02-02:4",
+            "label": "GET /api/v1/events/recommend",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getRecommendations",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/recommend",
+                "targetLine": 228,
+                "methodLine": 229
+              }
+            ]
+          }
+        ]
+      },
+      "automated": {
+        "directlyLinked": true,
+        "count": 2,
+        "featureMarkerCount": 0,
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/data/repositories/home_repository_cache_test.dart",
+          "community_app/test/domain/providers/notification/event_change_push_home_refresh_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -882,47 +1135,6 @@ window.SCENARIO_AUDIT = {
       },
       "evidenceStage": 2,
       "launchScope": "open",
-      "proof": "real",
-      "knownIssues": 0,
-      "pendingReview": 0
-    },
-    {
-      "id": "F02-02",
-      "domain": "홈 피드",
-      "name": "홈 피드 새로고침",
-      "scenarioCount": 6,
-      "scenarioSource": "상세 시나리오 문서",
-      "scenarioPath": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/scenarios.md",
-      "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
-      "scenarioDefinition": {
-        "formal": true,
-        "documentScenarioCount": 6
-      },
-      "trace": {
-        "backendPath": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/backend.md",
-        "total": 0,
-        "verified": 0,
-        "retired": 0,
-        "entries": []
-      },
-      "automated": {
-        "directlyLinked": false,
-        "count": 0,
-        "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
-        "markerCandidateFiles": []
-      },
-      "journey": {
-        "directlyLinked": false,
-        "count": 0,
-        "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
-        "markerCandidateFiles": []
-      },
-      "evidenceStage": 1,
-      "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
       "pendingReview": 0
@@ -931,27 +1143,64 @@ window.SCENARIO_AUDIT = {
       "id": "F02-03",
       "domain": "홈 피드",
       "name": "섹션 카드 진입",
-      "scenarioCount": 7,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/02_home_feed/F02-03_section-card-entry/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-03_section-card-entry/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F02-03:1",
+            "label": "GET /api/v1/events/{eventId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getEvent",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}",
+                "targetLine": 142,
+                "methodLine": 143
+              }
+            ]
+          },
+          {
+            "id": "F02-03:2",
+            "label": "GET /api/v1/events/recommend",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getRecommendations",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/recommend",
+                "targetLine": 228,
+                "methodLine": 229
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/presentation/home/home_nav_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -962,7 +1211,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -982,8 +1231,8 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-04_recommend-events-more/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 1,
+        "verified": 1,
         "retired": 0,
         "entries": [
           {
@@ -1002,23 +1251,6 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 229
               }
             ]
-          },
-          {
-            "id": "F02-04:2",
-            "label": "GET /api/v1/search/trending — 트렌딩 시그널 (보강)",
-            "status": "verified",
-            "note": "",
-            "endpoints": [
-              {
-                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/TrendingController.java",
-                "controller": "TrendingController",
-                "method": "getTrending",
-                "httpMethod": "GET",
-                "httpPath": "/api/v1/search/trending",
-                "targetLine": 25,
-                "methodLine": 26
-              }
-            ]
           }
         ]
       },
@@ -1028,21 +1260,19 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 0,
         "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_home_profile_surface_test.dart"
+          "community_app/test/presentation/plan_recommend_wall_clock_test.dart"
         ],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_home_profile_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
