@@ -1,117 +1,46 @@
 # community PRD 문서 묶음
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 제품 명세 진입점.** 현재 작업 순서는 [앞으로 할 일](../../docs/plan/NEXT_WORK.md), 구현·검증 상태는 [구현 현황판](../../docs/development/IMPLEMENTATION_WORKBOARD.md)을 따른다.
 
+## 처음 읽는 순서
 
-이 폴더는 `business_logic` 원문과 기획자 온보딩 문서를 기반으로 생성한 기능형 전체 PRD다.
+1. [사람용 PRD 읽는 법](START_HERE.md)에서 역할별 진입점을 찾는다.
+2. [제품 전체 PRD](00_product_prd.md)와 [업무 영역별 PRD](01_domain_prds/)로 제품 범위를 확인한다.
+3. [기능별 PRD](02_feature_prds/)에서 실제 입구·행동·결과·상태·권한·실패 복구를 읽는다.
+4. [공통 정책](03_policy_prds/)과 [QA 수용 기준](04_qa_acceptance/)에서 횡단 규칙과 확인 조건을 확인한다.
+5. [작성·검수 기준](FEATURE_PRD_STANDARD.md)과 [문서 전환·대조 상태](PRD_MIGRATION_STATUS.md)로 근거와 검수 범위를 확인한다.
 
-## 먼저 볼 문서
+## 정본과 갱신 방식
 
-처음 보는 사람은 이 README가 아니라 `START_HERE.md`부터 본다.
+제품 정책은 승인된 결정과 명세가, 실제 계약과 구현은 해당 버전의 코드가 정본이다. 둘이 다르면 차이를 기록한다. 코드가 있다는 이유로 정책을 바꾸거나 실기기·외부 연동·공개를 완료 처리하지 않는다.
 
-- 사람용 읽는 법: `START_HERE.md`
-- PRD 문서 상태표: `PRD_MIGRATION_STATUS.md`
-- 보조 문서 인덱스: `SUPPORTING_DOCS_INDEX.md`
-- 기능 PRD 작성 표준: `FEATURE_PRD_STANDARD.md`
-- 제대로 된 기능 PRD 샘플: `02_feature_prds/03_event/F03-02_event-detail_prd.md`
-- 현재 소스 실측 노트: `05_planning_artifacts/current_source_update_2026-07-29.md`
-- [기능별 제품 시나리오 완성도 감사](04_qa_acceptance/scenario_completeness_audit_2026-08-30.md)
+서버는 `community_api/modules.txt`에 적힌 모듈에서 실제 Controller·Service·DTO/VO·enum을 읽는다. 관리자 서버도 `community_api/admin-app`에 있다. 앱은 실제 입구부터 API·Repository·Provider·Screen/Widget까지 대조한다. 여러 저장소가 걸친 기능은 [구현 교차표](../../docs/development/IMPLEMENTATION_CROSSWALK.md)를 출발점으로 삼는다.
 
-## 현재 운영 원칙
+기능 본문은 제품 동작을 설명한다. 기술 계약을 복사해 또 하나의 정본으로 만들지 않는다. 코드 위치 블록은 `node verification/sync_source_reference_docs.mjs`로 검사하고, 소스를 확인한 뒤에만 `--write`로 갱신한다. 이 명령의 통과는 제품 설명 전체나 실행 시험의 통과를 뜻하지 않는다.
 
-`02_feature_prds/`의 기능 PRD는 단순 기능 설명서가 아니라 실사 기반 판단 문서로 운영한다.
-작성자는 `backend.md`/`frontend.md`를 출발점으로 삼되, 반드시 실제 서버와 Flutter
-소스를 다시 확인해야 한다.
-
-- 사람용 시작점: `START_HERE.md`
-- PRD 문서 상태표: `PRD_MIGRATION_STATUS.md`
-- 보조 문서 인덱스: `SUPPORTING_DOCS_INDEX.md`
-- 작성 표준: `FEATURE_PRD_STANDARD.md`
-- golden sample: `02_feature_prds/03_event/F03-02_event-detail_prd.md`
-- 현재 소스 실측: `05_planning_artifacts/current_source_update_2026-07-29.md`
-- legacy 자동 생성기: `business_logic/prd_tools/generate_prd.mjs`
-- 현재 소스 우선 방식으로 바꾸는 도구: `business_logic/prd_tools/rebuild_feature_prds_from_units.mjs`
-
-2026-07-29 기준 `02_feature_prds/` 175개 중 117개는 `business_logic/units` 원천을
-보유한다(1개 golden sample, 115개 실사 기반 전환본, 1개 실사 기반 갱신본).
-나머지 58개는 `units/` 없이 실제 소스·계획·구현 리포트를 정본으로 삼는다.
-구현 착수 전에는 각 문서에서 `Trace Source`, `현재 소스와의 정합성`, `남은 문제와 위험`이라는 제목을
-찾아 실제 코드와 다시 대조한다.
-2026-06-24 이후 구현된 게스트 동반 예매, 궁합/핏 Phase 0, 플랜 블록 에디터 후속,
-위치/길찾기 보강, 연결성/커뮤니티 메시지, 재사용 경험 루프는 신규 기능 ID를 만들지 않고
-기존 기능 PRD의 현재 소스 갱신으로 흡수한다.
+기능 Markdown을 고치면 관련 HTML, 도메인 요약, 정책과 QA의 같은 설명도 대조한다. 현재 현황 사이트는 검토한 정본 스냅샷을 따르며, 구현 버전과 실제 배포 버전을 구분한다.
 
 ## 구성
 
-| 경로 | 내용 | 먼저 보는 사람 | 산출/결정 |
-|---|---|---|---|
-| START_HERE.md | 사람용 PRD 읽는 법 | 신규 기획자, 개발자, QA, PO | 역할별로 무엇을 먼저 봐야 하는지 |
-| PRD_MIGRATION_STATUS.md | 175개 기능 PRD 문서 상태표 | 문서 운영자, 기능 담당자, QA | 기준 예시·전환본·현재 소스 우선 문서·추적 근거·위험 후보 현황 |
-| SUPPORTING_DOCS_INDEX.md | 보조 PRD 문서 27개 인덱스 | 문서 운영자, PO, QA | 인벤토리/정책/QA/운영 문서의 역할 구분 |
-| 05_planning_artifacts/current_source_update_2026-07-29.md | 현재 소스 실측 노트 | 문서 운영자, 기능 담당자, QA | 50개 재실측 기능의 UI 미배선·권한·보안 Gap과 실측 원칙 |
-| 00_product_prd.md | 제품 전체 PRD | PO, 신규 기획자, 이해관계자 | 제품 범위, 사용자 유형, 전체 여정, 미결정 항목 |
-| FEATURE_PRD_STANDARD.md | 실사 기반 기능 PRD 작성 표준 | PRD 작성자, 리뷰어 | 현재 소스 우선 작성 절차, 금지 패턴, 품질 체크 |
-| 00_prd_items/ | PRD 작성 가능 항목별 독립 문서 12개 | 신규 기획자, 문서 운영자 | 서비스 개요, persona, 정보구조, 기능 정의, 상태/권한/QA 기준 |
-| 01_domain_prds/ | 21개 업무 영역별 PRD | 도메인 담당 기획자 | 도메인 목적, 기능 목록, 영역별 수용 기준 |
-| 02_feature_prds/ | 175개 기능별 PRD | 기능 담당 기획자, QA | 기능 결론, 흐름, 제품 규칙, 상태·권한 표, Gap/Risk, 수용 기준(계약은 코드가 정본) |
-| 03_policy_prds/ | 상태, 권한, 알림, 결제/정산, 개인정보/안전 정책 | 정책/운영/기획 | 공통 정책, 상태/권한 판단, 민감 기능 기준 |
-| 04_qa_acceptance/ | 수용 기준, 시나리오 커버리지, 릴리즈 체크리스트 | QA, 릴리즈 담당자 | QA 기준, 회귀 검토, 출시 차단 조건 |
-| [기능별 제품 시나리오 완성도 감사](04_qa_acceptance/scenario_completeness_audit_2026-08-30.md) | 기능 175개의 시나리오·자동 테스트·사용자 여정 근거 연결 | 기획, QA, 개발 | 기능별 현재 근거와 다음 확인 순서 |
-| 05_planning_artifacts/ | Notion 업로드, 결정 등록부, MVP 범위, 리뷰 워크숍 | PO, 문서 운영자 | 업로드 순서, 미결정 사항, MVP 후보, 리뷰 진행안 |
+| 위치 | 역할 |
+|---|---|
+| [제품 전체 PRD](00_product_prd.md) | 제품 범위·사용자 유형·전체 여정 |
+| [PRD 항목별 문서](00_prd_items/README.md) | 서비스 개요·정보구조·기능 정의·역할·상태·QA |
+| [21개 업무 영역](01_domain_prds/) | 기능 묶음별 목적과 범위 |
+| [175개 기능 PRD](02_feature_prds/) | 기능별 사용자 흐름·규칙·수용 기준 |
+| [공통 정책 6개](03_policy_prds/) | 상태·권한·알림·결제·개인정보·기획 QA |
+| [QA 문서](04_qa_acceptance/) | 수용 기준·시나리오·출시 확인 조건 |
+| [기획 보조 자료](05_planning_artifacts/) | 결정 기록·소개 자료·워크숍·과거 조사 |
+| [보조 문서 인덱스](SUPPORTING_DOCS_INDEX.md) | 보조 자료의 역할과 읽는 순서 |
+| [전체 문서 대조 기록](../verification/document-refresh-2026-11-22.json) | 문서별 근거·대조 여부·처리 결과 |
 
-## 추천 읽기 순서
+## 로컬 원천 자료와 과거 조사
 
-1. `START_HERE.md`에서 역할별 읽는 법을 확인한다.
-2. `PRD_MIGRATION_STATUS.md`에서 담당 기능 PRD의 상태와 trace/risk 수를 확인한다.
-3. `SUPPORTING_DOCS_INDEX.md`에서 보조 문서 역할을 확인한다.
-4. `00_product_prd.md`로 제품 전체를 잡는다.
-5. `FEATURE_PRD_STANDARD.md`에서 기능 PRD의 현재 소스 우선 작성 기준을 확인한다.
-6. `02_feature_prds/03_event/F03-02_event-detail_prd.md`를 golden sample로 읽는다.
-7. `00_prd_items/README.md`에서 PRD 항목별 문서 역할을 확인한다.
-8. `00_prd_items/05_feature_definitions.md`로 175개 기능을 훑는다.
-9. `01_domain_prds/`에서 담당 도메인의 목적과 범위를 확인한다.
-10. `03_policy_prds/`로 상태, 권한, 돈, 알림, 안전 정책을 먼저 고정한다.
-11. `02_feature_prds/`에서 기능별 상세 계약, 시나리오, Gap/Risk 후보를 검토한다.
-12. `04_qa_acceptance/`와 `05_planning_artifacts/`로 QA와 운영 결정을 추적한다.
+기능 175개 중 117개는 `units/` 원천 메모가 있고, 나머지 58개는 코드·제품 결정·구현 기록에서 출발했다. 이 숫자는 문서의 생성 계보다. 117개만 현재 기능이라는 뜻도, 175개 모두 실기기 검증을 마쳤다는 뜻도 아니다.
 
-## 기능 PRD 갱신 절차
+`units/`와 `prd_tools/`는 로컬에 존재하지만 Git에서는 제외한다. 옛 `generate_prd.mjs`·`rebuild_feature_prds_from_units.mjs`는 초기 초안의 생성 도구다. 이후 교정한 현재 PRD에 일괄 실행하지 않는다.
 
-1. `business_logic/units/<domain>/<feature>/backend.md`와 `frontend.md`를 읽는다.
-2. 실제 `community_api/src/`의 Controller, Service, VO/DTO, enum을 다시 확인한다.
-3. 실제 `community_app/lib/`의 API, Repository, Provider, Screen/Widget을 다시 확인한다.
-4. 서버 응답 필드와 Flutter 소비 필드를 비교한다.
-5. 상태/권한별 CTA 매트릭스를 작성한다.
-6. 일치, 불일치, 미구현, 미검증을 `Gap / Risk`로 남긴다.
-7. 검증 파일이 무엇을 증명하는지 적고, 없는 검증은 숨기지 않는다.
+[2026년 7월 29일 소스 실측 노트](05_planning_artifacts/current_source_update_2026-07-29.md)와 [2026년 7월 8일 계약 노트](05_planning_artifacts/current_source_update_2026-07-08.md)는 당시 변경의 근거다. 현행 여부는 현재 코드와 [문서별 대조 기록](../verification/document-refresh-2026-11-22.json)에서 확인한다. 날짜가 오래됐다는 이유만으로 유효한 제품 결정을 삭제하지 않는다.
 
-## 범위
-
-- 작성 가능: 기능 구조, 사용자 유형, 기능 요구사항, 상태/권한, 시나리오 수용 기준, QA 체크.
-- 별도 결정 필요: 사업 KPI, 출시 일정, 법무 최종 문구, 운영 SLA, 최종 UX 카피.
-
-## 생성 기준
-
-- 21개 업무 영역
-- 175개 기능 (v4.5 W1~W7 신규 5개 F03-13~17 + F03-18/F04-17 인구통계 + F08-14/F08-15 환불·매출 귀속 + F15·F16·F17 도메인 신설 + 2026-06-05 F18 분쟁 해결·F19 관심인·F20 고객지원 도메인 신설 및 F03-19/F03-20/F04-18/F11-07 신규 누적)
-- 시나리오 정의 기능 175/175. 기능 목록 등록 숫자 합 1,403, 상세 문서 117개의 실제 제목 1,086, 등록값 불일치 49개. 어느 숫자도 아직 테스트 통과율의 분모로 사용하지 않음
-- 552개 도식
-
-## v4.5 이벤트 확장 계보 (2026-05-22, 계획 산출물 2026-06-05 폐기)
-
-이벤트 도메인 확장은 처음에 `docs/plan/event-extensions/`의 3개 계획 산출물로 관리됐지만,
-실코드 병합 뒤 2026-06-05 정리에서 해당 파일들이 폐기됐다. 현재 계약은 F03-13~17 기능 PRD와
-`community_api`의 실제 Controller/Service/DTO/enum이 기준이다. enum 번호와 중복은
-`community_api/src/test/java/com/endside/community/EnumReservationTest.java`가 회귀 검증한다.
-
-당시 추가된 기능 PRD 5개:
-
-| ID | 기능 | Wave |
-|---|---|---|
-| F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | W2a/W2b/W3 |
-| F03-14 | 이동수단 공통 설정 | W4에서 시작, 2026-09-02 통합 완료 |
-| F03-15 | 카풀·자차 | W5에서 시작, 2026-09-02 통합 완료 |
-| F03-16 | 대절 버스와 자리 배정 | W7에서 시작, 2026-09-02 통합 완료 |
-| F03-17 | 차량 좌석 배치도 운영 | W6에서 시작, 2026-09-02 운영 화면 완료 |
-
-영향 받는 보조 문서: `PRD_MIGRATION_STATUS.md`, `SUPPORTING_DOCS_INDEX.md`, `03_policy_prds/notification_policy_prd.md`, `03_policy_prds/permission_policy_prd.md`, `03_policy_prds/state_policy_prd.md`, `00_product_prd.md`.
+시나리오 등록 수와 상세 시나리오 수가 다를 수 있으며 어느 쪽도 자동으로 시험 통과율의 분모가 되지 않는다. [시나리오 완성도 대조](04_qa_acceptance/scenario_completeness_audit_2026-08-30.md)에서 원천과 확인 범위를 구분한다.

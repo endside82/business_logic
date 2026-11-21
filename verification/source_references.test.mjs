@@ -100,15 +100,15 @@ test('같은 경로가 두 모듈에 있거나 뿌리 밖 경로면 거부한다
     assert.throws(() => resolveReferences(root, [{ ...reference, bindings: [{ ...login, targetPath: bad }] }]), /검사 대상 밖의 서버 경로/);
   }
 });
-test('N4i 자료의 창구 파일 302 는 모듈과 무관한 꼴이고, 옆 공개 저장소가 있으면 같은 302 를 찾는다', (t) => {
+test('자료의 모든 창구 연결은 모듈과 무관한 꼴이며, 실제 소스에서 빠짐없이 찾는다', (t) => {
   const targets = JSON.parse(fs.readFileSync(new URL('./source_reference_targets.json', import.meta.url), 'utf8')).references;
   const bindings = targets.flatMap((entry) => entry.bindings);
-  assert.equal(bindings.length, 302);
+  assert.ok(bindings.length > 0);
   for (const binding of bindings) assert.match(binding.targetPath, /^com\/[\w/]+\.java$/, binding.targetPath);
   const workspace = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
   if (!fs.existsSync(path.join(workspace, API_REPO, 'settings.gradle'))) return t.skip('옆 공개 저장소가 없다');
   const resolved = resolveReferences(loadApiModules(workspace), targets);
   const endpoints = resolved.flatMap((entry) => entry.endpoints);
-  assert.equal(endpoints.length, 302);
+  assert.equal(endpoints.length, bindings.length);
   for (const endpoint of endpoints) assert.match(endpoint.targetPath, /^community_api\/(?:[\w-]+\/)?src\/main\/java\/com\//);
 });

@@ -1,34 +1,34 @@
 /* 이 파일은 verification/build_scenario_audit_data.mjs가 현재 저장소에서 생성한다. */
 window.SCENARIO_AUDIT = {
-  "asOf": "2026-11-08",
+  "asOf": "2026-11-22",
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "b3e81c05879478896c2e2f61268bc0af5204a3cf"
+    "sourceRevision": "9eec7d87c660366764ab9f2050a005cd994a4a20"
   },
   "countingNote": "시나리오 1,068개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1068,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4493,
-    "journeyFilesScanned": 317,
+    "automatedTestFilesScanned": 4944,
+    "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 55,
+    "directlyLinkedAutomatedTests": 54,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 55,
-    "directlyLinkedJourneys": 53,
+    "automatedScenarioReferences": 54,
+    "directlyLinkedJourneys": 52,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 53,
+    "journeyScenarioReferences": 52,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 54,
+    "completeEvidenceChain": 53,
     "partialEvidenceChain": 33,
-    "definitionOnlyEvidence": 88,
-    "traceMarkers": 303,
-    "verifiedTraceRecords": 301,
+    "definitionOnlyEvidence": 89,
+    "traceMarkers": 304,
+    "verifiedTraceRecords": 302,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -757,8 +757,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRecommendations",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/recommend",
-                "targetLine": 224,
-                "methodLine": 225
+                "targetLine": 228,
+                "methodLine": 229
               }
             ]
           },
@@ -878,8 +878,8 @@ window.SCENARIO_AUDIT = {
                 "method": "listOpenEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events",
-                "targetLine": 179,
-                "methodLine": 180
+                "targetLine": 183,
+                "methodLine": 184
               }
             ]
           },
@@ -895,8 +895,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRecommendations",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/recommend",
-                "targetLine": 224,
-                "methodLine": 225
+                "targetLine": 228,
+                "methodLine": 229
               }
             ]
           },
@@ -912,8 +912,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSimilarEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/similar",
-                "targetLine": 483,
-                "methodLine": 484
+                "targetLine": 487,
+                "methodLine": 488
               }
             ]
           }
@@ -1020,8 +1020,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events",
-                "targetLine": 100,
-                "methodLine": 101
+                "targetLine": 102,
+                "methodLine": 103
               }
             ]
           },
@@ -1037,8 +1037,8 @@ window.SCENARIO_AUDIT = {
                 "method": "publishEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/publish",
-                "targetLine": 282,
-                "methodLine": 283
+                "targetLine": 286,
+                "methodLine": 287
               }
             ]
           },
@@ -1054,8 +1054,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createRecurringEvents",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 500,
-                "methodLine": 501
+                "targetLine": 504,
+                "methodLine": 505
               }
             ]
           },
@@ -1071,8 +1071,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getRecurringGroup",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 538,
-                "methodLine": 539
+                "targetLine": 542,
+                "methodLine": 543
               }
             ]
           }
@@ -1139,8 +1139,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateEvent",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}",
-                "targetLine": 235,
-                "methodLine": 236
+                "targetLine": 239,
+                "methodLine": 240
               }
             ]
           },
@@ -1156,8 +1156,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteEvent",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}",
-                "targetLine": 266,
-                "methodLine": 267
+                "targetLine": 270,
+                "methodLine": 271
               }
             ]
           },
@@ -1173,8 +1173,8 @@ window.SCENARIO_AUDIT = {
                 "method": "publishEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/publish",
-                "targetLine": 282,
-                "methodLine": 283
+                "targetLine": 286,
+                "methodLine": 287
               }
             ]
           },
@@ -1190,8 +1190,8 @@ window.SCENARIO_AUDIT = {
                 "method": "closeEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/close",
-                "targetLine": 314,
-                "methodLine": 315
+                "targetLine": 318,
+                "methodLine": 319
               }
             ]
           },
@@ -1207,8 +1207,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/cancel",
-                "targetLine": 346,
-                "methodLine": 347
+                "targetLine": 350,
+                "methodLine": 351
               }
             ]
           },
@@ -1241,8 +1241,8 @@ window.SCENARIO_AUDIT = {
                 "method": "announceToAttendees",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/announce",
-                "targetLine": 578,
-                "methodLine": 579
+                "targetLine": 582,
+                "methodLine": 583
               }
             ]
           },
@@ -1258,8 +1258,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateFutureEvents",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 515,
-                "methodLine": 516
+                "targetLine": 519,
+                "methodLine": 520
               }
             ]
           },
@@ -1275,8 +1275,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelAllFutureEvents",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/recurring",
-                "targetLine": 529,
-                "methodLine": 530
+                "targetLine": 533,
+                "methodLine": 534
               }
             ]
           }
@@ -1394,8 +1394,8 @@ window.SCENARIO_AUDIT = {
                 "method": "applyToEvent",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/apply",
-                "targetLine": 368,
-                "methodLine": 369
+                "targetLine": 372,
+                "methodLine": 373
               }
             ]
           },
@@ -1411,8 +1411,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelApplication",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/apply",
-                "targetLine": 390,
-                "methodLine": 391
+                "targetLine": 394,
+                "methodLine": 395
               }
             ]
           },
@@ -1428,8 +1428,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyApplications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/users/me/applications",
-                "targetLine": 412,
-                "methodLine": 413
+                "targetLine": 416,
+                "methodLine": 417
               }
             ]
           }
@@ -1438,12 +1438,14 @@ window.SCENARIO_AUDIT = {
       "automated": {
         "directlyLinked": true,
         "count": 1,
-        "featureMarkerCount": 4,
+        "featureMarkerCount": 6,
         "scenarioReferenceCount": 1,
         "files": [
           "community_app/integration_test/seed_event_list_badge_matrix_test.dart"
         ],
         "markerCandidateFiles": [
+          "community_app/test/audit/entry_paths_search_notification_help_test.dart",
+          "community_app/test/audit/entry_paths_support_case_result_test.dart",
           "community_app/test/core/router/user_guide_detail_public_route_test.dart",
           "community_app/test/presentation/event/event_attendance_guidance_cards_test.dart",
           "community_app/test/widget/event/event_action_bar_payment_cta_test.dart",
@@ -1496,8 +1498,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getApplications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/{eventId}/applications",
-                "targetLine": 404,
-                "methodLine": 405
+                "targetLine": 408,
+                "methodLine": 409
               }
             ]
           },
@@ -1513,8 +1515,8 @@ window.SCENARIO_AUDIT = {
                 "method": "approveApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/approve",
-                "targetLine": 424,
-                "methodLine": 425
+                "targetLine": 428,
+                "methodLine": 429
               }
             ]
           },
@@ -1530,8 +1532,8 @@ window.SCENARIO_AUDIT = {
                 "method": "rejectApplication",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/reject",
-                "targetLine": 440,
-                "methodLine": 441
+                "targetLine": 444,
+                "methodLine": 445
               }
             ]
           }
@@ -2112,8 +2114,8 @@ window.SCENARIO_AUDIT = {
                 "method": "listMyEvents",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/my",
-                "targetLine": 188,
-                "methodLine": 189
+                "targetLine": 192,
+                "methodLine": 193
               }
             ]
           },
@@ -2129,8 +2131,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyApplications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/events/users/me/applications",
-                "targetLine": 412,
-                "methodLine": 413
+                "targetLine": 416,
+                "methodLine": 417
               }
             ]
           },
@@ -3662,7 +3664,7 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 3,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 1,
+      "knownIssues": 2,
       "pendingReview": 0
     },
     {
@@ -5617,8 +5619,8 @@ window.SCENARIO_AUDIT = {
                 "method": "cancelApplication",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/events/{eventId}/apply",
-                "targetLine": 390,
-                "methodLine": 391
+                "targetLine": 394,
+                "methodLine": 395
               }
             ]
           },
@@ -7206,8 +7208,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyCreatedPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/plans/my/created",
-                "targetLine": 178,
-                "methodLine": 179
+                "targetLine": 180,
+                "methodLine": 181
               }
             ]
           },
@@ -7223,8 +7225,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyPurchasedPlans",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/plans/my/purchased",
-                "targetLine": 170,
-                "methodLine": 171
+                "targetLine": 172,
+                "methodLine": 173
               }
             ]
           },
@@ -7471,8 +7473,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createItem",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/market/items",
-                "targetLine": 61,
-                "methodLine": 62
+                "targetLine": 64,
+                "methodLine": 65
               }
             ]
           },
@@ -7488,8 +7490,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateItem",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/market/items/{itemId}",
-                "targetLine": 69,
-                "methodLine": 70
+                "targetLine": 72,
+                "methodLine": 73
               }
             ]
           },
@@ -7505,8 +7507,8 @@ window.SCENARIO_AUDIT = {
                 "method": "publishItem",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/market/items/{itemId}/publish",
-                "targetLine": 77,
-                "methodLine": 78
+                "targetLine": 80,
+                "methodLine": 81
               }
             ]
           },
@@ -7522,8 +7524,8 @@ window.SCENARIO_AUDIT = {
                 "method": "stopSelling",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/market/items/{itemId}/stop",
-                "targetLine": 91,
-                "methodLine": 92
+                "targetLine": 94,
+                "methodLine": 95
               }
             ]
           },
@@ -7539,8 +7541,8 @@ window.SCENARIO_AUDIT = {
                 "method": "removeItem",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/market/items/{itemId}",
-                "targetLine": 111,
-                "methodLine": 112
+                "targetLine": 114,
+                "methodLine": 115
               }
             ]
           },
@@ -7556,8 +7558,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getMyItems",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/market/items/my",
-                "targetLine": 54,
-                "methodLine": 55
+                "targetLine": 57,
+                "methodLine": 58
               }
             ]
           }
@@ -7986,8 +7988,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getPreview",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/plans/{planId}/preview",
-                "targetLine": 71,
-                "methodLine": 72
+                "targetLine": 73,
+                "methodLine": 74
               }
             ]
           }
@@ -8048,8 +8050,8 @@ window.SCENARIO_AUDIT = {
                 "method": "createEventFromPlan",
                 "httpMethod": "POST",
                 "httpPath": "/api/v1/plans/{planId}/create-event",
-                "targetLine": 154,
-                "methodLine": 155
+                "targetLine": 156,
+                "methodLine": 157
               }
             ]
           },
@@ -8752,8 +8754,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getProfileViews",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/date/profile/views",
-                "targetLine": 86,
-                "methodLine": 87
+                "targetLine": 91,
+                "methodLine": 92
               }
             ]
           }
@@ -9707,8 +9709,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getNotifications",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications",
-                "targetLine": 38,
-                "methodLine": 39
+                "targetLine": 37,
+                "methodLine": 38
               }
             ]
           },
@@ -9724,8 +9726,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getUnreadCount",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/unread-count",
-                "targetLine": 80,
-                "methodLine": 81
+                "targetLine": 72,
+                "methodLine": 73
               }
             ]
           },
@@ -9741,8 +9743,8 @@ window.SCENARIO_AUDIT = {
                 "method": "markAsRead",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/notifications/{notificationId}/read",
-                "targetLine": 86,
-                "methodLine": 87
+                "targetLine": 78,
+                "methodLine": 79
               }
             ]
           },
@@ -9758,8 +9760,8 @@ window.SCENARIO_AUDIT = {
                 "method": "markAllAsRead",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/notifications/read-all",
-                "targetLine": 94,
-                "methodLine": 95
+                "targetLine": 86,
+                "methodLine": 87
               }
             ]
           },
@@ -9775,8 +9777,8 @@ window.SCENARIO_AUDIT = {
                 "method": "deleteNotification",
                 "httpMethod": "DELETE",
                 "httpPath": "/api/v1/notifications/{notificationId}",
-                "targetLine": 101,
-                "methodLine": 102
+                "targetLine": 93,
+                "methodLine": 94
               }
             ]
           }
@@ -9833,18 +9835,18 @@ window.SCENARIO_AUDIT = {
         "entries": [
           {
             "id": "F12-02:1",
-            "label": "GET /api/v1/notifications/grouped — 그룹 카드 리스트",
+            "label": "GET /api/v1/notifications/grouped/cursor — 그룹 카드 리스트",
             "status": "verified",
             "note": "",
             "endpoints": [
               {
                 "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
                 "controller": "NotificationController",
-                "method": "getGroupedNotifications",
+                "method": "getGroupedNotificationsAfter",
                 "httpMethod": "GET",
-                "httpPath": "/api/v1/notifications/grouped",
-                "targetLine": 59,
-                "methodLine": 60
+                "httpPath": "/api/v1/notifications/grouped/cursor",
+                "targetLine": 64,
+                "methodLine": 65
               }
             ]
           },
@@ -9860,21 +9862,19 @@ window.SCENARIO_AUDIT = {
                 "method": "getUnreadCount",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/unread-count",
-                "targetLine": 80,
-                "methodLine": 81
+                "targetLine": 72,
+                "methodLine": 73
               }
             ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 4,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart",
           "community_app/test/data/repositories/notification_cursor_wire_test.dart",
@@ -9883,18 +9883,16 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
@@ -9914,8 +9912,8 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-03_category-settings/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
@@ -9930,8 +9928,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getSettings",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/settings",
-                "targetLine": 109,
-                "methodLine": 110
+                "targetLine": 101,
+                "methodLine": 102
               }
             ]
           },
@@ -9947,8 +9945,25 @@ window.SCENARIO_AUDIT = {
                 "method": "updateSettings",
                 "httpMethod": "PATCH",
                 "httpPath": "/api/v1/notifications/settings",
-                "targetLine": 127,
-                "methodLine": 128
+                "targetLine": 119,
+                "methodLine": 120
+              }
+            ]
+          },
+          {
+            "id": "F12-03:3",
+            "label": "PATCH /api/v1/notifications/settings/bulk — 카테고리 수신 설정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "controller": "NotificationController",
+                "method": "updateSettingsBulk",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/notifications/settings/bulk",
+                "targetLine": 112,
+                "methodLine": 113
               }
             ]
           }
@@ -10014,8 +10029,8 @@ window.SCENARIO_AUDIT = {
                 "method": "getQuietHours",
                 "httpMethod": "GET",
                 "httpPath": "/api/v1/notifications/settings/quiet-hours",
-                "targetLine": 135,
-                "methodLine": 136
+                "targetLine": 127,
+                "methodLine": 128
               }
             ]
           },
@@ -10031,8 +10046,8 @@ window.SCENARIO_AUDIT = {
                 "method": "updateQuietHours",
                 "httpMethod": "PUT",
                 "httpPath": "/api/v1/notifications/settings/quiet-hours",
-                "targetLine": 141,
-                "methodLine": 142
+                "targetLine": 133,
+                "methodLine": 134
               }
             ]
           }
@@ -11071,7 +11086,7 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 1,
+      "knownIssues": 2,
       "pendingReview": 0
     },
     {

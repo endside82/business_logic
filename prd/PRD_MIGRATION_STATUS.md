@@ -11,6 +11,12 @@
 >
 > **2026-05-28 운영 원칙 명시 — units/ 부재 = source-first.** F03-13~18 / F04-17 / F08-14~15 / F15-01~09 / F16-01~08 / F17-01~10 (총 36개 신규 PRD, 2026-06-05에 F03-19~20 / F04-18 / F11-07 / F18-01~05 / F19-01~03 / F20-01~03 15개 추가로 총 51개), 이후 F21-01~07 7개가 추가되어 현재 58개 기능은 `business_logic/units/<domain>/<feature>/` 폴더 없이 작성된다. canonical은 실제 Controller/Service/DTO/enum/DDL/test와 App/Admin 소비부이며, plan·구현 리포트는 설계 배경으로만 사용한다. F03-13~17은 `EnumReservationTest`가 enum registry만 검증하고, F15·F16은 `community_api/src/main/java/com/endside/community/{warning,mileage}/`, F21은 API/App/Admin 제공자·약관·배정·원장 소스를 직접 대조한다. units/ 새로 만들면 운영 모델이 깨진다 — 만들지 않는다.
 
+## 2026-11-22 전체 최신화 진행
+
+[전체 문서 대조 기록](../verification/document-refresh-2026-11-22.json)에 추적 문서 485개와 로컬 참고 문서 517개의 처리 상태를 둔다. 관련 저장소 7개의 원격 main과 로컬 main 일치를 확인하고 별도 작업 가지에서 갱신 중이다. 아직 대조하지 않은 문서는 `pending`으로 남기며, 아래 과거 전환 완료나 코드 위치 검사를 전체 최신화 완료로 읽지 않는다.
+
+첫 확인에서 알림 그룹 PRD 본문의 ‘첫 20건 한도’와 같은 문서의 ‘추가 조회 해소’가 모순되고, 제거된 그룹 조회 API를 참조하고 있었다. 현재 커서 조회·상단 배지·읽음 실패 복구를 PRD·HTML·로컬 참고에 함께 반영했다. 그룹 카드의 읽음 후 즉시 갱신과 대량 미읽음 집계 한도는 현재 제약으로 분리했다.
+
 ## 요약
 
 | 항목 | 개수 |
