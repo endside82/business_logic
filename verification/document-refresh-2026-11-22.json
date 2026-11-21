@@ -2549,9 +2549,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "35add131e3134b0fb4dcbb42ca4e87c59c4abd0c74e6dab4f37cbc798b1d1e9e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_search_notification_entry_20261122"
+      ],
+      "reviewedSha256": "e3eed6095190ecda3467c182aa4056f332a7af5659377ecb7b24a77ef6c85861"
     },
     {
       "path": "docs/features/F03-01.html",
@@ -5330,10 +5333,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "8d64f6e76c92445e7f454552fc698a1e9499f6fdc9846495c27f5d2fa787f2a5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_search_notification_entry_20261122"
+      ],
+      "reviewedSha256": "0aa967b4b7126f20bb6b7ea6ccd3d01fc7ce94edc6d2fea72a36eba779c78bd8"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
@@ -8334,9 +8339,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a8b999fb64444615f554a8e6169c03acfd92cc61a4f28f98464cb3e8a62c81e1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_search_notification_entry_20261122"
+      ],
+      "reviewedSha256": "f4eb0dbdcda12e5d9ef2160d30e1a03e0dbeaacfdbd2c27b73aaa0d10e9376af"
     },
     {
       "path": "units/02_home_feed/F02-05_search-notification-entry/diagrams.md",
@@ -8344,9 +8352,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "46e1221715fb1b59834fa82b1365d1d6935d45fcea6db0ec417524ea86dbaa90",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_search_notification_entry_20261122"
+      ],
+      "reviewedSha256": "a09a12eb9b95a4e9edeb5bcfc854f0caa0ae6feb706cf67a74a9044f9d5d7247"
     },
     {
       "path": "units/02_home_feed/F02-05_search-notification-entry/frontend.md",
@@ -8354,9 +8365,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "98201423052bd63f0810b8eba2c97e9f7988b8974778b00b8c55a53ded01cc66",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_search_notification_entry_20261122"
+      ],
+      "reviewedSha256": "8dcd10e22f737b1c8671810804e9136d10f5f7d3d0f57686cf35b8bf04060164"
     },
     {
       "path": "units/02_home_feed/F02-05_search-notification-entry/scenarios.md",
@@ -8364,9 +8378,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "01f204a0a5395631a7471b429621e7cf4d5918bc0535e849f479d2c48e09b337",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "home_search_notification_entry_20261122"
+      ],
+      "reviewedSha256": "dd0b4012dbfdce07503441818b8c9533db07c2b428ff2dccf722c00c6f88e564"
     },
     {
       "path": "units/03_event/00_overview.md",
@@ -13982,6 +13999,19 @@
         "derivedSourceDigests": 107
       },
       "scope": "읽기 안내의 문서 역할·실재 경로·범위 검산. 소스 확인·시험·실기기·공개 상태를 분리했으며 전체 기능 검토 완료 판정은 아님."
+    },
+    {
+      "command": "F02-05: scenario audit; reviewed document paths/digests; source and canonical digests; retained HTML IDs; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceRecords": 366,
+        "verifiedRecords": 364,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 969,
+        "derivedSourceDigests": 111,
+        "currentTurnSourceAndCanonicalDigests": 71
+      },
+      "scope": "공통 상단의 검색·알림·전체 메뉴와 인증·배지·복귀의 문서 검사. 검색과 알림의 기존 근거를 재사용했으며 새 제품 시험·실제 앱/푸시 검증 아님."
     }
   ],
   "evidenceGroups": {
@@ -16181,6 +16211,60 @@
         {
           "path": "docs/plan/NEXT_WORK.md",
           "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997"
+        }
+      ]
+    },
+    "home_search_notification_entry_20261122": {
+      "kind": "source_review",
+      "scope": "홈의 공통 상단 세 행동과 검색·알림 진입, 인증 목적지·미읽음 실패·복귀/데이터 변경의 경계를 대조. 검색·알림 세부 정책은 이미 대조한 기능 정본을 재사용. 홈 피드 전체·전체 메뉴 세부 기능·새 앱 실행·실제 푸시 수신 검증은 아님.",
+      "reuses": [
+        "search_workflows_20261122",
+        "notification_groups_settings_20261122"
+      ],
+      "sources": [
+        {
+          "path": "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart",
+          "sha256": "97ca9f0de94269cb16d3c682c518a779624d9382d4102c3a62ca452acfb20d5b"
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/home_feed_screen.dart",
+          "sha256": "6d0a3faf2f4a3f314bb4a493a0690c783a2087dbcdcaf108236c8a2d37c27c3a"
+        },
+        {
+          "path": "community_app/lib/domain/providers/home/home_feed_provider.dart",
+          "sha256": "d387089be168eb807b00bf7783e026a3d14a58cc3f8b092ab91286ff449c3d9c"
+        },
+        {
+          "path": "community_app/lib/core/router/app_router.dart",
+          "sha256": "d4c3beeb804216276a25fdc12006ff1efe134ee0bf0cfe05499c16544bdeca47"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9"
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/search_routes.dart",
+          "sha256": "c54a4792c9358ae3441a9ce4c81134dbe23c53c7fa3e1761acc1be9974122cda"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/notification_routes.dart",
+          "sha256": "bb8bba132d52c5fcf6840702e9287a0d195d3e7c817164ed1be0b279086071e2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/notification/notification_list_provider.dart",
+          "sha256": "613ebfe83b09366c15f77d5b843c0e8f9d7ec5f0f1e65919a976ea052d1478b0"
+        },
+        {
+          "path": "community_app/test/presentation/common/navigation/app_top_bar_actions_test.dart",
+          "sha256": "dd0eaa1c59a6d82f7a9d8905377ca446ae2cccb8cec9e86995962cbcf0bdaf3a"
+        },
+        {
+          "path": "community_app/test/audit/entry_paths_search_notification_help_test.dart",
+          "sha256": "1965329c76ccfae53f6fa8db99b6f6e1cc4ef789e210fc31253e6f5844be7123"
         }
       ]
     }

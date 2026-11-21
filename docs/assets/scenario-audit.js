@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,081개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,083개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1081,
+    "documentedScenarioItems": 1083,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 53,
+    "directlyLinkedAutomatedTests": 54,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 53,
+    "automatedScenarioReferences": 54,
     "directlyLinkedJourneys": 44,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 44,
@@ -25,8 +25,8 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 48,
-    "partialEvidenceChain": 37,
-    "definitionOnlyEvidence": 90,
+    "partialEvidenceChain": 38,
+    "definitionOnlyEvidence": 89,
     "traceMarkers": 366,
     "verifiedTraceRecords": 364,
     "unresolvedTraceRecords": 0,
@@ -1052,13 +1052,13 @@ window.SCENARIO_AUDIT = {
       "id": "F02-05",
       "domain": "홈 피드",
       "name": "검색·알림 진입점",
-      "scenarioCount": 6,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/02_home_feed/F02-05_search-notification-entry/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/02_home_feed/F02-05_search-notification-entry/backend.md",
@@ -1068,11 +1068,14 @@ window.SCENARIO_AUDIT = {
         "entries": []
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/audit/entry_paths_search_notification_help_test.dart",
+          "community_app/test/presentation/common/navigation/app_top_bar_actions_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -1083,7 +1086,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
