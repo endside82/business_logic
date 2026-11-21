@@ -3609,9 +3609,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "6188fe79f869965a1062af9587c23f22d7ed314d9c6dc6dc6bc15a5d66857c2e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "acd95bc560c5a9c9600a7e944f3120b3b2455cad16904231f5b2f50f31abf075"
     },
     {
       "path": "docs/features/F13-02.html",
@@ -3619,9 +3622,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "03d8326d26772071df6d66f278da912d277ec378ad552e64e05826782e836fe7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "c0233d2c2598673dbf394f24f044e51c03125d357c96e7b03ea33ee6e15b8837"
     },
     {
       "path": "docs/features/F13-03.html",
@@ -3629,9 +3635,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "584dcdfedf5c425c9bc25a0393695956dc59cc40d3b11c29b49c08de751a33cc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "7acefaa817eaee42ba825064b59fefef43048e8db8da726dcc65de4361f27c27"
     },
     {
       "path": "docs/features/F13-04.html",
@@ -6446,10 +6455,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "cfab401a6f3c977ec789cbf2e3e39b55d3d4b9b63877a9e3ee15bf8cf389931d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "0895ef949b6c266c256e81e05c598117aa5d6b2ca314920526bc17f7a4bcf6af"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
@@ -6457,10 +6468,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "57d73bba1ff9fc18d95a99c8e1d5191c5b412834581fc76a41b03329faa41f79",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "870645bbfe507a64a20e05f5fb00256a53da55959a0a93438f3bc107e140f68f"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
@@ -6468,10 +6481,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "e02849f527f6e39b1377544aad82037ac249280c7b0b602e036c794b63a85e70",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "a48c5aed1a93098a6be7258a76ef1bb553d5100a39fb0374e26668160b7dabf7"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md",
@@ -12142,9 +12157,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c63dafd2e77bc6ef929dd9f16ab328729fff2dc24b358e9fba3a929dd52028f8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "6513b2cac8f5b44f862084701c75f5d01a973d9a11843de936278376d19e255e"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/diagrams.md",
@@ -12152,9 +12170,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "993e4f27ebf4aa02d94d2f89368051ab21c265e6e7af604eea27cd2ff74bd8ba",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "d0f9993cd2bc0325daa948d1acc452c058d1aac7a082c7679220eb6d4b04c560"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/frontend.md",
@@ -12162,9 +12183,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f3ec9558ace07aed899531318c67f809f8c07fa62f9f12d04c19f3a125016e3c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "3aa78df45f77543ba5cb3888dce5e4b2d1afd84ed987c83fe0919a766399dbb3"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/scenarios.md",
@@ -12172,9 +12196,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b639b04465235b86cc7a9939deb7fe773f6a993bee703dd1227ae67f074d00eb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "ac0451f09ece9129761b176f471f66afd1f2c907fb8589d42b4c8ef3d3493a8a"
     },
     {
       "path": "units/13_profile_settings/F13-02_profile-edit/backend.md",
@@ -12182,9 +12209,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d50952c5647b705b48d0292016023ddde64b3403dc19f15110da7e37c64690a0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "8fb0de891fa799197cc9c3d9eeedabf8ace5cf8f41ca05bac61dfa9263a152d8"
     },
     {
       "path": "units/13_profile_settings/F13-02_profile-edit/diagrams.md",
@@ -12192,9 +12222,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c00806d55a5a0e11589ab1781ebb94da4f0b5b4492d471829f2948d1a1c2ba7c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "3a97ba03763194e70f1ed91a32a161b162e8a6db0239abb6ccf57eb30602f9e8"
     },
     {
       "path": "units/13_profile_settings/F13-02_profile-edit/frontend.md",
@@ -12202,9 +12235,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6aacaf6d03970ee682e7477e13ac9cba0cfe9fc470e1ad77e52e910bcaecd6e1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "db0d34285be4790be30779690a5cdb2c50027f334da145287a4d0cc5a01af93e"
     },
     {
       "path": "units/13_profile_settings/F13-02_profile-edit/scenarios.md",
@@ -12212,9 +12248,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b3788c1c3852f06490078ec0624e27712dd78ba4d4bbfe7fa15acfee55b30088",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "29e2e6b7b66138909faf507dc1cc9e677c3ea053ad2184bf6e5b50727dec410c"
     },
     {
       "path": "units/13_profile_settings/F13-03_address-management/backend.md",
@@ -12222,9 +12261,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fb8f1eac45b87629eb5cd89300eeb43653802b525efa364ae430e00050f03eb9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "309941de1e4f05e71f36346ee0b3eba6ae4f2b5b05646d7549a2f39395ad8ed0"
     },
     {
       "path": "units/13_profile_settings/F13-03_address-management/diagrams.md",
@@ -12232,9 +12274,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5c473e2576bb2646a679a3dc083bd7e6ea1a377987f73f5429426cfea72beaf6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "01703aca37ed13ef79923c76fab7636c37e9873e556f039979b06bdd3bfcb78b"
     },
     {
       "path": "units/13_profile_settings/F13-03_address-management/frontend.md",
@@ -12242,9 +12287,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f7d9a8f27ce742c3861f00339a16f5bf51957286a7cd6115ff4115a92bbe869a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "70f9893e9509c456f6ffa8bb00fcaab5a486af51ee5dbcd87ac729908756c0dc"
     },
     {
       "path": "units/13_profile_settings/F13-03_address-management/scenarios.md",
@@ -12252,9 +12300,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9f66bebb9f8b397f3e601e54ab45b856b2cc70ed402f163fa82d98285715a246",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reviewedSha256": "767ffa45f16035dd28f82c0a61be813a7b0f0b8dd56d833932d466bea4289fed"
     },
     {
       "path": "units/13_profile_settings/F13-04_preference-tags/backend.md",
@@ -13707,6 +13758,22 @@
         "sharedPolicyAnchors": 2
       },
       "scope": "문서·연결·근거 재사용 검사. 가입 후 프로필 관리의 범위이며 새 제품 시험이나 추천 결과 검증 아님. HTML 변환기의 문단 위치 생략을 이 페이지의 명시적 링크로 보완했다."
+    },
+    {
+      "command": "F13-01/02/03: source reference tests and sync; scenario audit; reviewed relative paths, document/source/derived digests; retained HTML IDs; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 92,
+        "sourceRecords": 348,
+        "verifiedRecords": 346,
+        "retiredRecords": 2,
+        "localSourceLocations": 349,
+        "reviewedDocumentRelativePaths": 661,
+        "derivedSourceDigests": 85,
+        "currentBatchSourceDigests": 62
+      },
+      "scope": "허브·상세 프로필·성향·만난 사람·작성 글·편집·주소의 문서 검사. 새 제품 시험·기기 조작·외부 공유·좌표 변환 성공 검증이 아니다. 프로필 영역 요약은 다음 대조 대상이며 출시 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -14892,6 +14959,260 @@
         }
       ],
       "reusedSourceDigestCount": 23
+    },
+    "profile_hub_edit_addresses_20261122": {
+      "kind": "source_review",
+      "scope": "F13-01/02/03의 허브와 상세 프로필 진입, 성향·만난 사람·받은 후기·작성 글, 프로필 저장·사진·계정 경계, 주소 종류·좌표·기본 지정·소유권·실패. 해당 본문과 계약 대조이며 파일 전체의 기능 완결·새 제품 시험·실기기·외부 공유/지오코딩 성공 증명 아님.",
+      "sources": [
+        {
+          "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b"
+        },
+        {
+          "path": "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart",
+          "sha256": "97ca9f0de94269cb16d3c682c518a779624d9382d4102c3a62ca452acfb20d5b"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc"
+        },
+        {
+          "path": "community_app/lib/core/router/app_router.dart",
+          "sha256": "d4c3beeb804216276a25fdc12006ff1efe134ee0bf0cfe05499c16544bdeca47"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/my_events_provider.dart",
+          "sha256": "0bec76d879d611c525b2cab2d191bfc3aeda3fd8d2d7c5bc81a1316a5d18e283"
+        },
+        {
+          "path": "community_app/lib/domain/providers/reschedule/reschedule_proposal_providers.dart",
+          "sha256": "a23d3fd277e6dd276da67806a8a1924d291e5e4f07f4a2491a454aa32b08d5d1"
+        },
+        {
+          "path": "community_app/lib/domain/providers/trait/trait_provider.dart",
+          "sha256": "629f7c95204f7aee733910bf9b9128b874f751f92751aae2ad2c47a6d0b6c1b5"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/trait_assessment_screen.dart",
+          "sha256": "75eb0e6670ddc32fd30732588881981809200b88924a62a906f3644a1c6f8456"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/trait_report_screen.dart",
+          "sha256": "f837a1f56c50392654a5f27647e6634dabfc4199cd5e3dd66c0732babba0c177"
+        },
+        {
+          "path": "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
+          "sha256": "2d20dbe2c87013012dc4091dbee1e5a9a673cf3d4844d83022a860da9086e1d8"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/met_people_screen.dart",
+          "sha256": "ff26315be8ba5b83f18d7c20ad1f66364cf519e2a62da5c58ce52acd6821936f"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/user_profile_screen.dart",
+          "sha256": "fc3e4edeae3528b5587dd9eb9870f2bbef033aacbc906a216097af63a51c7f1f"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/user_profile_view_provider.dart",
+          "sha256": "0249b418e50247559500cc6a731c4357139a364d38dbc1962e75c90cfaee9cf9"
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/user_club_posts_provider.dart",
+          "sha256": "3bdbb0c4fedf76eec44c8a34c793d6943a97caee472b0d7b5c302fcb4ff85afa"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/widgets/profile_authored_posts.dart",
+          "sha256": "54398604ac051db45b3b2168ce942615b04fe8a9956a9726c1e85868f4ba0902"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/widgets/public_profile_sections.dart",
+          "sha256": "b5baf10bd869ff721d4a79eee21969daeb265f4da0d53b1b6090868706d58cc9"
+        },
+        {
+          "path": "community_app/lib/core/router/profile_exploration.dart",
+          "sha256": "a69d2fdb3560ed811ab12a6c3ab49037d17da61ca94c6eef8babf5de29d05823"
+        },
+        {
+          "path": "community_app/lib/domain/providers/review/review_list_provider.dart",
+          "sha256": "54a15a3d3ed7ff47f0dc29f517b4520fcffffe90d247c209d0ee8eacf31aa6a2"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/profile_edit_screen.dart",
+          "sha256": "0913daef37858451a55b0953218b8aa160d747223c68baac426c29d5f892fa17"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/profile_edit_provider.dart",
+          "sha256": "9bd2d7930da85bb7173f37d151d1783ce1e7af3d17216c952450993535dac61b"
+        },
+        {
+          "path": "community_app/lib/domain/providers/auth_provider.dart",
+          "sha256": "1f74f344223be3e7843561067bd4c8a7bcaf370a6b6eba8e7c8cfaf66db98204"
+        },
+        {
+          "path": "community_app/lib/data/repositories/auth_repository.dart",
+          "sha256": "ccac24fb541bb9502f79f41da5da7ebfa70a7237b95ae158fc7abc97a2084459"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+          "sha256": "6153e5ed4b32c935dcd8569e9e01e48171a1be5b7dc54c978a364449af6b778e"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/unsaved_leave_guard.dart",
+          "sha256": "04f8196c1a47cc1fe2fceedc434328a18a3e512e85b0fd54cd7bfce40d9e1bba"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/address_provider.dart",
+          "sha256": "52733bd8ff5424b32579094baec2e96938b889b5b3f2099ad4ae87ae9dc7575c"
+        },
+        {
+          "path": "community_app/lib/data/repositories/profile_repository.dart",
+          "sha256": "962fc3786f158195eceab5feafb20038302c799db3dfe88a8c6f9ee53bab71e2"
+        },
+        {
+          "path": "community_app/lib/data/api/user_address_api.dart",
+          "sha256": "8832fb167fc2f10c67e55044780179a9ef836adfaa0a5620802333de155bfb5d"
+        },
+        {
+          "path": "community_app/lib/data/models/user/user_address_vo.dart",
+          "sha256": "e0bb3fde72c4a4166c0602aad4c4f9e40e4d387807af82a796cd354cc7c422dd"
+        },
+        {
+          "path": "community_app/lib/data/models/user/user_address_add_request.dart",
+          "sha256": "bfd1e363fd2a9af3b6f6e8680aa23b03be000e380ad9bd6647ce34d9ab747ca2"
+        },
+        {
+          "path": "community_app/lib/data/models/user/user_address_mod_param.dart",
+          "sha256": "6ff096886c781c1d03646d97d29cc985c8329e282eb82e229fea3963bf9503e0"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/address_list_screen.dart",
+          "sha256": "3539b43cdc3abeac59ee28e639666b4b82b5663caeee64ada889e72b8807647d"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/address_form_screen.dart",
+          "sha256": "515a20fd6bf91e2a7f95b24fb71c94f4c1455b84f2b3da9044ba9a2d262a777f"
+        },
+        {
+          "path": "community_app/lib/domain/providers/location/geocoding_provider.dart",
+          "sha256": "18d28053aa0e8accc4b8bb609ce09f9025a09871a62f5e3a0abdf27aad24bc93"
+        },
+        {
+          "path": "community_app/lib/data/api/geocoding_api.dart",
+          "sha256": "f9a59343c88d1a09e7854e60cb37d0423b80c81d8e73b9436d7280f2464316ef"
+        },
+        {
+          "path": "community_app/lib/data/repositories/geocoding_repository.dart",
+          "sha256": "4fd32a55d2ae07c6b608f1619756a8fd1e09470e54b422919e0da33a8f6ea6e8"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+          "sha256": "26920610289d0b5e1fd758db6e73a61b732f90222a865cc3c84b54bd17d3f30d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserService.java",
+          "sha256": "fd0e8c2f8ae89ecb4653a5a47a45a201a8ee8afe4e5c06f10873d7c96f49f9bb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/UserModParam.java",
+          "sha256": "284f6e4e60b4dfc7ca49af6802b3c93b023895ade8998f7b96e7e07fb3df6989"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/UserProfileVo.java",
+          "sha256": "2dcad409cc9937ca9c7c170acc843f94ff43d6d58906951f6f0ce90f1619367e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/ProfileDetailAccessService.java",
+          "sha256": "bc6d91e6c23a9774e236f2c81b2ef9329b7f475d07f100e574e589b075fc64c6"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/trait/controller/TraitController.java",
+          "sha256": "15bed2037d6a1c95eafa76631dc99714c6d95e31e6c4da813f3fb40018385e0c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/trait/param/TraitSubmitParam.java",
+          "sha256": "96badeac261cc98cb7e3d74d9535833906dd6bbc5198d05bb5acd95f2d5bd16b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/trait/service/TraitService.java",
+          "sha256": "dfbc6e46fa39d1e7b6013078452a276604550d22ff342cc95ea7f0a701b721b4"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/MetPeopleController.java",
+          "sha256": "c9221a9bdeb9177e04bd6bbf38d3c7f906f469f78ba4d2d62957d94ad62d6429"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/MetPeopleService.java",
+          "sha256": "115fef8a79dde5e406fbb37afe968cb797a6b4f5b30925490cd5aec95aa47728"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/repository/query/EventAttendanceQueryRepository.java",
+          "sha256": "f3194ce62f3158bdfbd3a826232471bdcabdb0d0bc1d4c793c8c13f764eb6fa8"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/UserClubPostController.java",
+          "sha256": "7e0c806d1e9f9d4a4f27092b7c8c6f606727a8dc51bcd5235c5cfb6bb21345cd"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/UserClubPostService.java",
+          "sha256": "ddbe5e88c2e480cf2d5b70115bbf73a8038e9fb7a43afdde2fc6b6604b726c7e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/UserClubPostQueryRepository.java",
+          "sha256": "2548fc5205c149d841bdd255a062d5741fc933e799273bfa4f0f4cb8246dd8b0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/UserClubPostSearchParam.java",
+          "sha256": "611b018e7b88af3974beb0095d595e8206e0d5900d28beae9fa180b72f6583d2"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/UserClubPostVo.java",
+          "sha256": "de4684a3a3e34ff2dc2a62fb1abd6d85c1576afc86eaa5ff36377e5fc82697f9"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
+          "sha256": "72a4fe9159dbd8526c9e64283b532ae3cae0eb7e8fcc0b9de3334cfa39a56b4a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ReviewService.java",
+          "sha256": "f7f665f5f51d31092132c29317a23898bfba07ad3f2db4897a65bad67a41718f"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+          "sha256": "9aabe7d4c857c55acc181e736f39e01a2321d0fabee9d3faef19394c562f6863"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserAddressService.java",
+          "sha256": "7217583757c78ed278fa3d8f88cfde997671541788784dabef206f0f4b96ecd4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/UserAddressAddParam.java",
+          "sha256": "e5cf2274d30c915071ca9d6577ac607f0f304d2fdd552afd0cc72cd03bf9a17a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/UserAddressModParam.java",
+          "sha256": "da072e06cf1b062bc7a09130da935803d826c475654b57b751758ef53e2177e7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/UserAddressVo.java",
+          "sha256": "5f276517df3ae51268757a75d3ce925e5887ce2fe7be7704cf2b5d7711e98f95"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+          "sha256": "0734c789dd61bf52bcab498e8f216e9fd72979fc27ddc18b4aee38992c872cd8"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/service/GeocodingService.java",
+          "sha256": "e319885b6ce8cf30f7545b88f03f4d8de0b2cb463a9dea659a47cdb2bdeb74c4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/vo/AddressCoordinateVo.java",
+          "sha256": "04b9804fdfb40fc9427685e408a842245aa76e70d6aacffc49c065cebd20e171"
+        }
+      ]
     }
   },
   "currentSourceVersions": {

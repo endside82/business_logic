@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,065개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,084개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1065,
+    "documentedScenarioItems": 1084,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 50,
+    "directlyLinkedAutomatedTests": 49,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 50,
-    "directlyLinkedJourneys": 46,
+    "automatedScenarioReferences": 49,
+    "directlyLinkedJourneys": 45,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 46,
+    "journeyScenarioReferences": 45,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 49,
+    "completeEvidenceChain": 48,
     "partialEvidenceChain": 34,
-    "definitionOnlyEvidence": 92,
-    "traceMarkers": 337,
-    "verifiedTraceRecords": 335,
+    "definitionOnlyEvidence": 93,
+    "traceMarkers": 348,
+    "verifiedTraceRecords": 346,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10631,20 +10631,174 @@ window.SCENARIO_AUDIT = {
       "id": "F13-01",
       "domain": "프로필 & 설정",
       "name": "내·타인 프로필과 작성 글",
-      "scenarioCount": 7,
+      "scenarioCount": 15,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-01_profile-hub/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 15
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-01_profile-hub/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 9,
+        "verified": 9,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F13-01:1",
+            "label": "GET /api/v1/users/me — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "getMyProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
+          },
+          {
+            "id": "F13-01:2",
+            "label": "GET /api/v1/users/me/met-people — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/MetPeopleController.java",
+                "controller": "MetPeopleController",
+                "method": "getMetPeople",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/met-people",
+                "targetLine": 31,
+                "methodLine": 32
+              }
+            ]
+          },
+          {
+            "id": "F13-01:3",
+            "label": "GET /api/v1/traits/questions — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/trait/controller/TraitController.java",
+                "controller": "TraitController",
+                "method": "getQuestions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/traits/questions",
+                "targetLine": 40,
+                "methodLine": 41
+              }
+            ]
+          },
+          {
+            "id": "F13-01:4",
+            "label": "POST /api/v1/traits/sessions — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/trait/controller/TraitController.java",
+                "controller": "TraitController",
+                "method": "startSession",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/traits/sessions",
+                "targetLine": 45,
+                "methodLine": 46
+              }
+            ]
+          },
+          {
+            "id": "F13-01:5",
+            "label": "POST /api/v1/traits/sessions/{sessionId}/submit — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/trait/controller/TraitController.java",
+                "controller": "TraitController",
+                "method": "submit",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/traits/sessions/{sessionId}/submit",
+                "targetLine": 50,
+                "methodLine": 51
+              }
+            ]
+          },
+          {
+            "id": "F13-01:6",
+            "label": "GET /api/v1/traits/me — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/trait/controller/TraitController.java",
+                "controller": "TraitController",
+                "method": "getMyScores",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/traits/me",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F13-01:7",
+            "label": "GET /api/v1/users/{userId}/profile — 내·타인 프로필",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "getUserProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/{userId}/profile",
+                "targetLine": 61,
+                "methodLine": 62
+              }
+            ]
+          },
+          {
+            "id": "F13-01:8",
+            "label": "GET /api/v1/users/{targetUserId}/club-posts — 열람 가능한 작성 글",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/UserClubPostController.java",
+                "controller": "UserClubPostController",
+                "method": "getUserClubPosts",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/{targetUserId}/club-posts",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F13-01:9",
+            "label": "GET /api/v1/users/{userId}/reviews — 받은 후기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
+                "controller": "ReviewController",
+                "method": "getReviewsByUser",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/{userId}/reviews",
+                "targetLine": 52,
+                "methodLine": 53
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -10672,18 +10826,18 @@ window.SCENARIO_AUDIT = {
       "id": "F13-02",
       "domain": "프로필 & 설정",
       "name": "프로필 수정",
-      "scenarioCount": 5,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-02_profile-edit/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-02_profile-edit/backend.md",
-        "total": 1,
-        "verified": 1,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
         "entries": [
           {
@@ -10702,37 +10856,49 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 70
               }
             ]
+          },
+          {
+            "id": "F13-02:2",
+            "label": "GET /api/v1/users/me — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "getMyProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_profile_edit_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_profile_edit_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 3,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/seed_profile_edit_mutation_test.dart",
-          "community_app/scripts/e2e/run_p62_profile_edit_mutation_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_profile_edit_mutation_test.dart",
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
           "community_app/scripts/e2e/run_p62_profile_edit_mutation_matrix.sh"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
@@ -10742,18 +10908,18 @@ window.SCENARIO_AUDIT = {
       "id": "F13-03",
       "domain": "프로필 & 설정",
       "name": "다중 주소 관리",
-      "scenarioCount": 5,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-03_address-management/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-03_address-management/backend.md",
-        "total": 5,
-        "verified": 5,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
         "entries": [
           {
@@ -10838,6 +11004,23 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/users/me/addresses/{addressId}",
                 "targetLine": 59,
                 "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F13-03:6",
+            "label": "GET /api/v1/location/geocode — 프로필·성향·만난 사람·주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+                "controller": "GeocodingController",
+                "method": "geocode",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/location/geocode",
+                "targetLine": 39,
+                "methodLine": 40
               }
             ]
           }
