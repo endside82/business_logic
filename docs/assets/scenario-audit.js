@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,058개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,057개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1058,
+    "documentedScenarioItems": 1057,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 50,
     "partialEvidenceChain": 33,
     "definitionOnlyEvidence": 92,
-    "traceMarkers": 315,
-    "verifiedTraceRecords": 313,
+    "traceMarkers": 320,
+    "verifiedTraceRecords": 318,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -496,20 +496,106 @@ window.SCENARIO_AUDIT = {
       "id": "F01-07",
       "domain": "인증 & 온보딩",
       "name": "관심사 태그 관리",
-      "scenarioCount": 11,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-07_preference-tags/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-07_preference-tags/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F01-07:1",
+            "label": "GET /api/v1/users/me/preference-tags — 본인 태그 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "getMyTags",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/preference-tags",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F01-07:2",
+            "label": "POST /api/v1/users/me/preference-tags — 태그 단건 추가",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "addTag",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/preference-tags",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          },
+          {
+            "id": "F01-07:3",
+            "label": "PUT /api/v1/users/me/preference-tags/{tagId} — 태그 단건 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "updateTag",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/preference-tags/{tagId}",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
+          },
+          {
+            "id": "F01-07:4",
+            "label": "DELETE /api/v1/users/me/preference-tags/{tagId} — 태그 단건 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "deleteTag",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/users/me/preference-tags/{tagId}",
+                "targetLine": 53,
+                "methodLine": 54
+              }
+            ]
+          },
+          {
+            "id": "F01-07:5",
+            "label": "GET /api/v1/interests/catalog — 관심사 카탈로그",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/InterestCatalogController.java",
+                "controller": "InterestCatalogController",
+                "method": "getCatalog",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/interests/catalog",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

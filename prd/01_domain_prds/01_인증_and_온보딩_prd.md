@@ -24,7 +24,7 @@
 | F01-04 | F01-04. 비밀번호 재설정 | [F01-04_password-reset_prd.md](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | [F01-04_password-reset](../../units/01_auth_onboarding/F01-04_password-reset) | 2026-11-22 소스 대조 | 3 | 4 |
 | F01-05 | F01-05. 토큰 갱신 & 로그아웃 | [F01-05_token-refresh-logout_prd.md](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | [F01-05_token-refresh-logout](../../units/01_auth_onboarding/F01-05_token-refresh-logout) | 2026-11-22 소스 대조 | 2 | 3 |
 | F01-06 | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | [F01-06_onboarding_prd.md](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | [F01-06_onboarding](../../units/01_auth_onboarding/F01-06_onboarding) | 전환 완료 | 0 | 1 |
-| F01-07 | F01-07. 관심사 태그 관리 | [F01-07_preference-tags_prd.md](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | [F01-07_preference-tags](../../units/01_auth_onboarding/F01-07_preference-tags) | 전환 완료 | 4 | 1 |
+| F01-07 | F01-07. 관심사 태그 관리 | [F01-07_preference-tags_prd.md](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | [F01-07_preference-tags](../../units/01_auth_onboarding/F01-07_preference-tags) | 2026-11-22 소스 대조 | 5 | 4 |
 | F01-08 | F01-08. 소셜 계정 연결 해제 | [F01-08_social-unlink_prd.md](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | [F01-08_social-unlink](../../units/01_auth_onboarding/F01-08_social-unlink) | 2026-11-22 소스 대조 | 3 | 3 |
 
 ## 3. 먼저 볼 기능
@@ -36,7 +36,7 @@
 | [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 현재 제한·미검증 3건 |
 | [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 현재 제한·미검증 4건 |
 | [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 현재 제한·미검증 3건 |
-| [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | Risk 후보 1 |
+| [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 현재 제한·미검증 4건 |
 
 ## 4. 도메인 기능 목록
 
@@ -106,16 +106,7 @@
 
 ### F01-07 관심사 태그 관리
 
-- **사용자 가치**: 온보딩 이후에도 사용자의 흥미 변화를 반영해 추천 품질을 지속적으로 조정한다.
-- **주요 화면**: `community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart`가 신규 등록 진입점이고, `community_app/lib/presentation/profile/screens/preference_tag_screen.dart`가 운영 중 조회·추가·삭제 화면이다. 서버 PUT과 Retrofit 선언은 있으나 이름·가중치 편집 UI/Provider/Repository 호출자는 없다.
-- **백엔드 엔드포인트**:
-  - `GET /api/v1/interests/catalog` (`InterestCatalogController#getCatalog`) — 서버 허용 라벨 25개를 비어 있지 않은 13개 카테고리로 반환
-  - `GET /api/v1/users/me/preference-tags` — 내 태그 전체 조회 (List<UserPreferenceTagVo>)
-  - `POST /api/v1/users/me/preference-tags` — 태그 추가
-  - `PUT /api/v1/users/me/preference-tags/{tagId}` — 태그 수정
-  - `DELETE /api/v1/users/me/preference-tags/{tagId}` — 태그 삭제 (204)
-- **선결 조건/상태**: 로그인 상태(`@AuthenticationPrincipal UserPrincipal` 필요).
-- **결과 상태 변화**: `user_preference_tag` 테이블에 신규/수정/삭제가 반영된다. 현재 저장값은 PersonSheet 공통점, 홈 사람 추천 `COMMON_GROUND`, 양쪽 동의 데이팅 Jaccard 점수에서 실제 소비된다.
+2026-11-22 현재 동작을 소스 대조했다. 카탈로그 태그의 본인 소유·20개 상한·단건 저장을 확인한다. 온보딩의 부분 저장과 프로필 쓰기 실패 안내, 화면 명세와의 차이는 남아 있다. 자세한 흐름과 남은 차이는 [관심사 태그 관리 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md)를 따른다.
 
 ### F01-08 소셜 계정 연결 해제
 
@@ -129,7 +120,7 @@
 | [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 3 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 | [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 4 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 | [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 4 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 | [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 3 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 
 ## 8. 운영 방법

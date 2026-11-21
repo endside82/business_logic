@@ -251,7 +251,8 @@
         "data_export_20261122",
         "event_detail_complete_20261122",
         "email_code_auth_20261122",
-        "session_and_social_unlink_20261122"
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
       ],
       "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2179,7 +2180,8 @@
       "disposition": "partially_updated",
       "evidence": [
         "email_code_auth_20261122",
-        "session_and_social_unlink_20261122"
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
       ],
       "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2461,9 +2463,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "26520beb2e220c32d623d309e8c50cb4bbfcd53675eaa0984136af4e856fbb30",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "preference_tags_20261122"
+      ],
+      "reviewedSha256": "2600b1edb0c3a793a27a2d38c4337adc5a3e07cc448107e586b8af0c0f35b579"
     },
     {
       "path": "docs/features/F01-08.html",
@@ -4640,7 +4645,8 @@
       "disposition": "partially_updated",
       "evidence": [
         "email_code_auth_20261122",
-        "session_and_social_unlink_20261122"
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
       ],
       "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4689,7 +4695,8 @@
         "data_export_20261122",
         "event_detail_complete_20261122",
         "email_code_auth_20261122",
-        "session_and_social_unlink_20261122"
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
       ],
       "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4868,7 +4875,8 @@
       "disposition": "partially_updated",
       "evidence": [
         "email_code_auth_20261122",
-        "session_and_social_unlink_20261122"
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
       ],
       "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5174,10 +5182,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "78f8a4e702cc210ed07a91bc7e1f4e61731af98276a31686b02e283ccc8d8938",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "preference_tags_20261122"
+      ],
+      "reviewedSha256": "e71ef9fdd9f985c6b1ca3d1624cdd05c8c384eb8d19cc75ca9209a297b9863aa"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md",
@@ -7897,9 +7907,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d0a93921944ba7745db96dea0bb49b9b0702ad791d74eb012b3a628ac0fd04c1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "preference_tags_20261122"
+      ],
+      "reviewedSha256": "c52da78d278d66f8bc6866478f11db631f1f716ad1a6a519a6b8b8d126006668"
     },
     {
       "path": "units/01_auth_onboarding/F01-07_preference-tags/diagrams.md",
@@ -7907,9 +7920,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9eb583c6561d33ed164ba220d8a6e42656626755bd15c261719a48e715eb1870",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "preference_tags_20261122"
+      ],
+      "reviewedSha256": "7d5c0d23260340f0ca531a0f79a5bb31930852979c6fb4e23f989302632dc973"
     },
     {
       "path": "units/01_auth_onboarding/F01-07_preference-tags/frontend.md",
@@ -7917,9 +7933,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f0b9fde3f9c80a208f3dd496c2670eb92ca5f3d443f099ccc75b5a8035b2ada8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "preference_tags_20261122"
+      ],
+      "reviewedSha256": "84611434180cde3881b333d9e9c556b6ab49802b931f11dcfff6405a6b64298b"
     },
     {
       "path": "units/01_auth_onboarding/F01-07_preference-tags/scenarios.md",
@@ -7927,9 +7946,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ed3275b9e024a0b7052891f731b6d68a6e4ab04c38342a2189075af5710074e8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "preference_tags_20261122"
+      ],
+      "reviewedSha256": "ee5ddfea3524271cc8dd2b5793a758e2d5fbeca42bdc25c30d92f95da5cb3c2c"
     },
     {
       "path": "units/01_auth_onboarding/F01-08_social-unlink/backend.md",
@@ -13517,6 +13539,20 @@
         "reviewedDocumentRelativePaths": 359
       },
       "scope": "문서·근거·생성 데이터 검사. 비활성 소셜도 마지막 수단 계산에 포함되는 조건부 Gap을 기록했으며 제품 코드 수정·새 제품 시험·운영 계정 검증을 뜻하지 않음. 출시 범위 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "F01-07: source_references tests; sync_source_reference_docs; check_scenario_audit; reviewed-document relative paths/digests; existing HTML anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 88,
+        "sourceRecords": 320,
+        "verifiedRecords": 318,
+        "retiredRecords": 2,
+        "localSourceLocations": 316,
+        "reviewedDocumentRelativePaths": 377
+      },
+      "scope": "문서·근거·생성 데이터 검사. 화면 명세와 단건 구현 차이·쓰기 실패 안내·온보딩 부분 저장은 남은 차이로 기록했다. 제품 시험·실제 추천 결과 확인 아님. 출시 범위 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -14199,6 +14235,104 @@
         {
           "path": "community_app/test/core/network/refresh_interceptor_retry_test.dart",
           "sha256": "c55223edf4e0a0d24edf4de8293b530645f4fa4f48ea583c37431941eb52af31"
+        }
+      ]
+    },
+    "preference_tags_20261122": {
+      "kind": "source_review",
+      "scope": "F01-07 실제 두 입구·단건 CRUD·카탈로그·잠금·부분 저장·실패·관계/추천 소비 대조. 화면 명세의 저장 버튼/일괄 계약과 실제 단건 구현 차이를 명시. 서버 시험 목적 확인이며 새 시험 실행·기기·추천 결과 검증 아님.",
+      "sources": [
+        {
+          "path": "docs/ui-ux/screens/28-profile-settings.md",
+          "sha256": "628e4876e3ae0a3044fe8f3925332a938ba5f8596dec8a3474fab84d4670e2f9"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+          "sha256": "159e46b3f364d4bc7e57571d5180155ee9bc7a8db75c1253df69a2ba55fe5f6a"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/InterestCatalogController.java",
+          "sha256": "76b574c4d2425da64c2868531428ee00acb1de4b4c40e2c27a246d1277762ac7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserPreferenceTagService.java",
+          "sha256": "dc631f14128344332ffb4c5dbb5296fd074b0afb7c92f7b1d4174df44bbb6e00"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/InterestCatalogService.java",
+          "sha256": "802f9e287e43add263b0aed77d797b21913810d5cc21982524eb83c91b0336f3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/constants/InterestTag.java",
+          "sha256": "cc55d79cbb08b2b571a0d4b25974dc53c870972b3a2e29c62bc4d970503beee9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/UserPreferenceTagParam.java",
+          "sha256": "29e6b6aababeeaccaf260156d67393c055529734725549bbe28d8570fe35c8d1"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/UserPreferenceTagVo.java",
+          "sha256": "6840c8c6ebd6d922e6d26788f1a54ef1504c5e03c231b02d68737eaab1ff2b08"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/RelationshipService.java",
+          "sha256": "3cce838a49279513848c1d29a8ce7c456f1627f809d260aa00f8510513c21bca"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/PersonRecommendationService.java",
+          "sha256": "9d258185e17a1823210502a812de677483d5730db800c07ac5efc76df0a28eae"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/MatchScoringService.java",
+          "sha256": "db4902c2ec4610580699670092de64a22d4d401cdaa392377dcc65110f1322ca"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/UserPreferenceTagServiceTest.java",
+          "sha256": "fa206b700ad374453721a2400075f92c38b51c75a4b4ebc9e554eda81241942f"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/preference_tag_screen.dart",
+          "sha256": "5ab6ec12b6a03d52c864010c446f4159c5af117cb62d950be4b460cf79cc21b9"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart",
+          "sha256": "8f0085be737ffe28f0beab09706d294b0c1cf3316ee28238cbac8a453c778250"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/preference_tag_provider.dart",
+          "sha256": "bd2b19e3b6e9271f61ed91b52b4057de4555c1e8427fa22fadaaf7c512db3247"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/interest_catalog_provider.dart",
+          "sha256": "0d487fc791c44e8e9d26567af1f1b67da779a94da0d866f989a4f17c60521ca9"
+        },
+        {
+          "path": "community_app/lib/data/repositories/auth_repository.dart",
+          "sha256": "ccac24fb541bb9502f79f41da5da7ebfa70a7237b95ae158fc7abc97a2084459"
+        },
+        {
+          "path": "community_app/lib/data/repositories/profile_repository.dart",
+          "sha256": "962fc3786f158195eceab5feafb20038302c799db3dfe88a8c6f9ee53bab71e2"
+        },
+        {
+          "path": "community_app/lib/data/api/user_preference_tag_api.dart",
+          "sha256": "abc860d899464345aa4468460a419af9d2770b90135117dfeb7243918dc51f72"
+        },
+        {
+          "path": "community_app/lib/data/api/interest_catalog_api.dart",
+          "sha256": "fe7165a0f0a243104ce4cd587d080979934e19efb021fb4ff4abbce981ff0bea"
+        },
+        {
+          "path": "community_app/lib/data/models/user/user_preference_tag_param.dart",
+          "sha256": "85bd37ab122ae2606ad2cab0fab594b34bb2d20bcd79eddd32fe9d4d65848701"
+        },
+        {
+          "path": "community_app/lib/data/models/user/user_preference_tag_vo.dart",
+          "sha256": "2f5ac4a4eb503ed5bf11c9f74c4f9b0f9b258969876f254b0e52a6148102ccd2"
         }
       ]
     }
