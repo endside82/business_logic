@@ -2303,9 +2303,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ef74e7537e1ff1546566cc0833cb3e3e51fd1ef82200852209977c61840aa924",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "ef6fa62cb523e12c5abdf3bb0cb9d529104b825cd1b6633f729706e89d528dd8"
     },
     {
       "path": "docs/domains/14-location.html",
@@ -5038,12 +5041,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "325cd1e470a837cce1be944e517120e2f925583031a74b160617e3fbaf290fac",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "data_export_20261122"
+        "profile_domain_rollup_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "reviewedSha256": "df9f07d478109e1c4b6655733f11c4435b8031375ecf07f567d210bbb8718c7a"
     },
     {
       "path": "prd/01_domain_prds/14_위치_and_길찾기_prd.md",
@@ -12147,9 +12150,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "640b375883db7762b89ae7af2711749b34136760b406515489d37aa6056a4610",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "ac7550de96094567a69fcb23ad110a9c6303ff4b4b927b3d42d2b03804dcaff5"
     },
     {
       "path": "units/13_profile_settings/F13-01_profile-hub/backend.md",
@@ -13774,6 +13780,17 @@
         "currentBatchSourceDigests": 62
       },
       "scope": "허브·상세 프로필·성향·만난 사람·작성 글·편집·주소의 문서 검사. 새 제품 시험·기기 조작·외부 공유·좌표 변환 성공 검증이 아니다. 프로필 영역 요약은 다음 대조 대상이며 출시 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "Profile domain rollup: canonical/source reuse digests; reviewed relative paths and derived digests; existing domain HTML IDs; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocumentRelativePaths": 697,
+        "derivedSourceDigests": 86,
+        "additionalEvidenceDigests": 20,
+        "reusedSourceDigests": 194
+      },
+      "scope": "7개 기능의 현재 요약·버전 판정·탈퇴 목록·폐지된 미인증 정리를 문서에 반영. 원래 시험 날짜·범위는 유지하며 새 제품 실행·스토어 공개·계정 파기 검증을 주장하지 않음."
     }
   ],
   "evidenceGroups": {
@@ -15211,6 +15228,101 @@
         {
           "path": "community_api/domain/src/main/java/com/endside/community/location/vo/AddressCoordinateVo.java",
           "sha256": "04b9804fdfb40fc9427685e408a842245aa76e70d6aacffc49c065cebd20e171"
+        }
+      ]
+    },
+    "profile_domain_rollup_20261122": {
+      "kind": "source_review",
+      "scope": "프로필 영역 7개 기능의 현행 요약 및 앱 버전 판정·관리자 탈퇴 목록·미인증 정리 폐지 확인. 기존 기능 검토 지문 불변 확인 후 재사용. 새 시험·실기기·스토어 공개·법적 검토·파기 실행 검증 아님.",
+      "reuses": [
+        "profile_hub_edit_addresses_20261122",
+        "profile_preference_tags_20261122",
+        "preference_tags_20261122",
+        "data_export_20261122",
+        "account_closure_20261122",
+        "signup_social_onboarding_20261122"
+      ],
+      "reusedSourceDigestCount": 194,
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/appversion/controller/AppVersionController.java",
+          "sha256": "d7788491dea91129905ec47414665e9739e754b92106a66db4796fcd2001f48c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/appversion/service/AppVersionService.java",
+          "sha256": "c40367a5fe1ce32da951eb0d22eef1855916fe1014a6965c80c3b5f3bd7b0d89"
+        },
+        {
+          "path": "community_app/lib/domain/services/app_update_policy.dart",
+          "sha256": "8e48124ca3e4a81905d43f4fede179fcbb6114af31d4ab29cee866ac4540ac9f"
+        },
+        {
+          "path": "community_app/lib/domain/providers/app_update/app_update_provider.dart",
+          "sha256": "4f2cb26478a994172feed58bf1340ca4975da1f67d678ed5f035549ee596c1b3"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/app_update_gate.dart",
+          "sha256": "868165423e81185793751ad425db094da2059ade694b4f99093873064870e5a2"
+        },
+        {
+          "path": "community_app/lib/core/config/constants.dart",
+          "sha256": "1f91424c4c98049e82aaaff3e7b98f71426617bdf1fb3760bf27e754685cd81c"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/user/controller/DropOutUserController.java",
+          "sha256": "2d1785f050e2bc6837a6e7efc7c672454efa51b2a9304dc6b221fc5b42ded892"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/user/service/DropOutUserService.java",
+          "sha256": "1c4a017ee5ea13ec1320203e3a7f72b5f691af97609321b94071c3b55588707c"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/user/repository/DropOutUserQueryRepository.java",
+          "sha256": "63294dbbf8e9affdcee3914171a5249a246dbdc44d74f9805e354d87d8e94f1b"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/user/param/DropOutUserSearchParam.java",
+          "sha256": "8139dbe4758def10d57e4c178bf1935a56d4a611d4825f969d7b64f850087190"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/user/vo/DropOutUserVo.java",
+          "sha256": "47e054a906846fb3adf4ad0a9a55a9d40ce1839ac393c157fb5b9a953c3a48dd"
+        },
+        {
+          "path": "community_admin_front/src/features/operations/model/operation-resource-configs.tsx",
+          "sha256": "c105c3d811d0548a26f6f609cae8ad4927dbf6d083a5b08f4eaab509d53f2d11"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/constants/NotificationType.java",
+          "sha256": "ec20cc7ce5efdb9030696ea26d9795293e885c42b53d743b25cc990b15faffab"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
+          "sha256": "0895ef949b6c266c256e81e05c598117aa5d6b2ca314920526bc17f7a4bcf6af"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
+          "sha256": "870645bbfe507a64a20e05f5fb00256a53da55959a0a93438f3bc107e140f68f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
+          "sha256": "a48c5aed1a93098a6be7258a76ef1bb553d5100a39fb0374e26668160b7dabf7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md",
+          "sha256": "1ea3eb28b1529379fee2d92532fd1c1cb8cd48db093afd2babbabe88412b7f80"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
+          "sha256": "78719feeac48678c9e694f2490621675a9f7e9b17b54de085926476a5a8d508c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
+          "sha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
+          "sha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
         }
       ]
     }

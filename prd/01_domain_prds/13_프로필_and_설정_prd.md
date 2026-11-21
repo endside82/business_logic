@@ -1,227 +1,87 @@
-# 13. 프로필 & 설정 PRD
+# 13. 프로필과 설정 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버·앱 소스와 기능 PRD를 대조했다. 새 제품 시험·실기기·운영 파기·배포의 완료 기록이 아니다. 현재 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 결론과 정본
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/13_profile_settings -->
+이 영역은 내 프로필·생활권·선호 정보의 관리, 사람 프로필의 열람과 복귀, 데이터 내보내기·삭제 요청·탈퇴를 연결한다. 현재 마이는 사진·닉네임·신뢰점수 카드, 내 이벤트·내 일정·찜한 이벤트·지갑 바로가기와 조건부 보조 영역으로 구성된다. 이전 지갑 잔액·클럽 수 요약 카드와 메뉴 나열은 현재 화면 설명에서 제외한다.
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/13_profile_settings/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+아래 7개 기능 PRD가 각 흐름·실패·권한·수용 기준의 정본이다. 로컬 단위 메모와 공개 HTML은 그 설명을 옮긴 자료다. 서버 계약은 실제 코드에서 확인하며, 링크 수·시나리오 수를 구현 완료나 시험 통과 수로 사용하지 않는다.
 
-> **2026-05-28 RM 도메인 신설 영향(cross-ref).** `AccountDeactivationService`에 RM 가드 4건 추가(결정 L). (1) `checkRegularMeetingPayments` — PENDING/REFUND_REQUESTED 항상 차단, PAID는 `meeting.status != CLOSED`일 때만 차단. (2) `checkRegularMeetingHosting` — 호스트의 DRAFT/OPEN 운영중 모임 차단(자동 cancel 없음, 금전 발화 방지). (3) `checkRegularMeetingHostedRefunds` — 호스트가 책임진 멤버 PENDING/REFUND_REQUESTED 결제 + RM-keyed failed_refund 차단(CANCELED 호스트의 환불 책임 갭 해소). (4) `checkFailedRefunds` — 멤버측 user_id 기반 PENDING/FAILED 차단. 즉시 비활성화(F13-07) 진입 전 `AccountDeactivationCheckVo.blockingItems`에서 확인. 자세한 내용은 [17 정기모임 도메인 §6](17_정기모임_prd.md).
+## 기능과 사용자 흐름
 
-> **2026-06-05 관심인(19) 도메인 신설 영향(cross-ref).** 마이페이지(`my_profile_screen.dart:115-129`) 메뉴에 두 항목이 추가됐다: ① "관심인" → `/profile/favorites`(`FavoriteListScreen`) — 관심인 목록·등록·해제 진입점. ② "프라이버시 설정" → `/profile/privacy-settings`(`PrivacySettingsScreen`) — 캘린더 비공개 + 가입 클럽 숨기기 토글 진입점(프리미엄 전용). 두 화면 모두 `app_router.dart`의 profile 쉘 내 GoRoute로 등록. 자세한 내용은 [19 관심인 도메인](19_관심인_prd.md).
+| 기능 정본 | 현재 흐름 | 연결 근거 수 | 제한·위험 항목 수 |
+|---|---|---:|---:|
+| [마이페이지와 프로필 탐색](../02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md) | 마이 카드·네 바로가기·보조 정보, 성향·만난 사람, 상세 프로필·후기·작성 글을 실제 입구별로 구분한다. | 9 | 5 |
+| [프로필 편집과 사진 변경](../02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md) | 닉네임·소개·MBTI·사진을 편집하고 상단 저장으로 반영한다. 사진 업로드·프로필 저장·이탈과 계정 변경은 별도 경계다. | 2 | 3 |
+| [주소 관리](../02_feature_prds/13_profile_settings/F13-03_address-management_prd.md) | 최대 10개, 집·회사 각 한 개, 기타 여러 개를 관리한다. 검색한 주소의 좌표 변환과 소유권 검사 후 저장한다. | 6 | 5 |
+| [선호 태그 관리](../02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | 서버 카탈로그에서 최대 20개를 단건 추가·삭제한다. 프로필 관리에는 온보딩의 다음 단계 최소 선택 수를 적용하지 않는다. | 5 | 4 |
+| [데이터 내보내기](../02_feature_prds/13_profile_settings/F13-05_data-export_prd.md) | 최신 비동기 요청의 처리·완료·실패·만료를 확인하고 유효한 다운로드 주소를 외부 앱으로 연다. | 2 | 6 |
+| [계정 삭제 요청과 취소](../02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | 사전 의무 점검과 필요한 금액 동의를 거쳐 30일 뒤 파기를 예약한다. 대기 상태에서만 사용자가 취소할 수 있다. | 4 | 6 |
+| [즉시 탈퇴와 후속 파기](../02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | 사전 점검·필요한 동의·최종 확인 후 즉시 이용을 끝내며, 후속 파기·돈 처리·파일 소거는 각각의 조건을 따른다. | 2 | 4 |
 
-## 1. 결론
+7개 기능의 연결 근거는 30개, 제한·위험 표 항목은 33개다. 이 수에는 미검증 범위도 포함하며 미해결 결함의 총수와 같지 않다.
 
-이 단위는 로그인 사용자가 자기 신원과 활동 환경을 직접 관리하는 영역을 담당한다. "내 프로필 카드(닉네임·자기소개·사진·지갑/이벤트/클럽/신뢰점수 요약)"를 출발점으로, 프로필 편집, 다중 주소 관리(라벨/기본/지오코드), 선호 태그 관리, 데이터 프라이버시(데이터 내보내기, 30일 유예 계정 삭제, 즉시 계정 비활성화), 그리고 외부 화면(앱 설정/연동 계정/고객센터/찜 목록)으로의 진입을 통합 제공한다. 이 단위가 끝나면 사용자는 자기 데이터를 자기 의지로 갱신·내보내기·삭제할 수 있는 통제권을 보유한 상태가 된다. 인증 자체(로그인/토큰/소셜 SDK)는 Unit 01에서, 알림 설정은 Unit 12에서 처리된다 — 본 단위는 "소유한 데이터의 표시·수정·삭제" 책임에 한정한다.
+## 메뉴·권한·계정 경계
 
-이 도메인은 기능 PRD 7개로 구성된다. 현재 기능별 trace source는 총 18개이고, risk 후보는 총 37개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+- 하단 마이의 상단은 검색·알림·전체 메뉴다. 카드 아래 메뉴는 프로필 편집·선호 태그·조건부 성향·취향 프로필·주소이며, 신뢰점수는 별도 입구다. 만난 사람은 전체 메뉴의 활동에서 찾는다. 설정·로그아웃은 이 카드의 항목으로 되풀이하지 않는다.
+- 본인 상세 프로필에는 편집·공개 설정, 타인 상세에는 허용된 관심인·관계 정보와 신고·차단을 제공한다. 현재 상세 관계는 본인·같은 클럽·참가가 확정된 같은 이벤트를 근거로 판단한다. 데이팅 매칭을 커뮤니티 상세 공개 근거로 사용하지 않는다.
+- 소개·MBTI 등은 서버가 허용한 값만 표시한다. 공개 클럽 수나 작성 글 수를 대상의 전체 가입 수·전체 작성 수라고 표시하지 않는다. 조회·재확인·거절 때는 이전 상세를 그대로 남기지 않는다.
+- 프로필 편집·사진 처리의 늦은 응답은 시작한 계정에만 적용한다. 프로필 탐색·편집 입력·후기 및 글 펼침 상태도 계정이 바뀌면 섞지 않는다.
+- 성향 검사는 문항·세션·제출·본인 결과로 나뉜다. 문항 조회 실패와 문항 없음, 지원하는 문항의 응답과 서버가 허용하는 부분 제출을 구분한다. 타인 원점수의 자동 공개를 가정하지 않는다.
 
-## 2. 실사 근거 맵
+## 사람 정보를 확인하고 원래 화면으로 돌아오기
 
-| ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---|---:|---:|
-| F13-01 | F13-01. 내 프로필 조회 (마이페이지 허브) | [F13-01_profile-hub_prd.md](../02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md) | [F13-01_profile-hub](../../units/13_profile_settings/F13-01_profile-hub) | 전환 완료 | 1 | 4 |
-| F13-02 | F13-02. 프로필 수정 (닉네임·자기소개·사진) | [F13-02_profile-edit_prd.md](../02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md) | [F13-02_profile-edit](../../units/13_profile_settings/F13-02_profile-edit) | 전환 완료 | 1 | 4 |
-| F13-03 | F13-03. 다중 주소 관리 | [F13-03_address-management_prd.md](../02_feature_prds/13_profile_settings/F13-03_address-management_prd.md) | [F13-03_address-management](../../units/13_profile_settings/F13-03_address-management) | 전환 완료 | 5 | 5 |
-| F13-04 | F13-04. 선호 태그 관리 | [F13-04_preference-tags_prd.md](../02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | [F13-04_preference-tags](../../units/13_profile_settings/F13-04_preference-tags) | 전환 완료 | 4 | 7 |
-| F13-05 | F13-05. 데이터 내보내기 (Export) | [F13-05_data-export_prd.md](../02_feature_prds/13_profile_settings/F13-05_data-export_prd.md) | [F13-05_data-export](../../units/13_profile_settings/F13-05_data-export) | 전환 완료 | 2 | 6 |
-| F13-06 | F13-06. 계정 삭제 요청 (30일 유예) | [F13-06_account-deletion_prd.md](../02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | [F13-06_account-deletion](../../units/13_profile_settings/F13-06_account-deletion) | 전환 완료 | 3 | 4 |
-| F13-07 | F13-07. 계정 즉시 비활성화 (탈퇴) | [F13-07_account-deactivation_prd.md](../02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | [F13-07_account-deactivation](../../units/13_profile_settings/F13-07_account-deactivation) | 전환 완료 | 2 | 7 |
+사람 카드에서 현재 허용된 상세 프로필로 이동한다. 받은 후기는 펼칠 때 읽어 처음 3개를 표시하고, 나머지는 별도 후기 목록으로 이동한다. 각 후기의 원 모임과 가입 클럽·작성 글 원문도 탐색할 수 있다. 등록된 중간 초안을 버리면서 출발점으로 돌아갈 때 확인하며, 프로필로 복귀하면 현재 공개 권한을 다시 읽는다.
 
-## 3. 먼저 볼 기능
+같은 사람을 다시 열었을 때의 방문별 상태와 현재 서버 공개 판정은 별개다. 화면의 펼침·쪽·스크롤을 유지해도 오래된 공개 내용을 그대로 허용하지 않는다. 실제 기기의 제스처·푸시·다른 기기에서 바뀐 권한의 반영은 소스 대조만으로 통과 처리하지 않는다.
 
-| 먼저 볼 기능 | 기능 | 이유 |
+## 다른 사람의 클럽 글을 내가 볼 수 있는 범위에서 모아 보기
+
+상세 프로필의 받은 후기 아래에서 작성 글을 펼친다. 조회자가 현재 가입한 클럽의 대상 작성 글 중 게시 상태만 목록과 건수에 포함하며, 작성 시각·글 번호 내림차순으로 20개씩 이동한다. 대상이 작성 클럽을 떠났다는 이유만으로 남은 글을 제외하지 않으며, 조회에 클럽 운영 상태 조건은 없다.
+
+대상 계정·차단·상세 열람 관계를 먼저 검사한다. 타인이 가입 클럽을 숨겼으면 빈 목록이며, 예약·숨김·삭제 글과 비회원 클럽 글은 제외한다. 원문 왕복 후 펼침·쪽 상태를 유지하면서 내용을 다시 읽고, 사라진 쪽은 첫 쪽으로 돌아간다. 조회 실패를 빈 목록으로 표시하지 않는다.
+
+## 삭제 예약·즉시 탈퇴·후속 파기
+
+| 구분 | 삭제 예약 | 즉시 탈퇴 |
 |---|---|---|
-| [F13-07](../02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | F13-07. 계정 즉시 비활성화 (탈퇴) | Risk 후보 7 |
-| [F13-04](../02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | F13-04. 선호 태그 관리 | Risk 후보 7 |
-| [F13-05](../02_feature_prds/13_profile_settings/F13-05_data-export_prd.md) | F13-05. 데이터 내보내기 (Export) | Risk 후보 6 |
-| [F13-03](../02_feature_prds/13_profile_settings/F13-03_address-management_prd.md) | F13-03. 다중 주소 관리 | Risk 후보 5 |
-| [F13-01](../02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md) | F13-01. 내 프로필 조회 (마이페이지 허브) | Risk 후보 4 |
-| [F13-02](../02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md) | F13-02. 프로필 수정 (닉네임·자기소개·사진) | Risk 후보 4 |
-| [F13-06](../02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | F13-06. 계정 삭제 요청 (30일 유예) | Risk 후보 4 |
+| 신청 전 | 금융·활동 의무 점검과 필요한 예치금 동의 | 같은 사전 점검과 필요한 동의, 즉시 이용 종료 확인 |
+| 접수 뒤 | 기본 30일 뒤 처리 예정, 대기 상태에서만 취소 | 계정 이용 종료·세션 차단과 식별 정보 익명화 |
+| 로그인·취소 | 로그인만으로 예약을 취소하지 않음. 승인 뒤에는 사용자 취소 불가 | 기존 계정 복원·재활성화 경로가 아님 |
+| 후속 처리 | 매일 04:00 대상 점검. 제재·의무·동의·실패에 따라 지연 가능 | 기본 유예 뒤 매일 04:40 대상 점검. 파기 조건과 재시도 적용 |
+| 돈·파일 | 법적 보존, 지급 예약·운영자 확인, 저장소 소거를 별도 추적 | 지갑이 즉시 0이 되거나 실제 송금·파일 소거가 동시에 끝나는 것이 아님 |
 
-## 4. 도메인 기능 목록
+삭제 요청 직후 판매 정리 등 후속 변경이 시작될 수 있다. 취소가 이미 처리한 판매·활동 정리를 되돌리는 것은 아니다. 즉시 탈퇴도 여러 정리 단계 뒤 최종 확정을 하므로 중간 실패를 전체 원상 복구로 설명하지 않는다. 마이의 남은 일수·완료 예정 문구는 실제 파기 완료 보장이 아니다.
 
-### 핵심 기능 목록 (7개)
+내보내기는 최신 요청의 자료 생성·주소 발급·다운로드·만료·물리 파일 소거를 구분한다. 현재 자료 범위와 30일 간격, 처리 지연·실패·주소 없음은 기능 PRD를 따른다. 과거의 ‘9개 자료 묶음’, ‘자동 만료 없음’, ‘최대 48시간 처리 보장’ 설명을 현재 정책으로 사용하지 않는다.
 
-| ID | 기능명 | 한 줄 설명 | 주요 사용자 액션 |
-|----|---|---|---|
-| F13-01 | 내 프로필 조회 (마이페이지 허브) | 프로필 카드 + 지갑/이벤트/클럽/신뢰점수 요약 + 하위 메뉴 진입점을 한 화면에서 본다 | 마이페이지 탭 진입, 카드/메뉴 항목 탭 |
-| F13-02 | 프로필 수정 (닉네임·자기소개·사진) | 닉네임/자기소개를 편집하고 프로필 사진을 카메라/앨범에서 골라 S3에 업로드한 뒤 저장한다 | 사진 영역 탭, 닉네임/자기소개 입력, "저장" 탭 |
-| F13-03 | 다중 주소 관리 | 여러 주소(라벨: 집/회사/기타)를 추가·수정·삭제하고 기본 주소를 지정한다 | 주소 관리 진입, "+" 추가, 라벨 선택, 다음 우편번호 검색, "기본설정"/"수정"/"삭제" 탭 |
-| F13-04 | 선호 태그 관리 | 서버 카탈로그에서 내 관심사 태그를 조회·추가·삭제한다. 서버 PUT은 있지만 현재 편집 UI 호출자는 없다 | 선호 태그 진입, 추천 태그 칩 탭으로 추가, 기존 태그의 X로 삭제 |
-| F13-05 | 데이터 내보내기 (Export) | 내 데이터를 JSON으로 비동기 추출 요청하고, 완료 시 만료 전에 다운로드한다 | "데이터 내보내기 요청" 탭, 진행 상태 새로고침, "다운로드" 탭 |
-| F13-06 | 계정 삭제 요청 (30일 유예) | 개인정보 삭제·익명화를 예약하고 마이페이지 배너로 상태를 본다. 사용자 취소는 PENDING에서만 가능하다 | "계정 삭제 요청" 탭 → 확인 다이얼로그, 배너에서 "관리" → PENDING일 때 "삭제 취소" 탭 |
-| F13-07 | 계정 즉시 비활성화 (탈퇴) | 차단 사유 사전 점검 후, 즉시 계정을 비활성화하고 강제 로그아웃된다 | "계정 탈퇴" 탭 → deactivation-check → (해결 항목 안내) → 최종 확인 |
+## 시작할 때 공개 앱 버전을 확인하기
 
-> M = 7 기능. F13-01은 단위의 "허브 화면" 자체이고, F13-02·F13-03·F13-04는 사용자가 자기 신원·생활권·관심사를 갱신하는 운영 기능이며, F13-05·F13-06·F13-07은 GDPR/개인정보 통제권(데이터 추출, 30일 유예 삭제, 즉시 탈퇴)을 구성한다. 본 단위는 "데이터 통제권" 핵심 흐름에 집중하기 위해 외부 도메인 진입점(앱 설정, 연동 계정, 고객센터, 찜, 정산 계좌, 기기 관리)은 별도 기능으로 분리하지 않는다.
+앱 시작과 다시 앞으로 돌아올 때 공개된 버전 기준을 읽는다. 서버는 게시 상태이고 게시 시각이 지난 항목을 종류별로 고른다. 앱은 현재 버전을 필수·권장 기준과 비교하고 필수를 먼저 적용한다. 권장의 ‘나중에’는 이번 실행에서 기억한다. 조회 실패는 직전 판정을 유지하며 처음부터 조회하지 못한 경우 새 강제 차단을 만들지 않는다. 읽을 수 없는 버전 문자열은 해당 기준으로 적용하지 않는다.
 
----
+Android는 앱 식별자로 스토어 주소를 만들고, iOS 스토어 번호는 빌드 설정에서 받는다. 예전 문서의 고정 번호를 모든 빌드의 값으로 취급하지 않는다. 웹·데스크톱 또는 번호가 없는 iOS에는 같은 스토어 버튼을 보장하지 않는다. 스토어 연결 구현과 실제 공개·설치 완료는 별도 증거다. 공지의 목록·상세와 관리 흐름은 운영 영역의 문서를 함께 확인한다.
 
-## 5. 상태/권한/의존성
+## 운영자의 탈퇴 회원 조회
 
-> 이 overview에는 별도 요약 섹션이 없다. 이 도메인의 세부 판단은 위 실사 근거 맵의 기능 PRD와 unit 문서를 기준으로 확인한다.
+탈퇴 회원 조회 권한이 있는 운영자가 회원 번호와 시작일·종료일로 삭제 유예·파기 상태의 회원을 조회한다. 목록은 회원 번호·상태·현재 상태가 된 시각을 제공하며 연락처를 싣지 않는다. 유예에서 파기로 바뀌면 표시 시각도 파기 시각으로 바뀐다. 기간 필터는 두 날짜가 모두 있을 때 적용된다.
 
-## 6. 화면/API 매핑
+삭제 예약만 접수한 일반 회원은 탈퇴 상태와 구분한다. 이 목록은 회원 탈퇴·파기를 새로 실행하는 기능이 아니다. 서버 권한 검사를 통과해야 하며 관리자 화면에 링크가 보이는 것만으로 열람 권한을 보장하지 않는다.
 
-### 기능별 상세
+## 폐지된 설명과 과거 검증 기록
 
-### F13-01 내 프로필 조회 (마이페이지 허브)
+- **미인증 계정의 30일 안내·7일 후 정리:** 현재 동작이 아니다. 새 계정은 이메일 번호 또는 확인된 Google 주소를 근거로 인증된 상태로 생성한다. 미인증 관문·정리 기능을 걷었고 관련 알림 종류도 폐지 목록에 있다. 소스 주석에 남은 옛 정리 흐름을 현재 스케줄러로 해석하지 않는다.
+- **오래 미접속한 계정의 자동 휴면:** 이 문서에서 보장하는 기능이 아니다. 가입 인증·사용자 삭제 요청·즉시 탈퇴를 미접속 기간에 의한 처분과 혼동하지 않는다.
+- **예전 공개 관계:** 과거 문서의 데이팅 매칭 포함 또는 같은 이벤트 관계 제외 설명은 현재 프로필 판정으로 대체한다.
+- **기존 실행 기록:** [10월 13일 문서 동기화 기록](../../verification/document-sync-2026-10-13.json)과 원래 시험의 날짜·환경·범위는 유지한다. 당시 브라우저 대체 응답·자동 검사와 실제 로그인 서버 왕복·서명 앱 검증을 구분한다. 이번 문서 갱신이 그 실행을 재수행한 것은 아니다.
 
-- **사용자 가치**: 자기 정체성(이름·사진·자기소개)과 활동 요약(지갑 잔액·내 이벤트 수·내 클럽 수·신뢰점수)을 한 화면에서 확인하고, 모든 프로필/설정 하위 메뉴로 일관된 진입점을 갖는다.
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/my_profile_screen.dart` (SCR-PS-001 대응)
-  - `community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart` — 삭제 요청 진행 중일 때 상단 고정 배너
-- **백엔드 엔드포인트**:
-  - `GET /api/v1/users/me` (`UserController#getMyProfile`) — `UserProfileVo` 반환
-  - 요약 카드 데이터는 외부 단위 의존: 지갑(payment), 내 이벤트/클럽(event/club), 신뢰점수(review)
-- **선결 조건/상태**: 로그인 상태(`@AuthenticationPrincipal UserPrincipal`).
-- **결과 상태 변화**:
-  - 화면 진입 시 프로필/요약 카드 렌더, 메뉴 탭 시 해당 하위 화면(편집/주소/태그/계좌/기기/프라이버시/캘린더/리뷰/찜/앱 설정/고객센터)으로 이동
-  - "로그아웃" 탭 시 확인 다이얼로그 → `authNotifierProvider.logout()` 호출(Unit 01의 F01-05로 위임)
-  - 삭제 요청이 PENDING/APPROVED 상태이면 상단에 D-day 카운트다운 배너 노출 → "관리" 탭 시 데이터 프라이버시 화면 이동
+## 제한과 다음 확인
 
-### F13-02 프로필 수정 (닉네임·자기소개·사진)
+- 보조 정보의 실패 숨김, 기본 주소 변경·삭제 및 태그 쓰기의 실패 안내 누락을 현재 구현 차이로 기록한다.
+- 주소의 기본 지정은 최대 한 개이며 반드시 한 개를 보장하지 않는다. 기본 주소 삭제의 앱·서버 제한 차이, 기타 이름표 잔존, 편집 대상 조회 실패를 구분한다.
+- 앱 자기소개 200자와 서버 500자, 사진 업로드 후 폼 취소, 제한된 일정 요청 집계와 결제 대기 미리보기의 의미를 구분한다.
+- 삭제 동의 변경·제재·미결 의무·결과 불명·이전 정리의 유지와 후속 돈 처리를 성공 한 단계로 묶지 않는다.
+- 기능별 수용 기준은 현재 입구·저장·취소·오류·계정 변경·복귀의 확인 대상이다. 새 실행 결과는 별도 기록에 날짜·환경·실제 결과를 남긴다.
 
-- **사용자 가치**: 자기 표현(닉네임·자기소개)과 시각 자산(프로필 사진)을 직접 갱신하여 다른 사용자에게 보이는 정체성을 통제한다.
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/profile_edit_screen.dart` (SCR-PS-002 대응)
-- **백엔드 엔드포인트**:
-  - `PATCH /api/v1/users/me` (`UserController#updateMyProfile`) — `@RequestBody UserModParam`, 응답 `UserProfileVo`
-  - 프로필 사진 업로드: file 도메인 (`uploadImageFile` 헬퍼, `purpose: 'PROFILE'`) — 본 단위 외부 의존
-- **선결 조건/상태**: 로그인 상태. 변경 사항(닉네임/자기소개/사진 중 하나라도)이 있을 때만 저장 버튼 활성화.
-- **결과 상태 변화**:
-  - 저장 성공: User의 nickname/bio/profileImageUrl 갱신 → `authNotifierProvider.checkAuthStatus()`로 클라이언트 상태 동기화 → "프로필이 수정되었습니다" 토스트 → 이전 화면 복귀
-  - 닉네임 < 2자: 클라 검증 실패 토스트 ("닉네임은 2자 이상이어야 합니다")
-  - 변경 사항 있는 채로 뒤로가기 시 "변경 사항을 저장하지 않고 나가시겠습니까?" 다이얼로그
-  - 사진 업로드 실패: "사진 업로드에 실패했습니다" 토스트, 기존 이미지 유지
-
-### F13-03 다중 주소 관리
-
-- **사용자 가치**: 집/회사/기타 라벨로 여러 생활 거점을 등록해 이벤트 추천·정산·배송 등 위치 기반 기능에 활용하고, "기본 주소" 한 건을 지정해 디폴트 동작의 일관성을 확보한다.
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/address_list_screen.dart` (SCR-PS-003 대응) — 클라 한도 상수 `_maxAddressCount = 10` (서버 `UserAddressService.MAX_ADDRESS_COUNT = 10`과 일치)
-  - `community_app/lib/presentation/profile/screens/address_form_screen.dart` (SCR-PS-004 대응) — 추가/수정 공용
-  - `common/widgets/daum_postcode_search.dart` — 다음 우편번호 검색 웹뷰(외부)
-- **백엔드 엔드포인트** (모두 `UserAddressController`, prefix `/api/v1/users/me/addresses`):
-  - `GET /` — `List<UserAddressVo>` 전체 조회
-  - `GET /{addressId}` — 단건 조회
-  - `POST /` — `@RequestBody UserAddressAddParam`, 201 + `UserAddressVo`
-  - `PUT /{addressId}` — `@RequestBody UserAddressModParam`, 200
-  - `DELETE /{addressId}` — 204
-- **선결 조건/상태**: 로그인 상태. 추가 시 라벨(home/work/custom)·주소·좌표 필요(클라이언트는 다음 검색 결과로 입력하지만 좌표는 0.0 기본값으로 보낼 수도 있음 — 코드 주석에 명시).
-- **결과 상태 변화**:
-  - 목록: 카드 단위로 라벨/기본 배지/주소/상세주소 노출, 항목별 "기본설정"(기본이 아닌 경우만)·"수정"·"삭제" 버튼
-  - 추가 성공: `UserAddress` 신규 레코드, isDefault=true이면 기존 기본 주소 자동 해제 → 목록에 합류
-  - 수정 성공: 해당 레코드 갱신, isDefault 토글 시 기본 주소 재할당
-  - 삭제: 기본 주소이면 클라 토스트 차단("기본 주소는 삭제할 수 없습니다…"), 일반 주소이면 확인 다이얼로그 후 DELETE → 애니메이션과 함께 목록에서 제거
-  - 한도 초과(10개): "+" 버튼 자체를 비표시(클라 가드)
-
-### F13-04 선호 태그 관리
-
-- **사용자 가치**: 자기 관심사를 시점에 맞게 갱신하여 추천·검색 도메인의 결과 품질을 지속적으로 조정한다.
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/preference_tag_screen.dart` (SCR-PS-006 대응) — 클라 한도 상수 `_maxPreferenceTagCount = 20` (서버 `UserPreferenceTagService.MAX_TAGS_PER_USER = 20`과 일치)
-  - 추천 태그는 공유 `interestCatalogProvider`가 서버 카탈로그를 조회해 그린다. 현재 카탈로그는 비어 있지 않은 13개 카테고리, 25개 라벨이다.
-- **백엔드 엔드포인트**:
-  - `GET /api/v1/interests/catalog` — 서버 허용 태그 카탈로그
-  - `GET /` — `List<UserPreferenceTagVo>`
-  - `POST /` — `@RequestBody UserPreferenceTagParam`, 201 + `UserPreferenceTagVo`
-  - `PUT /{tagId}` — `@RequestBody UserPreferenceTagParam`, 200
-  - `DELETE /{tagId}` — 204
-- **선결 조건/상태**: 로그인 상태.
-- **결과 상태 변화**:
-  - 추천 칩 탭: 단건 POST → 즉시 "내 태그" 섹션에 추가, 카운터 갱신
-  - 내 태그의 X 탭: 단건 DELETE → 칩 제거, 카운터 갱신
-  - 한도 도달(20): 추천 칩 탭 차단 + "최대 20개까지 선택 가능합니다" 토스트
-  - 이미 선택된 추천 태그는 비활성(연한 회색)으로 표시되어 중복 추가 차단
-  - UI 스펙(SCR-PS-006)은 PUT 일괄 업데이트를 가정하지만 서버는 단건 API를 제공하고 현재 화면은 POST/DELETE만 호출한다. 이름·가중치 편집 caller는 없다.
-  - POST/DELETE 실패는 Provider에서 `false`로 접히며 화면이 Future를 await하지 않아 오류 안내와 재동기화가 없다.
-
-### F13-05 데이터 내보내기
-
-- **사용자 가치와 입구:** 전체 메뉴 → 설정 → 데이터 내보내기·탈퇴에서 자기 자료의 JSON 사본을 요청한다. 자료 포함·제외와 법률 검토는 구분한다.
-- **요청·조회:** 서버가 새 요청을 접수하면 처리 중으로 표시한다. 화면은 최신 요청 하나를 읽고 수동 새로고침으로 결과를 확인한다. 요청 없음과 조회 실패를 구분하며 오류 때는 재조회한다.
-- **완료·실패:** 주소가 있는 완료 요청은 외부 앱에서 다운로드한다. 실패·만료에서는 새 요청을 만들며 알 수 없는 상태는 ‘상태 확인 필요’로 표시한다. 완료인데 주소가 없는 경우와 외부 열기 실패 안내는 아직 부족하다.
-- **기한·정리:** 기한은 요청일부터 30일이다. 자동 복구와 만료 정리 작업이 있으며, 요청 만료·파일 삭제 요청 기록과 실제 저장소 삭제는 별도 단계다. 관리자 수동 만료만 존재한다는 과거 설명은 정정한다.
-- **현재 제약:** 최대 48시간 안내의 처리 보장, 요청 중복·응답 유실, 관리자 재발급과 회원 다운로드의 일치를 구분해 확인한다. 세부 흐름·근거·현재 차이는 [데이터 내보내기 PRD](../02_feature_prds/13_profile_settings/F13-05_data-export_prd.md)가 정본이다.
-- **검토 범위:** 이 항목은 2026-11-22 소스 대조를 반영했다. 전체 프로필 도메인의 나머지 항목과 실제 외부 파일 수령은 별도 검토 대상이다.
-
-### F13-06 계정 삭제 요청 (30일 유예)
-
-- **사용자 가치**: 즉시 비활성화와 별도로 30일 유예의 개인정보 삭제·익명화를 예약한다. 거래/정산과 법적 분쟁 기록은 보존 정책에 따라 남을 수 있다.
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/data_privacy_screen.dart` 내 `_AccountDeletionSection`
-  - `community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart` — 마이페이지 상단 고정 배너 (D-day + "관리" 버튼)
-- **백엔드 엔드포인트** (`DataPrivacyController`, prefix `/api/v1/users/me`):
-  - `POST /data-deletion` — 삭제 예약, 202 Accepted + `DataDeletionRequestVo` (서버 status enum 진행 중 값은 PENDING/APPROVED — 코드 주석에 CONFIRMED가 아님이 명시됨)
-  - `GET /data-deletion/status` — 현재 요청 상태 조회
-  - `DELETE /data-deletion` — `PENDING` 요청만 취소, 204
-  - 참고: UI 스펙(SCR-PS-007)의 비밀번호 재확인은 현재 Flutter 화면과 서버에 없다. 컨트롤러는 body 없이 요청하고 서비스도 비밀번호를 검증하지 않는다.
-- **선결 조건/상태**: 로그인 상태이며 진행 중 `PENDING` 요청이 없어야 한다. status 조회는 최신 `PENDING`/`APPROVED`만 반환하고 취소·완료 뒤에는 NOT_FOUND다.
-- **결과 상태 변화**:
-  - 요청 성공: status PENDING 진입 → "삭제까지 N일 남음" 카드 + "삭제 취소" 버튼 노출, 마이페이지 상단 배너 활성화. APPROVED도 배너에는 보이지만 취소 버튼은 없다.
-  - 취소 성공: DELETE 후 status CANCELLED → "계정 삭제가 취소되었습니다" 토스트, 배너 사라짐
-  - 로그인은 진행 중 요청을 조회해 배너/관리 동선을 노출할 뿐 삭제 요청을 자동 취소하지 않는다. 취소는 사용자가 `DELETE /data-deletion`을 명시적으로 호출해야 한다.
-  - 30일 만료: 서버 워커가 개인정보를 삭제·익명화하고 계정을 EXIT로 전환한다. 거래/정산은 5년, active legal hold의 분쟁 증거와 종결 분쟁 보존 대상은 별도 정책에 따라 유지한다.
-  - 관리자 `process`는 현재 COMPLETED만 skip해 이미 CANCELLED인 row도 실행할 수 있다. 공개 취소를 우회할 수 있는 상태 가드 Gap이다.
-
-### F13-07 계정 즉시 비활성화 (탈퇴)
-
-- **사용자 가치**: 30일 유예 없이 즉시 서비스 이용을 중단하고 계정을 비활성화한다. 단, 진행 중인 의무(예: 호스팅 정산, 결제 미정산 등)가 있으면 차단되거나 자동 처리 안내 후 진행된다.
-- **주요 화면**:
-  - `community_app/lib/presentation/profile/screens/data_privacy_screen.dart` 내 `_AccountDeactivationSection`
-- **백엔드 엔드포인트**:
-  - `GET /api/v1/users/me/deactivation-check` (`UserController#checkDeactivation`) — `DeactivationCheckVo` (`deactivationAllowed`, `blockingItems[]`, `resolvableItems[]`)
-  - `DELETE /api/v1/users/me` (`UserController#deleteMyAccount`) — `AccountDeactivationService` 호출, 204
-- **선결 조건/상태**: 로그인 상태. 사전 점검에서 `deactivationAllowed=true` 또는 차단 항목 없음.
-- **결과 상태 변화**:
-  - check 결과 `deactivationAllowed=false`: blocking 항목(타이틀/설명/디테일 최대 3건 + "외 N건") 다이얼로그 노출 후 진행 차단
-  - check 결과 resolvable 항목 존재: "탈퇴 시 다음 항목이 자동 처리됩니다" 안내 + 최종 확인 다이얼로그
-  - 최종 확인 후 DELETE 성공: User 비활성화 → 강제 로그아웃 + "계정이 탈퇴되었습니다" 토스트 → 로그인 화면 복귀(Unit 01 흐름)
-  - check 호출 실패: "탈퇴 가능 여부를 확인할 수 없습니다" 토스트, 진행 차단
-
----
-
-## 7. Gap / Risk Rollup
-
-| 기능 | 제목 | 후보 수 | 처리 기준 |
-|---|---|---:|---|
-| [F13-04](../02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | F13-04. 선호 태그 관리 | 7 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F13-07](../02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | F13-07. 계정 즉시 비활성화 (탈퇴) | 7 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F13-05](../02_feature_prds/13_profile_settings/F13-05_data-export_prd.md) | F13-05. 데이터 내보내기 (Export) | 6 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F13-03](../02_feature_prds/13_profile_settings/F13-03_address-management_prd.md) | F13-03. 다중 주소 관리 | 5 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F13-01](../02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md) | F13-01. 내 프로필 조회 (마이페이지 허브) | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F13-02](../02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md) | F13-02. 프로필 수정 (닉네임·자기소개·사진) | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F13-06](../02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | F13-06. 계정 삭제 요청 (30일 유예) | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-
-### 접근권한 감사 교정 (2026-07-02)
-
-접근권한 감사(2026-06-30~07-01)에서 확인·교정된 사항이다.
-
-**타인 프로필 단계 노출 정책(확인).** 타인 프로필 조회 시 관계 유형에 따라 노출 필드가 단계적으로 제한된다. 서버가 SELF / MATCHED / SAME_CLUB / THIRD_PARTY 네 단계의 관계 유형을 계산해 단계별로 필드를 투영한다. 제3자(THIRD_PARTY) 뷰어에게는 닉네임과 프로필 사진만 노출된다. 이메일과 생년월일은 본인만 조회할 수 있다. 클라이언트가 비본인 필드를 "많이 fetch한다"는 의심은 서버가 비본인 필드를 null로 내려 반증됐다.
-
-**차단 시 타인 프로필 열람 불가(확인).** 차단 관계(양방향)인 상대의 프로필은 열람할 수 없다(FORBIDDEN 반환).
-
-**기본정보 이메일 제거(방어적 교정).** 타 멤버 기본정보 조회 경로에 이메일 필드가 포함되어 있었으나 배선되지 않은 잠재적 노출 경로였다. 해당 필드가 제거됐다.
-
-**관심인(F19) 단방향 확인.** 관심인은 단방향 즐겨찾기이며 팔로워/팔로잉 목록 개념이 없다. 변경 없음.
-
-## 8. 운영 방법
-
-1. 새 구현이나 QA 착수 전 `PRD_MIGRATION_STATUS.md`에서 담당 기능의 trace/risk 수를 확인한다.
-2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
-3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
-4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
-
-## 9. 연결성·성향·개인정보 재실측 (2026-07-29)
-
-F13-01 허브에는 메시지, `/my/met-people`, 성향 검사/리포트가 실제 연결됐다. 만난 사람 API는 증거등급 공동참석자를 사람별로 접어 반환하며 현재 상태·차단·`hideFromSearch`를 매번 다시 적용한다. 성향 API는 문항/세션/제출/내 최신 결과 4개 endpoint이고 V1 기준 활성 11축·24문항이다. 타인 원점수 API는 없으며 이벤트/클럽 fit은 최소 표본과 k-익명 게이트를 통과한 버킷·분포만 보여 준다.
-
-PersonSheet 관계 요약은 공통 관심태그/선호 카테고리/시간대만 제한적으로 보여 주고 커뮤니티 chip에서 데이팅 `MATCHED`를 제거했다. 커뮤니티 채팅은 같은 클럽·이벤트 72시간 유예·미결 의무 자격을 매 전송 재평가하며 `sendableBasis`와 nullable `sendableUntil`을 내려준다.
-
-F13-05 export는 FileStorage key를 저장하고 조회 시 presigned URL을 발급한다. metadata 외 9개 섹션에 데이팅 새 필드, 본인 이벤트/만남 피드백, trait, taste behavior estimate를 포함한다. `vibeTags` 누락, 자연 만료의 자동 EXPIRED 전이/파일 정리 부재, `COMPLETED + URL 없음` UX가 Gap이다. 관리자 `expire`/`reissue`는 수동 상태 전이를 제공한다.
-
-F13-06 삭제는 요청/실행 직전 금융 의무를 이중 검사하고 프로필·관심태그·데이트·취향·이벤트 피드백·trait 개인 데이터를 삭제한다. 법정 거래/분쟁 기록은 보존한다. 차단 의무 상세의 Flutter 손실, 데이팅 사진 FileStorage 실물 삭제 부재, Entity unique 선언과 V1 non-unique index 불일치는 후속 조치가 필요하다.
+검토 버전·근거 지문·문서 상태는 [문서 갱신 검토 기록](../../verification/document-refresh-2026-11-22.json)에서 확인한다. 기능 PRD에 기록한 차이를 해결하려면 현재 작업 정본에 따라 별도 코드 작업으로 진행한다.
