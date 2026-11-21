@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,123개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,131개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1123,
+    "documentedScenarioItems": 1131,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,18 +17,18 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 63,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 63,
-    "directlyLinkedJourneys": 36,
+    "directlyLinkedJourneys": 35,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 36,
+    "journeyScenarioReferences": 35,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 44,
-    "partialEvidenceChain": 50,
+    "completeEvidenceChain": 43,
+    "partialEvidenceChain": 51,
     "definitionOnlyEvidence": 81,
-    "traceMarkers": 393,
-    "verifiedTraceRecords": 391,
+    "traceMarkers": 404,
+    "verifiedTraceRecords": 402,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -2489,18 +2489,18 @@ window.SCENARIO_AUDIT = {
       "id": "F03-09",
       "domain": "이벤트",
       "name": "이벤트 사진첩",
-      "scenarioCount": 9,
+      "scenarioCount": 17,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-09_event-photos/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 17
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-09_event-photos/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 14,
+        "verified": 14,
         "retired": 0,
         "entries": [
           {
@@ -2553,6 +2553,193 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 83
               }
             ]
+          },
+          {
+            "id": "F03-09:4",
+            "label": "POST /api/v1/events/{eventId}/photos/batch — 다중 사진 등록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "uploadPhotosBatch",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/photos/batch",
+                "targetLine": 72,
+                "methodLine": 73
+              }
+            ]
+          },
+          {
+            "id": "F03-09:5",
+            "label": "GET /api/v1/events/{eventId}/photos/download-links — 다운로드 링크 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "getDownloadLinks",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/photos/download-links",
+                "targetLine": 93,
+                "methodLine": 94
+              }
+            ]
+          },
+          {
+            "id": "F03-09:6",
+            "label": "POST /api/v1/events/{eventId}/photos/{photoId}/like — 좋아요 추가",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "likePhoto",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/photos/{photoId}/like",
+                "targetLine": 105,
+                "methodLine": 106
+              }
+            ]
+          },
+          {
+            "id": "F03-09:7",
+            "label": "DELETE /api/v1/events/{eventId}/photos/{photoId}/like — 좋아요 취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "unlikePhoto",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}/photos/{photoId}/like",
+                "targetLine": 115,
+                "methodLine": 116
+              }
+            ]
+          },
+          {
+            "id": "F03-09:8",
+            "label": "POST /api/v1/events/{eventId}/photos/{photoId}/report — 사진 신고",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "reportPhoto",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/photos/{photoId}/report",
+                "targetLine": 126,
+                "methodLine": 127
+              }
+            ]
+          },
+          {
+            "id": "F03-09:9",
+            "label": "PATCH /api/v1/events/{eventId}/photos/{photoId}/hide — 사진 숨김·해제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "setPhotoHidden",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/photos/{photoId}/hide",
+                "targetLine": 138,
+                "methodLine": 139
+              }
+            ]
+          },
+          {
+            "id": "F03-09:10",
+            "label": "PATCH /api/v1/events/{eventId}/photo-album/cover — 대표 사진 지정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "setAlbumCover",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/photo-album/cover",
+                "targetLine": 153,
+                "methodLine": 154
+              }
+            ]
+          },
+          {
+            "id": "F03-09:11",
+            "label": "PATCH /api/v1/events/{eventId}/photo-album/extend — 만료 연장",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "extendAlbum",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/photo-album/extend",
+                "targetLine": 164,
+                "methodLine": 165
+              }
+            ]
+          },
+          {
+            "id": "F03-09:12",
+            "label": "PATCH /api/v1/events/{eventId}/photo-album/lock — 앨범 잠금·해제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "setAlbumLocked",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/photo-album/lock",
+                "targetLine": 173,
+                "methodLine": 174
+              }
+            ]
+          },
+          {
+            "id": "F03-09:13",
+            "label": "POST /api/v1/events/{eventId}/photo-album/restore — 만료 앨범 복구",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "restoreAlbum",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/photo-album/restore",
+                "targetLine": 183,
+                "methodLine": 184
+              }
+            ]
+          },
+          {
+            "id": "F03-09:14",
+            "label": "POST /api/v1/events/{eventId}/photo-album/cleanup — 앨범 강제 정리",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+                "controller": "EventPhotoController",
+                "method": "cleanupAlbum",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/photo-album/cleanup",
+                "targetLine": 194,
+                "methodLine": 195
+              }
+            ]
           }
         ]
       },
@@ -2562,23 +2749,20 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 0,
         "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_event_access_edge_test.dart",
-          "community_app/integration_test/seed_event_post_attendance_surfaces_test.dart"
+          "community_app/test/widget/event/event_photo_upload_retry_test.dart",
+          "community_app/test/widget/event/photo_upload_sheet_wait_test.dart"
         ],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/seed_event_access_edge_test.dart",
-          "community_app/integration_test/seed_event_post_attendance_surfaces_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,

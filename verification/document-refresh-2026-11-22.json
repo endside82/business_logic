@@ -2675,9 +2675,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a7e250375d77846fc25a8ed0902d9e581fa0f8cc7358b23b8bba16e3cc734ba7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_photos_20261122"
+      ],
+      "reviewedSha256": "186bb373978a3f26823936b3ce0011d7919f2e3625501cdd3a52249937273549"
     },
     {
       "path": "docs/features/F03-10.html",
@@ -5516,10 +5519,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "dcceb429aab89fd847758675bf5c3a9e86178b5a46b7105d1e411b602b21802f",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_photos_20261122"
+      ],
+      "reviewedSha256": "9382ac752350441a40a1ec02372ba1038d0e3dee850d34c4e2049bf1602ff2c5"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
@@ -8934,9 +8939,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c5eb9c9a865621e84a825b08712213cb6ff886b6278849e8525a686fef3d7ddd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_photos_20261122"
+      ],
+      "reviewedSha256": "bc255631cd1596ed661413140017fe4656d058f5885a4434b4424c0dc229ffba"
     },
     {
       "path": "units/03_event/F03-09_event-photos/diagrams.md",
@@ -8944,9 +8952,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f3f56cb9f77ecc087f75163f943662dcb314157055f92801fecf498062293f77",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_photos_20261122"
+      ],
+      "reviewedSha256": "f26d259c1ad177509fbb0f9ed5d8a16dc1ee0c456f3138d0353e42ad12b7dd78"
     },
     {
       "path": "units/03_event/F03-09_event-photos/frontend.md",
@@ -8954,9 +8965,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5c739cd4c62350d401a29afa07d001e76e5a660f6945f294f9434c2e5cd36fe6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_photos_20261122"
+      ],
+      "reviewedSha256": "c8a1d2be7cfaff7742985bf79e137005d15bd01e2acd0681b1c91ce5d35f8c24"
     },
     {
       "path": "units/03_event/F03-09_event-photos/scenarios.md",
@@ -8964,9 +8978,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ceab7e97b2ae5581f6703687fa4be6b0eda2c73a7f9b3628c29483b0e11a6f47",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_photos_20261122"
+      ],
+      "reviewedSha256": "a0c4bf52c0f3367ac9330cb80cab732b1d2e14a6c769e49a508738c87a7ce573"
     },
     {
       "path": "units/03_event/F03-10_event-plan-link/backend.md",
@@ -14492,6 +14509,32 @@
         }
       },
       "scope": "QR·숫자 코드·본인/게스트·직접 체크인의 시간과 부분 완료·통계 문서 대조. 소스 참조 등록은 그대로라 변경 없는 참조 해석기 11개 시험의 선행 통과를 재사용했다. 새 제품 시험·실DB·카메라·화면·알림 수신·마일리지 적립 실행은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-09: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; scoped source/canonical digests; retained HTML IDs; incoming Markdown anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 6,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 100,
+        "sourceRecords": 404,
+        "verifiedRecords": 402,
+        "retiredRecords": 2,
+        "localSourceLocations": 394,
+        "localLinks": 183,
+        "repositoryLinks": 528,
+        "reviewedRelativePaths": 1490,
+        "derivedSourceDigests": 189,
+        "currentSourceAndCanonicalDigests": 61,
+        "retainedHtmlPages": 1,
+        "incomingMarkdownAnchors": 0,
+        "reviewCounts": {
+          "source_verified": 315,
+          "historical_retained": 33,
+          "pending": 654
+        }
+      },
+      "scope": "이벤트 사진첩 공개 흐름·파일 번호 등록·다중 부분 실패·초안/재시도·신고 보존·앨범 상태·부분 정리·현재 앱 차이의 문서 검증. 공개 API 창구 11개를 추가했다. 기존 모의 제품 시험 단언은 읽었고 새 제품 시험·실DB·저장소·실제 화면·배치·알림·적립 검증은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -19003,6 +19046,383 @@
         ]
       },
       "referenceChanges": []
+    },
+    "event_photos_20261122": {
+      "kind": "source_review",
+      "scope": "F03-09 공개 이벤트 사진첩의 등록·재시도·접근·공개·반응/신고·숨김/삭제·앨범 수명·다운로드와 현 앱 차이를 대조. 기존 파일·권한 근거는 지문 확인 후 해당 범위를 추가 확인. 새 제품 시험·DB 경합·저장소·기기·배치·알림·적립 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventPhotoController.java",
+          "sha256": "5b55fa8706047c164fee00931ac2ca1412bb27513cf428fd8d41e67b4ad6f000"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPhotoService.java",
+          "sha256": "aeedbe47c18ad33e180ad987675cf7b3e7f1dbc2027ef4f3c99872cc75c8f3d5",
+          "reviewScope": "238–339 목록/다운로드, 349–542 단건·다중 등록·기존 파일 재사용·적립 신호, 562–881 삭제·좋아요·신고·회원 운영자 숨김, 1121–1122 신고 보존, 1156–1335 대표 사진·검증·연장·복구·정리 입구, 1399–1504 정리 본체·잠금, 1510–1738 조회·생성·파일·자격·상태, 1817–1863 대표 표시·옛 파일 제외·신고 표시. 플랫폼 관리자 명령 909–1099·1354–1398 전체와 파일 표시 서비스 내부는 범위 밖."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPhotoBatchUploadService.java",
+          "sha256": "280426cca2c77f51873857f14be6cf884c8b7d161e7efc1a45a70ce4b39a23b9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPhotoAlbumScheduler.java",
+          "sha256": "70127262f85ba65fbe3c5e3faaac113497d2babf570446cdbc9a7fa48fe0d3f0",
+          "reviewScope": "58–142 만료/유예/정리 대상과 앨범별 처리, 156–170 경고 작업 진입. 실제 배치 실행·모든 알림 수신자 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPhotoAlbumLifecycleWorker.java",
+          "sha256": "5bf09add6b6f9af614dc7c6e0d8c09a246de79a1f64af5f3a06f085f6f5f0d9d",
+          "reviewScope": "77–182 앨범 잠금 후 세 상태 전이·사진별 정리·잔존 수 재계산. 수신자 계산 전체는 범위 밖."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPhotoCleanupScheduler.java",
+          "sha256": "91c86976b1997b7231ac57f53f9684bc54f3b785a5fa53db1bb43316a8e53000",
+          "reviewScope": "56–94 개별 정리의 별도 트랜잭션·분쟁/신고 보존·옛 파일 거절·참조 해제."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPhotoFileReferences.java",
+          "sha256": "91b6b579e94c3838501eedd3bd323156f83d74560f3c3adab76e887405d57ec7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/port/EventPhotoAttendanceAdapter.java",
+          "sha256": "8c6bb11b7c1d7b1e44a15d4d229d33a3a6f03fd27db3020f28c4ffc6a3e8189a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/EventPhotoAlbum.java",
+          "sha256": "5b4f1dd8ec75ad8388552a2f4ebcfd170ec4e452430c51730f16d820389d0abd"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventConstants.java",
+          "sha256": "1e67f7fc25db01983f40e3bfd20183166d9388f3575c460f01e9d3a356e43397"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventPhotoAlbumStatus.java",
+          "sha256": "f707db3acd5969348c4a42a48282aa16f3bbd5a9cf35b9f4bec1b47a2ce984ef"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/PhotoHideReasonCode.java",
+          "sha256": "d56fdaa752bbbdb1176ae502095cc230bc5fd98b62fb25cc34b873d14b29336b"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/service/EventPhotoBatchUploadServiceTest.java",
+          "sha256": "e0de39cf0d56070c23acfc6e89dbebde8fa0638e5c9b36d53388042c7905745b",
+          "reviewScope": "164–207 사진 3개 중 2개 성공·1개 실패 위치/파일/사유 단언. 새 시험 실행 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_photos_screen.dart",
+          "sha256": "4f216fa2777f73d9662e302debe7c77f95a8996c5e5e5cb9556bbe598e15e4b3"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/event_photo_provider.dart",
+          "sha256": "faaf45fa054dec0e153e933ba832aa17dbf7c98b51ab96c1bbd453cf5738e9ca",
+          "reviewScope": "51–315 조회·앨범 없음 구별·등록·삭제·좋아요/신고/숨김 낙관적 변경과 취소·앨범 관리 재조회. 공통 PendingEdits 내부 경합 검증 아님."
+        },
+        {
+          "path": "community_app/lib/data/repositories/event_photo_repository.dart",
+          "sha256": "00568904d712af2c4875359c58e03d742c25237a5a690bca042fb89e0d01ae81"
+        },
+        {
+          "path": "community_app/lib/data/api/event_photo_api.dart",
+          "sha256": "17d446faeff3c2a9506c6a45db56689300c2de8272bbb0f58c2586b4cb0c1af8"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/photo_upload_sheet.dart",
+          "sha256": "31e83d4defb619e0b319e622a95014a4a65d5799c2d0762814c48acaf3e0460a",
+          "reviewScope": "89–190 초안 복원/보관/폐기, 197–347 선택·전송·잔여 사진 처리, 462–507 설명 잠금·제출·나가기. 장식 위젯 전체 검수 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_photo_upload_draft.dart",
+          "sha256": "94425ac43c4f937e3672d67b0dfad78c4f1404e4b82ef8065cb8581d629619b7"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/photo_fullscreen_viewer.dart",
+          "sha256": "dbc9026d1aee43c7fceda08f6e2342d95ecbbe24b3947502c50ab04a228b05cf",
+          "reviewScope": "55–89 최초 목록·현재 사진·넘김, 204–234 좋아요/신고 표시, 247–295 운영 메뉴와 초기 삭제 허용 사용."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/photo_action_menu.dart",
+          "sha256": "28b8259cd81fc5198e79fc297fdd17bade786e9dfa8687a4b51e70c27c4d67ca"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/photo_report_dialog.dart",
+          "sha256": "e4b8b952db5a49d6e168e69a5478dabffd43ce9bf7e6d7a0ce7dfeb2c007523f",
+          "reviewScope": "21–61 사유·설명 전달·성공 뒤 닫기·실패 뒤 유지, 98–113 사유 목록 선택. 외부 신고 후속 업무 전체는 범위 밖."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/photo_download_links_sheet.dart",
+          "sha256": "a2741248bf52d385fd80ffa37e300df800a273f2fc22cbca147d96cddc1e75c1",
+          "reviewScope": "25–179 링크 창·목록/빈/실패 상태·개별/전체 텍스트 공유. 실제 공유·원본 저장 실행 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/album_manage_action_sheet.dart",
+          "sha256": "92b822fd11b8b678fc92ebedbed64c59e76dbbda496b20a56949eb2f6b3f22a8"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/album_status_banner.dart",
+          "sha256": "bae02460ff42e2be754cdd0f08c4da4c728d7e71a915a70a1cc32241619eb871",
+          "reviewScope": "18–26 잔여일, 50–104 상태별 배너·EXPIRED 잔여일 입력값·복구 행동."
+        },
+        {
+          "path": "community_app/lib/presentation/common/inputs/app_text_area.dart",
+          "sha256": "f75589502831f331c8dd70e2569a1178528c9a898d92f64c3eda5731ede4d0b0",
+          "reviewScope": "17·49–58 기본 maxLength 없음, 155–156 명시된 상한만 길이 포매터에 연결."
+        },
+        {
+          "path": "community_app/test/widget/event/photo_upload_sheet_wait_test.dart",
+          "sha256": "084f825373c70a3aaa27d4f1de0961a9152abc149c0b0ede1ef07e39c91e5676",
+          "reviewScope": "411–455 실패 사진·설명 유지와 남은 사진만 재요청 뒤 창 닫기 단언. 새 시험 실행 아님."
+        },
+        {
+          "path": "community_app/test/widget/event/event_photo_upload_retry_test.dart",
+          "sha256": "fdeda497008447effd2c4dbd6fa8d64c9dddc6d1cc9928a8a9f9280c38e83871",
+          "reviewScope": "310–351 모의 응답 유실·디스크 재시작 후 동일 파일 번호 재등록과 원본 재전송 없음 단언. 새 시험 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPhotoAddParam.java",
+          "sha256": "06118cb4859864da45c85e073e3fa6b90cd57685c6034e35ef371765ad4247b5",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPhotoAlbumCoverParam.java",
+          "sha256": "925861b62ace6e8d038392c1bc7febbff876593ae6545376263eb5c2728d1f55",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPhotoAlbumLockParam.java",
+          "sha256": "5d8eccfa06ee1655575fb0bdb5b59f2f365cdb9022b72c4ceabbbbedf22c3e0d",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPhotoBatchAddParam.java",
+          "sha256": "7ee348f4cbd03147a3b295f2bd1fdef4239df1f11eb54282924b7d29e296b26c",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPhotoHideParam.java",
+          "sha256": "e3af1dee77bdc66d7b6ef8c7dd049afd30eef4cbf63e6a4400307c25e801c445",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventPhotoReportParam.java",
+          "sha256": "98ab57b748647250472a9cf11a555bf848083e1179a243aabaf1c4fcd404cec2",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoAlbumCleanupResultVo.java",
+          "sha256": "5982350009601be23cce493627eb3fa2e361c942b244bc8d24a5f2245d5276aa",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoAlbumVo.java",
+          "sha256": "a6c56e08b2ea138d023ab399c3d6e7f66bfddf84f09cdedc58dc9c13c61eb0bc",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoBatchFailureVo.java",
+          "sha256": "579baf1c2d33c47c92eb79665278270800c825f869989068107f02722792c4fb",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoBatchUploadResultVo.java",
+          "sha256": "110e1513f78c8914ff5df5399f660d65862fec9093505075208e8a36337b5fe4",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoDownloadLinkVo.java",
+          "sha256": "152a60a5a9358ba0e790eb2bcb7bf34b128fbd443d356cddec4c7280deae5861",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoLikeResultVo.java",
+          "sha256": "666529e0796530e9b6a3b3002b8c949a476b9e40691881e72983b42f0835f54f",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventPhotoVo.java",
+          "sha256": "593b43ee28488c2746fe845d56f99ec403f1167be750bfe16ff9178ec5d0f637",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_add_param.dart",
+          "sha256": "b69063cbdaa82d35e52675b2369e7088eac92334cafa60f67f5e0ed771d1b03e",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_album_cover_param.dart",
+          "sha256": "76b015b3af71384f833dbeda5e84e9b9a1cacab4d71b403e2ba112610007126a",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_album_lock_param.dart",
+          "sha256": "a78d9b5c4a7a3871b2b8de8e32938e7ccf6dcf4047defc176dbe874a31e4d70f",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_album_vo.dart",
+          "sha256": "0c57867474ee80f8addcc38d6ea78c5f40ee8e22dc90d19d96a6433cd480189e",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_batch_add_param.dart",
+          "sha256": "dec8f05a1829873194fa575c6228bfd4b710d766943e552531d8921e50e51187",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_batch_failure_vo.dart",
+          "sha256": "649bfc7058b1e92fd70cf661b4ceab38f1889f4fe9e3582ea39e905d1aeef8e1",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_batch_upload_result_vo.dart",
+          "sha256": "9dd8ecb7b6f8bbaee46bff0b2c3a99875b0ee1adcfb5004bfb1c73a5350cbdf6",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_download_link_vo.dart",
+          "sha256": "24f005d34eb6a2d1cec459749524b0e1d3c2f54421c107c1fc09d2ae4c6dd11f",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_hide_param.dart",
+          "sha256": "c2832124ee10e8926be28fb4050e7498a852ccedf606bdc97dd7d42e6ec40b34",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_like_result_vo.dart",
+          "sha256": "95051d94098eb76ad4a44895498cc453f00a6430e367078bbe39883b432c7e14",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_report_param.dart",
+          "sha256": "111aacc1fe2305b13f83c67241c73de452edaaad3cab28e9044677dfa4dfec97",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/event_photo_vo.dart",
+          "sha256": "f133c40d24e00853b2919986dffe43fb646f305a913c6d3bebb46f109ae97635",
+          "reviewScope": "사진첩 공개 요청·응답 필드와 nullable/default 계약 대조. 플랫폼 관리자 객체·생성 파일은 제외."
+        }
+      ],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "event_checkin_20261122",
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "signup_social_onboarding_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_app/lib/core/utils/image_upload_helper.dart",
+          "sha256": "689c0f124d2d761415be01c844bb82327ca39c747fcdbc1fa2025550bc7ad407"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "173–189 신청 관리 경로의 관리 권한 가드·화면 연결."
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "b7ff405c284771652b8e82d28c6297164706b936553e9274f8e6fe3789436ff6",
+          "reviewScope": "546–547 체크인 접근은 출석 관리 허용 또는 실제 참석 행. 다른 라우터 가드 전체 검수 아님."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_permission_provider.dart",
+          "sha256": "9372d2935e8ed13031e769a3124f9f1c3548e59e1da3b8d286bd913ce735ae64"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10"
+        },
+        {
+          "path": "docs/ui-ux/screens/14-event-attendance.md",
+          "sha256": "240a1cf6b7a8ab98908fd40e1b77e7a60d7f9d69a3a6af4281fecb524b7a3be3",
+          "reviewScope": "신청 명단의 사람 링크, 322–367 신청 목록과 메시지 펼치기 명세, 949–974 승인 기반 신청 흐름. 현재 앱과 다른 명세는 Gap으로 유지."
+        }
+      ],
+      "additionalReusedSourceReview": {
+        "image_upload_helper.dart": "15 10MB 상한·159–229 파일 번호를 반환하는 전송→완료→실패 중단 요청. 기존 프로필 업로드 대조와 구분.",
+        "EventActionPolicy.java": "805–806 사진 열람은 사진 관리자 또는 실제 참석 행.",
+        "home_branch_routes.dart": "322–339 사진첩 경로와 viewEventPhotos 가드.",
+        "route_guards.dart": "517–518 서버 사진 열람 허용 값 사용.",
+        "event_permission_provider.dart": "84–92 초안 제외·열람 허용 사용, 253 서버 값 전달.",
+        "event_detail_screen.dart": "사진첩 문자열·eventPhotos·경로 연결의 소스 검색. 현재 상세 직접 입구를 찾지 못함; 실제 앱 조작 아님.",
+        "14-event-attendance.md": "461–541 사진첩 입구·권한·파일 경로·기본 흐름 명세. 현재 파일 번호·참석 권한·다중/수명 관리와 다른 부분을 명시."
+      },
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
+          "sha256": "9382ac752350441a40a1ec02372ba1038d0e3dee850d34c4e2049bf1602ff2c5"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-09.html": [
+          "sidebar",
+          "launch-strip",
+          "state-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-09:4",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:5",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:6",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:7",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:8",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:9",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:10",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:11",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:12",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:13",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        },
+        {
+          "id": "F03-09:14",
+          "change": "added",
+          "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        }
+      ]
     }
   },
   "currentSourceVersions": {
