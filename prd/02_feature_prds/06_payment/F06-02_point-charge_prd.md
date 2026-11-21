@@ -1,75 +1,81 @@
-# F06-02. 포인트 충전 (PG 결제) PRD
+# F06-02. 포인트 충전 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버·앱 소스와 명시한 기존 시험 단언을 대조했다. 새 제품 시험·기기·외부 결제의 통과 기록은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-사용자가 외부 PG(Toss)를 거쳐 자기 지갑에 유료 포인트를 충전한다. 흐름은 (1) `POST /charge`로 PENDING 트랜잭션 + `orderId` 발급 → (2) 클라가 PG WebView로 결제 완료 → (3) `POST /charge/client-confirm`(클라이언트) 또는 `POST /charge/confirm`(PG webhook) 중 한쪽이 PG 승인 검증 후 잔액 반영. (4) 미사용 충전 건은 `POST /charge/cancel`로 PG 취소 가능. 충전 금액 프리셋·자주 쓴 금액은 `GET /charge/presets`로 화면 진입 직전에 받는다.
+충전은 주문 생성, 결제창 승인, 서버 확인·지갑 적립의 순서다. 주문을 만든 시점이나 결제창이 성공을 알린 시점을 지갑 충전 완료로 쓰지 않는다. 카드 결제 결과를 알 수 없으면 확인 중으로 남기고 추가 충전을 막는다. 저장한 카드가 없어도 충전을 시작할 수 있다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 코드 위치
 
-- 지갑 메인 ▶ "충전하기" CTA
-- 결제(F06-06) / 호스팅 티켓 구매(F06-07) / 멤버십 구독(F06-08)에서 잔액 부족(`ApiError.unprocessable` + `PaymentFailureVo`) → "충전" 분기 ▶ `prefillAmount`/`prefillReason`이 채워진 채 진입 (B-01a)
-- 거래 상세(F06-03)에서 미사용 충전을 취소한 직후 다시 충전 시작
-- 결제수단 화면(F06-04)에서 빈 상태일 때 충전 시도 후 결제수단 미등록 분기 → 결제수단 등록 후 다시 충전 화면 복귀
-- 자동충전 설정(F06-05)에서 "지금 한 번 충전" 같은 액션은 없음 → 항상 본 화면을 거친다
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `AutoChargeController`, `WalletController`, `PointTransactionStatus`, `PaymentStatus`, `FailedRefundStatus`. 앱: `charge_screen.dart`.
+서버: WalletController, AutoChargeController, ChargeService, ChargeConfirmResultWriter, ChargeCancellationWriter, ChargeConfirmRecoveryTxSteps, AutoChargeService, ChargeParam·PgConfirmParam·ChargeCancelParam. 앱: wallet_api.dart, wallet_repository.dart, charge_provider.dart, frequent_charge_amounts_provider.dart, charge_screen.dart, pg_payment_factory.dart. 충전 취소 상세는 [거래내역·상세](F06-03_transaction-history_prd.md)를 함께 본다.
 
 <!-- source-references:start -->
 서버 창구: `AutoChargeController#getChargePresets`, `WalletController#charge`, `WalletController#clientConfirmCharge`, `WalletController#confirmCharge`, `WalletController#cancelCharge`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 입구·금액·결제수단의 의미
 
-1. 화면 진입: `chargePresetsNotifierProvider` ▶ `WalletRepository.getChargePresets()` ▶ `GET /api/v1/wallet/charge/presets`
-2. 화면 진입: `paymentMethodListNotifierProvider` ▶ `PaymentMethodRepository.list()` ▶ `GET /api/v1/wallet/payment-methods` (결제수단 셀렉터용)
-3. "충전하기" 탭 (Step1): `chargeNotifierProvider.initiateCharge(amount)` ▶ `WalletRepository.charge(ChargeRequest(amount))` ▶ `POST /api/v1/wallet/charge` ▶ 응답 `PointTransaction` (status=PENDING, orderId 포함)
-4. PG WebView 성공 (Step3): `chargeNotifierProvider.confirmCharge(paymentKey, orderId, amount)` ▶ `WalletRepository.confirmCharge(ChargeConfirm)` ▶ `POST /api/v1/wallet/charge/client-confirm` ▶ `PointTransaction` (COMPLETED)
-5. 성공 후: `ref.invalidate(walletNotifierProvider)`로 지갑 메인 잔액 갱신 트리거 (notifier 내부 또는 화면 pop 후 자동 reload)
-6. PG webhook(서버 ↔ Toss)이 client-confirm보다 먼저 도착할 수도 있지만, 서버가 멱등 보장 (트랜잭션 status 확인) → 클라는 항상 `client-confirm` 호출, 응답이 이미 COMPLETED여도 동일 결과 받음
-7. 충전 취소(거래 상세에서 진입): `chargeCancelNotifierProvider.cancelCharge(transactionId)` ▶ `POST /api/v1/wallet/charge/cancel` ▶ `PointTransaction` (취소 거래 또는 PENDING→CANCELLED)
+지갑의 충전하기에서 화면을 연다. 다른 결제 흐름에서 부족액·이유를 전달하면 금액을 미리 채우고 안내를 표시한다. 이 화면은 호출자가 넣은 값을 받을 뿐, 충전 후 원래 구매를 자동으로 완료하는 기능은 아니다. 완료창을 닫으면 현재 충전 경로를 되돌아간다.
 
-## 4. 제품 규칙
+앱은 1,000원부터 500,000원까지, 서버는 1,000원부터 1,000,000원까지 받는다. 서버는 충전 후 지갑 잔액이 50,000,000원을 넘는 것도 거절한다. 입력한 금액이 앱 범위를 벗어나면 오류를 표시하고 제출하지 않는다.
 
-- 충전 금액은 앱에서 1,000원 이상 500,000원 이하, 서버에서 1,000원 이상 1,000,000원 이하다. 충전 뒤 잔액이 50,000,000원을 넘으면 서버가 거절한다.
-- 금액 제안은 서버가 주는 프리셋 10,000, 30,000, 50,000, 100,000원과 최근 충전 금액 3개다. 프리셋이 비어 오면 앱은 5,000, 10,000, 30,000, 50,000원을 쓴다.
-- 프리셋을 고르면 직접 입력이 지워지고, 직접 입력하면 프리셋 선택이 풀린다.
-- 잔액 부족으로 들어오면 부족 금액을 채운 채 그 까닭을 배너로 보여 준다.
-- 결제 창이 열린 동안에는 뒤로 가기를 막고 취소로 처리한다. 창을 닫으면 서버 거래는 PENDING 으로 남고 잔액은 변하지 않는다.
-- 결제 창 실패는 코드와 메시지를 대화상자로 보여 주고, 성공은 충전 금액과 새 잔액을 보여 준 뒤 지갑으로 돌아간다.
-- 결제수단이 없으면 "결제 수단을 등록해주세요" 안내 뒤 결제수단 화면으로 보낸다.
-- 충전 취소 때 PG 취소가 실패하면 전체를 되돌린다. 포인트와 카드 금액을 함께 잃는 일을 막기 위해서다.
+금액 제안은 두 조회를 구분한다. 프리셋 API는 10,000·30,000·50,000·100,000원과 최근 충전 금액을 반환하지만 화면의 자주 쓴 금액은 별도 거래내역 첫 50건에서 충전 금액별 횟수, 동률이면 최근 사용 시각 순으로 최대 2개를 계산한다. 프리셋이 없을 때 앱은 5,000·10,000·30,000·50,000원을 쓴다. 자주 쓴 금액 조회 실패는 제안을 비우며, 두 집계 모두 완료 거래만으로 제한하지 않는다.
 
-## 6. 상태/권한/시나리오 매트릭스
+잔액이 아직 없거나 읽기에 실패하면 현재·예상 잔액을 확인 중 또는 확인 실패로 표시한다. 이를 0원으로 단정하지 않는다. 저장 카드 선택과 관리 입구는 있지만 선택한 카드 번호를 충전 요청이나 결제창에 전달하지 않는다. 실제 결제수단은 뒤의 결제창에서 정한다. 결제수단 관리와 자동충전 설정은 현재 경로 위에 열어 돌아올 수 있게 한다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 일반 충전 Happy Path (지갑 메인 → 50,000원 충전) | `/profile/wallet`에서 "충전하기" 탭 | `wallets.balance += 50,000`, `point_transactions` 1행(COMPLETED), `payment_records` 1행(COMPLETED), `charge_lots` 1행, accounting_ledger 분개 다수 |
-| S2 | 잔액 부족 → 자동 prefill 진입 후 결제 재시도 | 호스팅 티켓 화면에서 구매 → `INSUFFICIENT_BALANCE` + `PaymentFailureVo { shortfall: 3000 }` | 충전 1건 + 다음 단계에서 결제 재시도 가능 |
-| S3 | PG 결제 실패 (카드 한도/잔액) | 100,000원 충전 시작 | 첫 PENDING은 후속 스케줄러에서 FAILED, 두 번째 충전은 성공 시 정상 완료. 사용자는 잔액 변동 없음 (실패 케이스). |
-| S4 | webhook과 client-confirm 동시 도달 (멱등성) | PG WebView 결제 완료 | 잔액 +100,000 단 한 번만 반영. 이중 적립 없음. |
-| S5 | 미사용 충전 건 취소 (거래 상세 → 충전 취소) | 거래내역에서 해당 CHARGE 거래 탭 → 거래 상세 | 사용자 잔액 0. 거래내역에 환불 1행 추가. PG 측 카드 환불은 스케줄러가 큐에서 재시도. |
-| S6 | 부분 사용한 충전을 취소 시도 → 거절 | 거래 상세에서 "충전 취소" 시도 | DB 변경 없음. 사용자는 부분 사용한 충전은 취소할 수 없음을 인지. |
-| S7 | PENDING 충전이 webhook도 client-confirm도 받지 못함 | PENDING transaction만 존재 | 잔액 영향 없음. PG 측에서도 미승인 → 결제수단 청구 없음. |
+## 주문 생성과 서버 확정
 
-## 8. Gap / Risk
+| 단계 | 요청·반환·보장 범위 |
+|---|---|
+| 주문 생성 | 본인의 `amount`로 대기 거래와 결제 기록·주문 번호를 만든다. 아직 지갑 적립 없음 |
+| 결제창 | 주문을 만들 때의 금액·주문 번호·계정 세션을 고정한다. 임시 결제 설정이면 임시 창, 개발 환경이면 시뮬레이션, 그 외에는 Toss 결제창 구현을 선택 |
+| 앱 확인 | 본인의 `paymentKey`, `orderId`, `amount`를 서버에 전송 |
+| 웹훅 확인 | 원문 본문과 필수 `X-Toss-Signature`를 받아 서명을 확인하고 주문 소유자를 찾은 뒤 공통 확인 처리 |
+| 확인 선점 | 거래 소유자·금액을 대조한다. 완료 거래면 기존 결과 반환, 대기 거래면 확인 중으로 선점. 다른 수동·자동충전 확인 중 거래와 이미 적립한 결제 키도 확인 |
+| PG 확인 뒤 적립 | 적립 가능한 사건인지 다시 판정하고 지갑·완료 거래·결제 기록·충전 원본·회계 기록을 반영 |
 
-> 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
+웹훅과 앱 요청이 겹쳤다는 이유로 두 요청 모두 성공한다고 약속하지 않는다. 이미 완료된 요청은 결과를 돌려주지만 확인 중인 같은 거래는 중복 오류가 날 수 있다. 중복 적립 방지 코드와 실DB 동시 실행 검증은 별개다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Risk (PG 게이트) | ChargeService.java:347-463 | **응답유실 엣지** — DB-first→PG cancel 순서에서 PG 성공+응답유실 시 DB 롤백 = 지갑 미환불+PG 환불됨 불일치 가능. 실 PG(Toss) 연동 전까지 잠재. release-gate `05_pg.md`에 cancelCharge 응답유실 재검 항목으로 등재(코드 무변경, PG 계약 시 일괄). | PG 계약 시 webhook TODO와 함께 검증 |
+앱은 진행 중 새 제출과 같은 결제창의 반복 성공 처리를 막는다. 취소한 시도·끝난 계정 세션의 늦은 응답을 현재 시도에 섞지 않는다. 성공 응답을 받으면 응답 금액·잔액으로 완료창을 표시하고 지갑 변경 신호를 보낸다. 오류여도 서버에 반영됐을 가능성이 있는 경우 지갑을 다시 읽도록 알린다.
 
-## 9. 수용 기준
+## 카드 충전 결과가 불확실할 때의 복구
 
-- **AC-01. 일반 충전 Happy Path (지갑 메인 → 50,000원 충전)**: Given `/profile/wallet`에서 "충전하기" 탭 When 사용자가 해당 흐름을 실행하면 Then `wallets.balance += 50,000`, `point_transactions` 1행(COMPLETED), `payment_records` 1행(COMPLETED), `charge_lots` 1행, accounting_ledger 분개 다수
-- **AC-02. 잔액 부족 → 자동 prefill 진입 후 결제 재시도**: Given 호스팅 티켓 화면에서 구매 → `INSUFFICIENT_BALANCE` + `PaymentFailureVo { shortfall: 3000 }` When 사용자가 해당 흐름을 실행하면 Then 충전 1건 + 다음 단계에서 결제 재시도 가능
-- **AC-03. PG 결제 실패 (카드 한도/잔액)**: Given 100,000원 충전 시작 When 사용자가 해당 흐름을 실행하면 Then 첫 PENDING은 후속 스케줄러에서 FAILED, 두 번째 충전은 성공 시 정상 완료. 사용자는 잔액 변동 없음 (실패 케이스).
-- **AC-04. webhook과 client-confirm 동시 도달 (멱등성)**: Given PG WebView 결제 완료 When 사용자가 해당 흐름을 실행하면 Then 잔액 +100,000 단 한 번만 반영. 이중 적립 없음.
-- **AC-05. 미사용 충전 건 취소 (거래 상세 → 충전 취소)**: Given 거래내역에서 해당 CHARGE 거래 탭 → 거래 상세 When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 0. 거래내역에 환불 1행 추가. PG 측 카드 환불은 스케줄러가 큐에서 재시도.
-- **AC-06. 부분 사용한 충전을 취소 시도 → 거절**: Given 거래 상세에서 "충전 취소" 시도 When 사용자가 해당 흐름을 실행하면 Then DB 변경 없음. 사용자는 부분 사용한 충전은 취소할 수 없음을 인지.
-- **AC-07. PENDING 충전이 webhook도 client-confirm도 받지 못함**: Given PENDING transaction만 존재 When 사용자가 해당 흐름을 실행하면 Then 잔액 영향 없음. PG 측에서도 미승인 → 결제수단 청구 없음.
+서버의 시간 초과·통신 실패·알 수 없는 PG 결과는 확인 중을 유지한다. 승인 금액 불일치도 즉시 실패나 적립으로 닫지 않는다. PG 승인 뒤 DB 적립에 실패하면 보상 취소 경로가 처리하며, 남은 사건은 복구가 이어받는다. 탈퇴 완료 계정과 운영자에게 넘어간 사건의 적립 보류도 구분한다.
+
+복구는 운영자 검토·처리 중·처리 완료 사건을 자동으로 덮어쓰지 않는다. 결제 키 조회 결과를 주문·금액·결제 상태와 대조한다. 부분 취소처럼 남은 카드 청구가 있을 수 있는 결과는 청구 없음으로 단정하지 않는다. 실제 결제사 확인과 운영자 종결은 이 문서의 소스 대조 밖이다.
+
+앱은 지정된 통신·시간 초과 오류에서는 결과 확인 중 안내를 유지하고 금액을 바꿔도 새 충전을 막는다. 서버가 앞선 충전을 확인 중이라고 거절했을 때도 결제창을 열지 않는다. 확정 거절은 일반 오류로 안내하고 새 충전을 허용한다. 모든 HTTP 성공 응답이 실제 완료 상태인지는 별도 제한을 아래에 기록했다.
+
+## 취소·실패·복귀
+
+결제창에서 뒤로 가거나 취소하면 앱의 시도와 창을 정리한다. 이 동작은 서버 충전 취소 API를 호출하지 않으므로 대기 거래가 즉시 취소되는 것은 아니다. 결제창 실패는 재시도·결제수단 변경·문의 선택을 제공한다. 재시도와 결제수단 변경은 새 주문의 결제창을 여는 동작이다.
+
+거래 상세에서 요청하는 충전 취소는 별도 동작이다. 본인의 충전 거래만 허용하며 대기는 대기 취소, 완료는 결제 키에 따라 실제 PG 취소 또는 로컬 취소 경로를 쓴다. 확인 중인 거래는 이 취소로 바로 닫지 않는다. 로컬 완료 취소도 미사용 충전 원본과 유료 잔액을 확인한다. PG 취소의 불확실한 응답을 단순 전체 롤백·확정 환불로 설명하지 않는다. 상세 표시와 취소 후 재조회는 [거래내역·상세](F06-03_transaction-history_prd.md)의 범위다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인한 차이·한계 | 영향·후속 |
+|---|---|---|
+| Gap | 저장 카드 선택값이 실제 충전 요청·결제창 인자에 없음 | 선택한 카드로 자동 결제된다는 오해를 막을 표시 보완 대상 |
+| Gap | 서버가 적립 보류 거래를 성공 응답으로 돌려주는 경로가 있고 앱은 상태를 재검사하지 않고 완료창을 표시 | 운영자 통제·탈퇴 경합에서 확인 중 거래를 완료로 알릴 가능성. 성공 상태 판정 보완 대상 |
+| Gap | 충전 상한이 앱 50만원·서버 100만원으로 다름 | 채널별 실제 허용 범위를 구분하고 정책을 맞출 대상 |
+| Risk | 자주 쓴 금액과 서버 최근 금액은 완료 상태 필터가 없음 | 실패·대기 시도의 금액이 추천에 포함될 수 있음 |
+| 미검증 | 실제 승인·웹훅 경합·부분 취소·복구·기기 복귀 | 소스의 방어 조건과 기존 시험 단언을 실결제 통과로 확대하지 않음 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 입구와 복귀:** 지갑 또는 부족액 전달로 시작하고 완료 뒤 호출 경로로 돌아간다. 원 구매 자동 완료와 구분한다.
+- **AC-02 금액 범위:** 앱·서버의 서로 다른 상한과 서버 지갑 한도를 구분한다.
+- **AC-03 추천 근거:** 서버 프리셋과 첫 50건으로 계산하는 자주 쓴 금액 2개를 구분한다.
+- **AC-04 잔액 불명:** 잔액 로딩·오류를 실제 0원으로 표시하지 않는다.
+- **AC-05 카드 없음:** 저장 카드 없이도 시작하며 실제 결제수단은 결제창에서 정한다.
+- **AC-06 주문과 계정:** 금액·주문·세션을 시도마다 고정하고 늦은·중복 응답을 구분한다.
+- **AC-07 확인과 적립:** 주문 생성·PG 승인·서버 완료를 분리하고 소유자·금액·중복을 확인한다.
+- **AC-08 불확실 결과:** 지정된 확인 중 오류 뒤 새 충전을 막고 지갑 확인을 안내한다.
+- **AC-09 운영자 사건:** 자동 복구가 운영자 통제 사건을 덮어쓰지 않도록 유지한다.
+- **AC-10 취소 구분:** 결제창 닫기와 서버 대기 취소·완료 충전 취소를 구분한다.
+- **AC-11 완료 판정:** 성공 응답의 실제 거래 상태가 완료인지 확인하는 요구를 유지하며 현재 앱의 미확인 경로를 숨기지 않는다.
+
+기존 `charge_screen_confirm_pending_test.dart`는 결제 기능 제한, 통신·시간 초과 뒤 재제출 차단, 앞선 확인 중 오류, 확정 거절 뒤 재시도, 결제창 실패 뒤 새 주문을 단언한다. 이번에는 해당 단언과 소스를 읽었으며 새 앱 시험·실PG·웹훅·실DB 경합 검증을 실행하지 않았다.

@@ -3038,9 +3038,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e2b1fed7edc786fab62bee47a9b0f7042c5a47526aba63beadfd09c7a50796a3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "5456c97237067c6f5a29a2f3c8325aff2916892ec925cbb5ce5920d1178e424b"
     },
     {
       "path": "docs/features/F06-03.html",
@@ -3061,9 +3064,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5ce158ce98501570db0edb902c4f5b521bbbfc003a8bc1c33c2b52ef70f3a5a2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "89cd31011a114b83f0d5e0d250b161dd2394ed3dec85547a907fb67694e18fee"
     },
     {
       "path": "docs/features/F06-05.html",
@@ -3071,9 +3077,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "718fa2532f791672b0d66b130db24f98f9208c8c7e584b5d7a92c21d685a3d16",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "3022f98004f6df2a724073b79f92d40a9cb5b5ffd1e91b9f9838bee945c69b53"
     },
     {
       "path": "docs/features/F06-06.html",
@@ -5881,10 +5890,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "a3459317ea4f1bae9d3988569933c155c39dc1cddd384b40c497d52e7fdcc2b3",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "6b6d396eacb60ba290cef220bd1a00cf20fdd3ec9c24a99e636bcbd0ff19f8a8"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
@@ -5905,10 +5916,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5bfffe1602c15030151e59f3d0c5eb3b83b205ba8da7643cfb889e6b1364b353",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "e988306b2e846b50570abce854a11408040e4a2518a098af3cd9d0cda1e510ad"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
@@ -5916,10 +5929,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "123ba7abd55e328ad68255ff598a0b7c7fdb80428b18bb699c7bf5918a351c3a",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "099793209eb5a069983b5bf568fb27904a684ab091e3a2ad2938a4a9b8e54afc"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
@@ -9979,9 +9994,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c2a3e1a5c285d2336b38ab8e8805887f8ef7818614ebba910a667e4e44a30c05",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "026e3754f5b17ae2edbf58a8b9155cd6142436e92124fdbbc9417554a4df512a"
     },
     {
       "path": "units/06_payment/F06-02_point-charge/diagrams.md",
@@ -9989,9 +10007,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6fb4c34b10e86f9223ab0da93dde3ca17d22e0683b163f28b48b5b6c6f69bfa8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "7755871e5d17f0b633fb8cfeacdf44ae57a94ebf3ad596adb5a9a565183606d8"
     },
     {
       "path": "units/06_payment/F06-02_point-charge/frontend.md",
@@ -9999,9 +10020,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "199921a7d9e70d2f1add862bb280195e724b83d365ce21693baa1035992f04a0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "c8dcae8ff6718fe235d74ba52f9ddf77e3c5ddf0c9ca1ddab8c5a022ed4baeed"
     },
     {
       "path": "units/06_payment/F06-02_point-charge/scenarios.md",
@@ -10009,9 +10033,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c0c81c006018f9349b88beb98e4d88b4ac831e113486800b8b90c5e0a0ab2195",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "42a366dfad7456a181e3b58ac02dbf5e725dae762fc708775bb83107ef525a13"
     },
     {
       "path": "units/06_payment/F06-03_transaction-history/backend.md",
@@ -10071,9 +10098,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6cebb688e302f668096cd154d395b86c9f57c9c1a28e3ba4a345bf2aa5d14a6f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "aa9185a7a2c4f39a1a7c741c25bc6516ca8efef622a89f0115f803dd1b6b84e8"
     },
     {
       "path": "units/06_payment/F06-04_payment-method/diagrams.md",
@@ -10081,9 +10111,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "bd77b50999c0f7d2265bc92432c689d147db48d23de3f31ea32bce3b529108dc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "7cf60be4e7510ec09097a1af2cf65a1eb4913e0ffca32fdeae65618fb9b2a5e0"
     },
     {
       "path": "units/06_payment/F06-04_payment-method/frontend.md",
@@ -10091,9 +10124,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "50ee421fc8566d8230ecd9ea675684aad97f40e94bd5d22566291868acd5c61f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "8c868daa41b9d311314cb3a80e636f8ebf45889bcea005a0d50b0998c3961dd5"
     },
     {
       "path": "units/06_payment/F06-04_payment-method/scenarios.md",
@@ -10101,9 +10137,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "19cce3584ada717bbb7a85f9cd1a257f1edd18c1c842b06f235d07205109cd13",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "a6cf82ba413df2d1aed1fdacea06d0576e16b7aa8bf8b430ac33a8654fa47c91"
     },
     {
       "path": "units/06_payment/F06-05_auto-charge/backend.md",
@@ -10111,9 +10150,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2bc77f33d17191889ac11ace93650d64a4f5663a83f706f29751537622ac3e93",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "08dbd095b0e33baffdcbabfb07e9a8c53d0cfa6f413a0c717a582e9e80c190cb"
     },
     {
       "path": "units/06_payment/F06-05_auto-charge/diagrams.md",
@@ -10121,9 +10163,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f24a7babe4d32e9aa14eac76626889f814ad81150c289686dd95ac090091d8fe",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "22886bb9ff948e02a1fe55ac2eb383d73082d75c22371d0cb6f429170c7100d0"
     },
     {
       "path": "units/06_payment/F06-05_auto-charge/frontend.md",
@@ -10131,9 +10176,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e33689c3777c4031a36ea6d539ff31dbf16948a043002c6d60c3c32e87474749",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "f64ff09f31c43b6c2bb0fb7f2c54f2f6451e7cd0c268b81038b612a031b9082e"
     },
     {
       "path": "units/06_payment/F06-05_auto-charge/scenarios.md",
@@ -10141,9 +10189,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7dab1e20eb4ffa464a5d2eb45e50dc32a6442ffbbc2bb187ee6c1dee1f142e4a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "charge_methods_autocharge_20261122"
+      ],
+      "reviewedSha256": "bb9b1f6599392ca961a257a8ce96cecad00477d20b724b2ae0a4e5d0ea17d4ab"
     },
     {
       "path": "units/06_payment/F06-06_point-pay-refund/backend.md",
@@ -14189,6 +14240,23 @@
         "retainedHtmlPages": 4
       },
       "scope": "지갑·거래 목록/상세/CSV·수익·호스트 정산 이의의 문서 대조와 생성 자료 검사. 기존 379개 서버 연결을 보존하고 두 연결 추가. 제품 시험·실DB·외부 지급·파일 저장·실기기 검증은 새로 실행하지 않았다. 공통 정책·영역 요약과 출시 날짜 관문은 별도 미완료다."
+    },
+    {
+      "command": "F06-02/04/05: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; source/canonical fingerprints; retained HTML IDs; incoming Markdown anchor scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 18,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 99,
+        "sourceRecords": 381,
+        "verifiedRecords": 379,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1255,
+        "derivedSourceDigests": 156,
+        "currentSourceAndCanonicalDigests": 51,
+        "retainedHtmlPages": 3
+      },
+      "scope": "수동 충전·카드 등록/관리·자동충전의 실제 호출·권한·금액/카드 검증·불확실 결과·복귀를 문서 대조. 카드 등록 세션 연결 추가, 자동충전 화면의 미사용 프리셋 연결 제거(프리셋 API는 수동 충전에 유지). 새 제품 시험·실결제·기기·실DB 검증 아님. 공통 정책·영역 요약·출시 날짜 관문은 아직 미완료."
     }
   ],
   "evidenceGroups": {
@@ -17193,6 +17261,272 @@
           "release-completion"
         ]
       }
+    },
+    "charge_methods_autocharge_20261122": {
+      "kind": "source_review",
+      "scope": "F06-02/04/05: 수동 충전 주문·확인·보류·앱 시도/세션·금액 제안·카드 선택·취소 구분, 카드 등록 세션·인증 결과 저장·목록/기본/삭제·무효, 자동충전 설정과 부족액 실행·금액/카드/월 한도·확인 중 의도·원 요청 재실행의 해당 함수/필드 대조. 시험은 문서에 명시한 단언만 읽었고 새 제품 시험·실DB·실카드·웹훅·외부 청구·기기 실행은 하지 않았다. 소스 해시는 그 파일 전체의 동작 검증을 뜻하지 않는다.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
+          "sha256": "5c926ddeed99c40438c90e9151393e3fbf975179aada83c4f2250c7f1ed13cb4"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
+          "sha256": "246df45456596bba4848087401bb5a7bfda922680724d4df41e45c02185cb074"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PaymentMethodService.java",
+          "sha256": "c4487d3be13b9999f1bcbec754714e7bffaa3ffda3aa4ce31555aea983128f5a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/PaymentMethodQueryRepository.java",
+          "sha256": "da16fe6e1b4003d3ef97c9607f4b2d964e319c317ab685538c6103a7273db02f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/PaymentMethodParam.java",
+          "sha256": "ff5242ebf52e74d4e4432e54354fa817c4619a55e62c4d1af90c3c394f209aec"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/PaymentMethodVo.java",
+          "sha256": "2caed75fe95a29bdd4fb4d85d7ac8bb757fb9783b7d1776ea0ba888c6daede88"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeService.java",
+          "sha256": "f234f6f5c6872d1ee5819b41f08cdcab0e4e2e3c8e7415fc0724d5e4e7cb08be"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/AutoChargeParam.java",
+          "sha256": "05d7aed1a751023b695540f1a5452c67fe22da13a026a7af5f55a9f56dff8d66"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/AutoChargeConfigVo.java",
+          "sha256": "eb18149307cf02eee6bf0b6e005caaf5b931760d2417a2fec796bc9ccae2c45c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/ChargePresetVo.java",
+          "sha256": "ac0cb2c9152dd1ad98494459c100d5291df359adfc49cfd8c192beed38531b06"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeEligibility.java",
+          "sha256": "f00162acce4fafafa9ab2e863fd82461b4e2bafa1f64602c1bfdd5283390c367"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeCoordinator.java",
+          "sha256": "19c58b937a4343cb450aea0f5a9f3c1af3521099f192074db634b2c72c3b2201"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeIntentWriter.java",
+          "sha256": "aee0b21d91eb282171b407b6802ae509b346d77be1c240a7f7c7d7f5ae01504d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeStage.java",
+          "sha256": "2122281c986f96a6a59f1e7974466901618daadd327c6542db3314344d76d5cc"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ChargeService.java",
+          "sha256": "b820282eeed5863d81d00f0ef904a6a26f88fdd230c5b7cd81673d5aac9c56af"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ChargeConfirmResultWriter.java",
+          "sha256": "5e517361cc5db2742cb1e01f36de18c1b67cee01ba0d83d34e04534e63b8cfde"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ChargeCancellationWriter.java",
+          "sha256": "0d4b67d9d8c2a69264cb9d34580ef7b7e97d4b3195b427d7c7b6e7f21667665c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ChargeConfirmRecoveryTxSteps.java",
+          "sha256": "f25252fbcf187d8c1e5f2d22145c5f474a6486ba4420ec35f0f6ab040b71e086"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PgPaymentVerdict.java",
+          "sha256": "86e0648a334b9fd2052be834db03d32492c2326f3954acf8528ca1d5a5ff9f52"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/ChargeParam.java",
+          "sha256": "288535fbd61f2b29015b8f6240e22e969127a38a70d4919909f8803a7a5f8628"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/PgConfirmParam.java",
+          "sha256": "25832964f1f7dfd572e05b852bca18494092f5448780328dc8cf8a6fa69e81f5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/ChargeCancelParam.java",
+          "sha256": "84af276ac9e4553f286db7b063240b72bab65ead3ff87e2974473f380fbc977c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/money/MoneyLiveGate.java",
+          "sha256": "e244dfb07a6970d6462ddca412bd2be860b48af156269f2ba160e797d0fd8b57"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/service/PaymentMethodServiceTest.java",
+          "sha256": "7e6e2097b56282b2e626a00b2720b17d3eac799ef4476414cb65b7ca97db0cf1"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/charge_provider.dart",
+          "sha256": "d1091c19c7817a846bd997f04e696676337af7dc3752424e2e42f07dc3f03813"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/frequent_charge_amounts_provider.dart",
+          "sha256": "fbddb8899ffcf3a06671a26d56f2814739d4d65ab1b5bdba2e9851564010b661"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/charge_screen.dart",
+          "sha256": "2b78b456962a4c0fffaaa02654db94ade3dc26fcb6f9a186ce3230e986b652ee"
+        },
+        {
+          "path": "community_app/lib/core/payment/pg_payment_factory.dart",
+          "sha256": "47455aca501df65bf69a02260275c046d7b659b2e8c81f7e49f5a33b1867dfd8"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/payment_method_provider.dart",
+          "sha256": "9f17d6b283c4a984b9ae9183839401bdd7f8bcc4dec5d8180a0398ccb6b588a9"
+        },
+        {
+          "path": "community_app/lib/data/api/payment_method_api.dart",
+          "sha256": "d7760ac0531b8d53a6a0d23b89d1b17206c88a5cbf52a1ab888ecf78113f6761"
+        },
+        {
+          "path": "community_app/lib/data/repositories/payment_method_repository.dart",
+          "sha256": "82be97e908e76c0c2a5dad327fe6861ada38a3a3e7c49135289c3588624ae680"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/payment_method.dart",
+          "sha256": "57336258609e720fc0417516ffb1fa66f04712df5b958191c33de9761f26bd5c"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/payment_method_param.dart",
+          "sha256": "39d9ebe04880c80b4d98d1894e8599ab5cefe9d7854f6e5e729feba3d69234fd"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/payment_method_screen.dart",
+          "sha256": "25c736fb7376f704b3925c548f68046e938d6202fef64e99e1d85d1b567cdbb3"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/payment_method_card_widget.dart",
+          "sha256": "0fafaa3cee6c84d92afc54da87b74cb5136bd12cb720836cee8e39845b0f6fee"
+        },
+        {
+          "path": "community_app/lib/core/payment/billing_auth_factory.dart",
+          "sha256": "d9b2669a837a54b74d2b14febf453730160955b1a4b1905bafad44cbe51891d3"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/auto_charge_provider.dart",
+          "sha256": "d8489dbc3d65754662d67677e34b986f68c3b5f79c8ac5906e2346a971fb2e5c"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/auto_charge_screen.dart",
+          "sha256": "182fb4981af4aea72e44e62476b8589a117c6edda4c1d00caf59ae9a6cbff05a"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/auto_charge_setting.dart",
+          "sha256": "1fd4d15074c6d14dbc30d4c8d2bc869db91ba1c17c2e5470aa7aff0158a97d84"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/auto_charge_param.dart",
+          "sha256": "2e5e3b095688d9024de090cc1749b5c0b8e617eb34a965a2bfd7bc9f690c4703"
+        },
+        {
+          "path": "community_app/test/widget/payment/charge_screen_confirm_pending_test.dart",
+          "sha256": "19872ebe356bc34f2a7d4607feaa8e561c53759144224fbbf4fdbcca7c363f60"
+        },
+        {
+          "path": "community_app/test/domain/providers/payment/auto_charge_provider_test.dart",
+          "sha256": "7e9da93c778338022da7535b7d5d2a2177f11d5109eb25c88509ea4f90ef7764"
+        },
+        {
+          "path": "community_app/test/presentation/payment/payment_method_money_gate_test.dart",
+          "sha256": "36bdef8266a0212d7474575489044e64c3f11ffb6a46d7db0b256b4529635feb"
+        }
+      ],
+      "reuses": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+          "sha256": "9d3ead0cc566f10853c081c56babf9f3435c84d8efe53f6d58e89dda7e892144"
+        },
+        {
+          "path": "community_app/lib/data/api/wallet_api.dart",
+          "sha256": "656d92bc47b7281635a9f038baf701c169da9d25d2ecc56b8684b8645e3cda74"
+        },
+        {
+          "path": "community_app/lib/data/repositories/wallet_repository.dart",
+          "sha256": "a3a1a46834beb9ef3283f5ad89cc79f2bce49939981a8bdd2ced117a417aaeb8"
+        },
+        {
+          "path": "docs/ui-ux/screens/19-payment.md",
+          "sha256": "5d083cc93e176141c06353936bd8f916d629eaf90f29d5ebe8edb9bc6a17c259"
+        },
+        {
+          "path": "docs/ui-ux/screens/20-payment-advanced.md",
+          "sha256": "01d20453889071d1b78a9bbdcdf70b01da780750310aa143f127bf92d2b43c3a"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
+          "sha256": "6b6d396eacb60ba290cef220bd1a00cf20fdd3ec9c24a99e636bcbd0ff19f8a8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
+          "sha256": "e988306b2e846b50570abce854a11408040e4a2518a098af3cd9d0cda1e510ad"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
+          "sha256": "099793209eb5a069983b5bf568fb27904a684ab091e3a2ad2938a4a9b8e54afc"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F06-02.html": [
+          "sidebar",
+          "launch-strip",
+          "charge-recovery",
+          "release-completion"
+        ],
+        "docs/features/F06-04.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F06-05.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F06-04:5",
+          "change": "added",
+          "reason": "현재 카드 등록 화면이 호출하는 서버 인증 세션을 누락된 연결로 추가"
+        },
+        {
+          "id": "F06-05:4",
+          "change": "removed_feature_association",
+          "reason": "자동충전 설정의 칩은 고정 목록이며 프리셋 API를 호출하지 않는다. 같은 API는 수동 충전 F06-02:1에 유지하며 API 철회로 기록하지 않는다.",
+          "previous": [
+            {
+              "id": "F06-05:4",
+              "featureId": "F06-05",
+              "label": "GET /api/v1/wallet/charge/presets — 자주 쓴 충전 금액",
+              "backendPath": "business_logic/units/06_payment/F06-05_auto-charge/backend.md",
+              "documentPath": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
+              "status": "active",
+              "bindings": [
+                {
+                  "targetPath": "com/endside/community/payment/controller/AutoChargeController.java",
+                  "controller": "AutoChargeController",
+                  "method": "getChargePresets",
+                  "httpMethod": "GET",
+                  "httpPath": "/api/v1/wallet/charge/presets"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   },
   "currentSourceVersions": {

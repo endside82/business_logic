@@ -6,27 +6,27 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,104개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,115개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1104,
+    "documentedScenarioItems": 1115,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 60,
+    "directlyLinkedAutomatedTests": 62,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 60,
-    "directlyLinkedJourneys": 43,
+    "automatedScenarioReferences": 62,
+    "directlyLinkedJourneys": 42,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 43,
+    "journeyScenarioReferences": 42,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 48,
-    "partialEvidenceChain": 43,
-    "definitionOnlyEvidence": 84,
+    "completeEvidenceChain": 47,
+    "partialEvidenceChain": 46,
+    "definitionOnlyEvidence": 82,
     "traceMarkers": 381,
     "verifiedTraceRecords": 379,
     "unresolvedTraceRecords": 0,
@@ -5830,13 +5830,13 @@ window.SCENARIO_AUDIT = {
       "id": "F06-02",
       "domain": "결제 & 지갑",
       "name": "포인트 충전",
-      "scenarioCount": 7,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-02_point-charge/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-02_point-charge/backend.md",
@@ -5933,29 +5933,25 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 2,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 2,
+        "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_notification_permission_test.dart",
-          "community_app/integration_test/seed_wallet_payment_visibility_test.dart"
+          "community_app/test/widget/payment/charge_screen_confirm_pending_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/test/presentation/payment/point_charge_guidance_card_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/seed_notification_permission_test.dart",
-          "community_app/integration_test/seed_wallet_payment_visibility_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
@@ -6079,18 +6075,18 @@ window.SCENARIO_AUDIT = {
       "id": "F06-04",
       "domain": "결제 & 지갑",
       "name": "결제 수단 관리",
-      "scenarioCount": 6,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-04_payment-method/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-04_payment-method/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
         "entries": [
           {
@@ -6160,15 +6156,34 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 59
               }
             ]
+          },
+          {
+            "id": "F06-04:5",
+            "label": "POST /api/v1/wallet/payment-methods/billing-session — 카드 인증 세션",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PaymentMethodController.java",
+                "controller": "PaymentMethodController",
+                "method": "createBillingSession",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/wallet/payment-methods/billing-session",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/presentation/payment/payment_method_money_gate_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -6179,7 +6194,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,
@@ -6189,18 +6204,18 @@ window.SCENARIO_AUDIT = {
       "id": "F06-05",
       "domain": "결제 & 지갑",
       "name": "자동 충전 설정",
-      "scenarioCount": 7,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-05_auto-charge/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-05_auto-charge/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
@@ -6253,32 +6268,17 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 47
               }
             ]
-          },
-          {
-            "id": "F06-05:4",
-            "label": "GET /api/v1/wallet/charge/presets — 자주 쓴 충전 금액",
-            "status": "verified",
-            "note": "",
-            "endpoints": [
-              {
-                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/AutoChargeController.java",
-                "controller": "AutoChargeController",
-                "method": "getChargePresets",
-                "httpMethod": "GET",
-                "httpPath": "/api/v1/wallet/charge/presets",
-                "targetLine": 27,
-                "methodLine": 28
-              }
-            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/domain/providers/payment/auto_charge_provider_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/payment/auto_charge_guidance_card_test.dart"
         ]
@@ -6291,7 +6291,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
