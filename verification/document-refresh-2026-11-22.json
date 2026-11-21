@@ -13310,6 +13310,13 @@
       "command": "알림 관련 변경 뒤 scenario-audit 재생성·check_scenario_audit",
       "result": "PASS; 소스 위치85문서 일치; 문서 데이터·표·필터·로컬 참조 검증",
       "scope": "제품 실행 시험 아님"
+    },
+    {
+      "command": "다른 세션 main 반영 후 기존 대조 근거 지문 검사",
+      "result": {
+        "changedEvidenceFiles": []
+      },
+      "scope": "기존 알림·발송 대조 근거의 유효성; 새 이벤트·검색·보관함 의미 검수는 별도"
     }
   ],
   "evidenceGroups": {
@@ -13450,5 +13457,61 @@
         }
       ]
     }
-  }
+  },
+  "currentSourceVersions": {
+    "saisoop_docs": {
+      "commit": "fcd806fc54d9319d506f45c797105f5be2dc4020",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    },
+    "business_logic": {
+      "commit": "0179eb227444394ed32c19775df7f2888f321c63",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    },
+    "community_api": {
+      "commit": "b9ee63f619eba6501f952fa663a243ac87d3573b",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    },
+    "community_app": {
+      "commit": "a443150abb314b7658b6cf3adeab01272d47e37f",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    },
+    "community-realtime": {
+      "commit": "83b145969779e0fe0236441cdcdd3f15678037b2",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    },
+    "community_admin_front": {
+      "commit": "451c5560bf84b1be0d6fc3790c8909b18ecc961a",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    },
+    "saisoop_mcp": {
+      "commit": "53bafa35ac829a7724b33764cd35daaa976acc2d",
+      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+    }
+  },
+  "mainUpdates": [
+    {
+      "repository": "saisoop_docs",
+      "from": "b0c99de91cac54be34f083b4585cbd44f0e4107f",
+      "to": "fcd806fc54d9319d506f45c797105f5be2dc4020",
+      "impact": "관리자 검수 기록·NEXT_WORK·WORKLIST 변경을 독립 가지에 fast-forward 반영. 알림 근거 소스 변경 없음"
+    },
+    {
+      "repository": "business_logic",
+      "from": "968daa5999e5f96b975e2e17759d97c248f1ffcc",
+      "to": "0179eb227444394ed32c19775df7f2888f321c63",
+      "impact": "공개 현황 스냅샷·허브·출시 상태 HTML 변경 위로 두 문서 커밋을 rebase. 다른 세션의 최신 상태 유지"
+    },
+    {
+      "repository": "community_api",
+      "from": "9eec7d87c660366764ab9f2050a005cd994a4a20",
+      "to": "b9ee63f619eba6501f952fa663a243ac87d3573b",
+      "impact": "결제 취소 시험 고정물 변경. 확인한 알림 구현 파일 변경 없음"
+    },
+    {
+      "repository": "community_app",
+      "from": "ae0630984ddffffda48ad595a8e408c3f2ebd741",
+      "to": "a443150abb314b7658b6cf3adeab01272d47e37f",
+      "impact": "이벤트 초안 삭제가 더보기로 이동, 만들기 단계·캘린더 빈 달 설명, 검색 재조회 결과 유지, 보관함 명령 잠금. 이벤트·검색·보관함 문서 대조에 반영할 범위. 확인한 알림 파일 변경 없음"
+    }
+  ]
 }
