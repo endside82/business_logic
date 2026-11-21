@@ -2737,9 +2737,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "385ceed34d9138f660718dde8ff5fecf91560effa0adfbb60d0e92cd3e55dfa4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "transport_policy_20261122"
+      ],
+      "reviewedSha256": "3bc61d02ed99a5568190d6028ec87c6e3c0bd68c729a9d62af01de3a919b5ff4"
     },
     {
       "path": "docs/features/F03-15.html",
@@ -4913,7 +4916,8 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "demographics_20261122"
+        "demographics_20261122",
+        "transport_policy_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5599,10 +5603,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "2f20e5ca2b601cc7381d748e279e78d9c8d8f542210e307d2a09790cf63852ce",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "transport_policy_20261122"
+      ],
+      "reviewedSha256": "5a12f236b4c3791d5f1de907af168d6b461eafc6c597e5791b61c6a68f61be9f"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
@@ -7576,7 +7582,9 @@
       "baselineSha256": "cd9cfc2647345f1ed13431f12e589c6f9e0a3391fba109868372e1a769443616",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "transport_policy_20261122"
+      ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
     {
@@ -14668,6 +14676,32 @@
         }
       },
       "scope": "이벤트·클럽 구성 통계의 권한/대상/기준일/최소집단/응답/앱 입구와 오류를 대조. 전체 기능 정의는 두 행 설명만 갱신. 새 제품 시험·실DB·본인인증 품질·개인 비식별 보장·실제 앱 검수 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-14: source-reference sync and 11 tests; scenario audit; reviewed paths/digests; scoped source/canonical digests; original HTML IDs; Markdown fragments; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 2,
+        "partialDocuments": 2,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 103,
+        "sourceRecords": 413,
+        "verifiedRecords": 411,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1590,
+        "derivedSourceDigests": 204,
+        "currentSourceAndCanonicalDigests": 35,
+        "retainedHtmlPages": 1,
+        "markdownFragments": 3,
+        "incomingMarkdownAnchors": 0,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 339,
+          "historical_retained": 33,
+          "pending": 630
+        }
+      },
+      "scope": "현재 조율 공통 설정·실제 참석 권한·구형 쓰기 종료·배정 보존·동일 요청 확인과 개정/갱신 대조. 목록의 해당 행만 부분 갱신. 생성 도구의 표 열 수 조건을 보완해 기능 Wave/상태와 참조/위험 수를 구분. 새 제품 시험·운영 환경·실제 앱 실행 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -20236,6 +20270,234 @@
           "id": "F04-17:1",
           "change": "added",
           "reason": "별도 units 없이 실제 구성 통계 창구 연결"
+        }
+      ]
+    },
+    "transport_policy_20261122": {
+      "kind": "source_review",
+      "scope": "F03-14 현재 이동 조율 공통 정책·실제 참석 권한·구형 쓰기 종료·요청 재확인/개정·저장과 조회 성공 구분. 상세 차량/배정 전체 및 새 제품 실행/운영 환경 확인 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+          "sha256": "c9fd3b16f1bb24cb7ff9a0e606f3cf16c97d24035e3a7288d236dd5ebb15502e",
+          "reviewScope": "overview·policy의 실제 경로·반환 타입·TRANSPORT 출시 범위."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java",
+          "sha256": "6b69895277aab768079cd334035b6641da15e0b3c4fc393e49a7c6de5ef3848a",
+          "reviewScope": "getConfig 조회와 updateConfig의 구형 쓰기 종료 오류; 예전 service.updateConfig 호출 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportPreferencesService.java",
+          "sha256": "ebe1b30142722a1a9c4b360afd7248a9985f7ca504a5beda21a2bdbacf6231d6",
+          "reviewScope": "policy의 호스트/활성 공동호스트·DRAFT/OPEN 조건, 세 정책 대응·구형 반납 false·OPEN 알림 호출; intent의 개별 이동 정책. 다른 명령 전체 검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportRosterService.java",
+          "sha256": "4a6d6f9cbb196774fe2598fc5f1afba1216ef4a4e7e543510ed51869d46aaaf8",
+          "reviewScope": "overview의 호스트/실제 참석 권한, 기본 설정 비저장·명단과 구성·응답; 개인정보 마스킹 전체 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/port/TransportMemberAdapter.java",
+          "sha256": "d4471a1d8c9e386818affc95651d5a1f2127e9098ba43c0b8f86d4baf1beff21",
+          "reviewScope": "findAttending·isAttending이 실제 ATTENDING 행을 사용하는 조건."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportCommandGate.java",
+          "sha256": "e370c154011036424e74731ed8373aacc63c307b8d5c58a17da4eca6a89084aa",
+          "reviewScope": "execute의 잠금·현재 계정/권한·기존 요청 기록 우선·내용 해시·개정 충돌·한 번 적용 및 기록. fingerprint의 명령·대상·요청 포함."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportCommandInputCheck.java",
+          "sha256": "9ad8cfcdee48f645714feb504c61de44b944b2ab22792fb444729b30fe20f560",
+          "reviewScope": "requireValid의 소문자 UUID·0 이상 개정과 TransportPolicyParam 세 값 nonnull 검사. 다른 요청 검증 전체 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportActorGuard.java",
+          "sha256": "ed07cd4d5a23c88cd8f3c8a5ea1794560aaf16d2e65434c6f8fd2ea79d3b8eee",
+          "reviewScope": "assertCanWrite의 현재 계정 상태 검사."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportAllocationService.java",
+          "sha256": "f426f33751c179432b3746086f15f803abf45ebb42f1d46c57c495dd50196b28",
+          "reviewScope": "moveSelf 및 apply 중 본인 대상·참가자 변경 정책·기존 차량 claimPolicy 조건. 배정 알고리즘 전체 검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/EventTransportService.java",
+          "sha256": "057033a5dee8c7df11c94de37ab8a8364091393be7ff08fbe91c43cf6d76656d",
+          "reviewScope": "getConfig의 상세 접근 검사·기본값·조회와 기존 updateConfig의 차량 보호가 현재 컨트롤러 쓰기에 연결되지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/model/EventTransportConfig.java",
+          "sha256": "a369dcfa53695181a550e938ee07c2b336c5b13d16cd3535b8e5e3e5469013ff",
+          "reviewScope": "기존 저장 필드와 새 참가자 변경·개정 필드의 기본값."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportPolicyParam.java",
+          "sha256": "44223b4d6d597e1233a016bd51350fd897e865e092cf82eba14261c10ef73e62",
+          "reviewScope": "세 Boolean 입력."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportMutationParam.java",
+          "sha256": "63a6d67fa156e54282fc27666881b65b6a8044a0d617f6f78d81892f0ed73c70",
+          "reviewScope": "requestId·expectedRevision과 미정의 필드 거절."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/vo/TransportOverviewVo.java",
+          "sha256": "f36239d4dcd83d2310819c6d9babf245c0b9c3ca0ce5d923f5cd00c817846ec4",
+          "reviewScope": "개정·세 정책·관리 여부·요약/명단/차량/지원/요청/행동 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/vo/TransportCommandVo.java",
+          "sha256": "2c2610ca95ef9699cfc59deed190a5dd39c3656874de63246af65ca52cb89e54",
+          "reviewScope": "적용 개정·현재 개정·재확인 여부·선택 resourceId."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/transport_coordination_screen.dart",
+          "sha256": "c2f53e7b2702bf8d65cb196be79497a2846149afcf12d417f80b5e9dfc21f5e8",
+          "reviewScope": "함께 이동 최초 로딩/오류/재시도/새로고침·조율 중단 안내·관리 설정 입구 및 설정 전용 화면. 실제 렌더 검수 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_coordination_forms.dart",
+          "sha256": "2f94e4a2e0a74b2a5284a28d2e0efb288d3f135b733622a394a0627adf03fd2c",
+          "reviewScope": "TransportPolicyForm 266–335 세 스위치·설명·입력 잠금·권한/상태 및 요청 구성."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_editor_frame.dart",
+          "sha256": "6cf0dc46aa7832e9c62a2325a837ff6cf5d755aa479d53bb8c8c58f0e0078bbc",
+          "reviewScope": "미확정/확정 오류·동일 요청 재확인·현황 재검토 후 입력 유지·계정 변경·저장 중 닫기 제한. 앱 종료 후 영속성 없음."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+          "sha256": "10d32aa1a2ab7323f883fa5b95200e3ebf108f8a14f9d60f6b0037d9324caaf6",
+          "reviewScope": "개정 하한·계정/모임 구독·조회 최소 개정·setPolicy와 _run의 저장 성공/후속 조회 실패 구분·관련 조회 무효화."
+        },
+        {
+          "path": "community_app/lib/data/api/transport_coordination_api.dart",
+          "sha256": "ff85dff71c1ae3465c334c79f453b635394f43b416a61284dfcaff9c31192167",
+          "reviewScope": "getOverview·setPolicy 실제 API 연결."
+        },
+        {
+          "path": "community_app/lib/data/repositories/transport_coordination_repository.dart",
+          "sha256": "cfc78c87c4af654d3805e1e7cc8b3e454b39997166932ac980c97246b2caceee",
+          "reviewScope": "getOverview·setPolicy의 API 위임과 Result 경로."
+        },
+        {
+          "path": "community_app/lib/data/models/event/transport_coordination_param.dart",
+          "sha256": "55a700c0f5b176d0b3a1ba1dced5ac35ddcff8f72f9c63e6ce2bb92a4c4f142d",
+          "reviewScope": "정책 요청의 requestId·expectedRevision·세 bool 필드."
+        },
+        {
+          "path": "community_app/lib/data/models/event/transport_coordination_vo.dart",
+          "sha256": "2cd87dda78ea5fe87ef9d5b0ef5b5e351dc93d5aabc143432ad8e34dda90a31a",
+          "reviewScope": "overview 필드와 enabled/OPEN 기반 canEdit."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
+          "sha256": "e29a26e2dd908252c5642354a0ed8b887915876e49d91e2c29c84a853c9b9015",
+          "reviewScope": "설정·현황 경로의 eventManage/transportView 검사 및 현재 화면 연결."
+        },
+        {
+          "path": "community_app/lib/core/router/release_scope_routes.dart",
+          "sha256": "2372295713ae7df0b4c59a9a3551c6a1c8ffe3c5896fa3567b0707eeb89c28af",
+          "reviewScope": "이동/차량 경로의 출시 범위 분류; 운영 활성 여부 추정 안 함."
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/application-prod.yaml",
+          "sha256": "8cb1351b9f4d0664d91da564ff054fe7f5d05dfbe6dcd0055d0ed024a4a2b187",
+          "reviewScope": "245행 RELEASE_SCOPE_ENABLED_DOMAINS 기본값에 TRANSPORT 포함. 운영 실환경 값 조회 아님."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/transport/service/TransportCommandGateTest.java",
+          "sha256": "3ff687bd1a9c9f50cd99b6b3b0b9204a324bb200ba3f90321f251605e293f2d0",
+          "reviewScope": "71–120 최초 설정·개정 증가, 응답 유실 후 이후 배정 보존, 동일 요청 다른 내용 거절의 단언. 실행 안 함."
+        },
+        {
+          "path": "community_app/test/widget/event/transport_coordination_screen_test.dart",
+          "sha256": "933f0ba07f7342bbb416084ff872c848bd09d28ee188306af4b31e39a8554903",
+          "reviewScope": "401–437 지연 설정 저장 후 폼 닫힘·중단 안내 제거·버스 추가 표시 단언. 실행 안 함."
+        },
+        {
+          "path": "docs/plan/transport/TRANSPORT_VERIFICATION_PLAN_2026-09-20.md",
+          "sha256": "c8629363c9042005d0688d88a36ac767d001ebe8ae799582001415cc8efbcf17",
+          "reviewScope": "E2E 시나리오와 현재 상태 절의 행동별 기록/소스 판정 분리 및 실제 기기 미확인 경계."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventAuthorizationService.java",
+          "sha256": "5f27b7133a29189c88eb74b09ef6356946d02e1b00921eab5e0fd79035c4e897",
+          "reviewScope": "isHostOrCoHost·assertHostOrCoHost의 실제 호스트와 활성 공동호스트."
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "b7ff405c284771652b8e82d28c6297164706b936553e9274f8e6fe3789436ff6",
+          "reviewScope": "EventRequiredAccess.transportView의 실제 참석 조건 전달과 eventManage의 canEditEvent 연결."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_permission_provider.dart",
+          "sha256": "9372d2935e8ed13031e769a3124f9f1c3548e59e1da3b8d286bd913ce735ae64",
+          "reviewScope": "canViewTransportWhen은 호스트/공동호스트/실제 참석만 허용; 대기 인자로 자동 허용하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "TRANSPORT 공개 범위·permission·설정 조회와 이동 설정 입구. 전체 화면 검수 아님."
+        },
+        {
+          "path": "docs/development/IMPLEMENTATION_WORKBOARD.md",
+          "sha256": "7d608628f5b723f9751e1a229147150fb15c565a3ab40dc8ed744e0fc004496c",
+          "reviewScope": "첫 출시 기능의 확인 범위 중 이동 기능의 기존 구현/로컬·웹 확인과 휴대전화·푸시·실차 도면·최종 시나리오 구분."
+        }
+      ],
+      "reuses": [
+        "demographics_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_photos_20261122",
+        "reading_guides_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
+          "sha256": "5a12f236b4c3791d5f1de907af168d6b461eafc6c597e5791b61c6a68f61be9f"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-14.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-7",
+          "current-8",
+          "current-limits",
+          "current-10",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-14:1",
+          "change": "added",
+          "reason": "현재 조율 조회/저장과 기존 조회/종료 오류 창구를 각각 연결"
+        },
+        {
+          "id": "F03-14:2",
+          "change": "added",
+          "reason": "현재 조율 조회/저장과 기존 조회/종료 오류 창구를 각각 연결"
+        },
+        {
+          "id": "F03-14:3",
+          "change": "added",
+          "reason": "현재 조율 조회/저장과 기존 조회/종료 오류 창구를 각각 연결"
+        },
+        {
+          "id": "F03-14:4",
+          "change": "added",
+          "reason": "현재 조율 조회/저장과 기존 조회/종료 오류 창구를 각각 연결"
         }
       ]
     }

@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 40,
     "partialEvidenceChain": 51,
     "definitionOnlyEvidence": 84,
-    "traceMarkers": 409,
-    "verifiedTraceRecords": 407,
+    "traceMarkers": 413,
+    "verifiedTraceRecords": 411,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3197,20 +3197,87 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-14:1",
+            "label": "GET /api/v1/events/{eventId}/transport/coordination — 조율 현황 조회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "overview",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination",
+                "targetLine": 30,
+                "methodLine": 31
+              }
+            ]
+          },
+          {
+            "id": "F03-14:2",
+            "label": "PUT /api/v1/events/{eventId}/transport/coordination/policy — 현재 정책 저장",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "policy",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/policy",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          },
+          {
+            "id": "F03-14:3",
+            "label": "GET /api/v1/events/{eventId}/transport — 기존 설정 조회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java",
+                "controller": "EventTransportController",
+                "method": "getConfig",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/transport",
+                "targetLine": 28,
+                "methodLine": 29
+              }
+            ]
+          },
+          {
+            "id": "F03-14:4",
+            "label": "PUT /api/v1/events/{eventId}/transport/config — 구형 쓰기 종료 오류",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventTransportController.java",
+                "controller": "EventTransportController",
+                "method": "updateConfig",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/events/{eventId}/transport/config",
+                "targetLine": 34,
+                "methodLine": 35
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 1,
         "files": [
-          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
-          "community_app/test/data/models/event/transport_vo_wire_test.dart",
-          "community_app/test/unit/transport_entry_access_test.dart"
+          "community_app/test/widget/event/transport_coordination_screen_test.dart"
         ],
         "markerCandidateFiles": []
       },
