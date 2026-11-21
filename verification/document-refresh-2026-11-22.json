@@ -2222,9 +2222,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1c04a2ccd693ec7828a086ac02728d22bb880133d2084981c6a99f22695b7e9f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "97b7739051de4beb70469925122184f06aff10fd5f3d98db1fee3a67a163bf7c"
     },
     {
       "path": "docs/domains/06-payment.html",
@@ -2937,9 +2940,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2a9b1611c13d15dc66b7af9438dee98316026a279d57b8c8cb71a1977cb549a5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "0c7ddc4b2f74f52608da7106265565226eb09355f922735fb3f350aa6daa1f82"
     },
     {
       "path": "docs/features/F05-02.html",
@@ -2947,9 +2953,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "020104ecbb8438127ef009ce89f1409e55ff1358ad596bee08b6907d7a936787",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "c4f8a7c84835b659e0de961ec58144935eb9cc7a8db95ae89d9f17382e660aad"
     },
     {
       "path": "docs/features/F05-03.html",
@@ -2957,9 +2966,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ec7b6504b1e6da4ff8366d2bfdaef43a8f9048969fe7db9b4809910df92ecdd1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "7986ab1768e364f5e0f32eb4ce915e91400ccb2c321326c95173da7d0799507e"
     },
     {
       "path": "docs/features/F05-04.html",
@@ -2967,9 +2979,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "7746b90657d674ff5f579d6f3ae0f2c5fa8335c2380bc4d29562c9f355bff8de",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "e8c513b0b51496f07a9740d07751b681ceb8f857730a49e3f4abfa027a42502a"
     },
     {
       "path": "docs/features/F05-05.html",
@@ -2977,9 +2992,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5a9995473b39baeedc9a549270ecb0335c3a9770a6e5cefc7a71681e07d33896",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "855784fb1a5d6603b116f4bb8acf7e9b57cc80072f320e3c2967e09cffbc18aa"
     },
     {
       "path": "docs/features/F06-01.html",
@@ -4967,10 +4985,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "c09215c43446bc163a78e7fe79ad7ba63b815b938503ed3c589661f7da4d8deb",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "9c7bcdf9dff4585e71bcaa53cfc321a9bc3866f446121ed060eeaaa54bf1728d"
     },
     {
       "path": "prd/01_domain_prds/06_결제_and_지갑_prd.md",
@@ -5739,10 +5759,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c537ca2badb8f5b398dfe6a6335180c47aa58bbf5c54a8a83bb96354d8548a4f",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "69296c86632d6f8ac1a60faea18b84640a53f887dcc2eff0fbe5fc70b2f1ac6f"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md",
@@ -5750,10 +5772,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bd660ceb44cb88ff46bc51f7bb57f0b992e3bed42cdc5f9abdc3a1824d111237",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "3d1919ec9dc55c3baeda2b6f0392aef6876476cbd2d92b815316e90a23c2a347"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-03_search-filter_prd.md",
@@ -5761,10 +5785,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "dafb270532292a59617fd8aaa1be762ff2b2e206d2c509a9005b5142bc6e6ff2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "b87feec137b6417a641291cea6b7e3a7815e96202890e5c2e99aa31b86e86eb2"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-04_search-history_prd.md",
@@ -5772,9 +5798,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "6686068b49495aaee4b71e03e29da5e12a87c7de40df0a16d51c0d29fd5a881e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "b87c68957b64ace66812d55bcd533b1ee540c85b4ae1baaac351e55d500f8dd0"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-05_saved-search_prd.md",
@@ -5782,10 +5811,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "0c3a4677c725a51d5a25bac93f2869fc8f2162bac8022a05b575e5e5bc17c351",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "db6b5299743dc2fe75d1bc8e1036b62278911a531fdec8093c2d687c439333e6"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
@@ -9497,9 +9528,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0c4023c5529abbf57e613decb92f99492f9a74d75940844d745af02bea8cc8a2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "cc23dbd0847d905291fa8921b7ef55bc0177c570063ec2e31b9dcc17fcf5a9e9"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/backend.md",
@@ -9507,9 +9541,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "491c78df62b13a89342f0552c185e5475bb9ab8bf654fd95c7c826c2b0bf011f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "15f6df87b3bf91fa14834f419b36bb92c1beb9cbeb1266e8a7f88de235ffdf49"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/diagrams.md",
@@ -9517,9 +9554,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8adc08064f33a46072114e8785af55a225efe01cb373dc3a8a2ce98c286206f3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "7acf6e18f6b40f49130c15926eccb7a3581b781f2c8ddfb86f65610fa05dce78"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/frontend.md",
@@ -9527,9 +9567,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "375d66e1c45409b6771412ed8dac39a9b3fb121b2e41a0bf1f617b9a3506b32e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "31b9ded6ba8a74b5daedfe9fb6335c8def292bfb7fc71b3473bf8e120bad90db"
     },
     {
       "path": "units/05_search/F05-01_keyword-search/scenarios.md",
@@ -9537,9 +9580,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1a238960f39e7b81db83f5dae097f010418937c66ebdd48ac96d17906456adba",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "69d274f7cbeeda594a311df01889ba767cdce47704671f6cdcf8c6ec9145bf42"
     },
     {
       "path": "units/05_search/F05-02_autocomplete-suggest/backend.md",
@@ -9547,9 +9593,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "357e31d0bd6e812b1b44e9cfd7d4ad6d36adf0e366e0e3a5942228ec7cf4cf4d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "6cd2cc89bd40acc0d6d39f224600097a73643b627d2faecea758470e3cbb8924"
     },
     {
       "path": "units/05_search/F05-02_autocomplete-suggest/diagrams.md",
@@ -9557,9 +9606,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d2ca34c71280b1279fbb4d55d7fa8807c03c9982f27f5f66902f45147e65d69a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "99935b339b7b210c5fc1d076e45abe2cb268e4e4c6bc7b52c69f8e539dbeb9c7"
     },
     {
       "path": "units/05_search/F05-02_autocomplete-suggest/frontend.md",
@@ -9567,9 +9619,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "deb6159d4651b4ddb754dc091c3dfa6c53d20c2c6eb076de794c8c61bb375896",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "90a9983c8365d089d24f08a37ee951da3f55215db673e630e7de6943d6c0ea1b"
     },
     {
       "path": "units/05_search/F05-02_autocomplete-suggest/scenarios.md",
@@ -9577,9 +9632,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d49dc30d45c748959898d2f4b87d5e1f4d9150bb748365a14bc404efdc127029",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "4baf82588405152d757ae670399f441263c77e70b2e7b6b1c4d962fa5b0e6709"
     },
     {
       "path": "units/05_search/F05-03_search-filter/backend.md",
@@ -9587,9 +9645,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c59a8dc71f4ab4d02affb393b9eeddebdfa6592745c4f38709270abbf7744236",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "f7d8f6556058dc4b81c92ef877736aeef67e45e097e423100b475981ef5ff373"
     },
     {
       "path": "units/05_search/F05-03_search-filter/diagrams.md",
@@ -9597,9 +9658,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "db9882645ef4b88b244557ef7939b37210c3b07589e4173afd65e905754a759a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "db1610c8444ce5afdfd12dd0bd2a7d1498cb4e35dea944660f2e98955456d50a"
     },
     {
       "path": "units/05_search/F05-03_search-filter/frontend.md",
@@ -9607,9 +9671,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "990a641d86c2f43f12fa6c83fc80be76911a991aec659e9af5ebf4fd8da79d1c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "1fb669d846dc1d62d4d7f4ac590ea45d893512f4fe417a923ea6589e24888db6"
     },
     {
       "path": "units/05_search/F05-03_search-filter/scenarios.md",
@@ -9617,9 +9684,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5333dd93d9879280dc2c58b998ea2276b4839a4d22baef7f8f59ecff84a7f0dd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "e797de135f2d788f653a36c452bb5b2760cb02c6bdda216cf786156e90275c72"
     },
     {
       "path": "units/05_search/F05-04_search-history/backend.md",
@@ -9627,9 +9697,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4d9d8900e32b838a0e1d9df761ace41730883bb8fc4e71a5305aadebfc6988fe",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "c77a72cf1fae52ac3ce30b3f27704cf1ae9a225fea5997f139b416f9e68b8413"
     },
     {
       "path": "units/05_search/F05-04_search-history/diagrams.md",
@@ -9637,9 +9710,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b769361d821f63c996afa8727f3d7fe78d7c3ffd7d3d76c9d99d5a28cfeefd41",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "08694c3473028aeedd584b3587e2a7e2d092c02136594de1eed575b484a926c9"
     },
     {
       "path": "units/05_search/F05-04_search-history/frontend.md",
@@ -9647,9 +9723,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5691e80e2511c13e2bac13564521cda0215c8c0c88be1380378d9e3be1ab3858",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "b95f165938bcb735811b2bf7357da28ffe29864566426600e9725d39dd8cb5a6"
     },
     {
       "path": "units/05_search/F05-04_search-history/scenarios.md",
@@ -9657,9 +9736,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d88cf9dd388743a294571bbff40102863d455209d30ffbc82072efa9ebee3202",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "14fa09a6ba8a4771630e95ef438cef2ad7648075968985d768a39f0249df8f5a"
     },
     {
       "path": "units/05_search/F05-05_saved-search/backend.md",
@@ -9667,9 +9749,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2d81ed8d8dd7ccc8e99dd5109f0acbbf9e49f0e9ef29fc7998e5718b2e92bb1a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "193df2a9dde9b7d1a1cc61463f2695e4ef0538474ff7827a787083707b8c551c"
     },
     {
       "path": "units/05_search/F05-05_saved-search/diagrams.md",
@@ -9677,9 +9762,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "59be38cca419f6c09070c0b896feddc25613118271fd74084ef8c18eff1d8a6f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "7c43cb4fe1549499b92da1ab4c74e9ff55742d99eba7455173def8d1ae780965"
     },
     {
       "path": "units/05_search/F05-05_saved-search/frontend.md",
@@ -9687,9 +9775,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a5869d74faf43c1ad1326b24b3b72fff59b450f7a98318b057f2740b1e2e566d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "93168b32642cd351ba9688903e0de61eacd2e3aaec99ed97859dca9a51e84ac0"
     },
     {
       "path": "units/05_search/F05-05_saved-search/scenarios.md",
@@ -9697,9 +9788,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a5ef7eb3075177d253063bfe60f1800a7fd49dccb58268940a5943e46ddc36de",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "search_workflows_20261122"
+      ],
+      "reviewedSha256": "237bd72d451464bbc1aae9bccea664a79778163cc94bf2e0e5e861ca0470c6b5"
     },
     {
       "path": "units/06_payment/00_overview.md",
@@ -13853,6 +13947,23 @@
         "reusedSourceDigests": 35
       },
       "scope": "관심인 등록·해제·한도·집계·개별 조회 입구 부재·알림 후보 처리의 문서 검사. 공용 공개 분류에서 정기모임과 승인제를 확인해 F19-03 설명도 정정. 새 제품 시험·실구독·실기기·외부 수신 검증은 아님."
+    },
+    {
+      "command": "F05-01..05 and domain: source references and 11 tests; scenario audit; reviewed document paths/digests; retained HTML IDs and current source digests; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 96,
+        "sourceRecords": 366,
+        "verifiedRecords": 364,
+        "retiredRecords": 2,
+        "localSourceLocations": 354,
+        "reviewedRelativePaths": 904,
+        "derivedSourceDigests": 107,
+        "currentBatchSourceDigests": 52,
+        "retainedHtmlPages": 6
+      },
+      "scope": "검색 5개 기능·영역·로컬 단위 문서·HTML과 생성 자료의 검사. 실제 기기 위치·제품 시험 재실행·외부 알림 수신 검증이 아니며, 출시 범위 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -15710,6 +15821,302 @@
         {
           "path": "business_logic/prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
           "sha256": "c46b3114183089cde5286ad6144a80b82aca6d0a537b26c34a54c0daed523a62"
+        }
+      ]
+    },
+    "search_workflows_20261122": {
+      "kind": "source_review",
+      "scope": "검색 5개 기능과 영역 요약의 현재 입구·유형별 공개·필터·정렬·최근 기기 기록·서버 저장·알림 집계를 해당 소스 함수와 대조. 시험 파일은 명시한 목적만 확인했으며 새 제품 시험·실제 위치·외부 수신 검증은 아님. 화면 명세의 낡은 항목은 현재 구현과 구분하고 원문은 이 업무 범위 밖이므로 수정하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
+          "sha256": "a19184b40b2200a3bbbea4c1eff47e904de38dc5233058988c612c6cc93b75bc"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/search/controller/SavedSearchController.java",
+          "sha256": "def8efb933e4774367a4df0a06dd9c92e47bc4f2bfbc0cc6e8ad7e86ef69d44b"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/search/controller/TrendingController.java",
+          "sha256": "a145314e57dfebc2a9f99b6b977557b3693aad9661a17eaefc26503e5b72f3ad"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/EventSearchService.java",
+          "sha256": "b654072bf05b66f8bb7a559104142b77b48e4a64ae3aea9a8e4ee47c9806547b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/repository/EventSearchRepository.java",
+          "sha256": "b115402413528bf212e8d79b43ae256c5c4067eda7c4e7983725c134ba303724"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/SearchSuggestionService.java",
+          "sha256": "e92fad6f9976eca5311db84101a5d2c5b3151584048e84c0ab4b19b16bd99d49"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/TrendingService.java",
+          "sha256": "3d669711eb2c305ff1e95f3afe511092792dbb31bff850e82e2c7113122c6d6b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/ClubSearchService.java",
+          "sha256": "b962aca78f69181b0df3b821e15772cfc3cd0e4a1bb7efc32e06fddd0c04b1d0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/PersonSearchService.java",
+          "sha256": "85e08aac5687b30cd4aa737b78ad34391151eb4860ddbda960fc15505a755d25"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/repository/PersonSearchQueryRepository.java",
+          "sha256": "1190084d223260f008d083a9e9bb40d7be0f054ea31e00d88837dcf926fb1ab6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/port/SearchEventAdapter.java",
+          "sha256": "c2e5654fbbef3a524a601ae4bedd6e3055b46e991e0b59ec3dd78c12fd899765"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/port/SearchClubAdapter.java",
+          "sha256": "b07aa34ad9bc6150623f35de48328426c4650df540ab39bc530cb4e8c86070dc"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/SavedSearchService.java",
+          "sha256": "6a4a2370b7b7681cc571c4d936994e43f9257d6ae7ab5eed1110464be4965cb3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/SavedSearchCriteriaCodec.java",
+          "sha256": "0abe5b476054bda5f63fc06d0dca5d726e95747ea193dad3b83bd359ada9ed6b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/SavedSearchNotifyWorker.java",
+          "sha256": "7dd08ad6a165eb25b8baf4738d116709f7c09267936d35b356ed4408b9db7f54"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/SavedSearchNotificationScheduler.java",
+          "sha256": "7b2f33160526a1c32072b13fece108b549eb7909cfad5df0444fabc553a0c9c2"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/param/EventSearchParam.java",
+          "sha256": "ed10d3ffd08b32997ccaf9d2075e6a41315ea3d7806aad166d4e7557f130bf1d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/param/UnifiedSearchParam.java",
+          "sha256": "4e9f426bd171b5ca82e5d33de123d2161b1f7375fce63060ebcfc15d49c79993"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/vo/SearchVo.java",
+          "sha256": "279b3d458e7447b0f24e074210564b8d5a0ccf4f4d63f3f7dc96b84be6273b45"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/vo/SuggestionVo.java",
+          "sha256": "4d81894a8f09980ac8239a92cfa5a94973964a045e1003c4cd14dd2eede868a0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/vo/FilterHintsVo.java",
+          "sha256": "f932e86bd5e89de8b660b50c3ec597a12b6b54ba2856401a1c50f376449b4dea"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/vo/PersonSearchVo.java",
+          "sha256": "f524e964f45494ddc1abac7b83bae62d3ce7b7ba20fc65ac7f344535b161716b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/vo/SavedSearchVo.java",
+          "sha256": "3024c465e3d1ecadf0e52621878344c9ccd6e003cae9cc1e715cdb7758f90211"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/param/SavedSearchParam.java",
+          "sha256": "b32ee90b400d23543e8e1ca7b1037f6cff526ed681c14e7f17ef479b97910555"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/util/GeoUtils.java",
+          "sha256": "0fea34ed12f7390d5b6ad2647923f8155a2d242a325403082925e0d4b134bd83"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubQueryRepository.java",
+          "sha256": "9c59e7a0d57a7a03ee04b19d3ed5d6fb7746cafe42469d090da771dbbf7d4665"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanService.java",
+          "sha256": "16616bfb18da0a9bbb7ff422b1f47a716581288a1a6c0b3640b9df5aa3c0c1c8"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/search_provider.dart",
+          "sha256": "29bed962a0130e50ce707cedd3d49640ede2e7d36f8221fa2f4593eb337674e8"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/search_typed_provider.dart",
+          "sha256": "3e98ca1a619cd682df79dba646926191e44c55a2f3785d501b2c2a622613cba4"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/search_suggest_provider.dart",
+          "sha256": "e237c5a60ee666b330b0b3bd82eb7e65f5655801d3bca9c2c46acc7e79877a59"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/search_history_provider.dart",
+          "sha256": "2db7263de3a757d3832c798f515bc0ed2fd790ef63d75bd92a5748fd38ee526d"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/search_filter_count_provider.dart",
+          "sha256": "7a937da921fb6d6422c85de864e0c0a80cf9b1bb191cbc00fff04006978f9445"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/saved_search_provider.dart",
+          "sha256": "50033970462d5655ee5ea38e5319a35d4083b55bca636a24bc91dbdc1442e959"
+        },
+        {
+          "path": "community_app/lib/domain/providers/search/trending_provider.dart",
+          "sha256": "54729d53d552a3d1b5e60764272e2e74d0a832ea6dc50719d0778c5cb003d73a"
+        },
+        {
+          "path": "community_app/lib/presentation/search/screens/search_screen.dart",
+          "sha256": "3a1886d86a925d3733329be799ce2196fd546b46db9df90804093dd453e928e1"
+        },
+        {
+          "path": "community_app/lib/presentation/search/screens/saved_search_screen.dart",
+          "sha256": "1194a11ede1fcb6485dbca939fbaa6c985748653ef5a75fb1166cd30c022c013"
+        },
+        {
+          "path": "community_app/lib/presentation/search/widgets/search_filter_sheet.dart",
+          "sha256": "eadf074a8bf0e0b1737e928efe3e5136a70d0c639d060e9a282b8846362013ec"
+        },
+        {
+          "path": "community_app/lib/presentation/search/widgets/filter_distance_slider.dart",
+          "sha256": "ddc2354a135eae9db938a29d2acf6ad2af1e2d7ac77fb78d3503735a2c34e398"
+        },
+        {
+          "path": "community_app/lib/presentation/search/widgets/filter_hint_chips.dart",
+          "sha256": "624613ad5785c6bca0900c923c327fc2318a6a1c893d3517dea7876cb55017c4"
+        },
+        {
+          "path": "community_app/lib/presentation/search/widgets/save_search_dialog.dart",
+          "sha256": "247cb77e8fc9205927d448e9fa186a3d7f7e3163f85a059978c6e8960357531b"
+        },
+        {
+          "path": "community_app/lib/presentation/search/widgets/saved_search_card.dart",
+          "sha256": "64fa08bc6b0136cd2ded01668b483d20e53a1c9d232d193c4a4f334729077241"
+        },
+        {
+          "path": "community_app/lib/presentation/search/utils/saved_search_sort.dart",
+          "sha256": "a76b062a1bccede19b18a81d48caf4dfe9e53a16d0e8eccf19690f4a4bd193fc"
+        },
+        {
+          "path": "community_app/lib/data/models/search/search_filter.dart",
+          "sha256": "53fad4f1baa8bf5d6e6120dae7b49cc44deda728c7dd47ab8d7a3850a34156aa"
+        },
+        {
+          "path": "community_app/lib/data/models/search/trending_keyword.dart",
+          "sha256": "2faeaf2891a900e5cfaa512c8b01ade6e6557159d4014c2dd371fd2bf814d9e1"
+        },
+        {
+          "path": "community_app/lib/data/repositories/search_repository.dart",
+          "sha256": "efbc0a5f679a261490e9743f93bda8f7b793137cca3b0171890f96cd25a73247"
+        },
+        {
+          "path": "community_app/lib/core/storage/search_history_storage.dart",
+          "sha256": "91161fbc85c9fec970f65a16164443595c7852f751598e2c8d1c287392f9fd06"
+        },
+        {
+          "path": "community_app/lib/core/storage/withdrawn_account_device_storage.dart",
+          "sha256": "a137dcd6e45985935592dd814649e7326a0d0b07908858c2a09711adb1bef2ec"
+        },
+        {
+          "path": "community_app/test/data/api/search_filter_contract_test.dart",
+          "sha256": "36fe559e96d3f6a91f847fa2dc0e501f8343a0f845943d94df81196b3cfed43a"
+        },
+        {
+          "path": "community_app/test/domain/providers/search/search_history_device_test.dart",
+          "sha256": "8dbbca4921bf251384a4eb6f46fc3aec6c313cd18d08e7ee41f39bb110ff537d"
+        },
+        {
+          "path": "community_app/test/unit/search_suggest_provider_test.dart",
+          "sha256": "32befc6832019fb60b346edd10dd2e70d935603740319cead35f10d6aeed5d19"
+        },
+        {
+          "path": "community_app/test/widget/search/search_typed_tabs_keep_results_test.dart",
+          "sha256": "7cc889350ee92d7217feeeb308b85e3d3ac985a69821f569ff95a77443a10bbb"
+        },
+        {
+          "path": "docs/ui-ux/screens/18-search.md",
+          "sha256": "eb6d1df626ae00d059cca61e8106766d3feaee4a9c05e9677c0ecf2b1528a644"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F05-01.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "state-current",
+          "recent-search-storage",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F05-02.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "recent-search-storage",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F05-03.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F05-04.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F05-05.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/domains/05-search.html": [
+          "sidebar",
+          "recent-search-storage",
+          "state-current",
+          "launch-strip"
+        ]
+      },
+      "reuses": [
+        "favorite_management_calendar_20261122",
+        "account_closure_20261122",
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/util/EventScope.java",
+          "sha256": "05fe1879bc701b17f35b3570df3617ce79e6c29680a7eecf4a140b44925e3041"
+        },
+        {
+          "path": "community_app/lib/core/storage/withdrawn_account_device_storage.dart",
+          "sha256": "a137dcd6e45985935592dd814649e7326a0d0b07908858c2a09711adb1bef2ec"
+        },
+        {
+          "path": "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart",
+          "sha256": "97ca9f0de94269cb16d3c682c518a779624d9382d4102c3a62ca452acfb20d5b"
+        },
+        {
+          "path": "community_app/lib/core/router/app_router.dart",
+          "sha256": "d4c3beeb804216276a25fdc12006ff1efe134ee0bf0cfe05499c16544bdeca47"
         }
       ]
     }

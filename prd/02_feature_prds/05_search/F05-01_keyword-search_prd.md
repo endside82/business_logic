@@ -1,102 +1,73 @@
-# F05-01. 키워드 검색 (이벤트/클럽/플랜/사람) PRD
+# F05-01. 키워드 검색 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버·앱 소스와 기존 시험 목적을 대조했다. 새 제품 시험·실기기·외부 알림 검증 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-사용자가 입력한 키워드와 페이징 파라미터로 **이벤트**, **클럽**, **플랜**, **사람** 네 탭을 검색한다. 사람 검색은 전역 사용자 디렉터리가 아니라 같은 클럽 또는 증거등급 공동참석이라는 공유 맥락 안의 사용자만 찾는 인증 전용 표면이다. 인증 사용자가 비어 있지 않은 키워드로 검색하면 Redis 검색 기록(F05-04)에도 저장된다.
+검색은 공통 상단 검색 입구에서 여는 독립 화면이다. 하단 두 번째 탭이 검색이라는 과거 설명은 현재 탐색 구조와 다르다. 같은 검색어로 이벤트·클럽·플랜·사람을 나눠 찾되, 플랜 탭은 마켓 공개 범위에 따르고 사람은 로그인한 회원의 관계 범위 안에서만 찾는다.
 
-### 2026-07-29 소스 재실측 — 사람 탭 계약
+검색 결과가 있다는 사실은 상세·참가·구매 권한을 보장하지 않는다. 결과 선택 뒤 각 상세 화면에서 현재 공개 상태와 권한을 다시 적용한다.
 
-| 항목 | 현재 계약 |
-|---|---|
-| Endpoint | `GET /api/v1/search/people?keyword&page&size` |
-| 인증 | 필수. `SearchController` 매핑이 public 경로에 걸려 있어도 principal이 null이면 명시적으로 401을 반환한다. |
-| 응답 | Spring `Page<PersonSearchVo>` / Flutter `PageResponse<PersonSearchVo>` |
-| 필드 | `userId`, `nickname`, `avatarUrl`, `sharedClub`, `coAttendedCount` |
-| 후보 우주 | 내 클럽의 현재 멤버 ∪ 증거등급 공동참석자. 전체 회원 검색이 아니다. |
-| DB 선필터 | 본인 제외, `UserStatus.NORMAL`, 양방향 차단 제외, `hideFromSearch=false` 또는 설정 row 없음 |
-| 키워드/정렬 | nickname 대소문자 무시 포함 검색, `nickname ASC, userId ASC` 안정 정렬 |
-| 공동참석 | 체크인 운영 이벤트는 양쪽 체크인, 무체크인 이벤트는 양쪽 `ATTENDING`이고 확정/이의중 노쇼가 아니어야 한다. |
+## 실제 입구와 검색 흐름
 
-`sharedClub`과 `coAttendedCount`는 page 후보를 정한 뒤 배치 조립하며, Flutter는 이를 `같은 클럽` / `함께한 모임 N회` 라벨로 렌더한다. 비로그인 사용자는 사람 탭에서 로그인 유도를 보고 API는 호출하지 않는다. `hideFromSearch`는 이 표면, 만난 사람, 사람 추천에 적용하지만 직접 프로필 URL까지 막지는 않는다.
+1. 상단 검색을 열면 검색 전 안내, 최근 검색어, 인기 모임 제목을 이용한 검색어 태그, 저장된 검색 입구를 볼 수 있다. 검색어가 전달된 진입은 그 값으로 검색한다.
+2. 공백만 있는 입력은 실행하지 않는다. 직접 검색, 최근 검색어, 추천 선택은 같은 검색 실행으로 이어지고 포커스와 추천 목록을 정리한다.
+3. 이벤트·클럽·플랜 조회를 시작하고, 로그인 상태일 때 사람 조회도 시작한다. 플랜 탭을 숨기는 조건과 플랜 요청을 보내는 조건은 현재 같지 않다.
+4. 선택한 결과 탭을 표시한다. 이벤트의 필터·정렬 변경은 이벤트 조회에만 적용한다.
+5. 각 탭은 20개씩 다음 페이지를 가져온다. 클럽·플랜·사람도 더 읽기를 지원하므로 이벤트만 무한 스크롤이라는 설명을 사용하지 않는다.
+6. 이벤트·클럽·플랜은 해당 상세로, 사람은 공통 사람 상세 창으로 이동한다. 돌아왔을 때의 목록 유지와 데이터 변경에 따른 재조회는 구분한다.
 
-별도 `GET /api/v1/users/search?nickname=`은 즐겨찾기 추가/운영 선택기용 최대 20건 전역 검색이다. 이 경로는 `hideFromSearch`와 `hideFromStrangers`를 모두 적용하며 F05 사람 탭과 후보·응답 계약이 다르다.
+## 결과 종류와 공개 조건
 
-실측 근거: `SearchController`, `PersonSearchService`, `PersonSearchQueryRepository`, `PersonSearchVo`, Flutter `search_api.dart`, `search_repository.dart`, `search_provider.dart`, `search_screen.dart`.
+| 결과 | 현재 검색 대상·순서 | 화면의 건수 |
+|---|---|---|
+| 이벤트 | 클럽 소속이 없는 독립 이벤트·정기모임 중 공개 또는 승인제 공개, 열린 상태, 숨김 제외. 로그인한 회원의 차단 호스트를 제외. 제목·설명에서 검색 | 서버의 전체 결과 수 |
+| 클럽 | 활동 중인 클럽의 이름·설명. 생성 시각 내림차순, 같은 시각이면 번호 내림차순 | 현재 읽은 목록 수 |
+| 플랜 | 발행된 플랜의 제목. 화면은 마켓 공개 범위에 따라 표시 | 현재 읽은 목록 수 |
+| 사람 | 본인·차단 대상·검색 숨김·활동 불가 계정을 제외. 같은 클럽 또는 함께 참석한 근거가 있는 사람의 닉네임. 닉네임·번호 오름차순 | 현재 읽은 목록 수 |
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+사람 검색의 함께 참석한 근거는 같은 이벤트의 체크인 기록을 우선한다. 체크인이 전혀 없는 이벤트는 두 사람의 참석 상태와 유효 노쇼 제외를 적용한다. 단순 신청·관심인 등록·데이팅 매칭을 사람 검색의 공개 관계로 바꾸지 않는다. 검색 숨김과 상세 프로필의 낯선 사람 숨김은 서로 다른 판정이다.
 
-- 하단 탭 2번째 "검색" → `/search`
-- 알림 → 트렌딩 키워드 칩 탭(F05-02)
-- 최근 검색어 항목 탭(F05-04)
-- 저장된 검색 실행(F05-05) → 키워드 + 필터 프리셋으로 자동 검색
-- 검색 결과 화면 내 자동완성 항목 탭(F05-02)
+## 정렬·재조회·실패·복귀
 
-## 2. 코드 위치
+이벤트 화면의 기본 정렬은 추천순이다. 현재 추천순은 시작 시각 오름차순·참여 인원 내림차순·생성 시각 내림차순·번호 내림차순이며 개인화 추천 점수순은 아니다. 최신순은 생성 시각이 아니라 시작 시각 내림차순이다. 인기순은 현재 참여 인원, 가격순은 가격을 기준으로 한다. 일반 검색에 일괄 미래 시작 조건이 있는 것은 아니다.
 
-계약의 정본은 코드다. 서버: `SearchController`, `SearchVo`, `SortType`, `ViewerContextService`, `PlanService`. 앱: `search_screen.dart`.
+같은 검색어의 재조회 중에는 기존 결과를 유지하고 검색어가 바뀌면 이전 목록을 비운다. 클럽·플랜·사람의 더 읽기 실패는 기존 목록을 유지하고 재시도를 제공한다. 사람 더 읽기에서 권한 없음·로그인 필요·찾을 수 없음 응답은 목록을 비우고 오류로 전환한다. 단순 네트워크 재시도와 공개 권한 회수를 같은 동작으로 설명하지 않는다.
 
-## 3. 전체 동작 흐름
+검색바의 입력 지우기·취소는 이미 실행한 검색 상태를 초기화하거나 이전 화면으로 돌아가는 행동과 다르다. 취소 뒤 포커스가 사라지면 이전 실행 검색어가 다시 입력칸에 맞춰질 수 있다. 계정 변경은 각 계정 범위의 검색 상태를 다시 만든다.
 
-### Provider 체인
-- `searchApiProvider` (`@Riverpod(keepAlive: true)`) → `Retrofit SearchApi`
-- `savedSearchApiProvider` → `Retrofit SavedSearchApi` (F05-05 사용)
-- `searchRepositoryProvider` → 두 API 모두 주입한 `SearchRepository` (`Result<T>` 래핑)
-- `searchNotifierProvider` (`@Riverpod(keepAlive: true)`, `class SearchNotifier extends _$SearchNotifier`) — 이벤트 검색 상태 + 무한 스크롤
-- `searchClubsNotifierProvider` / `searchPlansNotifierProvider` (`@riverpod`, auto-dispose) — 각 도메인 보조 검색
-- `searchHistoryNotifierProvider` — 검색 직후 invalidate (F05-04)
+## 최근 검색어와 저장된 검색
 
-### 검색 실행 시
-1. `_onSearch(keyword)` → `searchNotifierProvider.search(keyword)`
-   - 내부: `_filter.radiusKm != null` + lat/lng 비어 있으면 `locationPermissionNotifierProvider.getCurrentPosition()` 보충 (5분 캐시)
-   - `repo.searchEvents(...)` → `GET /api/v1/search?keyword=&categories=&...&page=0&size=20`
-   - `success` → `_items = pageResponse.content`, `_totalElements = pageResponse.totalElements`, `_hasMore = !pageResponse.last`
-2. `searchClubsNotifierProvider.search(keyword)` → `GET /api/v1/search/clubs?keyword=&page=0&size=20`
-3. `searchPlansNotifierProvider.search(keyword)` → `GET /api/v1/search/plans?keyword=&page=0&size=20`
-4. `searchHistoryNotifierProvider.refresh()` → `GET /api/v1/search/history` 재조회
+최근 검색어는 계정별 기기에 최대 20개를 저장한다. 검색 결과 조회와 기록 저장은 독립적이며 서버 Redis 검색 이력을 쓰지 않는다. 저장된 검색은 서버의 본인 목록으로 조건을 보관하는 별도 기능이다. 자세한 실패·삭제 범위는 [최근 검색어](F05-04_search-history_prd.md), [저장된 검색](F05-05_saved-search_prd.md)을 따른다.
 
-### 정렬 변경 / 필터 변경 시
-- `setSortType(sortType)` 또는 `setFilter(filter)` → `_reSearch()` (page=0부터 재호출). 키워드가 비어 있으면 호출하지 않는다.
+## 현재 제한과 확인 범위
 
-### 무한 스크롤
-- `loadMore()` → `_isLoadingMore` 가드 + `_hasMore` 체크 후 `_fetchPage(_currentPage + 1)` → `_items = [..._items, ...newPage.content]`
-- 클럽/플랜 탭은 화면 단에서 `loadMore()` 호출이 연결되어 있지 않으나(이벤트 `_scrollController`만 등록), Provider에는 구현되어 있다.
+| 판정 | 항목 | 영향·다음 확인 |
+|---|---|---|
+| Gap | 결과 건수 의미가 다름 | 이벤트 전체 건수와 다른 탭의 읽은 건수가 같은 종류의 총계처럼 보일 수 있음 |
+| Gap | 공통 위치의 필터와 적용 범위 | 클럽·플랜·사람을 보고 있어도 이벤트 필터만 바뀌므로 결과 탭별 안내가 필요 |
+| Gap | 숨긴 플랜 탭도 조회 | 검색 실행은 공개 범위와 별개로 플랜 공급자를 호출함. 탭 숨김을 요청 차단 증거로 쓰지 않음 |
+| Risk | 취소와 결과 초기화 | 입력 정리 뒤 이전 검색어·결과가 유지되는 현재 동작을 전체 검색 취소로 안내하지 않음 |
+| 미검증 | 실제 상세 왕복·권한 변경 | 현재 소스와 기존 시험 목적 대조이며 새 실기기·실계정 실행 결과는 없음 |
 
-## 4. 제품 규칙
+## 수용 기준과 검증 근거
 
-- 노출 범위: 이벤트는 모집 중(OPEN)만, 클럽은 활동 중(ACTIVE)만, 플랜은 공개된 상품만 검색된다. 사람 탭은 로그인이 필요하고 같은 클럽 또는 함께 참석한 사람으로 한정한다.
-- 정렬: 최신순(기본), 인기순(참가 인원 많은 순), 가격 낮은 순, 가격 높은 순, 추천순, 시작 빠른 순. 추천순은 아직 시작하지 않은 이벤트만 시간 근접, 인기, 최신 순으로 묶는다. 앱은 추천순으로 시작한다.
-- 한 번에 20건씩 불러온다. 거리 필터를 쓰는데 위치 권한이 없으면 위치 조건 없이 검색되고 따로 안내하지 않는다.
+- **AC-01 입구:** 공통 검색 입구와 검색어가 전달된 진입을 구분하고 하단 검색 탭을 전제하지 않는다.
+- **AC-02 입력:** 공백 검색은 실행하지 않고 직접 입력·최근 검색어·추천 선택이 제출한 검색어로 조회한다.
+- **AC-03 이벤트 공개:** 공개 분류·열린 상태·숨김·로그인 차단 호스트 제외가 목록과 전체 건수에 적용된다.
+- **AC-04 다른 유형:** 클럽은 활동 상태, 플랜은 발행 상태, 사람은 로그인·관계·숨김·차단을 적용한다.
+- **AC-05 건수:** 이벤트 전체 건수와 나머지 탭의 현재 읽은 건수를 구분한다.
+- **AC-06 정렬:** 추천·최신·인기·가격순의 실제 기준과 동률 순서가 일치한다.
+- **AC-07 재조회:** 같은 검색어를 다시 찾는 동안 앞 결과를 유지하고 다른 검색어는 앞 목록을 비운다.
+- **AC-08 더 읽기:** 각 탭의 다음 페이지·중복 요청 방지·실패 재시도와 사람 권한 회수 시 목록 제거를 확인한다.
+- **AC-09 결과 이동:** 유형별 상세로 이동하고 공개·참가 권한을 재판정하며 검색 화면으로 돌아온다.
+- **AC-10 상태 분리:** 계정 변경·검색 취소·최근 검색 기록 저장·플랜 탭 공개를 각각 구분한다.
 
-## 6. 상태/권한/시나리오 매트릭스
+기존 `search_typed_tabs_keep_results_test.dart`는 같은 검색어 재조회와 다른 검색어의 목록 처리를 다룬다. `search_screen_first_search_test.dart`, `search_clubs_refresh_after_close_test.dart`, 페이지 추가 조회 시험이 있다. 파일 존재·시험 목적 대조를 새 실행 통과로 기록하지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | Happy Path — 키워드로 이벤트 발견 | 로그인 완료, 홈 탭에 있음 | 이벤트 상세 화면으로 이동. `searchNotifierProvider`는 keepAlive로 결과 유지, 뒤로가기 시 동일한 결과 화면으로 복귀 |
-| S2 | 클럽/플랜 탭 전환 | "독서" 검색 직후 이벤트 탭 노출 | 클럽 상세 진입. (탭 전환 자체는 추가 네트워크 비용 없음) |
-| S3 | 무한 스크롤 (이벤트 탭만) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | 정렬 변경 | 시나리오 본문 참조 | 동일 키워드 + 새 정렬 결과. `_currentPage` = 0으로 리셋 |
-| S5 | 빈 결과 | 시나리오 본문 참조 | 사용자가 다른 키워드로 재시도 가능 |
-| S6 | 비로그인 검색 | 비로그인. `Routes.publicRoutes`에 `/search` 포함되어 접근 가능 | 비로그인이라 최근 검색어 영역만 비어있고 트렌딩/검색 결과는 정상 |
-| S7 | 네트워크 오류 — 이벤트 탭 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | 권한별 분기 — 거리 필터 + 위치 권한 거부 | 시나리오 본문 참조 | 사용자에게 별도 안내 없음 — UX 개선 여지 |
+## 코드 위치
 
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 검색 결과 거리 | 검색 결과의 거리 값은 비어 있고 앱도 거리를 보이지 않는다 | 없음 |
-| 해소됨 | 오류 분기 메모 | 개발 메모라 제품 판정 대상이 아니다 | 없음 |
-
-## 9. 수용 기준
-
-- **AC-01. Happy Path — 키워드로 이벤트 발견**: Given 로그인 완료, 홈 탭에 있음 When 사용자가 해당 흐름을 실행하면 Then 이벤트 상세 화면으로 이동. `searchNotifierProvider`는 keepAlive로 결과 유지, 뒤로가기 시 동일한 결과 화면으로 복귀
-- **AC-02. 클럽/플랜 탭 전환**: Given "독서" 검색 직후 이벤트 탭 노출 When 사용자가 해당 흐름을 실행하면 Then 클럽 상세 진입. (탭 전환 자체는 추가 네트워크 비용 없음)
-- **AC-03. 무한 스크롤 (이벤트 탭만)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. 정렬 변경**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 동일 키워드 + 새 정렬 결과. `_currentPage` = 0으로 리셋
-- **AC-05. 빈 결과**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 다른 키워드로 재시도 가능
-- **AC-06. 비로그인 검색**: Given 비로그인. `Routes.publicRoutes`에 `/search` 포함되어 접근 가능 When 사용자가 해당 흐름을 실행하면 Then 비로그인이라 최근 검색어 영역만 비어있고 트렌딩/검색 결과는 정상
-- **AC-07. 네트워크 오류 — 이벤트 탭**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. 권한별 분기 — 거리 필터 + 위치 권한 거부**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자에게 별도 안내 없음 — UX 개선 여지
+<!-- source-references:start -->
+서버 창구: `SearchController#searchEvents`, `SearchController#searchClubs`, `SearchController#searchPlans`, `SearchController#searchPeople`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->

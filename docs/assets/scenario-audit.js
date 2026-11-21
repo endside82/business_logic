@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,084개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,081개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1084,
+    "documentedScenarioItems": 1081,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 50,
+    "directlyLinkedAutomatedTests": 53,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 50,
-    "directlyLinkedJourneys": 45,
+    "automatedScenarioReferences": 53,
+    "directlyLinkedJourneys": 44,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 45,
+    "journeyScenarioReferences": 44,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 48,
-    "partialEvidenceChain": 35,
-    "definitionOnlyEvidence": 92,
-    "traceMarkers": 361,
-    "verifiedTraceRecords": 359,
+    "partialEvidenceChain": 37,
+    "definitionOnlyEvidence": 90,
+    "traceMarkers": 366,
+    "verifiedTraceRecords": 364,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -5069,27 +5069,100 @@ window.SCENARIO_AUDIT = {
       "id": "F05-01",
       "domain": "검색",
       "name": "키워드 검색",
-      "scenarioCount": 12,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-01_keyword-search/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-01_keyword-search/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F05-01:1",
+            "label": "GET /api/v1/search",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "controller": "SearchController",
+                "method": "searchEvents",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/search",
+                "targetLine": 47,
+                "methodLine": 48
+              }
+            ]
+          },
+          {
+            "id": "F05-01:2",
+            "label": "GET /api/v1/search/clubs",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "controller": "SearchController",
+                "method": "searchClubs",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/search/clubs",
+                "targetLine": 56,
+                "methodLine": 57
+              }
+            ]
+          },
+          {
+            "id": "F05-01:3",
+            "label": "GET /api/v1/search/plans",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "controller": "SearchController",
+                "method": "searchPlans",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/search/plans",
+                "targetLine": 63,
+                "methodLine": 64
+              }
+            ]
+          },
+          {
+            "id": "F05-01:4",
+            "label": "GET /api/v1/search/people",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/SearchController.java",
+                "controller": "SearchController",
+                "method": "searchPeople",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/search/people",
+                "targetLine": 72,
+                "methodLine": 73
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 3,
         "featureMarkerCount": 2,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 3,
+        "files": [
+          "community_app/test/domain/providers/search/search_clubs_refresh_after_close_test.dart",
+          "community_app/test/widget/search/search_screen_first_search_test.dart",
+          "community_app/test/widget/search/search_typed_tabs_keep_results_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/calendar/calendar_availability_guidance_cards_test.dart",
           "community_app/test/presentation/calendar/recurring_rule_load_and_copy_test.dart"
@@ -5103,7 +5176,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,
@@ -5113,18 +5186,18 @@ window.SCENARIO_AUDIT = {
       "id": "F05-02",
       "domain": "검색",
       "name": "자동완성 서제스트",
-      "scenarioCount": 12,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-02_autocomplete-suggest/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-02_autocomplete-suggest/backend.md",
-        "total": 1,
-        "verified": 1,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
         "entries": [
           {
@@ -5143,6 +5216,23 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 93
               }
             ]
+          },
+          {
+            "id": "F05-02:2",
+            "label": "GET /api/v1/search/trending",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/search/controller/TrendingController.java",
+                "controller": "TrendingController",
+                "method": "getTrending",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/search/trending",
+                "targetLine": 25,
+                "methodLine": 26
+              }
+            ]
           }
         ]
       },
@@ -5152,27 +5242,25 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 1,
         "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_search_suggestion_test.dart"
+          "community_app/test/unit/search_suggest_provider_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_search_suggestion_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 3,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_search_suggestion_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_search_suggestion_test.dart",
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
           "community_app/scripts/e2e/run_p66_search_suggestion_matrix.sh"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -5182,13 +5270,13 @@ window.SCENARIO_AUDIT = {
       "id": "F05-03",
       "domain": "검색",
       "name": "검색 필터 적용",
-      "scenarioCount": 8,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-03_search-filter/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-03_search-filter_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-03_search-filter/backend.md",
@@ -5233,11 +5321,13 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/data/api/search_filter_contract_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -5248,7 +5338,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -5258,13 +5348,13 @@ window.SCENARIO_AUDIT = {
       "id": "F05-04",
       "domain": "검색",
       "name": "최근 검색어",
-      "scenarioCount": 12,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-04_search-history/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-04_search-history_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-04_search-history/backend.md",
@@ -5274,11 +5364,14 @@ window.SCENARIO_AUDIT = {
         "entries": []
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/domain/providers/search/search_history_device_test.dart",
+          "community_app/test/widget/search/search_screen_recent_keywords_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -5289,7 +5382,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -5299,13 +5392,13 @@ window.SCENARIO_AUDIT = {
       "id": "F05-05",
       "domain": "검색",
       "name": "저장된 검색",
-      "scenarioCount": 9,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/05_search/F05-05_saved-search/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/05_search/F05-05_saved-search_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/05_search/F05-05_saved-search/backend.md",

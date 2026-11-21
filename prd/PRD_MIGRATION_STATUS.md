@@ -272,11 +272,11 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F04-16 | 클럽 | [F04-16_subscription_prd.md](02_feature_prds/04_club/F04-16_subscription_prd.md) | `F04-16_subscription` | 실사 기반 전환본 | 5 | 8 |
 | F04-17 | 클럽 | [F04-17_club-demographics_prd.md](02_feature_prds/04_club/F04-17_club-demographics_prd.md) | `source-first` | 신규 PRD | 4 | 1 |
 | F04-18 | 클럽 | [F04-18_club-reputation_prd.md](02_feature_prds/04_club/F04-18_club-reputation_prd.md) | `source-first` | source-first 구현 확인 | 3 | 1 |
-| F05-01 | 검색 | [F05-01_keyword-search_prd.md](02_feature_prds/05_search/F05-01_keyword-search_prd.md) | `F05-01_keyword-search` | 실사 기반 전환본 | 3 | 2 |
-| F05-02 | 검색 | [F05-02_autocomplete-suggest_prd.md](02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md) | `F05-02_autocomplete-suggest` | 실사 기반 전환본 | 1 | 2 |
-| F05-03 | 검색 | [F05-03_search-filter_prd.md](02_feature_prds/05_search/F05-03_search-filter_prd.md) | `F05-03_search-filter` | 실사 기반 전환본 | 2 | 2 |
-| F05-04 | 검색 | [F05-04_search-history_prd.md](02_feature_prds/05_search/F05-04_search-history_prd.md) | `F05-04_search-history` | 실사 기반 전환본 | 3 | 0 |
-| F05-05 | 검색 | [F05-05_saved-search_prd.md](02_feature_prds/05_search/F05-05_saved-search_prd.md) | `F05-05_saved-search` | 실사 기반 전환본 | 5 | 4 |
+| F05-01 | 검색 | [F05-01_keyword-search_prd.md](02_feature_prds/05_search/F05-01_keyword-search_prd.md) | `F05-01_keyword-search` | 실사 기반 전환본 | 4 | 5 |
+| F05-02 | 검색 | [F05-02_autocomplete-suggest_prd.md](02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md) | `F05-02_autocomplete-suggest` | 실사 기반 전환본 | 2 | 4 |
+| F05-03 | 검색 | [F05-03_search-filter_prd.md](02_feature_prds/05_search/F05-03_search-filter_prd.md) | `F05-03_search-filter` | 실사 기반 전환본 | 2 | 6 |
+| F05-04 | 검색 | [F05-04_search-history_prd.md](02_feature_prds/05_search/F05-04_search-history_prd.md) | `F05-04_search-history` | 실사 기반 전환본 | 0 | 4 |
+| F05-05 | 검색 | [F05-05_saved-search_prd.md](02_feature_prds/05_search/F05-05_saved-search_prd.md) | `F05-05_saved-search` | 실사 기반 전환본 | 5 | 6 |
 | F06-01 | 결제 & 지갑 | [F06-01_wallet-main_prd.md](02_feature_prds/06_payment/F06-01_wallet-main_prd.md) | `F06-01_wallet-main` | 실사 기반 전환본 | 1 | 0 |
 | F06-02 | 결제 & 지갑 | [F06-02_point-charge_prd.md](02_feature_prds/06_payment/F06-02_point-charge_prd.md) | `F06-02_point-charge` | 실사 기반 전환본 | 5 | 0 |
 | F06-03 | 결제 & 지갑 | [F06-03_transaction-history_prd.md](02_feature_prds/06_payment/F06-03_transaction-history_prd.md) | `F06-03_transaction-history` | 실사 기반 전환본 | 3 | 4 |
