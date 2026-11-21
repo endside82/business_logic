@@ -2742,7 +2742,7 @@
       "evidence": [
         "transport_policy_20261122"
       ],
-      "reviewedSha256": "3bc61d02ed99a5568190d6028ec87c6e3c0bd68c729a9d62af01de3a919b5ff4"
+      "reviewedSha256": "f05046fc1223724fed5360dfa51c2072f6a9036060aba04fdc1e05d3a3f76c07"
     },
     {
       "path": "docs/features/F03-15.html",
@@ -2763,9 +2763,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2385b4015f953bd6e30f09d19bdb50bb71ea9167afb7c8e198412d6ef0101fd5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "bus_allocation_20261122"
+      ],
+      "reviewedSha256": "408a5c39fc9d04baf7a1f937d1712fc7dcd51f29e06ab171463bd5fc362f36da"
     },
     {
       "path": "docs/features/F03-17.html",
@@ -4921,7 +4924,8 @@
       "evidence": [
         "demographics_20261122",
         "transport_policy_20261122",
-        "carpool_20261122"
+        "carpool_20261122",
+        "bus_allocation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5612,7 +5616,7 @@
       "evidence": [
         "transport_policy_20261122"
       ],
-      "reviewedSha256": "5a12f236b4c3791d5f1de907af168d6b461eafc6c597e5791b61c6a68f61be9f"
+      "reviewedSha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
@@ -5633,10 +5637,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "6f7f7185864446c60f77e452e6254159085cb418176ba0bbd3d949c4dbe4860b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "bus_allocation_20261122"
+      ],
+      "reviewedSha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
@@ -7590,7 +7596,8 @@
       "disposition": "partially_updated",
       "evidence": [
         "transport_policy_20261122",
-        "carpool_20261122"
+        "carpool_20261122",
+        "bus_allocation_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -14735,6 +14742,33 @@
         }
       },
       "scope": "지원과 배정의 분리·승인 후 운전자/동승 자리·개별 이동·운행 취소/전원 교체·개인 장소·고지/신고를 소스 대조. 목록 해당 행만 부분 갱신. 새 제품 시험·모든 참가 종료 연동·실제 기기·운영·법률 검토 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-16 and F03-14 clarification: source-reference sync/11 tests; scenario audit; reviewed paths/derived digests; scoped digests; HTML IDs; outbound/incoming fragments; git diff --check",
+      "result": {
+        "status": "PASS",
+        "newlyReviewedDocuments": 2,
+        "recheckedDocuments": 2,
+        "partialDocuments": 2,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 105,
+        "sourceRecords": 429,
+        "verifiedRecords": 427,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1625,
+        "derivedSourceDigests": 206,
+        "uniqueSourceAndCanonicalDigests": 57,
+        "retainedHtmlPages": 2,
+        "markdownFragments": 9,
+        "incomingMarkdownAnchors": 6,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 343,
+          "historical_retained": 33,
+          "pending": 626
+        }
+      },
+      "scope": "버스·배정·좌석전환·이력·신고 소스 대조와 정책 폼의 실제 동작 불일치를 반영. 공통 설정 근거는 최신 범위로 갱신하되 이후 그룹을 이전 그룹 재사용 대상으로 돌리지 않도록 기록 순서를 제한. 새 제품 시험·실DB 적용·실제 동시성·실차·휴대전화·푸시 확인 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -20353,7 +20387,7 @@
         {
           "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportAllocationService.java",
           "sha256": "f426f33751c179432b3746086f15f803abf45ebb42f1d46c57c495dd50196b28",
-          "reviewScope": "moveSelf 및 apply 중 본인 대상·참가자 변경 정책·기존 차량 claimPolicy 조건. 배정 알고리즘 전체 검수 아님."
+          "reviewScope": "moveSelf 및 apply 57–74/125–178의 첫 직접 잡기·배정 후 변경·조건부 본인 비우기·기존/목적 차량 claimPolicy 조건. 배정 알고리즘 전체 검수는 bus 그룹."
         },
         {
           "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/EventTransportService.java",
@@ -20388,7 +20422,7 @@
         {
           "path": "community_app/lib/presentation/event/screens/transport_coordination_screen.dart",
           "sha256": "c2f53e7b2702bf8d65cb196be79497a2846149afcf12d417f80b5e9dfc21f5e8",
-          "reviewScope": "함께 이동 최초 로딩/오류/재시도/새로고침·조율 중단 안내·관리 설정 입구 및 설정 전용 화면. 실제 렌더 검수 아님."
+          "reviewScope": "함께 이동 최초 로딩/오류/재시도·중단 안내·관리 설정과 전용 화면 및403–436 첫 잡기/본인 변경/비우기 입구. 실제 렌더 검수 아님."
         },
         {
           "path": "community_app/lib/presentation/event/widgets/transport_coordination_forms.dart",
@@ -20423,7 +20457,7 @@
         {
           "path": "community_app/lib/data/models/event/transport_coordination_vo.dart",
           "sha256": "2cd87dda78ea5fe87ef9d5b0ef5b5e351dc93d5aabc143432ad8e34dda90a31a",
-          "reviewScope": "overview 필드와 enabled/OPEN 기반 canEdit."
+          "reviewScope": "overview 필드·enabled/OPEN 기반 canEdit 및552–588 selfCanEnter/selfCanRelease의 첫 잡기/이동/비우기 조건."
         },
         {
           "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
@@ -20492,7 +20526,7 @@
       "canonicalSources": [
         {
           "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
-          "sha256": "5a12f236b4c3791d5f1de907af168d6b461eafc6c597e5791b61c6a68f61be9f"
+          "sha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
         }
       ],
       "retainedHtmlIds": {
@@ -20753,6 +20787,225 @@
           "id": "F03-15:10",
           "change": "added",
           "reason": "현재 지원·의사·운행 취소·종료·교체·신고 창구 연결"
+        }
+      ]
+    },
+    "bus_allocation_20261122": {
+      "kind": "source_review",
+      "scope": "F03-16 버스 등록·자리 채우기/배정 후 변경 정책·첫 잡기/비우기·일괄배정·물리 좌석 분리·도면 전환/이력·자리 신고를 대조. F03-14의 고정 안내와 실제 동작 차이도 보완. 새 제품 시험·DB적용·실제 동시성·실차/기기/푸시 확인 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportLayoutController.java",
+          "sha256": "d26b905131c83da3d9d924209bb75c30e20a9f9bad16a6909f890a8ab43b583b",
+          "reviewScope": "차량 좌석 방식 변경 POST와 이력 GET·응답 타입·출시 범위."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportLayoutService.java",
+          "sha256": "512109a7e2ee76417a816967cf110625d42d536bc224e409cf6ae78cd2bd2c63",
+          "reviewScope": "change/history·현재 차량/자격/요청형태/도면 잠금·활성/확인/차종/개정·geometry·승객 전원 물리 대응·사람별 전후 이력·일괄 배정 위임. 실차 검증 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java",
+          "sha256": "26cec05d946f5f43e0deefab0c03529f697dc3bc4e8ef5c82038528c04e1e9f7",
+          "reviewScope": "verified·seats 공개 조회의 목록/좌석표 반환 연결. 전체 관리자 기능은 후속 별도 범위."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/VehicleLayoutQueryService.java",
+          "sha256": "29a4b68b41e6cb8b9ca626e56888eab5c39439f2a7fba550e0a8c4bd6db7401f",
+          "reviewScope": "verified의 활성/확인/차종 필터·SELF 거절; seats의 번호별 목록."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportBusParam.java",
+          "sha256": "7da1410edad044427990bbb276eabdb2044f115e46a609cce91b201ef5106ff3",
+          "reviewScope": "승객 정원·선택 경로/안내/비용·claimPolicy 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportAllocationParam.java",
+          "sha256": "b46ed7b4fd680f9a9cc119e0cfedd2f479ce949724cfefee229b0999785cad59",
+          "reviewScope": "assignments/vehicles 빈 목록 기본값·필수 사유는 입력 검증에서 판정."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportPersonAssignmentParam.java",
+          "sha256": "8750beb1fe8ef476c213cda89c695a4b3ba7509cd2dec6c848536a2340157bc6",
+          "reviewScope": "대상회원·목적차량·물리좌석·미배정의사·미정의 필드 거절."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportVehicleEditParam.java",
+          "sha256": "77c480c1d251fd4004bd41ce216dd0feabb3f644290e9e06669f7ec96a609f17",
+          "reviewScope": "차량 정원/경로/안내/비용/정책 수정 계약·미정의 필드 거절."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/param/TransportLayoutChangeParam.java",
+          "sha256": "e2727d0b4b3d994da2ad5f466cff3fda97a7cb375877e9a142e54204f18e35d7",
+          "reviewScope": "상속된 일괄배정과 좌석방식·도면번호/개정·정원·물리승객목록 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/vo/TransportLayoutChangeVo.java",
+          "sha256": "ae8a78aac7f610ce380343a3352dd9a32027995156d557efed131e9b6a9e4101",
+          "reviewScope": "전후 좌석방식·도면·정원·기존배정버전·행위자·사유·개정·사람별 이력 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/port/EventVehicleAttendanceAdapter.java",
+          "sha256": "27434b690effe8f26dc502e2e1b588c885c0a7d67ee33e237c14a8a6083338d3",
+          "reviewScope": "isAttending은 정확히 ATTENDING 행 존재. 대기까지 보는 별도 함수와 구분."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_layout_wizard.dart",
+          "sha256": "89632a2374fd2e25ba8b2b618212fc1202b874d66f370f7d945ecf5120d83d86",
+          "reviewScope": "43–83 모드/카탈로그/좌석표·후속 폼,180–290 출처/실차 확인·아직 저장 전·재시도·정원/권한검사 후 탑승자 조정."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_vehicle_diagram.dart",
+          "sha256": "071690e9ce2dacbbf88fb6157d18b1c848a0a7511d38a26eb6d2a4b47b2e737b",
+          "reviewScope": "23–87 세부좌석미배정·실제번호대응·운전석/통로/사용불가·숨김이름·읽기전용·오류재시도."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_layout_history.dart",
+          "sha256": "6adc6de59e659a107edac805682c5889c1b595efa20672603c2d1466853cf8f8",
+          "reviewScope": "25–98 전후 상태/차량/세부좌석·날짜/정원/사유/회원별 결과·빈목록/오류 재시도."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/transport/service/TransportAllocationServiceTest.java",
+          "sha256": "00c4985307467b84ff8604d59f79326ea5877b9b788d9be1f74f6f897006e7d0",
+          "reviewScope": "78–163 첫잡기/전담거절/차단/이동정책/자리비우기/타인·개별이동 우회 거절의 선택 단언. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+          "sha256": "c9fd3b16f1bb24cb7ff9a0e606f3cf16c97d24035e3a7288d236dd5ebb15502e",
+          "reviewScope": "addBus/adjust/moveSelf 실제 경로·입력·공통 명령 반환."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportPreferencesService.java",
+          "sha256": "ebe1b30142722a1a9c4b360afd7248a9985f7ca504a5beda21a2bdbacf6231d6",
+          "reviewScope": "addBus 98–131 주최자/상세/OPEN/사용·확정 버스 상한·정원/비지정/기사 제외·기본 HOST_ASSIGNS 생성."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "addBusLimit의 확정 BUS 10대 미만과 transportCommandOpen의 OPEN/사용 조건."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportAllocationService.java",
+          "sha256": "f426f33751c179432b3746086f15f803abf45ebb42f1d46c57c495dd50196b28",
+          "reviewScope": "adjust/moveSelf/apply 전체 변경 흐름: 자격·claimPolicy·첫 잡기/변경/비우기·정원/물리 좌석·차단·최종 상태 검사·기존 자리 해제 후 배정·비활성 칸 보존·기록. 새 동시성 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportCommandGate.java",
+          "sha256": "e370c154011036424e74731ed8373aacc63c307b8d5c58a17da4eca6a89084aa",
+          "reviewScope": "transport_policy 그룹 동일 SHA의 모임 잠금·개정·같은 요청 확인·한 명령 저장 근거 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportCommandInputCheck.java",
+          "sha256": "9ad8cfcdee48f645714feb504c61de44b944b2ab22792fb444729b30fe20f560",
+          "reviewScope": "버스1~100·배정200/차량100·사유500·물리/차량 입력·도면 전환 입력 조건."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportReallocationService.java",
+          "sha256": "c8358928eee2e4920d480f0aa3d3766ab643e0540674b22f8b91247a248b5b0f",
+          "reviewScope": "eligibleUsers의 실제 참석·호스트/활성 공동호스트·종료 계정 제외; carpool 그룹 취소 뒤 재배정 근거 재사용."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventVehicleReportController.java",
+          "sha256": "0df6235b805b49477138543a83cb6aca9ca73b24c32587f74510bd5be0bc7572",
+          "reviewScope": "reportSeat의 자리 식별자 경로·HTTP201 ReportVo·안전 출구. carpool 대조에서 읽은 동일 SHA 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/EventVehicleReportService.java",
+          "sha256": "05b6241f1e6440eacaa826a597c1071f8dd9deefcac0b6b9656a77757af81c14",
+          "reviewScope": "reportSeat 68–111 실제 참석·모임/차량/자리·점유자·본인/예상대상 변경 조건. 신고 처리/관리자 결과 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/V1__init.sql",
+          "sha256": "65cd46eb4295dc2bede2b38643ee2339a9d044c8a1bdfa78a52d7f3eea7fb289",
+          "reviewScope": "event_vehicle_seat 1791–1817의 내부자리/모임회원/물리자리 유일성·비활성 비점유·차량/모임 FK 정의. 적용 DB 확인 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_coordination_forms.dart",
+          "sha256": "2f94e4a2e0a74b2a5284a28d2e0efb288d3f135b733622a394a0627adf03fd2c",
+          "reviewScope": "버스 공용 입력과 기본 hostAssigns·정원/비용·정책 필드, 본인 비우기 명령; policy폼의 실제 동작과 다른 고정 문구."
+        },
+        {
+          "path": "community_app/lib/data/models/event/transport_coordination_vo.dart",
+          "sha256": "2cd87dda78ea5fe87ef9d5b0ef5b5e351dc93d5aabc143432ad8e34dda90a31a",
+          "reviewScope": "552–588 selfCanEnter/selfCanRelease의 첫 잡기·이미 배정·지원 대기·구형 확인·차량 정책 판정."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/transport_coordination_screen.dart",
+          "sha256": "c2f53e7b2702bf8d65cb196be79497a2846149afcf12d417f80b5e9dfc21f5e8",
+          "reviewScope": "403–436 첫 잡기/본인 변경/비우기, 차량 카드 좌석방식·교체·이력 입구. 실제 렌더 검수 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/transport_assignment_form.dart",
+          "sha256": "035f4c2dbb33681bc156cb99b9c28c27b7f19a9dac97607c911e70f4e1f06a04",
+          "reviewScope": "175–193 다른 도면/비지정 전환의 물리번호 초기화,908–1040 최종정원/물리중복/사유·도면전환 요청,변경명령 연결. 전 폼/구형 정리 화면 감사 아님."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/transport_coordination_provider.dart",
+          "sha256": "10d32aa1a2ab7323f883fa5b95200e3ebf108f8a14f9d60f6b0037d9324caaf6",
+          "reviewScope": "verifiedTransportLayouts/transportLayoutHistory와 공통 수정/조회 갱신 재사용."
+        },
+        {
+          "path": "community_app/lib/data/api/transport_coordination_api.dart",
+          "sha256": "ff85dff71c1ae3465c334c79f453b635394f43b416a61284dfcaff9c31192167",
+          "reviewScope": "addBus/adjust/moveSelf/changeLayout/history 연결. transport_policy/carpool 동일 SHA 근거 재사용."
+        },
+        {
+          "path": "community_app/test/widget/event/transport_coordination_screen_test.dart",
+          "sha256": "933f0ba07f7342bbb416084ff872c848bd09d28ee188306af4b31e39a8554903",
+          "reviewScope": "546–613 차량별 전환 내부배정미전송·다른 도면 옛번호미이식/개정전달 단언. 실행 안 함."
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "carpool_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
+          "sha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-16.html": [
+          "sidebar",
+          "launch-strip",
+          "transport-notice-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-16:1",
+          "change": "added",
+          "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
+        },
+        {
+          "id": "F03-16:2",
+          "change": "added",
+          "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
+        },
+        {
+          "id": "F03-16:3",
+          "change": "added",
+          "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
+        },
+        {
+          "id": "F03-16:4",
+          "change": "added",
+          "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
+        },
+        {
+          "id": "F03-16:5",
+          "change": "added",
+          "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
+        },
+        {
+          "id": "F03-16:6",
+          "change": "added",
+          "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
         }
       ]
     }

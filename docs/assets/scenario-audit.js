@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 52,
     "definitionOnlyEvidence": 84,
-    "traceMarkers": 423,
-    "verifiedTraceRecords": 421,
+    "traceMarkers": 429,
+    "verifiedTraceRecords": 427,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3523,20 +3523,121 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-16:1",
+            "label": "POST /api/v1/events/{eventId}/transport/coordination/buses — 버스 등록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "addBus",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/buses",
+                "targetLine": 48,
+                "methodLine": 49
+              }
+            ]
+          },
+          {
+            "id": "F03-16:2",
+            "label": "POST /api/v1/events/{eventId}/transport/coordination/assignments — 주최자 일괄 조정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "adjust",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/assignments",
+                "targetLine": 54,
+                "methodLine": 55
+              }
+            ]
+          },
+          {
+            "id": "F03-16:3",
+            "label": "POST /api/v1/events/{eventId}/transport/coordination/my-assignment — 본인 배정·비우기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportCoordinationController.java",
+                "controller": "TransportCoordinationController",
+                "method": "moveSelf",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/my-assignment",
+                "targetLine": 60,
+                "methodLine": 61
+              }
+            ]
+          },
+          {
+            "id": "F03-16:4",
+            "label": "POST /api/v1/events/{eventId}/transport/coordination/vehicles/{vehicleId}/layout — 좌석 방식 변경",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportLayoutController.java",
+                "controller": "TransportLayoutController",
+                "method": "change",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/vehicles/{vehicleId}/layout",
+                "targetLine": 21,
+                "methodLine": 22
+              }
+            ]
+          },
+          {
+            "id": "F03-16:5",
+            "label": "GET /api/v1/events/{eventId}/transport/coordination/vehicles/{vehicleId}/layout-changes — 좌석 방식 변경 기록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/TransportLayoutController.java",
+                "controller": "TransportLayoutController",
+                "method": "history",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/transport/coordination/vehicles/{vehicleId}/layout-changes",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          },
+          {
+            "id": "F03-16:6",
+            "label": "POST /api/v1/events/{eventId}/vehicles/{vehicleId}/seats/{seatNo}/report — 자리 점유자 신고",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/EventVehicleReportController.java",
+                "controller": "EventVehicleReportController",
+                "method": "reportSeat",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/vehicles/{vehicleId}/seats/{seatNo}/report",
+                "targetLine": 38,
+                "methodLine": 39
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 1,
         "files": [
-          "community_api/domain/src/test/java/com/endside/community/event/transport/service/EventVehicleServiceTest.java",
-          "community_app/test/widget/event/vehicle_seat_grid_test.dart",
-          "community_app/test/widget/event/vehicle_seat_occupant_name_test.dart"
+          "community_app/test/widget/event/transport_coordination_screen_test.dart"
         ],
         "markerCandidateFiles": []
       },
