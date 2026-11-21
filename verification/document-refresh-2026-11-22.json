@@ -2698,9 +2698,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d447573e498ce51aa4447e27a5ce7ab08ba97fec68dd4862414268276dade88f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "9510f79cc27ebc41c3b63a2a667234a769998cb6fef13b7bf2aecccf4a38177a"
     },
     {
       "path": "docs/features/F03-12.html",
@@ -2708,9 +2711,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b2082f8379b3225a7fdea7682065773fe58e2b1c76a3316bc4b9874b0c2802b8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "bd12f9cef6f48e2ee2ea45d2d041869c78ca60ce94c933c746c0484d3e7efe79"
     },
     {
       "path": "docs/features/F03-13.html",
@@ -5543,10 +5549,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "85c0cdcb019237162436d643d0a2563de07ec1e5864ed9fe3c48833b20a7dff6",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "be3f4a15722488f755ac41feefd9e409b29558772a4b29ea29c7fc522fffd88d"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
@@ -5554,10 +5562,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "ab1f6ec33da234aeaee8a4685f5aef7cc4c01e1aa00082027e9a77a51bd80e5b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "1dcea9c3094c0a44429a57ee6afc18ec4ba4d359b4718eb62ed01ff6b799404f"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
@@ -9031,9 +9041,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f8d702f5e94ad6c31b1882902c3a0fcef2b833305562f904dfc9a13485663191",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "2111c835e23aac188cba584998ac2222be0a1247a6680b9595c3e030f51907e9"
     },
     {
       "path": "units/03_event/F03-11_wishlist/diagrams.md",
@@ -9041,9 +9054,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "396f64f4acdf1757fa6c4b8f4a7d09015f2c2c77f3ef8a8ce88509c1fecaa710",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "b13764d5014a50aca10e9491795ed9f186df116504b57a92e226d4e01686cd3f"
     },
     {
       "path": "units/03_event/F03-11_wishlist/frontend.md",
@@ -9051,9 +9067,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e4a65d6b33d86916bc74f686f720e804f0bf1eb6aaff256358d7a6e6dcca4825",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "17a9d92ceaace99cc0f5363d75dc565cc188bf1259e812e326b85a2bb8fad3b8"
     },
     {
       "path": "units/03_event/F03-11_wishlist/scenarios.md",
@@ -9061,9 +9080,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "09e97d96f859f07539b69e2f49328d9ecb49a5b875781f961464d105c4aef9a1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "9b319e725bb9b1a0b98f575017bfa3351d98c657bd1c3f72cceab342b6753cbd"
     },
     {
       "path": "units/03_event/F03-12_my-events/backend.md",
@@ -9071,10 +9093,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9a09442d5c23305889cf307d5a7e12495ba17d22387f8b3e3750bb923465c942",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "c3d118f54f4df2716b969eb1635e1b76aa4e2e2956cc73caf5ada011d3a3015c"
     },
     {
       "path": "units/03_event/F03-12_my-events/diagrams.md",
@@ -9082,9 +9106,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a80ab96699141a0793f5d5ad239c7e381943bf3c2e6c06a6b32c28f41b785c3c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "89f6301d245613a3c1abd98d029c017649afad8fd6d01c8b418dd797f3d8557c"
     },
     {
       "path": "units/03_event/F03-12_my-events/frontend.md",
@@ -9092,9 +9119,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ccb09b7e7c32f05d042c138927d6895ab9510a2fc71db7f26057aa44bf4d4386",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "f5be37a79c541a1766dbbcaa27243091644054b41367c548af952491f49e9880"
     },
     {
       "path": "units/03_event/F03-12_my-events/scenarios.md",
@@ -9102,9 +9132,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3fbbb3c859bedfb67682a94b2c7ac30022429018584484fac374ebb25dd80e5c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wishlist_my_events_20261122"
+      ],
+      "reviewedSha256": "31a424c210083551c3dc7a7824c2ccd46f1bc42181fb4dd916a9c488db8dad50"
     },
     {
       "path": "units/04_club/00_overview.md",
@@ -14535,6 +14568,29 @@
         }
       },
       "scope": "이벤트 사진첩 공개 흐름·파일 번호 등록·다중 부분 실패·초안/재시도·신고 보존·앨범 상태·부분 정리·현재 앱 차이의 문서 검증. 공개 API 창구 11개를 추가했다. 기존 모의 제품 시험 단언은 읽었고 새 제품 시험·실DB·저장소·실제 화면·배치·알림·적립 검증은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-11/F03-12: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; scoped source/canonical digests; original HTML IDs; incoming Markdown anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 12,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 100,
+        "sourceRecords": 406,
+        "verifiedRecords": 404,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1527,
+        "derivedSourceDigests": 197,
+        "currentSourceAndCanonicalDigests": 52,
+        "retainedHtmlPages": 2,
+        "incomingMarkdownAnchors": 0,
+        "reviewCounts": {
+          "source_verified": 327,
+          "historical_retained": 33,
+          "pending": 642
+        }
+      },
+      "scope": "찜의 추가/해제·조회·실패와 네 이벤트 목록·참석 기록의 조건/권한/표시를 대조. 새 제품 시험·실DB·기기·통신 단절·다음 일정 생성·정산 실행은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -19421,6 +19477,320 @@
           "id": "F03-09:14",
           "change": "added",
           "reason": "기존 단건 CRUD 외 다중 등록·다운로드·좋아요/신고/숨김·앨범 관리의 실제 앱 창구 연결"
+        }
+      ]
+    },
+    "wishlist_my_events_20261122": {
+      "kind": "source_review",
+      "scope": "F03-11 찜의 저장/해제/조회·낙관적 변경과 응답 불확실성, F03-12 네 목록의 실제 범위·기록 권한/유형/표시·빈 화면 차이를 대조. 새 제품 테스트·실DB·기기·실제 통신 단절·생성/정산 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/WishlistService.java",
+          "sha256": "7eb9b92eca5915a968a8c4bbca79bceafc770bd344963aeb4bc1557bdefcc342",
+          "reviewScope": "55–150 추가 검증을 중복보다 먼저 수행·본인 해제·페이지 조회 뒤 열람 필터·카드 보강."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/repository/query/WishlistQueryRepository.java",
+          "sha256": "141c7d89e9184da40b8a15ae56b1823da56aa9a6c3bdef7858afe10b85af3fd5",
+          "reviewScope": "54–95 저장 시각/번호 정렬·페이지 조회·필터 전 전체 수."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/service/WishlistServiceTest.java",
+          "sha256": "18e44b07fa65e83aadb7eea08336c53e67e844922416b3946ebb77de197759ce",
+          "reviewScope": "198–230 이미 저장한 OPEN 모임에서 재저장하지 않는 단언과 공유 토큰별 거절/저장 단언을 읽음. 실행 안 함."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/MyEventSearchParam.java",
+          "sha256": "52d3bb1fafeee1c3df9b5651f653aea8803df85df5c4e47f8345b48cb781d4f4",
+          "reviewScope": "29–52 상태 목록 해석과 기본 시작 시각 정렬."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventHistoryService.java",
+          "sha256": "a9102f0bf71caff191e45cc9f820658d739ccd9c612fe86a8d6e039e967254c3",
+          "reviewScope": "41–117 주최 종료/취소 이력과 참석 이력의 분리·후기/정산 요약·호스트 숨김 표시."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/EventHistorySummaryVo.java",
+          "sha256": "ca52d2f0324c3472eb8ef3f1857647e1cd50db1c9eedfd238f2046a88adf9950",
+          "reviewScope": "15–35 목록 요약의 nullable 값과 금액·후기·정산·종류·숨김 표시."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/model/EventAttendanceLog.java",
+          "sha256": "c3132d66c769f970376700fbde91f58a02080aa8063b2e1da7b5832a8917f905",
+          "reviewScope": "25–69 대상 회원·변경 유형·전후 상태·처리자·대기 순서·시각 저장 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/AttendanceLogVo.java",
+          "sha256": "50585cb679c2034deafc361aadab60496de5a99ac3f60341fc653ec84a411fad",
+          "reviewScope": "공개 capacity/vo의 10–19 응답 필드. 닉네임 없음. admin-app 객체와 구분."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/util/CapacityMapper.java",
+          "sha256": "526e792f2d94d2069a8570d39f738cf8481ecb4cf125f8ae4eedbaf55a59a5f1",
+          "reviewScope": "39–64 기록 유형과 전후 상태를 문자열로 변환. 닉네임 추가 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/constants/ChangeType.java",
+          "sha256": "fe754c731c63430b5d04a00c279ae2c75a97ed9b790e412bb14edf77d5377dfd",
+          "reviewScope": "현재 참가 변경 enum 9개와 앱 표시 매핑. enum 존재가 모든 명령의 기록 생성 증거는 아님."
+        },
+        {
+          "path": "community_app/lib/data/repositories/wishlist_repository.dart",
+          "sha256": "7b0f46e7cbefc3183f755c07952a515d61f4e4ff31b33bbc8d261c35d312ce19",
+          "reviewScope": "12–33 세 요청의 Result 경계."
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/profile_wishlist_screen.dart",
+          "sha256": "1b628fec49adb3d789ebebedacba169e1f981614a66433754b20fb145ae2fe9c",
+          "reviewScope": "25–137 목록 진입 후 추가 읽기·첫/빈/오류/갱신 상태·하트 결과 안내·상세 이동."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/wishlist_heart_button.dart",
+          "sha256": "ef7a75962adc1b432a863edd77fb2f35139f15f4bee8a86829257c623975cddc",
+          "reviewScope": "23–46 채운/테두리 하트와 의미 색상 사용. 이미지 검수 아님."
+        },
+        {
+          "path": "community_app/test/domain/providers/wishlist/wishlist_remove_edit_test.dart",
+          "sha256": "4ea87122425c434d7ead07072837ca8ce78bf311d5ab1ae76bbd5effc4b2b6ad",
+          "reviewScope": "232–275 해제 대기 중 새로고침, 같은 모임 뒤 조작을 앞 성공이 덮지 않는 선택 단언. 실행 안 함."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/my_events_screen.dart",
+          "sha256": "61aad003d4576130effa82dbdf30e570ace084bde041e5c436b39ba743e19f4b",
+          "reviewScope": "18–48 세 탭과 초기 선택·상세 이동."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/my_events_tab_view.dart",
+          "sha256": "0c808bfb5fd9fd91bbbaa97b1244267b3df636fced9a5a1e4058a630cc7d3292",
+          "reviewScope": "54–137 참석/결제 기한 표시, 162–379 주최·지난 목록과 다음 행동·오류, 385–414 빈 화면이 actionLabel을 렌더링하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/attended_events_screen.dart",
+          "sha256": "e6db75b3cead28dc6997aeb871097b58678caba518f1f40223477db51f739680",
+          "reviewScope": "30–113 별도 참석 목록·후기 요약·추가 페이지·빈 화면·오류."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_history_summary_vo.dart",
+          "sha256": "a298f28f76b0f9555620b4257a380373249ee3b184dd3699d8e9468a88bab65f",
+          "reviewScope": "8–37 서버 금액·후기 숫자 변환과 요약 필드."
+        },
+        {
+          "path": "community_app/lib/data/api/attendance_log_api.dart",
+          "sha256": "6a1fee5c9853f6c7fc0280aa4e0bae1a02c972fa0d474b5c891f3bc4c5bb43b1",
+          "reviewScope": "13–18 capacity/logs 페이지 조회."
+        },
+        {
+          "path": "community_app/lib/data/repositories/attendance_log_repository.dart",
+          "sha256": "217b6039ac0e6f44d9cf699055c442d836bb5c83b333f533fdb52a7ab3f9cc3b",
+          "reviewScope": "12–23 기록 조회 Result 경계."
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendance_log_provider.dart",
+          "sha256": "ea742a61539a2918b299c16ec912e2a026671e34fcdcba1d60bff852c90ada8e",
+          "reviewScope": "18–31 모임별 20개 페이지 읽기."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/attendance_log_screen.dart",
+          "sha256": "e8d13c52d4b26686b95d0851cd6aa08819ccf484e4b59e7bff671bf3fbc8b54f",
+          "reviewScope": "33–175 기록 목록·빈/오류/갱신·날짜 구분·유형 해석과 WAITING 보정·닉네임 모델 사용."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/attendance_log_type.dart",
+          "sha256": "dd511f62f6387bb36c1847c1058bcf575af3027f92e077118541e3c634ea4bc1",
+          "reviewScope": "12–87 현재 유형의 문구 및 unknown 처리."
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/attendance_log_vo.dart",
+          "sha256": "13f2822424d6bf63aea9997c90ddf5bbf904fa1fd363cd64bd33b2cdb3250ead",
+          "reviewScope": "10–24 changeType 매핑·전후 상태·처리자·순서·시각. 앱의 nullable 닉네임은 서버 필드 존재 증거가 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_attendance_guidance_cards.dart",
+          "sha256": "471a97874974c20ee1d3db3ebacaf4c200c23d024cf9e6d186d7f0222bd9c62b",
+          "reviewScope": "114–142 참석 기록 권한·기록 종류·화면 표시 안내와 현재 코드의 차이."
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/event_card.dart",
+          "sha256": "c6a2c51a014fdb6c09b21e32a8c2f21989e2512cbffa08e69db3feaee4b48b35",
+          "reviewScope": "78–110 카드 이동과 선택적 하트 콜백. 카드 전체 디자인 검수 아님."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/regular_meeting_routes.dart",
+          "sha256": "444802f09b9f2c3983da1b3c7626c75f2641f09749a2ec04eaeebb3f27a729ad",
+          "reviewScope": "40–43 별도 참석한 이벤트 경로."
+        },
+        {
+          "path": "community_app/test/presentation/event/my_events_load_more_test.dart",
+          "sha256": "5241020e310a46e47bbd37de4dd35f2c803c88007ecbd745b84f0d24c5c43685",
+          "reviewScope": "78–117 두 페이지 도달·오류 꼬리·동일 실패 페이지 재시도의 선택 단언. 실행 안 함."
+        },
+        {
+          "path": "community_app/test/presentation/event/my_events_screen_initial_tab_test.dart",
+          "sha256": "c640ceda21d9315c3c7aeb55274832d08443ddd0dfbbdd0534a2de9d474f04ee",
+          "reviewScope": "83–101 알림 경로 주최 중 및 기본 참석 예정 초기 선택의 단언. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/WishlistController.java",
+          "sha256": "8d8ff3928c078df5b67ccbd56eecaf0e70e18d89807f8ed1a6197e3d76da73da",
+          "reviewScope": "공개 추가·해제·개인 목록 세 창구의 입력·응답과 shareToken 전달."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "200–217 wishlistAdd의 상세 열람·취소·종료·새 참가·PRIVATE 판정. 기존 다른 행동 검토를 전체 정책 검토로 확대하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/Event.java",
+          "sha256": "17b9bd033fa423c591ef9a91b3b9613977b2905ce4ae18aaec3dc552e3a01216",
+          "reviewScope": "369–370 acceptsNewcomers는 OPEN이며 운영자 숨김이 아닌 조건. 모델 전체 검토 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d",
+          "reviewScope": "192–223 주최·지난 주최·참석 이력 창구와 기존 내 신청 목록 연결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventService.java",
+          "sha256": "0d3cfd4f4e5fcd048ff6eaab97f06d628c0971122e9d9ad410ebe733af79eb98",
+          "reviewScope": "108–124 listMyEvents 상태 필터·호스트 범위·위임 종류 제외·목록 보강."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationService.java",
+          "sha256": "4bf144955a40f618b6435ac2a55cfa799bf17581628ec1edda0b3fc32cf3fffe",
+          "reviewScope": "461–499 내 신청은 생성 시각 내림차순 List이며 날짜 필터 없이 모임 표시 자료 보강."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/repository/query/EventAttendanceQueryRepository.java",
+          "sha256": "f3194ce62f3158bdfbd3a826232471bdcabdb0d0bc1d4c793c8c13f764eb6fa8",
+          "reviewScope": "528–565 참석 과거 이력은 본인 ATTENDING+모임 CLOSED, 종료/번호 내림차순. 체크인 완료 조건 없음."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+          "sha256": "accdbd266bcc4aee3ce15153f3a11b3c09b8b0dd644f52b683ecc8d5603b6ea0",
+          "reviewScope": "197–203 앱이 사용하는 capacity/logs 창구와 페이지 반환."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacityService.java",
+          "sha256": "0735a5827e73de7b55a7deb8b1dfff84d4cf50fbbe134060d51a5835a3b964e4",
+          "reviewScope": "641–647 기록 조회·안정 정렬, 1648–1689 호스트/공동호스트/클럽 참석 관리 권한. 체크인·전체 명령 흐름은 범위 밖."
+        },
+        {
+          "path": "community_app/lib/data/api/wishlist_api.dart",
+          "sha256": "8bf6b1f30ef6d2dee7c589e31bbe64dc0c17aaca387660727e60993bd9d9232b",
+          "reviewScope": "15–27 추가·해제·20개 페이지 요청과 공유 토큰 전달 계약."
+        },
+        {
+          "path": "community_app/lib/domain/providers/wishlist/wishlist_provider.dart",
+          "sha256": "6ad481a379d0abdd5de0d3bea1c2f97b74daafe36f54f9f7e02486c62c12c6da",
+          "reviewScope": "33–332 첫 페이지/갱신·개별 낙관적 변경·연속 조작·불확실한 쓰기 뒤 재조회 신호·계정 범위. 공통 PendingEdits 전체 경합 감사 아님."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/my_events_provider.dart",
+          "sha256": "0bec76d879d611c525b2cab2d191bfc3aeda3fd8d2d7c5bc81a1316a5d18e283",
+          "reviewScope": "23–139 승인/결제 대기 신청 필터·주최 DRAFT/OPEN·별도 주최 과거/참석 과거 페이지·계정 범위."
+        },
+        {
+          "path": "community_app/lib/data/api/event_api.dart",
+          "sha256": "8571e82942da46e026411406040124aa33183130b790c764a2fbd019461772fd",
+          "reviewScope": "198–220 주최/과거주최/과거참석 페이지와 내 신청 List의 계약."
+        },
+        {
+          "path": "community_app/lib/data/repositories/event_repository.dart",
+          "sha256": "277a0a59230e8cd8415ae0c79f8f5bd61e2dc7fd00ebaea676a3ac0547807fa9",
+          "reviewScope": "360–405 네 조회의 Result 처리."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_type.dart",
+          "sha256": "ce1d9b19c05a22c41ee6151937f20e22220c50c48364db7797e0d106413b8108",
+          "reviewScope": "42–51 canCreateNextOccurrence의 종류·취소·숨김 조건. 실제 생성 실행은 미검증."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "447–452 기록 입구·774–782 하트 허용 조건·1922–1955 추가/해제 결과 안내."
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "410–455 내 이벤트·참석한 이벤트·찜 목록의 대상과 메뉴/마이 배치."
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+          "reviewScope": "379–397 내 이벤트·찜 목록 바로가기."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745",
+          "reviewScope": "371–383 내 이벤트 초기 탭 전달·찜 목록 경로."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "340–355 참석 기록 경로의 manageAttendance 검사."
+        },
+        {
+          "path": "docs/ui-ux/screens/13-event.md",
+          "sha256": "5fe0f5e626623050f1bf37f9fbea5fc58f66396158fdc36aff7c26a599d82914",
+          "reviewScope": "1388–1435 내 이벤트 명세의 미래 승인 필터·지난 목록 합산·빈 안내와 실제 앱 차이."
+        }
+      ],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "favorite_management_calendar_20261122",
+        "home_feed_core_20261122",
+        "profile_hub_edit_addresses_20261122",
+        "wallet_history_earnings_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
+          "sha256": "be3f4a15722488f755ac41feefd9e409b29558772a4b29ea29c7fc522fffd88d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
+          "sha256": "1dcea9c3094c0a44429a57ee6afc18ec4ba4d359b4718eb62ed01ff6b799404f"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-11.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F03-12.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "state-current",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-limits",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-12:4",
+          "change": "added",
+          "reason": "지난 주최와 참석 이력의 실제 별도 조회 연결"
+        },
+        {
+          "id": "F03-12:5",
+          "change": "added",
+          "reason": "지난 주최와 참석 이력의 실제 별도 조회 연결"
         }
       ]
     }

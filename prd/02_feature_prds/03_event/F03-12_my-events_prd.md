@@ -1,119 +1,102 @@
-# F03-12. 내 이벤트 관리 & 참석 로그 PRD
+# F03-12. 내 이벤트와 참석 변경 기록
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 소스 대조이며 새 제품 시험·실제 앱 이용 결과가 아니다.
 
-## 1. 결론
+## 결론
 
-사용자가 자신과 관련된 이벤트를 한 데 모아 보는 기능. 두 가지 시점이 결합됨:
-- **참가자 시점**: 내가 신청한 이벤트 (`Application` 기준) → "참석 예정" 탭 (APPROVED + 미래)
-- **호스트 시점**: 내가 주최하는 이벤트 (`Event.hostUserId == 본인`) → "주최 중" / "지난 이벤트" 탭
+‘내 이벤트’의 참석 예정·주최 중·지난 이벤트는 서로 다른 자료를 읽는다. 참석 예정은 승인 또는 승인 후 결제 대기인 신청, 주최 중은 본인이 호스트인 초안·공개 모임, 지난 이벤트는 본인이 호스트인 종료·취소 모임이다. 내가 참가했던 종료 모임은 별도 ‘참석한 이벤트’ 화면에 있다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+‘참석 기록’은 모임 운영자가 참가 상태 변화를 보는 기록이다. 내 이벤트 목록, 체크인 내역, 모든 신청 심사 이력을 하나의 기록으로 합치지 않는다.
 
-- **내 이벤트**: 프로필 탭 → "내 이벤트" → `/profile/my-events`
-- **참석 로그** (호스트 시점): 이벤트 상세 또는 참석자 목록(F03-07) 의 우상단 "로그 >" → `/home/events/:eventId/log`
+## 코드 위치
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `EventController`, `CapacityController`, `AttendanceController`, `EventService`. 앱: `my_events_screen.dart`, `attendance_log_screen.dart`, `my_events_tab_view.dart`, `timeline_node.dart`, `date_divider.dart`, `event_card.dart`.
+서버: EventController·EventService·MyEventSearchParam·ApplicationService·EventHistoryService, EventAttendanceQueryRepository, CapacityController·CapacityService·CapacityMapper·AttendanceLogVo·ChangeType. 앱: event_api.dart·event_repository.dart·my_events_provider.dart, my_events_screen.dart·my_events_tab_view.dart·attended_events_screen.dart, attendance_log_api.dart·attendance_log_repository.dart·attendance_log_provider.dart·attendance_log_screen.dart·attendance_log_type.dart, 메뉴와 프로필·정기모임·홈 라우터.
 
 <!-- source-references:start -->
-서버 창구: `EventController#listMyEvents`, `EventController#getMyApplications`, `CapacityController#getLogs`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `EventController#listMyEvents`, `EventController#getMyApplications`, `CapacityController#getLogs`, `EventController#listMyEventHistory`, `EventController#listMyAttendedHistory`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 입구와 목록의 구분
 
-### 내 이벤트 (`my_events_screen.dart`)
+마이의 ‘내 이벤트’ 바로가기와 전체 메뉴의 내 활동에서 `/profile/my-events`로 이동한다. 기본 선택은 참석 예정이며, 주최 중을 지정한 경로는 두 번째 탭을 연다. 탭마다 카드 선택은 모임 상세로 이어진다. ‘참석한 이벤트’는 전체 메뉴의 별도 항목이며 내 이벤트의 네 번째 탭이 아니다.
 
-- **AppBar 제목**: "내 이벤트", `TabBar` 3개 탭: "참석 예정" / "주최 중" / "지난 이벤트"
-- `DefaultTabController(length: 3)` + `TabBarView` — 각 탭 콘텐츠는 `MyEventsTabView(tabIndex: 0|1|2)`
+| 화면·탭 | 실제 자료와 조건 | 순서·페이지 |
+| --- | --- | --- |
+| 참석 예정 | 본인 신청 중 APPROVED 또는 APPROVED_PENDING_PAYMENT | 서버의 신청 생성 시각 내림차순을 유지. 신청 전체 목록을 한 번 읽으며 페이지 목록이 아님 |
+| 주최 중 | 본인이 호스트이며 DRAFT 또는 OPEN | 기본 시작 시각 오름차순과 번호 보조 정렬. 앱은 20개씩 읽음 |
+| 지난 이벤트 | 본인이 호스트이며 CLOSED 또는 CANCELED | 종료 시각 내림차순과 번호 보조 정렬. 앱은 20개씩 읽음 |
+| 참석한 이벤트 | 본인 참가 행이 ATTENDING이고 모임이 CLOSED | 종료 시각·모임 번호 내림차순. 앱은 20개씩 읽음 |
 
-#### 탭 0: "참석 예정" (`_UpcomingTab`)
+주최 목록의 상태 필터는 현재 서버가 실제 적용한다. 과거의 ‘서버가 상태 인자를 무시한다’는 설명은 제거한다. 참석 이력의 ATTENDING은 참가 상태이며 현장 체크인 완료를 의미하지 않는다. 이 조회는 체크인 기록이 있어야만 반환하는 조건이 아니다.
 
-- **데이터**: `upcomingEventsNotifierProvider` ▶ `eventRepository.getMyApplications()` ▶ `GET /api/v1/events/users/me/applications`
-- 클라이언트 측 필터: `status == APPROVED` 만
-- 카드: `EventCard` — 제목/썸네일/시작시간/주소/`_ApplicationBadge(status)` (APPROVED 표시)
-- 이벤트 status (`eventStatus`) 가 CLOSED / CANCELED 면 `EventCardVariant.disabled` + statusLabel 노출
-- 빈 상태: `_EmptyMessage(message: '참석 예정인 이벤트가 없습니다', actionLabel: '이벤트 탐색')`
-- 풀투리프레시 활성
+## 참석 예정과 결제 대기
 
-#### 탭 1: "주최 중" (`_HostingTab`)
+참석 예정은 신청 상태로 고른다. 앱은 현재 시각이나 모임 시작 시각으로 미래만 거르지 않고, 서버의 내 신청 조회도 날짜 조건을 적용하지 않는다. 따라서 ‘미래의 참석 확정 모임만 표시’라고 설명하지 않는다. 종료·취소 모임이 포함되면 카드에 그 상태를 표시한다.
 
-- **데이터**: `hostingEventsNotifierProvider` ▶ `eventRepository.getMyEvents(status: 'DRAFT,OPEN', page, size: 20)` ▶ `GET /api/v1/events/my?page=N&size=20` (`status` 쿼리는 서버 미사용, 클라이언트가 status 분류 의도 표시 — 백엔드는 모두 hostUserId 기반 조회)
-- 무한 스크롤 (`loadMore`), 페이지 사이즈 20
-- 카드: 정원/현재인원/가격 표시 + DRAFT 인 경우 회색 "임시저장" 뱃지
-- 빈 상태: "주최 중인 이벤트가 없습니다" + "이벤트 생성" 안내
+승인 후 결제 대기는 승인 완료와 다른 배지로 보여 주며, 결제 기한이 있으면 ‘MM/DD HH:mm까지 결제’를 표시한다. 결제 전 좌석을 실제 참석 확정으로 설명하지 않는다. 승인 신청과 참가 행의 ATTENDING·WAITING은 다른 상태이므로, 이 탭에 있다는 이유만으로 참가 행이 ATTENDING이라고 단정하지 않는다.
 
-#### 탭 2: "지난 이벤트" (`_PastTab`)
+## 주최·지난 모임과 다음 행동
 
-- **데이터**: `pastEventsNotifierProvider` ▶ `getMyEvents(status: 'CLOSED,CANCELED', ...)` 동일 엔드포인트
-- 카드는 항상 `EventCardVariant.disabled` + statusLabel
-- 무한 스크롤
-- 빈 상태: "지난 이벤트가 없습니다"
+주최 중 카드에는 초안 배지와 현재 일정·장소 투표 요약이 표시될 수 있다. 지난 이벤트에는 후기 수·평균과 모임 비용 정산 상태가 있으면 함께 표시한다. 정산 상태를 정산금 지급 완료나 모든 금전 업무 완료로 확대하지 않는다.
 
-### 참석 로그 (`attendance_log_screen.dart`)
+지난 이벤트는 ‘결과 보기’로 모임 결과 화면에 이동한다. ‘다음 일정 만들기’는 현재 앱 판정상 종류가 INDEPENDENT 또는 PRIVATE이고 취소되지 않았으며 운영자 숨김이 아닌 모임에 표시한다. 종류를 알 수 없으면 표시하지 않는다. 눌렀을 때 실제 생성 권한·결과는 해당 생성 기능에서 다시 판정하며, 이 문서의 목록 조회 대조를 생성 실행 통과로 쓰지 않는다.
 
-- **사용자가 보는 것**:
-  - AppBar "참석 로그"
-  - 시간순 세로 타임라인 (최신 상단)
-  - 날짜별 `DateDivider` 자동 삽입 (이전 항목과 다른 날짜인 경우)
-  - 각 노드: `TimelineNode(logType, message: logType.label, userNickname, createdAt, isFirst, isLast)`
-  - 빈 상태: `AppEmptyState(title: '아직 참석 기록이 없습니다')`
-- **사용자가 할 수 있는 액션**:
-  - 무한 스크롤 — `position.maxScrollExtent - 200` 도달 시 `attendanceLogNotifier.loadMore()`
-  - 풀투리프레시 → `refresh()`
-- **타임라인 이벤트 유형 매핑** (`AttendanceLogType` enum + `.label`):
-  - `APPLIED_ATTENDING` → "참석 확정" (positive). 대기로 들어간 신청(`newStatus=WAITING`)은 "대기열 등록" 으로 그린다
-  - `APPLIED_WAITING` → "대기열 등록" (neutral)
-  - `CANCELLED_BY_USER` → "참석 취소" (negative)
-  - `PROMOTED_AUTO` → "자동 승격" (positive)
-  - `PROMOTED_CAPACITY_INCREASE` → "정원 증가 승격" (positive)
-  - `PROMOTED_MANUAL` → "수동 승격" (positive)
-  - `REMOVED_BY_HOST` → "호스트 제거" (negative)
-  - `OVERCAPACITY_APPROVED` → "정원 초과 승인" (neutral). 지금 이 값을 쓰는 길은 없다
-  - 옛 `REJECTED_BY_HOST`(호스트 거절)·`WAITLIST_ORDER_CHANGED`(순번 변경)·`CAPACITY_REDUCED`(정원 축소)는 걷었다. 신청 거절은 신청 결정 이력이 남긴다
-- **상태 분기**: 로딩 / 에러(`AppErrorState`) / 빈 상태 / 데이터
+참석한 이벤트 화면은 후기 요약과 상세 이동을 제공한다. 현재 이 화면의 응답에는 호스트용 정산 상태를 붙이지 않는다. 호스트의 지난 이벤트와 참가자의 참석 이력을 합친 단일 목록으로 설명하지 않는다.
 
-## 4. 제품 규칙
+## 참석 변경 기록의 권한·내용
 
-- 참석 예정 탭은 승인된 신청을 보인다. 결제 대기 신청은 결제 기한을 함께 보이고, 누르면 상세로 가서 결제한다.
-- 모임이 종료·취소됐으면 참석 예정 카드는 흐리게, 상태 라벨과 함께 보인다.
-- 주최 중 탭은 DRAFT·OPEN, 지난 이벤트 탭은 CLOSED·CANCELED 이고 20개씩 불러온다. DRAFT 에는 임시저장 표시가 붙는다.
-- 빈 탭 안내: "참석 예정인 이벤트가 없습니다", "주최 중인 이벤트가 없습니다", "지난 이벤트가 없습니다".
-- 참석 로그는 최신이 위인 타임라인이고 날짜가 바뀌면 구분선을 넣는다. 볼 수 있는 사람은 F03-07 §4 를 따른다.
+모임 상세에서 참석 관리가 허용된 사용자에게 ‘참석 기록’ 입구가 보이며 `/home/events/:eventId/log`로 이동한다. 경로도 참석 관리 허용 값을 검사한다. 서버는 모임 존재를 확인한 뒤 호스트, 참석 관리 권한이 있는 공동호스트, 클럽의 참석 관리 권한 보유자를 판정한다. 공동호스트의 위임 권한이 정지되었거나 참석 관리 권한이 없으면 거절한다. 일반 참석자라는 이유만으로 전체 기록을 볼 수 없다.
 
-## 6. 상태/권한/시나리오 매트릭스
+앱은 정원 관리의 기록 조회를 사용하며, 한 번에 20개씩 생성 시각·기록 번호 내림차순으로 읽는다. 날짜가 바뀌면 날짜 구분선을 표시한다. 현재 표시하는 유형은 다음과 같다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 참가자가 "참석 예정" 확인 | APPROVED 상태 신청 3건, REJECTED 1건, PENDING 1건 | 사용자가 일정 확인 완료 |
-| S2 | 호스트가 "주최 중" 탭에서 임시저장 이벤트 발견 | 어제 폼 작성하다 임시저장한 호스트, DRAFT 1건 + OPEN 2건 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | 호스트가 "지난 이벤트" 회고 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | 호스트가 자기 이벤트의 참석 로그 검토 | 종료된 이벤트, 신청/취소/체크인 로그 50건 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | 무한 스크롤 마지막 페이지 도달 | 로그 50건, 페이지 0 (20건) 로드됨 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 종료/취소 카드 시각화 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 참석 예정 0건일 때 "이벤트 탐색" 안내 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | 풀투리프레시로 페이지 초기화 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | 호스트가 아닌 사용자가 참석 로그 URL 직접 접근 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+| 기록 유형 | 앱 표시 |
+| --- | --- |
+| APPLIED_ATTENDING | 참석 확정. 단 새 상태가 WAITING이면 대기 명단 등록으로 표시 |
+| APPLIED_WAITING | 대기 명단 등록 |
+| CANCELLED_BY_USER | 참석 취소 |
+| PROMOTED_AUTO | 자동 참석 확정 |
+| PROMOTED_CAPACITY_INCREASE | 정원 증가로 참석 확정 |
+| PROMOTED_MANUAL | 직접 참석 확정 |
+| REMOVED_BY_HOST | 호스트 제거 |
+| OVERCAPACITY_APPROVED | 정원 초과 승인. enum·표시 지원만으로 현재 명령이 이 기록을 생성한다고 단정하지 않음 |
+| DEMOTED_NO_SHOW | 노쇼 제외 |
+| 앱이 모르는 문자열 | 알 수 없음 |
 
-## 8. Gap / Risk
+응답에는 대상 회원 번호·이전/새 상태·처리자 번호·이전 대기 순서·생성 시각이 있지만, 현재 타임라인은 유형 문구와 시각을 중심으로 표시한다. 상태 전후·처리자·대기 순서의 모든 값을 화면에서 볼 수 있다는 설명은 맞지 않는다. 체크인은 별도 기록이므로 QR 스캔 성공을 이 목록의 새 행 생성과 동일하게 취급하지 않는다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 상태 필터 | 내 모임 목록 창구는 상태 목록(쉼표로 이은 값, 예: 주최 중은 DRAFT·OPEN, 지난 모임은 CLOSED·CANCELED)을 받아 서버에서 거른다. 빈 값이면 전체다 | 없음 |
-| 해소됨 | 서비스 상세 미확인 메모 | 개발 메모라 제품 판정 대상이 아니다. 주최 목록은 내가 주최한 모임을 쪽으로 나눈 목록이다 | 없음 |
-| 해소됨 | 참가자 지난 모임 | 내 모임 화면은 참석 예정·주최 중·지난 이벤트 세 탭이다. 서버에 지난 모임 기록 창구와 참석했던 모임 창구가 따로 있다 | 없음 |
-| 해소됨 | 그림 줄 | 흐름 그림의 마디·색 지정 줄이라 판정할 내용이 없다 | 없음 |
+## 빈 목록·갱신·실패
 
-## 9. 수용 기준
+내 이벤트는 탭별 빈 안내 문구를 구분한다. 참석 예정의 이벤트 둘러보기와 주최 중의 이벤트 만들기는 호출부가 문구를 넘기지만, 현재 공통 빈 화면은 그 값을 렌더링하지 않아 버튼이 나타나지 않는다. 기존 항목이 있을 때 당겨 새로고침하며, 주최·지난·참석한 이벤트와 참석 기록은 다음 페이지 로딩·실패·재시도를 목록 끝에 표시한다. 첫 조회 실패에는 화면의 다시 시도를 사용한다. 다음 페이지 실패를 전체 목록이 없는 상태로 바꾸지 않는다.
 
-- **AC-01. 참가자가 "참석 예정" 확인**: Given APPROVED 상태 신청 3건, REJECTED 1건, PENDING 1건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 일정 확인 완료
-- **AC-02. 호스트가 "주최 중" 탭에서 임시저장 이벤트 발견**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. 호스트가 "지난 이벤트" 회고**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. 호스트가 자기 이벤트의 참석 로그 검토**: Given 종료된 이벤트, 신청/취소/체크인 로그 50건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. 무한 스크롤 마지막 페이지 도달**: Given 로그 50건, 페이지 0 (20건) 로드됨 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 종료/취소 카드 시각화**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 참석 예정 0건일 때 "이벤트 탐색" 안내**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. 풀투리프레시로 페이지 초기화**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. 호스트가 아닌 사용자가 참석 로그 URL 직접 접근**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+기존 데이터 갱신 중에는 이전 내용을 유지하는 표시 정책을 쓴다. 내 이벤트의 빈 안내, 참석한 이벤트의 빈 화면, 참석 기록의 빈 목록은 현재 새로고침 래퍼 바깥 분기이므로 빈 상태에서도 당겨 새로고침할 수 있다고 쓰지 않는다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인 근거 | 현재 차이·영향 | 후속 확인 |
+| --- | --- | --- | --- |
+| Gap | UpcomingEventsNotifier·ApplicationService·상위 화면 명세 | ‘참석 예정’은 미래 날짜 필터가 없고 결제 대기도 포함. 상위 명세는 승인된 미래 모임만으로 설명 | 탭 의미의 제품 결정과 상위 명세·필터 일치 |
+| Gap | EventHistoryService·상위 화면 명세 | 지난 이벤트는 호스트 이력 전용이며 별도 참석 이력 화면이 있음. 상위 명세의 신청과 합친 목록 설명과 다름 | 상위 명세를 현재 구분에 맞추어 정리 |
+| Gap | AttendanceLogVo·CapacityMapper·앱 모델 | 앱 모델과 타임라인에 닉네임 표시 여지는 있지만 서버 응답에 닉네임 필드가 없음 | 닉네임이 제공된다고 약속하지 않고 표시 요구와 계약을 별도 결정 |
+| Gap | AttendanceLogGuidanceCard·ChangeType·타임라인 | 안내는 호스트·공동호스트만 가능하다고 쓰고, 순서 재정렬·정원 감소 기록 및 상세 상태 열람까지 설명. 현재 권한·enum·화면 표시와 일치하지 않음 | 안내 문구와 실제 조회·표시 범위 정리 |
+| Gap | 목록 화면의 빈 상태 분기 | 빈 화면에는 당겨 새로고침 연결이 없고, 내 이벤트의 둘러보기·만들기 인자는 공통 빈 화면에서 사용하지 않아 버튼도 보이지 않음 | 빈 결과의 갱신·다음 행동 보완 여부 결정 |
+| 미검증 | 선택한 소스·기존 목록 시험 | 실제 기기·실DB의 권한 변경·최신 목록 반영·다음 일정 생성·정산 완료는 이번에 실행하지 않음 | 필요한 실행 범위를 별도 증거로 확인 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 기본·지정 탭:** 내 이벤트 기본 경로는 참석 예정을 열고, 주최 중을 지정한 경로는 주최 중 탭을 연다.
+- **AC-02 참석 예정 상태:** APPROVED와 APPROVED_PENDING_PAYMENT 신청을 포함하고, 심사 대기·취소·거절 신청은 이 탭의 필터에서 제외한다.
+- **AC-03 결제 안내:** 결제 대기 신청을 완료된 참석으로 표시하지 않으며 결제 기한이 있으면 기한을 표시한다. 기한이 없으면 임의의 시간을 만들지 않는다.
+- **AC-04 날짜 해석:** 현재 날짜 필터가 없음을 문서와 검사에서 반영한다. 종료·취소 모임이 승인 신청에 남으면 카드 상태를 구분하고 ‘미래만 표시’ 성공으로 판정하지 않는다.
+- **AC-05 주최 범위:** 본인이 호스트인 DRAFT·OPEN만 주최 중 조회에 포함하며 초안 배지를 구분한다. 공동호스트라는 이유로 이 목록에 자동 포함된다고 설명하지 않는다.
+- **AC-06 지난 주최 이력:** CLOSED·CANCELED인 본인 주최 모임을 종료 시각 순서로 읽고 후기·정산 요약은 값이 있을 때 표시한다.
+- **AC-07 별도 참석 이력:** 참석한 이벤트는 ATTENDING 참가 행과 CLOSED 모임을 조회한다. 체크인 완료 필터·취소 모임 포함·호스트 정산 상태를 임의로 추가하지 않는다.
+- **AC-08 다음 행동:** 지난 주최 모임에서 결과 화면으로 이동하고, 다음 일정 생성은 현재 종류·취소·숨김 표시 조건에 맞는 입구만 노출한다. 이 입구 확인을 실제 생성 완료와 구분한다.
+- **AC-09 페이지 실패:** 주최·지난·참석한 이벤트와 참석 기록의 추가 페이지 실패는 앞 항목을 남기고 재시도를 제공하며, 재시도는 실패한 페이지를 다시 요청한다.
+- **AC-10 첫 조회·빈 결과:** 로딩·오류·빈 상태를 구분하고 탭별 안내를 제공한다. 현재 빈 분기에 없는 당겨 새로고침을 제공하는 것으로 기록하지 않는다.
+- **AC-11 기록 접근:** 참석 관리가 없는 일반 참석자는 기록 경로와 서버 조회에서 거절된다. 허용된 클럽 참석 관리자도 권한 판정에 포함한다.
+- **AC-12 기록 순서·유형:** 생성 시각·기록 번호 내림차순과 날짜 경계를 유지하며, 노쇼 제외와 알 수 없는 유형을 구분한다. WAITING으로 끝난 APPLIED_ATTENDING은 대기 명단 등록으로 표시한다.
+- **AC-13 기록 표시 범위:** 서버가 반환하지 않는 닉네임과 화면이 표시하지 않는 이전/새 상태·처리자·대기 순서가 보인다고 판정하지 않는다. 체크인 성공은 별도 기록에서 확인한다.
+- **AC-14 갱신 범위:** 기존 목록을 다시 읽을 때 앞 내용을 유지하는 표시 정책과 다음 페이지 오류를 구분한다. 계정별 자료와 각 목록의 독립적인 조회 조건을 보존한다.
+
+검증 근거: my_events_screen_initial_tab_test의 기본 참석 예정·알림 경로 주최 중 선택 단언, my_events_load_more_test의 두 페이지 25건 도달과 실패 페이지 재시도 단언을 읽었다. 서버·앱의 조회 조건 및 기록 모델을 함께 대조했으며, 위 수용 기준 전체의 새 실행이나 실제 앱 검수 통과를 뜻하지 않는다.

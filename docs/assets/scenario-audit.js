@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,131개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,138개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1131,
+    "documentedScenarioItems": 1138,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 63,
+    "directlyLinkedAutomatedTests": 61,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 63,
-    "directlyLinkedJourneys": 35,
+    "automatedScenarioReferences": 61,
+    "directlyLinkedJourneys": 33,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 35,
+    "journeyScenarioReferences": 33,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 43,
+    "completeEvidenceChain": 41,
     "partialEvidenceChain": 51,
-    "definitionOnlyEvidence": 81,
-    "traceMarkers": 404,
-    "verifiedTraceRecords": 402,
+    "definitionOnlyEvidence": 83,
+    "traceMarkers": 406,
+    "verifiedTraceRecords": 404,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -2903,13 +2903,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-11",
       "domain": "이벤트",
       "name": "위시리스트",
-      "scenarioCount": 10,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-11_wishlist/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-11_wishlist/backend.md",
@@ -2971,33 +2971,28 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_wishlist_toggle_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_event_wishlist_toggle_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 3,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/integration_test/seed_event_wishlist_toggle_test.dart",
-          "community_app/scripts/e2e/run_p61_event_wishlist_toggle_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_event_wishlist_toggle_test.dart",
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
           "community_app/scripts/e2e/run_p61_event_wishlist_toggle_matrix.sh"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -3007,18 +3002,18 @@ window.SCENARIO_AUDIT = {
       "id": "F03-12",
       "domain": "이벤트",
       "name": "내 이벤트 관리 & 참석 로그",
-      "scenarioCount": 9,
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-12_my-events/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-12_my-events/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
         "entries": [
           {
@@ -3071,30 +3066,60 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 198
               }
             ]
+          },
+          {
+            "id": "F03-12:4",
+            "label": "GET /api/v1/events/my/history — 지난 주최 이벤트",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "listMyEventHistory",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/my/history",
+                "targetLine": 209,
+                "methodLine": 210
+              }
+            ]
+          },
+          {
+            "id": "F03-12:5",
+            "label": "GET /api/v1/events/my/attended — 참석한 종료 이벤트",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "listMyAttendedHistory",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/my/attended",
+                "targetLine": 218,
+                "methodLine": 219
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_operational_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_operational_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
