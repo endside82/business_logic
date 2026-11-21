@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,057개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,063개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1057,
+    "documentedScenarioItems": 1063,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 51,
+    "directlyLinkedAutomatedTests": 50,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 51,
-    "directlyLinkedJourneys": 47,
+    "automatedScenarioReferences": 50,
+    "directlyLinkedJourneys": 46,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 47,
+    "journeyScenarioReferences": 46,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 50,
-    "partialEvidenceChain": 33,
+    "completeEvidenceChain": 49,
+    "partialEvidenceChain": 34,
     "definitionOnlyEvidence": 92,
-    "traceMarkers": 320,
-    "verifiedTraceRecords": 318,
+    "traceMarkers": 328,
+    "verifiedTraceRecords": 326,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -37,18 +37,18 @@ window.SCENARIO_AUDIT = {
       "id": "F01-01",
       "domain": "인증 & 온보딩",
       "name": "이메일 회원가입 & 로그인",
-      "scenarioCount": 5,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
@@ -84,6 +84,23 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 72
               }
             ]
+          },
+          {
+            "id": "F01-01:3",
+            "label": "GET /api/v1/users/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "getMyProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
           }
         ]
       },
@@ -113,18 +130,18 @@ window.SCENARIO_AUDIT = {
       "id": "F01-02",
       "domain": "인증 & 온보딩",
       "name": "소셜 로그인",
-      "scenarioCount": 5,
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-02_social-login/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-02_social-login/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
         "entries": [
           {
@@ -175,6 +192,23 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/auth/social/existing-account/link",
                 "targetLine": 108,
                 "methodLine": 109
+              }
+            ]
+          },
+          {
+            "id": "F01-02:4",
+            "label": "GET /api/v1/auth/providers",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+                "controller": "AuthController",
+                "method": "getAuthProviderManifest",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/auth/providers",
+                "targetLine": 113,
+                "methodLine": 114
               }
             ]
           }
@@ -451,42 +485,141 @@ window.SCENARIO_AUDIT = {
       "id": "F01-06",
       "domain": "인증 & 온보딩",
       "name": "온보딩",
-      "scenarioCount": 11,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-06_onboarding/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-06_onboarding/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F01-06:1",
+            "label": "GET /api/v1/users/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "getMyProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
+          },
+          {
+            "id": "F01-06:2",
+            "label": "PATCH /api/v1/users/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "updateMyProfile",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/users/me",
+                "targetLine": 69,
+                "methodLine": 70
+              }
+            ]
+          },
+          {
+            "id": "F01-06:3",
+            "label": "POST /api/v1/users/me/onboarding/complete",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+                "controller": "UserController",
+                "method": "completeOnboarding",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/onboarding/complete",
+                "targetLine": 54,
+                "methodLine": 55
+              }
+            ]
+          },
+          {
+            "id": "F01-06:4",
+            "label": "POST /api/v1/users/me/addresses",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+                "controller": "UserAddressController",
+                "method": "createAddress",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/addresses",
+                "targetLine": 43,
+                "methodLine": 44
+              }
+            ]
+          },
+          {
+            "id": "F01-06:5",
+            "label": "POST /api/v1/users/me/preference-tags",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "addTag",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/preference-tags",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          },
+          {
+            "id": "F01-06:6",
+            "label": "GET /api/v1/interests/catalog",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/InterestCatalogController.java",
+                "controller": "InterestCatalogController",
+                "method": "getCatalog",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/interests/catalog",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_auth_recovery_onboarding_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_auth_recovery_onboarding_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 0,

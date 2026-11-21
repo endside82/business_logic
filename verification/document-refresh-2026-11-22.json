@@ -252,9 +252,10 @@
         "event_detail_complete_20261122",
         "email_code_auth_20261122",
         "session_and_social_unlink_20261122",
-        "preference_tags_20261122"
+        "preference_tags_20261122",
+        "signup_social_onboarding_20261122"
       ],
-      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "docs/assets/launch-status.js",
@@ -2176,14 +2177,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "651448a5461efd474bc0dea4ddb22463689703c8a2ba7ca0600d0bbe00b4518a",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "email_code_auth_20261122",
-        "session_and_social_unlink_20261122",
-        "preference_tags_20261122"
+        "auth_domain_rollup_20261122"
       ],
-      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "reviewedSha256": "09e510a3e32ad1d6d092010ab41568f926a27976be2dc832160646f30f26d3f8"
     },
     {
       "path": "docs/domains/02-home.html",
@@ -2394,9 +2393,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "61d78dd551cd454d7d25addb0f921e00170729a69f0084d2ce0cfe4509a1a275",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "055abadc9e6185c3d60c97c949a412da8d3c948984b33b80d9be2aebfd108dbe"
     },
     {
       "path": "docs/features/F01-02.html",
@@ -2404,9 +2406,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ba019f136fdb33c0b0dd1c60aa119dad44ddc0802a68676c47c005d36ade3b42",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "dcef7468fb8c6af94d2d81a931ae99d28c4440957c328abe74163009c3cd0fe5"
     },
     {
       "path": "docs/features/F01-03.html",
@@ -2453,9 +2458,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e51655e714f217f1fdac4b790d693fde0fc4b886dec77efb54a2a448f8ed2842",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "6d2ff2cfbbd477beffdbeb6a912ff0e5893b917624c0b524163744ad7c6b6921"
     },
     {
       "path": "docs/features/F01-07.html",
@@ -4646,9 +4654,10 @@
       "evidence": [
         "email_code_auth_20261122",
         "session_and_social_unlink_20261122",
-        "preference_tags_20261122"
+        "preference_tags_20261122",
+        "signup_social_onboarding_20261122"
       ],
-      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "planner_onboarding/08_scenario_coverage_matrix.md",
@@ -4696,9 +4705,10 @@
         "event_detail_complete_20261122",
         "email_code_auth_20261122",
         "session_and_social_unlink_20261122",
-        "preference_tags_20261122"
+        "preference_tags_20261122",
+        "signup_social_onboarding_20261122"
       ],
-      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "planner_onboarding/README.md",
@@ -4871,14 +4881,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "64f5530cb7d19b3ded5994de2d950dc9f54813b7317e97157d1b3ba3982e7a11",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "email_code_auth_20261122",
-        "session_and_social_unlink_20261122",
-        "preference_tags_20261122"
+        "auth_domain_rollup_20261122"
       ],
-      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "reviewedSha256": "43ecf5b20a50b6e1c38f1f4d67b49c04d4294a85cbb6940b8760edf15ba08e99"
     },
     {
       "path": "prd/01_domain_prds/02_홈_피드_prd.md",
@@ -5112,9 +5120,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "57413a981070b172b6cf8bf86424f4ae30f80be764dccea11483a401a788affd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "022dc2cd156203ddde9a89501d9ceb224c0470edb22c45d13f826359a2d77b4e"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
@@ -5122,9 +5133,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bddf664386936620ec9a3a1fd96d4ba1994972108c8e3c1aebf070b86a3b2f45",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "b053a7ef1ce30c821389a1e7ecd8a5b85b6af8eaa8f5e988006a5426f092eda3"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
@@ -5171,10 +5185,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "514b9656921e7bbde03f1ca020a5196324176d30f0460116927301be886b4fa6",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "6efae24304e9e95c12b0674b3e00021e7496cff51e05b561cfc74ce6ee92eeaa"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
@@ -7329,7 +7345,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
     {
       "path": "prd/README.md",
@@ -7621,9 +7637,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f45b82a990e39bc528c3e31bb1063cf7e682b8939f86219aad780e3d7b49e8d7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "auth_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "b722cdb19caaa839c45fc62c3b2c346d38159efefda82ba23de24a87dc98ba2b"
     },
     {
       "path": "units/01_auth_onboarding/F01-01_email-signup-login/backend.md",
@@ -7631,9 +7650,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "03c60539ffeac251676f23aaf370c41a0a798cca197a1ad265445e06eba5f828",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "fb9f0da31fb2df50884da6248fa7d91fa19740913997c73b83e34e81843fc769"
     },
     {
       "path": "units/01_auth_onboarding/F01-01_email-signup-login/diagrams.md",
@@ -7641,9 +7663,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "37c5c40dd8bdb82e5dd016f2288153e56126902a5f98552559e8189822673f09",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "82ce7e633a367e0b9a080eb7e539674b8aaf771396680a9b9f9cee6b7d1a3218"
     },
     {
       "path": "units/01_auth_onboarding/F01-01_email-signup-login/frontend.md",
@@ -7651,9 +7676,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2ef4e2b86abbe21ff8a9d2cd462e243306018a53f365530719d5db6d1edcf6e2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "ec9a74ad1a743004acf555a84b45af0bdf19332957811929cf670ae1d7428bb7"
     },
     {
       "path": "units/01_auth_onboarding/F01-01_email-signup-login/scenarios.md",
@@ -7661,9 +7689,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e33daa9164f7674124e3889b98a0062f883edf903948506734400a767d27c6fa",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "de31aafba4f4cfc2c727d236d165c72963c3a80801b2c316312fde8d427a8d5f"
     },
     {
       "path": "units/01_auth_onboarding/F01-02_social-login/backend.md",
@@ -7671,9 +7702,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b3f7910607d4067e44f0668c398a01f98c7606d5b2ee809a6f7a91185ae28021",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "0c7e34cd48e0cb5a7301cdfc53c6b1a2e3c7de2ca8ca9ff76caf360d10413023"
     },
     {
       "path": "units/01_auth_onboarding/F01-02_social-login/diagrams.md",
@@ -7681,9 +7715,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "846de945cc99a8de500b141858c7ea8f4c425a76cac7f760bb77403a99c2129d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "7b7309a7fc30bc0b0ab3ae93e60660a6702a8e54f3602db9a43036177a1f7a6c"
     },
     {
       "path": "units/01_auth_onboarding/F01-02_social-login/frontend.md",
@@ -7691,9 +7728,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a464e396eb6766d0eadfc162cefa203ccc7f132fd4cefd0e3e0cb8fdce8c3255",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "99980f6bd731f837f5094dc9f0adbaa8bb0171d0565aafdd21773a8de5b1aee1"
     },
     {
       "path": "units/01_auth_onboarding/F01-02_social-login/scenarios.md",
@@ -7701,9 +7741,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b95b54ca8e60445caf6772b34665e22f486e475a68230320443846807fe21797",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "f37d9ae8e95b4d98357b89e78f7cff192ab2a10452ba2922eb21e5be91086106"
     },
     {
       "path": "units/01_auth_onboarding/F01-03_email-verification/backend.md",
@@ -7867,9 +7910,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5275c962ebf5c6ae66a662c4b6877968539dfbc4ef5011420cfe6d10fc42f257",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "34dbb9071a480eb90894e49fea065429a5005914f741d74ff984ce67fe587c59"
     },
     {
       "path": "units/01_auth_onboarding/F01-06_onboarding/diagrams.md",
@@ -7877,9 +7923,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "14aa4fad260d37897a70a0d4d5e0545ac27137c4029dbd288f95ec812e47f8b7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "c923d70fda0427c81bbca33593f6d7ada0cb21f73eb0a079975ee1c977cafd64"
     },
     {
       "path": "units/01_auth_onboarding/F01-06_onboarding/frontend.md",
@@ -7887,9 +7936,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e2fcd1f6f7c15ccd90c3c699741b3323bcc7b928984b67a3bbe134383bcf70a2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "fe62d219f48ce75776aa26f4f591364887bf968f00fb6c8fceb53e811f5e230d"
     },
     {
       "path": "units/01_auth_onboarding/F01-06_onboarding/scenarios.md",
@@ -7897,9 +7949,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c878615d81543ba6f647a4912d58c36a5de7feed9e7d36719fd32ca00141b38d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "signup_social_onboarding_20261122"
+      ],
+      "reviewedSha256": "8c150ecf51c3d61d07c5d07c25411b425bdf19225976444ba60d1372115fcc7d"
     },
     {
       "path": "units/01_auth_onboarding/F01-07_preference-tags/backend.md",
@@ -13553,6 +13608,20 @@
         "reviewedDocumentRelativePaths": 377
       },
       "scope": "문서·근거·생성 데이터 검사. 화면 명세와 단건 구현 차이·쓰기 실패 안내·온보딩 부분 저장은 남은 차이로 기록했다. 제품 시험·실제 추천 결과 확인 아님. 출시 범위 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "F01-01/02/06 and auth domain: source_references tests; sync_source_reference_docs; check_scenario_audit; reviewed-document paths/digests; source digests; HTML anchor preservation; October 12 evidence preservation; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 89,
+        "sourceRecords": 328,
+        "verifiedRecords": 326,
+        "retiredRecords": 2,
+        "localSourceLocations": 329,
+        "reviewedDocumentRelativePaths": 536
+      },
+      "scope": "문서·근거·생성 자료 검사. 인증 8개 기능과 영역 설명의 소스 대조이며 제품 시험·실계정·메일·기기 검증 아님. 출시 범위 날짜 관문은 별도 미해결. 과거 검증은 external-integration 섹션을 보존하며 release-completion의 현재 판정 조건과 구분한다."
     }
   ],
   "evidenceGroups": {
@@ -14333,6 +14402,193 @@
         {
           "path": "community_app/lib/data/models/user/user_preference_tag_vo.dart",
           "sha256": "2f5ac4a4eb503ed5bf11c9f74c4f9b0f9b258969876f254b0e52a6148102ccd2"
+        }
+      ]
+    },
+    "signup_social_onboarding_20261122": {
+      "kind": "source_review",
+      "scope": "F01-01·F01-02·F01-06 가입/로그인/Google 연결/온보딩의 실제 진입·입력 검증·계정 상태·완료 경계·부분 저장·실패/복귀 대조. 공통 번호 인증·세션·태그 근거 지문 불변 확인. 시험 목적·일부 본문 확인이며 실제 실행·외부 계정·메일·기기·운영 설정 검증 아님.",
+      "reuses": [
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
+      ],
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AuthService.java",
+          "sha256": "989c146e2ab0a7d0e7189e464667469204ff1418f0689546142456fdff45c46b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/SocialLoginService.java",
+          "sha256": "d544d4349c2a0279778ad406677ae213804b2ad9db0542973b777df018c33c0d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/SocialLoginAttemptService.java",
+          "sha256": "0a3e96eba40af65de731e8a09ac073a6adfed0c962d3ce2cb744709ed1e10e44"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/EmailCodeAuthService.java",
+          "sha256": "1b6df54da282bd7d3d6aa38b2920d8f0248c7134c33dda2ec0a87b5f2de8866f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserService.java",
+          "sha256": "fd0e8c2f8ae89ecb4653a5a47a45a201a8ee8afe4e5c06f10873d7c96f49f9bb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserAddressService.java",
+          "sha256": "7217583757c78ed278fa3d8f88cfde997671541788784dabef206f0f4b96ecd4"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+          "sha256": "3f56d9cff712da7b21d204edbc575e195bf94466069b493ea5d3428e0ed98b61"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserController.java",
+          "sha256": "26920610289d0b5e1fd758db6e73a61b732f90222a865cc3c84b54bd17d3f30d"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserAddressController.java",
+          "sha256": "9aabe7d4c857c55acc181e736f39e01a2321d0fabee9d3faef19394c562f6863"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/SignupParam.java",
+          "sha256": "815a79354cb64b703b2e1b1ecd0d40ce8ad60db846bf28d0071fbd9b8ef3504e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/LoginParam.java",
+          "sha256": "a01af692ae68188cd9a5a7f3460e151edd37bde6e84001a9a2b4482b40aa07c6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/SocialLoginParam.java",
+          "sha256": "9acf682957a23b72bf010731eb3f382c172af9948036bc54cfaeb0cb26842631"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/UserModParam.java",
+          "sha256": "284f6e4e60b4dfc7ca49af6802b3c93b023895ade8998f7b96e7e07fb3df6989"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/UserAddressAddParam.java",
+          "sha256": "e5cf2274d30c915071ca9d6577ac607f0f304d2fdd552afd0cc72cd03bf9a17a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/UserProfileVo.java",
+          "sha256": "2dcad409cc9937ca9c7c170acc843f94ff43d6d58906951f6f0ce90f1619367e"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/login_screen.dart",
+          "sha256": "88b576188db5508dfaee6b107cdf72594501ea3627db1927c82dd568366fc393"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/signup_screen.dart",
+          "sha256": "96cc02715b24936b35b594fceebfd8e2f8015137d5fffe774b6bbc126827e766"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/onboarding_welcome_screen.dart",
+          "sha256": "f3b208a56f3819f44a18428d7ca9af4596d7c4d4ed781944e30037276d41beab"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/onboarding_profile_screen.dart",
+          "sha256": "0ce75dc5992961d3f4882054ca718efbe257a086cf9775c4277d61de3850b6f6"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/onboarding_interests_screen.dart",
+          "sha256": "8f0085be737ffe28f0beab09706d294b0c1cf3316ee28238cbac8a453c778250"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/onboarding_location_screen.dart",
+          "sha256": "0a2de3c2097b300e00b2cc9107f68c9308cb73938dc32a6b242d3676411479c5"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/widgets/social_account_link_sheet.dart",
+          "sha256": "da31e0c47f0412bf70a3fe57596120f5d2d3177657ec15c7f68a1b65a6cfcfa4"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/widgets/social_login_info_sheet.dart",
+          "sha256": "c1d78f895b0fb2ff1f80acf09affd4ffa8218cf84db845ba693caacd57f65541"
+        },
+        {
+          "path": "community_app/lib/domain/providers/auth_provider.dart",
+          "sha256": "1f74f344223be3e7843561067bd4c8a7bcaf370a6b6eba8e7c8cfaf66db98204"
+        },
+        {
+          "path": "community_app/lib/data/repositories/auth_repository.dart",
+          "sha256": "ccac24fb541bb9502f79f41da5da7ebfa70a7237b95ae158fc7abc97a2084459"
+        },
+        {
+          "path": "community_app/lib/data/api/auth_api.dart",
+          "sha256": "fbf3456370f5487a1e7589dc42b369520ca2319f3b17c56168de762ae63d4997"
+        },
+        {
+          "path": "community_app/lib/core/auth/google_auth_provider.dart",
+          "sha256": "1a2110f17d79807d634494e07624b22ae8453df6394b0f790b4f63a584f32453"
+        },
+        {
+          "path": "community_app/lib/core/storage/onboarding_storage.dart",
+          "sha256": "a342595ea4b7a0296c8395c229ecf44926292ad6f3b1b57d7480011a86e7bc81"
+        },
+        {
+          "path": "community_app/lib/core/utils/image_upload_helper.dart",
+          "sha256": "689c0f124d2d761415be01c844bb82327ca39c747fcdbc1fa2025550bc7ad407"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/SocialLoginServiceTest.java",
+          "sha256": "08133600f79d3e4bdd372912dd282910136175b75909dae0eea8a5b683cabd48"
+        },
+        {
+          "path": "community_app/test/domain/providers/auth_state_transition_test.dart",
+          "sha256": "d62e7d9d020bbf806be294c262b4bae4a7c2ef5f1b1a49d129370e3f493693dc"
+        },
+        {
+          "path": "community_app/test/presentation/auth/social_link_dismissal_test.dart",
+          "sha256": "ca2dcfbea5a7440f00ec618fd24098d60d30ab93ee3c8adb964662a3b781897f"
+        }
+      ]
+    },
+    "auth_domain_rollup_20261122": {
+      "kind": "source_review",
+      "scope": "검토 완료한 인증 기능 8개의 근거를 종합한 영역 PRD·공개 영역 페이지·로컬 개요. 과거 7개 표기·가입 뒤 인증·4종 전면 활성·정보가 모두 채워짐·옛 세션/보안 완료 문구를 현재 범위로 교정. 새 제품 실행 검증 아님.",
+      "reuses": [
+        "signup_social_onboarding_20261122",
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122",
+        "preference_tags_20261122"
+      ],
+      "sources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
+          "sha256": "022dc2cd156203ddde9a89501d9ceb224c0470edb22c45d13f826359a2d77b4e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
+          "sha256": "b053a7ef1ce30c821389a1e7ecd8a5b85b6af8eaa8f5e988006a5426f092eda3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
+          "sha256": "a01d776c4d3cb588c033ea3d2e20243bec7bb62ccba8b1e8866fe49be5d45cb9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md",
+          "sha256": "622f5304ecd2f4c1bcac2578d50bcd301149f6df2bf2bce4d6c943d1bca76606"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md",
+          "sha256": "f6c7a319403ff2b5d3186a1a464e468133b6e7b0f714cb6196ba0051d3a3f832"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md",
+          "sha256": "6efae24304e9e95c12b0674b3e00021e7496cff51e05b561cfc74ce6ee92eeaa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
+          "sha256": "e71ef9fdd9f985c6b1ca3d1624cdd05c8c384eb8d19cc75ca9209a297b9863aa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md",
+          "sha256": "4783a96eca43a387b31bba9834f034720c852664ed0ff4a616501909e115ebba"
         }
       ]
     }

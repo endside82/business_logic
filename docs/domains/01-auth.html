@@ -14,162 +14,22 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>시작·발견<span>›</span>01 인증·온보딩</div>
         <h1>01. 인증 · 온보딩</h1>
-        <p class="lede">
-          가입·로그인·이메일 인증·온보딩·관심사 설정으로 사용자를
-          “추천 알고리즘이 무엇을 보여줄지 결정할 수 있는 상태”까지 끌어올린다.
-          모든 다른 도메인의 진입 조건이라, 여기서 깨지면 다른 모든 기능이 보이지 않는다.
-        </p>
+        <p class="lede">가입 전 번호 확인부터 로그인·계정 복구·세션 종료·온보딩까지 8개 기능을 잇습니다. 2026-11-22 소스 대조와 실제 환경 검증을 구분합니다.</p>
       </header>
       <p class="subtitle"><a href="../qa/completion-criteria.html#domain-01">이 영역의 기능별 출시 완료 기준</a>에서 확인할 결과와 증거를 봅니다. 기능 포함 여부와 구현 완료·실환경 통과·공개 승인은 별도로 판정합니다.</p>
 
       <div class="launch-strip" id="launch-strip" data-domain="1"></div>
 
 
-      <section>
-        <div class="callout">
-          <span class="label">2026-07-29 소스 재실측 — 관심사 태그 소비</span>
-          <p>F01-07 태그는 PersonSheet 공통점, 홈 사람 추천 COMMON_GROUND, 양쪽 동의 데이팅 Jaccard
-            점수에 실제 사용된다. 저장 weight는 공통점 표시 순서에는 쓰지만 추천 개수·데이트 유사도에
-            직접 곱하지 않으며 타인에게 전체 태그나 숫자 궁합을 노출하지 않는다.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">기능</div><div class="value">8</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">82</div><div class="hint">기능당 평균 10.3개</div></div>
-          <div class="metric"><div class="label">주 사용자</div><div class="value">3</div><div class="hint">게스트·신규·기존 로그인</div></div>
-          <div class="metric"><div class="label">민감도</div><div class="value">높음</div><div class="hint">계정 잠김 위험</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">왜 이 도메인이 중요한가</span>
-          <p>인증·온보딩은 사용자 입장에서 “1회만 거치는 화면”이라 가벼워 보이지만,
-          실제로는 가장 회귀 위험이 크다. 토큰 만료 처리 한 줄을 잘못 건드리면 전체 사용자가
-          갑자기 로그아웃되고, 마지막 로그인 수단 보호 로직이 빠지면 계정 잠김이 발생한다.
-          “성공 흐름이 짧아도 실패 시나리오가 길다”는 게 이 도메인의 핵심 특성이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>8개 기능과 각자의 역할</h2>
-        <p class="subtitle">기능 ID는 다른 문서·이슈에서 그대로 참조한다.</p>
-
-        <div class="cards">
-          <a class="card" href="../features/F01-01.html">
-            <div class="eyebrow">F01-01</div>
-            <h3>이메일 회원가입 · 로그인</h3>
-            <p>이메일+비밀번호로 가입·로그인한다. 미성년자 차단, 중복 이메일, 비밀번호 정책, 이미 차단·탈퇴된 계정 처리가 핵심.</p>
-            <div class="meta"><span class="pill">10 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-02.html">
-            <div class="eyebrow">F01-02</div>
-            <h3>소셜 로그인</h3>
-            <p>Apple·Google·Kakao·Naver 4종의 연결 코드가 있고 현재 소셜 로그인은 Google만 활성이다. iOS 공개 전 심사 기준에 맞는 로그인 구성은 별도로 결정해야 한다. 신규 가입자의 추가 정보, 사용자의 취소, 제공자 오류와 차단 계정을 구분하며, 카카오·네이버 외부 호출은 연결 5초·응답 10초를 넘기지 않는다.</p>
-            <div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-03.html">
-            <div class="eyebrow">F01-03</div>
-            <h3>이메일 인증</h3>
-            <p>가입 전 6자리 번호와 60분 가입 확인표. 번호 확인·계정 생성·발송과 실제 수신을 구분한다.</p>
-            <div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-04.html">
-            <div class="eyebrow">F01-04</div>
-            <h3>비밀번호 재설정</h3>
-            <p>번호 확인 뒤 15분 확인표로 비밀번호 변경. 계정별 메일과 확인표 소비·로그인 및 AI 연결 해지·실시간 알림을 구분한다.</p>
-            <div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-05.html">
-            <div class="eyebrow">F01-05</div>
-            <h3>토큰 갱신 · 로그아웃</h3>
-            <p>동시 갱신·응답 유실·일시 오류의 세션 유지와 명시적 거절을 구분하고, 로그아웃은 해당 세션·푸시만 정리한다.</p>
-            <div class="meta"><span class="pill warn">9 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-06.html">
-            <div class="eyebrow">F01-06</div>
-            <h3>온보딩</h3>
-            <p>첫 로그인 사용자가 거치는 4–5단계 흐름. 건너뛰기, 중간 재개, 사진·태그·위치 실패 시에도 “추천 가능 상태”까지 도달해야 한다.</p>
-            <div class="meta"><span class="pill">11 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-07.html">
-            <div class="eyebrow">F01-07</div>
-            <h3>관심사 태그 관리</h3>
-            <p>카탈로그 태그의 본인 소유·20개 상한·단건 저장을 확인한다. 온보딩의 부분 저장과 프로필 쓰기 실패 안내, 화면 명세와의 차이는 남아 있다.</p>
-            <div class="meta"><span class="pill">10 시나리오</span><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F01-08.html">
-            <div class="eyebrow">F01-08</div>
-            <h3>소셜 계정 연결 해제</h3>
-            <p>실제 연결과 활성 제공자를 구분하고, 마지막 수단·동시 해제·결과 유실을 확인한다. 비활성 수단 계산의 조건부 차이를 남겼다.</p>
-            <div class="meta"><span class="pill danger">계정 잠김 위험</span><span class="pill brand">상세 →</span></div>
-          </a>
-        </div>
-      </section>
-
-      <section><h2>도메인 안 흐름</h2><div class="diagram"><div class="mermaid">flowchart TD
- A["이메일 가입"] --> B["6자리 번호 확인"]
- B --> C["가입 정보 · 필수 동의"]
- C --> D["계정 생성 · 자동 로그인"]
- D --> E["온보딩"]
- G["Google 인증"] --> H{"기존 신원인가?"}
- H -->|연결됨| I["로그인"]
- H -->|신규| C
- H -->|같은 이메일의 기존 계정| J["연결 동의 · 메일 번호"]
- J --> I
- K["비밀번호 찾기"] --> L["메일 번호 · 새 비밀번호"]
- L --> I
- I --> M["홈 · 토큰 갱신 · 로그아웃"]</div></div></section>
-
-      <section>
-        <h2>이 도메인의 부수효과</h2>
-        <p class="subtitle">인증·온보딩은 다른 도메인 데이터의 진입 권한을 결정한다. 잘못 건드리면 다른 도메인이 같이 깨진다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
-            <tbody>
-              <tr><td>알림</td><td><span class="pill">간접</span></td><td>가입·로그인 자체로 알림은 적지만, 푸시 디바이스 토큰 등록은 여기서 시작된다.</td></tr>
-              <tr><td>결제·정산</td><td><span class="pill">간접</span></td><td>로그인되지 않으면 결제 불가. 차단·탈퇴 계정의 결제 차단 정책이 여기로 수렴.</td></tr>
-              <tr><td>위치</td><td><span class="pill brand">있음</span></td><td>온보딩에서 위치 권한과 기본 주소를 받는다. 거부 시에도 추천이 동작해야 함.</td></tr>
-              <tr><td>리뷰·신뢰</td><td><span class="pill brand">있음</span></td><td>회원가입·소셜 로그인 케이스에서 차단·탈퇴 사용자의 재진입을 막아야 신뢰 시스템이 유지된다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section><h2>이메일 인증의 구체 정책 (F01-03)</h2><p>번호는 6자리·10분 유효·5회 오입력 시 폐기다. 재발송은 60초 뒤, 목적·이메일별 첫 발송부터 24시간에 10회까지다. 가입 표는 60분, 비밀번호 재설정 표는 15분, Google 연결 표는 30분 유효하다.</p><p>가입 뒤 미인증 제한 세션과 미인증 계정의 30일·7일 정리는 제거됐다. 예전 인증·복구 링크의 확인 기록은 현재 번호 방식의 운영 검증으로 사용하지 않는다.</p></section>
-
-      <section>
-        <h2>자주 빠뜨리는 시나리오</h2>
-        <div class="callout warn">
-          <span class="label">레드 플래그</span>
-          <ul>
-            <li><strong>마지막 로그인 수단 제거</strong> — F01-08에서 마지막 남은 소셜 또는 이메일 인증을 해제하면 계정 잠김. 반드시 사전 차단.</li>
-            <li><strong>번호 확인 전 가입 시도</strong> — 유효한 가입 표 없이 계정을 만들 수 없어야 한다. 기존 계정의 emailVerified 값으로 홈을 막던 분기는 제거됐다.</li>
-            <li><strong>토큰 갱신 무한 루프</strong> — refresh 토큰까지 만료된 상태에서 401이 반복되며 사용자가 무한히 로딩만 보는 케이스.</li>
-            <li><strong>소셜 가입 후 추가정보 미입력 이탈</strong> — 가입은 됐지만 닉네임·동의가 비어 있어 추천 불가능 상태. 진입 가드 분기 필요.</li>
-            <li><strong>이메일 인증 메일 재발송 제한 미안내</strong> — 사용자가 “안 와요”라며 계속 누르는 케이스. 대기 안내·횟수 제한 표시 필요.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>관련 정책·문서</h2>
-        <div class="hub-grid">
-          <a class="card" href="../policies/state.html">
-            <div class="eyebrow">정책</div><h3>계정 삭제·비활성화 상태</h3>
-            <p>탈퇴 예약·즉시 비활성화의 상태 모델은 상태 정책에서 본다.</p>
-          </a>
-          <a class="card" href="../policies/permission.html">
-            <div class="eyebrow">정책</div><h3>역할별 진입 가드</h3>
-            <p>비로그인·로그인·관계자·관리자의 권한 매트릭스.</p>
-          </a>
-          <a class="card" href="../qa/exceptions.html">
-            <div class="eyebrow">QA</div><h3>가입·인증 빠뜨리기 쉬운 시나리오</h3>
-            <p>토큰·메일·소셜 모듈·계정 상태 관련 케이스 모음.</p>
-          </a>
-        </div>
-      </section>
+      <section><h2>8개 기능과 현재 확인 범위</h2><p>시나리오 수는 확인 항목 수이며 실행 통과 건수가 아닙니다.</p><div class="hub-grid"><a class="card" href="../features/F01-01.html"><div class="eyebrow">F01-01</div><h3>이메일 가입·로그인</h3><p>가입 전 번호 확인·정보 검증과 가입 응답 뒤 내 정보 조회·세션 설치를 구분한다. 상태별 로그인과 응답 유실 복구를 확인한다.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-02.html"><div class="eyebrow">F01-02</div><h3>소셜 로그인</h3><p>기존 Google 로그인·신규 가입·기존 이메일 연결과 각 단계의 취소·확인표 소비·늦은 결과를 구분한다.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-03.html"><div class="eyebrow">F01-03</div><h3>이메일 인증</h3><p>가입 전 6자리 번호·60분 가입 확인표, 재발송·오입력·발송 예외·수신 제한과 실제 가입 복귀를 구분한다.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-04.html"><div class="eyebrow">F01-04</div><h3>비밀번호 재설정</h3><p>번호 확인 뒤 15분 확인표로 변경한다. 확인표 소비·비밀번호 저장·로그인 및 AI 연결 해지·실시간 통지를 구분한다.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-05.html"><div class="eyebrow">F01-05</div><h3>토큰 갱신과 로그아웃</h3><p>동시 갱신·응답 유실·일시 오류의 세션 유지와 명시적 거절을 구분하고, 로그아웃은 해당 세션·푸시만 정리한다.</p><div class="meta"><span class="pill">9 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-06.html"><div class="eyebrow">F01-06</div><h3>온보딩</h3><p>네 단계의 저장·건너뛰기·재개를 구분한다. 서버 완료 요청 실패를 앱이 확인하지 않는 차이와 단계별 부분 저장을 남겼다.</p><div class="meta"><span class="pill">10 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-07.html"><div class="eyebrow">F01-07</div><h3>관심사 태그 관리</h3><p>카탈로그 태그의 본인 소유·20개 상한·단건 저장을 확인한다. 온보딩의 부분 저장과 프로필 쓰기 실패 안내, 화면 명세와의 차이는 남아 있다.</p><div class="meta"><span class="pill">10 시나리오</span><span class="pill brand">상세 →</span></div></a><a class="card" href="../features/F01-08.html"><div class="eyebrow">F01-08</div><h3>소셜 계정 연결 해제</h3><p>실제 연결과 활성 제공자를 구분하고, 마지막 수단·동시 해제·결과 유실을 확인한다. 비활성 수단 계산의 조건부 차이를 남겼다.</p><div class="meta"><span class="pill">8 시나리오</span><span class="pill brand">상세 →</span></div></a></div></section>
+<section><h2>영역의 역할</h2><p>가입 전 이메일 소유 확인, 이메일·활성 소셜 로그인, 계정 접근 복구, 로그인 세션 유지와 종료, 소셜 연결 관리, 첫 이용의 프로필·관심사·위치 설정을 담당한다. 네 단계 온보딩을 건너뛸 수 있으므로 이 영역을 통과했다고 모든 프로필·태그·주소가 채워졌다고 보지 않는다.</p>
+<p>소셜 기본 활성 구성은 이메일·Google이며 현재 앱 노출은 서버의 활성 제공자 목록을 따른다. 카카오·네이버·Apple 코드의 존재, 과거 외부 로그인 기록, 현재 운영 공개를 구분한다.</p></section>
+<section><h2>사용자 흐름과 실제 입구</h2><ul><li><strong>이메일 가입:</strong> 로그인 화면의 회원가입 → 이메일 번호 확인 → 가입 정보·동의 → 계정 생성 → 내 정보 조회·앱 세션 설치 → 온보딩/후속 이동이다. 가입 뒤 링크를 눌러 미인증 제한을 푸는 옛 흐름이 아니다.</li><li><strong>Google:</strong> 로그인 화면의 활성 버튼 → 외부 신원 확인 → 기존 로그인·신규 정보 입력·기존 이메일 계정 연결로 나뉜다. 기존 계정 연결은 명시적인 번호 요청·확인을 거친다.</li><li><strong>복구:</strong> 로그인 화면의 비밀번호 찾기 → 이메일 → 번호 → 새 비밀번호다. 변경 결과와 기존 로그인·AI 연결 해지·실시간 종료는 따로 확인한다.</li><li><strong>로그아웃·연동 관리:</strong> 전체 메뉴 → 설정 → 계정에서 연다. 로그아웃 확인 취소와 소셜 해제 확인 취소는 서버 변경을 보내지 않는다. 연동 해제는 계정 탈퇴나 외부 제공자 권한 철회가 아니다.</li><li><strong>온보딩·관심사:</strong> 최초 진행은 웰컴 → 프로필 → 관심사 → 위치다. 이후 태그는 마이의 내 프로필 메뉴에서 관리한다. 온보딩의 순차 저장과 프로필의 단건 저장을 구분한다.</li></ul></section>
+<section><h2>상태와 처리 경계</h2><div class="table-wrap"><table><thead><tr><th>상태·상황</th><th>현재 처리</th><th>판단할 때 구분할 것</th></tr></thead><tbody><tr><td>번호 확인만 완료</td><td>가입 확인표 발급, 계정 미생성</td><td>메일 요청·실제 수신·번호 확인·가입 확정</td></tr><tr><td>가입/로그인 응답 성공</td><td>앱이 내 정보 조회 뒤 세션 설치</td><td>서버 성공과 앱 로그인 완료</td></tr><tr><td>정상 계정</td><td>신규 여부·약관·온보딩·원래 이동 대상에 따른 이용</td><td>항상 홈 직행이라는 보장 아님</td></tr><tr><td>정지·차단 계정</td><td>제한된 로그인·갱신 결과</td><td>로그인 거절이나 일반 권한 복구와 다름</td></tr><tr><td>탈퇴·탈퇴 대기 계정</td><td>일반 로그인 거절</td><td>소셜 연결 안내 단계와 최종 상태 재검사</td></tr><tr><td>갱신 통신 오류·서버 오류·경합</td><td>기존 세션 유지, 호출한 작업에 실패 반환</td><td>명시적 토큰 거절과 구분</td></tr><tr><td>새 기기 로그인</td><td>기존 로그인 세션 대체</td><td>같은 세션의 정상 토큰 갱신과 구분</td></tr><tr><td>로그아웃</td><td>앱 세션 종료 후 해당 서버 세션·푸시 정리</td><td>앱 안내·DB 정리·실시간 연결 종료</td></tr><tr><td>온보딩 건너뛰기</td><td>해당 단계의 신규 입력 없이 다음 진행</td><td>이미 서버에 성공한 일부 데이터는 취소되지 않음</td></tr></tbody></table></div></section>
+<section><h2>공통 정책과 남은 차이</h2><p>가입·복구·Google 연결은 목적별 번호와 확인표를 분리한다. 번호는 6자리·10분 유효·5회 오입력 폐기이며, 재발송은 60초 이후 목적·이메일별 24시간에 10회다. 가입 확인표는 60분, 비밀번호 복구는 15분, Google 연결은 30분이다. 발송 예외의 회차 복구와 수신 제한의 정상 응답을 구분한다.</p>
+<p>현재 주요 차이는 다음과 같다. 해결된 제품 동작으로 표시하지 않으며 상세 근거와 확인 항목은 기능 PRD에서 관리한다.</p>
+<div class="table-wrap"><table><thead><tr><th>관련 기능</th><th>남은 차이·확인</th></tr></thead><tbody><tr><td><a href="../features/F01-01.html">이메일 가입·로그인</a></td><td>내 정보 조회 실패에서 앱 세션이 설치되지 않아도 가입 성공 안내가 나올 수 있음</td></tr><tr><td><a href="../features/F01-02.html">소셜 로그인</a></td><td>연결 확인표 소비 뒤 실패·화면 취소 뒤 서버 확정 여부와 운영 외부 계정 확인</td></tr><tr><td><a href="../features/F01-03.html">이메일 인증</a> · <a href="../features/F01-04.html">비밀번호 복구</a></td><td>요청 성공과 실제 수신, 확인표 소비와 변경 확정, 실시간 알림과 실제 종료의 구분</td></tr><tr><td><a href="../features/F01-05.html">세션 갱신·로그아웃</a></td><td>응답 유실·저장 지연·로그아웃 후 서버 정리 결과</td></tr><tr><td><a href="../features/F01-06.html">온보딩</a></td><td>서버 완료 요청 실패를 앱이 확인하지 않아 완료 표시가 다를 수 있음</td></tr><tr><td><a href="../features/F01-07.html">관심사 태그</a></td><td>화면 명세의 일괄 저장과 실제 단건 구현 차이, 쓰기 실패 안내 누락, 온보딩 부분 저장</td></tr><tr><td><a href="../features/F01-08.html">소셜 해제</a></td><td>비활성 제공자도 마지막 수단으로 세어 이용 가능한 로그인 수단만 해제될 수 있는 조건부 차이</td></tr></tbody></table></div></section>
+<section><h2>검증 범위와 관련 문서</h2><p>이번 확인은 코드·시험 목적 대조입니다. 과거 외부 수신·에뮬레이터 기록을 현재 서명 앱·실제 계정·운영 설정의 새 통과로 확대하지 않습니다.</p><p><a href="../qa/external-readiness.html">외부 준비 현황</a> · <a href="../qa/completion-criteria.html">출시 완료 기준</a> · <a href="../policies/state.html">상태 정책</a> · <a href="../policies/permission.html">권한 정책</a> · <a href="../index.html">현재 할 일</a></p></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

@@ -1,161 +1,72 @@
-# 01. 인증 & 온보딩 PRD
+# 인증과 온보딩 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 인증 영역의 기능 PRD 8개와 실제 소스 대조 결과를 종합했다. 현재 작업은 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다. 문서 갱신은 실제 메일·외부 계정·기기·운영 설정의 새 검증을 뜻하지 않는다.
 
+## 영역의 역할
 
-<!-- generated: domain-source-first-rollup; updated: 2026-05-18; unit: business_logic/units/01_auth_onboarding -->
+가입 전 이메일 소유 확인, 이메일·활성 소셜 로그인, 계정 접근 복구, 로그인 세션 유지와 종료, 소셜 연결 관리, 첫 이용의 프로필·관심사·위치 설정을 담당한다. 네 단계 온보딩을 건너뛸 수 있으므로 이 영역을 통과했다고 모든 프로필·태그·주소가 채워졌다고 보지 않는다.
 
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/01_auth_onboarding/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
+소셜 기본 활성 구성은 이메일·Google이며 현재 앱 노출은 서버의 활성 제공자 목록을 따른다. 카카오·네이버·Apple 코드의 존재, 과거 외부 로그인 기록, 현재 운영 공개를 구분한다.
 
-## 1. 결론
+## 기능별 현재 기준
 
-이 단위는 사용자가 community 플랫폼에 처음 발을 들이는 진입 지점을 담당한다. 이메일/비밀번호 또는 소셜(Apple/Google/Kakao/Naver) 로그인으로 신원을 증명하고, 이메일 번호 확인 → 회원가입·자동 로그인 → 온보딩(웰컴 캐러셀, 프로필 초기 설정, 관심사 태그, 위치)으로 이어지는 첫 사용자 경험(FUE)을 제공한다. 또한 비밀번호 재설정, JWT Access/Refresh 토큰 자동 갱신, 소셜 계정 연결 해제 등 인증 라이프사이클 전반을 책임진다. 이 단위가 끝나면 사용자는 토큰을 보유하고, 프로필·관심사·위치가 채워진 "추천 가능한" 상태로 메인 피드에 진입한다.
+아래 시나리오 수는 확인 항목 수이며 실행 통과 건수가 아니다. 상세 상태·입력·실패·수용 기준은 연결된 기능 PRD를 따른다.
 
-이 도메인은 기능 PRD 8개로 구성된다. 현재 기능별 trace source는 총 16개이고, risk 후보는 총 6개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
+| 기능 ID | 기능 문서 | 현재 초점 | 시나리오 |
+|---|---|---|---:|
+| F01-01 | [이메일 가입·로그인](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | 가입 전 번호 확인·정보 검증과 가입 응답 뒤 내 정보 조회·세션 설치를 구분한다. 상태별 로그인과 응답 유실 복구를 확인한다. | 8 |
+| F01-02 | [소셜 로그인](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | 기존 Google 로그인·신규 가입·기존 이메일 연결과 각 단계의 취소·확인표 소비·늦은 결과를 구분한다. | 9 |
+| F01-03 | [이메일 인증](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | 가입 전 6자리 번호·60분 가입 확인표, 재발송·오입력·발송 예외·수신 제한과 실제 가입 복귀를 구분한다. | 8 |
+| F01-04 | [비밀번호 재설정](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | 번호 확인 뒤 15분 확인표로 변경한다. 확인표 소비·비밀번호 저장·로그인 및 AI 연결 해지·실시간 통지를 구분한다. | 8 |
+| F01-05 | [토큰 갱신과 로그아웃](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | 동시 갱신·응답 유실·일시 오류의 세션 유지와 명시적 거절을 구분하고, 로그아웃은 해당 세션·푸시만 정리한다. | 9 |
+| F01-06 | [온보딩](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | 네 단계의 저장·건너뛰기·재개를 구분한다. 서버 완료 요청 실패를 앱이 확인하지 않는 차이와 단계별 부분 저장을 남겼다. | 10 |
+| F01-07 | [관심사 태그 관리](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | 카탈로그 태그의 본인 소유·20개 상한·단건 저장을 확인한다. 온보딩의 부분 저장과 프로필 쓰기 실패 안내, 화면 명세와의 차이는 남아 있다. | 10 |
+| F01-08 | [소셜 계정 연결 해제](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | 실제 연결과 활성 제공자를 구분하고, 마지막 수단·동시 해제·결과 유실을 확인한다. 비활성 수단 계산의 조건부 차이를 남겼다. | 8 |
 
-## 2. 실사 근거 맵
+## 사용자 흐름과 실제 입구
 
-| ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---|---:|---:|
-| F01-01 | F01-01. 이메일 회원가입 & 로그인 | [F01-01_email-signup-login_prd.md](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | [F01-01_email-signup-login](../../units/01_auth_onboarding/F01-01_email-signup-login) | 전환 완료 | 2 | 0 |
-| F01-02 | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | [F01-02_social-login_prd.md](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | [F01-02_social-login](../../units/01_auth_onboarding/F01-02_social-login) | 전환 완료 | 1 | 1 |
-| F01-03 | F01-03. 이메일 인증 | [F01-03_email-verification_prd.md](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | [F01-03_email-verification](../../units/01_auth_onboarding/F01-03_email-verification) | 2026-11-22 소스 대조 | 2 | 3 |
-| F01-04 | F01-04. 비밀번호 재설정 | [F01-04_password-reset_prd.md](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | [F01-04_password-reset](../../units/01_auth_onboarding/F01-04_password-reset) | 2026-11-22 소스 대조 | 3 | 4 |
-| F01-05 | F01-05. 토큰 갱신 & 로그아웃 | [F01-05_token-refresh-logout_prd.md](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | [F01-05_token-refresh-logout](../../units/01_auth_onboarding/F01-05_token-refresh-logout) | 2026-11-22 소스 대조 | 2 | 3 |
-| F01-06 | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | [F01-06_onboarding_prd.md](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | [F01-06_onboarding](../../units/01_auth_onboarding/F01-06_onboarding) | 전환 완료 | 0 | 1 |
-| F01-07 | F01-07. 관심사 태그 관리 | [F01-07_preference-tags_prd.md](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | [F01-07_preference-tags](../../units/01_auth_onboarding/F01-07_preference-tags) | 2026-11-22 소스 대조 | 5 | 4 |
-| F01-08 | F01-08. 소셜 계정 연결 해제 | [F01-08_social-unlink_prd.md](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | [F01-08_social-unlink](../../units/01_auth_onboarding/F01-08_social-unlink) | 2026-11-22 소스 대조 | 3 | 3 |
+- **이메일 가입:** 로그인 화면의 회원가입 → 이메일 번호 확인 → 가입 정보·동의 → 계정 생성 → 내 정보 조회·앱 세션 설치 → 온보딩/후속 이동이다. 가입 뒤 링크를 눌러 미인증 제한을 푸는 옛 흐름이 아니다.
+- **Google:** 로그인 화면의 활성 버튼 → 외부 신원 확인 → 기존 로그인·신규 정보 입력·기존 이메일 계정 연결로 나뉜다. 기존 계정 연결은 명시적인 번호 요청·확인을 거친다.
+- **복구:** 로그인 화면의 비밀번호 찾기 → 이메일 → 번호 → 새 비밀번호다. 변경 결과와 기존 로그인·AI 연결 해지·실시간 종료는 따로 확인한다.
+- **로그아웃·연동 관리:** 전체 메뉴 → 설정 → 계정에서 연다. 로그아웃 확인 취소와 소셜 해제 확인 취소는 서버 변경을 보내지 않는다. 연동 해제는 계정 탈퇴나 외부 제공자 권한 철회가 아니다.
+- **온보딩·관심사:** 최초 진행은 웰컴 → 프로필 → 관심사 → 위치다. 이후 태그는 마이의 내 프로필 메뉴에서 관리한다. 온보딩의 순차 저장과 프로필의 단건 저장을 구분한다.
 
-## 3. 먼저 볼 기능
+## 상태와 처리 경계
 
-| 먼저 볼 기능 | 기능 | 이유 |
+| 상태·상황 | 현재 처리 | 판단할 때 구분할 것 |
 |---|---|---|
-| [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | Risk 후보 1, trace 없음 |
-| [F01-02](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | Risk 후보 1 |
-| [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 현재 제한·미검증 3건 |
-| [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 현재 제한·미검증 4건 |
-| [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 현재 제한·미검증 3건 |
-| [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 현재 제한·미검증 4건 |
+| 번호 확인만 완료 | 가입 확인표 발급, 계정 미생성 | 메일 요청·실제 수신·번호 확인·가입 확정 |
+| 가입/로그인 응답 성공 | 앱이 내 정보 조회 뒤 세션 설치 | 서버 성공과 앱 로그인 완료 |
+| 정상 계정 | 신규 여부·약관·온보딩·원래 이동 대상에 따른 이용 | 항상 홈 직행이라는 보장 아님 |
+| 정지·차단 계정 | 제한된 로그인·갱신 결과 | 로그인 거절이나 일반 권한 복구와 다름 |
+| 탈퇴·탈퇴 대기 계정 | 일반 로그인 거절 | 소셜 연결 안내 단계와 최종 상태 재검사 |
+| 갱신 통신 오류·서버 오류·경합 | 기존 세션 유지, 호출한 작업에 실패 반환 | 명시적 토큰 거절과 구분 |
+| 새 기기 로그인 | 기존 로그인 세션 대체 | 같은 세션의 정상 토큰 갱신과 구분 |
+| 로그아웃 | 앱 세션 종료 후 해당 서버 세션·푸시 정리 | 앱 안내·DB 정리·실시간 연결 종료 |
+| 온보딩 건너뛰기 | 해당 단계의 신규 입력 없이 다음 진행 | 이미 서버에 성공한 일부 데이터는 취소되지 않음 |
 
-## 4. 도메인 기능 목록
+## 공통 정책과 남은 차이
 
-### 핵심 기능 목록 (7개)
+가입·복구·Google 연결은 목적별 번호와 확인표를 분리한다. 번호는 6자리·10분 유효·5회 오입력 폐기이며, 재발송은 60초 이후 목적·이메일별 24시간에 10회다. 가입 확인표는 60분, 비밀번호 복구는 15분, Google 연결은 30분이다. 발송 예외의 회차 복구와 수신 제한의 정상 응답을 구분한다.
 
-| ID | 기능명 | 한 줄 설명 | 주요 사용자 액션 |
-|----|---|---|---|
-| F01-01 | 이메일 회원가입 & 로그인 | 이메일/비밀번호로 계정을 만들고 로그인하여 토큰을 발급받는다 | 이메일·비밀번호 입력, 약관 동의, "가입하기"/"로그인" 탭 |
-| F01-02 | 소셜 로그인 (Apple/Google/Kakao/Naver) | 외부 OAuth로 즉시 로그인하거나 신규 회원이면 추가 정보를 입력한다 | 소셜 버튼 탭, SDK 인증, (신규 시) 닉네임·약관 입력 |
-| F01-03 | 이메일 인증 | 가입 전 6자리 메일 번호로 이메일 소유를 확인한다 | 번호 요청·재요청 → 앱에서 6자리 입력 |
-| F01-04 | 비밀번호 재설정 | 메일 번호 확인 뒤 15분 유효한 재설정 표로 비밀번호를 바꾼다 | 이메일 입력 → 6자리 번호 확인 → 새 비밀번호 입력 |
-| F01-05 | 토큰 갱신 & 로그아웃 | Access Token 만료 시 Refresh Token으로 자동 재발급하고, 명시적 로그아웃으로 세션을 종료한다 | (자동) 401 응답 시 백그라운드 갱신, 명시적 로그아웃 액션 |
-| F01-06 | 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | 첫 로그인 후 4단계 온보딩으로 프로필·태그·위치를 채워 추천 가능한 상태로 만든다 | 캐러셀 스와이프, 프로필 사진/닉네임 입력, 태그 3개 이상 선택, 위치 권한 허용 또는 주소 검색 |
-| F01-07 | 관심사 태그 관리 | 서버 카탈로그 기반 태그를 단건 CRUD한다. 현재 Flutter 사용자 흐름은 온보딩 추가와 프로필 조회·추가·삭제만 연결한다 | 온보딩 태그 추가, 프로필 태그 추가/삭제 |
-| F01-08 | 소셜 계정 연결 해제 | 연결된 소셜 제공자(Apple/Google/Kakao/Naver)를 개별 해제한다 | 설정 화면에서 특정 소셜 제공자 "연결 해제" 탭 |
+현재 주요 차이는 다음과 같다. 해결된 제품 동작으로 표시하지 않으며 상세 근거와 확인 항목은 기능 PRD에서 관리한다.
 
-> 기능 8개. 가입·로그인·메일 번호·복구·세션·온보딩·관심사·소셜 연결 해제를 다룬다. 탈퇴와 내 데이터 정리는 프로필·설정 도메인에서 확인한다.
+| 관련 기능 | 남은 차이·확인 |
+|---|---|
+| [이메일 가입·로그인](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | 내 정보 조회 실패에서 앱 세션이 설치되지 않아도 가입 성공 안내가 나올 수 있음 |
+| [소셜 로그인](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | 연결 확인표 소비 뒤 실패·화면 취소 뒤 서버 확정 여부와 운영 외부 계정 확인 |
+| [이메일 인증](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) · [비밀번호 복구](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | 요청 성공과 실제 수신, 확인표 소비와 변경 확정, 실시간 알림과 실제 종료의 구분 |
+| [세션 갱신·로그아웃](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | 응답 유실·저장 지연·로그아웃 후 서버 정리 결과 |
+| [온보딩](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | 서버 완료 요청 실패를 앱이 확인하지 않아 완료 표시가 다를 수 있음 |
+| [관심사 태그](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | 화면 명세의 일괄 저장과 실제 단건 구현 차이, 쓰기 실패 안내 누락, 온보딩 부분 저장 |
+| [소셜 해제](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | 비활성 제공자도 마지막 수단으로 세어 이용 가능한 로그인 수단만 해제될 수 있는 조건부 차이 |
 
----
+## 검증 범위와 관련 문서
 
-## 5. 상태/권한/의존성
+기능별 서버 계약·앱 진입·상태·오류·복귀와 시험 목적을 대조했다. 외부 수신함, 현재 운영 활성값, 서명된 물리 기기, 실제 두 기기 교체, 사진·지도·추천 결과는 별도의 실행 근거가 필요하다. 과거 검증 날짜와 환경은 그대로 유지한다.
 
-> 이 overview에는 별도 요약 섹션이 없다. 이 도메인의 세부 판단은 위 실사 근거 맵의 기능 PRD와 unit 문서를 기준으로 확인한다.
-
-## 6. 화면/API 매핑
-
-### 기능별 상세
-
-### F01-01 이메일 회원가입 & 로그인
-
-2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [이메일 회원가입 & 로그인 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
-
-### F01-02 소셜 로그인 (Apple/Google/Kakao/Naver)
-
-2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [소셜 로그인 (Apple/Google/Kakao/Naver) 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
-
-### F01-03 이메일 인증
-
-2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [이메일 인증 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
-
-### F01-04 비밀번호 재설정
-
-2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [비밀번호 재설정 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
-
-### F01-05 토큰 갱신 & 로그아웃
-
-2026-11-22 현재 동작을 소스 대조했다. 동시 갱신·응답 유실·일시 오류의 세션 유지와 명시적 거절을 구분하고, 로그아웃은 해당 세션·푸시만 정리한다. 상세 흐름·상태·미검증은 [토큰 갱신과 로그아웃 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md)를 따른다.
-
-### F01-06 온보딩 (웰컴 → 프로필 → 관심사 → 위치)
-
-- **사용자 가치**: 첫 로그인 사용자가 4단계 흐름으로 자기소개·관심사·생활권을 채워 즉시 맞춤 추천을 받을 수 있는 상태가 된다.
-- **주요 화면** (모두 `community_app/lib/presentation/auth/screens/`):
-  - `onboarding_welcome_screen.dart` (SCR-OB-001 — 4페이지 캐러셀, 로컬 화면)
-  - `onboarding_profile_screen.dart` (SCR-OB-002 — 프로필 사진/닉네임/자기소개)
-  - `onboarding_interests_screen.dart` (SCR-OB-003 — 카테고리별 태그 그리드, 최소 3개)
-  - `onboarding_location_screen.dart` (SCR-OB-004 — 위치 권한 + 지도 또는 주소 검색)
-- **백엔드 엔드포인트**:
-  - 프로필 사진 업로드: `POST /api/v1/files/presigned-url` → S3 PUT → `POST /api/v1/files/upload/complete` (file 도메인, 본 단위 외부 의존)
-  - 프로필 갱신: `PATCH /api/v1/users/me` (사용자 도메인, 본 단위 외부 의존)
-  - 관심사 태그 등록: `POST /api/v1/users/me/preference-tags` (`UserPreferenceTagController#addTag`) — 태그 1건씩 등록(루프). UI 스펙은 `tagIds: [...]` 일괄 전송을 가정하나 실제 컨트롤러는 단건 `UserPreferenceTagParam` 추가만 제공 — 클라이언트는 다건을 순차 호출해야 함.
-  - 위치 등록: `POST /api/v1/users/me/addresses` (location/account 외부 도메인, 본 단위 외부 의존)
-- **선결 조건/상태**: 로그인 + `onboardingCompleted=false` 상태(서버 User 프로필).
-- **결과 상태 변화**:
-  - 각 단계 완료 또는 건너뛰기 시 다음 단계로 이동, 마지막 위치 단계 완료 시 메인 피드(SCR-HF-001)로 진입
-  - 서버 측: `profileSetup`, `tagsSelected`, `locationSet`, `onboardingCompleted` 플래그 갱신
-  - 로컬 측: `welcomeShown=true` (기기별 1회)
-
-### F01-07 관심사 태그 관리
-
-2026-11-22 현재 동작을 소스 대조했다. 카탈로그 태그의 본인 소유·20개 상한·단건 저장을 확인한다. 온보딩의 부분 저장과 프로필 쓰기 실패 안내, 화면 명세와의 차이는 남아 있다. 자세한 흐름과 남은 차이는 [관심사 태그 관리 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md)를 따른다.
-
-### F01-08 소셜 계정 연결 해제
-
-2026-11-22 현재 동작을 소스 대조했다. 실제 연결과 활성 제공자를 구분하고, 마지막 수단·동시 해제·결과 유실을 확인한다. 비활성 수단 계산의 조건부 차이를 남겼다. 상세 흐름·상태·미검증은 [소셜 계정 연결 해제 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md)를 따른다.
-
-## 7. Gap / Risk Rollup
-
-| 기능 | 제목 | 후보 수 | 처리 기준 |
-|---|---|---:|---|
-| [F01-02](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 3 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
-| [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 4 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
-| [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 4 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
-| [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 3 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
-
-## 8. 운영 방법
-
-1. 새 구현이나 QA 착수 전 `PRD_MIGRATION_STATUS.md`에서 담당 기능의 trace/risk 수를 확인한다.
-2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
-3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
-4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
-
-## 9. 접근권한 감사 교정 (2026-07-02)
-
-접근권한 전수 감사(Wave 4 — F01 인증·온보딩)에서 확인된 동작 변경 사항을 반영한다.
-
-### 소셜 로그인 토큰 앱 귀속 검증 (F01-F1 하드닝)
-
-소셜 로그인 시 외부 OAuth 토큰이 **우리 앱 발급분인지** 검증하는 단계가 카카오·애플에 누락되어 있었다. 구글은 `setAudience`가 이미 정상 적용됨. 카카오·네이버 user id는 앱별(app-specific) 식별자라 타 앱 토큰을 사용해도 다른 id로 해석되므로 계정 탈취는 아니지만 OAuth 표준(audience 검증)·심층방어 요건을 충족하지 못하는 상태였다.
-
-**수정**: 카카오 — `/v1/user/access_token_info` 응답의 `app_id`를 서버 설정값(`KAKAO_APP_ID`)과 비교 검증. 애플 — `setExpectedAudience`로 우리 앱 bundle ID 검증. **단계적 롤아웃**: 운영 환경에서 `KAKAO_APP_ID` / `APPLE_CLIENT_ID` 설정이 되어 있을 때 강제 검증, 미설정 시 경고 로그 + 스킵(운영 활성화가 필요한 외부 설정 사항).
-
-### 인증 필수 엔드포인트 분류 교정 (F01-F2)
-
-`POST /auth/logout`, `DELETE /auth/social/{providerType}`(소셜 연결 해제), `POST /users/me/email/verify/send`(인증 메일 발송)가 `SecurityConfiguration`의 `permitAll /auth/**` 매처 아래 포함되어 있었다. 각 엔드포인트는 내부적으로 principal을 검증하나 익명 호출 시 401 대신 500이 반환되는 일관성 문제가 있었다. **수정**: 위 세 엔드포인트를 `.authenticated()` 매처 범위로 이동하여 미인증 요청에 401 응답.
-
-### 기타 보안 현황 (확인)
-
-- 토큰 회전·재사용·IDOR 방어 견고: 기존 구현 정상 확인
-- 계정 삭제는 본인 전용(self-only): 기존 서버 강제 확인
-- 비밀번호 재설정 기존 세션 잔존(F01-F4): 완화 수준 수용, 백로그 처리
-
-## 10. 관심사 태그 downstream 재실측 (2026-07-29)
-
-F01-07의 CRUD 계약은 유지되지만 저장된 태그는 현재 세 경로에서 실제 소비된다.
-
-- 공용 PersonSheet 관계 요약: 태그명 교집합을 뷰어 weight 순 최대 5개로 노출
-- 홈 사람 추천: 태그·선언 선호 카테고리·시간대의 공통 개수를 `COMMON_GROUND` 신호로 사용
-- 데이팅 후보 점수: 양쪽 `communityDataOptIn=true`일 때만 태그 Jaccard 유사도를 0.30 성분으로 사용
-
-추천과 데이팅 점수는 저장 weight를 직접 곱하지 않는다. 타인에게 전체 태그나 수치 궁합을 노출하지 않으며 데이팅 미동의자는 해당 커뮤니티 성분을 제외한 뒤 남은 가중치를 재정규화한다. 근거는 `UserPreferenceTagService`, `RelationshipService`, `PersonRecommendationService`, `MatchScoringService`다.
+- [인증 기능별 문서 상태](../PRD_MIGRATION_STATUS.md)는 전체 제품 범위 안에서 읽는다.
+- 제한 계정의 허용 업무는 [제재 적용과 제한 계정 이용](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md)을 따른다.
+- 실제 외부 연동·기기 확인은 [외부 준비 현황](../../docs/qa/external-readiness.html), 완료 판정은 [출시 완료 기준](../../docs/qa/completion-criteria.html)을 따른다.
+- 검토 파일·버전·지문은 [문서 갱신 검토 기록](../../verification/document-refresh-2026-11-22.json)에 남긴다.

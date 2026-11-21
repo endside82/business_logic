@@ -13,9 +13,11 @@
 
 ## 2026-11-22 전체 최신화 진행
 
-[전체 문서 대조 기록](../verification/document-refresh-2026-11-22.json)에 추적 문서 485개와 로컬 참고 문서 517개의 처리 상태를 둔다. 관련 저장소 7개의 원격 main과 로컬 main 일치를 확인하고 별도 작업 가지에서 갱신 중이다. 아직 대조하지 않은 문서는 `pending`으로 남기며, 아래 과거 전환 완료나 코드 위치 검사를 전체 최신화 완료로 읽지 않는다.
+[전체 문서 대조 기록](../verification/document-refresh-2026-11-22.json)에 추적 문서 485개와 로컬 참고 문서 517개의 처리 상태를 둔다. 착수 때 관련 저장소 7개의 원격 main과 로컬 main을 대조했고, 이후 로컬 main 변경은 기록의 `currentSourceVersions`로 구분해 별도 작업 가지에서 갱신 중이다. 아직 대조하지 않은 문서는 `pending`으로 남기며, 아래 과거 전환 완료나 코드 위치 검사를 전체 최신화 완료로 읽지 않는다.
 
 첫 확인에서 알림 그룹 PRD 본문의 ‘첫 20건 한도’와 같은 문서의 ‘추가 조회 해소’가 모순되고, 제거된 그룹 조회 API를 참조하고 있었다. 현재 커서 조회·상단 배지·읽음 실패 복구를 PRD·HTML·로컬 참고에 함께 반영했다. 그룹 카드의 읽음 후 즉시 갱신과 대량 미읽음 집계 한도는 현재 제약으로 분리했다.
+
+인증·온보딩 기능 8개는 [인증과 온보딩 영역의 현재 동작과 확인 범위](01_domain_prds/01_인증_and_온보딩_prd.md)에 종합했다. 아래 인증 행의 코드 참조·확인 항목 수는 2026-11-22 대조를 반영하며, 전환 상태는 문서 작성 계보를 유지한다. 소스 대조를 새 시험 실행이나 실제 계정·기기 검증으로 계산하지 않는다.
 
 ## 요약
 
@@ -125,7 +127,7 @@
 
 | PRD(후보 수) | 판정 | 근거 |
 | --- | --- | --- |
-| F01-06·F01-08(2) | 태그 3개는 「다음」 조건·건너뛰기 있음, 해제 제공자 열거·이메일 거절·마지막 수단 막음 해소됨 | 앱 `presentation/auth/screens/onboarding_interests_screen.dart:36,92,159-161`, `account/param/UserPreferenceTagParam.java`, api-app `account/controller/AuthController.java:118-124`, `account/service/SocialLoginService.java:97-123`, 앱 `presentation/profile/screens/connected_accounts_screen.dart:48-70,156-175` |
+| F01-06·F01-08(2) | 당시 확인: 태그 3개는 「다음」 조건·건너뛰기 있음, 해제 제공자 열거·이메일 거절·연결 수 검사 있음. 2026-11-22 재대조에서 비활성 제공자도 연결 수에 포함되는 조건부 차이를 [소셜 연결 해제의 현재 제한](02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md#현재-제한과-확인-범위)에 추가함 | 앱 `presentation/auth/screens/onboarding_interests_screen.dart:36,92,159-161`, `account/param/UserPreferenceTagParam.java`, api-app `account/controller/AuthController.java:118-124`, `account/service/SocialLoginService.java:97-123`, 앱 `presentation/profile/screens/connected_accounts_screen.dart:48-70,156-175` |
 | F02-01·F02-02·F02-03(6) | 홈 예정 모임은 시작 시각순(위치 안 씀), 공용 요청 제한, 마켓 목록 입구는 비공개 경로·상세는 공개 해소됨 | `main/service/HomeService.java:151-198`, `main/param/HomeEventSearchParam.java`, api-app `config/security/RateLimitingFilter.java`, 앱 `core/router/routes.dart:366,763-775`, `core/router/app_redirect.dart:219-223` |
 | F03-01·03·04·08·09·10·11(13) | 거리순 없음, 임시 저장, 이후 회차 일괄 수정·취소, 공개 뒤 수정은 동의 절차, QR 새로 받기, 사진 10MB·축소, 연결 실패 안내, 찜 거절 문구 해소됨. 플랜 연결 덮어쓰기 입력 칸 없음은 Gap | 앱 `presentation/event/screens/event_list_screen.dart:43`, `core/storage/event_draft_storage.dart`, `domain/providers/event/event_create_provider.dart:58,176,209`, `event/service/RecurringEventUpdateService.java`(시험 `RecurringEventUpdateServiceTest`), 앱 `presentation/event/screens/event_edit_screen.dart:771-799,1142`, `presentation/event/widgets/qr_code_view.dart`, `core/utils/image_upload_helper.dart:13-26,77-90`, `presentation/event/widgets/photo_upload_sheet.dart:200-211`, `data/models/event/event_plan_map_add_param.dart:11-13`, `presentation/event/widgets/event_plan_card.dart`, `presentation/event/screens/event_plan_link_screen.dart:123,191-204`, `presentation/event/screens/event_detail_screen.dart:1786-1806` |
 | F04-01·05·07·08·10·11·12·13·15(18) | 시험 보강 기록, 달력 회원·통계 운영진, 반복 만들기 운영진·제재·회차 0 거절 해소됨. 회원 통계 「참석률」 이 활동 멤버 비율인 것과 신규·증감·기간 없음은 Risk, 인출 사유 서버 무검증은 Risk | `club/service/ClubEventStatisticsService.java:59-62,150-152,257-277`, `club/service/ClubRecurringEventService.java:80-122`, api-app `club/controller/ClubEventController.java:278-326`, 앱 `presentation/club/widgets/member_stats_overview.dart:37-65`, `presentation/club/screens/club_member_stats_screen.dart`, `club/param/ClubFundWithdrawParam.java`, `club/service/ClubSettlementService.java:84-85,266-270`, V1 `club_fund_withdrawal.reason varchar(500)`, 앱 `presentation/club/finance/screens/withdrawal_screen.dart:210-254`, `presentation/club/community/screens/post_edit_screen.dart:212-217` |
@@ -217,14 +219,14 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 
 | ID | 도메인 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
 | --- | --- | --- | --- | --- | ---: | ---: |
-| F01-01 | 인증 & 온보딩 | [F01-01_email-signup-login_prd.md](02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | `F01-01_email-signup-login` | 실사 기반 전환본 | 2 | 0 |
-| F01-02 | 인증 & 온보딩 | [F01-02_social-login_prd.md](02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | `F01-02_social-login` | 실사 기반 전환본 | 1 | 1 |
-| F01-03 | 인증 & 온보딩 | [F01-03_email-verification_prd.md](02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | `F01-03_email-verification` | 실사 기반 전환본 | 4 | 1 |
-| F01-04 | 인증 & 온보딩 | [F01-04_password-reset_prd.md](02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | `F01-04_password-reset` | 실사 기반 전환본 | 2 | 1 |
-| F01-05 | 인증 & 온보딩 | [F01-05_token-refresh-logout_prd.md](02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | `F01-05_token-refresh-logout` | 실사 기반 전환본 | 2 | 0 |
-| F01-06 | 인증 & 온보딩 | [F01-06_onboarding_prd.md](02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | `F01-06_onboarding` | 실사 기반 전환본 | 0 | 1 |
-| F01-07 | 인증 & 온보딩 | [F01-07_preference-tags_prd.md](02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | `F01-07_preference-tags` | 실사 기반 전환본 | 4 | 1 |
-| F01-08 | 인증 & 온보딩 | [F01-08_social-unlink_prd.md](02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | `F01-08_social-unlink` | 실사 기반 전환본 | 1 | 1 |
+| F01-01 | 인증 & 온보딩 | [F01-01_email-signup-login_prd.md](02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | `F01-01_email-signup-login` | 실사 기반 전환본 | 3 | 3 |
+| F01-02 | 인증 & 온보딩 | [F01-02_social-login_prd.md](02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | `F01-02_social-login` | 실사 기반 전환본 | 4 | 4 |
+| F01-03 | 인증 & 온보딩 | [F01-03_email-verification_prd.md](02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | `F01-03_email-verification` | 실사 기반 전환본 | 2 | 3 |
+| F01-04 | 인증 & 온보딩 | [F01-04_password-reset_prd.md](02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | `F01-04_password-reset` | 실사 기반 전환본 | 3 | 4 |
+| F01-05 | 인증 & 온보딩 | [F01-05_token-refresh-logout_prd.md](02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | `F01-05_token-refresh-logout` | 실사 기반 전환본 | 2 | 3 |
+| F01-06 | 인증 & 온보딩 | [F01-06_onboarding_prd.md](02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | `F01-06_onboarding` | 실사 기반 전환본 | 6 | 5 |
+| F01-07 | 인증 & 온보딩 | [F01-07_preference-tags_prd.md](02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | `F01-07_preference-tags` | 실사 기반 전환본 | 5 | 4 |
+| F01-08 | 인증 & 온보딩 | [F01-08_social-unlink_prd.md](02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | `F01-08_social-unlink` | 실사 기반 전환본 | 3 | 3 |
 | F02-01 | 홈 피드 | [F02-01_home-feed-main_prd.md](02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md) | `F02-01_home-feed-main` | 실사 기반 전환본 | 4 | 3 |
 | F02-02 | 홈 피드 | [F02-02_home-feed-refresh_prd.md](02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md) | `F02-02_home-feed-refresh` | 실사 기반 전환본 | 0 | 1 |
 | F02-03 | 홈 피드 | [F02-03_section-card-entry_prd.md](02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md) | `F02-03_section-card-entry` | 실사 기반 전환본 | 0 | 2 |
