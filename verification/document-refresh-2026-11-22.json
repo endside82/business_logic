@@ -2623,9 +2623,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e334241aa2e9142bde0a30b0d677aa3f6dbf2fcc0dc89cd53455ddc2e4865043",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "bba5d626a14ecf7f12f08264e7a46a28e1da6df2fdd4a7428f7d72ee312babd4"
     },
     {
       "path": "docs/features/F03-06.html",
@@ -2633,9 +2636,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "100432b065b94a23d1ff99e95250f1611790db4657428218aef27e1b9a7af9ae",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "206c9db26d16cdd9eb022b634dbf793abdd1582a009eeea95dfbc1f50c73b0f4"
     },
     {
       "path": "docs/features/F03-07.html",
@@ -5452,10 +5458,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d5b3766964f402596e194075650dc16cc16fe8db241058d6ed99fda6b22f71dc",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
@@ -5463,10 +5471,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "483186d5a095d2936c6567c5422060392bd7e667f580db1b5c97a9a45a2129f7",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "7298cd7164059cd04b9d206553cdbea296fd2078f14c8cd1d7b226077ae1ea49"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
@@ -8706,10 +8716,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a839c8943bc1bbd1ae1ded24fb9fc1144f284bdf1b31f071fa36139ded523d88",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "af2ebb75ebf7e7dcc6a8fd52ad2fd383ccf335837a7205766ec6065279a55910"
     },
     {
       "path": "units/03_event/F03-05_event-attendance/diagrams.md",
@@ -8717,9 +8729,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "acb82c03ce762c3f31dd1fa99674ea55671bb722d0e43af7abccbf86b391049d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "b1e954025a93cd163a19ab5f887e1bfabbfddf4089d93cdfd00ffe7286af3f35"
     },
     {
       "path": "units/03_event/F03-05_event-attendance/frontend.md",
@@ -8727,9 +8742,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fc66f86d8d8d872a20356faf9c47fdd16ae2bc329a8adbbdc6bf1ab71771c8e0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "2568bd8ec2337c1e09d064a72ceb3b21e560876d48826492dc80dcb1d5a0dca7"
     },
     {
       "path": "units/03_event/F03-05_event-attendance/scenarios.md",
@@ -8737,9 +8755,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "50ab26e801229e7d4b170d8360bf59da6d7bb4a68b2b5841a53e5882d2c63ad8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "b8fd406e0489e7e784469178ccc074d33ec3c4c87ee02fea7d94008b6b913ce4"
     },
     {
       "path": "units/03_event/F03-06_application-review/backend.md",
@@ -8747,10 +8768,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d32c08c633ffb12fb9f82be9c56c0474535e36d0bbdc9dfef28b4333b700e8ad",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "a4e74e7db60f4ddcb5d6504b4ae4fd30de87944b55a96ccdddb1804b892853ec"
     },
     {
       "path": "units/03_event/F03-06_application-review/diagrams.md",
@@ -8758,9 +8781,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f901fd6ab7d46eaa614e4eb9b20bb8f3b77db0d02ff0ecc8b95754a6024ec07b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "3ad1918e897e14609040640308ff6237eb88a3e0125686692721fdd4b90d6b7a"
     },
     {
       "path": "units/03_event/F03-06_application-review/frontend.md",
@@ -8768,9 +8794,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "75068427d284d6aecb4cc37f07921f05cb4b20356af16ebd9f4da4001ff3cc39",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "3cad08cb064cd7cf9d04aea0b60162ef3f4268cb6f0615887ddfc46ab2e5a55c"
     },
     {
       "path": "units/03_event/F03-06_application-review/scenarios.md",
@@ -8778,9 +8807,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4d46de1e8000add7df6fec08595e66b9d951f0686da9b7897be80b4584efbb5c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_application_participation_review_20261122"
+      ],
+      "reviewedSha256": "072ae2c049866d283e2714b4aea981dc6f644f99853505bbcb77312b425105fe"
     },
     {
       "path": "units/03_event/F03-07_capacity-and-waitlist/backend.md",
@@ -14352,6 +14384,32 @@
         "paymentLimitations": 51
       },
       "scope": "참가비 지갑 결제·신청 취소·예상액·일행/계좌이체 환불 경계와 최신 기능 열 개의 결제 영역 요약 문서 검사. 두 서버 연결 추가. 마지막 표현 정리 후 링크·파생 지문을 재확인했으며 변경 없는 서버 연결 시험은 반복하지 않았다. 과거 전환/권한 감사는 당시 이력으로 보존. 새 제품 시험·실DB·외부 결제·반환 송금·운영 배치·기기 검증 아님. 공통 정책과 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-05/06: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; source/canonical fingerprints; retained HTML IDs; incoming Markdown anchor scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 12,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 99,
+        "sourceRecords": 385,
+        "verifiedRecords": 383,
+        "retiredRecords": 2,
+        "localSourceLocations": 373,
+        "localLinks": 183,
+        "repositoryLinks": 507,
+        "reviewedRelativePaths": 1414,
+        "derivedSourceDigests": 177,
+        "currentSourceAndCanonicalDigests": 52,
+        "retainedHtmlPages": 2,
+        "incomingMarkdownAnchors": 0,
+        "reviewCounts": {
+          "source_verified": 297,
+          "historical_retained": 33,
+          "pending": 672
+        }
+      },
+      "scope": "이벤트 신청·참석·심사의 문서 내용·파생 문서·코드 참조 검증. 기존 모의 제품 시험 단언을 읽었고 새 제품 시험·실DB·실제 화면·결제·알림 수신 검증은 하지 않음."
     }
   ],
   "evidenceGroups": {
@@ -18103,6 +18161,284 @@
         "sourceReferences": 39,
         "limitations": 51
       }
+    },
+    "event_application_participation_review_20261122": {
+      "kind": "source_review",
+      "scope": "F03-05·06의 실제 신청·관리 입구, 무료/유료/심사/일행 배치, 권한·시각·재신청·만료·요청 재생, 단건·일괄 성공/실패/복귀를 해당 서버·앱 함수로 대조. 결제 취소와 공통 명령의 선행 근거는 지문 불변 확인 후 재사용. 표기한 기존 시험 단언을 읽었고 새 제품 시험·실DB·기기·PG·알림 수신 검수는 수행하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationEntryService.java",
+          "sha256": "f400fae3c4316eb204dd85a80980eb9e410b0e710c07f29a07c217f2e7a455d2"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationService.java",
+          "sha256": "4bf144955a40f618b6435ac2a55cfa799bf17581628ec1edda0b3fc32cf3fffe",
+          "reviewScope": "본인·심사 결과 재생, 거절, 관리/본인 신청 조회, 결제 확정·만료 연결. 취소 내부 전체는 선행 결제 취소 범위를 따름."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationTransitions.java",
+          "sha256": "5a16cfec60251cc111d5f79b495f822056386a164ed2488cc110aaf71af211e5",
+          "reviewScope": "신청·재신청·승인·거절·만료의 해당 함수. 전체 전이 클래스 검수로 확대하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationDecisionSupport.java",
+          "sha256": "30388ba3e8b69ca2ae81f049d41d252b8e4c24c13b3449d301746d5692befc18"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/ApplicationParam.java",
+          "sha256": "14b8443874cec2cae3b265996866f282d849f11d9ff2ea925823391310573ea9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/ApplicationDecisionParam.java",
+          "sha256": "7f14a87ed2d9155c11c31ee097e872ba2fd67e47238cd21fef24c5dc65028d5e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/ApplicationStatus.java",
+          "sha256": "11c2259cbedeea933a9d247724e36006ecd115bb77eb08e4fad17ed192604da8"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/ApplicationRejectReasonCode.java",
+          "sha256": "12d7b089b8e19215b1712b4be3602ee04b662b1b29cde3c76aa8f7295024309a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/ApplicationVo.java",
+          "sha256": "a30686fd62dab89c51a8d701041f13f14aa842ae42bf54529529d87215227ea6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/rule/EventApplyFacts.java",
+          "sha256": "923d54b511526c3200e8cbfe84e0c79ce284e91f54cc5647c5e964b6729ffeeb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/rule/ApplyNotRestrictedRule.java",
+          "sha256": "07c165c4ce7e2a8b86f1452376fb292d5fd5e8f4076e981a7db4b89c947849ad"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/rule/ApplyClubMemberRule.java",
+          "sha256": "7e7aa1d7eecbfd95ebd27822e999e7589d44255d87eae638944fb3afad86b512"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/rule/ApplyNoPendingDecisionRule.java",
+          "sha256": "7dba4b9a95e3dd260af49ae18c8a496d23d0fe9d2738a33bceb0d1adc4002975"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/rule/ApplyNoRefundPendingRule.java",
+          "sha256": "e6d4f443fe0686ed221b31f2cc2bdbea12ecb5efd1d986eabb93cb19bd225ce1"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/rule/ApplyNotFixedSessionRule.java",
+          "sha256": "479304cfa235d9b108bb2240e416038162aac433fcb31e2e3ddfa5fa987ed42c"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CapacityController.java",
+          "sha256": "accdbd266bcc4aee3ce15153f3a11b3c09b8b0dd644f52b683ecc8d5603b6ea0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacityService.java",
+          "sha256": "0735a5827e73de7b55a7deb8b1dfff84d4cf50fbbe134060d51a5835a3b964e4",
+          "reviewScope": "직접 참석·본인 취소·본인 상태 재조회·무료 승인 참석 생성·결제 확정 참석·placeRow의 해당 함수. 수동 승격·강제 제거·정기모임 전체 구현은 이번 범위 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacityPolicy.java",
+          "sha256": "420bb0b72b55a661b5ce1a63fd8d1439d1c89365c9a5427ae9c4724403cb29ee"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/GuestPolicy.java",
+          "sha256": "6d5e3d59e66d2986295c6c8e6c7380f3d4a18ea4dd58c1078e3f0327a8d14b77"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationPaymentExpiryScheduler.java",
+          "sha256": "3168cf4a79f001beb5b37447f34a03f68abd4658108699bb32369808d5d6397a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/repository/query/ApplicationQueryRepository.java",
+          "sha256": "b2087203f5e521b47447930631321585bdf3c7b34fbd62d7838e3f2b1cf66630",
+          "reviewScope": "211–218 계좌이체 신고 대기 제외, 239–316 만료 후보·조건 변경. 나머지 조회 전체는 이번 범위 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/Event.java",
+          "sha256": "17b9bd033fa423c591ef9a91b3b9613977b2905ce4ae18aaec3dc552e3a01216",
+          "reviewScope": "369–371 신규 참가 허용은 OPEN이고 숨김 아님이라는 판정."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/service/ApplicationServiceTest.java",
+          "sha256": "cb0cdbd5f731ebdbd8cacaf8e41fe3686497506b104a42a5acecc9e45420ae00",
+          "reviewScope": "1033–1051 선입금 없는 유료 승인 거절, 1320–1360 사유 코드 없는 거절, 1710–1741 모의 만료 상태 변경 뒤 이력·알림 호출 단언을 읽음. 시험 실행 아님."
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/application_list_provider.dart",
+          "sha256": "9f69784ddbbf5db5ff151459339a385ecab8684cecc6aa2d88341f4bd8755546"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/application_list_screen.dart",
+          "sha256": "48b483a752f45a8fca748b4ed68e52ab6a3ee3f5de4bb63d2cd9e95b703feb29"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/application_card.dart",
+          "sha256": "b6adec605cfe616d90288266326dbecbc8c3278d79fddb9d02e0f0b52a2d7817",
+          "reviewScope": "신청·결정 메시지, 결제 대기 금액·시각, 만료 안내와 승인/거절 행동 표시."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/application_decision_sheet.dart",
+          "sha256": "3758b2418026c0b14afd5023e420a406815092a99c50cb2bdf9c0b46319ffb60"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_apply_confirm_sheet.dart",
+          "sha256": "a7e88e4322f7bc6458e51cd1a1e4ebb605acfe6edb925032420462b195c1a395"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/reschedule_ack_dialog.dart",
+          "sha256": "3edb824b4af865faac987aa3ff10b63c0070ab656a8416c0cf73e2c94ffccddb"
+        },
+        {
+          "path": "community_app/lib/data/repositories/application_repository.dart",
+          "sha256": "38b1f6d304db882d269420b6507821dd7e9f8648fea1dac5723618f245b23ba1"
+        },
+        {
+          "path": "community_app/lib/data/api/application_api.dart",
+          "sha256": "3b44c2e6af2d0d8e91bb4ece41d1f8bece96164a4caee5572f6d70470a55e9c4"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/application_vo.dart",
+          "sha256": "d0a68b80ac89a9f87284b2500249b7e2d0638ff97e0d1b76d5b7d7f862f03b03"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/application_param.dart",
+          "sha256": "691eec59b53b5a68357162bb6afeb2eba362326fc5f908cb151f175b8f0c585a"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/application_decision_param.dart",
+          "sha256": "8a8dab9b94fb284e0e2ba3961ad064ee26a086c353be24cc43db763a6f09e847"
+        },
+        {
+          "path": "community_app/lib/data/api/attendance_api.dart",
+          "sha256": "9f569c69f94e9eb626b9b3130af4dd7ca2578464c2a1b838cc6d8ab58679715f",
+          "reviewScope": "직접 참석·취소의 계약을 비교. 나머지 명단·일행 관리 전체 확인 아님."
+        },
+        {
+          "path": "community_app/lib/data/repositories/attendance_repository.dart",
+          "sha256": "7df9eb7f27db9d485d5674f69ac986a64cb904478c4022dda1e7ed40d7ea748b",
+          "reviewScope": "직접 참석·취소 전달과 Result 처리의 해당 함수."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "173–189 신청 관리 경로의 관리 권한 가드·화면 연결."
+        },
+        {
+          "path": "community_app/test/widget/event/application_decision_sheet_wait_test.dart",
+          "sha256": "64862d5b086f825dea5c95269a6adf9bc3889e88fbd30cc5e2d29745e4780977",
+          "reviewScope": "141–225 단건 실패·재시도와 일괄 실패 건만 재전송 단언을 읽음. 시험 실행 아님."
+        },
+        {
+          "path": "community_app/test/widget/event/application_decision_failure_keeps_list_test.dart",
+          "sha256": "510f56b73a235d6c1adb553ad06e3930bb86d37fa5b769329ee94bfeefa1cb85",
+          "reviewScope": "157–211 실패 뒤 목록·선택 유지 단언을 읽음. 시험 실행 아님."
+        },
+        {
+          "path": "community_app/test/widget/event/event_apply_confirm_sheet_message_test.dart",
+          "sha256": "7153aeea0589963808b651cda3047c13e6d9efc744acb68e9d2c1ef1ffc239b3",
+          "reviewScope": "66–94 메시지 공백 정리·빈 메시지·직접 참석 입력 부재 단언을 읽음. 시험 실행 아님."
+        },
+        {
+          "path": "docs/ui-ux/screens/14-event-attendance.md",
+          "sha256": "240a1cf6b7a8ab98908fd40e1b77e7a60d7f9d69a3a6af4281fecb524b7a3be3",
+          "reviewScope": "신청 명단의 사람 링크, 322–367 신청 목록과 메시지 펼치기 명세, 949–974 승인 기반 신청 흐름. 현재 앱과 다른 명세는 Gap으로 유지."
+        }
+      ],
+      "reuses": [
+        "event_detail_lifecycle_20261122",
+        "event_detail_complete_20261122",
+        "event_payment_cancel_refund_20261122",
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendance_action_provider.dart",
+          "sha256": "bcd5def8aa7369363637a1ba8f2bc42a3847d600b484b83b6481ee1966ca600c"
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_prepayment_gate.dart",
+          "sha256": "10770736db0b936bc06518886cec051f1f1d6476400cc39728b865ebc8732a53"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java",
+          "sha256": "b52ca6b77efc515f087b18cac597958ee316ab227bd2b118999b491e8c346595"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/cancel_attendance_sheet.dart",
+          "sha256": "d9fc03f56853eda251223dd98d6adae0a321686daabad533f048614ebc4f45ac"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03"
+        }
+      ],
+      "additionalReusedSourceReview": {
+        "EventController.java": "370–472 신청·취소·조회·승인·거절 계약과 선택 요청 번호의 실행/재생 분기를 추가로 읽음.",
+        "event_detail_screen.dart": "378–407 관리 목록 입구, 1325–1474 참가자 확인·로그인 복귀·동의·신청·오류 처리를 추가로 읽음.",
+        "attendance_action_provider.dart": "39–76 취소 경로 선택, 196–265 신청 경로, 367–635 직접 참석·신청·직접 취소와 갱신을 추가로 읽음.",
+        "EventActionPolicy.java": "93–185 승인/유료/무료 일행 자리, 596–645 본인 취소 시각/상태, 721–784 신청 조건을 추가로 읽음."
+      },
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
+          "sha256": "7298cd7164059cd04b9d206553cdbea296fd2078f14c8cd1d7b226077ae1ea49"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-05.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "cancel-start-boundary",
+          "cancellation-and-waitlist",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F03-06.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-limits",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-05:4",
+          "change": "clarified",
+          "reason": "신청 경로는 심사 필요뿐 아니라 자동 승인 선입금도 사용하므로 설명 수정. 실제 창구 바인딩은 변경 없음."
+        }
+      ]
     }
   },
   "currentSourceVersions": {

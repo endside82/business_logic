@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,110개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,112개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1110,
+    "documentedScenarioItems": 1112,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,15 +17,15 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 63,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 63,
-    "directlyLinkedJourneys": 40,
+    "directlyLinkedJourneys": 38,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 40,
+    "journeyScenarioReferences": 38,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 46,
-    "partialEvidenceChain": 48,
+    "completeEvidenceChain": 45,
+    "partialEvidenceChain": 49,
     "definitionOnlyEvidence": 81,
     "traceMarkers": 385,
     "verifiedTraceRecords": 383,
@@ -1911,13 +1911,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-05",
       "domain": "이벤트",
       "name": "이벤트 신청 & 참석",
-      "scenarioCount": 13,
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-05_event-attendance/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 13
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-05_event-attendance/backend.md",
@@ -1978,7 +1978,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F03-05:4",
-            "label": "POST /api/v1/events/{eventId}/apply — 신청서 제출 (승인 필요)",
+            "label": "POST /api/v1/events/{eventId}/apply — 심사 또는 선입금 신청",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -2035,7 +2035,7 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 6,
         "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_event_list_badge_matrix_test.dart"
+          "community_app/test/widget/event/event_apply_confirm_sheet_message_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/test/audit/entry_paths_search_notification_help_test.dart",
@@ -2047,13 +2047,11 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_event_list_badge_matrix_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "evidenceStage": 3,
@@ -2066,13 +2064,13 @@ window.SCENARIO_AUDIT = {
       "id": "F03-06",
       "domain": "이벤트",
       "name": "신청서 승인/거절",
-      "scenarioCount": 12,
+      "scenarioCount": 13,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-06_application-review/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 13
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-06_application-review/backend.md",
@@ -2135,30 +2133,24 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_event_application_lifecycle_test.dart",
-          "community_app/integration_test/seed_event_application_mutation_test.dart",
-          "community_app/integration_test/seed_event_detail_role_controls_test.dart"
+          "community_app/test/widget/event/application_decision_failure_keeps_list_test.dart",
+          "community_app/test/widget/event/application_decision_sheet_wait_test.dart"
         ],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 4,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 4,
-        "files": [
-          "community_app/integration_test/seed_event_application_lifecycle_test.dart",
-          "community_app/integration_test/seed_event_application_mutation_test.dart",
-          "community_app/integration_test/seed_event_detail_role_controls_test.dart",
-          "community_app/scripts/e2e/run_p72_event_application_mutation_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
