@@ -20,8 +20,8 @@
 |---|---|---|---|---|---:|---:|
 | F01-01 | F01-01. 이메일 회원가입 & 로그인 | [F01-01_email-signup-login_prd.md](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md) | [F01-01_email-signup-login](../../units/01_auth_onboarding/F01-01_email-signup-login) | 전환 완료 | 2 | 0 |
 | F01-02 | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | [F01-02_social-login_prd.md](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | [F01-02_social-login](../../units/01_auth_onboarding/F01-02_social-login) | 전환 완료 | 1 | 1 |
-| F01-03 | F01-03. 이메일 인증 | [F01-03_email-verification_prd.md](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | [F01-03_email-verification](../../units/01_auth_onboarding/F01-03_email-verification) | 전환 완료 | 4 | 1 |
-| F01-04 | F01-04. 비밀번호 재설정 | [F01-04_password-reset_prd.md](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | [F01-04_password-reset](../../units/01_auth_onboarding/F01-04_password-reset) | 전환 완료 | 2 | 1 |
+| F01-03 | F01-03. 이메일 인증 | [F01-03_email-verification_prd.md](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | [F01-03_email-verification](../../units/01_auth_onboarding/F01-03_email-verification) | 2026-11-22 소스 대조 | 2 | 3 |
+| F01-04 | F01-04. 비밀번호 재설정 | [F01-04_password-reset_prd.md](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | [F01-04_password-reset](../../units/01_auth_onboarding/F01-04_password-reset) | 2026-11-22 소스 대조 | 3 | 4 |
 | F01-05 | F01-05. 토큰 갱신 & 로그아웃 | [F01-05_token-refresh-logout_prd.md](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | [F01-05_token-refresh-logout](../../units/01_auth_onboarding/F01-05_token-refresh-logout) | 전환 완료 | 2 | 0 |
 | F01-06 | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | [F01-06_onboarding_prd.md](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | [F01-06_onboarding](../../units/01_auth_onboarding/F01-06_onboarding) | 전환 완료 | 0 | 1 |
 | F01-07 | F01-07. 관심사 태그 관리 | [F01-07_preference-tags_prd.md](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | [F01-07_preference-tags](../../units/01_auth_onboarding/F01-07_preference-tags) | 전환 완료 | 4 | 1 |
@@ -34,8 +34,8 @@
 | [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | Risk 후보 1, trace 없음 |
 | [F01-02](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | Risk 후보 1 |
 | [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | Risk 후보 1 |
-| [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | Risk 후보 1 |
-| [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | Risk 후보 1 |
+| [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 현재 제한·미검증 4건 |
+| [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 현재 제한·미검증 3건 |
 | [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | Risk 후보 1 |
 
 ## 4. 도메인 기능 목록
@@ -67,19 +67,19 @@
 
 ### F01-01 이메일 회원가입 & 로그인
 
-2026-10-29 번호 인증 전환을 반영했다. 최신 사용자 흐름·요청/응답·실패·출시 판정은 [이메일 회원가입 & 로그인 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
+2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [이메일 회원가입 & 로그인 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
 
 ### F01-02 소셜 로그인 (Apple/Google/Kakao/Naver)
 
-2026-10-29 번호 인증 전환을 반영했다. 최신 사용자 흐름·요청/응답·실패·출시 판정은 [소셜 로그인 (Apple/Google/Kakao/Naver) 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
+2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [소셜 로그인 (Apple/Google/Kakao/Naver) 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
 
 ### F01-03 이메일 인증
 
-2026-10-29 번호 인증 전환을 반영했다. 최신 사용자 흐름·요청/응답·실패·출시 판정은 [이메일 인증 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
+2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [이메일 인증 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
 
 ### F01-04 비밀번호 재설정
 
-2026-10-29 번호 인증 전환을 반영했다. 최신 사용자 흐름·요청/응답·실패·출시 판정은 [비밀번호 재설정 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
+2026-11-22 번호 제한·발송과 수신·확인표 소비·앱 진입과 복귀를 소스 대조했다. 최신 사용자 흐름·실패·출시 판정은 [비밀번호 재설정 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md)를 따른다. 이전 링크 인증·미인증 제한 세션은 현재 계약이 아니다.
 
 ### F01-05 토큰 갱신 & 로그아웃
 
@@ -146,8 +146,8 @@
 | 기능 | 제목 | 후보 수 | 처리 기준 |
 |---|---|---:|---|
 | [F01-02](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 3 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
+| [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 4 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 | [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |

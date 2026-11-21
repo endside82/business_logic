@@ -249,9 +249,10 @@
       "disposition": "partially_updated",
       "evidence": [
         "data_export_20261122",
-        "event_detail_complete_20261122"
+        "event_detail_complete_20261122",
+        "email_code_auth_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "docs/assets/launch-status.js",
@@ -2174,8 +2175,11 @@
       "document": true,
       "baselineSha256": "651448a5461efd474bc0dea4ddb22463689703c8a2ba7ca0600d0bbe00b4518a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "note": "F01-03·F01-04 카드만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "docs/domains/02-home.html",
@@ -2406,9 +2410,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "4079656551ebb871892429686774c9b5f1ab72924fc9c7347375d5e3e6d891c8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "8a0ba630c7d6fd00d1166ccdc2ee57ea6664d26d5a5385b8590fcc5b94c7a5e8"
     },
     {
       "path": "docs/features/F01-04.html",
@@ -2416,9 +2423,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "13b4c1a1f1b2002394c701a4d732d83ef888bd94a23f982f73985e6f80b0bd98",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "55071dd2e401115f000196a77f40afabbda145a5100ef925b854f20ddbbc0954"
     },
     {
       "path": "docs/features/F01-05.html",
@@ -4620,8 +4630,10 @@
       "baselineSha256": "04764914a346d5e2e5541c2db1d216b0be90f0902cfe41c300b05bf47cba0cf7",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "planner_onboarding/08_scenario_coverage_matrix.md",
@@ -4666,9 +4678,10 @@
       "disposition": "partially_updated",
       "evidence": [
         "data_export_20261122",
-        "event_detail_complete_20261122"
+        "event_detail_complete_20261122",
+        "email_code_auth_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "planner_onboarding/README.md",
@@ -4843,8 +4856,10 @@
       "baselineSha256": "64f5530cb7d19b3ded5994de2d950dc9f54813b7317e97157d1b3ba3982e7a11",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/02_홈_피드_prd.md",
@@ -5098,9 +5113,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f97e9d9c0471296ef52b48749ce5a9aa75e56d029863ec973d6d0412536d12de",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "a01d776c4d3cb588c033ea3d2e20243bec7bb62ccba8b1e8866fe49be5d45cb9"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md",
@@ -5108,9 +5126,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "875b29185c909ff46521becd8c2f9251f0984e3310244fc8b393afdc8e29fe7d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "622f5304ecd2f4c1bcac2578d50bcd301149f6df2bf2bce4d6c943d1bca76606"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md",
@@ -5233,7 +5254,6 @@
       "evidence": [
         "event_detail_complete_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료",
       "reviewedSha256": "1d6ab9ac555188045fb69f313258bb664b0bbf5da0f42e1b55267a8fd04f50a9"
     },
     {
@@ -7666,9 +7686,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8f11b9417d26c5cc07afbebd729df06ba354dc70f632640515085baa9dd6bd48",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "ae37a9fab3da3b8b6833cb4885f8f3b6b909d6d63acd14e879e0ab5d3a021058"
     },
     {
       "path": "units/01_auth_onboarding/F01-03_email-verification/diagrams.md",
@@ -7676,9 +7699,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "11c3643e8df8865cf393206aff1ce3414f222ff14894c3416af923cf0ab51545",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "215da4cfeff7c1310d1d51977f5156cf7c6953d7ab661502e38f0c028ff35906"
     },
     {
       "path": "units/01_auth_onboarding/F01-03_email-verification/frontend.md",
@@ -7686,9 +7712,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e5a5c6ef4983f046b542520f18eb33e58546d122702e6e2807ee1b33554686d2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "176379b45ddda5517f915f74ca213424f0f2f3fec81f081c6be08c493add5679"
     },
     {
       "path": "units/01_auth_onboarding/F01-03_email-verification/scenarios.md",
@@ -7696,9 +7725,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "226c8bea72fc37d41685514ef42cf1d7fae913dd49f465de2b74962f2e59b563",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "23f75022f613fb78a0446f3febe5615c897cb5992265013cbabd39edc645ba40"
     },
     {
       "path": "units/01_auth_onboarding/F01-04_password-reset/backend.md",
@@ -7706,9 +7738,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a76289f4f7cc11e0e56de867bba88aed1792b799d084cfe4f917b4e2562652b5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "657da75f77f51876275c2584626fa75ab208df977e3c4f816dc06aee5f65fa10"
     },
     {
       "path": "units/01_auth_onboarding/F01-04_password-reset/diagrams.md",
@@ -7716,9 +7751,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "36352b89628e1cb836947e2af79d690383432863934808d719e21325a44ed6f2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "58f01a9763607d70fd519ab0a664bd22095c6f293f3db46b9582d0984fa60c68"
     },
     {
       "path": "units/01_auth_onboarding/F01-04_password-reset/frontend.md",
@@ -7726,9 +7764,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "45d6a5c93e3da5dae66447df0a00db111f8c33c5106a1108c1a829b39eb63587",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "52962923d87f63c171cd2968866677887577d7215f0126f78216ec82f5557431"
     },
     {
       "path": "units/01_auth_onboarding/F01-04_password-reset/scenarios.md",
@@ -7736,9 +7777,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c365b16fb9e91312ac1fc5a8017eb1054e021d691f489ceef4d9c22c9f9ae40f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "email_code_auth_20261122"
+      ],
+      "reviewedSha256": "c8e4ade2188e1dc37e9c5e978c14d59cca3b299c621126ff79fcb1ddfbe2db73"
     },
     {
       "path": "units/01_auth_onboarding/F01-05_token-refresh-logout/backend.md",
@@ -8173,7 +8217,7 @@
       "evidence": [
         "event_detail_complete_20261122"
       ],
-      "reviewedSha256": "934296dcb6a4d23bdb25bfd7ccc357e473fcbb8979c51b2036193fc049f59730"
+      "reviewedSha256": "9b62f9a9c824aa76a21362be231a2e3c1a20eb093fa75a930a008d4c26d5b9e7"
     },
     {
       "path": "units/03_event/F03-02_event-detail/diagrams.md",
@@ -11675,7 +11719,7 @@
       "evidence": [
         "notification_domain_20261122"
       ],
-      "reviewedSha256": "334ab601aab221445a4b2eca0a9ab9ef3136eb7a6c63f80197a3b77e5fd03ba2"
+      "reviewedSha256": "6a4e3cc722b3b395824ad8e36fc2663ef22c92068beb9223a25753b697cc4da4"
     },
     {
       "path": "units/12_notification/F12-01_notification-list-read/scenarios.md",
@@ -13406,6 +13450,20 @@
         "status": "PASS"
       },
       "scope": "이벤트 상세의 문서·근거·생성 데이터 일치. 제품 시험·외부 앱 결과 확인 아님. 기존 출시 범위 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "F01-03·F01-04: source_references tests; sync_source_reference_docs; check_scenario_audit; reviewed-document paths/digests; existing HTML anchors and historical-section equality; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 87,
+        "sourceRecords": 313,
+        "verifiedRecords": 311,
+        "retiredRecords": 2,
+        "localSourceLocations": 309,
+        "reviewedDocumentRelativePaths": 320
+      },
+      "scope": "문서·근거·생성 데이터 일치. 로컬 파생본의 상대 링크 2곳과 인증 API 주석 위치를 교정했다. 제품 시험·실수신·운영 검증 아님. 출시 범위 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -13840,6 +13898,136 @@
         {
           "path": "docs/ui-ux/screens/13-event.md",
           "sha256": "5fe0f5e626623050f1bf37f9fbea5fc58f66396158fdc36aff7c26a599d82914"
+        }
+      ]
+    },
+    "email_code_auth_20261122": {
+      "kind": "source_review",
+      "scope": "F01-03·F01-04 현행 제품 본문과 서버·앱 번호 흐름, 요청 계약, 발송/수신·확인표·세션 경계 대조. 시험 목적·소스를 확인했으며 새 시험 실행이나 외부 실수신·운영 설정 검증을 뜻하지 않음. 가입 전체·Google 연결 전체는 해당 기능 검토에서 별도 확인.",
+      "sources": [
+        {
+          "path": "docs/plan/auth/EMAIL_CODE_AUTH_2026-10-29.md",
+          "sha256": "351d5a3f3b7397bc0d7da45bae172fc23b75c59e11f663f883ceca28951f9791"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+          "sha256": "3f56d9cff712da7b21d204edbc575e195bf94466069b493ea5d3428e0ed98b61"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/EmailCodeService.java",
+          "sha256": "088a4dd19c735e55f5c5ac07f99377bb484ba7796286faa9911265cb0662fc49"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/EmailCodeAuthService.java",
+          "sha256": "1b6df54da282bd7d3d6aa38b2920d8f0248c7134c33dda2ec0a87b5f2de8866f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/RedissonEmailCodeStore.java",
+          "sha256": "4bd1817f0c89467ba3247c9f701f40c9ca940cc4835d927c69baa49065072609"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/PasswordResetService.java",
+          "sha256": "a4430706d73a3e36178f4180c540dfa31a2853c683970368b98e97c7d8cea668"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AuthService.java",
+          "sha256": "989c146e2ab0a7d0e7189e464667469204ff1418f0689546142456fdff45c46b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AccountCredentialStore.java",
+          "sha256": "409cc5fb709d3725b1d59849d959e0206c447f2f877b22cd444f9ef589adf82e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/constants/EmailCodePurpose.java",
+          "sha256": "ce22fa41bbb178ec76fc58a045b4f5f4a3493166b71df0b7b961dde02ffc08a4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/util/PasswordRule.java",
+          "sha256": "1320b1c504adc717d55e7c6ffd7319a4c0199a7bab5d3e0e25a0808b99552da4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/config/EmailCodeBypass.java",
+          "sha256": "07d23a41418422c5ab5763ecfb828937b83ec09363f2233206a348f9b4078bf8"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/EmailCodeMailSender.java",
+          "sha256": "2d731a4a48c9fc56c3bcf4c4f76922961e79f6d49159c6737940a2bf6ce3e1f7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/EmailCodeRequestParam.java",
+          "sha256": "1b72f3006fe3d0f3d9dd1ab1f7b6c8227489c6dd59e4939693cae04271ca08bb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/EmailCodeVerifyParam.java",
+          "sha256": "669ef5ed211036bf69e62bc6d456f77561873cf65aef466ba6d55d844f98ffe4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/PasswordResetRequestParam.java",
+          "sha256": "f564e0f68b68edc53841070e2b5f893e2c63e5c72bd6e3c550f277cdb91f7ed9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/param/PasswordResetParam.java",
+          "sha256": "4f737287555aafa67c120fec62aafd1d0d489cc24a851a3d9ff733692d87a5ea"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/EmailCodeSentVo.java",
+          "sha256": "cfd68f5828ca4b2c6457c09fb846dde166a62423ef85c54768a3245393858d6e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/SignupTokenVo.java",
+          "sha256": "5a8616d45f21ef58160cfcf205d324c1a9950184c4106ce87d1ec96a3e9ac07a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/PasswordResetTokenVo.java",
+          "sha256": "118727c61da5a8e0863cdadd34e25cc2d85cdd739b4d19e1cc0a45049ab44bc4"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/login_screen.dart",
+          "sha256": "88b576188db5508dfaee6b107cdf72594501ea3627db1927c82dd568366fc393"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/signup_screen.dart",
+          "sha256": "96cc02715b24936b35b594fceebfd8e2f8015137d5fffe774b6bbc126827e766"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/screens/password_reset_screen.dart",
+          "sha256": "7049e2bc9591e1e18dcc7e9b64b86ea59aa48141e68c52a75a02d208050e15ff"
+        },
+        {
+          "path": "community_app/lib/presentation/auth/widgets/email_code_entry.dart",
+          "sha256": "52dd2d87eedcc7f7998c9a7a41902d75f39f5d9b4b3498bcc6853b7166be72e5"
+        },
+        {
+          "path": "community_app/lib/data/api/auth_api.dart",
+          "sha256": "fbf3456370f5487a1e7589dc42b369520ca2319f3b17c56168de762ae63d4997"
+        },
+        {
+          "path": "community_app/lib/data/repositories/auth_repository.dart",
+          "sha256": "ccac24fb541bb9502f79f41da5da7ebfa70a7237b95ae158fc7abc97a2084459"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9"
+        },
+        {
+          "path": "community_app/lib/core/services/deep_link_service.dart",
+          "sha256": "19c52f10845e3d69ccc851cc75220de66d71e2cfc5479c8b3c6ce991341e87d4"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/EmailCodeServiceTest.java",
+          "sha256": "9f4d336d6b24ccea4758a5a311ea9fadebedfea50d6d326c69d82ac20c4c83f7"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/PasswordResetServiceTest.java",
+          "sha256": "25d4ed527d9b34da909a146b23e4dafb61f35a622c66c5cbdb26ca47282c7fc9"
+        },
+        {
+          "path": "community_app/test/presentation/auth/email_code_auth_flow_test.dart",
+          "sha256": "b3b5c58c710d046bc117a2ab9dd41a6c8297a03b7ecc34ec745704342d036554"
+        },
+        {
+          "path": "community_app/test/data/repositories/email_code_auth_wire_test.dart",
+          "sha256": "d6c67c01b4d54127a3495dcaa4018f6d6ce251d820e7a8bac1b1e1c7734da380"
         }
       ]
     }

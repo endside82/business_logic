@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,058개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,064개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1058,
+    "documentedScenarioItems": 1064,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -206,13 +206,13 @@ window.SCENARIO_AUDIT = {
       "id": "F01-03",
       "domain": "인증 & 온보딩",
       "name": "이메일 인증",
-      "scenarioCount": 5,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-03_email-verification/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-03_email-verification/backend.md",
@@ -282,13 +282,13 @@ window.SCENARIO_AUDIT = {
       "id": "F01-04",
       "domain": "인증 & 온보딩",
       "name": "비밀번호 재설정",
-      "scenarioCount": 5,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/01_auth_onboarding/F01-04_password-reset/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/01_auth_onboarding/F01-04_password-reset/backend.md",
