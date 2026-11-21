@@ -22,10 +22,10 @@
 | F01-02 | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | [F01-02_social-login_prd.md](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | [F01-02_social-login](../../units/01_auth_onboarding/F01-02_social-login) | 전환 완료 | 1 | 1 |
 | F01-03 | F01-03. 이메일 인증 | [F01-03_email-verification_prd.md](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | [F01-03_email-verification](../../units/01_auth_onboarding/F01-03_email-verification) | 2026-11-22 소스 대조 | 2 | 3 |
 | F01-04 | F01-04. 비밀번호 재설정 | [F01-04_password-reset_prd.md](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | [F01-04_password-reset](../../units/01_auth_onboarding/F01-04_password-reset) | 2026-11-22 소스 대조 | 3 | 4 |
-| F01-05 | F01-05. 토큰 갱신 & 로그아웃 | [F01-05_token-refresh-logout_prd.md](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | [F01-05_token-refresh-logout](../../units/01_auth_onboarding/F01-05_token-refresh-logout) | 전환 완료 | 2 | 0 |
+| F01-05 | F01-05. 토큰 갱신 & 로그아웃 | [F01-05_token-refresh-logout_prd.md](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md) | [F01-05_token-refresh-logout](../../units/01_auth_onboarding/F01-05_token-refresh-logout) | 2026-11-22 소스 대조 | 2 | 3 |
 | F01-06 | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | [F01-06_onboarding_prd.md](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | [F01-06_onboarding](../../units/01_auth_onboarding/F01-06_onboarding) | 전환 완료 | 0 | 1 |
 | F01-07 | F01-07. 관심사 태그 관리 | [F01-07_preference-tags_prd.md](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | [F01-07_preference-tags](../../units/01_auth_onboarding/F01-07_preference-tags) | 전환 완료 | 4 | 1 |
-| F01-08 | F01-08. 소셜 계정 연결 해제 | [F01-08_social-unlink_prd.md](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | [F01-08_social-unlink](../../units/01_auth_onboarding/F01-08_social-unlink) | 전환 완료 | 1 | 1 |
+| F01-08 | F01-08. 소셜 계정 연결 해제 | [F01-08_social-unlink_prd.md](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | [F01-08_social-unlink](../../units/01_auth_onboarding/F01-08_social-unlink) | 2026-11-22 소스 대조 | 3 | 3 |
 
 ## 3. 먼저 볼 기능
 
@@ -33,7 +33,7 @@
 |---|---|---|
 | [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | Risk 후보 1, trace 없음 |
 | [F01-02](../02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md) | F01-02. 소셜 로그인 (Apple/Google/Kakao/Naver) | Risk 후보 1 |
-| [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | Risk 후보 1 |
+| [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 현재 제한·미검증 3건 |
 | [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 현재 제한·미검증 4건 |
 | [F01-03](../02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md) | F01-03. 이메일 인증 | 현재 제한·미검증 3건 |
 | [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | Risk 후보 1 |
@@ -83,20 +83,7 @@
 
 ### F01-05 토큰 갱신 & 로그아웃
 
-- **사용자 가치**: 사용자가 의식하지 못하는 사이 세션을 갱신해 끊김 없는 사용 경험을 제공하고, 로그아웃으로 디바이스 세션을 명시적으로 종료한다.
-- **주요 화면**:
-  - 갱신: 화면 없음 — HTTP Interceptor가 자동 처리 (SCR-AU-007)
-  - 로그아웃: 프로필/설정 화면(이 단위 외부)에서 트리거되지만 인증 라이프사이클이므로 본 단위에 포함
-- **백엔드 엔드포인트**:
-  - `POST /api/v1/auth/refresh` (`AuthController#refreshToken`) — `TokenRefreshParam`, 200 + `LoginVo`
-  - `POST /api/v1/auth/logout` (`AuthController#logout`) — `@AuthenticationPrincipal`의 `userId` + `jwtId`로 RefreshToken 무효화, 204
-- **선결 조건/상태**:
-  - 갱신: 만료된 Access Token + 유효한 Refresh Token 보유
-  - 로그아웃: 로그인 상태
-- **결과 상태 변화**:
-  - 갱신 성공: 새 토큰 저장, 큐잉된 401 요청 모두 새 토큰으로 재시도
-  - 갱신 실패: 모든 토큰 삭제 + SCR-AU-001 강제 이동 ("세션이 만료되었습니다" 토스트)
-  - 로그아웃: 서버에서 RefreshToken 폐기, 클라이언트 토큰 삭제, SCR-AU-001 진입
+2026-11-22 현재 동작을 소스 대조했다. 동시 갱신·응답 유실·일시 오류의 세션 유지와 명시적 거절을 구분하고, 로그아웃은 해당 세션·푸시만 정리한다. 상세 흐름·상태·미검증은 [토큰 갱신과 로그아웃 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md)를 따른다.
 
 ### F01-06 온보딩 (웰컴 → 프로필 → 관심사 → 위치)
 
@@ -132,14 +119,7 @@
 
 ### F01-08 소셜 계정 연결 해제
 
-- **사용자 가치**: 더 이상 사용하지 않는 소셜 제공자를 계정에서 분리하여 보안 표면을 축소한다.
-- **주요 화면**: 본 단위에는 전용 화면 없음. 일반적으로 설정 화면(외부 단위)에서 트리거되지만 인증 라이프사이클이므로 본 단위에 포함.
-- **백엔드 엔드포인트**:
-  - `DELETE /api/v1/auth/social/{providerType}` (`AuthController#unlinkSocial`) — `providerType` path는 `ProviderType` enum 값(대문자 정규화), 204
-- **선결 조건/상태**: 로그인 상태 + 해당 `providerType`으로 연결된 `SocialLogin` 레코드 존재.
-- **결과 상태 변화**: 해당 SocialLogin 레코드 삭제 또는 비활성화. 동일 제공자로 다시 로그인 시 신규 회원 플로우 또는 재연결 플로우 진입.
-
----
+2026-11-22 현재 동작을 소스 대조했다. 실제 연결과 활성 제공자를 구분하고, 마지막 수단·동시 해제·결과 유실을 확인한다. 비활성 수단 계산의 조건부 차이를 남겼다. 상세 흐름·상태·미검증은 [소셜 계정 연결 해제 현재 기능 PRD](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md)를 따른다.
 
 ## 7. Gap / Risk Rollup
 
@@ -150,7 +130,7 @@
 | [F01-04](../02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md) | F01-04. 비밀번호 재설정 | 4 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 | [F01-06](../02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md) | F01-06. 온보딩 (웰컴 → 프로필 → 관심사 → 위치) | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
 | [F01-07](../02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md) | F01-07. 관심사 태그 관리 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
+| [F01-08](../02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md) | F01-08. 소셜 계정 연결 해제 | 3 | 기능 PRD의 「현재 제한과 확인 범위」 참조 |
 
 ## 8. 운영 방법
 

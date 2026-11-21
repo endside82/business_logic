@@ -250,9 +250,10 @@
       "evidence": [
         "data_export_20261122",
         "event_detail_complete_20261122",
-        "email_code_auth_20261122"
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122"
       ],
-      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "docs/assets/launch-status.js",
@@ -2177,9 +2178,10 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "email_code_auth_20261122"
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122"
       ],
-      "note": "F01-03·F01-04 카드만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "docs/domains/02-home.html",
@@ -2436,9 +2438,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1075500159fd8fd596c9ed8e288693b300aafc0c5e00d07974a0a75ace6f54cf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "abe50d0be5b5e701368d7cc1e3fa26c801797311b74adc6f528aa7d5dd987ca2"
     },
     {
       "path": "docs/features/F01-06.html",
@@ -2466,9 +2471,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "665a705b4b4a88eefb36edac0739c022fe76b547af010e2da32e0ba3d973a46d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "d834b77e6e8fbf9a39000a13237227fec23389abe1bbe7ba138c147ba3a282ec"
     },
     {
       "path": "docs/features/F02-01.html",
@@ -4631,9 +4639,10 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "email_code_auth_20261122"
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122"
       ],
-      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "planner_onboarding/08_scenario_coverage_matrix.md",
@@ -4679,9 +4688,10 @@
       "evidence": [
         "data_export_20261122",
         "event_detail_complete_20261122",
-        "email_code_auth_20261122"
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122"
       ],
-      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "planner_onboarding/README.md",
@@ -4857,9 +4867,10 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "email_code_auth_20261122"
+        "email_code_auth_20261122",
+        "session_and_social_unlink_20261122"
       ],
-      "note": "F01-03·F01-04 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "note": "인증 도메인의 검토 완료 기능 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/02_홈_피드_prd.md",
@@ -5139,10 +5150,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d8c527aeacf1eba544a6332635695ccd877a62c61a9c2ab079fbc0f2054e82d2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "f6c7a319403ff2b5d3186a1a464e468133b6e7b0f714cb6196ba0051d3a3f832"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md",
@@ -5172,10 +5185,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c4ffa6b1958f6ac187ce85b23e867e32048a642736dbd42a91dee23b4b0aa0f5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "4783a96eca43a387b31bba9834f034720c852664ed0ff4a616501909e115ebba"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
@@ -7790,9 +7805,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "79660794a5f49d043db03913abded9ed18c493d1b378ccc773a2a77c840927d6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "cc1a41b673f0dfb32a14ebdb23e460992074d7e6ed06e48c1964420031b537e0"
     },
     {
       "path": "units/01_auth_onboarding/F01-05_token-refresh-logout/diagrams.md",
@@ -7800,9 +7818,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2190ab1c9805d7d001c5c0befedc5c3e34d8391f95917ac15510ef2ef2b7b06a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "07b1739c13e504855c4fe55b4a7c57806f43cb0fb0682b9b2c58d1f1e9d481eb"
     },
     {
       "path": "units/01_auth_onboarding/F01-05_token-refresh-logout/frontend.md",
@@ -7810,9 +7831,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a28e194387a0f9a7173c983e5898064c6ce0374b88796768ffd7d5e2781ad79a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "10edc52e093d69e8ae0af508a31dce05a68b467a4ff5cd1149a309fdb7b07fc6"
     },
     {
       "path": "units/01_auth_onboarding/F01-05_token-refresh-logout/scenarios.md",
@@ -7820,9 +7844,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "51e0cdb4703542ea9934a1346d6cf4fd918e4c5a3733b8349100a3d1c4d389e1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "6e6c4c29abe8c6d67549a3f78374fb03510590b2a5ec2d393a9627f4f163e6b0"
     },
     {
       "path": "units/01_auth_onboarding/F01-06_onboarding/backend.md",
@@ -7910,9 +7937,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9addcdb099f043915dfd93d61df86a9a1e0f7268d502157cb9719bbfc9aebfb5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "20c186301eaed30cf2f3743ec82daf57969785c456fa93d7f29fd4f6ef4021d2"
     },
     {
       "path": "units/01_auth_onboarding/F01-08_social-unlink/diagrams.md",
@@ -7920,9 +7950,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c965a094fe1009a44bfe9d4933b42eb336b7031553c5f21567e7dc2d04fc8cbf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "0e60943a2fbf2429992808bd2ed51825c89f5b700cf7ab87eb7e303c387785ac"
     },
     {
       "path": "units/01_auth_onboarding/F01-08_social-unlink/frontend.md",
@@ -7930,9 +7963,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d842c7ecbd49608c30a2bb6dc88174c81a9ed478bb87613339103deea15f9204",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "1650a9f22fad24938403d4176e07c0a43ba349a9daa6ff26ed4793a3fed2d5cd"
     },
     {
       "path": "units/01_auth_onboarding/F01-08_social-unlink/scenarios.md",
@@ -7940,9 +7976,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "aabed4838ee3d9f0838b4afcc3c2cb7acdc31dd0879a9af5b5eefd1cc3e24b8a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "session_and_social_unlink_20261122"
+      ],
+      "reviewedSha256": "1099d4bc074e8ac2403eeb238746616a068e345b33327abad9b224a61e0e211b"
     },
     {
       "path": "units/02_home_feed/00_overview.md",
@@ -13464,6 +13503,20 @@
         "reviewedDocumentRelativePaths": 320
       },
       "scope": "문서·근거·생성 데이터 일치. 로컬 파생본의 상대 링크 2곳과 인증 API 주석 위치를 교정했다. 제품 시험·실수신·운영 검증 아님. 출시 범위 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "F01-05·F01-08: source_references tests; sync_source_reference_docs; check_scenario_audit; reviewed-document relative paths/digests; existing HTML anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 87,
+        "sourceRecords": 315,
+        "verifiedRecords": 313,
+        "retiredRecords": 2,
+        "localSourceLocations": 311,
+        "reviewedDocumentRelativePaths": 359
+      },
+      "scope": "문서·근거·생성 데이터 검사. 비활성 소셜도 마지막 수단 계산에 포함되는 조건부 Gap을 기록했으며 제품 코드 수정·새 제품 시험·운영 계정 검증을 뜻하지 않음. 출시 범위 날짜 관문은 별도 미해결."
     }
   ],
   "evidenceGroups": {
@@ -14028,6 +14081,124 @@
         {
           "path": "community_app/test/data/repositories/email_code_auth_wire_test.dart",
           "sha256": "d6c67c01b4d54127a3495dcaa4018f6d6ce251d820e7a8bac1b1e1c7734da380"
+        }
+      ]
+    },
+    "session_and_social_unlink_20261122": {
+      "kind": "source_review",
+      "scope": "F01-05·F01-08 세션 갱신·로그아웃과 소셜 해제의 실제 동작 대조. 잠금·세션 식별·응답 유실·오류 분류·앱 진입/복귀·제공자 활성과 마지막 수단 차이를 확인. 시험 목적·일부 본문을 읽었으며 새 실행·운영 계정·기기 결과로 확대하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/AuthController.java",
+          "sha256": "3f56d9cff712da7b21d204edbc575e195bf94466069b493ea5d3428e0ed98b61"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AuthService.java",
+          "sha256": "989c146e2ab0a7d0e7189e464667469204ff1418f0689546142456fdff45c46b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/TokenService.java",
+          "sha256": "7bea00d370019319891d1a3b81d3dab36344ba469226f068949730a22a9048e7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AccountCredentialStore.java",
+          "sha256": "409cc5fb709d3725b1d59849d959e0206c447f2f877b22cd444f9ef589adf82e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/JwtAuthenticationService.java",
+          "sha256": "71d10417b9bb85627196c99d5c53d44ef48f9019fa270b7096e751d41a4dce33"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/SocialLoginService.java",
+          "sha256": "d544d4349c2a0279778ad406677ae213804b2ad9db0542973b777df018c33c0d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/SocialAuthProviderPolicy.java",
+          "sha256": "351d101cc7d5b54ab2071872a1e1533b99fdbcfc892b7abf3a21ba7cc4ab20e4"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/LogoutTokenReader.java",
+          "sha256": "3ab8f0e5245a5e1ec4752ca97f780a81eb8bd95df7c1cad56a5e90e9d708445f"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/JwtAuthorizationFilter.java",
+          "sha256": "5ed05ae2b1d2a133def2175045f9f7e02543709d9f17ec2139b6b8006ac790a5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/util/UserStatusValidator.java",
+          "sha256": "0d37bac937d5aa5061839f952b07ba7fa86740461b5528ec62d7cc53ea246400"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/config/SocialAuthProviderProperties.java",
+          "sha256": "5ec1b10fe825c1848a43e941e965aa347ed170631f2f2ab5d7208ab203585bbd"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/ConnectedAuthProvidersVo.java",
+          "sha256": "480a5b229dd654830e2c870cb2936ed7485e2516dd98449ec62dba2a44e4e47d"
+        },
+        {
+          "path": "community_app/lib/data/models/auth/connected_auth_providers_vo.dart",
+          "sha256": "55f6c7d188029cc2e06578ccdd4f52268fdf21ceec21193f7859559191170fc9"
+        },
+        {
+          "path": "community_app/lib/data/api/auth_api.dart",
+          "sha256": "fbf3456370f5487a1e7589dc42b369520ca2319f3b17c56168de762ae63d4997"
+        },
+        {
+          "path": "community_app/lib/data/repositories/auth_repository.dart",
+          "sha256": "ccac24fb541bb9502f79f41da5da7ebfa70a7237b95ae158fc7abc97a2084459"
+        },
+        {
+          "path": "community_app/lib/core/network/refresh_interceptor.dart",
+          "sha256": "79356a761f5431448c77679f09837bebc1f62b4ed47fb3eff56180acfa382659"
+        },
+        {
+          "path": "community_app/lib/core/session/session_store.dart",
+          "sha256": "8909797c8093333a8a8cc89066b1d0e7bdeaf51dd85feca8f4a73b29ddcc6971"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9"
+        },
+        {
+          "path": "community_app/lib/domain/providers/auth_provider.dart",
+          "sha256": "1f74f344223be3e7843561067bd4c8a7bcaf370a6b6eba8e7c8cfaf66db98204"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/app_settings_screen.dart",
+          "sha256": "634d923ab037f0508ace2303b8e81cd0d7cd48dbad5ef346bc7941307f37a888"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/connected_accounts_screen.dart",
+          "sha256": "0e2cef0a0cd163860deff34fd1a556728276eaff2893383fdde70f2d163d94d4"
+        },
+        {
+          "path": "community_app/lib/presentation/navigation/screens/full_menu_screen.dart",
+          "sha256": "916ef357db7c524c620096010e2cb18dcf819d92497827eb515424feda9662ab"
+        },
+        {
+          "path": "community_api/api-app/src/test/java/com/endside/community/account/service/DeviceSessionLogoutCommitTest.java",
+          "sha256": "ad60bd3cc612f33fffd1a09178b280c29435311b1332b3940813ea9790090482"
+        },
+        {
+          "path": "community_app/test/presentation/profile/connected_accounts_screen_test.dart",
+          "sha256": "5a1461933951377cb975b0fc4551457a623166e0b1265e27e4c9ed4525e79a20"
+        },
+        {
+          "path": "community_app/test/core/session/session_store_refresh_test.dart",
+          "sha256": "dcec97405aecb0f3f12a9ee2235826d2ae266e6bb8bde65bef056c13b0380392"
+        },
+        {
+          "path": "community_app/test/core/session/session_refresh_single_flight_test.dart",
+          "sha256": "e7d47a394cc74ccb06402ff4351597384ea1f28ff11fb1607e8a8cfcf34b7f92"
+        },
+        {
+          "path": "community_app/test/core/session/session_store_lost_refresh_reply_test.dart",
+          "sha256": "9415400392ab78062ec32f09dc4d55e41e82583123b8edb37edee53e1a3ef575"
+        },
+        {
+          "path": "community_app/test/core/network/refresh_interceptor_retry_test.dart",
+          "sha256": "c55223edf4e0a0d24edf4de8293b530645f4fa4f48ea583c37431941eb52af31"
         }
       ]
     }

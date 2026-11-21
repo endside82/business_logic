@@ -83,8 +83,8 @@
           <a class="card" href="../features/F01-05.html">
             <div class="eyebrow">F01-05</div>
             <h3>토큰 갱신 · 로그아웃</h3>
-            <p>가장 자주 깨지는 기능. 동시 401, refresh 만료, 로그아웃 실패 시 로컬 토큰만이라도 비워야 함. 계정 상태 변화 시 강제 로그아웃 동기화 필요.</p>
-            <div class="meta"><span class="pill warn">15 시나리오</span><span class="pill brand">상세 →</span></div>
+            <p>동시 갱신·응답 유실·일시 오류의 세션 유지와 명시적 거절을 구분하고, 로그아웃은 해당 세션·푸시만 정리한다.</p>
+            <div class="meta"><span class="pill warn">9 시나리오</span><span class="pill brand">상세 →</span></div>
           </a>
           <a class="card" href="../features/F01-06.html">
             <div class="eyebrow">F01-06</div>
@@ -101,7 +101,7 @@
           <a class="card" href="../features/F01-08.html">
             <div class="eyebrow">F01-08</div>
             <h3>소셜 계정 연결 해제</h3>
-            <p>다중 소셜 연동 환경에서 “마지막 로그인 수단”은 절대 해제할 수 없다. 미연동 제공자 해제 시도, 멀티 디바이스 처리.</p>
+            <p>실제 연결과 활성 제공자를 구분하고, 마지막 수단·동시 해제·결과 유실을 확인한다. 비활성 수단 계산의 조건부 차이를 남겼다.</p>
             <div class="meta"><span class="pill danger">계정 잠김 위험</span><span class="pill brand">상세 →</span></div>
           </a>
         </div>
