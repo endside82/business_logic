@@ -2240,9 +2240,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "13fad59b39b148faf280f44f05b0ada484478cac7124c308ab697c897d05adfa",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "payment_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "a655f2e2ecedb8bc73ed0d4f65778fc60184b77e5f52e22ea42e85512b3e3466"
     },
     {
       "path": "docs/domains/07-settlement.html",
@@ -3090,9 +3093,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d01d9bcf744ed89e6843a6e046abcfa792ce0d0f4fb200d6239476cf35b85cdb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reviewedSha256": "44f4e77191922237559b569a6f0def4dada0722e6bef09409e1b7cd6179e9f9b"
     },
     {
       "path": "docs/features/F06-07.html",
@@ -5047,10 +5053,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "36f888ae9792a22307c01e7dc122aa51e282059cd88d5870fd1a674644b31c0a",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "payment_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "2ea0874c8dbebcb165173137798ce12fec8dcb9f6761a3b649607196100c6663"
     },
     {
       "path": "prd/01_domain_prds/07_모임_정산_prd.md",
@@ -5948,10 +5956,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "767442016eac5e38ab44f44f64ba4489d02b864c8a07ef4615ff5111ade83c8c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reviewedSha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
@@ -9942,9 +9952,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6e75b3ea2d2e6586da7053132ca1bf0d29c68bd6e50287f009f64f1147ba76d8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "payment_domain_rollup_20261122"
+      ],
+      "reviewedSha256": "74bfb2227596a94d854d4b2f39d0fafb4addfbe2ac34093556785274f96953aa"
     },
     {
       "path": "units/06_payment/F06-01_wallet-main/backend.md",
@@ -10212,10 +10225,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6ca164dcf9d5439f70542072bbbe257d0d2924f1e1e87848fe201cec8ebf48ec",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reviewedSha256": "f646f1999545e1d60688d1841e35a8fecc663d16dac2a32c9a3f828feead7592"
     },
     {
       "path": "units/06_payment/F06-06_point-pay-refund/diagrams.md",
@@ -10223,9 +10238,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "db2c9f80f2b24bf3a1aff552c0ecdc6c806e9dcf97d566eca4349c49a723b284",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reviewedSha256": "e523579970e435f6489c0d87e4bfbb556adfe7199af7d9ad7e9b9c45532cbb02"
     },
     {
       "path": "units/06_payment/F06-06_point-pay-refund/frontend.md",
@@ -10233,9 +10251,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "056f8c03324520d5dcd263ce5e3c4608c01d306e5faa6a2523c43de9561fed09",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reviewedSha256": "58b10b3ec825c99bbdacc7468becbb879a583caa5ee407be233f315f0367c065"
     },
     {
       "path": "units/06_payment/F06-06_point-pay-refund/scenarios.md",
@@ -10243,9 +10264,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "838aecc57c18238fa93c1648f9813e17df75133d4c6acd63e92dbcb7aa24840e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_payment_cancel_refund_20261122"
+      ],
+      "reviewedSha256": "f13625e844b26e1d204fc6d5db42e78dbca2816782bd12709169a0e5f19aa3df"
     },
     {
       "path": "units/06_payment/F06-07_hosting-ticket/backend.md",
@@ -14308,6 +14332,26 @@
         "retainedHtmlPages": 2
       },
       "scope": "개설권 구매·사용·원본 반환·운영자 잔여 환불과 개인 멤버십 판정·기간 구간·갱신·해제의 문서 대조 및 파생 자료 검사. 내부 환불과 혜택 카탈로그 연결 두 개 추가. 새 제품 시험·실DB·실결제·운영 배치·기기 검증 아님. 결제/환불 공통 기능·영역 요약·공통 정책·출시 날짜 관문은 아직 미완료."
+    },
+    {
+      "command": "F06-06 and payment domain: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; source/canonical fingerprints; retained HTML IDs; incoming Markdown anchor scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 9,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 99,
+        "sourceRecords": 385,
+        "verifiedRecords": 383,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1357,
+        "derivedSourceDigests": 169,
+        "currentSourceAndCanonicalDigests": 43,
+        "retainedHtmlPages": 2,
+        "paymentFeatureCount": 10,
+        "paymentSourceReferences": 39,
+        "paymentLimitations": 51
+      },
+      "scope": "참가비 지갑 결제·신청 취소·예상액·일행/계좌이체 환불 경계와 최신 기능 열 개의 결제 영역 요약 문서 검사. 두 서버 연결 추가. 마지막 표현 정리 후 링크·파생 지문을 재확인했으며 변경 없는 서버 연결 시험은 반복하지 않았다. 과거 전환/권한 감사는 당시 이력으로 보존. 새 제품 시험·실DB·외부 결제·반환 송금·운영 배치·기기 검증 아님. 공통 정책과 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -17805,6 +17849,260 @@
           "reason": "현재 멤버십 화면이 사용하는 혜택 카탈로그 조회 연결 추가"
         }
       ]
+    },
+    "event_payment_cancel_refund_20261122": {
+      "kind": "source_review",
+      "scope": "F06-06 현행 참가비 지갑 결제·명령 재생·자동충전 경계·취소 전 서버 예상액·동의·결제수단별 신청 취소·모임 정책/귀책/유료무료/일행 추가분 잔여 계산·정산 보정 연결의 해당 함수 대조. 선행 이벤트 상세/지갑/충전/명령 근거 파일 지문 불변 확인. 기존 시험은 계좌이체 미리보기 허용·거절 단언만 읽었고 새 제품 시험·실DB·실PG·주최자 송금·운영 회수·알림 수신 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java",
+          "sha256": "b52ca6b77efc515f087b18cac597958ee316ab227bd2b118999b491e8c346595"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPaymentRefundService.java",
+          "sha256": "b65956091d62afd8d83f4af5881af7ac84bf6669fa7df999d246b3aeb93c6377"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+          "sha256": "324eb35492888c29c6b241b41076e4ea2ab49a7a91920e573c1796dd64cdab3c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/ApplicationRefundPreviewService.java",
+          "sha256": "112975da8c69834d5a99e7e837219de045e5efdbd533309d43595816ab78df4e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/RefundPolicyService.java",
+          "sha256": "7095cc117ec2b3bba4606722cea744fad3190134af23db6fd71b72c88c181888"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/EventRefundSettlementService.java",
+          "sha256": "714ccb6574351d3ae7515651aaaa0609dce9606fcb02cbd2e4e94ef4035d8975"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletRefundPolicyService.java",
+          "sha256": "fa17bf2f973913a8d563852292bed65173af69acf6a1b1abf613241836e45dda"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/constants/RefundPolicyTemplateCode.java",
+          "sha256": "20e6f5d9a902cb82941c650bec1d37def125c3c1a0b0b53a4a4b41bf1e431ea5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/constants/RefundFaultCategory.java",
+          "sha256": "4610c0cf8bde044139a5b06a305305cc1f22d4080334d78820c23ab7ed94fb5d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/param/RefundPreviewParam.java",
+          "sha256": "b09efb7b5fe598b6f22fb263256c290e9b53cdf0cb333b0cef261046da852674"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/vo/RefundPreviewVo.java",
+          "sha256": "ae40ae6be5f9ef55ba063217cb025605dc26512f93466975680870cbec485e6b"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/cancel_attendance_sheet.dart",
+          "sha256": "d9fc03f56853eda251223dd98d6adae0a321686daabad533f048614ebc4f45ac"
+        },
+        {
+          "path": "community_app/lib/domain/providers/refund/refund_policy_providers.dart",
+          "sha256": "5a2a83898b8dca9030832c77bfd33961d0abed0cf07c85aa2465df744c7a21cf"
+        },
+        {
+          "path": "community_app/lib/data/api/refund_policy_api.dart",
+          "sha256": "fe116fdc4a5f5c1f386cf649a698a0b12c41b21939b498c21cbeff99448ef547"
+        },
+        {
+          "path": "community_app/lib/data/models/refund_policy/refund_preview_param.dart",
+          "sha256": "07f046e0917316a73ba7a2385c5af844782dfbc969ca50acff39fe4c94187841"
+        },
+        {
+          "path": "community_app/lib/data/models/refund_policy/refund_preview_vo.dart",
+          "sha256": "77160174a301565c1328560a4a672a2f0d7f2e380b85d402c4a10138d254afd2"
+        },
+        {
+          "path": "community_app/test/widget/event/refund_policy_form_test.dart",
+          "sha256": "eaf103c6335097bd50fd8118c64b2c5c4acb92bedfd167c59ba1a605513b3dc7"
+        }
+      ],
+      "reuses": [
+        "event_detail_lifecycle_20261122",
+        "event_detail_complete_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "charge_methods_autocharge_20261122",
+        "wallet_history_earnings_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java",
+          "sha256": "6b8a2cfc6c945aede2a7e96522c54d7c63d57c5637957044741c75528ad40c8a"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+          "sha256": "381045f124ec5a62325fe558276174538ffbe312557f6bf110b26d88057c4682"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendance_action_provider.dart",
+          "sha256": "bcd5def8aa7369363637a1ba8f2bc42a3847d600b484b83b6481ee1966ca600c"
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_prepayment_gate.dart",
+          "sha256": "10770736db0b936bc06518886cec051f1f1d6476400cc39728b865ebc8732a53"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletSpendService.java",
+          "sha256": "8055356dba4bbf6bb233978b417e97f26b8542578ba75b43794e309b15f9ce89"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeEligibility.java",
+          "sha256": "f00162acce4fafafa9ab2e863fd82461b4e2bafa1f64602c1bfdd5283390c367"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AutoChargeCoordinator.java",
+          "sha256": "19c58b937a4343cb450aea0f5a9f3c1af3521099f192074db634b2c72c3b2201"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+          "sha256": "9d3ead0cc566f10853c081c56babf9f3435c84d8efe53f6d58e89dda7e892144"
+        },
+        {
+          "path": "docs/ui-ux/screens/19-payment.md",
+          "sha256": "5d083cc93e176141c06353936bd8f916d629eaf90f29d5ebe8edb9bc6a17c259"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F06-06.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-payment-entry",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "event-refund-repayment",
+          "current-8",
+          "current-limits",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F06-06:4",
+          "change": "added",
+          "reason": "활성 모임 환불 정책 카탈로그 창구 추가"
+        },
+        {
+          "id": "F06-06:5",
+          "change": "added",
+          "reason": "참석 취소 시트의 신청별 환불 예상액 창구 추가"
+        },
+        {
+          "id": "F06-06:3",
+          "change": "clarified",
+          "reason": "예전 고정 비율 안내를 실제 모임 환불 계산과 구분. 기존 2026-10-03 이관 주석은 과거 변경과 현재 공개 설정 판정을 구분하도록 수정"
+        }
+      ]
+    },
+    "payment_domain_rollup_20261122": {
+      "kind": "source_review",
+      "scope": "최신화된 F06 열 기능 PRD와 해당 근거 그룹을 재사용한 결제·지갑 영역 요약. 광범위한 과거 전환/권한 감사 기록은 역사로 구분하며 새 감사·실결제·배치·기기 결과로 승격하지 않음. 영역 밖 출금/클럽/정기모임/마켓/참석자 비용 정산 및 공통 정책 전체 검증을 대신하지 않는다.",
+      "reuses": [
+        "charge_methods_autocharge_20261122",
+        "event_payment_cancel_refund_20261122",
+        "host_settlement_appeal_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "wallet_history_earnings_20261122"
+      ],
+      "sources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
+          "sha256": "a3f059b0545bb5857d1f3c303830a8b6dda2e32212bb9b3a6691e6e77b23e93a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
+          "sha256": "6b6d396eacb60ba290cef220bd1a00cf20fdd3ec9c24a99e636bcbd0ff19f8a8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
+          "sha256": "7ae7565eda58eec9594d9a38b92ccb373ce77d0ba75a69f63c4b785e0d92ec57"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
+          "sha256": "e988306b2e846b50570abce854a11408040e4a2518a098af3cd9d0cda1e510ad"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
+          "sha256": "099793209eb5a069983b5bf568fb27904a684ab091e3a2ad2938a4a9b8e54afc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
+          "sha256": "f1f10d2565d487b56edefc8b8d281569666fa1a9c88b786804db26ce1fc9fb5d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
+          "sha256": "e369daee8ee66f3de1e05c4648e94c80c8b7b3f12e8982d2af2e73afc1fa1abf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
+          "sha256": "6a47ba414f3266b0808bc2df6f0533953cf69187544c3f80f2f74d37c0e92b89"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
+          "sha256": "36e8bd4483ad4747853b33e3b94bd1e2acb4d420a909fa40e3e4b4e7fc8011a3"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/01_domain_prds/06_결제_and_지갑_prd.md",
+          "sha256": "2ea0874c8dbebcb165173137798ce12fec8dcb9f6761a3b649607196100c6663"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/06-payment.html": [
+          "sidebar",
+          "launch-strip",
+          "domain-1",
+          "domain-2",
+          "domain-3",
+          "domain-4",
+          "domain-5",
+          "domain-6"
+        ]
+      },
+      "featureCounts": {
+        "features": 10,
+        "sourceReferences": 39,
+        "limitations": 51
+      }
     }
   },
   "currentSourceVersions": {

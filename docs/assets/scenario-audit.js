@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,118개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,110개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1118,
+    "documentedScenarioItems": 1110,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,9 +17,9 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 63,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 63,
-    "directlyLinkedJourneys": 41,
+    "directlyLinkedJourneys": 40,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 41,
+    "journeyScenarioReferences": 40,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 46,
     "partialEvidenceChain": 48,
     "definitionOnlyEvidence": 81,
-    "traceMarkers": 383,
-    "verifiedTraceRecords": 381,
+    "traceMarkers": 385,
+    "verifiedTraceRecords": 383,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -6301,25 +6301,25 @@ window.SCENARIO_AUDIT = {
       "id": "F06-06",
       "domain": "결제 & 지갑",
       "name": "포인트 결제·환불",
-      "scenarioCount": 20,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-06_point-pay-refund/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 20
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-06_point-pay-refund/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
         "entries": [
           {
             "id": "F06-06:1",
             "label": "POST /api/v1/events/{eventId}/prepayment/wallet — 참가비 지갑 결제",
             "status": "verified",
-            "note": "2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.",
+            "note": "2026-10-03 옛 지갑 결제·환불 API 제거 뒤의 연결 이관 기록이다. 현재 결제수단 사용 가능 여부는 공개 설정과 서버 수단 정책으로 판단하며 계좌이체 취소는 주최자 반환 대기와 구분한다.",
             "endpoints": [
               {
                 "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
@@ -6336,7 +6336,7 @@ window.SCENARIO_AUDIT = {
             "id": "F06-06:2",
             "label": "DELETE /api/v1/events/{eventId}/apply — 본인 신청 취소와 결제 정리",
             "status": "verified",
-            "note": "2026-10-03 옛 지갑 결제·환불 API 삭제 뒤의 현행 경로다. 지갑 신규 결제 제한은 유지하며 계좌이체 취소는 주최자 반환 대기로 구분한다.",
+            "note": "2026-10-03 옛 지갑 결제·환불 API 제거 뒤의 연결 이관 기록이다. 현재 결제수단 사용 가능 여부는 공개 설정과 서버 수단 정책으로 판단하며 계좌이체 취소는 주최자 반환 대기와 구분한다.",
             "endpoints": [
               {
                 "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
@@ -6351,7 +6351,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F06-06:3",
-            "label": "GET /api/v1/wallet/refund/policy — 환불 정책 조회",
+            "label": "GET /api/v1/wallet/refund/policy — 예전 고정 비율 안내",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -6365,34 +6365,61 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 220
               }
             ]
+          },
+          {
+            "id": "F06-06:4",
+            "label": "GET /api/v1/refund-policy-templates — 활성 정책 카탈로그",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "listTemplates",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/refund-policy-templates",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
+          },
+          {
+            "id": "F06-06:5",
+            "label": "POST /api/v1/events/{eventId}/applications/{applicationId}/refund-preview — 신청별 환불 예상액",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+                "controller": "RefundPolicyController",
+                "method": "preview",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/refund-preview",
+                "targetLine": 49,
+                "methodLine": 50
+              }
+            ]
           }
         ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_calendar_availability_mutation_test.dart",
-          "community_app/integration_test/seed_payment_refund_test.dart",
-          "community_app/integration_test/seed_report_mutation_test.dart"
+          "community_app/test/widget/event/refund_policy_form_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/test/presentation/payment/transaction_history_guidance_card_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 4,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 4,
-        "files": [
-          "community_app/integration_test/seed_calendar_availability_mutation_test.dart",
-          "community_app/integration_test/seed_payment_refund_test.dart",
-          "community_app/integration_test/seed_report_mutation_test.dart",
-          "community_app/scripts/e2e/run_p70_payment_refund_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "evidenceStage": 3,

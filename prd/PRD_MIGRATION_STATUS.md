@@ -71,7 +71,7 @@
 | F03-20 시작 전 확정 | 단일·일괄 노쇼 확정은 OPEN·CLOSED 이고 시작 시각이 지났을 때만 받는다. 종료 시각 상한은 없다. 앱 일괄 단추는 같은 판정의 서버 표지를 따른다 | `capacity/service/EventNoShowService.java:289-308`, 앱 `presentation/event/widgets/no_show_manage_section.dart:28,44-50` |
 | F04-03·04 도메인 소유권 이전 | 제안(201, `PROPOSED`, 7일) → 받는 회원이 재인증해 수락하면 같은 처리 안에서 `EFFECTIVE`. 거절·취소·만료가 있다 | `club/controller/ClubController.java:252-300`, `club/constants/ClubOwnershipTransferStatus.java`, `club/service/ClubOwnershipTransferTransitions.java:20-23,86-96`, `club/service/ClubOwnershipTransferService.java:94` |
 | F04-15 지급처 | 관리자 승인은 기금 차감·예약 분개 뒤 연결된 출금 요청을 승인해 신청 때 복사한 정산 계좌로 보낸다. 지갑 입금이 아니다. 지급이 끝나면 PAID | `club/service/ClubSettlementService.java:179-236`, `payment/withdrawal/port/ClubFundWithdrawalAdapter.java:45-53` |
-| F06-06 옛 결제 서술 | 카드 환불 대기열(`refund.pg-queue.enabled`)과 PG 환불 상태 열거·비동기 환불 작업기는 없다. 환불은 지갑으로 바로 돌아간다. 지갑 환불 창구(`POST /api/v1/wallet/refund`)도 없다. 충전 취소의 결과 모름은 결과 모름 사건으로 조회해 푼다. 지갑 결제 창구는 금액을 받지 않는다 | `api-app/.../payment/controller/WalletController.java`(매핑 목록, `:219` 정책 조회), `payment/service/WalletRefundPolicyService.java`, `payment/cancel/ChargeCancelIndeterminate*.java`, `event/prepayment/controller/EventPrepaymentController.java:128`, `api-app/src/main/resources/application-prod.yaml:153-163` |
+| F06-06 옛 결제 서술 | 5 | 4 |
 | F08-06 S7·S10 | 승인 뒤 심사 대상 칸을 바꾸면 SUBMITTED 로 재심사. 판매된 적 있으면 삭제 거절(`MARKET_ITEM_SOLD_NOT_DELETABLE`). 삭제한 아이템은 작성자에게 REMOVED, 남에게 `NOT_FOUND` | `plan/service/MarketItemService.java:203-215,299-308,410-425`, `plan/policy/MarketAbilityPolicy.java:32-46` |
 | F11-07 답변 수정 표 | 앱이 수정 가능 시각 안에서만 「답변 수정」 을 보이고 수정 시트가 저장한다 | 앱 `presentation/review/widgets/review_card.dart:74-78,254-257`, `presentation/review/screens/review_list_screen.dart:252-259` |
 | F20-02 앱 종류 | 앱 열거가 서버 7종을 모두 갖는다. 접수·스레드 메시지가 증빙 id 를 보낸다. 가시성은 서버 기본값 | `support/constants/OperationalIssueSourceType.java`, 앱 `data/models/support/operational_issue.dart:11-35`, `data/models/support/operational_issue_create_param.dart:16-22` |
@@ -88,7 +88,7 @@
 | 이메일 인증 제한 세션의 화면 파급 | 제한 세션 자체가 2026-10-29 에 없어짐(가입 전 번호 확인) | 해당 없음. F01-03 이 이미 반영 | `EmailCodePurpose.java`(`SIGNUP`·`PASSWORD_RESET`·`SOCIAL_LINK`), `EmailCodeService.java` |
 | 플랜 읽기 조판·TABLE(옛 「미커밋 Flutter 작업본」) | 앱·서버 main 에 들어감 | F08-02 11.3, F08-03 11.5·11.6, 08 도메인 9.6 을 지금 계약으로 고침 | 앱 `presentation/plan/screens/plan_reading_mode_screen.dart:33,68,77,114-126`, `presentation/plan/theme/plan_block_text_styles.dart:11,50-53,110`, `presentation/plan/widgets/block_renderer.dart:1730,1823`, `presentation/plan/widgets/block_type_sheet.dart:132-148`, `data/models/plan/table_block_adapter.dart:83`, 서버 `PlanBlockTableRowsValidator.java` |
 | 여러 요일 반복 생성 시험 | 있음 | F03-03 다음 조치 칸을 고침 | `domain/src/test/.../event/service/RecurringEventCreateSourceGateTest.java:210,249,316`, `domain/src/test/.../club/service/ClubRecurringEventServiceTest.java:302,419` |
-| F06-06 S8·S9, F06-08 시험 | S8 은 창구가 금액을 받지 않아 구조로 막힘. S9 는 충전 취소 결과 모름으로 바뀌었고 시험이 있음. F06-08 은 개인 구독 서비스 시험이 있음 | F06-06 S8·S9 를 고침 | `EventPrepaymentController.java:128`, `ChargeCancelIndeterminateServiceTest.java`, `ChargeCancelIndeterminateInternalControllerTest.java`, `SubscriptionServiceTest.java` |
+| F06-06 S8·S9, F06-08 시험 | S8 은 창구가 금액을 받지 않아 구조로 막힘. S9 는 충전 취소 결과 모름으로 바뀌었고 시험이 있음. F06-08 은 개인 구독 서비스 시험이 있음 | 5 | 4 |
 
 ### 소개 웹·보관 설명 문서
 
@@ -282,7 +282,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F06-03 | 결제 & 지갑 | [F06-03_transaction-history_prd.md](02_feature_prds/06_payment/F06-03_transaction-history_prd.md) | `F06-03_transaction-history` | 실사 기반 전환본 | 4 | 6 |
 | F06-04 | 결제 & 지갑 | [F06-04_payment-method_prd.md](02_feature_prds/06_payment/F06-04_payment-method_prd.md) | `F06-04_payment-method` | 실사 기반 전환본 | 5 | 5 |
 | F06-05 | 결제 & 지갑 | [F06-05_auto-charge_prd.md](02_feature_prds/06_payment/F06-05_auto-charge_prd.md) | `F06-05_auto-charge` | 실사 기반 전환본 | 3 | 7 |
-| F06-06 | 결제 & 지갑 | [F06-06_point-pay-refund_prd.md](02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md) | `F06-06_point-pay-refund` | 실사 기반 전환본 | 3 | 21 |
+| F06-06 | 결제 & 지갑 | [F06-06_point-pay-refund_prd.md](02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md) | `F06-06_point-pay-refund` | 실사 기반 전환본 | 5 | 4 |
 | F06-07 | 결제 & 지갑 | [F06-07_hosting-ticket_prd.md](02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md) | `F06-07_hosting-ticket` | 실사 기반 전환본 | 3 | 6 |
 | F06-08 | 결제 & 지갑 | [F06-08_personal-subscription_prd.md](02_feature_prds/06_payment/F06-08_personal-subscription_prd.md) | `F06-08_personal-subscription` | 실사 기반 전환본 | 6 | 6 |
 | F06-09 | 결제 & 지갑 | [F06-09_earnings-dashboard_prd.md](02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md) | `F06-09_earnings-dashboard` | 실사 기반 전환본 | 1 | 4 |
