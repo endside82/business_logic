@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 40,
     "partialEvidenceChain": 51,
     "definitionOnlyEvidence": 84,
-    "traceMarkers": 407,
-    "verifiedTraceRecords": 405,
+    "traceMarkers": 409,
+    "verifiedTraceRecords": 407,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3385,10 +3385,28 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 1,
+        "verified": 1,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-18:1",
+            "label": "GET /api/v1/events/{eventId}/demographics — 구성 통계",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "getEventDemographics",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/demographics",
+                "targetLine": 173,
+                "methodLine": 174
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -5593,10 +5611,28 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 1,
+        "verified": 1,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F04-17:1",
+            "label": "GET /api/v1/clubs/{id}/demographics — 구성 통계",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getClubDemographics",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}/demographics",
+                "targetLine": 109,
+                "methodLine": 110
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

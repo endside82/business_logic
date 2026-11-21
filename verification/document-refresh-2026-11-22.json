@@ -2777,9 +2777,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "406649fbbe7190123aae773e143453f241d16289e049035fbe48374ffc3df63f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "demographics_20261122"
+      ],
+      "reviewedSha256": "e64a8e3c5a16135f2ef407ac4e8bb3fd5d6804c271c4434ebbd9e5ea6346c18c"
     },
     {
       "path": "docs/features/F03-19.html",
@@ -2967,9 +2970,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "7692a2247a25ed4b12b88e7983520c2062667d1c356f8851af94e4660a0d8700",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "demographics_20261122"
+      ],
+      "reviewedSha256": "d081e908aa3a07bcb149f80e9f320e527cd381bb09c3a2b11540dc8826db7e4f"
     },
     {
       "path": "docs/features/F04-18.html",
@@ -4906,7 +4912,9 @@
       "baselineSha256": "21ab8b527d297141ff6b738cc7494f012348a14bb35eb710aa8f6073bda9d2e1",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "demographics_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -5635,10 +5643,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "a2755c8c517a011fa15e603c8e7206115060baae01b34d94b77f96bfa371d9eb",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "demographics_20261122"
+      ],
+      "reviewedSha256": "ed166e464eb55e12210cdb30e6d74ac2410e4a854f648920cd1c0290b17621a3"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
@@ -5844,10 +5854,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "4661d8a4641cebb93858d574658a71b709030fea8fae89c5ae146dd2d25fc5a8",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "demographics_20261122"
+      ],
+      "reviewedSha256": "13df3f48604dc72c8c291588191ed4de896d595aa097f546a0ff2dfe6dc1d066"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
@@ -14631,6 +14643,31 @@
         }
       },
       "scope": "플랜 연결 권한·사용 권리·관리/상세 목록·전체 순서·장소와 준비 시각·실패 후 처리를 대조. 새 제품 시험·실DB 경합·구매/환불·실제 앱 이용은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-18/F04-17: source-reference sync and 11 tests; scenario audit; reviewed links/digests; scoped source/canonical digests; original HTML IDs; incoming Markdown anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 4,
+        "partialDocuments": 1,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 102,
+        "sourceRecords": 409,
+        "verifiedRecords": 407,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1572,
+        "derivedSourceDigests": 203,
+        "currentSourceAndCanonicalDigests": 31,
+        "retainedHtmlPages": 2,
+        "incomingMarkdownAnchors": 0,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 337,
+          "historical_retained": 33,
+          "pending": 632
+        }
+      },
+      "scope": "이벤트·클럽 구성 통계의 권한/대상/기준일/최소집단/응답/앱 입구와 오류를 대조. 전체 기능 정의는 두 행 설명만 갱신. 새 제품 시험·실DB·본인인증 품질·개인 비식별 보장·실제 앱 검수 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -20007,6 +20044,198 @@
           "id": "F03-10:6",
           "change": "added",
           "reason": "현재 앱의 전체 연결 순서 일괄 저장 창구 연결"
+        }
+      ]
+    },
+    "demographics_20261122": {
+      "kind": "source_review",
+      "scope": "F03-18/F04-17 공통 집계와 최소집단 숨김, 서로 다른 권한/대상/기준일/입구/실패 처리, 응답 전체수와 MBTI 입력률 대조. 새 제품 시험·개인정보 비식별성 보장·본인인증 품질·실제 앱 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DemographicsService.java",
+          "sha256": "d15ea2323e585512395c01dbd4334e4a9b46b15871c7c3de0de90a085761e5cf",
+          "reviewScope": "34–139 대상 회원 중복 제거·전체 수·프로필 첫 행·성별/만 나이/MBTI·최소5/차원응답/비영분류 기준·응답률·비율 분모."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/DemographicsStatsVo.java",
+          "sha256": "7b17eabc310d1acc22680d162c5b146c8768b8b492b08a2c44a263ae23c433be",
+          "reviewScope": "21–48 전체 대상 수를 숨김 결과에도 반환, 전체/차원 허용·분포·입력률 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/RatioItemVo.java",
+          "sha256": "832f860adb0b60a92e92d4474e97dfe6e3b343c1c6909bff26f3249bd623fe8a",
+          "reviewScope": "분류 코드·문구·비율, 개별 분류 인원 수 필드 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/IeRatioVo.java",
+          "sha256": "cc9a6c0c0d360d82db45db83822fdc67401465b609c8128fe52e54f41085fa95",
+          "reviewScope": "I/E 비율과 MBTI 입력률 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/constants/AgeGroup.java",
+          "sha256": "85a336dd10c6361fea9c915229c18e1c51e00494c906838267b12ef2000d3b98",
+          "reviewScope": "11–26 20/30/40/50 경계와 표시 문구. 음수도20미만에 포함되지만 정상 입력 여부의 별도 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/port/EventDemographicsAttendanceAdapter.java",
+          "sha256": "3af0bd7078630d74e3f48a0b9184c00ea78a9db3a698480d680f3f28bf3c7687",
+          "reviewScope": "27–30 실제 ATTENDING 행의 회원 번호 조회. null 게스트 제외는 호출 서비스에서 수행."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubDemographicsService.java",
+          "sha256": "ac3bed7aa5676415839dd0e34407ab331b0a90e13cd4ccb1ac1d4bf1558221c8",
+          "reviewScope": "30–40 소속 행 존재를 권한으로 사용·모든 소속 회원·서울 조회일 집계. 클럽 상세나 상태 별도 검사 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/ClubMemberRepository.java",
+          "sha256": "d8fcf4f1ababb24b7a9a07b2bccffaeb100d74bfebc56630161e1b4c30d57783",
+          "reviewScope": "78–93 소속 존재·전체 소속 행 조회·탈퇴 삭제 메서드. 탈퇴 명령 실행 검증 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/model/ClubMember.java",
+          "sha256": "73c900060b8e9a33958b92a3916ac4d1333e613561676d51cd7d0bbacfe68658",
+          "reviewScope": "24–98 회원 소속 엔티티·역할과 권한 필드. 상태별 자동 행 제외 어노테이션 없음."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+          "sha256": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+          "reviewScope": "109–114 회원 통계 조회 창구. 운영진 활동 통계 기능과 구분."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/account/service/DemographicsServiceTest.java",
+          "sha256": "a3b882a2d01c44387e834d5a901ae8ad1899bc89bf558b698b1f16426a37f1e3",
+          "reviewScope": "51–120 전체4명 숨김·성별9/1 숨김·5/5 분포·MBTI4/10 숨김 및 입력률 반환의 선택 단언. 실행 안 함."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/event/service/EventDemographicsServiceTest.java",
+          "sha256": "9a848ef02289220587c572acac5a4e365bf819f1681eb732b3b21475a941dbb9",
+          "reviewScope": "109–136 실제 참석 허용과 합성 참석/승인 신청만 있을 때 거절, 159–171 숨김 공개 모임의 대기/신청 거절·호스트/실제 참석 허용 단언. 실행 안 함."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubDemographicsServiceTest.java",
+          "sha256": "bde57b96535c667a007c692d564bb10e871431c99b72e7282a18dec39a9ac0bd",
+          "reviewScope": "42–68 비회원 거절/집계 미호출·회원 허용 후 모든 번호 전달 단언. 실행 안 함."
+        },
+        {
+          "path": "community_app/lib/data/models/common/demographics_stats_vo.dart",
+          "sha256": "c06798f756900736427c236d8847eb3288c6ffa73d247600eba361651cceb460",
+          "reviewScope": "10–54 숫자 변환·표시 여부 기본값·전체 수/분포/입력률 계약."
+        },
+        {
+          "path": "community_app/lib/presentation/common/data/demographics_section.dart",
+          "sha256": "e98bd212d7109088a0191f800b27dd0bd5f2c70f9065e43da201823244311474",
+          "reviewScope": "23–108 전체/차원 표시·MBTI 입력률 표시 조건·모든 차원 없을 때 안내, 167–237 막대0..1·백분율 반올림·공통 숨김 문구."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_demographics_section.dart",
+          "sha256": "1c2ef037dd22a74d55f4deb4e2686f6a7fd7c4e507181d01ce141324cf277f3d",
+          "reviewScope": "15–22 최초 로딩/오류는 빈 영역·갱신 시 이전 내용 유지 정책."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/club_demographics_section.dart",
+          "sha256": "b133d147a5722241ee1b905cf80714ef5c3bf35aa9aea646a57d1ae4b1b9b556",
+          "reviewScope": "22–35 작은 로딩·오류 문구·해당 통계 재시도·기존 내용 유지 정책."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_detail_provider.dart",
+          "sha256": "cf2992bf7f439012f9451a86882062a85345d11e57e414348a6472f75e739670",
+          "reviewScope": "142–149 클럽 접근 변경 구독·통계 조회 및 실패 전파."
+        },
+        {
+          "path": "community_app/lib/data/api/club_api.dart",
+          "sha256": "275b166be696f16e97d22953cf2cd6606ad0c5718b7fb64c5136dc0c06b6d9e9",
+          "reviewScope": "39–40 클럽 통계 창구."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_repository.dart",
+          "sha256": "c124023fe3f496a01d0b4c43d1e13796d17c215be69d7d94db44374398f72d90",
+          "reviewScope": "50–55 클럽 통계 Result 처리."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "sha256": "7fb6b94389c130295ede88a9ad591da4cdae43a960a2ff0083d23295daf773cc",
+          "reviewScope": "154–165 홈의 정보 링크·227–250 내부 정보 허용 및 정보전용 화면에 구성 통계 배치."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "118–123 모임 정보 경로의 informationOnly 전달."
+        },
+        {
+          "path": "docs/ui-ux/screens/15-club.md",
+          "sha256": "2f39e150d55e5f9f6b2a89f7bb6df623f6ce53db46ea2dc28a6d814a8b0782bd",
+          "reviewScope": "327–333 현재 클럽 홈/정보 구분과 비회원 본문·통계 제외, 914 이후 운영진 회원 통계 화면은 별도 기능임을 대조."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventDemographicsService.java",
+          "sha256": "b7a61017aeae5fe54b1f2b494c550d3791c2106ff9fb6110cc344f48c2b59b20",
+          "reviewScope": "40–100 상세 열람/토큰 후 통계 권한·숨김 아닌 PUBLIC OPEN/CLOSED·호스트/공동호스트/실제 참석·대상·조회일 시간대와 폴백."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d",
+          "reviewScope": "173–180 통계 조회 창구와 공유 토큰 전달."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_detail_provider.dart",
+          "sha256": "be0016afe58e84a6b273bbd9c2ecdd04d53ef074b5dc39810a4fa47ddf2854e2",
+          "reviewScope": "107–121 모임 변경 구독·공유 토큰 구독 및 전달·Result 실패 전파."
+        },
+        {
+          "path": "community_app/lib/data/api/event_api.dart",
+          "sha256": "8571e82942da46e026411406040124aa33183130b790c764a2fbd019461772fd",
+          "reviewScope": "132–136 회원 통계 창구·선택 공유 토큰."
+        },
+        {
+          "path": "community_app/lib/data/repositories/event_repository.dart",
+          "sha256": "277a0a59230e8cd8415ae0c79f8f5bd61e2dc7fd00ebaea676a3ac0547807fa9",
+          "reviewScope": "241–254 선택 토큰 전달과 통계 Result 처리."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "983–997 상세 본문의 구성 통계 배치. 전체 화면 실제 검수 아님."
+        }
+      ],
+      "reuses": [
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "home_feed_core_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
+          "sha256": "ed166e464eb55e12210cdb30e6d74ac2410e4a854f648920cd1c0290b17621a3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
+          "sha256": "13df3f48604dc72c8c291588191ed4de896d595aa097f546a0ff2dfe6dc1d066"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-18.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F04-17.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-18:1",
+          "change": "added",
+          "reason": "별도 units 없이 실제 구성 통계 창구 연결"
+        },
+        {
+          "id": "F04-17:1",
+          "change": "added",
+          "reason": "별도 units 없이 실제 구성 통계 창구 연결"
         }
       ]
     }

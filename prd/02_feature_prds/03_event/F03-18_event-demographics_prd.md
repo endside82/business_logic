@@ -1,84 +1,92 @@
-# F03-18. 이벤트 구성인원 인구통계 PRD
+# F03-18. 이벤트 구성 통계
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 소스 대조이며 새 제품 시험·실제 앱 이용 결과가 아니다. 이 기능은 별도 units 문서 없이 실제 소스를 기준으로 관리한다.
 
-> 문서 상태: **2026-05-27 신규 기능.** 이벤트 상세 화면 내 "구성 통계" 섹션 — 참석 확정자(host + cohost + ATTENDING)의 성별·나이대·MBTI I·E 비율을 가로 비율 바로 표시한다. 데이터 원천은 `Member.gender/birthDate/mbti`이며 본인인증 동기화([[F09-01]])로 검증값이 반영된다. 프라이버시 3단계 게이트(전체 인원 / 차원 응답수 / 버킷 최소셀)로 소수 셀(개인) 식별을 차단한다.
+## 결론
 
-## 1. 결론
+모임 상세의 ‘구성 통계’에서 호스트·공동호스트·실제 참석 회원의 성별·나이대·MBTI I/E 분포를 보여 준다. 조회 권한과 집계 대상, 최소 집단 기준과 화면 표시를 각각 구분한다. 참가 좌석 수·게스트 포함 인원이나 현장 체크인 통계와 같지 않다.
 
-이벤트 상세에서 가입(참가) 전 사용자가 이벤트 구성을 가늠할 수 있게 하고, 참가자는 자기 모임의 인구통계 분포를 확인할 수 있게 한다. 핵심 가치는 **검증된 데이터(본인인증)** 기반 분포 + **k-익명성 보호**다.
+## 코드 위치
 
-- **대상**: host + cohost + EventAttendance(status=ATTENDING) — distinct.
-- **차원**: 성별(남/여) · 나이대(10대 이하/20대/30대/40대/50대 이상) · MBTI I·E(내향/외향).
-- **표시**: 가로 비율 바(`LinearProgressIndicator`) — 비율(%)만, 원시 카운트 미노출.
-- **프라이버시 3단계 게이트**: (1) 전체 인원<5 → 전체 숨김, (2) 차원 응답수<5 → 해당 차원 숨김, (3) 0이 아닌 모든 버킷 count≥5 → 차원 표시(그렇지 않으면 차원 숨김). 노출 카운트는 항상 ≥5라 비율로부터 역산해도 개인 식별 불가(k-익명성, k=5).
-- **접근권한**: `PUBLIC` 가시성이면서 `OPEN/CLOSED` 상태는 인증 사용자 누구나 / 그 외(PRIVATE, LINK, APPROVAL, DRAFT, CANCELED, HIDDEN)는 host·cohost·ATTENDING만.
+서버: EventController#getEventDemographics, EventDemographicsService·EventDemographicsAttendanceAdapter, 공통 DemographicsService·DemographicsStatsVo·RatioItemVo·IeRatioVo·AgeGroup. 앱: event_api.dart·event_repository.dart·event_detail_provider.dart, event_detail_screen.dart·event_demographics_section.dart·demographics_section.dart·demographics_stats_vo.dart.
 
-## 2. 코드 위치
+<!-- source-references:start -->
+서버 창구: `EventController#getEventDemographics`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-계약의 정본은 코드다. 서버: `EventController`, `EventDemographicsService`, `DemographicsService`. 앱: `event_api.dart`, `demographics_stats_vo.dart`, `demographics_section.dart`, `event_demographics_section.dart`, `event_detail_provider.dart`.
+## 상세 진입과 조회 권한
 
-## 3. 전체 동작 흐름
+모임 상세 본문에 구성 통계를 배치하며 별도 관리 화면을 여는 기능이 아니다. 앱은 모임 변경 신호와 해당 모임의 공유 토큰을 구독하고, 통계 요청에도 공유 토큰을 전달한다. 로그인 회원의 요청은 먼저 같은 모임 상세 열람 판정을 통과해야 하며, 이후 통계의 별도 권한을 검사한다.
 
-1. 이벤트 상세 진입 시 `EventDetailScreen` 내 참석 섹션 직후 `EventDemographicsSection(eventId)` 위젯이 렌더된다.
-2. 위젯이 `eventDemographicsProvider(eventId)` 구독 → `EventRepository.getEventDemographics(eventId)` → `GET /api/v1/events/{eventId}/demographics`.
-3. 서버 `EventDemographicsService.getDemographics(eventId, userId)`:
-   - `eventService.getEvent(eventId, userId)`로 EventVo 조회(my* 컨텍스트 채움).
-   - `canView(event, userId)` 검증 — 실패 시 `FORBIDDEN(10003)`.
-   - userId 수집: `event.hostUserId` + `event.coHostUserIds` + `attendanceRepository.findByEventIdAndStatus(eventId, ATTENDING).userId` — distinct는 `DemographicsService.aggregate`에서 수행.
-   - `DemographicsService.aggregate(userIds, referenceDate)` — 기준일은 `event.timezone` 기반(없으면 `Asia/Seoul`).
-4. 응답 `DemographicsStatsVo` → 앱이 게이트 결과에 따라 차원별 비율 바 렌더(또는 "구성원이 적어 통계를 표시하지 않습니다" 안내).
+| 모임 조건 | 통계 조회 허용 |
+| --- | --- |
+| 공개 범위 PUBLIC·운영자 숨김 아님·상태 OPEN 또는 CLOSED | 상세를 볼 수 있는 로그인 비참가자도 허용 |
+| 위 공개 조건에 해당하지 않음 | 호스트, 상세의 공동호스트 목록에 포함된 회원, 실제 참가 행이 ATTENDING인 회원만 허용 |
+| 승인 신청만 있고 실제 참가 행은 없음 | 제한된 통계의 참석자 자격으로 인정하지 않음 |
+| 대기 참가자·신청자 | 공개 조건이면 조회 가능하나, 숨긴 모임 등의 제한 분기를 우회하지 않음 |
+| 상세를 읽을 수 없음 | 통계 집계 전에 상세 판정에서 거절 |
 
-## 4. 제품 규칙
+유효한 공유 토큰이 상세를 열어 준다고 비참가자에게 LINK 모임의 통계까지 허용하는 것은 아니다. 취소·초안·운영자 숨김을 하나의 상태값으로 합치지 않으며, 운영자 숨김은 PUBLIC 모임도 공개 통계 분기에서 제외한다.
 
-- 대상은 호스트·공동호스트·참석자의 중복 없는 계정이다. 계정 없는 게스트는 뺀다. 나이대를 알 수 없는 사람은 분포에서 뺀다.
-- 숨긴 모임은 공개 분기를 타지 않는다. 참가자 판정은 실제 참석 행으로 하여, 빠져나간 사람에게 통계가 열리지 않는다.
-- 로딩·오류 때 섹션은 비우고 본문을 막지 않는다.
+## 집계 대상과 기준일
 
-## 6. 상태/권한/시나리오 매트릭스
+대상은 호스트, 상세 응답의 공동호스트 번호 목록, 실제 ATTENDING 참가 행의 회원 번호다. 중복 회원은 한 번만 세며 계정 번호가 없는 게스트는 제외한다. WAITING이나 신청 상태만으로 대상에 추가하지 않는다. 체크인 여부로 다시 거르는 조회가 아니다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 공개+진행/종료 이벤트의 비참가자 조회 | event.visibility=PUBLIC + status∈{OPEN,CLOSED}, userId ∉ 참가자 | 200 + DemographicsStatsVo |
-| S2 | 비공개 이벤트의 비참가자 조회 | visibility=PRIVATE, userId ∉ host/cohost/ATTENDING | FORBIDDEN(10003) |
-| S3 | 비공개 이벤트의 host 조회 | visibility=PRIVATE, userId == hostUserId | 200 + 집계 결과 |
-| S4 | 참석자 5명 미만 | totalCount < 5 | visible=false, 분포 빈 배열, 앱은 안내 메시지 |
-| S5 | 성별 한쪽 4명+5명 | 남 4, 여 5 (총 9) | totalCount 9, genderVisible=false(버킷 최소셀 4<5), 다른 차원은 게이트 따로 |
-| S6 | MBTI 입력자 4명 | mbti 입력자 4 / 총 10 | ieVisible=false, mbtiCoverageRatio=0.4 노출, 다른 차원은 정상 |
-| S7 | MBTI I/E 한쪽 0 | I 8, E 0 (총 8 입력) | ieVisible=true(0은 비영 버킷 아님), I 100%, E 0% — 게이트 정상 |
-| S8 | DRAFT 이벤트 조회 | event 상태 DRAFT | (상위 getEvent 게이트에서) 비참가자라면 차단. host는 통과 가능. |
+나이 기준일은 조회한 날이다. 모임의 시간대가 유효하면 그 시간대의 오늘을 쓰고, 없거나 잘못된 시간대면 Asia/Seoul을 쓴다. 행사 시작일이나 종료 당시의 분포를 고정한 과거 통계가 아니므로, 생일·프로필·참가 구성 변경 뒤 다시 조회하면 결과가 달라질 수 있다.
 
-## 7. 정합성 판단
+## 공통 집계·차원별 숨김
 
-| 항목 | 확인 기준 | 현재 판단 |
-|---|---|---|
-| 서버 계약 | EventDemographicsService + DemographicsService 단위 테스트 | 신규 18개 테스트(Verification 8 / Demographics 4 / Event 3 / Club 2 / Backfill 1) 통과 |
-| 프론트 계약 | 모델·API·Repo·Provider·Widget이 서버 VO 필드와 1:1 | freezed 모델 / build_runner 재생성 / flutter analyze 클린 |
-| 접근권한 | EventDemographicsServiceTest(3) — PUBLIC+OPEN 허용 / PRIVATE 비참가자 거부 / host 허용 | 통과 |
-| 게이트 | DemographicsServiceTest(4) — 전체/차원응답/버킷최소셀 | 통과 |
+대상 회원 번호를 중복 제거해 전체 대상 수를 계산하고, 회원 프로필의 성별·생년월일·MBTI를 읽는다. 같은 회원의 프로필 행이 여러 개 조회되어도 처음 읽은 한 행만 사용한다. 대상 번호에 대응하는 프로필이 없으면 그 회원은 전체 수에는 남지만 차원별 응답 수에는 들어가지 않는다.
 
-## 8. Gap / Risk
+성별은 현재 값 1·2를 남성·여성으로 집계하고 그 밖의 값과 미입력은 제외한다. 나이는 기준일의 만 나이로 계산한다. 20세 미만은 ‘10대 이하’, 20~29세·30~39세·40~49세·50세 이상은 각각 해당 나이대로 묶으며, 생년월일이 없으면 나이 응답에서 제외한다. MBTI가 있으면 I·E로 나누고 미입력은 제외한다. 모든 값이 본인인증으로 검증됐는지를 집계 서비스가 검사하는 것은 아니다.
 
-- ⚠️ **나이대 버킷 경계** — `Period.between` 기준 만나이. 시간대(timezone) 경계일 처리 미세 차이는 `event.timezone` 기반으로 보정. 사용자 거주지 시간대와 다를 수 있음(허용 범위).
-- ⚠️ **APPROVED→ATTENDING 매핑** — `getEvent(eventId, userId)`가 `myAttendanceStatus`에 APPROVED를 ATTENDING으로 표현하는지는 EventService 구현 의존. 추후 EventService 리팩터 시 정합 재확인.
-- ⚠️ **UI/UX 스펙 부재** — 본 기능은 `docs/ui-ux/screens/13-event.md`에 명시 없음(net-new). 디자인 토큰만 사용해 일관성 유지.
+| 조건 | 응답 |
+| --- | --- |
+| 중복 제거한 전체 대상이 5명 미만 | 전체 표시 불가, 모든 분포 비움, I/E 분포 없음, MBTI 입력률 0 |
+| 전체는 5명 이상이나 특정 차원 응답자가 5명 미만 | 그 차원만 숨김 |
+| 응답자는 5명 이상이나 그 차원의 0이 아닌 분류 중 1~4명이 있음 | 그 차원 전체를 숨김 |
+| 모든 0이 아닌 분류가 각각 5명 이상 | 그 차원 분포를 반환. 0명 분류는 숨김 조건에 해당하지 않음 |
 
-## 9. 수용 기준
+성별·나이대·I/E를 독립적으로 판정한다. 예를 들어 성별 5명·4명은 성별 전체를 숨기지만 다른 차원은 별도로 표시할 수 있다. I 8명·E 0명은 I/E 응답자가 8명이므로 100%·0%를 반환할 수 있다. 전체 표시 허용이 참이어도 세 차원 모두 숨겨질 수 있다.
 
-- **AC-01**: PUBLIC+OPEN 이벤트 demographics는 인증 사용자가 조회 가능.
-- **AC-02**: PRIVATE 이벤트 비참가자는 FORBIDDEN.
-- **AC-03**: host/cohost/ATTENDING 사용자는 모든 visibility에서 조회 가능.
-- **AC-04**: 대상 인원<5 → visible=false, 분포 빈 배열, 앱은 "구성원이 적어 통계를 표시하지 않습니다" 표시.
-- **AC-05**: 차원의 응답수<5 → 해당 차원 숨김(다른 차원은 별도 평가).
-- **AC-06**: 0이 아닌 어떤 버킷이 <5 → 해당 차원 숨김(전체 노출은 유지하되 그 차원만 빈 배열).
-- **AC-07**: 응답에 원시 카운트가 포함되지 않는다(ratio·총수만).
-- **AC-08**: 나이 계산은 `event.timezone` 기준 만나이.
-- **AC-09**: 대상 = host + cohost + EventAttendance(ATTENDING).userId distinct.
+분포의 분모는 전체 대상이 아니라 해당 차원 응답자다. MBTI 입력률만 MBTI 입력자/전체 대상이다. 따라서 전체 10명 중 MBTI 입력자 4명은 I/E 분포를 숨기면서 응답의 MBTI 입력률은 0.4로 남는다.
 
-## 10. 미결정 / 후속
+## 응답과 화면 표시의 경계
 
-- **본인인증 backfill 실행** — Phase 0 이전 인증자의 검증 birthDate/gender가 Member에 반영되기 전까지는 가입값 폴백.
-- **나이대 버킷 경계 정책 확정**(미성년 노출 정책 등) — UI/UX 스펙 부재.
-- **순수 함수 컴포넌트 분리** — 향후 차원별 색상 토큰화/테마.
-- **차원별 정렬·정밀도** — 현재 ratio는 double 그대로. UI에서 round → 합계 100% 미세 어긋남 가능(허용).
+응답에는 **전체 대상 수**, 전체·차원별 표시 여부, 최소 기준 5, 성별·나이대의 분류명과 비율, 선택적인 I/E 비율, MBTI 입력률이 있다. 개별 분류의 인원 수 필드는 없지만, ‘응답에 원시 인원 수가 전혀 없다’는 설명은 맞지 않는다. 전체 5명 미만일 때에도 실제 전체 대상 수는 반환한다.
+
+화면은 허용된 차원만 가로 비율 막대와 반올림한 정수 백분율로 표시한다. MBTI 입력률 문구는 I/E 분포가 표시될 때 그 분포와 함께 표시한다. 분포가 숨겨졌다고 응답의 모든 관련 수치까지 제거되는 것은 아니다. 각 비율을 따로 반올림하므로 화면 합계가 정확히 100%가 아닐 수 있다.
+
+전체가 숨겨졌거나 표시할 차원이 하나도 없으면 ‘구성원이 적어 통계를 표시하지 않습니다.’를 표시한다. 이 문구는 전체가 많은 경우에도 입력 부족이나 작은 분류 때문에 나타날 수 있다. 현재 기능은 최소 집단 크기로 분포 공개를 제한하는 것이며, 다른 정보와 결합해도 개인을 절대 추정할 수 없다는 보장을 뜻하지 않는다.
+
+## 갱신·로딩·실패
+
+처음 통계를 읽는 동안과 오류 분기에서는 이 위젯의 내용을 비워 모임 본문을 막지 않는다. 이 위젯 자체에는 실패 안내나 재시도 버튼이 없다. 기존 자료를 갱신할 때는 공통의 기존 내용 유지 정책을 사용한다. 숨김 안내가 보이는 정상 응답과 요청 실패로 통계 영역이 비는 상태를 구분한다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인 근거 | 현재 차이·영향 | 후속 확인 |
+| --- | --- | --- | --- |
+| Risk | 공통 집계·응답 모델 | 전체 대상 수와 숨긴 차원의 MBTI 입력률도 응답에 남음. 이전 문서의 카운트 미반환·역산해도 개인 식별 불가 보장은 성립 근거가 없음 | 공개할 수치와 최소 집단 보호의 범위를 별도로 판단 |
+| Gap | 공통 안내 문구 | 전체 인원이 충분해도 입력 부족·작은 분류로 모두 숨겨지면 ‘구성원이 적어’로 안내 | 전체 인원 부족과 차원별 숨김 원인을 구분할지 결정 |
+| Gap | EventDemographicsSection | 최초 통계 조회 오류가 빈 영역으로 처리되며 별도 재시도 입구가 없음 | 통계 부재와 요청 실패를 구분할 사용자 안내 검토 |
+| 미검증 | 소스와 선택한 기존 시험 | 본인인증 데이터 품질·실DB의 구성 변경·실제 앱의 통계 갱신은 이번에 실행하지 않음 | 해당 범위의 실행 결과를 별도로 확보 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 공개 모임:** 상세 열람을 통과한 로그인 비참가자는 숨기지 않은 PUBLIC·OPEN/CLOSED 모임의 통계를 조회할 수 있다.
+- **AC-02 제한 모임:** 숨김·비공개 등 제한 분기에서는 호스트·공동호스트·실제 ATTENDING 참가 행을 확인하며, 승인 신청만 있는 사용자는 거절한다.
+- **AC-03 공유 토큰:** 상세와 통계 요청에 동일한 공유 토큰을 전달하되, 상세 통과만으로 통계의 참석자 조건을 건너뛰지 않는다.
+- **AC-04 대상 구분:** 호스트·공동호스트·ATTENDING 회원을 중복 제거하고 계정 없는 게스트·대기 참가자는 제외한다. 결과를 게스트 포함 참가 인원이나 체크인 인원으로 표시하지 않는다.
+- **AC-05 기준일:** 유효한 모임 시간대의 조회일로 만 나이를 계산하며 시간대가 없거나 잘못되면 Asia/Seoul을 사용한다. 과거 행사일 기준 통계로 설명하지 않는다.
+- **AC-06 전체 최소 기준:** 중복 제거한 대상이 4명이면 전체 분포를 숨기되 응답의 전체 대상 수는 4로 유지한다. 5명부터 차원별 조건을 별도로 검사한다.
+- **AC-07 차원·최소 분류:** 성별 5명·4명은 성별 분포를 숨긴다. I 8명·E 0명은 I/E 분포를 허용하며, 한 차원의 실패가 다른 차원을 자동으로 숨기지 않는다.
+- **AC-08 응답률과 분모:** 전체 10명 중 MBTI 입력자 4명은 I/E 분포 없음·입력률 0.4를 반환한다. 성별·나이대·I/E 비율은 각각 해당 차원의 응답자를 분모로 한다.
+- **AC-09 표시와 응답 구분:** 화면은 허용된 분포와 정수 백분율을 표시하며 전체 대상 수 필드의 존재를 부정하지 않는다. I/E가 숨겨지면 앱에 MBTI 입력률 문구만 따로 나타난다고 설명하지 않는다.
+- **AC-10 모든 차원 숨김:** 전체 5명 이상이라도 모든 차원이 숨겨지면 현재 공통 안내를 표시한다. 이를 반드시 전체 5명 미만인 증거로 해석하지 않는다.
+
+- **AC-11 조회 실패:** 최초 로딩·실패의 빈 영역과 정상 응답의 소수 집단 안내를 구분하며, 없는 통계 재시도 버튼을 제공한다고 기록하지 않는다.
+- **AC-12 자료의 검증 범위:** 프로필 필드의 실제 집계를 설명하고 모든 값이 본인인증 검증값이라고 단정하지 않는다. 기존 시험 작성·과거 통과 서술과 이번 실행을 구분한다.
+
+검증 근거: DemographicsServiceTest의 전체 4명 숨김·소수 성별 분류 숨김·5:5 비율·MBTI 입력 4/10 단언, EventDemographicsServiceTest의 실제 ATTENDING 허용·신청만 승인된 회원 거절·숨긴 공개 모임의 역할별 단언을 읽었다. 기존 2026-05-27 작성본의 ‘신규 18개 시험 통과·flutter analyze 클린’ 서술은 당시 기록이며 이번에 재실행하지 않았다. 위 수용 기준 전체의 새 실행 통과를 뜻하지 않는다.
