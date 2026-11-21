@@ -3025,9 +3025,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "3f1b83b48631b1db2f274d0d6e6e467ae7cd9c775d1ab0cadb48f869bac24b8d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "f2c9ca1e3df53273078f84ffb595f2e95150597ca841963e124f234900d9ce86"
     },
     {
       "path": "docs/features/F06-02.html",
@@ -3045,9 +3048,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b2a6077d816a880985dc9bcab1065457b405df8c21a8b02d2b2473350c685f88",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "9b83f16e6a2dab4b2c46f02acfd9f371572e4e54c09d10b9d3c321d5b51fc744"
     },
     {
       "path": "docs/features/F06-04.html",
@@ -3105,9 +3111,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "c688cdc945bb3f43f07687768ca9e0ca9e0eed16318a4ff528e668854d0ac52c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "2d47d0115e2ea0fe20e3bc582bc38eb6410480870ed24f504666fc5b22118148"
     },
     {
       "path": "docs/features/F06-10.html",
@@ -3115,9 +3124,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "efda771d309e098c1860a742327de8305aa4ae56ac92f82fd0dab950f7f7bb02",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "host_settlement_appeal_20261122"
+      ],
+      "reviewedSha256": "d50d3d549f7da193fc008c6a23930fccfb578ce8a6a7c80fa8f48840def58b40"
     },
     {
       "path": "docs/features/F07-01.html",
@@ -5856,10 +5868,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "4c6814cd624aec981875f62192b1154b477e7f344c9713b13b6df026e7060beb",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "a3f059b0545bb5857d1f3c303830a8b6dda2e32212bb9b3a6691e6e77b23e93a"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
@@ -5878,10 +5892,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "37fec38d9d1fb42e27cbaf4b862303603fd6082cb655cc8f353d232d88741f33",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "7ae7565eda58eec9594d9a38b92ccb373ce77d0ba75a69f63c4b785e0d92ec57"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
@@ -5944,10 +5960,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f29a383004c47c68232a4e5861af2784042e66f0078cee11a07048b45e5a28cd",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "6a47ba414f3266b0808bc2df6f0533953cf69187544c3f80f2f74d37c0e92b89"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
@@ -5955,10 +5973,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "695f3c200a38f4d21d9f3fc4ece779863087ee9646e531e310786a39e1556f92",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "host_settlement_appeal_20261122"
+      ],
+      "reviewedSha256": "36e8bd4483ad4747853b33e3b94bd1e2acb4d420a909fa40e3e4b4e7fc8011a3"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md",
@@ -9907,9 +9927,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1bbed744738fe640df130f9425170ed89145b3dd972c661761f3b3aa4d205f5d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "1826bada5bc824075dea6920f1c7c2ec75b23369a91238a5109788c1907bf817"
     },
     {
       "path": "units/06_payment/F06-01_wallet-main/diagrams.md",
@@ -9917,9 +9940,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4486d090da40ac3f4334b223f89c7029a615b2192617a36181202d003314f2a4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "4b267e000ef860e2b2312966a56eed03ab5371a43e93db954d6a7a437b08d2ba"
     },
     {
       "path": "units/06_payment/F06-01_wallet-main/frontend.md",
@@ -9927,9 +9953,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "59ec921d7a3089ccec136612fe0025793aeb80b7e9f22e882213d19b042fa447",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "55187e930ab9b6adb9aaafc08d17b4dac78d34f843b75cbf93f6b37a76b650fe"
     },
     {
       "path": "units/06_payment/F06-01_wallet-main/scenarios.md",
@@ -9937,9 +9966,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "54306f87a4d597ea765443e5d03136b9ff57eb1c72b6fad8cc65e8113f897c1b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "ab168a5a5c394435ae07646cc2f324f22b7a1c7946052c131718fd8b398dcb00"
     },
     {
       "path": "units/06_payment/F06-02_point-charge/backend.md",
@@ -9987,9 +10019,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5979821f7b5be68adbec547d36a5378c349f734e99c9ce42144ae3c6a487ffc3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "8379b358ecd576b08166da08246bd6f6a4e0e451e8263acdb7059370e5082a71"
     },
     {
       "path": "units/06_payment/F06-03_transaction-history/diagrams.md",
@@ -9997,9 +10032,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "16cc4f37e1f9ea9f7d9e99d073180ad0f639ae6d7de01edbf81316ea9fd581bb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "4673e3b84b216ef2253123fe9512d8c84d7c4e14764c494ae7008adb94e4831e"
     },
     {
       "path": "units/06_payment/F06-03_transaction-history/frontend.md",
@@ -10007,9 +10045,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e7578605020375102b39c55a4749a0ffd500bc4b11bdf1362f9b5363589c6ef7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "170275447e72f12c809710e0f2b48bf7188483026a40edc9c627acdab46d7ce5"
     },
     {
       "path": "units/06_payment/F06-03_transaction-history/scenarios.md",
@@ -10017,9 +10058,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4558460456ef939ef6d4e8dae8cfc3102f5502e2d95d73b1c6d1f713ea198456",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "f017cef47c5d2751c4755bb21c0574d837617f948f53bb6e8708ff6b6647ea00"
     },
     {
       "path": "units/06_payment/F06-04_payment-method/backend.md",
@@ -10228,9 +10272,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a80fbc3fdfe7c714e6b96ed538e3d8f600501c6bc06172508729ff41b66834ff",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "b0dfb8b4782eb6942315c6658ae002cd951458fbf61978744ad176ee073217e7"
     },
     {
       "path": "units/06_payment/F06-09_earnings-dashboard/diagrams.md",
@@ -10238,9 +10285,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "25224cfd96373cff2d6d0b6d72d6e65cc51513478a2091460e76457702d895e1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "a4c57df1ea622a3c7950341693ade4de28e3b5d124d9a0c20c8a891cf2a43aeb"
     },
     {
       "path": "units/06_payment/F06-09_earnings-dashboard/frontend.md",
@@ -10248,9 +10298,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6d2bc38913a568965bb63044a46bdbf6928485589b32671dc2ed08f1de075c4f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "e3c27955af8e5cf05225bfbaa9f64642db4242c37573dcc1b37396246ef77257"
     },
     {
       "path": "units/06_payment/F06-09_earnings-dashboard/scenarios.md",
@@ -10258,9 +10311,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "44a04f62bf3bf8d751c831fa91ad55051913867c62704eb872b17b8531467289",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reviewedSha256": "46b4e2f4b18f722a82af28d51a5058a2c52553dcfa49bc94e6c71ab8fa7003f2"
     },
     {
       "path": "units/06_payment/F06-10_settlement-appeal/backend.md",
@@ -10268,9 +10324,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "52e8dc19433402ec2ef81820fbdfc9efac2966f1fcd766934502d034f1412071",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "host_settlement_appeal_20261122"
+      ],
+      "reviewedSha256": "b7c0e27cfc5069475579e1f3e3bf300b6d5be0d36d14786c74437aed6362c974"
     },
     {
       "path": "units/06_payment/F06-10_settlement-appeal/diagrams.md",
@@ -10278,9 +10337,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9813951be65a14e098edaee1e25daba683f820b6394e685ce9e7b5a1f9eec995",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "host_settlement_appeal_20261122"
+      ],
+      "reviewedSha256": "b493a256c8f84913f6cc602f9a22c7b632fed20e035b6b7e2d3c8bf4a8cb35eb"
     },
     {
       "path": "units/06_payment/F06-10_settlement-appeal/frontend.md",
@@ -10288,9 +10350,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9f2c22da3b79c49ceb3043ef2ff5731f5cfc291234f05b8ad98e4fc70eb2351a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "host_settlement_appeal_20261122"
+      ],
+      "reviewedSha256": "db6ee68f7b86928c31f06dc1f4a2aa481c6fc479b68438a3557a473bf6cc8628"
     },
     {
       "path": "units/06_payment/F06-10_settlement-appeal/scenarios.md",
@@ -10298,9 +10363,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7a842ab09cb19d0149b6ad12ad44371d618d715e231d64becf7bb9433bf1c0f3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "host_settlement_appeal_20261122"
+      ],
+      "reviewedSha256": "33e191999460d5b367a312f2376de152ba64347d5b4678142ef503132af87039"
     },
     {
       "path": "units/07_meeting_settlement/00_overview.md",
@@ -14104,6 +14172,23 @@
         "retainedHtmlPages": 5
       },
       "scope": "홈 핵심·보조 자료·갱신·카드/더보기·추천 목록과 관련 문서의 검사. 쓰지 않는 트렌딩 연결 한 개를 이 기능에서만 제거했으며 API 자체는 유지. 새 제품 시험·실제 기기/GPS/외부 수신 검증 아님."
+    },
+    {
+      "command": "F06-01/03/09/10: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; source/canonical fingerprints; retained HTML IDs; incoming Markdown anchor scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 24,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 99,
+        "sourceRecords": 381,
+        "verifiedRecords": 379,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1197,
+        "derivedSourceDigests": 144,
+        "currentSourceAndCanonicalDigests": 95,
+        "retainedHtmlPages": 4
+      },
+      "scope": "지갑·거래 목록/상세/CSV·수익·호스트 정산 이의의 문서 대조와 생성 자료 검사. 기존 379개 서버 연결을 보존하고 두 연결 추가. 제품 시험·실DB·외부 지급·파일 저장·실기기 검증은 새로 실행하지 않았다. 공통 정책·영역 요약과 출시 날짜 관문은 별도 미완료다."
     }
   ],
   "evidenceGroups": {
@@ -16676,6 +16761,436 @@
           "sidebar",
           "state-current",
           "launch-strip"
+        ]
+      }
+    },
+    "wallet_history_earnings_20261122": {
+      "kind": "source_review",
+      "scope": "지갑 조회·생성·표시 보정·메뉴·최근 세 거래·갱신·숨김, 본인 거래 목록·상세·내보내기와 호스트 수익 집계·최근 정산의 해당 함수/화면 대조. 기존 시험은 명시한 단언 확인이며 새 제품 실행·실기기·실거래·실DB 경계 재생이 아니다.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+          "sha256": "9d3ead0cc566f10853c081c56babf9f3435c84d8efe53f6d58e89dda7e892144"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletService.java",
+          "sha256": "2409afbfee3dca1e85b568c5a78c3bf425b7a4c54cb2aee967e2843c4d2f016a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletCreator.java",
+          "sha256": "21ede32f09a1171c667162b45abf3d0a2ca8ae7e4ef61c6bb273486febaa76d7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ExpiredFreeLotReader.java",
+          "sha256": "0a06e99a5062d2b26d728cf5ef7c176bd6b6492046f01de43d1fbcd291845229"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletQueryService.java",
+          "sha256": "bed6364091f3e2fef097f31d489977a295d910a8481b199a070441ddd6392f32"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/PointTransactionQueryRepository.java",
+          "sha256": "d917883b0f0faf28f01bb1b5b1e302af91bf34bf4f17725f7cb17973552d1f70"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/WalletVo.java",
+          "sha256": "4fa20d0f7dd49cd1c29bb74ef4a23a2126e551340d5c2a8ad5af7d49b6e831da"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/TransactionVo.java",
+          "sha256": "26438871c1aa1b20973178dfaaf88354e210f4711e2047fd8fe68711c74577ad"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/WalletSearchParam.java",
+          "sha256": "6d8b339dd66563e664dfcba2392e35ad79cf8b5e46b65bed1a1ae543a9ca9154"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/TransactionType.java",
+          "sha256": "b169d1993a65705d15834a6be8d5a57ffa53a5655ab921036cc8f84a8b72e031"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/PointTransactionStatus.java",
+          "sha256": "a47fe43e8cbf13688cd3569636a97bd9e4bdaf398865c5942438a6fde0617579"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/TransactionExportController.java",
+          "sha256": "3129e45300f791f2fea80a1f852f91224beec845338041b675b1a349ee322e7f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/TransactionExportService.java",
+          "sha256": "975bd8ee65017b91ff5e0f656285e84090145bbc98889f9bdf5d1a4ffdfcafe6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/TransactionExportParam.java",
+          "sha256": "25905982bdf2e31dc08b1bb8b463a3038bce18807e4ff6ca91613dc5fca88a0f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/PointTransactionRepository.java",
+          "sha256": "38c0d11dde62357b3e1df9c14e70a0855a02d28c26e4fd327a994941a4874d92"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/util/PaymentMapper.java",
+          "sha256": "65d988c33145d944a80327314417f96a34d32268556e9f688c7091d8d24a2fa5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/EarningsDashboardService.java",
+          "sha256": "063cf90934aa51e548b94bb4bc5902bc28d1969bcd806a24bda7ea84526b0eab"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/EarningsDashboardVo.java",
+          "sha256": "a944f62b8e2ca6b9bf7371755af78001e1d672c500dc11398fcc1dedec81d78d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/EarningsDashboardQueryRepository.java",
+          "sha256": "99fc80c35894f455b58b103da7a6b825330f4b0b8bcb9b5e13820ddd564a6669"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/service/TransactionExportServiceTest.java",
+          "sha256": "a1781e4a8d16c9ef999876c96af56a9776ec891c3518a9052d75f5e99b6d8b75"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/service/EarningsDashboardServiceTest.java",
+          "sha256": "6c0a26f206b26ac4990dd2f2d8212d7dc9d034b7520c876eac0ade6e4adeecfd"
+        },
+        {
+          "path": "community_app/lib/data/api/wallet_api.dart",
+          "sha256": "656d92bc47b7281635a9f038baf701c169da9d25d2ecc56b8684b8645e3cda74"
+        },
+        {
+          "path": "community_app/lib/data/repositories/wallet_repository.dart",
+          "sha256": "a3a1a46834beb9ef3283f5ad89cc79f2bce49939981a8bdd2ced117a417aaeb8"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/wallet.dart",
+          "sha256": "a472bf325e5fc77ed5d5b51e3075acc6ec7303934d84cd0b84fa8340e9c36a95"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/wallet_provider.dart",
+          "sha256": "984499f9ee2c4b66d21734ff0f6e97d55144b975227abc79c3a02b80a92876ce"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/wallet_screen.dart",
+          "sha256": "7f80865b15761dd871296863296beb73bbb6d904d4b01a94b7d492cde1f93b81"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/balance_card_widget.dart",
+          "sha256": "d67b9bad11f9bec91adc884bf5819bd91b15436d6b73b7904d1fc7cfe34e4051"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/balance_visibility_provider.dart",
+          "sha256": "dab925e789df6ca99bca00484a0326a1271be76bc6a357d65cea601e87bf01e5"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/recent_transaction_widget.dart",
+          "sha256": "677e941bdb08cca269953a611c67eb5ad61b8392f01db926a101ab73bbf4ee79"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/shortcut_grid_widget.dart",
+          "sha256": "94e26f3937f54233bfa2e303164f350f6f09399bde8a0c06617fd82c4b493f8f"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/ability_source_refresher.dart",
+          "sha256": "3dd94694b2d02cb872437951aa9f8f453c7fa6c0143dc4e7cd923fbac78fc90b"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/transaction_list_provider.dart",
+          "sha256": "8f60cc6e543e178705a5db94e3a91954dacd951d151a3f5043ddff9cfd4a4707"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/transaction_detail_provider.dart",
+          "sha256": "95ceb7c94f9224e758264f1a07aed0ed42402dbcdac275e15230a8173131b52b"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/charge_cancel_provider.dart",
+          "sha256": "1ff08ed76fd107056962166154d5ca3be14c7f224ac0bf791ae8c35ab3690311"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/transaction_list_screen.dart",
+          "sha256": "58a41db44660f22ee4c8e250d7fa2b648bf4ce0a8240834380b577038baf2e6d"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/transaction_detail_screen.dart",
+          "sha256": "d31917306dc0b29f0c38f008a199d695b983bf17c35342ae827a70241b7f9e34"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/transaction_filter_widget.dart",
+          "sha256": "2bf6b6fee231a75fadc131eca20f7fb2df5dbb3ac7dad6b2cc3e55dfb22d84d3"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/point_transaction.dart",
+          "sha256": "1000b8cd222f27d63d7826432e69e7daab1b1333fc7d107e4103ab353e9203dd"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/point_transaction.g.dart",
+          "sha256": "5755db57e4a6c96b082aa8d092d21605655938df5159d46db790562c5b9b45d1"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/transaction_type.dart",
+          "sha256": "ff3e1d3894089febe00185233c002a91f3ee1c185b50c9781b70b5d603ed9467"
+        },
+        {
+          "path": "community_app/lib/data/api/earnings_api.dart",
+          "sha256": "6e0c6769fadc4af8242ca9ecb9e9c4a8d734f0e10b5d656189c92abdb7cd170d"
+        },
+        {
+          "path": "community_app/lib/data/repositories/earnings_repository.dart",
+          "sha256": "aa4a7c55b9f17c66ea7090d2ebffa76557993c6fd8054e694b722a73f45de770"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/earnings_dashboard_provider.dart",
+          "sha256": "72eb04ee24877f8d12c56e4e5c9e2c096c7e89a2d20ec1fd3c1d09bf0519979e"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/earnings_dashboard.dart",
+          "sha256": "85f368053b7458aaf31a2c4363fe56f66858632b678dd9360f0497912fd2de79"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/earnings_dashboard_screen.dart",
+          "sha256": "f41875e2e6388db690f8602280cbc6876d73f1ac6b6b3eba211930b80ce2648e"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/earnings_chart_widget.dart",
+          "sha256": "5eeb9a774f49db190412ec5c077a7740a8c03ca1d0d7b086164f1261b330ec17"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/earnings_event_list_widget.dart",
+          "sha256": "a01e1859104e731ba8151703062fb75ad2e374a9b1b6b74a6703bee345e479a0"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/earnings_summary_card_widget.dart",
+          "sha256": "f1c5235bbdd877e7d0b74eeb0ba987d51b3d02b3b7caa2ed77d5f3d9113720cc"
+        },
+        {
+          "path": "community_app/test/presentation/payment/transaction_export_test.dart",
+          "sha256": "95f35087cb790351f756ee8434ffa8c40dfaa863638bff1fc5619526a7b14093"
+        },
+        {
+          "path": "community_app/test/presentation/payment/transaction_charge_cancelled_detail_test.dart",
+          "sha256": "240b55b2224d3cada574b944387117984d61c00b0d75f4fc3903de5e2e0016f8"
+        },
+        {
+          "path": "community_app/test/presentation/payment/wallet_transaction_direction_test.dart",
+          "sha256": "104b863890609dbed96f71e62817c7b7022dbd3676a1418a4b8ce7fe660423a1"
+        },
+        {
+          "path": "community_app/test/presentation/payment/earnings_event_list_widget_test.dart",
+          "sha256": "54e098acd7a52077d32883704fa150ffd043c28694f9ef0b9da3f0ce688ac8bf"
+        },
+        {
+          "path": "docs/ui-ux/screens/19-payment.md",
+          "sha256": "5d083cc93e176141c06353936bd8f916d629eaf90f29d5ebe8edb9bc6a17c259"
+        },
+        {
+          "path": "docs/ui-ux/screens/20-payment-advanced.md",
+          "sha256": "01d20453889071d1b78a9bbdcdf70b01da780750310aa143f127bf92d2b43c3a"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
+          "sha256": "a3f059b0545bb5857d1f3c303830a8b6dda2e32212bb9b3a6691e6e77b23e93a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
+          "sha256": "7ae7565eda58eec9594d9a38b92ccb373ce77d0ba75a69f63c4b785e0d92ec57"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
+          "sha256": "6a47ba414f3266b0808bc2df6f0533953cf69187544c3f80f2f74d37c0e92b89"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F06-01.html": [
+          "sidebar",
+          "launch-strip",
+          "free-point-expiry",
+          "event-refund-repayment",
+          "release-completion"
+        ],
+        "docs/features/F06-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F06-09.html": [
+          "sidebar",
+          "launch-strip",
+          "payout-recovery-current",
+          "withdrawal-account",
+          "release-completion"
+        ]
+      }
+    },
+    "host_settlement_appeal_20261122": {
+      "kind": "source_review",
+      "scope": "본인 호스트 정산 목록·요약·상세·시간 필터·계산 표시·예상/재시도 일정과 이의 접수·운영자 판정·지급 증거 복구·작성 실패 보존의 해당 함수 대조. 시험은 명시한 단언/항목 확인이며 새 실행·실DB 경합·실지급·외부 알림 수신 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SettlementAppealController.java",
+          "sha256": "4c20a74dac7dc374e3185170da47b7ea15dde30d0a0d30c2a2114b335bef754a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementAppealService.java",
+          "sha256": "deff5057c26fc3b6f004ea18eeb1d97e14132af283a14110f5795d72ca821dc2"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/SettlementAppealParam.java",
+          "sha256": "bf837a630e542d06cc4737c6ca9810c525bd8a6f136d96683a9c9def613a8198"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/SettlementAppealVo.java",
+          "sha256": "2fb9e01d723ad0b85da7dc4d0f5bb70655f297f5cb71b7d55c7d638c00158fdf"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/SettlementSearchParam.java",
+          "sha256": "cdc5379e4e364797b260da7775c53e0d597b7cee9ba1323e5d6fcc8974551ba5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/SettlementDetailVo.java",
+          "sha256": "561613b95c0cb10c3194e7e122e58f61187545063a4b6b6b550af930a30417af"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/SettlementSummaryVo.java",
+          "sha256": "7060bc3bb86519f7829cbfe3623383566f55b528e4b2be0e0a6e6c8f235c9650"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/SettlementQueryRepository.java",
+          "sha256": "8e275d0dd52adcef9a33eeaed8145c89feeff73c7d6d24348a9b42bf44c6b2d0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementAppealResolution.java",
+          "sha256": "91da854e2fc148d18234e39be82831f94b903afd9a2054d0b34e12a660700485"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementTransferSchedule.java",
+          "sha256": "fe321cc8eb077c11d667f2b2af3addcfb8548821927cd85496ddebca5a4e25fb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementRetrySchedule.java",
+          "sha256": "aea50a656b6225bac11257a0d0f58c9441dbac926ae6f3eff91ce3dd7706f37b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/SettlementStatus.java",
+          "sha256": "4dcec758eeb4e39ec7269e7415cd595c0b9a76166b0bd79127af3c9fe4ce6bd4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/AppealStatus.java",
+          "sha256": "2b659e9993f112e460cc2be0e9bac96ac8dd843df7825ca64b9e3996d11570dc"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/model/SettlementAppeal.java",
+          "sha256": "6416c5ee0297307e1ae1e8ffab35ea19b4243d99e1ed87d1f0918a811188227e"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/model/Settlement.java",
+          "sha256": "7d8cda099cd62c97b87ed8540c4593d91177c122c22bde7a04f05d49b088f696"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementPayoutEvidence.java",
+          "sha256": "bb8aef424fec97bd9c0f28a492d2d3ff39d184b9a161b7fe6869672743375698"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/service/SettlementAppealServiceCreateTest.java",
+          "sha256": "f82dfd7778e8aa4374e9b2605a85b804befbab746abdcce0a0a271450d758b36"
+        },
+        {
+          "path": "community_app/lib/data/api/settlement_api.dart",
+          "sha256": "f9c49ab0d91c619981c91c6f8da10d9fe7e20799295e2895431521e494642756"
+        },
+        {
+          "path": "community_app/lib/data/repositories/settlement_repository.dart",
+          "sha256": "06657c442d6ebfdfa2e4524d1e1798885e6aea73f0a5d9e6bebad29859adfae4"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/settlement_list_provider.dart",
+          "sha256": "6ca8153a9b4b1b174a4a3b7ea04c67a5dfda5fb1324de97ffa25ea7bc3a3a035"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/settlement_appeal_provider.dart",
+          "sha256": "01cc4ad3af62a2e463fa63981b6f19965dd9d4ad7f124e90abb56f6600c02259"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/settlement_list_screen.dart",
+          "sha256": "4049caf66a056e52624ae6b7386c6a5ef7180033107eca027120ace4887f57e9"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/settlement_detail_screen.dart",
+          "sha256": "ef984803ea760ed54a5519f8d3aa6e86afef32c6a2898938accc20a899451b4b"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/widgets/settlement_appeal_dialog.dart",
+          "sha256": "5a8385295c579e317ec8dfc9dedd3881efd7ec0c0f5291dc0c8525a93611f0d9"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/settlement.dart",
+          "sha256": "69a1465300d43297201753f47a276965fb6838c03753fbe4ec64d6a8aa8511e0"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/settlement_summary.dart",
+          "sha256": "e2935651b90945c544f655471c87dd82d74f85dd923443f2f022eb6e91208886"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/settlement_appeal.dart",
+          "sha256": "77fe5fc5a71e509289476ec25f98d48b561c3cfe3fcf2c6f1a5fbb5b7d236367"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/settlement_appeal_param.dart",
+          "sha256": "f1c32d9b8b327b30c14c00b9e5b62c210d5c484ddb6e62e6c766bef774be7837"
+        },
+        {
+          "path": "community_app/test/widget/payment/settlement_appeal_wait_test.dart",
+          "sha256": "52067f893031d048c3a99aba02f49981ba1c69bd3ebeab4ec34e62467e673c62"
+        },
+        {
+          "path": "community_app/test/presentation/payment/settlement_time_filter_test.dart",
+          "sha256": "270873310764e05a9fece42431627a7ecc8dcb0703c5e2951108ceb966a812fb"
+        },
+        {
+          "path": "community_app/lib/domain/providers/common/data_change_signal_provider.dart",
+          "sha256": "8cb3981708426ad3af5e4b15dc13eb29c65146bc66085f1e82ea5b7c473f1690"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/settlement_detail_provider.dart",
+          "sha256": "eaa101c66f43e71fc1dcdea35f65d0da64507e06a01f0f58b18f0aa4991f2adb"
+        }
+      ],
+      "reuses": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+          "sha256": "9d3ead0cc566f10853c081c56babf9f3435c84d8efe53f6d58e89dda7e892144"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletQueryService.java",
+          "sha256": "bed6364091f3e2fef097f31d489977a295d910a8481b199a070441ddd6392f32"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745"
+        },
+        {
+          "path": "docs/ui-ux/screens/20-payment-advanced.md",
+          "sha256": "01d20453889071d1b78a9bbdcdf70b01da780750310aa143f127bf92d2b43c3a"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
+          "sha256": "36e8bd4483ad4747853b33e3b94bd1e2acb4d420a909fa40e3e4b4e7fc8011a3"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F06-10.html": [
+          "sidebar",
+          "launch-strip",
+          "settlement-consistency",
+          "release-completion"
         ]
       }
     }

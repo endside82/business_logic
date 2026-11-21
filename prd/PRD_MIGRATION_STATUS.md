@@ -277,16 +277,16 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F05-03 | 검색 | [F05-03_search-filter_prd.md](02_feature_prds/05_search/F05-03_search-filter_prd.md) | `F05-03_search-filter` | 실사 기반 전환본 | 2 | 6 |
 | F05-04 | 검색 | [F05-04_search-history_prd.md](02_feature_prds/05_search/F05-04_search-history_prd.md) | `F05-04_search-history` | 실사 기반 전환본 | 0 | 4 |
 | F05-05 | 검색 | [F05-05_saved-search_prd.md](02_feature_prds/05_search/F05-05_saved-search_prd.md) | `F05-05_saved-search` | 실사 기반 전환본 | 5 | 6 |
-| F06-01 | 결제 & 지갑 | [F06-01_wallet-main_prd.md](02_feature_prds/06_payment/F06-01_wallet-main_prd.md) | `F06-01_wallet-main` | 실사 기반 전환본 | 1 | 0 |
+| F06-01 | 결제 & 지갑 | [F06-01_wallet-main_prd.md](02_feature_prds/06_payment/F06-01_wallet-main_prd.md) | `F06-01_wallet-main` | 실사 기반 전환본 | 2 | 3 |
 | F06-02 | 결제 & 지갑 | [F06-02_point-charge_prd.md](02_feature_prds/06_payment/F06-02_point-charge_prd.md) | `F06-02_point-charge` | 실사 기반 전환본 | 5 | 0 |
-| F06-03 | 결제 & 지갑 | [F06-03_transaction-history_prd.md](02_feature_prds/06_payment/F06-03_transaction-history_prd.md) | `F06-03_transaction-history` | 실사 기반 전환본 | 3 | 4 |
+| F06-03 | 결제 & 지갑 | [F06-03_transaction-history_prd.md](02_feature_prds/06_payment/F06-03_transaction-history_prd.md) | `F06-03_transaction-history` | 실사 기반 전환본 | 4 | 6 |
 | F06-04 | 결제 & 지갑 | [F06-04_payment-method_prd.md](02_feature_prds/06_payment/F06-04_payment-method_prd.md) | `F06-04_payment-method` | 실사 기반 전환본 | 4 | 1 |
 | F06-05 | 결제 & 지갑 | [F06-05_auto-charge_prd.md](02_feature_prds/06_payment/F06-05_auto-charge_prd.md) | `F06-05_auto-charge` | 실사 기반 전환본 | 4 | 0 |
 | F06-06 | 결제 & 지갑 | [F06-06_point-pay-refund_prd.md](02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md) | `F06-06_point-pay-refund` | 실사 기반 전환본 | 3 | 21 |
 | F06-07 | 결제 & 지갑 | [F06-07_hosting-ticket_prd.md](02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md) | `F06-07_hosting-ticket` | 실사 기반 전환본 | 2 | 3 |
 | F06-08 | 결제 & 지갑 | [F06-08_personal-subscription_prd.md](02_feature_prds/06_payment/F06-08_personal-subscription_prd.md) | `F06-08_personal-subscription` | 실사 기반 전환본 | 5 | 3 |
-| F06-09 | 결제 & 지갑 | [F06-09_earnings-dashboard_prd.md](02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md) | `F06-09_earnings-dashboard` | 실사 기반 전환본 | 1 | 3 |
-| F06-10 | 결제 & 지갑 | [F06-10_settlement-appeal_prd.md](02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md) | `F06-10_settlement-appeal` | 실사 기반 전환본 | 5 | 4 |
+| F06-09 | 결제 & 지갑 | [F06-09_earnings-dashboard_prd.md](02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md) | `F06-09_earnings-dashboard` | 실사 기반 전환본 | 1 | 4 |
+| F06-10 | 결제 & 지갑 | [F06-10_settlement-appeal_prd.md](02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md) | `F06-10_settlement-appeal` | 실사 기반 전환본 | 5 | 5 |
 | F07-01 | 모임 정산 | [F07-01_create-settlement_prd.md](02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) | `F07-01_create-settlement` | 실사 기반 전환본 | 3 | 2 |
 | F07-02 | 모임 정산 | [F07-02_settlement-items_prd.md](02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) | `F07-02_settlement-items` | 실사 기반 전환본 | 4 | 2 |
 | F07-03 | 모임 정산 | [F07-03_activate-cancel_prd.md](02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md) | `F07-03_activate-cancel` | 실사 기반 전환본 | 2 | 1 |

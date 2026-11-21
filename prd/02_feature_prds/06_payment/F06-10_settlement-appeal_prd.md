@@ -1,145 +1,88 @@
-# F06-10. 정산 조회·요약·이의 제기 PRD
+# F06-10. 호스트 정산 내역·이의 제기 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버·앱 소스와 명시한 기존 시험 단언을 대조했다. 새 제품 시험·실기기·외부 지급의 통과 기록은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-> 문서 상태: **실사 기반 전환본 + W2 D5 호스트 직접 수취 정산 영향 추가 (2026-05-22)**. 이 문서는 기존 키워드형 PRD를 폐기하고 `business_logic/units/06_payment/F06-10_settlement-appeal`의 backend/frontend/scenario 근거를 제품 판단용 구조로 재배치한 것이다. 코드 수정이나 QA 착수 전에는 §2 코드 위치의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
->
-> 2026-05-22 W2 추가: 이벤트 참가 선입금의 BANK_TRANSFER 결제는 D5에 따라 호스트가 직접 수취하며 회계 분개를 발생시키지 않는다. 호스트 정산 보고서에는 별도 6 섹션(§6.1)으로 노출되어 플랫폼 정산금과 구분된다. 본 변경은 정산 상태머신·이의 제기 흐름에는 영향이 없고, 정산 보고서 UI에서만 audit 데이터를 보강한다.
+## 결론
 
-## 1. 결론
+본인의 호스트 정산을 목록·상세로 확인하고 거절된 정산에 사유를 제출한다. 모임 참석자끼리 비용을 나누는 정산 이의와 별도 기능이다. 이의를 접수해도 정산은 거절 상태에 남으며, 운영자가 이의를 승인했을 때 정산 대기로 다시 연다. 접수와 승인·지급을 같은 완료 상태로 쓰지 않는다.
 
-호스트가 자신에게 발생한 정산을 상태별로 조회하고, 서버 측 집계로 총/대기/승인 합계와 건수를 따로 받아 일관된 요약을 본다(CL-05). 정산 상세는 수수료 10% / 원천징수 3.3% / 무료 포인트 보조금 차감 / 실수령액으로 자동 분해되어 라인 아이템(`FeeLineItem`)으로 응답된다. `REJECTED` 상태일 때만 이의 제기가 가능하며, 본 단위는 이의 제기 생성/조회 API도 함께 묶는다.
+## 코드 위치
 
-(W2 추가) BANK_TRANSFER 선입금은 호스트 직접 수취(D5)이므로 본 정산 흐름과 분리된 별도 6 섹션으로 노출된다. 호스트는 플랫폼 정산금 vs 직접 수취 입금을 구분하여 확인한다.
-
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
-
-- 지갑 메인(F06-01) ▶ "정산" 바로가기
-- 수익 대시보드(F06-09) ▶ "전체 수익 내역 보기 →"
-- 정산 상태 변경 알림(예: 정산 거절) ▶ 푸시 클릭으로 정산 상세 직진입
-- 거래 상세(F06-03)에서 정산 거래 → "관련 이벤트" 외에 정산 상세 진입 경로(추가 라우팅, 미래 영역)
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `WalletController`, `SettlementAppealController`, `SettlementService`, `SettlementAppealService`. 앱: `settlement_list_screen.dart`, `settlement_detail_screen.dart`.
+서버: WalletController#getMySettlements·getMySettlementSummary·getSettlementDetail, WalletQueryService, SettlementQueryRepository, SettlementSearchParam, SettlementDetailVo·SummaryVo, SettlementAppealController·Service·Resolution, SettlementPayoutEvidence, SettlementTransferSchedule·RetrySchedule. 앱: settlement_api.dart, settlement_repository.dart, settlement_list_provider.dart, settlement_detail_provider.dart, settlement_appeal_provider.dart, settlement_list_screen.dart, settlement_detail_screen.dart, settlement_appeal_dialog.dart.
 
 <!-- source-references:start -->
 서버 창구: `WalletController#getMySettlements`, `WalletController#getMySettlementSummary`, `WalletController#getSettlementDetail`, `SettlementAppealController#createAppeal`, `SettlementAppealController#getAppeal`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 목록·요약·상세의 입구
 
-### 정산 목록 (`settlement_list_screen.dart`)
+지갑의 정산 바로가기 또는 수익의 전체 내역에서 목록을 연다. 서버는 본인의 정산을 생성 시각·번호 내림차순으로 기본 20건씩 돌려준다. 전체 또는 대기·승인·지급 중·완료·실패·거절 상태를 선택하면 해당 상태를 서버에 보내 첫 페이지부터 읽는다.
 
-- **사용자가 보는 것**:
-  - AppBar `정산 내역`
-  - 요약 Row (CL-05 서버 합계 사용): "정산 완료 / ₩{paidAmount}" + "보류 금액 / ₩{pending+approved}" (보류는 PENDING+APPROVED 합)
-  - 상태 필터 탭 가로 스크롤: 전체 / 대기(PENDING) / 승인(APPROVED) / 지급중(PAYING) / 완료(PAID) / 실패(FAILED) / 거절(REJECTED)
-  - 시간 필터 탭 가로 스크롤: 전체 / 이번 주 / 지난 주 / 이번 달 / 지난 달 / 최근 3개월 (클라 측 필터 — `_applyTimeFilter`로 `createdAt` 기준)
-  - `SettlementItemWidget` 리스트 (이벤트명 + 금액 + 상태 배지 + 정산일)
-  - 무한 스크롤 (maxScrollExtent - 200)
-- **사용자가 할 수 있는 액션**:
-  - 상태 탭 ▶ `notifier.setStatusFilter(value)` ▶ page=0부터 `GET /settlements?status=...`
-  - 시간 탭 ▶ 클라 필터링만 (서버 호출 없음)
-  - 카드 탭 ▶ `context.go('/profile/wallet/settlements/${id}')`
-  - 풀투리프레시 ▶ `settlementSummaryProvider` invalidate + `settlementListNotifierProvider` refresh
-- **상태 분기**:
-  - 로딩: `SkeletonLoader(preset: SkeletonPreset.list)`
-  - 에러: `AppErrorState(title: '정산 내역을 불러올 수 없습니다', onRetry: ...)`
-  - 빈 결과: `Center('정산 내역이 없습니다')`
-- **모달/시트/네비게이션**: 없음
+상단 요약은 별도 요청이다. 총 정산 금액은 완료 실수령액, 보류 금액은 대기와 승인 실수령액의 합이다. 요약 요청에는 현재 목록의 상태·기간 조건을 보내지 않으므로 필터한 행의 합계가 아니다. 지급 중·실패 금액이 보류 금액에 모두 포함되는 것도 아니다.
 
-### 정산 상세 (`settlement_detail_screen.dart`)
+기간은 앱이 읽은 목록의 생성 시각으로 거른다. 이번 주·지난주는 월요일 시작, 이번 달·지난달은 달력 월, 최근 3개월은 오늘의 날짜를 세 달 전으로 옮긴 날 0시부터 현재까지다. 날짜 넘침은 달력 정규화로 처리하므로 5월 31일의 세 달 전 시작은 2월 말일로 고정되지 않는다. 생성 시각이 없는 행은 통과한다.
 
-- **사용자가 보는 것**:
-  - AppBar `정산 상세`
-  - 헤더: 이벤트명(없으면 "이벤트 #N") + "정산 ID: {id}" + 우측 `SettlementStatusBadgeWidget`
-  - `MoneyFlowTracker.eventSettlement` — PENDING → APPROVED → PAYING → PAID 타임라인 (실패/거절 분기 시각화). 결제·환불·정산·송금·구독 5종이 공유하는 공통 트래커이며, 화면 전용이던 `SettlementTimelineWidget`은 이미 대체된 미사용 사본이라 제거됐다
-  - 상태별 안내 카드:
-    - PAYING: "지급 처리 중" (primary50 + primary500)
-    - FAILED: "자동 재시도 중" (warning50, "5일 이내에 처리되지 않으면 관리자 문의")
-    - REJECTED: "정산이 거부되었습니다" + 사유 표기 + "이의 제기" 안내 (error500 6%)
-  - `SettlementDetailBreakdownWidget` — 라인 아이템 리스트 (총 매출 / 플랫폼 수수료 -10% / 원천징수 -3.3% / [무료 포인트 보조금] / 실수령액)
-  - REJECTED + 이의 미제출 → `AppButton(variant: ButtonVariant.danger, label: '이의 제기')`
-  - 이의 제기 이력 있으면: `_buildAppealInfo(appeal)` ("사유 / 상태 / 관리자 답변")
-- **사용자가 할 수 있는 액션**:
-  - "이의 제기" 탭 ▶ `SettlementAppealDialog` 모달 (사유 입력 + 제출)
-  - 다이얼로그 "제출" ▶ `notifier.submitAppeal(reason)` ▶ `POST /settlements/{id}/appeal` ▶ 토스트 "이의 제기가 접수되었습니다"
-- **상태 분기**:
-  - 로딩: 스켈레톤
-  - 에러: `AppErrorState(title: '정산 상세를 불러올 수 없습니다', onRetry: ...)`
-  - REJECTED + 이의 이미 제출됨: 버튼 숨김, 이의 카드만 노출
-- **모달/시트/네비게이션**:
-  - `SettlementAppealDialog(onSubmit: (reason) => ...)` — 사유 입력. UI/UX 20에는 첨부 파일도 명시되어 있으나 **서버 Param에 첨부 필드 없음** → 클라 다이얼로그도 텍스트만 받음
+시간 조건에 맞는 행이 현재 페이지에 없어도 다음 페이지가 있으면 스크롤과 추가 조회 입구를 유지한다. 조건 변경·추가 조회 완료 뒤에는 화면을 채울 다음 조회가 필요한지 다시 확인한다. 전체 자료를 다 읽기 전의 표시를 전체 기간 집계로 단정하지 않는다. 추가 조회 실패는 앞 목록을 유지하고 하단에서 재시도한다.
 
-## 4. 제품 규칙
+목록을 당겨 새로고치면 목록과 요약을 함께 읽는다. 결과가 완전히 비고 다음 페이지도 없으면 빈 안내만 표시한다. 목록 행은 상세 경로로 이동한다. 필터·스크롤 복귀는 단순 주소 도착과 구분해 확인할 범위다.
 
-- 이의 제기는 정산의 호스트만 할 수 있다. 정산이 없으면 404, 호스트가 아니면 403이다.
-- 사유는 필수이고 1,000자까지다. 이의 상태는 PENDING, APPROVED, REJECTED, RESOLVED 넷이다.
-- REJECTED 인데 지급 증거가 있으면 이의 대신 정산을 PAID 로 복구하고 복구 알림을 보낸다.
+## 계산 명세와 일정의 의미
 
-## 5.1 호스트 정산 보고서의 BANK_TRANSFER 6 섹션 (W2 D5 추가)
+상세 조회는 정산 소유자를 확인한다. 이벤트와 정기모임 번호를 별도로 보존하고 정기모임 제목에는 표지를 붙인다. 총 매출·저장된 플랫폼 수수료율과 금액·원천징수율과 금액·있는 무료 포인트 보조금 차감·실수령액을 표시한다. 이 화면이 오늘의 요율로 새 정산을 계산하는 것은 아니다. 생성 시점·종료일에 적용할 요율과 환불·회수 한도는 [결제·정산 공통 정책](../../03_policy_prds/payment_settlement_policy_prd.md)의 범위다.
 
-이벤트 참가 선입금 BANK_TRANSFER는 호스트 계좌로 직접 입금되므로 플랫폼 정산금 산정에서 제외된다. 그러나 호스트가 자신의 수익을 정확히 파악하려면 BANK 입금 audit 데이터도 함께 봐야 하므로, PLAN.md §2.8에 따라 정산 보고서에 다음 6 섹션을 추가한다(데이터 출처는 모두 `event_payment` 테이블).
+대기·승인·지급 중·실패 정산의 예상일은 정산 생성일과 이의 승인 재개일 중 늦은 날을 기준으로 다음 3영업일을 센다. 토요일·일요일과 등록 휴일을 뺀다. 예상일은 실제 지급 완료 증빙이 아니다.
 
-| 섹션 | 데이터 출처 | 분개 영향 |
+실패 정산은 마지막 실패 뒤 한 시간 이상 지난 04시·10시·16시 중 다음 재시도 시각을 계산해 안내한다. 해당 시각에 반드시 지급된다는 보장은 아니다. 지급 중 안내·실패 재시도 안내·거절 사유와 이의 입구는 구분한다. 호스트 정산과 은행 출금의 실제 지급 확인도 별개다.
+
+## 이의 접수의 조건과 결과
+
+| 조건·순서 | 현재 처리 |
+|---|---|
+| 사유 | 공백뿐인 글 거절, 최대 1,000 UTF-16 단위. 앱은 앞뒤 공백을 제거해 전송. 첨부 파일 없음 |
+| 소유자 | 본인의 정산만 접수·조회. 서버는 정산 행과 계정 상태를 잠금 아래 확인 |
+| 지급 근거 | 정산 상태보다 먼저 지급 근거와의 일치를 확인. 지급 사실을 복구한 경우 이의를 만들지 않고 지급 완료 충돌 응답 |
+| 증거 불일치 | 이의를 만들지 않고 입력 거절. 조회·운영 확인과 재신청을 구분 |
+| 정산 상태 | 거절 정산만 신규 접수 |
+| 기존 이의 | 상태와 무관하게 이미 이의가 하나 있으면 추가 접수 거절 |
+| 계정 | 활동 가능한 계정이어야 함. 삭제 요청 대기 중이면 전용 충돌 오류로 차단 |
+| 정상 접수 | 대기 상태의 이의 한 건 생성. 정산은 거절 상태를 유지 |
+
+운영자 승인에서는 이의가 아직 대기이고 정산이 거절인지 다시 확인한 뒤 정산을 대기로 연다. 이의 거절·처리 완료는 승인과 같은 재개 동작이 아니다. 판정은 운영팀 답변과 처리 시각을 남기며 처리 결과 알림을 저장한다. 알림의 실제 수신은 별도 확인이다. 운영자 중복 명령은 작업 번호와 요청 내용의 결합으로 처리하며, 해당 명령 전에 지급 근거 복구·불일치도 다시 판정한다.
+
+## 작성·실패 보존·재조회
+
+상세는 정산 정보와 기존 이의를 각각 읽는다. 이의 조회의 없음 응답은 기존 이의 없음으로 바꾼다. 거절이고 읽은 이의 값이 없으면 이의 제기 단추, 값이 있으면 상태·사유·운영팀 답변을 표시한다.
+
+작성창은 제출 중 입력·취소·반복 제출을 막고, 저장하지 않고 나갈 때 작성 내용을 확인한다. 성공을 기다린 뒤 창을 닫고 해당 상세와 목록을 다시 읽는다. 일반 실패는 쓴 사유를 보존한 채 창을 유지하며 오류를 알린다.
+
+지급 근거를 복구했다는 전용 충돌 오류는 상세와 이의를 다시 읽고 창을 닫는다. 모든 지급 완료 상태가 이 전용 오류를 주는 것은 아니다. 처음부터 정산 상태가 완료이고 복구할 상태 차이가 없는 경우에는 현재 서버의 일반 상태 거절로 이어진다.
+
+정산 목록·요약·상세·이의는 정산 자료 변경 신호를 구독한다. 접수 성공의 직접 무효화는 상세와 목록이며, 접수만으로 요약 금액이 바뀌는 것은 아니다. 운영팀이 처리한 뒤의 갱신과 알림 수신 여부는 분리해서 판정한다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인한 차이·한계 | 영향·후속 |
 |---|---|---|
-| 플랫폼 수납 (WALLET PAID) | `event_payment.method=WALLET AND status=PAID` | F06-06 §4.2.5 분개 발생 (`recordPayment`) → 본 정산 흐름에 누적 |
-| 호스트 직접 수납 확인 (BANK_TRANSFER PAID) | `method=BANK_TRANSFER AND status=PAID` | **분개 없음** (D5). 본 정산 흐름에서 제외 |
-| 입금 대기 (BANK_TRANSFER PENDING) | `method=BANK_TRANSFER AND status=PENDING` | 분개 없음. 호스트 confirm/reject 대기 |
-| 환불 필요 (REFUND_REQUESTED) | `status=REFUND_REQUESTED` | 호스트 수동 환불 대기. 처리 시점에 BANK는 분개 없음, WALLET은 `recordRefund` 분개 |
-| 환불 완료 (REFUNDED) | `status=REFUNDED` | WALLET은 정산금 차감 누적. BANK는 audit만 |
-| 플랫폼 지급 제외 (BANK 합계) | `method=BANK_TRANSFER` 누계 | 호스트가 별도 수취한 합계. 본 정산 보고서의 "플랫폼 정산금" 합계와 구분 표시 |
+| Gap | 요약은 값이 없는 로딩·오류에서도 0을 기본 표시하고 목록 필터와 독립 | 실제 0과 조회 실패, 전체 합계와 필터 결과를 혼동하지 않도록 표시 보완 대상 |
+| Gap | 기존 이의 조회 중·오류와 없음이 단추 조건에서 분리되지 않음 | 거절 정산에 이미 낸 이의가 있어도 입구가 나타날 수 있음. 서버 중복 차단과 별도로 로딩·재시도 표시 필요 |
+| Gap | 이미 지급된 상태와 지급 근거로 복구한 상태의 오류가 달라 앱의 재조회·창 닫기 처리가 다름 | 같은 사용자 목적에 다른 복구 흐름이 생기는 조건을 보완할 대상 |
+| Risk | 기간 필터는 읽은 페이지에 적용하고 날짜 없는 행은 남김 | 기간 전체 완료 판정·비용·페이지 진행을 함께 확인 |
+| 미검증 | 운영자 판정 경합·삭제 경합·실지급·알림 수신·기기 복귀 | 이번 문서 소스 대조와 기존 시험 목적 확인을 전체 실행 통과로 확대하지 않음 |
 
-W2/W3 1차 출시에서는 audit 데이터(`event_payment.method, status, amount, paid_at, refunded_at`)만 확정한다. 보고서 UI 통합은 F06-09 수익 대시보드 후속 슬라이스에서 처리한다(§10 참조).
+## 수용 기준과 검증 근거
 
-## 5.2 정산 회계·원천세·감시 (2026-06-06 돈 흐름 무결성)
+- **AC-01 소유자:** 목록·상세·이의 조회와 접수는 본인의 호스트 정산만 허용한다.
+- **AC-02 목록 조건:** 상태는 서버에 보내고 시간은 읽은 행의 생성 시각에 적용한다.
+- **AC-03 다음 페이지:** 기간에 맞는 첫 행이 없어도 다음 페이지 조회와 실패 재시도를 유지한다.
+- **AC-04 요약 범위:** 전체 완료 합계와 대기·승인 합계가 필터한 행의 합계라는 오해를 막는다.
+- **AC-05 계산 명세:** 저장된 요율·공제·실수령액과 정기모임 제목을 보존한다.
+- **AC-06 일정:** 예상 3영업일과 실패 후 다음 재시도 시각을 실지급 보장으로 적지 않는다.
+- **AC-07 접수 조건:** 거절·기존 이의 없음·활동 계정·삭제 요청 없음과 사유 한도를 확인한다.
+- **AC-08 지급 근거:** 지급 사실 복구·증거 불일치에서는 새 이의를 만들지 않는다.
+- **AC-09 접수와 승인:** 접수는 이의 대기, 운영자 승인은 정산 대기 재개로 구분한다.
+- **AC-10 실패 보존:** 일반 접수 실패는 창과 사유를 유지하고 다시 제출할 수 있게 한다.
+- **AC-11 지급 충돌:** 지급 복구 전용 오류에서는 상세·이의를 다시 읽고 창을 닫는다.
+- **AC-12 판정 결과:** 기존 이의 상태와 운영팀 답변을 보이며 알림 저장·실수신을 구분한다.
 
-> 본 섹션은 호스트가 보는 정산 화면 뒤에서 동작하는 회계·원천세·감시 운영 사실을 기술한다. 모두 백엔드 사실이며 화면 직접 노출은 없다(운영/대사용).
-
-| 영역 | Fact (소스) | 사용자 영향 |
-|---|---|---|
-| 정산 완료 triple-entry | 정산 완료 분개가 `CREATOR_PAYABLE`를 **gross 전액**(net + fee + tax)으로 소거하도록 통일됨(api `AccountingLedgerService.recordSettlementTripleEntry`). admin 운영 정산도 동일 분개를 community_api에 위임(admin `ManageAccountingService`/`SettlementService` 직접 net-only 분개 제거). 과거 admin net-only 분개(fee+tax≈gross 12.97% 영구 잔류)는 H0으로 해소. | 호스트 net 지급은 변동 없음. 매출·원천세가 정확히 인식됨. |
-| 원천세 예수금 방향 정정 | 원천세 예수금(`WITHHOLDING_TAX_PAYABLE`, 부채)을 **정방향**으로 적립하도록 정정 — 적립 시 `DR PLATFORM_CASH(tax) / CR WITHHOLDING_TAX_PAYABLE(tax)`(신설 `AccountCode.PLATFORM_CASH` 플랫폼 현금성 자산, 소스: `payment/constants/AccountCode.java:22`, `AccountingLedgerService.java:99-141`). 과거 적립이 차변(방향 역)이라 운영 원천세 리포트가 과소집계되던 버그(MED) 해소. | 호스트 영향 없음. 운영 원천세 리포트 신뢰성 확보. |
-| 원천세 납부(소거) | `recordWithholdingRemittance`(`AccountingLedgerService.java:683-`) 분개 신설 — 납부 시 `DR WITHHOLDING_TAX_PAYABLE / CR PLATFORM_CASH`로 한 라이프사이클의 예수금·현금 순잔액이 0으로 수렴. 운영 액션은 admin `POST /admin/v1/manage/accounting/withholding-tax/remit`(`ManageAccountingController.java:124`) — AdminIdempotency 멱등 + 전 기간 누적 초과 거부 가드. ledger-only `TransactionType.WITHHOLDING_REMITTANCE(30)`(PointTransaction row 미생성). 동시성: `accounting_remit_lock` 단일행 비관락 + `WHT-REMIT:{key}` 결정적 referenceId 영구 백스톱(crash-takeover 재실행 안전). | 호스트 영향 없음. 운영자가 예수금을 실제 납부로 소거. |
-| 정산 FAILED 감시 | `SettlementRetryScheduler`가 FAILED 정산 5일 경과 시 멱등 운영자 경보(`OperatorAlertType.SETTLEMENT_FAILED_STALE`, 키 `SETTLEMENT_FAILED:{id}`) 발화 — 과거 무제한 재시도+로그만이던 사각지대 해소. 자동 만료·자동 중단은 없음(돈 in-flight는 사람이 처리). | 화면의 "5일 이내 미처리 시 관리자 문의" 안내(§169)와 정합. |
-| 지급명세서 환불 반영 | admin 지급명세서가 정산 후 전액환불의 net 회수를 반영 — `netPaid = CREATOR_SETTLEMENT(DR−CR) − withheldTax − netRecovery`(전액환불 시 netPaid=0). | 호스트 지급명세서 정확성. |
-| 이벤트 무료 매출 호스트 지급 (2026-06-06) | 이벤트 결제는 무료분이 호스트의 `CREATOR_PAYABLE` 보조금 residue로 남아 있었으나, 이제 정산 완료 시 호스트에게 **무료 포인트로 실지급**한다(`AccountingLedgerService.recordEventFreeSettlement` — `DR USER_WALLET(host) / CR CREATOR_PAYABLE(host)`로 residue 0 수렴). 유료분은 기존 triple-entry로 `CREATOR_PAYABLE` 유료분을 소거. 무료 포인트는 현금화 불가(freeBalance 적립). admin 운영 정산도 동일 미러. | 호스트가 무료 매출분을 무료 포인트로 받는다(인출 불가). |
-| free-only 정산 생성 (2026-06-06) | 유료 매출이 0이라도 무료 매출이 있으면 정산이 생성된다(`SettlementBatchService` — 순 매출 0 이하면 스킵, 유료 음수면 스킵, paid==0 & free>0 이면 수수료·세금 0의 free-only 정산 생성). `CreatorEarning`에 `grossPaid`/`grossFree`를 분리 적재. 정산 완료 알림은 "무료 포인트 N 지급"으로 분기. | 무료 결제만 모인 이벤트의 호스트도 정산을 받는다(무료 포인트). |
-| 정산 후 무료분 환불 흡수 (2026-06-06) | 정산 완료 후 무료분 환불은 호스트에게서 회수하지 않고 **플랫폼 비용(`PROMOTION_EXPENSE`)으로 흡수**한다(`recordEventRefundFreeAfterSettlement` — `DR USER_WALLET(participant) / CR PROMOTION_EXPENSE`). 정산 시 무료분이 이미 호스트에 실지급되어 residue가 0이므로 residue 환원 불가 → 정책상 플랫폼 흡수. | 호스트의 무료 적립을 사후 환불로 빼앗지 않는다(정책). |
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 정산 목록 + 요약 빠르게 확인 (Happy Path) | 지갑 메인 → "정산" 바로가기 | 사용자가 어떤 상태가 몇 건인지 명확히 인지 |
-| S2 | 정산 상세 → breakdown 확인 | 호스트가 한 정산의 수수료 내역을 보고 싶음 | 사용자가 수수료 정확히 인지 |
-| S3 | REJECTED 정산에 이의 제기 | 정산 상세, status=REJECTED, rejectionReason="중복 정산 의심" | 이의 1건 제출됨. 관리자 검토 대기. UI/UX 20에 따르면 정산 상태가 REJECTED → PENDING으로 전환되어 재심사 대기 (서버 후속 워크플로우). |
-| S4 | 이의 제기 중복 시도 | 이미 이의 제출한 사용자가 다시 제출 시도 | 중복 차단. 1정산 1이의 원칙. |
-| S5 | PENDING 정산에 이의 제기 시도 → 거절 | 아직 거절 안 된 정산에 이의 시도하는 사용자 | 변경 없음. UI 가드 + 서버 가드 이중. |
-| S6 | PAYING 상태 안내 | 정산 지급 진행 중 | 사용자가 진행 단계 인지 |
-| S7 | FAILED 정산 자동 재시도 안내 | 정산 1건이 외부 송금 실패로 FAILED | 사용자에게 명확한 일정 안내 + 추가 액션 불필요 |
-| S8 | 시간 필터 (이번 달) | 이번 달 정산만 보고 싶은 호스트 | 빠른 클라이언트 필터로 사용자 결정 보강 |
-| S9 | 상태/시간 필터 동시 사용 | 이번 달 PAID만 보고 싶음 | 정확한 부분집합 노출 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 이의 첨부 파일 | 이의 제기는 사유 글만 받는다(1,000자까지, 서버와 앱 모두 검사). 2026-11-08 결정 75-2 로 화면 명세에서 첨부 파일을 뺐다. 운영자가 자료가 더 필요하면 이의를 처리하며 따로 요청한다 | 없음 |
-| 해소됨 | 모임 제목 보강 메모 | 이의 목록에 모임 제목을 붙이는 개발 메모라 제품 판정 대상이 아니다 | 없음 |
-| 해소됨 | 시나리오 조각 | 시나리오 종료 상태 문장 조각이라 판정할 내용이 없다 | 없음 |
-| Risk (PG 게이트) | NoopPayoutProvider.java:21,28 | **실 payout(출금) provider 미구현(NOOP)** — dev/default mock이며 prod 부팅 시 `@PostConstruct guardAgainstProd` 예외로 차단. 정산 → 외부 송금(PAYING→PAID 실 지급)은 PG/출금 provider 계약 후에만 검증 가능. release-gate `05_pg.md` 등재. | PG 계약 시 검증 |
-
-## 9. 수용 기준
-
-- **AC-01. 정산 목록 + 요약 빠르게 확인 (Happy Path)**: Given 지갑 메인 → "정산" 바로가기 When 사용자가 해당 흐름을 실행하면 Then 사용자가 어떤 상태가 몇 건인지 명확히 인지
-- **AC-02. 정산 상세 → breakdown 확인**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 수수료 정확히 인지
-- **AC-03. REJECTED 정산에 이의 제기**: Given 정산 상세, status=REJECTED, rejectionReason="중복 정산 의심" When 사용자가 해당 흐름을 실행하면 Then 이의 1건 제출됨. 관리자 검토 대기. UI/UX 20에 따르면 정산 상태가 REJECTED → PENDING으로 전환되어 재심사 대기 (서버 후속 워크플로우).
-- **AC-04. 이의 제기 중복 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 중복 차단. 1정산 1이의 원칙.
-- **AC-05. PENDING 정산에 이의 제기 시도 → 거절**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변경 없음. UI 가드 + 서버 가드 이중.
-- **AC-06. PAYING 상태 안내**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 진행 단계 인지
-- **AC-07. FAILED 정산 자동 재시도 안내**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자에게 명확한 일정 안내 + 추가 액션 불필요
-- **AC-08. 시간 필터 (이번 달)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 빠른 클라이언트 필터로 사용자 결정 보강
-- **AC-09. 상태/시간 필터 동시 사용**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 정확한 부분집합 노출
+기존 `settlement_appeal_wait_test.dart`는 실패 후 사유 보존·재접수·삭제 요청 안내·지급 충돌 뒤 재조회를 단언한다. `SettlementAppealServiceCreateTest`는 삭제 요청의 전용 오류와 닫힌 계정의 접수 차단을 확인한다. 기간 경계는 현재 함수와 별도 `settlement_time_filter_test.dart`의 항목을 대조했다. 이번에는 새 시험·실DB·기기·실지급 검증을 실행하지 않았다.

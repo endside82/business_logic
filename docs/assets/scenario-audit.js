@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,090개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,104개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1090,
+    "documentedScenarioItems": 1104,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 57,
+    "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 57,
+    "automatedScenarioReferences": 60,
     "directlyLinkedJourneys": 43,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 43,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 48,
-    "partialEvidenceChain": 40,
-    "definitionOnlyEvidence": 87,
-    "traceMarkers": 379,
-    "verifiedTraceRecords": 377,
+    "partialEvidenceChain": 43,
+    "definitionOnlyEvidence": 84,
+    "traceMarkers": 381,
+    "verifiedTraceRecords": 379,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -5752,18 +5752,18 @@ window.SCENARIO_AUDIT = {
       "id": "F06-01",
       "domain": "결제 & 지갑",
       "name": "지갑 메인 조회",
-      "scenarioCount": 6,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-01_wallet-main/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-01_wallet-main/backend.md",
-        "total": 1,
-        "verified": 1,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
         "entries": [
           {
@@ -5780,6 +5780,23 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/wallet",
                 "targetLine": 71,
                 "methodLine": 72
+              }
+            ]
+          },
+          {
+            "id": "F06-01:2",
+            "label": "GET /api/v1/wallet/transactions — 최근 거래 세 건",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "controller": "WalletController",
+                "method": "getTransactions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/wallet/transactions",
+                "targetLine": 195,
+                "methodLine": 196
               }
             ]
           }
@@ -5948,18 +5965,18 @@ window.SCENARIO_AUDIT = {
       "id": "F06-03",
       "domain": "결제 & 지갑",
       "name": "거래 내역 조회·필터·내보내기",
-      "scenarioCount": 7,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-03_transaction-history/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-03_transaction-history/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
         "entries": [
           {
@@ -6012,15 +6029,36 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 29
               }
             ]
+          },
+          {
+            "id": "F06-03:4",
+            "label": "POST /api/v1/wallet/charge/cancel — 상세 충전 취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "controller": "WalletController",
+                "method": "cancelCharge",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/wallet/charge/cancel",
+                "targetLine": 183,
+                "methodLine": 184
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 3,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 3,
+        "files": [
+          "community_app/test/presentation/payment/transaction_charge_cancelled_detail_test.dart",
+          "community_app/test/presentation/payment/transaction_export_test.dart",
+          "community_app/test/presentation/payment/wallet_transaction_direction_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -6031,7 +6069,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -6580,13 +6618,13 @@ window.SCENARIO_AUDIT = {
       "id": "F06-09",
       "domain": "결제 & 지갑",
       "name": "수익 대시보드 조회",
-      "scenarioCount": 6,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-09_earnings-dashboard/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-09_earnings-dashboard/backend.md",
@@ -6614,11 +6652,14 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/payment/earnings_event_list_widget_test.dart",
+          "community_app/test/widget_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/payment/earnings_guidance_card_test.dart"
         ]
@@ -6631,7 +6672,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,
@@ -6641,13 +6682,13 @@ window.SCENARIO_AUDIT = {
       "id": "F06-10",
       "domain": "결제 & 지갑",
       "name": "정산 조회·요약·이의 제기",
-      "scenarioCount": 9,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-10_settlement-appeal/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-10_settlement-appeal/backend.md",
@@ -6743,11 +6784,14 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/payment/settlement_time_filter_test.dart",
+          "community_app/test/widget/payment/settlement_appeal_wait_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/meeting_settlement/bank_account_guidance_card_test.dart"
         ]
@@ -6760,7 +6804,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
