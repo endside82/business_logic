@@ -341,7 +341,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F13-01 | 프로필 & 설정 | [F13-01_profile-hub_prd.md](02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md) | `F13-01_profile-hub` | 실사 기반 전환본 | 1 | 4 |
 | F13-02 | 프로필 & 설정 | [F13-02_profile-edit_prd.md](02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md) | `F13-02_profile-edit` | 실사 기반 전환본 | 1 | 4 |
 | F13-03 | 프로필 & 설정 | [F13-03_address-management_prd.md](02_feature_prds/13_profile_settings/F13-03_address-management_prd.md) | `F13-03_address-management` | 실사 기반 전환본 | 5 | 5 |
-| F13-04 | 프로필 & 설정 | [F13-04_preference-tags_prd.md](02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | `F13-04_preference-tags` | 실사 기반 전환본 | 4 | 7 |
+| F13-04 | 프로필 & 설정 | [F13-04_preference-tags_prd.md](02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md) | `F13-04_preference-tags` | 실사 기반 전환본 | 5 | 4 |
 | F13-05 | 프로필 & 설정 | [F13-05_data-export_prd.md](02_feature_prds/13_profile_settings/F13-05_data-export_prd.md) | `F13-05_data-export` | 실사 기반 전환본 | 2 | 6 |
 | F13-06 | 프로필 & 설정 | [F13-06_account-deletion_prd.md](02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md) | `F13-06_account-deletion` | 실사 기반 전환본 | 4 | 6 |
 | F13-07 | 프로필 & 설정 | [F13-07_account-deactivation_prd.md](02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | `F13-07_account-deactivation` | 실사 기반 전환본 | 2 | 4 |

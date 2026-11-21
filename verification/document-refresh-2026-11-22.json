@@ -2474,9 +2474,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "preference_tags_20261122"
+        "preference_tags_20261122",
+        "profile_preference_tags_20261122"
       ],
-      "reviewedSha256": "2600b1edb0c3a793a27a2d38c4337adc5a3e07cc448107e586b8af0c0f35b579"
+      "reviewedSha256": "c3bbfa24a0cf71ed053d82035d938241cc965f8ef6ed5b599a58a42a0604b267"
     },
     {
       "path": "docs/features/F01-08.html",
@@ -3638,9 +3639,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "c353eb6d48d2b20b562dadf1a03ffdb8af0e3ece1beee7a280a29baa6dc10f2a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_preference_tags_20261122"
+      ],
+      "reviewedSha256": "68cd6321edc070ba16d34277072ef86fb079333f70691f48c9c8d8fa60c1cd3e"
     },
     {
       "path": "docs/features/F13-05.html",
@@ -6475,10 +6479,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "3472dd28980cb56fa5b7ce43746e73f8bf5609c0a95308d6f22678ac27d2a8ed",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_preference_tags_20261122"
+      ],
+      "reviewedSha256": "1ea3eb28b1529379fee2d92532fd1c1cb8cd48db093afd2babbabe88412b7f80"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
@@ -12256,9 +12262,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c248ee556296d1a8d92e148af7cc8f99bcc6e19c47dda8cc2a5d7bfc31f1c2fe",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_preference_tags_20261122"
+      ],
+      "reviewedSha256": "3c3d397693968274336a525f1d892acb0a4b1ab1bc5d74fbdc7e854c4aff2986"
     },
     {
       "path": "units/13_profile_settings/F13-04_preference-tags/diagrams.md",
@@ -12266,9 +12275,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ad964ea062204c218452c7568588af524e0cb22a1012513f479f36488db9dfff",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_preference_tags_20261122"
+      ],
+      "reviewedSha256": "19f1ac5321407dfb7836797548abc88f6daf657d5ba5d5cc734228a08c2aacc2"
     },
     {
       "path": "units/13_profile_settings/F13-04_preference-tags/frontend.md",
@@ -12276,9 +12288,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fb3c9e4b244cc6e9974fcb1ec0b039e3ab42421b8b5bf976f87c2048f5a2349c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_preference_tags_20261122"
+      ],
+      "reviewedSha256": "4350a5023db476bed8f53969b7c7d529ab6890fcef1bac0cc383dc7e2c2add8d"
     },
     {
       "path": "units/13_profile_settings/F13-04_preference-tags/scenarios.md",
@@ -12286,9 +12301,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "bc0ce4bcd6f9cba31d0df18149291811e69500842c8311ac723e0d0b1738a896",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "profile_preference_tags_20261122"
+      ],
+      "reviewedSha256": "f0cb971cdf51a632e0d13837d6d79d8d436b7075137d28afd202702fa41bb883"
     },
     {
       "path": "units/13_profile_settings/F13-05_data-export/backend.md",
@@ -13672,6 +13690,23 @@
         "currentBatchSourceDigests": 49
       },
       "scope": "계정 삭제 예약·즉시 탈퇴의 문서와 생성 자료 검사. 소스와 시험 목적·일부 본문 대조이며 새 제품 시험·실기기·운영 파기·법적 적합성·파일 소거·실제 송금 완료의 검증 아님. 출시 범위 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "F13-04: source_references tests; sync_source_reference_docs; check_scenario_audit; reviewed relative paths/digests; derived digests; canonical source reuse; exact two shared-policy HTML anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 91,
+        "sourceRecords": 337,
+        "verifiedRecords": 335,
+        "retiredRecords": 2,
+        "localSourceLocations": 338,
+        "reviewedDocumentRelativePaths": 599,
+        "derivedSourceDigests": 73,
+        "reusedSourceDigests": 23,
+        "sharedPolicyAnchors": 2
+      },
+      "scope": "문서·연결·근거 재사용 검사. 가입 후 프로필 관리의 범위이며 새 제품 시험이나 추천 결과 검증 아님. HTML 변환기의 문단 위치 생략을 이 페이지의 명시적 링크로 보완했다."
     }
   ],
   "evidenceGroups": {
@@ -14843,6 +14878,20 @@
           "sha256": "541be3db3d432bd7b598652ce26128906ca70269b99fd3b4c2294a35ee530756"
         }
       ]
+    },
+    "profile_preference_tags_20261122": {
+      "kind": "source_review",
+      "scope": "F13-04 프로필 태그 진입·단건 저장·조회/쓰기 실패·복귀·공통 소비 연결. 앞선 관심사 검토 소스 23개의 지문 불변 확인으로 재사용. 새 시험 실행·추천 결과 검증 아님.",
+      "reuses": [
+        "preference_tags_20261122"
+      ],
+      "sources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
+          "sha256": "e71ef9fdd9f985c6b1ca3d1624cdd05c8c384eb8d19cc75ca9209a297b9863aa"
+        }
+      ],
+      "reusedSourceDigestCount": 23
     }
   },
   "currentSourceVersions": {

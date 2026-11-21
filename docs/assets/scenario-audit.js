@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 49,
     "partialEvidenceChain": 34,
     "definitionOnlyEvidence": 92,
-    "traceMarkers": 332,
-    "verifiedTraceRecords": 330,
+    "traceMarkers": 337,
+    "verifiedTraceRecords": 335,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10879,10 +10879,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-04_preference-tags/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F13-04:1",
+            "label": "GET /api/v1/users/me/preference-tags — 본인 태그 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "getMyTags",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/preference-tags",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F13-04:2",
+            "label": "POST /api/v1/users/me/preference-tags — 태그 단건 추가",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "addTag",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/preference-tags",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          },
+          {
+            "id": "F13-04:3",
+            "label": "PUT /api/v1/users/me/preference-tags/{tagId} — 태그 단건 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "updateTag",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/preference-tags/{tagId}",
+                "targetLine": 44,
+                "methodLine": 45
+              }
+            ]
+          },
+          {
+            "id": "F13-04:4",
+            "label": "DELETE /api/v1/users/me/preference-tags/{tagId} — 태그 단건 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/UserPreferenceTagController.java",
+                "controller": "UserPreferenceTagController",
+                "method": "deleteTag",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/users/me/preference-tags/{tagId}",
+                "targetLine": 53,
+                "methodLine": 54
+              }
+            ]
+          },
+          {
+            "id": "F13-04:5",
+            "label": "GET /api/v1/interests/catalog — 관심사 카탈로그",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/InterestCatalogController.java",
+                "controller": "InterestCatalogController",
+                "method": "getCatalog",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/interests/catalog",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
