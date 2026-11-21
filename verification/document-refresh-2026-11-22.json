@@ -3100,9 +3100,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b9287b1917c30146fbaffeb2caef114a2ad787c9d3d30887c96219f794b89b74",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "9563416221dcba00607e57685ff11c08ca0d8096edf0c6a48c1d237884966245"
     },
     {
       "path": "docs/features/F06-08.html",
@@ -3110,9 +3113,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "730d69783c25b331682275edb0f166cb9f72554eb3f41e6eb79797fe4611b2ca",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "56ad844ef81e94b4c878aa819e30c06cab18fd6771c40b0fb224aae89f139753"
     },
     {
       "path": "docs/features/F06-09.html",
@@ -5953,10 +5959,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "2db51092c5a8c654420f7fb5d61812074f5a7a5248740fd105c30e82b992a20a",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "f1f10d2565d487b56edefc8b8d281569666fa1a9c88b786804db26ce1fc9fb5d"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
@@ -5964,10 +5972,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5124c449e8785b605b74748c7703c238e06a880b22afdb2f93ee0ebd1c25d534",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "e369daee8ee66f3de1e05c4648e94c80c8b7b3f12e8982d2af2e73afc1fa1abf"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
@@ -10243,9 +10253,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "922fb121540d9b9ddb7f124c5fb61e427dccb25ecfc79c50812a51dde8e45994",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "d97f52061cb1b49c3fccaf08475e5d43f071b94f2b0e7742883d9bcb3b30c7a7"
     },
     {
       "path": "units/06_payment/F06-07_hosting-ticket/diagrams.md",
@@ -10253,9 +10266,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f4f6e2aa0bb6f08551354f6a72d6c0ba615c6df742bbe2a1e3c2c3eb16efe108",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "84c388e794edaf1e72566f61301a1dd0d27b364b5862b7a1fc8b02b241f124b2"
     },
     {
       "path": "units/06_payment/F06-07_hosting-ticket/frontend.md",
@@ -10263,9 +10279,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1b2fee600a3d89f45833c1dd329121e91f6b915dc3a958fbda490f7249f08dfc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "c6474baa6f7f9938bc650f9507cb9f2306c67b1a5e653a6c72452e76fd7c1a0c"
     },
     {
       "path": "units/06_payment/F06-07_hosting-ticket/scenarios.md",
@@ -10273,9 +10292,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b90be1fbf608468f507126170f91defa229246253b55d4fba963c4c974fe35a0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "6b951bc5f78328f100a8c2e6874d01089787ec571d068b4fae1f6821d881925f"
     },
     {
       "path": "units/06_payment/F06-08_personal-subscription/backend.md",
@@ -10283,9 +10305,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "15a823031b3c8248f20293c21864cfb151ebd2f29cb334fe1c1f2ad8a2f11275",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "d0f16a8b6a30953364537b80eab8798e9dbf02ab913ea9070cac5693978028b3"
     },
     {
       "path": "units/06_payment/F06-08_personal-subscription/diagrams.md",
@@ -10293,9 +10318,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e61521f949ad0bd8e1bf49424650384ee8d0262602d36502829bc6c273ce0174",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "72a63ee98916ed1df96cd71512b76ecff4e913751ee75c30669181f992f03fbf"
     },
     {
       "path": "units/06_payment/F06-08_personal-subscription/frontend.md",
@@ -10303,9 +10331,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "826b541de198f6de8bc70737bec57c323e214e210068988fad26c05743838182",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "de8c35da670af8391e427efef2e33e4456ca0208b78b0f5f32bea0afe7d6f537"
     },
     {
       "path": "units/06_payment/F06-08_personal-subscription/scenarios.md",
@@ -10313,9 +10344,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "194530603e80c065d9edf984b7e1b119cf3e26aff9060de11fdbb97ddfafdad2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "hosting_ticket_personal_subscription_20261122"
+      ],
+      "reviewedSha256": "00f6445485616fbdd6e84f04f802c01ee9551f9134f69fc782f9458811b6b73c"
     },
     {
       "path": "units/06_payment/F06-09_earnings-dashboard/backend.md",
@@ -14257,6 +14291,23 @@
         "retainedHtmlPages": 3
       },
       "scope": "수동 충전·카드 등록/관리·자동충전의 실제 호출·권한·금액/카드 검증·불확실 결과·복귀를 문서 대조. 카드 등록 세션 연결 추가, 자동충전 화면의 미사용 프리셋 연결 제거(프리셋 API는 수동 충전에 유지). 새 제품 시험·실결제·기기·실DB 검증 아님. 공통 정책·영역 요약·출시 날짜 관문은 아직 미완료."
+    },
+    {
+      "command": "F06-07/08: source-reference sync and 11 tests; scenario audit; reviewed document links/digests; source/canonical fingerprints; retained HTML IDs; incoming Markdown anchor scan; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 12,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 99,
+        "sourceRecords": 383,
+        "verifiedRecords": 381,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1286,
+        "derivedSourceDigests": 164,
+        "currentSourceAndCanonicalDigests": 47,
+        "retainedHtmlPages": 2
+      },
+      "scope": "개설권 구매·사용·원본 반환·운영자 잔여 환불과 개인 멤버십 판정·기간 구간·갱신·해제의 문서 대조 및 파생 자료 검사. 내부 환불과 혜택 카탈로그 연결 두 개 추가. 새 제품 시험·실DB·실결제·운영 배치·기기 검증 아님. 결제/환불 공통 기능·영역 요약·공통 정책·출시 날짜 관문은 아직 미완료."
     }
   ],
   "evidenceGroups": {
@@ -17525,6 +17576,233 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    "hosting_ticket_personal_subscription_20261122": {
+      "kind": "source_review",
+      "scope": "F06-07/08: 개설권의 수량 구매·잔액/한도·보유 목록/만료 표시·영수증 재시도·사용 원본 반환·운영자 잔여 환불 및 개인 멤버십 플랜/혜택·서버 가입 판정·기간 세그먼트·갱신/정지/해제·앱 갱신·확인 가격을 해당 함수와 필드에서 대조. 시험은 문서에 명시한 단언만 확인; 새 제품 시험·실DB 경합·실결제·운영 배치·기기·알림 실수신 아님. 소스 파일 해시는 전체 파일 기능 검증을 뜻하지 않는다.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketController.java",
+          "sha256": "6b18afcf5d23e3d1f5ae941271678878fde0911e5ed3d88782403a006845ee81"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketInternalController.java",
+          "sha256": "04c29845c583524e7ba42c249b3d12cb820d3520eda2a5c832d976aaac929e58"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/HostingTicketService.java",
+          "sha256": "f6f07d87644e12ff6eb16ad1c418ed4496cd532458ac1f86b46d53325c46c9b7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/HostingTicketRepository.java",
+          "sha256": "a440ab27989d18ae867aa999cc7189ac9ed19522fdbc629b17af96b0370fba73"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/model/HostingTicket.java",
+          "sha256": "62ede5b344f35085bfb2de9b6c8caba02c2fdfb955891dc923ab477aa18a7db6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/HostingTicketExpireWorker.java",
+          "sha256": "93fcf9f08ed92c9946f258fcbcd5637df9f11db65ae721044f8a78deb90ef839"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/HostingTicketVo.java",
+          "sha256": "51c1415cbaa282138a070f67667873c768cd1c7bc336ebed305458c27ea89cec"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/TicketPurchaseParam.java",
+          "sha256": "99c67f33773d433d3b3c4cd000a76792d03aceb7d34e319f65199461593c817b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingOpenEntryService.java",
+          "sha256": "d2ba20b3cd0ed2160a36a21a3fdef633f0bf443a393281be5c667d98b38623a6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletSpendService.java",
+          "sha256": "8055356dba4bbf6bb233978b417e97f26b8542578ba75b43794e309b15f9ce89"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/service/HostingTicketServiceTest.java",
+          "sha256": "da6b7110823f24b00a5b154ecc415c712533a7a5a5ed05214a23ff867f3f16d4"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+          "sha256": "7b5c2af49cce64e7f895c4e056fa28f7d9a960d2fa8d63dfc420d841e225567b"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SubscriptionService.java",
+          "sha256": "aba6da08cb6bebe6f06aa5e2e2183a74439fa86d1b2eea69a84554c28cd2cf6a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SubscriptionTermService.java",
+          "sha256": "6d8867350caa6a140e8fe7fc9ca05ddb98943c0f367181d1df951b98e54e39e3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SubscriptionTransitions.java",
+          "sha256": "ac538e9875c09e0a85a91e1e8972ae1f0cdf491f8d963ee21c48a9139d163fd6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SubscriptionAutoRenewalService.java",
+          "sha256": "05f27d18f9de3482b2fd6a7d4c1b2dde26ba50bf3813403359ac79264a813d90"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SubscriptionRenewalWorker.java",
+          "sha256": "d5c960b318998f412e63ff9a60bf21b58e89fa221e3448d40dc89ae056cde0e9"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/model/Subscription.java",
+          "sha256": "37cddf78a6a2c72941e31b866640b285a1992ff9874e5a7a8d8b407f1389f588"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/SubscriptionVo.java",
+          "sha256": "97d8176f03449af74e80e260cc6f5929c06c42a9443ce2ef3fca18fe4f736ce3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/util/PaymentMapper.java",
+          "sha256": "65d988c33145d944a80327314417f96a34d32268556e9f688c7091d8d24a2fa5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/SubscriptionPlan.java",
+          "sha256": "7447ddf8cb0ea83d931a339f9da9398c3b166e9390adeee8fac2d5edbb4d5654"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/SubscriptionStatus.java",
+          "sha256": "8bbbdf3f57a2d892a898f5bf66d5aadd89b4f59ec17f7ee25661d3a2ced93fad"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/subscription/benefit/SubscriptionBenefitCatalog.java",
+          "sha256": "0a7096a76c3eeb55a4ee2103b0fe95c90e0580e9bff2436fe4c21b60fe22611d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/subscription/benefit/SubscriptionBenefit.java",
+          "sha256": "54770794a3339ecd6c80e110ea12dd5db2d9e747c4c18f6a4be12d36ebd8f79c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/subscription/policy/SubscriptionBenefitPolicy.java",
+          "sha256": "4388befd2ee7b11bab0089e117ee4b5b1523c080d8445d86406cc8d2802f38f2"
+        },
+        {
+          "path": "community_app/lib/data/api/hosting_ticket_api.dart",
+          "sha256": "30932dabfe73294bab73365cb2ba8126aaa7978cdbdc9ea3d27306328e6f052f"
+        },
+        {
+          "path": "community_app/lib/data/repositories/hosting_ticket_repository.dart",
+          "sha256": "9ff5c810d9f7d2388ec24340ca800b96cff512f6790765b0d966ae06a29fc604"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/hosting_ticket_provider.dart",
+          "sha256": "03761002b8f7b919516ff549c2b6790f27f6c2932552c54f945a3b6098ef303f"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/hosting_ticket_screen.dart",
+          "sha256": "cd4ef644862cc31306e79912189ef3544adfa39e13c8f12bcdae9901deb50311"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/hosting_ticket.dart",
+          "sha256": "03010ed4abf19e9e2230721f70d10ac6d0f3a3771217ef4d23a3080789e4968d"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03"
+        },
+        {
+          "path": "community_app/lib/data/models/common/api_error.dart",
+          "sha256": "5f4c4120be8fadad0877434fc3ed49055c5000f9e619c449b222a9f547c4b30b"
+        },
+        {
+          "path": "community_app/lib/data/api/personal_subscription_api.dart",
+          "sha256": "b7153eb880b77a0ff7c0ecf075c97de0aa4b46efaf418ae8d4025a7dbaa162b9"
+        },
+        {
+          "path": "community_app/lib/data/repositories/personal_subscription_repository.dart",
+          "sha256": "6157b4dc98494b42b52a073bea742097c47ecc0b5df7e783dcc8e91dd822acfa"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/personal_subscription_provider.dart",
+          "sha256": "2153130a7421793576c0d0d2a5366dc6e20842df6e4b0b60341dd9e8d8836aa8"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/personal_subscription_screen.dart",
+          "sha256": "765c721e3f547c0d0ed59c6b55ae8f26f6a31d05346d77ef49c606b9b6f5ad09"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/personal_subscription.dart",
+          "sha256": "60a00dd2f3e7de05d14ad3d217f4b95697b8fdf94dced52c59aa8160a3a41b8c"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/personal_subscription_plan.dart",
+          "sha256": "344a7372dc4a868cfd84d5abf6807d0640cdf69a4f93a96d7de6a40bca08c1a2"
+        },
+        {
+          "path": "community_app/test/payment/personal_subscription_server_judgement_test.dart",
+          "sha256": "5e790512c3ec62183e51760c2122930a614dc67377f51a3c746bdae626a5e292"
+        },
+        {
+          "path": "community_app/test/payment/personal_subscription_provider_test.dart",
+          "sha256": "99e93888e316a21dd1c8ceb541a367abab206c430499f2c7288518614b64d52e"
+        },
+        {
+          "path": "community_app/test/unit/withdrawal_and_ticket_request_key_test.dart",
+          "sha256": "ca9360e938c362cb8ab87fc494cd60b628774474a70bfd1deaac1f9fe1e486b4"
+        }
+      ],
+      "reuses": [
+        "wallet_history_earnings_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_app/lib/presentation/payment/screens/wallet_screen.dart",
+          "sha256": "7f80865b15761dd871296863296beb73bbb6d904d4b01a94b7d492cde1f93b81"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745"
+        },
+        {
+          "path": "docs/ui-ux/screens/20-payment-advanced.md",
+          "sha256": "01d20453889071d1b78a9bbdcdf70b01da780750310aa143f127bf92d2b43c3a"
+        }
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
+          "sha256": "f1f10d2565d487b56edefc8b8d281569666fa1a9c88b786804db26ce1fc9fb5d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
+          "sha256": "e369daee8ee66f3de1e05c4648e94c80c8b7b3f12e8982d2af2e73afc1fa1abf"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F06-07.html": [
+          "sidebar",
+          "launch-strip",
+          "money-retry-current",
+          "operator-ticket-refund",
+          "release-completion"
+        ],
+        "docs/features/F06-08.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F06-07:3",
+          "change": "added",
+          "reason": "공개 HTML에 있는 운영자 잔여 개설권 환불의 내부 서버 창구를 회원 구매 창구와 구분해 연결"
+        },
+        {
+          "id": "F06-08:6",
+          "change": "added",
+          "reason": "현재 멤버십 화면이 사용하는 혜택 카탈로그 조회 연결 추가"
         }
       ]
     }

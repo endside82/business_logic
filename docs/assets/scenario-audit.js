@@ -6,29 +6,29 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,115개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,118개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1115,
+    "documentedScenarioItems": 1118,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 62,
+    "directlyLinkedAutomatedTests": 63,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 62,
-    "directlyLinkedJourneys": 42,
+    "automatedScenarioReferences": 63,
+    "directlyLinkedJourneys": 41,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 42,
+    "journeyScenarioReferences": 41,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 47,
-    "partialEvidenceChain": 46,
-    "definitionOnlyEvidence": 82,
-    "traceMarkers": 381,
-    "verifiedTraceRecords": 379,
+    "completeEvidenceChain": 46,
+    "partialEvidenceChain": 48,
+    "definitionOnlyEvidence": 81,
+    "traceMarkers": 383,
+    "verifiedTraceRecords": 381,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -6405,18 +6405,18 @@ window.SCENARIO_AUDIT = {
       "id": "F06-07",
       "domain": "결제 & 지갑",
       "name": "호스팅 티켓 구매",
-      "scenarioCount": 6,
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-07_hosting-ticket/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-07_hosting-ticket/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
@@ -6452,15 +6452,34 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 48
               }
             ]
+          },
+          {
+            "id": "F06-07:3",
+            "label": "POST /api/internal/hosting-tickets/{ticketId}/operator-refund — 운영자 연계 내부 환불 창구",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/HostingTicketInternalController.java",
+                "controller": "HostingTicketInternalController",
+                "method": "refundByOperator",
+                "httpMethod": "POST",
+                "httpPath": "/api/internal/hosting-tickets/{ticketId}/operator-refund",
+                "targetLine": 38,
+                "methodLine": 40
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/unit/withdrawal_and_ticket_request_key_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/payment/hosting_ticket_guidance_card_test.dart"
         ]
@@ -6473,7 +6492,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
@@ -6483,18 +6502,18 @@ window.SCENARIO_AUDIT = {
       "id": "F06-08",
       "domain": "결제 & 지갑",
       "name": "개인 구독 관리",
-      "scenarioCount": 12,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/06_payment/F06-08_personal-subscription/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/06_payment/F06-08_personal-subscription/backend.md",
-        "total": 5,
-        "verified": 5,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
         "entries": [
           {
@@ -6581,34 +6600,50 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 74
               }
             ]
+          },
+          {
+            "id": "F06-08:6",
+            "label": "GET /api/v1/subscriptions/benefits — 혜택 카탈로그",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SubscriptionController.java",
+                "controller": "SubscriptionController",
+                "method": "getBenefits",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/subscriptions/benefits",
+                "targetLine": 42,
+                "methodLine": 43
+              }
+            ]
           }
         ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 2,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_subscription_mutation_test.dart"
+          "community_app/test/payment/personal_subscription_provider_test.dart",
+          "community_app/test/payment/personal_subscription_server_judgement_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_subscription_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_subscription_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_subscription_mutation_test.dart"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,

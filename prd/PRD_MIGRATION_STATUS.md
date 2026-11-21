@@ -283,8 +283,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F06-04 | 결제 & 지갑 | [F06-04_payment-method_prd.md](02_feature_prds/06_payment/F06-04_payment-method_prd.md) | `F06-04_payment-method` | 실사 기반 전환본 | 5 | 5 |
 | F06-05 | 결제 & 지갑 | [F06-05_auto-charge_prd.md](02_feature_prds/06_payment/F06-05_auto-charge_prd.md) | `F06-05_auto-charge` | 실사 기반 전환본 | 3 | 7 |
 | F06-06 | 결제 & 지갑 | [F06-06_point-pay-refund_prd.md](02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md) | `F06-06_point-pay-refund` | 실사 기반 전환본 | 3 | 21 |
-| F06-07 | 결제 & 지갑 | [F06-07_hosting-ticket_prd.md](02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md) | `F06-07_hosting-ticket` | 실사 기반 전환본 | 2 | 3 |
-| F06-08 | 결제 & 지갑 | [F06-08_personal-subscription_prd.md](02_feature_prds/06_payment/F06-08_personal-subscription_prd.md) | `F06-08_personal-subscription` | 실사 기반 전환본 | 5 | 3 |
+| F06-07 | 결제 & 지갑 | [F06-07_hosting-ticket_prd.md](02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md) | `F06-07_hosting-ticket` | 실사 기반 전환본 | 3 | 6 |
+| F06-08 | 결제 & 지갑 | [F06-08_personal-subscription_prd.md](02_feature_prds/06_payment/F06-08_personal-subscription_prd.md) | `F06-08_personal-subscription` | 실사 기반 전환본 | 6 | 6 |
 | F06-09 | 결제 & 지갑 | [F06-09_earnings-dashboard_prd.md](02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md) | `F06-09_earnings-dashboard` | 실사 기반 전환본 | 1 | 4 |
 | F06-10 | 결제 & 지갑 | [F06-10_settlement-appeal_prd.md](02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md) | `F06-10_settlement-appeal` | 실사 기반 전환본 | 5 | 5 |
 | F07-01 | 모임 정산 | [F07-01_create-settlement_prd.md](02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) | `F07-01_create-settlement` | 실사 기반 전환본 | 3 | 2 |

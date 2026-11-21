@@ -1,93 +1,83 @@
-# F06-08. 개인 구독 관리 PRD
+# F06-08. 개인 멤버십 구독·갱신·해제 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버·앱 소스와 명시한 기존 시험 단언을 대조했다. 새 제품 시험·기기·실결제·운영 배치의 통과 기록은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-플랜 카탈로그(유료 등급 PREMIUM 하나) 조회 → 구독 시작(`/subscribe`) → 자동갱신 해제(`/cancel`) → 정지된 구독 재활성(`/reactivate`)을 한 컨트롤러에서 제공한다. 결제는 외부 PG가 아닌 사용자 지갑 포인트 차감(`walletSpendService.spend(SUBSCRIPTION, ...)`)으로 처리되며, `TransactionType.PERSONAL_SUBSCRIPTION_PAY`로 거래 내역에 기록된다. 자동갱신 시도(주기 만료 시)는 `SubscriptionService` 스케줄러에서 별도로 운영(본 단위 외).
+개인 멤버십은 지갑으로 구독하고 자동갱신을 끄거나 정지 상태에서 다시 시작하는 기능이다. 현재 판매 플랜은 PREMIUM 하나, 기본 설정은 30일 2,800P이며 가격은 서버 운영 설정으로 바뀔 수 있다. BASIC은 기존 자료 호환용으로 남지만 신규 카탈로그와 가입 대상에서 제외한다. 만료 후 재가입은 기존 구독에 이용 기간 구간을 더하는 구조이며 매번 새 구독 행을 만든다는 설명은 현재와 다르다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 코드 위치
 
-- 지갑 메인(F06-01) ▶ "커뮤니티 멤버십" 진입 카드 (`_MembershipEntryCard`)
-- 프로필 설정 ▶ "멤버십" 메뉴 (선택)
-- 구독 만료 알림(자동갱신 실패 등) 푸시 → 본 화면 직진입
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `SubscriptionController`, `Subscription`, `SubscriptionService`, `ClubSubscriptionStatus`, `FavoriteService`, `PrivacySettingService`, `WalletSpendService`. 앱: `favorite_list_screen.dart`, `privacy_settings_screen.dart`, `personal_subscription_screen.dart`.
+서버: SubscriptionController·SubscriptionService·SubscriptionTermService·SubscriptionTransitions, SubscriptionAutoRenewalService·SubscriptionRenewalWorker, Subscription·SubscriptionVo·PaymentMapper, SubscriptionPlan·SubscriptionStatus, SubscriptionBenefitCatalog·SubscriptionBenefit·SubscriptionBenefitPolicy, WalletSpendService. 앱: personal_subscription_api.dart·personal_subscription_repository.dart·personal_subscription_provider.dart·personal_subscription_screen.dart, personal_subscription.dart·personal_subscription_plan.dart.
 
 <!-- source-references:start -->
-서버 창구: `SubscriptionController#getPlans`, `SubscriptionController#getMySubscription`, `SubscriptionController#subscribe`, `SubscriptionController#cancelAutoRenew`, `SubscriptionController#reactivate`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `SubscriptionController#getPlans`, `SubscriptionController#getMySubscription`, `SubscriptionController#subscribe`, `SubscriptionController#cancelAutoRenew`, `SubscriptionController#reactivate`, `SubscriptionController#getBenefits`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 입구·조회·상태의 의미
 
-### 멤버십 (`personal_subscription_screen.dart`)
+지갑의 멤버십 카드에서 `/profile/wallet/subscription`으로 연다. 화면은 플랜 목록, 내 구독, 혜택 카탈로그, 지갑을 각각 요청한다. 내 구독은 단건 또는 없음이며, 없는 경우 현재 구독 카드를 그리지 않는다. 플랜이 비면 이용 가능한 플랜 없음 안내를 표시한다.
 
-- **사용자가 보는 것**:
-  - AppBar `멤버십`
-  - `_HeroCard` — primary700/primary500/warning500 그라디언트, "Community Plus / 더 적은 마찰로 모임을 운영하세요" + 현재 지갑 잔액 표기
-  - `_CurrentSubscriptionCard` — 활성/예약해지/정지/만료 상태별 `_StatusPill` (이용 중 / 해지 예약 / 정지 / 만료) + 단가 + 만료일 + 액션 버튼(자동갱신 해제 / 재활성화 / 안내문)
-  - "플랜 선택" 섹션 헤더
-  - `_PlanCard` (서버가 주는 프리미엄 하나) — 단가, 기간, 혜택 체크리스트, "지갑으로 구독" 또는 "이용 중" 버튼
-  - `_PolicyNote` — "구독은 지갑 잔액에서 결제되며, 자동갱신 해제 후에도 만료일까지 이용할 수 있습니다."
-- **사용자가 할 수 있는 액션**:
-  - 풀투리프레시 ▶ `personalSubscriptionPlansNotifierProvider`, `personalSubscriptionNotifierProvider`, `walletNotifierProvider` 모두 invalidate
-  - "지갑으로 구독" 탭 ▶ 확인 다이얼로그 ("BASIC/PREMIUM 구독 / N P가 지갑에서 차감됩니다") → 동의 시 `notifier.subscribe(planType)` ▶ `POST /subscriptions/subscribe { planType }` ▶ 토스트 "구독이 시작되었습니다"
-  - 잔액 부족 사전 가드: walletBalance < plan.price면 토스트 "잔액이 부족합니다. 포인트를 충전한 뒤 다시 시도해주세요."
-  - "자동갱신 해제" 탭 ▶ 확인 다이얼로그 → `notifier.cancelAutoRenew()` ▶ `POST /subscriptions/cancel` ▶ 토스트 "자동갱신을 해제했습니다"
-  - "재활성화" 탭 ▶ 확인 다이얼로그 → `notifier.reactivate()` ▶ `POST /subscriptions/reactivate` ▶ 토스트 "멤버십이 재활성화되었습니다"
-- **상태 분기**:
-  - 로딩: `SkeletonLoader(preset: SkeletonPreset.list)`
-  - 에러: `AppErrorState.fromError(error, onRetry: _refresh)`
-  - 빈 플랜 응답: `_EmptyPlanCard` "이용 가능한 멤버십 플랜이 없습니다."
-  - 현재 구독 없음: `_CurrentSubscriptionCard` 자체를 그리지 않고 플랜만 노출
-- **모달/시트/네비게이션**:
-  - `AlertDialog` (구독/해제/재활성 각각)
-  - 토스트는 `AppToast.show(...)`
+현재 구독 카드의 표지는 서버 상태를 사용한다. ACTIVE는 이용 중, CANCELLED는 해지 예약, SUSPENDED는 정지, EXPIRED는 만료, REFUNDING은 환불 중이다. 상태 표지와 실제 이용 기간·새 가입 가능 여부를 같은 값으로 취급하지 않는다.
 
-## 4. 제품 규칙
+서버는 만료 시각이 지났고 환불 예약이 아닌지를 `canSubscribe`로 돌려준다. 앱은 이 값을 읽고 기기 시각만으로 새 가입을 허용하지 않는다. 값이 빠지면 기본은 가입 불가다. 다만 정지는 새 가입 단추 대신 다시 시작으로 안내한다. 구독이 전혀 없으면 가입 가능하다. 서버의 실제 쓰기에서는 남아 있는 이용 기간 구간·환불 진행 상태를 다시 확인한다.
 
-- 유료 등급은 PREMIUM 하나이고 30일 2,800P다. 값은 운영 설정으로 바꿀 수 있다. 구독하지 않은 상태가 무료 등급이다. BASIC 은 옛 행 호환용으로 목록에 없고 새로 구독할 수 없다.
-- 상태는 ACTIVE, CANCELLED(자동 갱신 해제, 만료일까지 이용), SUSPENDED, EXPIRED, REFUNDING(운영 환불 진행 중) 다섯이다.
-- 결제는 유료 우선 차감이다. 받는 사람이 없는 플랫폼 매출이라 쓰인 무료 포인트는 누구에게도 넘어가지 않는다.
-- 돈 이동이 닫혀 있으면 구독과 재활성을 거절한다.
-- 자동 갱신이 실패하면 1, 2회째는 결제 실패 알림을 보낸다. 3회째는 SUSPENDED 로 바꾸고 7일 유예를 주며 알림을 보낸다. 유예 안에 재활성하면 새 기간이 시작되고, 유예가 지나면 EXPIRED 가 되고 만료 알림이 간다.
-- CANCELLED 는 만료일이 지나면 EXPIRED 가 된다. 서버가 여러 대여도 한 구독은 한 번만 결제된다.
-- 운영 환불은 환불 대상을 REFUNDING 으로 먼저 잡아 동시 환불을 막고, 원결제의 유료·무료 구성을 복원한다.
+개인 구독 공개 범위가 닫히면 플랜 가입과 재활성화는 가리고 기존 구독 조회·자동갱신 해제 입구를 유지한다. 서버도 내 구독 조회와 해제에 별도 종료 경로 예외를 둔다. 결제 기능 제한은 별개로 서버의 가입·재활성화·갱신에서 검사한다. 이 문서는 현재 운영 배포의 플래그 값을 선언하지 않는다.
 
-| PREMIUM 혜택 | 없을 때 |
+## 가입·해제·재활성화와 실패
+
+| 행동 | 현재 앱·서버 흐름 |
 |---|---|
-| 관심인 10명 | 3명까지 등록 |
-| 관심인에게 캘린더 공개 제어 | 켜면 PREMIUM_REQUIRED |
-| Google 캘린더 자동 동기화 | 켜면 PREMIUM_REQUIRED |
-| 클럽 숨김 | 켜면 PREMIUM_REQUIRED |
+| 가입 | 플랜의 가격·일수·자동갱신을 확인한 뒤 `planType` 전송. 읽은 잔액이 가격보다 작으면 앱에서 안내만 하고 중단. 잔액을 모르면 서버 판정까지 진행 가능 |
+| 지갑 차감 | 유료 우선으로 부족분은 무료 포인트를 사용. 지갑 잠금·만료 무료분 정리·사용 제한·충전 원본 소비를 확인. 이 경로 자체가 자동충전을 호출하지는 않음 |
+| 기간 생성 | 본인의 구독을 생성 또는 잠금 조회하고 이용 기간 구간을 추가. 살아 있는 기간이 남았거나 환불 예약이면 직접 가입·재시작 거절. 새 30일 기간과 활성·자동갱신 상태 반영 |
+| 자동갱신 해제 | 앱은 ACTIVE이고 자동갱신 중일 때 표시. 확인 뒤 서버가 CANCELLED·자동갱신 꺼짐으로 변경. 남은 기간을 즉시 환불하는 동작이 아님 |
+| 다시 시작 | 앱은 SUSPENDED에 표시. 서버는 해당 상태를 찾아 현재 플랜 가격으로 다시 차감하고 새 기간·자동갱신을 시작 |
+| 성공 | 토스트 후 현재 화면에 남고 구독·혜택 변경을 알림. 돈이 움직인 가입·다시 시작은 지갑도 다시 읽음 |
+| 실패 | 오류를 표시. 반영됐을 가능성이 있는 오류는 구독과 필요한 지갑을 다시 읽고 성공 여부를 단정하지 않음 |
 
-## 6. 상태/권한/시나리오 매트릭스
+확인창을 열 때 계정 세션을 잡고 요청은 해당 세션에서 수행한다. 요청 중 앱은 처리 중 표시를 사용한다. 개설권 구매와 달리 이 API에는 같은 구매의 영속 요청 번호를 보내는 계약이 없다. 서버의 기간 중복 검사와 응답 유실 후 최초 결과 재생을 같은 보장으로 쓰지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 첫 구독 (Happy Path) | `/profile/wallet/subscription`, `GET /subscriptions/me` → null | 사용자 잔액 47,200P, ACTIVE 구독 1건. 거래 내역에 `PERSONAL_SUBSCRIPTION_PAY -2,800P`. |
-| S2 | 자동갱신 해제 (이용은 만료까지 유지) | ACTIVE 구독 (만료 5일 후), autoRenew=true | 사용자는 만료 시점까지 PREMIUM 혜택 유지, 그 이후 자동 결제 없음. |
-| S3 | 정지된 구독 재활성 | status=SUSPENDED | 잔액 -2,800, ACTIVE 구독 복귀. |
-| S4 | 잔액 부족으로 구독 시도 실패 | 잔액 2,000P, PREMIUM(2,800) 구독 시도 | 충전 1건 + 구독 1건 (재시도 후). |
-| S5 | 이미 활성 구독 보유한 채로 재구독 시도 | ACTIVE 상태에서 BASIC을 PREMIUM으로 바꾸려는 사용자 | 변경 없음. 사용자가 자동갱신 해제 → 만료 후 새 플랜으로 재가입하는 플로우 안내(미래 개선 영역). |
-| S6 | 만료 후 동일 플랜 재구독 | 만료된 구독을 다시 시작하려는 사용자 | 새 ACTIVE 구독 1건 추가, 이전 EXPIRED 행은 그대로 보존(이력). |
-| S7 | 잘못된 planType 시도 | 로그인 완료. mutation 무관 — 멱등. | 변경 없음. |
+## 이용 기간과 자동갱신·정지
 
-## 8. Gap / Risk
+현재 구독은 회원별 부모 행과 출처가 있는 이용 기간 구간을 사용한다. 직접 가입·재활성화·자동갱신은 각각 원 결제 거래를 출처로 남긴다. 기간이 끝나 새로 시작할 때 새 기간 세대를 열고, 유효한 구간의 끝에서 구독 만료 시각을 계산한다. PREMIUM 혜택은 현재 세대의 활성 구간이 지금을 포함하는지로 판단하며 정지는 혜택에서 제외한다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 시험 보강 기록 | 구독 시나리오 묶음의 덮지 못한 경우(잔액 부족 등)를 적은 시험 보강 기록이다. 결함이 아니다 | 없음 |
+자동갱신 작업은 매일 03시로 설정돼 있고, 개인 구독 공개 범위가 닫히면 실행을 건너뛴다. ACTIVE·자동갱신 켜짐·만료 시각 경과 건을 대상으로 한다. BASIC·결제 기능 닫힘·탈퇴 완료 계정은 청구하지 않는다. 작업 잠금과 기간 구간의 잠금 아래 재검사로 중복을 방어한다. 이를 여러 서버에서 실제 경합 시험을 마쳤다는 기록으로 쓰지 않는다.
 
-## 9. 수용 기준
+잔액 부족으로 갱신을 못 하면 실패 횟수를 센다. 1·2회에는 결제 실패 알림을 저장하고, 3회부터 정지와 7일 유예를 기록한다. 잠금 경합·인프라 실패 등은 같은 잔액 부족 횟수로 세지 않고 운영 확인과 다음 스캔 대상으로 구분한다. 실제 알림 수신은 별도다.
 
-- **AC-01. 첫 구독 (Happy Path)**: Given `/profile/wallet/subscription`, `GET /subscriptions/me` → null When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 47,200P, ACTIVE 구독 1건. 거래 내역에 `PERSONAL_SUBSCRIPTION_PAY -2,800P`.
-- **AC-02. 자동갱신 해제 (이용은 만료까지 유지)**: Given ACTIVE 구독 (만료 5일 후), autoRenew=true When 사용자가 해당 흐름을 실행하면 Then 사용자는 만료 시점까지 PREMIUM 혜택 유지, 그 이후 자동 결제 없음.
-- **AC-03. 정지된 구독 재활성**: Given status=SUSPENDED When 사용자가 해당 흐름을 실행하면 Then 잔액 -2,800, ACTIVE 구독 복귀.
-- **AC-04. 잔액 부족으로 구독 시도 실패**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 충전 1건 + 구독 1건 (재시도 후).
-- **AC-05. 이미 활성 구독 보유한 채로 재구독 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변경 없음. 사용자가 자동갱신 해제 → 만료 후 새 플랜으로 재가입하는 플로우 안내(미래 개선 영역).
-- **AC-06. 만료 후 동일 플랜 재구독**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 새 ACTIVE 구독 1건 추가, 이전 EXPIRED 행은 그대로 보존(이력).
-- **AC-07. 잘못된 planType 시도**: Given 로그인 완료. mutation 무관 — 멱등. When 사용자가 해당 흐름을 실행하면 Then 변경 없음.
+만료 정리는 매일 03시 30분으로 설정돼 있다. 자동갱신 없는 ACTIVE의 만료를 먼저 정리하고, 개인 구독 공개 범위가 열려 있을 때 해지 예약의 만료와 정지 유예 경과도 정리한다. 화면과 재활성화 API는 정지 상태 자체를 조건으로 쓰므로 유예 시각이 지났다는 이유만으로 즉시 단추·요청이 막힌다고 단정하지 않는다.
+
+## 혜택 카탈로그와 재조회
+
+혜택 목록은 서버 카탈로그의 이름을 사용한다. 관심인 한도는 서버가 반환한 무료·프리미엄 한도를 표시하고, 관심인에게 캘린더 공개 제어·Google 캘린더 자동 동기화·클럽 숨김을 함께 안내한다. 각 기능을 실제로 켤 때의 PREMIUM 조건은 해당 기능 서버 정책을 따른다. 카탈로그에 보인다는 사실을 각 외부 연동 실행 완료로 보지 않는다.
+
+내 구독을 읽으면 서버 만료 시각까지 서울 기준 남은 시간을 계산해 해당 시각의 구독·혜택 재조회 신호를 예약한다. 이는 서버의 구독 가능 판정을 기기에서 대신하는 기능이 아니다. 수동 새로고침은 플랜·내 구독·지갑을 무효화한다. 혜택 카탈로그는 이 수동 새로고침 목록에 없으며 별도 구독 변경 신호를 따른다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인한 차이·한계 | 영향·후속 |
+|---|---|---|
+| Gap | 다시 시작 확인창은 저장된 구독 가격을 보여 주지만 서버 차감은 현재 가격 설정을 사용 | 가격이 바뀌었을 때 동의 금액과 실제 차감이 다를 수 있어 보완 대상 |
+| Gap | 혜택 카탈로그 오류는 전체 오류 판정에서 빠지고 값이 없으면 혜택 목록이 비며 수동 새로고침에도 포함되지 않음 | 혜택 없음·조회 실패 구분과 재시도 보완 대상 |
+| Gap | 정지 유예 경과는 배치가 상태를 바꾸기 전까지 재활성화 API의 직접 차단 조건이 아님 | 7일을 정확한 요청 마감으로 설명하지 않도록 계약 정리 필요 |
+| Risk | 구독·재활성화 API에는 개설권과 같은 영속 요청 번호 재생 계약이 없음 | 통신 실패 뒤 중복 시도·현재 상태 재확인 범위를 별도로 검증 |
+| Risk | 화면의 잔액 사전 검사는 조회 당시 값이며 부족 안내에 충전 이동 단추가 없음 | 최종 차감은 서버가 판정하며 자동 충전·자동 복귀를 약속하지 않음 |
+| 미검증 | 여러 서버의 갱신 경합·실제 가격 설정 변경·환불 처리·알림 수신·기기 복귀 | 기존 시험 단언과 코드 대조를 제품 실행·운영 완료로 확대하지 않음 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 플랜:** 현재 판매는 PREMIUM 하나이며 가격·일수는 서버 응답으로 표시한다.
+- **AC-02 가입 판정:** 서버 `canSubscribe`와 정지·환불 상태를 구분하고 기기 시각만으로 가입을 열지 않는다.
+- **AC-03 공개 제한:** 신규 가입·재활성화 제한 중에도 기존 구독 조회와 해제 입구를 유지한다.
+- **AC-04 차감:** 가입·재시작은 유료 우선 지갑 차감이며 자동충전 실행과 구분한다.
+- **AC-05 기간 기록:** 기존 구독과 출처별 이용 기간 구간으로 재가입·갱신을 기록한다.
+- **AC-06 해제:** 자동갱신만 끄며 남은 기간 이용과 즉시 환불을 구분한다.
+- **AC-07 재시작 가격:** 확인창 가격과 현재 청구 가격의 차이 가능성을 해결할 요구로 유지한다.
+- **AC-08 갱신 실패:** 잔액 부족 횟수·3회 정지·7일 유예를 인프라 실패와 구분한다.
+- **AC-09 만료:** 상태 정리 배치와 기간에 따른 실제 혜택·가입 판정을 구분한다.
+- **AC-10 결과 재조회:** 성공·반영 가능 오류에서 구독·필요한 지갑을 다시 읽고 응답 유실을 성공으로 단정하지 않는다.
+- **AC-11 혜택:** 서버 카탈로그와 실제 기능 권한을 구분하고 조회 실패를 빈 혜택으로 숨기는 현재 한계를 기록한다.
+
+기존 `personal_subscription_server_judgement_test.dart`는 서버 가입 판정·기기 시각 불일치·정지·환불·구독 없음·필드 누락 시 기본 차단을 단언한다. `personal_subscription_provider_test.dart`의 플랜 코드 전달과 가입 후 재조회 단언도 확인했다. 시험의 BASIC·9,900P 모의 자료를 현재 판매 플랜·운영 가격으로 쓰지 않는다. 이번에는 새 시험·실DB 갱신·실결제·알림 수신을 실행하지 않았다.
