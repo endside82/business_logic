@@ -1,7 +1,7 @@
 # F14-02. 위치 공유 중지 (opt-out) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > 2026-07-29 현재 소스 갱신: `LocationService#optOut`은 `LocationOptIn.optedIn=false` 저장과 함께 `locationShareRepository.deleteByEventIdAndUserId(eventId, userId)`를 호출한다. 따라서 기존 문서의 “LocationShare 행은 남는다”는 설명은 현재 소스와 반대이며, 성공 즉시 보관 좌표를 삭제하는 계약으로 교정한다.

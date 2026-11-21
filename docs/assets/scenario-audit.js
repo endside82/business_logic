@@ -4,29 +4,29 @@ window.SCENARIO_AUDIT = {
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "9eec7d87c660366764ab9f2050a005cd994a4a20"
+    "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,068개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,063개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1068,
+    "documentedScenarioItems": 1063,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4944,
+    "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 54,
+    "directlyLinkedAutomatedTests": 52,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 54,
-    "directlyLinkedJourneys": 52,
+    "automatedScenarioReferences": 52,
+    "directlyLinkedJourneys": 48,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 52,
+    "journeyScenarioReferences": 48,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 53,
-    "partialEvidenceChain": 33,
-    "definitionOnlyEvidence": 89,
+    "completeEvidenceChain": 51,
+    "partialEvidenceChain": 32,
+    "definitionOnlyEvidence": 92,
     "traceMarkers": 304,
     "verifiedTraceRecords": 302,
     "unresolvedTraceRecords": 0,
@@ -9683,13 +9683,13 @@ window.SCENARIO_AUDIT = {
       "id": "F12-01",
       "domain": "알림",
       "name": "알림 목록 조회 & 읽음 관리",
-      "scenarioCount": 9,
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-01_notification-list-read/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-01_notification-list-read_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-01_notification-list-read/backend.md",
@@ -9699,7 +9699,7 @@ window.SCENARIO_AUDIT = {
         "entries": [
           {
             "id": "F12-01:1",
-            "label": "GET /api/v1/notifications — 알림 목록 페이지 조회",
+            "label": "앱 커서 조회와 MCP 위임 쪽 번호 조회 — 알림함",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -9711,6 +9711,15 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/notifications",
                 "targetLine": 37,
                 "methodLine": 38
+              },
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/notification/controller/NotificationController.java",
+                "controller": "NotificationController",
+                "method": "getNotificationsAfter",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/notifications/cursor",
+                "targetLine": 51,
+                "methodLine": 52
               }
             ]
           },
@@ -9785,31 +9794,27 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 2,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart",
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "real",
       "knownIssues": 1,
@@ -9902,13 +9907,13 @@ window.SCENARIO_AUDIT = {
       "id": "F12-03",
       "domain": "알림",
       "name": "카테고리별 알림 설정",
-      "scenarioCount": 7,
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-03_category-settings/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-03_category-settings_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-03_category-settings/backend.md",
@@ -9970,30 +9975,26 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_notification_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
@@ -10003,13 +10004,13 @@ window.SCENARIO_AUDIT = {
       "id": "F12-04",
       "domain": "알림",
       "name": "방해금지 시간 설정",
-      "scenarioCount": 7,
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/12_notification/F12-04_quiet-hours/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/12_notification/F12-04_quiet-hours_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/12_notification/F12-04_quiet-hours/backend.md",
@@ -10196,14 +10197,11 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 5,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/scripts/e2e/run_p67_notification_mutation_matrix.sh",
-          "community_app/scripts/e2e/run_p68_notification_permission_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart",
           "community_app/integration_test/seed_notification_permission_test.dart",
@@ -10212,7 +10210,7 @@ window.SCENARIO_AUDIT = {
           "community_app/scripts/e2e/run_p68_notification_permission_matrix.sh"
         ]
       },
-      "evidenceStage": 2,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
@@ -10249,14 +10247,11 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 2,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 5,
-        "scenarioReferenceCount": 2,
-        "files": [
-          "community_app/scripts/e2e/run_p67_notification_mutation_matrix.sh",
-          "community_app/scripts/e2e/run_p68_notification_permission_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_notification_mutation_test.dart",
           "community_app/integration_test/seed_notification_permission_test.dart",
@@ -10265,7 +10260,7 @@ window.SCENARIO_AUDIT = {
           "community_app/scripts/e2e/run_p68_notification_permission_matrix.sh"
         ]
       },
-      "evidenceStage": 2,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,

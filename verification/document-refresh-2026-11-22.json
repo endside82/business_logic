@@ -81,7 +81,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": ".ignore",
@@ -114,8 +114,9 @@
       "document": true,
       "baselineSha256": "4d67657f9d14ae88b89cfa41503723d5901930959affbc07786e4b9f9da53aa0",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "docs/_audit_checklist.md",
@@ -124,8 +125,9 @@
       "document": true,
       "baselineSha256": "ee3e7f72571816c58ba8f3bdf00603b53c82bdcb155fd4e9cf2bad9579733c8a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "docs/assets/app-tour-coverage-data.js",
@@ -246,7 +248,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "docs/assets/launch-status.js",
@@ -287,7 +289,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "docs/assets/screenshots/app-tour/2026-09-15/auth-login-options.jpg",
@@ -2276,8 +2278,9 @@
       "document": true,
       "baselineSha256": "d973f74eb9c5aec52e47660ff0f6f0f96dc21442c4a44c5d9c91e7a6ee107017",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "docs/domains/13-profile.html",
@@ -3485,9 +3488,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a9efd1175b1026cedd838fc70cb7a514afed9f918fbf51826955b06162db9518",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "195edcfae4b2a57ca55b0556e4ff3efde7d2cbc62aa5e26f2d90d998bf99d1db"
     },
     {
       "path": "docs/features/F12-02.html",
@@ -3498,7 +3504,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "24b2031d72a41077ff6cd18efdc11be5a1bdb6e50ee39b9e0c4b732a3f0b421f"
     },
@@ -3511,7 +3517,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "5c2400c037157f5cf68174f166359d264619353ac4716285eb8d26b1ebfc60e1"
     },
@@ -3521,9 +3527,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "73d9766c463f63409baea84dc2edf8e05d9541abdeef758e2abab5eef8e09b0b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "1acf743a7d183a55ffe7fe6cd0fe43bede75e7d1a4f8c82bf33c1f67397e7150"
     },
     {
       "path": "docs/features/F12-05.html",
@@ -3531,9 +3540,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "c0df1a98bf22d194740e09b24c4578e2136e106f860d65c08512dea37912ac4f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "0283b7cfcbb9fe458ff6746d05528dad25800ac64447f9c2293ea1adbad96460"
     },
     {
       "path": "docs/features/F12-06.html",
@@ -3541,9 +3553,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "82f63bbf2a7aa544e9f5355bb8f057b338c9da73ff778a2f73d0989f5c18c37e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "f369e642e46a1f0548350783a03e649dc4f2748f59665ce3cd283b2e38b4e3d4"
     },
     {
       "path": "docs/features/F13-01.html",
@@ -4292,8 +4307,9 @@
       "document": true,
       "baselineSha256": "61e3a94ddfc6bbd21d2758ab77e347df03019ae70d4e574a11926f2049f755e4",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "docs/policies/payment.html",
@@ -4512,8 +4528,9 @@
       "document": true,
       "baselineSha256": "dbbeb732efa5a4df2fb004e3769b835f27b7f13b66444dbb1ac396796a647b64",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/01_service_map.md",
@@ -4522,8 +4539,9 @@
       "document": true,
       "baselineSha256": "2813e57c4e50ce26b70c2dbbaec3d603de606a287607a28c7081aa4b0456a05e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/02_core_journeys.md",
@@ -4532,8 +4550,9 @@
       "document": true,
       "baselineSha256": "071ca903701afd100d204db5d0d9102df4ad8d209758e17662987a2baf2fa9ff",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/03_unit_playbooks.md",
@@ -4542,8 +4561,9 @@
       "document": true,
       "baselineSha256": "94b0051ac4b805451dcf74dfeab42210453511bd4b32043b412c2c04a9dea235",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/04_state_policy_guide.md",
@@ -4552,8 +4572,9 @@
       "document": true,
       "baselineSha256": "0d55ca6f9c023893e3fbfb6820072b474a0a6178ad96235a34bf4b577257bda4",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/05_terms_glossary.md",
@@ -4562,8 +4583,9 @@
       "document": true,
       "baselineSha256": "090bc12431deda5ce74491ef2f66d5028527d447e5d583f18d262a0214026c4d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/06_feature_card_template.md",
@@ -4572,8 +4594,9 @@
       "document": true,
       "baselineSha256": "16e3622792ef118c289e82263d1237500f758a6149ea54bf8a0154126bb1c7a2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/07_full_feature_inventory.md",
@@ -4582,8 +4605,9 @@
       "document": true,
       "baselineSha256": "04764914a346d5e2e5541c2db1d216b0be90f0902cfe41c300b05bf47cba0cf7",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/08_scenario_coverage_matrix.md",
@@ -4592,8 +4616,9 @@
       "document": true,
       "baselineSha256": "d93f3c24fe2d216f7ce0a66b278ec44f308a56f1bc53ac1ce5b1e16cc188d226",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/09_actor_permission_matrix.md",
@@ -4602,8 +4627,9 @@
       "document": true,
       "baselineSha256": "0a36f9cde40ab94a6b5a5116c11580e588f3041ea2a78bf0d39080b9dc407eed",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/10_planning_qa_checklist.md",
@@ -4612,8 +4638,9 @@
       "document": true,
       "baselineSha256": "f5a984666a7256e7f7a52ef43501e74a569fcfeba63f286c030d01b107854a88",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/11_feature_coverage_index.md",
@@ -4622,8 +4649,9 @@
       "document": true,
       "baselineSha256": "414496769b12cd72449e1f2139b542a751ab0ae4cf0d3f6722accdd512df2782",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "planner_onboarding/README.md",
@@ -4632,8 +4660,9 @@
       "document": true,
       "baselineSha256": "b179d004b70fb767f22e4b8ef4580b95095604a51280315606f736f7fd1072dd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/01_service_overview.md",
@@ -4642,8 +4671,9 @@
       "document": true,
       "baselineSha256": "e31fce90baa47b76e215a887aaf4dc3d2e1694a07725163a8e5e948d622cc299",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/02_user_personas.md",
@@ -4652,8 +4682,9 @@
       "document": true,
       "baselineSha256": "313ce6919c7cc49b7f398ed4efafa51831c2722c2ad2799ab6a29ede67ccca27",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/03_information_architecture.md",
@@ -4662,8 +4693,9 @@
       "document": true,
       "baselineSha256": "ce91981ef1ad257ab14de81e648386e553b32a454f3bd635705862ca1a446c61",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/04_domain_purposes.md",
@@ -4672,8 +4704,9 @@
       "document": true,
       "baselineSha256": "62f019267de4597cc5db27cbb2d31e2ac6e2a904ab1dfef0fd7dbcdc4b9240b0",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/05_feature_definitions.md",
@@ -4682,8 +4715,9 @@
       "document": true,
       "baselineSha256": "21ab8b527d297141ff6b738cc7494f012348a14bb35eb710aa8f6073bda9d2e1",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/06_user_journeys.md",
@@ -4692,8 +4726,9 @@
       "document": true,
       "baselineSha256": "ab891469c367946dd0d79f4f50345f1a4bba72c80a68be7b9e11fed496d52e88",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/07_role_action_matrix.md",
@@ -4702,8 +4737,9 @@
       "document": true,
       "baselineSha256": "d6c39c5a3d4919c1cd88968eaf14ac99be1062be6839c7a2279c3a065b5f1fa1",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/08_state_transitions.md",
@@ -4712,8 +4748,9 @@
       "document": true,
       "baselineSha256": "b443d23da720e98be79a0323b59d7b82fc1179c9b56b8590d103adcffc5b784a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/09_exceptions_edge_cases.md",
@@ -4722,8 +4759,9 @@
       "document": true,
       "baselineSha256": "07497666a3292e74398f430d23c460eda25857c375df057ceb715ab3a5c59066",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/10_impact_matrix.md",
@@ -4732,8 +4770,9 @@
       "document": true,
       "baselineSha256": "e83e9604b1c60bd94dc5d0a1a8f666ee87645b5e66c7bc57411e98966833b9bd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/11_qa_acceptance_criteria.md",
@@ -4742,8 +4781,9 @@
       "document": true,
       "baselineSha256": "8a4a0cbca80bd6d2a944e5a3cc62c720bfdef4ff3d335c2e0eaea3f5aa67b40e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/12_notion_markdown_guide.md",
@@ -4752,8 +4792,9 @@
       "document": true,
       "baselineSha256": "07639411653cfc46e02feab47e2cf2b94a70df19e2ee6e3ed3150b9fa784843b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_prd_items/README.md",
@@ -4762,8 +4803,9 @@
       "document": true,
       "baselineSha256": "39e216dce7664973e265c25988f9026130b8d7a99c8b551caedc53246e168f21",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/00_product_prd.md",
@@ -4772,8 +4814,9 @@
       "document": true,
       "baselineSha256": "4657059d5bf6cf45b9ffd3f849fddc0b0145d53b9cfc4b753f8b364ad1e7bb4f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/01_인증_and_온보딩_prd.md",
@@ -4782,8 +4825,9 @@
       "document": true,
       "baselineSha256": "64f5530cb7d19b3ded5994de2d950dc9f54813b7317e97157d1b3ba3982e7a11",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/02_홈_피드_prd.md",
@@ -4792,8 +4836,9 @@
       "document": true,
       "baselineSha256": "6cc13114ca278b918fa11f14e976ef419f90e40889d3321aabfd1091e5056dd4",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/03_이벤트_prd.md",
@@ -4802,8 +4847,9 @@
       "document": true,
       "baselineSha256": "95dbf38cea86789fd8df991b9f861844c8f30b20b101e794d2e0403c55cc0f1d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/04_클럽_prd.md",
@@ -4812,8 +4858,9 @@
       "document": true,
       "baselineSha256": "8526b3041e5da5ed0d68838a1ad8e11ec4179f1e0485a24fc4e22e74ec660aef",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/05_검색_prd.md",
@@ -4822,8 +4869,9 @@
       "document": true,
       "baselineSha256": "c09215c43446bc163a78e7fe79ad7ba63b815b938503ed3c589661f7da4d8deb",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/06_결제_and_지갑_prd.md",
@@ -4832,8 +4880,9 @@
       "document": true,
       "baselineSha256": "36f888ae9792a22307c01e7dc122aa51e282059cd88d5870fd1a674644b31c0a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/07_모임_정산_prd.md",
@@ -4842,8 +4891,9 @@
       "document": true,
       "baselineSha256": "b35ae236ab608ba0372b2d816544874302a36e564ec1af3b3caa6f8e1b211141",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/08_플랜_마켓_prd.md",
@@ -4852,8 +4902,9 @@
       "document": true,
       "baselineSha256": "f272ce715a8af5a7be703ca67e45b57c6497a6fc8a8df540697f72f458a686a9",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/09_프라이빗_데이팅_prd.md",
@@ -4862,8 +4913,9 @@
       "document": true,
       "baselineSha256": "789cdd5f57f7d6550f85ff62c9602c859b36527af81034dded9798e7cde91d58",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/10_캘린더_prd.md",
@@ -4872,8 +4924,9 @@
       "document": true,
       "baselineSha256": "1077d0b62fa687edf877ff43f37aa11880ff6200c747f73c922430d2752ce55d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/11_리뷰_and_신고_prd.md",
@@ -4882,8 +4935,9 @@
       "document": true,
       "baselineSha256": "09d47f93a63382675d2c9217c50683dd3df03c701424ec7700315ff3e26c643d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/12_알림_prd.md",
@@ -4891,9 +4945,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "20ef55b5349e048999ae0b8a81d55e9042748d444681840487fdf824fe551f3a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "4c2ffc503d3761148d0bdbfbe9e376b5913e9b900de4a2c774934eb6ad0fe81f"
     },
     {
       "path": "prd/01_domain_prds/13_프로필_and_설정_prd.md",
@@ -4902,8 +4959,9 @@
       "document": true,
       "baselineSha256": "325cd1e470a837cce1be944e517120e2f925583031a74b160617e3fbaf290fac",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/14_위치_and_길찾기_prd.md",
@@ -4912,8 +4970,9 @@
       "document": true,
       "baselineSha256": "f1cbe82c5864e5dffed69588d8250248432fe032c735de40784d95ab475e9a02",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/15_경고_징계_prd.md",
@@ -4922,8 +4981,9 @@
       "document": true,
       "baselineSha256": "4d9e17582aeeab602b1760bc92e15340f2d8fe793bab7fd17312f380fe2ed4d6",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/16_마일리지_prd.md",
@@ -4932,8 +4992,9 @@
       "document": true,
       "baselineSha256": "fc3079b49a56986c723028d0f81cbe93e33917c0a9d2755c295d539a21d240fd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/17_정기모임_prd.md",
@@ -4942,8 +5003,9 @@
       "document": true,
       "baselineSha256": "9f4020295501f91d90dd2f706faa0fceeff81ce1072b72f0a51510cbcf937e12",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/18_분쟁_해결_prd.md",
@@ -4952,8 +5014,9 @@
       "document": true,
       "baselineSha256": "1b1993a397aad4f2ff29784b407a8d7f2ce3b21ecb139f29284faf6cde36be47",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/19_관심인_prd.md",
@@ -4962,8 +5025,9 @@
       "document": true,
       "baselineSha256": "e592c0ca247380a64b07564da69b02b7db238a89a0d8831b66328a5e107b2d81",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/20_고객지원_prd.md",
@@ -4972,8 +5036,9 @@
       "document": true,
       "baselineSha256": "ab6aafc0d8ee51f73b500950ec909e0b3126268dd3ec82f2f26cfe7783a92115",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/01_domain_prds/21_제공자_배정_정산_prd.md",
@@ -4982,8 +5047,9 @@
       "document": true,
       "baselineSha256": "a8cf9d3c40f0b7a8483d92f1c2f1cb0598926a2eac39343d3d859b761b9c9575",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
@@ -5032,8 +5098,9 @@
       "document": true,
       "baselineSha256": "d8c527aeacf1eba544a6332635695ccd877a62c61a9c2ab079fbc0f2054e82d2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md",
@@ -5042,8 +5109,9 @@
       "document": true,
       "baselineSha256": "514b9656921e7bbde03f1ca020a5196324176d30f0460116927301be886b4fa6",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
@@ -5052,8 +5120,9 @@
       "document": true,
       "baselineSha256": "78f8a4e702cc210ed07a91bc7e1f4e61731af98276a31686b02e283ccc8d8938",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md",
@@ -5062,8 +5131,9 @@
       "document": true,
       "baselineSha256": "c4ffa6b1958f6ac187ce85b23e867e32048a642736dbd42a91dee23b4b0aa0f5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
@@ -5072,8 +5142,9 @@
       "document": true,
       "baselineSha256": "f160ad7214a27a2b556f6c0ce5b3c5e6dccea2bdea2e1645bb8c291389680048",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
@@ -5082,8 +5153,9 @@
       "document": true,
       "baselineSha256": "5316d0691ba0ab976f502edaa5ecd240b2b899c36ae0dd51811156e81591322c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
@@ -5092,8 +5164,9 @@
       "document": true,
       "baselineSha256": "dbf725bdce02b43a66ed8d24b43a576c03c2b247ea7fa40bdb2c74c6b66d2e47",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
@@ -5102,8 +5175,9 @@
       "document": true,
       "baselineSha256": "62c9a9338c64573462bc5aa30fbcc6f4b86e9858e383789f656a7699e19c28f9",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
@@ -5112,8 +5186,9 @@
       "document": true,
       "baselineSha256": "8d64f6e76c92445e7f454552fc698a1e9499f6fdc9846495c27f5d2fa787f2a5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
@@ -5122,8 +5197,9 @@
       "document": true,
       "baselineSha256": "559a948f4323b8c67f008a835e39d4ce39d98d5bcb823ae7f0628792324d1cab",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
@@ -5132,8 +5208,9 @@
       "document": true,
       "baselineSha256": "962c994938fce6619f99247d9e9a55e4a295d24106e344386938a5fee62b01fd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
@@ -5142,8 +5219,9 @@
       "document": true,
       "baselineSha256": "b74a3096fcb0c2374507f1f483b883ae5fa7a94384a90f10684f8f8530d80ff5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
@@ -5154,7 +5232,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
@@ -5163,8 +5241,9 @@
       "document": true,
       "baselineSha256": "d5b3766964f402596e194075650dc16cc16fe8db241058d6ed99fda6b22f71dc",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
@@ -5173,8 +5252,9 @@
       "document": true,
       "baselineSha256": "483186d5a095d2936c6567c5422060392bd7e667f580db1b5c97a9a45a2129f7",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
@@ -5183,8 +5263,9 @@
       "document": true,
       "baselineSha256": "e6dcaab1839e048063ecf4af738dbce3382de25ad59d156f38d2066015e330e0",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
@@ -5193,8 +5274,9 @@
       "document": true,
       "baselineSha256": "9815a7383162db7138338847fad8ab01abee508ad3e157bf31cec895bdedf16b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
@@ -5203,8 +5285,9 @@
       "document": true,
       "baselineSha256": "dcceb429aab89fd847758675bf5c3a9e86178b5a46b7105d1e411b602b21802f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
@@ -5213,8 +5296,9 @@
       "document": true,
       "baselineSha256": "c1f49357b006a6cb6ff8311ae8d90404a0d41ea78d8f79d3a301af6f693123a5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
@@ -5223,8 +5307,9 @@
       "document": true,
       "baselineSha256": "85c0cdcb019237162436d643d0a2563de07ec1e5864ed9fe3c48833b20a7dff6",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
@@ -5233,8 +5318,9 @@
       "document": true,
       "baselineSha256": "ab1f6ec33da234aeaee8a4685f5aef7cc4c01e1aa00082027e9a77a51bd80e5b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
@@ -5243,8 +5329,9 @@
       "document": true,
       "baselineSha256": "0f3575d7017b838c01f99dc1e2fddf0d120dc7e00f61f6c2798b260308f5c875",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
@@ -5253,8 +5340,9 @@
       "document": true,
       "baselineSha256": "2f20e5ca2b601cc7381d748e279e78d9c8d8f542210e307d2a09790cf63852ce",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
@@ -5263,8 +5351,9 @@
       "document": true,
       "baselineSha256": "d362592b5f27e50c0a91683ec40e6d3f5483db2ed1a03fc9f0a51d3bd7303065",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
@@ -5273,8 +5362,9 @@
       "document": true,
       "baselineSha256": "6f7f7185864446c60f77e452e6254159085cb418176ba0bbd3d949c4dbe4860b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
@@ -5283,8 +5373,9 @@
       "document": true,
       "baselineSha256": "acd1150a27d9047e92b8b4c150d8b80bec36288fa0853a1007fd5c36cee39932",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
@@ -5293,8 +5384,9 @@
       "document": true,
       "baselineSha256": "a2755c8c517a011fa15e603c8e7206115060baae01b34d94b77f96bfa371d9eb",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
@@ -5303,8 +5395,9 @@
       "document": true,
       "baselineSha256": "d15f56884048db0e778d4deb09c989fb4a143ebe084220535a83717b1bff2f94",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
@@ -5313,8 +5406,9 @@
       "document": true,
       "baselineSha256": "bea70e5dd9bcfc0bad7b33ae74a445754d853969485325deef89906e95e7fd7b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-01_club-discovery_prd.md",
@@ -5323,8 +5417,9 @@
       "document": true,
       "baselineSha256": "16bad929a756034b8cc58230ec53bd1e6a978ef9fb7d95456f7bdbb37819ba53",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-02_club-detail-join_prd.md",
@@ -5333,8 +5428,9 @@
       "document": true,
       "baselineSha256": "6e939240ebe83ab27a9a64f1cc48b05946ac5ad797d40b0ede23a4cbcf6ddd3f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md",
@@ -5343,8 +5439,9 @@
       "document": true,
       "baselineSha256": "c610bd1c74ee6cb4bcbe79d7748adb0a47cb82f0e1af811339dc869a923f8dde",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
@@ -5353,8 +5450,9 @@
       "document": true,
       "baselineSha256": "fef60a49bb1387b9d6aafbfded53e3fe73bd9e4ac1db6877a486f9a8d770cdf5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
@@ -5363,8 +5461,9 @@
       "document": true,
       "baselineSha256": "3a1885512ae46f078606af0f5fc773c9ccbabbddef7e37f9cb5cb9650981a868",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
@@ -5373,8 +5472,9 @@
       "document": true,
       "baselineSha256": "c911cbd48e0dd15504fb78efc75f6544fe6d50e8c448b88999b8d3be55639546",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md",
@@ -5383,8 +5483,9 @@
       "document": true,
       "baselineSha256": "9b3ff059d0b320a7c62c9d50efeca86337eb5199d714606891c7a5344e859d6c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
@@ -5393,8 +5494,9 @@
       "document": true,
       "baselineSha256": "503477028465f5e6ef69d0d0c647e25640f131a003c98335e5f4fb866af0baa1",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
@@ -5403,8 +5505,9 @@
       "document": true,
       "baselineSha256": "a4d285fd8fee2a255bc3e761501b9420daa93839e640626ee458028f2fc45200",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-10_announcements_prd.md",
@@ -5413,8 +5516,9 @@
       "document": true,
       "baselineSha256": "68d71fed657f957e1a6abc2596b5d5469b5ce94bb19f5cbba0c9d2cd2e7a173e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-11_photo-album_prd.md",
@@ -5423,8 +5527,9 @@
       "document": true,
       "baselineSha256": "bc622aeb40c01c20b14454541c3e39e92c3ed5d35d56c5317ae623a1b845e9e2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
@@ -5433,8 +5538,9 @@
       "document": true,
       "baselineSha256": "80812d4e2e12747a9e43fcd2eed374744c21a6fe7f8332e08d1360fea5f28bd4",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
@@ -5443,8 +5549,9 @@
       "document": true,
       "baselineSha256": "c6ec06a8a89acb08d06ad95f718e0e473fe7387ad836b22f01da4b71b6c18b31",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-14_donation_prd.md",
@@ -5453,8 +5560,9 @@
       "document": true,
       "baselineSha256": "283ea22068ddbafcee7391a20a65f2cbdb9a4c76eaf4fa57f9ae2a22e0210cb9",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
@@ -5463,8 +5571,9 @@
       "document": true,
       "baselineSha256": "bba3508f54ae88cad0fa8ed21c43f71d5817d79b3cd89e2fe526471a8367a5b2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
@@ -5473,8 +5582,9 @@
       "document": true,
       "baselineSha256": "92dd2444fb907718ff833ba0756dec248d68eac4b06613a698332f0e17b58187",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
@@ -5483,8 +5593,9 @@
       "document": true,
       "baselineSha256": "4661d8a4641cebb93858d574658a71b709030fea8fae89c5ae146dd2d25fc5a8",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
@@ -5493,8 +5604,9 @@
       "document": true,
       "baselineSha256": "694fb0c6f5478dfab4e9cd1fe71b03b12fb7f5b90ca908b2307dbb19aa7f2f03",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
@@ -5503,8 +5615,9 @@
       "document": true,
       "baselineSha256": "c537ca2badb8f5b398dfe6a6335180c47aa58bbf5c54a8a83bb96354d8548a4f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md",
@@ -5513,8 +5626,9 @@
       "document": true,
       "baselineSha256": "bd660ceb44cb88ff46bc51f7bb57f0b992e3bed42cdc5f9abdc3a1824d111237",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-03_search-filter_prd.md",
@@ -5523,8 +5637,9 @@
       "document": true,
       "baselineSha256": "dafb270532292a59617fd8aaa1be762ff2b2e206d2c509a9005b5142bc6e6ff2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-04_search-history_prd.md",
@@ -5543,8 +5658,9 @@
       "document": true,
       "baselineSha256": "0c3a4677c725a51d5a25bac93f2869fc8f2162bac8022a05b575e5e5bc17c351",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
@@ -5553,8 +5669,9 @@
       "document": true,
       "baselineSha256": "4c6814cd624aec981875f62192b1154b477e7f344c9713b13b6df026e7060beb",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
@@ -5563,8 +5680,9 @@
       "document": true,
       "baselineSha256": "a3459317ea4f1bae9d3988569933c155c39dc1cddd384b40c497d52e7fdcc2b3",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
@@ -5573,8 +5691,9 @@
       "document": true,
       "baselineSha256": "37fec38d9d1fb42e27cbaf4b862303603fd6082cb655cc8f353d232d88741f33",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
@@ -5583,8 +5702,9 @@
       "document": true,
       "baselineSha256": "5bfffe1602c15030151e59f3d0c5eb3b83b205ba8da7643cfb889e6b1364b353",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
@@ -5593,8 +5713,9 @@
       "document": true,
       "baselineSha256": "123ba7abd55e328ad68255ff598a0b7c7fdb80428b18bb699c7bf5918a351c3a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
@@ -5603,8 +5724,9 @@
       "document": true,
       "baselineSha256": "767442016eac5e38ab44f44f64ba4489d02b864c8a07ef4615ff5111ade83c8c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
@@ -5613,8 +5735,9 @@
       "document": true,
       "baselineSha256": "2db51092c5a8c654420f7fb5d61812074f5a7a5248740fd105c30e82b992a20a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
@@ -5623,8 +5746,9 @@
       "document": true,
       "baselineSha256": "5124c449e8785b605b74748c7703c238e06a880b22afdb2f93ee0ebd1c25d534",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
@@ -5633,8 +5757,9 @@
       "document": true,
       "baselineSha256": "f29a383004c47c68232a4e5861af2784042e66f0078cee11a07048b45e5a28cd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
@@ -5643,8 +5768,9 @@
       "document": true,
       "baselineSha256": "695f3c200a38f4d21d9f3fc4ece779863087ee9646e531e310786a39e1556f92",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md",
@@ -5653,8 +5779,9 @@
       "document": true,
       "baselineSha256": "d44df18367bc14a965c93e3f37e2f231ea6bec30dbf2eb6a0b168fabc213dac0",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md",
@@ -5663,8 +5790,9 @@
       "document": true,
       "baselineSha256": "d6c4eaf38157b7af14518b66595701a07674667cb3835666793ccd2d1c14bbc3",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
@@ -5673,8 +5801,9 @@
       "document": true,
       "baselineSha256": "2a156cfa218d55e00c084126913e896a325f0d3c55b9597c589e808ee0c963c2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md",
@@ -5683,8 +5812,9 @@
       "document": true,
       "baselineSha256": "765103c0bbc8e4718d749a4b773e596ca56eb41ac0a1257c42833ed9ee6ae5ce",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
@@ -5693,8 +5823,9 @@
       "document": true,
       "baselineSha256": "9470998b4806c7efd5eaa5b5a616c88ba1afe7e00b16cabbc11cba90c859ac0c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
@@ -5703,8 +5834,9 @@
       "document": true,
       "baselineSha256": "ab4f8180e7a9c474d2a4594b9dbf4bf93d853062f37603012f79cf674b612354",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md",
@@ -5713,8 +5845,9 @@
       "document": true,
       "baselineSha256": "c1960ce304fecf6995f2b827cb8f4e9f9e4135825cfa85bba50a089b4322b409",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
@@ -5723,8 +5856,9 @@
       "document": true,
       "baselineSha256": "0ad46be21c71121355c0b0aa5d72f2c1c8e679fc59cf5b653fc980a8ee235881",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
@@ -5733,8 +5867,9 @@
       "document": true,
       "baselineSha256": "4d306879231c00e8235a6bf1bf9534c946a7c3c9a27beaf3df44c0f40781f6cf",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
@@ -5743,8 +5878,9 @@
       "document": true,
       "baselineSha256": "5a8fef4ea4d988764853bb493fec382b8b03957d2a9729e0a280e200366a7957",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md",
@@ -5753,8 +5889,9 @@
       "document": true,
       "baselineSha256": "776b832131fa142cbb5ce29812cc0f7c2ef934ee5a364f1874c1c85e72a10665",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
@@ -5763,8 +5900,9 @@
       "document": true,
       "baselineSha256": "3e74a76ecef0f4aedf90487fbd01b830d5fc0cb44d3311768df8dc3770135a95",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-03_block-editor_prd.md",
@@ -5773,8 +5911,9 @@
       "document": true,
       "baselineSha256": "fd9a28d0b047dfa0430c5a94cbf24dbd8a52c3c5a61ab9678a9c95d619689788",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
@@ -5783,8 +5922,9 @@
       "document": true,
       "baselineSha256": "f561c7ba3f73e714239d0d06ffc4f97b52b6421f317882f8fa908e54bfc26688",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
@@ -5793,8 +5933,9 @@
       "document": true,
       "baselineSha256": "3332232f34e7407e6128726a295cf78964ee64f6bd7c22b004ae901b7256f879",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
@@ -5803,8 +5944,9 @@
       "document": true,
       "baselineSha256": "f30a889ab9e8f74af5a1bd3c0a3eb603d65875659d3c0e216c479ae0cd4bcfcf",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
@@ -5813,8 +5955,9 @@
       "document": true,
       "baselineSha256": "0cab9d9ba36559c8fe38d4c6e1d7b512dc13bd92b6e8faad2bfca703aa294bae",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
@@ -5823,8 +5966,9 @@
       "document": true,
       "baselineSha256": "3bc5b6a15c25f981affd4118b067678c87e2d731600a1a20dc1535dc16e8d247",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
@@ -5833,8 +5977,9 @@
       "document": true,
       "baselineSha256": "5f0b7a1c20a66a01133f015626a9a5eb36d49f8b7a3ef1b6160bd0e91a59a850",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
@@ -5843,8 +5988,9 @@
       "document": true,
       "baselineSha256": "b1a09ba6fb7ba805c80d5f05cf43aae74e7a1060b699965e2c8d98ac6bddc286",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
@@ -5853,8 +5999,9 @@
       "document": true,
       "baselineSha256": "d38e4de0e1b9606fa58f06a4a1e7618d903b223e22b37e424a020e1fcf8b8b52",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-12_my-collection_prd.md",
@@ -5863,8 +6010,9 @@
       "document": true,
       "baselineSha256": "398842a77851981e71a205500d3033ec58a36631ec345bba8d41e0b672b12ef3",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md",
@@ -5873,8 +6021,9 @@
       "document": true,
       "baselineSha256": "f37ba12d671573319dd02329baed54ff22add8bc072767ebe349c08f3c6b1484",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
@@ -5883,8 +6032,9 @@
       "document": true,
       "baselineSha256": "a3ebeb8a430a92c947ae15d17e533d4858dd5b353c4c3aaf8ce91f6140d234d6",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
@@ -5893,8 +6043,9 @@
       "document": true,
       "baselineSha256": "4ff07e3b10f6b1de31a689d23c0c00cf5ee837791d76c2e593070f8d3f3e7b60",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
@@ -5903,8 +6054,9 @@
       "document": true,
       "baselineSha256": "374f22d3a4da87d7c981a19e648630b29e2271ff6987b98378fe576fe53a37fc",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
@@ -5913,8 +6065,9 @@
       "document": true,
       "baselineSha256": "b5d9dfae38843fb9f147b2764bde52154169c18e1d2f28460c3bfade63f3d4ae",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
@@ -5923,8 +6076,9 @@
       "document": true,
       "baselineSha256": "03982d021f905f15f131b365d5b2a8e904e949609d1f24e78ef804d317e21a4d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
@@ -5933,8 +6087,9 @@
       "document": true,
       "baselineSha256": "a997b38edcbc23828aac3e518b6a4d652d0609c73a49b9a52b8c18787fcf97b3",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
@@ -5943,8 +6098,9 @@
       "document": true,
       "baselineSha256": "cbaa2695b49eec077e9face7f38126cd5cea0efc09298d34194701b0e16d3e2b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md",
@@ -5953,8 +6109,9 @@
       "document": true,
       "baselineSha256": "42ee73e4a68c462ebd0f8824f8b20a6c12ead7ad7765f52a7122b2a78ac3e4f7",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
@@ -5963,8 +6120,9 @@
       "document": true,
       "baselineSha256": "d3c8948df55a67ec12589039cc49747025eb6607105ee7b3439f183a38ab9a53",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-08_profile_views_prd.md",
@@ -5973,8 +6131,9 @@
       "document": true,
       "baselineSha256": "ef6c9238d56390c3e38b113110bfbe342aa5d9353f3fce018007ba1911596403",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
@@ -5983,8 +6142,9 @@
       "document": true,
       "baselineSha256": "cb12deccfdab2b82acb15b5558a10d6c61603dcc460693a8c21ea8ce602bc32e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
@@ -5993,8 +6153,9 @@
       "document": true,
       "baselineSha256": "2902244e6094b0945d783d6ca36fb9d2e47655f299f4f054715768705a7e12cd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md",
@@ -6003,8 +6164,9 @@
       "document": true,
       "baselineSha256": "a2a548524fd0f42f89b20ebc5545d9f4b7e2658a35001d3e602eba7bf0c36a82",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
@@ -6013,8 +6175,9 @@
       "document": true,
       "baselineSha256": "4e5d7d720f26068a22168e62400f5ad9e47040cf50eab1745d8b42b5abf06228",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
@@ -6023,8 +6186,9 @@
       "document": true,
       "baselineSha256": "d4a9227261045c5b422b632eb5043adee2353db37a3ba92648f75eee59e08791",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-01_event-review-write_prd.md",
@@ -6033,8 +6197,9 @@
       "document": true,
       "baselineSha256": "1e6b6191e6dc761f39c411ac31fcf7151a25e7d7fea1d1a2b3752517beb50027",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
@@ -6043,8 +6208,9 @@
       "document": true,
       "baselineSha256": "5c19ef92a43eb7ecf89841585a82eb45e90ed47c3788410de77dbaa22ae3e1ad",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md",
@@ -6053,8 +6219,9 @@
       "document": true,
       "baselineSha256": "e3234f107fb3da3386c7462bb245cbf4b9751df27c78b3c29d2f6923e4d0f0bb",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-04_report_prd.md",
@@ -6063,8 +6230,9 @@
       "document": true,
       "baselineSha256": "65302fae086e881356eea91799bb36e58db237e904c833d07f4d13b9fa73247a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-05_trust-score_prd.md",
@@ -6073,8 +6241,9 @@
       "document": true,
       "baselineSha256": "4154cb8b351858448b9f26ed70898d1a0cf407a7a50b0760e749e21f3a63b401",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-06_taste-profile_prd.md",
@@ -6083,8 +6252,9 @@
       "document": true,
       "baselineSha256": "7e9519fe0d532252ba414066ddd22e626cf9fa7f25160c1a2a7166912f8308b2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md",
@@ -6093,8 +6263,9 @@
       "document": true,
       "baselineSha256": "2d56981f68a54160618e5c21a014cc0dc09e39174f5dc631f4a4327d88afc4a5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/12_notification/F12-01_notification-list-read_prd.md",
@@ -6102,9 +6273,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "8132574d73f1de8ad8bd7185d2e6ca9e4a80f3f04f85a376cb2a53cd29a88337",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "1a7473d5cd10c99e1d97f40a65390c5539e6e9e42109fa5c515fff0561bab4d6"
     },
     {
       "path": "prd/02_feature_prds/12_notification/F12-02_notification-grouped-badge_prd.md",
@@ -6115,7 +6289,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "9c303f78b638cd422a5747adcbb02c2e93b4f9ef23b38027d482388dcd624d52"
     },
@@ -6128,7 +6302,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "1960c4b8afa383a378da6372466505c528146c74b1cdf2e29c97ec5f8dd09f5c"
     },
@@ -6138,9 +6312,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "832e4b0e0f57bce10c233c8deb4dfb443f71eeb58ed0e97c037349e523cd20b5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "f0cc5b825022345b19c8f2aebc5963f216ca3d9b513429916b70708238ae334c"
     },
     {
       "path": "prd/02_feature_prds/12_notification/F12-05_device-token-management_prd.md",
@@ -6148,9 +6325,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "400d6cf70e2aabe1c4aa9d778b6c893f32d8e92903fa6705458fb8861241823c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "42eedf00fa322fbbf43f6b206c1b89b9d1312ce581cd9b44e856ce36772c1adf"
     },
     {
       "path": "prd/02_feature_prds/12_notification/F12-06_permission-banner_prd.md",
@@ -6158,9 +6338,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d32c0a1c5868c8c146509096e2a7e680f28b9e3aa28d4de202875428fe4c1094",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "a014689eb2eb61730f4029649634446fdd9f14251ea6c3f9dd1d4245558fc05f"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
@@ -6169,8 +6352,9 @@
       "document": true,
       "baselineSha256": "cfab401a6f3c977ec789cbf2e3e39b55d3d4b9b63877a9e3ee15bf8cf389931d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
@@ -6179,8 +6363,9 @@
       "document": true,
       "baselineSha256": "57d73bba1ff9fc18d95a99c8e1d5191c5b412834581fc76a41b03329faa41f79",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
@@ -6189,8 +6374,9 @@
       "document": true,
       "baselineSha256": "e02849f527f6e39b1377544aad82037ac249280c7b0b602e036c794b63a85e70",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md",
@@ -6199,8 +6385,9 @@
       "document": true,
       "baselineSha256": "3472dd28980cb56fa5b7ce43746e73f8bf5609c0a95308d6f22678ac27d2a8ed",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
@@ -6209,8 +6396,9 @@
       "document": true,
       "baselineSha256": "16d2969964f7743d77fd110d8ad63ac05be229fc8eeff91b351214e56138900d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
@@ -6219,8 +6407,9 @@
       "document": true,
       "baselineSha256": "cb1dd0bb6f94bd1f7e5beb0ae7b73022863cd7a952640a77c3c0b6424d84473c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
@@ -6229,8 +6418,9 @@
       "document": true,
       "baselineSha256": "3f53c799afe5b7fed1cc87c192ddb2fc34b3169c998cf9976a6eca850d37653d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
@@ -6239,8 +6429,9 @@
       "document": true,
       "baselineSha256": "674a215c37840c1215dd1c6ddcada13992b407220b816a5504ab1628bb830010",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
@@ -6249,8 +6440,9 @@
       "document": true,
       "baselineSha256": "fd32a806e5a3019c48f9d85a626ca97cd6a0ed6deb970144cbd0f3b3b1acb560",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
@@ -6259,8 +6451,9 @@
       "document": true,
       "baselineSha256": "b4a50c5511a366edd04e45a8bc3b519f8903c1d6a92972628f2a7b66e67fe18e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
@@ -6269,8 +6462,9 @@
       "document": true,
       "baselineSha256": "b7a671281acd9817bf38502039d697c82fa5e9af4b43e845b17175b53c28201c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
@@ -6279,8 +6473,9 @@
       "document": true,
       "baselineSha256": "f6bd6d1b1bc77f2f807360bb9e64ec17ba3acc8b9c989f4b01919dd027d7817b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
@@ -6289,8 +6484,9 @@
       "document": true,
       "baselineSha256": "5aeefd6cdbf570794dcd07a33aaa264c14375b612f4321cd0a656fdb30f6f230",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
@@ -6299,8 +6495,9 @@
       "document": true,
       "baselineSha256": "02a2df64031d8392c75e80cc79bb6f8726853084eca4976b77b3f14e600c088d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
@@ -6309,8 +6506,9 @@
       "document": true,
       "baselineSha256": "165dc03ae0c264847f9e913c38932708b8a399382df80a13dd81d6144c71edb6",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
@@ -6319,8 +6517,9 @@
       "document": true,
       "baselineSha256": "dce23d25ff7efc20622102d18ccac69f681de8523f12b375d323b95ad5a523fc",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
@@ -6329,8 +6528,9 @@
       "document": true,
       "baselineSha256": "1d5c82d547932f44b2b2bc70208ff486b2e6e55ef417d48cf31d034d82b85b7d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
@@ -6339,8 +6539,9 @@
       "document": true,
       "baselineSha256": "d9c159d26380751790bfb175a0eb5bc137e360c5969b7d1605a957884cb2d359",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
@@ -6349,8 +6550,9 @@
       "document": true,
       "baselineSha256": "9f639a96d6b392dae8322131b4aa95057f52aaf9272b9ba437dc40832e1cec02",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
@@ -6359,8 +6561,9 @@
       "document": true,
       "baselineSha256": "9a95a4c3b491411b94dd88060a28bf5c482086e7591998e5930d5144a677c96b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
@@ -6369,8 +6572,9 @@
       "document": true,
       "baselineSha256": "de5ef3526cb4319cf830284225588ac290fadade20155208133798c1a78dd796",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
@@ -6379,8 +6583,9 @@
       "document": true,
       "baselineSha256": "ce3931f95001d81cfa53f1df62ad4dc14608de4995201d66d366c2d22d118ea2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
@@ -6389,8 +6594,9 @@
       "document": true,
       "baselineSha256": "2222c1f71c4847a5d5cb3ccf5bd3b2046d6ac57979b93f70e43a5012a403dd1e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md",
@@ -6399,8 +6605,9 @@
       "document": true,
       "baselineSha256": "eba9c507baff6e646faac565b368de176a629fd8a241d54c4ce28a0344e67b4d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-03_season_prd.md",
@@ -6409,8 +6616,9 @@
       "document": true,
       "baselineSha256": "6f7e3fbd5b0e03185de576cbe1040ceb9358ad622765ba51cdde4ebe8ef85527",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
@@ -6419,8 +6627,9 @@
       "document": true,
       "baselineSha256": "8ce26d31b2dbde2078680165b6bdb93d0f5aec83561ada15fb2f70065344224e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
@@ -6429,8 +6638,9 @@
       "document": true,
       "baselineSha256": "51d6b3be8b84ccf9d30892a2190ab2fb6a8288625def3a3119a7fdd50b9d77b8",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
@@ -6439,8 +6649,9 @@
       "document": true,
       "baselineSha256": "7cc22500c887cc19d9906928ddccbcf5da331ca236fac04564546214064aacfd",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
@@ -6449,8 +6660,9 @@
       "document": true,
       "baselineSha256": "eed76fd394c49f85525419c74e19b8b33d23daa09c094b7d096c93f397919ede",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
@@ -6459,8 +6671,9 @@
       "document": true,
       "baselineSha256": "8ae8f2e47bd4ae908c762e9ecebee4107c32895b25d7859f96ffd762e53f24c9",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md",
@@ -6469,8 +6682,9 @@
       "document": true,
       "baselineSha256": "e35d185a780373fa67294c793cc78c3b2aa2086169082466cd8ef9ecc90a8d26",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
@@ -6479,8 +6693,9 @@
       "document": true,
       "baselineSha256": "75745af141d1b28782e8e207b46749829c89b76de2c85d5ad91515a26caea681",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
@@ -6489,8 +6704,9 @@
       "document": true,
       "baselineSha256": "97f22395f78263e7640a8995d89f9cf421289b11bc18d80bb073c6d6268222c8",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
@@ -6499,8 +6715,9 @@
       "document": true,
       "baselineSha256": "c5730da6da771596d750c7fa328d349f5e1bc77125b519ae3d2bf34b8e4a396c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
@@ -6509,8 +6726,9 @@
       "document": true,
       "baselineSha256": "baa9e613eb1bee3a30d16edba1b57a0eddf0d5a25b01b44821b19e7a7917f09a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
@@ -6519,8 +6737,9 @@
       "document": true,
       "baselineSha256": "7363362889a020b8c21cac78d65c4f50db423171d66ec2d840be792414692730",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
@@ -6529,8 +6748,9 @@
       "document": true,
       "baselineSha256": "f99b44cb9b1302f1ccba20341c6521c444c536c383a6b92fab527eff54286d8f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
@@ -6539,8 +6759,9 @@
       "document": true,
       "baselineSha256": "3b036b9c4b82a01f23b74dcc9274b466511b8f51116496916334a7d78ef249f1",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
@@ -6549,8 +6770,9 @@
       "document": true,
       "baselineSha256": "5a9ae455058ca14168a1a7ff0af168f7afc52237d57bf6ca52d0b6f05430fe1e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
@@ -6559,8 +6781,9 @@
       "document": true,
       "baselineSha256": "312d519900a62580ddcaaf59f240525059d690f0e0f933657765a20a783d9b31",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
@@ -6569,8 +6792,9 @@
       "document": true,
       "baselineSha256": "6b297a3a1d09927a96e7d963de9b55f87479268d96db285396bbe96f73a79ed4",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
@@ -6579,8 +6803,9 @@
       "document": true,
       "baselineSha256": "33a5d610cfa5439e7a34277f456e6118b5007b4b604c8bf3068c62f43cba2372",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
@@ -6589,8 +6814,9 @@
       "document": true,
       "baselineSha256": "0685ac6b34d5fd23e5bd441dd870b2faa3fafcf6b3607045cd83515253cd8ec7",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
@@ -6599,8 +6825,9 @@
       "document": true,
       "baselineSha256": "bb0a95b1ee131ae5ab3b28203ad923dc93e839aac8d74484ff6832b80809e08f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
@@ -6609,8 +6836,9 @@
       "document": true,
       "baselineSha256": "acaa1decd5a13bebb71fc09572ab57e6a5866a751a4e8be89b75de72262873dc",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md",
@@ -6619,8 +6847,9 @@
       "document": true,
       "baselineSha256": "fedd2ffe4d45708af1c288991b0c58b3a017de296c4a55c05a6afa45caffc00f",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
@@ -6629,8 +6858,9 @@
       "document": true,
       "baselineSha256": "d68272a7f68a92dbc1ffe9a5a0d3139944b8f40ca845f5aafae1bd59de9b4102",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
@@ -6639,8 +6869,9 @@
       "document": true,
       "baselineSha256": "c5ce23188bee44fcc2f97ed3e411a261c327086cfe6bc00c35abb196f8597234",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
@@ -6649,8 +6880,9 @@
       "document": true,
       "baselineSha256": "309341adf207fc3f978e0ad82814d12522c03193fcfe093ddb6f6725acadacad",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
@@ -6659,8 +6891,9 @@
       "document": true,
       "baselineSha256": "bcb1e5f964c21265a7ae1638d02aadb955a733c39eaf3e291cc5591899b22a1d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
@@ -6669,8 +6902,9 @@
       "document": true,
       "baselineSha256": "6aa23c4de9923f4757af01fbcc4ba5d248be8d2973d2062592cd883ee4dea490",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
@@ -6679,8 +6913,9 @@
       "document": true,
       "baselineSha256": "fe67d8ee05f8d50c8e77f672eade09ae3d34c9d3f6a3fdf59cf82a7a7b105ead",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
@@ -6689,8 +6924,9 @@
       "document": true,
       "baselineSha256": "97ffda1a8cf281ba6fad8c73bd5cb19ed573d9de3f9b1f3cd696f57fe2340371",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
@@ -6699,8 +6935,9 @@
       "document": true,
       "baselineSha256": "87e244d703bd8cb6fcc2851465be74d489b0b5cfde47af1ace876233db4d3510",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
@@ -6709,8 +6946,9 @@
       "document": true,
       "baselineSha256": "61ee725127885842ca248d7ebb137273b69e43c972480f5257570134e42075fc",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
@@ -6719,8 +6957,9 @@
       "document": true,
       "baselineSha256": "077d27ae66481012cc00efc89ba255bcd4bec9843a98b1396f76e5623b88c263",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
@@ -6729,8 +6968,9 @@
       "document": true,
       "baselineSha256": "d1a55c00a89affda9820c1683cae9502639b09c6800588ea756834d51d90bc0a",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
@@ -6739,8 +6979,9 @@
       "document": true,
       "baselineSha256": "4739735d0b093112205d1125adddb22d30cf6c0833f231fcea71a249ca8ebc8b",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/03_policy_prds/notification_policy_prd.md",
@@ -6748,10 +6989,13 @@
       "kind": "policy_prd",
       "document": true,
       "baselineSha256": "cd1400e25a650f4f8954f59764d62a17ac5bd7e57b42d2957939ec26f1d35c5c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122",
+        "notification_delivery_20261122"
+      ],
+      "reviewedSha256": "9c7c54d9e4cb5c585cff0aaf4f64a5ecf5c3a1e0d0c2e13632f36124b659f1c6"
     },
     {
       "path": "prd/03_policy_prds/payment_settlement_policy_prd.md",
@@ -6760,8 +7004,9 @@
       "document": true,
       "baselineSha256": "d1fd9d1aa1e391d85b2f6ff2e4e5b199f374025737ca08122718b6cf0e220d9e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/03_policy_prds/permission_policy_prd.md",
@@ -6770,8 +7015,9 @@
       "document": true,
       "baselineSha256": "4b02a81191385c6ae29ac186062ce543c865b8f52e5c1b1824ab565190a789cc",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/03_policy_prds/planning_qa_policy.md",
@@ -6780,8 +7026,9 @@
       "document": true,
       "baselineSha256": "936b0c32b7c8715b496e632dbf952c437fc399657dc5e2b9a43a0a5a1337dba5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/03_policy_prds/privacy_safety_policy_prd.md",
@@ -6790,8 +7037,9 @@
       "document": true,
       "baselineSha256": "60f75c5f2f218c0da3ca5af0c76ff5cf325679c7c2e6e51a0282a3692e4caad4",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/03_policy_prds/state_policy_prd.md",
@@ -6800,8 +7048,9 @@
       "document": true,
       "baselineSha256": "2c12b80b385c9573d080d372e8a4d5cd563a354a8237c06145bb6ab8ba07736c",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/04_qa_acceptance/acceptance_criteria_matrix.md",
@@ -6810,8 +7059,9 @@
       "document": true,
       "baselineSha256": "afb58b80ac991ef348bc33f7a3c7a9da787feb3d3d66d540e24bc10290404cb2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/04_qa_acceptance/release_readiness_checklist.md",
@@ -6820,8 +7070,9 @@
       "document": true,
       "baselineSha256": "c281e22c4277e85f03f6a5e73ef09dc8357c9de273811e9c6af09f72b8bd58c7",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/04_qa_acceptance/scenario_completeness_audit_2026-08-30.md",
@@ -6830,8 +7081,9 @@
       "document": true,
       "baselineSha256": "5d5aa7ccdab8481930639e9b15aba2a5c5dd5b98886d8d37fe22b92a2fe48d94",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/04_qa_acceptance/scenario_coverage_matrix.md",
@@ -6840,8 +7092,9 @@
       "document": true,
       "baselineSha256": "0c03ed59b1d90c04a777d2ed685d6e34d22926562d31c37838c6822dda356c58",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/community_feature_intro_deck.html",
@@ -6910,8 +7163,9 @@
       "document": true,
       "baselineSha256": "d2d5324a81045f3d2b930a96aacc5d6bf00c3f1551afe2f89ac83cbc32a3243e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/current_source_update_2026-07-29.md",
@@ -6920,8 +7174,9 @@
       "document": true,
       "baselineSha256": "5eb57677ad78da8a43f1b334b9d055b8f57a93aba310f225a7df0a74b4e8f5e2",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/decision_register.md",
@@ -6930,8 +7185,9 @@
       "document": true,
       "baselineSha256": "5793a49228a58c7322a3a2d98174b4538d71603669e688571f53e6bc7be6f112",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/mvp_scope_matrix.md",
@@ -6940,8 +7196,9 @@
       "document": true,
       "baselineSha256": "8b70772fa6e6a4d13a45d68140be579c4288417ac27ceae49f973a9e1befa851",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/notion_import_order.md",
@@ -6950,8 +7207,9 @@
       "document": true,
       "baselineSha256": "c710a29342fdbd1b9f48356f1d21090029a4a3686e54964d9455ab3711a79e9d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/ppt_feature_intro_outline_draft.md",
@@ -6960,8 +7218,9 @@
       "document": true,
       "baselineSha256": "854687c1493b81c19e91cd69363491974b5988208450900504f4d359bd1abe12",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/05_planning_artifacts/prd_review_workshop.md",
@@ -6970,8 +7229,9 @@
       "document": true,
       "baselineSha256": "d74215b7b4b464cd59717ba40bb98bee7c125ab017eee18bb74a1a837265f616",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/FEATURE_PRD_STANDARD.md",
@@ -6996,7 +7256,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/README.md",
@@ -7019,8 +7279,9 @@
       "document": true,
       "baselineSha256": "6c0c1cac6d5e89e154ec282d2f50f1304ab52164e2f899a1396bbc7733b20da9",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "prd/SUPPORTING_DOCS_INDEX.md",
@@ -7028,9 +7289,13 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "7e989fa6d69f763735f91d4037501886342972e7f3ac0f8fa9d93b867fd1c4e1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "prd/FEATURE_PRD_STANDARD.md",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md"
+      ],
+      "reviewedSha256": "9c9ae7c6cf18eb5f7d72482f4d0fdc935b35df75a7b24add4e3ea07c9b53b62f"
     },
     {
       "path": "verification/api_modules.mjs",
@@ -7191,7 +7456,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "verification/source_references.mjs",
@@ -7212,7 +7477,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "verification/sync_source_reference_docs.mjs",
@@ -7743,7 +8008,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/02_home_feed/F02-04_recommend-events-more/diagrams.md",
@@ -7834,7 +8099,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/03_event/F03-01_event-discovery/diagrams.md",
@@ -7915,7 +8180,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/03_event/F03-03_event-creation/diagrams.md",
@@ -7956,7 +8221,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/03_event/F03-04_event-lifecycle/diagrams.md",
@@ -7997,7 +8262,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/03_event/F03-05_event-attendance/diagrams.md",
@@ -8038,7 +8303,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/03_event/F03-06_application-review/diagrams.md",
@@ -8279,7 +8544,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/03_event/F03-12_my-events/diagrams.md",
@@ -9390,7 +9655,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/06_payment/F06-06_point-pay-refund/diagrams.md",
@@ -10011,7 +10276,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/08_plan_market/F08-01_my-plan-list/diagrams.md",
@@ -10212,7 +10477,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/08_plan_market/F08-06_market-item-management/diagrams.md",
@@ -10453,7 +10718,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/08_plan_market/F08-12_my-collection/diagrams.md",
@@ -10494,7 +10759,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/08_plan_market/F08-13_plan-event-and-review/diagrams.md",
@@ -10825,7 +11090,7 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
       "path": "units/09_private_date/F09-08_profile_views/diagrams.md",
@@ -11323,9 +11588,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "829ba78245d0c1e1fdabaeff42dba6ca7b0887bc938fe82713fda8b0995a9f0b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "2296449d3bedfbbf3c6007d4d15a7c32a675831c1b49b5b26208da536d3e4e1d"
     },
     {
       "path": "units/12_notification/F12-01_notification-list-read/backend.md",
@@ -11333,10 +11601,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7e395e09d77c307d827def3ad4d4c91cb8fa426dfc06117cf05198310ae535e5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "7f18aa07ffea43c84e770b66554d7bc70ea508d154c24d3011717a3643305db0"
     },
     {
       "path": "units/12_notification/F12-01_notification-list-read/diagrams.md",
@@ -11344,9 +11614,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "56c540a76a56ad5a58fb24b862598738d167ad493623cf04b676f13b62e94247",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "aeca6315a45d90a007df5b0edd43c5794b11e84c40bb034dae58a05b5a1fbecc"
     },
     {
       "path": "units/12_notification/F12-01_notification-list-read/frontend.md",
@@ -11354,9 +11627,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f3be82be884812f29697e739ffdb7e00c8de1f5d2678afe7b965f6d248116d8b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "334ab601aab221445a4b2eca0a9ab9ef3136eb7a6c63f80197a3b77e5fd03ba2"
     },
     {
       "path": "units/12_notification/F12-01_notification-list-read/scenarios.md",
@@ -11364,9 +11640,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d47b420c05495f734062a3554578255c3df8841580d4a340d632c20d973bf5de",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "dbd90f4d3d29f0e87ace2107bfc7b6210b37e0f5d677ea20cc284cbebb20b01e"
     },
     {
       "path": "units/12_notification/F12-02_notification-grouped-badge/backend.md",
@@ -11377,7 +11656,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "27e514947b1f1b344eba6ed8e3ac90c89d178b598c09fc1df8da17a09081b6c4"
     },
@@ -11390,7 +11669,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "17c03d73ccb38f0f963d6fa9a58bd0ffbc4c2f6e4b4ff0fa8de516eb789d11e1"
     },
@@ -11403,7 +11682,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "3cdc5a9a46770922fa1ab5fa3bf64850fb612f13f4d60ae5cdae580ca2175215"
     },
@@ -11416,7 +11695,7 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_groups_settings_20261122"
+        "notification_domain_20261122"
       ],
       "reviewedSha256": "f15930320441241bffb6752318d803e9fbf9aaa02d879ba1673118bf478229b3"
     },
@@ -11426,10 +11705,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ff7d5180170b6ec6687b266b64cb7787f5a07b6c3b480097b351a5e3993df244",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "e69f64fb3f55dc53d1f6328ea44efb206c0f2194341d857b790f6377b91049bd"
     },
     {
       "path": "units/12_notification/F12-03_category-settings/diagrams.md",
@@ -11437,9 +11718,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e53775bddebc7d486b2f52917a644e08fcb4cdb062c33aae21a1ea4eb0b06fb2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "03be7194dfb6a24cbb035540bfec662edc8b5940c234a94d9d952ff15704ca81"
     },
     {
       "path": "units/12_notification/F12-03_category-settings/frontend.md",
@@ -11447,9 +11731,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fd350ff370ad73e544f356856cf0d1872ef3b2a8e8d8fa664495bfafa97ac85b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "9bf0aef5e9b732785243c41d7f036d2ecafa3691f0da471d4983259f177f1213"
     },
     {
       "path": "units/12_notification/F12-03_category-settings/scenarios.md",
@@ -11457,9 +11744,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5af3c2df82a5f8c3fe807f5e934c5cd575c65436455ff0c1f1b24cb4ceb9fa36",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "789c2e6cc1865f47ca588b8d905888e14271205611bbe6bab363807a8bb422a5"
     },
     {
       "path": "units/12_notification/F12-04_quiet-hours/backend.md",
@@ -11467,10 +11757,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cbf45cd6ad4155850d9d4c3f7702078448168859ffa772ea49e870a7eaa63b50",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "일부 내용 또는 코드 위치를 갱신했으며 문서 전체 대조는 아직 완료하지 않음"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "ce2a6acc6f0adcd27db8f618d5d3c46f1313452453488413cfc3f7ad6ad51369"
     },
     {
       "path": "units/12_notification/F12-04_quiet-hours/diagrams.md",
@@ -11478,9 +11770,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "66ff898578147775f427d003e0201419f9632192ffbd48d950d65d661e5fa997",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "0f6363b36a0f45528095d781236a56e14561cf5fb3b7d0608613cca59971edfd"
     },
     {
       "path": "units/12_notification/F12-04_quiet-hours/frontend.md",
@@ -11488,9 +11783,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "03625cb2de69ba79baed12ac0dea465783a59774cfae00086ec860fae3ea60ee",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "7001858c2bb440622732ec4267206ec0a17e14a159e1ca1ca5b9cac64a56ad3e"
     },
     {
       "path": "units/12_notification/F12-04_quiet-hours/scenarios.md",
@@ -11498,9 +11796,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c74055e0ec66d67e6d45838ac7180db6018fba4e0f52671525f6e37bbd275c0d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "37b4a35fcf460eb64dc6a3292d7d5dc1c3df2fd1afb64d1417d44345e79e8e76"
     },
     {
       "path": "units/12_notification/F12-05_device-token-management/backend.md",
@@ -11508,9 +11809,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5b207624e51d691fc395cf5b7682d5f3ee82bacc9d67a0b49bf1eadc84d009c6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "c321cf1891ea85eecbe1bc88ecdfa7a7c8d8689a9f3343be180a728140846586"
     },
     {
       "path": "units/12_notification/F12-05_device-token-management/diagrams.md",
@@ -11518,9 +11822,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0bbe40b524c23bdcce502018f2f317decbb570f508b73d321f7d09567a99a7a6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "d3e7e3db8a008136ad3b16c4b0a79621036228f3abe05aee303ce9594d9af3d4"
     },
     {
       "path": "units/12_notification/F12-05_device-token-management/frontend.md",
@@ -11528,9 +11835,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "aeb3a3a9ba78f8fae8690a29549565f8ae916cccc360d419ad90e12e1da5528b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "809f9744d1f86b32b7ec6d0f3c5da0d67bd7b753689ac5053060f24b8ec77a0f"
     },
     {
       "path": "units/12_notification/F12-05_device-token-management/scenarios.md",
@@ -11538,9 +11848,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cbdb3399b27031a93d84e02a42103d3036f1b09c1b1da64af65efa06cee16503",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "1eea2c63bf8c0ca68030dee55c3aaafc217800e1c3f0af63947d8a8c196f4207"
     },
     {
       "path": "units/12_notification/F12-06_permission-banner/backend.md",
@@ -11548,9 +11861,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a7ffc4314aaac057fdfa756cfe382da77796486ff5cb5bdf12093706a3600daf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "814db5a7bbd234ac889e33d6eb889e262103faec3c82ea501596dd9f9ddf28f4"
     },
     {
       "path": "units/12_notification/F12-06_permission-banner/diagrams.md",
@@ -11558,9 +11874,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "bace49c9f38add0333ff3c84990f60b6e53f771c545e87a2f2a1e3721eb5854b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "1224214c8110e4959e8fd8bbc4a572a5ef26037e343bfa4670ced5a63b644fbf"
     },
     {
       "path": "units/12_notification/F12-06_permission-banner/frontend.md",
@@ -11568,9 +11887,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d14b0e4edd03c5f24e5e5a15ac23ee6759a0645611851fafa041df556a4dd103",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "aad930ed56b7967abeea7797ca075e78cfdf84c0b9efa0a56a078035e6c61abf"
     },
     {
       "path": "units/12_notification/F12-06_permission-banner/scenarios.md",
@@ -11578,9 +11900,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2818b919d906a9a3a4dab3e37242bcdb752a15d8d55a64c8c0fe9f7d20c1d395",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "notification_domain_20261122"
+      ],
+      "reviewedSha256": "1893dcd5172d66541507e05c23fb2270e15943399581aad2966458b65caf6779"
     },
     {
       "path": "units/13_profile_settings/00_overview.md",
@@ -12328,9 +12653,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "4e2f18b99cfa6192271f1929ea07221309b12f148dc534b71cf7d1e30a2ca5b6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "6a7ef9cd3b2a6550dc0ee86d0f52f0da3aed70351d199d6f7d14f2172763b2c2"
     },
     {
       "path": "verification/01_auth_onboarding_report.md",
@@ -12338,9 +12666,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "f669b4703dcb39ea16a52167cf2aad6297645900095dc6e43b47fbc5a161dd5e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "f530b7629be69e0d718c451be2c1c9966717ee7c30c412c197306297dc742aff"
     },
     {
       "path": "verification/02_home_feed_report.md",
@@ -12348,9 +12679,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "f00be4c603bef0f61de82eed477b30cc594c3d30e139a59b583b93942c6bd01b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "214c3a617dd7b028e91f0a7a536bfa734dd46ebccd8f5a441f8e8e178f5dc1c2"
     },
     {
       "path": "verification/03_event_report.md",
@@ -12358,9 +12692,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "705a05fd0866a4da3d6f68d25e7e43f89a989b04213118adc161aacaa293a189",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "e278daaf491a5212d99cc0e307860eb5c436c877aa0cb0db995708e9fde8ec98"
     },
     {
       "path": "verification/04_club_report.md",
@@ -12368,9 +12705,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "14ff98f561c19e2a2caaa157e287d3ce07d3d0f24d9d9ae0e74f54842e5a3caa",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "9e614d7d9ab17cdf492a8a1fd8640515ba53f03271abbc992e414afd7977a587"
     },
     {
       "path": "verification/05_search_report.md",
@@ -12378,9 +12718,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "ea030d286c1093c3060af3658ee9db9b25fc84ba865ff9ed0007bab1937a57de",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "27306c14687f553742167c11587aa99566d4f0e16fa4a2159f835ef1c1a5e64b"
     },
     {
       "path": "verification/06_payment_report.md",
@@ -12388,9 +12731,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "0b9a632d6e704f9f347d400029f724c433813558897c3e1839b654987f4e858b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "e295eaf408d362c9f03313ad650c1d5e3d4dad872428547638559f820a5fb227"
     },
     {
       "path": "verification/07_meeting_settlement_report.md",
@@ -12398,9 +12744,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "4bfcbb700f1a36b0cea3ae49dfd8999592f02009c3673afc608f0f33f8af998a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "1ccf6cf356e1e30a5e5bf5669319b8e311fbd4e30d734956a35a88579757ed8c"
     },
     {
       "path": "verification/08_plan_market_report.md",
@@ -12408,9 +12757,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "3a45dabf073d0b5a771c91923562ac2b96f7feaf57d902f09b73c009f4449ccc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "1f48112b75c2d2b9351f48e7b8e9132e53630019164a84c72e26e46a493f88bc"
     },
     {
       "path": "verification/09_private_date_report.md",
@@ -12418,9 +12770,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "c29a1592fe8d031f1352ee6a4424dd9204d1e8426eafe606ae40f79a5452033c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "1b7442f4105ce13b77900352d3b51579517b58445e4ea0ce6aaa9725fc128979"
     },
     {
       "path": "verification/10_calendar_report.md",
@@ -12428,9 +12783,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "cad33d80c4578d7b19c4045bbd8f54ce30927735cb68d518c0bc3879a3eb5dd3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "34be9ed814d57ee79960b5e6e93755c52bc9ee814a090f9cc982ff65f6e703c9"
     },
     {
       "path": "verification/11_review_report_report.md",
@@ -12438,9 +12796,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "197e6735051f9a7495a048988159d96fe3ea224e27d29a5b478549081671de7a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "9967aef638833674c55ac834a0a0c24ad5c1d092e5625b7ce82727fd7838b41f"
     },
     {
       "path": "verification/12_notification_report.md",
@@ -12448,9 +12809,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "95032cfb3418c035f476a2b53b1935c80d68509472046734ce1de284bf0ddbda",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "aa35b7e4d9ca0598ccda530141fa3854fc50836ea0e8910540247e3f4afd229b"
     },
     {
       "path": "verification/13_profile_settings_report.md",
@@ -12458,9 +12822,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "652941768c429a5cb22db7167daa65f389e5f79e0492710f44b173a1bf3f998e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "6284dfad9aa16d9746bd4c725adf65dd67c329ef940c6a8d70020b1bc3d88ed5"
     },
     {
       "path": "verification/14_location_directions_report.md",
@@ -12468,9 +12835,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "07b7a0d5ef91e2c1a77241245817febb36aba521836b47855a34726786e1c94d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "c7c0b3e84d5b61fcd4dae450188b9610d81f8ea83acca328fbe6eb4211766b1a"
     },
     {
       "path": "verification/PG_WEBVIEW_MOCK_PATTERN.md",
@@ -12478,9 +12848,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "07c97012e887cc6576f8c1f8ff8e2aaf38f86d03f09049c7dbdadee8c4894c9d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "e0f4af3bb1f71cca09a3762964a7baf0ecd6278ce1a6e2b0fffaf8c5455b1daf"
     },
     {
       "path": "verification/SANDBOX_BASELINE.md",
@@ -12488,9 +12861,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "68cae5b05f03bbcfca02197c0c3b314d4bc5b5812b8ef0e2cc500a0401d140ac",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "1ac35d63f061174aa317e0c1b522ce40550718ccd18d2cdea020c0f936908fde"
     },
     {
       "path": "verification/VERIFICATION_SPEC.md",
@@ -12498,9 +12874,13 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "43f2cd8764ed8aa9de0fecfc803a65594ece21ab7fe2a2100103a10742d8a7b3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "prd/FEATURE_PRD_STANDARD.md",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md"
+      ],
+      "reviewedSha256": "33d20d8fe8e0606230a9f97d5bdc8e944d04f03a0fe31151461ef975b3338b9b"
     },
     {
       "path": "verification/audit_input_stats.sh",
@@ -12618,9 +12998,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "a5c08b6db9ef7701366f3578d507777ea3a261f9afe866e67a03592ccb373565",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "2a778260123108eaa8ae27927ceaa2ce21bdecf470595457b588281191be1180"
     },
     {
       "path": "verification/e2e_traceability/00_cross_cut_e2e.md",
@@ -12628,9 +13011,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "51481dd0617852bbcf97cc3d84ed7ea65cdce1bc282457d67788d66a2c87ed78",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "b7c6c2b41133c5b52951e6d50f55ad65fda1c20bf2835007888ebf4cab2dee60"
     },
     {
       "path": "verification/e2e_traceability/01_auth_onboarding_e2e.md",
@@ -12638,9 +13024,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "7819719f271844e320ba47943e785d0637eaabbb0de27b7e3fad847cacc80a14",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "8e9da20211336756e76ea7d730650e5544a0fac482a545aac04ce0184152d53f"
     },
     {
       "path": "verification/e2e_traceability/02_home_feed_e2e.md",
@@ -12648,9 +13037,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "43bb2e90be466fad9c97410bd0db63d03e13046106693345fbe463a2cbc47d11",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "8c275a7caa7bfdcae5743d17df9d0a7557af8a1b97d5b4fcbb9aa25e1e6deeb9"
     },
     {
       "path": "verification/e2e_traceability/03_event_e2e.md",
@@ -12658,9 +13050,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "fd1e0563f1f25ea0fef1042c5a28bbc3758a33a659689bdf27eb58f60727082c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "99e652c3223987935aa619988d98aea22ec67867b25d78eb8f73a0b042c34d18"
     },
     {
       "path": "verification/e2e_traceability/04_club_e2e.md",
@@ -12668,9 +13063,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "c47ae21a1450e98e184a0d6813015b7f0ee8d14fd0e331a2b94ed56a34477cd7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "4486ec5246e7f0ad69a288678d55cd632e4492d974066cf0f3ce432cc6ea8cad"
     },
     {
       "path": "verification/e2e_traceability/05_search_e2e.md",
@@ -12678,9 +13076,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "78ef2da64bc3a90cd06e156b57427409be5120768a13d92bc40d5fb784ad725f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "e57ff632de71293eb18bc4ef62f7c43bf154f797a8dc9fbc991ad6bcfa8beec6"
     },
     {
       "path": "verification/e2e_traceability/06_payment_e2e.md",
@@ -12688,9 +13089,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "49ca4231933cfea5fb0acd11b89919fe5f72fa8a616efce2a5a5f2cf77781a1c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "d8ed60154b250b480ab83781135be280fe79f31ecb80271f1f784931b0da24c4"
     },
     {
       "path": "verification/e2e_traceability/07_meeting_settlement_e2e.md",
@@ -12698,9 +13102,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "af8eecf90405c2489203ac1593e8326b9da2f95470f22edd95e6797e6e0cc07e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "74ef4cb6927f0588d854df1d55073af3a53504b13742d5619313e7c47ece7466"
     },
     {
       "path": "verification/e2e_traceability/08_plan_market_e2e.md",
@@ -12708,9 +13115,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "e1ed163cd017533aed6b6f0ec337e3ba2ba3eb44921414cda9c3afa186aeb933",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "e21c726591329155a030b0c83eb4438122df9196bfc58859e86e0642f2cc7b60"
     },
     {
       "path": "verification/e2e_traceability/09_private_date_e2e.md",
@@ -12718,9 +13128,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "9cc49213b69dea1203d03693b8da258d377898e0275823d354f14d8b8cde2d97",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "8505a5ddea0da22a08071939048ecbf030bbc44679b317e1a52eb64a38ad3c36"
     },
     {
       "path": "verification/e2e_traceability/10_calendar_e2e.md",
@@ -12728,9 +13141,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "19b2e4c3719a266fb60656647049dcc249d2fc9669302c137ebff4873facaebd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "5b733e7ac70ad9f1e1d68af4172e519e58a73eeffe82bb0d543d4343317f732a"
     },
     {
       "path": "verification/e2e_traceability/11_review_report_e2e.md",
@@ -12738,9 +13154,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "3156cea3589a89880d23fe72a3bbc1222c626982af8869cb7407ae7671a69f66",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "bb7033e50cab3843c411c78d889405329ccd7f76d0bfd66c5ead338775b0fdc2"
     },
     {
       "path": "verification/e2e_traceability/12_notification_e2e.md",
@@ -12748,9 +13167,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "15618db035906ef1d20e2a18101b067d29361c60322fd03f2396fb19d69d6539",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "287958a3db9395171ba80db4ab7140280009891c55275a9f91742fd5a21a6021"
     },
     {
       "path": "verification/e2e_traceability/13_profile_settings_e2e.md",
@@ -12758,9 +13180,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "0eb913dad84119aefbe9dac1b44f4562faab89034f4429f91c0974e88379ee9c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "322c3608ebe34bbe45f729801c1bfec0cff27aa39ed7a4fc6455de240ba814e6"
     },
     {
       "path": "verification/e2e_traceability/14_location_directions_e2e.md",
@@ -12768,9 +13193,12 @@
       "kind": "verification_reference",
       "document": true,
       "baselineSha256": "92e895b0b997a19175c11082a2122e8503c7d5e646b79dc55e92e36e1eb8c263",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "historical_retained",
+      "disposition": "classified_and_linked",
+      "evidence": [
+        "원문 지문 대조: 역할 안내를 제외한 본문은 기준 시점과 동일"
+      ],
+      "reviewedSha256": "9c3b218949b13a9ba9f2d5b7edd9d82774a70640fbef84ac135ad0d73ca0e012"
     },
     {
       "path": "verification/location_privacy_decision.md",
@@ -12833,6 +13261,55 @@
       "command": "변경 Markdown 내부 경로 검사",
       "result": "50개 경로 존재; 누락 0개",
       "scope": "변경한 진입점·표준·F12-02·F12-03 링크 대상 존재. 전체 앵커·시각 검수와 구분"
+    },
+    {
+      "command": "추적 Markdown/HTML의 상대 링크 경로 전수 검사",
+      "result": "5317개 중 JavaScript 동적 템플릿 2개를 제외한 실제 경로 누락 없음",
+      "scope": "경로 존재만 확인. 의미·앵커·실제 앱 검수 아님"
+    },
+    {
+      "command": "과거 조사 원문 지문 대조",
+      "result": "33개 역할 안내 추가 후에도 본문 원본 지문 일치",
+      "scope": "과거 결과 보존. 현재 버전 검증으로 승격하지 않음"
+    },
+    {
+      "command": "node verification/check_scenario_audit.mjs",
+      "result": "PASS: 기능175, 참조304, 로컬 소스위치295, 로컬링크183, 저장소링크457",
+      "scope": "자료·표·연결 대상 검사"
+    },
+    {
+      "command": "node --test verification/source_references.test.mjs",
+      "result": "11/11 PASS",
+      "scope": "앱 알림 커서 참조 추가 후 검사기 검증"
+    },
+    {
+      "command": "추적 문서 경로·알림 공개 앵커·기준 소스 재확인",
+      "result": {
+        "relativePaths": 5309,
+        "missingPaths": 0,
+        "removedNotificationAnchors": 0,
+        "duplicateNotificationAnchors": 0,
+        "changedSourceVersions": {
+          "business_logic": {
+            "baseline": "968daa5999e5f96b975e2e17759d97c248f1ffcc",
+            "actual": "0179eb227444394ed32c19775df7f2888f321c63"
+          },
+          "community_api": {
+            "baseline": "9eec7d87c660366764ab9f2050a005cd994a4a20",
+            "actual": "b9ee63f619eba6501f952fa663a243ac87d3573b"
+          },
+          "community_app": {
+            "baseline": "ae0630984ddffffda48ad595a8e408c3f2ebd741",
+            "actual": "a443150abb314b7658b6cf3adeab01272d47e37f"
+          }
+        }
+      },
+      "scope": "경로·식별자·기준 버전. 전체 문서 의미 검수와 구분"
+    },
+    {
+      "command": "알림 관련 변경 뒤 scenario-audit 재생성·check_scenario_audit",
+      "result": "PASS; 소스 위치85문서 일치; 문서 데이터·표·필터·로컬 참조 검증",
+      "scope": "제품 실행 시험 아님"
     }
   ],
   "evidenceGroups": {
@@ -12891,6 +13368,85 @@
         {
           "path": "community_app/lib/domain/providers/notification/push_notification_provider.dart",
           "sha256": "b91af1d73d025c5d293b0dd2a54e3bf8a07cae8de24061116907573c3b68dafa"
+        }
+      ]
+    },
+    "notification_domain_20261122": {
+      "kind": "source_review",
+      "scope": "알림함·방해금지·기기 등록·OS 권한과 여섯 기능의 요약. 기존 발송 기록의 범위는 보존하며 이번에 실제 기기 시험을 실행한 것은 아님",
+      "reuses": [
+        "notification_groups_settings_20261122"
+      ],
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/notification/controller/DeviceTokenController.java",
+          "sha256": "424499488b3b93786141e6501068c2b7bd80244b55657abb48372c0f49c59206"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/DeviceTokenService.java",
+          "sha256": "405eb074cabc21221c379c5ae24b1a340ff578cee140823ce7a2b8ca7ac2c2d5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/repository/query/DeviceTokenQueryRepository.java",
+          "sha256": "227463eb505065c2f5a10e49124ae1e327fe57e4813037d6f895f14e0f08e421"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/PushDeliveryEligibility.java",
+          "sha256": "cad60a52da60411caa88d351019988161ea52cd2df6661d3464e483ec9125120"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/model/QuietHoursSetting.java",
+          "sha256": "4ab829ce24375d8294cc6c481294c19b3dd458c50f2e782e549b74eb14bebc70"
+        },
+        {
+          "path": "community_app/lib/domain/providers/notification/fcm_permission_provider.dart",
+          "sha256": "8996abb46309fa951c533839a8f4df558ab669073d5163921d8fb767efe26757"
+        },
+        {
+          "path": "community_app/lib/domain/providers/notification/device_management_provider.dart",
+          "sha256": "bc0fca0a9d204b7832b3fda92d388c4db32e407b30efca99e0c0b2078ab8b5b4"
+        },
+        {
+          "path": "community_app/lib/core/services/push_notification_service.dart",
+          "sha256": "ebedd6415617955aaa48ccbf29eac41d99365e84354ecd2085a0ce58e624dd7a"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67"
+        },
+        {
+          "path": "community_app/lib/app.dart",
+          "sha256": "ded06cdd2fa72d1a7e63789699851360c842ac905fad11cd9ed89f263ec7ebaf"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/device_management_screen.dart",
+          "sha256": "0fb475047a4c89d381d809e2f363b353060471b99d889b3f91b5158f93b939e0"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/quiet_hours_screen.dart",
+          "sha256": "606a43666e359e1b66216ee4efe3a1acbb929af3a2be81657d82928102deecb4"
+        }
+      ]
+    },
+    "notification_delivery_20261122": {
+      "kind": "source_review",
+      "scope": "채널 발송의 소유권·대기·만료·수락과 수신의 구분; 실제 발송 실행 증거 아님",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/model/NotificationDeliveryJob.java",
+          "sha256": "41e8e9cec0e21e5c36b16d8e34311121079736edf19959863b27d15de7b12dca"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/ChannelDeliveryStore.java",
+          "sha256": "c8ff86e71e0acb80811d7c4735f585845df0b9f98a93409c2b8d1e44a603dc28"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/ChannelDeliveryWorker.java",
+          "sha256": "62adfec8922f2b27c1c8f92b33ac43ae88beee54ed2639b5510b79f3be7cfdb7"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/constants/DeliveryJobStatus.java",
+          "sha256": "55d9d30f1e3e1e87fbec85d97f965ffb0a3df9be3aa5031ee9d8ac73d9667cd1"
         }
       ]
     }

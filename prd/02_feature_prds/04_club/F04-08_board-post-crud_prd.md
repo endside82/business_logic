@@ -1,7 +1,7 @@
 # F04-08. 게시판 & 게시글 CRUD PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > **2026-06-10 AUTH-04/06/08 + 이미지 수정 반영**: 클럽 포스트 컴포저 고도화(AUTH-04), 예약 게시(AUTH-06, `PostStatus.SCHEDULED`), 게시글 좋아요(AUTH-08, `club_post_like` 테이블), 이미지 업로드 완료 처리(presigned → completeUpload → IDOR 검증).

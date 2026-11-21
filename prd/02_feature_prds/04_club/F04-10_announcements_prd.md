@@ -1,7 +1,7 @@
 # F04-10. 공지사항 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > **2026-06-10 AUTH-06 반영**: 예약 공지(`AnnouncementStatus.SCHEDULED`) 신설, 고정 공지 동시 생성 비관적 락 강화.

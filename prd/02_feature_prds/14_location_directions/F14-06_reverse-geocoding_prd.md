@@ -1,7 +1,7 @@
 # F14-06. 지오코딩 (좌표 ↔ 주소) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > 2026-07-08 현재 소스 갱신: 본 단위는 좌표→주소(reverse geocode)뿐 아니라 주소→좌표 geocode도 함께 제공한다. 서버 `GeocodingController`는 `GET /api/v1/location/geocode?address=...`를 추가했고 Kakao Local address search 결과의 `x/y`를 `longitude/latitude`로 매핑한다. Flutter `geocoding_api.dart`/provider는 주소 검색 결과를 좌표로 확정한다.

@@ -1,15 +1,14 @@
 # 보조 PRD 문서 인덱스
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 
-> 업데이트: 2026-08-30. 이 인덱스는 기능 PRD가 아닌 현재 존재 자료 32개
-> (`business_logic` 내부 30개 + 외부 참조 2개)를 추적한다.
+> 역할·진입점 갱신: 2026-11-22. 아래 목록은 제품·정책·QA·기획 자료의 역할을 안내한다. 전체 문서의 처리 범위와 대조 여부는 [문서별 최신화 기록](../verification/document-refresh-2026-11-22.json)을 따른다.
 
 ## 읽는 법
 
-보조 문서는 기능별 source-of-truth가 아니다. 기능별 현재 계약, source trace, Gap/Risk는 `PRD_MIGRATION_STATUS.md`와 `02_feature_prds/`의 기능 PRD에서 확인한다. 이 문서들은 제품 구조, 정책, QA, Notion/운영 흐름을 보조한다.
+제품 정책은 승인된 결정과 명세가, 구현 계약은 해당 버전의 실제 코드가 정본이다. 기능별 흐름·상태·위험은 [기능 PRD](02_feature_prds/), 대조 범위는 [문서 전환·대조 상태](PRD_MIGRATION_STATUS.md)에서 확인한다. 과거 소스 조사와 구현 리포트는 당시 근거로 읽고 현재 미구현 목록으로 옮기지 않는다.
 
 ## 목록
 
@@ -43,13 +42,13 @@
 | [05_planning_artifacts/notion_import_order.md](05_planning_artifacts/notion_import_order.md) | Notion 업로드 순서 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/ppt_feature_intro_outline_draft.md](05_planning_artifacts/ppt_feature_intro_outline_draft.md) | community 기능 소개 PPT 항목 초안 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
 | [05_planning_artifacts/prd_review_workshop.md](05_planning_artifacts/prd_review_workshop.md) | PRD 리뷰 워크숍 가이드 | Notion 업로드, 결정 등록부, MVP/워크숍 등 운영 산출물 |
-| [05_planning_artifacts/current_source_update_2026-07-29.md](05_planning_artifacts/current_source_update_2026-07-29.md) | 현재 소스 실측 노트 (2026-07-29 기준) | 50개 기능의 source/UI 교차 실측 원칙과 확정 Gap/Risk |
-| [05_planning_artifacts/current_source_update_2026-07-08.md](05_planning_artifacts/current_source_update_2026-07-08.md) | 현재 소스 계약 노트 (2026-07-08 기준) | 2026-06-24 이후 구현된 게스트 동반 예매·궁합/핏·플랜 에디터·위치/길찾기·커뮤니티 메시지 변경을 기존 175개 기능 체계에 흡수한 기준 |
+| [05_planning_artifacts/current_source_update_2026-07-29.md](05_planning_artifacts/current_source_update_2026-07-29.md) | 과거 소스 실측 노트 (2026-07-29 기준) | 당시 50개 기능의 소스·UI 대조 기록. 현행 여부는 새 대조 기록을 확인 |
+| [05_planning_artifacts/current_source_update_2026-07-08.md](05_planning_artifacts/current_source_update_2026-07-08.md) | 과거 소스 계약 노트 (2026-07-08 기준) | 2026-06-24 이후 구현된 게스트 동반 예매·궁합/핏·플랜 에디터·위치/길찾기·커뮤니티 메시지 변경을 기존 175개 기능 체계에 흡수한 기준 |
 | [../../docs/plan/regular-meeting/README.md](../../docs/plan/regular-meeting/README.md) | 정기모임 구현 계획 (16분할) | GLOSSARY · 16개 분할본(요구/결제·환불/노쇼/예외/Flutter/Phase 등) + NEXT_SESSION을 담은 2026-05-28 설계 배경. 현재 계약은 F17 PRD와 실제 API/App 소스가 우선한다. |
 | [../../community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md](../../community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md) | 정기모임 구현 리포트 | Pre-1 → Phase 1~7 구현 당시의 스냅샷. 현재 endpoint·상태·Flutter 도달성 판단에는 실제 소스를 우선한다. |
 
 > `docs/plan/event-extensions/{PLAN,ENUM_RESERVATIONS,E2E_SCENARIOS}.md` 3개는
 > 2026-06-05 정리에서 폐기되어 목록과 링크에서 제외했다. 현재 이벤트 확장 계약은
 > F03-13~17 기능 PRD와 `community_api` 실제 Controller/Service/DTO/enum이 기준이며,
-> enum 번호·충돌은 `community_api/src/test/java/com/endside/community/EnumReservationTest.java`가
+> enum 번호·충돌은 `community_api/modules.txt`의 테스트 소스에서 찾는 `EnumReservationTest`가
 > 회귀 검증한다.

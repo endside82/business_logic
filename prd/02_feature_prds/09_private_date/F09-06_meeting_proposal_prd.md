@@ -1,7 +1,7 @@
 # F09-06. 만남 제안 & 안전 흐름 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > 2026-07-29 현재 소스 갱신: 만남 완료 이후 데이트 만남 피드백이 추가됐다. `DateMeetingFeedbackService`와 관련 VO/Param이 만남 단위의 `meetAgain`/`satisfaction`을 수집하고, 앱은 만남 제안 화면/배너에서 피드백 시트를 노출한다. 현재 소스에서 이 응답을 F11-06 취향 프로필이나 추천 점수로 전달하는 호출은 없으며, privatedate 격리 데이터와 본인 export 원본으로만 확인된다.

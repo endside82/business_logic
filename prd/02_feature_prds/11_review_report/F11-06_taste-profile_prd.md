@@ -1,7 +1,7 @@
 # F11-06. 취향 평가 & 취향 프로필 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > 2026-07-29 현재 소스 갱신: legacy GraphQL 추천, `PreferenceRating`, `TasteNeighbor` 중심 흐름은 현재 기준이 아니다. 현재 `TasteProfileService`의 자동 재구축 원천은 이벤트 선택형 피드백이며, 데이트 만남 피드백은 이 프로필에 합산되지 않는다. InterestTag 카탈로그는 서버 단일 출처이고, 데이터 내보내기·삭제도 현재 취향 데이터를 포함한다. 아래 기존 trace는 역사적 전환본으로 남기되, 구현 판단은 `EventFeedbackController`, `TasteProfileService`, 현재 Flutter 피드백 화면을 우선한다.

@@ -1,7 +1,7 @@
 # F14-01. 이벤트 참석자 위치 공유 (opt-in / 위치 갱신 / 조회) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > 2026-07-29 현재 소스 갱신: 신규 opt-in 성공 또는 앱 resume 경로는 위치 목록을 30초마다 `GET`하고, 공유 중인 내 GPS는 별도 60초 타이머로 다시 취득해 `POST /update`한다. 기존 활성 share로 화면에 재진입한 직후에는 GPS 타이머만 시작하고 목록 타이머는 시작하지 않는 lifecycle Gap이 있다. GPS 갱신이 2회 연속 실패하면 GPS 타이머만 멈추고 한 번 안내한다. dispose·앱 paused·위치 화면에서 성공한 opt-out은 두 주기 모두 멈추지만, 만료는 GPS 타이머만 멈추고 30초 목록 타이머는 계속될 수 있다. privacy route push도 기존 위치 화면을 dispose하지 않는다. 서버는 아직 활성인 공유에 대해 **요청의** `expiryMode`가 null인 좌표 갱신에서 기존 `expiresAt`/`expiryMode`를 보존한다.

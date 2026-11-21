@@ -1,7 +1,7 @@
 # F14-04. 위치 프라이버시 대시보드 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 할 일은 [출시 실행 계획표](../../../../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
 
 >
 > 2026-07-29 현재 소스 갱신: 컨트롤러는 `eventId`를 서비스에 전달하며, 서비스는 해당 이벤트에서 최근 30일 동안 내 위치를 본 기록만 반환한다. 응답의 `userOptedIn`·`locationShareEnabled`가 토글 상태의 서버 기준이고, Flutter는 `locationPrivacyProvider(eventId)`로 이를 조회해 접근 기록·빈 상태·재시도를 실제 렌더한다. 30일 초과 접근 로그는 매일 03:30 삭제된다. 2026-11-08 결정 84-2 로 호스트 토글은 전용 창구 `PATCH /api/v1/events/{eventId}/location-share` 를 쓴다. 호스트·공동 호스트가 초안·공개 모임에서 켜고 끄며, 범용 이벤트 PATCH 의 `locationShareEnabled` 는 초안 전용이다. 이 문서가 적어 두었던 계약 불일치(화면은 운영 중 호스트 제어인데 창구는 초안 전용)는 이 창구로 닫혔다.
