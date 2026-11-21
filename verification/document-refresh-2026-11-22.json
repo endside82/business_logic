@@ -4103,9 +4103,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "98dd180e543ad4c650a4f7c2ebf6447d27c29c3eeade82675f61b8d49e1f8269",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "privacy_visibility_20261122"
+      ],
+      "reviewedSha256": "fde16c34e1b72fd664f6ed37c949bc6c86105e2496ebbe743d329a5aee62d6db"
     },
     {
       "path": "docs/features/F20-01.html",
@@ -4415,8 +4418,11 @@
       "document": true,
       "baselineSha256": "6bf984c9b8cb07948a025cb05d7fb1611370d26224883498b5c8f3c613e5538d",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "profile_domain_rollup_20261122"
+      ],
+      "note": "프로필 공개·내보내기·삭제·탈퇴의 현재 근거만 갱신. 다른 안전·증빙·보존·위치 항목은 전체 대조 대기."
     },
     {
       "path": "docs/policies/state.html",
@@ -6990,10 +6996,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c5ce23188bee44fcc2f97ed3e411a261c327086cfe6bc00c35abb196f8597234",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "privacy_visibility_20261122"
+      ],
+      "reviewedSha256": "ea9713966781d1c92a55254d1d65a9708e1cb6b4b829d635b30c53d3ec736f4f"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
@@ -7161,8 +7169,11 @@
       "baselineSha256": "60f75c5f2f218c0da3ca5af0c76ff5cf325679c7c2e6e51a0282a3692e4caad4",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "evidence": [
+        "profile_domain_rollup_20261122",
+        "privacy_visibility_20261122"
+      ],
+      "note": "프로필 공개·내보내기·삭제·탈퇴의 현재 근거만 갱신. 다른 안전·증빙·보존·위치 항목은 전체 대조 대기."
     },
     {
       "path": "prd/03_policy_prds/state_policy_prd.md",
@@ -13791,6 +13802,23 @@
         "reusedSourceDigests": 194
       },
       "scope": "7개 기능의 현재 요약·버전 판정·탈퇴 목록·폐지된 미인증 정리를 문서에 반영. 원래 시험 날짜·범위는 유지하며 새 제품 실행·스토어 공개·계정 파기 검증을 주장하지 않음."
+    },
+    {
+      "command": "F19-03: source reference tests; source-first records without local backend paths; scenario audit; reviewed paths and source/derived digests; retained HTML IDs; git diff --check",
+      "result": {
+        "status": "PASS",
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 93,
+        "sourceRecords": 354,
+        "verifiedRecords": 352,
+        "retiredRecords": 2,
+        "localSourceLocations": 349,
+        "reviewedDocumentRelativePaths": 714,
+        "derivedSourceDigests": 86,
+        "currentBatchSourceDigests": 35,
+        "sourceFirstBindingsWithoutLocalBackend": 6
+      },
+      "scope": "공개 설정 문서와 근거 생성 검사. 단위 폴더를 새로 만들지 않고 기존 source-first 문서에도 서버 함수 연결을 검사한다. 개인정보 공통 정책은 검토한 절만 반영했으며 다른 안전 정책의 전체 검토는 미완료. 새 제품 시험·두 계정·실결제·외부 알림 검증 아님."
     }
   ],
   "evidenceGroups": {
@@ -15323,6 +15351,155 @@
         {
           "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
           "sha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
+        }
+      ]
+    },
+    "privacy_visibility_20261122": {
+      "kind": "source_review",
+      "scope": "F19-03 공개 설정 네 토글·서버 허용·프리미엄 켜기/무료 끄기·개별 저장·실패/복귀·계정 경계 및 직접 프로필/가입 클럽/검색/만남 후보/캘린더와 발행 알림의 적용 경계. 해당 메서드와 조건 대조이며 새 제품 시험·실결제·다른 기기 정보 회수·외부 알림 검증 아님.",
+      "reuses": [
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/PrivacySettingController.java",
+          "sha256": "3fdbdf6016fa4ddeea2890e3ad53a636e2764a110bd8c22adfcf7f86e8d41b05"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/PrivacySettingService.java",
+          "sha256": "1664819dadd8660b4a7472316c1949504e90a164fbb98077fbe32ad0de13b8a1"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/UserClubController.java",
+          "sha256": "c9bec4ce406e719ac09aed85b18f899c910860fac6b3db6c4f9d216760ff66ef"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/UserClubService.java",
+          "sha256": "9ee84f2a8ddc141e2c490685d67394df01c131899ae3006aaf171a96f0bc4ec1"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/StrangerVisibilityService.java",
+          "sha256": "98c6abe54f850cb227592b60eacd37c18700a4f171fb87e06836f317013dfdad"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/ProfileDetailAccessService.java",
+          "sha256": "bc6d91e6c23a9774e236f2c81b2ef9329b7f475d07f100e574e589b075fc64c6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/vo/UserPrivacySettingVo.java",
+          "sha256": "a666bf5317e984c77be3d16db2ac6cb5ee0123d85da4f8960e33e68b7ed93728"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/vo/UserJoinedClubVo.java",
+          "sha256": "a11d318808f251e16b8493b4fb502d387e9d6b6709872dc5ebf4d2bfb30d8417"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/param/CalendarPrivacyParam.java",
+          "sha256": "17536ed7d5b19df39903331f908122f43490d3df774b534a2c24c4eafcb073f5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/param/ClubPrivacyParam.java",
+          "sha256": "33cdbeb04c25540832397dc716af80e15908c81384fbb02ec02e2b9f5d43262c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/param/HideFromStrangersParam.java",
+          "sha256": "1b71a5e17a82cd6bd88368fb0656e09472f46e60301a45e70fb51ace8fd3065d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/param/HideFromSearchParam.java",
+          "sha256": "ec8334c410ec57bab5e5dcb4b9da4dd5442d66bab8fc12f20f589f6bc232095d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/repository/query/UserPrivacySettingQueryRepository.java",
+          "sha256": "92172c9920ca6147c6e6cbb6e9f6e53f9649de9658286df49792523008357519"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/subscription/policy/SubscriptionBenefitPolicy.java",
+          "sha256": "4388befd2ee7b11bab0089e117ee4b5b1523c080d8445d86406cc8d2802f38f2"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/subscription/benefit/SubscriptionBenefit.java",
+          "sha256": "54770794a3339ecd6c80e110ea12dd5db2d9e747c4c18f6a4be12d36ebd8f79c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SubscriptionService.java",
+          "sha256": "aba6da08cb6bebe6f06aa5e2e2183a74439fa86d1b2eea69a84554c28cd2cf6a"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/repository/PersonSearchQueryRepository.java",
+          "sha256": "1190084d223260f008d083a9e9bb40d7be0f054ea31e00d88837dcf926fb1ab6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/repository/query/UserQueryRepository.java",
+          "sha256": "de2dad195091a2301216907cbbb23ec834b2779a74e41e37c0e3e0c730575dcd"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/service/PersonRecommendationService.java",
+          "sha256": "9d258185e17a1823210502a812de677483d5730db800c07ac5efc76df0a28eae"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/connectivity/port/PersonRelationAttendanceAdapter.java",
+          "sha256": "39f6d4343b8dbcf4e5c2d7213da0e6b2aeb25ba9d597f784badd54300b5e5cd1"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/FavoriteCalendarService.java",
+          "sha256": "5d6bb0c51fc12cf71345813eb6784ac269800537c7512941acbcb10ed515e3e4"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/favorite/service/FavoriteEventNotifier.java",
+          "sha256": "9e3dadd33977ce6600ba1b3ab749ce539277833c95596c55a75a7655ab39e5ba"
+        },
+        {
+          "path": "community_app/lib/domain/providers/favorite/privacy_setting_provider.dart",
+          "sha256": "f158bff1775a6105ad035953a34b437f7758bf24059613ffa9fad1cd3f0ff21c"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/privacy_settings_screen.dart",
+          "sha256": "0fcc51a8d4e1150038abf9e95b191f17fd66724de822ea1b5704b99a76517ab8"
+        },
+        {
+          "path": "community_app/lib/data/models/favorite/user_privacy_setting_vo.dart",
+          "sha256": "be08a9e138c0d32e7635635f195dfa48c1e3fe97b61650df5542289d95f91872"
+        },
+        {
+          "path": "community_app/lib/data/models/favorite/privacy_param.dart",
+          "sha256": "68466d84d2678ad6d0218a38835b8fd3601671e6a86eda3e3a5af7fe783f6775"
+        },
+        {
+          "path": "community_app/lib/data/api/favorite_api.dart",
+          "sha256": "f404d8fdf036284d10f8541afdcab2819934988ed8a4e124d721b185afca2c56"
+        },
+        {
+          "path": "community_app/lib/data/repositories/favorite_repository.dart",
+          "sha256": "5e3e6e4dfbbc08910bf344eb85c9e4453219410fa0b4ea4850767e15af4d0d65"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/app_settings_screen.dart",
+          "sha256": "634d923ab037f0508ace2303b8e81cd0d7cd48dbad5ef346bc7941307f37a888"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart",
+          "sha256": "6153e5ed4b32c935dcd8569e9e01e48171a1be5b7dc54c978a364449af6b778e"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/ability_source_refresher.dart",
+          "sha256": "3dd94694b2d02cb872437951aa9f8f453c7fa6c0143dc4e7cd923fbac78fc90b"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/user_profile_screen.dart",
+          "sha256": "fc3e4edeae3528b5587dd9eb9870f2bbef033aacbc906a216097af63a51c7f1f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/UserService.java",
+          "sha256": "fd0e8c2f8ae89ecb4653a5a47a45a201a8ee8afe4e5c06f10873d7c96f49f9bb"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/repository/query/EventAttendanceQueryRepository.java",
+          "sha256": "f3194ce62f3158bdfbd3a826232471bdcabdb0d0bc1d4c793c8c13f764eb6fa8"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/UserClubPostService.java",
+          "sha256": "ddbe5e88c2e480cf2d5b70115bbf73a8038e9fb7a43afdde2fc6b6604b726c7e"
         }
       ]
     }

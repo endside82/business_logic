@@ -385,7 +385,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F18-05 | 분쟁 해결 | [F18-05_host-inbox_prd.md](02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md) | `source-first` | source-first PRD | 3 | 5 |
 | F19-01 | 관심인 | [F19-01_favorite-manage_prd.md](02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md) | `source-first` | source-first 구현 확인 | 3 | 3 |
 | F19-02 | 관심인 | [F19-02_favorite-calendar_prd.md](02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md) | `source-first` | source-first 부분 구현 | 3 | 2 |
-| F19-03 | 관심인 | [F19-03_privacy-visibility-settings_prd.md](02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md) | `source-first` | source-first 구현 확인 | 3 | 2 |
+| F19-03 | 관심인 | [F19-03_privacy-visibility-settings_prd.md](02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md) | `source-first` | source-first 구현 확인 | 6 | 4 |
 | F20-01 | 고객지원 | [F20-01_inquiry_prd.md](02_feature_prds/20_support/F20-01_inquiry_prd.md) | `source-first` | source-first 부분 구현 | 2 | 3 |
 | F20-02 | 고객지원 | [F20-02_operational-issue_prd.md](02_feature_prds/20_support/F20-02_operational-issue_prd.md) | `source-first` | source-first 부분 구현 | 2 | 3 |
 | F20-03 | 고객지원 | [F20-03_support-faq_prd.md](02_feature_prds/20_support/F20-03_support-faq_prd.md) | `source-first` | source-first 구현 확인 | 1 | 1 |

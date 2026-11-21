@@ -51,7 +51,7 @@ const identities = new Map(references.flatMap((reference) => reference.endpoints
 const sourceRelative = (file) => file.slice(file.indexOf('/src/main/java/') + 1);
 const moved = Map.groupBy(identities.values(), (endpoint) =>
   sourceRelative(endpoint.targetPath) + ' ' + endpoint.controller + '#' + endpoint.method + ' ' + endpoint.httpMethod + ' ' + endpoint.httpPath);
-for (const backendPath of new Set(targets.map((target) => target.backendPath))) {
+for (const backendPath of new Set(targets.map((target) => target.backendPath).filter(Boolean))) {
   const absolute = path.join(workspace, backendPath);
   if (!fs.existsSync(absolute)) continue; // 로컬 전용 자료는 Git 저장소에 포함되지 않는다.
   const text = fs.readFileSync(absolute, 'utf8');

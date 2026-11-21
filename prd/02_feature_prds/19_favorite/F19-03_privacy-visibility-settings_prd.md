@@ -1,123 +1,79 @@
-# F19-03. 프라이버시 공개범위 설정 PRD
+# F19-03. 공개 범위 설정 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 서버·앱 소스를 대조했다. 새 시험·실기기·다른 계정의 실제 화면 검증은 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-07-29 -->
+## 결론
 
-## 1. 결론
+공개 범위에는 서로 다른 네 설정이 있다. 관심인에게 캘린더 숨기기와 가입 클럽 숨기기는 켜기만 프리미엄 판정을 받는다. 이미 켠 값은 구독이 끝나도 유지되며 끄기는 항상 허용한다. 낯선 사람 프로필 숨김과 검색 숨김은 구독과 무관하다. 설정이 없으면 네 값 모두 꺼짐으로 조회한다.
 
-프라이버시 설정 화면은 네 개의 토글을 제공한다. ① **캘린더 비공개**, ② **가입 클럽 숨기기**는 켜기만 PREMIUM 전용이고 끄기는 항상 허용된다. ③ **낯선 사람에게 프로필 숨기기**(`hideFromStrangers`), ④ **사람 검색·추천에서 숨기기**(`hideFromSearch`)는 구독과 무관하게 누구나 설정한다. 설정 row가 없으면 네 값 모두 false다.
+이 설정들을 하나의 계정 비공개로 합치지 않는다. 검색에서 사라지는 것, 직접 프로필의 기본 정보·상세를 읽는 것, 가입 클럽·작성 글을 보는 것, 관심인 캘린더를 보는 것은 각각의 판정을 따른다.
 
-"타인의 가입 클럽 보기"(`GET /api/v1/users/{targetUserId}/clubs`)는 무료 포함 전원이 조회할 수 있으며, 대상이 `hide_clubs=true`를 설정하면 빈 리스트가 반환된다. 차단 관계이면 `FORBIDDEN`.
+## 실제 입구와 저장·복귀
 
-본인 프라이버시 설정 조회(`GET /api/v1/users/me/privacy`)도 제공되어 화면 초기 상태를 서버에서 읽어온다.
+- **전체 메뉴 → 설정 → 프라이버시·안전 → 공개 범위**에서 연다. 본인 상세 프로필의 **공개 설정**도 같은 화면으로 연결한다. 하단 마이 카드의 메뉴에 별도 항목이 있다고 설명하지 않는다.
+- 처음에는 서버 설정을 읽고, 로딩 중에는 입력 대신 로딩을 표시한다. 조회 실패는 오류와 다시 시도를 제공한다.
+- 토글 하나를 바꿀 때 그 설정만 즉시 요청한다. 별도 저장 버튼이나 네 값을 모아 제출하는 마지막 단계는 없다. 성공 응답의 전체 설정으로 표시를 갱신하고 저장 안내를 한다.
+- 실패하면 성공한 값으로 표시하지 않고 오류를 알린다. 유료 토글의 서버 거절은 최신 허용 정보를 다시 읽는 공통 처리를 따른다. 일반 두 토글의 실패는 저장 실패 안내를 한다.
+- 뒤로 가기는 원래 화면으로 돌아간다. 이미 성공한 토글 저장을 취소하는 동작이 아니다. 같은 계정의 공개 범위 변경은 관련 사람·관심인 자료를 다시 읽도록 알리며, 다른 계정으로 바뀐 뒤 온 응답은 그 계정의 설정과 안내를 바꾸지 않는다.
 
-### 2026-07-29 소스 재실측 — 두 신규 공개범위의 의미
+## 네 설정의 의미
 
-- `hideFromStrangers=true`: `GET /api/v1/users/{target}/profile`에서 뷰어가 SELF/MATCHED/같은 클럽/증거등급 공동참석/증거등급 호스트-참가자 맥락 중 어디에도 속하지 않으면 leak-safe `USER_NOT_FOUND`를 반환한다. 직접 프로필 열람 정책이며 차단 검사는 더 먼저 적용된다.
-- `hideFromSearch=true`: `/api/v1/search/people`, `/api/v1/users/search`, `/api/v1/users/me/met-people`, `/api/v1/users/me/people-recommendations` 후보에서 제외한다. 직접 프로필 URL을 막지는 않는다.
-- `/api/v1/users/search?nickname=` 전역 사용자 선택기는 두 값이 모두 false인 사용자만 반환한다. 반면 `/api/v1/search/people`는 이미 공유 맥락 후보만 대상으로 하므로 `hideFromSearch`만 적용한다.
-- 두 신규 토글은 무료 설정이며 서버/Flutter 모두 optimistic premium gate를 적용하지 않는다.
-- Flutter의 통합 타인 프로필 route는 `/profile/users/:userId`이고 즐겨찾기 목록, 사람 시트,
-  멘션 텍스트 등 실제 화면에서 호출한다. 따라서 `hideFromStrangers`는 직접 route에서도 서버 프로필
-  조회 결과로 강제되며, 미사용 route를 전제로 설명하면 안 된다.
+| 설정 | 켜기 조건 | 적용 범위·제외 |
+|---|---|---|
+| 관심 있는 사람에게 내 캘린더 숨기기 | 서버가 현재 프리미엄 혜택 사용을 허용함 | 관심인 전체 캘린더에서는 대상 제외, 개별 조회에서는 비공개 거절. 독립 공개 이벤트 발행 시 관심인 알림 발행도 중단함. 이미 전달된 알림·외부 푸시 회수의 의미가 아님 |
+| 가입한 클럽 숨기기 | 같은 서버 허용 판정 | 타인의 가입 클럽 조회와 프로필 작성 글 모아 보기는 빈 목록. 본인 조회는 숨김만으로 제한하지 않음. 클럽의 원래 멤버 목록·게시글 자체를 삭제하는 것이 아님 |
+| 낯선 사람에게 프로필 숨기기 | 구독 조건 없음 | 직접 프로필에서 상세 열람 관계가 없으면 추가 공유 맥락을 확인해 숨김 여부를 판정. 공유 맥락으로 기본 프로필을 볼 수 있다는 것과 상세 열람 허용은 같지 않음 |
+| 검색으로 나를 찾을 수 없게 하기 | 구독 조건 없음 | 사람 검색·만난 사람·사람 추천 후보에서 제외. 이미 함께 있는 멤버 목록이나 알려진 주소의 프로필 열람을 일괄 차단하지 않음 |
 
-## 2. 코드 위치
+서버는 각 갱신에서 해당 값만 바꾼다. 최초 설정 생성이 겹치면 한 행을 만든 뒤 잠가 갱신하여 다른 토글 값을 덮어쓰는 저장을 피한다. 응답에는 네 값과 현재 켜기 허용 여부를 함께 넣는다. 프리미엄 판정은 현재 구독 기간에 대한 서버 기준을 사용하며 앱의 별도 구독 조회·문자열 비교로 대체하지 않는다.
 
-계약의 정본은 코드다. 서버: `PrivacySettingController`, `UserClubController`, `PrivacySettingService`, `UserClubService`, `UserPrivacySetting`, `UserPrivacySettingVo`, `UserJoinedClubVo`. 앱: `privacy_settings_screen.dart`, `favorite_api.dart`, `user_privacy_setting_vo.dart`, `user_joined_club_vo.dart`, `privacy_param.dart`, `privacy_setting_provider.dart`, `user_clubs_provider.dart`, `app_router.dart`.
+## 유료 설정과 구독 안내
 
-## 3. 전체 동작 흐름
+앱은 서버가 준 두 켜기 허용 값을 사용한다. 꺼진 값은 켜기 허용이 없으면 잠그고, 이미 켜진 값은 끌 수 있게 둔다. 허용 정보가 없거나 읽을 수 없을 때 켜기를 임의로 허용하지 않는다. 서버도 켜기 요청을 다시 검사한다.
 
-### 프라이버시 설정 화면
-1. 마이페이지 "프라이버시 설정" 메뉴 → `/profile/privacy-settings`(`PrivacySettingsScreen`).
-2. 화면 진입 시 `privacySettingNotifierProvider` watch → `GET /api/v1/users/me/privacy`.
-3. 서버 `PrivacySettingService.getMySettings`: row 없으면 기본값(false, false) 반환. row 있으면 현재 설정값.
-4. `personalSubscriptionNotifierProvider` watch → 프리미엄 여부 판단(`status=='ACTIVE' && planType=='PREMIUM'`).
-5. 비프리미엄이면 상단 `_PremiumBanner` 표시.
-6. 낯선 사람 프로필 숨김과 검색·추천 숨김은 프리미엄 상태와 무관하게 즉시 PUT한다.
+프리미엄 필요 사유로 막혔을 때는 구독 안내를 연다. 개인 구독 기능이 열린 범위에서는 확인 후 구독 화면으로 이동하고, 닫힌 범위에서는 안내만 한다. 구독 화면에서 돌아온 뒤 최신 허용 정보로 다시 판단한다. 현재 안내창에는 ‘프라이버시 설정은 프리미엄 구독자만’이라는 넓은 표현이 남아 있으므로, 구독과 무관한 두 토글까지 유료라고 안내하지 않도록 구분해야 한다.
 
-### 캘린더 비공개 토글
-1. 토글 ON 시도(next=true) + 비프리미엄 → `_showUpsell()` → 구독 화면 이동 제안. 서버 호출 없음.
-2. 토글 ON 시도 + 프리미엄 → `PrivacySettingNotifier.setCalendarPrivate(true)` → `PUT /api/v1/users/me/privacy/calendar { privateToFavorites: true }`.
-3. 서버 `PrivacySettingService.updateCalendarPrivacy`: `privateToFavorites && !isPremium` → `PREMIUM_REQUIRED`. 통과 시 upsert → `UserPrivacySettingVo` 반환.
-4. 성공: `state = AsyncData(data)` → 토글 상태 갱신, "설정을 저장했어요" 토스트.
-5. 서버 `PREMIUM_REQUIRED` 응답(403) → 업셀 다이얼로그.
-6. 토글 OFF(next=false) → 프리미엄 여부 무관하게 서버 호출(프리미엄 게이트 없음).
+## 다른 사람의 프로필·가입 클럽·작성 글
 
-### 가입 클럽 숨기기 토글
-1. 동일 패턴. `PrivacySettingNotifier.setHideClubs(bool)` → `PUT /api/v1/users/me/privacy/clubs`.
-2. 서버 `PrivacySettingService.updateHideClubs`: `hideClubs && !isPremium` → `PREMIUM_REQUIRED`.
+차단·대상 계정 상태를 먼저 확인한다. 본인·같은 클럽·참가가 확정된 같은 이벤트의 관계가 상세 열람 근거다. 그 외에는 낯선 사람 숨김과 실제 공동참석·호스트/참가자 맥락 등의 추가 판정을 거치며, 통과해도 제3자의 상세가 자동으로 열리지 않는다. 데이팅 매칭은 커뮤니티 상세 공개 근거가 아니다.
 
-### 낯선 사람에게 프로필 숨기기
+가입 클럽 조회는 본인을 포함해 현재 상세 열람 관계를 확인하며, 타인에게는 계정 상태·차단도 적용한다. 그 뒤 대상이 가입 클럽을 숨겼으면 빈 목록이다. 무료 사용자라도 조회할 수 있다는 말은 구독이 필수는 아니라는 뜻이며 모든 대상의 클럽 목록을 읽을 권한이라는 뜻이 아니다. 원래 공개된 목록의 길이를 전체 가입 수라고 표시하지 않는다.
 
-1. `PUT /api/v1/users/me/privacy/strangers { hideFromStrangers }`.
-2. 구독 게이트 없이 upsert하고 전체 `UserPrivacySettingVo`를 반환한다.
-3. 같은 클럽·증거등급 모임·호스트/참가자·데이트 MATCHED 맥락에는 프로필이 계속 보이고, 무맥락 뷰어에게는 `USER_NOT_FOUND`로 숨김 여부와 미존재를 구별하지 못하게 한다.
+프로필 작성 글은 위 공개 판정 외에도 조회자가 가입한 클럽의 게시 상태 글만 모은다. 후기를 포함한 상세 화면의 복귀·계정 전환·권한 재확인은 [마이페이지와 프로필 탐색](../13_profile_settings/F13-01_profile-hub_prd.md)을 따른다.
 
-### 사람 검색·추천에서 숨기기
+## 검색과 직접 열람의 구분
 
-1. `PUT /api/v1/users/me/privacy/search-visibility { hideFromSearch }`.
-2. 구독 게이트 없이 upsert한다.
-3. 사람 검색, 전역 사용자 선택기, 만난 사람, 홈 사람 추천에서 제외한다. 이미 알고 있는 사용자의 직접 프로필 열람은 별도 `hideFromStrangers` 계약이다.
+사람 검색은 현재 공유 맥락 후보에서 검색 숨김을 적용한다. 전역 닉네임 선택기는 검색 숨김과 낯선 사람 숨김을 모두 제외한다. 만난 사람과 추천은 현재 활동 상태·차단·검색 숨김을 적용하는 만남 후보 조회를 사용한다. 설정을 바꾼 뒤 이미 다른 기기에 열린 목록이 즉시 사라지는지까지 이 소스 확인으로 보장하지 않는다.
 
-### 타인 가입 클럽 조회
-1. 타인 프로필 화면 → `userClubsProvider(userId)` watch → `GET /api/v1/users/{userId}/clubs`.
-2. 서버 `UserClubService.getJoinedClubs(viewerId, targetUserId)`:
-   - `viewerId != targetUserId && isBlockedBetween` → `FORBIDDEN`.
-   - `viewerId != targetUserId && isClubsHidden(targetUserId)` → 빈 리스트.
-   - 본인 조회 → 항상 전체 목록.
-   - 통과 시 `ClubMemberQueryRepository.findJoinedClubsForViewer(targetUserId)` → `List<UserJoinedClubVo>`.
-3. 타인 프로필 화면(`UserProfileScreen`)에 가입 클럽 섹션이 구현되어 있다. `userClubsProvider(userId)` watch → clubs 목록 표시. 숨김 설정 시 빈 상태 "공개된 가입 클럽이 없습니다." 표시(`user_profile_screen.dart:54-131`).
+## 현재 제한과 확인 범위
 
-## 6. 상태/권한 매트릭스
+| 판정 | 항목 | 영향·다음 확인 |
+|---|---|---|
+| Gap | 구독 안내의 넓은 표현 | 현재 안내창은 전체 프라이버시 설정을 유료로 읽히게 표현함. 실제 유료 켜기는 두 항목뿐임 |
+| Risk | 토글 요청 겹침 | 서버는 행을 잠가 서로 다른 값의 유실을 방지하지만 화면은 모든 요청 동안 입력을 잠그지 않음. 응답 순서·재조회와 같은 토글 연속 변경의 최종 표시 확인 필요 |
+| Risk | 공개 설정과 다른 기기의 기존 자료 | 같은 앱의 갱신 신호·서버의 다음 조회와 다른 기기에서 이미 받은 자료의 회수는 다름 |
+| 미검증 | 실제 구독·두 계정·외부 알림 | 소스 대조이며 실결제 전환·단말 간 공개 회수·이미 전달된 푸시 삭제를 실행한 결과가 아님 |
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 |
-|---|---|---|---|
-| 비프리미엄 · 토글 ON 시도 | 서버 `PREMIUM_REQUIRED` | 클라 선제 업셀 다이얼로그 | 구독 화면 이동 안내 |
-| 비프리미엄 · 토글 OFF | 서버 게이트 없음 | 직접 서버 호출 | 공개 상태로 저장 |
-| PREMIUM · 토글 ON/OFF | 게이트 없음 | 직접 서버 호출 | 저장 성공, 토스트 |
-| 누구나 · 낯선 사람 숨김 ON/OFF | 구독 게이트 없음 | 직접 서버 호출 | 무맥락 프로필 열람만 제어 |
-| 누구나 · 검색 숨김 ON/OFF | 구독 게이트 없음 | 직접 서버 호출 | 검색/만난 사람/추천 후보 제어 |
-| 본인 클럽 조회 | `viewerId == targetUserId` → 전체 | — | 전체 목록 |
-| 타인 클럽 조회 · 공개 설정 | `isClubsHidden=false` | 목록 표시 | 클럽 목록 노출 |
-| 타인 클럽 조회 · 비공개 설정 | `isClubsHidden=true` → 빈 리스트 | 빈 목록 처리 | 빈 상태 표시 |
-| 차단된 사용자 클럽 조회 | `FORBIDDEN` | 에러 처리 | 403 |
+## 수용 기준과 검증 근거
 
-## 7. 정합성 판단
+- **AC-01 진입:** 설정의 공개 범위와 본인 상세의 공개 설정에서 같은 화면을 열고 원래 화면으로 돌아간다.
+- **AC-02 조회:** 최초 기본값·현재 값·로딩·오류·다시 시도를 구분한다.
+- **AC-03 켜기 허용:** 유료 두 토글은 서버 허용 정보로 제어하며 정보 없음·거절·구독 기능 미공개도 구분한다.
+- **AC-04 끄기와 구독 종료:** 구독이 끝나도 이미 켜진 값은 유지되고 끄기 요청을 허용한다.
+- **AC-05 무료 토글:** 낯선 사람·검색 숨김은 유료 설정의 잠금과 무관하게 각각 저장한다.
+- **AC-06 저장 경계:** 성공 응답·실패 안내·연속 요청·서로 다른 토글 동시 변경과 최종 재조회가 일치하는지 확인한다.
+- **AC-07 직접 프로필:** 본인·상세 관계·기본 정보만 가능한 관계·차단·대상 상태·숨김을 구분한다.
+- **AC-08 가입 클럽과 글:** 숨김·열람 권한·작성 글의 회원 조건을 구분하고 현재 목록·건수만 표시한다.
+- **AC-09 발견과 캘린더:** 전역 선택기·사람 검색·만난 사람·추천·관심인 캘린더와 발행 알림의 적용 범위를 각각 확인한다.
+- **AC-10 계정과 복귀:** 같은 계정의 관련 자료 갱신, 이전 계정의 늦은 응답 차단, 다른 기기에서 재조회할 때의 공개 판정을 구분한다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| GET 설정 조회 | `GET /api/v1/users/me/privacy` | `@GET('/api/v1/users/me/privacy')` | 정합 |
-| PUT 캘린더 | `PUT /api/v1/users/me/privacy/calendar` | `@PUT('/api/v1/users/me/privacy/calendar')` | 정합 |
-| PUT 클럽 | `PUT /api/v1/users/me/privacy/clubs` | `@PUT('/api/v1/users/me/privacy/clubs')` | 정합 |
-| PUT 낯선 사람 | `PUT /api/v1/users/me/privacy/strangers` | 동일 Retrofit path | 정합 |
-| PUT 검색 공개범위 | `PUT /api/v1/users/me/privacy/search-visibility` | 동일 Retrofit path | 정합 |
-| GET 타인 클럽 | `GET /api/v1/users/{targetUserId}/clubs` | `@GET('/api/v1/users/{userId}/clubs')` | 정합 |
-| 비공개 → 빈 리스트 vs 404 | 서버 빈 리스트 반환 | 빈 리스트 처리 | 정합 |
-| PREMIUM 필드 이름 | `boolean premium`(FavoriteLimitVo) | 클라 `PersonalSubscription.planType=='PREMIUM'` 별도 판단 | 중복이지만 모순 없음 |
+위 항목은 확인할 결과이며 새 실행 통과 수가 아니다. 단위 메모가 없는 기존 기능이므로 문서 수를 늘리기 위해 새 로컬 단위 폴더를 만들지 않는다. 검토 지문은 [문서 갱신 검토 기록](../../../verification/document-refresh-2026-11-22.json)에 둔다.
 
-## 8. Gap / Risk
+## 코드 위치
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| 완료 | 타인 프로필 화면 가입 클럽 섹션 — 구현 완료 | `userClubsProvider(userId)` + `UserProfileScreen:54-131` 클럽 섹션 및 빈 상태 모두 구현됨 | 숨김 설정 시 빈 상태 "공개된 가입 클럽이 없습니다." 표시 | — |
-| **P1** | 서버 `PREMIUM_REQUIRED` 응답에 대한 forbidden 처리 분기 | `privacy_settings_screen.dart:117-121` — `forbidden` 또는 `unprocessable` 둘 다 업셀 처리. 실제 서버는 `forbidden`(403)만 반환 | 큰 영향 없음, `unprocessable` 케이스가 들어올 수 없는 경로 처리 | 향후 에러 코드 세분화 시 업셀 분기 정제 |
-| Risk | 비프리미엄이 토글 OFF 후 재구독 시 자동 재설정 없음 | 토글 값은 서버 저장값 그대로 유지. 다운그레이드로 토글이 true이더라도 서버는 비공개를 유지 — 설정 보존. 재구독 없이 비공개 효과 지속됨 | 비프리미엄인데도 캘린더/클럽 비공개 상태 유지(설정 row = true) — 일관성 논의 필요 | 정책 결정 필요: 구독 만료 시 자동 리셋 여부 |
+계약의 정본은 실제 Controller·요청·응답과 서비스, 앱 공급자·화면이다.
 
-## 9. 수용 기준
-
-- **AC-01 (설정 조회)**: Given 프라이버시 설정 미설정 사용자 When `GET /users/me/privacy` Then 네 boolean이 모두 false다.
-- **AC-02 (프리미엄 캘린더 비공개)**: Given PREMIUM 구독 사용자 When 캘린더 비공개 토글 ON Then 200 + `calendarPrivateToFavorites: true` 저장, 토스트.
-- **AC-03 (비프리미엄 업셀)**: Given 무료 사용자 When 캘린더 비공개 토글 ON 시도 Then 클라 업셀 다이얼로그, 서버 호출 없음.
-- **AC-04 (서버 이중 게이트)**: Given 비프리미엄 사용자가 클라 우회하여 `PUT /users/me/privacy/calendar { privateToFavorites: true }` 직접 호출 When Then 403 `PREMIUM_REQUIRED`.
-- **AC-05 (클럽 숨김 효과)**: Given 대상이 `hideClubs=true` 설정 When 타인이 `GET /users/{targetUserId}/clubs` Then 200 + 빈 리스트.
-- **AC-06 (차단 클럽 조회)**: Given 뷰어와 대상 간 차단 관계 When `GET /users/{targetUserId}/clubs` Then 403.
-- **AC-07 (낯선 사람 숨김)**: Given 대상 `hideFromStrangers=true`, 공유 맥락 없음 When 통합 타인 프로필 조회 Then 404 `USER_NOT_FOUND`; 같은 클럽/증거등급 이벤트/host-participant/MATCHED 맥락은 기존 관계 view를 유지한다.
-- **AC-08 (검색 숨김)**: Given 대상 `hideFromSearch=true` When 사람 검색·만난 사람·홈 추천 후보를 산출 Then 해당 사용자를 제외하되 직접 프로필 URL은 이 값만으로 막지 않는다.
-
-## 10. 미결정 / 후속
-
-- 구독 만료 시 프라이버시 토글 자동 리셋 여부 정책 결정.
-- 타인 프로필 화면 가입 클럽 섹션 구현 완료(숨김 시 빈 상태 표시).
-- 비공개 설정 효과를 알림으로 안내(예: "캘린더 비공개 켜져 있어 관심인이 볼 수 없습니다") 여부.
+<!-- source-references:start -->
+서버 창구: `PrivacySettingController#getMyPrivacy`, `PrivacySettingController#updateCalendarPrivacy`, `PrivacySettingController#updateClubPrivacy`, `PrivacySettingController#updateHideFromStrangers`, `PrivacySettingController#updateHideFromSearch`, `UserClubController#getUserClubs`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->

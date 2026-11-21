@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 48,
     "partialEvidenceChain": 34,
     "definitionOnlyEvidence": 93,
-    "traceMarkers": 348,
-    "verifiedTraceRecords": 346,
+    "traceMarkers": 354,
+    "verifiedTraceRecords": 352,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -13304,10 +13304,113 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F19-03:1",
+            "label": "GET /api/v1/users/me/privacy — 공개 범위·가입 클럽",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/PrivacySettingController.java",
+                "controller": "PrivacySettingController",
+                "method": "getMyPrivacy",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/privacy",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F19-03:2",
+            "label": "PUT /api/v1/users/me/privacy/calendar — 공개 범위·가입 클럽",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/PrivacySettingController.java",
+                "controller": "PrivacySettingController",
+                "method": "updateCalendarPrivacy",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/privacy/calendar",
+                "targetLine": 35,
+                "methodLine": 36
+              }
+            ]
+          },
+          {
+            "id": "F19-03:3",
+            "label": "PUT /api/v1/users/me/privacy/clubs — 공개 범위·가입 클럽",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/PrivacySettingController.java",
+                "controller": "PrivacySettingController",
+                "method": "updateClubPrivacy",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/privacy/clubs",
+                "targetLine": 43,
+                "methodLine": 44
+              }
+            ]
+          },
+          {
+            "id": "F19-03:4",
+            "label": "PUT /api/v1/users/me/privacy/strangers — 공개 범위·가입 클럽",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/PrivacySettingController.java",
+                "controller": "PrivacySettingController",
+                "method": "updateHideFromStrangers",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/privacy/strangers",
+                "targetLine": 51,
+                "methodLine": 52
+              }
+            ]
+          },
+          {
+            "id": "F19-03:5",
+            "label": "PUT /api/v1/users/me/privacy/search-visibility — 공개 범위·가입 클럽",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/PrivacySettingController.java",
+                "controller": "PrivacySettingController",
+                "method": "updateHideFromSearch",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/privacy/search-visibility",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F19-03:6",
+            "label": "GET /api/v1/users/{targetUserId}/clubs — 공개 범위·가입 클럽",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/favorite/controller/UserClubController.java",
+                "controller": "UserClubController",
+                "method": "getUserClubs",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/{targetUserId}/clubs",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

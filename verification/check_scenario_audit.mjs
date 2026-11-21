@@ -61,7 +61,7 @@ const endpointsByIdentity = new Map([...resolved.values()].flatMap((entry) => en
   [endpoint.targetPath + ' ' + endpoint.controller + '#' + endpoint.method + ' ' + endpoint.httpMethod + ' ' + endpoint.httpPath, endpoint],
 ));
 let localSourceLocations = 0;
-for (const backendPath of new Set(targets.map((target) => target.backendPath))) {
+for (const backendPath of new Set(targets.map((target) => target.backendPath).filter(Boolean))) {
   const absolute = path.join(workspace, backendPath);
   if (!fs.existsSync(absolute)) continue;
   const text = fs.readFileSync(absolute, 'utf8');
