@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 52,
     "definitionOnlyEvidence": 84,
-    "traceMarkers": 429,
-    "verifiedTraceRecords": 427,
+    "traceMarkers": 440,
+    "verifiedTraceRecords": 438,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3669,19 +3669,206 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 11,
+        "verified": 11,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-17:1",
+            "label": "GET /admin/v1/manage/vehicle-layouts — 관리 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "list",
+                "httpMethod": "GET",
+                "httpPath": "/admin/v1/manage/vehicle-layouts",
+                "targetLine": 39,
+                "methodLine": 40
+              }
+            ]
+          },
+          {
+            "id": "F03-17:2",
+            "label": "GET /admin/v1/manage/vehicle-layouts/{id} — 관리 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "detail",
+                "httpMethod": "GET",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}",
+                "targetLine": 47,
+                "methodLine": 48
+              }
+            ]
+          },
+          {
+            "id": "F03-17:3",
+            "label": "POST /admin/v1/manage/vehicle-layouts — 빈 배치도 생성",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "create",
+                "httpMethod": "POST",
+                "httpPath": "/admin/v1/manage/vehicle-layouts",
+                "targetLine": 56,
+                "methodLine": 57
+              }
+            ]
+          },
+          {
+            "id": "F03-17:4",
+            "label": "PUT /admin/v1/manage/vehicle-layouts/{id} — 이름·설명 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "update",
+                "httpMethod": "PUT",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}",
+                "targetLine": 66,
+                "methodLine": 67
+              }
+            ]
+          },
+          {
+            "id": "F03-17:5",
+            "label": "POST /admin/v1/manage/vehicle-layouts/{id}/clone — 원본·좌석 복제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "cloneLayout",
+                "httpMethod": "POST",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}/clone",
+                "targetLine": 76,
+                "methodLine": 77
+              }
+            ]
+          },
+          {
+            "id": "F03-17:6",
+            "label": "DELETE /admin/v1/manage/vehicle-layouts/{id} — 미사용 비활성 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "delete",
+                "httpMethod": "DELETE",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}",
+                "targetLine": 87,
+                "methodLine": 88
+              }
+            ]
+          },
+          {
+            "id": "F03-17:7",
+            "label": "POST /admin/v1/manage/vehicle-layouts/{id}/seats — 좌석표 저장",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "registerSeatMap",
+                "httpMethod": "POST",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}/seats",
+                "targetLine": 97,
+                "methodLine": 98
+              }
+            ]
+          },
+          {
+            "id": "F03-17:8",
+            "label": "POST /admin/v1/manage/vehicle-layouts/{id}/verify — 실물 확인 기록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "verify",
+                "httpMethod": "POST",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}/verify",
+                "targetLine": 107,
+                "methodLine": 108
+              }
+            ]
+          },
+          {
+            "id": "F03-17:9",
+            "label": "PATCH /admin/v1/manage/vehicle-layouts/{id}/active — 사용 시작·중지",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+                "controller": "ManageVehicleLayoutController",
+                "method": "setActive",
+                "httpMethod": "PATCH",
+                "httpPath": "/admin/v1/manage/vehicle-layouts/{id}/active",
+                "targetLine": 117,
+                "methodLine": 118
+              }
+            ]
+          },
+          {
+            "id": "F03-17:10",
+            "label": "GET /api/v1/vehicle-layouts/verified — 확인된 종류별 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java",
+                "controller": "VehicleLayoutController",
+                "method": "verified",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/vehicle-layouts/verified",
+                "targetLine": 31,
+                "methodLine": 32
+              }
+            ]
+          },
+          {
+            "id": "F03-17:11",
+            "label": "GET /api/v1/vehicle-layouts/{id}/seats — 좌석표 읽기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java",
+                "controller": "VehicleLayoutController",
+                "method": "seats",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/vehicle-layouts/{id}/seats",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 2,
+        "count": 1,
         "featureMarkerCount": 2,
-        "scenarioReferenceCount": 2,
+        "scenarioReferenceCount": 1,
         "files": [
-          "community_admin_front/e2e/vehicle-layouts.spec.ts",
-          "community_api/admin-app/src/test/java/com/endside/community/event/service/ManageVehicleLayoutGuardTest.java"
+          "community_admin_front/e2e/vehicle-layouts.spec.ts"
         ],
         "markerCandidateFiles": [
           "community_api/api-app/src/test/java/com/endside/community/event/transport/service/TransportCoordinationDataJpaTest.java",

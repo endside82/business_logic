@@ -2776,9 +2776,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "13735c14a52d54a20f352486827aa682387f36c1851948298966457eed9637af",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "layout_catalog_20261122"
+      ],
+      "reviewedSha256": "93ca480d8ecf6f1a971508fb214997896e0634a351a45b726517bf5c76294a6f"
     },
     {
       "path": "docs/features/F03-18.html",
@@ -4925,7 +4928,8 @@
         "demographics_20261122",
         "transport_policy_20261122",
         "carpool_20261122",
-        "bus_allocation_20261122"
+        "bus_allocation_20261122",
+        "layout_catalog_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5650,10 +5654,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "acd1150a27d9047e92b8b4c150d8b80bec36288fa0853a1007fd5c36cee39932",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "layout_catalog_20261122"
+      ],
+      "reviewedSha256": "67b8ed73dd6bc845e8d7a05284343b1bd54b33e971cd93640c44bbad4f530f71"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
@@ -7597,7 +7603,8 @@
       "evidence": [
         "transport_policy_20261122",
         "carpool_20261122",
-        "bus_allocation_20261122"
+        "bus_allocation_20261122",
+        "layout_catalog_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -14769,6 +14776,33 @@
         }
       },
       "scope": "버스·배정·좌석전환·이력·신고 소스 대조와 정책 폼의 실제 동작 불일치를 반영. 공통 설정 근거는 최신 범위로 갱신하되 이후 그룹을 이전 그룹 재사용 대상으로 돌리지 않도록 기록 순서를 제한. 새 제품 시험·실DB 적용·실제 동시성·실차·휴대전화·푸시 확인 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-17: source-reference sync/11 tests; scenario audit; reviewed paths/derived digests; scoped digests; HTML IDs; Markdown fragments; seed guard inspection; git diff --check",
+      "result": {
+        "status": "PASS",
+        "newlyReviewedDocuments": 2,
+        "partialDocuments": 2,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 106,
+        "sourceRecords": 440,
+        "verifiedRecords": 438,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1639,
+        "derivedSourceDigests": 207,
+        "sourceAndCanonicalDigests": 25,
+        "retainedHtmlPages": 1,
+        "markdownFragments": 2,
+        "incomingMarkdownAnchors": 0,
+        "manufacturerCandidatesWithGuardSets": 4,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 345,
+          "historical_retained": 33,
+          "pending": 624
+        }
+      },
+      "scope": "관리자 편집/확인/활성/사용보호/복제/삭제·공개도면과 합성/제조사 후보 구분을 소스 대조. 선택한 서버/모의응답 웹시험 단언만 읽음. 새 제품 시험·실제 관리자/앱 실행·운영 DB/실물/제조사 원문 확인 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -21006,6 +21040,207 @@
           "id": "F03-16:6",
           "change": "added",
           "reason": "현재 버스·주최자/본인배정·좌석전환/기록·자리신고 창구 연결"
+        }
+      ]
+    },
+    "layout_catalog_20261122": {
+      "kind": "source_review",
+      "scope": "F03-17 관리자 좌석표 편집·확인·별도 활성화·사용 원본 보호·복제/삭제와 공개 도면/기본9종/제조사 후보4개 구분. 새 시험·운영 DB·실차·브라우저 검수 아님.",
+      "sources": [
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManageVehicleLayoutController.java",
+          "sha256": "d2e60ae57af16052861880340cfd05ae503c657ae20c7aedfadff7bcbc948da3",
+          "reviewScope": "관리자 목록/상세READ·모든변경WRITE와 생성/복제201·삭제204·좌석표/확인/활성 실제 경로 및 타입."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/service/ManageVehicleLayoutService.java",
+          "sha256": "fe52a6106ec85a310c31237a82dcc56b0f4715b6c9ae437e7bb6b25d1155b35b",
+          "reviewScope": "생성/복제/삭제/수정/좌석표/확인/활성 및 입력·geometry·used/invalidate·관리기록 함수: 확인·사용 분리와 최초사용 원본 보호. 운영 DB/실물 확인 실행 아님."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/param/ManageVehicleLayoutCreateParam.java",
+          "sha256": "d052182970e9edd7fa3462b82ee814e1af03a8065c5536e363bd99d530b291e8",
+          "reviewScope": "생성 name/description만 존재; 정원 입력 없음."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/param/ManageVehicleLayoutUpdateParam.java",
+          "sha256": "2b9687167fb7ce337719a8ba5dd6abb309de88d3eb944187b9ee9191f39d479c",
+          "reviewScope": "이름·설명 수정 계약; 도면 개정 입력 없음."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/param/ManageVehicleLayoutCloneParam.java",
+          "sha256": "ef4801a3c6868d410f2d135f994ce28bf7f84f33e93a02b2881d574f3b109bf3",
+          "reviewScope": "복제 이름·선택 설명 계약."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/param/ManageVehicleLayoutActiveParam.java",
+          "sha256": "0bccfa610cd4704dc2c9b826f8c835c4decce433b658da5d634a02b44af2c45a",
+          "reviewScope": "active boolean 계약."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/param/ManageVehicleLayoutVerifyParam.java",
+          "sha256": "af2025a28799dcf13ce0b7269d440539461e6055c77f40b621aec96f9ea0bb74",
+          "reviewScope": "expectedDiagramRevision·차종·모델·자료 주소/확인 내용 계약."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/param/ManageVehicleSeatMapParam.java",
+          "sha256": "046c22b326ec1b53ac91fd2775c91bf17e2645ae40ca4b42838c2c7db2e5f76f",
+          "reviewScope": "좌석표 전체목록과 번호·좌표·종류·selectable 기본값 계약."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/vo/ManageVehicleLayoutVo.java",
+          "sha256": "6aeb72e9fc3ec8c38adfdd00e74cc65bb0e6ce1ce5030194fbc121fd38e252ba",
+          "reviewScope": "목록 정원/등록칸수/활성/과거사용/차종/근거/확인/개정/최초사용 계약."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/vo/ManageVehicleLayoutDetailVo.java",
+          "sha256": "91cefc904b079f6f471059308a65dbc90c985c4b81618ae9bce1bad748120b6f",
+          "reviewScope": "상세 좌석표와 활성/과거사용·확인/도면 개정 계약."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminPrincipal.java",
+          "sha256": "c140e2e09f45f599999eba56e427ddcb339f0f3e3db516f65b0730512b40c89f",
+          "reviewScope": "checkPrivilege 기본 WRITE·명시READ, privilegeUse에 따른 제한 관리자 분기. 전체 인증 구조 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/model/VehicleLayout.java",
+          "sha256": "9ac4005dc4d78d2fcee53d7187e6756c8e0d977d35f12ce4666b828e60b40aee",
+          "reviewScope": "확인자/시각·도면 개정·최초사용 필드 및 생성 시 확인/사용 상태 비승계."
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/R__seed_reference_data.sql",
+          "sha256": "1c59a667c99236bf573d6a426a5e7d900ed448e228e0fc623c0b5bff81439fd7",
+          "reviewScope": "기본9종 이름/인원/초기삽입 확인필드 없음, 제조사후보4개 비활성미확인 삽입과 관리상태/좌석기존여부 보호 조건. 시드 실행 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/vehicle-layouts/manufacturer-layout-candidates.json",
+          "sha256": "f6cc9b0c6f4df5ca05f21c484243c0df5b20ac3b44bb2e46be9b3afb9ab2d89f",
+          "reviewScope": "activationPolicy·coordinateConvention·4개 후보명/종류/승객과총원. 제조사 원문/실차를 새로 확인한 결과 아님."
+        },
+        {
+          "path": "community_admin_front/src/features/vehicle-layouts/api/vehicle-layout-api.ts",
+          "sha256": "a3b38c5dda7db6319250ebe1531123c8341810259d15407df379ff21846b3b1f",
+          "reviewScope": "관리웹의 요청/응답 타입·생성/좌석수파생/복제한요청·삭제/확인/활성 API 연결."
+        },
+        {
+          "path": "community_admin_front/src/features/vehicle-layouts/ui/vehicle-layouts-screen.tsx",
+          "sha256": "f27601afb207abd10e1f5f28696e1928d5ddbcfef4800ad4c75efef3856458e0",
+          "reviewScope": "목록권한·행동/초안저장·비활성미사용편집·확인폼/개정/오류입력유지·좌석표검사·빈좌표보존·표기반편집기. 실제 브라우저 검수 아님."
+        },
+        {
+          "path": "community_admin_front/src/widgets/admin-shell/admin-shell.tsx",
+          "sha256": "0d3b2976349625f0e47c769dd6d14599a6fcfb2367ef99d7b8d30943b668bd5a",
+          "reviewScope": "177–182 차량 좌석 배치도 메뉴·/vehicle-layouts·MANAGE_EVENT 연결만 대조."
+        },
+        {
+          "path": "community_admin_front/src/app/(admin)/vehicle-layouts/page.tsx",
+          "sha256": "897a5e6cad3a701ba92ea814ff9db1d7e956ada0f9153ffcf44093c2415a05b2",
+          "reviewScope": "VehicleLayoutsScreen 라우트 연결."
+        },
+        {
+          "path": "community_api/admin-app/src/test/java/com/endside/community/event/service/ManageVehicleLayoutVerificationTest.java",
+          "sha256": "bfc078a8c31b26f989ca27ecd9b538901d4c99fda82c3a4d85ef67dc08e54a75",
+          "reviewScope": "82–107 미확인활성거절·확인개정증가/비활성·옛개정거절,146–170 메타수정확인해제·과거사용보호 단언. 실행 안 함."
+        },
+        {
+          "path": "community_admin_front/e2e/vehicle-layouts.spec.ts",
+          "sha256": "0ed8bdbe47cad713240686db6704860dc0f86a7692c9f4e8f8493df769cf062d",
+          "reviewScope": "193–238 모의응답 사용 확인요청 필드·옛개정충돌시 입력유지 단언. 실제 계정/실물 확인 근거가 아니며 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/transport/controller/VehicleLayoutController.java",
+          "sha256": "26cec05d946f5f43e0deefab0c03529f697dc3bc4e8ef5c82038528c04e1e9f7",
+          "reviewScope": "공개 verified 종류필수목록·ID별 seats 경로/타입·TRANSPORT 범위."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/VehicleLayoutQueryService.java",
+          "sha256": "29a4b68b41e6cb8b9ca626e56888eab5c39439f2a7fba550e0a8c4bd6db7401f",
+          "reviewScope": "verified의 활성/확인/차종필터와 SELF거절, 단독seats 조회에는 해당필터 재검사없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/service/TransportLayoutService.java",
+          "sha256": "512109a7e2ee76417a816967cf110625d42d536bc224e409cf6ae78cd2bd2c63",
+          "reviewScope": "bus_allocation 그룹 동일 SHA의 실제적용 활성/확인/차종/개정/geometry 재검사와 신·구 도면 최초사용 기록 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/V1__init.sql",
+          "sha256": "65cd46eb4295dc2bede2b38643ee2339a9d044c8a1bdfa78a52d7f3eea7fb289",
+          "reviewScope": "1686–1708 vehicle_layout 확인/개정/최초사용 필드 기본값·이름 유일 제약. 적용 DB 조회 아님."
+        }
+      ],
+      "reuses": [
+        "bus_allocation_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
+          "sha256": "67b8ed73dd6bc845e8d7a05284343b1bd54b33e971cd93640c44bbad4f530f71"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-17.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-17:1",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:2",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:3",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:4",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:5",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:6",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:7",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:8",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:9",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:10",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        },
+        {
+          "id": "F03-17:11",
+          "change": "added",
+          "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
         }
       ]
     }

@@ -202,7 +202,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-14 | 이벤트 | `F03-14_event-transport-mode_prd.md` | 이동 조율·개별 이동·배정 후 본인 변경 정책과 요청 재확인 | W4에서 시작 | 2026-11-22 현재 소스 대조; 실제 기기 확인 별도 |
 | F03-15 | 이벤트 | `F03-15_event-carpool_prd.md` | 배정과 독립된 차량 지원·승인·운행 취소·전원 교체·개별 이동 | W5에서 시작 | 2026-11-22 현재 소스 대조; 실제 기기 확인 별도 |
 | F03-16 | 이벤트 | `F03-16_event-bus-charter_prd.md` | 버스·자리 채우기 정책·일괄 배정·물리 좌석 전환·변경 기록 | W7에서 시작 | 2026-11-22 현재 소스 대조; 실제 기기 확인 별도 |
-| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 표준 9종과 관리자 배치도 운영 | W6에서 시작 | 2026-09-02 코드·운영 화면 완료 |
+| F03-17 | 이벤트 | `F03-17_vehicle-layout-catalog_prd.md` | 좌석표 편집·실물 확인·활성화·사용 이력 보호·복제/삭제·후보 자료 | W6에서 시작 | 2026-11-22 현재 소스 대조; 실차·운영 확인 별도 |
 
 신규 PRD 5개는 모두 작성 완료 상태다. 세부 구현/클라이언트 후속 범위는 각 기능 PRD의 §8 Gap/Risk를 우선한다.
 
@@ -250,7 +250,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-14 | 이벤트 | [F03-14_event-transport-mode_prd.md](02_feature_prds/03_event/F03-14_event-transport-mode_prd.md) | `source-first` | 신규 PRD | 4 | 5 |
 | F03-15 | 이벤트 | [F03-15_event-carpool_prd.md](02_feature_prds/03_event/F03-15_event-carpool_prd.md) | `source-first` | 신규 PRD | 10 | 4 |
 | F03-16 | 이벤트 | [F03-16_event-bus-charter_prd.md](02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | `source-first` | 신규 PRD | 6 | 4 |
-| F03-17 | 이벤트 | [F03-17_vehicle-layout-catalog_prd.md](02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | `source-first` | 신규 PRD | 2 | 2 |
+| F03-17 | 이벤트 | [F03-17_vehicle-layout-catalog_prd.md](02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | `source-first` | 신규 PRD | 11 | 4 |
 | F03-18 | 이벤트 | [F03-18_event-demographics_prd.md](02_feature_prds/03_event/F03-18_event-demographics_prd.md) | `source-first` | 신규 PRD | 1 | 4 |
 | F03-19 | 이벤트 | [F03-19_event-reschedule-consent_prd.md](02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | `source-first` | source-first 구현 확인 | 4 | 5 |
 | F03-20 | 이벤트 | [F03-20_event-no-show_prd.md](02_feature_prds/03_event/F03-20_event-no-show_prd.md) | `source-first` | source-first 구현 확인 | 4 | 7 |
