@@ -1,53 +1,46 @@
 # community — 제품 문서
 
 <!-- release-document: reference -->
-> **문서 구분: 참고 문서.** 현재 상태와 현재 작업 순서는 [앞으로 할 일](../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 제품 문서 안내.** 현재 할 일은 [앞으로 할 일](../docs/plan/NEXT_WORK.md), 구현·검증 상태는 [기능별 구현·검증 상태](../docs/development/IMPLEMENTATION_WORKBOARD.md)를 따른다. 2026-11-22 문서 구조와 읽는 경로를 대조했다.
 
-## [문서 사이트 바로 보기 — endside82.github.io/business_logic](https://endside82.github.io/business_logic/)
+## 문서 사이트
 
-이 저장소는 위 링크로 배포되는 **community 제품 문서의 소스**다.
-GitHub에서 파일을 하나씩 열지 말고, 위 주소로 들어가 웹 문서로 읽는 것을 권한다.
-
-<br>
+[사이숲 제품 문서 사이트](https://endside82.github.io/business_logic/)에서 제품 구조·기능·정책·현황을 읽을 수 있다. 이 저장소는 그 사이트의 Markdown·HTML·자료 소스다. 작업 브랜치의 수정, 사이트 반영, 앱 배포와 고객 공개는 각각 다른 상태다.
 
 ## 무엇을 다루는 문서인가
 
-community는 관심사 기반의 모임을 찾고 참여한 뒤, **함께 쓴 비용까지 정리하는** 커뮤니티 앱이다.
-누가 먼저 결제했는지, 각자 얼마를 부담하는지, 누구에게 얼마를 보내야 하는지부터
-주최자의 입금 확인과 정산 완료까지 이어진다.
+community는 관심사에 맞는 모임을 찾고 참여하며 클럽 활동과 함께 쓴 비용 정리를 연결하는 커뮤니티 제품이다. 문서는 기능의 입구·행동·결과·권한·상태·실패 복구와 아직 확인하지 못한 범위를 설명한다.
 
-| | |
-| --- | --- |
-| 업무 영역 | **21개** — 모임·클럽·결제 등 기능별 책임 |
-| 기능 목록 | **175개** — 기능 설명과 확인 기준 |
-| 등록된 시나리오 | **1,403개** — 검사 항목 수이며 통과 건수는 아님 |
-| 정책 문서 | **6개** — 상태·권한·돈·알림·안전의 공통 규칙 |
-
-<br>
+| 범위 | 현재 구성 |
+|---|---|
+| 업무 영역 | 21개 도메인 PRD |
+| 기능 | 175개 기능 PRD |
+| 공통 정책 | 6개 정책 PRD |
+| 기능별 로컬 참고 | 117개 기능의 서버·앱·시나리오·흐름도. Git이 추적하지 않는 로컬 자료 |
+| 별도 로컬 참고가 없는 기능 | 58개. 기능 PRD와 실제 소스로 확인 |
+| 시나리오 | 현재 목록은 [기능별 시나리오 감사](docs/qa/scenario-completeness.html)에서 확인. 등록 수는 시험 통과 수가 아님 |
 
 ## 어디부터 볼까
 
 | 목적 | 문서 |
-| --- | --- |
-| **실제 앱 화면으로 둘러보기** | [사진으로 보는 앱 기능](https://endside82.github.io/business_logic/tour/index.html) · [정산 과정 보기](https://endside82.github.io/business_logic/tour/index.html#feature-settlement) |
-| 이 제품이 무엇인가 | [서비스 정의](https://endside82.github.io/business_logic/overview/service.html) |
-| 무엇이 어디에 있나 | [정보구조](https://endside82.github.io/business_logic/overview/architecture.html) |
-| 사용자는 어떻게 움직이나 | [사용자 여정](https://endside82.github.io/business_logic/overview/journeys.html) |
-| 기능을 하나씩 찾기 | [기능 목록](https://endside82.github.io/business_logic/features/catalog.html) |
-| 대표 흐름 — 비용 나누기 | [모임 비용 나누기](https://endside82.github.io/business_logic/domains/07-settlement.html) |
-| **무엇부터 해야 하나** | [전체 현황·다음 할 일](https://endside82.github.io/business_logic/) — 출시 흐름·병행 작업·필요한 자원·전체 항목 |
-| 기능 하나의 구현·검사 근거 | [기능별 구현·검사 기록](https://endside82.github.io/business_logic/qa/feature-status.html) |
-| 화면을 실제로 확인했나 | [화면 검수](https://endside82.github.io/business_logic/qa/screen-review.html) |
+|---|---|
+| 제품 전체 이해 | [서비스 정의](docs/overview/service.html) · [사용자 여정](docs/overview/journeys.html) |
+| 기능 찾기 | [기능 목록](docs/features/catalog.html) · [사람용 PRD 읽는 법](prd/START_HERE.md) |
+| 기능의 동작·수용 기준 | [기능 PRD](prd/02_feature_prds/) · [공통 정책](prd/03_policy_prds/) |
+| 현재 할 일과 조건 | [전체 현황 사이트](docs/index.html) · 정본인 [앞으로 할 일](../docs/plan/NEXT_WORK.md) |
+| 구현·검사 근거 확인 | [기능별 구현·검사 기록](docs/qa/feature-status.html) · [화면 검수 기록](docs/qa/screen-review.html) |
+| 촬영한 앱 화면 보기 | [사진으로 보는 앱 기능](docs/tour/index.html). 촬영 시점·환경과 현재 구현을 함께 확인 |
+| 문서 편집 시작 | [문서 진입점](00_README.md) · [기능 PRD 작성·검수 기준](prd/FEATURE_PRD_STANDARD.md) |
 
-<br>
+## 상태와 근거를 읽는 법
 
-## 읽을 때 주의할 점
+- 제품 정책과 현재 구현이 다르면 차이를 기록한다. 구현을 근거로 승인된 정책을 임의 변경하지 않는다.
+- 코드가 있음, 시험이 있음, 해당 버전에서 시험이 통과함, 실제 기기·외부 연결을 확인함, 고객에게 공개함을 구분한다.
+- 앱 탐색 맵·문서 HTML·과거 촬영 화면은 최신 앱 전체의 검수 완료를 증명하지 않는다.
+- 현재 문서의 대조 여부와 과거 기록 보존은 [전체 문서 갱신 기록](verification/document-refresh-2026-11-22.json)에서 구분한다. 이 기록의 소스 대조 완료는 제품 시험 통과가 아니다.
 
-- 문서는 **구현 / 자동 테스트 / 실제 환경**을 나눠 표시한다. 기능 설명이 있다는 사실만으로 지금 사용할 수 있다는 뜻은 아니다.
-- 등록된 시나리오 수는 **검사 항목 수이며 통과 건수가 아니다.**
-- 현재 외부 고객 공개는 보류 중이다. 우선순위·선행 조건·브랜딩·로고 결정과 필요한 자원은 [전체 현황·다음 할 일](https://endside82.github.io/business_logic/)에서 확인한다.
-- 문서에 실린 앱 화면은 로컬 시험 서버에 연결해 촬영한 실제 화면이며 합성하지 않았다. 등장하는 모임·회원·사진은 소개를 위해 준비한 **가상 예시**다.
+## 원본과 산출물
 
----
+기능 상세는 `prd/`, 사이트 산출물은 `docs/`, 기획자용 읽기 자료는 `planner_onboarding/`에 있다. 현황판은 바깥 문서 저장소의 현재 할 일·작업 목록에서 생성하며 HTML에서 별도 잔여 목록을 만들지 않는다.
 
-문서를 직접 편집하거나 PRD 원본을 찾을 때의 진입점은 [`00_README.md`](00_README.md)에 정리했다.
+로컬 `units/`와 일부 `verification/` 문서는 Git 기본 제외 대상이다. 새 체크아웃에 없다는 이유로 기능이 없다고 판단하지 않으며, 반대로 로컬 자료를 수정하고 커밋했다고 그 자료까지 전달됐다고 보지 않는다. 파일 반영 여부는 별도로 확인한다.

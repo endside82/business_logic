@@ -52,7 +52,7 @@
     },
     {
       "name": "작성 기준·정본 관계 정비",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "name": "기능 PRD·공통 정책 대조",
@@ -113,10 +113,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "4d67657f9d14ae88b89cfa41503723d5901930959affbc07786e4b9f9da53aa0",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "reading_guides_20261122"
+      ],
+      "reviewedSha256": "85de60c2adc715bb2c5d28ef091ccd8d7f2086736f77c296a034b156034133c8"
     },
     {
       "path": "docs/_audit_checklist.md",
@@ -7460,10 +7462,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "6c0c1cac6d5e89e154ec282d2f50f1304ab52164e2f899a1396bbc7733b20da9",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "reading_guides_20261122"
+      ],
+      "reviewedSha256": "07bee8e6621cd7fb2545618542ad1d301f388b194334f91dd703117892563a94"
     },
     {
       "path": "prd/SUPPORTING_DOCS_INDEX.md",
@@ -13964,6 +13968,20 @@
         "retainedHtmlPages": 6
       },
       "scope": "검색 5개 기능·영역·로컬 단위 문서·HTML과 생성 자료의 검사. 실제 기기 위치·제품 시험 재실행·외부 알림 수신 검증이 아니며, 출시 범위 날짜 관문은 별도 미해결."
+    },
+    {
+      "command": "README and START_HERE: filesystem catalog counts; reviewed document links/digests; git diff --check",
+      "result": {
+        "status": "PASS",
+        "features": 175,
+        "domains": 21,
+        "policies": 6,
+        "unitBackedFeatures": 117,
+        "sourceFirstFeatures": 58,
+        "reviewedRelativePaths": 938,
+        "derivedSourceDigests": 107
+      },
+      "scope": "읽기 안내의 문서 역할·실재 경로·범위 검산. 소스 확인·시험·실기기·공개 상태를 분리했으며 전체 기능 검토 완료 판정은 아님."
     }
   ],
   "evidenceGroups": {
@@ -16117,6 +16135,52 @@
         {
           "path": "community_app/lib/core/router/app_router.dart",
           "sha256": "d4c3beeb804216276a25fdc12006ff1efe134ee0bf0cfe05499c16544bdeca47"
+        }
+      ]
+    },
+    "reading_guides_20261122": {
+      "kind": "canonical_document_review",
+      "scope": "README와 PRD 읽기 안내의 역할·정본·기능과 로컬 단위 범위·과거 기록·소스 대조와 실행 결과 구분. 각 기능의 구현 완결이나 공개 사이트 배포를 판정한 것은 아님.",
+      "catalogFacts": {
+        "features": 175,
+        "domains": 21,
+        "policies": 6,
+        "unitBackedFeatures": 117,
+        "sourceFirstFeatures": 58,
+        "unitBackedDomains": 14
+      },
+      "sources": [
+        {
+          "path": "business_logic/prd/FEATURE_PRD_STANDARD.md",
+          "sha256": "bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22"
+        },
+        {
+          "path": "business_logic/prd/README.md",
+          "sha256": "a9a9be47f6f7240011309b6d512d280d76a87601f733e23c8437f570aa33297f"
+        },
+        {
+          "path": "business_logic/prd/SUPPORTING_DOCS_INDEX.md",
+          "sha256": "9c9ae7c6cf18eb5f7d72482f4d0fdc935b35df75a7b24add4e3ea07c9b53b62f"
+        },
+        {
+          "path": "business_logic/planner_onboarding/README.md",
+          "sha256": "c2f0cc46dbc2f39ea1c4d572499816d52330c4c0b7cc89ee63b2ea397742c18d"
+        },
+        {
+          "path": "docs/development/IMPLEMENTATION_CROSSWALK.md",
+          "sha256": "2d6a5251e085ee118d2b64ca844c1afb4ca0aec19d94b0af6745692b3d6594ea"
+        },
+        {
+          "path": "docs/development/IMPLEMENTATION_WORKBOARD.md",
+          "sha256": "7d608628f5b723f9751e1a229147150fb15c565a3ab40dc8ed744e0fc004496c"
+        },
+        {
+          "path": "docs/development/DOCUMENTATION_GUIDE.md",
+          "sha256": "5dc47c322fcf9141f933b8830747fa0779a20b9e5884c4dee958c0a19b77e95e"
+        },
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997"
         }
       ]
     }

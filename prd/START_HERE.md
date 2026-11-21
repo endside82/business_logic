@@ -1,96 +1,75 @@
 # PRD를 처음 보는 사람을 위한 읽는 법
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../docs/plan/NEXT_WORK.md)을 따릅니다.
-
+> **문서 구분: 읽기 안내.** 2026-11-22 현재 문서 구조와 정본 관계를 대조했다. 기능 설명·과거 확인은 현재 미구현 목록이 아니다. 현재 할 일은 [앞으로 할 일](../../docs/plan/NEXT_WORK.md)을 따른다.
 
 ## 결론
 
-사람은 `02_feature_prds/` 전체를 처음부터 읽으면 안 된다. 먼저 상태표에서 담당
-기능의 위치, trace 수, risk 후보 수를 확인하고 필요한 기능 문서만 들어간다.
+담당 기능을 고른 뒤 실제 입구·행동·결과·권한·상태·복귀를 읽는다. 목록에 문서가 있다는 사실과 본문이 최신 소스로 검토됐다는 사실은 다르다. 기능 번호·연결 근거 수·위험 항목 수·시나리오 수를 구현 완료율이나 시험 통과율로 바꾸지 않는다.
 
-먼저 아래 순서로 본다.
+## 처음 읽는 순서
 
-1. 제품 전체를 알고 싶으면 `00_product_prd.md`
-2. 전체 기능 PRD 전환 상태를 알고 싶으면 `PRD_MIGRATION_STATUS.md`
-3. 보조 문서의 역할을 알고 싶으면 `SUPPORTING_DOCS_INDEX.md`
-4. 지금 PRD 작성 기준을 알고 싶으면 `FEATURE_PRD_STANDARD.md`
-5. 제대로 된 기능 PRD 예시를 보고 싶으면 `02_feature_prds/03_event/F03-02_event-detail_prd.md`
-6. 특정 기능을 실제로 파악하려면 `business_logic/units/<domain>/<feature>/`의
-   `backend.md`, `frontend.md`, `scenarios.md`, `diagrams.md`
-7. 구현 우선순위와 현재 위험도를 보려면 `../../docs/development/IMPLEMENTATION_CROSSWALK.md`와
-   `../../docs/development/IMPLEMENTATION_WORKBOARD.md`
-8. 기능 175개의 제품 시나리오 정의·자동 테스트·사용자 여정 연결 상태는
-   [기능별 제품 시나리오 완성도 감사](04_qa_acceptance/scenario_completeness_audit_2026-08-30.md)
-9. v4.5 이벤트 확장(W1~W7)의 현재 계약은 F03-13~17 기능 PRD와
-   `community_api` 실제 소스에서 본다. 과거 `docs/plan/event-extensions/` 계획 산출물 3개는
-   실코드 병합 뒤 2026-06-05 폐기됐다.
-10. **현재 소스를 우선 확인하는 58개 기능은 `units/` 폴더 없이 운영된다.**
-   2026-06-05까지 51개였고, 이후 제공자 배정·정산 F21-01~07이 7개 추가됐다.
-   정본 위치와 정확한 기능 목록은 `PRD_MIGRATION_STATUS.md` 상단 운영 원칙에서 확인한다.
-11. 2026-07-29 실제 소스 기준점과 재실측 Gap은 `05_planning_artifacts/current_source_update_2026-07-29.md`에서 확인한다.
+1. [제품 전체 PRD](00_product_prd.md)와 [전체 기능 정의](00_prd_items/05_feature_definitions.md)에서 제품과 기능의 위치를 찾는다.
+2. [문서 전환·대조 상태](PRD_MIGRATION_STATUS.md)에서 해당 기능 PRD로 이동한다. 이번 전체 최신화의 검토 여부는 [문서별 갱신 기록](../verification/document-refresh-2026-11-22.json)과 함께 확인한다.
+3. 기능의 결론·사용자 흐름·권한과 상태·현재 제한·수용 기준을 읽는다.
+4. [공통 정책](03_policy_prds/)과 [기능과 코드의 연결 지도](../../docs/development/IMPLEMENTATION_CROSSWALK.md)에서 관련 기능과 구현의 경계를 찾는다.
+5. 현재 동작을 판단할 때는 실제 서버·앱 소스를 대조하고, 실행 결과는 버전·환경·날짜가 있는 시험 기록으로 따로 확인한다.
 
-## v4.5 W1~W7 이벤트 확장 계보 (2026-05-22)
+## 정본과 참고 자료의 역할
 
-이벤트 도메인 5개 PRD는 W1~W7 계획을 거쳐 추가됐다. 당시 계획 파일은 폐기됐으므로,
-아래 기능 PRD와 실제 Controller/Service/DTO/enum을 현재 근거로 사용한다.
+| 판단할 내용 | 먼저 볼 곳 | 경계 |
+|---|---|---|
+| 제품이 제공하기로 한 동작 | 승인된 결정·정책·기능 PRD | 코드와 다르면 정책을 지우지 말고 차이를 기록 |
+| 현재 구현과 계약 | 실제 서버·앱·관련 관리자·실시간·MCP 코드 | 파일·함수 존재만으로 사용자 흐름 전체를 완료 처리하지 않음 |
+| 현재 할 일 | [앞으로 할 일](../../docs/plan/NEXT_WORK.md) · [작업 목록](../../docs/plan/WORKLIST.md) | 과거 보고서의 모든 Gap을 새 잔여 목록으로 복사하지 않음 |
+| 구현·기존 확인 범위 | [기능별 구현·검증 상태](../../docs/development/IMPLEMENTATION_WORKBOARD.md) | 과거 시험·현재 소스·실제 환경 확인을 구분 |
+| 기능별 로컬 참고 | `units/`의 서버·앱·시나리오·흐름도 | 조사 당시 자료이며 최신 코드보다 우선하지 않음 |
+| 읽기용 HTML | [기능 목록](../docs/features/catalog.html) | 기능 원문과 함께 갱신해야 하는 산출물 |
+| 기획·QA 보조 자료 | [보조 PRD 문서 인덱스](SUPPORTING_DOCS_INDEX.md) | 기능별 현재 계약의 정본이 아님 |
 
-| ID | 기능 | 현재 기능 PRD | Wave |
-|---|---|---|---|
-| F03-13 | 참가 선입금 (WALLET/BANK_TRANSFER) | `02_feature_prds/03_event/F03-13_event-prepayment_prd.md` | W2a/W2b/W3 |
-| F03-14 | 이동수단 공통 설정 | `02_feature_prds/03_event/F03-14_event-transport-mode_prd.md` | W4에서 시작, 2026-09-02 통합 완료 |
-| F03-15 | 카풀·자차 | `02_feature_prds/03_event/F03-15_event-carpool_prd.md` | W5에서 시작, 2026-09-02 통합 완료 |
-| F03-16 | 대절 버스와 자리 배정 | `02_feature_prds/03_event/F03-16_event-bus-charter_prd.md` | W7에서 시작, 2026-09-02 통합 완료 |
-| F03-17 | 차량 좌석 배치도 운영 | `02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md` | W6에서 시작, 2026-09-02 운영 화면 완료 |
+## 로컬 참고가 있는 기능과 없는 기능
 
-enum 번호와 충돌은
-`community_api/src/test/java/com/endside/community/EnumReservationTest.java`가 회귀 검증한다.
+전체는 **21개 도메인·175개 기능**이다. 이 가운데 **14개 도메인의 117개 기능**에는 로컬 `units/` 자료가 있다. 각 기능 폴더의 `backend.md`, `frontend.md`, `scenarios.md`, `diagrams.md`를 출발점으로 사용할 수 있다.
+
+나머지 **58개 기능**은 별도 단위 폴더 없이 기능 PRD와 실제 소스를 직접 대조한다. 폴더가 없다는 이유로 구현이 없다고 판단하거나 숫자를 맞추려고 단위 문서를 새로 만들지 않는다. 정확한 목록과 범위는 [문서 전환·대조 상태](PRD_MIGRATION_STATUS.md)의 운영 기준을 따른다.
+
+`units/`와 일부 과거 검증 문서는 Git 기본 제외 대상이다. 다른 체크아웃에 자동으로 따라오지 않을 수 있다. 로컬 자료가 없을 때는 기능 PRD의 소스 연결과 [기능과 코드의 연결 지도](../../docs/development/IMPLEMENTATION_CROSSWALK.md)로 실제 소스에 접근한다. 온보딩의 단위 인벤토리는 117개 범위이며 전체 175개의 목록으로 읽지 않는다.
 
 ## 역할별로 뭘 보면 되나
 
-| 사람 | 먼저 볼 것 | 이유 |
+| 역할 | 읽는 경로 | 확인할 결과 |
 |---|---|---|
-| 신규 기획자 | `00_product_prd.md` -> `00_prd_items/05_feature_definitions.md` | 제품 구조와 175개 기능 이름을 빠르게 잡는다. |
-| 기능 담당 기획자 | `PRD_MIGRATION_STATUS.md` -> 담당 기능 PRD -> 담당 기능의 `units/*` 4개 문서 | 전환 상태와 risk 후보를 먼저 보고 실제 source 기반 근거를 확인한다. |
-| 개발자 | `../../docs/development/IMPLEMENTATION_CROSSWALK.md` -> 담당 기능의 `units/*/backend.md` -> 실제 서버 소스 | 패키지가 아니라 서버부터 앱까지 이어지는 기능 단위로 구현 범위를 잡는다. |
-| Flutter 개발자 | 담당 기능의 `units/*/frontend.md` -> 실제 API/Repository/Provider/Screen | 서버 계약과 화면 분기 사이의 불일치를 찾는다. |
-| QA | 현재 소스 우선 기능 PRD의 `상태·권한 표`, `남은 문제와 위험`, `검증 현황` | 어떤 시나리오가 닫혔고 어디가 미검증인지 본다. |
-| PO/운영 | `05_planning_artifacts/decision_register.md`와 각 기능 PRD의 `미결정 / 후속` | 코드로 닫을 수 없는 정책/운영 결정을 본다. |
-
-## 현재 믿어도 되는 문서
-
-| 문서 | 신뢰도 | 이유 |
-|---|---|---|
-| `PRD_MIGRATION_STATUS.md` | 운영 기준 | 175개 기능 PRD의 전환 상태, trace 수, risk 후보 수를 한 번에 보여준다. |
-| `SUPPORTING_DOCS_INDEX.md` | 보조 문서 안내 | 인벤토리, 정책, QA, Notion/운영 산출물의 역할을 구분한다. |
-| `FEATURE_PRD_STANDARD.md` | 기준 문서 | 앞으로 기능 PRD를 어떻게 써야 하는지 정의한다. |
-| `02_feature_prds/03_event/F03-02_event-detail_prd.md` | golden sample | 실제 서버/Flutter 소스를 다시 대조해서 Gap/Risk까지 남긴 첫 샘플이다. |
-| `02_feature_prds/*` 전환본 | 기능 판단 출발점 | 116개 기능 PRD가 `units` 실사 자료를 기준으로 재배치됐다. 구현 착수 전 trace source 재확인이 필요하다. |
-| `business_logic/units/*/*/{backend,frontend,scenarios,diagrams}.md` | 원천 실사 자료 | 기존 절차에서 실제 소스 확인을 강제하기 위해 만든 자료다. 다만 stale 가능성이 있으므로 실제 소스로 재확인한다. |
-| `00_product_prd.md`, `00_prd_items/*`, `01_domain_prds/*` | 개요/인벤토리 | 제품 구조를 훑는 용도다. 세부 판단 근거로 단독 사용하면 안 된다. |
+| 기획자 | 제품 전체 → 담당 기능 → 공통 정책 | 사용자가 어디서 무엇을 하고 어떤 결과를 얻는가 |
+| 개발자 | 구현 연결 지도 → 서버 계약·서비스 → 앱 데이터·화면·경로 | 서버와 앱의 상태·권한·성공·실패 처리가 맞는가 |
+| QA | 기능 수용 기준 → 실제 시험 본문·기존 실행 기록 | 어떤 조건이 검증됐고 어떤 환경·분기가 남았는가 |
+| 운영·제품 책임자 | 현재 할 일 → 담당 정책·미결정 항목 | 운영 입력·제품 결정·실제 환경 확인 중 무엇이 필요한가 |
+| 문서 편집자 | 작성 기준 → 기능 원문 → 관련 요약·HTML·자료 | 같은 설명이 여러 문서에서 어긋나지 않는가 |
 
 ## 특정 기능을 파악하는 실제 순서
 
-예를 들어 `F03-05 이벤트 신청 & 참석`을 본다면:
+예를 들어 [이벤트 상세](02_feature_prds/03_event/F03-02_event-detail_prd.md)를 본다면 다음을 이어서 확인한다.
 
-1. `PRD_MIGRATION_STATUS.md`에서 `F03-05`의 PRD, unit 근거, trace/risk 후보 수를 확인한다.
-2. `02_feature_prds/03_event/F03-05_event-attendance_prd.md`의 `결론`, `제품 규칙`, `Gap/Risk`를 먼저 본다. 계약은 `코드 위치` 줄을 따라 코드에서 읽는다.
-3. `business_logic/units/03_event/F03-05_event-attendance/backend.md`를 읽는다.
-4. `business_logic/units/03_event/F03-05_event-attendance/frontend.md`를 읽는다.
-5. 실제 서버 Controller/Service/VO/Enum을 확인한다.
-6. 실제 Flutter API/Repository/Provider/Screen/Widget을 확인한다.
-7. `scenarios.md`에서 사용자 흐름을 확인한다.
-8. 서버 응답 필드와 Flutter 소비 필드를 비교한다.
+1. 어떤 메뉴·목록·알림·공유 링크에서 들어오는지 확인한다.
+2. 로그인 여부·주최자·참가 상태·공개 상태에 따라 무엇을 보거나 실행할 수 있는지 읽는다.
+3. 실제 서버의 Controller·Service·요청 및 응답·상태 값에서 계약과 권한을 확인한다.
+4. 앱의 모델·API·Repository·Provider·Screen/Widget·Router를 따라 화면 결과와 복귀를 확인한다.
+5. 취소·실패·응답을 모르는 요청·권한 회수 때 입력·목록·버튼이 어떻게 되는지 확인한다.
+6. 시험이 실제로 검증하는 조건과 버전·환경·결과를 확인한다. 시험 파일명이나 시나리오 제목만으로 통과 판정하지 않는다.
+
+작성 형식은 [기능 PRD 작성·검수 기준](FEATURE_PRD_STANDARD.md)을 따른다. 기능 본문에 기술 계약을 복제하지 않으며 확인된 차이가 사용자에게 주는 영향을 적는다.
+
+## 과거 조사와 현재 확인
+
+[2026년 7월 소스 조사](05_planning_artifacts/current_source_update_2026-07-29.md)와 날짜가 붙은 검증 보고서는 당시 범위의 근거다. 날짜만 최신으로 바꾸거나 그때의 문제를 지금도 재현된 결함으로 취급하지 않는다. 반대로 현재 확인이 필요한 계약·미해결 근거를 오래됐다는 이유로 지우지 않는다.
+
+이미 확인한 소스·시험 근거는 버전과 변경 범위를 비교해 재사용한다. 변경·새 실패·미해결 가설이 없으면 같은 이미지·로그·전체 시험을 반복하지 않는다. 문서 링크·코드 위치·생성 자료 검사와 실제 앱·외부 수신 검증은 별도로 기록한다.
 
 ## 독자가 얻어야 하는 답
 
-좋은 기능 PRD를 읽고 나면 아래 질문에 답할 수 있어야 한다.
+- 현재 어떤 입구에서 기능을 사용할 수 있는가?
+- 사용자 상태와 권한에 따라 어떤 결과나 제한을 만나는가?
+- 성공·실패·취소 뒤 무엇이 저장되고 어디로 돌아오는가?
+- 제품 의도와 구현의 차이, 검증하지 못한 범위는 무엇인가?
+- 판단을 뒷받침하는 소스·시험·실제 환경 근거의 시점과 범위는 무엇인가?
 
-- 이 기능은 현재 실제로 어디까지 동작하는가?
-- 서버가 주는 계약과 Flutter가 기대하는 계약이 맞는가?
-- 상태/권한별로 버튼과 화면이 어떻게 달라지는가?
-- 사용자가 피해를 볼 수 있는 Gap/Risk는 무엇인가?
-- 어떤 테스트가 이 판단을 뒷받침하는가?
-- 제품/운영/법무 결정 없이는 못 닫는 항목은 무엇인가?
-
-이 질문에 답하지 못하는 문서는 PRD가 아니라 인벤토리 또는 초안으로 취급한다.
+답이 없는 부분은 미검토·미검증·미결정 중 해당 상태로 남긴다. 모든 기능이 검토됐다고 선언하지 않는다.
