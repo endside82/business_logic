@@ -2662,9 +2662,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "fc709fa98ca1736ac398f262a01c1f846fd1bdd71f4ca9e825207d847c3cbdcf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_checkin_20261122"
+      ],
+      "reviewedSha256": "20941f975f7132888821a8a2e653ad48a30b625b1b3ca4845b605402b8c0d566"
     },
     {
       "path": "docs/features/F03-09.html",
@@ -5500,10 +5503,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "9815a7383162db7138338847fad8ab01abee508ad3e157bf31cec895bdedf16b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_checkin_20261122"
+      ],
+      "reviewedSha256": "c2487e00ea1e1d05e63a93c190ea0b795becc60ea9af7370d80a1d2271a91a1f"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
@@ -8877,9 +8882,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "375b7006517584fecdc2fbecdb4ca5fe8f48f08825a1d0e13b075e753f81b29e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_checkin_20261122"
+      ],
+      "reviewedSha256": "f5c24c6c4b7b7212d2665ebdffcad74dd84de4a9bb65d7610586ba72a2ac3060"
     },
     {
       "path": "units/03_event/F03-08_qr-checkin/diagrams.md",
@@ -8887,9 +8895,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e4060bd05de29b53921384ef3c8e2e23c32542a7d3fa371983649ed8a4b8db1a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_checkin_20261122"
+      ],
+      "reviewedSha256": "6a4cb3bab138a32e3025b784048d5305bb6df554202f7cab9f08522e0581358d"
     },
     {
       "path": "units/03_event/F03-08_qr-checkin/frontend.md",
@@ -8897,9 +8908,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5fe922faaf31249694310348e3b986d474cad1c927bbb38754ac8a7c85897192",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_checkin_20261122"
+      ],
+      "reviewedSha256": "49d47a1214d931eadf7de33b078bea204b748088e4a4f248304c14c5562f8489"
     },
     {
       "path": "units/03_event/F03-08_qr-checkin/scenarios.md",
@@ -8907,9 +8921,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "24b895b2a7f853a60f8ad196f0ee2750a88231315c180642013240c3feb9ff95",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_checkin_20261122"
+      ],
+      "reviewedSha256": "613763ae008978d2a39e6019d7d56c664d6d066a55431693293a46c107ac52ca"
     },
     {
       "path": "units/03_event/F03-09_event-photos/backend.md",
@@ -14453,6 +14470,28 @@
         }
       },
       "scope": "정원·대기열·모집 관리 문서와 파생 문서·소스 참조 검사. 기존 모의 시험 단언을 읽었고 새 제품 시험·실DB·기기·반환 송금·알림 수신 검증 아님."
+    },
+    {
+      "command": "F03-08: source-reference sync; scenario audit; reviewed document links/digests; scoped source/canonical digests; retained HTML IDs; incoming Markdown anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "reviewedDocuments": 6,
+        "sourceDocuments": 100,
+        "sourceRecords": 393,
+        "verifiedRecords": 391,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1472,
+        "derivedSourceDigests": 185,
+        "currentSourceAndCanonicalDigests": 41,
+        "retainedHtmlPages": 1,
+        "incomingMarkdownAnchors": 0,
+        "reviewCounts": {
+          "source_verified": 309,
+          "historical_retained": 33,
+          "pending": 660
+        }
+      },
+      "scope": "QR·숫자 코드·본인/게스트·직접 체크인의 시간과 부분 완료·통계 문서 대조. 소스 참조 등록은 그대로라 변경 없는 참조 해석기 11개 시험의 선행 통과를 재사용했다. 새 제품 시험·실DB·카메라·화면·알림 수신·마일리지 적립 실행은 하지 않음. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -18752,6 +18791,218 @@
           "reason": "기존 소스 참조 등록이 없던 정원·대기열 기능의 실제 앱 창구와 모집 별칭 연결"
         }
       ]
+    },
+    "event_checkin_20261122": {
+      "kind": "source_review",
+      "scope": "F03-08 QR/숫자 코드 발급·실제 입구·시간/행 자격·게스트·직접 체크인 부분 완료·통계 표시의 서버/앱 대조. 기존 근거 지문을 확인하고 필요한 체크인 함수를 추가로 읽었다. 기존 시험의 명시한 단언 확인이며 새 제품 시험·실DB·카메라·실제 화면·알림 수신·마일리지 적립 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/capacity/controller/CheckInController.java",
+          "sha256": "464891c840564eeee4e9a4cafe26af752214bb5ee59d66ac67a76be5d692b8ef"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CheckInService.java",
+          "sha256": "629833f554fc82b29af6ebe9850d908315b108adc74b7586c09bad0cd5fa53f9",
+          "reviewScope": "96–270 QR/숫자 코드 발급·검증·직접 체크인, 279–496 통계·본인/게스트 처리·시간·행 저장·적립 신호. 실제 Redis·DB·적립 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/BatchCheckInOrchestrator.java",
+          "sha256": "20b38654cdbff2fd408efbbeea2ae4d9780a41a7ce171527fe6b7d73f51879f6"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventAttendanceActions.java",
+          "sha256": "85b7f91d6d1fdbca456f28248a6f47659c2c1d28ebf64a6f3135c5c258d36612",
+          "reviewScope": "147–169 본인·수동·발급 허용, 183–239 행별 현재 체크인 판정. 다른 출석·승격·환불 명령의 전체 감사 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/ParticipationRowLock.java",
+          "sha256": "b70cc459b2845fd4372fd83e9268152743ee77197496272af34b7ace42a1e07b",
+          "reviewScope": "140–169 잠금 후 참석·환불·중복 판정, 437–479 번복되지 않은 노쇼·중복·환불 대기 현재 읽기. 경합 실행 시험 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/param/CheckInQrParam.java",
+          "sha256": "43d2880abe694188adfaa42c7f10a26403111cfafe0db27416c393ec61a5c50d"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/param/CheckInShortCodeParam.java",
+          "sha256": "b0bff1a82c8aadbb941a139a78303b3923bf03b51d7689b33dcda88ce018fe95"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/param/BatchCheckInParam.java",
+          "sha256": "a7c696cace4fc0367bc7025c4770b40544a59ee1c5cba5427683373aac83c7da"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/CheckInTokenVo.java",
+          "sha256": "5eb896c7c3b7906b3f6e6634db9f3e015d2dfbfdedfdea3044ec2a7389effdd3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/CheckInStatsVo.java",
+          "sha256": "ead95ca6cacc3eb43bd2e20635518e35f6e1ecc84ed2a751681ebc41be728ab3"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/vo/BatchCheckInResultVo.java",
+          "sha256": "e76aff9a38b9011681dcd29606ff224be3edfefed58a6f4bf9bd87c532ee13af"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/capacity/service/CheckInServiceTest.java",
+          "sha256": "03f71fa303b642e2dd119d8bddb0e0a080f706be1d3fc50d8fa4690da8843ad5",
+          "reviewScope": "672–711 기존 코드 삭제·발급 충돌 단언, 747–779 반환 대기 회원 제외·50.0 백분율 단언. 시험 실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/capacity/service/BatchCheckInOrchestratorTest.java",
+          "sha256": "870717bac257039c80b28fa218362012051860f29db835c77992d2b12fc4b4d6",
+          "reviewScope": "58–87 한 행씩 호출·반환 수 합산·빈 요청 권한 검사·외부 트랜잭션 거절 단언. 시험 실행 아님."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/qr_check_in_screen.dart",
+          "sha256": "a58e536414d155768b6a4ac31bfd04cabf8e383836e8b4393a5970cfb00f5d9a"
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/check_in_provider.dart",
+          "sha256": "21df8ec110b445bbe04f1f572ae5a8b78314b4b0893d2171370b6997f8c4958b"
+        },
+        {
+          "path": "community_app/lib/data/repositories/check_in_repository.dart",
+          "sha256": "4a5b451331ab31a93cced4228b37707ccd91add728a9a93ae72efa4f579c3e3f"
+        },
+        {
+          "path": "community_app/lib/data/api/check_in_api.dart",
+          "sha256": "e901750c0e4019c0588b7236f29c02b8853b7f98df2835ecbb6c49cda00c5f63"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/qr_code_view.dart",
+          "sha256": "5a9ca13d422498a01a98a9150c4e6e80515f0c681901281828a76efe393ac71c"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/qr_scanner_view.dart",
+          "sha256": "eb04e2e5709c256906adc9622af864516e711ccfdb095770a3ec7606ad62be24"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/check_in_short_code_sheet.dart",
+          "sha256": "ec61d4ac11f21743fd522824bf4c0f016b671b2dadb623aced83ac386bed7a3a"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/manual_check_in_list.dart",
+          "sha256": "33d4f7dbb501d0fbe65d8752d57ec35c6eb5c6376831574723940a93c4488ff7"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/check_in_stats_card.dart",
+          "sha256": "6cb206b1f4b4929cd788e4c82ee3580b76c28aad0b7a47f41d3c256246ebc0b7"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/qr_token_vo.dart",
+          "sha256": "2fb648cf0275d65e15c9700445a6d305ff249f0a5bda47f560435eebe0407c83"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/check_in_param.dart",
+          "sha256": "16f1accad00d4a3d794de07f4e5d13b0a4e09b5620b23f2e2416bc40194fa5c8"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/check_in_short_code_param.dart",
+          "sha256": "6940a9e44bbeff9169a3c39d6ffb58fa26481e2611ba38856946988a5e627785"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/batch_check_in_param.dart",
+          "sha256": "6d007b5ac2169aa2373c9647fe28919fc235559a2654aa570e1ef1023bb90187"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/batch_check_in_result_vo.dart",
+          "sha256": "2518c1c405e989e5fe8bb113e69691a8ab59bfe94a05a52a6496c847b7df91b0"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/check_in_stats_vo.dart",
+          "sha256": "9dac27f12a62b9b09e87593a2b54abeed85e51187c25bf7db8fbac5c99e29414"
+        },
+        {
+          "path": "community_app/lib/data/models/attendance/check_in_stats_vo.g.dart",
+          "sha256": "57b448fa5f479812bf1d355050223c1dcd91dd172663a9f15ad3e27826b62677",
+          "reviewScope": "14 백분율 JSON 수치를 그대로 double로 읽으며 100분의 1 변환이 없음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_time_boundary.dart",
+          "sha256": "a62ea383e73138ec36d122042e2e7f43c1a87a78003b109c0f3b57d2f4a7c217",
+          "reviewScope": "12–49 유효 일정·일정 결정 대기·본인 체크인·수동 정정 시간 계산. 다른 시간 경계 전체 검수 아님."
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "b7ff405c284771652b8e82d28c6297164706b936553e9274f8e6fe3789436ff6",
+          "reviewScope": "546–547 체크인 접근은 출석 관리 허용 또는 실제 참석 행. 다른 라우터 가드 전체 검수 아님."
+        },
+        {
+          "path": "community_app/test/presentation/event/qr_check_in_batch_toast_test.dart",
+          "sha256": "8fff3c26d34d03c66992dbb9da4888f0a6ab5dcbfc0266804a292877f7a0eeb5",
+          "reviewScope": "28–115 실제 처리 수에 따른 완료·부분 건너뜀·0건 안내와 직접 체크인 시간 밖 문구의 모의 단언. 시험·화면 캡처 실행 아님."
+        }
+      ],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "favorite_management_calendar_20261122"
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventAttendanceManagerGuard.java",
+          "sha256": "306a09ed8b1104b3329368acf1372f24b7adeca4b4e44201866d9756a8fbd5c7",
+          "reviewScope": "59–99 수동 승격의 호스트·공동호스트 출석 관리 허용·위임 정지·클럽 출석 관리자 판정."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/port/CapacityEventAdapter.java",
+          "sha256": "9d706b69ce29f4704482903f4675b3cb0b38bf33bc6eaff29ba1a2763002f187",
+          "reviewScope": "62–120 명단 관리 권한 위임·현재 설정 전달·상태 검사·저장·설정 VO 연결."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "173–189 신청 관리 경로의 관리 권한 가드·화면 연결."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_permission_provider.dart",
+          "sha256": "9372d2935e8ed13031e769a3124f9f1c3548e59e1da3b8d286bd913ce735ae64"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67"
+        },
+        {
+          "path": "docs/ui-ux/screens/14-event-attendance.md",
+          "sha256": "240a1cf6b7a8ab98908fd40e1b77e7a60d7f9d69a3a6af4281fecb524b7a3be3",
+          "reviewScope": "신청 명단의 사람 링크, 322–367 신청 목록과 메시지 펼치기 명세, 949–974 승인 기반 신청 흐름. 현재 앱과 다른 명세는 Gap으로 유지."
+        }
+      ],
+      "additionalReusedSourceReview": {
+        "EventActionPolicy.java": "338–414 본인/수동 시간·행 자격·거절, 957–959 토큰 발급 권한.",
+        "EventAttendanceManagerGuard.java": "59–99 출석 관리 권한의 기존 대조 재사용.",
+        "CapacityEventAdapter.java": "171–174 반환 대기 신청 회원 집합의 실제 조회.",
+        "home_branch_routes.dart": "304–320 체크인 경로와 전용 접근 가드.",
+        "event_permission_provider.dart": "235–245 실제 참석 행과 서버 출석 관리 권한 전달.",
+        "event_detail_screen.dart": "379–383 출석 관리 허용 대상의 상세 입구. 앱 전체 경로 문자열 검색으로 일반 참가자의 별도 상세 직접 입구를 찾지 못함.",
+        "notification_router.dart": "248–252 안전 체크인 알림의 체크인 경로 연결. 알림 발송·수신 실행 아님.",
+        "14-event-attendance.md": "395–455 QR·게스트·통계·카메라 권한 명세, 973–991 발급→스캔/코드→결과 흐름."
+      },
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
+          "sha256": "c2487e00ea1e1d05e63a93c190ea0b795becc60ea9af7370d80a1d2271a91a1f"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-08.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": []
     }
   },
   "currentSourceVersions": {

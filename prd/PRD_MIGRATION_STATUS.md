@@ -241,7 +241,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-05 | 이벤트 | [F03-05_event-attendance_prd.md](02_feature_prds/03_event/F03-05_event-attendance_prd.md) | `F03-05_event-attendance` | 실사 기반 전환본 | 6 | 6 |
 | F03-06 | 이벤트 | [F03-06_application-review_prd.md](02_feature_prds/03_event/F03-06_application-review_prd.md) | `F03-06_application-review` | 실사 기반 전환본 | 3 | 5 |
 | F03-07 | 이벤트 | [F03-07_capacity-and-waitlist_prd.md](02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | `F03-07_capacity-and-waitlist` | 실사 기반 전환본 | 8 | 6 |
-| F03-08 | 이벤트 | [F03-08_qr-checkin_prd.md](02_feature_prds/03_event/F03-08_qr-checkin_prd.md) | `F03-08_qr-checkin` | 실사 기반 전환본 | 5 | 1 |
+| F03-08 | 이벤트 | [F03-08_qr-checkin_prd.md](02_feature_prds/03_event/F03-08_qr-checkin_prd.md) | `F03-08_qr-checkin` | 실사 기반 전환본 | 5 | 8 |
 | F03-09 | 이벤트 | [F03-09_event-photos_prd.md](02_feature_prds/03_event/F03-09_event-photos_prd.md) | `F03-09_event-photos` | 실사 기반 전환본 | 8 | 4 |
 | F03-10 | 이벤트 | [F03-10_event-plan-link_prd.md](02_feature_prds/03_event/F03-10_event-plan-link_prd.md) | `F03-10_event-plan-link` | 실사 기반 전환본 | 5 | 3 |
 | F03-11 | 이벤트 | [F03-11_wishlist_prd.md](02_feature_prds/03_event/F03-11_wishlist_prd.md) | `F03-11_wishlist` | 실사 기반 전환본 | 3 | 1 |
