@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 52,
     "definitionOnlyEvidence": 84,
-    "traceMarkers": 440,
-    "verifiedTraceRecords": 438,
+    "traceMarkers": 447,
+    "verifiedTraceRecords": 445,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3967,10 +3967,130 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 7,
+        "verified": 7,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-19:1",
+            "label": "POST /api/v1/events/{eventId}/reschedule-proposals — 변경 제안",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "createProposal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/reschedule-proposals",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F03-19:2",
+            "label": "GET /api/v1/events/{eventId}/reschedule-proposals/{batchId} — 주최 측 동의 현황",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "getBatch",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/reschedule-proposals/{batchId}",
+                "targetLine": 76,
+                "methodLine": 77
+              }
+            ]
+          },
+          {
+            "id": "F03-19:3",
+            "label": "POST /api/v1/events/{eventId}/reschedule-proposals/{batchId}/apply — 변경 확정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "applyBatch",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/reschedule-proposals/{batchId}/apply",
+                "targetLine": 90,
+                "methodLine": 91
+              }
+            ]
+          },
+          {
+            "id": "F03-19:4",
+            "label": "DELETE /api/v1/events/{eventId}/reschedule-proposals/{batchId} — 제안 철회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "withdrawBatch",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}/reschedule-proposals/{batchId}",
+                "targetLine": 118,
+                "methodLine": 119
+              }
+            ]
+          },
+          {
+            "id": "F03-19:5",
+            "label": "POST /api/v1/reschedule-proposals/{proposalId}/response — 본인 동의·거절",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "respond",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/reschedule-proposals/{proposalId}/response",
+                "targetLine": 133,
+                "methodLine": 134
+              }
+            ]
+          },
+          {
+            "id": "F03-19:6",
+            "label": "GET /api/v1/me/reschedule-proposals/{proposalId} — 본인 제안 단건",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "getMyProposal",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/reschedule-proposals/{proposalId}",
+                "targetLine": 150,
+                "methodLine": 151
+              }
+            ]
+          },
+          {
+            "id": "F03-19:7",
+            "label": "GET /api/v1/me/reschedule-proposals — 본인 제안 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+                "controller": "RescheduleProposalController",
+                "method": "getMyProposals",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/reschedule-proposals",
+                "targetLine": 162,
+                "methodLine": 163
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

@@ -178,7 +178,7 @@
 | F17-08 | 정기모임 | 환불 (pro-rata · 트리거별) | 멤버/호스트 | MEMBER_CANCEL=elapsed, HOST_CANCEL=delivered, FORFEIT 동일 산식, 100원 floor, failed_refund.regular_meeting_id | 10 | 1 |
 | F17-09 | 정기모임 | 세션 출석 확정·노쇼 | 호스트 | session_attendance 권위, endTime≤now 가드, FORFEIT_ON_LIMIT, scheduler opt-in, close 가드 연동 | 10 | 0 |
 | F17-10 | 정기모임 | 호스트 정산 (flow-through) | 호스트 | retained paid/free 분리, close afterCommit REQUIRES_NEW, uk_settlement_rm 멱등, fail-closed, reservedRefund 게이트 | 10 | 1 |
-| F03-19 | 이벤트 | 일정 변경 제안·참가자 합의 (RS-002) | 호스트/참가자 | RescheduleClassification(AUTO/MAJOR) 분류, 참가자 PENDING→ACCEPTED/DECLINED/AUTO_ACCEPTED/WITHDRAWN 응답, batch 확정/철회, 48h 자동수락 스케줄러, DECLINED→무료 자동취소 연계, EVENT_UPDATED 알림(type:RESCHEDULE_PROPOSAL/RESCHEDULE_APPLIED/RESCHEDULE) | — | — |
+| F03-19 | 이벤트 | 일정 변경 제안·참가자 합의 (RS-002) | 호스트/참가자 | AUTO/MAJOR·48시간 동의·확정/철회, 늦은 응답 저장·거절 취소/재시도·재전송·앱 입구/갱신과 안내 차이 | — | — |
 | F03-20 | 이벤트 | 이벤트 노쇼 관리 | 호스트/참가자 | NoShowStatus(CONFIRMED/APPEALED/OVERTURNED), 호스트·cohost 단건/일괄 확정, 참가자 소명(appealCaseId 외부 발급 필요), 호스트 뒤집기(OVERTURNED 제재 카운트 제외), 게스트 노쇼 owner 패널티, 노쇼 사후 환불(NoShowRefund + dispute_case_id 자동 생성), EventApplyRestrictionGuard 17개 진입점 통합 | — | — |
 | F04-18 | 클럽 | 클럽 레퓨테이션 점수 | 클럽 멤버/관리자 | ReputationScoreController(GET /api/v1/club/reputation/me, /members/{memberId}), 클럽 호스트 신뢰도 (HostSettlementReputation)와 별개 도메인, 클럽-스코프 점수 | — | — |
 | F11-07 | 리뷰 & 신고 | 호스트 리뷰 모더레이션 | 이벤트 호스트 | 호스트 답변(POST/PUT/GET /reviews/{reviewId}/reply, 수정 EditWindow 제한), 임시 숨김(POST /reviews/{reviewId}/hide, ReviewHideReasonCode **6종**), 숨김 해제(unhide), autoEscalate 옵션(hide 시 Report 자동 생성), 증빙 파일 첨부(EvidenceFileValidator, max 5), 신고 진행 중 리뷰 unhide 차단(legal hold) | — | — |

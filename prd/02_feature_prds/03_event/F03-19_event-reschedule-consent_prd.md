@@ -1,220 +1,134 @@
 # F03-19. 일정 변경 제안·참가자 합의 (RS-002) PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 소스 대조이며 제품 시험·실제 앱 이용 결과가 아니다. 별도 units 문서 없이 현재 서버와 앱 소스를 기준으로 관리한다.
 
-<!-- 작성일: 2026-06-05 -->
-<!-- 소스 기준 갱신: 2026-07-29 community_api/community_app current source -->
+## 결론
 
-## 1. 결론
+호스트와 활성 공동호스트는 공개 중인 모임의 시간·장소 변경을 제안한다. 시작 시각이 60분 이상 바뀌거나 가격이 오르면 큰 변경(MAJOR), 나머지는 작은 변경(AUTO)으로 분류한다. 작은 변경은 즉시 반영하며, 큰 변경은 계정이 있는 동의 대상에게 48시간 응답 기한을 준다. 큰 변경도 대상이 없으면 즉시 반영한다. 자동 동의와 모임에 변경을 확정하는 작업은 별개다.
 
-일정 변경 합의(RS-002)는 **서버 계약, 분류기 로직, 상태기계, 환불 연계, 스케줄러, 알림 딥링크, 화면 3종**까지 구현이 닫혀 있다.
+**기한이 지난 응답의 자동 동의 저장, 확정 후 상세·목록 갱신, 모임과 묶음의 소속 검증, 자동 취소 실패 재시도는 현재 구현돼 있다.** 2026-07-29 기준 설명에 있던 해당 미구현·롤백 주장을 현재 위험으로 재사용하지 않는다. 가격 변경은 서버 계약에 있지만 현재 앱의 공개 모임 편집 요청에는 newPrice를 넣지 않는다.
 
-분류기(`RescheduleClassifierService`)가 변경 규모를 AUTO/MAJOR로 분류한다. AUTO이면 즉시 이벤트에 반영하고 `EVENT_UPDATED(type=RESCHEDULE)` 알림만 발송하며 proposal row를 생성하지 않는다. MAJOR이면 동의 대상(계정이 있는 참석·대기자, 참석 행 없이 돈을 냈거나 입금을 신고한 진행 중 신청자, 결제 행 없는 심사 대기·결제 대기 신청자)마다 proposal row를 만들고 48시간 이내 명시 응답을 기다린다. 동의 대상이 0명이면 기다리지 않고 바로 적용한다. fixed-delay 스케줄러가 마감된 PENDING을 AUTO_ACCEPTED로 일괄 전이한 뒤 호스트가 `applyBatch`를 호출해야 이벤트에 반영된다. 참가자가 DECLINED하면 100%·수수료 0 환불 정책으로 자동 취소를 시도하지만 예외는 `autoCancelFailed=true`로 흡수되고, hosting ticket release도 best-effort라 즉시 완료를 보장하지 않는다.
+## 코드 위치
 
-앱은 `EventEditNotifier`에서 `rescheduleProposalRepository.createProposal()`을 직접 호출해 `POST /api/v1/events/{eventId}/reschedule-proposals`(직접 POST 경로)를 사용한다. `RescheduleProposalCreateParam`에 newStartTime/newEndTime/newAddress/newAddressDetail/**newLatitude/newLongitude**/changeReason/hostMessage(=changeReason과 동일값)를 채우며, **newPrice는 채우지 않는다** — 가격 변경 입력 UI 자체가 없어 가격 변경 제안은 현재 불가(G-1). 주소가 바뀌면 저장 전에 서버 geocoding API로 좌표를 다시 구하고, 실패하면 저장을 막는다. 두 서버 경로(`PATCH /reschedule`과 `POST /reschedule-proposals`)가 공존하며 PATCH는 서버 내부에서 위임/하위호환 경로로 유지된다(G-7). apply 후 이벤트 상세 캐시 무효화(G-2), 전원 응답 전 확정 차단(G-5), RESCHEDULE_APPLIED 알림 전용 라우팅 미구현(G-6)이 미완 Gap이다.
+서버: RescheduleProposalController, EventRescheduleProposalService, EventRescheduleResponseCoordinator, RescheduleClassifierService, RescheduleProposalTransitions, RescheduleOpenBatch·RescheduleOpenSummaryReader, EventChangeConsentRoster·EventPayerRoster, RescheduleDeclineAutoCancel·EventRescheduleAutoCancelExecutor, 두 스케줄러와 요청·응답 객체. 권한은 EventActionPolicy, 환불 계산은 RefundPolicyService를 대조했다.
 
-## 2. 코드 위치
+앱: event_edit_provider.dart·event_edit_screen.dart, reschedule_proposal_api.dart·reschedule_proposal_providers.dart, 현황·응답·받은 요청 목록 화면, event_detail_screen.dart, my_profile_screen.dart, event_host_routes.dart·notification_router.dart. 다음 연결은 현재 공개 API의 7개 창구다.
 
-계약의 정본은 코드다. 서버: `RescheduleProposalController`, `EventRescheduleProposalService`, `RescheduleClassifierService`, `RescheduleChangeType`, `RescheduleClassification`, `RescheduleResponseStatus`, `RescheduleProposalCreateParam`, `RescheduleResponseParam`, `RescheduleProposalResultVo`, `RescheduleProposalBatchVo`. 앱: `reschedule_proposal_batch_screen.dart`, `reschedule_proposal_response_screen.dart`, `my_reschedule_proposals_screen.dart`, `event_edit_screen.dart`, `reschedule_proposal_api.dart`, `event_edit_provider.dart`, `geocoding_repository.dart`, `geocoding_api.dart`, `reschedule_proposal_providers.dart`, `routes.dart`.
+<!-- source-references:start -->
+서버 창구: `RescheduleProposalController#createProposal`, `RescheduleProposalController#getBatch`, `RescheduleProposalController#applyBatch`, `RescheduleProposalController#withdrawBatch`, `RescheduleProposalController#respond`, `RescheduleProposalController#getMyProposal`, `RescheduleProposalController#getMyProposals`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 입구와 실제 이동 경로
 
-### 3-1. 호스트가 일정 변경 제안하는 흐름 (직접 POST 경로)
+| 접근 경로 | 현재 연결 |
+| --- | --- |
+| 공개 모임 편집 저장 | 즉시 적용이면 편집 종료, 동의가 필요하면 해당 모임·묶음의 동의 현황으로 이동 |
+| 모임 상세의 관리 항목 | 편집 권한과 openReschedule이 있으면 ‘일정 변경 동의 현황 보기’ 제공 |
+| 내 프로필의 응답 요청 배너 | 응답 가능한 요청 수가 있을 때 받은 일정 변경 요청 목록으로 이동 |
+| 받은 일정 변경 요청 목록 | 상태 필터·20개 단위 추가 조회·당겨 새로 고침·오류 재시도 제공, 카드에서 개별 응답 화면 이동 |
+| RESCHEDULE_PROPOSAL 알림 | proposalId로 /me/reschedule-proposals/{proposalId} 응답 화면 이동 |
+| RESCHEDULE_APPLIED·RESCHEDULE·RESCHEDULE_WITHDRAWN 알림 | EVENT_UPDATED의 공통 모임 상세 경로로 이동 |
 
-1. 호스트가 `event_edit_screen.dart`에서 시간/장소/변경사유를 입력하고 저장 버튼을 누른다.
-2. 주소가 dirty인 오프라인 이벤트면 `EventEditNotifier._resolveAddressCoordinatesIfNeeded()`가 `GeocodingRepository.geocodeAddress(address)`를 호출한다. 성공 시 새 위도/경도를 state에 저장하고, 실패 또는 빈 주소면 address error를 남기고 저장을 중단한다. 주소가 바뀌지 않았으면 기존 좌표를 그대로 둔다.
-3. `EventEditNotifier`가 `rescheduleProposalRepository.createProposal(eventId, RescheduleProposalCreateParam)`을 직접 호출한다.
-4. `POST /api/v1/events/{eventId}/reschedule-proposals`로 `RescheduleProposalCreateParam`(newStartTime, newEndTime, newAddress?, newAddressDetail?, newLatitude?, newLongitude?, changeReason, hostMessage=changeReason)이 전달된다. 새 좌표는 주소가 바뀐 경우에만 pair로 보낸다. **newPrice는 채우지 않는다** — 가격 변경 입력 UI 부재로 가격 변경 제안은 현재 불가.
-5. 서버 `RescheduleProposalController`가 `createProposal`을 직접 처리한다. 좌표는 둘 다 없으면 기존값 보존, 한쪽만 있거나 범위 밖 또는 `(0,0)`이면 `INVALID_COORDINATES`로 거부한다.
-6. `RescheduleClassifierService.classify(event, param)`이 AUTO 또는 MAJOR를 결정한다.
-   - **AUTO 경로**: 이벤트 필드 즉시 반영 → `EVENT_UPDATED(type=RESCHEDULE)` 알림 → proposal row 미생성 → `applied=true, batchId=null` 반환.
-   - **MAJOR 경로**: 동의 대상마다 proposal row 생성(status=PENDING, 48h 마감) → 각 대상에게 `EVENT_UPDATED(type=RESCHEDULE_PROPOSAL, proposalId=<id>, batchId=<uuid>)` 알림 → `applied=false, batchId=<uuid>` 반환. 동의 대상은 작은 변경의 알림·큰 변경의 동의·확정 알림이 함께 쓰는 한 명단이다: 계정이 있는 참석·대기자, 그 밖에 돈을 냈거나 입금을 신고했고 신청이 진행 중인 회원, 그 밖에 결제 행 없는 심사 대기·결제 대기 신청자. 게스트 행은 응답할 계정이 없어 빠지고 데려온 회원이 일행 대표로 받는다. 대상이 0명이면 같은 트랜잭션에서 바로 적용하고 응답 모양은 AUTO 와 같다(batchId 없음).
-7. `event_edit_screen.dart`가 `lastRescheduleProposalResult`를 확인한다.
-   - `applied=true` → 토스트 "경미한 변경으로 바로 반영됐습니다"
-   - `applied=false && batchId != null` → `pushReplacement`로 `RescheduleProposalBatchScreen(eventId, batchId)` 이동.
+확정 알림이 모임 상세로 가는 현재 동작을 ‘딥링크가 없다’고 적지 않는다. 현황 라우트는 모임 관리 접근 검사를 거치며, 서버도 호스트 또는 활성 공동호스트인지 검사한다. 참가자 단건·목록은 본인의 제안만 읽는다. 위임 접근에는 비공개 모임 제외 조건이 있다.
 
-### 3-2. 참가자가 제안에 응답하는 흐름
+프로필 배너는 PENDING 조회 결과 중 canRespond인 항목을 세며 최대 5쪽을 읽고 20개 초과 가능성을 +로 표시한다. 서버의 전체 PENDING 수를 항상 정확히 표시하는 배너로 설명하지 않는다.
 
-1. 참가자가 푸시 알림(EVENT_UPDATED, type=RESCHEDULE_PROPOSAL)을 수신한다.
-2. `notification_router.dart`가 `proposalId`를 추출해 `/me/reschedule-proposals/{proposalId}`로 라우팅한다.
-3. `RescheduleProposalResponseScreen`이 `myRescheduleProposalProvider(proposalId)`로 `GET /api/v1/me/reschedule-proposals/{proposalId}`를 호출한다.
-4. 화면은 `RescheduleProposalViewVo`에서 typed diff(시간/장소/가격 변경 전후), 이벤트 메타, `canRespond`/`deadlinePassed`를 읽어 UI를 구성한다.
-5. 참가자가 "동의" 또는 "거절"을 선택하고 note를 입력해 제출한다.
-6. `rescheduleProposalActionNotifierProvider.respondToProposal(proposalId, RescheduleResponseParam(accept, note))`가 `POST /api/v1/reschedule-proposals/{proposalId}/response`를 호출한다.
-7. 서버는 pessimistic lock(`@Lock(PESSIMISTIC_WRITE)`)으로 row를 잠그고 마감 인라인 체크 후 상태를 전이한다.
-   - ACCEPTED: proposal.status = ACCEPTED.
-   - DECLINED: proposal.status = DECLINED → `EventParticipationCancellationService.cancelMyParticipation(RefundFaultCategory.RESCHEDULE_DECLINED)` 호출. 성공 시 100%·수수료 0 정책이 적용되지만 예외는 응답 row를 되돌리지 않고 `autoCancelFailed=true`로 반환한다. hosting ticket release는 별도 best-effort다.
-8. 화면은 `RescheduleResponseResultVo`(proposal 상태, autoCancelTriggered, cancelStatus)를 표시한다.
+## 변경 제안과 분류
 
-### 3-3. 호스트가 batch를 확정·철회하는 흐름
+생성은 모임 행을 잠그고 주최 권한, 결정 대기 여부, 정기 모임 회차 제한, OPEN 상태, 입력 시간, 진행 중 묶음 부재를 검사한다. 결정 투표가 연결된 모임에는 양수 가격 제안을 허용하지 않는다. 이전 묶음에 적용 시각이 없고 철회되지 않은 행이 남아 있으면 새 제안을 거절한다.
 
-1. 호스트가 `RescheduleProposalBatchScreen`에서 응답 현황(`totalCount`, `acceptedCount`, `declinedCount`, `pendingCount` 등)을 확인한다.
-2. `readyToApply=true`(pendingCount==0 && withdrawnCount==0)이면 "확정" 버튼 활성. DECLINED row는 ready 조건을 막지 않지만 화면 배너는 “거절 또는 대기 중이면 확정 불가”라고 써 서버 조건과 불일치한다.
-3. 확정: `POST /api/v1/events/{eventId}/reschedule-proposals/{batchId}/apply` → 이벤트 필드 반영 + ACCEPTED/AUTO_ACCEPTED 참가자에게 `EVENT_UPDATED(type=RESCHEDULE_APPLIED)` 알림 + `EventUpdatedEvent` 발행(캘린더 sync).
-4. 철회: `DELETE /api/v1/events/{eventId}/reschedule-proposals/{batchId}` → 모든 row status=WITHDRAWN(soft-delete, audit 보존).
+시작·종료는 필수이며 시작은 과거가 아니어야 하고 종료는 시작 이후여야 한다. 변경 사유는 비공백·200자 이내, 주최 메시지는 선택·500자 이내다. 시간은 저장 초 단위로 반올림하고 입력 가격은 100원 단위 처리 후 분류한다. 시작 시각 차이의 절댓값이 60분 이상이면 MAJOR이며 종료 시각만 바뀌거나 장소만 바뀌는 것은 이 조건에 들어가지 않는다. 가격 인상도 MAJOR다.
 
-### 3-4. 스케줄러 자동 수락 흐름
+장소 변경은 별도 동의를 요구하지 않는 기존 제품 결정을 유지한다. 변경 종류는 TIME·PLACE·PRICE·MULTI다. 장소명·주소·상세 주소 변경은 PLACE 판정에 포함되며 좌표만 바뀐 것은 PLACE 판정 항목이 아니다. 장소 기능의 공개 범위가 닫혀 있으면 장소명을 요청·스냅샷·변경 표시에서 해당 정책대로 제외한다.
 
-1. `EventRescheduleProposalScheduler`가 1시간 주기(`fixedDelayString=3600000ms`)로 `markExpiredAsAutoAccepted`를 호출한다.
-2. QueryDSL bulk UPDATE: `WHERE status=PENDING AND response_deadline_at < now` → AUTO_ACCEPTED 전이.
-3. 마감 후 늦은 응답 시도 시: `respond()`가 PENDING row를 AUTO_ACCEPTED로 저장한 뒤 `RESCHEDULE_RESPONSE_DEADLINE_PASSED(409)`를 던지지만 메서드가 `rollbackFor=Exception.class`이므로 이 인라인 저장은 롤백된다. 영속 AUTO_ACCEPTED 전이는 스케줄러 bulk update 경로에서만 일어난다.
+좌표는 둘 다 생략하면 보존한다. 한쪽만 제공, 유한하지 않은 값, 위도 -90~90·경도 -180~180 범위 밖, (0,0)은 거절한다. 앱은 오프라인 주소 변경 시 선택된 주소의 좌표를 재사용하거나 주소 검색으로 다시 구한다. 조회 실패나 조회 중 주소 변경이면 저장을 멈추고 오류를 남긴다. 앱은 변경된 주소·상세 주소·좌표와 변경 사유를 보내고 hostMessage에도 같은 사유를 넣는다. newPrice는 이 요청에 넣지 않는다.
 
-## 4. 제품 규칙
+AUTO는 제안 행 없이 즉시 적용하고 applied=true·batchId=null·proposalCount=0이다. 실제 저장값의 변화가 없으면 새 변경 알림을 만들지 않는다. MAJOR의 대상이 0명일 때도 즉시 적용하지만 classification은 MAJOR를 유지한다. 대상이 있으면 하나의 batchId로 대상별 PENDING 행과 변경 전후 스냅샷, 생성 시점부터 48시간 뒤의 기한을 저장한다.
 
-### 분류
-- 큰 변경(MAJOR)은 시작 시각 60분 이상 변경 또는 가격 인상이다. 나머지는 작은 변경(AUTO)이다.
-- 장소 변경은 동의를 받지 않는다. 바로 적용하고 참가자에게 알린다(2026-11-02 사용자 결정). 변경 종류 기록(`PLACE`·`MULTI`)에만 쓴다.
-- 장소 이름만 바뀌어도 장소 변경으로 적는다. 공백뿐인 이름은 없음과 같다. 좌표만 바뀐 것은 장소 변경이 아니다.
+## 대상 명단과 제안 중 새 참가
 
-### 입력
-- 새 시작·종료는 필수이고 시작은 현재 이후, 종료는 시작 이후다. 변경 사유는 필수이고 200자, 호스트 메시지는 500자까지다.
-- 좌표는 둘 다 비우면 기존 값을 유지한다. 한쪽만 주거나 범위를 벗어나거나 (0,0) 이면 `INVALID_COORDINATES` 다.
+동의 명단은 계정이 있는 ATTENDING·WAITING 참석 행, 진행 중 신청에 연결된 결제·입금 신고자, 진행 중 신청자를 합쳐 중복을 없앤다. 게스트 참석 행의 빈 계정 번호로 별도 응답 요청을 만들지 않는다. 작은 변경 안내와 큰 변경 제안이 같은 명단 서비스를 사용한다.
 
-### 대상과 묶음
-- 동의 대상은 계정이 있는 참석·대기자, 참석 행 없이 돈을 냈거나 입금을 신고한 진행 중 신청자, 결제 행 없는 심사 대기·결제 대기 신청자다. 마지막 무리를 빼면 동의를 묻는 사이 참가를 마치고 바뀐 모임에 묶이기 때문이다. 큰 변경이라도 대상이 0명이면 바로 적용한다.
-- 같은 모임에 적용도 철회도 안 된 묶음이 있으면 새 제안을 받지 않는다.
-- 철회는 이미 적용된 묶음이면 `RESCHEDULE_BATCH_ALREADY_APPLIED` 다. 모임 상태는 보지 않아 취소된 모임의 제안도 정리한다.
-- 호스트 철회는 이미 응답한 행까지 `WITHDRAWN` 으로 바꾸고 행은 기록으로 남기며, 참석자에게 철회 알림을 보낸다. 거절자의 자동 취소는 되돌리지 않는다. 다시 철회해도 오류 없이 아무 일도 하지 않는다.
-- 거절(`DECLINED`)은 확정을 막지 않는다. 거절한 사람은 자동 취소로 빠진다.
-- 끝난 모임의 응답은 거절한다. 거절 응답 결과에는 취소 상태만 있고 환불 금액은 없다.
+진행 중 묶음 요약에는 batchId·변경 종류·변경 전후·응답 기한이 있다. 모임 상세 배너는 기존 참가자의 동의를 받는 중이며 확정되면 바뀐다는 점을 표시한다. 새 참가의 변경 확인 판정은 현재 열린 batchId와 acknowledgedBatchId를 비교하며 다르면 RESCHEDULE_ACK_REQUIRED다. 이 문서의 확인은 요약·판정 헬퍼와 상세 배너 범위이고, 모든 참가 창구의 실행 통과를 뜻하지 않는다.
 
-### 가격
-- 가격이 바뀌는 적용은 선결제 금액도 함께 맞춰 환불액이 실제 결제액과 어긋나지 않게 한다.
-- 무료에서 유료로 바뀌면 결제 수단을 지금 열린 수단에서 고르고, 고를 수 없으면 거절한다(F03-03 §4.1).
+확정 시에는 기존 ACCEPTED·AUTO_ACCEPTED 대상과 현재 명단을 다시 읽어 알린다. 기존 제안 행 없이 나중에 들어온 대상도 확정 알림을 받을 수 있다. 명단과 알림 유형만으로 푸시 실제 수신을 보장하지 않는다.
 
-### 알림
-| 때 | 받는 사람 |
-|---|---|
-| 큰 변경 제안 | 참가자 각각, 응답 화면으로 바로 |
-| 묶음 확정 | 동의·자동 동의한 참가자 |
-| 작은 변경 적용 | 참가자 전원 |
+## 응답·자동 동의·거절 취소
 
-### 화면
-- 호스트 현황은 자동으로 갱신되지 않는다. 처리하거나 다시 시도할 때 새로 읽는다.
-- 응답 기한은 절대 시각으로 보이고 남은 시간 카운트다운은 없다.
+| 조건 | 서버의 현재 처리 |
+| --- | --- |
+| 본인의 PENDING, 기한 전 | accept=true면 ACCEPTED, false면 DECLINED. 응답 시각·선택 메모 저장 |
+| 응답 메모 | 500자 이내, accept는 필수 |
+| WITHDRAWN 또는 이미 응답 | 철회됨·이미 응답 오류로 재응답 거절 |
+| CLOSED 모임 | 응답 거절. 화면의 canRespond는 OPEN일 때만 참 |
+| 기한에 도달한 PENDING에 직접 응답 | AUTO_ACCEPTED를 저장·커밋한 뒤 조정 계층에서 RESCHEDULE_RESPONSE_DEADLINE_PASSED 반환 |
+| 스케줄러 | 기한이 지난 PENDING을 AUTO_ACCEPTED로 전이. 기본 fixed-delay 1시간, 초기 지연 1분 |
+| DECLINED | 거절을 저장하고 별도 트랜잭션에서 참가 취소 시도. 결과와 실패 여부를 함께 반환 |
 
-### 오류의 뜻
-| 코드 | 뜻 |
-|---|---|
-| `RESCHEDULE_ALREADY_RESPONDED` | 이미 응답함 |
-| `RESCHEDULE_RESPONSE_DEADLINE_PASSED` | 응답 기한 지남 |
-| `RESCHEDULE_BATCH_PENDING_EXISTS` | 진행 중인 제안이 있음 |
-| `RESCHEDULE_BATCH_WITHDRAWN` | 철회된 제안 |
+늦은 응답의 자동 동의는 현재 오류 응답과 함께 롤백되는 구조가 아니다. 앱은 기한 경과 응답에서 단건·목록을 다시 읽고 자동 동의 처리 안내를 표시한다. 스케줄러는 모임 변경까지 자동 확정하지 않는다. 기본 실행 간격은 장애·처리 시간을 포함한 최대 지연 보장이 아니다.
 
-## 6. 상태/권한 매트릭스
+거절 취소는 모임을 다시 잠그고 실제 신청·참석 상태를 확인한다. 신청이 있는 경로는 RESCHEDULE_DECLINED 귀책으로 참가 취소, 신청 없이 참석 중인 경로는 정원 서비스의 거절 취소를 사용한다. 이미 종료·취소된 모임은 취소를 다시 수행하지 않는다. 같은 귀책의 은행 환불 대기·취소 기록은 재시도에서 이미 처리된 것으로 다룬다.
 
-| 행위자/상태 | 서버 근거 | 앱 분기 | 결과 | 판단 |
-|---|---|---|---|---|
-| host — AUTO 변경 | 분류기 MAJOR 조건 미해당 | EventEditScreen 토스트 | 즉시 반영, batch 화면 없음 | 일치 |
-| host — MAJOR 변경 | 분류기 조건 1개 이상 해당 | BatchScreen으로 이동 | proposal 생성, 현황 표시 | 일치 |
-| host — applyBatch (readyToApply=true) | pendingCount==0 && withdrawnCount==0 | 확정 버튼 활성 | 이벤트 반영 + 알림 발송 | 일치 |
-| host — applyBatch (pendingCount>0) | `RESCHEDULE_BATCH_NOT_READY_FOR_APPLY` 400 | 확정 버튼 비활성 또는 에러 | 차단 | 일치 |
-| host — withdrawBatch | status != WITHDRAWN인 row 일괄 WITHDRAWN | soft-delete | audit 보존 | 일치 |
-| 참가자 — PENDING + 마감 전 | canRespond=true, deadlinePassed=false | 동의/거절 버튼 노출 | 응답 가능 | 일치 |
-| 참가자 — PENDING + 마감 후 인라인 체크 | AUTO_ACCEPTED save 후 409 throw, `rollbackFor=Exception` | 409 수신 → 에러 표시 | save는 rollback되어 PENDING 유지 가능; scheduler가 별도 전이 | Gap |
-| 참가자 — ACCEPTED | 응답 완료 | canRespond=false → 상태 표시 | 재응답 불가 | 일치 |
-| 참가자 — DECLINED | 100% 정책 자동 취소 시도; 예외 흡수·ticket best-effort | cancelStatus/autoCancelFailed 표시 | DECLINED와 실제 취소 완료가 분리될 수 있음 | 조건부 |
-| 참가자 — AUTO_ACCEPTED | 스케줄러 전이 | 상태 표시 | 자동 수락 확인 | 일치 |
-| 참가자 — WITHDRAWN | 호스트 철회 | 목록에서 WITHDRAWN 상태 표시 | 철회 확인 | 일치 |
-| 가격 변경 제안 (POST proposal 경로) | `RescheduleClassifierService.java:94-103`: `newPrice`가 실제로 전달되면 인상 여부를 정확히 판정하고, null이면 가격 변경 없음으로 처리 | EventEditScreen에 가격 입력이 없고 `newPrice`를 보내지 않음 | 앱에서 가격 인상·인하 proposal 생성 불가(기존 가격은 그대로 유지) | Gap G-1 |
+환불 계산은 결제한 유료·무료 금액의 100%, 고정 수수료 0 정책이다. **환불 정책과 실제 환불 완료는 다르다.** 응답 cancelStatus가 CANCELED 또는 CANCEL_PENDING_REFUND일 수 있고, 취소할 참가가 없으면 null일 수 있다. 응답은 환불 금액을 반환하지 않는다. 앱은 은행 환불 대기, 취소 완료, 거절만 완료, autoCancelFailed를 구분해 안내한다. 다시 연 응답 화면은 제안만으로 취소 성공을 단정하지 않고 모임 상세의 내 신청·참석 상태를 함께 읽는다.
 
-## 7. 정합성 판단
+## 자동 취소 실패와 재시도
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| RescheduleChangeType 4값 | TIME,PLACE,PRICE,MULTI | @JsonValue 1:1 매핑 | 일치 |
-| RescheduleClassification 2값 | AUTO,MAJOR | @JsonValue 1:1 매핑 | 일치 |
-| RescheduleResponseStatus 5값 | PENDING,ACCEPTED,DECLINED,AUTO_ACCEPTED,WITHDRAWN | @JsonValue 1:1 매핑 | 일치 |
-| batchId null (AUTO) | applied=true, batchId=null | BatchScreen 미진입 조건으로 처리 | 일치 |
-| cancelStatus 타입 | ApplicationStatus enum 직렬화 | String?로 수신 후 fromString 변환 | 기능상 일치, 타입 안전성 약함 |
-| eventStatus 타입 | EventStatus enum 직렬화 | String?로 수신 (enum 매핑 없음) | 약한 타입 |
-| newPrice/hostMessage | POST 경로에 존재 | 앱은 POST 경로 사용하나 newPrice 미전송(UI 부재), hostMessage=changeReason 동일값 전송 | G-1: newPrice 미전달로 가격 인상 제안 불가 |
-| 주소·좌표 | 서버 param 2종과 snapshot/apply가 nullable 좌표 pair 지원 | 주소 dirty 시 강제 geocoding 후 pair 전송, 실패 시 저장 차단 | 일치 |
-| apply 후 캐시 무효화 | EventUpdatedEvent 발행 | eventDetailProvider invalidate 없음 | Gap G-2 |
-| RESCHEDULE_APPLIED 라우팅 | type="RESCHEDULE_APPLIED" 알림 발송 | 이벤트 상세 fallback | Gap G-6 |
+취소 예외는 거절 행에 실패 시각·시도 수로 기록하고 autoCancelFailed=true를 반환한다. 재시도 작업은 실패 표식이 있는 DECLINED 중 시도 수 5회 미만을 오래된 순서로 최대 100개 고른다. 기본 fixed-delay는 10분이다. 각 행을 잠근 뒤 상태·표식·상한을 다시 검사하고 성공하면 실패 표식을 지운다.
 
-## 8. Gap / Risk
+5회에는 첫 시도도 포함한다. 마지막 실패는 표식을 남기고 HIGH 운영자 경보를 같은 트랜잭션으로 등록하며 이후 자동 후보에서 제외한다. 운영자 경보 등록을 실제 운영 처리 완료로 표현하지 않는다. 철회된 행은 DECLINED 재시도 후보가 아니므로 실패가 남은 제안의 철회와 운영 복구는 함께 판단해야 한다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | **G-1. newPrice 미전달 → 가격 변경 제안 불가** | 앱이 `POST /reschedule-proposals` 경로를 사용하나 `EventEditNotifier`가 `newPrice`를 채우지 않고 OPEN 편집 화면에 가격 변경 입력도 없음. | 앱에서는 가격 인상/인하 proposal 자체를 만들 수 없다. `newPrice=null`은 “변경 없음”이므로 현재 앱 경로에서 가격이 몰래 AUTO 반영되는 것은 아니다. | 가격 변경을 제품 범위에 넣을 때 입력 UI + `newPrice` 전송 + MAJOR 안내를 함께 배선 |
-| P2 | **주소 변경 저장이 geocoding 가용성에 종속** | 주소 dirty인 오프라인 이벤트는 `geocodeAddress` 성공 전 proposal 호출을 막음 | geocoding key/외부 API 장애 시 시간 변경과 주소 변경을 함께 저장할 수 없음 | 의도한 안전장치로 유지하되 오류 telemetry와 재시도 UX 검증 |
-| P2 | **G-2. apply 후 이벤트 상세 캐시 미무효화** | `rescheduleProposalActionNotifierProvider.applyBatch` 성공 후 `rescheduleProposalBatchProvider` invalidate만, `eventDetailProvider(eventId)` invalidate 없음. | 확정 후 이벤트 상세 화면에서 이전 시간/장소 표시. | `applyBatch` Provider에서 `eventDetailProvider(eventId).invalidate()` 추가. |
-| P2 | **G-5. PENDING 소진 전 확정 차단** | `applyBatch`는 `pendingCount>0`이면 400. 대형 이벤트에서 1명 미응답 시 변경 미확정 지속. | 기본 1시간 fixed-delay 스케줄러가 48h 마감을 정리하지만 처리 시간·장애·설정 변경을 포함한 최대 지연 상한은 아니다. | 운영 정책 결정 — 스케줄러 주기/모니터링 강화 또는 부분 apply 정책 도입. |
-| P2 | **G-7. PATCH vs POST 이중 계약 공존** | 두 서버 경로가 공존. 앱은 POST 직접 경로 사용, PATCH는 서버 내부 위임/하위호환으로만 유지. PATCH가 외부에 노출된 상태로 유지될 경우 혼용 위험. | 향후 API 통일 시 브레이킹 체인지 가능성. | 장기적으로 PATCH를 deprecated 처리하거나 서버 내부 전용으로 변경. |
-| P1 | **마감 후 인라인 AUTO_ACCEPTED rollback** | `respond()`가 상태 저장 뒤 409 `RestException`을 throw하고 트랜잭션은 모든 Exception rollback이다. | 늦은 응답 자체는 자동 수락을 영속화하지 못해 다음 scheduler 실행 전 PENDING으로 남는다. | 전이를 별도 transaction으로 확정하거나 저장 없이 deadline error만 반환하도록 계약 정리 |
-| 해소됨 | **게스트-only MAJOR 빈 batch** | 동의 대상이 0명이면 제안 행을 만들지 않고 같은 트랜잭션에서 바로 적용하며 batchId 없이 AUTO 와 같은 응답을 준다. | 없는 batchId 로 이동하는 일이 없다. | 없음 |
-| P2 | **path eventId 미검증** | batch GET/apply/delete controller는 path `eventId`를 service에 전달하지 않는다. service는 batch row의 실제 event 소유권은 검사하지만 URL eventId와 row eventId 일치는 검사하지 않는다. | URL 리소스 계층과 실제 대상이 불일치해 audit/cache 의미가 흐려진다. | eventId를 service에 전달해 batch 소속 검증 |
-| P1 | **거절 후 자동 취소 완료 비보장** | cancellation 예외를 잡아 `autoCancelFailed=true`로 응답하고 ticket release도 best-effort다. | 거절 row는 확정됐지만 참가·환불·티켓 정리가 지연/불일치할 수 있다. | 재시도/운영 큐와 failed 상태 모니터링 |
-| P2 | **현황 화면 snapshot** | batch FutureProvider는 최초 GET 한 번뿐이고 polling/socket이 없다. | 다른 참가자의 응답이 화면에 “실시간” 반영되지 않는다. | pull-to-refresh/polling/realtime 중 하나 연결 |
-| P2 | **readyToApply 안내 문구 불일치** | 서버는 DECLINED를 허용하지만 화면 배너는 거절도 확정을 막는다고 안내한다. | 버튼 활성 상태와 설명이 모순된다. | 문구를 pending/withdrawn 기준으로 교정 |
+개최권은 참가 취소가 성공했고 그 결과 모임 자체가 CANCELED인 경우에만 해제한다. 참가자 한 명의 거절을 모임 전체 취소나 개최권 무조건 반환으로 설명하지 않는다. 현재 개최권 해제 호출은 예전 설명의 별도 best-effort 예외 흡수 경로가 아니다.
 
-## 9. 수용 기준
+## 확정·철회·재전송·갱신
 
-### AC-01. AUTO 변경 즉시 반영
+현황 조회·확정·철회는 URL eventId와 실제 묶음의 모임이 같아야 한다. 확정·철회는 행과 모임을 잠그며 경합을 CONCURRENT_MODIFICATION으로 처리한다. 확정은 주최 권한·OPEN·정기 회차 제한을 재검사하고, 미응답이나 철회된 행이 있거나 이미 적용됐으면 거절한다. readyToApply는 pendingCount=0·withdrawnCount=0·미적용이다. DECLINED는 확정을 막지 않는다. 이 표시만으로 모임 상태 등 모든 확정 조건이 충족됐다고 판단하지 않는다.
 
-Given 호스트가 30분 시간 변경(MAJOR 조건 미해당)을 제출한다.
-When `POST /events/{eventId}/reschedule-proposals`가 성공한다.
-Then 서버는 `applied=true, batchId=null`을 반환하고, 앱은 "경미한 변경으로 바로 반영됐습니다" 토스트를 표시하며 BatchScreen으로 이동하지 않는다.
+확정하면 변경 스냅샷을 모임에 반영하고 각 행에 appliedAt을 기록한다. ACCEPTED·DECLINED 등 기존 응답 상태는 보존한다. 철회는 적용 전 묶음의 행을 WITHDRAWN으로 바꾸고 기록·알림을 남긴다. 모임 종료 상태만으로 철회를 막지 않으며 같은 철회 재요청은 바꿀 행이 없으면 무동작이다. 이미 실행한 거절 취소·환불을 철회로 되돌리지 않는다.
 
-### AC-02. MAJOR 변경 합의 시작
+생성·확정·응답 API는 선택 Idempotency-Key를 받는다. 확정 재생은 저장한 batchId로 현재 현황을 다시 만들고, 응답 재생은 저장한 취소 결과와 새로 읽은 본인 제안을 합친다. 같은 키로 대상·본문을 바꾸는 요청은 충돌 계약이다. 키가 없는 요청도 지원하므로 모든 외부 호출이 자동으로 중복 방지된다고 적지 않는다.
 
-Given 호스트가 90분 시간 변경(MAJOR 조건)을 제출한다.
-When `POST /events/{eventId}/reschedule-proposals`가 성공한다.
-Then 서버는 `applied=false, batchId=<uuid>`를 반환하고, 각 ATTENDING/WAITING 참가자에게 `EVENT_UPDATED(type=RESCHEDULE_PROPOSAL)` 알림이 발송되며, 앱은 `RescheduleProposalBatchScreen`으로 이동한다.
+앱의 확정·응답 키는 세션에 묶인 메모리 저장소에서 대상·본문별로 유지하고 계정 세션이 바뀌면 비운다. 생성 편집 요청은 준비한 요청의 키를 보낸다. 결과가 불명확한 실패에는 관련 데이터를 다시 읽으며, 성공 확인 전 임의로 다른 키로 같은 명령을 반복하는 흐름으로 설명하지 않는다. 앱 재시작을 넘는 확정·응답 키 보존은 이 저장소가 보장하지 않는다.
 
-### AC-03. 참가자 동의 응답
+확정 성공 후 현황·모임 상세·개최 목록·참석 예정·모임 카드 갱신 신호를 보낸다. 철회도 현황·상세·받은 요청을 갱신한다. 거절 응답에 실제 취소 상태가 있으면 참석 예정·지갑·모임 데이터를 함께 갱신한다. 호스트 현황은 최초 조회와 처리·오류 재시도에 의존하며 다른 참가자의 응답을 주기적으로 읽는 화면은 아니다.
 
-Given 참가자가 PENDING proposal을 수신하고 마감 전 동의 버튼을 누른다.
-When `POST /reschedule-proposals/{proposalId}/response`(accept=true)가 성공한다.
-Then proposal.status=ACCEPTED, `autoCancelTriggered=false`, 화면은 수락 확인 상태를 표시한다.
+## API와 가격 계약의 범위
 
-### AC-04. 참가자 거절 → 100% 환불
+생성 POST는 HTTP 201의 RescheduleProposalResultVo, 묶음 GET·확정 POST는 RescheduleProposalBatchVo, 철회 DELETE는 HTTP 204·본문 없음이다. 본인 단건은 RescheduleProposalViewVo, 본인 목록은 서버 Page<RescheduleProposalViewVo>이며 앱은 PageResponse로 받는다. 목록은 선택 status·page·size를 쓰며 생성 시각 내림차순에 id를 보조 정렬로 둔다. 응답 POST는 proposal·autoCancelTriggered·cancelStatus·autoCancelFailed다.
 
-Given 참가자가 PENDING proposal을 마감 전 거절한다.
-When `POST /reschedule-proposals/{proposalId}/response`(accept=false)가 성공한다.
-Then proposal.status=DECLINED, `autoCancelTriggered=true`가 된다. 취소 성공 시 `cancelStatus`가 CANCELED 또는 CANCEL_PENDING_REFUND이고 `RESCHEDULE_DECLINED`(100%, 수수료 0%) 정책을 적용한다. 예외 시 DECLINED는 유지되면서 `autoCancelFailed=true`, cancelStatus=null일 수 있다.
+서버 가격 적용은 모임 가격과 선결제 금액을 맞춘다. 0 이하로 적용하면 선결제 설정을 제거한다. 무료에서 유료 전환에는 활성 결제·대기 행 제한과 현재 허용된 결제 수단 선택을 다시 검사한다. 기존 환불 고정 수수료의 가격 범위도 검사·조정한다. 가격 변경 자체를 이미 낸 참가자의 추가 징수나 자동 차액 환불 완료로 확대하지 않는다.
 
-### AC-05. 48h 마감 후 자동 수락
+옛 PATCH /reschedule 공존 설명은 현재 공개 API 매핑 근거가 없어 제거했다. 현재 연결은 위 7개 창구를 기준으로 한다. 분쟁 소명은 [일정 변경 등의 분쟁 소명 문서](../18_dispute_resolution/F18-03_dispute-appeal_prd.md)를 함께 참고한다.
 
-Given MAJOR 제안 생성 48시간 후 PENDING row가 남아 있다.
-When 스케줄러가 `markExpiredAsAutoAccepted`를 실행한다.
-Then 해당 row status가 AUTO_ACCEPTED로 전이된다. 스케줄러 실행 전 늦은 응답은 409를 받지만 인라인 AUTO_ACCEPTED save는 rollback된다.
+## 현재 제한과 확인 범위
 
-### AC-06. batch 확정 (readyToApply=true)
+| 구분 | 확인된 경계 | 영향 | 후속 판단 |
+| --- | --- | --- | --- |
+| Gap | 앱 OPEN 변경 요청에 newPrice 없음, hostMessage는 변경 사유와 같음 | 서버의 가격·별도 메시지 계약과 앱 입력 범위가 다름 | 제품 범위 결정 후 입력·전송·안내를 함께 변경 |
+| Gap | 현황 일부 안내는 거절도 확정을 막는다고 표시 | 실제 readyToApply·버튼 조건과 문구 불일치 | 미응답·철회·적용 여부 기준으로 문구 정리 |
+| Gap | 즉시 적용 토스트가 applied만으로 ‘작은 변경’ 표시 | 대상 0명의 MAJOR도 작은 변경으로 안내 | classification과 즉시 적용 사유를 구분 |
+| Gap | canRespond는 OPEN만 허용하지만 응답 서비스는 CLOSED만 직접 차단 | 취소된 모임의 남은 PENDING에 직접 호출하는 조건이 화면과 다름 | 취소·철회 연계와 직접 호출 경계를 검수 |
+| Risk | 자동 취소는 최대 5회, 실패 후 철회는 재시도 대상에서 제외 | 거절·취소·환불의 즉시 완료나 끝없는 자동 복구를 보장하지 않음 | 실패 표식·운영 경보와 실제 참가 상태를 확인 |
+| Risk | 호스트 현황의 응답 변화 자동 갱신 없음 | 다른 참가자의 응답 직후 화면 숫자가 오래될 수 있음 | 필요한 갱신 방식 판단 |
+| 미검증 | 소스와 선택된 시험 단언을 대조 | 실제 기기 왕복·푸시 수신·은행 환불·운영 스케줄러 실행 완료는 이번 근거가 없음 | 기존 실행 기록과 이번 소스 대조를 구분 |
 
-Given `pendingCount==0 && withdrawnCount==0`인 batch에서 호스트가 확정을 누른다.
-When `POST /reschedule-proposals/{batchId}/apply`가 성공한다.
-Then 이벤트 필드가 제안값으로 반영되고, ACCEPTED+AUTO_ACCEPTED 참가자에게 `EVENT_UPDATED(type=RESCHEDULE_APPLIED)` 알림이 발송된다.
+## 수용 기준과 검증 근거
 
-### AC-07. pendingCount>0 확정 차단
+- **AC-01 권한과 모임 상태:** 호스트·활성 공동호스트의 OPEN 제안만 허용하고 결정 대기·정기 회차·열린 묶음 제한을 검사한다.
+- **AC-02 분류:** 저장 단위로 처리한 시작 시각 차이 60분 이상 또는 가격 인상은 MAJOR, 장소만 변경은 AUTO다.
+- **AC-03 즉시 적용:** AUTO와 대상 0명 MAJOR는 batchId 없이 즉시 적용하고 분류 결과는 보존한다. 저장값 변화가 없으면 새 변경 알림을 만들지 않는다.
+- **AC-04 대상과 기한:** 계정 참석·대기·진행 중 신청 대상을 중복 없이 모아 제안하고 48시간 응답 기한을 둔다.
+- **AC-05 입력과 주소:** 필수 시간·사유, 길이·좌표 쌍을 검사하며 앱의 주소 확인 실패는 저장을 중단한다.
+- **AC-06 개인 응답:** 본인의 PENDING만 응답하고 accept·메모 길이·기한·종료 상태를 서버에서 검사한다.
+- **AC-07 늦은 응답:** AUTO_ACCEPTED를 커밋한 뒤 기한 경과 오류를 반환하며 앱은 다시 조회한다.
+- **AC-08 자동 동의와 확정:** 스케줄러는 기한 지난 PENDING만 자동 동의하고 모임 변경 확정은 주최 측의 별도 명령이다.
+- **AC-09 거절과 실제 취소:** DECLINED와 취소 완료를 구분하며 RESCHEDULE_DECLINED 환불 정책·은행 대기·실패·취소할 대상 없음 결과를 구분한다.
+- **AC-10 재시도:** 실패 시각·시도 수를 남기고 첫 시도 포함 5회까지 재시도하며 상한 실패는 운영 경보와 표식을 남긴다.
+- **AC-11 소속과 확정 조건:** 모임과 묶음 소속을 검사하고 미응답·철회·이미 적용을 차단한다. 거절은 확정 가능 여부를 막지 않는다.
+- **AC-12 철회:** 적용 전 철회는 기록을 남기고 반복 요청은 무동작이며 이미 처리된 취소·환불을 복원하지 않는다.
+- **AC-13 재전송:** 선택 키 계약과 같은 키·같은 대상 재생을 지키고 다른 대상·본문은 충돌 처리한다. 앱 세션 메모리 키를 영구 보존으로 설명하지 않는다.
+- **AC-14 화면 갱신:** 확정 후 현황·상세·개최·참석 예정·카드를 갱신하고 결과 불명 실패와 기한 경과에도 해당 조회를 갱신한다.
+- **AC-15 접근과 알림:** 제안 알림·받은 요청 목록은 응답 화면, 확정·철회·작은 변경 알림은 모임 상세로 연결한다.
+- **AC-16 검증 범위:** 소스 확인·시험 단언 존재와 실제 앱·환불·푸시 실행 결과를 구분하며 남은 안내 불일치를 감추지 않는다.
 
-Given `pendingCount>0`인 batch에서 호스트가 확정을 시도한다.
-When `POST /reschedule-proposals/{batchId}/apply`가 호출된다.
-Then `RESCHEDULE_BATCH_NOT_READY_FOR_APPLY(400)`이 반환되고 이벤트 필드는 변경되지 않는다.
-
-### AC-08. 알림 딥링크 → 응답 화면 직행
-
-Given 참가자가 `EVENT_UPDATED(type=RESCHEDULE_PROPOSAL)` 알림을 수신한다.
-When 알림을 탭한다.
-Then `notification_router`가 `proposalId`를 추출해 `/me/reschedule-proposals/{proposalId}`로 이동하고 `RescheduleProposalResponseScreen`이 열린다.
-
-### AC-09. 주소 변경 시 좌표 동기화
-
-Given OPEN 오프라인 이벤트에서 호스트가 주소를 변경한다.
-When 앱이 주소 geocoding에 성공하고 proposal을 제출한다.
-Then `newLatitude/newLongitude`가 pair로 전송되고, AUTO면 즉시 event에 반영되며 MAJOR면 snapshot을 거쳐 batch apply 시 반영된다. geocoding 실패, 한쪽 좌표 누락, 범위 밖 또는 `(0,0)`은 저장되지 않는다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
-|---|---|---|
-| 구현 | G-1 앱 가격 변경 제안 부재 | 서버 분류기는 전달된 `newPrice`를 정상 판정한다. 이벤트 편집 화면에 가격 변경 입력 UI 추가 + `newPrice` 전송 배선이 필요하다. |
-| 구현 | G-2 캐시 무효화 | `applyBatch` Provider에 `eventDetailProvider.invalidate()` 추가(단순 수정). |
-| 구현 | G-6 RESCHEDULE_APPLIED 전용 라우팅 | 확정 후 UX 흐름 설계 결정 후 구현. |
-| 정책 | G-5 대형 이벤트 1명 미응답 차단 | 운영 정책: 스케줄러 48h 완화책 유지 vs 부분 apply 정책 도입 결정. |
-| 사업 | hostMessage 분리 여부 | 현재 앱은 hostMessage=changeReason 동일값 전송. 호스트가 참가자에게 별도 메시지를 보낼 수 있어야 하는지 사업 결정. |
-| 테스트 | AUTO/MAJOR 분류기 경계값 | 60분 정확히 = MAJOR인지 59분 = AUTO인지 경계 테스트. |
-| 테스트 | 동시성 — 같은 batch 복수 apply 시도 | pessimistic lock + applyBatch 경합 시나리오 검증. |
-| cross-ref | 분쟁 소명 연계 | 일정 변경으로 인한 취소 분쟁은 `../18_dispute_resolution/F18-03_dispute-appeal_prd.md` 참조. |
+검증 근거: RescheduleReceiptTest의 같은 키 확정·응답 재생, 늦은 응답 오류 재생, 대상·본문 충돌 단언을 읽었다. EventRescheduleAutoCancelRetryCommitTest의 실패 표식 유지, 성공 재시도 후 표식 제거, 5회 실패 경보·후보 제외 단언도 읽었다. 이번에 제품 시험을 실행했거나 전체 수용 기준이 실행 통과했다는 뜻은 아니다.

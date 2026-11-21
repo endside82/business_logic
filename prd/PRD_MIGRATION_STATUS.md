@@ -67,7 +67,7 @@
 | F03-02·F03-11 숨김 | 모임 상태는 넷이고 운영자 숨김은 따로 둔 표지다. 숨긴 모임은 당사자만 상세를 열고 그 밖은 `EVENT_NOT_FOUND`, 공유 링크로도 열지 않는다. 새 신청·참석·찜을 받지 않는다. 호스트·공동 호스트에게만 숨김 안내 | `event/constants/EventStatus.java`, `event/model/Event.java:78-84,360-363`, `event/service/EventViewerContextService.java:790-824,843-848`, `event/service/WishlistService.java:76-87`, 앱 `presentation/event/screens/event_detail_screen.dart:283-290,336` |
 | F03-07 모집 마감 화면 | 8 | 6 |
 | F03-05·F03-13 결제 만료 알림 | 만료는 신청 하나씩 조건부로 바꾸고 결정 이력과 알림 75(`EVENT_PREPAYMENT_EXPIRED`)를 같은 트랜잭션에 남긴다. 확인 대기 계좌이체 신고가 있으면 만료하지 않는다 | `event/service/ApplicationService.java:566-608`, `event/service/ApplicationTransitions.java:465-490`, `event/repository/query/ApplicationQueryRepository.java:302-316`, `event/prepayment/service/EventPrepaymentNotices.java:35-39` |
-| F03-19 변경 대상 | 동의 대상은 계정 있는 참석·대기자, 돈을 냈거나 입금 신고한 진행 중 신청자, 결제 행 없는 진행 중 신청자다. 0명이면 같은 트랜잭션에서 바로 적용 | `event/reschedule/service/EventRescheduleProposalService.java:245-279`, `capacity/service/EventChangeConsentRoster.java:15-45` |
+| F03-19 변경 대상 | 계정 참석·대기자와 진행 중 결제자·신청자를 중복 없이 합친다. 대상 0명 MAJOR는 분류를 유지하고 바로 적용하며, 확정 알림은 현재 명단도 다시 읽는다 | [일정 변경 제안 문서의 대상 명단과 제안 중 새 참가](02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md#대상-명단과-제안-중-새-참가) |
 | F03-20 시작 전 확정 | 단일·일괄 노쇼 확정은 OPEN·CLOSED 이고 시작 시각이 지났을 때만 받는다. 종료 시각 상한은 없다. 앱 일괄 단추는 같은 판정의 서버 표지를 따른다 | `capacity/service/EventNoShowService.java:289-308`, 앱 `presentation/event/widgets/no_show_manage_section.dart:28,44-50` |
 | F04-03·04 도메인 소유권 이전 | 제안(201, `PROPOSED`, 7일) → 받는 회원이 재인증해 수락하면 같은 처리 안에서 `EFFECTIVE`. 거절·취소·만료가 있다 | `club/controller/ClubController.java:252-300`, `club/constants/ClubOwnershipTransferStatus.java`, `club/service/ClubOwnershipTransferTransitions.java:20-23,86-96`, `club/service/ClubOwnershipTransferService.java:94` |
 | F04-15 지급처 | 관리자 승인은 기금 차감·예약 분개 뒤 연결된 출금 요청을 승인해 신청 때 복사한 정산 계좌로 보낸다. 지갑 입금이 아니다. 지급이 끝나면 PAID | `club/service/ClubSettlementService.java:179-236`, `payment/withdrawal/port/ClubFundWithdrawalAdapter.java:45-53` |
@@ -252,7 +252,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-16 | 이벤트 | [F03-16_event-bus-charter_prd.md](02_feature_prds/03_event/F03-16_event-bus-charter_prd.md) | `source-first` | 신규 PRD | 6 | 4 |
 | F03-17 | 이벤트 | [F03-17_vehicle-layout-catalog_prd.md](02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md) | `source-first` | 신규 PRD | 11 | 4 |
 | F03-18 | 이벤트 | [F03-18_event-demographics_prd.md](02_feature_prds/03_event/F03-18_event-demographics_prd.md) | `source-first` | 신규 PRD | 1 | 4 |
-| F03-19 | 이벤트 | [F03-19_event-reschedule-consent_prd.md](02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | `source-first` | source-first 구현 확인 | 4 | 5 |
+| F03-19 | 이벤트 | [F03-19_event-reschedule-consent_prd.md](02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md) | `source-first` | source-first 구현 확인 | 7 | 7 |
 | F03-20 | 이벤트 | [F03-20_event-no-show_prd.md](02_feature_prds/03_event/F03-20_event-no-show_prd.md) | `source-first` | source-first 구현 확인 | 4 | 7 |
 | F04-01 | 클럽 | [F04-01_club-discovery_prd.md](02_feature_prds/04_club/F04-01_club-discovery_prd.md) | `F04-01_club-discovery` | 실사 기반 전환본 | 1 | 3 |
 | F04-02 | 클럽 | [F04-02_club-detail-join_prd.md](02_feature_prds/04_club/F04-02_club-detail-join_prd.md) | `F04-02_club-detail-join` | 실사 기반 전환본 | 3 | 2 |

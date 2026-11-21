@@ -2802,9 +2802,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1bc4056f2e1933560706e38dc1d899ecf54aaa5067cbcc0ed3d6e0bc0b2fc58f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "reschedule_20261122"
+      ],
+      "reviewedSha256": "38e33548d51c0ad5ea73100f0fe85af9a1290e7539f10e348fca461cb1e8720d"
     },
     {
       "path": "docs/features/F03-20.html",
@@ -4929,7 +4932,8 @@
         "transport_policy_20261122",
         "carpool_20261122",
         "bus_allocation_20261122",
-        "layout_catalog_20261122"
+        "layout_catalog_20261122",
+        "reschedule_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5680,10 +5684,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d15f56884048db0e778d4deb09c989fb4a143ebe084220535a83717b1bff2f94",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "reschedule_20261122"
+      ],
+      "reviewedSha256": "9b8afb186e1ec189d2a1b96a37e2d390c76a1f74fcce2f8b9da8a27cea63e8a9"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
@@ -7604,7 +7610,8 @@
         "transport_policy_20261122",
         "carpool_20261122",
         "bus_allocation_20261122",
-        "layout_catalog_20261122"
+        "layout_catalog_20261122",
+        "reschedule_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -14803,6 +14810,30 @@
         }
       },
       "scope": "관리자 편집/확인/활성/사용보호/복제/삭제·공개도면과 합성/제조사 후보 구분을 소스 대조. 선택한 서버/모의응답 웹시험 단언만 읽음. 새 제품 시험·실제 관리자/앱 실행·운영 DB/실물/제조사 원문 확인 아님. 전체 문서·최종 전달·출시 날짜 관문은 미완료."
+    },
+    {
+      "command": "F03-19: source-reference sync/11 tests; scenario audit; reviewed paths/derived digests; scoped source hashes; retained HTML anchors; git diff --check",
+      "result": {
+        "status": "PASS",
+        "newlyReviewedDocuments": 2,
+        "partialDocuments": 2,
+        "sourceTestsPassed": 11,
+        "sourceDocuments": 107,
+        "sourceRecords": 447,
+        "verifiedRecords": 445,
+        "retiredRecords": 2,
+        "reviewedRelativePaths": 1655,
+        "derivedSourceDigests": 208,
+        "sourceAndCanonicalDigests": 40,
+        "retainedHtmlPages": 1,
+        "unitDirectoriesCreated": 0,
+        "reviewCounts": {
+          "source_verified": 347,
+          "pending": 622,
+          "historical_retained": 33
+        }
+      },
+      "scope": "일정 변경의 현재 소스와 선택된 시험 단언 대조. 기한 경과 저장·취소 재시도·소속/재전송·앱 갱신의 옛 미구현 주장 정리, 남은 문구/입력/직접 호출 조건 차이 기록. 제품 시험·실제 앱·푸시·환불·스케줄러 실행 아님. 전체 최신화와 최종 전달은 미완료."
     }
   ],
   "evidenceGroups": {
@@ -21241,6 +21272,270 @@
           "id": "F03-17:11",
           "change": "added",
           "reason": "관리자9개와 공개조회2개 창구를 현재 모듈 소스에 연결"
+        }
+      ]
+    },
+    "reschedule_20261122": {
+      "kind": "source_review",
+      "scope": "F03-19 일정 변경 분류·제안/응답/확정/철회·기한 경과 커밋·취소 실패 재시도·소속 검증·선택 키·앱 입구와 갱신. 현재 안내 차이와 실제 취소/환불 경계. 제품 시험·실제 앱/푸시/운영 스케줄러 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/controller/RescheduleProposalController.java",
+          "sha256": "cb909100103850845d42564761bef62ab67b060439cc7c43dafcbcafe5d69a4b",
+          "reviewScope": "59–168 제안/현황/확정/철회/응답/본인 단건·목록 7개 창구와 선택 Idempotency-Key."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/EventRescheduleProposalService.java",
+          "sha256": "df5a60542e91c4fbec3866bb983051139437a85624c7ae690502d3c0ef929574",
+          "reviewScope": "95–98 제한값;172–348 제안·명단·즉시 적용;362–708 응답·확정·철회·본인 조회;729–1037 소속 잠금·적용·가격·권한·입력;1057–1269 현황·canRespond·스냅샷. 종료 응답과 OPEN canRespond 차이 포함."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/EventRescheduleResponseCoordinator.java",
+          "sha256": "3fa9c889944f9def85531c3d3b958fa53f4d8bf1a50286c263cc50bef2d3f78d",
+          "reviewScope": "42–116 비트랜잭션 조정 계층의 커밋 뒤 기한 오류, 응답 영수증 재생."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/RescheduleClassifierService.java",
+          "sha256": "e1ef7fc0c17a7ab089da078b75bf07b7d4ff8ed68afeb05754c1f44b5041fac0",
+          "reviewScope": "33–124 60분 절댓값·가격 인상과 TIME/PLACE/PRICE/MULTI, 좌표 판정 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/constants/RescheduleResponseStatus.java",
+          "sha256": "9b49a504608d040cc5298c5f68b27fe7b824fd1569a4b6745aa7a22c6d9add26",
+          "reviewScope": "20–45 다섯 상태와 허용 전이."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/param/RescheduleProposalCreateParam.java",
+          "sha256": "6646e0618a1ff9f4a950b1207ce334a6e26968e76d64f80682ecd17473f13b94",
+          "reviewScope": "16–51 정확한 시간·장소·좌표·가격·사유 필드, 내부 clear 플래그."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/param/RescheduleResponseParam.java",
+          "sha256": "77b7030e87a863cb58917bccfa6ff4f46cec5b13471c1f0696b134c897bc8ef2",
+          "reviewScope": "10–16 필수 여부를 서비스에서 판정하는 Boolean accept와 note."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/param/RescheduleProposalSearchParam.java",
+          "sha256": "5885def474eeb637d6e7e37dce51bc9d1c1d1b7ffb65cd5d59f1bacb4408c56b",
+          "reviewScope": "16–31 상태 필터·PagingParam·생성 시각/id 정렬."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/vo/RescheduleProposalBatchVo.java",
+          "sha256": "f58f374ca30a360fbdf026da3ed93fea1c6cc12f1283adec8f8ee987a44bd33d",
+          "reviewScope": "19–36 집계·readyToApply·proposals·withdraw ability."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/vo/RescheduleResponseResultVo.java",
+          "sha256": "79eeaa153504ed20b5d52491fae85ff288f506d5a39605317db984d236b8d24d",
+          "reviewScope": "28–36 proposal와 자동 취소 결과 3필드; 환불 금액 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/RescheduleProposalTransitions.java",
+          "sha256": "9931978800fc2fa4b71008688a64f59f06e68386bff6d0db94d918859cedf1c1",
+          "reviewScope": "43–169 생성·열린 묶음·철회·appliedAt·응답·실패 횟수·늦은 응답 저장과 PENDING 자동 동의 전달."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/RescheduleOpenBatch.java",
+          "sha256": "b21c21a6e57fc61977dc007147b4f88423679dc9c909e371b3ed213728d70a54",
+          "reviewScope": "23–49 열린 행 판정과 acknowledgedBatchId 비교. 모든 호출 창구 실행 검증 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/RescheduleOpenSummaryReader.java",
+          "sha256": "ff56355525852e67b67b75cc9d2b727849380ddc790afd601f8aa0ccc6a343a1",
+          "reviewScope": "22–30 열린 묶음의 변경 요약·기한."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/repository/query/RescheduleProposalQueryRepository.java",
+          "sha256": "6208958252d392e9ab2e50f39feaf1b0328b58b83fd6f244be60ade5529fa4a0",
+          "reviewScope": "42–51 PENDING 집합과 deadline < now 조건의 자동 동의 갱신."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/RescheduleDeclineAutoCancel.java",
+          "sha256": "e75215232d3c8b917e067b14e2f8ca64e0381ee6049dfdf1ebd5cd1ad793a31e",
+          "reviewScope": "46–270 첫 취소 실패 기록, 최대5회/100개 후보, 잠금 후 재검사, 상한 경보, 예외 흡수·모임 취소 후에만 개최권 해제."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/service/EventRescheduleAutoCancelExecutor.java",
+          "sha256": "3ab047674ebe9dcfa471d69f11faf37e901edd6aca37e381f1048b753e1fc4fe",
+          "reviewScope": "58–140 REQUIRES_NEW 취소, 잠근 모임·신청/참석 재검사, 은행 환불 대기 중복 회피, 종료 상태 건너뜀."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/scheduler/EventRescheduleProposalScheduler.java",
+          "sha256": "ef2789e817891bcab80d62e69c10613480799bf8e5e7286518353372f04ba6be",
+          "reviewScope": "24–40 기본 1시간 fixed delay/1분 초기지연과 오류 기록."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/reschedule/scheduler/EventRescheduleAutoCancelRetryScheduler.java",
+          "sha256": "f1c7cc55913cfb8f6d5cc2fd44f2e089f32df143e8be426a5291b22edde0d041",
+          "reviewScope": "32–60 기본10분 재시도·후보별 처리/오류 계속."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventChangeConsentRoster.java",
+          "sha256": "f030e56f56afbf9d2c0b03aca7228e3a741b408b73c021a53b64edd0fe2de684",
+          "reviewScope": "34–44 계정 참석·대기와 진행 중 결제자·신청자 합집합."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_edit_provider.dart",
+          "sha256": "0258fb1759ed62b6eb8c66dd56ea06d3afd1e0bc261887adb1b0ae6ef097b505",
+          "reviewScope": "982 주소 좌표 확인 호출;1469–1742 OPEN 요청 필드·newPrice 없음·준비한 키·저장 결과/갱신·주소 확인과 실패 보존. 준비 저장소 전체 지속성 검수 아님."
+        },
+        {
+          "path": "community_app/lib/data/api/reschedule_proposal_api.dart",
+          "sha256": "7059096facf4215720c29d9bbbd797dcd7565c772aef1769359a407a5a144f39",
+          "reviewScope": "15–64 서버7창구와 선택키·페이지 응답."
+        },
+        {
+          "path": "community_app/lib/data/models/reschedule/reschedule_response_result_vo.dart",
+          "sha256": "c7eb71fd93b5357c287056fbfdeb4f360433ea2f2d471aff7bed244a7af4ef8a",
+          "reviewScope": "13–36 String cancelStatus와 ApplicationStatus 변환, 취소 실패."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "sha256": "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06",
+          "reviewScope": "980–1025 제안 성공 시 현황 교체 이동·즉시 적용 작은 변경 토스트."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/my_reschedule_proposals_screen.dart",
+          "sha256": "f6b013d21acd6881862c7478a31afaf2d69baaccb00cfaac4a9ae6f8ae7ddde7",
+          "reviewScope": "37–167 상태 필터·추가 조회·오류·빈 상태와 당겨 새로 고침,297 카드의 본인 응답 경로."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/open_reschedule_banner.dart",
+          "sha256": "7ae1219a717c06a0388e366f0ae86e377586f5d7ee7009d61010ae0d0d3209ea",
+          "reviewScope": "10–49 진행 중 변경 안내와 diff 표시."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/reschedule_proposal_batch_screen.dart",
+          "sha256": "637cbe5c493294a536054992da7271e51a7360879dc7fd27d9455a22024810ec",
+          "reviewScope": "54–220 현황 조회·확정/철회·오류 재조회와 거절도 차단된다는 오래된 안내를 검색 대조. 자동 polling 없음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/reschedule_proposal_response_screen.dart",
+          "sha256": "6b1e4239ff649adede8ae46fa49fab6d275e49f25a592c603a76f93f6c8784e3",
+          "reviewScope": "124–202 응답 확인·기한 경과·취소 결과 토스트;328–410 재진입에서 상세의 참가 상태로 취소 완료/지연 판단."
+        },
+        {
+          "path": "community_api/api-app/src/test/java/com/endside/community/event/reschedule/controller/RescheduleReceiptTest.java",
+          "sha256": "1b3e3bea1b48f592ad93027add3a2cb06b1cf02fa30cf71b6217b36f4416a5b6",
+          "reviewScope": "191–265 같은 키 확정/응답/늦은 응답 재생·본문/대상 충돌 단언 읽기. 실행 안 함."
+        },
+        {
+          "path": "community_api/api-app/src/test/java/com/endside/community/event/reschedule/service/EventRescheduleAutoCancelRetryCommitTest.java",
+          "sha256": "765dea0a6fa545ef21776c26a10ee45da40662f8dbc1788df0e06d6212834242",
+          "reviewScope": "59–126 실패 표식 커밋·성공 재시도·5회 상한 경보/후보 제외 단언 읽기. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPayerRoster.java",
+          "sha256": "a06aa99567d5ded34631bf6cde112a4fed64f3780ad4943ef68d6efd6a029ad2",
+          "reviewScope": "48–103 진행 중 신청과 결제 명단·전체 활성 신청자·취소 트랙 조회. 기존 그룹의 다른 범위와 구분."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "701–707 호스트/활성 공동호스트 권한과 적용 뒤 철회 금지."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/RefundPolicyService.java",
+          "sha256": "7095cc117ec2b3bba4606722cea744fad3190134af23db6fd71b72c88c181888",
+          "reviewScope": "201–227 RESCHEDULE_DECLINED 유료/무료100%·고정수수료0 계산. 실제 지급 완료 근거 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventService.java",
+          "sha256": "0d3cfd4f4e5fcd048ff6eaab97f06d628c0971122e9d9ad410ebe733af79eb98",
+          "reviewScope": "371–372 좌표 검증을 GeoUtils에 위임."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/util/GeoUtils.java",
+          "sha256": "0fea34ed12f7390d5b6ad2647923f8155a2d242a325403082925e0d4b134bd83",
+          "reviewScope": "48–61 nullable 좌표 쌍·유한값·범위·(0,0) 거절."
+        },
+        {
+          "path": "community_app/lib/domain/providers/reschedule/reschedule_proposal_providers.dart",
+          "sha256": "a23d3fd277e6dd276da67806a8a1924d291e5e4f07f4a2491a454aa32b08d5d1",
+          "reviewScope": "45–489 단건·목록20개·배너 최대5쪽/20+, 명령키·결과 판정·상세/목록/지갑 갱신, 세션 메모리 키."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "483–492 편집 권한+열린 묶음의 동의 현황 입구."
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+          "reviewScope": "496–515 응답 가능 배너·받은 요청 경로."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
+          "sha256": "e29a26e2dd908252c5642354a0ed8b887915876e49d91e2c29c84a853c9b9015",
+          "reviewScope": "101–141 현황 관리 접근 검사·본인 목록/응답 라우트."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "60–61,79–89,1375–1380 제안 응답 분기와 EVENT_UPDATED 모임 상세 fallback."
+        }
+      ],
+      "reuses": [
+        "bus_allocation_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_checkin_20261122",
+        "event_payment_cancel_refund_20261122",
+        "profile_hub_edit_addresses_20261122",
+        "search_workflows_20261122",
+        "transport_policy_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
+          "sha256": "9b8afb186e1ec189d2a1b96a37e2d390c76a1f74fcce2f8b9da8a27cea63e8a9"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-19.html": [
+          "sidebar",
+          "launch-strip",
+          "current-rules",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-19:1",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-19:2",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-19:3",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-19:4",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-19:5",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-19:6",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
+        },
+        {
+          "id": "F03-19:7",
+          "change": "added",
+          "reason": "현재 공개 API 7개 창구의 실제 Controller 메서드 연결"
         }
       ]
     }
