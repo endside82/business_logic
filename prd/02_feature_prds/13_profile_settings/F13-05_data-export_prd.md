@@ -1,85 +1,88 @@
-# F13-05. 데이터 내보내기 (Export) PRD
+# F13-05. 데이터 내보내기 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 현재 기능 설명.** 2026-11-22 서버·앱 소스를 대조했다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 이 문서는 실제 파일 수령·운영 배치 실행을 확인한 기록이 아니다.
 
-## 1. 결론
+## 결론
 
-데이터 내보내기는 로그인 사용자가 자기 데이터 사본을 JSON 파일로 생성하도록 요청하고, 최신 요청 상태를 조회하는 기능이다. 서버는 요청을 `PROCESSING`으로 저장한 뒤 비동기 worker로 사용자 데이터를 수집해 파일을 만들고 완료 상태와 다운로드 위치를 기록한다. UI 스펙은 "최대 48시간"을 안내하지만, account 코드 안에서 48시간 제한을 강제하는 로직은 확인되지 않는다.
+로그인 회원은 **전체 메뉴 → 설정 → 계정의 데이터 내보내기·탈퇴 → 데이터 내보내기**에서 자기 자료의 JSON 사본을 요청한다. 화면은 최신 요청 하나의 처리 상태를 보여 주고, 완료된 요청의 임시 주소를 외부 앱으로 연다. 요청 시점부터 30일이 지나면 새 다운로드 주소를 발급하지 않는다.
 
-**2026-05-27 변경**: `DataExportAsyncWorker.toMemberMap`이 `mbti` 필드를 export에 포함한다(기존 name/birthDate/gender/bio/profileImageUrl/locale + mbti). [[F13-02]] / [[F09-01]]의 데이터가 모두 사용자에게 내보내져야 한다는 GDPR-style 원칙에 따른다.
+서버에는 중단된 작업을 다시 제출하는 복구 작업과 만료 요청을 정리하는 작업이 있다. 만료 상태 전환·다운로드 차단과 저장소의 실제 파일 삭제는 별도 단계다. 화면의 ‘최대 48시간’은 안내 문구이며 소스로 확인한 처리 완료 보장이 아니다.
 
-### 2026-07-29 소스 재실측 — 저장·다운로드·스키마
+## 코드 위치
 
-- `POST /api/v1/users/me/data-export`는 202를 반환하고 `PROCESSING`, `expiresAt=now+30일` 요청을 만든다. `GET /api/v1/users/me/data-export/status`는 최신 요청을 반환한다.
-- worker는 JSON을 `FileStorageService`로 `exports/{userId}/{requestId}_{yyyyMMdd_HHmmss}.json` 키에 업로드하고 `fileKey`만 저장한다. 완료 시 DB `downloadUrl`은 null이다.
-- 상태 조회 시 `COMPLETED + fileKey + 미만료`일 때만 `my-data-export.json` 파일명의 presigned GET URL을 동적으로 발급한다. 과거 문서의 로컬 절대경로 설명은 현재 소스와 다르다.
-- 최상위 `metadata.schemaVersion`은 `2026-04-23`이고 포함 섹션은 `profile`, `events`, `trust`, `financial`, `notifications`, `dating`, `feedback`, `traits`, `taste` 9개다.
-- `notifications.devices[].token`과 신원인증 `verifiedName`, `verifiedBirthDate`, `ci`, `di`는 redacted 목록에 명시되고 export하지 않는다. 인증 type/status/gender/provider/시각은 포함한다.
-- `dating.profile`은 흡연·음주·만남 목적·종교/동의시각·네 결격 토글·`communityDataOptIn/At`를 포함한다.
-- `feedback`은 내가 작성한 이벤트 선택/인상 태그와 데이트 만남 피드백만 포함한다. 받은 선택/피드백은 포함하지 않는다.
-- `traits` schema v1은 본인의 모든 세션(`IN_PROGRESS` 포함), 응답과 해석용 문항/축 메타, 점수를 포함한다. 전역 축·문항을 독립 데이터로 덤프하지 않는다.
-- `taste` schema v1은 선언 선호와 `behaviorStyleEstimate`를 포함한다. `positiveTagWeights`는 원본 이벤트 선택 피드백에서 재생성 가능한 중복 파생 캐시라 의도적으로 제외한다.
+<!-- source-references:start -->
+서버 창구: `DataPrivacyController#requestExport`, `DataPrivacyController#getExportStatus`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-확정 Gap:
+- 서버 요청·상태: `DataPrivacyController`, `DataExportService`, `DataExportRequestVo`.
+- 생성·복구·정리: `DataExportWorkStore`, `DataExportExecutionWorker`, `DataExportContentWorker`, `DataExportArtifacts`, `DataExportPurgeWorker`, `DataExportRecoveryScheduler`, `DataExportExpiryScheduler`.
+- 자료 포함 범위: 각 도메인의 `*DataExportAssembler`; 본인 피드백은 `ReviewDataExportAssembler`.
+- 관리자: `community_api/admin-app`의 `ManageDataPrivacyService`. 옛 별도 관리자 저장소는 현재 구현 근거가 아니다.
+- 앱: `app_menu.dart` → `app_settings_screen.dart` → `data_privacy_screen.dart`, `data_privacy_provider.dart` → `ProfileRepository` → `DataPrivacyApi`.
 
-1. `EventFeedbackVo`가 보존하는 사용자 작성 `vibeTags`를 `toEventFeedbackMap`이 export하지 않는다.
-2. community_api에는 시간 경과만으로 status를 `EXPIRED`로 바꾸는 자동 전이와 artifact 정리 scheduler가 없다. 자연 만료 조회는 `COMPLETED + downloadUrl=null`이다. 다만 community_admin_api의 `expire` 액션은 수동으로 `EXPIRED` 전이할 수 있다.
-3. Flutter에는 `COMPLETED`인데 URL이 없는 만료 케이스를 명시적으로 재요청 상태로 바꾸는 계약이 없고, 화면의 "최대 48시간" 문구도 서버 SLA로 강제되지 않는다.
+## 전체 동작 흐름
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+1. 전체 메뉴에서 설정을 열고 ‘데이터 내보내기·탈퇴’를 선택한다. 마이 화면의 별도 데이터 메뉴를 입구로 가정하지 않는다.
+2. 화면이 최신 요청을 조회한다. ‘요청 없음’이라는 서버 오류만 처음 상태로 표시한다. 통신 장애·서버 오류·다른 404는 오류 안내와 재조회로 구분한다.
+3. 처음 상태에서 ‘데이터 내보내기 요청’을 누른다. 서버는 요청을 저장한 뒤 비동기 생성을 제출하고, 앱은 성공 응답을 받으면 처리 중 표시와 토스트를 보여 준다. 파일이 즉시 내려오는 동작이 아니다.
+4. 처리 중에는 새 요청 버튼이 제한된다. 사용자가 ‘새로고침’을 눌러 상태를 다시 읽는다. 정기 자동 조회는 없다. 화면을 떠나도 이미 접수한 요청은 서버에서 이어진다.
+5. 완료되고 주소가 있으면 ‘다운로드’를 눌러 외부 앱을 연다. 임시 주소가 만료된 뒤에는 상태를 다시 조회해 새 주소를 받아야 한다. 외부 앱이 열리는 것과 파일 수령 완료는 구분한다.
+6. 실패·만료 상태에서는 ‘다시 요청’으로 새 요청을 만든다. 이전 실패 기록을 수정하는 동작이 아니며 화면에는 새 요청이 보인다.
+7. 뒤로 가면 설정과 전체 메뉴를 거쳐 출발 화면으로 돌아간다. 설정의 스크롤 위치와 전체 메뉴 검색어를 유지하는 경로가 앱 시험에 있다. 외부 파일 수령은 그 시험의 범위 밖이다.
+8. 요청 응답을 잃었을 때 실패 안내만으로 서버 미접수를 단정하지 않는다. 상태를 재조회해 이미 처리 중인 요청이 있는지 확인해야 한다. 현재 화면에는 이 확인을 강제하는 별도 복구 절차가 없다.
 
-- 마이페이지 허브에서 `데이터 프라이버시` 메뉴를 탭한다.
-- 데이터 프라이버시 화면의 첫 번째 섹션 `데이터 내보내기`에서 요청과 다운로드를 수행한다.
+## 제품 규칙
 
-## 2. 코드 위치
+- 본인 인증 세션으로 자기 요청을 만들고 읽는다. 서버는 삭제된 계정·탈퇴 완료·탈퇴 진행 계정의 새 요청을 거절한다.
+- 보관 기한은 **요청 생성 시점부터 30일**이다. 완료 시점부터 30일로 늘어나지 않는다. 화면에는 최신 요청 하나를 보여 준다.
+- 완료·파일 식별자 존재·미만료 조건에서만 조회 응답에 임시 다운로드 주소를 발급한다. DB에 예전에 저장한 다운로드 문자열을 그대로 제공하지 않는다.
+- 복구 작업은 기본 1분 간격으로 실행할 후보를 찾는다. 실행권을 얻은 작업만 처리하며 중단 뒤 같은 파일 식별자로 재개한다. 실행권 재획득이 다섯 번 소진되면 실패로 종결한다. 작업 예외로 실패한 건이 모두 자동 재시도되는 것은 아니다.
+- 만료 정리의 기본 스케줄은 서버 설정 기준 매일 04:20이다. 요청을 만료시키고 파일 참조를 지우는 트랜잭션에 파일 삭제 요청도 기록한다. 저장소 삭제 실패는 삭제 재시도 작업이 이어받는다. `EXPIRED`만 보고 실제 저장소 삭제까지 끝났다고 판정하지 않는다.
+- 관리자 수동 만료도 주소 발급을 막지만 파일 삭제 완료와 같지 않다. 관리자 재처리·재발급을 일반 회원의 ‘다시 요청’과 혼동하지 않는다.
+- 현재 생성기는 큰 자료를 파일에 나누어 기록하며 기본 파일 크기 상한은 1GiB다. 상한 초과는 실패로 끝나며 사용자는 일반 실패 안내를 받는다.
 
-계약의 정본은 코드다. 서버: `DataPrivacyController`, `FileStorageService`. 앱: `data_privacy_screen.dart`.
+### 자료의 포함·제외
 
-## 3. 전체 동작 흐름
+최상위 자료 묶음은 프로필·이벤트·신뢰·금전·알림·데이트·피드백·성향·취향·지원·위치·클럽·정기모임·마켓·제공자·클럽 활동 기록·설정이다. 해당 회원의 자료가 없는 항목은 비어 있을 수 있다. 정확한 필드는 현재 생성기와 각 도메인 조립기가 정본이며 PRD에 별도 스키마를 복제하지 않는다.
 
-1. 화면 진입: `exportStatusNotifierProvider` ▶ `GET /api/v1/users/me/data-export/status`.
-2. status 조회가 NOT_FOUND 등 실패일 때 화면은 오류 자체보다 요청 버튼을 보여준다.
-3. 요청 버튼: `requestExport()` ▶ `POST /api/v1/users/me/data-export`.
-4. 요청 성공: `데이터 내보내기를 요청했습니다` 토스트.
-5. 처리 중 새로고침: provider invalidate ▶ status 재조회.
-6. 완료 후 다운로드: `canLaunchUrl(Uri.parse(downloadUrl))` 확인 ▶ 외부 앱 열기.
-7. `ExportStatusNotifier` → `ProfileRepository` → `DataPrivacyApi` 체인이 상태 조회와 요청을 수행한다.
+본인이 제출한 이벤트 피드백에는 분위기 태그가 포함된다. 과거 문서의 분위기 태그 누락과 자동 만료 작업 부재는 현재 결함이 아니다. 설정에는 AI 연결 기록을 포함하지만 연결 토큰·해시는 제외한다.
 
-## 4. 제품 규칙
+회원이 만든 콘텐츠와 대화 원문을 제외한다는 제품 결정은 [현재 결정과 남은 작업](../../../../docs/plan/NEXT_WORK.md)을 따른다. 이 결정의 법률 검토와 투표 포함 여부 등 남은 결정은 그 문서에서 관리한다. 제품 결정이나 이번 소스 대조를 법률 검토 완료로 쓰지 않는다. 푸시 토큰, 본인인증 민감 식별값, 계좌번호·예금주, 제공자 사업자등록번호 등 가리는 필드는 생성기의 제외 목록을 따른다.
 
-- 요청 전 확인 창 없이 바로 요청이 만들어지고 `데이터 내보내기를 요청했습니다` 안내가 뜬다. 안내 문구는 `처리에 최대 48시간이 소요됩니다` 지만 서버가 이 시간을 강제하지는 않는다.
-- 화면은 가장 최근 요청 하나만 보인다. 상태에 따라 다음처럼 바뀐다.
-  - 요청이 없거나 상태 조회가 실패: 요청 버튼
-  - 처리 중(`PROCESSING`): 요청 버튼은 꺼지고 진행 표시, 요청 뒤 경과 시간(방금 전, N분 전, N시간 전, N일 전), 새로고침 아이콘
-  - 완료(`COMPLETED`): 만료일(`yyyy.MM.dd (D-N)`, `오늘 만료`, `만료됨`)과 다운로드 버튼. 다운로드 주소가 없으면 버튼도 없다.
-  - 실패(`FAILED`), 만료(`EXPIRED`), 알 수 없는 상태: 상태 표시와 다시 요청 버튼
-- 다운로드는 외부 앱(브라우저)으로 연다. 주소는 상태를 볼 때마다 새로 발급되는 임시 주소다.
-- 관리자는 완료된 건을 수동으로 만료시키거나(`EXPIRED`) 미래 만료일을 줘 다시 열 수 있다. 시간이 지나 저절로 `EXPIRED` 로 바뀌지는 않는다.
+## 상태·권한별 동작
 
-## 6. 상태/권한/시나리오 매트릭스
+| 시작 상태 | 사용자 행동 | 현재 결과·복구 |
+|---|---|---|
+| 로그인, 요청 없음 | 새 요청 | 접수 성공 뒤 처리 중 표시 |
+| 최초 상태 조회 실패 | 오류 안내에서 다시 시도 | 상태 재조회. 요청이 없다고 대신 표시하지 않음 |
+| 처리 중 | 새로고침 | 최신 결과 확인. 새 요청 버튼 제한 |
+| 완료·주소 있음 | 다운로드 | 외부 앱 열기 시도. 파일 수령 성공은 별도 확인 |
+| 완료·주소 없음 | 다운로드 | 현재 버튼 동작이 비어 있어 안내·복구가 부족함 |
+| 실패 또는 만료 | 다시 요청 | 새 처리 중 요청 생성 |
+| 알 수 없는 상태 | 상태 확인 필요 표시 | 성공·실패로 추정하지 않음. 별도 재요청 버튼 없음 |
+| 삭제·탈퇴 진행 계정 | 새 요청 | 서버에서 거절. 기존 계정 상태를 바꾸지 않음 |
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
+## 남은 차이와 위험
+
+| 판정 | 항목 | 확인 근거·사용자 영향 | 남은 조치·완료 조건 |
 |---|---|---|---|
-| S1 | 처음으로 데이터 내보내기를 요청한다 | 로그인됨, 기존 export 요청 없음 또는 status 조회 실패 | 최신 export 요청이 `PROCESSING` 상태로 존재한다. |
-| S2 | 처리 중 상태를 확인한다 | 최신 요청 status가 `PROCESSING` | 사용자는 요청이 아직 처리 중임을 확인한다. |
-| S3 | 완료된 JSON 파일을 다운로드한다 | 최신 요청 status가 `COMPLETED`, `fileKey` 존재, 미만료 | 상태 조회가 presigned `downloadUrl`을 발급하고 사용자는 외부 앱으로 JSON을 연다. |
-| S4 | 내보내기 작업이 실패한다 | worker가 예외를 만나 status를 `FAILED`로 변경 | 다시 요청하면 새 `PROCESSING` row가 생기고 기존 FAILED row는 보존된다. 화면은 최신 row 하나만 표시한다. |
-| S5 | 완료 파일이 자연 만료된다 | 최신 요청 status가 `COMPLETED`, `expiresAt <= now`, 관리자 expire 미실행 | community_api는 status를 바꾸지 않고 `downloadUrl=null`을 반환한다. 관리자 expire를 실행한 경우에만 `EXPIRED` UI로 도달한다. |
+| Risk | 48시간 안내 | 화면은 최대 48시간이라고 안내하지만 서버 처리 기한을 강제하는 계약은 없음 | 실제 처리 기준과 안내를 맞추고 운영 지연을 관측 |
+| Gap | 완료인데 주소 없음 | 자연 만료 후 정리 전 또는 파일 참조가 없는 완료 요청에서 ‘다운로드’ 동작이 빈 함수임 | 재조회·다시 요청 또는 명시적 제한으로 복구 가능하게 처리 |
+| Gap | 외부 열기 실패 | 외부 앱을 열 수 없거나 실행이 실패했을 때 별도 오류 안내가 없음 | 실패를 안내하고 재조회·재시도 경로 확인 |
+| Risk | 요청 응답 유실·중복 누름 | 서버 요청 함수에 기존 처리 중 요청의 중복 방지 규칙이 없고 앱도 전송 중 별도 잠금을 두지 않음 | 중복·응답 유실 조건에서 접수 수와 최신 요청 표시를 확인 |
+| Gap | 관리자 재발급과 회원 조회 | 관리자는 주소·기한·완료 상태를 저장하지만 회원 조회는 파일 식별자로 주소를 다시 발급함. 정리로 파일 참조가 없어진 요청은 관리자가 주소를 넣어도 회원이 받지 못함 | 실제 보관 파일·회원 응답·관리자 성공 표시를 같은 계약으로 정렬 |
+| 미검증 | 실제 수령·저장소 삭제 | 이번 작업은 소스 대조이며 외부 파일 다운로드나 운영 정리 작업 실행은 하지 않음 | 회원별 권한·임시 주소 만료·실제 파일 정리 결과를 버전·환경과 함께 확인 |
 
-## 8. Gap / Risk
+## 수용 기준과 검증 근거
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 내보내기 요청 실패 응답 | 요청 저장이 실패하면 요청 행과 실행이 함께 남지 않고, 서버는 공용 오류 형식으로 잠금 충돌 409, 그 밖의 오류 500 을 돌려준다. 탈퇴 중인 계정은 403, 로그인 없이 부르면 401 이다. 앱은 「요청에 실패했습니다」 를 보인다 | 없음 |
-| Gap | `DataExportAsyncWorker#toEventFeedbackMap` | 본인이 작성한 `vibeTags`가 export에서 빠진다. | feedback schema에 vibeTags 추가 및 테스트 보강 |
-| Gap | `DataExportService#getExportStatus`, admin `expire` | 자연 만료는 자동 EXPIRED 전이/파일 정리 없이 `COMPLETED + downloadUrl=null`이 되고, 관리자 수동 expire만 EXPIRED를 만든다. | 자동 만료·관리자 전이·artifact retention·Flutter 재요청 UX를 한 계약으로 정렬 |
-| 확정 | request repository/status 조회 | 재요청은 새 row를 만들고 기존 FAILED row를 보존하며, public status는 `createdAt DESC` 최신 row 하나를 반환한다. | 문서 계약으로 유지 |
+- **AC-01 요청과 복귀:** 전체 메뉴에서 설정을 찾아 새 요청하면 처리 중으로 바뀌고, 뒤로 가면 설정 스크롤과 메뉴 검색어가 유지된다.
+- **AC-02 조회 실패:** 서버 오류나 다른 종류의 404에서는 오류·재시도를 표시한다. 요청이 없다는 응답만 새 요청 상태로 보인다.
+- **AC-03 생성 완료:** 처리 중 새로고침으로 완료 상태·만료일·다운로드 행동을 확인한다. 외부 앱 실행과 실제 파일 수령 결과를 각각 기록한다.
+- **AC-04 만료 단계:** 기한 경과 후 새 주소가 발급되지 않고, 정리 작업 뒤 요청 만료와 삭제 요청이 기록된다. 저장소 삭제 실패 때 재시도가 이어지는지 별도 확인한다.
+- **AC-05 실패 복구:** 실패·만료 뒤 재요청하면 새 요청이 생긴다. 응답 유실과 빠른 반복 누름도 확인하며 현재 중복 제한의 부족을 통과로 간주하지 않는다.
+- **AC-06 권한·자료 범위:** 타인의 요청에 접근하지 못하고, 제외한 민감값·콘텐츠를 전체 사본에 포함한다고 안내하지 않는다.
+- **AC-07 중단·탈퇴 경합:** 중단 후 새 작업자가 이어받고 이전 작업자가 결과를 덮지 않는다. 탈퇴·만료 뒤 늦게 끝난 작업이 파일을 다시 공개하지 않는다.
+- **AC-08 관리자 복구:** 재처리·수동 만료·재발급 뒤 회원 화면과 실제 파일 접근이 일치하는지 확인한다. 관리자 요청 성공만으로 회원 수령을 완료 처리하지 않는다.
 
-## 9. 수용 기준
-
-- **AC-01. 처음으로 데이터 내보내기를 요청한다**: Given 로그인됨, 기존 export 요청 없음 또는 status 조회 실패 When 사용자가 해당 흐름을 실행하면 Then 최신 export 요청이 `PROCESSING` 상태로 존재한다.
-- **AC-02. 처리 중 상태를 확인한다**: Given 최신 요청 status가 `PROCESSING` When 사용자가 해당 흐름을 실행하면 Then 사용자는 요청이 아직 처리 중임을 확인한다.
-- **AC-03. 완료된 JSON 파일을 다운로드한다**: Given 최신 요청 status가 `COMPLETED`, `fileKey` 존재, 미만료 When 사용자가 상태를 조회하면 Then 서버가 `my-data-export.json`용 presigned GET URL을 발급하고 사용자는 외부 앱으로 연다.
-- **AC-04. 내보내기 작업이 실패한다**: Given worker가 최신 요청을 FAILED로 변경 When 사용자가 다시 요청하면 Then 새 PROCESSING row가 생기고 기존 FAILED row는 보존되며 화면은 최신 row를 표시한다.
-- **AC-05. 완료 파일이 자연 만료된다**: Given 최신 요청이 COMPLETED이고 `expiresAt <= now`, 관리자 expire 미실행 When public status를 조회하면 Then `downloadUrl=null`이고 status는 COMPLETED다. 관리자 expire를 실행한 경우에만 EXPIRED다.
+앱의 `data_export_status_failure_test.dart`는 조회 실패 구분을, `entry_paths_data_export_result_test.dart`는 실제 메뉴 경로·요청·새로고침·복귀를 다루지만 외부 다운로드는 실행하지 않는다. 서버의 `DataExportRecoveryCommitTest`에는 제출 유실·작업 소유권·만료·탈퇴 경합 조건이 있다. 이번 문서 갱신에서는 이 시험의 목적과 소스를 확인했으며 재실행 통과를 주장하지 않는다. 검토 버전과 근거 파일 지문은 [문서 갱신 검토 기록](../../../verification/document-refresh-2026-11-22.json)에 기록한다.

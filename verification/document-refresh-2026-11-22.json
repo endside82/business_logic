@@ -247,7 +247,9 @@
       "baselineSha256": "83353a8a94a74be875acd3100f54c05edcc91d29304bb8c5b1b54fdfa9b0d8ed",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "data_export_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -288,7 +290,9 @@
       "baselineSha256": "54f4e4ef4c33c5c01c32dc8b5a1c8e08a09f41af1f4dddb7fb95460176315787",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "data_export_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -3606,9 +3610,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "564db1d92197c49dfa715d77708df66b7bded55cf76a24713d4edf0c4309e337",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "data_export_20261122"
+      ],
+      "reviewedSha256": "5be2f682384f30ed9a38f87b1f2529f9075ce5dc13bd0f53300e5f4c2cae9e4d"
     },
     {
       "path": "docs/features/F13-06.html",
@@ -6395,10 +6402,13 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "16d2969964f7743d77fd110d8ad63ac05be229fc8eeff91b351214e56138900d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "data_export_20261122"
+      ],
+      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료",
+      "reviewedSha256": "78719feeac48678c9e694f2490621675a9f7e9b17b54de085926476a5a8d508c"
     },
     {
       "path": "prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
@@ -7455,7 +7465,9 @@
       "baselineSha256": "907d783ff0e1ad65b557f73c1b81e678c9ee054038b52fb5e0effac370fbb8f2",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
+      "evidence": [
+        "data_export_20261122"
+      ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
     {
@@ -12083,9 +12095,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8159f5dd6aeee60780716284c377b3121a44006614ea6accacc41f032b2a131b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "data_export_20261122"
+      ],
+      "reviewedSha256": "1646dc1ef53e8ead761a5fe31bec5123b2a710a2030f0fb803e3d56c5b0762bc"
     },
     {
       "path": "units/13_profile_settings/F13-05_data-export/diagrams.md",
@@ -12093,9 +12108,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "bd92c14f3f0d65cad9d77d60650dbc6281df8ecd092e7f9a6dafc492cf70c28c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "data_export_20261122"
+      ],
+      "reviewedSha256": "4c8ab65ce776717d6008e97954574105b225ed4136fa197c0c5c2b200eb31963"
     },
     {
       "path": "units/13_profile_settings/F13-05_data-export/frontend.md",
@@ -12103,9 +12121,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ee4dcc546335dbc0b7943f273494a10727614115b7a7485fca74e758999c76fe",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "data_export_20261122"
+      ],
+      "reviewedSha256": "3a7c39498e7ed45e91b2f53506fa0c4242f7e50d44570c9ee558bc27eb53b8a8"
     },
     {
       "path": "units/13_profile_settings/F13-05_data-export/scenarios.md",
@@ -12113,9 +12134,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f58f0627130d27db6e302e936fe6c561f83c3ed8702a871e435329526acabab6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "data_export_20261122"
+      ],
+      "reviewedSha256": "9efebf1181e9af6e3cf9467f6b9e1dc4f31a1c740089254afcb2a4408c48560b"
     },
     {
       "path": "units/13_profile_settings/F13-06_account-deletion/backend.md",
@@ -13317,6 +13341,27 @@
         "changedEvidenceFiles": []
       },
       "scope": "기존 알림·발송 대조 근거의 유효성; 새 이벤트·검색·보관함 의미 검수는 별도"
+    },
+    {
+      "command": "node --test verification/source_references.test.mjs",
+      "result": "11 tests passed",
+      "scope": "F13-05 두 창구 추가 후 모든 등록 창구의 실제 소스 대조. 제품 시험 아님."
+    },
+    {
+      "command": "node verification/sync_source_reference_docs.mjs; node verification/check_scenario_audit.mjs",
+      "result": {
+        "sourceDocuments": 86,
+        "sourceRecords": 306,
+        "verifiedRecords": 304,
+        "retiredRecords": 2,
+        "status": "PASS"
+      },
+      "scope": "문서 근거·집계·연결 검사; 기존 출시 범위 날짜 불일치 관문과 제품 실행 확인은 별도."
+    },
+    {
+      "command": "F13-05 HTML 이전 앵커·중복 ID·Markdown 잔여 확인; git diff --check",
+      "result": "PASS",
+      "scope": "개인정보 내보내기 문서 동기화 구조 검사"
     }
   ],
   "evidenceGroups": {
@@ -13454,6 +13499,112 @@
         {
           "path": "community_api/domain/src/main/java/com/endside/community/notification/constants/DeliveryJobStatus.java",
           "sha256": "55d9d30f1e3e1e87fbec85d97f965ffb0a3df9be3aa5031ee9d8ac73d9667cd1"
+        }
+      ]
+    },
+    "data_export_20261122": {
+      "kind": "source_review",
+      "scope": "F13-05 현재 진입·최신 조회·새 요청·생성 복구·만료/파일 삭제 분리·최상위 자료 범위·관리자 재발급 차이. 앱 시험은 소스의 범위만 확인했으며 재실행·실제 파일 수령·운영 배치 실행은 아님. 다른 도메인 조립기의 모든 필드를 전수 검증한 기록도 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+          "sha256": "b6d27393d41e998f3439604fa31b0479d47a17c403eb9c0b280148dd24c7907c"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportService.java",
+          "sha256": "9c84d20081844cef8a52319adc216233e577348dc42730f9e8e24626cb6259ee"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/vo/DataExportRequestVo.java",
+          "sha256": "926f6530ca6cfc08c20d59847ddc760d540197082f0a5b8fb79cdab354e19951"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportWorkStore.java",
+          "sha256": "b01eb4f6cdb5b9f47b7fe1f9674dccfdb3ef99b32c264ee2e616e3535bff4b26"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportExecutionWorker.java",
+          "sha256": "7c6f2581f59c452f3f656963fb6b0b5659ca120116a677e3ae550b5ac9fb2525"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportContentWorker.java",
+          "sha256": "033435a127b0d90a6da9719d197be460ceac7d710b20d7e8dda2b15cc05a7dae"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportArtifacts.java",
+          "sha256": "635edda3457373433266235ba7887d5d54e13fe91fb520b9c8427d99459308e0"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportPurgeWorker.java",
+          "sha256": "b4b634640d0ce8f2fc3bf04a0f9b8f556a4c6a2c30add77e01685f28735b27ed"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/service/DataExportRecoveryScheduler.java",
+          "sha256": "b15dfc2a289e445d62bfb7f93a4eb203c644e459dfa522000af0e8dea2f67b98"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/service/DataExportExpiryScheduler.java",
+          "sha256": "9ae704556c92374610fa67c58cbd890d0f8191563fecf3335862cc47062efd6f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ReviewDataExportAssembler.java",
+          "sha256": "8282cc6b40979b807a909545267f143a7621da722f3a466b8dbba50e7bf7e99f"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/agentauth/service/AgentAuthDataExportAssembler.java",
+          "sha256": "1c64b72b8ed9b99f290d117d32cc04577ea1bced121b9417dab94ef74d9c6785"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/privacy/service/ManageDataPrivacyService.java",
+          "sha256": "cdbbee073547afef136828f6f1f823fb11084cc8809bf278ce8e2e8645901073"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc"
+        },
+        {
+          "path": "community_app/lib/presentation/navigation/screens/full_menu_screen.dart",
+          "sha256": "916ef357db7c524c620096010e2cb18dcf819d92497827eb515424feda9662ab"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/app_settings_screen.dart",
+          "sha256": "634d923ab037f0508ace2303b8e81cd0d7cd48dbad5ef346bc7941307f37a888"
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/data_privacy_screen.dart",
+          "sha256": "b7e53669a5aeb8b02f041b0cd263761b52097afcaa33332df24cad826eff3837"
+        },
+        {
+          "path": "community_app/lib/domain/providers/profile/data_privacy_provider.dart",
+          "sha256": "4f4b1387472c5ef632c4bfa86c3392fc142a76dc2882b0dfb7caa876592b27ac"
+        },
+        {
+          "path": "community_app/lib/data/repositories/profile_repository.dart",
+          "sha256": "962fc3786f158195eceab5feafb20038302c799db3dfe88a8c6f9ee53bab71e2"
+        },
+        {
+          "path": "community_app/lib/data/api/data_privacy_api.dart",
+          "sha256": "7f58e744335cab82d1a455b85e3fefeea505acc03252a83ce5d1ec11e86364b8"
+        },
+        {
+          "path": "community_app/lib/data/models/user/data_export_request_vo.dart",
+          "sha256": "6aa5986730d8a9eedcc01e454117267cb649f3acbb64f34c6a8302f110b8e30a"
+        },
+        {
+          "path": "community_app/test/presentation/profile/data_export_status_failure_test.dart",
+          "sha256": "02ebf7403d0c9cb2d8c1855f1fc57e7915f9b39453ddc13a3f012de00280ca75"
+        },
+        {
+          "path": "community_app/test/audit/entry_paths_data_export_result_test.dart",
+          "sha256": "750b98b34425d12ff7af5a520ca5f21fc7fca8d6132c494ae7c4d4d58d9f4af6"
+        },
+        {
+          "path": "docs/ui-ux/screens/28-profile-settings.md",
+          "sha256": "628e4876e3ae0a3044fe8f3925332a938ba5f8596dec8a3474fab84d4670e2f9"
+        },
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997"
         }
       ]
     }

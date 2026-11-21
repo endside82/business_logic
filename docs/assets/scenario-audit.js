@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,063개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,061개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1063,
+    "documentedScenarioItems": 1061,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 51,
     "partialEvidenceChain": 32,
     "definitionOnlyEvidence": 92,
-    "traceMarkers": 304,
-    "verifiedTraceRecords": 302,
+    "traceMarkers": 306,
+    "verifiedTraceRecords": 304,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10549,20 +10549,55 @@ window.SCENARIO_AUDIT = {
       "id": "F13-05",
       "domain": "프로필 & 설정",
       "name": "데이터 내보내기",
-      "scenarioCount": 10,
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/13_profile_settings/F13-05_data-export/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/13_profile_settings/F13-05_data-export/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F13-05:1",
+            "label": "POST /api/v1/users/me/data-export — 데이터 내보내기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+                "controller": "DataPrivacyController",
+                "method": "requestExport",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/data-export",
+                "targetLine": 32,
+                "methodLine": 33
+              }
+            ]
+          },
+          {
+            "id": "F13-05:2",
+            "label": "GET /api/v1/users/me/data-export/status — 데이터 내보내기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/account/controller/DataPrivacyController.java",
+                "controller": "DataPrivacyController",
+                "method": "getExportStatus",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/data-export/status",
+                "targetLine": 39,
+                "methodLine": 40
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
