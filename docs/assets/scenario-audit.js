@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,242개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,248개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1242,
+    "documentedScenarioItems": 1248,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4951,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 62,
+    "directlyLinkedAutomatedTests": 63,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 62,
+    "automatedScenarioReferences": 63,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -24,11 +24,11 @@ window.SCENARIO_AUDIT = {
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 39,
-    "partialEvidenceChain": 54,
+    "completeEvidenceChain": 40,
+    "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 82,
-    "traceMarkers": 526,
-    "verifiedTraceRecords": 524,
+    "traceMarkers": 530,
+    "verifiedTraceRecords": 528,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -9361,19 +9361,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-02",
       "domain": "모임 정산",
-      "name": "정산 항목 관리",
-      "scenarioCount": 8,
+      "name": "정산 항목·배분 편집·영수증·최근 항목",
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-02_settlement-items/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-02_settlement-items/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
         "entries": [
           {
@@ -9443,15 +9443,88 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 37
               }
             ]
+          },
+          {
+            "id": "F07-02:5",
+            "label": "GET /api/v1/events/{eventId}/settlement/items — 항목 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "getItems",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/settlement/items",
+                "targetLine": 206,
+                "methodLine": 207
+              }
+            ]
+          },
+          {
+            "id": "F07-02:6",
+            "label": "GET /api/v1/events/{eventId}/settlement/items/{itemId}/allocation — 기존 배분",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "getItemAllocation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/settlement/items/{itemId}/allocation",
+                "targetLine": 224,
+                "methodLine": 225
+              }
+            ]
+          },
+          {
+            "id": "F07-02:7",
+            "label": "POST /api/v1/meeting-settlement/calculator/preview — 분담 미리보기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementCalculatorController.java",
+                "controller": "MeetingSettlementCalculatorController",
+                "method": "preview",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/meeting-settlement/calculator/preview",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          },
+          {
+            "id": "F07-02:8",
+            "label": "GET /api/v1/events/{eventId}/settlement/receipts/{fileId}/download-url — 정산 영수증 주소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "getReceiptDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/settlement/receipts/{fileId}/download-url",
+                "targetLine": 96,
+                "methodLine": 97
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 4,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 4,
+        "files": [
+          "community_api/domain/src/test/java/com/endside/community/payment/meeting/service/MeetingSettlementItemServiceTest.java",
+          "community_app/test/meeting_settlement/settlement_items_server_only_test.dart",
+          "community_app/test/presentation/meeting_settlement/settlement_item_form_allocation_test.dart",
+          "community_app/test/presentation/meeting_settlement/settlement_item_receipt_upload_save_lock_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -9462,7 +9535,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,

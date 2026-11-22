@@ -288,7 +288,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F06-09 | 결제 & 지갑 | [F06-09_earnings-dashboard_prd.md](02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md) | `F06-09_earnings-dashboard` | 실사 기반 전환본 | 1 | 4 |
 | F06-10 | 결제 & 지갑 | [F06-10_settlement-appeal_prd.md](02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md) | `F06-10_settlement-appeal` | 실사 기반 전환본 | 5 | 5 |
 | F07-01 | 모임 정산 | [F07-01_create-settlement_prd.md](02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md) | `F07-01_create-settlement` | 실사 기반 전환본 | 4 | 5 |
-| F07-02 | 모임 정산 | [F07-02_settlement-items_prd.md](02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) | `F07-02_settlement-items` | 실사 기반 전환본 | 4 | 2 |
+| F07-02 | 모임 정산 | [F07-02_settlement-items_prd.md](02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md) | `F07-02_settlement-items` | 실사 기반 전환본 | 8 | 4 |
 | F07-03 | 모임 정산 | [F07-03_activate-cancel_prd.md](02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md) | `F07-03_activate-cancel` | 실사 기반 전환본 | 2 | 1 |
 | F07-04 | 모임 정산 | [F07-04_status-summary-receipt_prd.md](02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md) | `F07-04_status-summary-receipt` | 실사 기반 전환본 | 3 | 2 |
 | F07-05 | 모임 정산 | [F07-05_pay-share_prd.md](02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md) | `F07-05_pay-share` | 실사 기반 전환본 | 7 | 2 |
