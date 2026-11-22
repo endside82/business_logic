@@ -127,8 +127,8 @@
 | F10-04 | 캘린더 | 반복 가능 시간 규칙 관리 | 회원 | 매주·격주·매월 규칙의 본인 목록·편집·실제 인스턴스와 예상 개수·전체 삭제·무기한 연장 조건을 구분한다. | 10 | 1 |
 | F10-05 | 캘린더 | 타 사용자 가능 시간 공개 기능 폐기와 비공개 경계 | 회원·운영자 | 폐기된 공개·친구 가능 시간 조회를 복구 대상으로 두지 않는다. 본인 전용 모델·요청·권한과 관심인 공개 모임의 차이를 확인한다. | 5 | 1 |
 | F11-01 | 리뷰 & 신고 | 이벤트 리뷰 작성 | 참석자 | 참석자 자격, 중복, 부적절 콘텐츠 | 6 | 3 |
-| F11-02 | 리뷰 & 신고 | 리뷰 목록 조회 | 사용자 | 이벤트별/사용자별, 평균/분포, 신고 진입 | 6 | 4 |
-| F11-03 | 리뷰 & 신고 | 리뷰 수정 & 삭제 | 작성자 | 수정 한도, 타인 리뷰 차단, 삭제 후 점수 | 6 | 5 |
+| F11-02 | 리뷰 & 신고 | 이벤트 후기와 사용자가 받은 후기 조회 | 회원 | 받은 후기와 작성한 후기를 구분하고 차단·프로필 접근·숨김 마스킹·역할별 메뉴·갱신을 현재 계약에 맞춘다. | 7 | 1 |
+| F11-03 | 리뷰 & 신고 | 후기 수정과 삭제 | 후기 작성자 | 작성자 5회 수정·삭제 후 재작성 금지·입력 보존·응답 불확실성과 관련 목록 갱신을 구분한다. | 7 | 1 |
 | F11-04 | 리뷰 & 신고 | 신고 | 로그인 사용자 | 대상 유형, 자기 신고, 중복 신고, 운영 접수 | 6 | 5 |
 | F11-05 | 리뷰 & 신고 | 신뢰점수 & 변동 이력 | 사용자 | 본인/타인 노출 차이, 등급 임계, 이력 | 7 | 5 |
 | F11-06 | 리뷰 & 신고 | 취향 평가 & 취향 프로필 | 로그인 사용자 | 이벤트 피드백, 데이트 피드백, 태그 가중치, 데이터 부족, export/delete 포함 | 8 | 5 |
@@ -181,7 +181,7 @@
 | F03-19 | 이벤트 | 일정 변경 제안·참가자 합의 (RS-002) | 호스트·공동호스트·참가자 | 일정 변경 분류·동의·확정·철회·기한 경과 저장·취소 실패 재시도·재전송과 실제 앱 입구·갱신을 구분한다. | 0 | 0 |
 | F03-20 | 이벤트 | 이벤트 노쇼 관리 | 호스트·출석/환불 권한자·참가자 | 노쇼 확정·본인/게스트 직접 소명·거절/번복·실제 미참석 환불 자격·원결제별 잔여 배정·0원 기록·알림과 조회를 구분한다. | 0 | 0 |
 | F04-18 | 클럽 | 클럽 회원 신뢰도 점수와 공개 범위 | 현재 회원·본인·유효 운영진 | 내 마일리지/운영진 회원 상세의 실제 입구, 본인/타인 계산 항목 공개, 인정 누적·등급·경고·심각 제재 계산과 재조회 범위를 구분한다. | 10 | 0 |
-| F11-07 | 리뷰 & 신고 | 호스트 리뷰 모더레이션 | 이벤트 호스트 | 호스트 답변(POST/PUT/GET /reviews/{reviewId}/reply, 수정 EditWindow 제한), 임시 숨김(POST /reviews/{reviewId}/hide, ReviewHideReasonCode **6종**), 숨김 해제(unhide), autoEscalate 옵션(hide 시 Report 자동 생성), 증빙 파일 첨부(EvidenceFileValidator, max 5), 신고 진행 중 리뷰 unhide 차단(legal hold) | — | — |
+| F11-07 | 리뷰 & 신고 | 호스트 후기 답변과 임시 숨김 | 이벤트 호스트 | 답변 수정 전 재조회·24시간 경계·자동 검토 기본 OFF·중복 신고·숨김 해제의 범위를 갱신한다. | 7 | 1 |
 | F18-01 | 분쟁 해결 | 통합 분쟁 케이스 조회 | 참가자/호스트 | GET /me/dispute-cases(참가자), GET /host/dispute-cases(호스트), UnifiedDisputeStatus(OPEN/IN_REVIEW/RESOLVED/CLOSED/ESCALATED) 필터, **DisputeSourceType enum 21값(분류용) — 실제 emit: 사용자 7종+USER_DISPUTE 양측/호스트 2종**, caseId 형식 `{sourceType}:{sourceId}`, DisputeCaseVo 목록·상세(타임라인·증빙·actorPermissions), Page 페이지네이션 | — | — |
 | F18-02 | 분쟁 해결 | 분쟁 직접 접수 | 참가자 | POST /me/dispute-cases, DisputeCaseType(REPORT/APPEAL/REFUND_ISSUE/NO_SHOW_APPEAL/CONTENT_MODERATION/SAFETY/SETTLEMENT/TRANSPORT/HOST_ACTION_REVIEW) 9종, summary 필수(min 10/max 2000자), evidenceFileIds max 5, rate-limit 429/중복 409 가드, active_dedup_key GENERATED 컬럼(OPEN/IN_REVIEW/ESCALATED+target 존재 시 중복 방지) | — | — |
 | F18-03 | 분쟁 해결 | 분쟁 이의제기 | 참가자 | POST /me/dispute-cases/{caseId}/appeals, AppealCreateParam(reasonCode 5종: FACT_INCORRECT/EVIDENCE_MISSING/PROCEDURE_UNFAIR/CIRCUMSTANCE_OVERRIDE/OTHER, reasonText min 20/max 1000자), UNIQUE(caseId, appellantUserId) 1건 제약, 철회(POST .../withdraw, PENDING만 가능→CLOSED), DisputeAppealStatus(PENDING/UPHELD/REJECTED/CLOSED), admin이 UPHELD/REJECTED 전이 소유 | — | — |

@@ -1,65 +1,57 @@
-# F11-03. 리뷰 수정 & 삭제 PRD
+# F11-03. 후기 수정과 삭제 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 소스를 기준으로 갱신했다. 구현 계약의 대조이며 새 앱 실행·운영 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 현재 역할과 입구
 
-본인이 작성한 단일 리뷰를 수정(PATCH)하거나 삭제(DELETE, soft delete)하는 두 엔드포인트다. 두 작업 모두 호출자(`@AuthenticationPrincipal`)와 `Review.reviewerId` 일치 검증, 삭제는 `deletedAt`을 현재 시각으로 채우는 soft delete이며, 수정은 변경 직전 값을 `ReviewEditHistory`에 보관하고 5회를 초과해 수정할 수 없다. 두 작업 모두 끝나면 `TrustScoreService.recalculate(revieweeId)`를 호출해 평가 대상자의 신뢰점수가 다시 산정된다.
+이벤트 후기 목록의 본인 카드에서 수정·삭제를 선택한다. 수정은 `Routes.reviewEditPath(review.id)`에 현재 `ReviewVo`를 넘겨 작성 화면을 재사용하고, 삭제는 복구할 수 없다는 확인 뒤 호출한다. 사용자별 「내 후기」는 받은 후기 목록이므로 작성한 후기 전체의 관리 화면으로 설명하지 않는다. [후기 목록의 구분](F11-02_review-list_prd.md)을 따른다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 서버 권한과 수정 횟수
 
-- F11-02 리뷰 목록(`review_list_screen.dart`)에서 본인이 작성한 리뷰 카드의 우상단 더보기(`more_vert`) 메뉴를 통해 트리거된다.
-- 마이페이지의 "내 리뷰" 영역(`/profile/my-reviews` → 동일 `ReviewListScreen`을 `userId`로 진입)에서도 동일 메뉴가 노출된다 — `_resolveCurrentUserId(ref)`로 `authNotifierProvider`의 사용자 id를 읽어 `review.reviewerId`와 일치할 때만 `onEdit`/`onDelete` 콜백을 전달.
-- 수정 흐름은 F11-01의 `ReviewWriteScreen`을 재사용하며, `editReviewId`/`initialReview`가 주어지면 PATCH 모드로 분기된다(앱바 타이틀 "리뷰 수정", 버튼 라벨 "수정", 폼 prefill).
-- 삭제는 `AppDialog.confirm("리뷰를 삭제할까요?")` → 확인 시 `ReviewDeleteNotifier`로 DELETE 호출.
+`PATCH /api/v1/reviews/{id}`는 `{rating, content}`를 받고 `ReviewVo`를 반환한다. 별점은 필수 1~5, 본문은 null 허용·최대 1000자다. 삭제되지 않은 행에 쓰기 잠금을 잡고 작성자 본인인지 확인한다. 다른 작성자는 `REVIEW_NOT_OWNER`, 없는 행은 `REVIEW_NOT_FOUND`다. 사용자 계정이 닫혔으면 수정은 `TARGET_ACCOUNT_CLOSED`로 거절한다.
 
-## 2. 코드 위치
+수정 이력은 최대 5회다. 현재 횟수가 5 이상이면 `REVIEW_EDIT_LIMIT_EXCEEDED`이고, 허용되면 변경 전 별점·본문을 이력에 남기고 새 값을 저장하며 `edited=true`로 설정한다. 동일 값을 다시 PATCH해도 이력과 횟수를 소모한다. 수정 API에 멱등 키가 없으므로 응답 유실 뒤 같은 요청을 안전하게 반복한다고 단정하지 않는다. 최초 작성의 종료 후 7일 조건은 이 수정 메서드에 없다.
 
-계약의 정본은 코드다. 서버: `ReviewController`, `ReviewEditHistory`, `TrustScoreService`, `ScoreHistoryService`. 앱: `review_list_screen.dart`, `review_write_screen.dart`, `review_card.dart`.
+작성자 응답의 `canEdit`와 `remainingEditCount`는 수정 이력에서 계산한다. 비작성자는 `canEdit=false`, `remainingEditCount=null`이다. 임시 숨김 중 작성자에게 반환하는 수정 응답에는 호스트 사유 글을 싣지 않는다.
+
+## 삭제와 연관 결과
+
+`DELETE /api/v1/reviews/{reviewId}`는 작성자 검증 후 `deletedAt`을 기록하고 204를 반환한다. 이미 삭제한 행은 `REVIEW_NOT_FOUND`다. 복구 API는 이 컨트롤러에 없고, 삭제 이력도 최초 작성 중복 판정에 남는다.
+
+수정과 삭제는 평가 대상자의 신뢰점수 재계산을 요청한다. 삭제는 연결 클럽이 있으면 후기 적립의 회수 신호를 발행한다. 신호 발행과 실제 마일리지 회수 완료는 별도 단계이므로 이 문서의 API 호출만으로 후속 소비 성공을 증명하지 않는다. 수정은 기존 적립의 재발행 경로가 아니다.
+
+## 앱 입력 보존과 복귀
+
+작성 화면은 기존 별점·본문을 채우고, `review_{eventId}_{reviewId}` 문서 키의 `SubmissionDraft`로 입력 복원과 제출 준비·완료 처리를 연결한다. 초기 리뷰가 있는 수정 모드는 서버 변경 확인을 사용한다. 남은 횟수를 알면서 `canEdit=false`일 때 제출을 막고, 횟수 필드가 없는 오래된 응답의 기본 false만으로 잠그지 않는다.
+
+성공 시 초안 완료 처리를 마친 뒤 수정 성공을 알리고 `true`로 복귀한다. 호출 목록과 이벤트별·사용자별 후기, 참석·지난 이벤트 집계가 갱신된다. 수정 응답의 적용 여부가 불확실한 오류에서는 관련 목록·집계를 다시 읽도록 표시하고, 확실한 거절만 초안의 거절 상태로 처리한다. 초안 연결 자체를 서버 PATCH의 멱등성 보장으로 설명하지 않는다.
+
+삭제는 서버 응답 후 성공 안내와 목록 갱신을 수행한다. 실패 시 미리 카드를 제거하지 않는다. 대상 없음 오류는 목록을 다시 읽고 권한·통신 오류는 이유를 안내한다. 수정된 후기 카드에는 `(수정됨)`을 표시한다.
+
+## 코드 위치
+
+서버: `ReviewController#updateReview/deleteReview`, `ReviewService#updateReview/deleteReview`, `ReviewEditAllowance`, `ReviewRepository`, `ReviewParam`, `ReviewVo`. 앱: `review_api.dart`, `review_write_provider.dart`, `review_write_screen.dart`, `review_list_screen.dart`, `review_vo.dart`.
 
 <!-- source-references:start -->
 서버 창구: `ReviewController#updateReview`, `ReviewController#deleteReview`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-1. **수정 트리거**: 본인 카드의 더보기 → 시트 → "수정" 탭 → `Routes.reviewEditPath(review.id)` push (`extra: review`) → `ReviewWriteScreen` (edit 모드) → `ReviewEditNotifier(reviewId).updateReview(rating, content)` → `ReviewRepository.updateReview(id, ReviewParam)` → `PATCH /api/v1/reviews/:id`.
-2. **삭제 트리거**: 본인 카드의 더보기 → 시트 → "삭제" 탭 → `AppDialog.confirm` → 확인 시 `ReviewDeleteNotifier.deleteReview(id)` → `ReviewRepository.deleteReview(id)` → `DELETE /api/v1/reviews/:reviewId`.
-3. **목록 invalidate**: 두 작업 모두 성공 후 호출자(`_EventReviewList` / `_UserReviewList`)에서 `ref.invalidate(eventReviewListNotifierProvider(eventId))` 또는 `ref.invalidate(userReviewListNotifierProvider(userId))`로 새로 fetch.
-4. 수정 결과 응답에서 `isEdited`(JSON `edited`)가 true이면 `ReviewCard`가 `(수정됨)` 라벨을 노출.
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Risk | 동일 PATCH도 횟수를 소모하고 서버 멱등 키가 없다. | 응답 유실 후 재전송을 중복 영향 없는 재시도로 쓰지 않는다. |
+| 미검증 | 신뢰점수·마일리지 후속 처리와 실제 초안 복구를 이번에 실행하지 않았다. | 소스 연결과 실행 완료를 구분한다. |
 
-## 4. 제품 규칙
+## 수용 기준과 검증 근거
 
-- 수정과 삭제는 쓴 사람 본인만 할 수 있다. 남의 후기는 거절된다.
-- 수정은 한 후기당 최대 5번이다. 수정 전 값은 이력으로 남고, 수정한 후기에는 닉네임 옆에 `(수정됨)` 이 붙는다. 남은 횟수는 수정 화면에 보인다.
-- 삭제하면 목록에서 사라지고 복구되지 않는다(삭제 전 확인 창에 같은 안내). 삭제 뒤 같은 모임에 다시 쓸 수 없다.
-- 수정과 삭제 모두 호스트의 신뢰점수를 다시 계산한다. 클럽 마일리지가 켜진 클럽 모임의 후기라면 삭제 때 그 적립이 회수된다.
-- 본인 후기 카드에는 신고 대신 더보기(수정, 삭제)가 보인다. 마이페이지의 내 후기 목록에서도 같다.
-- 한도를 넘기면 수정할 수 없다는 안내가 나오고, 후기가 이미 없으면 목록에서 제거한다.
+- **AC-01 유효한 수정:** 작성자이며 남은 횟수가 있을 때 이전 값을 이력에 남기고 새 별점·본문·수정됨 표시와 차감한 횟수를 반환한다.
+- **AC-02 다섯 번 제한:** 이력 5회부터 수정과 추가 이력 저장을 거절한다. 동일 값 제출도 허용된 한 번의 수정으로 센다.
+- **AC-03 입력과 권한:** 범위를 벗어난 별점·1000자 초과 본문·다른 작성자·삭제된 후기는 각각 서버 조건에 따라 거절한다.
+- **AC-04 삭제:** 본인 확인 후 soft delete와 점수 재계산·해당 클럽 회수 신호를 수행한다. 삭제 후 같은 이벤트 재작성은 허용하지 않는다.
+- **AC-05 앱 한도 표시:** 남은 횟수가 알려진 경우 서버의 수정 허용을 따르고, 횟수 정보가 없다는 이유만으로 수정을 막지 않는다.
+- **AC-06 성공과 불확실한 수정:** 성공하면 초안 완료 후 복귀·관련 목록 갱신을 하고, 적용 여부가 불확실하면 재조회 대상에 표시한다. 서버 멱등성을 가정하지 않는다.
+- **AC-07 삭제 실패와 대상 없음:** 실패 때 카드를 먼저 빼지 않는다. 대상 없음은 목록 재조회, 다른 오류는 안내로 처리한다.
 
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 본인 리뷰 수정 (Happy Path) | `Review` 존재(`reviewerId == 본인`), `deleted_at IS NULL`, 수정 이력 0회. | review.rating=5, is_edited=true, review_edit_history 1건, 점수 변동 시 score_snapshot 추가. |
-| S2 | 5회 한도 도달 | `review_edit_history` 5건 존재. | review/이력 변동 없음. |
-| S3 | 타인의 리뷰를 수정하려 함 | 호출 사용자 ≠ `review.reviewerId`. | 변동 없음. |
-| S4 | 본인 리뷰 삭제 (Happy Path) | 본인 리뷰 존재. | review.deleted_at 채움, 조회에서 제외, 신뢰점수 재계산. |
-| S5 | 타인 리뷰 삭제 시도 | 권한 없는 호출. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 이미 삭제된 리뷰 재호출 | `/reviews?eventId=1301` 진입 직후 본인 리뷰 카드 노출, `is_edited=false`. | 변동 없음. 목록이 갱신되며 사라진 카드가 화면에서도 제거. |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 삭제 뒤 목록 갱신 | 후기를 지우면 서버가 확인한 뒤 목록과 평균·개수를 다시 읽어 카드가 빠진다. 미리 빼지 않으므로 삭제가 실패하면 카드는 그대로 남고 이유 안내가 뜬다 | 없음 |
-
-## 9. 수용 기준
-
-- **AC-01. 본인 리뷰 수정 (Happy Path)**: Given `Review` 존재(`reviewerId == 본인`), `deleted_at IS NULL`, 수정 이력 0회. When 사용자가 해당 흐름을 실행하면 Then review.rating=5, is_edited=true, review_edit_history 1건, 점수 변동 시 score_snapshot 추가.
-- **AC-02. 5회 한도 도달**: Given `review_edit_history` 5건 존재. When 사용자가 해당 흐름을 실행하면 Then review/이력 변동 없음.
-- **AC-03. 타인의 리뷰를 수정하려 함**: Given 호출 사용자 ≠ `review.reviewerId`. When 사용자가 해당 흐름을 실행하면 Then 변동 없음.
-- **AC-04. 본인 리뷰 삭제 (Happy Path)**: Given 본인 리뷰 존재. When 사용자가 해당 흐름을 실행하면 Then review.deleted_at 채움, 조회에서 제외, 신뢰점수 재계산.
-- **AC-05. 타인 리뷰 삭제 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 이미 삭제된 리뷰 재호출**: Given `/reviews?eventId=1301` 진입 직후 본인 리뷰 카드 노출, `is_edited=false`. When 사용자가 해당 흐름을 실행하면 Then 변동 없음. 목록이 갱신되며 사라진 카드가 화면에서도 제거.
+근거는 현재 서버 저장·이력·권한과 앱 입력·호출·갱신 분기다. 로컬 시나리오의 과거 E2E 기록은 보존하고 이번 실행 통과로 합산하지 않는다.

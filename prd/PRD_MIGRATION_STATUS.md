@@ -326,12 +326,12 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F10-04 | 캘린더 | [F10-04_recurring-availability-rule_prd.md](02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md) | `F10-04_recurring-availability-rule` | 실사 기반 전환본 | 5 | 3 |
 | F10-05 | 캘린더 | [F10-05_other-user-availability_prd.md](02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md) | `F10-05_other-user-availability` | 실사 기반 전환본 | 2 | 1 |
 | F11-01 | 리뷰 & 신고 | [F11-01_event-review-write_prd.md](02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | `F11-01_event-review-write` | 실사 기반 전환본 | 1 | 1 |
-| F11-02 | 리뷰 & 신고 | [F11-02_review-list_prd.md](02_feature_prds/11_review_report/F11-02_review-list_prd.md) | `F11-02_review-list` | 실사 기반 전환본 | 2 | 2 |
-| F11-03 | 리뷰 & 신고 | [F11-03_review-edit-delete_prd.md](02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | `F11-03_review-edit-delete` | 실사 기반 전환본 | 2 | 3 |
+| F11-02 | 리뷰 & 신고 | [F11-02_review-list_prd.md](02_feature_prds/11_review_report/F11-02_review-list_prd.md) | `F11-02_review-list` | 실사 기반 전환본 | 2 | 3 |
+| F11-03 | 리뷰 & 신고 | [F11-03_review-edit-delete_prd.md](02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | `F11-03_review-edit-delete` | 실사 기반 전환본 | 2 | 2 |
 | F11-04 | 리뷰 & 신고 | [F11-04_report_prd.md](02_feature_prds/11_review_report/F11-04_report_prd.md) | `F11-04_report` | 실사 기반 갱신본 | 2 | 3 |
 | F11-05 | 리뷰 & 신고 | [F11-05_trust-score_prd.md](02_feature_prds/11_review_report/F11-05_trust-score_prd.md) | `F11-05_trust-score` | 실사 기반 전환본 | 3 | 1 |
 | F11-06 | 리뷰 & 신고 | [F11-06_taste-profile_prd.md](02_feature_prds/11_review_report/F11-06_taste-profile_prd.md) | `F11-06_taste-profile` | 실사 기반 전환본 | 5 | 1 |
-| F11-07 | 리뷰 & 신고 | [F11-07_review-moderation_prd.md](02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | `source-first` | 실사 기반 신규 작성 | 3 | 4 |
+| F11-07 | 리뷰 & 신고 | [F11-07_review-moderation_prd.md](02_feature_prds/11_review_report/F11-07_review-moderation_prd.md) | `source-first` | 실사 기반 신규 작성 | 0 | 2 |
 | F12-01 | 알림 | [F12-01_notification-list-read_prd.md](02_feature_prds/12_notification/F12-01_notification-list-read_prd.md) | `F12-01_notification-list-read` | 실사 기반 전환본 | 5 | 4 |
 | F12-02 | 알림 | [F12-02_notification-grouped-badge_prd.md](02_feature_prds/12_notification/F12-02_notification-grouped-badge_prd.md) | `F12-02_notification-grouped-badge` | 실사 기반 전환본 | 2 | 3 |
 | F12-03 | 알림 | [F12-03_category-settings_prd.md](02_feature_prds/12_notification/F12-03_category-settings_prd.md) | `F12-03_category-settings` | 실사 기반 전환본 | 2 | 1 |

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F11-07 호스트 리뷰 모더레이션 — community PRD</title>
+  <title>F11-07 호스트 후기 답변과 임시 숨김</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,262 +17,27 @@
           <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
           F11-07 호스트 리뷰 모더레이션
         </div>
-        <h1>F11-07. 호스트 리뷰 모더레이션 (답변 · 임시 숨김)</h1>
-        <p class="lede">
-          이벤트 호스트가 본인 이벤트에 달린 리뷰에 직접 대응할 수 있는 두 가지 도구다.
-          <strong>답변</strong>은 리뷰 1건에 공개 댓글을 붙이고(리뷰당 1개, 작성 후 24시간 이내만 수정 가능),
-          <strong>임시 숨김</strong>은 6가지 사유 중 하나를 선택해 리뷰를 일시적으로 가린다.
-          허위 리뷰 사유로 숨기면 운영자 검토를 위한 신고가 자동으로 접수된다(F11-04 연동).
-          모더레이션 권한은 해당 이벤트의 호스트에게만 있다.
-        </p>
+        <h1>F11-07 호스트 후기 답변과 임시 숨김</h1>
+        <p class="lede">답변 수정 전 재조회·24시간 경계·자동 검토 기본 OFF·중복 신고·숨김 해제의 범위를 갱신한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">답변</div><div class="value">리뷰당 1개</div><div class="hint">작성 후 24시간 이내만 수정 가능</div></div>
-          <div class="metric"><div class="label">숨김 사유</div><div class="value">6가지</div><div class="hint">욕설·명예훼손·광고·주제 무관·허위 리뷰·기타</div></div>
-          <div class="metric"><div class="label">숨김 → 신고</div><div class="value">자동 연동</div><div class="hint">허위 리뷰 사유 선택 시 신고 자동 접수</div></div>
-          <div class="metric"><div class="label">숨김 해제</div><div class="value">언제든</div><div class="hint">원래대로 다시 보이게 복구</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 호스트에게 발언권을 주되, 삭제 권한은 주지 않는다</span>
-          <p>모임 후기는 다른 사용자의 판단 근거다. 사실과 다른 후기에 호스트가 침묵해야 한다면
-            커뮤니티 신뢰는 유지되지 않는다 — 답변 기능이 그 발언권이다.
-            동시에 호스트가 부정적인 후기를 마음대로 지워버릴 수 있다면 리뷰 자체가 무력화된다.
-            그래서 <strong>삭제는 없고 임시 숨김만 있다</strong>. 숨김도 사유를 남기고, 운영자가 검토할 수 있는 신고 경로와 연동된다.
-            "호스트가 불쾌하다고 숨겼느냐, 진짜 문제 있는 후기를 정리했느냐"를 운영 기록이 추적한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>답변 — 발언권의 구조</h2>
-        <p class="subtitle">호스트의 답변은 리뷰 카드 아래에 녹색 카드로 붙는다. 다른 사용자가 리뷰를 볼 때 호스트의 시각도 같이 보인다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["호스트: 리뷰 더보기"] --> D{"이미 답변 있음?"}
-    D -->|"없음"| B["답변 입력창<br/>새 답변 작성"]
-    B --> C["답변 등록"]
-    C --> F["답변 저장<br/>24시간 수정 가능 상태"]
-    F --> G["리뷰 카드에 녹색 답변 카드 표시"]
-    D -->|"예"| H{"24시간 이내?"}
-    H -->|"예"| I["답변 수정 화면<br/>기존 내용 수정"]
-    I --> G
-    H -->|"이후"| J["수정 불가 안내"]
-          </div>
-        </div>
-
-        <div class="callout">
-          <span class="label">현재 상태 — 답변 생성·수정·24시간 차단·작성자 알림 완료</span>
-          <p>답변이 없는 리뷰는 새 답변 작성으로, 이미 답변이 있는 리뷰는 수정 화면으로 이동한다.
-            생성→수정→재조회 화면 테스트가 있고, 서버는 작성 후 24시간이 지나면 수정 요청을 거절한다.
-            앱도 서버의 <code>allowEdit</code>와 답변 생성 시각을 함께 확인해 만료된 수정 버튼을 숨긴다.
-            새 답변을 등록하면 작성자에게 한 번 알리고, 같은 답변을 24시간 안에 고칠 때는 다시 알리지 않는다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>임시 숨김 — 사유를 남기고 가린다</h2>
-        <p class="subtitle">숨김은 리뷰를 지우는 게 아니다. 사유를 남기고 가리는 것이다. 운영자가 나중에 그 흔적을 볼 수 있다.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:160px">숨김 사유</th><th>의미</th><th style="width:30%">특이사항</th></tr></thead>
-            <tbody>
-              <tr><td>욕설·괴롭힘</td><td>욕설 · 괴롭힘</td><td>—</td></tr>
-              <tr><td>명예훼손</td><td>명예훼손 · 허위 사실 적시</td><td>—</td></tr>
-              <tr><td>광고·스팸</td><td>광고 · 스팸</td><td>—</td></tr>
-              <tr><td>주제 무관</td><td>모임과 무관한 내용</td><td>—</td></tr>
-              <tr><td>허위 리뷰</td><td>허위 리뷰</td><td>선택 시 우선 검토 표시가 붙은 신고가 자동 접수된다. 자동 신고는 기본으로 켜지지만 호스트가 체크박스로 끌 수 있다.</td></tr>
-              <tr><td>기타</td><td>기타</td><td>호스트가 사유를 직접 적어 넣는다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="diagram" style="margin-top:1.5rem">
-          <div class="mermaid">
-flowchart LR
-    A["호스트: 임시 숨김 선택"] --> B["숨김 사유 선택"]
-    B --> C{"허위 리뷰 선택?"}
-    C -->|"예"| D["자동 신고 켜짐<br/>(호스트가 체크박스로 끌 수 있음)"]
-    C -->|"아니오"| E["자동 신고 기본 켜짐<br/>(호스트가 체크박스로 끌 수 있음)"]
-    D --> F["임시 숨김 처리"]
-    E --> F
-    F --> G["리뷰 카드: 숨김 배지 + 안내 문구"]
-    F --> H["자동 신고가 켜져 있으면<br/>운영자 검토 신고 자동 접수 (F11-04)"]
-    H --> I["운영자 신고 목록에 적재"]
-          </div>
-        </div>
-
-        <div class="callout warn" style="margin-top:1.5rem">
-          <span class="label">알려진 갭 — 자동 신고 기본값이 양쪽에서 다르다</span>
-          <p>앱에서는 어떤 사유로 숨기든 "자동 신고"가 <strong>기본으로 켜진</strong> 상태이며, 호스트가 체크박스를 직접 꺼야만 해제된다.
-            허위 리뷰를 골라도 자동 신고가 켜지지만 끄는 것은 여전히 가능하다.
-            반면 서버 쪽 기본값은 <strong>꺼짐</strong>이다.
-            그 결과 호스트가 체크박스를 의식하지 못하면 허위 리뷰가 아닌 일반 숨김까지도 운영자 신고가 자동으로 접수된다.
-            이것이 의도한 운영 정책이라면 그대로 두되 양쪽 기본값을 "켜짐"으로 맞추고,
-            의도하지 않았다면 앱 기본값을 "꺼짐"으로 바꿔야 한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>숨겨진 리뷰를 사용자가 보면</h2>
-        <p class="subtitle">숨긴다는 것은 없애는 게 아니다. 내용이 가려지고 왜 가려졌는지가 대신 보인다.</p>
-        <div class="callout">
-          <span class="label">숨김 상태 리뷰 카드의 모습</span>
-          <ul>
-            <li><strong>리뷰 작성자와 별점은 그대로 보인다.</strong> 누가 쓴 리뷰인지, 몇 점을 줬는지는 가려지지 않는다 — 신뢰점수에도 계속 반영된다.</li>
-            <li><strong>본문 자리에 "임시 숨김" 안내가 들어온다.</strong> 호스트가 적은 사유가 있으면 그 내용이, 없으면 선택한 숨김 사유의 의미가 안내문으로 보인다.</li>
-            <li><strong>숨김 배지가 붙는다.</strong> 허위 리뷰 사유면 "허위 리뷰 검토 중", 그 외이면 "임시 숨김" 라벨이 카드 상단에 붙는다.</li>
-            <li><strong>호스트 답변이 있으면 숨김 상태에서도 함께 보인다.</strong></li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 답변</div>
-            <h3>억울한 후기에 입장을 남긴다</h3>
-            <p>호스트가 본인 이벤트 리뷰 목록을 보다 사실과 다른 내용이 적힌 후기를 발견한다. 카드 더보기를 눌러 "답변하기"를 선택하고, 공식 입장을 적는다. 확인하면 녹색 카드가 리뷰 아래에 붙는다. 다른 사용자가 그 리뷰를 볼 때 호스트의 입장도 같이 보인다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 침묵하지 않아도 된다는 장치. 리뷰 한 줄이 전부인 상황에서 호스트 시각이 추가되어 조회자가 더 균형 잡힌 판단을 할 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">수정 윈도우</div>
-            <h3>잘못 입력한 답변을 24시간 안에 수정</h3>
-            <p>답변을 달았는데 오탈자가 심각하다. 24시간 이내라면 더보기 → "답변 수정"으로 고칠 수 있다. 24시간이 지나면 수정 메뉴가 비활성화된다 — 공개 답변은 함부로 고치지 못한다는 정책이다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 답변을 언제든 수정할 수 있으면 호스트가 후기에 따라 입장을 바꾸는 식으로 악용될 수 있다. 24시간은 교정 시간이지 번복 시간이 아니다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">임시 숨김</div>
-            <h3>광고성 스팸 후기를 잠시 가린다</h3>
-            <p>이벤트와 전혀 무관한 광고 문구가 적힌 후기가 달렸다. 더보기 → "임시 숨김" → "광고·스팸" 선택. 확인하면 후기 본문 자리에 "임시 숨김" 안내가 들어온다. 다른 사람은 그 후기의 내용 대신 "임시 숨김 처리된 리뷰"라는 안내를 본다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 리뷰가 사라지지 않는다는 것을 사용자가 인지한다. 호스트가 부정적인 후기를 모두 없앨 수 있다는 오해를 막는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">허위 리뷰 신고 연동</div>
-            <h3>"이건 허위다" — 숨김과 신고가 한 번에</h3>
-            <p>참석하지 않은 사용자가 리뷰를 남긴 것이 의심된다. 더보기 → "임시 숨김" → "허위 리뷰" 선택. 확인하면 리뷰가 가려지는 동시에 운영자 신고 목록에 우선 검토 표시가 붙은 신고가 자동으로 접수된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 "이건 신고감이다"고 판단할 때 두 번 행동(숨김 + 신고)하지 않아도 된다. 허위 리뷰를 발견한 순간 한 번의 선택으로 운영 검토까지 이어진다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">숨김 해제</div>
-            <h3>오판이었다 — 되돌린다</h3>
-            <p>숨겼는데 돌아보니 과한 판단이었다. 더보기 → "숨김 해제"를 누르면 리뷰가 다시 보이기 시작한다. 별점과 본문이 원래대로 복구된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 실수를 되돌릴 수 있다. 단, 숨김 중에 자동 생성된 신고는 이미 접수된 상태라 함께 취소되지 않는다 — 운영자 검토는 별도로 진행된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">권한 경계</div>
-            <h3>다른 이벤트의 호스트가 내 리뷰에 접근 시도</h3>
-            <p>B 이벤트 호스트가 A 이벤트 리뷰에 답변을 달려 한다. 서버에서 "해당 이벤트의 호스트가 아닙니다" 거절이 반환된다. 앱에서는 본인이 아닌 이벤트의 리뷰에는 더보기 모더레이션 메뉴 자체가 보이지 않는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 답변과 숨김 권한이 이벤트 단위로 격리된다. 호스트 A가 B의 이벤트에 개입할 수 없다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <p class="subtitle">호스트와 일반 사용자가 같은 리뷰를 볼 때 각각 다른 것이 보인다.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:160px">화면 요소</th><th>일반 사용자</th><th style="width:35%">호스트(본인 이벤트)</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>리뷰 카드 더보기</strong></td>
-                <td>신고 아이콘만</td>
-                <td>신고 + "답변하기" + "임시 숨김" / "숨김 해제" (상태에 따라)</td>
-              </tr>
-              <tr>
-                <td><strong>숨김 상태 카드</strong></td>
-                <td>본문 자리에 "임시 숨김" 안내 + 사유 배지</td>
-                <td>동일. 단, 더보기에 "숨김 해제" 메뉴가 붙는다.</td>
-              </tr>
-              <tr>
-                <td><strong>호스트 답변 카드</strong></td>
-                <td>리뷰 아래 녹색 카드 — 호스트 닉네임 + 답변 내용</td>
-                <td>동일. 답변이 있으면 더보기에 "답변 수정" 메뉴를 노출하고 수정 화면으로 이동.</td>
-              </tr>
-              <tr>
-                <td><strong>답변 수정 여부</strong></td>
-                <td>보이지 않음</td>
-                <td>작성 후 24시간 이내이면 수정 메뉴 노출, 지나면 비활성.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">모더레이션 흔적은 남는다</span>
-          <ul>
-            <li><strong>임시 숨김을 해제해도 그 사실이 별도 이력으로 남지 않는다.</strong>
-              숨김 해제 시 숨김 사유·실행자 등의 기록이 비워질 뿐, 누가 언제 해제했는지를 따로 남기는 이력은 없다.
-              다만 자동 신고가 켜진 채 숨겼다면 그때 접수된 신고는 삭제되지 않고 그대로 남으므로,
-              숨김과 해제를 반복하는 패턴은 신고 목록을 통해 운영에서 감지할 수 있다.</li>
-            <li><strong>허위 리뷰 숨김은 자동으로 신고가 접수된다(우선 검토 표시 포함).</strong>
-              운영자 목록 상단에 우선 노출된다. 숨김을 해제해도 신고 기록은 남는다.
-              운영 처리(승인/기각)는 별도로 진행되어야 한다.</li>
-            <li><strong>별점은 숨겨도 신뢰점수에서 제외되지 않는다.</strong>
-              현재 정책은 임시 숨김 중에도 별점을 신뢰점수 계산에서 빼지 않는 것이다.
-              이 정책이 바뀌면 신뢰점수 재계산이 필요하다.</li>
-            <li><strong>답변 삭제는 호스트도 운영자도 일반 화면으로는 할 수 없다.</strong>
-              현재 답변을 지우는 경로 자체가 화면에 열려 있지 않다. 꼭 지워야 한다면 운영자용 별도 도구를 거쳐야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>알려진 갭 요약</h2>
-        <div class="callout warn">
-          <span class="label">남은 정책·계약 정리</span>
-          <ul>
-            <li><strong>사용자 동작은 24시간에서 닫히지만 서버의 저장된 <code>allowEdit</code> 값은 늦게 남을 수 있다.</strong>
-              만료 요청은 서버가 거절하고 앱도 생성 시각으로 버튼을 숨겨 실제 수정 우회는 없다. 다만 만료 시
-              값을 내린 뒤 예외를 던지는 현재 트랜잭션은 함께 롤백되므로, API 필드를 정확한 현재값으로 만들려면
-              조회 시 계산하거나 별도 갱신 경계를 두어야 한다.</li>
-            <li><strong>자동 신고 기본값 운영 정책 결정</strong> — 앱은 자동 신고가 기본으로 켜진 채이고 호스트가 체크박스로 끌 수 있는데, 서버 기본값은 꺼짐이다.
-              체크박스가 잘 보이는지와 기본 방향이 의도한 정책인지 확인하고, 필요하면 안내를 강조하거나 양쪽 기본값을 맞춰야 한다.</li>
-            <li><strong>답변 삭제 경로는 없다.</strong> 사용자 제품에서 삭제를 제공하지 않는 정책이라면 그대로 두고,
-              법적·운영상 삭제가 필요하다면 별도 관리자 절차와 감사 기록을 설계해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이어지는 단위 · 관련 정책</h2>
-        <div class="hub-grid">
-          <a class="card" href="../domains/11-review.html"><div class="eyebrow">상위 도메인</div><h3>11 리뷰·신고</h3></a>
-          <a class="card" href="F11-02.html"><div class="eyebrow">진입</div><h3>F11-02 리뷰 목록</h3><p>모더레이션 더보기 메뉴가 표시되는 화면.</p></a>
-          <a class="card" href="F11-04.html"><div class="eyebrow">연동</div><h3>F11-04 신고</h3><p>허위 리뷰 숨김 시 자동 신고 접수 경로.</p></a>
-          <a class="card" href="F11-05.html"><div class="eyebrow">관련</div><h3>F11-05 신뢰점수</h3><p>숨김 상태에서도 별점이 신뢰점수에 반영됨.</p></a>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
-  - business_logic/prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md
-  - community_api/src/.../review/controller/ReviewController.java:89-127
-  - community_api/src/.../review/service/ReviewService.java:300-460
-  - community_api/src/.../review/constants/ReviewHideReasonCode.java
-  - community_app/lib/data/api/review_api.dart:40-62
-  - community_app/lib/presentation/review/widgets/review_card.dart
--->
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 역할과 입구</h2><p>후기 카드의 처리 메뉴에서 답변 작성·수정과 임시 숨김·해제를 실행한다. 앱은 <code>revieweeId == currentUserId</code>인 비작성자에게 호스트 콜백을 준다. 서버의 답변 작성·숨김·해제는 현재 이벤트의 호스트인지 검사하며, 답변 수정은 답변에 저장된 <code>hostUserId</code>를 검사한다. 이 권한 차이를 단일 조건으로 축약하지 않는다.</p></section>
+<section id="current-2"><h2>답변 생성과 수정</h2><p><code>POST /api/v1/reviews/{reviewId}/reply</code>는 삭제되지 않은 후기와 현재 호스트를 확인하고, 살아 있는 답변이 있으면 <code>REVIEW_REPLY_ALREADY_EXISTS</code>로 거절한다. 본문은 공백만 있는 값이 불가하고 최대 1000자다. 성공은 201 <code>ReviewReplyVo</code>, 작성자 알림은 답변 식별자로 outbox에 한 번 등록한다. 알림 발송·수신 완료와 outbox 등록은 구분한다.</p>
+<p><code>PUT</code>은 기존 답변의 호스트 본인이고 <code>allowEdit=true</code>이며 생성 후 24시간 경계 이내여야 한다. 정확히 24시간인 시점까지는 열려 있고 그 뒤에는 <code>REVIEW_REPLY_EDIT_WINDOW_EXPIRED</code>다. <code>GET</code>은 답변 호스트와의 차단 관계가 있으면 답변 없음으로 처리하며, 조회자 기준 <code>canEdit</code>를 계산한다. 답변 삭제 API는 공개 컨트롤러에 없다.</p>
+<p>앱은 새 답변과 수정 호출을 구분한다. 수정 선택 직전에 GET으로 현재 본문과 권한을 다시 읽고, 허용된 응답으로 시트를 채운다. 이미 지난 24시간을 오래된 목록의 true만으로 통과시키지 않는다. 같은 후기의 재확인 중 중복 진입도 막는다. 서버가 <code>canEdit</code>를 주면 앱은 그 값을 우선하고 없을 때 <code>allowEdit</code>·생성 시각으로 판정한다.</p></section>
+<section id="current-3"><h2>임시 숨김과 운영팀 검토 요청</h2><p><code>POST /api/v1/reviews/{reviewId}/hide</code>는 <code>{reasonCode, reasonText, autoEscalate}</code>를 받는다. 사유는 <code>HARASSMENT</code>, <code>DEFAMATION</code>, <code>SPAM</code>, <code>OFF_TOPIC</code>, <code>FAKE_REVIEW</code>, <code>OTHER</code> 중 하나가 필수이고 자유 글은 선택·최대 500자다. <code>OTHER</code>에도 글 필수 조건은 없다. 이미 숨긴 후기는 <code>REVIEW_ALREADY_HIDDEN</code>이다.</p>
+<p><strong>현재 앱 시트·앱 요청 모델·서버 모두 <code>autoEscalate</code> 기본값은 false다.</strong> 앱에서 허위 후기 사유를 선택하면 true로 바꾸지만 사용자가 체크를 해제할 수 있다. 따라서 허위 후기를 골랐다는 이유만으로 신고가 항상 생기는 것은 아니다.</p>
+<p>true이고 같은 호스트의 해당 후기 신고가 없으면 플랫폼 정책·플랫폼 관할의 <code>REVIEW</code> 신고를 <code>PENDING</code>으로 만든다. 사유는 <code>INAPPROPRIATE</code>, 허위 후기일 때 우선 검토다. 기존 신고가 있으면 새로 만들지 않는다. 기존 신고 중 <code>PENDING</code>, <code>IN_REVIEW</code>, <code>ESCALATED</code>가 하나도 없으면 숨김은 성공하되 <code>escalationNotAccepted=true</code>로 검토 요청이 접수되지 않았음을 알린다. 앱은 이를 별도 경고 문구로 표시한다.</p>
+<p>숨김은 후기의 별점을 신뢰점수에서 제외하는 동작이 아니다. 연결 클럽의 후기 적립 회수 신호는 발행하지만 후속 소비 완료를 이 API 성공만으로 단정하지 않는다. <a href="F11-02.html">목록의 본문 마스킹</a>의 조회자별 반환과 앱 숨김 안내가 적용된다.</p></section>
+<section id="current-4"><h2>해제와 앱 실패 처리</h2><p><code>POST /api/v1/reviews/{reviewId}/unhide</code>는 현재 호스트만 호출할 수 있고 숨김 상태가 아니면 <code>REVIEW_NOT_HIDDEN</code>이다. 성공 시 <code>temporarilyHidden=false</code>로 바꾸고 사유·숨긴 사람·시각을 비운다. 기존 자동 신고를 철회하거나 마일리지를 재적립하는 호출은 없다. 서버는 <code>ReviewVo</code>를 반환하지만 앱은 이 응답 본문을 사용하지 않고 목록을 다시 읽는다.</p>
+<p>앱은 해제 확인 후 호출하고 성공하면 목록을 갱신한다. 답변·숨김 시트는 제출 중 중복 클릭을 막고, 실패 시 입력을 유지한다. 답변 생성에서 이미 존재 오류는 목록 재조회 후 시트를 닫으며, 결과를 확정할 수 없는 오류는 목록 확인 안내와 함께 시트를 유지한다. 답변 수정도 실패 시 시트를 유지하며 확정된 상태 변화는 목록을 갱신한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>앱의 평가 대상자·현재 이벤트 호스트·답변 생성자의 역할이 호스트 변경 뒤 달라질 수 있다.</td><td>각 호출의 실제 서버 권한을 나눠 기록한다.</td></tr><tr><td>미검증</td><td>실제 계정별 조작·알림 수신·신고 처리·마일리지 후속 처리를 이번에 실행하지 않았다.</td><td>문서 최신화와 실제 운영 완료를 분리한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 답변 작성:</strong> 현재 호스트가 비어 있지 않은 1000자 이하 본문을 제출하면 201로 답변을 반환하고 중복 생성을 거절한다.</li><li><strong>AC-02 수정 전 재확인:</strong> 앱은 GET으로 현재 답변을 다시 읽고 수정 가능할 때만 그 본문으로 시트를 연다. 중복 재확인 진입을 막는다.</li><li><strong>AC-03 수정 기간과 권한:</strong> 답변에 저장된 호스트 본인·allowEdit·24시간 경계를 서버에서 검사하고 범위를 벗어나면 거절한다.</li><li><strong>AC-04 숨김 기본값:</strong> 시트·요청 모델·서버의 자동 검토 요청 기본값은 false다. 허위 후기 선택으로 켜져도 사용자가 끌 수 있다.</li><li><strong>AC-05 자동 신고 중복:</strong> 검토 요청을 켜면 기존 신고를 먼저 확인한다. 종결 신고만 있으면 숨김 성공과 검토 미접수를 구분해 표시한다.</li><li><strong>AC-06 숨김 해제:</strong> 현재 호스트가 확인 후 해제하면 숨김 정보가 비워지고 목록이 갱신된다. 기존 신고 철회나 마일리지 재적립은 포함하지 않는다.</li><li><strong>AC-07 시트 오류 복구:</strong> 확정된 답변 중복은 목록을 갱신하고 닫는다. 결과 불명·수정·숨김 실패는 해당 입력을 유지하며 원인 또는 확인 안내를 표시한다.</li></ul>
+<p>근거는 현재 서버 계약·권한과 앱 메뉴·재확인·시트 처리다. 이번에 제품 시험을 새로 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

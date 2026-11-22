@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,316개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,317개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1316,
+    "documentedScenarioItems": 1317,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -13513,14 +13513,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-02",
       "domain": "리뷰 & 신고",
-      "name": "리뷰 목록 조회",
-      "scenarioCount": 6,
+      "name": "이벤트 후기와 사용자가 받은 후기 조회",
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-02_review-list/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-02_review-list/backend.md",
@@ -13589,7 +13589,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-03",
       "domain": "리뷰 & 신고",
-      "name": "리뷰 수정 & 삭제",
+      "name": "후기 수정과 삭제",
       "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-03_review-edit-delete/scenarios.md",
@@ -13851,7 +13851,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-07",
       "domain": "리뷰 & 신고",
-      "name": "호스트 리뷰 모더레이션",
+      "name": "호스트 후기 답변과 임시 숨김",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md",
