@@ -426,7 +426,8 @@
         "payment_policy_20261122",
         "payment_supplement_20261122",
         "privacy_policy_20261122",
-        "planning_qa_20261122"
+        "planning_qa_20261122",
+        "permission_policy_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5060,9 +5061,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "cfd9b3bdcb76b6be90b4f25a9a22297a0a5004fec6d76f41e1ec1afc4fe797b6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "permission_policy_20261122"
+      ],
+      "reviewedSha256": "9419a6c4dc8a5152bf969bad9a041a743d0c3efea78b166fe0c49922ec771adc"
     },
     {
       "path": "docs/policies/planning-qa.html",
@@ -8386,10 +8390,12 @@
       "kind": "policy_prd",
       "document": true,
       "baselineSha256": "4b02a81191385c6ae29ac186062ce543c865b8f52e5c1b1824ab565190a789cc",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "permission_policy_20261122"
+      ],
+      "reviewedSha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
     },
     {
       "path": "prd/03_policy_prds/planning_qa_policy.md",
@@ -43890,6 +43896,356 @@
         "productTests": "not run; documentation guidance, current counting implementation, and verified unchanged canonical contracts reviewed"
       },
       "observedSourceVersions": {
+        "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "permission_policy_20261122": {
+      "kind": "source_review",
+      "scope": "권한 정책 PRD 500줄·공개 HTML 19절 전체 대조. 동일 SHA의 26개 기능/정책 정본 재사용과 공통 권한·관리자 인증/재인증 예외·공개 범위/플랫폼 개입 관문·개최권 요청 복구 직접 소스 대조. 실제 운영 설정·브라우저·제품 시험은 수행하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/JwtAuthenticationFilter.java",
+          "sha256": "20db439da0552db7f5afcc6df468f3d207a9d8012644a454ffbdaf29ae1a0816",
+          "reviewScope": "123–154 비밀번호 성공 뒤 예외 경로 또는 두 번째 단계 대기"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminPasswordOnlyLogin.java",
+          "sha256": "886509c4e8f88c8d7e012142d92170ac4648a8078047d9ba2e01620d61cb8e09",
+          "reviewScope": "전체 본문: 지정 관리자 중지 정책일 때 세션 발급·계정 검사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminSecondFactorPolicy.java",
+          "sha256": "5a25e52db215c967c047a7bdcad202614e8e19a4d9550ae0a6878febba6bfbc1",
+          "reviewScope": "전체 본문: 특정 관리자·시각 또는 manual 중지 조건"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/service/AdminTwoFactorService.java",
+          "sha256": "161117407b0ed55c6b070b345eff38831590921da4ef58a9aef491bfddf38ad9",
+          "reviewScope": "105–159 등록·검증·복구 코드·대기 소모"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/service/AdminTwoFactorTxSteps.java",
+          "sha256": "f0a80ff96f6c1930051ffd66b8c20542b5599e44f584cbb184d68c9686545abf",
+          "reviewScope": "112–126 시간 단계 조건부 소비와 복구 코드 소비"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/repository/AdminTwoFactorRepository.java",
+          "sha256": "150a89696f8c13eaef9d578a60f265957c1d33c98d4113bd55993253bf3921e4",
+          "reviewScope": "21–65 관리자·암호·확인 비밀 잠금;71–95 사용 시간 단계·한 번 복구 코드 조건부 쓰기"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/service/AdminTwoFactorSessionIssuer.java",
+          "sha256": "0fd41b91b9a18c6349edc4bdc80b5c6a9aa3c2fa4a1d180a3f4cd8b6f8a19cf6",
+          "reviewScope": "60–99 현재 암호·인증 세대·중지 정책·계정 권한 재검사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminTwoFactorChallengeStore.java",
+          "sha256": "6ebc932dd1ff1b5c01046ff32652ebd454313f3b1cc8ecb5dad6f12ad78b48b9",
+          "reviewScope": "49 대기 TTL 5분;93–102 암호 지문과 대기 저장 연결"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/service/AdminReauthService.java",
+          "sha256": "60361faf6f696cdd786f50b8621203cc95859b385cd4d6b10ebaed942c0a2457",
+          "reviewScope": "55–68 관리자/세션 재인증·유효한 TOTP 소비"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminReauthStore.java",
+          "sha256": "73056efe95c0cc4bd3fbb7bc3ce5feaffd3a6ca774592cc99374e542ab1598fd",
+          "reviewScope": "26 WINDOW 5분;43–70 관리자·세션 저장 및 미래/만료 거절"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminReauthGuard.java",
+          "sha256": "1b373daf731ca8b57206027eef254cfa0923b596a315024ed7605e65f1fe4315",
+          "reviewScope": "39–59 지정 경로·정책 예외·신선한 재인증 검사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminReauthTargets.java",
+          "sha256": "fb3c02b88fbe39d5e35a3ee973c1c7218a5d51aa33fdd9fcc9fcadba08dac557",
+          "reviewScope": "31–42 세 분류·일부 등록;181–225 내보내기와 정확한 method/handler 키 판정. 전체 대상 목록의 업무별 의미 대조는 아님"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminSessionCookies.java",
+          "sha256": "5c5f607080f3c2e3c2e7fc25f391ec2beb793a3b029aac91939692f1f1edf3b8",
+          "reviewScope": "35–94 쿠키 설정·CSRF와 세션 분리;151–165 로그인 대기/세션 HttpOnly·SameSite·Secure"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/security/SecurityConfiguration.java",
+          "sha256": "339d3935587f6feb189ce7d527471d539ddd09f1978da7a1d35e10e82a9bd248",
+          "reviewScope": "118–147 필터·CSRF·로그인 POST 예외·출처 검사 연결"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/config/security/AdminOriginCheckFilter.java",
+          "sha256": "5f801b774f2caa1458b4c74392c2370fa4880a8971e9a18dfe25a73e0c65ed81",
+          "reviewScope": "31–64 상태 변경의 Origin 허용 목록 검사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/util/AdminPasswordPolicy.java",
+          "sha256": "7d7f472b415b02a51b0a08b81c26031688c10772c1be4035352f68a1f6586992",
+          "reviewScope": "19–50 전체 정책: codepoint 12·UTF8 72·대소문자·지정 특수문자"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/service/AdminService.java",
+          "sha256": "f04aeae92134180ff6cdcbaa468474227e4b3fba15eefe53c4bd10414542da9b",
+          "reviewScope": "73 새 비밀번호의 공통 정책 호출"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/service/AdminManageService.java",
+          "sha256": "f3a970af53e54621b67cbc4ba3077ab2d5d2c7cdc4a3ed3a9960431ed90c3169",
+          "reviewScope": "108 새 관리자 비밀번호의 공통 정책 호출"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/club/service/AdminClubPlatformOversightGuard.java",
+          "sha256": "9f1d8e4322e78ef88f844392b995fc3b79054eba421f8568fcc87aaf067297dd",
+          "reviewScope": "63–105 기본 false·관문 검사와 거절"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/club/controller/ManageClubOwnerTransferController.java",
+          "sha256": "d936188a41829d4c48b9fa03b0b42c319efc3e0af9c7d4174f977a8faef7ce7d",
+          "reviewScope": "24–47 전용 직무 권한·필수 명령 키·서비스 위임"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/club/service/ManageClubOwnerTransferService.java",
+          "sha256": "e5c94423dd7dab8ae90c8c21f919cfb63e4ab455ba832fc5cfa94987baac60a2",
+          "reviewScope": "42–43 긴급 승계의 관문 선행 검사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/regularmeeting/service/ManageRegularMeetingService.java",
+          "sha256": "2db72bc490e81f4dbc29c9099f69b1d377ab10c7a75b93135bf849b9f8060ed0",
+          "reviewScope": "143–152 호스트 변경의 관문 선행 검사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/admin/error/AdminErrorCode.java",
+          "sha256": "411fcb5c736ed18321e3a27ae7d600bc07a62ea78f19b98447b82aed9c998c85",
+          "reviewScope": "509 클럽 플랫폼 개입 비활성의 HTTP 410"
+        },
+        {
+          "path": "community_admin_front/src/features/payments/api/hosting-tickets-api.ts",
+          "sha256": "a8b2efdf60b00f903ecd2a310f75ebff7e3049c1acdbc88727c4a2f0acec6533",
+          "reviewScope": "40–80 집행되지 않은 확정 거절 목록과 안내"
+        },
+        {
+          "path": "community_admin_front/src/features/payments/ui/hosting-tickets-screen.tsx",
+          "sha256": "64e66e62743a4ce2c8e980c6842b8dbfb744ef7395a9ab0c5800272212138b98",
+          "reviewScope": "150–195 성공 결과·확정 거절 키 해제·결과 불명/충돌 키 보존"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventAuthorizationService.java",
+          "sha256": "5f27b7133a29189c88eb74b09ef6356946d02e1b00921eab5e0fd79035c4e897",
+          "reviewScope": "1–99 전체 본문: 호스트·활성 공동호스트·클럽 운영진 읽기·일괄 조회의 서로 다른 함수"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCoHostService.java",
+          "sha256": "27f9e3a4a3768726b32d95fee5279e58be5cd6609d2acc5cd943bc6257ff7003",
+          "reviewScope": "75–100 신규 위임 제한;224–285 호스트와 개별 플래그·현재 위임 정지 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/release/ReleaseScopeGate.java",
+          "sha256": "96144e069c13a0cad27613afbba199ddb24bd39fb4c8c7abdbf2c76fb3195b5c",
+          "reviewScope": "59–178 설정 미지정 운영/비운영 대체값·명시 목록·상위 의존·알 수 없는 설정 거절"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/release/ReleaseScopeDomain.java",
+          "sha256": "17174a55b5290964de26f05cda8a103374b7facc0996ec1673edfb1d1bc65e6a",
+          "reviewScope": "161–173 비운영에서도 명시해야 하는 MEETING_PREPAYMENT"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/release/ReleaseScopeInterceptor.java",
+          "sha256": "29b85f5946924deb21ad60fffedd0ce725075c7151ba1397a67409e01e63ad52",
+          "reviewScope": "47–94 메서드 우선·안전 출구·비공개 관문 거절"
+        }
+      ],
+      "reuses": [
+        "app_label_layout_source_advance_20261122",
+        "bus_allocation_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "curated_refund_20261122",
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_checkin_20261122",
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122",
+        "mileage_commands_20261122",
+        "mileage_policy_season_20261122",
+        "mileage_queries_20261122",
+        "payment_supplement_20261122",
+        "people_block_source_advance_20261122",
+        "plan_detail_20261122",
+        "poll_supplement_20261122",
+        "privacy_policy_20261122",
+        "regular_meeting_commands_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_appeal_20261122",
+        "settlement_domain_rollup_20261122",
+        "settlement_prepayment_20261122",
+        "signup_social_onboarding_20261122",
+        "stamp_supplement_20261122",
+        "support_20261122",
+        "transport_policy_20261122",
+        "warning_intake_20261122",
+        "warning_operations_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
+          "sha256": "b053a7ef1ce30c821389a1e7ecd8a5b85b6af8eaa8f5e988006a5426f092eda3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
+          "sha256": "db71640ec99214f345562c0b3a4669c700f9a57312e27b8a22f5f7bfee459a49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
+          "sha256": "c2487e00ea1e1d05e63a93c190ea0b795becc60ea9af7370d80a1d2271a91a1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
+          "sha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
+          "sha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md",
+          "sha256": "7e0618c35aa5fa83d6bceed5f5d91dc439081689ac7a50eb7f0ce36242bb77d9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
+          "sha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
+          "sha256": "ad4a9f42105069708dfe08819f2f3598693c6e0f5769b0caee835401e5dc831f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
+          "sha256": "71f8f69cc2b5a587fa969a28eefd6d4ef867788be493995bea71c116f50c1aa1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
+          "sha256": "beec9dcec88e7b8e3203ee97aec5837a85bd2c6c7a575c5cba17bf781baa6e10"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
+          "sha256": "8fc3304d6cc030996ba82a495606f95ce86788eb9214ff65b44a416f69056213"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
+          "sha256": "7fc11205ab7127279f1a3cfc71ac686ed9f4295e6bb1946980fbe414b50b32a7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
+          "sha256": "0d0bc93e7b534385263765104bb1155341eb52d8f531a2e11f2c4424e92fc257"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
+          "sha256": "5e3b0daf6bc0250da6f88ab9a8c4cfa3659e8a960affb7ec2a51a01254efef0e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
+          "sha256": "dee45ad827b62fa7c8ec48ceac25101312e0a17b6d79b4bb638870cc45bf0fbd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
+          "sha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
+          "sha256": "5c2d0c057bfb54385c214295fcd6aebc3307dee7818795fdc0f7565a6dc703dc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
+          "sha256": "c84de1ce585ae6e29a768287b470c4481cc175fa102fc0e2e3b8ad1d1e8b650c"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/docs/features/club-stamp.html",
+          "sha256": "b4a7f4ee690ae79af00d164ca742dc54c50225ee06f83d426e7be44c87ad4f6a"
+        },
+        {
+          "path": "business_logic/docs/features/club-poll.html",
+          "sha256": "e5551bac752078bede9ddbfec7e045d4bd8dae0f5aa86c16f44469887e7cad82"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/policies/permission.html": [
+          "sidebar",
+          "admin-current",
+          "operator-identity",
+          "admin-security",
+          "host-transfer",
+          "server-actions",
+          "role-restriction"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "이벤트 실행 전 상태 검사와 명령별 권한 분리",
+        "현재 이동 조율 ATTENDING 조회·본인 자리 잡기와 옛 교통 표 분리",
+        "클럽 역할 변경 소유자 전용·위임 마스크·역할 제한 반영",
+        "마일리지 POLICY_OWNER/검토/점수/배지 권한 분리",
+        "관리자 두 번째 단계와 재인증의 지정 관리자 중지 예외 명시",
+        "긴급 승계는 삭제된 창구가 아닌 기본 비활성 운영 관문임을 구분",
+        "정산 생성자와 현재 주최자·초안 제한 응답·원 납부자 책임 분리"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "4c642e16da2f949da6533e6411ca617ebff632301c0c75abadec08f02cc77d38",
+          "characters": 15597,
+          "note": "과거 권한 조사·감사·시험 기록 원문; 현재 계약·새 실행으로 합산하지 않음",
+          "heading": "## 과거 권한 조사 원문 보존"
+        }
+      ],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/policies/permission.html",
+          "pattern": "<details id=\"permission-previous-admin-record\">[\\s\\S]*?</details>",
+          "sha256": "044ad783224fad67705615e6e7120310770c516809677dc872b99c67c4bd0b99",
+          "note": "이전 관리자 반영·확인 기록 원문; 현재 인증 예외·실행 증거와 구분"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "57 source/canonical digests; 7 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 62 relative links/anchors and 1 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; verified unchanged canonical contracts and specified source ranges reviewed"
+      },
+      "observedSourceVersions": {
+        "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
         "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
         "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
       }
