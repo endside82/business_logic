@@ -269,7 +269,8 @@
         "club_stats_20261122",
         "club_announcements_20261122",
         "club_comments_20261122",
-        "club_posts_20261122"
+        "club_posts_20261122",
+        "club_calendar_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2995,9 +2996,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "51f4636990bb564e39a9ff3bf2972771bdd03175e37e0705258f15659dc57656",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_calendar_20261122"
+      ],
+      "reviewedSha256": "1effbc859e7b7473561746291ed09d1ba0c48d6b5448ed0e2d3d51013840223c"
     },
     {
       "path": "docs/features/F04-13.html",
@@ -4883,7 +4887,8 @@
         "club_stats_20261122",
         "club_announcements_20261122",
         "club_comments_20261122",
-        "club_posts_20261122"
+        "club_posts_20261122",
+        "club_calendar_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4948,7 +4953,8 @@
         "club_stats_20261122",
         "club_announcements_20261122",
         "club_comments_20261122",
-        "club_posts_20261122"
+        "club_posts_20261122",
+        "club_calendar_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5036,7 +5042,8 @@
         "club_stats_20261122",
         "club_announcements_20261122",
         "club_comments_20261122",
-        "club_posts_20261122"
+        "club_posts_20261122",
+        "club_calendar_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5962,10 +5969,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "80812d4e2e12747a9e43fcd2eed374744c21a6fe7f8332e08d1360fea5f28bd4",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_calendar_20261122"
+      ],
+      "reviewedSha256": "b3d97463e60f92b39332613dc875f00f1a00da13ba2e69e809d19486e9e09ebd"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
@@ -7758,7 +7767,8 @@
         "club_stats_20261122",
         "club_announcements_20261122",
         "club_comments_20261122",
-        "club_posts_20261122"
+        "club_posts_20261122",
+        "club_calendar_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7971,7 +7981,8 @@
         "club_stats_20261122",
         "club_announcements_20261122",
         "club_comments_20261122",
-        "club_posts_20261122"
+        "club_posts_20261122",
+        "club_calendar_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9971,9 +9982,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d8e3fa78a5cee49836c18698d43e6bc365fc7a69df55f432f95cf6e8e5a238c7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_calendar_20261122"
+      ],
+      "reviewedSha256": "40f638f7fb3485c5d3bcccec56c7d81f106fdde5d209769e90c0bdbfe20baddc"
     },
     {
       "path": "units/04_club/F04-12_club-events-calendar/diagrams.md",
@@ -9981,9 +9995,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "25c68cd5169a9843e17f15b2dab3d7a3a63c3b76a2fc4f32cd42a216ea9a0bae",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_calendar_20261122"
+      ],
+      "reviewedSha256": "f2f4c668fae1a87bd64c9d09733308819d7e100a654872929bbccb5cb4421724"
     },
     {
       "path": "units/04_club/F04-12_club-events-calendar/frontend.md",
@@ -9991,9 +10008,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c0dcc81730735e862d4ccac0df1783b3698dae8a944cbb3592269e244610ce41",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_calendar_20261122"
+      ],
+      "reviewedSha256": "c55cacbe5cac6e4f6e0dbe9832da1a9e88f0fddfefc5d21507b022a4e5be2ee9"
     },
     {
       "path": "units/04_club/F04-12_club-events-calendar/scenarios.md",
@@ -10001,9 +10021,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "40035f438d2e2517a43c395c41d21a1027e82458590389ac8a9e6782aeae2f39",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_calendar_20261122"
+      ],
+      "reviewedSha256": "b333259e603c6225a45bf718670acd12d2557524aa8792cc78073a6b44100e3c"
     },
     {
       "path": "units/04_club/F04-13_fund-overview/backend.md",
@@ -15240,6 +15263,11 @@
       "command": "F04-08 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
       "result": "코드 위치112개 일치; 파서11/11 통과; 상대경로2206개·파생 정본 해시263개 오류0; 현재 그룹 소스/정본44개 해시 일치; 기존 HTML ID7개·과거 인용1개 보존; scenario-audit 최신; diff 오류0; API/app HEAD 유지",
       "scope": "게시판/게시글/사진/초안/멱등결과/예약/좋아요/프로필글 문서 검사. 새 제품·이미지·업로드·예약실행·동시성 시험 없음. ignored units4개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-12 문서 묶음: 소스 참조·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
+      "result": "코드 위치112개 일치; 상대경로2242개·파생 정본 해시267개 오류0; 현재 그룹 소스/정본40개 해시 일치; 기존 HTML ID4개·과거 인용1개 보존; scenario-audit 최신; diff 오류0; API/app HEAD 유지",
+      "scope": "클럽 모임/캘린더/통계/반복 문서 검사. 서버 참조 파서 변경 없음으로 기존11/11 결과 재사용; 새 제품·이미지·자동참가·환불·푸시·재전송 실행 없음. ignored units4개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -25351,6 +25379,243 @@
           "path": "units/04_club/F04-08_board-post-crud/scenarios.md",
           "sha256": "574e0aaddb3c693ef29399f925d5fefd5ea200ebe2fe7cf945c7f220f423d073",
           "characters": 5942,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
+    },
+    "club_calendar_20261122": {
+      "kind": "source_review",
+      "scope": "F04-12 실제 목록/상세/통계 입구·단일 초안/선입금·무료 자동 참가·공통 신청/직접 취소·달력 월/주/숨김/결정 대기·통계 산식·반복 초안/회차/재전송. 소스와 선택한 시험 단언 대조; 새 제품 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubEventController.java",
+          "sha256": "d20991206db19bd17f6550cb9d97ef5b0c25fca94ca1f8dda22abe82d92c1882",
+          "reviewScope": "50–74 및 80–336: 생성/게시/취소/수정/삭제/목록/예정/간략상세/참석/취소/명단/달력/통계/반복; 요청 키 필수/선택과 join 선택 본문·반환 형태."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubEventService.java",
+          "sha256": "a974b9c89348e0f8e643a5478dc0cacf18eade40d8eaa903d222c5f52393532e",
+          "reviewScope": "59–63,142–247,263–440,441–612,628–761,768–1086,1098–1158: 생성/선입금/환불·초안 수정·게시 무료 결정완료 자동참가·권한/구독·목록 상태/숨김·간략상세·직접 참석/취소/명단·회원알림 확산 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubEventAddParam.java",
+          "sha256": "835ac7f5e0a811744d7faa6e5c3418197c1a4e2dd40181b785cc15b698c85502",
+          "reviewScope": "14–90: 본문/서식/사진/장소/날짜/가격/선입금/환불/결정 투표 요청 정확한 타입."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubEventSearchParam.java",
+          "sha256": "4b57c1ea247b545b7d5402e8b68ecb97fbdb8e2a2ef0171e72eeb847e9fe20fc",
+          "reviewScope": "13–22: 기본 시작시각 역순·ID 동률 정렬."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubEventResponseVo.java",
+          "sha256": "e2391102d78f9258231b6da4392f563087b8bbb58012b6e3f147c291bc049526",
+          "reviewScope": "20–29: event/club/title/description/time/status/capacity 간략 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ClubEventQueryAdapter.java",
+          "sha256": "6f27cc201834e46d57646276327f4d8fefeb1cc68630dac5dca4ff1e6013c632",
+          "reviewScope": "54–68: 간략행 변환·클럽 상태/숨김 목록·별도 예정 질의 연결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubEventStatisticsService.java",
+          "sha256": "61215ea17d44236bb76df77e992a5edc51a2142e931047f6b831cf2c40de18f5",
+          "reviewScope": "40,57–277: 달력 권한/연월·시작 월/숨김/DATE결정제외/반복, 운영진 통계 전체상태·OPEN수·종료 ATTENDING/정원비·6개월."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ClubEventStatisticsEventAdapter.java",
+          "sha256": "a6164ce712af75ab9ba953a7438cb39252eabc830a7a1b3e090b4cacee61f86c",
+          "reviewScope": "24–75: 상태별 수·전체/월 수·날짜와 숨김 전달·반복 부모 조회."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubEventCalendarVo.java",
+          "sha256": "c8fb3c254642a67132ced3d70f459ff28b6d817f275912062d6d4f97c09827eb",
+          "reviewScope": "13–112: 달력 이벤트/연월/total·요일·시간·장소·recurring JSON·부모 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubEventStatisticsVo.java",
+          "sha256": "d96e34f562344d1b7ecc85510dd0344589137099d67d06897a921e9a3d77593d",
+          "reviewScope": "14–114: 수/참석률BigDecimal·월별값·집계기간 반환."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubRecurringEventService.java",
+          "sha256": "8101bee782007d7e91310547694faca8f5b9e11a5b382c3638c7891d5aa35641",
+          "reviewScope": "44,85–335,340–453,475–539: 운영/제재·회차 선계산·초안 템플릿/자식·유료100원단위·각회차정책·날짜/요일/말일·개수/주기상한·현재회원 템플릿목록."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/RecurringEventParam.java",
+          "sha256": "365d85dcf7639a45a37279db9b0afb59f337d3f82489800d49dc18533c00aaac",
+          "reviewScope": "14–116: 반복 종류/요일/월일/시간/시작·종료일/횟수·장소/가격/선입금/환불 정확한 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ClubRecurringEventAdapter.java",
+          "sha256": "2de71a431a2a04ff4e6d826c47a129c6fdc9669ea70fc0033bbeb3a5c3d6c36c",
+          "reviewScope": "40–135: DRAFT 세션생성·반복 부모/자식·선입금/사진 연결 어댑터."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
+          "sha256": "bd1caa9539e1b50bc4ef5e0893bfcffcf4bf172ec9859ea99720db322990f7c9",
+          "reviewScope": "70–85,180–253,300–376,436–752: 필터/권한·반복/만들기·상세·행중복잠금·참석취소·최신상세/공통신청/일정변경동의/승인·결제결과와 실패."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_event_list_provider.dart",
+          "sha256": "488f9085419079117941883db48b41f3269372cc0756b9b67b02234abafc3451",
+          "reviewScope": "18–121: 20개 페이지·계정/이벤트/클럽신호·상태/최근정렬·클라이언트 필터·원본 페이지 메타."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/club_event_list_status_filter.dart",
+          "sha256": "68517107a708507977946418f70ac73bcc0d105650bcd7b6a54961000ca789fd",
+          "reviewScope": "10–67: 서버는 DRAFT만 필터·결정대기/시각/상태의 예정/진행/종료 판정."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_event_attendance_provider.dart",
+          "sha256": "9407b21b49cd2daa9ca02e33abb13578900d8903e141680781d25f166d700f88",
+          "reviewScope": "17–124: 직접참석/취소의 요청키·세션초기화·불명확결과와 관련목록 새읽기."
+        },
+        {
+          "path": "community_app/lib/data/api/club_event_manage_api.dart",
+          "sha256": "95700dca5e0e868b8ba7ad652fffa0b8f5d292145e5fa6722efc6c13a570d132",
+          "reviewScope": "18–121: 15개 API 대응, 직접참석 요청의 동의 본문 누락·키필수/선택."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_event_manage_repository.dart",
+          "sha256": "1a758f44dcf562fc1cb0b09f4c52509a3307d958aedc01102696419e0a8a86e8",
+          "reviewScope": "131–158 직접참석/취소 전달,187–218 통계/반복생성/템플릿조회 guard/result."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_calendar_provider.dart",
+          "sha256": "40d962d5b263632fb6853b2a6089493a3befd46ed1b3e2d5412c8563b181637b",
+          "reviewScope": "19–357: clubId family·연월/날짜/보기·월캐시·최초50개 후보·12개월 탐색·일요일주·월경계합침·요청순서."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart",
+          "sha256": "6aa0c946016f4e498cb09831632aa1dad9f4fb80e5fcb6be13fe8c5e1fe9f702",
+          "reviewScope": "41–241: 위치복원/저장·월/주·일자/월빈상태·재시도·공통상세 이동."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_calendar_repository.dart",
+          "sha256": "51b5c3b0977d5816e025a5593626e8636a7f219fea811076e6109d9486d4c3eb",
+          "reviewScope": "11–23: 연월 calendar API→단일 응답 Result."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/club_calendar_response.dart",
+          "sha256": "dbc7fc8cd01ba78184bbd152a1ab1ed4a368b71c5569de658d81d9aabc93ede2",
+          "reviewScope": "8–41: wallclock·요일·상태/정원·recurring JSON/parent nullable 매핑."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_event_stats_screen.dart",
+          "sha256": "ee36a38aaff2a37f60de27fe49adffed43dde0519efa76c0821632a8c050248a",
+          "reviewScope": "23–124: 합계/참석률·건당평균분모전체모임·상태/월수·6개월차트·새로고침/재시도."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_event_stats_provider.dart",
+          "sha256": "d79a9647ed226052f45496bb2db9397dae53485a072fc58c8509ac103132eb55",
+          "reviewScope": "11–25: repository 통계읽기·이벤트/클럽변경 구독이 없는 provider 범위."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/club_event_stats.dart",
+          "sha256": "d429aab3970f58b84e2a4b884d5cf74dbd1246c70cbe97a7201ea3b6a44f4c0c",
+          "reviewScope": "8–51: 수와 월배열·BigDecimal num/string→double 매핑."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_recurring_event_provider.dart",
+          "sha256": "00d537cef595ba6f1f75bac11949ed541671c9aaab221369535d208712c21f7a",
+          "reviewScope": "23–230: 목록/수동새읽기·생성반영·세션내본문/키재사용·중복중차단·응답재구성불가완료/불명확유지/확정실패정리."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_recurring_event_screen.dart",
+          "sha256": "ff5a88be5bbe896f84f284d2e531f11df46fb01d8ea8a8bee96cc310cb09134b",
+          "reviewScope": "93–175,196–239,343–352,382–513,737–802,901–1063: 목록/회차수·폼기본값/사진·시간별선택·입력검증/전송필드·같은요청재전송·결과안내."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubEventCalendarHiddenTest.java",
+          "sha256": "7bf628eb349781d002fe7a0a62fa6a06f474cbc3a3e33973fb5cd87f5b1e634e",
+          "reviewScope": "60–95: 숨김제외달력 OPEN/CLOSED/CANCELED와 통계숨김CLOSED ATTENDING포함 단언 확인; 실행 안 함."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubRecurringEventServiceTest.java",
+          "sha256": "fe6286d83a39a5bc3b96916eadf5efc9af39e4722f4516207cfdb6281cf0c7c3",
+          "reviewScope": "547–557,576–604: 종료일포함·명시5회·장기100회상한·시작일전제외 단언 확인; 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/repository/query/EventQueryRepository.java",
+          "sha256": "e5e129bf297970ee4960e11d226048aca780efdb87884a384fb192d1196f7bbf",
+          "reviewScope": "238–267 예정 OPEN/숨김제외/미래 또는 결정 대기;300–313 시작 월 반개구간·상태·숨김;324–334 월 수 무상태 필터."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "169–180: 단일생성은 호스트 권한+구독, 반복생성은 호스트 권한; 동일 파일의 이전 범위와 구분."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "233–309: 무료 클럽취소의 회원/활성/상태/참석, 직접 신청의 회원/활성/구독/결정/모임종류/승인/유료/대기 한도."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CapacityService.java",
+          "sha256": "0735a5827e73de7b55a7deb8b1dfff84d4cf50fbbe134060d51a5835a3b964e4",
+          "reviewScope": "916–937 직접클럽입장/중복/상태·1077–1086 자동참가 bulk ATTENDING/count/감사·1102–1108 동반인 취소."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCancelService.java",
+          "sha256": "cad0c561fb80376275d91e58e7970dfb07c4121879188045dc2d879fc2866c97",
+          "reviewScope": "215–221 클럽소속 잠금·CLUB_STAFF 공통취소. 동일 SHA의 event_lifecycle_20261122 72–209 취소 상태/환불 handoff 근거 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventService.java",
+          "sha256": "0d3cfd4f4e5fcd048ff6eaab97f06d628c0971122e9d9ad410ebe733af79eb98",
+          "reviewScope": "274–280 클럽 초안 삭제 소속검사→공통삭제; 동일 SHA의 event_lifecycle_20261122 128–260 초안삭제 조건·정리 재사용."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "925–939 캘린더회원;1063–1103 목록 최근/초안·통계/반복 운영진 경로."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "255–261 게시/리마인더는 모임 상세 또는 클럽 fallback."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+          "reviewScope": "132–148 단일생성·초안목록·반복·통계의 실제 관리 메뉴."
+        }
+      ],
+      "reuses": [
+        "club_comments_20261122",
+        "club_posts_20261122",
+        "club_stats_20261122",
+        "event_discovery_20261122",
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
+          "sha256": "b3d97463e60f92b39332613dc875f00f1a00da13ba2e69e809d19486e9e09ebd"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-12.html": [
+          "sidebar",
+          "content-photos",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-12 기존29개 참조/15개 서버 메서드 연결 유지·현재 소스 대조"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-12_club-events-calendar/scenarios.md",
+          "sha256": "1fd55e698cff01866f3097f5ccc9feebf9b76aa4a4acc89503f0bc52f26d1938",
+          "characters": 2208,
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]
