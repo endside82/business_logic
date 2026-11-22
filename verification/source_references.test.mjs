@@ -47,6 +47,22 @@ test('줄이 이동하면 같은 로그인 함수를 다시 찾아 새 위치를
   assert.equal(result.endpoints[0].targetLine, 10);
   assert.equal(result.endpoints[0].method, 'login');
 });
+test('Spring 패키지를 명시한 매핑도 짧은 표기와 같은 주소·함수·줄로 연결한다', () => {
+  const text = source
+    .replace('@RequestMapping', '@org.springframework.web.bind.annotation.RequestMapping')
+    .replaceAll('@PostMapping', '@org.springframework.web.bind.annotation.PostMapping');
+  assert.deepEqual(parseController(text, file), parseController(source, file));
+  const batch = `@RequestMapping("/api/v1/admin/clubs/{clubId}/mileage")
+public class MileageAdminActionController {
+  @org.springframework.web.bind.annotation.GetMapping("/batches/{batchId}")
+  public ResponseEntity<MileageBatchResultVo> getBatchResult(String batchId) { return null; }
+}`;
+  const [endpoint] = parseController(batch, file);
+  assert.equal(endpoint.httpMethod, 'GET');
+  assert.equal(endpoint.httpPath, '/api/v1/admin/clubs/{clubId}/mileage/batches/{batchId}');
+  assert.equal(endpoint.method, 'getBatchResult');
+  assert.equal(endpoint.targetLine, 3);
+});
 test('근처의 회원가입 함수를 로그인 근거로 통과시키지 않는다', (t) => {
   const root = fixture(t, source);
   assert.throws(() => resolveReferences(root, [{ ...reference, bindings: [{ ...login, method: 'signup' }] }]), /재확인 필요/);

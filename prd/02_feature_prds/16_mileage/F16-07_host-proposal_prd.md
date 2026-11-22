@@ -1,88 +1,84 @@
-# F16-07. 호스트 제안 PRD
+# F16-07. 호스트 적립 제안·승인·반려 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 서버·앱 계약을 대조했다. 새 제품 실행·실기기 검수 기록은 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 입구와 범위
 
-호스트 제안은 이벤트 호스트가 자기 이벤트 참여 멤버에게 줄 적립 점수를 제안하고, 운영진(`MILEAGE_MANAGER`)이 검토 큐에서 승인(적립 실행)/반려하는 두 단계 흐름이다. 제출/조회는 `MileageHostController`(`/api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals`, `isEventHost` 검증), 처리는 `MileageAdminQueueController`(`/admin/.../host-proposals`)에서 이뤄진다.
+클럽 이벤트의 호스트는 이벤트 상세의 ‘마일리지 적립 제안’에서 제안 화면으로 들어간다. MILEAGE 공개 범위, 호스트 여부, clubId 존재가 입구 조건이며 라우터도 hostOnly 접근을 확인한다. 제안 화면은 회원 선택·점수·선택 사유/첨부와 ‘내가 낸 제안’을 함께 제공한다. 과거 문서의 호스트 처리 결과 조회 화면 부재 설명은 현재와 다르다.
 
-제출 시 정책 활성(`requireActive`) + points>0 검증 후 `SUBMITTED` 제안을 만들고 **검토 큐(`HOST_PROPOSAL`)에 자동 적재**한다. 승인 시 `MileageEarningService.approveProposal`이 대상 멤버에게 적립(`insertEarn`, sourceType=`HOST_PROPOSAL`)을 실행하고 제안을 `APPROVED`로, 큐를 `PROCESSED`로 전환한다(`overridePoints`로 점수 조정 가능). 반려는 사유 필수.
+운영진은 검토 대기열의 제안 처리 입구 또는 운영 액션의 제안 목록에서 처리한다. **승인은 REWARD_MANAGER**, 목록/단건/반려는 MILEAGE_MANAGER다. 일반 검토 대기열을 IGNORE로 닫는 동작은 제안 승인·반려가 아니며 점수를 바꾸지 않는다.
 
-판정: **제출·승인·반려는 사용 가능**. `HostProposalStatus`의 `NEEDS_MORE_INFO`/`WITHDRAWN` 전환 경로가 없고, 제안 경로(클럽+이벤트)와 처리 경로(admin)의 권한·컨트롤러가 분리되어 호스트가 자기 제안의 처리 결과를 직접 조회할 화면 흐름이 제한적인 것이 Gap이다.
+## 현재 서버 계약
 
-## 2. 코드 위치
+MILEAGE 공개 범위를 적용한다.
 
-계약의 정본은 코드다. 서버: `MileageHostController`, `MileageAdminQueueController`, `MileageEarningService`, `MileageReviewQueueService`, `MileageHostProposalVo`, `MileageHostProposalAddParam`, `MileageHostProposalProcessParam`, `MileageHostProposalSearchParam`, `HostProposalStatus`. 앱: `mileage_host_proposal_screen.dart`, `mileage_host_api.dart`, `mileage_host_repository.dart`, `mileage_host_providers.dart`, `mileage_admin_queue_api.dart`, `mileage_admin_queue_repository.dart`.
+| 요청 | 현재 계약 |
+|---|---|
+| POST /api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals | 호스트 제출, MileageHostProposalAddParam → 201 MileageHostProposalVo |
+| GET 같은 주소 | 현재 이벤트 호스트의 club/event/proposer 조건 목록, List<MileageHostProposalVo> |
+| GET /api/v1/admin/clubs/{clubId}/mileage/host-proposals | status/eventId/proposerUserId 필터와 생성 시각/id 역순 Page |
+| GET 위 운영 주소/{proposalId} | 현재 클럽 단건, 표시 이름 보강 |
+| POST 위 운영 주소/{proposalId}/approve | 선택 overridePoints/processReason → 승인 VO, REWARD_MANAGER |
+| POST 위 운영 주소/{proposalId}/reject | processReason 필수 → 반려 VO, MILEAGE_MANAGER |
 
-## 3. 전체 동작 흐름
+제출·승인·반려 API는 필수 Idempotency-Key 헤더를 받지 않는다. 점수 직접 명령과 동일한 요청 키 API라고 설명하지 않는다. 승인 원장은 제안 ID 기반 출처 키를 사용한다.
 
-1. 이벤트 호스트가 호스트 제안 화면(`mileage-proposals`)에 진입 → 대상 멤버·점수·사유를 입력 → `submitProposal(clubId, eventId, param)` → `POST /api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals`.
-2. 서버 `MileageHostController#submitProposal`이 `requireEventHost(eventId, userId)`(아니면 `CLUB_PERMISSION_DENIED`) 검증 후 `earningService.submitProposal`.
-3. `submitProposal`은 `requireActive` + points>0(`MILEAGE_AMOUNT_INVALID`) 검증, `SUBMITTED` 제안 저장, `reviewQueueService.enqueue(HOST_PROPOSAL, target=proposalId)`로 큐 적재, audit + outbox(`HostProposalSubmitted`). 응답 201 `MileageHostProposalVo`.
-4. 호스트는 `getMyProposals` → `GET .../mileage-proposals`로 본인이 그 이벤트에 낸 제안 목록을 조회(`eventId + proposerUserId` 필터).
-5. 운영진이 큐/제안 목록(`GET /admin/.../host-proposals`, `MileageHostProposalSearchParam`: status/eventId/proposerUserId)에서 제안을 검토.
-6. **승인**: `POST /host-proposals/{proposalId}/approve`(`MileageHostProposalProcessParam`: overridePoints?, processReason?). `approveProposal`이 SUBMITTED/NEEDS_MORE_INFO만 처리, finalPoints(override 우선) 검증, ACTIVE 시즌 id로 `insertEarn`(sourceType=`HOST_PROPOSAL`, sourceId=`HOST_PROPOSAL-{id}`) → 제안 `APPROVED`+processedBy/resultingLedgerId, 큐 markProcessed, audit+outbox.
-7. **반려**: `POST /host-proposals/{proposalId}/reject`. processReason 필수(없으면 `MILEAGE_REASON_REQUIRED`), 제안 `REJECTED`, 큐 markProcessed.
-8. 이미 처리된 제안 재처리 시 `MILEAGE_PROPOSAL_ALREADY_PROCESSED`.
+## 제출·대상·첨부 검사
 
-## 6. 상태/권한 매트릭스
+제출은 대상 ID와 양수 points를 검사하고 설정 공유 잠금 아래 제도 ACTIVE를 요구한다. 실제 이벤트 호스트, 이벤트의 clubId와 경로 일치, 제안자/대상 모두 해당 클럽 회원인지 확인한다. 첨부는 소유자 기준 검증·정규화에 최대 5개 제한을 적용하고 파일 참조를 연결한다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 이벤트 호스트 + 제출 | isEventHost 통과, SUBMITTED + 큐 적재 | 제출 성공 | 제안 등록·검토 대기 | 일치 |
-| 비호스트 + 제출 | `CLUB_PERMISSION_DENIED` | 에러 | 제출 차단 | 일치 |
-| 정책 OFF + 제출 | `MILEAGE_NOT_ACTIVATED` | 에러 | 제출 차단 | 일치 |
-| MANAGER + 승인 | 적립 실행 + APPROVED | 승인 결과 | 멤버 적립·resultingLedgerId | 일치 |
-| MANAGER + 승인 + overridePoints | finalPoints로 적립 | 조정 점수 입력 | 제안과 다른 점수 적립 | 일치 |
-| MANAGER + 반려 사유 누락 | `MILEAGE_REASON_REQUIRED` | 에러 | 반려 차단 | 일치 |
-| 이미 처리된 제안 재처리 | `MILEAGE_PROPOSAL_ALREADY_PROCESSED` | 에러 | 중복 처리 차단 | 일치 |
-| NEEDS_MORE_INFO/WITHDRAWN 전환 | 전환 경로 없음 | 해당 CTA 없음 | 사용 불가 | **미구현 (Gap)** |
+현재 제출 서비스가 검사하는 대상 조건은 **클럽 회원**이다. 이벤트 참석 이력까지 같은 서비스에서 검증한다고 확대하지 않는다. 앱 회원 선택은 hostProposal 목적과 eventId를 보내지만 API의 직접 제출 검사 범위와 동일하다고 보장하지 않는다. reason은 현재 제출 서비스와 앱에서 선택 입력이다.
 
-## 7. 정합성 판단
+저장 결과는 SUBMITTED이고 HOST_PROPOSAL 검토 항목, 제출 감사, HostProposalSubmitted outbox를 남긴다. 본인 목록 조회는 현재 이벤트 호스트인지 확인한 뒤 클럽/이벤트/제안자 조건으로 읽는다. 제출에서 수행하는 활성·이벤트 클럽 일치·대상 회원 검사를 조회가 전부 반복하는 것은 아니다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 제출 경로 | `/clubs/{clubId}/events/{eventId}/mileage-proposals` | 동일 path | 일치 |
-| `HostProposalStatus` | SUBMITTED/APPROVED/REJECTED/NEEDS_MORE_INFO/WITHDRAWN | 동일 enum | enum 일치하나 일부 미사용 |
-| 승인 적립 sourceType | `HOST_PROPOSAL`, sourceId `HOST_PROPOSAL-{id}` | 결과 표시만 | 일치 |
-| 제안 조회 응답 | 호스트 `List`, 운영 `Page` | 호스트 List / 운영 PageResponse | 일치 |
-| overridePoints | nullable, 우선 적용 | 입력 필드 | 일치 |
-| 처리 경로 권한 | `MILEAGE_MANAGER`(admin 컨트롤러) | 운영 화면 | 일치 |
+## 승인·반려·동시 처리
 
-## 8. Gap / Risk
+승인은 ACTIVE를 요구하고 SUBMITTED 또는 NEEDS_MORE_INFO만 처리한다. overridePoints가 없으면 제안 점수, 있으면 양수 조정 점수를 사용하며 대상이 아직 클럽 회원인지 재확인한다. 제안을 APPROVED로 기록하고 `HOST_PROPOSAL-{id}` 출처로 적립한 원장 ID를 resultingLedgerId에 연결한다. 최신 열린 HOST_PROPOSAL 검토 항목을 처리하고 감사·결과 outbox를 남긴다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | `NEEDS_MORE_INFO`/`WITHDRAWN` 전환 경로 부재 | enum에 존재하나 어떤 서비스도 이 상태로 전환하지 않음(approve는 NEEDS_MORE_INFO를 받지만 설정 경로 없음) | "추가 정보 요청"·"호스트 철회" 워크플로 불가 | 전환 액션 추가 또는 enum 정리 |
-| P2 | 호스트의 처리 결과 추적 화면 제한 | 호스트 조회는 본인 이벤트 제안 목록만(`getMyProposals`), 승인/반려는 admin 화면 | 호스트가 자기 제안의 승인/반려·적립 결과를 확인할 알림/화면 흐름 불명확 | 호스트용 결과 알림(outbox)·상태 표시 경로 정의 |
-| P2 | 제안 적립이 qualifiedForGrade=true | `approveProposal`이 `insertEarn(... qualifiedForGrade=true)` | 호스트 제안 적립도 등급 산정에 반영 — 정책상 의도인지 확인 필요 | 제안 적립의 등급 반영 정책 확정 |
+적립 worker는 별도 REQUIRES_NEW 트랜잭션이며 제안 상태 저장과 원장 반영을 하나의 단일 트랜잭션으로 설명하지 않는다. 응답 실패만으로 적립이 전혀 없었다고 판단하지 않고 제안/원장을 다시 조회해야 한다. 동일 제안 출처 원장은 재사용 경로가 있다.
 
-## 9. 수용 기준
+반려는 처리 가능한 상태와 비어 있지 않은 사유를 확인해 REJECTED와 처리자/시각/사유를 저장하고 검토 항목을 처리한다. 반려에는 제도 ACTIVE 검사가 없어 중지 상태에서도 접수된 제안을 정리할 수 있다. 이미 끝난 제안의 새 승인/반려는 MILEAGE_PROPOSAL_ALREADY_PROCESSED이며 낙관적 잠금 충돌도 현재 결과를 읽은 뒤 같은 오류로 전달한다.
 
-### AC-01. 호스트 제안 제출
-Given 이벤트 호스트가 참여 멤버에게 50점을 제안한다. When `POST .../mileage-proposals`가 성공한다. Then SUBMITTED 제안이 생성되고 검토 큐에 HOST_PROPOSAL 항목이 적재된다.
+현재 상태 enum은 SUBMITTED/APPROVED/REJECTED/NEEDS_MORE_INFO의 4개다. WITHDRAWN은 없다. NEEDS_MORE_INFO를 받는 처리 조건은 남아 있지만 이번에 대조한 제안 Controller/Service에는 해당 상태로 바꾸는 명령이 없다. 추가 정보 요청·호스트 철회를 지원한다고 설명하지 않는다.
 
-### AC-02. 비호스트 차단
-Given 호스트가 아닌 사용자가 제안을 제출한다. When 서버가 `isEventHost`를 검증한다. Then `CLUB_PERMISSION_DENIED`가 반환된다.
+## 앱 결과·실패·복귀
 
-### AC-03. 승인 적립
-Given MILEAGE_MANAGER가 SUBMITTED 제안을 승인한다. When `POST .../approve`가 성공한다. Then 대상 멤버에게 적립이 실행되고 제안은 APPROVED, resultingLedgerId가 채워진다.
+호스트 화면은 회원·양수 점수를 확인하고 첨부 업로드 중 제출을 막는다. 성공 시 회원/점수/사유/첨부를 비우고 본인 목록을 다시 읽는다. 실패는 입력을 유지하지만 현재 오류 문구는 일반적인 제출 실패로 표시한다. 본인 목록에는 대상 이름·원래 제안 점수·사유·상태가 보이며 처리 사유와 resultingLedgerId는 표시하지 않는다.
 
-### AC-04. 점수 조정 승인
-Given 운영진이 overridePoints=30으로 승인한다. When 제안 points=50이다. Then 30점이 적립된다.
+운영 승인 단추는 현재 보상 권한을 확인하고 빈 처리 Param을 보내므로 **현재 화면에 overridePoints 입력은 없다**. 서버가 점수 조정 승인을 받는다는 사실과 화면 지원 범위를 나눈다. 반려는 사유 입력 명령을 사용한다. 권한이 부족한 승인은 비활성화하고 보상 권한 필요를 안내한다. 처리 결과 뒤 관련 콘솔/제안 조회를 다시 읽는 경로가 있다.
 
-### AC-05. 반려 사유 필수
-Given 운영진이 사유 없이 반려한다. When `POST .../reject`를 호출한다. Then `MILEAGE_REASON_REQUIRED`가 반환된다.
+승인 시 원래 proposal.points를 최종 조정 점수로 덮어쓰지는 않는다. 원래 제안 점수와 실제 원장 적립액, 승인 outbox의 최종 points를 구분한다. 현재 앱의 빈 Param 승인은 원래 점수를 사용한다.
 
-### AC-06. 중복 처리 방지
-Given 이미 APPROVED된 제안을 다시 승인한다. When `POST .../approve`를 호출한다. Then `MILEAGE_PROPOSAL_ALREADY_PROCESSED`가 반환된다.
+결과 outbox에는 제안자 userId와 eventId가 포함된다. 앱의 HostProposalApproved/Rejected 알림 경로는 eventId가 있으면 해당 이벤트 제안 화면, 없으면 클럽 마일리지 메인이다. 이것은 서버 기록/앱 이동 경로 확인이며 실제 푸시 수신을 검증한 것은 아니다.
 
-## 10. 미결정 / 후속
+## 코드 위치
 
-| 분류 | 항목 | 결정/작업 |
+서버: MileageHostController, MileageAdminQueueController, MileageEarningService, MileageEarningGrantWorker, MileageHostProposalQueryRepository, HostProposalStatus. 앱: mileage_host_api.dart, mileage_host_providers.dart, mileage_host_proposal_screen.dart, mileage_action_screen.dart, mileage_admin_commands.dart, event_detail_screen.dart, club_branch_routes.dart, notification_router.dart.
+
+<!-- source-references:start -->
+서버 창구: `MileageAdminQueueController#listHostProposals`, `MileageAdminQueueController#getHostProposal`, `MileageAdminQueueController#approveHostProposal`, `MileageAdminQueueController#rejectHostProposal`, `MileageHostController#submitProposal`, `MileageHostController#getMyProposals`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | NEEDS_MORE_INFO/WITHDRAWN | 전환 액션 추가 또는 enum 정리 |
-| 구현 | 호스트 결과 추적 | 승인/반려 알림(outbox) + 호스트 화면 상태 표시 |
-| 정책 | 제안 적립 등급 반영 | qualifiedForGrade 정책 확정 |
-| 테스트 | 제안 흐름 | 제출→큐 적재→승인 적립→중복 차단 E2E 추가 |
+| Gap | NEEDS_MORE_INFO 전환·호스트 철회 명령이 없다. | enum/설계와 실제 지원 행동을 구분한다. |
+| Gap | API 점수 조정 승인과 처리 사유/원장 정보가 현재 화면에 모두 노출되지 않는다. | 원래 제안 점수·최종 적립·상태 표시에 차이가 있음을 남긴다. |
+| Risk | 직접 제출 API는 대상의 클럽 회원 여부를 확인하며 이벤트 참석 검사는 하지 않는다. | 회원 선택 UI와 서버 불변 조건을 혼동하지 않는다. |
+| Risk | 제안 승인과 적립 worker의 트랜잭션이 나뉘고 제출에는 필수 요청 키가 없다. | 불명확한 실패에서 새 제안/새 적립을 임의 반복하지 않는다. |
+| 미검증 | 파일 검증·승인 경합·중단 후 복구·푸시 수신·실제 앱 복귀를 실행하지 않았다. | 소스 계약과 실제 운영 결과를 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 호스트 입구:** 이벤트 상세의 공개 범위/호스트/클럽 조건과 hostOnly 라우터를 대조한다.
+- **AC-02 제출 검사:** 활성 제도·클럽 일치·호스트/대상 회원·양수 점수·첨부 검증 경계를 설명한다.
+- **AC-03 접수와 목록:** SUBMITTED·대기열·감사/outbox 생성과 본인 상태 목록을 구분한다.
+- **AC-04 처리 권한:** 승인 보상 권한과 조회/반려 검토 권한을 나눈다.
+- **AC-05 실제 적립:** 조정 점수·제안 출처 키·별도 트랜잭션과 원장 ID 연결을 설명한다.
+- **AC-06 반려와 경쟁:** 사유 필수·중지 중 반려·종료 상태/낙관적 충돌 오류를 구분한다.
+- **AC-07 화면 결과:** 입력 유지/초기화, 원래 점수/상태 표시와 조정 입력·처리 사유 미표시를 명시한다.
+- **AC-08 알림과 미지원 상태:** 제안자/eventId 결과 경로와 추가 정보 요청/철회 미지원을 구분한다.
+
+현재 소스 계약과 후속 실행 기준이다. 이번 작업에서 제품 시험·실기기·알림 전송/수신·시각 검수를 실행하지 않았다.

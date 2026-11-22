@@ -14,203 +14,31 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>클럽 줄기 · <a href="04-club.html">04 클럽</a><span>›</span>16 마일리지</div>
         <h1>16. 마일리지</h1>
-        <p class="lede">
-          클럽 활동에 보상하는 비현금 점수 제도다. 회원은 활동으로 점수를 쌓고 등급·배지·랭킹을 확인하며,
-          클럽 운영진은 정책과 적립·사용·정정을 관리한다. 지갑·결제·정산과 연결되지 않아 현금화나 환불은 없다.
-          핵심 기능과 시즌·사진 심사 적립·반복 수동 적립 검토를 <strong>첫 출시 범위</strong>에 포함했다.
-          운영 배포와 서비스 공개 전 휴대전화 알림·화면 이동 검사는 남아 있다.
-        </p>
+        <p class="lede">마일리지 8개 기능의 현재 조회·권한·정책·원장·시즌·복구 경계. 2026-11-22 소스 대조.</p>
       </header>
       <p class="subtitle"><a href="../qa/completion-criteria.html#domain-16">이 영역의 기능별 출시 완료 기준</a>에서 확인할 결과와 증거를 봅니다. 기능 포함 여부와 구현 완료·실환경 통과·공개 승인은 별도로 판정합니다.</p>
 
       <div class="launch-strip" id="launch-strip" data-domain="1"></div>
 
-      <section id="recovery-current">
-        <h2>중단된 적립·회수 작업의 복구</h2>
-        <p>적립·회수·사진 심사·등급 재계산의 후속 작업을 저장해 중단 뒤 복구하도록 보완했습니다.
-          수동 재계산·회수 배치·반복 수동 적립 탐지·시즌 전이의 연결 사용 보완도 기본 브랜치에 반영했습니다.</p>
-        <p>마일리지 처리 단위 보완의 나머지 묶음과 누락 점검·등급 재계산 화면은 진행 중이거나 대기 중입니다.
-          기존 첫 출시 기능과 로컬 확인 기록은 유지하며, 이번 변경만으로 실제 사진 파일·휴대전화·운영 배포 확인을 완료하지 않습니다.</p>
-      </section>
-
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">핵심 코드·운영 화면</div><div class="value">완료</div><div class="hint">네 저장소 구현·검증 완료</div></div>
-          <div class="metric"><div class="label">제공 범위</div><div class="value">첫 출시 포함</div><div class="hint">시즌·사진·반복 수동 적립 검토 포함</div></div>
-          <div class="metric"><div class="label">권한 단계</div><div class="value">3</div><div class="hint">회원 · 클럽 소유자(정책) · 마일리지 관리자</div></div>
-          <div class="metric"><div class="label">현금성</div><div class="value">없음</div><div class="hint">환불·현금화 경로 없음</div></div>
-        </div>
-
-        <div class="callout info">
-          <span class="label">현재 판단 — 검증한 추가 기능도 첫 출시 포함</span>
-          <p>적립·사용·정정·등급·배지·순위에 <strong>시즌·사진 심사 적립·반복 수동 적립 검토</strong>를 함께 제공한다.
-            앱 전체와 기능별 서버 검사를 통과했고, 시즌·반복 적립 판정·모임별 점수는 실제 앱과 서버의 결과도 확인했다.
-            사진 적립은 클럽 정책 담당자가 규칙을 켠 경우에만 적용한다.</p>
-          <p><strong>운영 배포와 휴대전화 검사</strong>는 아직 남아 있다. 서버 운영 담당자는 기존 클럽의 제도 설정·시즌 배정·공개 모임 점수를
-            준비하고 배포한다. 품질 확인 담당자는 서비스 공개 전에 사진 심사의 회원·운영진 실제 앱 연결과 휴대전화 알림·화면 이동을 검사한다.
-            담당자별 남은 일은 <a href="../qa/launch-status.html#scope">첫 출시 범위와 배포 전 준비</a>,
-            검사 한계는 <a href="../qa/launch-status.html#evidence">확인한 것과 아직 확인하지 못한 것</a>을 따른다.</p>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">점수를 안전하게 기록하는 원칙</span>
-          <p>마일리지는 돈이 아니며 지갑·정산·환불과 연결하지 않는다. 모든 점수 이동은 지우거나 덮어쓰지 않고
-            새 기록으로 남긴다. 잘못 준 점수는 반대 방향의 정정 기록으로 바로잡고, 사용할 때는 만료가 가까운
-            적립분부터 차감한다. 같은 작업을 다시 실행해도 점수는 한 번만 움직인다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>8개 기능 — 3개 묶음으로 본다</h2>
-
-        <h3>멤버가 보는 것</h3>
-        <div class="cards">
-          <a class="card" href="../features/F16-01.html"><div class="eyebrow">F16-01</div><h3>내 마일리지·월간 영수증·전체 내역</h3><p>현재 잔액·등급·최근 거래와 월간 요약, 조건별 전체 내역을 본다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-02.html"><div class="eyebrow">F16-02</div><h3>등급·배지·랭킹·프로필</h3><p>등급 정의·변경 이력, 사용 중인 배지, 클럽 랭킹, 다른 회원의 프로필 카드.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-03.html"><div class="eyebrow">F16-03 · 첫 출시 포함</div><h3>시즌</h3><p>자동 시작·마감·공동 순위·실패 복구를 제공한다. 기존 데이터 준비와 실제 배포 확인은 필요하다.</p><div class="meta"><span class="pill brand">첫 출시 포함</span><span class="pill brand">상세 →</span></div></a>
-        </div>
-
-        <h3>호스트가 제안하는 것</h3>
-        <div class="cards">
-          <a class="card" href="../features/F16-07.html"><div class="eyebrow">F16-07</div><h3>호스트 제안</h3><p>이벤트 호스트가 참여 회원의 적립을 제안하고, 운영진이 승인하면 점수가 적립된다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-        </div>
-
-        <h3>운영진이 운영하는 것</h3>
-        <div class="cards">
-          <a class="card" href="../features/F16-04.html"><div class="eyebrow">F16-04</div><h3>정책 설정</h3><p>제도 시작·일시 중지, 만료일과 현재 랭킹 기준을 관리하고 변경 영향을 미리 본다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-05.html"><div class="eyebrow">F16-05</div><h3>적립 규칙·등급·배지·사용 사유</h3><p>클럽 공통 규칙과 보상을 관리한다. 사진 승인 규칙도 첫 출시에 포함하며 사용할 클럽에서 켠다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-06.html"><div class="eyebrow">F16-06</div><h3>적립·차감·정정 집행</h3><p>수동·일괄 적립·차감, 원장 정정과 활동 자동 적립·회수. 사진 승인 적립·회수도 코드가 완료됐다.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-          <a class="card" href="../features/F16-08.html"><div class="eyebrow">F16-08</div><h3>검토 대기열·운영 현황·감사 기록</h3><p>검토 항목 처리, 클럽 운영 현황, 회원 상세와 담당자별 변경 기록.</p><div class="meta"><span class="pill brand">상세 →</span></div></a>
-        </div>
-      </section>
-
-      <section>
-        <h2>권한 3단계</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    M["클럽 회원<br/>본인 조회"] --> H["이벤트 호스트<br/>적립 제안"]
-    H --> PO["클럽 소유자<br/>규칙·등급·배지 정의"]
-    PO --> MM["마일리지 관리자<br/>적립·차감·검토 집행"]
-    M -.->|"잔액·등급·배지·랭킹"| RD["읽기 전용"]
-    MM -.->|"감사 기록·중복 실행 방지"| AUD["모든 작업 추적"]
-          </div>
-        </div>
-        <p>멤버는 본인 내역과 허용된 랭킹·프로필을 본다. 호스트는 자기 이벤트의 공개 전 점수를 상한 안에서 정하거나,
-        회원에게 줄 수동 적립을 제안한다. 호스트 자격만으로 직접 수동 적립을 집행하지는 못한다.
-        <strong>정책 정의와 점수 집행은 일부러 다른 권한</strong>으로 나뉘어 있어, 규칙을 만드는 사람과 점수를
-        실제로 주는 사람을 분리한다. 제도·규칙·등급·배지·사용 사유를 정하는 권한은 <strong>클럽 소유자 전용</strong>이라
-        운영진에게 위임되지 않고, 적립·차감·검토 집행은 마일리지 관리자에게 맡길 수 있다.</p>
-      </section>
-
-      <section>
-        <h2>원장 — 4가지 유형, 되돌릴 수 없는 기록</h2>
-        <p class="subtitle">모든 점수 이동은 장부에 한 줄로 남고 수정·삭제되지 않는다 — 기록 추가만 가능. 잘못된 것은 반대 부호 행으로만 바로잡는다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>유형</th><th>부호</th><th>의미</th></tr></thead>
-            <tbody>
-              <tr><td><strong>적립</strong></td><td>+</td><td>수동·일괄·자동 적립·호스트 제안 승인으로 발생.</td></tr>
-              <tr><td><strong>차감</strong></td><td>−</td><td>잔액 부족 시 거절. 만료 임박분부터 먼저 소비.</td></tr>
-              <tr><td><strong>정정</strong></td><td>원 기록 반대</td><td>잘못 준/뺀 점수를 반대 부호 기록으로 바로잡음. 같은 기록 두 번 정정 불가.</td></tr>
-              <tr><td><strong>만료</strong></td><td>−</td><td>적립분의 만료일이 지나면 잔여분이 소멸.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout">
-          <span class="label">만료가 가까운 점수부터 사용</span>
-          <p>점수를 사용할 때는 가장 먼저 만료될 적립분부터 빠진다. 어느 적립분에서 얼마가 빠졌는지도 기록해
-            나중에 확인할 수 있다. 만료일은 클럽 정책을 따르며 기본값은 365일이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>등급 — 누적 적립으로 자동 산정</h2>
-        <p class="subtitle">등급은 "등급 산정용 누적 적립"이 기준 점수 이상일 때 자동으로 매겨진다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>항목</th><th>값·정책</th></tr></thead>
-            <tbody>
-              <tr><td>등급 개수</td><td>클럽당 <strong>최대 10개</strong></td></tr>
-              <tr><td>기준 점수</td><td>낮은 등급에서 높은 등급 순으로 점점 커져야 하며, 같은 점수를 두 등급에 쓸 수 없음</td></tr>
-              <tr><td>이름 제약</td><td>금전성 단어(<code>원·캐시·포인트·won·cash·point</code>) 금지 — 마일리지가 현금처럼 보이지 않게</td></tr>
-              <tr><td>강등</td><td>정정·만료로 누적 적립이 줄면 등급이 내려갈 수 있음</td></tr>
-              <tr><td>이력</td><td><strong>감사 기록</strong>에 남은 등급 변경 내용을 회원에게 시간순으로 표시</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>첫 출시 범위와 공개 전 확인</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>구분</th><th>현재 상태</th><th>다음 행동</th></tr></thead>
-            <tbody>
-              <tr><td><strong>핵심 마일리지</strong><br>적립·사용·정정·만료·등급·배지·랭킹·호스트 제안·운영 복구</td><td><span class="pill brand">첫 출시 포함</span><br>운영 기본 목록 반영·배포 전</td><td>품질 확인 담당자는 서비스 공개 전에 휴대전화 알림과 화면 이동을 검사한다.</td></tr>
-              <tr><td><strong>사진 승인 적립</strong></td><td><span class="pill brand">첫 출시 포함</span><br>승인·재심·취소·회수·동시 승인 상한 검사 통과</td><td>클럽 정책 담당자가 규칙을 켠다. 품질 확인 담당자는 공개 전 회원·운영진의 실제 앱 연결과 알림을 검사한다.</td></tr>
-              <tr><td><strong>시즌</strong></td><td><span class="pill brand">첫 출시 포함</span><br>자동 전환·순위·복구 검사와 실제 앱 연결 확인</td><td>서버 운영 담당자는 기존 클럽의 시즌 배정을 준비한다. 품질 확인 담당자는 배포 환경의 전환·순위·복구를 검사한다.</td></tr>
-              <tr><td><strong>반복 수동 적립 검토</strong></td><td><span class="pill brand">첫 출시 포함</span><br>탐지·판정·선택 회수와 응답 유실 재시도 확인</td><td>클럽은 검토·점수 집행 담당자를 정하고 서버 운영 담당자는 일일 탐지를 확인한다. 반복 사용·대량 사후 검토·등급 이상은 제공하지 않는다.</td></tr>
-              <tr><td><strong>이벤트별 적립 규칙</strong></td><td><span class="pill brand">첫 출시 포함</span><br>호스트 점수·클럽 상한·공개 시 고정·취소 회수 확인</td><td>서버 운영 담당자는 기존 공개 모임의 확정 점수를 준비한 뒤 핵심 마일리지와 함께 배포한다.</td></tr>
-              <tr><td><strong>클럽별 후기 작성 기간</strong></td><td><span class="pill">만들지 않음(2026-09-05 결정)</span><br>후기 작성 기간은 모든 클럽에 공통 7일</td><td>요구가 확인되면 재검토한다. 마일리지 인정 기간은 지금도 클럽이 정한다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>제도 상태 세 가지: 미개설·운영 중·일시 중지</h2>
-        <p class="subtitle">클럽이 F16-04 정책 화면에서 직접 시작하고 멈춘다. 상태는 세 가지이고, 운영 중이 아니면 점수가 움직이지 않는다.</p>
-        <ul>
-          <li>미개설: 클럽이 아직 시작하지 않은 상태다. 설정을 시작하기 전이면 서버가 미개설로 응답하고, 적립·차감·호스트 제안 제출이 모두 막힌다. 클럽을 만든 직후에 시작할 수도 있고, 운영하던 중에 도입할 수도 있다. 도입 이전의 활동은 소급 적립하지 않는다.</li>
-          <li>운영 중: 클럽이 정책 화면에서 시작한 상태다. 적립·차감·호스트 제안이 정상 동작한다.</li>
-          <li>일시 중지: 클럽이 운영하다가 잠시 멈춘 상태다. 새 적립과 사용은 막히지만, 이미 받은 점수의 만료는 원래 날짜대로 진행된다.</li>
-          <li>만료일 변경은 <strong>향후 적립분에만</strong> 적용되고 기존 원장에 소급되지 않는다(미리보기에서 안내).</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>이 도메인의 부수효과</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>영향</th><th>여부</th><th>이유</th></tr></thead>
-            <tbody>
-              <tr><td>알림</td><td><span class="pill brand">서버 생성 완료</span></td><td>적립·사용·정정·만료·등급·배지·제안 결과 알림은 만들어진다. 품질 확인 담당자는 서비스 공개 전에 휴대전화 수신과 화면 이동을 검사한다.</td></tr>
-              <tr><td>이벤트</td><td><span class="pill brand">있음</span></td><td>체크인·후기·사진 승인을 자동 적립 조건으로 제공한다. 사진은 클럽에서 규칙을 켜야 적립한다. 호스트 제안은 이벤트 호스트 권한과 연결된다.</td></tr>
-              <tr><td>결제·정산</td><td><span class="pill">없음</span></td><td>마일리지는 지갑·정산·회계와 연결되지 않는다. 현금화·환불 경로 없음.</td></tr>
-              <tr><td>감사</td><td><span class="pill brand">강함</span></td><td>모든 운영 작업이 변경 전·후 내용과 함께 감사 기록(5년 보존)에 남는다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>첫 출시에서 알고 가는 한계</h2>
-        <div class="callout warn">
-          <span class="label">첫 출시 범위에 포함한 기능의 운영 한계</span>
-          <ul>
-            <li><strong>활동과 후속 적립 작업을 함께 저장</strong>해 서버 중단 뒤에도 이어서 처리한다. 다만 제도 활성 판정 자체가 실패한 경우는 당시 상태를 사후 확정할 수 없어 사람이 판정한다. 누락 점검은 처리 순서를 기다리는 작업을 빼고, 처리가 한 시간 넘게 밀린 작업만 후보로 올린다.</li>
-            <li><strong>자동 회수 때 잔액이 부족한 건</strong>은 검토 목록에 올라오지만 전용 처리 버튼은 없다. 운영자가 수동 정정·차감 도구로 처리하고 메모와 함께 닫는다.</li>
-            <li><strong>잔액이 0인 현재 회원도 랭킹에 보일 수 있다.</strong> 출시를 막지는 않으며 랭킹 화면을 다시 다룰 때 노출 기준을 정한다.</li>
-            <li><strong>탈퇴한 회원의 프로필 카드</strong>는 현재 회원이 직접 주소로 요청하면 열릴 수 있다. 이벤트 참석자 등 다른 화면과 함께 제품 범위를 정해야 한다.</li>
-            <li><strong>등급 기준 변경 뒤 자동 재계산은 동작</strong>하지만 실패분을 다시 실행하는 앱 버튼은 없다. 실패가 남으면 운영자가 처음부터 재실행한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>관련 정책·도메인</h2>
-        <div class="hub-grid">
-          <a class="card" href="../domains/04-club.html"><div class="eyebrow">상위 맥락</div><h3>04 클럽</h3><p>마일리지는 클럽 단위로 운영되며 클럽 권한 시스템을 쓴다.</p></a>
-          <a class="card" href="../domains/03-event.html"><div class="eyebrow">관련</div><h3>03 이벤트</h3><p>체크인·후기·사진 승인을 적립 조건으로 제공하며, 호스트 제안도 이벤트에서 시작한다.</p></a>
-          <a class="card" href="../policies/permission.html"><div class="eyebrow">정책</div><h3>권한 정책</h3><p>정책은 클럽 소유자 전용, 점수 집행은 마일리지 관리자에게 위임.</p></a>
-        </div>
-      </section>
-<!--
-  현재 상태 근거
-  - /Users/kyle/source/09.community/docs/plan/mileage/MILEAGE_RELEASE_PLAN.md
--->
+      <section id="domain-1"><h2>현재 범위와 기능 정본</h2><p>마일리지는 클럽 단위 정수 점수 원장과 등급·배지·시즌·운영 검토를 제공한다. 지갑 결제와 별도 업무다. 회원은 본인의 잔액/원장/월간 영수증, 등급·배지와 랭킹을 보고 호스트는 이벤트에서 적립을 제안한다. 운영진은 실제 권한에 맞춰 정책, 점수, 배지, 검토를 나눠 처리한다.</p>
+<div class="table-wrap"><table><thead><tr><th>기능 정본</th><th>서버 연결 수</th><th>제한·미검증 항목</th><th>확인 항목 수</th></tr></thead><tbody><tr><td><a href="../features/F16-01.html">F16-01 내 마일리지·원장·월간 영수증</a></td><td>3</td><td>5</td><td>8</td></tr><tr><td><a href="../features/F16-02.html">F16-02 등급·배지·랭킹·프로필 카드</a></td><td>5</td><td>6</td><td>8</td></tr><tr><td><a href="../features/F16-03.html">F16-03 시즌 조회·순위 확정·재시도</a></td><td>4</td><td>4</td><td>8</td></tr><tr><td><a href="../features/F16-04.html">F16-04 마일리지 제도 설정·변경 미리보기</a></td><td>3</td><td>5</td><td>8</td></tr><tr><td><a href="../features/F16-05.html">F16-05 적립 규칙·등급·배지·차감 사유·시즌 관리</a></td><td>20</td><td>4</td><td>10</td></tr><tr><td><a href="../features/F16-06.html">F16-06 마일리지 적립·차감·정정·배지 집행</a></td><td>8</td><td>5</td><td>10</td></tr><tr><td><a href="../features/F16-07.html">F16-07 호스트 적립 제안·승인·반려</a></td><td>6</td><td>5</td><td>8</td></tr><tr><td><a href="../features/F16-08.html">F16-08 검토 대기열·대시보드·감사 기록</a></td><td>11</td><td>5</td><td>9</td></tr></tbody></table></div>
+<p>기능 PRD 8개, 등록한 서버 연결 60개, 제한·미검증 39개, 수용 기준 69개다. 연결 수는 기능별 기록 수이며 전체 서비스 엔드포인트 수가 아니다. 제한 수는 결함 확정 수, 수용 기준 수는 시험 통과 수와 다르다.</p></section>
+<section id="domain-2"><h2>실제 접근과 권한</h2><div class="table-wrap"><table><thead><tr><th>이용자·행동</th><th>현재 입구와 권한</th></tr></thead><tbody><tr><td>회원 조회</td><td>클럽 마일리지 메인 → 원장/영수증/랭킹/등급 변화. 서버 클럽 회원 검사</td></tr><tr><td>정책·정의·시즌 관리</td><td>POLICY_OWNER. 상태 전이는 본인 재인증을 추가 적용</td></tr><tr><td>점수 이동·호스트 승인</td><td>REWARD_MANAGER. 점수 직접 명령은 필수 요청 키</td></tr><tr><td>배지 부여·회수</td><td>BADGE_AWARD_MANAGER. 정의 편집과 별도 권한</td></tr><tr><td>검토·감사·대시보드·일괄 재조회</td><td>MILEAGE_MANAGER. 반복 적립 FRAUD는 보상 권한도 필요</td></tr><tr><td>호스트 제안</td><td>이벤트 상세의 호스트 입구와 hostOnly 라우터 → 본인 제출·상태 목록</td></tr></tbody></table></div>
+<p>MILEAGE, MILEAGE_SEASON, MILEAGE_PHOTO, MILEAGE_ADVANCED_REVIEW의 공개 범위는 각각의 서버/앱 경계다. seasonEnabled 값 하나가 시즌 업무 전체의 허용 여부를 결정하는 공통 게이트는 아니다. API가 존재한다는 사실과 실제 공개·화면 입구·실행 완료를 나눈다.</p></section>
+<section id="domain-3"><h2>설정·원장·등급의 현재 규칙</h2><p>설정 조회는 기존 행을 요구하며 누락은 무결성 오류다. 새 클럽용 기본값은 NOT_STARTED/365일/BALANCE/시즌 꺼짐이다. 최초 활성화에 없는 기본 적립 규칙만 보충한다. NOT_STARTED → ACTIVE, ACTIVE ↔ PAUSED만 허용하고 실제 상태 전이는 재인증한다.</p>
+<p>새 적립·차감·호스트 제출/승인은 ACTIVE를 확인한다. 반려·수동 정정·기존 조회·만료는 같은 조건으로 일괄 차단하지 않는다. 만료 기간은 새 적립에 적용하고 기존 만료를 중지/재개로 미루지 않는다.</p>
+<p>EARN은 잔액과 누적을 늘리고 REDEEM은 만료 임박 적립부터 소비 관계를 만든다. EARN 정정은 이미 만료된 양을 제외해 회수하고 원시/등급 누적은 원래 적립액만큼 감소한다. REDEEM 정정은 사용을 복원한다. EXPIRE는 잔여 잔액을 없애며 등급 누적을 감소시키지 않는다. 과거 ‘REVERSE/EXPIRE 모두 등급 누적 차감’ 설명은 현재 구현과 다르다.</p>
+<p>등급 정의 생성/삭제/기준 변경은 재계산을 예약하고 저장 성공과 전체 회원 재계산 완료는 분리한다. 규칙 POST는 트리거 중복을 거절한다. 등급 오류는 개수·이름·금지어·기준 중복·사용 중 삭제 등으로 나뉜다. 배지 정의/차감 사유/시즌 생성 키와 실제 배지 부여 명령의 키 계약도 다르다.</p></section>
+<section id="domain-4"><h2>조회와 공개 정보의 경계</h2><p>본인 원장과 배지의 운영자 식별 필드는 가린다. 메인 최근 원장은 DB 5건, 원장은 페이지 조회다. 월간 순증은 REVERSE를 제외하지만 월초/말 잔액은 포함한다. 과거 월 등급은 EARN 합과 현재 정의로 재구성하고 배지는 현재 활성 상태의 영향을 받는다.</p>
+<p>회원 랭킹 화면은 BALANCE를 명시해 시작한다. 서버 미지정 기본값이 정책 기준이라는 사실과 다르다. 현재 랭킹에는 회원 상태/차단 제외 조건이 없고 동점도 개별 순번을 갖는다. 별도 프로필 카드 API는 차단/점수 가림을 적용하지만 현재 화면 소비자가 확인되지 않는다.</p>
+<p>종료 시즌 순위는 적립 기준만 사용하며 동점은 공동 순위다. 양수 적립과 확정 순위가 있는 기록만 공개하고 앱은 상위 첫 20건과 별도 본인 기록을 보여 준다. 회원 랭킹과 시즌 확정 순위의 계산·페이지 지원을 구분한다.</p></section>
+<section id="recovery-current"><h2>실패·복구·운영 결과</h2><p>시즌은 SCHEDULED → ACTIVE(집계 준비) → CLOSING → CLOSED로 이어진다. 회원별 기록과 순위 확인이 끝나기 전에 완료로 바꾸지 않는다. 준비/마감 재시도와 자동 후속 처리가 있고 다음 시즌도 시작 시각·다른 시즌 상태 조건을 만족해야 활성화된다.</p>
+<p>점수 일괄 명령은 회원별 부분 성공이다. 같은 본문 재시도의 키를 유지한다. 즉시 결과와 서버 재조회는 다르며 재조회의 실패 감사/배지 결과 복원에는 제한이 있다. 모든 운영 명령을 같은 멱등·전체 원자 처리로 설명하지 않는다.</p>
+<p>검토 대기열은 4종이고 일반 처리는 IGNORE만 받는다. 반복 수동 적립 NORMAL/FRAUD, 자동 회수 재시도, 원장 변경 없는 종결은 별도 명령이다. FRAUD가 PROCESSED여도 잔액 부족 원장은 회수 검토로 남을 수 있다.</p>
+<p>호스트는 본인 제안 상태를 볼 수 있다. 승인은 최종 적립액/원장 연결과 별도 적립 트랜잭션을 가지며 현재 화면에는 조정 점수 입력과 처리 사유 표시가 없다. 결과 outbox와 알림 이동 경로는 존재하지만 실제 푸시 전달을 이번 문서 대조로 증명하지 않는다.</p></section>
+<section id="domain-6"><h2>해결된 과거 설명과 남은 제한</h2><p>현재 대시보드·회원 상세·일괄 결과·설정 미리보기는 전용 응답 모델로 연결된다. 최근 원장·대시보드 집계·만료 후보는 과거의 전체 원장 findAll 방식과 다르다. 자동 적립 신호의 호출 경로도 있다. 해결된 과거 진단을 현재 미구현 항목으로 계속 남기지 않는다.</p>
+<p>남은 차이는 상세 원장 첫 50건과 미표시 감사/열린 검토 항목, 전역 outbox 수치, 월 영수증 산식/과거 상태 복원, 랭킹 기본값/공개 범위, 시즌 첫 20건, 배지 부여 중복 요청 계약, FEFO 미배정 경고, 일괄 실패 내역 재조회와 호스트 승인 화면 범위다. 각각의 정본 PRD에서 조건과 증거 범위를 확인한다.</p>
+<p>이 영역에는 기존 로컬 units 폴더가 없어 새로 만들지 않는다. HTML과 목록은 기능 PRD에서 맞추고 실제 API 함수/주소·내부 링크·소스 지문을 검사한다. 이번 작업은 문서와 문서 검사기 수정이며 제품 코드·브라우저·실기기 시험 결과로 확대하지 않는다.</p></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

@@ -11,7 +11,7 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 5008,
+    "automatedTestFilesScanned": 5010,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 76,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 700,
-    "verifiedTraceRecords": 698,
+    "traceMarkers": 714,
+    "verifiedTraceRecords": 712,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -18126,7 +18126,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F16-06",
       "domain": "마일리지",
-      "name": "적립/차감/정정 집행",
+      "name": "마일리지 적립·차감·정정·배지 집행",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
@@ -18137,10 +18137,147 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F16-06:1",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/grants",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "grant",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grants",
+                "targetLine": 69,
+                "methodLine": 71
+              }
+            ]
+          },
+          {
+            "id": "F16-06:2",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/grants/bulk",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "grantBulk",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grants/bulk",
+                "targetLine": 88,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F16-06:3",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/redemptions",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "redeem",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemptions",
+                "targetLine": 109,
+                "methodLine": 111
+              }
+            ]
+          },
+          {
+            "id": "F16-06:4",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/redemptions/bulk",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "redeemBulk",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemptions/bulk",
+                "targetLine": 128,
+                "methodLine": 130
+              }
+            ]
+          },
+          {
+            "id": "F16-06:5",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/ledger/{ledgerId}/reverse",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "reverseLedger",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/ledger/{ledgerId}/reverse",
+                "targetLine": 156,
+                "methodLine": 158
+              }
+            ]
+          },
+          {
+            "id": "F16-06:6",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/badges/{badgeDefId}/awards",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "awardBadge",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/badges/{badgeDefId}/awards",
+                "targetLine": 178,
+                "methodLine": 180
+              }
+            ]
+          },
+          {
+            "id": "F16-06:7",
+            "label": "DELETE /api/v1/admin/clubs/{clubId}/mileage/badge-awards/{awardId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "revokeBadge",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/badge-awards/{awardId}",
+                "targetLine": 192,
+                "methodLine": 194
+              }
+            ]
+          },
+          {
+            "id": "F16-06:8",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/batches/{batchId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+                "controller": "MileageAdminActionController",
+                "method": "getBatchResult",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/batches/{batchId}",
+                "targetLine": 209,
+                "methodLine": 211
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -18167,7 +18304,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F16-07",
       "domain": "마일리지",
-      "name": "호스트 제안",
+      "name": "호스트 적립 제안·승인·반려",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
@@ -18178,10 +18315,113 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F16-07:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/host-proposals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminQueueController.java",
+                "controller": "MileageAdminQueueController",
+                "method": "listHostProposals",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/host-proposals",
+                "targetLine": 213,
+                "methodLine": 215
+              }
+            ]
+          },
+          {
+            "id": "F16-07:2",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/host-proposals/{proposalId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminQueueController.java",
+                "controller": "MileageAdminQueueController",
+                "method": "getHostProposal",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/host-proposals/{proposalId}",
+                "targetLine": 229,
+                "methodLine": 231
+              }
+            ]
+          },
+          {
+            "id": "F16-07:3",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/host-proposals/{proposalId}/approve",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminQueueController.java",
+                "controller": "MileageAdminQueueController",
+                "method": "approveHostProposal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/host-proposals/{proposalId}/approve",
+                "targetLine": 242,
+                "methodLine": 244
+              }
+            ]
+          },
+          {
+            "id": "F16-07:4",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/host-proposals/{proposalId}/reject",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminQueueController.java",
+                "controller": "MileageAdminQueueController",
+                "method": "rejectHostProposal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/host-proposals/{proposalId}/reject",
+                "targetLine": 254,
+                "methodLine": 256
+              }
+            ]
+          },
+          {
+            "id": "F16-07:5",
+            "label": "POST /api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageHostController.java",
+                "controller": "MileageHostController",
+                "method": "submitProposal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals",
+                "targetLine": 40,
+                "methodLine": 42
+              }
+            ]
+          },
+          {
+            "id": "F16-07:6",
+            "label": "GET /api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageHostController.java",
+                "controller": "MileageHostController",
+                "method": "getMyProposals",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/events/{eventId}/mileage-proposals",
+                "targetLine": 52,
+                "methodLine": 54
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

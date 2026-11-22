@@ -312,7 +312,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -386,7 +387,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2459,9 +2461,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b15bf49855f77f1e8965d7a20501cecd72f854cf489ac5e097caff555fd033cc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "4344335230f7d96119bd8b3495864176ed2439f0f377da772fc2347477055784"
     },
     {
       "path": "docs/domains/17-regular-meeting.html",
@@ -4402,9 +4407,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "824613af6dc60a9c7cea4e7be5e2c1a2b917ccf05b658fa8bbff2bac9726d3e3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "24f96f496c9e20a08c6637a6c553c7e8b94ab37e215d8e45cbf03397162cb9bb"
     },
     {
       "path": "docs/features/F16-07.html",
@@ -4412,9 +4420,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f339566b40ab5372d654609429280bdf4404a81baa0e5a258ebaac8e5c763782",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "71b36a948061ca2707ddac9a1f622a942741c365f3205953522a93cdf4691182"
     },
     {
       "path": "docs/features/F16-08.html",
@@ -5249,7 +5260,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5356,7 +5368,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5487,7 +5500,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5791,10 +5805,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "fc3079b49a56986c723028d0f81cbe93e33917c0a9d2755c295d539a21d240fd",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
     },
     {
       "path": "prd/01_domain_prds/17_정기모임_prd.md",
@@ -7739,10 +7755,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "7cc22500c887cc19d9906928ddccbcf5da331ca236fac04564546214064aacfd",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "5e3b0daf6bc0250da6f88ab9a8c4cfa3659e8a960affb7ec2a51a01254efef0e"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
@@ -7750,10 +7768,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "eed76fd394c49f85525419c74e19b8b33d23daa09c094b7d096c93f397919ede",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "27a28c32afe8baf2a583e0e3ffd45068a31c6a6c63dd54c2969237260a3d3fe5"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
@@ -8422,7 +8442,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8681,7 +8702,8 @@
         "date_matching_block_20261122",
         "date_chat_meeting_20261122",
         "mileage_queries_20261122",
-        "mileage_policy_season_20261122"
+        "mileage_policy_season_20261122",
+        "mileage_commands_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -8691,9 +8713,12 @@
       "kind": "verification_reference",
       "document": false,
       "baselineSha256": "45832cd54d2a0f72628fbd5a8167599b787b7bb9fff82966b3ab2b32704e1292",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "a31f52977f4d26326e00b23e10de1921ccb6f548aa689a545df3224d0f37005e"
     },
     {
       "path": "verification/source_references.test.mjs",
@@ -8701,10 +8726,12 @@
       "kind": "verification_reference",
       "document": false,
       "baselineSha256": "0a36f6fe23b99d42262e4859e33b038f9257e0c025ad97dde08ec43a0f975241",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "mileage_commands_20261122"
+      ],
+      "reviewedSha256": "b200e0fd377cfb71f3d13806ae0560eccd17fff0a2563bc8c436ee27af72ee98"
     },
     {
       "path": "verification/sync_source_reference_docs.mjs",
@@ -37930,6 +37957,259 @@
       "observedSourceVersions": {
         "community_api": "4e781f7a9f5d18f381c680539a9a95a348ba5295",
         "community_app": "7b708bf5e4dbfefa014fe23e734b0720415976a0"
+      }
+    },
+    "mileage_commands_20261122": {
+      "kind": "source_review",
+      "scope": "F16-06/07 명령·일괄/FEFO/정정/만료·자동신호연결·호스트제안의 서버/앱 소스 대조와 마일리지8기능 도메인 요약. 제품 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminActionController.java",
+          "sha256": "d7ee1047bdbf0c6856a835f75fc220f2cd30298b9fb9b9c47aa0a43b2b9d31a3",
+          "reviewScope": "전체 8개 명령/조회·권한·필수키대상·별도배지쓰기·typed배치 응답"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageHostController.java",
+          "sha256": "e956d5b1c6e11ed6117ae47f3986114e869f2044865617b9089804ef995fd77e",
+          "reviewScope": "호스트 제출/본인목록 REST·본문/응답·공개범위"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageEarningService.java",
+          "sha256": "bc0c62f9fa285468e1211ea16d196e9a5a84bf3de735a809a802c5ffb84f7c15",
+          "reviewScope": "90–467 수동적립회원별결과/실패응답·호스트조회/제출/첨부/클럽/회원·승인/반려/출처/상태/알림·입력검사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageEarningGrantWorker.java",
+          "sha256": "e3de97015543eaf88baf5a6c50e1261fe44c3bf57a1d5d6c1d141d38b6fd45d1",
+          "reviewScope": "48–131 ACTIVE/회원별트랜잭션·결정적출처키/원장·호스트별도REQUIRES_NEW"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageRedemptionService.java",
+          "sha256": "6342e4e4df2ce0c70baad1adc7fdeb1182d156b34886aad4e1100435bdd3e7ba",
+          "reviewScope": "70–198 부분성공·프리셋·입력·정정위임/부분응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageRedemptionWorker.java",
+          "sha256": "652105c412759ab0eaf5750992ba8a53fceda1035f7239f34beaa6387f6f18c0",
+          "reviewScope": "45–80 회원별ACTIVE/원장/회원검사/감사/결과"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageReverseWorker.java",
+          "sha256": "8998a93974a8adc6a6eb5650a1a3449c5579e6e81d3729896bb799c891735386",
+          "reviewScope": "70–83 상태ACTIVE없는잠금·정정/감사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageLedgerService.java",
+          "sha256": "eeeea81b505a995b05e321ad845ecf760eb82cb55858742daecda47014ab109e",
+          "reviewScope": "109–299 적립/차감·중복출처/요약/FEFO;328–508 정정·잔액/등급누적/소비대체·528–637 만료/회수액·688–727 FEFO소비·860–865 만료일"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageAutoTaskSignals.java",
+          "sha256": "c51b750b22af8a891214c08b7a684c7fba6aae81da00de32310fd27f13bb6b73",
+          "reviewScope": "전체 원트랜잭션 의도저장과aftercommit runner·미판정기록·earn/revert/photo신호"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileagePhotoUploadSignal.java",
+          "sha256": "922da33e6cea0d4f6abbaa398e36f69cbd84670a34b4256dd4da713f041f5d90",
+          "reviewScope": "42–73 사진공개범위/활성probe·photoReview의도연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/repository/query/MileageHostProposalQueryRepository.java",
+          "sha256": "7f9e6b9538a08cfb230d558606c76487114d07c602087bd0d876e360d1035373",
+          "reviewScope": "20–97 목록필터/정렬/페이지/닉네임조인"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/constants/HostProposalStatus.java",
+          "sha256": "090636fc863d809f37804cfb7309649b40d075e3d7d4710c790cb4b5bb29f995",
+          "reviewScope": "현재4상태·WITHDRAWN없음"
+        },
+        {
+          "path": "community_app/lib/data/api/mileage/mileage_admin_action_api.dart",
+          "sha256": "a425eab7beb31164aeb9c00660bc4e8c6365cf9c91923f533cb7209114249ae5",
+          "reviewScope": "전체 8개 REST의권한외요청/응답·키있는점수명령과키없는배지·typed배치"
+        },
+        {
+          "path": "community_app/lib/data/repositories/mileage/mileage_admin_action_repository.dart",
+          "sha256": "3282e0c7ece9d7c7738cd14d15cc4baf45401fa50ab95dfbff78f3270d2a4fef",
+          "reviewScope": "40–142 bulk/redeem/reverse 키전달·배지/typed배치Result변환"
+        },
+        {
+          "path": "community_app/lib/domain/providers/mileage/mileage_admin_commands.dart",
+          "sha256": "0097335d5f5ea1ce7db534ef14a401558287e0ba56abf52c65e2ac7d95924bf1",
+          "reviewScope": "60–178 대상수별grant/redeem·key전달·정정/배지·제안처리후재조회콜백"
+        },
+        {
+          "path": "community_app/lib/presentation/mileage/admin/screens/mileage_action_screen.dart",
+          "sha256": "8c025ac1ad17900c10a758079ad2198ab1a692b893ae1fc58f2f4df7481056da",
+          "reviewScope": "599–722/902–1013 입력/확인/권한/계정범위·같은본문키·실패유지·성공결과;1378–1543 호스트승인빈Param/반려사유/권한/목록표시"
+        },
+        {
+          "path": "community_app/lib/presentation/mileage/admin/screens/mileage_batch_result_screen.dart",
+          "sha256": "52c0e9ece9f986ec7585fea6f77ff1be224935f21a0d6a85b4c6787f31f0109a",
+          "reviewScope": "69–114 현재계정범위의즉시GrantResult·검토권한/ID필요서버재조회·typed변환"
+        },
+        {
+          "path": "community_app/lib/data/api/mileage/mileage_host_api.dart",
+          "sha256": "e341e8ab46f75446db2ec22da13e73365f3122be555e3a3738c1f57097aa2413",
+          "reviewScope": "전체 제출/본인목록REST·키없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/mileage/mileage_host_providers.dart",
+          "sha256": "0a2e1316b7eac9278ef4806c6edde7a2e2745bd21ca7e51f2898e7f9bbd1e2fa",
+          "reviewScope": "전체 본인목록콘솔변경구독·제출provider세션범위·repo호출"
+        },
+        {
+          "path": "community_app/lib/presentation/mileage/screens/mileage_host_proposal_screen.dart",
+          "sha256": "65871536cf7c26f6099adc9f73c54954624f0d55db046fa33a68852887044f99",
+          "reviewScope": "68–223 회원/점수/첨부업로드/선택사유·성공초기화/실패유지·본인목록;352–398 원래점수/사유/상태표시와처리결과미표시"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "adf279be605d999e1f29b3b161e851c39313282f91e02a025dbe5a4b7d07da8b",
+          "reviewScope": "509–521 MILEAGE공개·호스트·clubId조건의제안입구만대조"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminQueueController.java",
+          "sha256": "cf5d4504486848a4898fb111c59133373fc68a092c82db5a0af775b3a228c13a",
+          "reviewScope": "235–285 승인REWARD_MANAGER/반려MILEAGE_MANAGER·낙관적충돌처리, 목록/단건 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageBadgeService.java",
+          "sha256": "6b787353d4595c4f5d65a79993f421dbf6b911a96d925d4750af29eeb0753e18",
+          "reviewScope": "122–193 부여회원/정의/트랜잭션·필수키없는신규행·이미회수된행no-op·감사/outbox"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageQueryService.java",
+          "sha256": "4f56184dac3096e1006e88a089d20f6c5dfb427b30defb771e986d79d4aaff6c",
+          "reviewScope": "403–452 전용배치재조회·원장/FAIL감사·빈badgeRows·원장수/고유회원수"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/repository/query/MileageAuditLogQueryRepository.java",
+          "sha256": "bb07fda48a7858df4ee6df474cc2e1a99694f563343ebdeb7e925ae5ff6cae48",
+          "reviewScope": "176–185 batchId와actionType FAIL포함 실패감사조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/repository/query/MileageLedgerQueryRepository.java",
+          "sha256": "4516354fdb4b34068bb116acdbfe815a65067c7dbfcb0374fa225b8ea292e89e",
+          "reviewScope": "210–230 만료후보cursor/잔여/정정제외·266–294 FEFO순서/정정제외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/CheckInService.java",
+          "sha256": "629833f554fc82b29af6ebe9850d908315b108adc74b7586c09bad0cd5fa53f9",
+          "reviewScope": "454 실제자동적립호출·480–495 활성여부probe/미판정/earn연결만검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ReviewService.java",
+          "sha256": "f7f665f5f51d31092132c29317a23898bfba07ad3f2db4897a65bad67a41718f",
+          "reviewScope": "153/214 작성/되돌림호출·174–189 활성여부probe/미판정/earn연결만검토"
+        },
+        {
+          "path": "community_app/lib/presentation/mileage/admin/screens/mileage_member_detail_screen.dart",
+          "sha256": "bbbe7100a7740e1425ec4452d8de6f40f4795f6163fca3179d6f2e9c5b25570c",
+          "reviewScope": "294–363 개별점수입력/키·631–637 EARN/REDEEM정정입구"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "1107–1128 제안경로hostOnly가드와screen전달"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "1428–1433 HostProposalApproved/Rejected의eventId제안화면/메인폴백만대조"
+        }
+      ],
+      "reuses": [
+        "date_chat_meeting_20261122",
+        "event_checkin_20261122",
+        "feedback_taste_20261122",
+        "mileage_policy_season_20261122",
+        "mileage_queries_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
+          "sha256": "5e3b0daf6bc0250da6f88ab9a8c4cfa3659e8a960affb7ec2a51a01254efef0e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
+          "sha256": "27a28c32afe8baf2a583e0e3ffd45068a31c6a6c63dd54c2969237260a3d3fe5"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/16_마일리지_prd.md",
+          "sha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
+          "sha256": "faac8c985f1995f6440e54d47926ae7ce0822b6a381304c81495a16993128888"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md",
+          "sha256": "a85a063148562f5fe7e90973e4bd45a4b99ae9cfb9b7106f0f87b94d66152760"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-03_season_prd.md",
+          "sha256": "f0b3496806995b768d04c1e75c37d409c566bc0b46cb27f57a83af7506666892"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
+          "sha256": "0d0bc93e7b534385263765104bb1155341eb52d8f531a2e11f2c4424e92fc257"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
+          "sha256": "b585c8e6a7fcd9b4d65623c3efd5dd0a927d906f714ec87c01bc4db5c46a5970"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
+          "sha256": "dee45ad827b62fa7c8ec48ceac25101312e0a17b6d79b4bb638870cc45bf0fbd"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F16-06.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F16-07.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/domains/16-mileage.html": [
+          "sidebar",
+          "launch-strip",
+          "recovery-current"
+        ]
+      },
+      "referenceChanges": [
+        "14개 API 연결 등록",
+        "배치typed응답·자동신호호출·호스트상태목록의 현재 구현 반영"
+      ],
+      "followUpFindings": [
+        "일괄재조회 실패행/배지결과 보존부족·배지부여 필수키없음",
+        "차감 FEFO 미배정 경고 후 계속·정정 응답 부분필드",
+        "호스트승인 별도 적립트랜잭션·조정점수/처리사유UI차이·NEEDS_MORE_INFO전이없음"
+      ],
+      "retainedHistoricalQuotes": [],
+      "documentationChecks": [
+        {
+          "command": "node --test verification/source_references.test.mjs",
+          "result": "12 passed; includes fully qualified Spring mapping and all registered live endpoint bindings"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 140개가 실제 소스와 일치합니다.",
+        "groupDigests": "40 source/canonical digests; 9 retained HTML IDs",
+        "derivedDocuments": "8 documents; shared batch verified 8 paths, 43 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only; documentation parser tests 12 passed"
+      },
+      "observedSourceVersions": {
+        "community_api": "4e781f7a9f5d18f381c680539a9a95a348ba5295",
+        "community_app": "05c36da1d49f5799a365c5a8e7e6257ddf8def62"
       }
     }
   },

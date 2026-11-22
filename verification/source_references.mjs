@@ -39,7 +39,7 @@ export function parseController(source, sourcePath) {
   const text = withoutComments(source);
   const classMatch = /public\s+class\s+(\w+)/.exec(text);
   if (!classMatch) return [];
-  const mappings = [...text.matchAll(/@(Get|Post|Put|Patch|Delete|Request)Mapping\b/g)].map((match) => ({
+  const mappings = [...text.matchAll(/@(?:org\.springframework\.web\.bind\.annotation\.)?(Get|Post|Put|Patch|Delete|Request)Mapping\b/g)].map((match) => ({
     kind: match[1], index: match.index, ...annotationArguments(text, match.index + match[0].length),
   }));
   const prefixes = mappings.filter((mapping) => mapping.index < classMatch.index);
