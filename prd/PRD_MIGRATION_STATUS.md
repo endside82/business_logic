@@ -237,7 +237,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F03-01 | 이벤트 | [F03-01_event-discovery_prd.md](02_feature_prds/03_event/F03-01_event-discovery_prd.md) | `F03-01_event-discovery` | 실사 기반 전환본 | 3 | 4 |
 | F03-02 | 이벤트 | [F03-02_event-detail_prd.md](02_feature_prds/03_event/F03-02_event-detail_prd.md) | `F03-02_event-detail` | Golden sample | 2 | 2 |
 | F03-03 | 이벤트 | [F03-03_event-creation_prd.md](02_feature_prds/03_event/F03-03_event-creation_prd.md) | `F03-03_event-creation` | 실사 기반 전환본 | 6 | 4 |
-| F03-04 | 이벤트 | [F03-04_event-lifecycle_prd.md](02_feature_prds/03_event/F03-04_event-lifecycle_prd.md) | `F03-04_event-lifecycle` | 실사 기반 전환본 | 9 | 3 |
+| F03-04 | 이벤트 | [F03-04_event-lifecycle_prd.md](02_feature_prds/03_event/F03-04_event-lifecycle_prd.md) | `F03-04_event-lifecycle` | 실사 기반 전환본 | 10 | 4 |
 | F03-05 | 이벤트 | [F03-05_event-attendance_prd.md](02_feature_prds/03_event/F03-05_event-attendance_prd.md) | `F03-05_event-attendance` | 실사 기반 전환본 | 6 | 6 |
 | F03-06 | 이벤트 | [F03-06_application-review_prd.md](02_feature_prds/03_event/F03-06_application-review_prd.md) | `F03-06_application-review` | 실사 기반 전환본 | 3 | 5 |
 | F03-07 | 이벤트 | [F03-07_capacity-and-waitlist_prd.md](02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md) | `F03-07_capacity-and-waitlist` | 실사 기반 전환본 | 8 | 6 |

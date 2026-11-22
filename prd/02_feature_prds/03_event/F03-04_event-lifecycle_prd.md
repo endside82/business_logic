@@ -1,87 +1,145 @@
-# F03-04. 이벤트 수정/생명주기 관리 (호스트) PRD
+# F03-04. 이벤트 수정·공개·종료·취소 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 시험 단언을 대조했다. 실제 앱 조작·푸시 수신·송금·재시작 시험을 새로 실행한 결과가 아니다.
 
-## 1. 결론
+## 결론
 
-호스트/공동호스트가 이벤트의 메타데이터를 수정하거나 상태를 전이시킨다. 상태 전이는 `DRAFT → OPEN → CLOSED|CANCELED`만 합법이며 엔티티의 `Event#publish()/close()/cancel()` 메서드가 검증한다. 일정 변경은 OPEN 상태에서만 가능하고 변경 즉시 참석자/대기자에게 FCM 알림을 발송한다. 취소 시 유료 이벤트는 ATTENDING 사용자에게 100% 환불(Unit 06 위임)을 시도하고 실패한 건은 `failed_refund` 테이블에 기록한다. 호스트는 참석자 전체에게 공지(`announce`)를 일괄 발송할 수 있다 (throttle 적용).
+초안 수정, 공개 후 소개 수정, 참가 조건 변경, 공개·종료·취소는 서로 다른 작업이다. 공개 뒤에도 소개는 고칠 수 있지만 일정·장소는 변경 제안, 정원은 정원 설정, 위치 공유 허용은 별도 설정으로 다룬다. **이벤트 취소 응답은 취소 확정이며 모든 환불의 완료를 뜻하지 않는다.**
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+일반 이벤트 전이는 DRAFT → OPEN 또는 CANCELED, OPEN → CLOSED 또는 CANCELED다. 종료·취소를 되돌리는 일반 경로는 없다. 숨김은 별도 운영 표지이고 상태값이 아니다. 정기모임 회차·PRIVATE 취소·클럽 운영 권한은 각각의 전용 흐름을 따른다.
 
-- 이벤트 상세(F03-02) ▶ 호스트 액션바 또는 더보기 메뉴
-- 마이 이벤트(F03-12) "주최 중" 탭 ▶ 카드 ▶ 상세 ▶ 호스트 액션바
-- 알림(F12) "환불 실패" 또는 "변경 알림" 탭 ▶ 상세
+## 코드 위치
 
-## 2. 코드 위치
+서버: EventController·EventEntryService·EventService·EventCommandSupport·EventStatus, EventCloseService·EventCloseTransition, EventCancelService·EventCancelEntrance·EventCancelRefundRunner·EventCancelRefundService·EventPaymentRefundService·EventCancelNotices·CancelRefundRecoveryScheduler, EventAnnounceThrottleService, RecurringEventUpdateService·RecurringEventCreateService, EventLocationSharePolicyService.
 
-계약의 정본은 코드다. 서버: `EventController`, `RescheduleProposalController`, `EventService`, `EventCapacitySettingsService`, `EventAnnounceThrottleService`, `NotificationService`. 앱: `event_edit_screen.dart`, `event_detail_screen.dart`, `recurring_event_group_screen.dart`, `event_action_bar.dart`, `event_announce_dialog.dart`.
+앱: event_detail_screen.dart·event_action_bar.dart·event_more_menu.dart, event_edit_screen.dart·event_edit_provider.dart·event_edit_draft_storage.dart, event_lifecycle_provider.dart, event_announce_dialog.dart·event_announce_provider.dart, recurring_event_group_screen.dart·recurring_event_provider.dart, location_privacy_screen.dart.
 
 <!-- source-references:start -->
-서버 창구: `EventController#updateEvent`, `EventController#deleteEvent`, `EventController#publishEvent`, `EventController#closeEvent`, `EventController#cancelEvent`, `RescheduleProposalController#createProposal`, `EventController#announceToAttendees`, `EventController#updateFutureEvents`, `EventController#cancelAllFutureEvents`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `EventController#updateEvent`, `EventController#deleteEvent`, `EventController#publishEvent`, `EventController#closeEvent`, `EventController#cancelEvent`, `RescheduleProposalController#createProposal`, `EventController#announceToAttendees`, `EventController#updateFutureEvents`, `EventController#cancelAllFutureEvents`, `EventController#changeLocationShare`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 - 옛 reschedule PATCH는 제거됐으며 일정 변경 제안 생성으로 연결한다.
 - 같은 절에 함께 적힌 수정·취소 위치를 각각 연결했다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 입구·권한·복귀
 
-1. 권한 확인: `eventPermissionProvider(eventId)` — host/coHost/staff 여부
-2. 발행: `eventLifecycleNotifierProvider.publishEvent(id)`
-   - `EventRepository.publishEvent` ▶ `POST .../publish`
-   - 성공 → `eventDetailNotifier(id).invalidate()` + `eventListNotifier.invalidate()`
-3. 종료: `eventLifecycleNotifierProvider.closeEvent(id)` ▶ `POST .../close`
-4. 취소: `eventLifecycleNotifierProvider.cancelEvent(id)` ▶ `POST .../cancel` (백엔드에서 환불 + 알림 일괄 처리, 클라는 결과만 반영)
-5. 삭제: `eventLifecycleNotifierProvider.deleteEvent(id)` ▶ `DELETE /api/v1/events/{id}`
-6. 메타 수정 (DRAFT): `eventEditNotifierProvider(id).submit()` ▶ `PATCH /api/v1/events/{id}`
-7. 일정 변경: `EventRepository.rescheduleEvent(id, EventRescheduleParam)` ▶ `PATCH .../reschedule`
-8. 공지 발송: `eventAnnounceNotifierProvider.announce(id, EventAnnounceParam)` ▶ `POST .../announce`
-9. 반복 일괄 수정/취소: `recurringEventProvider`(가정) ▶ `PATCH /DELETE .../recurring`
+마이 이벤트의 주최 중 카드나 다른 목록에서 상세를 연 뒤 현재 상태와 권한에 맞는 행동을 고른다. 일반 수정·공개·종료·취소·삭제는 서버에서 호스트 또는 유효한 공동호스트를 확인한다. 공지는 추가 발송 권한, 반복 일괄 관리는 원본 호스트 본인 조건을 적용한다.
 
-## 4. 제품 규칙
+| 상세 입구 | 표시·행동과 결과 |
+| --- | --- |
+| 초안 하단 수정·공개 | DRAFT 수정은 하단 수정 버튼에서 연다. 공개 성공 후 상세와 관련 목록을 갱신한다 |
+| 공개 후 관리 목록의 수정 | OPEN이고 수정 권한이 있으며 정기모임 회차가 아닐 때 편집 화면을 연다. 하단·더보기의 중복 수정 입구로 설명하지 않는다 |
+| 공개 모임 하단 종료 | 되돌릴 수 없음, 신청 마감과 선입금 지급 등 후속 처리를 확인하고 종료한다 |
+| 관리 목록의 취소 | 일반 상세에서는 OPEN에 노출한다. 확인 뒤 현재 상태·권한을 다시 읽고 일반·PRIVATE·클럽 운영자 취소를 구분해 요청한다 |
+| 초안 더보기의 삭제 | 정기모임 회차를 제외한 수정 가능한 DRAFT에서 보인다. 성공하면 상세를 닫고 목록을 갱신한다 |
+| 반복 일정 관리 | 원본 틀 기준으로 묶음을 연다. 일괄 수정·취소 행동은 원본 호스트만 사용한다 |
+| 위치 공유 설정 | OPEN·오프라인·수정 권한·정기모임 회차 아님 조건의 관리 목록에서 설정 화면으로 간다 |
 
-- 상태 전이는 DRAFT→OPEN·CANCELED, OPEN→CLOSED·CANCELED 뿐이다. CLOSED·CANCELED 는 끝이고 되돌리지 못한다. 숨김은 상태가 아니라 운영자 표지다.
-- 공개 뒤에도 소개(제목·설명·카테고리·대표 사진·본문 사진)는 고칠 수 있다. 일정·장소·가격 등 참가 조건은 전용 절차(F03-19)로만, 정원은 정원 설정(F03-07)으로만 바꾼다.
-- 정원·정원 설정은 DRAFT·OPEN 에서만 바꾼다. 종료·취소 모임은 `INVALID_EVENT_STATUS` 다.
-- 정원 축소로 기존 참석자가 빠지지 않는다. 올리면 빈자리만큼 대기자가 승격한다. 참석이 정원보다 많은 모임도 지금 정원보다 크게 올리는 것은 받는다(2026-10-31 사용자 결정).
-- 정원 변경 자체의 알림은 없다. 승격이 일어나면 승격 알림이 따로 간다.
-- 공지는 제목 100자, 본문 500자까지이고 둘 다 필수다. 외부 링크 개수를 제한해 광고·스팸 발송을 막는다.
-- 공지 한도는 호스트마다 1분 3회, 하루 20회가 기본이다. 넘으면 `RATE_LIMIT_EXCEEDED`(공지 발송 한도 초과)다. 호스트 본인은 수신에서 빠진다.
-- 모임 취소에서 일부 환불이 실패하면 호스트에게 별도 알림이 가고, 화면은 고객센터에서 처리한다고 안내한다.
-- 오류의 뜻: `INVALID_EVENT_STATUS` 는 지금 상태에서 할 수 없음, `EVENT_NOT_OWNER` 는 권한 없음이다.
+종료·취소 확인창을 연 사이 계정·상태·권한이 달라지면 앱은 실행을 멈추고 다시 확인하도록 안내한다. 서버의 최종 판정도 유지한다. 상세 취소 버튼이 OPEN에만 보이는 사실과 서버 일반 취소가 DRAFT도 받는 계약을 구분한다.
 
-## 6. 상태/권한/시나리오 매트릭스
+## 상태별 수정 범위
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | DRAFT 이벤트 수정 후 발행 (Happy Path) | 마이 이벤트 "주최 중" 탭에서 DRAFT 카드 확인. | 이벤트 OPEN, 목록(F03-01) 노출 시작. |
-| S2 | OPEN 이벤트 일정 변경 + 참석자 알림 | 이벤트 OPEN, ATTENDING 6명 + WAITING 2명. | 일정 변경 + 8명 알림 발송. |
-| S3 | 유료 이벤트 취소 + 자동 환불 | ATTENDING 4명, WAITING 1명. | 이벤트 CANCELED, 3건 환불 완료, 1건 failed_refund 등록. |
-| S4 | 호스트가 참석자 전체 공지 발송 (C-03) | OPEN 이벤트, ATTENDING 10명. | 9명 푸시 수신. |
-| S5 | 공지 발송 throttle 초과 | 동일 호스트, 1분 내에 여러 번 공지 시도. | 발송 차단. |
-| S6 | DRAFT 이벤트 삭제 | 호스트. | 이벤트 삭제, 마이 이벤트 목록 갱신. |
-| S7 | 발행된 이벤트를 삭제 시도 | 호스트. | 액션 차단. |
-| S8 | 비호스트의 권한 위반 | 일반 사용자. | 차단. |
-| S9 | 일정 변경 시 시간 검증 실패 | 호스트. | 사용자가 시각 재입력. |
-| S10 | CLOSED/CANCELED 이벤트 수정 진입 차단 | `event.status ∈ {CLOSED, CANCELED}`. | 수정 진입 차단, 호스트가 다른 흐름으로 이동. |
-| S11 | 호스트 위치 공유 안내 화면 | `event.status=OPEN`, 위치 공유 토글 ON 상태. | 호스트가 위치 공유 정책을 명시적으로 확인. |
+| 상태·업무 | 현재 허용 범위 |
+| --- | --- |
+| DRAFT 편집 | 제목·설명·사진·일정·장소·참가 조건·결제 정책 등 요청 필드를 검증해 저장한다. 필드 누락과 값 변경을 구분한다 |
+| OPEN 소개 편집 | 제목·설명·본문·카테고리·대표 사진·본문 사진의 소개 요청만 일반 수정 API로 받는다. 일정·장소·정원·결제 설정을 섞으면 이 경로로 처리하지 않는다 |
+| OPEN 일정·장소 | [일정 변경과 참석자 동의](F03-19_event-reschedule-consent_prd.md)의 제안 절차를 사용한다. 시작 시각 차이 60분 이상 또는 가격 인상 등 주요 변경 판정과 동의 결과를 따른다 |
+| 정원·대기 명단 | [정원과 대기 명단](F03-07_capacity-and-waitlist_prd.md)의 별도 설정·승격 정책을 따른다 |
+| CLOSED·CANCELED | 일반 편집·공개·종료·재개를 허용하지 않는다 |
 
-## 8. Gap / Risk
+초안에서도 제목·시간 순서·정원·가격과 결제 정책을 검사한다. 양수 가격에는 유효한 선입금 정책이 필요하며 정책 금액과 정규화한 가격이 일치해야 한다. 결제 수단 변경·유료 전환·계좌 변경에는 기존 결제·대기 신청과 현재 허용 수단 등의 제약이 있다. 공개 뒤 이 결제 폼으로 수단을 바꾸지 않는다. 세부 정책은 [모임 선입금](F03-13_event-prepayment_prd.md)을 따른다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 반복 모임 이후 회차 | 반복 모임의 이후 회차 일괄 수정과 이후 회차 일괄 취소가 서버에 있고 시험이 있다 | 없음 |
-| 해소됨 | 공개 뒤 수정 화면 | 공개한 모임은 결제 수단을 폼에서 바꿀 수 없다. 일정은 변경 절차로 바꾸며, 시간이 1시간 넘게 바뀌거나 참가비가 오르면 참가자 동의를 받는다. 옛 시험 기록의 안내 두 줄은 지금 화면에 없다 | 없음 |
+## 사진·편집 저장·미확정 결과
 
-## 9. 수용 기준
+소개 사진은 대표 사진과 본문 사진을 구분해 저장한다. 본문 사진 목록을 서버 연결에 반영하며 공개 후 소개 수정에도 포함할 수 있다. 사진 권한·업로드의 전체 계약은 [이벤트 상세](F03-02_event-detail_prd.md)의 소개 사진 범위와 [이벤트 사진](F03-09_event-photos_prd.md)을 함께 따른다.
 
-- **AC-01. DRAFT 이벤트 수정 후 발행 (Happy Path)**: Given 마이 이벤트 "주최 중" 탭에서 DRAFT 카드 확인. When 사용자가 해당 흐름을 실행하면 Then 이벤트 OPEN, 목록(F03-01) 노출 시작.
-- **AC-02. OPEN 이벤트 일정 변경 + 참석자 알림**: Given 이벤트 OPEN, ATTENDING 6명 + WAITING 2명. When 사용자가 해당 흐름을 실행하면 Then 일정 변경 + 8명 알림 발송.
-- **AC-03. 유료 이벤트 취소 + 자동 환불**: Given ATTENDING 4명, WAITING 1명. When 사용자가 해당 흐름을 실행하면 Then 이벤트 CANCELED, 3건 환불 완료, 1건 failed_refund 등록.
-- **AC-04. 호스트가 참석자 전체 공지 발송 (C-03)**: Given OPEN 이벤트, ATTENDING 10명. When 사용자가 해당 흐름을 실행하면 Then 9명 푸시 수신.
-- **AC-05. 공지 발송 throttle 초과**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 발송 차단.
-- **AC-06. DRAFT 이벤트 삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 이벤트 삭제, 마이 이벤트 목록 갱신.
-- **AC-07. 발행된 이벤트를 삭제 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 액션 차단.
-- **AC-08. 비호스트의 권한 위반**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 차단.
-- **AC-09. 일정 변경 시 시간 검증 실패**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 시각 재입력.
-- **AC-10. CLOSED/CANCELED 이벤트 수정 진입 차단**: Given `event.status ∈ {CLOSED, CANCELED}`. When 사용자가 해당 흐름을 실행하면 Then 수정 진입 차단, 호스트가 다른 흐름으로 이동.
-- **AC-11. 호스트 위치 공유 안내 화면**: Given `event.status=OPEN`, 위치 공유 토글 ON 상태. When 사용자가 해당 흐름을 실행하면 Then 호스트가 위치 공유 정책을 명시적으로 확인.
+앱 편집은 계정·모임별 입력과 미확정 요청을 기기에 보관한다. 전송 전 작업 종류·수정 버전·키·본문을 저장하고, 결과를 모르면 같은 요청을 확인한다. 다른 편집기가 저장한 버전이나 해결하지 않은 요청을 임의로 덮어쓰지 않는다. 계정 세대가 바뀐 뒤 늦게 온 결과를 현재 편집에 적용하지 않는다.
+
+복원 시 서버 상태가 달라졌거나 가려진 장소와 저장된 장소 변경이 충돌하면 바로 덮어쓰지 않고 안내한다. 공개 후 소개와 일정·장소를 함께 고친 경우 **소개 저장 후 변경 제안을 별도로 전송**한다. 뒤 요청이 실패해도 앞서 저장된 소개까지 취소되는 원자적 작업은 아니다. 저장 도중 추가한 입력은 이미 전송한 본문과 구분해 남긴다.
+
+서버 저장 성공 뒤 기기 정리에 실패하면 저장 결과와 미확정 상태를 보존해 정리를 재시도한다. 재전송·복원·성공 안내·상세 갱신의 실제 기기 결과는 별도 실행으로 확인해야 한다.
+
+## 공개·종료·삭제
+
+공개는 DRAFT를 OPEN으로 바꾸며 권한과 현재 결제 수단 허용 여부를 다시 확인한다. 일반 공개 경로는 정기모임 회차·PRIVATE를 대신하지 않는다. 생성과 공개의 두 단계 및 공개 실패 복원은 [이벤트 생성과 다음 일정·반복 일정](F03-03_event-creation_prd.md)을 따른다.
+
+종료는 OPEN을 CLOSED로 바꾸고 신청을 마감하며 이동 관련 종료 처리를 수행한다. 선입금이 있으면 호스트 지급 흐름을 호출한다. 이 호출을 은행 송금·외부 지급 완료 증거로 쓰지 않는다. 정기모임 회차와 미확정 일정·장소 투표는 일반 종료에서 거절한다. 이 일반 종료 함수에는 예정 종료 시각이 지나야 한다는 별도 조건이 없다.
+
+삭제는 DRAFT에 한정한다. 배정·정산·실제 선입금 등 보호할 연결 자료가 있으면 거절하고, 허용될 때 공동호스트·환불 정책·이동 등 연결 자료를 정리한 뒤 이벤트를 삭제한다. 이미 공개한 이벤트를 삭제로 취소하거나 납부 기록을 없애는 기능이 아니다.
+
+일반 수정·공개·종료의 서버 요청 키는 선택이지만 앱은 키를 사용한다. 일반 취소는 키가 필수이고 앱의 금전 명령 처리 경로를 사용한다. 성공 또는 반영됐을 수 있는 오류에는 상세·주최 목록·관련 카드 등을 다시 읽는다. 취소는 지갑 관련 상태도 갱신한다. 공개·종료 키의 세션 메모리 보관을 편집 초안의 기기 보관과 같은 재시작 보장으로 설명하지 않는다.
+
+## 취소 확정과 환불·알림
+
+서버는 권한·종류·상태를 검사하고 이벤트 잠금 아래 취소와 미완료 신청 종료를 저장한다. 참석·대기·활성 신청·납부 대상의 합집합을 중복 없이 취소 안내 대상으로 계산한다. 알림 저장·발행 요청과 실제 단말 푸시 수신은 다른 확인 단계다.
+
+**취소 트랜잭션이 커밋된 뒤 환불 실행기를 별도로 넘긴다.** 취소 HTTP 응답과 참가자 환불 완료 순서는 묶이지 않는다. 환불 대상도 단순 ATTENDING 인원수가 아니라 남은 환불 의무가 있는 납부자 기준이다. 모임 선입금의 남은 환불도 별도로 처리한다.
+
+| 환불 단계 | 현재 의미 |
+| --- | --- |
+| 지갑 납부 | 주최 취소 사유의 전액 환불 규칙을 적용한다. 이미 처리된 환불을 중복 실행하지 않는다 |
+| 계좌이체 납부·입금 신고 | 반환 요청 큐로 넘긴다. REFUND_REQUESTED는 실제 은행 반환 완료가 아니다 |
+| 환불 처리 실패 | 별도 트랜잭션에서 남은 금액과 실패 기록을 남기고 참가자·호스트 안내 및 운영 경보 흐름으로 연결한다 |
+| 취소 환불 복구 | 기본 스케줄은 매시 20분이다. 취소 환불 대기 표지가 5분 이상 지난 대상을 다시 살피며, 이번에 운영 스케줄 실행을 확인한 것은 아니다 |
+| 자동 처리 대기 표지 해제 | 자동 처리할 납부자·모임 선입금이 더 없을 때 해제한다. 은행 반환 큐나 실패 처리 기록으로 넘겨진 건이 남을 수 있으므로 모두 환불 완료라는 뜻이 아니다 |
+
+실패 기록 처리와 참가자가 보는 환불 상태는 [포인트 결제·환불](../06_payment/F06-06_point-pay-refund_prd.md)의 현재 규칙을 따른다. 옛 시나리오의 고정 인원에 대한 몇 건 완료·한 건 실패 숫자를 일반 결과로 쓰지 않는다.
+
+## 참석자 공지
+
+제목·본문은 공백일 수 없고 각각 100자·500자까지다. 서버는 본문의 http://·https:// 출현 수를 합해 두 개를 넘으면 거절한다. 호스트 또는 공동호스트의 소유 관계와 SEND_ANNOUNCEMENT 권한을 검사한다.
+
+발송 제한은 **실제 요청자 계정 기준으로 여러 모임에 걸쳐** 적용한다. 기본값은 분당 3회·하루 20회이며 현재 운영 설정을 확인한 값은 아니다. 수신 대상은 ATTENDING 사용자 번호의 중복을 합치고 요청자 본인을 뺀다. 공동호스트가 발송했다는 이유로 호스트까지 항상 제외하지 않는다. 수신자가 없어도 그 전에 한도 계산을 거친다.
+
+앱은 발송 중 중복 조작을 막고, 성공하면 완료 안내 후 대화상자를 닫으며 실패하면 입력을 남긴다. 서버 공지는 요청 키가 없는 명령이므로 응답 유실 뒤 다시 보내면 중복 공지가 될 수 있다. 공지 API 성공을 정해진 수의 단말 푸시 도착으로 판정하지 않는다.
+
+## 반복 일정 일괄 수정·취소
+
+원본 호스트 본인만 처리한다. 자식 생성·묶음 조회는 [이벤트 생성과 다음 일정·반복 일정](F03-03_event-creation_prd.md)의 범위다.
+
+| 작업 | 대상·응답·실패 경계 |
+| --- | --- |
+| 이후 회차 수정 | 원본과 자식을 함께 검사한다. 시작이 지난 회차·종료·취소·숨김 회차와 요청 정원이 점유 자리보다 작은 회차는 건너뛴다 |
+| 수정 응답 | 단일 수정 건수가 아니라 회차별 UPDATED·SKIPPED 등의 결과 목록을 반환한다. 앱은 UPDATED 수를 완료 안내에 사용한다 |
+| 장소 일괄 변경 | 주소와 변경 사유를 검증한다. 대상 중 진행 중 변경 제안이 있으면 변경 전 전체 요청을 거절하고 해당 회차·제안 번호를 돌려준다. 앱은 제안 현황을 여는 입구를 제공한다 |
+| 장소 변경 적용 | 초안에는 직접 적용하고 OPEN에는 변경 제안 절차를 사용한다. 일반 소개·정원·사진 수정과 동일한 직접 장소 덮어쓰기로 설명하지 않는다 |
+| 이후 회차 취소 | 원본을 제외한 자식 중 시작 전이며 DRAFT·OPEN인 회차를 취소한다. 수정과 달리 숨김만으로 제외하지 않는다. 응답은 취소 수이고 환불은 공통 취소 후속 흐름을 따른다 |
+
+UPDATED는 처리 결과이며 모든 필드 값이 실제로 바뀌었다는 변경 이력 건수는 아니다. 취소 응답의 건수를 환불 완료 인원으로 사용하지 않는다.
+
+## 위치 공유 허용 변경
+
+호스트·공동호스트가 DRAFT·OPEN에서 모임의 위치 공유 허용을 변경하는 전용 API가 있다. 정기모임 회차는 이 경로에서 거절한다. 상세의 공개 모임 입구는 위치 공유 설정 화면이며 단순 안내 화면에 그치지 않는다.
+
+허용값을 실제로 바꿀 때 기존 공유를 종료한다. 끌 때는 공유 중이던 사람에게 종료 안내를, 켤 때는 참석자에게 허용 안내를 예약하며 요청자 본인은 제외한다. **허용을 켜도 참가자 위치가 자동으로 공유되지는 않는다.** 참가자의 직접 동의와 공유 시작은 [이벤트 위치 공유](../14_location_directions/F14-01_event-location-share_prd.md)의 별도 절차다. 같은 허용값 재요청은 현재 결과를 반환한다. 앱은 성공 또는 반영 가능 오류에 상세·공유 정책·관련 카드를 갱신한다.
+
+## 현재 제한과 확인 범위
+
+| 판정 | 항목 | 근거·사용자 영향 | 남은 확인 |
+| --- | --- | --- | --- |
+| Risk | 소개와 변경 제안의 분리 저장 | 소개 저장 후 일정·장소 제안이 실패할 수 있다 | 실제 실패·재개에서 이미 저장된 소개와 남은 변경이 구분되는지 확인 |
+| Risk | 공지 응답 유실 | 발송에는 요청 키가 없고 다시 전송하면 중복될 수 있다 | 결과 불명 상황의 사용자 안내·재전송 정책 검토 |
+| Risk | 반복 수정 결과 표현 | 서버는 회차별 결과를 주지만 앱 완료 안내는 UPDATED 건수를 사용한다 | SKIPPED 회차를 사용자가 이해할 수 있는지 실제 흐름 확인 |
+| 미검증 | 앱·푸시·돈의 실제 결과 | 소스와 선택한 기존 시험 단언을 읽었으며 이번에 실행하지 않았다 | 실제 입구·복원·알림 수신·환불·은행 반환 증거로 별도 판정 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 수정 입구:** DRAFT는 하단, OPEN은 상세 관리 목록에서 수정으로 가며 현재 상태·권한·정기모임 여부를 적용한다.
+- **AC-02 소개 수정:** OPEN에서 소개 필드만 일반 수정으로 저장하고 일정·장소·정원·결제 변경을 같은 요청으로 우회하지 않는다.
+- **AC-03 초안 조건:** 시간 순서·정원·가격·유료 정책과 기존 결제·대기 제약을 검사하고 거절된 입력을 안내한다.
+- **AC-04 편집 보존:** 계정·모임별 초안과 전송 전 키·본문을 보관하고 다른 편집 버전이나 해결하지 않은 요청을 덮어쓰지 않는다.
+- **AC-05 분리 저장:** 소개가 저장되고 변경 제안이 실패하면 저장된 소개와 남은 변경을 구분해 재개한다.
+- **AC-06 공개:** 권한과 현재 결제 수단 허용 조건을 확인해 초안을 공개하고 실제 공개 상태·관련 목록을 갱신한다.
+- **AC-07 종료:** 확인 뒤 상태·권한을 재검사하고 신청 마감·이동 종료·선입금 지급 흐름을 수행하며 종료를 되돌릴 수 있다고 안내하지 않는다.
+- **AC-08 삭제:** 초안이면서 보호할 배정·정산·납부 자료가 없을 때 연결 자료를 정리하고 삭제 뒤 상세에서 돌아간다.
+- **AC-09 취소 분기:** 일반·PRIVATE·클럽 운영자 경로를 구분하고 취소 확인 뒤 변경된 계정·권한·상태에서는 실행하지 않는다.
+- **AC-10 비동기 환불:** 취소 커밋 후 환불을 처리하며 취소 응답·환불 대기 표지 해제만으로 모든 환불 완료를 표시하지 않는다.
+- **AC-11 환불 상태:** 납부 의무 기준의 지갑 환불·은행 반환 요청·실패 처리 기록을 구분하고 재처리에 중복 환불하지 않는다.
+- **AC-12 공지 대상:** 발송 권한과 제목·본문·링크 수를 검사하고 ATTENDING 중 요청자를 뺀 고유 수신자에게 알림을 생성한다.
+- **AC-13 공지 제한:** 요청자 계정의 분·일 한도를 검사하고 실패하면 입력을 보존한다. API 성공과 단말 수신 완료를 구분한다.
+- **AC-14 반복 수정:** 원본 포함 대상에서 지난 시각·종료·취소·숨김·정원 미달 조건을 건너뛰고 회차별 결과를 읽는다.
+- **AC-15 반복 장소 충돌:** 진행 중 제안이 있는 대상 때문에 일괄 변경이 거절되면 해당 제안 현황으로 이동한다.
+- **AC-16 반복 취소:** 원본은 남기고 시작 전 자식 초안·공개 회차를 취소하며 응답 건수와 후속 환불을 구분한다.
+- **AC-17 위치 허용:** 모임 허용을 변경하면 기존 공유를 종료하고 참가자의 새 동의를 요구한다. 동일값 재요청에는 불필요한 공유 종료·알림을 만들지 않는다.
+
+검증 근거: EventCancelRefundLifecycleCommitTest의 취소 후 환불·중복 복구 방지 및 은행 반환 큐 단언, recurring_event_update_wire_test.dart의 행별 결과 해석, event_edit_draft_storage_test.dart의 미확정 본문 불변·시각 직렬화 단언을 읽었다. 이번에 실행하지 않았다. 예전 P72 공개 시나리오는 초안 공개·이미 공개됨·비호스트 거절을 다룬 과거 목적이며, 옛 소스 줄번호·시드 상태·키 없는 재호출 결과를 현재 실행 근거로 승격하지 않는다.
