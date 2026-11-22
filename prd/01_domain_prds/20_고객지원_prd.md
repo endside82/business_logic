@@ -1,171 +1,55 @@
 # 20. 고객지원 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 기능 정본과 서버·앱 소스를 기준으로 정리했다. 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다. 소스 대조를 제품 실행·출시 완료와 구분한다.
 
+## 업무 경계와 정본
 
-<!-- source-first: community_api/src/main/java/com/endside/community/inquiry/ + support/; updated: 2026-06-05 -->
-
-> 문서 상태: **신규 도메인 신설본**. 서버 소스 (`inquiry/`, `support/`) 및 Flutter 소스 (`data/api/support_issue_api.dart`, `presentation/support/`, `domain/providers/support/`) 를 1차 자료로 작성한다.
-
-## 1. 결론
-
-**고객지원 도메인**은 사용자가 플랫폼에 도움을 요청하는 두 가지 채널을 제공한다.
-
-- **1:1 문의 (Inquiry)** — 계정·결제·이벤트·클럽·신고 등 카테고리로 관리자에게 직접 접수한다. sourceType(`EVENT/CLUB/SETTLEMENT`)이 있으면 호스트도 답변 가능한 3자 스레드가 열린다 (서버에 설계 돼 있으나 admin 측 호스트 답변 endpoint는 v1 미구현).
-- **운영 이슈 (OperationalIssue)** — 결제·환불·정산·신고 등 특정 트랜잭션/정산/신고 오브젝트에 직접 연결해 접수한다. 시스템이 호스트 매핑 가능한 source(PAYMENT/REFUND/SETTLEMENT/REGULAR_MEETING_*)에 한해 자동으로 `relatedHostUserId`를 채워 HostInbox로 라우팅한다. WALLET_TRANSACTION·REPORT는 null(CS 직접 처리).
-
-두 채널은 대상이 다르다. **Inquiry는 카테고리 기반 일반 문의**이고, **OperationalIssue는 특정 소스 객체(transaction/settlement/report)에 묶인 운영 이슈**다. 사용자 입장에서는 진입점이 다르다: Inquiry는 설정 > 고객센터 > 문의하기, OperationalIssue는 각 기능 화면(정산 상세, 거래 내역, 신고 내역)에서 맥락과 함께 접수된다.
-
-**SupportFaq**는 DB 기반 FAQ 테이블 없이 코드에 하드코딩된 문구 제안 기능이다. 문의 작성 화면 진입 시 소스 타입에 맞는 도움말 2개를 최대 5개까지 keyword 필터해 제공한다.
-
-이 도메인은 기능 PRD 3개로 구성된다(F20-01 ~ F20-03).
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | 핵심 소스 | 상태 |
-|---|---|---|---|---|
-| F20-01 | 1:1 문의 | [F20-01_inquiry_prd.md](../02_feature_prds/20_support/F20-01_inquiry_prd.md) | `inquiry/controller/InquiryController.java`, `InquiryService.java`, `InquiryStatus`, `InquirySourceType`, `InquiryCategory` | 구현됨 |
-| F20-02 | 운영 이슈 | [F20-02_operational-issue_prd.md](../02_feature_prds/20_support/F20-02_operational-issue_prd.md) | `support/controller/OperationalIssueController.java`, `OperationalIssueService.java`, `OperationalIssueSourceType`, `OperationalIssueStatus`, `OperationalIssueEvidenceVisibility` | 구현됨 |
-| F20-03 | 지원 FAQ 제안 | [F20-03_support-faq_prd.md](../02_feature_prds/20_support/F20-03_support-faq_prd.md) | `support/controller/SupportFaqController.java`, `SupportFaqSuggestionService.java` | 구현됨 (코드 하드코딩) |
-
-## 3. 도메인 핵심 설계 결정
-
-### 3-1. 두 채널의 역할 분담
-
-| 구분 | Inquiry | OperationalIssue |
-|---|---|---|
-| 진입 맥락 | 카테고리 + 자유 텍스트 | 특정 소스 객체 ID 필수 |
-| 소스 연결 | NONE/EVENT/CLUB/SETTLEMENT | WALLET_TRANSACTION/PAYMENT/REFUND/SETTLEMENT/REPORT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT |
-| 답변 주체 | 관리자 (+ sourceType 있을 시 호스트 가능) | 운영자 (HOST_ONLY visibility 시 호스트 열람 가능) |
-| 증빙 첨부 | 없음 | evidenceFileIds(최대 5개) + evidenceVisibility |
-| 자동 라우팅 | 없음 | relatedHostUserId 자동 채우기 → HostInbox |
-| DB 테이블 | `inquiry`, `inquiry_message` | `operational_issue`, `operational_issue_message` |
-
-### 3-2. InquirySourceType 의 의미
-
-`InquirySourceType`은 누가 답변할 수 있는지를 결정한다.
-
-- `NONE` (기본): 관리자만 답변. sourceId 무시.
-- `EVENT`: event 호스트·공동호스트 또는 APPROVED/APPROVED_PENDING_PAYMENT/CANCEL_PENDING_REFUND 참가자만 작성 가능. 호스트 답변 루프 활성화(v1 admin 측 미구현).
-- `CLUB`: club owner 또는 ClubMember만 작성 가능. 호스트 답변 루프 활성화(v1 미구현).
-- `SETTLEMENT`: hostUserId 본인만 작성 가능. 정산 호스트 전용.
-
-소스 참조: `InquiryService.verifySource()` (`InquiryService.java:144-157`)
-
-### 3-3. OperationalIssue 자동 라우팅 (Wave C-1)
-
-`createIssue()` 시점에 `resolveRelatedHostUserId()`가 sourceType별로 호스트를 자동 해석한다.
-
-- `SETTLEMENT/REGULAR_MEETING_SETTLEMENT` → `MeetingSettlement.creatorUserId`
-- `PAYMENT/REFUND` → PointTransaction → Event → `Event.hostUserId`
-- `REGULAR_MEETING_PAYMENT` → PointTransaction → RegularMeetingPayment → RegularMeeting → `RegularMeeting.hostUserId`
-- `WALLET_TRANSACTION/REPORT` → null (일반 거래·신고는 단일 호스트 매핑 불가)
-
-소스 참조: `OperationalIssueService.resolveRelatedHostUserId()` (`OperationalIssueService.java:222-256`)
-
-### 3-4. OperationalIssue 유입 경로
-
-사용자가 직접 접수하는 경로 외에, 시스템이 자동으로 운영 이슈를 emit하는 경로가 **v1 기준 없다**. 자동 발제는 dispute SLA 임박·settlement limbo 등 다른 도메인에서 emit하는 방향으로 설계 가능하지만, 현재는 모두 **사용자 수동 접수**다. `NotificationType.SUPPORT_ISSUE_UPDATED(66)` 알림 코드가 정의되어 있으나 서버 `OperationalIssueService` 내에서 알림 emit 코드가 없음 — admin 측에서 답변 시 emit하는 것으로 설계된 것으로 보이나 admin api 구현에만 존재할 가능성이 있다.
-
-## 4. 도메인 책임 한도
-
-| 영역 | 책임 | 비고 |
-|---|---|---|
-| 문의 접수·조회·메시지 | 사용자 측 CRUD 전담 | admin 관리 페이지는 community_admin_api 별도 |
-| sourceType 소유권 검증 | 접수 시점 서버 강제 검증 | EVENT/CLUB/SETTLEMENT별 로직 상이 |
-| 자동 라우팅 (OperationalIssue) | creatorUserId/hostUserId 자동 채우기 | HostInbox는 admin_api 영역 |
-| 증빙 첨부 | OperationalIssue만 지원 (max 5파일) | EVIDENCE/REVIEW purpose 파일만 허용 |
-| FAQ 제안 | 코드 하드코딩 제안 (DB 없음) | 최대 5개, keyword 필터 |
-| 분쟁 (DisputeCase) | **이 도메인이 아님 — 도메인 18** | 분쟁은 양측 당사자 구조, 법적 hold 포함 |
-| 신고 처리 결과 | **이 도메인이 아님 — 도메인 11** | 신고 접수·조치는 review/ReportController |
-| 경고·징계 | **이 도메인이 아님 — 도메인 15** | WarningController 영역 |
-
-### 이웃 도메인과의 경계
-
-| 이웃 | 구분 기준 |
+| 기능 정본 | 현재 책임 |
 |---|---|
-| 도메인 18 분쟁 | DisputeCase = 양측 당사자(피신고자 포함)·법적 hold·appeal·SLA. OperationalIssue = reporter 단방향·CS 처리·법적 hold 없음. |
-| 도메인 11 신고 (F11-04) | Report = 콘텐츠 위반 신고(ReportController). OperationalIssue sourceType=REPORT = 신고 결과에 대한 운영 문의. 역할이 다름. |
-| 도메인 15 경고 (F15-02) | Warning = 징계 처분. OperationalIssue = 결제/환불/정산 이슈. 겹치지 않음. |
+| [작성자 문의·호스트 응대·관할 이관](../02_feature_prds/20_support/F20-01_inquiry_prd.md) | 일반/이벤트/클럽 문의, 페이지 목록, 작성자 대화, 호스트·클럽·플랫폼 관할과 응대·이관·종결 |
+| [원천별 운영 이슈·증빙·처리 대화](../02_feature_prds/20_support/F20-02_operational-issue_prd.md) | 거래·정산·신고 원천 번호와 소유권, 증빙, 운영팀 처리 상태·메모·알림, 앱 초안·조회 |
+| [출처별 지원 FAQ·검색·실패 복구](../02_feature_prds/20_support/F20-03_support-faq_prd.md) | 로그인 사용자에게 고정 도움말을 제안하고 검색·빈 결과·실패를 처리 |
 
-## 5. 핵심 데이터 인프라
+Inquiry와 OperationalIssue는 서로 다른 채널이다. 문의의 sourceType=SETTLEMENT와 운영 이슈의 SETTLEMENT를 같은 작성 화면·권한·원천 번호 검증으로 합치지 않는다. 사용자가 질문을 작성하는 입구와 호스트가 응대하는 입구도 별도다.
 
-### 5-1. 테이블 2종 (inquiry 측)
+## 사용자 업무 순서
 
-| 테이블 | 핵심 컬럼 | 인덱스 |
-|---|---|---|
-| `inquiry` | `id, user_id, category(30), title(200), status(20), assignee_admin_id, last_message_at, answered_at, closed_at, source_type(20) DEFAULT 'NONE', source_id, host_response_at, created_at, updated_at` | `idx_inquiry_user`, `idx_inquiry_status`, `idx_inquiry_source` |
-| `inquiry_message` | `id, inquiry_id, sender_type(10), sender_id, content(text), created_at` | `idx_inquiry_message_inquiry` |
+1. 일반 질문은 내 문의에서 작성하고 이벤트·클럽 관련 질문은 원천 상세에서 문맥을 넘긴다. 앱은 유효한 EVENT/CLUB만 문의 출처로 보내며 다른 값은 일반 문의로 정규화한다.
+2. 특정 거래·정산·신고를 지원받으려면 원천별 운영 이슈를 작성한다. 출처가 요구하는 실제 번호와 권한을 확인하고 필요하면 본문 또는 추가 메시지에 증빙을 붙인다.
+3. FAQ는 해당 출처의 고정 안내를 검색하는 보조 수단이다. 조회가 실패하거나 답을 찾지 못해도 문의 작성은 계속한다.
+4. 작성자는 자신의 상세에서 답변과 상태를 읽고 미종결 상태에서 추가 질문을 한다. 호스트는 현재 관할과 availableActions에 따라 응대하거나 클럽/플랫폼으로 넘긴다.
+5. 명령 성공·상세 재조회 실패·전송 결과 미확정을 구분하고 저장한 초안·요청키·목록 갱신으로 복귀한다.
 
-### 5-2. 테이블 2종 (support 측)
+## 관할·상태·권한
 
-| 테이블 | 핵심 컬럼 | 인덱스 |
-|---|---|---|
-| `operational_issue` | `id, source_type(40), source_id, reporter_user_id, assignee_user_id, related_host_user_id, status(20) DEFAULT 'OPEN', title(120), last_message_at, resolved_at, evidence_file_ids(JSON), evidence_visibility(20), created_at, updated_at` | `idx_operational_issue_reporter`, `idx_operational_issue_source`, `idx_operational_issue_status`, `idx_operational_issue_related_host` |
-| `operational_issue_message` | `id, issue_id, author_user_id, author_role(20), content(text), user_visible(tinyint default 1), created_at` | `idx_operational_issue_message_issue` |
+문의는 OPEN/ANSWERED/CLOSED이고 작성자 추가 질문이 ANSWERED를 OPEN으로 돌린다. 최초 관할은 EVENT→EVENT_HOST, CLUB→CLUB_STAFF, NONE/SETTLEMENT→PLATFORM이다. 출처는 유지하면서 관할을 넘긴다. 호스트가 이관 뒤 읽을 수 있어도 다시 답변할 수 있는 것은 아니다. 플랫폼 담당자도 플랫폼 관할·미종결 조건으로 배정·답변·종결한다.
 
-### 5-3. Enum 목록
+운영 이슈는 OPEN/IN_PROGRESS/RESOLVED/REJECTED이며 작성자 메시지가 Inquiry의 상태 전이를 재사용하지 않는다. 실제 거래 소유자·정산 당사자·신고 접수자 권한을 적용한다. PAYMENT/REFUND/REGULAR_MEETING_PAYMENT의 sourceId는 point_transaction이며 정기모임 정산은 settlement 행 번호다.
 
-| Enum | 값 | 파일 |
-|---|---|---|
-| `InquiryStatus` | `OPEN, ANSWERED, CLOSED` | `inquiry/constants/InquiryStatus.java` |
-| `InquirySourceType` | `NONE, EVENT, CLUB, SETTLEMENT` | `inquiry/constants/InquirySourceType.java` |
-| `InquiryCategory` | `ACCOUNT, PAYMENT, EVENT, CLUB, REPORT, ETC` | `inquiry/constants/InquiryCategory.java` |
-| `InquirySenderType` | `USER, ADMIN` | `inquiry/constants/InquirySenderType.java` |
-| `OperationalIssueStatus` | `OPEN, IN_PROGRESS, RESOLVED, REJECTED` | `support/constants/OperationalIssueStatus.java` |
-| `OperationalIssueSourceType` | `WALLET_TRANSACTION, PAYMENT, REFUND, SETTLEMENT, REPORT, REGULAR_MEETING_PAYMENT, REGULAR_MEETING_SETTLEMENT` | `support/constants/OperationalIssueSourceType.java` |
-| `OperationalIssueAuthorRole` | `USER, OPERATOR` | `support/constants/OperationalIssueAuthorRole.java` |
-| `OperationalIssueEvidenceVisibility` | `PARTIES, HOST_ONLY, CS_ONLY` | `support/constants/OperationalIssueEvidenceVisibility.java` |
+FAQ에는 원천 소유권 조회가 없지만 현재 URL 보안은 로그인 필요다. 제한 계정 허용 목록과 익명 접근은 다르다. 추천 문구에 있는 원천 업무 설명은 실제 작업 실행·자격 확인 결과를 대신하지 않는다.
 
-### 5-4. ErrorCode 블록
+## 증빙·공개·개인정보
 
-| 코드 | HTTP | 서버 번호 | 설명 |
-|---|---|---|---|
-| `INQUIRY_NOT_FOUND` | 404 | 2300006 | 문의 없음 |
-| `INQUIRY_ACCESS_DENIED` | 403 | 2300007 | 접근 거부 |
-| `INQUIRY_CLOSED` | 400 | 2300008 | 종결된 문의에 메시지 추가 시도 |
-| `INQUIRY_INVALID_CATEGORY` | 400 | 2300009 | 잘못된 카테고리 값 |
-| `INQUIRY_SOURCE_NOT_FOUND` | 404 | 2300010 | 소스 객체 없음 |
-| `INQUIRY_SOURCE_NOT_OWNED` | 403 | 2300011 | 소스 소유권 없음 |
-| `INQUIRY_SOURCE_ID_REQUIRED` | 400 | 2300012 | sourceType 비NONE 시 sourceId 누락 |
-| `OPERATIONAL_ISSUE_SOURCE_NOT_OWNED` | 403 | 3000001 | 운영 이슈 소스 소유권 없음 |
-| `OPERATIONAL_ISSUE_SOURCE_NOT_FOUND` | 404 | 3000002 | 운영 이슈 소스 객체 없음 |
-| `OPERATIONAL_ISSUE_EVIDENCE_FILE_INVALID` | 400 | 3000003 | 증빙 파일 상태/purpose 불적합 |
-| `OPERATIONAL_ISSUE_EVIDENCE_FILE_NOT_OWNED` | 403 | 3000004 | 증빙 파일 소유권 없음 |
-| `OPERATIONAL_ISSUE_EVIDENCE_TOO_MANY` | 400 | 3000005 | 증빙 5개 초과 |
+Inquiry의 현재 접수·메시지 계약은 텍스트이며 파일 ID 필드가 없다. 운영 이슈는 이슈 본문과 추가 메시지 각각 최대 5개 파일을 받고 소유자·완료·허용 용도를 검증한다. REPORT의 기본 증빙 범위는 CS_ONLY, 나머지는 PARTIES이고 앱은 별도 공개 범위를 보내지 않는다.
 
-## 6. 도메인 외부 영향
+작성자 문의 응답에서는 담당자 이관 메모를 숨기고 회원 VO에 배정 관리자 번호를 싣지 않는다. 운영 이슈의 사용자 상세는 userVisible=true 메시지만 공개한다. 파일 번호를 반환받는 것과 파일 다운로드 권한은 별도다. 보존 만기와 실제 삭제는 [분쟁 증거 열람·보존·파일 정리](../02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md)를 따른다.
 
-| 도메인 | 영향 | 이유 |
-|---|---|---|
-| 06 결제·지갑 | **있음** | OperationalIssue sourceType PAYMENT/REFUND/WALLET_TRANSACTION → PointTransaction 소유권 검증 및 hostUserId 해석 |
-| 07 모임 정산 | **있음** | OperationalIssue sourceType SETTLEMENT/REGULAR_MEETING_SETTLEMENT → MeetingSettlement 조회 + host 라우팅 |
-| 11 신고 | **있음** | OperationalIssue sourceType REPORT → Report 소유권 검증 (reporter만 접수 가능) |
-| 12 알림 | 조건부 | `NotificationType.SUPPORT_ISSUE_UPDATED(66)` 코드 정의됨. 사용자에게 답변 도착 시 알림 emit 설계이나 community_api 서버에서 emit 코드 미확인 (admin_api에만 있을 가능성) |
-| 17 정기모임 | **있음** | OperationalIssue sourceType REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT → RegularMeetingPayment/RegularMeeting 조회 + host 라우팅 |
-| 18 분쟁 | **경계 명확** | HostInbox는 OperationalIssue.relatedHostUserId로 이슈를 source-routing. 단 DisputeCase 자체는 별도 도메인 |
+## 요청·초안·조회·알림
 
-## 7. 진행 상태 (2026-06-05 기준)
+호스트 문의 명령 네 개는 요청키를 요구하지만 작성자 문의와 운영 이슈 POST에는 같은 헤더가 없다. 앱은 계정별 초안과 전송 전 pending 기록으로 불명확한 결과의 자동 재전송을 막는다. 호스트 초안은 키·본문·생성 시각을 함께 보관해 동일 명령 재시도를 관리한다.
 
-| 레이어 | 상태 |
-|---|---|
-| 서버 inquiry 도메인 | 구현 완료 (4 endpoint, InquirySourceType D-09 포함) |
-| 서버 support 도메인 | 구현 완료 (5 endpoint OperationalIssue + 1 endpoint FAQ) |
-| Flutter 데이터 레이어 (OperationalIssue) | 구현 완료 (models/api/repository/providers) |
-| Flutter 화면 (OperationalIssue) | 구현 완료 (3 screens: List/Detail/Create) |
-| Flutter 데이터 레이어 (Inquiry) | **미구현** — InquiryApi, InquiryRepository, InquiryProvider 없음 |
-| Flutter 화면 (Inquiry) | **미구현** — 설정 화면에서 Inquiry 진입점 없음 |
-| PRD 문서 | 신설 (본 문서) |
+호스트 답변은 메시지 한 건을 반환하므로 상세를 다시 읽고, 나머지 호스트 명령은 반환 상세를 적용한다. 호스트 명령은 처리함 목록과 통계를 함께 무효화한다. 운영 이슈 상세는 15초 타이머로 조회하며 목록·원천별 목록의 갱신 범위는 접수와 메시지에서 다르다.
 
-## 8. 잔여 후속
+신규 문의의 응대자 알림과 호스트/플랫폼 답변 알림, 운영 이슈의 공개 답변·상태 변경 알림은 outbox 호출 근거가 있다. 모든 명령이 같은 알림을 발행하는 것은 아니며 실제 수신·딥링크는 별도 실행 검증 대상이다. 운영팀 구현 위치는 현재 community_api/admin-app이며 옛 별도 관리 저장소를 수정 대상으로 삼지 않는다.
 
-| 항목 | 차단 사유 |
-|---|---|
-| Flutter Inquiry 데이터 레이어 + 화면 | Flutter에 InquiryApi/InquiryRepository/화면 없음. 서버 endpoint 4개 구현됨. |
-| 호스트 답변 루프 (Inquiry sourceType EVENT/CLUB) | admin_api에 호스트 답변 endpoint 미구현. `inquiry.host_response_at` 컬럼은 준비돼 있음. |
-| SUPPORT_ISSUE_UPDATED 알림 emit | community_api 서버에서 OperationalIssueService가 답변 시 알림 emit하는 코드 없음. admin_api에만 있을 가능성. |
-| OperationalIssue Flutter 모델 — REGULAR_MEETING_* sourceType 미반영 | Flutter `OperationalIssueSourceType` enum에 `REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT` 없음 (서버에는 존재). |
-| 증빙 첨부 Flutter UI | `OperationalIssueCreateParam`에 `evidenceFileIds` 필드 없음. 서버는 지원. |
+## 현재 제한과 완료 판정
 
-<!-- 접근권한 감사 검증 (2026-07-02): 1:1 문의 IDOR 불가(소유자 검증 서버 강제), 운영 이슈 일반사용자 접근 불가(admin_api 분리), 상담원 내부메모는 `user_visible` 필드 기반 필터(operational_issue_message) — 이슈 없음. -->
+- 서버의 문의 출처 허용과 실제 앱 입구가 다르다. SETTLEMENT 문의와 일부 환불 대기 입구를 문서상 모두 제공한다고 만들지 않는다.
+- 결과 미확정·요청키 만료·페이지 순서 변경·운영 이슈의 15초 조회는 각 기능의 제한을 유지한다.
+- FAQ는 고정 문구·부분 문자열 검색이며 개인 거래 조회나 관리자 업무 실행을 대신하지 않는다.
+- 이 영역은 현재 소스 대조를 마쳤다는 근거로 사용한다. 새 제품 시험·실기기·운영 알림·배포 설정·최종 전체 문서 감사 완료를 뜻하지 않는다.
+
+## 검증 근거
+
+현재 세 기능의 계약·코드 위치 표와 문서 최신화 대장의 support 근거 묶음을 연결한다. 기능 HTML과 영역 HTML은 이 정본에 맞추며 기존 원천 번호 앵커를 보존한다. 과거의 ‘호스트 응대 미구현’, ‘FAQ 익명 접근’, ‘정기모임 enum 부재’, ‘검색 미배선’은 현재 제한으로 남기지 않는다.

@@ -1,86 +1,76 @@
-# F20-03. 지원 FAQ 제안 PRD
+# F20-03. 출처별 지원 FAQ·검색·실패 복구 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first: community_api/src/main/java/com/endside/community/support/controller/SupportFaqController.java + SupportFaqSuggestionService.java; updated: 2026-06-05 -->
+## 현재 범위와 입구
 
-## 1. 결론
+운영 이슈 작성 화면 위의 추천 도움말이다. 서버가 출처별 고정 문구를 반환하고 앱은 검색어를 전달해 좁힌다. 별도의 대화형 상담이나 사용자의 실제 거래 상태를 조회하는 진단 서비스가 아니다. FAQ를 읽어도 [운영 이슈 접수](F20-02_operational-issue_prd.md)를 계속할 수 있다.
 
-지원 FAQ 제안은 운영 이슈 작성 화면 진입 시 **sourceType별 자주 묻는 질문 2개를 최대 5개까지** 제공하는 경량 기능이다. DB 테이블이 없다. `SupportFaqSuggestionService`의 코드 하드코딩 제안 목록을 keyword로 필터해 반환한다.
+## 현재 서버 계약
 
-서버는 `GET /api/v1/support/faq/suggestions` 1개 endpoint를 제공하며 인증 불필요다. Flutter `SupportIssueApi.getFaqSuggestions()`로 호출하고, `SupportIssueCreateScreen`에서 `_FaqSuggestionsSection` 위젯이 문의 작성 폼 위에 도움말 카드 형태로 표시한다.
+| 요청 | 입력·반환 |
+|---|---|
+| GET /api/v1/support/faq/suggestions | 필수 sourceType, 선택 sourceId·query → List<SupportFaqSuggestionVo> |
 
-**관리자가 FAQ를 추가하거나 편집하는 어드민 CRUD 기능은 구현되어 있지 않다.** FAQ 문구를 바꾸려면 서버 코드를 직접 수정해야 한다.
+sourceType은 운영 이슈와 같은 일곱 값이다. 서버는 sourceType이 없으면 INVALID_REQUEST로 거절한다. sourceId는 받아도 현재 서비스의 제안 생성·필터에서 사용하지 않는다. 실제 거래 소유권이나 결제·환불 상태를 확인한 개인화 답변으로 설명하지 않는다.
 
-## 2. 코드 위치
+Controller에 principal 인자가 없어도 인증이 불필요한 것은 아니다. 현재 SecurityConfiguration의 공개 경로 목록에 FAQ가 없고 anyRequest().authenticated()가 적용된다. AccountLockPolicy에는 GET FAQ가 허용 경로로 들어 있다. 이는 계정 제한 시의 접근 허용과 비로그인 허용이 서로 다른 판정임을 뜻한다.
 
-계약의 정본은 코드다. 서버: `SupportFaqController`, `SupportFaqSuggestionService`, `SupportFaqSuggestionVo`. 앱: `support_issue_api.dart`, `support_faq_suggestion.dart`, `support_issue_screens.dart`, `support_issue_provider.dart`.
+## 제안 생성과 검색
 
-## 3. 전체 동작 흐름
+각 출처는 priority 1과 2의 두 제안을 코드에서 만든다. 전체 결과에는 최대 5개 제한이 있지만 현재 출처 하나의 기본 제안 수가 5개라는 뜻은 아니다.
 
-1. `SupportIssueCreateScreen(sourceType, sourceId)` 빌드 시 `_FaqSuggestionsSection` 구독.
-2. `supportFaqSuggestionsProvider(sourceType, sourceId, null)` → `SupportIssueRepository.getFaqSuggestions()` → `GET /api/v1/support/faq/suggestions?sourceType=PAYMENT&sourceId=123`.
-3. 서버 `SupportFaqSuggestionService.getSuggestions()` → `baseSuggestions(sourceType)` → keyword 필터(비어 있으면 전체 통과) → priority 오름차순 → 최대 5개 반환.
-4. Flutter가 결과가 있으면 "추천 도움말" 섹션 카드 표시. 없거나 오류이면 `SizedBox.shrink()`.
+| 출처 | 기본 제안 주제 |
+|---|---|
+| PAYMENT, WALLET_TRANSACTION | 결제 실패 확인, 거래 기록 보존 |
+| REFUND | 환불 상태, 환불 가능 조건 |
+| SETTLEMENT | 정산 이의, 정산 처리 상태 |
+| REPORT | 신고 처리 상태, 같은 문의 메시지에 추가 자료 첨부 |
+| REGULAR_MEETING_PAYMENT | 계좌이체 확인, 결제·등록 상태 |
+| REGULAR_MEETING_SETTLEMENT | 정산 누락, 정산 매출 구성 |
 
-## 6. 상태/권한 매트릭스
+검색어는 trim하고 Locale.ROOT로 소문자화한다. 비었으면 모두 통과하고, 아니면 title과 answer를 합친 문자열에 검색어가 연속 부분 문자열로 들어 있는지 확인한다. 태그·오타·형태소·의미 검색이 아니다. priority 오름차순 정렬 뒤 최대 5개를 반환한다.
 
-| 사용자/상태 | 서버 결과 | Flutter 처리 | 판단 |
-|---|---|---|---|
-| 비로그인 + 유효한 sourceType | 정상 응답 (인증 불필요) | 도움말 카드 표시 | 일치 |
-| 로그인 + 유효한 sourceType | 정상 응답 | 도움말 카드 표시 | 일치 |
-| 제안 없음 (query 불일치) | `[]` 반환 | `SizedBox.shrink()` (섹션 숨김) | 일치 |
-| API 오류 | 오류 응답 | `orElse: SizedBox.shrink()` (조용히 숨김) | 기능 저하는 있으나 UX 안전 |
-| REGULAR_MEETING_PAYMENT sourceType | 서버 응답 가능 | Flutter enum 없어 query string 직접 전달 필요 | Gap (enum 불일치) |
+FAQ의 ‘24시간 지연 시 관리자 대리 확인’ 같은 안내 문구가 이 GET에서 해당 작업을 실행하거나 실제 요청 자격을 보장하는 것은 아니다. 해당 업무의 현재 조건은 원천 기능 정본에서 판정한다. 이 서비스는 DB를 읽지 않고 고정 문구를 만들며 현재 FAQ Controller는 조회만 제공한다.
 
-## 7. 정합성 판단
+## 앱 검색과 상태 표시
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| endpoint 경로 | `/api/v1/support/faq/suggestions` | `SupportIssueApi.getFaqSuggestions()` 동일 경로 | 일치 |
-| sourceType 파라미터 | `OperationalIssueSourceType` | `sourceType.value` (string) 전달 | 일치 |
-| 응답 필드 | `{ id, title, answer, sourceType, priority }` | `SupportFaqSuggestion.fromJson` 동일 구조 | 일치 |
-| REGULAR_MEETING_* 제안 | 서버 하드코딩 있음 | Flutter enum 미포함 | Gap (enum 추가 시 해소) |
+현재 앱 enum은 정기모임 결제·정산을 포함한다. 지원하지 않아 FAQ에 도달할 수 없다는 옛 제한은 폐기한다. 작성 화면은 sourceType·sourceId와 검색어로 provider를 구독한다.
 
-## 8. Gap / Risk
+입력 변경은 300ms 지연 후 trim한 검색어를 반영하고 빈 입력은 null로 정규화한다. 새 입력은 이전 타이머를 취소하며 검색어 지우기는 즉시 전체 제안으로 돌아간다. 화면 종료 시 타이머와 컨트롤러를 정리한다. 항상 query=null만 전달한다는 기존 설명은 현재 사실이 아니다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | 하드코딩 FAQ — 운영 변경 어려움 | `SupportFaqSuggestionService` — DB 없음, 코드 직접 수정 필요 | FAQ 내용 변경 시 서버 재배포 필요 | DB 테이블 `support_faq` 신설 + admin CRUD endpoint 추가 검토 |
-| P2 | REGULAR_MEETING_* sourceType 제안 접근 불가 | Flutter enum에 두 값 없어 by-source 화면 진입 어려움 | 정기모임 관련 이슈 작성 화면에서 FAQ 표시 안 됨 | F20-02 Gap 해소(enum 추가)와 동시 해소 |
-| P3 | query 파라미터 실시간 검색 미구현 | Flutter가 항상 `null` query 전달 | 키워드로 FAQ를 좁히는 기능 사용 불가 | 텍스트 검색 입력 추가 여부 결정 |
+| 상태 | 앱 표시·복구 |
+|---|---|
+| 첫 로딩 | 작은 로딩 표시 |
+| 재조회 | 공통 AsyncValueWidget의 keepPrevious 정책으로 기존 결과 유지 |
+| 성공·제안 있음 | 추천 도움말 카드 |
+| 성공·제안 없음·검색어 없음 | 표시할 추천 도움말 없음 안내 |
+| 성공·검색 결과 없음 | 검색어와 일치 항목 없음, 아래에 문의 가능 안내 |
+| 오류 | 도움말 조회 실패와 재시도. 문의 등록은 계속 가능하다는 안내 |
 
-## 9. 수용 기준
+빈 결과·오류를 모두 숨기는 구현이 아니다. FAQ 조회 실패가 접수 버튼의 필수 성공 조건이 되는 것도 아니다. 실제 계정 제한·네트워크 상태에 따른 화면 실행 결과는 이번 소스 대조로 확정하지 않는다.
 
-### AC-01. sourceType=PAYMENT 제안 조회
+## 코드 위치
 
-Given 비로그인 상태에서 sourceType=PAYMENT로 제안을 요청한다.  
-When `GET /api/v1/support/faq/suggestions?sourceType=PAYMENT` 를 호출한다.  
-Then 서버는 priority 1("결제 실패 확인"), priority 2("거래 기록 보존") 2개를 반환한다.
+<!-- source-references:start -->
+서버 창구: `SupportFaqController#getSuggestions`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### AC-02. keyword 필터
+## 현재 제한과 확인 범위
 
-Given sourceType=REFUND, query="환불" 로 요청한다.  
-When API 를 호출한다.  
-Then title/answer에 "환불"이 포함된 항목만 반환한다.
-
-### AC-03. 빈 결과 처리
-
-Given sourceType=REFUND, query="존재하지않는키워드" 로 요청한다.  
-When API를 호출한다.  
-Then 서버는 `[]`를 반환하고 Flutter는 섹션을 표시하지 않는다.
-
-### AC-04. CreateScreen FAQ 표시
-
-Given `SupportIssueCreateScreen(sourceType=OperationalIssueSourceType.refund, sourceId=123)` 이 빌드된다.  
-When `supportFaqSuggestionsProvider`가 성공 응답을 받는다.  
-Then "추천 도움말" 섹션과 제안 카드가 문의 폼 위에 표시된다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 운영 | DB 기반 FAQ CRUD | 운영팀이 FAQ를 직접 편집할 필요가 있는지 결정. 필요 시 `support_faq` 테이블 + admin endpoint 신설 |
-| 구현 | query 실시간 검색 | CreateScreen에 검색 입력 추가 여부 결정 |
-| 구현 | REGULAR_MEETING_* FAQ 접근 | F20-02 Flutter enum 추가 후 자동 해소 |
+| Risk | 문구가 서버 코드에 고정돼 있고 실제 원천 상태를 읽지 않는다. | 추천 문구와 개별 거래의 실행 자격을 구분한다. |
+| Risk | sourceId를 현재 제안 함수에서 사용하지 않는다. | 번호별 개인화·소유권 확인 결과로 설명하지 않는다. |
+| 미검증 | 실제 로그인/제한 계정 요청과 입력 지연·네트워크 오류 화면을 실행하지 않았다. | 보안 설정·화면 분기 근거와 제품 실행을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 인증과 입력:** 인증 경로와 제한 계정 허용 목록을 구분하고 sourceType 필수·sourceId 미사용을 명시한다.
+- **AC-02 출처별 제안:** 정기모임을 포함한 일곱 출처에서 두 고정 제안을 생성하고 priority·최대 개수 제한을 따른다.
+- **AC-03 검색 규칙:** trim·소문자·제목/본문 연속 부분 문자열 필터를 사용한다.
+- **AC-04 앱 전달:** 300ms 지연·빈 검색 null·검색어 지우기·종료 타이머 취소를 연결한다.
+- **AC-05 실패 복구:** 로딩·빈 결과·검색 결과 없음·오류 재시도를 구분하고 문의 접수를 유지한다.
+
+근거는 현재 서버 보안·서비스와 앱 소스이며 새 제품 시험 통과 기록은 없다.

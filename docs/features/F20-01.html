@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F20-01 1:1 문의 — community PRD</title>
+  <title>F20-01 작성자 문의·호스트 응대·관할 이관</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,157 +17,37 @@
           <a href="../domains/20-support.html">20 고객지원</a><span>›</span>
           F20-01 1:1 문의
         </div>
-        <h1>F20-01. 1:1 문의</h1>
-        <p class="lede">
-          사용자가 카테고리를 골라 담당자에게 스레드를 여는 자유 문의 채널.
-          계정·결제·이벤트·클럽·신고·기타 6가지 카테고리가 있고, 특정 이벤트·클럽·정산 컨텍스트를
-          연결하면 문의 출처에 따라 이벤트 호스트, 클럽 운영진 또는 플랫폼 운영팀이 답한다.
-          상태는 <strong>접수됨 → 답변 완료 → 종결</strong> 3단계이며,
-          사용자가 추가 메시지를 보내면 다시 접수됨으로 돌아간다.
-        </p>
+        <h1>F20-01 작성자 문의·호스트 응대·관할 이관</h1>
+        <p class="lede">일반/출처 문의와 페이지 목록, 관할별 응대·이관·종결, 요청키·초안·갱신을 현재 계약에 맞췄다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">문의 단계</div><div class="value">4</div><div class="hint">작성·내 목록·상세·추가 답장</div></div>
-          <div class="metric"><div class="label">카테고리</div><div class="value">6</div><div class="hint">계정·결제·이벤트·클럽·신고·기타</div></div>
-          <div class="metric"><div class="label">연결 대상</div><div class="value">4</div><div class="hint">일반·이벤트·클럽·정산</div></div>
-          <div class="metric"><div class="label">답변 주체</div><div class="value">관할별</div><div class="hint">호스트·클럽 운영진·플랫폼</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">현재 상태 — 문의 출처에 따라 실제 담당자가 앱에서 응대한다</span>
-          <p>사용자 앱의 목록·상세·작성·추가 답장과 서버의 본인 참여 확인이 동작한다. 프로필에서 새 문의를
-            열면 일반 문의로 접수되고, 이벤트 상세의 “호스트에게 문의”와 클럽 상세의 “운영진에게 문의”는
-            출처를 붙여 담당자에게 보낸다. 이벤트 문의는 호스트와 분쟁 처리 권한을 받은 공동호스트가,
-            클럽 문의는 해당 클럽 운영진이 전용 응대 화면에서 답변·종결한다. 필요하면 플랫폼 운영팀으로
-            이관할 수 있고, 클럽 소속 이벤트 문의는 클럽 운영진에게 넘길 수 있다.</p>
-          <p><strong>제재 계정의 과거 대화도 복구됐다.</strong> 제재 전에 만든 문의의 목록·상세·추가 답장은
-            앱과 서버 모두 허용한다. 새 문의 작성 버튼과 작성 API는 계속 막혀 있으며, 이를 열지는 관리자
-            관측 화면의 실제 수요를 본 뒤 제품 책임자가 결정한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">일반 문의</div>
-            <h3>"비밀번호를 바꾸려는데 이메일이 안 와요"</h3>
-            <p>카테고리 "계정"을 고르고 제목·내용을 작성해 접수한다.
-              특정 모임이나 거래에 걸린 문의가 아니므로 별도 확인 없이 바로 플랫폼 운영팀 대기열에 들어간다.
-              운영팀이 답변하면 상태가 "답변 완료"로 바뀐다.
-              사용자가 추가 질문을 보내면 "접수됨"으로 되돌아간다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 관리자가 답변까지의 대화 이력 전체를
-              한 자리에서 볼 수 있다. 사용자도 진행 상태를 문의 목록에서 확인한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">모임 연결 문의</div>
-            <h3>"이 이벤트 참가비 영수증이 잘못됐어요"</h3>
-            <p>카테고리 "이벤트"를 고르고 해당 이벤트를 지정해 접수한다.
-              내가 실제로 그 이벤트의 확정 참가자임을 확인한 뒤 문의가 만들어진다 — 참여하지 않은
-              남의 모임을 끌어와 문의하는 것은 차단된다.
-              연결된 이벤트가 문의에 기록되고 해당 모임의 호스트 응대 화면으로 전달된다.</p>
-            <p><strong>담당자 흐름</strong> — 호스트는 답변·종결하거나 플랫폼 운영팀으로 이관한다. 클럽 소속
-              이벤트라면 클럽 운영진에게 인계할 수도 있다. 서버가 내려 주는 실행 가능 작업만 화면에 표시한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정산 연결 문의</div>
-            <h3>"정산 금액이 제가 계산한 것과 달라요 (호스트)"</h3>
-            <p>해당 정산을 지정해 접수한다.
-              그 정산의 호스트가 문의자 본인인지 확인한다.
-              정산 호스트만 정산에 연결한 문의를 넣을 수 있다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>문의 상태 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 접수됨 : 문의 접수
-    접수됨 --> 답변완료 : 현재 관할 담당자 답변
-    답변완료 --> 접수됨 : 사용자 추가 메시지
-    접수됨 --> 종결 : 현재 관할 담당자 종결
-    답변완료 --> 종결 : 현재 관할 담당자 종결
-    종결 --> [*]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>연결 대상별 본인 참여 확인</h2>
-        <p class="subtitle">내가 실제로 참여·거래한 건에만 문의를 걸 수 있다 — 남의 모임이나 남의 정산을 끌어와 문의하는 것은 차단된다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>연결 대상</th><th>접수할 수 있는 사람</th></tr></thead>
-            <tbody>
-              <tr><td>일반 (대상 없음)</td><td>누구나 접수 가능</td></tr>
-              <tr><td>이벤트</td><td>이벤트 호스트, 공동호스트, 또는 그 이벤트의 확정·결제 대기·취소 환불 대기 참가자</td></tr>
-              <tr><td>클럽</td><td>클럽 운영자 또는 클럽 멤버</td></tr>
-              <tr><td>정산</td><td>그 정산의 호스트 본인</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout">
-          <span class="label">확인에 걸리면</span>
-          <p>참여하지 않은 대상이면 <strong>접수가 거부</strong>된다. 대상을 지정하기로 한 문의인데
-            어떤 건인지 빠뜨리면 역시 <strong>접수되지 않는다</strong>.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>주요 규칙</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">종결 뒤 추가 불가</div>
-            <h3>종결된 문의에 메시지 추가 시도</h3>
-            <p>현재 관할 담당자가 문의를 종결 처리하면 사용자는 더 이상 메시지를 추가할 수 없다.
-              종결된 문의에 추가를 시도하면 <strong>막힌다</strong>.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">내 문의만 볼 수 있다</div>
-            <h3>타인 문의 접근 차단</h3>
-            <p>사용자용 문의 상세는 작성자 본인만 가능하다. 응대자는 별도의 호스트·클럽 운영진·플랫폼
-              운영 화면에서 자기 관할 문의만 볼 수 있고, 그 밖의 사용자가 직접 열면
-              <strong>접근이 차단된다</strong>.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">사용자 추가 메시지 → 재접수</div>
-            <h3>답변 완료 상태에서 사용자가 다시 질문</h3>
-            <p>담당자가 답변을 마친 뒤 사용자가 추가 질문을 보내면
-              문의 상태가 자동으로 "접수됨"으로 되돌아가
-              다시 답변 대기열에 들어간다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>알려진 격차</h2>
-        <div class="callout warn">
-          <span class="label">남은 격차</span>
-          <ul>
-            <li><strong>일반 프로필 작성 화면에는 연결 대상을 직접 고르는 선택기가 없다.</strong> 이벤트·클럽은 각 상세 화면에서 출처를 붙여 진입하지만, 정산 상세에서 바로 문의하는 진입은 아직 확인되지 않았다. 따라서 일반 문의는 대상 없음으로 접수되고 정산 연결 문의는 고객 화면의 마지막 연결이 남아 있다.</li>
-            <li><strong>제재 계정의 신규 문의 작성은 의도적으로 닫혀 있다.</strong> 기존 문의 읽기·답장은 열렸고, 관리자 화면에서 안내 열람자와 문의 창구 도달자를 관측한다. 실제 운영 데이터를 본 뒤 신규 작성 출시 여부를 결정한다.</li>
-            <li><strong>답변 알림은 완료됐다.</strong> 호스트·클럽 운영진·플랫폼 운영팀이 새 답변을 등록하면 작성자에게 커밋 이후 한 번 통지하고 해당 문의 상세로 이동한다.</li>
-          </ul>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용)
-  - business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md
-  - community_api/src/main/java/com/endside/community/inquiry/
--->
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>일반 문의는 프로필의 내 문의 목록에서 작성한다. 이벤트·클럽 상세는 sourceType과 sourceId를 query에 담아 같은 작성 화면으로 연결한다. 문의 분류 category와 누가 답할 차례인지 나타내는 jurisdiction은 다르다. 사용자가 category를 바꾸어도 원천과 관할이 바뀌는 것은 아니다.</p>
+<p>호스트·클럽 운영진은 <a href="F18-05.html">호스트 처리함</a>의 INQUIRY 카드에서 별도 호스트 문의 상세로 들어간다. 이 응대 기능이 미구현이라는 기존 설명은 폐기한다. 1:1 문의의 본문은 텍스트 계약이며 파일 첨부가 필요한 원천 업무는 <a href="F20-02.html">운영 이슈</a> 등 해당 계약을 따른다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·반환</th></tr></thead><tbody><tr><td>POST /api/v1/inquiries</td><td>InquiryAddParam → 201 InquiryDetailVo</td></tr><tr><td>GET /api/v1/inquiries/my</td><td>기존 List&lt;InquiryVo&gt; 목록</td></tr><tr><td>GET /api/v1/inquiries/my/page</td><td>PagingParam → Page&lt;InquiryVo&gt;, 현재 앱 사용</td></tr><tr><td>GET /api/v1/inquiries/{inquiryId}</td><td>본인 InquiryDetailVo</td></tr><tr><td>POST /api/v1/inquiries/{inquiryId}/messages</td><td>InquiryMessageParam → InquiryDetailVo</td></tr><tr><td>GET /api/v1/host/inquiries/{inquiryId}</td><td>호스트 시점 InquiryDetailVo와 availableActions</td></tr><tr><td>POST /api/v1/host/inquiries/{inquiryId}/messages</td><td>InquiryMessageParam → InquiryMessageVo</td></tr><tr><td>POST /api/v1/host/inquiries/{inquiryId}/escalate</td><td>InquiryHandoverParam → InquiryDetailVo</td></tr><tr><td>POST /api/v1/host/inquiries/{inquiryId}/transfer-to-club</td><td>InquiryHandoverParam → InquiryDetailVo</td></tr><tr><td>POST /api/v1/host/inquiries/{inquiryId}/close</td><td>본문 없음 → InquiryDetailVo</td></tr></tbody></table></div>
+<p>모두 로그인 경로다. 호스트의 네 POST는 Idempotency-Key가 필수다. 답변은 트랜잭션형 verified 실행기, 이관·인계는 본문을 받는 verified 실행기, 종결은 본문 없는 실행기를 호출한다. 작성자 접수·추가 메시지에는 이 요청키 헤더가 선언돼 있지 않다.</p>
+<p>InquiryAddParam은 category, title, content, sourceType, sourceId다. category는 ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC 중 하나, title은 공백 불가·최대 200자, content는 공백 불가·최대 2000자다. 추가 메시지는 content만 받는다. 이관·인계 reason은 공백 불가·최대 500자이며 trim한 값을 저장한다. 어떤 요청에도 evidenceFileIds 필드가 없다.</p></section>
+<section id="current-3"><h2>출처 검증과 최초 관할</h2><div class="table-wrap"><table><thead><tr><th>출처</th><th>생성 허용 조건</th><th>최초 관할</th></tr></thead><tbody><tr><td>NONE 또는 생략</td><td>일반 문의. sourceId를 보내도 저장 시 null로 정규화</td><td>PLATFORM</td></tr><tr><td>EVENT</td><td>이벤트 호스트, 유효 공동 주최자, APPROVED/APPROVED_PENDING_PAYMENT/CANCEL_PENDING_REFUND 신청자 또는 무통장 환불 대기가 있는 사용자</td><td>EVENT_HOST</td></tr><tr><td>CLUB</td><td>클럽 소유자 또는 멤버</td><td>CLUB_STAFF</td></tr><tr><td>SETTLEMENT</td><td>해당 정산의 호스트</td><td>PLATFORM</td></tr></tbody></table></div>
+<p>NONE 이외는 sourceId가 필요하며 원천 없음·권한 없음을 나누어 거절한다. 앱 작성 화면은 양수 ID의 EVENT/CLUB만 실제 출처로 전송한다. SETTLEMENT, unknown, 번호 누락·0·음수는 NONE/null로 보낸다. 서버가 SETTLEMENT를 지원한다는 사실과 현재 앱이 그 출처를 전송한다는 주장은 구분한다.</p>
+<p>모든 서버 허용 상태에 동일한 화면 입구가 있는 것은 아니다. 이벤트 상세의 문의 노출은 현재 뷰어 상태로 판정하므로 서버가 허용하는 환불 대기 등 모든 경우를 그 버튼 하나로 포괄한다고 설명하지 않는다.</p></section>
+<section id="current-4"><h2>작성자 목록·대화·공개</h2><p>페이지 목록은 lastMessageAt 내림차순, 같은 시각은 id 내림차순이다. 앱은 20건씩 읽고 다음 페이지를 붙일 때 ID로 중복을 제거한다. 대화가 갱신돼 항목이 페이지 경계를 넘어간 경우 누락 없이 고정된 스냅샷을 보장하는 것은 아니며 새로고침은 첫 페이지부터 다시 읽는다. 구형 전체 List API가 남아 있지만 현재 앱 목록 API는 다르다.</p>
+<p>상세는 본인 소유를 확인하고 메시지를 ID 오름차순으로 반환한다. 위임 접근이면 이벤트 문의에 대해 허용 이벤트 목록을 적용하며, 페이지 API는 페이지를 자르기 전에 같은 제한을 반영한다. 허용되지 않은 이벤트 상세는 INQUIRY_NOT_FOUND다. 위임 열람 필터와 작성 명령의 원천 검증은 별도로 읽는다.</p>
+<p>작성자 응답은 handlerNote를 null로 가린다. 회원용 InquiryVo에는 배정 관리자 번호가 없다. 호스트 답변자는 HOST, 플랫폼 담당자는 ADMIN, 문의자는 USER로 구분한다. senderId의 숫자만으로 동일한 사용자 신원 공간이라고 가정하지 않는다.</p>
+<p>작성자가 추가 메시지를 보낼 때 문의 행을 잠그고 본인·CLOSED 여부를 검사한다. 허용되면 USER 메시지를 저장하고 OPEN·lastMessageAt을 갱신한다. ANSWERED 뒤 추가 질문은 OPEN으로 돌아가지만 CLOSED를 사용자가 다시 여는 API는 없다.</p></section>
+<section id="current-5"><h2>호스트 읽기와 명령 권한</h2><p>호스트 열람과 현재 응대 권한은 다르다. 원래 EVENT 출처의 분쟁 처리 권한자나 CLUB 출처 관리자에게는 다른 관할로 넘긴 뒤에도 읽기가 허용될 수 있다. 답변·이관·인계·종결은 현재 관할에서 응대 가능한 사람만 수행한다.</p>
+<div class="table-wrap"><table><thead><tr><th>현재 관할·상태</th><th>응대 조건·행동</th></tr></thead><tbody><tr><td>EVENT_HOST, 미종결</td><td>해당 이벤트의 RESOLVE_DISPUTE 권한. REPLY, ESCALATE_TO_PLATFORM, CLOSE 가능</td></tr><tr><td>EVENT_HOST, 소속 클럽 있음</td><td>위 조건에 TRANSFER_TO_CLUB 추가</td></tr><tr><td>CLUB_STAFF, 미종결</td><td>원래 클럽 또는 이벤트 소속 클럽의 현재 관리자. REPLY, ESCALATE_TO_PLATFORM, CLOSE 가능</td></tr><tr><td>PLATFORM</td><td>호스트 명령 불가. 플랫폼 담당자 경로로 처리</td></tr><tr><td>CLOSED</td><td>availableActions 빈 목록, 명령 거절</td></tr></tbody></table></div>
+<p>모든 호스트 명령은 문의 행을 잠근 뒤 상태·관할을 다시 검사한다. 답변은 ANSWERED·hostResponseAt·lastMessageAt을 갱신한다. 플랫폼 이관은 jurisdiction=PLATFORM, escalatedAt·handlerNote, OPEN·lastMessageAt을 갱신한다. 클럽 인계는 원천이 소속 클럽을 가진 EVENT_HOST인 경우 CLUB_STAFF·handlerNote·OPEN·lastMessageAt으로 바꾼다. sourceType/sourceId 자체를 바꾸는 동작은 아니다. 종결은 CLOSED·closedAt을 기록한다.</p>
+<p>최초 응대자가 없을 때 handlerId와 HOST_USER를 기록한다. 이것을 모든 명령마다 현재 담당자 ID로 덮어쓰는 기능으로 설명하지 않는다. 플랫폼 관리 서비스도 미종결·PLATFORM 관할을 검사한 뒤 배정·답변·종결하며, 호스트 관할을 관리자가 임의로 처리하는 루프로 문서화하지 않는다.</p></section>
+<section id="current-6"><h2>알림과 앱 결과 처리</h2><p>신규 EVENT 문의는 호스트와 분쟁 처리 권한 공동 주최자, CLUB 문의는 현재 관리자에게 HOST_INQUIRY_RECEIVED를 발행하며 작성자는 제외한다. 공동 주최자 알림에서 위임 권한 정지를 제외한다. 호스트 답변과 플랫폼 답변은 INQUIRY_ANSWERED를 outbox로 연결한다. 현재 작성자 추가 메시지 함수에는 같은 신규 문의 알림 호출이 없고, 이관·인계·종결 함수에도 답변 알림과 같은 호출이 없다. 생성·답변 발행 근거를 모든 후속 행동의 알림 보장으로 확대하지 않는다.</p>
+<p>작성자 화면은 계정·출처 또는 inquiryId별 초안을 복원하고 전송 전 pending을 저장한다. 명확한 거절은 입력을 유지하며 pending을 풀고, 결과가 불명확하면 기록을 남겨 재전송을 막는다. 이는 요청키 없는 API의 서버 중복 방지를 대체하지 않는다. 성공한 접수는 반환 inquiry.id의 상세로 교체 이동하며 메시지는 보낸 값만 지운다. provider는 접수/메시지 성공 및 커밋 가능 실패에 관련 목록·상세를 무효화하고 계정이 바뀐 뒤 옛 결과를 적용하지 않는다.</p>
+<p>호스트 화면은 서버 availableActions와 앱이 아는 네 명령의 교집합만 사용한다. 답변·사유·종결 초안은 원문과 키·생성 시각·trim한 본문을 함께 보관한다. 결과 미확정 상태에서는 내용과 허용 기간이 같은 키만 재사용하며 오래된 불명확 요청을 새 키로 자동 전송하지 않는다.</p>
+<p>호스트 답변 응답은 메시지 한 건이므로 상세를 다시 읽는다. 이 재조회가 실패해도 답변 자체를 실패로 바꾸어 다시 보내지 않고 상세 오류로 표시한다. 이관·인계·종결은 반환 상세를 바로 적용한다. 이 명령 흐름은 처리함의 모든 상태 목록과 통계를 invalidate한다. 처리함 자체의 당기기 새로고침이 현재 목록만 갱신한다는 동작과 구분한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>앱은 SETTLEMENT 문맥을 NONE으로 정규화하고 모든 서버 허용 상태의 원천 버튼을 제공하지 않는다.</td><td>서버 허용과 앱 입구를 구분한다.</td></tr><tr><td>Risk</td><td>작성자 요청에는 요청키가 없고 호스트 요청은 별도 키·초안 수명 규칙을 사용한다.</td><td>모든 문의 명령에 같은 재전송 보장을 쓰지 않는다.</td></tr><tr><td>Gap</td><td>작성자 추가 질문·이관·인계·종결에는 검토한 함수상 신규/답변 알림 호출이 없다.</td><td>생성·답변 알림을 전체 명령에 확대하지 않는다.</td></tr><tr><td>미검증</td><td>실제 관할 변경·동시 명령·기기 알림·키 만료 복구를 이번에 실행하지 않았다.</td><td>소스 대조와 제품 실행 증거를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 출처와 관할:</strong> category와 sourceType·jurisdiction을 분리하고 EVENT/CLUB/SETTLEMENT/NONE의 권한을 따른다.</li><li><strong>AC-02 목록 계약:</strong> 구형 List와 현재 Page API, 정렬·20건·페이지 경계 ID 중복 제거를 구분한다.</li><li><strong>AC-03 작성자 권한:</strong> 본인 상세·위임 열람 제한·담당 메모 마스킹·CLOSED 메시지 거절을 적용한다.</li><li><strong>AC-04 호스트 권한:</strong> 열람과 현재 관할 응대, 서버 availableActions와 실제 명령 재검사를 연결한다.</li><li><strong>AC-05 관할 변경:</strong> 클럽 인계 조건·원천 유지·플랫폼 이관·CLOSED를 구분한다.</li><li><strong>AC-06 반환과 요청키:</strong> 호스트 답변의 메시지 응답과 다른 명령의 상세 응답, 작성자 API의 요청키 부재를 구분한다.</li><li><strong>AC-07 초안과 실패:</strong> 계정별 pending·같은 명령 키·만료 후 결과 확인·보낸 값만 정리를 적용한다.</li><li><strong>AC-08 갱신과 알림:</strong> 답변 뒤 상세 실패를 명령 실패로 바꾸지 않고 처리함 목록/통계를 갱신하며 실제 알림 호출 범위를 표시한다.</li></ul>
+<p>근거는 현재 서버·앱·관리 모듈 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

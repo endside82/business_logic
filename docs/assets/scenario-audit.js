@@ -4,7 +4,7 @@ window.SCENARIO_AUDIT = {
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "e7b434388dd95e96fa6c2cba24782cf4f04e49a5"
+    "sourceRevision": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12"
   },
   "countingNote": "시나리오 1,276개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
@@ -14,9 +14,9 @@ window.SCENARIO_AUDIT = {
     "automatedTestFilesScanned": 5011,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 76,
+    "directlyLinkedAutomatedTests": 75,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 76,
+    "automatedScenarioReferences": 75,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 57,
-    "definitionOnlyEvidence": 74,
-    "traceMarkers": 776,
-    "verifiedTraceRecords": 774,
+    "partialEvidenceChain": 56,
+    "definitionOnlyEvidence": 75,
+    "traceMarkers": 792,
+    "verifiedTraceRecords": 790,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -20711,7 +20711,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F20-01",
       "domain": "고객지원",
-      "name": "1:1 문의",
+      "name": "작성자 문의·호스트 응대·관할 이관",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
@@ -20722,19 +20722,188 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 10,
+        "verified": 10,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F20-01:1",
+            "label": "POST /api/v1/inquiries",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/InquiryController.java",
+                "controller": "InquiryController",
+                "method": "createInquiry",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/inquiries",
+                "targetLine": 33,
+                "methodLine": 34
+              }
+            ]
+          },
+          {
+            "id": "F20-01:2",
+            "label": "GET /api/v1/inquiries/my",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/InquiryController.java",
+                "controller": "InquiryController",
+                "method": "getMyInquiries",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/inquiries/my",
+                "targetLine": 41,
+                "methodLine": 42
+              }
+            ]
+          },
+          {
+            "id": "F20-01:3",
+            "label": "GET /api/v1/inquiries/my/page",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/InquiryController.java",
+                "controller": "InquiryController",
+                "method": "getMyInquiryPage",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/inquiries/my/page",
+                "targetLine": 52,
+                "methodLine": 53
+              }
+            ]
+          },
+          {
+            "id": "F20-01:4",
+            "label": "GET /api/v1/inquiries/{inquiryId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/InquiryController.java",
+                "controller": "InquiryController",
+                "method": "getInquiry",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/inquiries/{inquiryId}",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F20-01:5",
+            "label": "POST /api/v1/inquiries/{inquiryId}/messages",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/InquiryController.java",
+                "controller": "InquiryController",
+                "method": "addMessage",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/inquiries/{inquiryId}/messages",
+                "targetLine": 66,
+                "methodLine": 67
+              }
+            ]
+          },
+          {
+            "id": "F20-01:6",
+            "label": "GET /api/v1/host/inquiries/{inquiryId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/HostInquiryController.java",
+                "controller": "HostInquiryController",
+                "method": "getInquiry",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/host/inquiries/{inquiryId}",
+                "targetLine": 45,
+                "methodLine": 47
+              }
+            ]
+          },
+          {
+            "id": "F20-01:7",
+            "label": "POST /api/v1/host/inquiries/{inquiryId}/messages",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/HostInquiryController.java",
+                "controller": "HostInquiryController",
+                "method": "reply",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/host/inquiries/{inquiryId}/messages",
+                "targetLine": 53,
+                "methodLine": 55
+              }
+            ]
+          },
+          {
+            "id": "F20-01:8",
+            "label": "POST /api/v1/host/inquiries/{inquiryId}/escalate",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/HostInquiryController.java",
+                "controller": "HostInquiryController",
+                "method": "escalate",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/host/inquiries/{inquiryId}/escalate",
+                "targetLine": 68,
+                "methodLine": 70
+              }
+            ]
+          },
+          {
+            "id": "F20-01:9",
+            "label": "POST /api/v1/host/inquiries/{inquiryId}/transfer-to-club",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/HostInquiryController.java",
+                "controller": "HostInquiryController",
+                "method": "transferToClub",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/host/inquiries/{inquiryId}/transfer-to-club",
+                "targetLine": 82,
+                "methodLine": 84
+              }
+            ]
+          },
+          {
+            "id": "F20-01:10",
+            "label": "POST /api/v1/host/inquiries/{inquiryId}/close",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/HostInquiryController.java",
+                "controller": "HostInquiryController",
+                "method": "close",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/host/inquiries/{inquiryId}/close",
+                "targetLine": 96,
+                "methodLine": 98
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/test/inquiry/inquiry_screens_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -20745,7 +20914,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 1,
@@ -20754,7 +20923,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F20-02",
       "domain": "고객지원",
-      "name": "운영 이슈",
+      "name": "원천별 운영 이슈·증빙·처리 대화",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
@@ -20765,10 +20934,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F20-02:1",
+            "label": "POST /api/v1/support/issues",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/support/controller/OperationalIssueController.java",
+                "controller": "OperationalIssueController",
+                "method": "createIssue",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/support/issues",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F20-02:2",
+            "label": "GET /api/v1/support/issues/my",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/support/controller/OperationalIssueController.java",
+                "controller": "OperationalIssueController",
+                "method": "getMyIssues",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/support/issues/my",
+                "targetLine": 37,
+                "methodLine": 38
+              }
+            ]
+          },
+          {
+            "id": "F20-02:3",
+            "label": "GET /api/v1/support/issues/my/by-source",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/support/controller/OperationalIssueController.java",
+                "controller": "OperationalIssueController",
+                "method": "getMyIssuesBySource",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/support/issues/my/by-source",
+                "targetLine": 45,
+                "methodLine": 46
+              }
+            ]
+          },
+          {
+            "id": "F20-02:4",
+            "label": "GET /api/v1/support/issues/{issueId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/support/controller/OperationalIssueController.java",
+                "controller": "OperationalIssueController",
+                "method": "getMyIssue",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/support/issues/{issueId}",
+                "targetLine": 55,
+                "methodLine": 56
+              }
+            ]
+          },
+          {
+            "id": "F20-02:5",
+            "label": "POST /api/v1/support/issues/{issueId}/messages",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/support/controller/OperationalIssueController.java",
+                "controller": "OperationalIssueController",
+                "method": "addMessage",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/support/issues/{issueId}/messages",
+                "targetLine": 63,
+                "methodLine": 64
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -20795,7 +21050,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F20-03",
       "domain": "고객지원",
-      "name": "FAQ 제안",
+      "name": "출처별 지원 FAQ·검색·실패 복구",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
@@ -20806,10 +21061,28 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 1,
+        "verified": 1,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F20-03:1",
+            "label": "GET /api/v1/support/faq/suggestions",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/support/controller/SupportFaqController.java",
+                "controller": "SupportFaqController",
+                "method": "getSuggestions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/support/faq/suggestions",
+                "targetLine": 25,
+                "methodLine": 26
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

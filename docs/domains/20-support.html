@@ -14,13 +14,7 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>신뢰·운영<span>›</span>20 고객지원</div>
         <h1>20. 고객지원</h1>
-        <p class="lede">
-          사용자가 플랫폼에 도움을 요청하는 두 가지 채널.
-          <strong>1:1 문의</strong>는 카테고리를 골라 관리자에게 스레드를 여는 일반 문의이고,
-          <strong>운영 이슈</strong>는 특정 거래·정산·신고 건에 직접 연결해 접수하는 구조화된 채널이다.
-          운영 이슈는 접수 시 시스템이 관련 호스트를 자동으로 찾아 담당자로 연결한다.
-          두 채널은 진입점과 대상이 명확히 다르다.
-        </p>
+        <p class="lede">2026-11-22 작성자 문의·호스트 응대·원천별 운영 이슈·검색 FAQ의 현재 근거와 제한.</p>
       </header>
       <div class="callout"><span class="label">2026-11-02 메뉴 개편 반영</span><p>하단 탭은 홈·이벤트·모임·채팅·마이입니다. 검색·알림·전체 메뉴는 탭 상단에서, 설정·고객센터는 전체 메뉴에서 엽니다. <a href="../overview/architecture.html#app-navigation">현재 앱 메뉴와 역할별 입구</a>를 기준으로 이 기능을 찾습니다.</p></div>
       <p class="subtitle"><a href="../qa/completion-criteria.html#domain-20">이 영역의 기능별 출시 완료 기준</a>에서 확인할 결과와 증거를 봅니다. 기능 포함 여부와 구현 완료·실환경 통과·공개 승인은 별도로 판정합니다.</p>
@@ -28,209 +22,19 @@
       <div class="launch-strip" id="launch-strip" data-domain="1"></div>
 
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">기능</div><div class="value">3</div><div class="hint">1:1 문의·운영 이슈·FAQ 제안</div></div>
-          <div class="metric"><div class="label">문서화 시나리오</div><div class="value">16</div><div class="hint">3개 기능의 현재 등록 합계</div></div>
-          <div class="metric"><div class="label">채널</div><div class="value">2</div><div class="hint">1:1 문의·운영 이슈</div></div>
-          <div class="metric"><div class="label">문의 대상 연결</div><div class="value">11종</div><div class="hint">일반 4 · 거래/정산/신고 7</div></div>
-          <div class="metric"><div class="label">자동 라우팅</div><div class="value">있음</div><div class="hint">문의 대상별 호스트 자동 연결</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">두 채널을 혼동하지 않는다</span>
-          <p><strong>1:1 문의</strong>는 "결제 문제가 있어요"처럼 카테고리를 고르는 자유 문의다.
-            선택적으로 특정 이벤트·클럽·정산에 연결할 수 있도록 설계돼 있다. 이벤트 문의는 호스트와
-            권한 있는 공동호스트, 클럽 문의는 클럽 운영진, 일반·정산 문의는 플랫폼 운영팀 관할로 배정된다.
-            <strong>운영 이슈</strong>는 "거래 번호 123 환불이 안 돼요"처럼
-            문제가 걸린 거래·정산·신고 건을 반드시 지정해 접수한다. 시스템이 그 건으로 담당 호스트를 자동으로 찾아
-            호스트 작업함에 연결해 두기 때문에 담당자 배정이 빠르다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>3개 기능</h2>
-
-        <div class="cards">
-          <a class="card" href="../features/F20-01.html">
-            <div class="eyebrow">F20-01</div>
-            <h3>1:1 문의</h3>
-            <p>카테고리(계정·결제·이벤트·클럽·신고·기타)로 관리자 스레드를 연다.
-              이벤트·클럽·정산 컨텍스트를 지정하면 소유권 검증 후 연결된다.
-              상태는 접수 → 답변 완료 → 종결 3단계.</p>
-            <div class="meta"><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F20-02.html">
-            <div class="eyebrow">F20-02</div>
-            <h3>운영 이슈</h3>
-            <p>거래·결제·환불·정산·신고·정기모임 결제·정기모임 정산 7종 대상에 연결해 접수한다.
-              본인이 실제로 참여·거래한 건인지 확인한 뒤 생성되고, 시스템이 관련 호스트를 자동으로 찾아 연결한다.
-              앱에서 증빙을 최대 5개까지 첨부할 수 있고, 상세에서 첨부를 탭해 파일을 다시 열어 확인할 수 있다.</p>
-            <div class="meta"><span class="pill brand">상세 →</span></div>
-          </a>
-          <a class="card" href="../features/F20-03.html">
-            <div class="eyebrow">F20-03</div>
-            <h3>FAQ 제안</h3>
-            <p>운영 이슈 작성 화면 진입 시 문의 대상에 맞는 도움말 카드를 최대 5개 보여준다.
-              별도 저장소 없이 서버에 직접 적어 둔 가벼운 제안 기능이다.</p>
-            <div class="meta"><span class="pill">상세 →</span></div>
-          </a>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오 — 두 채널의 차이</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">1:1 문의 — 일반</div>
-            <h3>"비밀번호를 바꾸고 싶은데 이메일이 안 와요"</h3>
-            <p>카테고리 "계정"을 고르고 제목·내용을 작성해 접수한다. 특정 모임이나 거래에 걸린 문의가
-              아니므로 별도 확인 없이 바로 관리자 대기열에 들어간다. 관리자가 답변하면 상태가 "답변 완료"로
-              바뀌고, 사용자가 추가 메시지를 보내면 다시 "접수됨"으로 돌아간다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">1:1 문의 — 모임 연결</div>
-            <h3>"이 이벤트 참가비에 문제가 있어요"</h3>
-            <p>카테고리 "이벤트"를 고르고 해당 이벤트를 지정해 접수한다.
-              내가 실제로 그 이벤트의 참가자임을 확인한 뒤 문의가 만들어진다 — 참여하지 않은
-              남의 모임을 끌어와 문의하는 것은 차단된다.
-              이벤트 상세에서 문의하면 출처가 함께 저장되고 해당 모임의 호스트 응대 화면으로 전달된다.
-              호스트는 직접 답변·종결하거나 플랫폼 운영팀으로 이관할 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">운영 이슈</div>
-            <h3>"거래 번호 123 환불이 3일째 안 돼요"</h3>
-            <p>거래 내역 화면에서 "이 거래 문의하기" 버튼을 누른다. 어떤 거래의 환불 문의인지가
-              자동으로 채워진 상태로 문의 작성 화면이 열린다. 접수되면
-              시스템이 그 거래가 어느 이벤트의 환불인지 추적해 담당 호스트를 자동 연결하므로
-              호스트도 작업함에서 상황을 볼 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">운영 이슈 — 신고 관련</div>
-            <h3>"제가 낸 신고 결과가 어떻게 됐는지 모르겠어요"</h3>
-            <p>신고 내역에서 해당 신고 건으로 문의를 접수한다.
-              신고 관련 문의는 증빙 공개 범위가 자동으로 "운영팀 전용"으로 설정돼 피신고자에게는 내용이 노출되지 않는다.
-              운영자만 내용을 보고 처리한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>1:1 문의 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["사용자: 카테고리 선택"] --> B{"특정 대상에 연결?"}
-    B -->|"연결 안 함"| C["바로 접수"]
-    B -->|"이벤트·클럽·정산 연결"| D["본인 참여 확인"]
-    D -->|"통과"| C
-    D -->|"실패"| E["접수 거부"]
-    C --> F["접수됨"]
-    F --> G["관리자 답변"]
-    G --> H["답변 완료"]
-    H --> I{"사용자 추가 메시지?"}
-    I -->|"있음"| F
-    I -->|"없음"| J["관리자 종결"]
-    J --> K["종결"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영 이슈 자동 라우팅</h2>
-        <div class="callout">
-          <span class="label">접수 즉시 담당 호스트를 자동 연결한다</span>
-          <p>운영 이슈가 접수되는 순간, 시스템이 문의 대상에 따라 관련 호스트를 자동으로 찾아
-            연결해 둔다. 호스트 작업함은 이 연결을 기준으로 자기에게 온 이슈만 추려 보여 준다.</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>문의 대상</th><th>연결되는 사람</th></tr></thead>
-            <tbody>
-              <tr><td>정산 / 정기모임 정산</td><td>정산을 만든 호스트</td></tr>
-              <tr><td>결제 / 환불</td><td>해당 이벤트의 호스트</td></tr>
-              <tr><td>정기모임 결제</td><td>해당 정기모임의 호스트</td></tr>
-              <tr><td>지갑 거래 / 신고</td><td>단일 호스트로 좁혀지지 않음 — 운영팀이 직접 처리</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>두 채널의 문의 대상 비교</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>항목</th><th>1:1 문의</th><th>운영 이슈</th></tr></thead>
-            <tbody>
-              <tr><td>연결할 수 있는 대상</td><td>일반 문의, 이벤트, 클럽, 정산 — 4종</td><td>지갑 거래, 결제, 환불, 정산, 신고, 정기모임 결제, 정기모임 정산 — 7종</td></tr>
-              <tr><td>대상 지정 필수 여부</td><td>일반 문의는 지정 안 함, 나머지는 대상 지정 필수</td><td>항상 대상 지정 필수</td></tr>
-              <tr><td>본인 참여 확인</td><td>대상별 맞춤 확인 (참가자·멤버·호스트)</td><td>모든 대상에 확인 (거래 당사자·정산 당사자·신고자)</td></tr>
-              <tr><td>증빙 첨부</td><td>없음</td><td>파일 최대 5개 + 공개 범위(양측 공개 / 호스트 공개 / 운영팀 전용)</td></tr>
-              <tr><td>담당 관할 지정</td><td>출처가 이벤트면 호스트, 클럽이면 클럽 운영진, 그 외는 플랫폼 운영팀</td><td>접수 즉시 관련 호스트를 자동 연결</td></tr>
-              <tr><td>답변하는 사람</td><td>사용자 ↔ 현재 관할 담당자</td><td>사용자 ↔ 운영자</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">현재 비즈니스 한계</span>
-          <ul>
-            <li><strong>일반 계정은 1:1 문의를 사용할 수 있고 제재 계정도 과거 대화를 이어갈 수 있다.</strong> 마이페이지에서 목록·상세 스레드·작성 화면으로 접수·조회한다. 제재 계정은 기존 문의의 목록·상세·추가 답장이 열려 있지만 새 문의 작성은 계속 막힌다. 실제 수요를 운영 화면으로 관측한 뒤 새 작성 출시 여부를 결정한다.</li>
-            <li><strong>이벤트·클럽 문의의 직접 응대가 연결됐다.</strong> 이벤트 호스트와 권한 있는 공동호스트, 클럽 운영진은 전용 화면에서 자기 관할 문의에 답변·종결하고 필요하면 플랫폼으로 이관한다. 플랫폼 시스템 관리자는 일반 모임 운영에 개입하지 않고 플랫폼 관할로 넘어온 문의만 처리한다.</li>
-            <li><strong>정기모임 결제·정산 운영 이슈는 앱과 서버가 같은 두 대상 유형을 사용한다.</strong> 이전의 앱 대상 누락은 해소됐다.</li>
-            <li><strong>운영 이슈 증빙은 앱에서 최대 5개까지 첨부할 수 있다.</strong> 접수·목록 표시에 이어 상세에서 첨부를 눌러 다시 여는 뷰어도 동작한다 — 본인이 제출한 파일 기준으로 확인됐고, 상대가 올린 파일까지 동일하게 열리는지는 별도 확인이 필요하다.</li>
-            <li><strong>답변 알림은 완료됐다.</strong> 현재 관할 담당자가 새 답변을 등록하면 작성자에게 커밋 이후 한 번 통지하고 문의 상세로 연결한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 도메인과 인접 도메인의 경계</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>비교 대상</th><th>고객지원 (이 도메인)</th><th>구분 기준</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>18 분쟁</td>
-                <td>1:1 문의 / 운영 이슈 — 접수자 단방향 접수, 법적 보존 의무 없음</td>
-                <td>분쟁은 양측 당사자가 맞붙는 구조로 처리 기한·이의 제기·법적 보존을 포함한다. 고객지원은 운영팀의 단순 처리만 담당한다.</td>
-              </tr>
-              <tr>
-                <td>11 신고 (F11-04)</td>
-                <td>신고 대상 운영 이슈 — 신고 결과에 대한 문의</td>
-                <td>신고 접수·조치 자체는 신고 도메인. 그 신고가 어떻게 처리됐는지에 대한 문의가 이 도메인.</td>
-              </tr>
-              <tr>
-                <td>15 경고·징계</td>
-                <td>해당 없음 — 경고는 징계 처분</td>
-                <td>경고·징계는 별도 도메인. 고객지원은 결제·환불·정산 문의를 전담한다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>관련 도메인</h2>
-        <div class="hub-grid">
-          <a class="card" href="../domains/06-payment.html"><div class="eyebrow">관련 도메인</div><h3>06 결제·지갑</h3><p>결제·환불·지갑 거래 문의에서 본인 거래인지 확인하고 담당 호스트를 찾는 출처.</p></a>
-          <a class="card" href="../domains/07-settlement.html"><div class="eyebrow">관련 도메인</div><h3>07 모임 정산</h3><p>정산·정기모임 정산 문의에서 정산을 만든 호스트를 찾아 연결하는 출처.</p></a>
-          <a class="card" href="../domains/11-review.html"><div class="eyebrow">관련 도메인</div><h3>11 리뷰·신고</h3><p>신고 문의 — 신고를 낸 본인이 그 처리 결과를 문의하는 경로.</p></a>
-          <a class="card" href="../domains/17-regular-meeting.html"><div class="eyebrow">관련 도메인</div><h3>17 정기모임</h3><p>정기모임 결제·정산 문의 — 정기모임 전용 문의 대상.</p></a>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용)
-  - business_logic/prd/01_domain_prds/20_고객지원_prd.md
--->
+      <section id="domain-1"><h2>업무 경계와 정본</h2><div class="table-wrap"><table><thead><tr><th>기능 정본</th><th>현재 책임</th></tr></thead><tbody><tr><td><a href="../features/F20-01.html">작성자 문의·호스트 응대·관할 이관</a></td><td>일반/이벤트/클럽 문의, 페이지 목록, 작성자 대화, 호스트·클럽·플랫폼 관할과 응대·이관·종결</td></tr><tr><td><a href="../features/F20-02.html">원천별 운영 이슈·증빙·처리 대화</a></td><td>거래·정산·신고 원천 번호와 소유권, 증빙, 운영팀 처리 상태·메모·알림, 앱 초안·조회</td></tr><tr><td><a href="../features/F20-03.html">출처별 지원 FAQ·검색·실패 복구</a></td><td>로그인 사용자에게 고정 도움말을 제안하고 검색·빈 결과·실패를 처리</td></tr></tbody></table></div>
+<p>Inquiry와 OperationalIssue는 서로 다른 채널이다. 문의의 sourceType=SETTLEMENT와 운영 이슈의 SETTLEMENT를 같은 작성 화면·권한·원천 번호 검증으로 합치지 않는다. 사용자가 질문을 작성하는 입구와 호스트가 응대하는 입구도 별도다.</p></section>
+<section id="domain-2"><h2>사용자 업무 순서</h2><ol><li>일반 질문은 내 문의에서 작성하고 이벤트·클럽 관련 질문은 원천 상세에서 문맥을 넘긴다. 앱은 유효한 EVENT/CLUB만 문의 출처로 보내며 다른 값은 일반 문의로 정규화한다.</li><li>특정 거래·정산·신고를 지원받으려면 원천별 운영 이슈를 작성한다. 출처가 요구하는 실제 번호와 권한을 확인하고 필요하면 본문 또는 추가 메시지에 증빙을 붙인다.</li><li>FAQ는 해당 출처의 고정 안내를 검색하는 보조 수단이다. 조회가 실패하거나 답을 찾지 못해도 문의 작성은 계속한다.</li><li>작성자는 자신의 상세에서 답변과 상태를 읽고 미종결 상태에서 추가 질문을 한다. 호스트는 현재 관할과 availableActions에 따라 응대하거나 클럽/플랫폼으로 넘긴다.</li><li>명령 성공·상세 재조회 실패·전송 결과 미확정을 구분하고 저장한 초안·요청키·목록 갱신으로 복귀한다.</li></ol></section>
+<section id="domain-3"><h2>관할·상태·권한</h2><p>문의는 OPEN/ANSWERED/CLOSED이고 작성자 추가 질문이 ANSWERED를 OPEN으로 돌린다. 최초 관할은 EVENT→EVENT_HOST, CLUB→CLUB_STAFF, NONE/SETTLEMENT→PLATFORM이다. 출처는 유지하면서 관할을 넘긴다. 호스트가 이관 뒤 읽을 수 있어도 다시 답변할 수 있는 것은 아니다. 플랫폼 담당자도 플랫폼 관할·미종결 조건으로 배정·답변·종결한다.</p>
+<p>운영 이슈는 OPEN/IN_PROGRESS/RESOLVED/REJECTED이며 작성자 메시지가 Inquiry의 상태 전이를 재사용하지 않는다. 실제 거래 소유자·정산 당사자·신고 접수자 권한을 적용한다. PAYMENT/REFUND/REGULAR_MEETING_PAYMENT의 sourceId는 point_transaction이며 정기모임 정산은 settlement 행 번호다.</p>
+<p>FAQ에는 원천 소유권 조회가 없지만 현재 URL 보안은 로그인 필요다. 제한 계정 허용 목록과 익명 접근은 다르다. 추천 문구에 있는 원천 업무 설명은 실제 작업 실행·자격 확인 결과를 대신하지 않는다.</p></section>
+<section id="domain-4"><h2>증빙·공개·개인정보</h2><p>Inquiry의 현재 접수·메시지 계약은 텍스트이며 파일 ID 필드가 없다. 운영 이슈는 이슈 본문과 추가 메시지 각각 최대 5개 파일을 받고 소유자·완료·허용 용도를 검증한다. REPORT의 기본 증빙 범위는 CS_ONLY, 나머지는 PARTIES이고 앱은 별도 공개 범위를 보내지 않는다.</p>
+<p>작성자 문의 응답에서는 담당자 이관 메모를 숨기고 회원 VO에 배정 관리자 번호를 싣지 않는다. 운영 이슈의 사용자 상세는 userVisible=true 메시지만 공개한다. 파일 번호를 반환받는 것과 파일 다운로드 권한은 별도다. 보존 만기와 실제 삭제는 <a href="../features/F18-04.html">분쟁 증거 열람·보존·파일 정리</a>를 따른다.</p></section>
+<section id="domain-5"><h2>요청·초안·조회·알림</h2><p>호스트 문의 명령 네 개는 요청키를 요구하지만 작성자 문의와 운영 이슈 POST에는 같은 헤더가 없다. 앱은 계정별 초안과 전송 전 pending 기록으로 불명확한 결과의 자동 재전송을 막는다. 호스트 초안은 키·본문·생성 시각을 함께 보관해 동일 명령 재시도를 관리한다.</p>
+<p>호스트 답변은 메시지 한 건을 반환하므로 상세를 다시 읽고, 나머지 호스트 명령은 반환 상세를 적용한다. 호스트 명령은 처리함 목록과 통계를 함께 무효화한다. 운영 이슈 상세는 15초 타이머로 조회하며 목록·원천별 목록의 갱신 범위는 접수와 메시지에서 다르다.</p>
+<p>신규 문의의 응대자 알림과 호스트/플랫폼 답변 알림, 운영 이슈의 공개 답변·상태 변경 알림은 outbox 호출 근거가 있다. 모든 명령이 같은 알림을 발행하는 것은 아니며 실제 수신·딥링크는 별도 실행 검증 대상이다. 운영팀 구현 위치는 현재 community_api/admin-app이며 옛 별도 관리 저장소를 수정 대상으로 삼지 않는다.</p></section>
+<section id="domain-6"><h2>현재 제한과 완료 판정</h2><ul><li>서버의 문의 출처 허용과 실제 앱 입구가 다르다. SETTLEMENT 문의와 일부 환불 대기 입구를 문서상 모두 제공한다고 만들지 않는다.</li><li>결과 미확정·요청키 만료·페이지 순서 변경·운영 이슈의 15초 조회는 각 기능의 제한을 유지한다.</li><li>FAQ는 고정 문구·부분 문자열 검색이며 개인 거래 조회나 관리자 업무 실행을 대신하지 않는다.</li><li>이 영역은 현재 소스 대조를 마쳤다는 근거로 사용한다. 새 제품 시험·실기기·운영 알림·배포 설정·최종 전체 문서 감사 완료를 뜻하지 않는다.</li></ul></section>
+<section id="domain-7"><h2>검증 근거</h2><p>현재 세 기능의 계약·코드 위치 표와 문서 최신화 대장의 support 근거 묶음을 연결한다. 기능 HTML과 영역 HTML은 이 정본에 맞추며 기존 원천 번호 앵커를 보존한다. 과거의 ‘호스트 응대 미구현’, ‘FAQ 익명 접근’, ‘정기모임 enum 부재’, ‘검색 미배선’은 현재 제한으로 남기지 않는다.</p></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

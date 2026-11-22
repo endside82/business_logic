@@ -1,112 +1,106 @@
-# F20-01. 1:1 문의 PRD
+# F20-01. 작성자 문의·호스트 응대·관할 이관 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first: community_api/src/main/java/com/endside/community/inquiry/; updated: 2026-06-05 -->
+## 현재 범위와 입구
 
-## 1. 결론
+일반 문의는 프로필의 내 문의 목록에서 작성한다. 이벤트·클럽 상세는 sourceType과 sourceId를 query에 담아 같은 작성 화면으로 연결한다. 문의 분류 category와 누가 답할 차례인지 나타내는 jurisdiction은 다르다. 사용자가 category를 바꾸어도 원천과 관할이 바뀌는 것은 아니다.
 
-1:1 문의는 사용자가 관리자에게 카테고리 기반 스레드를 개설하는 기능이다. 서버는 4개 endpoint(생성·목록·상세·메시지 추가)를 제공하며 모두 로그인 필수(`@AuthenticationPrincipal`)다. 상태는 `OPEN → ANSWERED → CLOSED` 3단계이며 사용자가 추가 메시지를 보내면 `OPEN` 으로 되돌아간다.
+호스트·클럽 운영진은 [호스트 처리함](../18_dispute_resolution/F18-05_host-inbox_prd.md)의 INQUIRY 카드에서 별도 호스트 문의 상세로 들어간다. 이 응대 기능이 미구현이라는 기존 설명은 폐기한다. 1:1 문의의 본문은 텍스트 계약이며 파일 첨부가 필요한 원천 업무는 [운영 이슈](F20-02_operational-issue_prd.md) 등 해당 계약을 따른다.
 
-`sourceType` 필드가 핵심 분기 포인트다. 기본값 `NONE`은 일반 admin 처리 문의이고, `EVENT/CLUB/SETTLEMENT`를 지정하면 서버가 sourceId 소유권을 검증한다(이벤트 참가자·클럽 멤버·정산 호스트만 작성 가능). 이 경우 호스트 답변 루프 컬럼(`host_response_at`)이 활성화되도록 설계되어 있으나 **v1에서 admin 측 호스트 답변 endpoint가 미구현**이다.
+## 현재 서버 계약
 
-Flutter 측에서는 `SupportIssueApi`가 OperationalIssue 전용으로 구현되어 있고, Inquiry 전용 Flutter 데이터 레이어·화면은 **2026-06-06에 풀스택 구현 완료**되었다. 목록/상세 스레드/작성 화면 + `/profile/inquiries` 라우트 + 마이페이지 진입 메뉴가 서버 4개 endpoint를 소비한다. 다만 **v1 작성 화면은 위의 `sourceType`을 `NONE`으로 고정**하며(컨텍스트 분기 미구현 — `inquiry_screens.dart:204`), EVENT/CLUB/SETTLEMENT 컨텍스트 지정은 후속이다.
+| 요청 | 입력·반환 |
+|---|---|
+| POST /api/v1/inquiries | InquiryAddParam → 201 InquiryDetailVo |
+| GET /api/v1/inquiries/my | 기존 List<InquiryVo> 목록 |
+| GET /api/v1/inquiries/my/page | PagingParam → Page<InquiryVo>, 현재 앱 사용 |
+| GET /api/v1/inquiries/{inquiryId} | 본인 InquiryDetailVo |
+| POST /api/v1/inquiries/{inquiryId}/messages | InquiryMessageParam → InquiryDetailVo |
+| GET /api/v1/host/inquiries/{inquiryId} | 호스트 시점 InquiryDetailVo와 availableActions |
+| POST /api/v1/host/inquiries/{inquiryId}/messages | InquiryMessageParam → InquiryMessageVo |
+| POST /api/v1/host/inquiries/{inquiryId}/escalate | InquiryHandoverParam → InquiryDetailVo |
+| POST /api/v1/host/inquiries/{inquiryId}/transfer-to-club | InquiryHandoverParam → InquiryDetailVo |
+| POST /api/v1/host/inquiries/{inquiryId}/close | 본문 없음 → InquiryDetailVo |
 
-## 2. 코드 위치
+모두 로그인 경로다. 호스트의 네 POST는 Idempotency-Key가 필수다. 답변은 트랜잭션형 verified 실행기, 이관·인계는 본문을 받는 verified 실행기, 종결은 본문 없는 실행기를 호출한다. 작성자 접수·추가 메시지에는 이 요청키 헤더가 선언돼 있지 않다.
 
-계약의 정본은 코드다. 서버: `InquiryController`, `InquiryService`, `Inquiry`, `InquiryStatus`, `InquirySourceType`, `InquiryCategory`, `InquirySenderType`, `InquiryAddParam`, `InquiryVo`, `InquiryDetailVo`. 앱: `inquiry_screens_test.dart`, `support_issue_api.dart`.
+InquiryAddParam은 category, title, content, sourceType, sourceId다. category는 ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC 중 하나, title은 공백 불가·최대 200자, content는 공백 불가·최대 2000자다. 추가 메시지는 content만 받는다. 이관·인계 reason은 공백 불가·최대 500자이며 trim한 값을 저장한다. 어떤 요청에도 evidenceFileIds 필드가 없다.
 
-## 3. 전체 동작 흐름
+## 출처 검증과 최초 관할
 
-1. 사용자가 마이페이지 > 1:1 문의에서 목록 화면(`/profile/inquiries`)을 거쳐 작성 화면(`/profile/inquiries/new`)에 진입한다 — **2026-06-06 앱 화면·진입점 구현 완료**.
-2. 카테고리(`ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC`) + 제목 + 내용을 입력한다. **v1 작성 흐름에서 `sourceType`은 `NONE` 고정**(컨텍스트 분기 미구현 — `inquiry_screens.dart:204` 주석, `InquiryAddParam.sourceType` 기본값 `NONE`). EVENT/CLUB/SETTLEMENT 컨텍스트 지정은 후속.
-3. `POST /api/v1/inquiries` 호출. 서버는 category 파싱 후 sourceType 소유권 검증 → `Inquiry` 생성 → 첫 번째 `InquiryMessage` 생성(senderType=USER) → `InquiryDetailVo` 반환.
-4. 관리자가 admin 콘솔에서 답변 → `InquiryStatus.ANSWERED`, `answeredAt` 기록. sourceType 비NONE이면 `host_response_at` 기록 가능(v1 미구현).
-5. 사용자가 추가 메시지 `POST /api/v1/inquiries/{inquiryId}/messages` → 서버가 소유권 확인 후 상태를 다시 `OPEN`으로 변경.
-6. 관리자가 `CLOSED` 처리하면 이후 사용자 메시지 추가 불가(`INQUIRY_CLOSED` 400).
-7. 사용자가 `GET /api/v1/inquiries/my` 로 목록(최신순), `GET /api/v1/inquiries/{inquiryId}` 로 상세+스레드 조회.
-
-## 4. 제품 규칙
-
-- 카테고리는 계정, 결제, 이벤트, 클럽, 신고, 기타 여섯 가지이다. 제목은 200자, 내용과 추가 메시지는 각 2000자까지이다.
-- 이벤트, 클럽, 정산을 연결하려면 연결 대상이 있어야 하고 본인과 관련이 있어야 한다. 이벤트는 호스트, 공동 호스트, 승인된 참가자, 클럽은 소유자와 멤버, 정산은 그 정산의 호스트만 쓸 수 있다.
-- 종결된 문의에는 메시지를 더할 수 없다. 사용자가 메시지를 더하면 문의는 다시 접수 상태가 된다.
-
-## 6. 상태/권한 매트릭스
-
-| 사용자/상태 | 서버 근거 | 사용자 결과 | 판단 |
-|---|---|---|---|
-| 로그인 사용자 + sourceType=NONE | `createInquiry`, `verifySource` NONE pass | 문의 생성 가능 | 일치 (서버 구현) |
-| 로그인 사용자 + sourceType=EVENT + 비참가자 | `verifyEventSource` 검증 실패 | `INQUIRY_SOURCE_NOT_OWNED(403)` | 일치 |
-| 로그인 사용자 + sourceType=EVENT + 참가자(APPROVED) | 검증 통과 | 문의 생성 가능, 이벤트 컨텍스트 연결 | 일치 |
-| 로그인 사용자 + CLOSED 문의에 메시지 | `addMessage` CLOSED 체크 | `INQUIRY_CLOSED(400)` | 일치 |
-| 타인의 문의 상세 조회 | `verifyOwner` 실패 | `INQUIRY_ACCESS_DENIED(403)` | 일치 |
-| 비로그인 | 모든 endpoint 인증 필수 | 401 | 일치 |
-
-## 7. 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 문의 접수 | `POST /api/v1/inquiries` 구현됨 | Flutter 구현 완료 | 일치 |
-| 문의 목록 | `GET /api/v1/inquiries/my` 구현됨 | Flutter 구현 완료 | 일치 |
-| 문의 상세 | `GET /api/v1/inquiries/{id}` 구현됨 | Flutter 구현 완료 | 일치 |
-| 메시지 추가 | `POST /api/v1/inquiries/{id}/messages` 구현됨 | Flutter 구현 완료 | 일치 |
-| sourceType 분기 | `InquirySourceType` 4개 값, 검증 로직 완성 | v1 작성 화면은 `sourceType=NONE` 고정(컨텍스트 분기 미구현 — `inquiry_screens.dart:204`, `InquiryAddParam` 기본 `NONE`) | 부분(EVENT/CLUB/SETTLEMENT 지정은 후속) |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| ~~P0~~ 해소(2026-06-06) | Flutter Inquiry 전 레이어 ~~미구현~~ → **구현 완료** | `InquiryApi`·`data/models/inquiry/`·목록/상세/작성 화면·`/profile/inquiries` 라우트·마이페이지 메뉴 신설 | 사용자가 1:1 문의를 직접 접수·조회 가능 | 완료. 후속은 admin 호스트 답변 루프(P1)·답변 알림(P2)만 잔존 |
-| P1 | 호스트 답변 루프 미완 (admin 측) | `inquiry.host_response_at` 컬럼 준비됨. admin_api 호스트 답변 endpoint 없음 | EVENT/CLUB sourceType 문의의 호스트 회신 기능 비활성화 | admin_api 호스트 답변 endpoint + `InquiryService.addHostMessage()` 추가 필요 |
-| P2 | SUPPORT_ISSUE_UPDATED 알림 미배선 | `NotificationType(66)` 코드 있으나 `InquiryService`에 알림 emit 없음 | 관리자 답변 도착 시 사용자가 푸시 알림 미수신 | admin_api 답변 처리 시 알림 emit 연결 |
-| P3 | `sourceType=SETTLEMENT`의 settlement는 어느 settlement인가 | `InquiryAddParam.sourceId` = settlement.id 이나 어떤 Settlement 테이블인지 코드에서 `SettlementRepository.findById(settlementId)` 사용 → Payment 도메인의 `Settlement` 엔티티 | 사용자가 어떤 settlement ID를 알아야 하는지 UI 가이드 필요 | 문의 생성 화면에서 Settlement 컨텍스트 전달 방법 정의 |
-
-## 9. 수용 기준
-
-### AC-01. 기본 문의 접수
-
-Given 로그인 사용자가 category=PAYMENT, sourceType=NONE으로 문의를 접수한다.  
-When `POST /api/v1/inquiries` 가 성공한다.  
-Then 서버는 status=OPEN인 Inquiry + 첫 메시지 1건을 생성하고 `InquiryDetailVo`를 201로 반환한다.
-
-### AC-02. sourceType=EVENT 소유권 검증
-
-Given 사용자가 자신이 APPROVED 참가자인 이벤트에 sourceType=EVENT, sourceId={eventId}로 문의한다.  
-When `POST /api/v1/inquiries` 를 호출한다.  
-Then 소유권 검증을 통과하고 문의가 생성된다.
-
-### AC-03. sourceType=EVENT 비소유자 거부
-
-Given 사용자가 참가하지 않은 이벤트에 sourceType=EVENT로 문의를 시도한다.  
-When `POST /api/v1/inquiries` 를 호출한다.  
-Then 서버는 `INQUIRY_SOURCE_NOT_OWNED(403)`을 반환한다.
-
-### AC-04. CLOSED 문의 추가 메시지 거부
-
-Given 문의 status=CLOSED인 상태에서 사용자가 메시지를 추가한다.  
-When `POST /api/v1/inquiries/{id}/messages` 를 호출한다.  
-Then 서버는 `INQUIRY_CLOSED(400)`을 반환한다.
-
-### AC-05. 사용자 추가 메시지 후 OPEN 복귀
-
-Given 문의 status=ANSWERED인 상태에서 사용자가 메시지를 추가한다.  
-When 메시지 추가에 성공한다.  
-Then 서버는 `inquiry.status = OPEN`, `inquiry.lastMessageAt = now()`으로 갱신한다.
-
-### AC-06. 타인 문의 접근 거부
-
-Given 사용자 A가 사용자 B의 문의 ID로 상세를 조회한다.  
-When `GET /api/v1/inquiries/{id}` 를 호출한다.  
-Then 서버는 `INQUIRY_ACCESS_DENIED(403)`을 반환한다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 출처 | 생성 허용 조건 | 최초 관할 |
 |---|---|---|
-| ~~구현~~ 해소(2026-06-06) | Flutter Inquiry 데이터 레이어 | InquiryApi·Repository·Provider·목록/상세/작성 화면·라우트 구현 완료 |
-| 구현 | 호스트 답변 루프 | admin_api + `InquiryService.addHostMessage()` 신규 메서드 필요 |
-| 운영 | sourceType=SETTLEMENT UI 안내 | 어떤 settlement ID를 입력해야 하는지 화면 안내 정의 |
-| 알림 | 답변 알림 배선 | admin_api 답변 처리 후 `SUPPORT_ISSUE_UPDATED(66)` emit 연결 |
-| 테스트 | 전체 검증 없음 | 단위/통합/Flutter UI 테스트 작성 필요 |
+| NONE 또는 생략 | 일반 문의. sourceId를 보내도 저장 시 null로 정규화 | PLATFORM |
+| EVENT | 이벤트 호스트, 유효 공동 주최자, APPROVED/APPROVED_PENDING_PAYMENT/CANCEL_PENDING_REFUND 신청자 또는 무통장 환불 대기가 있는 사용자 | EVENT_HOST |
+| CLUB | 클럽 소유자 또는 멤버 | CLUB_STAFF |
+| SETTLEMENT | 해당 정산의 호스트 | PLATFORM |
+
+NONE 이외는 sourceId가 필요하며 원천 없음·권한 없음을 나누어 거절한다. 앱 작성 화면은 양수 ID의 EVENT/CLUB만 실제 출처로 전송한다. SETTLEMENT, unknown, 번호 누락·0·음수는 NONE/null로 보낸다. 서버가 SETTLEMENT를 지원한다는 사실과 현재 앱이 그 출처를 전송한다는 주장은 구분한다.
+
+모든 서버 허용 상태에 동일한 화면 입구가 있는 것은 아니다. 이벤트 상세의 문의 노출은 현재 뷰어 상태로 판정하므로 서버가 허용하는 환불 대기 등 모든 경우를 그 버튼 하나로 포괄한다고 설명하지 않는다.
+
+## 작성자 목록·대화·공개
+
+페이지 목록은 lastMessageAt 내림차순, 같은 시각은 id 내림차순이다. 앱은 20건씩 읽고 다음 페이지를 붙일 때 ID로 중복을 제거한다. 대화가 갱신돼 항목이 페이지 경계를 넘어간 경우 누락 없이 고정된 스냅샷을 보장하는 것은 아니며 새로고침은 첫 페이지부터 다시 읽는다. 구형 전체 List API가 남아 있지만 현재 앱 목록 API는 다르다.
+
+상세는 본인 소유를 확인하고 메시지를 ID 오름차순으로 반환한다. 위임 접근이면 이벤트 문의에 대해 허용 이벤트 목록을 적용하며, 페이지 API는 페이지를 자르기 전에 같은 제한을 반영한다. 허용되지 않은 이벤트 상세는 INQUIRY_NOT_FOUND다. 위임 열람 필터와 작성 명령의 원천 검증은 별도로 읽는다.
+
+작성자 응답은 handlerNote를 null로 가린다. 회원용 InquiryVo에는 배정 관리자 번호가 없다. 호스트 답변자는 HOST, 플랫폼 담당자는 ADMIN, 문의자는 USER로 구분한다. senderId의 숫자만으로 동일한 사용자 신원 공간이라고 가정하지 않는다.
+
+작성자가 추가 메시지를 보낼 때 문의 행을 잠그고 본인·CLOSED 여부를 검사한다. 허용되면 USER 메시지를 저장하고 OPEN·lastMessageAt을 갱신한다. ANSWERED 뒤 추가 질문은 OPEN으로 돌아가지만 CLOSED를 사용자가 다시 여는 API는 없다.
+
+## 호스트 읽기와 명령 권한
+
+호스트 열람과 현재 응대 권한은 다르다. 원래 EVENT 출처의 분쟁 처리 권한자나 CLUB 출처 관리자에게는 다른 관할로 넘긴 뒤에도 읽기가 허용될 수 있다. 답변·이관·인계·종결은 현재 관할에서 응대 가능한 사람만 수행한다.
+
+| 현재 관할·상태 | 응대 조건·행동 |
+|---|---|
+| EVENT_HOST, 미종결 | 해당 이벤트의 RESOLVE_DISPUTE 권한. REPLY, ESCALATE_TO_PLATFORM, CLOSE 가능 |
+| EVENT_HOST, 소속 클럽 있음 | 위 조건에 TRANSFER_TO_CLUB 추가 |
+| CLUB_STAFF, 미종결 | 원래 클럽 또는 이벤트 소속 클럽의 현재 관리자. REPLY, ESCALATE_TO_PLATFORM, CLOSE 가능 |
+| PLATFORM | 호스트 명령 불가. 플랫폼 담당자 경로로 처리 |
+| CLOSED | availableActions 빈 목록, 명령 거절 |
+
+모든 호스트 명령은 문의 행을 잠근 뒤 상태·관할을 다시 검사한다. 답변은 ANSWERED·hostResponseAt·lastMessageAt을 갱신한다. 플랫폼 이관은 jurisdiction=PLATFORM, escalatedAt·handlerNote, OPEN·lastMessageAt을 갱신한다. 클럽 인계는 원천이 소속 클럽을 가진 EVENT_HOST인 경우 CLUB_STAFF·handlerNote·OPEN·lastMessageAt으로 바꾼다. sourceType/sourceId 자체를 바꾸는 동작은 아니다. 종결은 CLOSED·closedAt을 기록한다.
+
+최초 응대자가 없을 때 handlerId와 HOST_USER를 기록한다. 이것을 모든 명령마다 현재 담당자 ID로 덮어쓰는 기능으로 설명하지 않는다. 플랫폼 관리 서비스도 미종결·PLATFORM 관할을 검사한 뒤 배정·답변·종결하며, 호스트 관할을 관리자가 임의로 처리하는 루프로 문서화하지 않는다.
+
+## 알림과 앱 결과 처리
+
+신규 EVENT 문의는 호스트와 분쟁 처리 권한 공동 주최자, CLUB 문의는 현재 관리자에게 HOST_INQUIRY_RECEIVED를 발행하며 작성자는 제외한다. 공동 주최자 알림에서 위임 권한 정지를 제외한다. 호스트 답변과 플랫폼 답변은 INQUIRY_ANSWERED를 outbox로 연결한다. 현재 작성자 추가 메시지 함수에는 같은 신규 문의 알림 호출이 없고, 이관·인계·종결 함수에도 답변 알림과 같은 호출이 없다. 생성·답변 발행 근거를 모든 후속 행동의 알림 보장으로 확대하지 않는다.
+
+작성자 화면은 계정·출처 또는 inquiryId별 초안을 복원하고 전송 전 pending을 저장한다. 명확한 거절은 입력을 유지하며 pending을 풀고, 결과가 불명확하면 기록을 남겨 재전송을 막는다. 이는 요청키 없는 API의 서버 중복 방지를 대체하지 않는다. 성공한 접수는 반환 inquiry.id의 상세로 교체 이동하며 메시지는 보낸 값만 지운다. provider는 접수/메시지 성공 및 커밋 가능 실패에 관련 목록·상세를 무효화하고 계정이 바뀐 뒤 옛 결과를 적용하지 않는다.
+
+호스트 화면은 서버 availableActions와 앱이 아는 네 명령의 교집합만 사용한다. 답변·사유·종결 초안은 원문과 키·생성 시각·trim한 본문을 함께 보관한다. 결과 미확정 상태에서는 내용과 허용 기간이 같은 키만 재사용하며 오래된 불명확 요청을 새 키로 자동 전송하지 않는다.
+
+호스트 답변 응답은 메시지 한 건이므로 상세를 다시 읽는다. 이 재조회가 실패해도 답변 자체를 실패로 바꾸어 다시 보내지 않고 상세 오류로 표시한다. 이관·인계·종결은 반환 상세를 바로 적용한다. 이 명령 흐름은 처리함의 모든 상태 목록과 통계를 invalidate한다. 처리함 자체의 당기기 새로고침이 현재 목록만 갱신한다는 동작과 구분한다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `InquiryController#createInquiry`, `InquiryController#getMyInquiries`, `InquiryController#getMyInquiryPage`, `InquiryController#getInquiry`, `InquiryController#addMessage`, `HostInquiryController#getInquiry`, `HostInquiryController#reply`, `HostInquiryController#escalate`, `HostInquiryController#transferToClub`, `HostInquiryController#close`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 앱은 SETTLEMENT 문맥을 NONE으로 정규화하고 모든 서버 허용 상태의 원천 버튼을 제공하지 않는다. | 서버 허용과 앱 입구를 구분한다. |
+| Risk | 작성자 요청에는 요청키가 없고 호스트 요청은 별도 키·초안 수명 규칙을 사용한다. | 모든 문의 명령에 같은 재전송 보장을 쓰지 않는다. |
+| Gap | 작성자 추가 질문·이관·인계·종결에는 검토한 함수상 신규/답변 알림 호출이 없다. | 생성·답변 알림을 전체 명령에 확대하지 않는다. |
+| 미검증 | 실제 관할 변경·동시 명령·기기 알림·키 만료 복구를 이번에 실행하지 않았다. | 소스 대조와 제품 실행 증거를 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 출처와 관할:** category와 sourceType·jurisdiction을 분리하고 EVENT/CLUB/SETTLEMENT/NONE의 권한을 따른다.
+- **AC-02 목록 계약:** 구형 List와 현재 Page API, 정렬·20건·페이지 경계 ID 중복 제거를 구분한다.
+- **AC-03 작성자 권한:** 본인 상세·위임 열람 제한·담당 메모 마스킹·CLOSED 메시지 거절을 적용한다.
+- **AC-04 호스트 권한:** 열람과 현재 관할 응대, 서버 availableActions와 실제 명령 재검사를 연결한다.
+- **AC-05 관할 변경:** 클럽 인계 조건·원천 유지·플랫폼 이관·CLOSED를 구분한다.
+- **AC-06 반환과 요청키:** 호스트 답변의 메시지 응답과 다른 명령의 상세 응답, 작성자 API의 요청키 부재를 구분한다.
+- **AC-07 초안과 실패:** 계정별 pending·같은 명령 키·만료 후 결과 확인·보낸 값만 정리를 적용한다.
+- **AC-08 갱신과 알림:** 답변 뒤 상세 실패를 명령 실패로 바꾸지 않고 처리함 목록/통계를 갱신하며 실제 알림 호출 범위를 표시한다.
+
+근거는 현재 서버·앱·관리 모듈 소스이며 새 제품 시험 통과 기록은 없다.

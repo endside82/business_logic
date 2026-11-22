@@ -319,7 +319,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -400,7 +401,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2525,9 +2527,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "142ddf6d3be75c751c26c133f4de508415d229e3e5aaa6896f791e820f94c330",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "c83c1cdfdef35d8917d32204cb7a85b7cc5675a9667a7c6dc0b5aeffcffe757d"
     },
     {
       "path": "docs/domains/21-curated.html",
@@ -4700,9 +4705,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "082b53521558bf28c13c65d5fdfd0568f1881190eb0866e1f20c57c0c51ca814",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "e97a0f0065d42f4631d0ae4d04501ec879ff6ce7056f58c7dc9e92a1d5c81832"
     },
     {
       "path": "docs/features/F20-02.html",
@@ -4710,9 +4718,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e062090e8e5d60d1e854a602b17f2680d409c254cd5c5ff7ebfbddca30162906",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "6ef6a3e10afa4ec2a91c7d8ccecd3823f1db595360bde2777857cfcd90897d6d"
     },
     {
       "path": "docs/features/F20-03.html",
@@ -4720,9 +4731,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f06ba985f78c4f4d7d87cc8f64492c27b4df8d6bb942fcff6c79688e964a3c0d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "bfb0b2adf23e95b2f50811d44119b99c46dc8312bbb4ddcb18be9097a566a38f"
     },
     {
       "path": "docs/features/F21-01.html",
@@ -5330,7 +5344,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5444,7 +5459,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5582,7 +5598,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5938,10 +5955,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "ab6aafc0d8ee51f73b500950ec909e0b3126268dd3ec82f2f26cfe7783a92115",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "2c1d80ffc09ee8f160dcccf2a8db629a6940836753c5ef5a9f8fbf713741c7fa"
     },
     {
       "path": "prd/01_domain_prds/21_제공자_배정_정산_prd.md",
@@ -8115,10 +8134,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "309341adf207fc3f978e0ad82814d12522c03193fcfe093ddb6f6725acadacad",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "84d0f7cd4184a5888a67ca3f0b6d8e4a322875fe6f50afc7f49387a9cf5669e7"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
@@ -8126,10 +8147,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bcb1e5f964c21265a7ae1638d02aadb955a733c39eaf3e291cc5591899b22a1d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "5c2d0c057bfb54385c214295fcd6aebc3307dee7818795fdc0f7565a6dc703dc"
     },
     {
       "path": "prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
@@ -8137,10 +8160,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "6aa23c4de9923f4757af01fbcc4ba5d248be8d2973d2062592cd883ee4dea490",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "support_20261122"
+      ],
+      "reviewedSha256": "94f159170c91ffdfc22dc9e51d1e54d61858484a33c1b207a042527379491867"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
@@ -8564,7 +8589,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8830,7 +8856,8 @@
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
         "dispute_query_20261122",
-        "dispute_evidence_20261122"
+        "dispute_evidence_20261122",
+        "support_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -39914,6 +39941,329 @@
       },
       "observedSourceVersions": {
         "community_api": "e7b434388dd95e96fa6c2cba24782cf4f04e49a5",
+        "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
+      }
+    },
+    "support_20261122": {
+      "kind": "source_review",
+      "scope": "고객지원3기능과영역개요: 작성자/호스트/플랫폼문의관할·요청/반환·초안/키, 운영이슈원천번호/소유권/증빙/관리답변, FAQ인증/검색/오류를현행서버/앱/관리모듈소스로대조.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/InquiryController.java",
+          "sha256": "b8aba5d6b7146329676f597133968799e6ff64b00875a1848eb5ca7076faf841",
+          "reviewScope": "전체작성자생성/List/신규Page/상세/추가메시지5개HTTP계약"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/inquiry/controller/HostInquiryController.java",
+          "sha256": "34191fee6818633801ef520e42ebe960ab837decd00c359490a70d7b037b84c1",
+          "reviewScope": "전체호스트GET/4POST·필수Idempotency-Key·verified실행기선택/정확한반환타입"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/support/controller/OperationalIssueController.java",
+          "sha256": "0ab4347aa65aa31db35183a2b63996eefd51e9f5ed40525b38a9af7470a90f73",
+          "reviewScope": "전체접수/페이지/by-source/상세/메시지5계약·요청키없음"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/support/controller/SupportFaqController.java",
+          "sha256": "1dbfc2c32bc2b71b39bf3c9ddff7fa23892941907e107c1dc54394f4bd1736d4",
+          "reviewScope": "전체GET ModelAttribute/목록반환·principal없음이인증불필요근거아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/service/InquiryService.java",
+          "sha256": "3f1fd6c82756dd97cdaf5a42e26cc36be77572f3aa1698cc95b3d74b287a019a",
+          "reviewScope": "60–388입력길이·출처권한/무통장환불대기·생성관할·목록/페이지위임필터·본인/종료메시지잠금·알림수신자·작성자handlerNote마스킹"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/service/HostInquiryService.java",
+          "sha256": "b66c40e1e81ede42ffadcf99d741588dc1ee4eccb354fb5c8e2f90ecd6bb78aa",
+          "reviewScope": "60–292전체호스트읽기/응대분리·행잠금·4행동·관할·첫담당자·길이검사·답변outbox"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/port/InquiryEventAdapter.java",
+          "sha256": "7ffc98f82520c237500ba1286e883f808a6054b51632ab37195b2677c7270105",
+          "reviewScope": "36–97원천조회/유효공동주최/분쟁권한위임·응대알림정지제외·위임비공개이벤트필터"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/repository/InquiryRepository.java",
+          "sha256": "89c4fd264bfef23009e7e4b8267201e94b6e9705ed1802fa07d712dc01c902a3",
+          "reviewScope": "27정렬키와29–69페이지검색/행잠금계약·소스출력중관측한선언만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/param/InquiryAddParam.java",
+          "sha256": "42fd2804bb37f9733fe2f28f26b109e4e3e4dfa5141d16aa264d515eb0aeb88e",
+          "reviewScope": "전체category/title/content/sourceType/sourceId"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/param/InquiryMessageParam.java",
+          "sha256": "7d32bd8fe7ab63e10092f7f3aa2699f6d55a0f279e4d637022ee835a686e78a9",
+          "reviewScope": "전체content전용·첨부필드없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/param/InquiryHandoverParam.java",
+          "sha256": "abc3a19c7b4ee44b4cbd706fec4792ae6109da5f76bb5e422f96351d287d5c64",
+          "reviewScope": "전체reason"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/constants/InquiryCategory.java",
+          "sha256": "f824087c00f1dfca9589cee9a1e5bb315fae5c244738637f6d4340cbb8ce5411",
+          "reviewScope": "전체6개분류"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/constants/InquiryJurisdiction.java",
+          "sha256": "36b044fb19e3b452fd6f34b3617fdcf41c4d3ae67ab6470b93ade188a0b0f46b",
+          "reviewScope": "전체3관할"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/constants/InquiryAction.java",
+          "sha256": "6ec624b2fc23c0bddf07c18e2a9ef0151914aa47b16dae16a3fd1089466e1302",
+          "reviewScope": "전체4명령문자열"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/constants/InquirySenderType.java",
+          "sha256": "5896d29706b0f2c6db1afc5817b4e385bfa718c3108e667ab30380e89d5dae9b",
+          "reviewScope": "전체USER/ADMIN/HOST"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/inquiry/vo/InquiryVo.java",
+          "sha256": "db1565ac0bbd1664fd3323e529b7ccc7e38f54b30a2e998b487aac98ef1da967",
+          "reviewScope": "전체공개회원필드·assigneeAdminId없음·handlerNote포함후작성자필터"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/service/OperationalIssueService.java",
+          "sha256": "0170b8c8c529114360c0ac7e9d4ede0ea1c4458291002b6bf2cd5218c15b0d90",
+          "reviewScope": "75–530입력/원천권한·관련호스트·본문/메시지파일검증/참조·본인페이지/상세/메시지공개·종료거절·visibility·제목/VO"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/constants/OperationalIssueSourceType.java",
+          "sha256": "4320cc46a1b4240f2d161c5f21e8cdd240ddb0db56bd68351fcdb2d6d26934db",
+          "reviewScope": "전체7출처와sourceRecord명시매핑"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/constants/OperationalIssueSourceRecord.java",
+          "sha256": "3dcb1e023ace94eff8c7c62bf1454d30c4ad8710c522a924d3e3f40044e4bfe4",
+          "reviewScope": "전체4원천행종류와ReferenceTable매핑"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/constants/OperationalIssueStatus.java",
+          "sha256": "a7e1634985d9c27eec953a7b443e8a8913176c8c2406a1e52bb4074e00f70eb1",
+          "reviewScope": "전체4상태와종료집합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/constants/OperationalIssueEvidenceVisibility.java",
+          "sha256": "7e88f4b3a62094f3a0575a0fb0936888eb4eb0b95fd8b856b43f3fe5e70148e1",
+          "reviewScope": "전체3공개범위와기본REPORT CS_ONLY/나머지PARTIES"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/param/OperationalIssueCreateParam.java",
+          "sha256": "cbff149137532f04940e70646ffd22359f81f31d5c5dddc6ca54cb63aa622dae",
+          "reviewScope": "전체원천/제목/본문/증빙/선택공개범위"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/param/OperationalIssueMessageParam.java",
+          "sha256": "e39b15346828de6cd72f009dc1f8c2a5cdb34d4a20a92a6fc85b56a446db3701",
+          "reviewScope": "전체본문/증빙"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/service/SupportFaqSuggestionService.java",
+          "sha256": "94a07ca87c04e2ae715d47c0fa20fbf33c609ea06fbb678a5121ac5af19fceb6",
+          "reviewScope": "전체필수sourceType·sourceId미사용·고정출처별2개·Locale.ROOT/trim/부분문자열·priority/limit5"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/support/param/SupportFaqSuggestionSearchParam.java",
+          "sha256": "62eca13e2b68f85d2e697597456143bebe2ae8ed586ff53eb189ba7cb7c32fa6",
+          "reviewScope": "전체sourceType/sourceId/query"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/inquiry/service/ManageInquiryService.java",
+          "sha256": "a1ec57e15dd1ed195126b530842c9258a1c608f74a83973429d541d5481c05ee",
+          "reviewScope": "72–212문의플랫폼관할/미종결단언·배정/답변/종결·ADMIN주체·답변outbox·잠금"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/support/service/ManageOperationalIssueService.java",
+          "sha256": "03d7989b21eafbdf4b459cfce6d0f722c75db409bcdf5f62034d89c03821ebbe",
+          "reviewScope": "113–220상태/재개방resolvedAt·리뷰잠금·공개/내부메시지·OPEN전환·상태/답변outbox·payload원천키"
+        },
+        {
+          "path": "community_app/lib/data/api/inquiry_api.dart",
+          "sha256": "7e8691d309059022aadd8d81eb84e62c3a4aa0fcdbfcb1751e936cfed5ae2ddf",
+          "reviewScope": "전체현재Page목록/작성자접수/상세/메시지타입"
+        },
+        {
+          "path": "community_app/lib/data/api/host_inquiry_api.dart",
+          "sha256": "e04b779381c6c57f3fd26e1fb7e11d07488422ca7dddbef3b57d0021a26ff00d",
+          "reviewScope": "전체호스트5계약·헤더·반환타입"
+        },
+        {
+          "path": "community_app/lib/data/api/support_issue_api.dart",
+          "sha256": "7e45a312dab83d4bf31deb8a8f00c13daff7b67a49fa695adbd7a77718383471",
+          "reviewScope": "전체운영5계약과FAQ쿼리"
+        },
+        {
+          "path": "community_app/lib/domain/providers/inquiry/inquiry_provider.dart",
+          "sha256": "ebc4a8222a8e64f3104aed7c3a4f094dc976c35b742c2faa5193005d5b4b0f5d",
+          "reviewScope": "전체147행20건페이지/ID중복제거·mutation단일실행·세션수명·성공/불명확실패무효화"
+        },
+        {
+          "path": "community_app/lib/domain/providers/host/host_inquiry_provider.dart",
+          "sha256": "f2266c13fb29374a94326012557ac5c0afba344bd4fe07ce0a564895bd032542",
+          "reviewScope": "전체238행명령별키/정규화·세션·답변재조회실패분리·상세응답적용·처리함전체목록/통계무효화"
+        },
+        {
+          "path": "community_app/lib/domain/providers/support/support_issue_provider.dart",
+          "sha256": "a32a2f5a18e3160ce0d535cfe7177fa1f23980731e0e7da91049e2a1d75e185d",
+          "reviewScope": "전체188행페이지/원천/상세/FAQ·성공/불명확실패조회무효화와세션수명"
+        },
+        {
+          "path": "community_app/lib/presentation/inquiry/inquiry_command_draft.dart",
+          "sha256": "1a693aaa37ad4e268d631ece69a1afa83cf39fc8cebce38d8c5e8b1d4dd0bdab",
+          "reviewScope": "전체84행본문/키/시각/지문영구초안·pending같은키재사용·기간만료결과확인경계"
+        },
+        {
+          "path": "community_app/lib/presentation/inquiry/screens/inquiry_screens.dart",
+          "sha256": "3ce25399b6ceae2d33fc2fb31afbf788ec08b7aadb1fabb394775840429ce77a",
+          "reviewScope": "46–105공통초안;420–570메시지전송/복원/생성문맥/유효EVENT CLUB;697–750전송전pending·성공상세교체·오류보존"
+        },
+        {
+          "path": "community_app/lib/presentation/host/screens/host_inquiry_detail_screen.dart",
+          "sha256": "3b0627d4cc140e56de65a9f889c20a6218ce28188d73aa5b4f0c500d8582c958",
+          "reviewScope": "202–214known availableActions교집합;333–500답변/이관/인계/종결초안키실행·성공/불명확/세대판정·보낸내용만정리;277/656입력상한"
+        },
+        {
+          "path": "community_app/lib/presentation/support/screens/support_issue_screens.dart",
+          "sha256": "111cab6d7a688565cc83e6ef129f5aeb2da6925791029cd742619d63a7ed0cac",
+          "reviewScope": "42–105공통초안;238–268상세15초타이머/정리;409–462메시지입력/파일부분정리;663–872접수전송/상세이동/300ms FAQ검색·로딩/빈결과/오류복구;1010–1053메시지증빙칩"
+        },
+        {
+          "path": "community_app/lib/data/models/support/operational_issue.dart",
+          "sha256": "cb697ae3c305ccfaa262c25c20f58184a3cec080027f9696c5e1d38472865b3f",
+          "reviewScope": "전체7출처+unknown/4상태+unknown·상세/메시지증빙필드·evidenceVisibility없음"
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "sha256": "768b92ecccf0ff44c7b9a82a0239211d5df462b451af9af5e93b81a6716fc556",
+          "reviewScope": "766–782문의라우트의클럽출처전달부분"
+        },
+        {
+          "path": "community_app/lib/presentation/common/media/evidence_file_chips.dart",
+          "sha256": "cb2a4a51a0e7bcfcc391c79c6c951ec12fdfd3c0c92e83f5ba407a4eac194523",
+          "reviewScope": "1–80fileId칩onTap/onOpen또는공통뷰어연결부분;스타일검수아님"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "75–210공개경로전체매처와anyRequestauthenticated;FAQ비로그인허용아님"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/AccountLockPolicy.java",
+          "sha256": "8594e360d2639332af9cb4c58b7b551315598dd80e891f9e71a630fd55a62178",
+          "reviewScope": "129–136GET FAQ제한계정허용경로.전체제재정책재감사아님"
+        },
+        {
+          "path": "community_app/lib/presentation/common/inputs/submission_draft.dart",
+          "sha256": "f753894bbfbf0def943302101228edaedfbcee1d4c22eb79c974e870e33fa8d1",
+          "reviewScope": "동일 SHA dispute_intake 전체계정별저장/pending/complete/명확거절/완료정리/계정종료 재사용"
+        },
+        {
+          "path": "community_app/lib/core/utils/idempotency_key_holder.dart",
+          "sha256": "c9506dcb207c5cb3a07844f41c62643d31742e787f5d523e999d6c9052e1a295",
+          "reviewScope": "동일 SHA regular_meeting_commands 70–149지문/키교체/성공정리 근거재사용;새숫자기간주장없음"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745",
+          "reviewScope": "300–366운영이슈unknown/비양수ID목록복귀·문의sourcequery전달"
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92",
+          "reviewScope": "740–761문의문맥query헬퍼/호스트상세경로"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "adf279be605d999e1f29b3b161e851c39313282f91e02a025dbe5a4b7d07da8b",
+          "reviewScope": "736–752canContactHost조건부문의라우트호출;전체입구권한행렬재감사아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/FileDisplayService.java",
+          "sha256": "5a5b838c8d77ebcf970e729191e7000597c25eea50cc29e61404706925d1ba2c",
+          "reviewScope": "84–115일반다운로드본인/제공가능상태검사와helper;기존dispute_evidence 주소발급후반SHA재사용"
+        }
+      ],
+      "reuses": [
+        "dispute_evidence_20261122",
+        "dispute_intake_20261122",
+        "mileage_commands_20261122",
+        "regular_meeting_commands_20261122",
+        "regular_meeting_reads_20261122",
+        "report_intake_20261122",
+        "warning_operations_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
+          "sha256": "84d0f7cd4184a5888a67ca3f0b6d8e4a322875fe6f50afc7f49387a9cf5669e7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
+          "sha256": "5c2d0c057bfb54385c214295fcd6aebc3307dee7818795fdc0f7565a6dc703dc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
+          "sha256": "94f159170c91ffdfc22dc9e51d1e54d61858484a33c1b207a042527379491867"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/20_고객지원_prd.md",
+          "sha256": "2c1d80ffc09ee8f160dcccf2a8db629a6940836753c5ef5a9f8fbf713741c7fa"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F20-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F20-02.html": [
+          "sidebar",
+          "launch-strip",
+          "support-source-binding",
+          "release-completion"
+        ],
+        "docs/features/F20-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/domains/20-support.html": [
+          "sidebar",
+          "launch-strip"
+        ]
+      },
+      "referenceChanges": [
+        "문의10·운영이슈5·FAQ1 실제Controller연결",
+        "support-source-binding 기존앵커보존",
+        "units/20_support 미존재로생성하지않음"
+      ],
+      "followUpFindings": [
+        "호스트응대4명령과키·관할·반환상이",
+        "작성자목록Page/20개·앱EVENT/CLUB만출처전달",
+        "입금환불대기와정산당사자접수확장",
+        "정확한POINT_TRANSACTION/MEETING_SETTLEMENT/SETTLEMENT ID구분",
+        "FAQ인증필요·제한계정허용·sourceId미사용·300ms검색/오류복구",
+        "관리outbox존재·본문/메시지첨부·15초상세폴링·메시지후원천별목록미무효화"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 158개가 실제 소스와 일치합니다.",
+        "groupDigests": "52 source/canonical digests; 12 retained HTML IDs",
+        "derivedDocuments": "8 documents; shared batch verified 8 paths, 49 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
         "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
       }
     }

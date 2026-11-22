@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F20-02 운영 이슈 — community PRD</title>
+  <title>F20-02 원천별 운영 이슈·증빙·처리 대화</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,185 +17,40 @@
           <a href="../domains/20-support.html">20 고객지원</a><span>›</span>
           F20-02 운영 이슈
         </div>
-        <h1>F20-02. 운영 이슈</h1>
-        <p class="lede">
-          문제가 걸린 거래·정산·신고 건에 직접 연결해 접수하는 구조화된 지원 채널.
-          결제·환불·지갑 거래·정산·신고·정기모임 결제·정기모임 정산 7가지 대상이 있고,
-          대상마다 본인 참여를 확인하는 방식이 다르다.
-          접수 즉시 시스템이 담당 호스트를 찾을 수 있는 건(결제·환불·정산·정기모임 결제·정기모임 정산)에 한해
-          관련 호스트를 자동으로 연결해 두고, 지갑 거래·신고는 단일 호스트로 좁혀지지 않아 운영팀이 직접 처리한다.
-          증빙은 앱에서 최대 5개까지 업로드해 접수할 수 있고, 상세에서 첨부를 탭하면 본인이 제출한 파일을
-          다시 열어 확인할 수 있다.
-        </p>
+        <h1>F20-02 원천별 운영 이슈·증빙·처리 대화</h1>
+        <p class="lede">정확한 원천 ID·소유권·관련 호스트, 본문과 메시지 증빙, 운영 상태·알림·초안·갱신 범위를 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="support-source-binding">
-        <h2>운영 문의의 원천 기록을 바르게 연결합니다</h2>
-        <p>운영자는 문의의 원천 사건을 연결하거나 해제하고 처리 사유를 남길 수 있습니다. 사건 종류·번호와 실제 당사자를 검사하며 이동수단 신고는 해당 원천 종류로 구분합니다. 저장 실패에서는 입력과 사유를 유지하고, 다른 운영자의 변경과 충돌하면 최신 기록을 다시 읽습니다. 일반 회원에게 내부 운영자 식별자를 공개하지 않습니다.</p>
-      </section>
-
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">문의 단계</div><div class="value">5</div><div class="hint">작성·내 목록·건별 목록·상세·추가 답장</div></div>
-          <div class="metric"><div class="label">문의 대상</div><div class="value">7</div><div class="hint">결제·환불·거래·정산·신고·정기모임 2종</div></div>
-          <div class="metric"><div class="label">증빙 첨부</div><div class="value">최대 5개</div><div class="hint">업로드·접수·목록·다시 열기 모두 동작</div></div>
-          <div class="metric"><div class="label">앱 지원 대상</div><div class="value">7/7</div><div class="hint">정기모임 2종 포함</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">왜 "특정 건에 연결"하는가</span>
-          <p>결제나 환불 문제는 "언제 무엇이 얼마"라는 맥락이 없으면 처리가 느리다.
-            문제가 걸린 거래·정산 건을 반드시 지정받아 시스템이 자동으로 거래 이력을 추적하고
-            관련 호스트를 찾아두면, 담당자가 배경 조사 없이 바로 처리할 수 있다.
-            증빙 첨부와 공개 범위 분류(양측 공개·호스트 공개·운영팀 전용)로
-            민감 정보도 안전하게 전달된다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">결제 / 환불 문의</div>
-            <h3>"환불 요청한 지 3일이 됐는데 처리가 안 돼요"</h3>
-            <p>거래 내역에서 해당 거래 항목 옆 "문의하기"를 누른다.
-              어떤 거래의 환불 문의인지가 자동으로 채워진다.
-              내용을 쓰고 접수하면 시스템이 그 거래가 어느 이벤트의 환불인지 찾아
-              담당 이벤트 호스트를 자동 연결한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트도 작업함에서 상황을 볼 수 있고,
-              운영팀도 거래 번호를 따로 요청하지 않고 바로 처리할 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정산 문의</div>
-            <h3>"이번 모임 정산 금액이 제가 계산한 것과 달라요 (호스트)"</h3>
-            <p>정산 상세 화면에서 "정산 문의하기"를 누른다.
-              어떤 정산 건인지가 자동으로 채워진다.
-              그 정산의 당사자(정산을 만든 호스트 또는 정산 항목·분배 당사자)만 접수 가능하다.
-              증빙 정책상 계산 근거 파일은 "양측 공개"로 분류되어 운영자와 호스트가 모두 볼 수 있게
-              설계되어 있고, 앱의 첨부 기능도 대상을 가리지 않아 정산 문의에도 똑같이 쓸 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">신고 결과 문의</div>
-            <h3>"제가 낸 신고 결과가 어떻게 됐는지 모르겠어요"</h3>
-            <p>신고 내역에서 해당 신고를 누르고 "문의하기"를 탭한다.
-              어떤 신고 건인지가 자동으로 채워져 접수된다.
-              신고를 낸 본인만 접수 가능하다.
-              증빙 공개 범위가 자동으로 "운영팀 전용"으로 설정돼 피신고자에게 내용이 노출되지 않는다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>문의 대상별 본인 참여 확인</h2>
-        <p class="subtitle">내가 실제로 거래·참여한 건에만 문의를 걸 수 있다 — 남의 결제나 남의 정산을 끌어와 문의하는 것은 차단된다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>문의 대상</th><th>접수할 수 있는 사람</th><th>증빙 기본 공개 범위</th></tr></thead>
-            <tbody>
-              <tr><td>지갑 거래</td><td>그 거래의 당사자 본인</td><td>양측 공개</td></tr>
-              <tr><td>결제</td><td>그 결제의 당사자 본인</td><td>양측 공개</td></tr>
-              <tr><td>환불</td><td>그 환불의 당사자 본인</td><td>양측 공개</td></tr>
-              <tr><td>정산</td><td>정산을 만든 호스트, 또는 정산 항목·분배 당사자</td><td>양측 공개</td></tr>
-              <tr><td>신고</td><td>그 신고를 낸 본인</td><td>운영팀 전용</td></tr>
-              <tr><td>정기모임 결제</td><td>그 결제의 당사자 본인</td><td>양측 공개</td></tr>
-              <tr><td>정기모임 정산</td><td>정산을 만든 호스트, 또는 정산 항목·분배 당사자</td><td>양측 공개</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>담당 호스트 자동 연결</h2>
-        <div class="callout">
-          <span class="label">담당 호스트를 찾을 수 있는 건만 자동 연결, 지갑 거래·신고는 운영팀 직접 처리</span>
-          <p>운영 이슈가 접수되는 순간 시스템이 문의 대상에 따라 관련 호스트를 자동으로 추적한다.
-            결제·환불·정산·정기모임 결제·정기모임 정산은 거래 기록이나 정산 기록을 거슬러
-            담당 이벤트 호스트 또는 정산을 만든 호스트를 찾아 연결한다.
-            지갑 거래는 일반 거래라 단일 호스트로 좁혀지지 않고, 신고는 대상에 따라
-            한 명의 호스트로 환원되지 않아 — 두 대상 모두 운영팀이 직접 처리한다.
-            호스트 작업함은 이 연결을 기준으로 자기에게 온 이슈만 추려 보여 준다.</p>
-        </div>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["결제 / 환불"] --> B["거래 기록"] --> C["이벤트"] --> D["이벤트 호스트"]
-    E["정산"] --> F["정산 기록"] --> G["정산을 만든 호스트"]
-    H["정기모임 결제"] --> I["거래 기록"] --> J["정기모임 결제 기록"] --> K["정기모임"] --> L["정기모임 호스트"]
-    M["지갑 거래 / 신고"] --> N["연결 불가 — 운영팀 직접 처리"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>이슈 상태 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 접수됨 : 사용자 접수
-    접수됨 --> 처리중 : 운영자 처리 시작
-    처리중 --> 처리완료 : 완료
-    처리중 --> 반려 : 반려
-    접수됨 --> 처리완료 : 즉시 완료
-    접수됨 --> 반려 : 즉시 반려
-    처리완료 --> [*]
-    반려 --> [*]
-          </div>
-        </div>
-        <p>처리 완료 또는 반려 상태가 되면 사용자는 추가 메시지를 보낼 수 없다.
-          상세 화면에서 문의가 닫힌 경우 메시지 입력창이 숨겨진다.</p>
-      </section>
-
-      <section>
-        <h2>증빙 첨부 규칙</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>규칙</th><th>내용</th></tr></thead>
-            <tbody>
-              <tr><td>최대 개수</td><td>5개 (초과하면 접수 거부)</td></tr>
-              <tr><td>파일 소유</td><td>문의자 본인이 올린 파일만 허용</td></tr>
-              <tr><td>파일 상태</td><td>업로드가 끝난 파일만 허용</td></tr>
-              <tr><td>허용 용도</td><td>증빙 또는 리뷰용으로 올린 파일만 (프로필·이벤트 사진·클럽 사진 등은 불허)</td></tr>
-              <tr><td>공개 범위</td><td>양측 공개 / 호스트 공개 / 운영팀 전용. 지정하지 않으면 문의 대상별 기본값이 자동 적용</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout warn">
-          <span class="label">첨부는 탭하면 다시 열린다 — 본인 제출분 기준으로 확인됨</span>
-          <p>앱 접수 화면은 공통 파일 선택·업로드를 사용해 최대 5개 파일을 서버에 전달하고,
-            상세 화면에서 첨부 칩을 탭하면 뷰어가 열려 파일을 다시 확인할 수 있다. 본인이 제출한 파일
-            기준으로 동작이 확인됐고, 상대가 올린 파일까지 같은 열람 권한으로 여는지는 별도 확인이 필요하다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>알려진 격차</h2>
-        <div class="callout warn">
-          <span class="label">현재 남은 격차</span>
-          <ul>
-            <li><strong>정기모임 결제·정기모임 정산</strong> 두 대상도 앱이 인식한다(2026-08-18 확인 — 종전 "미인식" 서술은 해소).
-              일곱 대상 모두 접수 화면에서 고를 수 있다.</li>
-            <li><strong>증빙 업로드·접수·목록·다시 열기까지 모두 동작한다.</strong> 본인이 제출한 첨부는 상세에서 탭해 다시 열어 확인할 수 있다.
-              상대가 올린 첨부까지 같은 방식으로 열리는지는 별도 확인이 필요하다.</li>
-            <li><strong>답변 알림은 1:1 문의(F20-01)와 같은 경로로 발송된다.</strong> 담당자가 답변을 등록하면 같은 통지 경로로 작성자에게 전달되고 문의 상세로 연결된다.</li>
-          </ul>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용)
-  - business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md
-  - community_api/src/main/java/com/endside/community/support/
-  - community_app/lib/presentation/support/screens/support_issue_screens.dart
--->
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>운영 이슈는 특정 거래·정산·신고에 연결한 지원 요청이다. 원천 업무에서 sourceType/sourceId를 넘겨 작성하며 프로필에서 내 운영 이슈 목록과 상세를 읽는다. 일반 텍스트 상담의 <a href="F20-01.html">1:1 문의</a>와 데이터·권한·상태가 다르다.</p>
+<p>앱 작성 route는 알려진 출처와 양수 sourceId를 요구한다. 알 수 없는 출처, 번호 없음·파싱 실패·0·음수이면 임의의 지갑 거래로 연결하지 않고 내 운영 이슈 목록을 표시한다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·반환</th></tr></thead><tbody><tr><td>POST /api/v1/support/issues</td><td>OperationalIssueCreateParam → 201 OperationalIssueVo</td></tr><tr><td>GET /api/v1/support/issues/my</td><td>PagingParam → Page&lt;OperationalIssueVo&gt;</td></tr><tr><td>GET /api/v1/support/issues/my/by-source</td><td>sourceType, sourceId → List&lt;OperationalIssueVo&gt;</td></tr><tr><td>GET /api/v1/support/issues/{issueId}</td><td>본인 OperationalIssueVo</td></tr><tr><td>POST /api/v1/support/issues/{issueId}/messages</td><td>OperationalIssueMessageParam → OperationalIssueVo</td></tr></tbody></table></div>
+<p>모두 로그인 경로이며 요청키 헤더는 선언돼 있지 않다. 생성에는 sourceType/sourceId와 공백 아닌 content가 필요하다. content는 요청 문자열 기준 최대 2000자, 선택 title은 최대 120자다. 제목이 없거나 trim 후 비면 출처별 기본 제목을 사용한다. 본문은 trim해서 저장한다. 생성과 메시지는 각각 evidenceFileIds 최대 5개를 받으며, 생성만 선택 evidenceVisibility를 받는다.</p></section>
+<section id="support-source-binding"><h2>원천 번호와 소유권</h2><div class="table-wrap"><table><thead><tr><th>sourceType</th><th>sourceId가 가리키는 실제 행</th><th>접수·원천별 조회 권한</th></tr></thead><tbody><tr><td>WALLET_TRANSACTION, PAYMENT, REFUND, REGULAR_MEETING_PAYMENT</td><td>point_transaction</td><td>거래 소유자</td></tr><tr><td>SETTLEMENT</td><td>meeting_settlement</td><td>정산 생성자, 항목 보유/분담 당사자 또는 취소된 미확인 송금의 당사자</td></tr><tr><td>REGULAR_MEETING_SETTLEMENT</td><td>regular_meeting_id가 있는 settlement 행</td><td>해당 정기모임 정산 호스트</td></tr><tr><td>REPORT</td><td>report</td><td>신고 접수자</td></tr></tbody></table></div>
+<p>PAYMENT/REFUND라고 해서 event_payment 또는 refund 행 번호를 직접 보내지 않는다. REGULAR_MEETING_SETTLEMENT에도 정기모임 ID나 meeting_settlement ID를 대신 넣지 않는다. 이 매핑은 서버 sourceRecord()가 소유권 검사·호스트 연결의 공통 기준으로 사용한다.</p>
+<p>거래가 없으면 TRANSACTION_NOT_FOUND, 거래 소유자가 다르면 FORBIDDEN이다. 다른 출처는 해당 원천 없음/소유권 오류를 반환하므로 모든 권한 오류가 OPERATIONAL_ISSUE_SOURCE_NOT_OWNED라고 정규화해 쓰지 않는다. REPORT 접수는 연결된 신고 대상 리뷰를 잠그는 경로도 거친다.</p></section>
+<section id="current-4"><h2>관련 호스트와 원천 제목</h2><p>SETTLEMENT는 정산 생성자, REGULAR_MEETING_SETTLEMENT는 해당 정산의 호스트를 연결한다. PAYMENT/REFUND는 거래 referenceType/referenceId를 읽고 EVENT_PAYMENT/EVENT_REFUND이면 이벤트 번호로, EVENT_PREPAYMENT/EVENT_PREPAYMENT_REFUND이면 EventPayment에서 이벤트 번호를 찾아 호스트를 연결한다.</p>
+<p>REGULAR_MEETING_PAYMENT는 거래 참조가 REGULAR_MEETING_PAYMENT 또는 REGULAR_MEETING_PAYMENT_REFUND일 때 결제 행의 정기모임과 호스트를 찾는다. 참조 종류·번호·원천이 없으면 null일 수 있다. WALLET_TRANSACTION과 REPORT는 이 함수에서 관련 호스트를 정하지 않는다. 출처 enum만으로 항상 호스트 처리함에 나타난다고 약속하지 않는다.</p>
+<p>응답 sourceTitle은 사용자에게 보여줄 원천 제목이다. sourceId를 원천 화면 ID로 임의 해석하지 않고 실제 업무 연결은 <a href="F18-05.html">호스트 처리함</a>의 문맥과 경로 조건을 따른다.</p></section>
+<section id="current-5"><h2>접수·목록·상세·메시지</h2><p>생성은 OPEN 이슈, 생성 시 증빙 참조, USER 작성의 첫 공개 메시지를 함께 저장한다. 본문 증빙은 이슈에 붙고 첫 메시지에 같은 파일 참조를 중복 저장하지 않는다. 코드에 요청키 기반 성공 응답 재생이나 동일 출처 활성 이슈를 하나로 제한하는 조건은 없다.</p>
+<p>내 목록은 본인 접수 건을 updatedAt·id 내림차순으로 조회한다. by-source도 원천 소유권을 다시 확인한 뒤 본인의 해당 출처 이슈를 반환한다. 상세는 issueId와 reporterUserId로 조회하므로 타인 이슈는 NOT_FOUND다. 목록은 messages를 빈 배열로 주고, 상세는 userVisible=true인 메시지만 createdAt·id 오름차순으로 준다.</p>
+<p>추가 메시지는 이슈 행을 잠근 뒤 본인과 상태를 검사한다. RESOLVED/REJECTED는 INVALID_INPUT으로 거절한다. 허용되면 공개 USER 메시지·증빙 참조와 lastMessageAt을 저장한다. Inquiry처럼 ANSWERED→OPEN으로 되돌리는 상태 전이는 없다. 운영 이슈 상태는 OPEN, IN_PROGRESS, RESOLVED, REJECTED다.</p></section>
+<section id="current-6"><h2>증빙 입력·공개·열기</h2><p>원시 evidenceFileIds 배열이 5개를 넘으면 먼저 거절한다. 이후 null·0·음수 ID를 제외하고 중복을 제거하며 실제 파일의 본인 소유·COMPLETED·EVIDENCE 또는 REVIEW 용도를 검사한다. 5개를 넘게 보내 놓고 중복 제거 뒤 5개 이하가 된다는 이유로 항상 허용되는 것은 아니다.</p>
+<p>공통 참조 등록부에 이슈 본문과 각 메시지의 파일 연결을 동기화한다. evidenceVisibility는 PARTIES/HOST_ONLY/CS_ONLY 중 명시값을 우선하고, 생략하면 REPORT는 CS_ONLY, 나머지는 PARTIES다. 본인 조회의 evidenceFileIds는 유지된다. 이 필드만으로 모든 다른 역할의 열람을 허용하는 것은 아니다.</p>
+<p>현재 앱은 생성 시 evidenceVisibility를 보내지 않고 응답 모델에도 그 필드가 없다. 서버 기본값을 따르는 동작이며 사용자가 공개 범위를 선택하는 UI로 설명하지 않는다. 본문·추가 메시지의 파일 ID는 모두 칩으로 표시한다. 일반 파일 다운로드 helper는 소유자와 제공 가능한 파일 상태를 검사한다. 분쟁의 별도 공개 목록 기반 파일 주소 발급과 같은 권한 규칙이라고 가정하지 않는다.</p>
+<p>첨부 참조의 보존·정리는 <a href="F18-04.html">분쟁 증거 보존과 파일 정리</a>를 따른다. 접수 필드에서 파일 ID를 제거했다는 사실만으로 실제 파일 삭제가 끝났다고 쓰지 않는다.</p></section>
+<section id="current-7"><h2>운영팀 답변·상태·알림</h2><p>현재 관리 모듈은 community_api/admin-app 안에 있다. 상태 변경은 이슈를 잠그고 요청 상태·담당자를 저장한다. 끝 상태면 resolvedAt을 기록하고 다시 진행 상태로 옮기면 null로 지운다. 신고 관련 이슈를 다시 열 때는 직접 출처와 활성 연결 신고의 리뷰를 잠근다.</p>
+<p>상태 변경의 사용자 메시지는 공개 메시지와 알림으로, 내부 메모는 userVisible=false로 저장한다. 사용자 메시지가 없어도 상태 변경 안내 알림을 요청한다. 일반 운영 답변은 OPEN을 IN_PROGRESS로 바꾸며 공개 메시지일 때만 알린다. 추가 메시지 함수 자체는 사용자의 종료 상태 거절 조건과 동일하지 않으므로 끝난 이슈의 운영 메모까지 모두 금지한다고 설명하지 않는다.</p>
+<p>알림은 SUPPORT_ISSUE_UPDATED를 관리 outbox에 넣으며 issueId를 포함한다. payload의 transactionId 키에도 sourceId를 넣는 현재 코드는 그 값이 언제나 실제 거래 번호라는 보장이 아니다. 출처별 원천 매핑을 유지한다. outbox 호출 근거는 실제 사용자 기기 수신·딥링크 성공과 다르다.</p></section>
+<section id="current-8"><h2>앱 초안·전송·새로고침</h2><p>내 목록은 20건씩 다음 페이지를 읽는다. 상세는 화면이 살아 있는 동안 15초 타이머로 상세 provider를 invalidate하고 dispose에서 취소한다. 이 타이머가 실시간 스트리밍이거나 화면 비활성 시 자동 중지되는 기능이라고 확대하지 않는다.</p>
+<p>접수 초안은 계정·sourceType/sourceId, 메시지 초안은 계정·issueId를 구분하며 제목·본문·첨부 ID를 복원한다. 업로드 중이거나 pending/충돌이면 전송을 막고 전송 전에 기록을 저장한다. 명확한 거절은 pending을 풀지만 불명확한 결과는 기록을 보관한다. API에 요청키가 없으므로 자동 재시도로 중복 접수를 만들지 않는다.</p>
+<p>접수 성공은 반환 issue.id의 상세로 교체 이동하고 내 목록·원천별 목록을 invalidate한다. 메시지 성공은 내 목록·해당 상세를 invalidate하며 보낸 본문과 첨부만 비운다. 원천별 목록은 이 메시지 함수의 무효화 대상이 아니다. 커밋 가능 실패에서도 해당 조회들을 무효화하고 계정 세션 종료 후 옛 결과는 적용하지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>PAYMENT/REFUND와 정기모임 정산의 ID 공간이 이름만으로 드러나지 않는다.</td><td>실제 테이블·참조 경로를 명시한다.</td></tr><tr><td>Gap</td><td>앱에 evidenceVisibility 선택·응답 필드가 없다.</td><td>서버 기본값을 따르는 현재 동작으로 설명한다.</td></tr><tr><td>Risk</td><td>요청키·활성 출처 중복 제한이 없고 메시지 성공이 원천별 목록까지 무효화하지 않는다.</td><td>pending 결과 확인과 갱신 범위를 분리한다.</td></tr><tr><td>Risk</td><td>상세 15초 타이머와 알림 payload의 transactionId가 원천 의미를 완전히 표현하지 못한다.</td><td>실시간·항상 거래 번호라는 약속을 피한다.</td></tr><tr><td>미검증</td><td>실제 원천 권한·증빙 다운로드·운영 답변 수신·다중 제출·화면 수명은 실행하지 않았다.</td><td>문서 소스 대조와 제품 실행을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 원천 ID:</strong> 일곱 출처를 네 원천 행 종류에 정확히 연결한다.</li><li><strong>AC-02 권한과 호스트:</strong> 원천별 소유권·정산 당사자 예외·거래 참조에 따른 호스트/null을 구분한다.</li><li><strong>AC-03 접수와 목록:</strong> OPEN·첫 메시지·본문 증빙, 본인 페이지/출처 조회와 상세 공개 메시지를 구분한다.</li><li><strong>AC-04 추가 메시지:</strong> 잠금·본인·종료 상태 거절과 상태 유지·메시지 증빙 참조를 적용한다.</li><li><strong>AC-05 증빙:</strong> 원시 개수 검사 뒤 정규화·소유/완료/용도·서버 기본 공개값을 따른다.</li><li><strong>AC-06 운영 처리:</strong> 재개방 resolvedAt 초기화·리뷰 잠금·공개/내부 메모·알림 발행을 나눈다.</li><li><strong>AC-07 앱 결과:</strong> 업로드 잠금·계정별 pending·성공 상세 이동·보낸 내용만 정리를 적용한다.</li><li><strong>AC-08 갱신 범위:</strong> 15초 상세 조회와 접수/메시지별 목록 무효화, 실제 알림 수신을 구분한다.</li></ul>
+<p>근거는 현재 서버·앱·관리 모듈 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

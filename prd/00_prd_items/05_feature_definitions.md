@@ -190,9 +190,9 @@
 | F19-01 | 관심인 | 관심인 등록·관리 | 로그인 사용자 | POST /api/v1/favorites(등록), DELETE /api/v1/favorites/{targetUserId}(해제), GET /api/v1/favorites(목록, active=true max N명 등록순), GET /api/v1/favorites/limit(구독 플랜별 한도 확인), isBlockedBetween status-aware(BLOCKED row만 체크, UNBLOCKED history 제외), FAVORITE_PERSON_NEW_EVENT(96) 알림 팬아웃(FavoriteService.isEffectiveFavorite 기반) | — | — |
 | F19-02 | 관심인 | 관심인 캘린더·알림 | 로그인 사용자 | GET /api/v1/favorites/calendar/monthly(관심인 전체 월간 일정 합산), GET /api/v1/favorites/{targetUserId}/monthly(특정 관심인 월간 일정), 관심인이 새 이벤트 발행 시 FAVORITE_PERSON_NEW_EVENT(96) 수신, effectiveTargetIds()로 캘린더·알림 팬아웃 공통 대상 집합 관리 | — | — |
 | F19-03 | 관심인 | 공개범위(프라이버시) 설정 | 로그인 사용자 | PUT `/api/v1/users/me/privacy/calendar`(본인 캘린더 공개범위), PUT `/api/v1/users/me/privacy/clubs`(클럽 활동 공개범위), 관심인 한도 무료 **3명** / 프리미엄 **10명**, PrivacySettingController 기반 | — | — |
-| F20-01 | 고객지원 | 1:1 문의 | 로그인 사용자 | POST /api/v1/inquiries(문의 생성, InquiryCategory 6종: ACCOUNT/PAYMENT/EVENT/CLUB/REPORT/ETC, sourceType 4종: NONE/EVENT/CLUB/SETTLEMENT), GET /api/v1/inquiries/my(내 문의 목록), GET /api/v1/inquiries/{inquiryId}(상세), POST /api/v1/inquiries/{inquiryId}/messages(추가 메시지), 운영팀 답변 시 SUPPORT_ISSUE_UPDATED(66) 알림 | — | — |
-| F20-02 | 고객지원 | 운영 이슈 접수 | 로그인 사용자 | POST /api/v1/operational-issues(이슈 접수), GET /api/v1/operational-issues/my(내 이슈 목록), GET /api/v1/operational-issues/my/by-source(소스별 조회), GET /api/v1/operational-issues/{issueId}(상세), POST /api/v1/operational-issues/{issueId}/messages(추가 메시지), HostInboxSourceType.OPERATIONAL_ISSUE로 호스트 인박스 연동, DisputeSlaExceededScheduler SLA 7일 초과 시 운영알림 승급 | — | — |
-| F20-03 | 고객지원 | 지원 FAQ | 로그인/게스트 사용자 | SupportFaqController 기반 자주 묻는 질문 목록·상세 조회, 카테고리별 분류, 고객 자가해결 지원 | — | — |
+| F20-01 | 고객지원 | 작성자 문의·호스트 응대·관할 이관 | 문의 작성자·호스트·클럽 운영진·플랫폼 담당자 | 일반/출처 문의와 페이지 목록, 관할별 응대·이관·종결, 요청키·초안·갱신을 현재 계약에 맞췄다. | 8 | 0 |
+| F20-02 | 고객지원 | 원천별 운영 이슈·증빙·처리 대화 | 거래·정산·신고의 관련 사용자와 운영팀 | 정확한 원천 ID·소유권·관련 호스트, 본문과 메시지 증빙, 운영 상태·알림·초안·갱신 범위를 대조했다. | 8 | 0 |
+| F20-03 | 고객지원 | 출처별 지원 FAQ·검색·실패 복구 | 운영 이슈를 작성하는 로그인 사용자 | 현재 인증 경계, 출처별 고정 제안과 300ms 검색, 빈 결과·오류·재시도를 대조했다. | 5 | 0 |
 | F21-01 | 제공자 배정·정산 | 제공자 배정 | 호스트/운영자 | 호스트 기획 모임에 서비스 제공자 배정·배정 변경·해제, 배정 이력 조회 | 3 | 1 |
 | F21-02 | 제공자 배정·정산 | 참가자 서비스비 분담 결제 | 참가자/호스트 | 참가자별 서비스비 분담 청구·결제(WALLET/BANK_TRANSFER), 미납 알림, 납부 확인 | 3 | 1 |
 | F21-03 | 제공자 배정·정산 | 제공자 정산 | 호스트/제공자 | 제공자 수익 정산 생성·지급·실패 복구, flow-through 정산(유료/무료 분리), 세금 처리 | 4 | 1 |

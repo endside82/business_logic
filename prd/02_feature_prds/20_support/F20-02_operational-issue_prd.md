@@ -1,129 +1,106 @@
-# F20-02. 운영 이슈 PRD
+# F20-02. 원천별 운영 이슈·증빙·처리 대화 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first: community_api/src/main/java/com/endside/community/support/; updated: 2026-06-05 -->
+## 현재 범위와 입구
 
-## 1. 결론
+운영 이슈는 특정 거래·정산·신고에 연결한 지원 요청이다. 원천 업무에서 sourceType/sourceId를 넘겨 작성하며 프로필에서 내 운영 이슈 목록과 상세를 읽는다. 일반 텍스트 상담의 [1:1 문의](F20-01_inquiry_prd.md)와 데이터·권한·상태가 다르다.
 
-운영 이슈는 사용자가 **특정 소스 객체(트랜잭션·정산·신고)**에 연결해 운영 지원을 요청하는 구조화된 채널이다. 서버는 5개 endpoint를 제공하며 (`POST /api/v1/support/issues`, `GET /my`, `GET /my/by-source`, `GET /{issueId}`, `POST /{issueId}/messages`) 모두 로그인 필수다.
+앱 작성 route는 알려진 출처와 양수 sourceId를 요구한다. 알 수 없는 출처, 번호 없음·파싱 실패·0·음수이면 임의의 지갑 거래로 연결하지 않고 내 운영 이슈 목록을 표시한다.
 
-`OperationalIssueSourceType` 7개 값(WALLET_TRANSACTION/PAYMENT/REFUND/SETTLEMENT/REPORT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT)은 어떤 객체에 대한 이슈인지와 소유권 검증 방식을 결정한다. 접수 시점에 서버가 호스트 매핑 가능한 source(PAYMENT/REFUND/SETTLEMENT/REGULAR_MEETING_PAYMENT/REGULAR_MEETING_SETTLEMENT)에 한해 자동으로 `relatedHostUserId`를 채워 HostInbox에서 source별 라우팅이 가능하게 한다. WALLET_TRANSACTION과 REPORT는 단일 호스트로 환원되지 않아 null(CS 직접 처리)이다.
+## 현재 서버 계약
 
-Flutter 측은 완전히 구현되어 있다. `SupportIssueApi` (Retrofit) → `SupportIssueRepository` → `SupportIssueMutation/Detail/List` Provider → 3개 화면(목록·상세·작성)이 모두 존재하고 프로필 탭 라우터에 연결되어 있다. Flutter `OperationalIssueSourceType` 은 서버 7종을 모두 갖고(정기모임 결제·정산 문의 포함), 모르는 값은 `unknown` 으로 읽는다.
+| 요청 | 입력·반환 |
+|---|---|
+| POST /api/v1/support/issues | OperationalIssueCreateParam → 201 OperationalIssueVo |
+| GET /api/v1/support/issues/my | PagingParam → Page<OperationalIssueVo> |
+| GET /api/v1/support/issues/my/by-source | sourceType, sourceId → List<OperationalIssueVo> |
+| GET /api/v1/support/issues/{issueId} | 본인 OperationalIssueVo |
+| POST /api/v1/support/issues/{issueId}/messages | OperationalIssueMessageParam → OperationalIssueVo |
 
-증빙 첨부(`evidenceFileIds` 최대 5개)와 증빙 가시성(`evidenceVisibility: PARTIES/HOST_ONLY/CS_ONLY`)을 서버가 지원하고, 앱은 접수와 스레드 메시지에 올린 증빙 id 를 보낸다. 가시성은 앱이 보내지 않아 서버의 sourceType 별 기본값을 따른다.
+모두 로그인 경로이며 요청키 헤더는 선언돼 있지 않다. 생성에는 sourceType/sourceId와 공백 아닌 content가 필요하다. content는 요청 문자열 기준 최대 2000자, 선택 title은 최대 120자다. 제목이 없거나 trim 후 비면 출처별 기본 제목을 사용한다. 본문은 trim해서 저장한다. 생성과 메시지는 각각 evidenceFileIds 최대 5개를 받으며, 생성만 선택 evidenceVisibility를 받는다.
 
-## 2. 코드 위치
+## 원천 번호와 소유권
 
-계약의 정본은 코드다. 서버: `OperationalIssueController`, `OperationalIssueService`, `OperationalIssue`, `OperationalIssueMessage`, `OperationalIssueStatus`, `OperationalIssueSourceType`, `OperationalIssueAuthorRole`, `OperationalIssueEvidenceVisibility`, `OperationalIssueCreateParam`, `OperationalIssueMessageParam`. 앱: `support_issue_api.dart`, `operational_issue.dart`, `operational_issue_create_param.dart`, `support_issue_repository.dart`, `support_issue_provider.dart`, `support_issue_screens.dart`, `app_router.dart`, `routes.dart`.
-
-## 3. 전체 동작 흐름
-
-### 사용자 수동 접수 경로
-
-1. 사용자가 거래 내역, 정산 화면, 신고 내역 등 각 기능 화면에서 "운영 문의" 버튼 탭 → `context.push('/profile/support-issues/new?sourceType=PAYMENT&sourceId=123')`.
-2. `SupportIssueCreateScreen(sourceType, sourceId)` 진입. 서버 FAQ 제안(`GET /api/v1/support/faq/suggestions`) 선행 표시.
-3. 제목(선택)·내용 입력 → `SupportIssueMutation.createIssue(OperationalIssueCreateParam)` 호출.
-4. 서버 `OperationalIssueService.createIssue()`:
-   a. `validateSourceOwnership(userId, sourceType, sourceId)` — sourceType별 소유권 검증.
-   b. `validateAndNormalizeEvidence()` — 증빙 파일 검증 (v1 Flutter에서 미전달).
-   c. `resolveRelatedHostUserId()` — 자동 호스트 해석.
-   d. `OperationalIssue` 저장 + 첫 `OperationalIssueMessage`(authorRole=USER) 저장.
-   e. `OperationalIssueVo` 반환.
-5. Flutter가 성공 toast 후 `/profile/support-issues/{id}` push.
-6. `SupportIssueDetailScreen` 15초 주기로 자동 갱신(polling timer).
-
-### 운영자 답변 경로 (admin_api 측)
-
-1. admin_api HostInbox 또는 CS 콘솔에서 운영자가 issue를 처리.
-2. `OperationalIssueMessage`(authorRole=OPERATOR) 추가 + `status` IN_PROGRESS/RESOLVED/REJECTED 변경.
-3. `NotificationType.SUPPORT_ISSUE_UPDATED(66)` 알림 emit — community_api `OperationalIssueService`에는 없음. admin_api에만 있을 것으로 추정. **확인 필요(Gap)**.
-
-## 4. 제품 규칙
-
-- 대상 소유 확인: 지갑 거래, 결제, 환불, 정기모임 결제는 본인 거래만, 정산과 정기모임 정산은 정산 호스트이거나 정산 항목을 받는 사람, 신고는 신고한 본인만 접수할 수 있다.
-- 제목을 비우면 종류에 맞춰 "환불 문의", "결제 문의" 같은 기본 제목이 붙는다. 증빙은 5개까지이고 공개 범위 기본값은 신고만 운영자 전용, 나머지는 당사자 공개이다.
-- 내용은 2000자까지이다. 접수한 본인만 자기 건을 볼 수 있고, 남의 건이나 없는 건은 똑같이 없음으로 응답한다. 운영자가 사용자에게 숨긴 메모는 보이지 않는다. 종결된 건에는 메시지를 더할 수 없다.
-
-## 6. 상태/권한 매트릭스
-
-| 사용자/상태 | 서버 근거 | Flutter 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 로그인 + 유효한 sourceType + 소유권 있음 | `validateSourceOwnership` 통과 | `SupportIssueCreateScreen` 문의 생성 | 접수 성공 | 일치 |
-| 로그인 + 소유권 없음 | `OPERATIONAL_ISSUE_SOURCE_NOT_OWNED(403)` | `showApiErrorToast` | 에러 toast | 일치 |
-| 로그인 + sourceType=REGULAR_MEETING_PAYMENT | 서버 처리 가능 | Flutter enum `regularMeetingPayment`(「정기모임 결제 문의」) | 정기모임 결제 문의로 접수 | 일치 |
-| 로그인 + RESOLVED/REJECTED 이슈 메시지 추가 | `status.isClosed() → INVALID_INPUT(400)` | `!status.isClosed` 조건 → 입력창 숨김 | 입력창 표시 안 됨 | 일치 |
-| 비로그인 | 모든 endpoint 401 | Auth guard | 로그인 화면 redirect | 일치 |
-| 상세 타인 접근 | `findByIdAndReporterUserId` 실패 → NOT_FOUND | `AppErrorState` | 에러 화면 | 일치 |
-
-## 7. 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 5 endpoint | 완전 구현 | SupportIssueApi 5 method 정확 매핑 | 일치 |
-| OperationalIssueStatus 4종 | OPEN/IN_PROGRESS/RESOLVED/REJECTED | Dart enum 4종 label 포함 | 일치 |
-| sourceType 7종 | 서버 7종 | Flutter 7종 + 모르는 값 `unknown` | 일치 |
-| evidenceFileIds | 서버 지원 (max 5) | Flutter CreateParam·OperationalIssue 에 있음. 접수와 스레드 메시지에 올린 증빙 id 를 보낸다 | 일치 |
-| evidenceVisibility | 서버 응답에 포함, 접수 때 비우면 sourceType 별 기본값 | 앱은 보내지 않고 모델에도 칸이 없음(서버 기본값을 따름) | 표시하지 않음 |
-| 목록 반환 타입 | `Page<OperationalIssueVo>` (Spring Page) | `PageResponse<OperationalIssue>` | 일치 |
-| 메시지 필터 | `userVisible=true` 필터 | Flutter는 서버가 내려주는 대로 렌더링 | 일치 |
-| 알림 emit | `SUPPORT_ISSUE_UPDATED(66)` 코드 있으나 community_api emit 없음 | Flutter NotificationRouter에 라우팅 설계 필요 | Gap |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| 해소됨 | Flutter OperationalIssueSourceType 의 정기모임 2종 | 앱 열거가 서버 7종을 모두 갖는다 | 정기모임 결제·정산 문의가 제 종류로 접수된다 | 없음 |
-| 해소됨 | Flutter 접수의 증빙 첨부 | 접수 요청과 스레드 메시지가 올린 증빙 id(최대 5)를 보낸다. 서버가 업로더 본인·업로드 완료·용도를 검증한다 | 증빙을 함께 접수할 수 있다 | 없음 |
-| P1 | Flutter OperationalIssue 모델에 evidenceVisibility 없음 | `operational_issue.dart:63-82` — evidenceVisibility 필드 없음 | 서버 응답의 visibility 정보 무시 | 모델에 `String? evidenceVisibility` 추가 |
-| P2 | SUPPORT_ISSUE_UPDATED 알림 emit 위치 불명 | `OperationalIssueService` emit 코드 없음. `SupportIssueNotificationData` VO는 존재 | 운영자 답변 시 사용자 push 알림 미수신 가능 | admin_api 답변 처리 경로 확인 및 emit 추가 |
-| P3 | 상세 15초 polling — 서버 부하 | `SupportIssueDetailScreen._refreshTimer = Timer.periodic(15s)` | 이슈 상세를 오래 열어두면 불필요한 API 호출 발생 | WebSocket 또는 long polling으로 교체 검토 |
-
-## 9. 수용 기준
-
-### AC-01. 결제 이슈 접수
-
-Given 로그인 사용자가 자신의 PointTransaction ID로 sourceType=PAYMENT 운영 이슈를 접수한다.  
-When `POST /api/v1/support/issues` 가 성공한다.  
-Then 서버는 status=OPEN, title="결제 문의"(자동), relatedHostUserId=이벤트 호스트 ID인 OperationalIssue를 생성한다.
-
-### AC-02. 소유권 없는 sourceId 접수 거부
-
-Given 사용자 A가 사용자 B 소유의 PointTransaction ID로 운영 이슈를 접수한다.  
-When `POST /api/v1/support/issues` 를 호출한다.  
-Then 서버는 `OPERATIONAL_ISSUE_SOURCE_NOT_OWNED(403)`을 반환한다.
-
-### AC-03. 목록 페이지네이션
-
-Given 사용자가 운영 이슈 목록을 요청한다.  
-When `GET /api/v1/support/issues/my?page=0&size=20` 을 호출한다.  
-Then 서버는 updatedAt DESC 정렬된 `Page<OperationalIssueVo>`를 반환한다. Flutter는 `page.content` 리스트를 카드 목록으로 표시한다.
-
-### AC-04. RESOLVED 이슈 메시지 추가 차단
-
-Given 이슈 status=RESOLVED 상태에서 사용자가 메시지를 추가한다.  
-When `POST /api/v1/support/issues/{id}/messages` 를 호출한다.  
-Then 서버는 `INVALID_INPUT(400)`을 반환한다. Flutter는 상세 화면에서 status.isClosed=true이므로 입력창을 숨긴다.
-
-### AC-05. 신고 관련 이슈 CS_ONLY visibility
-
-Given 사용자가 sourceType=REPORT로 이슈를 접수한다.  
-When evidenceVisibility 미지정 상태로 생성된다.  
-Then 서버는 evidenceVisibility=CS_ONLY를 자동 설정한다.
-
-### AC-06. by-source 조회
-
-Given 사용자가 특정 settlement에 연결된 운영 이슈를 조회한다.  
-When `GET /api/v1/support/issues/my/by-source?sourceType=SETTLEMENT&sourceId=456` 을 호출한다.  
-Then 서버는 소유권 재검증 후 해당 settlement 관련 이슈 목록을 반환한다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| sourceType | sourceId가 가리키는 실제 행 | 접수·원천별 조회 권한 |
 |---|---|---|
-| 구현 | Flutter evidenceVisibility 모델 필드 추가 | `OperationalIssue.dart` 필드 추가 |
-| 운영 | SUPPORT_ISSUE_UPDATED emit 경로 확인 | community_admin_api OperationalIssueAdminService에서 emit 여부 확인 |
-| 성능 | 상세 화면 polling 교체 | 15초 polling → SSE/WebSocket 또는 pull-to-refresh만 사용 검토 |
-| 테스트 | 서비스 단위 테스트 | `OperationalIssueService` 소유권 검증·호스트 라우팅·evidence 검증 테스트 없음 |
+| WALLET_TRANSACTION, PAYMENT, REFUND, REGULAR_MEETING_PAYMENT | point_transaction | 거래 소유자 |
+| SETTLEMENT | meeting_settlement | 정산 생성자, 항목 보유/분담 당사자 또는 취소된 미확인 송금의 당사자 |
+| REGULAR_MEETING_SETTLEMENT | regular_meeting_id가 있는 settlement 행 | 해당 정기모임 정산 호스트 |
+| REPORT | report | 신고 접수자 |
+
+PAYMENT/REFUND라고 해서 event_payment 또는 refund 행 번호를 직접 보내지 않는다. REGULAR_MEETING_SETTLEMENT에도 정기모임 ID나 meeting_settlement ID를 대신 넣지 않는다. 이 매핑은 서버 sourceRecord()가 소유권 검사·호스트 연결의 공통 기준으로 사용한다.
+
+거래가 없으면 TRANSACTION_NOT_FOUND, 거래 소유자가 다르면 FORBIDDEN이다. 다른 출처는 해당 원천 없음/소유권 오류를 반환하므로 모든 권한 오류가 OPERATIONAL_ISSUE_SOURCE_NOT_OWNED라고 정규화해 쓰지 않는다. REPORT 접수는 연결된 신고 대상 리뷰를 잠그는 경로도 거친다.
+
+## 관련 호스트와 원천 제목
+
+SETTLEMENT는 정산 생성자, REGULAR_MEETING_SETTLEMENT는 해당 정산의 호스트를 연결한다. PAYMENT/REFUND는 거래 referenceType/referenceId를 읽고 EVENT_PAYMENT/EVENT_REFUND이면 이벤트 번호로, EVENT_PREPAYMENT/EVENT_PREPAYMENT_REFUND이면 EventPayment에서 이벤트 번호를 찾아 호스트를 연결한다.
+
+REGULAR_MEETING_PAYMENT는 거래 참조가 REGULAR_MEETING_PAYMENT 또는 REGULAR_MEETING_PAYMENT_REFUND일 때 결제 행의 정기모임과 호스트를 찾는다. 참조 종류·번호·원천이 없으면 null일 수 있다. WALLET_TRANSACTION과 REPORT는 이 함수에서 관련 호스트를 정하지 않는다. 출처 enum만으로 항상 호스트 처리함에 나타난다고 약속하지 않는다.
+
+응답 sourceTitle은 사용자에게 보여줄 원천 제목이다. sourceId를 원천 화면 ID로 임의 해석하지 않고 실제 업무 연결은 [호스트 처리함](../18_dispute_resolution/F18-05_host-inbox_prd.md)의 문맥과 경로 조건을 따른다.
+
+## 접수·목록·상세·메시지
+
+생성은 OPEN 이슈, 생성 시 증빙 참조, USER 작성의 첫 공개 메시지를 함께 저장한다. 본문 증빙은 이슈에 붙고 첫 메시지에 같은 파일 참조를 중복 저장하지 않는다. 코드에 요청키 기반 성공 응답 재생이나 동일 출처 활성 이슈를 하나로 제한하는 조건은 없다.
+
+내 목록은 본인 접수 건을 updatedAt·id 내림차순으로 조회한다. by-source도 원천 소유권을 다시 확인한 뒤 본인의 해당 출처 이슈를 반환한다. 상세는 issueId와 reporterUserId로 조회하므로 타인 이슈는 NOT_FOUND다. 목록은 messages를 빈 배열로 주고, 상세는 userVisible=true인 메시지만 createdAt·id 오름차순으로 준다.
+
+추가 메시지는 이슈 행을 잠근 뒤 본인과 상태를 검사한다. RESOLVED/REJECTED는 INVALID_INPUT으로 거절한다. 허용되면 공개 USER 메시지·증빙 참조와 lastMessageAt을 저장한다. Inquiry처럼 ANSWERED→OPEN으로 되돌리는 상태 전이는 없다. 운영 이슈 상태는 OPEN, IN_PROGRESS, RESOLVED, REJECTED다.
+
+## 증빙 입력·공개·열기
+
+원시 evidenceFileIds 배열이 5개를 넘으면 먼저 거절한다. 이후 null·0·음수 ID를 제외하고 중복을 제거하며 실제 파일의 본인 소유·COMPLETED·EVIDENCE 또는 REVIEW 용도를 검사한다. 5개를 넘게 보내 놓고 중복 제거 뒤 5개 이하가 된다는 이유로 항상 허용되는 것은 아니다.
+
+공통 참조 등록부에 이슈 본문과 각 메시지의 파일 연결을 동기화한다. evidenceVisibility는 PARTIES/HOST_ONLY/CS_ONLY 중 명시값을 우선하고, 생략하면 REPORT는 CS_ONLY, 나머지는 PARTIES다. 본인 조회의 evidenceFileIds는 유지된다. 이 필드만으로 모든 다른 역할의 열람을 허용하는 것은 아니다.
+
+현재 앱은 생성 시 evidenceVisibility를 보내지 않고 응답 모델에도 그 필드가 없다. 서버 기본값을 따르는 동작이며 사용자가 공개 범위를 선택하는 UI로 설명하지 않는다. 본문·추가 메시지의 파일 ID는 모두 칩으로 표시한다. 일반 파일 다운로드 helper는 소유자와 제공 가능한 파일 상태를 검사한다. 분쟁의 별도 공개 목록 기반 파일 주소 발급과 같은 권한 규칙이라고 가정하지 않는다.
+
+첨부 참조의 보존·정리는 [분쟁 증거 보존과 파일 정리](../18_dispute_resolution/F18-04_evidence-visibility_prd.md)를 따른다. 접수 필드에서 파일 ID를 제거했다는 사실만으로 실제 파일 삭제가 끝났다고 쓰지 않는다.
+
+## 운영팀 답변·상태·알림
+
+현재 관리 모듈은 community_api/admin-app 안에 있다. 상태 변경은 이슈를 잠그고 요청 상태·담당자를 저장한다. 끝 상태면 resolvedAt을 기록하고 다시 진행 상태로 옮기면 null로 지운다. 신고 관련 이슈를 다시 열 때는 직접 출처와 활성 연결 신고의 리뷰를 잠근다.
+
+상태 변경의 사용자 메시지는 공개 메시지와 알림으로, 내부 메모는 userVisible=false로 저장한다. 사용자 메시지가 없어도 상태 변경 안내 알림을 요청한다. 일반 운영 답변은 OPEN을 IN_PROGRESS로 바꾸며 공개 메시지일 때만 알린다. 추가 메시지 함수 자체는 사용자의 종료 상태 거절 조건과 동일하지 않으므로 끝난 이슈의 운영 메모까지 모두 금지한다고 설명하지 않는다.
+
+알림은 SUPPORT_ISSUE_UPDATED를 관리 outbox에 넣으며 issueId를 포함한다. payload의 transactionId 키에도 sourceId를 넣는 현재 코드는 그 값이 언제나 실제 거래 번호라는 보장이 아니다. 출처별 원천 매핑을 유지한다. outbox 호출 근거는 실제 사용자 기기 수신·딥링크 성공과 다르다.
+
+## 앱 초안·전송·새로고침
+
+내 목록은 20건씩 다음 페이지를 읽는다. 상세는 화면이 살아 있는 동안 15초 타이머로 상세 provider를 invalidate하고 dispose에서 취소한다. 이 타이머가 실시간 스트리밍이거나 화면 비활성 시 자동 중지되는 기능이라고 확대하지 않는다.
+
+접수 초안은 계정·sourceType/sourceId, 메시지 초안은 계정·issueId를 구분하며 제목·본문·첨부 ID를 복원한다. 업로드 중이거나 pending/충돌이면 전송을 막고 전송 전에 기록을 저장한다. 명확한 거절은 pending을 풀지만 불명확한 결과는 기록을 보관한다. API에 요청키가 없으므로 자동 재시도로 중복 접수를 만들지 않는다.
+
+접수 성공은 반환 issue.id의 상세로 교체 이동하고 내 목록·원천별 목록을 invalidate한다. 메시지 성공은 내 목록·해당 상세를 invalidate하며 보낸 본문과 첨부만 비운다. 원천별 목록은 이 메시지 함수의 무효화 대상이 아니다. 커밋 가능 실패에서도 해당 조회들을 무효화하고 계정 세션 종료 후 옛 결과는 적용하지 않는다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `OperationalIssueController#createIssue`, `OperationalIssueController#getMyIssues`, `OperationalIssueController#getMyIssuesBySource`, `OperationalIssueController#getMyIssue`, `OperationalIssueController#addMessage`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Risk | PAYMENT/REFUND와 정기모임 정산의 ID 공간이 이름만으로 드러나지 않는다. | 실제 테이블·참조 경로를 명시한다. |
+| Gap | 앱에 evidenceVisibility 선택·응답 필드가 없다. | 서버 기본값을 따르는 현재 동작으로 설명한다. |
+| Risk | 요청키·활성 출처 중복 제한이 없고 메시지 성공이 원천별 목록까지 무효화하지 않는다. | pending 결과 확인과 갱신 범위를 분리한다. |
+| Risk | 상세 15초 타이머와 알림 payload의 transactionId가 원천 의미를 완전히 표현하지 못한다. | 실시간·항상 거래 번호라는 약속을 피한다. |
+| 미검증 | 실제 원천 권한·증빙 다운로드·운영 답변 수신·다중 제출·화면 수명은 실행하지 않았다. | 문서 소스 대조와 제품 실행을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 원천 ID:** 일곱 출처를 네 원천 행 종류에 정확히 연결한다.
+- **AC-02 권한과 호스트:** 원천별 소유권·정산 당사자 예외·거래 참조에 따른 호스트/null을 구분한다.
+- **AC-03 접수와 목록:** OPEN·첫 메시지·본문 증빙, 본인 페이지/출처 조회와 상세 공개 메시지를 구분한다.
+- **AC-04 추가 메시지:** 잠금·본인·종료 상태 거절과 상태 유지·메시지 증빙 참조를 적용한다.
+- **AC-05 증빙:** 원시 개수 검사 뒤 정규화·소유/완료/용도·서버 기본 공개값을 따른다.
+- **AC-06 운영 처리:** 재개방 resolvedAt 초기화·리뷰 잠금·공개/내부 메모·알림 발행을 나눈다.
+- **AC-07 앱 결과:** 업로드 잠금·계정별 pending·성공 상세 이동·보낸 내용만 정리를 적용한다.
+- **AC-08 갱신 범위:** 15초 상세 조회와 접수/메시지별 목록 무효화, 실제 알림 수신을 구분한다.
+
+근거는 현재 서버·앱·관리 모듈 소스이며 새 제품 시험 통과 기록은 없다.
