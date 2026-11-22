@@ -449,7 +449,8 @@
         "overview_identity_20261122",
         "product_structure_20261122",
         "exceptions_current_20261122",
-        "impact_current_20261122"
+        "impact_current_20261122",
+        "release_sharing_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5267,9 +5268,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a9f8d9c696c15bd22f1517677cda50ba3fc3ac588a5b95b920e739c16adcc14d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "release_sharing_current_20261122"
+      ],
+      "reviewedSha256": "1c4907928c0db459f73fbbf99adbef2daae16fd9c313d05ba1efa0b881c5fe8f"
     },
     {
       "path": "docs/qa/scenario-completeness.html",
@@ -5297,9 +5301,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2c24593562a89c91387d0832b4013460f107a55f2285565f42400bdb98151be0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "release_sharing_current_20261122"
+      ],
+      "reviewedSha256": "73fa1bf8ba50ad119a34304b8639900a5ea2f28ecb3a0dbc0491f1867b4a6e14"
     },
     {
       "path": "docs/reference/numbers.html",
@@ -8341,10 +8348,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "c281e22c4277e85f03f6a5e73ef09dc8357c9de273811e9c6af09f72b8bd58c7",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "release_sharing_current_20261122"
+      ],
+      "reviewedSha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
     },
     {
       "path": "prd/04_qa_acceptance/scenario_completeness_audit_2026-08-30.md",
@@ -51629,6 +51638,108 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; canonical digest reuse and static/VM document checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "6020346db80c426e9bf62c63a9c380441ed46781"
+      }
+    },
+    "release_sharing_current_20261122": {
+      "kind": "source_review",
+      "scope": "릴리즈 체크리스트 MD·HTML과 공유 계획 HTML 전체 본문 대조. 배포/공개/소스 병합/자동 검사/실제 설치 구분, 최신 작업과 공유 잔여 범위 정본 연결. 과거 시험 수·실패 수를 현재 판정으로 반복하지 않음.",
+      "sources": [
+        {
+          "path": "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md",
+          "sha256": "b6af68643938b94cbc7d82f6233399709d030ee9136db518f7c9d117df1d74c0",
+          "reviewScope": "문서 처음부터 출시 상태 표·운영 준비 처음까지 0–5800자; 내부 테스트와 공개 출시의 구분만 인용"
+        },
+        {
+          "path": "docs/plan/event-sharing/PROGRESS.md",
+          "sha256": "f1978e9eee5e333e2c9d26e25b79c8ecb4fca9495f76ef3e31fe857490b89092",
+          "reviewScope": "전체 본문; 구현/검사/잔여 범위와 내보내기 설명의 최신 정본 우선 경계"
+        },
+        {
+          "path": "docs/plan/event-sharing/EXECUTION_PLAN.md",
+          "sha256": "588dc1cf92c6fea0f40aef6714dc0a6645635643dd27ed9facbf644ceb7416d9",
+          "reviewScope": "현재 남은 작업과 완료 기준 절 전체 4,127자; 첫 출시 수동 복구와 후속 SDK·기기/스토어·공개 기준"
+        },
+        {
+          "path": "community_app/docs/DEPLOYMENT_CHECKLIST.md",
+          "sha256": "824216565ab27803e40bdbf6b7a13f86b2f429755727ebb086c42e19bd798ad3",
+          "reviewScope": "전체 본문; 기존 설정 재사용과 서명/업로드/설치/공개 상태·판정 근거 위치"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997",
+          "reviewScope": "출시 배포 차례와 공유 첫 출시·수동/자동 복원 결정 문단 대조; 전체 13만 자의 재검토 아님"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "data_export_20261122",
+        "exceptions_current_20261122",
+        "planning_decisions_20261122",
+        "qa_acceptance_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_coverage_matrix.md",
+          "sha256": "2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/09_exceptions_edge_cases.md",
+          "sha256": "274b38165749415229f5e6d9e2f8ee6b56d5a1b5d8c1d73d5cdfe6add71218de"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
+          "sha256": "78719feeac48678c9e694f2490621675a9f7e9b17b54de085926476a5a8d508c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
+          "sha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/release.html": [
+          "sidebar",
+          "현재-기록을-읽는-방법",
+          "source-update-2026-10-13",
+          "기능-범위와-후보",
+          "사용자-흐름과-복귀",
+          "상태권한복구",
+          "돈알림위치안전",
+          "공개-판정에-남길-결과",
+          "completion-standard"
+        ],
+        "docs/qa/sharing-plan.html": [
+          "sidebar",
+          "current",
+          "sequence",
+          "resources",
+          "completion"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "53개 시나리오 완료·10월 배포 상태와 실패 수의 현재 판정 오용 제거",
+        "운영 서버보다 앞선 앱/API 계약은 현재 배포 차례 정본 참조",
+        "iOS 수동 복구 첫 출시와 후속 자동 복원·CLUB_CHAT 검증 조건 구분",
+        "공유 과거 기록과 최신 내보내기 결정 충돌은 현재 개인정보 정본 우선"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "10 source/canonical digests; 14 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 3 paths, 15 relative links/anchors and 1 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical/digest/links only; no deployment, browser, device or store inspection"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",

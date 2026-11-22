@@ -8,51 +8,33 @@
 </head>
 <body data-document-kind="reference" data-base="../">
   <div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
-    <header class="page-head">
-      <div class="breadcrumb"><a href="../index.html">전체 현황·다음 할 일</a> › 모임 공유</div>
+      <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>모임 공유</div>
       <h1>모임 공유·설치 후 복원</h1>
-      <p class="lede">링크나 QR을 받은 사람이 설치·가입을 마친 뒤 원래 모임 또는 클럽 소개로 도착하게 하는 계획입니다. 2026년 10월 26일 문서 대조 기준, 주요 구현은 각 제품 main에 병합했으며 첫 출시에 포함하기로 정했습니다. 운영·기기·스토어 검증과 공개 판단은 남았습니다. iOS 신규 설치는 수동 복구로 출시하고 자동 복원은 후속입니다.</p>
-    </header>
-    <section id="current">
-      <h2>현재 완료된 범위와 한계</h2>
-      <p>주소·로그 보호, 공통 링크 수신·가입 복원, 공유 메뉴·QR, 설치 안내 웹·Android 전달표, 회원 지정 전달과 클럽 단체 채팅의 주요 코드를 구현했습니다. 수동 링크 입력·클럽 공유 UUID 저장, iOS 의존성 충돌과 캘린더 가드도 보완했습니다.</p>
-      <p>10월 21일 최신 main 통합 기준으로 앱 관련 회귀 612건·가드 4종·Android debug·iOS 시뮬레이터 빌드를 통과했습니다. 공개 API 전체 단위·구조 13,221건과 전용 MySQL 73건, 관리자 단위 16건·DB 21건, 실시간 394건 통과·12건 건너뜀, 소개 웹 단위 91건·브라우저 18건의 기록이 있습니다. 서로 다른 범위의 검사 수를 합산하거나 최신 전체 앱 통과로 확대하지 않습니다.</p>
-      <p><strong>기존 실패 시험도 남아 있습니다.</strong> 10월 26일 차수 7 마무리 앱 전체 시험 14,376건 중 기존 기준선 18건이 실패했고 새 실패는 없었습니다. 관리자 단위 2,461건·commitTest 645건은 통과했습니다. 차수 8의 영향·도구 검사에는 별도의 기존 기준선 7건이 남아 있습니다. <a href="launch-status.html#validation-current">현재 검사 기록과 남은 실패</a>에서 표적 검사와 전체 검사 결과를 구분합니다.</p>
-      <p><strong>첫 출시 범위와 후속 자동 복원을 구분합니다.</strong> 10월 26일 신규 공유 기능을 첫 출시에 넣기로 결정했습니다. iOS 신규 설치는 수동 복구로 출시합니다. 자동 복원 공급자 선정·SDK 본 연동은 후속이며, 기존 실제 API·소켓 검사를 두 휴대전화의 화면 검사로 확대하지 않습니다.</p>
-    </section>
-    <section id="sequence">
-      <h2>남은 작업과 완료 기준</h2>
-      <div class="table-wrap"><table><thead><tr><th>남은 작업</th><th>선행 조건</th><th>완료 기준</th></tr></thead><tbody>
-        <tr><td>전체 시험의 기존 실패 해소</td><td>모임 공유 통합 main과 실패 기준선</td><td>앱 전체 시험의 기존 기준선 18건과 관련 도구 기준선을 담당 세션에서 보완하고 영향 검사 결과를 기록. 관리자 마무리 시험은 통과</td></tr>
-        <tr><td>후속: iOS 후보 실증·SDK 본 연동</td><td>후보 계정·이용 조건·앱 설정·도메인</td><td>후보 비교 뒤 연동 방향 확정, 공통 parser/coordinator로 수신·중복 방지·기존 콜백 공존. Branch는 조사 후보이며 채택되지 않음</td></tr>
-        <tr><td>운영·서명·스토어 준비</td><td>API origin, 실제 스토어 URL, Play 서명 지문, iOS capability·AASA</td><td>운영 웹·API·도메인 검증 파일과 서명 앱 설정 일치, 설치 버튼·권한·오류 경로 확인</td></tr>
-        <tr><td>후속 자동 복원 공개 전 TestFlight 비교</td><td>후보 최소 연동·iPhone·TestFlight</td><td>같은 조건의 대조군·후보군 수신·추가 행동·권한 거절·중복 처리 기록. App Store 결과로 일반화하지 않음</td></tr>
-        <tr><td>서명 기기 여정</td><td>Android·iPhone, 역할별 시험 계정, 같은 서버·웹·실시간</td><td>링크·QR 저장/스캔·카카오·가입·강제 종료 복원, 두 기기 회원 지정/클럽방 전달·재연결·접근 회수</td></tr>
-        <tr><td>실제 스토어 신규 설치</td><td>Play 트랙, 실제 App Store 설치 가능 상태·iOS 수동 복구 경로</td><td>설치→첫 실행→인증→원래 모임/클럽 도착. Android 설치 복원과 iOS 수동 복구를 구분해 기록. iOS 자동 복원은 후속 연동 뒤 별도 실증</td></tr>
-        <tr><td>공개·배포</td><td>해당 공개 범위 검증, 클럽방은 두 기기 검사 선행</td><td>CLUB_CHAT 노출과 권한 확인, 호환 배포·복귀 기록. main 병합은 완료했으며 운영 배포·공개 판단은 남음</td></tr>
-      </tbody></table></div>
-      <p>첫 출시는 기존 실패 보완과 운영·서명 준비 → 두 기기 여정 → 실제 스토어 설치·iOS 수동 복구 검증 → 공개 판단 순서입니다. 후속 iOS 자동 복원은 후보 최소 연동 → TestFlight 비교 → 본 연동·회귀 → 실제 스토어 검사로 별도 진행합니다.</p>
-      <p>기존 공수는 최초 전체 추정이며 남은 기간이 아닙니다. 후속 자동 복원의 SDK 연동·실제 스토어 검사·심사 대기는 별도로 산정합니다.</p>
-    </section>
-    <section id="resources">
-      <h2>필요한 자원</h2>
-      <ul>
-        <li>공개 도메인과 앱·API·소개 웹에서 사용할 동일한 주소 계약</li>
-        <li>Android·iOS 서명, 도메인 검증 파일, 실제 스토어 주소와 설치 경로</li>
-        <li>Android와 iPhone, 신규·기존 회원과 주최자·클럽 역할별 계정</li>
-        <li>후속 자동 복원에 필요한 iOS 후보의 계정·설정·이용 조건. 활성 공동주최자 포함과 기존 수신 자격 원칙은 이미 확정</li>
-      </ul>
-      <p><a href="external-readiness.html#android-distribution">Android 배포 준비</a> · <a href="external-readiness.html#ios-distribution">iOS 배포 준비</a> · <a href="../index.html#view-resources">전체 자원 현황</a></p>
-    </section>
-    <section id="completion">
-      <h2>완료를 판단할 핵심 결과</h2>
-      <p>독립 이벤트는 해당 모임으로, 외부 클럽 모임 링크는 해당 클럽 소개로 도착해야 합니다. 링크를 여는 것만으로 클럽 가입이나 모임 신청이 자동 처리되지는 않습니다.</p>
-      <p>로그아웃·신규 가입·메일 왕복·온보딩·프로세스 종료·실제 스토어 설치를 각각 확인합니다. 토큰 재발급·대상 삭제·차단·권한 회수와 응답 유실 뒤 재시도도 포함합니다. 기기·버전·도착 대상·추가 행동 수와 결과를 남깁니다.</p>
-    </section>
-    <details><summary>상세 설계 원문의 위치</summary>
-      <p>작업공간의 <code>docs/plan/event-sharing/PROGRESS.md</code>, <code>LINK_CONTRACT.md</code>, <code>EXECUTION_PLAN.md</code>에 소스 진입점·현재 계약·수정 파일·검사가 있습니다. 공유 통합 커밋은 공개 API <code>9a586d17c</code>, 앱 <code>592568c5</code>, 관리자 API <code>9ba4312</code>, 관리자 웹 <code>253d3df</code>, 실시간 <code>01b4289</code>, 소개 웹 <code>598d7e3</code>입니다. 이후 세션·권한 보완이 추가됐으므로 현재 main은 <a href="launch-status.html#development-current">최근 개발·병합 현황</a>에서 확인합니다. 이번 문서 갱신에서 제품 검사를 새로 실행하지 않았습니다.</p>
-    </details>
-  </main></div>
+      <p class="lede">2026-11-22 현재 계획·배포 문서를 대조했습니다. 첫 출시에는 공유와 iOS 신규 설치의 수동 복구를 포함하고, iOS 자동 설치 복원 공급자·SDK 연동은 후속으로 둡니다. 구현·로컬 검사·운영 배포·실제 설치·공개 판단은 별도입니다.</p></header>
+      <section id="current"><h2>구현 범위와 현재 근거</h2>
+      <p>공통 주소 파서·목적지 판정·보안 저장·인증 후 복원, 공유 메뉴·QR, 설치 안내 웹과 Android 전달표, 회원 지정 전달·클럽방·공유 카드·신고 검토 화면의 구현 범위는 <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/event-sharing/PROGRESS.md#현재-구현과-검증">공유 기능의 현재 구현과 검증</a>을 따른다. 코드가 있다는 사실만으로 실제 두 기기 전달이나 스토어 설치 복원을 완료했다고 판단하지 않는다.</p>
+      <p>운영 웹의 공유 API 주소 빌드는 2026-11-12 반영 기록이 있다. 이 기록은 스토어 주소·기기 여정의 완료 증거가 아니다. 최신 배포·설정과 남은 조건은 <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/event-sharing/EXECUTION_PLAN.md#현재-남은-작업과-완료-기준">현재 남은 작업과 완료 기준</a>과 <a href="https://github.com/endside82/community_app/blob/main/docs/DEPLOYMENT_CHECKLIST.md">앱 배포 준비와 남은 확인</a>을 함께 읽는다.</p>
+      <p>10월의 시험 건수·기존 실패 수·당시 통합 커밋을 현재 전체 통과나 현재 미해결 수로 재사용하지 않는다. <a href="https://github.com/endside82/community_app/blob/main/docs/testing/SCENARIO_TEST_STATUS_CURRENT.md">현재 앱 검사 기록</a>의 기준 버전·범위·미실행과 <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/NEXT_WORK.md">현재 작업</a>을 확인한다. 이번 문서 갱신에서는 제품·스토어·실기기를 실행하지 않았다.</p></section>
+      <section id="sequence"><h2>첫 출시와 후속 자동 복원</h2>
+      <div class="table-wrap"><table><thead><tr><th>범위</th><th>완료를 판단할 결과</th></tr></thead><tbody>
+      <tr><td>운영 설정과 서명</td><td>기존 도메인·API·웹·AASA·assetlinks·Play 서명·iOS capability·스토어 주소를 같은 후보와 연결한다. 준비된 계정·키를 없는 것으로 판단해 재발급하지 않는다.</td></tr>
+      <tr><td>서명 앱과 두 기기</td><td>역할별 링크·QR·회원 지정 전달·클럽방 수신, 인증 후 복귀·재시작·재연결·접근 회수를 실제 화면과 서버 결과로 확인한다.</td></tr>
+      <tr><td>실제 신규 설치</td><td>Play와 App Store를 나눠 설치→첫 실행→인증→원래 모임/클럽 도착을 확인한다. iOS 첫 출시는 수동 복구 범위로 판정한다.</td></tr>
+      <tr><td>클럽방 옵션과 공개</td><td>현재 계획은 CLUB_CHAT 공유 옵션을 두 기기 검증 뒤 공개하도록 둔다. 서버·웹·앱의 호환 배포·복귀와 공개 범위를 기록한다.</td></tr>
+      <tr><td>후속 iOS 자동 복원</td><td>공급자는 미정이고 Branch는 조사 후보다. 후보 최소 연동·TestFlight 비교·SDK 본 연동·실제 스토어 검증을 별도 수행한다. 수동 복구나 TestFlight 성공을 App Store 자동 복원 완료로 세지 않는다.</td></tr>
+      </tbody></table></div></section>
+      <section id="completion"><h2>도착·권한·복구의 기준</h2>
+      <ul><li>독립 이벤트는 해당 모임, 외부 클럽 모임은 클럽 소개로 도착한다. 링크를 열었다는 이유로 가입·참가 신청을 자동 실행하지 않는다.</li>
+      <li>미로그인·신규 가입·인증번호 확인·온보딩·프로세스 종료를 각각 구분한다. 수동 입력이나 원래 링크 재탭을 자동 복원 성공으로 세지 않는다.</li>
+      <li>호스트·활성 공동주최자와 수신 가능한 회원의 경계를 지킨다. 삭제·취소·회전된 링크·만료 전달표·강퇴·제재·차단·계정 전환 뒤 옛 목적지와 권한을 재사용하지 않는다.</li>
+      <li>응답 유실·재시작 뒤 같은 공유 요청과 성공 영수증을 확인한다. 새 식별자로 중복 발송하거나 확정되지 않은 결과를 성공으로 표시하지 않는다.</li>
+      <li>QR 이미지 저장·읽기나 화면 배치처럼 시각 증거가 필요한 질문과, API 권한·소켓·저장소·서버 상태를 확인할 질문을 구분한다.</li></ul>
+      <p>자료 내보내기·보존·탈퇴는 <a href="../features/F13-05.html">현재 데이터 내보내기 계약</a>과 <a href="../features/F13-06.html">계정 삭제 계약</a>을 따른다. 과거 공유 구현 기록의 자료 포함 설명이 최신 개인정보 결정과 다르면 최신 정본을 우선한다.</p></section>
+      <section id="resources"><h2>검증 기록과 상세 정본</h2>
+      <p>각 결과에 서버·웹·실시간·앱 버전, 기기·OS·설치 채널, 목적지·인증 단계, 추가 행동·실패 복구를 남긴다. 공유 URL의 비밀 query·전달표·JWT는 가린다. API·소켓 시나리오를 네이티브 화면이나 스토어 설치 결과로 확대하지 않는다.</p>
+      <p><a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/event-sharing/LINK_CONTRACT.md">공개 주소와 목적지 복원 계약</a> · <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/event-sharing/EXECUTION_PLAN.md#필수-기기-여정과-기록">필수 기기 여정과 기록</a> · <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/NEXT_WORK.md#별도-설계에서-관리하는-공유-개선">현재 공유 개선 결정</a></p>
+      <p>최초 전체 공수를 남은 기간으로 다시 쓰지 않는다. 후속 자동 복원의 공급자·환경·스토어 심사 대기는 조건이 정해진 뒤 별도 산정한다.</p></section>
+    </main></div>
   <script src="../assets/sidebar.js"></script><script src="../assets/app.js"></script>
 </body>
 </html>
