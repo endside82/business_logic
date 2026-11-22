@@ -12347,7 +12347,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-14",
       "domain": "플랜 마켓",
-      "name": "플랜 마켓 환불 (Purchase Refund)",
+      "name": "마켓 구매 환불·부분 환불·분쟁",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",

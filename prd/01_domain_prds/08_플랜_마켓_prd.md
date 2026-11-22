@@ -1,356 +1,76 @@
-# 08. 플랜 마켓 PRD
+# 08. 플랜·마켓의 현재 기능과 확인 범위
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
-
-
-<!-- generated: domain-source-first-rollup; updated: 2026-06-10; unit: business_logic/units/08_plan_market -->
-
-> 문서 상태: **도메인 전환본**. 이 문서는 `business_logic/units/08_plan_market/00_overview.md`와 기능 PRD 전환 상태표를 묶어, 도메인 담당자가 어떤 기능 문서를 어떤 순서로 확인해야 하는지 보여준다.
-
-## 1. 결론
-
-데이트/모임 코스를 "플랜"이라는 상품으로 만들어 마켓에 판매하고, 다른 사용자가 구매·활용·리뷰까지 완수하는 단위.
-사용자는 두 종류로 갈린다 — **크리에이터**(플랜 작성·발행·판매)와 **구매자**(탐색·구매·활용·리뷰).
-
-이 도메인은 기능 PRD 15개로 구성된다(F08-01~13 기존 + F08-14 구매 환불·F08-15 크리에이터 매출 귀속 보정 2026-05-24 추가). 현재 기능별 trace source는 총 55개이고, risk 후보는 총 43개다. 도메인 수준의 판단은 아래 기능별 PRD와 unit 근거를 따라가며 확정한다.
-
-### 2026-06-09 크리에이터 저작도구 고도화(AUTH-01~05, AUTH-08) 반영
-
-이 도메인은 2026-06-09 기준 아래 capability를 새로 갖췄다. 각 기능 PRD에 상세 반영됨.
-
-| capability | 관련 F | 핵심 변화 | 실측 소스 |
-|---|---|---|---|
-| **AUTH-01 발행 준비도 서버 검증** | F08-05 | `GET /api/v1/plans/{planId}/publish-readiness` 신설. 발행 전 체크리스트(제목/설명/블록/가격/커버이미지) 서버 측 일괄 검증. 앱에서 항목별 BLOCKER/WARNING 표시. | `PlanController.java:102`, `PlanService.java` |
-| **AUTH-02/03 블록 에디터 자동저장 + picker/패턴** | F08-03 | 블록 편집 시 debounce 자동저장. 서버·renderer known 20종, 신규 picker 18종(목록 2종은 인라인), predefined pattern 12종. Draft generation token 발급(`draftToken`). | `PlanBlockController.java`, `block_type_sheet.dart` |
-| **AUTH-05 마켓 아이템 운영자 moderation (Option B)** | F08-06 | 판매 전 `REVIEW_PENDING` 상태 추가. admin에서 승인/반려. `on-sale`/`review-history` 엔드포인트 신설. `community_admin_api` admin 배선. | `MarketItemController.java:53,61`, `MarketItemModerationService.java` |
-| **AUTH-06 예약 발행** | F08-05, F08-06 공통 | 플랜/마켓 아이템 미래 시점 자동 발행 스케줄 등록(`POST /api/v1/authoring/schedules`). 플랜/마켓/클럽 발행을 단일 스케줄링 코어로 통합. | `community_api/src/main/java/com/endside/community/authoring/controller/ScheduledPublishController.java`, `ScheduledPublishService.java` |
-| **AUTH-06 Slice 3 초안 미리보기 로그인 게이트** | F08-02 | `getPreview`: DRAFT/HIDDEN 미리보기는 로그인 필수(익명→401). DELETED→404. PUBLISHED 공개 유지. | `PlanService.java:159-173`  |
-| **AUTH-08 상세 조회수 수집 + 크리에이터 대시보드 환류** | F08-02, F08-10, F08-07 | `plan.view_count`/`market_item.view_count` 컬럼 신설. 비소유자 조회 시 원자 증가(`ViewCountIncrementService`, REQUIRES_NEW). 대시보드 `planViewTotal`/`marketItemViewTotal` 집계 표시. | `Plan.java:74`, `MarketItem.java:82`, `ViewCountIncrementService.java:36,43`, `CreatorStatsQueryRepository.java:127,141`  |
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | Unit 근거 | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---|---:|---:|
-| F08-01 | F08-01. 내 플랜 목록 관리 | [F08-01_my-plan-list_prd.md](../02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | [F08-01_my-plan-list](../../units/08_plan_market/F08-01_my-plan-list) | 전환 완료 | 3 | 1 |
-| F08-02 | F08-02. 플랜 상세 / 작성자용 미리보기 | [F08-02_plan-detail_prd.md](../02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | [F08-02_plan-detail](../../units/08_plan_market/F08-02_plan-detail) | 전환 완료 (AUTH-08/06 갱신 2026-06-10) | 6 | 1 |
-| F08-03 | F08-03. 블록 에디터 (블록 CRUD) | [F08-03_block-editor_prd.md](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | [F08-03_block-editor](../../units/08_plan_market/F08-03_block-editor) | 전환 완료 | 5 | 4 |
-| F08-04 | F08-04. 블록 드래그 재정렬 / 계층 이동 | [F08-04_block-reorder_prd.md](../02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | [F08-04_block-reorder](../../units/08_plan_market/F08-04_block-reorder) | 전환 완료 | 2 | 2 |
-| F08-05 | F08-05. 플랜 발행 | [F08-05_plan-publish_prd.md](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | [F08-05_plan-publish](../../units/08_plan_market/F08-05_plan-publish) | 전환 완료 | 1 | 3 |
-| F08-06 | F08-06. 마켓 아이템 관리 (등록/수정/판매중지) | [F08-06_market-item-management_prd.md](../02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | [F08-06_market-item-management](../../units/08_plan_market/F08-06_market-item-management) | 전환 완료 | 6 | 2 |
-| F08-07 | F08-07. 크리에이터 프로필 / 내 통계 | [F08-07_creator-profile-stats_prd.md](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | [F08-07_creator-profile-stats](../../units/08_plan_market/F08-07_creator-profile-stats) | 전환 완료 | 2 | 7 |
-| F08-08 | F08-08. 마켓 메인 탐색 | [F08-08_market-main-browse_prd.md](../02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | [F08-08_market-main-browse](../../units/08_plan_market/F08-08_market-main-browse) | 전환 완료 | 3 | 2 |
-| F08-09 | F08-09. 마켓 검색 | [F08-09_market-search_prd.md](../02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | [F08-09_market-search](../../units/08_plan_market/F08-09_market-search) | 전환 완료 | 1 | 4 |
-| F08-10 | F08-10. 마켓 아이템 상세 | [F08-10_market-item-detail_prd.md](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | [F08-10_market-item-detail](../../units/08_plan_market/F08-10_market-item-detail) | 전환 완료 (AUTH-08 갱신 2026-06-10) | 5 | 4 |
-| F08-11 | F08-11. 아이템·번들·플랜 구매 | [F08-11_purchase_prd.md](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | [F08-11_purchase](../../units/08_plan_market/F08-11_purchase) | 전환 완료 | 3 | 4 |
-| F08-12 | F08-12. 내 컬렉션 | [F08-12_my-collection_prd.md](../02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | [F08-12_my-collection](../../units/08_plan_market/F08-12_my-collection) | 전환 완료 | 4 | 4 |
-| F08-13 | F08-13. 구매 플랜 이벤트 생성 / 리뷰 작성 | [F08-13_plan-event-and-review_prd.md](../02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | [F08-13_plan-event-and-review](../../units/08_plan_market/F08-13_plan-event-and-review) | 전환 완료 | 4 | 2 |
-| F08-14 | F08-14. 플랜 마켓 환불 (Purchase Refund) | [F08-14_purchase-refund_prd.md](../02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md) | — | source-first 구현 확인 | 6 | 2 |
-| F08-15 | F08-15. 크리에이터 매출 귀속 보정 | [F08-15_creator-earning-coverage_prd.md](../02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md) | — | source-first 구현 확인 | 4 | 1 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 기능 | 이유 |
-|---|---|---|
-| [F08-07](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | F08-07. 크리에이터 프로필 / 내 통계 | Risk 후보 7 + AUTH-08 planViewTotal/marketItemViewTotal 집계 환류 신규 반영 |
-| [F08-09](../02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | F08-09. 마켓 검색 | Risk 후보 4 |
-| [F08-11](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | F08-11. 아이템·번들·플랜 구매 | Risk 후보 4 |
-| [F08-12](../02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | F08-12. 내 컬렉션 | Risk 후보 4 |
-| [F08-03](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | F08-03. 블록 에디터 (블록 CRUD) | Risk 후보 4 + AUTH-02/03 자동저장·18종 picker·12종 패턴 |
-| [F08-10](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | F08-10. 마켓 아이템 상세 | Risk 후보 4 + AUTH-08 view_count 수집 신규 |
-| [F08-05](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | F08-05. 플랜 발행 | Risk 후보 3 + AUTH-01 준비도 검증·AUTH-06 예약 발행 신규 |
-| [F08-02](../02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | F08-02. 플랜 상세 / 작성자용 미리보기 | AUTH-08 view_count 수집·AUTH-06 Slice 3 미리보기 게이트 신규 |
-| [F08-06](../02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | F08-06. 마켓 아이템 관리 (등록/수정/판매중지) | Risk 후보 2 + AUTH-05 moderation 상태 전이(REVIEW_PENDING) 신규 |
-| [F08-04](../02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | F08-04. 블록 드래그 재정렬 / 계층 이동 | Risk 후보 2 |
-| [F08-08](../02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | F08-08. 마켓 메인 탐색 | Risk 후보 2 |
-| [F08-13](../02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | F08-13. 구매 플랜 이벤트 생성 / 리뷰 작성 | Risk 후보 2 |
-| [F08-14](../02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md) | F08-14. 플랜 마켓 환불 (Purchase Refund) | Risk 후보 2 |
-| [F08-01](../02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | F08-01. 내 플랜 목록 관리 | Risk 후보 1 |
-| [F08-15](../02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md) | F08-15. 크리에이터 매출 귀속 보정 | Risk 후보 1 |
-
-## 4. 도메인 기능 목록
-
-### 사용자 관점 분할
-
-이 단위는 **두 페르소나가 한 도메인에서 정반대 행동을 한다**.
-
-| 페르소나 | 주요 목적 | 다루는 화면 |
-|---|---|---|
-| 크리에이터 (Plan Author) | 플랜을 작성하고 발행/판매하여 수익화 | SCR-PE-001~005, SCR-MK-002 (자기 아이템 보기), SCR-MK-004 (내 통계) |
-| 구매자 (Buyer / Collector) | 마음에 드는 플랜을 발견·구매·내 컬렉션에 보관·활용 | SCR-MK-001~003, SCR-PE-002 (구매 후 미리보기) |
-| 공통 / 양방향 | 리뷰, 크리에이터 프로필 탐색 | SCR-MK-002 리뷰 섹션, SCR-MK-004 |
-
-따라서 핵심 기능은 **크리에이터 7개 + 구매자 6개 + 운영/매출 정합 2개(F08-14·F08-15) = 총 15개**로 도출했다.
-
----
-
-### 핵심 기능 목록 (M = 13)
-
-### A. 크리에이터 (플랜 작성·판매)
-
-#### F08-01. 내 플랜 목록 관리 (탭: 내가 만든 플랜 / 구매한 플랜)
-- **사용자 가치**: 작성 중인 플랜과 보유 중인 플랜을 한 화면에서 빠르게 찾고 새 플랜 작성으로 진입
-- **화면**: SCR-PE-001 / `plan_list_screen.dart`
-- **API**:
-  - `GET /api/v1/plans/my/created` (PageResponse, 내가 만든 플랜)
-  - `GET /api/v1/plans/my/purchased` (PageResponse, 구매한 플랜)
-  - `POST /api/v1/plans` (PlanController.createPlan, DRAFT 생성)
-- **컨트롤러**: PlanController
-
-#### F08-02. 플랜 상세 보기 / 작성자용 미리보기
-- **사용자 가치**: 작성한 플랜의 블록 구성, 상태(DRAFT/PUBLISHED), 메타데이터를 검토하고 편집·발행·복사 진입점 제공
-- **화면**: SCR-PE-002 / `plan_detail_screen.dart`, `plan_preview_screen.dart`
-- **API**:
-  - `GET /api/v1/plans/{planId}` (PlanController.getPlan) — **AUTH-08**: 인증된 비소유자 조회 시 `view_count` +1 원자 증가 (`PlanService.java:148`)
-  - `GET /api/v1/plans/{planId}/preview` (PlanController.getPreview) — **AUTH-06 Slice 3**: DRAFT/HIDDEN 미리보기 익명→401, DELETED→404 게이트 (`PlanService.java:159-173`)
-  - `PATCH /api/v1/plans/{planId}` (PlanController.updatePlan, 메타 수정)
-  - `DELETE /api/v1/plans/{planId}` (PlanController.deletePlan)
-  - `POST /api/v1/plans/{planId}/copy` (PlanController.copyPlan, 복사본 DRAFT 생성)
-  - `POST /api/v1/plans/{planId}/hide` (PlanController.hidePlan, 발행 취소/숨김)
-- **컨트롤러**: PlanController
-
-#### F08-03. 블록 에디터 (블록 CRUD + 인라인 편집)
-- **사용자 가치**: 텍스트/이미지/장소/시간/체크리스트 등 다양한 타입의 블록을 트리 구조로 추가·편집·삭제하여 플랜 내용을 구성
-- **화면**: SCR-PE-003 / `block_editor_screen.dart` + `widgets/block_edit_dialogs/*` (callout, image, link, list, location, timetable, todo) + `block_renderer.dart`, `block_type_sheet.dart`
-- **AUTH-02/03 (2026-06-09, 2026-07-29 재실측)**: 블록 편집 debounce 자동저장. known 20종 중 목록 2종을 인라인으로 단일화해 picker는 18종이며 pattern은 모임 8 + 여행 4 = 12종이다. Draft generation token(`draftToken`) 발급으로 세션 경합 방지.
-- **API**:
-  - `GET /api/v1/plans/{planId}/blocks` (PlanBlockController.getBlockTree, 트리 반환)
-  - `POST /api/v1/plans/{planId}/blocks` (PlanBlockController.addBlock)
-  - `PATCH /api/v1/plans/{planId}/blocks/{blockId}` (PlanBlockController.updateBlock)
-  - `DELETE /api/v1/plans/{planId}/blocks/{blockId}` (PlanBlockController.deleteBlock)
-  - `POST /api/v1/plans/{planId}/blocks/{blockId}/restore` (PlanBlockController.restoreBlock)
-- **컨트롤러**: PlanBlockController
-
-#### F08-04. 블록 드래그 재정렬 / 계층 이동
-- **사용자 가치**: 블록 순서를 한 번에 재배열하거나 다른 부모 블록 아래로 이동시켜 플랜 구조를 자연스럽게 조정
-- **화면**: SCR-PE-004 / `block_reorder_screen.dart`, `block_reorder_model.dart`
-- **API**:
-  - `PUT /api/v1/plans/{planId}/blocks/reorder` (PlanBlockController.reorderBlocks, 일괄 순서)
-  - `PATCH /api/v1/plans/{planId}/blocks/{blockId}/move` (PlanBlockController.moveBlock, 계층 변경)
-- **컨트롤러**: PlanBlockController
-
-#### F08-05. 플랜 발행 (체크리스트 검증 → 마켓 등록)
-- **사용자 가치**: 제목·설명·블록·가격·커버이미지 등 발행 요건을 충족시킨 후 마켓에 등록하여 판매 시작
-- **화면**: SCR-PE-005 / `plan_publish_screen.dart`
-- **AUTH-01 (2026-06-09)**: `GET /api/v1/plans/{planId}/publish-readiness` — 발행 전 체크리스트 서버 측 검증. 항목별 BLOCKER/WARNING + `publishable` 플래그. 앱에서 통과 여부 시각화.
-- **AUTH-06 예약 발행 (2026-06-09)**: `POST /api/v1/authoring/schedules` — 플랜 발행을 미래 시점에 예약. 스케줄 취소·조회 지원.
-- **API**:
-  - `GET /api/v1/plans/{planId}/publish-readiness` (PlanController.getPublishReadiness — AUTH-01)
-  - `POST /api/v1/plans/{planId}/publish` (PlanController.publishPlan)
-  - `POST /api/v1/authoring/schedules` (ScheduledPublishController — AUTH-06)
-- **에러 분기**: 400 PUBLISH_REQUIREMENTS_NOT_MET, 409 ALREADY_PUBLISHED
-- **컨트롤러**: PlanController, ScheduledPublishController
-
-#### F08-06. 마켓 아이템 관리 (등록·수정·판매중지)
-- **사용자 가치**: 발행된 플랜을 상품(아이템) 단위로 노출 제어, 가격/설명/이미지 수정, 판매 중지/재개
-- **화면**: `market_item_edit_screen.dart` + `MarketItemController.getMyItems` 기반 내 아이템 관리
-- **AUTH-05 moderation (2026-06-09, Option B)**: 판매 전 `REVIEW_PENDING` 상태 추가. admin 승인 시 ON_SALE, 반려 시 READY 복귀. `on-sale` 전환 엔드포인트·`review-history` 조회 신설. admin 배선은 `community_admin_api`.
-- **AUTH-06 예약 발행 (2026-06-09)**: 마켓 아이템 판매 시작도 미래 시점 예약 가능(targetType=`MARKET_ITEM`, actionType=`PUBLISH`). `ScheduledPublishActionType.java:8`에 `PUBLISH` 하나만 정의됨 — `SUBMIT_FOR_REVIEW` 타겟은 존재하지 않는다.
-- **API**:
-  - `POST /api/v1/market/items` (MarketItemController.createItem)
-  - `PUT /api/v1/market/items/{itemId}` (MarketItemController.updateItem)
-  - `POST /api/v1/market/items/{itemId}/publish` (MarketItemController.publishItem — AUTH-05: REVIEW_PENDING 전환)
-  - `POST /api/v1/market/items/{itemId}/on-sale` (MarketItemController — AUTH-05: admin 승인 후 ON_SALE)
-  - `GET /api/v1/market/items/{itemId}/review-history` (MarketItemController — AUTH-05: 심사 이력 조회)
-  - `POST /api/v1/market/items/{itemId}/stop` (MarketItemController.stopSelling)
-  - `DELETE /api/v1/market/items/{itemId}` (MarketItemController.removeItem)
-  - `GET /api/v1/market/items/my` (MarketItemController.getMyItems)
-- **컨트롤러**: MarketItemController
-
-#### F08-07. 크리에이터 프로필 / 내 통계
-- **사용자 가치**: 크리에이터로서 등록 플랜 수, 평균 별점, 총 판매·매출 등 자신의 활동 성과를 확인 (본인 프로필이면 통계 섹션 추가)
-- **화면**: SCR-MK-004 / `creator_profile_screen.dart`, `creator_stats_screen.dart`
-- **AUTH-08 대시보드 환류 (2026-06-09)**: `CreatorStatsVo`에 `planViewTotal`(플랜 전체 조회수 합산) + `marketItemViewTotal`(마켓 아이템 전체 조회수 합산) 추가. Flutter `CreatorProfileVo` 동기 (`creator_profile_vo.dart:47-48`). 앱 크리에이터 성과 대시보드 화면에서 표시.
-- **API**:
-  - `GET /api/v1/creators/{creatorId}` (CreatorController.getCreatorProfile, 공개 프로필 + 판매 아이템)
-  - `GET /api/v1/creators/me/stats` (CreatorController.getMyStats, 본인만 — `planViewTotal`/`marketItemViewTotal` 포함)
-- **컨트롤러**: CreatorController
-- **창작자 정산 split** (2026-05-24 포인트 분리정산 반영): 창작자 수익(`CreatorEarning`)은 유료/무료를 분리 기록한다. 수수료·원천징수는 **유료분에만** 적용하고, 무료 매출은 무수수료 `free_credit`으로 창작자 free에 적립되어 **인출 불가**(무료→현금 전환 차단). 정본은 정책 PRD §2.5.
-
----
-
-### B. 구매자 (탐색·구매·활용·리뷰)
-
-#### F08-08. 마켓 메인 탐색 (카테고리 / 인기 / 최신)
-- **사용자 가치**: 마켓 진입 시 카테고리 필터, 인기 플랜 가로 스크롤, 최신 플랜 무한 스크롤로 새 플랜을 발견
-- **화면**: SCR-MK-001 / `market_main_screen.dart`, `popular_plans_screen.dart`, `widgets/market_item_card.dart`, `widgets/price_tag.dart`
-- **API**:
-  - `GET /api/v1/market/categories` (MarketCategoryController.getCategories, 트리)
-  - `GET /api/v1/market/items/popular?limit=` (MarketSearchController.getPopularItems, 최대 50)
-  - `GET /api/v1/market/items` (MarketItemController.getMarketItems, 카테고리 필터 등 PageResponse)
-- **컨트롤러**: MarketCategoryController, MarketSearchController, MarketItemController
-
-#### F08-09. 마켓 검색
-- **사용자 가치**: 키워드/정렬로 플랜을 검색해 원하는 콘셉트의 코스를 빠르게 찾기
-- **화면**: `market_search_screen.dart`
-- **API**:
-  - `GET /api/v1/market/search` (MarketSearchController.searchItems, MarketSearchParam)
-- **컨트롤러**: MarketSearchController
-
-#### F08-10. 마켓 아이템 상세 (커버 / 설명 / 크리에이터 / 리뷰 / 번들)
-- **사용자 가치**: 구매 결정에 필요한 모든 정보(이미지, 설명, 크리에이터, 평점, 리뷰, 번들 옵션)를 한 화면에서 확인
-- **화면**: SCR-MK-002 / `market_item_detail_screen.dart`
-- **AUTH-08 (2026-06-09)**: `GET /api/v1/market/items/{itemId}` 조회 시 인증된 비소유자는 `market_item.view_count` 원자 증가. 집계는 F08-07 `marketItemViewTotal`로 환류 (`MarketItemService.java:77`).
-- **API**:
-  - `GET /api/v1/market/items/{itemId}` (MarketItemController.getMarketItem — AUTH-08: 비소유자 조회수 증가)
-  - `GET /api/v1/market/items/{itemId}/reviews` (MarketItemReviewController.getReviews, PageResponse)
-  - `GET /api/v1/market/items/{itemId}/bundles` (BundleController.listBundlesForItem)
-  - `GET /api/v1/market/bundles/{bundleId}` (BundleController.getBundleDetail)
-  - `GET /api/v1/market/bundles` (BundleController.listActiveBundles)
-- **컨트롤러**: MarketItemController, MarketItemReviewController, BundleController
-
-#### F08-11. 아이템·번들·플랜 구매 (포인트 결제)
-- **사용자 가치**: 단일 아이템 / 묶음 번들 / 플랜 단위로 포인트로 즉시 결제하여 보유함에 추가
-- **화면**: SCR-MK-002 아이템·번들 직접 구매 CTA, SCR-PE-005 플랜 구매. 무료 포인트가 허용된 유료 플랜만 `PlanFundingChoiceSheet`에서 PAID/FREE를 선택한다.
-- **API**:
-  - `POST /api/v1/market/items/{itemId}/purchase?fundingMode=PAID|FREE` (MarketPurchaseController.purchaseItem, 기본 PAID)
-  - `POST /api/v1/market/bundles/{bundleId}/purchase?fundingMode=PAID|FREE` (MarketPurchaseController.purchaseBundle, 기본 PAID)
-  - `POST /api/v1/plans/{planId}/purchase?fundingMode=PAID|FREE` (PlanController.purchasePlan, 기본 PAID)
-- **에러 분기**: 잔액 부족은 공통 결제 오류로 롤백된다. 중복 구매 409 `PLAN_ALREADY_PURCHASED`는 플랜 직접 구매에만 적용되며, 마켓 아이템 단건은 같은 상품의 누적 구매를 허용한다. 현행 서버에는 `PARTIAL_ALREADY_PURCHASED` 오류가 없다.
-- **컨트롤러**: MarketPurchaseController, PlanController
-- **유료/무료 차등가격** (2026-05-24 포인트 분리정산 반영): 마켓 구매는 무료 수취자(창작자)가 존재하는 **flow-through** 사용처. 무료 허용 결정 필드는 도메인별로 다르다 — **마켓 아이템/번들**은 `currencyType`(PAID_POINT/FREE_POINT/ANY_POINT) + 구매자 `fundingMode`로, **플랜 직접 구매**는 `allowFreePoints` + 구매자 `fundingMode`로 결정한다. 무료 전용가는 양쪽 모두 `freePointPrice`(nullable). 차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1, 무료 미허용 상품(마켓 `PAID_POINT`/플랜 `allowFreePoints=false`)의 무료 결제 요청은 `INVALID_REQUEST`로 거부. 마켓 `ANY_POINT + freePointPrice==null + fundingMode=FREE`도 `INVALID_REQUEST`(기본가는 무료로 결제 불가); `ANY_POINT + freePointPrice==null + 유료`는 PAID_FIRST 혼합 허용. 결제 시 유료/무료 split이 창작자 수익까지 전파된다. 정본은 정책 PRD §2.5. (followup: 마켓 번들 차등가 admin 배선은 `community_admin_api`.)
-
-#### F08-12. 내 컬렉션 (보유함 / 활성화 / 만료 관리)
-- **사용자 가치**: 구매한 모든 플랜을 보관·필터링(전체/활성/비활성)하고, 비활성 아이템을 활성화하거나 만료 임박 알림으로 갱신을 챙김
-- **화면**: SCR-MK-003 / `my_collection_screen.dart`
-- **API**:
-  - `GET /api/v1/market/collection?active=` (CollectionController.getMyCollection / getActiveCollection)
-  - `POST /api/v1/market/collection/{id}/activate` (CollectionController.activateItem)
-  - `GET /api/v1/market/collection/expiring` (CollectionController.getExpiringItems)
-- **연결 화면**: SCR-PE-002 미리보기, `plan_preview_screen.dart` (구매한 플랜 열람)
-- **API (연결)**: `GET /api/v1/plans/{planId}/preview` (PlanController.getPreview)
-- **컨트롤러**: CollectionController, PlanController
-
-#### F08-13. 구매 플랜 → 이벤트 생성 / 리뷰 작성
-- **사용자 가치**: 구매한 플랜을 실제 모임으로 옮겨(이벤트 자동 생성) 활용하고, 사용 후 별점·리뷰를 남겨 다른 사용자에게 도움 제공
-- **화면**:
-  - 이벤트 생성: `plan_event_create_screen.dart` + SCR-PE-002 "이 플랜으로 이벤트 만들기" 버튼
-  - 리뷰 작성: SCR-MK-002 리뷰 섹션 + `widgets/market_review_write_dialog.dart`
-- **API**:
-  - `POST /api/v1/plans/{planId}/create-event` (PlanController.createEventFromPlan, PlanEventAddParam)
-  - `POST /api/v1/market/items/{itemId}/reviews` (MarketItemReviewController.createReview)
-  - `PUT /api/v1/market/items/{itemId}/reviews/{reviewId}` (MarketItemReviewController.updateReview)
-  - `DELETE /api/v1/market/items/{itemId}/reviews/{reviewId}` (MarketItemReviewController.deleteReview)
-- **에러 분기**: 403 PLAN_NOT_OWNED (이벤트 생성)
-- **컨트롤러**: PlanController, MarketItemReviewController
-
----
-
-## 4-C. 접근권한 감사 교정 (2026-07-02)
-
-> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F08_plan_market.md`
-
-- **D-F08-1 — 유료 플랜 전체 본문 = 작성자·구매자만**: `GET /api/v1/plans/{planId}/blocks`(블록 트리)는 유료 플랜(price 또는 freePointPrice > 0)이 PUBLISHED 상태일 때 **작성자 또는 구매자**만 전체 본문 열람 가능. 비구매자는 `getPreview`의 작성자 지정 샘플(최대 5) 또는 자동 티저(텍스트 3 + 일정표 1 + 로그인 시 이미지 1)만 본다. 무료 플랜은 공개 유지. 이전에는 PUBLISHED이면 로그인 사용자 전원이 전체 블록에 접근 가능했음(페이월 우회 S2 수정 완료).
-- **D-F08-2 — 번들 자기구매 차단**: `POST /api/v1/market/bundles/{bundleId}/purchase` 번들 구매 시, 번들에 포함된 아이템의 원작자인 경우 구매가 차단됨(`MARKET_CANNOT_PURCHASE_OWN`). 단일 아이템·플랜의 자기구매 차단과 동일한 정책. 혼합 번들도 원작자 포함 시 차단.
-- **D-F08-3 — 비공개 플랜 메타 접근 제한**: `GET /api/v1/plans/{planId}`에서 DRAFT는 작성자만, HIDDEN은 **작성자 또는 숨기기 전에 구매한 기존 구매자**가 읽는다. HIDDEN은 신규 판매 중단이지 구매자의 소유권 회수가 아니다. 그 외 비작성자는 FORBIDDEN, DELETED는 PLAN_NOT_FOUND다.
-- **마켓 심사 관리자 전용(F08-07 심층방어)**: 심사 승인·반려·비공개 엔드포인트(`/api/v1/admin/market/**`)는 SecurityConfiguration에서 **ADMIN 역할**만 허용. 운영 심사 UI는 community_admin_api 이관 중. 이전에는 feature-flag(기본 off)만으로 보호됐고 역할 게이트 없었음.
-- **판매자 구매 버튼 숨김(F08-01 UX 교정)**: 마켓 아이템 상세에서 판매자 본인에게 "구매하기" 버튼가 숨겨짐. 서버는 이미 `MARKET_CANNOT_PURCHASE_OWN`으로 자기구매를 거부하므로 자금이동 누수는 없었음. 순수 UX 개선.
-
-## 5. 상태/권한/의존성
-
-### 외부 단위 의존
-
-- **06 결제 & 지갑**: 포인트 결제 (잔액 부족 시 충전 화면 이동), `INSUFFICIENT_BALANCE` 처리
-- **03 이벤트**: F08-13의 "이 플랜으로 이벤트 만들기" → 이벤트 편집 화면 진입
-- **11 리뷰 & 신고**: F08-13의 마켓 아이템 리뷰는 본 단위(`MarketItemReview`)에서 직접 관리하지만, 신고 흐름은 11 단위 호출
-- **횡단 인프라**: 파일 업로드(커버 이미지/블록 이미지), DioClient 인터셉터, GoRouter
-
-## 6. 화면/API 매핑
-
-> 이 overview에는 별도 요약 섹션이 없다. 이 도메인의 세부 판단은 위 실사 근거 맵의 기능 PRD와 unit 문서를 기준으로 확인한다.
-
-## 7. Gap / Risk Rollup
-
-| 기능 | 제목 | 후보 수 | 처리 기준 |
-|---|---|---:|---|
-| [F08-07](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | F08-07. 크리에이터 프로필 / 내 통계 | 7 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-03](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | F08-03. 블록 에디터 (블록 CRUD) | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-09](../02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | F08-09. 마켓 검색 | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-10](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | F08-10. 마켓 아이템 상세 | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-11](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | F08-11. 아이템·번들·플랜 구매 | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-12](../02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | F08-12. 내 컬렉션 | 4 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-05](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | F08-05. 플랜 발행 | 3 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-04](../02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | F08-04. 블록 드래그 재정렬 / 계층 이동 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-06](../02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | F08-06. 마켓 아이템 관리 (등록/수정/판매중지) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-08](../02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | F08-08. 마켓 메인 탐색 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-13](../02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | F08-13. 구매 플랜 이벤트 생성 / 리뷰 작성 | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-14](../02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md) | F08-14. 플랜 마켓 환불 (Purchase Refund) | 2 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-01](../02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | F08-01. 내 플랜 목록 관리 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-| [F08-15](../02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md) | F08-15. 크리에이터 매출 귀속 보정 | 1 | 기능 PRD의 `Gap / Risk` 섹션에서 후보를 source 대조로 확정 |
-
-## 8. 운영 방법
-
-1. 새 구현이나 QA 착수 전 `PRD_MIGRATION_STATUS.md`에서 담당 기능의 trace/risk 수를 확인한다.
-2. 담당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한/시나리오 매트릭스`, `Gap / Risk`를 먼저 읽는다.
-3. PRD가 인용한 `units` 문서와 실제 source trace를 열어 endpoint, DTO, enum, provider, screen이 현재 코드와 맞는지 확인한다.
-4. 도메인 정책은 이 문서에서 확정하지 않는다. 기능 PRD와 정책 PRD의 Gap/Risk가 충돌하면 `05_planning_artifacts/decision_register.md`에 결정 항목으로 올린다.
-
-## 9. 2026-07-29 서버·Flutter 소스 실측 갱신
-
-9.6 의 읽기 조판·TABLE 계약은 2026-11-08 서버·앱 main 으로 다시 확인했다.
-
-- TABLE 표준 쓰기와 옛 형식 함께 읽기, 블록 고르기 검색·시각 체계, 읽기 조판은 아래 9.6 이 설명한다.
-
-### 9.1 상세·블록·이벤트 생성의 상태/소유권
-
-| 상태 | 플랜 상세/전체 블록/이벤트 생성 |
-|---|---|
-| `DRAFT` | 작성자만 |
-| `PUBLISHED` 무료 | 인증 사용자의 전체 읽기. 이벤트 생성은 작성자 또는 구매자 |
-| `PUBLISHED` 유료 | 전체 블록은 작성자 또는 구매자. 비구매자는 preview 티저만 |
-| `HIDDEN` | 작성자 또는 기존 구매자는 상세·전체 블록·이벤트 생성을 계속 사용. 신규 구매는 불가 |
-| `DELETED` | `PLAN_NOT_FOUND` |
-
-preview는 별도 노출 계약이다. 서버 Service는 PUBLISHED 익명, DRAFT/HIDDEN 로그인 사용자를 허용하고 person-specific 권한은 v1에서 보류했다. 다만 `SecurityConfiguration`에 preview permitAll이 없어 현재 HTTP 익명 요청은 인증 필터에서 먼저 차단된다.
-
-### 9.2 preview 티저
-
-- 작성자가 `properties.previewSample=true`로 고른 known/non-envelope 블록이 있으면 문서 순서대로 최대 5개.
-- 지정 블록이 하나도 없으면 텍스트 최대 3 + 일정표 최대 1 + 로그인 사용자에게 이미지 최대 1.
-- 익명 서비스 호출에서는 이미지 티저를 제외한다.
-- 구매한 비작성자는 전체 본문 경로가 있으므로 `sampleBlocks=[]`.
-- 작성자는 구매 전 사용자가 보게 될 티저를 검토해야 하므로 비구매자와 같은 샘플을 받는다.
-- 미디어 presign/projection은 접근 게이트 통과 후에만 붙인다.
-
-### 9.3 무료 포인트 가격·구매
-
-- `PlanPreviewVo`가 `allowFreePoints:boolean`, `freePointPrice:BigDecimal?`를 직접 내려 앱의 중복 상세 조회가 제거됐다.
-- `POST /plans/{planId}/purchase?fundingMode=PAID|FREE`; 미전송 기본은 `PAID`.
-- `FREE`는 `allowFreePoints=true`일 때만 가능하다. `freePointPrice`가 null이면 기본 `price`로 폴백한다.
-- 유료 플랜에서 무료 구매 허용 + 명시적 `freePointPrice < 1`은 생성/수정 최종 상태 검증에서 거절한다. 0.x가 `longValue()`로 0원이 되는 우회를 차단한다.
-- 구매 기록 `pricePaid`는 실제 적용가 snapshot이다. 적용가 0은 지갑 차감 없이 구매 기록만 만든다.
-- 앱 preview와 마켓 플랜 상세는 `allowFreePoints && price>0 && (freePointPrice ?? price)>=1`일 때 PAID/FREE 선택 시트를 연다. 무료 잔액 부족은 표시만 하고 최종 거절은 서버가 담당한다.
-- 발행 화면은 유료 플랜에서만 무료 허용 토글을 보이고 무료 가격 1 이상을 검증한 뒤 `PlanModParam`을 먼저 저장한다.
-- 마켓 아이템/번들 서버도 `fundingMode`를 받지만 현재 Flutter `market_api`/repository/provider는 query를 노출하지 않아 기본 `PAID`로만 호출한다. 플랜 직접 구매의 선택 구현과 구분해야 한다.
-- 번들 매출은 현재 포함 아이템 원작자별로 정가×수량 비례 배분하고 paid/free split까지 전파한다. 과거 “번들 전체 단위 수익만 적재” 기록은 더 이상 현재 계약이 아니다.
-
-### 9.4 커버·블록 파일 안전 계약
-
-- 모든 presign 요청 크기는 최대 10MiB.
-- 일반 이미지 purpose는 JPEG/PNG/WebP만, `PLAN_BLOCK`은 여기에 MP4/WebM/QuickTime/PDF를 추가 허용한다.
-- 앱 순서는 presign → S3 PUT → `completeUpload`; PUT/complete 실패 시 abort를 호출한다.
-- 플랜 커버는 `EVENT_THUMBNAIL`, 블록 IMAGE/VIDEO/FILE은 `PLAN_BLOCK`을 사용한다.
-- 커버 저장은 작성자 소유 + `COMPLETED` + 정확한 purpose의 bare key만 허용한다. 만료 URL/외부 절대 URL은 저장하지 않는다.
-- 블록 미디어는 `properties.fileId`를 서버가 존재·작성자 소유·COMPLETED·PLAN_BLOCK으로 검증하고 `plan_block_file`에 등록한다.
-- 표시 URL은 권한 게이트 통과 뒤 현재 COMPLETED metadata에서 다시 발급한다. 미존재/미완료는 null/placeholder.
-- 블록 삭제 미디어는 복원용 30일 보존 후 정리한다. 플랜 복사는 복사 블록의 미디어 참조도 등록한다.
-
-### 9.5 committed Flutter 편집·읽기 UX
-
-- 서버 enum과 맞는 known 20종을 에디터/렌더러가 처리한다. 신규 picker는 목록 2종을 인라인 서식으로 단일화해 18종만 노출한다.
-- mutation은 단일 직렬 큐와 `X-Plan-Block-Tree-Revision`을 사용한다. 409면 최신 revision을 reconcile하고 한 번 재시도한다.
-- revision skip-over는 expected/server 값을 로그하고 burst당 제한된 경고를 낸 뒤 큐 idle 후 트리를 새로고침한다. silent autosave는 편집 중 로컬 텍스트를 덮지 않는다.
-- 부모 범위 reorder는 살아 있는 전체 형제 ID set-equality를 강제하며, move는 cycle을 거절하고 depth를 서버가 산출해 자손까지 재계산한다.
-- 읽기 모드·발행 전환은 입력 flush → mutation queue barrier → failed/pending/operation error 검사 → 트리 준비 확인을 모두 통과해야 한다.
-- 이미지/영상/파일 블록은 업로드 전에 10MiB와 허용 형식을 검사하고, 만료 미디어 표시 실패 시 provider를 한 번 invalidate해 새 URL을 받는다.
-- `moveBlock.sortOrder`는 서버가 대상 부모의 살아 있는 형제 범위 `0..maxSibling+1`로 검증한다.
-
-### 9.6 읽기 조판과 TABLE 계약
-
-- 읽기 모드: 커버·제목·작성자 머리, 본문 최대 폭 680.
-- 본문 16px, 줄간 1.65, 제목 위 여백 확대. 편집기와 뷰어가 같은 값을 쓴다.
-- 상세·preview 가 `reading:true` 를 넘기고 읽기 표면이 여백을 맡는다.
-- 블록 고르기는 생성 블록 종류와 작성 패턴을 나누고, 검색 결과를 블록·패턴별 점수 순으로 정렬한다.
-- 콘텐츠 역할별 색조·아이콘·접근성 의미와 공통 상태 배지를 쓴다.
-- API는 TABLE 신규/구조 변경 쓰기에 비어 있지 않은 직사각형 문자열 `properties.rows`와 optional boolean `header`를 강제한다.
-- Flutter는 옛 `columns + content JSON`을 제한적으로 읽어 안전하면 표준 rows로 저장하고, 깨지거나 잃을 위험이 있는 표는 저장과 원문 JSON 렌더를 막는다. 자동 데이터 이전은 없다.
+> 2026-11-22 소스와 대조된 기능 PRD 15개를 통합했다. 문서 대조와 실제 앱·거래·운영 확인은 구분한다. 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
+
+## 범위와 기준 문서
+
+플랜은 작성물, 마켓 아이템·번들은 판매 단위, 구매·보관함·이용 권리는 구매 후 사용 관계다. 플랜을 공개한 것, 상품 심사를 통과한 것, 판매 중인 것, 구매자가 사용할 권리를 가진 것은 서로 다른 상태다. 창작자는 작성·공개·판매·매출을, 구매자는 탐색·구매·켜기·전달·모임 활용·후기·환불을 거친다.
+
+현재 기능은 F08-01~15다. 각 기능의 요청·응답·권한·오류·복귀·검증 경계는 아래 PRD가 기준이다. F08-01~13에는 기존 로컬 참고 문서 네 종류가 있고, 환불·매출 귀속은 기존 PRD와 HTML을 관리한다. 없는 참고 문서를 작성 완료한 것으로 세지 않는다. 기능 수·API 참조 수·수용 항목 수를 시험 통과 수로 쓰지 않는다.
+
+## 현재 기능 15개
+
+| 기능 기준 문서 | 현재 확인 범위 |
+| --- | --- |
+| [F08-01 내 플랜 목록과 새 플랜 생성](../02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | 계정별 만든·구매 목록, 새 초안 입력·한도와 기기 기록에 의한 결과 불명 복구를 설명한다. |
+| [F08-02 플랜 상세·미리보기와 관리 행동](../02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | 기본 정보·전체 본문·견본의 권한, 무료 읽기와 구매 구분, 삭제·복제·판매 중지의 결과와 복구를 설명한다. |
+| [F08-03 플랜 블록 편집·저장·복구](../02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | 본인 DRAFT의 블록 편집, 기기 보관과 서버 저장, 충돌 보류·재시작 복구, paste와 순차 틀 추가, 표·TODO·미디어 계약을 현재 구현에 맞춘다. |
+| [F08-04 블록 순서와 계층 변경](../02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | 편집기 메뉴에서 순서·계층을 바꾸고 최신 트리에 이동 의도를 재적용한다. 범위별 저장, 개정 번호 보호와 부분 반영 복구를 구분한다. |
+| [F08-05 플랜 공개와 예약 공개](../02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | 준비도 9개 항목, 입력 복원·선저장, 플랜 공개와 상품 READY의 구분, 예약 생성·실행·실패 알림·복구를 설명한다. |
+| [F08-06 내 상품 등록·심사·판매 관리](../02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | 실제 관리 입구에서 콘텐츠를 연결하고 후보 버전을 심사받는다. 변경 필드 저장·재심사·판매 상태·설명 사진·예약·플랫폼 기간권의 경계를 구분한다. |
+| [F08-07 크리에이터 프로필·판매 현황](../02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | 크리에이터 프로필과 본인 판매 현황의 입구·공개 조건을 구분하고, 플랜 구매·수익 귀속·전환·조회 집계의 실제 범위와 조회 실패를 설명한다. |
+| [F08-08 마켓 메인 탐색](../02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | 홈의 플랜 더보기에서 판매 중 상품을 탐색한다. 유형·분류·정렬·가격은 본문 목록에 적용하고 인기10개·최근본목록·조회실패·기간권 공개 조건을 구분한다. |
+| [F08-09 마켓 키워드 검색](../02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | 검색어를 안전하게 전달하고 제목·설명의 부분 일치 결과를 20개씩 읽는다. 서버 전체 건수·첫조회 오류·추가조회 오류·재검색·기간권 제한을 구분한다. |
+| [F08-10 마켓 상품 상세·구매 입구](../02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | itemId 상세의 익명 열람·소유/구매 접근과 인증이 필요한 후기·번들을 구분한다. 설명 사진·판매/결제/로그인별 구매 입구·후기 권한·조회수와 실패 복구를 현재 소스로 설명한다. |
+| [F08-11 상품·번들·플랜 구매](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | 상품·번들의 영수증 재시도와 플랜 직접 구매의 중복 차단을 구분한다. 승인 버전 가격·구매 한도·재고·소유자 수익·권리 부여·실패 후 복구를 실제 호출에 맞춘다. |
+| [F08-12 내 보관함](../02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | 보관함 입구·세 필터·켜기 권한·상품별 전달·만료 갱신·환불 연결과 결과 화면 복귀를 구분한다. 활성화 재요청과 전달 키, 목록 재조회 중 행 잠금의 현재 계약을 반영한다. |
+| [F08-13 구매 플랜으로 모임 만들기·후기 작성](../02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md) | 플랜 권리·호스트 조건으로 모임 초안을 만들고 저장한 키·본문으로 결과를 복구한다. 상품 후기의 구매 자격·삭제 후 재작성·수정/삭제 권한·상세 갱신 차이를 명시한다. |
+| [F08-14 마켓 구매 환불·부분 환불·분쟁](../02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md) | 판매자/운영자 큐·부분 대상·기간권 재계산·포인트 반환·권리 회수·분쟁·승인 영수증과 실제 앱 복귀 범위를 현재 계약으로 정리한다. |
+| [F08-15 크리에이터 매출 귀속·정산](../02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md) | 세 구매 원천의 소유자별 배분, 유료·무료 계산, 월 지급 컷오프, 환불 종결과 원금을 보존하는 미수금 상계를 현재 코드에 맞춘다. |
+
+## 작성·저장·복구와 파일
+
+새 플랜·복제·블록 변경·공개는 서로 다른 요청이다. 생성·복제 결과가 불명확하면 기기에 남긴 기록과 목록 확인으로 복구하며, 서버 영수증이 없는 요청을 무조건 다시 보내지 않는다. 복제본의 무료 포인트 조건이 원본과 모두 같다고 보장하지 않는다.
+
+본문 수정은 작성자 DRAFT만 가능하다. 블록은 서버 known 20종, 신규 선택 18종, 로컬 작성 틀 12개다. 기기 보관 내용을 복원하고 전송 전 체크포인트를 저장한다. 충돌한 본문은 자동 덮어쓰기 대신 보류하며 삭제된 서버 블록의 로컬 초안도 보존한다. 읽기·공개로 이동할 때 입력 저장과 진행 중 변경·실패·보류를 확인한다.
+
+블록 트리는 revision으로 대조하고 구조 변경은 순서대로 처리한다. 서버 한 번의 paste는 하위 트리 전체를 원자적으로 처리하지만 작성 틀의 개별 추가와 여러 move/reorder는 부분 반영될 수 있다. 실행 취소도 원래 위치를 항상 복원하는 것은 아니다. TABLE은 문자열 rows와 파생 TSV를 쓰며 옛 columns/content 표의 제한적 읽기 지원은 현재 계약에서 제거됐다.
+
+미디어는 업로드 완료와 블록/상품 연결 저장을 구분한다. 소유·파일 준비·용도 검사를 통과한 파일을 연결하고 권한 확인 뒤 URL을 제공한다. 블록 삭제의 보존 기간과 실제 파일 복구 성공은 다르다. 문서용 탐색도·이미지는 앱 화면 검수의 근거로 사용하지 않는다.
+
+## 공개·심사·판매의 경계
+
+플랜의 즉시 공개와 예약 등록은 다르다. 준비도 응답, 메타데이터 선저장, 즉시 공개의 최종 검증, 예약 실행 시 검증을 구별한다. HIDDEN의 값 변경 없는 재공개와 DRAFT 전용 메타 수정도 구분한다. 예약을 등록했다고 정시에 공개·알림 수신까지 완료된 것은 아니다.
+
+상품은 후보 버전 심사와 활성 판매 버전을 관리한다. 회원 상품 생성의 READY, 심사 SUBMITTED, 승인 APPROVED, 판매 ON_SALE, 중지 STOP_SELLING 및 운영 비공개 SUSPENDED를 구분한다. 현재 운영자 승인도 SUBMITTED를 대상으로 하므로 SUSPENDED 직접 승인 해제를 구현된 경로로 안내하지 않는다. 관리자 서버는 community_api/admin-app 모듈이다.
+
+MARKET 출시 범위와 각 판매 유형의 활성화는 소스 존재와 별개다. 회원 상품·플랫폼 기간권의 소유자와 심사·판매 창구도 다르다. 신규 판매 제한과 기존 구매를 처리하는 보관함·환불 등의 안전 출구를 함께 확인한다. 전체 메뉴·목록·상품 상세·플랜 상세의 입구와 버튼 역할은 해당 기능 문서를 따른다.
+
+## 본문 열람과 구매 후 사용
+
+DRAFT는 작성자, HIDDEN은 작성자와 유효한 기존 구매자의 읽기 범위를 구분한다. 유료 공개 플랜의 전체 본문은 작성자·권리 보유자만 읽으며 미리보기 견본/티저와 다르다. 서비스의 익명 처리 가능성과 HTTP 보안 설정을 혼동하지 않는다. 읽을 권리가 있어도 작성자 초안 수정 권한을 얻는 것은 아니다.
+
+구매 성공은 보관함 사용 완료가 아니다. 상품·번들의 GRANTED 권리를 켜 ACTIVE로 만들고, 전달 요청으로 플랜 열기·모임 준비·외부 파일·기간권 결과를 연다. 반복 활성화는 기간을 늘리지 않는다. 전달 재시도 키의 메모리 보관 범위와 구매 영수증의 기기 보관 범위는 다르다. 활성화·전달 뒤 행 잠금과 목록 재조회, 오류·복귀를 함께 판단한다.
+
+구매 플랜으로 모임을 만들면 HOST/ADMIN 및 현재 플랜 권리를 확인해 DRAFT 모임을 만든다. 계정·플랜별 키와 본문을 먼저 보관해 같은 생성 의도를 복구한다. 이 경로의 양수 참가비 제한과 공개 범위는 모임 문서를 함께 따른다. 상품 후기는 현재 권리·작성자·삭제 상태를 검사하며 수정 뒤 후기 목록과 상세 평균 갱신 범위가 다르다.
+
+## 가격·매출·환불
+
+구매 시 최종 가격은 상품의 승인 버전 또는 잠근 번들 조건으로 결정한다. PAID 요청값을 유료 포인트만 사용한다는 뜻으로 바꾸지 않는다. 상품·번들 앱에는 fundingMode 선택이 연결되어 있지 않고, 플랜 선택 화면의 표시 조건도 서버 결제 조건을 고정하는 인자가 아니다.
+
+상품·번들 구매는 계정별 영속 의도와 서버 영수증으로 재시도한다. 직접 플랜 구매는 잠금·중복 거절 경로를 사용하므로 응답 유실 뒤 같은 성공 결과 재생을 보장하지 않는다. 구매·차감·권리·매출 귀속과 후속 창작자 지급은 별도 단계다. 번들은 구성품 소유자별로 유료·무료 몫을 배분하며 플랫폼 매출을 회원 지급액에 섞지 않는다.
+
+환불은 SELLER와 PLATFORM_QUEUE를 구분한다. 회원 상품의 일반 14일·미사용 조건과 기간권의 승인 시점 일할 계산은 다르다. 부분 환불은 구매 당시 구성품을 기준으로 하고 신청 중 구매 전체 잠금과 실제 환불 대상별 권리 회수를 구분한다. 취소도 신청 횟수에 포함되며 판매자 승인에만 별도 회원 영수증 키가 있다.
+
+반환된 포인트·환불 종결·권리 회수·지급 후 미수금은 원결제와 매출 행에 연결한다. 이미 지급된 매출을 환불할 때 원래 실수령금을 덮어쓰지 않고 종결과 상계를 기록한다. 월 지급의 엄격한 14일 컷오프, 환불 판단 기한, 기간권 남은 일수는 같은 시간 기준이 아니다. 실제 송금·외부 결제·알림 수신은 문서 대조로 확인한 상태가 아니다.
+
+## 영역 간 연결과 남은 확인
+
+포인트·지갑·회계는 결제 영역, 플랜으로 만든 모임의 공개·참가는 이벤트 영역, 증빙과 운영 판정은 분쟁 영역에 연결된다. API 경로·enum·요청 키는 각 기능 PRD의 실제 서버 계약을 따른다. 여기에는 별도 SQL 설치안이나 모든 권한을 하나로 뭉친 역할표를 복제하지 않는다.
+
+현재 확인된 제한은 각 기능의 「현재 제한과 확인 범위」에서 관리한다. 대표적으로 탐색/후기 오류가 빈 결과처럼 보이는 경우, 일부 변경 후 보조 집계 갱신, 상품의 동시 수정 충돌 범위, 멱등 키가 없는 생성·직접 구매·환불 신청, 서버와 앱 판매자 환불 버튼 범위 차이가 있다. 문서에서 이를 명시한 것을 제품 수정 완료로 세지 않는다.
+
+이번 통합은 검토 완료된 15개 기능 PRD의 현재 해시를 확인해 재사용했다. 제품 시험·실기기·PG·S3·푸시·예약·지급을 새로 실행하지 않았다. 소스 변경이 생기면 영향받은 기능부터 대조하고 PRD·참고 문서·HTML·색인을 갱신한다. 변경 없는 근거의 반복 조사와 이미지 확인은 추가하지 않는다.
+
+전체 최신화의 파일별 상태와 근거는 [문서 최신화 추적 자료](../../verification/document-refresh-2026-11-22.json)에 기록한다. 과거 날짜의 감사·작성 이력은 Git 또는 기능 문서의 명시된 역사 인용으로 읽고 현재 검증 완료 수에 합산하지 않는다.

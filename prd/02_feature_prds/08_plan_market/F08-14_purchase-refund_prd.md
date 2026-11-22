@@ -1,668 +1,125 @@
-# F08-14 — 플랜 마켓 환불 (Purchase Refund) · v2
+# F08-14. 마켓 구매 환불·부분 환불·분쟁 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
-
-> 신규 PRD. 작성일 2026-05-24, codex 페어 리뷰 합의 v2 갱신.
-> 상태: **구현됨** (`PurchaseRefundController`/`PurchaseRefundService`). 전액 환불, 번들 구성품 일부 환불,
-> 판매자 심사, 구매자 취소, 분쟁과 운영자 판정까지 코드가 연결되어 있다. 유료·무료 포인트 구성 보존과
-> 이중 환불 차단도 구현되어 있다.
-> **선행 기능**: [크리에이터 매출 귀속 보정](F08-15_creator-earning-coverage_prd.md). 환불 회계는
-> `CreatorEarning`의 정확한 매출 귀속과 상태 모델을 사용하며, 이 선행 기능도 현재 구현 완료 상태다.
-
-## 1. 결론
-
-플랜 마켓에서 구매한 아이템·번들·플랜에 대해 **구매자가 환불을 신청**하고, **판매자(크리에이터)가 승인 또는 거절**하는 흐름을 다룬다. 판매자 무응답에 대비한 자동 처리, 사용 흔적 기반 차단, 거절에 대한 운영자 중재까지 본 PRD가 다룬다. 환불 API는 구현되어 있다(`PurchaseRefundController`/`PurchaseRefundService` — 요청·승인·거절·구매자 취소·자동 처리·분쟁 진입, 회계 분개 포함). 지갑 환불은 `PurchaseRefundService`가 원결제 거래를 찾아 `WalletRefundService.refundByTransaction`으로 위임하므로 유료 포인트는 유료 잔액으로, 무료 포인트는 무료 잔액으로 돌아간다. 전액을 유료 잔액으로 바꿔 버리던 과거 경로는 차단되어 있다.
-
-## 2. 의존성
-
-본 PRD는 F08-15(크리에이터 매출 귀속 보정)에 하드 의존한다. F08-15가 보장하는 인터페이스:
-
-- 세 source type 모두 `CreatorEarning` 행이 생성되며, `sourceId`는 **구매 ID**다.
-- `CreatorEarning.status`에 `REFUND_HELD`, `REFUNDED`, `REVERSED`가 정의된다.
-- `MarketplaceSettlementService`가 환불 가능 기간이 끝난 수익만 정산한다.
-- 번들 매출은 포함 아이템별로 N행 분개된다.
-
-이 보장을 전제로 환불 흐름을 설계한다.
-
-## 3. 사용자 흐름
-
-### 3.1 구매자
-
-1. 마이 → 보유함 또는 내 플랜 구매 탭에서 구매 카드를 누른다.
-2. "환불 신청" 버튼을 누른다 (환불 가능 상태일 때만 노출, 6번 섹션 환불 가능 조건 참조).
-3. 환불 사유 입력 시트가 열린다. 사유 분류(품질 불만족, 설명과 다름, 실수 구매, 파일 하자, 기타)와 메모를 입력한다.
-4. "신청" 버튼을 누르면 환불 요청이 `REQUESTED` 상태로 접수된다. 카드는 즉시 잠긴다.
-5. 판매자에게 푸시 알림이 발송된다. 구매자에게는 보유함 카드에 "환불 심사 중" 배지가 표시된다.
-6. 판매자 결정까지 카드는 사용·다운로드·이벤트 연결이 불가능한 잠금 상태가 된다.
-7. 승인되면 결제 금액이 지갑으로 환불되고, 카드는 보유함에서 사라진다 (또는 "환불 완료" 표시).
-8. 거절되면 사유와 함께 알림이 오고, 카드는 다시 사용 가능 상태로 돌아간다. 구매자는 24시간 후 1회 추가 신청 가능하다 (5.4 참조).
-9. 판매자가 7일 동안 응답하지 않고 사용 흔적이 없으면 자동 승인된다. 사용 흔적이 있으면 운영자 검토로 에스컬레이션된다 (5.3 참조).
-10. 거절·자동 거절에 이의가 있으면 거절 후 7일 이내 1회 분쟁 신청 가능 (8번 섹션 운영자 중재 참조). 운영자가 거절을 유지하면 같은 신청으로 다시 분쟁할 수 없다. 운영자가 추가 자료를 요청하면 구매자는 알림을 받고, 요청 시각부터 7일 안에 자료를 보완해 다시 분쟁할 수 있다. 처음 7일이 지났어도 된다.
-
-### 3.2 판매자 (크리에이터)
-
-1. 알림 또는 크리에이터 대시보드 → "환불 요청"에서 진입한다.
-2. 환불 요청 목록에서 카드를 누르면 구매자 정보·사유·구매 시점·결제 금액·사용 흔적(다운로드 횟수, 이벤트 연결, 활성화 시각)이 표시된다.
-3. "승인", "거절", "추가 자료 요청" 중 하나를 선택한다.
-4. 거절 시 거절 사유를 입력한다.
-5. "추가 자료 요청"은 1회 가능. 7일 자동 승인 타이머를 멈춘다. 구매자가 일정 기간 응답하지 않으면 만료된다.
-6. 결정이 저장되면 구매자에게 결과 알림이 발송된다.
-
-### 3.3 운영자 (분쟁)
-
-1. 구매자가 거절에 분쟁을 제기한 경우, `community_admin_api`를 통해 분쟁 큐에 진입한다.
-2. 분쟁 상세에서 거절 사유·증빙·사용 흔적·이전 신청 이력을 검토한다.
-3. "판매자 거절 유지", "강제 환불", "추가 자료 요청" 중 선택한다.
-4. 강제 환불은 판매자 승인 환불과 동일한 회계 경로를 탄다. 다만 `decision_source = OPERATOR` 메타가 남는다.
-5. 결정은 양측에 알림으로 통지된다. 판매자 측 정산·노출 패널티는 누적되어 별도 정책으로 추적된다.
-
-> **Fact (v3 dispute union, 2026-06-02)**: `purchase_refund_dispute` 레코드는 v3 통합 분쟁 케이스 view에서 `REFUND_DISPUTE:{id}` caseId로 조회된다. 구매자가 `GET /api/v1/me/dispute-cases?sourceType=REFUND` 로 조회하면 `DisputeCaseVo` 형태로 포함됨. `DisputeLegalHoldService`가 `RefundDisputeStatus(OPEN→OPEN/UPHELD/OVERTURNED→RESOLVED/CLOSED→CLOSED)` 매핑을 통해 legal hold 적용 — active 상태(OPEN)이면 evidence 삭제 차단, 증거 파일 1년 보존 retention 스케줄러 대상. SLA 스케줄러(`DisputeSlaExceededScheduler`) 7일 초과 시 `DISPUTE_SLA_EXCEEDED HIGH` 운영알림 대상. 자세한 분쟁 케이스 union 계약은 `../../01_domain_prds/18_분쟁_해결_prd.md` 참조 (병렬 작성 중).
-
-## 4. 상태 모델
-
-```
-REQUESTED ──승인──▶ APPROVED ──지갑환불완료──▶ REFUNDED
-   │                       │
-   │                       └──환불실패──▶ FAILED ─재시도─▶ APPROVED
-   │
-   ├──거절──▶ REJECTED ──분쟁신청──▶ DISPUTED
-   │                                    │
-   │                                    ├──거절유지──▶ REJECTED
-   │                                    └──강제환불──▶ REFUNDED_BY_OPERATOR
-   │
-   ├──자동승인(미사용 7일경과)──▶ APPROVED
-   │
-   ├──운영자에스컬레이션(사용흔적 7일경과)──▶ ESCALATED
-   │                                            │
-   │                                            └──운영자결정──▶ APPROVED|REJECTED
-   │
-   ├──자료보완요청──▶ AWAITING_BUYER ──응답없음──▶ EXPIRED
-   │                              └──응답──▶ REQUESTED (타이머 재시작)
-   │
-   └──구매자취소──▶ CANCELED
-```
-
-### 상태 정의
-
-| 상태 | 의미 | 카드 잠금 | 정산 영향 |
-|---|---|---|---|
-| `REQUESTED` | 구매자가 신청. 판매자 결정 대기. | 잠금 | 수익 행 `REFUND_HELD` |
-| `AWAITING_BUYER` | 판매자가 자료 보완 요청. 구매자 응답 대기. | 잠금 | `REFUND_HELD` 유지 |
-| `APPROVED` | 판매자 승인 또는 자동 승인. 지갑 환불 트랜잭션 발행 직전. | 잠금 | `REFUND_HELD` |
-| `REFUNDED` | 지갑 환불 완료. | 영구 잠금 | 정산 전이면 `REFUNDED`, 정산 후면 `REVERSED` |
-| `REFUNDED_BY_OPERATOR` | 운영자 강제 환불 완료. | 영구 잠금 | 동일 |
-| `FAILED` | 지갑 환불 실패. 운영자 재시도 필요. | 잠금 | `REFUND_HELD` 유지 |
-| `REJECTED` | 판매자 거절. 거절 후 7일 안에 분쟁 가능. 운영자 자료 요청으로 돌아오면 요청 시각부터 7일 안에 다시 분쟁 가능. 운영자 거절 유지로 돌아오면 분쟁 불가. | 잠금 해제 | `PENDING` 복원 |
-| `ESCALATED` | 사용 흔적 + 자동 처리 대상. 운영자 검토. | 잠금 | `REFUND_HELD` |
-| `DISPUTED` | 구매자가 거절에 분쟁 제기. | 잠금 | `REFUND_HELD` 재진입 |
-| `CANCELED` | 구매자가 결정 전 신청 취소. | 잠금 해제 | `PENDING` 복원 |
-| `EXPIRED` | 자료 보완 요청 후 구매자 무응답. | 잠금 해제 | `PENDING` 복원 |
-
-## 5. 정책 결정 (codex 페어 리뷰 합의)
-
-### 5.1 환불 가능 기간 — **14일**
+> 2026-11-22 서버·앱 소스 대조. 신청·심사·포인트 반환·권리 회수의 현재 계약이다. 제품 시험이나 실제 환불을 새로 실행한 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-- 결제 후 **14일** 이내 신청 가능.
-- 정산 쿼리는 `created_at <= now - 14일` 조건을 포함하여 환불 가능 기간이 끝난 수익만 정산한다 (F08-15 5.5 섹션).
-- 사유 분류가 **"파일 하자" 또는 "설명과 다름"** 인 경우는 14일 제한을 예외 적용. 판매자 심사·운영자 중재로 처리한다.
+## 적용 범위와 실제 입구
 
-### 5.2 환불 가능 조건
+MARKET_ITEM·MARKET_BUNDLE·PLAN_DIRECT 구매를 다룬다. 구매 ID를 상품 ID와 구분한다. [내 보관함](F08-12_my-collection_prd.md)의 환불 입구와 [플랜 상세](F08-02_plan-detail_prd.md)의 직접 구매 환불 입구에서 신청한다. 내 환불 목록과 받은 환불 목록은 각각 구매자·판매자 상세로 연결된다. 판매 제한 중에도 기존 구매를 처리할 수 있도록 회원 환불 컨트롤러는 MARKET 안전 출구로 선언되어 있다.
 
-다음을 모두 만족해야 신청 가능:
-
-- 결제 후 14일 이내 (5.1 예외 적용 가능)
-- 같은 구매에 대해 열린 환불 요청 없음
-- 누적 신청 횟수 2회 미만 (5.4 참조)
-- 사용 흔적이 없거나, 사용 흔적이 있더라도 사유가 하자/설명 불일치
-- 번들은 전체 환불 또는 구매 당시 구성품 단위 일부 환불만 가능하다. 임의 금액 환불은 허용하지 않는다.
-- 플랜이 이벤트에 사용 중이고 사유가 단순 변심이면 불가
-
-### 5.3 자동 처리 — 7일 조건부
-
-판매자 무응답 시 처리:
-
-- **사용 흔적 없음** (다운로드 0회, 이벤트 연결 0건, 활성화 0회): **7일 후 자동 승인**
-- **사용 흔적 있음**: **7일 후 `ESCALATED` 상태로 운영자 큐 진입**. 자동 승인하지 않음.
-- "자료 보완 요청"이 들어오면 7일 타이머 일시 정지. 구매자 응답 시 재시작. 보완 요청은 1회만 가능.
-
-### 5.4 재신청 정책
-
-- 같은 구매에 대해 열린 신청은 1건만.
-- 구매자 취소(`CANCELED`)는 시도 횟수에 포함하지 않는다. 단 반복 취소는 악용 지표로 누적.
-- 판매자 거절(`REJECTED`) 후 24시간 잠금. 이후 1회 추가 신청 가능.
-- 두 번째 신청은 **새 증빙** 또는 **새 사유**가 필수. UI에서 강제.
-- 두 번째 거절 뒤에는 일반 재신청 불가. 분쟁 제기만 가능.
-
-### 5.5 사용 흔적 정의
-
-다음 항목 중 하나라도 발생했으면 "사용 흔적 있음"으로 본다.
-
-- `Collection.isActivated = true` (마켓 아이템·번들 보유함 활성화)
-- `Collection.activatedAt != null`
-- 마켓 아이템 또는 번들 포함 아이템의 다운로드 횟수 1회 이상 (신규 `download_count` 컬럼 필요)
-- `PLAN_DIRECT`: 해당 구매가 이벤트에 연결된 적이 있음 (신규 `plan_purchase_id` 추적 컬럼 필요, 6.5 참조)
-
-사용 흔적이 있으면 자유 환불은 불가하지만, 사유가 "파일 하자" 또는 "설명과 다름"이면 신청 가능. 판매자 심사 또는 운영자 중재로 처리.
-
-### 5.6 악용 방지
-
-다음 다층 방어를 둔다.
-
-- **구매 단위**: 열린 환불 요청 1건, 총 신청 2회.
-- **사용자 단위**: 최근 30일 환불 신청 5건 초과 시 추가 신청은 자동으로 `ESCALATED`로 진입.
-- **신뢰점수(F11-05) 연동**: 승인된 환불은 차감하지 않는다. 다음 케이스만 차감:
-  - 판매자 거절이 2회 이상 연속 발생한 사용자
-  - 운영자가 악용으로 판정한 분쟁
-  - 사용 직후 반복 환불 신청 (1주일 내 3회 이상)
-- **판매자 품질 지표**:
-  - 자동 승인된 환불 비율 (응답 지연)
-  - 분쟁 패소 비율
-  - 임계 초과 시 정산 보류·노출 제한·판매 일시 정지
-
-### 5.7 도메인 통일 — 마켓 한정 + 공통 커널
-
-본 PRD는 플랜 마켓에 한정한다. 정기 구독(F04-16)·이벤트 사전결제(F03-13)·기부(F04-14) 환불과는 별도 흐름을 유지한다.
-
-다만 다음 내부 기반은 공통 커널로 설계한다:
-
-- `RefundRequestStatus` enum (`REQUESTED/APPROVED/REFUNDED/...`)
-- 환불 금액 계산 로직
-- 지갑 환불 입금 트랜잭션
-- 원장 기록 reference 규칙
-- 알림 템플릿 베이스
-- 악용 방지 카운터
-
-이 커널 위에 도메인별 환불 서비스가 오케스트레이션을 한다. `PurchaseRefundService`는 마켓 환불 오케스트레이션을 맡고, 지갑·원장·알림은 공통 서비스에 위임한다.
-
-### 5.8 번들 구성품 일부 환불
-
-번들은 구매 당시 저장한 구성품을 기준으로 일부 환불할 수 있다. 구매 뒤 판매자가 번들 구성을 바꾸더라도
-환불 대상은 달라지지 않는다.
-
-- 구매자는 아직 환불되지 않은 구성품만 선택할 수 있다.
-- 선택하지 않은 구성품의 사용 흔적은 선택한 구성품의 환불 자격에 영향을 주지 않는다.
-- 모든 구성품을 선택하면 전액 환불 경로로 합쳐 처리한다.
-- 승인되면 선택한 구성품에 해당하는 매출 귀속 행과 이용 권한만 되돌린다.
-- 사용자가 금액을 직접 입력하는 임의 금액 부분 환불은 지원하지 않는다.
-
-## 6. 데이터 모델
-
-### 6.1 신규 테이블: `purchase_refund_request`
-
-```sql
-CREATE TABLE purchase_refund_request (
-  refund_id            BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  purchase_id          BIGINT       NOT NULL,
-  purchase_source      VARCHAR(20)  NOT NULL,  -- 'MARKET_ITEM' | 'MARKET_BUNDLE' | 'PLAN_DIRECT'
-  buyer_user_id        BIGINT       NOT NULL,
-  seller_user_id       BIGINT       NOT NULL,
-  refund_scope         VARCHAR(20)  NOT NULL DEFAULT 'FULL',  -- 'FULL' (현재) | 'PARTIAL_ITEM' (후속) | 'PARTIAL_AMOUNT' (후속)
-  requested_amount     BIGINT       NOT NULL,
-  approved_amount      BIGINT       NULL,
-  reason_category      VARCHAR(30)  NOT NULL,  -- 'QUALITY' | 'NOT_AS_DESCRIBED' | 'MISTAKE' | 'FILE_DEFECT' | 'OTHER'
-  reason_memo          TEXT         NULL,
-  status               VARCHAR(30)  NOT NULL,  -- 4번 섹션 상태 모델
-  attempt_no           INT          NOT NULL DEFAULT 1,
-  reapply_unlocked_at  DATETIME     NULL,
-  rejection_reason     TEXT         NULL,
-  refund_transaction_id BIGINT      NULL,
-  decision_source      VARCHAR(20)  NULL,  -- 'BUYER' | 'SELLER' | 'AUTO' | 'OPERATOR'
-  has_usage_at_request TINYINT(1)   NOT NULL DEFAULT 0,  -- 신청 시점 사용 흔적 스냅샷
-  requested_at         DATETIME     NOT NULL,
-  decided_at           DATETIME     NULL,
-  auto_process_at      DATETIME     NULL,    -- requested_at + 7일
-  awaiting_buyer_at    DATETIME     NULL,
-  finalized_reason     TEXT         NULL,    -- 최종 종결 사유 (감사용)
-  INDEX idx_refund_buyer (buyer_user_id, status),
-  INDEX idx_refund_seller (seller_user_id, status),
-  INDEX idx_refund_purchase (purchase_source, purchase_id),
-  INDEX idx_refund_auto_process (auto_process_at, status)
-);
-```
-
-### 6.2 신규 테이블: `purchase_refund_dispute`
-
-```sql
-CREATE TABLE purchase_refund_dispute (
-  dispute_id            BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  refund_id             BIGINT       NOT NULL,
-  buyer_user_id         BIGINT       NOT NULL,
-  seller_user_id        BIGINT       NOT NULL,
-  reason_category       VARCHAR(30)  NOT NULL,
-  reason_memo           TEXT         NULL,
-  evidence_file_group_id BIGINT      NULL,
-  status                VARCHAR(20)  NOT NULL,  -- 'OPEN' | 'UPHELD' (판매자 거절 유지) | 'OVERTURNED' (강제 환불) | 'CLOSED'
-  operator_user_id      BIGINT       NULL,
-  operator_decision     VARCHAR(30)  NULL,  -- 'UPHOLD_REJECTION' | 'FORCE_REFUND' | 'REQUEST_MORE_EVIDENCE'
-  operator_note         TEXT         NULL,
-  created_at            DATETIME     NOT NULL,
-  resolved_at           DATETIME     NULL,
-  FOREIGN KEY (refund_id) REFERENCES purchase_refund_request(refund_id),
-  INDEX idx_dispute_status (status, created_at),
-  INDEX idx_dispute_refund (refund_id),
-  UNIQUE KEY uk_dispute_open_refund (refund_id, status)  -- 같은 환불에 열린 분쟁 1건만
-);
-```
-
-### 6.3 기존 테이블 변경
-
-```sql
--- 환불 진행 중인 구매를 빠르게 식별
-ALTER TABLE market_purchase
-  ADD COLUMN is_locked TINYINT(1) NOT NULL DEFAULT 0,
-  ADD COLUMN active_refund_id BIGINT NULL;
-
-ALTER TABLE plan_purchase
-  ADD COLUMN is_locked TINYINT(1) NOT NULL DEFAULT 0,
-  ADD COLUMN active_refund_id BIGINT NULL;
-
--- 다운로드 추적 (사용 흔적 판정용)
-ALTER TABLE collection
-  ADD COLUMN download_count INT NOT NULL DEFAULT 0,
-  ADD COLUMN first_downloaded_at DATETIME NULL,
-  ADD COLUMN last_downloaded_at DATETIME NULL;
-
--- 플랜 직접 구매 이벤트 연결 추적 (5.5 사용 흔적 판정)
-ALTER TABLE event_plan_map
-  ADD COLUMN plan_purchase_id BIGINT NULL;
-```
-
-### 6.4 마이그레이션 정책
-
-CLAUDE.md 규칙대로 `V1__init.sql` 단일 파일에 직접 반영.
-
-### 6.5 신규 회계 계정
-
-`AccountCode`에 다음을 추가:
-
-- `CREATOR_RECEIVABLE`: 크리에이터 미수금. 정산 후 환불 시 회수 대상.
-- `MARKETPLACE_REFUND_HOLD`: 환불 대기 중인 금액 (선택, `REFUND_HELD` 상태 대응)
-
-`TransactionType`에도 다음을 추가:
-
-- `MARKETPLACE_REFUND_BEFORE_SETTLEMENT`
-- `MARKETPLACE_REFUND_AFTER_SETTLEMENT`
-- `CREATOR_RECEIVABLE_OFFSET` (다음 정산에서 차감)
-
-## 7. 백엔드 API
-
-### 7.1 구매자
-
-| Method | Path | 설명 |
-|---|---|---|
-| POST | `/api/v1/market/refunds` | 환불 신청. Body: `{ purchaseId, purchaseSource, reasonCategory, reasonMemo? }` |
-| DELETE | `/api/v1/market/refunds/{refundId}` | 신청 취소 (`REQUESTED`·`AWAITING_BUYER`에서만) |
-| POST | `/api/v1/market/refunds/{refundId}/respond` | 자료 보완 응답 (`AWAITING_BUYER` 상태에서) |
-| POST | `/api/v1/market/refunds/{refundId}/dispute` | 거절에 분쟁 제기 |
-| GET | `/api/v1/market/refunds/me` | 내 환불 요청 목록 |
-| GET | `/api/v1/market/refunds/{refundId}` | 상세 |
-
-### 7.2 판매자
-
-| Method | Path | 설명 |
-|---|---|---|
-| GET | `/api/v1/market/refunds/incoming` | 본인에게 들어온 환불 요청 목록 |
-| POST | `/api/v1/market/refunds/{refundId}/approve` | 승인 |
-| POST | `/api/v1/market/refunds/{refundId}/reject` | 거절. Body: `{ rejectionReason }` |
-| POST | `/api/v1/market/refunds/{refundId}/request-evidence` | 자료 보완 요청 (1회) |
-
-### 7.2a 번들 큐레이터 관리
-
-| Method | Path | 설명 |
-|---|---|---|
-| GET | `/api/v1/market/bundles/{bundleId}/curators` | 큐레이터 목록 |
-| POST | `/api/v1/market/bundles/{bundleId}/curators` | 큐레이터 추가. Body: `{ userId, role: LEAD|CO }` |
-| DELETE | `/api/v1/market/bundles/{bundleId}/curators/{curatorId}` | 큐레이터 제거 |
-
-권한: 그 번들의 대표(LEAD) 큐레이터만 호출 가능. 대표는 번들당 1명(`uk_bundle_curator_lead`)이고 관리자가 번들을 만들 때 앉히며,
-바꾸기도 관리자만 한다(옛 대표는 공동(CO)으로 내려감). 이 API 로는 대표 자리를 더하거나 지울 수 없다(`INVALID_INPUT`).
-채우는 곳 없던 `bundle.curator_user_id` 는 차수 10 에서 걷었다.
-
-### 7.2b 번들 부분 환불
-
-| Method | Path | 설명 |
-|---|---|---|
-| POST | `/api/v1/market/refunds/partial` | 번들 부분 환불 신청. Body: `{ purchaseId, selectedBundleItemIds, reasonCategory, reasonMemo? }` |
-
-선택된 BundleItem만 환불 처리되며 `refund_scope=PARTIAL_ITEM`으로 기록. 모든 아이템 선택 시 일반 환불(`FULL`)로 자동 전환된다.
-
-### 7.2c 다운로드 트래킹
-
-| Method | Path | 설명 |
-|---|---|---|
-| POST | `/api/v1/market/collection/{id}/download` | 다운로드 흔적 기록 |
-
-호출 시 `Collection.downloadCount++`, `firstDownloadedAt`(없을 때만), `lastDownloadedAt` 갱신. 단순 변심 환불 차단 기준이 된다.
-
-### 7.2d Admin API 이관 정책
-
-운영자 분쟁 처리·강제 환불 엔드포인트는 현재 `community_api`의 `AdminRefundController`에 있다. `community_admin_api`로의 이관은 다음 조건을 충족해야 한다:
-
-- `PurchaseRefundRequest`/`PurchaseRefundDispute` Entity·Repository를 admin_api 패키지에 복제 (또는 공유 모듈로 추출)
-- admin_api에 별도 `ManageRefundController` + `ManageRefundService` 작성 — 분개·지갑 환불은 community_api의 트랜잭션 경로를 그대로 사용해야 lot 추적과 회계 정합성이 유지됨
-- 따라서 단순 복제가 아니라 community_api → admin_api 호출 또는 공유 라이브러리 도입이 선행돼야 한다
-
-본 PRD 시점에는 community_api에 유지하되 라우트 prefix(`/api/v1/admin/...`)는 admin 도메인 표시로 둔다. 보안은 admin 토큰 또는 별도 `@PreAuthorize` 정책으로 강화. 모듈 분리는 별도 의사결정 + 인프라 작업으로 분리한다.
+신청 화면은 사유 QUALITY·NOT_AS_DESCRIBED·MISTAKE·FILE_DEFECT·OTHER 중 하나와 선택 메모를 받는다. 메모를 trim하고 빈 값은 null로 보낸다. 성공하면 신청 화면을 닫아 진입 화면으로 돌아가며, 기간권의 운영팀 검토 안내는 서버 응답의 deciderType을 따른다. 실패하면 입력을 유지한다. 버튼이 보인다는 사실만으로 서버 환불 자격이 충족됐다고 판단하지 않는다.
 
-### 7.3 운영자 (admin API)
+## 코드 위치
 
-| Method | Path | 설명 |
-|---|---|---|
-| GET | `/api/v1/admin/refund-disputes` | 분쟁 큐 |
-| GET | `/api/v1/admin/refund-disputes/{disputeId}` | 분쟁 상세 |
-| POST | `/api/v1/admin/refund-disputes/{disputeId}/uphold` | 판매자 거절 유지 |
-| POST | `/api/v1/admin/refund-disputes/{disputeId}/force-refund` | 강제 환불 |
-| POST | `/api/v1/admin/refund-disputes/{disputeId}/request-evidence` | 추가 자료 요청 |
-| GET | `/api/v1/admin/refund-escalations` | `ESCALATED` 상태 큐 |
-| POST | `/api/v1/admin/refund-escalations/{refundId}/approve` | 운영자 직접 승인 |
-| POST | `/api/v1/admin/refund-escalations/{refundId}/reject` | 운영자 직접 거절 |
+서버 창구는 `PurchaseRefundController`, `SellerRefundController`, 운영자 앱 모듈의 `ManageMarketRefundEscalationController`다. `PurchaseRefundService`는 응답·알림을 조정하고 `MarketRefundCommand`가 잠금·자격·금액·권리·회계를 처리한다. `RefundPlan`, `PeriodPassRefundCalculator`, `RefundDisputeService`, `PurchaseRefundAutoProcessWorker`와 스케줄러를 함께 대조했다.
 
-### 7.4 시스템
+앱은 `refund_request_screen.dart`, `refund_partial_select_screen.dart`, `refund_detail_screen.dart`, `purchase_refund_provider.dart`를 대조했다. 구매 원천과 매출 행·환불 종결·미수금은 [크리에이터 매출 귀속·정산](F08-15_creator-earning-coverage_prd.md)의 검토 근거를 재사용한다.
 
-- `RefundAutoProcessScheduler`: 매시 `auto_process_at < now AND status IN (REQUESTED)` 조회
-  - 사용 흔적 없음 → `APPROVED`로 전이 + 환불 실행
-  - 사용 흔적 있음 → `ESCALATED`로 전이 + 운영자 알림
-- `AwaitingBuyerExpiryScheduler`: 자료 보완 요청 후 일정 기간(예: 7일) 경과 시 `EXPIRED`로 전이
+## 신청 자격과 판매자·운영자 구분
 
-## 8. 서비스 책임
+서버는 본인 구매, ACTIVE, 진행 중 환불로 잠기지 않은 상태, 양수 결제와 대상 매출 행을 확인한다. 유료 구매에 매출 귀속이 없으면 MARKET_REFUND_EARNING_MISSING으로 거절한다. 회원 소유 대상의 일반 신청은 구매 후 14일 이내·미사용이어야 하며, FILE_DEFECT·NOT_AS_DESCRIBED는 기간·사용 제한의 예외 사유다. 플랫폼 기간권만 있는 대상은 회원 상품의 14일·미사용 규칙 대신 기간권 계산을 따른다.
 
-### 8.1 `PurchaseRefundService`
+구매 당시 ownerMix=USER는 SELLER, 플랫폼 소유가 포함되면 PLATFORM_QUEUE다. 플랫폼 큐는 sellerUserId가 null일 수 있고 처음부터 ESCALATED, 자동 처리 기한은 null이다. 앱은 플랫폼 큐에 판매자 승인·자료 요청·구매자 분쟁 버튼을 열지 않는다. 기간권 포함 여부와 판매자 ID 하나로 결정권을 추정하지 않는다.
 
-- `requestRefund(userId, param)`: 가능 조건 검증 → `purchase_refund_request` INSERT → `market_purchase.is_locked = 1`, `active_refund_id` 설정 → `CreatorEarning.status = REFUND_HELD` → 판매자 알림
-- `approveRefund(sellerUserId, refundId, decisionSource)`: 권한 검증 → status `APPROVED` → 환불 실행 위임 (8.2 참조) → 성공 시 `REFUNDED`, 실패 시 `FAILED` (별도 트랜잭션 `REQUIRES_NEW`) → 양측 알림
-- `rejectRefund(sellerUserId, refundId, reason)`: 권한 검증 → status `REJECTED` → 카드 잠금 해제 → `CreatorEarning.status = PENDING` 복원 → 구매자 알림 (분쟁 가능 안내 포함)
-- `cancelRefund(buyerUserId, refundId)`: `REQUESTED`·`AWAITING_BUYER`에서만 → `CANCELED` → 카드 잠금 해제 → `PENDING` 복원
-- `requestEvidence(sellerUserId, refundId)`: 1회만 가능 → `AWAITING_BUYER` → auto_process_at 일시 정지
-- `respondEvidence(buyerUserId, refundId, memo)`: `AWAITING_BUYER` → `REQUESTED` → auto_process_at 재계산
-- `autoProcessExpired()`: 스케줄러 진입점
+회원 번들의 결정권은 저장된 판매자와 해당 번들 큐레이터에게 있다. 대상 매출의 소유자별 배분과 결정권은 별개다. 판매자 탈퇴와 지급 완료가 겹친 대상은 MARKET_REFUND_SELLER_CLOSED로 차단될 수 있으며, 남은 대상 상태를 확인하지 않고 운영자가 항상 강제 환불할 수 있다고 안내하지 않는다.
 
-### 8.2 환불 실행 (회계 분개)
+최근 30일 신청이 이미 5건 이상이면 다음 회원 상품 신청도 ESCALATED로 시작한다. 구매자별 신청은 직렬화하며 MySQL 교착 희생으로 롤백된 요청에 한해 최대 3회 시도한다. 이 내부 복구는 HTTP 응답 유실에 대한 영수증 재생이 아니다.
 
-기존 코드 관례(`AccountingLedgerService.recordRefund`: `USER_WALLET` 차변, `CREATOR_PAYABLE` 대변)에 맞춰 다음 메서드를 신설:
+## 재신청과 부분 환불
 
-> **유료·무료 구성 보존**: 마켓 구매는 창작자에게 흘려보내는 결제이므로 환불도 원결제의 유료·무료
-> 구성을 그대로 복원한다. 수수료·원천징수의 환원은 유료분에만 적용한다. 공통 기준은
-> [결제·정산 정책의 유료·무료 포인트 분리정산 정책](../../03_policy_prds/payment_settlement_policy_prd.md#25-유료무료-포인트-분리정산-정책-point-split-flow-through)에서 확인한다.
+같은 구매의 진행 중 신청과 전액 환불 완료는 재신청을 막는다. 완료된 PARTIAL_ITEM 환불은 남은 대상의 신청을 허용하는 예외다. 일반 시도 한도는 구매·구매자별 2회이며 현재 집계에는 CANCELED도 포함된다. 따라서 기존의 ‘취소하면 횟수를 소모하지 않는다’는 안내는 현재 구현과 맞지 않는다. 판매자 탈퇴로 분쟁만 막힌 거절의 제한적 횟수 구제는 대상 온전성·분쟁 가능 상태 등 별도 조건을 만족해야 한다.
 
-#### 8.2.1 정산 전 환불
+최근 거절 뒤에는 24시간 대기한다. 명시된 reapplyUnlockedAt이 없으면 decidedAt+24시간을 사용한다. 현재 신청 DTO·서비스·화면은 두 번째 신청에 새 사유나 새 증빙을 강제하지 않는다. 이를 구현된 조건으로 기재하지 않는다.
 
-```
-차변: USER_WALLET (구매자 지갑 입금)
-대변: CREATOR_PAYABLE[creator_i] (각 크리에이터 미지급금 차감, net 유료분)
-대변: PLATFORM_FEE_REVENUE (수수료 환원, 유료분만)
-대변: CREATOR_PAYABLE (원천세분 — 정산 전엔 예수금이 아직 적립 안 됐으므로 WITHHOLDING 미사용, 미지급금 환원으로만 처리)
-대변: PROMOTION_EXPENSE (무료분 grossFree 환원)
-
-(번들의 경우 N행으로 발행)
-```
+부분 환불은 MARKET_BUNDLE의 구매 시점 bundleItemId 목록을 선택한다. 빈 목록·null·중복·존재하지 않는 대상·이미 종결된 매출 행은 거절한다. 열려 있는 구성품을 모두 고르면 서버는 FULL로 합친다. 임의 금액 입력은 없다. 선택한 회원 상품의 사용 흔적만 자격 판정에 쓰지만 신청 중에는 구매 전체를 잠근다. 승인 후에는 실제 환불된 구성품의 매출·권리만 회수한다.
 
-원천세 슬라이스는 정산 전 예수금이 아직 없으므로 `WITHHOLDING_TAX_PAYABLE`을 건드리지 않고 `CREATOR_PAYABLE` 환원으로만 처리한다(`AccountingLedgerService.java:909-918`). `CreatorEarning.status = REFUNDED`로 변경.
+앱 선택기는 현재 보관함에서 같은 purchaseId의 행을 읽는다. bundleItemId 없는 옛 구매 행이 있으면 전체 환불만 안내한다. 현재 상품의 최신 구성 목록으로 구매 당시 구성을 대체하지 않는다. 사유·메모는 전체 신청 → 항목 선택 → 부분 신청에 전달되며 성공하면 처음 진입한 화면까지 돌아간다.
 
-#### 8.2.2 정산 후 환불
+## 환불액과 포인트·권리 반영
 
-```
-차변: USER_WALLET (구매자 지갑 입금, netPaid)   대변: CREATOR_RECEIVABLE[creator_i] (각 크리에이터 미수금)
-차변: USER_WALLET (수수료분)                     대변: PLATFORM_FEE_REVENUE (수수료 환원)
-원천세 환원(역원복) — 2쌍 분개:
-  차변: USER_WALLET (원천세분 지갑 복구)         대변: CREATOR_SETTLEMENT (정산 tax 슬라이스 역원복)
-  차변: WITHHOLDING_TAX_PAYABLE (예수금 부채 소거) 대변: PLATFORM_CASH (플랫폼 현금 회수)
-차변: USER_WALLET (무료분 grossFree)            대변: PROMOTION_EXPENSE
-```
+회원 상품의 열려 있는 매출 행은 grossPaid·grossFree를 반환한다. 플랫폼 기간권은 미활성 또는 시작 전이면 해당 유료·무료 몫 전액, 활성 기간 중이면 남은 일수 비율로 각각 내림 계산한다. 사용 일수는 시작부터 지난 24시간 단위에 현재 시작한 하루를 포함한다. 종료 시각에 도달했거나 권리/선납 구간을 찾지 못하면 환불액이 0일 수 있다.
 
-원천세 환원은 적립된 예수금 부채를 차변으로 소거하므로 `[USER_WALLET / CREATOR_SETTLEMENT]` + `[WITHHOLDING_TAX_PAYABLE / PLATFORM_CASH]` 2쌍으로 발행한다(`AccountingLedgerService.java:958-973`). `CreatorEarning.status = REVERSED`로 변경.
+금액은 신청 때 견적을 기록하고 **승인 시점에 다시 계산**한다. 운영자 승인 기대 금액과 현재 계산이 다르면 MARKET_REFUND_AMOUNT_CHANGED로 거절한다. 총액 0은 MARKET_REFUND_NOTHING_REFUNDABLE이다. 신청액을 고정 지급 약속으로 표시하지 않는다.
 
-다음 정산 사이클에서 `CREATOR_RECEIVABLE`을 우선 차감하여 회수한다. `MarketplaceSettlementService.offsetCreatorReceivable(creatorId, availableNet)`이 정산 직전 호출되어 `REVERSED` 상태의 earning을 회수 대상으로 잡고, 가용 정산금에서 차감한 뒤 회수 완료된 행은 `PAID`로 전이된다.
+실행은 원결제 transactionId를 찾아 `WalletRefundCommand`에 유료·무료 분할을 전달한다. 포인트 반환·대상 매출 종결·원장·권리 회수·환불 결과 저장이 같은 명령의 트랜잭션에 들어간다. 실제 반환 대상에서 제외된 매출은 환불 보류만 해제한다. 전액 구매는 환불 상태로, 부분 구매는 해당 구성품 접근 회수로 처리한다. 활성 기간권의 선납 기간도 회수 정책을 적용한다.
 
-`CREATOR_RECEIVABLE_OFFSET` 분개로 회수:
+정산 전 매출의 환불 종결, 지급 후 미수금 및 후속 상계는 매출 귀속·정산 문서를 따른다. 판매자 지갑에서 즉시 돈을 빼서 구매자에게 보내는 것으로 설명하지 않는다. 이 기능은 포인트 환불이며 앱의 결제 회사 환불 언급만으로 외부 PG 환불 실행까지 증명할 수 없다.
 
-```
-차변: CREATOR_PAYABLE (다음 정산 크리에이터 지급액에서 회수)
-대변: CREATOR_RECEIVABLE
-```
+## 상태와 구매자·판매자 행동
 
-회수 흐름(구현):
-1. 월간 정산 시작 시 각 크리에이터별로 `offsetCreatorReceivable(creatorId, totalNet)` 호출
-2. `REVERSED` 상태 earning 목록 조회
-3. 가용 정산금이 미수금 전액을 충당하면 해당 earning은 `PAID`로 전이 + 회수 금액만큼 정산 지급액 감소
-4. 부분 회수는 본 라운드 미지원 — 전액 회수만. 부분 회수가 필요한 잔액은 다음 사이클로 이월
-5. 회수 분개 1행 발행 (`recordCreatorReceivableOffset`)
-6. 정산 지갑 입금 안내 메시지에 회수 금액 표시
-
-장기 미수(예: 60일 초과)는 운영자 알림 + 판매 중지 트리거.
-
-### 8.3 분쟁 서비스: `RefundDisputeService`
-
-- `createDispute(buyerUserId, refundId, param)`: `REJECTED` 상태 + 분쟁 기한 이내 + 운영자 거절 유지(분쟁 `UPHELD`) 없음 + 같은 환불에 열린 분쟁 없음 → `purchase_refund_dispute` INSERT → 환불 상태 `DISPUTED` → 카드 재잠금 → `CreatorEarning.status = REFUND_HELD` 복원. 분쟁 기한은 거절 후 7일이고, 운영자가 자료를 요청했으면 요청 시각 + 7일(`redispute_deadline_at`)이다. 처음 기한이 지났어도 새 기한을 쓴다. 거절 유지 뒤의 새 분쟁은 409 `DISPUTE_CASE_ALREADY_CLOSED`(4000003)로 거절한다.
-- `upholdRejection(operatorUserId, disputeId, note)`: 권한 검증 → dispute `UPHELD` → 환불 `REJECTED` 유지 → 카드 잠금 해제 → 양측 알림
-- `forceRefund(operatorUserId, disputeId, note)`: 권한 검증 → dispute `OVERTURNED` → 환불 `REFUNDED_BY_OPERATOR` → 환불 실행(8.2) → 양측 알림 → 판매자 패널티 지표 누적
-- `requestMoreEvidence(operatorUserId, disputeId, note)`: 권한 검증 → dispute `CLOSED` → 환불 `REJECTED` 로 되돌림 → 카드 잠금 해제 → 재분쟁 기한(`redispute_deadline_at`) = 요청 시각 + 7일 → 커밋 뒤 구매자에게 `REFUND_DISPUTE_EVIDENCE_REQUESTED` 알림(본문에 필요한 자료와 기한). 이 알림은 사용자가 끌 수 없다.
-
-### 8.4 락 정책
-
-- 환불 신청 시: `MarketPurchase` row lock (`SELECT ... FOR UPDATE`)
-- 환불 승인 시: `CreatorEarning` row lock. 같은 row를 월간 정산이 잡지 못하게 함.
-- 정산 배치 시: 환불 가능 기간 종료 + `is_locked = 0` + `status = PENDING`인 수익만 잡음.
-
-## 9. 클라이언트 화면
-
-### 9.1 신규 화면
-
-- `presentation/market/screens/refund_request_screen.dart` — 사유 입력 + 신청 시트
-- `presentation/market/screens/my_refunds_screen.dart` — 내 환불 요청 목록
-- `presentation/market/screens/incoming_refunds_screen.dart` — 판매자용 받은 환불 요청 목록
-- `presentation/market/screens/refund_detail_screen.dart` — 양쪽 공용 상세 화면 (역할에 따라 액션 분기)
-- `presentation/market/screens/dispute_create_screen.dart` — 구매자 분쟁 제기
-
-### 9.2 기존 화면 보강
-
-- `my_collection_screen.dart` — 카드에 "환불 신청" 버튼 + "환불 심사 중"·"분쟁 진행 중" 배지
-- `creator_stats_screen.dart` — 환불 요청 카운트 + 진입 링크
-- `community_app/lib/presentation/notification/screens/notification_list_screen.dart` — 환불 신청·결정·분쟁 알림 표시
-- `market_item_detail_screen.dart` — 환불 정책 안내 섹션 신설
-
-### 9.3 라우트
-
-`Routes`에 추가:
-- `marketRefundRequest = 'refund-request'`
-- `marketMyRefunds = 'my-refunds'`
-- `marketIncomingRefunds = 'incoming-refunds'`
-- `marketRefundDetail = ':refundId'`
-- `marketDisputeCreate = ':refundId/dispute'`
-
-### 9.4 운영자 UI
-
-운영자 웹의 `환불 분쟁` 목록과 상세 판정 화면이 구현되어 있다. 운영자는 거절 유지, 추가 자료 요청,
-강제 환불을 선택할 수 있다. 강제 환불은 별도의 임시 자금 경로를 만들지 않고 판매자 승인과 같은 환불·회계
-경로를 한 번만 호출한다. 돈을 움직이는 판정은 결제 관리 쓰기 권한이 있어야 한다.
-
-## 10. 알림 (Unit 12)
+| 상태·경로 | 현재 행동과 결과 |
+| --- | --- |
+| SELLER의 REQUESTED | 구매자 취소, 결정권자 승인·거절·자료 요청. 앱 판매자 버튼도 이 상태에서 표시 |
+| AWAITING_BUYER | 구매자 취소·추가 메모 제출. 서버 판매자 거절은 허용하지만 앱 판매자 조작부는 표시하지 않음 |
+| PLATFORM_QUEUE의 ESCALATED | 운영자 검토, 구매자 신청 취소 가능. 자동 승인·회원 판매자 판정·구매자 분쟁 없음 |
+| SELLER의 ESCALATED | 운영자 검토 대상. 서버는 결정권자의 승인도 허용하지만 현재 앱 승인 버튼은 REQUESTED에만 표시 |
+| REJECTED·CANCELED·EXPIRED | 구매 잠금과 대상 REFUND_HELD를 해제. 거절은 재신청 시각·분쟁 가능 여부를 별도로 확인 |
+| DISPUTED | 구매와 대상 매출을 다시 잠그고 운영자 판정 대기 |
+| REFUNDED | 판매자 승인으로 반환 완료 |
+| REFUNDED_BY_OPERATOR | 운영자·분쟁 강제 승인뿐 아니라 현재 AUTO 승인 결과도 이 상태. decisionSource로 AUTO/OPERATOR를 구분 |
+| APPROVED·FAILED | enum·잠금 모델에는 존재하지만 현재 승인 명령은 반환과 결과를 한 트랜잭션으로 완료. 모든 승인에서 반드시 거치는 저장 단계로 그리지 않음 |
 
-새 알림 타입 추가:
+## 자료 보완과 자동 처리
 
-- `REFUND_REQUESTED` — 판매자 수신
-- `REFUND_APPROVED` — 구매자 수신
-- `REFUND_AUTO_APPROVED` — 양측 수신
-- `REFUND_REJECTED` — 구매자 수신 (분쟁 가능 안내 포함)
-- `REFUND_EVIDENCE_REQUESTED` — 구매자 수신
-- `REFUND_EVIDENCE_RESPONDED` — 판매자 수신
-- `REFUND_ESCALATED` — 운영자 수신
-- `REFUND_FAILED` — 운영자 + 구매자 수신
-- `DISPUTE_CREATED` — 운영자 + 판매자 수신
-- `DISPUTE_UPHELD` — 구매자 수신
-- `DISPUTE_OVERTURNED` — 판매자 + 구매자 수신
-- `REFUND_DISPUTE_EVIDENCE_REQUESTED` — 구매자 수신 (운영자 자료 요청, 필요한 자료와 재분쟁 기한 포함, 끌 수 없음)
-- `CREATOR_RECEIVABLE_OFFSET` — 판매자 수신 (정산에서 회수 시)
+판매자의 자료 요청은 REQUESTED이며 awaitingBuyerAt이 없는 때 한 번 허용한다. AWAITING_BUYER로 바꾸고 자동 처리 기한을 비운다. 구매자 응답은 메모를 덧붙여 REQUESTED와 새 7일 기한을 설정하며 awaitingBuyerAt은 두 번째 요청을 막는 기록으로 남는다.
 
-각 알림은 딥링크로 해당 상세 화면 진입.
+자동 처리 작업은 매시 정각, 보완 무응답 만료 작업은 매시 30분에 실행하도록 선언되어 있다. 스케줄러 시간대를 별도로 지정하지 않아 정시의 실제 운영 시간대는 배포 설정 확인 대상이다. 판매자 신청의 7일 기한 경과 후 신청 시점 사용 흔적이 없으면 승인, 있으면 ESCALATED다. 플랫폼 큐는 이 자동 승인 경로에 들어가지 않는다. 보완 대기 7일 초과는 EXPIRED 처리한다. 각 건은 다시 상태·기한을 확인하며 한 건 실패가 나머지를 중단하지 않는다.
 
-## 11. 가이드 문서
+## 분쟁과 운영자 처리
 
-[F08-11 앱 구매 도움말](../../../../community_app/assets/guides/08_plan_market/F08-11_purchase.html)에 환불 섹션 추가. 본 PRD 구현 완료 후 가이드 갱신:
+구매자 분쟁은 SELLER의 REJECTED에 한한다. 기본 기한은 거절 결정+7일이며 별도 redisputeDeadlineAt이 있으면 그 기한을 쓴다. 같은 신청의 최종 거절 유지 UPHELD 또는 판정 되돌림 DECISION_REVERSED가 있으면 새 분쟁을 막고, OPEN 중복도 거절한다. 앱은 서버 canDispute와 disputeDeadlineAt을 사용한다.
 
-- 환불 가능 조건 (14일·중복 신청 제한·번들 단일 환불·사용 흔적 차단)
-- 환불 신청 → 판매자 심사 → 결과의 흐름
-- 자동 처리 정책 (미사용 7일 자동 승인, 사용 흔적 운영자 검토)
-- 거절 시 재신청 정책 (24시간 쿨다운, 새 증빙 필수, 총 2회)
-- 분쟁 제기 흐름 (거절 후 7일 이내)
-- 사유 분류별 처리 (단순 변심·하자·설명 불일치 차이)
+분쟁 입력은 reasonCategory·선택 reasonMemo·선택 evidenceFileIds다. 서버가 증빙 파일을 검증하고 참조를 연결한 뒤 환불 대상을 다시 잠근다. 이미 환불 종결된 대상이나 탈퇴 판매자의 지급 완료 대상은 분쟁 진입에서도 재검사한다. 상세의 통합 분쟁 이동은 REFUND_DISPUTE:{id}를 사용한다. 운영 판정·판정 되돌림의 전체 수명주기는 분쟁 도메인과 함께 관리한다.
 
-신규 가이드도 검토:
-- `F08-15_refund_dispute.html` — 분쟁 제기 가이드 (필요 시)
+관리자 서버는 현재 `community_api/admin-app` 모듈이다. `/admin/v1/manage/market-refund-escalations`에서 목록·상세·승인·거절을 제공한다. 조회는 MANAGE_DISPUTE 읽기, 승인은 MANAGE_DISPUTE와 MANAGE_PAYMENT, 거절은 MANAGE_DISPUTE 권한을 확인한다. 쓰기는 필수 멱등 키를 래퍼에서 검사한다. 운영자 대기열과 구매자가 제기한 분쟁을 같은 목록·상태 모델로 합치지 않는다.
 
-## 12. 권한·검증
+## 재시도와 화면 갱신
 
-- `JwtAuthorizationFilter` 통해 인증된 사용자만 접근
-- 환불 신청은 본인 구매에 한정 (`buyer_user_id == @AuthenticationPrincipal.userId`)
-- 승인·거절·자료 보완 요청은 판매자 결정 건의 저장된 판매자(`seller_user_id == @AuthenticationPrincipal.userId`)와, 번들 구매면 그 번들의 큐레이터(대표·공동)에 한정 (17.1)
-- 분쟁 처리는 운영자 권한 (`@PreAuthorize("hasRole('OPERATOR')")` 또는 admin API 토큰)
-- 자동 처리 스케줄러는 시스템 권한으로 실행
+판매자 승인만 회원 명령 MARKET_REFUND_SELLER_APPROVE와 필수 Idempotency-Key로 결박한다. 앱은 계정별 영속 의도 보관을 통해 같은 신청·빈 본문을 같은 키로 재시도한다. 성공·커밋된 결과를 다시 읽을 수 없음·서버 반영 가능 오류에는 받은 환불 목록과 상세를 갱신한다. 판매자 지갑 변경 알림은 발생시키지 않는다.
 
-## 13. 남은 위험과 검증 공백
+구매자 신청·취소·보완 및 판매자 거절·자료 요청은 이 승인 영수증 계약과 다르다. 신청 실패 뒤 무조건 같은 성공 응답을 돌려준다고 보장하지 않는다. 신청 성공은 내 환불 목록, 취소는 목록과 상세를 갱신한다. 보관함·지갑·만료 배너까지 모든 화면이 즉시 갱신된다고 확대하지 않는다. 알림은 영속 outbox 예약과 실제 단말 수신을 구분한다.
 
-- **실제 앱-서버 왕복 부재**: 환불 API, 앱 화면, 운영자 분쟁 화면은 각각 자동 검증이 있으나 구매자 신청부터
-  판매자 결정, 운영자 강제 환불까지 한 번에 잇는 모바일 통합 시나리오는 아직 직접 연결되어 있지 않다.
-- **자료 보완·자동 처리 전용 테스트 부족**: 자료 요청·구매자 응답·7일 자동 처리 코드는 있으나 해당 상태 전이를
-  직접 호출해 결과를 고정하는 표적 테스트는 현재 확인되지 않았다.
-- **사용 흔적 측정 정확도**: 다운로드 카운터·플랜 구매 ID 추적은 신규 컬럼이라 백필 데이터 없음. 본 PRD 시행 이전 구매에는 사용 흔적이 0으로 보일 수 있다. 운영 정책으로 별도 안내.
-- **자료 보완 요청 악용**: 판매자가 시간 끌기로 사용. 1회 제한과 7일 만료(`EXPIRED`)로 방어하지만 후속 모니터링 필요.
-- **회계 정합성**: 정산 후 환불의 미수금 회수 실패 케이스. 장기 미수 처리 정책이 본 PRD에 명시되어 있으나 (60일+ 알림) 운영 합의 필요.
-- **세무 보고**: `WITHHOLDING_TAX_PAYABLE` 환원 시 신고 변경. 재무·세무팀 합의.
-- **국제 사례**: 한국 전자상거래법 적용 여부. 법무 검토 필요.
-- **동시 환불 + 정산 경합**: 락 정책으로 방어하지만 부하 테스트 필요.
+## 요청과 응답
 
-### 13.1 돈 흐름 무결성 해소 (2026-06-06)
+기본 경로는 `/api/v1/market/refunds`다. 회원 창구의 현재 계약은 다음과 같다.
 
-- **이중환불 차단 (C5 해소)**: 환불 신규 신청 차단 상태 목록(`PURCHASE_REFUND_BLOCKING_STATUSES`, `PurchaseRefundService.java:81-89`)에 `REFUNDED`/`REFUNDED_BY_OPERATOR`(완료된 환불)를 포함해 1구매당 full refund 2회(환불 > 결제액)를 차단. 지갑층 누적환불 가드가 백스톱. 과거 완료 상태가 차단 조건에서 빠져 있던 결함 해소.
-- **환불 split 보존 + 회계-지갑 일치 (H1/H7 해소)**: 환불이 원결제 PointTransaction을 역참조(`resolveOriginalPointTransactionId` → `WalletRefundService.refundByTransaction`, `PurchaseRefundService.java:190-193`)해 유료/무료 split을 복원하며, 지갑 입금과 원장 환원이 같은 split 기준으로 일치(과거: wallet 전액 paid 입금 vs 원장 free 분리의 불일치) — 분해 컬럼 신설 없이 역참조로 해결.
-- **claw-back 부분회수 (H17 해소)**: 정산 후 환불의 `MarketplaceSettlementService.offsetCreatorReceivable`이 차기 net < owed인 경우에도 가능한 만큼 부분 회수하도록 변경(과거 `if applied>=owed`로 부분 net이면 REVERSED earning 영구 미회수=플랫폼 손실).
-- **무료분 정산 장부 (H3 해소)**: `MarketplaceSettlementService` 무료 매출 정산(freeCredit 지급)에 원장 분개를 기록(과거 무원장 → USER_WALLET 차변 < 실지급). 자세한 원칙은 [크리에이터 매출 귀속 보정의 유료·무료 분리정산](F08-15_creator-earning-coverage_prd.md#34a-유료무료-분리정산--creatorearning-split)에서 확인한다.
+| 요청 | 본문·응답 |
+| --- | --- |
+| POST 기본 경로 | purchaseId·purchaseSource·reasonCategory·선택 reasonMemo → 201 PurchaseRefundRequestVo |
+| POST /partial | purchaseId·selectedBundleItemIds·reasonCategory·선택 reasonMemo → 201 PurchaseRefundRequestVo |
+| GET /me 또는 /incoming | PagingParam 기반 page/size → Page<PurchaseRefundRequestVo>; 앱은 페이지 크기 20 |
+| GET /{refundId} | PurchaseRefundRequestVo |
+| DELETE /{refundId} | 취소 결과 PurchaseRefundRequestVo, 200 |
+| POST /{refundId}/respond | memo → PurchaseRefundRequestVo |
+| POST /{refundId}/approve | 필수 Idempotency-Key, 본문 없음 → PurchaseRefundRequestVo |
+| POST /{refundId}/reject | rejectionReason → PurchaseRefundRequestVo |
+| POST /{refundId}/request-evidence | 본문 없음 → PurchaseRefundRequestVo |
+| POST /{refundId}/dispute | reasonCategory·reasonMemo·evidenceFileIds → 201 PurchaseRefundDisputeVo |
 
-## 14. 구현 순서
+응답의 핵심은 refundId·purchaseId·purchaseSource·buyerUserId·nullable sellerUserId·deciderType·periodPassIncluded·refundScope·requestedAmount·nullable approvedAmount·status·attemptNo·각 처리 시각·canDispute·disputeDeadlineAt·activeDisputeId·disputeStatus·operatorDecision·decisionReversed·viewerIsDecider다. 앱은 저장된 판매자 번호만 비교하지 않고 viewerIsDecider로 결정권자를 표시한다.
 
-1. **F08-15 완료** (선행 차단)
-2. **재무·법무·운영 합의**: 환불 가능 기간 14일, 자동 처리 7일, 분쟁 7일, 신뢰점수 차감 규칙, 판매자 패널티 임계
-3. **마이그레이션**: `V1__init.sql`에 신규 2개 테이블 + 기존 3개 테이블 컬럼 추가 + 신규 회계 계정·트랜잭션 타입
-4. **백엔드 공통 커널**: `RefundRequestStatus`, 금액 계산, 지갑 환불 입금, 원장 reference
-5. **백엔드 환불 서비스**: `PurchaseRefundService` 전체 흐름
-6. **백엔드 분쟁 서비스**: `RefundDisputeService` 전체 흐름
-7. **회계 분개 메서드**: 정산 전/후 환불, `CREATOR_RECEIVABLE` 회수
-8. **스케줄러**: `RefundAutoProcessScheduler`, `AwaitingBuyerExpiryScheduler`
-9. **알림 fanout**: 12종 알림 타입 + 딥링크
-10. **백엔드 테스트**: 상태 전이·권한·잔액 정합성·정산 경합·번들 다중 크리에이터 환불
-11. **클라이언트**: 신규 5개 화면 + 기존 4개 보강 + 라우트 5개
-12. **가이드 갱신**: F08-11 환불 섹션
-13. **운영자 UI**: 환불 분쟁 목록·상세·판정 화면 연결 완료
-14. **모니터링**: 자동 처리 비율, 분쟁 비율, 미수금 잔액, 판매자 패널티 지표
+## 현재 제한과 확인 범위
 
-## 15. 잠정 결정값 (PO·재무·법무 최종 합의 전)
-
-다음은 codex 페어 리뷰 합의로 정한 잠정값이다. 코드에 박는 기본값이며 최종 합의 시 변경 가능.
-
-### 15.1 `CREATOR_RECEIVABLE` 장기 미수 처리
-
-- **30일** 초과: 운영자 알림 + 정산 보류 (모니터링 단계)
-- **60일** 초과: 판매 중지 트리거 (제재 단계, 운영자 수동 해제·이의 처리 경로 필수)
-- **90일** 초과: 법무·회계 write-off 검토
-
-### 15.2 판매자 패널티 임계값
-
-| 지표 | 사전 경고 | 판매 제한 후보 |
-|---|---|---|
-| 자동 승인 환불 비율 (최근 30일) | 환불 3건+ AND 자동승인율 15%+ | 환불 5건+ AND 자동승인율 25%+ |
-| 분쟁 패소 비율 (최근 30일) | 분쟁 2건+ AND 패소율 25%+ | 분쟁 3건+ AND 패소율 40%+ |
-
-최소 건수 조건은 표본 1건 100% 오탐을 막기 위함. 판매 제한은 영구가 아니라 "후보" 상태로, 운영자 확인 후 처리.
-
-### 15.3 신뢰점수 차감 가중치 (F11-05 연동)
-
-신뢰점수 최종 차감량(0~100점 척도) 기준:
-
-| 케이스 | 차감 |
-|---|---|
-| 판매자 거절 2회 연속 발생한 사용자 | **-2점** |
-| 운영자 악용 판정 분쟁 | **-5점** (신고 1건과 동급) |
-| 사용 직후 반복 환불 (1주 내 3회 이상) | **-8점** |
-
-근거: 현재 `PenaltyScoreCalculator`에서 확인된 신고 1건이 penalty 20 → 최종 점수 약 -5점. 운영자 악용 판정을 이와 동급으로 둠. 환불 악용용 penalty event ledger를 별도 도입한다.
-
-### 15.4 한국 전자상거래법 잠정 적용
-
-- 단순 변심 + 사용 흔적 없음: **14일 환불 가능** (현 PRD 5.1)
-- 단순 변심 + 사용 흔적 있음: **자동 승인 금지, 판매자/운영자 심사**
-- 파일 하자·설명과 다름: **공급일부터 3개월 이내**, **안 날 또는 알 수 있었던 날부터 30일 이내** 신청 가능
-
-근거: 전자상거래법 제17조 제1항은 기본 7일 청약철회. 더 긴 기간은 약정 가능. 14일은 유리한 약정으로 충돌 없음. 제17조 제3항은 하자·표시광고 불일치에 3개월/30일 별도 적용.
-
-**위험도 높음**: 디지털 콘텐츠 청약철회 제한 가능성. 법무 확정 전까지 사용 흔적 있는 단순 변심은 자동 거절하지 말고 운영자 검토로 보낸다.
-
-### 15.5 보너스 포인트 회계
-
-번들 구매에는 덤(보너스) 포인트가 없어(차수 10 에서 걷음) 환불이 되돌릴 덤도, 그 회계도 없다.
-
-### 15.6 기존 데이터 백필
-
-(a) 백필 포기. 과거 `MARKET_BUNDLE`·`PLAN_DIRECT` 구매는 매출 귀속 없음 상태로 유지. 거래 메모에 "백필 이전 구매" 플래그 남김 (F08-15 3.6 결정).
-
-## 16. 시나리오 기준 수용 조건
-
-아래 10개는 이 기능의 제품 시나리오다. 단순히 메서드가 존재하는지를 세지 않고, 사용자가 시작한 행동이
-권한·상태·지갑·매출 귀속·알림까지 일관되게 끝나는지를 기준으로 한다. `직접 검증 없음`은 기능이 없다는
-뜻이 아니라, 해당 시나리오를 하나로 묶어 자동 실행한 근거를 아직 찾지 못했다는 뜻이다.
-
-| 번호 | 시작 상황과 사용자 행동 | 완료로 인정하는 결과 | 현재 근거 |
-|---:|---|---|---|
-| 1 | 구매자가 14일 안의 미사용 아이템·플랜에 전액 환불을 신청한다. | 신청이 `REQUESTED`로 저장되고 구매 권한과 매출 귀속이 잠기며 판매자에게 알림을 예약한다. | 서버 단위 테스트 있음 |
-| 2 | 14일이 지난 단순 변심, 사용한 상품의 단순 변심, 이미 전액 환불된 구매에 다시 신청한다. | 돈과 권한을 바꾸지 않고 거절한다. 파일 하자·설명 불일치는 사용 흔적 예외로 심사에 들어간다. | 서버 단위 테스트 있음 |
-| 3 | 번들에서 아직 환불하지 않은 구성품 일부 또는 전체를 선택한다. | 일부 선택은 해당 구매 시점 구성품만 잠그고, 전체 선택은 전액 환불로 합쳐진다. 이미 환불한 구성품은 다시 선택할 수 없다. | 서버 단위 테스트 있음 |
-| 4 | 판매자가 환불을 승인한다. | 원결제의 유료·무료 포인트 구성이 그대로 복원되고, 해당 이용 권한을 회수하며, 정산 전·후에 맞는 회계 상태로 한 번만 전이한다. | 서버 단위 테스트와 실제 데이터베이스 반영 통합 테스트 있음 |
-| 5 | 판매자가 거절하거나 구매자가 결정 전에 취소한 뒤 다시 신청한다. | 거절은 사용 제한을 풀고 24시간 뒤 한 번만 재신청하게 하며, 구매자 취소는 시도 횟수를 소모하지 않는다. | 취소·재신청 잠금 테스트 있음. 판매자 거절 전체 흐름은 직접 검증 없음 |
-| 6 | 판매자가 추가 자료를 한 번 요청하고 구매자가 보완한다. | 요청 중 자동 처리 시계가 멈추고, 응답 후 `REQUESTED`로 돌아가 새 7일 기한을 적용한다. 무응답 만료 시 사용 제한을 푼다. | 코드 구현 확인. 상태 전이 직접 검증 없음 |
-| 7 | 판매자가 7일 동안 응답하지 않는다. | 미사용 구매는 자동 승인하고, 사용 흔적이 있거나 판매자를 특정할 수 없는 구매는 운영자 검토로 보낸다. | 코드 구현 확인. 스케줄러 직접 검증 없음 |
-| 8 | 구매자가 거절 뒤 7일 안에 증빙과 함께 분쟁을 만들고 운영자가 판정한다. | 거절 유지·추가 자료 요청·강제 환불 중 하나로 종결되며, 강제 환불은 기존 환불 경로를 정확히 한 번 호출하고 판정자 감사 기록을 남긴다. | 서버 단위 테스트, 실제 데이터베이스 반영 통합 테스트, 관리자 웹 E2E 있음 |
-| 9 | 같은 사용자가 임계 직전에 두 환불을 동시에 신청하거나 두 사용자가 서로의 상품에 동시에 신청한다. | 월간 한도를 우회하지 못하고, 상호 잠금 교착으로 어느 한쪽 신청이 유실되지 않는다. | 실제 데이터베이스 반영 동시성 테스트 있음 |
-| 10 | 구매자 앱에서 신청·목록·상세·취소·자료 응답·분쟁으로 이동하고 판매자 앱에서 받은 요청을 처리한다. | 필수 식별자가 없는 라우트 오류 없이 서버 결과와 같은 상태·가능 행동을 보여 준다. | 앱 계약·위젯 테스트 일부 있음. 모바일 앱-서버 통합 E2E 없음 |
-
-따라서 코드 구현은 대부분 끝났지만, 제품 시나리오 관점에서 바로 추가할 검증은 5번 판매자 거절, 6번 자료
-보완, 7번 자동 처리, 10번 모바일 왕복이다. 이 네 묶음을 통과하기 전에는 “환불 전 과정 E2E 완료”라고
-표현하지 않는다.
-
-## 17. MARKET_BUNDLE 환불 정책
-
-번들은 N개 아이템이 N명의 원작자에게 정가 비례 배분되므로 환불 권한과 결과 전파가 단일 크리에이터와 다르다. 본 라운드에서 다음 잠정 정책으로 구현한다.
-
-### 17.1 권한자 결정 (`resolveSellerUserId`)
-
-회원 상품만 든 구매(owner_mix=USER)가 판매자 결정 건이 되고, 신청 때 판매자 한 명을 저장한다. 플랫폼 상품이 섞인 구매는 운영자 큐로 간다.
-
-1. 번들의 대표 큐레이터(`bundle_curator` 의 LEAD 행, 번들당 하나)가 탈퇴(TRYEXIT·EXIT)하지 않았으면 그 사람을 판매자로 한다.
-2. 대표가 없거나 탈퇴했으면 첫 번째 `CreatorEarning.creator_user_id` (= F08-15 정가 비례 배분 결과의 첫 행)를 판매자로 한다. 그 주인이 탈퇴했어도 그대로 둔다.
-3. 대표는 관리자가 번들을 만들 때 앉히고, 관리자가 바꾸면 옛 대표는 공동(CO)으로 내려간다(7.2a). 채우는 곳 없던 `bundle.curator_user_id` 는 차수 10 에서 걷어 대표의 정본은 LEAD 행 하나다.
-
-승인/거절/자료 보완 요청 권한은 저장된 판매자와 그 번들의 큐레이터(대표·공동) 모두에게 있다.
-
-### 17.2 환불 실행
-
-- `purchase_refund_request`는 단일 행만 만든다.
-- 승인 시 `creator_earning.source_type='MARKET_BUNDLE' AND source_id=marketPurchaseId` 행 전체를 일괄 상태 전이한다.
-- 회계 분개도 일괄 처리: 각 `CreatorEarning` 행의 `grossAmount`만큼 `AccountingLedgerService.recordMarketplaceRefundBeforeSettlement` 또는 `recordMarketplaceRefundAfterSettlement`를 N번 호출한다 (정산 전/후 분기는 각 earning의 status로 판정).
-
-### 17.3 알림
-
-- 단일 `sellerUserId`에는 항상 단건 알림 (기존 흐름과 동일).
-- 추가로 `notifyAllBundleCreators(refund, type, title, message)` 헬퍼로 모든 `CreatorEarning.creatorUserId`에게 같은 타입의 알림을 fanout한다. `sellerUserId`와 `buyerUserId`는 중복 회피.
-- 적용 메서드: `requestRefund` (`REFUND_REQUESTED`/`REFUND_ESCALATED`), `approveRefund` (`REFUND_APPROVED`), `rejectRefund` (`REFUND_REJECTED`).
-
-### 17.4 후속 결정 필요
-
-- **원작자 거절권**: 큐레이터가 승인한 환불을 원작자가 이의 제기할 수 있는지는 미정. 본 라운드는 큐레이터/대표 판매자 결정만 따른다.
-- **fanout 부하**: N=100+ 큰 번들 환불 시 알림 fanout 비용. 추후 큐 비동기 처리 검토.
-
-## 18. 명시되지 않은 결정 사항 (후속)
-
-- 환불 사유 분류 한글 라벨 확정
-- 분쟁 증빙 파일의 운영상 허용 형식·개별 용량 확정. 앱과 서버는 현재 개별 `evidenceFileIds`를 최대 5개 받는다.
-- 판매자 패널티 임계값 (자동 승인 비율 X%, 분쟁 패소 비율 Y%)
-- 신뢰점수 차감 가중치 정책 (F11-05와 연동)
-- `CREATOR_RECEIVABLE` 장기 미수 처리 시점 (60일이 적정한가)
-- 정기 구독·이벤트 사전결제·기부 환불을 본 PRD 패턴으로 통일하는 마스터 플랜
+| 구분 | 현재 경계 |
+| --- | --- |
+| Gap | 서버의 판매자 ESCALATED 승인·AWAITING_BUYER 거절과 앱 버튼 노출 범위가 다르다 |
+| Gap | 일반 환불 신청에는 승인과 같은 영수증 키가 없고, 취소도 신청 횟수에 포함된다. 새 증빙 필수·취소 횟수 면제는 현재 기능이 아니다 |
+| 정책 보류 | 과거 문서의 자동 판매자 패널티 임계값·신뢰점수 가중치·장기 미수금 처리 시점·타 도메인 환불 통일은 이 코드 대조로 확정하지 않았다. 구현된 자동 제재나 실행할 신규 SQL로 취급하지 않는다 |
+| 검증 범위 | 소스와 기존 플랫폼 큐·부분 환불 복귀 시험 단언을 열람했다. 새 DB 환불·외부 결제·푸시 수신·스케줄러 실행·앱-서버 통합 시험은 수행하지 않았다 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 입구·반환:** 보관함/플랜 구매에서 신청하고 성공 시 원래 화면으로 돌아간다. 부분 선택을 거쳐도 사유·메모와 복귀 결과를 보존한다.
+- **AC-02 자격:** 본인 ACTIVE·잠금·매출·회원 대상 14일/사용 조건을 서버에서 검사하며 하자·설명 불일치 예외를 구분한다.
+- **AC-03 결정권:** ownerMix에 따른 SELLER/PLATFORM_QUEUE와 nullable 판매자·viewerIsDecider를 사용한다. 플랫폼 큐에 판매자·분쟁 버튼을 열지 않는 기존 시험 단언을 읽었다.
+- **AC-04 재신청:** 횟수 집계·취소 포함·24시간·판매자 탈퇴의 제한적 구제를 코드와 일치시킨다. 미구현 새 증빙 강제를 제거한다.
+- **AC-05 부분 대상:** 구매 당시 구성품과 미종결 매출을 확인하고 전체 선택은 FULL로 합친다. 사용 흔적 범위와 구매 전체 잠금을 구분한다.
+- **AC-06 금액:** 기간권의 일수별 유료/무료 내림과 승인 시 재계산을 반영한다. 신청액과 실제 승인액을 구분하는 기존 시험 단언을 읽었다.
+- **AC-07 원자 반영:** 원결제 기반 포인트 반환·매출 종결·원장·권리 회수·결과 저장을 같은 명령에서 처리한다. 실제 실행 통과는 주장하지 않는다.
+- **AC-08 상태:** 판매자·자동·운영자 완료 상태와 decisionSource를 구분한다. APPROVED/FAILED를 필수 중간 저장 단계로 그리지 않는다.
+- **AC-09 보완·자동:** 보완 한 번, 새 7일 기한, 무응답 만료, 사용 흔적별 승인/에스컬레이션과 플랫폼 큐 제외를 대조한다.
+- **AC-10 분쟁:** 서버 기한·최종 판정·재검토 차단·대상 재검사를 따른다. canDispute를 클라이언트의 날짜 추측으로 대체하지 않는다.
+- **AC-11 승인 복구:** 영속 승인 키와 결과 불명 뒤 목록·상세 갱신을 구분하고 다른 환불 명령에 같은 보장을 확대하지 않는다.
+- **AC-12 운영 경계:** 관리자 모듈·권한·멱등 키와 outbox 예약을 기록하며 실제 돈 이동·단말 전달·법적 검토 완료로 표시하지 않는다.
+
+위 12개는 문서 수용 항목이며 새 시험 통과 수가 아니다.

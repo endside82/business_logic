@@ -298,7 +298,8 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -353,7 +354,9 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122",
+        "plan_market_domain_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2324,9 +2327,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "90fa3ac598ff90161ab05dcfc88829ec8bc002af463bd93a3a22cbc0a11e899b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_market_domain_20261122"
+      ],
+      "reviewedSha256": "cb201e6ad96ea6c4ffb14855d5cd6955b6322c4ed12ff5524aa0d690bc3409bc"
     },
     {
       "path": "docs/domains/09-dating.html",
@@ -3635,9 +3641,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5f75c5f4ce12fe117276e2b3308257babac45a06a87c7fa9c1dd854ea3eabb2d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "purchase_refund_20261122"
+      ],
+      "reviewedSha256": "a934be8e34da602a71e5763b49994cace251e9b42160a796eaa6859c500d0444"
     },
     {
       "path": "docs/features/F08-15.html",
@@ -5058,7 +5067,8 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5151,7 +5161,8 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5268,7 +5279,8 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5468,10 +5480,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "f272ce715a8af5a7be703ca67e45b57c6497a6fc8a8df540697f72f458a686a9",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_market_domain_20261122"
+      ],
+      "reviewedSha256": "a45b1a19d4a1e276458bc5a6cbb45eeca97dc3ace089b57fbccb823dae090fcb"
     },
     {
       "path": "prd/01_domain_prds/09_프라이빗_데이팅_prd.md",
@@ -6791,10 +6805,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "a3ebeb8a430a92c947ae15d17e533d4858dd5b353c4c3aaf8ce91f6140d234d6",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "purchase_refund_20261122"
+      ],
+      "reviewedSha256": "ef4baa7802a7af6aa7fe5549a95a359a4d2be024110d9b10de0a011f33cd6058"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
@@ -8093,7 +8109,8 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8338,7 +8355,8 @@
         "creator_earning_20261122",
         "my_collection_20261122",
         "plan_event_review_20261122",
-        "block_editor_20261122"
+        "block_editor_20261122",
+        "purchase_refund_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -11976,9 +11994,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fbcdc603be4e0208822944223ce3295ad97f5e8b255f6f96af243d4d0c8cdc9f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_market_domain_20261122"
+      ],
+      "reviewedSha256": "f95325c70769ab7141dde824bad30366b44650c9341952b1d35727f35bd121cb"
     },
     {
       "path": "units/08_plan_market/F08-01_my-plan-list/backend.md",
@@ -33540,6 +33561,306 @@
         "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
         "groupDigests": "35 source/canonical digests; 3 retained HTML IDs",
         "derivedDocuments": "6 documents; shared batch verified 6 paths, 33 relative links/anchors and 4 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "c3ccc9cc48b5b627db538711f548739961c7ecca"
+      }
+    },
+    "purchase_refund_20261122": {
+      "kind": "source_review",
+      "scope": "F08-14 기존 PRD·HTML: 신청/부분/상태/큐/기간권/원자반환/분쟁/승인키/앱복귀·기존선택단언 대조. 제품실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/PurchaseRefundController.java",
+          "sha256": "c422cab39c0bc18635ba654eb61fae3b053764fb298222c076ebfd6b43abfad1",
+          "reviewScope": "28–98: MARKET safetyExit·신청/부분/취소/보완/분쟁·Page 조회·정확 경로/응답"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/SellerRefundController.java",
+          "sha256": "79feafb2aa98efe8a015d43659df82935103f279a8403ddb886aa582db2b1ae7",
+          "reviewScope": "24–79: 판매자 결정 창구·승인 필수 Idempotency-Key와 참조 영수증·Page incoming"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PurchaseRefundService.java",
+          "sha256": "66dbe226fe64d67aedce31c2a8211e605658ad7229a760da01831498407373ef",
+          "reviewScope": "72–154,162–225: 입력 모델·명령 위임·응답·소유자별 outbox 예약·승인 재생"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/RefundPlan.java",
+          "sha256": "8664992825ad077d816e5aeb5b0c9054c8427d836b8eeff2f84d848fcab4eb53",
+          "reviewScope": "38–180: 구성품별 회원/플랫폼 금액·권리·환불 제외·기간권 견적"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PeriodPassRefundCalculator.java",
+          "sha256": "31696969c0bcac35ce6f674852984deae298a5cb40abaf44c732112f37b22275",
+          "reviewScope": "26–90: 비활성/시작전/종료·24시간 현재일 포함·유료/무료 독립 내림"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PurchaseRefundRequestRetrier.java",
+          "sha256": "f84ca3dd4780af327bafa540e025fba70c49b38430de03e30b88bccea1d549e2",
+          "reviewScope": "51–123: 구매자 직렬화·MySQL1213 희생에만 최대3회 시도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/PurchaseRefundRequestRepository.java",
+          "sha256": "0c42a901a87cecd2deea85cd95fb0022f4a25bc0ef03a0170fcf5305968b554b",
+          "reviewScope": "44–57: 구매자/구매 신청 횟수는 CANCELED 제외 필터가 없는 파생 count"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/PurchaseRefundAutoProcessWorker.java",
+          "sha256": "3e9965facec9df6b3968629f22e03ffd20001d678c90d200cb22e3883b63d043",
+          "reviewScope": "45–86: 경과 REQUESTED 승인/에스컬레이션·보완 만료·건별 실패 격리"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/scheduler/RefundAutoProcessScheduler.java",
+          "sha256": "c4232bb5b520fff75ddb21a7b0e592ae6ddde1480c7e87b8ddcc5ee128105f50",
+          "reviewScope": "31–81: 정각/30분 cron·보완7일·분산잠금·시간대 미지정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/model/PurchaseRefundRequest.java",
+          "sha256": "77b6395533ee0079756a9c37e3b177f57974b273ddcf529e940242aa5c22789a",
+          "reviewScope": "164–190: 분쟁 기한 override·큐 제외·기한 포함 경계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/RefundDisputeService.java",
+          "sha256": "66c9e0223feeb636fd922a309cdc6bea1f06697e0d0402201e860d7fc73c105d",
+          "reviewScope": "100–195: 본인/SELLER/REJECTED·최종판정/재검토/OPEN 중복 차단·파일 검증·환불 재잠금"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/RefundDisputeStatus.java",
+          "sha256": "5419c568c1e54439461b1f203b4db4a1a1dbe637000686a29492c69266b2ed8d",
+          "reviewScope": "9–113: 5상태·UPHELD 최종차단·DECISION_REVERSED 재검토차단"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/RefundStatus.java",
+          "sha256": "aab40283425241df3806f3a5c41e5a40a9433f4e6de5f211c138d4902aead872",
+          "reviewScope": "23–73: 11상태·열림/잠금/종결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/RefundReasonCategory.java",
+          "sha256": "ce43180229a10767811fc78a5c81454a97e78fbf3737ea4883a4e3174ea600e7",
+          "reviewScope": "6–24: 5사유와 FILE_DEFECT/NOT_AS_DESCRIBED 예외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/vo/PurchaseRefundRequestVo.java",
+          "sha256": "86203b83135932fccaf899c7f7d1647d40f7253ca7748de1862918d8636076fd",
+          "reviewScope": "18–64: nullable 판매자/승인금액·decider/기간권·분쟁/결정권 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/PurchaseRefundCreateParam.java",
+          "sha256": "9c4ebf41554fea2b0e4e8a10ea740f750a3d3deeb3d178bb737a3d69a4e23687",
+          "reviewScope": "13–22: 구매ID/source/reason/memo"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/PurchaseRefundPartialCreateParam.java",
+          "sha256": "00679136fd3a892f1b3eb47703eeacd35f43b841e0b6df1a756e96bb37d24db1",
+          "reviewScope": "14–23: 구매ID/선택bundleItemIds/reason/memo"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/param/PurchaseRefundDisputeCreateParam.java",
+          "sha256": "5f3a940771d3c1a617f550bdd3ef59c9970c7b819738c6fb5c5d07730b696f9b",
+          "reviewScope": "14–32: reason/memo/evidenceFileIds"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/payment/controller/ManageMarketRefundEscalationController.java",
+          "sha256": "3e277763a894d224115b0a650d7fea048715931cfacc39683bfef60a88413fea",
+          "reviewScope": "30–90: 현재 admin-app·목록/상세/승인/거절·권한·wrapRequired 키"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/purchase_refund_provider.dart",
+          "sha256": "2f7f73fa3714eb6e76d200c5ec653d7bf6b61e5344f7c5362a54e4aea1768bb2",
+          "reviewScope": "20–188: 두 목록20개·상세 구독·신청/취소 갱신·판매자 승인 영속키·결과불명 재조회"
+        },
+        {
+          "path": "community_app/lib/data/models/payment/purchase_refund_param.dart",
+          "sha256": "4698b8a97504c1807c62c0a7abee4270999f3c52f74f4a65f3190512a73c7a39",
+          "reviewScope": "9–89: 현재 앱 요청 모델·enum 변환"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/refund_request_screen.dart",
+          "sha256": "901e1d32bd5d248548726de89b521d36434449a9cc6191cb6191e54cc5179f57",
+          "reviewScope": "45–171: 기본사유/메모·부분분기·실패 입력보존·성공 반환·선택 경로 인자"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/refund_partial_select_screen.dart",
+          "sha256": "40a5b9cdbe8657761129ae69e53fb6afe454b18f17272140ed3fb902f65556ec",
+          "reviewScope": "65–172: 선택/전체승격·purchaseId별 보관함·legacy 구성 없으면 전체만·결과 복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/refund_detail_screen.dart",
+          "sha256": "90f6c48b3df97d03c04aa746a8537bbf29267d4574e80fe2a2faee990c81fccc",
+          "reviewScope": "56–83,431–515,602–632: buyer/viewerIsDecider·상태별버튼·승인확인·결과안내"
+        },
+        {
+          "path": "community_app/test/presentation/market/refund_platform_queue_test.dart",
+          "sha256": "3460d7e98b6316ded99858f5641c758b2ca952691442f2e16a40001e4658bcae",
+          "reviewScope": "282–335,692–727: 플랫폼큐 버튼/금액/기한·보관함↔부분환불 원경로 복귀 단언 열람; 실행하지 않음"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/MarketRefundCommand.java",
+          "sha256": "81ffa7c4ef777912d10dc4ddd43ecf997a1c5ceef10f5c3fecf77640e4177f2b",
+          "reviewScope": "115–134,219–367,385–517,699–882,956–1003,1152–1346: 자격/기간/시도/큐/부분·명령 트랜잭션·원결제/분할·승인 재계산·매출/권리/최종상태·허용 행동·보완/자동/분쟁 재검사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/EarningTransitions.java",
+          "sha256": "7083601f1ec99cdd4cda3d0c24d6f9f7c143678ec0898eacaddeaa720dbdfcce",
+          "reviewScope": "creator_earning_20261122 동일 SHA: 기존 매출 환불 보류/종결/미수금 보존 근거 재사용"
+        }
+      ],
+      "reuses": [
+        "creator_earning_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
+          "sha256": "ef4baa7802a7af6aa7fe5549a95a359a4d2be024110d9b10de0a011f33cd6058"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-14.html": [
+          "sidebar",
+          "launch-strip",
+          "money-retry-current",
+          "seller-refund-obligations",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "옛 community_admin_api와 SQL 신규작성 계획을 현재 모듈·계약으로 교체",
+        "취소 횟수 면제·새 증빙 강제·모든 승인 APPROVED→REFUNDED 도식 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "취소 신청도 횟수에 포함되고 AUTO 완료도 REFUNDED_BY_OPERATOR다. 기간권 승인액은 재계산한다.",
+          "disposition": "현재 코드대로 교정"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "판매자 서버 허용 상태와 앱 버튼 범위가 다르며 구매자 신청에는 승인 영수증 키가 없다.",
+          "disposition": "차이와 복구 한계 명시"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "28 source/canonical digests; 5 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 5 paths, 67 relative links/anchors and 1 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "c3ccc9cc48b5b627db538711f548739961c7ecca"
+      }
+    },
+    "plan_market_domain_20261122": {
+      "kind": "canonical_rollup",
+      "scope": "현재 F08-01~15의 검토 해시를 재사용한 영역 PRD·HTML·로컬 개요. 추가 제품 실행·소스 재조사 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "block_editor_20261122",
+        "creator_earning_20261122",
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_detail_20261122",
+        "market_management_20261122",
+        "market_purchase_20261122",
+        "market_search_20261122",
+        "my_collection_20261122",
+        "plan_detail_20261122",
+        "plan_event_review_20261122",
+        "plan_list_20261122",
+        "plan_publish_20261122",
+        "plan_reorder_20261122",
+        "purchase_refund_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md",
+          "sha256": "940c0c4f53537cb3740e07c60f0904ba3efb89888e77d88894b7b0a579a50ad2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
+          "sha256": "beec9dcec88e7b8e3203ee97aec5837a85bd2c6c7a575c5cba17bf781baa6e10"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-03_block-editor_prd.md",
+          "sha256": "718ab989540e92a724dfabd3ee48cc94d326b016caee20816bed4c8499a16a8b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
+          "sha256": "a2e31298323349d9ee548516ea9150fc1eafe13262e38606fca9b5455ee3ff59"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
+          "sha256": "d4a7be815eb9c495f918d097a5dd74c25746dc9926100443b956ca989bfe8fba"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
+          "sha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
+          "sha256": "619393746c996dc2b5405c9ce2466f3955290177372c0f1187669ea040d06c76"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
+          "sha256": "7bf30193ce3224646b49cabfcedefde453e40b35e95b2d4c87c2181b249a8a95"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
+          "sha256": "d0f6aaf60f93dd7fa81706092151bbee900a18b3c4bb6d6a2c5631855a38bf81"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
+          "sha256": "a8bd6671fd09fa507ce6b4a30980c1d24a8dad28a1c8ca45961bb94fcf8f2e80"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
+          "sha256": "40ab1e495a89faaf5cf7ce02d9576396ba9c3fe4231dfac9df68c2e2e8a764db"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-12_my-collection_prd.md",
+          "sha256": "d588dd1408cce5e3086d01618f05989766dabc75a03fc25ca4b81a29387f1fa9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md",
+          "sha256": "14b9938bc27e32ddf545deba7e171c18d7eec0a6fb844a2a6262aeea03ae0cd1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
+          "sha256": "ef4baa7802a7af6aa7fe5549a95a359a4d2be024110d9b10de0a011f33cd6058"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
+          "sha256": "2b336ec6c5bab3e6250baeca0bfe67509e5bded619d21e10b284e6644652e344"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/08_플랜_마켓_prd.md",
+          "sha256": "a45b1a19d4a1e276458bc5a6cbb45eeca97dc3ace089b57fbccb823dae090fcb"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/08-plan-market.html": [
+          "sidebar",
+          "content-photos",
+          "current-plan-use",
+          "operator-publication-block",
+          "launch-strip"
+        ]
+      },
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "16 source/canonical digests; 5 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 5 paths, 67 relative links/anchors and 1 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; selected existing assertions read"
