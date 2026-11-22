@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>10월 23일 이후 변경 추적 — community 제품 문서</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css"><link rel="stylesheet" href="../assets/styles.css"></head>
 <body data-document-kind="history" data-base="../"><div class="layout"><aside class="sidebar" id="sidebar"></aside><main>
+      <section id="current-reading-guide">
+        <h1>2026년 10월 변경 추적과 현재 문서 읽기</h1>
+        <p><strong>2026년 11월 23일 문서 정리.</strong> 이 페이지의 비교 기간은 2026년 10월 23일 기준점부터 10월 26일 당시 저장소 끝점까지다. 아래 원문의 ‘현재’, ‘main’, 커밋 수와 검사 결과는 그 기간의 기록이며 오늘의 소스·배포·시험 통과를 뜻하지 않는다.</p>
+        <p>현재 기능 계약과 남은 차이는 <a href="feature-status.html">기능별 현재 계약과 검증 범위</a>에서, 공개 설정·배포 근거와 미확인은 <a href="launch-status.html">출시 상태와 근거</a>에서 확인한다. 문서를 소스와 대조했다는 사실과 제품을 실행해 통과했다는 사실은 <a href="completion-criteria.html#evidence">버전·환경·결과·승인 기록</a>의 기준으로 구분한다.</p>
+        <p>원문에 등장하는 별도 <code>community_admin_api</code> 저장소는 당시 비교 대상이다. 현재 관리자 API는 <code>community_api/admin-app</code> 모듈이며, 옛 저장소를 현재 수정 대상이나 실행 서버로 안내하지 않는다.</p>
+        <p>후속 문서 변경은 <a href="../overview/changelog.html">변경 이력</a>, 현재 남은 업무는 <a href="../index.html">작업 현황</a>에서 이어서 읽는다. 아래 기록은 추적 근거로 보존하며 다시 실행하거나 현재 결과로 재분류하지 않았다.</p>
+      </section>
+      <details class="historical-record" id="historical-comparison-record">
+        <summary>2026년 10월 23일부터 10월 26일까지 비교한 원문 기록</summary>
+        <div id="historical-comparison-body">
 <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>검증 자료</div><h1>2026년 10월 23일 이후 변경 추적</h1><p class="lede">이전 문서가 대조한 소스부터 10월 26일 현재 main까지 제품 커밋 365개를 추적했습니다. 현황 요약에 그쳤던 앞선 갱신을 보완해 기능 본문·횡단 정책·출시 상태를 고쳤습니다.</p></header>
 <section id="range"><h2>비교 시작점과 끝점</h2><p>시작점은 business_logic <code>79446c8</code>의 공개 스냅샷(2026-10-23 01:53:39 +09:00)입니다. 파일 수정 시각이나 날짜 검색으로 범위를 자르지 않고 저장소별 기준 커밋의 다음 커밋부터 비교했습니다. 아래 다섯 저장소는 모두 기준점이 현재 main의 조상임을 확인했습니다.</p><div class="table-wrap"><table><thead><tr><th>저장소</th><th>시작 커밋</th><th>현재 main</th><th>후속 커밋</th><th>최종 차이 파일</th></tr>
 </thead><tbody><tr><td>community_api</td><td><code>8eca28ff4</code></td><td><code>3246c693a</code></td><td>158</td><td>1446</td></tr>
@@ -409,4 +419,6 @@
 </tbody></table></div></details>
 </section>
 <section id="remaining"><h2>문서 반영 뒤에도 남은 확인</h2><p>H-525~H-527은 사용자 결정과 구현 결과를 반영했습니다. H-531의 실서버 앱 통합 11개 파일, 관리자 웹 두 창 손 검사, 배포 리허설 두 건은 남아 있습니다. 이번 갱신에서 제품 자동 시험·실제 PG/은행·실기기·푸시·운영 배포를 수행하지 않았습니다.</p><p>기존 제품 시험 실패와 다른 세션의 공유 원천 문서 문제도 이번 변경으로 종결하지 않습니다. <a href="../qa/launch-status.html#validation-current">현재 검사 기록과 남은 실패</a>와 <a href="../index.html#view-work">전체 추적 항목</a>을 따릅니다.</p></section>
-<footer class="page-foot"><a href="../overview/changelog.html">주요 변경 기록</a> · <a href="launch-status.html">현재 출시 현황</a></footer></main></div><script src="../assets/sidebar.js"></script><script src="../assets/app.js"></script></body></html>
+<footer class="page-foot"><a href="../overview/changelog.html">주요 변경 기록</a> · <a href="launch-status.html">현재 출시 현황</a></footer></div>
+      </details>
+    </main></div><script src="../assets/sidebar.js"></script><script src="../assets/app.js"></script></body></html>

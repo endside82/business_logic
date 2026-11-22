@@ -44,3 +44,9 @@ community는 관심사에 맞는 모임을 찾고 참여하며 클럽 활동과 
 기능 상세는 `prd/`, 사이트 산출물은 `docs/`, 기획자용 읽기 자료는 `planner_onboarding/`에 있다. 현황판은 바깥 문서 저장소의 현재 할 일·작업 목록에서 생성하며 HTML에서 별도 잔여 목록을 만들지 않는다.
 
 로컬 `units/`와 일부 `verification/` 문서는 Git 기본 제외 대상이다. 새 체크아웃에 없다는 이유로 기능이 없다고 판단하지 않으며, 반대로 로컬 자료를 수정하고 커밋했다고 그 자료까지 전달됐다고 보지 않는다. 파일 반영 여부는 별도로 확인한다.
+
+## 이번 최신화의 완료 범위
+
+2026-11-23 기준 문서 1,002개를 처리했다. 967개는 현재 근거와 대조했고 35개는 당시 기록으로 보존했다. 175개 기능 PRD와 사이트의 현재 설명·하단 카드, 도메인·정책·온보딩·시나리오 자료와 소개 HTML·17쪽 PDF를 맞췄다. 기준 저장소 버전·후속 소스 차이·검사 결과는 [최종 대조 기록](verification/document-refresh-final-2026-11-23.json)에 있다. 이 완료는 문서 최신화의 완료이며 제품의 미해결 항목·실기기 확인·외부 계약·배포·공개까지 완료했다는 뜻이 아니다.
+
+문서 전달 상태는 `python3 verification/check_document_refresh.py`로, 기록한 소스가 이후 바뀌었는지도 보려면 `--check-sources`를 더해 확인한다. 공개 문서 링크는 `node verification/check_release_scope.mjs`, 현황판 재생성은 `python3 verification/refresh_work_overview.py`를 사용한다. 과거 `prd_tools/`와 라운드 감사 도구·캐시는 당시 참고 자료이며 현재 PRD의 생성 기준으로 사용하지 않는다.

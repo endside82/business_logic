@@ -3,7 +3,7 @@
 <!-- release-document: reference -->
 > 2026-11-22 현재 기능 정본과 추가 관리자·공개 범위 소스를 대조했다. 역할 설명, 현재 실행 자격, 공개 설정, 실제 검증 결과를 구분한다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- derived-from: prd/03_policy_prds/permission_policy_prd.md; sha256: 00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7 -->
+<!-- derived-from: prd/03_policy_prds/permission_policy_prd.md; sha256: ce649dcebda37d27866fbd433b586d220bf21af8bee0c7cb344eeb36ca0bdcb4 -->
 
 ## 이 보조 문서의 역할
 

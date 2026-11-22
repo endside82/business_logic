@@ -31,11 +31,13 @@
 <section id="sync-current"><h2>파일 내보내기와 Google 동기화의 현재 입구</h2><p>월 내보내기와 본인 가능 시간 ICS 내보내기, Google 계정 연결, 선택 전송, 자동 설정은 각각 다른 입구다. 내보낸 파일을 사용자가 공유하는 행위를 서버의 타인 가능 시간 조회 권한으로 확대하지 않는다.</p>
 <p>현재 Google 창구는 <code>/api/v1/users/me/calendar/google</code> 아래 연결 상태·code 연결·설정·해제, GET/POST <code>/sync</code>, PUT <code>/auto-sync</code>다. 두 컨트롤러는 P0로 선언되어 있다. 그러나 실제 전송 서비스는 Google 클라이언트·OAuth 설정·ACTIVE 연결을 확인하므로 선언이나 화면 입구만으로 운영 환경 사용 가능 여부가 증명되지는 않는다.</p>
 <p>선택 전송은 eventId와 확인한 내용의 fingerprint를 보내고 한 요청은 최대 500개다. 서버는 현재 내용을 재확인해 accepted·stale·unchanged·unavailable을 구분하고 작업을 예약한다. 접수는 Google 반영 완료가 아니다. 자동 설정은 OFF/ALL/SELECTED이며 OFF 이외에는 현재 프리미엄 혜택을 검사한다. SELECTED의 빈 선택은 거절하고 다른 모드에 선택 ID를 섞지 않는다. 기본 모드는 OFF다.</p>
-<p>이번에는 이 입구·선택/자동 설정 계약을 확인했다. OAuth 실제 동의·토큰 갱신·외부 생성/수정/삭제·물리 기기와 iOS의 결과를 재실행하지 않았다. 현재 운영 공개 판단은 <a href="../../docs/qa/external-readiness.html#google-calendar">외부 연결 준비 현황</a>과 <a href="../../docs/qa/launch-status.html#item-N-12-CALENDAR">선택·자동 동기화의 완료 조건</a>을 함께 확인한다. 이 연결 문서도 전체 최신화 대상이며 예전 완료 문구만으로 지금의 환경을 완료 처리하지 않는다.</p></section>
+<p>이번에는 이 입구·선택/자동 설정 계약을 확인했다. OAuth 실제 동의·토큰 갱신·외부 생성/수정/삭제·물리 기기와 iOS의 결과를 재실행하지 않았다. 현재 운영 공개 판단은 <a href="../../docs/qa/external-readiness.html#google-calendar">외부 연결 준비 현황</a>과 <a href="../../docs/qa/launch-status.html#item-N-12-CALENDAR">선택·자동 동기화의 완료 조건</a>을 함께 확인한다. 이 연결 문서도 전체 최신화 대상이며 예전 완료 문구만으로 지금의 환경을 완료 처리하지 않는다.</p>
+<p>앱은 개인 구독 공개 범위가 열리고 자동 동기화 켜기 거절 사유가 PREMIUM_REQUIRED일 때만 프리미엄 혜택·구독 이동을 권한다. 판매 범위가 닫혀 있고 자동 동기화가 OFF인 프리미엄 필요 상태에서는 켜기를 막고 「프리미엄 구독자만 켤 수 있어요」라는 사유를 표시한다. 이미 켜진 자동 동기화를 끄는 동작과 판매 권유는 구분한다. 이 표시 기준을 실제 프리미엄 가입·Google 운영 공개 완료로 바꾸어 기록하지 않는다.</p>
+</section>
 <section id="google-sync"><h2>Google 동기화의 과거 검증 기록</h2><p>아래는 갱신 전 공개 영역 페이지에 남아 있던 두 기록의 인용이다. 당시 시험·연결 범위를 보존하며 이번 실행 결과나 현재 운영·물리 기기·iOS 공개 완료로 합산하지 않는다.</p>
 <p>&gt; 구현·검사 기록: 10월 13일 기본 브랜치 통합 뒤 공개 API 단위 344개·DB/경합 142개, 앱 112개, 관리자 인덱스 1개·설치 정의 비교 13개를 통과한 기록이 있습니다. 이전 캘린더 250개 결과와 겹치는 범위이므로 합산하지 않습니다. DB 검사의 Google 응답은 모사한 것이며 실계정 일정 반영 증거가 아닙니다. &gt; &gt; 실제 연결 기록: Android 에뮬레이터의 실제 Google 계정에서 생성·변경·삭제·토큰 갱신·해제 확인을 마쳤습니다. 운영·물리 기기·iOS 확인은 별도입니다.</p></section>
 <section id="domain-6"><h2>유지와 확인 범위</h2><p>기능 PRD 5개의 검토 해시와 기존 소스 근거를 재사용했고 Google 컨트롤러·선택 서비스의 제한된 범위를 추가 대조했다. PRD·로컬 개요·HTML의 링크와 파생 해시를 검사한다. 기능 문서에 보존한 과거 E2E 인용은 당시 기록이며 새 실행 통과 수가 아니다.</p>
-<p>API·시간 조건·소유권·화면 소비부가 바뀌면 해당 기능 기준 문서부터 고치고 파생 문서와 색인을 맞춘다. 달력 개요에 별도의 공개 범위·API·날짜 정책을 중복 정의하지 않는다. 전체 작업 상태는 <a href="../../verification/document-refresh-2026-11-22.json">문서 최신화 추적 자료</a>를 따른다.</p></section>
+<p>API·시간 조건·소유권·화면 소비부가 바뀌면 해당 기능 기준 문서부터 고치고 파생 문서와 색인을 맞춘다. 달력 개요에 별도의 공개 범위·API·날짜 정책을 중복 정의하지 않는다. 전체 작업 상태는 <a href="../qa/feature-status.html">문서 최신화 추적 자료</a>를 따른다.</p></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

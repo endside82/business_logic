@@ -1,7 +1,7 @@
 # F09-04. 매칭 목록과 대화 연결 PRD
 
 <!-- release-document: reference -->
-> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 시험·운영·실기기 검수 통과 기록이 아니다.
+> 2026-11-23 후속 변경까지 대조한 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 시험·운영·실기기 검수 통과 기록이 아니다.
 
 ## 공개 계약과 당사자 범위
 
@@ -11,11 +11,11 @@ GET /api/v1/date/matches는 status·page·size 검색으로 Page<DateMatchVo>를
 
 ## 응답에 붙는 대화 정보
 
-DateMatchVo에는 매치 ID·user1Id·user2Id·각 행동·상태·matchedAt·expiresAt·createdAt과 unreadCount·lastMessage·lastMessageAt이 있다. 상대 프로필 표시 이름·사진·chatRoomId는 이 VO에 없다.
+DateMatchVo에는 매치 ID·user1Id·user2Id·각 행동·상태·matchedAt·expiresAt·createdAt과 unreadCount·lastMessage·lastMessageAt이 있다. 상대 식별자 otherUserId·표시 이름 otherUserDisplayName·사진 주소 otherUserPhotoUrl·사진 번호 otherUserPhotoId도 반환한다. chatRoomId는 이 VO에 없다.
 
 매치에 연결된 방이 있으면 상대가 보낸 읽지 않은 메시지 수와 마지막 메시지를 조회하고 미리보기 본문을 복호화한다. 이 보강 메서드는 방의 ACTIVE 상태나 양방향 차단을 추가로 검사하지 않는다. 닫히거나 차단된 매치의 서버 목록/단건에서도 이 보강을 거칠 수 있다. 앱이 해당 행을 화면에서 숨긴다고 서버가 미리보기를 내려주지 않는 것은 아니다.
 
-목록의 페이지마다 각 매치에 방·미읽음·마지막 메시지 조회가 이어진다. 이 문서는 구조만 확인했으며 대량 자료의 응답 시간이나 조회 수 최적화 완료를 주장하지 않는다.
+목록의 매치 ID를 모아 방·읽지 않은 수·마지막 메시지를 묶음 조회한다. 상대 프로필과 승인된 첫 사진도 묶음으로 읽는다. 상대 ID는 먼저 채우되 양방향 차단된 상대에는 표시 이름·사진을 붙이지 않는다. MATCHED가 아닌 매치는 상대 프로필의 발견 가능 조건을 추가 적용한다. 메시지 미리보기의 접근 경계는 앞 문단과 별개이며, 표시 정보 필터만으로 모든 대화 정보가 차단됐다고 주장하지 않는다. 묶음 조회 구조를 확인했으며 실제 대량 자료 응답 시간은 이번에 측정하지 않았다.
 
 ## 앱의 탭과 페이지 범위
 
@@ -29,17 +29,17 @@ DateMatchesNotifier는 상태별 첫 응답을 읽으며 다음 페이지를 이
 
 매칭 목록 카드의 onTap은 등록된 방 목록 경로 /dating/chat으로 이동한다. 사용자는 거기서 방을 한 번 더 선택해 /dating/chat/{roomId}로 들어간다. 따라서 이 이동은 존재하지 않는 주소로의 오류가 아니며, 선택한 매치의 대화를 바로 여는 기능과 구분한다. 후보 선택 직후의 성공 창은 chatRoomId로 개별 대화를 직접 여는 별도 입구다.
 
-카드의 상대 표시와 차단 명령은 user2Id를 사용하며 로그인 사용자가 user1인지 비교해 상대 ID를 고르지 않는다. 본인이 user2인 매치에서는 차단 대상이 본인이 되어 서버가 거절할 수 있다. 목록 VO에 방 번호나 상대 표시용 정보가 없다는 문제와 앱의 대상 선택 문제를 함께 남긴다.
+카드의 차단 대상은 로그인 사용자와 user1Id·user2Id를 비교하는 counterpartFor/counterpartOf로 고른다. 본인이 user2인 경우 user1을 선택하며, 본인 관계를 확인할 수 없으면 상대 ID를 만들지 않는다. 표시에는 서버의 상대 이름·사진을 사용하고 이름이 비어 있으면 회원 번호 대신 ‘상대방’을 표시한다. 사진이 없거나 읽기에 실패하면 기본 표시를 사용한다. 상대 식별·표시 정보와 개별 방 ID 부재를 구분한다.
 
 ## 차단 후 갱신과 표시
 
-카드 메뉴의 차단은 사유·선택 안전 신고 시트를 열고 성공하면 매칭·후보·차단 목록을 무효화한다. 수동 새로고침해야만 반영된다는 과거 설명은 현재와 다르다. 실패하면 시트 입력을 유지한다. 올바른 상대를 고르는 문제는 위의 현재 차이를 따른다.
+카드 메뉴의 차단은 사유·선택 안전 신고 시트를 열고 성공하면 매칭·후보·차단 목록을 무효화한다. 수동 새로고침해야만 반영된다는 과거 설명은 현재와 다르다. 실패하면 시트 입력을 유지한다. 일반 이미 차단된 CONFLICT는 성공으로 정규화하지만 REPORT_ALREADY_EXISTS는 신고 중복 안내를 보여 주는 별도 실패로 처리한다. 결과를 알 수 없는 오류를 성공으로 바꾸지는 않는다.
 
 PENDING은 남은 시간, EXPIRED는 만료 표시를 사용한다. 매치가 MATCHED라는 것만으로 연결된 방도 ACTIVE라고 판정하지 않는다. 무활동 정리는 매치 상태를 유지하며 방을 INACTIVE로 바꾸므로 실제 채팅·만남 명령의 방 상태 확인이 별도로 필요하다.
 
 ## 코드 위치
 
-서버: DateMatchController, DateMatchingService#getMatches/getMatch, DateMatchQueryRepository, DateMatchVo, DateChatService#enrichMatchWithChatInfo. 앱: date_match_api.dart, date_match_repository.dart, date_match_provider.dart, match_list_screen.dart, dating_routes.dart.
+서버: DateMatchController, DateMatchingService#getMatches/getMatch, DateMatchQueryRepository, DateMatchVo, DateChatService#enrichMatchWithChatInfo/enrichMatchesWithChatInfo와 DateMatchingService#attachOtherUsers. 앱: date_match_api.dart, date_match_repository.dart, date_match_provider.dart, match_list_screen.dart, dating_routes.dart.
 
 <!-- source-references:start -->
 서버 창구: `DateMatchController#getMatches`, `DateMatchController#getMatch`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
@@ -50,7 +50,6 @@ PENDING은 남은 시간, EXPIRED는 만료 표시를 사용한다. 매치가 MA
 | 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
 | Risk | 목록 카드는 등록된 /dating/chat 방 목록을 열어 방을 한 번 더 선택하게 한다. | 특정 매치 대화로 직접 진입하는 기능이나 잘못된 라우트로 설명하지 않는다. |
-| Gap | 상대·차단 대상을 user2Id로 고정한다. | 로그인 사용자가 user2인 경우를 구분한다. |
 | Gap | 첫 페이지만 읽고 새매칭/대화중이 같은 자료이며 서버 정렬도 명시되지 않았다. | 전체 목록·안정 정렬·의미 있는 탭 분리가 완성됐다고 쓰지 않는다. |
 | Risk | 서버 미리보기 보강에는 방 활성·차단 추가 검사가 없다. | 클라이언트 가림과 응답 정보 제한을 구분한다. |
 | 미검증 | 실제 당사자 계정·채팅 이동·대량 페이지·차단 뒤 메시지 노출을 실행하지 않았다. | 소스 결함 확인과 제품 수정/시험을 구분한다. |
@@ -58,7 +57,7 @@ PENDING은 남은 시간, EXPIRED는 만료 표시를 사용한다. 매치가 MA
 ## 수용 기준과 검증 근거
 
 - **AC-01 당사자 조회:** 전체 상태/선택 상태 페이지와 단건 당사자 검사를 구분한다.
-- **AC-02 응답 정보:** 미읽음·복호화 미리보기와 방/차단 검사 부재, 상대/방 ID 필드 부재를 명시한다.
+- **AC-02 응답 정보:** 상대 ID·허용된 표시 이름·사진과 묶음 대화 정보 보강을 구분한다. 표시 정보의 차단 필터를 미리보기 전체 차단으로 확대하지 않으며 방 ID 부재를 명시한다.
 - **AC-03 화면 범위:** 첫 페이지·클라이언트 가림·같은 MATCHED 탭·최대 5개 가로 목록을 실제대로 설명한다.
-- **AC-04 입구와 대상:** 매칭 카드 → 방 목록 → 개별 방의 실제 이동과 user2Id 고정 차단 대상 문제를 구분한다.
+- **AC-04 입구와 대상:** 매칭 카드 → 방 목록 → 개별 방의 실제 이동과 로그인 사용자 기준 상대 선택을 확인한다. 이름 없음은 ‘상대방’으로 표시하고 회원 번호를 노출하지 않는다.
 - **AC-05 갱신과 상태:** 대화 목록 신호·성공 차단 갱신·오류 재시도 및 매치/방 상태 차이를 구분한다.

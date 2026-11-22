@@ -15,7 +15,7 @@
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>기능 인벤토리<span>›</span>기능별 영향 표</div>
         <h1>기능별 영향 표</h1>
         <p class="lede">21개 도메인·175개 기능을 바꿀 때 함께 읽을 영역이다. ●는 현재 PRD의 생성·조회·설정·연결·보존 조건을 뜻한다. 실제 알림 수신·돈 이동·제품 실행의 통과 표시가 아니다. ·도 영향 없음이나 검토 면제가 아니다.</p>
-        <p><a href="../../prd/00_prd_items/10_impact_matrix.md">영향 판단 기준과 기능별 분류 정본</a> · 2026-11-22 정본 대조. 기능 이름에서 해당 PRD를 열 수 있다.</p>
+        <p><span class="workspace-reference" title="로컬 근거: business_logic/prd/00_prd_items/10_impact_matrix.md">영향 판단 기준과 기능별 분류 정본 <small>(로컬 근거)</small></span> · 2026-11-22 정본 대조. 기능 이름에서 해당 PRD를 열 수 있다.</p>
       </header>
 
       <!-- derived-from: prd/00_prd_items/10_impact_matrix.md; sha256: 351822c6e159051e0978abb3e84c2f8f3873dd0523733e266dc2d4aedf1da33d -->
@@ -122,7 +122,7 @@
       document.querySelector('#rows').innerHTML = filtered.map(f => `
         <tr>
           <td style="text-align:left"><code>${esc(f.id)}</code></td>
-          <td style="text-align:left"><a href="../../prd/${esc(f.prdPath)}">${esc(f.name)}</a></td>
+          <td style="text-align:left"><a href="${esc(f.id)}.html">${esc(f.name)}</a></td>
           <td>${mark(f.impacts.notification)}</td>
           <td>${mark(f.impacts.money)}</td>
           <td>${mark(f.impacts.calendar)}</td>

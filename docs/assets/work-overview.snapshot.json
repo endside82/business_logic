@@ -321,6 +321,7 @@
         "H-662",
         "H-599",
         "H-659",
+        "H-664",
         "H-590"
       ],
       "href": "WORKLIST.md#다음에-할-일",
@@ -1324,6 +1325,31 @@
       ]
     },
     {
+      "id": "H-664",
+      "title": "차단 수리 운영 반영: 앱 먼저 배포, 옛 차단 쌍 세어 보정 정하기",
+      "description": "회원이 겪는 일 ①(배포 차례): 서버가 먼저 나가면 이미 깔린 옛 앱의 커뮤니티 차단 목록에 데이트에서만 건 차단 줄이 나온다. 옛 앱은 그 줄의 해제를 커뮤니티 해제로 보내 성공 응답을 받지만 차단은 풀리지 않아, 눌러도 풀리지 않는 줄이 된다. 앱이 먼저 나가면 옛 서버에서는 데이트 매칭 목록의 상대 이름이 모두 「상대방」 으로 나올 뿐이다. 그래서 앱 새 판을 먼저 내보내고 서버를 나중에 올린다(2026-11-22 사용자 승인). 다만 다음 앱 판은 긴 목록 수리 때문에 서버 배포 뒤에 내야 한다([1번 섹션](#1-진행-중인-일)의 「다음 서버 배포에 실을 것」 — 새 앱이 옛 서버를 만나면 문의 목록·댓글이 오류가 된다). 두 조건을 함께 지키려면 서버를 두 번에 나눠 올린다: 긴 목록 수리까지(`9eec7d87c`) → 앱 새 판 → 차단 수리(`72b98e9a6`·`32163b5c0`·`a3dd80d7b`). 서버를 한 번에 올리면 서버가 먼저가 되어 옛 앱에 눌러도 풀리지 않는 줄이 생긴다. 나눠 올릴지 한 번에 올릴지는 배포 때 사용자가 정한다(정해지지 않음). 앱이 먼저 나간 동안에는, 데이트 차단 목록에서 푼 사람이 커뮤니티에서도 차단돼 있으면 \"커뮤니티에서 건 차단이 남아 있어 계속 차단됩니다\" 가 뜬다 — 이때 데이트 쪽은 풀려 있다. 이미 데이트에서 차단한 사람을 신고와 함께 다시 차단하면 서버 배포 전에는 신고가 접수되지 않는다. 회원이 겪는 일 ②(옛 자료): 옛 자료 가운데 커뮤니티 차단만 살아 있고 데이트 쪽 짝 행이 없는 쌍은 데이트 화면에서 서로 막히지 않는다. 몇 쌍인지는 아직 세지 않았다. 다음 행동: 운영 DB 에서 읽기 전용으로 그 쌍의 수를 센다 — `SELECT COUNT(*) FROM user_block ub WHERE ub.status = 'BLOCKED' AND NOT EXISTS (SELECT 1 FROM date_block db WHERE db.blocker_id = ub.blocker_id AND db.blocked_id = ub.blocked_id AND db.status = 'BLOCKED');` 수를 본 뒤 일회성 보정을 할지와 그 꼴을 사용자가 정한다. 0 이면 센 결과를 근거로 남기고 이 몫을 닫는다. 끝내는 기준: 앱과 서버가 그 차례로 운영에 올라간 기록이 있고, 센 수와 보정 결정(보정했으면 실행 기록)이 남는다.",
+      "condition": "차단 수리(차단은 건 곳에서 푼다)의 코드는 2026-11-22 공개 API·앱 main 에 있다(운영 전). 배포는 앱을 먼저, 서버를 나중에. 옛 차단 쌍 세기는 운영 DB 읽기 전용 조회다",
+      "scope": "now",
+      "kind": "조사·확인",
+      "section": "8. 확인할 것",
+      "stage": null,
+      "resources": [
+        "development"
+      ],
+      "source": "NEXT_WORK.md#8-확인할-것",
+      "evidence": "2026-11-22 사용자 결정(차단은 건 곳에서 푼다, 배포 차례, 옛 자료 보정), [커뮤니티 차단 목록 명세](../ui-ux/screens/28-profile-settings.md#scr-ps-013-차단-목록), [데이트 차단 명세](../ui-ux/screens/24-private-date.md#차단은-건-곳에서-푼다)",
+      "evidenceLinks": [
+        {
+          "label": "커뮤니티 차단 목록 명세",
+          "href": "../ui-ux/screens/28-profile-settings.md#scr-ps-013-차단-목록"
+        },
+        {
+          "label": "데이트 차단 명세",
+          "href": "../ui-ux/screens/24-private-date.md#차단은-건-곳에서-푼다"
+        }
+      ]
+    },
+    {
       "id": "H-492",
       "title": "약관의 콘텐츠 삭제 제한과 열람 범위·포인트 기한 법무 확인",
       "description": "약관에 「판매가 일어났거나 등록된 콘텐츠는 함부로 지울 수 없다」 를 적는다. 개인정보 열람·내보내기 범위에서 회원 콘텐츠를 뺀 것(H-482)이 법적으로 맞는지 확인한다. 무료 포인트 유효기간 문구도 법무 확인 필요: 2026-10-28 사용자 결정 14(무료 지급은 지급일부터 1년, 환불로 되돌린 무료 포인트는 원래 기한을 따르되 남은 기간이 30일 미만이거나 이미 지난 몫은 복원일부터 30일, 유료 포인트는 기한 없음, 쓸 때는 먼저 만료될 무료부터)는 차수 10 에서 서버에 들어갔고, 약관 본문은 법무 답을 받은 뒤 쓴다.",
@@ -1631,8 +1657,8 @@
     {
       "id": "H-590",
       "title": "원격 관측 수집처와 GA4 측정 ID 정해 켜기",
-      "description": "원격 관측 수집처 계정과 최소 대시보드를 정해 켠다. 검색 측정 두 이벤트(`search_performed`·`zero_result`)는 2026-11-08 에 사전에 들어가 있어 켜는 즉시 모인다. 소개 웹 GA4 측정 ID 를 정해 켠다. 지금은 측정 ID 가 비어 수집이 꺼져 있다. 앱 쪽 세 사건(`host_role_ready`·`event_detail_viewed`·`event_checkin_completed`)은 2026-11-09 부터 앱이 보낸다(앱 `bc44d9318`). 보내는 때와 집계 주의(추천 상세에서 모임 상세로 넘어가면 같은 모임이 두 번 남아 사용자·모임별 1회로 센다, 체크인은 모임 단위)는 서버 [텔레메트리 사전](../../community_api/docs/telemetry/CLIENT_EVENT_DICTIONARY.md)에 적었다. 남은 것은 수집처 계정·최소 대시보드와 GA4 측정 ID 다.",
-      "condition": "계정을 정한 뒤 켜고 수집을 확인. 2026-11-22 소개 웹 소스·운영의 측정 ID가 빈 값임을 확인했다. 브라우저 호스트 연결 불가로 개인 계정·실제 웹 스트림을 확인하지 못해 GA4 설정·배포·실제 수신 확인은 미완료([실행 근거](../release-gate/evidence/ADMIN-GAPS-20261122.json))",
+      "description": "원격 관측 수집처 계정과 최소 대시보드를 정해 켠다. 검색 측정 두 이벤트(`search_performed`·`zero_result`)는 2026-11-08 에 사전에 들어가 있어 켜는 즉시 모인다. 소개 웹은 2026-11-22 실제 속성 `565380890`·웹 스트림 `16390774892`·측정 ID `G-JJC8KV22D1`을 연결해 운영에 배포했다. 동의 전 수집·내부 접속 수집은 차단하며 향상된 측정·Signals·광고 개인화는 껐다. 사용자·이벤트 데이터는 각 2개월, 새 활동에 따른 기간 연장은 끔. 같은 날 원격 최신 이용안내 `0771264`를 통합한 소개 웹 `7927b77`을 재배포했다. 가이드 350쪽에도 동의·내부 접속 제외를 적용했고 운영 로그·응답을 확인했다. 390×844 화면 검수는 브라우저 제어 도구 오류로 미완료([이용안내 재배포 근거](../release-gate/evidence/WEB-GUIDE-RELEASE-20261122.json)). 이후 사진 보완 `a519a34`의 운영 반영 기록과 통합했다. 소개 웹 main `aad604d` 원격 푸시 완료, 빌드·정적 검사·시험 104건 통과, `dist/`는 사진 보완 배포와 동일하다. 사진·넘침 검수는 [사진 보완 근거](../release-gate/evidence/APP-GUIDE-PHOTO-REFRESH-2026-11-22.json)를 따르며 앞선 390×844 상호작용 검수 공백을 완료로 바꾸지 않는다. 추가 화면 보강 `f85ed26`이 위 통합 `aad604d`를 포함해 뒤이어 운영에 반영됐다. 본문·사진 391개 HTTPS 해시 일치와 기존 분석 설정 보존은 [추가 보강 배포 근거](../release-gate/evidence/APP-GUIDE-MORE-SCENES-2026-11-22.json)에 기록돼 있다. 확인된 개인 Chrome의 지정 로컬 검증 세션에서 보낸 이벤트 1건과 실행 이름을 실제 DebugView에서 확인했다. 운영 홈페이지 일반 방문자 이벤트를 확인했다는 뜻은 아니다. [GA4 연결과 수신 근거](../release-gate/evidence/GA4-CONNECTION-20261122.json). 앱 쪽 세 사건(`host_role_ready`·`event_detail_viewed`·`event_checkin_completed`)은 2026-11-09 부터 앱이 보낸다(앱 `bc44d9318`). 보내는 때와 집계 주의(추천 상세에서 모임 상세로 넘어가면 같은 모임이 두 번 남아 사용자·모임별 1회로 센다, 체크인은 모임 단위)는 서버 [텔레메트리 사전](../../community_api/docs/telemetry/CLIENT_EVENT_DICTIONARY.md)에 적었다. 남은 것은 원격 관측 수집처 계정·최소 대시보드다. 소개 웹 GA4는 위 근거대로 완료했다.",
+      "condition": "원격 관측 수집처 계정·최소 대시보드는 남아 있다. 소개 웹은 2026-11-22 실제 GA4 ID `G-JJC8KV22D1` 설정·운영 배포·지정 로컬 검증 세션 DebugView 1건 수신 완료([실행 근거](../release-gate/evidence/GA4-CONNECTION-20261122.json)). 일반 방문자 수신 검증과는 구분한다",
       "scope": "launch",
       "kind": "실제 환경 확인",
       "section": "9. 출시 준비·외부 입력",
@@ -1758,7 +1784,7 @@
   "versions": [
     {
       "name": "공개 API",
-      "commit": "b9ee63f61"
+      "commit": "65f2fb1fb"
     },
     {
       "name": "관리자 API",
@@ -1766,30 +1792,31 @@
     },
     {
       "name": "앱",
-      "commit": "ae0630984"
+      "commit": "5ed4d4a42"
     },
     {
       "name": "관리자 웹",
-      "commit": "c81f344"
+      "commit": "8af79d5"
     },
     {
       "name": "실시간",
       "commit": "231ecae"
     }
   ],
-  "sourceDigest": "86fa7d7cf08bc856be1bcde0e7a72ff74dfa7d42473f756616feb4ed683da9c7",
+  "sourceDigest": "854fa8889f6ea4d8756c8fb84c2315cede94fe026affaf494332bff643e51e09",
   "sourceDeclaredDate": "2026-11-15",
   "summary": {
-    "lead": "현재 작업 정본의 추적 항목과 마지막 배포 기록을 구분합니다. 서버는 11월 15일 배포, Android는 11월 12일 내부 테스트 16 기록이 있으며, 그 뒤 main 변경을 모두 운영 반영으로 읽지 않습니다. 현재 착수 조건과 남은 확인을 먼저 봅니다.",
+    "lead": "현재 작업 정본의 추적 항목과 배포 기록을 구분합니다. 공개·관리자 API는 11월 15일, MCP 허용 설정과 소개 웹 분석은 11월 22일의 반영 기록입니다. 그 뒤 소스 변경과 남은 실제 이용 확인은 작업별 조건을 따릅니다.",
     "updates": [
-      "서버: 11월 15일 공개·관리자 API와 관리자 웹을 prd-20261115a로 배포한 기록이 있습니다. 서비스 상태·공개 응답 확인과 관리자 실제 화면·권한 적용·MCP 실제 클라이언트 확인은 별개입니다.",
+      "서버: 공개·관리자 API와 관리자 웹은 prd-20261115a 기록입니다. 11월 22일 MCP 서버 67d6d47과 허용 AI 클라이언트 넷을 운영에 반영했습니다. 네 서비스의 로그인·동의·읽기·연결 해제와 개인정보 검토 후 가이드 공개는 남아 있습니다.",
       "Android: 11월 12일 내부 테스트 1.0.0 (16) 기록입니다. iOS는 10월 27일 서명 IPA 1까지의 기록이며 업로드·설치·APNs·정식 공개를 따로 확인합니다.",
-      "임시 결제: 실제 돈이 오가지 않는 시험입니다. 대사 판정은 11월 13일 배포됐으며, 11월 9일 대사를 관리자에서 다시 생성하는 확인(H-659)은 현재 작업 정본에 남아 있습니다.",
-      "긴 목록: 분할 코드는 11월 21일 관련 main에 반영됐습니다. 운영 API 배포 뒤 실제 서버·맥 확인과 새 앱·AI 연결 서버 전환 뒤 옛 창구 정리를 구분합니다(H-579).",
-      "방문 분석: 11월 22일 소개 웹 측정 ID가 빈 상태라는 기록과 계정·스트림·실제 수신 미확인 조건을 반영했습니다(H-590)."
+      "임시 결제: 실제 돈이 오가지 않는 시험입니다. 배포된 대사 판정으로 11월 9일 대사를 다시 만드는 H-659와 참가자·정산·출금 준비 조건을 구분합니다.",
+      "긴 목록: 새 창구를 쓰는 앱·AI 연결 서버는 공개 API의 선행 배포를 기다립니다(H-579). 차단 출처 표시 변경은 앱을 먼저 낸 뒤 서버를 반영하며, 기존 차단 쌍의 운영 보정은 H-664입니다.",
+      "방문 분석: 11월 22일 소개 웹 GA4 연결·운영 반영과 지정 로컬 검증 세션의 실제 수신을 확인한 기록이 있습니다. 운영 일반 방문자의 수신 검증은 별도이며, H-590에는 원격 관측 수집처·최소 대시보드가 남습니다.",
+      "관리자: 11월 22일 로컬 실제 서버 6개 여정과 모의 응답 2개 UI 흐름의 네이티브 브라우저 확인 기록이 있습니다. 그 결과를 운영 배포나 모든 관리자 기능의 통과로 확대하지 않습니다."
     ],
     "checks": "2026-11-23 문서·정본·기존 배포 증거 대조입니다. 새 제품 시험·운영 조회·브라우저·기기 확인·배포를 실행하지 않았습니다.",
-    "inventory": "현재 정본의 추적 항목 62개입니다. 조건부·제품 후보·외부 확인을 포함하므로 미완료 개발 수나 완료율이 아닙니다. 문서 대조일과 작업 정본의 표기 기준일을 구분합니다.",
+    "inventory": "현재 정본의 추적 항목 63개입니다. 조건부·제품 후보·외부 확인을 포함하므로 미완료 개발 수나 완료율이 아닙니다.",
     "categoryCounts": {
       "2": 9,
       "3": 3,
@@ -1797,7 +1824,7 @@
       "5": 15,
       "6": 3,
       "7": 4,
-      "8": 6,
+      "8": 7,
       "9": 20
     },
     "actions": [
@@ -1820,40 +1847,55 @@
     "progressRows": [
       [
         "서버",
-        "11월 15일 배포 기록",
-        "공개·관리자 API와 관리자 웹 교체. main의 이후 변경과 실제 화면은 별도"
+        "11월 15일 API 배포",
+        "main의 후속 변경·실제 화면은 별도"
+      ],
+      [
+        "AI 연결",
+        "11월 22일 MCP 67d6d47·클라이언트 넷",
+        "로그인·동의·도구 이용·해제와 가이드 공개 조건은 별도"
+      ],
+      [
+        "소개 웹 분석",
+        "11월 22일 연결·운영 반영",
+        "지정 로컬 세션 수신 확인; 일반 운영 방문 수신은 별도"
       ],
       [
         "Android",
         "내부 테스트 16",
-        "11월 12일 원격 트랙·해시 확인 기록; 실기기·정식 공개 별도"
+        "실기기·정식 공개 별도"
       ],
       [
         "iOS",
         "서명 IPA 1 기록",
         "업로드·설치·APNs·기기 여정·심사 별도"
-      ],
-      [
-        "임시 결제",
-        "대사 판정 수정 배포",
-        "H-659 관리자 재확인과 미완료 시험 범위 별도"
       ]
     ],
     "evidenceRows": [
       [
         "서버",
-        "11월 15일 배포의 적용·검증과 미확인 범위",
+        "11월 15일 배포 범위",
         "docs/release-gate/evidence/API-RELEASE-20261115a.json"
       ],
       [
-        "현재 작업",
-        "62개 표·상세의 일치와 착수 조건",
-        "docs/plan/NEXT_WORK.md"
+        "AI 연결",
+        "11월 22일 허용 목록·MCP 이미지와 남은 시험",
+        "docs/release-gate/evidence/MCP-RELEASE-20261115m.json"
       ],
       [
-        "배포와 소스 차이",
-        "프로그램별 소스·운영 버전",
-        "docs/plan/WORKLIST.md"
+        "방문 분석",
+        "지정 검증 세션 수신과 일반 운영 방문 구분",
+        "docs/release-gate/evidence/GA4-CONNECTION-20261122.json"
+      ],
+      [
+        "관리자",
+        "실제 서버 6개·모의 UI 2개 범위",
+        "docs/release-gate/evidence/ADMIN-GAPS-20261122.json"
+      ],
+      [
+        "현재 작업",
+        "63개 작업과 착수 조건",
+        "docs/plan/NEXT_WORK.md"
       ]
     ],
     "decisions": "후보 고정·운영 서버 확정 뒤 복구 규약·기기 연결의 사용자 보류와 작업별 착수 조건을 유지합니다. 내부 테스트·임시 결제·소스 대조를 정식 공개로 확대하지 않습니다."
@@ -1862,21 +1904,20 @@
     "updatedAt": "2026-11-23T00:11:08+09:00",
     "sourceBranch": "local docs worktree reference",
     "sourceBaseCommit": "abe635d7889e42d3d0a3da4d55a3d025ffe2ef74",
-    "sourceCommit": "fcd806fc54d9319d506f45c797105f5be2dc4020",
+    "sourceCommit": "644bc2ba5786b4547e90155a4c98daa53f14f74b",
     "sourcePath": "docs/plan/NEXT_WORK.md",
-    "sourceSha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997",
-    "worklistSha256": "d5560320324efe4f5273783a9af51a107795da0aba09b8af7780ccca4c293698",
+    "sourceSha256": "fcbc77dd9180cbefe2645146620a952e37b412d4615c91b25ded12c18768b6ef",
+    "worklistSha256": "f3a943b22c120b366eb2ae25e447f273358c16eb1e11a94d6fce8db383c3f460",
     "evidenceSha256": {
-      "docs/plan/NEXT_WORK.md": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997",
-      "docs/plan/WORKLIST.md": "d5560320324efe4f5273783a9af51a107795da0aba09b8af7780ccca4c293698",
-      "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md": "b6af68643938b94cbc7d82f6233399709d030ee9136db518f7c9d117df1d74c0",
-      "docs/release-gate/evidence/API-RELEASE-20261113a.json": "56010a32d8dc29168322479ea5e99b5e48cf64449f0837c781f2041bcc192ae1",
+      "docs/plan/NEXT_WORK.md": "fcbc77dd9180cbefe2645146620a952e37b412d4615c91b25ded12c18768b6ef",
+      "docs/plan/WORKLIST.md": "f3a943b22c120b366eb2ae25e447f273358c16eb1e11a94d6fce8db383c3f460",
       "docs/release-gate/evidence/API-RELEASE-20261115a.json": "3577220a651c1d65997d57067f6d668894ba1b489fac9ceb688b1099624e551d",
-      "community_app/docs/ANDROID_RELEASE.md": "50d434aaaeda42d7405b363ef4ae2e5ffbbde02f34f8fa3256f06a1ba0f91d53",
-      "community_app/docs/IOS_RELEASE.md": "f634696c1226fe050d7acb0088ef45adb98f6556bf69b7821b55acd6c703e561"
+      "docs/release-gate/evidence/MCP-RELEASE-20261115m.json": "bb398bb8002428d9e3f9f0963951e10b911b14eaa2e6395cc74bdb44e365bb80",
+      "docs/release-gate/evidence/GA4-CONNECTION-20261122.json": "111659d4cdfe4eabf48a403251fdf4928f0553c003975b6a533e59c02572186f",
+      "docs/release-gate/evidence/ADMIN-GAPS-20261122.json": "b305a117b85ec339f679435e298eb9aa71ed6f6db228483bc804abc05300ed12"
     },
-    "method": "2026-11-23 정본 표·세부·작업 조건 및 날짜별 배포 근거 대조. 새 제품 시험·운영 조회·외부 변경 없음. 기록된 버전과 현재 실행 상태를 구분.",
-    "regenerate": "검토한 snapshot으로 index를 생성한다. 상태 참고 페이지의 현재 안내는 별도 유지한다.",
-    "check": "node --test verification/work_overview.test.mjs 및 정본 표·상세·해시 대조"
+    "method": "2026-11-23 현재 작업 정본·11월22일 후속 실행 기록 대조. 문서 갱신 세션의 새 제품 시험·브라우저·배포 없음.",
+    "regenerate": "python3 verification/refresh_work_overview.py",
+    "check": "python3 verification/refresh_work_overview.py --check; node --test verification/work_overview.test.mjs"
   }
 }

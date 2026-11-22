@@ -73,7 +73,8 @@ for (const item of launch.openItems) {
     assert.equal(item.impact, item.id === 'N-07' ? 'included' : 'next', `${item.id}: 기존 출시 범위와 추가 개발 상태를 따로 유지`);
   }
 }
-assert.equal(launch.asOf, work.date, '출시 상태표의 대조일과 문서 갱신일 일치');
+assert.ok(launch.asOf <= work.date, '과거 출시 분류의 기록일은 현재 문서 대조일보다 늦을 수 없음');
+assert.match(fs.readFileSync(path.join(docs, 'qa/launch-status.html'), 'utf8'), /historical-launch-body/, '기존 출시 분류와 현재 근거를 구분');
 assert.equal(launch.openItems.find(item => item.id === 'N-12-CALENDAR').readiness.work, 'environment', '직접 권한 철회 안내 반영 뒤에도 운영 OAuth·물리 기기·iOS 확인을 남김');
 for (const id of ['N-03', 'N-13-BANK']) {
   assert.equal(launch.openItems.find(item => item.id === id).readiness.work, 'development', id);
