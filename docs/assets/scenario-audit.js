@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,277개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,282개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1277,
+    "documentedScenarioItems": 1282,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4957,
     "journeyFilesScanned": 336,
@@ -10266,14 +10266,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-08",
       "domain": "모임 정산",
-      "name": "이의제기/처리/감사로그",
-      "scenarioCount": 9,
+      "name": "정산 이의제기·처리·변경 기록",
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-08_appeal-audit/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-08_appeal-audit/backend.md",
@@ -10370,7 +10370,7 @@ window.SCENARIO_AUDIT = {
       "evidenceStage": 1,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 0,
+      "knownIssues": 1,
       "pendingReview": 0
     },
     {

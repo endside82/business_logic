@@ -1,83 +1,124 @@
-# F07-08. 정산 이의제기 / 처리 / 감사로그 (Appeal & Audit Log) PRD
+# F07-08. 정산 이의제기·처리·변경 기록 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 해당 서버·앱 함수와 선택한 기존 시험 단언을 대조했다. 새 제품 시험·실DB·기기·알림 수신의 통과 기록은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-참가자가 본인의 분담 또는 이체에 이의를 제기하면 PENDING appeal이 생성되고 해당 subject에 대한 결제·확인이 차단된다. 호스트(=정산 생성자)가 APPROVED/REJECTED/RESOLVED 중 하나로 처리해야 차단이 해제된다. 모든 정산 변경은 감사 로그(audit log)로 기록되어 페이지네이션 조회된다.
+이의 접수, 정산 생성자의 답변, 운영팀 판단, 정산 변경 기록 조회는 권한과 효과가 서로 다르다. 접수한 PENDING 이의는 해당 분담·항목 또는 이체의 결제·확인에 영향을 주지만, 이의를 받아들였다고 금액 변경이나 환불이 자동 실행되지는 않는다.
 
-**2026-06-05부터 DRAFT(준비 중) 정산에는 이의제기를 서버가 차단한다(DEC-V4)** — 비확정 금액에 대한 이의는 혼란과 활성화 후 결제 장애(미처리 PENDING appeal의 결제 차단)만 만들기 때문. 정산 신청(ACTIVE) 이후부터 이의 가능하며, COMPLETED에서의 현행 허용은 유지된다.
+정산 생성자와 현재 모임 호스트를 같은 사람이라고 가정하지 않는다. 이의 전체 목록은 정산 생성자만 조회하며, 변경 기록은 본인이 관리하는 정산과 모임 수준 기록의 조회 범위를 별도로 판정한다. 과거 문서의 ‘참가자도 전체 감사 기록 조회’, ‘호스트 본인 분담은 무조건 이의 불가’, ‘모든 변경을 영구 보관’ 같은 해석은 현재 계약이 아니다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 코드 위치
 
-- **이의 생성**:
-  - `MySettlementSharesScreen` 카드의 "이의 제기" 버튼 (참가자, F07-05) — DRAFT 또는 status 미확정(로딩/에러) 동안은 버튼 숨김(3상태 가드, 2026-06-05)
-  - `TransferListScreen` 카드의 "이의 제기" 버튼 (참가자/호스트) — transfer는 활성화 시점에 생성되므로 DRAFT에서는 진입 자체가 없음
-- **이의 관리 / 감사 로그**:
-  - 정산 현황 화면 manager PopupMenu → "이의제기 관리" / "감사 로그"
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `MeetingSettlementController`, `MeetingSettlementAppealService`, `UserService`. 앱: `settlement_appeals_screen.dart`, `settlement_audit_log_screen.dart`, `settlement_appeal_dialog.dart`.
+서버: MeetingSettlementController·MeetingSettlementAppealService·MeetingSettlementAppealOperatorService·MeetingSettlementService·SettlementAccountAbilityPolicy, SettlementAuditLogService·MeetingSettlementEventLogQueryRepository·SettlementAuditLogSanitizer·SettlementAuditPublisher·SettlementAuditLogRetentionScheduler. 요청·응답: MeetingSettlementAppealCreateParam·MeetingSettlementAppealResolveParam·MeetingSettlementAuditLogSearchParam·MeetingSettlementAppealVo·MeetingSettlementAuditLogVo. 앱: appeals_provider.dart·audit_log_provider.dart, share_appeal_flow.dart·settlement_appeal_dialog.dart, settlement_appeals_screen.dart·settlement_audit_log_screen.dart, my_settlement_shares_screen.dart·settlement_item_payments_screen.dart·transfer_list_screen.dart·settlement_status_screen.dart.
 
 <!-- source-references:start -->
 서버 창구: `MeetingSettlementController#createAppeal`, `MeetingSettlementController#getAppeals`, `MeetingSettlementController#resolveAppeal`, `MeetingSettlementController#getAuditLog`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 실제 입구와 조회 권한
 
-이의제기 관리 화면 진입 시:
-1. `appealsProvider(eventId)` ▶ `GET .../appeals`
-2. `settlementDetailProvider(eventId)` ▶ host 권한 판정
+| 업무 | 현재 앱 입구·조건 | 서버 경계 |
+|---|---|---|
+| 분담금 이의 접수 | 내 분담금 및 항목별 납부 행의 서버 actions.appeal.allowed가 참일 때 | 현재 모임 호스트 또는 참석 자격, 해당 분담 당사자, 정산·계정 상태를 다시 확인 |
+| 이체 이의 접수 | 송금 내역의 PENDING 이체에서 관련 당사자이고 화면상 진행 중 이의가 없을 때 | 이체 양쪽 당사자와 현재 모임 참가 자격을 함께 확인 |
+| 이의 관리 | 정산 현황의 정산 더보기 → 이의제기 관리 | 현재 정산 생성자만 전체 목록 조회·호스트 답변 가능 |
+| 변경 기록 | 정산 더보기 → 변경 기록. 화면 제목은 정산 변경 기록 | 정산별 관리 범위와 모임 수준 기록의 권한을 별도로 확인 |
 
-이의 생성 액션 (다른 화면에서):
-1. `SettlementAppealDialog` 표시 → reason 입력
-2. `appealsProvider(eventId).createAppeal(subjectType, subjectId, reason)` ▶ `POST .../appeals`
-3. invalidate appealsProvider + transferList(또는 myShares) — 결제 차단 표시 갱신
+분담금 버튼은 예전 화면의 DRAFT·로딩·호스트 여부만으로 계산하던 설명 대신 현재 서버 행의 허용값을 따른다. 항목별 납부 화면도 같은 분담 접수 함수를 사용한다. 항목 ITEM에 대한 서버 접수와 앱의 SHARE 접수 입구를 혼동하지 않는다.
 
-이의 처리 액션 (호스트):
-1. PENDING 카드의 액션 → status 선택 + hostResponse 입력
-2. `appealsProvider(eventId).resolveAppeal(appealId, status, hostResponse)` ▶ `PATCH .../appeals/{id}/resolve`
-3. invalidate appealsProvider + transferList/summary (차단 해제)
+현황 화면의 관리 입구는 현재 모임 호스트 기준인 반면 이의 관리 화면의 처리 버튼은 정산 creatorUserId를 기준으로 한다. 호스트가 바뀐 상황에서 입구 표시가 서버의 조회·처리 권한을 보장하지 않는다.
 
-감사 로그 화면 진입 시:
-1. `auditLogProvider(eventId)` ▶ `GET .../audit-log?page=0&size=30`
-2. (스크롤 페이지네이션) 다음 페이지 로딩
+## 접수 요청과 대상별 자격
 
-## 4. 제품 규칙
+POST /api/v1/events/{eventId}/settlement/appeals는 Idempotency-Key를 필수로 받고 subjectType·subjectId·reason을 전달한다. 성공은 201 MeetingSettlementAppealVo다. 사유는 공백만 입력할 수 없고 서버 한도는 2,000자다. AuditSubjectType enum에는 SETTLEMENT·ITEM·SHARE·TRANSFER·PREPAYMENT가 있지만 이 접수는 ITEM·SHARE·TRANSFER만 허용한다. SETTLEMENT와 PREPAYMENT는 INVALID_INPUT이다.
 
-- 이의 대상은 분담(SHARE), 항목(ITEM), 송금(TRANSFER)이다. 사유는 비울 수 없고, 사유와 호스트 답변은 2000자까지다.
-- 감사 기록의 행위자 역할은 USER, HOST, SYSTEM, ADMIN 이다.
+| 대상 | 동일 정산 소속 확인 후 허용하는 사람 |
+|---|---|
+| ITEM | 항목 보유자 또는 해당 항목에 자기 분담이 있는 사람 |
+| SHARE | 해당 분담의 회원 또는 실제 낼 사람. 수입 항목의 지급 방향도 반영 |
+| TRANSFER | 해당 이체의 보내는 사람 또는 받는 사람 |
 
-## 6. 상태/권한/시나리오 매트릭스
+문 앞에서 모임 존재와 현재 호스트 또는 참석 자격을 먼저 검사한다. 일반 모임은 현재 참석 상태, 정기모임 회차는 실제 참석 정책을 사용한다. 과거 분담·송금 당사자라는 사실만으로 참석 취소 후에도 접수 자격이 유지되는 것은 아니다. 정산 생성자 본인이라는 이유만으로 모두 거절하는 별도 조건은 없으며 대상 당사자 조건을 그대로 적용한다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | (Happy Path · 참가자 이의 제기) 분담금 산정에 동의 못 함 | settlement ACTIVE, share 본인 PENDING 결제 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S2 | (호스트 · 이의 처리 - APPROVED) 호스트가 사용자 의견 수락 | PENDING appeal 1건 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | (호스트 · 이의 처리 - REJECTED) 사유 부족으로 기각 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | (엣지 · 동일 subject 중복 이의) PENDING이 있는데 또 이의제기 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | (엣지 · 호스트 본인 share 이의 차단) 클라이언트 가드 + 백엔드 가드 | 호스트가 자기 share에 이의 제기 시도 (UI 우회) | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | (호스트 · 결제 차단 효과) PENDING appeal로 transfer 결제 차단 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | (참가자 / 호스트 · 감사 로그 조회) 정산 변경 이력 추적 | 호스트가 누가 언제 무엇을 했는지 점검 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | (엣지 · ALREADY_RESOLVED) 이미 처리된 이의를 다시 처리 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | (엣지 · INVALID_STATUS) status에 PENDING으로 resolve 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S10 | (엣지 · DRAFT 이의 차단) 준비 중 정산에 이의제기 시도 (UI 우회 포함) | settlement DRAFT, 본인 share 존재 | `MEETING_SETTLEMENT_NOT_ACTIVE` 거부, appeal row 미생성, 호스트 알림 0건. 앱은 버튼 자체를 숨김 (2026-06-05) |
+서버는 정산을 잠가 최신 상태를 읽고 회원 상태도 잠가 확인한다. DRAFT는 MEETING_SETTLEMENT_NOT_ACTIVE로 거절하며 COMPLETED 접수는 허용하는 현재 정책이다. 취소된 정산은 현재 정산 조회에서 제외되므로 ‘DRAFT가 아니면 어떤 과거 정산이든 이 경로로 접수 가능’으로 확대하지 않는다. 같은 대상에 PENDING 이의가 있으면 MEETING_APPEAL_ALREADY_PENDING, 닫힌 계정 또는 진행 중인 계정 삭제 요청도 각각 거절한다.
 
-## 8. Gap / Risk
+## 입력 보존과 요청 결과
 
-> 원천 문서에서 명시적인 Gap/Risk 키워드는 발견되지 않았다. 이 문서는 기능 구현이나 QA 착수 전에 실제 서버/Flutter 소스 대조로 Gap을 다시 닫아야 한다.
+분담금 이의 창은 공백 제거 후 필수 사유를 받고 **앱에서 1,000자**로 제한한다. 송금 이의 창은 **2,000자**다. 호스트 답변은 선택 입력이며 앱·서버 모두 2,000자까지다. 서로 다른 현재 한도를 하나의 값으로 쓰지 않는다.
 
-## 9. 수용 기준
+접수 창은 요청 결과를 기다리고 중복 제출·작성 중 이탈을 제어한다. 열린 창에서 같은 사유를 재전송할 때 같은 명령 키를 사용하고 사유가 바뀌면 새 키를 만든다. 결과를 모르는 오류에서는 입력을 유지하고 재전송 안내를 한다. 이미 진행 중인 이의라는 응답은 현재 목록·행을 다시 읽고 접수되어 있음을 안내한 뒤 창을 닫는다. 창을 닫았다가 다시 열 때까지 키·입력을 영구 보관하는 구현은 아니다.
 
-- **AC-01. (Happy Path · 참가자 이의 제기) 분담금 산정에 동의 못 함**: Given settlement ACTIVE, share 본인 PENDING 결제 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-02. (호스트 · 이의 처리 - APPROVED) 호스트가 사용자 의견 수락**: Given PENDING appeal 1건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. (호스트 · 이의 처리 - REJECTED) 사유 부족으로 기각**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. (엣지 · 동일 subject 중복 이의) PENDING이 있는데 또 이의제기 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. (엣지 · 호스트 본인 share 이의 차단) 클라이언트 가드 + 백엔드 가드**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. (호스트 · 결제 차단 효과) PENDING appeal로 transfer 결제 차단**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. (참가자 / 호스트 · 감사 로그 조회) 정산 변경 이력 추적**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. (엣지 · ALREADY_RESOLVED) 이미 처리된 이의를 다시 처리 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. (엣지 · INVALID_STATUS) status에 PENDING으로 resolve 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-10. (엣지 · DRAFT 이의 차단) 준비 중 정산에 이의제기 시도**: Given settlement DRAFT, 본인 share 존재 When 참가자가 이의 생성을 호출하면(UI 우회 포함) Then `MEETING_SETTLEMENT_NOT_ACTIVE`로 거부되고 appeal이 저장되지 않으며 호스트 알림도 발생하지 않는다
+성공 뒤 이의 목록과 송금 목록을 다시 읽는다. 분담 접수는 호출한 내 분담 또는 항목별 납부 조회도 무효화하여 행의 행동 허용값을 갱신한다. 이의 목록 재조회 오류는 공급자의 오류 상태로 저장되며 접수 성공 자체를 되돌리지 않는다.
+
+## 진행 중 이의의 영향
+
+분담 포인트 납부·은행 입금 확인은 해당 SHARE뿐 아니라 부모 ITEM의 PENDING 이의도 검사한다. 일반 이체 납부·혼합 납부·입금 확인은 해당 TRANSFER의 진행 중 이의를 검사한다. 거절은 MEETING_SETTLEMENT_SUBJECT_UNDER_APPEAL이다. 자세한 지급 방향·허용 상태는 [분담·이체 납부와 신고](F07-05_pay-share_prd.md), [이체 확인·만료·후속 처리](F07-06_host-confirm-transfers_prd.md)를 따른다.
+
+이의 처리는 PENDING 차단 조건을 해제하는 상태 변경이다. 이미 납부한 돈의 자동 환불, 항목 금액 수정, 취소된 정산의 자동 재개가 아니다. 또한 ITEM 이의가 모든 DIRECT 이체를 일괄 차단한다고 설명하지 않는다. 각 명령이 확인하는 대상 종류가 다르다.
+
+## 정산 생성자의 답변
+
+PATCH /api/v1/events/{eventId}/settlement/appeals/{appealId}/resolve는 status와 선택 hostResponse를 받고 200 MeetingSettlementAppealVo를 반환한다. 이의 행을 잠가 PENDING인지 확인한 뒤, 경로의 모임과 해당 정산이 일치하는지 및 요청자가 정산 생성자인지 확인한다. 허용 상태는 APPROVED·REJECTED·RESOLVED다. PENDING으로 처리하거나 이미 처리한 행을 다시 처리하면 거절한다.
+
+생성자의 답변은 hostResponse·resolvedByUserId·resolvedAt에 저장하고 이의 낸 회원에게 알림 발송 의도를 등록한다. 이 API는 현재 정산 상태를 ACTIVE로 한정하는 추가 조건이 없지만 이의의 기존 PENDING 여부·소속·생성자 권한은 요구한다.
+
+앱은 생성자에게만 대기 카드의 거절·해결·받아들임을 표시한다. 답변 확인 창은 제출 전에 닫히며 이후 실패는 안내 메시지로 표시한다. 실패한 답변의 자동 복원이나 영구 명령 키 재생을 갖춘 접수 창과 동일한 흐름으로 설명하지 않는다.
+
+## 운영팀 판단과 호스트 답변의 분리
+
+운영팀 처리는 별도 서버 명령이다. 대기 이의를 APPROVED 또는 REJECTED로 판단할 때 판단 글은 필수이며, 이미 APPROVED인 이의를 RESOLVED로 닫을 수 있다. RESOLVED에서 글을 비우면 기존 운영팀 글을 유지한다. 명령 식별자에 최초 결과를 묶고 이의 행을 잠가 상태 전이를 다시 확인한다.
+
+운영팀은 operatorResponse·operatorResolvedAt과 내부 관리자 식별자를 기록하며 호스트 답변 칸을 덮어쓰지 않는다. 회원 응답에는 운영팀 판단 글·시각을 주되 관리자 번호는 주지 않는다. 앱은 기존 호스트 응답 아래에 **운영팀 판단**을 따로 표시하며, 글이 없어도 판단 시각이 있으면 표시한다.
+
+운영팀 판단의 알림 대상은 정산 생성자와 이의 낸 회원을 중복 제거한 집합이다. 두 사람이 같으면 두 통을 등록하지 않는다. 접수·호스트 답변·운영팀 판단은 발송 의도 저장까지이며 실제 기기 수신을 보장한 검증은 아니다. 운영팀 판단 서비스 자체도 금액 변경·환불을 실행하지 않는다.
+
+## 이의 목록과 표시의 한계
+
+GET /api/v1/events/{eventId}/settlement/appeals는 생성자 권한 확인 후 현재 정산의 전체 이의를 생성 시각 내림차순 List로 반환한다. 페이지 응답이 아니다. 앱은 대상 종류·번호·사유·신청자 이름·접수 시각·상태와 별도 응답 상자를 표시한다. 로딩·오류와 재시도·빈 목록을 구분하고 목록 당겨서 새로고침을 제공한다.
+
+송금 화면은 이 생성자 전용 목록을 구독하여 진행 중인 TRANSFER 번호를 계산한다. 조회 실패나 값이 없으면 빈 집합으로 대체한다. 따라서 일반 참가자 화면의 진행 중 표시와 이의·결제 행동 노출을 이 목록만으로 정확히 보장할 수 없다. 서버의 실제 명령 차단이 남아 있다는 사실과 화면이 올바르게 안내하는지는 별도다.
+
+## 변경 기록의 범위와 보관
+
+GET /api/v1/events/{eventId}/settlement/audit-log는 page·size를 받아 Spring Page를 반환하며 기본 크기는 30이다. 같은 모임의 취소 전후 정산을 모두 조사하되 본인이 관리하는 정산 번호만 포함한다. 정산 번호가 없는 모임 수준 기록은 현재 모임 호스트일 때 포함한다. 어느 범위에도 권한이 없으면 FORBIDDEN, 정산 자체가 없으면 MEETING_SETTLEMENT_NOT_FOUND다.
+
+보냈어요·취소의 SHARE/TRANSFER 기록은 해당 정산 생성자에게만 공개한다. 목록과 전체 건수는 같은 가시성 조건을 사용하며 생성 시각 내림차순·같은 시각이면 기록 번호 내림차순이다. 일반 참가자의 전체 정산 활동 기록으로 설명하지 않는다.
+
+감사 발행기는 호출한 쓰기 트랜잭션 안에서 기록을 저장한다. 이의 접수·답변은 대상·행동·행위자·관련 정산 및 사유/처리 내용을 기록한다. 선택한 호출에서 기록되는 내용을 확인한 것이며 모든 코드 변경이 빠짐없이 기록되는지 전수 감사한 결과는 아니다. 현재 보관 작업은 매일 03:00에 90일보다 오래된 행을 삭제한다. 실제 운영 스케줄 실행 여부나 별도 법적 보관 적정성은 이번 소스 대조의 판정 범위가 아니다.
+
+## 변경 기록의 공개와 앱 표시
+
+행위자 역할은 USER·HOST·ADMIN·SYSTEM이다. 회원에게 제공할 때 ADMIN은 운영팀, SYSTEM은 시스템으로 표시하고 식별자를 비운다. 요청 추적 번호도 제거하며 beforeSnapshot·afterSnapshot·payload 안의 지정된 내부 관리자·인계 메모·작업·추적·서버 식별 키를 재귀적으로 제거한다. JSON 해석에 실패한 세부 내용은 숨긴다. 모든 종류의 개인정보를 자동 탐지하는 필터라고 설명하지 않는다.
+
+앱은 30개씩 이어 읽고 추가 조회 실패는 목록 꼬리의 재시도로 처리한다. 줄에는 동작 이름·대상 종류와 번호·초까지의 시각·행위자를 표시한다. 모르는 종류나 동작은 알 수 없음이다. 반환 모델에 변경 전후·payload가 있어도 현재 화면에서 이를 펼쳐 읽거나 기록 줄을 눌러 상세로 이동하는 기능은 없다. 뒤로 돌아가면 이전 정산 화면으로 복귀한다.
+
+## 현재 제한과 확인 범위
+
+| 판정 | 항목 | 영향·다음 확인 |
+|---|---|---|
+| Gap | 참가자의 송금 이의 표시 | 생성자 전용 목록 실패를 빈 진행 중 집합으로 처리한다. 참가자에게 허용된 근거로 진행 중 표시·행동을 판단하도록 맞춰야 함 |
+| Risk | 현재 호스트와 정산 생성자 | 현황 관리 입구와 이의 조회·처리 권한이 다름. 호스트 변경 후 접근·안내 경계를 확인 |
+| Risk | 호스트 답변 실패·응답 유실 | 입력 창이 먼저 닫히고 자동 복원·영구 요청 재생이 없음. 재시도 시 이미 처리됨과 실제 실패를 구분해야 함 |
+| Risk | 입력 한도·설계 설명 차이 | 분담 창 1,000자와 송금/서버 2,000자를 구분. 화면 명세의 enum 다섯 종류를 모두 접수 가능으로 해석하지 않음 |
+| 미검증 | 실제 접수·경합·알림·보관 실행 | 기존 선택 단언의 목적과 소스만 대조. 실제 DB 경합·기기 수신·90일 정리 실행의 현재 통과 기록은 아님 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 입구:** 내 분담·항목별 납부의 서버 허용값, 송금의 당사자/상태 조건, 관리 더보기의 이의·변경 기록을 구분한다.
+- **AC-02 접수 계약:** 필수 명령 키·201 응답과 세 허용 대상, 필수 사유·서버 2,000자 한도를 확인한다.
+- **AC-03 접수 자격:** 현재 모임 참석/호스트와 대상별 실제 당사자·정산 소속을 함께 검사한다.
+- **AC-04 상태와 계정:** DRAFT·중복 대기·닫힌 계정·삭제 요청을 거절하며 COMPLETED 허용을 실제 정책대로 설명한다.
+- **AC-05 재시도:** 분담/송금 입력 한도·열린 창의 동일 의도 키 재사용·결과 모름 입력 유지·이미 접수 안내를 구분한다.
+- **AC-06 차단 범위:** 분담과 부모 항목, 개별 이체의 대기 이의 검사와 처리 후 금액 자동 변경 없음이 일치한다.
+- **AC-07 생성자 처리:** 같은 모임·정산 생성자·잠근 PENDING 행과 세 종결 상태를 확인한다.
+- **AC-08 답변 실패:** 답변 창 종료 후 실패·응답 유실과 재조회 결과를 확인하며 자동 복원을 있다고 쓰지 않는다.
+- **AC-09 운영팀 판단:** 대기 판단과 받아들인 이의 해결의 상태 전이, 별도 글/시각·최초 결과 재생·중복 없는 알림 대상을 구분한다.
+- **AC-10 목록 권한:** 생성자 전용 전체 List와 참가자 송금 화면의 빈 집합 대체 문제를 구분한다.
+- **AC-11 기록 범위:** 같은 모임의 관리 가능한 정산·모임 수준 기록·생성자에게만 보이는 송금 신고 기록을 목록과 건수에 동일 적용한다.
+- **AC-12 기록 보관:** 쓰기 트랜잭션의 기록과 90일 초과 정리 정책을 설명하며 전수 완전성·실행 결과로 확대하지 않는다.
+- **AC-13 공개 정보:** 내부 식별자 제거와 운영팀/시스템 표시, 파싱 실패 시 세부 숨김을 확인한다.
+- **AC-14 조회 복귀:** 30개씩 추가 조회·실패 재시도·알 수 없는 동작·상세 이동 없음·뒤로 복귀를 구분한다.
+
+기존 MeetingSettlementAppealServiceTest의 DRAFT 거절·저장/알림 없음과 COMPLETED 접수 허용 단언, share_appeal_flow_test의 요청 중 공급자 유지·명령 키 전달·접수 후 목록/행 재조회 단언을 읽었다. 새 제품 시험을 실행하지 않았으며 문서 검사와 제품 동작 검증을 구분한다.
