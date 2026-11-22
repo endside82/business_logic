@@ -437,7 +437,8 @@
         "permission_guides_20261122",
         "qa_acceptance_20261122",
         "feature_inventory_20261122",
-        "qa_overview_20261122"
+        "qa_overview_20261122",
+        "numbers_reference_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4968,9 +4969,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a1f65c27e34098706166e6ab0f3289750273848005ec696c9bd00da5db85e35e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "numbers_reference_20261122"
+      ],
+      "reviewedSha256": "b19ded6380b75fb8381e20965b406a0a95533efc7e38d9d394d2027511cdcfb2"
     },
     {
       "path": "docs/money-flow/scenarios.html",
@@ -5265,9 +5269,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5ae4d88a232c84a6b0e69ee2136bc8942eaaf1b96e3f800126ee17ca0aed02bb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "numbers_reference_20261122"
+      ],
+      "reviewedSha256": "e5427ad0c996894a319c72f336d02526b91fcff11856bc874bf8ae2c6f4af6a7"
     },
     {
       "path": "docs/tour/coverage.html",
@@ -48344,6 +48351,266 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; canonical document derivation and migration table Node VM checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "numbers_reference_20261122": {
+      "kind": "source_review",
+      "scope": "기존 수치표 전체 본문 읽기, 최신 기능 정본의 수치·조건 재사용과 결제창 소스 직접 대조. 정책·기본값·앱/서버 한도·실행 조건 분리. 돈흐름 개요 전체 본문 읽기, 공통 결제·개인정보 정책/마일리지·창작자 정본 재사용과 관리자 무료 지급 소스 확인.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/EventPrepayment.java",
+          "sha256": "012784d56c78265179521b03ceedf449ef74da25d8a45b41360faf1d5c07701b",
+          "reviewScope": "DEFAULT/MIN/MAX_PAYMENT_WINDOW_HOURS, paymentWindowHours 기본값·생성·normalizePaymentWindowHours 본문 확인. 환불 마감과 분리된 기본24·허용1~168시간."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/payment/controller/ManageWalletController.java",
+          "sha256": "5628111d972dd6d456274ed17c9e74a4dbece4cc481658d489bc0488fe90339d",
+          "reviewScope": "무료포인트POST 권한·필수멱등키와읽기별권한 확인. 전체파일 본문 읽기."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/payment/service/ManageWalletService.java",
+          "sha256": "870efe437c9a1f838bb519cd9ecff809d8f2963d380e08cf5ea6609ccddf20b6",
+          "reviewScope": "grantFreePoints와validateFreePointParam 본문: 무료보상전용/원결제미지정·운영작업예약·위임·대상/금액1~1000만/필수사유185자 대조. 운영실행증거아님."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationEntryService.java",
+          "sha256": "f400fae3c4316eb204dd85a80980eb9e410b0e710c07f29a07c217f2e7a455d2",
+          "reviewScope": "결제 대기 신청·호스트 승인 paymentDueAt 계산과 resolvePaymentWindowHours 본문 대조(176~193,298~311,355~360). 전체 서비스 재검수 아님."
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "charge_methods_autocharge_20261122",
+        "club_finance_20261122",
+        "club_subscription_20261122",
+        "creator_earning_20261122",
+        "date_chat_meeting_20261122",
+        "email_code_auth_20261122",
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_checkin_20261122",
+        "event_payment_cancel_refund_20261122",
+        "event_prepayment_20261122",
+        "location_features_20261122",
+        "mileage_commands_20261122",
+        "mileage_policy_season_20261122",
+        "notification_domain_20261122",
+        "payment_supplement_20261122",
+        "people_block_source_advance_20261122",
+        "privacy_policy_20261122",
+        "profile_hub_edit_addresses_20261122",
+        "profile_preference_tags_20261122",
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122",
+        "report_intake_20261122",
+        "settlement_pay_20261122",
+        "settlement_prepayment_20261122",
+        "trust_score_20261122",
+        "wallet_history_earnings_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/01_domain_prds/16_마일리지_prd.md",
+          "sha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
+          "sha256": "a01d776c4d3cb588c033ea3d2e20243bec7bb62ccba8b1e8866fe49be5d45cb9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
+          "sha256": "c2487e00ea1e1d05e63a93c190ea0b795becc60ea9af7370d80a1d2271a91a1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
+          "sha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
+          "sha256": "6b6d396eacb60ba290cef220bd1a00cf20fdd3ec9c24a99e636bcbd0ff19f8a8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
+          "sha256": "e988306b2e846b50570abce854a11408040e4a2518a098af3cd9d0cda1e510ad"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
+          "sha256": "099793209eb5a069983b5bf568fb27904a684ab091e3a2ad2938a4a9b8e54afc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
+          "sha256": "6a47ba414f3266b0808bc2df6f0533953cf69187544c3f80f2f74d37c0e92b89"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
+          "sha256": "8319a11d5d9cc34d09df368f325d62b512f16a8baec507779036fb6508d180e2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
+          "sha256": "2b336ec6c5bab3e6250baeca0bfe67509e5bded619d21e10b284e6644652e344"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
+          "sha256": "68b12332e2bfd32316c03ed01ddeed1682f6f15cfb101fb118b01259a31c70dc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-04_report_prd.md",
+          "sha256": "62524dc3d89c9ff83201ba7258805720e2530477ff91205ae89ad498d802f37e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-05_trust-score_prd.md",
+          "sha256": "5a9dfa9c2ce3cabe8d8a4c336f2bd1858b3ecdda7190676327de9c27aa7ccd34"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-04_quiet-hours_prd.md",
+          "sha256": "f0cc5b825022345b19c8f2aebc5963f216ca3d9b513429916b70708238ae334c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
+          "sha256": "a48c5aed1a93098a6be7258a76ef1bb553d5100a39fb0374e26668160b7dabf7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md",
+          "sha256": "1ea3eb28b1529379fee2d92532fd1c1cb8cd48db093afd2babbabe88412b7f80"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
+          "sha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
+          "sha256": "c6a23acda7bcc657dfe1c54de5d2274b7691dac39781a26b4ea440194fcd5025"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
+          "sha256": "a6e96903f29760d91f8413ff3f50e52674ffaa2e5ab235fa7dc97bef1622e6c4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
+          "sha256": "b585c8e6a7fcd9b4d65623c3efd5dd0a927d906f714ec87c01bc4db5c46a5970"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
+          "sha256": "9a28f6b294a20448851abc88f40a524f8ebd7d45489137f91bb2d4709b2aec5c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
+          "sha256": "c37b11088f99c9f22dfec5be15cc03063607ffa46b9a82315f43a80837adf4eb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
+          "sha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
+          "sha256": "16e72499f9b219ab6bb08d82e2a1d520f67eafcc08658183184e36b4f11a353c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
+          "sha256": "1aca822bd967ce9c826e6494ec2ce58e554172e8f7cac1dd5ac9b1b367a32704"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/reference/numbers.html": [
+          "sidebar"
+        ],
+        "docs/money-flow/index.html": [
+          "sidebar",
+          "money-retry-current",
+          "1-현재-제품의-돈은-세-종류로-나뉜다",
+          "1-1-유료-포인트",
+          "1-2-무료-포인트",
+          "1-3-클럽-마일리지",
+          "2-제품-전체에-공통으로-적용되는-원칙",
+          "2-1-지갑-차감과-비즈니스-처리의-역할이-다르다",
+          "2-2-무료-포인트는-현금화되지-않는다",
+          "2-3-환불은-원래-결제-구성을-넘을-수-없다",
+          "2-4-수수료와-원천징수세는-유료-매출에만-붙는다",
+          "2-5-정산은-즉시-수익-이-아니라-확정-후-지급-이다",
+          "2-6-운영자는-돈을-직접-움직이지-않는-것이-원칙이다",
+          "2-7-운영자의-돈-조치는-다시-보내도-한-번만-집행된다",
+          "2-8-지갑에서-돈이-나가는-길은-창구-하나를-지난다",
+          "3-비즈니스-유형별-분류",
+          "3-1-flow-through-사용자-돈이-수취자에게-넘어가는-흐름",
+          "3-2-platform-revenue-플랫폼이-판매자인-흐름",
+          "3-3-paid-only-clearing-현금성-채무를-맞추는-흐름",
+          "4-상황별-빠른-판단표",
+          "5-기획에서-특히-주의해야-할-경계",
+          "5-1-잔액-이라는-단어는-하나가-아니다",
+          "5-2-환불-시점은-정산-전과-정산-후로-나눠야-한다",
+          "5-3-은행-이체는-off-ledger-구간이-있다",
+          "5-4-현재-실연동-게이트가-남아-있는-영역",
+          "6-문서-사용법"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "이메일24시간토큰→6자리10분 및발송/가입증명 제한",
+        "정산 선입금 공개·MIXED 오안내 수정",
+        "자동충전 임계값 저장과 실제부족액실행/채널한도 구분",
+        "기금수수료후원천세·추가한도·거절요청 월제한 구분",
+        "정기모임72시간납부/기본5일은행확인/날짜별요율 구분",
+        "호스트위치시간예외·대기1번무조건승격·신뢰원시감점20을총감점으로오독하는설명 수정",
+        "대사11종과모든거래기록완전성의보편적인실행완료주장 제거",
+        "개요의 기금전액구독·모든차감봉인·환불의무전면예외 일반화 수정",
+        "유료/무료 분류·판매원천·지급시점·상계·은행증거 단계 분리",
+        "운영자 원문은 종결행90일/계정파기로 수정,무료지급 상한과사유길이 확인",
+        "마일리지 과거실행통과 원문분리보존"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/money-flow/index.html",
+          "pattern": "<details id=\"money-overview-previous-mileage-record\">[\\s\\S]*?</details>",
+          "sha256": "ac64dc7fb843d6ab7a22a1dbdcebe9495711c0a0d394f6d951b23f24903043a6",
+          "note": "기존 마일리지 실행·출시 단락 원문을 별도 과거기록으로 보존; 현재 검증으로 합산 안 함"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "37 source/canonical digests; 27 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 59 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical/source document and link checks only"
       },
       "observedSourceVersions": {
         "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
