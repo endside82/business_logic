@@ -477,7 +477,9 @@
         "tour_current_20261122",
         "audit_checklist_current_20261122",
         "screen_review_current_20261122",
-        "private_meeting_current_20261122"
+        "private_meeting_current_20261122",
+        "completion_criteria_current_20261122",
+        "feature_status_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5219,9 +5221,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f22592408b460916103e770a799dda8f23fcb57feb41403c625ecef4ad48f98f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "completion_criteria_current_20261122"
+      ],
+      "reviewedSha256": "e3fff22d97f7038fa425b06e530bfb217eadd150200190c1246b146c1cd01921"
     },
     {
       "path": "docs/qa/coverage.html",
@@ -5265,9 +5270,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "8d2ab862e2c2e2399191910dd25258b66d03c3172287fd695c4a8124323240ad",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feature_status_current_20261122"
+      ],
+      "reviewedSha256": "d88e88f7da41763e6053250a57d00aff08e2b028e56a200c85ed11834ac34811"
     },
     {
       "path": "docs/qa/launch-status.html",
@@ -53342,6 +53350,206 @@
       },
       "observedSourceVersions": {
         "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
+      }
+    },
+    "completion_criteria_current_20261122": {
+      "kind": "source_review",
+      "scope": "완료 기준 HTML 전체 본문·175 기능 링크 대조. 과거 배포·실행 기록을 접어 보존하고 현행 완료 단계·공개 범위·정본 제한·검수 운영 기준 교정. 제품 재실행 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/09_exceptions_edge_cases.md",
+          "sha256": "274b38165749415229f5e6d9e2f8ee6b56d5a1b5d8c1d73d5cdfe6add71218de"
+        },
+        {
+          "path": "business_logic/docs/features/private-meeting.html",
+          "sha256": "49b0d6add369032c66e41a1ce10057cbbbbc4362fdb9cf7e5ba813c7f655986a"
+        },
+        {
+          "path": "business_logic/docs/assets/features.js",
+          "sha256": "395c220325b35170e399a373c971a66d0e6a4010a49ba3a1a6b5deafccd5ae08"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
+          "sha256": "73b0db9e10fed64cf4361233bed2f293e503e4c28673064823524051e9537ec7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
+          "sha256": "8342d2e2f3691a7ea7260602174d9d826a1e04d9a8f26bbe9f63892c1f965a87"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-02_notification-grouped-badge_prd.md",
+          "sha256": "9c303f78b638cd422a5747adcbb02c2e93b4f9ef23b38027d482388dcd624d52"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
+          "sha256": "80647479db7e31d0392ea130ba7a1498461c15f71f6f64eeadb3d739910b7bf2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
+          "sha256": "2d01632669a8e6b03ba4c5150595ae12b2e55aaf76e4e2962c6c19d2bbbf1388"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
+          "sha256": "fc7a6d43295b0121e09802419ce6b70d2cfe3574115863d9aa3fc6bede7c9131"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
+          "sha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
+          "sha256": "399705517651edbfa3a0b859ef9452701dda8e92206886c1e361495f65859b29"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
+          "sha256": "9521674a5a966f949835c0c8a15b36b785d2fdc462bb9db6d96b2f8818f5328a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/completion-criteria.html": [
+          "sidebar",
+          "latest-development",
+          "decision",
+          "stages",
+          "scope",
+          "common",
+          "known-limits",
+          "sequence",
+          "profile-required",
+          "evidence",
+          "domains",
+          "domain-01",
+          "domain-02",
+          "domain-03",
+          "domain-04",
+          "domain-05",
+          "domain-06",
+          "domain-07",
+          "domain-08",
+          "domain-09",
+          "domain-10",
+          "domain-11",
+          "domain-12",
+          "domain-13",
+          "domain-14",
+          "domain-15",
+          "domain-16",
+          "domain-17",
+          "domain-18",
+          "domain-19",
+          "domain-20",
+          "domain-21",
+          "additional",
+          "reference-checklists"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "옛 150/24/1 분류와 11월 빌드·추적 수는 과거 기록으로 한정",
+        "현재 알림 입구와 기능별 공백을 정본에 연결",
+        "175 링크 이름을 현재 인벤토리에 맞춤; 폐기 기능 완료 오인 제거"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/qa/completion-criteria.html",
+          "pattern": "<details id=\"historical-development\"><summary>.*?</summary><p>.*?</p>([\\s\\S]*?)</details>",
+          "sha256": "089de8b581e5db8b3fa7c41777b123689a1d1051a05178757e97a5230744f9dd"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "13 source/canonical digests; 34 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 2 paths, 240 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; documentation, history preservation and link/anchor checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
+      }
+    },
+    "feature_status_current_20261122": {
+      "kind": "source_review",
+      "scope": "기능 상태 HTML 전체 본문과 inline renderer 대조. 현재 175 기능 계약을 행별 표시; 옛 배포·검사·작업 기록은 날짜와 범위를 갖는 과거 자료로 구분. 필터·페이지·검색·링크 VM 확인.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/assets/features.js",
+          "sha256": "395c220325b35170e399a373c971a66d0e6a4010a49ba3a1a6b5deafccd5ae08"
+        },
+        {
+          "path": "business_logic/docs/qa/completion-criteria.html",
+          "sha256": "e3fff22d97f7038fa425b06e530bfb217eadd150200190c1246b146c1cd01921"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/feature-status.html": [
+          "sidebar",
+          "source-range-current",
+          "source-update-current",
+          "completion-standard",
+          "source-update-2026-10-13",
+          "source-update-2026-10-07",
+          "source-update-2026-09-26",
+          "m-open",
+          "m-sealed",
+          "m-retired",
+          "m-journey",
+          "q",
+          "domain-filter",
+          "scope-filter",
+          "proof-filter",
+          "work-filter",
+          "f-gap",
+          "count",
+          "rows",
+          "previous-page",
+          "page-number",
+          "next-page",
+          "reading-guide",
+          "asof"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "옛 코드 보완 목록을 현재 결함 수나 강제 작업으로 이월하지 않음",
+        "현재 기능 확인 범위를 정본 인벤토리에서 연결",
+        "운영 공개 여부는 현재 후보·설정·실행 근거 별도 판단"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/qa/feature-status.html",
+          "pattern": "<section id=\"source-update-current\"><details><summary>.*?</summary><p>.*?</p>([\\s\\S]*?)</details></section>",
+          "sha256": "d94f874b45ccd2178d7386f826eab2549a943b240607b7ac1a396302e86f300b"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "3 source/canonical digests; 24 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 2 paths, 240 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; VM document rendering and local links only"
+      },
+      "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
         "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
       }
