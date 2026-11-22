@@ -6,12 +6,12 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,282개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,281개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1282,
+    "documentedScenarioItems": 1281,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4957,
+    "automatedTestFilesScanned": 4959,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 68,
@@ -20,15 +20,15 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
-    "featureLevelAutomatedProof": 126,
+    "featureLevelAutomatedProof": 127,
     "localServerE2eProof": 13,
-    "localRealAccountProof": 35,
+    "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 43,
-    "partialEvidenceChain": 52,
-    "definitionOnlyEvidence": 80,
-    "traceMarkers": 538,
-    "verifiedTraceRecords": 536,
+    "partialEvidenceChain": 51,
+    "definitionOnlyEvidence": 81,
+    "traceMarkers": 539,
+    "verifiedTraceRecords": 537,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10376,19 +10376,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-09",
       "domain": "모임 정산",
-      "name": "선입금/환불/환불규정",
-      "scenarioCount": 11,
+      "name": "출시 제한 중인 정산 선입금·환불 규정",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/backend.md",
-        "total": 7,
-        "verified": 7,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
         "entries": [
           {
@@ -10494,28 +10494,36 @@ window.SCENARIO_AUDIT = {
             ]
           },
           {
-            "id": "F07-09:7",
-            "label": "가상계좌 입금 통지 — 공급자별 요청과 기존 호환 요청",
+            "id": "F07-09:8",
+            "label": "PATCH /api/v1/events/{eventId}/prepayments/{id}/bank-refund/returned — 출시 제한 중인 은행 반환 처리",
             "status": "verified",
-            "note": "공급자 코드가 있는 경로는 onDeposit, 옛 고정 주소는 onDepositLegacy가 처리한다. 처리 함수가 없다는 옛 설명도 정정했다.",
+            "note": "",
             "endpoints": [
               {
-                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
-                "controller": "VirtualAccountWebhookController",
-                "method": "onDeposit",
-                "httpMethod": "POST",
-                "httpPath": "/webhooks/meeting-settlement/{providerCode}/virtual-account/deposit",
-                "targetLine": 52,
-                "methodLine": 53
-              },
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "controller": "MeetingPrepaymentController",
+                "method": "markBankRefundReturned",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/prepayments/{id}/bank-refund/returned",
+                "targetLine": 114,
+                "methodLine": 115
+              }
+            ]
+          },
+          {
+            "id": "F07-09:9",
+            "label": "PATCH /api/v1/events/{eventId}/prepayments/{id}/bank-refund/not-received — 출시 제한 중인 은행 반환 처리",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
               {
-                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
-                "controller": "VirtualAccountWebhookController",
-                "method": "onDepositLegacy",
-                "httpMethod": "POST",
-                "httpPath": "/webhooks/meeting-settlement/virtual-account/deposit",
-                "targetLine": 70,
-                "methodLine": 71
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+                "controller": "MeetingPrepaymentController",
+                "method": "closeBankRefundNotReceived",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/prepayments/{id}/bank-refund/not-received",
+                "targetLine": 125,
+                "methodLine": 126
               }
             ]
           }
@@ -10539,9 +10547,9 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
-      "launchScope": "partial",
-      "proof": "real",
+      "evidenceStage": 1,
+      "launchScope": "sealed",
+      "proof": "auto",
       "knownIssues": 1,
       "pendingReview": 0
     },

@@ -56,7 +56,13 @@ for (const id of ['N-00', 'N-07', 'N-11-POLL', 'N-08-SEASON', 'N-08-PHOTO', 'N-0
 }
 assert.equal(new Set(launch.openItems.map(item => item.id)).size, launch.openItems.length, '중복 작업 식별자');
 for (const item of launch.openItems) {
-  assert.equal(item.owner, '운영자', item.id);
+  if (item.owner === '개발자') {
+    assert.ok(['repair', 'development'].includes(item.readiness.work), `${item.id}: 개발 담당은 구현 보완 또는 개발 항목`);
+    assert.equal(item.implementationReady, false, `${item.id}: 개발 보완을 완료로 표시하지 않음`);
+    assert.ok(item.developmentFeatures.length > 0 && item.developmentFeatures.every(id => item.features.includes(id)), `${item.id}: 보완 대상 기능을 명시`);
+  } else {
+    assert.equal(item.owner, '운영자', item.id);
+  }
   for (const field of ['implementation', 'automation', 'environment', 'input', 'work']) {
     assert.ok(item.readiness?.[field]?.trim(), `${item.id}: ${field}`);
   }
@@ -79,6 +85,11 @@ assert.equal(socialLogin.implementationReady, true);
 assert.equal(socialLogin.operationsReady, false, '실제 계정·서명 앱 확인은 아직');
 assert.equal(socialLogin.readiness.work, 'environment');
 assert.equal(launch.forFeature('F01-02').scope, 'partial', '로그인 집계를 만들었다고 추가 제공자를 공개하지 않음');
+assert.equal(launch.forFeature('F07-09').scope, 'sealed', '정산 선입금은 참가비 선입금과 별도로 닫힘');
+assert.equal(launch.forFeature('F07-09').proof, 'auto', '참가비 실사용 근거를 정산 선입금으로 옮기지 않음');
+assert.ok(!launch.forFeature('F07-09').openItems.some(item => item.id === 'N-00'), '직접 송금 참가비의 신규 이용과 연결하지 않음');
+assert.equal(launch.forFeature('F03-13').scope, 'partial', '참가비 자체의 공개 범위 유지');
+assert.equal(launch.forFeature('F03-13').proof, 'real', '참가비 자체의 기존 확인 기록 유지');
 for (const id of ['F03-14', 'F03-15', 'F03-16', 'F03-17']) {
   assert.equal(launch.forFeature(id).developmentItems.length, 0, `${id}: 연결한 차량 조율의 실제 이용 미확인을 미구현으로 표시하지 않음`);
 }

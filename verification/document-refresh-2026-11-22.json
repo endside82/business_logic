@@ -282,7 +282,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -298,7 +299,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ]
     },
     {
@@ -3415,9 +3417,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f08d675fe2d562f29394ef58a83d94c9e9fcabbb69bf57e5da494b49398456c6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "reviewedSha256": "8250365f5a5c12e6e87b7c2618c142c9fc94af78769a6b667d87689490c473ec"
     },
     {
       "path": "docs/features/F07-10.html",
@@ -4969,7 +4974,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5046,7 +5052,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5147,7 +5154,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6473,10 +6481,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "4d306879231c00e8235a6bf1bf9534c946a7c3c9a27beaf3df44c0f40781f6cf",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "reviewedSha256": "8319a11d5d9cc34d09df368f325d62b512f16a8baec507779036fb6508d180e2"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
@@ -7922,7 +7932,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8024,8 +8035,11 @@
       "document": false,
       "baselineSha256": "abd379e0d65f7e52631d9cd2539e0c0be230eaf38eb7b6ae7263e2fd8535869e",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "note": "개발 보완 담당자/분류와 정산 선입금 분리 검사 갱신. 전체 현황 기준일 불일치로 전역 검사 미통과."
     },
     {
       "path": "verification/check_scenario_audit.mjs",
@@ -8148,7 +8162,8 @@
         "settlement_pay_20261122",
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
-        "settlement_appeal_20261122"
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -11679,9 +11694,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "326f7cfea15bdab8c028984dcb8916c420376dd4368ac789e539795dc81c2470",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "reviewedSha256": "185acaf178d0bb42b1e1e3786e7148f2f4b1f87b9016af804787e65f71f72c07"
     },
     {
       "path": "units/07_meeting_settlement/F07-09_prepayment-refund/diagrams.md",
@@ -11689,9 +11707,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ab3b24d33da78d3d214489d1e6c4c71db0f59f9c04a400d87b5802fdbd30b6a4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "reviewedSha256": "cfe620b6aa3aef8e64ba9b0a87a5d66e77f958b2d30d07b6f2ccf06e237631fe"
     },
     {
       "path": "units/07_meeting_settlement/F07-09_prepayment-refund/frontend.md",
@@ -11699,9 +11720,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "08c492c508536d5fcce76f1ff0e37765b370ebb119d3719e536c0b9e2b862c5d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "reviewedSha256": "35b09d0820da50caa428624f775e415d8419a0b8940766028e7fe522528382bf"
     },
     {
       "path": "units/07_meeting_settlement/F07-09_prepayment-refund/scenarios.md",
@@ -11709,9 +11733,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "85973a58550ee75249be53116c42ec7e41f8f69427bac2d6b7aa91a4885d954c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_prepayment_20261122"
+      ],
+      "reviewedSha256": "e14238c12959764d2e47707e767f3916831b27e67db19f1c4d606d3bbf993c93"
     },
     {
       "path": "units/07_meeting_settlement/F07-10_account-history-reputation/backend.md",
@@ -15746,6 +15773,21 @@
       "command": "sync_source_reference_docs.mjs --check; build_scenario_audit_data.mjs --write / --check; Node vm LAUNCH_STATUS.forFeature(F07-08); git diff --check",
       "result": "서버 위치표113개·시나리오 생성자료 일치; 이의 표시/답변복구 보완항목 연결; 기존 출시범위와 실행근거 등급 유지; 공백검사 통과",
       "scope": "문서/등록부 검사. 제품코드·DB·브라우저·기기·푸시·보관작업 실행 없음"
+    },
+    {
+      "command": "check_document_evidence_group.py settlement_prepayment_20261122 / app_semantic_color_source_advance_20261122; check_reviewed_doc_artifacts.py",
+      "result": "정산 선입금 소스/정본 지문21개·기존HTML id4개; 앱색변경 기존근거12개; 검토 문서 상대경로2738개·파생정본지문324개 일치. 현재527검토/33과거보존/442대기",
+      "scope": "문서와 닫힌 공개계약 검수. 기존 근거 API877개 고유경로 SHA도 현재소스 일치. 앱12개색변경은 업무의미 영향만 판정; 이미지·제품실행 없음"
+    },
+    {
+      "command": "source_references.test.mjs; sync_source_reference_docs.mjs --check; build_scenario_audit_data.mjs --check; Node vm LAUNCH_STATUS; git diff --check",
+      "result": "API참조11검사·위치표113개·시나리오생성자료·공백검사 통과. 정산보완4개 work를 유효한repair로 정정. F07-09 sealed/auto·참가비 F03-13 partial/real 유지 확인",
+      "scope": "문서/등록부 검사; 공개설정 변경과 실제 금전·기기 확인 아님"
+    },
+    {
+      "command": "node verification/check_release_scope.mjs",
+      "result": "미통과: 출시 상태표 asOf 2026-11-08과 현황판 work.date 2026-11-15 불일치. baseline a5b6e6e에서도 같은 값임을 확인. 새 개발보완 담당자/분류 오류는 수정했지만 전체 검사는 아직 통과 아님",
+      "scope": "전체현황 동기화·최종감사 단계에서 해결할 기존 불일치. 날짜만 바꿔 전체검토 완료를 주장하지 않음"
     }
   ],
   "evidenceGroups": {
@@ -15795,15 +15837,20 @@
         },
         {
           "path": "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
-          "sha256": "3b584b6ea06ee4f445fa98014f893d2f700da8ea3f5a0c30af2fa3653404fca1",
+          "sha256": "7fa38ffce31752f29d80d7bcd4297473c8e5f2340c916e31c0554f3266d05a3f",
           "previousVersions": [
             {
               "sha256": "1e084858731b59d046d14e13be3dea23f1779858f4214ac217ec5f8796762d9f",
               "reviewScope": null,
               "revalidatedBy": "app_label_layout_source_advance_20261122"
+            },
+            {
+              "sha256": "3b584b6ea06ee4f445fa98014f893d2f700da8ea3f5a0c30af2fa3653404fca1",
+              "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
             }
           ],
-          "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지"
+          "reviewScope": "기존 대조 근거; 0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
@@ -15868,7 +15915,15 @@
         },
         {
           "path": "community_app/lib/presentation/notification/screens/quiet_hours_screen.dart",
-          "sha256": "606a43666e359e1b66216ee4efe3a1acbb929af3a2be81657d82928102deecb4"
+          "sha256": "be6703f5a1f24fa1f0554253ddebb51cd70b147e30735665c879dc85fd18f50c",
+          "previousVersions": [
+            {
+              "sha256": "606a43666e359e1b66216ee4efe3a1acbb929af3a2be81657d82928102deecb4",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         }
       ]
     },
@@ -16501,7 +16556,15 @@
         },
         {
           "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
-          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b"
+          "sha256": "c07f6e27be3e617be7b6dddc75c9c05e993247965cf7e0dca02cba7bfd554584",
+          "previousVersions": [
+            {
+              "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/presentation/profile/screens/preference_tag_screen.dart",
@@ -16882,7 +16945,15 @@
         },
         {
           "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
-          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b"
+          "sha256": "c07f6e27be3e617be7b6dddc75c9c05e993247965cf7e0dca02cba7bfd554584",
+          "previousVersions": [
+            {
+              "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/presentation/profile/widgets/deletion_in_progress_banner.dart",
@@ -16954,7 +17025,15 @@
       "sources": [
         {
           "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
-          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b"
+          "sha256": "c07f6e27be3e617be7b6dddc75c9c05e993247965cf7e0dca02cba7bfd554584",
+          "previousVersions": [
+            {
+              "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart",
@@ -17038,7 +17117,15 @@
         },
         {
           "path": "community_app/lib/presentation/profile/screens/profile_edit_screen.dart",
-          "sha256": "0913daef37858451a55b0953218b8aa160d747223c68baac426c29d5f892fa17"
+          "sha256": "daf052072ccefb5e4181faaa9956d92bd6f1b58eda8126de9582fcfad9981294",
+          "previousVersions": [
+            {
+              "sha256": "0913daef37858451a55b0953218b8aa160d747223c68baac426c29d5f892fa17",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/domain/providers/profile/profile_edit_provider.dart",
@@ -17796,7 +17883,15 @@
         },
         {
           "path": "community_app/lib/presentation/search/screens/search_screen.dart",
-          "sha256": "3a1886d86a925d3733329be799ce2196fd546b46db9df90804093dd453e928e1"
+          "sha256": "c3b4f3be7417104709df5570a9c72db4d5314ec819a3ef0b58eed0f399db59d7",
+          "previousVersions": [
+            {
+              "sha256": "3a1886d86a925d3733329be799ce2196fd546b46db9df90804093dd453e928e1",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/presentation/search/screens/saved_search_screen.dart",
@@ -19698,8 +19793,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/widgets/application_card.dart",
-          "sha256": "b6adec605cfe616d90288266326dbecbc8c3278d79fddb9d02e0f0b52a2d7817",
-          "reviewScope": "신청·결정 메시지, 결제 대기 금액·시각, 만료 안내와 승인/거절 행동 표시."
+          "sha256": "28a3caab80e3f6c7201bd89ece3ee800fab8e240525304e02aabc98a8d951734",
+          "reviewScope": "신청·결정 메시지, 결제 대기 금액·시각, 만료 안내와 승인/거절 행동 표시.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "b6adec605cfe616d90288266326dbecbc8c3278d79fddb9d02e0f0b52a2d7817",
+              "reviewScope": "신청·결정 메시지, 결제 대기 금액·시각, 만료 안내와 승인/거절 행동 표시.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/widgets/application_decision_sheet.dart",
@@ -19963,7 +20065,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/waitlist_screen.dart",
-          "sha256": "3b550cd66a298e05a38ef6668027696dcde009f7e86e099d1ed70f070ce4615a"
+          "sha256": "1c00822d5735fdb976fc3ec489d0d78f347c811112be67c588ad31bbff472108",
+          "previousVersions": [
+            {
+              "sha256": "3b550cd66a298e05a38ef6668027696dcde009f7e86e099d1ed70f070ce4615a",
+              "reviewScope": null,
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ],
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
         },
         {
           "path": "community_app/lib/data/models/attendance/capacity_settings_vo.dart",
@@ -19987,8 +20097,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
-          "sha256": "d4f1cd059fa25f61dcb8ab8d75f39a969c490e64cc0583d8250bd07fce4c2c11",
-          "reviewScope": "601–652 회원 제거 확인·현재 목록 복귀·환불 필요 안내. 전체 명단/게스트 제거 기능 검수 아님."
+          "sha256": "ad1c0569692b6263cab98f5bcd9c8cc6b102a41c8a228d2aa300379be44afc0f",
+          "reviewScope": "601–652 회원 제거 확인·현재 목록 복귀·환불 필요 안내. 전체 명단/게스트 제거 기능 검수 아님.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "d4f1cd059fa25f61dcb8ab8d75f39a969c490e64cc0583d8250bd07fce4c2c11",
+              "reviewScope": "601–652 회원 제거 확인·현재 목록 복귀·환불 필요 안내. 전체 명단/게스트 제거 기능 검수 아님.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/test/widget/event/capacity_settings_save_rejection_test.dart",
@@ -20968,8 +21085,15 @@
         },
         {
           "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
-          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
-          "reviewScope": "379–397 내 이벤트·찜 목록 바로가기."
+          "sha256": "c07f6e27be3e617be7b6dddc75c9c05e993247965cf7e0dca02cba7bfd554584",
+          "reviewScope": "379–397 내 이벤트·찜 목록 바로가기.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+              "reviewScope": "379–397 내 이벤트·찜 목록 바로가기.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
@@ -22494,8 +22618,15 @@
         },
         {
           "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
-          "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
-          "reviewScope": "496–515 응답 가능 배너·받은 요청 경로."
+          "sha256": "c07f6e27be3e617be7b6dddc75c9c05e993247965cf7e0dca02cba7bfd554584",
+          "reviewScope": "496–515 응답 가능 배너·받은 요청 경로.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "63a540723232b25581b91da731e317ab779484de6f6159b43bb72feb54e13b5b",
+              "reviewScope": "496–515 응답 가능 배너·받은 요청 경로.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
@@ -22822,8 +22953,15 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
-          "sha256": "d4f1cd059fa25f61dcb8ab8d75f39a969c490e64cc0583d8250bd07fce4c2c11",
-          "reviewScope": "232–254 출석 관리자 영역;499–505 본인과 소유게스트 선택;782–897 소명기한/거절/상태·직접시트 제출."
+          "sha256": "ad1c0569692b6263cab98f5bcd9c8cc6b102a41c8a228d2aa300379be44afc0f",
+          "reviewScope": "232–254 출석 관리자 영역;499–505 본인과 소유게스트 선택;782–897 소명기한/거절/상태·직접시트 제출.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "d4f1cd059fa25f61dcb8ab8d75f39a969c490e64cc0583d8250bd07fce4c2c11",
+              "reviewScope": "232–254 출석 관리자 영역;499–505 본인과 소유게스트 선택;782–897 소명기한/거절/상태·직접시트 제출.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
@@ -24732,8 +24870,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
-          "sha256": "f04c58bd0deab51f0f4eeb04d59817ddcde4fb0d09f355d3b7312f40f48a0652",
-          "reviewScope": "93–110 검색 지연/탐색범위;123–200 권한 읽기/비회원 미리보기/복원;244–269 현재 읽은 수·초대 입구;349–389 사람 시트/본인 더보기 제외;414–462 역할 탭/별도 대기;525–655 대상 firstWhere·역할/강퇴/차단·거절 후 갱신."
+          "sha256": "d04959adf94cd935824ab33ed0584372dd8962705ebbf734c99ec4b1dacef7a5",
+          "reviewScope": "93–110 검색 지연/탐색범위;123–200 권한 읽기/비회원 미리보기/복원;244–269 현재 읽은 수·초대 입구;349–389 사람 시트/본인 더보기 제외;414–462 역할 탭/별도 대기;525–655 대상 firstWhere·역할/강퇴/차단·거절 후 갱신.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "f04c58bd0deab51f0f4eeb04d59817ddcde4fb0d09f355d3b7312f40f48a0652",
+              "reviewScope": "93–110 검색 지연/탐색범위;123–200 권한 읽기/비회원 미리보기/복원;244–269 현재 읽은 수·초대 입구;349–389 사람 시트/본인 더보기 제외;414–462 역할 탭/별도 대기;525–655 대상 firstWhere·역할/강퇴/차단·거절 후 갱신.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/widgets/member_card.dart",
@@ -25178,8 +25323,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
-          "sha256": "f04c58bd0deab51f0f4eeb04d59817ddcde4fb0d09f355d3b7312f40f48a0652",
-          "reviewScope": "club_members_20261122 동일 SHA의 123–200/244–269/414–462 권한별탭·초대대화상자·별도승인대기 이동 범위 재사용."
+          "sha256": "d04959adf94cd935824ab33ed0584372dd8962705ebbf734c99ec4b1dacef7a5",
+          "reviewScope": "club_members_20261122 동일 SHA의 123–200/244–269/414–462 권한별탭·초대대화상자·별도승인대기 이동 범위 재사용.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "f04c58bd0deab51f0f4eeb04d59817ddcde4fb0d09f355d3b7312f40f48a0652",
+              "reviewScope": "club_members_20261122 동일 SHA의 123–200/244–269/414–462 권한별탭·초대대화상자·별도승인대기 이동 범위 재사용.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
@@ -26176,8 +26328,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
-          "sha256": "bd1caa9539e1b50bc4ef5e0893bfcffcf4bf172ec9859ea99720db322990f7c9",
-          "reviewScope": "70–85,180–253,300–376,436–752: 필터/권한·반복/만들기·상세·행중복잠금·참석취소·최신상세/공통신청/일정변경동의/승인·결제결과와 실패."
+          "sha256": "fb800369449c81019882d4df8d24f03f99443fccf25ac96369db5fdc5a2fc50d",
+          "reviewScope": "70–85,180–253,300–376,436–752: 필터/권한·반복/만들기·상세·행중복잠금·참석취소·최신상세/공통신청/일정변경동의/승인·결제결과와 실패.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "bd1caa9539e1b50bc4ef5e0893bfcffcf4bf172ec9859ea99720db322990f7c9",
+              "reviewScope": "70–85,180–253,300–376,436–752: 필터/권한·반복/만들기·상세·행중복잠금·참석취소·최신상세/공통신청/일정변경동의/승인·결제결과와 실패.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/domain/providers/club/club_event_list_provider.dart",
@@ -26211,8 +26370,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart",
-          "sha256": "6aa0c946016f4e498cb09831632aa1dad9f4fb80e5fcb6be13fe8c5e1fe9f702",
-          "reviewScope": "41–241: 위치복원/저장·월/주·일자/월빈상태·재시도·공통상세 이동."
+          "sha256": "d2f1e4a01a09634b92213120fa239431e2f5371d878158a7366b7c61469dc391",
+          "reviewScope": "41–241: 위치복원/저장·월/주·일자/월빈상태·재시도·공통상세 이동.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "6aa0c946016f4e498cb09831632aa1dad9f4fb80e5fcb6be13fe8c5e1fe9f702",
+              "reviewScope": "41–241: 위치복원/저장·월/주·일자/월빈상태·재시도·공통상세 이동.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/data/repositories/club_calendar_repository.dart",
@@ -26842,8 +27008,15 @@
         },
         {
           "path": "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart",
-          "sha256": "6754474debf65a13d40552b7dfb981c2f87d388f8f819ded01082ebd79f7afa1",
-          "reviewScope": "58–420: resume/TickerMode 재활성화·권한조회/비회원·재정 버튼·잔액/월별차트/최근거래 독립상태."
+          "sha256": "ffc3a9b76389c10146e6277981afd1a49d51bde16a5c091492da0f90368541ed",
+          "reviewScope": "58–420: resume/TickerMode 재활성화·권한조회/비회원·재정 버튼·잔액/월별차트/최근거래 독립상태.; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "6754474debf65a13d40552b7dfb981c2f87d388f8f819ded01082ebd79f7afa1",
+              "reviewScope": "58–420: resume/TickerMode 재활성화·권한조회/비회원·재정 버튼·잔액/월별차트/최근거래 독립상태.",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/lib/presentation/club/finance/widgets/fund_balance_card.dart",
@@ -29284,8 +29457,15 @@
         },
         {
           "path": "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
-          "sha256": "3b584b6ea06ee4f445fa98014f893d2f700da8ea3f5a0c30af2fa3653404fca1",
-          "reviewScope": "0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지"
+          "sha256": "7fa38ffce31752f29d80d7bcd4297473c8e5f2340c916e31c0554f3266d05a3f",
+          "reviewScope": "0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지; 42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음.",
+          "previousVersions": [
+            {
+              "sha256": "3b584b6ea06ee4f445fa98014f893d2f700da8ea3f5a0c30af2fa3653404fca1",
+              "reviewScope": "0504cfb→e808058 전체 diff 대조: 분쟁 판정 되돌림→분쟁 판단 되돌림 그룹 이름 변경; 알림 유형/라우팅 계약 유지",
+              "revalidatedBy": "app_semantic_color_source_advance_20261122"
+            }
+          ]
         },
         {
           "path": "community_app/test/audit/entry_paths_club_edit_test.dart",
@@ -29705,6 +29885,255 @@
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
         "community_app": "42d3316069aef5664e303d7fa93a6ec16db1168a"
       }
+    },
+    "settlement_prepayment_20261122": {
+      "kind": "source_review",
+      "scope": "F07-09의 현재 완료 기준은 닫힌 정산 선입금과 참가비 선입금의 분리. 공개 Controller8개·서버기본관문·앱입구/직접경로·내부금전의무 호출·보존된명령/규칙·별도이체webhook·채택전조건을 대조. 잠긴 기능 전체 금전분기나 현재 운영 설정을 새로 검증한 것 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingPrepaymentController.java",
+          "sha256": "e673274eebfc05eae5da854cb992757bcbf1008c69ebab49a6912285bccfbca4",
+          "reviewScope": "27–154 전체공개함수: 클래스범위관문·8창구·명령키/필드/응답·목록/규칙권한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/release/ReleaseScopeGate.java",
+          "sha256": "96144e069c13a0cad27613afbba199ddb24bd39fb4c8c7abdbf2c76fb3195b5c",
+          "reviewScope": "59–178: 설정생략 운영/비운영 기본·명시목록·봉인판정; 실제환경읽기 아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/release/ReleaseScopeDomain.java",
+          "sha256": "17174a55b5290964de26f05cda8a103374b7facc0996ec1673edfb1d1bc65e6a",
+          "reviewScope": "161–173: MEETING_PREPAYMENT·비운영도 명시 필요집합"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/release/ReleaseScopeInterceptor.java",
+          "sha256": "29b85f5946924deb21ad60fffedd0ce725075c7151ba1397a67409e01e63ad52",
+          "reviewScope": "47–94: 메서드/클래스관문·안전출구판정·RELEASE_SCOPE_DISABLED"
+        },
+        {
+          "path": "community_api/api-app/src/test/java/com/endside/community/config/release/MeetingPrepaymentSealedTest.java",
+          "sha256": "85bb0b22e06c11ca49b4be900cbdf44a0371bbcc791107bc45d5bbd7fafd0f61",
+          "reviewScope": "42–94:8개함수·예외없음·기본410/명시허용단언; 시험실행없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/param/MeetingPrepaymentPayParam.java",
+          "sha256": "f5a12937090317d3bec71fefaca5977bb39ab85dcad08729a0f5faa9cd98586c",
+          "reviewScope": "전체 짧은요청:Long amount/String paymentMethod"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/param/MeetingPrepaymentReturnParam.java",
+          "sha256": "f475b7a93eaab22979ccda47720ed6d23ac5602554d42e31beb55a5c2500b2b1",
+          "reviewScope": "전체 짧은요청:Long refundAmount"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/param/MeetingRefundRuleParam.java",
+          "sha256": "44d16aadc262a68eb5a6d5dc29f306eec31714210202d44c2c4834ae607792fa",
+          "reviewScope": "전체 짧은요청:Integer hoursBeforeStart/refundPercentage"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventAccountClosure.java",
+          "sha256": "562e5cd06cf051b9a92e73223c8936e6294598d17adba32189e70ded11c22270",
+          "reviewScope": "218–224,578–587,611–620:계정종료확인에서 미지급 포인트·참가자 열린포인트 선입금·호스트반환의무를 합산하는 연결만 대조"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/virtualaccount/VirtualAccountWebhookController.java",
+          "sha256": "d400792e923419267d42806d0cfb954c07ae8e8085088395dea5a87156059d61",
+          "reviewScope": "52–116:두주소·서명/본문검증 뒤 transferService.confirmVirtualAccountDeposit 호출. 정산선입금창구아님"
+        },
+        {
+          "path": "community_app/test/core/router/release_scope_routes_test.dart",
+          "sha256": "8d7b46f7f3bf40b94eca6826a44e04bfd938cef5d992d1cb5885cef070f7e352",
+          "reviewScope": "747–785:선입금/규칙경로닫힘·참가비형제경로유지·예외없음 단언만읽음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/prepayment_provider.dart",
+          "sha256": "4e7034f5fa43f0c1ab33be6e46f0cac9e9d72b2f4385afbf40d1c5d3bd63fdda",
+          "reviewScope": "47–83,137–154:보존된결제/환불 명령키공통함수·결과모름재조회, 현재입구연결/실행근거로확대안함"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/resources/application-prod.yaml",
+          "sha256": "8cb1351b9f4d0664d91da564ff054fe7f5d05dfbe6dcd0055d0ed024a4a2b187",
+          "reviewScope": "243–245 release.scope 기본허용목록에서 MEETING_PREPAYMENT 제외만 확인"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingPrepaymentService.java",
+          "sha256": "49ef28ba5282c90cb984925d3b35984fb376bb5122fbe491579b94146a690953",
+          "reviewScope": "486–518 미지급/반환의무조회,611–665 저장계약/검증,690–740 임시공통환불정책; 전체비활성금전분기재검수아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCloseService.java",
+          "sha256": "6063a27d3d3345f3d3a1eb8bba1969b5e22409b44a60f3f0e662b97c2a3ad5c1",
+          "reviewScope": "103–112:모임종료마다 호스트지급 내부호출; 공개선입금관문과별도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCancelRefundRunner.java",
+          "sha256": "189f2ba80abdfcda08fe6af3b0bcb586760c426bb39d2f557a07e21c576cdf04",
+          "reviewScope": "137–154:미완료정산선입금조회·취소환불시도·실패집계 연결"
+        },
+        {
+          "path": "community_app/lib/core/router/release_scope_routes.dart",
+          "sha256": "2372295713ae7df0b4c59a9a3551c6a1c8ffe3c5896fa3567b0707eeb89c28af",
+          "reviewScope": "271–274:MEETING_PREPAYMENT가 /home/events/*/prepayments 전체접두제한"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9",
+          "reviewScope": "75–85,237–238:직접경로/대기딥링크/해결주소가닫히면홈"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "165–166,497–502:범위와viewPrepayments허용시 선입금관리입구"
+        },
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997",
+          "reviewScope": "543,625–628:별도정산선입금상품 채택전·호스트요청/금액고정/본인조회/정산차감/환불/알림/관리가시성조건"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "club_album_20261122",
+        "club_detail_20261122",
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122",
+        "reading_guides_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
+          "sha256": "8319a11d5d9cc34d09df368f325d62b512f16a8baec507779036fb6508d180e2"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F07-09.html": [
+          "sidebar",
+          "launch-strip",
+          "money-retry-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F07-09:7의 가상계좌 webhook 두 주소는 정산 이체를 처리하므로 직접 창구 연결 제거",
+        "실제 닫힌 은행 반환 완료/미입금 종결 창구2개 추가; 전체 공개창구8개와 일치",
+        "F07-09 공개 상태를 partial에서 sealed로 교정. 참가비 직접송금 N-00/MNY-03B와 realProof의 잘못된 연결 제거; 해당 기록은 F03-13/F17-07에 유지"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "release_scope_misassociation",
+          "finding": "기존 공개현황이 참가비 선입금의 일부공개/실제확인 근거를 F07-09에 재사용",
+          "disposition": "닫힌 정산 선입금 상태로 교정하고 해당 참가비 기능 근거는 유지"
+        },
+        {
+          "kind": "reactivation_candidate",
+          "finding": "별도 정산 차감형 선입금 상품은 H-651 채택 전",
+          "disposition": "신규 필수 개발이나 현재 이용 가능 기능으로 확대하지 않음"
+        },
+        {
+          "kind": "existing_obligations",
+          "finding": "공개경로차단과 종료/취소/계정확인 내부호출은 별개",
+          "disposition": "기존 데이터 없음/정리완료를 추정하지 않도록 정정"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "6c62153ed7ca5138a35668ecdea5b299699c620d"
+      }
+    },
+    "app_semantic_color_source_advance_20261122": {
+      "kind": "source_delta_review",
+      "scope": "진행 중 앱 main 전진으로 바뀐 기존 근거12개 화면/위젯의 색 토큰·팔레트 전달 변경 대조. 현재 업무 문장 수정 불필요. 색·테마·이미지 검수나 시험 실행으로 기록하지 않음.",
+      "sources": [
+        {
+          "path": "community_app/lib/presentation/notification/screens/notification_list_screen.dart",
+          "sha256": "7fa38ffce31752f29d80d7bcd4297473c8e5f2340c916e31c0554f3266d05a3f",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/quiet_hours_screen.dart",
+          "sha256": "be6703f5a1f24fa1f0554253ddebb51cd70b147e30735665c879dc85fd18f50c",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "sha256": "c07f6e27be3e617be7b6dddc75c9c05e993247965cf7e0dca02cba7bfd554584",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/profile/screens/profile_edit_screen.dart",
+          "sha256": "daf052072ccefb5e4181faaa9956d92bd6f1b58eda8126de9582fcfad9981294",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/search/screens/search_screen.dart",
+          "sha256": "c3b4f3be7417104709df5570a9c72db4d5314ec819a3ef0b58eed0f399db59d7",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/application_card.dart",
+          "sha256": "28a3caab80e3f6c7201bd89ece3ee800fab8e240525304e02aabc98a8d951734",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/waitlist_screen.dart",
+          "sha256": "1c00822d5735fdb976fc3ec489d0d78f347c811112be67c588ad31bbff472108",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/attendee_list_screen.dart",
+          "sha256": "ad1c0569692b6263cab98f5bcd9c8cc6b102a41c8a228d2aa300379be44afc0f",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+          "sha256": "d04959adf94cd935824ab33ed0584372dd8962705ebbf734c99ec4b1dacef7a5",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
+          "sha256": "fb800369449c81019882d4df8d24f03f99443fccf25ac96369db5fdc5a2fc50d",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart",
+          "sha256": "d2f1e4a01a09634b92213120fa239431e2f5371d878158a7366b7c61469dc391",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart",
+          "sha256": "ffc3a9b76389c10146e6277981afd1a49d51bde16a5c091492da0f90368541ed",
+          "reviewScope": "42d3316→6c62153 전체 코드 diff 대조(주석/공백 제외 변경행 포함): 고정 색을 의미별 팔레트로 대체하고 색 선택 함수에 팔레트를 전달. 업무 조건·요청·자료·입구 설명은 유지. 색의 실제 시각 품질이나 제품 실행은 검증하지 않음."
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "account_closure_20261122",
+        "app_label_layout_source_advance_20261122",
+        "club_calendar_20261122",
+        "club_finance_20261122",
+        "club_invitation_20261122",
+        "club_members_20261122",
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "no_show_20261122",
+        "notification_domain_20261122",
+        "notification_groups_settings_20261122",
+        "preference_tags_20261122",
+        "profile_hub_edit_addresses_20261122",
+        "reschedule_20261122",
+        "search_workflows_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [],
+      "fromCommit": "42d3316069aef5664e303d7fa93a6ec16db1168a",
+      "toCommit": "6c62153ed7ca5138a35668ecdea5b299699c620d"
     }
   },
   "currentSourceVersions": {
@@ -29721,8 +30150,8 @@
       "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
     },
     "community_app": {
-      "commit": "42d3316069aef5664e303d7fa93a6ec16db1168a",
-      "observation": "로컬 main; 기존 근거가 있는 변경 경로를 diff로 대조하고 전체 기존 앱 근거 SHA 일치를 확인했다. 아직 미검토한 기능·문서의 완료를 뜻하지 않으며 원격 재조회하지 않음"
+      "commit": "6c62153ed7ca5138a35668ecdea5b299699c620d",
+      "observation": "로컬 main; 기존 근거12개 영향 파일의 색/팔레트 diff 대조. 신규 색 디자인의 시각 검수나 미검토 기능 완료를 뜻하지 않음. 원격 재조회 없음"
     },
     "community-realtime": {
       "commit": "83b145969779e0fe0236441cdcdd3f15678037b2",
@@ -30114,6 +30543,113 @@
       "currentFeatureScope": "F07-07 관련 경로 변경 없음; 18개 변경 중 기존2개 근거 묶음은 별도 재대조 대기",
       "reviewEvidenceGroup": "app_filter_sheet_source_advance_20261122",
       "disposition": "기존2개 근거 묶음·필터 설명 유지. 16개 다른 변경 경로는 기존 완료 근거와 교차하지 않으며 해당 미대조 문서 작업에서 현재 소스로 확인."
+    },
+    "community_app_42d3316_to_6c62153": {
+      "repository": "community_app",
+      "fromCommit": "42d3316069aef5664e303d7fa93a6ec16db1168a",
+      "toCommit": "6c62153ed7ca5138a35668ecdea5b299699c620d",
+      "changedPaths": [
+        "CLAUDE.md",
+        "audit/app_quality/evidence/UIUX-DS-20261121/baseline/assignments.json",
+        "docs/design/TOKENS.md",
+        "lib/core/theme/app_colors.dart",
+        "lib/presentation/club/community/screens/club_calendar_screen.dart",
+        "lib/presentation/club/finance/screens/club_event_list_screen.dart",
+        "lib/presentation/club/finance/screens/club_fund_screen.dart",
+        "lib/presentation/club/finance/widgets/club_event_card.dart",
+        "lib/presentation/club/screens/club_member_list_screen.dart",
+        "lib/presentation/event/screens/attendee_list_screen.dart",
+        "lib/presentation/event/screens/waitlist_screen.dart",
+        "lib/presentation/event/widgets/application_card.dart",
+        "lib/presentation/event/widgets/refund_policy_section.dart",
+        "lib/presentation/event/widgets/waitlist_item.dart",
+        "lib/presentation/notification/screens/notification_list_screen.dart",
+        "lib/presentation/notification/screens/quiet_hours_screen.dart",
+        "lib/presentation/poll/widgets/event_decision_poll_section.dart",
+        "lib/presentation/poll/widgets/poll_option_tile.dart",
+        "lib/presentation/profile/screens/my_profile_screen.dart",
+        "lib/presentation/profile/screens/profile_edit_screen.dart",
+        "lib/presentation/search/screens/search_screen.dart",
+        "test/catalog/goldens/token-colors-dark.png",
+        "test/catalog/goldens/token-colors-large.png",
+        "test/catalog/goldens/token-colors-light.png",
+        "test/catalog/pages/token_colors.dart",
+        "test/core/theme/app_semantic_palette_test.dart",
+        "test/presentation/design/fixed_color_visual_test.dart",
+        "test/presentation/design/goldens/fixed-color-application-dark.png",
+        "test/presentation/design/goldens/fixed-color-application-light.png",
+        "test/presentation/design/goldens/fixed-color-quiet-hours-off-dark.png",
+        "test/presentation/design/goldens/fixed-color-quiet-hours-off-light.png",
+        "test/presentation/design/goldens/fixed-color-quiet-hours-on-dark.png",
+        "test/presentation/design/goldens/fixed-color-quiet-hours-on-light.png",
+        "test/presentation/design/goldens/fixed-color-waitlist-dark.png",
+        "test/presentation/design/goldens/fixed-color-waitlist-light.png",
+        "test/presentation/design/goldens/notifications-dark.png",
+        "test/presentation/event/application_card_dark_contrast_test.dart",
+        "test/tool/design_tokens_guard_test.dart",
+        "tool/README.md",
+        "tool/check_design_tokens.dart",
+        "tool/design_tokens_baseline.txt",
+        "tool/hardcoded_colors_baseline.txt"
+      ],
+      "affectedEvidenceGroups": {
+        "notification_groups_settings_20261122": [
+          "community_app/lib/presentation/notification/screens/notification_list_screen.dart"
+        ],
+        "app_label_layout_source_advance_20261122": [
+          "community_app/lib/presentation/notification/screens/notification_list_screen.dart"
+        ],
+        "notification_domain_20261122": [
+          "community_app/lib/presentation/notification/screens/quiet_hours_screen.dart"
+        ],
+        "preference_tags_20261122": [
+          "community_app/lib/presentation/profile/screens/my_profile_screen.dart"
+        ],
+        "account_closure_20261122": [
+          "community_app/lib/presentation/profile/screens/my_profile_screen.dart"
+        ],
+        "profile_hub_edit_addresses_20261122": [
+          "community_app/lib/presentation/profile/screens/my_profile_screen.dart",
+          "community_app/lib/presentation/profile/screens/profile_edit_screen.dart"
+        ],
+        "wishlist_my_events_20261122": [
+          "community_app/lib/presentation/profile/screens/my_profile_screen.dart"
+        ],
+        "reschedule_20261122": [
+          "community_app/lib/presentation/profile/screens/my_profile_screen.dart"
+        ],
+        "search_workflows_20261122": [
+          "community_app/lib/presentation/search/screens/search_screen.dart"
+        ],
+        "event_application_participation_review_20261122": [
+          "community_app/lib/presentation/event/widgets/application_card.dart"
+        ],
+        "event_capacity_waitlist_20261122": [
+          "community_app/lib/presentation/event/screens/waitlist_screen.dart",
+          "community_app/lib/presentation/event/screens/attendee_list_screen.dart"
+        ],
+        "no_show_20261122": [
+          "community_app/lib/presentation/event/screens/attendee_list_screen.dart"
+        ],
+        "club_members_20261122": [
+          "community_app/lib/presentation/club/screens/club_member_list_screen.dart"
+        ],
+        "club_invitation_20261122": [
+          "community_app/lib/presentation/club/screens/club_member_list_screen.dart"
+        ],
+        "club_calendar_20261122": [
+          "community_app/lib/presentation/club/finance/screens/club_event_list_screen.dart",
+          "community_app/lib/presentation/club/community/screens/club_calendar_screen.dart"
+        ],
+        "club_finance_20261122": [
+          "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart"
+        ]
+      },
+      "remainingSourcePaths": [],
+      "status": "reviewed_for_existing_evidence",
+      "deltaEvidenceGroups": [
+        "app_semantic_color_source_advance_20261122"
+      ]
     }
   }
 }
