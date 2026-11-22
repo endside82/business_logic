@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,273개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,277개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1273,
+    "documentedScenarioItems": 1277,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4957,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 67,
+    "directlyLinkedAutomatedTests": 68,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 67,
+    "automatedScenarioReferences": 68,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,8 +25,8 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 43,
-    "partialEvidenceChain": 51,
-    "definitionOnlyEvidence": 81,
+    "partialEvidenceChain": 52,
+    "definitionOnlyEvidence": 80,
     "traceMarkers": 538,
     "verifiedTraceRecords": 536,
     "unresolvedTraceRecords": 0,
@@ -10171,14 +10171,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-07",
       "domain": "모임 정산",
-      "name": "미납자 리마인드/마감 연장",
-      "scenarioCount": 8,
+      "name": "다시 알림·마감 연장·알림 기록",
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-07_remind-extend/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-07_remind-extend/backend.md",
@@ -10240,11 +10240,13 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/presentation/meeting_settlement/settlement_notice_message_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -10255,10 +10257,10 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
-      "knownIssues": 1,
+      "knownIssues": 2,
       "pendingReview": 0
     },
     {

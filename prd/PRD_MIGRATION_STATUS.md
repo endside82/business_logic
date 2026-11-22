@@ -293,7 +293,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F07-04 | 모임 정산 | [F07-04_status-summary-receipt_prd.md](02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md) | `F07-04_status-summary-receipt` | 실사 기반 전환본 | 3 | 5 |
 | F07-05 | 모임 정산 | [F07-05_pay-share_prd.md](02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md) | `F07-05_pay-share` | 실사 기반 전환본 | 14 | 5 |
 | F07-06 | 모임 정산 | [F07-06_host-confirm-transfers_prd.md](02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md) | `F07-06_host-confirm-transfers` | 실사 기반 전환본 | 7 | 6 |
-| F07-07 | 모임 정산 | [F07-07_remind-extend_prd.md](02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) | `F07-07_remind-extend` | 실사 기반 전환본 | 3 | 3 |
+| F07-07 | 모임 정산 | [F07-07_remind-extend_prd.md](02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) | `F07-07_remind-extend` | 실사 기반 전환본 | 3 | 5 |
 | F07-08 | 모임 정산 | [F07-08_appeal-audit_prd.md](02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md) | `F07-08_appeal-audit` | 실사 기반 전환본 | 4 | 0 |
 | F07-09 | 모임 정산 | [F07-09_prepayment-refund_prd.md](02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) | `F07-09_prepayment-refund` | 실사 기반 전환본 | 7 | 7 |
 | F07-10 | 모임 정산 | [F07-10_account-history-reputation_prd.md](02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | `F07-10_account-history-reputation` | 실사 기반 전환본 | 0 | 3 |
