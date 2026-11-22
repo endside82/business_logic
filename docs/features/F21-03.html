@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F21-03 제공자 정산 — community PRD</title>
+  <title>F21-03 제공자 정산 확정·주간 지급·지급 재처리</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,221 +17,49 @@
           <a href="../domains/21-curated.html">21 서비스 제공자 배정·정산</a><span>›</span>
           F21-03 제공자 정산
         </div>
-        <h1>F21-03. 제공자 정산</h1>
-        <p class="lede">
-          회차 종료 후 호스트가 정산을 실행하면, 시스템이 출석자 전원의 납부를 확인한 뒤
-          제공자에게 수익을 지급하는 흐름. <strong>미납자가 한 명이라도 있으면 정산이 막히며</strong>,
-          사전점검은 막힌 이유와 조치할 사람·금액을 알려 준다. 지급은 주간 배치로 처리되고,
-          실패한 지급은 운영 화면에서 확인하고 안전하게 재시도한다.
-        </p>
+        <h1>F21-03 제공자 정산 확정·주간 지급·지급 재처리</h1>
+        <p class="lede">공통 정산 판정·실제 앱 안내, 승인과 주간 지급, 상계/실입금 집계·실패 재처리를 현재 소스로 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">정산 실행 주체</div><div class="value">호스트</div><div class="hint">회차 종료 후 수동 실행</div></div>
-          <div class="metric"><div class="label">완납 확인</div><div class="value">전원 납부</div><div class="hint">출석자 1명 미납도 통과 불가</div></div>
-          <div class="metric"><div class="label">미납 현황 사전 조회</div><div class="value">가능</div><div class="hint">정산 전 누가 안 냈는지 미리 확인</div></div>
-          <div class="metric"><div class="label">제공자 지급 시점</div><div class="value">주간 배치</div><div class="hint">정산 확정 후 다음 배치 주기</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 정산 확정 후에야 제공자 지급이 시작된다</span>
-          <p>호스트가 정산을 실행한다는 것은 "모든 출석자가 납부를 마쳤으니 제공자에게 지급해 달라"는
-            지시다. 시스템은 이 지시를 받으면 출석자 납부 집합과 실제 출석 인원이 일치하는지 교차 검증한다.
-            일치하지 않으면 어떤 이유에서든 정산은 통과되지 않는다. 이 검증이 제공자가 받아야 할 금액을
-            과소·과다 지급하는 사고를 막는 핵심 장치다.</p>
-        </div>
-        <div class="callout warn">
-          <span class="label">2026-09-04 현재 상태 — 코드 완료, 출시 전</span>
-          <p>카탈로그 계약은 최신 조건 수락과 이행 결과가 모두 있어야 한다. 이행 결과가 완료 또는
-            부분 이행일 때만 정산되고, 노쇼·분쟁 중·미기록은 막힌다. 모임장이 결과 기록을 잊으면
-            제공자 돈이 조용히 묶이므로, 회차가 끝났는데 결과가 비어 있는 배정을 찾아 모임장에게
-            기록을 요청하는 알림을 배정마다 한 번 보낸다. 정산 성공은 배정을 잠그고 제공자 수익을
-            지급 대기로 승인하는 단계이며, 제공자 지갑에 실제로 들어가는 것은 그다음 주간 지급이다.
-            신규 카탈로그 계약은 5% 수수료를 계약에 박아 두고, 기존 0% 계약은 재수락 전까지 그대로
-            유지한다. 사전점검과 실제 정산은 회차 종료·배정 상태·최신 조건·이행 결과·분쟁·수익 기록·
-            계약금과 참가자 처리 상태를 같은 규칙으로 판정하며, 실제 정산은 잠금 안에서 다시 검사한다.
-            제공자 앱의 수익 요약과 운영자의 지급 내역 조회·재시도 화면까지 만들어져 있고, 남은 것은
-            플랫폼 결제 기반 개통과 실제 지급 대행 증명, 법무·세무 승인, 서명된 앱의 실계정 왕복이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>정산이 통과되는 조건</h2>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">조건 1</div>
-            <h3>출석자 전원이 납부했거나 면제 처리됨</h3>
-            <p>실제 출석한 참가자 전원이 서비스비를 납부했거나, 호스트가 무료 초대 또는 대납 처리를 완료해야 한다.
-              노쇼 처리된 참가자는 납부 의무에서 제외된다. 한 명이라도 기록에 빠지면 정산이 막힌다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">조건 2</div>
-            <h3>총액 보장 모드라면 수납 합계가 총액과 일치</h3>
-            <p>호스트가 "제공자에게 총 X원을 보장한다"는 모드로 서비스비를 설정했다면,
-              실제 수납된 금액의 합이 그 총액과 같아야 한다. 합계가 맞지 않으면
-              누군가의 납부가 누락됐거나 과납됐다는 뜻이므로 정산이 통과되지 않는다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">조건 3</div>
-            <h3>계약금이 있다면 전체 금액 안에서 정합성 확인</h3>
-            <p>사전 계약금(선납)이 있는 배정이라면, 참가자 납부 합계 + 계약금이 총 서비스비와 일치하는지
-              검증한다. 계약금 선납 방식과 서비스비 설정 방식을 동시에 쓸 수 없으므로, 한 배정에서는
-              둘 중 하나의 검증만 적용된다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>정산 실행 전 미납 현황 확인 — 사전 준비 화면</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["호스트: 정산 실행 전 미납 현황 조회"] --> B["시스템이 출석자 납부 목록 분석"]
-    B --> C{"미납자 있는가?"}
-    C -->|"없음"| D["전원 납부 완료\n정산 실행 가능 안내"]
-    C -->|"있음"| E["사유 + 역할·표시 이름·금액 표시"]
-    E --> F["안내를 확인"]
-    F --> G["과금·무료·대납·노쇼 등 허용된 조치"]
-    G --> A
-    D --> J["호스트 정산 실행"]
-    J --> K["시스템 완납 검증"]
-    K -->|"통과"| L["정산 확정\n주간 배치로 제공자 지급"]
-    K -->|"실패"| M["막힌 이유 표시\n원인 조치 후 재시도"]
-          </div>
-        </div>
-        <div class="callout">
-          <span class="label">미납 현황 조회와 정산 실행은 별개다</span>
-            <p>배정 카드의 "정산" 액션이 읽기 전용 사전점검을 먼저 호출한다. 통과하지 못하면 사유,
-              해결 주체, 대상의 표시 이름과 관련 금액을 보여 주고 정산을 호출하지 않는다. 통과하면
-              확인 창 뒤 실제 정산을 호출하며, 서버는 그 사이 상태가 달라졌는지 잠금 안에서 다시 검사한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름</div>
-            <h3>회차 종료 후 호스트가 정산을 실행</h3>
-            <p>모임이 끝난 다음 날 호스트가 앱의 배정 카드에서 정산을 누른다.
-              사전점검이 미납 참가자 한 명의 표시 이름·금액과 해결 주체를 안내한다.
-              현재 전용 납부 요청 알림 액션은 없으므로 호스트가 별도로 연락하고, 하루 뒤 그 참가자도 납부한 다음
-              호스트가 정산 실행 버튼을 누른다. 시스템이 전원 완납을 확인하고 정산이 통과된다.
-              제공자는 다음 주간 배치에서 수익을 수령한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 정산 전에 미납자를 미리 파악하고 조치하는 단계가
-              있기 때문에 호스트가 정산 버튼을 눌렀다가 "실패"를 받는 당혹감이 줄어든다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">미납자 대납</div>
-            <h3>참가자가 납부하지 않을 때 호스트가 직접 대납</h3>
-            <p>마지막 1명이 연락이 안 되는 상황에서 호스트가 그 참가자 몫을 직접 대납하기로 결정한다.
-              대납 완료 후 미납 현황 조회에서 더 이상 미납자가 없음을 확인하고 정산을 실행한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 참가자 1명의 연락 두절이 제공자 정산 전체를
-              막지 않도록 호스트가 직접 해소하는 길이 열려 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정산 전 미리 확인</div>
-            <h3>정산 실행 전 미납 현황을 먼저 조회</h3>
-            <p>호스트가 정산 버튼을 바로 누르는 대신, 먼저 미납 현황 조회를 열어 본다.
-              현재 3명의 미납자와 각 금액을 확인하고 별도 채널로 안내한 뒤, 전원 납부 확인 후 다시
-              정산을 실행한다. 사전점검과 실행은 같은 규칙을 쓰지만, 두 호출 사이에 결제·환불·분쟁이
-              생기면 실행 시점의 잠금 재검사 결과가 최종 권위다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정기모임 묶음 정산</div>
-            <h3>여러 회차를 한 번에 정산 실행</h3>
-            <p>8주 코스 정기모임의 호스트가 3회차·4회차·5회차를 한 번에 묶음 정산 실행한다.
-              3회차와 5회차는 통과되고, 4회차는 미납자 1명이 남아 "완납 미충족"으로 표시된다.
-              호스트가 4회차 미납자를 조치한 뒤 4회차만 다시 정산을 실행해 완료한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 한 회차가 막혀도 나머지 회차 정산이 지연되지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">총액 보장 불일치</div>
-            <h3>총액 보장 모드에서 수납 합계가 맞지 않는 경우</h3>
-            <p>호스트가 "제공자에게 10만 원을 보장한다"고 설정했는데, 참가자들이 납부한 합계가
-              9만 8천 원밖에 안 된다. 정산 실행 시 시스템이 "보장 총액 10만 원과 실제 수납 합계
-              9만 8천 원이 맞지 않습니다"라고 안내한다. 돈 동작 뒤 서비스비를 다시 바꾸는 경로는
-              잠기므로, 호스트가 부족한 2천 원을 유효한 과금·대납 경로로 채워야 정산이 통과된다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>정산 상태 — 호스트와 제공자가 보는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:140px">단계</th><th>호스트에게</th><th>제공자에게</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>정산 전</strong></td>
-                <td>정산 액션에서 전체 조건 사전점검. 미통과 시 사유·역할·이름·금액 표시.</td>
-                <td>지급 예정액, 대기 이유와 모임 일시·장소를 확인.</td>
-              </tr>
-              <tr>
-                <td><strong>정산 확정</strong></td>
-                <td>배정이 정산 잠금 상태로 바뀌고 추가 조작이 제한된다.</td>
-                <td>지급 예정액과 주간 지급 대기 이유를 확인.</td>
-              </tr>
-              <tr>
-                <td><strong>지급 완료</strong></td>
-                <td>배정 정산 상태를 확인하고, 지급 사고는 플랫폼 운영자가 지급 원장에서 처리.</td>
-                <td>지급 완료 합계, 미수금 상계액, 실제 입금액과 마지막 지급 시각을 확인.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">핵심 운영 원칙</span>
-          <ul>
-            <li><strong>정산은 자동 실행되지 않는다.</strong> 회차가 종료돼도, 출석자 전원이 납부를 마쳐도 정산은 일어나지 않는다. 호스트가 명시적으로 정산 실행 버튼을 눌러야 한다.</li>
-            <li><strong>미납자 1명도 정산을 막는다.</strong> 99명이 납부했어도 1명이 미납이면 정산이 통과되지 않는다. 호스트가 그 1명을 대납·면제 처리하거나 납부받아야 한다.</li>
-            <li><strong>정산 확정 이후 취소는 "회수" 절차가 따른다.</strong> 정산이 완료된 후 사정이 생겨 되돌려야 하면 F21-05 환불·회수 기능을 통해 별도 처리한다. 확정 취소 기능은 없다.</li>
-            <li><strong>지급은 주간 배치로 일어난다.</strong> 정산 확정 즉시 제공자 지갑에 입금되는 것이 아니다. 다음 주간 배치 처리 시점에 지급된다. 제공자에게 "며칠 안에 들어옵니다"라고 안내할 수 있도록 배치 주기를 공지해야 한다.</li>
-            <li><strong>정기모임 묶음 정산은 회차별로 개별 결과가 반환된다.</strong> 일부 회차가 보류돼도 나머지는 정상 처리된다. 보류 회차는 호스트가 조치 후 별도 재실행해야 한다.</li>
-            <li><strong>사전점검과 실행은 같은 판정 규칙을 쓴다.</strong> 다만 조회 뒤 실제 실행까지
-              상태가 바뀔 수 있으므로, 실행 시 잠금 안에서 다시 판정한 결과가 최종 권위다.</li>
-            <li><strong>사전점검은 해결에 필요한 맥락을 제공한다.</strong> 사유와 함께 조치 주체,
-              대상의 표시 이름과 금액을 보여 주며, 실제 돈 조치는 배정 카드에서 별도로 실행한다.</li>
-            <li><strong>지급 실패는 원장에 남고 자동 수정하지 않는다.</strong> 운영자는 대기·처리 중·
-              실패·성공·보류 상태와 포함 수익을 조회하고, 실패 원인을 확인한 뒤 같은 거래를 중복 지급하지
-              않는 재시도 명령을 실행한다.</li>
-            <li><strong>신규 카탈로그 계약은 수수료와 원천징수를 함께 반영한다.</strong> 참가자 납부와
-              계약금 한 건마다 5.00% 플랫폼 수수료를 먼저 빼고, 남은 금액에 3.3% 원천징수를 적용해
-              제공자 실수령액을 만든다. 직접 지정한 배정과 수수료 0%로 맺어 둔 기존 계약은 플랫폼
-              수수료 없이 3.3%만 적용한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">알려진 제약 사항</span>
-          <ul>
-            <li><strong>세무 처리(지급명세서·사업자/개인 세율 구분)는 별도 외부 연동이 필요하다.</strong> 원천징수 데이터 적재는 완료되어 있지만, 지급명세서 발행과 사업자/개인 세율 구분은 세무 계약 이후 별도 구축 대상이다. 현재는 단일 원천징수(3.3%)만 적용된다.</li>
-            <li><strong>묶음 정산 중 일부 회차 보류는 호스트가 직접 확인해야 한다.</strong> 보류된 회차에 대한 별도 알림은 발송되지 않는다. 호스트가 묶음 정산 결과 화면에서 보류 회차를 직접 찾아야 한다.</li>
-            <li><strong>지급은 매주 한 번 실행된다.</strong> 코드 결함은 아니지만 정산 확정과 지갑 입금 사이에
-              대기 시간이 생긴다. 지급 주기를 서비스 안내와 운영 점검 일정에 명시해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>호스트/공동 주최자가 배정의 정산을 확정하면 배정은 SETTLEMENT_LOCKED, 연결 수익은 APPROVED가 된다. 이후 주간 배치가 제공자의 승인 수익을 모아 미납금 상계와 지갑 지급을 처리한다. 정산 확정 응답과 지갑 실입금은 서로 다른 사실이다.</p>
+<p>앱 호스트 배정 카드의 ‘정산’은 서버 actions에서 SETTLE.allowed=true일 때만 나타난다. 버튼을 누르면 사전점검을 다시 조회하고 executable=true일 때 확인 후 정산을 요청한다. 이미 목록에서 차단된 배정은 이 버튼이 숨겨지므로 모든 배정에 상시 사전점검 버튼이 있다고 설명하지 않는다.</p>
+<p>제공자는 내 배정 카드에서 지급 예정·지급 완료 합계·상계·실입금·대기 이유·지급 시간을 본다. 과거 문서의 ‘readiness는 coverage만 확인’, ‘대상은 raw ID만 표시’, ‘제공자 지급 화면과 운영 재처리 경로 없음’은 현재 구현과 달라 교정한다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·권한</th><th>반환</th></tr></thead><tbody><tr><td>GET /api/v1/events/{eventId}/assignments/{assignmentId}/settlement-readiness</td><td>실제 배정 eventId 일치, 호스트/공동 주최자</td><td>ServiceAssignmentSettlementReadinessVo</td></tr><tr><td>POST /api/v1/events/{eventId}/assignments/{assignmentId}/settle</td><td>같은 범위·권한, 필수 Idempotency-Key, 본문 없음</td><td>200, 본문 없음</td></tr></tbody></table></div>
+<p>둘 다 PROVIDER safetyExit다. settle은 ASSIGNMENT_SETTLE 영속 회원 명령이며 사용자·명령 종류·이벤트/배정 대상·본문에 결박된 요청키로 실행/결과를 기록한다. 같은 성공 키의 재시도는 성공을 재생한다. 이미 SETTLEMENT_LOCKED인 배정을 새 키로 정산하면 현재 판정의 ASSIGNMENT_NOT_CONFIRMED로 거절한다. 서로 다른 키의 재호출과 같은 키의 응답 재생을 구분한다.</p>
+<p>readiness VO는 ready, notReadyReason, missingBeneficiaryIds, unexpectedBeneficiaryIds와 executable, blockers, nextAction을 반환한다. blocker는 code·message·role(HOST/PROVIDER/PARTICIPANT/SYSTEM)·nullable targetUserId·targetDisplayName·BigDecimal amount다. 현재 ready와 executable은 같은 값이고 notReadyReason은 첫 blocker의 코드다.</p></section>
+<section id="current-3"><h2>사전점검과 실행의 공통 판정</h2><p>목록의 SETTLE action, readiness, 실제 settle은 ServiceAssignmentSettlementService.evaluate를 공유한다. 조회는 모든 차단 사유를 모으고 실행은 첫 사유를 오류로 반환한다.</p>
+<div class="table-wrap"><table><thead><tr><th>판정 순서</th><th>차단 조건과 책임</th></tr></thead><tbody><tr><td>이벤트·배정</td><td>이벤트 미종료는 SYSTEM, CONFIRMED가 아니면 HOST</td></tr><tr><td>조건·계약 연결</td><td>최신 terms 미수락은 PROVIDER. engagement가 있으나 requiresDeposit=false면 SYSTEM 자료 오류</td></tr><tr><td>제공자·이행</td><td>돈이 연결됐는데 지급 불가면 PROVIDER. DISPUTED는 항상 차단. 유상 또는 terms-managed 배정은 FULFILLED/PARTIALLY_FULFILLED 필요</td></tr><tr><td>출석·coverage</td><td>실제 참석자가 NOSHOW_FORFEIT이면 HOST. 미커버 참가자는 PARTICIPANT, 예상 밖 coverage 대상은 HOST</td></tr><tr><td>금전 연결</td><td>무료 제외 이외 행의 transactionId/creatorEarningId 누락은 SYSTEM</td></tr><tr><td>금액·계약금</td><td>직접 양수 총액은 수금 합계와 같아야 한다. engagement는 PAID·미적용 계약금과 참가자 수금 합계가 약정 X와 같아야 한다</td></tr></tbody></table></div>
+<p>‘direct/legacy는 이행 게이트를 무조건 생략한다’는 과거 설명도 수정한다. serviceFeeGross&gt;0, engagement/requiresDeposit 또는 실제 금전 coverage가 있으면 이행 완료가 필요하다. 돈이 없고 terms도 없는 배정만 이행 완료 검사를 생략하며 DISPUTED는 그 경우에도 차단한다.</p>
+<p>nextAction은 첫 사유에 따라 WAIT_EVENT_END, CONFIRM, ACCEPT_TERMS, RESOLVE_DISPUTE, RECORD_FULFILLMENT, COLLECT_PARTICIPANTS, PAY_DEPOSIT, VERIFY_PROVIDER, CONTACT_SUPPORT이며 모두 통과하면 SETTLE다. 여러 사유 중 하나를 해결했다고 나머지가 자동 해소되는 것은 아니다.</p>
+<p>공통 판정이 있어도 조회는 실행 예약이 아니다. 조회 뒤 출석·배정·지급 자격이 바뀔 수 있고 실제 승인 포트가 수익 행의 존재·상태·소유자·원천까지 잠금 후 다시 검증한다. readiness=true를 원자적 실행 성공 보장으로 쓰지 않는다.</p></section>
+<section id="current-4"><h2>출석 집합·금액·계약금</h2><p>활성 coverage는 canceledAt이 없는 행이다. expected는 실제 출석자에서 제공자를 제외하고 NOSHOW_FORFEIT beneficiary를 더한 집합, covered는 활성 coverage beneficiary 집합이다. missing=expected−covered, unexpected=covered−expected를 ID 순으로 정렬해 반환한다. 단순 인원 수가 같아도 다른 사람이 커버됐으면 정산하지 않는다.</p>
+<p>FREE_EXCLUDED도 집합 coverage에는 포함하고 금전 합계에는 제외한다. 같은 참가자의 추가 납부 여러 행은 집합에서는 한 사람이고 금전 합계에는 각각 포함한다. 실제 출석자가 노쇼 몰수로 표시돼 있으면 집합이 같더라도 ASSIGNMENT_BENEFICIARY_ATTENDED로 차단한다. 실제 출석의 FIXED 체크인/일반 ATTENDING 구분은 <a href="F21-02.html">종료 후 자동 1/N 납부</a>와 같은 정책을 쓴다.</p>
+<p>engagement 없는 양수 serviceFeeGross는 Σ금전 coverage=X가 필요하다. engagement가 있으면 계약금 PAID·applicationType=null 행을 찾고 참가자 수금 C+계약금 D=agreedProviderFee를 검사한다. 누락 계약/계약금과 금액 불일치를 readiness에서도 표시한다. 금액 blocker의 amount는 X−현재 합계라서 과수금이면 음수이며, 개인별 미납액은 이 응답이 계산하지 않는다.</p>
+<p>계약금이 아직 적용되지 않았으면 실행 중 계약금 수익을 만들고 해당 prepayment ID도 유효 원천에 포함한다. 배정 잠금과 수익 승인, APPLIED_TO_PROVIDER 적용은 같은 트랜잭션이다. 조건과 반올림은 <a href="F21-06.html">계약금의 정산 적용과 수수료</a>를 따른다.</p></section>
+<section id="current-5"><h2>수익 승인과 실제 지급</h2><p>approveAssignmentEarnings는 요청 수만큼 수익 행을 잠갔는지 확인한다. 모든 수익이 SERVICE_ASSIGNMENT·PENDING·회원 소유·미종결이고 같은 제공자 소유이며 sourceId가 현재 charge/prepayment ID 집합에 속해야 APPROVED로 바꾼다. 금전 행이 없는 무료 배정은 수익 승인 호출 없이 배정 잠금만 가능하다.</p>
+<p>주간 배치 기본 cron은 0 0 3 * * MON이며 curated.settlement.batch-cron으로 변경 가능하다. @Scheduled에 zone이 없으므로 월요일 03:00을 UTC/KST로 단정하지 않는다. Redisson 분산락을 최대 5초 기다리고, 락을 얻지 못하면 건너뛴다.</p>
+<p>APPROVED·SERVICE_ASSIGNMENT의 제공자별로 REQUIRES_NEW 지급을 수행한다. 관리자 정지 상태는 사전 확인하고 지갑 행 잠금 뒤 DB에서 다시 확인한다. 정지면 ON_HOLD를 기록하며 다른 제공자는 계속 처리한다. 지급 후보를 잠근 뒤에도 승인 상태·원천·실제 소유자를 재확인하며 대상이 없어지면 지급 없음 결과다.</p>
+<p>실지급은 공통 CreatorPayoutCommand가 지갑·수익 잠금, 환불 미납금 상계, 순입금과 원장, PAID 전환을 처리한다. 명목 순수익과 실제 입금은 다를 수 있고 전액 상계라면 실제 입금은 0일 수 있다. 성공한 payout batch와 수익별 nominalNetAmount/offsetAllocatedAmount/paidContributionAmount를 같은 지급 트랜잭션에 기록한다.</p>
+<p>지급 완료 outbox는 제공자에게 명목 순수익과 건수, 미납금 우선 상계 안내를 보낸다. 상계가 있으면 상계액·실입금 안내를 별도로 보낸다. ‘알림 금액=지갑 입금액’으로 해석하지 않는다. 알림 enqueue 호출을 실제 푸시 수신 시험 통과로 취급하지 않는다.</p></section>
+<section id="current-6"><h2>실패·보류 기록과 운영 재처리</h2><p>지급 예외는 실패 건의 지급 트랜잭션을 롤백하고 별도 트랜잭션에 FAILED와 안정된 오류 코드를 기록한다. 이미 지급된 시도 행만 남았으면 실패 묶음을 만들지 않는다. 실패/보류 기록 자체가 실패하면 로그에 남고 다른 제공자 처리는 계속한다. 배치 success 카운터는 예외 없이 반환한 호출 수이므로 실제 입금 건수 집계로 쓰지 않는다.</p>
+<p>운영 API는 /admin/v1/manage/provider-payouts의 상태별 목록·묶음 상세와 /{batchId}/retry를 제공한다. 조회는 MANAGE_SETTLEMENT READ, 재시도는 쓰기 권한과 필수 멱등키·사유 본문을 사용한다. 공개 API의 /api/internal/provider-payouts/{batchId}/retry로 위임해 같은 지급 코어를 실행한다. 회원 앱이 운영 지급 재시도를 호출하는 흐름은 아니다.</p>
+<p>재시도는 FAILED 원본만 허용하고 이미 재시도 자식이 있으면 중복 예약을 거절한다. 기존 수익 집합을 보존한 PROCESSING 자식을 먼저 예약하고 성공/실패 결과를 그 행에 기록한다. ON_HOLD는 FAILED 재시도 대상과 다르다. 재시도 중 다시 실패해도 결과 행을 반환할 수 있으므로 HTTP 200만으로 지급 성공을 판단하지 않는다.</p>
+<p>재시도 경로에는 지갑 거래 없이 10분 넘게 PROCESSING에 머문 원본/직접 자식을 PAYOUT_INTERRUPTED 실패로 복구하는 처리가 있다. 이것을 자동 주기 복구 잡이라고 설명하지 않는다. 내부 API는 대상 경로·운영자·본문을 포함한 검증 멱등 실행을 사용하며 운영자 재시도 성공은 저장된 묶음 상태와 실제 입금액으로 판정한다.</p></section>
+<section id="current-7"><h2>제공자 본인 지급 표시</h2><p>서버 내 배정 응답은 본인 charge 수익과 engagement의 적용된 계약금 수익을 배정별로 집계한다. PENDING/APPROVED의 net 합계가 expectedNetAmount, PAID의 net 합계가 paidNetAmount다. REFUNDED/REVERSED는 이 집계 대상에서 빠지므로 과거 지급 전체 이력을 보존하는 영수증 목록과는 다르다.</p>
+<p>offsetAmount와 actualPaidAmount는 성공한 지급 묶음의 해당 수익별 배분 합계다. 과거 PAID 수익에 지급 묶음이 연결되지 않으면 paidNetAmount는 있어도 실제 입금/상계 집계는 0일 수 있다. lastPaidAt은 PAID 수익 updatedAt의 최댓값이며 별도의 은행 입금 시각이 아니다.</p>
+<p>대기 순수익이 양수일 때 사유는 ON_HOLD 기록, FAILED 기록, PENDING 존재, 나머지 지급 대기 순으로 정한다. 이 사유는 연결된 묶음 이력에 기반하며 현재 계정 정지 상태를 매번 직접 읽어 만든 값은 아니다. 수익이 없으면 0 합계와 사유 없음으로 채운다.</p>
+<p>앱은 이를 ‘지급 예정’, ‘미납금 갚기’, ‘실제 입금’, ‘지급 완료 합계’, 대기 이유, 지급 시간으로 표시한다. 배정 상태 SETTLEMENT_LOCKED의 라벨은 ‘지급 확정’이다. 제공자 수익 요약이 없다는 과거 Gap을 유지하지 않는다.</p></section>
+<section id="current-8"><h2>앱 정산 요청·안내·복귀</h2><p>정산 버튼을 누른 뒤 새 readiness가 막히면 blocker별 담당 역할·설명·존재하는 대상 이름·금액을 알림창에 표시한다. 이름이 없으면 raw ID로 대체 표시하지 않는다. 응답 nextAction과 targetUserId를 받아도 이 알림창은 직접 해결 버튼으로 연결하지 않는다. 개인 미납액은 응답에 없으며 금액 차이를 개인 청구액으로 쓰지 않는다.</p>
+<p>executable=true면 확인창 뒤 영속 회원 명령으로 settle을 보낸다. 확인창의 ‘지급을 시작할까요?’ 문구는 현재 구현의 문구일 뿐 즉시 지갑 입금을 보장하지 않는다. 성공 토스트는 ‘정산이 요청되었습니다’이고 배정 화면에 머무른다. 실패는 오류 토스트를 표시한다.</p>
+<p>성공 또는 커밋 가능 실패/결과 미확정이면 assignmentsChanged(eventId)를 발행한다. 이 요청은 지갑 실지급이 아니므로 여기서 지갑 변경 신호를 발행하지 않는다. 실제 전송 동안 행동별 로딩을 표시하고 다른 행동을 비활성화한다. readiness 조회·확인창 단계 자체에는 같은 _running 보호가 없으므로 모든 준비 단계가 단일 실행이라고 과장하지 않는다. 돈 명령의 같은 의도 동시 실행·키 보관 규칙은 <a href="F21-06.html">계약금 요청키와 앱 결과 처리</a>를 따른다.</p>
+<p>여러 회차의 독립 성공/실패와 재요청 범위는 <a href="F21-07.html">정기모임 제공자 배정·묶음 정산</a>을 따른다. 정산 뒤 환불과 미납금 원천은 <a href="F21-05.html">환불·정산 후 회수·배정 종료</a>를 따른다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>공통 evaluate를 쓰지만 조회 후 변경과 잠금 뒤 수익 검증 실패가 가능하다.</td><td>ready/executable을 실행 예약으로 쓰지 않는다.</td></tr><tr><td>Gap</td><td>목록에서 정산이 차단되면 버튼이 숨겨지고, 재조회 차단 알림창에도 직접 해결 버튼이 없다.</td><td>상시 사전점검 입구·자동 nextAction 이동을 주장하지 않는다.</td></tr><tr><td>Risk</td><td>정산 확인의 지급 표현·명목 금액 알림은 실입금과 다를 수 있다.</td><td>승인, 상계, 실제 지급을 구분한다.</td></tr><tr><td>Risk</td><td>본인 수익은 현재 대상 상태와 연결된 지급 이력 집계다.</td><td>과거 지급 전체·현재 정지 상태·은행 입금 시각으로 확대하지 않는다.</td></tr><tr><td>Risk</td><td>실패 기록 자체가 실패하면 로그만 남을 수 있고 재시도 200도 FAILED일 수 있다.</td><td>운영 묶음 상태·오류·실입금으로 결과를 확인한다.</td></tr><tr><td>미검증</td><td>락 경합·응답 단절·실제 배치·운영 재시도·앱 복귀를 이번에 실행하지 않았다.</td><td>소스 대조와 제품 시험 통과를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 계약과 키:</strong> 호스트 범위·safetyExit·필수 키·200 void와 같은 키 재생/새 키 상태 거절을 구분한다.</li><li><strong>AC-02 공통 판정:</strong> 목록 action·readiness·settle이 같은 evaluate를 사용하고 전 사유/첫 오류의 차이를 유지한다.</li><li><strong>AC-03 실제 출석:</strong> 제공자 제외·노쇼 포함과 실제 참석 충돌, 무료/취소 coverage, 같은 인원 다른 신원을 판별한다.</li><li><strong>AC-04 이행과 돈:</strong> 유상 direct도 완료 이행을 요구하며 DISPUTED·최신 조건·제공자 자격을 확인한다.</li><li><strong>AC-05 금액과 계약금:</strong> 직접 X 또는 C+D=X, 계약금 연결과 수익 원천·소유자·상태를 승인 전에 확인한다.</li><li><strong>AC-06 지급:</strong> 주간 설정·분산락·제공자별 트랜잭션·잠금 뒤 정지 확인·상계·실입금·지급 배분 기록을 구분한다.</li><li><strong>AC-07 실패 재처리:</strong> FAILED/ON_HOLD/PROCESSING, 재시도 예약·원래 수익 집합·중복 거절·중단 복구와 실패 결과 행을 따른다.</li><li><strong>AC-08 본인 집계:</strong> 예정 순액·지급 명목액·성공 배분 상계/실입금·대기 사유·시간의 원천과 한계를 표시한다.</li><li><strong>AC-09 앱 입구:</strong> allowed 버튼→재조회→사유 알림 또는 확인→실행→목록 갱신 순서를 따르고 없는 조치 CTA를 추가 설명하지 않는다.</li><li><strong>AC-10 결과 안내:</strong> SETTLEMENT_LOCKED/APPROVED/PAID, 토스트·outbox·실수신을 서로 다른 증거로 취급한다.</li></ul>
+<p>근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 56,
     "definitionOnlyEvidence": 75,
-    "traceMarkers": 811,
-    "verifiedTraceRecords": 809,
+    "traceMarkers": 813,
+    "verifiedTraceRecords": 811,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -21277,7 +21277,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F21-03",
       "domain": "제공자 배정·정산",
-      "name": "제공자 정산",
+      "name": "제공자 정산 확정·주간 지급·지급 재처리",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
@@ -21288,10 +21288,45 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-03:1",
+            "label": "GET /api/v1/events/{eventId}/assignments/{assignmentId}/settlement-readiness",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "settlementReadiness",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/settlement-readiness",
+                "targetLine": 518,
+                "methodLine": 521
+              }
+            ]
+          },
+          {
+            "id": "F21-03:2",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/settle",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "settle",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/settle",
+                "targetLine": 536,
+                "methodLine": 539
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

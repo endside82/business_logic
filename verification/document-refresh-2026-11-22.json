@@ -325,7 +325,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -412,7 +413,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4777,9 +4779,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ea824adc0a9335bdd7f68405084b7ebd903c868938f42abcf0d3e0875ee64098",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_settlement_20261122"
+      ],
+      "reviewedSha256": "849df7826593ff15c102d596c1a39cedf6f7feb48e5338fbb20dc799134eb1e4"
     },
     {
       "path": "docs/features/F21-04.html",
@@ -5375,7 +5380,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5495,7 +5501,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5639,7 +5646,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -8237,10 +8245,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "87e244d703bd8cb6fcc2851465be74d489b0b5cfde47af1ace876233db4d3510",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_settlement_20261122"
+      ],
+      "reviewedSha256": "f715d1b8247f6234c256422c6e1c68a62e8b0af77bb548fd73469038a3261feb"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
@@ -8645,7 +8655,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8917,7 +8928,8 @@
         "curated_deposit_20261122",
         "curated_subsidy_20261122",
         "curated_refund_20261122",
-        "curated_charge_20261122"
+        "curated_charge_20261122",
+        "curated_settlement_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -41340,6 +41352,204 @@
         "sourceReferences": "코드 위치 표 163개가 실제 소스와 일치합니다.",
         "groupDigests": "34 source/canonical digests; 3 retained HTML IDs",
         "derivedDocuments": "2 documents; shared batch verified 4 paths, 39 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "c804482752e3c9e6ec18a39958f235315dc8dc80"
+      }
+    },
+    "curated_settlement_20261122": {
+      "kind": "source_review",
+      "scope": "F21-03 공통 readiness/정산 판정·검증 승인·주간 지급/수동 재처리 경계·제공자 집계와 실제 앱 요청 흐름 대조",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentSettlementReadinessVo.java",
+          "sha256": "ee49495c68e64d831c9df8443e7a08cf46fdea387aa8c4b86bd90fa89a5eee89",
+          "reviewScope": "전체 ready/executable·blockers/nextAction 계약"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentSettlementBlockerVo.java",
+          "sha256": "53d84f85af4d00cc0ad2fada08d560f601bce0c9ac16b697532304e4dc2c8e1d",
+          "reviewScope": "전체 code/message/role/대상/BigDecimalamount"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderSettlementAdapter.java",
+          "sha256": "484b705b1505a023e9bf07a2a0e34b10e8a171e04e044dd98e4ad614814b9afc",
+          "reviewScope": "56-211 승인행잠금/검증·제공자 REQUIRES_NEW지급·지갑잠금뒤정지재확인·성공장부/outbox"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedSettlementBatchService.java",
+          "sha256": "cb710d1e6dfab2f01120dab3f1370472daba52359c608f686045dd222778ef9c",
+          "reviewScope": "전체 기본cron/zone미지정·Redisson5초·provider별실패격리·보류/실패저장·카운터의미"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderPayoutEligibilityAdapter.java",
+          "sha256": "620cf310738266b94de622e26d0356877998ce3b0b28b68b4a70f4cb7b0cbf0f",
+          "reviewScope": "전체 관리자정지사전조회와DB직접재조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ProviderPayoutLedgerService.java",
+          "sha256": "e99ce242e210c71030b94ba3ea9c0dc9e668705a2360253a82f23a81914f0614",
+          "reviewScope": "53-57 10분기준;83-125 성공/예약완료·186-338 실패/보류/재시도예약/원수익/중단복구·400-456 수익별배분/오류코드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ProviderPayoutRetryService.java",
+          "sha256": "1fb9ddb87f90c0a9f64ea234cde3b823e47427dee6a3423eef09f364e66d65eb",
+          "reviewScope": "전체 NOT_SUPPORTED 경계·보류검사/복구/예약·실패행반환·무지급거절"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/curated/controller/ManageProviderPayoutController.java",
+          "sha256": "0256b1465744b6e8544ecd6b0a822e24e639d15ad64e6496cf4432bd76752364",
+          "reviewScope": "50-112 목록/상세 READ·재시도WRITE/키필수wrapper·반환DTO"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/InternalProviderPayoutController.java",
+          "sha256": "d8e8119760966b266097ad3dc499be6e4398aca71a07ac703acad0386f283aae",
+          "reviewScope": "전체 내부재시도 경로·운영자필수·executeVerified 대상/본문/운영자 결박"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/repository/query/ServiceAssignmentQueryRepository.java",
+          "sha256": "cb6183767ed1b59ecd96832cf8966a50bfb11019cea7274a251ed7596d5024bb",
+          "reviewScope": "108-275 본인charge/계약금수익·상태필터·지급성공배분/실패보류이력·합계/대기사유 우선순위"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ProviderEarningSummaryVo.java",
+          "sha256": "a8ee8beef6ce2a222dfb8bf8e5e905e78af80efec3233cca0b213a0c2b36b723",
+          "reviewScope": "전체 4금액·lastPaidAt·pendingReasonCode"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_settlement_readiness_vo.dart",
+          "sha256": "ae3e221f2ae16dbc80a4f2d0e2e817d8a2b5c8fb77dff6cd8a2e9db251c47e0c",
+          "reviewScope": "전체 nullable금액/대상·역할unknown·executable/default·nextAction"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/my_assignments_screen.dart",
+          "sha256": "550ecf28eae4b25953da9ca5bf0e0d5767e8a1d43ba570f5fd49815df923a3e9",
+          "reviewScope": "160-321 본인카드 수익예정/상계/실입금/완료합계·대기사유/시간"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/curated/service/ManageProviderPayoutService.java",
+          "sha256": "aec07d927da8198dd222e810e234e86ab9d8cc7990474e4462b371700622c0a0",
+          "reviewScope": "94-151 사유정규화·재시도의도기록·동일키위임·불확정오류/기존지급결과/최종상태처리"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/curated/client/ProviderPayoutCommandApiClient.java",
+          "sha256": "56c004c0665d83c3e2b80478e2d9a701bf1b8b63bca56a77be3e6e2e723aaedf",
+          "reviewScope": "전체 operatorAdminId/reasonCode/note·동일키 내부위임"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+          "sha256": "a071d34fe7ecedc9b2d6d5d907222f335285d0fd7717eb2d86aef8b202928178",
+          "reviewScope": "518-552 readiness/settle safetyExit·필수키·본문없음·영속receipt·200void"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentSettlementService.java",
+          "sha256": "7d60d200c836e5eeb4eabd5737ee628449b54944daa522f3d542d2543d12d32b",
+          "reviewScope": "75-430 공통evaluate·순서/출석/이행/금액/계약금·blocker/nextAction·실행수익승인"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentActionPolicy.java",
+          "sha256": "6dcd3ff1a0ecdf2bfe19235c98a1aaa7b01d5b4a54f75a218dfcd02914ccd52c",
+          "reviewScope": "80-107,305-310 호스트 SETTLE는 공통 판정 첫오류를 전달"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentService.java",
+          "sha256": "b14d20701ef3f8cb550f889158a6594102d0026f7b56f43726b6030f7e2d9224",
+          "reviewScope": "266-285 본인 배정 수익요약/0기본값;477-483 목록 정산 action도evaluate 사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/EarningTransitions.java",
+          "sha256": "7083601f1ec99cdd4cda3d0c24d6f9f7c143678ec0898eacaddeaa720dbdfcce",
+          "reviewScope": "173-174,409-418 APPROVE_ASSIGNMENT 상태/소유자/sourceId 검증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/CreatorPayoutCommand.java",
+          "sha256": "363fa6026859008b6555803fe8957779762f095206346b7d91a771d3a0f33c1f",
+          "reviewScope": "134-159 제공자지급 잠금/승인소유자재확인;creator_earning 동일 SHA:201-369 공통잠금·상계·지급·장부 근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingAttendancePolicy.java",
+          "sha256": "8bd2fcb7158ac079ea0d6c2bcbf7dd8f11a08c4ac0d53c73cf23a1883ad75473",
+          "reviewScope": "curated_charge 동일 SHA:39-59 FIXED체크인/일반ATTENDING 실제출석집합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "curated_deposit 동일 SHA:86-101,159-289 영속대상/명령/본문·성공재생"
+        },
+        {
+          "path": "community_app/lib/data/api/service_assignment_api.dart",
+          "sha256": "9367ccc03fd8974b6b59c75cefafd670f64848faee5cf57d6fd036a02135e769",
+          "reviewScope": "147-161 readinessVO/settlevoid·필수키헤더"
+        },
+        {
+          "path": "community_app/lib/data/repositories/service_assignment_repository.dart",
+          "sha256": "6909b2e13882d799c1c92bf47caa2adb7d82ecd1bca32d946cd8f5e3addaedd7",
+          "reviewScope": "214-235 두API Result 포장·키전달"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_vo.dart",
+          "sha256": "47bfdd17f8f81bc73a54083cf1063e5b38bc50c8904ba571006f001932d48ce4",
+          "reviewScope": "35 SETTLEMENT_LOCKED 지급확정;168-221 사유enum/수익요약;289-301 actions.allowed 판정"
+        },
+        {
+          "path": "community_app/lib/domain/providers/curated/service_assignment_provider.dart",
+          "sha256": "6cfaaede57dd5cf9f73679c932e97149c44cc8c801df3e0fa5ab75751b113d51",
+          "reviewScope": "50-133 assignments 구독·영속명령뒤성공/불확정신호;233-252 readiness/settle"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/event_assignments_screen.dart",
+          "sha256": "5496abec9e73dd989ec46026b8a358f5379b4c8a439ea071e0431acd9533ec6f",
+          "reviewScope": "400-578 action버튼허용/숨김/로딩·결과토스트;757-832 조회/확인/차단역할이름금액/직접CTA없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "curated_deposit 동일 SHA:18-277 계정/세션·같은의도공유·영속키/결과판정"
+        }
+      ],
+      "reuses": [
+        "creator_earning_20261122",
+        "curated_charge_20261122",
+        "curated_deposit_20261122",
+        "curated_refund_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
+          "sha256": "f715d1b8247f6234c256422c6e1c68a62e8b0af77bb548fd73469038a3261feb"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F21-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "readiness/settle 두 공개 Controller 계약 연결",
+        "units 미존재 유지"
+      ],
+      "followUpFindings": [
+        "목록/readiness/settle evaluate 공유·과거 coverage 전용 한계 교정",
+        "유상 direct도 이행 완료 필요·노쇼 실출석 충돌",
+        "영속 정산키 같은 성공 재생과 새키 상태거절 구분",
+        "실패/보류 장부와 운영 재시도 구현·HTTP200은 지급 성공 보장 아님",
+        "제공자 내배정 예정/지급/상계/실입금/대기이유 구현",
+        "차단된 배정은 정산버튼 숨김·알림창 직접조치 없음·준비단계 running 미설정",
+        "지급예정과 실입금 구분·과거이력 집계와 lastPaidAt 의미 제한"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 164개가 실제 소스와 일치합니다.",
+        "groupDigests": "30 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 23 relative links/anchors and 0 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"
