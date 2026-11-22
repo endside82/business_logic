@@ -1,83 +1,128 @@
-# F04-02. 클럽 상세 보기 & 가입/탈퇴 PRD
+# F04-02. 클럽 상세와 가입·탈퇴 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 기존 시험 단언을 대조했다. 새 앱·브라우저·이미지 검수 결과가 아니다.
 
-## 1. 결론
+## 결론
 
-클럽의 메타정보(이름/카테고리/소개/멤버수/소유자)를 조회하면서 동시에 현재 사용자의 멤버십 컨텍스트(`myRole`, `myMembershipStatus`)를 함께 내려준다. 가입은 자유가입(즉시 멤버)/승인가입(대기열) 두 결과 타입(`MEMBER`/`WAITLIST`)을 같은 엔드포인트(`POST .../join`)로 분기 처리한다. 탈퇴는 `DELETE .../leave`로 OWNER만 제외하고 가능하다. 다만 현재 `/home/clubs/:id`는 Flutter public prefix인 반면 상세 GET은 JWT 필수이고, APPROVAL 가입 화면도 메시지를 받지 않은 채 `message=null`로 신청한다.
+숫자 클럽 번호의 /clubs/{id}와 상세 GET은 비로그인에게도 공개한다. 회원은 모임 홈, 비회원은 공개 미리보기와 가입 입구를 보고, 모임 정보는 별도 화면으로 연다. 공개 열람과 회원 전용 자료·운영 권한은 서로 다른 조건이다.
 
-### 2026-07-29 소스 재실측 — 멤버 전용 핏 프리뷰
+자유가입은 MEMBER, 승인제 가입 신청은 WAITLIST를 반환한다. 승인제에는 선택 메시지 입력이 있다. 가입·탈퇴는 동일 의도를 식별하는 필수 Idempotency-Key를 사용하며 성공 뒤 관련 자료를 갱신한다. 탈퇴 성공은 목록으로 강제로 이동하는 흐름이 아니라 현재 상세를 다시 읽는 흐름이다.
 
-- 인증된 **현재 클럽 멤버만** `GET /api/v1/clubs/{clubId}/fit-preview`를 호출할 수 있다. 비멤버는 403이며 가입 전 전환 유도 정보로 쓰지 않는다.
-- 응답은 `ClubFitPreviewVo { knownMembersBucket?, similarTraitBucket?, traitAxisDistribution }`다. 인원수는 `FEW`(1~2), `SEVERAL`(3 이상) 버킷만 노출하고 0명은 필드 자체를 생략한다.
-- `knownMembersBucket`은 증거등급 공동참석 이력이 있는 현재 멤버 수다. 뷰어·차단 사용자는 후보에서 제외한다.
-- `similarTraitBucket`은 양쪽의 최신 제출 trait 점수에서 공통 축이 4개 이상이고 평균 절대 차이가 20 이하인 멤버 수다. trait 점수가 있는 후보가 5명 미만이면 필드를 생략한다.
-- `traitAxisDistribution`은 멤버 최신 trait 점수를 축별 `LOW(0~33) / MID(34~66) / HIGH(67~100)` 비율로만 제공한다. 축 표본 5명 이상이고 0이 아닌 각 밴드가 최소 5명일 때만 노출하며 원점수·원인원은 내려가지 않는다. 표시할 축이 없으면 빈 배열이다.
-- Flutter `ClubFitPreviewSection`은 `clubFitPreviewProvider`를 통해 상세에 붙고, 데이터가 전부 억제되면 섹션을 숨긴다.
+## 코드 위치
 
-실측 근거: `ClubFitPreviewController/Service`, `TraitFitPreviewService`, `ClubFitPreviewVo`, Flutter `connectivity_api.dart`, `club_fit_preview_section.dart` 및 widget test.
+서버: ClubController#getClub·joinClub·leaveClub, ClubService#getClubWithMembership, ClubMembershipService#joinClub·processMemberFee, ClubWaitlistService의 승인 시 가입비 처리, ClubMemberExitCommandService#leaveClub, ClubAbilityPolicy#leave, ClubExitParticipationReleaser, ClubMemberExitSupport, ClubFundMoneyCommand·ClubFundPolicy, ClubVo·JoinParam·JoinResultVo, API 앱의 SecurityConfiguration. 공개 미리보기는 PreviewController·PreviewService, 핏은 ClubFitPreviewController·ClubFitPreviewService·TraitFitPreviewService·ClubFitPreviewVo다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+앱: club_branch_routes.dart·app_redirect.dart, club_detail_screen.dart·club_public_home.dart·club_join_message_sheet.dart·club_fit_preview_section.dart, club_detail_provider.dart·club_permission_provider.dart·club_join_provider.dart, club_api.dart·club_repository.dart·club_detail.dart·club_join_param.dart·join_result.dart, 공통 member_money_command.dart.
 
-- 클럽 목록 카드 탭 (F04-01)
-- 홈 클럽 카드·공유 링크 (`/home/clubs/:id`)
-- 내 클럽 카드 탭 (F04-07)
-- 알림 클릭 (가입 승인/거절/초대 등 → DeepLink → `/clubs/:id`)
-- 딥링크 `community://clubs/{id}`
+<!-- source-references:start -->
+서버 창구: `ClubController#getClub`, `ClubController#joinClub`, `ClubController#leaveClub`, `ClubFitPreviewController#getFitPreview`, `PreviewController#events`, `PreviewController#members`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-현재 `GET /api/v1/clubs/{id}`를 공개하는 Security matcher가 없어 상세 조회 자체가 JWT 인증 필수다. 반면 Flutter의 `/home/clubs` prefix는 public route라 비로그인 사용자가 라우터를 통과한 뒤 상세 GET에서 401을 받고, 화면은 이를 `"클럽을 찾을 수 없습니다"`로 축약한다. `/clubs/:id`는 public prefix가 아니므로 비로그인 진입 시 로그인으로 이동한다.
+## 실제 입구와 화면 구분
 
-## 2. 코드 위치
+[클럽 찾기와 모임 탭 탐색](F04-01_club-discovery_prd.md)의 카드 등에서 /clubs/{id}로 들어온다. 라우터는 숫자 클럽 상세와 정해진 공개 미리보기 경로를 로그인 없이 허용한다. 이 허용을 클럽 만들기 등 모든 /clubs 하위 경로에 확대하지 않는다.
 
-계약의 정본은 코드다. 서버: `ClubController`, `WalletService`, `AccountingLedgerService`, `NotificationService`. 앱: `club_detail_screen.dart`.
+| 상태·입구 | 현재 화면·행동 |
+| --- | --- |
+| 비로그인 상세 | 공개 정보·미리보기와 로그인 CTA. 로그인 이동에는 현재 경로를 복귀 주소로 넘긴다 |
+| 로그인 비회원 | 공개 정보·미리보기, 해당하면 신청 결정 메시지, 회원 전용 정보 잠금 안내와 가입 상태별 CTA |
+| 현재 회원 | 기본 화면에 모임 홈 내용을 보여 준다. 회원용 하단 클럽 홈 버튼을 다시 붙이지 않는다 |
+| 모임 정보 | 별도 정보 화면. 회원에게 규칙·핏·분포 구역을 구성하며 플랫폼 돈 기능이 켜지면 기금 입구를 표시한다 |
+| 관리 | 서버가 준 myAbilities 중 관리 입구에 해당하는 허용 행동이 있을 때 표시한다. 역할 이름 하나만으로 운영 권한 전체를 결정하지 않는다 |
+| 더보기 | 공유, 조건에 따른 문의·신고·탈퇴. 공유만 있으면 단독 공유 아이콘을 쓴다. 탈퇴는 leave.allowed일 때 제공한다 |
+| SUSPENDED | 상세 전체를 운영 중지 안내와 돌아가기로 대체한다 |
+| INACTIVE | 가입 바를 숨긴다. SUSPENDED와 같은 전체 차단 화면이라고 설명하지 않는다 |
 
-## 3. 전체 동작 흐름
+공개 사진첩 입구는 로그인·사진첩 출시 범위·조회된 사진첩 존재 조건을 만족할 때 표시한다. 비로그인에게 항상 나타나는 공개 입구가 아니다. 실제 사진첩 노출 정책 전체는 이 상세 검수의 범위를 넘는다.
 
-1. 화면 진입: `clubDetailNotifierProvider(clubId).build()` ▶ `clubRepository.getClubDetail` ▶ `GET /api/v1/clubs/:id`
-2. 가입 액션: `clubJoinNotifierProvider.joinClub(clubId)` ▶ `clubRepository.joinClub` ▶ `POST /api/v1/clubs/:id/join`
-   - 현재 화면에는 가입 메시지 입력 UI가 없어 FREE/APPROVAL 모두 `message=null`로 호출한다.
-   - 성공: `clubDetailNotifier.refresh()`로 상세 재조회 + `clubListNotifier` invalidate (목록 카드 상태 동기화)
-3. 탈퇴 액션: `leaveClub` ▶ `DELETE /api/v1/clubs/:id/leave` ▶ pop + `myClubsNotifier.refresh()` + `clubListNotifier` invalidate
-4. 권한 정보: `clubPermissionProvider(clubId)` (별도 provider) — myRole 기준 staff 메뉴 가시성 결정
-5. 예정 이벤트 미리보기: `clubUpcomingEventsProvider(clubId)` (Unit 04 F04-12로 분리)
+## 상세 조회와 회원 정보 축소
 
-## 4. 제품 규칙
+GET /api/v1/clubs/{id}는 선택 인증으로 ClubVo를 반환한다. 이름·소개·카테고리·규칙·인원·가입 방식·상태·클럽 유형·가입비·대표 이미지와 maxMembers/full을 포함하고, 로그인한 요청자에게 역할·가입 상태·결정 메시지·myAbilities를 구성한다. 대표 이미지 키는 표시용 URL로 변환한다.
 
-- 하단 버튼은 회원 상태로 갈린다. 비회원은 「가입하기」, 신청 뒤에는 누를 수 없는 「승인 대기 중」, 회원은 「클럽 홈」, 차단된 사람은 누를 수 없는 「가입할 수 없습니다」. 클럽장에게는 가입 버튼이 없다.
-- 운영 중지(SUSPENDED) 클럽은 서버가 내려 줘도 앱이 상세 전체를 막고 운영 중지 안내만 보인다.
-- 상세의 미리보기는 예정 이벤트 최대 3개, 멤버 아바타 5개와 남은 수다.
-- 가입 신청과 회원 탈퇴는 알림을 보낸다.
+현재 회원 행이 있으면 myRole과 ACTIVE를 적용한다. 회원이 아니면 BAN을 먼저 확인하고, 차단이 없으면 먼저 최신 APPLY 한 건을 고르고 그 상태가 APPROVED·CANCELLED가 아닐 때만 상태와 결정 메시지를 사용한다. 최신 행이 제외되었다고 이전 신청까지 되짚어 찾지는 않는다. 과거 문서의 신청 이력 우선·차단 후순위 설명은 현재와 다르다.
 
-## 6. 상태/권한/시나리오 매트릭스
+익명 또는 비회원에게는 fundBalance와 subscriptionExpiresAt을 null로 축소한다. 이 함수가 rules 등 모든 필드를 비공개로 바꾸는 것은 아니다. 화면에서 회원 구역을 숨긴다는 사실과 서버 응답의 필드 축소 범위를 구분한다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 자유가입 클럽 즉시 가입 (Happy Path) | `joinType=FREE`, `clubType=FREE` (가입비 없음). | ACTIVE 멤버, OWNER에게는 알림 미발송 (FREE 가입은 알림 분기 없음). |
-| S2 | 승인가입 클럽 신청 → 대기열 | `joinType=APPROVAL`. | `myMembershipStatus=PENDING`. 추후 승인은 F04-05. |
-| S3 | 중복 가입 시도 / 이미 신청 중 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | 비멤버 탈퇴 (멤버 → 탈퇴) | ACTIVE MEMBER, 가입 30일 경과. | ACTIVE 멤버 아님. |
-| S5 | OWNER 탈퇴 시도 (실패 시나리오) | 클럽 OWNER. | 여전히 OWNER. F04-03의 소유권 이전을 안내. |
-| S6 | BUSINESS 클럽 자유가입 (가입비 결제, FREE join) | `clubType=BUSINESS`, `memberFee=10000`, `joinType=FREE`. | 멤버. 7일 내 탈퇴 시 가입비 환불 가능. |
-| S7 | SUSPENDED 클럽 진입 (에러 시나리오) | alice 가 이미 club 1201 의 ADMIN. 시드 club_member 1222 ACTIVE. | 가입 시도 불가. |
-| S8 | 비로그인 홈 상세 진입 | 인증 토큰 없이 `/home/clubs/{id}` 진입 | public route matcher는 통과하지만 상세 GET이 401이고 화면은 `"클럽을 찾을 수 없습니다"`를 표시한다. 로그인 CTA까지 도달하지 못한다. |
-| S9 | APPROVAL 클럽 가입 신청 | 인증 비멤버, `joinType=APPROVAL` | 가입 메시지 입력 없이 `message=null`로 요청하고 `WAITLIST`/`PENDING` 상태가 된다. |
+## 공개 미리보기와 회원 전용 핏
 
-## 8. Gap / Risk
+비회원 홈은 최근 등록된 이벤트를 최대 3개, 사람 미리보기를 최대 5개 구성하고 각각 전체 보기로 공개 미리보기 목록을 연다. 이벤트 카드는 제목·대표 자료를 보여 주는 잠금 미리보기이며 눌렀다고 회원용 이벤트 상세로 바로 들어가지 않는다. 이를 회원용 예정 이벤트 목록과 혼동하지 않는다. 미리보기 구역에는 자체 로딩·실패 재시도가 있다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Gap | `Routes.publicRoutes`, `SecurityConfiguration`, `club_detail_screen.dart` | Flutter `/home/clubs/:id`는 public prefix지만 상세 GET은 JWT 필수라 게스트가 401을 받고, 화면은 이를 일반 `"클럽을 찾을 수 없습니다"`로 축약한다. | 공개 상세 계약을 서버와 맞추거나 앱 public prefix/로그인 분기 및 오류 표현을 정렬 |
-| Gap | `club_detail_screen.dart`, `club_join_provider.dart` | APPROVAL 가입도 메시지 입력 UI 없이 `joinClub(clubId)`를 호출해 신청 body의 `message`가 null이다. | 메시지가 제품상 필요하면 입력 UI와 검증을 연결하고, 선택 사항이면 승인 화면의 기대 계약을 명시 |
+공개 이벤트·멤버 미리보기 서버는 ACTIVE 클럽을 요구하고 로그인 요청자의 차단 관계를 조회 조건에 전달한다. 사람 미리보기의 프로필 열람 가능 여부도 별도로 계산한다. 상세를 읽을 수 있다는 사실이 중지 클럽의 미리보기나 모든 사람의 전체 프로필 접근 허가를 뜻하지 않는다.
 
-## 9. 수용 기준
+GET /api/v1/clubs/{clubId}/fit-preview는 인증된 현재 회원만 허용한다. 비회원 가입 유도 자료가 아니다. 응답은 nullable knownMembersBucket·similarTraitBucket과 traitAxisDistribution이다.
 
-- **AC-01. 자유가입 클럽 즉시 가입 (Happy Path)**: Given `joinType=FREE`, `clubType=FREE` (가입비 없음). When 사용자가 해당 흐름을 실행하면 Then ACTIVE 멤버, OWNER에게는 알림 미발송 (FREE 가입은 알림 분기 없음).
-- **AC-02. 승인가입 클럽 신청 → 대기열**: Given `joinType=APPROVAL`. When 사용자가 해당 흐름을 실행하면 Then `myMembershipStatus=PENDING`. 추후 승인은 F04-05.
-- **AC-03. 중복 가입 시도 / 이미 신청 중**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. 비멤버 탈퇴 (멤버 → 탈퇴)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then ACTIVE 멤버 아님.
-- **AC-05. OWNER 탈퇴 시도 (실패 시나리오)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 여전히 OWNER. F04-03의 소유권 이전을 안내.
-- **AC-06. BUSINESS 클럽 자유가입 (가입비 결제, FREE join)**: Given `clubType=BUSINESS`, `memberFee=10000`, `joinType=FREE`. When 사용자가 해당 흐름을 실행하면 Then 멤버. 7일 내 탈퇴 시 가입비 환불 가능.
-- **AC-07. SUSPENDED 클럽 진입 (에러 시나리오)**: Given alice 가 이미 club 1201 의 ADMIN. 시드 club_member 1222 ACTIVE. When 사용자가 해당 흐름을 실행하면 Then 가입 시도 불가.
-- **AC-08. 비로그인 홈 상세 진입**: Given 인증 토큰이 없음 When `/home/clubs/{id}`로 진입하면 Then public route matcher는 통과하지만 상세 GET은 401이고 화면은 `"클럽을 찾을 수 없습니다"`를 표시한다.
-- **AC-09. APPROVAL 클럽 가입 신청**: Given 인증 비멤버이고 `joinType=APPROVAL` When 가입 신청 CTA를 탭하면 Then 메시지 입력 없이 `message=null`로 요청하고 WAITLIST/PENDING 상태가 된다.
+| 신호 | 후보·계산 | 노출 조건 |
+| --- | --- | --- |
+| 함께한 회원 | 현재 회원에서 본인·차단 사용자를 제외하고 공동참석 증거가 있는 후보 | 0이면 필드 생략, 1~2명 FEW, 3명 이상 SEVERAL |
+| 비슷한 성향 | 본인·차단 사용자를 제외한 후보의 최신 성향 점수와 본인 점수 비교 | 점수 있는 후보 5명 이상, 공통 축 4개 이상·평균 절대 차이 20 이하인 수를 같은 버킷으로 축소 |
+| 성향 축 분포 | 전체 현재 회원 로스터의 최신 점수. 앞의 후보 제외를 그대로 적용하지 않는다 | LOW 0~33, MID 34~66, HIGH 67~100 비율. 축 표본 5명 이상이고 0이 아닌 각 구간도 5명 이상일 때만 표시 |
+
+식별자·개별 원점수 대신 버킷·분포를 반환하지만 이 조건만으로 재식별 불가능성을 보장했다고 쓰지 않는다. 앱은 모든 신호가 없거나 최초 로딩·오류일 때 핏 구역을 숨긴다. 신호 없음과 조회 실패를 사용자가 화면만 보고 구분할 수 없는 제한이 남는다.
+
+## 가입 조건과 선택 메시지
+
+POST /api/v1/clubs/{id}/join은 인증 사용자와 필수 Idempotency-Key, 선택 body JoinParam의 message를 받고 201 JoinResultVo를 반환한다. resultType·clubId·message 계약이며 회원/신청 객체 전체를 응답한다고 설명하지 않는다. 메시지는 선택이고 서버에서 500자 초과를 거절한다.
+
+서버는 클럽을 잠그고 ACTIVE 여부, 기존 회원, 가입 차단, 정원, 현재 가입자 계정 상태를 검사한다. FREE는 회원 추가와 인원 증가, 가입 이력 기록 후 MEMBER를 반환한다. APPROVAL은 같은 클럽의 현재 APPLY/PENDING 중복을 막고 새 신청 행을 저장한 뒤 WAITLIST를 반환한다. 거절한 행을 무조건 재사용한다는 과거 설명을 유지하지 않는다.
+
+승인 신청은 역할 제한을 제외한 운영진 수신 대상에 가입 신청 알림을 보낸다. FREE 가입 분기에는 같은 신청 알림 발송이 없다. [가입 신청·초대 관리](F04-05_waitlist-invitation_prd.md)의 승인·거절·초대 상세는 별도 기능이다.
+
+앱의 비회원 CTA는 차단 시 가입 불가, PENDING 시 승인 대기, 정원 초과 시 정원 안내로 비활성화한다. 거절된 신청은 다시 가입 신청, 그 밖에는 가입 방식에 따라 가입 신청 또는 가입하기다. 최신 상세가 확정되지 않은 로딩·오류 상태에서는 가입을 허용하지 않는다.
+
+APPROVAL을 누르면 최대 500자 선택 메시지 시트를 연다. 앞뒤 공백을 제거하고 빈 내용은 null로 전송한다. 실패하면 시트 입력을 유지하며 성공할 때 닫는다. 취소는 전송이 아니다. 확인창·입력 도중 계정이나 세션이 바뀌거나 최신 가입 상태·정원·클럽 상태·가입 방식·클럽 유형·가입비가 달라지면 이전 조건으로 보내지 않는다.
+
+## 가입비와 명령 재확인
+
+BUSINESS이며 가입비가 양수인 FREE 가입은 회원 추가와 같은 트랜잭션에서 가입비를 처리한다. 지갑은 PAID_FIRST로 지출하고 실제 유료·무료 분할만큼 기금을 늘리며 원장·회원 납부액·납부 시각·원거래를 남긴다. APPROVAL 신청 시에는 이 차감이 없고 승인 처리에서 가입비를 낸다.
+
+앱은 BUSINESS 양수 가입비에 대한 확인을 먼저 받는다. 현재 문구는 지갑 즉시 차감과 7일 이내 반환을 안내하지만 승인제의 실제 차감은 승인 때다. 따라서 승인제 신청 문구와 서버 시점은 남은 불일치다. 이를 이번 문서 갱신으로 수정했다고 보고하지 않는다.
+
+가입·탈퇴는 공통 회원 돈 명령 경로에 종류·클럽 대상·내용과 키를 전달한다. 결과가 불명확한 요청을 새 의도로 바꿔 무조건 다시 결제하는 방식으로 설명하지 않는다. 가입 성공의 MEMBER/WAITLIST에 따라 회원 상태 또는 클럽 변경 신호를 보내고 상세·목록·기금·지갑 관련 자료를 갱신한다. 결과가 이미 반영됐을 수 있는 오류에서도 관련 자료를 다시 읽게 한다. 계정 범위가 바뀐 뒤 이전 비동기 결과로 새 화면 상태를 덮지 않는다.
+
+## 탈퇴와 남은 참가·환불
+
+DELETE /api/v1/clubs/{id}/leave는 인증 사용자와 필수 Idempotency-Key를 받아 성공 시 204를 반환한다. 현재 회원이 아니면 거절하고 OWNER의 자발 탈퇴도 거절한다. 소유권을 먼저 해결하는 절차는 [클럽 생성과 관리](F04-03_club-crud-transfer_prd.md)를 따른다.
+
+탈퇴는 현재 클럽의 이벤트 참가를 전부 일괄 취소하는 동작이 아니다. 참가 해제 서비스가 범위 안의 후보 중 돈이 묶이지 않았고 본인 취소가 허용되는 것을 골라 잠근다. 체크인된 동행 행은 건너뛰고 남은 활성 참가 또는 대기 신청을 해제한다. 이 범위를 벗어난 참가·정산·보유 금액을 탈퇴 성공만으로 정리 완료라고 판단하지 않는다.
+
+회원 가입비 납부액이 양수이고 납부 시각에 7일을 더한 때가 현재보다 뒤이면 자발 탈퇴 환불 대상이다. 정확히 7일이 된 시각부터는 이 자발 탈퇴 반환 조건에서 제외한다. 원거래가 필요한데 없으면 실패하며, 환불은 원거래의 남은 몫을 기준으로 계산해 이미 전부 반환된 금액을 다시 반환하지 않는다. 이후 회원 제거·인원 감소와 클럽장 탈퇴 알림을 처리한다.
+
+앱은 서버 leave 허용 여부가 확정돼 있을 때만 탈퇴를 제시하고 확인 뒤 다시 권한·계정 상태를 확인한다. 성공하면 안내 후 현재 상세와 관련 목록·회원·기금·지갑 자료를 갱신한다. 상세에서 pop하는 것이 현재 성공 계약은 아니다. 확인창 문구의 반환 안내와 실제 지갑·기금 결과를 구분한다.
+
+## 오류와 복귀
+
+상세의 CLUB_NOT_FOUND만 클럽을 찾을 수 없다는 안내와 목록으로 돌아가기로 표시한다. 일반 네트워크·서버 오류와 우리 서버의 클럽 없음 코드가 아닌 404는 재시도 가능한 오류 화면이다. 모든 401·403·통신 오류를 같은 없음 화면으로 축약한다는 과거 설명은 제거한다.
+
+상세 새로고침은 상세와 공개 이벤트·사람 미리보기, 홈 이벤트·예정 이벤트·공지·분포 자료를 다시 읽게 한다. 회원 정보 변경 후의 실제 통신 순서·캐시 복구 성공은 별도 실행 증거가 필요하다.
+
+## 현재 제한과 확인 범위
+
+| 판정 | 항목 | 근거·사용자 영향 | 남은 확인 |
+| --- | --- | --- | --- |
+| Gap | 승인제 가입비 안내 시점 | 앱 공통 확인은 즉시 차감으로 안내하지만 APPROVAL 서버는 신청 뒤 승인 시 차감 | 승인제 문구·동의 시점을 실제 계약과 정렬 |
+| Risk | 핏의 숨김 상태 | 신호 없음·최초 로딩·오류에 모두 구역이 보이지 않을 수 있음 | 실패를 구분할 필요와 복구 표시 검토 |
+| Risk | 탈퇴 후 참가 정리 범위 | 돈 보유·본인 취소 불가·체크인 등은 자동 해제 범위에서 빠짐 | 탈퇴 이후 필요한 참가·정산 접근과 안내 확인 |
+| 미검증 | 실행 환경 | 소스와 선택한 기존 시험 단언만 읽었으며 통신·돈 이동·알림 수신·실제 기기 화면을 새로 실행하지 않음 | 제품 실행 결과는 별도 증거로 기록 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 공개 상세:** 비로그인 숫자 클럽 상세는 공개 GET을 사용하고 로그인 CTA에는 현재 복귀 경로를 보존한다.
+- **AC-02 정보 축소:** 익명·비회원 응답의 기금 잔액·구독 만료를 null로 줄이고 현재 회원·차단·최근 신청의 적용 순서를 지킨다.
+- **AC-03 홈과 정보:** 회원의 기본 모임 홈과 별도 정보 화면을 구분하고 하단 회원용 클럽 홈 버튼을 중복 추가하지 않는다.
+- **AC-04 권한 입구:** 관리·탈퇴는 서버 행동 허용과 최신 자료 확정 여부로 판정하며 역할 이름만으로 전체 행동을 열지 않는다.
+- **AC-05 운영 상태:** SUSPENDED 전체 안내와 INACTIVE 가입 바 숨김을 구분한다.
+- **AC-06 공개 미리보기:** 최근 이벤트 3개·사람 5개와 전체 보기·잠금·구역 재시도를 확인하고 회원 전용 상세를 공개하지 않는다.
+- **AC-07 가입 가드:** 비활성·기존 회원·차단·정원·닫힌 계정·현재 중복 신청을 서버가 검사한다.
+- **AC-08 자유가입:** FREE 성공은 MEMBER이며 양수 BUSINESS 가입비가 있으면 같은 가입 트랜잭션에서 기금·원장·납부정보를 반영한다.
+- **AC-09 승인 신청:** APPROVAL은 선택 메시지 시트에서 최대 500자를 받고 빈 값은 null로 보내며 새 신청과 WAITLIST를 반환한다.
+- **AC-10 신청 실패와 취소:** 실패 시 메시지를 보존하고 취소 시 전송하지 않으며 계정·가입 조건이 바뀌면 이전 조건으로 보내지 않는다.
+- **AC-11 가입비 시점:** FREE 즉시 가입 차감과 APPROVAL 승인 시 차감을 구분하고 현재 앱 공통 문구의 불일치를 완료 처리하지 않는다.
+- **AC-12 명령 재확인:** 가입·탈퇴의 필수 키와 동일 의도를 유지하고 성공 또는 반영 가능 오류 뒤 회원·목록·기금·지갑 자료를 갱신한다.
+- **AC-13 탈퇴 제한:** 비회원·OWNER 탈퇴를 거절하고 허용 회원은 확인 뒤 현재 상세를 다시 읽는다.
+- **AC-14 참가 해제:** 탈퇴 시 자동 해제 조건과 체크인·돈 보유 등 제외를 구분하고 모든 참가가 정리됐다고 가정하지 않는다.
+- **AC-15 가입비 반환:** 납부액·납부 시각의 엄격한 7일 조건·원거래·남은 반환액을 확인해 이미 반환된 금액을 다시 주지 않는다.
+- **AC-16 핏 범위:** 현재 회원 게이트, 본인·차단 제외 후보와 전체 분포 로스터의 차이, 버킷·축 표본 조건을 구분한다.
+- **AC-17 오류 복구:** CLUB_NOT_FOUND만 없음 안내로 처리하고 통신·서버·일반 404에는 상세 재시도를 제공한다.
+
+검증 근거: club_detail_error_state_test.dart의 통신 실패 뒤 재시도·복구와 CLUB_NOT_FOUND/일반 404 구분 단언, club_join_reactivate_money_command_test.dart의 결과 미확정 뒤 앱 재시작 시 같은 명령 키 유지 단언을 읽었다. 새 시험은 실행하지 않았다. 공통 회원 돈 명령의 기존 동일 소스 근거를 재사용하며 실제 결제·환불·알림 수신 성공으로 확대하지 않는다.

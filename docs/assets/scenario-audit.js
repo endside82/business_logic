@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,167개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,174개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1167,
+    "documentedScenarioItems": 1174,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,9 +17,9 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 60,
-    "directlyLinkedJourneys": 29,
+    "directlyLinkedJourneys": 28,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 29,
+    "journeyScenarioReferences": 28,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 475,
-    "verifiedTraceRecords": 473,
+    "traceMarkers": 481,
+    "verifiedTraceRecords": 479,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -4699,21 +4699,124 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-02",
       "domain": "클럽",
-      "name": "클럽 상세 보기 & 가입 액션",
-      "scenarioCount": 10,
+      "name": "클럽 상세와 가입·탈퇴",
+      "scenarioCount": 17,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-02_club-detail-join/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-02_club-detail-join_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 17
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-02_club-detail-join/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F04-02:1",
+            "label": "GET /api/v1/clubs/{id} — 클럽 상세와 가입·탈퇴",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getClub",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}",
+                "targetLine": 100,
+                "methodLine": 101
+              }
+            ]
+          },
+          {
+            "id": "F04-02:2",
+            "label": "POST /api/v1/clubs/{id}/join — 클럽 상세와 가입·탈퇴",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "joinClub",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{id}/join",
+                "targetLine": 155,
+                "methodLine": 156
+              }
+            ]
+          },
+          {
+            "id": "F04-02:3",
+            "label": "DELETE /api/v1/clubs/{id}/leave — 클럽 상세와 가입·탈퇴",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "leaveClub",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/clubs/{id}/leave",
+                "targetLine": 175,
+                "methodLine": 176
+              }
+            ]
+          },
+          {
+            "id": "F04-02:4",
+            "label": "GET /api/v1/clubs/{clubId}/fit-preview — 클럽 상세와 가입·탈퇴",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/connectivity/controller/ClubFitPreviewController.java",
+                "controller": "ClubFitPreviewController",
+                "method": "getFitPreview",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/fit-preview",
+                "targetLine": 31,
+                "methodLine": 32
+              }
+            ]
+          },
+          {
+            "id": "F04-02:5",
+            "label": "GET /api/v1/clubs/{clubId}/previews/events — 클럽 상세와 가입·탈퇴",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/preview/controller/PreviewController.java",
+                "controller": "PreviewController",
+                "method": "events",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/previews/events",
+                "targetLine": 21,
+                "methodLine": 22
+              }
+            ]
+          },
+          {
+            "id": "F04-02:6",
+            "label": "GET /api/v1/clubs/{clubId}/previews/members — 클럽 상세와 가입·탈퇴",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/preview/controller/PreviewController.java",
+                "controller": "PreviewController",
+                "method": "members",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/previews/members",
+                "targetLine": 33,
+                "methodLine": 34
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
@@ -4721,21 +4824,19 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 1,
         "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_club_mutation_test.dart",
-          "community_app/test/widget/club/club_fit_preview_section_test.dart"
+          "community_app/test/domain/providers/club/club_join_reactivate_money_command_test.dart",
+          "community_app/test/widget/club/club_detail_error_state_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 3,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_club_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart",
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
