@@ -1,88 +1,69 @@
-# F08-01. 내 플랜 목록 관리 PRD
+# F08-01. 내 플랜 목록과 새 플랜 생성 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 현재 기능 설명과 확인 범위.** 2026-11-22 서버·앱 소스와 선택한 기존 시험 단언을 대조했다. 새 제품 실행·기기 확인·마켓 거래 통과 기록은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-크리에이터가 본인이 작성한 플랜과 구매한 플랜을 한 화면에서 관리하기 위한 두 개의 페이징 목록과, 새 플랜 작성을 시작하는 DRAFT 생성 엔드포인트를 제공한다. 플랜 작성 한도(일반 5개 / HOST 10개)는 이 단계에서 검증된다.
+로그인 회원은 전체 메뉴의 「내 플랜」에서 내가 만든 플랜과 구매한 플랜을 각각 조회한다. 만든 플랜은 상세로, 구매 내역은 미리보기로 이동한다. 새 플랜은 제목을 입력해 초안을 만든 뒤 편집기로 들어간다. 하단 전용 플랜 탭이 있다고 설명하지 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+현재 생성 요청은 서버의 같은 요청 열쇠 재생 계약이 아니다. 앱은 제목·전송 상태·알게 된 생성 번호를 계정별 기기 기록에 남기고 결과가 불명확하면 재전송을 막는다. 이전 문서의 ‘같은 키로 최초 결과를 받는다’는 설명을 현재 플랜 생성에 적용하지 않는다.
 
-- 하단 탭 또는 마이페이지 ▶ "내 플랜" 메뉴 ▶ `/plan` (Routes.planList)
-- 마켓 메인의 "내가 만든 플랜" 진입 카드
-- 새 플랜 생성 후 자동 진입 (블록 에디터에서 뒤로가기)
+## 코드 위치
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `PlanController`, `Plan`, `PlanAddParam`, `PlanService`. 앱: `plan_list_screen.dart`, `plan_detail_screen.dart`, `plan_preview_screen.dart`, `block_editor_screen.dart`.
+서버: PlanController#getMyCreatedPlans/getMyPurchasedPlans/createPlan, PlanService, PlanPurchaseService, PlanPurchaseQueryRepository, MarketAbilityPolicy, PlanAddParam, PlanSimpleVo, PlanPurchaseVo. 앱: app_menu.dart, plan_market_routes.dart, plan_api.dart, plan_repository.dart, plan_editor_provider.dart, plan_create_draft.dart, plan_list_screen.dart.
 
 <!-- source-references:start -->
 서버 창구: `PlanController#getMyCreatedPlans`, `PlanController#getMyPurchasedPlans`, `PlanController#createPlan`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 2026-10-29 현재 계약 대조
+## 목록 대상과 페이지
 
-### 응답이 끊긴 생성 요청은 같은 요청으로 확인합니다
+만든 목록은 본인이 작성한 삭제되지 않은 플랜을 생성 시각·번호의 최신순으로 읽는다. 준비 중·공개·숨김 상태를 포함하며 삭제된 플랜은 제외한다. 앱은 한 번에 20개를 읽고 뒤 페이지를 이어 붙인다.
 
-차수 10에서 모임 생성 다섯 경로·플랜 생성·정기모임 생성·개인 반복 생성에 요청 고유키를 연결했다. 같은 키·같은 본문 재전송은 앞 결과를 돌려주며 다른 본문 재사용은 거절한다. 저장 결과를 모르는 동안 새 생성으로 바꾸지 않는다. 화면 재진입·계정 전환 뒤 이전 사용자의 미확정 요청을 현재 계정으로 보내지 않는지도 확인한다.
+구매 목록은 단순 구매 이력 전체가 아니라 사용할 수 있는 플랜의 구매 기록이다. 직접 플랜 구매와 마켓 권리로 받은 플랜·이벤트 패키지의 전달 플랜을 합쳐 구매 시각순으로 페이지를 만든다. 구매가 유효하고 진행 중 환불이 없어야 하며, 마켓 권리도 유효·미만료 조건을 만족해야 한다. 플랜 상태도 현재 사용 가능한 상태여야 한다. 같은 플랜 번호의 여러 구매 원천을 무조건 하나로 합치는 목록이 아니다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+만든 목록의 응답과 구매 목록의 응답은 서로 다르다. 구매 내역은 구매 번호·플랜 번호·제목·지불액·구매 시각·원천을 유지한다. 과거 시나리오에 적힌 구매 목록의 단순 플랜 응답형을 현재 계약으로 사용하지 않는다.
 
-<!-- source-references:start -->
-### 확인한 서버 코드 위치
+## 새 초안의 입력과 한도
 
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+현재 생성 창은 제목만 입력받으며 앞뒤 공백을 제거한 2~50자를 허용한다. 앱은 가격 0으로 요청하고 서버는 준비 중 상태로 저장한다. 가격·무료 포인트 설정 등 판매 준비는 별도 편집·발행 단계다. 생성 성공은 마켓 발행 성공이 아니다.
 
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
+한도는 삭제되지 않은 본인 플랜 수로 계산한다. 서버 역할이 HOST면 10개, 그 외 역할은 5개다. 숨긴 플랜도 한도에 포함하며 삭제하면 제외된다. 서버가 한도·제목·전달된 값의 조건을 다시 검사하고, 앱은 실패 이유를 보여 주며 제목을 유지한다.
+
+## 생성 결과 보관과 재시도
+
+제목과 요청 상태를 기기에 보관하는 데 실패하면 서버 요청을 보내지 않는다. 전송 전에 진행 중 상태를 기록한다. 확정적인 거절이면 입력을 유지해 다시 시도할 수 있고, 결과를 알 수 없는 실패이면 같은 생성 동작을 바로 반복하지 못하게 한다.
+
+생성 번호를 받았지만 기기 기록 정리를 마치지 못하면 「만든 플랜 열기」로 이미 알려진 편집기를 연다. 앱이 그 플랜을 다시 생성하지 않는다. 미확정 요청을 정리하려면 이미 생성됐을 가능성과 중복 위험을 확인해야 한다. 목록 확인 없이 새 생성을 선택하면 중복이 생길 수 있으므로 이를 서버 중복 방지 보장으로 설명하지 않는다.
+
+보관은 계정별이며 현재 세션이 끝나면 이전 세션의 결과로 다음 화면을 열지 않는다. 앱은 성공 또는 결과 불명 실패에 만든 목록의 갱신 신호를 보낸다. 상세에서 하는 복제의 별도 복구 기록은 [플랜 상세·미리보기](F08-02_plan-detail_prd.md)를 따른다.
+
+## 목록에서 다음 행동
+
+만든 플랜 카드는 상세를 열고, 구매 카드는 미리보기를 연다. 만든 카드의 「판매 시작」은 발행 화면으로 이동하는 입구이며 즉시 공개 명령이 아니다. 마켓 출시 범위가 닫혀 있으면 해당 판매 입구를 숨긴다. 작성과 읽기의 이용 범위를 마켓 신규 거래와 구분한다.
+
+각 목록은 로딩·조회 실패 재시도·빈 상태·뒤 페이지 실패 재시도를 제공한다. 항목이 있는 목록은 당겨 새로고침을 지원하지만 빈 상태는 같은 새로고침 위젯으로 감싸지 않는다. 만든 목록은 플랜 변경 신호를 구독한다. 구매 목록이 모든 외부 환불·권리 변경 때 자동 재조회된다고 보장하지 않는다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인한 경계 | 영향·후속 |
 |---|---|---|
-| `GET /api/v1/plans/my/created` | `PlanController#getMyCreatedPlans` | [PlanController.java:178](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L178) |
-| `GET /api/v1/plans/my/purchased` | `PlanController#getMyPurchasedPlans` | [PlanController.java:170](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L170) |
-| `POST /api/v1/plans` | `PlanController#createPlan` | [PlanController.java:46](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java#L46) |
-<!-- source-references:end -->
+| Risk | 생성 서버에는 요청 열쇠 재생이 없고 앱은 기기의 미확정 기록으로 반복을 막음 | 사용자가 기록을 정리한 후 새 생성하면 중복 가능. 같은 요청 자동 재전송으로 소개하지 않음 |
+| Gap | 빈 목록에 당겨 새로고침이 없고 구매 목록 공급자는 만든 목록의 변경 구독과 다름 | 빈 상태·외부 권리 변경 뒤 재조회 경로 보완 대상 |
+| Risk | 빈 상태는 마켓 공개·구매를 권하지만 해당 거래의 출시 범위는 별도 | 안내 문구를 현재 모든 마켓 행동을 사용할 수 있다는 증거로 쓰지 않음 |
+| 미검증 | 실제 계정 변경·운영 구매권·기기 저장·실제 생성 왕복 | 이번 소스·선택 단언 대조와 과거 시나리오를 새 실행 통과로 합산하지 않음 |
 
-## 3. 전체 동작 흐름
+## 수용 기준과 검증 근거
 
-1. 화면 진입 시:
-   - 만든 플랜 탭: `myCreatedPlansNotifierProvider` ▶ `PlanRepository.getMyCreatedPlans(page:0,size:20)` ▶ `GET /api/v1/plans/my/created`
-   - 구매한 플랜 탭: `myPurchasedPlansNotifierProvider` ▶ `PlanRepository.getMyPurchasedPlans(page:0,size:20)` ▶ `GET /api/v1/plans/my/purchased`
-2. "+ 새 플랜 만들기": `planCreateNotifierProvider.createPlan(title)` ▶ `PlanRepository.createPlan(PlanAddParam(title:..., price:0))` ▶ `POST /api/v1/plans` ▶ 성공 시 `ref.invalidate(myCreatedPlansNotifierProvider)` + push edit
-3. "판매 시작": 발행 화면(F08-05)으로 이동한다. 발행 호출은 그 화면이 한다.
-4. 풀투리프레시: 해당 탭 notifier invalidate
+- **AC-01 입구와 분리:** 전체 메뉴의 내 플랜에서 만든 목록과 구매 목록을 각각 읽고, 만든 카드는 상세·구매 카드는 미리보기로 이동한다.
+- **AC-02 목록 대상:** 만든 목록은 삭제 제외이며, 구매 목록은 유효 구매·환불 잠금·권리 만료·사용 가능 플랜 조건을 반영한다.
+- **AC-03 페이지와 원천:** 두 목록은 각각 20개씩 읽으며 구매 원천·지불액을 보존하고 서로 다른 응답을 같은 모델로 취급하지 않는다.
+- **AC-04 생성 입력:** 제목 2~50자와 삭제 제외 개수 한도를 서버에서 검사하고 앱은 가격 0의 초안을 만들어 편집기로 이동한다.
+- **AC-05 전송 전 보관:** 기기 기록 실패 시 서버 요청을 막고 저장 복구 후 다시 시도할 수 있다.
+- **AC-06 결과 불명:** 결과가 불명확한 생성의 자동 재전송을 막고 목록 확인·중복 가능성 확인을 거쳐 기록을 정리한다.
+- **AC-07 알려진 결과:** 이미 받은 생성 번호는 다시 생성하지 않고 해당 플랜을 연다. 세션이 끝난 결과로 현재 계정을 이동시키지 않는다.
+- **AC-08 발행 구분:** 판매 시작은 발행 화면 진입이고 마켓 제한 시 숨긴다. 생성·목록 확인을 판매 가능 판정으로 쓰지 않는다.
+- **AC-09 실패와 갱신:** 조회·뒤 페이지 실패를 재시도할 수 있고 빈 상태·구매 권리 변경의 자동 갱신 한계를 남긴다.
 
-## 4. 제품 규칙
-
-- 새 플랜은 제목만 받아 가격 0 의 DRAFT 로 만들고 곧장 블록 에디터로 간다. 제목이 공백뿐이면 창을 닫지 않는다. 무료 포인트 허용과 가격은 발행·수정 때 정한다(F08-05).
-- 내가 만든 목록은 DELETED 를 뺀 모든 상태를 보여 준다. 플랜 수 한도도 DELETED 를 뺀 수로 센다.
-- DRAFT 와 HIDDEN 카드의 "판매 시작"은 바로 발행하지 않고 발행 화면으로 보낸다. 준비도 확인을 건너뛰지 못하게 하기 위해서다. 마켓이 닫혀 있으면 이 단추는 없다.
-- 구매한 플랜 탭은 가격이 0 이면 "무료"로 표시한다.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 첫 플랜 작성 (Happy Path — 신규 크리에이터) | 로그인됨, 내가 만든 플랜 0건, 일반 사용자(USER 한도 5) | DRAFT 플랜 1건 생성, 사용자는 블록 에디터 화면에서 첫 블록을 추가할 준비 완료 |
-| S2 | 두 탭 전환 (만든 / 구매) | 만든 플랜 3개(DRAFT/PUBLISHED 혼재), 구매 플랜 2개 | 컨텍스트 따라 다른 화면으로 이동 (편집 vs 미리보기) |
-| S3 | DRAFT 카드 인라인 발행 | 작성 완료한 DRAFT 플랜 1건 (블록/제목/설명 모두 충족) | 플랜이 마켓에 노출 시작 |
-| S4 | 한도 초과 (5개 / 10개) | 일반 사용자, DRAFT/PUBLISHED 합쳐 5개 보유 | 새 플랜 생성 실패. HOST 권한 사용자는 한도 10개로 더 여유. |
-| S5 | 빈 제목 입력 시도 | 시나리오 본문 참조 | API 호출 자체가 발생하지 않음 |
-| S6 | 풀투리프레시 | 만든 플랜 탭에는 `Draft Hiking Plan` / `Hidden Language Exchange Plan` 노출, 구매 이력 0건 | 최신 목록 표시 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 플랜 만들기 실패 안내 | 만들기에 실패하면 제목 창은 쓴 제목을 그대로 쥔 채 남고, 서버가 준 이유를 알림으로 띄운다. 이유가 없으면 「플랜을 만들지 못했습니다」 를 띄운다 | 없음 |
-
-## 9. 수용 기준
-
-- **AC-01. 첫 플랜 작성 (Happy Path — 신규 크리에이터)**: Given 로그인됨, 내가 만든 플랜 0건, 일반 사용자(USER 한도 5) When 사용자가 해당 흐름을 실행하면 Then DRAFT 플랜 1건 생성, 사용자는 블록 에디터 화면에서 첫 블록을 추가할 준비 완료
-- **AC-02. 두 탭 전환 (만든 / 구매)**: Given 만든 플랜 3개(DRAFT/PUBLISHED 혼재), 구매 플랜 2개 When 사용자가 해당 흐름을 실행하면 Then 컨텍스트 따라 다른 화면으로 이동 (편집 vs 미리보기)
-- **AC-03. DRAFT 카드 인라인 발행**: Given 작성 완료한 DRAFT 플랜 1건 (블록/제목/설명 모두 충족) When 사용자가 해당 흐름을 실행하면 Then 플랜이 마켓에 노출 시작
-- **AC-04. 한도 초과 (5개 / 10개)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 새 플랜 생성 실패. HOST 권한 사용자는 한도 10개로 더 여유.
-- **AC-05. 빈 제목 입력 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then API 호출 자체가 발생하지 않음
-- **AC-06. 풀투리프레시**: Given 만든 플랜 탭에는 `Draft Hiking Plan` / `Hidden Language Exchange Plan` 노출, 구매 이력 0건 When 사용자가 해당 흐름을 실행하면 Then 최신 목록 표시
-
-## 10. 미결정 / 후속
-
-- `PlanAddParam`에 `allowFreePoints`/`freePointPrice`가 있으나 현재 생성 다이얼로그는 제목만 받는다. 생성 시점에 무료 허용/차등가를 입력받게 할지, 발행/수정 단계(F08-05)로 미룰지는 화면 결정 사항이다. 정책 자체는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
+기존 `PlanServiceTest`의 일반 한도 거절·HOST 한도 허용, `plan_create_recovery_test.dart`의 기기 보관 실패 시 요청 0건·알려진 생성 번호 재진입 시 재생성 없음 단언을 읽었다. 이번에는 이 시험을 새로 실행하지 않았다. 이전 빈 구매 탭 시나리오는 로컬 보조 문서에 당시 원문으로 보존하며, 그 안의 응답형과 과거 실행을 현재 계약·현재 통과 기록으로 쓰지 않는다.

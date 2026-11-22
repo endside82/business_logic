@@ -1,116 +1,88 @@
-# F08-02. 플랜 상세 / 작성자용 미리보기 PRD
+# F08-02. 플랜 상세·미리보기와 관리 행동 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 현재 기능 설명과 확인 범위.** 2026-11-22 서버·앱 소스와 선택한 기존 단언을 대조했다. 새 제품 시험·마켓 구매·실제 공유·기기 표시 완료 기록은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-플랜의 메타데이터(제목/설명/상태/구매수)와 블록 트리, 그리고 현재 사용자의 소유/구매 여부를 반환한다. 작성자는 추가로 수정·삭제·복사·발행·숨김(Hide) 같은 라이프사이클 액션을 호출할 수 있다.
+플랜 상세의 기본 정보, 전체 블록, 미리보기 견본은 별도 조회다. 상세 응답만으로 전체 본문을 받은 것으로 판단하지 않는다. 작성자·구매 권리·플랜 상태·가격 조건에 따라 보여 줄 범위와 삭제·복제·판매 행동을 구분한다.
 
-**AUTH-08(2026-06-09)**: 플랜 상세 조회 시 **인증된 비소유자(non-owner)** 조회에 한해 `view_count` 원자 증가를 수행한다. 소유자(크리에이터) 본인과 익명(보안상 도달 불가) 조회는 카운트 대상 제외. 집계 합산은 크리에이터 대시보드(F08-07 `planViewTotal`)로 환류된다.
+만든 플랜 목록은 상세로, 구매 목록은 미리보기로 이어진다. 미리보기의 「내 플랜 관리」「플랜 전체 보기」「무료로 시작하기」는 각 조건에 따라 상세를 연다. 무료 읽기는 구매 기록이나 이벤트 생성 권리를 만들지 않는다.
 
-**AUTH-06 Slice 3(2026-06-09)**: `getPreview` **서비스 레이어**에 상태별 게이트 적용 — PUBLISHED는 익명 허용(의도), DRAFT/HIDDEN은 로그인 필수(익명 → 401 UNAUTHORIZED), DELETED는 404 PLAN_NOT_FOUND. **단 현재 preview 경로는 전역 보안 permitAll 미선언이라 익명 HTTP 요청 자체가 필터에서 차단됨 → "PUBLISHED 익명 공개"·"익명→401" 분기는 서비스 의도일 뿐 실제로는 미도달(실효 효과 = 로그인 비소유자의 DRAFT/HIDDEN 미리보기 허용). §8 Gap 참조.**
+## 코드 위치
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+서버: PlanController, PlanService, PlanBlockController, PlanBlockService, MarketAbilityPolicy, PurchaseAccessService, ViewCountIncrementService, PlanVo, Plan. 앱: plan_api.dart, plan_repository.dart, plan_detail_provider.dart, plan_preview_provider.dart, plan_editor_provider.dart, plan_block_provider.dart, plan_detail_screen.dart, plan_preview_screen.dart, plan_market_routes.dart.
 
-- 플랜 목록(F08-01) ▶ 만든 플랜 카드 탭 ▶ `/plan/:planId`
-- 플랜 목록 ▶ 구매 플랜 카드 탭 ▶ `/plan/:planId/preview` (별도 화면)
-- 마켓 아이템 상세 ▶ "구매 플랜 보기" ▶ `/plan/:planId/preview`
-- 발행 화면(F08-05)에서 발행 성공 후 pop → 상세로 복귀
+<!-- source-references:start -->
+서버 창구: `PlanController#getPlan`, `PlanController#getPreview`, `PlanController#updatePlan`, `PlanController#deletePlan`, `PlanController#copyPlan`, `PlanController#hidePlan`, `PlanBlockController#getBlockTree`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-## 2. 코드 위치
+## 상태별 열람과 전체 본문
 
-계약의 정본은 코드다. 서버: `PlanController`, `Plan`, `PlanService`, `ViewCountIncrementService`, `PlanQueryRepository`, `SecurityConfiguration`, `PlanVo`. 앱: `plan_detail_screen.dart`, `plan_preview_screen.dart`, `block_editor_screen.dart`, `plan_publish_screen.dart`, `plan_event_create_screen.dart`.
+| 상태·권리 | 현재 조회 범위 |
+|---|---|
+| 준비 중 | 작성자만 상세·미리보기·블록 조회 가능 |
+| 공개 | 로그인 회원이 기본 정보와 견본을 볼 수 있음. 유료 전체 블록은 작성자 또는 유효 구매 권리 필요 |
+| 공개된 무료 플랜 | 가격과 무료 포인트 가격이 모두 0인 경우 구매 없이 전체 블록 읽기 가능. 미설정 무료 포인트 가격은 0으로 판단 |
+| 숨김 | 작성자와 유효 구매 권리 보유자가 계속 읽음. 비구매자는 금지 |
+| 삭제 | 작성자를 포함해 현재 상세·미리보기·블록 조회에서 찾을 수 없음 |
 
-## 3. 전체 동작 흐름
+구매 권리는 직접 활성 구매와 마켓의 플랜·이벤트 패키지 자원 권리를 함께 확인한다. 직접 구매의 진행 중 환불은 사용 권리에서 제외한다. 숨김만으로 기존 구매자의 접근을 없애거나, 로그인만으로 다른 사람의 초안을 열어 주지 않는다.
 
-1. 화면 진입 시: `planDetailNotifierProvider(planId)` ▶ `PlanRepository.getPlanDetail(planId)` ▶ `GET /api/v1/plans/{planId}`
-2. "편집" 버튼: 단순 `context.push` (편집 화면이 자체 Provider로 블록 트리 로드)
-3. "발행": `context.push('/plan/$planId/publish')` — F08-05에서 실제 API 호출
-4. "판매 중지": `planPublishNotifierProvider.hidePlan(planId)` ▶ `POST /api/v1/plans/{id}/hide` ▶ `ref.invalidate(myCreatedPlansNotifierProvider)` + 토스트
-5. "복제": `planCreateNotifierProvider.copyPlan(planId)` ▶ `POST /api/v1/plans/{id}/copy` ▶ 토스트 + `context.push('/plan/${copied.id}')`
-6. "삭제": `planCreateNotifierProvider.deletePlan(planId)` ▶ `DELETE /api/v1/plans/{id}` ▶ invalidate + `context.go('/plan')`
-7. "이벤트 만들기": push로 별도 화면 (Unit 03 위임)
+서비스 내부에는 공개 미리보기의 익명 처리 분기가 있지만 현재 HTTP 보안 설정은 플랜 경로를 익명 허용 목록에 넣지 않는다. 이 내부 분기를 비로그인 공유 열람 지원으로 소개하지 않는다.
 
-## 4. 제품 규칙
+## 미리보기와 상세의 표시
 
-- 상태 전이: DRAFT → PUBLISHED, PUBLISHED → HIDDEN, HIDDEN → PUBLISHED, DRAFT → DELETED.
-- 삭제는 작성자의 DRAFT 만 된다. PUBLISHED 와 HIDDEN 은 지울 수 없다. 산 사람이 계속 볼 수 있게 하기 위해서다. 화면은 "삭제된 플랜은 복구할 수 없습니다"라고 안내한다.
-- 복제는 작성자라면 어느 상태에서든 되며, 삭제되지 않은 플랜 수 한도 안에서 새 DRAFT 를 만든다.
-- 판매 중지는 PUBLISHED 에서만 되고 마켓 노출이 멈춘다. 언제든 다시 판매할 수 있다.
-- 작성자 화면: "편집"과 함께 DRAFT, HIDDEN 은 "발행하기", PUBLISHED 는 "판매 중지"와 "복제". 통계 카드는 PUBLISHED 의 작성자에게만 보인다. 구매자는 "이 플랜으로 이벤트 만들기" 하나다.
-- 오류의 뜻: PLAN_NOT_CREATOR(403) 작성자가 아님, PLAN_INVALID_STATUS_TRANSITION(400) 그 상태에서 못 하는 일, PLAN_LIMIT_EXCEEDED(400) 플랜 수 한도 초과.
+미리보기는 제목·요약·가격·작성자 요약·선별한 견본을 보여 준다. 작성자가 지정한 견본이 있으면 그 선택을 서버 상한 안에서 사용하고, 없으면 허용된 유형의 자동 견본을 고른다. 읽을 수 없는 미지원 하위 트리는 견본에서 제외한다. 구매한 비작성자에게는 견본 대신 전체 보기 입구를 제공한다. 작성자에게 보이는 견본도 전체 본문과 같은 계약이 아니다.
 
-## 6. 상태/권한/시나리오 매트릭스
+상세 본문은 별도 블록 트리를 읽는다. 빈 트리는 빈 상태, 금지 응답은 「구매 후 전체 내용을 볼 수 있어요」, 다른 로딩 실패는 재시도 가능한 오류로 표시한다. 제목 목차나 좌표 있는 코스가 충분하면 목차·코스 지도 입구를 제공한다. 미디어 실패 때 제한된 재조회를 연결하지만 이 소스 확인으로 실제 이미지 표시를 검증했다고 기록하지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 작성자가 DRAFT 플랜을 검토하고 발행 진입 (Happy Path) | 자기 소유 플랜, status=DRAFT, 블록 5개 | F08-05 발행 화면 진입 |
-| S2 | PUBLISHED 작성자 본인 — 통계 + 판매 중지 / 복제 | status=PUBLISHED, purchaseCount=12 | 새 DRAFT 플랜 124가 새 화면에 표시됨 |
-| S3 | PUBLISHED 작성자 — 판매 중지 → HIDDEN | 시나리오 본문 참조 | 마켓에 노출되지 않음. 다시 발행할 수 있음 |
-| S4 | 비구매 비작성자가 HIDDEN 플랜 진입 | 작성자가 발행 후 HIDDEN으로 전환한 플랜 | 서버 상세/블록이 FORBIDDEN이며 앱은 접근 불가/블러 폴백 |
-| S4-A | 기존 구매자가 HIDDEN 플랜 재진입 | 구매 뒤 작성자가 HIDDEN으로 전환 | 전체 본문과 이벤트 생성 권한 유지, 블러 없음 |
-| S5 | 작성자가 DRAFT 플랜 삭제 | 시나리오 본문 참조 | 목록에서 사라짐 (count는 status=DELETED 제외 카운트라 한도 회복) |
-| S6 | 잘못된 상태 전이 시도 — DRAFT에서 hide 호출 | 시나리오 본문 참조 | 상태 변경 없음 |
-| S7 | 구매자가 미리보기 진입 | planId=123 구매 완료 | 본문 열람 가능. 하단 "이 플랜으로 이벤트 만들기" 버튼 |
-| S8 | 비구매자가 미리보기 진입 | `/plan/1002` 상세, status=DRAFT, isCreatorOwned=true | 구매 유도 |
-| S9 (AUTH-08) | 인증된 비소유자 상세 조회 → view_count 증가 | 타 사용자가 GET /api/v1/plans/{planId} 호출 | view_count +1 원자 증가. 조회 응답 정상 반환(증가 실패 시에도 warn 로그만, 응답 무중단) |
-| S10 (AUTH-08) | 크리에이터 본인 상세 조회 → view_count 불변 | 작성자가 자기 PUBLISHED 플랜 조회 | view_count 변화 없음. 통계 부풀리기 방지 |
-| S11 (AUTH-06) | 익명 사용자가 DRAFT 플랜 미리보기 진입 | GET /api/v1/plans/{planId}/preview, 비로그인, status=DRAFT | 401 UNAUTHORIZED 반환. 앱 로그인 유도 |
-| S12 (AUTH-06) | 로그인 사용자가 HIDDEN 플랜 미리보기 진입 | GET /api/v1/plans/{planId}/preview, 로그인, status=HIDDEN | 미리보기 허용(sampleBlocks). 본문은 비구매자 차단 |
+미리보기의 작성자는 「내 플랜 관리」, 구매자는 「플랜 전체 보기」와 이벤트 만들기 또는 호스트 신청 입구를 본다. 무료 방문자의 「무료로 시작하기」는 구매 API를 호출하지 않고 상세를 연다. 유료 구매의 수단 선택·돈 처리·출시 제한은 [구매](F08-11_purchase_prd.md)의 범위다.
 
-## 8. Gap / Risk
+## 작성자의 변경·삭제·판매 중지
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 구현됨 (AUTH-08) | `PlanService.java:148`, `ViewCountIncrementService.java:36` | view_count 비소유자 조회 시 원자 증가. REQUIRES_NEW 격리. 실패 무중단. | QA: 소유자/비소유자/증가실패 시나리오 E2E 확인 |
-| 구현됨 (AUTH-06) | `PlanService.java:159-173` | getPreview 서비스 게이트(DELETED→404, DRAFT/HIDDEN+익명→401, PUBLISHED→익명 포함 공개, DRAFT/HIDDEN+로그인→허용·person-specific 보류). | QA: 로그인 비소유자의 DRAFT 미리보기 → 허용, DELETED 미리보기 → 404 E2E 확인 |
-| 의도 vs 배선 주의 (AUTH-06) | `SecurityConfiguration.java:77~88`(permitAll 목록), `PlanController.java:64` | `/api/v1/plans/*/preview`는 permitAll 목록에 없어 `anyRequest().authenticated()` 적용 → **익명 요청은 보안 레이어에서 먼저 차단**. 따라서 서비스의 "PUBLISHED 익명 공개" 의도와 "익명→401(UNAUTHORIZED)" 분기는 현재 HTTP로 도달 불가(방어적 게이트로만 작동). 실효 효과는 "로그인 비소유자의 DRAFT/HIDDEN 미리보기 허용". | 비로그인 미리보기 공유가 의도라면 preview 경로를 permitAll에 추가 필요. AUTH-08 상세 조회수의 익명 미도달과 동일 패턴. |
-| 주의 | `PlanVo.java` | view_count는 PlanVo 응답 필드에 노출되지 않음 — 크리에이터 대시보드(F08-07 planViewTotal)에서만 집계 확인 가능. 앱 상세 화면에서 직접 조회수를 표시하려면 별도 필드 추가 필요(현재 미노출). | 현재 정책 유지: 상세 화면에 조회수 미표시, 대시보드 집계만 제공. |
+기본 정보 변경은 작성자의 준비 중 플랜에만 허용한다. 상세에는 편집 입구가 있지만 모든 상태에서 저장이 허용된다는 뜻은 아니다. 블록 편집의 읽기 전용·복사·저장 동작은 [블록 편집](F08-03_block-editor_prd.md)을 따른다.
 
-## 9. 수용 기준
+삭제는 현재 서버가 허용한 행동을 받은 경우에만 화면에 표시하며, 서버도 작성자·준비 중 조건을 검사한다. 확인창에서 동의하고 서버 성공을 받은 뒤 목록으로 이동한다. 실패는 권한·상태 재조회와 오류 안내로 남긴다. 공개·숨김 플랜을 삭제해 구매자의 자료를 없애는 흐름이 아니다.
 
-- **AC-01. 작성자가 DRAFT 플랜을 검토하고 발행 진입 (Happy Path)**: Given 자기 소유 플랜, status=DRAFT, 블록 5개 When 사용자가 해당 흐름을 실행하면 Then F08-05 발행 화면 진입
-- **AC-02. PUBLISHED 작성자 본인 — 통계 + 판매 중지 / 복제**: Given status=PUBLISHED, purchaseCount=12 When 사용자가 해당 흐름을 실행하면 Then 새 DRAFT 플랜 124가 새 화면에 표시됨
-- **AC-03. PUBLISHED 작성자 — 판매 중지 → HIDDEN**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 마켓에 노출되지 않음. 다시 발행할 수 있음
-- **AC-04. 비구매 비작성자가 HIDDEN 플랜 진입**: Given 작성자가 발행 후 HIDDEN으로 전환한 플랜 When 비구매자가 상세/블록을 요청하면 Then FORBIDDEN이며 전체 본문은 노출되지 않음
-- **AC-04-A. 기존 구매자의 HIDDEN 접근 유지**: Given 구매 완료 뒤 플랜이 HIDDEN When 구매자가 상세/블록/이벤트 생성을 요청하면 Then 기존 소유 권한이 유지되고 앱 블러가 없음
-- **AC-05. 작성자가 DRAFT 플랜 삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 목록에서 사라짐 (count는 status=DELETED 제외 카운트라 한도 회복)
-- **AC-06. 잘못된 상태 전이 시도 — DRAFT에서 hide 호출**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 상태 변경 없음
-- **AC-07. 구매자가 미리보기 진입**: Given planId=123 구매 완료 When 사용자가 해당 흐름을 실행하면 Then 본문 열람 가능. 하단 "이 플랜으로 이벤트 만들기" 버튼
-- **AC-08. 비구매자가 미리보기 진입**: Given `/plan/1002` 상세, status=DRAFT, isCreatorOwned=true When 사용자가 해당 흐름을 실행하면 Then 구매 유도
-- **AC-09 (AUTH-08). 인증된 비소유자 상세 조회 → view_count 증가**: Given 타 사용자가 GET /api/v1/plans/{planId} 호출 When 조회 완료 Then view_count +1 원자 증가. 조회 응답 정상 반환. 증가 실패 시에도 응답 무중단.
-- **AC-10 (AUTH-08). 크리에이터 본인 조회 → view_count 불변**: Given 작성자가 자기 PUBLISHED 플랜 조회 When 조회 완료 Then view_count 변화 없음.
-- **AC-11 (AUTH-06). 익명 사용자가 DRAFT/HIDDEN 미리보기 진입 → 401**: Given GET /api/v1/plans/{planId}/preview, 비로그인, status=DRAFT When 요청 Then 서버 401 UNAUTHORIZED 반환.
-- **AC-12 (AUTH-06). DELETED 플랜 미리보기 → 404**: Given GET /api/v1/plans/{planId}/preview, status=DELETED When 요청 Then 서버 404 PLAN_NOT_FOUND 반환.
+판매 중지는 작성자의 공개 플랜만 숨김으로 바꾸고 판매 카탈로그도 내린다. 앱은 확인 뒤 결과를 기다리며 성공 또는 결과 불명 실패에 상세와 만든 목록을 갱신한다. 숨김에서 다시 판매하려면 발행 화면의 준비도와 운영 제한을 통과해야 한다. 운영팀이 막은 플랜은 사용자가 임의로 다시 판매할 수 있다고 안내하지 않는다. 발행·재판매의 상세 조건은 [플랜 발행](F08-05_plan-publish_prd.md)을 따른다.
 
-## 10. 미결정 / 후속
+## 복제와 결과 불명 복구
 
-- `PlanPreviewVo`도 `allowFreePoints`/`freePointPrice`를 직접 포함하고, 앱 preview/마켓 플랜 상세는 유료 플랜에서 무료 구매가 허용되면 PAID/FREE 선택 시트를 실제로 연다. `freePointPrice`가 null이면 기본가로 무료 결제하며, 무료 잔액 최종 판정은 서버가 담당한다.
+삭제되지 않은 본인 플랜은 상태와 개수 한도 조건을 만족하면 복제할 수 있다. 서버가 보낸 현재 복제 가능 여부로 입구를 판단한다. 원본 제목에 복사본 표시를 붙인 새 초안을 만들고 구매 수를 0으로 시작한다. 원본 정보·블록·부모 연결·미디어 참조를 복사하되 무료 포인트 허용과 무료 포인트 가격은 현재 복제 생성에서 넘기지 않는다. 모든 판매 설정이 보존된다고 설명하지 않는다.
 
-## 11. 2026-07-29 소스 실측 보강
+앱은 같은 세션·같은 원본의 동시 복제를 막고 원본별 요청 기록을 기기에 보관한다. 결과를 모르면 바로 새 복제 요청을 보내지 않고 내 플랜 목록을 확인하도록 안내한다. 이미 알게 된 복사본 번호가 있으면 그 상세를 다시 읽는다. 기록을 정리한 뒤 다시 누르는 복제는 새 복사본을 만들 수 있다. 서버 요청 열쇠 재생으로 중복을 제거한다고 설명하지 않는다.
 
-### 11.1 상세·preview·전체 본문은 서로 다른 계약
+성공한 복제는 새 상세를 현재 화면 위에 연다. 원본 상세와 만든 목록도 갱신한다. 세션 종료 뒤 늦게 도착한 복제 결과로 현재 계정을 이동시키지 않는다.
 
-- `GET /plans/{id}`: DRAFT 작성자만, HIDDEN 작성자 또는 기존 구매자, DELETED 없음.
-- `GET /plans/{id}/blocks`: 위 상태 게이트에 더해 PUBLISHED 유료 플랜은 작성자/구매자만. 무료 플랜은 인증 사용자 전체 읽기.
-- `GET /plans/{id}/preview`: PUBLISHED 공개 의도, DRAFT/HIDDEN 로그인 사용자 preview 허용(person-specific 보류), DELETED 없음.
-- `POST /plans/{id}/create-event`: 작성자 또는 구매자. HIDDEN 기존 구매자도 계속 가능하고 신규 구매만 막힌다.
+## 조회수·공유·외부 권한의 경계
 
-### 11.2 티저 선택
+로그인한 비작성자가 상세를 조회하면 별도 트랜잭션으로 조회수를 증가시키며 실패해도 상세 응답을 막지 않는다. 작성자 본인과 익명은 증가 대상이 아니다. 반복 상세 조회를 고유 방문자 한 명으로 합치는 집계가 아니며 미리보기 조회와도 구분한다. 상세 응답에는 조회수 필드가 없으므로 현재 화면의 별도 조회수 표시를 약속하지 않는다.
 
-- `properties.previewSample=true`인 known/non-envelope 블록이 있으면 문서 순서 최대 5.
-- 없으면 텍스트 3 + 일정표 1 + 로그인 시 이미지 1 자동 폴백.
-- 구매한 비작성자는 전체 본문을 쓰므로 `sampleBlocks=[]`; 작성자는 실제 판매 preview 검수용으로 티저를 받는다.
-- 이미지 projection은 접근 게이트 통과 뒤 붙인다.
+상세의 공유는 공개 상태와 마켓 허용 조건을 따르며 카카오톡·링크 복사·기기 공유 입구를 제공한다. 미리보기 공유도 마켓 조건을 확인한다. 이 입구의 존재를 실제 앱 전달·링크 로그인 복원·비로그인 본문 공개의 완료 증거로 쓰지 않는다. 이벤트 생성은 기존 사용 권리와 호스트 조건을 별도로 따른다.
 
-### 11.3 읽기 조판
+## 현재 제한과 확인 범위
 
-상세는 별도 block provider로 전체 트리를 읽고, preview는 서버 `sampleBlocks`를 렌더링하며, 구매자는 이벤트 생성 CTA를 본다. 문서로 읽히는 표면(상세·읽기 모드)은 통독 조판을 쓴다.
+| 분류 | 확인한 차이·한계 | 영향·후속 |
+|---|---|---|
+| Risk | 복제 생성은 무료 포인트 허용·무료 포인트 가격을 보존하지 않음 | 원본과 같은 판매 조건으로 재발행된다고 보장하지 않으며 복사본 설정 확인 필요 |
+| Risk | 복제의 결과 불명 복구는 기기 기록·사용자 목록 확인에 의존 | 기록 정리 후 새 복제는 중복을 만들 수 있음. 서버 멱등 재생으로 설명하지 않음 |
+| Gap | 전체 블록의 금지 응답을 구매 필요 문구 하나로 표시 | 구매 후 권리 회수 등 다른 금지 이유도 같은 안내가 될 수 있어 현재 권리와 안내 대조 필요 |
+| 미검증 | 실제 구매·권리 만료·공유 전달·미디어·운영 변경·기기 복귀 | 현재 소스와 아래 선택한 기존 단언 대조이며 새 제품·외부 환경 검증 아님 |
 
-- 읽기 모드는 커버·제목·작성자 머리를 세우고 본문 폭을 최대 680으로 묶는다.
-- 본문은 16px, 줄간 1.65 이고 제목 위 여백이 넓다. 편집기와 같은 글자 크기·줄간을 쓴다.
-- `BlockRenderer(reading:true)` 가 읽기 표면의 여백을 맡고 편집 표면과 나눈다.
-- TABLE 은 표준 `rows` 와 옛 `columns + content JSON` 을 함께 읽는다. 읽을 수 없는 표는 원문 JSON 대신 「이 표를 표시할 수 없습니다.」 카드로 보인다.
-- 2열 같은 작은 표는 가용 폭을 채우고, 열당 최소 96px보다 넓어지면 표 안만 가로로 넘긴다.
-- 콘텐츠 역할별 색조와 링크·장소·파일·코드·영상 카드 표현을 쓴다.
+## 수용 기준과 검증 근거
+
+- **AC-01 조회 분리:** 기본 정보·전체 블록·견본을 별도로 조회하며 상세 응답의 빈 블록 값만으로 본문 없음으로 표시하지 않는다.
+- **AC-02 비공개 권한:** 준비 중은 작성자만, 숨김은 작성자·유효 구매자만, 삭제는 찾을 수 없음으로 판정한다.
+- **AC-03 유료와 무료:** 공개 유료 본문은 구매 권리를 요구하고 공개 무료 본문은 읽기만 허용한다. 무료 읽기로 구매·이벤트 생성 권리를 만들지 않는다.
+- **AC-04 익명 범위:** 서비스 내부의 익명 미리보기 분기를 현재 HTTP 익명 열람으로 설명하지 않는다.
+- **AC-05 견본:** 작성자 선택·자동 견본과 서버 상한을 유지하며 전체 구매 본문과 구분한다.
+- **AC-06 본문 실패:** 빈 상태·구매 필요 안내·기타 실패 재시도를 구분하고 금지 이유 안내의 한계를 남긴다.
+- **AC-07 변경과 삭제:** 기본 정보 변경·삭제는 작성자의 준비 중 조건이며 삭제 성공 뒤 목록으로 이동한다.
+- **AC-08 판매 중지:** 공개에서 숨김으로 바꾸고 기존 구매권을 보존한다. 운영 제한과 발행 준비도를 재판매 조건으로 유지한다.
+- **AC-09 복제 범위:** 현재 허용 행동·개수 한도로 새 초안을 만들고 블록 구조와 판매 설정의 복사 범위를 구분한다.
+- **AC-10 복제 복구:** 미확정 요청을 바로 반복하지 않고 알려진 결과를 재사용한다. 기록 정리 후 중복 가능성과 계정 경계를 유지한다.
+- **AC-11 조회수:** 로그인 비작성자 상세 조회만 집계하고 증가 실패가 읽기 실패가 되지 않는다.
+- **AC-12 공유와 다음 행동:** 현재 상태·마켓·구매·호스트 조건에 맞는 입구만 설명하고 외부 전달·실거래 검증과 구분한다.
+
+기존 `PlanServiceTest`의 초안 비작성자 거절·삭제 조회 거절·숨긴 플랜의 구매자 허용·비구매자 거절·복제 한도 단언과 `plan_detail_blocks_test.dart`의 별도 블록 조회·금지 안내·일반 오류 재시도 단언을 읽었다. 이번에는 시험을 새로 실행하지 않았다. 기존 잘못된 익명·초안 공개 설명을 실제 서버·앱 조건으로 교정했으며, 이 문서의 수용 기준 수는 현재 시험 통과 수가 아니다.

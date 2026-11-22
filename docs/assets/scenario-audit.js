@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,290개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,294개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1290,
+    "documentedScenarioItems": 1294,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4959,
+    "automatedTestFilesScanned": 4965,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 69,
+    "directlyLinkedAutomatedTests": 70,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 69,
+    "automatedScenarioReferences": 70,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 50,
-    "definitionOnlyEvidence": 81,
-    "traceMarkers": 553,
-    "verifiedTraceRecords": 551,
+    "partialEvidenceChain": 51,
+    "definitionOnlyEvidence": 80,
+    "traceMarkers": 560,
+    "verifiedTraceRecords": 558,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10840,14 +10840,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-01",
       "domain": "플랜 마켓",
-      "name": "내 플랜 목록 관리",
-      "scenarioCount": 7,
+      "name": "내 플랜 목록과 새 플랜 생성",
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-01_my-plan-list/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-01_my-plan-list/backend.md",
@@ -10910,11 +10910,12 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_my_plans_state_surface_test.dart"
+          "community_app/integration_test/seed_my_plans_state_surface_test.dart",
+          "community_app/test/presentation/plan/screens/plan_create_recovery_test.dart"
         ],
         "markerCandidateFiles": []
       },
@@ -10937,28 +10938,150 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-02",
       "domain": "플랜 마켓",
-      "name": "플랜 상세/작성자용 미리보기",
-      "scenarioCount": 10,
+      "name": "플랜 상세·미리보기와 관리 행동",
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-02_plan-detail/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-02_plan-detail/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 7,
+        "verified": 7,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F08-02:1",
+            "label": "GET /api/v1/plans/{planId} — 상세 기본 정보",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "getPlan",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/plans/{planId}",
+                "targetLine": 62,
+                "methodLine": 63
+              }
+            ]
+          },
+          {
+            "id": "F08-02:2",
+            "label": "GET /api/v1/plans/{planId}/preview — 견본 미리보기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "getPreview",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/plans/{planId}/preview",
+                "targetLine": 73,
+                "methodLine": 74
+              }
+            ]
+          },
+          {
+            "id": "F08-02:3",
+            "label": "PATCH /api/v1/plans/{planId} — 초안 기본 정보 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "updatePlan",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/plans/{planId}",
+                "targetLine": 82,
+                "methodLine": 83
+              }
+            ]
+          },
+          {
+            "id": "F08-02:4",
+            "label": "DELETE /api/v1/plans/{planId} — 초안 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "deletePlan",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/plans/{planId}",
+                "targetLine": 91,
+                "methodLine": 92
+              }
+            ]
+          },
+          {
+            "id": "F08-02:5",
+            "label": "POST /api/v1/plans/{planId}/copy — 플랜 복제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "copyPlan",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/plans/{planId}/copy",
+                "targetLine": 101,
+                "methodLine": 102
+              }
+            ]
+          },
+          {
+            "id": "F08-02:6",
+            "label": "POST /api/v1/plans/{planId}/hide — 판매 중지",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "hidePlan",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/plans/{planId}/hide",
+                "targetLine": 127,
+                "methodLine": 128
+              }
+            ]
+          },
+          {
+            "id": "F08-02:7",
+            "label": "GET /api/v1/plans/{planId}/blocks — 전체 블록 트리",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanBlockController.java",
+                "controller": "PlanBlockController",
+                "method": "getBlockTree",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/plans/{planId}/blocks",
+                "targetLine": 41,
+                "methodLine": 42
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/presentation/plan/screens/plan_detail_blocks_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_api/domain/src/test/java/com/endside/community/plan/service/PlanBlockServiceTest.java"
         ]
@@ -10971,7 +11094,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,
