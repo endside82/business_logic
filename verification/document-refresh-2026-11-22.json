@@ -429,7 +429,8 @@
         "planning_qa_20261122",
         "permission_policy_20261122",
         "state_policy_20261122",
-        "state_guides_20261122"
+        "state_guides_20261122",
+        "permission_guides_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5454,10 +5455,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "0a36f9cde40ab94a6b5a5116c11580e588f3041ea2a78bf0d39080b9dc407eed",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "permission_guides_20261122"
+      ],
+      "reviewedSha256": "2c6095ffa3ac9028ad0778a14bd89facc0a1bf52b56e915e4ee479665707b6a9"
     },
     {
       "path": "planner_onboarding/10_planning_qa_checklist.md",
@@ -5724,10 +5727,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "d6c39c5a3d4919c1cd88968eaf14ac99be1062be6839c7a2279c3a065b5f1fa1",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "permission_guides_20261122"
+      ],
+      "reviewedSha256": "90d862a248691b8c40d10b043e11ca12f00298eed0933f13f90ab2bb3b0e98e1"
     },
     {
       "path": "prd/00_prd_items/08_state_transitions.md",
@@ -44630,6 +44635,74 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; reviewed canonical policy reused and four financial enum sources inspected"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "permission_guides_20261122": {
+      "kind": "source_review",
+      "scope": "온보딩 권한 가이드164줄 중159줄·제품 역할행동249줄 중185줄은 이미 읽은 옛 권한정책과 정확히 같은 줄을 재사용. 나머지 차이·과거 감사 기록 전부 읽고 현재 정책의 명령별 조건·위임/제재·관리자 관문으로 동기화.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "permission_policy_20261122",
+        "planning_qa_20261122",
+        "privacy_policy_20261122",
+        "state_guides_20261122",
+        "state_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/00_prd_items/07_role_action_matrix.md",
+          "sha256": "90d862a248691b8c40d10b043e11ca12f00298eed0933f13f90ab2bb3b0e98e1"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/planner_onboarding/10_planning_qa_checklist.md",
+          "sha256": "2a92b44427e9c443c6e4cd3615dc400f9516f1a1f436b96d9fe1730394ccb5e7"
+        },
+        {
+          "path": "business_logic/planner_onboarding/04_state_policy_guide.md",
+          "sha256": "05e0ba74661f76878eb69680419ac82d09557e3fd14505277967b360f8543bbc"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [
+        "역할 O표를 현재 상태·유효 위임·공개 관문 조건으로 교체",
+        "신청 승인과 이동 조율 실제 참석 자격 분리",
+        "소유자 전용 역할/위임·마일리지 정책 권한·강제 탈퇴 권한 반영",
+        "플랫폼 관리자와 클럽 운영진·인증/재인증 예외 구분"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/00_prd_items/07_role_action_matrix.md",
+          "sha256": "710cbacd3158905f9edeb85147e48796435409511959301c554787dbf8183763",
+          "characters": 1587,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음",
+          "heading": "## 과거 역할별 권한 조사 원문 보존"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "6 source/canonical digests; 0 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 41 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; verified canonical policies reused after SHA comparison"
       },
       "observedSourceVersions": {
         "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
