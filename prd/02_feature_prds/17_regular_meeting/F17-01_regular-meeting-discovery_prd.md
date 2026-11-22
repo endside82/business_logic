@@ -1,79 +1,72 @@
-# F17-01. 정기모임 발견·탐색 PRD
+# F17-01. 정기모임 발견·운영·참여 목록 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 제품 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- generated: source-first-regular-meeting; updated: 2026-05-28; source: community_api/src/main/java/com/endside/community/regularmeeting -->
+## 현재 범위와 입구
 
-## 참가자 탐색 화면 보완
+앱 `/regular-meetings`는 공개 목록, `/regular-meetings/my`는 운영하는 모임, `/regular-meetings/my/enrolled`는 참여하는 모임이다. 같은 목록 화면의 `all`, `operated`, `enrolled` 모드를 사용한다. 카드에서 [정기모임 상세](F17-02_regular-meeting-detail_prd.md#참가자가-판단하고-다음-행동으로-이동하는-화면)로 이동한다.
 
-2026-09-30 `RM-UX-01`에서 구현했고, 2026-10-02 현재 API·앱 main에 반영했다. 저장소별 커밋과 검증 소스 대조 기록 (Git 이력)에 병합과 검증 근거를 남긴다. 공개 목록은 운영·결제·노쇼 설명을 먼저 읽게 하지 않고 모임 카드부터 제공한다. 운영 방식 설명은 주최자의 내 모임 목록과 상세 정책에서 확인한다.
+로그인한 이용자에게 공개·운영 목록의 만들기 입구를 제공한다. 참여 목록에는 만들기 입구가 없다. 운영 방식 설명은 운영 목록에만 두며 공개 목록은 카드 탐색을 먼저 제공한다.
 
-카드는 ‘전체 과정 참여’와 ‘회차 선택 참여’를 구별한다. VARIABLE 본체의 가격 0은 무료를 뜻하지 않아 ‘회차별 비용’으로 표시하고, 부모 정원이 없는 경우 ‘회차별 정원’으로 안내한다. FIXED는 전체 과정 참가비를 표시한다. RM-UX-02에서 `nextSessionStartTime`과 실제 공개 회차 수 `publishedSessionCount`를 추가했다. 다음 일정이 없으면 ‘회차 준비 중’과 ‘예정된 회차 없음’을 구별한다. 한 페이지의 요약을 한 SQL로 집계하며, 카드마다 상세 API를 호출하지 않는다. 후기순 정렬은 후속 범위다.
+## 현재 서버 계약
 
-상세 행동은 [참가자가 판단하고 다음 행동으로 이동하는 화면](F17-02_regular-meeting-detail_prd.md#참가자가-판단하고-다음-행동으로-이동하는-화면)에 따른다.
+세 API 모두 `Page<RegularMeetingSimpleVo>`를 반환하며 앱은 `PageResponse<RegularMeetingSimpleVo>`로 받는다. 공개 목록은 HTTP 비로그인 조회를 허용하고 `/my`, `/my/**`는 인증이 필요하다.
 
-## 1. 결론
-
-호스트가 발행(OPEN)한 정기모임을 사용자가 찾는 진입점. 서버는 `GET /api/v1/regular-meetings` 단일 검색 엔드포인트와 `GET /api/v1/regular-meetings/my` 내 모임 목록을 제공한다. 응답은 `Page<RegularMeetingSimpleVo>` (Spring `Page`) 로, Flutter 는 `PageResponse<RegularMeetingSimpleVo>` 로 받는다. 검색 결과는 숨김이 아닌 OPEN 상태 모임만 노출하며, 카테고리·지역·타입(FIXED/VARIABLE) 으로 필터한다. 일반 이벤트 검색에서 RM 세션은 `EventScope#publiclyDiscoverable` 거름망에 의해 분류되지만, **모임 본체**의 검색은 본 엔드포인트가 단독 책임을 진다.
-
-Flutter `RegularMeetingListScreen` 은 검색 카드 형태로 표시하며 카드에 `RegularMeetingBadge` (FIXED/VARIABLE 표시) 가 붙는다. 일반 이벤트 카드와 시각적으로 구분된다.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`. 앱: `regular_meeting_list_screen.dart`, `regular_meeting_api.dart`, `regular_meeting_repository.dart`, `regular_meeting_list_provider.dart`, `regular_meeting_badge.dart`.
-
-## 3. 전체 동작 흐름
-
-1. 사용자가 정기모임 목록 진입 → `RegularMeetingListScreen` → `regularMeetingListProvider` 구독.
-2. Repository → `GET /api/v1/regular-meetings?keyword=...&category=...&meetingType=...&page=0&size=20`.
-3. 서버 `RegularMeetingService#search` → `RegularMeetingQueryRepository` 동적 조건 + Pageable → OPEN 상태만 필터 후 호스트 닉네임 일괄 조회·주입.
-4. Flutter 가 `RegularMeetingSimpleVo` 카드 + `RegularMeetingBadge` 렌더링. 무한 스크롤은 `PagingParam.page` 증가.
-5. 카드 탭 → `Routes.regularMeetingDetail.path(id)` → F17-02.
-6. "내 모임" 진입 시 `GET /api/v1/regular-meetings/my` (호스팅+등록 합산). 미로그인은 가드.
-
-## 4. 제품 규칙
-
-- 공개 검색은 요청한 상태와 상관없이 모집 중인 정기모임만, 숨김 처리된 것은 빼고 보여 준다. 정렬은 최근 등록순이다.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1-1 | 비로그인 사용자 목록 진입 | 비로그인 | OPEN 모임만 노출. 카드 탭 시 상세 진입 가능(상세도 optional auth) |
-| S1-2 | 카테고리·타입 필터 | 카테고리=러닝, type=FIXED | OPEN AND category=러닝 AND type=FIXED 필터된 결과 |
-| S1-3 | 검색 결과 0건 | 키워드 매치 없음 | empty 카드 표시 |
-| S1-4 | 내 모임(호스트+멤버) | 로그인 | 호스팅 + 멤버십 활성 모임 합산. CLOSED/CANCELED 도 포함 |
-| S1-5 | DRAFT 모임 노출 차단 | 호스트 자신이 작성중 | 일반 검색에서 미노출. 내 모임에서만 호스트에게 노출 |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 요청 | 실제 조회 범위 | 정렬 |
 |---|---|---|
-| OPEN 필터 | `RegularMeetingQueryRepository` 가 `regularMeeting.status.eq(OPEN)` 강제 | 검색에는 OPEN 만 노출. 내 모임은 전 상태 |
-| 응답 타입 | `Page<RegularMeetingSimpleVo>` (Spring `Page`) | Flutter 는 `PageResponse<T>` 로 매핑 — `content`, `totalPages`, `totalElements`, `last`, `pageable` 키 그대로 |
-| 뱃지 일관성 | `RegularMeetingBadge` 가 EventCard.badge 슬롯 위젯과 별도 | 일반 이벤트 카드와 RM 카드 모두에서 사용 가능. 다만 일반 EventCard 호출처 13+ 에 점진 적용 중(잔여 후속) |
-| 호스트 닉네임 일괄 조회 | `UserQueryRepository.findNicknames(...)` 로 N+1 회피 | 100건 페이지 기준 1쿼리 |
+| GET /api/v1/regular-meetings | 숨김이 아닌 OPEN 모임 | createdAt 내림차순, id 내림차순 |
+| GET /api/v1/regular-meetings/my | 현재 이용자가 호스트인 모임. 상태·숨김 필터 없음 | createdAt 내림차순, id 내림차순 |
+| GET /api/v1/regular-meetings/my/enrolled | 활성 과정 등록 또는 VARIABLE 회차 참석·대기에서 모임 ID를 모은 뒤 숨김 제외, OPEN/CLOSED만 | OPEN 먼저, createdAt·id 내림차순 |
 
-## 8. Gap / Risk
+공개 검색의 실제 필터는 `keyword`(제목 또는 설명 부분 일치), **`categories`**(목록), `meetingType`, `region`(주소 부분 일치)이다. 카테고리·타입 문자열은 서버 enum으로 파싱하고 잘못된 값은 `SEARCH_FILTER_INVALID`로 거절한다. 요청 객체에 `status`, `sortType`이 있어도 현재 검색 쿼리는 이를 적용하지 않는다. `category` 단수나 후기순·거리순 지원으로 설명하지 않는다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 잔여 | 구현 리포트 §9 | EventCard 호출처 13+ 개에 RM 뱃지 미통합 | 점진 적용, 위젯 자체는 준비됨 |
-| 잔여 | 도메인 PRD §9 | RM 푸시 라우팅 미구현 → 알림에서 목록 deep-link 부재 | NotificationType `REGULAR_MEETING_*` 정의 후 추가 |
-| 위험 | `regionSummary` | `address` 가 long string 인 경우 카드 표시 길이 깨질 수 있음 | Flutter 측 truncate 처리 |
+참여 목록의 과정 등록 상태는 PENDING, WAITING, APPROVED_PENDING_PAYMENT, ENROLLED다. VARIABLE은 취소되지 않은 회차의 ATTENDING 또는 WAITING을 추가한다. 두 경로의 모임 ID를 합쳐 중복을 제거한다. 따라서 운영 목록은 참여 목록과 합산되지 않으며, 참여 목록은 취소·탈락·결제 만료 전체 이력 화면이 아니다. 참여 목록에 관련 등록 행이 있으면 `myMemberStatus`를 채우고, 결제 대기일 때만 `myPaymentDueAt`, 정원 대기일 때만 `myWaitlistOrder`를 채운다.
 
-## 9. 수용 기준
+## 카드와 요약 집계
 
-- **AC-01 (S1-1). 공개 목록**: Given 비로그인. When `GET /api/v1/regular-meetings`. Then OPEN 상태 모임만 응답.
-- **AC-02 (S1-2). 필터**: Given `category=RUNNING&meetingType=FIXED`. Then 조건 일치 + OPEN 만.
-- **AC-03 (S1-4). 내 모임 합산**: Given 로그인, 호스팅 1건 + 멤버 1건. Then 양쪽 모두 응답 (총 2건).
-- **AC-04 (S1-5). DRAFT 비노출**: Given 호스트가 DRAFT 작성중. When 일반 검색. Then 결과에 미포함. 내 모임에서는 호스트 본인에게 노출.
-- **AC-05 (S1-3). empty**: Given 매치 없음. Then `content=[]`, `totalElements=0`, Flutter 가 empty state 표시.
+`shortIntro`, 썸네일 표시 URL, 호스트 닉네임, 지역 요약, 등록 인원, 실제 공개 회차 수와 다음 회차를 목록에서 내려준다. 지역은 오프라인 주소의 앞 두 어절이며 온라인은 null이다. 공개 회차 집계는 PUBLIC인 OPEN/CLOSED 회차를 세고, 다음 회차와 예정 수는 그중 시작 전 OPEN 회차로 계산한다. 계획한 `totalSessionCount`와 실제 `publishedSessionCount`는 다른 값이다. 조회 페이지의 모임 ID들을 묶어 회차 요약을 집계한다.
 
-## 10. 미결정 / 후속
+앱은 종류·모집 상태·내 등록 상태를 구분한다. VARIABLE 본체 가격 0은 무료로 해석하지 않고 일정별 비용·정원을 표시한다. 다음 일정이 없으면 공개 회차 0건인 ‘일정 준비 중’과 ‘예정된 일정 없음’을 구별한다. FIXED는 전체 과정 참가비·등록 인원을 표시한다. 제목·짧은 소개는 두 줄, 지역·기간은 한 줄 말줄임 처리한다.
 
-| 항목 | 사유 | 후속 |
+## 앱 탐색·실패·복귀
+
+세 목록 모두 20건씩 첫 페이지와 추가 페이지를 읽는다. 로딩·오류 재시도·빈 목록·추가 조회 오류를 구분한다. 목록의 새로고침은 해당 공급자를 무효화하며 운영/참여 데이터 변경을 구독한다. 참여 목록은 이벤트 카드 데이터 변경도 구독한다.
+
+현재 공개 목록 화면은 `regularMeetingListProvider()`를 필터 인자 없이 사용한다. 서버와 공급자가 검색 조건을 지원한다는 사실을 이 화면에 검색창·필터 UI가 있다는 뜻으로 확대하지 않는다. 카드 탭은 `/regular-meetings/{id}`를 연다.
+
+## 코드 위치
+
+서버: RegularMeetingController, RegularMeetingService, RegularMeetingQueryRepository, RegularMeetingReadSupport, RegularMeetingSearchParam, SecurityConfiguration. 앱: regular_meeting_api.dart, regular_meeting_list_provider.dart, regular_meeting_list_screen.dart, regular_meeting_simple_vo.dart, regular_meeting_routes.dart.
+
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#search`, `RegularMeetingController#myMeetings`, `RegularMeetingController#myEnrolledMeetings`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 추천·트렌딩 RM | 1차 출시는 검색만 | NotificationType + 홈 섹션 RM 카드 통합 |
-| 거리·가용성 정렬 | 1차는 publishedAt DESC 만 | 후속 슬라이스에서 거리 정렬 옵션 |
+| Gap | 공개 목록 화면에는 검색 조건을 입력하는 UI가 없다. | API 필터 지원과 화면 제공 범위를 구분한다. |
+| Gap | status/sortType 요청값이 검색 쿼리에 반영되지 않는다. | 현재 정렬은 최근 생성순으로 기록한다. |
+| Risk | 참여 목록은 활성 참여의 OPEN/CLOSED 모임만 포함한다. | 과거 취소·결제 전체 기록으로 안내하지 않는다. |
+| 미검증 | 이번 작업에서 목록 이동·로그인 복귀·무한 스크롤을 실행하지 않았다. | 소스 대조와 실제 사용 검증을 구분한다. |
+
+기존 ‘일반 EventCard 13곳 이상 미통합’, ‘정기모임 푸시 미구현’은 이 목록의 현재 근거가 아니므로 미구현 판정에서 제외한다. 다른 영역의 전체 적용 여부를 이 문서에서 추정하지 않는다.
+
+## 수용 기준과 검증 근거
+
+- **AC-01 공개 탐색:** 비로그인 공개 검색은 숨김이 아닌 OPEN만 반환하고 개인 목록은 인증을 요구한다.
+- **AC-02 실제 필터:** categories 복수명과 서버 enum 검증을 사용하고 status/sortType 미적용을 구분한다.
+- **AC-03 운영과 참여:** 호스트 전 상태 목록과 활성 참여 OPEN/CLOSED 목록의 서로 다른 조건을 설명한다.
+- **AC-04 회차 집계:** 계획 회차·실제 공개 회차·시작 전 회차를 구분하고 페이지 단위 집계를 사용한다.
+- **AC-05 가격과 상태:** VARIABLE의 일정별 비용·정원과 FIXED의 과정 참가비, 등록 상태·납부 기한·대기 순번을 구분한다.
+- **AC-06 탐색 실패:** 20건 페이지, 추가 조회 재시도, 빈 상태와 카드 상세 이동을 현재 앱 연결로 대조한다.
+
+현재 근거는 서버·앱 소스다. 새 제품 시험이나 화면 검수 통과 기록은 없다.
+
+## 과거 실행 기록의 보존
+
+아래는 이전 문서의 당시 기록이다. 이번 소스 대조의 실행 근거로 합산하지 않으며 현재 계약은 위 본문을 따른다.
+
+> 2026-09-30 `RM-UX-01`에서 구현했고, 2026-10-02 현재 API·앱 main에 반영했다. 저장소별 커밋과 검증 소스 대조 기록 (Git 이력)에 병합과 검증 근거를 남긴다. 공개 목록은 운영·결제·노쇼 설명을 먼저 읽게 하지 않고 모임 카드부터 제공한다. 운영 방식 설명은 주최자의 내 모임 목록과 상세 정책에서 확인한다.

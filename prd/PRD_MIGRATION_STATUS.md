@@ -368,8 +368,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F16-06 | 마일리지 | [F16-06_grant-redeem-reverse_prd.md](02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md) | `source-first` | source-first 구현 확인 | 8 | 5 |
 | F16-07 | 마일리지 | [F16-07_host-proposal_prd.md](02_feature_prds/16_mileage/F16-07_host-proposal_prd.md) | `source-first` | source-first 구현 확인 | 6 | 5 |
 | F16-08 | 마일리지 | [F16-08_review-queue-dashboard_prd.md](02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md) | `source-first` | source-first 구현 확인 | 11 | 5 |
-| F17-01 | 정기모임 | [F17-01_regular-meeting-discovery_prd.md](02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md) | `source-first` | source-first 구현 확인 | 3 | 2 |
-| F17-02 | 정기모임 | [F17-02_regular-meeting-detail_prd.md](02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md) | `source-first` | source-first 구현 확인 | 4 | 3 |
+| F17-01 | 정기모임 | [F17-01_regular-meeting-discovery_prd.md](02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
+| F17-02 | 정기모임 | [F17-02_regular-meeting-detail_prd.md](02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md) | `source-first` | source-first 구현 확인 | 7 | 4 |
 | F17-03 | 정기모임 | [F17-03_regular-meeting-creation_prd.md](02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
 | F17-04 | 정기모임 | [F17-04_regular-meeting-lifecycle_prd.md](02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md) | `source-first` | source-first 구현 확인 | 5 | 4 |
 | F17-05 | 정기모임 | [F17-05_regular-meeting-sessions_prd.md](02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `source-first` | source-first 구현 확인 | 6 | 6 |

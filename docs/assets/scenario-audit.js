@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 714,
-    "verifiedTraceRecords": 712,
+    "traceMarkers": 724,
+    "verifiedTraceRecords": 722,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -18677,7 +18677,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F17-01",
       "domain": "정기모임",
-      "name": "정기모임 발견·탐색",
+      "name": "정기모임 발견·운영·참여 목록",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md",
@@ -18688,10 +18688,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F17-01:1",
+            "label": "GET /api/v1/regular-meetings",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "search",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings",
+                "targetLine": 146,
+                "methodLine": 147
+              }
+            ]
+          },
+          {
+            "id": "F17-01:2",
+            "label": "GET /api/v1/regular-meetings/my",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "myMeetings",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/my",
+                "targetLine": 160,
+                "methodLine": 161
+              }
+            ]
+          },
+          {
+            "id": "F17-01:3",
+            "label": "GET /api/v1/regular-meetings/my/enrolled",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "myEnrolledMeetings",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/my/enrolled",
+                "targetLine": 168,
+                "methodLine": 169
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -18718,7 +18770,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F17-02",
       "domain": "정기모임",
-      "name": "정기모임 상세 조회",
+      "name": "정기모임 상세·참여 상태·회차 정보",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
@@ -18729,10 +18781,130 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 7,
+        "verified": 7,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F17-02:1",
+            "label": "GET /api/v1/regular-meetings/{id}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "get",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}",
+                "targetLine": 138,
+                "methodLine": 139
+              }
+            ]
+          },
+          {
+            "id": "F17-02:2",
+            "label": "GET /api/v1/regular-meetings/{id}/events",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "sessions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/events",
+                "targetLine": 329,
+                "methodLine": 330
+              }
+            ]
+          },
+          {
+            "id": "F17-02:3",
+            "label": "GET /api/v1/regular-meetings/{id}/members/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "myMembership",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/members/me",
+                "targetLine": 416,
+                "methodLine": 417
+              }
+            ]
+          },
+          {
+            "id": "F17-02:4",
+            "label": "GET /api/v1/regular-meetings/{id}/host-card",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "hostCard",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/host-card",
+                "targetLine": 153,
+                "methodLine": 154
+              }
+            ]
+          },
+          {
+            "id": "F17-02:5",
+            "label": "GET /api/v1/regular-meetings/{id}/content",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingContentController.java",
+                "controller": "RegularMeetingContentController",
+                "method": "content",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/content",
+                "targetLine": 20,
+                "methodLine": 21
+              }
+            ]
+          },
+          {
+            "id": "F17-02:6",
+            "label": "GET /api/v1/regular-meetings/{id}/events/{eventId}/preparation",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingContentController.java",
+                "controller": "RegularMeetingContentController",
+                "method": "preparation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/events/{eventId}/preparation",
+                "targetLine": 37,
+                "methodLine": 38
+              }
+            ]
+          },
+          {
+            "id": "F17-02:7",
+            "label": "GET /api/v1/regular-meetings/{id}/reviews",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingReviewController.java",
+                "controller": "RegularMeetingReviewController",
+                "method": "reviews",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/reviews",
+                "targetLine": 21,
+                "methodLine": 22
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

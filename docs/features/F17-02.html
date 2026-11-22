@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-02 정기모임 상세 조회 — community PRD</title>
+  <title>F17-02 정기모임 상세·참여 상태·회차 정보</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,157 +17,35 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-02 상세 조회
         </div>
-        <h1>F17-02. 정기모임 상세 조회</h1>
-        <p class="lede">
-          카드에서 진입하면 도착하는 면. 모임 본체·회차 요약·내 위치(보는 사람이 호스트·멤버·게스트 중 누구인가)를 한 화면에 모은다.
-          정기모임은 사용자마다 다음 행동이 완전히 다르기 때문에 <strong>하단 버튼이 가장 중요한 디자인 결정</strong>이다 —
-          "지금 보는 사람이 누구이고, 모임이 어떤 상태인가"의 두 축으로 6가지 버튼으로 갈린다.
-          비로그인도 들어올 수 있지만, 발행 전 초안은 호스트 본인에게만 보인다.
-        </p>
+        <h1>F17-02 정기모임 상세·참여 상태·회차 정보</h1>
+        <p class="lede">익명 공개와 민감 필드 가림, 회차 이력, 참여 상태별 입구, 소개·준비·후기 연결을 현재 소스로 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
-      <section id="place-current"><h2>장소를 나중에 정하거나 바꾸기</h2><p>2026-11-02 로컬 main 기준, 오프라인 정기모임의 장소는 선택 입력입니다. 공개 뒤 호스트는 상세의 운영 도구에서 「장소 정하기」 또는 「장소 바꾸기」를 엽니다. 장소는 즉시 적용되고 회원에게 알리며 동의 절차를 만들지 않습니다.</p><p>서버는 열린 오프라인 코스와 아직 시작하지 않은 관리 대상 회차에 반영합니다. 초안은 기존 수정 화면을 사용합니다. 시간 변경의 합의 규칙과 다르며, 이 변경의 새 서버·앱 배포와 기기 확인은 별도입니다.</p></section>
-
       <div class="launch-strip" id="launch-strip"></div>
-
-      <section id="review-person-links">
-        <h2>정기모임 후기의 작성자·평가 대상 이름으로 프로필을 봅니다</h2>
-        <p>정기모임 상세의 후기 미리보기와 전체 후기 목록에서 작성자 이름과 평가 대상 이름을 누르면 사람 미리보기가 열리고,
-          조회가 허용된 사람의 프로필로 이동합니다. ‘이 정기모임의 후기’와 ‘진행자의 다른 모임 후기’에 같은 동작을 적용합니다.</p>
-        <p>평가 대상은 그 후기에 기록된 사람입니다. 진행자가 바뀌어도 현재 진행자로 바꾸어 연결하지 않습니다.
-          이름이나 유효한 회원 정보가 없으면 ‘회원’·‘진행자’ 안내만 표시하고 링크는 제공하지 않습니다.
-          원 모임으로 이동하거나 후기를 신고하는 기존 동작은 유지합니다.</p>
-        <p>프로필에서 돌아오거나 차단을 마치면 두 후기 범위의 카드·건수·평균을 다시 읽습니다.
-          확인 중에는 이전 정보를 숨기며 같은 범위·페이지·스크롤을 유지합니다.
-          10월 13일 서버·앱 구현과 자동 검사를 반영했고, 실제 서버·서명 앱의 이름 이동·권한 회수·복귀 확인은 남아 있습니다.</p>
-        <p><a href="../domains/13-profile.html#authored-club-posts">다른 사람의 클럽 글을 내가 볼 수 있는 범위에서 모아 봅니다</a>로 탐색을 이어갈 수 있습니다.</p>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">하단 버튼 분기</div><div class="value">6</div><div class="hint">상태 × 보는 사람</div></div>
-          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">초안 제외</div></div>
-          <div class="metric"><div class="label">회차 요약</div><div class="value">동일 화면</div><div class="hint">전체 회차는 별도 진입</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — "내가 지금 뭘 할 수 있는지"를 단 한 버튼으로</span>
-          <p>호스트·멤버·게스트가 같은 화면을 보지만 다음 행동은 완전히 다르다. 호스트는 멤버 관리·발행·종료가 필요하고,
-            결제대기 멤버는 시간이 흐르고 있고, 게스트는 가입을 결정해야 한다. 화면에 행동 버튼을 여러 개 깔지 않고,
-            상황별로 가장 의미 있는 버튼 1~3개만 남겨 사용자가 망설이지 않게 한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">게스트 가입 결정</div>
-            <h3>모집 중 모임을 처음 본다</h3>
-            <p>화면 상단에 운영 방식 뱃지·호스트 닉네임·회차 요약. 하단에 "참가 신청" 버튼 1개.
-              화면을 스크롤하면 회차 일정을 카드로 본다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 가입 전 사용자가 모임 전체 일정을 확인할 수 있어야 가입 결정의 망설임이 줄어든다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">결제대기 멤버</div>
-            <h3>승인 후 결제 기한이 흐른다</h3>
-            <p>하단 버튼은 "결제하기" + 남은 시간 카운트다운(예: "67시간 남음").
-              상단에는 "결제 대기" 라벨이 노란색으로 표기된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 결제 기한 만료 = 자리 빼앗김 + 대기자 자동 승격. 카운트다운으로 긴급성을 시각화.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">참가확정 멤버</div>
-            <h3>이미 가입한 코스를 다시 본다</h3>
-            <p>하단 버튼은 "취소" 1개. 환불 기한 안내가 함께 노출되어 "지금 취소하면 얼마 돌려받는지"를 카드 단계에서 가늠한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 취소 시점이 환불 금액을 좌우하므로, 결정 화면에서 환불 산정 기준을 미리 보여 준다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 초안</div>
-            <h3>본인 초안을 다시 연다</h3>
-            <p>하단에 "발행하기" 버튼. 회차가 부족하면 "회차를 N개 더 추가해야 발행할 수 있어요" 안내.
-              초안은 외부 사용자에게는 "모임을 찾을 수 없습니다"로 가려진다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 안전하게 모임을 다듬을 수 있는 보호된 공간 유지.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 운영</div>
-            <h3>모집 중 모임의 운영자 진입</h3>
-            <p>하단 버튼이 "멤버 관리 · 회차 추가 · 출석 확정" 세 개로 갈린다. 결제 대기 멤버 수가 카드 형태로 노출된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트 일과의 핵심 액션을 한 화면에서 분기 없이 진입.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 종료</div>
-            <h3>코스 종료 후 정산을 본다</h3>
-            <p>하단 버튼이 "정산 보기" 1개. 정산이 자동 생성되기 전이면 "준비중" 라벨 + 새로고침 안내.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 종료 직후의 짧은 대기 시간을 사용자가 오류로 오인하지 않게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">취소 모임</div>
-            <h3>취소된 모임을 본다</h3>
-            <p>본문이 회색 처리되고 "취소된 모임" 라벨이 상단에 붙는다. 멤버에게는 환불 안내 라벨이 같이 노출된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 카드 클릭 → 빈 화면 같은 단절을 겪지 않게, 취소된 모임도 상태를 명시한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">회차 진입</div>
-            <h3>회차 카드 탭</h3>
-            <p>회차 카드를 누르면 일반 이벤트 상세로 이동한다. 단, 화면 상단에 "이건 정기모임의 N회차" 표기가 항상 같이 노출된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 일반 이벤트 화면을 재사용하면서도 사용자가 컨텍스트를 잃지 않게 한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr><td><strong>상태 라벨</strong></td><td>"모집 중·종료·취소·결제 대기" 등 상태가 상단에 색으로 구분.</td><td>같은 화면이라도 상태에 따라 하단 액션이 달라지므로, 사용자가 자기 위치를 먼저 인지하게 한다.</td></tr>
-              <tr><td><strong>하단 버튼</strong></td><td>최대 3개. 상황에서 가장 의미 있는 액션만 남긴다.</td><td>버튼이 많아지면 사용자가 망설이고, 적은 버튼이 결정 속도를 높인다.</td></tr>
-              <tr><td><strong>회차 카드 영역</strong></td><td>회차 시작 시각·장소·정원이 카드로 줄지어 노출.</td><td>코스 가입 결정에는 "이 코스가 내 일정에 맞는지"가 가장 중요해, 상세 화면에서 일정 가시성을 최대화.</td></tr>
-              <tr><td><strong>호스트 정보</strong></td><td>호스트 닉네임·운영 이력 표기.</td><td>코스는 호스트 신뢰가 가입 결정의 핵심 요소.</td></tr>
-              <tr><td><strong>결제대기 카운트다운</strong></td><td>결제 대기 상태에서만 노출. 남은 시간이 실시간으로 줄어든다.</td><td>72시간 안에 결제 안 하면 자리가 빠지는 정책이 있으므로, 긴급성을 시각화.</td></tr>
-              <tr><td><strong>회차 컨텍스트 표기</strong></td><td>회차 상세에서 "정기모임 N회차" 라벨이 상단 고정.</td><td>일반 이벤트 화면 재사용 시 사용자가 컨텍스트를 잃지 않도록 표기 유지.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">화면 동작</span>
-          <ul>
-            <li><strong>초안 모임은 외부에 "찾을 수 없음"으로 가린다</strong> — 초안의 존재 자체가 노출되지 않게 해, 호스트가 준비 단계에서 노출 부담을 갖지 않게 한다.</li>
-            <li><strong>정기모임 회차에는 일반 신청 버튼이 노출되지 않는다</strong> — 고정형은 본체 가입이 필수이고, 변동형은 회차에서 신청.</li>
-            <li><strong>취소된 모임도 본문은 보여 준다</strong> — 환불 안내를 사용자가 확인할 수 있게.</li>
-            <li><strong>종료 직후 정산은 "준비중"이 잠시 보일 수 있다</strong> — 안전망 재시도 1시간 안에 자동으로 갱신.</li>
-            <li><strong>비호스트가 초안 URL을 직접 쳐도 노출되지 않는다</strong> — 공유 링크 보호.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">자주 발생하는 케이스</span>
-          <ul>
-            <li><strong>결제 대기 멤버 호스트 관리 화면이 1차 미신설</strong> — 입금 확인은 별도 진입을 통해야 한다. 카운트만 노출되어 호스트가 답답할 수 있음.</li>
-            <li><strong>회차별 출석 명단 화면 부재</strong> — 호스트가 회차마다 누가 왔는지 한 명씩 보는 UI는 1차에서 빠짐. 일괄 확정만 가능.</li>
-            <li><strong>비호스트 사용자가 회차 카드 깊이까지 들어가도 정기모임 컨텍스트 유지</strong> — 라벨이 빠지면 사용자가 일반 이벤트로 오인.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+<section id="current-1"><h2>현재 서버 계약</h2><p>상세와 회차·공개 콘텐츠는 비로그인 GET을 허용한다. 개인 등록, 결제, 호스트 카드, 후기, 참가자 준비 자료는 인증이 필요하다. Controller의 nullable principal뿐 아니라 SecurityConfiguration의 실제 경로 규칙을 기준으로 구분한다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>응답·경계</th></tr></thead><tbody><tr><td>GET /api/v1/regular-meetings/{id}</td><td>RegularMeetingVo: 본체·host·등록 수·sessions</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/events</td><td>List&lt;RegularMeetingEventVo&gt;; includeHistory 기본 false</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/members/me</td><td>본인의 RegularMeetingMemberVo; 미등록은 ENROLLMENT_INVALID_STATUS</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/host-card</td><td>EventHostCardVo; 모임 가시성 확인 후 기존 호스트 카드 서비스 호출</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/content</td><td>RegularMeetingContentVo: 소개와 공개 회차 준비 요약</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/events/{eventId}/preparation</td><td>참가 자격을 확인한 준비 안내·자료 URL·중요 변경 이력</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/reviews</td><td>RegularMeetingReviewPageVo: scope·summary·reviews Page</td></tr></tbody></table></div>
+<p>DRAFT, 발행한 적 없는 CANCELED, 숨김 모임은 현재 호스트만 조회할 수 있다. 다른 이용자는 <code>REGULAR_MEETING_NOT_FOUND</code>를 받는다. 발행 뒤 CLOSED/CANCELED가 된 모임은 이 가시성 규칙만으로 차단하지 않는다.</p>
+<p>상세의 <code>host</code> JSON 필드는 앱 <code>@JsonKey(name: &#x27;host&#x27;) bool isHost</code>로 받는다. 금액은 서버 BigDecimal, 앱 double 변환이다. 본인의 등록 상태는 본체에 합쳐 있지 않으며 별도 조회한다. 해당 조회의 BadRequest와 정확한 <code>ENROLLMENT_INVALID_STATUS</code>만 앱에서 null로 바꾸고, 인증·권한·통신 오류는 그대로 실패로 처리한다.</p></section>
+<section id="place-current"><h2>장소와 익명 정보 가림</h2><p>익명 상세는 본체 <code>addressDetail</code>, <code>onlineUrl</code>, 회차 <code>onlineUrl</code>을 null로 만들고 <code>hostBankAccountBound</code>를 false로 가린다. 기본 주소·지역까지 모두 감추는 정책은 아니다. 공개 콘텐츠에서는 익명에게 <code>preparationText</code>를 가린다.</p>
+<p>앱은 오프라인 주소가 없으면 장소 미정, 비로그인 이용자에게는 상세 주소·온라인 주소의 로그인 안내를 표시한다. 로그인 상태의 일반 상세 열람과 참가 자격이 필요한 준비 자료 열람을 구분한다.</p></section>
+<section id="current-3"><h2>참가자가 판단하고 다음 행동으로 이동하는 화면</h2><p>상단은 제목·모집 상태, 요약과 내 참여 상태를 제공하고 소개·전체 일정·호스트·후기·정책으로 이어진다. 비호스트의 주 행동은 하단 고정 영역에 한 번 배치한다. 본문의 참여 카드는 상태 설명과 취소 입구를 표시하며 같은 주 행동 단추를 반복하지 않는다. 호스트 상단에는 참가자 미리보기 전환이 있다. 이 기능은 본체의 isHost 표시를 바꾸는 미리보기이며 새 익명 HTTP 세션 검증을 뜻하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>조회 상태</th><th>앱의 다음 행동</th></tr></thead><tbody><tr><td>OPEN 이외</td><td>상태·종료/취소 안내, 새 신청 없음</td></tr><tr><td>VARIABLE OPEN</td><td>가능한 일정이 있으면 일정 목록으로 이동</td></tr><tr><td>FIXED 미등록</td><td>예정 일정이 있으면 전체 과정 신청; 인증 실패는 로그인 안내</td></tr><tr><td>PENDING / WAITING</td><td>승인 대기 / 순번을 포함한 정원 대기, 본문에서 취소</td></tr><tr><td>APPROVED_PENDING_PAYMENT</td><td>납부 안내·기한 또는 입금 신고 후 호스트 확인 대기</td></tr><tr><td>ENROLLED</td><td>가장 이른 유효 OPEN 일정의 준비 안내, 본문에서 등록 취소·환불 요청</td></tr><tr><td>CANCELED / PAYMENT_EXPIRED / REJECTED</td><td>가능한 일정이 있으면 다시 신청</td></tr><tr><td>FORFEITED</td><td>참여 제한 안내, 재신청 없음</td></tr><tr><td>조회 실패</td><td>재시도 또는 로그인 안내; 미신청으로 바꾸지 않음</td></tr></tbody></table></div>
+<p>다음 행동에 쓰는 회차는 활성 OPEN이며 종료 시각(없으면 시작 시각)이 아직 지나지 않은 회차 중 시작 시각이 가장 이른 항목이다. 이미 시작했지만 끝나지 않은 회차도 포함할 수 있어 ‘시작 전 회차만’으로 설명하지 않는다. 납부 내역이 PAID/REFUND_REQUESTED인데 등록 상태가 아직 결제 대기라면 최신 상태를 재조회한다. 기한 경과도 서버 상태 재조회를 제공한다.</p>
+<p>신청·납부·준비 안내에서 돌아오면 참여/납부/상세 정보를 갱신한다. 당겨 새로고침은 상세와 콘텐츠·준비·호스트·후기를 함께 갱신한다. 호스트는 상태에 따라 기본 수정, 공개, 일정 추가, 장소 변경, 모집 종료, 취소, VARIABLE 다시 열기를 제공하며 멤버 관리와 FIXED 정산 상태로 연결된다. 상세 동작의 실제 명령 조건은 <a href="F17-04.html">모집 상태 관리</a>, <a href="F17-05.html">회차 관리</a>, <a href="F17-06.html">등록</a>, <a href="F17-07.html">납부</a>, <a href="F17-08.html">환불</a>을 따른다.</p></section>
+<section id="current-4"><h2>회차 활동과 진행 경험으로 판단하기</h2><p>상세 sessions는 ‘상위 N개’가 아니다. 현재 구현은 조건에 맞는 연결 회차 목록을 순번순으로 구성하며 별도 페이지 제한이 없다. 호스트 상세는 취소 이력까지 포함한다. 비호스트 상세는 PUBLIC·비DRAFT 회차 중 취소되지 않은 회차를 포함한다. 별도 <code>/events?includeHistory=true</code>를 요청하면 비호스트도 발행 뒤 취소된 공개 회차 이력을 받을 수 있다. 비공개·발행 전 취소 회차는 이 옵션으로 열리지 않는다.</p>
+<p>전체 일정에서 가장 가까운 시작 전 OPEN 회차 설명을 먼저 펼친다. 활성 회차 카드는 일반 이벤트 상세를 열고, 취소 회차는 같은 순번의 활성 대체 회차가 있으면 그 회차로 연결한다. 내부 생성·출석 확정 배지는 모임 호스트 또는 해당 회차 호스트에게만 표시한다. 후자는 모임 호스트와 다를 수 있다.</p>
+<p>호스트 카드의 allowedActions에 OPEN_PROFILE이 있을 때 프로필 입구·공개 진행 완료 횟수·신뢰점수를 표시한다. 축소 응답에서는 이름·사진만 안내한다. 프로필에서 돌아오면 카드와 후기를 다시 읽는다. 신뢰점수와 후기 평점은 서로 다른 지표다.</p></section>
+<section id="current-5"><h2>소개 재사용·본인용 선호·준비 안내 자동화</h2><p>공개 소개는 짧은 소개·대상·활동·경험 수준·기대 경험·호스트 경험·포함/별도 비용을 표시한다. 예상 추가 비용과 아직 미정인 비용을 구분한다. 공개 회차 준비 요약과 참가자 전용 자료 URL은 다른 조회다. 준비 자료는 모임 호스트 또는 서버의 참여 확정·회차 열람 조건을 통과한 이용자에게만 반환한다. 중요한 변경 이력은 최근 20개다.</p>
+<p>로그인한 비호스트에게 본인 선호 비교 영역을 제공한다. 비교 계산은 관심 분야와 가장 가까운 시작 전 회차의 시간·모집 정원을 사용한다. 실제 참석 인원이나 공개 성향 점수로 설명하지 않는다. 소개·준비 작성 입구는 DRAFT/OPEN 호스트에게 보인다. 콘텐츠 쓰기와 자동 안내의 상세 정책·과거 실행 결과는 기존 개선 계획 및 아래 과거 기록의 범위이며, 이번 조회 대조로 전송 성공을 재확인한 것은 아니다.</p></section>
+<section id="review-person-links"><h2>회차 후기와 다른 모임 후기를 구별하기</h2><p><code>THIS_MEETING</code>은 이 정기모임 회차의 후기, <code>HOST_OTHER_EVENTS</code>는 현재 호스트가 다른 모임에서 받은 후기다. summary는 후기 건수·서로 다른 작성자 수·평균이다. 회차 호스트 평가를 과정 전체 수료 평가로 안내하지 않는다. 목록은 작성일·id 내림차순이다.</p>
+<p>서버 목록·집계에는 삭제·비활성·임시 숨김 후기, 비공개·숨김·OPEN/CLOSED 이외 이벤트, 숨김·미발행 부모, 차단한 작성자·평가 대상·회차 호스트와 평가 대상 열람 권한을 반영한다. 다른 모임 범위의 대상 호스트를 볼 수 없으면 USER_NOT_FOUND로 거절한다.</p>
+<p>앱은 같은 과정 요약과 본문 최신 3건, 다른 모임 최신 3건을 분리한다. 각 카드에서 해당 scope의 전체 후기 화면으로 이동한다. 로그인 필요·조회 실패·빈 후기를 구분하고 다른 모임 평점으로 빈 과정을 대체하지 않는다. 프로필 또는 전체 후기에서 돌아오면 관련 후기를 갱신한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>상세 회차 목록에 페이지 제한이 없다.</td><td>상위 N개 요약이라고 설명하지 않는다.</td></tr><tr><td>Risk</td><td>참가자 미리보기는 호스트가 받은 응답의 표시 전환이다.</td><td>비로그인 권한·자료 가림 검증을 대신하지 않는다.</td></tr><tr><td>Risk</td><td>회차 설명 자동 펼침은 시작 전 기준, 다음 행동은 종료 전 기준이다.</td><td>진행 중 회차의 행동을 잘못 숨기거나 문서에서 배제하지 않는다.</td></tr><tr><td>미검증</td><td>이번에는 실제 로그인 복귀·신청/납부 왕복·자료 접근·화면 배치를 실행하지 않았다.</td><td>소스 연결과 실행 통과를 구분한다.</td></tr></tbody></table></div></section>
+<section id="current-8"><h2>과거 실행 기록의 보존</h2><p>아래는 이전 문서의 당시 기록이다. 이번 소스 대조의 실행 근거로 합산하지 않으며 현재 계약은 위 본문을 따른다.</p>
+<p>&gt; 2026-10-01 <code>RM-UX-04~06</code> 구현·로컬 검증을 마쳤고, 2026-10-02 현재 API·앱·관리자 API main에 반영했다. 저장소별 커밋과 검증 소스 대조 기록 (Git 이력)에 병합 시 재검증 결과를, 실제 연동·기존 데이터 보존·화면 점검 결과 (Git 이력)에 기존 검증 범위·한계를 남긴다. &gt; &gt; - 직원 인터뷰·대표 후기 선정·준비 검수·개별 독촉을 추가하지 않는다. 실제 앱/HTTP 자동 왕복과 기존 데이터 보존형 적용을 통과했다. 수동 브라우저 접근 제한, 렌더링 시각 점검과 출시 검증의 구분은 전체 완료 점검 (Git 이력)을 따른다.</p></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 공개와 인증:</strong> 공개 상세·회차·콘텐츠와 인증이 필요한 개인/호스트/후기/자료 조회를 구분한다.</li><li><strong>AC-02 가시성과 가림:</strong> 초안·미발행 취소·숨김의 호스트 예외와 익명 필드 가림을 적용한다.</li><li><strong>AC-03 회차 이력:</strong> 호스트 전체 이력, 비호스트 공개 이력과 includeHistory의 범위를 설명한다.</li><li><strong>AC-04 참여 분기:</strong> 승인 대기·정원 대기·납부·입금 확인·등록 완료·재신청·참여 제한을 구분한다.</li><li><strong>AC-05 오류 분리:</strong> 정확한 미등록 오류만 null로 처리하고 인증·통신 오류에는 재시도/로그인 안내를 제공한다.</li><li><strong>AC-06 행동과 복귀:</strong> 하단 주 행동과 본문 취소 입구를 구분하고 왕복 후 관련 조회 갱신을 연결한다.</li><li><strong>AC-07 준비 자료:</strong> 공개 요약과 참여 자격이 필요한 자료·중요 변경 20개를 분리한다.</li><li><strong>AC-08 후기 범위:</strong> 같은 과정과 다른 모임, 후기 수와 작성자 수, 공개/차단 조건을 각각 설명한다.</li><li><strong>AC-09 호스트와 미리보기:</strong> allowedActions 기반 프로필 표시와 표시 전환인 미리보기의 한계를 구분한다.</li></ul>
+<p>현재 근거는 서버·앱 소스다. 기존 실행 기록은 아래에 보존하며 새 시험 통과 수에 합산하지 않는다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

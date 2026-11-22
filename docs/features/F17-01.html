@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-01 정기모임 발견·탐색 — community PRD</title>
+  <title>F17-01 정기모임 발견·운영·참여 목록</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,130 +17,30 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-01 발견·탐색
         </div>
-        <h1>F17-01. 정기모임 발견·탐색</h1>
-        <p class="lede">
-          사용자가 발행된 정기모임을 찾는 두 면 — <strong>전체 목록</strong>과 <strong>내 모임</strong>. 전체 목록은
-          지금 모집 중인 모임만 노출해 사용자가 "지금 들어갈 수 있는 코스가 있는지"를 빠르게 가늠하게 한다.
-          내 모임은 호스팅 중인 모임과 등록한 모임을 한 번에 모아 종료된 모임까지 보여 줘 이력 확인에 쓴다.
-          일반 이벤트 카드와 시각적으로 구분되는 뱃지가 붙어, 사용자가 "이건 코스로 가입하는 모임"임을 카드 단계에서 인지한다.
-        </p>
+        <h1>F17-01 정기모임 발견·운영·참여 목록</h1>
+        <p class="lede">공개 탐색·운영 목록·참여 목록을 분리하고 필터명, 공개 회차 집계와 앱의 실제 탐색 범위를 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">한 번에 받는 카드</div><div class="value">20장</div><div class="hint">스크롤하면 다음 묶음</div></div>
-          <div class="metric"><div class="label">노출 기준</div><div class="value">모집 중만</div><div class="hint">초안·종료·취소 제외</div></div>
-          <div class="metric"><div class="label">가입 전 진입</div><div class="value">허용</div><div class="hint">신청 시점에만 로그인</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 코스 가입은 일반 신청과 다르다, 카드 단계에서 알려야 한다</span>
-          <p>정기모임은 한 번 가입하면 여러 회차에 자동으로 묶이고, 결제·환불이 코스 단위로 일어난다.
-            일반 이벤트와 똑같이 보이면 사용자가 "회차 하나 신청한다" 정도로 가볍게 가입했다가 환불·결제 시점에서 충돌이 생긴다.
-            카드 단계에서 <strong>고정형/변동형 뱃지</strong>로 운영 방식을 미리 알리고, 카테고리·지역 필터로 자기 성향에 맞는
-            모임만 좁힐 수 있게 한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름</div>
-            <h3>"러닝"으로 주말 코스 찾기</h3>
-            <p>사용자가 키워드를 입력하고 카테고리·운영방식 칩으로 결과를 좁힌다. 카드를 보고 "이건 8주 코스구나"를
-              뱃지로 인지한 뒤 상세로 진입해 회차 일정을 본다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 정기모임은 일반 이벤트와 결제·환불 구조가 다르므로,
-              가입 결정 전에 운영 방식이 노출되어야 분쟁이 줄어든다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">가입 전</div>
-            <h3>비로그인 사용자가 둘러봄</h3>
-            <p>카드와 상세는 모두 보인다. 단, "참가 신청"을 누르는 순간 로그인 화면이 뜬다. 비로그인에서는
-              내 모임 탭은 숨겨진다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — "가입하고 둘러봐" 대신 "둘러보고 마음 들면 가입" 패턴 유지.
-              정기모임 카탈로그가 가입 전환 동선의 일부.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">내 모임</div>
-            <h3>호스팅 + 멤버 합산</h3>
-            <p>내가 호스트인 모임과 멤버로 들어가 있는 모임이 한 화면에 모인다. 종료·취소된 모임도 같이 보여
-              "지난달 코스 정산은 어떻게 끝났더라" 같은 이력 확인이 한 진입으로 가능하다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자기 코스 이력을 별도 페이지를 찾아 헤매지 않게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">초안 보호</div>
-            <h3>호스트만 자기 초안을 본다</h3>
-            <p>발행 전 초안 모임은 일반 검색에 노출되지 않는다. 호스트 본인은 내 모임에서 자기 초안을 계속 볼 수 있다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 충분히 준비된 모임만 외부에 노출하도록 보호.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">무한 스크롤</div>
-            <h3>20장 보고 더 둘러봄</h3>
-            <p>리스트 끝에 다다르면 다음 20장이 자연스럽게 이어진다. 끝까지 가면 추가 로딩 표시가 사라진다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">결과 없음</div>
-            <h3>지금은 모집 중인 코스가 없음</h3>
-            <p>필터에 맞는 모임이 0건이면 "조건에 맞는 정기모임이 없습니다" 안내. 카테고리 칩을 풀거나 키워드를 비우면
-              일반 목록으로 복귀한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 정기모임 자체가 적은 시기에도 "오류"로 인지되지 않게 한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr><td><strong>운영 방식 뱃지</strong></td><td>카드 상단에 "고정형" 또는 "변동형" 뱃지가 색깔로 구분되어 붙는다.</td><td>가입 결정 전에 "코스 일괄"인지 "회차별 신청"인지 알려야 환불·결제 시점에서 사용자 기대와 어긋나지 않는다.</td></tr>
-              <tr><td><strong>호스트 닉네임</strong></td><td>카드에 호스트 닉네임이 같이 노출된다.</td><td>정기모임은 호스트 신뢰가 가입 결정의 큰 요인이라, 카드 단계에서 누가 운영하는지 보이게 한다.</td></tr>
-              <tr><td><strong>회차 수·기본 정원</strong></td><td>고정형은 "8회·정원 10명" 같은 규모 표기.</td><td>코스 가입은 시간 약속이 길기 때문에, 사용자가 카드 단계에서 코스 규모를 가늠해 망설임을 줄인다.</td></tr>
-              <tr><td><strong>가격</strong></td><td>고정형은 코스 전체 가격, 변동형은 "회차별 가격 변동"으로 표기.</td><td>변동형에 코스 가격을 표기하면 사용자가 "총액"으로 오인하기 쉬워, 표기 자체를 다르게 한다.</td></tr>
-              <tr><td><strong>내 모임 탭</strong></td><td>비로그인 시 숨김. 로그인 시 호스팅·등록을 합산한 카운트 뱃지.</td><td>로그인 사용자에게만 의미 있는 면이라 비로그인에서는 진입점 자체를 노출하지 않는다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">노출 정책</span>
-          <ul>
-            <li><strong>전체 목록은 모집 중만</strong> — 초안·종료·취소는 노출 대상 아님. 사용자가 클릭해도 "지금 들어갈 수 없는" 모임은 카드 단계에서 제외해 헛걸음을 줄인다.</li>
-            <li><strong>내 모임은 전 상태 포함</strong> — 정산·환불 이력 확인용이라 종료·취소도 같이 보여 준다.</li>
-            <li><strong>일반 이벤트 검색에서도 정기모임 회차가 노출된다</strong> — 정기모임 본체는 전용 검색이지만, 회차는 일반 이벤트 검색·홈·트렌딩에도 포함되어 검색 표면이 분리되어 있지 않다.</li>
-            <li><strong>호스트 닉네임 노출이 카드 성능을 좌우한다</strong> — 닉네임 표기 누락 시 카드가 비어 보여 가입 결정이 떨어진다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">자주 발생하는 케이스</span>
-          <ul>
-            <li><strong>일반 이벤트 카드 영역에 뱃지 미통합</strong> — 정기모임 회차가 일반 검색·홈·트렌딩에 일반 이벤트 카드 형태로 노출될 때 뱃지가 빠지면 사용자가 코스인 줄 모르고 신청한다.</li>
-            <li><strong>지역 요약이 너무 길면 카드 깨짐</strong> — 주소 원문이 그대로 들어올 경우 잘림 처리 필요.</li>
-            <li><strong>"가까운 순" 정렬은 1차 미지원</strong> — 정기모임은 위치보다 일정 적합도가 더 중요하다는 판단으로 1차에서 빠짐.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>앱 <code>/regular-meetings</code>는 공개 목록, <code>/regular-meetings/my</code>는 운영하는 모임, <code>/regular-meetings/my/enrolled</code>는 참여하는 모임이다. 같은 목록 화면의 <code>all</code>, <code>operated</code>, <code>enrolled</code> 모드를 사용한다. 카드에서 <a href="F17-02.html">정기모임 상세</a>로 이동한다.</p>
+<p>로그인한 이용자에게 공개·운영 목록의 만들기 입구를 제공한다. 참여 목록에는 만들기 입구가 없다. 운영 방식 설명은 운영 목록에만 두며 공개 목록은 카드 탐색을 먼저 제공한다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>세 API 모두 <code>Page&lt;RegularMeetingSimpleVo&gt;</code>를 반환하며 앱은 <code>PageResponse&lt;RegularMeetingSimpleVo&gt;</code>로 받는다. 공개 목록은 HTTP 비로그인 조회를 허용하고 <code>/my</code>, <code>/my/**</code>는 인증이 필요하다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>실제 조회 범위</th><th>정렬</th></tr></thead><tbody><tr><td>GET /api/v1/regular-meetings</td><td>숨김이 아닌 OPEN 모임</td><td>createdAt 내림차순, id 내림차순</td></tr><tr><td>GET /api/v1/regular-meetings/my</td><td>현재 이용자가 호스트인 모임. 상태·숨김 필터 없음</td><td>createdAt 내림차순, id 내림차순</td></tr><tr><td>GET /api/v1/regular-meetings/my/enrolled</td><td>활성 과정 등록 또는 VARIABLE 회차 참석·대기에서 모임 ID를 모은 뒤 숨김 제외, OPEN/CLOSED만</td><td>OPEN 먼저, createdAt·id 내림차순</td></tr></tbody></table></div>
+<p>공개 검색의 실제 필터는 <code>keyword</code>(제목 또는 설명 부분 일치), <strong><code>categories</code></strong>(목록), <code>meetingType</code>, <code>region</code>(주소 부분 일치)이다. 카테고리·타입 문자열은 서버 enum으로 파싱하고 잘못된 값은 <code>SEARCH_FILTER_INVALID</code>로 거절한다. 요청 객체에 <code>status</code>, <code>sortType</code>이 있어도 현재 검색 쿼리는 이를 적용하지 않는다. <code>category</code> 단수나 후기순·거리순 지원으로 설명하지 않는다.</p>
+<p>참여 목록의 과정 등록 상태는 PENDING, WAITING, APPROVED_PENDING_PAYMENT, ENROLLED다. VARIABLE은 취소되지 않은 회차의 ATTENDING 또는 WAITING을 추가한다. 두 경로의 모임 ID를 합쳐 중복을 제거한다. 따라서 운영 목록은 참여 목록과 합산되지 않으며, 참여 목록은 취소·탈락·결제 만료 전체 이력 화면이 아니다. 참여 목록에 관련 등록 행이 있으면 <code>myMemberStatus</code>를 채우고, 결제 대기일 때만 <code>myPaymentDueAt</code>, 정원 대기일 때만 <code>myWaitlistOrder</code>를 채운다.</p></section>
+<section id="current-3"><h2>카드와 요약 집계</h2><p><code>shortIntro</code>, 썸네일 표시 URL, 호스트 닉네임, 지역 요약, 등록 인원, 실제 공개 회차 수와 다음 회차를 목록에서 내려준다. 지역은 오프라인 주소의 앞 두 어절이며 온라인은 null이다. 공개 회차 집계는 PUBLIC인 OPEN/CLOSED 회차를 세고, 다음 회차와 예정 수는 그중 시작 전 OPEN 회차로 계산한다. 계획한 <code>totalSessionCount</code>와 실제 <code>publishedSessionCount</code>는 다른 값이다. 조회 페이지의 모임 ID들을 묶어 회차 요약을 집계한다.</p>
+<p>앱은 종류·모집 상태·내 등록 상태를 구분한다. VARIABLE 본체 가격 0은 무료로 해석하지 않고 일정별 비용·정원을 표시한다. 다음 일정이 없으면 공개 회차 0건인 ‘일정 준비 중’과 ‘예정된 일정 없음’을 구별한다. FIXED는 전체 과정 참가비·등록 인원을 표시한다. 제목·짧은 소개는 두 줄, 지역·기간은 한 줄 말줄임 처리한다.</p></section>
+<section id="current-4"><h2>앱 탐색·실패·복귀</h2><p>세 목록 모두 20건씩 첫 페이지와 추가 페이지를 읽는다. 로딩·오류 재시도·빈 목록·추가 조회 오류를 구분한다. 목록의 새로고침은 해당 공급자를 무효화하며 운영/참여 데이터 변경을 구독한다. 참여 목록은 이벤트 카드 데이터 변경도 구독한다.</p>
+<p>현재 공개 목록 화면은 <code>regularMeetingListProvider()</code>를 필터 인자 없이 사용한다. 서버와 공급자가 검색 조건을 지원한다는 사실을 이 화면에 검색창·필터 UI가 있다는 뜻으로 확대하지 않는다. 카드 탭은 <code>/regular-meetings/{id}</code>를 연다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>공개 목록 화면에는 검색 조건을 입력하는 UI가 없다.</td><td>API 필터 지원과 화면 제공 범위를 구분한다.</td></tr><tr><td>Gap</td><td>status/sortType 요청값이 검색 쿼리에 반영되지 않는다.</td><td>현재 정렬은 최근 생성순으로 기록한다.</td></tr><tr><td>Risk</td><td>참여 목록은 활성 참여의 OPEN/CLOSED 모임만 포함한다.</td><td>과거 취소·결제 전체 기록으로 안내하지 않는다.</td></tr><tr><td>미검증</td><td>이번 작업에서 목록 이동·로그인 복귀·무한 스크롤을 실행하지 않았다.</td><td>소스 대조와 실제 사용 검증을 구분한다.</td></tr></tbody></table></div>
+<p>기존 ‘일반 EventCard 13곳 이상 미통합’, ‘정기모임 푸시 미구현’은 이 목록의 현재 근거가 아니므로 미구현 판정에서 제외한다. 다른 영역의 전체 적용 여부를 이 문서에서 추정하지 않는다.</p></section>
+<section id="current-6"><h2>과거 실행 기록의 보존</h2><p>아래는 이전 문서의 당시 기록이다. 이번 소스 대조의 실행 근거로 합산하지 않으며 현재 계약은 위 본문을 따른다.</p>
+<p>&gt; 2026-09-30 <code>RM-UX-01</code>에서 구현했고, 2026-10-02 현재 API·앱 main에 반영했다. 저장소별 커밋과 검증 소스 대조 기록 (Git 이력)에 병합과 검증 근거를 남긴다. 공개 목록은 운영·결제·노쇼 설명을 먼저 읽게 하지 않고 모임 카드부터 제공한다. 운영 방식 설명은 주최자의 내 모임 목록과 상세 정책에서 확인한다.</p></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 공개 탐색:</strong> 비로그인 공개 검색은 숨김이 아닌 OPEN만 반환하고 개인 목록은 인증을 요구한다.</li><li><strong>AC-02 실제 필터:</strong> categories 복수명과 서버 enum 검증을 사용하고 status/sortType 미적용을 구분한다.</li><li><strong>AC-03 운영과 참여:</strong> 호스트 전 상태 목록과 활성 참여 OPEN/CLOSED 목록의 서로 다른 조건을 설명한다.</li><li><strong>AC-04 회차 집계:</strong> 계획 회차·실제 공개 회차·시작 전 회차를 구분하고 페이지 단위 집계를 사용한다.</li><li><strong>AC-05 가격과 상태:</strong> VARIABLE의 일정별 비용·정원과 FIXED의 과정 참가비, 등록 상태·납부 기한·대기 순번을 구분한다.</li><li><strong>AC-06 탐색 실패:</strong> 20건 페이지, 추가 조회 재시도, 빈 상태와 카드 상세 이동을 현재 앱 연결로 대조한다.</li></ul>
+<p>현재 근거는 서버·앱 소스다. 새 제품 시험이나 화면 검수 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
