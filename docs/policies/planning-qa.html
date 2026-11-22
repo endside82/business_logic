@@ -14,221 +14,56 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>기획 QA 정책</div>
         <h1>기획 QA 정책</h1>
-        <p class="lede">
-          새 화면·새 정책·기존 기능 변경을 검토할 때 사용하는 마지막 점검표.
-          기능이 많을수록 “주 흐름”은 외우기 쉬워도 상태·돈·알림·권한·개인정보·외부 실패를 빠뜨리기 쉽다.
-          그 누락을 막기 위한 10단계 검산이다.
-        </p>
+        <p class="lede">실제 접근 경로와 변경된 조건을 확인하고, 질문에 맞는 근거를 선택합니다. 2026-11-22 문서 기준이며 시나리오 등록 수와 시험 통과 수를 구분합니다.</p>
       </header>
 
-      <section>
-        <h2>전체 점검 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["기능·화면 변경안"] --> B["사용자와 역할 확인"]
-    B --> C["시작 상태와 종료 상태 확인"]
-    C --> D["주요 성공 흐름 확인"]
-    D --> E["예외·빈 상태·실패 확인"]
-    E --> F["돈·알림·위치·리뷰 부수효과 확인"]
-    F --> G["개인정보·안전·운영 리스크 확인"]
-    G --> H["QA 케이스와 로그·추적 포인트 확인"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>1. 사용자와 역할</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>체크</th><th>질문</th></tr></thead>
-            <tbody>
-              <tr><td>주 사용자</td><td>이 기능을 가장 자주 쓰는 사람은 누구인가</td></tr>
-              <tr><td>보조 사용자</td><td>같은 기능의 결과를 받는 사람은 누구인가</td></tr>
-              <tr><td>금지 사용자</td><td>버튼을 보거나 실행하면 안 되는 사람은 누구인가</td></tr>
-              <tr><td>복합 역할</td><td>호스트이면서 참가자, 클럽 관리자이면서 일반 멤버 같은 경우가 있는가</td></tr>
-              <tr><td>비정상 계정</td><td>차단·탈퇴 예약·비활성 계정과 번호 확인 전 가입 요청은 어떻게 되는가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>2. 시작 상태와 종료 상태</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>체크</th><th>질문</th></tr></thead>
-            <tbody>
-              <tr><td>시작 상태</td><td>이 화면에 들어오기 전 반드시 만족해야 하는 조건은 무엇인가</td></tr>
-              <tr><td>성공 종료</td><td>성공 후 어떤 상태·화면·데이터가 바뀌는가</td></tr>
-              <tr><td>실패 종료</td><td>실패 후 사용자가 다시 시도할 수 있는가</td></tr>
-              <tr><td>중간 이탈</td><td>입력 중 뒤로가기·앱 종료·네트워크 끊김 후 재진입은 어떻게 되는가</td></tr>
-              <tr><td>상태 갱신</td><td>다른 기기·다른 사용자의 액션으로 상태가 바뀌면 어떻게 반영하는가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>3. 빈 상태와 에러 상태</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>화면 상태</th><th>반드시 정해야 할 것</th></tr></thead>
-            <tbody>
-              <tr><td>최초 로딩</td><td>스켈레톤·스피너·빈 화면 중 무엇을 쓰는가</td></tr>
-              <tr><td>데이터 없음</td><td>사용자가 다음에 할 수 있는 액션이 있는가</td></tr>
-              <tr><td>일부 실패</td><td>다른 섹션은 보여줄 수 있는가</td></tr>
-              <tr><td>전체 실패</td><td>재시도 버튼이 있는가</td></tr>
-              <tr><td>권한 없음</td><td>로그인 유도·접근 불가·이전 화면 복귀 중 무엇인가</td></tr>
-              <tr><td>만료·삭제</td><td>대상이 사라졌거나 만료되었을 때 문구는 무엇인가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>4. 돈이 움직이는 기능</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>체크</th><th>질문</th></tr></thead>
-            <tbody>
-              <tr><td>잔액 부족</td><td>충전 또는 자동충전 중 무엇으로 보낼 것인가</td></tr>
-              <tr><td>결제수단 없음</td><td>결제수단 등록 화면으로 보낼 것인가</td></tr>
-              <tr><td>결제 성공</td><td>거래내역·잔액·기능 상태가 모두 갱신되는가</td></tr>
-              <tr><td>결제 실패</td><td>결제 대행 실패인지 잔액 부족인지 구분해서 보이는가</td></tr>
-              <tr><td>환불</td><td>환불 조건·시점·금액·원거래 연결이 명확한가</td></tr>
-              <tr><td>중복 결제</td><td>버튼 연타·콜백 중복 시에도 안전한가</td></tr>
-              <tr><td>정산</td><td>호스트 돈·참가자 돈·클럽 기금이 섞이지 않는가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>5. 알림이 나가는 기능</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>체크</th><th>질문</th></tr></thead>
-            <tbody>
-              <tr><td>수신자</td><td>누가 받아야 하는가</td></tr>
-              <tr><td>제외자</td><td>본인에게도 보내는가</td></tr>
-              <tr><td>트리거</td><td>어떤 상태 전이에 알림이 나가는가</td></tr>
-              <tr><td>문구</td><td>다음 행동을 바로 이해할 수 있는가</td></tr>
-              <tr><td>설정 반영</td><td>카테고리 꺼짐·방해금지에 걸리면 어떻게 되는가</td></tr>
-              <tr><td>딥링크</td><td>알림 탭 시 어디로 가는가</td></tr>
-              <tr><td>실패</td><td>푸시 실패해도 앱 내 알림함에는 남는가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>6. 위치와 개인정보</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>체크</th><th>질문</th></tr></thead>
-            <tbody>
-              <tr><td>명시적 동의</td><td>위치·프로필·데이터 내보내기·삭제는 사용자가 명확히 동의했는가</td></tr>
-              <tr><td>중지 동선</td><td>위치 공유·알림·노출·구독을 끄는 경로가 있는가</td></tr>
-              <tr><td>보관 기간</td><td>위치·데이터 추출 파일은 언제까지 보관되는가</td></tr>
-              <tr><td>노출 범위</td><td>타인에게 보이는 정보와 본인에게만 보이는 정보가 구분되는가</td></tr>
-              <tr><td>민감 상태</td><td>차단·신고·신뢰점수·데이팅 인증 상태가 과노출되지 않는가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>7. 리뷰·신고·신뢰점수</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>체크</th><th>질문</th></tr></thead>
-            <tbody>
-              <tr><td>작성 자격</td><td>실제 참석자·구매자·매칭 사용자 등 자격을 확인했는가</td></tr>
-              <tr><td>중복 방지</td><td>같은 대상에 여러 번 리뷰·신고할 수 있는가</td></tr>
-              <tr><td>수정·삭제</td><td>작성자가 바꿀 수 있는 범위와 횟수는 무엇인가</td></tr>
-              <tr><td>운영 접수</td><td>신고 후 사용자가 결과를 어떻게 인지하는가</td></tr>
-              <tr><td>신뢰 영향</td><td>리뷰·노쇼·신고·차단이 점수에 반영되는가</td></tr>
-              <tr><td>공개·비공개</td><td>공개 리뷰와 비공개 취향 평가를 구분했는가</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>8. 외부 시스템 의존</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>외부 시스템</th><th>실패 시 확인할 것</th></tr></thead>
-            <tbody>
-              <tr><td>소셜 로그인 앱 연동 모듈</td><td>사용자 취소·토큰 검증 실패·연동 제공자 오류</td></tr>
-              <tr><td>이메일 발송</td><td>발송 실패·만료 링크·재발송 제한</td></tr>
-              <tr><td>결제 대행</td><td>결제 중 이탈·응답 지연·중복 응답·승인 실패</td></tr>
-              <tr><td>푸시 알림</td><td>OS 권한 거부·토큰 만료·다중 기기</td></tr>
-              <tr><td>지도·지오코딩</td><td>권한 거부·시스템 연동 장애·주소 없음·외부 지도 앱 미설치</td></tr>
-              <tr><td>파일 업로드</td><td>업로드용 임시 주소 실패·업로드 실패·삭제 실패</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>9. 중복·동시성·멀티 디바이스</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>상황</th><th>예시</th><th>검토 포인트</th></tr></thead>
-            <tbody>
-              <tr><td>중복 클릭</td><td>신청 버튼 연타, 결제 연타</td><td>버튼 잠금·중복 처리 차단·실패 복구</td></tr>
-              <tr><td>동시 상태 변경</td><td>정원 마지막 자리, 대기열 승격</td><td>최신 상태 재조회·안내</td></tr>
-              <tr><td>멀티 디바이스</td><td>한 기기 로그아웃, 다른 기기 호출</td><td>토큰·세션 동기화</td></tr>
-              <tr><td>관리자·사용자 동시 액션</td><td>호스트 취소 중 참가자 결제</td><td>우선순위·환불·알림</td></tr>
-              <tr><td>외부 응답 지연</td><td>결제 대행 성공 후 앱 복귀 전 처리 지연</td><td>처리중 화면·재조회</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>10. 도메인별 레드 플래그</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>영역</th><th>레드 플래그</th></tr></thead>
-            <tbody>
-              <tr><td>인증</td><td>마지막 로그인 수단 제거, 가입 번호·확인 표 검증, 토큰 갱신 무한 루프</td></tr>
-              <tr><td>홈·검색</td><td>비로그인과 로그인 결과 차이, 부분 실패, 캐시로 오래된 CTA 노출</td></tr>
-              <tr><td>이벤트</td><td>정원·대기열·승인·결제가 한 버튼에 섞임</td></tr>
-              <tr><td>클럽</td><td>관리자와 소유자 권한 혼동, 차단 시 환불·멤버십 정리 누락</td></tr>
-              <tr><td>결제</td><td>결제 성공과 기능 성공이 분리되는 경우</td></tr>
-              <tr><td>정산</td><td>작성중인데 참가자에게 납부 요청 노출</td></tr>
-              <tr><td>플랜</td><td>작성물·판매상품·구매 보유물이 섞임</td></tr>
-              <tr><td>데이팅</td><td>차단 후 채팅·매칭이 남아 있음</td></tr>
-              <tr><td>캘린더</td><td>반복 일정 일부 삭제 UI가 있으나 서버 정책은 단일 삭제</td></tr>
-              <tr><td>리뷰</td><td>미참석자 리뷰·자기 신고·중복 신고</td></tr>
-              <tr><td>알림</td><td>푸시 권한 없는데 앱 내 알림도 없는 것처럼 보임</td></tr>
-              <tr><td>프로필</td><td>삭제 예약과 즉시 비활성화 문구 혼동</td></tr>
-              <tr><td>위치</td><td>동의 없이 위치 노출, 공유 중지 후 마커 잔존</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>PRD 작성 전 최종 10가지 질문</h2>
-        <div class="callout">
-          <ol>
-            <li>이 기능은 21개 업무 영역 중 어디에 속하는가</li>
-            <li>175개 기능 중 기존 기능의 확장인가, 신규 기능인가</li>
-            <li>주 사용자와 금지 사용자는 누구인가</li>
-            <li>시작 상태와 성공 종료 상태는 무엇인가</li>
-            <li>실패했을 때 사용자는 다음에 무엇을 할 수 있는가</li>
-            <li>돈·알림·위치·캘린더·리뷰·신뢰 중 움직이는 것이 있는가</li>
-            <li>빈 상태와 권한 없음 상태를 정의했는가</li>
-            <li>외부 시스템 실패를 정의했는가</li>
-            <li>중복 클릭과 멀티 디바이스를 정의했는가</li>
-            <li>QA가 바로 테스트할 수 있는 시나리오 이름을 5개 이상 썼는가</li>
-          </ol>
-        </div>
-      </section>
+<!-- derived-from: prd/03_policy_prds/planning_qa_policy.md; sha256: 9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe -->
+<section id="planning-qa-current-1"><h2>검증할 질문과 증거 선택</h2><p>변경한 내용과 아직 해결되지 않은 의문을 먼저 적고, 그 질문을 판정할 수 있는 증거를 고른다. 적용하지 않는 범주는 이유를 적고 제외한다. 모든 기능에 같은 수의 새 시험·이미지·기기 조합을 만들지 않는다. 문서만 고친 경우에는 내용 대조·링크·파생 문서 동기화를 검사하며 제품 실행을 했다고 기록하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>판정할 질문</th><th>사용할 증거</th><th>그 증거만으로 말할 수 없는 것</th></tr></thead><tbody><tr><td>요청 값·역할·상태·중복·복귀</td><td>해당 소스와 실제 조건을 단언하는 시험·로그</td><td>파일 존재만으로 시험 통과, 로컬 통과만으로 운영 통과</td></tr><tr><td>버튼 위치·잘림·대비·이미지 표시</td><td>문제가 있는 대표 화면의 실제 이미지</td><td>화면 한 장으로 요청 성공·정산 완료·알림 도착</td></tr><tr><td>실제 메뉴 입구·업무 결과·복귀</td><td>해당 버전의 앱에서 구체적인 경로를 실행한 결과</td><td>탐색 맵·문서 HTML·목업으로 실제 앱 동작</td></tr><tr><td>메일·푸시·PG·은행·서명 앱</td><td>대상 환경에서 해당 외부 결과를 확인한 기록</td><td>발송 의도·큐 등록·요청 접수만으로 수신·지급 완료</td></tr><tr><td>문서 통계·연결</td><td>현재 입력 파일과 집계 규칙·링크 검사</td><td>시나리오 등록 수·소스 주소 존재로 전체 내용·실행 검증</td></tr></tbody></table></div>
+<p>UI 확인이 필요한 변경은 기본 390×844·글자 1배의 실제 입구 → 정상 업무 → 결과 → 원래 상태 복귀를 따른다. 큰 글자·작은 폭 조합은 기본 범위에 넣지 않고 해당 환경의 보고된 결함 또는 사용자 요청에 따라 선택한다. 이미지 없이 판정할 수 있는 상태·권한·키·횟수는 시험과 로그로 확인한다. 테마·분기별 전수 캡처를 기본 절차로 만들지 않는다.</p>
+<p>버전과 확인 범위가 맞는 기존 근거는 재사용한다. 변경·새 실패·미해결 의문이 없으면 같은 소스·로그·이미지·회귀 실행을 반복하지 않는다. 근거가 바뀌었을 때 해당 판단만 다시 확인한다. <a href="../../prd/FEATURE_PRD_STANDARD.md#수용-기준과-검증-근거">기능 PRD 작성·검수 기준</a>과 저장소의 검수 운영 규칙을 함께 적용한다.</p></section>
+<section id="planning-qa-current-2"><h2>실제 접근 경로와 중복 행동 확인</h2><p>화면 주소만 직접 열어 확인을 끝내지 않는다. 해당 기능으로 이어지는 실제 메뉴·카드·목록·알림·공유 링크와 로그인 후 복귀 경로를 적는다. 같은 행동이 햄버거 메뉴·상단 독립 버튼·더보기 메뉴·하단에 동시에 나타나는지 비교하고, 상태·역할 때문에 입구가 달라지는 경우에는 그 조건을 명시한다.</p>
+<p>입구마다 먼저 확인할 것은 접근 가능 여부·실행 대상·변경 결과·돌아왔을 때 갱신되는 상태다. 공통 동작은 검증한 근거를 재사용하고 차이가 있는 입구만 추가 확인한다. 업무에 필요한 서로 다른 입구와 불필요한 중복 행동은 승인된 제품 기준으로 구분한다. 이 검토표가 기존 입구를 임의로 제거할 권한을 새로 만들지는 않는다.</p></section>
+<section id="planning-qa-current-3"><h2>전체 점검 흐름</h2><p>``<code>mermaid flowchart TD     A[&quot;기능/화면 변경안&quot;] --&gt; B[&quot;사용자와 역할 확인&quot;]     B --&gt; C[&quot;시작 상태와 종료 상태 확인&quot;]     C --&gt; D[&quot;주요 성공 흐름 확인&quot;]     D --&gt; E[&quot;예외/빈 상태/실패 확인&quot;]     E --&gt; F[&quot;돈/알림/위치/리뷰 부수효과 확인&quot;]     F --&gt; G[&quot;개인정보/안전/운영 리스크 확인&quot;]     G --&gt; H[&quot;QA 케이스와 로그/추적 포인트 확인&quot;] </code>``</p></section>
+<section id="planning-qa-current-4"><h2>1. 사용자와 역할</h2><div class="table-wrap"><table><thead><tr><th>체크</th><th>질문</th></tr></thead><tbody><tr><td>주 사용자</td><td>이 기능을 가장 자주 쓰는 사람은 누구인가</td></tr><tr><td>보조 사용자</td><td>같은 기능의 결과를 받는 사람은 누구인가</td></tr><tr><td>금지 사용자</td><td>버튼을 보거나 실행하면 안 되는 사람은 누구인가</td></tr><tr><td>복합 역할</td><td>호스트이면서 참가자, 클럽 관리자이면서 일반 멤버 같은 경우가 있는가</td></tr><tr><td>비정상 계정</td><td>제재·탈퇴 예약·탈퇴 상태와 가입 전 번호 확인은 각각 어떻게 되는가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-5"><h2>2. 시작 상태와 종료 상태</h2><div class="table-wrap"><table><thead><tr><th>체크</th><th>질문</th></tr></thead><tbody><tr><td>시작 상태</td><td>사용자가 이 화면에 들어오기 전에 반드시 만족해야 하는 조건은 무엇인가</td></tr><tr><td>성공 종료</td><td>성공 후 어떤 상태/화면/데이터가 바뀌는가</td></tr><tr><td>실패 종료</td><td>실패 후 사용자가 다시 시도할 수 있는가</td></tr><tr><td>중간 이탈</td><td>입력 중 뒤로가기, 앱 종료, 네트워크 끊김 후 재진입은 어떻게 되는가</td></tr><tr><td>상태 갱신</td><td>다른 기기나 다른 사용자의 액션으로 상태가 바뀌면 어떻게 반영하는가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-6"><h2>3. 빈 상태와 에러 상태</h2><div class="table-wrap"><table><thead><tr><th>화면 상태</th><th>반드시 정해야 할 것</th></tr></thead><tbody><tr><td>최초 로딩</td><td>스켈레톤, 스피너, 빈 화면 중 무엇을 쓰는가</td></tr><tr><td>데이터 없음</td><td>사용자가 다음에 할 수 있는 액션이 있는가</td></tr><tr><td>일부 실패</td><td>다른 섹션은 보여줄 수 있는가</td></tr><tr><td>전체 실패</td><td>재시도 버튼이 있는가</td></tr><tr><td>권한 없음</td><td>로그인 유도, 접근 불가, 이전 화면 복귀 중 무엇인가</td></tr><tr><td>만료/삭제</td><td>대상이 사라졌거나 만료되었을 때 문구는 무엇인가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-7"><h2>4. 돈이 움직이는 기능</h2><div class="table-wrap"><table><thead><tr><th>체크</th><th>질문</th></tr></thead><tbody><tr><td>잔액 부족</td><td>충전으로 보낼 것인가, 자동충전을 시도할 것인가</td></tr><tr><td>결제수단 없음</td><td>결제수단 등록 화면으로 보낼 것인가</td></tr><tr><td>결제 성공</td><td>거래내역, 잔액, 원래 기능 상태가 모두 갱신되는가</td></tr><tr><td>결제 실패</td><td>사용자에게 PG 실패인지 잔액 부족인지 구분해서 보이는가</td></tr><tr><td>환불</td><td>환불 조건, 환불 시점, 환불 금액, 원거래 연결이 명확한가</td></tr><tr><td>중복 결제</td><td>같은 버튼을 여러 번 누르거나 콜백이 중복 도착해도 안전한가</td></tr><tr><td>정산</td><td>호스트 돈과 참가자 돈, 클럽 기금이 섞이지 않는가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-8"><h2>5. 알림이 나가는 기능</h2><div class="table-wrap"><table><thead><tr><th>체크</th><th>질문</th></tr></thead><tbody><tr><td>수신자</td><td>누가 받아야 하는가</td></tr><tr><td>제외자</td><td>본인에게도 보내는가, 보내지 않는가</td></tr><tr><td>트리거</td><td>어떤 상태 전이에 알림이 나가는가</td></tr><tr><td>문구</td><td>사용자가 다음 행동을 바로 이해할 수 있는가</td></tr><tr><td>설정 반영</td><td>카테고리 꺼짐이나 방해금지 시간에 걸리면 어떻게 되는가</td></tr><tr><td>딥링크</td><td>알림을 눌렀을 때 어디로 가는가</td></tr><tr><td>실패</td><td>푸시 실패해도 앱 내 알림함에는 남는가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-9"><h2>6. 위치와 개인정보</h2><div class="table-wrap"><table><thead><tr><th>체크</th><th>질문</th></tr></thead><tbody><tr><td>명시적 동의</td><td>위치, 프로필, 데이터 내보내기, 삭제는 사용자가 명확히 동의했는가</td></tr><tr><td>중지 동선</td><td>위치 공유, 알림, 노출, 구독을 끄는 경로가 있는가</td></tr><tr><td>보관 기간</td><td>위치나 데이터 추출 파일은 언제까지 보관되는가</td></tr><tr><td>노출 범위</td><td>타인에게 보이는 정보와 본인에게만 보이는 정보가 구분되는가</td></tr><tr><td>민감 상태</td><td>차단, 신고, 신뢰점수, 데이팅 인증 상태가 과도하게 노출되지 않는가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-10"><h2>7. 리뷰, 신고, 신뢰점수</h2><div class="table-wrap"><table><thead><tr><th>체크</th><th>질문</th></tr></thead><tbody><tr><td>작성 자격</td><td>실제 참석자, 구매자, 매칭 사용자 등 자격을 확인했는가</td></tr><tr><td>중복 방지</td><td>같은 대상에 여러 번 리뷰/신고할 수 있는가</td></tr><tr><td>수정/삭제</td><td>작성자가 바꿀 수 있는 범위와 횟수는 무엇인가</td></tr><tr><td>운영 접수</td><td>신고 후 사용자가 결과를 어떻게 인지하는가</td></tr><tr><td>신뢰 영향</td><td>리뷰, 노쇼, 신고, 차단이 점수에 반영되는가</td></tr><tr><td>공개/비공개</td><td>공개 리뷰와 비공개 취향 평가를 구분했는가</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-11"><h2>8. 외부 시스템 의존</h2><div class="table-wrap"><table><thead><tr><th>외부 시스템</th><th>실패 시 확인할 것</th></tr></thead><tbody><tr><td>소셜 로그인 앱 연동 모듈</td><td>사용자가 취소, 토큰 검증 실패, 연동 제공자 오류</td></tr><tr><td>이메일 발송</td><td>발송 실패, 번호·확인표 만료, 재발송 제한</td></tr><tr><td>PG/결제</td><td>결제 중 이탈, 콜백 지연, 중복 콜백, 승인 실패</td></tr><tr><td>푸시 알림</td><td>OS 권한 거부, 토큰 만료, 다중 기기</td></tr><tr><td>지도/지오코딩</td><td>권한 거부, 시스템 연동 장애, 주소 없음, 외부 지도 앱 미설치</td></tr><tr><td>파일 업로드</td><td>업로드용 임시 주소 실패, 업로드 실패, 삭제 실패</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-12"><h2>9. 중복, 동시성, 멀티 디바이스</h2><div class="table-wrap"><table><thead><tr><th>상황</th><th>예시</th><th>검토 포인트</th></tr></thead><tbody><tr><td>중복 클릭</td><td>신청 버튼 연타, 결제 버튼 연타</td><td>버튼 잠금, 멱등 처리, 실패 복구</td></tr><tr><td>동시 상태 변경</td><td>정원 마지막 자리, 대기열 승격</td><td>최신 상태 재조회, 안내 문구</td></tr><tr><td>멀티 디바이스</td><td>한 기기에서 로그아웃, 다른 기기에서 호출</td><td>토큰/세션 상태 동기화</td></tr><tr><td>관리자와 사용자 동시 액션</td><td>호스트가 취소하는 중 참가자가 결제</td><td>우선순위, 환불, 알림</td></tr><tr><td>외부 콜백 지연</td><td>PG 성공 후 앱 복귀 전 서버 처리 지연</td><td>pending 화면, 재조회</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-13"><h2>10. 기능별 레드 플래그</h2><div class="table-wrap"><table><thead><tr><th>영역</th><th>레드 플래그</th></tr></thead><tbody><tr><td>인증</td><td>가입 전 번호·확인표 검증, 가입 성공 뒤 세션 설치 실패, 마지막 로그인 수단 제거, 토큰 갱신 반복</td></tr><tr><td>홈/검색</td><td>비로그인과 로그인 결과 차이, 부분 실패, 캐시로 오래된 CTA 노출</td></tr><tr><td>이벤트</td><td>정원/대기열/승인/결제가 한 버튼에 섞이는 경우</td></tr><tr><td>클럽</td><td>관리자와 소유자 권한 혼동, 차단 시 환불/멤버십 정리 누락</td></tr><tr><td>결제</td><td>결제 성공과 기능 성공이 분리되는 경우</td></tr><tr><td>정산</td><td>작성중 상태인데 참가자에게 납부 요청이 보이는 경우</td></tr><tr><td>플랜</td><td>작성물, 판매상품, 구매 보유물이 섞이는 경우</td></tr><tr><td>데이팅</td><td>차단 후 채팅/매칭이 남아 있는 경우</td></tr><tr><td>캘린더</td><td>반복 일정 일부만 삭제하는 UI가 있는데 서버 정책이 단일 삭제인 경우</td></tr><tr><td>리뷰</td><td>미참석자 리뷰, 자기 신고, 중복 신고</td></tr><tr><td>알림</td><td>푸시 권한이 없는데 앱 내 알림도 없는 것처럼 보이는 경우</td></tr><tr><td>프로필</td><td>삭제 예약과 즉시 비활성화 문구 혼동</td></tr><tr><td>위치</td><td>opt-in 없이 위치가 보이거나, opt-out 후 마커가 남는 경우</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-14"><h2>11. PRD 작성 전 최종 질문</h2><p>```text</p>
+<ol><li>이 기능은 현재 21개 업무 영역 중 어디에 속하는가?</li><li>175개 기능 인벤토리 중 기존 기능의 확장인가, 신규 기능인가?</li><li>주 사용자와 금지 사용자는 누구인가?</li><li>시작 상태와 성공 종료 상태는 무엇인가?</li><li>실패했을 때 사용자는 다음에 무엇을 할 수 있는가?</li><li>돈, 알림, 위치, 캘린더, 리뷰/신뢰 중 움직이는 것이 있는가?</li><li>빈 상태와 권한 없음 상태를 정의했는가?</li><li>외부 시스템 실패를 정의했는가?</li><li>중복 클릭과 멀티 디바이스를 정의했는가?</li><li>관련 위험에 대해 시작 조건·조작·관찰 결과와 필요한 근거를 적었는가?</li></ol>
+<p>```</p></section>
+<section id="planning-qa-current-15"><h2>12. Notion 운영 권장 구조</h2><p>``<code>mermaid flowchart TD     A[&quot;서비스 온보딩 홈&quot;] --&gt; B[&quot;전체 서비스 지도&quot;]     A --&gt; C[&quot;175개 기능 인벤토리&quot;]     A --&gt; D[&quot;대표 사용자 여정&quot;]     A --&gt; E[&quot;상태와 정책 가이드&quot;]     C --&gt; F[&quot;업무 영역별 플레이북&quot;]     F --&gt; G[&quot;핵심 기능 카드&quot;]     G --&gt; H[&quot;시나리오/QA 체크&quot;]     E --&gt; H     D --&gt; H </code>``</p>
+<p>175개 기능 PRD를 현재 제품 내용의 정본으로 사용한다. Notion 카드는 정본을 연결한 목적별 요약이며 독립적인 구현 상태나 미완료 총계를 만들지 않는다. 카드가 없다는 이유로 해당 기능 PRD도 없다고 판단하지 않는다.</p></section>
+<section id="planning-qa-current-16"><h2>시나리오 커버리지 기준</h2><p>2026-11-22 집계의 대상은 175개 기능·21개 업무 영역이다. 기능 목록의 시나리오 등록 수 합계는 1,654개이고, 상세 시나리오 문서 117개에서 식별한 제목은 1,276개다. 두 값은 집계 대상이 다르다. 상세 문서가 없는 58개 기능도 기능 PRD의 수용 기준을 가질 수 있으며, 제목 집계에서 0이라고 시험·정의가 없다는 뜻은 아니다.</p>
+<p><a href="../assets/scenario-audit.js">시나리오 집계 자료</a>는 상세 문서의 지정된 제목 패턴만 세고, <a href="../assets/features.js">기능 목록 자료</a>는 기능별 등록 수를 제공한다. 시험 파일 참조·기능 번호 발견·기존 출시 근거 표시는 각각 별도 값이다. 어느 수도 이번 최신화에서 새로 통과한 시험 수나 전체 시나리오 통과율이 아니다. 자동 집계의 근거 연결 단계 역시 모든 수용 기준을 검증했다는 판정으로 확대하지 않는다.</p></section>
+<section id="planning-qa-current-17"><h2>커버리지 원칙</h2><p>다음 8개 범주의 관련성을 검토한다. 해당 기능·변경에 필요한 조건을 골라 시작 상태·조작·관찰 결과를 적고, 적용하지 않는 조건은 이유를 남긴다. 범주 수를 필수 시험 실행 횟수로 바꾸지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>범주</th><th>질문</th><th>예시</th></tr></thead><tbody><tr><td>정상 흐름</td><td>사용자가 기대한 대로 성공하는가</td><td>회원가입 완료, 이벤트 신청 성공, 정산 납부 완료</td></tr><tr><td>진입/복귀</td><td>어디서 들어오고 어디로 돌아가는가</td><td>홈 카드, 알림 딥링크, 백버튼 복귀</td></tr><tr><td>빈 상태</td><td>데이터가 없을 때 자연스러운가</td><td>리뷰 없음, 검색 결과 없음, 등록 기기 없음</td></tr><tr><td>권한/역할</td><td>이 사용자가 이 액션을 할 수 있는가</td><td>비호스트 정산 생성 차단, 타인 리뷰 수정 차단</td></tr><tr><td>상태 불일치</td><td>화면을 보는 사이 상태가 바뀌면?</td><td>정원 마감, 이미 취소된 이벤트, 만료된 토큰</td></tr><tr><td>입력 검증</td><td>값이 부족하거나 잘못되면?</td><td>비밀번호 약함, 금액 범위 초과, 시간 역전</td></tr><tr><td>실패/복구</td><td>네트워크나 외부 시스템이 실패하면?</td><td>PG 실패, SMTP 실패, 지도 시스템 연동 장애</td></tr><tr><td>중복/동시성</td><td>같은 액션을 반복하거나 여러 기기에서 하면?</td><td>중복 신청, 토큰 동시 갱신, 일괄 승인 충돌</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-18"><h2>시나리오 검산 흐름</h2><p>``<code>mermaid flowchart TD     A[&quot;기능 하나 선택&quot;] --&gt; B[&quot;정상 흐름 작성&quot;]     B --&gt; C[&quot;진입점과 복귀 지점 확인&quot;]     C --&gt; D[&quot;빈 상태와 로딩 상태 확인&quot;]     D --&gt; E[&quot;역할/권한별 CTA 확인&quot;]     E --&gt; F[&quot;상태가 바뀐 경우 확인&quot;]     F --&gt; G[&quot;입력 검증 확인&quot;]     G --&gt; H[&quot;외부 실패와 네트워크 실패 확인&quot;]     H --&gt; I[&quot;중복 클릭/멀티 디바이스 확인&quot;]     I --&gt; J[&quot;알림/결제/위치/리뷰 부수효과 확인&quot;] </code>``</p></section>
+<section id="planning-qa-current-19"><h2>단위별 시나리오 수</h2><p>같은 시점의 자료를 아래처럼 구분해 센다. 상세 제목 수가 기능 등록 수와 다르다고 그 차이를 미통과 시험으로 계산하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>업무 영역</th><th>기능 수</th><th>목록 등록 수</th><th>상세 제목 수</th><th>상세 문서가 있는 기능 수</th></tr></thead><tbody><tr><td>인증 &amp; 온보딩</td><td>8</td><td>70</td><td>70</td><td>8</td></tr><tr><td>홈 피드</td><td>5</td><td>48</td><td>48</td><td>5</td></tr><tr><td>이벤트</td><td>20</td><td>172</td><td>172</td><td>12</td></tr><tr><td>클럽</td><td>18</td><td>260</td><td>250</td><td>16</td></tr><tr><td>검색</td><td>5</td><td>50</td><td>50</td><td>5</td></tr><tr><td>결제 &amp; 지갑</td><td>10</td><td>106</td><td>106</td><td>10</td></tr><tr><td>모임 정산</td><td>10</td><td>146</td><td>146</td><td>10</td></tr><tr><td>플랜 마켓</td><td>15</td><td>172</td><td>150</td><td>13</td></tr><tr><td>프라이빗 데이팅</td><td>8</td><td>51</td><td>51</td><td>8</td></tr><tr><td>캘린더</td><td>5</td><td>38</td><td>38</td><td>5</td></tr><tr><td>리뷰 &amp; 신고</td><td>7</td><td>54</td><td>47</td><td>6</td></tr><tr><td>알림</td><td>6</td><td>38</td><td>39</td><td>6</td></tr><tr><td>프로필 &amp; 설정</td><td>7</td><td>72</td><td>72</td><td>7</td></tr><tr><td>위치 &amp; 길찾기</td><td>6</td><td>37</td><td>37</td><td>6</td></tr><tr><td>경고 &amp; 징계</td><td>9</td><td>57</td><td>0</td><td>0</td></tr><tr><td>마일리지</td><td>8</td><td>69</td><td>0</td><td>0</td></tr><tr><td>정기모임</td><td>10</td><td>83</td><td>0</td><td>0</td></tr><tr><td>분쟁 해결</td><td>5</td><td>41</td><td>0</td><td>0</td></tr><tr><td>관심인</td><td>3</td><td>0</td><td>0</td><td>0</td></tr><tr><td>고객지원</td><td>3</td><td>21</td><td>0</td><td>0</td></tr><tr><td>제공자 배정·정산</td><td>7</td><td>69</td><td>0</td><td>0</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-20"><h2>영역별 검토 우선순위</h2><p>아래는 검토 질문의 우선순위이며 모든 기능의 고정 시험 목록이 아니다. 기능 정본의 현재 조건과 변경 범위에서 실제 대상을 고른다.</p>
+<div class="table-wrap"><table><thead><tr><th>영역</th><th>우선 확인할 경계</th></tr></thead><tbody><tr><td>인증·프로필</td><td>가입 전 확인과 계정 생성·세션 설치, 제한 계정, 이전 계정의 늦은 응답</td></tr><tr><td>이벤트·클럽·정기모임</td><td>실제 입구, 현재 역할, 심사·결제 대기·참석, 대상 회차, 취소·소유권 책임</td></tr><tr><td>지갑·정산·마켓·제공자</td><td>유료·무료 금액, 수단별 공개 조건, 동일 요청 재조회, 결과 불명, 반환·미수금·후속 복구</td></tr><tr><td>데이팅·위치·관심인</td><td>명시적 동의와 공개 범위, 양방향 차단, 중지·해제 차이, 좌표·자료의 보존과 파기</td></tr><tr><td>알림·고객지원·신고·분쟁</td><td>대상자와 처리자, 접수·판단·통지 의도·실제 수신, 사건 접근·증거 가시성·보존</td></tr><tr><td>검색·홈·캘린더·리뷰·마일리지</td><td>조회 문맥·부분 실패, 빈 결과, 현재 권한, 집계 갱신, 결과와 원본 기록의 차이</td></tr></tbody></table></div>
+<p>금전 조건은 <a href="payment.html">결제·정산 정책</a>, 민감 자료는 <a href="privacy.html">개인정보·안전 정책</a>, 통지 결과는 <a href="notification.html">알림 정책</a>을 함께 확인한다.</p></section>
+<section id="planning-qa-current-21"><h2>핵심 여정별 빠뜨리기 쉬운 시나리오</h2><h3>가입/인증</h3>
+<div class="table-wrap"><table><thead><tr><th>시나리오</th><th>왜 중요한가</th></tr></thead><tbody><tr><td>가입 전 번호 확인과 가입 뒤 내 정보 조회 실패</td><td>번호 확인·계정 생성·앱 세션 설치가 다른 단계임</td></tr><tr><td>인증번호 재발송 제한·확인표 만료</td><td>번호 발송·번호 확인·가입 제출의 유효성을 각각 안내해야 함</td></tr><tr><td>소셜 가입 후 추가정보 미입력 이탈</td><td>가입은 됐지만 추천 불가능 상태가 될 수 있음</td></tr><tr><td>토큰 만료 중 여러 요청 동시 발생</td><td>사용자가 갑자기 로그아웃되는 것처럼 보일 수 있음</td></tr><tr><td>마지막 로그인 수단 해제 시도</td><td>계정 잠김을 막아야 함</td></tr></tbody></table></div>
+<h3>이벤트/클럽 참여</h3>
+<div class="table-wrap"><table><thead><tr><th>시나리오</th><th>왜 중요한가</th></tr></thead><tbody><tr><td>정원이 찬 직후 신청</td><td>리스트에서는 가능해 보였지만 상세에서는 실패할 수 있음</td></tr><tr><td>대기열 자동 승격</td><td>사용자 행동 없이 상태가 바뀌므로 알림과 CTA 갱신이 필요</td></tr><tr><td>호스트가 자기 이벤트에 신청</td><td>권한상 막아야 하며 메시지가 명확해야 함</td></tr><tr><td>이벤트 취소 후 유료 참가자 환불</td><td>돈과 알림이 동시에 움직임</td></tr><tr><td>유료 승인제 이벤트의 승인 후 결제</td><td>승인, 정원 예약, 결제, 참석 확정이 분리됨</td></tr><tr><td>클럽 멤버 추방/차단</td><td>게시글, 이벤트, 구독, 환불까지 영향 가능</td></tr></tbody></table></div>
+<h3>결제/정산</h3>
+<div class="table-wrap"><table><thead><tr><th>시나리오</th><th>왜 중요한가</th></tr></thead><tbody><tr><td>결제수단 등록 후 PG 콜백 실패</td><td>사용자는 완료했다고 생각할 수 있음</td></tr><tr><td>자동충전 실패 후 원래 결제 실패</td><td>실패 원인을 두 단계로 설명해야 함</td></tr><tr><td>승인제 유료 이벤트에서 미승인 사용자가 결제 시도</td><td>돈을 먼저 받으면 거절/환불 리스크가 생김</td></tr><tr><td>정산 요청 전 항목·분담·종료 시각 확인</td><td>검토만 가능한 상태와 실제 납부 요청 가능 상태를 구분해야 함</td></tr><tr><td>계좌이체 후 호스트 미확인</td><td>참가자는 냈다고 생각하지만 시스템은 미완료일 수 있음</td></tr><tr><td>이의제기 수락/기각</td><td>금액, 상태, 알림, 감사로그가 함께 바뀜</td></tr></tbody></table></div>
+<h3>데이팅/위치/안전</h3>
+<div class="table-wrap"><table><thead><tr><th>시나리오</th><th>왜 중요한가</th></tr></thead><tbody><tr><td>미인증 사용자의 데이팅 진입</td><td>안전 신뢰의 출발점</td></tr><tr><td>상호 좋아요 직후 한쪽이 차단</td><td>매칭/채팅 상태 cascade가 필요</td></tr><tr><td>만남 제안 후 일정/장소 변경</td><td>캘린더와 위치 안내에 영향</td></tr><tr><td>위치 권한 영구 거부</td><td>앱 안 CTA만으로 해결되지 않고 OS 설정이 필요</td></tr><tr><td>위치 공유 자동 만료</td><td>사용자가 계속 보인다고 오해하지 않게 해야 함</td></tr></tbody></table></div>
+<h3>리뷰/신고/신뢰</h3>
+<div class="table-wrap"><table><thead><tr><th>시나리오</th><th>왜 중요한가</th></tr></thead><tbody><tr><td>미참석자의 리뷰 작성</td><td>평판 조작을 막아야 함</td></tr><tr><td>중복 리뷰/중복 신고</td><td>운영 큐와 점수 왜곡 방지</td></tr><tr><td>본인 신고</td><td>악용과 오류를 막아야 함</td></tr><tr><td>리뷰 수정/삭제 후 신뢰점수</td><td>점수가 언제 재계산되는지 명확해야 함</td></tr><tr><td>데이터 부족한 취향 프로필</td><td>빈 차트보다 설명 있는 빈 상태가 필요</td></tr></tbody></table></div></section>
+<section id="planning-qa-current-22"><h2>기능 카드 작성 전 체크</h2><p>```text 기능 ID: 기능명:</p>
+<p>[ ] 정상 성공 흐름이 있다. [ ] 사용자가 들어오는 진입점이 2개 이상이면 모두 적었다. [ ] 빈 상태, 로딩, 전체 실패, 부분 실패를 구분했다. [ ] 비로그인/로그인/소유자/관리자/대상자 권한이 구분됐다. [ ] 상태가 화면 진입 후 바뀌는 경우를 적었다. [ ] 입력값 범위와 필수값을 적었다. [ ] 외부 시스템을 사용하는 경우 실패·결과 불명·결과 조회를 적었다. [ ] 중복 클릭·재시도·다른 기기와의 상태 변경 중 관련 조건을 적었다. [ ] 돈, 알림, 캘린더, 위치, 리뷰/신뢰 영향이 있는지 확인했다. ```</p></section>
+<section id="planning-qa-current-23"><h2>완료 근거 기록</h2><p>결과에는 기능·입구·역할·시작 상태, 확인한 저장소 버전과 변경 범위, 관찰 결과, 사용한 근거의 위치·확인 범위, 남은 제한을 함께 적는다. 기존 시험을 읽은 경우와 새로 실행해 통과한 경우를 구분한다. 문서·소스 대조 완료를 배포·공개·실사용 확인으로 바꾸지 않는다.</p>
+<p>실행 중인 작업은 확인한 프로세스·세션을 이어 확인한다. 단순 응답 대기나 출력 관찰 시간 만료만으로 같은 작업을 다시 시작하지 않는다. 필요한 검사가 통과하면 추가 검증은 새 변경·실패·의문이 있을 때만 수행한다. 현재 작업과 남은 결정은 정본 작업 목록으로 연결한다.</p></section>
     </main>
   </div>
   <script src="../assets/sidebar.js"></script>

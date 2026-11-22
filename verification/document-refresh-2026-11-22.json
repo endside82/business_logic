@@ -425,7 +425,8 @@
         "notification_results_20261122",
         "payment_policy_20261122",
         "payment_supplement_20261122",
-        "privacy_policy_20261122"
+        "privacy_policy_20261122",
+        "planning_qa_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5069,9 +5070,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ff052324b8a5d6f87247a896ee21b0bf6bcee9fdfcf156e529d48b495935369a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_qa_20261122"
+      ],
+      "reviewedSha256": "309281e64ba907aab4bd9c637128c324bc82f40dd112561ea424cd2e17ebcd5c"
     },
     {
       "path": "docs/policies/privacy.html",
@@ -5328,10 +5332,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "16e3622792ef118c289e82263d1237500f758a6149ea54bf8a0154126bb1c7a2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_qa_20261122"
+      ],
+      "reviewedSha256": "a33c345ace33ff452653799a594c7b116a1b7ee2a9504add2929b5e7be12f1e6"
     },
     {
       "path": "planner_onboarding/07_full_feature_inventory.md",
@@ -5448,10 +5454,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "f5a984666a7256e7f7a52ef43501e74a569fcfeba63f286c030d01b107854a88",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_qa_20261122"
+      ],
+      "reviewedSha256": "2a92b44427e9c443c6e4cd3615dc400f9516f1a1f436b96d9fe1730394ccb5e7"
     },
     {
       "path": "planner_onboarding/11_feature_coverage_index.md",
@@ -8389,10 +8397,12 @@
       "kind": "policy_prd",
       "document": true,
       "baselineSha256": "936b0c32b7c8715b496e632dbf952c437fc399657dc5e2b9a43a0a5a1337dba5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "planning_qa_20261122"
+      ],
+      "reviewedSha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
     },
     {
       "path": "prd/03_policy_prds/privacy_safety_policy_prd.md",
@@ -43783,6 +43793,101 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; previously reviewed unchanged canonical contracts and direct source evidence used"
+      },
+      "observedSourceVersions": {
+        "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "planning_qa_20261122": {
+      "kind": "source_review",
+      "scope": "기획 QA 정책·HTML·온보딩 체크리스트·기능 카드 전체 내용 대조. 기존 정책과 동일한 체크리스트 154줄을 재사용하고 다른 13줄을 별도 확인. 작성 기준·검수 운영 규칙·현재 통계 산식·가입/이벤트신청/정산요청 정본에 맞춤. 제품 시험은 수행하지 않음.",
+      "sources": [
+        {
+          "path": "AGENTS.md",
+          "sha256": "ecdd689b0d4fc36919bdd81539a8e8e43cb788c70811e569af12fa9e3f63a6ab",
+          "reviewScope": "UI 검수 운영 교정: 실제 입구·업무·복귀, 390×844 1배, 시각 질문만 이미지, 유효 근거 재사용"
+        },
+        {
+          "path": "business_logic/verification/build_scenario_audit_data.mjs",
+          "sha256": "44107f13e27a4028c059ff48bcef4693dd9c7ddf08db8c09de20916a7d998801",
+          "reviewScope": "1–60 입력 자료;71–75 상세 시나리오 제목 산식;135–180 단위 문서·직접 시험 참조·근거 연결 단계;220–270 통계 합산과 설명"
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "notification_results_20261122",
+        "payment_supplement_20261122",
+        "prd/FEATURE_PRD_STANDARD.md",
+        "privacy_policy_20261122",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md",
+        "settlement_activate_cancel_20261122",
+        "signup_social_onboarding_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/planning_qa_policy.md",
+          "sha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
+        },
+        {
+          "path": "business_logic/prd/FEATURE_PRD_STANDARD.md",
+          "sha256": "bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
+          "sha256": "022dc2cd156203ddde9a89501d9ceb224c0470edb22c45d13f826359a2d77b4e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
+          "sha256": "ad4a9f42105069708dfe08819f2f3598693c6e0f5769b0caee835401e5dc831f"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/docs/assets/features.js",
+          "sha256": "4fbe05c0505a5b29169f57b6ee9da4578b2c9ab2d44ae758b3c69afae4a753e9"
+        },
+        {
+          "path": "business_logic/docs/assets/scenario-audit.js",
+          "sha256": "eab45121eac2282e320a372f9548617c7d0459804b848492821056589f643690"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/policies/planning-qa.html": [
+          "sidebar"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "실제 접근 경로와 메뉴 중복 비교 명시",
+        "큰 글자·전수 이미지·고정 시험 개수 의무화 제거",
+        "목록 등록 수 1654와 상세 제목 1276을 구분",
+        "가입 전 번호 확인과 가입 뒤 세션 설치 분리",
+        "유료 신청의 별도 결제와 정산 요청의 즉시 완료·반환 차이를 카드 예시에 반영"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "12 source/canonical digests; 1 retained HTML IDs",
+        "derivedDocuments": "4 documents; shared batch verified 4 paths, 27 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; documentation guidance, current counting implementation, and verified unchanged canonical contracts reviewed"
       },
       "observedSourceVersions": {
         "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
