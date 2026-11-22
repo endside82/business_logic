@@ -474,7 +474,8 @@
         "release_sharing_current_20261122",
         "scenario_current_20261122",
         "tour_current_20261122",
-        "audit_checklist_current_20261122"
+        "audit_checklist_current_20261122",
+        "screen_review_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5318,9 +5319,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "3bc71c816f66101539c9ff63b635980ab707f628329782dd220cda262a52eb92",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "screen_review_current_20261122"
+      ],
+      "reviewedSha256": "3b5b7620711ad1215572746371f2772f681a7b50b7f1db3c6b6627e4ccfbe11a"
     },
     {
       "path": "docs/qa/sharing-plan.html",
@@ -53027,6 +53031,114 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; document/canonical/links only"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "6020346db80c426e9bf62c63a9c380441ed46781"
+      }
+    },
+    "screen_review_current_20261122": {
+      "kind": "source_review",
+      "scope": "화면 검수 HTML 전체 본문 읽기. 당시 9월 실행 기록/이미지/합성 시험 자료와 현재 정본·판정 기준 분리. 표·figure·이미지 링크 원문 보존 자동 대조; 이미지 열람·제품 재실행 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "audit_checklist_current_20261122",
+        "auth_domain_rollup_20261122",
+        "bus_allocation_20261122",
+        "carpool_20261122",
+        "exceptions_current_20261122",
+        "layout_catalog_20261122",
+        "release_sharing_current_20261122",
+        "settlement_domain_rollup_20261122",
+        "tour_current_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/_audit_checklist.md",
+          "sha256": "b3b01ed671158ee6d89df03d9d430d7ca0fd621abd63f111aa96d6306b5e7132"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/09_exceptions_edge_cases.md",
+          "sha256": "274b38165749415229f5e6d9e2f8ee6b56d5a1b5d8c1d73d5cdfe6add71218de"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/01_인증_and_온보딩_prd.md",
+          "sha256": "43ecf5b20a50b6e1c38f1f4d67b49c04d4294a85cbb6940b8760edf15ba08e99"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
+          "sha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
+          "sha256": "d42329b306b225e07f6abf3cb9b4aa4fd50a8ce6b0ba0c8da3043d2c42c9c176"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
+          "sha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
+          "sha256": "67b8ed73dd6bc845e8d7a05284343b1bd54b33e971cd93640c44bbad4f530f71"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/screen-review.html": [
+          "sidebar",
+          "auth-capture-current",
+          "tour-summary",
+          "coverage",
+          "tour-coverage",
+          "settlement-review",
+          "settlement-visual-followup",
+          "transport-followup-review",
+          "transport-real-review",
+          "transport-layout-real-review",
+          "transport-admin-real-review",
+          "findings",
+          "tour-findings",
+          "captures",
+          "tour-content"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "과거 미해결·미병합·후속 실행 계획을 현재 할 일로 이월하지 않음",
+        "인증·메뉴·정산·이동의 현재 정본 연결",
+        "전체 촬영·큰 글자·다기기·반복 시나리오의 일괄 요구 제거"
+      ],
+      "retainedHistoricalQuotes": [],
+      "historicalMarkupPreservation": {
+        "baselineCommit": "8a8d8d386ca15fc381b33fbcc17999c1ac17e0f3",
+        "blocks": {
+          "table": {
+            "count": 2,
+            "sha256": "cfe9f49c3af74aacc3b355e0555dfdf930822627b56e05c4fc30be6acc9d2ebf"
+          },
+          "figure": {
+            "count": 8,
+            "sha256": "14487f624f1e5bb5d48d858e2d91a825f0b7993c1dbdccc076a78878fb8e4dc3"
+          }
+        },
+        "imageLinksPreserved": 25
+      },
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "9 source/canonical digests; 15 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 1 paths, 51 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; static history identity, registry/VM rendering and links only; no images viewed"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
