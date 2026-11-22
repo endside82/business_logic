@@ -327,7 +327,8 @@
         "curated_refund_20261122",
         "curated_charge_20261122",
         "curated_settlement_20261122",
-        "curated_assignment_20261122"
+        "curated_assignment_20261122",
+        "feature_inventory_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -354,9 +355,12 @@
       "kind": "site_asset_or_data",
       "document": false,
       "baselineSha256": "32f8eb60315ebf575525c138ea83e6fd05aab6a401613a9b048881d49b47b484",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feature_inventory_20261122"
+      ],
+      "reviewedSha256": "780d161d33255426ab00e4b3bfd814575dfc966283d130bffc02520529045ebb"
     },
     {
       "path": "docs/assets/release-readability.css",
@@ -431,7 +435,8 @@
         "state_policy_20261122",
         "state_guides_20261122",
         "permission_guides_20261122",
-        "qa_acceptance_20261122"
+        "qa_acceptance_20261122",
+        "feature_inventory_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4870,9 +4875,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "bb86d8569eae83db08390efae96df1a9ef091e5b0cf93a705b1c3254c1a5b11e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feature_inventory_20261122"
+      ],
+      "reviewedSha256": "ce9642c1c564f209575be27af76a439deede99fd331045f435f58791bc6bffad"
     },
     {
       "path": "docs/features/club-poll.html",
@@ -5361,86 +5369,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "04764914a346d5e2e5541c2db1d216b0be90f0902cfe41c300b05bf47cba0cf7",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "email_code_auth_20261122",
-        "session_and_social_unlink_20261122",
-        "preference_tags_20261122",
-        "signup_social_onboarding_20261122",
-        "event_discovery_20261122",
-        "event_creation_20261122",
-        "event_lifecycle_20261122",
-        "event_prepayment_20261122",
-        "event_domain_rollup_20261122",
-        "club_discovery_20261122",
-        "club_detail_20261122",
-        "club_lifecycle_20261122",
-        "club_members_20261122",
-        "club_invitation_20261122",
-        "club_stats_20261122",
-        "club_announcements_20261122",
-        "club_comments_20261122",
-        "club_posts_20261122",
-        "club_calendar_20261122",
-        "club_album_20261122",
-        "club_finance_20261122",
-        "club_subscription_20261122",
-        "settlement_create_20261122",
-        "settlement_items_20261122",
-        "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122",
-        "settlement_pay_20261122",
-        "settlement_confirm_20261122",
-        "settlement_remind_20261122",
-        "settlement_appeal_20261122",
-        "settlement_prepayment_20261122",
-        "settlement_account_20261122",
-        "plan_list_20261122",
-        "plan_detail_20261122",
-        "plan_reorder_20261122",
-        "plan_publish_20261122",
-        "market_management_20261122",
-        "creator_stats_20261122",
-        "market_browse_20261122",
-        "market_search_20261122",
-        "market_detail_20261122",
-        "market_purchase_20261122",
-        "creator_earning_20261122",
-        "my_collection_20261122",
-        "plan_event_review_20261122",
-        "block_editor_20261122",
-        "purchase_refund_20261122",
-        "calendar_features_20261122",
-        "review_core_20261122",
-        "feedback_taste_20261122",
-        "trust_score_20261122",
-        "report_intake_20261122",
-        "location_features_20261122",
-        "warning_intake_20261122",
-        "warning_operations_20261122",
-        "date_identity_profile_20261122",
-        "date_matching_block_20261122",
-        "date_chat_meeting_20261122",
-        "mileage_queries_20261122",
-        "mileage_policy_season_20261122",
-        "mileage_commands_20261122",
-        "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122",
-        "dispute_intake_20261122",
-        "dispute_query_20261122",
-        "dispute_evidence_20261122",
-        "support_20261122",
-        "curated_bulk_20261122",
-        "curated_deposit_20261122",
-        "curated_subsidy_20261122",
-        "curated_refund_20261122",
-        "curated_charge_20261122",
-        "curated_settlement_20261122",
-        "curated_assignment_20261122"
+        "feature_inventory_20261122"
       ],
-      "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "reviewedSha256": "e46c46ee12b89dba2250e6e77c4d76b44e9db7d766993cade5f8aa8126692f7b"
     },
     {
       "path": "planner_onboarding/08_scenario_coverage_matrix.md",
@@ -5487,88 +5421,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "414496769b12cd72449e1f2139b542a751ab0ae4cf0d3f6722accdd512df2782",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "data_export_20261122",
-        "event_detail_complete_20261122",
-        "email_code_auth_20261122",
-        "session_and_social_unlink_20261122",
-        "preference_tags_20261122",
-        "signup_social_onboarding_20261122",
-        "event_discovery_20261122",
-        "event_creation_20261122",
-        "event_lifecycle_20261122",
-        "event_prepayment_20261122",
-        "event_domain_rollup_20261122",
-        "club_discovery_20261122",
-        "club_detail_20261122",
-        "club_lifecycle_20261122",
-        "club_members_20261122",
-        "club_invitation_20261122",
-        "club_stats_20261122",
-        "club_announcements_20261122",
-        "club_comments_20261122",
-        "club_posts_20261122",
-        "club_calendar_20261122",
-        "club_album_20261122",
-        "club_finance_20261122",
-        "club_subscription_20261122",
-        "settlement_create_20261122",
-        "settlement_items_20261122",
-        "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122",
-        "settlement_pay_20261122",
-        "settlement_confirm_20261122",
-        "settlement_remind_20261122",
-        "settlement_appeal_20261122",
-        "settlement_prepayment_20261122",
-        "settlement_account_20261122",
-        "plan_list_20261122",
-        "plan_detail_20261122",
-        "plan_reorder_20261122",
-        "plan_publish_20261122",
-        "market_management_20261122",
-        "creator_stats_20261122",
-        "market_browse_20261122",
-        "market_search_20261122",
-        "market_detail_20261122",
-        "market_purchase_20261122",
-        "creator_earning_20261122",
-        "my_collection_20261122",
-        "plan_event_review_20261122",
-        "block_editor_20261122",
-        "purchase_refund_20261122",
-        "calendar_features_20261122",
-        "review_core_20261122",
-        "feedback_taste_20261122",
-        "trust_score_20261122",
-        "report_intake_20261122",
-        "location_features_20261122",
-        "warning_intake_20261122",
-        "warning_operations_20261122",
-        "date_identity_profile_20261122",
-        "date_matching_block_20261122",
-        "date_chat_meeting_20261122",
-        "mileage_queries_20261122",
-        "mileage_policy_season_20261122",
-        "mileage_commands_20261122",
-        "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122",
-        "dispute_intake_20261122",
-        "dispute_query_20261122",
-        "dispute_evidence_20261122",
-        "support_20261122",
-        "curated_bulk_20261122",
-        "curated_deposit_20261122",
-        "curated_subsidy_20261122",
-        "curated_refund_20261122",
-        "curated_charge_20261122",
-        "curated_settlement_20261122",
-        "curated_assignment_20261122"
+        "feature_inventory_20261122"
       ],
-      "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
+      "reviewedSha256": "7e3119780ae867b4581318658c8b28d8847682929953f036a30d97ceacb3758a"
     },
     {
       "path": "planner_onboarding/README.md",
@@ -5631,90 +5489,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "21ab8b527d297141ff6b738cc7494f012348a14bb35eb710aa8f6073bda9d2e1",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "demographics_20261122",
-        "transport_policy_20261122",
-        "carpool_20261122",
-        "bus_allocation_20261122",
-        "layout_catalog_20261122",
-        "reschedule_20261122",
-        "no_show_20261122",
-        "event_discovery_20261122",
-        "event_creation_20261122",
-        "event_lifecycle_20261122",
-        "event_prepayment_20261122",
-        "event_domain_rollup_20261122",
-        "club_discovery_20261122",
-        "club_detail_20261122",
-        "club_lifecycle_20261122",
-        "club_members_20261122",
-        "club_invitation_20261122",
-        "club_stats_20261122",
-        "club_announcements_20261122",
-        "club_comments_20261122",
-        "club_posts_20261122",
-        "club_calendar_20261122",
-        "club_album_20261122",
-        "club_finance_20261122",
-        "club_reputation_20261122",
-        "club_subscription_20261122",
-        "settlement_create_20261122",
-        "settlement_items_20261122",
-        "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122",
-        "settlement_pay_20261122",
-        "settlement_confirm_20261122",
-        "settlement_remind_20261122",
-        "settlement_appeal_20261122",
-        "settlement_prepayment_20261122",
-        "settlement_account_20261122",
-        "plan_list_20261122",
-        "plan_detail_20261122",
-        "plan_reorder_20261122",
-        "plan_publish_20261122",
-        "market_management_20261122",
-        "creator_stats_20261122",
-        "market_browse_20261122",
-        "market_search_20261122",
-        "market_detail_20261122",
-        "market_purchase_20261122",
-        "creator_earning_20261122",
-        "my_collection_20261122",
-        "plan_event_review_20261122",
-        "block_editor_20261122",
-        "purchase_refund_20261122",
-        "calendar_features_20261122",
-        "review_core_20261122",
-        "feedback_taste_20261122",
-        "trust_score_20261122",
-        "report_intake_20261122",
-        "location_features_20261122",
-        "warning_intake_20261122",
-        "warning_operations_20261122",
-        "date_identity_profile_20261122",
-        "date_matching_block_20261122",
-        "date_chat_meeting_20261122",
-        "mileage_queries_20261122",
-        "mileage_policy_season_20261122",
-        "mileage_commands_20261122",
-        "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122",
-        "dispute_intake_20261122",
-        "dispute_query_20261122",
-        "dispute_evidence_20261122",
-        "support_20261122",
-        "curated_bulk_20261122",
-        "curated_deposit_20261122",
-        "curated_subsidy_20261122",
-        "curated_refund_20261122",
-        "curated_charge_20261122",
-        "curated_settlement_20261122",
-        "curated_assignment_20261122"
+        "feature_inventory_20261122"
       ],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "reviewedSha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
     },
     {
       "path": "prd/00_prd_items/06_user_journeys.md",
@@ -8663,88 +8443,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "cd9cfc2647345f1ed13431f12e589c6f9e0a3391fba109868372e1a769443616",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "transport_policy_20261122",
-        "carpool_20261122",
-        "bus_allocation_20261122",
-        "layout_catalog_20261122",
-        "reschedule_20261122",
-        "no_show_20261122",
-        "event_discovery_20261122",
-        "event_creation_20261122",
-        "event_lifecycle_20261122",
-        "event_prepayment_20261122",
-        "club_discovery_20261122",
-        "club_detail_20261122",
-        "club_lifecycle_20261122",
-        "club_members_20261122",
-        "club_invitation_20261122",
-        "club_stats_20261122",
-        "club_announcements_20261122",
-        "club_comments_20261122",
-        "club_posts_20261122",
-        "club_calendar_20261122",
-        "club_album_20261122",
-        "club_finance_20261122",
-        "club_reputation_20261122",
-        "club_subscription_20261122",
-        "settlement_create_20261122",
-        "settlement_items_20261122",
-        "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122",
-        "settlement_pay_20261122",
-        "settlement_confirm_20261122",
-        "settlement_remind_20261122",
-        "settlement_appeal_20261122",
-        "settlement_prepayment_20261122",
-        "settlement_account_20261122",
-        "plan_list_20261122",
-        "plan_detail_20261122",
-        "plan_reorder_20261122",
-        "plan_publish_20261122",
-        "market_management_20261122",
-        "creator_stats_20261122",
-        "market_browse_20261122",
-        "market_search_20261122",
-        "market_detail_20261122",
-        "market_purchase_20261122",
-        "creator_earning_20261122",
-        "my_collection_20261122",
-        "plan_event_review_20261122",
-        "block_editor_20261122",
-        "purchase_refund_20261122",
-        "calendar_features_20261122",
-        "review_core_20261122",
-        "feedback_taste_20261122",
-        "trust_score_20261122",
-        "report_intake_20261122",
-        "location_features_20261122",
-        "warning_intake_20261122",
-        "warning_operations_20261122",
-        "date_identity_profile_20261122",
-        "date_matching_block_20261122",
-        "date_chat_meeting_20261122",
-        "mileage_queries_20261122",
-        "mileage_policy_season_20261122",
-        "mileage_commands_20261122",
-        "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122",
-        "dispute_intake_20261122",
-        "dispute_query_20261122",
-        "dispute_evidence_20261122",
-        "support_20261122",
-        "curated_bulk_20261122",
-        "curated_deposit_20261122",
-        "curated_subsidy_20261122",
-        "curated_refund_20261122",
-        "curated_charge_20261122",
-        "curated_settlement_20261122",
-        "curated_assignment_20261122"
+        "feature_inventory_20261122"
       ],
-      "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
+      "reviewedSha256": "2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb"
     },
     {
       "path": "prd/README.md",
@@ -43894,7 +43598,8 @@
         },
         {
           "path": "business_logic/docs/assets/features.js",
-          "sha256": "4fbe05c0505a5b29169f57b6ee9da4578b2c9ab2d44ae758b3c69afae4a753e9"
+          "sha256": "41fe24e362872a2903a9171a0d1c17a3d0bf14968f6a66d85d5fdaf596b508b9",
+          "reviewScope": " F08-14에 실재하지 않는 도식 등록값 1→0 정정; 기존 ID·확인항목·units 집계는 불변."
         },
         {
           "path": "business_logic/docs/assets/scenario-audit.js",
@@ -44884,8 +44589,8 @@
         },
         {
           "path": "business_logic/docs/assets/features.js",
-          "sha256": "4fbe05c0505a5b29169f57b6ee9da4578b2c9ab2d44ae758b3c69afae4a753e9",
-          "reviewScope": "집계 입력:175 ID·현재정본경로·21도메인·등록 확인 항목1654. 다른 메타데이터 열의 전수 내용 검증 아님."
+          "sha256": "41fe24e362872a2903a9171a0d1c17a3d0bf14968f6a66d85d5fdaf596b508b9",
+          "reviewScope": "집계 입력:175 ID·현재정본경로·21도메인·등록 확인 항목1654. 다른 메타데이터 열의 전수 내용 검증 아님. F08-14에 실재하지 않는 도식 등록값 1→0 정정; 기존 ID·확인항목·units 집계는 불변."
         },
         {
           "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
@@ -46582,6 +46287,1883 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; current policy and feature/unit hashes reused; full 175-row inventory and 21-domain counts recomputed"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "feature_inventory_20261122": {
+      "kind": "source_review",
+      "scope": "목록 문서4개 및 PRD현황의 현재 안내/구조를 읽고 기존 행 수·ID를 전체 비교. 175기능 정본·234unit 현재SHA 재사용. 과거 PRD현황의 날짜별 코드조사/백로그는 원문 보존하며 당시 구현을 재검증한 것으로 세지 않음. 카탈로그 전체 HTML/inlineJS 읽기; 메타데이터 ID/경로/도메인/이름/사용자/확인초점/등록값을 재사용; 영향태그 전수 재평가는 별도.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "account_closure_20261122",
+        "app_label_layout_source_advance_20261122",
+        "block_editor_20261122",
+        "bus_allocation_20261122",
+        "calendar_features_20261122",
+        "carpool_20261122",
+        "charge_methods_autocharge_20261122",
+        "club_album_20261122",
+        "club_announcements_20261122",
+        "club_calendar_20261122",
+        "club_comments_20261122",
+        "club_detail_20261122",
+        "club_discovery_20261122",
+        "club_finance_20261122",
+        "club_invitation_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "club_posts_20261122",
+        "club_reputation_20261122",
+        "club_stats_20261122",
+        "club_subscription_20261122",
+        "creator_earning_20261122",
+        "creator_stats_20261122",
+        "curated_assignment_20261122",
+        "curated_bulk_20261122",
+        "curated_charge_20261122",
+        "curated_deposit_20261122",
+        "curated_refund_20261122",
+        "curated_settlement_20261122",
+        "curated_subsidy_20261122",
+        "data_export_20261122",
+        "date_chat_meeting_20261122",
+        "date_identity_profile_20261122",
+        "date_matching_block_20261122",
+        "demographics_20261122",
+        "dispute_evidence_20261122",
+        "dispute_intake_20261122",
+        "dispute_query_20261122",
+        "email_code_auth_20261122",
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_checkin_20261122",
+        "event_creation_20261122",
+        "event_detail_complete_20261122",
+        "event_discovery_20261122",
+        "event_domain_rollup_20261122",
+        "event_lifecycle_20261122",
+        "event_payment_cancel_refund_20261122",
+        "event_photos_20261122",
+        "event_plan_link_20261122",
+        "event_prepayment_20261122",
+        "favorite_management_calendar_20261122",
+        "feedback_taste_20261122",
+        "home_feed_core_20261122",
+        "home_search_notification_entry_20261122",
+        "host_settlement_appeal_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "layout_catalog_20261122",
+        "location_features_20261122",
+        "market_browse_20261122",
+        "market_detail_20261122",
+        "market_management_20261122",
+        "market_purchase_20261122",
+        "market_search_20261122",
+        "mileage_commands_20261122",
+        "mileage_policy_season_20261122",
+        "mileage_queries_20261122",
+        "my_collection_20261122",
+        "no_show_20261122",
+        "notification_domain_20261122",
+        "notification_results_20261122",
+        "payment_supplement_20261122",
+        "people_block_source_advance_20261122",
+        "permission_policy_20261122",
+        "plan_detail_20261122",
+        "plan_event_review_20261122",
+        "plan_list_20261122",
+        "plan_publish_20261122",
+        "plan_reorder_20261122",
+        "planning_qa_20261122",
+        "preference_tags_20261122",
+        "privacy_policy_20261122",
+        "privacy_visibility_20261122",
+        "profile_hub_edit_addresses_20261122",
+        "profile_preference_tags_20261122",
+        "purchase_refund_20261122",
+        "qa_acceptance_20261122",
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122",
+        "regular_meeting_reads_20261122",
+        "report_intake_20261122",
+        "reschedule_20261122",
+        "review_core_20261122",
+        "search_workflows_20261122",
+        "session_and_social_unlink_20261122",
+        "settlement_account_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_appeal_20261122",
+        "settlement_confirm_20261122",
+        "settlement_create_20261122",
+        "settlement_items_20261122",
+        "settlement_pay_20261122",
+        "settlement_prepayment_20261122",
+        "settlement_remind_20261122",
+        "settlement_status_summary_20261122",
+        "signup_social_onboarding_20261122",
+        "state_policy_20261122",
+        "support_20261122",
+        "transport_policy_20261122",
+        "trust_score_20261122",
+        "wallet_history_earnings_20261122",
+        "warning_intake_20261122",
+        "warning_operations_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
+        },
+        {
+          "path": "business_logic/prd/PRD_MIGRATION_STATUS.md",
+          "sha256": "2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
+          "sha256": "022dc2cd156203ddde9a89501d9ceb224c0470edb22c45d13f826359a2d77b4e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-02_social-login_prd.md",
+          "sha256": "b053a7ef1ce30c821389a1e7ecd8a5b85b6af8eaa8f5e988006a5426f092eda3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-03_email-verification_prd.md",
+          "sha256": "a01d776c4d3cb588c033ea3d2e20243bec7bb62ccba8b1e8866fe49be5d45cb9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-04_password-reset_prd.md",
+          "sha256": "622f5304ecd2f4c1bcac2578d50bcd301149f6df2bf2bce4d6c943d1bca76606"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-05_token-refresh-logout_prd.md",
+          "sha256": "f6c7a319403ff2b5d3186a1a464e468133b6e7b0f714cb6196ba0051d3a3f832"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-06_onboarding_prd.md",
+          "sha256": "6efae24304e9e95c12b0674b3e00021e7496cff51e05b561cfc74ce6ee92eeaa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-07_preference-tags_prd.md",
+          "sha256": "e71ef9fdd9f985c6b1ca3d1624cdd05c8c384eb8d19cc75ca9209a297b9863aa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/01_auth_onboarding/F01-08_social-unlink_prd.md",
+          "sha256": "4783a96eca43a387b31bba9834f034720c852664ed0ff4a616501909e115ebba"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-01_home-feed-main_prd.md",
+          "sha256": "c963f371cf9a7e18fb76ae2107d2fa501bb42b6467131926a405e8f14d605370"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-02_home-feed-refresh_prd.md",
+          "sha256": "bbd459650b18a8a0dfc943ac5b93688179bb42f463456604cf92bfc151d2fc7a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md",
+          "sha256": "f69096cf78b713e25acba928e13aab50f61f9ce268237a65633e27ee9e849c5a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md",
+          "sha256": "8dbf6d3a5b6e6c8c8f4b5304f0ef26c3dd88c198299dc1781a3ebcba5679d7b7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md",
+          "sha256": "0aa967b4b7126f20bb6b7ea6ccd3d01fc7ce94edc6d2fea72a36eba779c78bd8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
+          "sha256": "09b055b19b9d7f0db14535b032dc8e18c9ac87cd53afed9848f56b555a128b47"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
+          "sha256": "1d6ab9ac555188045fb69f313258bb664b0bbf5da0f42e1b55267a8fd04f50a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
+          "sha256": "db82859cb0cfccfd5a9a983614559edd5733424fdb62cc4d0919664d3581590a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
+          "sha256": "db71640ec99214f345562c0b3a4669c700f9a57312e27b8a22f5f7bfee459a49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-06_application-review_prd.md",
+          "sha256": "7298cd7164059cd04b9d206553cdbea296fd2078f14c8cd1d7b226077ae1ea49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-08_qr-checkin_prd.md",
+          "sha256": "c2487e00ea1e1d05e63a93c190ea0b795becc60ea9af7370d80a1d2271a91a1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-09_event-photos_prd.md",
+          "sha256": "9382ac752350441a40a1ec02372ba1038d0e3dee850d34c4e2049bf1602ff2c5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-10_event-plan-link_prd.md",
+          "sha256": "8705fb93ac20072c0b58897d194ace681fe8ba94db2cfbe5f1327cd689f8d123"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-11_wishlist_prd.md",
+          "sha256": "be3f4a15722488f755ac41feefd9e409b29558772a4b29ea29c7fc522fffd88d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-12_my-events_prd.md",
+          "sha256": "1dcea9c3094c0a44429a57ee6afc18ec4ba4d359b4718eb62ed01ff6b799404f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
+          "sha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
+          "sha256": "d42329b306b225e07f6abf3cb9b4aa4fd50a8ce6b0ba0c8da3043d2c42c9c176"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
+          "sha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-17_vehicle-layout-catalog_prd.md",
+          "sha256": "67b8ed73dd6bc845e8d7a05284343b1bd54b33e971cd93640c44bbad4f530f71"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-18_event-demographics_prd.md",
+          "sha256": "ed166e464eb55e12210cdb30e6d74ac2410e4a854f648920cd1c0290b17621a3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
+          "sha256": "9b8afb186e1ec189d2a1b96a37e2d390c76a1f74fcce2f8b9da8a27cea63e8a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
+          "sha256": "4da44066b2bea91a5c87daf303c4a4cf045bd7bd8b1afa1213515c767c849e58"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-01_club-discovery_prd.md",
+          "sha256": "4e272ace9c4af9056ae2647881f96c877811bf433b3464bcf01eac6ff92652c6"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-02_club-detail-join_prd.md",
+          "sha256": "dea83a2c16ba7a33351d9057541d48c1bae6a62953e270b7c35e8a4f9eff5999"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md",
+          "sha256": "7e0618c35aa5fa83d6bceed5f5d91dc439081689ac7a50eb7f0ce36242bb77d9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
+          "sha256": "54c40c5beb03c524ed41462b839918b3a04b97686958db26e800f800d270777b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
+          "sha256": "b6cbfcc196e0749c622c4458d6cd748ee30d3089fb070c9fe4028c9c2ab0e116"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
+          "sha256": "8f6c6df55f2ff2309e142e61587ba607e57c3e97717512ff012fd9ef1d019dd2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md",
+          "sha256": "0e629cace459596ad2c564c9ed2346995c4cf01cdd6ba6d8489d4eb0a9b607b5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
+          "sha256": "ac77c14eda2ccd1c6a3bc9fee968f3ee5fca4c5cd7a87934838706cbf818a7f7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
+          "sha256": "0a2a97f5074af808d753209af5235ca5ff79362fc076aa46990a0e2b687ffae5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-10_announcements_prd.md",
+          "sha256": "cdd08cc1460f4eceecc4bc271d3fa18ac9c28d3120dbc3c9461de11f106f23ee"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-11_photo-album_prd.md",
+          "sha256": "7a03b64fd05d672f223caafb86768efb53399463390d58795df219c42ad6ee78"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
+          "sha256": "b3d97463e60f92b39332613dc875f00f1a00da13ba2e69e809d19486e9e09ebd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
+          "sha256": "d5474c1a3155bcd8177bfa05f34af73d6e144fb1f1a8fc7903bbf7984acf790d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
+          "sha256": "fbe3bb0283be6b292fef33a1b0ca6939469e97f5c8068752aeb4b79759c4d7e1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
+          "sha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
+          "sha256": "13df3f48604dc72c8c291588191ed4de896d595aa097f546a0ff2dfe6dc1d066"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
+          "sha256": "07a949b94883a4bc0115d35e74300f98aebe053351053f94526a7603e4521832"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
+          "sha256": "2299cbc6d3e2cbf93e6d19ae2ddc040ef0e8c7509245175fac31eeb05b25f7e5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/05_search/F05-02_autocomplete-suggest_prd.md",
+          "sha256": "3d1919ec9dc55c3baeda2b6f0392aef6876476cbd2d92b815316e90a23c2a347"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/05_search/F05-03_search-filter_prd.md",
+          "sha256": "b87feec137b6417a641291cea6b7e3a7815e96202890e5c2e99aa31b86e86eb2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/05_search/F05-04_search-history_prd.md",
+          "sha256": "b87c68957b64ace66812d55bcd533b1ee540c85b4ae1baaac351e55d500f8dd0"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/05_search/F05-05_saved-search_prd.md",
+          "sha256": "db6b5299743dc2fe75d1bc8e1036b62278911a531fdec8093c2d687c439333e6"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-01_wallet-main_prd.md",
+          "sha256": "a3f059b0545bb5857d1f3c303830a8b6dda2e32212bb9b3a6691e6e77b23e93a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
+          "sha256": "6b6d396eacb60ba290cef220bd1a00cf20fdd3ec9c24a99e636bcbd0ff19f8a8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-03_transaction-history_prd.md",
+          "sha256": "7ae7565eda58eec9594d9a38b92ccb373ce77d0ba75a69f63c4b785e0d92ec57"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-04_payment-method_prd.md",
+          "sha256": "e988306b2e846b50570abce854a11408040e4a2518a098af3cd9d0cda1e510ad"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
+          "sha256": "099793209eb5a069983b5bf568fb27904a684ab091e3a2ad2938a4a9b8e54afc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
+          "sha256": "f1f10d2565d487b56edefc8b8d281569666fa1a9c88b786804db26ce1fc9fb5d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
+          "sha256": "e369daee8ee66f3de1e05c4648e94c80c8b7b3f12e8982d2af2e73afc1fa1abf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
+          "sha256": "6a47ba414f3266b0808bc2df6f0533953cf69187544c3f80f2f74d37c0e92b89"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
+          "sha256": "36e8bd4483ad4747853b33e3b94bd1e2acb4d420a909fa40e3e4b4e7fc8011a3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md",
+          "sha256": "56bcd265e61e23981c6adfd7d60c8bc66f55f7a33d925af375756985d693efbe"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-02_settlement-items_prd.md",
+          "sha256": "635ce40d274eb63667b627e8a737c107a654c412f8faba73dc0562ec4b6cb35b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
+          "sha256": "ad4a9f42105069708dfe08819f2f3598693c6e0f5769b0caee835401e5dc831f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md",
+          "sha256": "ca2acb16e8c5272021cace08cbe7f8dd7952f6a19d66e456ea535f7d00d7d972"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
+          "sha256": "312e842ddc53946b9d652b590f023942871925c6ac8106ceac83539b03bf52f7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md",
+          "sha256": "873c35bc59a419b02f7a0e9e67eb1a7987a80d28f54fbf1765b594dcf780d411"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
+          "sha256": "71f8f69cc2b5a587fa969a28eefd6d4ef867788be493995bea71c116f50c1aa1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
+          "sha256": "8319a11d5d9cc34d09df368f325d62b512f16a8baec507779036fb6508d180e2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
+          "sha256": "6a9b2d51994bd545511ca13235bdc170069e4c9709e8d72cd8d9b4c77162e781"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md",
+          "sha256": "940c0c4f53537cb3740e07c60f0904ba3efb89888e77d88894b7b0a579a50ad2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
+          "sha256": "beec9dcec88e7b8e3203ee97aec5837a85bd2c6c7a575c5cba17bf781baa6e10"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-03_block-editor_prd.md",
+          "sha256": "718ab989540e92a724dfabd3ee48cc94d326b016caee20816bed4c8499a16a8b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
+          "sha256": "a2e31298323349d9ee548516ea9150fc1eafe13262e38606fca9b5455ee3ff59"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
+          "sha256": "d4a7be815eb9c495f918d097a5dd74c25746dc9926100443b956ca989bfe8fba"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
+          "sha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
+          "sha256": "619393746c996dc2b5405c9ce2466f3955290177372c0f1187669ea040d06c76"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
+          "sha256": "7bf30193ce3224646b49cabfcedefde453e40b35e95b2d4c87c2181b249a8a95"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
+          "sha256": "d0f6aaf60f93dd7fa81706092151bbee900a18b3c4bb6d6a2c5631855a38bf81"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
+          "sha256": "a8bd6671fd09fa507ce6b4a30980c1d24a8dad28a1c8ca45961bb94fcf8f2e80"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
+          "sha256": "40ab1e495a89faaf5cf7ce02d9576396ba9c3fe4231dfac9df68c2e2e8a764db"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-12_my-collection_prd.md",
+          "sha256": "d588dd1408cce5e3086d01618f05989766dabc75a03fc25ca4b81a29387f1fa9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md",
+          "sha256": "14b9938bc27e32ddf545deba7e171c18d7eec0a6fb844a2a6262aeea03ae0cd1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
+          "sha256": "ef4baa7802a7af6aa7fe5549a95a359a4d2be024110d9b10de0a011f33cd6058"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
+          "sha256": "2b336ec6c5bab3e6250baeca0bfe67509e5bded619d21e10b284e6644652e344"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
+          "sha256": "b23553fe1606ec404362cea808a5f91e0aa4ca91a8fe26f4df95bde40a3b44fa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
+          "sha256": "919d199edcb321fe5edb81cabf2731a19f0d0cd3a96bab77350ffda7a40a5538"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
+          "sha256": "186a8636af6ddf3fc71836490b89f0108f1af592b93fa08fce4effe26d248f62"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
+          "sha256": "514374f5efe7b995e333447d79ee5d09c3e74845ee9a60e08a6eac9b75c2da56"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-05_chat_prd.md",
+          "sha256": "68b12332e2bfd32316c03ed01ddeed1682f6f15cfb101fb118b01259a31c70dc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md",
+          "sha256": "02bacfc8673723699c49380ed0d989eafa7048e1455a942859945ed41def7479"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
+          "sha256": "c7024ade9bf17c4a9415dc17e5276a91766a460472056d11c34f3b3e0b8ac891"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-08_profile_views_prd.md",
+          "sha256": "dd8771365f5b69289097ee36aa6f6cf9447b1b1b81dc674bd56f8798236c791b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
+          "sha256": "399705517651edbfa3a0b859ef9452701dda8e92206886c1e361495f65859b29"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
+          "sha256": "af3ddf46b46886eb6c84e2980a21a6caf8bdd9e30a1f22853710a88bb0f9cbbf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md",
+          "sha256": "e393007ee6c2f642ea69624135c3fd466d6fb1e0d3f46033a60f0c5ed64e49b7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
+          "sha256": "23f8b46fd3b011ef3115d88dfc92e93dcc6c2d92a2825d03de4200f278a7a78f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
+          "sha256": "9521674a5a966f949835c0c8a15b36b785d2fdc462bb9db6d96b2f8818f5328a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-01_event-review-write_prd.md",
+          "sha256": "b7f4bd6bf94c85ba059b3ebd7b795998cc734f497595b490fb2d66184ea94867"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
+          "sha256": "0c801b6eec657def892458f11ab29d85029aa1959a053a785af1b3caa820c8d4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md",
+          "sha256": "24118781f36c4a190a19c44807423dc5132a97b56414955659f700a1abcdc1a2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-04_report_prd.md",
+          "sha256": "62524dc3d89c9ff83201ba7258805720e2530477ff91205ae89ad498d802f37e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-05_trust-score_prd.md",
+          "sha256": "5a9dfa9c2ce3cabe8d8a4c336f2bd1858b3ecdda7190676327de9c27aa7ccd34"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-06_taste-profile_prd.md",
+          "sha256": "e987d750cf88b0c9084ddcc8ad6a61f7e58b00a7508834dc71fc26c66a1c4383"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md",
+          "sha256": "37b5381d80ea44308e5bcb3a2c7f0b5892bc703001db0b782acc04a72207f777"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-01_notification-list-read_prd.md",
+          "sha256": "1a7473d5cd10c99e1d97f40a65390c5539e6e9e42109fa5c515fff0561bab4d6"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-02_notification-grouped-badge_prd.md",
+          "sha256": "9c303f78b638cd422a5747adcbb02c2e93b4f9ef23b38027d482388dcd624d52"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-03_category-settings_prd.md",
+          "sha256": "1960c4b8afa383a378da6372466505c528146c74b1cdf2e29c97ec5f8dd09f5c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-04_quiet-hours_prd.md",
+          "sha256": "f0cc5b825022345b19c8f2aebc5963f216ca3d9b513429916b70708238ae334c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-05_device-token-management_prd.md",
+          "sha256": "42eedf00fa322fbbf43f6b206c1b89b9d1312ce581cd9b44e856ce36772c1adf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/12_notification/F12-06_permission-banner_prd.md",
+          "sha256": "a014689eb2eb61730f4029649634446fdd9f14251ea6c3f9dd1d4245558fc05f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-01_profile-hub_prd.md",
+          "sha256": "73b0db9e10fed64cf4361233bed2f293e503e4c28673064823524051e9537ec7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-02_profile-edit_prd.md",
+          "sha256": "870645bbfe507a64a20e05f5fb00256a53da55959a0a93438f3bc107e140f68f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-03_address-management_prd.md",
+          "sha256": "a48c5aed1a93098a6be7258a76ef1bb553d5100a39fb0374e26668160b7dabf7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-04_preference-tags_prd.md",
+          "sha256": "1ea3eb28b1529379fee2d92532fd1c1cb8cd48db093afd2babbabe88412b7f80"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
+          "sha256": "78719feeac48678c9e694f2490621675a9f7e9b17b54de085926476a5a8d508c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
+          "sha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
+          "sha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
+          "sha256": "c6a23acda7bcc657dfe1c54de5d2274b7691dac39781a26b4ea440194fcd5025"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
+          "sha256": "2669914b0645a0e49d9b348efce135a09bcc7bd62c7c844153909491ca4785e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
+          "sha256": "a6e96903f29760d91f8413ff3f50e52674ffaa2e5ab235fa7dc97bef1622e6c4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
+          "sha256": "5936326c6c98dc801d3d0b3e758328e81280fc661fd981e516eb439e38be38d0"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
+          "sha256": "4a49ff61bba02c14ee5c2f08430500e678c5660f244802f9741782bb4ce01a9c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
+          "sha256": "53ce13742773f152de85253a260eccae2ef3794167eeff477c60a9475031be3f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
+          "sha256": "f5192f53d0f66addf35b146f2a2119b38d3a6c93e878aa9a9772e092d854a668"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
+          "sha256": "99a2f46e7bf2ee30e11512ddb026d2efe8878c6992f865010fa45dbc72dbb6e8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
+          "sha256": "80647479db7e31d0392ea130ba7a1498461c15f71f6f64eeadb3d739910b7bf2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
+          "sha256": "1f8db035aba724ee13fd9cbf8a6de2bb8c7f8cb3784d276e636dce48f6d86d3b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
+          "sha256": "8fc3304d6cc030996ba82a495606f95ce86788eb9214ff65b44a416f69056213"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
+          "sha256": "2e8286557d521c537ee0bb3b556fb38efe620e684ab434e3460b6f0d406ab829"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
+          "sha256": "cb25e842f2a21fdbe63456f7187a679a8e988b7f87ab96c72d84a036340755ba"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
+          "sha256": "7fc11205ab7127279f1a3cfc71ac686ed9f4295e6bb1946980fbe414b50b32a7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
+          "sha256": "2d01632669a8e6b03ba4c5150595ae12b2e55aaf76e4e2962c6c19d2bbbf1388"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
+          "sha256": "faac8c985f1995f6440e54d47926ae7ce0822b6a381304c81495a16993128888"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md",
+          "sha256": "a85a063148562f5fe7e90973e4bd45a4b99ae9cfb9b7106f0f87b94d66152760"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-03_season_prd.md",
+          "sha256": "f0b3496806995b768d04c1e75c37d409c566bc0b46cb27f57a83af7506666892"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
+          "sha256": "0d0bc93e7b534385263765104bb1155341eb52d8f531a2e11f2c4424e92fc257"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
+          "sha256": "b585c8e6a7fcd9b4d65623c3efd5dd0a927d906f714ec87c01bc4db5c46a5970"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
+          "sha256": "5e3b0daf6bc0250da6f88ab9a8c4cfa3659e8a960affb7ec2a51a01254efef0e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-07_host-proposal_prd.md",
+          "sha256": "27a28c32afe8baf2a583e0e3ffd45068a31c6a6c63dd54c2969237260a3d3fe5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md",
+          "sha256": "dee45ad827b62fa7c8ec48ceac25101312e0a17b6d79b4bb638870cc45bf0fbd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md",
+          "sha256": "2d9422df16e9a34160e88533240a80269aeba865fe6ed0c40fd8b4a0697ec3d3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
+          "sha256": "8342d2e2f3691a7ea7260602174d9d826a1e04d9a8f26bbe9f63892c1f965a87"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
+          "sha256": "9a28f6b294a20448851abc88f40a524f8ebd7d45489137f91bb2d4709b2aec5c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
+          "sha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
+          "sha256": "0085b9cdc3949d7a89c432b228a675ba660dc59d40ef22612579698621d515dd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
+          "sha256": "5f281c1b01c2bd40fc5623314af27693e991bd62b92226f57457604d83766961"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
+          "sha256": "c37b11088f99c9f22dfec5be15cc03063607ffa46b9a82315f43a80837adf4eb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
+          "sha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
+          "sha256": "16e72499f9b219ab6bb08d82e2a1d520f67eafcc08658183184e36b4f11a353c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
+          "sha256": "1aca822bd967ce9c826e6494ec2ce58e554172e8f7cac1dd5ac9b1b367a32704"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
+          "sha256": "47e0ee64095374782f4ed60bdf040e62639f51a5f850e83353d87564728adc38"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
+          "sha256": "a1e081811e550998fe55c4c6f273ba523ae51e9b02f436dbaf82245d86dc0454"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
+          "sha256": "e0a4f8bca0142f5d1e62526e2696e3c7b8135c17106be089f9d92ebaf42ea8c7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
+          "sha256": "fc7a6d43295b0121e09802419ce6b70d2cfe3574115863d9aa3fc6bede7c9131"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
+          "sha256": "12921e429909dfb2188371702496671aa7f42aa1e65eb42cddb3276789033661"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-01_favorite-manage_prd.md",
+          "sha256": "004665f027eff9c79832cb1e2fdf99f35b4f66ea9c9cff8e4ab2e7772ad994df"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-02_favorite-calendar_prd.md",
+          "sha256": "c46b3114183089cde5286ad6144a80b82aca6d0a537b26c34a54c0daed523a62"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/19_favorite/F19-03_privacy-visibility-settings_prd.md",
+          "sha256": "36890a5f27ca3d2fd28a790e43fa46ec2e7271503f189f4113ad145167672798"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-01_inquiry_prd.md",
+          "sha256": "84d0f7cd4184a5888a67ca3f0b6d8e4a322875fe6f50afc7f49387a9cf5669e7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-02_operational-issue_prd.md",
+          "sha256": "5c2d0c057bfb54385c214295fcd6aebc3307dee7818795fdc0f7565a6dc703dc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/20_support/F20-03_support-faq_prd.md",
+          "sha256": "94f159170c91ffdfc22dc9e51d1e54d61858484a33c1b207a042527379491867"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
+          "sha256": "26089221d8b056273a0c4e122446d382d9c5973645b953de33c71889c39a3cc4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
+          "sha256": "838b5a7e3c1de24c8ecb49a41a2d24bef9f837c328c51605af10d20f9b7dfd88"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
+          "sha256": "f715d1b8247f6234c256422c6e1c68a62e8b0af77bb548fd73469038a3261feb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
+          "sha256": "7f896b227eb67c07f561f9dfa75fc1b3222c1289e2896ef8fb7e8a33fe6d0a50"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
+          "sha256": "c84de1ce585ae6e29a768287b470c4481cc175fa102fc0e2e3b8ad1d1e8b650c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
+          "sha256": "7a709026f73e78d121b354bb762414e426803220c49f80a0f58dbe686bd32d3b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
+          "sha256": "437e2cf619baa542fbd8e0a06d44b8be414678ef1c4ab1d9734b079de937593b"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/acceptance_criteria_matrix.md",
+          "sha256": "6f233d0cd0f480b8b15b03b1a7b64bc8eb361ca0c065de0836e0ecc530fa9da8"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_coverage_matrix.md",
+          "sha256": "2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/planner_onboarding/10_planning_qa_checklist.md",
+          "sha256": "2a92b44427e9c443c6e4cd3615dc400f9516f1a1f436b96d9fe1730394ccb5e7"
+        },
+        {
+          "path": "business_logic/docs/assets/features.js",
+          "sha256": "41fe24e362872a2903a9171a0d1c17a3d0bf14968f6a66d85d5fdaf596b508b9",
+          "reviewScope": "목록 ID·정본 경로·이름·사용자·확인 초점·등록 항목·도식 입력; 영향 태그 전수 판정 제외"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/scenarios.md",
+          "sha256": "de31aafba4f4cfc2c727d236d165c72963c3a80801b2c316312fde8d427a8d5f"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-01_email-signup-login/diagrams.md",
+          "sha256": "82ce7e633a367e0b9a080eb7e539674b8aaf771396680a9b9f9cee6b7d1a3218"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-02_social-login/scenarios.md",
+          "sha256": "f37d9ae8e95b4d98357b89e78f7cff192ab2a10452ba2922eb21e5be91086106"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-02_social-login/diagrams.md",
+          "sha256": "7b7309a7fc30bc0b0ab3ae93e60660a6702a8e54f3602db9a43036177a1f7a6c"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-03_email-verification/scenarios.md",
+          "sha256": "23f75022f613fb78a0446f3febe5615c897cb5992265013cbabd39edc645ba40"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-03_email-verification/diagrams.md",
+          "sha256": "215da4cfeff7c1310d1d51977f5156cf7c6953d7ab661502e38f0c028ff35906"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-04_password-reset/scenarios.md",
+          "sha256": "c8e4ade2188e1dc37e9c5e978c14d59cca3b299c621126ff79fcb1ddfbe2db73"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-04_password-reset/diagrams.md",
+          "sha256": "58f01a9763607d70fd519ab0a664bd22095c6f293f3db46b9582d0984fa60c68"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-05_token-refresh-logout/scenarios.md",
+          "sha256": "6e6c4c29abe8c6d67549a3f78374fb03510590b2a5ec2d393a9627f4f163e6b0"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-05_token-refresh-logout/diagrams.md",
+          "sha256": "07b1739c13e504855c4fe55b4a7c57806f43cb0fb0682b9b2c58d1f1e9d481eb"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-06_onboarding/scenarios.md",
+          "sha256": "8c150ecf51c3d61d07c5d07c25411b425bdf19225976444ba60d1372115fcc7d"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-06_onboarding/diagrams.md",
+          "sha256": "c923d70fda0427c81bbca33593f6d7ada0cb21f73eb0a079975ee1c977cafd64"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-07_preference-tags/scenarios.md",
+          "sha256": "ee5ddfea3524271cc8dd2b5793a758e2d5fbeca42bdc25c30d92f95da5cb3c2c"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-07_preference-tags/diagrams.md",
+          "sha256": "7d5c0d23260340f0ca531a0f79a5bb31930852979c6fb4e23f989302632dc973"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-08_social-unlink/scenarios.md",
+          "sha256": "1099d4bc074e8ac2403eeb238746616a068e345b33327abad9b224a61e0e211b"
+        },
+        {
+          "path": "business_logic/units/01_auth_onboarding/F01-08_social-unlink/diagrams.md",
+          "sha256": "0e60943a2fbf2429992808bd2ed51825c89f5b700cf7ab87eb7e303c387785ac"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-01_home-feed-main/scenarios.md",
+          "sha256": "e7dcf41f719e4fedaed58a42a72e42326c0bb1f4f33a80db58711ea59347ac6d"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-01_home-feed-main/diagrams.md",
+          "sha256": "918f0a09d9d766ba9218d625317d7f5c40cc919c97d744f2ca8d78040b29f425"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/scenarios.md",
+          "sha256": "1afce90dd6a40f980a23771d787ac0da7a791ddfb8b6c8a5029a0af77bddb7ee"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-02_home-feed-refresh/diagrams.md",
+          "sha256": "17c694c0f13a1d65c0666c45ee348935af682dca7ec13b55c727f3ea730ca503"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-03_section-card-entry/scenarios.md",
+          "sha256": "23afc2907c59c68aa4dd58e292b2ec8f6a9f91bcfa518608d7ddf99f30317cce"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-03_section-card-entry/diagrams.md",
+          "sha256": "800be919d34fab54c84bad439072c6612035bbb0fa23bed07d0fcf0ee72dd079"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-04_recommend-events-more/scenarios.md",
+          "sha256": "a6b7a7b9982afcbd087dce8bbb85dce2eb50f3d592202c3b52a9299c9b569463"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-04_recommend-events-more/diagrams.md",
+          "sha256": "eac3c9ff0f4d46ae5c9fbe0f6482a892a89df6851d934407aded1ede3efb8999"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-05_search-notification-entry/scenarios.md",
+          "sha256": "dd0b4012dbfdce07503441818b8c9533db07c2b428ff2dccf722c00c6f88e564"
+        },
+        {
+          "path": "business_logic/units/02_home_feed/F02-05_search-notification-entry/diagrams.md",
+          "sha256": "a09a12eb9b95a4e9edeb5bcfc854f0caa0ae6feb706cf67a74a9044f9d5d7247"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-01_event-discovery/scenarios.md",
+          "sha256": "f403efd6fd20189aef614c80489738fc094165869a7942d2aa4a995b36b9efce"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-01_event-discovery/diagrams.md",
+          "sha256": "44f012fcc36e009b3a36526288101c06796bc8d1c9b07055227c996ecda5bc8c"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-02_event-detail/scenarios.md",
+          "sha256": "4235577917b5013fd694e2d81db864326f30ffcf28c45cc13c2089c633c16a1d"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-02_event-detail/diagrams.md",
+          "sha256": "b2d96a8c58eefda3bff06483709aabe27d8797098cf61d3accf1ac5d70935fa4"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-03_event-creation/scenarios.md",
+          "sha256": "8bb9ace9197c52ea4b9d5c3731a602874973b7fb56bae8c56c4286318c108b00"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-03_event-creation/diagrams.md",
+          "sha256": "4ce6753691d2fc20b91037bb3e25a48b02671bcfb6d85f9d3b63bfe8e2d7f247"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-04_event-lifecycle/scenarios.md",
+          "sha256": "b918ac023ee91baae642c612d5c0ae1f649f37fcf74831587d1e877c8b43d960"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-04_event-lifecycle/diagrams.md",
+          "sha256": "26368f45a66a082b5b1286a3c8a166ab7555ca0074b0b88f277f882e1b9a3ea3"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-05_event-attendance/scenarios.md",
+          "sha256": "b8fd406e0489e7e784469178ccc074d33ec3c4c87ee02fea7d94008b6b913ce4"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-05_event-attendance/diagrams.md",
+          "sha256": "b1e954025a93cd163a19ab5f887e1bfabbfddf4089d93cdfd00ffe7286af3f35"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-06_application-review/scenarios.md",
+          "sha256": "072ae2c049866d283e2714b4aea981dc6f644f99853505bbcb77312b425105fe"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-06_application-review/diagrams.md",
+          "sha256": "3ad1918e897e14609040640308ff6237eb88a3e0125686692721fdd4b90d6b7a"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-07_capacity-and-waitlist/scenarios.md",
+          "sha256": "c44210218828b31594d305446f2c7d3bf5b182c7c40a044a7bb94940b3fdf0fa"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-07_capacity-and-waitlist/diagrams.md",
+          "sha256": "6423070955949be065aa882a515eedfecc85553154d0bae310ff90cab5bba3f3"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-08_qr-checkin/scenarios.md",
+          "sha256": "613763ae008978d2a39e6019d7d56c664d6d066a55431693293a46c107ac52ca"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-08_qr-checkin/diagrams.md",
+          "sha256": "6a4cb3bab138a32e3025b784048d5305bb6df554202f7cab9f08522e0581358d"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-09_event-photos/scenarios.md",
+          "sha256": "a0c4bf52c0f3367ac9330cb80cab732b1d2e14a6c769e49a508738c87a7ce573"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-09_event-photos/diagrams.md",
+          "sha256": "f26d259c1ad177509fbb0f9ed5d8a16dc1ee0c456f3138d0353e42ad12b7dd78"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-10_event-plan-link/scenarios.md",
+          "sha256": "db4861c4b956dbde5cf4ed482e37d6a07d9f2042d74cc86c372fc6f1bddfadc8"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-10_event-plan-link/diagrams.md",
+          "sha256": "f163ab695eef7c47054cafbd7d346d2147b90dc0926fca542b39e5e0aa3aa969"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-11_wishlist/scenarios.md",
+          "sha256": "9b319e725bb9b1a0b98f575017bfa3351d98c657bd1c3f72cceab342b6753cbd"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-11_wishlist/diagrams.md",
+          "sha256": "b13764d5014a50aca10e9491795ed9f186df116504b57a92e226d4e01686cd3f"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-12_my-events/scenarios.md",
+          "sha256": "31a424c210083551c3dc7a7824c2ccd46f1bc42181fb4dd916a9c488db8dad50"
+        },
+        {
+          "path": "business_logic/units/03_event/F03-12_my-events/diagrams.md",
+          "sha256": "89f6301d245613a3c1abd98d029c017649afad8fd6d01c8b418dd797f3d8557c"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-01_club-discovery/scenarios.md",
+          "sha256": "f6fe3e159ee4162e1403a1ea1dfc33da5e17089bf02deb72d77f88efbc0ff581"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-01_club-discovery/diagrams.md",
+          "sha256": "c1806fe8de6c3421b771bed6a6cdba4e9526b37b2fb8d9f059d47f42cbb2c914"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-02_club-detail-join/scenarios.md",
+          "sha256": "f5f9bf9c86c3511f7413ed64bd60f694d6c7dcfe673b92bc0e39f7acada73c85"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-02_club-detail-join/diagrams.md",
+          "sha256": "a6636787b28592a55705cca56f1d3c734a0e84f3285c5dc70bdab6f6c6e25a0f"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-03_club-crud-transfer/scenarios.md",
+          "sha256": "8c4b92f5882932d27a6f0e9357c8c96f87ee8f194695f572158ea3110711bbb1"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-03_club-crud-transfer/diagrams.md",
+          "sha256": "42c95aee2ce6a113cc7415448c50fe77a6a4334212cf99859a851745d6d60fa3"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-04_member-management/scenarios.md",
+          "sha256": "9baa6ec600a91b231b2a762d5b46e3d772d13f13c3d73ac27db4bcdf8f98372e"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-04_member-management/diagrams.md",
+          "sha256": "35a84c07be0e47f248af590982f51fc802fff05289b58d2cf2c96b29404c2c7c"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-05_waitlist-invitation/scenarios.md",
+          "sha256": "bef29d15fc3aa69714c03923897a3f3c6ec076d3c05b80bea81a6d7ae78ef11d"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-05_waitlist-invitation/diagrams.md",
+          "sha256": "89d6655d1ccdc6ec0c6f76179b2acbd36d461270a272679a0587ddcdf99a528d"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-06_ban-management/scenarios.md",
+          "sha256": "1984a0bbad8adf6155b7a66dd33278da804a1bbc9893ba05bf17e98f1913cf44"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-06_ban-management/diagrams.md",
+          "sha256": "6193db49995583326a89ef667324041b1962862087c52aa3d880459badb04b70"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-07_my-clubs-stats/scenarios.md",
+          "sha256": "1eb7efef6bf5648da901de51af1eb3a30aa096371b7610be7dcdd82fa281ad52"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-07_my-clubs-stats/diagrams.md",
+          "sha256": "8c5fd809d0654a4846cbe139770a1ab2d8f31b7ac06231ce4822a62cdf364533"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-08_board-post-crud/scenarios.md",
+          "sha256": "df8e7e48b9427f1dee426704c2166dd9b89657a22d4c13510cef7a16711659b4"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-08_board-post-crud/diagrams.md",
+          "sha256": "1f98c216e70b99ce32de386fdcc91db4e3d4762f6a0573af32f088da181d7536"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-09_post-comments/scenarios.md",
+          "sha256": "aab524038b6e2abf85788b08643af15f23292e1a3fdb6a91ae7e78e5d88b5b48"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-09_post-comments/diagrams.md",
+          "sha256": "55b1730c54bb08ab9ed7ce75652bfbf1ff1a23b5f455227195e99ed96657b814"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-10_announcements/scenarios.md",
+          "sha256": "e97c61e12084d9fbe3bad2acbebe2045dd2e7f9b14d0ed5979befec44ef3922b"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-10_announcements/diagrams.md",
+          "sha256": "8dabae98fb36ce28549fd57bafbd43528a2d2b9d43ce4c5126dba982b2300535"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-11_photo-album/scenarios.md",
+          "sha256": "818149ff102663a8d71b8e1ba8b781cc1ee99dbcec71678b25b4d7cc6bc4924b"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-11_photo-album/diagrams.md",
+          "sha256": "4dff8d2527f80c6aa247487798cd099ed8929d607eaa0bab967c920c5506915a"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-12_club-events-calendar/scenarios.md",
+          "sha256": "b333259e603c6225a45bf718670acd12d2557524aa8792cc78073a6b44100e3c"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-12_club-events-calendar/diagrams.md",
+          "sha256": "f2f4c668fae1a87bd64c9d09733308819d7e100a654872929bbccb5cb4421724"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-13_fund-overview/scenarios.md",
+          "sha256": "ece57835d12c6edcd15eed071de2caee7f1cd07a9ff1650346505ed22c065599"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-13_fund-overview/diagrams.md",
+          "sha256": "0c3f406f785b318664af817fd66c88b63f923f13867507ccc59e33edc5ac864e"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-14_donation/scenarios.md",
+          "sha256": "8d9b2a5e37552cbac89d3921886076d7b87bfa571bd315fd258bbd7a6174447e"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-14_donation/diagrams.md",
+          "sha256": "45defb1bae41940cfabd6f5edf834fa5184d0b956fdd4bac77f5ee9d0690a317"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-15_fund-withdrawal/scenarios.md",
+          "sha256": "e43f5f6c84e4981ad310d9a352f1ec86faa75a3cb9756a1afc8fde7bf9977c54"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-15_fund-withdrawal/diagrams.md",
+          "sha256": "ce825169910afaa06fbcb857f1fd353ba95a2727471efb81f9b5fbfdc9ca9453"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-16_subscription/scenarios.md",
+          "sha256": "cb2d5e82af0340e94b5fed0222b12a489cbe4b2d890a77465706e27e511398c9"
+        },
+        {
+          "path": "business_logic/units/04_club/F04-16_subscription/diagrams.md",
+          "sha256": "b5c2edd29b81d3a6952517af57a7f732023b7e44ff9d28541afd2b4d94dc37e9"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-01_keyword-search/scenarios.md",
+          "sha256": "536e3e6275124dc3cf4675efe0293dfa3a2080566d06b3315580d756c3c8c5f4"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-01_keyword-search/diagrams.md",
+          "sha256": "ef337a6bef7f8a5c97e680b8aaced1a8c88d939c782cd63636e708cedf650460"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-02_autocomplete-suggest/scenarios.md",
+          "sha256": "4baf82588405152d757ae670399f441263c77e70b2e7b6b1c4d962fa5b0e6709"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-02_autocomplete-suggest/diagrams.md",
+          "sha256": "99935b339b7b210c5fc1d076e45abe2cb268e4e4c6bc7b52c69f8e539dbeb9c7"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-03_search-filter/scenarios.md",
+          "sha256": "e797de135f2d788f653a36c452bb5b2760cb02c6bdda216cf786156e90275c72"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-03_search-filter/diagrams.md",
+          "sha256": "db1610c8444ce5afdfd12dd0bd2a7d1498cb4e35dea944660f2e98955456d50a"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-04_search-history/scenarios.md",
+          "sha256": "14fa09a6ba8a4771630e95ef438cef2ad7648075968985d768a39f0249df8f5a"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-04_search-history/diagrams.md",
+          "sha256": "08694c3473028aeedd584b3587e2a7e2d092c02136594de1eed575b484a926c9"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-05_saved-search/scenarios.md",
+          "sha256": "237bd72d451464bbc1aae9bccea664a79778163cc94bf2e0e5e861ca0470c6b5"
+        },
+        {
+          "path": "business_logic/units/05_search/F05-05_saved-search/diagrams.md",
+          "sha256": "7c43cb4fe1549499b92da1ab4c74e9ff55742d99eba7455173def8d1ae780965"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-01_wallet-main/scenarios.md",
+          "sha256": "ab168a5a5c394435ae07646cc2f324f22b7a1c7946052c131718fd8b398dcb00"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-01_wallet-main/diagrams.md",
+          "sha256": "4b267e000ef860e2b2312966a56eed03ab5371a43e93db954d6a7a437b08d2ba"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-02_point-charge/scenarios.md",
+          "sha256": "42a366dfad7456a181e3b58ac02dbf5e725dae762fc708775bb83107ef525a13"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-02_point-charge/diagrams.md",
+          "sha256": "7755871e5d17f0b633fb8cfeacdf44ae57a94ebf3ad596adb5a9a565183606d8"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-03_transaction-history/scenarios.md",
+          "sha256": "f017cef47c5d2751c4755bb21c0574d837617f948f53bb6e8708ff6b6647ea00"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-03_transaction-history/diagrams.md",
+          "sha256": "4673e3b84b216ef2253123fe9512d8c84d7c4e14764c494ae7008adb94e4831e"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-04_payment-method/scenarios.md",
+          "sha256": "a6cf82ba413df2d1aed1fdacea06d0576e16b7aa8bf8b430ac33a8654fa47c91"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-04_payment-method/diagrams.md",
+          "sha256": "7cf60be4e7510ec09097a1af2cf65a1eb4913e0ffca32fdeae65618fb9b2a5e0"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-05_auto-charge/scenarios.md",
+          "sha256": "bb9b1f6599392ca961a257a8ce96cecad00477d20b724b2ae0a4e5d0ea17d4ab"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-05_auto-charge/diagrams.md",
+          "sha256": "22886bb9ff948e02a1fe55ac2eb383d73082d75c22371d0cb6f429170c7100d0"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-06_point-pay-refund/scenarios.md",
+          "sha256": "f13625e844b26e1d204fc6d5db42e78dbca2816782bd12709169a0e5f19aa3df"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-06_point-pay-refund/diagrams.md",
+          "sha256": "e523579970e435f6489c0d87e4bfbb556adfe7199af7d9ad7e9b9c45532cbb02"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-07_hosting-ticket/scenarios.md",
+          "sha256": "6b951bc5f78328f100a8c2e6874d01089787ec571d068b4fae1f6821d881925f"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-07_hosting-ticket/diagrams.md",
+          "sha256": "84c388e794edaf1e72566f61301a1dd0d27b364b5862b7a1fc8b02b241f124b2"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-08_personal-subscription/scenarios.md",
+          "sha256": "00f6445485616fbdd6e84f04f802c01ee9551f9134f69fc782f9458811b6b73c"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-08_personal-subscription/diagrams.md",
+          "sha256": "72a63ee98916ed1df96cd71512b76ecff4e913751ee75c30669181f992f03fbf"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-09_earnings-dashboard/scenarios.md",
+          "sha256": "46b4e2f4b18f722a82af28d51a5058a2c52553dcfa49bc94e6c71ab8fa7003f2"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-09_earnings-dashboard/diagrams.md",
+          "sha256": "a4c57df1ea622a3c7950341693ade4de28e3b5d124d9a0c20c8a891cf2a43aeb"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-10_settlement-appeal/scenarios.md",
+          "sha256": "33e191999460d5b367a312f2376de152ba64347d5b4678142ef503132af87039"
+        },
+        {
+          "path": "business_logic/units/06_payment/F06-10_settlement-appeal/diagrams.md",
+          "sha256": "b493a256c8f84913f6cc602f9a22c7b632fed20e035b6b7e2d3c8bf4a8cb35eb"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-01_create-settlement/scenarios.md",
+          "sha256": "77d9cd68b6288ca9e88c63ba4feacd428fe187fcf41d7c45d6f45c122cb99359"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-01_create-settlement/diagrams.md",
+          "sha256": "dfda1a101d1beca9f71e4d24a5ddd46cc4c31d8596430d01cabfe28ecff56e16"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-02_settlement-items/scenarios.md",
+          "sha256": "eae440d7e2b0fb39e8ba2a8ba1bd246337f7fabd379e424eb0b2d5d9d078470d"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-02_settlement-items/diagrams.md",
+          "sha256": "d8f3d129793f6553cc54a7dc56953f7177893cd7959a98453430084caf4a30d7"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-03_activate-cancel/scenarios.md",
+          "sha256": "47d41c92696874667e5060b20471d88a5d1aa70c2cab698a64f1c8ebd5660b27"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-03_activate-cancel/diagrams.md",
+          "sha256": "7c898a04fc3a3495e622489ca8cc10a375e82d50f0edc748a7a2c0497ff0bf94"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-04_status-summary-receipt/scenarios.md",
+          "sha256": "2f043c3377414818687ff2445637bd42e36219698745e9527652fa49c42718d7"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-04_status-summary-receipt/diagrams.md",
+          "sha256": "c2451cd9f02d75adecf4b97ee08433c9aa1ea4cb6f5cfa133b07e42fb835b9b0"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-05_pay-share/scenarios.md",
+          "sha256": "97a66a6d283e54f0c867b5f8d1d1432aa3bc3d51937c3a0217a1416e35f66819"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-05_pay-share/diagrams.md",
+          "sha256": "75ff95f0579d6e1b7971bba083663f7554147d4b9d5639ad2ed29f6ca2b329b8"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers/scenarios.md",
+          "sha256": "65b8fd8c0fe8e42e1617c5ddf2f7541259dff12ce0c3e25521935ed188dd06f7"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers/diagrams.md",
+          "sha256": "310c99f4fe87faa43b863a7fc460c605b76190051eeeb4a9eff6d0e7b4e42f34"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-07_remind-extend/scenarios.md",
+          "sha256": "ef6f7c674d0512858ee56dcd77bde246f361ce189adad610fd88acca0eee9a02"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-07_remind-extend/diagrams.md",
+          "sha256": "7934d6c5a199c842f278e9c95618b32ae0ae2629db7055af89cb45eae6644015"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-08_appeal-audit/scenarios.md",
+          "sha256": "77fa4413885d590f4ac19f93709ffeeed3a511a40c981a291f60b98308f1277c"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-08_appeal-audit/diagrams.md",
+          "sha256": "0fcf1666ab73164c85b808875c74bf12d6a79b31c8be164b85413a6bbd478c38"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/scenarios.md",
+          "sha256": "e14238c12959764d2e47707e767f3916831b27e67db19f1c4d606d3bbf993c93"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-09_prepayment-refund/diagrams.md",
+          "sha256": "cfe620b6aa3aef8e64ba9b0a87a5d66e77f958b2d30d07b6f2ccf06e237631fe"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-10_account-history-reputation/scenarios.md",
+          "sha256": "066e45de0c51f09ed880fe6cd09c207ce3483a350b07798ae2ae63ccb5062385"
+        },
+        {
+          "path": "business_logic/units/07_meeting_settlement/F07-10_account-history-reputation/diagrams.md",
+          "sha256": "5f9e1ec9301bc76b227acd036a135780e13e851266608f91775e306350790c98"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-01_my-plan-list/scenarios.md",
+          "sha256": "1859f5b20cf58294ff9f5fc9bdccff577747aed6275165fe7aa49826e4ba9a4b"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-01_my-plan-list/diagrams.md",
+          "sha256": "f2527c2b36f3d4ba36638c4033d639711f28c3142112fc9f8c630f757b2a2571"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-02_plan-detail/scenarios.md",
+          "sha256": "b1656224b0866352f51a9930050343d47330e6f7b53b1048d52ed75fcacf8f88"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-02_plan-detail/diagrams.md",
+          "sha256": "f1bd7c07812fe3eed0208e22546c7a412598dc587f301306a2a1919d43716885"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-03_block-editor/scenarios.md",
+          "sha256": "f88acc53f12083e41fa48c27394e9f791dbbc25c34de2521ee8f6ef5b7651748"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-03_block-editor/diagrams.md",
+          "sha256": "40101dd01afb1782732405decc6e3c350b65a6bf1b292adecdf16fbc9300219f"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-04_block-reorder/scenarios.md",
+          "sha256": "a8270e86eaabfedae032627c31f8dbbf09450d50908eec50b123ed8c24f9a173"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-04_block-reorder/diagrams.md",
+          "sha256": "7011271e5114bdbde6d87ac2c8253cbe2554557febe65105046536e6717957d4"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-05_plan-publish/scenarios.md",
+          "sha256": "7602713ed21c8fe7567b11511e4dfa43f1932fd748842207e4b325f7c88c00b3"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-05_plan-publish/diagrams.md",
+          "sha256": "b07c9e3a65b525e81a26f75dd08472b5719565b3b6f3552c49994ae142d13223"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-06_market-item-management/scenarios.md",
+          "sha256": "1fa4a2d49856e94b24c80071e9401d418a167cd384478ce143c1733bb75fe445"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-06_market-item-management/diagrams.md",
+          "sha256": "04ebd701e1d0a24870bb3831dfdee8d1fea4bdb13af255f48a7940a4060bdc2e"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-07_creator-profile-stats/scenarios.md",
+          "sha256": "1638c57e02bb16ddd0140144b5a2b6b64a369d60552cced473e8a85eaa4f0b3e"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-07_creator-profile-stats/diagrams.md",
+          "sha256": "9e663e57247d36a11429fa06bac9069b790246057295c04dabe4212295dadfc4"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-08_market-main-browse/scenarios.md",
+          "sha256": "ed2f0f8e66e3e4921a484ad56324b4d73056916c5aa8e096a000390cec9404cd"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-08_market-main-browse/diagrams.md",
+          "sha256": "e9e47b4ce1c6b3cdd713efbc6c1518870f5dd8cc94763d56760f4e0e58d9d297"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-09_market-search/scenarios.md",
+          "sha256": "440cf06c116f0a272a6c28a40005c1e113bd5a51d0cae588934351d021cf4578"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-09_market-search/diagrams.md",
+          "sha256": "340996bb3d4139173d41800e2edd77feb8a1763bfcc6bbe77f9e1524d3e94436"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-10_market-item-detail/scenarios.md",
+          "sha256": "206e4a8f56ee5dc105c13a438923b598b4ba6e9209a23a7e0ad313388e1df5bf"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-10_market-item-detail/diagrams.md",
+          "sha256": "d165bf7699bc99321f74ab9a026f4d7d4e04179155759d580f4f61d035e6412e"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-11_purchase/scenarios.md",
+          "sha256": "a69a5af920374f2186389c9a56d0be7eb4bb52c35f932559b41b4f5240ae8d4e"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-11_purchase/diagrams.md",
+          "sha256": "9307de196f874a7a9d9df8f2801b257cfeb99e2b1c04cf7e17f53da9c77733b0"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-12_my-collection/scenarios.md",
+          "sha256": "07d5979f7316ced778707333e99b17606375a15f00d9d604cc496d509dae2539"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-12_my-collection/diagrams.md",
+          "sha256": "e95519b2299950861f577a1d45df59ae5694eacbea3e282e36d63fea811762b7"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-13_plan-event-and-review/scenarios.md",
+          "sha256": "b7ed8a98072fdff01d43d34b21c43fe649038fed241f0a109cf75412f392c0e9"
+        },
+        {
+          "path": "business_logic/units/08_plan_market/F08-13_plan-event-and-review/diagrams.md",
+          "sha256": "b21e327f8594b7bf63360f4e30509e0199b9d1dddfdcda6167846b157efab632"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-01_verification/scenarios.md",
+          "sha256": "57653ac990431d1b3d79cbacc4a263f368011e47f00a65eaf471c34836417ba2"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-01_verification/diagrams.md",
+          "sha256": "8e3a66f15e9b640344ec011661c16cfd5740d3dde9c0b3e1436aa4881f56ea72"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-02_profile/scenarios.md",
+          "sha256": "4bf90f70ae21f90381e72381fad459cbc9806b0a7b183337bc35b2b617358eb8"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-02_profile/diagrams.md",
+          "sha256": "1c45d4a2c86ae341994244ed3d9f466a9361b6ba5693a8f63d60f099170dd2f0"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-03_candidate_swipe/scenarios.md",
+          "sha256": "32ca4acf3fab143d218d98bcf1a64152c942e08b4fbe67bc293ada039a2b3d3e"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-03_candidate_swipe/diagrams.md",
+          "sha256": "041f520d66e86ff26b2ab3d3beb1fef272402f8fd25c1a25c79a75a19a5946b7"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-04_match_list/scenarios.md",
+          "sha256": "69018be4ae6b7ec940be3ca072aefa75a855aa69b3fbe3765345fd13b7f29c32"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-04_match_list/diagrams.md",
+          "sha256": "99748d365abf23955f586a492e025d79a05d81ede64d7354fe16e78be6803406"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-05_chat/scenarios.md",
+          "sha256": "77bd1f7c31740f22eb7ff83ce299696b417d992b61393293dcd6b26bd3d9e656"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-05_chat/diagrams.md",
+          "sha256": "190a6ea73fa11c9b0f91c09a4ea3bf48470b8f9d90ff5e29fd8c9b4d7ecaa451"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-06_meeting_proposal/scenarios.md",
+          "sha256": "6d7a19751dde25a2de4b2dd5920e4087256af6dc1752ff604a62c23b2af6e82f"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-06_meeting_proposal/diagrams.md",
+          "sha256": "0e20111c2a92e50291371fa39a31a953ef7a6226cb45d000f53aee0e4f86c5c7"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-07_block/scenarios.md",
+          "sha256": "7ccb42883d931e6afecebbf51ff272bd9e9c8c2270a5e80b0f598c58036cde79"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-07_block/diagrams.md",
+          "sha256": "14282b577a00dd56110340439b59219e016ba6817b8a60fab7ef62344e997c72"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-08_profile_views/scenarios.md",
+          "sha256": "d62c251f3ec68bc86310876e5f5ee7fd3656b1c6bfb686851cfc095193ded193"
+        },
+        {
+          "path": "business_logic/units/09_private_date/F09-08_profile_views/diagrams.md",
+          "sha256": "15a684e659ce86a53a0e600ef2bec52974eef4ba6ff6ecbc6db68bd98d2845e5"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-01_unified-calendar-view/scenarios.md",
+          "sha256": "b1f0d09cb0176aed6101447bdb7b278b9b86fecc880579cd9476b173bd1870db"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-01_unified-calendar-view/diagrams.md",
+          "sha256": "4e658a2150a723daa8ebdec7dd6e77e9b4c723a9909973e1dcf95dcdf00d590e"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-02_calendar-item-routing/scenarios.md",
+          "sha256": "7de819560bd5f4d9861d5b5e8283a9cd6d982c0d360e703bbac25cfec9d89279"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-02_calendar-item-routing/diagrams.md",
+          "sha256": "a54d2997b43864724e8d8ebd0ab9ecc40cfb1d7a13ad7ee774424c617868b480"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-03_single-availability-crud/scenarios.md",
+          "sha256": "67b2a7105251d9a6991fa2b06ba343c1621442162ed7588f5e28dd63ff384080"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-03_single-availability-crud/diagrams.md",
+          "sha256": "20cc222c5fe1480340434d2f15568800ab46db27c6f3d642a3946b2963a2d92a"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-04_recurring-availability-rule/scenarios.md",
+          "sha256": "2f812e8180fb28e8c106f6568ada36ffbcd49194b45c0e3d6e0752717c526c8c"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-04_recurring-availability-rule/diagrams.md",
+          "sha256": "3140cf5efff531f986b954f0902ea5884ddaf17f507b9c1891819a0b68f8e517"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-05_other-user-availability/scenarios.md",
+          "sha256": "8974acbd74f64163f630430602c1abcb473407a393ad28d49691a25e67168b48"
+        },
+        {
+          "path": "business_logic/units/10_calendar/F10-05_other-user-availability/diagrams.md",
+          "sha256": "ae4dbd5069008a9dcc37af3b0217c9465e5b30f8470f5ea73b686bccd83cc6a3"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-01_event-review-write/scenarios.md",
+          "sha256": "2a5f8585ba755878d3f2c2e95b5ebb1b842e9928c35e94bdb4efaa4a4567ec42"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-01_event-review-write/diagrams.md",
+          "sha256": "b7d314c0bb29e1d32f3f89726d56c557e80cae200abd7e85e3b93004dd9a11e8"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-02_review-list/scenarios.md",
+          "sha256": "bce30aa8ce51d4b894d915867ca3fbfe1a4547bfe874d8e5c76e3ce7b6fca40b"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-02_review-list/diagrams.md",
+          "sha256": "46798566dc6789072728b8b83a8dfc5db54ef8489dac59b49403febac79ddd1a"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-03_review-edit-delete/scenarios.md",
+          "sha256": "e814666c264a7496af449de6d3609bcec59493dd0664564157047d4df97e9aff"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-03_review-edit-delete/diagrams.md",
+          "sha256": "2a1cfcebbe11ea291508450eb6a1e2b03560303be21ab1ae7cc9299c5ddd2518"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-04_report/scenarios.md",
+          "sha256": "922afa40c2a233dd3fd512e12079af2e719c4a494a53feafa9e31ac09d5d569f"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-04_report/diagrams.md",
+          "sha256": "d6d63b0f67386b471877911ac480f5a28ae12e1c023cf37de068f0c59662ce79"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-05_trust-score/scenarios.md",
+          "sha256": "d9e92b9930ef131f304a26ebbe5610a15889136531eb32e6befe146e3b6e1f10"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-05_trust-score/diagrams.md",
+          "sha256": "6459fb5c316e28581682939e99397c59c9358b660ba5eba705aa84fffe4b26ec"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-06_taste-profile/scenarios.md",
+          "sha256": "ecbed2bc63eab6d61392cf0ae1558728089b4cfa872c4fc9f9d33aefe873fd31"
+        },
+        {
+          "path": "business_logic/units/11_review_report/F11-06_taste-profile/diagrams.md",
+          "sha256": "3c3173a8d8a8ca8c78a2a8a5050ac486ebdeae9f5725d9649adf3bb22aaf5ea0"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-01_notification-list-read/scenarios.md",
+          "sha256": "dbd90f4d3d29f0e87ace2107bfc7b6210b37e0f5d677ea20cc284cbebb20b01e"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-01_notification-list-read/diagrams.md",
+          "sha256": "aeca6315a45d90a007df5b0edd43c5794b11e84c40bb034dae58a05b5a1fbecc"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-02_notification-grouped-badge/scenarios.md",
+          "sha256": "f15930320441241bffb6752318d803e9fbf9aaa02d879ba1673118bf478229b3"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-02_notification-grouped-badge/diagrams.md",
+          "sha256": "17c03d73ccb38f0f963d6fa9a58bd0ffbc4c2f6e4b4ff0fa8de516eb789d11e1"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-03_category-settings/scenarios.md",
+          "sha256": "789c2e6cc1865f47ca588b8d905888e14271205611bbe6bab363807a8bb422a5"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-03_category-settings/diagrams.md",
+          "sha256": "03be7194dfb6a24cbb035540bfec662edc8b5940c234a94d9d952ff15704ca81"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-04_quiet-hours/scenarios.md",
+          "sha256": "37b4a35fcf460eb64dc6a3292d7d5dc1c3df2fd1afb64d1417d44345e79e8e76"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-04_quiet-hours/diagrams.md",
+          "sha256": "0f6363b36a0f45528095d781236a56e14561cf5fb3b7d0608613cca59971edfd"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-05_device-token-management/scenarios.md",
+          "sha256": "1eea2c63bf8c0ca68030dee55c3aaafc217800e1c3f0af63947d8a8c196f4207"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-05_device-token-management/diagrams.md",
+          "sha256": "d3e7e3db8a008136ad3b16c4b0a79621036228f3abe05aee303ce9594d9af3d4"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-06_permission-banner/scenarios.md",
+          "sha256": "1893dcd5172d66541507e05c23fb2270e15943399581aad2966458b65caf6779"
+        },
+        {
+          "path": "business_logic/units/12_notification/F12-06_permission-banner/diagrams.md",
+          "sha256": "1224214c8110e4959e8fd8bbc4a572a5ef26037e343bfa4670ced5a63b644fbf"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-01_profile-hub/scenarios.md",
+          "sha256": "9a991e3ec7373712a5c80900d44abf7aaeaab721872696a1198b59b81222f576"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-01_profile-hub/diagrams.md",
+          "sha256": "11cbf5401e3e15219d398f4ef17a5f4cff51e89d04a7c45e90aad5e720ebee74"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-02_profile-edit/scenarios.md",
+          "sha256": "29e2e6b7b66138909faf507dc1cc9e677c3ea053ad2184bf6e5b50727dec410c"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-02_profile-edit/diagrams.md",
+          "sha256": "3a97ba03763194e70f1ed91a32a161b162e8a6db0239abb6ccf57eb30602f9e8"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-03_address-management/scenarios.md",
+          "sha256": "767ffa45f16035dd28f82c0a61be813a7b0f0b8dd56d833932d466bea4289fed"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-03_address-management/diagrams.md",
+          "sha256": "01703aca37ed13ef79923c76fab7636c37e9873e556f039979b06bdd3bfcb78b"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-04_preference-tags/scenarios.md",
+          "sha256": "f0cb971cdf51a632e0d13837d6d79d8d436b7075137d28afd202702fa41bb883"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-04_preference-tags/diagrams.md",
+          "sha256": "19f1ac5321407dfb7836797548abc88f6daf657d5ba5d5cc734228a08c2aacc2"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-05_data-export/scenarios.md",
+          "sha256": "9efebf1181e9af6e3cf9467f6b9e1dc4f31a1c740089254afcb2a4408c48560b"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-05_data-export/diagrams.md",
+          "sha256": "4c8ab65ce776717d6008e97954574105b225ed4136fa197c0c5c2b200eb31963"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-06_account-deletion/scenarios.md",
+          "sha256": "c4f07d94ca85dde45d6d4c25f55319e39f2a43459f699baead040678a6fd0258"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-06_account-deletion/diagrams.md",
+          "sha256": "397546257d2fb59ba16a0d812a92041cba10019f0ea61baf70bb48c09d5161d4"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-07_account-deactivation/scenarios.md",
+          "sha256": "0c13b3b7a72fbdc849e486214b9efbf6f8a46c93189a17b28e52fe852c2ea5af"
+        },
+        {
+          "path": "business_logic/units/13_profile_settings/F13-07_account-deactivation/diagrams.md",
+          "sha256": "57bd51c05c222b479fad5a710742f3bba5e36b5c434a39a8d1d98c5fa10dc96e"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-01_event-location-share/scenarios.md",
+          "sha256": "e9bdf90aeabf6a24c3190b2ae33056f38605eb09250a454741e6aa8a8da2ef7e"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-01_event-location-share/diagrams.md",
+          "sha256": "f4692d3dc624ee3460a2258a13470f0e6e876a3a849c7281589e4ad84dc290ee"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-02_location-opt-out/scenarios.md",
+          "sha256": "214b1a82960ea58418cb6105a6ada196307d312a4263af25663241527ee863fd"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-02_location-opt-out/diagrams.md",
+          "sha256": "24997784ac6ecbad5f22580cfd5072254a5d0a97fc5b3de20e62a94173339809"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-03_location-extend/scenarios.md",
+          "sha256": "5a2b3deb37f7b8476a34e3f28931a88a7c2c0d2f58cb3e6d770496eba72e2d4a"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-03_location-extend/diagrams.md",
+          "sha256": "4077857cf0ab521a3ff29b5263abc8b5815fa48a21cfbc7f271a5289a9824fc0"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/scenarios.md",
+          "sha256": "797e73152752e7d4eebdfd62b3f14c81644196e34bba5f756bfb24281c5c0728"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/diagrams.md",
+          "sha256": "7df682349171a83dfbdcf41102c836d1483ed9c80136b637ebf133090642b230"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-05_event-directions/scenarios.md",
+          "sha256": "565c803bcf266aba4b7c407ca8ffabd7bf2c48554bf3b0314e6eafdb37ff008b"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-05_event-directions/diagrams.md",
+          "sha256": "525ed55b279258779e07f7abc666f44db3928b43e09a1c8232152cab3fc4beb7"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-06_reverse-geocoding/scenarios.md",
+          "sha256": "0f5e9af88fa6f70aad0c322f67f3f0ae0dc38366d8944cbbb795ed3970f3e720"
+        },
+        {
+          "path": "business_logic/units/14_location_directions/F14-06_reverse-geocoding/diagrams.md",
+          "sha256": "f8c74c1c95adf44ad5cb96946e7301ac31cdace56f1499d91b13efde8969724c"
+        },
+        {
+          "path": "business_logic/docs/assets/mileage-feature-status.js",
+          "sha256": "780d161d33255426ab00e4b3bfd814575dfc966283d130bffc02520529045ebb",
+          "reviewScope": "전체 구형 8기능 덮어쓰기 읽기 후 현재 features.js를 보존하는 호환 파일로 교체. 기존 출시 범위 등록은 변경하지 않음."
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/catalog.html": [
+          "sidebar",
+          "metric-total",
+          "metric-scenarios",
+          "metric-diagrams",
+          "metric-shown",
+          "metric-shown-hint",
+          "search",
+          "domain-filter",
+          "feature-count",
+          "feature-table",
+          "feature-rows"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "117개 하위목록에125행이 섞인 상태에서 전체175개/별도units유무로 정리",
+        "기능 정의의 오래된 검토초점과 숫자를 현재 메타데이터·정본으로 동기화",
+        "기능 문서 작성계보와 현재 문서대조/실행/공개를 분리",
+        "실재하지 않는F08-14도식등록1건 제거:등록도식121, units도식120",
+        "과거 코드대조/백로그를 현재 미완료와분리",
+        "마일리지 구형 overlay가 최신 8기능 이름·조건·risk·문서상태를 덮어쓰던 연결 제거. 참조하던 6개 HTML은 현재 features.js를 유지함."
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "8832823fac65b73764860ec94c3232efbf0e7f67b736046264e4ec9e1bf615e6",
+          "characters": 281,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음",
+          "heading": "## 과거 기능 등록 변경 기록 원문 보존"
+        },
+        {
+          "path": "prd/PRD_MIGRATION_STATUS.md",
+          "sha256": "644262f93e20a7b1eafda7f650a41ccfb804a4aa31b9e7528638c34dda10bc86",
+          "characters": 27690,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음",
+          "heading": "## 과거 코드 대조와 백로그 원문 보존"
+        }
+      ],
+      "inventoryCheck": {
+        "uniqueRowsPerMarkdown": 175,
+        "domains": 21,
+        "metadataRegisteredItems": 1654,
+        "metadataDiagramItems": 121,
+        "unitMermaidBlocks": 120
+      },
+      "catalogCheck": {
+        "features": 175,
+        "domains": 21,
+        "renderedLinks": 371,
+        "registeredItems": 1654,
+        "registeredDiagrams": 121,
+        "method": "Node VM with document stubs; metadata preservation + ID/domain/combined impact filtering; not browser or app runtime"
+      },
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "421 source/canonical digests; 11 retained HTML IDs",
+        "derivedDocuments": "6 documents; shared batch verified 6 paths, 854 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical SHA reuse, inventory regeneration, catalog JS/data/links static checks only"
       },
       "observedSourceVersions": {
         "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",

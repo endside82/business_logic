@@ -16,7 +16,7 @@
         <h1>175개 기능 카탈로그</h1>
         <p class="lede">
           전 기능을 한 화면에서 검색·필터링한다. 키워드는 ID·이름·주 사용자·완료 확인 조건 전부에서 찾는다.
-          영향 영역(알림·돈·캘린더·위치·신뢰)으로도 좁힐 수 있어 “돈이 움직이는 기능만”과 같은 질문에 즉시 답할 수 있다.
+          등록된 영향 영역(알림·돈·캘린더·위치·신뢰)으로 좁혀 회귀 검토 대상을 찾는다. 표의 영향 분류가 모든 실제 부수효과를 증명하는 것은 아니다.
         </p>
       </header>
       <p><a href="content-photos.html">본문 아래 사진 첨부와 용도별 관리</a>는 공지·모임·상품 설명에 함께 적용하는 규칙이다.</p>
@@ -25,8 +25,8 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">총 기능</div><div class="value" id="metric-total">175</div></div>
-          <div class="metric"><div class="label">시나리오 등록 숫자</div><div class="value" id="metric-scenarios">1403</div><div class="hint">목록 숫자의 합 · 통과 건수 아님</div></div>
-          <div class="metric"><div class="label">총 도식</div><div class="value" id="metric-diagrams">552</div></div>
+          <div class="metric"><div class="label">확인 항목 등록값</div><div class="value" id="metric-scenarios">1654</div><div class="hint">목록 숫자의 합 · 통과 건수 아님</div></div>
+          <div class="metric"><div class="label">도식 등록값</div><div class="value" id="metric-diagrams">121</div></div>
           <div class="metric"><div class="label">현재 표시</div><div class="value" id="metric-shown">175</div><div class="hint" id="metric-shown-hint">전체 표시 중</div></div>
         </div>
 
@@ -45,7 +45,7 @@
           “첫 출시” 열은 이 기능이 <strong>첫 출시에 고객에게 열리는지</strong>만 나타낸다 —
           판정 근거와 열린 항목은 <a href="../qa/launch-status.html">첫 출시 현황</a>,
           기능별 확인 수준은 <a href="../qa/feature-status.html">기능별 출시 상태</a>에서 본다.
-          “PRD 상태”는 문서 작성 수준이며 구현 완료와 무관하다(<a href="../qa/migration-status.html">PRD 문서 상태표</a>).<br>
+          “문서 대조”는 2026-11-22 기능 정본 대조를 뜻하며 구현·실행 완료와 무관하다(<a href="../qa/migration-status.html">PRD 문서 상태표</a>).<br>
           기존 번호 목록 밖의 설명은 별도로 연결한다 — <a href="private-meeting.html">사적 모임 전 과정</a>과
           <a href="club-stamp.html">클럽 스탬프</a> · <a href="club-poll.html">게시글·모임 투표</a>.
           독립 번호를 부여하기 전에는 기능 수 175에 임의로 합산하지 않는다.</p>
@@ -61,8 +61,8 @@
                 <th style="width:130px">주 사용자</th>
                 <th style="width:150px">영향</th>
                 <th style="width:92px">첫 출시</th>
-                <th style="width:128px">PRD 상태</th>
-                <th style="width:78px;text-align:right">시나리오</th>
+                <th style="width:128px">문서 대조</th>
+                <th style="width:78px;text-align:right">등록 항목</th>
               </tr>
             </thead>
             <tbody id="feature-rows"></tbody>
@@ -71,12 +71,13 @@
       </section>
 
       <section>
-        <h2>읽는 법</h2>
+        <h2>읽는 법</h2><p><a href="../../prd/00_prd_items/05_feature_definitions.md">175개 기능 정본과 검토 초점</a> · <a href="../../prd/04_qa_acceptance/acceptance_criteria_matrix.md">전체 수용 기준과 상세 시나리오</a> · <a href="../../prd/PRD_MIGRATION_STATUS.md">기능별 문서 대조 근거</a></p>
         <ul>
           <li><strong>ID</strong> — <code>F도메인번호-순번</code> 형식. 다른 문서·이슈에서 이 ID로 참조한다.</li>
-          <li><strong>완료 확인 조건</strong> — 2026년 10월 13일 갱신한 기능별 사용자 결과·권한·실패 조건. 검사 통과 기록은 아니며 현재 구현 상태는 출시 상태표에서 확인한다.</li>
+          <li><strong>완료 확인 조건</strong> — 2026-11-22 기능 정본의 사용자 결과·권한·실패·복귀를 요약한 검토 초점. 실행 통과 기록이 아니며 자세한 조건과 제한은 각 기능 정본을 따른다.</li>
           <li><strong>영향</strong> — 이 기능이 변경되면 같이 바뀌는 횡단 영역. 회귀 검토의 기준.</li>
-          <li><strong>시나리오 수</strong> — 해당 기능 문서에 등록된 시나리오·수용 조건 수. 과거 집계 방식이 달라 상대적 복잡도를 보는 참고값이며 테스트 통과 건수가 아니다.</li>
+          <li><strong>등록 항목</strong> — 기능 목록의 확인 항목 합은 1,654개다. 별도 상세 시나리오 문서 117개의 제목 1,276개와 구분하며 어느 숫자도 시험 통과 수가 아니다.</li>
+          <li><strong>도식 등록값</strong> — 현재 목록의 합은 121개다. 별도 units 도식 120개와 기능 정본의 추가 도식을 포함한 등록값이며 실제 실행 경로 수가 아니다.</li>
         </ul>
       </section>
     </main>
@@ -136,7 +137,7 @@
         const impactChips = Object.entries(f.impacts)
           .filter(([, v]) => v)
           .map(([k]) => `<span class="pill ${IMPACT_CLASSES[k]}">${IMPACT_LABELS[k]}</span>`)
-          .join(' ') || '<span class="pill">직접 영향 없음</span>';
+          .join(' ') || '<span class="pill">등록 영향 없음</span>';
         const statusClass = f.status === 'Golden sample'
           ? 'brand'
           : f.status.includes('부분')
@@ -148,11 +149,11 @@
                 : f.status.includes('갱신')
                   ? 'money'
                   : '';
-        const statusBadge = `<span class="pill ${statusClass}" title="${esc(f.statusDetail || f.status)}">${esc(f.status)}</span>`;
+        const statusBadge = `<span class="pill" title="${esc(f.statusDetail || '기능 정본과 대조 기록 확인')}">문서 대조 · 11/22</span>`;
         return `<tr>
           <td><code>${esc(f.id)}</code></td>
           <td>${slug ? `<a href="../domains/${slug}.html">${esc(f.domain)}</a>` : esc(f.domain)}</td>
-          <td><strong>${esc(f.name)}</strong><br><span style="color:var(--muted); font-size:12.5px">${esc(f.checks)}</span><br><a href="${esc(f.id)}.html#release-completion">이 기능의 출시 완료 기준</a></td>
+          <td><strong>${esc(f.name)}</strong><br><span style="color:var(--muted); font-size:12.5px">${esc(f.checks)}</span><br><a href="${esc(f.id)}.html">현재 기능 설명과 제한</a> · <a href="${esc(f.id)}.html#release-completion">출시 완료 기준</a></td>
           <td>${esc(f.actor)}</td>
           <td><div style="display:flex; flex-wrap:wrap; gap:4px">${impactChips}</div></td>
           <td>${launchBadge(f.id)}</td>
