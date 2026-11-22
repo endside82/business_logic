@@ -418,7 +418,8 @@
         "curated_settlement_20261122",
         "curated_assignment_20261122",
         "curated_domain_20261122",
-        "notification_marketing_20261122"
+        "notification_marketing_20261122",
+        "poll_supplement_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2444,9 +2445,10 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "notification_marketing_20261122"
+        "notification_marketing_20261122",
+        "poll_supplement_20261122"
       ],
-      "note": "광고 동의·재확인·메일 및 공통 발송 흐름 부분 수정. 투표·스탬프·사진 심사와 업무별 알림 원문 대조 후 페이지 전체 완료 판정."
+      "note": "광고 동의·재확인·메일·공통흐름·투표 부분 대조 완료. 스탬프·사진 심사·본인확인·반환 등 업무별 추가 설명 대조 후 페이지 전체 완료 판정."
     },
     {
       "path": "docs/domains/13-profile.html",
@@ -4866,9 +4868,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e64fd1edc7f3579a13b2a07df5c9abf2898dbb87162b99c4bf1cd342f0c37579",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "poll_supplement_20261122"
+      ],
+      "reviewedSha256": "e5551bac752078bede9ddbfec7e045d4bd8dae0f5aa86c16f44469887e7cad82"
     },
     {
       "path": "docs/features/club-stamp.html",
@@ -5019,9 +5024,10 @@
       "review": "pending",
       "disposition": "partially_updated",
       "evidence": [
-        "notification_marketing_20261122"
+        "notification_marketing_20261122",
+        "poll_supplement_20261122"
       ],
-      "note": "광고 동의·재확인·메일 및 공통 발송 흐름 부분 수정. 투표·스탬프·사진 심사와 업무별 알림 원문 대조 후 페이지 전체 완료 판정."
+      "note": "광고 동의·재확인·메일·공통흐름·투표 부분 대조 완료. 스탬프·사진 심사·본인확인·반환 등 업무별 추가 설명 대조 후 페이지 전체 완료 판정."
     },
     {
       "path": "docs/policies/payment.html",
@@ -42202,6 +42208,415 @@
       "observedSourceVersions": {
         "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
         "community_app": "b1627de77381f33a895e605367cc5f7ccca21458"
+      }
+    },
+    "poll_supplement_20261122": {
+      "kind": "source_review",
+      "scope": "보충 기능인 게시글·참가자·일정/장소 결정 투표의 현재 생성/권한/표변경/기한/확정/자동참가/재확정/알림/앱복귀 대조. 기존175개 기능수와 별도이며 실행검증 아님. 알림2페이지는 투표 부분만 추가 동기화.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollService.java",
+          "sha256": "ce8210a8518688466f5fbd939ccea5c37e319334cc2ee9a18011bf7017462c5e",
+          "reviewScope": "60–826 실제본문: 게시글 생성·첨부·열람·익명 명단·표 교체·마감·수정·삭제·예약 공개 및 현재투표 집계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollDefinitionValidator.java",
+          "sha256": "36beab61a037168420976de09c3b9f0a82cf0fdec4fd67a59e40a238e196fe50",
+          "reviewScope": "18–107 전체 실제본문: 2–10개·질문/이름·중복·후보전용필드·시간범위"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollAccessResolver.java",
+          "sha256": "df64cc1297852713b04d3662c93542e8b6929bd796a9fd4f8f78c678dcd156cd",
+          "reviewScope": "19–75 전체 실제본문: 부모 글 상태·현재회원·양방향차단·작성자/운영진"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/EventPollAccessPolicy.java",
+          "sha256": "db128833a87cae684b685dd6096b197b3dc3485a0c6e854f2c54a6c362396c7d",
+          "reviewScope": "33–104 전체 실제본문: 주최측/참석자·현재클럽회원·공지권한·부모상태"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/EventDecisionAccessPolicy.java",
+          "sha256": "6eb63feb5d4a9905682fad3e7895066a68cf07b7c5b9e52bef816875febb7724",
+          "reviewScope": "25–60 전체 실제본문: 초안 주최측 열람과 공개 회원/주최측, 주최자 투표 제외·관리 권한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/EventPollService.java",
+          "sha256": "abb96f0952f53a14c911147c3e8ed859407ff623559f99a8d1f9c4a7e9d3c617",
+          "reviewScope": "46–164 전체 실제본문: DRAFT/OPEN 생성·진행중5개·공지제한·Page 조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollVoAssembler.java",
+          "sha256": "cc0ff5378a9843fb69e6b8fa942e635d8613b46645b9992f8780451f0eb743ee",
+          "reviewScope": "20–58 전체 실제본문: 상태/마감/부모에 따른 canVote/canManage·내표·결과"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollNotificationHooks.java",
+          "sha256": "478739e9493fb68562a2d2db418c30f21ba47383df7b8497e45e5a9ce1391317",
+          "reviewScope": "25–131 전체 실제본문: 생성/마감 대상·작성자/마감자 제외·현재클럽회원 재필터·의도 중복키"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollDeadlineWorker.java",
+          "sha256": "b7ed4b96f1413055d7037f982ff1eaf0a9c0eb57615ce1255e5fe1fbe11d7d7f",
+          "reviewScope": "24–112 전체 실제본문: 일반 기한 마감과 부모OPEN일때 통지, 결정투표 별도 처리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollDeadlineScheduler.java",
+          "sha256": "eeabf1502db695c1096d2cd6fa3b98f6ab0bf430fc6c528df57e455e5f7847c8",
+          "reviewScope": "27–65 전체 실제본문: 공개범위·60초 기본·200개 한도·실패 격리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/service/PollLifecycleService.java",
+          "sha256": "d24d925c3777400950d543a8228f20be8858f81b8ba0c9849060e86095b69560",
+          "reviewScope": "29–102 전체 실제본문: 공개시 PENDING 전환에 시작통지 호출 없음·기한초과 CLOSED·모임취소"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/constants/PollLimit.java",
+          "sha256": "d14b33d5024ee82f1e0099e4207f1d4a24d8dea8bda012eee99ce8df97de09c6",
+          "reviewScope": "4–30 실제 한도 상수"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/constants/PollTimeRule.java",
+          "sha256": "f5131231b360986bd2290346eba3fa058a1afdec8293a2849c93079c1ea169e7",
+          "reviewScope": "16–33 실제 시간 상수"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/vo/PollVo.java",
+          "sha256": "205271b9290af31a815116a6468782dc5eae84c5cbae8dde780af7584e8ad068",
+          "reviewScope": "12–41 전체 필드: 버전/권한/종류/선택지, eventId 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/poll/port/PollEventAdapter.java",
+          "sha256": "2b1d0edc5d3cd0496e7d2798a101eb46fe7c97dac04609b17b2ffa201eadc9ab",
+          "reviewScope": "20–62 실제 이벤트 조회와 유효 주최측/공지권한 위임"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionService.java",
+          "sha256": "cfc567d13f77c0b27c6a0894cf8bec957fceda472a1bf6e53baca0ffb2e33799",
+          "reviewScope": "100–927 실제본문: 무료클럽 후보·초안제거·관리수정·버전확정·자동결정·만료통지·참가전환 제외·재확정·알림그룹"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionRules.java",
+          "sha256": "9cc0c6adb7a07f682267b0a1bc15eae1a3c3a38340312518e2f42b94dea42279",
+          "reviewScope": "41–266 실제본문: 무료CLUB_MEETING·후보/주소/좌표·1시간/30일/2시간 경계·실제일정 일치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionNotifier.java",
+          "sha256": "5f91d51cc115069618dafbdb9a014067c2ce39990d963f1c9b3adf610bb5f2ef",
+          "reviewScope": "28–148 전체 실제본문: 공개/참가전환/기존참가변경/나머지회원/조치요청 의도와 중복키"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionLifecycleHooks.java",
+          "sha256": "e9aa0c3626d64c67eefa3fb66e5d96d72b58eb5c900170af6dcf0259774123e8",
+          "reviewScope": "33–134 전체 실제본문: 공개 재검증·OPEN·주최자제외통지·취소·버전 갱신"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionScheduler.java",
+          "sha256": "c0dacf914cfa3e8d94ce0bc62255d03ddddeb3b96d8e675bbc6a64cb74803f28",
+          "reviewScope": "35–85 실제본문: 60초 기본/200개 조회·별도 마감/만료 작업·실패 격리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionSchedulerWorker.java",
+          "sha256": "b6283ccced574500d8b5716e4fe6c5f26474d11f6ecaf1e05e99d2d5fa499a13",
+          "reviewScope": "23–42 실제본문: 독립 거래·마일리지 행사 잠금과 확정 서비스 호출"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/decision/service/EventDecisionGuard.java",
+          "sha256": "e430ad201eacce8e20bd6a5691df77f7ad975dd551543159b33ac713ce6996ab",
+          "reviewScope": "14–28 전체 실제본문: 확정대기 참가 거절"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/poll/controller/ClubPostPollController.java",
+          "sha256": "887bcb14f6a0fd6f6e694a73e730bba2e997b411c336a8cf6712001525de291f",
+          "reviewScope": "24–52 전체 실제본문: 생성201/필수Idempotency-Key/주소/본문/응답"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/poll/controller/EventPollController.java",
+          "sha256": "f2ce38703db38e0e1a52476829320ba9626824afae55fd641e9f6f79090b68c1",
+          "reviewScope": "30–67 전체 실제본문: 생성201/필수키/목록Page·상태검색"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/poll/controller/PollController.java",
+          "sha256": "6d407938ae29999de8a748a113a22a55fc9b8844cdf89c43a4f841ce33f1f3f8",
+          "reviewScope": "29–86 전체 실제본문: GET/표PUT/마감POST/수정PUT/삭제204/명단Page"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/decision/controller/ClubEventDecisionController.java",
+          "sha256": "0011a61989586fa97a93adbf0a5e14559c7f7d2c625613332f0eaa33d67ef1a1",
+          "reviewScope": "26–48 전체 실제본문: club/event 결정 POST·결과 VO"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/port/MileageEventAdapter.java",
+          "sha256": "7337c26451a3db566fd0dbd49d40c91b4c8da0e2c57250ca7bc07d491ce32c1f",
+          "reviewScope": "44–48 결정투표 공개 훅 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventDataExportAssembler.java",
+          "sha256": "ed3b463c582b613698dcfea03b1bcae8f2bad9e9926a08a634779f2bcda4b281",
+          "reviewScope": "83–157 이벤트 내보내기 의존·항목 구성에 투표/표 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubDataExportAssembler.java",
+          "sha256": "c209d0a4459edd76b302a30b6121007ddad189deea16cb36914301489104c8fb",
+          "reviewScope": "48–138 클럽 내보내기 의존·항목 구성에 투표/표 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/poll/event_decision_provider.dart",
+          "sha256": "a40504bd81b19cf0d1084e73bdebaa373cb07169538b263a122e2f76d0d49933",
+          "reviewScope": "30–314 실제본문: 버전확정·후보편집·초안제거 재조회·성공/반영가능오류 갱신"
+        },
+        {
+          "path": "community_app/lib/domain/providers/poll/poll_card_provider.dart",
+          "sha256": "683f5bdf459cc7bc17a220e7984828120fdea1eff4f2d21630ddcd363a163119",
+          "reviewScope": "10–157 실제본문: 표 낙관변경·실패복구·중복억제·마감과관련조회 신호"
+        },
+        {
+          "path": "community_app/lib/domain/providers/poll/poll_commands.dart",
+          "sha256": "c51f965f3c9665ed27d7bee10ef31769fd06abaad41fb7dacbdc2d2029893158",
+          "reviewScope": "19–86 실제본문: 생성/첨부/수정/삭제 결과와변경신호"
+        },
+        {
+          "path": "community_app/lib/domain/providers/poll/event_poll_list_provider.dart",
+          "sha256": "1d41cd132b055641d6cbfdcfd43f2efa5573f23d34951c77a2bbd5f676c67a15",
+          "reviewScope": "13–187 실제본문: 20개 페이지·세대·추가조회 실패/권한거절·단건pollId조회"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/event_decision_flow.dart",
+          "sha256": "cd9065b4cf6a54c23c38b6e5b213146287f4c126f261d1464a2985442e5fd8da",
+          "reviewScope": "38–199 실제본문: 앱재확정3시간초과·후보편집·확정시트/버전충돌 상세갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/event_poll_create_flow.dart",
+          "sha256": "c78e5dd11ad9777fdb3a748892d7bf36c76f42f910797cb32ae96d32567c6822",
+          "reviewScope": "29–122 실제본문: 생성/5개표지·편집세션내 본문별키·성공/실패"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/event_poll_close_action.dart",
+          "sha256": "f0d7131cab7ab8b9702f0e5793e75b41d3c24e7f766619f37b692664416899b5",
+          "reviewScope": "28–113 실제본문: 관리/현재OPEN/마감전 확인창·마감결과"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/screens/event_poll_list_screen.dart",
+          "sha256": "20767ca870bfa68916ab679fbe3c15c0293f9ae0ffa9d0f9804a62a72e63ff37",
+          "reviewScope": "31–246 전체 실제본문: 만들기·표카드·마감·추가조회·빈값·오류"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/screens/event_poll_detail_screen.dart",
+          "sha256": "740093276cda3e7ca4307b6d2efa80bc67e5ba4192569815b003a38c5ffc7e74",
+          "reviewScope": "20–87 전체 실제본문: 단건카드·마감·없음/재시도·경로eventId와투표결합검사없음"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/screens/poll_editor_screen.dart",
+          "sha256": "628a84c8942d9d09a0eb8bf405963b2c7520bc9cbfc1e1795672b649097f9528",
+          "reviewScope": "329–368 전송중닫기억제;850–1040 마감/선택지/후보검증·저장성공만닫기/실패입력유지"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/widgets/draft_decision_actions.dart",
+          "sha256": "12e3ef92e7a9170b9dd25af6089c8fb16d59ce261a6551a297ba369c81a8fe1a",
+          "reviewScope": "21–193 실제본문: 초안후보수정·투표제거 별도허용·후보선택·실패유지"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/widgets/event_decision_poll_section.dart",
+          "sha256": "883a79a6b3c70838d718b4962e5acd708a4c8b4c9eeff96bd9e9670c1c85dec8",
+          "reviewScope": "28–159 실제본문: 모임후보표카드·투표시트 공개범위·참가전환안내"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/widgets/decision_decide_sheet.dart",
+          "sha256": "d767c29cf7c9b2206ea208d98b7308cc0a1e491d50182ca6b72a8e9c733f5195",
+          "reviewScope": "43–350 후보초기선택/시간/비익명명단추가조회/예상인원;476–622 제외명단·확인·버전요청·성공/충돌/실패"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/widgets/poll_card.dart",
+          "sha256": "c8a4322af33da7e26d4e5a1a619b15da7fe24300e4d904d75819cf9688fc57c9",
+          "reviewScope": "92–180 선택상태/득표비율/익명명단;215–354 단복수표·표거두기·결과반영/실패안내"
+        },
+        {
+          "path": "community_app/lib/presentation/poll/widgets/poll_attach_section.dart",
+          "sha256": "0d0ec38a4685207dd35b0e60a65e7d842158245f4c7a0a7326816b53140e118a",
+          "reviewScope": "20–124 실제본문: 공개범위·최대5개 첨부·편집/삭제 콜백"
+        },
+        {
+          "path": "community_app/lib/data/models/poll/draft_decision_removal.dart",
+          "sha256": "ba4835ab2f2315922f99644d3289be4ae194fa6bb9e54a95e9f6e36334eaedb1",
+          "reviewScope": "9–86 전체 실제본문: 편집/제거별도권한·후보유효성·실제일정/장소 제거본문"
+        },
+        {
+          "path": "community_app/lib/data/models/poll/poll_vo.dart",
+          "sha256": "cd0da42745833f7729b7625673dfdc78f434afe7d04840a6ecb201bc42faa525",
+          "reviewScope": "20–132 필드·상태/마감·알수없음·삭제가능·득표비율, eventId 없음"
+        },
+        {
+          "path": "community_app/lib/data/api/poll/poll_api.dart",
+          "sha256": "d317fac2bb7231d75296813ec9b2c2d234b019811f233fb922f22f16af0c4ca1",
+          "reviewScope": "15–47 전체 HTTP 계약"
+        },
+        {
+          "path": "community_app/lib/data/api/poll/event_poll_api.dart",
+          "sha256": "b21d46690afeb0e440b26db75a221fcc4deb8afc4376cb4a884a37cca55f4d74",
+          "reviewScope": "15–41 생성키/검색페이지/앱상태필터미노출"
+        },
+        {
+          "path": "community_app/lib/data/api/poll/club_post_poll_api.dart",
+          "sha256": "0911405a8d7783b2230e5d6982948f0d73f1dcb89960aa1d545adec66749ba38",
+          "reviewScope": "13–24 필수키첨부"
+        },
+        {
+          "path": "community_app/lib/data/api/poll/club_event_decision_api.dart",
+          "sha256": "732b3d54c692ac28c3a922cca927835fffdac72ff28861c4c3d94752a5a581b1",
+          "reviewScope": "17–30 결정POST본문"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventAuthorizationService.java",
+          "sha256": "5f27b7133a29189c88eb74b09ef6356946d02e1b00921eab5e0fd79035c4e897",
+          "reviewScope": "31–91 주최자와 유효공동주최자·클럽 운영진 판정 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCoHostService.java",
+          "sha256": "27f9e3a4a3768726b32d95fee5279e58be5cd6609d2acc5cd943bc6257ff7003",
+          "reviewScope": "232–277 공지권한/활성공동주최자에 위임권한정지 적용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubAccessService.java",
+          "sha256": "6aa6a020c768d36ef4bb1a6214f99084bb4c5fde7817fadccae1465b8d01a258",
+          "reviewScope": "85–90 운영진 isAdmin 판정 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "96–107/258–276 결정대기 거절·968–973 현재회원/유효운영진의 초안수정 허용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubEventService.java",
+          "sha256": "a974b9c89348e0f8e643a5478dc0cacf18eade40d8eaa903d222c5f52393532e",
+          "reviewScope": "768–817 초안수정 현재회원/유효운영진·소속/상태 확인; 869–926 후보 제거·실제값·교체/저장 같은 업무 흐름"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/CalendarExportService.java",
+          "sha256": "9427f97d0b8a94f93ef27f1d618e82e419da08c633a69f0827d96f7ac2230da5",
+          "reviewScope": "33–58 상세열람 뒤 결정대기 ICS 거절"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/repository/query/CalendarQueryRepository.java",
+          "sha256": "d2a7e6f7e695900583fefb3969f41a6cfeb64e36eb6de7b388205c6cb38c469d",
+          "reviewScope": "30–124 주최·승인/참석 일정의 decisionPending 제외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubEventStatisticsService.java",
+          "sha256": "61215ea17d44236bb76df77e992a5edc51a2142e931047f6b831cf2c40de18f5",
+          "reviewScope": "57–88 클럽달력의 DATE 결정투표 제외 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageEventLifecycleService.java",
+          "sha256": "fa73777d9bc7f6b88da16def42b6e6e4b551d5c8f8e7488b2e9eab60198a0dde",
+          "reviewScope": "39–78 공개 훅·일반투표활성·OPEN 발행과 규칙고정 호출"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataExportContentWorker.java",
+          "sha256": "033435a127b0d90a6da9719d197be460ceac7d710b20d7e8dda2b15cc05a7dae",
+          "reviewScope": "63–165 의존목록,200–272 내보내기 조립/구역 목록; 별도투표 산출물 없음"
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/application-prod.yaml",
+          "sha256": "8cb1351b9f4d0664d91da564ff054fe7f5d05dfbe6dcd0055d0ed024a4a2b187",
+          "reviewScope": "239–245 로컬운영 기본 공개범위 POLL 포함. 실제환경·배포 확인 아님"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "225–307 생성/후보편집/목록/단건 경로와가드"
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "f29f53587a7650e60f9abc67a4b337ec0597425b11262039875b7497c0005d6a",
+          "reviewScope": "424–464 모임별 목록/생성·후보편집가드; pollId와eventId결합검사없음"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "92–120 알림종류별경로;733–738 pollId있음/없음"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
+          "sha256": "1545eda9424b9eafd2af70b5e4282c825fb0e1cb0f8c93fec322c6d672682a2a",
+          "reviewScope": "50–83 이벤트투표/결정결과;102–162 운영조치/클럽공개 묶음"
+        }
+      ],
+      "reuses": [
+        "calendar_features_20261122",
+        "club_album_20261122",
+        "club_calendar_20261122",
+        "curated_assignment_20261122",
+        "curated_charge_20261122",
+        "data_export_20261122",
+        "event_creation_20261122",
+        "event_detail_complete_20261122",
+        "location_features_20261122",
+        "notification_marketing_20261122",
+        "settlement_account_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [],
+      "retainedHtmlIds": {
+        "docs/features/club-poll.html": [
+          "sidebar",
+          "current-state",
+          "poll-types",
+          "vote-rules",
+          "decision-flow",
+          "privacy-calendar",
+          "notifications",
+          "release-checks",
+          "release-completion"
+        ],
+        "docs/policies/notification.html": [
+          "sidebar",
+          "refresh-and-destination-current",
+          "durable-delivery",
+          "poll-notifications",
+          "marketing-current-1",
+          "marketing-current-2",
+          "marketing-current-3",
+          "marketing-current-4",
+          "marketing-current-5",
+          "marketing-current-6"
+        ],
+        "docs/domains/12-notification.html": [
+          "sidebar",
+          "settlement-refund-notification",
+          "launch-strip",
+          "delivery-recovery"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "초안 참가자 투표 공개 훅의 시작통지 호출 없음",
+        "일반 투표의 마감 제거와 결정투표 필수마감 구분",
+        "생성키는 편집세션 내 유지; 재진입 영속보관 보장 아님",
+        "직접링크 eventId와pollId 결합검사 부재; 각 대상 권한검사와 구분",
+        "서버 재확정3시간포함 vs 앱3시간초과 경계차이",
+        "확정 예상인원과 실제자격검사·전환결과 구분"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/features/club-poll.html",
+          "pattern": "<details>[\\s\\S]*?</details>",
+          "sha256": "a79e3e8ab0a5cf859ef5897390bc9c7b52a401c6714ea9021fd36c292c8314c3",
+          "note": "2026-09-14 기존 실행 기록 원문; 현재 실행으로 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "65 source/canonical digests; 23 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 3 paths, 39 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review and document checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
+        "community_app": "39074c1e4e91aaf8a37da82b3c9cc434c6ae5bab"
       }
     }
   },
