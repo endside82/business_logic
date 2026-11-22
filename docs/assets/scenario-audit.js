@@ -4,7 +4,7 @@ window.SCENARIO_AUDIT = {
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "8955dac9f50ba83014a6a26f37326de05d1dfa78"
+    "sourceRevision": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa"
   },
   "countingNote": "시나리오 1,276개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {

@@ -14,155 +14,55 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>횡단 정책<span>›</span>상태 정책</div>
         <h1>상태 정책</h1>
-        <p class="lede">
-          이 문서는 화면 설명보다 “지금 이게 어떤 상태인지”가 중요한 기능만 모았다.
-          버튼·문구·알림·예외 처리를 결정할 때 첫 참고서다.
-          구현 내용을 따로 확인하지 않고도 “이 상태에서는 무엇이 가능한가”를 답할 수 있어야 한다.
-        </p>
+        <p class="lede">모집·참석·돈·반환·분쟁·개인정보 처리의 서로 다른 상태와 후속 결과를 구분합니다. 2026-11-22 소스 대조이며 새 실행 검증 결과와 구분합니다.</p>
       </header>
 
-      <section id="closure-current">
-        <h2>모임 취소와 탈퇴 뒤 남겨야 할 사실</h2>
-        <p>모임 시작 뒤 본인 취소를 막으며 비공개 모임의 선정 마감과 행사 종료를 구분합니다. 탈퇴가 이미 끝난 모임의 참가·출석 사실을 취소로 바꾸지 않도록 하고, 정리할 돈 의무는 사전 점검에서 확인합니다. 비활성화 뒤 남은 신청·직접 참석·정기모임 정리는 재시도합니다.</p><p><a href="../features/F03-05.html#cancel-start-boundary">시작·종료 상태에 따라 본인 취소를 제한합니다</a> · <a href="../features/F13-07.html#closure-participation">탈퇴가 과거 참석 사실을 지우지 않습니다</a> · <a href="payment.html#money-recovery-current">외부 지급의 시작 전 대기와 결과 불명을 구분합니다</a></p>
-      </section>
-
-
-      <section id="session-and-retry">
-        <h2>계정 전환·화면 복귀·실패 뒤의 상태를 맞춥니다</h2>
-        <p>요청을 시작한 로그인 세션과 완료 시점의 세션이 다르면 이전 응답으로 현재 계정의 화면·입력·알림 연결을 바꾸지 않습니다. 확인창이나 사진 선택기를 열었다가 돌아오는 작업도 시작 당시 계정에 묶습니다. 다른 기기 로그인으로 종료됐다면 그 이유를 안내합니다.</p>
-        <p>작성 화면의 저장 실패에서는 입력을 유지합니다. 저장 성공 뒤에만 닫고, 작성 중 이탈이나 사진 업로드 중 이탈은 해당 화면의 확인·차단 절차를 거칩니다. 사진 일부만 전송됐다면 실패한 사진을 이어 처리하고 이미 반영된 사진을 중복 등록하지 않습니다.</p>
-        <p>목록의 추가 읽기는 중복 요청을 막고, 늦게 도착한 이전 검색·계정의 응답을 버립니다. 다음 페이지 실패는 기존 목록을 없애지 않고 다시 시도할 수 있게 합니다. 낙관적으로 표시한 변경이 실패하면 해당 작업의 변경만 되돌립니다.</p>
-        <p>클럽을 못 찾았다는 응답과 일시적인 읽기 실패를 구분합니다. 새 권한을 확인 중이거나 확인에 실패했다면 전에 허용됐던 버튼으로 변경을 실행하지 않습니다. 서버가 이미 반영했을 가능성이 있는 실패에서도 관련 상세·목록을 다시 확인합니다.</p>
-      </section>
-
-
-      <section id="unconfirmed-command-retry">
-        <h2>응답을 받지 못한 오래된 명령은 결과부터 확인합니다</h2>
-        <p>중복 실행 방지 번호를 보관하는 앱 명령은 23시간 안의 재시도에 같은 번호를 사용합니다.
-          23시간이 지난 미확정 번호로는 다시 실행하지 않고 현재 결과를 조회해 확인하도록 안내합니다.
-          다음에 사용자가 새로 실행하면 새 번호를 사용합니다. 이 규칙은 해당 보관함을 사용하는 명령과 문의 답글에 적용하며 모든 API의 보존 시간을 뜻하지 않습니다.</p>
-        <p>응답을 잃은 것을 실패로 단정해 돈·역할·신고 처리를 곧바로 중복 실행하지 않습니다.</p>
-      </section>
-
-      <section>
-        <h2>이 문서를 보는 법</h2>
-        <p>
-          각 상태마다 <strong>사용자에게 보이는 의미</strong>, <strong>허용 액션</strong>, <strong>다른 도메인에 미치는 영향</strong>을
-          함께 정의한다. 상태 이름만 정해 두면 “이 상태에서 어떤 알림이 가는가”를 매번 다르게 해석하게 된다.
-        </p>
-        <div class="callout">
-          <span class="label">상태 PRD의 3원칙</span>
-          <ul>
-            <li>상태 이름만 정의하지 않는다. 사용자가 보는 문구와 가능한 액션까지 같이 정의한다.</li>
-            <li>상태 변경은 알림·캘린더·결제·리뷰 자격에 영향을 줄 수 있다. 변경 시 그 영향을 함께 검토한다.</li>
-            <li>취소·만료·삭제·차단은 성공 상태와 다른 <strong>복구 동선</strong>을 가져야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>1. 이벤트 상태</h2>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 작성중: 호스트가 초안 생성
-    작성중 --> 모집중: 발행
-    모집중 --> 종료됨: 모집 또는 이벤트 종료
-    모집중 --> 취소됨: 호스트 취소
-    모집중 --> 비공개: 비공개 처리
-    종료됨 --> [*]
-    취소됨 --> [*]
-    비공개 --> [*]
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>상태</th><th>사용자에게 보이는 의미</th><th>주요 허용 액션</th></tr></thead>
-            <tbody>
-              <tr><td><strong>작성중</strong></td><td>아직 공개되지 않은 초안 이벤트</td><td>호스트 편집·발행</td></tr>
-              <tr><td><strong>모집중</strong></td><td>모집 또는 참여 가능</td><td>참가자 신청·취소, 호스트 운영</td></tr>
-              <tr><td><strong>종료됨</strong></td><td>모집 또는 이벤트가 종료</td><td>리뷰·사진첩·정산 등 후속 흐름</td></tr>
-              <tr><td><strong>취소됨</strong></td><td>취소된 이벤트</td><td>취소 안내·환불·알림 후속</td></tr>
-              <tr><td><strong>비공개</strong></td><td>일반 노출에서 제외</td><td>관리자·호스트 정책에 따름</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>2. 이벤트 신청과 참석 상태</h2>
-        <p>이벤트에는 “신청서 심사”와 “참석 확정/대기”가 같이 돌아간다. 두 흐름은 별개 — 한 상태로 묶지 않는 게 핵심.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["참석 신청 버튼"] --> B{"승인 필요?"}
-    B -->|"예"| C["심사 대기"]
-    C -->|"호스트 승인"| D["승인됨 → 참석 확정"]
-    C -->|"호스트 거절"| E["거절됨"]
-    C -->|"사용자 취소"| F["신청 취소"]
-    B -->|"아니오"| G{"정원 여유?"}
-    G -->|"예"| H["참석 확정"]
-    G -->|"대기열 가능"| I["대기 중"]
-    G -->|"대기열도 가득"| J["신청 실패"]
-    I -->|"자리 발생"| H
-    H -->|"사용자 취소"| K["참석 취소"]
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>구분</th><th>상태</th><th>의미</th></tr></thead>
-            <tbody>
-              <tr><td>신청서</td><td><strong>심사 대기</strong></td><td>호스트 검토 전</td></tr>
-              <tr><td>신청서</td><td><strong>승인됨</strong></td><td>호스트가 승인</td></tr>
-              <tr><td>신청서</td><td><strong>거절됨</strong></td><td>호스트가 거절</td></tr>
-              <tr><td>신청서</td><td><strong>신청 취소</strong></td><td>신청자가 심사 전에 취소</td></tr>
-              <tr><td>참석</td><td><strong>참석 확정</strong></td><td>참석이 확정됨</td></tr>
-              <tr><td>참석</td><td><strong>대기 중</strong></td><td>대기열에 있음</td></tr>
-              <tr><td>참석</td><td><strong>참석 취소</strong></td><td>확정됐던 참석이 취소됨</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout warn">
-          <span class="label">자주 헷갈리는 부분</span>
-          <ul>
-            <li>"신청 취소"(심사 전 신청서를 거둠)와 "참석 취소"(확정된 자리를 비움)는 서로 다른 상태다. 정원 반환·환불·대기열 승급 처리가 달라지는, 가장 자주 혼동되는 지점.</li>
-            <li>대기열 자동 승격은 사용자 행동 없이 시스템이 바꾼다. 따라서 <strong>알림</strong>이 필수.</li>
-            <li>“승인됨”과 “참석 확정”은 다르다. 유료 승인제 이벤트의 경우 결제 후에만 참석 확정이다.</li>
-          </ul>
-        </div>
-
-        <h3>유료 승인제 권장 상태</h3>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 심사대기: 신청서 제출
-    심사대기 --> 거절됨: 호스트 거절
-    심사대기 --> 승인후결제대기: 호스트 승인
-    승인후결제대기 --> 참석확정: 결제 성공
-    승인후결제대기 --> 결제기한만료: 기한 만료
-    승인후결제대기 --> 취소됨: 사용자 취소
-    거절됨 --> 심사대기: 재신청
-    결제기한만료 --> 심사대기: 재신청
-    취소됨 --> 심사대기: 재신청
-          </div>
-        </div>
-        <div class="callout warn">
-          <span class="label">F03-13 선입금 상태로 분리</span>
-          <p>"승인 후 결제 대기", "결제 기한 만료"는 이벤트 참가 선입금의 핵심 상태다.
-          승인 즉시 참석 확정으로 만들지 않고, 지갑 결제 또는 계좌이체 확인 이후에만 참석 확정으로 넘어간다.
-          자세한 결제 단계별 상태는 <a href="../features/F03-13.html">F03-13 이벤트 참가 선입금</a>에서 본다.</p>
-        </div>
-        <div class="callout">
-          <span class="label">결제 성공·취소·만료 처리 상세</span>
-          <p>결제가 성공하면 신청 상태와 참석 상태가 각각 갱신되어 참석이 확정된다. 계좌이체 결제 후 참가자가
-            취소하면 호스트가 외부 환불을 확인할 때까지는 정원을 계속 붙든 채 "환불 대기 중인 취소"로
-            표시하고(노쇼 집계에서는 제외), 호스트가 환불을 확인하면 그때 최종 취소로 넘어간다.
-            결제 기한이 지나면 신청 상태가 자동으로 결제 기한 만료로 바뀌고 신청자에게 알림이 간다.
-            계좌이체 입금 신고가 확인을 기다리는 중이면 만료 처리는 보류된다.</p>
-        </div>
-      </section>
-
-      <section>
+      <!-- derived-from: prd/03_policy_prds/state_policy_prd.md; sha256: a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90 -->
+<section id="state-current-1"><h2>상태를 읽는 기준</h2><p>상태는 <strong>어떤 기록의 상태인지</strong>부터 구분한다. 모임 공개 상태, 신청, 실제 참석, 납부, 송금, 반환, 분쟁, 알림 전달은 서로 다른 기록이다. 같은 이름의 PENDING·COMPLETED라도 같은 사건을 뜻하지 않는다. enum에 전이가 있다는 사실만으로 모든 API·역할에서 그 전이가 허용되지는 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>확인 순서</th><th>문서에 남길 내용</th></tr></thead><tbody><tr><td>대상과 현재 사실</td><td>계정·대상·원천 기록, 저장 상태와 계산한 화면 단계</td></tr><tr><td>실행 자격</td><td>현재 역할·소속·상태·기한·보류·공개 설정·필요한 동의</td></tr><tr><td>실행 결과</td><td>저장된 전이, 아직 진행 중인 돈·알림·정리 작업</td></tr><tr><td>실패·복귀</td><td>확정 거절·결과 불명·부분 처리·만료를 나누고 현재 결과를 다시 조회</td></tr></tbody></table></div>
+<p>권한의 공통 기준은 <a href="../../prd/03_policy_prds/permission_policy_prd.md">권한 정책</a>, 금전 후속 처리는 <a href="../../prd/03_policy_prds/payment_settlement_policy_prd.md">결제·환불·정산 정책</a>을 따른다. 화면 문구만으로 저장 상태나 외부 실행 완료를 판정하지 않는다.</p></section>
+<section id="state-current-2"><h2>이벤트 공개 상태와 실제 종료</h2><p>EventStatus는 DRAFT·OPEN·CLOSED·CANCELED 네 값이다. 기본 전이는 DRAFT에서 OPEN 또는 CANCELED, OPEN에서 CLOSED 또는 CANCELED다. 일반 이벤트 enum에서 CLOSED·CANCELED는 다음 전이가 없다. <strong>숨김은 이 enum의 다섯 번째 상태가 아니다.</strong> 노출 설정·운영 제한·시간 경계는 별도로 읽는다.</p>
+<p>공개 모임의 편집 가능 범위와 일정 변경 제안은 상태 전이와 다른 계약이다. CLOSED 표시를 모든 모임의 실제 만남 종료로 번역하지 않는다. 특히 비공개 모임은 상대 선정 때 모집을 닫아도 만남과 완료 확인이 남는다. 정기모임 코스의 CLOSED 재공개는 별도 상태 기계다.</p>
+<p><a href="../features/F03-04.html">이벤트 생성·공개·마감·취소</a>, <a href="../features/F17-04.html">정기모임 코스 공개·마감·재개·취소</a>를 따른다. 정기모임 코스의 재개는 VARIABLE에 허용되며 일반 이벤트의 CLOSED를 다시 OPEN으로 바꾸는 공통 규칙이 아니다.</p></section>
+<section id="state-current-3"><h2>신청·참석·선입금의 서로 다른 상태</h2><div class="table-wrap"><table><thead><tr><th>기록</th><th>현재 상태값</th><th>혼동하면 안 되는 사실</th></tr></thead><tbody><tr><td>ApplicationStatus</td><td>PENDING, APPROVED, APPROVED_PENDING_PAYMENT, PAYMENT_EXPIRED, REJECTED, CANCELED, CANCEL_PENDING_REFUND</td><td>승인과 참석 행 생성·납부 완료를 합치지 않음</td></tr><tr><td>AttendanceStatus</td><td>ATTENDING, WAITING, CANCELLED</td><td>신청의 CANCELED와 철자가 다름. 회원·게스트 행과 정원을 별도 판단</td></tr><tr><td>EventPaymentStatus</td><td>PENDING, PAID, REFUND_REQUESTED, REFUNDED, CANCELED</td><td>결제 행과 송금·입금 신고 상태는 별개</td></tr></tbody></table></div>
+<p>신청 PENDING은 승인·결제 대기 승인·거절·취소로 이동할 수 있다. APPROVED_PENDING_PAYMENT에서는 납부 완료에 따른 APPROVED, 기한 만료 PAYMENT_EXPIRED 또는 취소를 구분한다. 이미 승인된 신청의 취소는 곧바로 CANCELED가 되거나 반환 대기 CANCEL_PENDING_REFUND가 남을 수 있다. 만료·거절·취소 후의 재신청·재승인 전이는 해당 명령의 현재 조건을 다시 검사한다.</p>
+<p>선입금 대기 동안 참석 행 없이 논리적으로 자리를 예약하는 경우가 있다. 한 신청의 회원·게스트가 실제 참석과 대기로 나뉠 수도 있으므로 신청 한 행만으로 전체 인원의 참석을 세지 않는다. 유료 모임인데 선입금이 꺼진 설정을 무료 승인 흐름으로 우회시키는 과거 설명은 현재 거절 조건과 맞지 않는다.</p>
+<p>납부 만료 처리는 기한이 엄격하게 지난 대상을 다룬다. 호스트의 은행 입금 확인을 기다리는 신고는 일반 만료 대상과 구분한다. 현재 은행 신고·확인 앱 경로가 있으며 신고 버튼 성공이 실제 송금·입금 확인·참석 확정을 모두 뜻하지 않는다. POINT는 지갑, CASH·현재 MIXED 앱 경로는 은행 안내를 사용하며 MIXED를 항상 사용자 결제수단 선택 화면으로 설명하지 않는다.</p>
+<p>EventPaymentStatus의 PENDING은 PAID·REFUND_REQUESTED·CANCELED로, PAID는 REFUND_REQUESTED·REFUNDED로, REFUND_REQUESTED는 REFUNDED·CANCELED로 전이할 수 있다. 이 허용 목록은 모든 취소가 즉시 환불된다는 보장이 아니다.</p>
+<p><a href="../features/F03-05.html">이벤트 신청·참석·취소</a>, <a href="../features/F03-07.html">정원과 대기자</a>, <a href="../features/F03-13.html">선입금과 입금 확인</a>을 함께 따른다.</p></section>
+<section id="state-current-4"><h2>비공개 만남의 계산된 단계</h2><p>PrivateMeetingPhase는 EventStatus와 matchedAt·completedAt으로 계산한다. 독립된 단계 열을 저장하고 순서대로 증가시키는 모델로 설명하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>조건</th><th>계산 단계</th><th>해석</th></tr></thead><tbody><tr><td>DRAFT</td><td>WAITING_PAYMENT</td><td>초안의 표시 단계. 이 이름만으로 실제 미납 채무 존재를 단정하지 않음</td></tr><tr><td>OPEN</td><td>RECRUITING</td><td>상대 모집</td></tr><tr><td>CANCELED</td><td>CANCELLED</td><td>취소. 반환의 실제 완료와 별도</td></tr><tr><td>CLOSED + completedAt 있음</td><td>COMPLETED</td><td>완료 사실 저장</td></tr><tr><td>CLOSED + matchedAt 있음, completedAt 없음</td><td>MATCHED</td><td>상대 선정 뒤 실제 만남·완료 확인이 남음</td></tr><tr><td>위 조건에 해당하지 않음</td><td>WAITING_PAYMENT</td><td>현재 계산 함수의 기본값</td></tr></tbody></table></div>
+<p>선정은 선택 신청을 승인하고 실제 참석을 연결하며 다른 대기 신청을 정리한 뒤 모임을 PRIVATE_MATCH 사유로 닫고 matchedAt을 남긴다. 동일 선정의 재요청에서 참석 연결을 보완하는 경로도 있다.</p>
+<p>완료 확인은 매칭된 모임의 호스트 또는 선정 상대가 예정 종료 시각 이후에 한다. 각자 확인 시각과 최종 completedAt은 다르다. 양쪽이 확인했더라도 보관금 보류 등 반환·지급 조건을 해결하지 못하면 곧바로 완료로 저장되지 않는다. 이미 완료된 확인의 재요청과 새로운 완료 전이를 구분한다. 이 정책의 직접 대조 범위는 선정·완료 확인이며 비공개 만남의 모든 결제·취소 실행을 새로 검증했다는 뜻은 아니다.</p></section>
+<section id="state-current-5"><h2>모임 정산과 송금·반환</h2><div class="table-wrap"><table><thead><tr><th>기록</th><th>현재 상태값</th><th>완료의 경계</th></tr></thead><tbody><tr><td>MeetingSettlementStatus</td><td>DRAFT, ACTIVE, COMPLETED, CANCELLED</td><td>초안 확정·분담 수집·종결·취소이며 개별 돈 이동과 다름</td></tr><tr><td>TransferStatus</td><td>PENDING, BANK_AWAITING_CONFIRM, COMPLETED, CANCELLED, EXPIRED, SUPERSEDED, REVERSAL_FAILED, PENDING_MANUAL_REFUND, BANK_WAIVED</td><td>납부·은행 확인·대체·반환 실패·수동 반환·은행 면제 상태를 보존</td></tr><tr><td>호스트 SettlementStatus</td><td>PENDING, APPROVED, PAYING, PAID, FAILED, REJECTED</td><td>호스트 정산금의 별도 지급 절차. 모임 정산이나 회원 송금과 합치지 않음</td></tr></tbody></table></div>
+<p>초안 정산을 확정하면 유효성 검사 뒤 ACTIVE가 되거나 남은 의무가 없는 경우 같은 요청에서 COMPLETED가 될 수 있다. 확정은 그 자체로 돈을 보내는 행동이 아니다. DRAFT·ACTIVE 취소가 CANCELLED로 저장돼도 지갑 반환·외부 은행 반환·수동 수습은 남을 수 있다.</p>
+<p>EXPIRED가 TransferStatus.isOpen()에서 false인 것과 해당 정산의 완료 판정은 다르다. 완료 판정에서는 COMPLETED·CANCELLED·SUPERSEDED·BANK_WAIVED를 제외한 송금 의무를 따로 검사하므로 ‘기한 만료=채무 소멸’로 안내하지 않는다. BANK_AWAITING_CONFIRM은 수취 확인 전 상태이며 앱 신고 성공을 수취 완료로 바꾸지 않는다.</p>
+<p>호스트 정산금의 FAILED·REJECTED에 임의로 자동 재지급·회원 재심 화살표를 붙이지 않는다. 각 재처리 명령·보류·외부 결과 확인 조건이 필요하다. 외부 지급 시작 전의 대기와 이미 요청한 뒤 결과를 모르는 UNKNOWN·조회 대기를 나누고, 응답을 잃었다는 이유로 새 지급을 보내지 않는다.</p>
+<p><a href="../../prd/01_domain_prds/07_모임_정산_prd.md">모임 정산 도메인</a>, <a href="../features/F07-03.html">금액 검토·정산 요청·취소와 반환</a>, <a href="../../prd/03_policy_prds/payment_settlement_policy_prd.md">결제·환불·정산 정책</a>을 따른다.</p></section>
+<section id="state-current-6"><h2>이동 지원·차량 배정·조정 요청</h2><p>이동 지원, 실제 차량, 현재 참가자의 이동 의사, 차량 배정, 물리 좌석과 조정 요청을 한 상태열로 합치지 않는다. 조율을 끄는 설정 변경도 기존 배정 기록의 삭제를 뜻하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>대상</th><th>상태·행동의 경계</th></tr></thead><tbody><tr><td>차량 지원</td><td>PENDING·APPROVED·REJECTED·WITHDRAWN·PARTICIPATION_ENDED. 지원·수정·철회·거절은 기존 배정을 유지하며 승인 시점에 운전자 배정으로 전환</td></tr><tr><td>배정 필요·개별 이동</td><td>NEEDS_ASSIGNMENT·INDIVIDUAL과 개인 승차 장소. 공동 차량에 이미 배정된 사람의 의사 변경은 조정 절차 적용</td></tr><tr><td>이동 조율 종료</td><td>LEFT. 모임 참가 취소와 다름. 현재 자리·대기 지원·요청을 정리하며 살아 있는 본인 차량은 먼저 취소</td></tr><tr><td>운행 취소</td><td>차량 CANCELLED. 모임에 남는 전 운전자·승객을 다시 배정 대상으로 남김. 자동 SELF 차량이나 개별 이동을 생성하지 않음</td></tr><tr><td>조정 요청</td><td>PENDING·RESOLVED·DECLINED·WITHDRAWN·PARTICIPATION_ENDED·EVENT_ENDED. 모임 종료에 따른 닫힘을 해결 성공으로 읽지 않음</td></tr><tr><td>모임 종료 뒤 미해결</td><td>남은 배정 과제를 미해결 기록으로 보존. 화면에서 요청이 닫혔다고 모두 배정됐다고 표시하지 않음</td></tr></tbody></table></div>
+<p>차량 배정과 물리 좌석은 별개다. 지원 승인이 실제 좌석 선택 완료를 뜻하지 않으며 운전자는 동승 정원에서 제외한다. 상세 조건은 <a href="../features/F03-14.html">이동수단 공통 설정</a>, <a href="../features/F03-15.html">카풀 지원·개별 이동</a>, <a href="../features/F03-16.html">대절 버스와 자리 배정</a>을 따른다.</p></section>
+<section id="state-current-7"><h2>일정 변경 응답·노쇼·분쟁</h2><div class="table-wrap"><table><thead><tr><th>대상</th><th>현재 상태값</th><th>별도로 읽을 사실</th></tr></thead><tbody><tr><td>일정 변경 개별 응답</td><td>PENDING, ACCEPTED, DECLINED, AUTO_ACCEPTED, WITHDRAWN</td><td>응답·기한 자동 동의·변경 묶음의 실제 확정은 다름</td></tr><tr><td>NoShowStatus</td><td>CONFIRMED, APPEALED, OVERTURNED</td><td>서버 판정과 앱의 OPEN·REJECTED·DEADLINE_PASSED 등 표시 분류는 다름</td></tr><tr><td>UnifiedDisputeStatus</td><td>OPEN, IN_REVIEW, RESOLVED, CLOSED, ESCALATED, CLOSED_WITH_MANUAL_RECOVERY</td><td>수동 수습을 남긴 닫힘과 모든 보상 완료를 합치지 않음</td></tr><tr><td>DisputeAppealStatus</td><td>PENDING, DECIDED, COMPENSATION_APPLIED, UPHELD, RECOVERY_REQUIRED, REJECTED, CLOSED</td><td>결정·보상 적용·인용·수습·기각·철회 닫힘을 보존</td></tr></tbody></table></div>
+<p>노쇼의 소명은 본인과 확정 시각부터 7일 기한을 검사하며 기각 뒤 재소명을 자동 허용하지 않는다. CONFIRMED·APPEALED에서 OVERTURNED로 뒤집은 결과는 별도 최종 판정이다. canonical 사건 ID가 있다는 사실을 통합 분쟁 등록부가 이미 만들어졌다는 뜻으로 사용하지 않는다.</p>
+<p>통합 이의의 isClosed()는 PENDING 이외에서 true지만, 사건 종결 차단 판정은 PENDING·DECIDED·COMPENSATION_APPLIED를 별도로 다룬다. PENDING 본인 철회는 CLOSED로 바뀌며 재요청 성공 재생이나 재접수 권리를 자동 보장하지 않는다. 원천 동기화·보류 해제·알림·보상은 각각의 후속 결과를 확인한다. 기본 비활성인 플랫폼 판단 경로도 있으므로 상태 enum의 존재와 운영 접수 가능을 구분한다.</p>
+<p><a href="../features/F03-19.html">일정 변경 제안과 참가자 합의</a>, <a href="../features/F03-20.html">노쇼 확정·소명</a>, <a href="../features/F18-03.html">통합 이의 접수·철회</a>을 따른다.</p></section>
+<section id="state-current-8"><h2>플랜 공개·구매 권리·차단 해제</h2><p>PlanStatus는 DRAFT·PUBLISHED·HIDDEN·DELETED다. 플랜 본문 공개, 마켓 판매, 구매 거래, 보유 권리는 별개다. 무료 본문 열람이 구매 완료·모임 생성 권리를 뜻하지 않으며 숨김 이후 기존 유효 구매자의 접근도 별도로 판정한다. <a href="../features/F08-02.html">플랜 상세와 열람 권리</a>를 따른다.</p>
+<p>DateBlockStatus는 BLOCKED·UNBLOCKED다. 해제는 이전 매칭·채팅방 복원을 뜻하지 않고 상대방이 설정한 차단까지 해제하지 않는다. <a href="../features/F09-07.html">프라이빗 데이트 차단</a>의 현재 관계·소프트 기록 정책을 따른다.</p></section>
+<section id="closure-current"><h2>데이터 내보내기·삭제 예약·탈퇴</h2><div class="table-wrap"><table><thead><tr><th>대상</th><th>상태</th><th>사용자에게 설명할 경계</th></tr></thead><tbody><tr><td>데이터 내보내기</td><td>PROCESSING, COMPLETED, FAILED, EXPIRED</td><td>상태 조회 실패를 요청 없음으로 해석하지 않음. 완료 URL 열기는 실제 파일 수신 확인과 다름</td></tr><tr><td>데이터 삭제 요청</td><td>PENDING, APPROVED, COMPLETED, CANCELLED</td><td>NONE은 저장 enum이 아니라 활성 요청이 없는 화면 표현</td></tr><tr><td>삭제 요청 취소</td><td>본인 PENDING만 가능</td><td>APPROVED 이후에도 취소 가능하다는 이전 설명은 현재 계약과 맞지 않음</td></tr><tr><td>예약 시각 도래</td><td>PENDING의 30일 뒤 처리 대상</td><td>제재·금전 의무·동의·실패 등의 실행 조건 재검사. 시각 도래만으로 COMPLETED 아님</td></tr></tbody></table></div>
+<p>활성 삭제 조회가 PENDING·APPROVED만 반환하므로 완료·취소 뒤 요청이 없다는 화면과 감사 기록 삭제를 혼동하지 않는다. 예약 시 공개 해제한 자료와 실행 전 일부 정리 결과는 취소·후속 실패 때 자동 복구되지 않을 수 있다.</p>
+<p>즉시 탈퇴의 계정 비활성·신원 정리·세션 해제, 예약 삭제, 보존 기한에 따른 물리 제거는 서로 다른 처리다. 탈퇴가 이미 끝난 모임의 참가·출석 사실을 취소로 바꿔서는 안 되며 미결 책임과 후속 정리는 별도다. <a href="../features/F13-05.html">데이터 내보내기</a>, <a href="../features/F13-06.html">데이터 삭제 예약</a>, <a href="../features/F13-07.html">즉시 탈퇴와 남은 참여 정리</a>를 따른다.</p></section>
+<section id="state-current-10"><h2>위치 동의·좌표·만료와 보존</h2><p>공유 동의, OS 위치 권한, 좌표 갱신, 공유 만료 시각, 실제 조회 권한과 조회 기록은 별개다. 동의 저장만으로 좌표를 취득하거나 타인이 본 것은 아니다. 주기적 좌표 갱신이 원래 공유 만료를 자동 연장한다고 설명하지 않는다. 공유 중지는 새로운 공개와 저장된 기록의 보존·삭제를 같은 결과로 만들지 않는다.</p>
+<p>증빙 참조 해제와 저장소의 실제 파일 제거도 별도 단계다. 분쟁의 화면상 종결일 하나로 모든 원천의 보존 기한을 계산하지 않는다. <a href="../../prd/03_policy_prds/privacy_safety_policy_prd.md">개인정보·안전 정책</a>의 현재 소유권·목적·동의·보류·원천별 기한을 따른다.</p></section>
+<section id="state-current-11"><h2>알림 의도·알림함·발송·실수신</h2><p>업무 상태 변경 → 알림 의도 → 알림함 기록·채널 작업 → 공급자 발송 → 실제 기기 표시를 하나의 완료로 합치지 않는다. 채널·기능별 구현이 다르며 모든 메일에 영속 큐의 자동 재시도가 있다고 일반화하지 않는다.</p>
+<p>카테고리 끄기는 새 푸시와 알림함 기록을 함께 제한하며 이미 받은 기록을 삭제하지 않는다. 방해금지는 일반 푸시를 건너뛰는 조건이고 알림함 기록을 취소하지 않는다. 이를 무조건 다음 시간까지 보류·예약 발송하는 상태로 설명하지 않는다. 예외 종류·수신자 자격·발송 시점의 도메인 상태를 따로 검사한다.</p>
+<p>처리 소유권·임대·다음 시도·만료·최대 시도는 발송 작업의 상태다. 알림함 읽음은 업무 완료가 아니며 공급자의 SENT·수락도 사용자의 수신 증거가 아니다. <a href="../../prd/03_policy_prds/notification_policy_prd.md">알림 정책</a>을 따른다.</p></section>
+<section id="session-and-retry"><h2>계정 전환·오류 뒤 화면 복귀의 확인 기준</h2><p>상태를 바꾸는 기능은 시작 계정·대상과 완료 시점 계정·대상을 맞춰야 한다. 조회 실패를 비어 있음이나 권한 없음으로 바꿔 쓰지 않고 현재 결과를 확인할 수 있게 한다. 낙관적 변경 실패는 해당 변경의 복구, 저장 후 조회 실패는 저장 결과 확인으로 나눈다.</p>
+<p>이 기준을 모든 화면에서 새로 실행 검증했다는 뜻으로 읽지 않는다. 초안 보존, 업로드 중 이탈, 페이지 추가 조회, 권한 갱신, 계정 전환 응답 폐기는 각 기능 정본에 확인된 연결과 제한을 적는다. 검수 범위는 <a href="../../prd/03_policy_prds/planning_qa_policy.md">기획 QA 정책</a>을 따른다.</p></section>
+<section id="unconfirmed-command-retry"><h2>결과 불명 명령과 재요청 키</h2><p>앱의 시간 제한형 IdempotencyKeyHolder는 같은 입력의 키를 만든 시각부터 <strong>23시간 미만</strong>, 시계가 뒤로 가지 않은 경우 재사용한다. 시간창을 벗어난 기존 키는 해제하고 동일 입력의 즉시 재생성을 잠시 막으며 현재 결과 확인을 안내한다. 입력이 달라진 새 명령과 동일 명령의 재시도는 구분한다.</p>
+<p>이 보관함의 untimed 모드는 위 시간창을 쓰지 않는다. 회원 금전 명령에는 별도의 계정별 영속 의도 저장소를 사용하므로 화면 메모리 보관함의 23시간 정책을 그대로 적용하지 않는다. 서버의 모든 API가 같은 기간 응답을 재생한다는 보장도 아니다.</p>
+<p>확정 거절, 실행 성공, 결과 불명, 입력 수정은 각 명령의 키 해제·보존 규칙을 따른다. 응답이 없다는 이유로 돈·역할 변경을 새 키로 반복하지 않는다. 영속 기록이 필요한 명령에서 저장 실패는 실행을 막는 조건이며 UI 재시도 문구가 서버 중복 방지 계약을 대신하지 않는다.</p></section>
+<section id="state-current-14"><h2>상태 정책의 수용 기준과 검증 근거</h2><ul><li><strong>대상 분리:</strong> 신청·참석·결제·송금·반환·분쟁·알림을 같은 상태로 합치지 않는다.</li><li><strong>종료 경계:</strong> 모집 마감·실제 만남 종료·양쪽 확인·보관금 해제·완료 사실을 구분한다.</li><li><strong>후속 작업:</strong> 취소·기한 만료·삭제 예약·분쟁 닫힘을 돈 반환·물리 삭제·보상 완료로 확대하지 않는다.</li><li><strong>복구:</strong> 결과 불명에서는 해당 키·의도 기록과 현재 결과를 확인하고 기능별 확정 거절 조건을 따른다.</li><li><strong>증거:</strong> 직접 읽은 상태 enum·비공개 선정/완료·앱 키 보관과 동일 SHA의 기능 정본을 근거로 한다. 이번 제품 시험·실제 기기·운영 설정·외부 송금·푸시는 실행하지 않았다.</li></ul></section>
+<section><h2>이전 검수 기록</h2><p>아래 원문은 당시 확인 기록이며 이번 브라우저·기기 시험 결과가 아닙니다. 현재 계약은 위 본문을 따릅니다.</p><details id="state-previous-transport-record"><summary>이전 이동 조율 검수 기록 원문</summary><section>
         <h2>이동 조율·카풀·버스 상태</h2>
         <div class="table-wrap">
           <table>
@@ -177,195 +77,8 @@ stateDiagram-v2
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section>
-        <h2>3. 프라이빗 모임 단계</h2>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 결제대기: 호스팅비 결제 대기
-    결제대기 --> 모집중: 결제 완료 후 모집
-    모집중 --> 매칭됨: 매칭 또는 선택 완료
-    매칭됨 --> 완료: 만남 완료
-    결제대기 --> 취소됨: 취소
-    모집중 --> 취소됨: 취소
-    매칭됨 --> 취소됨: 취소
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>단계</th><th>확인할 것</th></tr></thead>
-            <tbody>
-              <tr><td>결제 대기</td><td>결제 실패·이탈 시 재진입 문구</td></tr>
-              <tr><td>모집중</td><td>신청자 노출, 선택 기준, 마감 기준</td></tr>
-              <tr><td>매칭됨</td><td>상대에게 어떤 정보가 공개되는지</td></tr>
-              <tr><td>완료</td><td>리뷰·신고·신뢰점수와의 연결</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>4. 모임 정산 상태</h2>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 작성중: 호스트가 정산 생성
-    작성중 --> 진행중: 납부 요청 시작
-    진행중 --> 완료: 모든 납부·확인 완료
-    진행중 --> 취소됨: 호스트가 취소
-    완료 --> [*]
-    취소됨 --> [*]
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>상태</th><th>의미</th><th>호스트 액션</th><th>참가자 액션</th></tr></thead>
-            <tbody>
-              <tr><td><strong>작성중</strong></td><td>호스트가 작성 중인 정산 — 참가자에게는 <strong>미리보기</strong>로 보인다 (2026-06-05 정식화)</td><td>항목 편집·활성화</td><td>미리보기 조회만(총액·상태·내 분담금) — 항목 상세·영수증·타인 몫 비공개, 납부·이의제기 불가, 알림 없음</td></tr>
-              <tr><td><strong>진행중</strong></td><td>납부 진행중</td><td>독촉·연장·이체 확인·취소</td><td>분담금 확인·납부·이의제기</td></tr>
-              <tr><td><strong>완료</strong></td><td>정산 완료</td><td>내역 조회</td><td>내역 조회</td></tr>
-              <tr><td><strong>취소됨</strong></td><td>정산 취소</td><td>내역 조회</td><td>환불·취소 안내</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout danger">
-          <span class="label">절대 위반 금지</span>
-          <ul>
-            <li>정산 생성만으로 참가자에게 알림이 가면 안 된다. 알림은 작성중 → 진행중 전환(납부 요청 시작) 시점에만.</li>
-            <li>작성중 정산에는 이의제기를 받지 않는다 — 비확정 금액에 대한 이의는 혼란과 결제 장애만 만든다(2026-06-05부터 차단). 이의는 진행중부터.</li>
-            <li>포인트 납부는 즉시 반영, 계좌이체는 호스트 확인 필요. 사용자가 “냈다”와 “시스템이 받았다”를 구분할 수 있어야 한다.</li>
-            <li>이의제기와 감사로그는 분쟁을 줄이는 안전망이다. 임의로 끄지 않는다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>5. 호스트 정산금 상태</h2>
-        <p>호스트가 받을 수익은 모임 정산과 별개로 흐른다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 정산대기: 정산 대기
-    정산대기 --> 승인됨: 승인
-    승인됨 --> 지급처리중: 지급 처리
-    지급처리중 --> 지급완료: 지급 완료
-    지급처리중 --> 지급실패: 지급 실패
-    지급실패 --> 지급처리중: 재시도
-    정산대기 --> 거절됨: 거절
-    승인됨 --> 거절됨: 거절
-    거절됨 --> 정산대기: 이의제기 후 재심사
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>6. 플랜·마켓 상품 상태</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["플랜 초안"] --> B["플랜 발행"]
-    B --> C["마켓 상품 등록"]
-    C --> D["판매중"]
-    D --> E["구매됨"]
-    D --> F["판매중지"]
-    E --> G["내 컬렉션"]
-    G --> H["이 플랜으로 이벤트 생성"]
-          </div>
-        </div>
-        <ul>
-          <li>플랜 초안은 크리에이터의 편집 대상, 마켓 상품은 구매자의 구매 대상, 컬렉션은 활용 대상. 셋이 같은 데이터의 다른 얼굴.</li>
-          <li>이미 구매한 상품·일부 중복 번들·잔액 부족은 구매 바텀시트에서 명확히 분기.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>7. 데이터 내보내기와 계정 삭제</h2>
-        <div class="split">
-          <div class="diagram">
-            <div class="mermaid">
-flowchart TD
-    A["데이터 내보내기 요청"] --> B["처리 중"]
-    B --> C["처리 완료"]
-    B --> D["처리 실패"]
-    C --> E["다운로드 가능"]
-    E --> F["기한 만료"]
-            </div>
-          </div>
-          <div class="diagram">
-            <div class="mermaid">
-stateDiagram-v2
-    [*] --> 요청없음: 삭제 요청 없음
-    요청없음 --> 삭제예약: 삭제 예약
-    삭제예약 --> 처리대기: 처리 대기
-    삭제예약 --> 취소됨: 사용자 취소
-    처리대기 --> 취소됨: 사용자 취소
-    처리대기 --> 삭제완료: 유예 종료 후 삭제
-            </div>
-          </div>
-        </div>
-        <ul>
-          <li>데이터 내보내기는 즉시 파일을 주는 기능이 아니라 비동기 요청이다. 처리 중 상태를 사용자에게 명확히 안내.</li>
-          <li>계정 삭제 예약은 유예 기간과 취소 동선이 가장 중요. 유예 동안 사용자가 “취소”를 발견하지 못하면 의도치 않은 삭제 발생.</li>
-          <li>즉시 비활성화는 삭제 예약과 사용자 영향이 다르므로 별도 문구.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>8. 위치 공유 상태</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["위치 공유 가능 이벤트"] --> B{"사용자 동의"}
-    B -->|"동의"| C["공유 활성"]
-    B -->|"거부"| D["공유 비활성"]
-    C --> E["위치 업데이트"]
-    C --> F["공유 시간 연장"]
-    C --> G["공유 중지"]
-    G --> D
-          </div>
-        </div>
-        <ul>
-          <li>위치 공유는 항상 사용자가 직접 동의해야 켜진다. 동의 없이 위치가 노출되는 동작은 금지.</li>
-          <li>중지 버튼과 프라이버시 대시보드가 함께 있어야 사용자가 통제권을 가진다.</li>
-          <li>이벤트 종료 후 위치 데이터 보관·삭제 정책을 화면 문구와 맞춘다.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>9. 알림 수신 정책</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["상태 변화 발생"] --> B{"알림 받을 사용자 존재?"}
-    B -->|"없음"| C["종료"]
-    B -->|"있음"| D{"카테고리 수신 허용?"}
-    D -->|"아니오"| E["푸시 미발송"]
-    D -->|"예"| F{"방해금지 시간?"}
-    F -->|"예"| G["보류·무음 정책"]
-    F -->|"아니오"| H["푸시 발송"]
-    E --> I["알림함 반영 여부 판단"]
-    G --> I
-    H --> I
-          </div>
-        </div>
-        <ul>
-          <li>알림은 “무엇을 보낼까”보다 “누가 받아야 하는가”가 먼저.</li>
-          <li>결제·정산 알림은 마케팅 알림보다 중요도가 높다.</li>
-          <li>OS 권한 거부 상태에서는 인앱 알림함과 권한 회복 배너를 함께 고려.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>수용 기준</h2>
-        <ul>
-          <li>상태 이름만 정하지 말고, 그 상태에서 사용자에게 보이는 문구·할 수 있는 액션·알림 발송 여부까지 한 묶음으로 적어 둔다.</li>
-          <li>상태 변경 후 이전 화면의 CTA가 오래된 상태를 보여주지 않아야 한다.</li>
-          <li>취소·만료·삭제·차단 상태는 성공 상태와 별도의 복구 동선을 가진다.</li>
-        </ul>
-      </section>
-    </main>
+      </section></details></section>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>

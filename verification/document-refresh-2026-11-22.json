@@ -427,7 +427,8 @@
         "payment_supplement_20261122",
         "privacy_policy_20261122",
         "planning_qa_20261122",
-        "permission_policy_20261122"
+        "permission_policy_20261122",
+        "state_policy_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5100,9 +5101,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e3b9d5b3d1189054968b06434acf6186030ba4718954878add973209f7d39d60",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "state_policy_20261122"
+      ],
+      "reviewedSha256": "5f7b35dc325ebf0d1f0ecdcefed48e54f2165db7c38314828d84a7ad5d065b71"
     },
     {
       "path": "docs/qa/acceptance.html",
@@ -8429,10 +8433,12 @@
       "kind": "policy_prd",
       "document": true,
       "baselineSha256": "2c12b80b385c9573d080d372e8a4d5cd563a354a8237c06145bb6ab8ba07736c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "state_policy_20261122"
+      ],
+      "reviewedSha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
     },
     {
       "path": "prd/04_qa_acceptance/acceptance_criteria_matrix.md",
@@ -44248,6 +44254,288 @@
         "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
         "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
         "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "state_policy_20261122": {
+      "kind": "source_review",
+      "scope": "기존 상태 PRD 540줄·공개 HTML 15절 전체 읽기와 현재 enum/비공개 선정·완료 확인/앱 요청 키 직접 대조; 동일 SHA 기능·정책 정본 재사용. 과거 날짜별 조사와 HTML 이동 조율 실행 기록 원문 보존.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/constants/AttendanceStatus.java",
+          "sha256": "fc8fb5180ce9dc71c2b8bdd74c6468d9f89b14c06af1b6eaa3fc69fa876018f1",
+          "reviewScope": "1–57 상태 3값과 허용 전이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/PrivateMeetingPhase.java",
+          "sha256": "88123935ede894d1547af8ac98bfab560add277e2dfe436c9b91cdce5005b3ed",
+          "reviewScope": "전체: EventStatus·matchedAt·completedAt에서 단계 계산"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingService.java",
+          "sha256": "43370acf8c3aaca081bfa1579ece5cb40411cca2a28c5544c5f9732c26d20bb1",
+          "reviewScope": "151–211 선정 자격·동일 선정 복구;266–294 참석·타 신청 정리·PRIVATE_MATCH마감·matchedAt;307–390 종료 시각·확인 주체·양쪽 확인·보관금 조건·completedAt;795–850 취소 시작 조건만. 나머지 취소·결제 전체 검증 아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/constants/EventPaymentStatus.java",
+          "sha256": "ca42aff6629272d2114a0b65d22bf7a01b0983e5b1dd0c7dd6d3ec17632a279e",
+          "reviewScope": "1–71 전체 상태·허용 전이·active/awaiting predicate"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/transport/constants/TransportAdjustmentStatus.java",
+          "sha256": "461e577ff0c5d69a447914b0198f5e763e21016a07c92f0237017a4286eef48e",
+          "reviewScope": "1–6 전체 상태 6값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/constants/DateBlockStatus.java",
+          "sha256": "39f2a4277c0030ed145e2fb4040d1f5c22fe517203057471c84873e768bff6ad",
+          "reviewScope": "1–16 전체 2값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/constants/DataExportStatus.java",
+          "sha256": "b15f58714a586c522dc62d79bcc155a2c2280f8c2d202c903fb5d2b8ef08fc86",
+          "reviewScope": "전체 상태 4값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/constants/PlanStatus.java",
+          "sha256": "33a5d4243c530728a4b2fbe3d01ae8f83fe34dc00b3d5373936ff6df88d81241",
+          "reviewScope": "1–27 전체 상태 4값과 판매 판정"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventStatus.java",
+          "sha256": "d62c8612d5befab331dcaa5abed461ca92dc8894b21bd68b44402bd75d1b7877",
+          "reviewScope": "1–53 enum·허용 전이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/ApplicationStatus.java",
+          "sha256": "11c2259cbedeea933a9d247724e36006ecd115bb77eb08e4fad17ed192604da8",
+          "reviewScope": "1–80 상태 7값·허용 전이. 이후 정원 predicate는 이 직접 범위에 포함하지 않음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/constants/MeetingSettlementStatus.java",
+          "sha256": "9b82bfbe972fe9deb13ec2834ce1b06ca8ab2d3bff284d9a4f1960add5c599ee",
+          "reviewScope": "1–35 전체 상태·진행/분담 수집 predicate"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/constants/TransferStatus.java",
+          "sha256": "8de86d891c26d05c36092f4a4933b10024a2321c59cd4722d5eb949554d134d7",
+          "reviewScope": "1–60 전체 9값과 isOpen. 정산 완료 predicate와 다름"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/SettlementStatus.java",
+          "sha256": "4dcec758eeb4e39ec7269e7415cd595c0b9a76166b0bd79127af3c9fe4ce6bd4",
+          "reviewScope": "1–40 상태 6값과 미정산 판정. 재지급/재심 전이 그래프는 주장하지 않음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/constants/NoShowStatus.java",
+          "sha256": "0f723aedb576b3f1b1c3a9e99af4bd58a33f8e0b3150c21d699c29a23b9856a6",
+          "reviewScope": "1–54 상태·허용 전이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/constants/UnifiedDisputeStatus.java",
+          "sha256": "bd89cae36d35da190d96b6d1346778f9d19259766a8d17e49201e481ab5cb987",
+          "reviewScope": "전체 상태 6값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/constants/DisputeAppealStatus.java",
+          "sha256": "de8bc35738bc9c29e99892ad190d43d8e11a9d8d93f89c727db27745e36d1f2d",
+          "reviewScope": "1–46 상태 7값·isClosed/isDecided; 사건 종결 차단 predicate는 기능 정본 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/reschedule/constants/RescheduleResponseStatus.java",
+          "sha256": "9b49a504608d040cc5298c5f68b27fe7b824fd1569a4b6745aa7a22c6d9add26",
+          "reviewScope": "1–47 상태 5값·철회 전이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/constants/DataDeletionStatus.java",
+          "sha256": "e008a6acb9ffe72ed3e9e16525587cd6799ca63ccd112ab64580efcaf89d22cb",
+          "reviewScope": "전체 상태 4값"
+        },
+        {
+          "path": "community_app/lib/core/utils/idempotency_key_holder.dart",
+          "sha256": "c9506dcb207c5cb3a07844f41c62643d31742e787f5d523e999d6c9052e1a295",
+          "reviewScope": "20–166 시간 제한형/untimed·23시간 미만·음수 시간 거절·3초 안내 구간·동일 입력·현재 키 해제"
+        },
+        {
+          "path": "community_app/lib/core/storage/member_command_intent_store.dart",
+          "sha256": "d85e229469c90416470855e28ac8c4d6a14ab25736be4fd7b3cbaac56ebeeed3",
+          "reviewScope": "동일 SHA 기존 회원 금전 검수 재사용:298–331,553–617 계정별 영속 의도·저장 실패 차단·기존 키 재사용"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "bus_allocation_20261122",
+        "carpool_20261122",
+        "curated_bulk_20261122",
+        "curated_charge_20261122",
+        "data_export_20261122",
+        "date_matching_block_20261122",
+        "dispute_intake_20261122",
+        "dispute_query_20261122",
+        "event_application_participation_review_20261122",
+        "event_capacity_waitlist_20261122",
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122",
+        "host_settlement_appeal_20261122",
+        "no_show_20261122",
+        "notification_results_20261122",
+        "payment_supplement_20261122",
+        "people_block_source_advance_20261122",
+        "permission_policy_20261122",
+        "plan_detail_20261122",
+        "planning_qa_20261122",
+        "privacy_policy_20261122",
+        "regular_meeting_commands_20261122",
+        "reschedule_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_create_20261122",
+        "settlement_domain_rollup_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
+          "sha256": "db71640ec99214f345562c0b3a4669c700f9a57312e27b8a22f5f7bfee459a49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-05_event-attendance_prd.md",
+          "sha256": "799076936d67da78ae845e6923ba087a88307a0fbd0f1f6ce23001407aed84ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-07_capacity-and-waitlist_prd.md",
+          "sha256": "57550c551859139cf4771cba59ce6e55ea52266e836a0b95e7fa1d51afadbb69"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
+          "sha256": "9b97e8ec0a3613a6d1c66d38a21dba5082872607e54d989994bd04b190992d1f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-15_event-carpool_prd.md",
+          "sha256": "d42329b306b225e07f6abf3cb9b4aa4fd50a8ce6b0ba0c8da3043d2c42c9c176"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-16_event-bus-charter_prd.md",
+          "sha256": "5ab0ea7e9083ad3bba0114e858e55e0372a7d4b68d5449a5f09c84e9030de000"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-19_event-reschedule-consent_prd.md",
+          "sha256": "9b8afb186e1ec189d2a1b96a37e2d390c76a1f74fcce2f8b9da8a27cea63e8a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-20_event-no-show_prd.md",
+          "sha256": "4da44066b2bea91a5c87daf303c4a4cf045bd7bd8b1afa1213515c767c849e58"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
+          "sha256": "ad4a9f42105069708dfe08819f2f3598693c6e0f5769b0caee835401e5dc831f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md",
+          "sha256": "beec9dcec88e7b8e3203ee97aec5837a85bd2c6c7a575c5cba17bf781baa6e10"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
+          "sha256": "c7024ade9bf17c4a9415dc17e5276a91766a460472056d11c34f3b3e0b8ac891"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-05_data-export_prd.md",
+          "sha256": "78719feeac48678c9e694f2490621675a9f7e9b17b54de085926476a5a8d508c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md",
+          "sha256": "e449257fba1a450206adec52ddb1a9d83c55e1c43bfc711d485ad15eac3aaafc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
+          "sha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
+          "sha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
+          "sha256": "e0a4f8bca0142f5d1e62526e2696e3c7b8135c17106be089f9d92ebaf42ea8c7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/planning_qa_policy.md",
+          "sha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/policies/state.html": [
+          "sidebar",
+          "closure-current",
+          "session-and-retry",
+          "unconfirmed-command-retry"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "신청·참석·결제·송금·반환의 상태 분리",
+        "비공개 선정 마감과 실제 만남/보관금 해제/완료 분리",
+        "Transfer 9값·통합분쟁 6값·이의7값 반영",
+        "삭제 APPROVED 취소 불가와 예약시각/실행완료 분리",
+        "현재 이동 조율의 LEFT·재배정·미해결 보존",
+        "시간 제한형 키와 untimed·계정 영속 금전 명령 분리"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "64835a7221104ca948de2bc711dc1d70cc21a1547f60349856566e614d357763",
+          "characters": 13484,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음",
+          "heading": "## 과거 상태 조사 원문 보존"
+        }
+      ],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/policies/state.html",
+          "pattern": "<details id=\"state-previous-transport-record\">[\\s\\S]*?</details>",
+          "sha256": "c7744dc520140ccb34c9c91c80c56585bca2f592ec1e4e0f95eec2b0a993f443",
+          "note": "이전 이동 조율 실행 기록 그대로 보존; 이번 실행 증거 아님"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "44 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 54 relative links/anchors and 1 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; enum/selected command code plus unchanged reviewed canonical evidence reused"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
       }
     }
   },
