@@ -1,263 +1,138 @@
 # 결제·정산 정책 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 기능 정본과 공통 지갑 차감·무료 만료 코드를 대조한 정책이다. 문서 대조는 실결제·은행 입금·운영 대사·출시 승인을 뜻하지 않는다. 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 돈의 흐름과 완료 기준
 
-<!-- supporting-doc-status: 2026-05-22 -->
+| 흐름 | 실제 의미 | 완료와 구분할 단계 |
+| --- | --- | --- |
+| 포인트 충전 | 외부 결제 확인 뒤 지갑에 적립 | 주문 생성·결제창 성공·서버 확인 중 |
+| 포인트 소비 | 허용된 통화로 잔액과 충전 원본을 차감하고 이용 권리를 처리 | 충전 성공·구매 요청 접수·권리 활성화 |
+| 참가비 직접 송금 | 참가자가 주최자 은행 계좌로 보내고 주최자가 확인 | 계좌 열기·보냈어요 신고·입금 확인·참석 확정 |
+| 환불 | 원결제·정책·잔여 한도에 따라 지갑 반환 또는 외부 반환 의무 처리 | 취소 접수·반환 요청·실제 송금·수령 확인 |
+| 모임 비용 정산 | 이미 쓴 비용과 공동 수입에 따라 실제 당사자 사이의 돈 정리 | 초안·납부 요청·송금 신고·수취 확인·취소 후 반환 |
+| 호스트·창작자 수익 지급 | 원천별 수익·수수료·세금·회수금을 반영해 지급 | 매출 발생·지급 후보·승인·지갑 적립·외부 출금 |
+| 클럽 기금 | 클럽의 유료·무료 자금과 사용·환불·예약 관리 | 잔액 조회·출금 가능액·출금 신청·승인·실제 은행 지급 |
 
-> 문서 상태: **보조 문서 + W2/W3 정책 결정 사항 통합 (2026-05-22)**. 기능별 현재 계약, source trace, Gap/Risk 판단은 [PRD_MIGRATION_STATUS.md](../PRD_MIGRATION_STATUS.md)와 각 기능 PRD를 우선한다. 이 문서는 인벤토리, 정책, QA, 기획 운영 기준을 보조하며, 기능 세부 판단은 [FEATURE_PRD_STANDARD.md](../FEATURE_PRD_STANDARD.md) 기준으로 재확인한다.
+참가비, 모임 비용 정산, 플랫폼의 수익 지급은 서로 다른 상태 모델을 쓴다. 모든 돈을 주최자 한 사람에게 보내는 구조가 아니며, 수익 화면의 합계가 출금 가능액도 아니다. [결제·지갑 영역](../01_domain_prds/06_결제_and_지갑_prd.md)과 [모임 정산 영역](../01_domain_prds/07_모임_정산_prd.md)을 함께 읽는다.
 
-## 1. 목적
+## 공개 범위와 기존 돈 의무
 
-포인트 충전, 결제, 환불, 호스트 정산금, 모임 정산, 클럽 기금을 서로 구분해 사용자와 운영자가 돈의 상태를 오해하지 않게 한다.
+소스의 결제 경로 존재, 서버 금전 기능 허용, 앱의 공개 범위, 공급자 준비, 운영 공개 승인은 각각 확인한다. 문서의 기본 설정이나 과거 출시 날짜만으로 현재 운영 환경에서 특정 수단이 열린다고 단정하지 않는다.
 
-## 2. 돈의 흐름 구분
+현재 공통 지갑 차감에서 금전 기능이 닫히면 일반 신규 소비는 거절한다. 예외 목록의 기부·가입비·클럽 미납금 상환·클럽 구독 지갑분은 허용된 무료 전용 정책으로 좁힌다. 환불성 반환·정산 보정·회수·계정 폐쇄 환급 등의 지정된 의무 처리는 별도 예외다. 이 예외를 모든 돈 API의 무조건 허용으로 확대하지 않는다.
 
-| 흐름 | 주체 | 의미 |
-|---|---|---|
-| 포인트 충전 | 사용자 -> 지갑 | 외부 결제로 잔액 증가 |
-| 포인트 결제 | 지갑 -> 서비스 | 이벤트, 플랜, 구독 등 비용 지불 |
-| 환불 | 서비스 -> 지갑 복원(기본); 원수단(PG) 환불은 조건부(`refund.pg-queue.enabled` 활성화 + PG 결제건) | 기존 결제 취소 또는 보상. 조건 미충족 시 paidRefund도 지갑으로 즉시 복원. |
-| 모임 정산 | 참가자 -> 호스트 | 모임 비용 분담 |
-| 호스트 정산금 | 플랫폼 -> 호스트 | 수익 지급 |
-| 클럽 기금 | 멤버/운영 -> 클럽 | 공동 자금 |
+클럽 구독은 기금의 유료, 기금의 무료, 부족분의 클럽장 지갑 순서다. 금전 기능이 닫혀도 마지막 지갑분은 무료 전용으로 처리할 수 있다. 기존 문서의 ‘기금이 전액을 충당해야만 성공한다’는 설명은 현재 계약이 아니다. [클럽 구독의 결제 재원과 기간 연장](../02_feature_prds/04_club/F04-16_subscription_prd.md#결제-재원과-기간-연장)을 따른다.
 
-> 모든 잔액·정산·인출은 **유료(paid)/무료(free) 포인트를 분리**해서 다룬다. 상세는 §2.5.
+참가비 직접 송금과 별도 모임 정산 선입금을 구분한다. [정산 선입금의 현재 제한](../02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md)은 참가비 은행 수납 경로가 있다는 이유로 해제되지 않는다. 제한 중에도 기존 돈 의무의 조회·반환·종결 경로를 별도로 확인한다.
 
-## 2.5 유료/무료 포인트 분리정산 정책 (Point Split Flow-Through)
+## 유료·무료 통화와 자금 전달
 
-<!-- 2026-05-24: 포인트 정책 디커플링 구현 반영 -->
+유료와 무료는 잔액·차감·환불·수익 귀속에서 구분한다. 무료 포인트를 유료 잔액이나 외부 현금으로 바꾸지 않는다. 유료 잔액 전체가 즉시 출금 가능한 것도 아니다. 출금 자격·예약·회수 의무·계좌·금전 기능 조건을 추가로 적용한다.
 
-> 구현 근거: `community_api/docs/plan/POINT_POLICY_DECOUPLING_PLAN.md` §3.5. 무료 포인트로 프로모션을 운영하되 **무료가 절대 현금이 되지 않도록** 유료/무료를 잔액·결제·정산·인출 전 구간에서 분리한다.
+자금 전달 방식과 사용 가능한 통화는 서로 다른 기준이다.
 
-### 핵심 원리
+| 자금 전달 방식 | 현재 등록된 대표 사용처 | 통화 판단 |
+| --- | --- | --- |
+| 수취자에게 전달 | 참가비, 상품·번들·플랜 구매, 프라이빗 미팅비, 클럽 기부·가입비, 정기모임 지갑 결제 | 등록부가 허용한 정책을 실제 호출자가 좁힌다. 각 경로의 유료·무료 분해를 보존 |
+| 플랫폼 소비 | 개인 구독, 클럽 구독 지갑분, 프라이빗 개설비, 개설권 | 등록부의 무료 허용이 모든 화면의 무료 결제 제공을 뜻하지 않음. 현재 개설권 구매는 유료만 사용 |
+| 정산성 이동 | 모임 정산·반환·회수·외부 출금·계정 폐쇄 환급 등 | 지정된 경로는 유료 전용. 구매 지출과 회수·상환 집계를 구분 |
+| 제공자 서비스비 | 제공자에게 귀속되는 구매 | 수취자에게 전달되지만 유료 전용. 무료를 허용하는 상품으로 소개하지 않음 |
+| 클럽 미납금 상환 | 클럽의 통화별 채무 정리 | 한 명령은 유료 또는 무료 한 통화로 처리하며 채무별 허용 조건 적용 |
 
-- 지갑·클럽 기금 잔액을 **유료(paid)** / **무료(free)** 로 분리 관리한다.
-  - 유료 = 충전·현금 환불로 들어온 **인출 가능** 잔액
-  - 무료 = 프로모션 지급분. **사용 가능하나 현금 인출 불가**
-- 결제 시 유료/무료 split이 발생한다. 단, split이 수취자까지 전파되는지는 **사용처 분류(아래 3분류)에 따라 다르다**.
-  - **flow-through**(무료 수취자 존재): split이 **수취자(창작자/호스트/기금)까지 그대로 전파(flow-through)** 된다. 무료로 결제하면 수취자도 무료로 받아 플랫폼 안에서만 쓸 수 있고 현금화되지 않는다.
-  - **free-burn**(플랫폼 매출, 수취자 없음): 수취자가 없으므로 전파 대상이 없다. 무료분은 **지갑에서 차감(소각)** 된다.
-  - **PAID_ONLY**(순수 P2P 채무): **무료 결제 자체를 허용하지 않는다**.
-  - 이벤트 참가비도 flow-through로 **완성**되었다(2026-06-06, §2.6). 무료로 결제된 참가비는 호스트에게 **무료 포인트(현금화 불가)로 적립**되고, 유료분만 정산·인출 대상이 된다. 무료 결제만 모인 이벤트도 수수료·세금 0의 정산이 생성되어 호스트가 무료 포인트를 받는다.
-- 모든 입금(충전/적립/정산/환불)은 `charge_lot`을 만들고, 모든 차감(결제/만료)은 FIFO로 lot을 소비해 잔액-lot 정합을 유지한다.
+공통 차감은 실제 유료·무료 몫을 저장하고 충전 원본 소비가 부족하면 실패한다. 무료를 쓸 수 있는 차감은 같은 지갑 잠금 아래 만료된 무료 원본을 먼저 정리한다. 자금 전달 분류 하나만으로 모든 회계 분개·판매자 지급이 자동 완성된다고 설명하지 않는다.
 
-### 사용처 3분류
+## 가격 확정과 구매 재원
 
-| 분류 | 정의 | 사용처 | 무료 처리 |
-|---|---|---|---|
-| flow-through | 무료 수취자 존재 | 마켓 구매, 플랜 직접 구매, 프라이빗 미팅비, 클럽 기부·가입비(→기금), **이벤트 참가비**(2026-06-06 이관 완료) | opt-in 시 무료 허용. split이 수취자/기금/호스트에 free로 적립, 유료분만 정산·인출. 무료만 모인 경우도 수수료·세금 0 정산 생성 |
-| free-burn | 플랫폼 매출(수취자 없음) | 개인 구독, 클럽 구독, 프라이빗 호스팅비, 호스팅 티켓 | opt-in 시 무료 허용. 무료분은 지갑에서 차감(소각). **결제(spend) 시점의 프로모션 비용(PROMOTION_EXPENSE) 분개는 여전히 미구현 — followup**(이벤트의 정산·환불 흡수 경로에서는 PROMOTION_EXPENSE가 사용되나, free-burn 결제 시점 인식은 별개) |
-| PAID_ONLY | 순수 P2P 채무 정산/회수 | 모임 정산 송금·회수·선입금, 충전 취소 | 무료 불가(실제 채무를 프로모션 포인트로 갚게 두지 않는다) |
+상품 단건과 플랜 직접 구매는 활성 상품 버전, 번들은 잠근 번들의 가격으로 최종 계산한다. 플랜 응답의 무료 허용 필드만으로 최종 결제 규칙을 대체하지 않는다.
 
-### 차등 가격 (콘텐츠 생산자 opt-in)
+| 승인된 가격 정책 | 일반 요청 | 무료 요청 |
+| --- | --- | --- |
+| 유료 전용 | 기본가·유료만 차감 | 거절 |
+| 무료 전용 | 무료 전용가 또는 기본가·무료만 차감 | 동일 |
+| 양쪽 허용·무료 전용가 없음 | 기본가·유료 우선 혼합 | 거절 |
+| 양쪽 허용·무료 전용가 있음 | 기본가·유료만 차감 | 무료 전용가·무료만 차감 |
 
-무료 허용 여부를 결정하는 필드는 도메인별로 다르다(`PricingDecision` 참조).
+요청값 PAID가 모든 상품에서 유료 전용이라는 뜻은 아니다. 현재 상품·번들 앱은 결제 재원 선택값을 보내지 않고, 플랜 직접 구매는 선택 화면이 있다. 화면에서 확인한 가격과 서버 승인 버전을 고정하는 인자가 없으므로 조회 뒤 변경 가능성도 남아 있다. 상세는 [구매 가격과 포인트 사용 방식](../02_feature_prds/08_plan_market/F08-11_purchase_prd.md#가격과-포인트-사용-방식)을 따른다.
 
-| 도메인 | 무료 허용 결정 필드 | 무료 전용 가격 |
-|---|---|---|
-| 마켓 아이템/번들 | `currencyType`(PAID_POINT/FREE_POINT/ANY_POINT) + 구매자 `fundingMode` | `freePointPrice`(nullable) |
-| 플랜 직접 구매 | `allowFreePoints` + 구매자 `fundingMode` | `freePointPrice`(nullable) |
+## 참가비 신청·승인·납부
 
-| 정책 | 설명 |
-|---|---|
-| 무료 전용 가격 | `freePointPrice`(nullable). 무료 결제 시 이 가격 적용(미설정 시 기본가) |
-| 단일 결제수단 | 차등가 콘텐츠는 전액 무료(freePointPrice 또는 기본가) 또는 전액 유료(기본가) 중 택1. `ANY_POINT + freePointPrice==null`은 PAID_FIRST 혼합 허용 |
-| 미허용 거부 | 무료 미허용 콘텐츠(마켓 `PAID_POINT`, 플랜 `allowFreePoints=false`)에 무료(`fundingMode=FREE`) 결제 요청 시 `INVALID_REQUEST` |
-| ANY_POINT 기본가 무료 금지 | 마켓 `ANY_POINT + freePointPrice==null + fundingMode=FREE` → `INVALID_REQUEST`(차등 무료가 미설정 시 기본가를 무료로 결제할 수 없음) |
+유료 신청의 자동 승인 또는 호스트 승인은 APPROVED_PENDING_PAYMENT와 결제 기한을 만든다. 승인만으로 참석을 확정하지 않는다. 지갑 결제 또는 은행 입금 확인 뒤 참석 확정 조건을 다시 판정한다. 확인 대기 은행 신고가 있으면 일반 결제 기한 만료에서 제외한다.
 
-### 인출(현금화) 정책
+지갑 납부는 신청별 서버 금액·현재 상태·기한·접근권한·활성 결제·허용 수단을 검사한다. 자동충전 확인 중은 원 참가비 결제 완료가 아니며, 수동 충전 뒤에도 사용자가 다시 결제를 시도한다. 은행 신고는 실제 입금을 증명하지 않는다. 호스트 확인 요청도 제재·정원 때문에 반환 요청으로 끝날 수 있다.
 
-| 정책 | 설명 |
-|---|---|
-| 유료만 인출 | 사용자·클럽 외부 출금은 **유료(paid) 잔액만** 대상. 무료 잔액은 현금 인출 불가 |
-| 탈퇴 처리 | 탈퇴 시 유료는 환불, 무료는 소멸(forfeit) |
-| 클럽 기금 인출 | 가용액 = paid 잔액 − 예비금/미수금. 수수료(5%)·원천징수(3.3%)는 유료(현금)분에만 부과. 폐쇄 인출도 유료만 현금화, 무료 기금은 소멸 |
+POINT·CASH·MIXED 정책과 실제 앱 선택지를 구분한다. 현재 상세는 POINT를 지갑으로, CASH·MIXED를 은행 안내로 보낸다. 원 결제와 일행 추가 결제는 별도 기록이며 신청 하나에 항상 결제 한 건만 있다고 쓰지 않는다. [참가비 선입금](../02_feature_prds/03_event/F03-13_event-prepayment_prd.md)이 현재 정본이다.
 
-### 창작자 정산 split
+## 취소 예상액과 실제 환불
 
-창작자 수익(`CreatorEarning`)은 유료/무료를 분리 기록한다. 수수료·원천징수는 **유료분에만** 적용하고, 무료분은 무수수료 `free_credit`으로 정산한다. 무료로 결제된 매출은 창작자에게 free로 적립되어(인출 불가) 무료→현금 전환을 차단한다.
+취소 미리보기는 조회 시점의 예상이다. 실제 명령은 모임 정책·귀책·시각·남은 유료/무료 원금·이전에 취소한 일행과 추가 결제를 다시 판정한다. 옛 고정 24시간·12시간 안내를 모든 모임에 적용하지 않는다.
 
-### 후속(미완) 항목
+| 귀책·상황 | 참가비 계산의 현재 원칙 |
+| --- | --- |
+| 참가자 귀책 | 모임의 시간별 비율과 잔여 한도. 고정 수수료는 유료 반환분 안에서만 공제 |
+| 호스트 귀책·불가항력·합의·일정 변경 거절 | 해당 계산에서 100%·수수료 0. 남은 원금 한도는 별도 |
+| 모임 취소 | 호스트 귀책으로 판정. 취소 후 환불 실행·복구와 취소 상태 확정을 구분 |
+| 노쇼 | 일반 자동 환불 불가. 노쇼 사후 조정 명령의 권한·금액 검사가 별도 |
+| 전체 신청·일행 취소 | 원 결제와 추가 결제의 잔여를 함께 계산. 추가 건마다 고정 수수료를 중복 적용하지 않음 |
 
-- ~~`refundToWallet`(클럽 기부·가입비·구독 환불)의 원결제 split 보존~~ — **해소 (2026-06-06 돈 흐름 무결성, §2.6)**. 전 경로가 `WalletRefundService.refundByTransaction`로 전환되었고 `refundToWallet` 본체는 차단됨.
-- ~~EVENT 결제/환불 경로의 표준 결제·환불 이관(결제 측 flow-through화)~~ — **해소 (2026-06-06, §2.6)**. 이벤트 참가비 결제가 표준 차감 경로로 통합되어 flow-through가 완성됐고, 환불도 표준 환불 경로로 통합됐다. 구식 결제 통로 2개는 차단됨.
-- ~~마켓 번들 차등가 admin 설정 배선(`community_admin_api`)~~ — **종결 (2026-06-05 감사)**. 이미 정상 배선되어 있었음(followup 자체가 stale).
-- (잔여) 미사용 legacy 차감 메서드 4종 정리(호출처 0, cleanup 대상), 사용자·클럽 외부 출금 시 충전 단위(lot) 소비 추적, 마켓/번들 무료 전용 가격(`freePointPrice`) 명시적 해제(clear) 기능 — 비-blocker.
+지갑 환불과 원 결제수단의 외부 취소는 같은 명령이 아니다. 외부 환불 대기·처리 중·실패를 지갑 반환 완료로 표시하지 않는다. 주최자에게 이미 지급한 수익의 회수도 참가자 반환과 별도이며, 남은 회수금을 취소 성공만으로 상환 완료 처리하지 않는다. [참가비 취소와 환불](../02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md)을 따른다.
 
-## 2.6 돈 흐름 무결성 정책 (2026-06-06)
+## 은행 반환과 수령 확인
 
-> 2026-06-05 돈·포인트 흐름 전수 감사(`docs/audit/money-flow-2026-06-05/REPORT.md`)에서 확정된 CRITICAL 6·HIGH 20·MED 11·LOW 3을 라운드 1·2 + MED 백로그로 처리했다. 근본 원인은 wallet/lot/ledger/admin이 하나의 원자적 회계 facade로 묶이지 않은 것이었으며, **돈 변이지점부터 점진적으로** facade(`WalletRefundService.refundByTransaction`, internal 위임)를 도입해 닫았다.
+입금 신고 대기 또는 입금 완료 상태의 취소는 이미 보냈을 수 있는 돈을 보존해 반환 요청으로 이어진다. 주최자가 외부 은행에서 반환한 뒤 금액·증빙·시각을 기록하고, 참가자는 별도로 실제 수령을 확인한다. 환불 완료 버튼이 은행 이체를 실행하는 것은 아니다.
 
-### 정책 결정 (확정)
+현재 일반 모임의 은행 반환은 상한보다 적은 양수 금액도 REFUNDED로 닫을 수 있다. 따라서 상태명만으로 원금 전액 반환을 보장하지 않는다. 서버는 증빙을 선택으로 받지만 앱은 하나 이상 요구한다. 미입금 종결은 실제 입금 확인이 없는 반환 요청에 사유를 남기는 별도 처리다.
 
-| 영역 | 정책 |
-|---|---|
-| 환불 split 복원 | 모든 환불(이벤트/마켓/플랜/클럽 기부·가입비·구독/모임정산 역분개)은 원결제 PointTransaction을 역참조해 유료/무료 split을 복원한다. 전액 paid 복원(`refundToWallet`)은 **금지**(본체 `@Deprecated`+즉시 throw). 무료→유료 현금화 세탁을 코드 레벨에서 차단. |
-| admin 환불 위임 | 운영(admin) 환불 4경로(구독·클럽구독·adminRefund·실패환불 보상)는 community_api internal endpoint(`/api/internal/wallet/refunds/by-transaction`)로 위임한다. admin이 공유 DB에 직접 분개하지 않는다(split·lot·원장 단일 기록). 원거래 미해석 보상은 **무료 포인트(현금화 불가) grant**가 기본값. |
-| 멱등 | admin 환불·정산보정·구독갱신·원천세 납부에 멱등키(AdminIdempotency/reserve-before-execute) + 락 적용. 운영자 더블클릭/재시도/동시요청 이중지급 차단. |
-| 출금 자격 | 외부출금 가능액 = 원장 RECEIVABLE-leg 누계(Σ진성 수취 − Σ회수). PointTransaction referenceType 누계 미사용(selfRefund/선입금환불 credit 오인 차단). 출금 요청 시 지갑 paidBalance·lot reserve spend(SETTLEMENT-lot 우선소비), 터미널 실패 시 `RESTORE_RESERVE` 복원. |
-| 원천세 | 예수금(`WITHHOLDING_TAX_PAYABLE`, 부채)은 정방향 적립(DR PLATFORM_CASH/CR WITHHOLDING) 후 운영자 납부 액션으로 소거(DR WITHHOLDING/CR PLATFORM_CASH). 납부는 admin 멱등 액션(전 기간 누적 초과 거부 가드 + `accounting_remit_lock` 직렬화). |
-| 정산 회계 | 정산 완료 분개는 `CREATOR_PAYABLE`를 gross 전액(net+fee+tax)으로 소거(triple-entry). admin 운영 정산도 community_api에 위임해 동일 분개. |
-| 이벤트 결제 표준화 (2026-06-06) | 이벤트 참가비 결제·환불이 **표준 결제·환불 경로로 통합**되었다. 결제는 충전 단위(lot)를 정확히 추적하며, 잔액-추적 정합이 깨지면 결제가 진행되지 않고 거부된다(이전: 경고만 남기고 진행). 환불도 충전 단위까지 복원하고, 같은 결제에 대한 유료/무료 각각의 누적 환불 한도를 강제한다. 구식 결제 통로 2개는 완전 차단(호출 시 거부). |
-| 이벤트 무료 매출 호스트 전달 | 이벤트도 무료 포인트 매출이 호스트에게 전달된다(flow-through 완성). 유료분은 정산·인출 가능, 무료분은 호스트의 무료 포인트(현금화 불가)로 적립. **무료 결제만 모인 이벤트도 정산이 생성**된다(수수료·세금 0). 정산 완료 후의 무료분 환불은 호스트에게서 회수하지 않고 **플랫폼 비용으로 흡수**(정책). 운영(admin) 정산 완료도 동일 규칙(무료분 지급 포함). |
-| 대사(reconciliation) | 8축 대사(SQL1~8: wallet=ΣPointTransaction=원장 USER_WALLET, lot drift, CREATOR_PAYABLE=Σ미지급 CreatorEarning, CLUB_FUND, RECEIVABLE dangling/clearing, REFUND_PAYABLE, 원천세 누적, 계정별 분개단위 차대)를 일배치 스케줄러로 자동 실행. |
-| 감시(limbo) | 멈춘 돈 3지점(REVERSAL 회수 소진·BANK 환불요청 무응답·정산 FAILED 장기)에 limbo 패턴 감시탑(N일 임계 → 당사자 재알림 → 2회 후 운영자 경보, 멱등 키). **자동 만료·자동 회수 금지** — 돈 in-flight는 사람이 움직인다. |
-| 동시성 | 구독 자동갱신·마켓 구매·구독 만료에 분산락(Redisson) 또는 비관락. 이중과금·한도우회·중복 알림 차단. |
+정기모임의 회비 환불은 남은 회차 산식과 별도 결제 상태를 따른다. 미확인 은행 신고, 노쇼로 인한 등록 박탈, 모임 전체 취소를 일반 모임의 시간별 비율로 계산하지 않는다. [정기모임 회비 환불](../02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md)을 함께 확인한다.
 
-### 잔여 (PG 계약 의존, release-gate 05_pg 등재)
+## 모임 비용 정산과 반환
 
-- 충전취소(cancelCharge) 응답유실 보정·출금 provider 멱등 검증 — 실 PG(Toss)/출금 provider 연동 후에만 검증 가능(현재 NOOP). 가상계좌 webhook TODO와 동일 게이트. 코드 무변경, 체크리스트 등재만.
+지출은 몫을 부담하는 사람에게서 먼저 낸 사람에게, 수입은 보유자에게서 몫을 받는 사람에게 흐른다. 자기 몫을 자신에게 송금하지 않는다. 항목별 분담 납부와 직접 차액 송금도 구분한다.
 
-## 3. 결제 실패 처리
+초안은 납부 요청이 아니다. 서버는 요청 시 모임 종료·항목·분담·상태를 다시 검사한다. 취소 성공도 은행 반환·포인트 복원·실패 복구의 완료가 아니다. 보냈어요 신고가 남은 미확인 송금이나 만료된 의무를 단순 시간 경과로 없애지 않는다.
 
-| 상황 | 사용자 안내 |
-|---|---|
-| 잔액 부족 | 충전 또는 자동충전 안내 |
-| 결제수단 없음 | 결제수단 등록 안내 |
-| PG 실패 | 결제가 완료되지 않았고 재시도 가능함을 안내 |
-| 콜백 지연 | 처리중 상태와 재조회 동선 제공 |
-| 중복 클릭 | 한 번의 결제만 유효하도록 안내 |
+완료 알림도 실제 지갑 이동액과 수동 은행 잔여를 구분한다. [실제 지갑 반환 완료의 알림](notification_policy_prd.md#실제-지갑-반환-완료의-알림)은 양수 지갑 반환의 발송 의도이며 실기기 수신·은행 반환 완료를 대신하지 않는다.
 
-## 4. 유료 승인제 이벤트 정책
+## 기금·구독·수익과 출금
 
-유료 이벤트와 승인제 이벤트는 동시에 존재할 수 있다. 이 조합은 결제와 참석 확정이 분리되므로 별도 상태 계약을 둔다.
+클럽 기금 출금 가용액은 유료 잔액에서 미승인 예약·최근 환불 보호액·미납금을 반영한다. 신청 때 기금이 바로 차감되는 것이 아니라 승인 때 총액을 예약 차감하고 지급 작업으로 넘긴다. 회원의 클럽 기금 출금 신청에는 기부와 같은 필수 요청 키가 없다. [클럽 기금 출금](../02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md)의 신청·승인·반려·실지급을 구분한다.
 
-```mermaid
-flowchart TD
-    A["참가자 신청"] --> B["Application=PENDING"]
-    B --> C{"호스트 심사"}
-    C -->|"거절"| D["REJECTED<br/>결제 없음"]
-    C -->|"승인"| E["APPROVED_PENDING_PAYMENT<br/>결제 필요"]
-    E --> F{"기한 내 결제?"}
-    F -->|"성공"| G["EVENT_PAYMENT 거래"]
-    G --> H["Attendance=ATTENDING"]
-    F -->|"실패/만료"| I["PAYMENT_EXPIRED<br/>예약 해제"]
-```
+기부 취소는 현재 회원·본인·활성 상태·7일 조건과 원거래 잔여/기금 가용액을 적용한다. 폐쇄 반환은 별도 배분이며 모든 기부금 전액 환불 보장이 아니다. [클럽 기부와 반환](../02_feature_prds/04_club/F04-14_donation_prd.md)을 따른다.
 
-| 정책 | 설명 |
-|---|---|
-| 승인 전 결제 금지 | 승인되지 않은 사용자의 돈을 먼저 받지 않는다. |
-| 승인 후 결제 필요 | 호스트 승인은 결제 권한 부여이며 참석 확정이 아니다. |
-| 결제 전 참석 권한 제한 | 체크인, 위치 공유, 리뷰 자격은 결제 성공 후 열린다. |
-| 기한 만료 처리 | 결제 대기 상태에는 기한이 있고 만료 시 예약 정원을 반환한다. |
-| 서버 검증 | 선입금 승인제 흐름의 검증 주체는 이벤트 선입금 결제 facade다(§5 D8) — 승인 대기 상태·기한·중복 결제를 검증한다. 2026-06-06 이관으로 결제는 표준 차감 경로를 직접 호출하며, 구식 비선입금 결제 통로는 차단되었다. |
+구독 해지는 자동갱신 중지와 남은 기간 이용이며 즉시 전액 환불과 다르다. 클럽 운영자 환불은 현재 결제가 더한 기간과 실제 낸 지갑·유료/무료 기금으로 나눠 계산한다. 개설권도 현재 단가가 아니라 원 구매 근거와 남은 유효 수량으로 운영자 환불을 판단한다. [개설권 사용·반환](../02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md)과 구독 정본의 현재 기간·정지 원인을 따른다.
 
-현재 서버에는 `APPROVED_PENDING_PAYMENT`, `PAYMENT_EXPIRED`, `CANCEL_PENDING_REFUND`와 결제 후 `Application=APPROVED + EventAttendance=ATTENDING` 계약이 구현돼 있다. `APPROVED_PENDING_PAYMENT`는 attendance/currentCapacity를 만들지 않지만 pending party size를 용량 판정의 논리 hold로 반영한다. 다만 만료 bulk update가 PENDING payment를 정리하거나 75 event를 발행하지 않는 Gap이 있다.
+창작자 수익은 구매 당시 귀속과 후속 지급이 별도다. 유료분의 수수료를 먼저 빼고 그 남은 금액으로 원천징수액을 계산하며 각 단계의 반올림을 적용한다. 무료분은 무료로 지급하고 유료 미수금 상계와 분리한다. 회원 판매와 플랫폼 판매, 원천별 요율·지급 시점도 다르다. 모든 거래에 같은 요율 또는 ‘총액 × (1 − 수수료율 − 세율)’을 적용하지 않는다. [크리에이터 매출 귀속·정산](../02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md)이 해당 계산과 환불 종결의 정본이다.
 
-## 5. 이벤트 참가 선입금 현재 정책
+## 무료 만료와 탈퇴 뒤 돈
 
-본 섹션은 현재 `event/prepayment` 서비스, DDL, 관련 테스트와 Flutter 호출부를 기준으로 한다. 이벤트 참가 선입금(F03-13, F06-06)에 한해 적용되며 모임 정산 선입금(F07-09)·호스팅 티켓(F06-07)·구독(F06-08)과 구분한다.
+무료 지급은 현재 지급 경로에서 1년 만료일을 가진 원본으로 기록한다. 만료 처리는 해당 원본에 남은 무료 몫과 지갑 무료 잔액 중 작은 금액만 정리한다. 이미 쓴 몫이나 유료 잔액을 무료 만료로 다시 차감하지 않는다. 원 지급 거래의 완료 이력도 유지한다.
 
-### D1. 단방향 price 동기화
+무료 환불 몫의 원본 만료가 복원일부터 30일보다 짧으면 그 몫만 30일짜리 별도 무료 원본으로 분리한다. 원본 전체의 만료일을 연장하지 않는다. 더 긴 기존 기한은 유지한다. 이 소스 확인이 운영 만료 작업의 실제 실행 기록은 아니다.
 
-선입금 활성 시 `Event.price = EventPrepayment.prepaymentAmount` 단방향 동기화.
+즉시 계정 탈퇴는 지갑 잔액을 보존하고 사용을 막는다. 유예 만료 파기에서 유료 환급 예약과 무료 소멸을 처리하며 예약과 실제 송금을 구분한다. 탈퇴 뒤 반환·지급되는 지정된 돈은 지갑 대신 보류금에 남기고 원출금의 늦은 증빙·재지급·외부 종결을 판정한다. 미검토 증빙이 있으면 중복 지급 위험을 먼저 해소한다. [계정 탈퇴의 돈 처리](../02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md#비활성화와-파기돈-처리)를 따른다.
 
-- 활성 + price 불일치 → 400 `PRICE_PREPAYMENT_MISMATCH`
-- 활성 + `amount <= 0` → 400 `INVALID_PREPAYMENT_AMOUNT`
-- 비활성 → `Event.price` 자체값 사용
-- ON → OFF 전환 (Q2 사용자 확정): `event.price = 0` 무료 이벤트로 자동 전환. 사용자에게 price 재입력 받지 않음.
+## 실패·결과 불명·재시도
 
-### D4. `APPROVED_PENDING_PAYMENT` currentCapacity 미증가·논리 hold
+| 관측 | 안내와 후속 행동 |
+| --- | --- |
+| 명확한 미처리 거절 | 잔액·수단·권한·가격·기한 등 거절 사유에 맞게 조치 |
+| 외부 응답 지연·통신 단절 | 돈이 빠지지 않았다고 단정하지 않고 같은 거래의 결과 확인 |
+| 저장된 명령 결과 존재 | 해당 경로의 키·대상·본문·현재 권한 규칙에 맞춰 재생 |
+| 처리됐으나 결과 재구성 불가 | 성공으로 위장하거나 자동 신규 거래로 바꾸지 않고 지갑·거래·권리 재조회 |
+| 충전 완료 | 원 구매의 자동 재실행 여부를 기능별로 확인. 충전만으로 구매 완료 표시 금지 |
+| 알림 저장·공급자 수락 | 거래 결과·앱 갱신·기기 실제 수신과 각각 구분 |
 
-호스트 승인 또는 자동 승인 이후 `APPROVED_PENDING_PAYMENT` application은 attendance를 만들지 않고 `currentCapacity`도 증가시키지 않는다. 그러나 `ApplicationService`는 pending party size를 용량 판정의 논리 hold로 차감한다. 결제 facade(`payByWallet` 성공, `bankConfirm` 성공)가 `confirmPaymentAndAttend`를 호출한 시점에 `currentCapacity++`와 attendance 생성이 일어난다.
+모든 쓰기가 동일한 요청 키나 앱 재시작 복구를 제공하지 않는다. 상품·번들 구매와 직접 플랜 구매, 지갑 참가비와 은행 신고, 기부와 기금 출금은 보장이 다르다. 일반 오류 문구로 이 차이를 숨기지 않는다.
 
-### D5. 계좌이체 호스트 직접 수취
+## 수용 기준과 확인 범위
 
-BANK_TRANSFER 결제·환불은 호스트 계좌로 직접 처리되어 플랫폼 회계 분개를 발생시키지 않는다.
+- **금액 보존:** 원결제·유료/무료 몫·충전 원본·반환 누계·정산 회수 한도를 연결해 중복 차감·무료 현금화를 막는다.
+- **원장 대사:** 지갑 거래와 원장, 충전 원본 잔여, 창작자 미지급금, 기금, 미수금, 환불채무, 원천세 예수금, 분개 차대를 각각 확인한다. 정책 표와 과거 감사 수치가 현재 대사 통과 증거는 아니다.
+- **권한과 상태:** 결제·입금 확인·은행 반환·출금 승인·실지급을 서로 다른 행위자·원본 번호·현재 상태로 검사한다.
+- **복구:** 결과 불명·중단·부분 실패·늦은 증빙·회수 부족의 미해결 상태를 보존한다. 오래됐다는 이유로 실제 돈 의무를 자동 완료 처리하지 않는다.
+- **외부 결과:** 공급자 수락·앱 표시·지갑 적립·은행 입금·실제 수령·알림 도착을 각각 증명한다.
 
-- `bankConfirm/bankReject/refundByBankConfirm` → `AccountingLedgerService` 호출 없음
-- audit 데이터(`event_payment.method, status, amount, host_confirmed_at, host_confirmed_by, refunded_at, refund_amount, refund_reason`)만 기록
-- 호스트 정산 보고서에 6 섹션 별도 노출 (F06-10 §5.1) — 플랫폼 정산금과 명확히 구분
-- 1차 출시는 호스트 직접 수취만 (Q3 가정). 가상계좌 등 PG 자동화는 후속 슬라이스.
+현재 근거는 위 기능 정본과 SpendPolicyRegistry·WalletSpendService·무료 지급/만료/복원 코드다. 과거 돈 흐름 감사의 결함 수, 테스트 통과, 기본 브랜치 반영 기록은 Git 이력에 보존하며 이번 실행 결과로 합산하지 않는다. 옛 참가비 만료 발행 누락·알림 경로 부재·환불 재알림 비잠금·취소 시 참석자만 순회한다는 설명은 현재 참가비 정본으로 교체했다.
 
-### D6. application당 active INITIAL payment 1건
-
-`event_payment.active_application_id` STORED generated column + `UNIQUE KEY`로 application당 active(PENDING/PAID/REFUND_REQUESTED) **INITIAL** 결제 1건만 허용한다. `GUEST_INCREMENT`는 다건 허용이다.
-
-- DDL: `CASE WHEN status IN (...) AND purpose='INITIAL' THEN application_id ELSE NULL END`
-- 순차 중복은 service 선조회로 `DUPLICATE_PAYMENT`가 되지만 DB unique 경쟁 예외를 동일 코드로 명시 변환하는 catch는 없다.
-- 환불 완료(`REFUNDED`)·취소(`CANCELED`) 후에는 generated column이 NULL이 되어 재신청·재결제 가능
-
-### D7. 환불 정책 카탈로그 일원화 (2026-06-04 D-1 업데이트)
-
-> **D-1 으로 D7 내용 갱신**: 이벤트 참가 선입금의 환불은 더 이상 "단일 deadline 100% / 마감 후 0%" 고정이 아니며, `event_refund_policy` 카탈로그(6종 템플릿) 기반으로 전환 완료됨.
-
-- `EventPaymentRefundService.refundByWallet`/`refundByHostCancel` 은 `payment/refundpolicy/service/RefundPolicyService.computeRefund` 를 통해 `event_refund_policy` 카탈로그 규칙을 사용
-- 호스트 이벤트 취소(`refundByHostCancel`) 시에는 귀책 분류 `HOST_FAULT` 경로로 카탈로그 계산기에 위임 → 100% 환불 + 수수료 0 보장 (`RefundPolicyService.computeRefund:132-140` HOST_FAULT 분기)
-- 사용자 자가 취소(참가자 귀책) 시에는 `PARTICIPANT_FAULT` 경로로 by_time 비율 적용
-- BANK 수동 환불은 `inferBankRefundFault`로 귀책 자동 판별 후 `policyCeiling` 적용 (`EventPaymentRefundService.java:277-295`)
-- `EventPrepayment.refundDeadlineHours` 컬럼은 하위 호환 유지(paymentDueAt 계산에 계속 사용). 실환불 계산에는 미사용
-- 모임 정산 선입금(`meeting_refund_rule` 기반)은 D-1 카탈로그 저장 범위 외 — 저장은 `meeting_refund_rule` 별도 유지. 단 계산 엔진은 Phase 4(③)에서 MeetingRefundRule→transient EventRefundPolicy 변환으로 공통 `RefundPolicyService.computeRefund`를 재사용(저장하지 않음)
-
-조회 권한 실측: `GET /api/v1/refund-policy-templates`도 전역 `anyRequest().authenticated()` 대상이다. `POST .../refund-preview`는 Controller가 actor를 service에 전달하지 않고, `GET .../no-show-refund`는 actor가 없으며 path eventId도 무시하므로 applicationId 기반 IDOR 후보가 남아 있다.
-
-### D8. 결제 경로 분리 → 표준 결제 경로로 통합 (2026-06-06 갱신)
-
-> **2026-06-06 갱신 (EVENT 표준 결제 이관, §2.6)**: 아래 W2/W3 당시의 "신규/기존 분리" 구도는 종결됐다. 이벤트 선입금 결제는 이제 표준 차감 경로(`WalletSpendService.spend`)를 직접 호출하고(유료우선 차감 + 충전 단위 FIFO 소비, 단위 추적 필수 — 부족 시 결제 롤백), 멱등 가드·결제 기록·회계 분개는 호출 wrapper가 같은 트랜잭션에서 처리한다. 구식 결제 메서드 2개(`WalletService.pay`/`payForApplication`)는 본체가 차단되어 호출 시 즉시 거부된다(시그니처·endpoint는 하위호환 보존). 환불은 표준 환불 경로(`WalletRefundService.refundByTransaction`)로 통합 — 충전 단위 복원 + 통화별 누적 환불 한도 강제.
-
-(이력) W2/W3 당시 신규 경로 `WalletService.payForApplication`(referenceType=`EVENT_PREPAYMENT` / referenceId=`eventPaymentId`)를 추가하고 기존 `WalletService.pay`(referenceType=`EVENT_PAYMENT`)는 변경 없이 유지했었다. 환불은 신규 `TransactionType.EVENT_PREPAYMENT_REFUND(26)` 사용. 두 결제 메서드는 위 2026-06-06 이관으로 차단됐다.
-
-### D15. 알림은 도메인 이벤트 + AFTER_COMMIT
-
-71~74·76은 facade domain event와 `EventExtensionNotificationListener(AFTER_COMMIT)`가 연결돼 있다. 75는 listener만 있고 production publisher가 없어 실제 전송되지 않는다. 83은 최초 환불 요청 event가 아니라 기본 3일 후 `RefundRequestEscalationScheduler`의 직접 재알림이다. 72와 83의 수신자는 CoHost fanout 없이 주 호스트 한 명이다. Flutter `NotificationRouter`에는 71~76·83 case가 없다.
-
-### D16. Pending count 단건 lazy
-
-`EventVo.reservedPaymentPendingCount`는 단건 응답(`GET /events/{id}`)에서만 lazy 조회로 채워진다. `EventSimpleVo`와 목록 응답은 항상 0. N+1 회피.
-
-## 6. 미완 정책 (후속 슬라이스 운영 결정 필요)
-
-### 6.1 EventRefundSettlementService 분개 공통화 완료 — PG lot 처리 경로 분리 유지
-
-> `EventRefundSettlementService`로 분개 + 정산 후처리가 일원화됐다. 별도 지갑 환불 executor class/interface는 없으며 과거 리팩터링 아이디어와 현재 구현을 혼동하지 않는다.
-
-- PG lot 처리(RefundLotAllocator)와 PG 환불 queue(RefundRequest)는 **`RefundService` 경로만 사용**. `EventPaymentRefundService`(선입금 결제 환불 경로)는 PG queue를 사용하지 않으며 `pgQueuedPaid = 0` 고정.
-- `RefundLotAllocator`: `@Value("${refund.pg-queue.enabled:false}")` — **기본 비활성**. PG 환불 가능 lot + paymentKey 존재 + enabled 조건이 모두 충족될 때만 PG queue 대기. 조건 미충족 시 `RefundService.java:184-194`에서 paidRefund도 지갑 즉시 복원.
-- 추가 운영 정책 결정 필요 항목:
-  - 환불 실패 시 `FailedRefund` 레코드의 처리 SLA (현재 inline handling 유지)
-  - PG queue refund 통합 — 선입금 경로도 PG 환불 비동기 처리가 필요한지 여부
-
-### 6.1-A RefundFaultCategory 귀책 매트릭스 (D-1 신설)
-
-> **Fact (D-1)**: 소스 `payment/refundpolicy/constants/RefundFaultCategory.java`, `RefundPolicyService.computeRefund:132-198`
-
-| faultCategory | 환불율 | fixed_fee | 비고 |
-|---|---|---|---|
-| `HOST_FAULT` | 100% | 강제 0 | 호스트 취소 계열 |
-| `FORCE_MAJEURE` | 100% | 강제 0 | 불가항력 |
-| `MUTUAL` | 100% | 강제 0 | 합의 취소 |
-| `RESCHEDULE_DECLINED` | 100% | 강제 0 | 일정변경 거절 |
-| `NO_SHOW` | 0% (allowed=false) | — | 노쇼 자동 거절 |
-| `PARTICIPANT_FAULT` | by_time 비율 % | policy.fixedFeeAmount 유료분 cap | 표준 취소 |
-| `NO_SHOW_POST_ADJUSTMENT` | 호스트 입력 manual | 0 | 노쇼 사후 조정 |
-
-F07-06 limbo SLA 운영 정책 링크: [F07-06 §4 limbo SLA 정책](../02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md)
-
-### 6.1-B refundToWallet free split 미보존 (Known Gap) — 해소 (2026-06-06)
-
-> **해소 (2026-06-06 돈 흐름 무결성, §2.6)**: `refundToWallet` 계열(클럽 구독·기부·가입비·마켓·모임정산 역분개 환불)이 전부 split-보존 `WalletRefundService.refundByTransaction`(`payment/service/WalletRefundService.java:45-126` — 원결제 PointTransaction의 paid/free 비율 복원 + 원 lot 복원)으로 전환되었다. 원결제 미해석이 불가피한 클럽 폐쇄 환불은 row별 split을 독립 보존하도록 재설계됐다(분해 컬럼 신설 대신 환불 tx의 `original_point_transaction_id` 역참조). `WalletService.refundToWallet`(`payment/service/WalletService.java:684-692`) 본체는 `@Deprecated` + 진입 즉시 `RestException(INVALID_INPUT)` throw로 차단되어 재호출 시 세탁 재발 방지. 별도의 ClubMember/ClubSubscription txId 스키마 보강은 불필요했음(역참조 방식으로 해결).
-
-이벤트 선입금 환불도 2026-06-06 이관으로 동일한 split-보존 `WalletRefundService.refundByTransaction`(명시 split 오버로드 — 환불 정책 산식을 보존하면서 충전 단위 복원 + 통화별 누적 환불 한도 강제)로 수렴했다.
-
-### 6.2 환불 정책 비율 계산 (GRADUATED) — D-1에서 해소
-
-> D7 문서의 "GRADUATED 시간 비율은 후속 슬라이스" 항목은 **D-1에서 해소**됨. `event_refund_policy` 카탈로그(STANDARD/STRICT/FLEXIBLE 등 by_time 다단계 비율)가 구현됨. 후속 결정 필요 항목 없음.
-
-### 6.3 BANK_TRANSFER PAID 사용자 취소 SLA — 해소 (2026-06-06)
-
-> **부분 구현 (2026-07-29 재실측)**: BANK PAID → `REFUND_REQUESTED` 후 기본 3일 경과 시 `RefundRequestEscalationScheduler`가 주 호스트에게 재알림하고 2회 후 운영 경보를 낸다. 그러나 event payment 대상 조회/저장이 row lock 없이 이뤄지고 `EventPayment`와 DDL에 version도 없어, 동시에 환불 완료된 row를 stale `REFUND_REQUESTED`로 되살릴 경쟁 위험이 있다. 전용 refund 경합 테스트도 없다.
-
-이벤트 취소 환불에도 현재 경계가 있다. `EventService.tryRefundNewPrepayment`는 ATTENDING/WAITING 순회 기반이라 attendance가 없는 `APPROVED_PENDING_PAYMENT`와 BANK PENDING 결제가 정리에서 누락될 수 있다. BANK PAID는 `REFUND_REQUESTED`로만 전이하지만 caller가 refunded=true/완료 알림으로 취급하는 오표시가 있으며 Club/Recurring 취소 경로도 같은 계열을 재검증해야 한다. 별도 취소 환불 coordinator class가 아니라 이 실제 서비스 호출을 추적한다.
-
-## 7. 수용 기준
-
-- 결제 성공과 기능 성공이 분리되는 경우 처리중/재조회 상태가 있어야 한다.
-- 환불은 원거래, 환불 금액, 환불 상태가 추적 가능해야 한다.
-- DRAFT 정산은 참가자에게 납부 요청으로 노출되지 않아야 한다. 참가자 노출은 **미리보기 수위**(총액·상태·내 분담금만, "준비 중 — 금액 변동 가능" 표시)로 한정되며, 결제·이의제기 등 모든 행동은 서버가 거부해야 한다(2026-06-05 정식화 — D-OPEN-2 해소).
-- 계좌이체 납부는 호스트 확인 전까지 사용자가 완료로 오해하지 않게 표시해야 한다.
-- 유료 승인제 이벤트는 승인 전 결제, 결제 전 참석 확정, 기한 만료 후 결제가 모두 차단되어야 한다.
-- 무료 포인트는 외부 출금·현금 환불·탈퇴 환불 어느 경로로도 현금화되지 않아야 한다(인출은 유료분만).
-- 무료로 결제된 금액은 수취자(창작자/호스트/기금)에게 무료로 적립되어 인출 불가 상태로 유지되어야 한다.
-- 차등가 콘텐츠는 전액 무료 또는 전액 유료 중 하나로만 결제되며, 무료 미허용 콘텐츠의 무료 결제 요청은 거부되어야 한다.
+공통 외부 지급 복구·운영자 보정·대사의 모든 실행 경로는 이 정책 요약만으로 검증 완료가 아니다. 공개 HTML의 보충 운영 절차와 돈 흐름 감사 문서의 남은 대조는 최신화 대장에 별도로 남긴다. 제품 출시 판정에는 해당 배포본의 실거래·복구·운영 증거가 추가로 필요하다.

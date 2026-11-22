@@ -422,7 +422,8 @@
         "poll_supplement_20261122",
         "stamp_supplement_20261122",
         "content_photos_20261122",
-        "notification_results_20261122"
+        "notification_results_20261122",
+        "payment_policy_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2370,9 +2371,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "payment_domain_rollup_20261122"
+        "payment_domain_rollup_20261122",
+        "payment_policy_20261122"
       ],
-      "reviewedSha256": "a655f2e2ecedb8bc73ed0d4f65778fc60184b77e5f52e22ea42e85512b3e3466"
+      "reviewedSha256": "6fc7cf58b9b5ad658182d5e45f81887693efa41548c0912d94c907c2c60e2db5"
     },
     {
       "path": "docs/domains/07-settlement.html",
@@ -5043,8 +5045,10 @@
       "document": true,
       "baselineSha256": "b887ca27d4f2c2e11528a432c36ee9dc4d64ab028b7d29553c4960d271c7c484",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "payment_policy_20261122"
+      ]
     },
     {
       "path": "docs/policies/permission.html",
@@ -5854,9 +5858,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "payment_domain_rollup_20261122"
+        "payment_domain_rollup_20261122",
+        "payment_policy_20261122"
       ],
-      "reviewedSha256": "2ea0874c8dbebcb165173137798ce12fec8dcb9f6761a3b649607196100c6663"
+      "reviewedSha256": "b3c80af478c7898d953c82f9d4cdb0dc00a93a794d1ab439042a8d4cccd760ca"
     },
     {
       "path": "prd/01_domain_prds/07_모임_정산_prd.md",
@@ -8357,10 +8362,12 @@
       "kind": "policy_prd",
       "document": true,
       "baselineSha256": "d1fd9d1aa1e391d85b2f6ff2e4e5b199f374025737ca08122718b6cf0e220d9e",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "payment_policy_20261122"
+      ],
+      "reviewedSha256": "7b97e810ea2b1652dd492cc2cc864ddd56ea8a3dde2df1acb8c5f947bea164f4"
     },
     {
       "path": "prd/03_policy_prds/permission_policy_prd.md",
@@ -11543,9 +11550,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "payment_domain_rollup_20261122"
+        "payment_domain_rollup_20261122",
+        "payment_policy_20261122"
       ],
-      "reviewedSha256": "74bfb2227596a94d854d4b2f39d0fafb4addfbe2ac34093556785274f96953aa"
+      "reviewedSha256": "da079a79bd2eb2f54883f1be8e497986d83b5e7d84f47466df0fe87434bcaa5b"
     },
     {
       "path": "units/06_payment/F06-01_wallet-main/backend.md",
@@ -43267,6 +43275,161 @@
       },
       "observedSourceVersions": {
         "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "payment_policy_20261122": {
+      "kind": "source_review",
+      "scope": "결제·정산 정책 정본 전체 갱신: 기능 정본13개 재사용 및 공통 차감 분류/제한·무료 지급/만료/복원 직접 대조. HTML 정책 본문과 3개 결제영역 연결문서 부분 동기화; HTML 외부지급 복구·운영보정 보충은 미완료. 제품실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/policy/SpendPolicy.java",
+          "sha256": "7e23d8dfcfb7dea9ab6cb3f34de913a9ae629708cf8d52c6dcb3ad8570459556",
+          "reviewScope": "전체 정책구조·허용집합·기본값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/FreeLotExpiryService.java",
+          "sha256": "44f9b496f55c27192d72403f1e223305f83a9ae0917e9c94b13988f96cfa7a70",
+          "reviewScope": "전체 실제본문:원본별만료/지갑무료한도/원거래유지/거래원장"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletCreditService.java",
+          "sha256": "2707957022c16bc2e458715f0b2ea349f2ae416bd9a7a49daa5fbc378033ef45",
+          "reviewScope": "33–35 무료1년;151–168 지급거래/동일기한원본/회계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ChargeLotConsumptionService.java",
+          "sha256": "f5dee498f9258301e1c4db36a012edcea299c5b98cb71dd36d7ed71d6a2f5f07",
+          "reviewScope": "43 상수30일;441–518 환불유료/무료몫복원·단기무료분별도단위/원기한유지"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/policy/SpendPolicyRegistry.java",
+          "sha256": "eb72d347f3b9f16df0a76e89db6faaadf00bf5d5b5b95a92f5f7d38b7bf32c9a",
+          "reviewScope": "전체 등록부의 자금전달/통화/소비집계 축과 예외; 기존부분검토보다 확장"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletSpendService.java",
+          "sha256": "8055356dba4bbf6bb233978b417e97f26b8542578ba75b43794e309b15f9ce89",
+          "reviewScope": "40–205 제한예외/무료전용·허용집합·만료먼저정리·실제차감/원본소비부족실패"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "club_finance_20261122",
+        "club_subscription_20261122",
+        "creator_earning_20261122",
+        "curated_charge_20261122",
+        "event_payment_cancel_refund_20261122",
+        "event_prepayment_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "market_purchase_20261122",
+        "notification_results_20261122",
+        "payment_domain_rollup_20261122",
+        "regular_meeting_participation_20261122",
+        "settlement_domain_rollup_20261122",
+        "settlement_pay_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "7b97e810ea2b1652dd492cc2cc864ddd56ea8a3dde2df1acb8c5f947bea164f4"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/06_결제_and_지갑_prd.md",
+          "sha256": "b3c80af478c7898d953c82f9d4cdb0dc00a93a794d1ab439042a8d4cccd760ca"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
+          "sha256": "f1f10d2565d487b56edefc8b8d281569666fa1a9c88b786804db26ce1fc9fb5d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
+          "sha256": "fbe3bb0283be6b292fef33a1b0ca6939469e97f5c8068752aeb4b79759c4d7e1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
+          "sha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
+          "sha256": "40ab1e495a89faaf5cf7ce02d9576396ba9c3fe4231dfac9df68c2e2e8a764db"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
+          "sha256": "2b336ec6c5bab3e6250baeca0bfe67509e5bded619d21e10b284e6644652e344"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md",
+          "sha256": "a9ee225dc276e70de86ac07aa21fa7e8ea42f6a30c542a52b724053da4c11dd9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
+          "sha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/policies/payment.html": [
+          "sidebar",
+          "exit-money-resolution",
+          "free-point-expiry",
+          "money-recovery-current",
+          "event-refund-receivable",
+          "settlement-direction",
+          "durable-money-commands",
+          "refund-consistency",
+          "settlement-payout-recovery"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "금전제한 중 클럽구독 지갑 무료전용 허용: 기존 기금전액필요 설명 정정",
+        "자금전달과통화허용은별도:서비스비FLOW_THROUGH+PAID_ONLY/개설권실제유료전용",
+        "이전참가비알림/만료/환불재알림/취소누락 Gap 현행정본으로교체",
+        "무료환불단기원본은반환몫만30일분리",
+        "응답유실≠미차감;경로별키/앱보관차이",
+        "payment.html 외부지급복구·운영자보정·주최자회수금 보충 대조 남음"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/policies/payment.html",
+          "pattern": "<details id=\"payment-policy-history\">[\\s\\S]*?</details>",
+          "sha256": "c393c62bdb45991183629d585d01140144208c16a47580e0730d0c41e1aa81eb",
+          "note": "9월5일·25일 기존원문보존;현재실행통과아님"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "20 source/canonical digests; 9 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 5 paths, 76 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; documentation and selected current source contracts only"
+      },
+      "observedSourceVersions": {
+        "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
         "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
       }
     }
