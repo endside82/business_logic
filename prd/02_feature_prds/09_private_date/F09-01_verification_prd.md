@@ -1,111 +1,77 @@
-# F09-01. 본인 인증 (Toss) PRD
+# F09-01. 본인 인증과 증빙 검토 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 시험·외부 인증·기기 검수 통과 기록이 아니다.
 
-> 문서 상태: **실사 기반 전환본 v2 — 2026-05-27 Phase 0 보안 하드닝 반영.** 시도 단위 세션 테이블 신설(txId 바인딩·일일제한·만료·실패 전이 정확화), Member 인구통계 동기화 훅, Redisson 사용자별 락, 공통 AES 코덱이 추가됐다. 코드 수정/QA 착수 전에는 `community_api/src/main/java/com/endside/community/privatedate/` 와 `community_api/src/main/java/com/endside/community/account/service/MemberService.java` 를 직접 다시 연다.
+## 역할과 공개 범위
 
-## 1. 결론
+일반 본인 인증의 요청·완료·상태·제공자 목록은 P0 범위이며 수동 증빙 검토는 DATING 범위다. 따라서 인증 성공이 소개팅 공개나 모든 후속 기능 사용 가능을 뜻하지 않는다. 프로필 생성에는 별도로 만 20세 이상·검증된 성별·사진·노출 동의와 제재 조건을 적용한다.
 
-데이팅 진입의 게이트. 사용자는 Toss 본인인증 SDK를 통해 실명·생년월일·성별·CI를 검증받아야 데이팅 프로필 작성·후보자 노출·매칭 액션 등 모든 후속 기능에 접근할 수 있다. 서버는 Toss 인증 URL과 txId를 발급하고, 사용자가 Toss에서 인증을 마친 뒤 txId로 결과를 회신받아 개인정보를 AES 암호화해 저장한다.
+서버는 TOSS·NICE 제공자 구조와 설정별 활성 목록을 지원한다. GET /api/v1/date/verification/providers는 활성 제공자의 type·displayName 목록을 반환한다. POST /request는 선택 본문의 provider를 받고 없으면 활성 TOSS를 우선하며 그다음 활성 제공자를 선택한다. 모두 비활성이면 시작을 거절한다. 설정 클래스의 기본값은 비활성이며 실제 공급자 계약·자격증명·운영 활성 여부는 이번 문서 대조로 확인하지 않았다.
 
-**Phase 0(2026-05-27)에서 잠재 버그 4건을 동시 수정**했다:
-- (1) `/verify`가 클라가 보낸 임의 txId를 그대로 Toss로 넘기던 미바인딩 → 발급 txId를 HMAC-SHA256으로 사용자에 바인딩(`identity_verification_session`).
-- (2) 일일 5회 제한이 `IdentityVerification` 단일 row 재사용으로 무력화되던 버그 → 세션 `requested_at` 기준 카운트.
-- (3) `isVerified()`가 status만 보고 `expiresAt`을 무시하던 버그 → 만료 인증도 false 반환.
-- (4) provider 실패 시 row가 PENDING 잔류 → 세션 `FAILED`/`EXPIRED` 상태 전이(REQUIRES_NEW로 보존).
+현재 앱의 requestVerification은 본문 없이 요청한다. 사용자에게 제공자 선택 UI가 있다는 뜻은 아니며 서버가 선택해 반환한 provider와 콜백 경로를 사용한다. 과거 Toss 단독·NICE 미구현 설명은 현재 구조와 다르다.
 
-또한 인증 성공 시 검증값(gender/birthDate)이 `Member` 인구통계로 **afterCommit 동기화**되어 [[F03-18 event-demographics]] / [[F04-17 club-demographics]] 의 데이터 원천이 된다.
+## 인증 URL 발급과 완료 계약
 
-현재 이 PRD에서 바로 봐야 할 것은 다섯 가지다. 첫째 서버가 실제로 제공하는 endpoint/상태/side effect, 둘째 Flutter가 그 값을 어떤 route/provider/widget/CTA로 소비하는지, 셋째 시도 세션의 라이프사이클(PENDING→VERIFIED/FAILED/EXPIRED)과 클라 임의 txId 차단, 넷째 Member 인구통계 동기화의 트랜잭션 분리(afterCommit + REQUIRES_NEW), 다섯째 시나리오 문서가 이미 드러낸 Gap/Risk 후보를 실제 소스 대조로 확정하는 것.
+POST /request는 201 VerificationAuthVo(txId·authUrl·provider·successScheme·failScheme)를 반환한다. POST /verify는 txId와 선택 encData·integrityValue·tokenVersionId를 받아 VerificationVo를 반환한다. GET /status도 같은 상태 VO이며 아직 인증 행이 없으면 DATE_VERIFICATION_NOT_FOUND다. 응답에는 status·verificationProvider·verifiedAt·expiresAt·currentlyValid 등이 있고 실명·생년월일·CI·DI 평문은 없다.
 
-## 2. 코드 위치
+요청과 완료의 외부 공급자 호출은 NOT_SUPPORTED 경계에서 DB 거래 밖으로 실행된다. 별도 VerificationWriteWorker가 계정·인증 행을 잠그고 발급 준비, 발급 세션 저장, 완료 선점, 결과 반영을 짧은 거래로 나눈다. 사용자별 Redis 잠금은 대기 3초·임대 10초이며, 별도 DB 발급 선점의 토큰·만료도 확인한다. 외부 호출이 늦게 돌아와도 선점 소유권을 잃었으면 결과를 저장하지 않는다.
 
-계약의 정본은 코드다. 서버: `DateVerificationController`, `MemberService`, `VerificationBackfillService`, `VerificationService`, `AesEncryptionService`. 앱: `verification_screen.dart`.
+하루 한도는 저장된 인증 세션의 requestedAt 기준 5건이다. 외부 URL 발급 실패가 모두 저장된 시도 수를 늘린다고 설명하지 않는다. 유효 인증이 있으면 새 요청을 거절하고, 살아 있는 발급 선점이면 발급 진행 중 오류를 반환한다. 새 세션을 저장할 때 이전 PENDING·COMPLETING 세션을 EXPIRED로 바꾼다.
+
+## 시도 세션과 개인정보 반영
+
+세션은 사용자와 txId 해시로 연결하고 유효기간은 10분이다. 완료 시 PENDING 또는 임대가 만료된 COMPLETING을 선점해 COMPLETING과 새 토큰을 기록한다. 이미 살아 있는 완료 임대는 재시도 필요 오류다. 만료된 시도로 완료를 요청하면 거절하며 이 오류만으로 세션 행이 즉시 EXPIRED로 저장된다고 보장하지 않는다.
+
+공급자 실패는 아직 해당 임대를 소유한 경우 별도 거래에서 FAILED와 실패 정보를 저장한다. 성공 반영도 소유권·시도 기한을 다시 확인한다. 이미 유효한 인증이 있으면 verify는 기존 결과를 반환할 수 있고, 외부 호출 중 수동 승인이 생겼다면 그 인증을 덮어쓰지 않는다.
+
+자동 인증 성공 시 이름·생년월일·CI 및 제공된 DI를 암호화 저장하고 유효기간을 365일로 설정한다. 인증 저장이 커밋된 뒤 회원 인구통계 동기화를 호출하며 동기화 실패가 인증 성공을 되돌리지는 않는다. 프로필용 신원 판정은 실제 생년월일과 성별 1/2를 사용한다. 복호화 실패는 사용자 미자격과 구분한다.
+
+## 증빙 검토 요청과 철회
+
+GET·POST·DELETE /manual-review가 본인의 상태·제출·철회를 담당한다. 제출은 fileId 하나를 받는다. 유효 인증이 없고 발급 선점이 진행 중이 아니며 가장 최근 시도가 FAILED·EXPIRED 또는 기한이 지난 PENDING이어야 한다. 아직 자동 인증을 시작하지 않은 사람이나 살아 있는 COMPLETING 시도를 일반 수동 검토 대상으로 허용하지 않는다.
+
+파일은 본인 소유·업로드 COMPLETED·IDENTITY_VERIFICATION 목적이며 QUARANTINED 또는 CLEAN이어야 한다. 제출은 참조 등록·검토 세대 증가와 이전 검토 결과 정리를 수행한다. 응답의 reviewDecision과 evidenceScanStatus는 인증 status와 별개의 상태다. 스캔 대기는 PENDING, 안전 확인은 CLEAN, 누락·거절은 BLOCKED로 표현하며 새 제출은 PENDING_REVIEW가 될 수 있다. 회원용 제출 API가 직접 승인하는 것은 아니다.
+
+철회는 제출/수동 증빙 참조와 검토 기록을 정리하고 파일을 즉시 삭제 대상으로 표시해 후속 작업에 넘긴다. 현재 유효한 MANUAL 인증을 철회하면 인증도 EXPIRED로 바꾸고 verificationRevoked=true를 반환한다. 실제 저장소 삭제 완료를 응답만으로 보장하지 않는다. 교체·검토 종료의 증빙 보존 기한은 설정을 따르며 기본 90일이고, 실제 파일 정리의 보류 조건은 파일 서비스가 담당한다.
+
+## 앱의 인증 입구와 결과
+
+/dating/verification은 상태를 읽고 미인증·대기·유효·만료·실패·알 수 없는 상태를 구분한다. VERIFIED라도 currentlyValid=false면 만료로 보여 준다. 정확한 인증 없음 오류만 미시작으로 취급하고 다른 읽기 실패는 오류와 재시도로 표시한다.
+
+발급 응답의 URL·txId·성공/실패 경로가 모두 준비돼야 WebView를 연다. 콜백은 scheme·host·정규화한 path를 일치 검사하고 완료 요청에는 콜백이 준 임의 txId 대신 처음 발급한 txId를 사용한다. NICE 결과 필드는 함께 전달한다. 서버의 NICE return은 결과 값을 앱 콜백 URL로 넘기는 302이며 그 자체가 인증 완료 저장은 아니다.
+
+앱은 한도·시간 초과·세션 불일치·발급 진행·재시도 필요·제공자 비활성 등을 다른 안내로 표시한다. 닫기는 WebView 표시를 닫으며 서버 취소 명령을 호출하지 않는다. 일반 웹 리소스 오류에 대한 별도 복구 화면은 이 WebView에서 구현돼 있지 않다. 유효 인증 화면의 프로필 생성 입구는 DATING이 열려 있을 때 제공한다.
+
+## 앱의 증빙·불명 결과 복구
+
+수동 검토 입구는 DATING 공개 범위와 서버가 준 현재 제출 가능 상태를 따른다. 앱은 JPG·JPEG·PNG·WEBP 및 10MB 상한을 확인하고 본인확인 목적의 업로드 fileId를 제출한다. 증빙을 계정별로 보관하고 제출 전 최신 서버 상태·현재 계정을 다시 확인한다.
+
+결과 불명인 제출은 바로 중복 전송하지 않는다. 이미 같은 fileId가 접수됐는지 상태를 확인하며, 확실한 거절 또는 전송되지 않았다고 확인한 오류만 재제출 가능 상태로 되돌린다. 증빙 스캔 대기는 10·30·60초 간격과 10분 예산으로 재조회한다. 운영자 최종 판정을 무제한 폴링하는 계약은 아니다. 철회가 수동 인증도 취소했으면 일반 인증 상태를 다시 읽는다.
+
+## 코드 위치
+
+서버: DateVerificationController, VerificationService, VerificationWriteWorker, VerificationProperties, VerificationVo, DateAbilityPolicy. 앱: date_verification_api.dart, date_verification_provider.dart, verification_screen.dart, verification_webview.dart, verification_redirect_interceptor.dart, date_verification_error_message.dart, date_manual_review_provider.dart, date_manual_review_screen.dart, dating_routes.dart, release_scope_routes.dart.
 
 <!-- source-references:start -->
-서버 창구: `DateVerificationController#requestVerification`, `DateVerificationController#verify`, `DateVerificationController#getStatus`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `DateVerificationController#requestVerification`, `DateVerificationController#verify`, `DateVerificationController#getStatus`, `DateVerificationController#submitManualReview`, `DateVerificationController#withdrawManualReview`, `DateVerificationController#getManualReview`, `DateVerificationController#getProviders`, `DateVerificationController#niceReturn`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-1. 화면 진입 시: `dateVerificationNotifierProvider` ▶ `DateVerificationRepository.getStatus()` ▶ `GET /api/v1/date/verification/status` ▶ `VerificationVo` (IdentityVerification 단건)
-2. "본인 인증하기" 탭 시: `notifier.requestVerification()` ▶ `Repository.requestVerification()` ▶ `POST /api/v1/date/verification/request`
-    - 서버: Redisson 사용자 락(`verify:request:{userId}`, wait 3s/lease 10s) 획득 → 트랜잭션 내부에서 ① 오늘 세션 카운트 < 5 검증 ② 유효 인증 존재 시 거부 ③ **기존 PENDING 세션 EXPIRED 처리(best-effort)** ④ `tossVerificationService.requestAuthUrl()` ▶ ⑤ `identity_verification_session` row 생성(provider=`toss-cert`, `tx_id_hash=HMAC(txId)`, status=PENDING, requested_at=now, expires_at=now+10분)
-    - 응답 `TossIdentificationVo{txId, authUrl}` ▶ WebView 호스팅
-3. WebView `onSuccess(...)` 시: **안전판 — redirect의 txId 대신 발급 txId(`widget.txId`)를 사용** ▶ `notifier.verify(txId)` ▶ `Repository.verify(TossVerifyParam(txId))` ▶ `POST /api/v1/date/verification/verify`
-    - 서버: HMAC(txId)로 `(userId, tx_id_hash, status=PENDING)` 세션 조회 → 미존재 시 `DATE_VERIFICATION_SESSION_INVALID(400, 1600023)`, 만료 시 `DATE_VERIFICATION_EXPIRED(400, 1600017)` + 세션 EXPIRED
-    - `tossVerificationService.verifyIdentification(txId)` 호출 — 실패 시 `self.markSessionFailed(...)`(REQUIRES_NEW)로 세션 FAILED 보존 후 예외 전파
-    - 성공 시 `IdentityVerification` 갱신(VERIFIED, name/birthDate/ci AES 암호화, gender 1·2·0 매핑, expiresAt=now+1년) + 세션 VERIFIED
-    - **afterCommit** 콜백으로 `MemberService.syncVerifiedDemographics(userId, gender, birthDate)`(REQUIRES_NEW) — 인증 트랜잭션이 커밋된 뒤에만 실행, 실패해도 인증은 성공
-
-## 4. 제품 규칙
-
-- 본인 인증(Toss)을 마친 사람만 데이팅 프로필을 만들고, 후보로 노출되고, 좋아요를 보낼 수 있다. 상대의 인증이 만료되거나 운영자가 수동 승인을 취소하면 그 사람은 후보에서 빠진다.
-- 인증은 1년간 유효하다. 유효한 인증이 있으면 다시 요청할 수 없고, 만료되면 다시 인증한다.
-- 하루에 시도는 5번까지다. 한 사람이 동시에 여러 번 요청해도 하나씩만 처리되고, 처리 자리를 얻지 못한 요청은 하루 한도 초과와 같은 오류로 보인다.
-- 한 시도는 10분 안에 마쳐야 한다. 내가 받은 시도가 아닌 인증 번호로 확인을 요청하면 거절되고, 시간이 지나면 만료 오류가 난다. 새 요청을 하면 이전의 대기 시도는 만료로 바뀐다. 앱은 이런 실패를 구분하지 않고 「인증 확인에 실패했습니다. 다시 시도해주세요.」 하나로 보여 준다.
-- 이름, 생년월일, CI는 암호화해 저장하고 응답에 평문으로 내려주지 않는다. 성별은 남 1, 여 2, 기타 0으로 저장한다.
-- 인증이 성공하면 회원의 성별과 생년이 이벤트·클럽 인구통계용 정보로 함께 갱신된다. 이 갱신은 인증이 확정된 뒤에만 일어난다.
-- 인증 화면은 상태에 따라 네 갈래다: 미인증 또는 대기(인증 안내), 유효(인증 완료), 만료, 실패.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 데이팅 첫 진입 → 본인 인증 → 프로필 작성 (Happy Path) | 로그인, IdentityVerification row 없음 | `IdentityVerification.status = VERIFIED`, 세션 VERIFIED, **Member.gender/birthDate 동기화**(afterCommit), 데이팅 모든 기능 사용 가능 |
-| S2 | 일일 5회 한도 초과 | 오늘 세션(`identity_verification_session.requested_at`) 5건 누적 | `DATE_DAILY_LIMIT_EXCEEDED`(429), 신규 세션·인증 row 미생성 |
-| S3 | Toss 인증 중도 취소 | `requestVerification` 성공, 세션 PENDING | 세션 PENDING 유지(or TTL 만료 후 EXPIRED), 다음 `/request` 시 EXPIRED로 전이 |
-| S4 | Toss 결과 조회 실패 | `verifyIdentification` 예외 | `self.markSessionFailed`(REQUIRES_NEW) → 세션 FAILED + failure_code 보존, 인증 row PENDING 유지 |
-| S5 | 1년 후 만료 → 재인증 | `expiresAt < now` | `isVerified=false`(만료 검증), 재요청 허용 → 신규 verifiedAt/expiresAt |
-| S6 | 이미 유효 인증자의 강제 재요청 | `existsByUserIdAndStatusAndExpiresAtAfter=true` | `DATE_VERIFICATION_REQUIRED`(400), 변동 없음 |
-| **S7 (신규)** | 클라가 임의/위조 txId로 `/verify` | 발급된 PENDING 세션과 HMAC 불일치 | `DATE_VERIFICATION_SESSION_INVALID`(400), Toss 호출 안 함 |
-| **S8 (신규)** | 세션 TTL 초과 후 `/verify` | 세션 expires_at < now | 세션 EXPIRED 전이 + `DATE_VERIFICATION_EXPIRED`(400) |
-| **S9 (신규)** | 동시 다중 요청 | 같은 userId로 동시 `/request` 다발 | Redisson 락으로 직렬화. 락 미획득은 `DATE_DAILY_LIMIT_EXCEEDED`(429) |
-| **S10 (신규)** | 기존 VERIFIED 사용자 backfill | Phase 0 이전 인증 row | `VerificationBackfillService` 1회 실행 → 검증 birthDate/gender가 Member에 반영(idempotent) |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 서버 계약 | Controller/Service/VO/Enum + Phase 0 신규(세션·HMAC·락·afterCommit) | trace에 명시된 신규 파일들이 실제로 존재함(테스트 18개 통과) |
-| 프론트 계약 | Route/API/Repository/Provider/Screen + txId 안전판 | `toss_verification_webview.dart`의 success 콜백이 `widget.txId` 전송으로 변경 확인 |
-| 상태/권한 | 시나리오별 종료 상태(특히 S7~S10 신규) | 단위테스트로 S2/S5/S7/S8/S9 검증, S10은 backfill 서비스 단위테스트 |
-| 외부 영향 | Member 인구통계 동기화 / export·삭제 / NICE 후속 | F03-18·F04-17·F13-05/06/07 PRD 참조 |
+| Risk | 제공자 코드 지원과 실제 계약·설정·기기 콜백 성공은 다르다. | Toss/NICE 실제 왕복·운영 활성화를 이번 완료로 기록하지 않는다. |
+| Risk | 인증·DATING 공개·프로필 자격과 증빙 검토 상태가 서로 다르다. | 인증 성공을 모든 소개팅 기능 사용 가능으로 확대하지 않는다. |
+| Gap | 앱은 제공자 선택 본문을 보내지 않고 WebView 일반 리소스 오류의 별도 복구가 없다. | 서버 선택과 현재 앱의 한계를 명시한다. |
+| 미검증 | 실제 외부 인증·동시 완료·운영자 승인·파일 삭제와 실기기 복귀를 실행하지 않았다. | 과거 시험 주장은 로컬 시나리오에 인용으로 보존하고 새 통과 수로 합산하지 않는다. |
 
-## 8. Gap / Risk
+## 수용 기준과 검증 근거
 
-**Phase 0에서 해결됨:**
-- ✅ txId 미바인딩(클라 임의 txId 통과) — HMAC 세션 바인딩
-- ✅ 일일 제한 무력화(unique row 재사용) — 세션 카운트
-- ✅ 서버 만료 미검증(`isVerified`) — `expiresAt > now` 추가
-- ✅ FAILED 상태 전이 부재 — `markSessionFailed`(REQUIRES_NEW)
-- ✅ Member 동기화 불일치 가능성 — afterCommit으로 보강
-
-**잔존(후속):**
-- ⚠️ **staging Toss 검증 필요** — txId 왕복 일치, `birthday` 실제 포맷(yyyyMMdd 가정), 세션 TTL(10분) vs Toss authUrl 유효시간 적정성
-- ⚠️ **NICE 멀티 프로바이더(Phase 2)** — `docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` 참조. 현재는 Toss 단독, NICE 연동은 계약 후 마지막 단계
-- ⚠️ **network-in-tx 잔존** — `requestVerification/verify`가 Toss 네트워크 호출을 트랜잭션 안에서 수행(기존부터 존재). staging 후 별도 리팩터 권장
-- ⚠️ **동시성 엄격화 best-effort** — 사용자별 락은 burst 직렬화에는 충분하나, "단일 PENDING 정책"은 best-effort. `UNIQUE(user_id, provider, tx_id_hash)`는 정확한 중복행만 차단
-- 후속 안내 UX(에러코드별 토스트 메시지 정교화) — 앱 측 일반 처리 중
-
-## 9. 수용 기준
-
-- **AC-01 (Happy Path)**: 신규 사용자 → 인증 완료 → 데이팅 진입. Member.gender(1·2)/birthDate가 검증값으로 갱신.
-- **AC-02 (일일 제한)**: 오늘 세션 5건 누적 시 6번째 `/request`는 `DATE_DAILY_LIMIT_EXCEEDED`.
-- **AC-03 (Toss 중도 취소)**: WebView 닫음 → 세션 PENDING. 다음 `/request` 시 직전 PENDING → EXPIRED.
-- **AC-04 (Toss 결과 실패)**: `verify` 호출 후 Toss 502 → 세션 FAILED + failure_code 저장. 사용자 재시도 가능.
-- **AC-05 (1년 만료 재인증)**: `expiresAt < now` → `isVerified=false` → 재요청 → 신규 expiresAt(+1년).
-- **AC-06 (재요청 거부)**: 유효 인증자의 `/request` → `DATE_VERIFICATION_REQUIRED`.
-- **AC-07 (txId 위조 차단, 신규)**: 클라가 발급받지 않은 txId로 `/verify` → `DATE_VERIFICATION_SESSION_INVALID`, Toss 호출 없음.
-- **AC-08 (세션 만료, 신규)**: 세션 expires_at 경과 후 `/verify` → `DATE_VERIFICATION_EXPIRED` + 세션 EXPIRED.
-- **AC-09 (동시 요청 직렬화, 신규)**: 같은 userId 동시 `/request` 다발 → Redisson 락으로 순차 처리, 실패는 429.
-- **AC-10 (Member 동기화, 신규)**: 인증 커밋 후 `Member.gender ∈ {1,2}` + 유효 `birthDate`가 검증값으로 반영(인증 롤백 시 미반영).
-- **AC-11 (backfill, 신규)**: 기존 VERIFIED 사용자에 `VerificationBackfillService` 실행 → Member 인구통계 갱신(재실행 idempotent).
-
-## 10. 미결정 / 후속
-
-- **NICE 연동(Phase 2)** — `docs/plan/identity/VERIFICATION_PROVIDER_PLAN.md` 잔여 결정 Q1(NICE 확정)·Q2(DI 저장 확정), Q3·Q4·Q5는 멀티 프로바이더 도입 시 닫힘.
-- **staging Toss 검증** — Phase 0 가정(yyyyMMdd birthday, 10분 세션 TTL)을 실 환경으로 확인.
-- **network-in-tx 분리 리팩터** — staging 확보 후 `request authUrl` / `verify 결과조회` / `DB 상태전이` 트랜잭션 경계 분리.
-- **VerificationBackfillService 운영 트리거** — 1회성 배치 또는 admin 엔드포인트(`community_admin_api`). 실행 시 dry-run + 감사 로그 필수, PII 평문 로그 금지.
+- **AC-01 제공자와 공개:** 활성 제공자 선택·앱 기본 요청·P0와 DATING 범위를 구분한다.
+- **AC-02 시도 발급:** 사용자별 잠금·DB 선점·저장 세션 5건·10분 기한과 이전 시도 종료를 적용한다.
+- **AC-03 완료 소유권:** 사용자/해시와 COMPLETING 임대를 확인하고 늦은 결과·실패 반영을 제한한다.
+- **AC-04 상태와 신원:** 현재 유효성·365일 인증·암호화 저장·커밋 후 인구통계 및 프로필 자격을 나눠 설명한다.
+- **AC-05 증빙 제출:** 가장 최근 실패 시도·파일 소유/목적/스캔·검토 세대 조건을 확인한다.
+- **AC-06 증빙 철회:** 참조 해제·삭제 예약과 MANUAL 인증 취소를 구분한다.
+- **AC-07 앱 복구:** 발급 txId로 콜백을 완료하고 상태별 오류·제출 결과 불명·제한된 스캔 폴링을 처리한다.

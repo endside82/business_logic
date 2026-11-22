@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,295개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,289개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1295,
+    "documentedScenarioItems": 1289,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 634,
-    "verifiedTraceRecords": 632,
+    "traceMarkers": 645,
+    "verifiedTraceRecords": 643,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -12436,7 +12436,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-01",
       "domain": "프라이빗 데이팅",
-      "name": "본인 인증",
+      "name": "본인 인증과 증빙 검토",
       "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-01_verification/scenarios.md",
@@ -12447,8 +12447,8 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-01_verification/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
         "entries": [
           {
@@ -12501,6 +12501,91 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 110
               }
             ]
+          },
+          {
+            "id": "F09-01:4",
+            "label": "POST /api/v1/date/verification/manual-review",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "controller": "DateVerificationController",
+                "method": "submitManualReview",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/date/verification/manual-review",
+                "targetLine": 58,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F09-01:5",
+            "label": "DELETE /api/v1/date/verification/manual-review",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "controller": "DateVerificationController",
+                "method": "withdrawManualReview",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/date/verification/manual-review",
+                "targetLine": 74,
+                "methodLine": 76
+              }
+            ]
+          },
+          {
+            "id": "F09-01:6",
+            "label": "GET /api/v1/date/verification/manual-review",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "controller": "DateVerificationController",
+                "method": "getManualReview",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/verification/manual-review",
+                "targetLine": 82,
+                "methodLine": 84
+              }
+            ]
+          },
+          {
+            "id": "F09-01:7",
+            "label": "GET /api/v1/date/verification/providers",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "controller": "DateVerificationController",
+                "method": "getProviders",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/verification/providers",
+                "targetLine": 89,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F09-01:8",
+            "label": "GET /api/v1/date/verification/nice/return",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+                "controller": "DateVerificationController",
+                "method": "niceReturn",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/verification/nice/return",
+                "targetLine": 121,
+                "methodLine": 122
+              }
+            ]
           }
         ]
       },
@@ -12531,21 +12616,124 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-02",
       "domain": "프라이빗 데이팅",
-      "name": "데이팅 프로필 관리",
-      "scenarioCount": 8,
+      "name": "데이트 프로필 생성·편집과 사진 관리",
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-02_profile/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-02_profile/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F09-02:1",
+            "label": "POST /api/v1/date/profile",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "createProfile",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/date/profile",
+                "targetLine": 39,
+                "methodLine": 40
+              }
+            ]
+          },
+          {
+            "id": "F09-02:2",
+            "label": "GET /api/v1/date/profile",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "getMyProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/profile",
+                "targetLine": 47,
+                "methodLine": 49
+              }
+            ]
+          },
+          {
+            "id": "F09-02:3",
+            "label": "PATCH /api/v1/date/profile",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "updateProfile",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/date/profile",
+                "targetLine": 55,
+                "methodLine": 57
+              }
+            ]
+          },
+          {
+            "id": "F09-02:4",
+            "label": "PATCH /api/v1/date/profile/active",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "toggleActive",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/date/profile/active",
+                "targetLine": 64,
+                "methodLine": 66
+              }
+            ]
+          },
+          {
+            "id": "F09-02:5",
+            "label": "POST /api/v1/date/profile/photos",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "addPhoto",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/date/profile/photos",
+                "targetLine": 73,
+                "methodLine": 75
+              }
+            ]
+          },
+          {
+            "id": "F09-02:6",
+            "label": "DELETE /api/v1/date/profile/photos/{photoId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "deletePhoto",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/date/profile/photos/{photoId}",
+                "targetLine": 82,
+                "methodLine": 84
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -12939,14 +13127,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-08",
       "domain": "프라이빗 데이팅",
-      "name": "내 프로필 조회 이력",
-      "scenarioCount": 10,
+      "name": "내 데이트 프로필 방문 기록",
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-08_profile_views/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-08_profile_views_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-08_profile_views/backend.md",

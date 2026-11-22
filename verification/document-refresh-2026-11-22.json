@@ -307,7 +307,8 @@
         "report_intake_20261122",
         "location_features_20261122",
         "warning_intake_20261122",
-        "warning_operations_20261122"
+        "warning_operations_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -376,7 +377,8 @@
         "location_domain_20261122",
         "warning_intake_20261122",
         "warning_operations_20261122",
-        "warning_domain_20261122"
+        "warning_domain_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -3699,9 +3701,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "7921ea8f90a569963a213ca4d02785af502348b3d5139aa0f9f7deae1fc1e316",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "f14cb4a21519e640203ca2fca153ce9d0840f692821d63586a5840ab43ae39f9"
     },
     {
       "path": "docs/features/F09-02.html",
@@ -3709,9 +3714,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a7bed07ee0a2b13a08604c3ff5cb1592a68833a46d9dc449be8238ae65bb2cf7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "f20eaf90f1cc211a0ef6fb1bb2cee85b008fc8794dffdc7845d84430b6f95a98"
     },
     {
       "path": "docs/features/F09-03.html",
@@ -3769,9 +3777,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d8592f2da314f6f0381a183465f6d1706b8acfff3c4bd01f90c315f1a3352e22",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "9c2b6af38a0eb0105c7e2cc116a9873a216772479c01a0550cf781503a642040"
     },
     {
       "path": "docs/features/F10-01.html",
@@ -5189,7 +5200,8 @@
         "report_intake_20261122",
         "location_features_20261122",
         "warning_intake_20261122",
-        "warning_operations_20261122"
+        "warning_operations_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5291,7 +5303,8 @@
         "report_intake_20261122",
         "location_features_20261122",
         "warning_intake_20261122",
-        "warning_operations_20261122"
+        "warning_operations_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5417,7 +5430,8 @@
         "report_intake_20261122",
         "location_features_20261122",
         "warning_intake_20261122",
-        "warning_operations_20261122"
+        "warning_operations_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6976,10 +6990,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "374f22d3a4da87d7c981a19e648630b29e2271ff6987b98378fe576fe53a37fc",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "b23553fe1606ec404362cea808a5f91e0aa4ca91a8fe26f4df95bde40a3b44fa"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
@@ -6987,10 +7003,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "b5d9dfae38843fb9f147b2764bde52154169c18e1d2f28460c3bfade63f3d4ae",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "919d199edcb321fe5edb81cabf2731a19f0d0cd3a96bab77350ffda7a40a5538"
     },
     {
       "path": "prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
@@ -7053,10 +7071,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "ef6c9238d56390c3e38b113110bfbe342aa5d9353f3fce018007ba1911596403",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "dd8771365f5b69289097ee36aa6f6cf9447b1b1b81dc674bd56f8798236c791b"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
@@ -8317,7 +8337,8 @@
         "report_intake_20261122",
         "location_features_20261122",
         "warning_intake_20261122",
-        "warning_operations_20261122"
+        "warning_operations_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8571,7 +8592,8 @@
         "report_intake_20261122",
         "location_features_20261122",
         "warning_intake_20261122",
-        "warning_operations_20261122"
+        "warning_operations_20261122",
+        "date_identity_profile_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12908,9 +12930,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f8538d62b88a22b8e37ba8eb8db19a397cb6946a6a711089e12f30cf6ef40103",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "81477b4a7e3cf6e153fec917d69a7243b43206ab03cffa11312950a3ef15129a"
     },
     {
       "path": "units/09_private_date/F09-01_verification/diagrams.md",
@@ -12918,9 +12943,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c47a484d6b71e512a57e86d71c7bf57eb121587a428194f3a718abaa888cda84",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "8e3a66f15e9b640344ec011661c16cfd5740d3dde9c0b3e1436aa4881f56ea72"
     },
     {
       "path": "units/09_private_date/F09-01_verification/frontend.md",
@@ -12928,9 +12956,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ba5fef436a55bcd9d8c0ebf3117e9d0aa907fccafaf6b1fd6bf1f71d7c5e0ef1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "94800f803a2160b8a0f7a67683f38f4eeb47fd19054818ec48d9121c5ed77e04"
     },
     {
       "path": "units/09_private_date/F09-01_verification/scenarios.md",
@@ -12938,9 +12969,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "582711a2226a4293c0e069871bbf88a542f19551e848f251d3be6f3228302cfd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "57653ac990431d1b3d79cbacc4a263f368011e47f00a65eaf471c34836417ba2"
     },
     {
       "path": "units/09_private_date/F09-02_profile/backend.md",
@@ -12948,9 +12982,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "498fbe3acfe3fa971a07ad4fc2ff24254c1b1a00001ea3236b66147590c857f3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "adbe0141758beaefa14ebf162bca10f24ea47a041025e8f20fe868af6364f956"
     },
     {
       "path": "units/09_private_date/F09-02_profile/diagrams.md",
@@ -12958,9 +12995,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "07159eb0686ecc3708106cfc7705d3fcb8c09185750b90159e1c94f195490c96",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "1c45d4a2c86ae341994244ed3d9f466a9361b6ba5693a8f63d60f099170dd2f0"
     },
     {
       "path": "units/09_private_date/F09-02_profile/frontend.md",
@@ -12968,9 +13008,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "71b78721a1048067218a86af41688a6cb57c25f27247f56f72b21ab9587a4c33",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "db1a7a2a22b9136252761f0dbdd44d4ea4a43ace18cf18d1e65f3c1dcb97c0ab"
     },
     {
       "path": "units/09_private_date/F09-02_profile/scenarios.md",
@@ -12978,9 +13021,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e00241a47686dc3fedd375b9e8548184596e43d50abab1b7584dd221fce53b39",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "4bf90f70ae21f90381e72381fad459cbc9806b0a7b183337bc35b2b617358eb8"
     },
     {
       "path": "units/09_private_date/F09-03_candidate_swipe/backend.md",
@@ -13188,10 +13234,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a753704b2a0ebb7b3960e7f3adc67a5f9866d3efaf2a33c2848ccdcd3b5d68b0",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "b535feabc285fa91f99f4c317ff1a1869afe09342eae6e3f6e6b750751ab3ef3"
     },
     {
       "path": "units/09_private_date/F09-08_profile_views/diagrams.md",
@@ -13199,9 +13247,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "68a4213aea3928dc72952fda1a6fcaf5aadeb8683429f6a26c2980fe16d364e0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "15a684e659ce86a53a0e600ef2bec52974eef4ba6ff6ecbc6db68bd98d2845e5"
     },
     {
       "path": "units/09_private_date/F09-08_profile_views/frontend.md",
@@ -13209,9 +13260,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2df1ed6193bc474525eeb06faeaf2f3bc7604cbbc1a51bad4651b69732ed5121",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "3426d52ee43d94cd600dc59f4598819fe2dd61a469495d05b7e528f35ab178dc"
     },
     {
       "path": "units/09_private_date/F09-08_profile_views/scenarios.md",
@@ -13219,9 +13273,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "dcaa2a24b2d5a973967a980211639f94cb5d3ec2b7c7c45ed948c132d93a5b84",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "date_identity_profile_20261122"
+      ],
+      "reviewedSha256": "d62c251f3ec68bc86310876e5f5ee7fd3656b1c6bfb686851cfc095193ded193"
     },
     {
       "path": "units/10_calendar/00_overview.md",
@@ -36411,6 +36468,237 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; verified feature document rollup"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "date_identity_profile_20261122": {
+      "kind": "source_review",
+      "scope": "F09-01/02/08의 실제 인증·증빙 검토·프로필 생성/편집/사진·방문 기록 흐름 대조. 공유 서비스는 한 번 읽고 필요한 메서드 범위를 등록. 후보 검색/매칭/채팅/만남 전체는 후속. 외부 공급자·기기 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateVerificationController.java",
+          "sha256": "4d802f89ded4ef2abb04bbbff2a0a9a72ceaabb0e6ec161dbf0c9c28299acf6e",
+          "reviewScope": "요청/완료/상태/providers·manual-review 3종·NICE return의 입력/반환 및 P0/DATING 범위"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/VerificationService.java",
+          "sha256": "aa741865318263761e7de72a239d13848b27a3011dfab8a8f6777db554121d49",
+          "reviewScope": "발급/완료 거래 분리·provider 선택·수동 검토 자격/파일/세대/철회·현재 상태·프로필 신원 자격·콜백 URL"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/VerificationWriteWorker.java",
+          "sha256": "f0216a91486abcc0e9b57549f5f24df655af53a9fbfc512f2ecc1c2dae02e4bd",
+          "reviewScope": "발급 DB 선점/세션 저장·완료 임대·소유권/유효기간·5건/10분/365일·늦은 결과와 수동 승인 우선·암호화/회원 동기화 인계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/config/VerificationProperties.java",
+          "sha256": "f1e9177a972d033756af8eb2ef6b58748e52c8b11656b129d42fd9ff73ecf698",
+          "reviewScope": "제공자 설정 구조와 기본 enabled=false; 운영 자격증명 값은 읽거나 검증하지 않음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/VerificationVo.java",
+          "sha256": "684dd1a92dd34f801820967dbe4e3d200752af63021d5142a7243d5e07159454",
+          "reviewScope": "식별자/인증 종류/상태/provider/시각/currentlyValid와 평문 신원 필드 미노출"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/policy/DateAbilityPolicy.java",
+          "sha256": "c5cf7b70527d59a8c2a7456b162ba23c8bcc282a90b334434d63bc331155d8ee",
+          "reviewScope": "164–189: 실제 생일 만20세·검증 성별·제재/승인 사진 기반 노출 자격"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+          "sha256": "e7c517351a4f71b0433225baaa0a0b4dd8e24447f1787a629393fc69b4572fe0",
+          "reviewScope": "프로필 생성/조회/수정·활성/사진·방문자 페이지 계약 및 공개 범위/safetyExit"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/param/DateProfileAddParam.java",
+          "sha256": "cbb4dd449b6bd9a09c0e1cd18df9b28fcae761f31bf2a1522857ceeb29c5fdf5",
+          "reviewScope": "photoFileIds/discoverableConsent/개별 공개/특성/선호·동의 입력; 임의 생년/성별 입력 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/vo/DateProfilePhotoVo.java",
+          "sha256": "7e34160683285454e47854fed789767ef96e23b3acdf1d652684a534faaa77bf",
+          "reviewScope": "사진 ID/URL/primary/verified/검수 상태/시각 응답; fileId 미포함"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/DateMatchingService.java",
+          "sha256": "f3a0f2abd14214544755159b67e2bba64d37743c6e2100d4ca74db49622d1ed5",
+          "reviewScope": "295–339 선택 처리의 매치 저장 뒤 같은 거래 방문 기록 호출; 후보 검색 전체 검토는 후속"
+        },
+        {
+          "path": "community_app/lib/data/api/date_verification_api.dart",
+          "sha256": "6a481c600befad20b864359488cd7a8e6d98dcce94ae0ae364e64c788b397d5c",
+          "reviewScope": "자동 인증 본문 없는 요청과 완료/상태/수동 검토 공개 API"
+        },
+        {
+          "path": "community_app/lib/domain/providers/date/date_verification_provider.dart",
+          "sha256": "91569549957b1e0cf0a3cacab22ce7461e75297d47a01f2ad1c25d863eb68fa2",
+          "reviewScope": "정확한 인증 없음만 미시작·현재 인증 상태와 명령 결과"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/verification_screen.dart",
+          "sha256": "88a7bf2553eb37785d14ac596773c7c374aa77be257fdd65c26b19d1cb632445",
+          "reviewScope": "상태 분기/currentlyValid·발급 결과 유효성·WebView/오류·DATING 조건의 생성/수동 검토 입구"
+        },
+        {
+          "path": "community_app/lib/presentation/date/widgets/verification_webview.dart",
+          "sha256": "d2fe1440235bd69b4ae546cab9eab20355ee85363d66018a8328ef5e3854c471",
+          "reviewScope": "설정된 콜백/발급 txId 사용·NICE 필드 전달·닫기 및 일반 리소스 오류 처리 한계"
+        },
+        {
+          "path": "community_app/lib/presentation/date/widgets/verification_redirect_interceptor.dart",
+          "sha256": "0acd481ce11e0ef350ffb38a3854b657d4bd8315a755531d2d093791d2d06535",
+          "reviewScope": "scheme/host/path 일치와 콜백 결과/오류 해석"
+        },
+        {
+          "path": "community_app/lib/presentation/date/date_verification_error_message.dart",
+          "sha256": "13fb6b3b9b0e3e3a6fbdf7307e3db088b72d1fcfbbd67b8b4743ff17bebe85dd",
+          "reviewScope": "한도/기한/세션/선점/제공자/증빙 오류별 실제 문구"
+        },
+        {
+          "path": "community_app/lib/domain/providers/date/date_manual_review_provider.dart",
+          "sha256": "12f96f0d164dbbe5ff30e0545462ff47fd8a14a612a432286218aadc5b3d15b8",
+          "reviewScope": "190–450,567–625: 최신 계정/행·증빙 중복 잠금·결과 불명 재조회·철회·스캔 폴링 간격/예산"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/date_manual_review_screen.dart",
+          "sha256": "4bed935b9bd0e8495ed2c448bb9b9f630a812b4b25aa27f70d36f53423a4a828",
+          "reviewScope": "246–350: 계정 세션·허용 이미지/10MB·IDENTITY_VERIFICATION 업로드·fileId 보관/제출"
+        },
+        {
+          "path": "community_app/lib/data/api/date_profile_api.dart",
+          "sha256": "b8e846e9965b2f0b09ab60eae5a716d59951ed85b158f30d4d6f09e73b382b6a",
+          "reviewScope": "프로필 6개 명령/조회·방문자 page/size 계약"
+        },
+        {
+          "path": "community_app/lib/data/models/date/date_profile_param.dart",
+          "sha256": "6a7f95f035adaccff7546aba675bbde6a54f97d33eaaa235b67c343baca82825",
+          "reviewScope": "생성 fileId 목록·동의·수정 nullable 필드·사진 primary JSON 매핑"
+        },
+        {
+          "path": "community_app/lib/data/models/date/date_profile_photo_vo.dart",
+          "sha256": "ce16f3bd4065d69a0312d0ed53a9b914b3ce621c8a85cfbf60ce48d27201e498",
+          "reviewScope": "사진 primary/verified JSON·검수 상태/시각 소비"
+        },
+        {
+          "path": "community_app/lib/domain/providers/date/date_profile_provider.dart",
+          "sha256": "2cc724b228c740db42d9419277516692ba5359d8fd5eb1aff2dc187598ea3581",
+          "reviewScope": "계정 범위 조회·생성/편집/활성 상태 반영·사진 명령 결과·재조회/임시 업로드 제거"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/date_profile_create_screen.dart",
+          "sha256": "f642ca24986fa8ace95bf7e74c3398fe1888e6ea31a29b319275d4792fcccfdd",
+          "reviewScope": "429–605: 사진 업로드/제거·폼검증·fileId 생성/일반 실패/복귀; 입력 상한·미저장 이탈 연결"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/date_profile_screen.dart",
+          "sha256": "eee019da48ad61df3c1402701b154ee3c60aa685c010433d79927f70bb84fdf4",
+          "reviewScope": "프로필 없음/방문자 입구·347–474 사진 추가/삭제·736–805 서버 activate actions와 실패 복구"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/date_profile_edit_screen.dart",
+          "sha256": "682d874c82cd828af6848dfcc34661097caaf539960883c8b66fc4d999bf8228",
+          "reviewScope": "572–647 저장 입력·일반 텍스트 null/특성 빈값·동의·성공 복귀/입력 유지; 이름20자/미저장 이탈"
+        },
+        {
+          "path": "community_app/lib/domain/providers/date/profile_view_provider.dart",
+          "sha256": "b2ae0b92ec5541599ec3389dfefc62c83e11cbde2b954c65bd7353a74dc3ce0a",
+          "reviewScope": "20개 페이지의 공통 목록 provider"
+        },
+        {
+          "path": "community_app/lib/presentation/date/screens/profile_viewers_screen.dart",
+          "sha256": "5f1958ef91fc05a02130175c0d36569ff169fd8f304e537a6efd518219a1383c",
+          "reviewScope": "목록·짧은 페이지 추가 로드·하단 오류·자료 있는 목록 새로고침·빈 안내/일반 오류·행 액션 부재"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/dating_routes.dart",
+          "sha256": "6e1a7ffb1d2e65c192dce54ad3a3db458c41112a5c6888ade20ff39c3722f34f",
+          "reviewScope": "프로필 조회/생성/편집/방문자·인증/수동 검토 실제 라우트"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/util/PrivateDateMapper.java",
+          "sha256": "76c83d16413811fa3c2159467591c09740e4b4303ee3921329ad0cdf76674a59",
+          "reviewScope": "41–46: 본인 프로필 응답에 전달된 사진 전체를 검수 상태와 함께 매핑"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/DateProfileService.java",
+          "sha256": "0fc2681f2db52deb06217bc21fcd0063238fafdc08037d2e05c9d98ab64d3a69",
+          "reviewScope": "55–767: 검증 신원/입력/사진 원자 생성·파일 소유/목적·null/특성 동의·노출 증가/사진 삭제·방문 기록/차단/표시 URL"
+        },
+        {
+          "path": "community_app/lib/core/router/release_scope_routes.dart",
+          "sha256": "2372295713ae7df0b4c59a9a3551c6a1c8ffe3c5896fa3567b0707eeb89c28af",
+          "reviewScope": "DATING 닫힘 시 본인 프로필/편집/인증/차단의 허용 예외"
+        }
+      ],
+      "reuses": [
+        "my_collection_20261122",
+        "warning_operations_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
+          "sha256": "b23553fe1606ec404362cea808a5f91e0aa4ca91a8fe26f4df95bde40a3b44fa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-02_profile_prd.md",
+          "sha256": "919d199edcb321fe5edb81cabf2731a19f0d0cd3a96bab77350ffda7a40a5538"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-08_profile_views_prd.md",
+          "sha256": "dd8771365f5b69289097ee36aa6f6cf9447b1b1b81dc674bd56f8798236c791b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F09-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F09-02.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F09-08.html": [
+          "sidebar",
+          "launch-strip",
+          "blocked-candidates-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "인증 수동검토/providers/return 5개와 프로필 6개 경로 추가; 기존 4개 경로 재대조"
+      ],
+      "followUpFindings": [
+        "TOSS/NICE 지원과 실제 앱의 서버 기본 제공자 선택",
+        "외부 호출 거래 분리 및 DB 발급/완료 선점·기한·늦은 결과 처리",
+        "증빙 검토 자격/철회·MANUAL 인증 취소·결과 불명 및 스캔 폴링",
+        "검증 신원 기반 만20세 및 photoFileIds로 프로필/사진 원자 생성",
+        "실제 생성/사진 UI와 이름20/50자·일반 텍스트 null 유지 차이",
+        "DATING 공개 범위와 안전 종료 경로·노출 증가 조건",
+        "방문자 양방향 차단을 페이지 전 제외; 비활성/공개 범위/인증 추가 필터 없음"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/09_private_date/F09-01_verification/scenarios.md",
+          "sha256": "1043260f2c345f17452fe7c21677cd9a6eb91dc58bd7fdf952e97959390e7bc3",
+          "characters": 340,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 130개가 실제 소스와 일치합니다.",
+        "groupDigests": "34 source/canonical digests; 10 retained HTML IDs",
+        "derivedDocuments": "18 documents; shared batch verified 18 paths, 48 relative links/anchors and 12 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
       },
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
