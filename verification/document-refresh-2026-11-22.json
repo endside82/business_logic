@@ -423,7 +423,8 @@
         "stamp_supplement_20261122",
         "content_photos_20261122",
         "notification_results_20261122",
-        "payment_policy_20261122"
+        "payment_policy_20261122",
+        "payment_supplement_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5044,11 +5045,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b887ca27d4f2c2e11528a432c36ee9dc4d64ab028b7d29553c4960d271c7c484",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "payment_policy_20261122"
-      ]
+        "payment_supplement_20261122"
+      ],
+      "reviewedSha256": "aa73dc4b7b7abe8b0452a6988bb5025466fdbe7378e2f4cfdaa56f8d0b0c1e5a"
     },
     {
       "path": "docs/policies/permission.html",
@@ -8365,9 +8367,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "payment_policy_20261122"
+        "payment_supplement_20261122"
       ],
-      "reviewedSha256": "6b55f5ea91670db934714d3f1b0f95748657b3c806600b1c85f27a935ffa0aec"
+      "reviewedSha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
     },
     {
       "path": "prd/03_policy_prds/permission_policy_prd.md",
@@ -43454,6 +43456,136 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; documentation and selected current source contracts only"
+      },
+      "observedSourceVersions": {
+        "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "payment_supplement_20261122": {
+      "kind": "source_review",
+      "scope": "결제 정책 HTML 누적 검토 완료: payment_policy 정본/기존근거 재사용, 남은 외부지급 선점·조회·늦은증거/요율기준일/혼합은행분해소/회수금화면 대조 및 정본보충. 실제 운영·은행·제품시험 통과 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalOutboxWorker.java",
+          "sha256": "607ec2eaff2ac5ba3389aeb5f87031696ee049466514e840338643a4e2910ccf",
+          "reviewScope": "76–124 지급관문·선점;125–158 만료선점회수;194–382 지급/조회·결과불명;433–518 반영실패재시도/재발송전조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalOutboxTxSteps.java",
+          "sha256": "91a03e2174f32bee5446e21115da8a62fe06c717122cd60300c8e98afd563a80",
+          "reviewScope": "104–139 토큰회수·대기/조회구분;203–266 지급시작토큰/기한·늦은증빙중지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalOutboxResultWriter.java",
+          "sha256": "ed4049cf0f5d8ee09a517b8a83a4395268d7ce6b6683e8fafcc08ef1f259499e",
+          "reviewScope": "98–121 현재소유자결과반영·늦은증거;230–324 불확정/성공상태·원장/통지호출"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/repository/query/WithdrawalOutboxQueryRepository.java",
+          "sha256": "cf173d0a50f1f73660a0b10714bd90b835c3ed359ebe8b4e381b5b0b9d3b55de",
+          "reviewScope": "110–143 IN_FLIGHT+token+resolveOutcome null 조건부종결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementBatchWorker.java",
+          "sha256": "3defba69c52e609579d8ae5305e6f9903fa4750e1107ba1809e13ab65e246db1",
+          "reviewScope": "104–132 실제모임종료일의요율·유료수수료/세금순차반올림"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/FeePolicyService.java",
+          "sha256": "50bb65f514355e035528baaa3e84c21654fdab617dea796d2d9bd12cd2319c70",
+          "reviewScope": "전체 본문:기준일유효활성·최신시작/최대ID·기본요율폴백"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/payment/service/ManageFeePolicyService.java",
+          "sha256": "da8ce8939e8eb43798faea2e4a91be96ae36adaa06f2804677849c243394e957",
+          "reviewScope": "55–155 새요율내일이후/기존무종료정책닫기·미래취소/현재오늘까지종결"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/creator_receivable_screen.dart",
+          "sha256": "e71624e4739009d11d0b5852104aeb6c67630cfa88e1e5e19885dbc5f608c2ae",
+          "reviewScope": "115–171 모임환불미납금 별도목록/유료전액상환버튼;263–275 실제상환호출/토스트"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingSettlementService.java",
+          "sha256": "46c92f0b99227addfb203fd9ea3da1398769d6e57f7749072306b72820579990",
+          "reviewScope": "113–134 rateDate요율사용;256–290 기간정규화/종료우선취소/periodEnd와min"
+        }
+      ],
+      "reuses": [
+        "payment_policy_20261122",
+        "regular_meeting_participation_20261122",
+        "settlement_confirm_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
+          "sha256": "312e842ddc53946b9d652b590f023942871925c6ac8106ceac83539b03bf52f7"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/policies/payment.html": [
+          "sidebar",
+          "exit-money-resolution",
+          "free-point-expiry",
+          "money-recovery-current",
+          "event-refund-receivable",
+          "settlement-direction",
+          "durable-money-commands",
+          "refund-consistency",
+          "payment-policy-current-1",
+          "payment-policy-current-2",
+          "payment-policy-current-3",
+          "payment-policy-current-4",
+          "payment-policy-current-5",
+          "payment-policy-current-6",
+          "payment-policy-current-7",
+          "payment-policy-current-8",
+          "payment-policy-current-9",
+          "payment-policy-correction-limits",
+          "payment-policy-current-10",
+          "payment-policy-current-11",
+          "payment-policy-current-12",
+          "payment-policy-history",
+          "settlement-payout-recovery"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "외부호출전임대만료대기와호출후결과불명조회 구분",
+        "옛실행의늦은거래증거와현재토큰결과반영 분리",
+        "혼합은행면제후늦은확인시포인트재회수가능성 명시",
+        "호스트수익정산 요율기준일을 참가자모임비용정산과 구분",
+        "과거전체최적화/자동검사/기본브랜치완료주장은 역사로보존"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/policies/payment.html",
+          "pattern": "<details id=\"payment-policy-history\">[\\s\\S]*?</details>",
+          "sha256": "c393c62bdb45991183629d585d01140144208c16a47580e0730d0c41e1aa81eb",
+          "note": "9월5일·25일 기존원문보존;현재실행통과아님"
+        },
+        {
+          "path": "docs/policies/payment.html",
+          "pattern": "<details id=\"payment-operations-history\">[\\s\\S]*?</details>",
+          "sha256": "4ed7d1a98da24018d6f6beeb86fb3b3084ea56339dbd92370c3d6e7d7e7b1c0c",
+          "note": "이전운영보완/실행주장원문;현재결과로합산하지않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "11 source/canonical digests; 23 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 40 relative links/anchors and 1 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; current source contracts and previously reviewed canonical evidence reused"
       },
       "observedSourceVersions": {
         "community_api": "8955dac9f50ba83014a6a26f37326de05d1dfa78",
