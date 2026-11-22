@@ -1,105 +1,79 @@
-# F17-09. 세션 출석 확정·노쇼 (Phase 4) PRD
+# F17-09. 정기모임 출석 확정·노쇼·등록 박탈 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 2026-10-29 현재 계약 대조
+## 현재 범위와 입구
 
-### 체크인 기록을 출석 확정의 초깃값으로 씁니다
+FIXED의 회차 출석을 실제 회차 호스트가 확정한다. 모임 상세의 회차 관리 행동에서 전용 출석 확정 화면으로 이동한다. 호스트를 이전해도 이전 호스트에게 남긴 회차의 권한은 그 회차 호스트에게 있다. 본체 호스트라는 이유만으로 모든 남은 회차를 확정할 수 없다.
 
-출석 확정 미리보기는 체크인 기록을 반영하고 참석·노쇼·사유 인정 값을 조정할 수 있게 한다. 검토가 필요한 사람은 사유 인정(EXCUSED)에서 시작해 호스트가 판정한다. 시작 전 생성 실패 회차는 운영자가 재생성할 수 있다. 자동 정산 생성이 반복 실패하면 운영자 경보를 남기며 같은 실패를 무한히 새 경보로 쌓지 않는다.
+현재 앱은 finalize-preview로 명단·기본 결과·노쇼 누적·박탈 가능성과 예상 환불액을 받아 회원별 ATTENDED·NO_SHOW·EXCUSED를 선택한다. ‘명단 API 없음’·‘회원별 수정 화면 없음’은 해결된 과거 제한이다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+## 현재 서버 계약
 
-## 1. 결론
+기본 경로는 `/api/v1/regular-meetings`다.
 
-FIXED 모임의 호스트가 매 세션 종료 후 ATTENDING 명단(materialize) 의 실제 출석 여부를 일괄 확정한다. 결과는 권위 테이블 `regular_meeting_session_attendance` (`(event_id, user_id)` UNIQUE) 에 영속된다. 결과는 4종: `ATTENDED, NO_SHOW, EXCUSED, SESSION_CANCELED`.
-
-핵심 규칙:
-- **finalize 시점**: 세션 `endTime ≤ now` 일 때만 (`endTime != null && endTime ≤ now`). 미종료 세션 finalize 시도 → `REGULAR_MEETING_SESSION_CANNOT_FINALIZE`.
-- **재확정 차단**: 정션 `attendanceFinalizationStatus == FINALIZED` 이면 재호출 거부.
-- **NO_SHOW 부작용**: EventAttendance demote(remove ATTENDING flag) + `member.recordNoShow(now)` — 누적/연속 노쇼 +1.
-- **ATTENDED**: `member.recordAttended(now)` — attendedCount+1, consecutiveNoShow=0.
-- **EXCUSED / SESSION_CANCELED**: `member.recordExcusedOrCanceled` — 노쇼 미가산. consecutive 리셋(EXCUSED 도 연속 끊음, 멤버 귀책 아님이라).
-- **FORFEIT_ON_LIMIT**: NO_SHOW 가산 후 `reachesNoShowLimit(mode, limit)` 평가. 한도 도달 + `noShowPolicy == FORFEIT_ON_LIMIT` → `markForfeited` + FORFEIT 환불(F17-08).
-
-finalize 는 단일 트랜잭션: 모임 잠금 → 정션 FINALIZED 재확정 차단 → endTime 가드 → ATTENDING roster 순회 → currentCapacity 재계산 → 정션 FINALIZED.
-
-**close 가드 연동**: close (F17-04) 는 모든 정션의 attendanceFinalizationStatus 가 FINALIZED 여야 통과. 즉 finalize 가 close 전에 완료돼야 정산 시점이 옳다 → 정산 후 환불 위험 0.
-
-**안전망 스케줄러**: `@Value("${regular-meeting.auto-finalize.enabled:false}")` 기본 OFF + endTime+24h grace + Redisson lock. 호스트가 무대응이면 자동 처리(opt-in).
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingSessionAttendanceService`. 앱: `regular_meeting_session_finalize_screen.dart`.
-
-## 3. 전체 동작 흐름
-
-1. 호스트가 세션 상세 → "출석 확정" CTA → `RegularMeetingSessionFinalizeScreen`.
-2. `POST /api/v1/regular-meetings/{id}/events/{eventId}/finalize` (Param optional).
-3. 서버:
-   - `findByIdForUpdate(meetingId)` + host 검증.
-   - 정션 조회 → `attendanceFinalizationStatus == FINALIZED` 이면 거절(`REGULAR_MEETING_SESSION_CANNOT_FINALIZE`).
-   - event 조회 → `endTime != null && endTime <= now` 강제.
-   - ATTENDING roster 로드 (materialize 된 EventAttendance).
-   - 각 attendee 에 대해:
-     - 결과 결정: param 에 override 있으면 그 결과, 없으면 정책 (`RegularMeetingAttendancePolicy`) — 기본은 EventCheckIn 존재=ATTENDED, 없으면 NO_SHOW.
-     - `regular_meeting_session_attendance` row 생성 (`event_id, user_id, member_id, result, enrolled_at_finalize, finalized_by, finalized_at`).
-     - 결과별 부작용:
-       - ATTENDED: `member.recordAttended(now)`.
-       - NO_SHOW: EventAttendance demote + `member.recordNoShow(now)`. 한도 + policy=FORFEIT_ON_LIMIT 면 `markForfeited` + FORFEIT 환불 trigger (F17-08).
-       - EXCUSED / SESSION_CANCELED: `member.recordExcusedOrCanceled(now)`.
-   - event.currentCapacity 재계산 (ATTENDING 카운트).
-   - 정션 `attendanceFinalizationStatus = FINALIZED`.
-4. 응답: 204 No Content.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S9-1 | 정상 finalize (체크인 기준) | endTime≤now, ATTENDING roster 5명, 4명 EventCheckIn | session_attendance 5 row: 4 ATTENDED + 1 NO_SHOW. 4명 attendedCount+1, 1명 noShowCount+1+consecutiveNoShow+1 + demote |
-| S9-2 | 미종료 세션 finalize 시도 | endTime>now | 400 `REGULAR_MEETING_SESSION_CANNOT_FINALIZE` |
-| S9-3 | 재확정 시도 | 정션 FINALIZED | 400 `REGULAR_MEETING_SESSION_CANNOT_FINALIZE` |
-| S9-4 | EXCUSED override | param 으로 1명 EXCUSED | 해당 member.consecutiveNoShow=0, noShowCount 미가산 |
-| S9-5 | SESSION_CANCELED | param 으로 SESSION_CANCELED | 멤버 귀책 아님 — noShow 미가산, consecutive 리셋 |
-| S9-6 | FORFEIT_ON_LIMIT 한도 도달 | mode=CONSECUTIVE, limit=3, member 연속 3노쇼 | member=FORFEITED + FORFEIT 환불 trigger (F17-08) |
-| S9-7 | 호스트 미대응 + scheduler opt-in | auto-finalize.enabled=true, endTime+24h grace | scheduler 가 정책 기본값으로 일괄 finalize. Redisson lock 으로 중복 방지 |
-| S9-8 | scheduler opt-out (기본) | enabled=false | 자동 finalize 안 됨. close 가드가 끝까지 finalize 요구 |
-| S9-9 | finalize 후 close | 모든 정션 FINALIZED | close 통과 (F17-04 §3.2) |
-| S9-10 | 비호스트 finalize 시도 | 다른 user | 403 `REGULAR_MEETING_FORBIDDEN` |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 요청 | 입력·권한 | 결과 |
 |---|---|---|
-| endTime 가드 | `endTime != null && endTime ≤ now`  | 미종료 NO_SHOW 조기 발생 차단 |
-| scheduler 기본 OFF | `@Value("${regular-meeting.auto-finalize.enabled:false}")`  | opt-in 강제 |
-| EXCUSED/SESSION_CANCELED 연속 리셋 | `recordExcusedOrCanceled`  | 멤버 귀책 아님이라 consecutive 끊음 |
-| 권위 테이블 단일 진실 | `regular_meeting_session_attendance` UK | EventCheckIn 은 입력 신호일 뿐 |
-| member_id FK CASCADE 안전 | member_id 는 generated col base 아님 → CASCADE OK | 사전존재 버그 1과 별도 |
-| close 가드 통합 | F17-04 §3.2 가 모든 정션 FINALIZED 요구 | 정산 후 환불 위험 0 (§7 도메인) |
+| GET /{id}/events/{eventId}/finalize-preview | 실제 회차 호스트, 모임·회차 소속 검사 | RegularMeetingFinalizePreviewVo |
+| POST /{id}/events/{eventId}/finalize | 실제 회차 호스트, 선택 RegularMeetingSessionFinalizeParam, 선택 Idempotency-Key | 204 |
 
-## 8. Gap / Risk
+param은 excusedUserIds, attendedUserIds, noShowUserIds, reason이다. 배열은 회원 행 ID가 아니라 userId다. 같은 사용자를 여러 배열에 넣으면 EXCUSED→NO_SHOW→ATTENDED 순으로 먼저 일치한 결과가 적용된다. 일반 호스트 reason에 관리자 보정용 접두사를 사용하는 요청은 INVALID_INPUT이다. 명령 기록을 재생할 때도 실제 회차가 FINALIZED인지 재검사하고 결과가 사라졌으면 MEMBER_COMMAND_RESULT_UNAVAILABLE을 반환한다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 잔여 | §9 도메인 | finalize per-attendee override UI 부재 — 서버 roster list endpoint 필요 | endpoint 추가 후 UI 신설 |
-| 위험 | scheduler grace 24h | 호스트 매우 늦게 finalize → 일찍 강제 종료될 수 있음 | enabled=false 가 기본이라 안전. 켜기 전 운영 검토 |
-| 위험 | FORFEIT 환불 실패 | FailedRefund 큐로 가지만 멤버는 FORFEITED 영구 | F17-08 SLA 모니터링 |
+## 확정 조건과 실패 회차 검토
 
-## 9. 수용 기준
+모임을 잠그고 FIXED·모임 비취소·소속 회차·회차 비취소·종료 시각 존재 및 현재 이하·미확정을 검사한다. 정상 경로는 MATERIALIZED 회차다. FAILED이면서 NEEDS_REVIEW인 회차는 호스트 수동 검토로 확정할 수 있고 자동 확정은 이 예외를 사용하지 못한다.
 
-- **AC-01 (S9-1). 체크인 기반 정상 finalize**: Given endTime≤now, roster 5명, 4명 CheckIn. When `POST /finalize`. Then 5 row 영속 + 4 ATTENDED, 1 NO_SHOW + 1명 demote.
-- **AC-02 (S9-2). endTime 가드**: Given endTime>now. Then 400.
-- **AC-03 (S9-3). 재확정 차단**: Given 정션 FINALIZED. Then 400.
-- **AC-04 (S9-5). SESSION_CANCELED**: Given param SESSION_CANCELED. Then noShow 미가산, consecutive 리셋.
-- **AC-05 (S9-6). FORFEIT_ON_LIMIT**: Given mode=CONSECUTIVE limit=3, 연속 3노쇼. Then FORFEITED + FORFEIT 환불 발생.
-- **AC-06 (S9-8). scheduler opt-out**: Given enabled=false. Then scheduler 가 finalize 안 함. close 는 finalize 요구.
+미리보기는 권한·소속·FIXED를 확인하고 아직 출석 원장이 없는 대상의 기본값을 제공한다. 미리보기 성공만으로 종료 시각 등 확정 명령의 모든 조건을 통과했다고 간주하지 않는다. 앱은 회차 소유권·취소·종료 시각·확정 상태를 먼저 확인한 뒤 미리보기를 읽는다. 본체가 숨겨져 조회되지 않는 이전 호스트의 경우 개별 이벤트 권한과 회차 사실로 진입 조건을 확인하는 경로도 있다.
 
-## 10. 미결정 / 후속
+## 대상 명단·기본 결과·원장
 
-| 항목 | 사유 | 후속 |
+확정 시 회차 참석 좌석과 체크인 행을 잠근다. 일반 경로는 ATTENDING 명단을 기준으로 이미 출석 원장이 있는 사용자를 제외한다. 실패 회차 수동 검토는 참석 행이 누락된 등록 완료 회원도 보완 대상으로 포함한다. 체크인했다면 기본 ATTENDED이고, 체크인하지 않은 일반 회차는 NO_SHOW, 실패 회차 검토는 EXCUSED다.
+
+호스트 선택이 기본값보다 우선한다. 결과 원장에는 모임·회차·회원·사용자, 결과, 수동 사유, 확정자·시각, 확정 당시 노쇼 집계 대상 여부를 남긴다. NO_SHOW의 일반 참석 행을 내리고 좌석 카운터를 감소시킨다. 결과와 회원 카운터·회차 FINALIZED 전이는 같은 트랜잭션에서 수행한다. 미리보기 이후 명단 변화가 없다고 가정하지 않고 실행 시 다시 읽는다.
+
+## 노쇼 정책과 등록 박탈
+
+원장의 결과 enum은 ATTENDED, NO_SHOW, EXCUSED, SESSION_CANCELED다. 일반 호스트 선택 화면은 앞의 세 결과를 제공한다. 회원의 누적/연속 노쇼와 CUMULATIVE 또는 CONSECUTIVE 한도를 사용하며 현재 ENROLLED만 노쇼 집계·박탈 대상이며 다른 상태에는 NO_SHOW 카운터를 새로 적용하지 않는다. 출석은 attendedCount를 더하고 연속 노쇼를 0으로, 노쇼는 누적·연속을 각각 더하며 EXCUSED/SESSION_CANCELED는 연속 노쇼를 0으로 한다. 한도가 없거나 0 이하이거나 집계 방식이 없으면 한도 도달로 판정하지 않는다.
+
+NONE은 박탈하지 않고, WARN은 한도 도달을 기록하지만 박탈하지 않는다. FORFEIT_ON_LIMIT은 한도에 도달하면 FORFEITED로 바꾸고 [남은 회차 환불](F17-08_regular-meeting-refund_prd.md#사유별-회차-산식)을 호출한 뒤 향후 회차 참석을 해제한다. 무환불 영구 박탈이라고 설명하지 않는다. 일반 재등록은 차단되지만 관리자 보정·박탈 복구는 별도 경로다.
+
+출석 결과와 등록 박탈 알림 호출이 있다. WARN의 한도 도달 분기는 로그이며 별도의 경고 전송 보장으로 설명하지 않는다. 환불의 처리되지 않은 예외는 확정 트랜잭션 실패이며, 언제나 박탈만 확정되고 실패 큐로 넘어간다는 기존 설명을 사용하지 않는다.
+
+## 자동 확정과 종료의 관계
+
+`regular-meeting.auto-finalize.enabled` 기본값은 false다. 활성화하면 1시간 주기로 종료 후 24시간 유예가 지난 후보를 조회하고 모임별 처리 실패는 다음 주기 재시도로 남긴다. 설정의 기본값과 실제 배포 환경에서 켜져 있는지는 다르며 이번에 운영 설정은 확인하지 않았다.
+
+FIXED 과정 종료는 [종료와 자동 종료](F17-04_regular-meeting-lifecycle_prd.md#종료와-자동-종료)에 적힌 활성 회차 수·종료 시각·FINALIZED 조건을 따른다. 취소 이력까지 모두 FINALIZED로 만들 필요는 없다. 출석 확정 자체가 과정 종료·호스트 정산 지급까지 실행하는 것은 아니다.
+
+## 앱 제출·재시도·복귀
+
+앱은 선택 결과를 서로 분리된 사용자 ID 배열로 전송하고 확인창에서 출석·노쇼·사유 결석 수와 박탈 인원·예상 환불액을 보여준다. 현재 화면은 reason을 입력해 전송하지 않는다. 전송 본문과 회차에 묶인 요청키를 사용해 결과 미확정 때 유지하고 명확한 완료 후 정리한다. 성공 안내 뒤 이전 모임 화면으로 돌아가며 실패 시 현재 선택을 유지한다. 이 화면의 키는 세션 내 보관 경로이며 생성 초안의 영속 복원과 같은 보장으로 설명하지 않는다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#finalizeSession`, `RegularMeetingController#finalizePreview`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| per-attendee override UI | roster list endpoint 부재 | endpoint 추가 후 finalize 화면 확장 |
-| WARN 정책 액션 | 1차는 NONE/FORFEIT_ON_LIMIT 만 의미 — WARN 은 카운터만 영속, 알림 없음 | NotificationType + WARN 알림 |
-| EXCUSED 환불 정책 | 1차는 사용자 cancel 산식과 동일 | 약관 검토 후 결정 |
+| Gap | 서버 reason은 있지만 앱 확정 입력에 사유 필드가 없다. | 회원별 결과 선택 지원과 별도 사유 지원을 나눈다. |
+| Risk | preview의 금액·명단은 실행 전 참고값이다. | 서버 명령이 잠금 뒤 다시 판정하는 결과를 기준으로 한다. |
+| Risk | 자동 확정을 켜면 24시간 뒤 기본 결과가 적용될 수 있다. | 기본 비활성 설정만으로 모든 운영 위험이 없다고 하지 않는다. |
+| 미검증 | 동시 체크인·박탈 환불·실패 회차 복구를 실행하지 않았다. | 소스 검토와 원장 실행 검증을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 회차 권한:** 이전 호스트에게 남은 회차도 실제 회차 소유권을 적용한다.
+- **AC-02 명령 조건:** FIXED·비취소·종료 시각·미확정·구체화 상태를 검사한다.
+- **AC-03 실패 검토:** FAILED/NEEDS_REVIEW 수동 경로와 미체크인 EXCUSED 기본값을 구분한다.
+- **AC-04 결과 선택:** 현재 preview·회원별 선택·userId 배열과 서버 중복 우선순위를 기록한다.
+- **AC-05 원장 처리:** 기존 원장 중복 제외와 체크인·좌석·카운터·상태 전이를 연결한다.
+- **AC-06 한도와 환불:** 정책·집계 방식에 따른 박탈과 남은 회차 환불을 설명한다.
+- **AC-07 자동 설정:** 기본 비활성, 24시간 유예·1시간 주기와 운영 설정을 나눈다.
+- **AC-08 재확인:** 선택 요청키·실제 FINALIZED 재검사·성공 복귀를 설명한다.
+
+근거는 서버·앱 소스 대조이며 새 제품 시험 결과는 없다.

@@ -315,7 +315,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -392,7 +393,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2478,9 +2480,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "3f667a08af2f65f65b9a616fb353da48f6ec3c456f8e443e6c6b7d9203126463",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "dad300e4df0e0ca26faa90d39fd93750dd1b3034cfc8eefaed5b5d8914541256"
     },
     {
       "path": "docs/domains/18-dispute.html",
@@ -4515,9 +4520,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "45266c6d026dd1d39244d3e6dc0dcbfe40f46ce5f729e7d4bd6159bed07cfbba",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "373036e657981ce6547eb960cc50c87e5753b7288af788110b94fb37983e2841"
     },
     {
       "path": "docs/features/F17-07.html",
@@ -4525,9 +4533,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b2f1a9dfbef7b87c305795cdf1295833b5bdaed9203c47587132696b1bcdd829",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "3dee2ef008b17f22a768c62473ff203386c7bd091ad50358b7823b82cc59ff16"
     },
     {
       "path": "docs/features/F17-08.html",
@@ -4535,9 +4546,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "878b0470a78117478a087bb17725f0ffc401616e11ab7fcd864b5135959d5357",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "bd8b3898790366030389c236256fa725c2010df011e17883fc93269fbed0137a"
     },
     {
       "path": "docs/features/F17-09.html",
@@ -4545,9 +4559,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "90d3b75d21423a16a444ec31a9a35375f7ddbb30aa537abb0401347f37f8ac65",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "6deff300e3a767421855926b8bbfbc2f15d03e75ee94295726e1aef4b482d175"
     },
     {
       "path": "docs/features/F17-10.html",
@@ -4555,9 +4572,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "80a8e34c39389c5df18cf40abf0d2cf89be54a62efe61bda92d962cf1835e8d0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "8a5e0024efe0bd6d477141cfbaea4479d892d46101e36fe8a3633a51a791d2bf"
     },
     {
       "path": "docs/features/F18-01.html",
@@ -5282,7 +5302,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5392,7 +5413,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5526,7 +5548,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5843,10 +5866,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "9f4020295501f91d90dd2f706faa0fceeff81ce1072b72f0a51510cbcf937e12",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "a4c6c4ccfbe36c741bd7dbfa26ed1f84014940fdc50d2c8bf894337d25d16f9a"
     },
     {
       "path": "prd/01_domain_prds/18_분쟁_해결_prd.md",
@@ -7884,10 +7909,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "7363362889a020b8c21cac78d65c4f50db423171d66ec2d840be792414692730",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "5f281c1b01c2bd40fc5623314af27693e991bd62b92226f57457604d83766961"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
@@ -7895,10 +7922,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f99b44cb9b1302f1ccba20341c6521c444c536c383a6b92fab527eff54286d8f",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "c37b11088f99c9f22dfec5be15cc03063607ffa46b9a82315f43a80837adf4eb"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
@@ -7906,10 +7935,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "3b036b9c4b82a01f23b74dcc9274b466511b8f51116496916334a7d78ef249f1",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
@@ -7917,10 +7948,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5a9ae455058ca14168a1a7ff0af168f7afc52237d57bf6ca52d0b6f05430fe1e",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "16e72499f9b219ab6bb08d82e2a1d520f67eafcc08658183184e36b4f11a353c"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
@@ -7928,10 +7961,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "312d519900a62580ddcaaf59f240525059d690f0e0f933657765a20a783d9b31",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_participation_20261122"
+      ],
+      "reviewedSha256": "1aca822bd967ce9c826e6494ec2ce58e554172e8f7cac1dd5ac9b1b367a32704"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
@@ -8480,7 +8515,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8742,7 +8778,8 @@
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
-        "regular_meeting_commands_20261122"
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -38724,6 +38761,349 @@
       "observedSourceVersions": {
         "community_api": "4e781f7a9f5d18f381c680539a9a95a348ba5295",
         "community_app": "05c36da1d49f5799a365c5a8e7e6257ddf8def62"
+      }
+    },
+    "regular_meeting_participation_20261122": {
+      "kind": "source_review",
+      "scope": "F17-06..10 등록·납부·환불·출석·정산을 현재 서버 상태/금전 경계와 앱 입구·명령·복귀로 대조. 소스 검토이며 새 제품 실행 아님. 정기모임 도메인 개요와 공개 HTML은 전체 기능 정본10개를 종합.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingMemberTransitions.java",
+          "sha256": "f98d585b8d9fde8b53c12551c4dd90af02ce367059cfe2270ab5e4a62d968712",
+          "reviewScope": "75–574 상태 집합/좌석/재등록·승격·72시간의무·계좌복사·승인·취소/박탈/만료;관리자복구는 존재/대상 상태만 확인"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/constants/RegularMeetingMemberStatus.java",
+          "sha256": "f3e754c0d397dc2189ab41ee2502d55114fc5508c2a4a7776363da6e64564012",
+          "reviewScope": "전체8상태·허용전이·좌석점유·종결판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/rule/RegularMeetingEnrollFacts.java",
+          "sha256": "8a5444101ac1cc5a6ef3304220a3ac433ed99c14acd9dd78ce99b73581677dbe",
+          "reviewScope": "전체 지연제재팩트·명령family 정의"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/rule/HostCannotEnrollRule.java",
+          "sha256": "5601ff6d62d2d359c9df437242b536bf1e1cf58dcbfcfd3cf51d208d42f8c847",
+          "reviewScope": "전체 본체호스트 자기등록 금지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/rule/EnrollNotRestrictedRule.java",
+          "sha256": "31a8879bda9d52422c350225ecf362cd219d089fed9a83ead99f1444731bca42",
+          "reviewScope": "전체 신청제재 판정 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingPaymentEntryService.java",
+          "sha256": "ac3e3454f3729ac023f27204329f7c52da7de5aa7b4febb57165e8f11dac778b",
+          "reviewScope": "이전 연속 검토78–228 수단공개·납부검사·지갑/은행상태·중복결제;현재60–61 확인기한 기본5일"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingBankInstructionsService.java",
+          "sha256": "df29017f194167d8db1ad9fb0d9dc29c37fc1d75840528e3ebfda8847b70bbc8",
+          "reviewScope": "이전 연속 검토82–194 등록/살아있는은행결제 조회권한·계좌선택·기한/응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/constants/RegularMeetingLiveBankPayment.java",
+          "sha256": "b08b6f5a2b350597230f0b0a41a14292c6eddd673d541068c61146b73508d6b7",
+          "reviewScope": "전체 BANK_TRANSFER PENDING/PAID/REFUND_REQUESTED 살아있는결제 정의"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingPaymentService.java",
+          "sha256": "1876e288100c9c35621f92fe8931f814d91df3ad4e44229b8142ae6837851ce2",
+          "reviewScope": "115–175호스트목록/환불이력;205최대200;207–295본인결제/증빙권한;298–445확인·탈퇴제재환불·거절사유·증빙확정;1138–1288만료/종료회원정리;관리자재처리 본문 미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingRefundService.java",
+          "sha256": "bff582b56a24366cb2a723e1a7da963bf3b729d9cd7ae3973547f349305328c7",
+          "reviewScope": "68–142취소후새트랜잭션/실패기록;464–714계산계획/미확인신고전액/지갑은행·닫힌계정·FailedRefund/증빙후상태;관리자재시도본문미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingRefundCalculator.java",
+          "sha256": "8ab3401171e2a63da3e113b1f1dcc2cd7d273ccad0ee2af5b73e3701a52ef8f0",
+          "reviewScope": "전체 사유별소비회차·비례/정수내림/100원절삭"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingCancelRefundRecoveryScheduler.java",
+          "sha256": "a9e5fac62051b263d77b6f86948843df859eca0eec303aecfa50e4166378dd5d",
+          "reviewScope": "66–97 10분주기·대기표지·시간예산/중단뒤이어가기"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingSessionAttendanceService.java",
+          "sha256": "98e8fe496f70ddfecb44cf83d2afed45e306351519b910426cc6651204709d99",
+          "reviewScope": "95–190명령/재생/미리보기;356–485자동후보/실제확정조건·잠금/원장/실패검토;500–525원장/알림;577–655노쇼/박탈/환불·결과우선순위;관리자보정본문미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/model/RegularMeetingMember.java",
+          "sha256": "26bc7527f24e228849dfe09155eb07a8d42fb92b3247ed8aa563ef506cddaced",
+          "reviewScope": "160–214출석/노쇼/사유결석카운터·한도판정·박탈"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/constants/RegularMeetingNoShowCountMode.java",
+          "sha256": "ea438bd62f2f8da9f94b4bc1ea7e4bd7b0966ec2bbef4506d608aba7afe77d23",
+          "reviewScope": "전체 CUMULATIVE/CONSECUTIVE enum"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingSessionFinalizeParam.java",
+          "sha256": "756185586fc5217e329359452b046b80e29114eb0c8c59687363384d8ad7b2be",
+          "reviewScope": "전체 userId배열3종/선택reason"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingAttendanceFinalizeScheduler.java",
+          "sha256": "b5d4bbc9e27079e6fb44a2b7e260a3d0cec8bd9dd9ac3b87609e5724e5b90108",
+          "reviewScope": "20–76기본false·1시간주기·모임별재시도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingPaymentExpiryScheduler.java",
+          "sha256": "6d78c3a15b4f14a19ddf54acef08a640bd3910d9105aeae7cc2bc680a0ab30ee",
+          "reviewScope": "77–109 5분주기/만료·대기열sweep 진입;실제만료조건은PaymentService검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingBankConfirmEscalationScheduler.java",
+          "sha256": "be8634a5ccb1edf0e06ff5044d98280a85ef8d63fae54d5791dd862ced1095c4",
+          "reviewScope": "51–54기본48시간/5일;74–15205:45스캔·확인기한/리마인더·커서처리;worker전송결과미검증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingSettlementService.java",
+          "sha256": "46c92f0b99227addfb203fd9ea3da1398769d6e57f7749072306b72820579990",
+          "reviewScope": "전체 현재호스트·모임잠금/종료취소대상·환불보류·retained수익·동적요율/기간·PENDING생성·조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingRetainedCalculator.java",
+          "sha256": "2f4cae57adbeed456a56bc98c5f19e8dac0f699d5b830356b652d4a5b26a4c8d",
+          "reviewScope": "전체 지갑원장/환불차감·실패환불미제공분·이상검사·유료/무료잔여"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingSettlementScheduler.java",
+          "sha256": "93d9de41fa980c348bb1f53ee5da92a5dd94bb4eb6ef7e70d5b2ee759b571a2b",
+          "reviewScope": "46–96 1시간주기 CLOSED/CANCELED 후보·실패재시도/오래된실패알림"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/vo/RegularMeetingMemberVo.java",
+          "sha256": "6af52824ff0c87df6bba9db45faf50a1861b75b564a0ccc485f97047ce2bdfce",
+          "reviewScope": "전체 회원응답·기한/카운터·withdrawn"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/vo/RegularMeetingPaymentVo.java",
+          "sha256": "56933eb1e3f57e2aaae79818487a8b101b4a61da8df894f7219fff54a7123af3",
+          "reviewScope": "전체 결제/환불/증빙 응답필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/vo/RegularMeetingSettlementVo.java",
+          "sha256": "fcf75b33ce8b15c4c16b41554082b9c3f8b92cc3ecd39e5791dad2f04529d3bd",
+          "reviewScope": "전체 BigDecimal금액·문자열요율·날짜/시각응답"
+        },
+        {
+          "path": "community_app/lib/domain/providers/regular_meeting/regular_meeting_host_operations_provider.dart",
+          "sha256": "3495e38c01e72e50da839abd53e2a798ef800434d64286262bd5af80bb387a0d",
+          "reviewScope": "46–220전체회원페이지50한도/100size·결제/환불독립오류·호스트명령/재조회"
+        },
+        {
+          "path": "community_app/lib/domain/providers/regular_meeting/regular_meeting_payment_command.dart",
+          "sha256": "132ef7d79a20b4ff2d2fe2a9a914e84b74b4644d4189816f25d3c69f42485d39",
+          "reviewScope": "25–79 회원금전명령·본문/대상/요청키·결과불명확재조회/지갑신호"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_members_screen.dart",
+          "sha256": "8ca8b2f7ed7a08c7cbd4a8c0a0350c6e6b1b16938f4a90b83eeebc264ef383c5",
+          "reviewScope": "50–416승인/거절null본문·탈퇴제거확인·입금/환불대기/이력·명령성공뒤조회실패분리·고정토스트"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_payment_screen.dart",
+          "sha256": "85b017706914795aaf44c63d31a600b00059e4b97df6b092d4a543580cde075f",
+          "reviewScope": "40–452납부상태/기한타이머·공개수단/과정교집합·서버거절수단제외/재조회·금전명령·상세복귀·계좌안내의존"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/widgets/regular_meeting_payment_queue.dart",
+          "sha256": "88ac0b4771e64ec5e6af2bc48817cf5683285429833527198452a95117752807",
+          "reviewScope": "626–672증빙/메모요청·환불마감금액/첨부확인·명령결과에따른시트복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_enroll_screen.dart",
+          "sha256": "694b2b2e00a2f066151d402c0823e0a367eb8951b234ffd033208d254c0f10de",
+          "reviewScope": "35–160등록입력·계정ticket·결과별납부화면/이전복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_session_finalize_screen.dart",
+          "sha256": "2a0f34091d27ed7465536711fc2dff1fc828dd5819f99374d4b34863006f8dc2",
+          "reviewScope": "60–316회원별배열·요약/환불영향확인·reason미전송·회차권한/숨김fallback/미리보기게이트·성공복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_settlement_screen.dart",
+          "sha256": "a432442f632500ab9f5db748e71477f5da8077812d59572eaa2b896cf9135ec5",
+          "reviewScope": "30–180정산204빈상태·서버요율/금액표시·지급일·정산문의입구"
+        },
+        {
+          "path": "community_app/lib/data/models/regular_meeting/regular_meeting_settlement_vo.dart",
+          "sha256": "8bd5c2ad0914e9172364689cebc70be9bfb92beed4da92d07c6d3765689d8907",
+          "reviewScope": "전체 BigDecimal→double변환/문자열요율/서버시각모델"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+          "sha256": "de232ef387fd4f3f39f6ef66791d386329ad58a6e057ce4141b271591ec416a3",
+          "reviewScope": "423–691 회원 등록 취소/승인/거절/제거·납부·조회·환불 증빙·출석/정산 계약; 이전 연속 검토의 enroll/members/myMembership 정의와 현재 source reference 검사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingEnrollmentService.java",
+          "sha256": "8b3e44e3854490a7e7648902c1b49b0f7f3b8a6d447f74f3f2f1333dc4e1023b",
+          "reviewScope": "이전 연속 검토 82–289 등록/취소/승인/거절/탈퇴회원제거;290–319 명단/본인등록;608–807 좌석잠금·메시지검사·대기승격/정책홀드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingPublishCommandService.java",
+          "sha256": "97ace629c666732ae5d42c18418525709643bd9fe22965450fe234be12e23f5e",
+          "reviewScope": "113–209 OPEN FIXED 유료은행수납 계좌누락 보완·등록별전파/이미신고제외·감사기록"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/repository/query/RegularMeetingQueryRepository.java",
+          "sha256": "c243979118c181704e6761997f4ad849fa7ebf1583a9ea50327e518fc3e2b61c",
+          "reviewScope": "575–588소비회차;741–792미정산후보/취소환불종결·활성상태;863–897운영자미해결보류;이전목록/회차검토는별도그룹"
+        },
+        {
+          "path": "community_app/lib/data/api/regular_meeting_api.dart",
+          "sha256": "06b2c54941e3df79dd9ae814e667529cbaecdf2c1de4401986b4c0909e567d7a",
+          "reviewScope": "199–351 출석·등록·납부·계좌·처리목록·환불증빙·정산REST/필수선택키/반환타입"
+        },
+        {
+          "path": "community_app/lib/domain/providers/regular_meeting/regular_meeting_detail_provider.dart",
+          "sha256": "8b1c520ec021ac9c276a9989ab84b4e6402b7432ef5519de7318ba6f8ef0df7f",
+          "reviewScope": "229–324취소필수금전키/등록결과갱신·이전취소의도정리;482–530확정본문지문키;이전연속검토본인등록 정확한없음오류만null"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/widgets/regular_meeting_participation.dart",
+          "sha256": "1b43e4019653cb29d65830dccc84a85b13476cc7e8872fd651ba226b527b923c",
+          "reviewScope": "330–399상태행동·등록취소영향안내/명령/결과"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_detail_screen.dart",
+          "sha256": "8ca36550cc47214be0bfc39c6215ff1e945549cd55555f6fc7d573e72a83833c",
+          "reviewScope": "796–880회차관리확정입구/이벤트카드이동·이전연속검토의호스트멤버/정산입구"
+        }
+      ],
+      "reuses": [
+        "regular_meeting_commands_20261122",
+        "regular_meeting_reads_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
+          "sha256": "5f281c1b01c2bd40fc5623314af27693e991bd62b92226f57457604d83766961"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
+          "sha256": "c37b11088f99c9f22dfec5be15cc03063607ffa46b9a82315f43a80837adf4eb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
+          "sha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md",
+          "sha256": "16e72499f9b219ab6bb08d82e2a1d520f67eafcc08658183184e36b4f11a353c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
+          "sha256": "1aca822bd967ce9c826e6494ec2ce58e554172e8f7cac1dd5ac9b1b367a32704"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/17_정기모임_prd.md",
+          "sha256": "a4c6c4ccfbe36c741bd7dbfa26ed1f84014940fdc50d2c8bf894337d25d16f9a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md",
+          "sha256": "2d9422df16e9a34160e88533240a80269aeba865fe6ed0c40fd8b4a0697ec3d3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md",
+          "sha256": "8342d2e2f3691a7ea7260602174d9d826a1e04d9a8f26bbe9f63892c1f965a87"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
+          "sha256": "9a28f6b294a20448851abc88f40a524f8ebd7d45489137f91bb2d4709b2aec5c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
+          "sha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
+          "sha256": "0085b9cdc3949d7a89c432b228a675ba660dc59d40ef22612579698621d515dd"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F17-06.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F17-07.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F17-08.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F17-09.html": [
+          "sidebar",
+          "launch-strip",
+          "attendance-finalization",
+          "release-completion"
+        ],
+        "docs/features/F17-10.html": [
+          "sidebar",
+          "launch-strip",
+          "attendance-finalization",
+          "settlement-consistency",
+          "release-completion"
+        ],
+        "docs/domains/17-regular-meeting.html": [
+          "sidebar",
+          "occurrence-current",
+          "host-transfer-current",
+          "launch-strip",
+          "review-navigation"
+        ]
+      },
+      "referenceChanges": [
+        "현재 회원 Controller 21개 연결",
+        "기존 HTML 앵커 보존·존재하지 않는 units 디렉터리 생성 안 함"
+      ],
+      "followUpFindings": [
+        "승격을 등록 완료로 단정하지 않음",
+        "72시간 납부와 기본5일 입금확인 기한 분리",
+        "현재 결제목록·계좌안내·회원별 출석선택 구현 반영",
+        "confirm 성공의 환불분기와 앱 토스트 불일치",
+        "FORFEIT 무환불·모든 실패의 FailedRefund 고정결과 정정",
+        "취소 과정 정산·무료 보조·0원 후보 재검사 범위 한정"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
+          "sha256": "8c005a4883febebfd3683c85c6591a4d127f2b43825a0b070d2201bdb55f4667",
+          "characters": 194,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "prd/01_domain_prds/17_정기모임_prd.md",
+          "sha256": "5c5422f8f21788d152d2a8badb892e542f6af8cd996b60ad6e63a87910a10592",
+          "characters": 464,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 150개가 실제 소스와 일치합니다.",
+        "groupDigests": "53 source/canonical digests; 23 retained HTML IDs",
+        "derivedDocuments": "12 documents; shared batch verified 12 paths, 124 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4e781f7a9f5d18f381c680539a9a95a348ba5295",
+        "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
       }
     }
   },

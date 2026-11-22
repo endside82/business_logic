@@ -373,11 +373,11 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F17-03 | 정기모임 | [F17-03_regular-meeting-creation_prd.md](02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
 | F17-04 | 정기모임 | [F17-04_regular-meeting-lifecycle_prd.md](02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md) | `source-first` | source-first 구현 확인 | 5 | 4 |
 | F17-05 | 정기모임 | [F17-05_regular-meeting-sessions_prd.md](02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `source-first` | source-first 구현 확인 | 5 | 4 |
-| F17-06 | 정기모임 | [F17-06_regular-meeting-enrollment_prd.md](02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | `source-first` | source-first 구현 확인 | 8 | 5 |
-| F17-07 | 정기모임 | [F17-07_regular-meeting-payment_prd.md](02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | `source-first` | source-first 구현 확인 | 6 | 6 |
-| F17-08 | 정기모임 | [F17-08_regular-meeting-refund_prd.md](02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | `source-first` | source-first 구현 확인 | 7 | 6 |
-| F17-09 | 정기모임 | [F17-09_regular-meeting-attendance_prd.md](02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) | `source-first` | source-first 구현 확인 | 6 | 3 |
-| F17-10 | 정기모임 | [F17-10_regular-meeting-settlement_prd.md](02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md) | `source-first` | source-first 구현 확인 | 8 | 4 |
+| F17-06 | 정기모임 | [F17-06_regular-meeting-enrollment_prd.md](02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | `source-first` | source-first 구현 확인 | 7 | 4 |
+| F17-07 | 정기모임 | [F17-07_regular-meeting-payment_prd.md](02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | `source-first` | source-first 구현 확인 | 8 | 4 |
+| F17-08 | 정기모임 | [F17-08_regular-meeting-refund_prd.md](02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
+| F17-09 | 정기모임 | [F17-09_regular-meeting-attendance_prd.md](02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) | `source-first` | source-first 구현 확인 | 2 | 4 |
+| F17-10 | 정기모임 | [F17-10_regular-meeting-settlement_prd.md](02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md) | `source-first` | source-first 구현 확인 | 1 | 4 |
 | F18-01 | 분쟁 해결 | [F18-01_unified-dispute-case_prd.md](02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md) | `source-first` | source-first PRD | 4 | 5 |
 | F18-02 | 분쟁 해결 | [F18-02_dispute-create_prd.md](02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md) | `source-first` | source-first PRD | 3 | 4 |
 | F18-03 | 분쟁 해결 | [F18-03_dispute-appeal_prd.md](02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md) | `source-first` | source-first PRD | 3 | 4 |

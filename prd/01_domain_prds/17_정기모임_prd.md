@@ -1,208 +1,81 @@
 # 17. 정기모임 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱과 기능 PRD 10개의 대조 결과를 종합했다. 과거 구현 완료 선언과 현재 실행 검증을 분리한다. 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 운영 단위와 책임
 
-<!-- generated: source-first-regular-meeting; updated: 2026-05-28; source: community_api/src/main/java/com/endside/community/regularmeeting + docs/plan/regular-meeting -->
+FIXED는 전체 과정에 등록하고 회비를 한 번 납부하는 형태다. 승인·납부·대기 등록 상태가 각 회차 참석에 반영되며 출석을 회차별로 확정한다. VARIABLE은 본체 아래 회차를 구성하되 신청·결제·환불은 개별 이벤트 경로를 사용한다. 두 타입을 단순 반복 일정이나 상시 클럽 회원권과 동일한 단위로 설명하지 않는다.
 
-> 문서 상태: **신규 도메인 신설본**. 본 PRD는 `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md` 와 `community_api/src/main/java/com/endside/community/regularmeeting/` 실제 소스(엔티티 5종 · enum 9종 · 서비스 17종 · 컨트롤러 1종 · 엔드포인트 25개) 를 1차 자료로 작성한다. 계획 문서는 `docs/plan/regular-meeting/` 16개 분할본이 canonical.
+본체는 DRAFT·OPEN·CLOSED·CANCELED, 회차 연결은 순번·원본/대체·구체화·출석 확정 상태를 관리한다. 등록, 결제, 회차 출석 원장, 정산은 각각 다른 결과다. 신청·승인·입금 신고·입금 확인·출석 확정·모임 종료·정산 생성·지급을 한 단계의 완료로 합치지 않는다.
 
-## 1. 결론
+## 기능별 현재 근거
 
-호스트가 동일 멤버를 묶어 여러 회차를 운영하는 **신규 경량 도메인**. 클럽(상시 멤버십)과 EventRecurrence(일정 반복) 둘 다 부적합하다는 결론 후 별도 도메인 `regularmeeting` 으로 신설했다. 한 도메인 안에 두 가지 운영 형태가 있다:
-
-- **FIXED(고정형)** — 호스트가 사전에 회차 수를 정하고 멤버를 **코스 단위로** 등록·결제·정산한다. 모든 세션에 동일 멤버 명단이 깔리고, 멤버 한 명이 코스 비용을 한 번에 결제하며, 정산도 코스 종료 시 한 번에 발생한다.
-- **VARIABLE(변동형)** — 회차마다 독립된 이벤트로 동작한다. 인원·결제·정산이 **세션 단위로** 바인딩되며, 일반 이벤트 머신을 그대로 재사용한다.
-
-타입이 **인원·정산의 바인딩 레벨을 전환**하는 것이 도메인의 핵심 설계 결정이다. 하위 세션은 모두 `event` 테이블(`eventType=REGULAR_MEETING(3)`) 위에 올라가며, 모임과 세션을 잇는 정션 `regular_meeting_event` 가 순번·교체본·확정 상태를 관리한다. 일반 호스트용 이양 경로는 없고, 관리자 internal API에만 결제·정산 귀속을 보존하는 break-glass 이양이 있다.
-
-이 도메인은 기능 PRD 10개로 구성된다(F17-01 ~ F17-10). 백엔드 구현(Phase 1~5)·Flutter(Phase 6)·통합 검증(Phase 7)은 2026-05-28 단일 세션에 완료됐고.
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | 핵심 소스 | 상태 | Trace |
-|---|---|---|---|---|---:|
-| F17-01 | 정기모임 발견·탐색 | [F17-01_regular-meeting-discovery_prd.md](../02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md) | `RegularMeetingController#search,myMeetings`, `RegularMeetingQueryRepository` | 구현됨 | 3 |
-| F17-02 | 정기모임 상세 조회 | [F17-02_regular-meeting-detail_prd.md](../02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md) | `#get`, `RegularMeetingService#getMeeting`, `RegularMeetingVo` | 구현됨 | 4 |
-| F17-03 | 정기모임 생성 (호스트) | [F17-03_regular-meeting-creation_prd.md](../02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | `#create`, `RegularMeetingAddParam`, `truncateToHundred` 100원 floor | 구현됨 | 3 |
-| F17-04 | 정기모임 생명주기 (publish/close/cancel/reopen) | [F17-04_regular-meeting-lifecycle_prd.md](../02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md) | `RegularMeetingStatus`, `#publish/close/cancel/reopen`, `findByIdForUpdate` | 구현됨 | 5 |
-| F17-05 | 세션 관리 (add/generate/bulk/replace/cancel) | [F17-05_regular-meeting-sessions_prd.md](../02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | `#addSession,generateSessions,addSessionsBulk,replaceSession,cancelSession`, `RegularMeetingEventFactory` | 구현됨 | 6 |
-| F17-06 | 고정형 등록·승인·대기열 (FIXED) | [F17-06_regular-meeting-enrollment_prd.md](../02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | `RegularMeetingEnrollmentService`, `RegularMeetingMemberStatus` | 구현됨 | 8 |
-| F17-07 | 고정형 결제 (WALLET / BANK_TRANSFER) | [F17-07_regular-meeting-payment_prd.md](../02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | `RegularMeetingPaymentService`, `RegularMeetingPayment.isHostDirect`, `active_member_id` 생성컬럼 | 구현됨 | 6 |
-| F17-08 | 환불 (pro-rata · 트리거별 · FAILED_REFUND) | [F17-08_regular-meeting-refund_prd.md](../02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | `RegularMeetingRefundCalculator`, `RegularMeetingRefundService`, `failed_refund.regular_meeting_id` | 구현됨 | 7 |
-| F17-09 | 세션 출석 확정·노쇼 (Phase 4) | [F17-09_regular-meeting-attendance_prd.md](../02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) | `RegularMeetingSessionAttendanceService`, `regular_meeting_session_attendance`, `RegularMeetingNoShowPolicy` | 구현됨 | 6 |
-| F17-10 | 호스트 정산 (flow-through) | [F17-10_regular-meeting-settlement_prd.md](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md) | `RegularMeetingSettlementService`, `Settlement.regularMeetingId`, `reservedRefund` | 구현됨 | 8 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 기능 | 이유 |
+| 기능 | 정본 | 확인 범위 |
 |---|---|---|
-| [F17-10](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md) | 호스트 정산 (flow-through) | 머니 안전 핵심. close→afterCommit→REQUIRES_NEW 다층 방어, `uk_settlement_rm` 멱등, `reservedRefund` 게이트 |
-| [F17-08](../02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | 환불 (pro-rata) | MEMBER_CANCEL=elapsed 차감, HOST_CANCEL=delivered 차감, FORFEIT 동일 산식. 100원 floor, 0 clamp |
-| [F17-07](../02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | 결제 (WALLET/BANK) | `isHostDirect` 분기 + `active_member_id` 생성컬럼 + `uk_payment_active` UNIQUE 활성 1건 |
-| [F17-09](../02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) | 출석 확정·노쇼 | finalize 시점=close 전. FORFEIT_ON_LIMIT 즉시 환불, EXCUSED/SESSION_CANCELED 노쇼 미가산 |
-| [F17-06](../02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | FIXED 등록·승인·대기열 | 8 상태(`PENDING→APPROVED_PENDING_PAYMENT→ENROLLED`/`WAITING`/...) + waitlist 승격 |
+| F17-01 | [정기모임 발견·운영·참여 목록](../02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-02 | [정기모임 상세·참여 상태·회차 정보](../02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-03 | [정기모임 생성·기본 정보 수정](../02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-04 | [정기모임 공개·종료·취소·호스트 변경](../02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-05 | [정기모임 회차 생성·반복·대체·취소](../02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-06 | [정기모임 등록·승인·대기·취소](../02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-07 | [정기모임 회비 납부·입금 확인](../02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-08 | [정기모임 환불·증빙·실패 복구](../02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-09 | [정기모임 출석 확정·노쇼·등록 박탈](../02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
+| F17-10 | [정기모임 수익 정산·보류·조회](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md) | 현재 계약·입구·실패·복귀 소스 대조, 새 실행 아님 |
 
-## 4. 도메인 책임 한도
+표의 ‘소스 대조’는 출시 승인이나 새로운 기기 시험 통과가 아니다. 정확한 Controller 연결은 각 정본의 코드 위치 표와 `verification/source_reference_targets.json`, 검토 범위·해시는 `verification/document-refresh-2026-11-22.json`에 기록한다.
 
-본 도메인은 **VARIABLE 의 세션 인원/결제/정산 머신을 신설하지 않는다.** VARIABLE 세션은 `eventType=REGULAR_MEETING` 으로 일반 이벤트 머신을 그대로 재사용하며, RM 컨텍스트 5필드(`regularMeetingId`, `regularMeetingTitle`, `regularMeetingType`, `sequenceNo`, `directApplyBlocked`) 만 오버레이된다. FIXED 세션은 모임 본체가 정원·결제·정산을 잡고, 세션 자체는 ATTENDING materialize(체크인용)만 받는다 — 세션 단위 직접 신청/취소/체크인 mutation 은 가드로 차단(`directApplyBlocked=true`).
+## 탐색·상세·공개 경계
 
-## 5. 핵심 데이터·인프라
+공개 목록과 본인 운영·참여 목록은 조회 목적과 상태 필터가 다르다. 공개 상세와 회차 목록도 미공개 초안·발행 전 취소·숨김 접근을 구분하고 상세 주소·온라인 URL 같은 민감 필드를 제한한다. 본인 등록 조회 실패를 모든 경우의 미등록으로 바꾸지 않는다. [발견·목록 계약](../02_feature_prds/17_regular_meeting/F17-01_regular-meeting-discovery_prd.md)과 [상세 조회·권한](../02_feature_prds/17_regular_meeting/F17-02_regular-meeting-detail_prd.md)을 기준으로 한다.
 
-### 5.1 신규 테이블 5종 (V1__init.sql 통합)
+호스트 기본 정보 수정은 초안 범위이며 공개 뒤 장소 변경은 별도 명령이다. 생성은 공개 완료가 아니다. FIXED 유료 공개는 현재 판매 가능한 결제 정책·수납 계좌 조건을 확인한다. 최초 공개에 계획 회차를 모두 생성해야 한다는 서버 개수 조건은 없고, 계획 회차 수 일치는 정상 종료 조건이다.
 
-| 테이블 | 책임 | 핵심 제약 |
-|---|---|---|
-| `regular_meeting` | 모임 본체 (호스트·타입·코스·노쇼 정책·정산 후크) | `meeting_type ∈ {FIXED, VARIABLE}`, `status ∈ {DRAFT, OPEN, CLOSED, CANCELED}`, `price` 100원 floor |
-| `regular_meeting_event` | 모임 ↔ 세션 정션 | `event_id` UNIQUE (이벤트당 최대 1모임), `(meeting_id, sequence_no)` 중복 허용(원본 취소+대체본) |
-| `regular_meeting_member` | FIXED 등록 멤버 (8 상태) | `(meeting_id, user_id)` UNIQUE, 카운터 `attendedCount/noShowCount/consecutiveNoShowCount` 영속 |
-| `regular_meeting_payment` | FIXED 결제 (WALLET·BANK_TRANSFER) | `active_member_id` STORED 생성컬럼 + `uk_payment_active` UNIQUE → 활성 1건 보장 |
-| `regular_meeting_session_attendance` | 세션 출석 확정 권위 (Phase 4) | `(event_id, user_id)` UNIQUE, FK CASCADE (member_id 는 generated col base 아님 안전) |
+## 회차 생성·대체와 종료
 
-### 5.2 Settlement / failed_refund 확장
+FIXED 본체의 총 계획 회차는 1~200이며 회차 가격은 0으로 만든다. VARIABLE은 본체 가격·정원 대신 회차 가격·정원을 사용하고 활성 회차 200개 한도를 적용한다. 반복 생성은 1~26회이며 내부 일괄 생성 함수가 일반 회원 Controller의 공개 API라는 뜻은 아니다. 취소 회차의 대체는 같은 순번과 원본 연결을 유지한다.
 
-- `Settlement.event_id` `long` → `Long` nullable
-- `Settlement.regular_meeting_id` Long nullable 신규
-- `Settlement.reserved_refund` BigDecimal 신규 (FORFEIT 환불 예약분)
-- `uk_settlement_rm(regular_meeting_id)` UNIQUE — 코스당 정산 1건
-- `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))`
-- `failed_refund.event_id` nullable + `failed_refund.regular_meeting_id` 신규 (결정 K)
+현재 앱에는 생성 카테고리·장소 입력, 회차 추가·반복·전용 대체 입력, 회차 카드의 이벤트 상세 이동이 있다. ‘서버와 다른 기본 카테고리’, ‘주소 입력 없음’, ‘음수 가격 검사 없음’, ‘대체 화면 없음’, ‘회차 카드 이동 없음’, ‘추가 알림 호출 없음’은 이전 문서의 해결된 항목이다. 다만 본체 썸네일 입력·수정 카테고리 전달, 회차 시간 겹침 검사는 현재 제한으로 남는다. 1~99원은 100원 절삭 후 무료가 되므로 입력 양수와 저장 유료를 구분한다.
 
-### 5.3 enum 9종
+FIXED 정상 종료는 취소되지 않은 활성 회차의 수가 계획 수와 같고 종료 시각이 지났으며 출석이 모두 FINALIZED여야 한다. 취소 이력까지 확정할 필요는 없다. VARIABLE은 회차 처리와 두 달 무활동 자동 종료의 별도 조건을 따른다. 자세한 조건은 [회차 생성·반복·대체·취소](../02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md)와 [공개·종료·취소](../02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md)에 둔다.
 
-| Enum | 값 | 용도 |
-|---|---|---|
-| `RegularMeetingType` | FIXED, VARIABLE | 인원·정산 바인딩 레벨 분기 |
-| `RegularMeetingStatus` | DRAFT, OPEN, CLOSED, CANCELED | 모임 본체 상태머신 |
-| `RegularMeetingMemberStatus` | PENDING, APPROVED_PENDING_PAYMENT, ENROLLED, WAITING, PAYMENT_EXPIRED, CANCELED, REJECTED, FORFEITED | FIXED 등록 멤버 8 상태 |
-| `RegularMeetingNoShowPolicy` | NONE, WARN, FORFEIT_ON_LIMIT | 노쇼 정책(기본 NONE) |
-| `RegularMeetingNoShowCountMode` | CUMULATIVE, CONSECUTIVE | 한도 카운트 방식 |
-| `RegularMeetingEventOrigin` | ORIGINAL, REPLACEMENT | 정션의 세션 출처 |
-| `RegularMeetingMaterializationStatus` | PENDING, MATERIALIZED, FAILED | 세션 ATTENDING 자동 생성(≤24h) |
-| `RegularMeetingFinalizationStatus` | PENDING, FINALIZED, NEEDS_REVIEW | 세션 출석 확정 |
-| `RegularMeetingSessionAttendanceResult` | ATTENDED, NO_SHOW, EXCUSED, SESSION_CANCELED | Phase 4 권위 결과 |
+## 호스트 변경과 남은 회차
 
-### 5.4 ErrorCode 블록 2700001~
+현재 일반 회원용 호스트 이전 API와 관리자 복구 명령을 혼동하지 않는다. 관리자가 본체 호스트를 바꾸더라도 기존 호스트에게 남긴 회차의 운영·출석 권한과 금전 귀속을 함께 판정해야 한다. 유료 공개 FIXED 이전 제한과 남은 회차에 따른 종료·취소 차단은 [호스트 변경과 남은 회차](../02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md#호스트-변경과-남은-회차)를 따른다. force 취소가 회차 소유권을 무시하는 수단은 아니다.
 
-`REGULAR_MEETING_NOT_FOUND`, `REGULAR_MEETING_INVALID_STATUS`, `REGULAR_MEETING_FORBIDDEN`, `REGULAR_MEETING_NOT_FIXED`, `REGULAR_MEETING_MEMBER_NOT_FOUND`, `REGULAR_MEETING_ENROLLMENT_DENIED`, `REGULAR_MEETING_PAYMENT_NOT_FOUND`, `REGULAR_MEETING_PAYMENT_INVALID_STATUS`, `REGULAR_MEETING_SESSION_CANNOT_FINALIZE`, … (전체 목록은 `ErrorCode.java` 2700001~2700019 참조)
+## 등록·회비·환불
 
-## 6. 도메인 외부 영향
+PENDING·APPROVED_PENDING_PAYMENT·ENROLLED가 좌석을 점유하고 WAITING은 점유하지 않는다. 대기자 승격도 승인·유료 여부에 따라 다시 분기한다. 유료 등록의 72시간 납부 기한과 은행 신고의 기본 5일 호스트 확인 기한은 다르며, 살아 있는 신고를 납부 기한만으로 만료시키지 않는다.
 
-| 도메인 | 영향 | 이유 |
-|---|---|---|
-| 03 이벤트 | **강함** | `EventType.REGULAR_MEETING(3)` 신규. `EventScope` 공용 거름망 2개(디스커버리 8표면 분류 + 신청 가드). VO 5필드 오버레이(`regularMeetingId/Title/Type, sequenceNo, directApplyBlocked`). |
-| 05 검색 | **있음** | `EventScope#publiclyDiscoverable` 가 검색·트렌딩·홈·추천·관심인 8표면에서 RM 세션을 분류. RM 본체 검색은 `/api/v1/regular-meetings` 별도 엔드포인트. |
-| 06 결제·지갑 | **강함** | WALLET 결제는 기존 `PointTransaction` (`referenceType="REGULAR_MEETING_PAYMENT"`) + 분개 재사용. BANK_TRANSFER 는 off-ledger (`isHostDirect=true`). |
-| 07 모임 정산 | **강함** | `Settlement` 확장(event_id nullable + regular_meeting_id + reservedRefund). flow-through gross 산식: `retainedPaid` 만 호스트 수익으로, `retainedFree` 는 플랫폼 보조(payout 비대상). |
-| 11 리뷰·신고 | 조건부 | FIXED 세션은 EventCheckIn 기반 ATTENDED 만 리뷰 자격. 리뷰는 매 세션마다 가능. |
-| 12 알림 | 조건부 | 1차 출시는 RM 푸시 라우팅 미연동(NotificationType `REGULAR_MEETING_*` 미정의). 잔여 후속. |
-| 13 프로필·설정 | **있음** | `AccountDeactivationService` 4건 가드(member 활성 결제 / 호스트 운영중 모임 / 호스트 환불 책임 / failed_refund). PAID 는 `meeting.status != CLOSED` 일 때만 차단. |
-| 15 경고·징계 | 조건부 | FIXED 노쇼 `FORFEIT_ON_LIMIT` 한도 도달 → FORFEITED + pro-rata 환불(시작된 제공분 무환불). warning 도메인은 club-scoped + dead wiring 이라 재사용 불가 → RM v1 자체완결. |
+은행은 등록·결제에 연결한 계좌로 안내하고 현재 기본 계좌를 임의 대체하지 않는다. 입금 확인 시 탈퇴·제재가 발견되면 등록 완료 대신 전액 환불 대기로 갈 수 있다. 현재 앱에는 멤버·결제 관리, 계좌 안내, 입금 대기·환불 요청·증빙 이력이 있다.
 
-## 7. 핵심 머니 안전 불변
+회원 취소·박탈 환불은 시작한 비취소 회차를, 호스트 취소 환불은 CLOSED 회차를 소비분으로 계산한다. 총 계획 회차 기준 비례 계산 후 100원 미만 절삭이다. 미확인 은행 신고는 먼저 전액 환불 대기로 보존한다. 지갑 환불, 은행 송금 후 증빙 마감, 닫힌 계정의 운영 기록은 다른 경로다. 회원 취소·출석 확정의 예외 롤백과 모임 취소 커밋 뒤 회원별 환불·복구도 구분한다.
 
-> "정산 후 환불 위험 0" — 다층 방어. F17-10 §7 에 상세.
+## 출석·정산·검토 동선
 
-1. `close()` → `findByIdForUpdate` 잠금 (pay 와 직렬화)
-2. close FIXED 가드: 미래 OPEN 세션 무 + `activeSessionCount == totalSessionCount` + 모든 정션 `attendanceFinalizationStatus == FINALIZED`
-3. 정산 생성은 **afterCommit** REQUIRES_NEW (close 커밋 후 → orphan 차단)
-4. `tryCreateSettlement` 에 CLOSED 가드 (scheduler 우회 방지)
-5. `cancelEnrollment` CLOSED/CANCELED 거절
-6. `cancel()` `findByIdForUpdate` 잠금 (close 정산 스냅샷과 cancel REQUIRES_NEW 환불 경합 차단)
-7. `finalizeSession` `endTime ≤ now` 강제 (미종료 NO_SHOW 조기 발생 차단)
-8. FORFEIT 환불은 finalize 시점(=close 전) 에만 발생 → settlement gross 의 retained paid 에 자연 반영
+실제 회차 호스트가 종료 후 preview 명단에서 출석·노쇼·사유 결석을 선택하고 확정한다. 실패한 구체화 회차의 수동 검토는 미체크인 기본값을 EXCUSED로 하며 일반 회차는 NO_SHOW다. 노쇼 집계·박탈은 현재 ENROLLED에 적용하고 FORFEIT은 남은 회차 환불과 연결한다. 자동 확정은 기본 비활성이며 운영 환경 설정을 이번 소스 대조로 확인한 것은 아니다.
 
-이중지급 차단:
-- `uk_settlement_rm(regular_meeting_id)` UNIQUE — 코스당 1정산
-- `SettlementService.doCreditAndRecord` 의 `existsByReferenceTypeAndReferenceId("SETTLEMENT", id)` 멱등
-- `reservedRefund > 0` 게이트 (`completeSettlement` 내부, retry scheduler 우회 불가)
+정산은 FIXED의 CLOSED/CANCELED 잔여 지갑 수익을 대상으로 한다. 원결제와 실제 환불의 유료·무료 금액을 나누고 미해결 환불은 보류한다. 호스트 직접 계좌이체를 플랫폼 지갑 수익으로 더하지 않는다. 무료 잔여만 있어도 보조금 행을 만들 수 있으며 전체 잔여가 0이면 행을 만들지 않는다. 요율은 적용일 정책을 사용한다. 정산 없음의 204는 보류·지연·정상 무생성의 상세 사유를 구분해 주지 않는다.
 
-## 9. 잔여 후속 (서버 확장 필요)
+검토는 [등록·대기](../02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md) → [회비 납부·입금 확인](../02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md) → [환불·증빙](../02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md) → [출석·노쇼](../02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) → [정산·보류](../02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md)의 연결로 진행한다.
 
-| 항목 | 차단 사유 |
+## 현재 제한과 확인 범위
+
+| 구분 | 현재 남은 경계 |
 |---|---|
-| RM 푸시 라우팅 | 서버 `NotificationType` enum 에 `REGULAR_MEETING_*` 미정의 |
-| payment confirm/reject/refund 호스트 화면 | 서버 결제 list 엔드포인트 부재 (푸시 deep-link 예정) |
-| finalize per-attendee override UI | 서버 attendance roster list endpoint 필요 (MVP: 일괄 확정으로 충분) |
-| bulk/replace 세션 호스트 UI | API 는 있으나 UX 우선순위 낮음 |
-| EventCard 호출처 RM 뱃지 통합 | 위젯 준비됨, 호출처 13+ 개 점진 적용 |
-| `retained ≤ 0` 종료 코스 failsafe 영구 재검사 | non-blocking 백로그 (settlement-skipped 마커) |
+| 작성 | 본체 썸네일 UI와 수정 category 전달, 서버 기본 수정의 제목 공백·기간 순서 검사 경계 |
+| 회차 | 시간 겹침 미검사, 소액 절삭, 화면 내 요청키와 생성 초안의 영속 복원의 차이 |
+| 등록·확정 | 승인/거절 사유와 출석 확정 reason의 서버 지원·앱 미전송 차이 |
+| 금전 표시 | 입금 확인의 환불 전환 성공 응답과 앱 고정 완료 문구의 불일치 |
+| 정산 | 204의 상세 사유 부재, 전액 환불된 대상 지갑 결제의 보정 재검사 가능성 |
+| 실행 근거 | 실제 앱 화면·알림 수신·은행 송금·지갑 차감·회계 지급은 이번에 실행하지 않음 |
 
-## 10. 관련 문서
+과거의 ‘정산 후 환불 위험 0’ 선언은 현재 완료 근거로 사용하지 않는다. 잠금·상태 조건·후속 복구가 있다는 소스 사실과 운영에서 예외가 없다는 주장은 다르다. 이번 작업은 문서 갱신이며 제품 코드를 수정하지 않았다.
 
-- 구현 리포트: `community_api/docs/plan/regular-meeting/IMPLEMENTATION_REPORT_2026_05_28.md`
-- 계획 마스터: `docs/plan/regular-meeting/README.md` (16 분할 + GLOSSARY · NEXT_SESSION)
-- 결제 정책 횡단: `prd/03_policy_prds/payment_settlement_policy_prd.md`
-- 상태 정책 횡단: `prd/03_policy_prds/state_policy_prd.md`
+## 과거 시나리오 원문 보존
 
-## 11. 접근권한 감사 교정 (2026-07-02)
+> 이 도메인은 기능 PRD 10개로 구성된다(F17-01 ~ F17-10). 백엔드 구현(Phase 1~5)·Flutter(Phase 6)·통합 검증(Phase 7)은 2026-05-28 단일 세션에 완료됐고.
+> `GET /api/v1/regular-meetings/{id}` 및 `GET .../sessions`가 인증 사용자 누구에게나 DRAFT 상태 또는 발행 전 취소(status=CANCELED && publishedAt=null) 정기모임의 상세와 세션 목록을 노출하는 문제. 직접 링크(ID)를 알면 비호스트도 모임 주소·온라인 URL 등을 열람 가능했다. **수정**: 한 번도 발행되지 않은 정기모임(DRAFT, 또는 `publishedAt=null`인 CANCELED)은 호스트가 아닌 요청자에게 NOT_FOUND 응답. 한 번 공개됐던 CLOSED/CANCELED 상세는 계속 읽을 수 있다. 재현 테스트 추가.
 
-접근권한 전수 감사(F17 정기모임)에서 확인된 동작 변경 사항을 반영한다.
-
-### 미발행 정기모임 상세·세션 비호스트 접근 차단 (F17-3)
-
-`GET /api/v1/regular-meetings/{id}` 및 `GET .../sessions`가 인증 사용자 누구에게나 DRAFT 상태 또는 발행 전 취소(status=CANCELED && publishedAt=null) 정기모임의 상세와 세션 목록을 노출하는 문제. 직접 링크(ID)를 알면 비호스트도 모임 주소·온라인 URL 등을 열람 가능했다. **수정**: 한 번도 발행되지 않은 정기모임(DRAFT, 또는 `publishedAt=null`인 CANCELED)은 호스트가 아닌 요청자에게 NOT_FOUND 응답. 한 번 공개됐던 CLOSED/CANCELED 상세는 계속 읽을 수 있다. 재현 테스트 추가.
-
-이 원칙은 플랜 마켓(F08-03 getPlan 비공개 게이트)과 동일하다: 발행 전 콘텐츠는 작성자(호스트)만 열람 가능, 직접 링크로도 비호스트 접근 불가.
-
-### 기타 접근권한 현황 (이슈 없음)
-
-- 정기모임 멤버 명단(PII 표면): 서버가 호스트 전용으로 강제(기존 설계 정상)
-- 결제: 등록 당사자만 조회·결제 가능(기존 서버 강제 확인)
-- 승인/반려: 호스트만 처리 가능(기존 서버 강제 확인)
-
-### 잔여 백로그 (비보안, 별도)
-
-호스트 생애주기 UI 도달불가(F17-1 기능 갭)·관리 라우트 딥링크 press-then-error(F17-2)·`/regular-meetings/my` 라우트 크래시(F17-4)는 별도 기능 트랙으로 이연.
-
-## 12. 2026-07-29 서버·Flutter 재실측 갱신
-
-실측 기준은 `community_api` HEAD `be38d128b80d`, `community_app` HEAD `cb21bce8ef08`이다.
-
-### 12.1 가격의 귀속 단위
-
-| 계약 | FIXED | VARIABLE |
-|---|---|---|
-| 본체 가격 | 코스 전체 가격, 100원 미만 절삭 | 서버가 0 강제 |
-| 세션 가격 | 요청값과 무관하게 0 강제 | 세션별 가격, null/0 무료, 양수는 100원 미만 절삭 |
-| 신청·결제 | 정기모임 등록/결제 | 일반 이벤트처럼 세션별 신청/결제 |
-| 유료 세션 환불 | 코스 정책 | 세션별 template, 누락 시 STANDARD |
-
-VARIABLE 세션은 가격을 100원 단위로 절삭한 결과가 양수일 때 `EventPrepayment(required=true, type=CASH)`을 만들고 결제기한은 양수 요청값 또는 24시간 기본을 쓴다. 1~99원 요청은 0원이 되어 무료 처리된다. 단건·bulk·`generate(count 1..26)`·replace가 같은 가격/환불 helper를 공유한다.
-
-### 12.2 썸네일 저장·표시
-
-- 정기모임 생성/수정은 호스트 소유, `COMPLETED`, `EVENT_THUMBNAIL` purpose의 bare key만 저장한다.
-- 만료 URL/외부 절대 URL은 저장값으로 채택하지 않는다.
-- 목록·상세·세션 생성 응답은 bare key를 표시용 presigned URL로 바꾸고 미완료/유실 파일은 null 처리한다.
-- 세션 Event는 정기모임 썸네일 키를 상속하지만 `RegularMeetingEventVo` 자체에는 썸네일 필드가 없다.
-- Flutter 목록·상세는 응답 URL을 표시할 수 있으나 생성·수정 화면에는 썸네일 업로드 입력이 아직 없다.
-
-### 12.3 Flutter authoring/운영 UX
-
-2026-07-10~12 앱 변경으로 다음이 실제 화면에 반영됐다.
-
-- FIXED/VARIABLE 선택 전에 등록·결제·환불·노쇼·정산 단위 차이를 안내한다.
-- FIXED 생성/수정은 날짜, 총 회차, 환불 기준, 노쇼 정책, 승인/선결제를 입력하고 결과 카드를 보여 준다.
-- `LocalDate`는 `yyyy-MM-dd`로 직렬화한다.
-- 세션 추가는 VARIABLE의 정원·참가비·환불 template·결제기한을 받고, cadence와 1..26 횟수로 자동생성할 수 있다.
-- 상세/목록은 타입별 신청 단위를 설명하고 유료 VARIABLE 세션 가격을 표시한다.
-
-### 12.4 새로 확인된 계약 Gap
-
-`features.js`의 전체 F17 Risk 후보 합계는 **43개**다. 이 재실측에서 직접 갱신한
-F17-03은 4개, F17-05는 6개이며 아래 표의 10개 행과 일치한다.
-
-| 우선순위 | 실제 소스 | 판단 |
-|---|---|---|
-| **P0** | 앱 category: `CLASS/STUDY/SPORTS/HOBBY/COOKING/OTHER`; 서버 `Category`: `BOARD_GAME/HIKING/COOKING/BOOK_CLUB/SPORTS/MUSIC/ART/LANGUAGE/TECH/SOCIAL/TRAVEL/PHOTOGRAPHY/FOOD/FITNESS/OTHER` | 기본값 `CLASS`부터 서버에 없어 생성이 역직렬화 단계에서 실패할 수 있다. 앱 옵션을 서버 enum 정본에 맞춰야 한다. |
-| P1 | 서버/Dart param은 `thumbnailUrl`을 지원하지만 생성·수정 UI가 값을 보내지 않음 | 안전한 썸네일 계약은 있으나 authoring 도달 불가. |
-| P1 | 서버 param은 주소·좌표·온라인 URL을 지원하지만 앱은 `locationType`만 선택 | 상세 장소가 비어 있는 초안이 만들어질 수 있다. |
-| P1 | 앱은 FIXED 음수 가격을 막지만 서버 `validateAddParam/validateModParam`에는 `price < 0` 가드가 없음 | 직접 API 요청으로 음수 코스 가격이 저장될 수 있어 서버 검증이 필요하다. |
-| P1 | VARIABLE 세션 1~99원은 100원 절삭 후 0원이 되지만 앱에 최소 유료 금액 안내가 없음 | 호스트가 유료 세션으로 오인할 수 있다. |
-| P1 | bulk/replace API는 있으나 앱 호스트 UI 없음 | 자동생성은 배선됐지만 임의 bulk/대체 운영은 직접 호출만 가능. |
-| P1 | 상세의 회차 카드가 읽기 전용이고 일반 이벤트 상세에 정기모임 회차 라벨이 없음 | `RegularMeetingDetailScreen` 카드에 `onTap`이 없고 `EventDetailScreen`이 `sequenceNo`/정기모임 컨텍스트를 렌더링하지 않는다. 회차별 운영·상세 진입이 끊겨 있다. |
-| P1 | 세션끼리 시간 겹침 검사 없음 | 동일 시각 중복 회차 가능. |
-| P1 | 모집 중 세션 추가 알림 발행·배선 없음 | 기존 참여자가 새 회차를 놓칠 수 있어 별도 알림 정책과 발행 경로가 필요하다. |
-| P2 | Flutter replace 요청이 전용 모델 대신 `RegularMeetingSessionAddParam`을 재사용 | 현재 JSON 필드는 호환되지만 서버 ReplaceParam이 분기되면 compile-time 계약 보호가 약하다. |
+위 두 문장은 기존 문서의 과거 구현·시험 주장 원문이다. 당시 실행을 이번에 재현하거나 현재 기준의 통과로 합산하지 않았다. 과거 숫자·옛 패키지 경로·해결된 후속 목록은 현재 계약에서 제거했다.

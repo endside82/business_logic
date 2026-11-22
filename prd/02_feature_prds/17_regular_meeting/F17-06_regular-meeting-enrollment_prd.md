@@ -1,131 +1,89 @@
-# F17-06. 고정형 등록·승인·대기열 (FIXED) PRD
+# F17-06. 정기모임 등록·승인·대기·취소 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 입구
 
-FIXED 모임만의 멤버 8 상태 머신:
+FIXED 전체 과정의 등록을 다룬다. VARIABLE은 [회차 관리](F17-05_regular-meeting-sessions_prd.md)에서 생성한 개별 이벤트에 신청한다. 모임 상세의 참여 행동에서 등록 화면으로 이동하며 승인제일 때 자기소개·지원 동기를 입력할 수 있다. 등록 결과가 APPROVED_PENDING_PAYMENT이면 결제 화면으로 이동하고, 나머지 결과는 상태를 알린 뒤 이전 화면으로 돌아간다.
 
-```
-신청 → PENDING(승인제) | APPROVED_PENDING_PAYMENT(무승인+유료) | ENROLLED(무료)
-PENDING → APPROVED_PENDING_PAYMENT | ENROLLED | REJECTED
-APPROVED_PENDING_PAYMENT → ENROLLED(결제) | PAYMENT_EXPIRED(만료)
-정원초과 → WAITING → ENROLLED(승격+결제)
-ENROLLED → CANCELED(취소+환불) | FORFEITED(노쇼 한도, 무환불)
-```
+현재 호스트는 상세의 멤버·결제 관리에서 신청 승인·거절, 탈퇴 회원 제거, 입금·환불 처리를 한다. 앱은 회원 목록을 100명씩 끝까지 읽어 ID로 중복을 제거하되 50페이지를 넘으면 불완전한 목록을 성공으로 보여주지 않고 오류로 처리한다.
 
-좌석 점유(occupiesSeat): `PENDING | APPROVED_PENDING_PAYMENT | ENROLLED`. terminal: `CANCELED | REJECTED | PAYMENT_EXPIRED | FORFEITED`.
+## 현재 서버 계약
 
-호스트 5 액션: enroll(참가자) / cancelEnrollment(참가자) / approve(호스트) / reject(호스트) / 자동 승격(WAITING → APPROVED_PENDING_PAYMENT).
+기본 경로는 `/api/v1/regular-meetings`다. 등록과 승인 판단은 모임 행 잠금 아래 수행한다.
 
-핵심 가드:
-- 호스트 자신 enroll 금지 (`HOST_CANNOT_ENROLL`)
-- FORFEITED 재신청 금지 (`ENROLLMENT_FORFEITED`)
-- ENROLLED 동안 재신청 금지 (`ALREADY_ENROLLED`)
-- 종료(CANCELED/REJECTED/PAYMENT_EXPIRED) 후 재신청은 동일 row 재사용 (UNIQUE `(meeting_id, user_id)`)
-- CLOSED/CANCELED 모임에서는 자발 취소 금지 (`REGULAR_MEETING_INVALID_STATUS`) — 클로백 갭/중복 환불 방지
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingEnrollmentService`, `RegularMeetingMaterializationService`. 앱: `regular_meeting_enroll_screen.dart`, `regular_meeting_members_screen.dart`.
-
-## 3. 전체 동작 흐름
-
-### 3.1 enroll (`POST /enroll`)
-1. `lockFixedOpenMeeting(meetingId)` — FIXED + OPEN 만.
-2. 호스트 자신 차단 (`HOST_CANNOT_ENROLL`).
-3. 기존 member row 조회:
-   - `FORFEITED` → 거절.
-   - non-terminal → `ALREADY_ENROLLED`.
-   - terminal (재신청) → row 재사용.
-4. `activeSeats = count(status IN {PENDING, APPROVED_PENDING_PAYMENT, ENROLLED})`.
-5. status 결정:
-   - `meeting.approvalRequired=true` → PENDING (좌석 점유 시작)
-   - approvalRequired=false + price>0 → APPROVED_PENDING_PAYMENT (좌석 예약, paymentDueAt=now+72h)
-   - approvalRequired=false + price=0 → ENROLLED (즉시 확정)
-   - activeSeats >= baseCapacity → WAITING (`waitlistOrder` 자동 할당)
-6. ENROLLED 이면 `materializationService.syncMemberAdded` — 이미 ≤24h 머터리얼라이즈된 미래 세션에 ATTENDING catch-up.
-7. 응답: `RegularMeetingMemberVo`.
-
-### 3.2 cancelEnrollment (`DELETE /enroll`)
-1. `findByIdForUpdate(meetingId)`.
-2. `meeting.status ∈ {CLOSED, CANCELED}` → 거절 (`REGULAR_MEETING_INVALID_STATUS`).
-3. member 조회 (terminal 이면 거절).
-4. ENROLLED + price>0 → MEMBER_CANCEL pro-rata 환불 (F17-08).
-5. status = CANCELED. 자리 비움 → 다음 WAITING 자동 승격 (`promoteWaitlist`):
-   - 가장 작은 `waitlistOrder` 의 WAITING 1명 → APPROVED_PENDING_PAYMENT(유료) 또는 ENROLLED(무료).
-   - 승격 직후 알림(후속) + Flutter 가 invalidate.
-6. `materializationService.syncMemberRemoved` — 미래 세션 ATTENDING demote.
-
-### 3.3 approve (`POST /members/{memberId}/approve`)
-- 호스트만. PENDING 만.
-- 결과: price>0 → APPROVED_PENDING_PAYMENT (paymentDueAt=now+72h) / price=0 → ENROLLED.
-- 결정 메시지(`decisionMessage`) 저장.
-
-### 3.4 reject (`POST /members/{memberId}/reject`)
-- 호스트만. PENDING 만.
-- 결과: REJECTED. 좌석 비움 → 다음 WAITING 승격.
-
-### 3.5 getMembers (`GET /members`)
-- 호스트만. 페이징.
-- 정렬: status priority (ENROLLED → APPROVED_PENDING_PAYMENT → PENDING → WAITING → terminal) + enrolledAt ASC.
-
-### 3.6 getMyMembership (`GET /members/me`)
-- 인증 필수. 없으면 404 (silent for Flutter).
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S6-1 | 무승인 + 무료 enroll | approvalRequired=false, price=0, 정원 여유 | ENROLLED 즉시. ATTENDING catch-up |
-| S6-2 | 무승인 + 유료 enroll | approvalRequired=false, price>0 | APPROVED_PENDING_PAYMENT + paymentDueAt=now+72h |
-| S6-3 | 승인제 enroll | approvalRequired=true | PENDING. 호스트 알림 |
-| S6-4 | PENDING → approve (유료) | 호스트 approve | APPROVED_PENDING_PAYMENT + paymentDueAt |
-| S6-5 | PENDING → reject | 호스트 reject(decisionMessage) | REJECTED. 좌석 비움 → 다음 WAITING 승격 |
-| S6-6 | 정원 초과 → WAITING | activeSeats=baseCapacity | WAITING + waitlistOrder |
-| S6-7 | WAITING 자동 승격 | ENROLLED 1명 cancelEnrollment | 가장 작은 waitlistOrder WAITING → APPROVED_PENDING_PAYMENT or ENROLLED |
-| S6-8 | ENROLLED 자가 취소 | OPEN 상태 | CANCELED + MEMBER_CANCEL pro-rata 환불 (F17-08) |
-| S6-9 | CLOSED 모임 자가 취소 시도 | meeting CLOSED | 400 `REGULAR_MEETING_INVALID_STATUS` |
-| S6-10 | 호스트 자신 enroll 시도 | hostUserId == userId | 400 `HOST_CANNOT_ENROLL` |
-| S6-11 | FORFEITED 재신청 | 노쇼 한도 박탈 후 | 400 `ENROLLMENT_FORFEITED` (영구 차단) |
-| S6-12 | CANCELED 후 재신청 | terminal → 동일 row 재사용 | 정상 enroll. row 의 status/message/reviewedBy 등 초기화 |
-| S6-13 | PAYMENT_EXPIRED → 자동 좌석 해제 | paymentDueAt 만료 (F17-07 스케줄러) | PAYMENT_EXPIRED + 다음 WAITING 승격 |
-| S6-14 | VARIABLE 모임에 enroll | meetingType=VARIABLE | 400 — `lockFixedOpenMeeting` 가 `REGULAR_MEETING_NOT_FIXED` |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 요청 | 입력 | 결과 |
 |---|---|---|
-| `(meeting_id, user_id)` UNIQUE | DDL | 한 user 가 한 모임에 동시에 두 row 불가 |
-| terminal 후 재신청 row 재사용 | `enroll()` 분기에서 `member.status.isTerminal()` 후 reset | 잘 동작. UNIQUE 만족 |
-| 좌석 카운트 일관성 | `countByRegularMeetingIdAndStatusIn(SEAT_STATUSES)` 기준 | enroll/cancel 모두 같은 술어 사용 |
-| 승격 알고리즘 | `waitlistOrder ASC` 첫 번째 WAITING | FIFO |
-| CLOSED 자가 취소 차단 | `cancelEnrollment` 의 status 분기 | 클로백 갭 / 중복 환불 방지 |
-| materialize 동기화 | `syncMemberAdded/syncMemberRemoved` 양방향 호출 | ATTENDING catch-up + demote 양쪽 정상 |
+| POST /{id}/enroll | 선택 RegularMeetingEnrollParam.message, 최대 500자 | 201 RegularMeetingMemberVo |
+| DELETE /{id}/enroll | Idempotency-Key 필수 | 200 RegularMeetingMemberVo |
+| GET /{id}/members | 호스트, PagingParam | PageResponse<RegularMeetingMemberVo> |
+| GET /{id}/members/me | 본인 | RegularMeetingMemberVo |
+| POST /{id}/members/{memberId}/approve | 호스트, 선택 EnrollmentDecisionParam | RegularMeetingMemberVo |
+| POST /{id}/members/{memberId}/reject | 호스트, 선택 EnrollmentDecisionParam | RegularMeetingMemberVo |
+| POST /{id}/members/{memberId}/remove-withdrawn | 호스트 | RegularMeetingMemberVo |
 
-## 8. Gap / Risk
+회원 응답은 id, userId, nickname, profileUrl, status, enrolledAt, paymentDueAt, waitlistOrder, attendedCount, noShowCount, consecutiveNoShowCount, withdrawn을 포함한다. 회원 ID와 사용자 ID를 혼용하지 않는다. 본인 등록이 없는 경우 서버는 ENROLLMENT_INVALID_STATUS를 반환하며 앱이 이 오류만 미등록으로 해석한다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 잔여 | 도메인 §9 | RM 푸시 라우팅 미구현 → 승인/거절/승격/만료 알림 미발송 | NotificationType 정의 후 추가 |
-| 위험 | WAITING 가시성 | 사용자가 WAITING 인 줄 모름 (앱이 알림 없으면 새로고침 의존) | invalidate 빈도 + 알림 통합 |
-| 위험 | approve race | 호스트 두 명(공동호스트 미지원) 동시 approve 시 — 현재 단일 호스트만이라 안전 | 공동호스트 도입 시 락 필요 |
+## 상태·좌석·등록 조건
 
-## 9. 수용 기준
-
-- **AC-01 (S6-1). 무료 즉시 enroll**: Given approvalRequired=false, price=0, 정원여유. Then ENROLLED + ATTENDING catch-up.
-- **AC-02 (S6-6). 정원 초과 WAITING**: Given activeSeats=baseCapacity. Then WAITING + waitlistOrder=N.
-- **AC-03 (S6-7). 자동 승격**: Given ENROLLED 1명 취소. Then WAITING 중 가장 작은 order → APPROVED_PENDING_PAYMENT(유료) 또는 ENROLLED(무료).
-- **AC-04 (S6-9). CLOSED 자가 취소 차단**: Given meeting CLOSED. When `DELETE /enroll`. Then 400 `REGULAR_MEETING_INVALID_STATUS`.
-- **AC-05 (S6-10). 호스트 자신 차단**: Given hostUserId=userId. When enroll. Then 400 `HOST_CANNOT_ENROLL`.
-- **AC-06 (S6-11). FORFEITED 영구 차단**: Given member FORFEITED. When enroll. Then 400 `ENROLLMENT_FORFEITED`.
-- **AC-07 (S6-12). terminal 후 재신청**: Given member CANCELED. When enroll. Then row 재사용 + 새 status (PENDING/APPROVED_PENDING_PAYMENT/ENROLLED).
-
-## 10. 미결정 / 후속
-
-| 항목 | 사유 | 후속 |
+| 상태 | 좌석 점유 | 의미 |
 |---|---|---|
-| 호스트 일괄 approve | MVP 는 개별만 | 후속 슬라이스 |
-| WAITING 가시 알림 | NotificationType 미정의 | 푸시 통합 |
-| 공동호스트 권한 분리 | MVP 는 단일 호스트만 | 후속 |
+| PENDING | 예 | 호스트 승인 대기 |
+| APPROVED_PENDING_PAYMENT | 예 | 승인 후 또는 자동 승인된 유료 과정의 납부 대기 |
+| ENROLLED | 예 | 등록 완료 |
+| WAITING | 아니요 | 자리·차례 대기 |
+| PAYMENT_EXPIRED | 아니요 | 납부 의무 만료 |
+| CANCELED | 아니요 | 등록 취소 |
+| REJECTED | 아니요 | 신청 거절 |
+| FORFEITED | 아니요 | 노쇼 정책에 따른 자격 박탈 |
+
+FIXED·OPEN만 등록할 수 있다. 본체 호스트는 HOST_CANNOT_ENROLL, 신청 제한 회원은 해당 제재 오류로 거절한다. 유료는 prepaymentRequired 또는 양수 가격으로 판정하고 현재 판매 가능한 결제 정책도 검사한다. FORFEITED는 일반 재등록을 거절한다. 다른 비종결 상태는 ALREADY_ENROLLED이며 CANCELED·REJECTED·PAYMENT_EXPIRED는 같은 회원 행을 재사용해 재등록할 수 있다.
+
+기존 대기열을 먼저 승격한 뒤 신규 등록을 판정한다. 정원이 찼거나 남은 대기자가 있으면 WAITING이다. 자리가 있으면 승인제는 PENDING, 승인이 필요 없는 유료는 APPROVED_PENDING_PAYMENT, 무료는 ENROLLED다. 납부 대기 진입 때 현재로부터 72시간의 paymentDueAt과 본체에 연결된 hostBankAccountId를 회원에 저장한다. 기존 대기자가 있는데 새 신청자가 빈자리를 먼저 차지하는 규칙은 아니다.
+
+## 승인·거절·대기자 승격
+
+승인은 FIXED·OPEN과 현재 호스트, 해당 모임의 PENDING 회원을 확인한다. 대상 계정이 닫혔는지 재검사하고 유료는 결제 정책, 무료는 신청 제재를 검사한다. 승인 결과는 유료면 납부 대기, 무료면 등록 완료다. 무료 등록 완료 때 회차 참석 동기화를 수행한다. 승인·거절의 decisionMessage는 최대 500자이며 검토자·처리 시각을 기록한다. 현재 앱은 두 명령에 null 본문을 보내므로 운영 화면의 거절 사유 입력 지원과 혼동하지 않는다.
+
+거절은 PENDING을 REJECTED로 바꾸며 서비스가 승인과 똑같이 OPEN을 별도 선행 검사하지는 않는다. 자리 반환 후 승격을 커밋 뒤 요청한다. 승격은 OPEN에서만, waitlistOrder 순서로 같은 승인·유료·무료 분기를 적용한다. 닫힌 계정은 건너뛰고 즉시 ENROLLED가 되는 무료 분기에서는 신청 제한도 확인한다. 유료 기능이 잠기면 대기열을 보존한다. ‘대기 승격=등록 완료’로 단정하지 않는다.
+
+## 취소·탈퇴 회원 제거·재확인
+
+본인은 CLOSED/CANCELED가 아닌 모임의 비종결 등록을 취소할 수 있다. ENROLLED의 향후 참석을 해제하고 [정기모임 환불](F17-08_regular-meeting-refund_prd.md)을 같은 명령 흐름에서 호출한다. 좌석 점유 회원이 빠지면 커밋 뒤 승격을 요청한다. 등록 취소 응답은 은행 송금까지 끝났다는 뜻이 아니다.
+
+remove-withdrawn은 모임이 끝나지 않았고 대상 계정이 실제 탈퇴했으며 진행 중 결제가 없는 경우에만 동작한다. 임의 회원을 강퇴하는 API가 아니다. 앱은 영향을 확인한 뒤 이 명령을 전송한다.
+
+앱 등록 취소는 회원 금전 명령의 요청키를 사용하고 성공 또는 커밋 여부가 불명확한 응답 뒤 본인 등록·결제·지갑·모임·이벤트 조회를 갱신한다. 신규 등록은 같은 요청키 계약이 없으며 성공한 재등록은 이전 취소 의도를 정리한다. 관리 화면은 명령 실패와 명령 성공 뒤 목록 재조회 실패를 구분한다.
+
+## 알림과 만료
+
+현재 서버에는 신청, 승인, 거절, 대기 승격, 납부 만료 알림 호출이 있다. ‘알림 미구현’으로 남기지 않는다. 실제 발송·수신 여부는 이번에 실행하지 않았다. 납부 만료 작업은 5분 주기로 후보를 읽고 모임 잠금 안에서 OPEN·납부 대기·기한 경과·진행 중 결제 없음 조건을 다시 검사한다. 은행 입금 신고가 살아 있으면 회원 납부 기한만으로 만료시키지 않는다. 같은 스케줄러가 대기열도 다시 점검한다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#enroll`, `RegularMeetingController#cancelEnrollment`, `RegularMeetingController#members`, `RegularMeetingController#myMembership`, `RegularMeetingController#approveEnrollment`, `RegularMeetingController#rejectEnrollment`, `RegularMeetingController#removeWithdrawnMember`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 앱 승인·거절은 선택 사유를 보내지 않는다. | 서버의 사유 저장 지원과 앱 입력을 구분한다. |
+| Risk | WAITING 승격은 승인·납부 대기로 갈 수 있다. | 좌석 확보와 최종 등록 완료를 나눠 안내한다. |
+| Risk | 일시 오류의 결과가 이미 반영됐을 수 있다. | 새 등록·취소를 반복하기 전 현재 등록을 재조회한다. |
+| 미검증 | 알림 수신·동시 등록·계정 전환을 새로 실행하지 않았다. | 소스 근거를 실행 통과로 바꾸지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 등록 대상:** FIXED·OPEN, 호스트 자기 등록 금지, 신청 제한과 유료 공개 조건을 설명한다.
+- **AC-02 좌석 상태:** PENDING·APPROVED_PENDING_PAYMENT·ENROLLED만 좌석을 점유한다.
+- **AC-03 승인과 납부:** 승인 여부를 먼저 판정하고 무료·유료 등록 완료 시점을 구분한다.
+- **AC-04 대기 순서:** 기존 대기자를 우선하며 승격 결과도 승인·납부 규칙을 따른다.
+- **AC-05 재등록:** 일반 재등록 가능 종결 상태와 FORFEITED의 거절을 구분한다.
+- **AC-06 등록 취소:** 필수 요청키·참석 해제·환불·커밋 뒤 승격을 연결한다.
+- **AC-07 호스트 관리:** 전체 회원 페이지·사유 입력 범위·탈퇴 계정 제거 조건을 설명한다.
+- **AC-08 만료와 알림:** 신고된 결제의 만료 제외와 현재 알림 호출을 기록한다.
+
+근거는 서버·앱 소스 대조이며 새 제품 시험 결과는 없다.

@@ -1,134 +1,82 @@
-# F17-10. 호스트 정산 (flow-through) PRD
+# F17-10. 정기모임 수익 정산·보류·조회 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 2026-10-29 현재 계약 대조
+## 현재 범위와 입구
 
-### 체크인 기록을 출석 확정의 초깃값으로 씁니다
+FIXED 과정이 CLOSED 또는 CANCELED가 된 뒤 플랫폼이 보유한 지갑 수익의 잔여분으로 정산을 만든다. BANK_TRANSFER의 호스트 직접 입금은 이 지갑 정산 대상이 아니다. 현재 호스트는 상세의 정산 보기에서 결과를 읽고 해당 정산에 연결된 문의를 시작할 수 있다.
 
-출석 확정 미리보기는 체크인 기록을 반영하고 참석·노쇼·사유 인정 값을 조정할 수 있게 한다. 검토가 필요한 사람은 사유 인정(EXCUSED)에서 시작해 호스트가 판정한다. 시작 전 생성 실패 회차는 운영자가 재생성할 수 있다. 자동 정산 생성이 반복 실패하면 운영자 경보를 남기며 같은 실패를 무한히 새 경보로 쌓지 않는다.
+정산 행 생성과 승인·지급은 서로 다른 단계다. tryCreateSettlement는 PENDING 정산을 만들며 이 호출만으로 은행 지급이 완료되는 것은 아니다. 회차별 정산과 전체 과정 정산도 같은 금액으로 중복 취급하지 않는다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+## 현재 서버 계약
 
-## 1. 결론
-
-FIXED 모임 종료(`CLOSED`) 시 코스당 1건의 `Settlement(regular_meeting_id=...)` 가 생성된다. **flow-through** 모델: WALLET 결제의 retained 유료 포인트 합계만 호스트 수익으로 잡고, retained 무료 포인트 합계는 `freePointSubsidy`(플랫폼 보조, payout 비대상)로 분리한다. BANK_TRANSFER 는 호스트 직접입금(`isHostDirect=true`, off-ledger)이라 payout 대상 아님.
-
-산식:
-```
-retainedPaid = Σ (origTx.paidAmount − refundTx.paidAmount)  for each PAID|REFUNDED WALLET payment with pointTxId, !hostDirect
-retainedFree = Σ (origTx.freeAmount − refundTx.freeAmount)  for each PAID|REFUNDED WALLET payment with pointTxId, !hostDirect
-gross = retainedPaid
-freePointSubsidy = retainedFree
-platformFee = gross × 10%
-withholdingTax = gross × 3.3%
-netAmount = gross − platformFee − withholdingTax
-```
-
-**머니 안전 다층 방어**:
-1. `close()` `findByIdForUpdate` 잠금 (pay 와 직렬화)
-2. close FIXED 가드: 미래 OPEN 세션 무 + `activeSessionCount == totalSessionCount` + 모든 정션 FINALIZED
-3. 정산 생성은 **afterCommit** REQUIRES_NEW (close 커밋 후 → orphan 차단)
-4. `tryCreateSettlement` 에 CLOSED 가드 (scheduler 우회 방지)
-5. `cancelEnrollment` CLOSED/CANCELED 거절
-6. `cancel()` `findByIdForUpdate` 잠금
-7. `finalizeSession` endTime≤now 강제
-8. FORFEIT 환불은 finalize 시점(=close 전) 에만 발생 → settlement gross 의 retained paid 에 자연 반영
-
-이중지급 차단:
-- `uk_settlement_rm(regular_meeting_id)` UNIQUE — 코스당 1정산
-- `SettlementService.doCreditAndRecord` 의 `existsByReferenceTypeAndReferenceId("SETTLEMENT", id)` 멱등
-- `reservedRefund > 0` 게이트 (`completeSettlement` 내부, retry scheduler 우회 불가)
-
-`fail-closed`: 참조 결제/환불 PointTransaction 이 없으면 `TRANSACTION_NOT_FOUND` 던지고 중단 → 다음 failsafe 주기에 데이터 보정 후 재시도.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingSettlementService`, `RegularMeetingService`, `SettlementService`.
-
-## 3. 전체 동작 흐름
-
-### 3.1 트리거 (close → afterCommit)
-1. F17-04 §3.2 close 가 통과하면 `TransactionSynchronizationManager.registerSynchronization` 으로 afterCommit 등록.
-2. 커밋 후 별도 트랜잭션 (`REQUIRES_NEW`) 으로 `tryCreateSettlement(meetingId)` 호출.
-3. 실패 시 close 자체는 롤백 안 됨 — `RegularMeetingSettlementScheduler` 가 1h 마다 재시도.
-
-### 3.2 tryCreateSettlement 산식
-1. 멱등 — `settlementRepository.existsByRegularMeetingId(meetingId)` true → null 반환.
-2. meeting null 또는 not FIXED → null.
-3. `meeting.status != CLOSED` → null (scheduler 우회 방지).
-4. payment row 순회 — WALLET + !isHostDirect + pointTxId != null + status ∈ {PAID, REFUNDED}:
-   - 결제 tx: `paid, free` (paidAmount, freeAmount).
-   - 환불 tx (refundPointTxId != null): `paid -= refundTx.paidAmount`, `free -= refundTx.freeAmount`.
-   - fail-closed: tx 못 찾으면 `TRANSACTION_NOT_FOUND`.
-   - `retainedPaid += max(0, paid)`, `retainedFree += max(0, free)`.
-5. `retainedPaid <= 0` → skip (settlement-skipped 마커 영구 재검사 잔여, §9 도메인).
-6. 정산 기간 (periodStart, periodEnd) — 코스 startDate/endDate 또는 publishedAt~closedAt 기반.
-7. `gross = retainedPaid`, `freeSubsidy = retainedFree`, `platformFee=gross×0.10`, `withholdingTax=gross×0.033`, `netAmount=gross−fee−tax`.
-8. `Settlement(regular_meeting_id, status=PENDING, gross, fee, tax, net, freeSubsidy, periodStart, periodEnd)` insert.
-9. `recordRegularMeetingPayment` 이미 적립한 CREATOR_PAYABLE 을 `recordSettlementComplete`(gross 분) 로 소거.
-
-### 3.3 호스트 조회 (`GET /settlement`)
-1. host + meeting CLOSED 일 때만 의미.
-2. 미생성 → 204 No Content.
-3. 생성됐으면 `RegularMeetingSettlementVo` 응답:
-   - `settlementId, regularMeetingId, status, grossAmount, platformFee, withholdingTax, netAmount, freePointSubsidy, reservedRefund, periodStart, periodEnd, settledAt, createdAt`.
-
-### 3.4 후속 approve → completeSettlement (기존 파이프라인)
-- 이벤트 정산과 동일 — `SettlementService.completeSettlement` 재사용.
-- `reservedRefund > 0` 게이트 — 미정리 환불(예: FORFEIT 환불 실패) 있을 때 retry 보류.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S10-1 | close 직후 정산 생성 (정상) | FIXED CLOSED, 모든 세션 FINALIZED, 8 멤버 WALLET PAID 평균 80000 | Settlement(regular_meeting_id=X, status=PENDING, gross=640000, fee=64000, tax=21120, net=554880) |
-| S10-2 | 환불 후 재계산 | 멤버 1명 MEMBER_CANCEL 4세션 환불 (refund=40000) | retainedPaid = 640000 - 40000 = 600000. gross=600000 |
-| S10-3 | BANK PAID 멤버 1명 | payment.isHostDirect=true 1명, 나머지 WALLET | BANK 결제 가산 안 됨 — gross 는 WALLET 만 |
-| S10-4 | 무료 포인트만 결제 | retainedPaid=0, retainedFree=80000 | settlement skip (null 반환). freeSubsidy 만 있는 케이스는 settlement-skipped 마커 잔여 |
-| S10-5 | 정산 멱등 호출 | 이미 생성된 Settlement 있음 | tryCreateSettlement 가 null 반환. 중복 생성 안 됨 (`uk_settlement_rm`) |
-| S10-6 | scheduler 우회 (`status != CLOSED`) | 어떤 사유로 OPEN 상태에서 scheduler 가 호출 | null 반환 — CLOSED 가드 |
-| S10-7 | fail-closed tx 누락 | pointTxId 가 가리키는 tx 없음 | `TRANSACTION_NOT_FOUND` → 트랜잭션 롤백 → failsafe 재시도 |
-| S10-8 | FORFEIT 환불 후 close | finalize 중 FORFEIT 발생 → close 진행 | 환불은 finalize 시점에 끝나 settlement gross 에 자연 반영. reservedRefund 는 일반 환불 예약분 |
-| S10-9 | host 가 비호스트 모임 settlement 조회 | 다른 user | 403 `REGULAR_MEETING_FORBIDDEN` (`accessService.assertHost`) |
-| S10-10 | 정산 미생성 GET | 정산 row 없음 | 204 No Content |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 요청 | 권한 | 결과 |
 |---|---|---|
-| 산식 flow-through | retained = orig.paid - refund.paid (PAID + REFUNDED 둘 다 순회) | 확정 |
-| `freePointSubsidy` 분리 | retainedFree 가 별도 컬럼 | 호스트 payout 비대상 |
-| 멱등 보장 | `uk_settlement_rm` + `existsByRegularMeetingId` + `existsByReferenceTypeAndReferenceId("SETTLEMENT", id)` | 3중 보장 |
-| afterCommit 분리 | `TransactionSynchronization` + REQUIRES_NEW | orphan 차단  |
-| fail-closed | tx 누락시 throw → failsafe 재시도 | 데이터 무결성 보호 |
-| CLOSED 가드 | scheduler 진입 시 `meeting.status != CLOSED` → skip | scheduler 우회 방지 |
-| reservedRefund 게이트 | `completeSettlement` 내부에 `reservedRefund.signum() > 0` → `return false` retry 보류 | 미정리 환불 있을 때 지급 안 됨 |
-| Settlement 단일 컬럼 either-or | DDL `CHECK ((event_id IS NULL) <> (regular_meeting_id IS NULL))` | event Settlement vs RM Settlement 양립 불가 |
-| `WalletQueryService.toSettlementDetailVo` + `AccountDeactivationService.loadEventTitles` | RM 행 이벤트뷰 NPE 방지 — null 필터 + RM 분기  | 안전 |
+| GET /api/v1/regular-meetings/{id}/settlement | 현재 호스트 | RegularMeetingSettlementVo, 행이 없으면 204 |
 
-## 8. Gap / Risk
+응답의 settlementId와 regularMeetingId는 서로 다르다. status, grossAmount, platformFee, withholdingTax, platformFeeRate, withholdingTaxRate, netAmount, freePointSubsidy, periodStart, periodEnd, settledAt, createdAt을 반환한다. 서버 금액은 BigDecimal이며 앱 모델은 double 변환을 사용한다. 요율 표시는 문자열이므로 고정 숫자나 클라이언트 상수로 대체하지 않는다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 잔여 | §9 도메인 | `retained ≤ 0` 종료 코스 failsafe 영구 재검사 (settlement-skipped 마커 누락) | 후속 — 무료 포인트만 있는 코스 정산 정책 결정 |
-| 위험 | failsafe 1h 주기 | 호스트가 close 직후 정산을 보려고 하면 최대 1h 대기 — afterCommit 성공시 즉시 보임 | UI "준비중" 메시지로 안내 |
-| 위험 | FORFEIT 가 close 후 발생 | C5/C8 가드로 close 전에만 FORFEIT 가능. close 후 환불은 차단 (cancelEnrollment CLOSED 거절) | 검증됨 |
+## 출석 확정과 종료 선행 조건
 
-## 9. 수용 기준
+정상 FIXED 종료는 활성 회차 수가 계획 수와 같고 활성 회차 종료 시각이 현재 이하이며 출석이 모두 FINALIZED인지 검사한다. 취소 이력은 이 확정 대상에서 제외한다. 이 조건은 [과정 종료](F17-04_regular-meeting-lifecycle_prd.md#종료와-자동-종료)에서 집행한다. 정산 서비스 자체가 모든 출석 원장을 다시 확정하는 것은 아니다.
 
-- **AC-01 (S10-1). 정산 생성 happy path**: Given FIXED CLOSED + 8 WALLET PAID. When close. Then afterCommit `Settlement(regular_meeting_id, status=PENDING)` 1건 생성 + gross=Σretained, fee=10%, tax=3.3%, net=gross-fee-tax.
-- **AC-02 (S10-5). 멱등**: Given 이미 정산 존재. When tryCreateSettlement. Then null + 중복 row 안 만들어짐.
-- **AC-03 (S10-3). BANK 제외**: Given 1 BANK + 7 WALLET. Then gross = Σ7 WALLET retained.
-- **AC-04 (S10-7). fail-closed**: Given pointTxId 가 가리키는 tx 없음. Then `TRANSACTION_NOT_FOUND` + 트랜잭션 롤백 + scheduler 재시도.
-- **AC-05 (S10-6). scheduler 우회 방지**: Given meeting.status != CLOSED. When scheduler 호출. Then null (skip).
-- **AC-06 (S10-9). 호스트 권한**: Given 비호스트. When GET. Then 403.
+모임 취소의 환불은 커밋 뒤 이어지므로 CANCELED 직후에도 정산 생성이 보류될 수 있다. 정산은 모임 행 잠금·호스트 존재·기존 정산 없음·FIXED 종료 상태를 확인하고 새 트랜잭션으로 처리한다.
 
-## 10. 미결정 / 후속
+## 잔여 지갑 수익과 일관성
 
-| 항목 | 사유 | 후속 |
+대상 결제는 WALLET, hostDirect=false, pointTxId 존재, PAID 또는 REFUNDED다. 원 지갑 거래의 유료·무료 사용분을 각각 읽고 실제 환불 거래의 유료·무료분을 뺀다. 환불 원장이 있으면 그 금액을 사용하며 refundAmount만 보고 임의로 유료/무료를 나누지 않는다.
+
+운영자가 보상·상각으로 종결한 실패 환불의 미제공분은 PAID 원결제에서 비례 분리해 차감하고 회계 해제 기록을 남긴다. 같은 사용자에게 종결된 실패 기록이 중복되거나 미제공 금액이 원결제 범위를 벗어나면 생성하지 않는다. 참조한 원결제·환불 거래를 찾지 못하는 경우도 오류다. pointTxId 자체가 null인 결제는 대상 필터에서 제외되므로 참조 ID 존재 후 원장 누락과 구분한다.
+
+잔여 유료+무료가 양수면 정산을 만들 수 있다. 무료 포인트만 남아도 freePointSubsidy를 가진 행 생성 대상이다. 잔여 합계가 0이면 행을 만들지 않는다. ‘무료 포인트만 남은 과정은 정산 정책 미정’이라는 기존 설명을 현재 구현으로 사용하지 않는다.
+
+## 환불 보류와 수수료 계산
+
+CANCELED에서는 남은 취소 환불 의무와 운영자 처리 환불을 검사한다. CLOSED에서는 운영자 처리 환불을 검사한다. 은행 REFUND_REQUESTED와 운영자에게 넘어간 지갑 환불을 동일한 필드로 합쳐 설명하지 않는다. 구체적인 취소 의무·실패 기록 판정은 조회 저장소의 hasCancelRefundHoldingSettlement/hasRefundWithOperator를 따른다.
+
+| 항목 | 현재 계산 |
+|---|---|
+| 총 매출 grossAmount | 잔여 유료 포인트 |
+| 무료 보조 freePointSubsidy | 잔여 무료 포인트, gross와 별도 |
+| 플랫폼 수수료 | gross × 적용일 PLATFORM_FEE 요율, 정수 HALF_UP |
+| 원천징수 | (gross − 플랫폼 수수료) × 적용일 WITHHOLDING_TAX 요율, 정수 HALF_UP |
+| netAmount | gross − 플랫폼 수수료 − 원천징수 |
+
+요율은 FeePolicyService에서 적용일 정책을 조회하고 없을 때 enum 기본값을 사용한다. ‘항상 10%·3.3%’로 고정하지 않는다. 적용일은 본체 종료/취소일과 기간 종료일 중 앞선 날이며 기간 종료는 시작보다 빠르지 않게 보정한다. 무료 보조를 netAmount에 다시 더해 같은 금액으로 표시하지 않는다.
+
+## 생성 재시도와 조회의 의미
+
+종료 명령의 커밋 뒤 정산 생성과 1시간 주기의 누락 보정 작업이 있다. 보정 후보는 종료/취소된 FIXED, 정산 행 없음, 대상 지갑 결제 존재 조건을 사용한다. 단순 무료 과정·은행만 납부한 과정은 이 지갑 결제 후보와 다르다. 지갑 결제가 전액 환불돼 잔여가 0인 경우에는 별도 건너뜀 행 없이 후보에 남아 재검사될 수 있다. 이 제한은 무료 포인트만 있는 모든 과정에 적용된다는 뜻이 아니다.
+
+후속 실행 실패는 다음 주기에 재시도하며 오래 실패한 대상에는 운영 알림 경로가 있다. ‘반드시 한 시간 뒤 정산이 생긴다’는 보장은 아니다. 미해결 환불·원장 이상·잔여 0원이라면 생성되지 않는다.
+
+앱은 204를 null로 받아 아직 정산이 없다는 안내를 표시한다. 이 안내가 지갑 수익 없는 정상 무생성, 일시 생성 대기, 환불 보류를 각각 구별하는 상세 사유 응답은 아니다. 행이 있으면 서버 요율·금액·기간·지급일을 표시하고 sourceType=regularMeetingSettlement 및 settlementId로 문의 화면에 연결한다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#settlement`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| settlement-skipped 마커 | `retainedPaid ≤ 0` 코스 영구 재시도 회피 | 마커 row + 재시도 차단 정책 결정 |
-| FORFEIT 환불 reservedRefund 반영 | 1차는 finalize 시점에 자연 환불 — close 후 추가 reserve 는 아직 없음 | 정산 후 잔존 환불 정책 결정 |
-| 호스트 정산 이의제기 | 일반 Settlement 의 dispute 흐름 (F06-10) 재사용 | 통합 검토 |
+| Gap | 정산이 없는 204 응답에 무생성/보류 사유가 없다. | 빈 화면 문구를 정확한 원인 판정으로 설명하지 않는다. |
+| Risk | 전액 환불된 대상 지갑 결제는 보정 후보에 남을 수 있다. | 0원 건너뜀 표지 부재의 범위를 한정한다. |
+| Risk | 생성과 은행 지급은 별도 단계다. | PENDING 생성 성공을 지급 완료로 기록하지 않는다. |
+| 미검증 | 회계 원장·실제 지급·실패 환불 운영 처리를 실행하지 않았다. | 계산 근거와 실지급 검증을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 생성 대상:** FIXED의 CLOSED/CANCELED, 기존 정산 없음과 대상 지갑 결제를 구분한다.
+- **AC-02 환불 보류:** 취소 환불과 운영자 처리 대상의 보류 조건을 설명한다.
+- **AC-03 잔여 수익:** 원결제·실제 환불·종결 실패 환불의 유료/무료 분리와 이상 검사를 기록한다.
+- **AC-04 무료 보조:** 무료 포인트만 남은 양수 수익도 행 생성 대상이며 net과 별도다.
+- **AC-05 요율 계산:** 적용일별 정책·정수 반올림·금액 타입·표시 요율을 연결한다.
+- **AC-06 누락 보정:** 커밋 뒤 생성·시간 주기 재시도·잔여 0원 후보 경계를 설명한다.
+- **AC-07 조회 의미:** 호스트 권한·204와 사유 미분류·실제 지급 상태를 구분한다.
+- **AC-08 앱 문의:** 표시 금액과 정산 ID에 연결된 문의 입구를 기록한다.
+
+근거는 서버·앱 소스 대조이며 새 제품 시험 결과는 없다.

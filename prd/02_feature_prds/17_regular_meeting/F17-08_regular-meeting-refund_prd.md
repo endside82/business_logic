@@ -1,123 +1,88 @@
-# F17-08. 환불 (pro-rata · 트리거별 · FAILED_REFUND) PRD
+# F17-08. 정기모임 환불·증빙·실패 복구 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 트리거
 
-FIXED 모임 환불은 **진행 세션 차감 pro-rata** 산식 + 3가지 트리거(MEMBER_CANCEL / HOST_CANCEL / FORFEIT)로 분기한다. 모든 트리거가 동일한 `amount × (N − consumed) / N` 골격을 쓰되 `consumed` 정의가 다르다.
+회원의 등록 취소(MEMBER_CANCEL), FIXED 과정 취소(HOST_CANCEL), 노쇼 한도에 따른 등록 박탈(FORFEIT)이 환불 계산을 호출한다. FORFEIT을 무환불로 설명하지 않는다. 회차별 이벤트 환불과 전체 과정 회비 환불은 다른 경로다. [등록 취소](F17-06_regular-meeting-enrollment_prd.md#취소탈퇴-회원-제거재확인), [과정 취소](F17-04_regular-meeting-lifecycle_prd.md#취소와-강제-취소), [출석 확정](F17-09_regular-meeting-attendance_prd.md)을 각각 따른다.
 
-- **MEMBER_CANCEL** — consumed = 활성 세션 중 `startTime ≤ now` (정각 포함, 노쇼 포함). 시작된 모든 세션은 사용한 것으로 본다.
-- **HOST_CANCEL** — consumed = 활성 세션 중 `status == CLOSED`. 호스트가 미제공한 세션은 전액 환불.
-- **FORFEIT** — MEMBER_CANCEL 과 동일 산식. 시작된 세션은 환불 대상 아님, 미래 미제공분만 환불.
+## 현재 서버 계약
 
-100원 단위 floor, 0 clamp. WALLET 결제만 자동 환불. BANK_TRANSFER 는 `REFUND_REQUESTED` 큐로 보내고 호스트가 별도 계좌 환불 후 `POST /payment/{paymentId}/refund-confirm` 호출로 REFUNDED 마감.
+기본 경로는 `/api/v1/regular-meetings`다. 일반 회원이 임의 금액을 보내는 별도 정기모임 환불 요청 API는 없으며 등록·모임 취소가 계산을 유발한다.
 
-환불 실패(예: PG 큐 실패, 사용자 잔액 음수 clawback) 시 `failed_refund` 테이블에 row 생성. `failed_refund.event_id` nullable + `failed_refund.regular_meeting_id` 추가 (결정 K) 라서 RM 환불 실패도 추적된다.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingRefundService`, `RegularMeetingEnrollmentService`, `RegularMeetingService`, `RegularMeetingSessionAttendanceService`, `WalletService`.
-
-## 3. 전체 동작 흐름
-
-### 3.1 산식 정의
-
-```
-total = meeting.totalSessionCount
-consumed = (트리거별)
-remaining = total - consumed (clamp 0)
-raw = paymentAmount × remaining / total (RoundingMode.DOWN)
-refundAmount = floorToHundred(raw)  # 100원 단위 절삭, 0 clamp
-```
-
-`consumed` 정의:
-- MEMBER_CANCEL / FORFEIT: 활성 세션(`event.status != CANCELED`) 중 `startTime != null && startTime ≤ now` count.
-- HOST_CANCEL: 활성 세션 중 `event.status == CLOSED` count.
-
-### 3.2 MEMBER_CANCEL 흐름 (F17-06 §3.2 에서 트리거)
-1. `cancelEnrollment(userId, meetingId)` 진입 → meeting lock, member non-terminal 확인.
-2. PaidPayment 검색: `status IN {PAID, REFUNDED}` AND `pointTxId != null` AND `!isHostDirect`.
-3. WALLET 이면: `refundCalculator.calculate(meeting, paymentAmount, now, MEMBER_CANCEL)` → wallet refund 호출.
-4. payment.status=REFUNDED, refundAmount=계산값, refundReason="member_cancel", refundPointTxId=tx.id, refundedAt=now.
-5. BANK_TRANSFER 이면: payment.status=REFUND_REQUESTED. 호스트가 직접 계좌 환불 후 confirmRefund 로 마감.
-
-### 3.3 HOST_CANCEL 흐름 (F17-04 §3.3 에서 트리거)
-1. `cancel(meetingId)` 진입 → meeting lock, 상태=CANCELED.
-2. ACTIVE 멤버 전원 순회. 각자에 대해:
-   - WALLET: pro-rata HOST_CANCEL refund → REFUNDED.
-   - BANK_TRANSFER: REFUND_REQUESTED 로 큐잉.
-   - 실패 시 `FailedRefund(regularMeetingId=...)` 기록.
-3. 모든 활성 세션도 CANCELED 처리.
-
-### 3.4 FORFEIT 흐름 (F17-09 §3.5 에서 트리거)
-1. finalizeSession 결과 멤버가 `reachesNoShowLimit(mode, limit)` + `noShowPolicy == FORFEIT_ON_LIMIT`.
-2. `member.markForfeited()` → status=FORFEITED.
-3. `RegularMeetingRefundService.refundForForfeit(meeting, member)` → pro-rata FORFEIT 산식으로 환불 (`reasonStr="forfeit"`).
-4. 시작된 제공분 무환불, 미래 미제공분만 환불. 노쇼한 제공 세션은 환불 대상 아님 (consumed 에 포함됨).
-5. WALLET: 즉시 환불. BANK: REFUND_REQUESTED.
-
-### 3.5 BANK 환불 호스트 확정 (`POST /payment/{paymentId}/refund-confirm`)
-1. payment.status == REFUND_REQUESTED.
-2. host 가 별도 채널(계좌)로 입금 완료 후 호출.
-3. payment.status=REFUNDED, refundedAt=now.
-
-### 3.6 FailedRefund 재시도
-- `FailedRefund(regular_meeting_id, user_id, amount, reason, attempt_count)` row.
-- 별도 스케줄러가 재시도. 성공 시 마감.
-
-> **Fact (2026-06-06 돈 흐름 무결성 — RM failed_refund 실금액 기록)**: 과거 RM 환불 실패가 `failed_refund.amount=0`으로 기록되어 운영 재시도/보상이 실금액을 모르던 오라우팅(감사 MED/LOW)이 해소되었다. `RegularMeetingRefundService.recordFailedRefund(meeting, member, reason, amount)`(`:119-137`)가 **실제 환불 실패 금액**을 기록하고, `sendRefundFailedAlert`(`:157-174`)가 `OperatorAlertType` REFUND_FAILED 운영자 경보(멱등키 `REFUND_FAILED:REGULAR_MEETING:{failedRefundId}`)를 발화한다. 복구 경로 = 스케줄러 재시도 + 운영자 경보 기반 수동 처리(자동 만료 없음).
-
-## 4. 제품 규칙
-
-- 계좌이체 환불 요청이 3일 넘게 처리되지 않으면 호스트에게 다시 알리고, 두 번 알려도 풀리지 않으면 운영자에게 알린다. 환불을 자동으로 만료하거나 회수하지는 않는다.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S8-1 | MEMBER_CANCEL WALLET, 0/8 진행 | total=8, consumed=0, amount=80000 | refundAmount=80000 (전액). REFUNDED |
-| S8-2 | MEMBER_CANCEL WALLET, 3/8 진행 | total=8, consumed=3, amount=80000 | raw = 80000 × 5/8 = 50000 → floorToHundred=50000. REFUNDED |
-| S8-3 | MEMBER_CANCEL WALLET, 8/8 진행 | total=8, consumed=8 | refundAmount=0. REFUNDED with amount 0 (또는 payment 그대로) |
-| S8-4 | HOST_CANCEL WALLET, 5 CLOSED + 3 미진행 | total=8, delivered=5, amount=80000 | refundAmount = 80000 × 3/8 = 30000. REFUNDED for each ACTIVE member |
-| S8-5 | FORFEIT WALLET, 노쇼 3회 한도 도달 | total=8, consumed=4 (시작된 4세션), amount=80000 | raw = 80000 × 4/8 = 40000 → 40000. member=FORFEITED |
-| S8-6 | BANK MEMBER_CANCEL | payment.PAID(BANK) | payment=REFUND_REQUESTED. 호스트 책임 |
-| S8-7 | BANK refund-confirm | REFUND_REQUESTED | payment=REFUNDED, refundedAt 설정. 분개 없음 |
-| S8-8 | refund 실패 (wallet 음수 잔액 등) | wallet 처리 실패 | FailedRefund row 신규. 스케줄러 재시도 |
-| S8-9 | 100원 floor | raw=12345 | floorToHundred=12300 |
-| S8-10 | 0 clamp | consumed >= total | remaining=0 → refundAmount=0 |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 요청 | 입력·권한 | 결과 |
 |---|---|---|
-| pro-rata 산식 일관성 | `RegularMeetingRefundCalculator.calculate` 단일 진입점 | MEMBER_CANCEL/HOST_CANCEL/FORFEIT 모두 동일 메서드 |
-| `consumed` 분기 | reason 별 stream filter | HOST_CANCEL=CLOSED count, 외=startTime≤now |
-| FORFEIT 환불 책임 | finalize 시점(=close 전) 발생 → settlement gross 의 retained paid 에 자연 반영 | 정산 후 환불 위험 0 |
-| `failed_refund.regular_meeting_id` | 결정 K — schema 확장 | RM 환불 실패도 추적 가능 |
-| `event_id` nullable | DDL — 단일 컬럼 either-or 보장 | OK |
-| 멱등 환불 | `refundPointTxId` set 후 재시도 차단 | PointTransaction 단위 멱등 |
+| POST /{id}/payment/{paymentId}/refund-confirm | 현재 호스트, RegularMeetingRefundConfirmParam | RegularMeetingPaymentVo |
+| GET /{id}/payment/refunds | 현재 호스트 | 최근 REFUNDED 최대 200건, List<RegularMeetingPaymentVo> |
+| GET /{id}/payment/{paymentId}/refund-evidence/{fileId}/download-url | 결제 본인 또는 현재 호스트, 해당 결제에 기록된 증빙 | PresignedUrlVo |
 
-## 8. Gap / Risk
+refund-confirm은 evidenceFileIds와 선택 memo를 받는다. 서버는 호스트 소유의 유효 파일을 정규화해 최대 5개, 최소 1개를 요구한다. memo는 trim 뒤 최대 200자다. 환불 송금을 실행하는 API가 아니라 실제 송금 후 증빙·확인자·시각을 기록하고 REFUND_REQUESTED를 REFUNDED로 마감하는 명령이다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 위험 | clawback (음수 잔액) | 사용자 잔액이 환불액보다 작아 마이너스 잔액 가능 | wallet 정책: 마이너스 허용 + 적립 시 우선 차감 |
-| 잔여 | reservedRefund | FORFEIT 환불은 settlement reservedRefund 에 예약분 반영 (F17-10 §7) | 검증됨 |
+## 사유별 회차 산식
 
-## 9. 수용 기준
+총 계획 회차가 없거나 0 이하, 결제액이 0 이하이면 0원이다. 그 외에는 `결제액 × (총 계획 회차 − 소비 회차) ÷ 총 계획 회차`를 정수 내림한 뒤 100원 미만을 버린다. 남은 회차가 0 이하면 0원이며 취소된 이벤트는 소비 회차에서 제외한다.
 
-- **AC-01 (S8-1). 전액 환불**: Given consumed=0, total=8, amount=80000. Then refundAmount=80000.
-- **AC-02 (S8-2). 비례 환불**: Given consumed=3, total=8, amount=80000. Then refundAmount=50000 (floorToHundred).
-- **AC-03 (S8-4). HOST_CANCEL delivered 기준**: Given delivered=5, total=8. Then refundAmount = amount × 3/8.
-- **AC-04 (S8-5). FORFEIT**: Given FORFEIT_ON_LIMIT 한도 도달. Then member=FORFEITED + refundAmount = amount × remaining/total + refundReason="forfeit".
-- **AC-05 (S8-6,7). BANK 환불 양 단계**: Given BANK PAID member cancel. Then REFUND_REQUESTED. 호스트 refund-confirm 후 REFUNDED.
-- **AC-06 (S8-8). FailedRefund**: Given wallet 처리 실패. Then `FailedRefund(regular_meeting_id, user_id)` row 생성.
-
-## 10. 미결정 / 후속
-
-| 항목 | 사유 | 후속 |
+| 사유 | 소비 회차 판정 | 예시 |
 |---|---|---|
-| EXCUSED 환불 정책 | Phase 4 SHORTFALL/EXCUSED 미반영 — MEMBER_CANCEL 산식 그대로 | 약관 변경 시 sub-reason 추가 |
-| GRADUATED refund 정책 | 1차는 진행 차감만 — 시간 비율(24h 전 100% 등) 미적용 | 후속 |
-| BANK refund SLA 자동 알림 | MVP 부재 | NotificationType + 호스트 알림 |
+| MEMBER_CANCEL | startTime이 현재 이하인 비취소 회차 | 8회 80,000원 중 3회 시작: 50,000원 |
+| FORFEIT | MEMBER_CANCEL과 같은 시작 시각 기준 | 한도 도달 회차가 시작됐으면 소비분에 포함 |
+| HOST_CANCEL | 이벤트 상태가 CLOSED인 비취소 회차 | 8회 중 5회 CLOSED: 30,000원 |
+
+회원의 실제 출석 횟수나 EXCUSED 여부를 산식에 직접 넣지 않는다. 본체의 일반 환불 정책 이름·취소 몇 시간 전 규칙을 이 계산에 대신 적용하지 않는다. 호스트 취소는 진행되지 않은 회차를 돌려주는 기준이며 강제 취소 직전 OPEN이던 회차를 완료 회차로 간주하지 않는다.
+
+## 결제 상태와 지급 경로
+
+| 현재 결제·조건 | 환불 처리 |
+|---|---|
+| 활성 결제 없음 | 환불할 금전 처리 없음 |
+| BANK_TRANSFER·PENDING 신고 | 사유별 비례 계산보다 먼저 전액 REFUND_REQUESTED, reason에 declared_unconfirmed 표시 |
+| 그 밖의 PENDING | CANCELED로 정리, 0원 |
+| WALLET의 확정 결제 | 양수 환불액을 원결제 지갑 경로로 반환하고 REFUNDED, 0원도 완료 기록 |
+| 은행 확정 결제·양수 | REFUND_REQUESTED, 호스트 송금 후 증빙 확정 |
+| 은행 확정 결제·0원 | 추가 송금 없이 REFUNDED |
+| 닫힌 계정의 양수 지갑 환불 | 지갑에 넣지 않고 FailedRefund 운영 기록으로 넘김 |
+
+CANCELED·REFUNDED·REFUND_REQUESTED는 일반 취소 환불의 새 대상에서 제외한다. 이미 은행 환불 대기인 결제를 다시 신규 환불로 만드는 것이 아니다. 미확인 은행 신고가 실제 입금되지 않았다면 호스트가 [입금 거절 조건](F17-07_regular-meeting-payment_prd.md#호스트-확인거절과-지연)에 따라 사유를 남겨 대기를 닫을 수 있다. 입금 확인된 환불을 이 거절로 지우지는 못한다.
+
+## 실패·재시도·정산 보류
+
+회원 취소와 노쇼 확정에서 지갑 환불을 호출하다 처리되지 않은 예외가 발생하면 해당 트랜잭션이 실패한다. 모든 실패가 항상 ‘회원은 취소/박탈 완료, FailedRefund만 남음’이라는 공통 결과를 갖지 않는다. 닫힌 계정을 위한 명시적 실패 기록 분기와 일반 예외를 구분한다.
+
+모임 전체 취소는 모임 취소 커밋 뒤 회원별 새 트랜잭션으로 환불을 진행한다. 남은 환불 대상인지 다시 검사한 후 처리하며 실패 기록도 독립적으로 남기는 경로가 있다. cancelRefundPendingAt 표지와 10분 주기 복구 작업이 중단된 취소 환불을 이어간다. 작업 시간 예산이 끝나면 미완료 표지를 유지한다. 실패·검토 기록을 은행 송금이나 지갑 지급 완료로 세지 않는다.
+
+정산은 취소 환불 의무 또는 운영자 처리 대상이 남으면 보류할 수 있다. 운영자가 보상·상각으로 닫은 지갑 미제공분도 호스트 수익에서 제외하는 별도 계산이 있다. 상세는 [정기모임 정산](F17-10_regular-meeting-settlement_prd.md)을 따른다. 일반 회원 출구와 관리자 복구·감사 경로를 혼용하지 않는다.
+
+## 앱 증빙·결과 확인
+
+멤버·결제 관리의 환불 대기에서 파일을 첨부하고 메모를 작성한 뒤 금액·첨부 수를 확인해 마감한다. 성공 뒤 대기 목록과 이력을 다시 읽는다. 환불 이력 조회 실패는 기존 입금·회원 관리를 모두 가리지 않고 별도 오류로 보존한다. 본인 또는 현재 호스트만 결제의 증빙 목록에 포함된 파일 다운로드 URL을 받을 수 있다.
+
+회원 취소 화면은 시작한 회차 제외와 남은 회차 환불을 안내한다. 취소 버튼 성공만으로 은행 환불 완료를 표시하지 않는다. 환불 완료 알림·호스트 조치 알림 호출은 현재 구현돼 있지만 실제 전송은 이번에 확인하지 않았다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#confirmRefund`, `RegularMeetingController#refundedPayments`, `RegularMeetingController#refundEvidenceDownloadUrl`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Risk | 신고만 한 은행 결제도 실제 이체 가능성을 남긴다. | 전액 확인 대기와 미입금 거절을 구분한다. |
+| Risk | 회원 취소·박탈과 전체 모임 취소는 실패 트랜잭션 경계가 다르다. | 모든 예외를 FailedRefund 성공 기록으로 설명하지 않는다. |
+| Gap | 현재 산식은 실제 참석률·EXCUSED별 별도 감액을 적용하지 않는다. | 시간 비율·특별 면제 정책을 추가하지 않는다. |
+| 미검증 | 실제 환불·증빙 업로드·운영자 보상은 실행하지 않았다. | 문서 계산 예시를 실행 통과로 세지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 소비 회차:** 회원 취소·박탈은 시작 기준, 호스트 취소는 CLOSED 기준이다.
+- **AC-02 금액 절삭:** 계획 회차 기준 정수 내림과 100원 절삭, 0원 경계를 설명한다.
+- **AC-03 미확인 신고:** 은행 PENDING은 전액 환불 대기로 처리한다.
+- **AC-04 지급 경로:** 지갑 반환·은행 요청·0원 완료·닫힌 계정 기록을 구분한다.
+- **AC-05 증빙 확정:** 현재 호스트의 유효 파일 1~5개·메모 200자·확인자 기록을 적용한다.
+- **AC-06 실패 경계:** 동기 명령 롤백과 모임 취소 뒤 독립 처리·복구 표지를 구분한다.
+- **AC-07 조회 권한:** 본인/호스트와 해당 결제에 연결된 증빙만 공개한다.
+- **AC-08 정산 연결:** 미해결 환불과 미제공분을 호스트 수익 완료로 합산하지 않는다.
+
+근거는 서버·앱 소스 대조이며 새 제품 시험 결과는 없다.

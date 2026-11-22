@@ -1,117 +1,91 @@
-# F17-07. 고정형 결제 (WALLET / BANK_TRANSFER) PRD
+# F17-07. 정기모임 회비 납부·입금 확인 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 입구
 
-> **2026-08-18 P0 출시 태세(P0-PAID-01)**: 회비 결제도 이벤트와 **같은 서버 판정**을 쓴다(`GET /api/v1/app/release-scope`의 `enabledPaymentMethods` — 이벤트·정기모임 공통 단일 출처). 지금 열려 있는 수단은 **BANK_TRANSFER 하나**이며 WALLET(포인트 지갑)은 실 PG 출시 전까지 닫혀 있다. 아래 WALLET 서술은 설계 정본이자 현재 비활성으로 읽는다. 앱의 결제수단 라디오는 종전처럼 두 값을 하드코딩하지 않고 서버 목록으로 그려지며(2026-08-18 정정), 목록에 없는 수단으로 보내면 서버가 `400023`으로 거부한다. ⛔ 이미 접수된 건의 확인·거절·환불은 이 판정을 타지 않는다(안전 출구).
->
+전체 과정의 APPROVED_PENDING_PAYMENT 등록자가 결제 화면에서 회비를 낸다. 앱은 현재 공개된 결제 기능과 과정의 prepaymentType의 교집합만 선택 가능하게 한다. POINT는 WALLET, CASH는 BANK_TRANSFER, MIXED는 둘을 허용한다. 2026-08-18의 계좌이체만 공개된 설정을 모든 환경의 영구 계약으로 사용하지 않는다.
+
+WALLET은 서버 moneyLiveGate, BANK_TRANSFER는 hostDirectCashReady 판정을 통과해야 한다. 출시 설정을 확인하지 않고 코드에 두 수단이 있다는 이유로 둘 다 판매 중이라고 설명하지 않는다. 은행 입금 신고와 호스트 실제 입금 확인은 서로 다른 단계다.
+
+## 현재 서버 계약
+
+기본 경로는 `/api/v1/regular-meetings`다.
+
+| 요청 | 입력·권한 | 결과 |
+|---|---|---|
+| POST /{id}/payment/pay | 본인, RegularMeetingPayParam.method, Idempotency-Key 필수 | RegularMeetingPaymentVo |
+| GET /{id}/payment/bank-instructions | 납부 의무 또는 진행 중 은행 결제를 가진 본인 | RegularMeetingBankInstructionsVo |
+| POST /{id}/payment/bind-account | 현재 호스트 | RegularMeetingBankBindingVo |
+| GET /{id}/payment/queue | 현재 호스트 | List<RegularMeetingPaymentVo> |
+| GET /{id}/payment/me | 본인의 가장 최근 결제 | RegularMeetingPaymentVo |
+| GET /{id}/payment/{paymentId} | 결제 본인 또는 현재 호스트 | RegularMeetingPaymentVo |
+| POST /{id}/payment/{paymentId}/confirm | 현재 호스트 | RegularMeetingPaymentVo |
+| POST /{id}/payment/{paymentId}/reject | 현재 호스트, reason query | RegularMeetingPaymentVo |
+
+pay는 판매 조건을 적용하고 기존 결제 조회·확인·거절 등은 CASH_EVENT의 safetyExit로 선언돼 있다. 신규 결제가 막혔다는 이유로 기존 금전 처리를 함께 막는 것으로 설명하지 않는다. 계좌 보완은 현재 호스트의 FIXED·유료·은행 수납·OPEN 모임만 허용한다. 본체 계좌가 없을 때 연결하고, 계좌가 없는 납부 대기 등록에만 전파한다. 이미 계좌가 있거나 살아 있는 은행 결제가 있는 등록은 덮어쓰지 않으며 처리 내역을 감사 기록으로 남긴다. 기존 등록·결제의 계좌를 최신 기본 계좌로 임의 치환하지 않는다.
+
+## 납부 검사와 두 결제 수단
+
+모임을 잠그고 FIXED·OPEN, 본인 등록의 납부 대기 상태, paymentDueAt 경과 여부, 신청 제재, 닫힌 계정, 같은 회원의 활성 결제 유무를 검사한다. CANCELED/REFUNDED 외 기존 결제가 있으면 DUPLICATE_PAYMENT다. 금액은 서버의 본체 가격이며 양수여야 한다. 클라이언트가 제출한 임의 금액으로 결제하지 않는다.
+
+| 수단 | 서버 처리 | 등록 결과 |
+|---|---|---|
+| WALLET | 지갑 차감, pointTxId·paidAt 기록, PAID | ENROLLED, 회차 참석 동기화 |
+| BANK_TRANSFER | 등록에 저장된 hostBankAccountId 필수, hostDirect=true의 PENDING 신고 생성 | 납부 대기 유지, 호스트 확인 필요 |
+
+은행 신고 시 confirmDueAt을 현재부터 설정된 hostConfirmSlaDays 뒤로 정하며 기본값은 5일이다. 등록의 paymentDueAt은 납부 의무를 만들 때의 72시간 기한이고 신고 때 다시 72시간으로 연장하지 않는다. 신고된 결제가 살아 있는 동안 납부 만료 작업은 그 회원을 제외한다.
+
+## 계좌 안내의 접근 범위
+
+미등록 회원에게 계좌를 공개하지 않는다. 납부 대기 또는 PENDING·PAID·REFUND_REQUESTED인 본인 은행 결제가 있으면 안내를 조회할 수 있다. 진행 중 은행 결제에는 결제에 저장된 계좌를, 결제가 아직 없으면 등록에 저장된 계좌를 사용한다. 진행 중 결제가 없을 때만 현재 현금 기능·과정 결제 정책을 다시 검사한다.
+
+안내에는 은행·계좌번호·예금주·검증 표시, 금액, 입금자명 안내, 회원/결제 ID·상태가 포함된다. 살아 있는 은행 결제가 있으면 납부 dueAt은 null이며 PENDING 신고의 confirmDueAt을 구분해 표시한다. 이 응답은 은행의 실제 이체를 자동 검증했다는 증거가 아니다.
+
+## 호스트 확인·거절과 지연
+
+확인 대상은 BANK_TRANSFER·PENDING이며 모임 CANCELED는 거절한다. 등록이 APPROVED_PENDING_PAYMENT인지 재확인한다. 정상 확인은 PAID·ENROLLED로 바꾸고 참석을 동기화한다. 확인 순간 회원이 탈퇴했거나 신청 제재를 받았으면 전액 REFUND_REQUESTED·CANCELED로 바꾸고 환불 안내와 호스트 조치 알림, 커밋 뒤 대기 승격을 요청한다. 따라서 confirm의 성공 응답이 언제나 등록 완료라는 뜻은 아니다.
+
+거절은 PENDING 신고 또는 아직 confirmedAt이 없는 REFUND_REQUESTED만 허용한다. reason은 API 선언상 선택 query지만 서비스는 trim 뒤 1~200자를 요구한다. 거절은 결제를 CANCELED로 바꾼다. OPEN의 일반 신고 거절은 회원을 즉시 PAYMENT_EXPIRED로 바꾸지 않으며 재납부 가능 여부는 원래 납부 기한과 상태로 판단한다. CLOSED의 남은 납부 의무는 종결한다. 취소 모임에 갇힌 PENDING 신고·CANCELED 회원 조합은 별도 복구가 필요하다는 오류로 막는다.
+
+호스트 목록은 BANK_TRANSFER의 PENDING·REFUND_REQUESTED를 생성순으로 반환한다. 신고 후 기본 48시간의 확인 독촉과 confirmDueAt 경과 시 에스컬레이션을 매일 서버 05:45 작업이 조회한다. 시간 경과를 입금 완료나 자동 승인으로 해석하지 않는다.
+
+## 앱 재시도와 복귀
+
+결제 화면은 본체 OPEN·등록 상태·납부 기한을 확인하고 계좌 안내가 준비되지 않으면 신고를 막는다. 사용 불가능한 수단 응답을 받으면 그 수단을 현재 화면에서 제외하고 공개 기능·모임을 다시 조회한다. 전송은 회원 금전 명령의 본문·대상에 묶인 요청키를 사용한다. 결과 불명확 응답 뒤 등록·결제·계좌를 다시 읽고 WALLET이면 지갑·목록도 갱신한다. 성공은 모임 상세로 복귀하며 은행 신고는 ‘호스트 확인 후 등록’으로 안내한다.
+
+멤버·결제 관리 화면에는 계좌 연결 카드, 입금/환불 처리 목록, 환불 이력이 있다. ‘입금 목록 API 없음’·‘별도 채널로만 계좌 전달’은 현재 사실이 아니다.
+
+## 과거 시나리오 원문 보존
+
 > 정기모임 계좌이체 회비는 코스를 공개할 때 결박한 호스트의 받을 계좌로 받는다. 회원은 결제 화면의 납부 안내(`GET /payment/bank-instructions`)에서 계좌를 보고, 등록하지 않은 회원에게는 계좌를 보이지 않는다(400 `ENROLLMENT_INVALID_STATUS`, 2026-11-08 현금 정기모임 여정으로 확인).
 
-FIXED 모임에서 멤버가 `APPROVED_PENDING_PAYMENT` 상태일 때 코스 전체 금액을 한 번에 납부한다. 회비 납부와 계좌이체 신고·호스트 입금 확인은 고정형(전체 과정 참여)만 받고, 변동형(일정 골라 참여)은 400 `REGULAR_MEETING_INVALID_STATUS`(2700004)다. 두 가지 방식:
+위 인용은 해당 날짜의 과거 기록이며 이번 소스 검토의 새 실행 결과가 아니다.
 
-- **WALLET** (포인트 지갑) — `WalletService.payForRegularMeeting` 호출. 즉시 차감 → `PointTransaction(referenceType="REGULAR_MEETING_PAYMENT", referenceId=paymentId)` + 분개(`AccountingLedgerService.recordRegularMeetingPayment`: `USER_WALLET → CREATOR_PAYABLE`). 결제 row `PAID` → 멤버 `ENROLLED` → materialize.
-- **BANK_TRANSFER** (호스트 직접입금, off-ledger) — `isHostDirect=true`. PENDING 으로 만들고 paymentDueAt=now+72h. 회계 분개 없음(payout 비대상). 호스트가 입금 확인 후 `POST /payment/{paymentId}/confirm` → PAID → ENROLLED. 거부 시 `reject(reason)` → 결제 CANCELED + 멤버 APPROVED_PENDING_PAYMENT 유지(재결제 허용).
+## 코드 위치
 
-`regular_meeting_payment` 테이블의 `active_member_id` STORED 생성컬럼 (`status IN PENDING/PAID/REFUND_REQUESTED 일 때만 member_id, 그 외 NULL`) + `uk_payment_active(member_id, active_member_id)` UNIQUE 로 멤버당 동시 활성 결제 1건 보장 (CANCELED/REFUNDED 후 재결제 허용).
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#pay`, `RegularMeetingController#bankInstructions`, `RegularMeetingController#bindHostBankAccount`, `RegularMeetingController#paymentQueue`, `RegularMeetingController#myPayment`, `RegularMeetingController#payment`, `RegularMeetingController#confirmPayment`, `RegularMeetingController#rejectPayment`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-PG queue/외부 결제는 본 도메인에서 사용 안 함 — WALLET 의 lot 처리는 inline(F17-08 환불 facade 가 wallet 만 다룸). BigDecimal 금액은 `EventPayment.amount` 미러 — long(KRW) 정수.
+## 현재 제한과 확인 범위
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingPaymentService`, `WalletService`. 앱: `regular_meeting_payment_screen.dart`, `regular_meeting_api.dart`, `regular_meeting_pay_param.dart`.
-
-## 3. 전체 동작 흐름
-
-### 3.1 WALLET pay
-1. `lockPayableMeeting(meetingId)` — FIXED + OPEN.
-2. member 조회 → status 가 `APPROVED_PENDING_PAYMENT` 가 아니면 `ENROLLMENT_INVALID_STATUS`.
-3. `assertNoActivePayment(memberId)` — UNIQUE 가 막지만 명시 가드.
-4. amount = `meeting.price.longValue()`. 0 이하 → `INVALID_PAYMENT_AMOUNT`.
-5. payment row PENDING(WALLET, isHostDirect=false) 저장.
-6. `WalletService.payForRegularMeeting(userId, paymentId, meetingId, hostUserId, amount)` 호출:
-   - `USER_WALLET → CREATOR_PAYABLE` 분개.
-   - `PointTransaction(type=PAY, referenceType="REGULAR_MEETING_PAYMENT", referenceId=paymentId)`.
-   - 멱등: `existsByReferenceTypeAndReferenceId(...)` 으로 중복 차단.
-   - 잔액 부족 → `INSUFFICIENT_POINT` ApiError.
-7. payment row → PAID, paidAt=now, pointTxId = tx.id.
-8. member.markEnrolled() — status=ENROLLED, enrolledAt=now, waitlistOrder=null.
-9. `materializationService.syncMemberAdded` — 미래 세션 ATTENDING catch-up.
-10. 응답: `RegularMeetingPaymentVo`.
-
-### 3.2 BANK_TRANSFER pay (declare)
-1. 위 1~5 동일하나 method=BANK_TRANSFER, isHostDirect=true, paymentDueAt=now+72h.
-2. 회계 분개 없음 (off-ledger). 좌석은 멤버 APPROVED_PENDING_PAYMENT 로 유지 (예약).
-3. 응답: paymentId. 사용자는 호스트가 별도 알려준 계좌로 직접 입금.
-
-### 3.3 confirm (`POST /payment/{paymentId}/confirm`)
-1. `findByIdForUpdate(meetingId)` + `assertHost`.
-2. payment 조회 → BANK_TRANSFER + PENDING 이어야 함. 아니면 `REGULAR_MEETING_INVALID_STATUS`.
-3. payment.status=PAID, confirmedAt=now, paidAt=now.
-4. member.markEnrolled.
-5. materialize sync.
-6. 분개 없음(off-ledger).
-
-### 3.4 reject (`POST /payment/{paymentId}/reject?reason=...`)
-1. `assertHost`.
-2. BANK_TRANSFER + PENDING 만.
-3. payment.status=CANCELED, rejectReason=reason.
-4. **member 는 APPROVED_PENDING_PAYMENT 유지** — 재결제(다시 declare) 허용.
-
-### 3.5 paymentDueAt expiry (스케줄러)
-1. `RegularMeetingPaymentExpiryScheduler` 가 BANK_TRANSFER PENDING 중 `paymentDueAt < now` 검색.
-2. payment.status=CANCELED + member.status=PAYMENT_EXPIRED.
-3. 좌석 비움 → `promoteWaitlist` 호출.
-
-### 3.6 confirmRefund (BANK 환불 호스트 확정, `POST /payment/{paymentId}/refund-confirm`)
-- F17-08 환불 흐름 참조 (REFUND_REQUESTED → REFUNDED).
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S7-1 | WALLET 정상 결제 | APPROVED_PENDING_PAYMENT, 잔액 ≥ price | payment=PAID, member=ENROLLED, PointTransaction(REGULAR_MEETING_PAYMENT) 1건, 분개 1건 |
-| S7-2 | WALLET 잔액 부족 | 잔액 < price | 400 `INSUFFICIENT_POINT`. payment row 는 PENDING 으로 일부 생성됐을 수 있으므로 트랜잭션 롤백 보장 |
-| S7-3 | BANK declare | APPROVED_PENDING_PAYMENT | payment=PENDING(BANK_TRANSFER, isHostDirect=true), paymentDueAt=now+72h. 분개 없음 |
-| S7-4 | BANK host confirm | payment=PENDING(BANK) | payment=PAID, member=ENROLLED. 분개 없음 |
-| S7-5 | BANK host reject | payment=PENDING(BANK), reason="입금 확인 안됨" | payment=CANCELED, member 유지 APPROVED_PENDING_PAYMENT |
-| S7-6 | BANK paymentDueAt 만료 | paymentDueAt < now, status=PENDING | scheduler: payment=CANCELED, member=PAYMENT_EXPIRED, WAITING 승격 |
-| S7-7 | 활성 결제 중복 시도 | 이미 PENDING payment 보유 | 400 — `assertNoActivePayment` + uk_payment_active 가 차단 |
-| S7-8 | price=0 결제 시도 | 모임 price=0 | 400 `INVALID_PAYMENT_AMOUNT` (price>0 모임만 결제 단계) |
-| S7-9 | VARIABLE 모임 결제 시도 | meetingType=VARIABLE | 400 `REGULAR_MEETING_INVALID_STATUS`(2700004) |
-| S7-10 | CANCELED 후 재결제 | 이전 payment CANCELED | 신규 payment row 생성 가능 (active_member_id NULL → UNIQUE 우회) |
-
-## 7. 정합성 판단
-
-| 항목 | 확인 기준 | 현재 판단 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 활성 1건 UNIQUE | `regular_meeting_payment.active_member_id` STORED + `uk_payment_active` | 동시 활성 1건 보장. CANCELED/REFUNDED 후 재시도 가능 |
-| 멱등 결제 | `WalletService.payForRegularMeeting` 의 `existsByReferenceTypeAndReferenceId("REGULAR_MEETING_PAYMENT", paymentId)` | 중복 호출 차단 |
-| 회계 분개 | WALLET=`USER_WALLET → CREATOR_PAYABLE`. BANK=분개 없음(isHostDirect=true) | flow-through 정책과 일치 |
-| 락 순서 | meeting → member → payment → wallet | service 주석 C9/C10 일관 |
-| `regular_meeting_payment.fk_rmp_member ON DELETE CASCADE` 제거 | 사전존재 버그 1 수정 — generated col base 컬럼 CASCADE 가 MySQL ERROR 1215 유발 | CASCADE 제거(모임 cascade 로 결제 정리 충분) |
+| Risk | confirm 성공이 탈퇴·제재 회원의 환불 대기로 갈 수 있으나 앱 성공 토스트는 결제 완료 문구다. | 실제 응답 상태와 재조회 결과를 기준으로 판단하며 문구 정합성 후속을 남긴다. |
+| Risk | 은행 신고·확인은 외부 계좌 확인을 전제로 한다. | 신고/호스트 확인/환불 완료를 분리한다. |
+| Gap | 과정 회비는 한 번의 전체 금액이며 분할 납부 계약이 없다. | 분할 납부를 현재 기능으로 설명하지 않는다. |
+| 미검증 | 현재 환경별 공개 설정·실제 송금·지갑 차감을 실행하지 않았다. | 코드 지원과 운영 활성화를 구분한다. |
 
-## 8. Gap / Risk
+## 수용 기준과 검증 근거
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 잔여 | §9 도메인 | 호스트 결제 list endpoint 부재 → 호스트가 BANK PENDING 묶음 확인 불가(상세에서 카운트만) | endpoint 추가 후 호스트 화면 |
-| 위험 | BANK declare 후 사용자가 계좌 모름 | 호스트가 별도 채널로 알려야 함 | UX 안내 + 호스트 입력 계좌 영구 저장 후속 |
-| 위험 | confirm 후 demote 시 환불 책임 | confirm 직후 다시 reject 가능 → reject 는 PENDING 만이라 confirm 뒤로는 불가 (PAID 는 정상 환불 흐름 F17-08) | safe |
-
-## 9. 수용 기준
-
-- **AC-01 (S7-1). WALLET pay**: Given member APPROVED_PENDING_PAYMENT, 잔액 ≥ price. When `POST /payment/pay {method=WALLET}`. Then payment=PAID + member=ENROLLED + PointTransaction(REGULAR_MEETING_PAYMENT, referenceId=paymentId) + 분개 1건.
-- **AC-02 (S7-3). BANK declare**: Given 동일 조건. When `{method=BANK_TRANSFER}`. Then payment=PENDING + paymentDueAt=now+72h + 분개 없음.
-- **AC-03 (S7-4). BANK confirm**: Given BANK PENDING. When `POST /confirm`. Then PAID + ENROLLED + 분개 없음.
-- **AC-04 (S7-5). BANK reject**: Given BANK PENDING. When `POST /reject?reason=`. Then payment=CANCELED + member 유지.
-- **AC-05 (S7-7). 동시 활성 차단**: Given member 가 PENDING 결제 보유. When 두 번째 pay. Then 400 / DataIntegrityViolation → `DUPLICATE_PAYMENT` 변환.
-
-## 10. 미결정 / 후속
-
-| 항목 | 사유 | 후속 |
-|---|---|---|
-| 호스트 BANK 입금 계좌 영구 저장 | MVP 는 별도 채널 안내 | 호스트 정산 계좌(F07-10) 와 통합 |
-| 결제 list endpoint | MVP 부재 | NotificationType + 호스트 화면 |
-| 분할 결제(코스 분할) | 1차는 일괄 결제만 | 후속 |
+- **AC-01 납부 가능 조건:** FIXED·OPEN·납부 대기·유효 기한·계정·제재·중복 결제를 검사한다.
+- **AC-02 수단 공개:** 과정 정책과 실행 환경의 공개 기능을 교차 적용한다.
+- **AC-03 지갑 완료:** 지갑 차감과 등록 완료·회차 동기화를 연결한다.
+- **AC-04 은행 신고:** 등록별 계좌를 사용하고 신고와 실제 확인을 나눈다.
+- **AC-05 두 기한:** 등록 납부 72시간과 은행 확인 기본 5일을 구분한다.
+- **AC-06 확인 예외:** 탈퇴·제재 시 전액 환불 대기로 전환하는 성공 결과를 보존한다.
+- **AC-07 거절 조건:** 미확인 상태·필수 사유·종료 모임의 등록 종결을 설명한다.
+- **AC-08 기존 결제 출구:** 판매 중단 뒤에도 기존 조회·처리를 지원하는 선언을 구분한다.
+- **AC-09 앱 처리:** 요청키·불명확 결과 재조회·실제 호스트 처리 목록을 연결한다.

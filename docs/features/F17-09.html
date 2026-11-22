@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-09 회차 출석 확정·노쇼 — community PRD</title>
+  <title>F17-09 정기모임 출석 확정·노쇼·등록 박탈</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,136 +17,32 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-09 회차 출석 확정·노쇼
         </div>
-        <h1>F17-09. 회차 출석 확정·노쇼</h1>
-        <p class="lede">
-          고정형 호스트가 회차 종료 후 출석 명단을 일괄 확정한다. 결과는 4가지 — <strong>출석·노쇼·공결·세션 취소</strong>.
-          확정은 회차가 종료된 다음에만 가능하고, 한 번 확정된 회차는 다시 확정할 수 없다.
-          노쇼가 한도에 도달하면 즉시 자격박탈 + 잔여분 환불이 자동 발사된다.
-          이 단계가 끝나야 코스 종료 버튼이 풀려, 정산 후 환불 사고가 일어나지 않는 구조의 핵심 요소다.
-        </p>
+        <h1>F17-09 정기모임 출석 확정·노쇼·등록 박탈</h1>
+        <p class="lede">출석 미리보기·회원별 결과 선택, 실패 회차 수동 검토, 노쇼 한도·환불과 자동 확정 기본 설정을 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="attendance-finalization"><h2>체크인 기록을 출석 확정의 초깃값으로 씁니다</h2><p>출석 확정 미리보기는 체크인 기록을 반영하고 참석·노쇼·사유 인정 값을 조정할 수 있게 한다. 검토가 필요한 사람은 사유 인정(EXCUSED)에서 시작해 호스트가 판정한다. 시작 전 생성 실패 회차는 운영자가 재생성할 수 있다. 자동 정산 생성이 반복 실패하면 운영자 경보를 남기며 같은 실패를 무한히 새 경보로 쌓지 않는다.</p></section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">출석 결과</div><div class="value">4</div><div class="hint">출석·노쇼·공결·세션취소</div></div>
-          <div class="metric"><div class="label">확정 가능 시각</div><div class="value">종료 후</div><div class="hint">미종료 회차 확정 불가</div></div>
-          <div class="metric"><div class="label">노쇼 한도 정책</div><div class="value">3</div><div class="hint">없음·경고·자격박탈</div></div>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">왜 확정이 필요한가 — 종료·정산의 전제</span>
-          <p>호스트가 매 회차를 직접 확정해야 코스 종료 버튼이 풀린다. 자동 추정만으로 노쇼·박탈을 만들지 않고
-            호스트의 명시적 판단을 거치게 한 이유는 분쟁 발생 가능성이 높기 때문이다.
-            안전망으로 종료 시각 + 24시간이 지나도 호스트가 무대응이면 자동 확정하는 옵션이 있지만 <strong>기본은 꺼져 있다</strong>.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">정상 확정</div>
-            <h3>"회차 끝났으니 출석 확정"</h3>
-            <p>호스트가 회차 종료 후 "출석 확정" 화면 진입. 자동 판정된 결과(체크인 기반)를 검토하고 일괄 승인.
-              체크인 한 멤버는 출석, 안 한 멤버는 노쇼로 들어간다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 한 화면에서 한 액션으로 회차를 마무리, 매 회차마다 부담을 줄인다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">공결 표시</div>
-            <h3>"사정 있는 멤버는 공결로"</h3>
-            <p>호스트가 특정 멤버의 결과를 "공결"로 바꾼 뒤 확정. 그 멤버는 노쇼 카운트에 가산되지 않고, 연속 노쇼 카운트는 끊긴다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 멤버의 사정을 반영해 부당한 박탈을 막을 수 있는 재량.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">세션 취소</div>
-            <h3>"회차 자체를 못 했다"</h3>
-            <p>호스트가 회차 취소(F17-05)를 누르면 그 회차는 "세션 취소"로 마킹된다. 멤버에게 책임 없음 — 노쇼 가산 안 됨.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트 사정으로 회차가 못 열렸을 때 멤버가 노쇼 한도에 가까워지지 않게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">자격박탈 트리거</div>
-            <h3>"3회 연속 노쇼 → 박탈"</h3>
-            <p>노쇼 한도가 "자격박탈"로 설정된 모임에서 멤버가 3회 연속(또는 누적) 노쇼에 도달하면 확정 즉시 자격박탈 + 잔여 회차분 자동 환불.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트 운영자가 별도 액션 없이 자동으로 노쇼 정책 집행, 모임 분위기 보호.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">미종료 확정 시도</div>
-            <h3>"회차 시작 전인데 출석 확정 시도"</h3>
-            <p>회차 종료 시각이 안 지났는데 "출석 확정" 누르면 "회차가 아직 끝나지 않았어요" 안내. 차단.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 미래 노쇼를 미리 만들어 멤버를 박탈하는 일을 차단.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">재확정 시도</div>
-            <h3>"확정한 회차를 다시 확정"</h3>
-            <p>한 번 확정된 회차에 다시 "출석 확정" 누르면 "이미 확정된 회차예요" 안내. 차단.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 결과를 임의로 뒤집어 환불 분쟁이 일어나는 사고를 차단.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 무대응 안전망</div>
-            <h3>"24시간 지나도 호스트가 안 함"</h3>
-            <p>운영팀이 자동 마감을 켠 경우, 종료 +24시간 지나면 시스템이 체크인 기반으로 자동 확정. 기본은 꺼져 있고 운영팀이 명시적으로 켜야 한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 사라진 경우에도 코스가 닫힐 수 있는 비상 출구.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr><td><strong>출석 명단</strong></td><td>회차 자동 참석 명단이 자동 판정(체크인 기반)으로 미리 채워져 노출.</td><td>호스트가 빈 명단에서 한 명씩 표시하는 부담을 줄인다.</td></tr>
-              <tr><td><strong>일괄 확정 버튼</strong></td><td>화면 하단에 "전체 확정하기" 한 개.</td><td>한 회차 확정은 한 액션이어야 호스트가 매 회차마다 꾸준히 한다.</td></tr>
-              <tr><td><strong>공결·세션취소 토글</strong></td><td>각 멤버별로 결과를 호스트가 바꿀 수 있는 셀렉트.</td><td>호스트 재량으로 멤버 사정을 반영, 부당 박탈 방지.</td></tr>
-              <tr><td><strong>노쇼 한도 경고</strong></td><td>이 회차 확정 시 박탈될 멤버를 미리 노출("3회 노쇼 도달 — 박탈됩니다").</td><td>호스트가 결정을 내리기 전 영향을 미리 보게 한다.</td></tr>
-              <tr><td><strong>박탈 환불 안내</strong></td><td>박탈되는 멤버에 대한 환불 예상액을 같이 노출.</td><td>호스트가 박탈이 단순 처벌이 아니라 환불 발생을 동반함을 인지하게.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">확정 동작</span>
-          <ul>
-            <li><strong>기본은 체크인 자동 판정 + 호스트 일괄 승인</strong> — 호스트가 명단을 보고 일괄 확정. 1차 출시는 한 명씩 결과 바꾸는 UI 일부 제한.</li>
-            <li><strong>자동 마감은 기본 꺼짐</strong> — 호스트 무대응 시 종료 +24시간 안전망이 있지만, 운영팀이 명시적으로 켜야 동작한다.</li>
-            <li><strong>노쇼 → 일반 참석 명단에서 제거</strong> — 회차 정원 카운트가 자연스럽게 갱신.</li>
-            <li><strong>자격박탈 환불은 즉시</strong> — 박탈 시점에서 잔여 회차분이 자동 환불(코스 종료 이전).</li>
-            <li><strong>비호스트 확정 시도는 거절</strong> — 권한 가드.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">분쟁이 일어날 수 있는 케이스</span>
-          <ul>
-            <li><strong>호스트가 확정을 미루는 경우</strong> — 종료 버튼이 막혀 다음 단계로 못 넘어간다. 자동 마감을 켜지 않으면 영원히 대기.</li>
-            <li><strong>노쇼·공결 판정 분쟁</strong> — 멤버가 "사정 있어 못 갔다" 주장. 호스트가 공결로 바꾸려면 첫 확정 전에 정해야 한다(재확정 차단).</li>
-            <li><strong>자격박탈 환불 실패</strong> — 자동 재시도 큐로 가지만 멤버 입장에서는 박탈이 영구. 운영 모니터링 필요.</li>
-            <li><strong>한 명만 다르게 처리하는 UI 한계</strong> — 1차는 한 화면에서 결과를 일괄로 보고 일부만 바꾸는 동선. 후속에 회차별 명단 화면 강화.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>FIXED의 회차 출석을 실제 회차 호스트가 확정한다. 모임 상세의 회차 관리 행동에서 전용 출석 확정 화면으로 이동한다. 호스트를 이전해도 이전 호스트에게 남긴 회차의 권한은 그 회차 호스트에게 있다. 본체 호스트라는 이유만으로 모든 남은 회차를 확정할 수 없다.</p>
+<p>현재 앱은 finalize-preview로 명단·기본 결과·노쇼 누적·박탈 가능성과 예상 환불액을 받아 회원별 ATTENDED·NO_SHOW·EXCUSED를 선택한다. ‘명단 API 없음’·‘회원별 수정 화면 없음’은 해결된 과거 제한이다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>기본 경로는 <code>/api/v1/regular-meetings</code>다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·권한</th><th>결과</th></tr></thead><tbody><tr><td>GET /{id}/events/{eventId}/finalize-preview</td><td>실제 회차 호스트, 모임·회차 소속 검사</td><td>RegularMeetingFinalizePreviewVo</td></tr><tr><td>POST /{id}/events/{eventId}/finalize</td><td>실제 회차 호스트, 선택 RegularMeetingSessionFinalizeParam, 선택 Idempotency-Key</td><td>204</td></tr></tbody></table></div>
+<p>param은 excusedUserIds, attendedUserIds, noShowUserIds, reason이다. 배열은 회원 행 ID가 아니라 userId다. 같은 사용자를 여러 배열에 넣으면 EXCUSED→NO_SHOW→ATTENDED 순으로 먼저 일치한 결과가 적용된다. 일반 호스트 reason에 관리자 보정용 접두사를 사용하는 요청은 INVALID_INPUT이다. 명령 기록을 재생할 때도 실제 회차가 FINALIZED인지 재검사하고 결과가 사라졌으면 MEMBER_COMMAND_RESULT_UNAVAILABLE을 반환한다.</p></section>
+<section id="attendance-finalization"><h2>확정 조건과 실패 회차 검토</h2><p>모임을 잠그고 FIXED·모임 비취소·소속 회차·회차 비취소·종료 시각 존재 및 현재 이하·미확정을 검사한다. 정상 경로는 MATERIALIZED 회차다. FAILED이면서 NEEDS_REVIEW인 회차는 호스트 수동 검토로 확정할 수 있고 자동 확정은 이 예외를 사용하지 못한다.</p>
+<p>미리보기는 권한·소속·FIXED를 확인하고 아직 출석 원장이 없는 대상의 기본값을 제공한다. 미리보기 성공만으로 종료 시각 등 확정 명령의 모든 조건을 통과했다고 간주하지 않는다. 앱은 회차 소유권·취소·종료 시각·확정 상태를 먼저 확인한 뒤 미리보기를 읽는다. 본체가 숨겨져 조회되지 않는 이전 호스트의 경우 개별 이벤트 권한과 회차 사실로 진입 조건을 확인하는 경로도 있다.</p></section>
+<section id="current-4"><h2>대상 명단·기본 결과·원장</h2><p>확정 시 회차 참석 좌석과 체크인 행을 잠근다. 일반 경로는 ATTENDING 명단을 기준으로 이미 출석 원장이 있는 사용자를 제외한다. 실패 회차 수동 검토는 참석 행이 누락된 등록 완료 회원도 보완 대상으로 포함한다. 체크인했다면 기본 ATTENDED이고, 체크인하지 않은 일반 회차는 NO_SHOW, 실패 회차 검토는 EXCUSED다.</p>
+<p>호스트 선택이 기본값보다 우선한다. 결과 원장에는 모임·회차·회원·사용자, 결과, 수동 사유, 확정자·시각, 확정 당시 노쇼 집계 대상 여부를 남긴다. NO_SHOW의 일반 참석 행을 내리고 좌석 카운터를 감소시킨다. 결과와 회원 카운터·회차 FINALIZED 전이는 같은 트랜잭션에서 수행한다. 미리보기 이후 명단 변화가 없다고 가정하지 않고 실행 시 다시 읽는다.</p></section>
+<section id="current-5"><h2>노쇼 정책과 등록 박탈</h2><p>원장의 결과 enum은 ATTENDED, NO_SHOW, EXCUSED, SESSION_CANCELED다. 일반 호스트 선택 화면은 앞의 세 결과를 제공한다. 회원의 누적/연속 노쇼와 CUMULATIVE 또는 CONSECUTIVE 한도를 사용하며 현재 ENROLLED만 노쇼 집계·박탈 대상이며 다른 상태에는 NO_SHOW 카운터를 새로 적용하지 않는다. 출석은 attendedCount를 더하고 연속 노쇼를 0으로, 노쇼는 누적·연속을 각각 더하며 EXCUSED/SESSION_CANCELED는 연속 노쇼를 0으로 한다. 한도가 없거나 0 이하이거나 집계 방식이 없으면 한도 도달로 판정하지 않는다.</p>
+<p>NONE은 박탈하지 않고, WARN은 한도 도달을 기록하지만 박탈하지 않는다. FORFEIT_ON_LIMIT은 한도에 도달하면 FORFEITED로 바꾸고 <a href="F17-08.html">남은 회차 환불</a>을 호출한 뒤 향후 회차 참석을 해제한다. 무환불 영구 박탈이라고 설명하지 않는다. 일반 재등록은 차단되지만 관리자 보정·박탈 복구는 별도 경로다.</p>
+<p>출석 결과와 등록 박탈 알림 호출이 있다. WARN의 한도 도달 분기는 로그이며 별도의 경고 전송 보장으로 설명하지 않는다. 환불의 처리되지 않은 예외는 확정 트랜잭션 실패이며, 언제나 박탈만 확정되고 실패 큐로 넘어간다는 기존 설명을 사용하지 않는다.</p></section>
+<section id="current-6"><h2>자동 확정과 종료의 관계</h2><p><code>regular-meeting.auto-finalize.enabled</code> 기본값은 false다. 활성화하면 1시간 주기로 종료 후 24시간 유예가 지난 후보를 조회하고 모임별 처리 실패는 다음 주기 재시도로 남긴다. 설정의 기본값과 실제 배포 환경에서 켜져 있는지는 다르며 이번에 운영 설정은 확인하지 않았다.</p>
+<p>FIXED 과정 종료는 <a href="F17-04.html">종료와 자동 종료</a>에 적힌 활성 회차 수·종료 시각·FINALIZED 조건을 따른다. 취소 이력까지 모두 FINALIZED로 만들 필요는 없다. 출석 확정 자체가 과정 종료·호스트 정산 지급까지 실행하는 것은 아니다.</p></section>
+<section id="current-7"><h2>앱 제출·재시도·복귀</h2><p>앱은 선택 결과를 서로 분리된 사용자 ID 배열로 전송하고 확인창에서 출석·노쇼·사유 결석 수와 박탈 인원·예상 환불액을 보여준다. 현재 화면은 reason을 입력해 전송하지 않는다. 전송 본문과 회차에 묶인 요청키를 사용해 결과 미확정 때 유지하고 명확한 완료 후 정리한다. 성공 안내 뒤 이전 모임 화면으로 돌아가며 실패 시 현재 선택을 유지한다. 이 화면의 키는 세션 내 보관 경로이며 생성 초안의 영속 복원과 같은 보장으로 설명하지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>서버 reason은 있지만 앱 확정 입력에 사유 필드가 없다.</td><td>회원별 결과 선택 지원과 별도 사유 지원을 나눈다.</td></tr><tr><td>Risk</td><td>preview의 금액·명단은 실행 전 참고값이다.</td><td>서버 명령이 잠금 뒤 다시 판정하는 결과를 기준으로 한다.</td></tr><tr><td>Risk</td><td>자동 확정을 켜면 24시간 뒤 기본 결과가 적용될 수 있다.</td><td>기본 비활성 설정만으로 모든 운영 위험이 없다고 하지 않는다.</td></tr><tr><td>미검증</td><td>동시 체크인·박탈 환불·실패 회차 복구를 실행하지 않았다.</td><td>소스 검토와 원장 실행 검증을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 회차 권한:</strong> 이전 호스트에게 남은 회차도 실제 회차 소유권을 적용한다.</li><li><strong>AC-02 명령 조건:</strong> FIXED·비취소·종료 시각·미확정·구체화 상태를 검사한다.</li><li><strong>AC-03 실패 검토:</strong> FAILED/NEEDS_REVIEW 수동 경로와 미체크인 EXCUSED 기본값을 구분한다.</li><li><strong>AC-04 결과 선택:</strong> 현재 preview·회원별 선택·userId 배열과 서버 중복 우선순위를 기록한다.</li><li><strong>AC-05 원장 처리:</strong> 기존 원장 중복 제외와 체크인·좌석·카운터·상태 전이를 연결한다.</li><li><strong>AC-06 한도와 환불:</strong> 정책·집계 방식에 따른 박탈과 남은 회차 환불을 설명한다.</li><li><strong>AC-07 자동 설정:</strong> 기본 비활성, 24시간 유예·1시간 주기와 운영 설정을 나눈다.</li><li><strong>AC-08 재확인:</strong> 선택 요청키·실제 FINALIZED 재검사·성공 복귀를 설명한다.</li></ul>
+<p>근거는 서버·앱 소스 대조이며 새 제품 시험 결과는 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

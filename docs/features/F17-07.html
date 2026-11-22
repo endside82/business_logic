@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-07 고정형 결제 — community PRD</title>
+  <title>F17-07 정기모임 회비 납부·입금 확인</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,183 +17,33 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-07 결제
         </div>
-        <h1>F17-07. 고정형 결제 (지갑·계좌이체)</h1>
-        <p class="lede">
-          결제 대기 상태가 된 멤버가 <strong>코스 전체 금액을 한 번에</strong> 납부한다.
-          두 가지 방식 — <strong>지갑(포인트)</strong>은 즉시 차감되고 회계에 잡혀 자동 참가 확정으로 이어진다.
-          <strong>계좌이체</strong>는 호스트가 직접 받는 외부 송금이라 회계에 잡히지 않고, 호스트가 입금을 확인해야 참가 확정으로 마감된다.
-          멤버 한 명에게는 동시에 살아 있는 결제가 최대 1건뿐이라, 같은 화면이 두 번 열려도 두 번 결제되지 않는다.
-        </p>
+        <h1>F17-07 정기모임 회비 납부·입금 확인</h1>
+        <p class="lede">지갑/계좌이체 공개 조건, 등록별 계좌, 납부·확인 기한, 호스트 처리 목록과 예외 환불을 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">첫 출시 납부 방식</div><div class="value">1</div><div class="hint">주최자 계좌 직접 송금 · 플랫폼 지갑 결제는 후속 출시</div></div>
-          <div class="metric"><div class="label">결제 기한</div><div class="value">72시간</div><div class="hint">계좌이체 입금 마감</div></div>
-          <div class="metric"><div class="label">동시 활성 결제</div><div class="value">1건</div><div class="hint">멤버당</div></div>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">두 방식의 회계상 차이</span>
-          <p><strong>지갑 결제</strong>는 플랫폼이 중개하므로 매출·수수료·정산이 자동으로 잡힌다.
-            <strong>계좌이체</strong>는 호스트가 직접 받는 외부 송금이라 회계에 안 잡히고 정산 대상도 아니다(호스트 직거래).
-            그래서 환불도 지갑 결제는 자동, 계좌이체는 호스트가 직접 송금하고 "환불 완료"를 눌러야 마감된다.</p>
-        </div>
-
-        <div class="callout danger">
-          <span class="label">첫 출시 — 계좌 직접 송금 회비 포함</span>
-          <p>정기모임의 <strong>주최자 계좌 직접 송금</strong> 회비 접수를 첫 출시 기본 설정에 포함했다.
-            주최자가 계좌를 등록하고 입금 확인·거절·취소·환불을 처리한다. 플랫폼이 돈을 보관하거나 자동 환불하지 않는다.
-            <strong>새 지갑 결제</strong>는 후속 출시이며, 앱은 서버가 허용한 납부 방식만 보여 준다.</p>
-        </div>
-
-        <div class="callout info">
-          <span class="label">2026-09-05 현재 — 정기모임 계좌 안내 코드 공백 해소</span>
-          <p>호스트의 수납 계좌를 정기모임에 묶고, 참가자 화면에 은행·계좌번호·예금주·금액·납부 기한·
-            계좌 인증 여부와 직접 송금 책임 안내를 함께 보여 준다. 안내는 코스를 발행하는 순간 묶어 둔 계좌에서 나오며,
-            묶인 계좌가 없으면 안내를 만들지 않는다 — 어디로 보내야 할지 모르는 상태에서 송금을 권하지 않는다.
-            입금 신고 뒤 호스트 확인·거절, 취소·환불·수령 확인과 관리자 대기열까지 연결돼 전체 회귀를 통과했다.
-            첫 출시 기본 설정에 포함했으며, 실제 공개 전에는 책임 안내 최종 확인과 배포용 앱의 이용·환불 수령 검사를 마친다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">지갑 결제 happy</div>
-            <h3>잔액 충분 → 즉시 확정</h3>
-            <p>사용자가 결제 화면에서 "지갑" 선택. 잔액이 코스 가격보다 많아 즉시 차감되고 "참가 확정"으로 들어간다.
-              모든 회차 자동 참석 명단에 등록.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 가입 결정 후 가장 짧은 동선으로 자리 확보. 사용자가 결제 화면을 두 번 보지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">잔액 부족</div>
-            <h3>지갑 결제하려는데 모자라다</h3>
-            <p>지갑 선택 후 "결제하기" 누르면 "잔액이 부족해요 — 충전하기" 안내. 충전 화면에서 부족분 자동 입력 + 충전 완료 후 결제 화면으로 복귀.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 잔액 부족 사용자가 다른 모임으로 이탈하지 않게, 충전 동선을 한 흐름으로 연결.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">계좌이체 신청</div>
-            <h3>계좌이체로 코스 가입</h3>
-            <p>"계좌이체" 선택. 화면에 표시된 호스트 수납 계좌와 금액·기한을 확인해 직접 송금한 뒤 "송금 완료"를 누른다. 결제는 "확인 대기" 상태로 들어가
-              72시간 카운트다운 시작. 자리는 예약된 채로.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 카드 결제가 어려운 사용자도 가입할 수 있는 경로 유지(특히 50~60대).</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 입금 확인</div>
-            <h3>호스트가 송금을 확인했다</h3>
-            <p>호스트가 멤버 화면에서 "입금 확인" 누름. 결제 상태가 "완료"로 바뀌고 멤버는 "참가 확정"으로.
-              모든 회차 자동 참석 명단 등록.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 명시적 확인이 멤버 가입을 마무리, 무책임한 호스트 운영을 막는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 거절</div>
-            <h3>호스트가 입금을 못 확인했다</h3>
-            <p>호스트가 "입금 확인 안 됨" 사유로 거절. 결제는 "취소"로 들어가지만 멤버는 "결제 대기"로 유지되어 다시 결제할 수 있다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 송금 누락·잘못된 송금자명 등 실수에 한 번 더 기회.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">72시간 만료</div>
-            <h3>송금 안 함·확인 안 됨</h3>
-            <p>72시간이 지나도 결제 미완료면 자동 만료. 멤버 상태가 "결제 만료"로 가고 자리는 다음 대기자에게 자동 승격된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 자리가 무기한 점유되지 않게, 정원을 다른 사용자에게 흐르게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">중복 결제 차단</div>
-            <h3>실수로 결제 화면을 두 번 열었다</h3>
-            <p>같은 멤버에게 살아 있는 결제가 이미 있으면 새 결제 시도가 거절된다. "이미 진행 중인 결제가 있어요" 안내.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 우발적으로 두 번 결제되어 환불 분쟁이 일어나는 일을 차단.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr><td><strong>납부 방식 선택</strong></td><td>첫 출시에는 주최자 계좌 직접 송금을 제공한다. 플랫폼 지갑 납부는 고를 수 없다.</td><td>앱과 서버가 같은 허용 목록을 사용해야 한다.</td></tr>
-              <tr><td><strong>코스 총액</strong></td><td>"총 80,000원" 큰 글씨. 회차당 가격이 아니라 코스 전체.</td><td>코스 단위 결제임을 강조해, 사용자가 "회차당 가격"으로 오인하지 않게 한다.</td></tr>
-              <tr><td><strong>계좌 정보</strong></td><td>은행·계좌번호·예금주·금액·납부 기한·계좌 인증 여부, 직접 송금 책임 안내와 입금자명 입력을 한 화면에서 제공한다.</td><td>사용자가 송금 대상과 기한을 서비스 안에서 확인하고, 플랫폼 결제가 아닌 호스트 직접 수납이라는 책임 범위를 인지하게 한다.</td></tr>
-              <tr><td><strong>72시간 카운트다운</strong></td><td>결제 대기 상태에서 실시간 카운트다운.</td><td>기한 만료 = 자리 빼앗김. 시각적 긴급성으로 사용자 행동 유도.</td></tr>
-              <tr><td><strong>잔액 부족 안내</strong></td><td>"X원 부족 — 충전하기" 버튼.</td><td>충전 동선을 한 흐름으로 묶어 이탈 방지.</td></tr>
-              <tr><td><strong>중복 결제 차단</strong></td><td>이미 살아 있는 결제가 있으면 새 결제 버튼 비활성.</td><td>버튼 단계 차단으로 실수 결제 방지.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">결제·환불 책임 분리</span>
-          <ul>
-            <li><strong>지갑 결제는 정산 대상</strong> — 호스트 수익으로 잡혀 종료 시 정산에 포함.</li>
-            <li><strong>계좌이체는 정산 대상 아님</strong> — 호스트가 직접 받고 직접 환불하는 외부 거래. 플랫폼은 상태 추적만 한다.</li>
-            <li><strong>잔액 부족 → 충전 화면 → 재시도</strong> — 한 흐름으로 묶여 있어 사용자 이탈을 줄인다.</li>
-            <li><strong>결제 만료 시 대기자 자동 승격</strong> — 자리는 항상 다음 대기자에게 흘러간다.</li>
-            <li><strong>변동형은 본 화면 사용 안 함</strong> — 변동형 회차는 일반 이벤트 결제 흐름을 그대로 쓴다.</li>
-          </ul>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">입금 신고 뒤에 기다리는 쪽은 호스트다</span>
-          <ul>
-            <li><strong>신고된 건은 자동 만료되지 않는다</strong> — 참가자가 "보냈어요"를 누른 순간 이미 돈이 나갔을 수 있어, 자리를 자동으로 회수하지 않는다.
-              만료를 걷어낸 자리에 호스트 확인 기한을 둔다. 신고 시점에 확인 기한이 함께 정해지고, 그 기한은 참가자의 입금 기한과 다른 값이다 —
-              신고 뒤 참가자는 더 할 일이 없고 기다리는 쪽은 호스트다.</li>
-            <li><strong>신고가 들어오면 호스트에게 바로 알림이 간다.</strong> 전에는 통지가 없어 호스트가 확인 큐를 열기 전까지
-              "돈은 도착했는데 자리는 미확정"인 상태가 방치됐다. 확인이 곧 자리 확정이므로 그 알림이 시작점이다.</li>
-            <li><strong>48시간 무응답이면 한 번 더 재촉하고, 5일까지 무응답이면 운영 경보로 올라간다.</strong>
-              상태는 건드리지 않는다 — 돈은 사람이 움직인다.</li>
-          </ul>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">관리자가 대신 처리할 때 — 같은 조치를 두 번 집행하지 않는다</span>
-          <p>호스트가 응답하지 않거나 돈이 중간에 걸린 건은 관리자가 여섯 가지 창구로 대신 처리한다 —
-            <strong>입금 확인·확인 거절·환불 수령 확인·강제 환불·취소된 코스의 갇힌 신고 되살리기·기록 정합 수리</strong>.</p>
-          <ul>
-            <li><strong>조치마다 명령 이름표가 붙는다.</strong> 관리자 화면이 응답을 못 받고 같은 조치를 다시 보내면,
-              서버는 같은 이름표를 알아보고 새로 집행하지 않은 채 지금 상태를 그대로 돌려준다(2026-09-05 반영).
-              전에는 응답을 잃은 재전송이 두 번째 집행이 되어 알림과 감사 기록이 겹치고, 되풀이 가능한 조치는 실제로 두 번 실행됐다.</li>
-            <li><strong>같은 이름표에 다른 내용을 담아 보내면 거절된다.</strong> 이름표는 대상 회원·금액·조치 종류와 함께 묶여 있어,
-              내용이 달라진 재전송은 다른 명령으로 판정되고 집행되지 않는다.</li>
-            <li><strong>조치가 거절되면 이름표도 함께 없던 일이 된다</strong> — 거절된 조치가 이름표를 선점해 다시 시도할 수 없게 되는 일을 막는다.</li>
-            <li><strong>관리자 화면에는 답을 못 받은 명령이 모이는 자리가 따로 있다.</strong>
-              운영자는 거기서 같은 명령을 다시 보내거나, "집행된 것으로 확인해 닫기" / "집행되지 않은 것으로 확인해 닫기" 둘 중 하나로 조사를 종결한다.
-              가장 높은 권한의 운영자는 모든 운영자의 열린 명령을 함께 본다. 열린 명령이 남아 있으면 같은 종류의 새 명령은 받지 않는다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">분쟁이 일어날 수 있는 케이스</span>
-          <ul>
-            <li><strong>계좌이체 입금 확인 무대응</strong> — 호스트가 확인 안 하면 자리가 예약된 채 72시간 흘러간다. 다른 대기자가 못 들어옴.</li>
-            <li><strong>계좌이체 환불 마감 무대응</strong> — 호스트가 송금만 하고 "환불 완료"를 안 누르면 멤버 입장에서 영구 "환불 진행중".</li>
-            <li><strong>지갑 잔액 부족 → 충전 동선 이탈</strong> — 충전 화면에서 멤버가 다른 화면으로 새면 가입 미완료.</li>
-            <li><strong>잘못된 송금자명</strong> — 호스트가 누가 누구 송금인지 매칭이 안 되면 입금 확인이 늦어지거나 거절될 수 있음.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>전체 과정의 APPROVED_PENDING_PAYMENT 등록자가 결제 화면에서 회비를 낸다. 앱은 현재 공개된 결제 기능과 과정의 prepaymentType의 교집합만 선택 가능하게 한다. POINT는 WALLET, CASH는 BANK_TRANSFER, MIXED는 둘을 허용한다. 2026-08-18의 계좌이체만 공개된 설정을 모든 환경의 영구 계약으로 사용하지 않는다.</p>
+<p>WALLET은 서버 moneyLiveGate, BANK_TRANSFER는 hostDirectCashReady 판정을 통과해야 한다. 출시 설정을 확인하지 않고 코드에 두 수단이 있다는 이유로 둘 다 판매 중이라고 설명하지 않는다. 은행 입금 신고와 호스트 실제 입금 확인은 서로 다른 단계다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>기본 경로는 <code>/api/v1/regular-meetings</code>다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·권한</th><th>결과</th></tr></thead><tbody><tr><td>POST /{id}/payment/pay</td><td>본인, RegularMeetingPayParam.method, Idempotency-Key 필수</td><td>RegularMeetingPaymentVo</td></tr><tr><td>GET /{id}/payment/bank-instructions</td><td>납부 의무 또는 진행 중 은행 결제를 가진 본인</td><td>RegularMeetingBankInstructionsVo</td></tr><tr><td>POST /{id}/payment/bind-account</td><td>현재 호스트</td><td>RegularMeetingBankBindingVo</td></tr><tr><td>GET /{id}/payment/queue</td><td>현재 호스트</td><td>List&lt;RegularMeetingPaymentVo&gt;</td></tr><tr><td>GET /{id}/payment/me</td><td>본인의 가장 최근 결제</td><td>RegularMeetingPaymentVo</td></tr><tr><td>GET /{id}/payment/{paymentId}</td><td>결제 본인 또는 현재 호스트</td><td>RegularMeetingPaymentVo</td></tr><tr><td>POST /{id}/payment/{paymentId}/confirm</td><td>현재 호스트</td><td>RegularMeetingPaymentVo</td></tr><tr><td>POST /{id}/payment/{paymentId}/reject</td><td>현재 호스트, reason query</td><td>RegularMeetingPaymentVo</td></tr></tbody></table></div>
+<p>pay는 판매 조건을 적용하고 기존 결제 조회·확인·거절 등은 CASH_EVENT의 safetyExit로 선언돼 있다. 신규 결제가 막혔다는 이유로 기존 금전 처리를 함께 막는 것으로 설명하지 않는다. 계좌 보완은 현재 호스트의 FIXED·유료·은행 수납·OPEN 모임만 허용한다. 본체 계좌가 없을 때 연결하고, 계좌가 없는 납부 대기 등록에만 전파한다. 이미 계좌가 있거나 살아 있는 은행 결제가 있는 등록은 덮어쓰지 않으며 처리 내역을 감사 기록으로 남긴다. 기존 등록·결제의 계좌를 최신 기본 계좌로 임의 치환하지 않는다.</p></section>
+<section id="current-3"><h2>납부 검사와 두 결제 수단</h2><p>모임을 잠그고 FIXED·OPEN, 본인 등록의 납부 대기 상태, paymentDueAt 경과 여부, 신청 제재, 닫힌 계정, 같은 회원의 활성 결제 유무를 검사한다. CANCELED/REFUNDED 외 기존 결제가 있으면 DUPLICATE_PAYMENT다. 금액은 서버의 본체 가격이며 양수여야 한다. 클라이언트가 제출한 임의 금액으로 결제하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>수단</th><th>서버 처리</th><th>등록 결과</th></tr></thead><tbody><tr><td>WALLET</td><td>지갑 차감, pointTxId·paidAt 기록, PAID</td><td>ENROLLED, 회차 참석 동기화</td></tr><tr><td>BANK_TRANSFER</td><td>등록에 저장된 hostBankAccountId 필수, hostDirect=true의 PENDING 신고 생성</td><td>납부 대기 유지, 호스트 확인 필요</td></tr></tbody></table></div>
+<p>은행 신고 시 confirmDueAt을 현재부터 설정된 hostConfirmSlaDays 뒤로 정하며 기본값은 5일이다. 등록의 paymentDueAt은 납부 의무를 만들 때의 72시간 기한이고 신고 때 다시 72시간으로 연장하지 않는다. 신고된 결제가 살아 있는 동안 납부 만료 작업은 그 회원을 제외한다.</p></section>
+<section id="current-4"><h2>계좌 안내의 접근 범위</h2><p>미등록 회원에게 계좌를 공개하지 않는다. 납부 대기 또는 PENDING·PAID·REFUND_REQUESTED인 본인 은행 결제가 있으면 안내를 조회할 수 있다. 진행 중 은행 결제에는 결제에 저장된 계좌를, 결제가 아직 없으면 등록에 저장된 계좌를 사용한다. 진행 중 결제가 없을 때만 현재 현금 기능·과정 결제 정책을 다시 검사한다.</p>
+<p>안내에는 은행·계좌번호·예금주·검증 표시, 금액, 입금자명 안내, 회원/결제 ID·상태가 포함된다. 살아 있는 은행 결제가 있으면 납부 dueAt은 null이며 PENDING 신고의 confirmDueAt을 구분해 표시한다. 이 응답은 은행의 실제 이체를 자동 검증했다는 증거가 아니다.</p></section>
+<section id="current-5"><h2>호스트 확인·거절과 지연</h2><p>확인 대상은 BANK_TRANSFER·PENDING이며 모임 CANCELED는 거절한다. 등록이 APPROVED_PENDING_PAYMENT인지 재확인한다. 정상 확인은 PAID·ENROLLED로 바꾸고 참석을 동기화한다. 확인 순간 회원이 탈퇴했거나 신청 제재를 받았으면 전액 REFUND_REQUESTED·CANCELED로 바꾸고 환불 안내와 호스트 조치 알림, 커밋 뒤 대기 승격을 요청한다. 따라서 confirm의 성공 응답이 언제나 등록 완료라는 뜻은 아니다.</p>
+<p>거절은 PENDING 신고 또는 아직 confirmedAt이 없는 REFUND_REQUESTED만 허용한다. reason은 API 선언상 선택 query지만 서비스는 trim 뒤 1~200자를 요구한다. 거절은 결제를 CANCELED로 바꾼다. OPEN의 일반 신고 거절은 회원을 즉시 PAYMENT_EXPIRED로 바꾸지 않으며 재납부 가능 여부는 원래 납부 기한과 상태로 판단한다. CLOSED의 남은 납부 의무는 종결한다. 취소 모임에 갇힌 PENDING 신고·CANCELED 회원 조합은 별도 복구가 필요하다는 오류로 막는다.</p>
+<p>호스트 목록은 BANK_TRANSFER의 PENDING·REFUND_REQUESTED를 생성순으로 반환한다. 신고 후 기본 48시간의 확인 독촉과 confirmDueAt 경과 시 에스컬레이션을 매일 서버 05:45 작업이 조회한다. 시간 경과를 입금 완료나 자동 승인으로 해석하지 않는다.</p></section>
+<section id="current-6"><h2>앱 재시도와 복귀</h2><p>결제 화면은 본체 OPEN·등록 상태·납부 기한을 확인하고 계좌 안내가 준비되지 않으면 신고를 막는다. 사용 불가능한 수단 응답을 받으면 그 수단을 현재 화면에서 제외하고 공개 기능·모임을 다시 조회한다. 전송은 회원 금전 명령의 본문·대상에 묶인 요청키를 사용한다. 결과 불명확 응답 뒤 등록·결제·계좌를 다시 읽고 WALLET이면 지갑·목록도 갱신한다. 성공은 모임 상세로 복귀하며 은행 신고는 ‘호스트 확인 후 등록’으로 안내한다.</p>
+<p>멤버·결제 관리 화면에는 계좌 연결 카드, 입금/환불 처리 목록, 환불 이력이 있다. ‘입금 목록 API 없음’·‘별도 채널로만 계좌 전달’은 현재 사실이 아니다.</p></section>
+<section id="current-7"><h2>과거 시나리오 원문 보존</h2><p>&gt; 정기모임 계좌이체 회비는 코스를 공개할 때 결박한 호스트의 받을 계좌로 받는다. 회원은 결제 화면의 납부 안내(<code>GET /payment/bank-instructions</code>)에서 계좌를 보고, 등록하지 않은 회원에게는 계좌를 보이지 않는다(400 <code>ENROLLMENT_INVALID_STATUS</code>, 2026-11-08 현금 정기모임 여정으로 확인).</p>
+<p>위 인용은 해당 날짜의 과거 기록이며 이번 소스 검토의 새 실행 결과가 아니다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>confirm 성공이 탈퇴·제재 회원의 환불 대기로 갈 수 있으나 앱 성공 토스트는 결제 완료 문구다.</td><td>실제 응답 상태와 재조회 결과를 기준으로 판단하며 문구 정합성 후속을 남긴다.</td></tr><tr><td>Risk</td><td>은행 신고·확인은 외부 계좌 확인을 전제로 한다.</td><td>신고/호스트 확인/환불 완료를 분리한다.</td></tr><tr><td>Gap</td><td>과정 회비는 한 번의 전체 금액이며 분할 납부 계약이 없다.</td><td>분할 납부를 현재 기능으로 설명하지 않는다.</td></tr><tr><td>미검증</td><td>현재 환경별 공개 설정·실제 송금·지갑 차감을 실행하지 않았다.</td><td>코드 지원과 운영 활성화를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 납부 가능 조건:</strong> FIXED·OPEN·납부 대기·유효 기한·계정·제재·중복 결제를 검사한다.</li><li><strong>AC-02 수단 공개:</strong> 과정 정책과 실행 환경의 공개 기능을 교차 적용한다.</li><li><strong>AC-03 지갑 완료:</strong> 지갑 차감과 등록 완료·회차 동기화를 연결한다.</li><li><strong>AC-04 은행 신고:</strong> 등록별 계좌를 사용하고 신고와 실제 확인을 나눈다.</li><li><strong>AC-05 두 기한:</strong> 등록 납부 72시간과 은행 확인 기본 5일을 구분한다.</li><li><strong>AC-06 확인 예외:</strong> 탈퇴·제재 시 전액 환불 대기로 전환하는 성공 결과를 보존한다.</li><li><strong>AC-07 거절 조건:</strong> 미확인 상태·필수 사유·종료 모임의 등록 종결을 설명한다.</li><li><strong>AC-08 기존 결제 출구:</strong> 판매 중단 뒤에도 기존 조회·처리를 지원하는 선언을 구분한다.</li><li><strong>AC-09 앱 처리:</strong> 요청키·불명확 결과 재조회·실제 호스트 처리 목록을 연결한다.</li></ul></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
