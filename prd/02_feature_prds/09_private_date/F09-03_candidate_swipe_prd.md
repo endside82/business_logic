@@ -1,101 +1,77 @@
-# F09-03. 후보자 카드 & 매칭 액션 PRD
+# F09-03. 후보 탐색과 좋아요·넘김 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 시험·운영·실기기 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 입구와 API
 
-후보 카드를 한 장씩 보여 주고 버튼으로 LIKE/PASS를 받는다. drag/swipe gesture는 없다. 양쪽 LIKE가 일치하면 `DateMatch.MATCHED` + `DateChatRoom.ACTIVE` 채팅방을 즉시 생성하고, 매칭 미성사 시 7일짜리 PENDING row를 보관한다. 후보 쿼리는 이미 내가 처리한 상대와 나를 넘긴 상대를 제외한다.
+/dating과 /dating/candidates는 같은 후보 카드 화면이며 DATING 공개 범위를 따른다. GET /api/v1/date/profile/candidates는 페이지가 아닌 List<DateCandidateVo>를 최대 20개 반환한다. POST /api/v1/date/matches/action은 targetUserId·action을 받아 matchId·isMatched·선택 chatRoomId를 반환한다. 현재 화면 선택은 LIKE·PASS 버튼이며 끌어 넘기는 제스처 구현으로 설명하지 않는다.
 
-### 2026-07-29 소스 재실측 — 후보 하드필터와 점수 옵트인
+본인 프로필 없음 오류는 인증 상태 확인 입구로 안내한다. 다른 프로필 조회 오류는 오류/재시도로 표시한다. 후보 읽기 오류도 별도로 재시도하며 조회가 정상인데 빈 경우는 추천 상대 없음 안내다. 후보 응답을 받은 뒤 표시하지 않은 카드까지 실제 열람한 것으로 보장하지 않는다.
 
-- 기존 성별·연령·차단·활성 프로필 조건 뒤에 **조회자 관점의 단방향 결격 필터**가 적용된다.
-  - `excludeSmoker=true`이면 후보 `SMOKER` 제외
-  - `excludeHeavyDrinker=true`이면 후보 `OFTEN` 제외
-  - `excludeCasualPurpose=true`이면 후보 `CASUAL` 제외
-  - `sameReligionOnly=true`이면 양쪽 종교가 모두 non-null이고 서로 다를 때만 제외
-- 후보의 특성 값이 null이면 위 결격 필터를 통과한다. 필터가 상호 대칭으로 강제되는 것은 아니며 현재 조회자의 설정만 적용한다.
-- 기본 점수 성분은 태그 교집합 0.30, 지역 0.25, 상호 연령 선호 0.20, 신뢰점수 유사도 0.15, 활동성 0.10이다. 태그·신뢰점수는 양쪽 `communityDataOptIn=true`일 때만 포함한다.
-- 한쪽이라도 미동의면 지역·연령·활동성 성분의 합으로 가중치를 재정규화한다. 신규 프로필 보너스는 30일 범위 최대 +0.15, 과다 노출 페널티는 최대 -0.10이며 옵트인과 무관하다.
-- trait 검사 점수와 내부 `behaviorStyleEstimate`는 현재 데이팅 후보 점수에 사용되지 않는다.
+## 후보 조건과 공개 필드
 
-실측 근거: `DateMatchingService.passesDealbreakers`, `MatchScoringService.calculateMatchScore`, `DateProfileQueryRepository`, 관련 service/repository 테스트.
+조회자는 현재 유효한 인증과 본인 프로필이 있어야 한다. 후보 쿼리는 본인을 제외하고 isActive=true·PUBLIC·유효 인증·양쪽의 선호 성별 일치를 검사한다. 서비스에서 양방향 데이트 차단, 조회자 선호 나이, 조회자 관점의 결격 필터를 추가한다. 선호 나이는 현재 연도에서 출생연도를 뺀 값이며 프로필 생성의 실제 생일 기준 만 20세 검사와 다르다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+이미 내가 LIKE/PASS 등 PENDING 아닌 행동을 했거나 상대가 나를 PASS한 매치가 있으면 제외한다. 상대가 먼저 LIKE하고 나는 PENDING이면 후보에 남을 수 있다. 이 제외 조건은 매치의 상태나 만료 여부를 보지 않으므로 만료·차단 해제가 곧 후보 재노출을 보장하지 않는다.
 
-- **데이팅 탭 메인** — `/dating`과 `/dating/candidates` 모두 같은 후보 카드 화면
-- **매칭 목록 빈 상태에서 "후보자 둘러보기" 버튼** (스펙)
+excludeSmoker는 SMOKER, excludeHeavyDrinker는 OFTEN, excludeCasualPurpose는 CASUAL을 제외한다. sameReligionOnly는 양쪽 종교가 모두 있고 서로 다를 때 제외한다. 후보 값이 없으면 이 필터를 통과하며 상대방의 결격 선호를 대칭으로 적용하지 않는다.
 
-## 2. 코드 위치
+응답의 출생연도·성별·소개·키·직업·지역은 후보의 개별 disclose 설정에 따라 null일 수 있다. 사진은 삭제되지 않은 APPROVED 사진만 포함하고 표시용 서명 URL을 사용한다. 현재 후보 조회에 조회자 활성 여부, 계정 상태, DATE_PROFILE_BLOCK을 직접 검사하는 추가 경로는 없다. 프로필 생성·활성화의 제재 가드가 이 조회에서도 그대로 실행된다고 쓰지 않는다.
 
-계약의 정본은 코드다. 서버: `DateMatchController`, `DateProfileController`, `DateMatchExpirationScheduler`. 앱: `candidate_card_screen.dart`, `date_block_reason_sheet.dart`.
+## 점수와 노출 계수
 
-## 3. 전체 동작 흐름
+기본 가중치는 지역 0.25, 양쪽 나이 선호 0.20, 후보 활동성 0.10이며 양쪽 모두 communityDataOptIn=true일 때 관심 태그 0.30과 신뢰점수 유사도 0.15를 더한다. 사용한 성분의 가중치 합으로 다시 나누므로 미동의 자체를 별도의 감점으로 처리하지 않는다.
 
-### 후보자 카드 (`candidate_card_screen.dart`)
+그 뒤 생성 30일 이내 프로필에 최대 +0.15, 최근 24시간 노출 10회를 넘긴 프로필에 최대 -0.10을 적용하고 100을 곱한다. 최종값을 0~100으로 자르는 코드는 없다. 점수 내림차순 뒤 회원 ID 내림차순으로 최대 20개를 고른다.
 
-- **사용자가 보는 것**:
-  - `CommunityAppBar(title: '')` (배경 `gray50`)
-  - 가드 분기:
-    - 프로필 조회 실패 시 — 인증 안내 화면 + "프로필 만들기" 버튼 → `/dating/verification` 이동
-  - 후보 스택 (`_CandidateStack`) — 한 번에 1장. 카드 위에 사진(또는 핑크 fallback), 그라데이션 오버레이, 좌하단에 "{displayName}, {age}" + 📍 지역 + 자기소개 2줄
-  - 카드 우상단에 "더보기" `more_vert` IconButton — 탭 시 바텀시트(차단 메뉴)
-  - 하단 액션 버튼 2개: ✕ 패스(흰배경 + 그림자), ♥ LIKE(`datingPink` 원형)
-  - 모든 후보 소진 시 `AppErrorState(title: '모든 후보를 확인했습니다')`
-- **사용자가 할 수 있는 액션**:
-  - ♥ 탭 ▶ `_onAction(candidate, 'LIKE')` ▶ `POST /api/v1/date/matches/action {targetUserId, action: 'LIKE'}` ▶ 응답 `isMatched=true` 시 매칭 다이얼로그, 아니면 다음 카드
-  - ✕ 탭 ▶ 동일 흐름, action=`PASS`
-  - 좌상단 "더보기" → 바텀시트 `_showActionSheet` → "차단" 탭 ▶ `DateBlockReasonSheet.show` → 사유 받아 `matchActionNotifier.blockUser(userId, reason)` ▶ `POST /api/v1/date/blocks/{targetUserId}?reason=...` ▶ 토스트 + 다음 카드 (F09-07 호출)
-- **상태 분기**:
-  - 로딩: `CircularProgressIndicator`
-  - 에러: `AppErrorState.fromError(onRetry: invalidate)`
-  - 빈 후보: `AppErrorState(title: '추천 상대가 없습니다')`
-- **모달/시트**:
-  - 매칭 성공 시 `AlertDialog` "매칭 성공! 🎉" + 두 버튼 ("계속 둘러보기" / "채팅 시작")
-  - "채팅 시작" 탭 시 `chatRoomId`로 `/dating/chat/{chatRoomId}?partnerName=...` push (F09-05 진입)
-  - 더보기 시트: 차단 액션 1개
+노출 계수는 반환 목록을 만들 때 Redis에 기록하며 실제 화면에서 카드를 본 시각과 다르다. 조회/기록 실패는 로그를 남기고 감점을 생략하거나 기록 없이 진행한다. 점수 계산은 현재 연도 나이·프로필 활동 시각 등을 사용하며 성격 검사 추정값 전체를 가져오는 계약이 아니다.
 
-## 4. 제품 규칙
+## 선택 명령과 재검사 범위
 
-- 후보는 활성이고 전체 공개이며, 내 선호 성별에 맞고, 인증이 유효한 본인 외의 사람이다. 한 번에 최대 20명을 점수순으로 주고, 같은 점수는 회원 번호순이다.
-- 이미 좋아요나 넘김을 한 상대와 나를 넘긴 상대는 후보에서 빠진다. 상대가 먼저 좋아요를 눌렀고 내가 아직 응답하지 않았다면 남아 있다.
-- 내 인증이 없거나 프로필이 없으면 후보를 볼 수 없고, 인증 안내 화면으로 보낸다.
-- 양쪽이 좋아요를 누르면 바로 매칭이 되고 채팅방이 열린다. 한쪽만 누르면 7일간 응답 대기로 두고, 7일이 지나면 만료된다. 한쪽이 넘기고 상대도 이미 넘긴 상태면 거절로 끝난다.
-- 이미 매칭된 상대에게는 다시 보낼 수 없다. 차단 관계(어느 쪽이든)면 거절된다. 처음 상호작용하는 상대가 비활성이거나 전체 공개가 아니면 없는 프로필로 취급한다. 상대의 인증이 만료되었다면 좋아요는 닿지 않지만 넘기기는 할 수 있다.
-- 좋아요와 넘김을 누른 상대의 「나를 본 사람」 목록에 내가 기록된다.
-- 화면은 카드를 한 장씩 보여 주고 스와이프 없이 ✕, ♥ 버튼으로 고른다. 후보가 없으면 「추천 상대가 없습니다」, 다 보면 「모든 후보를 확인했습니다」 안내가 나온다. 더보기에서 바로 차단할 수 있고 차단하면 다음 카드로 넘어간다.
-- 매칭이 되면 「계속 둘러보기」와 「채팅 시작」 두 선택이 있는 창이 뜬다.
+선택은 계정 번호 순서의 공유 잠금, 본인 인증 공유 읽기, 사용자 쌍 잠금, 양방향 차단의 잠긴 조회, 매치 행 잠금을 거친다. 자기 자신은 거절한다. LIKE는 상대의 현재 인증과 양쪽 계정의 닫힘 상태도 검사한다. PASS는 LIKE와 같은 상대 인증 조건을 요구하지 않는다.
 
-## 6. 상태/권한/시나리오 매트릭스
+기존 매치가 없을 때만 상대 프로필 활성·PUBLIC을 검사한다. 직접 선택 API는 후보 목록의 나이·결격·점수 조건과 본인 프로필 존재/활성 조건을 모두 다시 적용하지 않는다. 이미 MATCHED이면 거절하지만 EXPIRED·REJECTED·BLOCKED 상태나 expiresAt을 명시적으로 일괄 거절하는 분기는 없다. 현재 차단이 풀려 있어도 기존 행동값과 상태가 이후 결과에 영향을 줄 수 있다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | LIKE → 상대도 LIKE → 즉시 매칭 + 채팅 시작 (Happy Path) | 후보자 카드 화면. 상대(targetUserId=42)가 이미 나에게 LIKE 한 상태(즉, `DateMatch(user1=42, user2=me, user1Action=LIKE, user2Action=PENDING, status=PENDING)` 존재). | `DateMatch.status=MATCHED, DateChatRoom.status=ACTIVE`. 매칭 목록(F09-04)·채팅방 목록(F09-05)에 반영. |
-| S2 | LIKE → 상대 미응답 → 7일 PENDING 보류 | 시나리오 본문 참조 | 사용자에게는 매칭 목록의 `새매칭` 탭에 PENDING 카드가 일정 기간 노출됨 (잔여시간 배너 — F09-04). |
-| S3 | PASS → 상대도 이미 PASS → REJECTED | 상대가 이미 PASS한 PENDING 페어 | row는 REJECTED로 보존되고, 이 페어는 후보 쿼리에서 제외되어 다시 노출되지 않는다. |
-| S4 | 차단된 사용자에게 LIKE 시도 | 내가 user42를 차단한 상태에서 어쩐 일로 카드가 노출(또는 캐시). | 매칭 미생성. |
-| S5 | 이미 매칭된 사용자에게 LIKE 재시도 | 시나리오 본문 참조 | 무변동. |
-| S6 | 미인증 / 프로필 미작성 사용자가 후보자 호출 | 시나리오 본문 참조 | 가드 통과 후 재시도 가능. |
-| S7 | 차단(횡단) — 카드에서 즉시 차단 | 시나리오 본문 참조 | 후보자 풀에서 영구 제외(차단 해제 전까지). |
-| S8 | 신고 (간접) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | 동시성 — 같은 사용자에게 두 번 빠르게 LIKE 탭 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+앱은 LIKE/PASS만 보내지만 서버 enum 변환에는 PENDING도 존재하며 요청 DTO와 이 메서드에 LIKE/PASS만 허용하는 별도 검증은 없다. 이 차이를 UI 선택 범위와 서버 명령 범위의 현재 제한으로 남긴다.
 
-## 8. Gap / Risk
+## 매칭 결과와 만료 작업
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 대화 중인 방 닫힘 | 응답 없는 좋아요는 7일이 지나면 매 정시 작업이 만료로 바꾸고 양쪽에 알린다. 같은 작업이 매일 새벽 30일 넘게 활동이 없는 매칭의 방을 닫는다. 2026-11-08 부터 활동은 매칭 성사, 방 메시지, 만남 제안·확정·취소·완료로 재고, 닫기 직전 잠근 뒤 다시 판정하며, 닫힌 방을 다시 닫지 않는다. 제안 중·확정된 만남은 만남 예정 날짜·시각까지 활동으로 보아, 만남 날짜가 남은 방은 닫지 않고 만남이 지나고 30일 동안 활동이 없으면 닫는다. 대화방이 닫힌 매치는 새 만남 제안·수락을 끝난 매치처럼 거절하고 확정된 만남의 취소·완료만 받는다 | 없음 |
-| Decision Needed | 끌어 넘기는 카드 | 명세는 카드를 좌우로 끌어 좋아요와 넘김을 고르게 한다. 앱은 카드를 한 장씩 보여 주고 ✕, ♥ 단추로만 고른다. 데이트는 첫 출시에서 닫혀 있다 | 끌어 넘기기를 만들지, 명세를 단추 방식으로 고칠지 정한다 |
-| 해소됨 | 단추 두 번 누르기 | 응답을 기다리는 동안 ✕·♥ 두 단추를 함께 잠가 두 번 눌러도 요청이 한 번만 간다(2026-11-08 앱). 처리한 후보는 응답이 오면 목록에서 뺀다 | 없음 |
+처음 선택하면 PENDING 매치와 생성 시점부터 7일의 expiresAt을 저장한다. 기존 행은 해당 사용자의 행동을 바꾸며 expiresAt을 새로 연장하지 않는다. 양쪽 LIKE면 MATCHED와 matchedAt, ACTIVE 채팅방을 같은 흐름에서 저장한다. 양쪽 PASS면 REJECTED다. 선택 저장 뒤 방문 기록을 같은 거래에서 남긴다.
 
-## 9. 수용 기준
+매 정시 만료 작업은 기한이 지난 PENDING을 찾아 행 잠금 뒤 여전히 PENDING인지 확인하고 EXPIRED 및 양쪽 알림 outbox를 기록한다. DATING이 닫혀 있으면 이 작업을 건너뛴다. 기한이 지났다는 사실과 스케줄러 반영 완료, 알림 발행과 실제 수신을 구분한다.
 
-- **AC-01. LIKE → 상대도 LIKE → 즉시 매칭 + 채팅 시작 (Happy Path)**: Given 후보자 카드 화면. 상대(targetUserId=42)가 이미 나에게 LIKE 한 상태(즉, `DateMatch(user1=42, user2=me, user1Action=LIKE, user2Action=PENDING, status=PENDING)` 존재). When 사용자가 해당 흐름을 실행하면 Then `DateMatch.status=MATCHED, DateChatRoom.status=ACTIVE`. 매칭 목록(F09-04)·채팅방 목록(F09-05)에 반영.
-- **AC-02. LIKE → 상대 미응답 → 7일 PENDING 보류**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자에게는 매칭 목록의 `새매칭` 탭에 PENDING 카드가 일정 기간 노출됨 (잔여시간 배너 — F09-04).
-- **AC-03. PASS → 상대도 이미 PASS → REJECTED**: Given 상대가 이미 PASS한 PENDING 페어 When 내가 PASS하면 Then row는 REJECTED가 되고 이 페어는 후보에서 제외된다.
-- **AC-04. 차단된 사용자에게 LIKE 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 매칭 미생성.
-- **AC-05. 이미 매칭된 사용자에게 LIKE 재시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 무변동.
-- **AC-06. 미인증 / 프로필 미작성 사용자가 후보자 호출**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 가드 통과 후 재시도 가능.
-- **AC-07. 차단(횡단) — 카드에서 즉시 차단**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 후보자 풀에서 영구 제외(차단 해제 전까지).
-- **AC-08. 신고 (간접)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. 동시성 — 같은 사용자에게 두 번 빠르게 LIKE 탭**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+30일 무활동 방 정리는 별도로 매일 03:00 스케줄에서 수행한다. 매칭 갱신·메시지·만남의 갱신 및 제안/확정된 만남 예정 시각을 활동 판단에 쓰고, 매치와 방을 잠근 뒤 다시 확인한다. 실제 변경은 방의 INACTIVE와 closedAt이며 매치 자체를 EXPIRED로 바꾸는 작업이 아니다. 이 작업도 DATING 닫힘에서는 건너뛴다.
+
+## 앱의 선택·차단·사진 신고
+
+선택 요청 중 두 버튼을 함께 잠그고 응답이 성공한 후보를 목록에서 뺀다. 실패는 일반 오류를 알리고 카드를 유지한다. 매칭 성공 창에서 계속 보기 또는 chatRoomId가 있는 채팅 시작을 선택할 수 있다. 이 입구는 방 번호를 포함하지만 현재 matchId는 넘기지 않으며 채팅 화면의 방 목록 해석에 의존한다.
+
+후보 메뉴에는 차단과 대표 사진 신고가 연결돼 있다. 사진 신고는 대표 또는 첫 사진의 사진 ID를 사용하고 복귀 후 후보를 다시 읽는다. 차단 성공 시 관련 목록을 갱신하고 현재 후보를 뺀다. 차단 사유·안전 신고·실패 입력 유지는 [데이트 차단과 안전 신고](F09-07_block_prd.md)를 따른다.
+
+## 코드 위치
+
+서버: DateProfileController#getCandidates, DateMatchController#performAction, DateMatchingService, DateProfileQueryRepository, MatchScoringService, MatchActionParam, MatchAction, DateBlockGuard, DateMatchQueryRepository, DateMatchExpirationScheduler, DateMatchExpirationWorker. 앱: date_profile_provider.dart, date_match_api.dart, date_match_provider.dart, candidate_card_screen.dart, dating_routes.dart.
+
+<!-- source-references:start -->
+서버 창구: `DateProfileController#getCandidates`, `DateMatchController#performAction`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 후보 조회와 직접 선택이 같은 자격 검사를 공유하지 않고 전역 프로필 제재를 직접 검사하지 않는다. | 생성/활성화 가드로 전체 노출·선택이 차단됐다고 단정하지 않는다. |
+| Gap | 선택 API의 PENDING 입력·기존 종료 상태·만료 시각 검증이 UI 정책보다 넓다. | LIKE/PASS만 있는 화면과 서버 범위를 구분한다. |
+| Risk | 응답 생성의 노출 기록·100 초과 가능한 점수·스케줄 반영 시차가 있다. | 실제 열람·백분율·즉시 만료로 오해하지 않게 한다. |
+| 미검증 | 실제 동시 선택/차단·Redis 실패·만료 작업·기기 채팅 이동은 실행하지 않았다. | 현재 소스 구조를 제품 시험 통과로 기록하지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 후보 필터:** 공개·활성·인증·양쪽 성별과 조회자 나이/결격·차단·기존 행동 제외를 구분한다.
+- **AC-02 개인정보:** disclose별 nullable 필드와 승인 사진만 응답한다.
+- **AC-03 점수 의미:** 옵트인 성분 재정규화·가감점·동점 역순·응답 시점 노출 계수를 설명한다.
+- **AC-04 선택 범위:** 잠금과 LIKE/PASS의 다른 인증 조건, 직접 API의 검증 한계를 명시한다.
+- **AC-05 상태 전이:** PENDING/양쪽 LIKE/양쪽 PASS와 기존 expiresAt 유지, 방문 기록을 구분한다.
+- **AC-06 예약 작업:** 7일 대기 만료와 30일 무활동 방 INACTIVE, 공개 범위에 따른 중단을 구분한다.
+- **AC-07 앱 복구:** 중복 버튼 잠금·실패 카드 유지·방 번호 채팅 이동·차단/사진 신고 후 갱신을 반영한다.

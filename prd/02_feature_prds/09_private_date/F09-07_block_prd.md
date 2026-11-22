@@ -1,86 +1,68 @@
-# F09-07. 사용자 차단/해제 PRD
+# F09-07. 데이트 차단과 안전 신고 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 시험·운영·실기기 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 입구와 공개 계약
 
-데이팅의 횡단 안전 보호 기능. 어디서든(후보자 카드/매칭 목록/채팅) 상대를 차단할 수 있고, 차단 시 활성 매치는 `BLOCKED`로, 채팅방은 `CLOSED`로 즉시 전환된다. 차단된 사용자는 후보자 노출과 매칭 액션에서 제외된다(F09-03 양방향 검사). 해제 시 매치 상태는 자동 복원하지 않으며, 다시 후보자 풀에 노출될 수 있다.
+후보 카드와 매칭 목록 메뉴에서 차단 사유 시트를 연다. 본인 프로필의 차단 목록에서는 현재 차단을 보고 해제한다. 채팅 화면에는 상대 사진 신고와 만남 제안 입구가 있지만 차단 사유 시트를 여는 메뉴는 현재 연결돼 있지 않다. 사진 신고와 상대 차단을 같은 동작으로 설명하지 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+DateBlockController 전체는 DATING의 safetyExit 경로다. GET /api/v1/date/blocks는 본인이 차단한 BLOCKED 행의 List<DateBlockVo>, POST /blocks/{targetUserId}는 201 본문 없음, DELETE는 204 본문 없음이다. 내부 서비스가 만든 VO를 공개 POST 응답으로 기대하지 않는다.
 
-- **차단 발동**: 어느 화면에서나 발동 가능
-  - F09-03 후보자 카드 우상단 ⋮ → "차단" → `DateBlockReasonSheet`
-  - F09-04 매칭 목록 카드 ⋮ → "차단" → `DateBlockReasonSheet`
-  - (스펙) F09-05 채팅 화면에서도 발동 가능 — 현 화면 코드에는 차단 메뉴 미연결
-- **차단 목록 조회**: 데이팅 프로필 화면(F09-02) → "차단 목록" ListTile → `datingBlocks` 라우트
+POST는 선택 본문 DateBlockParam(reason·fileReport·reportReason·evidenceFileIds)을 받고 과거 query reason도 지원한다. 본문이 없으면 안전 신고 없이 차단하며 본문 사유가 비어 있고 query 사유가 있으면 보완한다. reason은 최대 200자이며 서버에서 필수는 아니다. 증빙은 최대 5개로 본인 자격을 검증·정규화한다.
 
-## 2. 코드 위치
+## 차단 저장과 대화방 종료
 
-계약의 정본은 코드다. 서버: `DateBlockController`, `DateBlockStatus`, `FavoriteService`, `ReportService`. 앱: `date_blocks_screen.dart`, `date_block_reason_sheet.dart`, `date_block_param.dart`.
+자기 자신 차단을 거절하고 계정 번호 순서로 공유 잠금을 잡은 뒤 가능한 경우 사용자 쌍 잠금을 잡는다. 기존 차단 행은 커밋된 식별자 조회와 행 잠금으로 확인한다. 이미 BLOCKED이면 CONFLICT, 해제된 행이면 기존 행을 BLOCKED로 되돌려 사유·source·해제 시각을 갱신한다. 따라서 재차단의 createdAt은 반드시 새로운 시각이 아니다.
+
+현재 매치가 있으면 BLOCKED로 바꾸고 두 사람 사이의 ACTIVE MATCH 방과 선택된 비공개 모임 방을 모두 CLOSED 및 closedAt으로 변경한다. 데이터베이스 변경은 같은 차단 거래에 포함된다. 커밋 뒤 PairBlockedEvent를 실시간 제어 발행기에 전달하지만 발행 예외는 로그로 남기는 경로이므로 모든 기기의 즉시 수신까지 보장하지 않는다.
+
+양방향 BLOCKED 조회는 후보 제외와 매칭·채팅 관련 접근 판정에 쓰인다. 차단한 쪽의 목록 API에만 사유를 반환하며 실시간 제어 이벤트의 인자는 사용자 쌍과 닫힌 방 ID다. 사유·안전 신고 내용을 상대에게 알려 주는 알림으로 설명하지 않는다.
+
+## 안전 신고와 증빙 보존
+
+fileReport=true면 DATE_USER 신고를 만들고 reportId·증빙 ID를 차단 행에 연결한다. reportReason이 없거나 알 수 없는 값이면 OTHER를 사용한다. false면 신고·증빙 연결 필드를 비우고 해당 차단 증빙 참조를 남기지 않는다. 증빙 입력의 자격 검증은 그 전에 수행되므로 신고를 끈 요청이라도 잘못된 증빙 값을 무시한다고 보장하지 않는다.
+
+신고가 있고 두 사람 사이에 보류 대상 비공개 모임 에스크로가 있으면 DATE_BLOCK 분쟁 사례와 REPORTER/TARGET 당사자를 만들고 해당 모임을 보류한다. 단순 차단만으로 모든 금전 흐름을 중단하거나 환불 완료로 처리하지 않는다.
+
+차단 증빙의 정리 기준은 연결 신고가 RESOLVED 또는 DISMISSED이고 processedAt에서 1년을 넘긴 경우다. 처리 중 신고는 이 조건에 들지 않는다. 정리 때 차단 행을 잠근 뒤 조건을 다시 확인하고 증빙 필드를 비우며 참조 해제 절차를 거친다. 차단한 날부터 무조건 1년 뒤 삭제하거나 차단 해제 즉시 증빙을 없애는 정책이 아니다. 실제 파일 삭제 완료는 별도 저장소 작업과 보류 조건을 따른다.
+
+## 해제와 다시 보이는 조건
+
+해제는 본인의 BLOCKED 행을 잠그고 UNBLOCKED·unblockedAt을 저장한다. 대상 행이 없거나 이미 해제됐으면 NOT_FOUND다. 차단 기록을 삭제하거나 매치·채팅방을 자동 복원하지 않는다.
+
+후보 재노출에는 활성·PUBLIC·유효 인증·선호·기존 매치 행동 제외가 계속 적용된다. 상대가 여전히 나를 차단한 경우도 제외된다. 따라서 해제 성공을 즉시 다시 후보에 나타남 또는 기존 대화 재개로 설명하지 않는다. 직접 선택 API의 기존 상태 처리 한계는 [후보 탐색과 좋아요·넘김](F09-03_candidate_swipe_prd.md)을 따른다.
+
+## 앱의 사유·증빙과 실패 복구
+
+현재 시트는 안전 신고를 기본으로 켜고 사유 선택을 요구한다. 기타면 공백 아닌 설명이 있어야 하며 증빙 업로드 중 제출을 막는다. 최대 5개 증빙을 연결하고 신고를 끄면 현재 증빙 선택을 비운다. 선택 해제가 서버 파일의 즉시 삭제까지 뜻하지는 않는다. 제출 중 중복 실행·미저장 이탈을 제어하고 성공한 경우에만 시트를 닫는다. 실패하면 사유·증빙 입력을 유지한다.
+
+차단 성공은 매칭·후보·차단 목록을 다시 읽게 하며 후보 화면은 현재 카드도 뺀다. 차단 명령의 불명 결과에서는 이 성공 갱신이 자동 실행되지 않는다. 매칭 목록은 상대를 user2Id로 고정하는 결함이 있으므로 해당 입구의 자격을 [매칭 목록과 대화 연결](F09-04_match_list_prd.md)에서 함께 확인한다.
+
+해제는 확인창에서 본인의 blockedId를 사용한다. 성공 또는 반영됐을 가능성이 있는 오류에 대화 목록 변경 신호와 차단 목록 갱신을 수행한다. 현재 목록은 페이지가 아니며 빈 안내·오류 재시도가 있고 별도 당겨 새로고침은 없다. 도움말은 F09-03으로 연결돼 있어 차단 기능 안내와의 차이를 남긴다.
+
+## 코드 위치
+
+서버: DateBlockController, DateBlockService, DateBlockGuard, DateBlockQueryRepository, RealtimeControlEventListener#onPairBlocked, DisputeCaseRetentionScheduler#expireDateBlocks/isDateBlockExpired/isReportExpired. 앱: date_block_api.dart, date_block_param.dart, date_match_repository.dart, date_match_provider.dart, date_block_provider.dart, date_block_reason_sheet.dart, date_blocks_screen.dart, candidate_card_screen.dart, match_list_screen.dart, chat_screen.dart.
 
 <!-- source-references:start -->
 서버 창구: `DateBlockController#listBlocks`, `DateBlockController#blockUser`, `DateBlockController#unblockUser`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-### 차단 목록 (`date_blocks_screen.dart`)
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 채팅 차단 입구가 없고 매칭 목록은 user2Id 고정 대상이다. | 후보/목록/채팅의 입구를 전부 완성됐다고 묶지 않는다. |
+| Gap | 차단 불명 결과는 성공 목록 갱신을 하지 않으며 도움말은 F09-03이다. | 해제의 불명 결과 재조회와 구분한다. |
+| Risk | DB 방 종료·실시간 제어 발행·기기 수신, 차단 해제·재노출·증빙 정리는 서로 다른 결과다. | 자동 복원·즉시 수신·즉시 삭제를 보장하지 않는다. |
+| 미검증 | 실제 동시 차단·연결 기기·에스크로 보류·증빙 보존/삭제는 실행하지 않았다. | 현재 코드 경로와 운영 결과를 구분한다. |
 
-- **사용자가 보는 것**:
-  - `CommunityAppBar('차단 목록')`
-  - 빈 상태: `AppEmptyState(icon: block_outlined, title: '차단한 사용자가 없습니다', description: '차단된 사용자는 매칭/채팅에 노출되지 않습니다')`
-  - 차단 카드 `_BlockCard` — 첫글자 placeholder 아바타(`gray100` 배경) + `blockedNickname or "알 수 없음"` + `reason` (있을 때 2줄까지) + 차단일 `차단일 yyyy.MM.dd`
-  - 우측 `AppButton(variant: outline, size: sm, label: '해제')`
-- **사용자가 할 수 있는 액션**:
-  - "해제" 탭 ▶ `AppDialog.confirm("차단 해제", "{nickname}의 차단을 해제하시겠습니까?", confirmLabel: '해제')`
-  - 확인 시 `dateBlocksNotifier.unblock(blockedId)` ▶ `DELETE /api/v1/date/blocks/{blockedId}` ▶ 토스트 (성공: "차단을 해제했습니다", 실패: "차단 해제에 실패했습니다")
-- **상태 분기**:
-  - 로딩: `CircularProgressIndicator`
-  - 에러: `AppErrorState.fromError(onRetry: invalidate)`
+## 수용 기준과 검증 근거
 
-### 차단 사유 입력 시트 (`date_block_reason_sheet.dart`)
-
-- **사용자가 보는 것**: 사유 입력 바텀시트 (구현 세부는 본 작업 범위 외 — 단 호출 시그니처는 `DateBlockReasonSheet.show(context, targetNickname: ...)` → `Future<String?>`)
-- **반환**: null이면 액션 취소, 문자열이면 사유로 전달
-
-## 4. 제품 규칙
-
-- 후보 카드와 매칭 목록 어디서든 상대를 차단할 수 있다. 차단하면 그 상대와의 매칭은 차단 상태가 되고 그 쌍의 채팅방은 모두 닫힌다. 차단은 양방향으로 적용되어 서로의 후보 노출과 좋아요가 막힌다.
-- 이미 차단 중인 상대를 다시 차단하면 충돌 오류, 차단 중이 아닌 상대를 해제하면 찾을 수 없음 오류다.
-- 해제해도 매칭과 채팅방은 되살아나지 않는다. 해제는 기록으로 남고(해제 상태) 지워지지 않는다. 해제 뒤에는 후보 풀에 다시 나올 수 있다.
-- 차단할 때 사유(200자까지)를 남길 수 있고, 안전신고를 함께 접수할 수 있다(신고 사유를 안 고르면 기타). 증빙 파일은 5개까지다. 안전신고가 딸린 차단은 분쟁 케이스에 포함되어, 처리 중에는 증빙을 지울 수 없고 처리 뒤 1년 보관한다.
-- 차단당한 사람에게는 차단 사실도 사유도 알리지 않고, 사유는 차단한 본인만 본다.
-- 차단 목록에는 닉네임(없으면 「알 수 없음」), 사유, 차단일이 보이고 해제는 확인을 거친다. 차단한 사람이 없으면 「차단한 사용자가 없습니다」 안내가 나온다.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 후보자 카드에서 차단 (Happy Path) | 활성 매치 없음, 후보 카드 표시 중. | 차단 row 1개. 다음 후보자 fetch에서 해당 사용자 제외 (양방향 차단 필터). |
-| S2 | 매칭 카드에서 차단 → 매치 BLOCKED + 채팅 CLOSED | `Match.MATCHED`, `ChatRoom.ACTIVE`, 메시지 5건 교환됨. | 메시지 송신 차단, 새 매칭 액션 차단. |
-| S3 | 이미 차단한 사용자에게 다시 차단 시도 | 시나리오 본문 참조 | 변동 없음. |
-| S4 | 차단 해제 — 매치 복원 없음 | 과거에 차단한 사용자 1명. 매치는 BLOCKED 상태로 잔존. | 차단 row status=UNBLOCKED 전환 (삭제 아님), 매치/채팅 그대로. |
-| S5 | 권한 — 존재하지 않는 차단 해제 | 시나리오 본문 참조 | 변동 없음. |
-| S6 | 차단당한 자의 관점 (간접) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 신고와의 관계 (간접) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | 차단 시 데이터 보존 정책 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Gap | diagrams.md:18 | F09-05 채팅 화면에서 차단 메뉴 미연결 (`date_block_reason_sheet` 호출 코드 없음) | 채팅 화면 더보기(⋮) → 차단 진입 추가 |
-| Gap | dossier 09 §3-5 | Flutter `DateProfilePhotoVo`에 `fileId`, `moderationStatus` 필드 없음 — 차단+신고 시 증빙 사진의 moderationStatus 표시 불가 (F09-02 영역) | F09-02 Gap 참조 |
-| Risk | dossier 01 §4-D | `fileReport=true`이면 evidence 1년 legal hold → 탈퇴 사용자 데이터 보존 정책과 충돌 가능성 | 법무 검토 필요 |
-
-## 9. 수용 기준
-
-- **AC-01. 후보자 카드에서 차단 (Happy Path)**: Given 활성 매치 없음, 후보 카드 표시 중. When 사용자가 해당 흐름을 실행하면 Then 차단 row 1개. 다음 후보자 fetch에서 해당 사용자 제외 (양방향 차단 필터).
-- **AC-02. 매칭 카드에서 차단 → 매치 BLOCKED + 채팅 CLOSED**: Given `Match.MATCHED`, `ChatRoom.ACTIVE`, 메시지 5건 교환됨. When 사용자가 해당 흐름을 실행하면 Then 메시지 송신 차단, 새 매칭 액션 차단.
-- **AC-03. 이미 차단한 사용자에게 다시 차단 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변동 없음.
-- **AC-04. 차단 해제 — 매치 복원 없음**: Given 과거에 차단한 사용자 1명. 매치는 BLOCKED 상태로 잔존. When 사용자가 해당 흐름을 실행하면 Then 차단 row status=UNBLOCKED 전환(row 보존), 매치/채팅 그대로. `FavoriteService.isBlockedBetween()` 등 소비자는 이 row를 "차단 중" 아닌 이력으로 처리.
-- **AC-05. 권한 — 존재하지 않는 차단 해제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 변동 없음.
-- **AC-06. 차단당한 자의 관점 (간접)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 신고와의 관계 (간접)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. 차단 시 데이터 보존 정책**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+- **AC-01 API 형태:** 본인 List·본문 없는 생성/삭제와 선택 JSON/과거 query 사유를 구분한다.
+- **AC-02 차단 거래:** 자기 차단 금지·기존 행/쌍 잠금·매치 BLOCKED·해당 쌍 활성 방 CLOSED를 연결한다.
+- **AC-03 신고 연계:** 선택 신고/증빙 자격·OTHER 대체·조건부 에스크로 보류와 참조를 구분한다.
+- **AC-04 보존 기준:** 신고 종결 처리 시각부터 1년과 잠금 아래 재검사를 적용하며 해제 즉시 삭제로 설명하지 않는다.
+- **AC-05 해제 결과:** UNBLOCKED 기록과 매치/방 자동 복원 부재, 별도 후보 제외 조건을 유지한다.
+- **AC-06 앱 복구:** 사유 필수·업로드/중복 제출 차단·실패 입력 유지와 차단/해제의 서로 다른 재조회를 명시한다.

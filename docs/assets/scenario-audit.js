@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,289개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,282개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1289,
+    "documentedScenarioItems": 1282,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 645,
-    "verifiedTraceRecords": 643,
+    "traceMarkers": 647,
+    "verifiedTraceRecords": 645,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -12760,21 +12760,56 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-03",
       "domain": "프라이빗 데이팅",
-      "name": "후보자 스와이프 & 매칭 액션",
-      "scenarioCount": 9,
+      "name": "후보 탐색과 좋아요·넘김",
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-03_candidate_swipe/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-03_candidate_swipe_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-03_candidate_swipe/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F09-03:1",
+            "label": "GET /api/v1/date/profile/candidates",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateProfileController.java",
+                "controller": "DateProfileController",
+                "method": "getCandidates",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/date/profile/candidates",
+                "targetLine": 99,
+                "methodLine": 100
+              }
+            ]
+          },
+          {
+            "id": "F09-03:2",
+            "label": "POST /api/v1/date/matches/action",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/privatedate/controller/DateMatchController.java",
+                "controller": "DateMatchController",
+                "method": "performAction",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/date/matches/action",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -12801,14 +12836,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-04",
       "domain": "프라이빗 데이팅",
-      "name": "매칭 목록 조회",
-      "scenarioCount": 8,
+      "name": "매칭 목록과 대화 연결",
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-04_match_list/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-04_match_list_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-04_match_list/backend.md",
@@ -13034,14 +13069,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F09-07",
       "domain": "프라이빗 데이팅",
-      "name": "사용자 차단/해제",
-      "scenarioCount": 8,
+      "name": "데이트 차단과 안전 신고",
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/09_private_date/F09-07_block/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/09_private_date/F09-07_block_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/09_private_date/F09-07_block/backend.md",
