@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 724,
-    "verifiedTraceRecords": 722,
+    "traceMarkers": 737,
+    "verifiedTraceRecords": 735,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -18931,7 +18931,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F17-03",
       "domain": "정기모임",
-      "name": "정기모임 생성 (호스트)",
+      "name": "정기모임 생성·기본 정보 수정",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
@@ -18942,10 +18942,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F17-03:1",
+            "label": "POST /api/v1/regular-meetings",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "create",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings",
+                "targetLine": 104,
+                "methodLine": 105
+              }
+            ]
+          },
+          {
+            "id": "F17-03:2",
+            "label": "POST /api/v1/regular-meetings/from-event/{eventId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "createFromEvent",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/from-event/{eventId}",
+                "targetLine": 124,
+                "methodLine": 125
+              }
+            ]
+          },
+          {
+            "id": "F17-03:3",
+            "label": "PATCH /api/v1/regular-meetings/{id}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "update",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/regular-meetings/{id}",
+                "targetLine": 175,
+                "methodLine": 176
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -18972,7 +19024,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F17-04",
       "domain": "정기모임",
-      "name": "생명주기 (게시·종료·취소·재개)",
+      "name": "정기모임 공개·종료·취소·호스트 변경",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
@@ -18983,10 +19035,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F17-04:1",
+            "label": "POST /api/v1/regular-meetings/{id}/publish",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "publish",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/publish",
+                "targetLine": 199,
+                "methodLine": 200
+              }
+            ]
+          },
+          {
+            "id": "F17-04:2",
+            "label": "POST /api/v1/regular-meetings/{id}/close",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "close",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/close",
+                "targetLine": 210,
+                "methodLine": 211
+              }
+            ]
+          },
+          {
+            "id": "F17-04:3",
+            "label": "POST /api/v1/regular-meetings/{id}/cancel",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "cancel",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/cancel",
+                "targetLine": 255,
+                "methodLine": 256
+              }
+            ]
+          },
+          {
+            "id": "F17-04:4",
+            "label": "POST /api/v1/regular-meetings/{id}/reopen",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "reopen",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/reopen",
+                "targetLine": 273,
+                "methodLine": 274
+              }
+            ]
+          },
+          {
+            "id": "F17-04:5",
+            "label": "PUT /api/v1/regular-meetings/{id}/place",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "changePlace",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/regular-meetings/{id}/place",
+                "targetLine": 187,
+                "methodLine": 188
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -19013,7 +19151,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F17-05",
       "domain": "정기모임",
-      "name": "세션 관리 (추가·일괄·대체·취소)",
+      "name": "정기모임 회차 생성·반복·대체·취소",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
@@ -19024,10 +19162,96 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F17-05:1",
+            "label": "POST /api/v1/regular-meetings/{id}/events",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "addSession",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/events",
+                "targetLine": 293,
+                "methodLine": 294
+              }
+            ]
+          },
+          {
+            "id": "F17-05:2",
+            "label": "POST /api/v1/regular-meetings/{id}/events/generate",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "generateSessions",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/events/generate",
+                "targetLine": 314,
+                "methodLine": 315
+              }
+            ]
+          },
+          {
+            "id": "F17-05:3",
+            "label": "DELETE /api/v1/regular-meetings/{id}/events/{eventId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "cancelSession",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/regular-meetings/{id}/events/{eventId}",
+                "targetLine": 339,
+                "methodLine": 340
+              }
+            ]
+          },
+          {
+            "id": "F17-05:4",
+            "label": "POST /api/v1/regular-meetings/{id}/events/{eventId}/replace",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "replaceSession",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{id}/events/{eventId}/replace",
+                "targetLine": 354,
+                "methodLine": 355
+              }
+            ]
+          },
+          {
+            "id": "F17-05:5",
+            "label": "GET /api/v1/regular-meetings/{id}/events",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+                "controller": "RegularMeetingController",
+                "method": "sessions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/regular-meetings/{id}/events",
+                "targetLine": 329,
+                "methodLine": 330
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

@@ -170,9 +170,9 @@
 | F16-08 | 마일리지 | 검토 대기열·대시보드·감사 기록 | 권한을 가진 클럽 운영진 | 전용 응답 모델·DB 집계, 권한별 콘솔, 무시/반복 적립 판정/회수 재시도·종결을 구분했다. 전역 outbox와 상세 화면의 누락 표시를 남긴다. | 9 | 0 |
 | F17-01 | 정기모임 | 정기모임 발견·운영·참여 목록 | 방문자·회원·주최자 | 공개 탐색·운영 목록·참여 목록을 분리하고 필터명, 공개 회차 집계와 앱의 실제 탐색 범위를 대조했다. | 6 | 0 |
 | F17-02 | 정기모임 | 정기모임 상세·참여 상태·회차 정보 | 방문자·참가자·주최자 | 익명 공개와 민감 필드 가림, 회차 이력, 참여 상태별 입구, 소개·준비·후기 연결을 현재 소스로 대조했다. | 9 | 0 |
-| F17-03 | 정기모임 | 정기모임 생성 (호스트) | 호스트 | DRAFT 강제, FIXED 불변식(totalSessionCount>0/baseCapacity>0), 100원 floor, 호스트 교체 불가 | 8 | 0 |
-| F17-04 | 정기모임 | 생명주기 (publish/close/cancel/reopen) | 호스트 | 4상태 머신, findByIdForUpdate 락, close FIXED 가드(모든 정션 FINALIZED), afterCommit 정산, cancel pro-rata 환불 | 11 | 1 |
-| F17-05 | 정기모임 | 세션 관리 (add/bulk/replace/cancel) | 호스트 | event_id UNIQUE, sequence_no 중복허용(원본+대체본), RegularMeetingSessionGuard 6경로 차단 | 9 | 0 |
+| F17-03 | 정기모임 | 정기모임 생성·기본 정보 수정 | 로그인한 주최자 | 초안 생성·기존 이벤트에서 생성·초안 수정과 계정별 요청 복원을 대조하고 해결된 카테고리·장소·음수 가격 오류를 정정했다. | 8 | 0 |
+| F17-04 | 정기모임 | 정기모임 공개·종료·취소·호스트 변경 | 현재 주최자·운영자 | 타입별 종료·강제 취소·비동기 환불/정산과 이전 호스트에게 남은 회차의 권한을 현재 계약으로 정리했다. | 9 | 0 |
+| F17-05 | 정기모임 | 정기모임 회차 생성·반복·대체·취소 | 모임 주최자·회차 주최자 | 현재 공개 API와 내부 일괄 함수, 200회 한도, 반복 26회, 회차별 권한·가격·재시도 및 실제 대체 화면을 대조했다. | 10 | 0 |
 | F17-06 | 정기모임 | FIXED 등록·승인·대기열 | 사용자/호스트 | 8 멤버 상태, 승인제/즉시/유료 분기, FORFEITED 영구 차단, CLOSED 자가 취소 차단, WAITING 자동 승격 | 14 | 1 |
 | F17-07 | 정기모임 | FIXED 결제 (WALLET / BANK_TRANSFER) | 사용자/호스트 | active_member_id UNIQUE 활성 1건, WALLET 즉시·BANK off-ledger(isHostDirect), paymentDueAt 72h, lock 순서 | 10 | 1 |
 | F17-08 | 정기모임 | 환불 (pro-rata · 트리거별) | 멤버/호스트 | MEMBER_CANCEL=elapsed, HOST_CANCEL=delivered, FORFEIT 동일 산식, 100원 floor, failed_refund.regular_meeting_id | 10 | 1 |

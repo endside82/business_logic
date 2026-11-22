@@ -1,161 +1,94 @@
-# F17-05. 정기모임 세션 추가·자동생성·일괄·대체·취소 PRD
+# F17-05. 정기모임 회차 생성·반복·대체·취소 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-measured: 2026-07-29 -->
+## 현재 범위와 구조
 
-## 2026-10-29 현재 계약 대조
+각 회차는 독립 이벤트이며 정기모임 연결 행이 순번·원본/대체 관계와 생성·출석 확정 상태를 보유한다. 생성 이벤트는 REGULAR_MEETING, PUBLIC, Asia/Seoul을 사용하고 모임의 호스트·카테고리·장소·썸네일·환불 정책을 물려받는다. 모임이 DRAFT이면 회차도 DRAFT, OPEN이면 새 회차도 OPEN이다.
 
-### 반복 일정 생성과 남긴 회차의 소유권
+FIXED는 본체 단위 등록·결제이며 회차 가격은 0이고 단독 신청 차단 컨텍스트를 반환한다. VARIABLE은 본체 가격·정원이 0이며 회차에서 정원·가격을 정한다. 회차의 일반 이벤트 상세 연결과 공개 이력은 [정기모임 상세](F17-02_regular-meeting-detail_prd.md#회차-활동과-진행-경험으로-판단하기)를 따른다.
 
-개인 반복은 모임 상세 더보기에서 시작한다. 클럽 반복은 오늘부터 만들 수 있고 지난 시각은 건너뛰되 생성 결과가 0회이면 거절한다. 요일 입력을 정리하고 월 반복의 첫 회차와 생성 상한을 검사한다. 기존 플랜 생성의 반복 옵션은 제거했다. 호스트가 바뀌어도 남겨 둔 회차의 이전 호스트가 자기 회차를 확정·취소하는 권한은 구분한다.
+## 현재 서버 계약
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
-
-## 1. 결론
-
-정기모임의 각 회차는 `event` 테이블의 독립 이벤트(`eventType=REGULAR_MEETING`)이며 `regular_meeting_event` 정션이 순번·원본/대체 관계·materialization·출석 확정 상태를 보유한다.
-
-가격 단위는 모임 타입에 따라 완전히 갈린다.
-
-- `FIXED`: 코스 전체 가격은 정기모임 본체에 있고 세션 가격은 서버가 항상 0으로 강제한다. 세션 단독 신청도 차단한다.
-- `VARIABLE`: 정기모임 본체 가격은 0이고 각 세션이 자체 정원·가격·환불정책·결제기한을 갖는다. 유료 세션은 일반 이벤트 신청/사전결제/환불 흐름을 사용한다.
-
-Flutter 호스트 화면은 현재 단건 추가와 제한된 반복 자동생성(`count 1..26`)을 지원한다. 서버의 임의 목록 bulk와 취소 회차 replace endpoint는 앱 호스트 UI가 아직 없다. 상세의 회차 카드는 현재 읽기 전용이라 일반 이벤트 상세로 이동하지 않으며, 일반 이벤트 상세도 `sequenceNo`를 이용한 `"정기모임 N회차"` 컨텍스트 라벨을 렌더링하지 않는다.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`. 앱: `regular_meeting_session_add_screen.dart`.
-
-## 3. Endpoint 계약
-
-기본 경로: `/api/v1/regular-meetings/{id}`
-
-| Method | Path | Body/Query | 응답 | 접근 |
-|---|---|---|---|---|
-| POST | `/events` | `RegularMeetingSessionAddParam` | 201 `EventVo` | 호스트, DRAFT/OPEN, `EVENT_HOST_RESTRICT` 제재 시 차단 |
-| POST | `/events/bulk` | `RegularMeetingSessionBulkParam` | 201 `List<Long>` | 호스트, DRAFT/OPEN, 같은 제재 가드 |
-| POST | `/events/generate` | `RegularMeetingSessionGenerateParam` | 201 `List<Long>` | 호스트, DRAFT/OPEN, 같은 제재 가드 |
-| GET | `/events?includeHistory=false` | boolean | `List<RegularMeetingEventVo>` | 공개 이력 상태는 조회 가능, 미발행은 호스트만 |
-| DELETE | `/events/{eventId}` | 없음 | 204 | 호스트 |
-| POST | `/events/{eventId}/replace` | `RegularMeetingSessionReplaceParam` | 200 `EventVo` | 호스트, 취소된 원본, 같은 제재 가드 |
-
-`GET`까지 전부 host-only라는 과거 문서 서술은 틀리다. DRAFT 또는 한 번도 발행되지 않은 CANCELED만 비호스트에게 `NOT_FOUND`이며, 공개된 모임의 세션 목록은 상세 읽기 표면이다.
-
-## 4. 요청 필드
-
-### 4.1 단건·대체
-
-`RegularMeetingSessionAddParam` / `RegularMeetingSessionReplaceParam`:
-
-- `title:String`
-- `description:String?`
-- `startTime:LocalDateTime`
-- `endTime:LocalDateTime`
-- `baseCapacity:Integer?`
-- `price:BigDecimal?`
-- `refundPolicyCode:String?`
-- `refundDeadlineHours:Integer?`
-
-장소·좌표·온라인 URL·카테고리·썸네일은 세션 요청 필드가 아니다. 정기모임 본체에서 상속한다.
-
-### 4.2 자동생성
-
-`RegularMeetingSessionGenerateParam`:
-
-- 단건 공통 필드 중 `title`, `description`, `baseCapacity`, 가격/환불 필드
-- `firstStartTime`, `firstEndTime`
-- `cadence: DAILY | WEEKLY | BIWEEKLY | MONTHLY`
-- `count: 1..26`
-
-서버는 첫 회차 길이를 유지한 채 cadence만큼 시각을 이동해 목록으로 확장한 뒤, bulk 경로에 위임한다. 따라서 세션 상한과 유료 세션 사전결제 규칙이 동일하게 적용된다.
-
-## 5. 생성·순번·대체 규칙
-
-- 세션 상태는 모임이 OPEN이면 `OPEN`, DRAFT면 `DRAFT`.
-- 정션 순번은 기존 최대값 + 1부터 자동 할당한다.
-- FIXED는 활성 세션 수가 `totalSessionCount`를 넘을 수 없다. VARIABLE에는 수량 상한이 없다.
-- FIXED 발행/종료 정책은 활성 세션 수와 총 회차 정합성을 사용한다.
-- 취소는 Event를 `CANCELED`로 바꾸고 정션/이력은 보존한다.
-- 대체는 취소된 세션에만 가능하고 원본과 같은 `sequenceNo`, `origin=REPLACEMENT`, `replacedEventId=원본`으로 새 row를 만든다.
-- 같은 순번의 취소 원본과 대체본은 함께 존재할 수 있지만 활성 세션은 하나만 허용한다.
-- `includeHistory=false`는 취소 이력을 제외하고, true는 원본/대체 이력을 함께 돌려준다.
-
-## 6. 가격·결제·환불 계약
-
-### 6.1 FIXED
-
-- 단건/bulk/generate/replace 요청에 `price`가 있어도 서버가 세션 가격을 0으로 강제한다.
-- 정원은 모임의 `baseCapacity`를 사용한다.
-- 코스 등록·결제는 F17-06/F17-07 경로이고 세션 직접 신청은 `directApplyBlocked=true`.
-
-### 6.2 VARIABLE
-
-- `baseCapacity`는 세션별 필수 UI 입력이며 서버는 1 이상을 검증한다.
-- `price == null || price == 0`: 무료 세션. 별도 사전결제/환불정책 row를 만들지 않는다.
-- `price < 0`: `INVALID_INPUT`.
-- `price > 0`: 100원 미만을 아래로 절삭한다. 예: 5,099원 → 5,000원이며 1~99원은 0원이 되어 무료 세션으로 처리된다.
-- 유료 세션은 `EventPrepayment`을 생성한다.
-  - `prepaymentRequired=true`
-  - `prepaymentAmount=절삭 가격`
-  - `prepaymentType` — **2026-08-18 개정(P0-PAID-01)**: 이 경로는 호스트에게 결제수단을 묻지 않는다. 종전 서술의 고정값(문서상 `CASH`, 코드상 하드코딩)은 **폐기**되고, 이제 결제 시점과 **같은 술어**(`MoneyLiveGate`)에 위임해 지금 열린 수단으로 낙착시킨다. **P0 태세의 실제 낙착값은 `CASH`**이며, 이 경우 호스트 수납 계좌 결박까지 함께 확정한다 — 기본 계좌가 없으면 유료 세션 생성이 거부된다(신규 제약). 열린 수단이 하나도 없으면 유료 세션 자체를 만들지 않는다(`400023`). 하드코딩을 폐기한 이유는 "지금 되는 수단"을 사람이 판단해 박는 방식이 판단 근거가 바뀔 때마다 조용히 틀리기 때문이다(과거 두 번 틀림).
-  - 결제기한은 요청값(1~168시간), 미지정이면 24시간, 범위 밖이면 거부
-- 환불 template은 요청 `refundPolicyCode`, 누락 시 `STANDARD`.
-- 지원 UI 값은 `STANDARD, FLEXIBLE, STRICT, FULL, NON_REFUNDABLE`; 규칙 본문이 필요한 `CUSTOM`은 이 경로에서 지원하지 않는다.
-
-`RegularMeetingEventVo.price`는 Java `BigDecimal`이며 Flutter는 `double`로 읽는다. 앱 상세는 `price > 0`인 세션에만 금액을 표시한다.
-
-### 6.3 취소
-
-- DRAFT/OPEN 세션만 실제로 `CANCELED` 전이한다. 이미 그 밖의 상태면 endpoint는 별도 전이 없이 끝난다.
-- VARIABLE 세션의 `ATTENDING/WAITING` 대상에게 `EVENT_CANCELLED` 알림을 보내고, 결제한 `ATTENDING`은 전액 환불 또는 수동 환불 요청으로 전환한다. 실패분은 `FailedRefund`와 호스트 `PAYMENT_FAILED` 알림으로 남긴다.
-- FIXED 세션은 세션 자체 가격이 0이라 세션 결제 환불은 없고, 코스 멤버십은 유지된다.
-
-## 7. 썸네일 계약
-
-- 세션 Event row는 정기모임 본체의 bare thumbnail key를 상속한다.
-- 단건 추가/대체 응답 `EventVo`는 표시용 presigned URL로 변환한다.
-- 정기모임 상세의 `sessions: List<RegularMeetingEventVo>`에는 별도 `thumbnailUrl` 필드가 없다. 상단 모임 썸네일은 `RegularMeetingVo.thumbnailUrl`로 표시한다.
-- 따라서 “세션마다 썸네일을 업로드한다”는 UI/Param 계약은 없다.
-
-## 8. Flutter 실제 UX
-
-`RegularMeetingSessionAddScreen`:
-
-- 공통: 제목, 설명, 시작/종료 시각
-- VARIABLE만: 정원, 참가비, 환불정책 template, 결제기한
-- FIXED: 정원·가격 입력을 보내지 않고 코스 등록자용 회차임을 설명
-- 자동생성 스위치:
-  - 꺼짐 → `POST /events`
-  - 켜짐 → cadence + `count(1..26)` 입력 후 `POST /events/generate`
-- 성공하면 상세/세션 provider를 invalidate하고 `"세션 추가 완료"` 또는 `"회차 자동 생성 완료"` 토스트 후 뒤로 간다.
-- 상세 세션 목록은 순번, 상태, materialization, 출석 확정 상태, 시작 시각과 양수 가격을 표시한다.
-- 각 회차 카드는 현재 `onTap`이 없는 읽기 전용 카드다. `EventVo`에는 정기모임 컨텍스트 필드가 있지만 일반 이벤트 상세 화면은 이를 표시하지 않는다.
-
-현재 앱 API의 replace 메서드는 Dart 전용 replace param 대신 구조가 같은 `RegularMeetingSessionAddParam`을 body로 사용한다. 현행 JSON 필드는 서버 ReplaceParam과 일치하지만 서버 계약 분리를 모델 이름으로 표현하지 못한다.
-
-## 9. 확인된 Gap / Risk
-
-| 우선순위 | 실측 결과 | 영향/후속 |
+| 요청 | 입력·키 | 결과 |
 |---|---|---|
-| P1 | 임의 목록 bulk와 취소 회차 replace의 호스트 UI가 없다. | API 직접 사용만 가능. 관리 화면 추가 필요. |
-| P1 | 세션 간 시간 겹침을 검사하지 않는다. bulk도 각 세션의 시작<종료만 확인한다. | 같은 시각에 중복 회차 생성 가능. 경고 또는 서버 conflict 정책 필요. |
-| P1 | 모집 중 세션 추가 알림이 별도 배선되지 않았다. | 참여자가 새 회차를 놓칠 수 있다. |
-| P1 | 1~99원 VARIABLE 가격은 양수 입력이지만 100원 절삭 후 0원이 된다. | 앱이 최소 유료 금액을 설명/제한하지 않으면 호스트가 유료로 오인할 수 있다. |
-| P1 | 회차 카드에서 일반 이벤트 상세로 들어가는 동작과 `"정기모임 N회차"` 라벨이 없다. | 회차 운영/상세 확인 진입이 끊기고 일반 이벤트 상세를 열더라도 정기모임 문맥을 보장할 수 없다. |
-| P2 | Flutter replace body가 AddParam 모델을 재사용한다. | 현재는 호환되나 서버 필드 분기 시 compile-time 보호가 약하다. |
+| POST /api/v1/regular-meetings/{id}/events | RegularMeetingSessionAddParam, Idempotency-Key 필수 | 201 EventVo |
+| POST /api/v1/regular-meetings/{id}/events/generate | RegularMeetingSessionGenerateParam, Idempotency-Key 필수 | 201 List<Long> |
+| POST /api/v1/regular-meetings/{id}/events/{eventId}/replace | RegularMeetingSessionReplaceParam, Idempotency-Key 필수 | 200 EventVo |
+| DELETE /api/v1/regular-meetings/{id}/events/{eventId} | 모임·회차 ID, 키 없음 | 204 |
+| GET /api/v1/regular-meetings/{id}/events | includeHistory 기본 false | List<RegularMeetingEventVo> |
 
-## 10. 수용 기준
+`addSessionsBulk`는 반복 생성에서 쓰는 서비스 내부 함수다. 현재 회원 Controller에는 임의 목록을 받는 `/events/bulk`가 없다. 내부 함수의 존재를 회원 API 지원으로 설명하지 않는다. 앱에도 임의 목록 bulk 입구가 없다.
 
-- **AC-01**: FIXED 세션은 어떤 요청 가격에도 저장 가격 0이고 코스 정원을 상속한다.
-- **AC-02**: VARIABLE 유료 세션은 100원 단위 절삭 가격, **지금 열린 결제수단으로 낙착된** 사전결제(P0 태세 = 계좌이체 + 호스트 수납 계좌 결박), 지정/기본 환불 template을 만든다. 열린 수단이 없거나 계좌이체로 낙착됐는데 호스트 기본 계좌가 없으면 유료 세션 생성이 거부된다.
-- **AC-02a**: VARIABLE 1~99원 요청은 절삭 후 0원이므로 사전결제/환불정책 row를 만들지 않는다.
-- **AC-03**: generate는 1..26과 네 cadence만 허용하고, 생성된 모든 회차가 같은 기간·가격·환불 계약을 갖는다.
-- **AC-04**: FIXED 활성 세션 수는 `totalSessionCount`를 초과하지 못한다.
-- **AC-05**: 취소 원본만 replace할 수 있고 새 정션은 같은 순번과 원본 참조를 보유한다.
-- **AC-06**: 미발행 세션 목록은 비호스트에게 `NOT_FOUND`.
-- **AC-07**: Flutter는 VARIABLE 가격을 `int?`로 보내고 응답 `BigDecimal` 가격을 `double`로 안전하게 읽는다.
-- **AC-08**: 자동생성 성공 후 상세/세션 목록이 invalidate되어 새 회차를 표시한다.
-- **AC-09**: VARIABLE 유료 세션 취소는 참가자 알림과 결제 환불을 실행하고 실패분을 추적한다. FIXED 코스 멤버십은 세션 하나의 취소로 해지되지 않는다.
-- **AC-10 (현재 Gap 기록)**: 상세 회차 카드는 탭 이동을 제공하지 않으며 일반 이벤트 상세의 정기모임 회차 라벨도 아직 구현되지 않았다.
+단건·대체 입력은 title, description, startTime, endTime, baseCapacity, price, refundPolicyCode, refundDeadlineHours다. 반복은 시작/종료 대신 firstStartTime/firstEndTime, cadence, count를 받는다. 금액은 서버 BigDecimal, 앱 double?이며 원화 입력은 정수로 검증한다. 앱의 대체 요청은 전용 ReplaceParam을 사용한다.
+
+제목은 공백 아닌 최대 200자, 시작은 현재 이후, 종료는 시작보다 뒤여야 한다. 정원 override를 보냈다면 1 이상이어야 한다. FIXED는 override 자체를 거절하고 본체 정원을 사용한다. VARIABLE은 본체 정원이 0이므로 양수 회차 정원을 제공해야 한다. 생성·대체는 현재 모임 호스트, DRAFT/OPEN 상태, 호스팅 제재 없음이 필요하다.
+
+## 반복 생성의 현재 범위
+
+count는 1~26, cadence는 DAILY/WEEKLY/BIWEEKLY/MONTHLY다. 첫 시작에 일·주·2주·월 간격을 더하고, 종료는 첫 회차의 시작~종료 길이를 그대로 더해 계산한다. 각 회차는 같은 제목·설명·정원·가격·결제 기한·환불 템플릿을 사용한다. 전체를 한 트랜잭션의 일괄 생성으로 수행한다.
+
+개인 반복·클럽 반복 기능의 별도 시작일/요일 규칙을 이 정기모임 API에 섞지 않는다. 현재 서비스는 회차별 시작·종료 순서를 검사하지만 서로 다른 회차 사이의 시간 겹침을 검사하지 않는다.
+
+## 총 회차와 순번 한도
+
+취소되지 않은 연결 회차 수에 새로 추가할 수를 더해 검사한다. FIXED는 totalSessionCount, VARIABLE은 200회가 한도다. 한 번의 반복 생성 26회와 모임 전체 200회는 서로 다른 제한이다. 취소 이력은 활성 수에서 제외하고, 초안의 총 회차를 이미 살아 있는 회차 수 아래로 줄이지 못한다.
+
+단건·반복은 다음 순번을 배정한다. 취소 원본의 대체는 같은 순번을 사용하며 같은 순번에 다른 활성 회차가 있으면 EVENT_ALREADY_IN_MEETING으로 거절한다. 새 연결 행은 REPLACEMENT와 replacedEventId를 보관한다.
+
+## 가격과 유료 회차
+
+FIXED 회차 가격은 요청값과 관계없이 0이다. VARIABLE은 음수를 거절하고 100원 미만 자릿수를 버린다. 1~99원은 0원이 되어 선결제·환불 템플릿 행을 만들지 않는다.
+
+양수 회차는 현재 공개된 결제 기능으로 암묵적 정책과 수납 계좌를 결정하고 선결제를 구성한다. 요청의 refundDeadlineHours는 현재 구현에서 결제 기한 정규화로 전달되며 paymentWindowHours에도 저장한다. 지정한 refundPolicyCode 또는 기본 템플릿을 회차 가격에 적용한다. 특정 날짜의 CASH-only 설정을 영구 계약으로 쓰지 않는다.
+
+일반 이벤트의 신청·결제·취소·환불 처리를 사용하는 VARIABLE과, 본체 등록을 유지하는 FIXED를 구분한다. 회차 하나 취소를 모임 본체 취소나 전체 회원 등록 취소로 설명하지 않는다. 상세 금전 규칙은 [납부](F17-07_regular-meeting-payment_prd.md)와 [환불](F17-08_regular-meeting-refund_prd.md)을 함께 본다.
+
+## 취소·대체와 남은 회차의 소유권
+
+회차 취소는 모임 소속을 확인하고 회차를 잠근 뒤 실제 회차 호스트인지 재검사한다. 모임 호스트라는 이유만으로 다른 호스트가 맡은 회차를 취소할 수 없다. 모임은 DRAFT/OPEN이어야 하며 일반 회차 취소 경로로 위임한다.
+
+대체는 모임 호스트가 취소된 원본에 대해 수행한다. 같은 순번의 활성 회차가 없어야 하고 전체 한도·입력 검사를 다시 통과해야 한다. 대체 전/후 도메인 사건을 발행하며 원본 회차의 ATTENDING/WAITING 이용자에게 대체 안내를 요청한다. 이 호출만으로 출석·결제 전체 이관이나 알림 수신 완료를 보장한다고 쓰지 않는다.
+
+모집 중 단건/반복 회차 추가는 주최자를 제외한 관련 참가자에게 추가 알림을 요청한다. 기존 문서의 ‘추가 알림 미배선’은 현재 코드와 다르다. 생성 응답 EventVo에는 regularMeetingId/Title/Type, sequenceNo, directApplyBlocked를 채운다.
+
+## 앱 입구·재시도·복귀
+
+호스트 상세의 일정 추가 화면에서 단건 또는 반복 생성을 선택한다. 취소 회차의 관리 메뉴는 같은 순번의 활성 회차가 없을 때 대체 입구를 제공한다. 대체 화면은 includeHistory=true로 원본을 읽고 이미 대체됐거나 원본이 활성 상태이면 작성을 막는다. 제목·정원·가격과 아직 미래인 시각을 미리 채우며 전용 대체 Param으로 제출한다.
+
+회차 카드는 일반 이벤트 상세로 이동한다. 실제 회차 호스트에게 취소/출석 확정 입구를, 모임 호스트에게 대체 입구를 제공한다. 따라서 ‘대체 UI 없음’, ‘회차 카드 읽기 전용’, ‘대체가 AddParam 재사용’은 현재 미구현 항목에서 제외한다.
+
+같은 화면의 동일 대상·본문 재시도는 untimed 키 보관함에서 같은 키를 사용한다. 성공하면 키를 정리하고 원래 상세로 돌아간다. 실패는 입력과 키를 유지하고 오류를 보여 준다. 성공 또는 저장됐을 가능성이 있는 오류는 회차/모임/이벤트 목록을 다시 읽는다. 화면 키는 메모리 보관이며 본체 생성의 계정별 영속 초안과 동일한 복원 보장이 아니다. 본문을 바꾸면 새 키가 되므로 결과 미확정 상태에서 새 내용으로 무조건 다시 생성하는 것으로 안내하지 않는다.
+
+## 코드 위치
+
+서버: RegularMeetingController, RegularMeetingSessionCommandService, RegularMeetingEventFactory, RegularMeetingSessionEventAdapter, RegularMeetingCourseRules, RegularMeetingAccessService, SessionCadence 및 SessionAdd/Generate/ReplaceParam. 앱: regular_meeting_session_add_screen.dart, regular_meeting_detail_screen.dart, regular_meeting_detail_provider.dart, regular_meeting_api.dart, 전용 회차 Param 모델, idempotency_key_holder.dart.
+
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#addSession`, `RegularMeetingController#generateSessions`, `RegularMeetingController#cancelSession`, `RegularMeetingController#replaceSession`, `RegularMeetingController#sessions`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 회차 간 시간 겹침을 검사하지 않는다. | 개별 시간 검사와 중복 일정 방지를 구분한다. |
+| Gap | 앱은 1~99원 입력을 허용하지만 서버는 0원으로 저장한다. | 유료로 오인할 수 있는 실제 경계로 남긴다. |
+| Risk | 회차 작성의 요청키는 화면 메모리이며 본문 변경 시 새 키다. | 화면 재진입·본문 변경까지 중복 생성 방지가 보장된다고 확대하지 않는다. |
+| 미검증 | 동시 추가/대체·응답 유실·실제 취소 환불·알림 수신을 실행하지 않았다. | 소스 연결과 완료 실행을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 공개 명령:** 단건·반복·대체·취소의 실제 REST와 키·응답을 사용하고 내부 bulk를 공개 API로 쓰지 않는다.
+- **AC-02 타입별 정원과 금액:** FIXED override 거절·가격 0, VARIABLE 양수 정원·100원 절삭을 적용한다.
+- **AC-03 반복 생성:** 네 cadence·1~26회와 첫 회차 길이 유지, 개별 미래 시각 검사를 설명한다.
+- **AC-04 전체 한도:** 취소 제외 활성 수를 FIXED 총 회차 또는 VARIABLE 200회 한도와 비교한다.
+- **AC-05 같은 순번 대체:** 취소 원본·활성 대체 없음·원본 참조와 같은 순번을 유지한다.
+- **AC-06 회차 소유권:** 모임 소속 확인 후 실제 회차 호스트의 취소 권한을 재검사한다.
+- **AC-07 유료 정책:** 현재 공개 결제 기능·계좌 연결·결제 기한·환불 템플릿을 사용하고 소액 0원 처리를 구분한다.
+- **AC-08 화면 연결:** 상세 탭 이동·관리 메뉴·전용 대체 모델·원본 상태 재확인을 실제 앱 기준으로 설명한다.
+- **AC-09 요청과 갱신:** 동일 화면 본문 키 유지·실패 입력 보존·관련 조회 갱신과 영속 복원 한계를 나눈다.
+- **AC-10 알림 범위:** OPEN 추가 및 대체 알림 요청 연결과 실제 전송/수신 완료를 구분한다.
+
+현재 근거는 서버·앱 소스다. 새 제품 시험·브라우저·실기기 통과 기록은 없다.

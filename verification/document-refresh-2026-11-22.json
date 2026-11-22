@@ -314,7 +314,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -390,7 +391,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4474,9 +4476,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1eb85cef239f33111e7425c60280948006e8b11d6b829296475f4f88e3c046fd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_commands_20261122"
+      ],
+      "reviewedSha256": "8e3a0e8f8410d4fc06d232119b4471474febc6ded35303469285c1bf63c5a354"
     },
     {
       "path": "docs/features/F17-04.html",
@@ -4484,9 +4489,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "913c930f6891e3447a72ae70c52268cf87c5e2b1dd0a4e70cdd22b1b784ce263",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_commands_20261122"
+      ],
+      "reviewedSha256": "9d8b1827024d5b55444c29d8928b5c2a68354f149c1d89f858a6c1a255093278"
     },
     {
       "path": "docs/features/F17-05.html",
@@ -4494,9 +4502,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f0b8315452dd712231639cdd298c7bf816a1d95d30091b230652d400915fc068",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_commands_20261122"
+      ],
+      "reviewedSha256": "b5fd87608d2a4a921a73a505091f81639e068efd52130e7331654eb47d90c5f2"
     },
     {
       "path": "docs/features/F17-06.html",
@@ -5270,7 +5281,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5379,7 +5391,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5512,7 +5525,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -7831,10 +7845,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "97f22395f78263e7640a8995d89f9cf421289b11bc18d80bb073c6d6268222c8",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_commands_20261122"
+      ],
+      "reviewedSha256": "9a28f6b294a20448851abc88f40a524f8ebd7d45489137f91bb2d4709b2aec5c"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
@@ -7842,10 +7858,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c5730da6da771596d750c7fa328d349f5e1bc77125b519ae3d2bf34b8e4a396c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_commands_20261122"
+      ],
+      "reviewedSha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
@@ -7853,10 +7871,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "baa9e613eb1bee3a30d16edba1b57a0eddf0d5a25b01b44821b19e7a7917f09a",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "regular_meeting_commands_20261122"
+      ],
+      "reviewedSha256": "0085b9cdc3949d7a89c432b228a675ba660dc59d40ef22612579698621d515dd"
     },
     {
       "path": "prd/02_feature_prds/17_regular_meeting/F17-06_regular-meeting-enrollment_prd.md",
@@ -8459,7 +8479,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8720,7 +8741,8 @@
         "mileage_queries_20261122",
         "mileage_policy_season_20261122",
         "mileage_commands_20261122",
-        "regular_meeting_reads_20261122"
+        "regular_meeting_reads_20261122",
+        "regular_meeting_commands_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -38446,6 +38468,255 @@
         "sourceReferences": "코드 위치 표 142개가 실제 소스와 일치합니다.",
         "groupDigests": "32 source/canonical digests; 8 retained HTML IDs",
         "derivedDocuments": "4 documents; shared batch verified 4 paths, 35 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4e781f7a9f5d18f381c680539a9a95a348ba5295",
+        "community_app": "05c36da1d49f5799a365c5a8e7e6257ddf8def62"
+      }
+    },
+    "regular_meeting_commands_20261122": {
+      "kind": "source_review",
+      "scope": "F17-03/04/05 생성/초안수정·모집상태/장소/호스트변경·회차추가/반복/대체/취소의 현재 서버와 앱 대조. 명령 결과의 런타임 실행 검증 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingCourseCommandService.java",
+          "sha256": "82434b64f6946217ab82b15e4a1b27524878171f16695c584e9a26d5f869e91b",
+          "reviewScope": "55–65상수;90–300생성/기존이벤트/재조회/수정;301–395활성회차수·장소초안전파;407–461OPEN장소/대상알림;471–567관리자호스트이전;588–650검증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingPublishCommandService.java",
+          "sha256": "97ace629c666732ae5d42c18418525709643bd9fe22965450fe234be12e23f5e",
+          "reviewScope": "68–70publish;218–310결제정책공개/계좌바인딩·호스트/회차잠금·공유doOpen·reopen;별도계좌재연결본문미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingEndCommandService.java",
+          "sha256": "4d0424e05a61c3e57cf9b1f2745656f2f708d888c0aaeb345f6971bdb8b4d769",
+          "reviewScope": "93–379수동/자동종료·미제공회차/활성정산조건·등록종결·retained차단·취소force/이후환불넘김·재조회;392–400취소대상DRAFT/OPEN;관리자강제취소미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingSessionCommandService.java",
+          "sha256": "ebbe279bc9617e87efb7a158c5ed447ebdb1cfa3ae83b9d093b58607c5ebd8a6",
+          "reviewScope": "80–571단건/내부bulk/반복/취소/대체/재조회·알림수신자·가격/선결제·입력/소유권/한도·응답컨텍스트"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingCourseTransitions.java",
+          "sha256": "44bf4c713482c3d02cb17d1df327df58e81529c1e6382fdf6296e7e0ec23dcfa",
+          "reviewScope": "50–111초안/공개/재개/종료/취소/정원·열린시각갱신"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingCourseRules.java",
+          "sha256": "45ac07ebf7b6475662f880329603b1e1c65e8637e643cbee12773b7fbe88f166",
+          "reviewScope": "25–125총회차200·유료판정·온라인URL검사/오프라인미정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/constants/RegularMeetingStatus.java",
+          "sha256": "6e147a66d26bac606cb9b53f83320b36180ad52a64544275d8d32909133a9304",
+          "reviewScope": "전체4상태·허용전이·isHosting·종료상태"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/model/RegularMeeting.java",
+          "sha256": "703158abd661b29be08b7c24d1bd3456cc8f808fb122ca6b1ee7538a292e9c5c",
+          "reviewScope": "201–355생성필드기본값·결제정책·상태시각/취소환불pending·호스트변경·100원절삭"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingEventFactory.java",
+          "sha256": "8f0287b0dafffec7fc345ff5240d38ef5bd72261f417d04d3a356467363e0d42",
+          "reviewScope": "46–72회차PUBLIC/REGULAR_MEETING/서울시간·본체호스트/카테고리/위치/썸네일상속"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/port/RegularMeetingSessionEventAdapter.java",
+          "sha256": "7228867f04d114d3efbe0f4cef7e380135f2dfce12e4d1c116668d61884a2d7c",
+          "reviewScope": "34–104회차생성어댑터·EventTransitions·금액/결제기한/계좌저장"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/port/RegularMeetingSessionEventPort.java",
+          "sha256": "d8e4b0bcc5b2bfb25919b8c43344fc217b7320e6e17c3ad48ca68d0d1d5c8c6a",
+          "reviewScope": "30–70회차생성/선결제port입출력record"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingAddParam.java",
+          "sha256": "63a72fee33a1bc6723afea0fcfd399a20667ca4fb0af772856e36fa6cf6d0961",
+          "reviewScope": "전체필드타입·LocalDate/BigDecimal·enum·optional노쇼/썸네일"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingModParam.java",
+          "sha256": "8d6f1f255400f51f8d7a4f33b80fe66ed2214e61a68202d223735bd968d1920c",
+          "reviewScope": "전체부분수정필드·meetingType없음·nullable요청값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingSessionAddParam.java",
+          "sha256": "644e2c8e0f4c722b8abef059d49ebf58a9b738420663b6c36665871d4b4cdd2a",
+          "reviewScope": "전체단건입력/LocalDateTime/BigDecimal/기한/정원"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingSessionGenerateParam.java",
+          "sha256": "40c70f1c40b307dfb25f862b6e13ce57512145fa3ec456244c2ff10ccbbc6245",
+          "reviewScope": "전체반복입력·cadence/count·시각·금액"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/param/RegularMeetingSessionReplaceParam.java",
+          "sha256": "2a929fabe2038737f70f01148a8ba6418f207ec83cf3da37185a1d99cf289368",
+          "reviewScope": "전체전용대체입력·금액/정원/정책"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/Category.java",
+          "sha256": "7e0a62c6e6afc5d0cb0c2ab126329b94796bb987722c13c5724df936500fd1a3",
+          "reviewScope": "전체15개실제카테고리상수와code"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/scheduler/RegularMeetingVariableAutoCloseScheduler.java",
+          "sha256": "5ba6b01302e512a8a3d941177a8f4f81a4406688a6025e3609e20c1aced8e59e",
+          "reviewScope": "42–74매일서버0440·500건키셋·ShedLock·모임별오류계속/집계"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_create_screen.dart",
+          "sha256": "1d0dad22ab9128d22b466ffa7aa0da5ff5e39410cb6f8f82cf73a24e6f87cdfc",
+          "reviewScope": "89/736–792카테고리기본/15옵션;269–600계정초안복원/제출/미확정/성공/장소좌표/전송필드;999–1102장소입력"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_edit_screen.dart",
+          "sha256": "86033ca3687ca9246d887532e18cbd6712b3c8d78e0a62c322839d64fa2cc160",
+          "reviewScope": "303–550입력검사·주소좌표·body와금전정책보존/명시변경/실패보관·성공복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_session_add_screen.dart",
+          "sha256": "fd4cd68ed8131b0d86474f3b3670dc4c8e06e8c31bb2049d5cb820d8146e2ded",
+          "reviewScope": "89키보관방식;193–435단건/반복/전용대체·지문키·원본이력검증·프리필/복귀;479–620정원/정수가격/기한/반복입력"
+        },
+        {
+          "path": "community_app/lib/domain/providers/regular_meeting/regular_meeting_write_command.dart",
+          "sha256": "e341b0b94a904b58cc02fca9d37737c5267306e28057f537f33c429ab5da066f",
+          "reviewScope": "44–210일반생성/이벤트기반생성·동시flight·계정eventId별영속키·오류분류/목록갱신"
+        },
+        {
+          "path": "community_app/lib/core/storage/regular_meeting_creation_draft.dart",
+          "sha256": "0d5caa8572e3f328657a6f305609a0f6c8169aee9f06ffb17f57db1dfd102595",
+          "reviewScope": "전체계정문서handle·form/body/key/time/result복원·prepare/reject/complete/clear"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_recap_screen.dart",
+          "sha256": "8bf1b68de756f056b0e17da3321a85a436126ac34c89fba9f2e4233f9d74115d",
+          "reviewScope": "105–139이벤트→정기모임호출/중복진행막기·결과불명확시명시기록정리"
+        },
+        {
+          "path": "community_app/lib/data/models/regular_meeting/regular_meeting_add_param.dart",
+          "sha256": "63c52395e8e206271387ae2a8ddcb02f176236c25352fa3138065f183f82d11d",
+          "reviewScope": "전체입력모델·double·dateKey변환"
+        },
+        {
+          "path": "community_app/lib/data/models/regular_meeting/regular_meeting_mod_param.dart",
+          "sha256": "b023954a07e14fc3d75db1e22fb19be21f0fcd0693e1591d14575f8c3f34b31e",
+          "reviewScope": "전체nullable입력·dateKey변환·category/thumbnail서버지원과화면body구분"
+        },
+        {
+          "path": "community_app/lib/data/models/regular_meeting/regular_meeting_session_replace_param.dart",
+          "sha256": "97760fac3d3db71112f2c117f36eb5daa28a00c69fae37459c25edf39d3d6bb9",
+          "reviewScope": "전체전용대체요청·double/서버wallclock변환"
+        },
+        {
+          "path": "community_app/lib/data/models/regular_meeting/regular_meeting_session_generate_param.dart",
+          "sha256": "49357e983b21d70c51b61ba4be32067a89d407ae50e3cae3721ec03acac5091b",
+          "reviewScope": "전체반복요청·double/서버wallclock변환"
+        },
+        {
+          "path": "community_app/lib/core/utils/idempotency_key_holder.dart",
+          "sha256": "c9506dcb207c5cb3a07844f41c62643d31742e787f5d523e999d6c9052e1a295",
+          "reviewScope": "70–149untimed분기·지문변경키교체·성공키정리·메모리보관"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/regularmeeting/controller/RegularMeetingController.java",
+          "sha256": "de232ef387fd4f3f39f6ef66791d386329ad58a6e057ce4141b271591ec416a3",
+          "reviewScope": "104–137생성/fromEvent필수키;175–280기본수정/장소/선택키공개종료재개/필수키취소force·재조회상태;293–367회차추가반복/조회/취소/대체키응답;현재회원bulk/baseDELETE없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingReadSupport.java",
+          "sha256": "d7b29f479c02233d416c3457addca0d85a7f032cda6769050aa944affad647db",
+          "reviewScope": "동일 SHA 이전 F17 조회 대조의140–163 retained 소유권/운영중/확정필터 및 lifecycle수신자 호출 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingAccessService.java",
+          "sha256": "6e3aca1e9184c8bdac168ed9ceb7f829cd6378b611f26472becfc7766748efc7",
+          "reviewScope": "동일 SHA 이전 F17 조회 대조의assertHost와실제회차호스트권한을재사용"
+        },
+        {
+          "path": "community_app/lib/data/api/regular_meeting_api.dart",
+          "sha256": "06b2c54941e3df79dd9ae814e667529cbaecdf2c1de4401986b4c0909e567d7a",
+          "reviewScope": "99–195생성/상태/장소/회차REST·필수/선택키·전용대체모델·list와EventVo"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_detail_screen.dart",
+          "sha256": "8ca36550cc47214be0bfc39c6215ff1e945549cd55555f6fc7d573e72a83833c",
+          "reviewScope": "761–855회차상태별취소/대체/확정권한·메뉴이동;1142–1382공개/종료/취소force/재개영향확인과정확한오류분기;1385–1548기존읽은입구재사용"
+        },
+        {
+          "path": "community_app/lib/domain/providers/regular_meeting/regular_meeting_detail_provider.dart",
+          "sha256": "8b1c520ec021ac9c276a9989ab84b4e6402b7432ef5519de7318ba6f8ef0df7f",
+          "reviewScope": "68–110세션별키재사용/상태정리;337–625수정/상태/회차명령·회원금전취소force·미확정갱신·목록이벤트알림"
+        }
+      ],
+      "reuses": [
+        "regular_meeting_reads_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-03_regular-meeting-creation_prd.md",
+          "sha256": "9a28f6b294a20448851abc88f40a524f8ebd7d45489137f91bb2d4709b2aec5c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-04_regular-meeting-lifecycle_prd.md",
+          "sha256": "273b1852a33e43befdc03d4d62dc590c1b19b9a14ac3e2c6042287536ebae9ff"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-05_regular-meeting-sessions_prd.md",
+          "sha256": "0085b9cdc3949d7a89c432b228a675ba660dc59d40ef22612579698621d515dd"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F17-03.html": [
+          "sidebar",
+          "launch-strip",
+          "recurrence-current",
+          "creation-retry",
+          "release-completion"
+        ],
+        "docs/features/F17-04.html": [
+          "sidebar",
+          "launch-strip",
+          "host-transfer-current",
+          "release-completion"
+        ],
+        "docs/features/F17-05.html": [
+          "sidebar",
+          "launch-strip",
+          "recurrence-current",
+          "session-count-limit",
+          "host-transfer-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "실제 Controller 명령/조회 13개 연결",
+        "내부 addSessionsBulk를 공개API에서 제외",
+        "존재하지 않는 units/17_regular_meeting 생성 안 함"
+      ],
+      "followUpFindings": [
+        "해결된 카테고리/장소/음수가격·대체UI·회차이동·추가알림 항목 정정",
+        "기본수정 제목공백/본체기간 서버검사 경계·썸네일/수정category 앱미제공",
+        "공개/재개 내부공유와FIXED활성회차 종료조건",
+        "회차200/반복26 한도,1..99원 절삭,시간겹침 미검사",
+        "회차메모리키와본체영속초안 차이",
+        "호스트변경남은회차소유권 및커밋후금전처리"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 145개가 실제 소스와 일치합니다.",
+        "groupDigests": "38 source/canonical digests; 15 retained HTML IDs",
+        "derivedDocuments": "6 documents; shared batch verified 6 paths, 51 relative links/anchors and 0 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"

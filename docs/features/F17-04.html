@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-04 정기모임 생명주기 — community PRD</title>
+  <title>F17-04 정기모임 공개·종료·취소·호스트 변경</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,150 +17,36 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-04 생명주기
         </div>
-        <h1>F17-04. 정기모임 생명주기 (발행·종료·취소·재오픈)</h1>
-        <p class="lede">
-          모임 본체는 <strong>초안 → 모집 중 → 종료</strong>(또는 어디서든 <strong>취소</strong>)로 흘러간다.
-          종료는 모든 회차의 출석이 확정된 다음에만 통과한다 — 미확정 회차가 남아 있으면 버튼이 막힌다.
-          취소는 멤버 전원에게 자동 환불을 발사한다.
-          정산은 종료가 확정된 뒤 별도 단계로 만들어져,
-          "정산 후 새 환불"이 생기는 사고를 막는다.
-        </p>
+        <h1>F17-04 정기모임 공개·종료·취소·호스트 변경</h1>
+        <p class="lede">타입별 종료·강제 취소·비동기 환불/정산과 이전 호스트에게 남은 회차의 권한을 현재 계약으로 정리했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="host-transfer-current">
-        <h2>이전할 수 있는 회차와 돈의 책임</h2>
-        <p>호스트·소유권을 바꿀 때 미해결 돈 기록과 회차의 현재 책임자를 검사합니다. 넘기지 못한 회차는 이전 호스트에게 남고 새 코스 호스트의 명령으로 함께 변경하지 않습니다. 환불 회수의 책임도 실제로 해당 금액을 낸 사람을 기준으로 유지합니다.</p><p><a href="../policies/permission.html#host-transfer">미해결 돈과 회차 책임을 남긴 채 주최자를 바꾸지 않습니다</a>에서 적용 조건과 예외를 확인합니다.</p>
-      </section>
-
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">상태</div><div class="value">4</div><div class="hint">초안·모집중·종료·취소</div></div>
-          <div class="metric"><div class="label">호스트 액션</div><div class="value">6</div><div class="hint">발행·종료·취소·재오픈·수정·삭제</div></div>
-          <div class="metric"><div class="label">취소 후</div><div class="value">재개 불가</div><div class="hint">취소는 종착 상태</div></div>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">머니 안전 — 종료와 정산 사이에 빈틈 없음</span>
-          <p>종료는 모든 회차의 출석이 확정된 뒤에만 통과한다. 종료가 확정된 직후 정산이 만들어지고,
-            그 사이 멤버 자가 취소는 차단된다. 자격박탈 환불은 회차 확정 시점(=종료 이전)에만 발생하므로
-            정산 금액에 자연 반영된다 — <strong>정산이 만들어진 뒤에 환불이 새로 발생할 가능성이 0</strong>이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>네 가지 상태 전이</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    D["초안"] -->|"발행"| O["모집 중"]
-    D -->|"취소"| X["취소"]
-    O -->|"종료"| C["종료"]
-    O -->|"취소"| X
-    C -->|"재오픈"| O
-    X --> X2["(종착)"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">발행</div>
-            <h3>회차 8개 다 채우고 모집 연다</h3>
-            <p>호스트가 초안 모임에서 "발행하기" 누름. 시스템이 회차가 약속한 8개에 도달했는지 확인하고 통과시킨다.
-              발행 직후부터 일반 검색에 노출되고 신청이 들어오기 시작한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 회차 부족 모임이 외부에 노출되어 사용자가 가입 후 "회차가 없네?" 하는 경험을 차단.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">발행 차단</div>
-            <h3>고정형 8회 약속인데 5회만 등록함</h3>
-            <p>"발행하기" 누르면 "회차를 3개 더 추가해야 발행할 수 있어요" 안내. 시스템이 거절.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 회차 셋업을 다 마치고 발행하게 강제, 사용자 신뢰 보호.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">종료</div>
-            <h3>모든 회차 출석 확정 후 종료</h3>
-            <p>호스트가 마지막 회차 출석을 확정한 뒤 "종료하기" 누름. 즉시 정산이 자동 생성되어 호스트가 정산 화면으로
-              진입할 수 있다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 정산이 종료 직후 가시화되어 호스트가 별도 알림 없이도 다음 단계로 흐른다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">종료 차단</div>
-            <h3>마지막 회차 출석 미확정</h3>
-            <p>"종료하기" 누르면 "미확정 회차가 있어요" 안내. 미확정 회차 목록을 보여주고 출석 확정 화면으로 진입할 수 있게 한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 회차 노쇼 판정 없이 정산이 만들어지는 사고를 차단.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">취소</div>
-            <h3>호스트가 모임 자체를 접는다</h3>
-            <p>"취소하기" 누르고 확인 dialog("멤버에게 미진행 회차분 환불됩니다"). 활성 멤버 전원에게 비례 환불이 발사되고
-              미래 회차도 일괄 취소된다. 한 번 취소된 모임은 재개 불가.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 모임을 접을 때 모든 멤버 환불 책임이 자동 처리되어 분쟁 여지를 줄인다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">재오픈</div>
-            <h3>변동형 자동 종료를 풀어 다시 모집</h3>
-            <p>주로 변동형 모임이 한동안 회차 없이 흘러 자동 종료된 경우, 호스트가 "재오픈"으로 다시 모집을 연다.
-              기존 취소 회차는 되살아나지 않는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 한 번 닫은 모임을 새 모임으로 다시 만들지 않게, 같은 모임 ID를 유지하며 재시작 가능.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">초안 수정</div>
-            <h3>초안 본체 정보 손보기</h3>
-            <p>초안 단계에서만 본체(제목·설명·카테고리·가격 등)를 수정 가능. 발행 후에는 수정 버튼 비활성.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 발행 후 본체 정보가 흔들리지 않게 해, 가입 시점 약속을 끝까지 유지.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">초안 삭제</div>
-            <h3>"이 초안은 안 쓰겠다"</h3>
-            <p>초안 단계에서만 영구 삭제 가능. 발행된 모임은 멤버·결제·회차 이력 보존 의무로 삭제 버튼 비활성.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 시도 단계의 초안을 깔끔히 정리할 수 있게.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">현금 가드</span>
-          <ul>
-            <li><strong>종료가 막혀 있으면 출석 미확정 회차가 남은 것</strong> — 호스트에게 어떤 회차가 남았는지 안내해 다음 액션이 명확하게.</li>
-            <li><strong>취소 환불은 비동기로 멤버마다 따로 처리</strong> — 일부 실패해도 모임 취소 자체는 완료되고, 실패한 환불은 자동 재시도 큐로 들어간다.</li>
-            <li><strong>재오픈은 변동형 위주</strong> — 고정형도 가능하지만 회차 확정을 다시 갈아엎고 닫아야 하므로 실제 운영 케이스 드묾.</li>
-            <li><strong>본체 수정·삭제는 초안만</strong> — 발행 이후엔 두 버튼 모두 비활성. 가입자 노출 정보가 흔들리지 않도록.</li>
-            <li><strong>취소는 종착 — 되돌릴 수 없다</strong> — 호스트에게 확인 dialog 필수.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">분쟁이 일어날 수 있는 케이스</span>
-          <ul>
-            <li><strong>호스트가 출석 확정을 미루면 종료 버튼이 막혀 있음</strong> — 다음 회차로 못 넘어가는 멤버 항의 가능. 자동 마감은 기본 꺼져 있어 운영팀이 켜야 동작한다.</li>
-            <li><strong>취소 환불 일부 실패</strong> — 자동 재시도가 돌지만 사용자 입장에서는 환불이 늦어 보일 수 있음. 안내 필요.</li>
-            <li><strong>재오픈 후 회차 추가 → 다시 종료</strong> — 정산은 코스당 한 번만 생성되므로 다시 만들어지지 않지만, 호스트 입장에서 "정산이 안 늘었네?" 혼동 가능.</li>
-            <li><strong>발행 차단을 무한히 시도</strong> — 회차 부족 같은 사유가 명확히 표시되어야 호스트가 다음 액션을 안다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 상태와 실행 단위</h2><p>상태는 DRAFT, OPEN, CLOSED, CANCELED다. DRAFT에서 OPEN 또는 CANCELED, OPEN에서 CLOSED 또는 CANCELED로 전이한다. CLOSED에서 OPEN으로의 재개는 서비스가 VARIABLE에만 허용하며 CANCELED는 끝 상태다. 상태 변경은 모임 잠금과 소유자 확인 뒤 수행한다.</p>
+<p>최초 공개 때만 publishedAt을 설정하고 다시 열면 closedAt을 비운다. 종료·취소 시각은 초 단위로 저장한다. FIXED 취소는 cancelRefundPendingAt도 남겨 후속 환불 처리를 추적한다. 공개/재개 시 마지막 회차 생성 기준 시각도 현재로 갱신한다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>요청키·입력</th><th>응답</th></tr></thead><tbody><tr><td>POST /api/v1/regular-meetings/{id}/publish</td><td>Idempotency-Key 선택</td><td>200 RegularMeetingVo</td></tr><tr><td>POST /api/v1/regular-meetings/{id}/close</td><td>Idempotency-Key 선택</td><td>200 RegularMeetingVo</td></tr><tr><td>POST /api/v1/regular-meetings/{id}/reopen</td><td>Idempotency-Key 선택</td><td>200 RegularMeetingVo</td></tr><tr><td>POST /api/v1/regular-meetings/{id}/cancel</td><td>Idempotency-Key 필수, force query 기본 false</td><td>200 RegularMeetingVo</td></tr><tr><td>PUT /api/v1/regular-meetings/{id}/place</td><td>RegularMeetingPlaceParam</td><td>200 RegularMeetingVo</td></tr></tbody></table></div>
+<p>비호스트는 REGULAR_MEETING_NOT_OWNER로 거절한다. 허용되지 않은 상태는 REGULAR_MEETING_INVALID_STATUS다. 공개/종료/재개에 키를 보내면 명령 기록을 재사용하며 재조회한 현재 상태가 해당 결과 OPEN/CLOSED와 다르면 MEMBER_COMMAND_RESULT_UNAVAILABLE을 반환한다. 취소는 force 값까지 요청 식별에 포함한다. 키 없이 호출하는 선택형 명령과 앱의 키 포함 호출을 구분한다.</p></section>
+<section id="current-3"><h2>공개와 다시 열기</h2><p>모임과 연결 회차를 잠그고 본체 및 이번에 공개할 DRAFT 회차의 온라인 URL을 검사한다. FIXED 유료 과정은 현재 공개 가능한 결제 정책을 검사하고 계좌이체를 받는 경우 호스트 계좌를 연결한다. 기존 호스트에게 남겨 둔 회차를 제외한 관리 대상 DRAFT 회차는 결제 공개 조건을 검사한 후 함께 공개한다.</p>
+<p>공개 서비스에는 FIXED의 모든 계획 회차를 먼저 만들어야 한다는 개수 검사가 없다. ‘총 회차와 생성 회차 일치’는 종료 조건이다. 공개와 재개가 같은 내부 함수를 사용하므로 현재 API 구현은 DRAFT의 reopen도 공개로 처리하고 VARIABLE CLOSED의 publish도 재개로 처리한다. 앱은 상태에 따라 공개/다시 열기 입구를 나누지만 서버가 두 이름을 완전히 다른 선행 상태로 제한한다고 설명하지 않는다.</p></section>
+<section id="current-4"><h2>종료와 자동 종료</h2><p>FIXED 종료는 취소되지 않은 회차 전체의 종료 시각이 존재하고 현재 이하인지, 활성 회차 수가 totalSessionCount와 같은지, 그 활성 회차의 출석 확정이 전부 FINALIZED인지 검사한다. 취소 이력까지 모두 확정해야 한다는 조건은 아니다. 이전 호스트에게 남은 운영 중 회차나 FIXED의 미확정 회차가 있으면 먼저 처리해야 한다.</p>
+<p>VARIABLE 종료는 아직 끝나지 않은 OPEN 회차를 일반 회차 취소·환불 경로로 넘긴다. DRAFT 회차는 취소하고 끝난 OPEN 회차는 종료한다. FIXED에서는 미확정 등록 중 활성 결제가 없는 대상을 별도로 종결하며, 커밋 뒤 정산 생성을 넘긴다. 모임 CLOSED 응답은 정산 행 생성·지급까지 동시에 끝났다는 뜻이 아니다. 상세 금전 처리는 <a href="F17-10.html">정기모임 정산</a>을 따른다.</p>
+<p>VARIABLE 자동 종료는 OPEN이고 lastEventCreatedAt이 두 달 이상 전이며 앞으로 열릴 회차와 이전 호스트가 운영 중인 남은 회차가 없을 때 가능하다. 매일 서버 기준 04:40 스케줄이 500개씩 후보를 읽고 모임별 잠금 안에서 다시 판정한다. 한 건의 실패는 집계·로그로 남기고 다음 후보를 계속 처리한다. 자동 종료는 호스트에게, 수동 종료는 해당 참가자들에게 알림을 요청한다.</p></section>
+<section id="current-5"><h2>취소와 강제 취소</h2><p>현재 호스트는 DRAFT/OPEN만 취소할 수 있다. 다른 호스트에게 남은 DRAFT/OPEN 회차가 있으면 REGULAR_MEETING_HAS_RETAINED_SESSIONS와 대상 ID를 반환한다. force는 이 소유권 제한을 무시하지 않는다.</p>
+<p>force=false에서는 시작 시각이 지났지만 OPEN인 회차가 있으면 REGULAR_MEETING_HAS_STARTED_UNCLOSED_SESSIONS와 ID 목록으로 거절한다. 앱은 이 정확한 오류에만 추가 확인을 표시하고, 먼저 출석을 확정할지 강제 취소할지 안내한다. force=true를 확인하면 미마감 회차도 취소 대상으로 넘긴다. 다른 오류를 강제 취소 사유로 바꾸지 않는다.</p>
+<p>취소 대상은 DRAFT/OPEN 회차다. 참가자 알림을 요청하고 회차별 취소를 수행한다. FIXED는 모임 커밋 뒤 회원 환불 작업으로 넘기고 등록 상태를 종결한다. 이 응답만으로 모든 환불이 완료됐다고 표시하지 않는다. 계산·실패 복구·증빙은 <a href="F17-08.html">정기모임 환불</a>의 범위다. CLOSED와 CANCELED는 일반 취소 경로로 다시 취소할 수 없다.</p></section>
+<section id="current-6"><h2>공개 뒤 장소 변경</h2><p>숨김이 아닌 OPEN 오프라인 모임만 별도 장소 변경을 허용한다. 주소 필수, 주소 500자·상세 200자, 위경도는 함께 제공하며 유한값·범위를 검사한다. 현재와 동일하면 변경 없이 반환한다.</p>
+<p>본체와 미래 DRAFT/OPEN 회차 중 현재 모임 호스트가 관리하는 회차만 장소를 바꾼다. 시작된 회차와 이전 호스트 소유로 남겨진 회차는 제외한다. 모임을 저장하고 호스트를 제외한 관련 참가자에게 장소 확정/변경 알림을 요청하며 검색 캐시를 갱신한다.</p></section>
+<section id="host-transfer-current"><h2>호스트 변경과 남은 회차</h2><p>관리자 호스트 변경은 모임과 각 회차의 소유자를 별도로 다룬다. CANCELED 또는 이미 공개된 유료 FIXED는 이 변경 경로에서 거절한다. 새 호스트가 해당 과정의 PENDING/APPROVED_PENDING_PAYMENT/ENROLLED/WAITING 회원이거나 계정이 CLOSED/INACTIVE이면 거절한다.</p>
+<p>현재 호스트 소유의 DRAFT/OPEN 회차를 검사하여 이전 제약이 없는 회차만 계좌·호스트를 바꾼다. 제약이 있는 회차는 이전 호스트 소유로 남기고 사유와 계좌 재연결 목록을 응답한다. 이미 다른 호스트 소유로 남아 있던 회차를 추가로 가져오지 않는다. 남은 회차가 있으면 이전 호스트에게 알림을 요청한다.</p>
+<p>모임 호스트가 바뀌어도 회차의 취소·출석 확정 권한은 실제 회차 호스트를 기준으로 한다. 현재 모임 호스트가 다른 사람 소유의 회차를 임의로 취소하는 것으로 설명하지 않는다. 종료/취소가 남은 회차 때문에 막히는 이유도 이 경계다.</p></section>
+<section id="current-8"><h2>앱 확인·재시도·복귀</h2><p>상세에서 DRAFT 공개, OPEN 종료/취소/일정 추가, CLOSED VARIABLE 다시 열기를 제공한다. 각 명령 전 타입별 영향과 되돌릴 수 있는지를 설명한다. FIXED 종료 안내는 회차 종료·출석 확정을 먼저 요구하며, 강제 취소 확인은 미마감 회차의 환불 영향을 별도로 보여 준다.</p>
+<p>공개·종료·재개는 세션별 명령 키를 같은 대상에 유지하고 결과가 확정되면 정리한다. 전체 취소는 force를 포함하는 회원 금전 명령 보관 경로를 사용한다. 성공 또는 저장됐을 가능성이 있는 오류는 상세·목록·영향받은 회차를 재조회한다. 상세의 상태 표시와 실제 환불/정산 완료를 분리한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>공개/재개는 내부 구현을 공유하여 경로 이름과 선행 상태가 엄격한 일대일 관계가 아니다.</td><td>실제 서비스 동작과 앱 입구를 구분한다.</td></tr><tr><td>Risk</td><td>FIXED 종료·취소 뒤 금전 처리는 커밋 이후 작업이다.</td><td>응답 성공을 정산 생성·환불 지급 완료로 확대하지 않는다.</td></tr><tr><td>Risk</td><td>호스트 변경 뒤 남은 회차는 이전 호스트의 권한을 유지한다.</td><td>force로 소유권 제한을 우회할 수 있다고 안내하지 않는다.</td></tr><tr><td>미검증</td><td>동시 명령·스케줄러·알림 수신·환불/정산 복구를 이번에 실행하지 않았다.</td><td>연결된 호출과 실제 완료 증거를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 상태와 시간:</strong> 네 상태, VARIABLE 재개 제한과 최초 공개·종료·취소·환불 대기 시각을 구분한다.</li><li><strong>AC-02 공개 검사:</strong> 위치·결제 공개 조건과 관리 대상 DRAFT 회차를 검사하되 미구현된 공개 회차 수 검사를 만들어 쓰지 않는다.</li><li><strong>AC-03 FIXED 종료:</strong> 취소되지 않은 회차의 종료·계획 수 충족·출석 확정을 함께 검사한다.</li><li><strong>AC-04 VARIABLE 종료:</strong> 미래/미완료 회차 취소·끝난 회차 종료·두 달 무활동 자동 종료를 구분한다.</li><li><strong>AC-05 취소 확인:</strong> 시작 후 미마감 오류에만 force 확인을 제공하고 남은 타 호스트 회차는 계속 차단한다.</li><li><strong>AC-06 장소 변경:</strong> 공개 오프라인 본체와 미래 관리 회차에만 변경을 적용한다.</li><li><strong>AC-07 소유권 이전:</strong> 이전 제약·회원/계정 상태를 검사하고 남은 회차와 회차별 권한을 보존한다.</li><li><strong>AC-08 금전 후속:</strong> 모임 상태 응답과 커밋 이후 환불/정산 작업의 완료를 분리한다.</li><li><strong>AC-09 재확인:</strong> 선택/필수 요청키와 결과 미확정 후 관련 조회 갱신을 설명한다.</li></ul>
+<p>현재 근거는 서버·앱 소스다. 새 제품 시험·스케줄 실행·브라우저 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

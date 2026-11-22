@@ -1,131 +1,92 @@
-# F17-03. 정기모임 생성·초안 수정 PRD
+# F17-03. 정기모임 생성·기본 정보 수정 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 서버·앱 소스 대조 문서다. 새 실행·브라우저·실기기 검수 결과가 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-measured: 2026-07-29 -->
+## 현재 범위와 입구
 
-## 2026-10-29 현재 계약 대조
+공개·운영 목록의 만들기에서 FIXED(전체 과정 등록) 또는 VARIABLE(일정별 신청) 초안을 만든다. 이벤트 회고의 정기모임 만들기는 본인이 주최한 이벤트를 바탕으로 VARIABLE 초안을 만든다. 생성 성공은 아직 공개·등록·납부 완료가 아니다. 상세에서 검토하고 [모집 상태 관리](F17-04_regular-meeting-lifecycle_prd.md)를 거쳐 공개한다.
 
-### 응답이 끊긴 생성 요청은 같은 요청으로 확인합니다
+기본 정보 수정은 호스트의 DRAFT만 허용한다. `meetingType`은 수정 요청에 없으며 생성 후 바꿀 수 없다. 현재 회원 Controller에는 모임 본체 DELETE가 없으므로 ‘초안 삭제 API’를 제공한다고 설명하지 않는다. 모임 취소는 별도 명령이다.
 
-차수 10에서 모임 생성 다섯 경로·플랜 생성·정기모임 생성·개인 반복 생성에 요청 고유키를 연결했다. 같은 키·같은 본문 재전송은 앞 결과를 돌려주며 다른 본문 재사용은 거절한다. 저장 결과를 모르는 동안 새 생성으로 바꾸지 않는다. 화면 재진입·계정 전환 뒤 이전 사용자의 미확정 요청을 현재 계정으로 보내지 않는지도 확인한다.
+## 현재 서버 계약
 
-### 반복 일정 생성과 남긴 회차의 소유권
+| 요청 | 입력·키 | 결과 |
+|---|---|---|
+| POST /api/v1/regular-meetings | RegularMeetingAddParam, Idempotency-Key 필수 | 201 RegularMeetingVo, DRAFT |
+| POST /api/v1/regular-meetings/from-event/{eventId} | 본인 이벤트 ID, Idempotency-Key 필수 | 201 VARIABLE DRAFT |
+| PATCH /api/v1/regular-meetings/{id} | RegularMeetingModParam, 생성용 키 없음 | 200 수정된 RegularMeetingVo |
 
-개인 반복은 모임 상세 더보기에서 시작한다. 클럽 반복은 오늘부터 만들 수 있고 지난 시각은 건너뛰되 생성 결과가 0회이면 거절한다. 요일 입력을 정리하고 월 반복의 첫 회차와 생성 상한을 검사한다. 기존 플랜 생성의 반복 옵션은 제거했다. 호스트가 바뀌어도 남겨 둔 회차의 이전 호스트가 자기 회차를 확정·취소하는 권한은 구분한다.
+생성 요청은 제목의 공백 여부와 최대 200자, category·meetingType·locationType 필수, 정원 음수·금액 음수, 주소 500자·상세 200자·온라인 URL 500자 상한을 검사한다. 현재 호스팅 제한 제재가 있으면 USER_RESTRICTED_FROM_HOSTING으로 거절한다. FIXED는 총 회차 1~200과 정원 1 이상이 필요하다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+| 필드 | FIXED | VARIABLE |
+|---|---|---|
+| 날짜·총 회차 | 요청한 LocalDate·총 회차 | null |
+| 가격·기본 정원 | 100원 단위 절삭 가격·양수 정원 | 0·0 |
+| 선결제·승인 | 선결제는 요청 true이면서 저장 가격 양수일 때, 승인은 요청값 | false·false |
+| 결제 정책 | 저장 가격 양수이면 prepaymentType 필수 | null |
+| 환불 정책·기준 시간 | 요청 또는 FULL 기본값·요청값 | FULL·null |
 
-## 1. 결론
+가격은 null이면 0이며 100원 미만 자릿수를 버린다. 1~99원은 저장 시 0원이므로 입력이 양수라는 이유만으로 유료라고 단정하지 않는다. VARIABLE의 노쇼 관련 요청값은 생성 코드에서 그대로 전달되지만 현재 앱은 해당 타입에 이를 보내지 않는다.
 
-호스트는 `FIXED`(코스 전체 등록·결제) 또는 `VARIABLE`(세션별 신청·결제) 정기모임을 만들며, 서버는 항상 `DRAFT`로 저장한다. 수정·삭제는 호스트의 `DRAFT`에서만 가능하고 `meetingType`은 수정 body에 없어 생성 뒤 바꿀 수 없다.
+기존 이벤트에서 생성은 소유자를 검사하고 제목·설명·카테고리·장소·썸네일을 복사하여 일반 생성 경로로 넘긴다. 기존 이벤트를 회차로 편입하거나 참가자를 자동 이관하는 명령은 아니다. 생성 재조회는 저장된 모임 ID의 현재 호스트와 모임 존재를 다시 확인한다.
 
-Flutter 생성/수정 화면은 2026-07-10 이후 타입별 결과와 환불·노쇼·정산 영향을 설명하는 authoring guidance까지 갖췄다. 다만 실제 소스 대조 결과 **앱 카테고리 enum 세 값이 서버에 없고 기본값도 그중 하나라 생성 자체를 막을 수 있는 P0 계약 불일치**가 있다. 또한 서버는 안전한 썸네일 키를 지원하지만 앱 생성·수정 화면에는 썸네일 선택/업로드 입력이 없다.
+## 초안 수정과 장소
 
-## 2. 코드 위치
+수정은 모임을 잠그고 소유자·DRAFT를 확인한다. 제공한 값만 적용하며 총 회차를 취소되지 않은 기존 회차 수 아래로 줄일 수 없다. FIXED 정원 변경은 연결된 살아 있는 회차에도 적용한다. 금액을 0으로 바꾸면 선결제 필수·결제 정책·계좌 연결을 해제한다. 유료 상태인데 결제 정책이 비어 있으면 거절한다.
 
-계약의 정본은 코드다. 서버: `RegularMeetingController`, `RegularMeetingService`, `FileStorageService`. 앱: `regular_meeting_create_screen.dart`, `regular_meeting_edit_screen.dart`, `regular_meeting_add_param.dart`, `regular_meeting_mod_param.dart`.
+오프라인 장소는 미정으로 둘 수 있다. 온라인은 빈 값이 아닌 유효한 http/https URL이 필요하다. 장소 유형을 바꾸면 반대 유형의 주소 또는 온라인 URL을 제거한다. 오프라인 주소를 빈 문자열로 수정하면 상세 주소·좌표도 비운다. 초안 장소 변경은 연결된 DRAFT 회차에 전파된다. 공개 후 오프라인 장소 변경은 [공개 뒤 장소 변경](F17-04_regular-meeting-lifecycle_prd.md#공개-뒤-장소-변경)의 별도 계약이다.
 
-## 4. Flutter 실제 화면 계약
+썸네일은 EVENT_THUMBNAIL 용도의 소유·업로드 검증을 거친 키를 저장한다. 수정에서 정규화 결과가 null이면 새 값을 지정하지 않으므로 빈 입력으로 기존 썸네일을 제거할 수 있다고 추정하지 않는다.
 
-### 4.1 현재 입력
+## 앱 입력과 이미 해결된 항목
 
-공통 입력:
+생성 카테고리는 서버 Category의 15개 항목을 사용하고 기본값은 SOCIAL이다. 기존 문서의 CLASS/STUDY/HOBBY 불일치 주장은 현재 미구현 항목에서 제외한다. 생성·수정에 주소 선택·상세 위치·좌표·온라인 URL 입력이 연결돼 있으며, 서버 생성·수정 모두 음수 가격을 거절한다.
 
-- 운영 방식 `VARIABLE | FIXED`
-- 카테고리
-- 장소 유형 `OFFLINE | ONLINE`
-- 제목, 설명
+FIXED 입력은 기간·총 회차·정원·가격·승인·선결제·환불·노쇼 정책이다. 날짜는 dateKey 문자열로 직렬화하여 서버 LocalDate에 보낸다. 앱은 종료일이 시작일보다 빠르면 막는다. 좌표가 없는 새 오프라인 주소는 주소 검색으로 좌표를 구하며 실패하면 입력을 유지한다. 수정은 기존 주소의 좌표를 불필요하게 다시 구하지 않는다.
 
-FIXED일 때만:
+앱은 유료 새 과정의 정책을 현재 활성 결제 기능에서 정하고 사용 가능한 정책이 없으면 저장을 막는다. 수정에서 결제 조건을 바꾸지 않으면 기존 정책을 보존한다. 정책이 누락된 기존 유료 초안은 가격 입력을 명시적으로 확인하여 정책을 정해야 한다. 무료로 바꾸는 요청은 가격과 선결제 false를 보내며 서버가 정책을 비운다.
 
-- 정원, 참가비
-- 시작일·종료일, 총 회차
-- 환불 정책, 환불 기준 시간
-- 노쇼 정책, 집계 기준, 한도
-- 호스트 승인 필요, 선결제 필수
+생성/수정 제출 body에는 thumbnailUrl이 연결되지 않는다. 생성에는 카테고리 선택이 있지만 현재 수정 body에는 category를 보내지 않는다. 서버 수정 가능 필드와 화면 제공 범위를 분리한다.
 
-화면은 타입별로 다음 결과를 설명한다.
+## 응답이 끊긴 생성 요청과 계정별 복원
 
-- FIXED: 코스 전체 등록·결제, 잔여 회차 환불, 노쇼, 코스 정산
-- VARIABLE: 세션별 신청·결제·환불, 정기모임은 세션 묶음
+일반 생성은 계정별 로컬 초안에 입력과 요청 본문·키·발급 시각·성공 결과를 보관한다. 요청 전 저장에 실패하면 전송하지 않는다. 응답이 유실됐을 수 있거나 MEMBER_COMMAND_RESULT_UNAVAILABLE이면 같은 요청 정보를 남긴다. 저장되지 않은 것으로 판정할 수 있는 실패만 pending 요청을 해제한다.
 
-제출 전 `AppDialog.confirm`으로 아직 공개/결제가 발생하지 않는 DRAFT 생성임을 확인하고, 성공하면 `"정기모임 생성 완료"` 토스트 후 `/regular-meetings/{id}`로 이동한다.
+재진입 시 같은 본문·키로 다시 확인하며, 성공 결과를 이미 보관한 경우 새 생성 없이 해당 상세로 이동한다. 입력을 새 요청으로 바꾸기 전에는 운영 목록에서 결과를 확인했다는 명시적 확인을 받고 중복 생성 가능성을 알린다. 계정·세션·초안 소유권을 확인하여 이전 계정의 요청을 현재 계정에서 전송하지 않는다.
 
-### 4.2 날짜 직렬화
+이벤트 기반 생성도 계정과 eventId별 로컬 기록을 쓰고 같은 세션·계정·이벤트의 동시 실행을 공유한다. 일반 초안 수정은 생성용 Idempotency-Key를 사용하는 명령이 아니며 저장/실패 후 입력 보존과 성공 시 상세 복귀를 별도로 처리한다. 성공하거나 저장됐을 가능성이 있는 결과에서는 정기모임 목록 변경을 알린다.
 
-Flutter `DateTime?`은 add/mod model의 `toJson`에서 정확히 `yyyy-MM-dd`로 변환되어 서버 `LocalDate`와 맞는다. 과거 ISO timestamp 전송 위험은 현재 소스에서 해소됐다.
+## 본체 생성과 반복 일정의 경계
 
-### 4.3 현재 없는 입력
+정기모임 본체 생성은 회차를 자동 생성하지 않는다. 단건 추가와 반복 생성은 [회차 생성·대체·취소](F17-05_regular-meeting-sessions_prd.md)에서 수행한다. 개인 반복·클럽 반복을 이 API와 같은 요청이라고 설명하지 않는다.
 
-서버 param에는 있지만 생성/수정 화면이 실제로 보내지 않는 값:
+## 코드 위치
 
-- `address`, `addressDetail`, `latitude`, `longitude`, `onlineUrl`
-- `thumbnailUrl`
+서버: RegularMeetingController, RegularMeetingCourseCommandService, RegularMeetingCourseRules, RegularMeetingCourseTransitions, RegularMeeting, Category, RegularMeetingAddParam/ModParam. 앱: regular_meeting_create_screen.dart, regular_meeting_edit_screen.dart, regular_meeting_add_param.dart, regular_meeting_mod_param.dart, regular_meeting_creation_draft.dart, regular_meeting_write_command.dart, event_recap_screen.dart.
 
-따라서 장소 유형만 선택해도 실제 주소/온라인 URL은 비어 있고, 정기모임 썸네일을 새로 업로드할 UI도 없다.
+<!-- source-references:start -->
+서버 창구: `RegularMeetingController#create`, `RegularMeetingController#createFromEvent`, `RegularMeetingController#update`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-## 5. 확인된 P0/P1 Gap
+## 현재 제한과 확인 범위
 
-### 5.1 P0 — 카테고리 enum 불일치
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 생성·수정 화면에서 썸네일 값을 작성하지 않고 수정 body에 category도 없다. | 서버 지원과 앱 입력 지원을 구분한다. |
+| Gap | 서비스의 기본 수정 검사는 제목 공백, 본체 날짜의 시작/종료 순서를 별도로 검사하지 않는다. | 앱 검사와 서버 보장을 동일시하지 않는다. |
+| Risk | 가격은 100원 단위로 절삭된다. | 1~99원 입력을 유료 저장 성공이라고 설명하지 않는다. |
+| 미검증 | 로컬 초안 복구·계정 전환·응답 유실을 이번에 실행하지 않았다. | 소스 대조를 실제 복구 통과로 기록하지 않는다. |
 
-서버 `Category`:
+## 수용 기준과 검증 근거
 
-`BOARD_GAME, HIKING, COOKING, BOOK_CLUB, SPORTS, MUSIC, ART, LANGUAGE, TECH, SOCIAL, TRAVEL, PHOTOGRAPHY, FOOD, FITNESS, OTHER`
+- **AC-01 초안 생성:** 정상 요청은 DRAFT이며 FIXED의 총 회차 1~200·양수 정원과 공통 입력을 검사한다.
+- **AC-02 타입 정규화:** VARIABLE의 날짜·회차·가격·정원·승인·선결제와 FIXED의 저장 가격 기준 정책을 구분한다.
+- **AC-03 수정 범위:** 현재 호스트의 초안만 수정하며 타입 불변·기존 회차 수·정원 전파를 적용한다.
+- **AC-04 장소 계약:** 오프라인 미정, 온라인 URL 필수, 유형 전환 시 비관련 필드 정리와 초안 회차 전파를 설명한다.
+- **AC-05 현재 앱 입력:** 카테고리·장소·음수 가격의 해결된 항목과 썸네일·수정 카테고리 미제공을 나눈다.
+- **AC-06 생성 재확인:** 요청 전 로컬 저장, 같은 본문·키, 결과 미확정 유지와 계정 경계를 설명한다.
+- **AC-07 이벤트 재사용:** 본인 이벤트에서 VARIABLE 초안을 만들고 기존 이벤트·참가자를 자동 편입하지 않는다.
+- **AC-08 결과 복귀:** 생성 결과는 상세로, 수정 성공은 원래 화면 또는 상세로 복귀하며 관련 목록을 갱신한다.
 
-앱 생성 폼:
-
-`CLASS, STUDY, SPORTS, HOBBY, COOKING, OTHER`
-
-- 앱 기본값은 `CLASS`인데 서버 enum에 없다.
-- `CLASS`, `STUDY`, `HOBBY`는 서버 JSON enum 역직렬화 단계에서 거절될 수 있다.
-- 현재 일치하는 값은 `SPORTS`, `COOKING`, `OTHER`뿐이다.
-- Service 진입 전 실패할 수 있으므로 안내 문구 문제가 아니라 생성 경로 차단 결함이다.
-
-**해소 조건**: 앱 옵션을 서버 `Category` 정본에 맞추고, 기본값과 모든 선택값에 대한 request JSON 계약 테스트를 둔다. 서버에 없는 앱 enum을 새로 만들지 않는다.
-
-### 5.2 P1 — 썸네일 authoring 미배선
-
-서버의 안전한 `EVENT_THUMBNAIL` 저장·표시 계약과 Dart param의 `thumbnailUrl`은 있으나 화면에서 값을 만들지 않는다. 목록·상세는 기존 썸네일 URL을 표시할 수 있지만 사용자가 생성/수정 중 설정할 수 없다.
-
-### 5.3 P1 — 장소 상세 authoring 미배선
-
-장소 유형 선택은 있으나 주소/좌표/온라인 URL 필드가 없어 실제 장소 정보가 비어 있는 초안이 만들어진다.
-
-### 5.4 P1 — FIXED 본체 가격의 서버 음수 가드 누락
-
-Flutter 생성 화면은 음수 가격을 폼 검증으로 막지만, `RegularMeetingService.validateAddParam/validateModParam`은 `price < 0`을 검사하지 않는다. 엔티티는 받은 값을 100원 단위로 절삭할 뿐이므로 직접 API 요청으로 음수 FIXED 가격이 저장될 수 있다. 결제·환불 산식에 들어가기 전에 서버가 0 이상을 강제해야 한다.
-
-## 6. 상태·권한
-
-- 생성 결과는 항상 `DRAFT`.
-- 호스트만 DRAFT 상세·수정·삭제·세션 조회가 가능하다.
-- 한 번도 발행되지 않은 DRAFT 또는 `publishedAt == null`인 CANCELED 모임을 비호스트가 직접 ID로 조회하면 `REGULAR_MEETING_NOT_FOUND`.
-- 한 번 공개됐던 CLOSED/CANCELED는 기존 공개 이력이 있으므로 상세 조회를 유지한다.
-- `meetingType`은 생성 뒤 변경하지 않는다.
-- 일반 호스트용 이양 API는 없다. 다만 관리자 백엔드에는 internal token으로 호출하는 `POST /api/internal/regular-meetings/{id}/transfer-host` break-glass 경로가 있고, CANCELED가 아니면 본체 호스트와 결제·정산이 없는 미래 세션의 호스트를 이관한다.
-
-### 제품 규칙
-
-- 정기모임 만들기는 이벤트 주최 제한 제재를 받는 동안 막힌다.
-- 기존 이벤트에서 정기모임을 만들 수 있는 사람은 그 원본 이벤트의 호스트뿐이다.
-
-## 7. 수용 기준
-
-- **AC-01**: 서버 enum과 일치하는 category, 유효한 공통 필드로 생성하면 201 `DRAFT`.
-- **AC-02**: FIXED는 `totalSessionCount > 0`, `baseCapacity > 0`; 위반 시 `INVALID_INPUT`.
-- **AC-03**: VARIABLE은 본체 날짜·회차·가격·정원·선결제·승인을 서버가 null/0/false로 강제한다.
-- **AC-04**: 0 이상 FIXED 가격은 100원 아래를 절삭한다. 음수 직접 요청 차단은 현재 미충족 Gap이다.
-- **AC-05**: 앱의 날짜는 `yyyy-MM-dd` JSON으로 전송된다.
-- **AC-06**: 타인·미완료·purpose 불일치 썸네일 키는 저장되지 않고 서버 오류로 거절된다.
-- **AC-07**: 비호스트는 미발행 상세를 직접 ID로도 볼 수 없다.
-- **AC-08 (차단 상태)**: `CLASS/STUDY/HOBBY`가 서버와 합의되기 전에는 해당 앱 선택값을 정상 생성 수용 기준으로 간주하지 않는다.
-
-## 8. 후속 우선순위
-
-1. 앱 카테고리 옵션을 서버 enum과 일치시킨다(P0).
-2. 생성·수정에 `EVENT_THUMBNAIL` 업로드 → PUT → complete → bare key 제출 흐름을 연결한다.
-3. 서버 create/update에서 FIXED `price >= 0`을 강제한다.
-4. OFFLINE 주소/좌표, ONLINE URL 입력과 타입별 검증을 연결한다.
-5. 서버 응답의 절삭된 FIXED 가격을 상세에서 명확히 표시한다.
+현재 근거는 서버·앱 소스다. 새 제품 시험·브라우저·실기기 통과 기록은 없다.

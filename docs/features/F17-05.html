@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F17-05 회차 관리 — community PRD</title>
+  <title>F17-05 정기모임 회차 생성·반복·대체·취소</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,181 +17,36 @@
           <a href="../domains/17-regular-meeting.html">17 정기모임</a><span>›</span>
           F17-05 회차 관리
         </div>
-        <h1>F17-05. 회차 관리 (추가·자동생성·일괄·대체·취소)</h1>
-        <p class="lede">
-          회차 데이터는 일반 이벤트 위에 만들어진다. 상세의 회차 카드를 누르면 그 회차로 들어갈 수 있지만,
-          회차를 고치는 일은 정기모임 화면에서만 되고 일반 이벤트 운영 화면에서의 직접 수정은 막혀 있다.
-          다섯 가지 운영 동작이 있다 — <strong>한 회차 추가</strong>, <strong>반복 자동생성</strong>, <strong>여러 회차 일괄 추가</strong>,
-          <strong>취소된 회차의 대체본 추가</strong>, <strong>회차 취소</strong>.
-          이 가운데 호스트 화면에 없는 것은 회차 목록을 자유롭게 한 번에 편집하는 일괄 추가뿐이다.
-        </p>
+        <h1>F17-05 정기모임 회차 생성·반복·대체·취소</h1>
+        <p class="lede">현재 공개 API와 내부 일괄 함수, 200회 한도, 반복 26회, 회차별 권한·가격·재시도 및 실제 대체 화면을 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="recurrence-current"><h2>반복 일정 생성과 남긴 회차의 소유권</h2><p>개인 반복은 모임 상세 더보기에서 시작한다. 클럽 반복은 오늘부터 만들 수 있고 지난 시각은 건너뛰되 생성 결과가 0회이면 거절한다. 요일 입력을 정리하고 월 반복의 첫 회차와 생성 상한을 검사한다. 기존 플랜 생성의 반복 옵션은 제거했다. 호스트가 바뀌어도 남겨 둔 회차의 이전 호스트가 자기 회차를 확정·취소하는 권한은 구분한다.</p></section>
-
-      <section id="session-count-limit">
-        <h2>취소되지 않은 회차는 최대 200개입니다</h2>
-        <p>고정 회차 코스는 총 회차를 1~200개로 설정합니다. 가변 회차 코스도 추가·일괄 추가·주기 생성·대체 회차 생성에서 취소되지 않은 회차의 합이 200개를 넘지 않도록 검사합니다. 취소된 회차는 이 살아 있는 회차 수에서 제외합니다.</p>
-      </section>
-
-
-      <section id="host-transfer-current">
-        <h2>이전할 수 있는 회차와 돈의 책임</h2>
-        <p>호스트·소유권을 바꿀 때 미해결 돈 기록과 회차의 현재 책임자를 검사합니다. 넘기지 못한 회차는 이전 호스트에게 남고 새 코스 호스트의 명령으로 함께 변경하지 않습니다. 환불 회수의 책임도 실제로 해당 금액을 낸 사람을 기준으로 유지합니다.</p><p><a href="../policies/permission.html#host-transfer">미해결 돈과 회차 책임을 남긴 채 주최자를 바꾸지 않습니다</a>에서 적용 조건과 예외를 확인합니다.</p>
-      </section>
-
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">서버 액션</div><div class="value">5</div><div class="hint">추가·자동생성·일괄·대체·취소</div></div>
-          <div class="metric"><div class="label">순번 정책</div><div class="value">중복 허용</div><div class="hint">원본+대체본 보존</div></div>
-          <div class="metric"><div class="label">직접 수정</div><div class="value">차단</div><div class="hint">일반 이벤트 운영 우회 불가</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 회차는 정기모임만의 영역</span>
-          <p>회차도 결국 이벤트의 한 형태라 일반 이벤트 화면을 재사용할 여지는 있지만,
-            일반 이벤트 운영 경로로 회차를 수정하면 모임 본체와 정합성이 깨진다.
-            그래서 호스트는 정기모임 화면에서만 회차를 손볼 수 있고,
-            일반 이벤트의 게시/취소/정원 변경 같은 경로는 명시적으로 차단되어 있다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">한 회차 추가</div>
-            <h3>8회 코스의 다음 회차 한 건</h3>
-            <p>호스트가 회차 추가 화면에서 제목·설명·시작/종료 시각을 입력한다. 순번은 자동으로 다음 번호가 붙는다.
-              고정형은 정원을 본체에서 상속하지만 가격은 코스 전체 결제이므로 세션에 항상 0원으로 저장된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 고정형 회차에서 이중 과금을 막고 코스 정원만 일관되게 상속.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">반복 자동생성</div>
-            <h3>첫 회차를 기준으로 최대 26회 생성</h3>
-            <p>앱에서 매일·매주·격주·매월 중 주기와 생성 횟수(1~26)를 고른다. 서버가 첫 회차 길이를 유지해
-              제한된 회차 목록으로 확장한 뒤 bulk 생성 경로를 재사용한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 임의 bulk 편집 화면 없이도 가장 흔한 반복 패턴은 앱에서 바로 만든다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">변동형 회차 추가</div>
-            <h3>매번 다른 정원·가격</h3>
-            <p>변동형 회차는 회차마다 정원·가격을 따로 입력한다. 유료면 환불 정책과 결제기한도 고르며,
-              서버는 가격을 100원 단위로 절삭하고 CASH 사전결제를 만든다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 변동형 모임의 핵심 자유도. 본체는 공통 정책만, 회차는 자유 운영.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">회차 취소</div>
-            <h3>호스트가 회차 카드에서 바로 취소한다</h3>
-            <p>정기모임 상세의 회차 카드에 호스트 전용 "회차 관리" 메뉴가 있고 그 안에서 취소한다
-              (2026-08-13 반영 — 종전 "앱 카드에 취소 액션 없음" 서술은 해소).
-              누르면 회차 번호와 함께 취소의 금전 영향을 알리는 확인 창이 먼저 뜬다 — 고정형은 "이 회차만 취소하고 멤버와 출석 기록은 보존된다",
-              변동형 유료 회차는 "신청자 환불을 시작한다"로 문구가 갈린다.
-              취소할 수 있는 것은 모임이 초안이거나 모집 중이고 회차가 아직 살아 있을 때뿐이다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 고정형 코스 멤버십은 회차 취소로 흔들리지 않는다.
-              변동형 유료 회차라면 참가자에게 취소 알림이 가고 결제분이 환불되며, 실패분은 운영 추적 대상으로 남는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">대체본 추가</div>
-            <h3>취소된 회차를 같은 순번의 대체 회차로 다시 연다</h3>
-            <p>취소된 회차를 고르면 같은 순번의 대체 회차를 만들고 원본 참조를 보존한다. 호스트 화면도
-              회차 추가 화면이 대체 모드로 동작해 제공된다(2026-08-18 확인 — 종전 "앱 화면 없음" 서술은 해소).
-              대체 사실은 참가자에게 알림으로도 나간다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 원본과 대체를 한 순번으로 묶어 두어, 출석·정산이 회차를 잃지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">회차 카드에서 할 수 있는 것</div>
-            <h3>카드를 누르면 그 회차로 들어가고, 호스트는 메뉴로 운영한다</h3>
-            <p>회차 카드를 누르면 그 회차의 모임 상세로 이동한다(2026-08-13 반영 — 종전 "읽기 전용" 서술은 해소).
-              취소된 회차를 눌렀을 때 같은 순번의 대체 회차가 있으면 그쪽으로 보낸다 — 사용자가 실제로 가야 할 날짜는 대체본이기 때문이다.
-              호스트에게는 같은 카드에 출석 확정·대체 회차 만들기·회차 취소 세 가지가 조건에 따라 메뉴로 열린다.</p>
-            <p><strong>남은 공백</strong> — 회차로 들어간 뒤의 모임 상세 화면에는 "정기모임 몇 회차인지"를 알려 주는 표기가 아직 없다.
-              서버는 순번과 모임 이름을 함께 내려주지만 화면이 읽지 않는다. 호스트에게만 "정기모임에서 회차 관리" 버튼이 보여 문맥을 되찾을 수 있고,
-              일반 참가자에게는 단서가 없다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:150px">영역</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr><td><strong>회차 순번</strong></td><td>"1회차·2회차·3회차" 같은 표기가 모든 회차 카드 상단에 노출.</td><td>코스에서 자기 위치를 사용자가 직관적으로 인지하게 한다.</td></tr>
-              <tr><td><strong>대체 회차 이력</strong></td><td>같은 순번의 취소 원본과 활성 대체 회차가 함께 보존된다. 기본 목록은 취소 원본을 숨기고, 호스트 상세는 이력을 포함해 불러온다.</td><td>원본과 대체를 한자리에서 확인할 수 있다(2026-08-18 확인 — 종전 "이력 화면 없음" 서술은 해소).</td></tr>
-              <tr><td><strong>변동형 정원·가격</strong></td><td>회차 카드마다 다른 값으로 노출.</td><td>변동형의 자유도가 카드 단계에서 노출되어야 사용자가 "이번 달은 가격이 다르네"를 인지.</td></tr>
-              <tr><td><strong>취소 회차 노출</strong></td><td>목록은 기본적으로 활성 회차만 보여 주고, 호스트 상세는 취소 원본까지 포함해 불러온다.</td><td>참가자는 살아 있는 회차만 보고 호스트는 이력을 함께 본다(2026-08-18 확인 — 종전 "후속 배선" 서술은 해소).</td></tr>
-              <tr><td><strong>일반 이벤트 운영 차단</strong></td><td>호스트가 일반 이벤트 화면에서 회차 운영 버튼을 눌러도 거절.</td><td>운영 경로 분리로 모임 본체와 회차 정합성 보호.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">회차 운영 규칙</span>
-          <ul>
-            <li><strong>고정형 회차 취소 시 멤버 본체는 그대로</strong> — 자동 참석 명단만 갱신. 다른 회차에는 그대로 참여.</li>
-            <li><strong>변동형은 회차마다 정원·가격이 독립적</strong> — 회차별로 다른 가격을 받을 수 있다.</li>
-            <li><strong>1~99원은 절삭 후 무료가 된다</strong> — 서버가 100원 단위로 내림하므로 유료로 보이게 입력해도 사전결제가 생성되지 않는다.</li>
-            <li><strong>회차 시간 겹침 자동 검출 없음</strong> — 호스트가 같은 시간대에 두 회차를 만들 수 있음. 1차는 호스트 자율.</li>
-            <li><strong>회차를 새로 추가하면 참가자에게 알림이 간다</strong>(2026-08-26 반영 — 종전 "알림 종류 자체가 없다" 서술은 해소) —
-              고정형은 참여 중인 멤버에게, 변동형은 기존 회차 참석자에게 보낸다. 한 번에 여러 회차를 만들어도 알림은 한 건만 나가고,
-              호스트가 하루에 여러 번 회차를 더해도 푸시에는 발송 빈도 상한이 걸린다. 취소된 회차를 대신하는 대체 회차 알림과는 따로 둔다 —
-              대체는 "가려던 날이 옮겨졌다"는 통지이고 추가는 "없던 날이 생겼다"는 통지라, 읽고 나서 하는 행동과 사용자가 켜고 끄는 단위가 다르다.</li>
-            <li><strong>일반 이벤트 운영 화면 우회 차단</strong> — 회차에 대한 모든 변경은 정기모임 화면에서만 가능.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>가격과 환불의 실제 경계</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>항목</th><th>고정형(FIXED)</th><th>변동형(VARIABLE)</th></tr></thead>
-            <tbody>
-              <tr><td>세션 가격</td><td><strong>항상 0원</strong> — 요청값도 무시</td><td>세션별 입력, 100원 미만 절삭</td></tr>
-              <tr><td>정원</td><td>모임 본체 정원 상속</td><td>세션별 1 이상 입력</td></tr>
-              <tr><td>신청·결제</td><td>코스 등록/결제, 세션 단독 신청 차단</td><td>일반 이벤트처럼 세션별 신청/결제</td></tr>
-              <tr><td>유료 환불</td><td>코스 정책</td><td>세션별 template, 미지정 STANDARD</td></tr>
-              <tr><td>결제기한</td><td>코스 정책</td><td>양수 입력값, 비우면 24시간</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout">
-          <span class="label">썸네일은 세션 입력이 아니다</span>
-          <p>세션 이벤트는 정기모임 본체의 안전한 파일 키를 상속한다. 단건/대체 생성 응답은 새 표시 URL로 바꾸지만,
-            정기모임 상세의 회차 요약 객체 자체에는 별도 썸네일 필드가 없다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">자주 발생하는 케이스</span>
-          <ul>
-            <li><strong>임의 일괄 편집 화면은 1차 미신설</strong> — 단건 추가와 반복 자동생성은 앱에서 되고, 대체 회차도 회차 카드 메뉴에서 만든다. 회차 목록을 자유롭게 한 번에 편집하는 화면만 후속으로 빠졌다.</li>
-            <li><strong>회차 시간 겹침 미검증</strong> — 호스트가 실수로 같은 시간에 두 회차를 만들 수 있음.</li>
-            <li><strong>1~99원 유료 오인</strong> — 100원 절삭 뒤 0원이 되지만 앱이 최소 유료 금액을 별도로 안내하지 않는다.</li>
-            <li><strong>회차로 들어가면 몇 회차인지 알 수 없다</strong> — 카드에서 회차로 이동하는 길은 열렸지만, 도착한 모임 상세 화면이 정기모임 순번을 표시하지 않아 참가자가 문맥을 잃는다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 구조</h2><p>각 회차는 독립 이벤트이며 정기모임 연결 행이 순번·원본/대체 관계와 생성·출석 확정 상태를 보유한다. 생성 이벤트는 REGULAR_MEETING, PUBLIC, Asia/Seoul을 사용하고 모임의 호스트·카테고리·장소·썸네일·환불 정책을 물려받는다. 모임이 DRAFT이면 회차도 DRAFT, OPEN이면 새 회차도 OPEN이다.</p>
+<p>FIXED는 본체 단위 등록·결제이며 회차 가격은 0이고 단독 신청 차단 컨텍스트를 반환한다. VARIABLE은 본체 가격·정원이 0이며 회차에서 정원·가격을 정한다. 회차의 일반 이벤트 상세 연결과 공개 이력은 <a href="F17-02.html">정기모임 상세</a>를 따른다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·키</th><th>결과</th></tr></thead><tbody><tr><td>POST /api/v1/regular-meetings/{id}/events</td><td>RegularMeetingSessionAddParam, Idempotency-Key 필수</td><td>201 EventVo</td></tr><tr><td>POST /api/v1/regular-meetings/{id}/events/generate</td><td>RegularMeetingSessionGenerateParam, Idempotency-Key 필수</td><td>201 List&lt;Long&gt;</td></tr><tr><td>POST /api/v1/regular-meetings/{id}/events/{eventId}/replace</td><td>RegularMeetingSessionReplaceParam, Idempotency-Key 필수</td><td>200 EventVo</td></tr><tr><td>DELETE /api/v1/regular-meetings/{id}/events/{eventId}</td><td>모임·회차 ID, 키 없음</td><td>204</td></tr><tr><td>GET /api/v1/regular-meetings/{id}/events</td><td>includeHistory 기본 false</td><td>List&lt;RegularMeetingEventVo&gt;</td></tr></tbody></table></div>
+<p><code>addSessionsBulk</code>는 반복 생성에서 쓰는 서비스 내부 함수다. 현재 회원 Controller에는 임의 목록을 받는 <code>/events/bulk</code>가 없다. 내부 함수의 존재를 회원 API 지원으로 설명하지 않는다. 앱에도 임의 목록 bulk 입구가 없다.</p>
+<p>단건·대체 입력은 title, description, startTime, endTime, baseCapacity, price, refundPolicyCode, refundDeadlineHours다. 반복은 시작/종료 대신 firstStartTime/firstEndTime, cadence, count를 받는다. 금액은 서버 BigDecimal, 앱 double?이며 원화 입력은 정수로 검증한다. 앱의 대체 요청은 전용 ReplaceParam을 사용한다.</p>
+<p>제목은 공백 아닌 최대 200자, 시작은 현재 이후, 종료는 시작보다 뒤여야 한다. 정원 override를 보냈다면 1 이상이어야 한다. FIXED는 override 자체를 거절하고 본체 정원을 사용한다. VARIABLE은 본체 정원이 0이므로 양수 회차 정원을 제공해야 한다. 생성·대체는 현재 모임 호스트, DRAFT/OPEN 상태, 호스팅 제재 없음이 필요하다.</p></section>
+<section id="recurrence-current"><h2>반복 생성의 현재 범위</h2><p>count는 1~26, cadence는 DAILY/WEEKLY/BIWEEKLY/MONTHLY다. 첫 시작에 일·주·2주·월 간격을 더하고, 종료는 첫 회차의 시작~종료 길이를 그대로 더해 계산한다. 각 회차는 같은 제목·설명·정원·가격·결제 기한·환불 템플릿을 사용한다. 전체를 한 트랜잭션의 일괄 생성으로 수행한다.</p>
+<p>개인 반복·클럽 반복 기능의 별도 시작일/요일 규칙을 이 정기모임 API에 섞지 않는다. 현재 서비스는 회차별 시작·종료 순서를 검사하지만 서로 다른 회차 사이의 시간 겹침을 검사하지 않는다.</p></section>
+<section id="session-count-limit"><h2>총 회차와 순번 한도</h2><p>취소되지 않은 연결 회차 수에 새로 추가할 수를 더해 검사한다. FIXED는 totalSessionCount, VARIABLE은 200회가 한도다. 한 번의 반복 생성 26회와 모임 전체 200회는 서로 다른 제한이다. 취소 이력은 활성 수에서 제외하고, 초안의 총 회차를 이미 살아 있는 회차 수 아래로 줄이지 못한다.</p>
+<p>단건·반복은 다음 순번을 배정한다. 취소 원본의 대체는 같은 순번을 사용하며 같은 순번에 다른 활성 회차가 있으면 EVENT_ALREADY_IN_MEETING으로 거절한다. 새 연결 행은 REPLACEMENT와 replacedEventId를 보관한다.</p></section>
+<section id="current-5"><h2>가격과 유료 회차</h2><p>FIXED 회차 가격은 요청값과 관계없이 0이다. VARIABLE은 음수를 거절하고 100원 미만 자릿수를 버린다. 1~99원은 0원이 되어 선결제·환불 템플릿 행을 만들지 않는다.</p>
+<p>양수 회차는 현재 공개된 결제 기능으로 암묵적 정책과 수납 계좌를 결정하고 선결제를 구성한다. 요청의 refundDeadlineHours는 현재 구현에서 결제 기한 정규화로 전달되며 paymentWindowHours에도 저장한다. 지정한 refundPolicyCode 또는 기본 템플릿을 회차 가격에 적용한다. 특정 날짜의 CASH-only 설정을 영구 계약으로 쓰지 않는다.</p>
+<p>일반 이벤트의 신청·결제·취소·환불 처리를 사용하는 VARIABLE과, 본체 등록을 유지하는 FIXED를 구분한다. 회차 하나 취소를 모임 본체 취소나 전체 회원 등록 취소로 설명하지 않는다. 상세 금전 규칙은 <a href="F17-07.html">납부</a>와 <a href="F17-08.html">환불</a>을 함께 본다.</p></section>
+<section id="host-transfer-current"><h2>취소·대체와 남은 회차의 소유권</h2><p>회차 취소는 모임 소속을 확인하고 회차를 잠근 뒤 실제 회차 호스트인지 재검사한다. 모임 호스트라는 이유만으로 다른 호스트가 맡은 회차를 취소할 수 없다. 모임은 DRAFT/OPEN이어야 하며 일반 회차 취소 경로로 위임한다.</p>
+<p>대체는 모임 호스트가 취소된 원본에 대해 수행한다. 같은 순번의 활성 회차가 없어야 하고 전체 한도·입력 검사를 다시 통과해야 한다. 대체 전/후 도메인 사건을 발행하며 원본 회차의 ATTENDING/WAITING 이용자에게 대체 안내를 요청한다. 이 호출만으로 출석·결제 전체 이관이나 알림 수신 완료를 보장한다고 쓰지 않는다.</p>
+<p>모집 중 단건/반복 회차 추가는 주최자를 제외한 관련 참가자에게 추가 알림을 요청한다. 기존 문서의 ‘추가 알림 미배선’은 현재 코드와 다르다. 생성 응답 EventVo에는 regularMeetingId/Title/Type, sequenceNo, directApplyBlocked를 채운다.</p></section>
+<section id="current-7"><h2>앱 입구·재시도·복귀</h2><p>호스트 상세의 일정 추가 화면에서 단건 또는 반복 생성을 선택한다. 취소 회차의 관리 메뉴는 같은 순번의 활성 회차가 없을 때 대체 입구를 제공한다. 대체 화면은 includeHistory=true로 원본을 읽고 이미 대체됐거나 원본이 활성 상태이면 작성을 막는다. 제목·정원·가격과 아직 미래인 시각을 미리 채우며 전용 대체 Param으로 제출한다.</p>
+<p>회차 카드는 일반 이벤트 상세로 이동한다. 실제 회차 호스트에게 취소/출석 확정 입구를, 모임 호스트에게 대체 입구를 제공한다. 따라서 ‘대체 UI 없음’, ‘회차 카드 읽기 전용’, ‘대체가 AddParam 재사용’은 현재 미구현 항목에서 제외한다.</p>
+<p>같은 화면의 동일 대상·본문 재시도는 untimed 키 보관함에서 같은 키를 사용한다. 성공하면 키를 정리하고 원래 상세로 돌아간다. 실패는 입력과 키를 유지하고 오류를 보여 준다. 성공 또는 저장됐을 가능성이 있는 오류는 회차/모임/이벤트 목록을 다시 읽는다. 화면 키는 메모리 보관이며 본체 생성의 계정별 영속 초안과 동일한 복원 보장이 아니다. 본문을 바꾸면 새 키가 되므로 결과 미확정 상태에서 새 내용으로 무조건 다시 생성하는 것으로 안내하지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>회차 간 시간 겹침을 검사하지 않는다.</td><td>개별 시간 검사와 중복 일정 방지를 구분한다.</td></tr><tr><td>Gap</td><td>앱은 1~99원 입력을 허용하지만 서버는 0원으로 저장한다.</td><td>유료로 오인할 수 있는 실제 경계로 남긴다.</td></tr><tr><td>Risk</td><td>회차 작성의 요청키는 화면 메모리이며 본문 변경 시 새 키다.</td><td>화면 재진입·본문 변경까지 중복 생성 방지가 보장된다고 확대하지 않는다.</td></tr><tr><td>미검증</td><td>동시 추가/대체·응답 유실·실제 취소 환불·알림 수신을 실행하지 않았다.</td><td>소스 연결과 완료 실행을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 공개 명령:</strong> 단건·반복·대체·취소의 실제 REST와 키·응답을 사용하고 내부 bulk를 공개 API로 쓰지 않는다.</li><li><strong>AC-02 타입별 정원과 금액:</strong> FIXED override 거절·가격 0, VARIABLE 양수 정원·100원 절삭을 적용한다.</li><li><strong>AC-03 반복 생성:</strong> 네 cadence·1~26회와 첫 회차 길이 유지, 개별 미래 시각 검사를 설명한다.</li><li><strong>AC-04 전체 한도:</strong> 취소 제외 활성 수를 FIXED 총 회차 또는 VARIABLE 200회 한도와 비교한다.</li><li><strong>AC-05 같은 순번 대체:</strong> 취소 원본·활성 대체 없음·원본 참조와 같은 순번을 유지한다.</li><li><strong>AC-06 회차 소유권:</strong> 모임 소속 확인 후 실제 회차 호스트의 취소 권한을 재검사한다.</li><li><strong>AC-07 유료 정책:</strong> 현재 공개 결제 기능·계좌 연결·결제 기한·환불 템플릿을 사용하고 소액 0원 처리를 구분한다.</li><li><strong>AC-08 화면 연결:</strong> 상세 탭 이동·관리 메뉴·전용 대체 모델·원본 상태 재확인을 실제 앱 기준으로 설명한다.</li><li><strong>AC-09 요청과 갱신:</strong> 동일 화면 본문 키 유지·실패 입력 보존·관련 조회 갱신과 영속 복원 한계를 나눈다.</li><li><strong>AC-10 알림 범위:</strong> OPEN 추가 및 대체 알림 요청 연결과 실제 전송/수신 완료를 구분한다.</li></ul>
+<p>현재 근거는 서버·앱 소스다. 새 제품 시험·브라우저·실기기 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
