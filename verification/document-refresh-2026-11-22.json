@@ -263,7 +263,8 @@
         "event_domain_rollup_20261122",
         "club_discovery_20261122",
         "club_detail_20261122",
-        "club_lifecycle_20261122"
+        "club_lifecycle_20261122",
+        "club_members_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2888,9 +2889,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1ebf9b018b7d8cfa4fc404a50db9f70b29b82bf1cffac88a4b3783c3948dbac9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "2481028e124803b56cf8f7154b48706715bbafa9bcc24ad65830f8a6e7beddff"
     },
     {
       "path": "docs/features/F04-05.html",
@@ -2908,9 +2912,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "24c4efacc57a2d0aed290be89ff9fb1f331ee1b0d9654dfbc5c9c3bf8eec818a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "132dd1cbd394f40b8a47db278192e837e26f78a66dc95614a11e3e4c54f919ad"
     },
     {
       "path": "docs/features/F04-07.html",
@@ -4850,7 +4857,8 @@
         "event_domain_rollup_20261122",
         "club_discovery_20261122",
         "club_detail_20261122",
-        "club_lifecycle_20261122"
+        "club_lifecycle_20261122",
+        "club_members_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4909,7 +4917,8 @@
         "event_domain_rollup_20261122",
         "club_discovery_20261122",
         "club_detail_20261122",
-        "club_lifecycle_20261122"
+        "club_lifecycle_20261122",
+        "club_members_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4991,7 +5000,8 @@
         "event_domain_rollup_20261122",
         "club_discovery_20261122",
         "club_detail_20261122",
-        "club_lifecycle_20261122"
+        "club_lifecycle_20261122",
+        "club_members_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5815,10 +5825,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "fef60a49bb1387b9d6aafbfded53e3fe73bd9e4ac1db6877a486f9a8d770cdf5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "b90ddf37449a21158c8b2a76737874dc49ef5508013cebc82f9f78400faf77e7"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
@@ -5837,10 +5849,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c911cbd48e0dd15504fb78efc75f6544fe6d50e8c448b88999b8d3be55639546",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "8f6c6df55f2ff2309e142e61587ba607e57c3e97717512ff012fd9ef1d019dd2"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md",
@@ -7693,7 +7707,8 @@
         "event_prepayment_20261122",
         "club_discovery_20261122",
         "club_detail_20261122",
-        "club_lifecycle_20261122"
+        "club_lifecycle_20261122",
+        "club_members_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7900,7 +7915,8 @@
         "data_export_20261122",
         "event_detail_complete_20261122",
         "club_detail_20261122",
-        "club_lifecycle_20261122"
+        "club_lifecycle_20261122",
+        "club_members_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9496,9 +9512,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "40b79e3f345264f78a89a15dda31c6e106e7815f6c54f6b3fe29a57ee1b53cec",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "9e260d7cb413ff595c00f8fc789bf7849502b0bd84f88f395bcc633150179dbb"
     },
     {
       "path": "units/04_club/F04-04_member-management/diagrams.md",
@@ -9506,9 +9525,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "58491c684c967120ce631cef6057419124ba70504bc70ae67dd23c8845f7873a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "9e2b900aa40b7fc126b55e656ac8ce72410e33b955adfa62650874c3b7e3deca"
     },
     {
       "path": "units/04_club/F04-04_member-management/frontend.md",
@@ -9516,9 +9538,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1efc3207b78b8047c86c5f49cca8a880c0e2a1573be21c13b39b914a65f52def",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "3e34fad050025c9219e9382783268b5ea3faf0f514c30b7c692b147867c274da"
     },
     {
       "path": "units/04_club/F04-04_member-management/scenarios.md",
@@ -9526,9 +9551,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d31ea3e9dee4256d83774e71a717299344abb28eccf3d2b5fea3e2c15cd0b955",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "3d146682f2cc723f0755bae3e3b35031c11d4ddb3158e13d9b4118539cf32000"
     },
     {
       "path": "units/04_club/F04-05_waitlist-invitation/backend.md",
@@ -9576,9 +9604,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e219247f33aef56434858f02de2e2ba284305f9791431ec03c8ce9be0d208fc5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "3acf4b0975377569feaefcbd6e6bde253e8ca4e53aec1b362ba47c700dde3baf"
     },
     {
       "path": "units/04_club/F04-06_ban-management/diagrams.md",
@@ -9586,9 +9617,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2666b042fb86e48cef6423c7d655b81078a188e2035e67d7be46ef42b55f7adf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "6193db49995583326a89ef667324041b1962862087c52aa3d880459badb04b70"
     },
     {
       "path": "units/04_club/F04-06_ban-management/frontend.md",
@@ -9596,9 +9630,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "426f34be528d247d71561e5d64dc99fe27fe0085ed8647680da0a231a23fc633",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "4b67afc86dc4fa012386cbf733f6ef4246f566c1f3b9a21a6a363aa04d1a568d"
     },
     {
       "path": "units/04_club/F04-06_ban-management/scenarios.md",
@@ -9606,9 +9643,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fd61fc0b70179fdc63260e1511e875063181a9543b73695fbe2145a84dfb747a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_members_20261122"
+      ],
+      "reviewedSha256": "1984a0bbad8adf6155b7a66dd33278da804a1bbc9893ba05bf17e98f1913cf44"
     },
     {
       "path": "units/04_club/F04-07_my-clubs-stats/backend.md",
@@ -15055,6 +15095,11 @@
       "command": "F04-03 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·diff 검사",
       "result": "코드 위치110개 일치; 파서11/11 통과; 상대경로2052개·파생 정본 해시235개 오류0; 현재 그룹 소스/정본54개 해시 일치; 기존 HTML ID5개 유지; scenario-audit 최신; diff 오류0; 서버/앱 기준 HEAD 유지",
       "scope": "생성·수정·폐쇄·소유권 이전 문서 검사. 새 제품·돈 이동·기기·외부 재인증·알림·스케줄 실행 없음."
+    },
+    {
+      "command": "F04-04/F04-06 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
+      "result": "코드 위치110개 일치; 파서11/11 통과; 상대경로2107개·파생 정본 해시243개 오류0; 현재 그룹 소스/정본58개 해시 일치; 기존 HTML ID7개 유지·과거 원문2개 인용 보존; scenario-audit 최신; diff 오류0",
+      "scope": "회원·권한·강퇴·차단 문서 검사. 새 제품·돈 이동·기기·알림·만료 스케줄 실행 없음. ignored units8개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -23728,6 +23773,339 @@
       },
       "referenceChanges": [
         "F04-03 기존4개 유지·승계 목록/상세/수락/거절/취소·폐쇄의무조회 6개 연결 추가"
+      ]
+    },
+    "club_members_20261122": {
+      "kind": "source_review",
+      "scope": "F04-04 회원 목록·역할·세부권한·강퇴 및 F04-06 차단·기간·해제. 입구/페이지/권한·반환/이력·만료 시간차를 소스와 선택한 기존 시험 단언으로 대조; 새 제품 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubMemberPermissionController.java",
+          "sha256": "237b38b8ec3a8b38207c99cabd5e050bd314632f6cdc258ce231b76b653a15c9",
+          "reviewScope": "33–90 클럽 소유자용 /api/v1/admin/clubs/{clubId}/members/permissions;admins List·단건 GET·flags PUT."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubMemberSearchParam.java",
+          "sha256": "d72ba3cbae19c1dd5efd76d0f53c5913fbba085f8b94d3103db59e47dc0da2f7",
+          "reviewScope": "16–25 페이지·waitType·role·keyword·purpose·eventId 입력."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubMemberVo.java",
+          "sha256": "bf5c6aad8f05183eb79f1e60b3222c9f3ebb516afb1a7f80b56d1cadb95c2d3d",
+          "reviewScope": "16–29 회원 식별·닉네임·역할·가입일·kick/ban/promoteToAdmin/changeRole actions."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/RoleChangeParam.java",
+          "sha256": "2b98756491e71e6a7fc37ef18e571f386ec6cefb6edeb51ae6132ec977ad5c6a",
+          "reviewScope": "6–9 MemberRole role 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/MemberRole.java",
+          "sha256": "6bd19a2d818d9c8c19a9d1cda40792f0c0c15001a6e56b321ba1424090fd8de5",
+          "reviewScope": "12–57 MEMBER/ADMIN/OWNER 값·역할 전이 보조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubKickParam.java",
+          "sha256": "6a58d9c079e9652e3144cd448a3b7887816bb444d56c7a60c79abc79c2e1c4e5",
+          "reviewScope": "23–34 사유코드·설명·증빙 번호 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubBanParam.java",
+          "sha256": "c15eb10ffcfcf76edcdf84287d6043d162b12ba85d9c0c697db6c8299b2ef020",
+          "reviewScope": "14–44 차단 사유코드·설명·호환 reason·증빙;reasonText 우선 fallback."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubKickReasonCode.java",
+          "sha256": "a611ddd225940705536218ce50c07d556d61bb3588e10b7ecb6b2f77d4582b82",
+          "reviewScope": "10–16 강퇴 사유 5개."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubBanReasonCode.java",
+          "sha256": "ab62181e010c473e5d0b638ccec328ee5bf8c7717c0581813f0260da42e482fb",
+          "reviewScope": "10–18 차단 사유 7개."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubWaitlistVo.java",
+          "sha256": "59a0e66e65a91561b436ab9b10d605bb92f3e0ca846ea21a97fb3fde8e42c170",
+          "reviewScope": "11–25 대기/차단 message·상태·처리자·결정 설명·생성/종료일 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubMemberPermissionUpdateParam.java",
+          "sha256": "fac9b174470c9e6a7e23f63f89356397fb82f00555e0388211fbdc43ef9dabf0",
+          "reviewScope": "10–15 Long flags 요청;기대 버전 필드 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubMemberPermissionVo.java",
+          "sha256": "b2a973ef3fdd146351968e5c3c560376213b95adeb048e1ca0ad86ec73f2e036",
+          "reviewScope": "20–30 현재 flags/labels·grant/revoke/revokeAll."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubMemberQueryRepository.java",
+          "sha256": "8e8905abd692ecaebab2f90231def4c22aaa22638367d568188958eb1ad428ef",
+          "reviewScope": "64–96 닉네임 부분일치·역할 정확일치·차단 제외·가입시각/번호 정렬;128–143 OWNER/ADMIN 또는 잔여 flags 콘솔;420–429 역할/이름 조건."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubRowActions.java",
+          "sha256": "dcc74e6c57e0413169d0e0c07123e8b5e30cf1cd082c7859bfd6767ccd835ad5",
+          "reviewScope": "32–49 회원 행 kick/ban/역할·위임 grant/revoke/revokeAll 구성."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionChecker.java",
+          "sha256": "86c807bf78390e1a44e19962e9f963cac3fe3c6d5dba0faff62b3114fe3f436d",
+          "reviewScope": "187–204 실제 club.ownerId 기준 소유자;236–248 유효 ADMIN/OWNER와 권한 제한."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionService.java",
+          "sha256": "98dc7aa054118f11e2a64390b9be7e9ebaa4f5d57ec01ff9cf6b275dc81fb0fd",
+          "reviewScope": "64–105 단건/콘솔·OWNER 효과·행 actions;123–180 flags 검증/잠금·감사·변경 발행;246–293 위임 마스크·OWNER 대상 금지·추가 비트 제한·MEMBER 전체 회수 허용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionFlag.java",
+          "sha256": "6002b6dd0542fc1be497c41ffb47ed820a8c2370bc57b4719109a34dc8818362",
+          "reviewScope": "27–150 비트11개·위임9개·POLICY_OWNER/STAMP_ISSUER 제외·OWNER/ADMIN/MEMBER 실제 효과."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubFundService.java",
+          "sha256": "11805df67ed7aa8a39f0767395d2ab82a42cf39a8f815aca2ab0480d7159dba7",
+          "reviewScope": "449–456 정확 유료/무료 차감·기금 지출과 선지급 미수금."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubBanRows.java",
+          "sha256": "16ab1ec419ad5b39a7586f75f2639c771fb4f77765967a97f7adcb05782362a2",
+          "reviewScope": "25–45 진행 중 신청/초대 종결·기존 BAN 유지/만료 삭제."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubWaitTransitions.java",
+          "sha256": "3af6f8cb8120adcd46c2b720b8f6e3d662471acf78501da7f84e8ead40624240",
+          "reviewScope": "83–95 수동 무기한/기간 있는 BAN 생성;165–173 신청/초대 PENDING만 CANCELLED/CLUB_BANNED 종결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubBanExpiryService.java",
+          "sha256": "8dfd8b4cf716d0b372a415e5d44c2aca6ec734de744c705452e75ed2cd6038bf",
+          "reviewScope": "27–36 별도 트랜잭션 잠금·BAN/PENDING/효력 종료 재확인·삭제."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/service/ClubBanExpiryScheduler.java",
+          "sha256": "08261ce21ca2bdea0e7f62ffa2cb8dc75fd7d6d4cffd324971acd10362d18357",
+          "reviewScope": "29–50 Asia/Seoul 매시10분·만료 PENDING 조회·개별 실패 후 계속."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_member_list_screen.dart",
+          "sha256": "f04c58bd0deab51f0f4eeb04d59817ddcde4fb0d09f355d3b7312f40f48a0652",
+          "reviewScope": "93–110 검색 지연/탐색범위;123–200 권한 읽기/비회원 미리보기/복원;244–269 현재 읽은 수·초대 입구;349–389 사람 시트/본인 더보기 제외;414–462 역할 탭/별도 대기;525–655 대상 firstWhere·역할/강퇴/차단·거절 후 갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/member_card.dart",
+          "sha256": "5fb156cbd1a697c2974dba79a457927cc4546e5de6b79e03acd9798b87f398a1",
+          "reviewScope": "17–43 onTap을 ListTile에 전달·별도 long press 없음;76–82 관리 더보기 버튼."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/member_action_sheet.dart",
+          "sha256": "1d7bff83fa394ce3ba9146eebe45846d65d5ed4aeadf9ba7fe5dafda63a09008",
+          "reviewScope": "26–39 서버 actions·역할/강퇴/차단·마일리지/경고 상세 선택;72–79 행동 라벨."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/role_change_sheet.dart",
+          "sha256": "e6459c36186bf469f0e4fd83471e341b72af1b23898ce56efc9ffe36887f5b18",
+          "reviewScope": "25–140 현재 역할과 promote/change 허용값으로 다른 역할 선택."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "sha256": "badbd6cdca93fe7003c56a2800e309b34df73a2dbe6fdb47fb8a6a0d5b9ecac9",
+          "reviewScope": "85 페이지20;104–149 접근/차단 구독·조회·재가입자 이전 제거 의도 정리;159–218 추가 실패/접근실패·필터 초기화;221–233 역할 갱신;246–330 강퇴/차단 동일 명령;336–348 회원/기금 갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/club_membership_action_sheet.dart",
+          "sha256": "a517982f17eecf59a1cbb43c98561127bdfd86ad1eedddef13530010af64e270",
+          "reviewScope": "160–193 전송/업로드 잠금·기타 trim5자·요청 정규화·성공닫기/실패유지;250–285 500자·첨부 업로드;311–316 미저장/전송 종료 가드."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_member_permission_screen.dart",
+          "sha256": "402764f972ce9124d997a7c547891a07e2331217176acb953cc83e5d1007bed3",
+          "reviewScope": "297–298 알려진 위임 가능 항목;301–318 계정/현재 권한/행 상태;321–339 모르는 비트 보존·grant/revoke 선택;341–373 전송/권한거절 재조회/성공닫기;432 위임 가능 체크박스."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_member_permission_provider.dart",
+          "sha256": "2bf421aa11b2997a6accd2f327fd9215822c27080dbbb8d4daaa03c337600b44",
+          "reviewScope": "29–38 권한콘솔 구독/List;51–59 갱신;66–85 비트 저장과 성공 재조회."
+        },
+        {
+          "path": "community_app/lib/data/models/club/club_member_permission_flag.dart",
+          "sha256": "913e746118c21a4fdecedfd058de95c5d96d13a2477da1df3535ce0d4881fb40",
+          "reviewScope": "11–84 서버 비트11개·정책/도장판 위임제외·조합/전체/해석."
+        },
+        {
+          "path": "community_app/lib/data/api/club_member_permission_api.dart",
+          "sha256": "04e3d1f7981a36d0ce1901f9209527a4af79f721c0d0d35b9f2c64639a6c2889",
+          "reviewScope": "18–34 admins List·단건 GET·typed PUT."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_ban_list_screen.dart",
+          "sha256": "516515cd6324a9fe578d0ddbf76478d3ad2711ebf7d7984ab13862d7d472377b",
+          "reviewScope": "48–160 서버 총수/행수 fallback·빈 목록·추가/처음 재시도·비어 있지 않은 목록 RefreshIndicator·해제 확인/계정범위/결과."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/ban_card.dart",
+          "sha256": "31dba5e64c7550b6bfed2c5bc726c05fc278ddd3d9c8a15dce4ad3907bbe05d4",
+          "reviewScope": "19–57 PersonLink·생성일·선택 종료일·비어 있지 않은 message만 표시·해제."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_ban_provider.dart",
+          "sha256": "0a38c3a73138ee97c8655762e1dffbba78333308629c464b7a0805f14dc7a870",
+          "reviewScope": "21–70 페이지20·접근 변경 구독·해제/이전제거 의도정리·클럽갱신·반영가능오류."
+        },
+        {
+          "path": "community_app/lib/data/api/club_member_api.dart",
+          "sha256": "c791deeb30ab6faa7729b62bcd6731748f80381417973871634fbd33dfab0757",
+          "reviewScope": "18–55 회원 Page query·역할 POST·강퇴/차단 typed POST/필수 키."
+        },
+        {
+          "path": "community_app/lib/data/api/club_ban_api.dart",
+          "sha256": "e777a7140e04d290fe32e08c7b7762b214ece680a082071cac68f4de149c3a94",
+          "reviewScope": "13–24 BAN Page·전용 해제 DELETE."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_member_repository.dart",
+          "sha256": "2ce3ee0a85e746af6a61277cfc22b8078ed47ce36786c727ca7238132fe5e059",
+          "reviewScope": "60–114 역할/강퇴/차단 typed 요청과 키·Result;259–274 차단 목록/해제."
+        },
+        {
+          "path": "community_app/lib/data/models/club/club_member.dart",
+          "sha256": "797f55d989edabd2a2ff5f0c105f86636522457e9baf1ac34072716a3e4173fe",
+          "reviewScope": "11–40 회원 필드·기본 닫힌 행 actions."
+        },
+        {
+          "path": "community_app/lib/data/models/club/club_ban.dart",
+          "sha256": "7318eb4a998797eabf587cb51194c31bbe2a5ec453129f27d5afd1b10396b41d",
+          "reviewScope": "13–30 차단 id·닉네임·message·생성/만료 응답 모델."
+        },
+        {
+          "path": "community_app/test/widget/club/club_permission_delegation_screen_test.dart",
+          "sha256": "d9dbc084e71aecb16f0bf7d83ef8fdf21b11d1a6bf5be903891ac812dc62a527",
+          "reviewScope": "248–267 저장 시 정책 비트 제외·마일리지/보상 유지 단언만 읽음. 새 시험/큰 글자 검사 없음."
+        },
+        {
+          "path": "community_app/test/widget/club/my_clubs_and_bans_paging_test.dart",
+          "sha256": "876b117291b9e45819ed3396e5d0dd268e99f8c6f1df05839bb6dbc954193fa6",
+          "reviewScope": "217–246 차단 총수21·다음 페이지 실패/재시도 [0,1,1] 단언을 읽음. 실행 안 함."
+        },
+        {
+          "path": "community_app/test/presentation/club/ban_card_expiry_test.dart",
+          "sha256": "d4b286f784d0d3391295af5b60f3d6a6c8c9a79b1041c7bde3298e5edcadfd02",
+          "reviewScope": "34–49 종료일 유무 표시 단언을 읽음. 실행/이미지 검수 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+          "sha256": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+          "reviewScope": "194–249 회원 목록 Page·역할 POST200·강퇴 POST/필수 키204;404–458 차단 POST/필수 키201·두 해제 DELETE204·BAN 강제 목록."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMembershipService.java",
+          "sha256": "472689eb53a515c598f78fef260d488fa63ab20d51f2237dc6de083fabc0ed19",
+          "reviewScope": "196–225 회원 조회 권한·일반 차단 제외·목적별 조회;229–303 소유자 역할 변경·OWNER 제외·승격 제한·강등 비트 회수/감사·실제 역할 변화 이벤트;311–324 목적별 권한;105–124 가입의 BAN 존재 검사 재대조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "301–321 제거 대상/행위자;333–370 비회원 차단·역할 변경;570–603 소유자 권한 위임·OWNER 편집 금지·역할 제한 추가 금지·ADMIN 유지·MEMBER 회수."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMemberExitCommandService.java",
+          "sha256": "05644a17747f45c0ad766da761067f335ba05d4bffcc67902c0a6bc036ae99db",
+          "reviewScope": "64–65 한도;134–149 강퇴 검증/잠금/권한;212–240 강퇴의 기본 재가입 제한 없음·기록/알림;461–478 참가 정리/기금잠금/반환/제거;492–512 코드/500자/증빙5개/null 검증."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMemberExitSupport.java",
+          "sha256": "fe5364fac986bae8898a1c787f7294fb6e39a78d78c81fa08604ec27e74dba88",
+          "reviewScope": "73–89 강제제거 반환의 7일 제외·원거래;97–138 행위자/파일 검증·운영기록·KICK/BAN 분쟁 연결·파일참조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubExitParticipationReleaser.java",
+          "sha256": "e4a1b2e55d3e287599f15436c556329367977c35d9e006a688580e41b430727f",
+          "reviewScope": "club_detail_20261122의 36–64 동일 SHA 범위 재사용: 돈 보유·본인취소/운영자 차이·체크인 제외·참가/대기 정리."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundMoneyCommand.java",
+          "sha256": "e989afad9f6706e2fc132f9aefaea853647dc2bb8025057fd87543f4de38f3a7",
+          "reviewScope": "178–189 원거래 잔여 반환은 club_detail_20261122 동일 SHA 범위 재사용;260–275 유료/무료 정확 반환·기금·미수금 원장 새 범위 대조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundPlan.java",
+          "sha256": "78c445e7d641f5c5ea2d668234510a92a2b3c5971f56d4eaff4d02cf8ac39b3a",
+          "reviewScope": "268–270 통화별 min 기금 차감·부족분 계획."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/EvidenceFileValidator.java",
+          "sha256": "720eae0e72db85717e755e11f9dc65d9a65c72c824acf9a4b83455077e5cefcb",
+          "reviewScope": "122–152 빈목록/정규화/개수·파일 존재/행위자 소유/COMPLETED/허용 용도."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubWaitlistService.java",
+          "sha256": "3405fbd29addd871f1266ee9f1bc97c02954f18fed21d4df6ad1c29825841f2b",
+          "reviewScope": "89–90 한도;140–197 BAN 유효기간·권한·정렬/응답;714–806 기존BAN/대상권한·회원 반환/제거·대기종결·BAN/기록/알림;815–833 해제 잠금/삭제/UNBAN;838–861 요청 검증;878–882 유효 운영진;571–585 초대 수락 BAN 존재 검사."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+          "reviewScope": "88–118 회원·초대·권한위임·차단 입구와 능력값."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "203–214 회원 목록 회원 조건;246–258 차단 목록 운영 권한 조건."
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "club_detail_20261122 등 앞선 공통 회원 돈 명령의 동일 SHA 범위 재사용. 이번 강퇴/차단 종류·클럽/대상·본문·키 호출부 대조."
+        }
+      ],
+      "reuses": [
+        "club_detail_20261122",
+        "club_lifecycle_20261122",
+        "no_show_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
+          "sha256": "b90ddf37449a21158c8b2a76737874dc49ef5508013cebc82f9f78400faf77e7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
+          "sha256": "8f6c6df55f2ff2309e142e61587ba607e57c3e97717512ff012fd9ef1d019dd2"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-04.html": [
+          "sidebar",
+          "launch-strip",
+          "profile-navigation",
+          "release-completion"
+        ],
+        "docs/features/F04-06.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-04 기존3개에 권한 목록/단건/갱신3개 추가; F04-06 기존4개 유지"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-04_member-management/scenarios.md",
+          "sha256": "98a1d2a231cb682953cec96a36d161c3e83fca985c2de85e77e0ddfc917ef42f",
+          "characters": 4209,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/04_club/F04-06_ban-management/scenarios.md",
+          "sha256": "d8d30623175b8948631220ce2a755b5747e86d9c6a9f1bf13fc66c2d64fde48c",
+          "characters": 1080,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
       ]
     }
   },

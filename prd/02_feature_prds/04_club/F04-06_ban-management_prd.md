@@ -1,92 +1,97 @@
-# F04-06. 차단 관리 PRD
+# F04-06. 클럽 차단·기간·해제 관리 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 기존 시험 단언을 대조했다. 새 앱·이미지·돈 이동·알림 수신 시험 결과가 아니다.
 
-## 1. 결론
+## 결론
 
-OWNER/ADMIN이 멤버를 차단(BAN)하면 자동 추방되고 재가입이 불가해진다. 차단 시 가입비는 강제 환불(BANNED 사유 — 7일 가드 무관)되며, 동시에 진행 중이던 APPLY/INVITE 대기 레코드도 정리한다. 차단 목록 조회와 해제는 두 가지 경로(멤버 경로 / 전용 `/bans` 경로)가 모두 같은 동작을 한다.
+클럽 차단은 현재 회원을 제거하고 재가입을 막는 별도 BAN 행을 만든다. 비회원도 서버 차단 대상이 될 수 있다. 앱의 현재 수동 차단 입구는 회원 목록의 행 행동이며, 차단 관리 목록에서는 현재 유효한 차단과 해제를 다룬다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+차단 시 진행 중 신청·초대를 CANCELLED로 닫아 이력을 보존한다. 차단 사유 화면은 BAN 대기 행의 message를 표시하고 불리 조치 이력은 별도로 남는다. 해제는 차단 행을 없애는 동작이며 회원 자동 복원·가입 승인·환불 취소가 아니다.
 
-- 클럽 설정 > "차단 관리" — OWNER/ADMIN
-- 멤버 목록(F04-04) 액션 시트의 "차단" 항목 → 차단 사유 다이얼로그 → 호출
+## 코드 위치
 
-## 2. 코드 위치
+서버: ClubController#banMember·unbanMember·getBanList·unbanMemberByBanPath, ClubWaitlistService#banMember·unbanMember·getWaitlist, ClubBanParam·ClubBanReasonCode·ClubWaitlistVo, ClubBanRows·ClubWaitTransitions, ClubAbilityPolicy·ClubMemberPermissionChecker, ClubMemberExitSupport·ClubExitParticipationReleaser·EvidenceFileValidator·ClubFundMoneyCommand/Plan·ClubFundService, ClubBanExpiryService/Scheduler. 가입 차단 연결은 ClubMembershipService#joinClub과 초대 수락의 BAN 검사다.
 
-계약의 정본은 코드다. 서버: `ClubController`, `ClubBanReasonCode`, `ClubBanParam`, `ClubWaitlistService`. 앱: `club_ban_list_screen.dart`, `ban_card.dart`, `unban_dialog.dart`.
+앱: club_member_list_screen.dart·club_membership_action_sheet.dart·club_member_provider.dart, club_ban_list_screen.dart·ban_card.dart·club_ban_provider.dart, club_ban_api.dart·club_member_api.dart·club_member_repository.dart·club_ban.dart, club_management_screen.dart·club_branch_routes.dart.
 
 <!-- source-references:start -->
 서버 창구: `ClubController#banMember`, `ClubController#unbanMember`, `ClubController#getBanList`, `ClubController#unbanMemberByBanPath`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 실제 입구와 목록
 
-### 차단 목록 (`club_ban_list_screen.dart`)
+모임 관리의 회원·가입 구역에서 차단 목록으로 들어가며 viewBans 허용값과 운영 권한 라우트 검사를 거친다. 현재 회원을 차단하는 행동은 [회원 목록·역할·권한 위임과 강퇴](F04-04_member-management_prd.md)의 행 더보기 → 차단 사유·증빙 시트다. 서버의 비회원 차단 가능성과 현재 회원 목록에서 고를 수 있는 대상을 구분한다.
 
-- **사용자가 보는 것**:
-  - AppBar "차단 목록 (3)"
-  - BanCard 리스트:
-    - 프로필 + 이름
-    - "차단일: YYYY.MM.DD" Caption
-    - "사유: {reason}" Body2 (없으면 "사유 미기재")
-    - 우측 [차단 해제] OutlinedButton Small
-  - 빈 상태: "차단된 멤버가 없습니다"
-- **사용자가 할 수 있는 액션**:
-  - 카드 탭 ▶ 사용자 프로필 진입 (선택적)
-  - "차단 해제" ▶ `UnbanDialog` (확인 다이얼로그) ▶ `clubBanListNotifier.unban(userId)` ▶ `DELETE /api/v1/clubs/:id/bans/{userId}` ▶ 성공 시 카드 슬라이드아웃
-  - 풀투리프레시 ▶ refresh
-- **상태 분기**: 로딩/에러/빈상태 표준
-- **모달**: 차단 해제 확인 다이얼로그
+GET /api/v1/clubs/{id}/bans는 waitType=BAN을 강제하고 Page<ClubWaitlistVo>를 준다. 유효한 운영진 권한이 필요하다. 만료시각이 없거나 현재보다 뒤인 BAN만 목록에 포함하며 기본 조회는 번호 오름차순과 번호 동률 처리를 사용한다. 목록 조회가 모든 과거 차단 조치의 이력을 주는 API는 아니다.
 
-### 차단 (멤버 목록 → 액션 시트)
+앱은 20개씩 읽고 서버 totalElements를 상단 수로 사용한다. 이 값이 없을 때만 현재 행 수를 사용한다. 다음 페이지 실패는 하단 재시도, 처음 실패는 본문 재시도를 제공한다. 자료가 있는 목록은 당겨 새로고침을 지원하며 빈 목록 분기는 별도 ListView라 같은 RefreshIndicator로 감싸져 있지 않다.
 
-- 멤버 목록(F04-04) 카드 ⋮ → "차단" → **`ClubMembershipActionSheet(kind: ban)`** (사유코드 7개 Radio + reasonText 선택 + EvidencePickerField max 5) → "차단하기".
-- ▶ `clubMemberRepository.banMember(clubId, userId, BanParam(reasonCode, reasonText, evidenceFileIds))` ▶ `POST /api/v1/clubs/:id/members/:userId/ban` body `{reasonCode, reasonText, evidenceFileIds}`
-- 성공: 토스트 "차단되었습니다", 멤버 목록에서 사용자 제거(자동 추방됨), 차단 목록에 추가.
-- 실패 매핑:
-  - `CLUB_BAN_REASON_REQUIRED(1400034)`: 사유코드 미제공
-  - `CLUB_NO_PERMISSION`: "권한이 없습니다 (OWNER만 ADMIN 차단 가능)"
-  - `INVALID_INPUT`: "이미 차단된 사용자입니다"
+## 사유·기간 표시의 원천
 
-## 4. 제품 규칙
+BanCard의 사람 이름은 PersonLink로 제공한다. 차단일은 createdAt, 종료일은 expiresAt이 있을 때 표시한다. 사유는 **ClubWaitlistVo → ClubBan.message**이며 별도 ClubMembershipAction.reasonText를 다시 읽어 표시하지 않는다. message가 비어 있으면 사유 줄 자체를 숨긴다. 과거 문서의 사유 미기재 고정 문구는 현재 계약이 아니다.
 
-- 차단 사유 코드는 필수다: 강퇴의 사유에 차단 전용인 반복 위반(REPEAT_OFFENDER)과 돌이킬 수 없는 행위(IRREVERSIBLE)를 더한 7개다. 보충 설명 500자, 증빙 5개까지, 기타의 5자 이상은 화면이 막는다.
-- 회원이 아닌 사람도 차단할 수 있다(2026-10-23 사용자 결정).
-- 가입비 환불에 기금이 모자라면 부족분은 플랫폼이 먼저 내고 클럽 미수금으로 남긴다.
-- 차단당한 사람에게 알림이 가고, 그 사람은 이의를 제기할 수 있다.
+수동 차단 요청의 보충 설명은 reasonText를 우선 사용하고, 비어 있으면 호환용 reason에서 가져온다. 둘 다 비어 있으면 null이다. reasonCode는 별도 불리 조치 기록에 남으며 코드만 골랐다는 이유로 차단 카드에 코드의 설명이 자동 표시되는 것은 아니다.
 
-## 6. 상태/권한/시나리오 매트릭스
+해제로 BAN 행이 사라져도 별도 불리 조치 기록을 함께 지우는 처리는 없다. 현재 차단 목록과 과거 운영 기록의 목적이 다르므로, 목록에서 카드가 사라졌다고 이력도 삭제됐다고 쓰지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | ADMIN이 문제 멤버 차단 (Happy Path) | ADMIN. 부적절한 게시글 반복 작성하는 MEMBER 차단. | target은 클럽에서 자동 추방, 재가입 시도 시 `CLUB_BANNED` 응답. |
-| S2 | ADMIN이 다른 ADMIN 차단 시도 (실패) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | OWNER가 ADMIN을 차단 (가능) | 시나리오 본문 참조 | 차단 효과는 동일. |
-| S4 | 이미 차단된 사용자 재차단 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | 차단된 사용자가 재가입 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 차단된 사용자에게 초대 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 차단 해제 (Happy Path) | 시나리오 본문 참조 | 차단 해제. target은 다시 가입 시도 가능. |
-| S8 | 가입비 환불 잔액 부족 처리 (BUSINESS, 기금 부족) | 클럽 가입비 10,000원, ClubFund 잔액 3,000원, 차단 대상 BUSINESS 멤버. | 멤버 지갑 +10,000원 (전액). ClubFund 0원, 플랫폼 미수금 +7,000원. |
-| S9 | 비멤버가 차단 목록 조회 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S10 | 차단 후 진행 중 APPLY/INVITE 정리 | 사용자가 APPLY 신청 중인 상태에서 ADMIN이 차단. | 대기열 화면에서 해당 신청자 카드도 사라짐. 다음 새로고침에 반영. |
+## 차단 계약과 권한
 
-## 8. Gap / Risk
+POST /api/v1/clubs/{id}/members/{userId}/ban은 필수 Idempotency-Key와 ClubBanParam을 받고 201, 본문 없음으로 응답한다. 요청은 필수 reasonCode, 선택 reasonText, 최대 5개 evidenceFileIds다. 호환용 reason도 서버 모델에 남지만 현재 앱은 reasonText를 사용한다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P2 | 차단 목록 화면 BanCard "사유" 표시 소스 불명 | `ClubWaitlistService.banMember`가 `ClubMemberWait.message`와 `ClubMembershipAction.reasonText` 두 곳에 모두 저장. 차단 해제(unban) 후에는 `ClubMemberWait` row 하드삭제로 `message`가 사라지고 `ClubMembershipAction`에만 이력 남음 | 차단 목록 화면의 "사유: {reason}" 표시가 어떤 소스를 쓰는지에 따라 차단 해제 후 이력 조회 불일치 가능성 | `club_ban_list_screen.dart` BanCard 사유 표시 소스 (`ClubMemberWait.message` vs `ClubMembershipAction.reasonText`) 확인 후 정합성 맞출 것 |
-| P2 | ClubMembershipAction 조회 API 미노출 | 서버 `ClubMembershipActionRepository`에 `findByUserId/findByClubId` 있으나 Controller에 endpoint 없음 | 피차단 사용자가 자신의 차단 이력을 직접 조회할 방법 없음 (dispute 화면 경유가 유일) | 조회 endpoint 추가 필요 여부 결정 |
+reasonCode는 HARASSMENT·RULES_VIOLATION·INACTIVITY·MEMBER_COMPLAINTS·REPEAT_OFFENDER·IRREVERSIBLE·OTHER다. 서버는 사유코드 필수, reasonText/reason 각각 최대 500자, 첨부 개수와 null 요소를 확인한다. 증빙 파일은 작성자 소유·업로드 완료·허용 증빙 용도를 확인한다. 앱 기타 사유의 trim한 최소 5자 조건과 서버 최대길이 검증은 같지 않다.
 
-## 9. 수용 기준
+현재 유효한 운영진만 차단할 수 있고 OWNER는 대상이 될 수 없다. ADMIN 대상은 소유자만 처리한다. 현재 회원이 아니어도 차단할 수 있지만 이미 BAN 행이 있으면 CLUB_ALREADY_BANNED다. 이를 일반 INVALID_INPUT으로만 설명하지 않는다.
 
-- **AC-01. ADMIN이 문제 멤버 차단 (Happy Path)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then target은 클럽에서 자동 추방, 재가입 시도 시 `CLUB_BANNED` 응답.
-- **AC-02. ADMIN이 다른 ADMIN 차단 시도 (실패)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. OWNER가 ADMIN을 차단 (가능)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 차단 효과는 동일.
-- **AC-04. 이미 차단된 사용자 재차단 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. 차단된 사용자가 재가입 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 차단된 사용자에게 초대 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 차단 해제 (Happy Path)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 차단 해제. target은 다시 가입 시도 가능.
-- **AC-08. 가입비 환불 잔액 부족 처리 (BUSINESS, 기금 부족)**: Given 클럽 가입비 10,000원, ClubFund 잔액 3,000원, 차단 대상 BUSINESS 멤버. When 사용자가 해당 흐름을 실행하면 Then 멤버 지갑 +10,000원 (전액). ClubFund 0원, 플랫폼 미수금 +7,000원.
-- **AC-09. 비멤버가 차단 목록 조회 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-10. 차단 후 진행 중 APPLY/INVITE 정리**: Given 사용자가 APPLY 신청 중인 상태에서 ADMIN이 차단. When 사용자가 해당 흐름을 실행하면 Then 대기열 화면에서 해당 신청자 카드도 사라짐. 다음 새로고침에 반영.
+앱은 사유·첨부 업로드 중이나 전송 중 중복 제출을 막고 실패하면 시트 내용을 유지한다. 같은 클럽/대상/본문의 회원 돈 명령으로 키를 전달하고 성공 또는 반영 가능 오류 뒤 회원·기금 자료를 다시 읽게 한다. 화면 토스트만으로 반환액·알림 수신까지 확인됐다고 판단하지 않는다.
+
+## 회원 제거·반환·대기 이력
+
+현재 회원 대상이면 강제 참가 해제 조건에 맞는 참가를 정리하고 가입비 반환 후 회원을 제거·인원을 줄인다. 돈이 묶인 참가나 체크인 등 제외 조건이 있으므로 모든 참가를 무조건 취소하는 것은 아니다. 비회원 차단에는 현재 회원 제거·그 회원 납부정보 반환 단계가 없다.
+
+가입비 반환에는 자발 탈퇴의 7일 제한을 적용하지 않는다. 원거래의 아직 반환되지 않은 유료·무료 몫을 기준으로 반환하고 같은 통화 기금에서 가능한 만큼 차감한다. 부족분은 선지급과 클럽 미수금으로 남긴다. 예전 총액 예시처럼 기금 전체를 단일 금액으로 빼면 유료·무료 구성이 다른 경우 실제 결과와 달라질 수 있다.
+
+진행 중 APPLY·INVITE만 잠그고 CANCELLED, 결정 사유 CLUB_BANNED, 처리자·처리 시각으로 닫는다. 이미 승인·거절·취소된 과거 행을 일괄 삭제하지 않는다. 이후 별도 BAN 행과 BAN 불리 조치 기록·증빙 연결을 저장하고 분쟁 연결·대상 알림을 요청한다.
+
+수동 차단은 종료일 없는 새 BAN 행을 만든다. 제재 경로가 만든 기간 있는 차단은 같은 목록에서 종료일을 보여 줄 수 있지만 현재 수동 차단 요청에 종료일 입력 필드가 있는 것은 아니다.
+
+## 기간 종료와 가입 차단 시간차
+
+현재 가입과 초대 수락의 BAN 검사는 행의 존재를 사용한다. 반면 차단 목록은 종료시각이 지난 행을 조회에서 제외한다. 따라서 종료시각이 지났다고 목록 숨김과 가입 가능 전환이 정확히 동시에 일어난다고 보장하지 않는다.
+
+만료 정리 스케줄은 Asia/Seoul 기준 매시 10분에 기한이 된 PENDING BAN을 찾는다. 각 행을 별도 트랜잭션으로 잠그고 여전히 BAN/PENDING이며 효력이 끝났는지 확인한 후 삭제한다. 개별 실패는 기록하고 다음 행을 계속 처리한다. 이 스케줄의 소스 존재를 실제 운영 실행·정시 해제 완료 증거로 사용하지 않는다.
+
+## 수동 해제와 복귀
+
+DELETE /api/v1/clubs/{id}/bans/{userId}와 /members/{userId}/ban은 같은 해제 서비스를 사용하며 성공 시 204다. 해제에는 강퇴·차단과 같은 필수 명령 키 헤더가 없다. 현재 운영진 권한을 검사하고 해당 BAN 행을 잠가 삭제한 뒤 UNBAN 운영 기록을 남긴다. 이 기록은 KICK/BAN 불리 조치와 같은 분쟁 생성 대상이 아니다.
+
+앱은 해제 확인 후 전용 /bans/{userId} 경로로 요청한다. 성공하면 기존 강퇴·차단 명령 의도를 정리하고 클럽 변경 신호로 목록을 다시 읽게 한다. 실패하면 오류를 표시하고, 반영 가능 오류에도 관련 자료 갱신을 요청한다. 특정 카드 슬라이드 애니메이션을 성공 계약으로 보장하지 않는다.
+
+해제 후에는 차단 행이 없는 상태에서 새 가입·초대 규칙을 다시 적용한다. 이전 회원 역할·위임 권한·신청·초대를 자동 복원하거나 이미 반환한 가입비를 자동 재차감하지 않는다. 세부 재가입·초대 절차는 [클럽 상세와 가입·탈퇴](F04-02_club-detail-join_prd.md), [가입 신청·초대 관리](F04-05_waitlist-invitation_prd.md)를 따른다.
+
+## 현재 제한과 확인 범위
+
+| 판정 | 항목 | 근거·사용자 영향 | 남은 확인 |
+| --- | --- | --- | --- |
+| Risk | 기간 종료와 실제 행 삭제 | 목록은 만료행을 숨기지만 가입·초대 수락은 BAN 행 존재로 막을 수 있음 | 만료 정리 전후의 가입 가능 시점·실패 복구 확인 |
+| Risk | 비회원 차단 입구 | 서버는 비회원을 허용하지만 확인한 일반 앱 차단 입구는 현재 회원 목록 | 다른 대상 검색·운영 경로가 필요한지 구분 |
+| Risk | 사유 없는 카드·빈 목록 복구 | 코드만 고르면 사유 줄이 없을 수 있고 빈 목록은 당겨 새로고침 래퍼 밖임 | 표시와 빈 상태 복구 정책 확인 |
+| 미검증 | 실행·이력 | 소스와 선택한 기존 시험 단언만 대조 | 실제 지갑·만료 스케줄·분쟁·알림 실행 증거 별도 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 차단 입구:** 현재 회원 행의 차단과 운영진용 차단 목록을 구분하고 서버 비회원 허용을 앱 대상 검색과 혼동하지 않는다.
+- **AC-02 목록 조건:** BAN 강제·유효기간·운영 권한·페이지 계약으로 조회한다.
+- **AC-03 페이지 복구:** 서버 전체 수와 현재 행 수를 구분하고 다음 페이지 실패에 재시도를 제공한다.
+- **AC-04 사유 원천:** message·createdAt·expiresAt을 표시하며 빈 message를 별도 이력이나 사유코드에서 보충한다고 가정하지 않는다.
+- **AC-05 차단 요청:** 필수 키·7개 사유코드·설명/증빙 조건과 201 본문 없음을 따른다.
+- **AC-06 대상 권한:** 유효 운영진·OWNER 제외·ADMIN 대상 소유자 한정·이미 BAN 거절을 검사한다.
+- **AC-07 참가와 반환:** 회원 대상만 제거·납부정보 반환을 처리하고 참가 제외 조건·원거래 남은 몫·통화별 미수금을 구분한다.
+- **AC-08 대기 이력:** PENDING 신청·초대를 CANCELLED/CLUB_BANNED로 닫고 종결 이력을 지우지 않는다.
+- **AC-09 실패 입력:** 업로드/전송 중 중복을 막고 실패 시 사유·첨부를 유지하며 동일 의도를 재확인한다.
+- **AC-10 기간 차이:** 수동 무기한 차단과 기간 있는 제재 차단, 목록 숨김과 실제 가입 차단 해제를 구분한다.
+- **AC-11 만료 정리:** 기한·PENDING·효력을 잠금 뒤 다시 확인해 삭제하며 스케줄 소스만으로 실행 성공을 주장하지 않는다.
+- **AC-12 해제 결과:** 두 DELETE 별칭의 동일 해제·UNBAN 기록·클럽 목록 갱신을 확인한다.
+- **AC-13 재가입 구분:** 해제만으로 회원·역할·신청/초대·가입비를 자동 복원하거나 재차감하지 않는다.
+
+검증 근거: my_clubs_and_bans_paging_test.dart의 전체 21명 머리글·두 번째 페이지 실패 후 같은 페이지 재시도, ban_card_expiry_test.dart의 종료일 유무 표시 단언을 읽었다. 새 시험이나 이미지 검수는 수행하지 않았다. 과거 BAN 라우트 시나리오는 로컬 문서에 인용 보존하며 현재 실행 통과로 합산하지 않는다.

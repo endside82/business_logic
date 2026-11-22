@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,182개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,189개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1182,
+    "documentedScenarioItems": 1189,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 487,
-    "verifiedTraceRecords": 485,
+    "traceMarkers": 490,
+    "verifiedTraceRecords": 488,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -5072,19 +5072,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-04",
       "domain": "클럽",
-      "name": "멤버 관리",
-      "scenarioCount": 12,
+      "name": "회원 목록·역할·권한 위임과 강퇴",
+      "scenarioCount": 17,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-04_member-management/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 17
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-04_member-management/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
         "entries": [
           {
@@ -5137,18 +5137,70 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 235
               }
             ]
+          },
+          {
+            "id": "F04-04:4",
+            "label": "GET /api/v1/admin/clubs/{clubId}/members/permissions/admins — 회원 권한 위임",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubMemberPermissionController.java",
+                "controller": "ClubMemberPermissionController",
+                "method": "listAdmins",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/members/permissions/admins",
+                "targetLine": 50,
+                "methodLine": 53
+              }
+            ]
+          },
+          {
+            "id": "F04-04:5",
+            "label": "GET /api/v1/admin/clubs/{clubId}/members/permissions/{memberUserId} — 회원 권한 위임",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubMemberPermissionController.java",
+                "controller": "ClubMemberPermissionController",
+                "method": "getPermissionFlags",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/members/permissions/{memberUserId}",
+                "targetLine": 64,
+                "methodLine": 66
+              }
+            ]
+          },
+          {
+            "id": "F04-04:6",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/members/permissions/{memberUserId} — 회원 권한 위임",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubMemberPermissionController.java",
+                "controller": "ClubMemberPermissionController",
+                "method": "updatePermissionFlags",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/members/permissions/{memberUserId}",
+                "targetLine": 78,
+                "methodLine": 80
+              }
+            ]
           }
         ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 4,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 4,
         "files": [
           "community_app/integration_test/seed_club_community_moderation_test.dart",
           "community_app/integration_test/seed_club_list_settings_surface_test.dart",
-          "community_app/integration_test/seed_club_mutation_test.dart"
+          "community_app/integration_test/seed_club_mutation_test.dart",
+          "community_app/test/widget/club/club_permission_delegation_screen_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
@@ -5334,14 +5386,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-06",
       "domain": "클럽",
-      "name": "차단 관리",
-      "scenarioCount": 11,
+      "name": "클럽 차단·기간·해제 관리",
+      "scenarioCount": 13,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-06_ban-management/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 13
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-06_ban-management/backend.md",
@@ -5421,11 +5473,13 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 3,
         "featureMarkerCount": 2,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 3,
         "files": [
-          "community_app/integration_test/seed_club_community_moderation_test.dart"
+          "community_app/integration_test/seed_club_community_moderation_test.dart",
+          "community_app/test/presentation/club/ban_card_expiry_test.dart",
+          "community_app/test/widget/club/my_clubs_and_bans_paging_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart",
