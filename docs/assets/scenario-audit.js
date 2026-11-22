@@ -6,12 +6,12 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,318개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,316개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1318,
+    "documentedScenarioItems": 1316,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4973,
+    "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 76,
@@ -12998,14 +12998,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F10-01",
       "domain": "캘린더",
-      "name": "월간/일간 통합 캘린더 조회",
-      "scenarioCount": 7,
+      "name": "월간·일간 통합 달력",
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/10_calendar/F10-01_unified-calendar-view/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-01_unified-calendar-view/backend.md",
@@ -13093,14 +13093,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F10-02",
       "domain": "캘린더",
-      "name": "일정 항목 라우팅",
-      "scenarioCount": 7,
+      "name": "달력 항목과 상세 연결",
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/10_calendar/F10-02_calendar-item-routing/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-02_calendar-item-routing/backend.md",
@@ -13136,7 +13136,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F10-03",
       "domain": "캘린더",
-      "name": "단일 가용 시간 생성/수정/삭제",
+      "name": "본인 가능 시간 등록·수정·삭제",
       "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/10_calendar/F10-03_single-availability-crud/scenarios.md",
@@ -13275,14 +13275,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F10-04",
       "domain": "캘린더",
-      "name": "반복 가용 시간 규칙 관리",
-      "scenarioCount": 9,
+      "name": "반복 가능 시간 규칙 관리",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/10_calendar/F10-04_recurring-availability-rule/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-04_recurring-availability-rule/backend.md",
@@ -13414,14 +13414,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F10-05",
       "domain": "캘린더",
-      "name": "타 사용자 가용성 공개 조회",
-      "scenarioCount": 8,
+      "name": "타 사용자 가능 시간 공개 기능 폐기와 비공개 경계",
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/10_calendar/F10-05_other-user-availability/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/10_calendar/F10-05_other-user-availability/backend.md",

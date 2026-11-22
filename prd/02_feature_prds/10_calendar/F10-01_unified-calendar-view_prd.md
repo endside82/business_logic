@@ -1,72 +1,63 @@
-# F10-01. 월간/일간 통합 캘린더 조회 PRD
+# F10-01. 월간·일간 통합 달력 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 소스 대조. 현재 계약과 검증 경계이며 새 제품 실행 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 입구와 날짜 이동
 
-사용자가 캘린더 화면에 진입했을 때 본인이 주최하는 이벤트, 참여 승인된 이벤트, 등록한 가용 시간(Availability), 데이팅 만남을 단일 시간 축 위로 합쳐서 보여주기 위한 조회 전용 API다. 월간(1개월), 일간(1일), 임의 기간 세 가지 진입 경로가 있고, 모두 동일한 `CalendarEventVo` 리스트로 정규화되어 반환된다. 즉 프론트는 `itemType` 필드 하나로 4종(HOSTING/HOSTING_PRIVATE/ATTENDING/AVAILABILITY)을 분기 표시하면 된다.
+프로필의 달력은 서울 기준 오늘의 월과 선택 날짜로 시작한다. 이전/다음 달은 연도를 넘겨 이동하고 선택 날짜를 비운다. 오늘은 서울의 오늘을 다시 고른다. 날짜를 누르면 선택을 저장한 뒤 `/profile/calendar/day?date=YYYY-MM-DD` 일간 화면을 연다. 일간은 이전/다음 날·오늘·가능 시간 추가를 제공한다. 날짜 이동은 기기의 DST 일수 덧셈에 기대지 않고 날짜 성분으로 계산한다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+월 화면에는 Google 동기화, 반복 일정 목록, 관심인 보기, 월 내보내기, 가능 시간 추가 입구가 있다. 이 문서의 중심은 통합 조회이며 외부 Google 연결·공유 실행 성공을 이 입구의 존재로 대신하지 않는다.
 
-- **하단 탭 또는 프로필 메뉴 → "캘린더"**: 라우트 `/profile/calendar` (`profileCalendar`).
-- **이벤트 상세에서 캘린더 아이콘 탭** (UI/UX 스펙 25.2의 진입 경로). 코드상 별도 진입점 위젯은 본 유닛 범위 외.
-- **딥링크 / 알림**: 달력과 이어진 알림은 구글 달력 연결이 끊겼다는 알림 하나이고 구글 달력 연결 화면을 연다. 통합 달력을 여는 알림은 없다.
+## 코드 위치
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `CalendarIntegrationController`, `CalendarItemType`, `AvailabilityService`. 앱: `monthly_calendar_screen.dart`, `daily_calendar_screen.dart`.
+`CalendarIntegrationController`, `CalendarIntegrationService`, `CalendarQueryRepository`, `CalendarEventVo`, `EventScope`와 월·일 화면/공급자를 대조했다. 변경 신호의 기존 시험 단언을 읽었다.
 
 <!-- source-references:start -->
 서버 창구: `CalendarIntegrationController#getMonthlyCalendar`, `CalendarIntegrationController#getDailyCalendar`, `CalendarIntegrationController#getRangeCalendar`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 서버 조회와 포함 범위
 
-1. **월간 진입 시**:
-   - `MonthlyCalendarScreen` → `ref.watch(monthlyCalendarNotifierProvider(year, month))`.
-   - `MonthlyCalendarNotifier#build` → `calendarRepository.getMonthlyEvents(year, month)` → `CalendarApi.getMonthlyEvents` → `GET /api/v1/calendar/monthly?year=&month=`.
-2. **월 이동 시**:
-   - `setState(year, month)` → 새 family key로 Provider 재생성 → 위 호출 반복.
-3. **일간 진입 시**:
-   - `DailyCalendarScreen` → `ref.watch(dailyCalendarNotifierProvider(dateString))`.
-   - `DailyCalendarNotifier#build` → `calendarRepository.getDailyEvents(date)` → `GET /api/v1/calendar/daily?date=YYYY-MM-DD`.
-4. **에러 재시도**:
-   - `AppErrorState.fromError(onRetry: () => ref.invalidate(<provider>))` ▶ Provider 재실행 ▶ 동일 GET 재호출.
+로그인 본인의 주최 모임·참석 모임·가능 시간을 List로 합쳐 시작 시각 순으로 정렬한다. 모임과 가능 시간 모두 **시작 시각이 from 이상 to 미만**인 행을 읽는다. 기간 전에 시작해 현재까지 이어지는 모든 겹침 일정을 모으는 방식은 아니다. isPast는 종료가 아니라 시작 시각과 서버 현재 시각의 비교다.
 
-`/api/v1/calendar/range`는 본 유닛 화면에서는 직접 호출하지 않는다 (`CalendarApi.getRangeEvents`는 정의만 되어 있고 사용처 없음 — 위젯/통계용 예약).
+주최는 hostUserId, 참석은 APPROVED 신청 또는 ATTENDING 참석 기록이다. 참석의 두 원천은 모임 ID로 중복을 제거하지만 주최 목록과 참석 목록 전체를 합친 뒤 별도 중복 제거를 하는 것은 아니다. CANCELED와 decisionPending은 제외한다. 개인 PRIVATE 모임은 위임 요청일 때 EventScope에서 제외되며 일반 회원 조회까지 언제나 제외되는 것은 아니다.
 
-## 4. 제품 규칙
+itemType은 HOSTING·HOSTING_PRIVATE·ATTENDING·AVAILABILITY 네 값이다. 가능 시간에는 본인 저장 행만 들어간다. 월·일 조회는 1000~9998년, 월은 1~12를 검사하며 월말/일말은 다음 월/일 시작의 배타 경계로 만든다. range에 같은 입력 제한과 역전/최대 범위 검증이 모두 있는 것으로 확대하지 않는다.
 
-- 캘린더에는 내가 연 이벤트(`HOSTING`, 소개팅 이벤트는 `HOSTING_PRIVATE`), 참석이 확정된 이벤트(`ATTENDING`: 승인제는 승인됨, 직접 참석은 참석 확정), 내 가용 시간(`AVAILABILITY`)이 한 시간 축에 시작 시각순으로 모인다. 취소된 이벤트는 나오지 않는다. 이미 시작 시각이 지난 항목은 지난 일정으로 표시된다.
-- 월간 점 색은 이벤트(주최, 참석) 파랑, 가용 시간 초록, 소개팅 만남 분홍이다. 월간 그리드는 일요일부터 시작하고 일자를 누르면 그 날 일간 화면으로 간다(일정이 없는 날도 가능). 일간 화면에서 플러스 버튼으로 그 날짜의 가용 시간을 등록할 수 있다.
-- 일간 타임라인은 기본 08시~18시이고 일정이 그 밖에 있으면 넓어진다. 일정이 없는 날은 `이 날은 일정이 없습니다` 가 보인다. 가로 스와이프는 없고 화살표와 `오늘` 버튼으로 이동한다.
-- 불러오기에 실패하면 재시도 버튼이 있는 오류 상태가 보이고(당겨서 새로고침은 없다), 로그인이 풀리면 일정 데이터 없이 로그인 화면으로 간다.
+## 표시·관심인·오류와 갱신
 
-## 6. 상태/권한/시나리오 매트릭스
+월 화면은 날짜별 표시와 선택일 카드를, 일간은 시간대별 목록을 보여 준다. 월의 관심인 보기는 별도 favoriteCalendar 공급자를 선택적으로 조회하고 본인 결과와 합친다. ownerUserId가 있는 카드를 사람별로 묶는다. 이는 다른 사람의 가능 시간을 공개하는 기능이 아니다. 관심인 데이터가 없거나 실패하면 현재 병합은 빈 목록으로 대체할 수 있어 본인 조회 오류와 같은 별도 오류 상태를 보장하지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | (Happy Path) 이번 달 일정 한눈에 보기 | 로그인됨, 프로필 탭 진입. | 사용자가 5월 일정의 분포를 시각적으로 파악, 특정 날짜 카드를 통해 "어떤 일정이 있는지" 텍스트 확인. |
-| S2 | 월 이동 시 자동 재조회 | 위 S1 종료 직후. | 화살표 탭 횟수만큼 GET 호출이 누적되며, Provider 캐시(autoDispose)는 화면 이탈 시 해제. |
-| S3 | 오늘로 즉시 점프 | 월간 뷰가 "2026년 8월"을 표시 중. | 캘린더가 "오늘" 컨텍스트로 정렬됨. |
-| S4 | 일자 셀 탭 → 일간 뷰 | 동일 사용자, 5/12에 가용성 + 이벤트가 모두 있음. | 사용자가 일자 단위 시간대별 일정을 시각적으로 확인. |
-| S5 | 빈 일자 / 일정 없는 날 | 사용자가 일정 없는 미래 날짜 클릭. | 빈 일자에서 자연스럽게 가용성 등록 진입점이 노출. |
-| S6 | (에러) 네트워크 끊김 / 서버 오류 | 사용자. | 일시적 장애가 사용자 액션으로 회복 가능. |
-| S7 | (권한) 비로그인 사용자 | 토큰이 만료되어 401 응답. | 로그인 화면. 캘린더 데이터 노출 없음. |
+본인 월·일 조회는 로딩·빈 상태·오류·재시도를 제공하며 갱신 중 이전 자료를 유지한다. 계정 범위와 calendar/eventCards 변경 신호를 구독한다. 가능 시간·반복 규칙 변경, 모임 카드 변경 뒤 재조회하며 화면 복귀/권한 원천 갱신 래퍼도 있다. ‘다음 화면 생성 때까지 캐시가 항상 그대로’라는 설명은 현재와 다르다.
 
-## 8. Gap / Risk
+## 요청과 응답
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 달력으로 오는 알림 | 달력과 이어진 알림은 구글 달력 연결이 끊겼다는 알림 하나이고, 누르면 구글 달력 연결 화면을 연다. 통합 달력 자체를 여는 알림은 없다. 로그인하지 않은 사람이 달력을 열면 로그인 화면으로 갔다가 로그인 뒤 돌아온다 | 없음 |
+| 요청 | 응답·경계 |
+| --- | --- |
+| GET /api/v1/calendar/monthly?year=&month= | List<CalendarEventVo>, 월 시작~다음 월 시작 |
+| GET /api/v1/calendar/daily?date= | List<CalendarEventVo>, 해당 일 시작~다음 일 시작 |
+| GET /api/v1/calendar/range?from=&to= | LocalDateTime 범위의 List<CalendarEventVo> |
 
-## 9. 수용 기준
+주요 필드는 referenceId·itemType·title·startTime·endTime·location·timezone·eventStatus·eventType·isPast다. ownerUserId/ownerNickname과 정기모임 관련 필드도 DTO에 있지만 본인 통합 조회가 항상 모두 채우는 것은 아니다. 항목별 이동은 [달력 항목과 상세 연결](F10-02_calendar-item-routing_prd.md)을 따른다.
 
-- **AC-01. (Happy Path) 이번 달 일정 한눈에 보기**: Given 로그인됨, 프로필 탭 진입. When 사용자가 해당 흐름을 실행하면 Then 사용자가 5월 일정의 분포를 시각적으로 파악, 특정 날짜 카드를 통해 "어떤 일정이 있는지" 텍스트 확인.
-- **AC-02. 월 이동 시 자동 재조회**: Given 위 S1 종료 직후. When 사용자가 해당 흐름을 실행하면 Then 화살표 탭 횟수만큼 GET 호출이 누적되며, Provider 캐시(autoDispose)는 화면 이탈 시 해제.
-- **AC-03. 오늘로 즉시 점프**: Given 월간 뷰가 "2026년 8월"을 표시 중. When 사용자가 해당 흐름을 실행하면 Then 캘린더가 "오늘" 컨텍스트로 정렬됨.
-- **AC-04. 일자 셀 탭 → 일간 뷰**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 일자 단위 시간대별 일정을 시각적으로 확인.
-- **AC-05. 빈 일자 / 일정 없는 날**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 빈 일자에서 자연스럽게 가용성 등록 진입점이 노출.
-- **AC-06. (에러) 네트워크 끊김 / 서버 오류**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 일시적 장애가 사용자 액션으로 회복 가능.
-- **AC-07. (권한) 비로그인 사용자**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 로그인 화면. 캘린더 데이터 노출 없음.
+## 현재 제한과 확인 범위
+
+| 구분 | 현재 경계 |
+| --- | --- |
+| Gap | 조회는 시작 시각 기준이다. 기간을 가로지르는 모든 일정의 겹침 조회로 설명하지 않는다 |
+| Gap | 관심인 조회 실패를 본인 조회와 같은 독립 오류 안내로 표시하지 않는다 |
+| 미검증 | 서버 조회·공급자·날짜 이동과 기존 신호 시험을 읽었다. 새 실기기·외부 캘린더·앱-서버 실행은 하지 않았다 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 날짜:** 서울 오늘·월 경계·일 이동과 날짜 키를 구분한다.
+- **AC-02 범위:** 시작 시각의 포함/제외 경계와 월·일 입력 제한을 소스와 일치시킨다.
+- **AC-03 모집단:** 주최·승인 신청·참석 기록·본인 가능 시간의 포함/중복 범위를 구분한다.
+- **AC-04 개인 모임:** 위임 필터와 일반 회원 조회를 구분한다.
+- **AC-05 관심인:** 사람별 공개 모임 표시를 개인 가능 시간 공유로 오해하지 않는다.
+- **AC-06 상태:** 로딩·빈 결과·오류·재시도와 갱신 중 이전 자료를 구별한다.
+- **AC-07 갱신:** calendar/eventCards 신호와 계정 범위에 맞춰 재조회한다. 기존 calendar_signal_test 단언을 읽었다.
+- **AC-08 DTO:** List와 referenceId/itemType/isPast의 실제 의미를 보존한다.
+
+위 항목은 문서 수용 기준이며 새 시험 통과 수가 아니다.

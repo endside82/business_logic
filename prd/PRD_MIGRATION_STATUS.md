@@ -320,11 +320,11 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F09-06 | 프라이빗 데이팅 | [F09-06_meeting_proposal_prd.md](02_feature_prds/09_private_date/F09-06_meeting_proposal_prd.md) | `F09-06_meeting_proposal` | 실사 기반 전환본 | 3 | 8 |
 | F09-07 | 프라이빗 데이팅 | [F09-07_block_prd.md](02_feature_prds/09_private_date/F09-07_block_prd.md) | `F09-07_block` | 실사 기반 전환본 | 3 | 1 |
 | F09-08 | 프라이빗 데이팅 | [F09-08_profile_views_prd.md](02_feature_prds/09_private_date/F09-08_profile_views_prd.md) | `F09-08_profile_views` | 실사 기반 전환본 | 1 | 3 |
-| F10-01 | 캘린더 | [F10-01_unified-calendar-view_prd.md](02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md) | `F10-01_unified-calendar-view` | 실사 기반 전환본 | 3 | 1 |
-| F10-02 | 캘린더 | [F10-02_calendar-item-routing_prd.md](02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md) | `F10-02_calendar-item-routing` | 실사 기반 전환본 | 0 | 8 |
+| F10-01 | 캘린더 | [F10-01_unified-calendar-view_prd.md](02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md) | `F10-01_unified-calendar-view` | 실사 기반 전환본 | 3 | 3 |
+| F10-02 | 캘린더 | [F10-02_calendar-item-routing_prd.md](02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md) | `F10-02_calendar-item-routing` | 실사 기반 전환본 | 0 | 3 |
 | F10-03 | 캘린더 | [F10-03_single-availability-crud_prd.md](02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md) | `F10-03_single-availability-crud` | 실사 기반 전환본 | 5 | 3 |
-| F10-04 | 캘린더 | [F10-04_recurring-availability-rule_prd.md](02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md) | `F10-04_recurring-availability-rule` | 실사 기반 전환본 | 5 | 8 |
-| F10-05 | 캘린더 | [F10-05_other-user-availability_prd.md](02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md) | `F10-05_other-user-availability` | 실사 기반 전환본 | 2 | 2 |
+| F10-04 | 캘린더 | [F10-04_recurring-availability-rule_prd.md](02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md) | `F10-04_recurring-availability-rule` | 실사 기반 전환본 | 5 | 3 |
+| F10-05 | 캘린더 | [F10-05_other-user-availability_prd.md](02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md) | `F10-05_other-user-availability` | 실사 기반 전환본 | 2 | 1 |
 | F11-01 | 리뷰 & 신고 | [F11-01_event-review-write_prd.md](02_feature_prds/11_review_report/F11-01_event-review-write_prd.md) | `F11-01_event-review-write` | 실사 기반 전환본 | 1 | 1 |
 | F11-02 | 리뷰 & 신고 | [F11-02_review-list_prd.md](02_feature_prds/11_review_report/F11-02_review-list_prd.md) | `F11-02_review-list` | 실사 기반 전환본 | 2 | 2 |
 | F11-03 | 리뷰 & 신고 | [F11-03_review-edit-delete_prd.md](02_feature_prds/11_review_report/F11-03_review-edit-delete_prd.md) | `F11-03_review-edit-delete` | 실사 기반 전환본 | 2 | 3 |

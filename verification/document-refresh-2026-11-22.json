@@ -299,7 +299,8 @@
         "my_collection_20261122",
         "plan_event_review_20261122",
         "block_editor_20261122",
-        "purchase_refund_20261122"
+        "purchase_refund_20261122",
+        "calendar_features_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -356,7 +357,9 @@
         "plan_event_review_20261122",
         "block_editor_20261122",
         "purchase_refund_20261122",
-        "plan_market_domain_20261122"
+        "plan_market_domain_20261122",
+        "calendar_features_20261122",
+        "calendar_domain_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2350,9 +2353,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a8c6600e5b07aadc0f5ecbeb634b74b2a39f689fd488d8646099f5090e2de7cb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_domain_20261122"
+      ],
+      "reviewedSha256": "56414c7282a08292913314bd7a9a767f3b0afd26e7d43d44c8703a546770cb02"
     },
     {
       "path": "docs/domains/11-review.html",
@@ -3747,9 +3753,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "40d31df193fe3b8f7bb5bab90d4bada32a54048d688e6cdb8c70e8ae73968f0f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "a7ed8accad923ffa93100023568fc6e4cde7e9059f2a2700713b0940e4a9f69b"
     },
     {
       "path": "docs/features/F10-02.html",
@@ -3757,9 +3766,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "96545e8b375453a76ef337d4263ed2e6eae54a420e83df296bf06afc96814e81",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "17bc903ef2dc53663291875a56aee14a5cc65bd2ce5c553b884bb5ee0071daf7"
     },
     {
       "path": "docs/features/F10-03.html",
@@ -3767,9 +3779,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e47bc60405e25da0ebae8385563172b30ba421b7ba327a86072c9d98d7f4dcf7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "239555da37f9416315eb48e0ca7689ae3aae2e44981cadf7a981a1ff274de7e2"
     },
     {
       "path": "docs/features/F10-04.html",
@@ -3777,9 +3792,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "40b7a892797ab760953de16c2ab3106e440f2f793364e56296530c1cda49cd41",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "cbe4db63066c01d1b75f477e6f8dea0467fd2cca00e639f6c2fd9aa04264a36e"
     },
     {
       "path": "docs/features/F10-05.html",
@@ -3787,9 +3805,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5db54dfcb63036041a65231989493175606b687a86bfd1b2dc5a3136e0b01b00",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "d48956b2af160ce45b9006b96f73778314dbe4ee6c9576a3978561939430db64"
     },
     {
       "path": "docs/features/F11-01.html",
@@ -5068,7 +5089,8 @@
         "my_collection_20261122",
         "plan_event_review_20261122",
         "block_editor_20261122",
-        "purchase_refund_20261122"
+        "purchase_refund_20261122",
+        "calendar_features_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5162,7 +5184,8 @@
         "my_collection_20261122",
         "plan_event_review_20261122",
         "block_editor_20261122",
-        "purchase_refund_20261122"
+        "purchase_refund_20261122",
+        "calendar_features_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5280,7 +5303,8 @@
         "my_collection_20261122",
         "plan_event_review_20261122",
         "block_editor_20261122",
-        "purchase_refund_20261122"
+        "purchase_refund_20261122",
+        "calendar_features_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5504,10 +5528,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "1077d0b62fa687edf877ff43f37aa11880ff6200c747f73c922430d2752ce55d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_domain_20261122"
+      ],
+      "reviewedSha256": "d061936509b9b99975debd2c9ae498e91ebbf3fe036de9ec881615de87d57831"
     },
     {
       "path": "prd/01_domain_prds/11_리뷰_and_신고_prd.md",
@@ -6919,10 +6945,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "cb12deccfdab2b82acb15b5558a10d6c61603dcc460693a8c21ea8ce602bc32e",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "399705517651edbfa3a0b859ef9452701dda8e92206886c1e361495f65859b29"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
@@ -6930,10 +6958,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "2902244e6094b0945d783d6ca36fb9d2e47655f299f4f054715768705a7e12cd",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "af3ddf46b46886eb6c84e2980a21a6caf8bdd9e30a1f22853710a88bb0f9cbbf"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md",
@@ -6941,10 +6971,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "a2a548524fd0f42f89b20ebc5545d9f4b7e2658a35001d3e602eba7bf0c36a82",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "e393007ee6c2f642ea69624135c3fd466d6fb1e0d3f46033a60f0c5ed64e49b7"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
@@ -6952,10 +6984,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "4e5d7d720f26068a22168e62400f5ad9e47040cf50eab1745d8b42b5abf06228",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "23f8b46fd3b011ef3115d88dfc92e93dcc6c2d92a2825d03de4200f278a7a78f"
     },
     {
       "path": "prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
@@ -6963,10 +6997,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d4a9227261045c5b422b632eb5043adee2353db37a3ba92648f75eee59e08791",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "9521674a5a966f949835c0c8a15b36b785d2fdc462bb9db6d96b2f8818f5328a"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-01_event-review-write_prd.md",
@@ -8110,7 +8146,8 @@
         "my_collection_20261122",
         "plan_event_review_20261122",
         "block_editor_20261122",
-        "purchase_refund_20261122"
+        "purchase_refund_20261122",
+        "calendar_features_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8356,7 +8393,8 @@
         "my_collection_20261122",
         "plan_event_review_20261122",
         "block_editor_20261122",
-        "purchase_refund_20261122"
+        "purchase_refund_20261122",
+        "calendar_features_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -13014,9 +13052,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fc099c61d2361a78824b65b83a7d3c2e0b85a67067548f67402865075b2f438b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_domain_20261122"
+      ],
+      "reviewedSha256": "9fd273cdbe63183d50387fa7b463e152066cbfa9f98b818c65c1e304a12c1db0"
     },
     {
       "path": "units/10_calendar/F10-01_unified-calendar-view/backend.md",
@@ -13024,9 +13065,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b640191b5692a6979fb735dcbdc5325e849c456c41b8a4fbf42c7e20deb3ffdc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "31581069f1b8b28bc1884ddf097ed1bf5a9e82ea0cf5e750eb297712d6186a40"
     },
     {
       "path": "units/10_calendar/F10-01_unified-calendar-view/diagrams.md",
@@ -13034,9 +13078,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e3d2c9f0408a051da42999ffdb192e8959136cfca2a177aaf0febd81abd9f961",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "4e658a2150a723daa8ebdec7dd6e77e9b4c723a9909973e1dcf95dcdf00d590e"
     },
     {
       "path": "units/10_calendar/F10-01_unified-calendar-view/frontend.md",
@@ -13044,9 +13091,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e56ff8577077afa54a1dd542bcdcb72d9e9b81b2c789b160382ae8547a005446",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "d873e827c0491cea5c18ea08bf8c68b8f0184ab0b1d8e1476271ec6b8d9e776f"
     },
     {
       "path": "units/10_calendar/F10-01_unified-calendar-view/scenarios.md",
@@ -13054,9 +13104,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "23d64501654e8fb3f51aabe3498cf9469201d698e4d9206323df633aea039e5f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "b1f0d09cb0176aed6101447bdb7b278b9b86fecc880579cd9476b173bd1870db"
     },
     {
       "path": "units/10_calendar/F10-02_calendar-item-routing/backend.md",
@@ -13064,9 +13117,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "89d0348de4c5cd2576a3eb3d6b9ea5269a53b856d6f57f9750ef42fa46e6e729",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "a18068a18915207c7b5dbd395cc2e4eb0a93a710da6ad31901bf50022a61514e"
     },
     {
       "path": "units/10_calendar/F10-02_calendar-item-routing/diagrams.md",
@@ -13074,9 +13130,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "36be44b40e8d32c9b940ae20a16aab835c8b8a42394c3aaa41a221e1875dc6fe",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "a54d2997b43864724e8d8ebd0ab9ecc40cfb1d7a13ad7ee774424c617868b480"
     },
     {
       "path": "units/10_calendar/F10-02_calendar-item-routing/frontend.md",
@@ -13084,9 +13143,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e8082509b72805ccae7fd31c15f615c8603d662b8ebc1b614510b81d94e1c0ba",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "934af868486a61ac10ced7db957a68d50fc9d92da124b6d21fd11060f4e7dd14"
     },
     {
       "path": "units/10_calendar/F10-02_calendar-item-routing/scenarios.md",
@@ -13094,9 +13156,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9d672b5d40c29fde17881f22fa7274193f6d331fda25bee357d80055327cac5e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "7de819560bd5f4d9861d5b5e8283a9cd6d982c0d360e703bbac25cfec9d89279"
     },
     {
       "path": "units/10_calendar/F10-03_single-availability-crud/backend.md",
@@ -13104,9 +13169,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b20d2a666ad87e2bdd51960ccaf265c7bc7f9eb7e44dfb7d66ba7e0f06358450",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "ab5ef568e46ca2dabca1ab1cea30e7b89d8325a77be4c6b296ed859c289acbdf"
     },
     {
       "path": "units/10_calendar/F10-03_single-availability-crud/diagrams.md",
@@ -13114,9 +13182,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3cdf3cb38a5ca7d8066d967d58ce602c0ab887791415e86347e15e245213a7a2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "20cc222c5fe1480340434d2f15568800ab46db27c6f3d642a3946b2963a2d92a"
     },
     {
       "path": "units/10_calendar/F10-03_single-availability-crud/frontend.md",
@@ -13124,9 +13195,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ce04999c6c4beac800bbea729d444da82e3ea720ba9d37f2922676fd47dd9931",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "f9bb6bcffe37bb137a4ed7263b38bf6db64503570c4fc1111a4962ba0211c50a"
     },
     {
       "path": "units/10_calendar/F10-03_single-availability-crud/scenarios.md",
@@ -13134,9 +13208,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7e36d4d187cd5abce76cb273a7826913950961e070d1123871e859f3f1e86559",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "67b2a7105251d9a6991fa2b06ba343c1621442162ed7588f5e28dd63ff384080"
     },
     {
       "path": "units/10_calendar/F10-04_recurring-availability-rule/backend.md",
@@ -13144,9 +13221,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "bad05a3b61e34e99f98de302d1c54d901c0d4bcc90f6ab62aa1beb58cb7c7f9a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "8c86e89e08a784408618c93e2407e0a6861a8909d380311f20c16594c3dbb71b"
     },
     {
       "path": "units/10_calendar/F10-04_recurring-availability-rule/diagrams.md",
@@ -13154,9 +13234,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "57e274a9016a65ed6d8215d4d62244b2b2b5551f9884af9132cd8cbe9e2f3b49",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "3140cf5efff531f986b954f0902ea5884ddaf17f507b9c1891819a0b68f8e517"
     },
     {
       "path": "units/10_calendar/F10-04_recurring-availability-rule/frontend.md",
@@ -13164,9 +13247,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1a70f91c7d609786e2e1817e0cf58fc27cbd6c0b769c611cb7a73c3bc76ea5f3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "954bc2933c01231b17bcf5d1d9e428a7c735cb2e263b88518e6f154b8014e8da"
     },
     {
       "path": "units/10_calendar/F10-04_recurring-availability-rule/scenarios.md",
@@ -13174,9 +13260,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "333d2845bf4b33b1e7773b708a5faa15a799f47c202e37b8d929c92bddb70ed5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "2f812e8180fb28e8c106f6568ada36ffbcd49194b45c0e3d6e0752717c526c8c"
     },
     {
       "path": "units/10_calendar/F10-05_other-user-availability/backend.md",
@@ -13184,9 +13273,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "46c4f8638b79f3877181ec1a84a73d5f5468343e0ae649bc98fb264496df0d05",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "4143e43b6c56c23292f9dad70fdfc331ea9494a7693a96b60351dba9a09c7d1f"
     },
     {
       "path": "units/10_calendar/F10-05_other-user-availability/diagrams.md",
@@ -13194,9 +13286,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2749ca5692dc8303128f83af167a27bb0aea5745ddfb0e05079526598578bcdb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "ae4dbd5069008a9dcc37af3b0217c9465e5b30f8470f5ea73b686bccd83cc6a3"
     },
     {
       "path": "units/10_calendar/F10-05_other-user-availability/frontend.md",
@@ -13204,9 +13299,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9f50a2d5a146d6e7393f5fa5b15530fa7ad1d40fa8ec0048c4987256b7c91b2c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "088f2aecb8f7a56ec6963884037027381c2e5b69e33f9662084f0c4016dc89bf"
     },
     {
       "path": "units/10_calendar/F10-05_other-user-availability/scenarios.md",
@@ -13214,9 +13312,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b4dc5b2dc563a2803704907e2b3a5f7cc5df349dce60b3ceb3f3fe5804e9a9ae",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "calendar_features_20261122"
+      ],
+      "reviewedSha256": "8974acbd74f64163f630430602c1abcb473407a393ad28d49691a25e67168b48"
     },
     {
       "path": "units/11_review_report/00_overview.md",
@@ -33868,6 +33969,342 @@
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
         "community_app": "c3ccc9cc48b5b627db538711f548739961c7ecca"
+      }
+    },
+    "calendar_features_20261122": {
+      "kind": "source_review",
+      "scope": "F10-01~05의 현재 월/일 집계·라우팅·본인 가능 시간/반복·폐기된 타인 조회, 공통 소스 한 번 대조. 기존 선택 단언 열람; 과거 E2E 원문 보존; 새 제품시험 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/CalendarIntegrationController.java",
+          "sha256": "153b45d51ff578990253948eb977db8b11661eb4a5e55ad391b4cc772492de15",
+          "reviewScope": "22–69: P0·본인 monthly/daily/range List·export 창구"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/service/CalendarIntegrationService.java",
+          "sha256": "e4af8362eac47e66a26bc74269d14dd8a00b189b9aa0c5589cbce246f3c681d9",
+          "reviewScope": "25–90: 월/일 날짜 경계·연도검증·주최/참석/본인가능시간 합침·시작기준 isPast·정렬"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/repository/query/CalendarQueryRepository.java",
+          "sha256": "d2a7e6f7e695900583fefb3969f41a6cfeb64e36eb6de7b388205c6cb38c469d",
+          "reviewScope": "30–127: 시작시각 범위·취소/decisionPending 제외·승인신청/ATTENDING 중복 제거·위임필터"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/constants/CalendarItemType.java",
+          "sha256": "cb996805c806525f86d7fd2b1414fe58509d567831f81810729ffe08e3e99f72",
+          "reviewScope": "3–8: 네종류 enum"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/AvailabilityController.java",
+          "sha256": "511975d96563ad073376d338c5b78cb006a0bd89f2eaa3ec0ce9da2f180c09b4",
+          "reviewScope": "31–164 전체 창구: 본인principal·단일/반복 CRUD·list/expand/export·타인조회 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/service/AvailabilityService.java",
+          "sha256": "f02cf04122e36b440aaa133c73c3687d545116a1bb4892c4965268e0767aacb6",
+          "reviewScope": "65–608: 본인 CRUD/시간대/길이/겹침·삭제확인·규칙 목록/수정/삭제/펼침/범위·공개모델 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/repository/query/AvailabilityQueryRepository.java",
+          "sha256": "f83e2db5afc930101cedc7acc73d322f0e29eeaea5a60f92581488b7a8ec5c28",
+          "reviewScope": "23–34: 본인+제외ID·엄격한 겹침 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/port/CalendarHostEventAdapter.java",
+          "sha256": "3599bbc9369340492c26a3a8c1467b03ca05bd584df210fb257e65c1d719d0ca",
+          "reviewScope": "24–31: 삭제확인은 본인 DRAFT/OPEN 주최·decisionPending=false·겹침"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/model/Availability.java",
+          "sha256": "f2031974e2d118c7b14466a5b10239e90cba0de2abfd93e8e599cbdcd7df4806",
+          "reviewScope": "24–66: 본인/제목/시각/시간대/반복연결; visibility 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/param/AvailabilityParam.java",
+          "sha256": "f707d9091ad5d4d45539e1318a19b058789e99cfb3cbaa49fda52e3e389c815c",
+          "reviewScope": "15–22: title/startTime/endTime/timezone"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/param/RecurringParam.java",
+          "sha256": "7c6247cbb3bed008f778f7280060bf8d6b1c52cefc4c2fee136d7035c2ad03a4",
+          "reviewScope": "17–27: frequency/daysOfWeek/시간/시간대/적용기간"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/service/RecurringAvailabilityExtensionWorker.java",
+          "sha256": "5c05f89670eeb5d19b9ab006bc0ec0afbc543e33dbce6d98cc9db9c01c5eff43",
+          "reviewScope": "35–114: 종료없는규칙·물리인스턴스존재·1개월기준·3개월확장·겹침skip"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/service/RecurringAvailabilityExtensionScheduler.java",
+          "sha256": "65ef5806bdbf90c4249a5ec869e1cb9c3e43a73b6c815f4f462e87873c5185bb",
+          "reviewScope": "24–91: 매일02 cron·무기한규칙·분산잠금·규칙별실패격리"
+        },
+        {
+          "path": "community_app/lib/domain/providers/calendar/monthly_calendar_provider.dart",
+          "sha256": "06782f42fa7c1d34d46a59aeea60000fe7396d3e3b1e36b1b55dbbdf9bb10829",
+          "reviewScope": "build 전체: 계정범위·calendar/eventCards 구독·월조회"
+        },
+        {
+          "path": "community_app/lib/domain/providers/calendar/daily_calendar_provider.dart",
+          "sha256": "265cbcd4558c7ab6c49c040e85dbf16e3c1d0acd8ccc8926e1eca2e39770e1c0",
+          "reviewScope": "build 전체: 계정범위·calendar/eventCards 구독·일조회"
+        },
+        {
+          "path": "community_app/lib/domain/providers/calendar/availability_provider.dart",
+          "sha256": "91f9e03bbc43cddea05e4fed16f3b06a2706a1686eb984bb45eae1d9c3f355c4",
+          "reviewScope": "26–196: 생성/수정/삭제/규칙 변경 신호·결과불명·deleted=false·규칙20개페이지"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/screens/daily_calendar_screen.dart",
+          "sha256": "49de639fd00595a195c87191d120ab460e15bc807f0572f00dd8602d04270280",
+          "reviewScope": "45–149,483–504: 일간/오류/추가날짜·서울오늘·UTC날짜성분이동·항목경로"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/screens/availability_screen.dart",
+          "sha256": "378eb12daff7134352fdaa312ec5989b26405028e08c31df986d76ceae7e5344",
+          "reviewScope": "74–114,294–302,439–443,532–740: 날짜보정/기존값·규칙입구·길이유효성·저장/실패문자열판정·force삭제/복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/widgets/availability_time_rule.dart",
+          "sha256": "8f3070733e91d2939af31ad3fc07dfa2c20cc38a0a3710752df691ea8079e74c",
+          "reviewScope": "6–12: 같은날 시간길이 30~480분/30분단위"
+        },
+        {
+          "path": "community_app/lib/data/models/calendar/availability_param.dart",
+          "sha256": "1807abbf53a387e88aebba8ebd238399af7c62e80e54742bcd0c797bacf8986c",
+          "reviewScope": "12–25: 서울벽시계 직렬화 toJson"
+        },
+        {
+          "path": "community_app/lib/data/api/availability_api.dart",
+          "sha256": "7d57d19f15243f8c3b8e171de9733e8bc9fb88c8e5896c2e379288d86f94eff9",
+          "reviewScope": "전체 선언: 본인 단일/반복/export/expand·타인공개조회 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/screens/recurring_rule_screen.dart",
+          "sha256": "2a990764be565aa1f81ad7edfcd1265efdf0c33e802eedbbce2b8d1617db46f3",
+          "reviewScope": "140–180,667–842: 기존값/실패·과거시작일null·로컬미리보기·확인/저장/전체삭제/결과/복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/screens/recurring_rule_list_screen.dart",
+          "sha256": "3c9489e8efc7c4108e4c26d57630092caad21730f5f98c83552c3552d7589142",
+          "reviewScope": "36–135: 본인목록·20개provider·빈목록refresh·재진입refresher·추가조회실패footer"
+        },
+        {
+          "path": "community_app/test/presentation/calendar/calendar_event_open_affordance_test.dart",
+          "sha256": "367d104f2bddbb12e9a9ed080c5617797acc577077c28ad86011ea3d8d3c131d",
+          "reviewScope": "85–170: 관심인모임 실제상세이동·월/일비이동표시제외 단언 열람; 실행하지 않음"
+        },
+        {
+          "path": "community_app/test/domain/providers/common/calendar_signal_test.dart",
+          "sha256": "ec7baa087d24aad77b3b23a17537963723b5652f120767fe0f195f810528bbc1",
+          "reviewScope": "268–328: 명령후월/일재조회·삭제미실행/확실미전송 제외·이전세션늦은성공 제외 단언 열람; 실행하지 않음"
+        },
+        {
+          "path": "community_app/test/presentation/calendar/recurring_rule_effective_range_test.dart",
+          "sha256": "a049be8cffa8d5001a4cc064f6df8f6f2cb916aad7212f893c465929e568c1bb",
+          "reviewScope": "132–160: 과거시작일유지null/변경시선택일 전달 단언 열람; 실행하지 않음"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/vo/CalendarEventVo.java",
+          "sha256": "f92f3141fc9c8fd5c19be97763d93794c0cce93e98ddcb0609a4d88a7eb6e9ee",
+          "reviewScope": "20–70: nullable 참조·시각·상태·명시isPast·소유자/정기모임 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/util/EventScope.java",
+          "sha256": "05fe1879bc701b17f35b3570df3617ce79e6c29680a7eecf4a140b44925e3041",
+          "reviewScope": "45–51: 위임 요청에만 PRIVATE 제외"
+        },
+        {
+          "path": "community_app/lib/presentation/calendar/screens/monthly_calendar_screen.dart",
+          "sha256": "7e7a2c98b9ffe9f2720bc28ddaef1a64eed5a6aba19c0a69082e8075ff4b71e6",
+          "reviewScope": "45–197,252–288,600–665,834–853: 서울오늘·달력입구·관심인병합·오류·월/일이동·본인/관심인그룹·항목경로"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745",
+          "reviewScope": "430–482: 달력/일/가능시간/반복목록과편집·날짜누락기본·id/ruleId tryParse"
+        }
+      ],
+      "reuses": [
+        "event_discovery_20261122",
+        "favorite_management_calendar_20261122",
+        "settlement_account_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
+          "sha256": "399705517651edbfa3a0b859ef9452701dda8e92206886c1e361495f65859b29"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
+          "sha256": "af3ddf46b46886eb6c84e2980a21a6caf8bdd9e30a1f22853710a88bb0f9cbbf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md",
+          "sha256": "e393007ee6c2f642ea69624135c3fd466d6fb1e0d3f46033a60f0c5ed64e49b7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
+          "sha256": "23f8b46fd3b011ef3115d88dfc92e93dcc6c2d92a2825d03de4200f278a7a78f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
+          "sha256": "9521674a5a966f949835c0c8a15b36b785d2fdc462bb9db6d96b2f8818f5328a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F10-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F10-02.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F10-03.html": [
+          "sidebar",
+          "launch-strip",
+          "seoul-timezone",
+          "release-completion"
+        ],
+        "docs/features/F10-04.html": [
+          "sidebar",
+          "launch-strip",
+          "seoul-timezone",
+          "release-completion"
+        ],
+        "docs/features/F10-05.html": [
+          "sidebar",
+          "launch-strip",
+          "retired-status",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F10-05 두 API는 retired 상태 유지; 본문·시나리오의 가짜 공개/친구 동작 제거"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "가능 시간 변경은 달력 신호로 갱신한다. 타인 가능 시간 조회는 폐기됐고 반복 예상과 실제 저장은 다르다.",
+          "disposition": "현재 계약으로 동기화"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "단일 충돌 배너는 문자열 의존, 반복 인스턴스 0건은 자동 연장되지 않음, 비지원/잘못된 ID 라우팅 경계 존재.",
+          "disposition": "현재 제한 명시; 제품 수정으로 세지 않음"
+        }
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/10_calendar/F10-03_single-availability-crud/scenarios.md",
+          "sha256": "db29c63a0a9ba04fa4959420806051d3b78882be6ed76fbbc9f88e4869456c22",
+          "characters": 2842,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/10_calendar/F10-04_recurring-availability-rule/scenarios.md",
+          "sha256": "ab88cdfdd779766991993fe79b4627082ee9e0f4e7d1d3b88dafee370482a3f3",
+          "characters": 3628,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "35 source/canonical digests; 18 retained HTML IDs",
+        "derivedDocuments": "30 documents; shared batch verified 33 paths, 129 relative links/anchors and 21 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "calendar_domain_20261122": {
+      "kind": "canonical_rollup",
+      "scope": "현재 기능5개(활성4·폐기경계1)의 검토해시와 Google 현재 창구/선택서비스 일부 대조. 과거 Google 시험/실계정기록은 인용 보존; 새 제품실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/CalendarSelectionController.java",
+          "sha256": "267fa11ad7b04220592db668b541e2d27659483f98aaa5303f5f6c5b0c5ee4e7",
+          "reviewScope": "15–35: P0·본인 Google sync 조회/제출·자동설정"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/calendar/controller/UserCalendarConnectionController.java",
+          "sha256": "fc0fb1920c939e97a81f7fada21ed8ca5ae5ffaf7da6496c2841d98aa0203a2b",
+          "reviewScope": "24–71: P0·상태/code 연결/settings/해제"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/calendar/service/CalendarSelectionService.java",
+          "sha256": "25e33e6b9da0c3508d2a7a97d8edddf596a62d82eeb8354f24e34b1048a5af99",
+          "reviewScope": "40–59,115–176,248–294: 최대500·fingerprint 재검사/접수분류·자동모드/프리미엄·실제클라이언트/OAuth/ACTIVE 요구"
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "calendar_features_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-01_unified-calendar-view_prd.md",
+          "sha256": "399705517651edbfa3a0b859ef9452701dda8e92206886c1e361495f65859b29"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-02_calendar-item-routing_prd.md",
+          "sha256": "af3ddf46b46886eb6c84e2980a21a6caf8bdd9e30a1f22853710a88bb0f9cbbf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-03_single-availability-crud_prd.md",
+          "sha256": "e393007ee6c2f642ea69624135c3fd466d6fb1e0d3f46033a60f0c5ed64e49b7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-04_recurring-availability-rule_prd.md",
+          "sha256": "23f8b46fd3b011ef3115d88dfc92e93dcc6c2d92a2825d03de4200f278a7a78f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/10_calendar/F10-05_other-user-availability_prd.md",
+          "sha256": "9521674a5a966f949835c0c8a15b36b785d2fdc462bb9db6d96b2f8818f5328a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/10_캘린더_prd.md",
+          "sha256": "d061936509b9b99975debd2c9ae498e91ebbf3fe036de9ec881615de87d57831"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/10-calendar.html": [
+          "sidebar",
+          "launch-strip",
+          "sync-current",
+          "google-sync"
+        ]
+      },
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/01_domain_prds/10_캘린더_prd.md",
+          "sha256": "60442cc856571e8e313ecb2202699ea8f3b3c601468dc37f8d725fa0809add6d",
+          "characters": 281,
+          "note": "기존 공개 페이지의 시험 수와 Android 실계정 기록 인용; 현재 실행 수에 합산하지 않음",
+          "heading": "## Google 동기화의 과거 검증 기록"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "9 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 33 paths, 129 relative links/anchors and 21 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
       }
     }
   },

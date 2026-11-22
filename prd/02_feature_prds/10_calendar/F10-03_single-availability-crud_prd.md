@@ -1,77 +1,75 @@
-# F10-03. 단일 가용 시간 등록·수정·삭제 PRD
+# F10-03. 본인 가능 시간 등록·수정·삭제 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 소스 대조. 현재 계약과 검증 경계이며 새 제품 실행 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 입구와 입력
 
-사용자가 비어 있는 시간 슬롯을 명시적으로 등록(POST)하고, 잘못 등록한 슬롯을 수정(PATCH)하거나 삭제(DELETE)할 수 있게 하는 단일 가용성 CRUD다. 등록·수정 시 같은 사용자 내 시간 겹침을 서버에서 검증하고, 삭제 시 해당 슬롯과 시간이 겹치는 OPEN/DRAFT 이벤트가 있으면 1차 호출에서는 미삭제 + 충돌 카운트만 반환해 사용자에게 강제 삭제 여부를 묻도록 설계됐다.
+월 달력 추가 또는 일간 추가에서 신규 입력을 열고, AVAILABILITY 카드에서 id를 전달해 편집한다. 신규의 과거 initialDate는 서울 오늘로 보정한다. 편집은 본인 기록을 읽어 제목·날짜·시간과 반복 규칙 번호를 채운다. 반복에서 만들어진 한 칸의 수정과 전체 반복 규칙 수정은 별도 입구다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 코드 위치
 
-- **월간 캘린더 우상단 `+` 아이콘 탭** → `/profile/calendar/availability` (신규 등록 모드, 날짜 = 오늘 기본).
-- **일간 캘린더 FAB 탭** → `/profile/calendar/availability?date=YYYY-MM-DD` (해당 일자 사전 채움).
-- **일간 캘린더 가용성 블록 탭** (F10-02 라우팅) → `/profile/calendar/availability?id={id}` (편집 모드).
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `AvailabilityController`, `Availability`. 앱: `availability_screen.dart`.
+`AvailabilityController`, `AvailabilityService`, `AvailabilityQueryRepository`, `CalendarHostEventAdapter`와 `availability_screen.dart`, `availability_provider.dart`, `availability_time_rule.dart`, `availability_param.dart`를 대조했다.
 
 <!-- source-references:start -->
 서버 창구: `AvailabilityController#createAvailability`, `AvailabilityController#getAvailabilities`, `AvailabilityController#getAvailability`, `AvailabilityController#updateAvailability`, `AvailabilityController#deleteAvailability`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 서버 소유권과 저장
 
-1. **편집 모드 진입**:
-   - `_loadExisting()` → `availabilityDetailNotifierProvider(id).future` → `AvailabilityRepository.getAvailability(id)` → `GET /api/v1/availability/{id}` → 폼 사전 채움.
-2. **저장 (신규, 단일)**:
-   - `availabilityDetailNotifierProvider(0).notifier.createAvailability(param)` → Repository → `POST /api/v1/availability`.
-3. **저장 (편집)**:
-   - `.notifier.updateAvailability(id, param)` → `PATCH /api/v1/availability/{id}`.
-   - 성공 시 `state = AsyncData(data)`로 자체 갱신.
-4. **삭제 (1차)**:
-   - `.notifier.deleteAvailability(id, force: false)` → `DELETE /api/v1/availability/{id}?force=false`.
-5. **삭제 (강제, 충돌 시)**:
-   - `.notifier.deleteAvailability(id, force: true)` → `DELETE /api/v1/availability/{id}?force=true`.
-6. **신규 + 반복 ON**:
-   - F10-04의 `recurringRuleNotifierProvider.notifier.createRule(param)` → `POST /api/v1/availability/recurring`.
+목록은 principal의 userId만 읽는다. 단건 읽기는 없음과 다른 소유자를 구별하고, 수정·삭제는 id+userId로 찾아 본인 행이 아니면 AVAILABILITY_NOT_FOUND다. title·startTime·endTime·timezone만 받으며 공개/친구 visibility는 없다.
 
-## 4. 제품 규칙
+생성은 미래 시작·정상 시간 범위·제목 최대 100자·본인 가능 시간과 겹치지 않음을 확인해 isRecurring=false로 저장한다. 겹침은 start<상대end와 end>상대start여서 끝과 시작이 맞닿는 것은 겹침이 아니다. 모임과의 충돌 검사는 이 생성 겹침 검사와 다른 경로다.
 
-- 가용 시간(앱 문구는 「가능한 시간」)은 본인만 보고 관리하는 개인 기록이다. 공개 범위 선택은 없다.
-- 등록과 수정은 다음을 지켜야 한다. 시작이 지금 이후이고(과거 시각 거절), 길이는 30분 이상 480분(8시간) 이하이며 30분 단위다. 시간대는 서울 기준이다. 내 다른 가용 시간과 겹치면 거절되고 앱은 겹침 경고를 폼에 보인다.
-- 삭제할 때 같은 시간대에 내가 연 이벤트가 있으면(모집 중 또는 준비 중) 먼저 겹치는 건수를 알려 주고 확인을 다시 받는다. 확인하면 가용 시간만 지워지고 이벤트는 그대로다. 삭제 실패 때는 오류 안내가 뜬다.
-- 등록 폼 기본값은 시작 09:00, 종료 10:00이고 날짜는 오늘부터 365일 안에서 고른다. 길이가 30분 미만이거나 끝이 시작보다 이르면 저장 버튼이 꺼진다(30분 단위와 480분 상한은 서버가 검증한다). 반복 설정은 새로 등록할 때만 켤 수 있고 이미 만든 단일 가용 시간을 반복으로 바꿀 수는 없다. 반복을 켜고 요일을 하나도 고르지 않으면 저장할 수 없다.
+PATCH는 null 필드를 유지한다. title의 빈 문자열은 변경값이지만 null은 기존 제목 유지다. 시각을 바꿀 때 합쳐진 범위·길이·자기 행을 뺀 겹침을 재검사한다. 생성의 ‘과거 시작 금지’를 수정에도 동일하게 실행하지는 않는다. 저장한 반복 인스턴스의 규칙 ID를 이 PATCH가 지우거나 전체 규칙을 수정하지 않는다.
 
-## 6. 상태/권한/시나리오 매트릭스
+## 서울 시간과 입력 검증
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | (Happy Path) 신규 가용 시간 단일 등록 | 일간 캘린더 5/12 진입, FAB 탭으로 가용성 화면 진입. | DB에 `availability` 1건 INSERT, `is_recurring=false`. 가용 시간은 본인만 보며 다른 사용자에게는 공개되지 않는다. |
-| S2 | (엣지) 시간 겹침 — 충돌 경고 배너 | 동일 사용자, 이미 5/12 12:00~13:00 가용성을 등록한 상태. | 폼 그대로 유지, 사용자가 시간을 조정하면 배너는 다음 저장 시도 시 다시 평가. |
-| S3 | (엣지) 30분 미만 시도 | 사용자가 14:00~14:15로 입력. | 서버 호출 발생하지 않음. 사용자가 시간을 조정해야 함. |
-| S4 | (엣지) 과거 시각 시도 | 어제 날짜로 등록 시도. (DatePicker는 `firstDate=today`로 막혀 있어 정상 흐름에서는 발생 어려움.) | 등록 실패. (badRequest message가 OVERLAP을 포함하지 않으면 일반 토스트 처리.) |
-| S5 | 단일 가용성 수정 | 본인 가용성 #77 (12:00~13:30)을 11:30~13:00으로 변경. | DB UPDATE. 다음에 캘린더가 새로 fetch되면 변경 사항 반영. |
-| S6 | 삭제 — 충돌 없음 (Happy Path) | 본인 가용성 #77 삭제, 시간이 겹치는 OPEN/DRAFT 이벤트 없음. | DB 삭제. |
-| S7 | 삭제 — 충돌 있음, 강제 삭제 흐름 | 본인 가용성 #77이 5/12 12:00~13:30, 동일 시간에 본인이 호스팅 중인 OPEN 이벤트 #500이 12:30~14:00으로 존재. | DB 삭제됨. 시간이 겹치던 이벤트 #500은 그대로 존재 (가용성과 이벤트는 별도 도메인). |
-| S8 | (에러) 삭제 API 실패 | 네트워크 끊김 또는 5xx 응답. | 폼 유지, 사용자가 다시 시도 가능. |
-| S9 | (권한) 다른 사람 가용성 직접 URL 입력 | 본인 토큰으로 다른 사용자의 availabilityId(예: 999)에 대한 편집 화면을 강제 진입 시도. | 사용자에게 보이는 메시지가 명확하지 않음. (운영 시 확인 필요.) |
+현재 timezone은 Asia/Seoul만 허용한다. 생성은 timezone 누락·빈 문자열도 거절한다. 시작/종료 차이는 30~480분의 30분 배수여야 한다. 앱도 같은 길이 규칙과 반복 선택 요일을 확인해 유효하지 않으면 저장을 막는다. 30분 배수는 길이에 대한 규칙이며 시작 분을 반드시 00/30으로 고정하는 서버 조건은 아니다.
 
-## 8. Gap / Risk
+앱은 선택한 서울 날짜·시각 성분을 서버 벽시계 형식으로 직렬화한다. 기기의 로컬 시간대로 다시 변환해 날짜를 바꾸는 동작으로 설명하지 않는다. 단일 화면은 같은 날짜의 시작·종료를 구성한다. 서버 LocalDateTime 계약이 앱의 모든 날짜 선택 제한과 동일한 것은 아니다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 시험 보강 기록 | 가능 시간 등록·수정·삭제의 시험 보강 기록이다. 결함이 아니다 | 없음 |
+## 삭제 확인과 강제 삭제
 
-## 9. 수용 기준
+DELETE는 204가 아니라 AvailabilityDeleteCheckVo를 반환한다. 본인의 DRAFT/OPEN 주최 모임 중 decisionPending=false이고 시간이 겹치는 건수를 확인한다. 충돌이 있고 force=false면 deleted=false로 남긴다. 앱은 건수를 보여 주고 확인받은 뒤 force=true로 다시 요청한다. 충돌 확인 자체는 삭제가 아니다.
 
-- **AC-01. (Happy Path) 신규 가용 시간 단일 등록**: Given 일간 캘린더 5/12 진입, FAB 탭으로 가용성 화면 진입. When 사용자가 해당 흐름을 실행하면 Then DB에 `availability` 1건 INSERT, `is_recurring=false`. 가용 시간은 본인만 보며 다른 사용자에게는 공개되지 않는다.
-- **AC-02. (엣지) 시간 겹침 — 충돌 경고 배너**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 폼 그대로 유지, 사용자가 시간을 조정하면 배너는 다음 저장 시도 시 다시 평가.
-- **AC-03. (엣지) 30분 미만 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 서버 호출 발생하지 않음. 사용자가 시간을 조정해야 함.
-- **AC-04. (엣지) 과거 시각 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 등록 실패. (badRequest message가 OVERLAP을 포함하지 않으면 일반 토스트 처리.)
-- **AC-05. 단일 가용성 수정**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then DB UPDATE. 다음에 캘린더가 새로 fetch되면 변경 사항 반영.
-- **AC-06. 삭제 — 충돌 없음 (Happy Path)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then DB 삭제.
-- **AC-07. 삭제 — 충돌 있음, 강제 삭제 흐름**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then DB 삭제됨. 시간이 겹치던 이벤트 #500은 그대로 존재 (가용성과 이벤트는 별도 도메인).
-- **AC-08. (에러) 삭제 API 실패**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 폼 유지, 사용자가 다시 시도 가능.
-- **AC-09. (권한) 다른 사람 가용성 직접 URL 입력**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자에게 보이는 메시지가 명확하지 않음. (운영 시 확인 필요.)
+deleted=true일 때 해당 가능 시간만 삭제한다. 겹친 모임을 취소하거나 반복 규칙 전체를 삭제하지 않는다. 삭제 실패는 화면에 남고 다시 시도할 수 있다. 반복 규칙 전체 제거는 [반복 가능 시간 관리](F10-04_recurring-availability-rule_prd.md)의 별도 명령이다.
+
+## 저장·오류·복귀와 갱신
+
+성공은 안내 후 현재 화면을 닫고 달력 변경 신호를 보낸다. 수정은 상세 상태도 갱신하며 deleted=false에는 변경 신호를 보내지 않는다. 서버에 반영됐을 수 있는 오류도 달력을 재조회한다. 새 생성·수정 요청에는 영구 멱등 키가 없어 응답 유실 뒤 같은 성공 결과 재생을 보장하지 않는다.
+
+실패는 입력을 유지한다. 현재 충돌 배너 판정은 errorCode가 아니라 오류 message에 OVERLAP이 포함되는지 검사한다. 따라서 모든 TIME_OVERLAP_DETECTED 응답에 반드시 같은 배너가 뜬다고 단정하지 않는다. 본인 외 기록 조회 오류가 사용자에게 어떻게 안내되는지는 상세 로딩·실패 처리와 함께 확인해야 한다.
+
+## 요청과 응답
+
+| 요청 | 현재 계약 |
+| --- | --- |
+| POST /api/v1/availability | title·startTime·endTime·timezone → 201 AvailabilityVo |
+| GET /api/v1/availability?from=&to=&includeRecurring= | 날짜 to를 포함하도록 다음 날 시작으로 조회. items·totalCount·from·to의 AvailabilitySimpleVo |
+| GET /api/v1/availability/{id} | 본인 AvailabilityVo |
+| PATCH /api/v1/availability/{id} | 선택 변경값 → AvailabilityVo |
+| DELETE /api/v1/availability/{id}?force= | hasConflictingEvents·conflictingEventCount·deleted, 200 |
+| GET /api/v1/availability/{id}/calendar | 본인 ICS 파일 내보내기 창구. 실제 단말 공유 성공은 별도 |
+
+## 현재 제한과 확인 범위
+
+| 구분 | 현재 경계 |
+| --- | --- |
+| Gap | 충돌 배너는 message 문자열에 의존한다. 오류 코드만으로 표시 성공을 보장하지 않는다 |
+| Risk | 일반 생성은 요청 키 재생이 없으며 조회 후 겹침 검사만으로 모든 동시 등록 경합이 해결됐다고 주장하지 않는다 |
+| 미검증 | 소스·기존 달력 신호 단언을 읽었다. 기존 E2E 원문은 과거 인용으로 보존하며 이번 실행 결과에 합산하지 않는다 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 소유권:** 본인만 조회·수정·삭제하며 visibility를 받지 않는다.
+- **AC-02 신규:** 미래 시작·제목 길이·timezone·정상 범위를 확인해 단일 행을 만든다.
+- **AC-03 길이:** 30~480분·30분 배수를 앱과 서버에서 확인한다.
+- **AC-04 겹침:** 본인 기록의 실제 겹침만 거절하고 맞닿는 경계는 구별한다.
+- **AC-05 수정:** null 유지·빈 제목·현재 값과 합친 시간 검증 및 반복 연결 유지의 의미를 보존한다.
+- **AC-06 삭제 확인:** 충돌 시 deleted=false와 force 재요청을 구분한다.
+- **AC-07 삭제 결과:** 가능 시간만 제거하고 모임·반복 규칙을 취소하지 않는다.
+- **AC-08 갱신:** 명령 성공·서버 반영 가능 오류·삭제 미실행을 구분한다. 기존 신호 단언을 읽었다.
+- **AC-09 오류:** 입력 유지·문자열 기반 충돌 안내와 응답 불명 한계를 표시한다.
+
+위 항목은 문서 수용 기준이며 새 시험 통과 수가 아니다.
