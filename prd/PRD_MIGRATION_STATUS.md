@@ -269,7 +269,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F04-13 | 클럽 | [F04-13_fund-overview_prd.md](02_feature_prds/04_club/F04-13_fund-overview_prd.md) | `F04-13_fund-overview` | 실사 기반 전환본 | 5 | 3 |
 | F04-14 | 클럽 | [F04-14_donation_prd.md](02_feature_prds/04_club/F04-14_donation_prd.md) | `F04-14_donation` | 실사 기반 전환본 | 4 | 4 |
 | F04-15 | 클럽 | [F04-15_fund-withdrawal_prd.md](02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md) | `F04-15_fund-withdrawal` | 실사 기반 전환본 | 2 | 4 |
-| F04-16 | 클럽 | [F04-16_subscription_prd.md](02_feature_prds/04_club/F04-16_subscription_prd.md) | `F04-16_subscription` | 실사 기반 전환본 | 5 | 8 |
+| F04-16 | 클럽 | [F04-16_subscription_prd.md](02_feature_prds/04_club/F04-16_subscription_prd.md) | `F04-16_subscription` | 실사 기반 전환본 | 5 | 4 |
 | F04-17 | 클럽 | [F04-17_club-demographics_prd.md](02_feature_prds/04_club/F04-17_club-demographics_prd.md) | `source-first` | 신규 PRD | 1 | 3 |
 | F04-18 | 클럽 | [F04-18_club-reputation_prd.md](02_feature_prds/04_club/F04-18_club-reputation_prd.md) | `source-first` | source-first 구현 확인 | 2 | 2 |
 | F05-01 | 검색 | [F05-01_keyword-search_prd.md](02_feature_prds/05_search/F05-01_keyword-search_prd.md) | `F05-01_keyword-search` | 실사 기반 전환본 | 4 | 5 |

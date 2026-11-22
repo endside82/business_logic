@@ -1,75 +1,118 @@
-# F04-16. 클럽 구독 (시작/갱신/해지/재활성) PRD
+# F04-16. 클럽 운영 구독·갱신·해지·정지·환불 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 서버·앱 소스와 선택 시험 단언 대조. 실제 결제·스케줄 실행 결과가 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 실제 입구
 
-**클럽장(OWNER)이 플랫폼에 운영비를 지불하는 정기 구독.** 사용자 관점의 멤버 구독이 아니라 클럽 단위 운영료. FREE 클럽은 월 10,000 / 연 100,000원, BUSINESS 클럽은 월 30,000 / 연 300,000원. 결제 우선순위는 **ClubFund(클럽 기금) → 부족분 OWNER 지갑**. 만료 임박 시 자동 갱신, 결제 실패 3회시 SUSPENDED + 7일 유예 후 EXPIRED.
+클럽 운영 구독은 클럽장이 플랫폼에 내는 운영비다. 개인 유료 구독이나 모임 참가비와 구별한다. 앱의 기본 입구는 클럽 관리의 기금·재정 영역에 있는 **운영 구독**이며, 플랜 화면 상단의 관리로 현재 구독을 읽는다. 구독 실패·정지·만료 관련 알림도 해당 클럽 구독 관리로 이동한다. 마이페이지에서 소유 클럽을 일괄 결제·관리하는 화면이 있다고 설명하지 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+새 결제 화면은 서버 `paySubscription` 권한이 있을 때만 플랜·현재 구독을 조회한다. 관리 화면은 `viewSubscription` 또는 결제 권한으로 열리며, 본인 구독 열람 권한이 없으면 구독 조회를 시작하지 않는다. 일반 운영진 역할만으로 결제를 허용하지 않는다. 관리 경로는 부모 운영진 경로 제한을 별도로 건너뛰어 본인 구독 열람 조건을 판단한다.
 
-- 클럽 상세 ▶ (OWNER 전용) "구독" 또는 클럽 설정에서 "구독 관리"
-- 마이페이지 ▶ "구독 관리" — 본인이 OWNER인 클럽들의 구독 일괄 관리
-- 자동 갱신 실패 / SUSPENDED 푸시 알림 ▶ 구독 관리 화면
+## 조회와 요금제 계약
 
-## 2. 코드 위치
+요금제 조회는 `GET /api/v1/clubs/{id}/subscription/plans`의 목록 응답이다. 컨트롤러가 로그인 사용자 인자를 받지 않아도 보안 설정의 공개 경로에 포함되지 않으므로 **인증이 필요하다**. 서비스는 클럽 존재와 종류를 확인하며 별도 소유자 검사는 하지 않는다. 앱의 플랜 노출은 이 API보다 좁은 결제 권한을 따른다.
 
-계약의 정본은 코드다. 서버: `ClubController`, `ClubSubscriptionService`, `WalletService`, `AccountingLedgerService`, `NotificationService`. 앱: `subscription_screen.dart`, `subscription_manage_screen.dart`, `subscription_plan_card.dart`, `payment_method_sheet.dart`, `subscription_info_card.dart`, `subscription_status_badge.dart`, `payment_history_list.dart`, `cancel_subscription_dialog.dart`.
+| 클럽 종류 | MONTHLY | YEARLY |
+| --- | --- | --- |
+| FREE | 10,000 | 100,000 |
+| BUSINESS | 30,000 | 300,000 |
+
+요금제 응답은 `plan`, `clubType`, 정수 `price`, `description`, `benefits`다. 현재 구독 응답은 `id`, `clubId`, `status`, nullable `suspendReason`, `planType`, `price`, `autoRenew`, `startedAt`, `expiresAt`, `actions.cancelAutoRenewal/reactivate`다. 결제 이력 목록 응답은 아니다.
+
+`GET /subscription`은 로그인 사용자·클럽에 해당하는 **본인 구독 행**을 조회한다. 현재 소유자 여부와 별개의 계약이며, 행이 없으면 `CLUB_NOT_MEMBER`를 반환한다. 앱 provider는 이 오류를 자동으로 null로 바꾸지 않는다. 관리 화면은 열람 권한이 없는 경우 null로 시작해 구독 없음 화면을 제공하지만, 열람 권한이 있는데 조회가 실패하면 오류·재시도를 표시한다.
+
+## 결제 재원과 기간 연장
+
+`POST /subscription`은 필수 요청 키와 `planType`, `autoRenew`를 받는다. 요청 본문이 생략되면 서버 기본값은 MONTHLY·자동 갱신 켜짐이다. 정본 클럽장이며 클럽이 폐쇄되지 않아야 하고 운영자 정지 중에는 결제로 다시 시작할 수 없다.
+
+결제 순서는 **기금의 유료 → 기금의 무료 → 부족분의 클럽장 지갑**이다. 지갑 명령은 유료 우선이지만 금전 기능이 닫힌 배포에서는 해당 구독 지갑 지출에 무료 전용 정책을 적용한다. 기금에서 쓴 유료·무료 몫과 지갑 원거래를 구분해 기록한다. 앱 결제 수단 시트에는 내 지갑 한 가지가 있으며 기금 우선 차감을 안내한다. 신용카드·간편결제를 직접 받는 선택지나 PG 구독 결제가 아니다.
+
+결제 후 구독은 ACTIVE, 재시도 횟수 0, 유예 없음이 된다. 기간 시작 기준은 현재 시각·기존 행의 남은 만료·클럽의 남은 만료 중 적용 가능한 가장 늦은 값이며, 여기에 월간은 달력상 한 달, 연간은 한 해를 더한다. 고정 30일·365일로 계산하지 않는다. 플랜 변경도 선택한 플랜의 전체 가격을 결제하고 남은 기간 뒤에 기간을 추가한다. 기존 플랜 잔액을 자동 환불하거나 가격 차액만 결제하는 흐름이 아니다.
+
+현재 결제가 더한 기간 시작과 결제 재원은 따로 저장하고, 아직 남은 이전 결제 기간은 이전 결제 기록으로 보존한다. 구독 행의 `startedAt`은 이번 결제 시각이고 실제 추가된 유료 기간의 시작과 항상 같지는 않다. 클럽의 `subscriptionExpiresAt`도 새 만료로 갱신한다.
+
+## 자동 갱신과 실패와 만료
+
+자동 갱신 후보는 ACTIVE·자동 갱신 켜짐·만료가 조회 시각의 하루 뒤 이내인 행이다. 이미 만료 시각이 지났더라도 갱신 대상이 될 수 있다. 클럽·구독을 잠근 뒤 조건을 다시 확인하고, 클럽이 없어졌거나 폐쇄되었거나 소유자가 바뀐 오래된 구독은 취소하고 자동 갱신을 끈다. 성공하면 같은 결제·기간 연장 경로를 사용한다.
+
+실패 시 결제 트랜잭션과 분리된 처리에서 재시도 횟수를 올린다. 첫째·둘째 실패에는 각각 알림을 작성하고, 셋째 실패부터 `SUSPENDED/PAYMENT_FAILURE`와 실패 시각부터 7일 유예를 설정해 정지 알림을 작성한다. 운영자 정지와 이 결제 실패 정지를 같은 상태 설명으로 뭉치지 않는다.
+
+| 상태·기간 | 혜택과 후속 처리 |
+| --- | --- |
+| ACTIVE·유효 기간 | 운영 혜택 사용. 자동 갱신 조건에 맞으면 재결제. |
+| CANCELLED·유효 기간 | 자동 갱신 없이 남은 기간 사용. |
+| 결제 실패 SUSPENDED·유예 남음 | 유예 동안 운영 혜택 사용. 클럽장이 결제로 다시 시작할 수 있다. |
+| 운영자 SUSPENDED | 커밋 후 운영 혜택 차단. 남은 결제 기간이나 유예가 있어도 결제로 정지를 풀 수 없다. |
+| 유예 종료·결제 기간 남음 | 결제 실패 정지는 CANCELLED로 바꾸고 남은 기간을 유지한다. 운영자 정지는 SUSPENDED를 유지한 채 자동 갱신만 끈다. |
+| 유예 종료·결제 기간 없음 | EXPIRED로 전환한다. 운영자 정지는 별도 만료 처리에서도 실제 결제 기간이 지나면 종료한다. |
+
+서버 스케줄은 자동 갱신 02:00, 일반 만료 02:30, 유예 종료 03:00, 만료 임박 알림 09:00이며 각각 분산 잠금을 사용한다. 이는 코드의 cron 값이고 운영 서버의 실행·시간대 확인 결과는 아니다. 만료 임박 알림 후보는 ACTIVE이면서 향후 3일 안에 만료하는 행이며 구독·만료 시각·자동 갱신 여부로 중복을 막는다. 이미 CANCELLED인 모든 해지 예정 행에 같은 알림이 발송된다고 확대하지 않는다.
+
+## 해지와 회원 재활성과 기능 제한
+
+`DELETE /subscription`은 본인 구독 행의 해지 가능 상태를 판단해 자동 갱신을 끄고 CANCELLED로 바꾼 뒤 204를 반환한다. 이 경로에 결제와 같은 필수 요청 키는 없다. 해지는 즉시 남은 기간 환불이 아니다. 서버 조회는 운영자 정지가 아니며 클럽의 남은 기간이 있으면 응답 상태·만료를 ACTIVE·클럽 만료로 투영할 수 있다. 앱은 ACTIVE 응답이어도 자동 갱신이 꺼져 있고 기간이 남으면 해지 예정으로 표시한다.
+
+`POST /subscription/reactivate`는 필수 요청 키를 받는다. 본인 행이 SUSPENDED이고 현재 결제 권한을 충족하며 운영자 정지가 아니어야 한다. 기존 플랜을 실제로 다시 결제하고 자동 갱신을 켠다. 단순 상태 토글이나 무료 복구가 아니다. 운영자 정지 화면에서는 고객센터 문의를 제공하며 재시작 버튼도 서버 동작 권한을 따른다.
+
+구독 혜택 제한은 BUSINESS 클럽에 적용한다. 구독 행이 있으면 ACTIVE/CANCELLED의 남은 기간, 결제 실패 정지의 유예, 운영자 정지 여부로 판단한다. 행이 없을 때만 클럽의 만료 필드를 사용한다. FREE 클럽은 이 구독 기능 제한에서 차단하지 않는다. 실제 연결 기능은 이벤트 게시·공지 작성·회원 초대·사진 앨범 생성이며 회원 상한 확장 값은 예약된 기능이다. 다른 권한·클럽 상태 조건까지 구독 결제 한 번으로 해제되는 것은 아니다.
+
+## 운영자 환불과 상태 명령
+
+운영자 환불은 회원 해지와 별개다. 운영 명령 ID·운영자·사유·구독·현재 결제 순번·환불 방식을 결박하며 폐쇄되지 않은 클럽, 현재 소유자의 구독, 클럽과 행의 만료 일치, 유효한 결제 기간 기록을 확인한다.
+
+| 방식 | 현재 계산과 기간 처리 |
+| --- | --- |
+| FULL | 현재 결제 재원 전액을 반환한다. 이전 결제 전체를 뜻하지 않는다. |
+| PRORATED | 현재 결제가 더한 전체 초 중 아직 사용하지 않은 초 비율로 지갑·기금 유료·무료 몫을 각각 반올림한다. |
+| SUSPENSION | 현재 결제 기간과 운영자 정지로 막힌 기간의 겹치는 초를 기준으로 반환한다. 정지 종료 뒤에도 허용 상태와 기록이 있으면 판정할 수 있다. |
+
+FULL·PRORATED는 현재 결제가 더한 구간만 회수한다. 추가 구간이 아직 시작되지 않았다면 앞 결제의 남은 기간을 유지하고, 사용 중이면 현재 시각까지로 줄이며 이미 지난 구간을 늘리지 않는다. 자동 갱신을 끄고 운영자 정지 상태를 임의로 풀지 않는다. SUSPENSION은 만료·자동 갱신·상태를 유지한다. 세 방식 모두 처리한 현재 결제 기록을 비운다.
+
+기금으로 낸 몫은 원래 유료·무료 기금으로, 지갑으로 낸 몫은 원거래 지갑 몫에 맞춰 돌려준다. 운영자 상태 복구는 남은 유효 기간·현재 소유자·클럽 만료 일치 등을 확인하며 회원의 유료 재시작과 다르다. 운영자 정지 중 운영자 해지는 정지 사유와 기간을 유지하고 자동 갱신만 끈다. 폐쇄·소유권 이전의 전체 책임과 이전 결제 처리는 [클럽 관리·폐쇄·소유권 이전](F04-03_club-crud-transfer_prd.md)을 함께 본다.
+
+## 앱 결과와 실패와 복귀
+
+플랜 선택·재시작은 공통 회원 금전 명령으로 같은 계정·대상·본문의 요청 키를 준비해 전송한다. 구독 성공 후 기금·구독·지갑을 다시 읽고 이전 화면으로 돌아간다. 결과를 다시 얻을 수 없거나 쓰기가 반영됐을 수 있는 오류에도 기금·구독·지갑을 재조회한다. 재시작에서 이미 정지 상태가 아니라는 응답도 관련 자료를 다시 읽는다. 이를 새 결제 성공으로 표시하지는 않는다.
+
+관리 화면의 해지·재시작은 확인 후 실행하고 결과를 현재 화면에 반영한다. 동작 권한 거절 시 구독과 클럽 정보를 갱신한다. 당겨서 새로고침은 현재 구독 조회를 갱신하며, 별도 결제 이력 목록이나 전체 기금 조회를 모두 갱신하는 구현으로 설명하지 않는다. 알 수 없는 상태는 알 수 없음으로 표시하고 임의의 결제 버튼을 열지 않는다.
+
+## 코드 위치
+
+서버: `ClubController`, `SecurityConfiguration`, `ClubSubscriptionService`, `ClubSubscription`, `ClubSubscriptionQueryRepository`, `ClubSubscriptionAutoRenewalService`, `ClubSubscriptionRenewalWorker`, `ClubSubscriptionScheduler`, `ClubSubscriptionGateService`, `ClubAbilityPolicy`, `ClubFundMoneyCommand`, `ClubFundService`, `ClubFundPlan`, `WalletSpendService`. 앱: `club_subscription_api.dart`, `club_subscription_repository.dart`, `subscription_provider.dart`, `subscription_plan_provider.dart`, `club_subscription.dart`, `subscription_status.dart`, `subscription_screen.dart`, `subscription_manage_screen.dart`, `payment_method_sheet.dart`, `club_management_screen.dart`, `route_guards.dart`, `club_branch_routes.dart`, `notification_router.dart`.
 
 <!-- source-references:start -->
 서버 창구: `ClubController#getSubscriptionPlans`, `ClubController#subscribe`, `ClubController#getSubscription`, `ClubController#cancelSubscription`, `ClubController#reactivateSubscription`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-1. **플랜 화면 진입**: `subscriptionPlanProvider(clubId)` ▶ `ClubSubscriptionRepository.getPlans(clubId)` ▶ `GET /subscription/plans` (비인증 가능)
-2. **현재 구독 조회**: `subscriptionProvider(clubId)` ▶ `GET /subscription` (없으면 `CLUB_NOT_MEMBER` → 화면에 미가입 표시)
-3. **구독 시작**: 결제 수단 선택 → `subscribe(clubId, ClubSubscriptionParam{planType, autoRenew})` ▶ `POST /subscription` ▶ invalidate(clubFund, subscription)
-4. **해지**: `cancelSubscription(clubId)` ▶ `DELETE /subscription` ▶ invalidate
-5. **재활성**: `reactivateSubscription(clubId)` ▶ `POST /subscription/reactivate` ▶ invalidate
-6. **풀투리프레시**: 구독 + 기금 + 결제 이력 invalidate
+| 분류 | 근거 | 내용 | 다음 확인 |
+| --- | --- | --- | --- |
+| Risk | 플랜 화면의 현재 플랜 판정 | `planType`만 같으면 버튼을 막고 만료·정지 상태는 이 판정에 넣지 않는다. 만료 후 같은 플랜 재구독 입구를 방해할 수 있다. | 만료·재구독 상태의 실제 진입과 버튼 판정 확인. |
+| Risk | 플랜 설명 문구 | 월간·연간이 있는데 공통 안내는 “매월 자동 갱신”이라고 적혀 있다. | 실제 선택 주기와 안내 일치 여부 수정 판단. |
+| Risk | 요금제 benefits | 회원 상한 확장을 혜택으로 안내하지만 해당 기능 값은 예약 상태다. | 현재 제공 범위와 혜택 문구 일치 여부 결정. |
+| 미검증 | 소스 대조 범위 | 실제 결제·기기 복구·자동 갱신·운영자 환불·푸시 수신은 이번에 실행하지 않았다. | 실제 환경 확인은 별도 실행 근거로 판정. |
 
-## 4. 제품 규칙
+## 수용 기준과 검증 근거
 
-- 구독이 만료된 BUSINESS 클럽은 이벤트 생성·게시, 공지 작성, 멤버 초대, 사진 앨범 생성이 막힌다. 멤버 상한 확장은 예약해 둔 칸이다. 다른 클럽은 영향이 없다.
-- 클럽장이 아니면 구독 화면에서 조회 없이 클럽장 전용 안내만 보인다. 요금제 목록은 로그인 없이 볼 수 있다.
-- 상태별로 할 수 있는 일: 「구독 중」은 플랜 변경·해지, 「해지 예정」은 만료일까지 혜택 유지, 「일시정지」는 재활성, 만료는 재구독이다.
-- 소유권 이전은 F04-03 §4 규칙을 따른다.
-- 운영자 환불은 그 결제의 몫 전액, 또는 그 결제가 더한 구간 중 쓰지 않은 몫 두 가지다.
+- **AC-01 실제 입구:** 클럽 관리의 운영 구독·구독 관리·관련 알림 입구를 구분하고 없는 일괄 관리 화면을 안내하지 않는다.
+- **AC-02 조회 권한:** 요금제 API 인증과 앱 결제 권한을 구분하며 본인 구독 조회는 현재 소유자 검사와 혼동하지 않는다.
+- **AC-03 구독 없음:** 본인 행 부재 오류와 권한상 조회하지 않은 null 상태를 구분한다.
+- **AC-04 가격과 재원:** 클럽 종류·월간/연간 가격을 사용하고 기금 유료→기금 무료→지갑 부족분과 지갑 금전 기능 조건을 지킨다.
+- **AC-05 결제 키:** 가입·재시작은 필수 요청 키와 금전 명령을 사용하고 해지 경로의 계약과 구별한다.
+- **AC-06 기간 추가:** 기존 남은 기간 뒤에 달력상 월/년을 더하며 플랜 변경을 차액 결제로 처리하지 않는다.
+- **AC-07 결제 기록:** 현재 결제가 더한 구간·재원·이전 남은 결제 기록을 구별한다.
+- **AC-08 갱신 대상:** ACTIVE·자동 갱신·하루 이내 만료 조건과 잠금 후 재검사를 적용하며 폐쇄·소유자 변경 시 오래된 갱신을 멈춘다.
+- **AC-09 실패 단계:** 첫째·둘째 실패 알림과 셋째 실패의 PAYMENT_FAILURE·7일 유예를 구분한다.
+- **AC-10 유예 종료:** 남은 결제 기간과 정지 사유에 따라 해지 예정·운영자 정지 유지·만료로 나눈다.
+- **AC-11 혜택 제한:** BUSINESS 구독 행의 실제 혜택 조건을 사용하고 운영자 정지를 유예로 통과시키지 않는다.
+- **AC-12 해지:** 자동 갱신만 끄고 남은 기간을 유지하며 반환금이 발생한 것으로 표시하지 않는다.
+- **AC-13 상태 표시:** ACTIVE 응답과 자동 갱신 꺼짐·남은 기간 조합도 해지 예정으로 표시한다.
+- **AC-14 재시작:** 결제 실패 정지의 회원 재시작은 기존 플랜 재결제이며 운영자 정지를 우회하지 않는다.
+- **AC-15 환불 방식:** FULL·PRORATED·SUSPENSION을 현재 결제 순번과 해당 시간 구간으로 계산한다.
+- **AC-16 반환 대상:** 지갑과 기금 유료·무료를 원래 재원에 맞춰 반환하고 처리한 현재 결제 기록을 비운다.
+- **AC-17 결과 갱신:** 성공·불명확 결과·이미 정지 아님 응답에서 필요한 자료를 다시 읽고 성공 여부는 별도로 표시한다.
+- **AC-18 알림과 근거:** 구독 알림은 본인 관리 경로로 보내며 스케줄 소스·기존 단언·새 실행 결과를 구분한다.
 
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | OWNER가 새 클럽의 월간 구독 시작 (Happy Path) | 클럽 생성 직후 `subscriptionExpiresAt = null`, 기금 잔액 0, 본인 지갑 잔액 50,000. | club_subscription 1행 ACTIVE, wallet -10,000, 분개 기록. |
-| S2 | 자동 갱신 — 만료 D-1 | ACTIVE 구독, expiresAt=now+1day, autoRenew=true. | 동일 row 갱신, 알림 미발송(성공 시). |
-| S3 | 자동 갱신 결제 실패 1회차 → 알림 | 지갑 잔액 부족. | status=ACTIVE 유지, attempts=1. |
-| S4 | 자동 갱신 3회 실패 → SUSPENDED + 7일 유예 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | SUSPENDED 상태에서 OWNER 재활성 | 시나리오 본문 참조 | 정상 ACTIVE 복귀. |
-| S6 | 7일 유예 만료 → EXPIRED | SUSPENDED, gracePeriodUntil < now. | BUSINESS 클럽이면 `validateClubSubscription` 차단(공지/이벤트 작성 불가). |
-| S7 | OWNER가 자동 갱신 취소 (해지 예약) | ACTIVE, 만료일 D-15. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | 플랜 변경 (월간 → 연간) | ACTIVE MONTHLY 구독. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | OWNER 아닌 사용자 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S10 | 비로그인 사용자가 플랜 조회 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 후보 | backend.md:136 | **외부 PG 미연동**: PG 직접 결제 미연동. 모든 결제는 ClubFund/지갑 잔액에서. (스펙 SCR-CF-005에는 "신용/체크카드", "간편결제(카카오페이)" 옵션이 있으나 서버 미구현) | Decision Needed: PG 연동 여부 결정 |
-| 후보 | frontend.md:41 | **결제 이력 조회 미확인**: 서버 GET /subscription 응답에 결제 이력 별도 없음 → 클라이언트가 거래 내역(별 Unit) 또는 별도 API로 조립 필요 | 실제 소스 대조 확인 |
-| 후보 | frontend.md:45 | **플랜 변경 차액 처리 미구현**: 월간→연간 변경 시 잔여 월간 환불 없이 풀가격 청구. 클라이언트 안내 필요 | Decision Needed: 차액 처리 정책 결정 |
-
-## 9. 수용 기준
-
-- **AC-01. OWNER가 새 클럽의 월간 구독 시작 (Happy Path)**: Given 클럽 생성 직후 `subscriptionExpiresAt = null`, 기금 잔액 0, 본인 지갑 잔액 50,000. When 사용자가 해당 흐름을 실행하면 Then club_subscription 1행 ACTIVE, wallet -10,000, 분개 기록.
-- **AC-02. 자동 갱신 — 만료 D-1**: Given ACTIVE 구독, expiresAt=now+1day, autoRenew=true. When 사용자가 해당 흐름을 실행하면 Then 동일 row 갱신, 알림 미발송(성공 시).
-- **AC-03. 자동 갱신 결제 실패 1회차 → 알림**: Given 지갑 잔액 부족. When 사용자가 해당 흐름을 실행하면 Then status=ACTIVE 유지, attempts=1.
-- **AC-04. 자동 갱신 3회 실패 → SUSPENDED + 7일 유예**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. SUSPENDED 상태에서 OWNER 재활성**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 정상 ACTIVE 복귀.
-- **AC-06. 7일 유예 만료 → EXPIRED**: Given SUSPENDED, gracePeriodUntil < now. When 사용자가 해당 흐름을 실행하면 Then BUSINESS 클럽이면 `validateClubSubscription` 차단(공지/이벤트 작성 불가).
-- **AC-07. OWNER가 자동 갱신 취소 (해지 예약)**: Given ACTIVE, 만료일 D-15. When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. 플랜 변경 (월간 → 연간)**: Given ACTIVE MONTHLY 구독. When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. OWNER 아닌 사용자 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-10. 비로그인 사용자가 플랜 조회**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+`ClubSubscriptionRenewalStateTest`의 갱신/만료 소유 범위와 운영자 정지 경계, `ClubSubscriptionOperatorRefundPeriodTest`의 현재 결제 기간·이전 기간 보존·정지 겹침 초 단언을 읽었다. 18개는 수용 기준 수이며 제품 시험 통과 수가 아니다.

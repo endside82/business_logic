@@ -273,7 +273,8 @@
         "club_calendar_20261122",
         "club_album_20261122",
         "club_finance_20261122",
-        "club_reputation_20261122"
+        "club_reputation_20261122",
+        "club_subscription_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2236,9 +2237,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e04cdb790048159a652c6810dcd4d45ce1ee6fd001f9af0b9beefeef8ef38454",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_domain_20261122"
+      ],
+      "reviewedSha256": "0e7d123b5e7b339198abfda1bc3090f76f9b350535da3f5d43d8e59859697003"
     },
     {
       "path": "docs/domains/05-search.html",
@@ -3054,9 +3058,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "0cdeac5cf2df49f0e318b117f7ebe5800fe10ebf146b70d083658c5931511821",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_subscription_20261122"
+      ],
+      "reviewedSha256": "8c1e2a0179f62d2fdfd5f82f090e1152ff410715e7af8ae17c01cd7d4bf2a905"
     },
     {
       "path": "docs/features/F04-17.html",
@@ -4908,7 +4915,8 @@
         "club_posts_20261122",
         "club_calendar_20261122",
         "club_album_20261122",
-        "club_finance_20261122"
+        "club_finance_20261122",
+        "club_subscription_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4976,7 +4984,8 @@
         "club_posts_20261122",
         "club_calendar_20261122",
         "club_album_20261122",
-        "club_finance_20261122"
+        "club_finance_20261122",
+        "club_subscription_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5068,7 +5077,8 @@
         "club_calendar_20261122",
         "club_album_20261122",
         "club_finance_20261122",
-        "club_reputation_20261122"
+        "club_reputation_20261122",
+        "club_subscription_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5216,10 +5226,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "8526b3041e5da5ed0d68838a1ad8e11ec4179f1e0485a24fc4e22e74ec660aef",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_domain_20261122"
+      ],
+      "reviewedSha256": "0ab490d49b83e0b642220c40dedd03714ecaa8ef9759f73df233f0fd1e96ec2a"
     },
     {
       "path": "prd/01_domain_prds/05_검색_prd.md",
@@ -6048,10 +6060,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "92dd2444fb907718ff833ba0756dec248d68eac4b06613a698332f0e17b58187",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_subscription_20261122"
+      ],
+      "reviewedSha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
@@ -7806,7 +7820,8 @@
         "club_calendar_20261122",
         "club_album_20261122",
         "club_finance_20261122",
-        "club_reputation_20261122"
+        "club_reputation_20261122",
+        "club_subscription_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8023,7 +8038,8 @@
         "club_calendar_20261122",
         "club_album_20261122",
         "club_finance_20261122",
-        "club_reputation_20261122"
+        "club_reputation_20261122",
+        "club_subscription_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9453,9 +9469,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "44774af7857bfc5cb006c4b3084e52dcab4051bbdc483da4742d0d160429a711",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_domain_20261122"
+      ],
+      "reviewedSha256": "c24acbfbe60f0f7f8d78e1c5254c2e68a6eb7496008030cd8cb42a8ed58a7711"
     },
     {
       "path": "units/04_club/F04-01_club-discovery/backend.md",
@@ -10243,9 +10262,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "af0020241262fd7855bcb0fc3138da3c722599320371301eeb3723f5662d0b10",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_subscription_20261122"
+      ],
+      "reviewedSha256": "c2b9e42327eb29468e9f7eeb1708e459f6d904810bbe84994a39da9194af5c31"
     },
     {
       "path": "units/04_club/F04-16_subscription/diagrams.md",
@@ -10253,9 +10275,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8f8ea037572b3353d6c6e993980d3759556a87a89f995f9689052fbd82b4bb6a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_subscription_20261122"
+      ],
+      "reviewedSha256": "b5c2edd29b81d3a6952517af57a7f732023b7e44ff9d28541afd2b4d94dc37e9"
     },
     {
       "path": "units/04_club/F04-16_subscription/frontend.md",
@@ -10263,9 +10288,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a76438122c24a08bcc35a868ca8662d193274f61ce0ac558b1bc4d6346ecb4a6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_subscription_20261122"
+      ],
+      "reviewedSha256": "24a621d0fb16259c4477425faefc1253836e200b8c9e35557a0c49cc2648111e"
     },
     {
       "path": "units/04_club/F04-16_subscription/scenarios.md",
@@ -10273,9 +10301,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d82d5e0691dcf788ea383b46d2c4ffaa08286ae78193785e1ed2647357f23af6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_subscription_20261122"
+      ],
+      "reviewedSha256": "cb2d5e82af0340e94b5fed0222b12a489cbe4b2d890a77465706e27e511398c9"
     },
     {
       "path": "units/05_search/00_overview.md",
@@ -15372,6 +15403,11 @@
       "command": "F04-18 문서 묶음: 소스 참조·파서 시험·경로/해시·HTML ID/섹션 링크·units 미생성·diff 검사",
       "result": "코드 위치113개 일치; 파서11/11 통과; 상대경로2345개·파생 정본 해시283개 오류0; 현재 그룹 소스/정본21개 해시 일치; 기존 HTML ID3개 유지·섹션 링크 확인; scenario-audit 최신; diff 오류0",
       "scope": "클럽 신뢰도 실제 카드입구·공개권한·점수계산·모르는 레벨·재조회 범위 문서 검사. 선택한 기존 시험의 단언만 읽었으며 새 제품·브라우저·이미지·프로덕션 검증 없음. source-first 관리로 units 생성하지 않음."
+    },
+    {
+      "command": "F04-16 및 클럽 개요 문서: 소스 참조·파생자료·경로/해시·HTML 링크/ID·과거 인용·앱 main 변경 근거 검사",
+      "result": "코드 위치113개 일치; 상대경로2432개·파생 정본 해시288개 오류0; 구독 소스/정본36개·도메인 정본19개 해시 일치; 기존 HTML ID8개·과거 인용1개 보존; 도메인 기능 링크18개/섹션 링크 확인; 앱 변경 영향3그룹 40/38/41개 해시 확인; scenario-audit 최신; diff 오류0",
+      "scope": "구독6개·도메인3개 문서 완료. 서버 참조 연결·파서 변경 없어 직전 파서11/11 결과 재사용. 새 제품·결제·갱신스케줄·PG·이미지 실행 없음. 앱 main a443150→0504cfb 추가 diff 대조와 기존 근거 갱신. ignored units5개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -21929,8 +21965,11 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
-          "sha256": "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06",
-          "reviewScope": "980–1025 제안 성공 시 현황 교체 이동·즉시 적용 작은 변경 토스트."
+          "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
+          "reviewScope": "980–1025 제안 성공 시 현황 교체 이동·즉시 적용 작은 변경 토스트. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+          "previousSourceDigests": [
+            "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06"
+          ]
         },
         {
           "path": "community_app/lib/presentation/event/screens/my_reschedule_proposals_screen.dart",
@@ -22944,8 +22983,11 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
-          "sha256": "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06",
-          "reviewScope": "680–708 초안 요금·대기·위치 공유 입력;980–1025 공개 변경 제안 안내는 F03-19 기존 근거 재사용."
+          "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
+          "reviewScope": "680–708 초안 요금·대기·위치 공유 입력;980–1025 공개 변경 제안 안내는 F03-19 기존 근거 재사용. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+          "previousSourceDigests": [
+            "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06"
+          ]
         },
         {
           "path": "community_app/lib/domain/providers/event/event_lifecycle_provider.dart",
@@ -23161,8 +23203,11 @@
         },
         {
           "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
-          "sha256": "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06",
-          "reviewScope": "879–920 포인트 전환 확인·저장되지 않은 입력 안내·요청 결과/새 입력 보존 검사 시작. 전체 편집은 F03-04 기존 근거."
+          "sha256": "84a360abfc8a3e741903f4e207e3ebcf02eac22a6717627152f9920e5915fc63",
+          "reviewScope": "879–920 포인트 전환 확인·저장되지 않은 입력 안내·요청 결과/새 입력 보존 검사 시작. 전체 편집은 F03-04 기존 근거. 2026-11-22 앱 main 0504cfb36 추가 diff 대조: 공개 계좌이체/혼합 동결 안내는 현재 판매 허용 목록 밖일 때만 표시. 앞선 기재 범위는 그대로이며 현재 문서의 허용 목록 설명과 일치.",
+          "previousSourceDigests": [
+            "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06"
+          ]
         },
         {
           "path": "community_app/lib/core/utils/notification_router.dart",
@@ -26579,6 +26624,331 @@
         "F04-18 본인/회원 조회2개 연결 추가; source-first이므로 units 생성하지 않음"
       ],
       "retainedHistoricalQuotes": []
+    },
+    "club_subscription_20261122": {
+      "kind": "source_review",
+      "scope": "F04-16 인증/본인행/실제입구·재원/기간추가·갱신/해지/정지사유·3가지 운영환불·키/결과갱신. 소스와 기존 선택단언 대조; 새 제품/스케줄/결제/환불/이미지 검증 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubSubscriptionService.java",
+          "sha256": "95a999963f3071170028835ebc1b40d7a051a42af19b5a010e4aa0cda9b7c7a4",
+          "reviewScope": "59–202,226–258,286–546,552–616,639–756,763–809: 가격/소유자/정지·기간연장/재원기록·본인조회투영·해지·회원재시작·갱신뒤만료/유예·3환불모드/운영상태·플랜benefits."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/model/ClubSubscription.java",
+          "sha256": "34e18bcaa892b7f84352d97b6e2574ae91df149b5ee5d91a444fa471c4f150bc",
+          "reviewScope": "192–345,372–489: ACTIVE/CANCELLED 기간·실패/운영정지 혜택차이·갱신/만료/해지·결제기간보존·운영정지겹침초·상태변경."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubSubscriptionParam.java",
+          "sha256": "4ded151af2ba808ec20eecb9e4c00013270d98ae9bce2599e906b745a7700adc",
+          "reviewScope": "7–9: 기본 MONTHLY·autoRenew true."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubSubscriptionVo.java",
+          "sha256": "49536cdae79ffab91d66d685f1934a34aca2006bf7c818375d07e217d22495b8",
+          "reviewScope": "19–39: nullable응답/정지사유·plan/price/autoRenew/시각/actions."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubSubscriptionSuspendReason.java",
+          "sha256": "e943597013b98254288921c9c30f616e75efbcdad5e5349c657c472c115f4c0b",
+          "reviewScope": "PAYMENT_FAILURE/OPERATOR 두값·운영정지와 결제실패 분리."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubSubscriptionAutoRenewalService.java",
+          "sha256": "7ac9a1277a63efe6d03eef96bf538d40cf27397554337656e31c7d6e3faf816e",
+          "reviewScope": "39–66: 하루뒤까지 후보·개별 갱신과 실패마킹 분리."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubSubscriptionRenewalWorker.java",
+          "sha256": "7dd24da76f9ea3978515aa1233644941a42468555018adbc229896f664c27252",
+          "reviewScope": "69–167: 잠금뒤 조건재검사·폐쇄/소유자불일치 취소·같은 결제경로·실패1/2/3단계알림·PAYMENT_FAILURE 7일유예."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/service/ClubSubscriptionScheduler.java",
+          "sha256": "938dc4903105fcf0190fad3935e6757f18f6d10e1ab5043a76f56fc75c9d4fe3",
+          "reviewScope": "35–182: 02:00/02:30/03:00/09:00 cron·독립분산잠금·3일내ACTIVE알림·구독/만료/자동갱신 중복키. 실제 실행 확인 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubSubscriptionQueryRepository.java",
+          "sha256": "b2e50904e0c246d2935695afcbd33585a34c01818d11b4154c841675c568e966",
+          "reviewScope": "151–194: ACTIVE 임박알림·자동갱신 dueBy이하·CANCELLED/수동ACTIVE/운영정지만 일반만료대상."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubSubscriptionFeature.java",
+          "sha256": "35dc74b61367a3b10e5b81ca36fe8c67fedce6b6eedc8ea8041d6f5723ac5735",
+          "reviewScope": "19–44 및 사용처 검색: 이벤트게시/공지/초대/앨범·MEMBER_CAP_EXTENSION 예약값."
+        },
+        {
+          "path": "community_app/lib/data/api/club_subscription_api.dart",
+          "sha256": "6ce04f3747a5effc6567160f34445165a1f862e7fb79f1b2d6318e656ad766a3",
+          "reviewScope": "14–34: 5API·List/단건/void·가입/재시작키·해지키없음."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_subscription_repository.dart",
+          "sha256": "58eec8535adcdf4c42db567259a59ab53eb9d37e83ab8d2f554d21a2af4f0176",
+          "reviewScope": "14–66: Result 변환·MONTHLY/autoRenew 기본·키전달."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/subscription_provider.dart",
+          "sha256": "a5316ae5cf42222ed6455952f51b96afd30a6a58a80d3d4123ab3f12cbad7a3f",
+          "reviewScope": "24–162: 본인조회오류throw·공통금전명령키·성공/불명확/이미정지아님 갱신·해지성공 self만·지갑signal."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/subscription_plan_provider.dart",
+          "sha256": "2b5b3516eaf0386b6674cdf872aa1cecfafd599924938c001a6be1a15dc6f9a1",
+          "reviewScope": "13–24: 별도플랜List 조회·실패throw·재시도."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/club_subscription.dart",
+          "sha256": "abee37b87e7e660b0612014b897af338defc344ffce8378d9e1fdc1289068cc9",
+          "reviewScope": "11–44: nullable정지/플랜/가격/시각·autoRenew·동작권한기본닫힘."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/subscription_plan.dart",
+          "sha256": "69fca6edd38accc4933e7a7183426ab6538844554c7a5088b688ca576263b087",
+          "reviewScope": "전체: plan/clubType/price·nullable설명/benefits목록."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/subscription_status.dart",
+          "sha256": "9916d1c50302862c395db02e8dfd83b5e44d68ccf9c59a0e5c01b7ff2a3d43c3",
+          "reviewScope": "8–68: 4서버상태+unknown·Seoul wall-clock 기준 남은기간 해지예정 파생."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/subscription_screen.dart",
+          "sha256": "37a9257aedd34253611035e7285db04f3bcc910b01f6f458ba473383bd814d15",
+          "reviewScope": "50–115,124–210,236–324: pay전조회차단·관리입구·현재planType만버튼막음·매월안내·한가지지갑선택·성공기금갱신/pop·권한거절."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/subscription_manage_screen.dart",
+          "sha256": "737aabe37b6926451300d71a1b4d7eca31ad65f44e553546710106bef534fbb9",
+          "reviewScope": "50–420,505–568: view/pay 분리·조회오류/없음·당겨서구독만·서버actions·정지사유·고객센터·해지예정/만료 파생·확인/결과."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/widgets/payment_method_sheet.dart",
+          "sha256": "67a2c336ea6b34272e0a5104e303c3fb859be4cfd1b542d36a1dc2f86f925f0b",
+          "reviewScope": "15–97: WALLET 한가지·기금먼저 부족분 지갑 안내·선택결과."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/model/ClubSubscriptionRenewalStateTest.java",
+          "sha256": "d6dc0ad3d035550bbe04eed68730b962958fbbb09c75c737a8eaca34e3f40574",
+          "reviewScope": "30–75: 자동갱신 지난만료 대상·수동/해지 만료·운영정지 혜택즉시차단/만료·결제실패정지 일반만료제외 단언을 읽음. 실행 안 함."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/model/ClubSubscriptionOperatorRefundPeriodTest.java",
+          "sha256": "4e4027debdae12d16862f2162259dbf78a21d017ba5f7e7d9dd70d7d82acb696",
+          "reviewScope": "27–59,135–151: 사용중/미래추가/지난구간·앞기간보존·운영정지겹침초 단언을 읽음. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+          "sha256": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+          "reviewScope": "646–705: 인증 인자 없는 플랜 List·본인구독VO·가입/재시작 필수키 영수증·해지204 및 키부재."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "94–120,148–205 공개경로 목록과 anyRequest authenticated: 구독 plans는 공개 예외에 없음. 사용자 인자 부재를 비인증 허용으로 해석하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubSubscriptionGateService.java",
+          "sha256": "5f967a8cee985a858d4d508e651dfa82ae3e13812af12ed0b51e4c3bd98fa32d",
+          "reviewScope": "56–126: BUSINESS만 구독제한·현재소유자행 우선·없을때클럽만료·isActiveAt 혜택판정."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "216–218,235–236,274–295: 폐쇄아닌 정본소유자 결제·운영정지 차단·본인행 조회/해지·정지행재시작."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundMoneyCommand.java",
+          "sha256": "e989afad9f6706e2fc132f9aefaea853647dc2bb8025057fd87543f4de38f3a7",
+          "reviewScope": "114–165: 기금먼저/지갑부족분·재원원장·원기금/지갑 환불 경계."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubFundService.java",
+          "sha256": "11805df67ed7aa8a39f0767395d2ab82a42cf39a8f815aca2ab0480d7159dba7",
+          "reviewScope": "260–274,477–483: 기금 유료먼저 차감·totalSpent 증가; 구독 환불은 정확한 유료/무료 몫을 기금에 더하고 totalSpent를 줄임. 앞선 동일 SHA 범위와 추가 구현 대조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundPlan.java",
+          "sha256": "78c445e7d641f5c5ea2d668234510a92a2b3c5971f56d4eaff4d02cf8ac39b3a",
+          "reviewScope": "338–352: 지갑/기금유료/기금무료 비율별 HALF_UP·전액/0경계."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletSpendService.java",
+          "sha256": "8055356dba4bbf6bb233978b417e97f26b8542578ba75b43794e309b15f9ce89",
+          "reviewScope": "club_finance_20261122 80–123 동일 SHA 근거 재사용: CLUB_SUBSCRIPTION_WALLET은 금전 gate 닫힘 시 무료전용·일반정책유료우선."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+          "reviewScope": "207–236: 재정 영역의 운영 구독 실제 진입 항목."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "1031–1062: 플랜운영진경로·관리하위는 부모가드 건너뛰어 별도 view/pay가드."
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "b7ff405c284771652b8e82d28c6297164706b936553e9274f8e6fe3789436ff6",
+          "reviewScope": "237–248: 구독관리 viewSubscription/paySubscription 허용·거절/조회실패 복귀."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "357–360,398–401: 클럽 번호있는 결제실패/구독만료는 클럽구독관리·개인구독과분리."
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "club_finance_20261122 121–181,217–277 동일 SHA 근거 재사용: 같은계정/의도키·동시요청공유·키준비실패/계정변경 미전송. 이번 구독 명령종류/본문 호출부 대조."
+        }
+      ],
+      "reuses": [
+        "club_announcements_20261122",
+        "club_calendar_20261122",
+        "club_detail_20261122",
+        "club_finance_20261122",
+        "club_reputation_20261122",
+        "event_creation_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
+          "sha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-16.html": [
+          "sidebar",
+          "launch-strip",
+          "subscription-refund-source",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-16 기존5개 서버참조 유지·현재계약 대조"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-16_subscription/scenarios.md",
+          "sha256": "52d0e5156f0524063e45f48bb84f374239ad0a44961644ae3720335bacdbe16e",
+          "characters": 1463,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
+    },
+    "club_domain_20261122": {
+      "kind": "canonical_rollup",
+      "scope": "검토 완료된 F04-01~18 현재 해시와 기능 색인을 근거로 도메인 PRD·로컬 개요·HTML 통합. 과거 중복 권한표/미구현 추측을 현재 계약으로 교체. 새 제품실행 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "club_album_20261122",
+        "club_announcements_20261122",
+        "club_calendar_20261122",
+        "club_comments_20261122",
+        "club_detail_20261122",
+        "club_discovery_20261122",
+        "club_finance_20261122",
+        "club_invitation_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "club_posts_20261122",
+        "club_reputation_20261122",
+        "club_stats_20261122",
+        "club_subscription_20261122",
+        "demographics_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-01_club-discovery_prd.md",
+          "sha256": "4e272ace9c4af9056ae2647881f96c877811bf433b3464bcf01eac6ff92652c6"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-02_club-detail-join_prd.md",
+          "sha256": "dea83a2c16ba7a33351d9057541d48c1bae6a62953e270b7c35e8a4f9eff5999"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-03_club-crud-transfer_prd.md",
+          "sha256": "7e0618c35aa5fa83d6bceed5f5d91dc439081689ac7a50eb7f0ce36242bb77d9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-04_member-management_prd.md",
+          "sha256": "b90ddf37449a21158c8b2a76737874dc49ef5508013cebc82f9f78400faf77e7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-05_waitlist-invitation_prd.md",
+          "sha256": "b6cbfcc196e0749c622c4458d6cd748ee30d3089fb070c9fe4028c9c2ab0e116"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-06_ban-management_prd.md",
+          "sha256": "8f6c6df55f2ff2309e142e61587ba607e57c3e97717512ff012fd9ef1d019dd2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md",
+          "sha256": "0e629cace459596ad2c564c9ed2346995c4cf01cdd6ba6d8489d4eb0a9b607b5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
+          "sha256": "ac77c14eda2ccd1c6a3bc9fee968f3ee5fca4c5cd7a87934838706cbf818a7f7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
+          "sha256": "0a2a97f5074af808d753209af5235ca5ff79362fc076aa46990a0e2b687ffae5"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-10_announcements_prd.md",
+          "sha256": "cdd08cc1460f4eceecc4bc271d3fa18ac9c28d3120dbc3c9461de11f106f23ee"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-11_photo-album_prd.md",
+          "sha256": "7a03b64fd05d672f223caafb86768efb53399463390d58795df219c42ad6ee78"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
+          "sha256": "b3d97463e60f92b39332613dc875f00f1a00da13ba2e69e809d19486e9e09ebd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
+          "sha256": "d5474c1a3155bcd8177bfa05f34af73d6e144fb1f1a8fc7903bbf7984acf790d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
+          "sha256": "fbe3bb0283be6b292fef33a1b0ca6939469e97f5c8068752aeb4b79759c4d7e1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
+          "sha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-17_club-demographics_prd.md",
+          "sha256": "13df3f48604dc72c8c291588191ed4de896d595aa097f546a0ff2dfe6dc1d066"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
+          "sha256": "07a949b94883a4bc0115d35e74300f98aebe053351053f94526a7603e4521832"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/04_클럽_prd.md",
+          "sha256": "0ab490d49b83e0b642220c40dedd03714ecaa8ef9759f73df233f0fd1e96ec2a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/04-club.html": [
+          "sidebar",
+          "content-photos",
+          "action-permission-current",
+          "launch-strip"
+        ]
+      }
     }
   },
   "currentSourceVersions": {
@@ -26595,8 +26965,8 @@
       "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
     },
     "community_app": {
-      "commit": "a443150abb314b7658b6cf3adeab01272d47e37f",
-      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+      "commit": "0504cfb36f006cd40e209f59c546f51dd384150d",
+      "observation": "로컬 main; 기존 대조 이후 다른 세션 변경을 diff와 기존 근거 경로로 대조"
     },
     "community-realtime": {
       "commit": "83b145969779e0fe0236441cdcdd3f15678037b2",
@@ -26635,6 +27005,12 @@
       "from": "ae0630984ddffffda48ad595a8e408c3f2ebd741",
       "to": "a443150abb314b7658b6cf3adeab01272d47e37f",
       "impact": "이벤트 초안 삭제가 더보기로 이동, 만들기 단계·캘린더 빈 달 설명, 검색 재조회 결과 유지, 보관함 명령 잠금. 이벤트·검색·보관함 문서 대조에 반영할 범위. 확인한 알림 파일 변경 없음"
+    },
+    {
+      "repository": "community_app",
+      "from": "a443150abb314b7658b6cf3adeab01272d47e37f",
+      "to": "0504cfb36f006cd40e209f59c546f51dd384150d",
+      "impact": "공통 색상/링크 테마 대응·문구 검사·공개 계좌이체 모임의 동결 경고를 현재 허용 목록으로 판단·송금 목록의 도달 불가 만료조치 제거. 변경 파일과 근거 대조 결과 기존 검토 그룹 영향은 event_edit_screen 3개이며 관련 명령/입구 설명을 유지할 수 있어 해시와 추가 확인 범위를 갱신. 정산 문서는 아직 대조 대상이며 최신 소스로 검토한다."
     }
   ]
 }
