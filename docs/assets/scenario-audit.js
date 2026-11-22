@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 462,
-    "verifiedTraceRecords": 460,
+    "traceMarkers": 475,
+    "verifiedTraceRecords": 473,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -3191,18 +3191,241 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 13,
+        "verified": 13,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F03-13:1",
+            "label": "GET /api/v1/events/{eventId}/prepayment/bank-instructions — 본인 입금 안내",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "getBankInstructions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/bank-instructions",
+                "targetLine": 61,
+                "methodLine": 64
+              }
+            ]
+          },
+          {
+            "id": "F03-13:2",
+            "label": "GET /api/v1/events/{eventId}/prepayment/me — 본인 최신 결제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "getMyPayment",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/me",
+                "targetLine": 72,
+                "methodLine": 75
+              }
+            ]
+          },
+          {
+            "id": "F03-13:3",
+            "label": "GET /api/v1/events/{eventId}/prepayment/me/payments — 본인 결제 이력",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "getMyPayments",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/me/payments",
+                "targetLine": 87,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F03-13:4",
+            "label": "GET /api/v1/events/{eventId}/prepayment/bank/pending — 입금 확인 대기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "getPendingBankQueue",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/bank/pending",
+                "targetLine": 98,
+                "methodLine": 101
+              }
+            ]
+          },
+          {
+            "id": "F03-13:5",
+            "label": "GET /api/v1/events/{eventId}/prepayment/payments — 상태별 은행 결제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "getBankPayments",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/payments",
+                "targetLine": 112,
+                "methodLine": 115
+              }
+            ]
+          },
+          {
+            "id": "F03-13:6",
+            "label": "POST /api/v1/events/{eventId}/prepayment/wallet — 지갑 납부와 필수 키",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "payByWallet",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/wallet",
+                "targetLine": 128,
+                "methodLine": 130
+              }
+            ]
+          },
+          {
+            "id": "F03-13:7",
+            "label": "POST /api/v1/events/{eventId}/prepayment/bank-declare — 입금 신고",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "bankDeclare",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/bank-declare",
+                "targetLine": 146,
+                "methodLine": 147
+              }
+            ]
+          },
+          {
+            "id": "F03-13:8",
+            "label": "POST /api/v1/events/{eventId}/prepayment/point-conversion — 호스트 포인트 전환",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "convertPrepaymentToPoint",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/point-conversion",
+                "targetLine": 161,
+                "methodLine": 164
+              }
+            ]
+          },
+          {
+            "id": "F03-13:9",
+            "label": "POST /api/v1/events/{eventId}/applications/{applicationId}/bank-confirm — 입금 확인",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "bankConfirm",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/bank-confirm",
+                "targetLine": 175,
+                "methodLine": 178
+              }
+            ]
+          },
+          {
+            "id": "F03-13:10",
+            "label": "POST /api/v1/events/{eventId}/applications/{applicationId}/bank-reject — 입금 거절",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "bankReject",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/bank-reject",
+                "targetLine": 196,
+                "methodLine": 199
+              }
+            ]
+          },
+          {
+            "id": "F03-13:11",
+            "label": "POST /api/v1/events/{eventId}/prepayment/refund-receipt — 본인 반환 수령 확인",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "confirmRefundReceipt",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/prepayment/refund-receipt",
+                "targetLine": 220,
+                "methodLine": 223
+              }
+            ]
+          },
+          {
+            "id": "F03-13:12",
+            "label": "POST /api/v1/events/{eventId}/payments/{paymentId}/close-not-received — 미입금 종결",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "closeNotReceived",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/payments/{paymentId}/close-not-received",
+                "targetLine": 235,
+                "methodLine": 238
+              }
+            ]
+          },
+          {
+            "id": "F03-13:13",
+            "label": "POST /api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm — 은행 반환 완료 기록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+                "controller": "EventPrepaymentController",
+                "method": "refundBankConfirm",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/applications/{applicationId}/refund-bank-confirm",
+                "targetLine": 253,
+                "methodLine": 256
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 2,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_api/api-app/src/test/java/com/endside/community/payment/repository/query/PointTransactionQueryRepositoryDataJpaTest.java"
+          "community_app/test/core/router/event_payment_queue_route_gate_test.dart",
+          "community_app/test/widget/event/event_bank_declare_refusal_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/test/presentation/event/event_payment_policy_guidance_card_test.dart"

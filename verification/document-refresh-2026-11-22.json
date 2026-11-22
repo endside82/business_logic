@@ -258,7 +258,8 @@
         "signup_social_onboarding_20261122",
         "event_discovery_20261122",
         "event_creation_20261122",
-        "event_lifecycle_20261122"
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2739,9 +2740,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "457db9d0a18be01c2b4f99ab0d9615117c628c03482894a2a21f3f951991a371",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_prepayment_20261122"
+      ],
+      "reviewedSha256": "82cffcd292b2992f5dd9c54f6df9ef297d554fe30255362f81ba9b17c607ae61"
     },
     {
       "path": "docs/features/F03-14.html",
@@ -4827,7 +4831,8 @@
         "signup_social_onboarding_20261122",
         "event_discovery_20261122",
         "event_creation_20261122",
-        "event_lifecycle_20261122"
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4881,7 +4886,8 @@
         "signup_social_onboarding_20261122",
         "event_discovery_20261122",
         "event_creation_20261122",
-        "event_lifecycle_20261122"
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4958,7 +4964,8 @@
         "no_show_20261122",
         "event_discovery_20261122",
         "event_creation_20261122",
-        "event_lifecycle_20261122"
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5639,10 +5646,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "0f3575d7017b838c01f99dc1e2fddf0d120dc7e00f61f6c2798b260308f5c875",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_prepayment_20261122"
+      ],
+      "reviewedSha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-14_event-transport-mode_prd.md",
@@ -7648,7 +7657,8 @@
         "no_show_20261122",
         "event_discovery_20261122",
         "event_creation_20261122",
-        "event_lifecycle_20261122"
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -14944,6 +14954,11 @@
       "command": "F03-04 소스참조/시나리오 재생성·검사, source reference tests, 문서 경로·정본 SHA·HTML 앵커 대조, git diff --check",
       "result": "코드 위치 표 108개 일치; 참조 검사 11개 통과; 상대 경로 1799개·파생 정본 SHA 221개 오류 0; 이번 근거 38개 지문 일치; 원래 HTML ID 5개 유지·중복/내부 앵커 오류 0. 기능 PRD 64/175 소스 대조",
       "scope": "event_lifecycle_20261122. 제품 시험·실기기·실제 푸시/돈 처리 아님. ignored units 4개는 작업 트리에 보존하며 최종 원본 반영 대상."
+    },
+    {
+      "command": "F03-13 소스참조/시나리오 재생성·검사, source reference tests, 문서 경로·정본 SHA·HTML 절 링크 대조, git diff --check",
+      "result": "코드 위치 표 109개 일치; 참조 검사 11개 통과; 상대 경로 1836개·파생 정본 SHA 222개 오류 0; 이번 근거 41개 지문 일치; 원래 HTML ID 4개 유지·중복/로컬 절 링크 오류 0. 기능 PRD 65/175 소스 대조; 이벤트 영역 개별 PRD pending 없음",
+      "scope": "event_prepayment_20261122. 제품 시험·실기기·실제 송금/수령/운영 설정 조회 아님. source-first 기능으로 별도 units 파일을 생성하지 않음."
     }
   ],
   "evidenceGroups": {
@@ -22577,6 +22592,301 @@
           "id": "F03-04:10",
           "change": "added",
           "reason": "모임 위치 공유 허용의 전용 창구 연결"
+        }
+      ]
+    },
+    "event_prepayment_20261122": {
+      "kind": "source_review",
+      "scope": "F03-13 참가비 정책과 앱 수단 분기, 지갑 키 재생, 은행 신고/행별 확인·거절, 반환 의무·증빙·수령·미입금 종결, 권한별 큐·알림·지연 작업·포인트 복구. 소스와 선택 단언 대조이며 실제 돈·앱·운영 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventBankPaymentQueryService.java",
+          "sha256": "42c24ca72f115be3d817c7ba592a3069f1c9b36995350bbbf56fcb2b3c0e8aab",
+          "reviewScope": "95–194 납부 의무/호스트 계좌 안내·서버 declare 행동;201–300 본인 최신/전체와 호스트·환불담당 큐/결제별 행동 플래그·마스킹."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventBankRefundCommandService.java",
+          "sha256": "bd5efeefe243adc7d912bf8d9ac6f216ac2911eb184a957d25987347aae5ba4a",
+          "reviewScope": "127–152 권한·event/application/payment 잠금;228–240 환불/미입금 가능 상태;249–444 원금·정책/저장된 반환액 상한·0원·선택 증빙 소유/완료·REFUNDED/신청·일행 후속;459–477/540–565 미입금 종결;732–780 본인 지정 결제 수령 확인. 운영자 명령 전체 검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventBankRefundQueue.java",
+          "sha256": "4016705f6daeb88e932114257e7f69ba69f265b8279572416d634a9b2a42c615",
+          "reviewScope": "79–106 반환 의무·시각·귀책 기록과 신청 종료, 초기 반환 알림;117–150 일행 추가분 큐. 실제 은행 이체 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPaymentTransitions.java",
+          "sha256": "0332ef2157f78af93f3f45c0dcb350564ea7648b225f03b46a7c3fbba705699e",
+          "reviewScope": "168–211 반환 요청 저장·미입금 CANCELED·은행 완료 REFUNDED와 금액 누계. 상한 이하 적은 액수도 완료로 닫는 호출 경계는 CommandService와 대조."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentNotices.java",
+          "sha256": "d6b6cbf49793bc41a6d5e3cbed9bbf64bdf44f7e3080b99ecf420f9f753d4c64",
+          "reviewScope": "29–81 결제 대기/만료/수단별 완료/주호스트 신고/거절/반환 요청 fanout/완료 outbox 연결;단말 수신 실행 미확인."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/RefundRequestEscalationScheduler.java",
+          "sha256": "25a1d3fa3687ba7845de2352a584b98e44186de2b4b77a083ad5f8db7e137d22",
+          "reviewScope": "53–103 기본 3일·매일05:20·이벤트/정기모임 후보와 개별 worker 호출;이번 운영 스케줄 실행 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/RefundRequestEscalationWorker.java",
+          "sha256": "06ae59d7d482bf177d5d52829c43dc4d14fc2862b67dacb6fd45fb8b74dc4ec6",
+          "reviewScope": "58–112 이벤트 결제 row lock 뒤 상태·반환요청 시각·재알림 시각 재검사·기록/주호스트 알림·2회부터 운영 경보. 정기모임 경합 전체 검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/port/RefundRequestEscalationEventAdapter.java",
+          "sha256": "d91ddfadcda33d3f9b55e5ace37980c41c9197f0e0434b82a849e490210ba7d7",
+          "reviewScope": "35–71 후보 ID 조회와 MANDATORY 트랜잭션 row lock/현재 기록 저장."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/param/BankDeclareParam.java",
+          "sha256": "353c58693222045aa5126eed962fa5c33bc02eaddb115c5aea6149fc672a1976",
+          "reviewScope": "18–31 입금자명·메모·입금시각 요청 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/param/BankRejectParam.java",
+          "sha256": "8e259cbf3bf6ba6d41236543072adc2bf0b82412320a28b7ca91d17a74053db4",
+          "reviewScope": "14–24 사유와 depositReceived 구분."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/param/BankRefundParam.java",
+          "sha256": "e7fc6d441053e859f0a303cf9489f656371aa9cb69664459968686615fa3db68",
+          "reviewScope": "13–23 선택 금액·메모·증빙 번호 목록."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/param/RefundReceiptParam.java",
+          "sha256": "0270e7030d80322a4ba5536f7fc2c95ba8efc02c71b45aa52057ffc633d551cf",
+          "reviewScope": "16–37 received·note·선택 paymentId."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/vo/EventPaymentVo.java",
+          "sha256": "ea935471567c9790946b516887f88fe9d3c38276f1169bfe61ecb9f5e83558c1",
+          "reviewScope": "23–66 결제·신청·모임·금액·수단/상태·purpose·입금/반환/수령 시각과 마스킹 필드."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_bank_payment_screen.dart",
+          "sha256": "3411fd837aa7b3ca33337aa83e2e2df8013f005f62f23b33a2d64a97979b457f",
+          "reviewScope": "77–196 최신·이전 결제 상태/이력/수령확인·오류/새로고침/서버 행동 버튼;239–400 안내·입금자명/메모·신고 성공/거절 뒤 재조회;437–472 정확한 paymentId 수령 확인."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_bank_payment_queue_screen.dart",
+          "sha256": "97119fb08239b98577457c7141142a179665c1bddcc277f8c8ab0b98d9c61e9f",
+          "reviewScope": "83–164 호스트 세 탭·환불담당 제한목록;200–254 행별 서버 행동 플래그;314–444 입금확인 결과 분기/입금 있음 거절/증빙 필수·환불 완료 기록 안내."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_bank_payment_queue_card.dart",
+          "sha256": "ef3e9d5c17dc4dd124237713653cfb5a8cb14d252bcbfd8d42cdc2ceff49cb37",
+          "reviewScope": "495–538 반환액 기본값·증빙/업로드 제출 조건;540–644 양수 금액·메모·증빙 제출과 실패 입력 보존. UI와 서버 0원/선택 증빙 차이를 소스로 대조."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_bank_payment_provider.dart",
+          "sha256": "c51eb90031380a04498f9cb7217a658e095cb2703acb1eee47e3b8338f2a2348",
+          "reviewScope": "145–164 계정 세션 메모리 키;185–278 신고/결제번호별 확인·거절·환불/수령/미입금;282–385 같은 키 재시도·확정 결과 정리·성공/반영가능 오류의 자료 갱신."
+        },
+        {
+          "path": "community_app/test/core/router/event_payment_queue_route_gate_test.dart",
+          "sha256": "0135dbaa9550eba3ce5f8d8aa41d4bbca0fe12c3b2c341d0f004096709e4366d",
+          "reviewScope": "169–202 환불담당 큐 허용·일반 참가자 거절·본인 결제 입구 허용 단언을 읽음. 실행하지 않음."
+        },
+        {
+          "path": "community_app/test/widget/event/event_bank_declare_refusal_test.dart",
+          "sha256": "51462f385b475b77b795691dc82411e525699ce9b842dd14ea8fa9a73c478b84",
+          "reviewScope": "46–82 신고 상한 거절 후 안내 재조회·보냈어요 버튼 제거 단언을 읽음. 실행하지 않음."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/prepayment/controller/EventPrepaymentController.java",
+          "sha256": "381045f124ec5a62325fe558276174538ffbe312557f6bf110b26d88057c4682",
+          "reviewScope": "61–289 입금 안내/본인 최신·전체/호스트 큐/지갑 필수 키/은행 신고/포인트 전환/확인·거절/수령/미입금 종결/환불 완료와 현재 결제 재생. 기존 의무 출구의 safetyExit 선언 확인."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPrepaymentService.java",
+          "sha256": "6b8a2cfc6c945aede2a7e96522c54d7c63d57c5637957044741c75528ad40c8a",
+          "reviewScope": "348–392 원본 호스트 포인트 전환;407–452 은행 신고·INITIAL 5회 상한·금액;520–608 입력/정책 수단/허용;639–671 결제 번호와 권한;788–797 취소 제외·은행 PENDING;822–897 확정/제재·정원 반환 큐;924–979 거절/키 재생 권한;1043–1065 입금 있음·없음 거절. 지갑 함수는 event_payment_cancel_refund_20261122의 동일 SHA 기존 근거 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "665–695 접근·OPEN·APPROVED_PENDING_PAYMENT·활성 결제·기한·신고 횟수 순서. 그 밖의 신청 규칙은 F03-05/06 근거 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationService.java",
+          "sha256": "4bf144955a40f618b6435ac2a55cfa799bf17581628ec1edda0b3fc32cf3fffe",
+          "reviewScope": "301–308 은행 반환으로 옮기는 신청 호출. 기존 F03-05/06의 신청·승인·취소 근거 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationTransitions.java",
+          "sha256": "5a16cfec60251cc111d5f79b495f822056386a164ed2488cc110aaf71af211e5",
+          "reviewScope": "626–677 승인 신청 CANCEL_PENDING_REFUND·결제 대기 CANCELED 및 결정 이력 저장. 상태 변경을 은행 반환 완료로 확대하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/ApplicationPaymentExpiryScheduler.java",
+          "sha256": "3168cf4a79f001beb5b37447f34a03f68abd4658108699bb32369808d5d6397a",
+          "reviewScope": "event_application_participation_review_20261122 동일 SHA 근거 재사용: 결제 기한 만료 후보·신청별 조건부 전이·은행 PENDING 제외·이력/알림."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "415–424 권한별 은행 큐 입구;1475–1519 납부 기한/POINT 처리/CASH·MIXED 은행 안내. 지갑 흐름은 F06-06 동일 파일 기존 근거 재사용."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
+          "sha256": "e29a26e2dd908252c5642354a0ed8b887915876e49d91e2c29c84a853c9b9015",
+          "reviewScope": "247–275 본인 결제·일행 추가·관리 큐와 큐 접근 가드."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_prepayment_gate.dart",
+          "sha256": "10770736db0b936bc06518886cec051f1f1d6476400cc39728b865ebc8732a53",
+          "reviewScope": "57–94 POINT 지갑·CASH/MIXED 은행·현재 허용 수단/출시 범위. F06-06 동일 근거를 필요한 분기에서 재확인."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_edit_provider.dart",
+          "sha256": "0258fb1759ed62b6eb8c66dd56ea06d3afd1e0bc261887adb1b0ae6ef097b505",
+          "reviewScope": "713–740 포인트 전환 명령과 결과불명 갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_edit_screen.dart",
+          "sha256": "df16c763232c75564911b5822f3dc6f0361cfe43ae4df2fa8824313953065a06",
+          "reviewScope": "879–920 포인트 전환 확인·저장되지 않은 입력 안내·요청 결과/새 입력 보존 검사 시작. 전체 편집은 F03-04 기존 근거."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "156–181 참가자 결제·호스트 큐/정산선입금·노쇼 예외;1228–1243 반환 요청 payload별 이동."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventParticipationCancellationService.java",
+          "sha256": "b52ca6b77efc515f087b18cac597958ee316ab227bd2b118999b491e8c346595",
+          "reviewScope": "F06-06 event_payment_cancel_refund_20261122 동일 SHA 재사용: 본인 취소·수단별 환불/반환 큐·일행 연결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/prepayment/service/EventPaymentRefundService.java",
+          "sha256": "b65956091d62afd8d83f4af5881af7ac84bf6669fa7df999d246b3aeb93c6377",
+          "reviewScope": "F06-06 동일 SHA의 지갑 정책/잔여 결제 환불 근거와 F03-04의 주최 취소 지갑/은행 처리 범위 재사용."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/refundpolicy/controller/RefundPolicyController.java",
+          "sha256": "324eb35492888c29c6b241b41076e4ea2ab49a7a91920e573c1796dd64cdab3c",
+          "reviewScope": "F06-06 동일 SHA의 신청별 환불 미리보기 권한/모임 소속 계약 재사용. 노쇼의 전체 범위로 확대하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/refundpolicy/service/ApplicationRefundPreviewService.java",
+          "sha256": "112975da8c69834d5a99e7e837219de045e5efdbd533309d43595816ab78df4e",
+          "reviewScope": "F06-06 동일 SHA의 현재 사용자 취소 예상액·귀책·잔여 결제 근거 재사용."
+        },
+        {
+          "path": "community_app/lib/domain/providers/attendance/attendance_action_provider.dart",
+          "sha256": "bcd5def8aa7369363637a1ba8f2bc42a3847d600b484b83b6481ee1966ca600c",
+          "reviewScope": "F06-06/F03-05 동일 SHA의 최신 수단 조회·지갑 납부·은행 안내 분기·결과불명 자료 갱신 근거 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCancelRefundRunner.java",
+          "sha256": "189f2ba80abdfcda08fe6af3b0bcb586760c426bb39d2f557a07e21c576cdf04",
+          "reviewScope": "F03-04 event_lifecycle_20261122 동일 SHA·63–161 취소 커밋 뒤 환불/실패/모임선입금/표지 정리 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCancelRefundService.java",
+          "sha256": "4b95df0d89bfb256b94b94051f74a7155a12fda51de4b154e40451b9ba067fb4",
+          "reviewScope": "F03-04 동일 SHA의 납부자 환불 의무·은행 큐/실패기록과 자동 대기 표지 구분 재사용. 앱 취소 응답을 모든 반환 완료로 해석하지 않음."
+        }
+      ],
+      "reuses": [
+        "event_application_participation_review_20261122",
+        "event_creation_20261122",
+        "event_lifecycle_20261122",
+        "event_payment_cancel_refund_20261122",
+        "no_show_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
+          "sha256": "db71640ec99214f345562c0b3a4669c700f9a57312e27b8a22f5f7bfee459a49"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-13.html": [
+          "sidebar",
+          "launch-strip",
+          "cash-refund-preview",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-13:1",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:2",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:3",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:4",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:5",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:6",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:7",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:8",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:9",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:10",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:11",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:12",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
+        },
+        {
+          "id": "F03-13:13",
+          "change": "added",
+          "reason": "참가비 납부·은행 운영·반환 상태의 현행 창구 연결"
         }
       ]
     }
