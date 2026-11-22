@@ -1,75 +1,61 @@
-# F14-06. 지오코딩 (좌표 ↔ 주소) PRD
+# F14-06. 주소 변환과 장소 검색 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 소스를 기준으로 갱신했다. 구현 계약의 대조이며 새 앱 실행·운영 검수 통과 기록이 아니다.
 
->
-> 2026-07-08 현재 소스 갱신: 본 단위는 좌표→주소(reverse geocode)뿐 아니라 주소→좌표 geocode도 함께 제공한다. 서버 `GeocodingController`는 `GET /api/v1/location/geocode?address=...`를 추가했고 Kakao Local address search 결과의 `x/y`를 `longitude/latitude`로 매핑한다. Flutter `geocoding_api.dart`/provider는 주소 검색 결과를 좌표로 확정한다.
->
-> 2026-07-29 현재 소스 갱신: 이벤트 생성뿐 아니라 이벤트 편집·일정변경도 주소가 바뀌면 저장 전에 주소→좌표를 호출하고 실패 시 저장을 막는다. 일정변경 요청은 `newLatitude/newLongitude`를 함께 보내 AUTO 즉시 반영과 MAJOR 제안 snapshot/apply 모두 주소·좌표를 같이 이동시킨다. 운영의 빈 `KAKAO_MAPS_API_KEY`는 기동 실패가 아니라 `SecurityConfigValidator` 경고이며, 실제 지오코딩 호출은 계속 실패한다.
+## 현재 역할과 입구
 
-## 1. 결론
+위치 API는 좌표에서 주소 변환, 주소에서 좌표 변환, 장소 검색 세 기능을 제공한다. 앱의 주소 입력·온보딩·이벤트 장소 선택 등에서 호출한다. 현재 장소 검색 화면은 서버 places API에 연결돼 있다. 주소명·지도 중심 선택과 실시간 참석자 위치 공유는 서로 다른 기능이다.
 
-좌표를 한국식 주소(`AddressVo`)로, 주소 문자열을 좌표(`AddressCoordinateVo`)로 변환하는 양방향 보조 API다. 전용 화면은 없다. 2026-07-29 Flutter 호출부를 전수 검색한 결과, 좌표→주소는 온보딩에서 현재 GPS 위치를 주소로 채우는 한 곳만 사용한다. 주소→좌표는 온보딩 주소 검색, 프로필 주소 폼, 이벤트 생성, 이벤트 편집·일정변경이 사용한다. 두 방향 모두 카카오 로컬 API와 최대 10,000키·24시간 Caffeine 캐시를 각각 사용한다.
+## 주소 변환 계약
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+GET /api/v1/location/reverse-geocode는 lat·lng를 받아 fullAddress·roadAddress·city·district·neighborhood를 반환한다. 범위를 벗어난 좌표와 유한하지 않은 값은 거절한다. 이 메서드는 (0,0)을 별도로 거절하지 않아 위치 공유·길찾기의 좌표 규칙과 동일하지 않다. Kakao에는 x=경도, y=위도를 보낸다. 결과가 없으면 INVALID_COORDINATES다.
 
-본 단위에는 전용 화면이 없다. 실제 Flutter 호출부는 다음과 같다.
+GET /api/v1/location/geocode는 비어 있지 않은 address를 받아 첫 결과의 좌표·주소 이름·도로명 주소를 반환한다. 공백을 정리한 주소를 사용하고 빈 입력은 INVALID_INPUT, 검색 결과 없음은 INVALID_COORDINATES다. 전체 후보를 반환하는 API로 설명하지 않는다.
 
-- 온보딩 위치 (Unit 01) — 현재 GPS 좌표를 `reverseGeocodeProvider`로 주소화하고, 주소 검색 결과는 `geocodeAddressProvider`로 좌표화
-- 프로필 주소 등록/편집 (Unit 13) — 검색한 주소 문자열을 `geocodeAddressProvider`로 좌표화
-- 이벤트 생성 (Unit 03) — 입력한 장소 주소를 repository의 `geocodeAddress`로 좌표화
-- 이벤트 편집/일정변경 (Unit 03) — 주소가 바뀌면 repository의 `geocodeAddress`로 좌표를 먼저 확정하고 실패 시 저장/제안 생성을 중단
-- 길찾기(F14-05)는 서버가 준 `event.address/latitude/longitude`를 사용하며 본 API를 직접 호출하지 않는다.
-- 지도 핀 이동·long-press·이벤트 핀을 좌표→주소로 바꾸는 Flutter 호출부는 현재 없다.
+## 장소 검색 계약
 
-## 2. 코드 위치
+GET /api/v1/location/places는 공백을 정리한 1~100자 query를 받는다. Kakao 키워드 검색을 최대 15건으로 요청하고 결과가 없을 때 주소 검색으로 대체한다. 최종 결과 없음은 오류 대신 빈 목록이다. 각 항목은 이름·주소·분류·위도·경도이며 도로명 주소를 우선한다. 빈 결과는 캐시하지 않는다.
 
-계약의 정본은 코드다. 서버: `GeocodingController`. 앱: `geocoding_api.dart`, `geocoding_repository.dart`, `geocoding_provider.dart`, `address_vo.dart`.
+서버에는 세 변환별 최대 10,000건·24시간 캐시가 있다. 역변환은 소수 여섯 자리 좌표, 정변환과 검색은 정리한 입력을 키로 사용한다. Kakao 키는 서버 설정에서 읽고 앱에 전달하지 않는다. 외부 통신 실패는 EXTERNAL_SERVICE_ERROR로 처리하며 401·403·429는 공급자 거절 경보를 등록한다. 현재 인증·요금제·쿼터·운영 키의 유효성을 소스만으로 확인했다고 쓰지 않는다.
+
+## 앱의 검색과 지도 중심 선택
+
+장소 검색은 입력 지연 처리와 요청 순서 표식으로 늦은 응답을 버린다. 빈 입력은 결과를 비우고 실패는 결과 제거와 안내로 표시한다. 지도 선택은 중심 이동이 끝나고 주소 조회가 끝났으며 현재 중심에 대응하는 주소일 때 확정 가능하다. 주소 필수 모드이면 비어 있지 않은 주소도 필요하다.
+
+역변환 실패는 빈 주소·실패 상태로 남기고 알려진 주소로 이동하면 이전 역변환 응답이 새 선택을 덮지 못하게 한다. 선택한 주소와 좌표는 함께 전달해 이후 저장 과정에서 다시 사용하는 구조다.
+
+## 이벤트 저장의 경계
+
+이벤트 생성과 수정의 주소 보완 실패 정책은 동일하지 않다. 생성의 좌표 보완 helper는 주소 변환 실패만으로 false를 반환하지 않지만, 수정은 변경된 주소의 변환 실패나 응답 대기 중 주소 변경을 저장 오류로 처리한다. 따라서 모든 호출처가 변환 실패 시 저장을 무조건 막는다고 일반화하지 않는다. 최종 저장 조건은 해당 이벤트 생성·수정 문서의 계약을 따른다.
+
+## 과거 Kakao 연동 기록 보존
+
+아래는 기존 HTML에 있던 외부 확인 기록을 인용한 것이며 이번에 다시 실행한 결과가 아니다. 남은 환경별 확인은 [Kakao Local 주소 변환 설정과 확인 범위](../../../docs/qa/external-readiness.html#kakao-local)를 따른다.
+
+> Kakao 실제 주소 변환 확인 — 2026년 10월 12일 Kakao Local API·무료 쿼터와 서버 호출 IP 제한을 설정했다. 서울시청 주소로 실제 Kakao 호출과 공개 Tunnel 경유 서버의 주소→좌표·좌표→주소 변환 200을 확인했고, 검색 결과 없음·빈 입력·무인증 요청의 거절을 확인했다. 앱의 실제 모임 주소·현재 위치 변환, 시간 초과·한도 초과와 Android·iPhone 길찾기 앱 이동·복귀는 확인이 남아 있다. 키는 서버 전용이며 앱에 포함하지 않는다. 환경·근거·다음 행동: Kakao Local 주소 변환 설정 .
+
+## 코드 위치
+
+서버: GeocodingController, GeocodingService, AddressVo, AddressCoordinateVo, PlaceSearchVo. 앱: geocoding_api.dart, geocoding_provider.dart, place_search_screen.dart, map_place_picker_screen.dart, event_create_provider.dart, event_edit_provider.dart.
 
 <!-- source-references:start -->
-서버 창구: `GeocodingController#reverseGeocode`, `GeocodingController#geocode`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `GeocodingController#reverseGeocode`, `GeocodingController#geocode`, `GeocodingController#searchPlaces`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-1. 호출자 화면이 `reverseGeocodeProvider(lat: x, lng: y)` watch
-2. Provider 내부에서 `GeocodingRepository.reverseGeocode(lat: x, lng: y)` → `GeocodingApi.reverseGeocode(x, y)` → GET `/api/v1/location/reverse-geocode?lat=x&lng=y`
-3. `Result.success(AddressVo)` 또는 `Result.failure(ApiError)` → Provider 가 unwrap 하여 AsyncValue 로 노출
-4. 주소→좌표 호출자는 `geocodeAddressProvider(address:)` 또는 repository를 통해 `GET /api/v1/location/geocode?address=`를 호출하고 `AddressCoordinateVo`를 받는다.
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Risk | 이벤트 생성·수정의 주소 보완 실패 처리가 다르다. | 모든 호출처의 저장 차단으로 일반화하지 않는다. |
+| 미검증 | 실제 Kakao 요청·GPS·지도 표시·운영 키·쿼터를 이번에 확인하지 않았다. | 과거 연동 기록과 현재 코드 연결을 구분한다. |
 
-호출자가 같은 좌표로 여러 번 호출해도 클라이언트 단에서는 **별도 캐시 없음** — 매번 서버 호출. 서버는 Caffeine 24h 캐시로 흡수.
+## 수용 기준과 검증 근거
 
-## 4. 제품 규칙
-
-- 좌표를 주소로 바꾸면 전체 주소와 시/도, 구/군, 동 단위가 나온다(없는 단위는 비어 있을 수 있다). 주소를 좌표로 바꾸면 좌표와 지번, 도로명 주소가 나온다.
-- 서버 캐시는 최대 1만 건, 24시간이다. 좌표 키는 소수점 6자리, 주소 키는 앞뒤 공백을 뺀 문자열이다. 외부 장애 응답은 저장하지 않는다. 캐시는 서버마다 따로라 재기동이나 인스턴스가 바뀌면 사라진다.
-- 앱은 따로 캐시하지 않는다. 실패 때 보일 문구와 대체 표시(좌표 그대로, 빈 칸, 직접 입력)는 부르는 화면이 정한다. 주소를 고른 뒤 좌표를 못 얻으면 저장하지 못한다(예: 주소 관리).
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 온보딩에서 현재 위치 주소 자동 채움 (현재 연결된 좌표→주소 Happy Path) | 사용자가 위치 권한을 허용하고 현재 GPS 위치를 불러옴 | `reverseGeocodeProvider` 응답 주소가 선택 위치로 반영됨 |
-| S1-A | 검색 주소를 좌표로 확정 | 온보딩·프로필 주소 검색 또는 이벤트 장소 주소 입력 | `geocodeAddressProvider`/repository 응답 좌표를 저장·이벤트 파라미터에 사용 |
-| S2 | 같은 좌표 재호출 — 캐시 hit (성능 분기) | 시나리오 본문 참조 | 외부 카카오 API 호출 절감 |
-| S3 | 좌표 응답 없음 (네거티브, 무인도/바다 등) | 사용자가 좌표를 손으로 입력하거나 바다 위 좌표를 잡음 | 사용자가 다른 위치 선택해야 함 |
-| S4 | 카카오 API 장애 (외부 시스템 분기) | 시나리오 본문 참조 | 캐시 미저장. 다음 재시도 시 다시 외부 호출. |
-| S5 | 카카오 API 키 미설정 (운영 구성 분기) | 운영에서 `KAKAO_MAPS_API_KEY`가 비어 있음 | 서버는 경고를 남기고 기동은 계속하지만 주소↔좌표 변환 호출은 실패하므로 운영자가 즉시 키를 보충해야 함 |
-| S6 | 좌표 소수점 자릿수 차이 (캐시 키 정규화) | 호출자가 다른 자릿수로 호출 | 미세한 좌표 차이는 같은 응답을 사용 (~10cm 정도 단위에서 캐시 공유) |
-
-## 8. Gap / Risk
-
-- **호출 설명 과장 교정**: 기존 문서는 프로필 주소 지도 핀, 이벤트 장소 핀, 지도 long-press가 좌표→주소 API를 호출한다고 기술했지만 현재 Flutter에서 확인되는 reverse-geocode 호출은 온보딩 현재 GPS 한 곳뿐이다.
-- **운영 키 fail-open**: `KAKAO_MAPS_API_KEY`가 비어도 서버는 기동한다. 주소 등록과 이벤트 장소 저장은 런타임 지오코딩 실패로 막힐 수 있으므로 배포 전 키 검증과 호출 모니터링이 필요하다.
-- **외부 API/인메모리 캐시 의존**: 캐시는 서버 인스턴스별이며 카카오 장애나 재기동 시 보호 범위가 사라진다. 호출 화면별 실패 UX를 별도로 검증해야 한다.
-
-## 9. 수용 기준
-
-- **AC-01. 온보딩 현재 위치 주소 자동 채움**: Given 사용자가 위치 권한을 허용하고 현재 GPS 위치를 얻었을 때 When 온보딩 화면이 reverse geocode를 호출하면 Then 응답 주소와 좌표가 선택 위치에 반영된다
-- **AC-01-A. 검색 주소 좌표 확정**: Given 온보딩·프로필·이벤트 화면에서 주소를 선택하거나 입력했을 때 When 주소→좌표 호출이 성공하면 Then 해당 좌표가 저장 또는 이벤트 요청에 사용되고, 실패하면 호출 화면이 저장을 중단한다
-- **AC-02. 같은 좌표 재호출 — 캐시 hit (성능 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 외부 카카오 API 호출 절감
-- **AC-03. 좌표 응답 없음 (네거티브, 무인도/바다 등)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 다른 위치 선택해야 함
-- **AC-04. 카카오 API 장애 (외부 시스템 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 캐시 미저장. 다음 재시도 시 다시 외부 호출.
-- **AC-05. 카카오 API 키 미설정 (운영 구성 분기)**: Given 운영에서 `KAKAO_MAPS_API_KEY`가 비어 있을 때 When 서버가 기동하면 Then 보안 설정 경고를 기록하되 기동은 계속하며, 주소↔좌표 호출 실패가 예상되므로 운영자가 키를 보충한다
-- **AC-06. 좌표 소수점 자릿수 차이 (캐시 키 정규화)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 미세한 좌표 차이는 같은 응답을 사용 (~10cm 정도 단위에서 캐시 공유)
+- **AC-01 역변환:** lat/lng를 정확히 전달하고 반환 필드·빈 결과 오류와 별도 (0,0) 금지 없음의 범위를 구분한다.
+- **AC-02 정변환:** 정리한 비어 있지 않은 주소에서 첫 좌표 결과를 반환하며 빈 입력과 결과 없음을 구분한다.
+- **AC-03 장소 검색:** 1~100자 검색·키워드 우선·주소 fallback·빈 목록·반환 필드를 현재 계약으로 기록한다.
+- **AC-04 외부 의존:** 서버 전용 키·캐시·외부 오류·공급자 거절 경보와 실제 운영 확인을 구분한다.
+- **AC-05 늦은 응답:** 검색·지도 중심 변경 뒤 이전 응답이 현재 선택을 덮지 않으며 주소 조회 상태가 확정 가능 여부에 반영된다.
+- **AC-06 저장 정책:** 이벤트 생성·수정의 다른 보완 실패 처리를 동일한 저장 차단 규칙으로 표현하지 않는다.
+- **AC-07 과거 증거:** 10월 12일 실연동 기록을 원문 인용으로 보존하고 이번 실행 통과에 합산하지 않는다.

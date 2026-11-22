@@ -304,7 +304,8 @@
         "review_core_20261122",
         "feedback_taste_20261122",
         "trust_score_20261122",
-        "report_intake_20261122"
+        "report_intake_20261122",
+        "location_features_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -368,7 +369,9 @@
         "feedback_taste_20261122",
         "trust_score_20261122",
         "report_intake_20261122",
-        "review_domain_20261122"
+        "review_domain_20261122",
+        "location_features_20261122",
+        "location_domain_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2412,9 +2415,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "3fd349ee8a16c2c40ee6c4865a5a104083e811193f9c7a8f97df79d1e0fa2580",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_domain_20261122"
+      ],
+      "reviewedSha256": "752e9bd0e991a68d18c2193928189666359d65478cb4014e28e2b01071839df0"
     },
     {
       "path": "docs/domains/15-warning.html",
@@ -4091,9 +4097,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2b18f719b8a0d86dd1588d06dab5e0b2fb99a4b3d686bee5638fa0b9a0bcff8a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "3ca50215bc8968e5a886521470cc169e02da60920af9ddba1c9fc8a52edf0639"
     },
     {
       "path": "docs/features/F14-02.html",
@@ -4101,9 +4110,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "fe974ad3e81a059f998519b8c92ae42fa5790006d4618c23afd5a89ab2c5f0f6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "6366f141d0c86b9b32f1fe76bb7e34630d01989b2c984d4347e08f81ddd78c6f"
     },
     {
       "path": "docs/features/F14-03.html",
@@ -4111,9 +4123,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "94f9f14e00e54f3f6936a0bfc4f0833c3f06174db84360523a1c5ad90e9f5d04",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "3cad41388c0be20de2df4a54f2bb7bfd6625d1cdf6be4a79a08dd6bf9676f2be"
     },
     {
       "path": "docs/features/F14-04.html",
@@ -4121,9 +4136,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "b05e478be4782a23c638907d0cc581b4698786385fa794878fda45c096f62565",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "dd14f6524f1f1dab9f6b62c8adc3973e559305ef75a45c30e8db98c907ce50a4"
     },
     {
       "path": "docs/features/F14-05.html",
@@ -4131,9 +4149,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "ba14444b6de6c3eff1d961811559411f6c7b0e91c3745d7bff40720b611482d0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "eb13b28f66b9ee2bad7585bb083418d70851b411f12168840846ae5bf53bbadb"
     },
     {
       "path": "docs/features/F14-06.html",
@@ -4141,9 +4162,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "05d0aa08a5cf1f0e1733c3888ff6e9ad037791394020dfd11059889da7a51d68",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "9194d9e7c1868ce41512b67be1ce48b2bb53041f2268f6383717f26466504732"
     },
     {
       "path": "docs/features/F15-01.html",
@@ -5127,7 +5151,8 @@
         "review_core_20261122",
         "feedback_taste_20261122",
         "trust_score_20261122",
-        "report_intake_20261122"
+        "report_intake_20261122",
+        "location_features_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5226,7 +5251,8 @@
         "review_core_20261122",
         "feedback_taste_20261122",
         "trust_score_20261122",
-        "report_intake_20261122"
+        "report_intake_20261122",
+        "location_features_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5349,7 +5375,8 @@
         "review_core_20261122",
         "feedback_taste_20261122",
         "trust_score_20261122",
-        "report_intake_20261122"
+        "report_intake_20261122",
+        "location_features_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5625,10 +5652,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "f1cbe82c5864e5dffed69588d8250248432fe032c735de40784d95ab475e9a02",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_domain_20261122"
+      ],
+      "reviewedSha256": "42c0ee21ce42e0036915c511aa7d4434fde7d805374d65d88136fec1ac87a152"
     },
     {
       "path": "prd/01_domain_prds/15_경고_징계_prd.md",
@@ -7319,10 +7348,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "674a215c37840c1215dd1c6ddcada13992b407220b816a5504ab1628bb830010",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "c6a23acda7bcc657dfe1c54de5d2274b7691dac39781a26b4ea440194fcd5025"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
@@ -7330,10 +7361,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "fd32a806e5a3019c48f9d85a626ca97cd6a0ed6deb970144cbd0f3b3b1acb560",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "2669914b0645a0e49d9b348efce135a09bcc7bd62c7c844153909491ca4785e4"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
@@ -7341,10 +7374,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "b4a50c5511a366edd04e45a8bc3b519f8903c1d6a92972628f2a7b66e67fe18e",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "a6e96903f29760d91f8413ff3f50e52674ffaa2e5ab235fa7dc97bef1622e6c4"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
@@ -7352,10 +7387,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "b7a671281acd9817bf38502039d697c82fa5e9af4b43e845b17175b53c28201c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "5936326c6c98dc801d3d0b3e758328e81280fc661fd981e516eb439e38be38d0"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
@@ -7363,10 +7400,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f6bd6d1b1bc77f2f807360bb9e64ec17ba3acc8b9c989f4b01919dd027d7817b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "4a49ff61bba02c14ee5c2f08430500e678c5660f244802f9741782bb4ce01a9c"
     },
     {
       "path": "prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
@@ -7374,10 +7413,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5aeefd6cdbf570794dcd07a33aaa264c14375b612f4321cd0a656fdb30f6f230",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "53ce13742773f152de85253a260eccae2ef3794167eeff477c60a9475031be3f"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
@@ -8212,7 +8253,8 @@
         "review_core_20261122",
         "feedback_taste_20261122",
         "trust_score_20261122",
-        "report_intake_20261122"
+        "report_intake_20261122",
+        "location_features_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8463,7 +8505,8 @@
         "review_core_20261122",
         "feedback_taste_20261122",
         "trust_score_20261122",
-        "report_intake_20261122"
+        "report_intake_20261122",
+        "location_features_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -14425,9 +14468,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e5bb52a62e521cee80b2fa478eb283f39ac7c63310f9acd81f8824f629e81029",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_domain_20261122"
+      ],
+      "reviewedSha256": "e6027eeba20133f57d788f308914c44b6e288932996a737b429aaea5606e1083"
     },
     {
       "path": "units/14_location_directions/F14-01_event-location-share/backend.md",
@@ -14435,9 +14481,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cca1f7e399d3008fc19e8e11454153b671693f6c0c9cbb411264dc005d310fc7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "3f11ca708cdf8b74062b9fc55d1005a63e01dd8e080e5c4b56a8bd2b48483d73"
     },
     {
       "path": "units/14_location_directions/F14-01_event-location-share/diagrams.md",
@@ -14445,9 +14494,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4aa425f747be9c5f274f7ddf58e3b1bd15dbf26e29b7ab4328bca552e21cdeb5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "f4692d3dc624ee3460a2258a13470f0e6e876a3a849c7281589e4ad84dc290ee"
     },
     {
       "path": "units/14_location_directions/F14-01_event-location-share/frontend.md",
@@ -14455,9 +14507,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e07dc333db1085488f79b0ae953c81c835a31032452088aa2dbb89f87fa0a92d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "a4c60efab7cd04d6ebe1e3f5b9c05c83b0b5c84179a83380d91ee0a8f30349ba"
     },
     {
       "path": "units/14_location_directions/F14-01_event-location-share/scenarios.md",
@@ -14465,9 +14520,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "84756de26f8258294957a18f193afb3171e3ddc8a609b0b04b2f58cb478e917b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "e9bdf90aeabf6a24c3190b2ae33056f38605eb09250a454741e6aa8a8da2ef7e"
     },
     {
       "path": "units/14_location_directions/F14-02_location-opt-out/backend.md",
@@ -14475,9 +14533,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "923a62abde17ccdcace82952cb97dc6cc01578ca749c6cb2c6c0ab25cde5f152",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "69e6a3d54b42b15dc33ceac2f0bcb620bcfc548c79daf5b62a101830eeba3c1b"
     },
     {
       "path": "units/14_location_directions/F14-02_location-opt-out/diagrams.md",
@@ -14485,9 +14546,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cb9b517292174685183d426fd936bf9188bdb0e8bcb33540ef9b79edc1adcb15",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "24997784ac6ecbad5f22580cfd5072254a5d0a97fc5b3de20e62a94173339809"
     },
     {
       "path": "units/14_location_directions/F14-02_location-opt-out/frontend.md",
@@ -14495,9 +14559,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "be96a4ee886edc63cbb5ea9b35001b3085d968808f25f43859068defd7cb8d0f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "f70c3b9ac3b47f137e6e01ea37c8ea3888dbfe1f47167d427d3be5d8230b959e"
     },
     {
       "path": "units/14_location_directions/F14-02_location-opt-out/scenarios.md",
@@ -14505,9 +14572,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b3a0eb0ffd7812e541b0770a08dadccade60148f15f9bbcc309eab14e5b298c7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "214b1a82960ea58418cb6105a6ada196307d312a4263af25663241527ee863fd"
     },
     {
       "path": "units/14_location_directions/F14-03_location-extend/backend.md",
@@ -14515,9 +14585,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ccdf2856dc623592d84916b65a2857eefe7b5aa7113edc3aca3238b8f7f743d4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "8f587f42bdeb5a12b3d4ac36dbc8cc8d928af6d9bcb38f1d23d69243bedf2cc6"
     },
     {
       "path": "units/14_location_directions/F14-03_location-extend/diagrams.md",
@@ -14525,9 +14598,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6aeedb6eeafb17ba035d641f46e3b5e29d51277cfd19492f4d01b6535f361a81",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "4077857cf0ab521a3ff29b5263abc8b5815fa48a21cfbc7f271a5289a9824fc0"
     },
     {
       "path": "units/14_location_directions/F14-03_location-extend/frontend.md",
@@ -14535,9 +14611,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3d605422d7642eb7cc685ba6d406e3d4a741d25b799e7f7b86944d0746cb2b06",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "3a4eec21e1a008fb5ae02df21b77fbf75e7b67dbe1174fa110e134bc7cdd6ca9"
     },
     {
       "path": "units/14_location_directions/F14-03_location-extend/scenarios.md",
@@ -14545,9 +14624,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8bcea89caa681f0dc05d6e32fc87719ce4d1267fd9b06e4b7c4bf9cac0da1c1e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "5a2b3deb37f7b8476a34e3f28931a88a7c2c0d2f58cb3e6d770496eba72e2d4a"
     },
     {
       "path": "units/14_location_directions/F14-04_location-privacy-dashboard/backend.md",
@@ -14555,9 +14637,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ab58f5a28de8ff40eae70e7dd765c0f9845fb58deab71db39d5b3546f2fc07a7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "b717fa1d9cd2ceb269208d134d07eccb0a5c1eb43e4226c4e900c1c21c3a2dc3"
     },
     {
       "path": "units/14_location_directions/F14-04_location-privacy-dashboard/diagrams.md",
@@ -14565,9 +14650,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e1568bb556a9bd2fb345bc7ebe5b27206d24e11579d436a5adf9681ecd6d7977",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "7df682349171a83dfbdcf41102c836d1483ed9c80136b637ebf133090642b230"
     },
     {
       "path": "units/14_location_directions/F14-04_location-privacy-dashboard/frontend.md",
@@ -14575,9 +14663,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "803f62316cc82f6963e3e741fc780567e0be8c10231db333a8404f911d35d3bf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "3cc5ae3c1f1e7704274580f191f93e0e2278bab85d09bc4964923322bf562322"
     },
     {
       "path": "units/14_location_directions/F14-04_location-privacy-dashboard/scenarios.md",
@@ -14585,9 +14676,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f5dac05e9d97a397c6a19a4454e67ad789d6cff638cb97a7f9a8b542da9a041d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "797e73152752e7d4eebdfd62b3f14c81644196e34bba5f756bfb24281c5c0728"
     },
     {
       "path": "units/14_location_directions/F14-05_event-directions/backend.md",
@@ -14595,9 +14689,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "67f3cbc5682c008d83beec514d2edb318a0e9dea210414e41a5794314bfeb805",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "ae6e896911cdbd3ab598d912e65b4a9a9c94db5833e99b220a19120f2b5e21d3"
     },
     {
       "path": "units/14_location_directions/F14-05_event-directions/diagrams.md",
@@ -14605,9 +14702,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "21838bfb6abd7c717271682b2bbad16c775cc5438f951bd5c71db8ed145b0d26",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "525ed55b279258779e07f7abc666f44db3928b43e09a1c8232152cab3fc4beb7"
     },
     {
       "path": "units/14_location_directions/F14-05_event-directions/frontend.md",
@@ -14615,9 +14715,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7892156787d86bc3f9159a4d42ec8662345e5909ae6a3b6e2e9e7b88a7ff1edf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "2df10f6cb54d940fcf912de19fc4fac3d1e5910e9c64913beec1dd1f7268f9fe"
     },
     {
       "path": "units/14_location_directions/F14-05_event-directions/scenarios.md",
@@ -14625,9 +14728,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "aae9e16ad551c547ca6f772ab791bf30aacfa38980abbf33fb7ee1643e47932d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "565c803bcf266aba4b7c407ca8ffabd7bf2c48554bf3b0314e6eafdb37ff008b"
     },
     {
       "path": "units/14_location_directions/F14-06_reverse-geocoding/backend.md",
@@ -14635,9 +14741,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "969f9ffc37044514528d5c5bae541a8d3fc3e4efd0857d5d8e6ac75fdba2c923",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "f052f22603c5fd210c3c97dfabd2652d7f5579ab7a2179f04aa53ef48f3e8975"
     },
     {
       "path": "units/14_location_directions/F14-06_reverse-geocoding/diagrams.md",
@@ -14645,9 +14754,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "45d645bd1d1286e4ffd2edba16b9529b6ed6405e3ecbe111f9cc8923d6950670",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "f8c74c1c95adf44ad5cb96946e7301ac31cdace56f1499d91b13efde8969724c"
     },
     {
       "path": "units/14_location_directions/F14-06_reverse-geocoding/frontend.md",
@@ -14655,9 +14767,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "10f43b12f4d65200581519409674b27ec1c7d675f9b262fd562edf9b61ea1ce9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "2c9ed76ebb209ad2860e1cb8e9ce84d7fbe8864814af1498cc45a0183b1d8a7d"
     },
     {
       "path": "units/14_location_directions/F14-06_reverse-geocoding/scenarios.md",
@@ -14665,9 +14780,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "49e0f3a39a314edeb07e807ae834acdbc04ec710415401ee966fb1cfe554f332",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "location_features_20261122"
+      ],
+      "reviewedSha256": "0f5e9af88fa6f70aad0c322f67f3f0ae0dc38366d8944cbbb795ed3970f3e720"
     },
     {
       "path": "verification/.enum_cache/closest.txt",
@@ -35158,6 +35276,386 @@
         "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
         "groupDigests": "8 source/canonical digests; 2 retained HTML IDs",
         "derivedDocuments": "3 documents; shared batch verified 9 paths, 45 relative links/anchors and 5 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; verified feature document rollup"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "location_features_20261122": {
+      "kind": "source_review",
+      "scope": "위치·길찾기 6개 기능의 현재 서버·앱 계약을 공통 소스 1회 대조로 통합. 공유 시간/역할/동의·갱신/만료·연장/개인정보/직선거리/주소·장소 검색과 과거 증거를 구분. 새 제품 시험·브라우저·이미지 검수 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/location/controller/LocationController.java",
+          "sha256": "4a82bc9a03b731c48a10bd9f0260519c42e830f87f8383b3d7680bcf39a25a15",
+          "reviewScope": "위치 동의/철회/좌표/목록/개인정보/연장 경로·메서드·본문·쿼리·반환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/service/LocationService.java",
+          "sha256": "a97016a21e9ff2e4f44868b56bb203ec452f2ed1c03fcd608eda990c14891512",
+          "reviewScope": "공유 시간·잠금·역할·동의·좌표·만료·연장·조회 필터·열람 기록·정리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/service/LocationPrivacyService.java",
+          "sha256": "575a81e5f77e8f0268cc432b33ef435ce0b938d9e8e036b671b40bbfb3ecb4d0",
+          "reviewScope": "본인 대상 이벤트별 30일 기록·행 수와 내부 전체 조회의 구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/param/LocationModParam.java",
+          "sha256": "143ed265968923bbc66f21ec42c5a6866fe8a45b9e129b27283b30b6724c9e47",
+          "reviewScope": "좌표·accuracy·선택 expiryMode/customHours 입력"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/vo/LocationVo.java",
+          "sha256": "63f7fcd8ae8c82ed677ab572ead9cec943db4ec28664b737dfe8e35b323e144a",
+          "reviewScope": "위치 응답의 사용자·닉네임·좌표·공유/만료 시각"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/service/LocationShareExpiringScheduler.java",
+          "sha256": "627b83350f39935682392bf5444b46940f64767ca9945b272eb83b91e8ea66f2",
+          "reviewScope": "1분 주기·30분 예고 구간·동의/만료 필터·중복 키·실패 커서"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/directions/controller/DirectionsController.java",
+          "sha256": "2c75f9b37b8b96840ab8989651d0330dba39817370c5522c82827946d2d2a556",
+          "reviewScope": "길찾기 및 운영자용 참석자 거리 GET 계약"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/directions/service/MapDirectionsService.java",
+          "sha256": "bdaa4ef9df90ad7417db2677bb41b5b565f7cbb7e3aebd41dc6f5634ed94d9a0",
+          "reviewScope": "오프라인·출발점 우선순위·직선거리 예상·지도 링크 조합·관리용 거리 필터"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/directions/port/DirectionsEventAdapter.java",
+          "sha256": "c93deddf7cf92cf2eb133871ff25c910879fa2d76dd2a192e99656aa25d67c3f",
+          "reviewScope": "이벤트 상세 접근과 관리 역할의 구분"
+        },
+        {
+          "path": "community_app/lib/data/api/event_location_api.dart",
+          "sha256": "bbd0235d09d47ee4fcad97972d52857e1648cf2b4ceb30f6db3588ee20b250e1",
+          "reviewScope": "위치 API 경로·요청·반환"
+        },
+        {
+          "path": "community_app/lib/domain/providers/location/event_location_provider.dart",
+          "sha256": "9b9921cea481dcbf836a17c33a5149abc71fabe7119de5344ca5fe59ef8a0323",
+          "reviewScope": "30초 목록 갱신·늦은 응답·차단 신호·조회 실패 좌표 제거·명령 오류 보관"
+        },
+        {
+          "path": "community_app/lib/presentation/location/screens/event_location_screen.dart",
+          "sha256": "28f98aab047f54f3904be3e6af8995395ef9fad1e3c0b1cafd1d317cbe8346c8",
+          "reviewScope": "GPS 취득·60초 갱신·연속 실패 중단·동의/철회·첫 진입 오류·만료/연장·화면 수명"
+        },
+        {
+          "path": "community_app/lib/data/api/directions_api.dart",
+          "sha256": "51ad7444343f638674119db0bb1969a674c100baa86ac80e39d662867e4e19f5",
+          "reviewScope": "길찾기 출발점과 참석자 거리 요청"
+        },
+        {
+          "path": "community_app/lib/domain/providers/location/directions_provider.dart",
+          "sha256": "6f2968dc0917b44d88593affb918beccfdb6783d6e65cc8164adc33d86f60ee9",
+          "reviewScope": "명시 출발점 요청·초기 null·응답 처리"
+        },
+        {
+          "path": "community_app/lib/domain/providers/location/attendee_distance_provider.dart",
+          "sha256": "a41139609e69a14658989fe108b2b7ab2afe0d7acf8cd79466ca50e8bf780830",
+          "reviewScope": "거리 목록 조회와 사람 탐색 변경 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/location/screens/directions_screen.dart",
+          "sha256": "77c4ff38fa53ed9638ec745d7f449235253825392e0e5c94ab5e412a9cc6b2df",
+          "reviewScope": "GPS 1회 취득/저장 주소·이동 방식·지도별 링크와 canLaunchUrl fallback"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_info_section.dart",
+          "sha256": "cc027ee4361dcad1a94a407b5a09d8b6e76398a7188b9a5a6836e80042073c16",
+          "reviewScope": "주소 행 지도 선택과 별도 길찾기 입구"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/place_search_screen.dart",
+          "sha256": "2e705deab077ca7fae2d837f491d43db195597eb6752e2f12e06ec932f44d081",
+          "reviewScope": "입력 지연·서버 검색·늦은 응답 제외·빈 입력/실패 결과 초기화"
+        },
+        {
+          "path": "community_app/lib/presentation/common/widgets/map_place_picker_screen.dart",
+          "sha256": "b9c0630859add150533d998625953b02c3fdf5f3786b8f6551a5813aaa0d3a1f",
+          "reviewScope": "지도 중심별 역변환 순서·주소 필수 조건·확정 가능 상태·known address 재사용"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "locationSharingWindow OPEN·시작 2시간 전·종료 미만 및 위치 조회 권한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventLocationSharePolicyService.java",
+          "sha256": "7dcec510e7583d7008b9962909b33e6665d37fa4b9f5f05524389570470e31aa",
+          "reviewScope": "이벤트 전체 설정 권한·상태·정기모임 제외·동의 초기화·outbox 대상"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+          "sha256": "0734c789dd61bf52bcab498e8f216e9fd72979fc27ddc18b4aee38992c872cd8",
+          "reviewScope": "역변환·정변환·장소 검색 GET 인자와 반환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/location/service/GeocodingService.java",
+          "sha256": "e319885b6ce8cf30f7545b88f03f4d8de0b2cb463a9dea659a47cdb2bdeb74c4",
+          "reviewScope": "입력/좌표 검증·캐시·Kakao 호출·키워드/주소 fallback·외부 오류와 경보"
+        },
+        {
+          "path": "community_app/lib/presentation/location/screens/location_privacy_screen.dart",
+          "sha256": "4e9303bb9b96b0128aa8320d9cbc028374e23935dcb86d7fe73893e26860ec45",
+          "reviewScope": "역할별 설정·열람 닉네임·잘못된 시간 문구/도움말·false 반환 안내 경계"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_time_boundary.dart",
+          "sha256": "a62ea383e73138ec36d122042e2e7f43c1a87a78003b109c0f3b57d2f4a7c217",
+          "reviewScope": "EventMoment.liveWindow 상태·일정 확정·시작 2시간 전/종료 경계"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "위치 화면 접근 검사와 개인정보·길찾기 경로"
+        },
+        {
+          "path": "community_app/lib/data/api/geocoding_api.dart",
+          "sha256": "f9a59343c88d1a09e7854e60cb37d0423b80c81d8e73b9436d7280f2464316ef",
+          "reviewScope": "역변환·정변환·장소 검색 세 경로"
+        },
+        {
+          "path": "community_app/lib/domain/providers/location/geocoding_provider.dart",
+          "sha256": "18d28053aa0e8accc4b8bb609ce09f9025a09871a62f5e3a0abdf27aad24bc93",
+          "reviewScope": "주소 변환 Result 성공/실패 전달"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_create_provider.dart",
+          "sha256": "2fd9d35077fe717172286ca6499ef4ff36fccc1999e8ff3abc9adeda27ebdcbf",
+          "reviewScope": "주소 좌표 보완 helper에서 주소/GPS 재사용·주소 변환 실패 반환 경계"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_edit_provider.dart",
+          "sha256": "0258fb1759ed62b6eb8c66dd56ea06d3afd1e0bc261887adb1b0ae6ef097b505",
+          "reviewScope": "주소/좌표 재사용·세션/주소 변경 재확인·변환 실패 저장 오류"
+        }
+      ],
+      "reuses": [
+        "creator_stats_20261122",
+        "event_checkin_20261122",
+        "event_creation_20261122",
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122",
+        "feedback_taste_20261122",
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
+          "sha256": "c6a23acda7bcc657dfe1c54de5d2274b7691dac39781a26b4ea440194fcd5025"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
+          "sha256": "2669914b0645a0e49d9b348efce135a09bcc7bd62c7c844153909491ca4785e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
+          "sha256": "a6e96903f29760d91f8413ff3f50e52674ffaa2e5ab235fa7dc97bef1622e6c4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
+          "sha256": "5936326c6c98dc801d3d0b3e758328e81280fc661fd981e516eb439e38be38d0"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
+          "sha256": "4a49ff61bba02c14ee5c2f08430500e678c5660f244802f9741782bb4ce01a9c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
+          "sha256": "53ce13742773f152de85253a260eccae2ef3794167eeff477c60a9475031be3f"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F14-01.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F14-02.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F14-03.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F14-04.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F14-05.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F14-06.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "external-verification-2026-10-12",
+          "current-limits",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F14-06:3 GeocodingController#searchPlaces GET /api/v1/location/places 추가"
+      ],
+      "followUpFindings": [
+        "공동호스트의 동의와 좌표 쓰기 자격 차이",
+        "개인정보 화면의 시작 24시간 전 문구·F12-01 도움말·false 반환 실패 안내 누락",
+        "관리용 거리 조회의 별도 권한 및 공유 시간 검사·열람 로그 차이",
+        "모든 만료 모드와 연장의 이벤트 종료 상한",
+        "실제 도로 경로가 아닌 직선거리 추정 및 외부 지도 fallback 한계",
+        "이벤트 생성·수정의 주소 변환 실패 처리 차이"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/14_location_directions/F14-01_event-location-share/scenarios.md",
+          "sha256": "25a036ab38fd86c297b7069aee42226fc4df775d3816b635dbb2d08aa7b773e4",
+          "characters": 3069,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/14_location_directions/F14-02_location-opt-out/scenarios.md",
+          "sha256": "4d8784a9c4b529273a451b2fd1b65409fe8fe71eab1d389d0b4b4f67a0ac2bf1",
+          "characters": 885,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/14_location_directions/F14-03_location-extend/scenarios.md",
+          "sha256": "221e8ae4b826ba8c33437d2ff521c08244ce5e5a51a64278a5d64016e80aff4e",
+          "characters": 1676,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/14_location_directions/F14-04_location-privacy-dashboard/scenarios.md",
+          "sha256": "26590052e5aa2628bab1e77ca53efab6e9694f2c99324f26e6ffe94ef7cc1a38",
+          "characters": 1006,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
+          "heading": "## 과거 Kakao 연동 기록 보존",
+          "sha256": "9afd9f5c66722176acf39b145c69fa182cff1cbc6cb63fffa440a3d1c72e1d9c",
+          "characters": 307,
+          "note": "기존 HTML의 2026-10-12 Kakao 실연동 기록을 인용으로 보존; 이번 실행 결과 아님"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "36 source/canonical digests; 51 retained HTML IDs",
+        "derivedDocuments": "36 documents; shared batch verified 39 paths, 136 relative links/anchors and 25 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "location_domain_20261122": {
+      "kind": "canonical_rollup",
+      "scope": "위치·길찾기 기능 PRD 6개의 검토된 현재 계약과 근거를 재사용한 도메인 PRD/로컬 개요/HTML 통합. 새 제품 시험·화면 검수 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "location_features_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md",
+          "sha256": "c6a23acda7bcc657dfe1c54de5d2274b7691dac39781a26b4ea440194fcd5025"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
+          "sha256": "2669914b0645a0e49d9b348efce135a09bcc7bd62c7c844153909491ca4785e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
+          "sha256": "a6e96903f29760d91f8413ff3f50e52674ffaa2e5ab235fa7dc97bef1622e6c4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
+          "sha256": "5936326c6c98dc801d3d0b3e758328e81280fc661fd981e516eb439e38be38d0"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
+          "sha256": "4a49ff61bba02c14ee5c2f08430500e678c5660f244802f9741782bb4ce01a9c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
+          "sha256": "53ce13742773f152de85253a260eccae2ef3794167eeff477c60a9475031be3f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/14_위치_and_길찾기_prd.md",
+          "sha256": "42c0ee21ce42e0036915c511aa7d4434fde7d805374d65d88136fec1ac87a152"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/14-location.html": [
+          "sidebar",
+          "launch-strip",
+          "domain-1",
+          "domain-2",
+          "domain-3",
+          "domain-4",
+          "domain-5",
+          "domain-6",
+          "place-picker-current",
+          "domain-8"
+        ]
+      },
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "7 source/canonical digests; 10 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 39 paths, 136 relative links/anchors and 25 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; verified feature document rollup"

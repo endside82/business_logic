@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F14-06 주소 ↔ 좌표 변환 — community PRD</title>
+  <title>F14-06 주소 변환과 장소 검색</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,92 +17,26 @@
           <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
           F14-06 주소 ↔ 좌표 변환
         </div>
-        <h1>F14-06. 주소 ↔ 좌표 변환 (지오코딩)</h1>
-        <p class="lede">
-          위·경도 좌표를 한국식 주소로 바꾸고, 주소 문자열을 저장 가능한 좌표로 확정하는 양방향 보조 인프라.
-          본 단위에는 전용 화면이 없다. 현재 Flutter에서 좌표→주소는 온보딩의 현재 GPS 위치 한 곳,
-          주소→좌표는 온보딩·프로필 주소 폼·이벤트 생성·편집에서 호출한다.
-        </p>
+        <h1>F14-06 주소 변환과 장소 검색</h1>
+        <p class="lede">주소·좌표 변환과 서버 장소 검색·캐시·외부 오류·지도 선택·호출처별 저장 경계를 대조한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="external-verification-2026-10-12">
-        <h2>Kakao 실제 주소 변환 확인 — 2026년 10월 12일</h2>
-        <p>Kakao Local API·무료 쿼터와 서버 호출 IP 제한을 설정했다. 서울시청 주소로 실제 Kakao 호출과 공개 Tunnel 경유 서버의 주소→좌표·좌표→주소 변환 200을 확인했고, 검색 결과 없음·빈 입력·무인증 요청의 거절을 확인했다.</p>
-        <p>앱의 실제 모임 주소·현재 위치 변환, 시간 초과·한도 초과와 Android·iPhone 길찾기 앱 이동·복귀는 확인이 남아 있다. 키는 서버 전용이며 앱에 포함하지 않는다.</p>
-        <p>환경·근거·다음 행동: <a href="../qa/external-readiness.html#kakao-local">Kakao Local 주소 변환 설정</a>.</p>
-      </section>
-
-      <section>
-        <div class="callout">
-          <span class="label">설계 의도 — 사용자는 좌표가 아니라 주소로 위치를 이해한다</span>
-          <p>지도에서 핀을 옮기거나 현재 위치를 잡으면 결과로 받는 것은 위·경도 숫자다. 그러나 사용자가 "여기가 어디인가"를 인지하려면
-            "강남구 역삼동" 같은 한국식 주소가 필요하다. 본 단위는 그 변환을 빠르게 처리해 다른 화면이 사용자에게 의미 있는 라벨을 보여줄 수 있게 한다.
-            같은 좌표가 반복 호출되어도 외부 변환 서비스 비용을 늘리지 않도록 변환 결과는 24시간 동안 캐시된다.</p>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">2026-07-29 현재 소스 갱신 — 일정변경 좌표 동기화와 운영 키 경고</span>
-          <p>현재 서버는 좌표→주소뿐 아니라 `GET /api/v1/location/geocode?address=...`로 주소→좌표도 제공한다.
-            Flutter 이벤트 생성·편집·일정변경은 주소 변경 시 좌표를 먼저 확정하고 실패하면 저장을 막는다.
-            운영에서 Kakao 키가 비면 서버는 경고 후 기동을 계속하지만 주소↔좌표 호출은 실패한다.
-            기존 문서의 지도 핀·long-press·길찾기 reverse-geocode 설명은 현재 호출부와 일치하지 않아 제거했다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>본 변환이 호출되는 자리</h2>
-        <p class="subtitle">본 단위 자체에는 화면이 없다. 다른 화면이 사용자에게 위치를 보여줄 때 본 변환이 보조로 호출된다.</p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">온보딩 위치</div>
-            <h3>현재 GPS 위치를 주소로 표시</h3>
-            <p>사용자가 위치 권한을 허용하고 현재 위치를 불러오면 좌표→주소를 호출해 선택 위치에 반영한다.
-              현재 소스에서 확인되는 reverse-geocode 화면 호출자는 이 한 곳이다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">온보딩·프로필 주소</div>
-            <h3>검색 주소를 좌표로 확정</h3>
-            <p>온보딩과 프로필 주소 폼은 사용자가 검색 결과를 고르면 주소→좌표를 호출한다.
-              프로필 주소 화면은 reverse geocode가 아니라 이 forward-geocode 흐름을 사용한다.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">이벤트 생성·편집·일정변경</div>
-            <h3>장소 주소와 좌표를 함께 저장</h3>
-            <p>주소가 바뀌면 저장 전에 주소→좌표를 호출한다. 실패하면 저장을 막고, 성공하면 일정변경 요청의
-              `newLatitude/newLongitude`까지 함께 보내 AUTO 반영과 MAJOR 제안 적용에서 주소·좌표가 어긋나지 않게 한다.</p>
-          </div>
-        </div>
-        <div class="callout warn">
-          <span class="label">현재 연결되지 않은 흐름</span>
-          <p>길찾기는 서버의 이벤트 주소·좌표를 그대로 사용한다. 지도 핀 이동, 지도 long-press, 이벤트 핀을
-            좌표→주소로 바꾸는 Flutter 호출부도 현재 없다. 이 동작들은 구현 사실이 아니라 후속 후보로 취급해야 한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">변환 정책과 외부 의존</span>
-          <ul>
-            <li><strong>변환은 외부 지도 서비스(카카오 로컬)를 호출한다.</strong>
-              외부 서비스가 일시적으로 응답하지 않으면 본 변환도 같이 멈춘다. 다른 화면은 이 경우 "주소를 찾을 수 없습니다" 같은 안내로 좌표 숫자를 그대로 노출하거나 사용자에게 직접 입력을 유도해야 한다.</li>
-            <li><strong>같은 좌표는 24시간 동안 캐시된다.</strong>
-              같은 위치를 여러 사용자가 반복 조회해도 외부 서비스 호출은 한 번만 일어난다. 자주 보이는 주소(많이 등록되는 모임 장소 등)는 변환 비용이 거의 들지 않는다.</li>
-            <li><strong>바다·산속·미등록 지역의 좌표는 변환되지 않는다.</strong>
-              "주소를 찾을 수 없습니다" 안내가 호출 화면에서 노출되어 사용자가 다른 위치를 선택하도록 유도한다.</li>
-            <li><strong>외부 지도 서비스 인증 키 설정이 끊기면 본 변환 전체가 멈춘다.</strong>
-              프로덕션 기동 시 `SecurityConfigValidator`가 경고하지만 fail-fast 하지는 않는다.
-              주소 등록·이벤트 장소 등록·일정변경이 런타임에 막히므로 키 경고를 즉시 대응해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 역할과 입구</h2><p>위치 API는 좌표에서 주소 변환, 주소에서 좌표 변환, 장소 검색 세 기능을 제공한다. 앱의 주소 입력·온보딩·이벤트 장소 선택 등에서 호출한다. 현재 장소 검색 화면은 서버 places API에 연결돼 있다. 주소명·지도 중심 선택과 실시간 참석자 위치 공유는 서로 다른 기능이다.</p></section>
+<section id="current-2"><h2>주소 변환 계약</h2><p>GET /api/v1/location/reverse-geocode는 lat·lng를 받아 fullAddress·roadAddress·city·district·neighborhood를 반환한다. 범위를 벗어난 좌표와 유한하지 않은 값은 거절한다. 이 메서드는 (0,0)을 별도로 거절하지 않아 위치 공유·길찾기의 좌표 규칙과 동일하지 않다. Kakao에는 x=경도, y=위도를 보낸다. 결과가 없으면 INVALID_COORDINATES다.</p>
+<p>GET /api/v1/location/geocode는 비어 있지 않은 address를 받아 첫 결과의 좌표·주소 이름·도로명 주소를 반환한다. 공백을 정리한 주소를 사용하고 빈 입력은 INVALID_INPUT, 검색 결과 없음은 INVALID_COORDINATES다. 전체 후보를 반환하는 API로 설명하지 않는다.</p></section>
+<section id="current-3"><h2>장소 검색 계약</h2><p>GET /api/v1/location/places는 공백을 정리한 1~100자 query를 받는다. Kakao 키워드 검색을 최대 15건으로 요청하고 결과가 없을 때 주소 검색으로 대체한다. 최종 결과 없음은 오류 대신 빈 목록이다. 각 항목은 이름·주소·분류·위도·경도이며 도로명 주소를 우선한다. 빈 결과는 캐시하지 않는다.</p>
+<p>서버에는 세 변환별 최대 10,000건·24시간 캐시가 있다. 역변환은 소수 여섯 자리 좌표, 정변환과 검색은 정리한 입력을 키로 사용한다. Kakao 키는 서버 설정에서 읽고 앱에 전달하지 않는다. 외부 통신 실패는 EXTERNAL_SERVICE_ERROR로 처리하며 401·403·429는 공급자 거절 경보를 등록한다. 현재 인증·요금제·쿼터·운영 키의 유효성을 소스만으로 확인했다고 쓰지 않는다.</p></section>
+<section id="current-4"><h2>앱의 검색과 지도 중심 선택</h2><p>장소 검색은 입력 지연 처리와 요청 순서 표식으로 늦은 응답을 버린다. 빈 입력은 결과를 비우고 실패는 결과 제거와 안내로 표시한다. 지도 선택은 중심 이동이 끝나고 주소 조회가 끝났으며 현재 중심에 대응하는 주소일 때 확정 가능하다. 주소 필수 모드이면 비어 있지 않은 주소도 필요하다.</p>
+<p>역변환 실패는 빈 주소·실패 상태로 남기고 알려진 주소로 이동하면 이전 역변환 응답이 새 선택을 덮지 못하게 한다. 선택한 주소와 좌표는 함께 전달해 이후 저장 과정에서 다시 사용하는 구조다.</p></section>
+<section id="current-5"><h2>이벤트 저장의 경계</h2><p>이벤트 생성과 수정의 주소 보완 실패 정책은 동일하지 않다. 생성의 좌표 보완 helper는 주소 변환 실패만으로 false를 반환하지 않지만, 수정은 변경된 주소의 변환 실패나 응답 대기 중 주소 변경을 저장 오류로 처리한다. 따라서 모든 호출처가 변환 실패 시 저장을 무조건 막는다고 일반화하지 않는다. 최종 저장 조건은 해당 이벤트 생성·수정 문서의 계약을 따른다.</p></section>
+<section id="external-verification-2026-10-12"><h2>과거 Kakao 연동 기록 보존</h2><p>아래는 기존 HTML에 있던 외부 확인 기록을 인용한 것이며 이번에 다시 실행한 결과가 아니다. 남은 환경별 확인은 <a href="../qa/external-readiness.html#kakao-local">Kakao Local 주소 변환 설정과 확인 범위</a>를 따른다.</p>
+<p>&gt; Kakao 실제 주소 변환 확인 — 2026년 10월 12일 Kakao Local API·무료 쿼터와 서버 호출 IP 제한을 설정했다. 서울시청 주소로 실제 Kakao 호출과 공개 Tunnel 경유 서버의 주소→좌표·좌표→주소 변환 200을 확인했고, 검색 결과 없음·빈 입력·무인증 요청의 거절을 확인했다. 앱의 실제 모임 주소·현재 위치 변환, 시간 초과·한도 초과와 Android·iPhone 길찾기 앱 이동·복귀는 확인이 남아 있다. 키는 서버 전용이며 앱에 포함하지 않는다. 환경·근거·다음 행동: Kakao Local 주소 변환 설정 .</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>이벤트 생성·수정의 주소 보완 실패 처리가 다르다.</td><td>모든 호출처의 저장 차단으로 일반화하지 않는다.</td></tr><tr><td>미검증</td><td>실제 Kakao 요청·GPS·지도 표시·운영 키·쿼터를 이번에 확인하지 않았다.</td><td>과거 연동 기록과 현재 코드 연결을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 역변환:</strong> lat/lng를 정확히 전달하고 반환 필드·빈 결과 오류와 별도 (0,0) 금지 없음의 범위를 구분한다.</li><li><strong>AC-02 정변환:</strong> 정리한 비어 있지 않은 주소에서 첫 좌표 결과를 반환하며 빈 입력과 결과 없음을 구분한다.</li><li><strong>AC-03 장소 검색:</strong> 1~100자 검색·키워드 우선·주소 fallback·빈 목록·반환 필드를 현재 계약으로 기록한다.</li><li><strong>AC-04 외부 의존:</strong> 서버 전용 키·캐시·외부 오류·공급자 거절 경보와 실제 운영 확인을 구분한다.</li><li><strong>AC-05 늦은 응답:</strong> 검색·지도 중심 변경 뒤 이전 응답이 현재 선택을 덮지 않으며 주소 조회 상태가 확정 가능 여부에 반영된다.</li><li><strong>AC-06 저장 정책:</strong> 이벤트 생성·수정의 다른 보완 실패 처리를 동일한 저장 차단 규칙으로 표현하지 않는다.</li><li><strong>AC-07 과거 증거:</strong> 10월 12일 실연동 기록을 원문 인용으로 보존하고 이번 실행 통과에 합산하지 않는다.</li></ul></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

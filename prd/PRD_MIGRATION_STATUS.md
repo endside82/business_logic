@@ -347,10 +347,10 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F13-07 | 프로필 & 설정 | [F13-07_account-deactivation_prd.md](02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md) | `F13-07_account-deactivation` | 실사 기반 전환본 | 2 | 4 |
 | F14-01 | 위치 & 길찾기 | [F14-01_event-location-share_prd.md](02_feature_prds/14_location_directions/F14-01_event-location-share_prd.md) | `F14-01_event-location-share` | 실사 기반 전환본 | 3 | 2 |
 | F14-02 | 위치 & 길찾기 | [F14-02_location-opt-out_prd.md](02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md) | `F14-02_location-opt-out` | 실사 기반 전환본 | 1 | 2 |
-| F14-03 | 위치 & 길찾기 | [F14-03_location-extend_prd.md](02_feature_prds/14_location_directions/F14-03_location-extend_prd.md) | `F14-03_location-extend` | 실사 기반 전환본 | 1 | 3 |
-| F14-04 | 위치 & 길찾기 | [F14-04_location-privacy-dashboard_prd.md](02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md) | `F14-04_location-privacy-dashboard` | 실사 기반 전환본 | 1 | 4 |
-| F14-05 | 위치 & 길찾기 | [F14-05_event-directions_prd.md](02_feature_prds/14_location_directions/F14-05_event-directions_prd.md) | `F14-05_event-directions` | 실사 기반 전환본 | 2 | 2 |
-| F14-06 | 위치 & 길찾기 | [F14-06_reverse-geocoding_prd.md](02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md) | `F14-06_reverse-geocoding` | 실사 기반 전환본 | 1 | 0 |
+| F14-03 | 위치 & 길찾기 | [F14-03_location-extend_prd.md](02_feature_prds/14_location_directions/F14-03_location-extend_prd.md) | `F14-03_location-extend` | 실사 기반 전환본 | 1 | 2 |
+| F14-04 | 위치 & 길찾기 | [F14-04_location-privacy-dashboard_prd.md](02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md) | `F14-04_location-privacy-dashboard` | 실사 기반 전환본 | 1 | 3 |
+| F14-05 | 위치 & 길찾기 | [F14-05_event-directions_prd.md](02_feature_prds/14_location_directions/F14-05_event-directions_prd.md) | `F14-05_event-directions` | 실사 기반 전환본 | 2 | 3 |
+| F14-06 | 위치 & 길찾기 | [F14-06_reverse-geocoding_prd.md](02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md) | `F14-06_reverse-geocoding` | 실사 기반 전환본 | 3 | 2 |
 | F15-01 | 경고 & 징계 | [F15-01_warning-overview-ledger_prd.md](02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | `source-first` | source-first 구현 확인 | 0 | 2 |
 | F15-02 | 경고 & 징계 | [F15-02_report-submit-manage_prd.md](02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
 | F15-03 | 경고 & 징계 | [F15-03_appeal_prd.md](02_feature_prds/15_warning/F15-03_appeal_prd.md) | `source-first` | source-first 구현 확인 | 0 | 2 |

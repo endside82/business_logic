@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F14-02 위치 공유 중지 — community PRD</title>
+  <title>F14-02 위치 공유 중단과 이벤트 설정</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,214 +17,23 @@
           <a href="../domains/14-location.html">14 위치·길찾기</a><span>›</span>
           F14-02 위치 공유 중지
         </div>
-        <h1>F14-02. 위치 공유 중지</h1>
-        <p class="lede">
-          사용자가 토글을 내리는 순간 일행 화면에서 본인 위치가 즉시 사라지게 한다.
-          "끄겠다"는 의사 표시 한 번이 다른 사람의 다음 갱신 안에 반드시 반영되어야 하므로,
-          본 단위는 위치 공유의 4가지 원칙 중 "중지는 즉시"를 단호히 지키는 자리다.
-        </p>
+        <h1>F14-02 위치 공유 중단과 이벤트 설정</h1>
+        <p class="lede">본인 철회와 이벤트 전체 설정의 다른 권한·초기화·알림 효과 및 앱 실패 안내 경계를 명시한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">서버 삭제</div><div class="value">즉시</div><div class="hint">다른 화면은 다음 성공한 목록 조회에 반영</div></div>
-          <div class="metric"><div class="label">확인 단계</div><div class="value">1단계</div><div class="hint">위치 화면에서는 다이얼로그로 한 번 더 확인</div></div>
-          <div class="metric"><div class="label">종료 +2시간</div><div class="value">접근창 종료</div><div class="hint">자동 opt-out은 아님</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — "끄면 즉시 사라진다"가 위치 공유 전체의 신뢰 기반</span>
-          <p>사용자가 위치 공유를 다시 켤 수 있는 이유는 "꺼지면 진짜 꺼진다"라는 보장이 있기 때문이다.
-            중지 후 1초라도 마커가 남는다면, 그 사용자는 더 이상 토글을 켜지 않는다 — 그리고 그 의심은 위치 도메인 전체로 번진다.
-            서버 삭제는 즉시지만 다른 사용자 화면 반영은 다음으로 성공한 목록 조회에 달려 있다. 30초는 정상 폴링 주기이지 하드 상한이 아니다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>중지의 두 가지 진입 경로와 접근창</h2>
-        <p class="subtitle">사용자가 "끄겠다"라고 표시할 수 있는 자리는 두 곳이다. 종료 +2시간은 일반 참석자의 조회·갱신 접근창 종료이지 세 번째 opt-out 경로가 아니다.</p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">진입 1 — 위치 화면</div>
-            <h3>이벤트 위치 화면 하단 시트의 토글</h3>
-            <p>지도를 보고 있는 도중에 토글을 내리면 "위치 공유를 중지하시겠습니까? 다른 참석자에게 내 위치가 표시되지 않습니다." 다이얼로그가 한 번 뜬다.
-              "중지"를 누르면 곧장 처리되고, "취소"를 누르면 토글이 시각적으로 그대로 켜진 상태에 머문다.
-              한 번 더 확인하는 이유는, 지도를 보면서 토글을 잘못 건드리는 사용자가 많기 때문.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">진입 2 — 프라이버시 대시보드</div>
-            <h3>위치 프라이버시 화면에서 끄기</h3>
-            <p>위치 화면 우상단 톱니바퀴를 통해 들어간 프라이버시 대시보드에서는 확인 다이얼로그 없이 즉시 처리된다.
-              이 화면은 사용자가 "내 위치가 어디에 보이고 있는가"를 점검하러 일부러 들어온 자리이므로,
-              한 번 더 묻는 단계가 오히려 흐름을 끊는다고 본 설계.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">접근창 — opt-out 아님</div>
-            <h3>모임 종료 2시간 후 일반 참석자 접근 차단</h3>
-            <p>일반 참석자의 GET/update는 차단되지만 <code>LocationOptIn.optedIn</code>은 그대로다.
-              공유 행은 자체 <code>expiresAt</code> 필터와 03:30 cleanup을 따르고, 관리자급 조회자는
-              +2시간 GET 게이트를 우회한다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>중지 흐름</h2>
-        <p class="subtitle">사용자가 토글을 내리는 순간부터 다른 사람의 다음 갱신 응답에서 본인이 사라지기까지.</p>
-        <div class="diagram">
-          <div class="mermaid">
-sequenceDiagram
-    actor 나
-    participant 화면 as 위치 화면
-    participant 서버 as 위치 서버
-    actor 일행
-
-    나->>화면: 토글 Off 탭
-    alt 위치 화면에서 끄기
-        화면-->>나: "공유 중지하시겠습니까?" 다이얼로그
-        나->>화면: "중지" 탭
-    else 프라이버시 대시보드에서 끄기
-        Note over 화면,나: 확인 다이얼로그 없음
-    end
-    화면->>서버: 위치 공유 중지 요청
-    서버->>서버: 본인 동의 상태를 '꺼짐'으로 갱신
-    서버-->>화면: 처리 완료
-    화면-->>나: "위치 공유를 중지했습니다" 토스트
-    화면-->>화면: 자동 갱신 루프 중지
-    Note over 일행: 다음으로 성공한 목록 조회에서<br/>나의 좌표가 사라진다
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름</div>
-            <h3>약속 장소에 도착해서 끈다</h3>
-            <p>모임 장소에 도착한 사용자가 시트의 위치 공유 토글을 내린다. 다이얼로그가 한 번 뜨고, "중지"를 누르면
-              "위치 공유를 중지했습니다" 토스트와 함께 시트 라벨이 회색으로 바뀐다.
-              다른 일행의 다음 갱신 응답에서 본인 마커가 사라진다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 도착 후 위치를 끄는 자연스러운 마무리. 사용자가 "끝났다"를 직접 표시하게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">취소</div>
-            <h3>잘못 건드린 토글</h3>
-            <p>지도를 보다가 손가락이 토글에 닿아 다이얼로그가 뜬다. 사용자가 "취소"를 누르면 어떤 호출도 일어나지 않고
-              토글은 시각적으로도 켜진 상태 그대로다. 자동 갱신은 끊김 없이 계속된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 위치 공유처럼 민감한 동작은 한 번 더 확인하는 단계가 사용자 신뢰의 기반.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">다른 진입점</div>
-            <h3>프라이버시 대시보드에서 즉시 끄기</h3>
-            <p>모임이 끝나서 "내가 어디에 위치를 공유하고 있는지" 점검하러 들어온 사용자가 카드의 스위치를 내린다.
-              여기서는 다이얼로그 없이 즉시 처리되고, "위치 공유를 중단했습니다" 토스트가 뜬 뒤 카드 라벨이 "위치 비공개"로 바뀐다.</p>
-            <p>서버 좌표 삭제 결과는 같지만 이 화면은 아래 위치 화면의 30초 목록/GPS 60초 타이머를 직접 중지하지 않는다.
-              목록 갱신은 실패를 삼키고 GPS update는 실패를 누적한 뒤 멈출 수 있다.</p>
-            <p><strong>현재 Gap</strong> — 서버 프라이버시는 지키지만 두 화면의 실행 상태를 함께 정리하지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">접근창 종료</div>
-            <h3>모임이 끝나고 화면을 켜둔 채로 둔다</h3>
-            <p>일반 참석자의 다음 GET/update가 거부될 뿐 서버가 opt-in을 false로 바꾸지는 않는다.
-              저장 좌표의 노출 만료는 별도 expiresAt이고 물리 삭제는 03:30 cleanup이다.</p>
-            <p><strong>운영 해석</strong> — 접근창 종료와 사용자 동의 상태 종료를 같은 것으로 표시하면 안 된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">재개</div>
-            <h3>위치 지도에서 껐다가 다시 켠다</h3>
-            <p>잠시 끈 사용자가 data 화면의 토글을 다시 켜면 F14-01의 켜기 흐름을 시도한다.
-              opt-in 뒤 첫 좌표 update의 성공 여부를 확인하지 않고 성공 토스트와 두 타이머를 시작하므로
-              서버에 동의만 true이고 share row는 없는 상태가 가능하다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 한 번 꺼졌다고 영구히 막히지 않는 자유. 사용자가 자기 의사로 재개할 수 있어야 중지가 가벼운 동작이 된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">프라이버시 화면 재동의</div>
-            <h3>토글은 켜졌지만 좌표는 아직 없다</h3>
-            <p>프라이버시 화면에서 다시 켜면 opt-in 행만 true가 된다. 이 화면은 GPS를 얻거나
-              <code>POST /update</code>를 호출하거나 타이머를 시작하지 않으므로, 위치 화면에서 좌표를 다시 보낼 때까지 일행에게 보일 share row가 없다.</p>
-            <p><strong>현재 Gap</strong> — 동의 상태와 실제 좌표 공유 상태가 한 토글에서 같은 의미로 보인다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 차단의 간접 효과</div>
-            <h3>호스트가 모임 단위로 위치 공유를 끄면</h3>
-            <p>일반 참석자의 토글은 시각적으로는 켜진 상태로 유지되지만 좌표 갱신이 막힌다.
-              사용자 본인이 명시적으로 "끄겠다"는 의사를 표시한 것은 아니므로 본 단위의 흐름은 아니지만,
-              실질적으로 그 모임에 한해 위치가 더 이상 흘러가지 않는 결과가 된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트의 모임 단위 결정이 모든 참석자의 위치를 사실상 동시에 멈춘다.
-              "호스트는 위치 공유를 끌 책임이 있다"라는 모임 운영 신호.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 보는 것</h2>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:170px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>위치 화면 토글</strong></td>
-                <td>시트 맨 위의 스위치. 켜져 있을 때는 "위치 공유 중" 라벨, 꺼지면 회색 "위치 비공개".</td>
-                <td>지도와 같은 화면 안에 있어 "내 위치가 보이고 있는가"를 사용자가 항상 인지할 수 있어야 한다.</td>
-              </tr>
-              <tr>
-                <td><strong>확인 다이얼로그</strong></td>
-                <td>"위치 공유 중지" 제목 + "다른 참석자에게 내 위치가 표시되지 않습니다" 본문 + "취소" / "중지"(빨강) 두 버튼.</td>
-                <td>지도를 보면서 토글을 우연히 건드린 경우와 의식적으로 끄는 경우를 분리한다. 빨간색 "중지"는 되돌릴 수 없는 동작이라는 점을 사용자가 색만으로 인지하게 한다.</td>
-              </tr>
-              <tr>
-                <td><strong>완료 토스트</strong></td>
-                <td>"위치 공유를 중지했습니다" (위치 화면) / "위치 공유를 중단했습니다" (프라이버시 대시보드).</td>
-                <td>처리가 끝났다는 신호 — 사용자가 "진짜 꺼졌나"를 재확인하지 않게 한다.</td>
-              </tr>
-              <tr>
-                <td><strong>꺼진 후의 시트</strong></td>
-                <td>토글 라벨이 회색으로 바뀌고, 만료 카운트다운과 연장 버튼이 사라진다.</td>
-                <td>"공유 상태가 시각화"되어야 하는 위치 도메인 원칙의 실현. 한 번에 "내가 지금 공유하고 있지 않다"를 알 수 있다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">위치 공유 중지가 정상적으로 동작한다고 부르려면</span>
-          <ul>
-            <li><strong>"끄겠다"는 사용자 의사 표시는 서버에서 즉시 좌표 삭제로 반영된다.</strong>
-              다른 화면의 30초 타이머는 정상 재조회 cadence일 뿐 네트워크 실패까지 포함한 최대 반영 시간을 보장하지 않는다.</li>
-            <li><strong>위치 화면에서는 확인 다이얼로그, 프라이버시 대시보드에서는 즉시 처리.</strong>
-              두 진입점의 확인 단계가 다른 이유는 사용자가 의도하고 들어온 화면이 다르기 때문 — 한쪽에 통일하려면 이 의도 차이를 먼저 다시 검토해야 한다.</li>
-            <li><strong>중지 성공 시 보관 좌표도 즉시 삭제된다.</strong>
-              서버는 사용자 동의 상태를 끄는 것과 같은 트랜잭션에서 이벤트·사용자 키의 현재 위치 행을 삭제한다.
-              다른 사용자의 화면은 다음으로 성공한 목록 조회에서 이를 반영한다.</li>
-            <li><strong>모임 종료 2시간 후에는 일반 참석자 접근창만 닫힌다.</strong>
-              자동 opt-out은 없고 관리자급 GET은 시간 게이트를 우회한다. 좌표 자체는 각 share의
-              expiresAt과 cleanup 정책으로 제한된다.</li>
-            <li><strong>중지 실패(자격 미충족, 네트워크 오류)는 현재 별도 안내 없이 조용히 처리된다.</strong>
-              사용자가 토글을 내렸는데 실제로는 꺼지지 않은 상태로 머무는 분기다. 향후 명시적 토스트 보강 필요.</li>
-            <li><strong>프라이버시 화면의 재동의는 좌표 전송을 시작하지 않는다.</strong>
-              opt-in true와 실제 share row 존재를 화면에서 구분하거나 첫 GPS update를 연결해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 역할과 입구</h2><p>위치 공유 화면에서 본인 공유 중단을 확인한 뒤 동의 철회 API를 호출한다. 개인정보 화면은 일반 회원에게 본인 동의 스위치, 이벤트 수정 권한이 있는 회원에게 이벤트 전체 공유 설정을 표시한다. 두 스위치는 대상과 효과가 다르다.</p></section>
+<section id="current-2"><h2>본인 동의 철회</h2><p>POST /api/v1/events/{eventId}/location/opt-out은 본문 없이 200으로 끝난다. 이벤트·회원 단위 잠금 아래 본인 동의를 false로 만들거나 없는 행을 false로 생성하고 본인 좌표를 삭제한다. 이 메서드는 현재 참석 자격·공유 시간·이벤트 설정을 다시 요구하지 않아 참석 자격을 잃거나 시간이 지난 뒤에도 철회할 수 있다. 이벤트의 존재는 필요하다.</p>
+<p>성공하면 다른 사람이 다음에 조회할 위치에서 빠진다. 기존 열람 기록을 함께 삭제하는 호출은 아니다. 조회 기록의 범위와 보존은 <a href="F14-04.html">위치 개인정보와 열람 기록</a>을 따른다.</p></section>
+<section id="current-3"><h2>이벤트 전체 공유 설정</h2><p>이벤트 공유 설정 변경은 별도의 이벤트 변경 계약이다. 운영 권한을 확인하고 DRAFT 또는 OPEN에만 허용하며 정기모임 회차는 거절한다. 같은 값이면 변경하지 않는다. 실제로 값이 바뀌면 켜기·끄기 모두 기존 동의와 좌표를 초기화한다. 다시 켰다고 예전 동의나 좌표가 복원되지 않는다.</p>
+<p>켜기는 참석자, 끄기는 기존 공유자 중 실행자를 제외한 대상으로 알림 outbox를 만든다. outbox 등록과 실제 기기 알림 수신은 구분한다.</p></section>
+<section id="current-4"><h2>앱 성공과 실패</h2><p>위치 화면은 철회 성공 뒤 로컬 동의·위치 값을 비우고 GPS 갱신을 멈추며 개인정보를 다시 읽는다. 실패하면 성공 상태로 바꾸지 않고 오류를 알린다. provider는 최근 명령 오류를 보관하고 성공 시 목록을 다시 읽는다.</p>
+<p>개인정보 화면에서 본인 동의를 바꾸면 해당 개인정보 조회를 무효화해 위치 화면이 상태를 다시 반영한다. 개인정보 화면이 부모의 GPS 타이머를 직접 취소하는 구조는 아니다. 이 화면의 본인 동의 처리에는 provider가 false를 반환할 때 별도 실패 안내가 없는 경계가 남아 있다. 예외만 처리하므로 모든 실패가 사용자에게 안내된다고 쓰지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>개인정보 화면에서 본인 동의 명령이 false를 반환할 때 별도 실패 안내가 없다.</td><td>미해결 제품 경계로 남긴다.</td></tr><tr><td>미검증</td><td>철회 뒤 다른 기기 반영과 실제 알림 수신을 새로 실행하지 않았다.</td><td>과거 E2E 인용과 현재 확인을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 본인 철회:</strong> 참석 자격·공유 시간·이벤트 공유 설정과 무관하게 존재하는 이벤트의 본인 동의를 false로 하고 좌표를 삭제한다.</li><li><strong>AC-02 앱 상태 반영:</strong> 위치 화면의 성공은 동의·좌표 초기화와 GPS 중단·개인정보 갱신으로 이어진다.</li><li><strong>AC-03 실패 구분:</strong> 실패를 성공으로 표시하지 않고 개인정보 화면의 false 반환 안내 누락을 미해결로 기록한다.</li><li><strong>AC-04 전체 설정:</strong> 운영 권한·DRAFT/OPEN·정기모임 회차 제외를 확인하며 실제 설정 변경은 켜기·끄기 모두 기존 공유를 초기화한다.</li><li><strong>AC-05 데이터와 알림:</strong> 본인 철회는 기존 열람 기록 삭제가 아니고 전체 설정의 알림 등록은 수신 완료가 아니다.</li></ul></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

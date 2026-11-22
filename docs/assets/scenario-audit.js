@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,308개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,295개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1308,
+    "documentedScenarioItems": 1295,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 585,
-    "verifiedTraceRecords": 583,
+    "traceMarkers": 586,
+    "verifiedTraceRecords": 584,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -15310,7 +15310,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F14-01",
       "domain": "위치 & 길찾기",
-      "name": "이벤트 참석자 위치 공유",
+      "name": "이벤트 위치 공유와 조회",
       "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-01_event-location-share/scenarios.md",
@@ -15415,14 +15415,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F14-02",
       "domain": "위치 & 길찾기",
-      "name": "위치 공유 중지",
-      "scenarioCount": 8,
+      "name": "위치 공유 중단과 이벤트 설정",
+      "scenarioCount": 5,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-02_location-opt-out/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-02_location-opt-out_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 5
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-02_location-opt-out/backend.md",
@@ -15479,14 +15479,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F14-03",
       "domain": "위치 & 길찾기",
-      "name": "위치 공유 만료 연장",
-      "scenarioCount": 8,
+      "name": "위치 공유 만료와 연장",
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-03_location-extend/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-03_location-extend_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-03_location-extend/backend.md",
@@ -15545,14 +15545,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F14-04",
       "domain": "위치 & 길찾기",
-      "name": "위치 프라이버시 대시보드",
-      "scenarioCount": 10,
+      "name": "이벤트 위치 개인정보와 열람 기록",
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-04_location-privacy-dashboard_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-04_location-privacy-dashboard/backend.md",
@@ -15613,14 +15613,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F14-05",
       "domain": "위치 & 길찾기",
-      "name": "이벤트 길찾기",
-      "scenarioCount": 9,
+      "name": "이벤트 길찾기와 참석자 거리",
+      "scenarioCount": 6,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-05_event-directions/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-05_event-directions_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 6
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-05_event-directions/backend.md",
@@ -15689,19 +15689,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F14-06",
       "domain": "위치 & 길찾기",
-      "name": "역지오코딩",
-      "scenarioCount": 8,
+      "name": "주소 변환과 장소 검색",
+      "scenarioCount": 7,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/14_location_directions/F14-06_reverse-geocoding/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/14_location_directions/F14-06_reverse-geocoding_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 7
       },
       "trace": {
         "backendPath": "business_logic/units/14_location_directions/F14-06_reverse-geocoding/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
@@ -15735,6 +15735,23 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/location/geocode",
                 "targetLine": 39,
                 "methodLine": 40
+              }
+            ]
+          },
+          {
+            "id": "F14-06:3",
+            "label": "GET /api/v1/location/places — 장소 후보 검색",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/location/controller/GeocodingController.java",
+                "controller": "GeocodingController",
+                "method": "searchPlaces",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/location/places",
+                "targetLine": 46,
+                "methodLine": 47
               }
             ]
           }

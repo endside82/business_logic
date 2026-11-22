@@ -1,79 +1,47 @@
-# F14-04. 위치 프라이버시 대시보드 PRD
+# F14-04. 이벤트 위치 개인정보와 열람 기록 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 소스를 기준으로 갱신했다. 구현 계약의 대조이며 새 앱 실행·운영 검수 통과 기록이 아니다.
 
->
-> 2026-07-29 현재 소스 갱신: 컨트롤러는 `eventId`를 서비스에 전달하며, 서비스는 해당 이벤트에서 최근 30일 동안 내 위치를 본 기록만 반환한다. 응답의 `userOptedIn`·`locationShareEnabled`가 토글 상태의 서버 기준이고, Flutter는 `locationPrivacyProvider(eventId)`로 이를 조회해 접근 기록·빈 상태·재시도를 실제 렌더한다. 30일 초과 접근 로그는 매일 03:30 삭제된다. 2026-11-08 결정 84-2 로 호스트 토글은 전용 창구 `PATCH /api/v1/events/{eventId}/location-share` 를 쓴다. 호스트·공동 호스트가 초안·공개 모임에서 켜고 끄며, 범용 이벤트 PATCH 의 `locationShareEnabled` 는 초안 전용이다. 이 문서가 적어 두었던 계약 불일치(화면은 운영 중 호스트 제어인데 창구는 초안 전용)는 이 창구로 닫혔다.
+## 현재 역할과 입구
 
-## 1. 결론
+위치 공유 화면의 개인정보 설정에서 eventId를 가진 개인정보 화면으로 이동한다. 공개 컨트롤러와 앱 입구는 이벤트별이다. 서버 내부에 전체 이벤트를 묶는 서비스 메서드가 있어도 현재 전역 개인정보 대시보드 API·화면이 제공된다는 뜻은 아니다.
 
-현재 이벤트에서 내 위치가 지난 30일 동안 위치 목록 응답에 포함된 기록과 내 opt-in 상태, 이벤트 위치 공유 허용 상태를 반환하는 API다. 화면은 단일 `eventId` 컨텍스트에서 토글과 접근 기록을 함께 보여 주며, 토글 자체는 참석자면 F14-01/F14-02 엔드포인트를, 호스트·공동 호스트면 모임의 위치 공유 허용 전용 창구를 쓴다. 접근 기록은 고유 사용자나 의도적 클릭을 세지 않는다. `GET /location` 한 번마다 응답에 포함된 타인 좌표별로 행을 추가하므로 30초 자동 폴링도 반복 기록된다.
+## 반환 범위와 접근 기록
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+GET /api/v1/events/{eventId}/location/privacy는 로그인 사용자가 대상자인 해당 이벤트의 최근 30일 열람 기록을 반환한다. 본인 동의 상태와 이벤트의 공유 설정도 포함한다. 조회 서비스는 이 요청에 별도 참석 자격 검사를 두지 않고 본인 기록으로 범위를 제한한다.
 
-- `EventLocationScreen` (SCR-LD-001) AppBar 우측 톱니바퀴 → `context.push('/home/events/$eventId/location/privacy')`
-- (간접) 이벤트 설정 메뉴/딥링크에서 같은 라우트로 push 가능
+기록이 없으면 이벤트별 목록은 비어 있고 있으면 해당 이벤트 한 그룹이다. 조회자 식별자·닉네임·열람 시각을 제공하며 이벤트가 없으면 삭제된 이벤트 제목을 사용한다. totalAccesses는 기록 행 수로 같은 사람이 반복 조회한 횟수도 포함한다. 위치 목록에서 본인 좌표를 반환한 경우에는 기록하지 않는다.
 
-## 2. 코드 위치
+이 기록은 위치 목록 조회가 만든 열람 이력이다. [길찾기와 참석자 거리](F14-05_event-directions_prd.md)의 관리용 거리 계산 호출은 같은 열람 기록을 생성하지 않으므로 모든 위치 관련 접근의 통합 감사 로그로 설명하지 않는다.
 
-계약의 정본은 코드다. 서버: `LocationController`, `LocationPrivacyService`, `LocationService`, `EventService`. 앱: `location_privacy_screen.dart`, `routes.dart`.
+## 설정의 대상과 상태 반영
+
+앱은 이벤트·개인정보·권한을 읽고 canEditEvent가 있으면 이벤트 전체 공유 설정, 없으면 본인 동의 스위치를 표시한다. 전체 설정 변경과 본인 동의 철회는 [공유 중단과 이벤트 설정](F14-02_location-opt-out_prd.md)의 서로 다른 계약을 따른다.
+
+본인 동의 변경 성공 후 개인정보 조회를 무효화해 위치 화면이 서버 상태를 반영한다. 조회자 이름은 닉네임을 쓰고 없으면 「알 수 없는 사용자」를 표시한다. 내부 사용자 식별자를 닉네임의 정상 대체 표시로 안내하지 않는다.
+
+## 코드 위치
+
+서버: LocationController#getPrivacyDashboard, LocationPrivacyService, LocationService#getEventLocations. 앱: location_privacy_screen.dart, event_location_provider.dart, event_location_screen.dart.
 
 <!-- source-references:start -->
 서버 창구: `LocationController#getPrivacyDashboard`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-1. 화면 진입 → `eventDetailNotifierProvider(eventId)`와 `locationPrivacyProvider(eventId)`를 함께 watch
-2. `locationPrivacyProvider` → Repository → `GET /api/v1/events/{eventId}/location/privacy`
-3. 응답의 `locationShareEnabled`·`userOptedIn`으로 카드/결과 프리뷰 상태를 정하고, `byEvent[].accessors[]`를 최근 접근 기록으로 렌더
-4. 호스트 토글 → `PATCH /api/v1/events/{eventId}/location-share` `{enabled}`. 호스트·공동 호스트가 DRAFT·OPEN 에서 부르고, 성공 뒤 event detail과 privacy provider를 invalidate한다. CLOSED·CANCELED 는 `INVALID_EVENT_STATUS`, 정기모임 회차는 `EVENT_IN_REGULAR_MEETING`. 끄면 진행 중인 공유를 모두 끝내고 공유하던 참가자에게 「위치 공유 종료」(204)를, 켜면 참석 확정 참가자에게 「위치 공유 허용」(205)을 보낸다. 켤 때도 꺼진 동안 남은 동의·공유 위치를 알림 없이 치운다.
-5. 참석자 토글 → `/opt-in` 또는 `/opt-out` 성공 뒤 privacy provider invalidate. On은 동의 행만 바꾸며 GPS 취득·`POST /update`·타이머 시작은 하지 않는다.
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 화면 안내는 시작 24시간 전을 쓰고 도움말 guideId는 F12-01을 가리킨다. | 시작 2시간 전인 현재 계약과 다른 표시를 미해결로 기록한다. |
+| Gap | 본인 동의 명령의 false 반환에 별도 실패 안내가 없다. | 성공·예외·false 반환을 구분한다. |
+| 미검증 | 계정별 기록·삭제된 이벤트·설정 왕복·동시 열람을 새로 실행하지 않았다. | 제품 수정과 실제 검수 완료로 합산하지 않는다. |
 
-## 4. 제품 규칙
+## 수용 기준과 검증 근거
 
-- 대시보드는 한 이벤트만 다룬다. 그 이벤트에서 최근 30일 동안 내 위치를 본 기록을 보여주고, 지금 내 동의 상태와 이벤트의 위치 공유 허용 여부도 함께 준다. 삭제됐거나 없는 이벤트는 `삭제된 이벤트` 로 보인다.
-- 접근 횟수와 목록은 기록 한 줄 한 줄이다. 같은 사람이 반복해서 보일 수 있고 열람자는 닉네임 없이 `사용자 #번호` 와 `MM.dd HH:mm` 으로 보인다. 기록이 없으면 `위치 접근 기록이 없습니다` / `최근 30일 동안 내 위치를 조회한 기록이 없어요.` 가 뜬다.
-- 토글의 기준이 호스트와 참석자가 다르다. 호스트(유효한 공동 호스트 포함, 모임 상세의 모임 관리 권한과 같은 판정)는 이벤트의 위치 공유 허용, 참석자는 허용되어 있고 본인이 동의한 상태가 켜짐이다. 호스트는 공개 뒤에도 그 자리에서 끄고 켠다(2026-11-08 결정 84-2). 호스트에게는 `호스트로서 이벤트의 위치 공유를 관리합니다` 가 함께 보인다.
-- 안내 박스는 다섯 가지를 알린다. 위치 올리기는 시작 2시간 전부터 종료 2시간 후까지, 참석자 조회는 시작 24시간 전부터, 참석 확정자만, 중단하면 더는 보이지 않음, 접근 기록은 30일 보관.
-- 토스트: 호스트 켬 `위치 공유가 활성화되었습니다`, 끔 `위치 공유가 비활성화되었습니다`, 참석자 켬 `위치 공유에 참여했습니다`, 끔 `위치 공유를 중단했습니다`, 실패 `위치 공유 설정에 실패했습니다`.
-- 이 화면에서 참석자가 켜면 동의만 저장되고 좌표는 올라가지 않는다. 좌표를 올리는 것은 위치 지도 화면이다.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 톱니바퀴를 눌러 진입한 일반 참석자가 토글을 끈다 (Happy Path) | opt-in true, `EventLocationScreen` 위치 화면 사용 중 | 서버 `optedIn=false`·현재 좌표 삭제, privacy 재조회에서 `userOptedIn=false` |
-| S2 | 운영 중 호스트가 위치 공유 자체를 비활성화 | OPEN 이벤트 호스트·공동 호스트 | 전용 창구로 허용이 꺼지고 진행 중인 공유가 모두 끝나며, 공유하던 참가자에게 「위치 공유 종료」 알림이 간다. CLOSED·CANCELED 는 `INVALID_EVENT_STATUS` 로 막힌다 |
-| S3 | 처리 중 스피너 표시 (UX 디테일) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | 이벤트 조회 실패 (에러 분기) | 시나리오 본문 참조 | 카드 미렌더, 안내 박스도 미노출 |
-| S5 | 토글 실패 — API 에러 | 호스트 또는 일반 참석자 | 서버 변화 없음. 호스트는 오류 토스트, 참석자는 notifier가 false를 반환해 별도 안내 없이 끝날 수 있음 |
-| S6 | 최근 30일 이벤트별 접근 기록 확인 | 타 참석자의 위치 화면 30초 GET에 내 share가 반복 포함됨 | 해당 이벤트의 raw 로그 행 수와 `"사용자 #id"`·시각이 모두 표시된다. 같은 접근자가 반복될 수 있고 다른 이벤트 기록은 포함되지 않음 |
-| S7 | 접근 기록 없음 | 최근 30일 해당 이벤트 로그 0건 | 전용 빈 상태가 표시됨 |
-| S8 | 프라이버시 화면에서 토글 On | opt-out으로 share row가 삭제된 일반 참석자 | `userOptedIn=true`로 바뀌지만 GPS 취득/update/timer가 없어 실제 좌표 share는 생성되지 않음 |
-
-## 8. Gap / Risk
-
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 사실 | `LocationPrivacyService#getPrivacyDashboard(userId,eventId)` | 응답은 현재 이벤트에서 내 위치가 목록 응답에 포함될 때 쌓인 최근 30일 raw 로그이며, 다중 이벤트 목록 API가 아니다. | "고유 열람자/의도적 조회"로 해석하지 않도록 표시 |
-| Gap | `location_privacy_screen.dart` | UI/UX 스펙의 여러 이벤트 일괄 카드 목록은 없고 단일 이벤트만 제공한다. | 다중 이벤트 허브 필요 여부 결정 |
-| Gap | `location_privacy_screen.dart` | 접근자를 닉네임/프로필 없이 raw 사용자 ID로 표시하고 AppBar 도움말이 잘못된 `F12-01`을 가리킨다. | 사용자 식별 VO 확장 및 guideId 교정 |
-| 해소됨 | 공개 뒤 호스트 스위치 | 범용 PATCH 가 초안 전용이라 공개한 모임의 호스트 스위치가 늘 실패하던 계약 불일치를 결정 84-2(2026-11-08)로 닫았다. 서버는 호스트·공동 호스트 전용 창구 `PATCH /api/v1/events/{eventId}/location-share` 와 알림 둘(`EVENT_LOCATION_SHARE_DISABLED` 204, `EVENT_LOCATION_SHARE_ENABLED` 205)을 더했고, 앱은 공개 모임에서도 스위치를 열고 「바꿀 수 없어요」 글을 걷었으며 공동 호스트에게도 호스트 보기를 보인다 | 없음 |
-| 해소됨 | 참가자 쓰기의 허용 값 읽기 | 참가자 쪽 켜기(`opt-in`), 위치 올리기(`update`), 공유 늘리기가 허용 값을 잠그지 않고 읽어 호스트의 끄기와 겹치면 꺼진 뒤 동의나 공유 위치 한 줄이 남을 수 있던 것을 2026-11-08 밤 고쳤다. 세 쓰기 모두 모임 행을 공유 잠금한 뒤 허용 값과 시각창을 판정하고 같은 트랜잭션에서 쓴다. 호스트 끄기가 커밋되기 전에 온 쓰기는 기다렸다가 `LOCATION_SHARE_DISABLED` 로 거절된다(실 DB 장면 둘) | 없음. 같은 회원의 켜기·끄기·첫 위치 올리기가 겹쳐 한쪽이 유일 키 위반으로 실패하던 꼴도 고쳤다. 모임 행 공유 잠금 바로 뒤 회원 행을 배타로 잡아 같은 회원의 요청이 줄 서고, 뒤 요청은 앞 요청이 넣은 행을 찾아 고친다(2026-11-08 밤 늦게, 실 DB 장면 셋). 끄기는 모임이 있는지만 보고 공유 허용·시간 창은 따지지 않는다(안전 출구) |
-| P1 Gap | `_toggleOptIn` / `EventLocationNotifier` | 참석자 opt-in/out 실패가 false로 축약되고 UI에 false 실패 안내 분기가 없다. | 실패 원인을 보존하고 명시적 toast/상태 rollback |
-| P1 Gap | `_toggleOptIn(true)` | 프라이버시 화면은 opt-in만 저장하고 GPS 취득·첫 update·타이머를 시작하지 않는다. opt-out으로 share가 삭제된 뒤 토글을 다시 켜도 좌표는 보이지 않는다. | 실제 share 생성까지 연결하거나 동의/좌표 상태를 분리 표시 |
-| 분석 한계 | `LocationAccessLog` 생성부 | 30초 자동 GET마다 대상별 행을 추가하고 dedupe하지 않아 `totalAccesses`가 고유 사용자나 의도적 조회 수처럼 보일 수 있다. | 고유 접근자 집계/세션 집계 또는 raw polling hit라는 UI 설명 |
-| 해소됨 | 시험 보강 기록 | 위치 공개 현황 화면의 시험 보강 기록이다. 결함이 아니다 | 없음 |
-
-## 9. 수용 기준
-
-- **AC-01. 톱니바퀴를 눌러 진입한 일반 참석자가 토글을 끈다 (Happy Path)**: Given opt-in true, `EventLocationScreen` 위치 화면 사용 중 When 사용자가 토글을 끄면 Then 서버 `optedIn=false`·현재 좌표 삭제 후 privacy 응답의 `userOptedIn=false`로 화면이 동기화된다
-- **AC-02. 운영 중 호스트 토글**: Given OPEN 이벤트의 호스트 또는 공동 호스트가 위치 공유 토글을 끌 때 When 전용 창구 `PATCH /api/v1/events/{eventId}/location-share` 를 호출하면 Then `location_share_enabled` 가 false 가 되고 진행 중인 공유가 모두 끝나며 공유하던 참가자에게 「위치 공유 종료」 알림이 한 번 간다. CLOSED·CANCELED 이벤트면 `INVALID_EVENT_STATUS` 로 실패하고 값은 그대로다
-- **AC-03. 처리 중 스피너 표시 (UX 디테일)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. 이벤트 조회 실패 (에러 분기)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 카드 미렌더, 안내 박스도 미노출
-- **AC-05. 토글 실패 — API 에러**: Given 토글 API가 실패할 때 When 호스트 분기이면 Then 오류 토스트를 표시한다. 일반 참석자 분기이면 현재 false 반환을 소비하지 않아 별도 실패 토스트가 없을 수 있다
-- **AC-06. 최근 30일 이벤트별 접근 기록 확인**: Given 해당 이벤트의 위치 목록 GET에 내 share가 반복 포함됐을 때 When 화면에 진입하면 Then 해당 이벤트의 raw 로그 행 수·접근자 ID·시각을 중복 포함해 표시하고 다른 이벤트 기록은 포함하지 않는다
-- **AC-07. 접근 기록 없음**: Given 최근 30일 해당 이벤트의 접근 로그가 없을 때 When 화면에 진입하면 Then `"위치 접근 기록이 없습니다"` 빈 상태를 표시한다
-- **AC-08. 프라이버시 화면에서 토글 On**: Given share row가 없는 일반 참석자 When 프라이버시 화면에서 opt-in이 성공하면 Then `userOptedIn=true`만 반영되고 위치 화면에서 `POST /update`하기 전까지 실제 좌표는 노출되지 않는다
+- **AC-01 이벤트 범위:** 현재 공개 입구는 eventId별 본인 대상 기록이며 전체 이벤트 대시보드로 확대 해석하지 않는다.
+- **AC-02 30일 기록:** 최근 30일의 행 수·조회자·시각을 반환하고 반복 열람을 고유 인원수로 바꾸지 않는다.
+- **AC-03 빈 기록:** 기록 없음은 빈 그룹, 이벤트 없음은 삭제된 이벤트 안내로 처리한다.
+- **AC-04 설정 구분:** 이벤트 수정 권한과 일반 회원에 따라 전체 설정과 본인 동의를 구분한다.
+- **AC-05 표시와 오류:** 닉네임 fallback을 확인하고 잘못된 시간 안내·도움말 연결·명령 실패 안내 누락은 미해결로 기록한다.
+- **AC-06 감사 범위:** 위치 목록 열람 기록을 관리용 거리 조회까지 포함한 전체 감사 로그로 주장하지 않는다.
