@@ -296,7 +296,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F07-07 | 모임 정산 | [F07-07_remind-extend_prd.md](02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md) | `F07-07_remind-extend` | 실사 기반 전환본 | 3 | 5 |
 | F07-08 | 모임 정산 | [F07-08_appeal-audit_prd.md](02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md) | `F07-08_appeal-audit` | 실사 기반 전환본 | 4 | 5 |
 | F07-09 | 모임 정산 | [F07-09_prepayment-refund_prd.md](02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md) | `F07-09_prepayment-refund` | 실사 기반 전환본 | 8 | 2 |
-| F07-10 | 모임 정산 | [F07-10_account-history-reputation_prd.md](02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | `F07-10_account-history-reputation` | 실사 기반 전환본 | 0 | 3 |
+| F07-10 | 모임 정산 | [F07-10_account-history-reputation_prd.md](02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md) | `F07-10_account-history-reputation` | 실사 기반 전환본 | 14 | 3 |
 | F08-01 | 플랜 마켓 | [F08-01_my-plan-list_prd.md](02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | `F08-01_my-plan-list` | 실사 기반 전환본 | 3 | 1 |
 | F08-02 | 플랜 마켓 | [F08-02_plan-detail_prd.md](02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | `F08-02_plan-detail` | 실사 기반 전환본 | 6 | 1 |
 | F08-03 | 플랜 마켓 | [F08-03_block-editor_prd.md](02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | `F08-03_block-editor` | 실사 기반 전환본 | 5 | 4 |

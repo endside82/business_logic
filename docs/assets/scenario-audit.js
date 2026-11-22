@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,281개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,290개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1281,
+    "documentedScenarioItems": 1290,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4959,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 68,
+    "directlyLinkedAutomatedTests": 69,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 68,
+    "automatedScenarioReferences": 69,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -24,11 +24,11 @@ window.SCENARIO_AUDIT = {
     "localServerE2eProof": 13,
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 43,
-    "partialEvidenceChain": 51,
+    "completeEvidenceChain": 44,
+    "partialEvidenceChain": 50,
     "definitionOnlyEvidence": 81,
-    "traceMarkers": 539,
-    "verifiedTraceRecords": 537,
+    "traceMarkers": 553,
+    "verifiedTraceRecords": 551,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10556,28 +10556,269 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-10",
       "domain": "모임 정산",
-      "name": "정산 계좌/이력/호스트 신뢰도",
-      "scenarioCount": 9,
+      "name": "정산 계좌·내 정산·호스트 평판",
+      "scenarioCount": 18,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-10_account-history-reputation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 18
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-10_account-history-reputation/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 14,
+        "verified": 14,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F07-10:1",
+            "label": "GET /api/v1/users/me/bank-accounts — 본인 계좌 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "getAccounts",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/bank-accounts",
+                "targetLine": 33,
+                "methodLine": 34
+              }
+            ]
+          },
+          {
+            "id": "F07-10:2",
+            "label": "POST /api/v1/users/me/bank-accounts — 계좌 등록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "createAccount",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/bank-accounts",
+                "targetLine": 45,
+                "methodLine": 46
+              }
+            ]
+          },
+          {
+            "id": "F07-10:3",
+            "label": "PUT /api/v1/users/me/bank-accounts/{id} — 계좌 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "updateAccount",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/users/me/bank-accounts/{id}",
+                "targetLine": 60,
+                "methodLine": 61
+              }
+            ]
+          },
+          {
+            "id": "F07-10:4",
+            "label": "DELETE /api/v1/users/me/bank-accounts/{id} — 계좌 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "deleteAccount",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/users/me/bank-accounts/{id}",
+                "targetLine": 68,
+                "methodLine": 69
+              }
+            ]
+          },
+          {
+            "id": "F07-10:5",
+            "label": "PATCH /api/v1/users/me/bank-accounts/{id}/default — 기본 계좌 지정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "setDefault",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/users/me/bank-accounts/{id}/default",
+                "targetLine": 76,
+                "methodLine": 77
+              }
+            ]
+          },
+          {
+            "id": "F07-10:6",
+            "label": "POST /api/v1/users/me/bank-accounts/{id}/verification — 소액 확인 시작",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "startVerification",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/bank-accounts/{id}/verification",
+                "targetLine": 88,
+                "methodLine": 89
+              }
+            ]
+          },
+          {
+            "id": "F07-10:7",
+            "label": "POST /api/v1/users/me/bank-accounts/{id}/verification/confirm — 소액 확인 코드 제출",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+                "controller": "SettlementBankAccountController",
+                "method": "confirmVerification",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/users/me/bank-accounts/{id}/verification/confirm",
+                "targetLine": 100,
+                "methodLine": 101
+              }
+            ]
+          },
+          {
+            "id": "F07-10:8",
+            "label": "GET /api/v1/users/me/meeting-settlements/entries — 개인 내역 검색",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementEntryController.java",
+                "controller": "MeetingSettlementEntryController",
+                "method": "entries",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/meeting-settlements/entries",
+                "targetLine": 21,
+                "methodLine": 22
+              }
+            ]
+          },
+          {
+            "id": "F07-10:9",
+            "label": "GET /api/v1/users/me/meeting-settlements/entries/summary — 본인 전체 요약",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementEntryController.java",
+                "controller": "MeetingSettlementEntryController",
+                "method": "summary",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/meeting-settlements/entries/summary",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
+          },
+          {
+            "id": "F07-10:10",
+            "label": "GET /api/v1/users/me/meeting-settlements/entries/{sourceType}/{sourceId} — 원본 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementEntryController.java",
+                "controller": "MeetingSettlementEntryController",
+                "method": "detail",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/meeting-settlements/entries/{sourceType}/{sourceId}",
+                "targetLine": 32,
+                "methodLine": 33
+              }
+            ]
+          },
+          {
+            "id": "F07-10:11",
+            "label": "GET /api/v1/users/me/meeting-settlements — 이전 참여 이력",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementHistoryController.java",
+                "controller": "MeetingSettlementHistoryController",
+                "method": "getMyHistory",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/meeting-settlements",
+                "targetLine": 28,
+                "methodLine": 29
+              }
+            ]
+          },
+          {
+            "id": "F07-10:12",
+            "label": "GET /api/v1/users/me/meeting-settlements/monthly-summary — 이전 월별 요약",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementHistoryController.java",
+                "controller": "MeetingSettlementHistoryController",
+                "method": "getMonthlySummary",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/meeting-settlements/monthly-summary",
+                "targetLine": 34,
+                "methodLine": 35
+              }
+            ]
+          },
+          {
+            "id": "F07-10:13",
+            "label": "GET /api/v1/users/{userId}/meeting-settlement-reputation — 호스트 평판",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/HostSettlementReputationController.java",
+                "controller": "HostSettlementReputationController",
+                "method": "getReputation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/{userId}/meeting-settlement-reputation",
+                "targetLine": 25,
+                "methodLine": 26
+              }
+            ]
+          },
+          {
+            "id": "F07-10:14",
+            "label": "GET /api/v1/wallet/meeting-settlements — 모임별 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+                "controller": "WalletController",
+                "method": "getMyMeetingSettlements",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/wallet/meeting-settlements",
+                "targetLine": 275,
+                "methodLine": 276
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/meeting_settlement/settlement_entries_provider_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/meeting_settlement/settlement_appeal_guidance_card_test.dart"
         ]
@@ -10590,10 +10831,10 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "open",
       "proof": "local",
-      "knownIssues": 0,
+      "knownIssues": 1,
       "pendingReview": 0
     },
     {

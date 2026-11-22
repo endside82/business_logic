@@ -283,7 +283,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -300,7 +301,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ]
     },
     {
@@ -3430,9 +3432,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "c6f5d4d59c06036445710e1751cc7dd96c25dc622cd810413a2649c31d915bc0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_account_20261122"
+      ],
+      "reviewedSha256": "0bfdc180c5cd8db0b2fdee8e833d99f94a63a5661866eaf55b7bf9f606f41bb3"
     },
     {
       "path": "docs/features/F08-01.html",
@@ -4975,7 +4980,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5053,7 +5059,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5155,7 +5162,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6494,10 +6502,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5a8fef4ea4d988764853bb493fec382b8b03957d2a9729e0a280e200366a7957",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_account_20261122"
+      ],
+      "reviewedSha256": "6a9b2d51994bd545511ca13235bdc170069e4c9709e8d72cd8d9b4c77162e781"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md",
@@ -7933,7 +7943,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8163,7 +8174,8 @@
         "settlement_confirm_20261122",
         "settlement_remind_20261122",
         "settlement_appeal_20261122",
-        "settlement_prepayment_20261122"
+        "settlement_prepayment_20261122",
+        "settlement_account_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -11746,9 +11758,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "e02549825f910d205ff957658ff0d729ee6e4f4e16fe99eaafff2493879d33b6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_account_20261122"
+      ],
+      "reviewedSha256": "773fa8cfc749761afd682b8e92da402c89812876b29ba654b6f2c425b57f2dfb"
     },
     {
       "path": "units/07_meeting_settlement/F07-10_account-history-reputation/diagrams.md",
@@ -11756,9 +11771,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "622c6bcc1b4e15b66c0eaecdc1cd2be9221ddcb54a2d4380790adadf4e3ee868",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_account_20261122"
+      ],
+      "reviewedSha256": "5f9e1ec9301bc76b227acd036a135780e13e851266608f91775e306350790c98"
     },
     {
       "path": "units/07_meeting_settlement/F07-10_account-history-reputation/frontend.md",
@@ -11766,9 +11784,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c9aab2531b53ec046ca5ac7bb7a688e46033cf42bb4054fc7aa690d67b3e2c35",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_account_20261122"
+      ],
+      "reviewedSha256": "800b430a529b8616fb5db133831424cff1f2b1945c822750891d39bce5d40d76"
     },
     {
       "path": "units/07_meeting_settlement/F07-10_account-history-reputation/scenarios.md",
@@ -11776,9 +11797,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "422d9eb4eb47b34fd5c229a30b045301ea6800c4c34822af8807eee27ab21ee4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_account_20261122"
+      ],
+      "reviewedSha256": "066e45de0c51f09ed880fe6cd09c207ce3483a350b07798ae2ae63ccb5062385"
     },
     {
       "path": "units/08_plan_market/00_overview.md",
@@ -30134,6 +30158,337 @@
       "followUpFindings": [],
       "fromCommit": "42d3316069aef5664e303d7fa93a6ec16db1168a",
       "toCommit": "6c62153ed7ca5138a35668ecdea5b299699c620d"
+    },
+    "settlement_account_20261122": {
+      "kind": "source_review",
+      "scope": "F07-10 계좌 등록/현재행 재생·수납 참조·소액 확인과 개발/운영 조건, 현재 entries 목록과 이전 history 구분, 당사자/기간/합계/갱신·모임별 취소 목록, 호스트 평판 분모·비공개·배지. 기존 시험의 지정 단언 대조이며 새 제품 실행/실계좌/출금 검증 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/SettlementBankAccountController.java",
+          "sha256": "9079aa969b24a2e3220e4c55917d95fd8c41c63cf42419ee7e92ac8fa0dc0b03",
+          "reviewScope": "33–107: 계좌7창구, typed 요청, 등록 현재참조 재생, 반환형"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/SettlementBankAccountService.java",
+          "sha256": "210fbbc93091ffaf8aa9da2363d37ea6f7a33594969edebe022419b9eb024c52",
+          "reviewScope": "91–338,384–550: 중복·기본·본인·참조 보호·인증 외부요청/시도식별·실제 공급자·현재행 재생"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/BankAccountVerificationSteps.java",
+          "sha256": "6caadbca09b093b49e713d66bac3e9b716cf49c9d80c2d271ea6ab63b4989dc3",
+          "reviewScope": "48–229: 독립 트랜잭션 실패횟수·예약/적용/보상·인증 제한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/model/SettlementBankAccount.java",
+          "sha256": "1b3d45a06a4fd0c252fb5af54819624c89c52faecf062639acf6e25ea0cca664",
+          "reviewScope": "28–34,128–250: 시작60초·24시간5회·시도 유지·현재시도·인증상태"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/port/SettlementBankAccountEventAdapter.java",
+          "sha256": "97856a6ded2e02ae5f75f60f0227413d4ce02676aeeffa8b1c748df61f1ea8a4",
+          "reviewScope": "24–36: 이벤트 선입금 설정과 결제 참조 계좌"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/port/SettlementBankAccountRegularMeetingAdapter.java",
+          "sha256": "cf24d1939fa7ba12d0e438ac94df4c3bce9d47cb361ce51af8352af871eefa4b",
+          "reviewScope": "24–40: 정기모임·회원·결제 참조 계좌"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/vo/SettlementBankAccountVo.java",
+          "sha256": "fe6960b78066c4b9e97051bae942d17410ac22840bfcc53684fce3d3ca296ad0",
+          "reviewScope": "전체 필드·현재 delete/editIdentity 허용 행동 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/vo/BankAccountVerificationVo.java",
+          "sha256": "6583a8d9207e54d502a80b3fcef8f625908916ae8573d28500ea83623b59c4e6",
+          "reviewScope": "시작 응답 필수값과 유일한 nullable 개발코드"
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/application-dev.yaml",
+          "sha256": "cbfdf6e6b3002706bc62859b7611e3b723e99d6914812527d7fbf62843014330",
+          "reviewScope": "82–103: 인증 강제 true 기본·FAKE·10분/5회; 실제 환경값 확인 아님"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementEntryController.java",
+          "sha256": "c916ceaf9c89b087de1b31896b9c97c1dced119021080ee492fbad79d5454630",
+          "reviewScope": "14–36: 목록·전체요약·원본상세 GET"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementEntryQueryService.java",
+          "sha256": "4fbc169e20a3b9febe4d532894538fd21da4499b39c4bf89d44c6fefc58e2b3f",
+          "reviewScope": "30–138: 원본합침·1000상한·전체합계·기간밖건수·당사자·상세보강"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/policy/MeetingSettlementEntryPolicy.java",
+          "sha256": "869505df876f0424d80b9aab8e9b27fa913caa8399154ce12c131575b035ba09",
+          "reviewScope": "32–160: 분담/송금 실제당사자·대기/이력/추가확인·혼합은행부분·취소·정상합계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/repository/query/MeetingSettlementEntryQueryRepository.java",
+          "sha256": "ee74cf8fb9289f27abf892eba3474a13fd15610f8866562562d2d1e818e78f15",
+          "reviewScope": "62–146: 상세당사자·검색/집계 동일조건·정상금액·불명건수·기간기준"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/param/MeetingSettlementEntrySearchParam.java",
+          "sha256": "d1d133cc94984f5569949c790803825eb16a6403dc0a61fe418a2b9197fef6bf",
+          "reviewScope": "14–58: 전체/월/종료포함12개월·page/size상한·이력방향"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementHistoryController.java",
+          "sha256": "e2666d098aa8fe0829b84b8e39e1751f6508ea04acf8854be0654fa6f1e20fca",
+          "reviewScope": "28–38: 이전이력·월별기본6/상한24"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementHistoryService.java",
+          "sha256": "c872e6555dde1423e3b52a5e87aba315e5f5e5c423e5df593ba1d0384598fd60",
+          "reviewScope": "44–177: 기존 참여이력·완료/대기·생성월 요약, 현재 entries와 별개"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/HostSettlementReputationController.java",
+          "sha256": "0ebeabbcb987067ef94d945e9130916f064b98b5fab083b416afce17d173fdfb",
+          "reviewScope": "25–30: 로그인조회자와 대상회원 전달"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/HostSettlementReputationService.java",
+          "sha256": "c838b3b736f9386586543c52cb43573416cc7e87eeef31433ef8aa8d14a51804",
+          "reviewScope": "33–113: 차단/비공개·DRAFT전체분모·ACTIVE건수·이의전체·평균시간"
+        },
+        {
+          "path": "community_app/lib/data/api/settlement_bank_account_api.dart",
+          "sha256": "86dfdda4fc10351ee5a339606181e44f515031b2ca28c88622e0f98079168f81",
+          "reviewScope": "16–57: 계좌7요청·typedbody·등록키·반환형"
+        },
+        {
+          "path": "community_app/lib/data/repositories/settlement_bank_account_repository.dart",
+          "sha256": "c29bf818f616c37f484bb66d32c1f93f327437107d486cf0b7f137a585ac4ab0",
+          "reviewScope": "16–78: 결과래핑·등록열쇠 전달/생성·인증오류 전달"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/bank_account_provider.dart",
+          "sha256": "3f4c25da60332ce67fb8b8740440d29263a4ae492eedef436466bbd07c717596",
+          "reviewScope": "32–214: 계좌행 갱신·충돌재조회·기본표시·인증결과 반영"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/screens/bank_account_screen.dart",
+          "sha256": "cf7db245d976b43b815f9fda351d24b5c37e8a16f57119aa7c90700e49d92acb",
+          "reviewScope": "41–340: 현재행행동·입력결과대기/열쇠재사용·삭제/기본·인증창/결과"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/bank_account_form_dialog.dart",
+          "sha256": "0bd6ae7db54ab1ffb801508f5a53240ab2d5803eb00ddeb5956ad926f3c7c855",
+          "reviewScope": "21–184: 필수trim입력·제출잠금·성공후닫기·실패입력유지·이탈확인"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/bank_account_verification_sheet.dart",
+          "sha256": "edd8806cbc38287c1676ec52498efe42458efb923da63761ba84c5ae38c7fbe4",
+          "reviewScope": "38–178,180–294: 시작고정attemptsLeft·코드입력·만료/종료오류·성공반환"
+        },
+        {
+          "path": "community_app/lib/data/models/meeting_settlement/settlement_bank_account_vo.dart",
+          "sha256": "b8cc632017f2289087a0c2811e4de79d093ec3c1a1b995e2af9175ae5bc782ab",
+          "reviewScope": "12–98: default JSON·인증 기본미확인·계좌마스킹·행동기본닫힘"
+        },
+        {
+          "path": "community_app/lib/data/models/meeting_settlement/bank_account_verification_vo.dart",
+          "sha256": "c807e282b93f4c46701f3cd77be845fb8daac72986fb05fb49df779fa8761d41",
+          "reviewScope": "20–44: 인증 필수값·nullabledevHint"
+        },
+        {
+          "path": "community_app/lib/data/models/meeting_settlement/meeting_settlement_entry_vo.dart",
+          "sha256": "91c116984e77b5de315eb36046a77f14993c59580759c2a1ed8e90d0b14f902f",
+          "reviewScope": "11–35: 원본정체·실제당사자·nullable잔액/완료액·정상/주의표지"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/settlement_entries_filter_provider.dart",
+          "sha256": "f10649d4372471213c0410f329e192bf6483dec0c7edc7658e2b851a5be89db5",
+          "reviewScope": "18–105: 계정별필터·기본전체/이번달·12개월·방향·탭"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/settlement_entries_provider.dart",
+          "sha256": "0b2f98f09728060151e67b22e6dfe03cb73783e72324d02f04a8c580ca3d48cc",
+          "reviewScope": "38–134: 계정/조건별이전결과·늦은응답세대·페이징중복·요약구독"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/wallet_meeting_settlement_list_provider.dart",
+          "sha256": "f69143879143aafa367a87987bef676cebc1bb59d354fe3ff369b3b2e436d718",
+          "reviewScope": "20–58:20개페이지·변경구독·상태필터"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/wallet_meeting_settlement_list_screen.dart",
+          "sha256": "bc793bc26c5bd797344e0df5baaa1c7b97e1d364df6b5cff8c9cc57c82fb52de",
+          "reviewScope": "39–195: 상태필터·목록/실패·취소카드이동금지·그외이벤트정산"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/host_reputation_badge.dart",
+          "sha256": "122048432e0b1ae88786c5e768628c9a21a37623064db5ffa917c6c97e25b06e",
+          "reviewScope": "28–96:0건/로딩/오류숨김·임계값·표시용배지/탭없음"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/meeting/service/SettlementBankAccountServiceTest.java",
+          "sha256": "8d681fdba18a7f6b99d21657f8ed3998e9a5d818e3ef465814eeb54ce3ff510f",
+          "reviewScope": "398–436,458–482: 인증오입력횟수·성공·운영FAKE시작거절·비운영허용 단언읽기,미실행"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/meeting/service/HostSettlementReputationServiceTest.java",
+          "sha256": "ca927d7b27978139ac0d619f48088b0fe58250617ed96d040b32287e56f6fabf",
+          "reviewScope": "76–146: DRAFT전체분모/ACTIVE제외·차단/비공개·0건 단언읽기,미실행"
+        },
+        {
+          "path": "community_app/test/meeting_settlement/settlement_entries_provider_test.dart",
+          "sha256": "7da0812624cbcce8062a0ddacf98c76f4d0d0b6b3dde9071c190b22f4998c064",
+          "reviewScope": "109–173: 늦은응답·같은조건실패·다음페이지중복/합계 단언읽기,미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/resources/application-prod.yaml",
+          "sha256": "8cb1351b9f4d0664d91da564ff054fe7f5d05dfbe6dcd0055d0ed024a4a2b187",
+          "reviewScope": "193–217: 인증 강제 false 기본·FAKE·10분/5회; 실제 운영값 확인 아님"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+          "sha256": "9d3ead0cc566f10853c081c56babf9f3435c84d8efe53f6d58e89dda7e892144",
+          "reviewScope": "275–280: Page 모임별 목록·검색조건 위임"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementService.java",
+          "sha256": "a3de5d85028bf15316de0c943184516f09800e643489d93fd4ae8afa301cb1bd",
+          "reviewScope": "975–1020: 모임별조회·위임가시성·제목/금액·비작성자DRAFT 마스킹 호출"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/repository/query/MeetingSettlementQueryRepository.java",
+          "sha256": "827e787e4f28622548f5b3dbc9651f125eb1acdc3f16b76158a9e5a3911486f4",
+          "reviewScope": "633–710: 참여관계·상태별조회·기본취소제외·페이지정렬/건수"
+        },
+        {
+          "path": "community_app/lib/data/api/meeting_settlement_api.dart",
+          "sha256": "4f1f7e72e5357cb12a9621acc30b55f92d15cb890c5d396c7725711e1974f8b6",
+          "reviewScope": "48–60: 개인 entries·summary·source별 상세 API"
+        },
+        {
+          "path": "community_app/lib/data/repositories/meeting_settlement_repository.dart",
+          "sha256": "d441d3cd3d10cada0c05bb7f4a23e9a5cb3670c57421afb377046069172fc0d1",
+          "reviewScope": "46–64,133–139: 개인목록/요약·평판 결과래핑"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/screens/my_settlement_entries_screen.dart",
+          "sha256": "2bebe96675b89bfa17624e247b817cc05c824aa7d74e38a3495777ab34a70588",
+          "reviewScope": "37–325: 전체요약·세탭·추가확인·선택합계·1000건·원본상세·실패표시"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "275,505–532: 전체메뉴 전용 내정산/계좌 입구·로그인조건"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745",
+          "reviewScope": "511–526: 본인계좌·내정산·원본상세 라우트"
+        },
+        {
+          "path": "community_app/lib/presentation/payment/screens/wallet_screen.dart",
+          "sha256": "7f80865b15761dd871296863296beb73bbb6d904d4b01a94b7d492cde1f93b81",
+          "reviewScope": "150–170: 지갑 내정산 입구 이름/설명; 연결은 기존 정산 명세와 교차"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_host_card.dart",
+          "sha256": "b1d8fc445a36e297c83ce2d03c9ed7a44c0445df45a8da72e90d66f332107988",
+          "reviewScope": "101–122: 호스트번호 있을 때 축약 정산배지 삽입"
+        },
+        {
+          "path": "docs/ui-ux/screens/21-meeting-settlement.md",
+          "sha256": "79bde0ca1eaf3d83f2f6c7fc182ed709bad541ef7f497292a0ac1ed24cdc7aa4",
+          "reviewScope": "383–399: 개인당사자·전체/기간합계·기록일·원본이동·1000한도 명세"
+        }
+      ],
+      "reuses": [
+        "club_stats_20261122",
+        "event_detail_complete_20261122",
+        "event_payment_cancel_refund_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "settlement_appeal_20261122",
+        "settlement_prepayment_20261122",
+        "settlement_remind_20261122",
+        "settlement_status_summary_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
+          "sha256": "6a9b2d51994bd545511ca13235bdc170069e4c9709e8d72cd8d9b4c77162e781"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md",
+          "sha256": "ca2acb16e8c5272021cace08cbe7f8dd7952f6a19d66e456ea535f7d00d7d972",
+          "reviewScope": "기존 검토 정본의 관련 기능 범위 재사용; 새 실행 아님"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4",
+          "reviewScope": "기존 검토 정본의 관련 기능 범위 재사용; 새 실행 아님"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
+          "sha256": "312e842ddc53946b9d652b590f023942871925c6ac8106ceac83539b03bf52f7",
+          "reviewScope": "기존 검토 정본의 관련 기능 범위 재사용; 새 실행 아님"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-09_earnings-dashboard_prd.md",
+          "sha256": "6a47ba414f3266b0808bc2df6f0533953cf69187544c3f80f2f74d37c0e92b89",
+          "reviewScope": "기존 검토 정본의 관련 기능 범위 재사용; 새 실행 아님"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F07-10.html": [
+          "sidebar",
+          "launch-strip",
+          "recipient-account-visibility",
+          "withdrawal-account",
+          "bank-verification",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F07-10 실제 공개 Controller 연결 14개 신규 등록; 현재 entries와 이전 history를 구분",
+        "현재 전체 메뉴 입구, 은행 제어 확인 의미, 평판 전체 분모의 DRAFT, 취소 필터 및 고정 남은 인증 횟수 정정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "ui_mismatch",
+          "finding": "인증 창 attemptsLeft는 시작 응답으로 고정되어 오입력 후 감소하지 않음; 서버 제한은 적용됨",
+          "disposition": "제품 코드 수정 없이 문서에 후속 결함 기록"
+        },
+        {
+          "kind": "external_verification",
+          "finding": "실 공급자 연결·실계좌 확인·운영 환경변수 미검증",
+          "disposition": "개발 성공과 별도 완료 조건 유지"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "observedSourceVersions": {
+        "community_app": "6c62153ed7ca5138a35668ecdea5b299699c620d",
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
+      },
+      "checks": {
+        "sourceReferences": "114 tables match; source_references.test.mjs 11/11 pass",
+        "scenarioAudit": "generated and --check pass",
+        "publicFeature": "F07-10 open/local historical proof retained; current account display issue repair/implementationReady=false; unrelated withdrawal summary replaced",
+        "fullReleaseScope": "fails at pre-existing launch asOf 2026-11-08 vs index 2026-11-15; not a full pass",
+        "productTests": "not executed; source assertions read only"
+      }
+    },
+    "api_journey_fixture_source_advance_20261122": {
+      "kind": "source_version_delta",
+      "scope": "API b9ee→4dda의 변경 경로는 돈 여정 시험 준비 스크립트2개뿐. 기존 문서 소스 근거 경로와 교집합 없음. 스크립트 내용/제품 실행 판정 아님.",
+      "sources": [],
+      "canonicalSources": [],
+      "fromCommit": "b9ee63f619eba6501f952fa663a243ac87d3573b",
+      "toCommit": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+      "changedPaths": [
+        "scripts/check_money_gap_journeys.py",
+        "scripts/run-money-gap-journey-server.sh"
+      ],
+      "affectedEvidencePaths": []
     }
   },
   "currentSourceVersions": {
@@ -30146,8 +30501,8 @@
       "observation": "로컬 main; 현황판 공개 사본 후속 변경을 작업 브랜치에 병합함. 이번에 원격 재조회하지 않음"
     },
     "community_api": {
-      "commit": "b9ee63f619eba6501f952fa663a243ac87d3573b",
-      "observation": "로컬 main; 최초 원격 대조 이후 다른 세션 변경 반영"
+      "commit": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+      "observation": "로컬 main; 이전 판 이후 시험 준비 스크립트2개 변경·기존 문서 근거 경로 영향 없음. 원격 재조회 없음"
     },
     "community_app": {
       "commit": "6c62153ed7ca5138a35668ecdea5b299699c620d",
