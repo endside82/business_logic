@@ -438,7 +438,8 @@
         "qa_acceptance_20261122",
         "feature_inventory_20261122",
         "qa_overview_20261122",
-        "numbers_reference_20261122"
+        "numbers_reference_20261122",
+        "money_scenarios_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4982,9 +4983,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "1177b6465c1ad57ea4d37080d11b4699dd550b26d9ee4090149e1a1d77887bd0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "money_scenarios_20261122"
+      ],
+      "reviewedSha256": "7df9c775f25faa13be3b2b654f7186575b8a74824f3965db54c0af58fd3942db"
     },
     {
       "path": "docs/overview/architecture.html",
@@ -48617,6 +48621,244 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; canonical/source document and link checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "money_scenarios_20261122": {
+      "kind": "source_review",
+      "scope": "시나리오 전체 기존 본문(11065자) 읽기. 최신 공통 정책·기능 정본 재사용, 차지백·원천세 전표 소스 직접 확인. 각 단계의 역할/원금/권리/지급/실제수령 경계와 기존 마일리지 기록 보존.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ChargebackCommand.java",
+          "sha256": "798de961bd02c148de366e8119ac49addbed53b5dea5ce60a8b53266eee3304d",
+          "reviewScope": "receive/beginReview/close 전체 함수와 LOST/ACCEPTED 손실기록 조건 대조. 카드사실행 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/OperatorLedgerCommand.java",
+          "sha256": "6ab7c85da3311a771ad453ef354613d5be0eb2a2a075c0e9a0cb6c2f198d385c",
+          "reviewScope": "전체 함수 본문: 차지백/원천세 분개와기록·기간잠금만 수행. 지갑/외부송금 수행으로 확대 안함."
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/payment/service/ManageAccountingService.java",
+          "sha256": "4f407b8ad45bf70b7c3a1b5a93cc9f7650dc57618a33db4345c8da1bf81e789b",
+          "reviewScope": "remitWithholdingTax 오버로드 598~681:잠금·기존키충돌/결과재생·오늘누적예수금한도·전표/감사저장. 입력검증함수전체/실제세무납부 확인은아님."
+        }
+      ],
+      "reusedSources": [],
+      "reuses": [
+        "charge_methods_autocharge_20261122",
+        "club_detail_20261122",
+        "club_finance_20261122",
+        "club_subscription_20261122",
+        "creator_earning_20261122",
+        "event_payment_cancel_refund_20261122",
+        "event_prepayment_20261122",
+        "host_settlement_appeal_20261122",
+        "hosting_ticket_personal_subscription_20261122",
+        "market_purchase_20261122",
+        "mileage_commands_20261122",
+        "numbers_reference_20261122",
+        "payment_supplement_20261122",
+        "privacy_policy_20261122",
+        "purchase_refund_20261122",
+        "regular_meeting_participation_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_confirm_20261122",
+        "settlement_pay_20261122",
+        "settlement_prepayment_20261122",
+        "state_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/money-flow/index.html",
+          "sha256": "b19ded6380b75fb8381e20965b406a0a95533efc7e38d9d394d2027511cdcfb2"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/16_마일리지_prd.md",
+          "sha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-13_event-prepayment_prd.md",
+          "sha256": "573e9cc90bc6448fefed647f28c18569028c2b345aa24f42e85d2623a94b034f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-02_club-detail-join_prd.md",
+          "sha256": "dea83a2c16ba7a33351d9057541d48c1bae6a62953e270b7c35e8a4f9eff5999"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
+          "sha256": "fbe3bb0283be6b292fef33a1b0ca6939469e97f5c8068752aeb4b79759c4d7e1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
+          "sha256": "74b67277d839532e136c60b388908fba9778021d7ce6563ad9efb13c1cef3114"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-02_point-charge_prd.md",
+          "sha256": "6b6d396eacb60ba290cef220bd1a00cf20fdd3ec9c24a99e636bcbd0ff19f8a8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-05_auto-charge_prd.md",
+          "sha256": "099793209eb5a069983b5bf568fb27904a684ab091e3a2ad2938a4a9b8e54afc"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-06_point-pay-refund_prd.md",
+          "sha256": "e81bbc277de269a402c22a3028a9c62bab9d038457289a5ded09e7297270f9bd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-07_hosting-ticket_prd.md",
+          "sha256": "f1f10d2565d487b56edefc8b8d281569666fa1a9c88b786804db26ce1fc9fb5d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
+          "sha256": "e369daee8ee66f3de1e05c4648e94c80c8b7b3f12e8982d2af2e73afc1fa1abf"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-10_settlement-appeal_prd.md",
+          "sha256": "36e8bd4483ad4747853b33e3b94bd1e2acb4d420a909fa40e3e4b4e7fc8011a3"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-03_activate-cancel_prd.md",
+          "sha256": "ad4a9f42105069708dfe08819f2f3598693c6e0f5769b0caee835401e5dc831f"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
+          "sha256": "312e842ddc53946b9d652b590f023942871925c6ac8106ceac83539b03bf52f7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-09_prepayment-refund_prd.md",
+          "sha256": "8319a11d5d9cc34d09df368f325d62b512f16a8baec507779036fb6508d180e2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
+          "sha256": "40ab1e495a89faaf5cf7ce02d9576396ba9c3fe4231dfac9df68c2e2e8a764db"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md",
+          "sha256": "ef4baa7802a7af6aa7fe5549a95a359a4d2be024110d9b10de0a011f33cd6058"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-15_creator-earning-coverage_prd.md",
+          "sha256": "2b336ec6c5bab3e6250baeca0bfe67509e5bded619d21e10b284e6644652e344"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-07_regular-meeting-payment_prd.md",
+          "sha256": "c37b11088f99c9f22dfec5be15cc03063607ffa46b9a82315f43a80837adf4eb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-08_regular-meeting-refund_prd.md",
+          "sha256": "380620d03b2463ee1a413b564d1325f428e3a1d8bc76f955e921b0bca06be2d8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md",
+          "sha256": "1aca822bd967ce9c826e6494ec2ce58e554172e8f7cac1dd5ac9b1b367a32704"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/money-flow/scenarios.html": [
+          "sidebar",
+          "money-retry-current",
+          "0-공통-등장인물",
+          "1-지갑-충전",
+          "1-1-사용자가-직접-충전하는-경우",
+          "1-2-자동충전이-발생하는-경우",
+          "2-지갑-소비-공통",
+          "2-1-유료-우선-결제",
+          "2-2-유료만-가능한-결제",
+          "2-3-무료-포인트만-복원되는-경우",
+          "3-이벤트-참가비와-호스트-정산",
+          "3-1-지갑-선결제로-참가하는-경우",
+          "3-2-은행-이체-선결제로-참가하는-경우",
+          "3-3-이벤트-종료-후-정산되는-경우",
+          "3-4-이벤트-결제-환불이-발생하는-경우",
+          "4-마켓-아이템-번들-플랜-구매",
+          "4-1-단일-아이템-구매",
+          "4-2-번들-구매",
+          "4-3-플랜-구매",
+          "4-4-마켓-플랜-환불",
+          "5-모임-선입금과-모임-정산",
+          "5-1-모임-선입금",
+          "5-2-모임-정산-분담금",
+          "5-3-모임-정산-취소",
+          "6-클럽-기금",
+          "6-1-클럽-기부",
+          "6-2-클럽-가입비",
+          "6-3-클럽-운영-구독",
+          "6-4-클럽-기금-인출",
+          "7-개인-구독과-개최권",
+          "7-1-개인-구독",
+          "7-2-프라이빗-모임-개최권-호스팅-티켓",
+          "8-사용자-외부-출금",
+          "8-1-출금-신청",
+          "8-2-출금-승인",
+          "8-3-지급-성공-실패-복구",
+          "9-마일리지",
+          "9-1-적립",
+          "9-2-사용",
+          "9-3-회수와-만료",
+          "10-운영자-작업",
+          "10-1-정산-승인-완료",
+          "10-2-운영자-환불-보상",
+          "10-3-차지백",
+          "10-4-원천징수세-납부",
+          "11-대사와-알림이-필요한-상황",
+          "12-cs-답변-기준-예시",
+          "12-1-왜-환불금-일부가-무료-포인트로-들어왔나요",
+          "12-2-이벤트-결제했는데-호스트에게-바로-입금되나요",
+          "12-3-마켓-판매금이-왜-바로-안-들어오나요",
+          "12-4-정산-후-환불이-승인되면-판매자는-어떻게-되나요",
+          "12-5-클럽-기금은-전부-인출할-수-있나요",
+          "12-6-출금-신청했는데-왜-아직-입금이-안-됐나요"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "은행확인즉시참석보장·모든자동충전뒤구매성공·모든실패자동재지급 설명 수정",
+        "클럽기금전액구독/오너지갑즉시인출·월1회절대조건 수정",
+        "상품재원·번들배분/부분대상·환불REFUNDED_BY_OPERATOR/자동승인/플랫폼큐 보완",
+        "정산선입금제한·비용정산수입방향/미확인송금/반환복구 분리",
+        "정기모임납부·확인기한/회차환불/수익정산 추가",
+        "운영원문계정파기종결행조건·차지백/원천세전표와실제납부 구분"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/money-flow/scenarios.html",
+          "pattern": "<details id=\"money-scenarios-previous-mileage-record\">[\\s\\S]*?</details>",
+          "sha256": "f966ec87a8a8ad96cb9d3ab221345be222409f42420e33219861a25ec5146589",
+          "note": "이전 마일리지 실행 기록 단락 원문 보존, 이번 실행으로 계승하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "29 source/canonical digests; 53 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 1 paths, 46 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; document/canonical/source/link checks only"
       },
       "observedSourceVersions": {
         "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
