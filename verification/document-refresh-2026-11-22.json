@@ -436,7 +436,8 @@
         "state_guides_20261122",
         "permission_guides_20261122",
         "qa_acceptance_20261122",
-        "feature_inventory_20261122"
+        "feature_inventory_20261122",
+        "qa_overview_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5158,9 +5159,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "9419726a667bc4194ce1fca462da38068cdd7feb9d39d09743726be49df772d0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "qa_overview_20261122"
+      ],
+      "reviewedSha256": "5e951373dd73d25938f0ac7eaf79bb2003dc7c889711158bcd92a45e4439c316"
     },
     {
       "path": "docs/qa/exceptions.html",
@@ -5208,9 +5212,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "25ad32c0f98e62fbf4dbf5257118c81d1fc41a66e47bb5c0e923b84ac0d04dd7",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "qa_overview_20261122"
+      ],
+      "reviewedSha256": "2cf7f7285ab48547e43c5b0bf3963d06a03a7e06a461a52938abe244d0fba979"
     },
     {
       "path": "docs/qa/release.html",
@@ -48164,6 +48171,179 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; canonical SHA reuse, inventory regeneration, catalog JS/data/links static checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "qa_overview_20261122": {
+      "kind": "source_review",
+      "scope": "공개 커버리지 전체 본문·기존 표와 PRD상태 페이지 전체 본문/105줄 inlineJS 읽기. 최신 정본/목록 재사용. 과거 연결·로컬 제품 실행 기록은 원문 보존하고 이번 실행으로 계승하지 않음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "block_editor_20261122",
+        "calendar_features_20261122",
+        "club_album_20261122",
+        "club_announcements_20261122",
+        "club_calendar_20261122",
+        "club_comments_20261122",
+        "club_detail_20261122",
+        "club_discovery_20261122",
+        "club_finance_20261122",
+        "club_invitation_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "club_posts_20261122",
+        "club_reputation_20261122",
+        "club_stats_20261122",
+        "club_subscription_20261122",
+        "creator_earning_20261122",
+        "creator_stats_20261122",
+        "curated_assignment_20261122",
+        "curated_bulk_20261122",
+        "curated_charge_20261122",
+        "curated_deposit_20261122",
+        "curated_refund_20261122",
+        "curated_settlement_20261122",
+        "curated_subsidy_20261122",
+        "data_export_20261122",
+        "date_chat_meeting_20261122",
+        "date_identity_profile_20261122",
+        "date_matching_block_20261122",
+        "dispute_evidence_20261122",
+        "dispute_intake_20261122",
+        "dispute_query_20261122",
+        "email_code_auth_20261122",
+        "event_creation_20261122",
+        "event_detail_complete_20261122",
+        "event_discovery_20261122",
+        "event_domain_rollup_20261122",
+        "event_lifecycle_20261122",
+        "event_prepayment_20261122",
+        "feature_inventory_20261122",
+        "feedback_taste_20261122",
+        "location_features_20261122",
+        "market_browse_20261122",
+        "market_detail_20261122",
+        "market_management_20261122",
+        "market_purchase_20261122",
+        "market_search_20261122",
+        "mileage_commands_20261122",
+        "mileage_policy_season_20261122",
+        "mileage_queries_20261122",
+        "my_collection_20261122",
+        "plan_detail_20261122",
+        "plan_event_review_20261122",
+        "plan_list_20261122",
+        "plan_publish_20261122",
+        "plan_reorder_20261122",
+        "preference_tags_20261122",
+        "purchase_refund_20261122",
+        "qa_acceptance_20261122",
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122",
+        "regular_meeting_reads_20261122",
+        "report_intake_20261122",
+        "review_core_20261122",
+        "session_and_social_unlink_20261122",
+        "settlement_account_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_appeal_20261122",
+        "settlement_confirm_20261122",
+        "settlement_create_20261122",
+        "settlement_items_20261122",
+        "settlement_pay_20261122",
+        "settlement_prepayment_20261122",
+        "settlement_remind_20261122",
+        "settlement_status_summary_20261122",
+        "signup_social_onboarding_20261122",
+        "support_20261122",
+        "trust_score_20261122",
+        "warning_intake_20261122",
+        "warning_operations_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_coverage_matrix.md",
+          "sha256": "2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600"
+        },
+        {
+          "path": "business_logic/prd/PRD_MIGRATION_STATUS.md",
+          "sha256": "2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/acceptance_criteria_matrix.md",
+          "sha256": "6f233d0cd0f480b8b15b03b1a7b64bc8eb361ca0c065de0836e0ecc530fa9da8"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/11_qa_acceptance_criteria.md",
+          "sha256": "f801b8f85faad928d34eace151d12d4afcbbd996a57a4880aee76bdc98b0d56c"
+        },
+        {
+          "path": "business_logic/docs/assets/features.js",
+          "sha256": "41fe24e362872a2903a9171a0d1c17a3d0bf14968f6a66d85d5fdaf596b508b9"
+        },
+        {
+          "path": "business_logic/docs/assets/mileage-feature-status.js",
+          "sha256": "780d161d33255426ab00e4b3bfd814575dfc966283d130bffc02520529045ebb"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/coverage.html": [
+          "sidebar",
+          "completion-standard",
+          "source-links-2026-10-13"
+        ],
+        "docs/qa/migration-status.html": [
+          "sidebar",
+          "m-total",
+          "m-golden",
+          "m-reviewed",
+          "m-source-first",
+          "m-risk",
+          "domain-summary",
+          "top-risk",
+          "search",
+          "domain-filter",
+          "status-filter",
+          "risk-only",
+          "feature-count",
+          "full-table"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "커버리지1403/1086/49 불일치 설명을1654/1276과추가제목집계로 갱신",
+        "전도메인O표를 적용가능범주와증거선택으로 정리",
+        "PRD상태의대부분미판정·598위험후보 주장 제거;계보/등록참조/검토항목 분리",
+        "상태페이지 필터·정렬 유지,문서대조175/units117·58 구분"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/qa/coverage.html",
+          "pattern": "<details id=\"coverage-previous-execution-record\">[\\s\\S]*?</details>",
+          "sha256": "4820a285f13ad499c28dc10991b14f133b758288ecf96725b6c28cd5f618e878",
+          "note": "이전 절의 바깥 공백만 정리하고 소스 연결·제품 실행 기록 본문 원문 보존"
+        }
+      ],
+      "tableCheck": {
+        "features": 175,
+        "domains": 21,
+        "unitDocuments": 117,
+        "withoutUnits": 58,
+        "registeredReviewItems": 734,
+        "method": "Node VM document rendering; metadata preservation and ID/domain/lineage/count filters; not browser/app runtime"
+      },
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "6 source/canonical digests; 17 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 20 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical document derivation and migration table Node VM checks only"
       },
       "observedSourceVersions": {
         "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",

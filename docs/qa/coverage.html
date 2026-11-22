@@ -14,28 +14,26 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA & 릴리즈<span>›</span>시나리오 커버리지</div>
         <h1>시나리오 커버리지 기준</h1>
-        <p class="lede">
-          제품 기능 175개 모두 시나리오 또는 수용 조건을 갖는다. 기능 목록에 적힌 숫자의 합은 1,403이지만
-          동일한 기준으로 센 통과 건수가 아니다. 상세 시나리오 문서 117개에서 식별한 제목은 1,086개이고
-          49개 기능은 등록값과 제목 수가 다르다. 이 페이지는 새 시나리오를 작성할 때 빠뜨리지 않을
-          <strong>8개 범주</strong>를 설명한다. 기능별 실제 연결 상태는
-          <a href="scenario-completeness.html">기능별 시나리오 완성도</a>에서 본다.
-        </p>
+        <p class="lede">시나리오 정의·문서 연결·제품 실행 결과를 나눕니다. 2026-11-22 현재 21개 도메인·175개 기능의 문서 집계와 검토 범주를 안내합니다.</p>
       </header>
-      <section id="completion-standard"><div class="callout info"><span class="label">2026년 10월 13일 — 출시 완료 판정 기준</span>
-        <p><a href="completion-criteria.html">출시 완료 기준과 승인 기록</a>에서 구현·자동 검사·사용 흐름·실환경·공개 승인 단계를 구분합니다.
-          175개 기능의 구체적인 결과와 권한·실패 조건, 투표·스탬프·프라이빗 모임의 기준을 연결했습니다.
-          현재 상태표와 시나리오 개수는 완료율이 아닙니다.</p></div></section>
-
-      <section id="source-links-2026-10-13"><h2>10월 13일 현재 소스 연결 재확인</h2>
+      <!-- derived-from: prd/04_qa_acceptance/scenario_coverage_matrix.md; sha256: 2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600 -->
+<section id="completion-standard"><h2>문서 집계와 제품 완료를 구분합니다</h2><p>현재 기능 175개는 각각 정본과 수용 조건을 갖습니다. 목록 등록 확인 항목은 1,654개, 별도 상세 시나리오 문서 117개의 식별 제목은 1,276개입니다. 어느 숫자도 시험 통과 수나 구현률이 아닙니다. <a href="acceptance.html">QA 수용 기준</a>과 <a href="completion-criteria.html">출시 완료 기준</a>에서 문서·자동 검사·사용 흐름·외부 결과·공개 승인을 구분합니다.</p></section>
+<section id="coverage-current-1"><h2>집계 기준과 해석</h2><ul><li>등록 확인 항목은 기능 목록의 scenarios 값이다. 정본 수용 조건과 기능별 작성 기준을 반영하며 시험 통과 수가 아니다.</li><li>상세 제목은 units의 scenarios.md에서 S/SC 번호·시나리오 제목·E2E-derived 제목을 현재 집계식으로 식별한 수다. 별도 문서가 없는 기능은 ‘없음’으로 표시하며 기능 자체의 정의 없음과 구분한다.</li><li>도식은 별도 units/diagrams.md의 Mermaid 코드 블록 수다. 보이는 화면 개수나 실행된 경로 수가 아니다.</li><li>F12-02는 정본 수용 기준과 등록값이 6개이고, 상세 문서가 기존 조건을 풀어 쓴 E2E-derived 제목을 추가로 포함해 7개다. 두 값을 억지로 같게 만들지 않는다.</li><li>소스 연결·자동 시험 파일·여정 파일의 식별 결과는 후보 근거다. 단언 내용·버전·실행 결과까지 대조해야 해당 수용 기준의 통과를 주장할 수 있다.</li></ul></section>
+<section id="coverage-current-2"><h2>도메인별 현재 문서 집계</h2><div class="table-wrap"><table><thead><tr><th>도메인</th><th>기능</th><th>등록 확인 항목</th><th>상세 문서 보유 기능</th><th>상세 제목</th></tr></thead><tbody><tr><td>01 인증 &amp; 온보딩</td><td>8</td><td>70</td><td>8</td><td>70</td></tr><tr><td>02 홈 피드</td><td>5</td><td>48</td><td>5</td><td>48</td></tr><tr><td>03 이벤트</td><td>20</td><td>172</td><td>12</td><td>172</td></tr><tr><td>04 클럽</td><td>18</td><td>260</td><td>16</td><td>250</td></tr><tr><td>05 검색</td><td>5</td><td>50</td><td>5</td><td>50</td></tr><tr><td>06 결제 &amp; 지갑</td><td>10</td><td>106</td><td>10</td><td>106</td></tr><tr><td>07 모임 정산</td><td>10</td><td>146</td><td>10</td><td>146</td></tr><tr><td>08 플랜 마켓</td><td>15</td><td>172</td><td>13</td><td>150</td></tr><tr><td>09 프라이빗 데이팅</td><td>8</td><td>51</td><td>8</td><td>51</td></tr><tr><td>10 캘린더</td><td>5</td><td>38</td><td>5</td><td>38</td></tr><tr><td>11 리뷰 &amp; 신고</td><td>7</td><td>54</td><td>6</td><td>47</td></tr><tr><td>12 알림</td><td>6</td><td>38</td><td>6</td><td>39</td></tr><tr><td>13 프로필 &amp; 설정</td><td>7</td><td>72</td><td>7</td><td>72</td></tr><tr><td>14 위치 &amp; 길찾기</td><td>6</td><td>37</td><td>6</td><td>37</td></tr><tr><td>15 경고 &amp; 징계</td><td>9</td><td>57</td><td>0</td><td>0</td></tr><tr><td>16 마일리지</td><td>8</td><td>69</td><td>0</td><td>0</td></tr><tr><td>17 정기모임</td><td>10</td><td>83</td><td>0</td><td>0</td></tr><tr><td>18 분쟁 해결</td><td>5</td><td>41</td><td>0</td><td>0</td></tr><tr><td>19 관심인</td><td>3</td><td>0</td><td>0</td><td>0</td></tr><tr><td>20 고객지원</td><td>3</td><td>21</td><td>0</td><td>0</td></tr><tr><td>21 제공자 배정·정산</td><td>7</td><td>69</td><td>0</td><td>0</td></tr></tbody></table></div>
+<p>기능별 연결은 <a href="../../prd/04_qa_acceptance/acceptance_criteria_matrix.md">전체 기능 수용 기준 인덱스</a>를 따른다. 별도 상세 문서가 없는 범주를 0% 시험 커버리지로 환산하지 않는다. 기능 PRD·기존 시험·실제 실행의 연결 범위는 각각 확인해야 한다.</p></section>
+<section id="coverage-current-3"><h2>기능별로 적용할 확인 범주</h2><div class="table-wrap"><table><thead><tr><th>범주</th><th>빠뜨리지 않을 질문</th></tr></thead><tbody><tr><td>정상 결과</td><td>실제 요청 성공과 사용자에게 필요한 후속 결과가 무엇인가</td></tr><tr><td>입구와 복귀</td><td>메뉴·카드·목록·알림·공유 중 실제 연결과 중복 행동은 무엇인가</td></tr><tr><td>빈 상태·로딩·조회 실패</td><td>자료 없음·권한 거절·부분 실패·미조회 상태를 구분하는가</td></tr><tr><td>현재 권한</td><td>계정·관계·유효한 위임·공개 범위·역할 제한을 검사하는가</td></tr><tr><td>상태 변화</td><td>화면을 연 뒤 정원·가격·주최자·기한·보류가 바뀌면 어떻게 처리하는가</td></tr><tr><td>입력</td><td>서버 필드·nullable·범위·서로 의존하는 값과 앱 검증이 맞는가</td></tr><tr><td>실패·복구</td><td>확정 거절·외부 결과 불명·저장 후 재조회 실패·부분 처리를 나누는가</td></tr><tr><td>중복·동시성</td><td>같은 명령 재전송·다른 기기·늦은 응답·동시 변경을 판정하는가</td></tr><tr><td>후속 효과</td><td>돈·권리·알림·캘린더·위치·평판·증빙 보존의 실제 연결을 확인하는가</td></tr></tbody></table></div>
+<p>이 표는 검토할 질문이다. 모든 도메인에 O를 채운 실행 결과표가 아니다. 해당하지 않는 범주는 이유를 적으며, 근거가 충분하고 소스·조건이 바뀌지 않은 항목은 재사용한다.</p></section>
+<section id="coverage-current-4"><h2>핵심 여정에서 구분할 결과</h2><div class="table-wrap"><table><thead><tr><th>여정</th><th>확인할 경계</th></tr></thead><tbody><tr><td>가입·로그인</td><td>번호 확인·가입 확인표·계정 생성·내 정보 조회·세션 설치. 제공자 취소·기존 이메일 연결·마지막 수단 해제·늦은 응답</td></tr><tr><td>모임·클럽 참여</td><td>신청·논리 정원 예약·납부·실제 참석·대기 승격·게스트 책임. 취소·퇴장·차단과 반환·이력 보존</td></tr><tr><td>돈·정산</td><td>충전과 원 구매, 결제 신고와 수취 확인, 초안 확정과 돈 이동, 취소와 지갑/은행 반환, 외부 결과 불명</td></tr><tr><td>데이팅·위치·안전</td><td>현재 자격·연락처 동의·차단 관계·방 종료·신고, 위치 동의·OS 권한·좌표·만료·열람 목적</td></tr><tr><td>리뷰·신고·평판</td><td>작성 자격·자기 대상·중복 조건·수정/삭제·운영 판단·점수 반영. 모든 신고가 자동 제재나 점수 변화를 뜻하지 않음</td></tr><tr><td>운영·분쟁</td><td>사건 접근·증빙·결정·보상·수동 수습·보류 해제. 플랫폼 개입 기본 설정과 실제 공개 상태</td></tr></tbody></table></div>
+<p>위 항목은 경계를 찾는 안내다. 기능별 허용 전이·현재 제약은 <a href="../../prd/03_policy_prds/state_policy_prd.md">상태 정책</a>, <a href="../../prd/03_policy_prds/permission_policy_prd.md">권한 정책</a>과 연결된 기능 정본을 따른다.</p></section>
+<section id="coverage-current-5"><h2>기록 양식과 증거 선택</h2><p>기능 ID, 실제 입구, 계정·역할, 시작 상태, 명령과 입력, 예상 결과, 관측 결과, 남은 후속 작업, 버전·환경, 증거 위치를 적는다. 미실행·환경 미확인·실패·확인 완료·적용하지 않음을 구분한다. 계획 항목을 통과로 기록하지 않는다.</p>
+<p><a href="../../prd/00_prd_items/11_qa_acceptance_criteria.md">공통 QA 수용 기준</a>과 <a href="../../prd/03_policy_prds/planning_qa_policy.md">기획 QA 정책</a>에 따라 증거를 선택한다. 문서 집계에는 이미지·실결제·브라우저 실행이 필요하지 않다. 실제 메뉴 동선과 외부 결과를 주장할 때만 그 주장에 맞는 실행 근거를 확인한다.</p></section>
+<section id="source-links-2026-10-13"><h2>현재 연결과 과거 확인 기록</h2><p>현재 집계의 원본과 연결은 <a href="../../prd/04_qa_acceptance/acceptance_criteria_matrix.md">175개 기능의 수용 기준과 상세 시나리오 인덱스</a>에서 확인합니다. 이전 자동 검사·여정 파일의 존재, 당시 로컬 실행·확장 대상 53개의 완료 기록을 이번 전체 제품 통과로 합산하지 않습니다. 버전과 범위가 맞는 기존 근거만 재사용합니다.</p><details id="coverage-previous-execution-record"><summary>과거 소스 연결·제품 실행 기록 원문</summary><h2>10월 13일 현재 소스 연결 재확인</h2>
         <p>175개 기능의 자료를 다시 조사했습니다. 자동 검사 파일 직접 연결은 59개 기능, 통합·사용자 여정 직접 연결은 57개 기능입니다.
           서버 참조 302개 중 300개는 현재 함수·호출 주소·줄 위치를 확인했고, 폐기한 타인 가용시간 조회의 두 기록은 제외했습니다.
           정산 요청·취소의 바뀐 호출 주소도 반영했습니다.</p>
         <p>아래 9월 5일 수치는 당시 기록입니다. 이번 확인은 문서 연결과 실행 파일의 존재 확인이며 제품 테스트 재실행이 아닙니다.
           <a href="scenario-completeness.html">기능별 시나리오 근거 연결</a>에서 현재 자료를 확인합니다.</p>
-      </section>
-      <section>
-        <div class="callout danger">
+<div class="callout danger">
           <span class="label">2026-09-05 — 시나리오 정의와 시나리오 검증을 구분한다</span>
           <p>175개 기능 모두 시나리오 또는 수용 조건을 갖지만, 시나리오 문서가 자동 테스트 파일을 직접
             지목한 것은 59개 기능, 통합·E2E 실행 파일을 직접 지목한 것은 56개 기능이다. 테스트 안에서
@@ -69,129 +67,8 @@
           <p>앱 저장소의 확장 대상 53개는 모두 실행됐지만 제품 기능 175개의 부분집합이다. 53/53은 그 목록의
             작업 대기가 없다는 뜻이며, 제품 전체 커버리지 100%가 아니다. 실제 외부 서비스·서명 기기 검증도
             별도다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>모든 기능에 적용하는 8개 범주</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>범주</th><th>질문</th><th>예시</th></tr></thead>
-            <tbody>
-              <tr><td><strong>정상 흐름</strong></td><td>사용자가 기대한 대로 성공하는가</td><td>회원가입 완료, 이벤트 신청 성공, 정산 납부 완료</td></tr>
-              <tr><td><strong>진입·복귀</strong></td><td>어디서 들어오고 어디로 돌아가는가</td><td>홈 카드·알림 딥링크·백버튼 복귀</td></tr>
-              <tr><td><strong>빈 상태</strong></td><td>데이터가 없을 때 자연스러운가</td><td>리뷰 없음, 검색 결과 없음, 등록 기기 없음</td></tr>
-              <tr><td><strong>권한·역할</strong></td><td>이 사용자가 이 액션을 할 수 있는가</td><td>비호스트 정산 생성 차단, 타인 리뷰 수정 차단</td></tr>
-              <tr><td><strong>상태 불일치</strong></td><td>화면을 보는 사이 상태가 바뀌면?</td><td>정원 마감, 이미 취소된 이벤트, 만료된 토큰</td></tr>
-              <tr><td><strong>입력 검증</strong></td><td>값이 부족하거나 잘못되면?</td><td>비밀번호 약함, 금액 범위 초과, 시간 역전</td></tr>
-              <tr><td><strong>실패·복구</strong></td><td>네트워크·외부 시스템 실패 시</td><td>결제 대행 실패, 메일 발송 실패, 지도 시스템 연동 장애</td></tr>
-              <tr><td><strong>중복·동시성</strong></td><td>같은 액션을 반복하거나 여러 기기에서 하면?</td><td>중복 신청, 토큰 동시 갱신, 일괄 승인 충돌</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>시나리오 검산 흐름</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["기능 하나 선택"] --> B["정상 흐름 작성"]
-    B --> C["진입점·복귀 지점 확인"]
-    C --> D["빈 상태·로딩 상태 확인"]
-    D --> E["역할·권한별 CTA 확인"]
-    E --> F["상태가 바뀐 경우 확인"]
-    F --> G["입력 검증 확인"]
-    G --> H["외부 실패·네트워크 실패 확인"]
-    H --> I["중복 클릭·멀티 디바이스 확인"]
-    I --> J["알림·결제·위치·리뷰 부수효과 확인"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>도메인별 시나리오 분포</h2>
-        <p class="subtitle">기존 문서의 등록값을 합산한 참고 수치다. 문서마다 집계 방식이 달라 최소 보장 수로도 사용할 수 없다. 기능당 평균은 문서의 상대적 복잡도를 보는 참고값이며 테스트 통과율이 아니다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>영역</th><th style="text-align:right">기능</th><th style="text-align:right">시나리오</th><th style="text-align:right">기능당 평균</th><th>우선 확인할 시나리오</th></tr></thead>
-            <tbody>
-              <tr><td>01 인증·온보딩</td><td style="text-align:right">8</td><td style="text-align:right">82</td><td style="text-align:right">10.3</td><td>토큰, 메일, 소셜 앱 연동, 계정 상태</td></tr>
-              <tr><td>02 홈 피드</td><td style="text-align:right">5</td><td style="text-align:right">38</td><td style="text-align:right">7.6</td><td>부분 실패, 캐시, 비로그인, 카드 라우팅</td></tr>
-              <tr><td>03 이벤트</td><td style="text-align:right">20</td><td style="text-align:right">169</td><td style="text-align:right">8.5</td><td>정원, 승인, 유료 승인제, 게스트 동반 예매, 결제, 대기열, 체크인</td></tr>
-              <tr><td>04 클럽</td><td style="text-align:right">18</td><td style="text-align:right">204</td><td style="text-align:right">11.3</td><td>권한, 멤버십, 게시판, 기금, 구독, 레퓨테이션</td></tr>
-              <tr><td>05 검색</td><td style="text-align:right">5</td><td style="text-align:right">41</td><td style="text-align:right">8.2</td><td>입력 전·중·결과, 필터, 기록</td></tr>
-              <tr><td>06 결제·지갑</td><td style="text-align:right">10</td><td style="text-align:right">71</td><td style="text-align:right">7.1</td><td>결제 대행 실패, 잔액 부족, 유료 승인제, 환불, 자동충전</td></tr>
-              <tr><td>07 모임 정산</td><td style="text-align:right">10</td><td style="text-align:right">84</td><td style="text-align:right">8.4</td><td>작성중·진행중, 납부, 이체 확인, 이의</td></tr>
-              <tr><td>08 플랜 마켓</td><td style="text-align:right">15</td><td style="text-align:right">144</td><td style="text-align:right">9.6</td><td>초안·발행, 미리보기·공유, 구매 중복, 컬렉션, 리뷰, 환불·정산</td></tr>
-              <tr><td>09 프라이빗 데이팅</td><td style="text-align:right">8</td><td style="text-align:right">70</td><td style="text-align:right">8.8</td><td>인증, 매칭, 채팅, 만남, 차단</td></tr>
-              <tr><td>10 캘린더</td><td style="text-align:right">5</td><td style="text-align:right">40</td><td style="text-align:right">8.0</td><td>라우팅, 반복, 충돌, 공개 범위</td></tr>
-              <tr><td>11 리뷰·신고</td><td style="text-align:right">7</td><td style="text-align:right">43</td><td style="text-align:right">6.1</td><td>작성 자격, 중복, 자기 신고, 신뢰점수, 궁합/핏 피드백</td></tr>
-              <tr><td>12 알림</td><td style="text-align:right">6</td><td style="text-align:right">38</td><td style="text-align:right">6.3</td><td>권한, 카테고리, 방해금지, 토큰</td></tr>
-              <tr><td>13 프로필·설정</td><td style="text-align:right">7</td><td style="text-align:right">35</td><td style="text-align:right">5.0</td><td>데이터 내보내기, 삭제·비활성화, 주소</td></tr>
-              <tr><td>14 위치·길찾기</td><td style="text-align:right">6</td><td style="text-align:right">42</td><td style="text-align:right">7.0</td><td>공유 동의·중지, 위치 권한, 외부 지도</td></tr>
-              <tr><td>15 경고·징계</td><td style="text-align:right">9</td><td style="text-align:right">44</td><td style="text-align:right">4.9</td><td>신고 심사, 경고, 이의제기, 제재 집행</td></tr>
-              <tr><td>16 마일리지</td><td style="text-align:right">8</td><td style="text-align:right">42</td><td style="text-align:right">5.3</td><td>시즌·사진 심사·반복 수동 적립 검토까지 첫 출시 포함. 운영 배포와 실제 휴대전화 검사는 별도</td></tr>
-              <tr><td>17 정기모임</td><td style="text-align:right">10</td><td style="text-align:right">96</td><td style="text-align:right">9.6</td><td>세션, FIXED/VARIABLE, 결제, 환불, 정산</td></tr>
-              <tr><td>18 분쟁 해결</td><td style="text-align:right">5</td><td style="text-align:right">24</td><td style="text-align:right">4.8</td><td>직접 접수, 이의제기, 증빙, 호스트 인박스</td></tr>
-              <tr><td>19 관심인</td><td style="text-align:right">3</td><td style="text-align:right">14</td><td style="text-align:right">4.7</td><td>관심인 등록, 캘린더, 공개범위</td></tr>
-              <tr><td>20 고객지원</td><td style="text-align:right">3</td><td style="text-align:right">16</td><td style="text-align:right">5.3</td><td>1:1 문의, 운영 이슈, FAQ</td></tr>
-              <tr><td>21 제공자 배정·정산</td><td style="text-align:right">7</td><td style="text-align:right">66</td><td style="text-align:right">9.4</td><td>제공자 배정, 서비스비, 정산, 계약금, 정기 묶음</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>도메인별 필수 검토 범주</h2>
-        <p class="subtitle">아래 표의 O는 검증 완료 표시가 아니라 새 시나리오를 작성할 때 반드시 검토할 범주라는 뜻이다. 입력이 거의 없는 홈 피드만 입력 검증을 선택 항목으로 둔다.</p>
-        <div class="table-wrap">
-          <table class="compact center">
-            <thead><tr><th>영역</th><th>정상</th><th>빈</th><th>권한</th><th>상태</th><th>검증</th><th>실패</th><th>중복</th><th>부수효과</th></tr></thead>
-            <tbody>
-              <tr><td style="text-align:left">01 인증·온보딩</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">02 홈 피드</td><td>O</td><td>O</td><td>O</td><td>O</td><td></td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">03 이벤트</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">04 클럽</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">05 검색</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">06 결제·지갑</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">07 모임 정산</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">08 플랜 마켓</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">09 데이팅</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">10 캘린더</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">11 리뷰·신고</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">12 알림</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">13 프로필·설정</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">14 위치·길찾기</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">15 경고·징계</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">16 마일리지</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">17 정기모임</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">18 분쟁 해결</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">19 관심인</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">20 고객지원</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-              <tr><td style="text-align:left">21 제공자 배정·정산</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>기능 카드 작성 전 체크리스트</h2>
-        <div class="callout">
-          <ul>
-            <li>정상 성공 흐름이 있다</li>
-            <li>사용자가 들어오는 진입점이 2개 이상이면 모두 적었다</li>
-            <li>빈 상태·로딩·전체 실패·부분 실패를 구분했다</li>
-            <li>비로그인·로그인·소유자·관리자·대상자 권한이 구분됐다</li>
-            <li>상태가 화면 진입 후 바뀌는 경우를 적었다</li>
-            <li>입력값 범위와 필수값을 적었다</li>
-            <li>외부 시스템 실패를 적었다</li>
-            <li>중복 클릭·재시도·멀티 디바이스를 적었다</li>
-            <li>돈·알림·캘린더·위치·신뢰 영향이 있는지 확인했다</li>
-          </ul>
-        </div>
-      </section>
-    </main>
+        </div></details></section>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>

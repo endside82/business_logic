@@ -14,74 +14,39 @@
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>QA &amp; 릴리즈<span>›</span>PRD 문서 상태</div>
         <h1>175개 기능 PRD 문서 상태</h1>
-        <p class="lede">
-          상태는 <code>business_logic/prd/02_feature_prds/</code>의 실제 기능 PRD를 기준으로 갱신한다.
-          <strong>문서 작성 방식과 소스 대조 수준</strong>을 보여주는 표이며, 기능 구현 완료표가 아니다.
-          소스 참조 수와 검토 후보 수는 문서 정리 지표이며, 현재 출시를 위한 개발·테스트 우선순위가 아니다.
-        </p>
+        <p class="lede">2026-11-22 현재 175개 기능 정본의 문서 대조와 참고 자료 연결을 안내합니다. 작성 계보·등록 항목 수를 구현 완료나 실행 통과로 해석하지 않습니다.</p>
       </header>
-
-      <section>
-        <div class="callout danger">
-          <span class="label">2026-08-23 — 구현 상태를 찾아왔다면 여기가 아니다</span>
-          <p>이 표의 “상태”는 <strong>문서를 얼마나 소스와 대조해 썼는가</strong>이며 제품이 되었는지와는
-            무관하다. 어떤 기능이 첫 출시에 열리고 무엇으로 확인했는지는
-            <a href="feature-status.html">기능별 출시 상태</a>에서, 출시를 막고 있는 항목은
-            <a href="launch-status.html">첫 출시 현황</a>에서 본다. 개별 기능 본문의 설명 기준일이 더
-            오래됐더라도 페이지 위의 출시 상태 띠와 첫 출시 현황이 현재 출시 판정이다.</p>
-          <p>아래 “Risk 후보”도 결함 수가 아니라 <strong>아직 판정하지 않은 검토 항목</strong>의 수다.
-            대부분이 “소스와 대조한 뒤 확정”이라고만 적힌 채 남아 있으므로, 그대로 출시 판단에 쓰지 않는다.</p>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">문서 품질과 제품 준비를 구분한다</span>
-          <p>아래 문서 분류 수는 제품의 미구현 수나 테스트 실패 수가 아니다.
-            실제 구현·자동 테스트·남은 준비는 <a href="feature-status.html">기능별 출시 상태와 다음 행동</a>을 따른다.
-            오래된 문서의 검토 후보를 그대로 새 개발 작업으로 만들지 않는다.</p>
-        </div>
-
-        <div class="metrics">
-          <div class="metric"><div class="label">전체 기능</div><div class="value" id="m-total">175</div></div>
-          <div class="metric"><div class="label">Golden sample</div><div class="value" id="m-golden">1</div><div class="hint">실사 + 직접 대조 완료</div></div>
-          <div class="metric"><div class="label">실사 기반 전환본</div><div class="value" id="m-reviewed">115</div><div class="hint">units 근거를 PRD로 재배치</div></div>
-          <div class="metric"><div class="label">source-first</div><div class="value" id="m-source-first">50</div><div class="hint">실제 소스·plan 기준 PRD</div></div>
-          <div class="metric"><div class="label">Risk 후보 합계</div><div class="value" id="m-risk">598</div><div class="hint">우선 검토 가중치</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">읽는 법</span>
-          <ul>
-            <li><strong>상태</strong> — 실제 PRD의 상단 문서 상태 또는 source-first 본문을 기준으로 분류한 문서 작성/검증 성격. 구현 완료 여부와는 별개다.</li>
-            <li><strong>Trace 수</strong> — 원천 units 문서에 남아 있는 <code>&lt;!-- traces: ... --&gt;</code> 소스 참조 수. 클수록 PRD가 실제 소스와 묶여 있을 가능성이 높다.</li>
-            <li><strong>Risk 후보 수</strong> — 원천 문서에 Gap/Risk/주의/보강으로 표시된 판단 후보. 클수록 사용자 피해 가능성이 큰 영역.</li>
-            <li>Risk 후보가 많다고 “위험”이라는 뜻이 아니라 <strong>“검토해야 할 항목이 많다”</strong>는 뜻이다. F03-05(이벤트 신청)와 F06-06(포인트 결제·환불)이 특히 무겁다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>도메인별 Risk 후보 분포</h2>
-        <p class="subtitle">색이 진할수록 그 도메인의 검토 항목 누적이 크다. Risk 후보 합계 기준 정렬.</p>
+<!-- derived-from: prd/PRD_MIGRATION_STATUS.md; sha256: 2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb -->
+<section><h2>현재 문서 대조의 범위</h2><p>기능 PRD 175개를 기능별 근거 그룹과 대조했습니다. 각 정본의 현재 제한·수용 조건과 <a href="../../prd/PRD_MIGRATION_STATUS.md">기능별 대조 근거</a>를 함께 읽습니다. 전체 문서 최신화와 소스 추가 변경의 최종 감사는 별도이며, 이 페이지가 제품 시험·운영 환경·출시 승인을 증명하지 않습니다.</p>
+<div class="metrics">
+<div class="metric"><div class="label">등록 기능</div><div class="value" id="m-total">175</div></div>
+<div class="metric"><div class="label">기능 정본 문서 대조</div><div class="value" id="m-golden">175</div><div class="hint">2026-11-22 · 제품 실행과 별도</div></div>
+<div class="metric"><div class="label">별도 units 있음</div><div class="value" id="m-reviewed">117</div></div>
+<div class="metric"><div class="label">별도 units 없음</div><div class="value" id="m-source-first">58</div><div class="hint">기능 정본·소스 직접 대조</div></div>
+<div class="metric"><div class="label">검토 항목 등록값 합계</div><div class="value" id="m-risk">734</div><div class="hint">결함 수·미판정 수·심각도 아님</div></div>
+</div></section>
+<section><h2>열의 의미와 한계</h2><p>‘작성 계보’는 기능 목록에 남긴 기존 문서 분류입니다. ‘코드 완료’, ‘첫 출시’와 같은 문구가 포함돼 있어도 현재 운영 공개나 이번 실행 통과를 새로 선언하는 값이 아닙니다. 소스 참조 등록값은 코드 연결의 개수이며 검토 항목 등록값은 기능 목록에 기록한 조건의 수입니다. 이를 자동으로 미판정 후보·고유 결함·사용자 피해 순위로 환산하지 않습니다.</p><p>조회·권한·금전·미검증 조건의 실제 구분은 각 정본을 따릅니다. 등록값이 크다는 이유만으로 새 개발 작업이나 반복 회귀를 만들지 않습니다. <a href="feature-status.html">기능별 출시 상태</a>와 <a href="launch-status.html">첫 출시 현황</a>도 해당 근거 범위를 따로 확인합니다.</p></section>
+<section>
+        <h2>도메인별 검토 항목 등록값</h2>
+        <p class="subtitle">색과 정렬은 등록값 합계를 표시합니다. 실제 결함 수·심각도·출시 우선순위와 다릅니다.</p>
         <div class="table-wrap"><table class="compact center" id="domain-summary"><thead>
-          <tr><th>도메인</th><th>기능</th><th>Trace 합계</th><th>Risk 후보 합계</th></tr>
+          <tr><th>도메인</th><th>기능</th><th>등록 참조 합계</th><th>등록 검토 항목 합계</th></tr>
         </thead><tbody></tbody></table></div>
       </section>
-
-      <section>
-        <h2>Risk 후보 상위 10개 기능</h2>
-        <p class="subtitle">문서 검토 후보가 많이 남은 영역이다. 수가 많다는 이유만으로 첫 출시 필수 작업을 추가하지 않는다.</p>
+<section>
+        <h2>검토 항목 등록값이 큰 10개 기능</h2>
+        <p class="subtitle">목록의 등록값을 기준으로 찾는 참고 목록입니다. 현재 미판정 건수나 출시 필수 작업 목록이 아닙니다.</p>
         <div class="table-wrap"><table class="compact" id="top-risk"><thead>
-          <tr><th style="width:78px">ID</th><th>기능</th><th style="width:120px">도메인</th><th style="width:90px;text-align:right">Trace</th><th style="width:90px;text-align:right">Risk 후보</th></tr>
+          <tr><th style="width:78px">ID</th><th>기능</th><th style="width:120px">도메인</th><th style="width:90px;text-align:right">등록 참조</th><th style="width:90px;text-align:right">등록 검토 항목</th></tr>
         </thead><tbody></tbody></table></div>
       </section>
-
-      <section>
+<section>
         <h2>전체 175개 기능</h2>
         <div class="toolbar">
           <input id="search" type="search" placeholder="ID·기능명·도메인 검색">
           <select id="domain-filter"><option value="">전체 도메인</option></select>
-          <select id="status-filter"><option value="">전체 상태</option></select>
-          <label class="chip"><input type="checkbox" id="risk-only">Risk 후보 ≥ 5만 보기</label>
+          <select id="status-filter"><option value="">전체 작성 계보</option></select>
+          <label class="chip"><input type="checkbox" id="risk-only">등록 검토 항목 ≥ 5만 보기</label>
         </div>
         <p class="feature-count" id="feature-count"></p>
         <div class="table-wrap">
@@ -91,17 +56,16 @@
                 <th style="width:78px">ID</th>
                 <th style="width:130px">도메인</th>
                 <th>기능</th>
-                <th style="width:130px">상태</th>
-                <th style="width:80px;text-align:right;cursor:pointer" data-sort="trace">Trace ▾</th>
-                <th style="width:90px;text-align:right;cursor:pointer" data-sort="risk">Risk 후보 ▾</th>
+                <th style="width:130px">작성 계보</th>
+                <th style="width:80px;text-align:right;cursor:pointer" data-sort="trace">등록 참조 ▾</th>
+                <th style="width:90px;text-align:right;cursor:pointer" data-sort="risk">등록 검토 항목 ▾</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
       </section>
-
-      <section>
+<section>
         <h2>다음 단계</h2>
         <ul>
           <li><strong>출시할 기능의 판단을 바꾸는 모순부터</strong> 실제 소스와 대조한다. 현재 할 일은 <a href="launch-status.html#actions">첫 출시를 위한 실행 순서</a>를 따른다.</li>
@@ -109,7 +73,7 @@
           <li><strong>실제 수정할 기능만</strong> 서버 계약·화면·테스트를 함께 확인한다. 완료한 기능을 과거 후보 수 때문에 다시 개발하지 않는다.</li>
         </ul>
       </section>
-    </main>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script>
@@ -187,9 +151,9 @@
     function init(){
       DATA=window.PRD_FEATURES||[];
       document.querySelector('#m-total').textContent=DATA.length;
-      document.querySelector('#m-golden').textContent=DATA.filter(f=>f.status==='Golden sample').length;
-      document.querySelector('#m-reviewed').textContent=DATA.filter(f=>f.status==='실사 기반 전환본').length;
-      document.querySelector('#m-source-first').textContent=DATA.filter(f=>f.status.startsWith('source-first')).length;
+      document.querySelector('#m-golden').textContent=DATA.length;
+      document.querySelector('#m-reviewed').textContent=117;
+      document.querySelector('#m-source-first').textContent=58;
       document.querySelector('#m-risk').textContent=DATA.reduce((s,f)=>s+(f.risk||0),0);
       const sel=document.querySelector('#domain-filter');
       [...new Set(DATA.map(f=>f.domain))].forEach(d=>{
