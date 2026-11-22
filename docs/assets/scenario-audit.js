@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 773,
-    "verifiedTraceRecords": 771,
+    "traceMarkers": 776,
+    "verifiedTraceRecords": 774,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -20192,7 +20192,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F18-04",
       "domain": "분쟁 해결",
-      "name": "분쟁 증빙·공개범위·보존",
+      "name": "분쟁 증거 열람·보존·파일 정리",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
@@ -20203,10 +20203,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F18-04:1",
+            "label": "GET /api/v1/me/dispute-cases/{caseId}/evidence/{fileId}/download-url",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getMyCaseEvidenceDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/evidence/{fileId}/download-url",
+                "targetLine": 103,
+                "methodLine": 104
+              }
+            ]
+          },
+          {
+            "id": "F18-04:2",
+            "label": "GET /api/v1/host/dispute-cases/{caseId}/evidence/{fileId}/download-url",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getHostCaseEvidenceDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/host/dispute-cases/{caseId}/evidence/{fileId}/download-url",
+                "targetLine": 113,
+                "methodLine": 114
+              }
+            ]
+          },
+          {
+            "id": "F18-04:3",
+            "label": "GET /api/v1/me/dispute-cases/{caseId}/messages/{messageId}/attachments/{fileId}/download-url",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+                "controller": "DisputeCasePartyController",
+                "method": "getMessageAttachmentDownloadUrl",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/messages/{messageId}/attachments/{fileId}/download-url",
+                "targetLine": 126,
+                "methodLine": 127
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

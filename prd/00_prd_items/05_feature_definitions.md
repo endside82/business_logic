@@ -185,7 +185,7 @@
 | F18-01 | 분쟁 해결 | 통합 분쟁 조회·당사자 대화·종결 경계 | 사건 당사자와 관련 호스트 | 목록별 출처와 권한, 표시 상태·진행 상태·명령별 재요청, 대화와 종결 조건을 현재 소스와 대조했다. | 8 | 0 |
 | F18-02 | 분쟁 해결 | 사용자 분쟁 접수·출처 연결·초안 복구 | 로그인한 당사자 | 실제 접수 제한과 출처별 권한·상대 산출, 배정 사건 식별자, 앱 문맥 전달·결과 미확정 보관을 대조했다. | 8 | 0 |
 | F18-03 | 분쟁 해결 | 분쟁 이의 접수·공개 조건·철회 | 해당 사건의 당사자 | 허용 출처·기본 비활성 플랫폼 재심·현재 접근 검증, 7개 이의 상태와 초안/책임 동의를 대조했다. | 8 | 0 |
-| F18-04 | 분쟁 해결 | 분쟁 증빙·공개범위·보존 | 참가자/호스트/CS | Visibility(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY) 4종 **정책 의도(4종 분류)** — **현재 구현은 CS_ONLY 항목 제거만(public detail 조회 시 CS_ONLY 필터링), 역할별 게이트(HOST_ONLY·PARTIES 분기) 미생성**, evidenceFrozen flag, legal hold(OPEN/IN_REVIEW/ESCALATED 상태에서 evidence 삭제 차단), DisputeCaseRetentionScheduler(매일 05:00, RESOLVED/CLOSED 후 1년 경과 시 evidence 정리), EvidenceFileValidator(max 5, 소유권 검증) | — | — |
+| F18-04 | 분쟁 해결 | 분쟁 증거 열람·보존·파일 정리 | 사건 당사자·호스트·운영자 | 공개 목록 기반 파일 접근, 원천별 보존 표시, 사용자 자료 보류와 참조 해제·물리 삭제의 경계를 대조했다. | 9 | 0 |
 | F18-05 | 분쟁 해결 | 호스트 처리함·아홉 출처·업무 이동 | 주최자와 권한 있는 공동 주최자·클럽 운영진 | 아홉 출처의 수집·상태·권한·카드 이동과 처리함 통계 및 새로고침 한계를 대조했다. | 8 | 0 |
 | F19-01 | 관심인 | 관심인 등록·관리 | 로그인 사용자 | POST /api/v1/favorites(등록), DELETE /api/v1/favorites/{targetUserId}(해제), GET /api/v1/favorites(목록, active=true max N명 등록순), GET /api/v1/favorites/limit(구독 플랜별 한도 확인), isBlockedBetween status-aware(BLOCKED row만 체크, UNBLOCKED history 제외), FAVORITE_PERSON_NEW_EVENT(96) 알림 팬아웃(FavoriteService.isEffectiveFavorite 기반) | — | — |
 | F19-02 | 관심인 | 관심인 캘린더·알림 | 로그인 사용자 | GET /api/v1/favorites/calendar/monthly(관심인 전체 월간 일정 합산), GET /api/v1/favorites/{targetUserId}/monthly(특정 관심인 월간 일정), 관심인이 새 이벤트 발행 시 FAVORITE_PERSON_NEW_EVENT(96) 수신, effectiveTargetIds()로 캘린더·알림 팬아웃 공통 대상 집합 관리 | — | — |

@@ -318,7 +318,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -398,7 +399,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2497,9 +2499,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "daa5896c1dda1ed31f8e987a5bc1503a9a699789438e99b55ddc7121be2c4c58",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_evidence_20261122"
+      ],
+      "reviewedSha256": "abfd168665b73ca61c889b314485c525f2ac2cd722025d5b9d01ffaeedf2cae1"
     },
     {
       "path": "docs/domains/19-favorite.html",
@@ -4628,9 +4633,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "20e7638b03f64b012497453dc4b53c20c4b1ae6282787483aaf7f010d23413c4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_evidence_20261122"
+      ],
+      "reviewedSha256": "eef9ad39f6c1abfba3545266fc3a41b2e8f4eb5e88de4aedec62f3854cd4a604"
     },
     {
       "path": "docs/features/F18-05.html",
@@ -5321,7 +5329,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5434,7 +5443,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5571,7 +5581,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5901,10 +5912,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "1b1993a397aad4f2ff29784b407a8d7f2ce3b21ecb139f29284faf6cde36be47",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_evidence_20261122"
+      ],
+      "reviewedSha256": "bd6aee8cb82d00699962400ffb2a9927cd30e1af64c032b93539680000bb0862"
     },
     {
       "path": "prd/01_domain_prds/19_관심인_prd.md",
@@ -8035,10 +8048,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bb0a95b1ee131ae5ab3b28203ad923dc93e839aac8d74484ff6832b80809e08f",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_evidence_20261122"
+      ],
+      "reviewedSha256": "fc7a6d43295b0121e09802419ce6b70d2cfe3574115863d9aa3fc6bede7c9131"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
@@ -8548,7 +8563,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8813,7 +8829,8 @@
         "regular_meeting_commands_20261122",
         "regular_meeting_participation_20261122",
         "dispute_intake_20261122",
-        "dispute_query_20261122"
+        "dispute_query_20261122",
+        "dispute_evidence_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -39620,6 +39637,277 @@
         "sourceReferences": "코드 위치 표 154개가 실제 소스와 일치합니다.",
         "groupDigests": "39 source/canonical digests; 22 retained HTML IDs",
         "derivedDocuments": "4 documents; shared batch verified 4 paths, 34 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "e7b434388dd95e96fa6c2cba24782cf4f04e49a5",
+        "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
+      }
+    },
+    "dispute_evidence_20261122": {
+      "kind": "source_review",
+      "scope": "F18-04 현재공개필터/파일주소·원천별frozen·사용자보류와선택적익명화·만기참조해제/물리삭제/재개방잠금. F18영역개요는검토한5개기능정본으로재작성.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseEvidenceAccessService.java",
+          "sha256": "abde38439f99e875ae213b8c200ac3d88e7a8a705d8811af0577afc439a6d7a3",
+          "reviewScope": "전체65–114현재상세evidence·공개메시지의messageId/fileId접근검사와주소발급위임"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeLegalHoldService.java",
+          "sha256": "c52086f5f9e92e8f6f1d444a25cfe07fd211417b678646b0bd91b1288fa381a7",
+          "reviewScope": "48–412현재원천별사용자보류위임·케이스frozen·대화첨부보류·prefix스위치·배정상태·클럽대상자이의상태매핑"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeSourceHoldService.java",
+          "sha256": "486c93383da47776b2c284f96d26296ade3672eecdc5e0b2bd563477af726223",
+          "reviewScope": "전체미해제hold생성/같은instance재사용·해제/isHeld와비가역잠금조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/scheduler/DisputeEvidencePurgeWorker.java",
+          "sha256": "9aa936ea57d0a18429d8fd05a0ab1499adce2fb3778886bc5ed8cb92a3f35ce4",
+          "reviewScope": "전체원천행잠금/기한재확인·참조해제·purgeDue표시·운영이슈본문/메시지·별도파일물리삭제위임"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/scheduler/DisputeCaseAttachmentPurgeWorker.java",
+          "sha256": "c4cfb88848de867c392b8c6a813766fdb48e9799f87da6fbf2cab86fee9b1707",
+          "reviewScope": "전체caseId별에피소드잠금/최신재종결확인·파일ID순잠금·첨부참조deleteflush·만기표시"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/FileStorageService.java",
+          "sha256": "c6016f8b1db74d6011a2f0cc016bff9d82f3b1c24367a61f3c6e0378639783d3",
+          "reviewScope": "304–410일반파일메타flush후S3·실패예외/신원보류;444–522만기marker잠금재판정·잔여참조/대화/신원보류·신원별도위임;580–656만기표시/후보수집"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/FileDisplayService.java",
+          "sha256": "5a5b838c8d77ebcf970e729191e7000597c25eea50cc29e61404706925d1ba2c",
+          "reviewScope": "117–151주소발급helper의파일존재/제공가능상태검사·presigned반환필드. TTL설정/외부S3실행미검증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/HeldDataReleaseWorker.java",
+          "sha256": "cd80a26a2525f8f769e1435558c3528a783ced144b7c831962b6b9a461c59fb7",
+          "reviewScope": "전체20–51EXIT사용자잠금·활성보류없을때보관알림/대화삭제"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/constants/Visibility.java",
+          "sha256": "d0179835d2b2dbe3058bd0519b5a4b2ba26116facb58da09786667c4e448b53e",
+          "reviewScope": "전체4enum"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/vo/DisputeEvidenceVo.java",
+          "sha256": "93d600ff15d021691cd6019147891daae668c5c9908bf7eacfab7091c4e83897",
+          "reviewScope": "전체정확한필드/primitive와Long/공개범위·개별hold필드없음"
+        },
+        {
+          "path": "community_app/lib/data/models/dispute/dispute_evidence_vo.dart",
+          "sha256": "5062b10ed028e81dfcba0f9628c17ffcac6589e78866c66cb99adfee177ec7a6",
+          "reviewScope": "전체JSON필드와작성자/visibilityUNKNOWNfallback"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/widgets/evidence_gallery.dart",
+          "sha256": "cca57df16c9c16e7fb4a99997aa0639b53b3d59b5540647706a1817e98e3e770",
+          "reviewScope": "전체빈자료우선·자료있고frozen배너·선택callback·삭제버튼없음"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/dispute_evidence_screen.dart",
+          "sha256": "6d33bc55ab7f0c340953208d5cfda48bc2ec99fb4d86ce616f0000a5eb945c66",
+          "reviewScope": "34–80본인상세/오류재시도;92–142권한기반이의/기한입구;215–231갤러리onEvidenceTap미전달"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/RegistryDisputeDetailAssembler.java",
+          "sha256": "9f5b6d004fa270ed5cfa4386be232c25dd0166e29c0f092d90c535af51cafbaf",
+          "reviewScope": "84–140상세상태/타임라인/빈증빙과원천hold기반frozen"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/ClubMembershipActionDisputeDetailAssembler.java",
+          "sha256": "115447abbba486f26a550b0f30e9822971a8903655faed58937dbc102001fd7f",
+          "reviewScope": "115–121상세evidence/권한과상태기반frozen대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DateBlockDisputeDetailAssembler.java",
+          "sha256": "c835aae578c264352dada6d5b41210966f2795977b3ea7ba62d00ea44cd5f642",
+          "reviewScope": "112–118신고연결/활성기반frozen대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/OperationalIssueDisputeDetailAssembler.java",
+          "sha256": "3bc62b922c86ce56d8b6045348f9f7c1594f0905f27702ba56ef43cc6139c178",
+          "reviewScope": "71–77빈권한/frozenfalse대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/RefundDisputeDetailAssembler.java",
+          "sha256": "92c1c86aefd1899efb3519f86948d0942d226fbbaa2887bd6b49ac9c3692356f",
+          "reviewScope": "97–103증빙builder와frozenfalse대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/ReportDisputeDetailAssembler.java",
+          "sha256": "02a2ba0db248c920527bfa8cd706e82ae26554d5541d6a2a42cd734bc83ab12a",
+          "reviewScope": "99–105빈증빙/frozenfalse대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/ServiceAssignmentDisputeDetailAssembler.java",
+          "sha256": "61e8474e7a2a0ef4053bf1ef802452e2e2fd5c3beab9b55657157aa14ce03c82",
+          "reviewScope": "120–126현재사건증빙/활성기반frozen대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/SettlementAppealDisputeDetailAssembler.java",
+          "sha256": "584120a3b2684929fe1881a98fb4990901e4f64ab1ee6886e3ed7fe086b251d8",
+          "reviewScope": "101–107빈증빙/frozenfalse대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/TransportDisputeDetailAssembler.java",
+          "sha256": "86ad3ce60c47501e81daebd475e3501c1a7e9f9be8cfbaed94291e3552a0ca08",
+          "reviewScope": "140–146빈증빙/신고상태기반frozen대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/UserDisputeDetailAssembler.java",
+          "sha256": "6e556a6efe0d3ab2b656205016e711765f0b1096bbf0729c4376252ecfb9d723",
+          "reviewScope": "112–118증빙/활성기반frozen대입만"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/WarningDisputeDetailAssembler.java",
+          "sha256": "02e7bc121f323a90c935222f2bc7535607173574dfede9cd302c2b205ecb2b24",
+          "reviewScope": "67–73/98–104경고제보/이의빈증빙/frozenfalse대입만"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+          "sha256": "a0b7269842a0bf5076bf4111bf93db00fa19add6b14b7d8137f0303e9c41c9db",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 전체 현재회원목록/상세·생성·증빙다운로드·본인이의조회/접수/철회HTTP계약. 접수/철회요청키없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseService.java",
+          "sha256": "ca4449bf66645c822e14b68ceb641f46983a03e989176ebae790bf849d47072a",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 102–184정수제한/참조출처3종·목록이름/신고자마스킹;208–352상세dispatch/증빙제출자예외/권한계산;381–707입력·원천권한/문맥·접수수/중복·배정잠금·저장·등록부발행/반환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseCapabilityService.java",
+          "sha256": "eda6e5975a468076287cb289deb085468be894f159e25f8c93310dda16d1aea0",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 103–360최종canResolvefalse·당사자행동/동의·플랫폼개입가드·출처/기한/기존이의·결과확인·열린이의판정;당사자추출후반미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/EvidenceFileValidator.java",
+          "sha256": "720eae0e72db85717e755e11f9dc65d9a65c72c824acf9a4b83455077e5cefcb",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 동일 SHA report_intake그룹본인소유/완료/용도/양수ID/중복정규화 계약 재사용"
+        },
+        {
+          "path": "community_app/lib/data/api/dispute_case_api.dart",
+          "sha256": "906237e55807cfc631d0dcfbc55765befd836efc798c91c7a7da9eea2a65964c",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 35–150생성/이의조회접수철회·요청키없음·목록/상세/당사자/증빙경로선언"
+        },
+        {
+          "path": "community_app/lib/data/repositories/dispute_case_repository.dart",
+          "sha256": "47760a61319bacc011c65eb195e3350a2bcba84c6ab8a3a169c9968feacdb095",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 35–120생성/이의조회접수철회·guardRepositoryCall결과전달/조회enumwire"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/dispute_routes.dart",
+          "sha256": "90af41cc27d928aa619826b54486a7e6d21de61ca124a3364c94476de502148a",
+          "reviewScope": "동일 SHA 기존 dispute_intake 재사용: 23–110생성route전달필드·상세증빙가드·이의가드/화면·호스트목록"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+          "sha256": "154efc6b395af46e45f53c76a58926d1543c91174b212136424854ed221be6ef",
+          "reviewScope": "동일 SHA 기존 dispute_query 재사용: 전체현재동의/확인/이관/메시지목록/생성/첨부주소HTTP계약"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/vo/DisputeCaseDetailVo.java",
+          "sha256": "007bf4bb0ecccb8689aa4638b93d03b14c35ba368c73235d55acba5b87aee67f",
+          "reviewScope": "동일 SHA 기존 dispute_query 재사용: 전체상세필드·nullable문맥/타임라인/증빙/권한/기한"
+        },
+        {
+          "path": "community_app/lib/domain/providers/dispute/dispute_case_detail_provider.dart",
+          "sha256": "65f62704b38e66846faa75e227ef8d8453663e4d3d0cb6d79d15ee5f418e54e3",
+          "reviewScope": "동일 SHA 기존 dispute_query 재사용: 전체본인/호스트detail·대화·본인이의각provider 데이터갈래구독"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "sha256": "057175598e12183c58acb630ee1fcce01f8fe88a7ea4c90653abe4f8f5a5c11a",
+          "reviewScope": "동일 SHA 기존 dispute_query 재사용: 55–104상세조회/오류;132–282호스트해결문맥/타임라인/증빙/대화/행동플래그callback·당사자영역. 이의영역은 기존동일SHA근거"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/repository/query/DisputeCaseQueryRepository.java",
+          "sha256": "41085a61eb603194cc3cd5b39439e5104277943aa26cf7ba0b37a13736b32fbd",
+          "reviewScope": "194–341전체사용자별활성검사·정산appealer/신고subject/환불buyer추가·배정당사자위임;343–718범위는동일SHA dispute_query기존근거"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/scheduler/DisputeCaseRetentionScheduler.java",
+          "sha256": "571d844af52e2bc51d202680ac306269192e1bf13279a65cf1989922e2fbf10f",
+          "reviewScope": "117보존1년;165–390/395–585원천별조건/재판정/환불·노쇼;619–695대화첨부/최신에피소드;732–946종결조건/잠금해제/만기파일별재시도/JSON파싱"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AccountDeactivationService.java",
+          "sha256": "ad3d00dba0f13baa29a1e0e0472af06895c31e71c7f476c7c2fab62f2b4efc36",
+          "reviewScope": "180–290실제의무출처목록/BLOCKING기반허용판정·에스크로보류별도처리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/DataDeletionExecutionWorker.java",
+          "sha256": "b2db88c8b8c88b83ba712bb5cedafe817328e890bd88dbc03840df4d9aab2a9f",
+          "reviewScope": "258–440legalHold읽은뒤프로필익명화/관련정보정리·알림/대화에보류전달·별도탈퇴의무잠금판정;전체삭제도메인재감사아님"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "date_matching_block_20261122",
+        "dispute_intake_20261122",
+        "dispute_query_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
+          "sha256": "fc7a6d43295b0121e09802419ce6b70d2cfe3574115863d9aa3fc6bede7c9131"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/18_분쟁_해결_prd.md",
+          "sha256": "bd6aee8cb82d00699962400ffb2a9927cd30e1af64c032b93539680000bb0862"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
+          "sha256": "47e0ee64095374782f4ed60bdf040e62639f51a5f850e83353d87564728adc38"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
+          "sha256": "a1e081811e550998fe55c4c6f273ba523ae51e9b02f436dbaf82245d86dc0454"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
+          "sha256": "e0a4f8bca0142f5d1e62526e2696e3c7b8135c17106be089f9d92ebaf42ea8c7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
+          "sha256": "12921e429909dfb2188371702496671aa7f42aa1e65eb42cddb3276789033661"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F18-04.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/domains/18-dispute.html": [
+          "sidebar",
+          "launch-strip"
+        ]
+      },
+      "referenceChanges": [
+        "증빙주소2·대화첨부주소1실제Controller연결",
+        "F18영역PRD/HTML을현재5기능으로동기화"
+      ],
+      "followUpFindings": [
+        "CS_ONLY본인제출예외·원천별frozen차이",
+        "구매자/정산제기자/신고대상자보류검사존재",
+        "legalHold는모든계정익명화일괄차단아님",
+        "환불증빙retention존재·Asia/Seoul05:00/05:30",
+        "잠금재판정→참조해제→purgeDue표시→별도물리삭제",
+        "사유자료화면갤러리onTap없음"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 155개가 실제 소스와 일치합니다.",
+        "groupDigests": "45 source/canonical digests; 5 retained HTML IDs",
+        "derivedDocuments": "4 documents; shared batch verified 4 paths, 46 relative links/anchors and 0 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"

@@ -1,145 +1,134 @@
-# F18-04. 분쟁 증빙·공개범위·보존 PRD
+# F18-04. 분쟁 증거 열람·보존·파일 정리 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
+## 현재 범위와 입구
 
-## 1. 결론
+사건 상세의 증빙 목록, 대화 첨부의 다운로드 권한, 원천별 보존 표시, 계정 데이터 보류, 보존 기간 뒤의 참조 해제와 파일 삭제를 다룬다. 이들은 서로 다른 판정이다. 상세의 evidenceFrozen 하나로 모든 파일의 실제 삭제 가능 여부나 계정 탈퇴 가능 여부를 판정하지 않는다.
 
-분쟁 증빙(`DisputeEvidenceVo`)은 `Visibility` 4값(PARTIES/HOST_ONLY/CS_ONLY/PUBLIC_SUMMARY)을 기반으로 서버가 미리 필터링한 결과만 클라이언트에 전달한다. 실제 `filterByActorVisibility`(`DisputeCaseService`)는 **`CS_ONLY`를 제거하고, `HOST_ONLY`는 처분 권한이 있는 호스트 쪽 열람자(호스트·공동 주최자·정산 creator·클럽 운영진)에게만 남긴다**(차수 11 S3b). 현재 builder는 HOST_ONLY를 내지 않지만 값은 둔다. 클라이언트는 수신한 증빙 목록을 추가 필터링 없이 그대로 표시한다.
+증빙 제출은 [사용자 분쟁 접수](F18-02_dispute-create_prd.md), [이의 접수·철회](F18-03_dispute-appeal_prd.md), [당사자 대화](F18-01_unified-dispute-case_prd.md)의 입력 경로를 사용한다. 현재 증빙 첨부 UI가 없다는 과거 설명은 사용하지 않는다.
 
-legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케이스에 대해 판정하며, `evidenceFrozen=true` 케이스의 evidence는 삭제가 불가능하다. 계정 삭제·데이터 익명화(`AccountDeactivationService`, `DataDeletionService`)도 이 판정을 통과해야 한다.
+## 현재 서버 계약
 
-`DisputeCaseRetentionScheduler`는 매일 05:00(cron zone 미지정 — JVM 기본 타임존)에 종결(RESOLVED/CLOSED) + 1년 경과 케이스의 evidence `file_metadata` row와 S3 파일을 삭제한다. 삭제 성공 건만 JSON 필드에서 제거하는 partial-success 방어 구조다. `purchase_refund_dispute`(`evidence_file_group_id`)와 `meeting_settlement_appeal`(evidence 필드 미보유)은 retention 대상에서 제외된다.
+| 요청 | 권한·결과 |
+|---|---|
+| GET /api/v1/me/dispute-cases/{caseId}/evidence/{fileId}/download-url | 현재 사용자의 상세 evidence에 실제 fileId가 포함돼야 PresignedUrlVo 반환 |
+| GET /api/v1/host/dispute-cases/{caseId}/evidence/{fileId}/download-url | 같은 상세 조회·공개 판정을 재사용 |
+| GET /api/v1/me/dispute-cases/{caseId}/messages/{messageId}/attachments/{fileId}/download-url | 현재 사용자의 공개 대화에 messageId와 첨부 fileId가 함께 있어야 PresignedUrlVo 반환 |
 
-`EvidenceFileValidator`는 증빙 파일 첨부 시 소유권·용도·상태를 검증하며, `UserDisputeCase`, `DisputeAppeal`, `ClubMembershipAction` 등 증빙을 받는 도메인에서 공통으로 호출된다.
+증빙 VO는 id, caseId, fileId, fileName, mimeType, fileSize, submittedByUserId, submittedByRole, evidenceType, visibility, createdAt을 전달한다. 제출자 ID는 선택값이다. 개별 증빙의 legal_hold_until 필드는 없다. 앱 enum에는 알 수 없는 작성자 역할·공개 범위에 대한 UNKNOWN fallback이 있다.
 
-## 2. 코드 위치
+주소 발급은 먼저 사건 또는 대화 열람을 검사하고, 실제 공개 목록에 없는 파일이면 FILE_NOT_FOUND로 거절한다. 그 뒤 FileDisplayService가 파일 존재·제공 가능 상태를 검사해 downloadUrl, fileKey, fileId를 반환한다. 여기서 소유자 검사 없이 주소를 만드는 helper는 앞선 사건별 접근 검사를 대체하는 공개 권한 우회 API가 아니다.
 
-계약의 정본은 코드다. 서버: `Visibility`, `DisputeEvidenceVo`, `DisputeLegalHoldService`, `DisputeCaseRetentionScheduler`, `DisputeAppealService`, `DisputeCaseDetailVo`, `DisputeCaseQueryRepository`. 앱: `dispute_evidence_screen.dart`, `dispute_case_detail_screen.dart`, `dispute_evidence_vo.dart`, `dispute_enums.dart`.
+현재 분쟁 Controller에 개별 증빙 DELETE 경로는 없고 갤러리에도 삭제 버튼이 없다. evidenceFrozen=false가 삭제 버튼이나 삭제 권한을 자동으로 만든다는 설명은 틀리다.
 
-## 3. 전체 동작 흐름
+## 공개 범위와 제출자 예외
 
-### 증빙 조회 (서버 필터링 포함)
+Visibility는 PARTIES, HOST_ONLY, CS_ONLY, PUBLIC_SUMMARY 네 값이다. 사건 접근을 허용받은 뒤 서버가 목록을 거른다. PUBLIC_SUMMARY라는 이름만으로 비로그인 공개 URL이 되는 것은 아니다.
 
-1. 사용자가 케이스 상세(`GET /api/v1/me/dispute-cases/{caseId}`)를 조회한다.
-2. 서버 `filterByActorVisibility`(`DisputeCaseService.java:206-231`)가 **CS_ONLY timeline/evidence 항목을 제거**하고, 처분 권한(`actorPermissions.canResolveDispute`)이 없는 당사자 화면에서는 HOST_ONLY 항목도 제거한 복사본을 반환한다. PARTIES/PUBLIC_SUMMARY는 유지된다. 증빙은 붙인 사람 본인에게만 예외로 남긴다.
-3. Flutter가 수신한 `evidence` 목록을 추가 필터 없이 그대로 렌더링한다. 증빙 카드 탭 → `DisputeEvidenceScreen`(전체화면 뷰어). **evidence 삭제 버튼은 없음** — `EvidenceGallery`는 frozen 시 안내 배너만 표시하고 삭제 기능 자체가 미구현이다.
-4. `evidenceFrozen=true`이면 삭제 버튼 숨김.
+| 항목 | 실제 필터 |
+|---|---|
+| 타임라인 CS_ONLY | 공개 상세에서 제외 |
+| 타임라인 HOST_ONLY | 원천의 기본 canResolveDispute 권한이 있는 호스트 시점만 유지 |
+| 타임라인 운영자 작성자 | AuthorRole.CS인 항목의 authorUserId를 null로 변경 |
+| 증빙 PARTIES/PUBLIC_SUMMARY | 해당 사건 열람자에게 유지 |
+| 증빙 HOST_ONLY | 기본 호스트 권한이 있거나 제출자 본인이면 유지 |
+| 증빙 CS_ONLY | 제출자 본인인 경우에만 공개 상세에 유지 |
 
-### legal hold 판정 흐름
+필터는 최종 actorPermissions 계산 전에 원천 권한을 읽는다. 최종 공개 canResolveDispute=false와 앞선 HOST_ONLY 판정을 혼동하지 않는다. 증빙 제출자 예외를 타임라인에도 적용하지 않는다. 대화의 요청·답변·운영 내부 메모는 대화 서비스의 별도 공개 규칙을 따른다.
 
-1. 계정 삭제/익명화 요청 시 `DisputeLegalHoldService.hasActiveLegalHold(userId)` 호출.
-2. `DisputeCaseQueryRepository.existsActiveCaseByUserId(userId)`가 source별 finder 기준으로 active(OPEN/IN_REVIEW/ESCALATED) case를 검사한다 (`DisputeCaseQueryRepository.java:131-234`):
-   - OperationalIssue — reporter만
-   - WarningReport — reporter만 (target은 club-scoped라 제외)
-   - WarningAppeal — member(항소인)
-   - MeetingSettlementAppeal — settlement.creatorUserId(호스트 측)
-   - 공개 Report (CARPOOL 타입 제외) — reporter만
-   - PurchaseRefundDispute — seller만 (buyer 측 finder 부재)
-   - DateBlock 안전신고 — blocker(reporter)
-   - CARPOOL Report — reporter
-   - ClubMembershipAction(KICK/BAN) — 영향받은 member(userId)
-   - USER_DISPUTE — reporter 및 target 양측 모두
-3. hold가 있으면 `true` 반환 → 계정 삭제 차단.
+공통 EvidenceFileValidator는 파일 첨부 때 소유권·완료 상태·허용 용도·양수 ID와 중복을 검증한다. 다른 사람의 파일 번호를 알거나 상세 VO에 파일 이름이 있다는 이유만으로 첨부·다운로드 권한을 얻지 않는다.
 
-### evidenceFrozen 판정 흐름
+## evidenceFrozen 표시와 파일 보존
 
-1. `DisputeLegalHoldService.isCaseEvidenceFrozen(caseId)` 호출.
-2. caseId prefix 파싱 → 해당 source repo에서 status 조회 → `isActive(status)` 판정.
-3. `OPEN | IN_REVIEW | ESCALATED` → frozen=true. `RESOLVED | CLOSED` → frozen=false.
+상세 응답의 frozen 값은 원천 assembler마다 다르다.
 
-### retention 정리 흐름 (매일 05:00, cron zone 미지정)
+| 상세 원천 | 현재 evidenceFrozen 계산 |
+|---|---|
+| USER_DISPUTE, SERVICE_ASSIGNMENT, CLUB_MEMBERSHIP_ACTION | 해당 사건/현재 배정/이의 상태가 활성인지 계산 |
+| DATE_BLOCK | 연결 신고가 있고 신고 상태가 활성인지 계산 |
+| TRANSPORT | 연결 신고 상태가 활성인지 계산 |
+| 등록부 원천 | sourceType·sourceId에 해제되지 않은 DisputeSourceHold가 있는지 확인 |
+| 운영 이슈, 경고 제보·이의, 정산 이의, 일반 신고, 환불 분쟁 | 현재 assembler는 false를 넣음 |
 
-1. `DisputeCaseRetentionScheduler.expireOldCases()` 실행 (`DisputeCaseRetentionScheduler.java:103`).
-2. 7개 source별로 `closed_at + 1년 < now` 기준 케이스 조회.
-3. 각 케이스의 `evidence_file_ids` JSON 파싱 → `FileStorageService.delete(fileId)` 호출.
-4. 삭제 성공한 ID만 JSON에서 제거. 일부 실패 시 해당 ID 유지(재시도 보장).
-5. `meeting_settlement_appeal`(evidence 필드 미보유)과 `purchase_refund_dispute`(`evidence_file_group_id` 구조)는 처리 제외.
+DisputeLegalHoldService.isCaseEvidenceFrozen은 원천 상태를 읽어 OPEN/IN_REVIEW/ESCALATED를 활성으로 판정하는 별도 helper다. 모든 상세가 이 helper를 호출하는 것은 아니다. 이 helper의 prefix switch도 모든 등록부 출처를 포괄하지 않는다.
 
-## 6. 상태/권한 매트릭스
+파일의 실제 보존은 file_reference, 분쟁 대화 첨부 참조, 신원 증빙 소유자의 활성 분쟁 검사 등으로 재판정한다. 대화 첨부 참조가 있으면 사건의 현재 표시 상태와 무관하게 참조가 해제될 때까지 파일을 보류한다. 따라서 frozen 배너가 없다는 사실은 파일 보존이 해제됐다는 증거가 아니다.
 
-| 시나리오 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 참가자가 PARTIES 증빙 조회 | `filterByActorVisibility`는 CS_ONLY 제거, 당사자 화면에서는 HOST_ONLY 도 제거. PARTIES/PUBLIC_SUMMARY 유지 | 수신한 목록 그대로 렌더링 | PARTIES/PUBLIC_SUMMARY 증빙 표시 (현재 builder가 HOST_ONLY 미emit) | 일치 |
-| 참가자가 HOST_ONLY 증빙 조회 시도 | 서버 필터(`filterByActorVisibility`)가 처분 권한 없는 당사자 화면에서 HOST_ONLY를 제거(차수 11 S3b) | — | 해당 증빙 미표시 | 일치 |
-| CS_ONLY 증빙 | `filterByActorVisibility`가 CS_ONLY 제거 | — | CS가 아닌 사용자에게는 미노출 | 일치 |
-| evidenceFrozen=true (active case) | OPEN/IN_REVIEW/ESCALATED status | frozen 안내 배너 표시 | 증빙 삭제 불가 (서버 DELETE endpoint 미구현으로 frozen 여부 무관하게 삭제 불가) | 일치(삭제 기능 자체 없음) |
-| evidenceFrozen=false (terminal case) | RESOLVED/CLOSED status | frozen 배너 미표시 | 조회만 가능 (삭제 endpoint 미구현) | 일치(조회 전용) |
-| legal hold → 계정 삭제 차단 | `hasActiveLegalHold=true` | — (서버 차단) | 계정 삭제 불가 | 일치 |
-| retention 1년 후 | `closed_at + 1년 < now` | — (서버 정리) | 증빙 파일 접근 불가 | 일치 |
+## 사용자별 보류와 계정 삭제의 차이
 
-## 7. 정합성 판단
+hasActiveLegalHold는 활성 원천의 관련 사용자를 검사한다. 운영 이슈 접수자, 경고 제보자와 이의 제기자, 정산 생성자뿐 아니라 PENDING 정산 이의 제기자, 일반·이동 신고 접수자와 신고 대상 사용자, 환불 분쟁의 판매자뿐 아니라 구매자, 신고를 동반한 차단 작성자, KICK/BAN 대상자, 사용자 사건의 양 당사자 및 거래 조건을 만족한 배정 관련자를 포함한다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `evidenceFrozen` boolean | `DisputeCaseDetailVo.evidenceFrozen` | `@Default(false) bool evidenceFrozen` | 일치 |
-| visibility 필터링 실제 동작 | `filterByActorVisibility`: CS_ONLY 제거, 당사자 화면은 HOST_ONLY 도 제거 | 클라이언트 추가 필터 없음 | 호스트 쪽 열람자만 HOST_ONLY를 받는다. 현재 builder는 HOST_ONLY를 내지 않음 |
-| `DisputeVisibility` wire value | `Visibility.name()` | `DisputeVisibility.name` | 일치 (prefix는 다름) |
-| evidence 삭제 endpoint | `DisputeCaseController.java` 전체 확인 결과 DELETE endpoint 없음 | `EvidenceGallery` frozen 시 안내 배너만 표시 (`evidence_gallery.dart:37-47`). 삭제 버튼 UI 없음 | 일치(삭제 endpoint 미구현, 화면도 조회 전용) |
+‘정산 이의 제기자 finder 없음’과 ‘환불 구매자 finder 없음’은 현재 해소된 옛 제한이다. 이 검사와 내 분쟁 목록의 수집은 다르므로 목록에 안 나온다는 이유로 보류가 없다고 판정하지 않는다. 한편 이 함수에 등록부의 모든 party 행을 통째로 검사하는 공통 분기는 없다. 검토한 원천별 조건을 전체 분쟁 참여자에 대한 무조건 보장으로 넓히지 않는다.
 
-## 8. Gap / Risk
+활성 보류가 있으면 계정 삭제·익명화가 전부 차단된다는 기존 설명도 부정확하다. 탈퇴 가능 여부는 별도 의무 목록의 BLOCKING 조건으로 판정한다. 데이터 삭제 worker는 legalHold를 확인한 상태에서도 프로필 익명화와 다른 개인정보 삭제를 진행하고, 보류를 적용하는 알림·대화 등의 처리에 이 값을 전달한다. EXIT 계정의 보류 해제 worker는 사용자를 잠근 뒤 활성 분쟁이 없어야 남겨둔 자료를 정리한다. 자세한 전체 순서는 [탈퇴 판정](../13_profile_settings/F13-07_account-deactivation_prd.md)과 [계정 데이터 삭제](../13_profile_settings/F13-06_account-deletion_prd.md)를 따른다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| ~~P1~~ 해소(2026-06-06) | **evidence 첨부**: `DisputeCaseCreateScreen`에 `EvidencePickerField` 배선 완료(최대 5 `evidenceFileIds`). 서버 `EvidenceFileValidator` 검증. | `dispute_case_create_screen.dart` | 사용자가 증빙을 첨부해 운영팀에 맥락 전달 가능 | 완료 (마켓 환불 분쟁 첨부는 F08-14 §13 서버 계약 갭으로 별도) |
-| P1 | **purchase_refund_dispute retention 미구현**: `evidence_file_group_id` 구조로 인해 단일 file_metadata 패턴과 다름. 별도 file group cleanup 경로 필요. | `DisputeCaseRetentionScheduler.java` 주석 | REFUND_DISPUTE evidence가 1년 후에도 정리되지 않음 | 별도 file group cleanup 스케줄러 추가 |
-| P2 | **evidence 삭제 endpoint 미구현 확정**: `DisputeCaseController.java` 전체 확인 결과 DELETE endpoint 없음. `EvidenceGallery`는 frozen 시 안내 배너만 표시 (`evidence_gallery.dart:37-47`) — 삭제 버튼/AC 없음. 증빙은 조회 전용 + frozen 보존 안내만. | `DisputeCaseController.java` grep DELETE 0건 | evidence 삭제 기능 자체가 미구현. evidenceFrozen=false 상태에서도 삭제 불가 | evidence 삭제 endpoint 추가 여부 제품 정책 결정 필요 |
-| P2 | **legal hold MeetingSettlementAppeal appealer 직접 finder 없음**: `existsActiveCaseByUserId`(:158-169)는 settlement.creatorUserId(호스트) 경로로만 SETTLEMENT_APPEAL을 검출. appealer가 호스트가 아닌 경우 legal hold 미검출 가능. | `DisputeCaseQueryRepository.java:158-169` 주석 | SETTLEMENT_APPEAL appealer(비호스트)의 계정 삭제가 잘못 허용될 수 있음 | MeetingSettlementAppeal appealer 직접 finder 추가 |
-| P2 | **PurchaseRefundDispute buyer legal hold 미검출**: `existsActiveCaseByUserId`(:181-189)는 seller만 검사. buyer 시점 finder 없음. | `DisputeCaseQueryRepository.java:180-189` 주석 | buyer의 활성 REFUND_DISPUTE가 있어도 계정 삭제 차단 안 됨 | buyer 시점 finder 추가 |
-| P3 | **HostInboxService 성능**: `collectAllItems` 내부에서 page=0, size=500 전량 조회 후 메모리 집계. 인박스 항목 많을 시 N+1 + 메모리 문제 잠재. | `HostInboxService.java:85-88` | 호스트 인박스 화면 응답 지연 가능 | DB 집계 쿼리로 전환 검토 |
+## 원천 증빙의 보존 기간과 정리
 
-## 9. 수용 기준
+DisputeCaseRetentionScheduler는 Asia/Seoul을 명시해 매일 05:00에 실행하고, 기준 시각은 현재부터 1년 전이다. 모든 출처의 closed_at 하나만 읽는 구현이 아니라 해당 원천의 종결 상태와 처리·해결 시각을 검사한다.
 
-### AC-01. PARTIES 증빙 조회
+| 원천 | 정리 조건·대상 |
+|---|---|
+| 운영 이슈 | 닫힌 상태와 resolvedAt 경과를 잠금 후 다시 확인하고 본문 및 메시지 증빙 참조를 해제 |
+| 경고 제보·이의 | 승인/기각/철회 등 해당 원천의 끝 상태와 processedAt 경과를 확인 |
+| 안전 차단·공개 신고 | 연결 또는 직접 신고가 RESOLVED/DISMISSED이고 processedAt이 경과한 경우 |
+| 클럽 조치 | 해당 조치 대상 멤버가 낸 통합 이의가 UPHELD/REJECTED/CLOSED이고 processedAt이 경과한 경우 |
+| 사용자·배정 분쟁 | UserDisputeCase의 RESOLVED/CLOSED/CLOSED_WITH_MANUAL_RECOVERY와 resolvedAt 경과 |
+| 구매 환불 분쟁 | 원천 TERMINAL 상태 집합과 resolvedAt 경과. 현재 evidenceFileIds를 직접 정리하므로 미지원 file group이라는 옛 제한은 폐기 |
+| 노쇼 확정·소명 증빙 | OVERTURNED의 overturnedAt 또는 소명 기각된 CONFIRMED의 appealRejectedAt 경과를 다시 확인 |
+| 신고 원문 보관 | 처리된 신고 원문 후보를 최대 100건 가져와 별도 ReportSourceEvidencePurger에 위임 |
 
-Given 참가자가 OPEN 케이스의 상세를 조회한다.
-When 서버가 PARTIES visibility 증빙을 포함해 `DisputeCaseDetailVo`를 반환한다.
-Then Flutter 상세 화면에 해당 증빙이 표시된다. CS_ONLY 증빙은 응답에 포함되지 않으므로 표시되지 않는다.
+정산 이의에는 이 스캐너의 독립 증빙 정리 분기가 없다. 이의 상태 중 DECIDED·COMPENSATION_APPLIED·RECOVERY_REQUIRED를 UPHELD/REJECTED/CLOSED와 동일한 정리 자격으로 취급하지 않는다.
 
-### AC-02. evidenceFrozen=true 잠금
+각 행은 후보 조회 뒤 잠금 아래 종결·기한을 재판정한다. 그 사이 다시 열렸거나 처리 시각이 갱신됐으면 유지한다. JSON이 비어 있거나 파싱되지 않아 ID를 얻지 못한 경우 파일이 삭제됐다고 집계하지 않는다.
 
-Given 케이스 status가 OPEN이다.
-When 상세 조회 시 `evidenceFrozen=true`를 수신한다.
-Then `EvidenceGallery`가 "증빙 보존 중" 안내 배너를 표시한다. 삭제 버튼은 서버 DELETE endpoint 미구현으로 원래부터 없다.
+## 참조 해제와 물리 삭제의 두 단계
 
-### AC-03. evidenceFrozen=false 비잠금
+첫 단계는 트랜잭션 안에서 원천의 증빙 필드와 file_reference를 해제하고 각 파일에 purgeDueAt을 표시한다. 이 단계가 성공하면 원천 JSON은 비워질 수 있다. ‘S3 삭제 성공 ID만 JSON에서 지운다’는 과거 부분 성공 방식과 다르다.
 
-Given 케이스 status가 RESOLVED다.
-When 상세 조회 시 `evidenceFrozen=false`를 수신한다.
-Then 안내 배너가 표시되지 않는다. 삭제 endpoint 미구현으로 증빙 삭제는 불가하며 조회만 가능하다.
+두 번째 단계는 만기가 된 파일을 모아 파일별 worker로 삭제한다. 파일을 잠그고 현재 purgeDueAt, 다른 원천 참조, 분쟁 대화 첨부, 신원 증빙 소유자의 보류를 다시 확인한다. 참조가 남으면 표식을 유지하고 삭제를 미룬다. 없어진 파일은 이미 정리된 것으로 처리한다.
 
-### AC-04. legal hold → 계정 삭제 차단
+일반 파일은 메타데이터 삭제·flush 뒤 S3 삭제를 시도하며 S3 예외는 FILE_DELETE_FAILED로 올려 메타데이터 트랜잭션을 되돌린다. 신원 증빙은 사용자 잠금과 별도 삭제 인계 경로를 사용한다. 후보마다 실패를 기록하고 다른 파일 처리를 계속한다. 다음 실행의 재시도 근거는 purgeDueAt이므로 원천 JSON이 비워졌다는 것과 실제 객체 삭제 완료를 구분한다. 외부 저장소의 성공과 DB 커밋 사이 모든 실패까지 원자적이라고 주장하지 않는다.
 
-Given 사용자가 source별 finder 기준에 해당하는 역할(OperationalIssue reporter, WarningReport reporter, PurchaseRefundDispute seller, USER_DISPUTE reporter/target 등)로 OPEN/IN_REVIEW/ESCALATED 케이스에 연관되어 있다.
-When 계정 삭제를 요청한다.
-Then `DisputeLegalHoldService.hasActiveLegalHold(userId)=true` → `AccountDeactivationService`가 계정 삭제를 차단한다.
+## 대화 첨부의 보존 기간
 
-### AC-05. EvidenceFileValidator 소유권 검증
+같은 스케줄러의 별도 작업은 매일 한국 시간 05:30에 끝 상태의 등록부 에피소드 중 closedAt이 1년 지난 후보를 찾는다. 최신 에피소드가 다시 열렸거나 최근에 닫혔으면 과거 에피소드의 첨부도 유지한다.
 
-Given 사용자가 타인의 `file_metadata.id`를 `evidenceFileIds`에 포함해 이의제기를 제출한다.
-When `EvidenceFileValidator`가 소유권 검증을 실행한다.
-Then 소유권 불일치로 에러가 반환된다.
+worker는 같은 caseId의 에피소드들을 잠그고 현재·최신 에피소드의 종결과 기한을 다시 검사한다. 파일 ID 순으로 잠근 뒤 첨부 참조 행을 삭제·flush하고 purgeDueAt을 표시한다. 실제 파일 삭제는 위 두 번째 단계를 사용하므로 다른 사건에서 공유하는 파일까지 함께 지우지 않는다. 이 작업은 메시지 본문·사건 행 전체를 삭제하는 작업이 아니다.
 
-### AC-06. retention 1년 후 정리
+## 앱 표시·열기·복귀
 
-Given 케이스가 RESOLVED + `closed_at + 1년 < now`다.
-When `DisputeCaseRetentionScheduler`가 실행된다.
-Then `evidence_file_ids`의 `file_metadata` row와 S3 파일이 삭제된다. 삭제 성공 건만 JSON에서 제거되며 일부 실패 시 재시도 보장된다. case row 자체는 삭제되지 않는다.
+사건 상세의 EvidenceGallery는 서버가 공개한 목록을 표시하고, 자료를 누르면 사건별 주소 발급 callback을 가진 뷰어를 연다. 자료가 있고 frozen=true일 때 보존 배너를 표시한다. 빈 목록이면 빈 상태를 먼저 반환하므로 보존 배너도 표시되지 않는다.
 
-### AC-07. meeting_settlement_appeal retention 제외
+별도의 ‘사유·자료 보기’ 화면은 본인 상세를 조회하고 서버 canSubmitAppeal과 appealDeadlineAt에 따라 이의 입구·기한을 표시한다. 현재 이 화면의 EvidenceGallery에는 onEvidenceTap을 전달하지 않는다. 따라서 사건 상세에서 되는 파일 열기를 이 화면도 제공한다고 쓰지 않는다. 조회 오류는 재시도할 수 있고 이의 작성으로 이동한 뒤에는 해당 작성 흐름의 복귀·갱신 규칙을 따른다.
 
-Given `meeting_settlement_appeal` 케이스가 1년 이상 경과됐다.
-When `DisputeCaseRetentionScheduler`가 실행된다.
-Then retention 대상에서 제외된다. (evidence 필드 미보유)
+## 코드 위치
 
-## 10. 미결정 / 후속
+<!-- source-references:start -->
+서버 창구: `DisputeCaseController#getMyCaseEvidenceDownloadUrl`, `DisputeCaseController#getHostCaseEvidenceDownloadUrl`, `DisputeCasePartyController#getMessageAttachmentDownloadUrl`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-| 분류 | 항목 | 결정/작업 |
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | evidence 삭제 endpoint | DELETE evidence endpoint 미구현. 제품 정책 결정 후 추가 여부 결정 |
-| 구현 | evidence 첨부 v2 | `DisputeCaseCreateScreen`/`AppealFormScreen`에 업로드 UI 추가 |
-| 구현 | purchase_refund_dispute retention | `evidence_file_group_id` 기반 별도 cleanup 스케줄러 설계 |
-| 구현 | SETTLEMENT_APPEAL appealer + PurchaseRefundDispute buyer legal hold | 두 source에 대한 비호스트/buyer 측 legal hold 판정 finder 추가 |
-| 정책 | CS_ONLY 증빙의 호스트 접근 여부 | HOST_ONLY와 CS_ONLY 경계 제품 정책 명확화 필요. 현재 filterByActorVisibility는 CS_ONLY를 제거하고 HOST_ONLY는 호스트 쪽 열람자에게만 남긴다 |
+| Gap | 원천별 frozen 표시가 달라 활성 사건도 false일 수 있다. | 배너와 실제 참조 보존을 구분한다. |
+| Gap | 사유·자료 보기 화면은 자료 탭 callback이 없다. | 사건 상세와 같은 파일 열기 기능으로 설명하지 않는다. |
+| Risk | 참조 해제와 실제 파일 삭제는 다른 단계다. | 원천 필드 제거를 물리 삭제 완료로 계산하지 않는다. |
+| Risk | 사용자별 보류·목록·등록부 원천 보류의 검사 범위가 다르다. | 모든 원천의 모든 당사자에 대한 동일 보장을 만들지 않는다. |
+| 미검증 | 실제 서명 주소·만료·권한 변경·재개방 경쟁·DB/S3 실패·스케줄 실행은 이번에 수행하지 않았다. | 소스 근거와 실행 증거를 나눈다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 공개 필터:** 타임라인과 증빙의 CS_ONLY/HOST_ONLY 규칙 및 제출자 본인 예외를 구분한다.
+- **AC-02 파일 주소:** 현재 공개 상세/대화의 정확한 fileId·messageId 조합으로 접근을 확인한다.
+- **AC-03 보존 표시:** 원천별 frozen 계산, 실제 파일 참조 보류, 삭제 API 부재를 구분한다.
+- **AC-04 사용자 보류:** 정산 제기자·환불 구매자·신고 대상자와 배정 관련자 검사를 포함하되 목록과 혼동하지 않는다.
+- **AC-05 계정 처리:** 활성 보류를 계정 전체 삭제·익명화의 일괄 금지로 설명하지 않고 선택적 자료 보존과 해제 후 정리를 연결한다.
+- **AC-06 원천 만기:** 한국 시간 05:00과 원천별 상태·처리 시각·잠금 후 재판정을 따른다.
+- **AC-07 파일 정리:** 참조 해제·purgeDueAt·파일별 잠금 재판정·공유 참조·실패 재시도를 구분한다.
+- **AC-08 대화 첨부:** 한국 시간 05:30과 최신 에피소드 재개방/재종결 검사를 적용한다.
+- **AC-09 앱 경로:** 상세 파일 열기와 사유·자료 보기의 표시 전용 갤러리, 빈 자료와 보존 배너를 구분한다.
+
+근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.

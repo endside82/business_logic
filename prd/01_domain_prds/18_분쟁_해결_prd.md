@@ -1,128 +1,69 @@
 # 18. 분쟁 해결 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 기능 문서와 서버·앱 근거를 합친 업무 영역 안내다. 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다. 소스 대조 완료와 출시·실기기 검증 완료는 다르다.
 
+## 업무 경계와 정본
 
-<!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/ -->
+이 영역은 여러 도메인의 사건 조회에 더해 사용자 접수, 등록부 사건·당사자, 통합 이의, 대화와 종결, 증거 보존을 연결한다. 원천 테이블 두 개만 갖는 읽기 전용 어댑터라는 과거 설명으로 현재 구현을 표현할 수 없다.
 
-> 문서 상태: **신규 도메인 신설본**. 1차 자료는 `community_api/src/main/java/com/endside/community/host/dispute/` 및 `host/` 패키지 실제 소스 (엔티티 2종 · enum 8종 · 서비스 5종 · 컨트롤러 2종 · 엔드포인트 9개 · 스케줄러 2종), `community_app/lib/presentation/dispute/`, `lib/domain/providers/dispute/`, `lib/data/models/dispute/` 직접 확인 결과다.
->
-> **도메인 경계**: 이 도메인은 여러 원천 도메인이 생산하는 분쟁·이의·신고를 **단일 read 창구로 통합**하는 Union Adapter 역할을 한다. 각 원천 도메인의 해결 권위는 여전히 해당 도메인 PRD가 canonical이다.
-> - **F15-03** (클럽 경고 이의 `WarningAppeal`) — 15번 경고·징계 도메인이 canonical. 본 도메인은 `WARNING_APPEAL:{id}` union source로만 참조.
-> - **F07-08** (모임 정산 이의 `MeetingSettlementAppeal`) — 07번 모임 정산 도메인이 canonical. 본 도메인은 `SETTLEMENT_APPEAL:{id}` union source로만 참조.
-> - **F08-14** (플랜 마켓 구매 환불 분쟁 `PurchaseRefundDispute`) — 08번 플랜 마켓 도메인이 canonical. 본 도메인은 `REFUND_DISPUTE:{id}` union source로만 참조.
-
-## 1. 결론
-
-분쟁 해결 도메인은 기존 16개 도메인에 **흩어진 신고·이의·운영 이슈를 단일 통합 케이스 뷰**로 묶는 신규 경량 어댑터 도메인이다. 서버 `DisputeCaseQueryRepository`는 원천 도메인 테이블을 Java-side union으로 읽어 `caseId={prefix}:{sourceId}` 형태의 통합 식별자로 노출한다.
-
-`DisputeSourceType` enum 19값은 케이스의 **컨텍스트 분류(sourceType 필드)** 용도이며, 실제 emit되는 caseId prefix 집합과 1:1 대응하지 않는다. 예: caseId prefix가 `OPERATIONAL_ISSUE`인 케이스의 sourceType은 PAYMENT/REFUND/SETTLEMENT 등으로 매핑된다(`mapOperationalSourceType`). `WARNING_REPORT`/`WARNING_APPEAL`/`SETTLEMENT_APPEAL`/`REFUND_DISPUTE` 등은 enum 값이 아니라 **caseId prefix**다.
-
-실제 emit prefix 범위: 사용자 뷰(`searchByUser`) 7종(OPERATIONAL_ISSUE · WARNING_REPORT · WARNING_APPEAL · REPORT(CARPOOL 제외) · DATE_BLOCK · TRANSPORT · CLUB_MEMBERSHIP_ACTION) + USER_DISPUTE 양측(reporter+target). 호스트 뷰(`searchByHost`) 2종(SETTLEMENT_APPEAL · REFUND_DISPUTE). 미구현(out-of-scope): SETTLEMENT_APPEAL appealer 직접 finder 없음(사용자 뷰에서 미emit), PurchaseRefundDispute buyer finder 없음.
-
-사용자 본인이 직접 생성하는 `USER_DISPUTE` source만이 `user_dispute_case` 테이블에 persistent하게 저장되며, 나머지 source는 기존 도메인 테이블을 union-read한다.
-
-이의제기(`DisputeAppeal`)는 별도 `dispute_appeal` 테이블에 저장되고, `(case_id, appellant_user_id)` UNIQUE 제약으로 케이스당 본인 1건이 보장된다. 이의 상태 전이(UPHELD/REJECTED)는 admin API가 소유하며, 공개 API에서는 PENDING→CLOSED(철회)만 가능하다. `EVENT_NO_SHOW` source에 한해서만 원본 도메인 appeal 메커니즘과 best-effort sync가 이루어지며, 나머지 source는 audit-only다.
-
-legal hold는 `DisputeLegalHoldService`가 OPEN/IN_REVIEW/ESCALATED 상태 케이스를 기준으로 판정하고, 계정 삭제·데이터 익명화를 차단한다. evidence는 케이스 종결(RESOLVED/CLOSED) + 1년 후 `DisputeCaseRetentionScheduler`가 정리한다.
-
-5개 기능 PRD (F18-01~F18-05) 전체는 백엔드(2026-05-29)와 (2026-05-29~06-02)에 구현됐다. Flutter는 같은 기간에 배선됐다.
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | 핵심 소스 | 상태 | Trace |
-|---|---|---|---|---|---:|
-| F18-01 | 통합 분쟁 케이스 조회 | [F18-01_unified-dispute-case_prd.md](../02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md) | `DisputeCaseController#getMyCases,getHostCases,getMyCaseDetail`, `DisputeCaseQueryRepository`, `DisputeSlaExceededScheduler` | 구현됨 | 8 |
-| F18-02 | 분쟁 직접 접수 (USER_DISPUTE) | [F18-02_dispute-create_prd.md](../02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md) | `DisputeCaseController#createMyDispute`, `DisputeCaseService#createUserDispute`, `UserDisputeCase`, `DisputeCaseCreateScreen` | 구현됨 | 6 |
-| F18-03 | 분쟁 이의제기 (DisputeAppeal) | [F18-03_dispute-appeal_prd.md](../02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md) | `#createAppeal,getMyAppeals,withdrawAppeal`, `DisputeAppealService`, `dispute_appeal` 테이블, `AppealFormScreen` | 구현됨 | 7 |
-| F18-04 | 증빙·공개범위·보존 | [F18-04_evidence-visibility_prd.md](../02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md) | `EvidenceFileValidator`, `Visibility`, `DisputeLegalHoldService`, `DisputeCaseRetentionScheduler`, `evidenceFrozen` | 구현됨 | 5 |
-| F18-05 | 호스트 운영 인박스 | [F18-05_host-inbox_prd.md](../02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md) | `HostInboxController#getInbox,getStats`, `HostInboxService`, `HostInboxSourceType` 8종, `HostInboxScreen` | 구현됨 | 6 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 기능 | 이유 |
-|---|---|---|
-| [F18-04](../02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md) | 증빙·공개범위·보존 | legal hold = 계정 삭제·데이터 익명화 차단 핵심. `evidenceFrozen` 케이스 레벨 잠금, 1년 retention policy |
-| [F18-03](../02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md) | 분쟁 이의제기 | `DisputeAppealStatus` 4값 전이, EVENT_NO_SHOW best-effort sync, audit-only dispatcher 구조 이해 필수 |
-| [F18-01](../02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md) | 통합 케이스 조회 | source union(사용자 8종·호스트 2종), caseId prefix 계약, UnifiedDisputeStatus 매핑, SLA 스케줄러 이해 기반 |
-| [F18-02](../02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md) | 분쟁 직접 접수 | rate-limit·dedup 정책, admin 전이 소유 구조 파악 |
-| [F18-05](../02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md) | 호스트 운영 인박스 | 8-source 통합, EVENT_MESSAGE 미응답 판정, DISPUTE_CASE 카드 경로 |
-
-## 4. 도메인 책임 한도
-
-본 도메인은 **원천 도메인 status를 변경하지 않는다.** union 조회와 `USER_DISPUTE` 생성·`DisputeAppeal` insert·철회만이 공개 API 범위다. UPHELD/REJECTED 전이, 개별 원천 도메인의 해결 처리(WarningLedger 조정, Settlement 재계산, 환불 실행 등)는 각자 도메인 또는 admin API가 소유한다.
-
-단 `EVENT_NO_SHOW` source에서 이의제기 시 `EventNoShowService#appeal` 호출이 best-effort로 연동된다. 실패해도 `dispute_appeal` insert는 롤백되지 않는다.
-
-## 5. 핵심 데이터·인프라
-
-### 5.1 신규 테이블 2종 (V1__init.sql 통합)
-
-| 테이블 | 책임 | 핵심 제약 |
-|---|---|---|
-| `dispute_appeal` | 통합 이의제기 side-table | `UNIQUE(case_id, appellant_user_id)`, `status DEFAULT 'PENDING'` |
-| `user_dispute_case` | 사용자 자발적 분쟁 (⑤) | `active_dedup_key` GENERATED STORED UNIQUE, `CHECK(target_user_id IS NULL OR target_user_id <> reporter_user_id)`, FK NO CASCADE |
-
-### 5.2 enum 8종
-
-| Enum | 값 수 | 용도 |
-|---|---|---|
-| `DisputeSourceType` | 19 | 케이스 컨텍스트 분류(sourceType 필드)용. caseId prefix 집합과 1:1 대응 아님 |
-| `DisputeCaseType` | 9 | 분쟁 유형 분류 |
-| `UnifiedDisputeStatus` | 5 | 통합 상태 (OPEN/IN_REVIEW/RESOLVED/CLOSED/ESCALATED) |
-| `DisputeAppealStatus` | 4 | 이의제기 상태 (PENDING/UPHELD/REJECTED/CLOSED) |
-| `AuthorRole` | 6 | 타임라인/증빙 작성자 역할 |
-| `Visibility` | 4 | 증빙·타임라인 공개범위 |
-| `HostInboxSourceType` | 8 | 호스트 인박스 source 분기 |
-| `HostInboxStatus` | 3 | 인박스 항목 처리 상태 |
-
-### 5.3 스케줄러 2종
-
-| 스케줄러 | cron (KST) | 책임 |
-|---|---|---|
-| `DisputeSlaExceededScheduler` | 06:00 매일 (Asia/Seoul), ShedLock 20분 | 7일 이상 미해결 케이스 운영자 알림 (8개 scanOne 호출 — OPERATIONAL_ISSUE·WARNING_REPORT·WARNING_APPEAL·SETTLEMENT_APPEAL·PUBLIC_REPORT·REFUND_DISPUTE·USER_DISPUTE·DISPUTE_APPEAL(PENDING) — 독립 격리) |
-| `DisputeCaseRetentionScheduler` | 05:00 매일 | 종결(RESOLVED/CLOSED) + 1년 경과 케이스 evidence file_metadata 삭제 (7개 source) |
-
-### 5.4 legal hold 불변
-
-legal hold(OPEN/IN_REVIEW/ESCALATED) 케이스에 연관된 사용자의 계정 삭제·데이터 익명화는 `DisputeLegalHoldService.hasActiveLegalHold(userId)`가 차단한다. `evidenceFrozen=true` 케이스의 증빙 파일은 삭제 불가.
-
-## 6. 도메인 외부 영향
-
-| 도메인 | 영향 |
+| 기능 정본 | 현재 책임 |
 |---|---|
-| 03 이벤트 | EVENT_NO_SHOW(appeal prefix, enum 미존재), TRANSPORT(CARPOOL report) union 포함. 노쇼 appeal best-effort sync. APPLICATION·ATTENDANCE·CHECK_IN·EVENT_RESCHEDULE은 DisputeSourceType enum에만 있고 현재 emit 안 됨 |
-| 04 클럽 | CLUB_MEMBERSHIP_ACTION source union(KICK/BAN만, UNBAN 제외). WARNING_REPORT/WARNING_APPEAL은 경고·징계 도메인 소관 |
-| 07 모임 정산 | SETTLEMENT_APPEAL caseId prefix union(호스트 뷰만). MeetingSettlementAppeal은 원본 endpoint에서 처리. ACTIVE 이후 생성분만 유입 — DRAFT 이의는 생성 자체가 차단(2026-06-05, DEC-V4) |
-| 08 플랜 마켓 | REFUND_DISPUTE caseId prefix union(호스트 뷰·legal hold). PurchaseRefundDispute는 원본 endpoint에서 처리 |
-| 09 프라이빗 데이팅 | DATE_BLOCK(reportId≠null 안전신고 동반 차단만) · TRANSPORT(CARPOOL report) union. DATE_CHAT·DATE_PROFILE_PHOTO는 enum에만 있고 emit 안 됨. legal hold 적용 |
-| 11 리뷰·신고 | REPORT(EVENT type만, reporter), OPERATIONAL_ISSUE union. REVIEW·POST·COMMENT·PHOTO_ALBUM은 enum에만 있고 emit 안 됨 |
-| 15 경고·징계 | WARNING_REPORT(reporter), WARNING_APPEAL(member) source union. WarningAppeal은 F15-03 canonical |
-| 13 프로필·설정 | `AccountDeactivationService`: legal hold 활성 시 계정 삭제 차단 |
+| [통합 분쟁 조회·당사자 대화·종결 경계](../02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md) | 내/호스트 목록의 원천·등록부·배정 범위, 상태 변환, 당사자 명령과 권한, 보상 종결·알림 |
+| [사용자 분쟁 접수·출처 연결·초안 복구](../02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md) | 직접 접수, 참조 출처 세 종류, 최근 24시간 제한과 중복, 배정 caseId, 앱 초안과 미확정 결과 |
+| [분쟁 이의 접수·공개 조건·철회](../02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md) | 출처 허용과 플랫폼 설정, 현재 접근·기한, 일곱 상태, 본인 조회·철회·원천 동기화 |
+| [분쟁 증거 열람·보존·파일 정리](../02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md) | 서버 공개 필터·본인 증거 예외, 목록 기반 주소 발급, 자료 보류, 만기 참조 해제와 파일 삭제 |
+| [호스트 처리함·아홉 출처·업무 이동](../02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md) | 아홉 출처·세 탭, 공동 주최/상담 권한, 입금 확인, 신고 관할, 카드 경로·통계·갱신 |
 
-## 7-A. 접근권한 감사 교정 (2026-07-02)
+별도 원천의 해결 권위는 [클럽 경고 이의](../02_feature_prds/15_warning/F15-03_appeal_prd.md), [모임 정산 이의·감사](../02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md), [마켓 구매 환불 분쟁](../02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md)에 둔다. 통합 이의가 이 세 절차에 두 번째 이의를 무조건 추가하는 것은 아니다.
 
-> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F15_F18_F11_moderation.md` (F18 분쟁 파트)
+## 사용자 업무 순서
 
-- **경고 신고·이의 분쟁 상세 — 당사자/권한자 전용(G-DISP-2, S3 수정 완료)**: `WARNING_REPORT`·`WARNING_APPEAL` 케이스 상세는 **경고 검토권한자(WARNING_REVIEWER 플래그 보유 또는 OWNER) 또는 당사자(신고자/피신고자/이의제기자)**만 열람 가능. 이전에는 `DisputeSourceResolver`에서 `actorCanView`에 `isMember`만 주입되어 같은 클럽 멤버 누구나 신고 내용·대상 신원을 열람 가능했음(수평 누수 S3). 교정: 서버 게이트를 정확한 WARNING_REVIEWER‖OWNER 술어 + 당사자 조합으로 조임.
-- **강제환불 서비스단 심층방어(G-DISP-1)**: `RefundDisputeService.forceRefund/upholdRejection/requestMoreEvidence`에 서비스단 ADMIN 단언이 추가됨. URL 매처(SecurityConfiguration)와 이중 방어. 라이브 누수는 없었으나 방어 심도 강화.
-- **강제환불 조회/실행 — ADMIN 전용**: 환불 분쟁의 강제환불·판정·증빙요청은 **전역 ADMIN**만 수행 가능(06_결제_and_지갑 §8-A 참조).
-- **ActorPermissionFlags 패턴 — 인가 골든 스탠다드 재확인**: 서버 `DisputeSourceResolver`가 한 곳에서 능력플래그를 계산하고 클라이언트가 로컬 재계산 없이 소비하는 방식이 이 도메인의 인가 패턴 북극성임. 이 패턴 덕분에 클라이언트 flag 위조로 권한상승이 불가하며, 다른 도메인(F15, F08, F21 등)으로 확산이 권장됨.
+1. 내 목록·호스트 목록·처리함 또는 원천 업무에서 서버가 정한 caseId로 상세에 진입한다.
+2. 사건 접근권과 서버가 공개한 기록·증거를 확인한다. URL이나 목록 포함만으로 명령 권한을 추정하지 않는다.
+3. 현재 행동 플래그에 따라 메모·추가 자료 요청/답변·결과 확인·종결 동의·운영팀 검토 요청·이의를 수행한다. 신규 접수는 별도 입력 흐름이다.
+4. 접수·결정·보상 적용·수동 수습·종결을 나누어 결과를 읽는다. 표시 상태 하나로 자동 복구나 이의 권리 소멸을 단정하지 않는다.
+5. 원래 업무로 돌아가 재조회한다. 분쟁 provider의 데이터 신호 구독과 처리함의 명시적 복귀/통계 갱신 부재를 구분한다.
 
-## 8. 잔여 후속
+## 사건 식별·조회·상태
 
-| 항목 | 차단 사유 |
-|---|---|
-| dispute 딥링크 (NotificationRouter) | `notification_router.dart`에 신규 dispute 알림 타입 미배선 |
-| appeal 승인/거절 공개 endpoint | 공개 API 미구현. 현재 admin API 소유만. `canApproveAppeal` flag는 있음 |
-| evidence 첨부 업로드 UI (v2) | `DisputeCaseCreateScreen` v1에서 의도적 제외 |
-| purchase_refund_dispute evidence cleanup | `evidence_file_group_id` 구조 — 단일 file_metadata 매핑과 달라 별도 file group cleanup 필요 |
-| HostInboxService 성능 | `collectAllItems` size=500 전량 메모리 조회 |
+caseId의 prefix, sourceType 문맥 분류, 접수의 caseType은 다른 축이다. 내 목록에는 기존 운영·신고·조치·사용자 사건에 현재 배정과 여섯 등록부 출처가 더해진다. 호스트 목록에는 정산·환불 외에도 배정, HOST 등록부 사건, 호스트 처분 검토가 있다. 목록별 원천 수집 상한·현재 에피소드·당사자 조건이 다르다.
 
-## 9. 관련 문서
+표시 상태 UnifiedDisputeStatus와 진행 상태 DisputeWorkflowStatus는 각각 여섯 값이지만 원천 변환이 일부 상태를 합친다. 통합 이의는 PENDING, DECIDED, COMPENSATION_APPLIED, UPHELD, RECOVERY_REQUIRED, REJECTED, CLOSED 일곱 상태다. 호스트 처리함은 아홉 출처를 응답 필요·처리 중·완료 세 상태로 다시 분류한다.
 
-- 2026-06-04 델타 실사 원문은 외부 백업으로 보관한다. [문서 정리와 보관 위치](../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)에서 복원 경로를 확인한다. 현재 계약은 아래 기능 PRD와 실제 소스를 기준으로 읽는다.
-- F15-03 (클럽 경고 이의): `prd/02_feature_prds/15_warning/F15-03_appeal_prd.md`
-- F07-08 (모임 정산 이의): `prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md`
-- F08-14 (플랜 마켓 환불 분쟁): `prd/02_feature_prds/08_plan_market/F08-14_purchase-refund_prd.md`
+등록부에는 사건·당사자·에피소드, 대화·첨부·종결 동의, 원천 보류와 보상 원장이 연결된다. 목록의 가벼운 공통 표현과 원천별 업무 권한을 분리한다. 정확한 필드·경로는 각 기능의 현재 서버 계약과 코드 위치 표를 따른다.
+
+## 접수·명령·종결의 경계
+
+신규 사용자 접수는 최근 24시간 10건 제한과 활성 중복 검사를 적용한다. 참조 출처는 SERVICE_ASSIGNMENT, EVENT_PAYMENT, PRIVATE_MEETING이며 원천의 접근권·상대·문맥을 서버가 정한다. 배정 접수 결과는 SERVICE_ASSIGNMENT caseId를 반환하므로 모든 결과를 USER_DISPUTE로 조립하지 않는다.
+
+통합 이의는 허용 출처·접근·기존 이의·사건 상태·노쇼 기한을 검사한다. 노쇼·클럽·콘텐츠 플랫폼 판단 설정의 기본값은 false이며 현재 운영값은 이번 문서 검토에서 확인하지 않았다. 노쇼 저장 전 검증과 저장 후 별도 트랜잭션 원천 동기화는 다르다. 후자 실패가 삼켜질 수 있어 이의 저장 성공만으로 원천 변경을 확정하지 않는다.
+
+공개 행동 플래그는 열 가지이며 canApproveAppeal은 없다. 최종 canResolveDispute=false를 호스트 업무 전체의 권한 부재로 해석하지 않는다. ‘호스트 해결’은 실제 대상과 출결 관리 권한에 연결되고 공개 통합 이의 승인·기각 버튼이 아니다.
+
+결과 확인은 상태·이의 권리를 바꾸지 않는다. 상호 종결 동의는 금전·제재가 아닌 두 당사자 USER_DISPUTE에 한정한다. 이미 이관한 사건의 재이관은 충돌하므로 모든 명령의 최초 응답 재생을 약속하지 않는다. 종결은 보상 원장 상태와 열린 이의·전이 주체까지 검사하며 수동 수습 완료를 자동 보상 적용 완료와 합치지 않는다.
+
+## 공개·자료 보류·보존 만료
+
+서버는 증빙과 타임라인을 공개 범위로 거른다. 증빙은 제출자 본인 예외가 있고, 파일 주소도 현재 공개 목록의 fileId로 다시 판정한다. frozen 표시의 계산은 원천마다 다르며 실제 파일 참조 보존과 동일하지 않다.
+
+사용자별 활성 분쟁 검사에는 구매자·정산 이의 제기자·신고 대상자도 포함된다. 이 검사는 탈퇴 전체를 무조건 금지하는 단일 플래그가 아니다. [탈퇴 판정](../02_feature_prds/13_profile_settings/F13-07_account-deactivation_prd.md)과 [데이터 삭제](../02_feature_prds/13_profile_settings/F13-06_account-deletion_prd.md)의 의무 처리 및 선택적 자료 보존을 함께 따른다.
+
+매일 한국 시간 05:00의 원천 증빙 정리와 05:30의 대화 첨부 정리는 종결 후 1년 조건을 원천별 시각·최신 에피소드까지 확인한다. 원천 참조 해제와 purgeDueAt 표시는 실제 파일 삭제의 앞 단계다. 남은 공유 참조·대화 첨부·신원 증빙 소유자의 보류가 있으면 삭제를 미루며 실패는 파일별 재시도 대상으로 남긴다.
+
+## 알림·운영·앱 갱신
+
+분쟁 절차 알림은 DISPUTE outbox 발행 경로가 있다. 매일 한국 시간 06:00 SLA 스캐너는 여덟 원천의 7일 경과 활성 사건을 운영자 경보로 연결하며 출처별 상태 제외 조건과 실패 격리를 적용한다. 이 호출 근거를 사용자 기기 또는 운영 채널의 실제 수신 완료로 계산하지 않는다.
+
+호스트 처리함은 INQUIRY 상담·무통장 입금 확인·현재 관할 신고를 포함한다. 통계의 응답률은 DONE 비율, 평균은 완료 항목의 생성부터 수정까지의 간격이다. 현재 탭의 새로고침이 별도 통계까지 갱신하지 않으며 모든 업무 복귀·새 요청 자동 갱신을 보장하지 않는다.
+
+## 현재 제한과 완료 판정
+
+- 목록 수집과 사용자별 자료 보류의 포함 범위는 다르다. 특히 출처별 상한과 등록부 변환 때문에 목록 총수·상태를 모든 이력의 완전한 표현으로 취급하지 않는다.
+- 앱 생성 라우트의 targetUserId/clubId 전달, 미확정 전송 결과, 상세와 사유·자료 보기 화면의 파일 열기 차이는 해당 기능의 현재 제한을 유지한다.
+- 보존 배너·원천 참조 해제·물리 삭제·수동 수습·실제 알림 수신은 각각 별도 결과다.
+- 다섯 기능의 소스 대조는 최신 문서의 근거다. 새 제품 시험, 배포 설정 확인, 실기기 검수, 최종 저장소 전체 변경 대조와 원본 반영을 대신하지 않는다.
+
+## 검증 근거
+
+현재 기능 정본 다섯 개와 문서 최신화 대장의 dispute_intake, dispute_query, dispute_evidence 근거 묶음을 연결한다. HTML은 이 정본으로 동기화하고 기존 앵커를 보존한다. 과거의 고정 enum·endpoint 수량과 ‘전체 구현 완료’ 표현을 현재 실행 증거로 재사용하지 않는다.
