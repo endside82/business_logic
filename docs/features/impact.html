@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>부수효과 매트릭스 — community PRD</title>
+  <title>기능별 영향 표 — community PRD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -12,60 +12,32 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main>
       <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>기능 인벤토리<span>›</span>부수효과 매트릭스</div>
-        <h1>부수효과 매트릭스</h1>
-        <p class="lede">
-          한 기능을 바꿀 때 같이 흔들리는 영역을 본다.
-          알림·돈·캘린더·위치·신뢰 다섯 축은 도메인을 넘어 횡단으로 작동하기 때문에,
-          기능 PRD만 보고 있으면 같이 깨지는 부분을 놓치기 쉽다.
-        </p>
+        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>기능 인벤토리<span>›</span>기능별 영향 표</div>
+        <h1>기능별 영향 표</h1>
+        <p class="lede">21개 도메인·175개 기능을 바꿀 때 함께 읽을 영역이다. ●는 현재 PRD의 생성·조회·설정·연결·보존 조건을 뜻한다. 실제 알림 수신·돈 이동·제품 실행의 통과 표시가 아니다. ·도 영향 없음이나 검토 면제가 아니다.</p>
+        <p><a href="../../prd/00_prd_items/10_impact_matrix.md">영향 판단 기준과 기능별 분류 정본</a> · 2026-11-22 정본 대조. 기능 이름에서 해당 PRD를 열 수 있다.</p>
       </header>
 
+      <!-- derived-from: prd/00_prd_items/10_impact_matrix.md; sha256: 351822c6e159051e0978abb3e84c2f8f3873dd0523733e266dc2d4aedf1da33d -->
       <section>
-        <h2>영향 판단 5축</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>영향 영역</th><th>봐야 할 것</th></tr></thead>
-            <tbody>
-              <tr><td><span class="pill info">알림</span></td><td>수신자·트리거·딥링크·수신 설정·방해금지</td></tr>
-              <tr><td><span class="pill money">결제·정산</span></td><td>잔액·결제수단·환불·이체 확인·거래내역</td></tr>
-              <tr><td><span class="pill brand">캘린더</span></td><td>일정 생성·반복·가용 시간·상세 라우팅</td></tr>
-              <tr><td><span class="pill violet">위치</span></td><td>권한·공유 동의·공유 중지·길찾기·주소</td></tr>
-              <tr><td><span class="pill danger">리뷰·신뢰</span></td><td>리뷰 자격·신고·차단·노쇼·신뢰점수</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <h2>함께 읽을 다섯 영역</h2>
+        <div class="table-wrap"><table><thead><tr><th>영역</th><th>직접 다루는 계약</th></tr></thead><tbody>
+          <tr><td>알림</td><td>앱 알림·푸시·인증 이메일, 설정·방해금지·기기·배지·업무 이동·보존</td></tr>
+          <tr><td>금전</td><td>가격·결제·지갑·납부·반환·정산·거래 조회·구매 권리와 금전 분쟁</td></tr>
+          <tr><td>일정</td><td>이벤트·만남·회차·참석, 가능 시간·반복·달력 조회와 공개 경계</td></tr>
+          <tr><td>위치</td><td>주소·좌표·장소·거리·길찾기·공유·개인 승차 장소와 위치 자료</td></tr>
+          <tr><td>후기·안전</td><td>후기·피드백·신뢰·차단·신고·노쇼·경고·제재·분쟁과 보존</td></tr>
+        </tbody></table></div>
+        <p>기능 정본에서 변경할 입력·상태·대상·권한을 먼저 확인한다. 표시된 연결을 따라 정책을 읽고, 새로 생기는 영향과 다섯 열 밖의 개인정보·마일리지·스탬프·파일·세션·복구도 판단한다. 마일리지 점수는 현금이나 신뢰점수와 다르며, 단순 시각 정보가 달력 반영을 뜻하지 않는다.</p>
       </section>
 
       <section>
-        <h2>검토 순서</h2>
-        <p>기능 변경이 있을 때 다섯 영역을 순서대로 묻는다. 한 영역이라도 “예”면 해당 영역의 정책 PRD를 함께 갱신한다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["기능 변경"] --> B{"상태가 바뀌는가?"}
-    B -->|"예"| C["알림 검토"]
-    B -->|"아니오"| D{"돈이 움직이는가?"}
-    C --> D
-    D -->|"예"| E["결제·정산 검토"]
-    D -->|"아니오"| F{"시간·장소가 바뀌는가?"}
-    E --> F
-    F -->|"예"| G["캘린더·위치 검토"]
-    F -->|"아니오"| H{"신뢰·안전 영향?"}
-    G --> H
-    H -->|"예"| I["리뷰·신고·차단 검토"]
-    H -->|"아니오"| J["기능 PRD만 갱신"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>도메인별 영향 밀도</h2>
-        <p class="subtitle">색이 진할수록 해당 영역에 영향을 주는 기능이 많다는 뜻. 도메인별로 회귀 검토 비중을 결정할 때 쓴다.</p>
+        <h2>도메인별 분류 수</h2>
+        <p class="subtitle">색은 해당 분류의 기능 수만 나타낸다. 위험도·완성도·필요한 시험량을 뜻하지 않는다.</p>
         <div class="table-wrap" id="heatmap-wrap">
           <table class="compact center">
             <thead>
-              <tr><th>도메인</th><th>알림</th><th>돈</th><th>캘린더</th><th>위치</th><th>신뢰</th><th>기능 수</th></tr>
+              <tr><th>도메인</th><th>알림</th><th>금전</th><th>일정</th><th>위치</th><th>후기·안전</th><th>기능 수</th></tr>
             </thead>
             <tbody id="heatmap-body"></tbody>
           </table>
@@ -74,14 +46,15 @@ flowchart LR
 
       <section>
         <h2>기능별 영향</h2>
-        <p class="subtitle">전 175개 기능의 영향 매트릭스. 도메인 필터로 좁혀서 본다.</p>
+        <p class="subtitle">175개 기능의 정본과 분류 이유. 복수 분류를 선택하면 모두 해당하는 기능만 표시한다.</p>
         <div class="toolbar">
           <input id="search" type="search" placeholder="기능 검색">
           <select id="domain-filter"><option value="">전체 도메인</option></select>
-          <label class="chip"><input type="checkbox" data-impact="notification">알림만</label>
-          <label class="chip"><input type="checkbox" data-impact="money">돈만</label>
-          <label class="chip"><input type="checkbox" data-impact="calendar">캘린더만</label>
-          <label class="chip"><input type="checkbox" data-impact="location">위치만</label>
+          <label class="chip"><input type="checkbox" data-impact="notification">알림</label>
+          <label class="chip"><input type="checkbox" data-impact="money">금전</label>
+          <label class="chip"><input type="checkbox" data-impact="calendar">일정</label>
+          <label class="chip"><input type="checkbox" data-impact="location">위치</label>
+          <label class="chip"><input type="checkbox" data-impact="review">후기·안전</label>
         </div>
         <p class="feature-count" id="feature-count"></p>
         <div class="table-wrap">
@@ -91,10 +64,11 @@ flowchart LR
                 <th style="width:70px">ID</th>
                 <th>기능</th>
                 <th style="width:50px">알림</th>
-                <th style="width:50px">돈</th>
-                <th style="width:50px">캘린더</th>
+                <th style="width:50px">금전</th>
+                <th style="width:50px">일정</th>
                 <th style="width:50px">위치</th>
-                <th style="width:50px">신뢰</th>
+                <th style="width:50px">후기·안전</th>
+                <th>분류 이유</th>
               </tr>
             </thead>
             <tbody id="rows"></tbody>
@@ -148,12 +122,13 @@ flowchart LR
       document.querySelector('#rows').innerHTML = filtered.map(f => `
         <tr>
           <td style="text-align:left"><code>${esc(f.id)}</code></td>
-          <td style="text-align:left">${esc(f.name)}</td>
+          <td style="text-align:left"><a href="../../prd/${esc(f.prdPath)}">${esc(f.name)}</a></td>
           <td>${mark(f.impacts.notification)}</td>
           <td>${mark(f.impacts.money)}</td>
           <td>${mark(f.impacts.calendar)}</td>
           <td>${mark(f.impacts.location)}</td>
           <td>${mark(f.impacts.review)}</td>
+          <td style="text-align:left">${esc(f.impactReason)}</td>
         </tr>
       `).join('');
       document.querySelector('#feature-count').textContent = filtered.length + '개 / 전체 ' + FEATURES.length + '개';
@@ -177,7 +152,6 @@ flowchart LR
   <script src="../assets/features.js"></script>
   <script src="../assets/mileage-feature-status.js"></script>
   <script>init();</script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
   <script src="../assets/app.js"></script>
 </body>
 </html>
