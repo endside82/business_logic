@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,151개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,157개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1151,
+    "documentedScenarioItems": 1157,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,9 +17,9 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 60,
-    "directlyLinkedJourneys": 32,
+    "directlyLinkedJourneys": 31,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 32,
+    "journeyScenarioReferences": 31,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 39,
     "partialEvidenceChain": 53,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 459,
-    "verifiedTraceRecords": 457,
+    "traceMarkers": 461,
+    "verifiedTraceRecords": 459,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -1586,18 +1586,18 @@ window.SCENARIO_AUDIT = {
       "id": "F03-03",
       "domain": "이벤트",
       "name": "이벤트 생성",
-      "scenarioCount": 10,
+      "scenarioCount": 16,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/03_event/F03-03_event-creation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 16
       },
       "trace": {
         "backendPath": "business_logic/units/03_event/F03-03_event-creation/backend.md",
-        "total": 4,
-        "verified": 4,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
         "entries": [
           {
@@ -1667,6 +1667,40 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 543
               }
             ]
+          },
+          {
+            "id": "F03-03:5",
+            "label": "POST /api/v1/events/{eventId}/next-occurrence — 다음 일정 복제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+                "controller": "EventController",
+                "method": "createNextOccurrence",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/next-occurrence",
+                "targetLine": 123,
+                "methodLine": 124
+              }
+            ]
+          },
+          {
+            "id": "F03-03:6",
+            "label": "PATCH /api/v1/events/{eventId}/co-hosts/{coHostUserId}/permissions — 공동호스트 권한 변경",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventCoHostController.java",
+                "controller": "EventCoHostController",
+                "method": "updatePermissions",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/co-hosts/{coHostUserId}/permissions",
+                "targetLine": 35,
+                "methodLine": 36
+              }
+            ]
           }
         ]
       },
@@ -1676,21 +1710,17 @@ window.SCENARIO_AUDIT = {
         "featureMarkerCount": 0,
         "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_event_authoring_surface_test.dart",
-          "community_app/integration_test/seed_event_operational_surface_test.dart"
+          "community_app/test/domain/providers/event/event_create_idempotency_test.dart",
+          "community_app/test/domain/providers/event/recurring_event_create_commands_test.dart"
         ],
         "markerCandidateFiles": []
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 3,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 3,
-        "files": [
-          "community_app/integration_test/seed_event_authoring_surface_test.dart",
-          "community_app/integration_test/seed_event_operational_surface_test.dart",
-          "community_app/scripts/e2e/run_p21_event_authoring_matrix.sh"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md"
         ]

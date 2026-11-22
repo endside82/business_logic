@@ -1,138 +1,131 @@
-# F03-03. 이벤트 생성 (호스트) PRD
+# F03-03. 이벤트 생성과 다음 일정·반복 일정 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 시험 단언을 대조했다. 새 제품 시험, 실제 업로드·결제·앱 재시작 검증 결과는 아니다.
 
-## 1. 결론
+## 결론
 
-호스트가 새 이벤트를 만든다. 생성 시 `status=DRAFT`로 저장되고, 별도 `publish` 호출 시 `OPEN`으로 전이한다. 일반/클럽/프라이빗 모임을 한 엔드포인트로 받으며, `hostingCostType`이 있으면 PRIVATE 타입이 된다. 반복 이벤트는 모(母) 이벤트 생성 후 `recurring` 엔드포인트로 자식 occurrence를 일괄 생성한다.
+이벤트 만들기는 기본 정보 → 일시·장소 → 참가 설정·참가비·환불 → 미리보기의 네 단계다. **작성 중 기기 저장, 서버에 초안 만들기, 초안 공개는 서로 다른 단계**다. 마지막 단계의 임시저장은 서버에 DRAFT를 만들고, 등록 + 공개는 만든 초안에 공개 요청을 이어 보낸다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+클럽 모임은 같은 폼을 쓰더라도 클럽 전용 생성·공개 호출과 생성 권한을 따른다. 일반 이벤트 생성 API 하나로 모든 클럽 모임을 만든다고 설명하지 않는다. 상세의 이 이벤트로 새로 만들기는 서버에서 다음 일정을 복제한 뒤 편집 화면을 여는 별도 흐름이고, 반복 일정 만들기는 여러 자식 초안을 만드는 기능이다.
 
-- 이벤트 목록(F03-01) ▶ 우하단 FAB(+) 탭 ▶ `/create-event`
-- 이벤트 상세(F03-02) ▶ 더보기 ▶ "이 이벤트로 새로 만들기" ▶ `/create-event` + `extra=EventVo` (prefill)
-- 클럽 상세(Unit 04) ▶ "이벤트 생성" ▶ `/create-event` (clubId 사전 설정)
+## 코드 위치
 
-## 2. 코드 위치
+서버: EventController·EventEntryService·EventCommandSupport·EventTransitions·EventStatus, MileageEventLifecycleService, EventAddParam·NextOccurrenceParam, EventPrepaymentReleaseGuard, RecurringEventCreateService·EventConstants, EventCoHostController·EventCoHostService·EventCoHost.
 
-계약의 정본은 코드다. 서버: `EventController`, `EventService`. 앱: `event_create_screen.dart`, `recurring_event_group_screen.dart`, `event_create_step1.dart`, `event_create_step2.dart`, `event_create_step3.dart`, `event_create_step4.dart`, `event_preview_card.dart`, `event_summary_table.dart`.
+앱: event_host_routes.dart·route_guards.dart, event_create_screen.dart·event_create_provider.dart·event_draft_storage.dart·event_add_param.dart, event_create_step2.dart·event_create_step3.dart·event_create_step4.dart, event_detail_screen.dart·next_occurrence_flow.dart·event_lifecycle_provider.dart, recurring_event_create_sheet.dart·recurring_event_provider.dart·recurring_event_group_screen.dart.
 
 <!-- source-references:start -->
-서버 창구: `EventController#createEvent`, `EventController#publishEvent`, `EventController#createRecurringEvents`, `EventController#getRecurringGroup`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `EventController#createEvent`, `EventController#publishEvent`, `EventController#createRecurringEvents`, `EventController#getRecurringGroup`, `EventController#createNextOccurrence`, `EventCoHostController#updatePermissions`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 2026-10-29 현재 계약 대조
+## 입구와 권한
 
-### 응답이 끊긴 생성 요청은 같은 요청으로 확인합니다
+| 입구 | 현재 판정과 목적 |
+| --- | --- |
+| 이벤트 목록·전체 메뉴의 이벤트 열기 | 로그인한 호스트가 개인 모임 만들기로 간다. 비호스트는 이벤트 열기 신청으로 안내한다 |
+| 클럽에서 모임 만들기 | 클럽 번호를 갖고 폼을 열며 서버의 해당 클럽 createEvent 허가를 확인한다. 계정이 바뀌거나 클럽 조회·허가 확인에 실패하면 편집 입구를 열지 않는다 |
+| 상세 더보기의 이 이벤트로 새로 만들기 | 수정 권한과 원본 종류·상태 조건을 확인한 뒤 서버 복제를 호출한다. 성공하면 새 초안의 편집 화면을 연다 |
+| 상세 더보기의 반복 일정 만들기 | 호스트 본인이고 클럽 미소속 독립 모임이며 취소·숨김·기존 반복 묶음이 아닐 때 반복 생성 시트를 연다 |
+| 반복 일정 관리 | 원본 틀 번호로 묶음을 열어 자식 목록을 본다. 이후 회차 수정·취소는 [이벤트 수정과 생명주기](F03-04_event-lifecycle_prd.md)의 별도 작업이다 |
 
-차수 10에서 모임 생성 다섯 경로·플랜 생성·정기모임 생성·개인 반복 생성에 요청 고유키를 연결했다. 같은 키·같은 본문 재전송은 앞 결과를 돌려주며 다른 본문 재사용은 거절한다. 저장 결과를 모르는 동안 새 생성으로 바꾸지 않는다. 화면 재진입·계정 전환 뒤 이전 사용자의 미확정 요청을 현재 계정으로 보내지 않는지도 확인한다.
+라우터는 기존 EventVo로 폼을 미리 채우는 경로도 지원한다. 그 경우 저장된 로컬 초안이 있으면 초안이 우선이고, 초안이 없을 때 전달된 내용을 사용한다. 이 보조 경로와 상세의 서버 복제 입구를 혼동하지 않는다. 클럽 세부 정책은 [클럽 모임과 캘린더](../04_club/F04-12_club-events-calendar_prd.md)를 따른다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+## 네 단계 입력과 제출 조건
 
-<!-- source-references:start -->
-### 확인한 서버 코드 위치
+제목은 공백일 수 없고 200자 이하다. 개인 모임은 앱에서 카테고리를 고른다. 확정 일정은 시작·종료를 모두 입력하고 시작은 현재 이후, 종료는 시작 뒤여야 한다. 서버는 시간대가 비어 있으면 서울로 저장하고 다른 시간대를 거절한다. 정원은 1명 이상이고 가격은 음수일 수 없다. 필수 입력이 빠진 상태의 기기 저장과 서버 초안 생성을 구분한다.
 
-2026-11-01에 파일·처리 함수·HTTP 메서드·전체 호출 주소를 실제 서버 선언과 대조했다. 아래 링크는 확인한 코드 버전에 고정되어 있다. 위치 확인은 동작 테스트 통과나 아래 상세 계약 전체의 검증을 뜻하지 않는다.
+장소는 온라인·오프라인에 맞게 입력한다. 앱의 주소 좌표 보완 실패가 항상 생성 전체를 막는 것은 아니며, 서버의 좌표·URL·문자열 제한을 최종적으로 따른다. 장소 이름·첨부 장소와 같은 확장 기능은 출시 범위가 열렸을 때만 해당 입력을 보낸다.
 
-| 호출 주소 | 처리 함수 | 확인한 코드 위치 |
-|---|---|---|
-| `POST /api/v1/events` | `EventController#createEvent` | [EventController.java:94](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L94) |
-| `POST /api/v1/events/{eventId}/publish` | `EventController#publishEvent` | [EventController.java:257](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L257) |
-| `POST /api/v1/events/{eventId}/recurring` | `EventController#createRecurringEvents` | [EventController.java:395](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L395) |
-| `GET /api/v1/events/{eventId}/recurring` | `EventController#getRecurringGroup` | [EventController.java:433](https://github.com/endside82/community_api/blob/3e654d5eb2ad02fbb8b30ae6a5d7d357a62902d3/api-app/src/main/java/com/endside/community/event/controller/EventController.java#L433) |
-<!-- source-references:end -->
+클럽의 무료 모임이고 투표 범위가 열렸을 때 일정·장소를 투표로 정하는 입력을 보인다. 그 후보·마감은 클럽 요청에 포함한다. 일반 개인 모임 API의 필드나 모든 유료 모임의 기본 기능으로 설명하지 않는다. 후보·마감의 상세 정책은 클럽 모임·투표 문서의 책임이다.
 
-## 3. 전체 동작 흐름
+## 기기 저장과 서버 초안
 
-1. 진입: `EventCreateNotifier.build()` → 빈 `EventCreateState`
-2. (prefill 시) `applyPrefill(eventVoToCreateState(source, clearSchedule: true))`
-3. 사용자 입력 → `update*` 메서드들 (각 필드별 setter)
-4. Step 진행 → `validateStep1/2/3` → `nextStep`
-5. 썸네일: `state.thumbnailFile` 있으면 `_uploadThumbnail`:
-   - `FileRepository.generatePresignedUrl(fileName, mimeType, purpose: 'EVENT_THUMBNAIL', fileSize)` (Unit 05)
-   - S3 PUT (presigned URL)
-   - `state.thumbnailUrl = signed.fileKey`
-6. 등록: `EventRepository.createEvent(_buildParam())` → `POST /api/v1/events`
-7. 발행: `EventRepository.publishEvent(eventId)` → `POST .../publish` (선택적)
-8. 성공 후 `eventListNotifier`/`myEventsNotifier` invalidate
+| 상태·행동 | 저장되는 것과 다음 동작 |
+| --- | --- |
+| 작성 중 | 계정과 개인/클럽 구분별로 폼을 기기에 저장한다. 다시 열면 단계·입력·미확정 요청·공개 의도를 복원한다 |
+| 사진 파일 선택 | 아직 업로드하지 않은 대표 사진은 초안 전용 위치에 복사해 원본 파일에만 의존하지 않게 한다 |
+| 저장·복원 실패 | 실패를 알리고 재시도를 제공한다. 초기 로드가 끝나기 전에 폼을 수정하거나 임의로 새 초안으로 덮어쓰지 않는다 |
+| 마지막 단계의 임시저장 | 입력을 검증하고 서버에 DRAFT를 만든다. 성공하면 기기 초안을 정리하고 해당 이벤트 상세로 이동한다 |
+| 등록 + 공개 | DRAFT 생성 후 별도 공개 요청을 보낸다. 생성 성공과 공개 성공을 하나의 원자적 작업으로 취급하지 않는다 |
+| 생성 완료 뒤 기기 정리 실패 | 결과 모임을 유지하고 정리 실패를 안내한다. 다시 누를 때 새 모임을 무조건 만들지 않는다 |
 
-## 4. 제품 규칙
+앱은 세션·계정·초안 세대가 여전히 같은지 확인하고 이전 계정의 늦은 결과를 현재 폼에 적용하지 않는다. 미확정 요청이 저장되어 있으면 본문·키·공개 의도를 임의로 바꿔 저장할 수 없다.
 
-### 4.1 유료 모임의 결제 수단
-- 고를 수 있는 값은 서버가 정한다. `POINT` 는 실결제 스위치, `CASH` 는 호스트 직접 수납 스위치와 출시 범위(`CASH_EVENT`), `MIXED` 는 둘 다를 본다.
-- 첫 출시 태세에서 실제로 고를 수 있는 값은 `CASH`(계좌이체) 하나다. 닫힌 수단은 `EVENT_PREPAYMENT_TYPE_NOT_READY`(지금 쓸 수 없는 결제 수단)로 거절한다.
-- 판정은 만들 때뿐 아니라 DRAFT→OPEN, 비공개→공개 전이에도 걸린다. 열려 있을 때 만들어 둔 초안이 닫힌 뒤 공개되어, 아무도 결제할 수 없는 유료 모임이 나오는 일을 막는다.
-- 별도 스위치는 없다. 실결제가 열리면 `POINT` 는 자동으로 다시 열린다.
-- 봉인은 새로 나오는 것에만 건다. 이미 있는 건의 조회·취소·환불·정산·노쇼·분쟁은 막지 않는다. 막으면 돈과 좌석이 함께 갇힌다.
-- 앱은 서버 목록에 있는 수단만 그리고, 목록을 못 읽으면 빈 목록으로 본다.
+## 생성·공개 결과가 불명확할 때
 
-### 4.2 입력 값
-- 제목은 필수이고 200자까지다. 정원은 1 이상, 가격은 0 이상이다.
-- 시간대는 서울만 받는다. 빈 값은 서울로 저장하고 다른 값은 `INVALID_TIMEZONE` 이다.
-- 대기열은 기본 꺼짐이다. 정원 초과 허용·상한은 입력 칸이 없어 기본값으로 남는다(F03-07 §3-1).
-- 공동호스트 권한 변경은 호스트만 한다.
-- 복제로 시작하면 내용은 채우고 일정은 비운다.
-- "등록 후 발행" 은 DRAFT 를 만든 뒤 곧바로 공개한다.
+최초 전송 전에 생성 키와 정확한 본문을 기기에 저장한다. 저장하지 못하면 생성 요청을 보내지 않는다. 요청 중에는 중복 전송을 막고, 응답 유실 등으로 결과를 모르면 입력을 잠근 채 등록 결과 확인으로 같은 키·본문을 다시 보낸다. 명확히 거절된 경우에만 미확정 요청을 정리해 입력을 다시 고친다.
 
-## 6. 상태/권한/시나리오 매트릭스
+서버 일반 생성·다음 일정 생성·반복 생성에는 요청 키가 필수다. 일반 생성과 다음 일정은 결과 모임 번호를 보관하고 다시 조회한 현재 결과를 돌려준다. 반복 생성은 만든 자식 번호 목록을 재생한다. 공개 API는 키가 선택이지만 앱은 공개용 키를 사용한다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 무료 일반 모임 생성 후 즉시 발행 (Happy Path) | 로그인됨, 마이 이벤트(주최 중) 0건. | status=OPEN 이벤트 생성. 목록/마이 이벤트 invalidate. |
-| S2 | 임시저장 (DRAFT) 후 추후 발행 | 정보가 완전치 않은 호스트. | DRAFT → OPEN (별도 시점). |
-| S3 | 시작 시각이 과거인 경우 | 호스트. | 사용자가 시각 수정 후 정상 진행. |
-| S4 | 유료 이벤트 + 사전결제 설정 | 클래스 호스트. | 유료 이벤트 DRAFT 생성 완료. |
-| S5 | 프라이빗 모임 생성 | 데이팅 매칭 호스트. | PRIVATE 모임 DRAFT, phase=WAITING_PAYMENT. |
-| S6 | 공동호스트 추가 시 비존재 사용자 ID | 호스트. | 사용자 재선택. |
-| S7 | 템플릿 복제 (C-04) | 정기 호스트, 지난 모임을 다시 만들고 싶음. | 같은 호스트가 새 일정으로 모임 재생성. |
-| S8 | 반복 이벤트 (반복 occurrence 일괄 생성) | 매주 같은 시간 모임 호스트. | 반복 이벤트 그룹 생성 완료. |
-| S9 | Step 1 필수 입력 미완 시 다음 차단 | 호스트 로그인됨, 모 이벤트(`templateEventId`) 생성됨 (S8 의 1단계와 동일 — DRAFT 또는 갓 발행된 OPEN). | 사용자가 필수값을 채운 뒤에만 다음 단계 진입 가능. |
-| S10 | 반복 이벤트 그룹 관리 화면 surface | 부모 이벤트 + 자식 N건이 생성됨 (S8 결과). | 호스트가 반복 이벤트 운영 진입점을 한 화면에서 확인. |
+생성 후 공개에서 실패하면 이미 만든 초안 번호를 유지한다. 재개할 때 초안의 현재 상태를 다시 읽고 이미 공개·종료·취소되었으면 재생성·재공개하지 않고 현재 결과를 따른다. 결과를 모르는 오류에는 주최 중 목록과 이벤트 카드 데이터를 다시 읽게 한다. 실제 응답 유실·재시작·계정 전환 결과는 별도 실행 확인이 필요하다.
 
-## 8. Gap / Risk
+## 사진과 생성 부수 자료
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 임시 저장 | 모임 만들기는 쓰던 내용을 기기에 임시 저장하고 다시 열면 불러온다. 저장이나 불러오기에 실패하면 화면에 알리고 다시 시도하게 한다 | 없음 |
-| 확정 | `RecurringEventCreateService` | 반복 생성 본문의 `daysOfWeek`(MON~SUN, 영문 약어·2글자·전체 이름 모두 받음)는 WEEKLY/BIWEEKLY 에서 여러 요일을 한 번에 지정한다. 비우면 원본 시작 요일 하나다. 값 중복은 합치고 월~일 순으로 정렬하며, 모르는 요일 값은 `INVALID_INPUT` 이다. 회차는 시작 주 월요일부터 주 단위로 펼쳐 시작 시각 이전은 뺀다. 규칙 문자열은 `BYDAY=MO,WE,FR` 꼴이다. 회차 계산의 상한 `MAX_CHILD_EVENTS=52` 는 원본 회차를 포함한 목록 크기라, 시작 요일이 지정 요일에 들어 있으면 실제 만드는 자식은 최대 51개다. 시작이 이미 지난 회차는 만들지 않고 남는 회차가 없으면 `INVALID_INPUT` 이다. | 여러 요일 매주 생성은 서버 단위 시험이 덮는다(종료일 당일의 요일 회차, 원본 요일과 다른 요일, 클럽 반복의 요일 둘). |
+대표 사진은 업로드 주소 발급 → 파일 전송 → 완료 확인 뒤 파일 키를 생성 요청에 넣는다. 전송·완료 확인 실패에는 업로드 중단 처리를 시도하고 생성 실패를 안내한다. 본문 사진 업로드 중에는 제출을 막는다. 서버는 대표 사진의 소유자·용도를 검사하고 본문 사진·첨부 장소를 새 모임에 연결한다. 사진 정책은 [이벤트 사진](F03-09_event-photos_prd.md) 및 [이벤트 상세](F03-02_event-detail_prd.md)의 본문 사진 범위를 함께 따른다.
 
-## 9. 수용 기준
+## 유료 모임과 공개 조건
 
-- **AC-01. 무료 일반 모임 생성 후 즉시 발행 (Happy Path)**: Given 로그인됨, 마이 이벤트(주최 중) 0건. When 사용자가 해당 흐름을 실행하면 Then status=OPEN 이벤트 생성. 목록/마이 이벤트 invalidate.
-- **AC-02. 임시저장 (DRAFT) 후 추후 발행**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then DRAFT → OPEN (별도 시점).
-- **AC-03. 시작 시각이 과거인 경우**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자가 시각 수정 후 정상 진행.
-- **AC-04. 유료 이벤트 + 사전결제 설정**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 유료 이벤트 DRAFT 생성 완료.
-- **AC-05. 프라이빗 모임 생성**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then PRIVATE 모임 DRAFT, phase=WAITING_PAYMENT.
-- **AC-06. 공동호스트 추가 시 비존재 사용자 ID**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 재선택.
-- **AC-07. 템플릿 복제 (C-04)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 같은 호스트가 새 일정으로 모임 재생성.
-- **AC-08. 반복 이벤트 (반복 occurrence 일괄 생성)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 반복 이벤트 그룹 생성 완료.
-- **AC-09. Step 1 필수 입력 미완 시 다음 차단**: Given 호스트 로그인됨, 모 이벤트(`templateEventId`) 생성됨 (S8 의 1단계와 동일 — DRAFT 또는 갓 발행된 OPEN). When 사용자가 해당 흐름을 실행하면 Then 사용자가 필수값을 채운 뒤에만 다음 단계 진입 가능.
-- **AC-10. 반복 이벤트 그룹 관리 화면 surface**: Given 부모 이벤트 + 자식 N건이 생성됨 (S8 결과). When 사용자가 해당 흐름을 실행하면 Then 호스트가 반복 이벤트 운영 진입점을 한 화면에서 확인.
+앱은 서버가 제공하는 현재 사용 가능 결제 수단을 표시한다. 특정 수단만 지금 운영에 열렸다고 소스만으로 단정하지 않는다. 유료 참가비에는 사전결제 정책·금액·결제 수단이 필요하고, 계좌를 쓰는 수단은 수납 계좌도 고른다. 입금 기한·환불 정책과 사용자 정의 환불 구간을 함께 검증한다.
 
-## 12. 공동호스트(CoHost) 권한 세분화 (Wave E-1)
+서버는 양수 가격인데 사전결제가 없는 생성을 거절하고, 가격과 선입금 금액이 규칙에 맞는지 확인한다. 생성·다음 일정 복제·반복 생성에서 결제 수단 허용 여부를 검사하며 공개 직전에도 다시 검사한다. 생성 당시 허용됐다는 이유로 닫힌 수단의 초안을 그대로 공개하지 않는다. 참가자의 납부·환불은 [모임 선입금](F03-13_event-prepayment_prd.md)과 [포인트 결제·환불](../06_payment/F06-06_point-pay-refund_prd.md)의 별도 업무다.
 
-> **갱신일**: 2026-06-05. 소스: `EventCoHost.java:38-55`, `EventCoHostController.java:31`, `EventCoHostService.java:48`.
+일반 생성은 DRAFT에서 시작하고 공개는 OPEN으로 바꾼다. 공개 권한은 호스트 또는 유효한 공동호스트를 확인한다. 정기모임 회차와 PRIVATE 모임은 이 일반 공개 경로를 사용하지 않는다. 서버의 hostingCostType 입력은 PRIVATE 분기를 만들지만, 공통 생성 폼에서 이 입력을 사용자가 고르는 UI는 확인되지 않았다.
 
-### 권한 flag 5종
+## 다음 일정 만들기
 
-이벤트 생성 이후, 호스트는 공동호스트를 추가한 뒤 5개 권한 flag를 개별 부여할 수 있다. 기본값은 보수적(기존 사용 패턴 유지 위해 `canSendAnnouncement`만 `true`, 나머지 `false`).
+서버는 원본 권한과 현재 상태를 다시 확인한다. 취소·숨김 모임과 정기모임 회차는 거절하며 독립·PRIVATE 종류만 받는다. 원본 호스트·내용·위치·참가 조건 등을 새 DRAFT로 복제하고 참석·결제·정산 내역을 새 모임의 실적으로 옮기지 않는다.
 
-| 필드 | 컬럼 | 기본값 | 의미 |
-|---|---|---|---|
-| `canManageAttendance` | `can_manage_attendance` | false | 수동 체크인·참석자 강제 제거·대기열 수동 승급 |
-| `canModerateMessages` | `can_moderate_messages` | false | 타 사용자 메시지 삭제 (콘텐츠 모더레이션) |
-| `canSendAnnouncement` | `can_send_announcement` | **true** | 공지 일괄 발송 (기존 동작 보존) |
-| `canHandleRefundIssue` | `can_handle_refund_issue` | false | 환불 처리 (은행 환불 확인 등) |
-| `canResolveDispute` | `can_resolve_dispute` | false | 분쟁 처리 (host/dispute 도메인 연동) |
+새 시작 시각을 보내지 않으면 **원본 시작에서 7일 뒤**이고 원래 진행 시간을 유지한다. 이 시각도 과거면 거절한다. 현재 상세의 복제 흐름은 새 시작 시각 입력 없이 요청한 다음 편집 화면을 열므로, 오래된 원본에서 복제 자체가 막힐 수 있다.
 
-### PATCH 엔드포인트
+대표·본문 사진, 환불 정책, 조건에 맞는 공동호스트와 플랜 연결을 복사한다. 공동호스트 세부 권한은 기본값으로 생성하고 탈퇴·권한 정지 대상은 제외한다. 플랜의 구매 번호는 이어받지 않는다. 유료 모임의 수납 계좌와 결제 수단을 다시 검사한다. 제공자 범위가 열렸을 때만 앱이 제공자 배정도 이어갈지 묻고, 선택하면 서버가 배정 복사용 사건을 발행한다. 배정 처리 전체나 돈 이관 성공을 이 생성 응답만으로 판정하지 않는다.
 
-```
-PATCH /api/v1/events/{eventId}/co-hosts/{coHostUserId}/permissions
-```
+## 반복 일정 만들기와 묶음 조회
 
-- **인증**: 호스트 본인만 호출 가능 (`assertHostOrCoHost` 아님 — `assertHost`)
-- **Body**: `EventCoHostPermissionParam` — 5개 `Boolean` 필드, null 필드는 기존 값 유지 (PATCH 의미)
-- **응답**: 갱신된 `EventCoHost` 엔티티
+호스트 본인이 클럽 미소속 독립 모임을 원본으로 매주·격주·매월 회차를 만든다. 취소·숨김·정기모임 회차·이미 반복 원본 또는 자식인 모임은 거절한다. 플랫폼 주최 제한도 검사한다. 이는 다음 일정 한 개 복제나 클럽 전용 반복 기능과 다르다.
 
-소스: `EventCoHostController.java:31-41`, `EventCoHostService.java:37-70`
+매주·격주는 여러 요일을 고를 수 있고 생략하면 원본 요일을 쓴다. 요일 중복을 합치고 주중 순서로 정렬한다. 종료일은 그 날짜까지 포함한다. 매월은 원본 날짜를 기준으로 계산해 짧은 달을 지났다고 다음 달 날짜가 계속 앞당겨지지 않게 한다.
+
+계산 후보는 최대 52개이고 원본과 같은 시각·이미 지난 회차를 제외한다. 원본 시각이 계산 후보에 들어 있으면 자식은 최대 51개이며 항상 52개를 만드는 것은 아니다. 남는 회차가 없으면 거절한다. 자식은 모두 DRAFT로 만들고 각각 공개해야 한다. 유료 자식은 선입금·환불 정책과 수납 계좌 연결을 확인해 복사한다.
+
+앱은 같은 세션에서 결과가 불명확한 반복 요청의 키·본문을 유지하고, 다시 연 시트에서도 그 요청을 확인한다. 성공하면 자식 초안 수를 안내하고 묶음·상세·관련 목록을 갱신한다. 이 메모리 보관을 일반 생성 폼의 기기 저장과 같은 재시작 복원 보장으로 설명하지 않는다.
+
+묶음 조회는 원본 또는 자식 번호에서 원본 틀을 찾는다. 원본 호스트는 자식 초안을 포함해 보고, 비호스트는 초안·숨김·미발행 자식이 제외된 결과를 받는다. 총수와 앞으로의 회차 수는 이 조회 결과 기준이다. 앱의 일괄 관리 행동은 원본 호스트에게만 보인다.
+
+## 공동호스트 설정의 경계
+
+생성 요청에 공동호스트 목록을 주면 서버가 존재·활성 계정을 확인한다. 기본 세부 권한은 공지 발송만 켜지고 출석 관리·메시지 관리·환불 처리·분쟁 처리는 꺼진다. 기존 문서의 생성 폼 사용자 검색 UI 설명은 현재 공통 폼에서 확인되지 않아 서버 지원과 구분한다.
+
+생성 뒤 권한 변경은 호스트 본인만 할 수 있고, 전달하지 않은 권한은 유지한다. 새 권한을 부여할 때 탈퇴·클럽 역할 정지를 검사한다. 응답은 공동호스트 VO이며 엔티티 직접 반환이라고 쓰지 않는다. 세부 행동의 최종 권한은 각 업무의 현재 판정을 따른다.
+
+## 현재 제한과 확인 범위
+
+| 판정 | 항목 | 근거·사용자 영향 | 남은 확인 |
+| --- | --- | --- | --- |
+| Gap | 오래된 원본의 다음 일정 복제 | 앱은 새 시각 없이 복제를 보내고 서버의 원본 +7일이 과거면 거절된다 | 생성 전에 새 시각을 고르는 경로 등 제품 수정 검토 |
+| Risk | 반복 요청 보관 범위 | 키·본문은 세션 메모리에 남으며 계정 세션 변경 때 초기화한다 | 앱 재시작 복원과 일반 생성 초안 보관을 혼동하지 않기 |
+| Risk | 반복 묶음의 비호스트 열람 | 이 조회 함수는 초안·숨김·미발행 자식을 제외한다. 공개 검색의 후보·차단 조건을 그대로 사용하는 조회는 아니다 | 모임별 열람 정책과의 일치를 별도 제품 검토에서 확인 |
+| 미검증 | 실제 생성·사진·돈·복원 | 이번에는 소스와 선택한 시험 단언을 읽었다 | 실제 앱 재시작·응답 유실·업로드·공개 제한 변경은 실행 근거로 판정 |
+
+옛 문서의 메모리만 있는 초안, 하나의 생성 API로 클럽까지 처리, 상세 복제의 단순 prefill, 임의로 고정한 운영 결제 수단, 반복 자식 자동 공개 설명은 현재 흐름으로 교정했다.
+
+## 수용 기준과 검증 근거
+
+- **AC-01 입구 권한:** 개인 생성은 호스트 입구, 클럽 생성은 해당 클럽의 서버 생성 허가를 따르고 세션이 바뀌면 이전 권한 결과를 사용하지 않는다.
+- **AC-02 필수 입력:** 제목·개인 모임 카테고리·확정 일정·정원·가격·유료 조건을 검사한다. 단계가 연결된 입력 오류는 해당 단계로 이동하고, 서버 거절이나 단계가 연결되지 않은 오류는 현재 단계에서 안내한다.
+- **AC-03 저장 복원:** 계정·개인/클럽별 입력과 단계를 다시 열어 복원한다. 다른 계정의 저장 상태나 늦은 응답을 적용하지 않는다.
+- **AC-04 전송 전 저장:** 생성 키·본문을 기기에 저장하지 못하면 서버 생성 요청을 보내지 않는다. 저장 실패 안내와 재시도를 제공한다.
+- **AC-05 결과 확인:** 응답 유실 뒤 입력을 잠그고 같은 키·본문으로 결과를 확인한다. 거절이 확정되지 않은 요청을 새 모임 생성으로 바꾸지 않는다.
+- **AC-06 두 저장의 구분:** 작성 중 기기 저장은 서버 모임을 만들지 않고, 마지막 임시저장은 입력 검사 후 서버 DRAFT를 만든다.
+- **AC-07 공개 실패:** 생성 성공 뒤 공개 실패 시 만든 모임을 유지하고 현재 상태를 확인해 공개를 이어간다. 새 모임을 중복 생성하지 않는다.
+- **AC-08 사진:** 대표 사진 완료 확인 뒤 키를 보내고 본문 사진 업로드 중 제출을 막는다. 전송·완료 실패와 기기 사진 보존을 따로 확인한다.
+- **AC-09 유료 조건:** 양수 가격에 선입금 정책·사용 가능 수단·필요 계좌를 검사하고 공개 시점에 허용 여부를 다시 확인한다.
+- **AC-10 클럽 투표 범위:** 무료 클럽 모임과 열린 투표 범위에서 후보·마감 입력을 클럽 요청에 포함하며 일반 개인 모임 요청에 같은 기능을 가정하지 않는다.
+- **AC-11 다음 일정:** 현재 권한·원본 상태를 검사해 새 초안을 만들고 그 편집 화면으로 이동한다. 돈·참석 기록은 새 모임 실적으로 이어가지 않는다.
+- **AC-12 지난 원본의 제한:** 새 시각을 보내지 않았을 때 원본 +7일이 과거면 서버가 거절한다. 현재 상세 입구에서 이 제한을 정상 복제로 판정하지 않는다.
+- **AC-13 반복 계산:** 매주·격주 여러 요일과 월별 원본 날짜, 종료일 포함·원본 시각 제외·과거 제외·후보 상한을 적용하고 자식을 DRAFT로 만든다.
+- **AC-14 반복 재시도:** 같은 세션에서 결과를 모른 채 시트를 다시 열면 처음 키·본문으로 확인하고 성공·확정 거절 후에만 보관 상태를 정리한다.
+- **AC-15 묶음 조회:** 자식 번호로 열어도 원본 틀 기준의 묶음을 보며 비호스트에게 초안·숨김·미발행 자식을 내리지 않고 관리 행동은 원본 호스트에게만 보인다.
+- **AC-16 공동호스트:** 존재·활성 여부를 검사해 기본 권한으로 추가하고 권한 변경은 호스트 본인·입력한 필드에 한정한다.
+
+검증 근거: event_create_idempotency_test.dart의 통신 실패 뒤 입력 잠금·같은 키 재전송 단언과 recurring_event_create_commands_test.dart의 다시 연 시트가 처음 본문·키를 사용하고 모의 생성이 한 번인 단언을 읽었다. 모의 서버·Provider 단언이며 이번에 새로 실행한 결과가 아니다. 기존 실제 검증의 환경·버전은 별도 기록을 따른다.

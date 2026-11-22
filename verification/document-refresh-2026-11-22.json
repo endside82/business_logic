@@ -256,7 +256,8 @@
         "session_and_social_unlink_20261122",
         "preference_tags_20261122",
         "signup_social_onboarding_20261122",
-        "event_discovery_20261122"
+        "event_discovery_20261122",
+        "event_creation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2607,9 +2608,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "52d1400b59653a50a80bb6add0654ddfd9308da3d47e987acb98101020354a37",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_creation_20261122"
+      ],
+      "reviewedSha256": "0027d98d3ff39d56f68a36e868cfdd5e041ac7d406b78876956591820a573561"
     },
     {
       "path": "docs/features/F03-04.html",
@@ -4817,7 +4821,8 @@
         "session_and_social_unlink_20261122",
         "preference_tags_20261122",
         "signup_social_onboarding_20261122",
-        "event_discovery_20261122"
+        "event_discovery_20261122",
+        "event_creation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4869,7 +4874,8 @@
         "session_and_social_unlink_20261122",
         "preference_tags_20261122",
         "signup_social_onboarding_20261122",
-        "event_discovery_20261122"
+        "event_discovery_20261122",
+        "event_creation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4944,7 +4950,8 @@
         "layout_catalog_20261122",
         "reschedule_20261122",
         "no_show_20261122",
-        "event_discovery_20261122"
+        "event_discovery_20261122",
+        "event_creation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5495,10 +5502,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "b74a3096fcb0c2374507f1f483b883ae5fa7a94384a90f10684f8f8530d80ff5",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_creation_20261122"
+      ],
+      "reviewedSha256": "db82859cb0cfccfd5a9a983614559edd5733424fdb62cc4d0919664d3581590a"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-04_event-lifecycle_prd.md",
@@ -7628,7 +7637,8 @@
         "layout_catalog_20261122",
         "reschedule_20261122",
         "no_show_20261122",
-        "event_discovery_20261122"
+        "event_discovery_20261122",
+        "event_creation_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8740,10 +8750,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "674a7d3266f136c7766b5a73a964f3e03b711126ecd18a5a3bf119cbf620504d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_creation_20261122"
+      ],
+      "reviewedSha256": "9eb7399b4dea0be91db46ef3ca9cf8ecddc8ae32755e762c9e40b5821d535027"
     },
     {
       "path": "units/03_event/F03-03_event-creation/diagrams.md",
@@ -8751,9 +8763,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "fef38ba6d54155940785860cc56f2fb5881b906254666e47d6c2af4dd8a49667",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_creation_20261122"
+      ],
+      "reviewedSha256": "4ce6753691d2fc20b91037bb3e25a48b02671bcfb6d85f9d3b63bfe8e2d7f247"
     },
     {
       "path": "units/03_event/F03-03_event-creation/frontend.md",
@@ -8761,9 +8776,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6cf806cb35bc8bb51f99796abe9f92385736a4536be1a9384f2518081e1d7a73",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_creation_20261122"
+      ],
+      "reviewedSha256": "295338b92ff7d7ca9632f1660a15eaacf89310f030daeef81b046189cf7ff7dc"
     },
     {
       "path": "units/03_event/F03-03_event-creation/scenarios.md",
@@ -8771,9 +8789,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8ff11da44cb05e265c404772a2accc6f4dae6d8cc07e5a633dcde09c1ef1a3e4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_creation_20261122"
+      ],
+      "reviewedSha256": "8bb9ace9197c52ea4b9d5c3731a602874973b7fb56bae8c56c4286318c108b00"
     },
     {
       "path": "units/03_event/F03-04_event-lifecycle/backend.md",
@@ -14892,6 +14913,11 @@
       "command": "F03-01 문서 연결·시나리오 재생성/검사, source reference tests, 상대 경로·정본 SHA·HTML ID 대조, git diff --check",
       "result": "코드 위치 표 108개 일치; 문서 검사 시험 11개 통과; 상대 경로 1707개·파생 정본 SHA 213개 오류 0; 이번 근거 28개 지문·기존 HTML ID 3개 유지; 기능 PRD 62/175 소스 대조",
       "scope": "event_discovery_20261122. 제품 시험·실제 앱 검수 아님. ignored units 4개는 작업 트리에 보존하며 최종 원본 반영 대상."
+    },
+    {
+      "command": "F03-03 소스참조/시나리오 재생성·검사, source reference tests, 문서 경로·정본 SHA·HTML 앵커 대조, git diff --check",
+      "result": "코드 위치 표 108개 일치; 참조 검사 11개 통과; 상대 경로 1745개·파생 정본 SHA 217개 오류 0; 이번 근거 33개 지문 일치; 원래 HTML ID 6개 유지·중복/내부 앵커 오류 0. 기능 PRD 63/175 소스 대조",
+      "scope": "event_creation_20261122. 제품 시험·실기기·실제 업로드/돈 처리 아님. ignored units 4개는 작업 트리에 보존하며 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -22099,6 +22125,212 @@
         ]
       },
       "referenceChanges": []
+    },
+    "event_creation_20261122": {
+      "kind": "source_review",
+      "scope": "F03-03 일반/클럽 생성 경계·기기저장/서버초안/공개·결과불명 재시도·사진·결제수단 재검사·다음회차 서버복제·반복 자식초안/그룹·공동호스트 권한. 소스/모의시험 단언 대조이며 실제 앱/돈/업로드 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventAddParam.java",
+          "sha256": "ef523d9e0d4f656670042aba8e738c3dd71a7ef4c029435cb8ddbaeb012257d7",
+          "reviewScope": "14–96 개인 생성 입력·사전결제·환불설정·공동호스트·PRIVATE 메타. 클럽 ID 없는 별도 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/NextOccurrenceParam.java",
+          "sha256": "6b93491e3b3fa56da38da0439689a5863fb683a59aec7175e2554c1ed2be0181",
+          "reviewScope": "15–22 선택 시작시각·제공자 배정 복사 표지."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventPrepaymentReleaseGuard.java",
+          "sha256": "18f2468e3453d4ee3a8b182f4265cf68d48593f0cfdd6c6cbac40bb80a43f749",
+          "reviewScope": "67–103 생성·공개 시 현재 수단 허용 검사. 실제 운영 설정은 조회하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageEventLifecycleService.java",
+          "sha256": "fa73777d9bc7f6b88da16def42b6e6e4b551d5c8f8e7488b2e9eab60198a0dde",
+          "reviewScope": "53–59 일반 공개에서 발행 훅·투표 훅·eventPort.publish 연결. 마일리지 전체 검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/RecurringEventCreateService.java",
+          "sha256": "d00bb45085cf95b3277f2ee42948b98a0c8193b20726b8a3b9c1de38f270e09b",
+          "reviewScope": "84–270 원본잠금·호스트/상태/종류/주최제한/중복·새 자식초안·유료정책/사진;273–349 반복 검증·52후보·원본 날짜/종료일;402–434 요일 정규화;464–535 호스트/비호스트 그룹조회·필터뒤집계. 일괄수정/취소 검수 아님."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventCoHostController.java",
+          "sha256": "b1bb29c4b65bb6edf993960cc081b940039a32065d958f0de4bc87d01608fabd",
+          "reviewScope": "35–43 권한 PATCH와 EventCoHostVo 반환."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/EventCoHost.java",
+          "sha256": "8982d84e6807eb491b37b4a5039cd083fb95d81ca8c968a5d3982ab5b5e67478",
+          "reviewScope": "38–81 다섯 플래그와 공지 true/나머지 false 기본 생성."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_create_screen.dart",
+          "sha256": "a414bcb7cd8f43f2ab64a555c4d5100ba4ef3539e985b847b2dc48c863877f4d",
+          "reviewScope": "62–75 초안 우선 복원과 단계;100–110 오류 단계 안내;237–315 미확정 안내·4단계·초안/공개 성공 후 상세 교체."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_create_provider.dart",
+          "sha256": "2fd9d35077fe717172286ca6499ef4ff36fccc1999e8ff3abc9adeda27ebdcbf",
+          "reviewScope": "98–276 계정/세대/세션·기기 저장/복원/정리 실패;791–850 필수/시간;943–990 유료/환불/기한;1013–1091 개인본문;1150–1259 클럽투표 직렬화;1267–1494 키/본문 저장 후 전송·거절/미확정·목록 신호;1496–1612 좌표 보완/업로드완료;1615–1835 생성 후 공개 재개·현재 상태·별도 키·오류 단계."
+        },
+        {
+          "path": "community_app/lib/core/storage/event_draft_storage.dart",
+          "sha256": "f3a68ce0c1aafd2cac906359b0b252184f032d2a4a54174857db08405fc32552",
+          "reviewScope": "330–410 계정/클럽별 로드·미확정 키/본문/공개의도 변경 방지·사진파일복사·저장·정리대상키검사. 실제 파일시스템 장애 시험 아님."
+        },
+        {
+          "path": "community_app/lib/data/models/event/event_add_param.dart",
+          "sha256": "21e89029a6c9804fc347de1e206e481cd7922383cd52c0d4fc1ec2e17bdf850b",
+          "reviewScope": "필드 목록 대조: 일반 개인 요청에 클럽 투표 입력이 없고 공동호스트/PRIVATE 메타는 있음. 생성기 실행 안 함."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_create_step2.dart",
+          "sha256": "628f3abe2d397a020bb648c1402d4e4b3eb639853b91fee5f9dda14a5cd5b045",
+          "reviewScope": "31–150 무료 클럽+poll 범위의 후보 입력·확정 일정·온라인/오프라인·출시 범위별 장소입력."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_create_step3.dart",
+          "sha256": "51c64ce82ca71f4f531998dc6ef1d4166040dfc5ef2063feecdea109563dd351",
+          "reviewScope": "178–204 서버 결제 가능수단·계좌·입금기한. 공통 단계 파일 검색에서 공동호스트/PRIVATE 입력 UI 없음."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_create_step4.dart",
+          "sha256": "8b61012ae346a3dc91fcc8ef549bda99819e45fe9d97cc9c32a4c49b7bb3aeaf",
+          "reviewScope": "128–167 최종 임시저장=submit, 등록+공개, pending 결과확인과 원래 명령 의도 유지."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/recurring_event_provider.dart",
+          "sha256": "73d5a62d4546f0b8e858868a1bb3893297ca40d3640f3e4e4c54ced64891cf30",
+          "reviewScope": "24–38 그룹조회와 카드 구독;56–98 생성/불명확결과갱신;163–179 관련목록;232–315 세션 메모리의 키·본문 재전송·완료/거절/결과불명 분기."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/recurring_event_create_sheet.dart",
+          "sha256": "19175d16e0ff04db0da35d10b036e8cc330be472d9229d44437d6ebb3bd907ec",
+          "reviewScope": "119–155 새 입력/보관 입력 선택·초안수 안내·불명확 결과시 그룹확인 안내."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/recurring_event_group_screen.dart",
+          "sha256": "9d4e869a032a4ffc42e76204de4b4571c38b0abbfd550d8dae948788288803ea",
+          "reviewScope": "164 원본 틀 관리 전달;196 자식 상세;207–210 오류 재시도;230–231 원본 호스트만 일괄행동 표시."
+        },
+        {
+          "path": "community_app/test/domain/providers/event/event_create_idempotency_test.dart",
+          "sha256": "2ca6ced019d8a42cb5b2d32d2f8b28ef0a7ed57d7010ae9c1ab6f716ee646cbb",
+          "reviewScope": "222–240 모의 통신실패 뒤 입력 잠금·동일 키/본문 재전송 단언 읽기. 실행 안 함."
+        },
+        {
+          "path": "community_app/test/domain/providers/event/recurring_event_create_commands_test.dart",
+          "sha256": "992a98107167d2c6f62c86249c16e7dabeb71f97f4fcfc0db403a25df9e556f1",
+          "reviewScope": "117–142 재진입 후 최초 키/본문과 모의 생성 한 번 단언 읽기. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d",
+          "reviewScope": "102–135 생성/다음 회차 필수 키·저장참조 재생;286–309 공개 선택 키;504–547 반복 생성/조회 계약. PATCH/DELETE 반복은 이번 생성 범위 밖."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventEntryService.java",
+          "sha256": "c8de4906deab9c12d477f05c1d1c9c9cb653fc018010a35385ed517828c0d81c",
+          "reviewScope": "125–327 일반 생성 필수/시간/금액/공동호스트/사진/장소/정책;334–544 다음 일정 원본권한·+7일·새 초안·돈/참석 미이관·계좌/권한/플랜/제공자 사건;886–954 일반 공개/수단 재검사·입력검사;1006–1023 서울시간대·URL·금액. 실제 생성 시험 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCommandSupport.java",
+          "sha256": "5e260233add5b7c20e5c8559eff2ec791fb2b538ec237a95d64e09e5764bd775",
+          "reviewScope": "23–30 호스트 또는 활성 공동호스트 권한 확인."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventTransitions.java",
+          "sha256": "6b9200bcb1da938399b9dc6c332ffb8a55fa8717120d784cd6f440aeb2dcd52d",
+          "reviewScope": "60–62 공개 전이 호출;새 DRAFT 생성은 EventEntryService 및 반복 생성 호출과 기존 근거 연결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventStatus.java",
+          "sha256": "d62c8612d5befab331dcaa5abed461ca92dc8894b21bd68b44402bd75d1b7877",
+          "reviewScope": "25–26 DRAFT→OPEN/CANCELED·OPEN→CLOSED/CANCELED 허용 전이."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventConstants.java",
+          "sha256": "1e67f7fc25db01983f40e3bfd20183166d9388f3575c460f01e9d3a356e43397",
+          "reviewScope": "38 반복 계산 MAX_CHILD_EVENTS=52."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventCoHostService.java",
+          "sha256": "27f9e3a4a3768726b32d95fee5279e58be5cd6609d2acc5cd943bc6257ff7003",
+          "reviewScope": "63–123 모임 잠금·호스트본인·새 권한의 탈퇴/역할정지 검사·null필드유지·VO 반환."
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "280–315 이벤트 찾기·열기·열기 신청·역할 조건. 직전 탐색 대조 근거 재사용."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
+          "sha256": "e29a26e2dd908252c5642354a0ed8b887915876e49d91e2c29c84a853c9b9015",
+          "reviewScope": "56–78 개인/클럽 생성 경로·개별 ProviderScope·선택 prefill."
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "b7ff405c284771652b8e82d28c6297164706b936553e9274f8e6fe3789436ff6",
+          "reviewScope": "172–190 개인 호스트 가드 또는 클럽 createEvent ability·현재 세션 확인."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "666–704 다음 회차 실제 서버 복제 입구 및 호스트 전용 반복 생성 조건. 554–563 반복 원본 번호 관리 입구."
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/next_occurrence_flow.dart",
+          "sha256": "0c4ef54dc40b1ef1a8f80378fbf1bd3b84ee8a6eee466152ae7444bd4d999709",
+          "reviewScope": "38–106 중복 동작 제한·세션/계정 티켓·선택 제공자 배정·시작시각 없이 복제·새 편집 화면 이동."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_lifecycle_provider.dart",
+          "sha256": "686d3bc87801a938da2ae219d015f236c7208f30fcf4ee666b6d3705a6e789da",
+          "reviewScope": "315–365 다음 회차 untimed 키·성공/불명확 결과의 주최/카드 재조회. 공개 키는 생성 Provider의 호출 범위와 선행 근거 연결."
+        }
+      ],
+      "reuses": [
+        "event_capacity_waitlist_20261122",
+        "event_detail_complete_20261122",
+        "event_detail_lifecycle_20261122",
+        "event_discovery_20261122",
+        "event_photos_20261122",
+        "no_show_20261122",
+        "reschedule_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
+          "sha256": "db82859cb0cfccfd5a9a983614559edd5733424fdb62cc4d0919664d3581590a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-03.html": [
+          "sidebar",
+          "content-photos",
+          "launch-strip",
+          "creation-retry",
+          "next-occurrence-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        {
+          "id": "F03-03:5",
+          "change": "added",
+          "reason": "다음 일정 복제와 공동호스트 권한의 현재 창구 연결"
+        },
+        {
+          "id": "F03-03:6",
+          "change": "added",
+          "reason": "다음 일정 복제와 공동호스트 권한의 현재 창구 연결"
+        }
+      ]
     }
   },
   "currentSourceVersions": {
