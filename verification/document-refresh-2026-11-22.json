@@ -443,7 +443,8 @@
         "money_flowcharts_20261122",
         "authoring_navigation_20261122",
         "planning_decisions_20261122",
-        "historical_source_notes_20261122"
+        "historical_source_notes_20261122",
+        "onboarding_core_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5313,10 +5314,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "dbbeb732efa5a4df2fb004e3769b835f27b7f13b66444dbb1ac396796a647b64",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "onboarding_core_20261122"
+      ],
+      "reviewedSha256": "0c5ae88b99edca3a74a4be0b32ef3ccd8b5317352c889a4ee35577c2bee786b3"
     },
     {
       "path": "planner_onboarding/01_service_map.md",
@@ -5324,10 +5327,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "2813e57c4e50ce26b70c2dbbaec3d603de606a287607a28c7081aa4b0456a05e",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "onboarding_core_20261122"
+      ],
+      "reviewedSha256": "c6832078469e13aee41a68c9536d7b47b8626b1f20f7d0ef6ad911bde95afbd4"
     },
     {
       "path": "planner_onboarding/02_core_journeys.md",
@@ -5335,10 +5340,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "071ca903701afd100d204db5d0d9102df4ad8d209758e17662987a2baf2fa9ff",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "onboarding_core_20261122"
+      ],
+      "reviewedSha256": "c34207b1fdd8b19eb2a47aab30c08713d05e1934b37043a7db5bde9fc0ceb187"
     },
     {
       "path": "planner_onboarding/03_unit_playbooks.md",
@@ -5346,10 +5353,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "94b0051ac4b805451dcf74dfeab42210453511bd4b32043b412c2c04a9dea235",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "onboarding_core_20261122"
+      ],
+      "reviewedSha256": "05223c49a66c30a9b8345c6b74053dfc18f4d645797e8d181f0c525d0062490b"
     },
     {
       "path": "planner_onboarding/04_state_policy_guide.md",
@@ -5370,10 +5379,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "090bc12431deda5ce74491ef2f66d5028527d447e5d583f18d262a0214026c4d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "onboarding_core_20261122"
+      ],
+      "reviewedSha256": "f89a19a57cc1e84d52e4e75e07a33b97da4ca43474456f0fb808583e99920cd6"
     },
     {
       "path": "planner_onboarding/06_feature_card_template.md",
@@ -5459,10 +5470,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "b179d004b70fb767f22e4b8ef4580b95095604a51280315606f736f7fd1072dd",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "onboarding_core_20261122"
+      ],
+      "reviewedSha256": "593269ca3c474f1b18d0ed06ad0edc591e2c89bde5613c44f3a83435d74aeb9f"
     },
     {
       "path": "prd/00_prd_items/01_service_overview.md",
@@ -49793,6 +49806,272 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; historical record preservation and canonical navigation only"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "onboarding_core_20261122": {
+      "kind": "source_review",
+      "scope": "온보딩 미완료 6문서 전체 본문·기존 도식 대조. 검수된 21개 영역/6개 정책/인벤토리 동일 SHA 재사용. 14영역 하위집합·신청승인/금전/알림/가용시간의 오래된 안내를 현재 정본에 맞게 재작성.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "auth_domain_rollup_20261122",
+        "authoring_navigation_20261122",
+        "calendar_domain_20261122",
+        "club_domain_20261122",
+        "curated_domain_20261122",
+        "date_chat_meeting_20261122",
+        "dispute_evidence_20261122",
+        "event_domain_rollup_20261122",
+        "favorite_domain_rollup_20261122",
+        "feature_inventory_20261122",
+        "home_feed_core_20261122",
+        "location_domain_20261122",
+        "mileage_commands_20261122",
+        "money_scenarios_20261122",
+        "notification_domain_20261122",
+        "notification_results_20261122",
+        "payment_domain_rollup_20261122",
+        "payment_policy_20261122",
+        "payment_supplement_20261122",
+        "permission_guides_20261122",
+        "permission_policy_20261122",
+        "plan_market_domain_20261122",
+        "planning_decisions_20261122",
+        "planning_qa_20261122",
+        "prd/FEATURE_PRD_STANDARD.md",
+        "privacy_policy_20261122",
+        "profile_domain_rollup_20261122",
+        "qa_acceptance_20261122",
+        "regular_meeting_participation_20261122",
+        "review_domain_20261122",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md",
+        "search_workflows_20261122",
+        "settlement_domain_rollup_20261122",
+        "state_guides_20261122",
+        "state_policy_20261122",
+        "support_20261122",
+        "warning_domain_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/01_domain_prds/01_인증_and_온보딩_prd.md",
+          "sha256": "43ecf5b20a50b6e1c38f1f4d67b49c04d4294a85cbb6940b8760edf15ba08e99"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/02_홈_피드_prd.md",
+          "sha256": "b47888b92c10ee7746e6f7c62aa8d7368486b6b82c420ac875afed8c7e21ec88"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/03_이벤트_prd.md",
+          "sha256": "788c2e0d3b3b0e2840b7a6fc036068484aeee8d90dff0e340b7a57b6d51b2d6f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/04_클럽_prd.md",
+          "sha256": "0ab490d49b83e0b642220c40dedd03714ecaa8ef9759f73df233f0fd1e96ec2a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/05_검색_prd.md",
+          "sha256": "9c7bcdf9dff4585e71bcaa53cfc321a9bc3866f446121ed060eeaaa54bf1728d"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/06_결제_and_지갑_prd.md",
+          "sha256": "b3c80af478c7898d953c82f9d4cdb0dc00a93a794d1ab439042a8d4cccd760ca"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/08_플랜_마켓_prd.md",
+          "sha256": "a45b1a19d4a1e276458bc5a6cbb45eeca97dc3ace089b57fbccb823dae090fcb"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/09_프라이빗_데이팅_prd.md",
+          "sha256": "39959e319afdad8a3e5175f48212322e73f99b42e4615a25d55224b4ab0fe93c"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/10_캘린더_prd.md",
+          "sha256": "d061936509b9b99975debd2c9ae498e91ebbf3fe036de9ec881615de87d57831"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/11_리뷰_and_신고_prd.md",
+          "sha256": "13ddce944e0a9cf5dbd77f7bedf213d731d376c247d57727f0b3f7d36327cb9b"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/12_알림_prd.md",
+          "sha256": "4c2ffc503d3761148d0bdbfbe9e376b5913e9b900de4a2c774934eb6ad0fe81f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/13_프로필_and_설정_prd.md",
+          "sha256": "df9f07d478109e1c4b6655733f11c4435b8031375ecf07f567d210bbb8718c7a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/14_위치_and_길찾기_prd.md",
+          "sha256": "42c0ee21ce42e0036915c511aa7d4434fde7d805374d65d88136fec1ac87a152"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/15_경고_징계_prd.md",
+          "sha256": "49ca45b26dd59329c4cc63a6065bc81f97c73bd5793ec7b0cec3a8d0a10b6d04"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/16_마일리지_prd.md",
+          "sha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/17_정기모임_prd.md",
+          "sha256": "a4c6c4ccfbe36c741bd7dbfa26ed1f84014940fdc50d2c8bf894337d25d16f9a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/18_분쟁_해결_prd.md",
+          "sha256": "bd6aee8cb82d00699962400ffb2a9927cd30e1af64c032b93539680000bb0862"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/19_관심인_prd.md",
+          "sha256": "64538d4f60d2208afc6bb92bed683f534551624ac2af38d1167920cb28d97a6a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/20_고객지원_prd.md",
+          "sha256": "2c1d80ffc09ee8f160dcccf2a8db629a6940836753c5ef5a9f8fbf713741c7fa"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/21_제공자_배정_정산_prd.md",
+          "sha256": "990c57595c32c406ad7db0f3e57e6acdc8786f55de723bfe45da91da1f17042e"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/planning_qa_policy.md",
+          "sha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/prd/README.md",
+          "sha256": "a9a9be47f6f7240011309b6d512d280d76a87601f733e23c8437f570aa33297f"
+        },
+        {
+          "path": "business_logic/prd/FEATURE_PRD_STANDARD.md",
+          "sha256": "bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/mvp_scope_matrix.md",
+          "sha256": "ba14645586e6e1a85edba0e817162f937e968cdc59d53796d8feed8bb9bbaf36"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/12_notion_markdown_guide.md",
+          "sha256": "c5b8cae905c1309a4d847b0285f55787ec432549767d33e4c62b783f13d43881"
+        },
+        {
+          "path": "business_logic/docs/money-flow/scenarios.html",
+          "sha256": "7df9c775f25faa13be3b2b654f7186575b8a74824f3965db54c0af58fd3942db"
+        },
+        {
+          "path": "business_logic/planner_onboarding/04_state_policy_guide.md",
+          "sha256": "05e0ba74661f76878eb69680419ac82d09557e3fd14505277967b360f8543bbc"
+        },
+        {
+          "path": "business_logic/planner_onboarding/06_feature_card_template.md",
+          "sha256": "a33c345ace33ff452653799a594c7b116a1b7ee2a9504add2929b5e7be12f1e6"
+        },
+        {
+          "path": "business_logic/planner_onboarding/07_full_feature_inventory.md",
+          "sha256": "e46c46ee12b89dba2250e6e77c4d76b44e9db7d766993cade5f8aa8126692f7b"
+        },
+        {
+          "path": "business_logic/planner_onboarding/08_scenario_coverage_matrix.md",
+          "sha256": "708aa03c70dbc01a9c2e7aa18460beef983e04c5474eaaf7dcfac8ece49f2859"
+        },
+        {
+          "path": "business_logic/planner_onboarding/09_actor_permission_matrix.md",
+          "sha256": "2c6095ffa3ac9028ad0778a14bd89facc0a1bf52b56e915e4ee479665707b6a9"
+        },
+        {
+          "path": "business_logic/planner_onboarding/10_planning_qa_checklist.md",
+          "sha256": "2a92b44427e9c443c6e4cd3615dc400f9516f1a1f436b96d9fe1730394ccb5e7"
+        },
+        {
+          "path": "business_logic/planner_onboarding/11_feature_coverage_index.md",
+          "sha256": "7e3119780ae867b4581318658c8b28d8847682929953f036a30d97ceacb3758a"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [
+        "온보딩 진입·지도·플레이북을 21영역/175기능으로 통일",
+        "승인/납부/참석·모집마감/실제종료·부모취소/반환을 구분",
+        "지갑뿐인 유료여정·정산→클럽기금 자동연결 제거",
+        "마켓 심사/판매, 알림 설정/실수신, 타인 가능 시간 폐기 경계 반영",
+        "용어집의 PENDING 보편번역·검증없는 완료문구 정정"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedMarkdownAnchors": {
+        "planner_onboarding/README.md": [
+          "notion-이전-시-주의"
+        ],
+        "planner_onboarding/00_start_here.md": [
+          "start-here-서비스-큰-그림",
+          "unit-근거가-있는-14개-업무-영역",
+          "업무-영역을-묶어-보는-법",
+          "처음-파악할-때의-관점"
+        ],
+        "planner_onboarding/01_service_map.md": [
+          "unit-backed-서비스-지도",
+          "unit-backed-하위-집합-구조",
+          "기능-변경-영향도-체크",
+          "의존-관계를-읽는-방법",
+          "화면보다-먼저-봐야-할-축"
+        ],
+        "planner_onboarding/02_core_journeys.md": [
+          "여정-3-클럽-가입에서-공동-정산까지"
+        ],
+        "planner_onboarding/03_unit_playbooks.md": [
+          "unit-근거가-있는-14개-업무-영역-플레이북"
+        ],
+        "planner_onboarding/05_terms_glossary.md": [
+          "돈의-흐름",
+          "리뷰-신고-신뢰",
+          "상태값-표기-원칙",
+          "위치와-프라이버시",
+          "추천-화면-문구-기준"
+        ]
+      },
+      "conceptualDiagramCheck": {
+        "nodes": 8,
+        "edges": 8,
+        "domainMapAndPlaybookIds": "01..21 exactly",
+        "renderer": "not run"
+      },
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "40 source/canonical digests; 0 retained HTML IDs",
+        "derivedDocuments": "6 documents; shared batch verified 6 paths, 117 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; document semantics, retained anchors, local links and static diagram references only; no browser/screenshot"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
