@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F16-02 등급·배지·랭킹·프로필 — community PRD</title>
+  <title>F16-02 등급·배지·랭킹·프로필 카드</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,107 +17,28 @@
           <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
           F16-02 등급·배지·랭킹·프로필
         </div>
-        <h1>F16-02. 등급·배지·랭킹·프로필 카드</h1>
-        <p class="lede">
-          회원이 보상 체계를 보는 화면이다. 등급 정의와 본인 등급 변경 이력, 클럽이 운영하는 배지, 회원 간 랭킹,
-          다른 회원의 프로필 카드를 본다. 등급은 누적 적립으로 자동 매겨지고, 랭킹 기준은 클럽 정책이 정한다.
-        </p>
+        <h1>F16-02 등급·배지·랭킹·프로필 카드</h1>
+        <p class="lede">등급·배지 조회, 감사 기반 등급 변화, 랭킹의 명시적 잔액 기본값·페이지와 프로필 카드의 공개 범위를 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">회원이 보는 것</div><div class="value">5가지</div><div class="hint">등급·이력·배지·랭킹·프로필</div></div>
-          <div class="metric"><div class="label">현재 랭킹 대상</div><div class="value">현 회원</div><div class="hint">탈퇴 회원은 목록에서 제외</div></div>
-          <div class="metric"><div class="label">등급 방향</div><div class="value">3종</div><div class="hint">최초·승급·강등</div></div>
-        </div>
-
-        <div class="callout info">
-          <span class="label">첫 출시 포함 — 현재 회원 순위와 시즌 종료 순위</span>
-          <p>등급·배지·현재 회원 랭킹·다른 회원의 프로필 카드가 실제 서버 데이터와 이어지는 화면 왕복을 마쳤다.
-            핵심 출시 범위에는 현재 잔액과 누적 적립을 바탕으로 한 랭킹이 포함된다. 기간별 시즌 랭킹도
-            자동 시작·마감·확정 기록까지 검사하고 첫 출시 기본 목록에 포함했다. 시즌 순위는 잔액이 아닌 시즌 적립만 기준으로 한다.</p>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 보상은 보여야 동기가 된다</span>
-          <p>등급과 배지는 "이만큼 하면 이걸 받는다"는 약속이다. 다음 등급까지 남은 점수가 보여야 멤버가 한 번 더 참여한다.
-            현재 회원 순위는 잔액 또는 누적 적립 기준이며, 시즌 종료 순위는 해당 시즌의 적립 기준이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면 구성</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">등급</div>
-            <h3>등급 정의 + 내 변경 이력</h3>
-            <p>클럽 등급을 기준 점수 순으로 보고, 본인이 언제 어느 등급으로 올라갔거나 내려갔는지 시간순으로 본다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">배지</div>
-            <h3>활성 배지만 노출</h3>
-            <p>회원 화면에는 운영진이 사용 중으로 둔 배지만 보인다. 사용 중지한 배지는 숨겨진다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">랭킹</div>
-            <h3>클럽 내 순위</h3>
-            <p>클럽 정책이 정한 잔액 또는 누적 적립 기준으로 현재 회원의 순위·점수·등급을 표시한다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">프로필 카드</div>
-            <h3>다른 회원 요약</h3>
-            <p>다른 회원의 등급·배지를 본다. 점수 노출 여부는 클럽 정책에 따라 정해진다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>등급은 어떻게 매겨지나</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    E["적립 누적<br/>(정정·만료 반영)"] --> T{"등급 기준 점수 비교"}
-    T -->|"기준 점수 도달"| U["승급"]
-    T -->|"첫 등급 도달"| I["최초 등급 부여"]
-    T -->|"정정·만료로 누적 감소"| D["강등"]
-          </div>
-        </div>
-        <p>등급은 "등급 산정용 누적 적립"이 기준 점수 이상일 때 자동으로 매겨진다. 정정·만료로 누적이 줄면 강등될 수 있다.
-        등급 변경 이력은 별도 표가 아니라 감사 로그에서 읽어 온다.</p>
-      </section>
-
-      <section>
-        <h2>멤버가 할 수 있는 동작</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
-            <tbody>
-              <tr><td><strong>등급 정의 보기</strong></td><td>클럽 회원</td><td>클럽이 정한 등급을 기준 점수 순으로 본다.</td></tr>
-              <tr><td><strong>내 등급 이력 보기</strong></td><td>클럽 회원</td><td>본인이 언제 어느 등급으로 올라갔거나 내려갔는지 시간순으로 본다.</td></tr>
-              <tr><td><strong>사용 중인 배지 보기</strong></td><td>클럽 회원</td><td>운영진이 사용 중으로 둔 배지만 본다. 사용 중지한 배지는 보이지 않는다.</td></tr>
-              <tr><td><strong>랭킹 보기</strong></td><td>클럽 회원</td><td>정책이 정한 잔액 또는 누적 적립 기준으로 현재 회원의 순위·점수·등급을 본다.</td></tr>
-              <tr><td><strong>다른 회원 프로필 보기</strong></td><td>클럽 회원</td><td>다른 회원의 등급·배지를 본다. 점수 노출 여부는 정책에 따른다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">첫 출시에서 알고 가는 두 가지</span>
-          <ul>
-            <li><strong>잔액이 0인 현재 회원도 랭킹에 나타날 수 있다.</strong> 회원에게 손해를 주는 문제는 아니어서 첫 출시에서는 유지하고, 랭킹 화면을 개선할 때 노출 기준을 정한다.</li>
-            <li><strong>탈퇴 회원은 랭킹에서 빠지지만 프로필 카드는 직접 요청으로 열릴 수 있다.</strong> 이벤트 참석자 목록 등 다른 진입 경로와 함께 공개 범위를 결정해야 한다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 실제 입구</h2><p>등급 정의, 받은 배지/배지 안내, 등급 변화, 랭킹은 각각의 화면이 있다. 메인의 등급 카드는 본인 등급 변화로, 랭킹 바로가기는 랭킹으로 이동한다. 등급 목록은 threshold 오름차순이고 본인 배지는 메인 응답의 활성 부여 목록, 배지 안내는 활성 정의 조회를 사용한다.</p>
+<p>프로필 카드 조회 API와 provider는 존재하지만 현재 lib의 provider 사용 검색에서는 화면 소비자가 확인되지 않았다. 랭킹 행도 현재 Container/Row 표시이며 프로필 카드 이동 동작이 없다. API 구현을 근거로 ‘다른 회원 카드 열기까지 앱에서 연결 완료’라고 설명하지 않는다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>모든 요청은 클럽 회원을 확인한다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>응답과 의미</th></tr></thead><tbody><tr><td>GET /api/v1/clubs/{clubId}/mileage/grades</td><td><code>List&lt;MileageGradeVo&gt;</code>, 등급 기준 목록</td></tr><tr><td>GET /api/v1/clubs/{clubId}/mileage/badges</td><td><code>List&lt;MileageBadgeDefinitionVo&gt;</code>, 활성 정의만 반환</td></tr><tr><td>GET /api/v1/clubs/{clubId}/mileage/me/grade-history</td><td><code>List&lt;MileageGradeChangeVo&gt;</code>, 기본 limit 50, 저장소에서 1~200 범위로 제한</td></tr><tr><td>GET /api/v1/clubs/{clubId}/mileage/ranking</td><td><code>Page&lt;MileageRankingEntryVo&gt;</code>, 명시한 basis 또는 미지정 시 정책 기준</td></tr><tr><td>GET /api/v1/clubs/{clubId}/mileage/members/{memberId}/profile-card</td><td><code>MemberProfileCardVo</code>, 대상 회원 확인과 양방향 차단 검사 후 공개 필드 조합</td></tr></tbody></table></div>
+<p>프로필 카드는 현재 등급과 활성 배지, 표시 이름·사진을 구성한다. 타인을 조회할 때 양방향 커뮤니티 차단이면 FORBIDDEN이다. 정책이 LIFETIME_EARNED면 등급 산정 누적을, SEASON_EARNED이고 ACTIVE 시즌 집계가 준비됐으면 시즌 적립을 공개한다. 나머지는 해당 점수를 null로 가린다. 배지 운영자 정보도 가린다. 이 null은 정책에 따른 정보 경계이며 그 자체를 파싱 결함으로 분류하지 않는다.</p></section>
+<section id="current-3"><h2>랭킹의 대상·순위·앱 기본값</h2><div class="table-wrap"><table><thead><tr><th>기준</th><th>현재 점수</th></tr></thead><tbody><tr><td>BALANCE</td><td>currentBalance</td></tr><tr><td>LIFETIME_EARNED</td><td>qualifiedLifetimeEarned</td></tr><tr><td>SEASON_EARNED</td><td>currentSeasonEarned. ACTIVE 시즌이 없거나 집계 준비 전이면 각각 오류</td></tr></tbody></table></div>
+<p>서버는 basis 미지정 시 정책 기준을 사용하지만 <strong>앱의 초기 선택은 BALANCE이며 이를 명시해 요청</strong>한다. 정책이 시즌 기준이라고 앱이 처음부터 시즌 랭킹을 보여 주는 것은 아니다.</p>
+<p>요약 행과 클럽 회원 행을 조인하며 요약이 없는 회원을 별도 0점 행으로 추가하지 않는다. 현재 랭킹 쿼리에는 회원 상태/양방향 차단 제외 조건이 없다. 점수 내림차순, memberId 오름차순으로 정렬하며 rank는 offset + 행 순서 + 1이다. 동점자가 공동 순위를 갖는 방식이 아니다. 응답의 currentBalance도 basis와 별개로 포함된다.</p>
+<p>앱은 20건씩 읽고 주요 랭킹과 전체 목록이 같은 데이터를 공유한다. 주요 랭킹은 읽은 항목 중 상위 10개와 본인이 이미 포함된 경우 주변 ±3개를 사용한다. 별도 본인 순위 조회로 아직 읽지 않은 본인 위치를 찾아 주지는 않는다. 전체 목록은 추가 조회와 실패 재시도를 제공한다.</p></section>
+<section id="current-4"><h2>등급 변화와 배지의 표시 경계</h2><p>등급 이력은 별도 역사 테이블 대신 감사 로그의 MILEAGE_MEMBER_GRADE_CHANGED, MEMBER 대상, 본인 targetId를 조회한다. 생성 시각/id 역순이며 before/after JSON에서 등급과 방향을 복원한다. JSON이 잘못되면 관련 필드가 비어 있을 수 있고 방향의 기본값 처리도 있어 원본 감사 계약의 영향을 받는다.</p>
+<p>앱은 기본 조회된 목록을 타임라인으로 표시하며 이전 50건을 넘겨 계속 읽는 페이지 UI는 없다. 운영용 타임라인은 reviewQueue 권한을 재확인한다. 본인/운영 화면 모두 오류 재시도·새로고침을 제공한다. 배지 정의의 활성 여부와 이미 받은 활성 배지 부여 목록은 서로 다른 조건이다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>앱 초기 BALANCE는 서버 정책 기본값을 사용하지 않는다.</td><td>정책 기준 자동 시작을 수용 완료로 표시하지 않는다.</td></tr><tr><td>Risk</td><td>랭킹 쿼리에 회원 상태/차단 제외가 없고 currentBalance도 반환한다.</td><td>프로필 카드의 차단·점수 가림과 같은 정책으로 보장하지 않는다.</td></tr><tr><td>Gap</td><td>주요 랭킹의 내 주변은 로드된 항목 안에서만 계산한다.</td><td>아직 조회하지 않은 본인 순위를 찾는 기능과 구분한다.</td></tr><tr><td>Gap</td><td>프로필 카드 API/provider의 실제 화면 소비자가 확인되지 않는다.</td><td>연결된 회원 카드 화면으로 설명하지 않는다.</td></tr><tr><td>Risk</td><td>등급 이력은 감사 JSON과 조회 상한의 영향을 받는다.</td><td>전체 기간의 완전한 이력 보장을 하지 않는다.</td></tr><tr><td>미검증</td><td>실제 순위·차단 데이터·서버 오류·페이지·복귀를 실행하지 않았다.</td><td>문서 대조와 제품 실행을 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 정의와 부여:</strong> 정렬된 등급 정의, 활성 배지 정의, 본인의 활성 부여 목록을 구분한다.</li><li><strong>AC-02 이력 원천:</strong> 감사 로그의 대상·유형·역순·상한과 JSON 파싱 경계를 명시한다.</li><li><strong>AC-03 초기 기준:</strong> 서버 미지정 정책 기준과 앱의 명시적 BALANCE를 구분한다.</li><li><strong>AC-04 순위 계산:</strong> 기준별 점수·시즌 준비 조건·동점 정렬과 개별 순번을 설명한다.</li><li><strong>AC-05 페이지와 내 주변:</strong> 20건 추가 조회와 로드된 데이터에 한정한 내 주변 표시를 구분한다.</li><li><strong>AC-06 카드 공개:</strong> 회원·양방향 차단 검사와 정책별 nullable 점수, 배지 운영자 가림을 설명한다.</li><li><strong>AC-07 실제 입구:</strong> 등급/배지/랭킹 화면과 아직 소비자가 확인되지 않은 카드 API를 구분한다.</li><li><strong>AC-08 실패와 갱신:</strong> 초기/추가 실패와 오류 재시도·타임라인 갱신을 소스로 확인한다.</li></ul>
+<p>위 항목은 현재 소스 계약과 후속 실행 기준이다. 이번 작업은 새 제품 시험·시각 검수의 통과 기록을 추가하지 않는다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

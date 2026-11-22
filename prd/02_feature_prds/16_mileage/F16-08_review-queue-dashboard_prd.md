@@ -1,94 +1,109 @@
-# F16-08. 검토 큐 & 대시보드/감사로그 PRD
+# F16-08. 검토 대기열·대시보드·감사 기록 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버와 앱 소스의 현재 계약을 대조했다. 새 제품 실행·실기기 확인 기록은 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 2026-10-29 현재 계약 대조
+## 현재 범위와 응답 정정
 
-### 마일리지 운영 명령과 검토 대기열
+운영 콘솔은 본인의 정책·검토·점수 처리·배지 권한을 조회하고 허용된 입구를 제공한다. 대시보드와 회원 상세는 현재 서버·앱 양쪽의 **전용 응답 모델**을 사용한다. 과거 문서의 Map/MemberMileageMainVo 불일치 설명은 현재 계약과 다르다. 대시보드 원장 수치는 SQL 집계, 회원 관련 감사 기록은 구조화된 memberUserId로 조회한다. 전체 원장 `findAll()`과 감사 JSON 문자열 포함 검색을 현재 구현으로 설명하지 않는다.
 
-수동 적립·차감, 배지 부여·해제, 차감 프리셋과 시즌 작업은 요청 고유키를 사용해 중복 실행을 막는다. 반복 사용 검토는 REPEATED_REDEMPTION 유형으로 남긴다. 쓰지 않는 시간당 수동 처리·승인 횟수 경보를 운영 정책으로 약속하지 않는다. 등급 변경 통지는 24시간에 한 번으로 합치고 마지막 결과를 반영하며, 박탈·강등은 즉시 알린다.
+다만 회원 상세 화면은 요약·배지·원장을 표시하고, 응답의 auditTrail/openQueueItems는 표시하지 않는다. 모델 정합성 해결과 화면에서 모든 정보 제공은 별개의 상태다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+## 권한별 콘솔과 공개 범위
 
-## 1. 결론
+`GET /api/v1/admin/clubs/{clubId}/mileage/my-permissions`는 POLICY_OWNER, MILEAGE_MANAGER, REWARD_MANAGER, BADGE_AWARD_MANAGER의 허용 여부와 canEnterConsole을 계산한다. 앱은 권한 데이터가 확정될 때까지 보호하고 검토 권한이 있을 때 대시보드, 정책 권한이 있을 때 설정을 읽는다.
 
-`MILEAGE_MANAGER` 운영진의 마일리지 콘솔 기능이다 — 검토 큐 조회/단건/처리(`queue`), 운영 대시보드(`dashboard`), 멤버 운영 상세(`members/{memberId}`), 멤버 등급 이력(`members/{memberId}/grade-history`), 감사 로그(`audit-logs`). 서버 `MileageAdminQueueController`와 Flutter `mileage_console_screen.dart`·`mileage_queue_screen.dart`·`mileage_audit_log_screen.dart`·`mileage_member_detail_screen.dart`가 연결되어 있다.
+| 행동 | 현재 서버 권한·별도 경계 |
+|---|---|
+| 대기열·대시보드·회원 상세·감사 조회와 일반 무시 | MILEAGE_MANAGER, MILEAGE 공개 범위 |
+| 반복 수동 적립 NORMAL 판정 | MILEAGE_MANAGER, MILEAGE_ADVANCED_REVIEW 공개 범위 |
+| 반복 수동 적립 FRAUD 판정 | 위 조건 + REWARD_MANAGER |
+| 자동 회수 검토의 회수 재시도 | REWARD_MANAGER |
+| 자동 회수 검토의 종결 | MILEAGE_MANAGER |
 
-검토 큐는 다른 서비스가 `enqueue`로 적재(`ReviewQueueType` 7종)하고, 운영진이 `process`(APPROVE/REJECT→PROCESSED, IGNORE→IGNORED)로 닫는다. 대시보드는 활성 멤버 수·이번달 적립/차감/만료·전월 대비·열린 큐 수·최근 audit 10건·현재 시즌·outbox 메트릭을 합성한다. 감사 로그는 `Page<MileageAuditLogVo>`로 정상 typed.
+점수 지급·차감·원장 정정은 [적립·차감·정정](F16-06_grant-redeem-reverse_prd.md), 호스트 제안 승인/거절은 [호스트 제안](F16-07_host-proposal_prd.md)의 별도 명령이다. 일반 대기열 처리로 모두 대신하지 않는다.
 
-판정: **큐 처리·감사 로그는 사용 가능**. 그러나 ① **대시보드가 서버 `Map`인데 Flutter `getDashboard`는 Map으로 받지만 멤버 상세(`getMemberDetail`)는 서버 `Map`을 typed `MemberMileageMainVo`로 받아 파싱 깨짐** ② 대시보드/멤버 상세 집계가 `findAll()` in-memory가 핵심 Gap이다.
+## 현재 서버 계약
 
-## 2. 코드 위치
+아래 주소의 공통 접두사는 `/api/v1/admin/clubs/{clubId}/mileage`다.
 
-계약의 정본은 코드다. 서버: `MileageAdminQueueController`, `MileageReviewQueueService`, `MileageQueryService`, `MileageAuditService`, `MileageReviewQueueVo`, `MileageAuditLogVo`, `MileageGradeChangeVo`, `ReviewQueueType`, `ReviewQueueStatus`. 앱: `mileage_console_screen.dart`, `mileage_queue_screen.dart`, `mileage_audit_log_screen.dart`, `mileage_member_detail_screen.dart`, `mileage_admin_queue_api.dart`, `mileage_admin_queue_repository.dart`, `mileage_admin_queue_providers.dart`, `mileage_console_card.dart`.
+| 요청 | 현재 결과 |
+|---|---|
+| GET /my-permissions | `MileageConsolePermissionVo` |
+| GET /queue | queueType/status 필터의 `Page<MileageReviewQueueVo>`, 생성 시각/id 역순 |
+| GET /queue/{queueId} | 현재 클럽의 단건. 타 클럽/없는 항목은 없음 오류 |
+| POST /queue/{queueId}/process | decision은 **IGNORE만 허용**. OPEN → IGNORED, 감사·outbox 기록, 204 |
+| POST /queue/{queueId}/repeated-manual-decision | NORMAL/FRAUD, note, 선택 원장 ID. 필수 Idempotency-Key, 처리 결과 VO |
+| POST /queue/{queueId}/auto-revert/retry | 필수 Idempotency-Key와 note, 회수 재시도 결과 VO |
+| POST /queue/{queueId}/auto-revert/close | 필수 Idempotency-Key와 note, 원장 변경 없이 종결한 결과 VO |
+| GET /dashboard | `MileageAdminDashboardVo` |
+| GET /members/{memberId} | `MileageAdminMemberDetailVo`: memberNickname/main/ledger/auditTrail/openQueueItems |
+| GET /members/{memberId}/grade-history | 기본 50개, 저장소 1~200 제한의 `List<MileageGradeChangeVo>` |
+| GET /audit-logs | `Page<MileageAuditLogVo>`, actorId/actorRole/actionType/targetType/targetId/batchId/from/to 필터 |
 
-## 3. 전체 동작 흐름
+대기열 유형은 HOST_PROPOSAL, AUTO_REVERT_REVIEW, REPEATED_MANUAL, REPEATED_REDEMPTION의 **4개**, 상태는 OPEN/PROCESSED/IGNORED다. 일반 process는 APPROVE/REJECT를 실행하지 않으며 이미 닫힌 항목은 성공 no-op이 아니라 처리됨 오류다. 앱의 호스트 제안 행은 별도 제안 처리 화면을 열고, 일반 무시로 닫으면 점수가 바뀌지 않음을 안내한다.
 
-1. 운영진이 콘솔(`adminClubMileage`)에 진입 → `getDashboard(clubId)` → `GET /dashboard`. 서버 `buildDashboard`가 전체 ledger를 in-memory 집계해 `activeMembers`(30일 내 EARN distinct), `earnedThisMonth/redeemedThisMonth/expiredThisMonth`, `prevMonthDelta`, `pendingQueueCount`(OPEN 큐), `recentActions`(audit 10건), `currentSeason`, `outboxMetric`(MILEAGE pending/failed/skipped)을 `Map`으로 반환.
-2. 검토 큐 화면 → `listQueue(clubId, queueType?, status?, ...)` → `GET /queue`(`MileageReviewQueueSearchParam`) → `Page<MileageReviewQueueVo>`.
-3. 단건 → `getQueueItem` → `GET /queue/{queueId}`(클럽 불일치 시 `MILEAGE_QUEUE_ITEM_NOT_FOUND`).
-4. 처리 → `processQueue` → `POST /queue/{queueId}/process`(`MileageReviewQueueProcessParam`: decision=APPROVE/REJECT/IGNORE, note?). OPEN이 아니면 no-op. IGNORE→IGNORED, 그 외→PROCESSED, audit + outbox(`ReviewQueueProcessed`).
-5. 멤버 운영 상세 → `getMemberDetail` → `GET /members/{memberId}` → `buildAdminMemberDetail`가 `main`(buildMemberMain VO) + `ledger`(최근 50 Page) + `auditTrail`(멤버 관련 audit 20) + `openQueueItems`를 `Map`으로 반환.
-6. 멤버 등급 이력 → `getMemberGradeHistory` → `GET /members/{memberId}/grade-history` → `List<MileageGradeChangeVo>`.
-7. 감사 로그 → `listAuditLogs` → `GET /audit-logs`(`MileageAuditLogSearchParam`: actorId/actorRole/actionType/targetType/targetId/batchId/from/to) → `Page<MileageAuditLogVo>`.
+## 판정·재시도·종결의 차이
 
-## 6. 상태/권한 매트릭스
+반복 수동 적립은 같은 클럽/운영자/회원의 기간 내 MANUAL_GRANT를 증거로 묶는다. 반복 차감도 실제 탐지 워커가 있으며 같은 회원의 사유·액수와 인접 처리 간격을 이용한다. 두 탐지는 고급 검토 공개 범위를 확인하고 이전 증거의 최대 ID와 탐지 키로 중복 적재를 줄인다. enum에만 존재하고 모두 미구현이라는 과거 설명은 현재와 다르다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| MANAGER + 큐 목록 | OPEN/PROCESSED/IGNORED 필터 | 상태 탭 | 큐 페이지 표시 | 일치 |
-| MANAGER + 큐 처리 (APPROVE) | PROCESSED 전환 | 처리 결과 | 큐 닫힘 + audit | 일치 |
-| MANAGER + 이미 닫힌 큐 처리 | no-op(OPEN 아님) | 변화 없음 | 중복 처리 무시 | 일치 |
-| MANAGER + 대시보드 | Map 집계 반환 | asJsonMap 파싱 | 통계 카드 표시 | 일치 |
-| MANAGER + 멤버 상세 | Map(main/ledger/audit/queue) | `MemberMileageMainVo` typed 수신 | main 외 ledger/audit/queue 누락 | **불일치 (Gap)** |
-| MANAGER + 감사 로그 | `Page<MileageAuditLogVo>` | PageResponse 수신 | 로그 페이지 표시 | 일치 |
-| 비 MANAGER | `@RequiresClubPermission` 차단 | 접근 불가 | 권한 부족 | 일치 |
+반복 수동 적립 판정은 REPEATED_MANUAL 대상만 받는다. NORMAL은 선택 원장이 없어야 하며 FRAUD는 중복 없는 원장 ID가 필요하다. 선택 ID는 저장된 증거에 속해야 하고 실제 클럽·회원·운영자·EARN/MANUAL_GRANT를 다시 확인한다. 이미 정정된 원장은 건너뛴다. 회수 잔액이 부족하면 AUTO_REVERT_REVIEW를 적재하고 나머지 판정을 진행하므로 PROCESSED가 모든 금액 회수 완료를 뜻하지 않는다.
 
-## 7. 정합성 판단
+자동 회수 검토는 클럽·회원·EARN 원장을 확인한다. 재시도는 회수 필요액과 잔액을 검사해 정정하며 이미 정정됐다면 새 정정을 만들지 않고 처리할 수 있다. 종결은 원장을 바꾸지 않는다. 두 명령은 성공 시 PROCESSED와 처리자·메모·감사·outbox를 남긴다. 같은 사용자/키/내용은 기존 결과, 같은 키/다른 내용은 충돌이며 다른 키로 닫힌 항목을 다시 처리하면 처리됨 오류다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `ReviewQueueType`/`ReviewQueueStatus`/`Decision`/`ActorRole` | 서버 enum | 동일 enum | 일치 |
-| 큐 목록/감사 로그 | `Page<...Vo>` | `PageResponse<...Vo>` | 일치 |
-| 대시보드 | `Map<String,Object>` | `dynamic` → `asJsonMap` | 일치 (typed 모델 없음) |
-| 멤버 상세 | `Map`(main/ledger/auditTrail/openQueueItems) | `MemberMileageMainVo` typed | **불일치** |
-| audit 필드 | beforeJson/afterJson(JSON 문자열) | 동일 | 일치 |
-| 큐 process decision | APPROVE/REJECT/IGNORE | 동일 enum | 일치 |
+반복 차감 행의 ‘증거 확인 및 정정’과 반복 적립의 ‘증거 확인과 판단’은 별도 화면 입구다. 반복 적립 판정 API를 반복 차감에도 공통 사용한다고 설명하지 않는다.
 
-## 8. Gap / Risk
+## 집계의 의미와 회원 상세
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P0 | 멤버 상세 type 불일치 | 서버 `getMemberDetail`은 `Map`(main/ledger/auditTrail/openQueueItems) 반환, Flutter `getMemberDetail`은 `MemberMileageMainVo` typed 수신 | main 일부만 파싱되고 ledger·audit·열린 큐가 누락되거나 역직렬화 실패 | 멤버 상세 전용 VO 정의 또는 Flutter가 Map으로 받아 분해 |
-| P1 | 대시보드/멤버 상세가 `findAll()` in-memory 집계 | `buildDashboard`·`buildAdminMemberDetail`이 전체 ledger/audit 로드 후 필터 | 대규모 클럽에서 콘솔 진입·멤버 상세 조회 지연 | 월별 집계·멤버 audit 전용 QueryDSL 이관 |
-| P1 | 대시보드 outbox 메트릭이 글로벌 | `outboxMetric`이 `DomainType.MILEAGE` 전역 카운트(클럽 무관) | 특정 클럽 대시보드에 다른 클럽 outbox 수치가 섞임 | 클럽 단위 메트릭 필요 여부 결정 |
-| P2 | 멤버 상세 audit 매칭이 문자열 포함 | `buildAdminMemberDetail`이 `body.contains("\"memberId\":"+id)`로 audit 필터 | memberId가 다른 필드에 우연히 포함되면 오탐 | targetId/구조화 필드 기반 필터로 변경 |
-| P2 | 큐 적재 트리거 일부 미구현 | `ReviewQueueType`은 7종이나 enqueue 호출은 HOST_PROPOSAL만 확인됨(REPEATED_*, GRADE_ABNORMAL 등) | 남용 탐지 큐가 채워지지 않을 수 있음 | 각 큐 타입의 적재 트리거 구현 여부 점검 |
+| 항목 | 현재 의미 |
+|---|---|
+| activeMembers | 최근 30일 EARN 기록이 있는 서로 다른 회원 수. 클럽 전체 활동 회원 수가 아님 |
+| 월 적립·사용·만료 | DB의 월별 원장 집계, 사용/만료는 절댓값 |
+| prevMonthDelta | 이번 달 EARN − 전월 EARN |
+| pendingQueueCount | 해당 클럽 OPEN 항목 수. 현재 열린 행을 읽어 size를 계산 |
+| recentActions | 해당 클럽 최근 감사 10건 |
+| currentSeason | ACTIVE 시즌 요약 |
+| outboxMetric | **MILEAGE 도메인 전역** PENDING/FAILED/SKIPPED 수. 클럽별 집계가 아님 |
+| 회원 상세 원장 | 해당 회원 첫 페이지 50건 |
+| auditTrail | memberUserId로 조회한 최근 감사 20건 |
+| openQueueItems | 해당 클럽·회원의 OPEN 항목, id 역순 |
 
-## 9. 수용 기준
+앱 상세 모델은 ledger Page의 content를 목록으로 읽으며 페이지 메타데이터를 보존하지 않는다. 화면에 별도 다음 페이지 입구도 없다. ledger가 비어 있으면 main.recentLedger를 대체 표시한다. 감사 목록은 플랫폼 관리자·시스템 역할의 actorId를 0으로 가리며, 회원용 원장 가림과 동일한 전체 정책이라고 확대하지 않는다.
 
-### AC-01. 큐 목록 조회
-Given MILEAGE_MANAGER가 OPEN 큐를 연다. When `GET /queue?status=OPEN`을 호출한다. Then 미처리 큐 항목이 페이지로 반환된다.
+## 앱 행동·실패·복귀
 
-### AC-02. 큐 처리
-Given 운영진이 큐 항목을 IGNORE로 처리한다. When `POST /queue/{id}/process`를 호출한다. Then 상태가 IGNORED로 전환되고 audit가 기록된다.
+대기열은 상태별 20건 추가 조회, 감사 기록은 역할·행동·날짜 필터와 20건 이전/다음 페이지를 사용한다. 감사 필터 변경은 첫 페이지로 돌아간다. 빈 상태와 로딩·오류 재시도를 구분한다.
 
-### AC-03. 대시보드
-Given 운영진이 콘솔에 진입한다. When `GET /dashboard`가 성공한다. Then activeMembers·이번달 적립/차감/만료·pendingQueueCount·최근 audit·현재 시즌이 표시된다.
+점수 회수 재시도와 단순 종결은 서로 다른 단추와 권한을 사용한다. 처리 중 중복 탭을 막고 세션/명령 범위를 확인한다. 전용 명령 provider는 같은 시도의 키를 유지하며 성공·이미 처리됨·저장됐을 수 있는 오류에서 목록과 단건을 다시 읽는다. 결과 미확인과 실패를 새 키로 무조건 재실행하는 것으로 설명하지 않는다.
 
-### AC-04. 감사 로그 필터
-Given 운영진이 actionType=MILEAGE_MANUAL_GRANTED로 필터한다. When `GET /audit-logs`를 호출한다. Then 해당 액션 audit가 페이지로 반환된다.
+## 코드 위치
 
-### AC-05. 멤버 운영 상세 (현재 미충족)
-Given 운영진이 멤버 운영 상세를 연다. When `GET /members/{memberId}`가 main/ledger/auditTrail/openQueueItems를 반환한다. Then 화면이 멤버 요약·원장·감사·열린 큐를 모두 표시해야 한다. 현재 Flutter가 `MemberMileageMainVo`로 받아 이 기준을 충족하지 못한다.
+서버: MileageAdminQueueController, MileageConsolePermissionService, MileageReviewQueueService, MileageReviewQueueQueryRepository, MileageRepeatedManualReviewService/Worker, MileageRepeatedManualQueryRepository, MileageAutoRevertReviewService/Worker, MileageQueryService, MileageLedgerQueryRepository, MileageAuditLogQueryRepository. 앱: mileage_admin_queue_api.dart, mileage_admin_queue_providers.dart, mileage_admin_member_detail_vo.dart, mileage_console_screen.dart, mileage_queue_screen.dart, mileage_audit_log_screen.dart, mileage_member_detail_screen.dart.
 
-## 10. 미결정 / 후속
+<!-- source-references:start -->
+서버 창구: `MileageAdminQueueController#getMyConsolePermissions`, `MileageAdminQueueController#listQueue`, `MileageAdminQueueController#getQueueItem`, `MileageAdminQueueController#processQueue`, `MileageAdminQueueController#decideRepeatedManual`, `MileageAdminQueueController#retryAutoRevert`, `MileageAdminQueueController#closeAutoRevert`, `MileageAdminQueueController#getDashboard`, `MileageAdminQueueController#getMemberDetail`, `MileageAdminQueueController#getMemberGradeHistory`, `MileageAdminQueueController#listAuditLogs`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-| 분류 | 항목 | 결정/작업 |
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | 멤버 상세 VO | `buildAdminMemberDetail` 응답 전용 모델 정의 + Flutter 매핑 수정 |
-| 성능 | 대시보드/상세 집계 | in-memory → QueryDSL 집계 이관 |
-| 구현 | outbox 메트릭 범위 | 클럽 단위 집계 필요 여부 결정 |
-| 구현 | 큐 적재 트리거 | REPEATED_*/GRADE_ABNORMAL 등 enqueue 트리거 구현 점검 |
-| 테스트 | 콘솔 | 큐 처리, 대시보드 집계, 감사 필터, 멤버 상세 E2E 추가 |
+| Gap | 회원 상세 모델은 auditTrail/openQueueItems를 받지만 화면은 표시하지 않는다. | 응답 타입 해결과 화면 제공 범위를 분리한다. |
+| Gap | 회원 상세 원장은 첫 50건이며 앱은 Page 메타데이터를 버린다. | 전체 원장 탐색 완료로 설명하지 않는다. |
+| Risk | outbox는 도메인 전역 수치다. | 특정 클럽의 전송 장애 수로 단정하지 않는다. |
+| Risk | FRAUD 처리 완료에도 잔액 부족 원장은 별도 회수 검토로 남는다. | 검토 종결과 금액 회수를 따로 확인한다. |
+| 미검증 | 동시 처리·재시도·권한 회수·실제 집계/화면 복귀를 실행하지 않았다. | 소스 대조를 운영 검수 통과로 기록하지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 권한별 입구:** 콘솔의 정책·검토·점수·배지 권한을 나누고 조회/명령 권한을 다시 적용한다.
+- **AC-02 현재 유형:** 4개 대기열 유형과 3개 상태를 사용하고 실제 탐지 구현과 공개 범위를 구분한다.
+- **AC-03 일반 처리:** IGNORE만 허용하며 이미 닫힌 항목의 오류와 별도 호스트 제안 명령을 구분한다.
+- **AC-04 반복 적립 판정:** NORMAL/FRAUD의 원장 선택·권한·증거·멱등 조건을 설명한다.
+- **AC-05 회수와 종결:** 잔액 부족의 추가 검토, 회수 재시도, 원장 변경 없는 종결을 구분한다.
+- **AC-06 대시보드 의미:** EARN 기준 활동 회원·월 수치·전역 outbox를 해당 범위대로 표시한다.
+- **AC-07 상세 응답과 화면:** 전용 모델 수신, 첫 50건 원장, 미표시 감사/열린 항목을 구분한다.
+- **AC-08 감사 탐색:** API 필터·역순과 앱 역할/행동/기간 및 20건 페이지를 구분한다.
+- **AC-09 실패 후 갱신:** 같은 시도의 키 유지와 결과 미확인/이미 처리됨 후 관련 조회 갱신을 설명한다.
+
+현재 확인은 서버·앱 소스와 문서의 대조다. 새 제품 시험·동시성 실행·브라우저/실기기 통과 기록은 없다.

@@ -1,82 +1,76 @@
 # F16-02. 등급·배지·랭킹·프로필 카드 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 서버와 앱 소스의 현재 계약을 대조했다. 새 제품 실행·실기기 확인 기록은 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 실제 입구
 
-등급/배지/랭킹/프로필 카드 조회는 서버와 Flutter가 맞물려 구현되어 있다. 멤버는 클럽 등급 정의(`GET /grades`), 본인 등급 변경 이력(`GET /me/grade-history`), 활성 배지 정의(`GET /badges`, active=true만), 클럽 랭킹(`GET /ranking`), 다른 멤버 프로필 카드(`GET /members/{memberId}/profile-card`)를 본다.
+등급 정의, 받은 배지/배지 안내, 등급 변화, 랭킹은 각각의 화면이 있다. 메인의 등급 카드는 본인 등급 변화로, 랭킹 바로가기는 랭킹으로 이동한다. 등급 목록은 threshold 오름차순이고 본인 배지는 메인 응답의 활성 부여 목록, 배지 안내는 활성 정의 조회를 사용한다.
 
-등급은 별도 grade_history 테이블이 없고, **`mileage_audit_log`의 `MILEAGE_MEMBER_GRADE_CHANGED` 행을 파싱해 `MileageGradeChangeVo`로 합성**한다. 랭킹 기준(`RankingBasis`)은 `BALANCE`/`LIFETIME_EARNED`/`SEASON_EARNED`이며, 미지정 시 클럽 정책의 `rankingBasis`를 사용한다. 프로필 카드의 누적/시즌 적립 노출 여부도 정책의 rankingBasis에 따라 마스킹된다.
+프로필 카드 조회 API와 provider는 존재하지만 현재 lib의 provider 사용 검색에서는 화면 소비자가 확인되지 않았다. 랭킹 행도 현재 Container/Row 표시이며 프로필 카드 이동 동작이 없다. API 구현을 근거로 ‘다른 회원 카드 열기까지 앱에서 연결 완료’라고 설명하지 않는다.
 
-판정: **조회/표시는 사용 가능**. 등급 이력이 audit log JSON 파싱에 의존하고, 프로필 카드 점수 노출이 정책에 따라 null이 되는 점이 Gap/Risk다.
+## 현재 서버 계약
 
-## 2. 코드 위치
+모든 요청은 클럽 회원을 확인한다.
 
-계약의 정본은 코드다. 서버: `MileageMemberController`, `MileageGradeService`, `MileageBadgeService`, `MileageMemberSummaryService`, `MileageQueryService`, `MileageGradeVo`, `MileageGradeChangeVo`, `MileageRankingEntryVo`, `MemberProfileCardVo`, `MileageBadgeDefinitionVo`. 앱: `mileage_grade_list_screen.dart`, `mileage_badge_list_screen.dart`, `mileage_ranking_screen.dart`, `mileage_grade_history_screen.dart`, `mileage_member_api.dart`, `mileage_member_repository.dart`, `mileage_member_providers.dart`.
+| 요청 | 응답과 의미 |
+|---|---|
+| GET /api/v1/clubs/{clubId}/mileage/grades | `List<MileageGradeVo>`, 등급 기준 목록 |
+| GET /api/v1/clubs/{clubId}/mileage/badges | `List<MileageBadgeDefinitionVo>`, 활성 정의만 반환 |
+| GET /api/v1/clubs/{clubId}/mileage/me/grade-history | `List<MileageGradeChangeVo>`, 기본 limit 50, 저장소에서 1~200 범위로 제한 |
+| GET /api/v1/clubs/{clubId}/mileage/ranking | `Page<MileageRankingEntryVo>`, 명시한 basis 또는 미지정 시 정책 기준 |
+| GET /api/v1/clubs/{clubId}/mileage/members/{memberId}/profile-card | `MemberProfileCardVo`, 대상 회원 확인과 양방향 차단 검사 후 공개 필드 조합 |
 
-## 3. 전체 동작 흐름
+프로필 카드는 현재 등급과 활성 배지, 표시 이름·사진을 구성한다. 타인을 조회할 때 양방향 커뮤니티 차단이면 FORBIDDEN이다. 정책이 LIFETIME_EARNED면 등급 산정 누적을, SEASON_EARNED이고 ACTIVE 시즌 집계가 준비됐으면 시즌 적립을 공개한다. 나머지는 해당 점수를 null로 가린다. 배지 운영자 정보도 가린다. 이 null은 정책에 따른 정보 경계이며 그 자체를 파싱 결함으로 분류하지 않는다.
 
-1. 멤버가 등급/배지/랭킹 화면에 진입하면 각 provider가 대응 repository → API를 호출한다.
-2. `GET /grades` → `MileageGradeService.listGrades`(threshold 오름차순) → `List<MileageGradeVo>`.
-3. `GET /badges` → `MileageBadgeService.listDefinitions` 후 컨트롤러가 `active=true`만 필터해 반환.
-4. `GET /me/grade-history?limit=` → `MileageQueryService.findGradeChanges` → `MileageAuditLogQueryRepository.findGradeChangesByMember`가 `MILEAGE_MEMBER_GRADE_CHANGED` audit 행의 before/after JSON에서 등급 정보·`direction`을 추출해 `MileageGradeChangeVo` 리스트로 반환(시간 역순, limit은 repository가 1~200 클램프).
-5. `GET /ranking?basis=&page=` → `searchRanking`이 basis null이면 정책 `rankingBasis`(없으면 `BALANCE`)로 결정 후 `MileageRankingQueryRepository.searchRanking` → `Page<MileageRankingEntryVo>`.
-6. `GET /members/{memberId}/profile-card` → `buildProfileCard`가 대상 멤버의 현재 등급·활성 배지와, 정책 rankingBasis에 따라 `currentSeasonEarned`(SEASON_EARNED일 때만) 또는 `qualifiedLifetimeEarned`(LIFETIME_EARNED일 때만) 중 하나를 공개. 둘 다 아니면 둘 다 null.
-7. 등급 산정 자체는 적립/차감/정정 시점에 `MileageMemberSummaryService.recalcGrade`가 수행하고, 등급이 실제 변경되면 audit 행을 남긴다(이 기능은 그 결과를 읽기만 함).
+## 랭킹의 대상·순위·앱 기본값
 
-## 6. 상태/권한 매트릭스
+| 기준 | 현재 점수 |
+|---|---|
+| BALANCE | currentBalance |
+| LIFETIME_EARNED | qualifiedLifetimeEarned |
+| SEASON_EARNED | currentSeasonEarned. ACTIVE 시즌이 없거나 집계 준비 전이면 각각 오류 |
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 멤버 + basis 미지정 | 정책 rankingBasis 사용 (없으면 BALANCE) | basis null 전달 | 정책 기준 랭킹 표시 | 일치 |
-| 멤버 + 등급 변경 이력 있음 | audit `MILEAGE_MEMBER_GRADE_CHANGED` 파싱 | timeline 표시 | 승급/강등/최초 도달 timeline | 일치 |
-| 멤버 + 등급 이력 없음 | 파싱 결과 빈 리스트 | 빈 상태 | "등급 변경 이력 없음" | 일치 |
-| 프로필 카드 (정책 BALANCE) | season/lifetime 모두 null | 점수 미표시 | 등급·배지만 노출 | 일치 |
-| 프로필 카드 (정책 SEASON_EARNED) | currentSeasonEarned만 공개 | 시즌 적립 표시 | 시즌 점수 노출 | 일치 |
-| 배지 정의 (비활성) | 컨트롤러가 active만 필터 | 노출 안 됨 | 활성 배지만 보임 | 일치 |
+서버는 basis 미지정 시 정책 기준을 사용하지만 **앱의 초기 선택은 BALANCE이며 이를 명시해 요청**한다. 정책이 시즌 기준이라고 앱이 처음부터 시즌 랭킹을 보여 주는 것은 아니다.
 
-## 7. 정합성 판단
+요약 행과 클럽 회원 행을 조인하며 요약이 없는 회원을 별도 0점 행으로 추가하지 않는다. 현재 랭킹 쿼리에는 회원 상태/양방향 차단 제외 조건이 없다. 점수 내림차순, memberId 오름차순으로 정렬하며 rank는 offset + 행 순서 + 1이다. 동점자가 공동 순위를 갖는 방식이 아니다. 응답의 currentBalance도 basis와 별개로 포함된다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `RankingBasis` | BALANCE/LIFETIME_EARNED/SEASON_EARNED | 동일 enum | 일치 |
-| `GradeChangeDirection` | INITIAL/UP/DOWN | 동일 enum | 일치 |
-| 등급 이력 출처 | audit_log JSON 파싱 (전용 테이블 없음) | timeline 표시 | 일치하나 파싱 의존 Risk |
-| 프로필 점수 노출 | 정책 따라 nullable | nullable 모델 | 일치 |
-| 배지 active 필터 | 멤버 `GET /badges`만 active 필터, 운영 `GET /badges`는 전체 | 멤버 화면은 활성만 | 일치 |
-| 랭킹 `score` 의미 | basis별 의미 다름 (주석상) | 단일 score 필드 | 일치하나 라벨 표기 책임은 화면 |
+앱은 20건씩 읽고 주요 랭킹과 전체 목록이 같은 데이터를 공유한다. 주요 랭킹은 읽은 항목 중 상위 10개와 본인이 이미 포함된 경우 주변 ±3개를 사용한다. 별도 본인 순위 조회로 아직 읽지 않은 본인 위치를 찾아 주지는 않는다. 전체 목록은 추가 조회와 실패 재시도를 제공한다.
 
-## 8. Gap / Risk
+## 등급 변화와 배지의 표시 경계
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | 등급 이력이 audit log JSON 파싱에 의존 | `findGradeChangesByMember`가 `MILEAGE_MEMBER_GRADE_CHANGED` before/after JSON에서 등급/방향 추출 | audit log 포맷·`actionType` 변경 시 등급 이력 깨짐. 누락 시 timeline 공백 | 전용 grade_change 뷰/테이블 또는 파싱 계약 고정 |
-| P2 | 등급 강등이 사용자에게 노출됨 | REVERSE/EXPIRE로 `qualifiedLifetimeEarned` 감소 시 `direction=DOWN` 기록 | 멤버가 등급 하락 이력을 직접 보게 됨(운영 정정이 멤버에게 노출) | 멤버 노출 정책 결정(강등 사유 표시 여부) |
-| P2 | 프로필 카드 점수 노출이 정책 단일 값에 묶임 | rankingBasis가 BALANCE면 두 점수 모두 null | 잔액 기준 클럽은 프로필에 점수가 전혀 안 보임 | 프로필 공개 항목을 정책과 분리할지 결정 |
+등급 이력은 별도 역사 테이블 대신 감사 로그의 MILEAGE_MEMBER_GRADE_CHANGED, MEMBER 대상, 본인 targetId를 조회한다. 생성 시각/id 역순이며 before/after JSON에서 등급과 방향을 복원한다. JSON이 잘못되면 관련 필드가 비어 있을 수 있고 방향의 기본값 처리도 있어 원본 감사 계약의 영향을 받는다.
 
-## 9. 수용 기준
+앱은 기본 조회된 목록을 타임라인으로 표시하며 이전 50건을 넘겨 계속 읽는 페이지 UI는 없다. 운영용 타임라인은 reviewQueue 권한을 재확인한다. 본인/운영 화면 모두 오류 재시도·새로고침을 제공한다. 배지 정의의 활성 여부와 이미 받은 활성 배지 부여 목록은 서로 다른 조건이다.
 
-### AC-01. 등급 목록
-Given 멤버가 등급 목록을 연다. When `GET /grades`가 성공한다. Then threshold 오름차순으로 등급(name/threshold/color/icon)이 표시된다.
+## 코드 위치
 
-### AC-02. 활성 배지만 노출
-Given 운영진이 일부 배지 정의를 비활성화했다. When 멤버가 `GET /badges`를 호출한다. Then `active=true`인 배지 정의만 반환된다.
+서버: MileageMemberController, MileageQueryService#buildProfileCard/searchRanking/findGradeChanges, MileageRankingQueryRepository, MileageAuditLogQueryRepository. 앱: mileage_member_api.dart, mileage_member_providers.dart, mileage_grade_list_screen.dart, mileage_badge_list_screen.dart, mileage_ranking_screen.dart, mileage_grade_history_screen.dart, club_branch_routes.dart.
 
-### AC-03. 등급 이력 timeline
-Given 멤버가 적립으로 등급이 변경된 적이 있다. When `GET /me/grade-history`를 호출한다. Then `direction`(INITIAL/UP/DOWN), 변경 후 등급명, `changedAt`이 시간 역순으로 표시된다.
+<!-- source-references:start -->
+서버 창구: `MileageMemberController#getGrades`, `MileageMemberController#getBadgeDefinitions`, `MileageMemberController#getMyGradeHistory`, `MileageMemberController#getRanking`, `MileageMemberController#getMemberProfileCard`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### AC-04. 정책 기준 랭킹
-Given 클럽 정책 rankingBasis=SEASON_EARNED이고 멤버가 basis 미지정으로 랭킹을 연다. When `GET /ranking`을 호출한다. Then 시즌 적립 기준 랭킹이 rank·score·등급 정보와 함께 반환된다.
+## 현재 제한과 확인 범위
 
-### AC-05. 프로필 카드 마스킹
-Given 정책 rankingBasis=BALANCE이다. When 멤버가 다른 멤버 프로필 카드를 연다. Then `currentSeasonEarned`와 `qualifiedLifetimeEarned`는 모두 null이고 등급·배지만 노출된다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | 등급 이력 출처 | audit 파싱 의존 제거(전용 뷰) 검토 |
-| 정책 | 강등 이력 멤버 노출 | DOWN 이력 표시·사유 노출 정책 결정 |
-| 정책 | 프로필 점수 공개 범위 | rankingBasis와 분리 여부 결정 |
-| 테스트 | 랭킹/프로필/이력 | basis별 랭킹, 마스킹, direction 파싱 E2E 추가 |
+| Gap | 앱 초기 BALANCE는 서버 정책 기본값을 사용하지 않는다. | 정책 기준 자동 시작을 수용 완료로 표시하지 않는다. |
+| Risk | 랭킹 쿼리에 회원 상태/차단 제외가 없고 currentBalance도 반환한다. | 프로필 카드의 차단·점수 가림과 같은 정책으로 보장하지 않는다. |
+| Gap | 주요 랭킹의 내 주변은 로드된 항목 안에서만 계산한다. | 아직 조회하지 않은 본인 순위를 찾는 기능과 구분한다. |
+| Gap | 프로필 카드 API/provider의 실제 화면 소비자가 확인되지 않는다. | 연결된 회원 카드 화면으로 설명하지 않는다. |
+| Risk | 등급 이력은 감사 JSON과 조회 상한의 영향을 받는다. | 전체 기간의 완전한 이력 보장을 하지 않는다. |
+| 미검증 | 실제 순위·차단 데이터·서버 오류·페이지·복귀를 실행하지 않았다. | 문서 대조와 제품 실행을 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 정의와 부여:** 정렬된 등급 정의, 활성 배지 정의, 본인의 활성 부여 목록을 구분한다.
+- **AC-02 이력 원천:** 감사 로그의 대상·유형·역순·상한과 JSON 파싱 경계를 명시한다.
+- **AC-03 초기 기준:** 서버 미지정 정책 기준과 앱의 명시적 BALANCE를 구분한다.
+- **AC-04 순위 계산:** 기준별 점수·시즌 준비 조건·동점 정렬과 개별 순번을 설명한다.
+- **AC-05 페이지와 내 주변:** 20건 추가 조회와 로드된 데이터에 한정한 내 주변 표시를 구분한다.
+- **AC-06 카드 공개:** 회원·양방향 차단 검사와 정책별 nullable 점수, 배지 운영자 가림을 설명한다.
+- **AC-07 실제 입구:** 등급/배지/랭킹 화면과 아직 소비자가 확인되지 않은 카드 API를 구분한다.
+- **AC-08 실패와 갱신:** 초기/추가 실패와 오류 재시도·타임라인 갱신을 소스로 확인한다.
+
+위 항목은 현재 소스 계약과 후속 실행 기준이다. 이번 작업은 새 제품 시험·시각 검수의 통과 기록을 추가하지 않는다.

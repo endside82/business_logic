@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F16-01 내 마일리지·월간 영수증·전체 내역 — community PRD</title>
+  <title>F16-01 내 마일리지·원장·월간 영수증</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,97 +17,28 @@
           <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
           F16-01 내 마일리지·월간 영수증·전체 내역
         </div>
-        <h1>F16-01. 내 마일리지·월간 영수증·전체 내역</h1>
-        <p class="lede">
-          회원이 자기 마일리지를 보는 세 화면이다. 첫 화면은 "지금 얼마, 무슨 등급, 최근에 뭐가 들어왔나"를 한눈에 보여 준다.
-          월간 영수증은 한 달치 적립·차감·만료를 정산서처럼 묶고, 전체 내역은 유형·기간·검색어로 나누어 볼 수 있다.
-          모든 점수는 정수이고, 클럽 멤버만 볼 수 있다.
-        </p>
+        <h1>F16-01 내 마일리지·원장·월간 영수증</h1>
+        <p class="lede">본인 요약·최근 5건·원장 페이지·월별 집계와 운영자 정보 가림을 대조했다. 영수증 순증과 잔액 차이, 과거 등급 재구성의 한계를 구분한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section id="mileage-retry-review"><h2>마일리지 운영 명령과 검토 대기열</h2><p>수동 적립·차감, 배지 부여·해제, 차감 프리셋과 시즌 작업은 요청 고유키를 사용해 중복 실행을 막는다. 반복 사용 검토는 REPEATED_REDEMPTION 유형으로 남긴다. 쓰지 않는 시간당 수동 처리·승인 횟수 경보를 운영 정책으로 약속하지 않는다. 등급 변경 통지는 24시간에 한 번으로 합치고 마지막 결과를 반영하며, 박탈·강등은 즉시 알린다.</p></section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">회원이 보는 화면</div><div class="value">3개</div><div class="hint">요약 / 월간 영수증 / 전체 내역</div></div>
-          <div class="metric"><div class="label">권한</div><div class="value">클럽 회원</div><div class="hint">비회원 접근 차단</div></div>
-          <div class="metric"><div class="label">최근 거래</div><div class="value">5건</div><div class="hint">메인에 노출</div></div>
-        </div>
-
-        <div class="callout info">
-          <span class="label">현재 상태 — 첫 출시 포함</span>
-          <p>회원 메인·월간 영수증·전체 내역이 실제 서버 데이터와 이어지는 화면 왕복을 마쳤다.
-            첫 출시 기본 목록에 포함했으며 <strong>운영 배포와 휴대전화 검사</strong>는 남아 있다.
-            품질 확인 담당자는 서비스 공개 전에 휴대전화 알림을 눌러 메인과 내역으로 이동하는지 검사한다.</p>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 신뢰는 "내 점수가 어떻게 움직였나"에서 온다</span>
-          <p>마일리지는 돈이 아니지만, 회원 입장에서는 자기 노력의 보상이다. 첫 화면에서 잔액·등급·다음 등급까지 남은 점수를 보고,
-            의문이 생기면 전체 내역에서 각 기록을 확인할 수 있어야 한다. 월간 영수증은 "이번 달 내가 뭘로 얼마나 모았나"를 정산서로 묶어 준다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>세 화면이 보여주는 것</h2>
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">요약</div>
-            <h3>잔액·등급·최근 5건</h3>
-            <p>현재 잔액, 누적 적립, 현재 등급과 다음 등급까지 남은 점수, 활성 배지, 최근 거래 5건을 한 화면에 모은다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">월간 영수증</div>
-            <h3>한 달치 정산서</h3>
-            <p>해당 월의 적립·차감·만료·정정 합계, 월 시작/종료 잔액, 적립 종류별 합, 그 달에 받은 배지, 시작/종료 등급을 묶는다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">전체 내역</div>
-            <h3>유형·기간·검색어로 나누기</h3>
-            <p>적립·사용·정정·만료 유형, 기간, 키워드로 본인 거래를 나누어 본다. 시스템이 로그인한 본인의 기록만 보여 준다.</p>
-          </article>
-          <article class="card">
-            <div class="eyebrow">빈 상태</div>
-            <h3>아직 적립이 없는 회원</h3>
-            <p>제도가 미개설이거나 일시 중지면 화면이 그 상태를 안내한다. 운영 중인 클럽에서 거래가 없으면 잔액 0, 등급 미부여로 표시된다. 둘 다 오류가 아니다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>멤버가 할 수 있는 동작</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
-            <tbody>
-              <tr><td><strong>마일리지 요약 보기</strong></td><td>클럽 회원</td><td>본인의 잔액·등급·배지와 최근 거래 5건을 한 화면에서 본다.</td></tr>
-              <tr><td><strong>월간 영수증 보기</strong></td><td>클럽 회원</td><td>특정 연·월을 골라 그 달의 적립·차감·만료를 정산서처럼 묶어 본다.</td></tr>
-              <tr><td><strong>전체 내역 보기</strong></td><td>클럽 회원</td><td>본인의 모든 점수 기록을 유형·기간·검색어로 나누어 페이지별로 본다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout warn">
-          <span class="label">본인 거래만 보장</span>
-          <p>전체 내역은 본인 기록만 보인다. 회원을 따로 지정하지 않아도 시스템이 로그인한 본인으로 고정하므로
-            다른 회원의 기록을 볼 수 없다. 잘못된 월(13월 등)은 거절된다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>서비스 공개 전에 확인할 것</h2>
-        <div class="callout warn">
-          <span class="label">실제 기기 알림과 화면 이동</span>
-          <p>서버가 적립·사용·정정·만료 관련 알림을 만드는 것까지는 확인했다.
-            서버 운영 담당자는 푸시 서비스를 연결하고 앱 개발 담당자는 서명한 배포용 앱을 준비한다.
-            품질 확인 담당자는 휴대전화에서 알림을 받고 눌렀을 때 메인 또는 전체 내역으로 이동하는지 검사한다.</p>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="mileage-retry-review"><h2>현재 범위와 진입</h2><p>클럽 회원이 마일리지 메인에서 잔액·등급·받은 배지·최근 원장을 본다. 메인의 전체 원장, 월간 영수증, 랭킹, 등급 변화는 각각 별도 화면으로 연결된다. 월간 영수증은 현재 월로 진입한다. 시즌 기능이 공개되지 않은 상태에서는 지난 시즌 입구가 안내 화면을 연다.</p>
+<p>NOT_STARTED는 시작 전 안내를 표시한다. PAUSED는 중지 안내와 기존 조회 내용을 함께 보여 준다. 잔액과 누적 적립이 모두 0이고 중지 상태가 아니면 이벤트 탐색 입구를 보여 준다. 메인의 평판 카드와 마일리지 점수는 별도 정보다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>모든 회원 조회는 <code>MileageMemberController</code>에서 클럽 회원을 확인한다. 메인은 <code>buildMemberMainForSelf</code>를 호출한다. 요약 행이 없으면 0으로 구성하고 현재 등급과 다음 등급은 등급 기준과 <code>qualifiedLifetimeEarned</code>로 계산한다. 시즌 적립·잔액은 ACTIVE 시즌의 집계 준비가 끝났을 때만 내려준다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>응답과 현재 의미</th></tr></thead><tbody><tr><td>GET /api/v1/clubs/{clubId}/mileage/me</td><td><code>MemberMileageMainVo</code>: 운영 상태, 잔액, 원시 누적 적립, 등급 산정 누적, 선택적 시즌 수치, 현재/다음 등급, 활성 배지, 최근 원장 5건</td></tr><tr><td>GET /api/v1/clubs/{clubId}/mileage/me/ledger</td><td><code>Page&lt;MileageLedgerVo&gt;</code>. 요청 memberId는 본인으로 덮어쓴다. type·from·to·keyword·page·size를 적용</td></tr><tr><td>GET /api/v1/clubs/{clubId}/mileage/me/receipts/{year}/{month}</td><td><code>MileageMonthlyReceiptVo</code>. 해당 월의 적립·사용·만료·정정 합계, 순증, 시작/종료 잔액, 적립 출처별 합계, 배지, 등급명</td></tr></tbody></table></div>
+<p>최근 원장은 클럽·회원 조건으로 DB에서 생성 시각/id 역순 5건만 읽는다. 전체 원장도 같은 정렬의 페이지 조회이며 from/to는 경계를 포함한다. keyword는 <strong>사유(reason)</strong>의 대소문자 무시 포함 검색이다. 메모 전체를 검색한다고 설명하지 않는다. 과거 문서의 <code>findAll()</code> 전체 원장 메모리 필터 설명은 현재 조회와 다르다.</p>
+<p>본인 원장의 actorId는 0으로 가린다. 메인의 배지 awardedBy는 0, revokedBy는 null로 가린다. 운영 상세의 응답과 회원용 응답을 동일한 공개 범위로 취급하지 않는다.</p></section>
+<section id="current-3"><h2>월간 영수증 계산과 과거 기록의 한계</h2><div class="table-wrap"><table><thead><tr><th>항목</th><th>현재 계산</th></tr></thead><tbody><tr><td>월 경계</td><td>월 1~12를 검사하고 해당 월 첫날 이상, 다음 월 첫날 미만의 본인 원장 조회</td></tr><tr><td>적립·사용·만료·정정</td><td>EARN 합, REDEEM/EXPIRE/REVERSE 각각의 절댓값 합</td></tr><tr><td>netDelta</td><td>적립 − 사용 − 만료. <strong>REVERSE를 빼지 않는다</strong></td></tr><tr><td>시작/종료 잔액</td><td>각 기준 시각 이전의 모든 원장 amount 합. REVERSE도 포함</td></tr><tr><td>byType</td><td>해당 월 EARN의 sourceType별 합계. 출처가 없으면 UNKNOWN</td></tr><tr><td>월 배지</td><td>해당 월 부여 ID와 현재 활성 배지의 교집합. 당시 상태를 고정한 스냅샷이 아님</td></tr><tr><td>gradeStart/gradeEnd</td><td>경계 이전 EARN 합계를 현재 등급 정의에 대입. 이 쿼리는 qualifiedForGrade 필터와 REVERSE 차감을 적용하지 않음</td></tr></tbody></table></div>
+<p>따라서 순증이 종료 잔액 − 시작 잔액과 항상 같지는 않다. 월간 등급명도 실제 당시의 등급 변화 기록이나 현재 <code>qualifiedLifetimeEarned</code>를 정확히 복원한 값으로 보장하지 않는다. 등급 이력의 별도 감사 기록 조회는 <a href="F16-02.html">등급·배지·랭킹·프로필 카드</a>를 따른다.</p></section>
+<section id="current-4"><h2>앱 행동·실패·복귀</h2><p>메인은 로딩·오류 재시도·당겨서 새로고침을 제공한다. 원장은 전체/EARN/REDEEM/REVERSE/EXPIRE를 선택하고 20건씩 추가한다. REVERSE의 화면 이름은 적립취소다. 서버의 기간·keyword 검색 필드는 현재 원장 화면에 입력 UI가 없다. 추가 조회 실패는 목록 아래에서 재시도한다. 데이터가 있는 목록은 당겨서 갱신하지만 빈 원장 안내는 같은 RefreshIndicator 안에 있지 않다.</p>
+<p>월간 영수증은 이전/다음 월 이동, 로딩·오류 재시도·새로고침을 제공하며 현재 월 이후의 다음 이동을 막는다. 화면 제약과 서버가 받는 연/월 범위를 구분한다. 원장 새로고침은 이미 읽은 데이터를 유지하고 계정·클럽 회원 데이터 변경을 구독한다.</p>
+<p>받은 배지는 메인에 최대 6개, 6개 초과일 때 더보기로 본인 배지 목록을 연다. 메인의 ‘클럽 등급/뱃지 보기’는 실제로 등급 목록 경로를 연다. 배지 안내까지 연결된 것으로 간주하지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>netDelta는 REVERSE를 제외하지만 잔액은 포함한다.</td><td>순증과 잔액 증감을 동일 수치로 설명하지 않는다.</td></tr><tr><td>Risk</td><td>과거 월의 등급·배지는 현재 정의/활성 상태의 영향을 받는다.</td><td>당시 상태를 보존한 영수증으로 단정하지 않는다.</td></tr><tr><td>Gap</td><td>원장 기간·사유 검색 UI가 없고 빈 목록의 당겨서 갱신이 다르다.</td><td>API 기능과 화면 제공 범위를 나눈다.</td></tr><tr><td>Gap</td><td>‘클럽 등급/뱃지 보기’는 등급 목록만 연다.</td><td>배지 안내 연결은 별도 후속으로 남긴다.</td></tr><tr><td>미검증</td><td>권한 변경·실제 월별 데이터·페이지 경계·복귀를 실행하지 않았다.</td><td>소스 대조를 새 제품 시험 통과로 기록하지 않는다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 본인 범위:</strong> 모든 조회에서 회원 여부를 확인하고 원장 memberId를 본인으로 강제한다.</li><li><strong>AC-02 요약과 최근 기록:</strong> 요약이 없으면 0으로 구성하고 최근 원장은 DB에서 5건만 읽는다.</li><li><strong>AC-03 운영 상태:</strong> 시작 전 안내와 중지 후 기존 조회를 구분하고 시즌 준비 전 수치는 가린다.</li><li><strong>AC-04 정보 가림:</strong> 회원용 원장과 배지 응답의 운영자 식별 필드를 가린다.</li><li><strong>AC-05 원장 탐색:</strong> API의 유형·기간·사유 검색과 앱의 유형·20건 페이지 지원을 구분한다.</li><li><strong>AC-06 월별 산식:</strong> 정정 포함 잔액과 정정 제외 순증을 각각의 계산대로 설명한다.</li><li><strong>AC-07 과거 상태:</strong> 월 배지와 등급명이 당시 상태를 고정한 기록이 아님을 명시한다.</li><li><strong>AC-08 재조회와 입구:</strong> 오류·추가 조회·갱신 및 실제 이동 대상을 코드와 대조한다.</li></ul>
+<p>위 항목은 소스로 확인할 계약과 후속 실행 시나리오다. 이번 작업에서는 제품 시험·브라우저·실기기 확인을 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
