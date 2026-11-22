@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>운영 모델 — community PRD</title>
+  <title>PRD 작성·검수 운영 기준</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -13,183 +13,35 @@
     <main>
       <header class="page-head">
         <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>제품 이해<span>›</span>운영 모델</div>
-        <h1>PRD 운영 모델 — Source-first</h1>
-        <p class="lede">
-          2026-05-18부터 기능 PRD의 작성 기준이 바뀌었다.
-          “시나리오 수 나열”에서 <strong>“실제 서버·Flutter 소스를 직접 대조한 판단 문서”</strong>로 옮겨갔다.
-          이 페이지는 그 새 운영 모델의 골자를 한 자리에 정리한다.
-        </p>
+        <h1>PRD 작성·검수 운영 기준</h1>
+        <p class="lede">2026-11-22 현재 정본을 대조했습니다. 문서 구조·실제 입구·소스 확인과 실행·공개 결과를 구분합니다.</p>
       </header>
 
-      <section>
-        <h2>왜 모델을 바꿨나</h2>
-        <p>
-          기존 자동 생성 PRD는 “…를 안전하게 처리해야 한다”, “이해 가능한 결과를 볼 수 있어야 한다”
-          같은 범용 문장으로 가득 차 있어, 읽고 나도 “이 기능이 지금 어디까지 동작하는가”에
-          답할 수 없었다. 새 모델은 그 답이 PRD 한 페이지 안에서 나오도록 강제한다.
-        </p>
-        <div class="callout">
-          <span class="label">새 PRD의 6가지 질문 — 모두 답할 수 있어야 PRD다</span>
-          <ol>
-            <li>이 기능은 현재 실제로 어디까지 동작하는가</li>
-            <li>서버 계약과 Flutter가 기대하는 계약이 맞는가</li>
-            <li>상태·권한별로 버튼·화면이 어떻게 달라지는가</li>
-            <li>사용자가 피해를 볼 수 있는 Gap/Risk는 무엇인가</li>
-            <li>어떤 테스트가 이 판단을 뒷받침하는가</li>
-            <li>제품·운영·법무 결정 없이는 못 닫는 항목은 무엇인가</li>
-          </ol>
-        </div>
-      </section>
-
-      <section>
-        <h2>5개 라벨로 사실과 판단을 분리</h2>
-        <p class="subtitle">새 PRD는 한 문장이 어느 라벨에 속하는지 항상 분명해야 한다.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:160px">라벨</th><th>정의</th></tr></thead>
-            <tbody>
-              <tr><td><span class="pill brand">Fact</span></td><td>실제 소스에서 직접 확인한 사실. Controller 경로, VO 필드, enum 값, Repository 호출 등.</td></tr>
-              <tr><td><span class="pill info">Derived</span></td><td>backend/frontend 대조로 도출한 판단. 사실은 아니지만 사실에 기반한 추론.</td></tr>
-              <tr><td><span class="pill warn">Gap</span></td><td>서버·프론트·테스트 사이의 불일치, 미구현, 미검증.</td></tr>
-              <tr><td><span class="pill danger">Risk</span></td><td>지금 당장 실패하지 않아도 사용자 피해·회귀 가능성이 큰 지점.</td></tr>
-              <tr><td><span class="pill violet">Decision Needed</span></td><td>사업·운영·법무·외부 credential 없이는 닫을 수 없는 항목.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>금지 패턴 — 이 문장이 보이면 PRD가 아니다</h2>
-        <div class="callout danger">
-          <span class="label">기능 PRD에 나타나면 자동 생성 초안으로 간주</span>
-          <ul>
-            <li>“해당 상황에서 사용자가 이해 가능한 성공/실패 결과와 다음 행동을 볼 수 있어야 한다.”</li>
-            <li>“사용자가 이 조건을 인지하거나 시스템이 자동으로 안전하게 처리해야 한다.”</li>
-            <li>“조건부/없음”만 있고 실제 영향 판단이 없는 영향 범위 표.</li>
-            <li>source path 없이 “서버에서 처리한다”, “앱에서 처리한다”라고 쓰는 문장.</li>
-            <li>서버 enum에 없는 상태를 제품 상태처럼 확정해서 쓰는 문장.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>전환 분류와 골든 샘플</h2>
-        <p>
-          175개 기능 PRD는 다음 두 종류로 운영된다.
-        </p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:160px">분류</th><th>개수</th><th>의미</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><span class="pill brand">Golden sample</span></td>
-                <td><strong>1</strong></td>
-                <td>실제 서버·Flutter 소스를 수작업으로 대조해 완성한 기준 문서. 다른 PRD가 따라야 하는 모범 사례.</td>
-              </tr>
-              <tr>
-                <td><span class="pill info">실사 기반 전환본</span></td>
-                <td><strong>115</strong></td>
-                <td><code>business_logic/units/*</code>의 실사 자료를 PRD 구조로 재배치한 문서. 구현 착수 전 trace source를 다시 확인해야 함.</td>
-              </tr>
-              <tr>
-                <td><span class="pill violet">신규/갱신 PRD</span></td>
-                <td><strong>9</strong></td>
-                <td>신규 PRD 7개, 실사 기반 갱신본 1개, 실사 기반 신규 작성 1개. 별도 plan 또는 최근 소스 실사를 반영한 문서.</td>
-              </tr>
-              <tr>
-                <td><span class="pill info">source-first</span></td>
-                <td><strong>50</strong></td>
-                <td><code>units/</code> 없이 실제 소스·구현 리포트·plan을 정본으로 작성한 PRD. 부분 구현 3건은 각 PRD의 8번째 ‘후속 과제’ 섹션을 확인한다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="callout">
-          <span class="label">Golden sample 위치</span>
-          <p><code>02_feature_prds/03_event/F03-02_event-detail_prd.md</code> — 이벤트 상세 조회.
-          새 PRD를 쓸 때 이 문서를 옆에 두고 비교한다.
-          <a href="../qa/migration-status.html">PRD 문서 상태 페이지</a>에서 전체 175개 기능의 trace 수·risk 후보 수를 확인할 수 있다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>기능 PRD 갱신 절차</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["1. units/&lt;domain&gt;/&lt;feature&gt;/<br/>backend.md·frontend.md 읽기"] --> B["2. community_api/src의<br/>Controller·Service·VO·enum 확인"]
-    B --> C["3. community_app/lib의<br/>API·Repository·Provider·Screen 확인"]
-    C --> D["4. 서버 응답 필드 ↔<br/>Flutter 소비 필드 비교"]
-    D --> E["5. 상태·권한별 CTA 매트릭스 작성"]
-    E --> F["6. 일치·불일치·미구현·미검증을<br/>Gap / Risk로 남김"]
-    F --> G["7. 검증 파일이 무엇을 증명하는지 명시<br/>(없는 검증은 숨기지 않음)"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>새 PRD 표준 템플릿</h2>
-        <p class="subtitle">기능 PRD는 다음 10개 섹션으로 구성한다. 비어 있는 섹션은 “없음”이라고 명시한다.</p>
-        <div class="table-wrap">
-          <table class="compact">
-            <thead><tr><th style="width:38px">#</th><th style="width:200px">섹션</th><th>내용</th></tr></thead>
-            <tbody>
-              <tr><td>1</td><td><strong>결론</strong></td><td>3–5문장. 어디까지 닫혀 있고 어디가 미구현인지.</td></tr>
-              <tr><td>2</td><td><strong>실사 근거</strong></td><td>Backend·Frontend·Verification 소스 경로 표.</td></tr>
-              <tr><td>3</td><td><strong>전체 동작 흐름</strong></td><td>사용자 진입부터 화면 결과까지 단계별.</td></tr>
-              <tr><td>4</td><td><strong>서버 계약</strong></td><td>endpoint·요청·응답·enum·에러·side effect.</td></tr>
-              <tr><td>5</td><td><strong>프론트 계약</strong></td><td>route·provider·repository·screen·widget·CTA.</td></tr>
-              <tr><td>6</td><td><strong>상태·권한 매트릭스</strong></td><td>사용자/상태 × 서버 근거 × 프론트 분기 × 사용자 결과.</td></tr>
-              <tr><td>7</td><td><strong>정합성 판단</strong></td><td>항목 × Backend × Frontend × 판단.</td></tr>
-              <tr><td>8</td><td><strong>Gap / Risk</strong></td><td>등급·항목·근거·영향·다음 조치.</td></tr>
-              <tr><td>9</td><td><strong>수용 기준</strong></td><td>Given/When/Then 또는 관찰 가능한 조건.</td></tr>
-              <tr><td>10</td><td><strong>미결정 / 후속</strong></td><td>사업·운영·법무·credential·테스트 보강 분리.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>품질 체크리스트 — PRD 한 건이 완료되려면</h2>
-        <div class="callout">
-          <ul>
-            <li><strong>Backend source</strong> — Controller·Service·VO/DTO·enum 중 해당 기능 파일을 직접 확인했다</li>
-            <li><strong>Frontend source</strong> — API·Repository·Provider·Screen/Widget 중 해당 기능 파일을 직접 확인했다</li>
-            <li><strong>Contract comparison</strong> — 서버 응답 필드와 클라이언트 소비 필드를 비교했다</li>
-            <li><strong>State matrix</strong> — 상태·권한별 CTA 또는 차단 동작이 표로 정리되어 있다</li>
-            <li><strong>Gap/Risk</strong> — 발견된 불일치·미구현·미검증이 숨겨지지 않고 등급이 붙어 있다</li>
-            <li><strong>Acceptance criteria</strong> — 범용 문장이 아니라 관찰 가능한 조건으로 작성됐다</li>
-            <li><strong>Verification</strong> — 현재 검증 자산과 검증 공백이 분리되어 있다</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 시각화 문서와의 관계</h2>
-        <p>
-          이 시각화 묶음(<code>prd_visualization/</code>)은 <strong>제품 구조와 인벤토리를 빠르게 훑는 입구</strong>이지,
-          기능별 source-of-truth가 아니다. 특정 기능의 현재 계약·trace·Gap/Risk가 필요하면
-          반드시 <code>02_feature_prds/</code>의 해당 기능 PRD와 <code>units/&lt;domain&gt;/&lt;feature&gt;/</code> 실사 자료를 본다.
-        </p>
-        <div class="hub-grid">
-          <a class="card" href="../qa/migration-status.html">
-            <div class="eyebrow">신규</div>
-            <h3>PRD 문서 상태표</h3>
-            <p>175개 기능의 문서 상태, trace 수, risk 후보 수.</p>
-          </a>
-          <a class="card" href="../features/catalog.html">
-            <div class="eyebrow">기능</div>
-            <h3>175개 기능 카탈로그</h3>
-            <p>상태·영향·도메인으로 필터링.</p>
-          </a>
-          <a class="card" href="changelog.html">
-            <div class="eyebrow">기록</div>
-            <h3>시각화 변경 기록</h3>
-            <p>원문 변경 이후 이 묶음에 무엇이 반영됐는지.</p>
-          </a>
-        </div>
-      </section>
-    </main>
+      <!-- derived-from: prd/FEATURE_PRD_STANDARD.md; sha256: bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22 -->
+<section id="목적과-정본"><h2>목적과 정본</h2><p>기능 PRD는 사용자가 어디에서 무엇을 하고 어떤 결과를 얻는지 설명한다. 2026-11-07 결정에 따라 제품 내용만 본문에 두고, 서버·앱 계약을 복사하지 않는다. 문서를 고치기 전에는 실제 소스를 읽는다.</p>
+<div class="table-wrap"><table><thead><tr><th>판단할 내용</th><th>우선 근거</th><th>문서에 남길 것</th></tr></thead><tbody><tr><td>제품이 제공하기로 한 정책</td><td>승인된 제품 결정·정책</td><td>정책과 결정 근거. 구현과 다르면 차이를 명시</td></tr><tr><td>현재 구현한 동작</td><td>해당 버전의 서버·앱·관리자·실시간 소스</td><td>진입·조작·권한·상태·결과·실패 복구</td></tr><tr><td>확인한 결과</td><td>버전·환경·결과가 있는 실행 기록</td><td>소스 확인, 로컬 시험, 실기기·외부 연동 확인을 구분</td></tr><tr><td>고객에게 공개한 범위</td><td>현재 설정·배포 기록·출시 범위</td><td>구현과 배포·공개를 구분</td></tr></tbody></table></div>
+<p>과거 조사 메모와 <code>units/</code>는 조사 당시의 참고 자료다. 최신 코드의 정본으로 취급하거나 이 자료로 현재 PRD 전체를 덮어쓰지 않는다. 날짜를 바꾸거나 코드 위치 검사만 통과했다고 내용 검수를 완료 처리하지 않는다.</p></section>
+<section id="작성-전-확인"><h2>작성 전 확인</h2><ol><li><a href="https://github.com/endside82/saisoop_docs/blob/main/docs/development/IMPLEMENTATION_CROSSWALK.md">구현 교차표</a>와 해당 기능 명세에서 기능의 경계를 찾는다.</li><li>서버는 <code>community_api/modules.txt</code>의 모듈에서 실제 Controller, Service, DTO/VO, enum을 확인한다. 관리자 API는 같은 저장소의 <code>admin-app</code> 모듈이다.</li><li>앱은 실제 입구와 API → Repository → Provider → Screen/Widget의 연결을 확인한다. 관련 관리자 웹·실시간·MCP 동작이 있으면 함께 확인한다.</li><li>요청·응답 필드, 상태 값, 권한, 오류 처리의 일치 여부를 대조한다. 기술 계약을 본문에 중복 작성하지 않고 불일치가 제품에 미치는 결과를 적는다.</li><li>시험은 실제로 확인하는 조건을 읽는다. 시험 파일이 있다는 사실과 해당 버전에서 통과한 결과를 구별한다.</li></ol>
+<p>변경 없는 근거는 재사용한다. 새로운 의문이나 변경 없이 전체 로그·같은 소스·같은 이미지를 반복 확인하지 않는다.</p></section>
+<section id="기능-prd-구성"><h2>기능 PRD 구성</h2><h3>결론</h3>
+<p>현재 제공하는 범위, 사용자가 만나는 제약, 아직 확인하지 못한 범위를 짧게 쓴다. 구현·검증·공개 상태를 하나의 ‘완료’로 합치지 않는다.</p>
+<h3>코드 위치</h3>
+<p>구현을 찾아갈 서버·앱 파일이나 심볼을 짧게 적는다. 서버 창구의 자동 관리 블록은 <code>verification/sync_source_reference_docs.mjs</code>가 갱신한다. 이 검사는 함수·주소의 존재를 검증하며 제품 설명 전체를 검증하지 않는다.</p>
+<h3>전체 동작 흐름</h3>
+<ol><li>실제 메뉴·목록·알림·공유 링크에서 진입한다.</li><li>사용자가 내용을 확인하고 행동을 선택한다.</li><li>권한·현재 상태에 따라 허용하거나 이유를 안내한다.</li><li>성공 결과와 바뀐 상태를 보여준다.</li><li>원래 화면으로 돌아왔을 때 목록·배지·선택 상태가 어떻게 반영되는지 적는다.</li><li>취소·연결 실패·결과를 모르는 요청·권한 상실에서 복구하는 방법을 적는다.</li></ol>
+<h3>제품 규칙과 상태·권한 표</h3>
+<p>누가 어떤 상태에서 무엇을 할 수 있는지, 제한·금액·기한·부수 효과를 적는다. 한 행동이 여러 메뉴에 중복 노출되는지 실제 입구끼리 대조한다. 제품 상태와 운영자 숨김 등 별도 표시를 혼동하지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>사용자·상태</th><th>가능한 행동</th><th>차단·실패 때 안내</th><th>성공·복귀 결과</th></tr></thead><tbody></tbody></table></div>
+<h3>남은 차이와 위험</h3>
+<div class="table-wrap"><table><thead><tr><th>판정</th><th>항목</th><th>확인 근거</th><th>사용자 영향</th><th>남은 조치·완료 조건</th></tr></thead><tbody></tbody></table></div>
+<ul><li><code>Gap</code>: 확인한 구현 불일치 또는 아직 구현하지 않은 요구사항.</li><li><code>Risk</code>: 현재 구현에서 확인한 제한이나 회귀 위험.</li><li><code>Decision Needed</code>: 정책·운영 등 명시적 결정이 필요한 사항.</li><li><code>미검증</code>: 요구한 실행 확인을 하지 못한 상태. 제품 결함으로 세지 않는다.</li><li><code>미판정</code>: 소스 대조 자체가 끝나지 않은 후보. 무엇을 확인해야 판정되는지 적는다.</li><li><code>해소됨</code>: 현재 근거로 해결을 확인했다. 본문의 과거 결함 설명도 함께 고친다.</li></ul>
+<p>현재 실행할 후속 작업은 <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/plan/NEXT_WORK.md">앞으로 할 일</a>의 해당 항목과 연결한다. 공개 사이트의 현황 사본은 그 정본을 따른다. 기능 문서마다 별도 작업 번호나 독립적인 미완료 총계를 만들지 않는다.</p>
+<h3>수용 기준과 검증 근거</h3>
+<p>시작 조건 → 구체적인 조작 → 관찰할 결과로 쓴다. 성공뿐 아니라 해당 기능의 권한·중복 요청·취소·실패·복귀 조건을 포함한다. ‘안전하게 처리’, ‘일관성 유지’, ‘해당 흐름 실행’만으로 결과를 대신하지 않는다.</p>
+<p>시나리오 등록 수, 시험 파일 수, 시험 통과 수, 실제 앱·외부 연동 확인 수를 구분한다. 화면 이미지·탐색 맵·문서 HTML은 실제 앱 업무 성공의 증거가 아니다. 시각 질문이 있는 변경만 대표 화면을 확인한다.</p></section>
+<section id="완료-판정"><h2>완료 판정</h2><ul><li>실제 입구에서 결과와 복귀까지 설명이 이어지고, 상태·권한별 차이가 명확하다.</li><li>현재 본문과 위험 표가 서로 모순되지 않는다. 해소된 옛 결함을 현재 결함으로 남기지 않는다.</li><li>정책과 구현이 어긋나면 승인 없이 정책을 바꾸지 않고 차이를 표시했다.</li><li>근거의 저장소 버전과 확인 범위를 추적할 수 있다. 검증하지 않은 항목을 완료라고 쓰지 않는다.</li><li>기능 HTML·도메인 요약·공통 정책·QA에서 같은 사실을 설명하는 부분도 갱신했다.</li><li>내부 문서는 독자가 이해할 수 있는 전체 제목으로 실제 위치에 연결했다.</li></ul>
+<p>자동 생성기는 자료 수집과 형식 변환에만 쓴다. 개별 문서의 수동 교정·제품 결정을 덮어쓰지 않는다. 과거 문서 제거는 <a href="https://github.com/endside82/saisoop_docs/blob/main/docs/development/DOCUMENTATION_GUIDE.md#완료-문서-정리-원칙">완료 문서 정리 원칙</a>에 따라 현재 참조가 끝났는지 확인한 뒤 한다.</p></section>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>

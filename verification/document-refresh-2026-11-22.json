@@ -445,7 +445,8 @@
         "planning_decisions_20261122",
         "historical_source_notes_20261122",
         "onboarding_core_20261122",
-        "overview_identity_20261122"
+        "overview_identity_20261122",
+        "product_structure_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5005,9 +5006,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f8cd6bb5c2e622f7bb1ecb95844b3c5fbb59dfbbfb859ab3bed71559686ece03",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "c600005f204b3103220a5a57f715051c32648d5fc2531aadd7ddedddced8ca5f"
     },
     {
       "path": "docs/overview/changelog.html",
@@ -5025,9 +5029,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "6a07bf1faa3107a13e16264d733826f9d4164c4ca5a10a0afe4dadc0444aaed8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "90a81bdc3bb1c8be88baaddea7b59a0f76e423dd98889333dcc5423fdcb98f11"
     },
     {
       "path": "docs/overview/operating-model.html",
@@ -5035,9 +5042,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "64ee2c95482e0771b88674aecefac6d74e4705846177546230e4627bf9d88cc9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "c647a24e9e72b2187b5bd6a1ae33372af7219addd5437b1ed717a27771f1c4b3"
     },
     {
       "path": "docs/overview/personas.html",
@@ -5516,10 +5526,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "ce91981ef1ad257ab14de81e648386e553b32a454f3bd635705862ca1a446c61",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "6fe174b4e8f90490e05248a8bb221ca17e0e75b0872f937d82a53d86e74ad107"
     },
     {
       "path": "prd/00_prd_items/04_domain_purposes.md",
@@ -5527,10 +5539,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "62f019267de4597cc5db27cbb2d31e2ac6e2a904ab1dfef0fd7dbcdc4b9240b0",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "480ebbc0421808ffada33d5cc40c0efd7ce408682ebdf85518ed477ae325b58b"
     },
     {
       "path": "prd/00_prd_items/05_feature_definitions.md",
@@ -5551,10 +5565,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "ab891469c367946dd0d79f4f50345f1a4bba72c80a68be7b9e11fed496d52e88",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "95549fd32da947c3b41cee0edff0a4aa60697c4032afbb45b723d69bae8a94a6"
     },
     {
       "path": "prd/00_prd_items/07_role_action_matrix.md",
@@ -5649,10 +5665,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "4657059d5bf6cf45b9ffd3f849fddc0b0145d53b9cfc4b753f8b364ad1e7bb4f",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "product_structure_20261122"
+      ],
+      "reviewedSha256": "d7ec3e988b1fe5a93ccb0c6a79f76df08d4baaed2cbc750aa19292804cfdfdee"
     },
     {
       "path": "prd/01_domain_prds/01_인증_and_온보딩_prd.md",
@@ -50200,6 +50218,280 @@
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
         "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "product_structure_20261122": {
+      "kind": "source_review",
+      "scope": "정보구조·영역목적·제품 PRD·사용자 여정의 전체 본문 대조. 중복 여정은 이미 읽은 구버전과 본문 동일성 검사 후 재사용. HTML 구조/여정/운영 모델 전체 본문 대조. 현재 앱 탭·공통상단·전체메뉴 코드 범위 확인.",
+      "sources": [],
+      "reusedSources": [
+        {
+          "path": "community_app/lib/core/router/app_router.dart",
+          "sha256": "d4c3beeb804216276a25fdc12006ff1efe134ee0bf0cfe05499c16544bdeca47",
+          "reviewScope": "하단 shell branch 및 NavigationDestination 76~242행; 전체 라우터 심사 아님"
+        },
+        {
+          "path": "community_app/lib/presentation/common/navigation/app_top_bar_actions.dart",
+          "sha256": "97ca9f0de94269cb16d3c682c518a779624d9382d4102c3a62ca452acfb20d5b",
+          "reviewScope": "공통 상단 검색·알림·전체 메뉴 build 전체"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "MenuGroup·MenuPlacement·MenuRecord·MenuFacts 1~105행; 전 메뉴 조건 값 검수 아님"
+        },
+        {
+          "path": "community_app/lib/presentation/navigation/screens/full_menu_screen.dart",
+          "sha256": "916ef357db7c524c620096010e2cb18dcf819d92497827eb515424feda9662ab",
+          "reviewScope": "전체 메뉴 1~248행: 기록/검색/가시항목·그룹·이동·복귀 로직"
+        }
+      ],
+      "reuses": [
+        "auth_domain_rollup_20261122",
+        "calendar_domain_20261122",
+        "club_domain_20261122",
+        "curated_domain_20261122",
+        "date_chat_meeting_20261122",
+        "dispute_evidence_20261122",
+        "event_discovery_20261122",
+        "event_domain_rollup_20261122",
+        "favorite_domain_rollup_20261122",
+        "feature_inventory_20261122",
+        "home_feed_core_20261122",
+        "home_search_notification_entry_20261122",
+        "location_domain_20261122",
+        "mileage_commands_20261122",
+        "my_collection_20261122",
+        "notification_domain_20261122",
+        "notification_results_20261122",
+        "onboarding_core_20261122",
+        "overview_identity_20261122",
+        "payment_domain_rollup_20261122",
+        "payment_policy_20261122",
+        "payment_supplement_20261122",
+        "permission_policy_20261122",
+        "plan_market_domain_20261122",
+        "planning_decisions_20261122",
+        "planning_qa_20261122",
+        "prd/FEATURE_PRD_STANDARD.md",
+        "privacy_policy_20261122",
+        "profile_domain_rollup_20261122",
+        "qa_acceptance_20261122",
+        "regular_meeting_participation_20261122",
+        "review_domain_20261122",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md",
+        "search_workflows_20261122",
+        "settlement_domain_rollup_20261122",
+        "state_policy_20261122",
+        "support_20261122",
+        "warning_domain_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/00_prd_items/03_information_architecture.md",
+          "sha256": "6fe174b4e8f90490e05248a8bb221ca17e0e75b0872f937d82a53d86e74ad107"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/04_domain_purposes.md",
+          "sha256": "480ebbc0421808ffada33d5cc40c0efd7ce408682ebdf85518ed477ae325b58b"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/06_user_journeys.md",
+          "sha256": "95549fd32da947c3b41cee0edff0a4aa60697c4032afbb45b723d69bae8a94a6"
+        },
+        {
+          "path": "business_logic/prd/00_product_prd.md",
+          "sha256": "d7ec3e988b1fe5a93ccb0c6a79f76df08d4baaed2cbc750aa19292804cfdfdee"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/01_인증_and_온보딩_prd.md",
+          "sha256": "43ecf5b20a50b6e1c38f1f4d67b49c04d4294a85cbb6940b8760edf15ba08e99"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/02_홈_피드_prd.md",
+          "sha256": "b47888b92c10ee7746e6f7c62aa8d7368486b6b82c420ac875afed8c7e21ec88"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/03_이벤트_prd.md",
+          "sha256": "788c2e0d3b3b0e2840b7a6fc036068484aeee8d90dff0e340b7a57b6d51b2d6f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/04_클럽_prd.md",
+          "sha256": "0ab490d49b83e0b642220c40dedd03714ecaa8ef9759f73df233f0fd1e96ec2a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/05_검색_prd.md",
+          "sha256": "9c7bcdf9dff4585e71bcaa53cfc321a9bc3866f446121ed060eeaaa54bf1728d"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/06_결제_and_지갑_prd.md",
+          "sha256": "b3c80af478c7898d953c82f9d4cdb0dc00a93a794d1ab439042a8d4cccd760ca"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/07_모임_정산_prd.md",
+          "sha256": "908d8b4f69867c732244f61ad3c74d4474db6f05397fa86340c0fe9a24f4c9be"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/08_플랜_마켓_prd.md",
+          "sha256": "a45b1a19d4a1e276458bc5a6cbb45eeca97dc3ace089b57fbccb823dae090fcb"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/09_프라이빗_데이팅_prd.md",
+          "sha256": "39959e319afdad8a3e5175f48212322e73f99b42e4615a25d55224b4ab0fe93c"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/10_캘린더_prd.md",
+          "sha256": "d061936509b9b99975debd2c9ae498e91ebbf3fe036de9ec881615de87d57831"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/11_리뷰_and_신고_prd.md",
+          "sha256": "13ddce944e0a9cf5dbd77f7bedf213d731d376c247d57727f0b3f7d36327cb9b"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/12_알림_prd.md",
+          "sha256": "4c2ffc503d3761148d0bdbfbe9e376b5913e9b900de4a2c774934eb6ad0fe81f"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/13_프로필_and_설정_prd.md",
+          "sha256": "df9f07d478109e1c4b6655733f11c4435b8031375ecf07f567d210bbb8718c7a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/14_위치_and_길찾기_prd.md",
+          "sha256": "42c0ee21ce42e0036915c511aa7d4434fde7d805374d65d88136fec1ac87a152"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/15_경고_징계_prd.md",
+          "sha256": "49ca45b26dd59329c4cc63a6065bc81f97c73bd5793ec7b0cec3a8d0a10b6d04"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/16_마일리지_prd.md",
+          "sha256": "f7b71689a2abc0f6a2be6fe28030d3b178a9b1dd4a0b4acb93f03e600e5952a9"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/17_정기모임_prd.md",
+          "sha256": "a4c6c4ccfbe36c741bd7dbfa26ed1f84014940fdc50d2c8bf894337d25d16f9a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/18_분쟁_해결_prd.md",
+          "sha256": "bd6aee8cb82d00699962400ffb2a9927cd30e1af64c032b93539680000bb0862"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/19_관심인_prd.md",
+          "sha256": "64538d4f60d2208afc6bb92bed683f534551624ac2af38d1167920cb28d97a6a"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/20_고객지원_prd.md",
+          "sha256": "2c1d80ffc09ee8f160dcccf2a8db629a6940836753c5ef5a9f8fbf713741c7fa"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/21_제공자_배정_정산_prd.md",
+          "sha256": "990c57595c32c406ad7db0f3e57e6acdc8786f55de723bfe45da91da1f17042e"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/planning_qa_policy.md",
+          "sha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/privacy_safety_policy_prd.md",
+          "sha256": "0742e1a59c020577ddefa437af8d1488ab244abf36091acb93f9c8757ae561d2"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/prd/FEATURE_PRD_STANDARD.md",
+          "sha256": "bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22"
+        },
+        {
+          "path": "business_logic/prd/PRD_MIGRATION_STATUS.md",
+          "sha256": "2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/01_service_overview.md",
+          "sha256": "37bcaeccbbd5a281fd9b0748fa9c0dff5c552f62ed73a397bb32014e9128cf9a"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/02_user_personas.md",
+          "sha256": "770937cdcc789fd8004e873f84501c58c70b9e5af003202ca805a492aee7ecf5"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/scenario_coverage_matrix.md",
+          "sha256": "2fa260f97f026e7023189a6281de747baaaac267a5098fbabaefd881acd9a600"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/mvp_scope_matrix.md",
+          "sha256": "ba14645586e6e1a85edba0e817162f937e968cdc59d53796d8feed8bb9bbaf36"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/decision_register.md",
+          "sha256": "b941cae80ec690d0b1bae66ec63fa9bffcde8f2f2a8453f5229edb4b48efcae3"
+        },
+        {
+          "path": "business_logic/planner_onboarding/01_service_map.md",
+          "sha256": "c6832078469e13aee41a68c9536d7b47b8626b1f20f7d0ef6ad911bde95afbd4"
+        },
+        {
+          "path": "business_logic/planner_onboarding/02_core_journeys.md",
+          "sha256": "c34207b1fdd8b19eb2a47aab30c08713d05e1934b37043a7db5bde9fc0ceb187"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/overview/architecture.html": [
+          "sidebar",
+          "app-navigation"
+        ],
+        "docs/overview/journeys.html": [
+          "sidebar"
+        ],
+        "docs/overview/operating-model.html": [
+          "sidebar"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "문서 일곱 묶음·21개 영역과 실제 다섯 탭·8개 메뉴 묶음 분리",
+        "현재 등록 확인 항목1654·기능175를 정본 집계와 일치",
+        "분쟁을 조회계층만으로 축소하는 설명과 타인 가능 시간 공유 제거",
+        "구형10단계 계약복사 템플릿·1/115/9/50분류·미검증=Gap을 현행 작성기준으로 교체",
+        "제품 PRD와 여정을 현재 승인/금전/권한/복구 경계로 동기화"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/00_product_prd.md",
+          "sha256": "13197cce86e1e1e0af47ee8b1168d81895ebb4fa34a0de87171d231fc210d27f",
+          "characters": 455,
+          "note": "기존 제품 범위 변경 이력 원문 보존; 현재 미완료나 실행 통과로 해석하지 않음",
+          "heading": "## 과거 제품 범위 변경 기록"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "45 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "7 documents; shared batch verified 7 paths, 203 relative links/anchors and 4 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source/Markdown/HTML/link/hash checks, no browser/render/screenshots"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "6020346db80c426e9bf62c63a9c380441ed46781"
       }
     }
   },
