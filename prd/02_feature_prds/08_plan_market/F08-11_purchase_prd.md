@@ -1,86 +1,132 @@
-# F08-11. 아이템·번들·플랜 구매 PRD
+# F08-11. 상품·번들·플랜 구매 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 소스 대조. 현재 계약과 검증 공백이며 새 실제 거래·시험 통과 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 실제 구매 입구와 종료 화면
 
-포인트(지갑)로 마켓 아이템 단건 / 번들 묶음 / 플랜 단건을 구매하는 3개 엔드포인트. 결제 자체는 Unit 06 결제·지갑(`WalletService`)으로 위임하고, 본 단위는 결제 결과를 받아 보유함(`Collection`) / 플랜 구매 기록(`PlanPurchase`) / 크리에이터 수익(`CreatorEarning`) 적재까지 책임진다. 한 트랜잭션 내에서 잔액 차감 + 보유함 적재 + 수익 분배가 일어난다.
+상품·번들은 [마켓 상품 상세·구매 입구](F08-10_market-item-detail_prd.md)에서 상품명·금액을 확인한 뒤 요청한다. 확인을 취소하면 요청하지 않고, 성공하면 완료 안내 후 보관함으로 이동한다. 재구매 여부는 신규 거래와 이전 요청의 재시도를 구분해서 판단한다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+플랜 직접 구매는 별도 마켓 플랜 상세·미리보기의 구매 버튼을 사용한다. 플랜 응답의 `allowFreePoints && price > 0 && (freePointPrice ?? price) >= 1`이면 일반 결제 PAID와 무료 포인트 FREE 중 선택한다. 선택 시트를 닫으면 요청하지 않는다. 성공 뒤 플랜 관련 목록·상세를 갱신하고 `/plan/{planId}` 본문으로 이동한다.
 
-- **아이템 단건 구매**: F08-10 마켓 아이템 상세 화면 하단 "구매하기" 버튼
-- **번들 구매**: F08-10 화면 번들 카드 내 "이 번들로 구매하기" 버튼
-- **플랜 직접 구매**: 플랜 상세/미리보기 화면(F08-02 또는 마켓 미리보기) 의 "구매하기" 버튼 (`plan_preview_screen.dart` / `market_plan_detail_screen.dart`)
+무료 플랜 본문을 여는 행동은 구매 POST와 별개다. 미리보기에서 price와 freePointPrice가 모두 0인 경우 **무료로 시작하기**는 본문 이동이며, 이 동작만으로 구매 기록·보관함이 생성됐다고 기록하지 않는다. 읽기와 구매 권한의 경계는 [플랜 상세](F08-02_plan-detail_prd.md)를 따른다.
 
-## 2. 코드 위치
+## 코드 위치
 
-계약의 정본은 코드다. 서버: `MarketPurchaseController`, `PlanController`, `WalletService`, `MarketPurchaseService`, `PlanPurchaseService`, `WalletSpendService`, `AccountingLedgerService`. 앱: `plan_preview_screen.dart`, `market_plan_detail_screen.dart`, `market_item_detail_screen.dart`, `my_collection_screen.dart`.
+서버는 `MarketPurchaseController`, `MarketPurchaseService`, `MarketPurchaseCommand`, `PlanController`, `PlanPurchaseService`, `MarketProductVersionService`, `PricingDecision`, `MarketEntitlementService`, `MemberCommandReceiptExecutor`, `EarningTransitions`, `FeePolicyType`이 근거다. 앱은 마켓 상세·플랜 상세/미리보기·결제 수단 시트, `market_item_provider.dart`, `member_money_command.dart`, `plan_purchase_provider.dart`, 관련 API·Repository를 대조했다.
 
-## 3. 전체 동작 흐름
+<!-- source-references:start -->
+서버 창구: `MarketPurchaseController#purchaseItem`, `MarketPurchaseController#purchaseBundle`, `PlanController#purchasePlan`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### 아이템 구매
-1. 사용자 "구매하기" 탭 → `setState(_isPurchasing = true)`
-2. `marketPurchaseNotifierProvider.notifier.purchaseItem(itemId)` ▶ `MarketRepository.purchaseItem(itemId)` ▶ `POST /api/v1/market/items/{itemId}/purchase`
-3. 성공 응답 (`MarketPurchaseVo`): `purchaseId`, `purchaseType="ITEM"`, `paidAmount`, `collections=[CollectionVo]`
-4. `AppDialog.alert` 표시 → 확인 → `context.push('/market/collection')`
-5. 실패: `_handlePurchaseError(e)` 호출
+## 세 구매 경로와 서버 조건
 
-### 번들 구매
-1. 동일 패턴 — `purchaseBundle(bundleId)` ▶ `POST /api/v1/market/bundles/{bundleId}/purchase`
-2. 응답 `MarketPurchaseVo` (`purchaseType="BUNDLE"`, `collections=[N개]`)
+세 API는 로그인 및 MARKET 공개 범위를 적용한다. 상품·번들은 회원 돈 처리 잠금 안에서 판매 유형 공개를 먼저 확인하고 영수증 처리를 진행한다. 새 구매는 잠근 상품 행과 활성 상품 버전을 다시 확인한다. 활성 버전의 상품 ID·자원 종류/ID·소유자가 현재 상품과 맞아야 한다.
 
-### 플랜 직접 구매
-1. `allowFreePoints && price > 0 && (freePointPrice ?? price) >= 1`이면 결제 수단 시트에서 `PAID` 또는 `FREE`를 선택한다. 그 외에는 query를 생략해 서버 기본값 `PAID`를 사용한다.
-2. `planPurchaseNotifierProvider.notifier.purchasePlan(planId, fundingMode)` ▶ `PlanRepository.purchasePlan` ▶ `POST /api/v1/plans/{planId}/purchase?fundingMode=...`
-3. 성공 시 plan 관련 Provider invalidate → 본인 플랜 화면이 새로고침되며 "구매한 플랜" 탭에 표시
+| 경로 | 신규 구매 조건·한도 |
+| --- | --- |
+| 상품 단건 | 상품 존재·ON_SALE·활성 버전·본인 상품 아님·유한 재고가 있으면 양수·월 구매 한도 |
+| 번들 | 번들 존재·ON_SALE·판매 시작/종료 시각·번들 재고·ACTIVE 구매 기준 1인 한도·비어 있지 않은 구성·모든 구성 상품 존재/ON_SALE/활성 버전·구성 중 본인 상품 없음·월 한도 |
+| 플랜 직접 | 플랜 PUBLISHED·본인 플랜 아님·같은 플랜의 본인 ACTIVE 직접 구매 없음·동일 창작자 소유의 ON_SALE 플랜 상품 및 활성 버전 존재 |
 
-## 4. 제품 규칙
+상품·번들의 월 한도는 서버 현재 월 시작 이후 생성된 **MarketPurchase 50건**이다. 이 count에는 환불 상태 제외가 없다. 번들 1인 한도는 그 번들의 ACTIVE 구매 건수를 센다. 플랜 직접 구매에는 이 월50건·번들1인한도·재고 차감이 적용되지 않는다.
 
-- 수익 계산: 수수료 = 유료 결제액 x 10%, 원천징수 = (유료 결제액 - 수수료) x 3.3%, 각각 원 단위 반올림. 실수령액 = 유료 결제액 - 수수료 - 원천징수. 무료 결제분에는 수수료와 세금이 없고 무료로 전달된다(F08-15). 구매 경로는 운영이 고친 요율을 쓰지 않는 고정 요율이다.
-- 무료 결제 허용 여부는 아이템과 번들은 통화 종류(F08-10)로, 플랜은 작성자 허용 여부로 정한다. 허용하지 않는 상품에 무료 결제를 요청하면 INVALID_REQUEST 다.
-- 플랜 구매액은 구매 기록에 그대로 남는다. 값이 0 이면 지갑 차감과 수익 없이 구매 기록과 구매 수만 늘어난다.
-- 월 구매 한도 50건은 아이템과 번들에만 걸린다. 플랜 직접 구매에는 한도와 재고 검사가 없다.
-- 같은 사람의 동시 구매는 차례로 처리해 재고와 월 한도를 넘지 못한다.
-- 실패 때 보이는 것: 잔액 부족은 충전 안내(부족액을 알면 금액을 채움), 401 "로그인이 필요합니다", 404 "존재하지 않는 아이템입니다" 뒤 뒤로 감, 돈 잠금 실패(409)는 「지금은 구매 요청을 처리할 수 없어요. 잠시 후 다시 시도해 주세요.」, 월 구매 한도·묶음 1인 한도·품절은 그 이유 문구, 429 "잠시 후 다시 시도해주세요". 플랜은 자기 플랜이면 "본인 플랜은 구매할 수 없습니다", 미발행이면 "발행된 플랜만 구매할 수 있습니다".
+같은 상품은 한도·재고 등 조건을 충족하면 새 거래로 재구매할 수 있다. 직접 플랜은 ACTIVE 직접 구매가 있으면 `PLAN_ALREADY_PURCHASED`지만 환불된 이력만 있을 때는 다시 구매할 수 있다. HIDDEN 신규 구매는 거절한다. 다른 경로에서 받은 플랜 권리까지 이 직접 구매의 중복 조건이라고 확대하지 않는다.
 
-## 6. 상태/권한/시나리오 매트릭스
+## 가격과 포인트 사용 방식
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 아이템 단건 구매 — 잔액 충분 (Happy Path) | F08-10 마켓 아이템 상세 화면, `status="ON_SALE"`. | 사용자 잔액 -30,000P, `MarketPurchase` 1건, `Collection` 1건 추가, 크리에이터 수익 PENDING 26,109P. |
-| S2 | 잔액 부족 → 충전 분기 | 잔액 5,000P 사용자, 30,000P 아이템 구매 시도. | 결제는 일어나지 않음, `_isPurchasing = false`로 복귀, 사용자가 충전 화면으로 이동. |
-| S3 | 번들 구매 — 결제액만 차감 | 3개 아이템을 묶은 번들 구매. | 사용자 컬렉션 +3개, 잔액은 결제액만큼 줄고 덤(보너스) 포인트 적립 없음(차수 10 에서 걷음). |
-| S4 | 같은 마켓 아이템 재구매 | 같은 사용자가 이미 한 번 산 ON_SALE 아이템, 재고·월 한도·잔액 충족 | 새 구매/컬렉션/수익 기록이 한 건 더 생성된다. 플랜 직접 구매의 중복 차단과 다르다. |
-| S5 | 재고 소진 | 시나리오 본문 참조 | 한 명만 구매 성공. |
-| S6 | 월 50건 한도 초과 | 시나리오 본문 참조 | 익월까지 마켓 구매 차단. |
-| S7 | 플랜 직접 구매 — 본인 플랜 차단 | 시나리오 본문 참조 | 결제 미발생. |
-| S8 | 무료 플랜 (price=0) 구매 | 시나리오 본문 참조 | 무료 플랜 보유함 추가, 지갑 변동 없음. |
-| S9 | 플랜 FREE 차등가 구매 | `PUBLISHED`, `allowFreePoints=true`, `freePointPrice>=1`, 무료 잔액 충분 | `freePointPrice`만 FREE_ONLY로 차감하고 그 금액을 `pricePaid`에 저장 |
-| S10 | 플랜 FREE 기본가 폴백 | `allowFreePoints=true`, `freePointPrice=null` | 기본 `price`를 FREE_ONLY로 차감 |
-| S11 | 무료 결제 미허용 플랜에 FREE 직접 호출 | `allowFreePoints=false` | `INVALID_REQUEST`, 구매·지갑·수익 변동 없음 |
-| S12 | HIDDEN 플랜 신규 구매 | 과거 구매 이력이 없는 사용자 | `PLAN_NOT_PUBLISHED`, 결제 없음. 기존 구매자의 읽기 권한과 구분 |
+현재 상품 단건과 플랜 직접 구매의 최종 가격은 **활성 상품 버전**에서, 번들은 잠근 번들의 가격에서 계산한다. 플랜 구매 엔트리는 `PricingDecision.forProductVersion`을 호출한다. 별도로 남아 있는 `forPlan` 함수의 무료 기본가 폴백을 모든 현재 구매에 적용하지 않는다.
 
-## 8. Gap / Risk
+| 가격 정책 | PAID 또는 기본 요청 | FREE 요청 |
+| --- | --- | --- |
+| PAID_POINT | 기본가·PAID_ONLY | INVALID_REQUEST |
+| FREE_POINT | 무료 전용가가 있으면 그 값, 없으면 기본가·FREE_ONLY | 같은 FREE_ONLY 계산 |
+| ANY_POINT, 무료 전용가 없음 | 기본가·PAID_FIRST 혼합 사용 | INVALID_REQUEST |
+| ANY_POINT, 무료 전용가 있음 | 기본가·PAID_ONLY | 무료 전용가·FREE_ONLY |
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 구매 전 확인 | 상품과 묶음의 구매하기를 누르면 상품·금액을 보이는 확인 시트가 뜨고, 시트에서 「구매」 를 눌러야만 요청한다(2026-11-08 앱) | 없음 |
-| 해소됨 | 충전 뒤 돌아오기 | 잔액이 모자라면 충전 안내 창을 띄우고, 충전하기를 누르면 충전 화면을 위에 연다. 모자란 금액을 알면 그 금액을 채운다. 충전하고 돌아오면 상세 화면에서 다시 구매하기를 누른다. 돈이 드는 구매를 저절로 다시 하지 않는다 | 없음 |
-| 해소됨 | 잔액 부족 밖의 400 | 충전으로 풀리는 잔액 부족일 때만 충전을 권한다. 월 구매 한도, 묶음 1인 한도, 품절은 그 이유를 알림으로 보여 주고, 그 밖의 400 은 서버가 준 이유를 보여 준다. 무료 포인트 부족에는 충전을 권하지 않는다 | 없음 |
-| Gap(아이템/번들 Flutter) | `market_api.dart:82`, `market_repository.dart:213` | 서버는 아이템/번들의 fundingMode를 받지만 앱 API/repository/provider는 이를 노출하지 않아 기본 `PAID`만 호출한다. | `currencyType/freePointPrice` 표시·선택·query 배선 필요 |
-| 해소됨 | 409 문구 | 마켓 구매의 409 는 이미 구매로 읽지 않는다. 돈 잠금 실패는 잠시 뒤 다시 시도하라고 안내하고, 그 밖은 서버가 준 이유를 보여 준다 | 없음 |
+**fundingMode=PAID라는 요청값이 항상 유료 포인트만 차감한다는 뜻은 아니다.** 실제 통화 정책과 유료/무료 분해 결과가 결정한다. 가격은 음수·소수 포인트·정수 범위 초과를 거절하며, 5000.00처럼 값 자체가 정수인 표기는 허용한다.
 
-## 9. 수용 기준
+아이템·번들 앱 호출은 fundingMode를 보내지 않아 기본 PAID를 사용한다. 두 결제 수단을 선택하는 UI는 없다. 플랜 직접 구매의 선택 UI는 플랜 응답의 가격을 보여 주지만, 서버는 승인 버전으로 최종 판단한다. 현재 구매 요청에는 확인한 가격·예상 버전 인자가 없으므로 화면에서 본 조건과 결제 시점 조건이 자동으로 고정된다고 보장하지 않는다.
 
-- **AC-01. 아이템 단건 구매 — 잔액 충분 (Happy Path)**: Given F08-10 마켓 아이템 상세 화면, `status="ON_SALE"`. When 사용자가 해당 흐름을 실행하면 Then 사용자 잔액 -30,000P, `MarketPurchase` 1건, `Collection` 1건 추가, 크리에이터 수익 PENDING 26,109P.
-- **AC-02. 잔액 부족 → 충전 분기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 결제는 일어나지 않음, `_isPurchasing = false`로 복귀, 사용자가 충전 화면으로 이동.
-- **AC-03. 번들 구매 — 결제액만 차감**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 사용자 컬렉션 +3개, 잔액은 결제액만큼 줄고 덤(보너스) 포인트 적립 없음.
-- **AC-04. 같은 마켓 아이템 재구매**: Given 같은 사용자가 이미 구매한 ON_SALE 아이템이고 재고·월 한도·잔액이 충분 When 다시 구매하면 Then 새 구매·컬렉션·수익 기록이 한 건 더 생성되어야 한다. 플랜 직접 구매는 별도로 중복 차단한다.
-- **AC-05. 재고 소진**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 한 명만 구매 성공.
-- **AC-06. 월 50건 한도 초과**: Given 아이템·번들 구매가 월 50건에 도달 When 추가 마켓 구매 Then 익월까지 해당 구매 차단. 플랜 직접 구매에는 이 한도를 적용하지 않음.
-- **AC-07. 플랜 직접 구매 — 본인 플랜 차단**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 결제 미발생.
-- **AC-08. 무료 플랜 (price=0) 구매**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 무료 플랜 보유함 추가, 지갑 변동 없음.
-- **AC-09. 플랜 차등가 스냅샷**: Given FREE 선택과 유효한 차등가 When 구매 성공 Then 실제 차감액과 `PlanPurchase.pricePaid`가 같아야 한다.
-- **AC-10. 플랜 기본가 FREE 폴백**: Given 무료 포인트 허용, `freePointPrice=null` When FREE 구매 Then 기본 `price`를 FREE_ONLY로 차감해야 한다.
-- **AC-11. HIDDEN 신규 구매 차단**: Given HIDDEN 플랜 When 미구매자가 구매 호출 Then `PLAN_NOT_PUBLISHED`이고 어떤 금전·구매 기록도 남지 않아야 한다.
+## 구매 기록·권리·재고의 반영
+
+상품·번들은 회원 잠금의 커밋 시점 소유를 확인하고, 번들 및 구성 상품 ID를 정렬해 잠근 뒤 지갑을 잠근다. 조건 확인·양수 금액 차감·구매 기록·수익 기록·권리 부여는 구매 트랜잭션에 포함되며 예외는 롤백 대상이다. 요청 결과를 못 받은 것과 거래가 롤백된 것은 다르다.
+
+| 경로 | 구매 성공 시 반영 |
+| --- | --- |
+| 상품 단건 | 상품 유한 재고 −1·purchaseCount +1; ITEM 구매와 버전 ID; 수량1 Collection; GRANTED 권리 |
+| 번들 | 번들 유한 재고 −1; BUNDLE 구매; 구성 행별 수량·버전·bundleItemId를 담은 Collection; 구성 버전별 GRANTED 권리 |
+| 플랜 직접 | 실제 금액을 pricePaid에 담은 PlanPurchase·버전 ID; ACTIVE 권리와 활성/만료 시각; 플랜 구매 수 +1 |
+
+현재 번들 구매 경로는 구성 상품의 단품 재고를 검사·차감하거나 단품 purchaseCount를 증가시키지 않는다. 번들 재고와 구성 수량을 별도로 취급한다. 플랜 직접 구매도 상품 단건의 재고 감소 흐름과 동일하지 않다.
+
+금액이 0이면 지갑 차감 거래와 수익 생성을 생략하지만 구매·권리 기록은 만든다. 상품·번들의 GRANTED 부여는 실제 콘텐츠 사용·기간권 활성화 완료와 다르다. 플랜 직접 권리는 구매 단계에서 ACTIVE로 부여한다. 실제 보관함 이용은 [내 컬렉션](F08-12_my-collection_prd.md)을 따른다.
+
+## 수익 귀속과 거래의 경계
+
+차감 결과의 grossPaid·grossFree를 구분해 귀속한다. 회원 소유 상품은 유료분에 기본 수수료율10%, 수수료를 뺀 유료분에 원천세율3.3%를 각각 정수 반올림하고 남은 금액을 net으로 기록한다. 현재 이 구매 코드는 `FeePolicyType.defaultRate()`를 사용한다. 운영 요율 변경을 자동 반영한다고 쓰지 않는다.
+
+예를 들어 회원 귀속 유료분30,000P는 수수료3,000·원천세891·net26,109다. 무료분은 유료 수수료·원천세·net 계산에 넣지 않으며 grossFree로 별도 기록한다. 구매 순간 판매자 지갑 지급까지 끝났다는 뜻은 아니다. 새 수익은 PENDING이고 후속 정산은 별도다.
+
+번들은 승인 버전의 기본가×구성 수량 비중으로 결제액을 나누고, 유료/무료 합계와 총액이 유지되도록 나머지를 배분한다. 원가 합이0이면 균등 배분한다. 번들 금액만 차감하며 이 구매 흐름에 보너스 포인트 적립 단계는 없다. 수익의 상세 정산은 [크리에이터 수익과 검증 범위](F08-15_creator-earning-coverage_prd.md)에서 대조한다.
+
+## 플랫폼 기간권 구매의 조건
+
+플랫폼 소유 수익은 회원 판매자에게 지급할 채무와 구분한다. 플랫폼 행에도 grossPaid/grossFree는 남지만 수수료·원천세·회원 실수령 net은0이며 플랫폼 매출 원장으로 처리한다. 구매는 USER·PLATFORM·MIXED 소유 구성을 구분한다.
+
+기간권 포함 번들은 기간권 구성별 수량이1이어야 하고 실제 결제액이 양수여야 한다. 별도 무료 포인트 가격이 있다면 그 값도 양수여야 한다. 기간권 판매 유형이 닫히면 단품과 포함 번들을 결제 전에 거절한다. 구매 권리는 승인 버전의 조건을 보관한다. 판매 운영 범위는 [회원 상품과 플랫폼 기간권](F08-06_market-item-management_prd.md#회원-상품과-플랫폼-기간권)을 따른다.
+
+## 돈 처리의 재시도와 현재 정산 규칙
+
+상품·번들의 API는 Idempotency-Key를 필수로 받는다. 회원·명령 종류·대상·fundingMode를 같은 명령으로 묶으며 같은 키의 다른 대상/내용은 충돌이다. 서버는 같은 명령을 다시 실행하는 대신 저장 결과를 재생한다. 판매 유형 제한은 영수증 재생 전에도 확인한다.
+
+번들은 저장한 purchaseId로 본인의 해당 번들 구매와 컬렉션을 다시 구성한다. 결과 참조를 못 읽으면 `MEMBER_COMMAND_RESULT_UNAVAILABLE`로 알리고 새 구매로 재실행하지 않는다. 재생 결과가 최초 성공 시점과 모든 표시 필드까지 동일한 스냅샷이라고 가정하지 않는다.
+
+앱의 상품·번들 구매는 계정별 의도를 먼저 보관한다. 보관 실패·계정 변경 시 전송하지 않고, 진행 중인 같은 구매는 한 요청의 결과를 공유한다. 응답불명 키는 앱 재시작·시간 경과 뒤에도 유지한다. 재동의처럼 영수증 앞에서 거절된 결과를 확정 실패로 보고 새 키로 바꾸지 않는다. 성공 또는 확정된 결과는 의도를 종결하여 다음 신규 구매에 새 키를 쓴다.
+
+`MEMBER_COMMAND_RESULT_UNAVAILABLE`는 이미 처리된 명령의 결과를 읽지 못한 경우다. 앱은 지갑을 재조회하고 오류를 전달하면서 해당 의도를 종결한다. 다음 구매를 자동으로 보내지는 않으며, 사용자가 다시 시작한 구매는 새 거래가 될 수 있다. 이 경우 보관함·기존 구매를 확인하는 것과 재구매를 구분해야 한다.
+
+**플랜 직접 구매는 위 영수증 키 경로가 없다.** 플랜·상품·지갑 잠금과 ACTIVE 직접 구매 중복 거절을 사용한다. 앱은 성공하거나 서버에 반영됐을 수 있는 오류일 때 지갑·플랜 카드·상세·블록·미리보기·구매 목록을 갱신한다. 응답불명 뒤 재호출이 같은 성공 응답을 재생한다고 보장하지 않는다.
+
+## 실패 후 충전과 복귀
+
+상품·번들은 충전으로 해결할 수 있는 일반/유료 잔액 부족만 충전을 권한다. 부족액이 있으면 충전 경로의 amount에 전달하고, 충전을 마친 뒤 사용자가 상세에서 다시 구매를 시작한다. 돈이 드는 구매를 자동 재실행하지 않는다.
+
+무료 포인트 부족·월 한도·번들1인한도·품절은 충전으로 해결된다고 안내하지 않는다. 돈 잠금 실패는 잠시 후 재시도, 다른409는 서버 이유를 사용한다. 모든409를 이미 구매로 처리하지 않는다. 404는 존재하지 않는 상품 안내 후 뒤로 이동하고, 인증/권한/요청 제한/네트워크 실패는 해당 오류 안내로 처리한다. 플랜 직접 구매는 공통 API 오류 안내를 사용하며 상품·번들의 충전 다이얼로그와 동일하다고 설명하지 않는다.
+
+## 요청과 응답
+
+| 요청 | 입력·성공 응답 |
+| --- | --- |
+| `POST /api/v1/market/items/{itemId}/purchase` | 필수 Idempotency-Key, fundingMode 기본 PAID; 201 `MarketPurchaseVo` |
+| `POST /api/v1/market/bundles/{bundleId}/purchase` | 필수 Idempotency-Key, fundingMode 기본 PAID; 201 `MarketPurchaseVo` |
+| `POST /api/v1/plans/{planId}/purchase` | fundingMode 기본 PAID; 200 `PlanPurchaseVo`, 구매 키 인자 없음 |
+
+MarketPurchaseVo는 purchaseId·purchaseType·paidAmount·nullable transactionId·collections 등을 반환한다. PlanPurchaseVo는 purchaseId·planId·pricePaid·nullable transactionId 등을 반환한다. 금액0은 지갑 거래 ID가 없을 수 있다. 플랜을 이벤트로 만드는 API의 Idempotency-Key를 플랜 구매 API와 혼동하지 않는다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 관찰 | 처리 |
+| --- | --- | --- |
+| Gap | 상품·번들 fundingMode 선택 UI 없음 | 기본 PAID 요청과 실제 통화별 차감 정책을 구분 |
+| Gap | 직접 플랜 구매는 영수증 키 재생이 아님 | 응답불명 후 갱신/중복 거절과 동일 성공 재생을 구분 |
+| 미검증 | 화면 확인 후 가격/승인 버전 변경, 실제 동시 구매·원장·전달·환불 | 소스/선택 단언만 확인. 실제 거래·DB경합·회계 감사 통과를 주장하지 않음 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 구매 입구:** 상품·번들 확인 취소는 전송하지 않고 성공 뒤 보관함으로 간다. 직접 플랜 구매 성공은 본문으로 이동하며 무료 본문 열기를 구매 기록 생성과 구분한다.
+- **AC-02 단품 조건:** ON_SALE·활성 버전·비소유자·유한재고·월한도를 모두 확인하고 승인 버전의 소유/자원 정합을 검증한다.
+- **AC-03 번들 조건:** 판매 기간·번들 재고·ACTIVE 1인한도·모든 구성의 판매/버전·본인 구성 제외를 확인한다. 구성 단품 재고 차감이 있다고 쓰지 않는다.
+- **AC-04 월 한도:** 상태를 제외하지 않은 월 MarketPurchase50건과 번들 ACTIVE1인한도를 구분한다. 직접 플랜에 같은 한도를 적용하지 않는다.
+- **AC-05 직접 플랜:** PUBLISHED·타인 플랜·ACTIVE 직접구매 없음·판매 중 상품과 활성 버전이 필요하다. 환불 이력만으로 영구 재구매 차단하지 않는다.
+- **AC-06 실제 가격:** 단품/직접플랜은 승인 버전, 번들은 번들 가격을 사용한다. 음수·소수 포인트는 거절하고 확인 화면의 가격이 요청으로 고정된다고 가정하지 않는다.
+- **AC-07 통화 정책:** PAID_POINT·FREE_POINT·ANY_POINT와 무료 전용가 유무별 차감을 구분한다. PAID 요청을 유료 포인트 전용과 동일시하지 않는다.
+- **AC-08 부여와 사용:** 단품/번들 GRANTED와 직접플랜 ACTIVE를 구분하고 버전·조건·수량을 보관한다. 금액0도 구매/권리를 만들되 차감 거래와 수익은 생략한다.
+- **AC-09 거래 원자성:** 차감·구매·수익·권리 부여가 트랜잭션으로 연결되고 실패는 롤백 대상이다. 응답이 없다는 사실을 미결제로 단정하지 않는다.
+- **AC-10 수익 귀속:** 회원 유료분 요율·무료분 분리·플랫폼 net0·번들 총액/유료무료 합계를 보존한다. 수익 PENDING을 지급 완료로 표시하지 않는다.
+- **AC-11 기간권:** 포함 기간권 수량1과 양수 결제/무료가격 조건을 확인하고 봉인 유형은 차감 전에 거절한다.
+- **AC-12 상품·번들 재시도:** 계정별 저장 키로 같은 요청을 이어가고 겹친 요청을 공유한다. 재시작·시간 경과·영수증 앞 거절만으로 새 키를 발급하지 않는다.
+- **AC-13 결과불명 구분:** 서버 참조재생 실패는 업무를 재실행하지 않으며 앱은 지갑을 재조회한다. 직접 플랜의 갱신/ACTIVE 중복 거절을 같은 영수증 재생으로 설명하지 않는다.
+- **AC-14 실패 복구:** 충전 가능한 부족만 충전을 권하고 완료 후 자동 구매하지 않는다. 한도·품절·무료부족·돈잠금·다른409를 각각 처리한다.
+
+`market_purchase_idempotency_test.dart`의 재시작·오래된 키·재동의·결과불가·신규 키·중복 요청 단언, `PricingDecisionTest`의 정수 가격 검증, `PlanPurchaseServiceTest`의 환불 후 재구매와 ACTIVE 중복 거절 단언을 읽었다. 이번에는 제품 시험·실DB·실결제·브라우저·이미지 검수를 실행하지 않았다.

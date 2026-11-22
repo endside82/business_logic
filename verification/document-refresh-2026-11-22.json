@@ -293,7 +293,8 @@
         "creator_stats_20261122",
         "market_browse_20261122",
         "market_search_20261122",
-        "market_detail_20261122"
+        "market_detail_20261122",
+        "market_purchase_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3584,9 +3585,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "6010422385d85339ca496e8661ae7047032f2348b0ae6fcaa9ff3bdcfd13eb95",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_purchase_20261122"
+      ],
+      "reviewedSha256": "f9ba829575c01f715b1fb2c357d000201d6d52ad8a2c0cb58e2acd0f336f7893"
     },
     {
       "path": "docs/features/F08-12.html",
@@ -5029,7 +5033,8 @@
         "creator_stats_20261122",
         "market_browse_20261122",
         "market_search_20261122",
-        "market_detail_20261122"
+        "market_detail_20261122",
+        "market_purchase_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5117,7 +5122,8 @@
         "creator_stats_20261122",
         "market_browse_20261122",
         "market_search_20261122",
-        "market_detail_20261122"
+        "market_detail_20261122",
+        "market_purchase_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5229,7 +5235,8 @@
         "creator_stats_20261122",
         "market_browse_20261122",
         "market_search_20261122",
-        "market_detail_20261122"
+        "market_detail_20261122",
+        "market_purchase_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6711,10 +6718,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d38e4de0e1b9606fa58f06a4a1e7618d903b223e22b37e424a020e1fcf8b8b52",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_purchase_20261122"
+      ],
+      "reviewedSha256": "40ab1e495a89faaf5cf7ce02d9576396ba9c3fe4231dfac9df68c2e2e8a764db"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-12_my-collection_prd.md",
@@ -8039,7 +8048,8 @@
         "creator_stats_20261122",
         "market_browse_20261122",
         "market_search_20261122",
-        "market_detail_20261122"
+        "market_detail_20261122",
+        "market_purchase_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8279,7 +8289,8 @@
         "creator_stats_20261122",
         "market_browse_20261122",
         "market_search_20261122",
-        "market_detail_20261122"
+        "market_detail_20261122",
+        "market_purchase_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12435,9 +12446,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "1b488c919495b7bffc7f6079d3d679ebc0b03a8145ad18375eb9c4bb45fe244c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_purchase_20261122"
+      ],
+      "reviewedSha256": "980787f353a656ac13fbcb19c0a0f8593554e9feb2d009efaa7ccabb22e5089b"
     },
     {
       "path": "units/08_plan_market/F08-11_purchase/diagrams.md",
@@ -12445,9 +12459,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "292776c818812d9236ba606c94bf0d29b4e7aaaed057bc48a49f6a7dcbb97826",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_purchase_20261122"
+      ],
+      "reviewedSha256": "9307de196f874a7a9d9df8f2801b257cfeb99e2b1c04cf7e17f53da9c77733b0"
     },
     {
       "path": "units/08_plan_market/F08-11_purchase/frontend.md",
@@ -12455,9 +12472,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "099d3b54b6cddb8a083dc9e4c71fbe373ef56952784155d58eaef930c5d0e8cb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_purchase_20261122"
+      ],
+      "reviewedSha256": "cf68cc26195523dde6bc0b66ce4ec312b1e3e8dd53cff9f60e224eed906d487a"
     },
     {
       "path": "units/08_plan_market/F08-11_purchase/scenarios.md",
@@ -12465,9 +12485,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ecc4714a4880af360d5dea0b6fad11b59f1b810e8d6ec951d3f78800c075bc03",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_purchase_20261122"
+      ],
+      "reviewedSha256": "a69a5af920374f2186389c9a56d0be7eb4bb52c35f932559b41b4f5240ae8d4e"
     },
     {
       "path": "units/08_plan_market/F08-12_my-collection/backend.md",
@@ -32448,6 +32471,209 @@
         "sourceReferences": "118 source-reference tables match",
         "groupDigests": "28 source/canonical digests; 4 retained HTML IDs",
         "derivedDocuments": "6 document paths, 45 relative links and 4 derived-from digests checked",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "589721b1c68efd479ccf45254259419b092492ef"
+      }
+    },
+    "market_purchase_20261122": {
+      "kind": "source_review",
+      "scope": "세 실제 구매 엔드포인트·MARKET/Idempotency 차이·상품/번들/플랜 잠금·승인버전 가격·통화 분기·월/1인 한도·재고·수익귀속·구매권리상태·앱 보관키/결과불명/충전복귀 및 선택 단언 대조. 실제 거래/DB경합/원장감사 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketPurchaseService.java",
+          "sha256": "f5a087470876a4e03ac8d937c49ac75b0eac1c12013d60d58f151d7f7aac367e",
+          "reviewScope": "57–104,124–206,230–361,378–411: 유형관문·단품/번들 잠금/재고/월/1인한도·승인버전·권리·구매참조재생·기간권조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/MarketPurchaseCommand.java",
+          "sha256": "4bffdbfc5b08360ad8ac9b9706af3d6a6aae2be35920325573c8efdde07ddb39",
+          "reviewScope": "167–298: 회원잠금 커밋확인·정렬상품잠금·지갑/차감/구매/수익/전달·배분 합계보존"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PricingDecision.java",
+          "sha256": "776b02f1d7087c9ed7196071205acb9ae36b97ec5c0c98317c17317b81b4a0d0",
+          "reviewScope": "25–105: 실제 forProductVersion/forBundle 사용·PAID/FREE와통화·정수가격검증·forPlan과현재호출구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketEntitlementService.java",
+          "sha256": "68f3ac1c9190fa1e74a143ca0ac07e770fc04e832a6c8a17e64205d4d7837cd5",
+          "reviewScope": "61–114: 마켓 GRANTED/수량·직접플랜 ACTIVE/활성시각·grantedTerms·중복부여방지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/EarningTransitions.java",
+          "sha256": "7083601f1ec99cdd4cda3d0c24d6f9f7c143678ec0898eacaddeaa720dbdfcce",
+          "reviewScope": "310–352: 회원 paid기반fee/tax/net·platform fee/tax/net0·grossPaid/grossFree·PENDING"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/MarketPurchaseVo.java",
+          "sha256": "2be991673faad33fc483e18404d3958ef1f89afc437c5473631b607ec039ef56",
+          "reviewScope": "15–23: 구매번호/유형/금액/transactionId/컬렉션 응답"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/plan_purchase_provider.dart",
+          "sha256": "eba864d7f60080da12816ff05f2f6663324b89e2db66ed58a085d63c41fccf73",
+          "reviewScope": "18–58: 직접호출·성공/결과불명 지갑/플랜목록/상세/블록/미리보기갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/market_plan_detail_screen.dart",
+          "sha256": "62961d781d9b7e9360d20587f1447f8f8395e7986e3820441926df258bf7b864",
+          "reviewScope": "144–175,196–238: funding선택조건·취소·성공/plan/{id} 이동"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/widgets/plan_funding_choice_sheet.dart",
+          "sha256": "5566cc70162f0039e000ac0dff01718166721338277958082dc3f802bd0b204d",
+          "reviewScope": "16–66 및146–177검색: PAID/FREE 반환·무료잔액안내"
+        },
+        {
+          "path": "community_app/lib/presentation/market/market_purchase_error_message.dart",
+          "sha256": "6748829473f21772316bfcf314131854aefeba6f30829ec7312a6f41c3fb06a3",
+          "reviewScope": "16–44: 돈잠금/한도/재고문구·충전가능부족코드 한정"
+        },
+        {
+          "path": "community_app/test/data/repositories/market_purchase_idempotency_test.dart",
+          "sha256": "b95e3e115316c39be3379cb073786b2ee167880ee1bbfc1ff405ea10530afc99",
+          "reviewScope": "86–100,122–210: 재시작·오래된결과불명·재동의·2500012종결·성공새키·겹친요청공유 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/PricingDecisionTest.java",
+          "sha256": "a92e15b9303dc429d8bea375ac56870ba160919d3ad53230df001602349d2168",
+          "reviewScope": "19–41: 소수가격거절·소수표기정수허용 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/PlanPurchaseServiceTest.java",
+          "sha256": "2599c88a3886bd954bfa4c76963dc6ab1b230304b0d7e8cfc842d3b34e8614c0",
+          "reviewScope": "166–205: 환불뒤재구매와ACTIVE중복거절 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketPurchaseController.java",
+          "sha256": "8207d928f3a967e7fcd1b871f7962c2aab7e59c71a26bd6915379d0f79c87928",
+          "reviewScope": "23–64,86–92: MARKET·회원 직렬화·봉인확인 후 영수증·단건/번들201·fundingMode와 필수키·참조재생"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+          "sha256": "ae66890928117bcbffb4bc88fb1f0a78ffa7595e637e8b812bf6e5610e60cb94",
+          "reviewScope": "137–145: MARKET 구매POST·fundingMode·키없음·200"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanPurchaseService.java",
+          "sha256": "443a22b7fa71224e2bd24a000445d4b956d9300752efaa674f22d0b3e5897145",
+          "reviewScope": "87–198: PUBLISHED/본인/ACTIVE중복·판매상품/활성버전가격·지갑잠금·양수결제·구매/권리·고정요율"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketProductVersionService.java",
+          "sha256": "eb22bad97c707cef476d47df23d9596a519bdc018e26ef00aaf75464f784f4c7",
+          "reviewScope": "79–92,116–129: 활성버전 소유자/자원 정합·판매중인플랜상품 필요"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/FeePolicyType.java",
+          "sha256": "cc254fe0d2098dbfa5a9c2bd2227b7c20f25293bc66b43fd6798642aae6080c8",
+          "reviewScope": "27–54: defaultRate 0.10/0.033"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "113–148,254–288: 참조재생·결과못읽음409·hash불일치·업무재실행없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/PlanPurchaseVo.java",
+          "sha256": "88cd2d077af554e5b36b48b4aa1215a4f08e520ed058f407e8f1c581524cc92d",
+          "reviewScope": "11–23: purchaseId/planId/pricePaid/transactionId/sourceType 응답"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "sha256": "0157bb02a191d0a396f4c0786986301e2a533122725ff68e3f9f46ea6edbf0e1",
+          "reviewScope": "market_detail_20261122 동일 SHA: 상품·번들 확인/세션/성공보관함. 추가939–1033: 충전가능부족만충전·404복귀·기타오류/금액선입력"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "sha256": "114ccab8634f5f576d59b99fae1147d8ba0b8fae02b2ad17a9464d20071f21b5",
+          "reviewScope": "145–169: durable money command·결과불명/기확정결과불가 지갑갱신;118–134 두 명령"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "63–94,121–175,183–275: 계정/세션별 동시명령공유·보관실패전송차단·정산된오류/결과불명 키유지"
+        },
+        {
+          "path": "community_app/lib/data/api/market_api.dart",
+          "sha256": "a47b666e2911b73bd12c9f1233d86693de667d38fb5d31b1a3b9f0ec3c7847a6",
+          "reviewScope": "market_detail_20261122 동일 SHA: 상품/번들 Idempotency-Key·fundingMode 인자 없음"
+        },
+        {
+          "path": "community_app/lib/data/repositories/plan_repository.dart",
+          "sha256": "339fc30b3c78d85e5829cda8cc2f390ee2cb9b4ffe44a46724bc621ac44bc53a",
+          "reviewScope": "109–119: 직접구매 Result·fundingMode 전달"
+        },
+        {
+          "path": "community_app/lib/data/api/plan_api.dart",
+          "sha256": "d40dec6c4583634185f5bc7c18c25d920578aa9c4fabdf9fed6d89c5d305781a",
+          "reviewScope": "65–70: 구매query fundingMode·구매 Idempotency-Key 없음(후속이벤트생성의키와구분)"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/plan_preview_screen.dart",
+          "sha256": "7dd3bb97b806823c8d5f8c1cd63254b803b98431a321573cb49db90eb6866c0b",
+          "reviewScope": "314–359,369–388,445–465: 무료본문열기/구매분리·선택/복귀"
+        }
+      ],
+      "reuses": [
+        "club_finance_20261122",
+        "creator_stats_20261122",
+        "market_detail_20261122",
+        "market_management_20261122",
+        "plan_detail_20261122",
+        "plan_list_20261122",
+        "plan_publish_20261122",
+        "settlement_pay_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
+          "sha256": "40ab1e495a89faaf5cf7ce02d9576396ba9c3fe4231dfac9df68c2e2e8a764db"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-11.html": [
+          "sidebar",
+          "launch-strip",
+          "money-retry-current",
+          "platform-purchase",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F08-11 세 구매 POST 연결표 추가",
+        "플랜 PUBLISHED만 확인하는 옛 계약을 판매상품/승인버전 조건으로 교정",
+        "PAID query와 실제 유료/무료 차감 구분·무료본문열기와 구매기록 구분"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "product_gap",
+          "finding": "플랜 직접 구매는 상품·번들과 같은 Idempotency-Key 영수증 경로가 없다. 응답불명 갱신과 ACTIVE 중복 거절로 처리된다.",
+          "disposition": "세 구매의 재시도 보장을 동일하게 기록하지 않음"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "아이템·번들 화면은 fundingMode 선택을 제공하지 않음. 플랜 선택 UI는 플랜 응답 가격을 쓰나 서버 최종 결제는 활성 상품 버전 기준이며 확인 가격/버전 인자를 보내지 않음.",
+          "disposition": "현재 UI/서버 경계와 실제 가격변경 검증 공백 명시"
+        },
+        {
+          "kind": "document_contract_correction",
+          "finding": "번들은 번들 재고를 차감하고 구성품 단품 재고를 차감하지 않음. 월50건은 상태 제외 없는 구매기록, 번들1인한도는 ACTIVE만 계산.",
+          "disposition": "실제 범위 구분; 별도 제품 정책 변경 안 함"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "119 source-reference tables match",
+        "groupDigests": "28 source/canonical digests; 5 retained HTML IDs",
+        "derivedDocuments": "6 document paths, 34 relative links and 4 derived-from digests checked",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; selected existing assertions read"

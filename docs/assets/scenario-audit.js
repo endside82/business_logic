@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,316개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,318개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1316,
+    "documentedScenarioItems": 1318,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4967,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 75,
+    "directlyLinkedAutomatedTests": 76,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 75,
+    "automatedScenarioReferences": 76,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 56,
-    "definitionOnlyEvidence": 75,
-    "traceMarkers": 575,
-    "verifiedTraceRecords": 573,
+    "partialEvidenceChain": 57,
+    "definitionOnlyEvidence": 74,
+    "traceMarkers": 578,
+    "verifiedTraceRecords": 576,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -11922,28 +11922,82 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-11",
       "domain": "플랜 마켓",
-      "name": "아이템·번들·플랜 구매",
-      "scenarioCount": 12,
+      "name": "상품·번들·플랜 구매",
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-11_purchase/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-11_purchase/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F08-11:1",
+            "label": "POST /api/v1/market/items/{itemId}/purchase",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketPurchaseController.java",
+                "controller": "MarketPurchaseController",
+                "method": "purchaseItem",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/market/items/{itemId}/purchase",
+                "targetLine": 33,
+                "methodLine": 34
+              }
+            ]
+          },
+          {
+            "id": "F08-11:2",
+            "label": "POST /api/v1/market/bundles/{bundleId}/purchase",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketPurchaseController.java",
+                "controller": "MarketPurchaseController",
+                "method": "purchaseBundle",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/market/bundles/{bundleId}/purchase",
+                "targetLine": 48,
+                "methodLine": 49
+              }
+            ]
+          },
+          {
+            "id": "F08-11:3",
+            "label": "POST /api/v1/plans/{planId}/purchase",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+                "controller": "PlanController",
+                "method": "purchasePlan",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/plans/{planId}/purchase",
+                "targetLine": 137,
+                "methodLine": 140
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/data/repositories/market_purchase_idempotency_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/presentation/market/market_item_purchase_error_test.dart"
         ]
@@ -11956,7 +12010,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 1,
