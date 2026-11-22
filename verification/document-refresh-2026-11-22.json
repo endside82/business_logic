@@ -18051,7 +18051,7 @@
       "evidence": [
         "production_screenshots_20261123"
       ],
-      "reviewedSha256": "d1d1ec3c52241d7f964676e86c17e9b5f25f33119d6bcd92afdff6853eeeee95"
+      "reviewedSha256": "9e841cc08a9b52c9ebd5393730e4685249dc87a835a0a2c9d41c107e1f308ef1"
     }
   ],
   "checks": [
@@ -70580,7 +70580,7 @@
         },
         {
           "path": "business_logic/verification/production-screenshots-2026-11-23.json",
-          "sha256": "d1d1ec3c52241d7f964676e86c17e9b5f25f33119d6bcd92afdff6853eeeee95"
+          "sha256": "9e841cc08a9b52c9ebd5393730e4685249dc87a835a0a2c9d41c107e1f308ef1"
         }
       ],
       "previousReviewedHashes": {

@@ -26418,7 +26418,7 @@
     },
     {
       "path": "verification/production-screenshots-2026-11-23.json",
-      "sha256": "d1d1ec3c52241d7f964676e86c17e9b5f25f33119d6bcd92afdff6853eeeee95",
+      "sha256": "9e841cc08a9b52c9ebd5393730e4685249dc87a835a0a2c9d41c107e1f308ef1",
       "review": "source_verified"
     }
   ],
@@ -26448,7 +26448,7 @@
         "docs/tour/index.html": "e7214646501316c38feeefac42f6de31f624a8e6a0cd6d3d79a69ada5e4d8365"
       },
       "validation": "targeted screenshot catalogue, references and preservation checks passed; source-wide review not repeated",
-      "pending": "member-only capture scope awaits explicit existing-account access approval",
+      "pending": "Member-only capture incomplete: existing QA account login approved but saved credential rejected; additional credential confirmation or normal email recovery requires pending explicit approval",
       "documentHashVerification": {
         "result": "PASS",
         "artifactDigests": 1261,
