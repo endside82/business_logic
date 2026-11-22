@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,294개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,295개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1294,
+    "documentedScenarioItems": 1295,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4965,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 70,
+    "directlyLinkedAutomatedTests": 71,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 70,
+    "automatedScenarioReferences": 71,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 51,
-    "definitionOnlyEvidence": 80,
-    "traceMarkers": 560,
-    "verifiedTraceRecords": 558,
+    "partialEvidenceChain": 52,
+    "definitionOnlyEvidence": 79,
+    "traceMarkers": 562,
+    "verifiedTraceRecords": 560,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -11146,28 +11146,65 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-04",
       "domain": "플랜 마켓",
-      "name": "블록 드래그 재정렬",
-      "scenarioCount": 9,
+      "name": "블록 순서와 계층 변경",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-04_block-reorder/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-04_block-reorder/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F08-04:1",
+            "label": "PUT /api/v1/plans/{planId}/blocks/reorder",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanBlockController.java",
+                "controller": "PlanBlockController",
+                "method": "reorderBlocks",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/plans/{planId}/blocks/reorder",
+                "targetLine": 115,
+                "methodLine": 116
+              }
+            ]
+          },
+          {
+            "id": "F08-04:2",
+            "label": "PATCH /api/v1/plans/{planId}/blocks/{blockId}/move",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanBlockController.java",
+                "controller": "PlanBlockController",
+                "method": "moveBlock",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/plans/{planId}/blocks/{blockId}/move",
+                "targetLine": 126,
+                "methodLine": 127
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/presentation/plan/screens/block_reorder_screen_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -11178,7 +11215,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,

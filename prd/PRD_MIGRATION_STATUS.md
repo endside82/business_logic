@@ -300,7 +300,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F08-01 | 플랜 마켓 | [F08-01_my-plan-list_prd.md](02_feature_prds/08_plan_market/F08-01_my-plan-list_prd.md) | `F08-01_my-plan-list` | 실사 기반 전환본 | 3 | 4 |
 | F08-02 | 플랜 마켓 | [F08-02_plan-detail_prd.md](02_feature_prds/08_plan_market/F08-02_plan-detail_prd.md) | `F08-02_plan-detail` | 실사 기반 전환본 | 7 | 4 |
 | F08-03 | 플랜 마켓 | [F08-03_block-editor_prd.md](02_feature_prds/08_plan_market/F08-03_block-editor_prd.md) | `F08-03_block-editor` | 실사 기반 전환본 | 5 | 4 |
-| F08-04 | 플랜 마켓 | [F08-04_block-reorder_prd.md](02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | `F08-04_block-reorder` | 실사 기반 전환본 | 2 | 2 |
+| F08-04 | 플랜 마켓 | [F08-04_block-reorder_prd.md](02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md) | `F08-04_block-reorder` | 실사 기반 전환본 | 2 | 3 |
 | F08-05 | 플랜 마켓 | [F08-05_plan-publish_prd.md](02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | `F08-05_plan-publish` | 실사 기반 전환본 | 1 | 3 |
 | F08-06 | 플랜 마켓 | [F08-06_market-item-management_prd.md](02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | `F08-06_market-item-management` | 실사 기반 전환본 | 6 | 2 |
 | F08-07 | 플랜 마켓 | [F08-07_creator-profile-stats_prd.md](02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | `F08-07_creator-profile-stats` | 실사 기반 전환본 | 2 | 7 |

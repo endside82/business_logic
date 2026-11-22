@@ -286,7 +286,8 @@
         "settlement_prepayment_20261122",
         "settlement_account_20261122",
         "plan_list_20261122",
-        "plan_detail_20261122"
+        "plan_detail_20261122",
+        "plan_reorder_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3486,9 +3487,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f780c16ce412d6a264f0cde5193571c8957aba86de96eba5bb2cdab79c4c012d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_reorder_20261122"
+      ],
+      "reviewedSha256": "5ff5791373af364d1fc97f93ad0447f189d6612ab2110e24393fcb76becd7cb4"
     },
     {
       "path": "docs/features/F08-05.html",
@@ -4994,7 +4998,8 @@
         "settlement_prepayment_20261122",
         "settlement_account_20261122",
         "plan_list_20261122",
-        "plan_detail_20261122"
+        "plan_detail_20261122",
+        "plan_reorder_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5075,7 +5080,8 @@
         "settlement_prepayment_20261122",
         "settlement_account_20261122",
         "plan_list_20261122",
-        "plan_detail_20261122"
+        "plan_detail_20261122",
+        "plan_reorder_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5180,7 +5186,8 @@
         "settlement_prepayment_20261122",
         "settlement_account_20261122",
         "plan_list_20261122",
-        "plan_detail_20261122"
+        "plan_detail_20261122",
+        "plan_reorder_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6571,10 +6578,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f561c7ba3f73e714239d0d06ffc4f97b52b6421f317882f8fa908e54bfc26688",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_reorder_20261122"
+      ],
+      "reviewedSha256": "a2e31298323349d9ee548516ea9150fc1eafe13262e38606fca9b5455ee3ff59"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md",
@@ -7969,7 +7978,8 @@
         "settlement_prepayment_20261122",
         "settlement_account_20261122",
         "plan_list_20261122",
-        "plan_detail_20261122"
+        "plan_detail_20261122",
+        "plan_reorder_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8202,7 +8212,8 @@
         "settlement_prepayment_20261122",
         "settlement_account_20261122",
         "plan_list_20261122",
-        "plan_detail_20261122"
+        "plan_detail_20261122",
+        "plan_reorder_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -11994,9 +12005,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "73ecdb1a163053783e2a8df0f4440eef6a998f5f3ffc4ae43ecf1da0dfe4e6c9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_reorder_20261122"
+      ],
+      "reviewedSha256": "ad74e5a461ec2489f98bcafb7fc544ffad1709eb96b6c66bb68f80122ba1960f"
     },
     {
       "path": "units/08_plan_market/F08-04_block-reorder/diagrams.md",
@@ -12004,9 +12018,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c7527b17a968a1aba31dac664af9aedc6a3ffbd9bdf361290c5576a738526b4b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_reorder_20261122"
+      ],
+      "reviewedSha256": "7011271e5114bdbde6d87ac2c8253cbe2554557febe65105046536e6717957d4"
     },
     {
       "path": "units/08_plan_market/F08-04_block-reorder/frontend.md",
@@ -12014,9 +12031,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "87e7a618d729ea695202b5f1a1574eae3ba6d923e4f82e2a3e3109046c5dce20",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_reorder_20261122"
+      ],
+      "reviewedSha256": "6b4c6fc6a440aec981e74867e94498c36cf712abf887ff9400a21ee3b6c7d2bb"
     },
     {
       "path": "units/08_plan_market/F08-04_block-reorder/scenarios.md",
@@ -12024,9 +12044,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a1d7f979edfba09f7d45305ac296ef143675a1491049bd53afee3287566d8e51",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "plan_reorder_20261122"
+      ],
+      "reviewedSha256": "a8270e86eaabfedae032627c31f8dbbf09450d50908eec50b123ed8c24f9a173"
     },
     {
       "path": "units/08_plan_market/F08-05_plan-publish/backend.md",
@@ -30945,6 +30968,168 @@
         "globalSourceAdvance": "main advanced to 0552ff22b84b68aa83bed8a40c6f4c1cea4a40d9; 23 prior source paths queued, no current plan group source affected",
         "productTests": "not executed; selected existing assertions read only",
         "fullReleaseScope": "prior global date discrepancy remains; unchanged checker not rerun"
+      }
+    },
+    "plan_reorder_20261122": {
+      "kind": "source_review",
+      "scope": "플랜 재정렬의 실제 편집기 입구·로컬 의도·최신 트리 재투영·변경 부모 범위·개정 번호 기본 거절·요청별 무결성·첫 실패/부분 성공 복구를 서버와 앱 소스로 대조. 기존 선택 단언만 읽음; 제품 시험·화면·운영 설정 실행 확인 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/PlanBlockReorderParam.java",
+          "sha256": "b451db0452786ac0d77023e0eb52032e9efabb57a20e38458ffeeb06a731bbfa",
+          "reviewScope": "전체 필드: 구형 blockIds와 부모 범위 siblingIds/revision"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/PlanBlockMoveParam.java",
+          "sha256": "f394b84ce6b0e462b54442c3538fcbac905ef792bd345d2a7422d9143f0040ae",
+          "reviewScope": "전체 필드: parentBlockId/sortOrder/depth/revision"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/PlanRevisionRepository.java",
+          "sha256": "7967d937b47203205fd20a79704e0f5ff6b1d01ae9d6b15a48d424342c7aec92",
+          "reviewScope": "26–49: 조건부·무조건 개정 증가와 조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/PlanRepository.java",
+          "sha256": "a45b5e64d23af922884f53e755a3b0182ca5f3a1314a066468276af0c06912e1",
+          "reviewScope": "56–57: 플랜 쓰기 잠금"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/model/PlanBlock.java",
+          "sha256": "3285c581a3df663da1eb75d55ef8e6f71faeb5037b10808fa7565939f3a8fc42",
+          "reviewScope": "14–79: 삭제 행 제외·깊이/정렬/부모·스키마 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockOpaqueSubtreePolicy.java",
+          "sha256": "1f5b3f13be1f2a12f8c687376b85e1df8f55bf221c4aa89fa7c96c32da99a2a9",
+          "reviewScope": "34–47: 미지 타입·미래 스키마·rawEnvelope 읽기전용 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/error/ErrorCode.java",
+          "sha256": "3400b181bf89a66db9b6fd74f467f55d30f9a7824642741299271688c610dd14",
+          "reviewScope": "427,527,531–532: 충돌409·개정필수428·깊이/집합오류400"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/plan_block_param.dart",
+          "sha256": "1d3980f5bbf8fece5501f5d8675376fb2b4e39c007fe99072cfdbe35f844a794",
+          "reviewScope": "40–69: typed 이동/정렬 body"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/block_reorder_screen.dart",
+          "sha256": "57f5746d52bbdcfda9fa80279bb9ea409fc0864a7e40a1ae416d50469a7cf232",
+          "reviewScope": "28–369: 최신트리 의도재투영·빈/오류·잠긴행·변경부모 저장·첫 실패와 부분성공 복구"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/block_reorder_model.dart",
+          "sha256": "b05d932def2e07f13c7ce247d63c164c10327b8d8cff21b0ef162a1f16d12bea",
+          "reviewScope": "10–524: 의도/부모/형제 앵커·서브트리·깊이·새 트리 재투영·소실대상 제외"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/widgets/block_depth_guard.dart",
+          "sha256": "a72e88b47ad6642db814f09e4ad6d1353305ad31d21b376b21ebae557e5d6258",
+          "reviewScope": "7–32: 루트0/최대3과 자손 상대깊이"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/block_editor_screen.dart",
+          "sha256": "10e447a38d09853b78311796821c8683302855eb94ece0cb445ae6ac2c4363ef",
+          "reviewScope": "838–878,903–918: 편집기 메뉴의 DRAFT/블록 존재 조건과 재정렬 입구"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/plan_block_type.dart",
+          "sha256": "c4048eabfaa13c0a655e170f303f85e39c15af054ef64a5c7e8a43a3b40820b3",
+          "reviewScope": "isLockedBlock: 잠긴행 판정"
+        },
+        {
+          "path": "community_app/test/presentation/plan/screens/block_reorder_screen_test.dart",
+          "sha256": "99d7cff9f16f682dbeac67bde76bcf1041a6e6a293759fb8f4f72f492f7f684a",
+          "reviewScope": "261–349,469–538,591–651의 선택 단언: 손댄 부모만·첫 실패 의도보존·앞선성공 부분반영/재조회; 미실행"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/PlanBlockServiceTest.java",
+          "sha256": "a1c2ca8f85dc535097e5a9366dbcde8a0b2c96b0854b425b482b32862c239c82",
+          "reviewScope": "1170–1201: 기본 true와 revision없는 쓰기 거절·무조건증가없음 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanBlockController.java",
+          "sha256": "e74ec3e68c85f0c785f0a6dc130c8c4baaf0d6cd974042d3afc342771623d8bb",
+          "reviewScope": "28–51,115–136: 정렬·이동 주소/요청/응답과 개정 헤더"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockService.java",
+          "sha256": "9223e731c0c151c64868bfd13eb2e42d2ff59235b42f1b4756ef1565ffb421f9",
+          "reviewScope": "49,88–95,650–866,886–977,1134–1174: 현재 fail-closed true·정렬/이동·부모/자손/깊이/읽기전용 검사·revision·행 잠금·요청 트랜잭션"
+        },
+        {
+          "path": "community_app/lib/data/api/plan_api.dart",
+          "sha256": "d40dec6c4583634185f5bc7c18c25d920578aa9c4fabdf9fed6d89c5d305781a",
+          "reviewScope": "142–152: 정렬/이동 typed HTTP 요청과 응답"
+        },
+        {
+          "path": "community_app/lib/data/repositories/plan_repository.dart",
+          "sha256": "339fc30b3c78d85e5829cda8cc2f390ee2cb9b4ffe44a46724bc621ac44bc53a",
+          "reviewScope": "182–205,272–294: 개정 헤더 판독·트리/이동 응답"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/plan_block_provider.dart",
+          "sha256": "3dc4c9dcbe312cbc34a927c2eb8cf7b2a74a0eccc9f1cd250519536b9c4f4c16",
+          "reviewScope": "350–442,463–495,579–588,862–881,965–1130,1142–1187,1813–1887: 번호 보호·직렬큐·불완전트리 선행조회·충돌복구·매 시도 인자 재생성·부분응답 후 재조회"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "260–283: 작성자 재정렬 라우트; 이전 상세 검토와 동일 SHA"
+        },
+        {
+          "path": "docs/ui-ux/screens/23-plan-editor.md",
+          "sha256": "8465455c36aa35e8ac6e8f293b15d6d87266524ad01a4c6a4c14b478faefb16e",
+          "reviewScope": "354–358: plan별 직렬화·신뢰 revision·충돌후 의도 한 차례 재시도 명세"
+        }
+      ],
+      "reuses": [
+        "plan_detail_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
+          "sha256": "a2e31298323349d9ee548516ea9150fc1eafe13262e38606fca9b5455ee3ff59"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-04.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "최초 두 Controller 연결 추가; 옛 기본 fail-closed=false·모든 부모 재전송·실패 시 일괄 모델 폐기 설명 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "개정 번호 필수 기본값 true와 의도 기반 범위 저장·실패 분기 반영",
+          "disposition": "소스에 맞춰 문서 교정; 신규 구현·시험 통과를 주장하지 않음"
+        },
+        {
+          "kind": "product_risk",
+          "finding": "네트워크 응답 실패만으로 실제 서버 미반영을 보장하지 못함; 여러 요청의 부분 반영 가능",
+          "disposition": "현재 제한에 기록; 제품 코드는 변경하지 않음"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "observedSourceVersions": {
+        "community_app": "0552ff22b84b68aa83bed8a40c6f4c1cea4a40d9",
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
+      },
+      "checks": {
+        "sourceReferences": "116 tables match",
+        "groupDigestsAndAnchors": "23 source/canonical hashes and 3 retained HTML IDs match",
+        "scenarioAudit": "--write and --check pass",
+        "relativeLinksAndDerivedDigests": "2891 relative paths and 341 derived digests checked; global checker still fails only recorded my_profile source drift",
+        "productTests": "not executed; selected existing assertions read only",
+        "releaseScope": "known global date discrepancy remains; unchanged checker not rerun"
       }
     }
   },
