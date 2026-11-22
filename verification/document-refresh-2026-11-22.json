@@ -320,7 +320,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -402,7 +404,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4794,9 +4798,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "78ebcf25b77e9383c839558995f97371da4a495d02f6b9bf6ecad5e399459f13",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_deposit_20261122"
+      ],
+      "reviewedSha256": "9e377df635b5fb2423095d2d8f387a6144c525366652fd6133108fe0e2be875c"
     },
     {
       "path": "docs/features/F21-07.html",
@@ -4804,9 +4811,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "bc6bc3dce760157892e07c43bdbd5c67a6b40fd5a72ea1dca562eee65802fc90",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_bulk_20261122"
+      ],
+      "reviewedSha256": "effd19f84d0be624ace34eb5c7621afdad812f9f3232a828459a3c7e108dcbd0"
     },
     {
       "path": "docs/features/catalog.html",
@@ -5345,7 +5355,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5460,7 +5472,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5599,7 +5613,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -8228,10 +8244,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "d1a55c00a89affda9820c1683cae9502639b09c6800588ea756834d51d90bc0a",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_deposit_20261122"
+      ],
+      "reviewedSha256": "7a709026f73e78d121b354bb762414e426803220c49f80a0f58dbe686bd32d3b"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
@@ -8239,10 +8257,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "4739735d0b093112205d1125adddb22d30cf6c0833f231fcea71a249ca8ebc8b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_bulk_20261122"
+      ],
+      "reviewedSha256": "437e2cf619baa542fbd8e0a06d44b8be414678ef1c4ab1d9734b079de937593b"
     },
     {
       "path": "prd/03_policy_prds/notification_policy_prd.md",
@@ -8590,7 +8610,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8857,7 +8879,9 @@
         "dispute_intake_20261122",
         "dispute_query_20261122",
         "dispute_evidence_20261122",
-        "support_20261122"
+        "support_20261122",
+        "curated_bulk_20261122",
+        "curated_deposit_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -40258,6 +40282,401 @@
         "sourceReferences": "코드 위치 표 158개가 실제 소스와 일치합니다.",
         "groupDigests": "52 source/canonical digests; 12 retained HTML IDs",
         "derivedDocuments": "8 documents; shared batch verified 8 paths, 49 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
+      }
+    },
+    "curated_bulk_20261122": {
+      "kind": "source_review",
+      "scope": "F21-07 정기모임 직접 묶음배정/회차별 영구명령 정산, 호스트 이전 필터/다음회차/교체, 실제 앱 입구·키·갱신 범위 대조",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+          "sha256": "a071d34fe7ecedc9b2d6d5d907222f335285d0fd7717eb2d86aef8b202928178",
+          "reviewScope": "57-116 클래스 PROVIDER 게이트와 두 묶음 HTTP 계약·settlement safetyExit/요청키/배열"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentService.java",
+          "sha256": "b14d20701ef3f8cb550f889158a6594102d0026f7b56f43726b6030f7e2d9224",
+          "reviewScope": "108-244 직접 생성/자기배정·자격/차단/outbox·묶음 회차 잠금/active skip/단일 트랜잭션"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentResponseService.java",
+          "sha256": "8331b489b2b64afe25f991d24ca565d89eea8b6a1c7214540a5c72d7f9f34dec",
+          "reviewScope": "30-46 묶음 서비스 호출 뒤 VO 변환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentBulkSettleService.java",
+          "sha256": "7fd53934d47815446e89f1b49033005867ad33a0abacf0a53249dd4278973507",
+          "reviewScope": "전체 반복·권한·active 조회·배정별 영수증·예외 분류/범위·마지막 eventTitle 결합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedEventAccessAdapter.java",
+          "sha256": "b4256ec4b2809c5cbbc8f0895044b4828a2fa3aa0add8fe3bd8d8e5337c2720f",
+          "reviewScope": "103-143,192-214 잠근 묶음 생성/읽는 묶음 정산 회차 필터·sequence 복원"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/regularmeeting/service/RegularMeetingSessionOwnership.java",
+          "sha256": "71ef73b1897973b0fee8349037f08204553eb10497af32eb071ee5c1fb06fd2b",
+          "reviewScope": "전체 retained=정기모임 현재호스트와 회차호스트 불일치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/repository/ServiceAssignmentRepository.java",
+          "sha256": "6597ecd98937b187f60e17f7569a4a2ea42169ebe17747af3a5565301e463323",
+          "reviewScope": "24-63 잠금·active 배정 조회·교체 잠금"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/AssignmentStatus.java",
+          "sha256": "3b8b5e3db9d873a6c70da57c5ef50520efe23fd64636b321ba7b2794c5685759",
+          "reviewScope": "전체 active 집합과 terminal/전이 구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentCreateParam.java",
+          "sha256": "58f27df3a27b056d19150dbfbe15cc5ec859d93a7efdf26ce5694606b8c679cf",
+          "reviewScope": "전체 providerUserId/providerRole만 정의"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentBulkSettleParam.java",
+          "sha256": "9af07f940c99b583e0c16ffa57a49d5cfaab6b6cdbe97410ac270210ceb86e29",
+          "reviewScope": "전체 providerUserId"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentBulkSettleResultVo.java",
+          "sha256": "eed74c1386e08ee7f5239f3b225d0fc5e4ec31fb0b7e7fda51fe1c146e768bb7",
+          "reviewScope": "전체 eventId/assignmentId/status/reason/eventTitle"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/BulkSettleStatus.java",
+          "sha256": "f9e676001ce9b39713bd94ae77dc18f9c3808cd51bfa6e0524442521f1ea133d",
+          "reviewScope": "전체 서버6값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentSettlementService.java",
+          "sha256": "7d60d200c836e5eeb4eabd5737ee628449b54944daa522f3d542d2543d12d32b",
+          "reviewScope": "75-138 단일 정산 eventId/권한/게이트 후 잠금·수익승인·계약금적용; 상세 게이트는 별도 F21-03 검토 예정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedNextOccurrenceListener.java",
+          "sha256": "d3581c691f84266ceef7c21d9a6c904a2a8a593599aa4c3b3888051f6d6a69c1",
+          "reviewScope": "전체 봉인/terminal/중복/자격 제외·ASSIGNED 생성·수락terms v1복제/새 정책·재원과수락미복제"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedSessionReplaceListener.java",
+          "sha256": "be3b83aac44c50fda9805fd6936ed733768419bd6d486ed790c06c146dc3ea0e",
+          "reviewScope": "전체 사전잠금·종단/호스트불일치제외·eventId이동"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptTxRunner.java",
+          "sha256": "c6bd45fb1c135dfe54decbe01b8097c9911f5cbccd2e0caa3afdba2791b00337",
+          "reviewScope": "32-73 영수증저장/업무/결과직렬화 같은TX"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandType.java",
+          "sha256": "3c32fc39642a1ca348768b4b89a08f266da133802397570ffdeb3f5dabb8dffc",
+          "reviewScope": "ASSIGNMENT_BULK_SETTLE 정의와377-413 확정거절별도저장집합 미포함"
+        },
+        {
+          "path": "community_app/lib/data/api/service_assignment_api.dart",
+          "sha256": "9367ccc03fd8974b6b59c75cefafd670f64848faee5cf57d6fd036a02135e769",
+          "reviewScope": "256-269 두 묶음 요청/헤더/반환"
+        },
+        {
+          "path": "community_app/lib/data/repositories/service_assignment_repository.dart",
+          "sha256": "6909b2e13882d799c1c92bf47caa2adb7d82ecd1bca32d946cd8f5e3addaedd7",
+          "reviewScope": "369-390 두 묶음 Result 래핑"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_bulk_settle_result_vo.dart",
+          "sha256": "0623e3ace8d3ead5b1578eb45d8103084fb4d8282b3d5ba86d646068fc116b86",
+          "reviewScope": "전체6상태+UNKNOWN·라벨·success/needsHostAction·nullable eventTitle"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/regular_meeting_bulk_settle_screen.dart",
+          "sha256": "934194c1ddbcf8fffe405877685977644d25664e5053d0db7a3dc238617d0011",
+          "reviewScope": "전체 제공자 선택·중복실행방지·untimed fingerprint키/성공해제/실패유지·결과/제목/빈상태/배정focus"
+        },
+        {
+          "path": "community_app/lib/domain/providers/curated/service_assignment_provider.dart",
+          "sha256": "6cfaaede57dd5cf9f73679c932e97149c44cc8c801df3e0fa5ab75751b113d51",
+          "reviewScope": "527-565 묶음 정산 success회차 신호/커밋가능실패 known회차만 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/event_assignments_screen.dart",
+          "sha256": "5496abec9e73dd989ec46026b8a358f5379b4c8a439ea071e0431acd9533ec6f",
+          "reviewScope": "174-188 focusAssignmentId 카드강조 전달"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "86-101,159-289 요청키·배정키 해시·원자실행/중복재생·거절기록선택·저장결과 오류"
+        },
+        {
+          "path": "community_app/lib/domain/providers/regular_meeting/regular_meeting_write_command.dart",
+          "sha256": "e341b0b94a904b58cc02fca9d37737c5267306e28057f537f33c429ab5da066f",
+          "reviewScope": "213-222 묶음 생성 Repository직접반환·무효화없음"
+        },
+        {
+          "path": "community_app/lib/presentation/regular_meeting/screens/regular_meeting_detail_screen.dart",
+          "sha256": "8ca36550cc47214be0bfc39c6215ff1e945549cd55555f6fc7d573e72a83833c",
+          "reviewScope": "225,1068-1095,1384-1400,1506-1541 호스트입구/계정ticket·성공토스트·봉인새배정숨김/정산유지"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/regular_meeting_routes.dart",
+          "sha256": "444802f09b9f2c3983da1b3c7626c75f2641f09749a2ec04eaeebb3f27a729ad",
+          "reviewScope": "132-142 묶음정산 hostOnly redirect"
+        },
+        {
+          "path": "community_app/lib/core/utils/idempotency_key_holder.dart",
+          "sha256": "c9506dcb207c5cb3a07844f41c62643d31742e787f5d523e999d6c9052e1a295",
+          "reviewScope": "7-149 untimed키의 fingerprint재사용·complete·메모리보관"
+        }
+      ],
+      "reuses": [
+        "plan_event_review_20261122",
+        "regular_meeting_commands_20261122",
+        "regular_meeting_participation_20261122",
+        "regular_meeting_reads_20261122",
+        "support_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
+          "sha256": "437e2cf619baa542fbd8e0a06d44b8be414678ef1c4ab1d9734b079de937593b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F21-07.html": [
+          "sidebar",
+          "launch-strip",
+          "host-transfer-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "두 묶음 Controller 계약 연결",
+        "host-transfer-current 앵커 보존",
+        "units 미존재 유지"
+      ],
+      "followUpFindings": [
+        "DRAFT 승계 결함 주장은 현재 ASSIGNED로 해소",
+        "CreateParam assignmentSource 없음",
+        "회차별 영구 영수증과 부분 실패 재시도",
+        "앱 호스트 redirect/제목/빈상태 존재",
+        "묶음 생성 후 무효화 없음",
+        "정산키 화면 메모리 보관·실패 갱신은 알려진 회차 한정"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 160개가 실제 소스와 일치합니다.",
+        "groupDigests": "29 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 4 paths, 30 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
+      }
+    },
+    "curated_deposit_20261122": {
+      "kind": "source_review",
+      "scope": "F21-06 현행 method-only 계약금·수락조건 권위·봉인/금액/자격·영구 명령 기록/앱 영속키·조회/버튼·PENDING취소/정산/forfeit",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentPrepaymentService.java",
+          "sha256": "a2a34f22d1108c46b59e608891676f083341d54d37441910180e5d3edfbb56a8",
+          "reviewScope": "전체 method-only·event/권한/봉인/상태/지급자격·수락terms X/D·중복/유상지출·PAID·활동래치·연결검증/PENDING취소"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentPrepaymentCreateParam.java",
+          "sha256": "cf72aedc275e8fdee866ec5b418e186549e2e7ae571b7e755e8628fc5d6e73e7",
+          "reviewScope": "전체 method 하나"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentPrepaymentVo.java",
+          "sha256": "159426f37e55053403ed8344caad10d2fbcd07f371088bd1c75207373f9a26cb",
+          "reviewScope": "전체 응답 필드/BigDecimal·시각/적용상태"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentTermsService.java",
+          "sha256": "0db0315dbe06489d410e86c7d65908a4939d930a3198abac14b583e9bf34832a",
+          "reviewScope": "73-286,310-343 제안/견적/수락권한·버전/만료·D0/D양수 금액권위·financial잠금/offering필수"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/model/ServiceAssignment.java",
+          "sha256": "0d11291a144cfa7b4d007a7c70003b6e6784764e4456ee439fd1920678983e5e",
+          "reviewScope": "190-222 현재terms 수락검사·financial활동시각래치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentActionPolicy.java",
+          "sha256": "6dcd3ff1a0ecdf2bfe19235c98a1aaa7b01d5b4a54f75a218dfcd02914ccd52c",
+          "reviewScope": "80-105,196-228 호스트PAY_DEPOSIT/CANCEL_DEPOSIT와실제허용조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/CuratedSealPolicy.java",
+          "sha256": "bb0385b32d49cdf342b2c2c0d87b2c23349a280ca5d31b7bd1bf501b49f04180",
+          "reviewScope": "45-89 봉인잔여결제 moneyAttached=PAID계약금 또는실제moneycharge"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderEarningAdapter.java",
+          "sha256": "e19e390d3a71e63fa8d1eaf8355d388c09427fb5a4dd48698cc47b41434cd8b1",
+          "reviewScope": "117-151 청산원장/계약금별rate계산·CreatorEarning PENDING·원장적용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/PlatformFeePolicy.java",
+          "sha256": "50b61ee463b5c64d6fc4b70661f57d8d4a49878e3c4f4b89fdd5e936cbec0faf",
+          "reviewScope": "전체 현재5%/정책version·분류·fee HALF_UP/tax fee차감후 HALF_UP"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/ServicePrepaymentMethod.java",
+          "sha256": "5428fb1f750d94b42865637009e86dc0e0baad44d9880d3f9f8a0f3e05fcf207",
+          "reviewScope": "전체 WALLET/BANK_TRANSFER"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/ServicePrepaymentStatus.java",
+          "sha256": "d507b47a2f62885c433f18102aa5d7d1e5caddf14cc2d973bc24e303e94bba02",
+          "reviewScope": "전체 PENDING/PAID/CANCELED"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/PrepaymentApplicationType.java",
+          "sha256": "0925009e93396507808fb118b72da22c3d5a0008f5010aaede144dac563a5d79",
+          "reviewScope": "전체 APPLIED_TO_PROVIDER/FORFEIT_TO_PROVIDER"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentVo.java",
+          "sha256": "cf5a2301d490f5f7df46b06c836f509d0d630b3118281572d70abcd21a693061",
+          "reviewScope": "37-51 총액/계약금/상태·적용요약필드"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_params.dart",
+          "sha256": "016ad6aa4c169040c724321fd6ae02b576c8d4eee4481163c124f0a3d107e939",
+          "reviewScope": "168-177 method WALLET 기본값만존재"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_prepayment_vo.dart",
+          "sha256": "5300d07035430228a9871853c47f45dd7570b6e04b498dbcc846a219ea3fbc1d",
+          "reviewScope": "전체 응답double/nullable·3enum unknownfallback"
+        },
+        {
+          "path": "community_app/lib/data/models/curated/service_assignment_vo.dart",
+          "sha256": "47bfdd17f8f81bc73a54083cf1063e5b38bc50c8904ba571006f001932d48ce4",
+          "reviewScope": "248-268 총액/계약금요약 double/nullable 필드"
+        },
+        {
+          "path": "community_app/lib/core/storage/member_command_intent_store.dart",
+          "sha256": "d85e229469c90416470855e28ac8c4d6a14ab25736be4fd7b3cbaac56ebeeed3",
+          "reviewScope": "298-331,553-617 동일의도키 재사용·SharedPreferences읽기/쓰기·파싱/저장실패거절"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+          "sha256": "a071d34fe7ecedc9b2d6d5d907222f335285d0fd7717eb2d86aef8b202928178",
+          "reviewScope": "129-164 계약금필수키/201·PENDING취소200무본문·배정GET"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentService.java",
+          "sha256": "b14d20701ef3f8cb550f889158a6594102d0026f7b56f43726b6030f7e2d9224",
+          "reviewScope": "389-466 계약금대표선정/요약/actions;913-935 배정취소권한/분쟁/forfeit/참가자과금반환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentSettlementService.java",
+          "sha256": "7d60d200c836e5eeb4eabd5737ee628449b54944daa522f3d542d2543d12d32b",
+          "reviewScope": "75-138,166-301,437-470 전체게이트/금전과금합계+계약금=X·수익적용/승인·취소forfeit"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/policy/SpendPolicyRegistry.java",
+          "sha256": "eb72d347f3b9f16df0a76e89db6faaadf00bf5d5b5b95a92f5f7d38b7bf32c9a",
+          "reviewScope": "89 계약금PAID_ONLY/SERVICE_PREPAYMENT/NONE 정책"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/FeePolicyType.java",
+          "sha256": "cc254fe0d2098dbfa5a9c2bd2227b7c20f25293bc66b43fd6798642aae6080c8",
+          "reviewScope": "35 WITHHOLDING_TAX 기본0.033"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "curated_bulk 동일 SHA:86-101,159-289 요청키/대상본문해시·원자실행·거절저장선택·중복결과재생"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptTxRunner.java",
+          "sha256": "c6bd45fb1c135dfe54decbe01b8097c9911f5cbccd2e0caa3afdba2791b00337",
+          "reviewScope": "curated_bulk 동일 SHA:32-73 영수증/업무/결과직렬화 한TX"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandType.java",
+          "sha256": "3c32fc39642a1ca348768b4b89a08f266da133802397570ffdeb3f5dabb8dffc",
+          "reviewScope": "377-413 ASSIGNMENT_PREPAY 확정거절기록대상과묶음정산차이"
+        },
+        {
+          "path": "community_app/lib/data/api/service_assignment_api.dart",
+          "sha256": "9367ccc03fd8974b6b59c75cefafd670f64848faee5cf57d6fd036a02135e769",
+          "reviewScope": "219-235 계약금결제키/취소무키 계약"
+        },
+        {
+          "path": "community_app/lib/data/repositories/service_assignment_repository.dart",
+          "sha256": "6909b2e13882d799c1c92bf47caa2adb7d82ecd1bca32d946cd8f5e3addaedd7",
+          "reviewScope": "308-336 결제/취소Result 반환"
+        },
+        {
+          "path": "community_app/lib/domain/providers/curated/service_assignment_provider.dart",
+          "sha256": "6cfaaede57dd5cf9f73679c932e97149c44cc8c801df3e0fa5ab75751b113d51",
+          "reviewScope": "46-153,373-399 결제 영속명령/성공·불명배정지갑신호·PENDING취소 성공refresh"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/event_assignments_screen.dart",
+          "sha256": "5496abec9e73dd989ec46026b8a358f5379b4c8a439ea071e0431acd9533ec6f",
+          "reviewScope": "205-239,333-353,416-432,554-577,1117-1167 요약문/서버actions버튼·확인/SessionScope/토스트"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "18-277 계정/세션/의도 singleflight·저장후전송·확정거절판정/settle·실패보관"
+        }
+      ],
+      "reuses": [
+        "creator_earning_20261122",
+        "curated_bulk_20261122",
+        "market_purchase_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
+          "sha256": "7a709026f73e78d121b354bb762414e426803220c49f80a0f58dbe686bd32d3b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F21-06.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "계약금결제/취소/배정GET 세 Controller 계약 연결",
+        "units 미존재 유지"
+      ],
+      "followUpFindings": [
+        "과거 직접X/D입력 경로없음·조건수락 후 method만 전송",
+        "카탈로그결제CTA/요약필드/PENDING취소CTA 구현됨",
+        "봉인은 engagement만으로 돈있음 인정하지 않음",
+        "PAID계약금 수익적용은 정산/배정취소시",
+        "계약금키 계정별 영속보관·불명확실패 지갑/배정갱신"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 160개가 실제 소스와 일치합니다.",
+        "groupDigests": "31 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 4 paths, 30 relative links/anchors and 0 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"

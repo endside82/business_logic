@@ -394,8 +394,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F21-03 | 제공자 배정·정산 | [F21-03_provider-settlement_prd.md](02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | `source-first` | source-first 구현 확인 | 5 | 7 |
 | F21-04 | 제공자 배정·정산 | [F21-04_free-invite-host-subsidy_prd.md](02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | `source-first` | source-first 구현 확인 | 4 | 5 |
 | F21-05 | 제공자 배정·정산 | [F21-05_refund-clawback_prd.md](02_feature_prds/21_curated/F21-05_refund-clawback_prd.md) | `source-first` | source-first 구현 확인 | 5 | 5 |
-| F21-06 | 제공자 배정·정산 | [F21-06_engagement-prepayment_prd.md](02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | `source-first` | source-first 구현 확인 | 5 | 5 |
-| F21-07 | 제공자 배정·정산 | [F21-07_regular-meeting-bulk_prd.md](02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | `source-first` | source-first 구현 확인 | 4 | 6 |
+| F21-06 | 제공자 배정·정산 | [F21-06_engagement-prepayment_prd.md](02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
+| F21-07 | 제공자 배정·정산 | [F21-07_regular-meeting-bulk_prd.md](02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | `source-first` | source-first 구현 확인 | 2 | 5 |
 
 ## 누락/확인 필요
 

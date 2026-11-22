@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F21-06 계약금 선납 — community PRD</title>
+  <title>F21-06 수락 조건의 계약금 선납·적용·취소</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,234 +17,42 @@
           <a href="../domains/21-curated.html">21 서비스 제공자 배정·정산</a><span>›</span>
           F21-06 계약금 선납
         </div>
-        <h1>F21-06. 계약금 선납</h1>
-        <p class="lede">
-          호스트가 제공자를 섭외할 때 사전에 약정 금액을 정하고 그 일부를 계약금으로 미리 지불하는 방식이다.
-          정산 시점에 계약금과 참가자 분담금의 합계가 약정액과 맞아야 정산이 완료된다.
-          배정이 취소되더라도 계약금은 돌아오지 않으며, 총액 보장 방식과는 동시에 사용할 수 없다.
-          직접 배정과 카탈로그 계약 모두 서버가 확정한 금액을 사용하며, 앱은 계약금 납부 필요 여부와
-          처리 상태에 맞는 버튼을 제공한다.
-        </p>
+        <h1>F21-06 수락 조건의 계약금 선납·적용·취소</h1>
+        <p class="lede">수락 조건을 금액 정본으로 하는 계약금, 영속 요청키·잔여 거래 봉인, 실제 상태/버튼과 정산·취소 귀속을 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">선납 주체</div><div class="value">호스트</div><div class="hint">호스트 지갑에서 계약금을 직접 지불</div></div>
-          <div class="metric"><div class="label">배정 취소 시 계약금</div><div class="value">제공자 귀속 (환불 없음)</div><div class="hint">섭외 확정 대가로 취소 시 반환되지 않음</div></div>
-          <div class="metric"><div class="label">다른 방식과 병용</div><div class="value">불가</div><div class="hint">총액 보장 방식과 동시 선택 금지 — 둘 중 하나</div></div>
-          <div class="metric"><div class="label">정산 완료 조건</div><div class="value">계약금 + 참가자 분담 = 약정액</div><div class="hint">합산이 맞아야 정산 진행 가능</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 제공자에게 섭외 확실성을, 호스트에게 비용 유연성을</span>
-          <p>강사나 전문 인력을 섭외할 때 참가자 모집 전에 제공자에게 "올 것을 확약"하는 수단이 필요하다.
-            계약금은 그 확약을 돈으로 표현한 것이다.
-            정산 단계에서 계약금이 약정액의 일부로 인정받으므로,
-            참가자 분담금 수금액이 약정액에서 계약금만큼 줄어드는 효과가 있다.
-            호스트는 처음부터 전액을 내지 않아도 제공자를 미리 확보할 수 있다.</p>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">2026-09-04 현재 상태 — 코드 완료, 출시 전</span>
-          <p>총액 보장 방식과 계약금 선납 방식은 한 배정에서 함께 쓸 수 없다. 카탈로그에서는 최신
-            계약조건의 총액과 계약금이 금액의 근거이고, 계약금이 있는 조건을 수락하면 결제 전에
-            계약이 먼저 생긴다. 서버가 지금 할 수 있는 조치를 상태와 함께 내려 주고 앱은 그 값으로
-            계약금 결제·취소 버튼을 연다. 신규 계약에서는 계약금과 이후 참가자 납부 각각에 5.00%
-            수수료를 걸며, 금액은 건별로 원 단위에서 반올림한다. 계약금 취소는 아직 결제가 끝나지
-            않은 상태에서만 되고, 지갑 결제는 성공과 동시에 납부 완료가 된다. 신규 거래는
-            <code>PROVIDER</code>와 플랫폼 결제 기반이 함께 열리기 전에는 막히며, 이미 성립한 계약의
-            종결만 열어 둔다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>계약금 선납이 없는 방식과 있는 방식의 차이</h2>
-        <p class="subtitle">방식을 선택하면 정산 때 숫자가 달라진다.</p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">총액 보장 방식 (계약금 선납 없음)</div>
-            <h3>참가자 분담금 합계가 약정액을 채운다</h3>
-            <p>호스트가 약정 금액을 설정하면 참가자 분담금 합계가 그 금액과 같아야 정산이 진행된다.
-              호스트는 미리 돈을 내지 않으며, 제공자는 모임이 끝난 뒤 약정 금액에서 수수료와 세금을
-              뺀 실수령액을 받는다.</p>
-            <p><strong>언제 쓰나</strong> — 참가자 수가 미리 확정되고, 모임이 성사될 것이 확실할 때.
-              제공자가 계약금 없이 섭외에 동의한 경우.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">계약금 선납 방식</div>
-            <h3>호스트가 계약금(D)을 먼저 내고, 나머지(X−D)를 참가자가 채운다</h3>
-            <p>호스트가 약정 금액(X)과 계약금(D)을 함께 설정하고 D를 먼저 지불한다.
-              정산 시 계약금 D가 제공자 수익의 일부로 인정되고,
-              참가자 분담금 합계가 X−D에 도달해야 정산이 완료된다.
-              합산(D + 참가자 분담)이 X와 일치해야 정산이 통과된다.</p>
-            <p><strong>언제 쓰나</strong> — 참가자 모집 전에 제공자를 확보해야 할 때.
-              제공자가 계약금 없이는 일정을 비워 주지 않을 때.</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>계약금 선납 전체 흐름</h2>
-        <p class="subtitle">계약금을 냈을 때 정산까지 어떻게 이어지는지.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["직접 배정: 약정 금액 + 계약금 입력"] --> B["호스트 지갑에서 계약금 차감<br/>정산 전까지 보관"]
-    B --> C["모임 진행 — 참가자 분담금 수금"]
-    C --> D{"배정 취소?"}
-    D -->|"취소됨"| E["계약금 → 제공자 귀속<br/>환불 없음<br/>참가자 분담금은 복원"]
-    D -->|"정상 진행"| F{"분담금 합계 = 약정액 − 계약금?"}
-    F -->|"맞지 않음"| G["정산 불가<br/>호스트가 미수금 보완 또는 과수금 조정 필요"]
-    F -->|"일치"| H["정산 실행<br/>계약금 + 참가자 분담 = 약정액 확인<br/>납부 건별 수수료·세금을 적용해 제공자 수익 생성"]
-          </div>
-        </div>
-        <div class="callout">
-          <span class="label">직접 배정과 카탈로그 계약이 같은 화면 규칙을 쓴다</span>
-          <p>카탈로그 조건을 수락해 계약이 먼저 생겨도, 계약금이 필요하고 아직 납부되지 않았다면
-            서버가 계약금 결제 조치를 내려 준다. 앱은 계약이 있다는 사실만으로 납부가 끝났다고 짐작하지
-            않고 이 조치에 따라 결제 버튼을 보여 준다. 금액은 앱이 다시 입력받지 않고 수락된 총액과
-            계약금을 그대로 쓴다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 정상 정산</div>
-            <h3>직접 배정에서 계약금을 내고 모임을 열어 정산까지 완료한다</h3>
-            <p>호스트가 강사와 약정 금액 20만 원에 합의하고 계약금 5만 원을 선납한다.
-              호스트 지갑에서 5만 원이 즉시 차감된다.
-              모임 당일 10명이 참석하여 각자 1만 5천 원씩 분담금을 낸다.
-              총 수금액 15만 원 + 계약금 5만 원 = 20만 원이 약정액과 일치하므로 정산이 실행된다.
-              강사 몫으로 잡히는 총액은 20만 원이다. 직접 지정한 이 예시의 플랫폼 수수료는 0%이며,
-              강사는 납부 건별 원천징수를 반영한 실수령액을 주간 지급에서 받는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 계약금 덕분에 호스트가 강사를 미리 확보하고,
-              참가자가 납부한 15만 원으로 나머지를 채워 계획대로 마무리된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">배정 취소</div>
-            <h3>계약금을 냈는데 제공자 배정을 취소했다</h3>
-            <p>호스트가 갑작스러운 사정으로 제공자 배정을 취소한다.
-              이미 분담금을 낸 참가자들은 각자 전액을 돌려받는다.
-              그러나 호스트가 미리 낸 계약금은 제공자에게 귀속되어 돌아오지 않는다.
-              강사가 일정을 비워 두고 준비했으므로, 취소에 따른 손실 보상이다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 계약금은 섭외 확약의 대가이므로 모임 성사 여부와 무관하게
-              제공자에게 귀속된다. 호스트는 배정 취소를 결정할 때 계약금 손실을 감안해야 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">카탈로그 계약금</div>
-            <h3>D&gt;0 조건을 수락하고 계약금을 납부한다</h3>
-            <p>최종 수락 시 서버가 계약과 "계약금 납부가 필요함"을 먼저 기록한다.
-              결제 요청이 오면 서버가 수락된 총액과 계약금을 다시 확인하고, 앱에는 "계약금 결제"
-              조치를 내려 준다. 호스트가 누르면 서버가 확정한 계약금만 지갑에서 빠져 같은 계약에 붙는다.</p>
-            <p><strong>현재 결과</strong> — 직접 배정과 카탈로그 배정 모두 앱에서 계약금 납부까지 도달한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">합산 불일치</div>
-            <h3>참가자 분담금이 약정액에서 계약금을 뺀 금액과 맞지 않는다</h3>
-            <p>약정 20만 원 중 계약금 5만 원을 냈으므로 참가자 분담금 합계가 15만 원이어야 한다.
-              그런데 참가자 몇 명이 미납하여 합계가 12만 원에 그쳤다.
-              5 + 12 = 17만 원이 약정 20만 원과 다르므로 정산이 거부된다.
-              호스트가 미납분을 처리하거나 보완한 뒤 다시 시도해야 한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 계약금을 포함한 총합이 약정액과 정확히 맞아야
-              정산이 통과된다. 어림잡아 내보내는 정산이 허용되지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">방식 충돌 차단</div>
-            <h3>계약금 방식으로 배정을 만들었는데 총액 보장도 동시에 설정하려 한다</h3>
-            <p>호스트가 계약금과 별도로 총액 보장도 함께 걸려 한다.
-              두 방식은 동시에 사용할 수 없으므로 요청이 거절된다.
-              호스트는 둘 중 하나를 선택해야 한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 두 방식의 검증 조건이 서로 다르므로 동시 적용 시
-              정산 기준이 충돌한다. 명확한 하나의 규칙으로만 정산이 진행된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">계약금 취소</div>
-            <h3>결제가 끝나기 전의 계약금만 취소할 수 있다</h3>
-            <p>계약금 취소는 아직 납부가 끝나지 않은 상태에서만 받아 준다.
-              지갑 결제는 성공과 동시에 납부 완료가 되므로, 보통의 지갑 결제 뒤에는 취소가 아니라 정산에
-              반영되거나 배정 취소 시 제공자에게 귀속되는 길로 간다.
-              취소할 수 있는 중간 상태는 드물게만 나타난다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 계약금은 결제를 마친 뒤 지갑으로 되돌리는 기능이 아니다.
-              호스트는 계약금 버튼을 누르기 전에 총액 보장 방식과 계약금 선납 방식 중 하나를 분명히
-              골라야 한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>계약금 방식을 선택할 때 알아야 할 것</h2>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:160px">항목</th><th>총액 보장 방식</th><th>계약금 선납 방식</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>호스트 사전 지출</strong></td>
-                <td>없음</td>
-                <td>계약금(D) 미리 차감</td>
-              </tr>
-              <tr>
-                <td><strong>배정 취소 시 호스트</strong></td>
-                <td>참가자 환불만 발생</td>
-                <td>계약금은 돌아오지 않음</td>
-              </tr>
-              <tr>
-                <td><strong>배정 취소 시 제공자</strong></td>
-                <td>수령 없음</td>
-                <td>계약금(D) 귀속 수령</td>
-              </tr>
-              <tr>
-                <td><strong>정산 검증 기준</strong></td>
-                <td>참가자 분담 합계 = X</td>
-                <td>계약금 + 참가자 분담 합계 = X</td>
-              </tr>
-              <tr>
-                <td><strong>동시 사용</strong></td>
-                <td>계약금과 동시 사용 불가</td>
-                <td>총액 보장과 동시 사용 불가</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">계약금은 취소되어도 돌아오지 않는다 — 호스트가 인지하고 실행해야 한다</span>
-          <ul>
-            <li><strong>계약금 선납은 취소 시 손실로 이어진다.</strong>
-              호스트가 계약금을 낸 뒤 모임을 취소하면 그 금액은 제공자에게 귀속된다.
-              "계약을 확약한 대가"이므로 운영자가 별도로 돌려주는 수단이 없다.
-              호스트에게 사전에 이 조건을 명확히 안내해야 분쟁을 줄일 수 있다.</li>
-            <li><strong>계약금을 포함한 합산이 약정액과 정확히 일치해야 정산이 통과된다.</strong>
-              계약금 D원과 참가자 분담금 합계의 총합이 약정액 X원과 다르면 정산이 거부된다.
-              미납 참가자가 있거나 과수금이 생긴 경우 호스트가 직접 조정해야 한다.</li>
-            <li><strong>계약금 방식과 총액 보장 방식은 동시에 선택할 수 없다.</strong>
-              두 방식의 정산 검증 기준이 달라서 동시 적용이 허용되지 않는다.
-              배정을 만들기 전에 방식을 먼저 결정해야 한다.</li>
-            <li><strong>취소 가능 여부는 배정 확정 여부가 아니라 계약금 납부 상태로 갈린다.</strong>
-              서버는 아직 납부가 끝나지 않았을 때만 취소 조치를 내려 주고 앱도 그때만 버튼을 보여 준다.
-              지갑 결제는 그 자리에서 납부 완료가 되므로, 결제를 마친 뒤에는 취소가 아니라 정산 반영
-              또는 배정 취소 시 제공자 귀속으로 이어진다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>호스트 또는 권한 있는 공동 주최자가 수락된 제공자 계약의 계약금 D를 자신의 지갑으로 결제한다. 총 보수 X와 계약금 D는 수락 조건과 연결된 engagement에서 읽는다. 현재 결제 본문은 method 하나이며 사용자가 이 요청에서 X/D를 직접 입력하지 않는다. terms 없는 직접 배정에서 금액을 입력해 새 engagement를 만드는 옛 흐름은 현재 결제 API가 제공하지 않는다.</p>
+<p>앱 배정 화면은 서버 actions의 PAY_DEPOSIT 허용 여부로 ‘계약금’ 버튼을 표시한다. engagement가 있다는 이유만으로 숨기는 옛 canPrepay 조건은 없다. 확인 대화상자에 조회한 총 보수와 계약금을 보여주고 WALLET 요청을 보낸다. PENDING 취소 버튼과 계약금 금액·처리 상태 표시도 현재 구현에 존재한다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>입력</th><th>반환</th></tr></thead><tbody><tr><td>POST /api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/wallet</td><td>ServiceAssignmentPrepaymentCreateParam(method), 필수 Idempotency-Key</td><td>201 ServiceAssignmentPrepaymentVo</td></tr><tr><td>POST /api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/{prepaymentId}/cancel</td><td>본문·요청키 헤더 없음</td><td>200, 본문 없음</td></tr><tr><td>GET /api/v1/events/{eventId}/assignments</td><td>eventId</td><td>List&lt;ServiceAssignmentVo&gt;, 계약금 요약과 행동 목록 포함</td></tr></tbody></table></div>
+<p>WALLET/BANK_TRANSFER가 method enum에 있지만 현재 이 결제 함수는 WALLET만 허용한다. null이나 다른 method는 ASSIGNMENT_PREPAYMENT_METHOD_UNSUPPORTED다. Flutter 기본 method는 WALLET이며 서버 enum의 존재를 계좌이체 계약금 기능의 구현으로 설명하지 않는다.</p>
+<p>결제 응답은 id, engagementId, payerUserId, amount, method, status, pointTxId, paidAt, canceledAt, applicationType, appliedAmount, creatorEarningId, appliedAt, createdAt이다. 결제와 적용 시점이 다르므로 적용 필드와 취소·납부 시각은 비어 있을 수 있다. Java BigDecimal 금액은 앱 double로 매핑한다.</p></section>
+<section id="current-3"><h2>금액의 근거와 수락</h2><p>조건 변경은 offeringId가 있고 알려진 상품 분류인 배정에서 허용한다. 과금 기록·PAID/PENDING 계약금 또는 financialActivityStartedAt이 있으면 변경을 막는다. 제공자 견적은 미래 expiresAt이 필요하고, 수락은 만료·현재 조건 버전·수락 주체를 검사한다. 호스트 제안은 수락 순간 현재 수수료 정책 버전을 확인하며, 제공자 견적은 견적에 저장된 정책을 사용한다.</p>
+<div class="table-wrap"><table><thead><tr><th>수락 조건</th><th>배정 금액 상태</th></tr></thead><tbody><tr><td>D=0</td><td>serviceFeeGross=X, 기존 engagement가 있으면 취소 처리 후 연결 해제</td></tr><tr><td>0&lt;D&lt;X</td><td>engagement의 agreedProviderFee=X, requiresDeposit=true, serviceFeeGross=0</td></tr></tbody></table></div>
+<p>자기 배정의 양수 계약금은 수락 단계에서 거절한다. 수락된 버전은 acceptedTermsVersion에 기록한다. 계약금 결제는 현재 조건과 수락 버전이 일치하고 engagement가 있어야 하며, X는 engagement, D는 수락된 terms에서 읽는다. 결제 본문에는 agreedProviderFee·amount·expectedTermsVersion이 없다. 앱 확인 문구의 금액은 직전 조회값이고 실제 결제 금액의 권위는 요청 처리 시 읽는 수락 조건이다.</p></section>
+<section id="current-4"><h2>결제 권한과 처리 순서</h2><p>배정 행을 잠근 뒤 URL의 eventId와 실제 배정 eventId가 다르면 NOT_FOUND로 거절한다. PROVIDER 봉인 중에는 기존 돈이 붙은 배정인지 검사한 뒤 이벤트 호스트/공동 주최자 권한을 검사한다. 봉인 예외는 PAID 계약금 또는 취소되지 않은 실제 금전 과금 행이 있을 때다. FREE_EXCLUDED 표시나 engagement 존재만으로 새 결제를 허용하지 않는다.</p>
+<p>ACCEPTED/CONFIRMED만 결제할 수 있다. 호출자 자신이 제공자이면 ASSIGNMENT_SELF_CHARGE, 제공자가 지급 가능한 상태가 아니면 ASSIGNMENT_PROVIDER_NOT_PAYABLE이다. 최신 조건 수락과 engagement 존재, 0&lt;D&lt;X, serviceFeeGross=0을 검사한다. 같은 engagement에 CANCELED 이외 계약금이 하나라도 있으면 중복을 거절한다.</p>
+<p>호출자 지갑의 활성 지급자 잠금을 확보하고 PENDING 계약금을 만든 뒤, SERVICE_ASSIGNMENT_PREPAYMENT 정책으로 실제 유상 포인트만 지출한다. 납부자 payerUserId는 호출자다. 무료 포인트를 섞는 정책은 아니다. 지갑 거래와 청산 원장을 기록한 뒤 pointTxId·PAID·paidAt을 같은 트랜잭션에서 저장한다. 성공 시 금전 활동 시작 시각도 고정한다.</p>
+<p>결제 시점에는 계약금을 보관하는 원장을 만들며 제공자 수익 적용·승인은 이후 정산 또는 배정 취소에서 한다. 정상 WALLET 요청은 같은 트랜잭션에서 PAID가 되어 지속적인 PENDING 단계를 일반 사용자 흐름으로 노출하지 않는다. 잔액 부족 등 실패는 업무와 명령 기록의 트랜잭션 규칙을 따른다.</p></section>
+<section id="current-5"><h2>요청키와 앱의 결과 처리</h2><p>서버는 ASSIGNMENT_PREPAY 영구 명령 기록에 행위자·종류·키와 이벤트/배정 대상·본문 해시를 결박한다. 업무와 결과를 함께 커밋하고 같은 명령은 최초 201 응답을 재생한다. 같은 키를 다른 대상/본문에 쓰면 충돌한다. 이 명령은 앱이 키를 정리하는 확정 거절을 별도 기록하는 집합에 포함되며, 불명확한 오류와 저장된 결과를 읽을 수 없는 경우를 구분한다.</p>
+<p>앱은 계정·명령 종류·배정 ID·직렬화 본문별 의도를 로컬 보관함에 저장하고 같은 의도는 같은 키를 사용한다. SharedPreferences 쓰기가 실패하거나 저장 형식이 잘못되면 요청을 보내지 않는다. 같은 세션의 동일 의도 동시 호출은 진행 중 Future를 공유한다. 보관 중 계정이 바뀌면 전송하지 않고 이전 세션 결과를 새 화면에 적용하지 않도록 공통 계정·세션 경로를 사용한다.</p>
+<p>성공 또는 공통 처리기가 확정으로 판단한 거절은 보관함 settle 경로로 넘기고, 불명확한 실패는 키를 유지한다. HTTP 403/404는 명령 내부 거절로 표시된 경우에만 확정으로 판단한다. 모든 오류에서 키를 새로 만든다고 설명하지 않는다. 이 영속 보관 흐름은 <a href="F21-07.html">묶음 정산</a>의 화면 메모리 키와 다르다.</p>
+<p>결제 성공, 커밋 가능 실패 또는 MEMBER_COMMAND_RESULT_UNAVAILABLE이면 배정 목록과 지갑 변경 신호를 발행한다. 서버에서 성공했는데 후속 목록 재조회가 실패한 것을 결제 재실행으로 바꾸는 구조가 아니다. 화면의 결제 확인·실행은 세션 범위에서 수행하고 성공/오류 토스트를 표시한다.</p></section>
+<section id="current-6"><h2>계약금 조회와 행동 목록</h2><p>배정 조회는 agreedGross, requiresDeposit, depositAmount, prepaymentId, prepaymentStatus, prepaymentPaidAt, prepaymentApplicationType, prepaymentAppliedAt을 제공한다. depositAmount는 수락 조건에서 가져온다. 계약금 행을 고를 때 CANCELED가 아닌 행을 우선하고 같은 우선순위에서는 큰 ID를 선택한다.</p>
+<p>PAY_DEPOSIT 행동은 봉인·상태·최신 수락·engagement·자기 거래·제공자 지급 가능·미적용 PAID/PENDING 존재를 검사한다. CANCEL_DEPOSIT 행동은 호스트 시점에서 PENDING일 때 허용한다. 실제 명령은 다시 eventId·권한·계약금 연결·상태를 검사한다. 앱은 서버 허용 행동에 대응하는 버튼을 만들며 호출자의 추측으로 행동을 생성하지 않는다.</p>
+<p>requiresDeposit=true이고 depositAmount가 있으면 카드에 계약금 요약을 표시한다. 결제 전, 처리 중, 결제 완료·정산 대기, 제공자 정산 반영, 배정 취소로 제공자 귀속, 취소됨·다시 결제 가능, 알 수 없음 상태를 구분한다. PAID라는 결제 상태만으로 이미 제공자에게 정산 적용되었다고 판단하지 않고 applicationType을 함께 읽는다.</p></section>
+<section id="current-7"><h2>정산 적용과 수수료</h2><p>정산은 종료·CONFIRMED·최신 조건 수락·이행·참가자별 수금·제공자 지급 가능·유효 수익 연결 등 전체 게이트를 통과해야 한다. 계약금 합계만 일치하면 항상 정산되는 것은 아니다. 정산에 포함되는 취소되지 않은 금전 과금 행의 합계 C에는 호스트 대납 등도 포함하며 FREE_EXCLUDED는 제외한다.</p>
+<p>engagement가 있으면 PAID이고 아직 applicationType이 없는 계약금을 찾는다. 필수 계약금이 없으면 ASSIGNMENT_PREPAYMENT_REQUIRED이고 C+D가 engagement의 X와 다르면 ASSIGNMENT_FEE_MISMATCH다. 예를 들어 X=100,000원, D=30,000원일 때 금전 과금 합계 C=70,000원이어야 이 금액 검사를 통과한다.</p>
+<p>통과하면 계약금의 별도 CreatorEarning을 만들고 참가자 과금 수익과 함께 승인한다. 배정은 SETTLEMENT_LOCKED, 계약금 applicationType은 APPLIED_TO_PROVIDER, appliedAmount와 appliedAt은 적용액·시각으로 기록한다. 계약금 status 자체는 PAID를 유지한다. 수익 승인과 실제 제공자 지급 완료는 다르다.</p>
+<p>계약금 수익은 배정 feeRateSnapshot을 사용한다. 현재 신규 정책은 5%이고, 계약금 단위로 수수료= D×rate를 원 단위 HALF_UP, 원천징수=(D−수수료)×3.3%를 다시 HALF_UP 처리한다. 순액은 D−수수료−원천징수다. 과거 계약의 저장 rate와 현재 신규 rate를 같다고 가정하거나, 참가자 과금과 계약금을 합친 X에 단 한 번 계산한 값으로 대체하지 않는다. 이는 현재 코드 계산 설명이며 세무 승인이나 실지급 검증 기록이 아니다.</p></section>
+<section id="current-8"><h2>처리 중 취소와 배정 취소</h2><p>처리 중 취소 API는 배정을 잠그고 URL eventId·호스트 권한·prepaymentId의 engagement 연결을 검사한 뒤 PENDING만 CANCELED·canceledAt으로 바꾼다. PAID를 이 API로 환불할 수 없다. 앱에 확인 대화상자와 버튼이 있으며 성공 후 배정 목록을 다시 읽는다. 이 명령에는 결제 요청키 헤더가 없고, 일반 WALLET 납부는 즉시 PAID이므로 이 버튼이 나타나는 실제 중간 상태와 정상 결제 완료를 구분한다.</p>
+<p>배정 취소는 별도 업무다. 실제 배정 eventId·호스트 권한·열린 분쟁 없음·허용 상태 전이를 검사하고 CANCELED로 바꾼다. 금전 종료 범위를 잠근 뒤 PAID·미적용 계약금이 있으면 제공자 수익으로 적용·승인하고 applicationType=FORFEIT_TO_PROVIDER로 기록한다. 계약금을 납부자에게 반환하는 함수가 아니다. 이어 참가자 과금 종료 처리를 실행한다. 참가자 납부 반환과 제공자 계약금 귀속을 하나의 환불로 합치지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>method enum의 BANK_TRANSFER는 현재 계약금 지갑 함수가 지원하지 않는다.</td><td>지갑 경로만 현재 실행 계약으로 적는다.</td></tr><tr><td>Risk</td><td>PAID 계약금은 PENDING 취소로 환불되지 않고 배정 취소 시 제공자에게 적용한다.</td><td>결제 취소·배정 취소·참가자 반환을 분리한다.</td></tr><tr><td>Risk</td><td>결제 요청은 method만 받으며 확인 화면의 금액과 요청 시 수락 조건 사이에 버전 입력이 없다.</td><td>서버 수락 조건이 결제 금액의 정본임을 밝힌다.</td></tr><tr><td>미검증</td><td>디스크 실패 복구·잔액 차감·동시 재전송·실제 수익 지급·실기기 표시를 이번에 실행하지 않았다.</td><td>소스 근거와 제품 실행 결과를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 금액 권위:</strong> 결제 본문은 method뿐이고 현재 수락 terms·engagement에서 X/D를 읽는다.</li><li><strong>AC-02 결제 권한:</strong> URL 범위·호스트/공동 주최자·상태·지급 자격·자기 거래·잔여 거래 봉인을 검사한다.</li><li><strong>AC-03 금액과 중복:</strong> 0&lt;D&lt;X, serviceFeeGross=0과 활성 계약금 중복 거절을 따른다.</li><li><strong>AC-04 돈 기록:</strong> 유상 지갑 차감·청산 원장·PAID·금전 활동 시각을 한 업무로 저장한다.</li><li><strong>AC-05 키와 복구:</strong> 서버 최초 결과 재생과 앱 계정별 영속 키·저장 실패 전송 금지·동시 의도 공유를 구분한다.</li><li><strong>AC-06 조회와 입구:</strong> 수락 금액·계약금 상태/적용 타입·서버 행동으로 현재 결제/처리 중 취소 버튼을 제공한다.</li><li><strong>AC-07 갱신:</strong> 성공·커밋 가능 실패·저장 결과 불명에서 배정/지갑 신호를 보내고 계정·세션 경계를 지킨다.</li><li><strong>AC-08 정산:</strong> 전체 게이트와 C+D=X를 통과한 뒤 수익 승인·APPLIED_TO_PROVIDER를 기록한다.</li><li><strong>AC-09 취소:</strong> PENDING만 단독 취소하며 배정 취소의 PAID 계약금은 FORFEIT_TO_PROVIDER로 적용한다.</li><li><strong>AC-10 계산 경계:</strong> 저장 수수료율·계약금별 원 단위 계산과 신규 정책·실지급/세무 승인을 구분한다.</li></ul>
+<p>근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

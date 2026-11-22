@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 56,
     "definitionOnlyEvidence": 75,
-    "traceMarkers": 792,
-    "verifiedTraceRecords": 790,
+    "traceMarkers": 797,
+    "verifiedTraceRecords": 795,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -21314,7 +21314,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F21-06",
       "domain": "제공자 배정·정산",
-      "name": "계약금 선납",
+      "name": "수락 조건의 계약금 선납·적용·취소",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
@@ -21325,10 +21325,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-06:1",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/wallet",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "payPrepaymentByWallet",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/wallet",
+                "targetLine": 130,
+                "methodLine": 131
+              }
+            ]
+          },
+          {
+            "id": "F21-06:2",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/{prepaymentId}/cancel",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "cancelPrepayment",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/prepayment/{prepaymentId}/cancel",
+                "targetLine": 147,
+                "methodLine": 148
+              }
+            ]
+          },
+          {
+            "id": "F21-06:3",
+            "label": "GET /api/v1/events/{eventId}/assignments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "listByEvent",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/assignments",
+                "targetLine": 160,
+                "methodLine": 161
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -21366,10 +21418,45 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-07:1",
+            "label": "POST /api/v1/regular-meetings/{meetingId}/assignments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "bulkAssignToRegularMeeting",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{meetingId}/assignments",
+                "targetLine": 84,
+                "methodLine": 85
+              }
+            ]
+          },
+          {
+            "id": "F21-07:2",
+            "label": "POST /api/v1/regular-meetings/{meetingId}/settlements",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "bulkSettleRegularMeeting",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/regular-meetings/{meetingId}/settlements",
+                "targetLine": 109,
+                "methodLine": 110
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
