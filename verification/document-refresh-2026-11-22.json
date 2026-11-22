@@ -255,7 +255,8 @@
         "email_code_auth_20261122",
         "session_and_social_unlink_20261122",
         "preference_tags_20261122",
-        "signup_social_onboarding_20261122"
+        "signup_social_onboarding_20261122",
+        "event_discovery_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2580,9 +2581,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "098180d6fb9878b1b8dba70f2be7aef42874298efe226f53faaebcfb89a5129d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_discovery_20261122"
+      ],
+      "reviewedSha256": "72c3b787c521b474c15d8f14864f3af91c9643947d8e34b7567815c5eb63c3d7"
     },
     {
       "path": "docs/features/F03-02.html",
@@ -4812,7 +4816,8 @@
         "email_code_auth_20261122",
         "session_and_social_unlink_20261122",
         "preference_tags_20261122",
-        "signup_social_onboarding_20261122"
+        "signup_social_onboarding_20261122",
+        "event_discovery_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4863,7 +4868,8 @@
         "email_code_auth_20261122",
         "session_and_social_unlink_20261122",
         "preference_tags_20261122",
-        "signup_social_onboarding_20261122"
+        "signup_social_onboarding_20261122",
+        "event_discovery_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4937,7 +4943,8 @@
         "bus_allocation_20261122",
         "layout_catalog_20261122",
         "reschedule_20261122",
-        "no_show_20261122"
+        "no_show_20261122",
+        "event_discovery_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5462,10 +5469,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "559a948f4323b8c67f008a835e39d4ce39d98d5bcb823ae7f0628792324d1cab",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_discovery_20261122"
+      ],
+      "reviewedSha256": "09b055b19b9d7f0db14535b032dc8e18c9ac87cd53afed9848f56b555a128b47"
     },
     {
       "path": "prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
@@ -7618,7 +7627,8 @@
         "bus_allocation_20261122",
         "layout_catalog_20261122",
         "reschedule_20261122",
-        "no_show_20261122"
+        "no_show_20261122",
+        "event_discovery_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8626,10 +8636,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "179e129254d50013c5e4d9d1378b728a309b70d64b040758b4c00969882f13a9",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_discovery_20261122"
+      ],
+      "reviewedSha256": "8ee73b4867ba59269cc8e05a4f9e11a8eaf053db2395ad1b4e4907c6628dcb16"
     },
     {
       "path": "units/03_event/F03-01_event-discovery/diagrams.md",
@@ -8637,9 +8649,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "217a5c27819508354e6370d114459d63438d891585044141a4b60ef66bab1ffd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_discovery_20261122"
+      ],
+      "reviewedSha256": "44f012fcc36e009b3a36526288101c06796bc8d1c9b07055227c996ecda5bc8c"
     },
     {
       "path": "units/03_event/F03-01_event-discovery/frontend.md",
@@ -8647,9 +8662,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "9926d6c6da0df57fda58c0bc9fb324aa4a6c84801b57eb2a22ec4f9df7bdb3f2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_discovery_20261122"
+      ],
+      "reviewedSha256": "507143fea6d58eb01ed9928a2b4be121e02c32ca2391081738c42e4deead7bd2"
     },
     {
       "path": "units/03_event/F03-01_event-discovery/scenarios.md",
@@ -8657,9 +8675,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "59675186795493fc7cc7d6123ee8b4cac2db10acc1b3577f01a0892fd92fdf42",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "event_discovery_20261122"
+      ],
+      "reviewedSha256": "f403efd6fd20189aef614c80489738fc094165869a7942d2aa4a995b36b9efce"
     },
     {
       "path": "units/03_event/F03-02_event-detail/backend.md",
@@ -14866,6 +14887,11 @@
         }
       },
       "scope": "노쇼 확정/소명/거절/번복·권한·기한·환불대기 제외·실제미참석·사후조정 원결제별 잔여배정·0원/개최권·알림/본인조회 문서 대조. 과거 위험 중 해소와 남은 앱 입구/조회 차이를 구분. 선택시험 단언만 읽음; 제품 시험·실제 지갑/정산·동시성·앱/푸시·운영설정 확인 아님. 전체 문서·최종 전달 미완료."
+    },
+    {
+      "command": "F03-01 문서 연결·시나리오 재생성/검사, source reference tests, 상대 경로·정본 SHA·HTML ID 대조, git diff --check",
+      "result": "코드 위치 표 108개 일치; 문서 검사 시험 11개 통과; 상대 경로 1707개·파생 정본 SHA 213개 오류 0; 이번 근거 28개 지문·기존 HTML ID 3개 유지; 기능 PRD 62/175 소스 대조",
+      "scope": "event_discovery_20261122. 제품 시험·실제 앱 검수 아님. ignored units 4개는 작업 트리에 보존하며 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -21906,6 +21932,173 @@
           "reason": "노쇼7개·조정4개·공통미리보기1개 실제 Controller 메서드 연결"
         }
       ]
+    },
+    "event_discovery_20261122": {
+      "kind": "source_review",
+      "scope": "F03-01 공개 목록 범위·차단·필터/정렬·페이지/재시도·홈/전체메뉴/역할별 생성 입구·유사 조회 후보/실패/빈 결과·실제 상세 구역. 소스와 기존 표적 단언 대조이며 제품 시험·실제 앱 검수 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/port/EventListSearchAdapter.java",
+          "sha256": "e9eace77706e061bac51bd987d96241e50c64bdca85fe25e32785ba63ec84e7e",
+          "reviewScope": "20–35 검색 Repository 위임과 차단 목록 전달."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventListAssembler.java",
+          "sha256": "28db19e6c1679ab0ff0752c22fdc9fa7c4cbc4bc518c8175d31e0209f965e4a6",
+          "reviewScope": "39–68 호스트·조회자 상태·사진 URL·정기모임 맥락의 페이지 매핑."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/service/SimilarEventService.java",
+          "sha256": "07827aafd889affb9eea6133c89e41f5dcf4944db3d17f3e578f20db0313260e",
+          "reviewScope": "24–144 기준 모임 조회·공개 미래 후보·차단/자신 제외·가중치 합·동률 정렬·limit 무보정·조회자 맥락."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "83 인증 추천 우선 선언;125 목록·139 상세·140 유사 GET 공개 허용 매처."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_list_provider.dart",
+          "sha256": "490a42a65bf894a040ad188e220651fcddd6672d4ba0871c7d9991c5dd0c2d0b",
+          "reviewScope": "21–123 기본 START_ASC·20개·계정/카드 변경 구독·필터 전달·첫 페이지 총수·조건 변경 재조회."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_list_screen.dart",
+          "sha256": "0170ae77e3b446b1744a907853e7046d1b5734ab5cd6263ac33dea00035ffaf5",
+          "reviewScope": "49–140 두 정렬·칩·시트 결과 병합;148–225 메뉴 기반 호스트 입구·제출 검색;242–260 카테고리 선택;360–501 빈 결과/새로고침/페이지 실패/카드·찜;515–618 시트 초안·초기화·적용."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/similar_events_screen.dart",
+          "sha256": "93d6fc00cc5e82c3cb06c417b7b7206170b8a6808588ef1af23aa87278b7262c",
+          "reviewScope": "20–98 같은 Provider의 세로 목록·빈 상태·상세 push·Async 오류 재시도. 더보기 추가 페이지 없음."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_branch_routes.dart",
+          "sha256": "24a8caede95210fb2439e4c17a7de5d75b11e9e21046817f26802ec58789e2ba",
+          "reviewScope": "19–24 이벤트 목록 실제 라우트와 화면."
+        },
+        {
+          "path": "community_app/integration_test/seed_event_list_badge_matrix_test.dart",
+          "sha256": "17818e36367acc8f06c3b86974779105106c7a38b689768860d0a96b6c1a24f6",
+          "reviewScope": "70–85 실제 목록 경로·전체·총 건수·날짜순·대표 제목 단언 읽기. 실행 안 함."
+        },
+        {
+          "path": "community_app/integration_test/seed_event_recommendation_empty_state_test.dart",
+          "sha256": "fcfcc5e24bd420972250fa1cd700c071933139458d0e97651cb4bd25d773dd18",
+          "reviewScope": "33–69 빈 Provider 대체 후 유사 더보기 제목·빈 문구 단언 읽기. 실제 서버/통신 실패 시험 아님."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d",
+          "reviewScope": "183–189 공개 목록 Page;228–236 인증 추천 Page;487–494 선택 인증 유사 List와 기본 limit 5."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/EventService.java",
+          "sha256": "0d3cfd4f4e5fcd048ff6eaab97f06d628c0971122e9d9ad410ebe733af79eb98",
+          "reviewScope": "86–104 목록 좌표/반경 검사·차단 호스트·목록 조립 호출. 다른 서비스 기능 전체 재검토 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/util/EventScope.java",
+          "sha256": "05fe1879bc701b17f35b3570df3617ce79e6c29680a7eecf4a140b44925e3041",
+          "reviewScope": "30–73 클럽 미소속·독립/정기모임·PUBLIC/APPROVAL·OPEN·hidden 제외."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/param/EventSearchParam.java",
+          "sha256": "ed10d3ffd08b32997ccaf9d2075e6a41315ea3d7806aad166d4e7557f130bf1d",
+          "reviewScope": "14–68 서버 검색 필드와 앱 필터 노출 범위의 차이."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/repository/EventSearchRepository.java",
+          "sha256": "b115402413528bf212e8d79b43ae256c5c4067eda7c4e7983725c134ba303724",
+          "reviewScope": "71–244 공개/차단·키워드 제목/설명·날짜/가격/지역·좌표 사각 경계·START_ASC 미래 조건·총수/페이지와 정렬 동률 기준."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/search/port/SearchEventAdapter.java",
+          "sha256": "c2e5654fbbef3a524a601ae4bedd6e3055b46e991e0b59ec3dd78c12fd899765",
+          "reviewScope": "58–65 기준 모임 직접 조회와 공개 미래 후보 Repository 연결."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/repository/query/EventQueryRepository.java",
+          "sha256": "e5e129bf297970ee4960e11d226048aca780efdb87884a384fb192d1196f7bbf",
+          "reviewScope": "527–535 공개 분류와 미래 시작 후보 조회. 다른 목록 함수 전체 재검토 아님."
+        },
+        {
+          "path": "community_app/lib/data/api/event_api.dart",
+          "sha256": "8571e82942da46e026411406040124aa33183130b790c764a2fbd019461772fd",
+          "reviewScope": "47–71 목록/추천 Page 요청 필드;192–196 유사 List와 limit."
+        },
+        {
+          "path": "community_app/lib/data/repositories/event_repository.dart",
+          "sha256": "277a0a59230e8cd8415ae0c79f8f5bd61e2dc7fd00ebaea676a3ac0547807fa9",
+          "reviewScope": "59–93 목록 요청 전달·Result 래핑;349–356 유사 List 요청과 실패 래핑."
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_detail_provider.dart",
+          "sha256": "be0016afe58e84a6b273bbd9c2ecdd04d53ef074b5dc39810a4fa47ddf2854e2",
+          "reviewScope": "125–137 유사 5개와 카드 변경 구독, Repository 실패를 빈 목록으로 변환."
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "e46fd3df48bc1930276cc12a3c2375caeb905bdf3c85af0b7bd5c6aa52cc7e10",
+          "reviewScope": "999–1074 유사 구역·더보기·빈 안내·가로 카드·예외 Async 오류 숨김. 상세 전체 재검토 아님."
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "123–153 익명/회원/호스트 조건;280–315 이벤트 찾기·추천·열기·열기 신청 경로와 배치."
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/home_feed_screen.dart",
+          "sha256": "6d0a3faf2f4a3f314bb4a493a0690c783a2087dbcdcaf108236c8a2d37c27c3a",
+          "reviewScope": "38–45 홈 더보기의 기존 목록 정렬만 날짜순으로 전환;194/201 onMoreTap 연결."
+        },
+        {
+          "path": "community_app/lib/presentation/navigation/screens/full_menu_screen.dart",
+          "sha256": "916ef357db7c524c620096010e2cb18dcf819d92497827eb515424feda9662ab",
+          "reviewScope": "126–142 이벤트 목록 등 탭 루트 go와 그 외 push."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "118–127 상세의 similar 자식 라우트와 루트 Navigator."
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92",
+          "reviewScope": "58–60 /home/events와 similar 경로 상수."
+        },
+        {
+          "path": "community_app/lib/domain/providers/common/paged_list.dart",
+          "sha256": "2d1127a27d97744281b6e892d84087a27d93f7637207f7a981b2207b396a4a5b",
+          "reviewScope": "38–162 페이지 상태·추가 항목·실패 때 기존 항목/페이지 유지. 전체 notifier 동시성 검증 아님."
+        }
+      ],
+      "reuses": [
+        "demographics_20261122",
+        "event_plan_link_20261122",
+        "home_feed_core_20261122",
+        "no_show_20261122",
+        "reschedule_20261122",
+        "search_workflows_20261122",
+        "session_and_social_unlink_20261122",
+        "wishlist_my_events_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-01_event-discovery_prd.md",
+          "sha256": "09b055b19b9d7f0db14535b032dc8e18c9ac87cd53afed9848f56b555a128b47"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F03-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": []
     }
   },
   "currentSourceVersions": {

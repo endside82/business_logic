@@ -234,7 +234,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F02-03 | 홈 피드 | [F02-03_section-card-entry_prd.md](02_feature_prds/02_home_feed/F02-03_section-card-entry_prd.md) | `F02-03_section-card-entry` | 실사 기반 전환본 | 2 | 4 |
 | F02-04 | 홈 피드 | [F02-04_recommend-events-more_prd.md](02_feature_prds/02_home_feed/F02-04_recommend-events-more_prd.md) | `F02-04_recommend-events-more` | 실사 기반 전환본 | 1 | 7 |
 | F02-05 | 홈 피드 | [F02-05_search-notification-entry_prd.md](02_feature_prds/02_home_feed/F02-05_search-notification-entry_prd.md) | `F02-05_search-notification-entry` | 실사 기반 전환본 | 0 | 3 |
-| F03-01 | 이벤트 | [F03-01_event-discovery_prd.md](02_feature_prds/03_event/F03-01_event-discovery_prd.md) | `F03-01_event-discovery` | 실사 기반 전환본 | 3 | 2 |
+| F03-01 | 이벤트 | [F03-01_event-discovery_prd.md](02_feature_prds/03_event/F03-01_event-discovery_prd.md) | `F03-01_event-discovery` | 실사 기반 전환본 | 3 | 4 |
 | F03-02 | 이벤트 | [F03-02_event-detail_prd.md](02_feature_prds/03_event/F03-02_event-detail_prd.md) | `F03-02_event-detail` | Golden sample | 2 | 2 |
 | F03-03 | 이벤트 | [F03-03_event-creation_prd.md](02_feature_prds/03_event/F03-03_event-creation_prd.md) | `F03-03_event-creation` | 실사 기반 전환본 | 4 | 3 |
 | F03-04 | 이벤트 | [F03-04_event-lifecycle_prd.md](02_feature_prds/03_event/F03-04_event-lifecycle_prd.md) | `F03-04_event-lifecycle` | 실사 기반 전환본 | 9 | 3 |
