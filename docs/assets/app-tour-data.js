@@ -290,3 +290,73 @@ window.APP_TOUR.findings.push({ group: 'favorites', title: '관심인 등록 후
 window.APP_TOUR.findings.push({ group: 'dispute', title: '접수 화면의 내부 상태·공개범위 코드와 긴 안내', severity: '문구·정보 순서 개선', image: 'breadth-dispute-received', detail: '사건 번호와 OPEN·IN_REVIEW·PARTIES·HOST_ONLY·CS_ONLY가 표시되고 반복 안내가 큰 영역을 차지합니다. 새 사건인데도 아래에 주최자 조치 요약과 숨김 처리 문구가 나타나 실제 처리 여부를 혼동할 수 있습니다.', next: '접수됨·검토 중 같은 현재 상태와 다음 행동을 앞에 두고, 실제 운영 조치가 있을 때만 조치 요약을 표시하는지 확인합니다. 문구 노출만으로 운영 조치가 실행됐다고 판단하지 않습니다.' });
 window.APP_TOUR.findings.push({ group: 'warning', title: '회원 제보에 대상·첨부 파일의 숫자 번호를 요구합니다', severity: '일반 회원의 입력 방식 개선', image: 'breadth-warning-filled', detail: '대상 멤버 ID와 쉼표로 구분된 파일 ID를 직접 적게 되어 있습니다. 일반 회원은 이름·사진으로 사람을 고르거나 파일을 첨부하는 사용 방법을 기대합니다.', next: '대상 회원 선택과 실제 파일 첨부 흐름으로 연결하고 저장된 대상·첨부 파일이 일치하는지 확인합니다. 이번 촬영에서는 화면 코드를 변경하지 않았습니다.' });
 window.APP_TOUR.findings.push({ group: 'warning', title: '회원 접수 건이 운영진 검토함에 나타나지 않았습니다', severity: '후속 검토 동작 차단 · 원인 확인 필요', image: 'breadth-warning-operator-empty', detail: '회원의 내 제보에는 제출됨 1건이 나타나지만 클럽장의 상태 전체 목록은 비었습니다. 같은 클럽장의 서버 조회는 접수 1건을 반환했습니다. 화면이 보낸 검색 조건과 응답 처리 중 정확한 원인은 아직 구분하지 못했습니다.', next: '클럽장·클럽·검색 조건이 같은 요청과 실제 반환값을 대조한 뒤 목록·상세·검토 결과를 다시 촬영합니다. 승인·반려가 작동했다고 기록하지 않습니다.' });
+
+// Current navigation is separate from the unmodified historical capture records.
+window.APP_TOUR.currentDocuments = {
+  "settlement": [
+    "domains/07-settlement.html"
+  ],
+  "dispute": [
+    "domains/18-dispute.html"
+  ],
+  "warning": [
+    "domains/15-warning.html"
+  ],
+  "support": [
+    "domains/20-support.html"
+  ],
+  "favorites": [
+    "domains/19-favorite.html"
+  ],
+  "discovery": [
+    "domains/02-home.html",
+    "domains/05-search.html"
+  ],
+  "club": [
+    "domains/04-club.html"
+  ],
+  "attendance": [
+    "features/F03-08.html"
+  ],
+  "community": [
+    "features/F04-08.html",
+    "features/F04-09.html"
+  ],
+  "poll": [
+    "features/club-poll.html"
+  ],
+  "regular": [
+    "domains/17-regular-meeting.html"
+  ],
+  "transport": [
+    "features/F03-14.html",
+    "features/F03-15.html",
+    "features/F03-16.html"
+  ],
+  "transfer": [
+    "features/F03-13.html"
+  ],
+  "event-create": [
+    "features/F03-03.html"
+  ],
+  "plan": [
+    "domains/08-plan-market.html"
+  ],
+  "stamp": [
+    "features/club-stamp.html"
+  ],
+  "mileage": [
+    "domains/16-mileage.html"
+  ],
+  "calendar-notifications": [
+    "domains/10-calendar.html",
+    "domains/12-notification.html"
+  ],
+  "profile-support": [
+    "domains/13-profile.html"
+  ],
+  "auth": [
+    "domains/01-auth.html"
+  ]
+};
+window.APP_TOUR.recordNote = "촬영 당시 기록; 현재 기능·결함·출시 판정은 연결된 정본에서 확인";

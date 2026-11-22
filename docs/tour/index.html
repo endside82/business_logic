@@ -6,70 +6,23 @@
   <title>실제 화면으로 보는 앱 기능 — community</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
-  <link rel="stylesheet" href="../assets/app-tour.css?v=20260916-2">
+  <link rel="stylesheet" href="../assets/app-tour.css?v=20261122-docs">
 </head>
 <body data-document-kind="reference" data-base="../" data-tour-view="guide">
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
-      <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>실제 화면으로 보는 앱 기능</div>
-        <h1>함께한 비용은 쉽게 나누고,<br>다음 만남은 가볍게.</h1>
-        <p class="lede tour-intro">누가 먼저 결제했든, 각자 낼 돈과 주고받을 돈을 정리합니다.
-          회원의 송금 안내부터 주최자의 입금 확인까지, 모임 정산의 편의성을 가장 먼저 소개합니다.
-          이어서 모임 찾기·참가·클럽 활동을 실제 화면으로 살펴보세요.</p>
-        <p><a href="coverage.html">전체 업무 영역과 촬영 현황</a> · <a href="#tour-filter">촬영한 이용 흐름 보기</a> · <a href="../qa/screen-review.html#captures">전체 촬영본 보기</a></p>
-      </header>
-      <div class="callout warn"><span class="label">촬영 시점과 현재 앱 메뉴</span><p>아래 사진은 각 촬영일의 실제 앱입니다. 11월 2일 탭·전체 메뉴와 모임 홈 개편을 새로 촬영한 자료는 아닙니다. 기능을 찾을 때는 <a href="../overview/architecture.html#app-navigation">현재 앱 메뉴</a>, 배포·검사 범위는 <a href="../qa/launch-status.html#development-current">최신 구현·검증</a>을 확인합니다.</p></div>
-<section id="auth-capture-current"><h2>번호 인증 전환 뒤 다시 확인할 화면</h2><p>2026-10-29 가입·비밀번호 찾기·Google 기존 계정 연결이 6자리 번호 흐름으로 바뀌었다. 이전 이메일 링크·미인증 제한 화면 사진은 촬영 당시의 기록이다. 현재 화면 일치나 번호 메일 실수신의 통과 증거로 사용하지 않으며 서명 앱에서 다시 촬영·검수해야 한다. 현재 동작은 <a href="../domains/01-auth.html">인증·온보딩</a>, 남은 검증은 <a href="../qa/external-readiness.html#email">메일 발송 계약·도메인 인증·실수신</a>을 따른다.</p></section>
-      <div class="callout">
-        <span class="label">정산 편의 기능을 실제 화면으로 소개합니다</span>
-        <p><strong>첫 비용·금액 검토·항목별 입금 관리·내 정산의 월별·기간 조회</strong>를 새로 촬영했습니다. 가상 회원의 실제 웹 조작 결과이며, 실제 돈을 보낸 기록은 아닙니다. <a href="../domains/07-settlement.html#personal-settlement">내 정산과 비용 작성</a>, <a href="../qa/screen-review.html#settlement-review">확인한 행동과 남은 범위</a>를 함께 볼 수 있습니다.</p>
-      </div>
-      <section class="tour-story" aria-labelledby="tour-story-title">
-        <div class="tour-story-copy">
-          <span class="label">모임마다 들어가지 않아도 내 돈의 흐름을 한곳에서</span>
-          <h2 id="tour-story-title">계산은 함께 정리하고,<br>내가 할 일은 한눈에.</h2>
-          <p>지민은 저녁 모임에서 <strong>10,000원을 보내야 하고</strong>, 다른 모임에서는 <strong>9,000원을 받아야 합니다.</strong> 두 금액을 상계하지 않고 각각 누구와 주고받을지 확인합니다.</p>
-          <p>지난 내역은 <strong>월별 또는 원하는 기간</strong>으로 찾습니다. 비용을 먼저 낸 사람은 항목별로 남은 입금을 확인하고 정산을 마무리합니다.</p>
-          <a href="#feature-settlement">비용 입력부터 입금 확인·완료까지 보기 →</a>
-        </div>
-        <a href="../assets/screenshots/app-tour/2026-09-24/settlement-personal-balances.png" target="_blank" rel="noopener" aria-label="내 정산의 보낼 돈과 받을 돈 화면 원본 열기">
-          <img src="../assets/screenshots/app-tour/2026-09-24/settlement-personal-balances.png" width="390" height="844" alt="지민이 보낼 돈 10,000원과 받을 돈 9,000원을 따로 보여 주는 실제 내 정산 화면">
-        </a>
-      </section>
-      <nav class="tour-journeys" aria-label="이용 흐름 바로 보기">
-        <a href="#feature-settlement"><strong>함께 쓴 비용 정산하기</strong><span>비용 입력, 내 금액, 입금 확인과 완료</span></a>
-        <a href="#feature-discovery"><strong>발견하고 참여하기</strong><span>홈·검색, 클럽, 모임 참가</span></a>
-        <a href="#feature-community"><strong>이야기와 추억 나누기</strong><span>사진 게시글, 댓글, 투표, 사진첩</span></a>
-        <a href="#feature-regular"><strong>다음 만남 준비하기</strong><span>정기모임, 함께 이동, 참가비 안내</span></a>
-        <a href="#feature-stamp"><strong>활동을 이어 가기</strong><span>스탬프, 마일리지, 달력과 알림</span></a>
-        <a href="#feature-favorites"><strong>사람을 다시 찾기</strong><span>관심인 등록, 공개 프로필, 가입 클럽</span></a>
-        <a href="#feature-support"><strong>궁금한 점과 문제 해결하기</strong><span>문의·답변, 분쟁 접수, 클럽 제보</span></a>
-      </nav>
-      <section class="tour-intro">
-        <div class="callout">
-          <span class="label">실제 앱 · 가상의 모임과 예시 사진</span>
-          <p>소개를 위해 준비한 가상의 모임·회원을 실제 앱에 표시해 촬영했습니다. 표지·활동 사진 소재는 AI로 만든 예시이며, <strong>화면 캡처 자체는 합성하지 않은 실제 앱 화면</strong>입니다.</p>
-          <p>이 페이지는 <strong>기능 소개</strong>입니다. 조작 확인 범위와 발견한 문제는 <a href="../qa/screen-review.html">화면 검수</a>, 출시 가능 여부는 <a href="../qa/launch-status.html">출시 현황</a>에서 별도로 확인합니다.</p>
-        </div>
-        <div class="callout"><span class="label">앱 전체는 21개 업무 영역입니다</span><p>아래는 먼저 촬영한 이용 흐름입니다. 정산·경고·분쟁·고객지원·제공자 운영을 포함한 <a href="coverage.html"><strong>175개 등재 기능과 추가 소개 여정</strong></a>을 별도로 대조합니다. 후속 출시 기능도 소개 대상에서 제외하지 않으며, 사진이 일부 있다는 사실을 업무 전체의 소개 완료로 세지 않습니다.</p></div>
-        <div class="callout"><span class="label">차량은 주최자가 함께 조율합니다</span><p>차량 지원이 모이면 주최자가 사람과 정원을 맞추고, 취소·교체 때 남은 사람을 다시 배정합니다. <strong>참가자가 처음부터 차량을 고르거나 취소 뒤 자동으로 자차가 되는 방식은 사용하지 않습니다.</strong> <a href="../qa/screen-review.html#transport-real-review">현재 주최자 배정 화면</a>과 <a href="../qa/screen-review.html#transport-followup-review">추가로 확인한 여섯 상황</a>을 볼 수 있습니다. 이전 방식의 사진은 기능 소개에서 빼고 검수 기록에 보존했습니다.</p></div>
-        <div id="tour-summary" class="tour-summary" aria-live="polite"></div>
-      </section>
-      <nav id="tour-filter" class="tour-filter" aria-label="촬영된 기능 선택"></nav>
-      <div id="tour-content"></div>
-      <section class="tour-pending">
-        <h2>이어지는 기능 소개</h2>
-        <p>아직 소개용 사진이 없는 기능입니다. 각 기능의 일부 장면만 촬영했으며, 모든 동작을 검증했다는 뜻은 아닙니다.</p>
-        <div id="tour-pending"></div>
-      </section>
-      <noscript><p>사진 목록을 표시하려면 JavaScript가 필요합니다. <a href="../features/club-stamp.html#actual-screens">회원이 보는 실제 스탬프 화면</a>도 확인할 수 있습니다.</p></noscript>
-    </main>
+ <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>앱 촬영 기록</div><h1>촬영 기록으로 보는 앱 기능</h1><p class="lede">실제 앱에 가상의 회원·모임·예시 사진을 넣어 촬영한 기록입니다. 보관 날짜와 당시 조작 범위를 보여 주며, 현재 앱 화면·기능 전체 통과·출시 완료를 증명하지 않습니다.</p><p><a href="coverage.html">현재 기능 정본과 촬영 기록</a> · <a href="#tour-filter">촬영한 이용 흐름</a> · <a href="../qa/screen-review.html#captures">전체 촬영본과 당시 검수</a></p></header>
+ <section id="auth-capture-current"><h2>현재 기능은 정본에서 확인합니다</h2><p>2026-11-22 문서 대조. 보관된 화면은 2026년 9~10월 자료이며, 현재 다섯 탭·전체 메뉴와 이후 변경을 다시 촬영한 자료가 아닙니다. <a href="../overview/architecture.html#app-navigation">현재 앱 입구</a>와 각 이용 흐름의 기능 정본을 함께 읽습니다.</p><p>가입·복구의 이전 이메일 링크·미인증 제한 화면은 과거 기록입니다. 현재는 <a href="../domains/01-auth.html">번호 확인·가입·세션·선택형 온보딩 계약</a>을 따릅니다. 사진이나 코드 설정만으로 번호 메일·푸시의 실제 수신을 확인했다고 판단하지 않습니다.</p></section>
+ <section aria-labelledby="tour-story-title"><h2 id="tour-story-title">사진과 확인 기록을 읽는 방법</h2><p>예시로 촬영한 비용·참가자·금액은 설명을 위한 가상 자료입니다. 실제 은행 거래를 보낸 기록이 아닙니다. <a href="../domains/07-settlement.html">현재 모임 정산 계약</a>에서는 실제 수취인·납부·확인·반환을 구분합니다.</p><p>화면 캡처는 기존 기록을 유지합니다. 표지·활동 소재의 출처는 <a href="../assets/app-tour-samples/README.md">가상 예시 사진 안내</a>에 있습니다. 기존 소재·캡처를 새로 생성·합성·촬영하거나 현재 화면으로 재검증하지 않았습니다.</p><p>자료가 없다는 이유로 모든 화면을 새로 촬영하지 않습니다. 화면 배치·잘림·표시 상태 등 실제 시각 질문이 있으면 해당 장면을 고르고, 요청·권한·저장 상태는 적합한 소스와 실행 근거로 확인합니다.</p></section>
+ <div class="tour-summary" id="tour-summary"></div><nav id="tour-filter" class="tour-filter" aria-label="촬영 기록 묶음"></nav><div id="tour-content"></div>
+ <section class="tour-pending"><h2>소개용으로 고르지 않았던 묶음</h2><p>아래 내용은 당시 남긴 확인 범위입니다. 현재 작업·결함·필수 촬영 목록으로 자동 이월하지 않습니다.</p><div id="tour-pending"></div></section>
+ <noscript><p>촬영 목록은 JavaScript가 필요합니다. <a href="../qa/screen-review.html">당시 화면 검수 기록</a>과 <a href="../features/catalog.html">현재 기능 정본 목록</a>을 확인할 수 있습니다.</p></noscript>
+ </main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/app.js"></script>
-  <script src="../assets/app-tour-data.js?v=20260924-settlement"></script>
-  <script src="../assets/app-tour.js?v=20260924-settlement"></script>
+  <script src="../assets/app-tour-data.js?v=20261122-docs"></script>
+  <script src="../assets/app-tour.js?v=20261122-docs"></script>
 </body>
 </html>
