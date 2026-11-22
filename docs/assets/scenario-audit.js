@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,256개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,262개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1256,
+    "documentedScenarioItems": 1262,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4951,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 64,
+    "directlyLinkedAutomatedTests": 65,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 64,
+    "automatedScenarioReferences": 65,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -24,8 +24,8 @@ window.SCENARIO_AUDIT = {
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 41,
-    "partialEvidenceChain": 52,
+    "completeEvidenceChain": 42,
+    "partialEvidenceChain": 51,
     "definitionOnlyEvidence": 82,
     "traceMarkers": 530,
     "verifiedTraceRecords": 528,
@@ -9623,14 +9623,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-04",
       "domain": "모임 정산",
-      "name": "정산 현황/요약/영수증 조회",
-      "scenarioCount": 8,
+      "name": "정산 현황·금액 요약·영수증 열람",
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-04_status-summary-receipt/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-04_status-summary-receipt_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 8
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-04_status-summary-receipt/backend.md",
@@ -9692,11 +9692,15 @@ window.SCENARIO_AUDIT = {
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 3,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 3,
+        "files": [
+          "community_app/test/core/router/settlement_read_route_gate_test.dart",
+          "community_app/test/data/models/common/ability_test.dart",
+          "community_app/test/presentation/meeting_settlement/settlement_connected_readability_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -9707,7 +9711,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
