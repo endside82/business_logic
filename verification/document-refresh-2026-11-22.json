@@ -326,7 +326,8 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -414,7 +415,9 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122",
+        "curated_domain_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2552,9 +2555,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "a4f952e3c913ff5f8b7385d184364d6ebc7517dbc2804f76ed08f916e0bf2ed5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_domain_20261122"
+      ],
+      "reviewedSha256": "52f36147d4c0b605672b568750f02197ad340fbe27c02af0c8a720797d6d06ac"
     },
     {
       "path": "docs/features/F01-01.html",
@@ -4756,9 +4762,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "9b1594ba2f2ebf018aaa8bd1d438e4533821c100adc9053e02b62d4653d4b096",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_assignment_20261122"
+      ],
+      "reviewedSha256": "434b24dc0697795ec2323e8736777256be4e59a09f87f35a9875360fa3785f9d"
     },
     {
       "path": "docs/features/F21-02.html",
@@ -5381,7 +5390,8 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5502,7 +5512,8 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5647,7 +5658,8 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6016,10 +6028,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "a8cf9d3c40f0b7a8483d92f1c2f1cb0598926a2eac39343d3d859b761b9c9575",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_domain_20261122"
+      ],
+      "reviewedSha256": "990c57595c32c406ad7db0f3e57e6acdc8786f55de723bfe45da91da1f17042e"
     },
     {
       "path": "prd/02_feature_prds/01_auth_onboarding/F01-01_email-signup-login_prd.md",
@@ -8221,10 +8235,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "fe67d8ee05f8d50c8e77f672eade09ae3d34c9d3f6a3fdf59cf82a7a7b105ead",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "curated_assignment_20261122"
+      ],
+      "reviewedSha256": "26089221d8b056273a0c4e122446d382d9c5973645b953de33c71889c39a3cc4"
     },
     {
       "path": "prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
@@ -8656,7 +8672,8 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8929,7 +8946,8 @@
         "curated_subsidy_20261122",
         "curated_refund_20261122",
         "curated_charge_20261122",
-        "curated_settlement_20261122"
+        "curated_settlement_20261122",
+        "curated_assignment_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -41557,6 +41575,456 @@
       "observedSourceVersions": {
         "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
         "community_app": "c804482752e3c9e6ec18a39958f235315dc8dc80"
+      }
+    },
+    "curated_assignment_20261122": {
+      "kind": "source_review",
+      "scope": "F21-01 직접/카탈로그 배정·계약조건·이행·프로필/검증/상품·운영심사와 실제 회원/관리자 UI 연결 소스 대조",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/port/CuratedProviderEligibilityAdapter.java",
+          "sha256": "0f5257859d67abdea59fc9606ce6d678d025448abe358404522cd77f8389b82f",
+          "reviewScope": "전체 활성계정·프로필없음직접배정가능·REJECTED/정지배정차단·VERIFIED/비정지지급자격"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentTermsProposeParam.java",
+          "sha256": "5410a491c4e14af55ec6085bb5981c71d5ffd99cc5b6515d8c7b825c705e4221",
+          "reviewScope": "전체 agreedGross/depositAmount/payload"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentTermsQuoteParam.java",
+          "sha256": "e82c2e9f046dea4cda9441bef5484e9277f2ceffd47130a20be2e7b50f08cc03",
+          "reviewScope": "전체 위필드+expiresAt LocalDateTime"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentTermsAcceptParam.java",
+          "sha256": "c5170057d41ea318746d6b9deeab84646c1173550897262ac7c58d7936d8e77a",
+          "reviewScope": "전체 expectedTermsVersion/expectedFeePolicyVersion"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentFulfillmentParam.java",
+          "sha256": "2ec416a688afb829bb7f5dbf566069a58838495429bed0dfacbe158dfc3a26b5",
+          "reviewScope": "전체 fulfillmentStatus/reason"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/service/CatalogAssignmentService.java",
+          "sha256": "366a93ba37e88427fe272e76f5b94daa02a738edb3f9da2e11348dec43c2c32f",
+          "reviewScope": "전체 이벤트권한/회원잠금/상품재확인/스냅샷/role·서비스위임"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/port/ProviderCatalogAssignmentAdapter.java",
+          "sha256": "f583f747d73ab601ed1b68bacb01427c3e68289a39b5016d64c8e73a0fd87b83",
+          "reviewScope": "전체 CATALOG생성후호스트actions VO"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/provider/controller/CatalogAssignmentController.java",
+          "sha256": "b7a6f118d6bad75fe8259c25bb7ad18f296db9c834d05b695d2fee0740fa21c9",
+          "reviewScope": "전체 from-catalog 201/본문/신규PROVIDER게이트"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/param/AssignmentFromCatalogParam.java",
+          "sha256": "e8bf5ed003913a53061128ebb22875142625a75cee976594b104b0c0fe210b3f",
+          "reviewScope": "전체 offeringId/providerRole"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+          "sha256": "d039a4a3acb0d50952e9661d7864907d2f155b231266001f4a2869315feca6cd",
+          "reviewScope": "38-116 프로필/서류/이력/공개 경로·본문·반환·신규와safetyExit 구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/service/ProviderProfileService.java",
+          "sha256": "e8b84adfe6abda6655c4904f3fcc53d37cfa9806dd062dd658c2fbf086f5a149",
+          "reviewScope": "45-176 등록/수정/숨김·회원상태·번호10자리/중복해시·공개필터/통계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/model/ProviderProfile.java",
+          "sha256": "20b4b0705999847f1adf93f81aa8f5054870d0df4d4dc32436d9c149b9210864",
+          "reviewScope": "45-95 번호암호화변환기/해시·검증/숨김/정지 기본"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/util/ProviderMapper.java",
+          "sha256": "c2c619a9aec9e33faf966ec16e0baddd015c1f789abd9be32c572abf22705bf2",
+          "reviewScope": "전체 본인/공개끝5자리표시·verified배지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/vo/ProviderProfileVo.java",
+          "sha256": "908d184cb1ae6ccb0e2febecb8505a1ba36f203206058e2912edda2a79e4fe48",
+          "reviewScope": "전체 본인노출필드·마스킹번호·검증/숨김/정지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/vo/PublicProviderProfileVo.java",
+          "sha256": "8e26496709ff0d08c51c942b4a29e76c27aea1f6be88819467ac79422be65e76",
+          "reviewScope": "전체 공개마스킹/소개/검증/통계·서류없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/util/BusinessRegNoHasher.java",
+          "sha256": "8c01aec22db105d3eb4ddb43f7767a4416a02870507cd256917affbdb9912740",
+          "reviewScope": "전체 숫자정규화·HmacSHA256"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/config/crypto/BusinessRegNoConverter.java",
+          "sha256": "16d5c86ac1a37fb16a2f625d69047be0f88825134c7482ef24a4119285239904",
+          "reviewScope": "전체 암호화저장/실패닫힘복호화"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/service/ProviderVerificationService.java",
+          "sha256": "3c79936922d920a2f45885374d20e5719967317ae9e1f7a7d9e96f6a1a840dba",
+          "reviewScope": "55-160 상태별첫제출/재제출·봉인예외·문서대체/보관시작·참조/이력"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/service/ProviderDocumentValidator.java",
+          "sha256": "aa56a9dea34c077937429c6b1d5845a68bdb2c7b8fd892196937ab32006becb6",
+          "reviewScope": "전체 본인업로드/COMPLETED/PROVIDER_DOC/fileId검사"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+          "sha256": "9fab3ae044c6ac0a6514a4dbcaf8484dd6748fa7600239c809b6bd1d645c949c",
+          "reviewScope": "25-96 내상품 CRUD/상태/사진·Page vs detail·신규게이트"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingCatalogController.java",
+          "sha256": "f9b7ce8d6e55e814840e459ba85bd553d003372eb1d26648c55d68b059221531",
+          "reviewScope": "25-47 공개로그인목록/상세·PROVIDER게이트"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/service/OfferingService.java",
+          "sha256": "0cffa72b1132b688e4d0b8f5a15da207e7b166f5db58cb1099b78a25f7ad919e",
+          "reviewScope": "87-475 생성/수정/상태/사진정렬/공개검색/배정재확인·활성화게이트와마지막사진삭제미검사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/repository/query/ProviderOfferingQueryRepository.java",
+          "sha256": "70b0dd5ddc824e10960a638f4da56540b1318df0d599ecf3e583dea9fe44156c",
+          "reviewScope": "전체 공개상태/계정/차단·category/region/price/정렬·QUOTE뒤"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/constants/OfferingCategory.java",
+          "sha256": "3ef499ae7b1d274a541c12b520d70668c78fd371b89802fa651c643239655787",
+          "reviewScope": "전체 4값·VEHICLE/VENUE검증필수·기본역할표시명"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/constants/OfferingPriceModel.java",
+          "sha256": "fe6116918120338ba0b7838e2aa7cf73afeeca05db54a7bc3a2f62a27f4cbece",
+          "reviewScope": "전체 5값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/provider/param/OfferingSearchParam.java",
+          "sha256": "77c914f7eb9b2efc91a5ac6728ad0796fa25d01c1966e42f5c4717265ba9a21c",
+          "reviewScope": "전체 PagingParam·필터정확한필드"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/assignment_create_screen.dart",
+          "sha256": "07717a13b0da3ad0e27640a79c5744e87fc3cdbf5fb7fbd8ff4c552a05b42a43",
+          "reviewScope": "28-155 닉네임선택/역할·실제본문·성공leave/실패입력유지·안내문구의단계차이"
+        },
+        {
+          "path": "community_app/lib/presentation/provider/screens/offering_detail_screen.dart",
+          "sha256": "5676e5cdd4515ffd0955324d329dfb2e39483f79d7c6e07013c8fc1908dbac6f",
+          "reviewScope": "37-150 eventId전달/호스팅선택·일정충돌고지·요청/성공pop·실패유지"
+        },
+        {
+          "path": "community_app/lib/presentation/provider/screens/provider_center_screen.dart",
+          "sha256": "a67e47d417b7e9bd8d01f79ba525e29dd4cd665f6008d0cdddc265bbd27361be",
+          "reviewScope": "33-114,135-200 등록분기·봉인숨김·검증/받은배정정리입구"
+        },
+        {
+          "path": "community_app/lib/presentation/provider/screens/provider_documents_screen.dart",
+          "sha256": "56bc0777c4dcf4e58a0bdb30af535445776288a6781c9299cca5f5b355f44a9e",
+          "reviewScope": "193-305,402-505 제출/이력·requested저장·불확정후fileId/docType조회·거절복구/성공정리"
+        },
+        {
+          "path": "community_app/lib/data/api/provider_profile_api.dart",
+          "sha256": "8fdf4d0987fa37405ca21bb645795d122ad92045caa2150d5269acedc3faae07",
+          "reviewScope": "전체 프로필/서류/이력 List 계약"
+        },
+        {
+          "path": "community_app/lib/data/api/offering_api.dart",
+          "sha256": "072af6205905b1059692efe91aa195703ac20dc26399b6b2b7e8ba626591d3b7",
+          "reviewScope": "전체 내상품PageResponse/detail·CRUD/사진/상태"
+        },
+        {
+          "path": "community_app/lib/data/api/offering_catalog_api.dart",
+          "sha256": "6f2454bdba5f299d322fa22f885f8bea63f6e9b6bb45221dd19981a4fe71f43f",
+          "reviewScope": "전체 공개PageResponse/필터/상세"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/provider/controller/ManageProviderController.java",
+          "sha256": "129557bccb189e724713efe46155c2e826f499be79f827fe9af8d96ea81ea8ed",
+          "reviewScope": "35-148 READ/WRITE/문서별권한·필수키wrapper·반환/경로"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/provider/controller/ManageProviderOfferingController.java",
+          "sha256": "24551682d755c68227ba16f71196cf27d0435f686fc9ae4e8f1bac9c3ad6e9f0",
+          "reviewScope": "39-96 목록/제재/해제·권한/키"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/provider/service/ManageProviderVerificationService.java",
+          "sha256": "5ef3bba398d51b80e4bc5e0cdad578f2c2ecc956eaa522560a251be6baeef31c",
+          "reviewScope": "100-251 PENDING판정·프로필정지분리·감사/이력·결과outbox"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/provider/service/ManageProviderOfferingService.java",
+          "sha256": "e9cef4a9b28d243c8ad208c1aa84678fa6d279bfed1ede8dc06bb2bc5a20f218",
+          "reviewScope": "95-164 정지대상상태·해제PAUSED·사유/감사"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/provider/service/ManageProviderDocumentService.java",
+          "sha256": "4967770199a8933183a491aee78bd7b61a4c2556c4cfa77ee5fb59eda4f8dfd5",
+          "reviewScope": "전체 소속/파일제공가능상태·민감presign/감사·만료반환"
+        },
+        {
+          "path": "community_admin_front/src/features/operations/ui/provider-verification-detail-screen.tsx",
+          "sha256": "8e7dcea045f7b69cda15b9b7a134fd531a1d01c4d1784edfaaa63d2b5cd76be2",
+          "reviewScope": "73-161 READ/WRITE/문서권한·키/요청·성공/실패재조회·열람URL상태"
+        },
+        {
+          "path": "community_admin_front/src/features/operations/ui/provider-offerings-screen.tsx",
+          "sha256": "2e9e3fd4ebd0154fd1bd46e9da9f19ca907bae89281387afacb3b81bc7125d45",
+          "reviewScope": "98-172 권한/상태필터·동일dialog키·실패유지/성공갱신·해제PAUSED안내"
+        },
+        {
+          "path": "community_admin_front/src/features/operations/api/provider-verifications-api.ts",
+          "sha256": "9f374e41e8c7b6a3aa43976a7a241fa174246de996e14143034c376f45d1762b",
+          "reviewScope": "전체 관리자심사/정지/원문열람실제경로·본문·키전달"
+        },
+        {
+          "path": "community_admin_front/src/app/(admin)/provider-verifications/[id]/page.tsx",
+          "sha256": "b17fb65e66bd9965362b05c9fe1c571e9104dcc77adb3fc83752ba92c9787ec0",
+          "reviewScope": "전체 상세screen실제라우트연결"
+        },
+        {
+          "path": "community_admin_front/src/app/(admin)/provider-offerings/page.tsx",
+          "sha256": "f21c35b0ce6fd6519a640a5cf17b3388e7adaed8cd09801c295342d993e53cb7",
+          "reviewScope": "전체 상품제재screen실제라우트연결"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+          "sha256": "a071d34fe7ecedc9b2d6d5d907222f335285d0fd7717eb2d86aef8b202928178",
+          "reviewScope": "74-80,159-263,583-603 직접생성/조회/수락거절/확정/조건/이행의경로·본문·반환·게이트;취소curated_refund 동일 SHA 근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentService.java",
+          "sha256": "b14d20701ef3f8cb550f889158a6594102d0026f7b56f43726b6030f7e2d9224",
+          "reviewScope": "120-209 생성권한/자격/차단/자기배정·244-256 outbox/본인목록·294-339 호스트목록/통계·548-641 수락거절확정/이행·985-990 본인;취소/금액/응답부 curated 이전동일 SHA 근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/constants/AssignmentStatus.java",
+          "sha256": "3b8b5e3db9d873a6c70da57c5ef50520efe23fd64636b321ba7b2794c5685759",
+          "reviewScope": "전체 전이7값·ACTIVE_STATUSES에SETTLEMENT_LOCKED포함"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/repository/ServiceAssignmentRepository.java",
+          "sha256": "6597ecd98937b187f60e17f7569a4a2ea42169ebe17747af3a5565301e463323",
+          "reviewScope": "24-69 쓰기잠금/읽기분리·활성조회와소유자목록"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/vo/ServiceAssignmentVo.java",
+          "sha256": "cf5a2301d490f5f7df46b06c836f509d0d630b3118281572d70abcd21a693061",
+          "reviewScope": "20-77 현재ID/닉네임/이미지/상태/금액/계약금/terms/actions/본인수익/eventSummary"
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/V1__init.sql",
+          "sha256": "65cd46eb4295dc2bede2b38643ee2339a9d044c8a1bdfa78a52d7f3eea7fb289",
+          "reviewScope": "3393-3405,3424-3432 active_key 생성열과(event,provider) 활성유일키·role30"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/param/ServiceAssignmentCreateParam.java",
+          "sha256": "58f27df3a27b056d19150dbfbe15cc5ec859d93a7efdf26ce5694606b8c679cf",
+          "reviewScope": "전체 providerUserId/providerRole만·source없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentActionPolicy.java",
+          "sha256": "6dcd3ff1a0ecdf2bfe19235c98a1aaa7b01d5b4a54f75a218dfcd02914ccd52c",
+          "reviewScope": "114-195 수락/거절/조건/확정action·286-296 이벤트종료/분쟁이행action;기타curated 기존근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/ServiceAssignmentTermsService.java",
+          "sha256": "0db0315dbe06489d410e86c7d65908a4939d930a3198abac14b583e9bf34832a",
+          "reviewScope": "73-477 조건제안/견적/상대방수락·버전/정책/자격/자기배정·금액권위·래치·미리보기·알림"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/repository/query/ServiceAssignmentQueryRepository.java",
+          "sha256": "cb6183767ed1b59ecd96832cf8966a50bfb11019cea7274a251ed7596d5024bb",
+          "reviewScope": "56-83 자기배정제외·fulfilled정상완료만·노쇼분모3값"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/curated/service/PlatformFeePolicy.java",
+          "sha256": "50b61ee463b5c64d6fc4b70661f57d8d4a49878e3c4f4b89fdd5e936cbec0faf",
+          "reviewScope": "curated_deposit 동일 SHA:현행수수료/원천징수·건별반올림근거"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/widgets/assignment_pickers.dart",
+          "sha256": "6f010e5b4536a86c8f6bdf8f0ec3708a5e723f69afdea0e1043802a54bc05d01",
+          "reviewScope": "105-180 닉네임userSearch·선택userId/name"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/event_assignments_screen.dart",
+          "sha256": "5496abec9e73dd989ec46026b8a358f5379b4c8a439ea071e0431acd9533ec6f",
+          "reviewScope": "45-150 봉인별직접/카탈로그입구·리로드에러;585-753 조건/확정/실제이행선택·사유·결과"
+        },
+        {
+          "path": "community_app/lib/presentation/curated/screens/my_assignments_screen.dart",
+          "sha256": "550ecf28eae4b25953da9ca5bf0e0d5767e8a1d43ba570f5fd49815df923a3e9",
+          "reviewScope": "328-503 서버actions·수락거절/견적·실제본버전수락·성공오류토스트;수익curated_settlement근거재사용"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/event_host_routes.dart",
+          "sha256": "e29a26e2dd908252c5642354a0ed8b887915876e49d91e2c29c84a853c9b9015",
+          "reviewScope": "352-464 호스트관리guard·제공자서류/상품guard·센터/본인배정/카탈로그route"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "600-618 배정/조건/심사결과실제목적지·견적호스트도myAssignments경계"
+        },
+        {
+          "path": "community_app/lib/data/api/service_assignment_api.dart",
+          "sha256": "9367ccc03fd8974b6b59c75cefafd670f64848faee5cf57d6fd036a02135e769",
+          "reviewScope": "28-107 직접배정/조건/카탈로그/이행본문/반환"
+        },
+        {
+          "path": "community_app/lib/data/repositories/service_assignment_repository.dart",
+          "sha256": "6909b2e13882d799c1c92bf47caa2adb7d82ecd1bca32d946cd8f5e3addaedd7",
+          "reviewScope": "26-73,91-155 Result/API연결·버전/정책필드"
+        },
+        {
+          "path": "community_app/lib/domain/providers/curated/service_assignment_provider.dart",
+          "sha256": "6cfaaede57dd5cf9f73679c932e97149c44cc8c801df3e0fa5ab75751b113d51",
+          "reviewScope": "140-232 호스트성공refresh·572-589 카탈로그신호·644-739 제공자본인성공refresh"
+        }
+      ],
+      "reuses": [
+        "curated_bulk_20261122",
+        "curated_charge_20261122",
+        "curated_deposit_20261122",
+        "curated_refund_20261122",
+        "curated_settlement_20261122",
+        "dispute_intake_20261122",
+        "mileage_commands_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
+          "sha256": "26089221d8b056273a0c4e122446d382d9c5973645b953de33c71889c39a3cc4"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F21-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "공개 배정/프로필/상품 Controller 30개 계약 연결",
+        "units 미존재 유지"
+      ],
+      "followUpFindings": [
+        "confirm/cancel eventId invariant 구현·source사용자입력제거",
+        "활성유일키·DECLINED/CANCELED후재배정가능·SETTLEMENT_LOCKED활성포함",
+        "닉네임선택·서버actions·봉인별입구·계약확정과이행기록분리",
+        "유상계약은VERIFIED필수·미검증LABOR/OTHER게시와구분",
+        "운영심사/제재UI와결과outbox/서류라우팅구현",
+        "제재해제PAUSED·재공개조건재검사·마지막사진삭제경계",
+        "조건payload폼없음·계약금문자열0fallback·일정충돌미검사",
+        "견적호스트알림도myAssignments·일부UI문구와실제서버단계차이"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "63 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 4 paths, 48 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "b1627de77381f33a895e605367cc5f7ccca21458"
+      }
+    },
+    "curated_domain_20261122": {
+      "kind": "canonical_reconciliation",
+      "scope": "F21 전체7개 기능정본과 소스 근거를 도메인 PRD/HTML에 통합·과거 집계 보존",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "curated_assignment_20261122",
+        "curated_charge_20261122",
+        "curated_settlement_20261122",
+        "curated_subsidy_20261122",
+        "curated_refund_20261122",
+        "curated_deposit_20261122",
+        "curated_bulk_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/01_domain_prds/21_제공자_배정_정산_prd.md",
+          "sha256": "990c57595c32c406ad7db0f3e57e6acdc8786f55de723bfe45da91da1f17042e"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
+          "sha256": "26089221d8b056273a0c4e122446d382d9c5973645b953de33c71889c39a3cc4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md",
+          "sha256": "838b5a7e3c1de24c8ecb49a41a2d24bef9f837c328c51605af10d20f9b7dfd88"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md",
+          "sha256": "f715d1b8247f6234c256422c6e1c68a62e8b0af77bb548fd73469038a3261feb"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
+          "sha256": "7f896b227eb67c07f561f9dfa75fc1b3222c1289e2896ef8fb7e8a33fe6d0a50"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-05_refund-clawback_prd.md",
+          "sha256": "c84de1ce585ae6e29a768287b470c4481cc175fa102fc0e2e3b8ad1d1e8b650c"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md",
+          "sha256": "7a709026f73e78d121b354bb762414e426803220c49f80a0f58dbe686bd32d3b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md",
+          "sha256": "437e2cf619baa542fbd8e0a06d44b8be414678ef1c4ab1d9734b079de937593b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/21-curated.html": [
+          "sidebar",
+          "launch-strip"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "해결된 납부/계약금/무료취소/readiness/운영UI/알림/다음회차공백 교정",
+        "정산확정과지갑실입금·상태와활성유일성·멱등명령/회차경계분리"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/01_domain_prds/21_제공자_배정_정산_prd.md",
+          "sha256": "cebfb5e78fd92e8914d3e06d311b923fd9ab1a53e738e77764ead27f984a2f12",
+          "characters": 582,
+          "note": "2026-07-29 당시 집계 원문 보존; 현재 수량/시험 통과 증거 아님",
+          "heading": "## 과거 집계 원문 보존"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "8 source/canonical digests; 2 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 4 paths, 48 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical/source review only"
+      },
+      "observedSourceVersions": {
+        "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
+        "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "b1627de77381f33a895e605367cc5f7ccca21458"
       }
     }
   },

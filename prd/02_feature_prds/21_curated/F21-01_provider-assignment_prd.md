@@ -1,262 +1,180 @@
-# F21-01. 제공자 배정 PRD
+# F21-01. 제공자 배정·프로필·상품·계약조건 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·회원 앱·관리자 웹 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + community_admin_api provider/ + community_app curated/ + provider/ -->
+## 현재 범위와 실제 입구
 
-## 1. 결론
+호스트/공동 주최자는 이벤트의 서비스 제공자 배정 목록에서 회원을 직접 지정하거나 서비스 카탈로그 상품으로 배정을 요청한다. 제공자는 받은 배정에서 수락·거절·견적·조건 수락을 처리하고, 호스트는 확정과 종료 후 이행 결과를 기록한다. 배정 상태, 실제 이행, 금전 수익은 별도 축이다.
 
-서비스 제공자 배정은 기존의 userId 직접 배정에 더해, 검증된 제공자 프로필과 공개 상품을 검색하고
-상품 스냅샷으로 배정한 뒤 버전형 계약조건을 상호 수락하는 마켓플레이스 기능까지 포함한다.
+앱 호스트 목록의 추가 버튼은 직접 배정, 서비스 목록 버튼은 eventId를 넘기는 카탈로그 진입이다. 목록과 직접 생성 경로는 eventManage 접근 guard를 사용한다. 직접 생성은 userId를 타이핑하는 화면이 아니라 닉네임 검색에서 사람을 고르고 역할을 입력한다. 요청에는 providerUserId·providerRole만 보내며 assignmentSource를 사용자가 선택하지 않는다.
 
-상태머신 7값(`AssignmentStatus`: DRAFT·ASSIGNED·ACCEPTED·DECLINED·CONFIRMED·SETTLEMENT_LOCKED·CANCELED)은 enum이 전이 허용집합을 소유하고 엔티티 `transitionTo()`가 위반 시 `ASSIGNMENT_INVALID_STATE`를 던지는 설계로 완전히 서버에서 시행된다. 불법 전이는 서버에서 차단되며 클라이언트 CTA는 현재 상태에 맞는 동작만 허용한다.
+제공자 센터는 등록/미등록, 프로필, 검증 서류·이력, 내 서비스, 받은 배정을 연결한다. PROVIDER 봉인 설정이면 미등록 등록 버튼과 기존 제공자의 프로필 수정·공개 토글·서비스 관리·카탈로그 입구를 숨기고 기존 서류/배정 정리 입구는 남긴다. 코드에 화면이 있다는 사실을 현재 신규 거래 공개로 해석하지 않는다.
 
-IDOR는 `/api/v1/events/{eventId}/assignments`(호스트/co-host 전용)와 `/api/v1/me/assignments`(제공자 본인 IDOR-safe)를 분리해 시행한다. 배정 owner는 `event_id` 단독(정기모임 회차도 event로 귀결 — `regular_meeting_id` XOR 없음). 다만 현재 `confirm`과 `cancel` controller는 path의 `eventId`를 서비스에 전달하지 않고, 서비스가 assignment의 실제 `eventId`로 권한을 검사한다. 타 이벤트 권한 상승은 없지만 path와 실제 owner가 같다는 route invariant는 강제되지 않는다.
+## 배정과 계약 API
 
-자기 direct 배정(호스트=제공자)은 `AssignmentSource.HOST_MANUAL`로 허용되며 생성 즉시 ACCEPTED다.
-반면 카탈로그 자기 배정은 ASSIGNED로 생성되고 호스트의 조건 제안이 자동 수락된다. 카탈로그 배정은
-일반 `/accept`가 금지되고 반드시 계약조건 수락 흐름을 거친다.
-
-Flutter 앱은 `EventAssignmentsNotifier`(호스트 시점), `MyAssignmentsNotifier`(제공자 시점) 두 notifier로
-분리해 배정 목록과 액션을 관리한다. 핵심 경로는 구현돼 있으나 confirm/cancel의 path `eventId` 소유
-불변은 아래 Gap처럼 비어 있다.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `ServiceAssignmentController`, `ServiceAssignmentService`, `ServiceAssignment`, `AssignmentStatus`, `AssignmentSource`, `FulfillmentStatus`, `CuratedEventAccessPort`, `ServiceAssignmentVo`, `CatalogAssignmentService`, `ServiceAssignmentTermsService`. 앱: `assignment_create_screen.dart`, `event_assignments_screen.dart`, `my_assignments_screen.dart`, `service_assignment_api.dart`, `service_assignment_vo.dart`, `service_assignment_provider.dart`, `assignment_design.dart`, `assignment_pickers.dart`.
-
-## 2-A. 2026-07-29 제공자 마켓플레이스 실측
-
-### 공개 프로필·검증
-
-- `ProviderType`은 INDIVIDUAL/BUSINESS다. BUSINESS는 숫자 10자리 사업자번호가 필수이며 AES 암호문과
-  HMAC 유일성 해시로 저장하고 응답은 끝 5자리만 마스킹한다.
-- 검증 상태는 NONE → PENDING → VERIFIED/REJECTED/NEEDS_MORE_INFO다. 제출은 NONE·REJECTED·
-  NEEDS_MORE_INFO에서만 가능하며, 소유자가 업로드 완료한 `FilePurpose.PROVIDER_DOC` 파일만 받는다.
-- 공개 프로필은 self-hidden, admin-suspended, 차단 관계 중 하나라도 해당하면 404로 감춘다.
-
-### 상품·카탈로그
-
-| 항목 | 실제 계약 |
-|---|---|
-| 카테고리 | VEHICLE·VENUE·LABOR·OTHER |
-| 가격모델 | FIXED·PER_PERSON·PER_HOUR·PER_DAY·QUOTE. QUOTE만 basePrice=null, 나머지는 양수 |
-| 지역 | `Sido` 17개 시·도 코드 |
-| 상태 | DRAFT·ACTIVE·PAUSED·SUSPENDED·ARCHIVED |
-| 활성화 | 사진 1장 이상. VEHICLE/VENUE는 VERIFIED 필수, LABOR/OTHER는 미검증 경고 후 가능 |
-| 공개조회 | ACTIVE이고 profile이 visible이며 양방향 차단이 없어야 함. category/region/price/range/sort/page/size 필터 |
-| 사진 | 완료된 `OFFERING_PHOTO`만 허용, 순서 변경은 전체 사진의 완전한 순열이어야 함 |
-
-### 카탈로그 배정·계약조건
-
-`POST /api/v1/events/{eventId}/assignments/from-catalog`는 호스트/co-host 권한을 먼저 확인한 뒤 공개 가능한
-상품을 조회한다. `providerUserId`, `assignmentSource=CATALOG`, offering 제목·카테고리·버전은 서버가
-결정한다. 유일성은 **이벤트 전체 한 명**이 아니라 `(eventId, providerUserId)`라서 서로 다른 제공자는
-같은 이벤트에 각각 배정할 수 있다.
-
-조건은 배정별 불변 버전으로 누적된다. 호스트 고정가 제안과 제공자 견적 제출 모두 `X=agreedGross>0`,
-`D=depositGross>=0`, D>0이면 D<X다. 견적은 미래의 `expiresAt`이 필수다. 상대방만 최신 버전을 수락할
-수 있고, `expectedTermsVersion`은 항상 필수다. 호스트 제안 수락에는
-`expectedFeePolicyVersion`도 필수이며 견적 수락은 제출 시 캡처한 정책을 쓴다.
-
-| 표면 | 실제 엔드포인트 |
-|---|---|
-| 내 프로필 | `POST/GET/PUT /api/v1/providers/me`, `POST /me/visibility` |
-| 검증 | `POST/GET /api/v1/providers/me/documents`, `GET /me/verification-history` |
-| 공개 프로필 | `GET /api/v1/providers/{userId}` |
-| 내 상품 | `POST/GET /api/v1/providers/me/offerings`, `GET/PUT /{offeringId}`, `POST /{offeringId}/status` |
-| 상품 사진 | `POST /{offeringId}/photos`, `DELETE /{offeringId}/photos/{photoId}`, `PUT /{offeringId}/photos/order` |
-| 공개 카탈로그 | `GET /api/v1/providers/offerings`, `GET /api/v1/providers/offerings/{offeringId}` |
-| 카탈로그 배정 | `POST /api/v1/events/{eventId}/assignments/from-catalog` |
-| 조건 | `POST .../{assignmentId}/terms`, `POST .../terms/quote`, `POST .../terms/accept`, `GET .../terms/current` |
-| 이행 | `POST .../{assignmentId}/fulfillment` |
-
-수락 시 `FEE_V2_5PCT`/5.00%가 불변 스냅샷으로 저장된다. D=0이면 `serviceFeeGross=X`, D>0이면
-engagement X와 계약금 D를 만들며 두 권위는 XOR다. 금전 동작이 시작되면 새 조건을 제안할 수 없고,
-confirm/charge/subsidize/prepayment/settle/noshow는 accepted version이 current와 같아야 한다.
-환불·취소·clawback 같은 되감기 동작은 잠금 해제를 위해 계속 허용된다.
-
-### 이행 통계와 운영
-
-확정 뒤 이행 기록은 FULFILLED/PARTIALLY_FULFILLED/NO_SHOW 중 하나를 허용하지만, terms-managed
-배정의 정산은 FULFILLED 또는 PARTIALLY_FULFILLED만 통과한다. NO_SHOW는 통계에는 반영되나 정산은 막힌다.
-공개 프로필/상품 상세의 통계는 자기배정을 제외해 `fulfilledCount`와
-`noShowRate = NO_SHOW / (FULFILLED + PARTIALLY_FULFILLED + NO_SHOW)`를 scale 4 비율로 보여 주며
-분모 0이면 null이다.
-일정 충돌 검증은 아직 없어서 앱은 제공 가능 여부를 당사자가 직접 조율하라고 고지한다.
-
-관리자 API는 `MANAGE_PROVIDER_VERIFICATION(NR)`로 심사/상품 제재를, 별도
-`MANAGE_PROVIDER_DOC_VIEW(NS)`로 문서 presign을 통제한다. 문서 URL 발급마다 감사 로그를 남긴다.
-다만 관리자 프런트와 검증 결과 알림 발행/라우팅은 현재 비어 있다.
-
-| 관리자 표면 | 실제 엔드포인트 |
-|---|---|
-| 심사 조회 | `GET /admin/v1/manage/providers`, `GET /admin/v1/manage/providers/{profileId}` |
-| 판정 | `POST .../{profileId}/approve`, `POST .../reject`, `POST .../request-info` |
-| 원문 열람 | `GET .../{profileId}/documents/{documentId}/download-url` |
-| 상품 제재 | `POST /admin/v1/manage/providers/offerings/{offeringId}/suspend`, `POST .../unsuspend` |
-
-## 3. 전체 동작 흐름
-
-### 시나리오 A: 호스트가 외부 제공자를 배정하고 수락 후 확정
-
-1. 호스트가 이벤트 상세 화면의 "제공자 배정" CTA를 통해 `AssignmentCreateScreen`으로 진입한다.
-2. 호스트가 제공자 userId, providerRole(강사 종류), assignmentSource를 입력하고 제출한다.
-3. `EventAssignmentsNotifier.create(param)`가 `ServiceAssignmentRepository.create(eventId, param)`를 호출한다.
-4. 서버 `POST /api/v1/events/{eventId}/assignments` → `ServiceAssignmentService.createAssignment(hostUserId, eventId, providerUserId, source, role)`.
-5. 서버가 `CuratedEventAccessPort.assertHostOrCoHost(eventId, hostUserId)`로 권한 검증, `eventExists(eventId)` 확인, `UNIQUE(event_id, provider_user_id)` 충돌 여부 확인.
-6. source=HOST_MANUAL이고 providerUserId≠hostUserId이면 status=ASSIGNED(외부 제공자 수락 대기). providerUserId==hostUserId면 status=ACCEPTED(자기 배정 즉시 수락).
-7. 서버가 `ServiceAssignmentVo`를 201로 반환. Flutter가 목록을 갱신한다.
-8. 외부 제공자는 `MyAssignmentsNotifier` → `GET /api/v1/me/assignments`로 자신에게 온 배정을 본다.
-9. direct 배정 제공자가 `수락` CTA → `POST /api/v1/me/assignments/{assignmentId}/accept` →
-   ASSIGNED→ACCEPTED. 카탈로그 배정은 이 엔드포인트가 거부하며 terms 제안/견적과 수락을 거친다.
-10. 호스트가 ACCEPTED 배정을 `EventAssignmentsScreen`에서 확인하고 "확정" CTA → `POST /api/v1/events/{eventId}/assignments/{assignmentId}/confirm` → ACCEPTED→CONFIRMED.
-11. CONFIRMED 이후 서비스비 과금(F21-02)·정산(F21-03)이 가능해진다.
-
-### 시나리오 B: 제공자가 배정을 거절
-
-1. 외부 제공자가 `MyAssignmentsScreen`에서 배정 카드를 확인한다.
-2. "거절" CTA → `POST /api/v1/me/assignments/{assignmentId}/reject` → ASSIGNED→DECLINED(terminal).
-3. 서버가 `ServiceAssignmentVo`(status=DECLINED)를 반환. 호스트는 목록 재조회 시 DECLINED 상태를 확인하고 새 제공자를 배정할 수 있다.
-
-### 시나리오 C: 배정 취소
-
-1. 호스트가 DRAFT·ASSIGNED·ACCEPTED·CONFIRMED 상태의 배정을 취소한다.
-2. `POST /api/v1/events/{eventId}/assignments/{assignmentId}/cancel` + `ServiceAssignmentCancelParam(reason)`.
-3. 서버가 상태 전이 검증 후 →CANCELED(terminal). SETTLEMENT_LOCKED 이후는 취소 불가.
-4. 취소는 기존 money charge를 자동 역분개한다. engagement의 PAID 미적용 계약금은
-   `forfeitOnAssignmentCancel()`로 제공자에게 귀속한다.
-
-## 6. 상태/권한 매트릭스
-
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 호스트 + 신규 배정 | `assertHostOrCoHost` 통과 + 서비스 중복 선검사 | `EventAssignmentsNotifier.create()` | 배정 생성 201, 목록 갱신 | 일치 |
-| 호스트 + 자기 배정 | providerUserId==caller → status=ACCEPTED 즉시 | 동일 create 흐름 | 수락 단계 없이 바로 ACCEPTED | 일치 |
-| 호스트 + 중복 배정 | 서비스 선조회 → `ASSIGNMENT_ALREADY_EXISTS` 409, DB UNIQUE는 경합 backstop | `ApiError.conflict` | 에러 표시 | 일치 |
-| 제공자 + ASSIGNED 배정 수신 | `providerUserId` 일치 검증 | `MyAssignmentsNotifier` GET | 수락/거절 CTA | 일치 |
-| 제공자 + 타인 배정 accept 시도 | 서버가 `providerUserId` 불일치 → 예외 | API 에러 | 권한 에러 | 일치 |
-| 비호스트 + 목록 조회 | `assertHostOrCoHost` 실패 → 예외 | API 403 → `ApiError.forbidden` | 접근 차단 | 일치 |
-| SETTLEMENT_LOCKED 취소 시도 | `isTerminal()=true` → `ASSIGNMENT_INVALID_STATE` | API 에러 | 상태 전이 불가 에러 | 일치 |
-
-## 7. 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `AssignmentStatus` enum 7값 | DRAFT·ASSIGNED·ACCEPTED·DECLINED·CONFIRMED·SETTLEMENT_LOCKED·CANCELED | Dart `AssignmentStatus` 7값 verbatim | 일치 |
-| `AssignmentSource` enum 2값 | HOST_MANUAL·CATALOG | Dart 동일 값 + `unknown` | JSON 호환 |
-| `FulfillmentStatus` enum 6값 | PENDING·IN_PROGRESS·FULFILLED·PARTIALLY_FULFILLED·NO_SHOW·DISPUTED | Dart `FulfillmentStatus` 6값 verbatim | 일치 |
-| `ServiceAssignmentVo` 금액 | Java BigDecimal serviceFeeGross | Dart double? serviceFeeGross | 일치 (BigDecimal→double) |
-| 제거된 파생금액 | VO에 platformFee/withholdingTax/netAmount 없음 | 모델에서도 assignment-level 파생금액에 의존하지 않음 | 일치 |
-| 응답 타입 | `List<ServiceAssignmentVo>` (비페이지네이션) | `Future<List<ServiceAssignmentVo>>` Retrofit | 일치 |
-| 낙관락 | `@Version Long version` on ServiceAssignment | 클라이언트 미노출 | 서버 단독 처리, 정합 |
-| owner grain | `event_id` 단독 | `ServiceAssignmentVo.eventId` | 일치 |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| Gap | 일정/충돌 검증 없음 | catalog assignment는 상품 가시성·검증만 확인하고 시간 가용성을 확인하지 않음 | 이중 예약 가능 | availability 모델/API 추가 전 직접 조율 고지 유지 |
-| Gap | 관리자 프런트/검증 결과 알림 없음 | 관리자 API는 있으나 UI 없음. `PROVIDER_VERIFICATION_RESULT` 라우트와 서비스 발행도 비어 있음 | 운영 수동 호출, 제공자 결과 인지 지연 | admin UI와 알림 이벤트 연결 |
-| Risk | 관리자 상품 정지 해제 시 활성화 조건 재검증 없음 | `unsuspend`가 SUSPENDED→ACTIVE만 수행 | 검증/사진/프로필 조건이 바뀐 상품이 다시 노출될 수 있음 | 공개 필터만 의존할지, unsuspend 시 활성화 gate 재검증할지 결정 |
-| Gap | direct `providerRole` taxonomy 미확정 | direct는 varchar(30) 자유 입력, catalog는 카테고리 표시명 기본값 | direct 운영 데이터 비정형 | 선택지/enum 정책 확정 |
-| Risk | ACCEPTED 배정이 서비스비 설정 전에 확정(CONFIRMED) 가능 | `confirm` 엔드포인트가 `serviceFeeGross` 설정 여부를 검증하지 않음 | 과금 없이 정산 흐름 진입 가능 — 완납 게이트(F21-03)가 Σ==0이면 수금액 모드로 처리 | 수금액 모드(serviceFeeGross=0) 정산은 정책상 허용. 별도 차단 불필요 |
-| Risk | confirm/cancel path `eventId`와 assignment owner 일치 미검증 | controller가 `eventId`를 무시하고 service가 assignment 실제 eventId로 권한 검사 | 권한 상승은 없지만 잘못된 route도 실제 이벤트 호스트라면 성공해 API 경로 의미가 약해짐 | 서비스에 path eventId를 전달해 `assignment.eventId == eventId`를 검증 |
-
-## 9. 수용 기준
-
-### AC-01. 외부 제공자 배정 생성
-
-Given 호스트가 이벤트의 호스트/co-host이고 해당 이벤트에 이 제공자를 처음 배정한다.
-When `POST /api/v1/events/{eventId}/assignments`에 `providerUserId`, `assignmentSource=HOST_MANUAL`, `providerRole`을 전송한다.
-Then 서버는 201과 `ServiceAssignmentVo(status=ASSIGNED)`를 반환하고, 제공자의 `/me/assignments` 목록에 해당 배정이 나타난다.
-
-### AC-02. 자기 배정 즉시 수락
-
-Given 호스트가 자신을 providerUserId로 지정해 배정한다.
-When `POST /api/v1/events/{eventId}/assignments`를 호출한다.
-Then 서버는 `ServiceAssignmentVo(status=ACCEPTED)`를 반환한다(ASSIGNED 단계 없음).
-
-### AC-03. 중복 배정 차단
-
-Given 동일 이벤트에 동일 제공자가 이미 배정됐다.
-When 호스트가 같은 `(eventId, providerUserId)` 조합으로 재배정을 시도한다.
-Then 서버는 서비스 선검사로 `ASSIGNMENT_ALREADY_EXISTS`(409)를 반환하고 Flutter는 에러를 표시한다. DB UNIQUE는 동시 요청 방어선으로 남는다.
-
-### AC-04. direct 제공자 수락
-
-Given offeringId가 없는 direct 배정의 status=ASSIGNED이고 인증된 사용자가 해당 배정의 providerUserId다.
-When `POST /api/v1/me/assignments/{assignmentId}/accept`를 호출한다.
-Then 서버는 `ServiceAssignmentVo(status=ACCEPTED)`를 반환한다.
-
-카탈로그 배정이면 같은 호출은 거부되고 최신 terms를 버전·정책 기대값과 함께 수락해야 한다.
-
-### AC-05. 제공자 거절
-
-Given 배정 status=ASSIGNED이고 인증된 사용자가 해당 배정의 providerUserId다.
-When `POST /api/v1/me/assignments/{assignmentId}/reject`를 호출한다.
-Then 서버는 `ServiceAssignmentVo(status=DECLINED)`를 반환하고 이후 어떤 전이도 불가하다(terminal).
-
-### AC-06. 호스트 확정
-
-Given 배정 status=ACCEPTED다.
-When 호스트가 `POST /api/v1/events/{eventId}/assignments/{assignmentId}/confirm`을 호출한다.
-Then 서버는 `ServiceAssignmentVo(status=CONFIRMED)`를 반환한다. 이제 서비스비 설정과 과금이 가능해진다.
-
-### AC-07. CONFIRMED 이후 취소 불가 사례(SETTLEMENT_LOCKED)
-
-Given 배정 status=SETTLEMENT_LOCKED(terminal)다.
-When 호스트가 cancel을 시도한다.
-Then 서버는 `ASSIGNMENT_INVALID_STATE` 에러를 반환하고 Flutter는 에러를 표시한다.
-
-### AC-08. 비호스트 배정 목록 접근 차단
-
-Given 인증된 사용자가 해당 이벤트의 호스트/co-host가 아니다.
-When `GET /api/v1/events/{eventId}/assignments`를 호출한다.
-Then 서버는 `ASSIGNMENT_NOT_FOUND` 또는 권한 에러를 반환한다.
-
-### AC-09. 제공자 타인 배정 수락 시도 차단
-
-Given 인증된 사용자의 userId가 해당 assignmentId의 providerUserId와 다르다.
-When `POST /api/v1/me/assignments/{assignmentId}/accept`를 호출한다.
-Then 서버가 예외를 반환하고 Flutter는 에러를 표시한다(IDOR 차단).
-
-### AC-10. 취소 시 계약금 forfeit
-
-Given 배정에 engagement가 있고 계약금 status=PAID(미적용)인 상태에서 배정을 취소한다.
-When `POST .../cancel`이 성공한다.
-Then `ServiceAssignmentSettlementService.forfeitOnAssignmentCancel`이 호출되어 계약금이 제공자 earning으로 귀속된다.
-
-### AC-11. 카탈로그 상품 활성화 자격
-
-Given 상품 사진이 없거나 VEHICLE/VENUE 제공자가 VERIFIED가 아니다.
-When 제공자가 상품을 ACTIVE로 바꾸려 한다.
-Then 서버가 활성화를 거부한다. LABOR/OTHER는 미검증 경고를 노출하되 ACTIVE를 허용한다.
-
-### AC-12. 카탈로그 배정의 서버 스냅샷
-
-Given 호스트가 공개 ACTIVE 상품을 선택한다.
-When `POST /api/v1/events/{eventId}/assignments/from-catalog`를 호출한다.
-Then providerUserId/source/offering title/category/version은 서버가 상품에서 파생하고 status=ASSIGNED로 저장한다.
-
-### AC-13. 최신 계약조건 수락
-
-Given 상대방이 제안한 최신 terms가 있고 돈 활동이 시작되지 않았다.
-When 상대방이 `expectedTermsVersion`과 필요한 `expectedFeePolicyVersion`을 맞춰 수락한다.
-Then acceptance hash와 fee policy/rate 스냅샷이 저장되고 acceptedTermsVersion이 currentTermsVersion과 같아진다.
-stale 버전·정책·만료 견적·제안자 본인의 수락은 거부한다.
-
-### AC-14. terms-managed 이행 정산
-
-Given 카탈로그 계약이 CONFIRMED이고 최신 조건까지 수락됐다.
-When 호스트가 FULFILLED 또는 PARTIALLY_FULFILLED를 기록한 뒤 나머지 완납 게이트를 충족해 정산한다.
-Then earning은 APPROVED가 된다. NO_SHOW·DISPUTED·PENDING이면 정산을 거부한다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 요청 | 입력·권한 | 반환 |
 |---|---|---|
-| Product | `providerRole` taxonomy | 강사/MC/진행자 등 종류 확정 후 enum 또는 선택지 목록 배포. 현재 자유 입력 varchar(30) |
-| Product | 제공 가능 일정 | 상품/배정 충돌 모델과 취소 정책을 정의 |
-| UX/Admin | 검증 결과 알림·관리자 화면 | 현재 API만 있으므로 운영 화면과 provider 딥링크 연결 |
+| POST /api/v1/events/{eventId}/assignments | 호스트/공동 주최자, long providerUserId·String providerRole | 201 ServiceAssignmentVo |
+| GET /api/v1/events/{eventId}/assignments | 호스트/공동 주최자 | List<ServiceAssignmentVo> |
+| GET /api/v1/me/assignments | 인증된 제공자 자신의 배정 | 같은 List, 페이지 응답 아님 |
+| POST /api/v1/me/assignments/{assignmentId}/accept 또는 /reject | 배정의 제공자 본인, 본문 없음 | 200 ServiceAssignmentVo |
+| POST /api/v1/events/{eventId}/assignments/{assignmentId}/confirm | 실제 eventId 일치·호스트/공동 주최자, 본문 없음 | 200 ServiceAssignmentVo |
+| POST /api/v1/events/{eventId}/assignments/from-catalog | 호스트/공동 주최자, Long offeringId·선택 providerRole | 201 ServiceAssignmentVo |
+| POST /api/v1/events/{eventId}/assignments/{assignmentId}/terms | 호스트/공동 주최자, long agreedGross·long depositAmount·String payload | 200 ServiceAssignmentVo |
+| POST /api/v1/events/{eventId}/assignments/{assignmentId}/terms/quote | 제공자 본인, 위 금액/본문과 LocalDateTime expiresAt | 200 ServiceAssignmentVo |
+| POST /api/v1/events/{eventId}/assignments/{assignmentId}/terms/accept | 상대방, Integer expectedTermsVersion·String expectedFeePolicyVersion | 200 ServiceAssignmentVo |
+| GET /api/v1/events/{eventId}/assignments/{assignmentId}/terms/current | 제공자 본인 또는 호스트/공동 주최자 | ServiceAssignmentTermsVo |
+| POST /api/v1/events/{eventId}/assignments/{assignmentId}/fulfillment | 호스트/공동 주최자, fulfillmentStatus·reason | 200 ServiceAssignmentVo |
+
+생성·카탈로그·terms 쓰기는 신규 PROVIDER 범위다. 기존 배정 조회·직접 수락/거절·확정·조건 조회·이행 기록은 safetyExit다. 위 비금전 명령에 영속 회원 돈 명령의 Idempotency-Key 계약을 덧붙이지 않는다. 취소는 필수 키가 있는 별도 금전 명령이며 [환불·정산 후 회수·배정 종료](F21-05_refund-clawback_prd.md)를 따른다.
+
+현재 confirm과 cancel 모두 URL eventId를 서비스로 넘기고 실제 배정의 eventId 일치를 검사한다. ‘경로 이벤트를 무시한다’는 과거 Gap은 제거한다. 제공자 본인 조회는 인증 ID로 제한하고 타인의 accept/reject는 ASSIGNMENT_NOT_PROVIDER다.
+
+## 상태·자격·중복 배정
+
+| 현재 상태 | 허용 전이 |
+|---|---|
+| DRAFT | ASSIGNED, CANCELED |
+| ASSIGNED | ACCEPTED, DECLINED, CANCELED |
+| ACCEPTED | CONFIRMED, CANCELED |
+| CONFIRMED | SETTLEMENT_LOCKED, CANCELED |
+| DECLINED, CANCELED, SETTLEMENT_LOCKED | 추가 상태 전이 없음 |
+
+생성 서비스는 DRAFT를 저장 결과로 노출하는 대신 ASSIGNED로 전이한다. 직접 배정에서 제공자와 요청한 호스트 ID가 같으면 즉시 ACCEPTED다. 카탈로그 자기 배정은 ASSIGNED로 생성되며 이후 본인의 조건 제안/견적 수락 처리가 자동으로 이루어진다. 일반 accept는 offeringId가 있는 카탈로그 배정을 거절한다.
+
+중복 기준은 같은 eventId·providerUserId의 활성 배정이다. 활성은 DRAFT·ASSIGNED·ACCEPTED·CONFIRMED·SETTLEMENT_LOCKED이며 서비스 조회와 DB 생성열 유일키가 같은 집합을 사용한다. DECLINED/CANCELED 기록이 있어도 같은 제공자를 새로 배정할 수 있다. ‘한 번 배정한 조합은 영원히 재사용 불가’ 또는 ‘이벤트에 제공자 한 명만 가능’으로 쓰지 않는다. SETTLEMENT_LOCKED는 전이 종결 상태지만 활성 유일키에는 포함한다.
+
+생성은 이벤트 공유 잠금과 호스트/공동 주최자 권한, 회원 잠금·활성 여부, 제공자 배정 가능 자격, 요청자와 제공자의 양방향 차단을 확인한다. 제공자 프로필이 없어도 활성 회원은 직접 배정 대상이 될 수 있다. 프로필이 있으면 REJECTED 또는 관리자 정지는 배정을 막는다.
+
+배정 가능과 지급 가능은 다르다. 유료 조건 수락·유료 설정·과금·정산의 지급 자격은 VERIFIED이고 관리자 정지가 아니어야 한다. 미검증 인력·기타 상품의 게시 허용이 유료 지급 허용을 뜻하지 않는다.
+
+## 카탈로그 상품으로 배정
+
+서버는 eventId의 호스트 권한을 확인하고 실제 상품 제공자의 회원 상태를 잠근 뒤 상품을 다시 판정한다. ACTIVE 상품, 존재·공개 상태인 프로필, 관리자 정지 없음, 양방향 차단 없음, 활성 계정, 카테고리별 검증 조건을 검사한다.
+
+providerUserId와 CATALOG 원천은 서버가 정한다. offering ID·버전·카테고리·제목·가격모델·기준가격·지역·속성을 스냅샷에 저장한다. 역할이 비어 있으면 카테고리 표시명을 쓰고 지정한 역할은 30자 이하다. 상품 가격은 배정의 합의 금액을 자동 수락한 결과가 아니며 별도 terms가 필요하다.
+
+앱 상품 상세는 전달받은 eventId를 쓰거나 호스팅 이벤트 선택창을 연다. 요청 확인창은 일정 충돌을 앱이 검사하지 않으므로 직접 조율하라고 안내한다. 성공하면 토스트와 pop(true), 실패하면 해당 화면에서 오류를 표시한다. 성공 또는 커밋 가능 실패에는 배정 변경 신호를 발행한다. 상세의 ‘제공자가 수락하면 조건 협의’ 문구를 일반 accept 사용 가능의 근거로 쓰지 않는다. 카탈로그는 terms 합의로 ACCEPTED가 된다.
+
+## 조건 버전·수락·금액 권위
+
+새 terms는 카탈로그 offering과 알려진 스냅샷 카테고리가 있고 ASSIGNED/ACCEPTED/CONFIRMED일 때 제안할 수 있다. 직접 배정의 금액은 별도 service-fee API이며 이 terms 경로를 사용하지 않는다.
+
+X=agreedGross는 양수, D=depositAmount는 0 이상이고 양수면 D<X다. 제공자 견적은 미래 expiresAt이 필수다. 호스트 제안과 견적은 불변 버전을 추가하고 payload가 있으면 SHA-256을 저장한다. 자기 배정은 제안/견적 시 자동 수락되지만 양수 계약금은 금지한다.
+
+상대방 수락에는 최신 expectedTermsVersion이 필수다. 호스트 제안은 제공자가 수락하며 현재 expectedFeePolicyVersion도 맞아야 한다. 제공자 견적은 호스트/공동 주최자가 수락하고 제출 당시 정책을 사용한다. 제안자 자신을 상대방 수락자로 인정하지 않는다. 이미 수락한 버전, 만료, stale 기대값, 잘못된 상대방, 활성 무료 제외, 지급 불가 제공자를 거절한다.
+
+수락은 acceptance의 조건 해시/수수료 정책과 배정의 agreedGross·수수료율·정책 버전·acceptedTermsVersion을 저장한다. D=0은 serviceFeeGross=X로 설정하고 기존 engagement를 취소·연결 해제한다. D>0은 engagement의 agreedProviderFee=X, requiresDeposit=true, serviceFeeGross=0으로 두며 계약금 납부는 별도다. ASSIGNED는 ACCEPTED로 바뀌고 이미 ACCEPTED/CONFIRMED이면 상태를 유지한다.
+
+financialActivityStartedAt, 실제 금전 charge, PAID/PENDING 계약금이 있으면 새 조건 제안을 막는다. 금전 활동 뒤 환불해도 래치를 지우고 재협상하는 흐름은 아니다. 합의 총액과 계약금 적용·현재 수수료 정책은 [계약금의 정산 적용과 수수료](F21-06_engagement-prepayment_prd.md#정산-적용과-수수료)를 따른다.
+
+현재 terms 조회는 합의됐으면 수락 스냅샷, 미합의 제공자 견적이면 제출 스냅샷, 미합의 호스트 제안이면 현재 정책으로 미리보기를 계산한다. X 전체의 예상 순액과 개별 결제 수익 합계는 반올림 단위가 달라 차이가 날 수 있다.
+
+앱은 금액·계약금·견적 유효일을 입력하고 현재 조건 시트에서 계약 내용·예상 수수료/원천징수/순액·반올림 안내를 보여 준다. 수락은 시트에서 실제로 본 version과 feePolicyVersion을 보낸다. 제안/견적 폼에는 payload 편집 입력이 없고, 유효하지 않은 계약금 문자열은 현재 int.tryParse의 기본값 0으로 처리한다. 견적 유효일이 유효하지 않으면 expiresAt=null이 되어 서버가 거절한다. 실패 시 폼은 유지하고 성공 시 닫는다.
+
+## 확정·종료 후 이행·통계
+
+confirm은 ACCEPTED와 최신 terms 수락을 검사하고 CONFIRMED로 바꾼다. 이벤트 종료나 이행 완료를 이 요청이 검사하거나 기록하지 않는다. 앱 확인창의 ‘일을 마쳤다고 확정’ 문구와 서버의 계약 확정 의미를 구분한다. 서비스비 설정·본인 과금은 ACCEPTED에서도 가능하므로 ‘CONFIRMED 이후에만 결제’라는 과거 순서를 수정한다.
+
+이행 기록은 실제 eventId 일치·호스트 권한·이벤트 종료·CONFIRMED를 요구한다. 입력은 FULFILLED/PARTIALLY_FULFILLED/NO_SHOW만 허용하며 일부 이행과 미참석은 공백 아닌 500자 이하 사유가 필수다. 정상 완료는 사유를 지운다. DISPUTED 상태에 열린 배정 분쟁이 있으면 일반 호스트 기록을 막는다.
+
+앱은 세 결과를 선택하고 일부 완료/미참석 사유와 확인창을 거친다. 정산 전 수정 가능, 미참석은 정산 대신 취소·환불이 필요하다는 안내를 표시한다. NO_SHOW 기록 자체가 자동 취소나 자동 환불을 실행하지는 않는다. 정산의 이행 게이트는 [사전점검과 실행의 공통 판정](F21-03_provider-settlement_prd.md#사전점검과-실행의-공통-판정)을 따른다.
+
+공개 통계는 hostUserId와 providerUserId가 다른 배정만 집계한다. fulfilledCount는 FULFILLED 건수이며 PARTIALLY_FULFILLED를 정상 완료 건수에 더하지 않는다. noShowRate는 NO_SHOW/(FULFILLED+PARTIALLY_FULFILLED+NO_SHOW), 소수점 네 자리 반올림이며 분모 0이면 null이다.
+
+## 제공자 프로필과 검증 서류
+
+| 공개 API 계열 | 계약 |
+|---|---|
+| POST/GET/PUT /api/v1/providers/me | 등록 201, 본인 조회·수정 200 ProviderProfileVo. 유형은 INDIVIDUAL/BUSINESS |
+| POST /api/v1/providers/me/visibility | boolean hidden → 본인 프로필 반환 |
+| POST/GET /api/v1/providers/me/documents | 제출 documents의 docType·fileId → 프로필. 조회는 List<ProviderDocumentVo> |
+| GET /api/v1/providers/me/verification-history | List<ProviderVerificationHistoryVo> |
+| GET /api/v1/providers/{userId} | 로그인 사용자 기준 PublicProviderProfileVo |
+
+BUSINESS 등록은 사업자번호에서 숫자만 남긴 결과가 10자리여야 한다. 번호는 암호화 변환기로 저장하고 HMAC-SHA256 해시로 중복을 찾는다. 본인/공개 VO에는 끝 5자리만 드러나는 마스킹 값을 제공한다. 프로필 수정은 소개·상호명이며 유형/사업자번호 변경 API로 설명하지 않는다. 등록·수정·공개 변경은 닫힌 계정을 거절한다.
+
+공개 프로필은 selfHidden, adminSuspended, 양방향 차단, 비활성 계정이면 404로 감춘다. 공개 VO에는 유형·상호명·마스킹번호·소개·검증 상태/배지·이행 통계가 있고 검증 원문 파일은 없다.
+
+검증 제출은 NONE 또는 REJECTED/NEEDS_MORE_INFO에서만 가능하다. PENDING/VERIFIED 재제출은 거절한다. 봉인 중 NONE 최초 제출은 차단하고 반려/보완 재제출은 허용한다. 서버는 본인이 업로드한 COMPLETED·PROVIDER_DOC 파일만 받는다. 기존 ACTIVE 문서를 SUPERSEDED로 바꾸고 보관 시작 시각·파일 참조, 새 문서와 PENDING·제출/재제출 이력을 저장한다.
+
+앱 검증 화면은 제출 문서·심사 이력과 재조회 오류 경로를 제공한다. 제출 전에 첨부 체크포인트를 requested로 저장하고 응답이 불확실하면 서류를 다시 보내기보다 제출 목록의 fileId·docType으로 결과를 확인한다. 확인되면 보관 초안을 비우고 문서·이력을 다시 읽는다. 결과 확인은 같은 파일 식별자를 찾는 방식이며 서버의 영속 돈 명령 영수증과 동일한 계약으로 취급하지 않는다. 이번에 파일 업로드나 실제 제출을 실행하지 않았다.
+
+## 상품 공개·사진·검색
+
+내 상품은 /api/v1/providers/me/offerings에서 생성·페이지 목록, /{offeringId}에서 조회·수정, /status에서 상태 변경, /photos에서 추가·삭제, /photos/order에서 정렬한다. 공개 로그인 카탈로그는 /api/v1/providers/offerings의 페이지 목록과 /{offeringId} 상세다. 앱은 Java Page를 PageResponse로 받고 상세는 OfferingVo다.
+
+카테고리는 VEHICLE·VENUE·LABOR·OTHER, 가격모델은 FIXED·PER_PERSON·PER_HOUR·PER_DAY·QUOTE다. QUOTE는 basePrice=null로 저장하고 나머지는 양수 가격이 필요하다. 생성은 제목·지역·카테고리·가격모델을 요구하며 지역은 유효 시·도 코드여야 한다.
+
+| 상태 변경 | 실제 조건 |
+|---|---|
+| DRAFT/PAUSED → ACTIVE | 프로필 존재, 관리자 정지 아님, 사진 1장 이상. VEHICLE/VENUE는 VERIFIED |
+| ACTIVE → PAUSED | 소유자가 공개 일시 중지 |
+| DRAFT/ACTIVE/PAUSED → ARCHIVED | 소유자가 보관 처리 |
+| 운영자 제재 | DRAFT/ACTIVE/PAUSED → SUSPENDED, 해제는 SUSPENDED → PAUSED |
+
+ARCHIVED/SUSPENDED는 일반 편집과 사진 변경을 막는다. ACTIVE 상품의 카테고리를 검증 필수 유형으로 바꿀 때도 검증을 다시 검사한다. 사진 추가는 본인·OFFERING_PHOTO 키를 검증하며 정렬은 전체 사진 ID의 중복 없는 완전한 순열이어야 한다.
+
+공개 검색은 ACTIVE·숨김 아님·관리자 정지 아님·활성 계정·차단 제외를 필수 적용하고 category/regionCode/priceModel/minPrice/maxPrice/sort 및 페이지를 사용한다. 가격 정렬은 QUOTE를 뒤로 두고 생성 시각·ID로 동률을 정리한다. 공개 필터 자체가 검증·사진 조건을 모두 재판정하는 것은 아니다. 활성화 때의 사진 검사와 달리 현재 사진 삭제 함수에는 마지막 사진 삭제를 막는 검사가 없어 ACTIVE 사진 0건 경계가 남는다.
+
+## 운영 심사·제재·원문 열람
+
+현재 운영 코드는 community_api/admin-app 모듈이며 옛 community_admin_api를 정본으로 쓰지 않는다. 관리자 웹의 제공자 심사 목록·상세·상품 제재 화면도 구현돼 있다.
+
+| 운영 표면 | 권한·결과 |
+|---|---|
+| GET /admin/v1/manage/providers 및 /{profileId} | MANAGE_PROVIDER_VERIFICATION READ로 심사 목록/상세 |
+| POST /{profileId}/approve, /reject, /request-info | 같은 권한의 쓰기, 필수 멱등키. PENDING만 판정하며 반려/보완은 사유 필요 |
+| POST /{profileId}/suspend, /unsuspend | 검증 상태와 별개인 adminSuspended 변경, 사유·필수 키·감사 기록 |
+| GET /{profileId}/documents/{documentId}/download-url | 별도 MANAGE_PROVIDER_DOC_VIEW READ. 소속·파일 제공 가능 상태 확인 후 민감 URL 발급과 감사 기록 |
+| GET /admin/v1/manage/providers/offerings, POST /{offeringId}/suspend 또는 /unsuspend | 검증 관리 READ/WRITE 구분, 변경은 사유·필수 키 |
+
+상품 정지 해제는 ACTIVE가 아닌 PAUSED다. 다시 공개하려면 제공자가 활성화 조건을 통과해야 하므로 ‘해제 시 조건 없이 바로 공개’라는 과거 위험은 제거한다. 프로필 정지와 검증 상태, 개별 상품 제재는 별도 축이다.
+
+관리자 웹은 조회·쓰기·원문 열람 권한을 나누고 변경 dialog에서 만든 키를 재시도에 유지한다. 심사 성공 시 상세·목록을 갱신하고 실패에도 상세를 다시 읽는다. 상품 제재 성공은 목록을 다시 읽으며 해제 후 아직 공개되지 않는다고 안내한다. 이 화면 구현을 실제 운영 권한이나 브라우저 시험 통과로 쓰지 않는다.
+
+승인·반려·보완 요청은 PROVIDER_VERIFICATION_RESULT outbox에 결과와 profileId를 넣고 앱 알림 라우터는 검증 서류 화면으로 연결한다. 직접 배정 요청/수락/거절/확정과 조건 제안/수락도 관련 outbox 호출이 있다. 다만 providerTermsReacceptRequired의 앱 라우팅은 현재 받은 배정 목록으로 고정돼 있어, 제공자 견적을 받은 호스트에게 호스트 배정 상세로 바로 연결된다고 주장하지 않는다. 실제 알림 도착/탭 이동은 이번에 실행하지 않았다.
+
+## 앱 상태·결과와 남은 표현 차이
+
+배정 응답은 providerNickname/이미지, 계약·이행·금액·계약금, termsUpToDate, actions와 제공자 본인 수익/eventSummary를 지원한다. 앱은 주 행동을 서버 actions.allowed로 결정한다. 버튼 표시가 서버 명령의 최신 권한·상태 검사를 대체하지 않는다.
+
+직접 생성·확정·이행·호스트 조건 변경, 제공자 수락/거절·견적·조건 수락은 성공 뒤 해당 notifier 목록을 다시 읽는다. 직접 생성 성공은 토스트와 작성 화면 이탈, 실패는 입력 보존이다. 목록 재조회 실패를 이미 성공한 변경의 롤백으로 해석하지 않는다. 금전 취소·계약금·납부·정산의 영속 키와 불확정 결과 처리 범위는 각 기능 문서를 따른다.
+
+직접 생성 안내의 ‘금액은 정산 단계에서 확정’, confirm 안내의 ‘일을 마쳤다’, 카탈로그 안내의 일반 수락 표현은 실제 금액 설정·계약 확정·조건 수락 순서와 다를 수 있다. 이 문서는 실제 서버 경계를 정본으로 기록하며 해당 UI 문구를 수정했다고 주장하지 않는다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `ServiceAssignmentController#create`, `ServiceAssignmentController#listByEvent`, `ServiceAssignmentController#myAssignments`, `ServiceAssignmentController#accept`, `ServiceAssignmentController#reject`, `ServiceAssignmentController#confirm`, `ServiceAssignmentController#proposeTerms`, `ServiceAssignmentController#submitQuote`, `ServiceAssignmentController#acceptTerms`, `ServiceAssignmentController#currentTerms`, `ServiceAssignmentController#recordFulfillment`, `CatalogAssignmentController#createFromCatalog`, `ProviderProfileController#register`, `ProviderProfileController#getMyProfile`, `ProviderProfileController#update`, `ProviderProfileController#setVisibility`, `ProviderProfileController#submitDocuments`, `ProviderProfileController#getMyDocuments`, `ProviderProfileController#getVerificationHistory`, `ProviderProfileController#getPublicProfile`, `OfferingController#createOffering`, `OfferingController#getMyOfferings`, `OfferingController#getMyOffering`, `OfferingController#updateOffering`, `OfferingController#changeStatus`, `OfferingController#addPhoto`, `OfferingController#deletePhoto`, `OfferingController#reorderPhotos`, `OfferingCatalogController#search`, `OfferingCatalogController#getOffering`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 제공 가능 일정·예약 충돌 검사는 검토한 배정 경로에 없다. | 카탈로그 확인창의 당사자 조율 안내를 유지한다. |
+| Gap | 직접 역할은 30자 자유 입력이고 상품 역할은 기본 카테고리명이다. | 제품 공통 역할 enum이 확정됐다고 쓰지 않는다. |
+| Risk | 게시 가능·배정 가능·유료 지급 가능의 자격이 다르다. | 미검증 LABOR/OTHER 게시를 결제 허용으로 설명하지 않는다. |
+| Risk | ACTIVE 상품의 마지막 사진 삭제 차단은 없다. | 활성화 검사와 지속적인 공개 조건을 구분한다. |
+| Risk | 일부 앱 안내가 계약/이행/정산을 혼동하고 견적 알림의 호스트 경로 연결이 제한된다. | 실제 함수·입구와 표현 차이를 남긴다. |
+| Risk | 조건 폼은 payload 편집이 없고 잘못된 계약금 문자열을 0으로 처리한다. | 서버 전체 입력 계약과 현재 폼을 구분한다. |
+| 미검증 | 실제 등록·서류 업로드·심사·알림 수신·모바일/관리자 UI 이동을 새로 실행하지 않았다. | 소스 대조만 완료했으며 제품 통과 증거와 분리한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 입구와 봉인:** 호스트 배정 목록의 직접/카탈로그 입구, 제공자 센터와 기존 정리 경로를 봉인 설정별로 구분한다.
+- **AC-02 직접 생성:** 사용자 선택·역할만 전송하고 서버 HOST_MANUAL·자기 배정 ACCEPTED·타인 ASSIGNED를 따른다.
+- **AC-03 권한과 중복:** URL 이벤트·실제 제공자·활성 회원·차단 관계와 활성 상태 유일키, 취소/거절 후 재배정을 확인한다.
+- **AC-04 상태 축:** 계약 전이·종료 후 이행·수익 승인을 구분하고 SETTLEMENT_LOCKED의 전이 종결/활성 유일성을 함께 유지한다.
+- **AC-05 카탈로그:** 공개/검증/계정 조건을 다시 검사하고 원천·제공자·상품 스냅샷을 서버가 결정한다.
+- **AC-06 조건 수락:** 버전/상대방/만료/정책·X/D·무료 제외·지급 자격·금전 래치를 확인한다.
+- **AC-07 금액 권위:** D=0 직접 총액과 D>0 engagement/계약금, 예상 미리보기와 실제 수익 반올림을 구분한다.
+- **AC-08 이행:** 이벤트 종료·CONFIRMED·허용 결과·일부/미참석 사유·열린 분쟁 차단과 자동 환불 부재를 명시한다.
+- **AC-09 프로필과 문서:** 유형·사업자번호 보호·공개 제한·파일 소유/목적/완료·제출 상태/대체 이력을 확인한다.
+- **AC-10 상품:** 카테고리/가격·페이지 검색·상태 전이·사진/정렬 조건·제재 해제 PAUSED를 따른다.
+- **AC-11 운영과 알림:** READ/WRITE/민감 문서 권한·멱등키·감사·검증 결과 outbox와 실제 앱 라우팅 경계를 구분한다.
+- **AC-12 결과와 제한:** 성공 뒤 목록/폼 복귀·실패 입력 유지·현재 UI 표현/입력/알림 한계를 실행 검증 없이 완료로 바꾸지 않는다.
+
+근거는 현재 서버·회원 앱·관리자 웹 소스이며 새 제품 시험 통과 기록은 없다.

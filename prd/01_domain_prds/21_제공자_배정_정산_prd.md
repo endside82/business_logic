@@ -1,10 +1,91 @@
 # 21. 제공자 배정·정산 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 기능 PRD와 그 소스 대조 근거를 통합한 업무 영역 정본이다. 문서 최신화와 실제 서비스 공개·제품 시험 통과를 구분한다. 실행 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따른다.
 
+## 목적과 책임
 
-<!-- source-first; updated: 2026-07-29; source: community_api curated/ + provider/ + community_api/admin-app provider/ + community_app curated/ + provider/ -->
+호스트/공동 주최자는 이벤트에 서비스 제공자를 배정하고, 제공자는 조건을 수락하거나 견적을 제시한다. 참가자·호스트의 유상 분담금과 계약금으로 서비스 보수를 마련하며, 이벤트 종료 후 이행·출석·수금·수익 연결을 확인해 정산을 확정한다. 지갑 실입금은 이후 주간 지급과 별도 운영 재처리에서 발생한다.
+
+curated는 배정·조건·coverage·정산 판정, provider는 프로필·검증·상품과 공개 조건을 담당한다. 이벤트/정기모임은 실제 호스트·회차·참가·출석의 권위를 제공한다. 지갑·수익·상계·원장 실행은 기존 payment 명령과 포트를 사용한다. 운영 심사·제재·지급 재시도는 community_api/admin-app과 관리자 웹에 있다.
+
+## 기능 정본과 현재 구현
+
+| 기능 정본 | 현재 계약과 입구 | 남은 경계 |
+|---|---|---|
+| [제공자 배정·프로필·상품·계약조건](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | 닉네임 선택 직접 배정/상품 카탈로그, 서버 actions, 조건 버전·이행, 검증·상품 운영 화면과 결과 알림 | 일정 충돌 미검사·역할 자유 입력·일부 안내/견적 알림 경로 차이 |
+| [참가자 첫 납부·추가 납부·자동 분담](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | 총액·참가자 전체 상한·잔액, PAY/TOP_UP/NONE에 따른 실제 버튼, 영속 과금 키 | 개인 부족분 자동 추가 없음·잔액 초과 사전 검사 없음·제안 금액 재산정 |
+| [제공자 정산 확정·주간 지급·지급 재처리](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | 목록/readiness/실행의 공통 판정, 제공자 수익/지급 표시, 실패·보류 장부와 운영 재시도 | 차단 안내의 직접 조치 없음·조회 뒤 상태 변화·명목 순액과 실입금 차이 |
+| [무료 제외·무료 제외 취소·호스트 대납](../02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | 실제 참가자 자격 확인, 돈 없는 무료 제외와 취소, 실제 호출자 지갑의 유상 대납 | 앱 coverage 모델/선택기에 과거 취소 이력 구분이 부족함 |
+| [환불·정산 후 회수·배정 종료](../02_feature_prds/21_curated/F21-05_refund-clawback_prd.md) | 다섯 명령의 영속 키, 실제 납부자 반환·호스트 부담·지급 전/후 회수·배정 종료 | 부분 납부의 단일 행 제한·회수 응답에서 지급 전후와 실제 미수금 구분 부족 |
+| [계약금 납부·조회·정산 적용](../02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | 수락 terms의 X/D로 납부, 카탈로그 계약금 CTA와 PENDING 취소, 정산/배정 종료 귀속 | PAID 취소와 PENDING 취소를 혼동하면 안 됨·건별 반올림 |
+| [정기모임 묶음 배정·정산·다음 회차 승계](../02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | 현재 호스트 회차 범위·독립 정산 영수증·회차별 결과·다음 회차 ASSIGNED와 조건 재수락 | 묶음 UI 키는 메모리 보관·부분 실패 재시도·전체 취소 API 없음 |
+
+표는 소스로 확인한 구현과 제한을 나타낸다. 기능 존재나 문서 대조 완료를 실제 출시 허용·금전 게이트 활성·새 제품 시험 통과로 합산하지 않는다.
+
+## 사용자 경로와 봉인
+
+호스트는 이벤트 관리의 제공자 배정 목록에서 직접 생성 또는 이벤트를 지정한 카탈로그로 이동한다. 제공자는 제공자 센터의 받은 배정에서 수락·거절·견적·조건 수락을 처리한다. 참가자는 이벤트 상세의 서비스 이용료 분담 입구에서 본인에게 허용된 첫 납부/추가 납부를 진행한다.
+
+PROVIDER 봉인 설정에서는 신규 등록·상품 거래·새 배정·조건 협상을 시작하는 입구를 제한한다. 기존 본인 프로필·서류/이력·배정 조회와 허용된 정리 작업은 별도 safetyExit를 따른다. 잔여 금전 진입에는 실제 PAID 계약금/금전 charge 같은 연결 증거가 필요하므로 단순 engagement나 무료 표시만으로 새 돈을 받지 않는다.
+
+목록 route guard와 서버 호스트/참가자/본인 검사는 함께 존재한다. confirm/cancel의 URL eventId 소유 검사와 정기모임 묶음 정산의 호스트 route guard가 현재 구현돼 있으므로 과거 ‘경로 검사 없음’ 표기를 유지하지 않는다. 앱 화면 유무와 브라우저·실기기 동작 확인은 분리한다.
+
+## 계약·이행·금전 상태
+
+| 상태 축 | 의미 |
+|---|---|
+| 배정 | DRAFT → ASSIGNED → ACCEPTED → CONFIRMED → SETTLEMENT_LOCKED. 허용 전이에서만 DECLINED/CANCELED 가능 |
+| 활성 유일성 | 같은 이벤트·제공자는 DRAFT/ASSIGNED/ACCEPTED/CONFIRMED/SETTLEMENT_LOCKED 중 한 건. 거절·취소 후 새 배정 가능 |
+| 이행 | 계약 확정과 별개. 이벤트 종료 후 정상 완료·일부 완료·미참석을 기록하며 일부/미참석은 사유 필요. 열린 분쟁은 일반 수정 차단 |
+| coverage | SELF_PAID, FREE_EXCLUDED, HOST_SUBSIDIZED, NOSHOW_FORFEIT. beneficiary와 실제 payer를 구분하고 취소된 무료 행은 활성 집계에서 제외 |
+| 수익 | 과금별 PENDING, 정산 확정으로 APPROVED, 지급으로 PAID. 환불/회수는 별도 상태·원장 효과 |
+| 계약금 | PENDING/PAID/CANCELED와 적용 유형을 별도로 본다. 적용 후에도 PAID를 유지하며 제공자 정산 적용/배정 종료 귀속으로 나뉨 |
+| 지급 묶음 | PROCESSING/SUCCEEDED/FAILED/ON_HOLD를 실제 지갑 거래·상계·수익별 배분과 함께 판단 |
+
+SETTLEMENT_LOCKED는 배정 전이의 종결이지만 같은 제공자 활성 중복을 막는다. APP 정산 성공 토스트는 승인 요청의 결과이며 지갑 입금 증거가 아니다. 유상 direct 배정도 이행 완료를 요구하고 ‘legacy라면 항상 생략’하지 않는다.
+
+## 금액·정산·환불의 핵심 불변조건
+
+카탈로그 조건은 X>0, D=0 또는 0<D<X다. D=0이면 직접 총액 X, D>0이면 engagement X와 참가자 전체 상한 X−D를 쓴다. 참가자 상태의 remainingAmount는 배정 전체 수금 잔액이며 개인별 남은 몫이 아니다. 자동 1/N 첫 납부는 요청 시 실제 출석 집합으로 다시 계산한다.
+
+정산은 실제 출석자−제공자+노쇼 귀속 대상과 활성 coverage beneficiary 집합이 같아야 한다. 인원 수만 같아서는 부족하다. 실제 출석자를 노쇼로 몰수한 충돌도 별도로 막는다. 무료 제외는 집합에는 포함하고 돈 합계에서 제외한다. 직접 양수 총액은 수금=X, 계약금 방식은 참가자 수금 C+계약금 D=X다.
+
+목록 정산 action·readiness·실제 실행은 같은 판정 함수를 쓴다. 실행의 수익 승인 포트는 연결 행·원천·제공자 소유·PENDING 상태를 잠금 후 검증한다. 주간 지급은 제공자별 트랜잭션과 지갑 잠금 뒤 정지 확인을 거쳐 환불 미납금을 먼저 상계하고 실제 순입금·지급 묶음을 기록한다.
+
+현재 신규 수수료 정책은 수락 시 스냅샷된 5%이며 과거 스냅샷이나 null의 계산과 구분한다. 수수료와 구현의 원천징수 계산은 결제/계약금 건별 반올림이므로 전체 총액 미리보기와 차이가 날 수 있다. 이는 구현 설명이며 세무·외부 계약의 적정성이나 출시 승인 증거가 아니다.
+
+전액환불은 실제 납부자에게 반환한다. 부분환불은 현재 호스트가 유상 지갑으로 부담하고 원 coverage/수익은 유지한다. 배정 종료 시 부분환불 부담을 되돌릴 대상은 현재 호스트라는 추정이 아니라 기록된 실제 과거 부담자다. 정산 후 회수는 지급 전이면 수익 취소, 이미 PAID면 원 순수익 회수와 부족분 미수금으로 갈린다. 반환 gross와 제공자 회수 net을 같은 금액으로 쓰지 않는다.
+
+## 재시도·회차·운영 경계
+
+참가자 첫/추가/자동 납부·계약금·대납·무료 제외 취소·환불/회수·배정 종료·단일 정산은 각 기능의 영속 회원 명령 키 계약을 따른다. 비금전 배정/조건 쓰기까지 같은 영수증 계약이라고 확장하지 않는다. 같은 성공 키의 재생과 새 키로 상태를 다시 검사하는 요청을 구분한다.
+
+정기모임 묶음 배정은 현재 대상 회차를 하나의 트랜잭션으로 처리하며 활성 중복은 건너뛴다. 묶음 정산은 회차별 독립 영수증으로 부분 성공이 가능하다. API 결과 배열이 HTTP 성공이어도 모든 회차의 정산 성공을 뜻하지 않는다. 다음 회차는 ASSIGNED로 승계하고 카탈로그 조건은 새 버전으로 복제해 재수락하며 돈·수락 기록을 복사하지 않는다.
+
+운영자는 제공자 검증·프로필/상품 제재, 민감 서류 URL 발급, 지급 실패 재시도 화면을 사용한다. READ/WRITE/민감 원문 권한과 멱등키·감사 기록을 구분한다. 상품 제재 해제는 PAUSED로 복귀한다. 지급 실패 재시도의 HTTP 200도 FAILED 결과 행일 수 있으므로 묶음 상태·오류·실입금으로 판단한다.
+
+## 데이터와 연결 근거
+
+| 묶음 | 정본·책임 |
+|---|---|
+| 배정·조건 | service_assignment, terms/acceptance, 상품 스냅샷·상태·활성 유일키. [배정 상태·자격·중복](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md#상태자격중복-배정) |
+| 금전 연결 | charge의 payer/beneficiary/transaction/earning, 환불 audit, engagement/prepayment의 약정·적용. [참가자 첫 납부와 추가 납부](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md#첫-납부와-추가-납부) |
+| 지급 기록 | provider payout batch와 수익별 배분, 공통 CreatorEarning·지갑·원장. [수익 승인과 실제 지급](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md#수익-승인과-실제-지급) |
+| 검증·상품 | profile/document/history/offering/photo, 별도 공개·검증·정지 상태. [제공자 프로필과 검증 서류](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md#제공자-프로필과-검증-서류) |
+| 이벤트·정기모임 연결 | 실제 호스트/공동 주최자·참가·출석·종료와 회차 권위, 호스트 이전 뒤 회차 필터. [대상 회차와 호스트 이전](../02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md#대상-회차와-호스트-이전) |
+
+API별 정확한 위치는 각 기능 PRD의 코드 위치 표, 소스 SHA와 검토 범위는 [문서 최신화 근거 장부](../../verification/document-refresh-2026-11-22.json)에 기록한다. 과거 파일 수·메서드 수를 현재 검증 범위나 현재 API 총수로 사용하지 않는다.
+
+## 현재 제한과 확인 범위
+
+현재 미해결 사항은 각 기능의 ‘현재 제한과 확인 범위’를 정본으로 한다. 제공 가능 일정, 앱 일부 단계 표현, 개인별 부족액 자동 계산, 취소 coverage 선택 구분, 회수 응답의 실제 미수금 구분, 묶음 UI 키의 영속성 등이 남는다. 해결된 과거 공백인 총액 필드 누락·계약금 CTA 없음·무료 제외 취소 없음·readiness coverage 전용·제공자 지급 화면 없음·운영 심사 UI/알림 없음·다음 회차 DRAFT 고립은 현재 결함으로 다시 올리지 않는다.
+
+이 문서 대조에서는 돈을 움직이거나 제품 코드를 바꾸거나 앱·관리자 브라우저·실기기 시험을 실행하지 않았다. 문서 링크/정본·파생 일치 검사는 해당 문서 산출물의 검증이다. 전체 출시·외부 계약·배포 준비는 별도 근거가 필요하다.
+
+## 과거 집계 원문 보존
+
+다음은 당시 집계의 원문이다. 2026-11-22의 API·엔티티·화면·시험 수나 시험 통과 증거로 사용하지 않는다. 현재 계약은 위 기능 정본을 따른다.
 
 > 문서 상태: **2026-07-29 소스 재실측본**. 공개 API의 `curated/`와 `provider/`, 관리자 API의
 > `provider/`, Flutter의 curated/provider 전 레이어를 직접 대조했다.
@@ -18,190 +99,3 @@
 > 2026-07-08 이후 핵심 변화는 제공자 프로필·검증·상품 카탈로그, 카탈로그 기반 배정, 버전형 계약조건,
 > 카테고리 공통 플랫폼 수수료 5%, 이행 통계, 관리자 심사 API의 추가다. 이 수치는 생성 파일을 제외한
 > 실제 소스와 테스트 애노테이션/함수 수를 기준으로 한다.
-
-## 1. 결론
-
-제공자 배정·정산 도메인은 호스트가 이벤트(또는 정기모임)에 **서비스 제공자(강사 등 인력)를 배정**하고,
-참가자가 **서비스비를 분담 결제**하며, 회차 종료 후 **제공자에게 정산 지급**하는 신규 위성(satellite) 도메인이다.
-
-결합 설계 핵심은 **payment 도메인 내부를 직접 건드리지 않고 3개 검증형 포트(port/adapter)로만 통신**하는 단방향
-부패방지경계(anti-corruption layer)다. 카탈로그 계약은 `FEE_V2_5PCT`에 따라 총액의 **5.00% 플랫폼
-수수료**와 수수료 차감 후 금액의 **3.3% 원천징수**를 적용한다. 5% 정책 도입 전 수락된
-`FEE_V1_PASSTHROUGH` 계약과 direct/legacy 배정(`feeRateSnapshot=null`)은 0% 스냅샷을 유지한다.
-돈은 기존 WalletLedgerFacade·CreatorEarning·AccountingLedger 인프라를 재사용한다.
-
-7개 기능 PRD(F21-01~07)가 이 도메인을 커버한다: [F21-01 제공자 배정](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md), [F21-02 참가자 서비스비 분담 결제](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md), [F21-03 제공자 정산](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md), [F21-04 무료초대·호스트 대납](../02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md), [F21-05 환불·회수](../02_feature_prds/21_curated/F21-05_refund-clawback_prd.md), [F21-06 계약금 선납](../02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md), [F21-07 정기모임 묶음 배정·정산](../02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md).
-
-서버의 돈·상태 계약은 구현돼 있지만 Flutter 표면이 모든 계약을 완결하지는 않는다. 특히 참가자 과금
-상세값·카탈로그 계약금 결제·정산 readiness 표시·무료처리 취소·제공자 지급내역·정기모임 DRAFT 재개는
-현재 소스에서 명확한 공백이다. 아래 상태표의 “구현됨”은 서버 endpoint 존재와 동일한 의미가 아니며,
-클라이언트 도달성은 §8의 잔여 후속을 함께 봐야 한다.
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | 핵심 소스 | 상태 |
-|---|---|---|---|---|
-| F21-01 | 제공자 프로필·카탈로그·배정·계약조건 | [F21-01_provider-assignment_prd.md](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | `ProviderProfileController`, `OfferingController`, `OfferingCatalogController`, `CatalogAssignmentService`, `ServiceAssignmentTermsService`, `ServiceAssignmentController` | 구현됨 |
-| F21-02 | 참가자 서비스비 분담 결제 | [F21-02_participant-fee-charge_prd.md](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | `ServiceAssignmentController#{charge,topup,chargeMyShare,myChargeStatus,setServiceFee}`, `ServiceAssignmentChargeService`, `WalletLedgerFacade`, `CoverageType(4)` | 서버 구현·앱 정보 축약 |
-| F21-03 | 제공자 정산 | [F21-03_provider-settlement_prd.md](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | `ServiceAssignmentController#{settle,settlementReadiness}`, `ServiceAssignmentSettlementService`, `CuratedProviderSettlementPort`, `CuratedSettlementBatchService` | 서버 구현·앱 UX 공백 |
-| F21-04 | 무료초대·호스트 대납 | [F21-04_free-invite-host-subsidy_prd.md](../02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | `ServiceAssignmentController#{freeExclude,subsidize}`, `CoverageType.FREE_EXCLUDED/HOST_SUBSIDIZED`, `ASSIGNMENT_FREE_NOT_ALLOWED` | 생성 구현·undo 없음 |
-| F21-05 | 환불·회수 | [F21-05_refund-clawback_prd.md](../02_feature_prds/21_curated/F21-05_refund-clawback_prd.md) | `ServiceAssignmentController#{refund,partialRefund,clawback,noshowForfeit}`, `ServiceAssignmentRefund`, `AssignmentRefundType(2)` | 구현됨·경로별 멱등 상이 |
-| F21-06 | 계약금 선납(engagement) | [F21-06_engagement-prepayment_prd.md](../02_feature_prds/21_curated/F21-06_engagement-prepayment_prd.md) | `ServiceAssignmentController#{payPrepaymentByWallet,cancelPrepayment}`, `ServiceEngagement`, `ServiceAssignmentPrepaymentService`, `PrepaymentApplicationType(2)` | 직접 구현·카탈로그 앱 단절 |
-| F21-07 | 정기모임 묶음 배정·정산 | [F21-07_regular-meeting-bulk_prd.md](../02_feature_prds/21_curated/F21-07_regular-meeting-bulk_prd.md) | `ServiceAssignmentController#{bulkAssignToRegularMeeting,bulkSettleRegularMeeting}`, `BulkSettleStatus(6)`, `CuratedEventAccessPort#{assertRegularMeetingHost,getRegularMeetingSessionEventIds}` | 핵심 구현·DRAFT/bulk cancel 공백 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 기능 | 이유 |
-|---|---|---|
-| [F21-03](../02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | 제공자 정산 | 완납 게이트(집합 동일성) 설계가 도메인 전체 돈 흐름의 핵심 안전장치. 검증형 포트와 주간 배치 구조 이해 필수 |
-| [F21-02](../02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | 참가자 서비스비 분담 결제 | per-charge earning 즉시적립 + PAID_ONLY + 멱등 설계가 F21-03 정산 진실(charge 합계)의 재료 |
-| [F21-01](../02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | 제공자 배정 | 상태머신(7값) 이해 없이 나머지 기능 진입 불가. IDOR 경계와 owner=event 단독 설계 파악 기반 |
-
-## 4. 도메인 책임 한도
-
-curated 도메인은 배정 생애주기(계약축 AssignmentStatus)·과금 집계(coverage 신원)·정산 승인을 소유한다.
-**돈의 실행(지갑 차감·적립·지급)은 payment 도메인 포트에 위임**하며 직접 처리하지 않는다.
-
-provider 도메인은 공개 프로필, 검증문서, 상품과 사진, 상품 조회를 소유한다. 카탈로그 배정은 상품의 제공자·
-카테고리·제목·버전을 서버가 스냅샷으로 복사하므로 클라이언트가 제공자나 출처를 위조할 수 없다.
-
-- 이벤트 출석자 권위: `CuratedEventAccessPort`가 event 도메인에 위임 (curated 직접 EventRepository 접근 금지)
-- 제공자 earning 기록/환불: `CuratedProviderEarningPort`가 payment 도메인에 위임
-- 검증형 정산 지급 승인: `CuratedProviderSettlementPort`가 payment 도메인에 위임 (마켓 `processCreatorSettlement` 신뢰형 직접호출 금지)
-
-admin에는 프런트 화면은 아직 없지만 관리자 API가 존재한다. `MANAGE_PROVIDER_VERIFICATION(NR)` 권한으로
-심사 큐·승인·거절·추가자료요청·상품 정지/해제를 수행하고, 원문 다운로드 URL은 별도
-`MANAGE_PROVIDER_DOC_VIEW(NS)` 권한을 요구한다. 정산은 기존 `ManageCreatorEarning`과 머니플로우
-트레이스를 공유한다.
-
-## 5. 핵심 데이터·인프라
-
-### 5.1 신규 테이블 12종 (V1__init.sql 통합, V2+ 금지)
-
-| 테이블 | 책임 | 핵심 제약 |
-|---|---|---|
-| `service_assignment` | 배정 계약 생애주기 | `UNIQUE(event_id, provider_user_id)`, `@Version` 낙관락, owner=event_id 단독 |
-| `service_assignment_charge` | 참가자 분담 coverage 행 | `UNIQUE(assignment_id, beneficiary_user_id, charge_order)`, `creator_earning_id` 1:1 FK |
-| `service_assignment_prepayment` | 계약금/선납 | `engagement_id` FK, `status`(ServicePrepaymentStatus), `application_type`(PrepaymentApplicationType) |
-| `service_assignment_refund` | 환불 audit | `UNIQUE(refund_transaction_id)`, `refund_type`(AssignmentRefundType) |
-| `service_engagement` | 제공자 계약(약정) | `agreed_provider_fee`, `status`(ServiceEngagementStatus) |
-| `service_assignment_terms` | 카탈로그 계약조건의 불변 버전 | 배정별 단조 증가 `version`, X/D, 제안자·만료·정책 스냅샷 |
-| `service_assignment_terms_acceptance` | 조건 수락 증거 | 배정/버전/수락자 유일성, payload hash, fee policy/rate 스냅샷 |
-| `provider_profile` | 제공자 공개 프로필·가시성·검증 상태 | 사업자번호 AES 암호화+HMAC 유일성, selfHidden/adminSuspended 분리 |
-| `provider_verification_document` | 검증 제출 문서 | `PROVIDER_DOC` 완료 파일만, ACTIVE/SUPERSEDED 생애주기 |
-| `provider_verification_history` | 검증 상태 감사 이력 | 제출·재제출·관리자 판정 append-only |
-| `provider_offering` | 제공 상품 | 카테고리/가격모델/지역/상태, 콘텐츠 변경 시 version 증가 |
-| `provider_offering_photo` | 상품 사진 | `OFFERING_PHOTO` 완료 파일, 순서 전체순열 검증 |
-
-### 5.2 핵심 enum 19종
-
-| Enum | 값 | 위치 |
-|---|---|---|
-| `AssignmentStatus` | DRAFT·ASSIGNED·ACCEPTED·DECLINED·CONFIRMED·SETTLEMENT_LOCKED·CANCELED (7) | `curated/constants/AssignmentStatus.java` |
-| `AssignmentSource` | HOST_MANUAL·HOST_INVITE_ACCEPTED·PROVIDER_APPLY·ADMIN_ASSIGNED·CATALOG (5) | `curated/constants/AssignmentSource.java` |
-| `FulfillmentStatus` | PENDING·IN_PROGRESS·FULFILLED·PARTIALLY_FULFILLED·NO_SHOW·DISPUTED (6) | `curated/constants/FulfillmentStatus.java` |
-| `CoverageType` | SELF_PAID·FREE_EXCLUDED·HOST_SUBSIDIZED·NOSHOW_FORFEIT (4) | `curated/constants/CoverageType.java` |
-| `ChargeOrigin` | PREPAID·POSTPAID (2) | `curated/constants/ChargeOrigin.java` |
-| `AssignmentRefundType` | PARTIAL_HOST_ABSORBED·CLAWBACK (2) | `curated/constants/AssignmentRefundType.java` |
-| `PrepaymentApplicationType` | APPLIED_TO_PROVIDER·FORFEIT_TO_PROVIDER (2) | `curated/constants/PrepaymentApplicationType.java` |
-| `BulkSettleStatus` | SETTLED·ALREADY_SETTLED·NO_ASSIGNMENT·SKIPPED_NOT_READY·BLOCKED·FAILED (6) | `curated/constants/BulkSettleStatus.java` |
-| `ServicePrepaymentMethod` | WALLET·BANK_TRANSFER (2) | `curated/constants/ServicePrepaymentMethod.java` |
-| `ServicePrepaymentStatus` | PENDING·PAID·CANCELED (3) | `curated/constants/ServicePrepaymentStatus.java` |
-| `ServiceEngagementStatus` | DRAFT·ACTIVE·CLOSED·CANCELED (4) | `curated/constants/ServiceEngagementStatus.java` |
-| `ProviderType` | INDIVIDUAL·BUSINESS (2) | `provider/constants/ProviderType.java` |
-| `ProviderVerificationStatus` | NONE·PENDING·NEEDS_MORE_INFO·VERIFIED·REJECTED (5) | `provider/constants/ProviderVerificationStatus.java` |
-| `ProviderDocumentType` | BUSINESS_REG·TRANSPORT_LICENSE·INSURANCE·VENUE_RIGHT·OTHER (5) | `provider/constants/ProviderDocumentType.java` |
-| `OfferingCategory` | VEHICLE·VENUE·LABOR·OTHER (4) | `provider/constants/OfferingCategory.java` |
-| `OfferingPriceModel` | FIXED·PER_PERSON·PER_HOUR·PER_DAY·QUOTE (5) | `provider/constants/OfferingPriceModel.java` |
-| `OfferingStatus` | DRAFT·ACTIVE·PAUSED·SUSPENDED·ARCHIVED (5) | `provider/constants/OfferingStatus.java` |
-| `Sido` | SEOUL 등 17개 시·도 코드 | `provider/constants/Sido.java` |
-| `VerificationHistoryAction` | SUBMITTED·RESUBMITTED·APPROVED·REJECTED·NEEDS_MORE_INFO (5) | `provider/constants/VerificationHistoryAction.java` |
-
-### 5.3 포트(port) 3종
-
-| 포트 | 방향 | 책임 |
-|---|---|---|
-| `CuratedEventAccessPort` | curated → event | 호스트/co-host 권한 검증, 실제 출석자 집합 조회, 회차 종료 확인, 참가자 자격 검증, 정기모임 세션 조회 |
-| `CuratedProviderEarningPort` | curated → payment | per-charge earning 기록, 계약금 earning leg 적용, earning 환불/회수 |
-| `CuratedProviderSettlementPort` | curated → payment | earning 검증형 승인(PENDING→APPROVED), 주간 배치 대상 조회, 실지급(REQUIRES_NEW 격리) |
-
-### 5.4 배치 1종
-
-| 배치 | 일정 | 책임 |
-|---|---|---|
-| `CuratedSettlementBatchService` | 매주 월요일 03:00 스케줄러/JVM 기본 시간대 (`0 0 3 * * MON`, zone 미지정 — cron 설정 override 가능) | APPROVED·SERVICE_ASSIGNMENT earning을 provider 단위로 모아 실지급. Redisson 분산락(`curated:settlement:weekly:lock`) + 개별 provider REQUIRES_NEW 격리(부분 성공 허용) |
-
-## 6. 도메인 외부 영향
-
-| 도메인 | 영향 |
-|---|---|
-| 03 이벤트 | 배정 owner·실제 출석자 권위. `CuratedEventAccessPort`를 통해 단방향 접근 |
-| 06 결제/지갑 | `WalletLedgerFacade.spendAndJournal`로 PAID_ONLY 차감+분개. `CreatorEarning` 적립/환불/회수. `SERVICE_ASSIGNMENT` SpendingPurpose 소스 |
-| 07 모임정산 | `MarketplaceSettlementService.processCreatorSettlement` 검증 포트 위임(직접 호출 금지). CreatorEarning·payout 인프라 공유 |
-| 17 정기모임 | F21-07: 다회차 일괄 배정·정산. `CuratedEventAccessPort#{assertRegularMeetingHost,getRegularMeetingSessionEventIds}` 경유 |
-| admin | 제공자 검증 큐/상세/판정/문서 presign, 상품 정지·해제 API 8개 + `ManageCreatorEarning`/머니플로우. 관리자 프런트는 아직 없음 |
-
-## 7. 진행 상태 (2026-07-29 기준)
-
-| Phase | 범위 | 상태 |
-|---|---|---|
-| P0 | 3개 포트/어댑터 설계 + 부패방지경계 | 완료 |
-| F21-01 | 프로필·검증·상품 카탈로그·카탈로그 배정·버전형 계약조건·이행통계 + 기존 배정 상태머신 | 완료 |
-| F21-02 | 참가자 과금(PAID_ONLY + 멱등 + per-charge earning) + my-share N분의1 | 서버 완료·앱 상세값 축약 |
-| F21-03 | 완납 게이트(집합 동일성) + 보장모드 Σ검증 + 검증형 포트 승인 + 주간 배치 | 서버 완료·readiness/provider UI 공백 |
-| F21-04 | 무료초대(FREE_EXCLUDED) + 호스트 대납(HOST_SUBSIDIZED) | 생성 완료·undo/participant 검증 공백 |
-| F21-05 | 환불(전액/부분/clawback) + 경로별 멱등 계약 + 노쇼 forfeit | 서버 완료·앱 액션 구현 |
-| F21-06 | 계약금 선납(engagement) + applyDepositIfPresent + forfeitOnCancel | 직접 배정 완료·카탈로그 결제 CTA 단절 |
-| F21-07 | 정기모임 direct 일괄 배정·묶음 정산(BulkSettleStatus 6값) | 핵심 완료·DRAFT resume/bulk cancel 없음 |
-| Flutter | curated 5화면 + provider 7화면, 관련 라우트 13개 + API/Repository/Providers | 구현됨(아래 도달성 Gap 존재) |
-
-## 7-A. 접근권한 감사 교정 (2026-07-02)
-
-> 감사 원본: `docs/audit/access-control-2026-06-30/categories/F21_curated.md`
-
-- **제공자 배정·정산 화면 — 라우트/서버 권한 재확인(F21-01)**: `eventAssignments`,
-  `eventAssignmentCreate`는 호스트/공동호스트 라우트 가드, `eventServiceFeeCharge`는 참가자 가드가 있다.
-  `regularMeetingBulkSettle` 경로에는 현재 동일한 클라이언트 redirect가 없고 서버
-  `assertRegularMeetingHost`가 최종 권한을 강제한다. 공개 API 49개 엔드포인트는 각 controller/service의
-  호스트·참가자·제공자 본인·공개조회 경계를 따른다.
-- **서비스료 총액 노출 — 서버 계약과 현재 앱 축약(D-F21-1)**: 서버 my-charge-status는
-  `serviceFeeGross` 외에 `agreedGross`, `participantCap`, `chargeable`을 반환한다. 카탈로그 D>0이면
-  실제 참가자 부담 권위는 `X-D`가 될 수 있다. Flutter 모델은 `agreedGross`/`participantCap`을 버리고,
-  화면도 `chargeable`을 사용하지 않은 채 aggregate `myPaidAmount`와 `suggestedShare` 위주로 보여 준다.
-  따라서 서버의 투명성 필드는 존재하지만 현재 앱이 이를 완전히 노출한다는 서술은 맞지 않는다.
-
-## 8. 잔여 후속
-
-기능 PRD의 미해소 행을 기준으로 한 `features.js` Risk 후보는 F21-01 6개,
-F21-02 7개, F21-03 7개, F21-04 5개, F21-05 5개, F21-06 5개,
-F21-07 6개로 도메인 합계 **41개**다. 아래 표는 같은 후보를 운영 주제 13개로
-묶은 것이므로 행 수를 기능별 후보 합계로 해석하지 않는다.
-
-| 항목 | 차단 사유 |
-|---|---|
-| F7 용역 세무 — 지급명세서 산출·사업자/개인 세율 구분 | **외부 차단**: PG·세무 계약 대기. 원천징수 3.3%·자료적재는 구현 완료 |
-| 제공 가능 일정/충돌 검증 | 카탈로그 상세와 배정 생성에 일정 충돌 검사가 없다. 앱도 “가능 여부를 직접 조율”한다고 고지한다 |
-| 알림 완결 | `PROVIDER_VERIFICATION_RESULT` 라우팅은 현재 `null`이고 관리자 판정 서비스도 결과 알림을 발행하지 않는다 |
-| 관리자 상품 해제 재검증 | admin `unsuspend`는 SUSPENDED→ACTIVE만 수행하고 프로필 가시성·검증·사진 활성화 조건을 다시 검사하지 않는다 |
-| 정기모임 계약 승계 | 카탈로그 계약의 다음 회차는 조건 v1만 복제하고 재수락이 필요하다. direct/unaccepted는 DRAFT로 생기지만 DRAFT 재개 API가 없다 |
-| ProviderRole taxonomy 확정 | direct 배정은 현재 varchar(30) 자유 입력. 카탈로그는 미입력 시 카테고리 한글 표시명을 서버가 사용 |
-| admin 제공자 관리 프런트 | 관리자 API 8개는 구현됐으나 이 워크스페이스에 대응 프런트 화면은 없다 |
-| 배정 route-owner 불변 | confirm/cancel controller의 path `eventId`가 assignment의 실제 event와 같은지 확인하지 않는다. 서비스 권한은 실제 assignment event로 검사해 권한 상승은 막지만 route invariant는 비어 있다 |
-| 참가자 과금 UI/계약 | 서버는 `chargeable`, `agreedGross`, `participantCap`과 X-D cap을 계산하지만 앱은 두 필드를 모델에서 버리고 aggregate만 표시한다. 첫 `charge-my-share`도 잔액이 아니라 full share다. cap 에러 payload·완납 알림도 없다 |
-| 정산 readiness와 실제 settle 게이트 | readiness는 coverage 집합/보장합계만 미리 본다. 실제 settle은 회차 종료·상태·최신 terms·이행·earning·계약금까지 추가 검증한다. 앱 경고는 미납자를 이름/금액이 아닌 raw userId로 표시하고 provider 지급내역 UI도 없다 |
-| 무료 제외·대납 변경성/검증 | 생성 endpoint만 있고 undo가 없다. beneficiary가 실제 event participant인지 free/subsidize 서비스에서 검증하지 않는다. 카탈로그 사전 terms 단계에는 앱 무료 CTA가 보이지만 서버는 offering 배정을 거부한다 |
-| 환불 경제·멱등 | 부분환불은 참가자 복원액과 같은 금액을 호스트가 부담한다. PAID clawback은 gross가 아니라 원 provider net을 회수한다. Idempotency-Key는 partial-refund/clawback만 필수이며 refund/noshow에는 없다. 노쇼 전환 뒤에도 정산 전 전액환불은 가능하다 |
-| 카탈로그 계약금 Flutter 단절 | D>0 terms 수락이 결제 전에 engagement를 만들지만 앱은 engagement가 있으면 계약금 CTA를 숨긴다. cancel API/Repository는 있으나 화면 CTA가 없다 |
-| 정기모임 묶음 경계 | bulk 배정은 direct만 지원한다. direct/미수락 다음 회차 DRAFT는 resume API가 없고 bulk cancel endpoint도 없다. 묶음 결과는 회차를 raw eventId로 표시하며 SKIPPED는 미종료/미확정, BLOCKED는 돈·terms·이행 조치 항목이다 |
-
-## 9. 관련 문서
-
-- 2026-06-24 제공자 정산의 과거 기준선은 외부 백업으로 보관한다. [문서 정리와 보관 위치](../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리)를 참고하고 현재 계약은 아래 기능 PRD와 실제 소스를 기준으로 읽는다.
-- F21-01 제공자 배정: `prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md`
-- F21-02 참가자 서비스비 분담 결제: `prd/02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md`
-- F21-03 제공자 정산: `prd/02_feature_prds/21_curated/F21-03_provider-settlement_prd.md`
-- 도메인 06 결제/지갑: `prd/01_domain_prds/06_결제_and_지갑_prd.md`
-- 도메인 07 모임정산: `prd/01_domain_prds/07_모임_정산_prd.md`
-- 도메인 17 정기모임: `prd/01_domain_prds/17_정기모임_prd.md`
-- 머니플로우 감사: `docs/audit/money-flow-2026-06-12/REMEDIATION_STATUS.md`
-- 로드맵 계획서: `docs/plan/curated/PAYMENT_COUPLING_ADVANCEMENT_PLAN.md`

@@ -389,7 +389,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F20-01 | 고객지원 | [F20-01_inquiry_prd.md](02_feature_prds/20_support/F20-01_inquiry_prd.md) | `source-first` | source-first 부분 구현 | 10 | 4 |
 | F20-02 | 고객지원 | [F20-02_operational-issue_prd.md](02_feature_prds/20_support/F20-02_operational-issue_prd.md) | `source-first` | source-first 부분 구현 | 5 | 5 |
 | F20-03 | 고객지원 | [F20-03_support-faq_prd.md](02_feature_prds/20_support/F20-03_support-faq_prd.md) | `source-first` | source-first 구현 확인 | 1 | 3 |
-| F21-01 | 제공자 배정·정산 | [F21-01_provider-assignment_prd.md](02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | `source-first` | source-first 구현 확인 | 4 | 6 |
+| F21-01 | 제공자 배정·정산 | [F21-01_provider-assignment_prd.md](02_feature_prds/21_curated/F21-01_provider-assignment_prd.md) | `source-first` | source-first 구현 확인 | 30 | 7 |
 | F21-02 | 제공자 배정·정산 | [F21-02_participant-fee-charge_prd.md](02_feature_prds/21_curated/F21-02_participant-fee-charge_prd.md) | `source-first` | source-first 구현 확인 | 5 | 6 |
 | F21-03 | 제공자 배정·정산 | [F21-03_provider-settlement_prd.md](02_feature_prds/21_curated/F21-03_provider-settlement_prd.md) | `source-first` | source-first 구현 확인 | 2 | 6 |
 | F21-04 | 제공자 배정·정산 | [F21-04_free-invite-host-subsidy_prd.md](02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md) | `source-first` | source-first 구현 확인 | 4 | 5 |

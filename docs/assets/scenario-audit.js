@@ -11,7 +11,7 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 5014,
+    "automatedTestFilesScanned": 5022,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 75,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 56,
     "definitionOnlyEvidence": 75,
-    "traceMarkers": 813,
-    "verifiedTraceRecords": 811,
+    "traceMarkers": 843,
+    "verifiedTraceRecords": 841,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -21109,7 +21109,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F21-01",
       "domain": "제공자 배정·정산",
-      "name": "제공자 배정",
+      "name": "제공자 배정·프로필·상품·계약조건",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-01_provider-assignment_prd.md",
@@ -21120,10 +21120,521 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 30,
+        "verified": 30,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-01:1",
+            "label": "POST /api/v1/events/{eventId}/assignments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "create",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments",
+                "targetLine": 74,
+                "methodLine": 75
+              }
+            ]
+          },
+          {
+            "id": "F21-01:2",
+            "label": "GET /api/v1/events/{eventId}/assignments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "listByEvent",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/assignments",
+                "targetLine": 160,
+                "methodLine": 161
+              }
+            ]
+          },
+          {
+            "id": "F21-01:3",
+            "label": "GET /api/v1/me/assignments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "myAssignments",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/assignments",
+                "targetLine": 583,
+                "methodLine": 586
+              }
+            ]
+          },
+          {
+            "id": "F21-01:4",
+            "label": "POST /api/v1/me/assignments/{assignmentId}/accept",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "accept",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/assignments/{assignmentId}/accept",
+                "targetLine": 590,
+                "methodLine": 593
+              }
+            ]
+          },
+          {
+            "id": "F21-01:5",
+            "label": "POST /api/v1/me/assignments/{assignmentId}/reject",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "reject",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/assignments/{assignmentId}/reject",
+                "targetLine": 598,
+                "methodLine": 601
+              }
+            ]
+          },
+          {
+            "id": "F21-01:6",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/confirm",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "confirm",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/confirm",
+                "targetLine": 194,
+                "methodLine": 195
+              }
+            ]
+          },
+          {
+            "id": "F21-01:7",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/terms",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "proposeTerms",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/terms",
+                "targetLine": 203,
+                "methodLine": 204
+              }
+            ]
+          },
+          {
+            "id": "F21-01:8",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/terms/quote",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "submitQuote",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/terms/quote",
+                "targetLine": 214,
+                "methodLine": 215
+              }
+            ]
+          },
+          {
+            "id": "F21-01:9",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/terms/accept",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "acceptTerms",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/terms/accept",
+                "targetLine": 231,
+                "methodLine": 232
+              }
+            ]
+          },
+          {
+            "id": "F21-01:10",
+            "label": "GET /api/v1/events/{eventId}/assignments/{assignmentId}/terms/current",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "currentTerms",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/terms/current",
+                "targetLine": 244,
+                "methodLine": 245
+              }
+            ]
+          },
+          {
+            "id": "F21-01:11",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/fulfillment",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "recordFulfillment",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/fulfillment",
+                "targetLine": 255,
+                "methodLine": 256
+              }
+            ]
+          },
+          {
+            "id": "F21-01:12",
+            "label": "POST /api/v1/events/{eventId}/assignments/from-catalog",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/CatalogAssignmentController.java",
+                "controller": "CatalogAssignmentController",
+                "method": "createFromCatalog",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/from-catalog",
+                "targetLine": 34,
+                "methodLine": 35
+              }
+            ]
+          },
+          {
+            "id": "F21-01:13",
+            "label": "POST /api/v1/providers/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "register",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/providers/me",
+                "targetLine": 47,
+                "methodLine": 48
+              }
+            ]
+          },
+          {
+            "id": "F21-01:14",
+            "label": "GET /api/v1/providers/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "getMyProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/me",
+                "targetLine": 59,
+                "methodLine": 60
+              }
+            ]
+          },
+          {
+            "id": "F21-01:15",
+            "label": "PUT /api/v1/providers/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "update",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/providers/me",
+                "targetLine": 65,
+                "methodLine": 66
+              }
+            ]
+          },
+          {
+            "id": "F21-01:16",
+            "label": "POST /api/v1/providers/me/visibility",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "setVisibility",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/providers/me/visibility",
+                "targetLine": 72,
+                "methodLine": 73
+              }
+            ]
+          },
+          {
+            "id": "F21-01:17",
+            "label": "POST /api/v1/providers/me/documents",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "submitDocuments",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/providers/me/documents",
+                "targetLine": 83,
+                "methodLine": 84
+              }
+            ]
+          },
+          {
+            "id": "F21-01:18",
+            "label": "GET /api/v1/providers/me/documents",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "getMyDocuments",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/me/documents",
+                "targetLine": 94,
+                "methodLine": 95
+              }
+            ]
+          },
+          {
+            "id": "F21-01:19",
+            "label": "GET /api/v1/providers/me/verification-history",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "getVerificationHistory",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/me/verification-history",
+                "targetLine": 104,
+                "methodLine": 105
+              }
+            ]
+          },
+          {
+            "id": "F21-01:20",
+            "label": "GET /api/v1/providers/{userId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/ProviderProfileController.java",
+                "controller": "ProviderProfileController",
+                "method": "getPublicProfile",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/{userId}",
+                "targetLine": 110,
+                "methodLine": 111
+              }
+            ]
+          },
+          {
+            "id": "F21-01:21",
+            "label": "POST /api/v1/providers/me/offerings",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "createOffering",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/providers/me/offerings",
+                "targetLine": 34,
+                "methodLine": 35
+              }
+            ]
+          },
+          {
+            "id": "F21-01:22",
+            "label": "GET /api/v1/providers/me/offerings",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "getMyOfferings",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/me/offerings",
+                "targetLine": 42,
+                "methodLine": 43
+              }
+            ]
+          },
+          {
+            "id": "F21-01:23",
+            "label": "GET /api/v1/providers/me/offerings/{offeringId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "getMyOffering",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/me/offerings/{offeringId}",
+                "targetLine": 50,
+                "methodLine": 51
+              }
+            ]
+          },
+          {
+            "id": "F21-01:24",
+            "label": "PUT /api/v1/providers/me/offerings/{offeringId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "updateOffering",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/providers/me/offerings/{offeringId}",
+                "targetLine": 57,
+                "methodLine": 58
+              }
+            ]
+          },
+          {
+            "id": "F21-01:25",
+            "label": "POST /api/v1/providers/me/offerings/{offeringId}/status",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "changeStatus",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/providers/me/offerings/{offeringId}/status",
+                "targetLine": 65,
+                "methodLine": 66
+              }
+            ]
+          },
+          {
+            "id": "F21-01:26",
+            "label": "POST /api/v1/providers/me/offerings/{offeringId}/photos",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "addPhoto",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/providers/me/offerings/{offeringId}/photos",
+                "targetLine": 73,
+                "methodLine": 74
+              }
+            ]
+          },
+          {
+            "id": "F21-01:27",
+            "label": "DELETE /api/v1/providers/me/offerings/{offeringId}/photos/{photoId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "deletePhoto",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/providers/me/offerings/{offeringId}/photos/{photoId}",
+                "targetLine": 81,
+                "methodLine": 82
+              }
+            ]
+          },
+          {
+            "id": "F21-01:28",
+            "label": "PUT /api/v1/providers/me/offerings/{offeringId}/photos/order",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingController.java",
+                "controller": "OfferingController",
+                "method": "reorderPhotos",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/providers/me/offerings/{offeringId}/photos/order",
+                "targetLine": 89,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F21-01:29",
+            "label": "GET /api/v1/providers/offerings",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingCatalogController.java",
+                "controller": "OfferingCatalogController",
+                "method": "search",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/offerings",
+                "targetLine": 34,
+                "methodLine": 35
+              }
+            ]
+          },
+          {
+            "id": "F21-01:30",
+            "label": "GET /api/v1/providers/offerings/{offeringId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/provider/controller/OfferingCatalogController.java",
+                "controller": "OfferingCatalogController",
+                "method": "getOffering",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/providers/offerings/{offeringId}",
+                "targetLine": 41,
+                "methodLine": 42
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
