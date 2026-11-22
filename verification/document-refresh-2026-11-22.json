@@ -361,16 +361,12 @@
       "kind": "site_asset_or_data",
       "document": false,
       "baselineSha256": "edc5152bb807a7efc45c7321a7186a357ceb97a479e2a0dc42a70426def05aa8",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "settlement_pay_20261122",
-        "settlement_confirm_20261122",
-        "settlement_remind_20261122",
-        "settlement_appeal_20261122",
-        "settlement_prepayment_20261122",
-        "settlement_account_20261122"
-      ]
+        "launch_current_20261122"
+      ],
+      "reviewedSha256": "25398ccba24adae3b6e41b7195e7be74b8696e1ad35373f69a317279f5fb9fa8"
     },
     {
       "path": "docs/assets/mileage-feature-status.js",
@@ -480,7 +476,8 @@
         "private_meeting_current_20261122",
         "completion_criteria_current_20261122",
         "feature_status_current_20261122",
-        "changelog_current_20261122"
+        "changelog_current_20261122",
+        "launch_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5277,9 +5274,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "feature_status_current_20261122"
+        "feature_status_current_20261122",
+        "launch_current_20261122"
       ],
-      "reviewedSha256": "d88e88f7da41763e6053250a57d00aff08e2b028e56a200c85ed11834ac34811"
+      "reviewedSha256": "bfe3db69f90bbcb30f207018f5214a966c58650d2b97a20289ccb3bf94461d3a"
     },
     {
       "path": "docs/qa/launch-status.html",
@@ -5287,9 +5285,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d8e6d0d676ed3a9cdfdd491783e0782914c6eb1fe3b381bd80ef42ebe7b7b5b6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "launch_current_20261122"
+      ],
+      "reviewedSha256": "3fb3c3dd50cbfb65e4b923f1de33b28476a93788d4eb54b4aaaf6ec64ba4bc57"
     },
     {
       "path": "docs/qa/migration-status.html",
@@ -53661,6 +53662,141 @@
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
+      }
+    },
+    "launch_current_20261122": {
+      "kind": "source_review",
+      "scope": "출시 현황과 공통 상태 띠의 현재/과거 구분. 날짜별 출시 인계 284~5484 문자 읽기와 기존 배포 체크리스트 재사용. 기존 레지스트리 값/계산 및 옛 본문은 보존; 이번 정산 소스 보완5개는 현재 대조로 별도 노출하고 현재 계약·공개 근거를 별도 표시.",
+      "sources": [],
+      "reusedSources": [
+        {
+          "path": "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md",
+          "sha256": "b6af68643938b94cbc7d82f6233399709d030ee9136db518f7c9d117df1d74c0",
+          "reviewScope": "다른 세션이 이어받을 출시 상태 284~5484 문자: 11/12 Android16, 11/10 관리자·임시대사, iOS·웹·외부설정 및 보류"
+        },
+        {
+          "path": "community_app/docs/DEPLOYMENT_CHECKLIST.md",
+          "sha256": "824216565ab27803e40bdbf6b7a13f86b2f429755727ebb086c42e19bd798ad3",
+          "reviewScope": "기존 release_sharing 현재 SHA 재사용: 서명·업로드·설치·공개 구분과 기존 키 재사용"
+        }
+      ],
+      "reuses": [
+        "release_sharing_current_20261122",
+        "settlement_account_20261122",
+        "settlement_appeal_20261122",
+        "settlement_confirm_20261122",
+        "settlement_pay_20261122",
+        "settlement_remind_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/qa/completion-criteria.html",
+          "sha256": "e3fff22d97f7038fa425b06e530bfb217eadd150200190c1246b146c1cd01921"
+        },
+        {
+          "path": "business_logic/docs/qa/feature-status.html",
+          "sha256": "bfe3db69f90bbcb30f207018f5214a966c58650d2b97a20289ccb3bf94461d3a"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        },
+        {
+          "path": "business_logic/docs/policies/payment.html",
+          "sha256": "aa73dc4b7b7abe8b0452a6988bb5025466fdbe7378e2f4cfdaa56f8d0b0c1e5a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
+          "sha256": "312e842ddc53946b9d652b590f023942871925c6ac8106ceac83539b03bf52f7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-07_remind-extend_prd.md",
+          "sha256": "873c35bc59a419b02f7a0e9e67eb1a7987a80d28f54fbf1765b594dcf780d411"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-08_appeal-audit_prd.md",
+          "sha256": "71f8f69cc2b5a587fa969a28eefd6d4ef867788be493995bea71c116f50c1aa1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-10_account-history-reputation_prd.md",
+          "sha256": "6a9b2d51994bd545511ca13235bdc170069e4c9709e8d72cd8d9b4c77162e781"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/launch-status.html": [
+          "sidebar",
+          "source-range-current",
+          "development-current",
+          "validation-current",
+          "completion-standard",
+          "document-sync-2026-10-13",
+          "external-progress-2026-10-12",
+          "document-sync-2026-10-07",
+          "code-completeness",
+          "status-rules",
+          "settlement-ux",
+          "transport-rework",
+          "actions",
+          "blocking",
+          "unresolved",
+          "wiring",
+          "decisions",
+          "block-rows",
+          "scope",
+          "included-rows",
+          "event-rule",
+          "next",
+          "next-rows",
+          "later",
+          "later-rows",
+          "gates",
+          "evidence",
+          "axes",
+          "evidence-rows",
+          "retired",
+          "retired-rows",
+          "tracks",
+          "track-rows",
+          "source",
+          "doclimits",
+          "docs",
+          "asof-line"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "11월 12일 Android 16은 내부 테스트 기록이며 운영 전체/실기기/정식 공개 완료 아님",
+        "임시 결제 대사와 실제 지급 구분",
+        "기존 11월 8일 상태 분류를 175 기능/21 도메인의 현재로 표시하던 공통 띠 교정",
+        "VM 검사에서 wiring 7개 항목 카드 누락 발견. 11/22 소스 보완5개는 별도 현재 대조 영역, 기존 일반 계획2개는 과거 영역에 연결. 정산 소스 대조를 과거 실행으로 잘못 분류하지 않음."
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/qa/launch-status.html",
+          "pattern": "<div id=\"historical-launch-body\">([\\s\\S]*?)</div></details>",
+          "sha256": "adb0414f0fbc33f08d8bf822e099d114bb4be9d168e6c24194df66ff588be2c4"
+        }
+      ],
+      "retainedHistoricalRegistry": {
+        "commit": "cf54341fcc094261263e0155da2039583e7f6c5e",
+        "asset": "docs/assets/launch-status.js"
+      },
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "11 source/canonical digests; 37 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 55 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; document VM, preserved registry/history identity and links only"
+      },
+      "observedSourceVersions": {
+        "community_api": "199b34a05aa4a06ea578b03bafe21d6eb1635cd7",
         "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
       }
     }

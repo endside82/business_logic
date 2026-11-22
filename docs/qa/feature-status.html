@@ -173,7 +173,7 @@
       document.getElementById('asof').textContent = '현재 기능 정본 대조: 2026-11-22. 아래 과거 검사 데이터의 기준: ' + L.asOf + '. 현재 운영·실기기·공개 완료 여부는 최신 출시 기록과 해당 환경 근거로 별도 확인합니다.';
 
       function preparationItems(d) {
-        return d.openItems.filter(function (o) { return o.impact !== 'doc'; });
+        return d.openItems.filter(function (o) { return o.impact !== 'doc' && !/-20261122$/.test(o.id); });
       }
       function historicalNextSteps(d) {
         var items = preparationItems(d);
@@ -189,7 +189,9 @@
         }).join('<hr>');
       }
       function nextSteps(d) {
-        return '<p><a href="../features/' + esc(d.id) + '.html">현재 계약·완료 조건·공백 확인</a></p><p><a href="release.html">공개 범위의 증거 확인</a></p><details><summary>당시 후속 계획</summary><p>아래 계획은 현재 할 일로 확정된 목록이 아닙니다.</p>' + historicalNextSteps(d) + '</details>';
+        var currentItems = d.openItems.filter(function (o) { return /-20261122$/.test(o.id); });
+        var findings = currentItems.length ? '<p><strong>2026-11-22 소스 대조 보완</strong></p>' + currentItems.map(function (o) { return '<p><a href="launch-status.html#item-' + esc(o.id) + '">' + esc(o.title) + '</a></p>'; }).join('') : '';
+        return findings + '<p><a href="../features/' + esc(d.id) + '.html">현재 계약·완료 조건·공백 확인</a></p><p><a href="release.html">공개 범위의 증거 확인</a></p><details><summary>당시 후속 계획</summary><p>아래 계획은 현재 할 일로 확정된 목록이 아닙니다.</p>' + historicalNextSteps(d) + '</details>';
       }
       function scopeCell(d) {
         var note = d.scopeNote || (d.scope === 'open' ? '첫 출시에서 제공할 기능이다.' : '준비와 승인 후 별도로 공개한다.');
@@ -214,8 +216,8 @@
           if (scope === 'included' && d.scope !== 'open' && d.scope !== 'partial') return false;
           if (scope && scope !== 'included' && d.scope !== scope) return false;
           if (proof && d.proof !== proof) return false;
-          if (work === 'development' && !d.developmentItems.length) return false;
-          if (work === 'environment' && (d.developmentItems.length || d.scope === 'retired')) return false;
+          if (work === 'development' && !d.developmentItems.some(function (o) { return !/-20261122$/.test(o.id); })) return false;
+          if (work === 'environment' && (d.developmentItems.some(function (o) { return !/-20261122$/.test(o.id); }) || d.scope === 'retired')) return false;
           if (gap && !preparationItems(d).length) return false;
           return !q || (d.id + ' ' + d.name + ' ' + d.originalName + ' ' + d.domain).toLowerCase().includes(q);
         });

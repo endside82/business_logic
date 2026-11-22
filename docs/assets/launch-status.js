@@ -1,40 +1,10 @@
-/*
- * 첫 출시 상태 데이터 — 단일 출처.
- *
- * 이 파일이 답하는 질문은 두 가지다: "이 기능은 첫 출시에 고객에게 열리는가"와 "닫혀 있다면
- * 무엇 때문에 닫혔고 어떤 순서와 근거로 다시 여는가"다. 기능이 무엇을 하는지(설계 기준)는
- * features/FNN-MM.html 이 담당하고, 문서를 얼마나 잘 썼는지는 qa/migration-status.html 이 담당한다.
- * 출시 노출·코드 구현·운영 화면·외부 증명을 한 단어인 '봉인'으로 뭉치지 않는다.
- *
- * 판정 근거는 전부 저장소 밖 기준 문서에서 가져온다(추정으로 채우지 않는다).
- *   - 노출 여부  : 운영 배포 설정의 출시 범위 목록 + 실결제 활성화 스위치
- *   - 확인 수준  : 2026-08-19 신규 계정 재검증 20개 시나리오 + 2026-08-24 과거 전체 통합 회귀
- *                  + 2026-08-30 당시 소스 전체 자동 회귀와 제품 결정·소스 실측
- *                  + 2026-09-02 대절 버스·카풀 통합 기능 표적 회귀
- *                  + 2026-09-03 마일리지 네 저장소 구현·최초 설치 SQL 일치 검사·로컬 신규 계정 화면 왕복
- *                  + 2026-09-04 제공자 배정·정산 네 저장소 코드 완료·최초 설치 SQL 일치 검사·전체 회귀
- *                  + 2026-09-04 포인트 결제·환불 7개와 제공자 배정 생명주기 1개 로컬 서버 E2E
- *                  + 2026-09-04~05 W1 관리자 돈 조치, W3 직접 송금·이동 안내, W4 사진 승인 적립의
- *                    기본 브랜치 반영과 현재 네 변경 저장소 전체 회귀
- *                  + 2026-09-06 W2 증빙 기반 수동 승인·취소 독립 검토·전체 회귀·공유 스키마 대조·로컬 통합
- *                  + 2026-09-06 마일리지 후속 네 저장소 전체 회귀·실제 앱 왕복·빈 DB 22개 표 대조·로컬 통합
- *                  + 2026-09-06 클럽 스탬프 사용자 결정 반영·세 저장소 전체 회귀·빈 DB 두 V1 대조·로컬 통합
- *                  + 2026-09-11 다섯 저장소 원격 반영 확인과 실시간 서버 회귀 재실행
- *                  + 2026-09-12 빈 데이터베이스 두 곳에 두 서버를 직접 기동해 설치·기준 데이터 확인,
- *                    같은 소스 조합을 여덟 번째 출시후보로 고정
- *                  + 2026-09-24 정산 웹 여정·소셜 로그인 운영 현황 기록
- *                  + 2026-09-26 기본 브랜치의 정산 복구·미납 알림·기간권 구매 기반 대조
- *                  + 2026-10-02~07 프로필 탐색·발송 복구·정산·환불·제재·탈퇴 문서 변경 대조
- *                    (verification/document-sync-2026-10-07.json에 기준 커밋과 반영 위치 고정)
- *                  + 2026-10-23 기준 이후 제품 365개 커밋의 현재 소스·본문 대조
- *                    (verification/document-sync-2026-10-26.json, 새 제품 시험 수행 기록 아님)
- *   - 알려진 문제: 각 기능 문서가 이미 적어 둔 미구현·미연결 서술 + 출시 관문 문서
- * 개발 추적 코드(track)는 엔지니어링 작업판과 맞추기 위한 조인 키이며 제품 우선순위가 아니다.
- */
+/* 기존 출시 분류·실행·후속 계획과 추가 소스 대조 데이터. asOf는 옛 문서 기준일이다.
+ * 현재 계약은 기능 PRD, 실제 배포·공개 판단은 출시 인계와 현재 환경 증거를 따른다.
+ * 2026-11-22 개별 소스 대조는 별도 표시하며, 나머지 기본값·완료·미완료를 현재 상태로 자동 승계하지 않는다. */
 window.LAUNCH_STATUS = (function () {
   'use strict';
 
-  // 문서의 현재 대조일이다. 아래 날짜별 제품 시험 증거의 수행일은 그대로 유지한다.
+  // 보존된 문서의 대조일. 현재 문서 수정일 또는 운영 확인일이 아니다.
   var asOf = '2026-11-08';
 
   // ── 축 1. 첫 출시 노출 ─────────────────────────────────────────────
@@ -1607,89 +1577,36 @@ window.LAUNCH_STATUS = (function () {
   };
 })();
 
-/*
- * 기능 문서 머리에 붙는 상태 띠. 페이지에 <div id="launch-strip"> 가 있고 주소가 기능 문서면
- * 그 기능의 두 판단 기준과 알려진 문제를 채운다. 본문은 설계 기준이고 이 표시가 현재 상태다.
- */
+/* Current document navigation with explicitly dated historical classification. */
 (function () {
   'use strict';
-  function renderDomain(host, L, num, base) {
-    function esc(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function pill(t, tone) { return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(t) + '</span>'; }
-    var d = L.forDomain(num);
-    if (!d.total) { host.style.display = 'none'; return; }
-
-    var cls = d.sealed === d.total ? 'is-sealed' : (d.sealed || d.partial ? 'is-partial' : 'is-open');
-    var html = '<span class="strip-label">' + esc(L.asOf) + ' 현재</span>';
-    if (d.open + d.partial) html += pill('첫 출시 포함 ' + (d.open + d.partial), 'brand');
-    if (d.sealed) html += pill('후속 출시 ' + d.sealed, 'danger');
-    if (d.retired) html += pill('제품에서 제외 ' + d.retired, '');
-    if (d.local) html += pill('기존 계정 확인 ' + d.local + '/' + d.total, 'info');
-    html += pill('새 계정 확인 ' + d.real + '/' + d.total, d.real ? 'info' : '');
-    if (d.gaps) html += pill('남은 준비 ' + d.gaps + '건', 'warn');
-
-    var note = '이 업무 영역의 기능 ' + d.total + '개 중 ' + (d.open + d.partial) + '개가 첫 출시 범위다.';
-    if (d.gapFeatures) note += ' ' + d.gapFeatures + '개 기능에 별도로 남은 준비나 운영 확인이 있다.';
-    else if (d.sealed === d.total) note += ' 새 이용은 아직 제공하지 않는다. 현재 구현 상태와 남은 준비는 전체 현황에서 확인한다.';
-    html += '<span class="strip-note">' + esc(note) + ' 구현·자동 테스트·실제 환경은 기능별 상태에서 따로 확인한다. 본문은 기능 설명이며 출시 완료 기록이 아니다.</span>';
-    html += '<span class="strip-more"><a href="' + base + 'qa/feature-status.html">기능별 출시 상태</a></span>';
-
-    host.className = 'launch-strip ' + cls;
-    host.innerHTML = html;
-  }
-
+  function esc(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function render() {
-    var host = document.getElementById('launch-strip');
-    if (!host || !window.LAUNCH_STATUS) return;
-    var L = window.LAUNCH_STATUS;
-    var base = (document.body.getAttribute('data-base') || '../');
-
-    // 도메인 페이지: 그 도메인 기능들의 집계를 보여 준다.
+    var host = document.getElementById('launch-strip'), L = window.LAUNCH_STATUS;
+    if (!host || !L) return;
+    var base = document.body.getAttribute('data-base') || '../';
     var dm = location.pathname.match(/domains\/(\d{2})-[\w-]+\.html$/);
+    var match = location.pathname.match(/(F\d{2}-\d{2})\.html$/);
+    var id = host.getAttribute('data-feature') || (match && match[1]);
+    var note = '', details = '';
     if (host.getAttribute('data-domain') && dm) {
-      renderDomain(host, L, dm[1], base);
-      return;
-    }
-
-    var m = location.pathname.match(/(F\d{2}-\d{2})\.html$/);
-    var id = host.getAttribute('data-feature') || (m && m[1]);
-    if (!id) { host.style.display = 'none'; return; }
-
-    var s = L.forFeature(id);
-    var sc = L.SCOPE[s.scope], pr = L.PROOF[s.proof];
-
-    function esc(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function pill(t, tone) { return '<span class="pill' + (tone ? ' ' + tone : '') + '">' + esc(t) + '</span>'; }
-
-    var html = '<span class="strip-label">' + esc(L.asOf) + ' 현재</span>' +
-      pill(sc.label, sc.tone) + pill(pr.label, pr.tone) +
-      '<span class="strip-note"><strong>구현</strong> ' + esc(s.implementation) +
-      ' · <strong>자동 테스트</strong> ' + esc(s.automation) +
-      ' · <strong>실제 환경</strong> ' + esc(s.environment) + '</span>';
-
-    var note = s.scopeNote;
-    if (!note) {
-      if (s.scope === 'open') note = '첫 출시 범위에 든다.';
-      else if (s.scope === 'sealed') note = '새 이용은 아직 제공하지 않는다. 현재 구현 상태와 남은 준비는 전체 현황에서 확인한다.';
-    }
-    if (s.proofNote) note += (note ? ' ' : '') + '확인 범위 — ' + s.proofNote + (/[.!?]$/.test(s.proofNote) ? '' : '.');
-    if (s.proof === 'auto' && s.scope !== 'sealed') note += (note ? ' ' : '') + '이 기능의 현재 출시후보 실계정·실기기 통과 기록은 이 목록에 연결되지 않았다.';
-    if (note) html += '<span class="strip-note">' + esc(note) + '</span>';
-
-    html += '<span class="strip-more"><a href="' + base + 'index.html">전체 현황·다음 할 일</a> · <a href="#release-completion">이 기능의 출시 완료 기준</a></span>';
-
-    if (s.openItems.length) {
-      html += '<ul>' + s.openItems.map(function (o) {
-        return '<li><a href="' + base + 'qa/launch-status.html#item-' + esc(o.id) + '"><strong>' + esc(L.WORK[o.readiness.work]) + '</strong> — ' + esc(o.title) + '</a></li>';
-      }).join('') + '</ul>';
-    }
-
-    host.className = 'launch-strip is-' + s.scope;
-    host.innerHTML = html;
+      var d = L.forDomain(dm[1]);
+      if (!d.total) { host.style.display = 'none'; return; }
+      note = '현재 기능 계약과 공백은 본문과 기능 정본을 확인합니다. 등재 수와 과거 분류는 실행 통과 수가 아닙니다.';
+      details = '<p>당시 등재 ' + d.total + '개 · 포함/일부 포함 ' + (d.open + d.partial) + '개 · 후속 ' + d.sealed + '개 · 제외 ' + d.retired + '개</p><p>당시 새 계정 기록 ' + d.real + '개 · 기존 계정 기록 ' + d.local + '개. 현재 공개나 실기기 통과를 뜻하지 않습니다.</p>';
+    } else if (id) {
+      var s = L.forFeature(id);
+      note = '현재 역할·입구·상태·결과와 남은 한계는 본문을 따릅니다. 공개 여부는 현재 후보·설정·실행 증거로 별도 판단합니다.';
+      details = '<p>당시 분류: ' + esc(L.SCOPE[s.scope].label) + ' · ' + esc(L.PROOF[s.proof].label) + '</p><p>당시 구현: ' + esc(s.implementation) + '<br>당시 자동 검사: ' + esc(s.automation) + '<br>당시 환경: ' + esc(s.environment) + '</p>';
+      if (s.scopeNote) details += '<p>' + esc(s.scopeNote) + '</p>';
+      if (s.proofNote) details += '<p>' + esc(s.proofNote) + '</p>';
+      var currentItems = s.openItems.filter(function (o) { return /-20261122$/.test(o.id); });
+      if (currentItems.length) note += ' 2026-11-22 소스 대조의 보완 항목 ' + currentItems.length + '개가 연결되어 있습니다. 실환경 실행 실패 수는 아닙니다.';
+      if (s.openItems.length) details += '<p>기존 후속 기록입니다. 2026-11-22 소스 대조 항목은 연결된 본문에서 별도로 구분합니다.</p><ul>' + s.openItems.map(function (o) { return '<li><a href="' + base + 'qa/launch-status.html#item-' + esc(o.id) + '">' + (/-20261122$/.test(o.id) ? '[2026-11-22 소스 대조] ' : '[이전 계획] ') + esc(o.title) + '</a></li>'; }).join('') + '</ul>';
+    } else { host.style.display = 'none'; return; }
+    host.className = 'launch-strip';
+    host.innerHTML = '<span class="strip-label">현재 계약과 실행 근거 구분</span><span class="strip-note">' + note + '</span><span class="strip-more"><a href="' + base + 'qa/feature-status.html">기능별 계약·과거 기록</a> · <a href="' + base + 'qa/launch-status.html#release-record-current">마지막 출시 기록과 남은 확인</a></span><details><summary>' + esc(L.asOf) + '의 기존 분류·기록 보기 (이후 항목별 대조 포함)</summary>' + details + '</details>';
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
-  } else {
-    render();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+  else render();
 })();
