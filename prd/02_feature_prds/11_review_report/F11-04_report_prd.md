@@ -1,92 +1,90 @@
-# F11-04. 신고 (이벤트/사용자/리뷰/클럽) PRD
+# F11-04. 신고 접수·관할 결정·본인 처리 내역 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 소스를 기준으로 갱신했다. 구현 계약의 대조이며 새 앱 실행·운영 검수 통과 기록이 아니다.
 
-<!-- updated: 2026-06-05; delta: 2026-06-04 dossier 04 §4-1 + 03 §4-D 반영 -->
+## 현재 범위와 입구
 
-> 문서 상태: **실사 기반 갱신본**. 2026-06-04 리뷰·클럽 신고 델타 실사([원문의 보관 위치](../../../../docs/development/DOCUMENTATION_GUIDE.md#2026-09-28-문서-정리))를 반영해 ReportType 전체 8값, Report 엔티티 신규 컬럼 3개, ReportParam/ReportVo 신규 필드, 증빙 첨부 및 자동 플래그 섹션을 추가했다. 코드 수정이나 QA 착수 전에는 trace의 실제 서버/Flutter 소스를 다시 열어 최종 확인한다.
+대상 화면에서 신고를 열고 사유·설명·증빙과 검토 범위를 선택해 접수한 뒤, 본인 신고 목록·상세에서 상태와 결과를 확인한다. 현재 기능은 POST 하나와 목록 GET만 있는 구조가 아니다. 일반 신고 입력, 대상별 전용 접수, 모임·클럽·플랫폼 관할 결정, 본인 상세 조회를 구분한다. 접수 성공은 담당자의 최종 처리 완료와 다르다.
 
-## 1. 결론
+일반 신고 라우터는 대상 종류·식별자·표시 제목과 선택적인 `contextId`, `sourceClubId`, `sourceEventId`를 화면에 전달한다. 앱 요청 모델에도 세 맥락 필드가 있으므로 과거 「앱 contextId 누락」을 현재 미해결로 남기지 않는다. 후기 카드의 이벤트별 신고 입구는 후기 식별자와 원래 이벤트 식별자를 전달한다.
 
-부적절한 콘텐츠를 운영자에게 접수하는 신고 도메인. 한 개의 POST로 신고 레코드를 만들고(상태 PENDING으로 시작), 본인이 접수한 신고 이력을 조회하는 GET 하나로 구성된다. 자기-자신 신고(USER 타입 한정)와 동일 대상 중복 신고는 거부되며, `targetType`/`reason` 둘 다 enum 검증을 통과해야 한다. 운영자가 처리(`resolveReport`)하면 신고자에게 결과 알림이 푸시된다(서비스 메서드만 존재 — 컨트롤러에 사용자 입력 노출 없음).
+## 접수 API와 현재 대상 종류
 
-2026-06-04 기준 서버 ReportType은 8종(USER/EVENT/REVIEW/EVENT_PHOTO/EVENT_MESSAGE/DATE_USER/CARPOOL/CLUB)이다. CLUB(7) 신고가 서버에서 지원되며 앱 배선도 완료됐다. v1에서 CLUB 대상 자동 제재는 없고 운영자 수동 집행만 동작한다. 자동 제재(계정 처리 등)는 USER 타입 전용으로 유지된다. 증빙 파일 첨부(최대 5개)와 자동 플래그(우선검토) 로직이 서비스 레이어에 추가됐다.
+`POST /api/v1/reports`는 201 `ReportVo`를 반환한다. 요청은 필수 `targetType`, `targetId`, `reason`과 선택 `description`, `evidenceFileIds`, `contextId`, `scope`, `sourceClubId`, `sourceEventId`다. 대상·사유는 서버 Enum 이름을 사용한다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+| 대상 종류 | 서버 코드 | 일반 접수 경계 |
+|---|---|---|
+| USER, EVENT, REVIEW, EVENT_MESSAGE, DATE_USER, CLUB | 0, 1, 2, 4, 5, 7 | 서버가 원래 대상·관련 사람·소속 맥락을 확인 |
+| EVENT_PHOTO | 3 | 일반 POST 거절, 이벤트 사진 전용 접수에서 공통 저장 호출 |
+| CARPOOL, BUS | 6, 12 | 일반 POST는 `REPORT_TRANSPORT_DEDICATED_ENDPOINT_REQUIRED`, 이동수단 전용 접수 사용 |
+| COMMUNITY_MESSAGE, COMMUNITY_POST, COMMUNITY_COMMENT | 8, 9, 10 | 직접 메시지·게시글·댓글의 실제 대상과 맥락을 해석 |
+| DATE_PROFILE_PHOTO | 11 | 별도 신고자 인증·사진 상태 검사와 임계 숨김을 함께 수행 |
+| CLUB_PHOTO_ALBUM, CLUB_CHAT_MESSAGE | 13, 14 | 앨범 열람 범위·클럽 채팅 맥락 검사. 앨범 공개 기능이 봉인된 환경은 `RELEASE_SCOPE_DISABLED` |
 
-- 이벤트 상세 → 우상단 메뉴 "신고" → `context.push('/report', extra: {'targetType': 'EVENT', 'targetId': eventId})`
-- 사용자 프로필 → "신고" 메뉴 → `targetType: 'USER'`
-- 리뷰 카드(F11-02 이벤트별 모드)의 신고 아이콘 → `targetType: 'REVIEW', targetId: review.id`
-- 클럽 상세 → "신고" 메뉴 → `targetType: 'CLUB', targetId: clubId` —(2026-06-04)에서 실배선 완료. 오너 본인 클럽은 메뉴 숨김.
-- 카풀 오퍼 → `POST /api/v1/events/{eventId}/carpool/offers/{offerId}/report` — 전용 `CarpoolReportParam`(reason, description) 사용, `contextId=offerId`는 서버 자동 배선.
+Enum에 존재한다는 이유만으로 일반 신고 POST나 모든 출시 환경에서 허용된다고 기록하지 않는다. 전용 사진·이동수단의 접수 결과도 같은 신고 이력 체계에 연결된다.
 
-`ReportScreen`은 `targetType: String`, `targetId: int`, 선택적 `targetTitle`을 받는다.
+## 서버 입력과 증빙 검사
 
-## 2. 코드 위치
+일반 앱의 사유 선택은 괴롭힘·부적절한 콘텐츠·노쇼·사기·기타·지각·나쁜 매너 7종이다. 서버 Enum에는 여기에 운전자 미참석·위험 운전·부적절 행위·개인정보 유출·운전자 노쇼가 추가된 12종이 있다. 모든 서버 사유가 일반 앱 시트에 표시되는 것은 아니다.
 
-계약의 정본은 코드다. 서버: `ReportController`, `Report`, `ReportParam`, `ReportVo`, `ReportType`, `ReportReason`, `ReportStatus`, `EvidenceFileValidator`, `ReportService`. 앱: `club_detail_screen.dart`, `report_screen.dart`, `routes.dart`, `evidence_image_picker.dart`.
+설명은 서버에서 최대 500자, 증빙 원본 목록은 최대 5개다. 앱은 기타 사유에서 공백 제거 후 설명 10자 이상을 요구하고 업로드 중 제출을 막지만, 현재 서버 검증에는 기타의 10자 최소 조건이 없다. 증빙 검증은 양수 식별자를 중복 제거하고 파일 존재·본인 소유·업로드 완료·EVIDENCE 또는 REVIEW 용도를 검사한다. 성공 시 신고 증빙 참조를 연결한다.
+
+자기 자신을 USER로 직접 신고하는 것뿐 아니라, 서버가 해당 대상의 당사자 식별자를 해석했을 때 신고자 본인인 경우도 거절한다. `sourceClubId`, `sourceEventId`, `contextId`를 요청했다면 서버가 해석한 원래 맥락과 맞아야 한다. USER 신고에 모임·클럽 출처를 붙일 때는 신고자와 상대 모두 그 맥락의 관계 이력이 있어야 한다.
+
+## 검토 범위와 처리 관할
+
+검토 범위는 `CLUB_INTERNAL`, `PLATFORM_POLICY`, `PRIVATE_INTEREST`다. 원래 대상에서 클럽 소속을 찾고 클럽 기본 대상에 속하면 scope 생략 시 클럽 내부, 그 밖에는 플랫폼 정책으로 정한다. 앱은 지역 처리가 가능한 대상·맥락에 내부 범위를 제시하고 선택한 값을 명시적으로 보낸다. 클라이언트가 요청한 범위가 최종 담당자를 직접 결정하지는 않는다.
+
+플랫폼 정책과 사적 이해관계 범위는 플랫폼으로 간다. 내부 범위라도 플랫폼 전용 대상, 지역 관할 없음, 처리 담당자가 신고 당사자인 경우는 플랫폼으로 넘긴다. 그 밖에는 이벤트 출처가 있으면 `EVENT_HOST`, 클럽만 있으면 `CLUB_STAFF`다. 내부 처리에서는 클럽 관계를 확인하며 앨범은 열람 범위 검사를 사용한다. 처리 당사자 충돌은 현재 이벤트 호스트·분쟁 처리 가능한 공동호스트 또는 클럽 OWNER/ADMIN을 기준으로 판단한다.
+
+접수 상태는 `PENDING`으로 저장한다. 최초 관할 결정에서 플랫폼으로 넘어가 사유·시각이 생겼다고 해서 접수 응답의 상태도 곧바로 `ESCALATED`라고 바꾸어 설명하지 않는다. 앱 완료 안내는 실제 응답 관할과 선택 범위를 반영한다. 이후 검토·기각·경고·제재는 권한 있는 담당자의 별도 처리 흐름이다.
+
+## 중복과 우선 검토
+
+중복 기준은 신고자·대상 종류·대상 식별자이며, 서버가 확정한 context가 있으면 그 context도 포함한다. 이전 신고의 종결 여부와 관계없이 같은 기준의 기존 행이 있으면 `REPORT_ALREADY_EXISTS`다. 요청의 임의 context로 중복을 회피할 수 없다. 이 POST에는 멱등 키가 없으며 중복 거절을 기존 성공 응답의 재반환과 혼동하지 않는다.
+
+주간 우선 검토는 새 행 저장 전에 최근 1주 기존 신고가 5건 이상인지 검사하므로 해당 창의 6번째 접수부터 조건을 충족한다. 대상 우선 검토는 최근 1개월의 다른 신고자와 이번 신고자를 합쳐 서로 다른 3명 이상인지 검사한다. 두 조건은 우선 검토 플래그를 켜며 건수만으로 자동 기각하거나 일반 계정 제재를 확정하지 않는다. 접수에는 감사 기록도 남긴다.
+
+## 데이트 프로필 사진의 추가 효과
+
+이 대상은 활동 가능한 본인 인증 신고자와 삭제되지 않은 APPROVED 사진을 요구하고 본인 사진 신고를 거절한다. 접수 후 PENDING·IN_REVIEW·ESCALATED·RESOLVED 신고의 서로 다른 유효 활동 계정이 5명 이상이면 사진을 `UNDER_REPORT`로 숨긴다. 승인 사진이 3장 미만이 되면 활성 데이트 프로필을 비활성으로 전환하고 사진 소유자 알림을 outbox에 등록한다. 일반 신고 우선 검토와 이 사진 임계 숨김은 서로 다른 정책이다.
+
+## 앱 입력·복귀와 내 신고 조회
+
+입력은 대상·context·출처 조합별 `SubmissionDraft`로 복원·제출 준비·완료를 연결한다. 접수 성공 시 내 신고 목록을 갱신하고 초안 완료 후 관할별 접수 안내를 보여 준 뒤 닫는다. 적용 여부가 불확실한 오류도 내 신고 목록을 다시 읽도록 표시한다. 확실한 거절만 초안 거절 처리로 연결한다.
+
+`GET /api/v1/reports/my`는 본인의 신고 `List<ReportVo>`, `GET /api/v1/reports/my/{reportId}`는 본인 신고 한 건을 반환한다. 상세가 없으면 `REPORT_NOT_FOUND`, 다른 사람의 신고면 `FORBIDDEN`이다. 응답에는 원래 대상 표시명, 사유·설명·증빙, 상태·결과 메시지, 범위·관할·출처·이관 사유·접수/처리 시각이 포함된다. 페이지 응답으로 해석하지 않는다.
+
+현재 앱에는 「내 신고 내역」 목록과 상세 화면이 연결돼 있다. 빈 상태·오류 재시도·목록 새로고침을 제공하고 상세에는 대상·설명·첨부 자료·처리 결과·시각을 표시한다. 「이 신고 문의하기」는 신고 식별자를 가진 문의 작성으로 이동한다. 목록 API만 있고 화면은 미연결이라는 과거 서술은 제거한다. 접수만으로 총점 감점이 적용된다고 하지 않고 [신뢰점수의 실제 감점 범위](F11-05_trust-score_prd.md)를 따른다. 호스트 숨김의 자동 신고는 [호스트 답변과 임시 숨김](F11-07_review-moderation_prd.md)을 따른다.
+
+## 코드 위치
+
+서버: `ReportController/Service`, `ReportJurisdictionResolver`, `ReportParam/Vo`, 대상·사유·범위 Enum, `EvidenceFileValidator`, `DateProfilePhotoReportService`. 앱: `report_param.dart`, `report_reason.dart`, `report_provider.dart`, `report_screen.dart`, `my_reports_screen.dart`, `member_tools_routes.dart`, `profile_branch_routes.dart`, `review_list_screen.dart`.
 
 <!-- source-references:start -->
-서버 창구: `ReportController#createReport`, `ReportController#getMyReports`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `ReportController#createReport`, `ReportController#getMyReports`, `ReportController#getMyReport`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 현재 제한과 확인 범위
 
-1. 화면 진입 시: 별도 API 호출 없음. 입력 폼만 노출.
-2. "신고" 탭 시: `reportNotifierProvider.notifier.submitReport(ReportParam(targetType, targetId, reason: enum.value, description))` (`presentation/review/screens/report_screen.dart:76-86`)
-   → `ReviewRepository.createReport(ReportParam)`
-   → `ReviewApi.createReport` (`POST /api/v1/reports`)
-   → 성공: `Result.success(ReportVo)` → state = `AsyncData(reportVo)` → 알럿 + 닫기
-   → 실패: `Result.failure(ApiError)` → `_handleError` 분기
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 기타 사유 설명 10자 최소는 앱만 검사하고 서버는 설명 최대 길이만 검사한다. | 앱·서버의 검증 수준을 구분한다. |
+| Gap | 앱은 일반 INVALID_INPUT도 본인 신고로 안내하고 닫는다. | 길이·범위 등 다른 잘못된 입력까지 같은 원인으로 오인할 수 있음을 기록한다. |
+| Risk | 접수 중복 거절은 멱등 성공 응답 재반환이 아니고 최초 플랫폼 관할 배정도 상태 ESCALATED와 다르다. | 각 결과를 분리한다. |
+| 미검증 | 실제 증빙 업로드·접수·담당자 처리·사진 숨김·알림 수신을 이번에 실행하지 않았다. | 소스 대조를 실제 운영 완료로 확장하지 않는다. |
 
-> 본인 신고 이력 조회(`GET /api/v1/reports/my`)는 Repository에 `getMyReports()` 메서드로 구현되어 있으나 본 단위 화면에서 직접 호출하지 않음. 마이페이지/설정 화면 등에서 활용 가능.
+## 수용 기준과 검증 근거
 
-## 4. 제품 규칙
+- **AC-01 대상과 전용 경로:** 현재 15종을 구분하고 이동수단·이벤트 사진의 일반 접수 거절과 앨범 출시 범위 검사를 적용한다.
+- **AC-02 본인과 출처 검사:** 서버가 확정한 당사자·출처·context로 자기 신고와 허위 맥락을 거절한다. USER 출처는 양쪽 관계 이력을 확인한다.
+- **AC-03 증빙과 설명:** 설명 최대500자·원본 첨부 최대5개·본인 완료 파일의 허용 용도를 확인하고 기타 최소10자는 앱 한정으로 구분한다.
+- **AC-04 관할 결정:** 선택 범위와 실제 대상 맥락·담당자 충돌로 EVENT_HOST/CLUB_STAFF/PLATFORM을 정하고 접수 PENDING과 이관 메타데이터를 구분한다.
+- **AC-05 중복:** 확정 context를 포함한 대상 중복은 기존 신고 상태와 관계없이 거절하고 새 성공 응답처럼 처리하지 않는다.
+- **AC-06 우선 검토:** 기존 주간5건 이후 새 접수와 월간 서로 다른3명 조건을 구분해 우선 검토 플래그를 설정한다.
+- **AC-07 사진 임계 처리:** 유효 신고자5명에 사진을 숨기고 승인 사진3장 미만이면 활성 프로필을 비활성으로 바꾼다. 알림은 outbox 등록으로 구분한다.
+- **AC-08 앱 접수 복귀:** 대상별 초안을 사용하고 성공 안내·내 신고 목록 갱신·복귀를 연결하며 결과 불명과 확실한 거절을 구분한다.
+- **AC-09 본인 이력과 문의:** 본인 목록·상세만 반환하고 앱에서 결과·자료·시각과 신고 식별자를 가진 문의 입구를 제공한다.
 
-- 신고 대상은 사용자, 이벤트, 후기, 클럽, 이벤트 메시지, 데이트 사용자 등이다. 자동 제재는 사용자 신고에만 있고 클럽 등 나머지는 운영자가 수동으로 처리한다.
-- 카풀·버스 같은 이동수단 안전신고와 이벤트 사진 신고는 이 일반 신고로 받지 않고 각자 전용 신고 경로로만 받는다.
-- 사유 7가지: 괴롭힘, 부적절한 콘텐츠, 노쇼, 사기, 기타, 지각, 나쁜 매너. 설명은 500자까지다. 「기타」를 고르면 설명이 필수이고 10자 이상이어야 제출할 수 있다(앱에서만 확인한다).
-- 증빙 사진은 5장까지이며 본인이 올린 업로드 완료 파일이어야 한다. 업로드 중에는 제출할 수 없다.
-- 자기 자신은 신고할 수 없다. 같은 대상은 한 번만 신고할 수 있다. 카풀은 운전 건(오퍼)마다 따로 신고할 수 있다.
-- 접수된 신고는 처리 대기로 시작한다. 한 사람이 일주일에 5건 이상 접수하거나, 같은 대상을 한 달 안에 서로 다른 3명 이상이 신고하면 우선 검토 대상으로 올라간다. 건수만으로 자동 기각하지 않는다.
-- 접수가 끝나면 「검토 후 적절한 조치를 취하겠습니다」 안내 창이 뜨고 화면이 닫힌다. 접수만으로는 신뢰점수에 영향이 없고, 운영자가 확정 또는 상위 이관한 신고만 패널티로 반영된다.
-- 운영자가 처리하면 신고자에게 결과 알림이 간다.
-- 호스트가 후기를 숨기면서 검토 요청을 켜면 후기 신고가 자동으로 만들어진다(F11-07).
-- 오류의 사용자 뜻: 자기 신고, 대상이 올바르지 않음, 이미 신고한 대상(이 셋은 안내 후 화면 닫힘), 신고 대상 없음. 그 밖의 입력 오류는 화면에 남아 다시 시도한다.
-
-## 6. 상태/권한/시나리오 매트릭스
-
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 리뷰 신고 (Happy Path · `targetType=REVIEW`) | 로그인됨, F11-02 이벤트 리뷰 목록에서 카드를 발견. | `report` 1건 PENDING, 운영자 큐에 적재. |
-| S2 | 본인 신고 시도 (`targetType=USER && targetId=내 userId`) | 진입 시 `targetType="USER"`, `targetId=loginUser.userId`. | INSERT 없음. |
-| S3 | 동일 대상 중복 신고 | `report` 테이블에 `(reporterId, targetType, targetId)` 동일 행 존재. | INSERT 없음. |
-| S4 | "기타" 사유 선택 + 짧은 설명 | 입력 단계. | 충분한 설명 입력 후 정상 흐름(S1)으로 진행. 그 전에는 제출 차단. |
-| S5 | 클럽 신고 (서버 지원 v1) | `targetType="CLUB"`로 화면 진입. 클럽 상세에서 "신고" 진입 (오너 본인은 메뉴 숨김). | INSERT 1건 PENDING. 운영자 수동 처리. 자동 제재 없음. |
-| S6 | 대상 없음 (이미 삭제된 리뷰 신고 시도) | 해당 리뷰가 다른 경로로 soft delete됨. | 일반적으로 INSERT 성공. (운영자 검토 시 무효 처리될 수 있음.) |
-| S7 | 고빈도 신고자 | 신고자가 1주 내 5건 이상 신고 시도. | 자동 기각 없이 접수되고 `priority=true` 로 우선 검토 표시. |
-| S8 | 우선검토 플래그 | 동일 피신고 대상에 1개월 내 3명 이상 별도 신고자가 누적됨. | `priority=true`. 운영자 큐에서 상단 노출. |
-| S9 | 증빙 파일 소유권 불일치 | 다른 사용자가 업로드한 fileId를 evidenceFileIds에 포함. | `EVIDENCE_FILE_NOT_OWNED` (403, 1100007). |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| CLOSED | CLUB 신고 서버 미지원 | (2026-06-04) `ReportType.CLUB(7)` 서버 추가, 앱 실배선 완료 | 해소됨 — v1 운영자 수동 집행. 자동 제재 없음. | — |
-| Gap | `ReportParam.contextId` 앱 미배선 | `report_param.dart`에 `contextId` 필드 없음. 서버 `ReportParam.contextId(Long?)` 존재. | CARPOOL 신고는 전용 `CarpoolReportParam`(carpool_report_param.dart)으로 처리하므로 report_screen 경로에서는 contextId 불필요. 단, 다른 신고 경로에서 contextId가 필요한 경우 Flutter 모델 추가 필요. | 현재는 영향 없음. carpool_report_screen이 별도 전용 경로를 타므로 누락 없음. |
-| Gap | DDL 주석 불일치 | `V1__init.sql:1505` target_type COMMENT에 CLUB(7) 누락 | enum 소스 기준이 정답이므로 런타임 영향 없으나 DB 문서 정합성 훼손 | V1__init.sql COMMENT 갱신 |
-| Risk | `OTHER` description 클라이언트 10자 강제 — 서버 미검증 | `report_screen.dart` `_selectedReason == OTHER → description.trim().length >= 10` | 클라이언트 우회 시 서버는 빈 description으로 저장. 운영자 처리 시 사유 파악 불가. | 서버에서 `OTHER` 선택 시 description 최소 길이 검증 추가 검토 |
-| Info | CLUB 신고 v1 운영자 수동 처리 안내 미노출 | `report_screen.dart`에 "v1 운영자 검토 안내" 문구 없음 | 사용자가 신고 결과를 언제 받을지 예측 불가 | 앱 ReportScreen에 CLUB 대상 시 "v1 운영자 검토" 안내 추가 여부 결정 |
-
-## 9. 수용 기준
-
-- **AC-01. 리뷰 신고 (Happy Path · `targetType=REVIEW`)**: Given 로그인됨, F11-02 이벤트 리뷰 목록에서 카드를 발견. When 사용자가 해당 흐름을 실행하면 Then `report` 1건 PENDING, 운영자 큐에 적재.
-- **AC-02. 본인 신고 시도 (`targetType=USER && targetId=내 userId`)**: Given `targetType="USER"`, `targetId=loginUser.userId`. When 제출하면 Then INSERT 없음.
-- **AC-03. 동일 대상 중복 신고**: Given `report` 테이블에 `(reporterId, targetType, targetId)` 동일 행 존재. When 제출하면 Then INSERT 없음.
-- **AC-04. "기타" 사유 선택 + 짧은 설명**: Given 입력 단계. When description 10자 미만이면 Then 제출 버튼 비활성. description 10자 이상 입력 후 정상 제출.
-- **AC-05. 클럽 신고 (서버 지원 v1)**: Given 클럽 상세에서 신고 진입(오너 본인 제외). When 사유 선택 후 제출하면 Then `report` 1건 PENDING INSERT. 운영자 수동 처리 대기.
-- **AC-06. 대상 없음 (이미 삭제된 리뷰 신고)**: Given 해당 리뷰 soft delete됨. When 제출하면 Then INSERT 성공 (운영자 검토 시 무효 처리).
-- **AC-07. 고빈도 신고자**: Given 신고자가 1주 내 5번째 신고 시도. When 제출하면 Then PENDING 으로 저장되고 우선 검토로 표시된다. 자동 기각은 없다.
-- **AC-08. 증빙 파일 소유권 불일치**: Given 다른 사용자 업로드 fileId 포함. When 제출하면 Then 403 `EVIDENCE_FILE_NOT_OWNED` 반환.
-- **AC-09. 증빙 파일 5개 초과**: Given 6개 이상 fileId. When 제출하면 Then 400 `EVIDENCE_FILE_TOO_MANY` 반환.
+근거는 현재 접수·관할·증빙·사진 임계 처리와 앱 입력·본인 목록/상세다. 과거 E2E 기록은 인용으로 보존하며 이번에 제품 시험을 새로 실행하지 않았다.

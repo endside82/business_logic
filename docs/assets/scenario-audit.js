@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,310개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,308개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1310,
+    "documentedScenarioItems": 1308,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 584,
-    "verifiedTraceRecords": 582,
+    "traceMarkers": 585,
+    "verifiedTraceRecords": 583,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -13675,19 +13675,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-04",
       "domain": "리뷰 & 신고",
-      "name": "신고",
-      "scenarioCount": 11,
+      "name": "신고 접수·관할 결정·본인 처리 내역",
+      "scenarioCount": 9,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-04_report/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-04_report_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 9
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-04_report/backend.md",
-        "total": 2,
-        "verified": 2,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
         "entries": [
           {
@@ -13721,6 +13721,23 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/reports/my",
                 "targetLine": 46,
                 "methodLine": 47
+              }
+            ]
+          },
+          {
+            "id": "F11-04:3",
+            "label": "GET /api/v1/reports/my/{reportId} — 내가 접수한 신고 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReportController.java",
+                "controller": "ReportController",
+                "method": "getMyReport",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/reports/my/{reportId}",
+                "targetLine": 53,
+                "methodLine": 54
               }
             ]
           }
