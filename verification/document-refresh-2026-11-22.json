@@ -440,7 +440,8 @@
         "qa_overview_20261122",
         "numbers_reference_20261122",
         "money_scenarios_20261122",
-        "money_flowcharts_20261122"
+        "money_flowcharts_20261122",
+        "authoring_navigation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5596,10 +5597,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "07639411653cfc46e02feab47e2cf2b94a70df19e2ee6e3ed3150b9fa784843b",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "authoring_navigation_20261122"
+      ],
+      "reviewedSha256": "c5b8cae905c1309a4d847b0285f55787ec432549767d33e4c62b783f13d43881"
     },
     {
       "path": "prd/00_prd_items/README.md",
@@ -5607,10 +5610,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "39e216dce7664973e265c25988f9026130b8d7a99c8b551caedc53246e168f21",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "authoring_navigation_20261122"
+      ],
+      "reviewedSha256": "26e7ebaac3c561d34e85bb7d723220ba23a29a0d945dd033996895fd5c76570c"
     },
     {
       "path": "prd/00_product_prd.md",
@@ -8418,10 +8423,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "c710a29342fdbd1b9f48356f1d21090029a4a3686e54964d9455ab3711a79e9d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "authoring_navigation_20261122"
+      ],
+      "reviewedSha256": "68e9f3dbefa45d720b454b9224055bc9bb67febb1cc67e1583179a23daff4dbe"
     },
     {
       "path": "prd/05_planning_artifacts/ppt_feature_intro_outline_draft.md",
@@ -49303,6 +49310,73 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; document/source contracts and static graph/links checks; no browser/render/screenshot"
+      },
+      "observedSourceVersions": {
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "authoring_navigation_20261122": {
+      "kind": "source_review",
+      "scope": "기존 3개 문서 전체 본문 대조. 검수된 정본의 동일 SHA 재사용, 인덱스·작성 기준·외부 전달 절차 정합성 확인. Notion 실제 조작·기능 보장은 확인 범위가 아님.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "feature_inventory_20261122",
+        "prd/FEATURE_PRD_STANDARD.md",
+        "qa_acceptance_20261122",
+        "saisoop_docs:docs/development/DOCUMENTATION_GUIDE.md"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/00_prd_items/README.md",
+          "sha256": "26e7ebaac3c561d34e85bb7d723220ba23a29a0d945dd033996895fd5c76570c"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/12_notion_markdown_guide.md",
+          "sha256": "c5b8cae905c1309a4d847b0285f55787ec432549767d33e4c62b783f13d43881"
+        },
+        {
+          "path": "business_logic/prd/05_planning_artifacts/notion_import_order.md",
+          "sha256": "68e9f3dbefa45d720b454b9224055bc9bb67febb1cc67e1583179a23daff4dbe"
+        },
+        {
+          "path": "business_logic/prd/README.md",
+          "sha256": "a9a9be47f6f7240011309b6d512d280d76a87601f733e23c8437f570aa33297f"
+        },
+        {
+          "path": "business_logic/prd/FEATURE_PRD_STANDARD.md",
+          "sha256": "bb0409b2ebfe8eb13d45dc0cf06e4cb4b26d4aeebf047d7fb464348d9b70bd22"
+        },
+        {
+          "path": "business_logic/prd/PRD_MIGRATION_STATUS.md",
+          "sha256": "2210a92de3a6e3cc5a5d7e5e90491c782b3a13556ce8891b15e0876027cc07bb"
+        },
+        {
+          "path": "business_logic/prd/00_prd_items/05_feature_definitions.md",
+          "sha256": "fe6ce989f6085734f481dd3b623f39eeaf88a2ec8e0449721276d5b8b722feef"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/acceptance_criteria_matrix.md",
+          "sha256": "6f233d0cd0f480b8b15b03b1a7b64bc8eb361ca0c065de0836e0ecc530fa9da8"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [
+        "본문의 단순 파일명을 실제 상대 링크로 전환",
+        "중복 관리 항목 표를 단일 가이드로 통합",
+        "문서 대조와 제품 구현·시험·공개 근거 분리",
+        "외부 업로드 미실행 명시"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "8 source/canonical digests; 0 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 3 paths, 54 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; repository documentation and local links only; no external upload/browser"
       },
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
