@@ -1,158 +1,133 @@
-# F07-06. 이체 확인 / 일괄 확인 / 상각 (Host Confirm Transfers) PRD
+# F07-06. 수취 확인·일괄 확인·만료·재요청·손실 정리 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **2026-11-22 소스 대조.** 실제 수취 확인과 신고, 미완료 의무, 만료 뒤 후속 처리를 구분한다. 새 제품·은행·기기 실행 결과가 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-현재 Flutter에서 일반 계좌이체 단건·일괄 확인은 정산 생성자가 수행하고, POINT+계좌이체 혼합 결제의 은행분은 수취자 또는 정산 생성자가 `받았어요`로 확인한다. 혼합결제 송금자는 정산 생성자이기도 해도 self-confirm할 수 없다. 다건 일괄 확인, 만료 transfer 재발행(reissue), 회수 불가 transfer 상각(writeoff)을 처리하며, 취소·대체 원본을 제외한 모든 transfer가 `COMPLETED`이고 모든 share도 완료될 때 settlement가 자동 `COMPLETED`로 전이된다.
+일반 계좌 송금은 **받는 사람 또는 정산 생성자**가 실제 입금 내역을 확인한 뒤 완료 처리한다. 생성자라도 본인이 보낸 송금을 스스로 확인할 수 없다. 혼합 결제의 은행분도 같은 당사자 원칙을 따르지만 가상계좌·수동 확인 허용 정책을 추가로 검사한다. ‘보냈어요’ 신고와 외부 송금 앱 열기는 입금 확정이 아니다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+일괄 확인은 건별 성공·실패를 반환한다. 만료 송금은 지급 의무가 끝난 것이 아니며, 재요청하거나 포기하는 후속 판단이 필요하다. 생성자의 만료 송금 포기와 운영자의 혼합 은행분 손실 정리는 서로 다른 처리다. 정산 전체 완료는 현재 남은 의무를 서버가 다시 판정한다.
 
-- 정산 현황 화면(SCR-MS-002) → "이체 내역" 진입 → `transfer_list_screen`
-- 외부 송금 또는 혼합결제 은행분을 확인해야 하는 사용자가 정산 이체 내역으로 진입
-- 만료 transfer 알림 → reissue/writeoff 진입
+## 코드 위치
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `MeetingSettlementController`, `ManageMeetingSettlementController`, `TransferStatus`, `MeetingSettlementExpirationScheduler`, `ManageMeetingSettlementService`, `MeetingSettlementTransferService`. 앱: `transfer_list_screen.dart`, `transfer_card_widget.dart`, `transfer_list_provider.dart`, `transfer_actions_provider_test.dart`, `transfer_card_widget_test.dart`, `transfer_status_badge_widget.dart`.
+서버는 `MeetingSettlementController`, `MeetingSettlementTransferConfirmationService`, `MeetingSettlementTransferService`, 송금 상태 전이·전체 완료·미완료 의무 정책, 만료 스케줄러·작업자, 운영자 해소 정책과 실행 분기를 확인했다. 앱은 송금 목록, 확인 대상 계산, 일괄·단건 Provider, 다시 알림 호출과 기존 표적 단언을 대조했다.
 
 <!-- source-references:start -->
-서버 창구: `MeetingSettlementController#getTransfers`, `MeetingSettlementController#confirmBankTransfer`, `MeetingSettlementController#confirmTransferBankTransfer`, `MeetingSettlementController#bulkConfirmTransfers`, `MeetingSettlementController#reissueTransfer`, `MeetingSettlementController#writeoffTransfer`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `MeetingSettlementController#getTransfers`, `MeetingSettlementController#confirmBankTransfer`, `MeetingSettlementController#confirmTransferBankTransfer`, `MeetingSettlementController#bulkConfirmTransfers`, `MeetingSettlementController#reissueTransfer`, `MeetingSettlementController#writeoffTransfer`, `MeetingSettlementController#confirmTransferBankPortion`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 실제 입구와 목록
 
-화면 진입 시:
-1. `transferListProvider(eventId)` — 탭 인덱스에 따라 `getTransfers` 또는 `getMyTransfers`
-2. `settlementDetailProvider(eventId)`의 `creatorUserId`와 로그인 사용자 ID를 비교해 정산 생성자(`isHost`) 판정
-3. `appealsProvider(eventId)` ▶ PENDING appeal 표시
+정산 현황의 송금 내역에서 ‘모든 송금’과 ‘내가 주고받는 돈’을 본다. 초기 탭은 본인이 보내거나 받는 목록이며, 탭을 바꾸면 해당 범위를 다시 조회한다. 읽기 권한과 현재 정산 선택은 [정산 현황·금액 요약·영수증 열람](F07-04_status-summary-receipt_prd.md)을 따른다.
 
-혼합결제 은행분 확인 액션:
-1. 화면이 `status == bankAwaitingConfirm && !isSender && (isRecipient || isHost)`를 계산
-2. 조건이 참일 때만 카드에 callback을 넘겨 `받았어요` 노출
-3. 되돌릴 수 없는 확인 다이얼로그에서 실제 입금 비검증 경고 확인
-4. `transferListProvider.confirmBankPortion(transferId)` ▶ `POST .../transfers/{id}/confirm-bank-portion`
-5. 현재 탭 목록 재조회 + `settlementDetailProvider` invalidate; 서버는 transfer 완료 및 settlement 완료 조건 재평가
+이 화면의 관리 역할은 **정산 생성자**와 로그인 회원을 비교한다. 항목별 납부 방식의 정보성 송금 행은 목록에서 제외한다. 실제 항목별 입금은 항목별 납부 현황에서 다루며, 분담과 송금을 중복 확인하지 않는다. 지급 방향·계좌 조회·포인트 납부는 [분담·송금 납부와 반환](F07-05_pay-share_prd.md)을 따른다.
 
-이체 확인 액션:
-1. `transferListProvider(eventId).confirmBankTransfer(transferId)` ▶ `PATCH .../transfers/{id}/confirm`
-2. 현재 탭 목록 재조회 + `settlementDetailProvider` invalidate
-3. 토스트
+일반 대기 송금의 확인 버튼은 수취자 또는 생성자에게 제공하고 송금자 자신은 제외한다. 대기 이의가 있으면 일반 확인을 막는다. 혼합 은행분 확인, 만료 송금의 포기·재요청, 일괄 확인과 다시 알림도 같은 목록에 연결되지만 각 행동의 서버 조건은 서로 다르다.
 
-일괄 확인 액션:
-1. 현재 탭 목록에서 `pendingTransfers = transfers.where(status==PENDING)`
-2. 확인 다이얼로그
-3. `settlementBulkActionProvider(eventId).bulkConfirmTransfers(ids)` ▶ `PATCH .../bulk-confirm`
-4. 결과 카운팅 토스트
+## 단건 수취 확인
 
-미납자 알림 버튼:
-1. 현재 탭의 PENDING transfer로 안내 문자열을 만들지만 그 문자열은 사용하지 않는다.
-2. 서버/알림 API 호출 없이 “미납자 N명에게 알림을 보냈습니다” 토스트만 표시한다.
+| 대상 | 서버가 확인하는 조건 | 성공 결과 |
+| --- | --- | --- |
+| 일반 송금 | 요청 모임과 실제 정산 일치, 송금 `PENDING`, 정산 `ACTIVE`, 확인자가 송금자 아님, 수취자 또는 생성자, 대기 송금 이의 없음 | `BANK_TRANSFER/COMPLETED`, 완료 시각, 감사와 송금자 알림 등록, 전체 완료 재평가 |
+| 혼합 은행분 | 모임 일치, 송금 `BANK_AWAITING_CONFIRM`, 정산 `ACTIVE`, 송금자 아님, 수취자 또는 생성자, 대기 이의 없음, 수동 은행 확인 정책 허용 | 포인트 거래는 유지하고 송금을 `COMPLETED`로 전환, 완료 시각·감사·송금자 알림 등록, 전체 완료 재평가 |
+| 항목별 분담 | 실제 낼 사람 자신 아님, 실제 받을 사람 또는 생성자, 진행 중·항목별 납부·미완료·자기 몫 아님, 분담/항목 대기 이의 없음, 모임 일치 | 해당 분담 은행 납부 완료와 전체 의무 재평가 |
 
-재요청 액션:
-1. 확인 다이얼로그
-2. `transferListProvider.reissueTransfer(transferId)` ▶ `POST .../transfers/{id}/reissue`
-3. invalidate
+서버는 부모 정산·대상 행을 잠그고 조건을 확인한다. 잘못된 모임 번호나 다른 사람의 대상 번호를 넘기는 것으로 확인 권한을 얻지 못한다. 이전 설명의 ‘혼합 확인에서 모임 번호를 검증하지 않는다’는 현재 코드에 해당하지 않는다.
 
-상각 액션:
-1. 사유 입력 다이얼로그
-2. `transferListProvider.writeoffTransfer(transferId, reason)` ▶ `POST .../transfers/{id}/writeoff`
-3. invalidate
+앱은 확인 전에 실제 입금 내역을 대조하라는 경고를 표시한다. 혼합 확인창의 송금 총액은 은행분과 다를 수 있음을 명시한다. 일반 송금 응답에는 별도 은행분 금액과 수동 확인 허용 상태가 없으므로, 버튼 노출만으로 서버의 수동 확인 허용을 보장하지 않는다. 정상 가상계좌의 자동 입금 처리와 사람이 확인하는 예외 경로도 구분한다.
 
-## 4. 제품 규칙
+## 일괄 확인과 부분 실패
 
-### 송금 상태
+앱은 현재 탭의 표시 대상 중 **PENDING·확인 가능한 당사자·대기 이의 없음**에 해당하는 송금 번호와 합계를 계산한다. 혼합 은행분 대기는 이 묶음에 넣지 않는다. 개별 체크박스로 임의 선택한 목록이 아니라 현재 계산된 확인 대상이다. 생성자에게 하단 일괄 확인을 제공하며 조회 실패·조회 중·처리 중·대상 없음이면 실행을 막는다.
 
-| 값 | 뜻 | 미결 |
-|---|---|---|
-| `PENDING` | 결제·이체 대기 | 예 |
-| `BANK_AWAITING_CONFIRM` | 혼합 결제의 은행분 확인 대기 | 예 |
-| `REVERSAL_FAILED` | 되돌림 실패 | 예 |
-| `PENDING_MANUAL_REFUND` | 수동 환불 대기 | 예 |
-| `COMPLETED` | 완료 | 아니오 |
-| `CANCELLED` | 취소 | 아니오 |
-| `EXPIRED` | 만료 | 아니오 |
-| `SUPERSEDED` | 재요청으로 대체된 원본. 정산 완료 판정에서 뺀다 | 아니오 |
-| `BANK_WAIVED` | 포인트분은 냈고 은행분을 운영자가 면제 | 아니오 |
+서버 창구는 생성자 또는 현재 모임 호스트 자격을 먼저 확인한다. 이후 각 송금에는 수취자/생성자·본인 송금 금지·현재 상태·대기 이의·모임 소속 검사를 다시 적용한다. 현재 호스트라는 이유만으로 모든 개별 송금 확인이 통과하는 것은 아니다. 목록은 비어 있거나 null 번호를 포함하면 거절한다.
 
-### 확인·재요청·상각
+각 건은 별도 확인 서비스의 트랜잭션으로 실행한다. 한 건이 실패해도 다음 건을 시도하며 성공 수·실패 수와 실패한 번호/이유를 응답한다. 이전 문서의 같은 서비스 내부 호출에 따른 건별 트랜잭션 누락 설명은 현재 구조에서 해소되었다.
 
-- 은행분을 확인하면 완료 시각을 적고 송금자에게 알린다. 앞서 낸 포인트분은 그대로다. 정산의 남은 송금이 모두 끝나고(취소·대체 제외) 모든 분담이 완료되면 ACTIVE 정산만 COMPLETED 로 바꾸고 생성자에게 알린다.
-- 재요청은 최대 2회다. 새 PENDING 을 만들고 송금자에게 알린다. 상각은 되돌릴 수 없고 사유는 500자까지(선택)다.
-- 일괄 확인 대상은 지금 탭의 PENDING 이다. 없으면 「확인할 이체가 없습니다」만 보인다.
-- 호스트 일괄 수금의 송금 제안은 10원 단위로 반올림하되, 잔액은 실제 송금액으로 줄여 합이 어긋나지 않는다.
+앱은 성공·실패 건수를 나눠 표시한다. 현재 Provider는 서버의 개별 실패 상세를 화면용 결과에 넘기지 않으므로 어떤 건이 실패했는지 목록에서 즉시 설명하는 기능까지 있다고 쓰지 않는다. 성공이 있으면 관련 현황을 갱신하며 처리됐을 가능성이 있는 통신 실패에도 재조회한다. 같은 진행 중 일괄 요청은 다시 보내지 않고 계정이 바뀐 결과는 적용하지 않는다.
 
-### limbo SLA 정책
+## 송금 신고와 다시 알림
 
-돈이 이미 움직였을 수 있는 `BANK_AWAITING_CONFIRM`, `PENDING_MANUAL_REFUND` 는 자동으로 만료시키지 않는다. 상태를 바꾸지 않고 다시 알린다.
+‘보냈어요’는 실제 지급자가 등록하는 표시다. 신고 시각은 수취자·생성자에게, 본인 신고 여부는 송금자에게 공개한다. 다른 참석자에게 모든 신고 정보를 공개하지 않는다. 신고 철회도 은행 이체 취소나 입금 확인 취소가 아니다. 상세 조건은 [분담·송금 납부와 반환](F07-05_pay-share_prd.md)을 따른다.
 
-- 매일 05:10 에 보고, 다시 알리는 간격은 기본 3일(설정값)이다.
-- `BANK_AWAITING_CONFIRM`: 수취자와 정산 생성자(다르면)에게 재알림한다.
-- `PENDING_MANUAL_REFUND`: 수취자에게 환불 필요 알림을 다시 보낸다.
-- 2회 이상 풀리지 않으면 운영자에게 HIGH 경보를 보낸다. 확인 대기인데 정산이 ACTIVE 가 아니면 바로 경보한다.
+현재 ‘입금 확인 다시 알리기’는 `PENDING`과 `BANK_AWAITING_CONFIRM`을 확인한 뒤 안내 시트를 열고 실제 다시 알림 Provider를 호출한다. 서버 성공 응답 뒤에는 ‘다시 알림을 요청했습니다’라고 표시하며 실패는 오류로 표시한다. 이전 문서의 ‘서버 호출 없이 발송 성공 토스트만 표시’는 현재 구현과 다르다. 서버의 실제 수신 대상·간격·권한은 [리마인드와 마감 연장](F07-07_remind-extend_prd.md)의 조건을 따른다. 요청 성공은 기기 알림 수신 증명이 아니다.
 
-### 운영자 처리
+## 만료와 해결 대기
 
-확인 대기인데 정산이 진행 중이 아닌 경우는 정산 취소의 되돌림이 도는 몇 분 동안의 CANCELLED 뿐이다. 그동안 해소 명령은 `PARENT_CANCELLED`, 취소 뒤 입금 확인은 `CANCEL_IN_PROGRESS` 로 답한다. 되돌림이 끝나면 되돌림 실패(`REVERSAL_FAILED`) 방법이나 취소 뒤 입금 확인을 쓴다. 이 경우의 즉시 경보는 되돌림 복구가 멈췄다는 뜻이다.
+서버 스케줄의 매일 05:00 실행은 **생성 후 30일이 지난 PENDING 중 신고 표시가 없는 송금**을 대상으로 한다. 실제 처리 직전 잠근 행에서 다시 상태와 신고 여부를 확인한다. 신고가 저장되어 있으면 만료시키지 않는다. 만료 시 송금자와 다른 사람인 정산 생성자에게 후속 판단 알림을 등록한다. 실행 시간은 서버 스케줄 설정 기준이며 이 문서에서 운영 타임존·실행 성공을 증명하지 않는다.
 
-방법은 은행 확인(증빙 필요), 포인트 보상, 손실 정리, 되돌림 재설정 넷이다.
+`BANK_AWAITING_CONFIRM`과 `PENDING_MANUAL_REFUND`는 시간이 지났다는 이유만으로 만료시키지 않는다. 매일 05:10 실행이 기본 3일 간격 설정으로 장기 대기를 확인한다. 은행 확인 대기는 수취자와 별도 생성자에게, 직접 반환 대기는 수취자에게 알림을 등록한다. 반복 횟수가 2 이상이면 운영 경보를 등록한다. 진행 중이 아닌 정산에 은행 확인 대기가 남으면 사용자에게 확인을 요구하는 대신 운영 경보를 남긴다.
 
-| 상태 | 쓸 수 있는 방법 |
-|---|---|
-| `PENDING_MANUAL_REFUND` | 은행 확인, 포인트 보상, 손실 정리 |
-| `REVERSAL_FAILED`, 은행분 없음 | 넷 모두 |
-| `REVERSAL_FAILED`, 은행분 있음 | 포인트 보상, 되돌림 재설정. 가상계좌로 적립된 은행분이면 재설정만 |
-| `BANK_AWAITING_CONFIRM`, 정산 ACTIVE | 손실 정리. 가상계좌가 살아 있을 수 없을 때만 은행 확인도 |
-| `BANK_WAIVED`, 정산 취소 아님 | 은행 확인 |
+30일을 넘긴 신고된 PENDING은 별도로 수취 확인 알림과 운영 경보 대상이 된다. 혼합 은행 확인의 최초 대기 기준은 별도 은행 대기 진입 시각이 아닌 생성 시각으로 계산될 수 있어, 결제를 늦게 시작하면 알림이 예상보다 빨라질 여지가 있다.
 
-- 돌려받을 돈의 포인트 보상은 은행분(없으면 총액)을 무료 포인트로 준다. 되돌림 실패의 보상은 원 포인트 거래의 남은 몫을 환불한다.
-- 포인트분이 있는 확인 대기의 손실 정리는 은행분만 면제한다.
-- 되돌림 재시도는 3회까지다. 다 쓰면 운영자에게 한 번 경보한다.
+## 생성자의 재요청과 포기
 
-## 6. 상태/권한/시나리오 매트릭스
+| 행동 | 조건 | 결과 |
+| --- | --- | --- |
+| 다시 요청 | 모임 일치, 기존 송금 `EXPIRED`, 정산 `ACTIVE`, 생성자 본인, 재요청 횟수 2 미만, 송금 양쪽 계정 닫힘 아님 | 같은 당사자·금액의 새 `PENDING`, 원본 연결과 횟수 증가, 원본은 `SUPERSEDED`, 감사·송금자 알림 등록 |
+| 포기 | 모임 일치, 송금 `EXPIRED`, 정산 `ACTIVE`, 생성자 본인, 선택 사유 500자 이하 | 기존 송금 `CANCELLED`, 포기 시각·행위자·사유 저장, 감사와 전체 완료 재평가 |
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | (Happy Path · 호스트 단건 확인) 참가자 1명의 계좌이체를 확인 | settlement ACTIVE, transfer 5건 (1건 PENDING 계좌이체 대기) | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S2 | (Happy Path · 호스트 일괄 확인) 5건을 한 번에 확인 | 5건 PENDING (모두 계좌이체) | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | (엣지 · 일괄 확인 부분 실패) 일부 transfer가 이미 ALREADY_COMPLETED | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S4 | (호스트 · EXPIRED 재요청) 30일 경과한 transfer 재발행 | `MeetingSettlementExpirationScheduler`가 transfer 1건을 EXPIRED로 전이, reissueCount=0 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | (호스트 · 상각/포기) 회수 불가능한 transfer 정리 | transfer EXPIRED, 사용자 연락 두절 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | (참가자 · 자기 share 확인 시도) 본인이 자기 share confirm | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | (엣지 · 자동 COMPLETED 트리거) 마지막 transfer confirm 시 정산 자동 완료 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | (엣지 · appeal 차단) PENDING appeal이 있는 transfer를 confirm 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | (혼합결제 · 수취자 확인) 은행분 입금을 받고 `받았어요` | ACTIVE, `BANK_AWAITING_CONFIRM`, 확인자=`toUserId`, PENDING appeal 없음 | transfer `COMPLETED` + `completedAt`, 송금자 알림, 감사로그, 정산 완료 재평가 |
-| S10 | (혼합결제 · 정산 생성자 대리 확인) 수취자 대신 확인 | ACTIVE, `BANK_AWAITING_CONFIRM`, 확인자=`creatorUserId`, 확인자는 송금자가 아님 | S9와 동일, 감사 actorRole=`HOST` |
-| S11 | (차단 · 송금자/제3자) 확인 우회 호출 | 송금자 또는 transfer 무관 사용자 | SELF_CONFIRM 403 또는 NOT_AUTHORIZED 403, transfer 상태 불변 |
-| S12 | (차단 · wrong status/비ACTIVE/PENDING appeal) | 다른 transfer status, DRAFT·COMPLETED·CANCELLED settlement, 또는 PENDING appeal | 각각 NOT_AWAITING_CONFIRM 400 / NOT_ACTIVE 400 / UNDER_APPEAL 409, 상태 불변 |
-| S13 | (표시만 성공 · 미납자 알림) | 현재 탭에 PENDING transfer 존재 | API 호출/실제 발송 없이 성공 토스트만 표시 |
+재요청은 기존 행을 대기로 되돌리는 동작이 아니다. 앱은 최대 2회 안내와 한도 초과 비활성화를 제공한다. 포기는 선택 사유를 입력하는 확인창에서 실행한다. 상태가 이미 바뀌었다는 응답은 목록을 다시 읽어 안내한다. 포기 결과가 불확실하면 성공으로 닫지 않고 목록 확인 안내와 입력을 유지한다.
 
-## 8. Gap / Risk
+만료된 송금에 이의가 있으면 생성자의 행에도 ‘이의 제기 중’을 표시한다. 현재 재요청·포기 서버 함수에는 대기 이의를 별도로 차단하는 조건이 없으며, 새 송금 생성이 원본 이의를 자동으로 이전하는 처리도 이 경로에는 없다. 이의 표시와 각 행동의 실제 허용 조건을 혼동하지 않는다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Risk | `MeetingSettlementExpirationScheduler.java:120-122` | `BANK_AWAITING_CONFIRM` 첫 발송 앵커가 전용 진입 컬럼 없이 `createdAt` 폴백 사용. 결제가 transfer 생성보다 늦으면 첫 알림이 다소 이르게 발화 가능 (무해하나 인지 필요) | 인지 필요 — 영향 없음 |
-| Risk (2026-07-29 실측) | Controller `confirmTransferBankPortion` | URL의 `eventId`는 Controller가 받지만 service 호출에는 전달하지 않는다. 실제 대상·권한은 `transferId → settlementId`로만 결정되어 URL event context 불일치를 검증하지 않음 | service에 eventId를 전달해 transfer의 settlement event와 일치 검증하거나 공통 scope validator 적용 |
-| Risk (2026-07-29 실측) | `MeetingSettlementTransferVo`, `_confirmBankPortion` | 혼합 분할 금액이 VO에 없어 확인 다이얼로그가 transfer 총액을 은행분 확인 금액으로 표시 | VO에 `pointAmount`/`bankTransferAmount` 추가 또는 금액 단정 문구 제거 |
-| Fact (2026-07-29 실측) | `confirmBankPortion`, `canConfirmBankPortion` | 수취자/정산 생성자 허용, 송금자 self-confirm/제3자/wrong status 차단, 수기 입금 비검증 경고가 서버·Flutter에 반영됨 | 회귀 테스트와 경고 유지 |
-| Risk (2026-07-29 실측) | `bulkConfirmBankTransfers` self-invocation | 응답은 건별 성공/실패를 집계하지만 주석과 달리 건별 service transaction이 생성되지 않아 한 건 내부 원자성이 불명확 | 명시적 건별 transaction 경계 도입 + 후반 side-effect 실패 회귀 테스트 |
-| Gap (2026-07-29 실측) | `_notifyUnpaid` | 실제 알림 호출 없이 성공 토스트만 표시 | 실제 remind API에 연결하거나 버튼/성공 문구 제거 |
-| Gap (2026-07-29 실측) | `_TransferSummaryStats`, `canConfirmBank`, `_TransferBottomActions` | 대기 합계가 BANK_AWAITING_CONFIRM 제외, 일반 BANK 수취자 CTA 누락, 완료 후 하단 액션 잔존 가능 | 서버 권한·상태와 표시식을 동기화 |
+## 운영자의 손실 정리와 은행분
 
-## 9. 수용 기준
+운영자의 해소 명령은 생성자의 만료 송금 포기와 별도다. 같은 작업 식별자에는 최초 결과를 재사용하고, 예상 버전·현재 상태·대상 계정·필요 잔액을 다시 판단한다. 은행 확인은 유효한 증빙 파일이 필요하다. 이번 대조는 서버 정책·실행 분기이며 관리자 화면 전체의 실제 이용 확인이 아니다.
 
-- **AC-01. (Happy Path · 호스트 단건 확인) 참가자 1명의 계좌이체를 확인**: Given settlement ACTIVE, transfer 5건 (1건 PENDING 계좌이체 대기) When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-02. (Happy Path · 호스트 일괄 확인) 5건을 한 번에 확인**: Given 5건 PENDING (모두 계좌이체) When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. (엣지 · 일괄 확인 부분 실패) 일부 transfer가 이미 ALREADY_COMPLETED**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-04. (호스트 · EXPIRED 재요청) 30일 경과한 transfer 재발행**: Given `MeetingSettlementExpirationScheduler`가 transfer 1건을 EXPIRED로 전이, reissueCount=0 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. (호스트 · 상각/포기) 회수 불가능한 transfer 정리**: Given transfer EXPIRED, 사용자 연락 두절 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. (참가자 · 자기 share 확인 시도) 본인이 자기 share confirm**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. (엣지 · 자동 COMPLETED 트리거) 마지막 transfer confirm 시 정산 자동 완료**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. (엣지 · appeal 차단) PENDING appeal이 있는 transfer를 confirm 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. (혼합결제 은행분 수취자/정산 생성자 확인)**: Given ACTIVE 정산의 `BANK_AWAITING_CONFIRM` transfer이고 PENDING appeal이 없을 때 When 송금자가 아닌 수취자 또는 정산 생성자가 `받았어요`를 확정하면 Then transfer가 `COMPLETED`가 되고 `completedAt`, 감사로그, 송금자 알림, 정산 완료 재평가가 기록된다.
-- **AC-10. (혼합결제 은행분 self-confirm/제3자 차단)**: Given `BANK_AWAITING_CONFIRM` When 송금자 또는 무관 사용자가 endpoint를 우회 호출하면 Then 403으로 거절되고 transfer는 대기 상태를 유지한다.
-- **AC-11. (혼합결제 은행분 wrong status/비ACTIVE/appeal 차단)**: Given 상태·정산·분쟁 조건이 맞지 않을 때 When 확인을 호출하면 Then 대응 error code로 거절되고 어떤 완료 side effect도 생기지 않는다.
-- **AC-12. (완료 전이)**: Given 마지막 미완료 transfer가 해당 은행분 확인 건이고 모든 share가 완료됐을 때 When 확인에 성공하면 Then transfer와 ACTIVE settlement가 함께 `COMPLETED`가 되고 정산 생성자에게 완료 알림이 간다.
-- **AC-13. (일괄 확인 원자성)**: Given 일괄 확인 중 한 transfer의 감사/알림 같은 후반 side effect가 실패할 때 When 해당 건을 처리하면 Then 그 transfer의 앞선 상태·지갑·원장 변경이 모두 롤백되거나, 문서화된 복구 상태로 일관되게 남아야 한다.
-- **AC-14. (미납자 알림 진실성)**: Given PENDING transfer가 있을 때 When “미납자 알림” 성공을 표시하면 Then 실제 서버 알림 요청과 수신 근거가 있어야 한다.
+| 상태 | 정책상 가능한 해소 방법 |
+| --- | --- |
+| 직접 반환 대기 | 은행 반환 확인, 포인트 보상, 손실 정리 |
+| 되돌림 실패·은행분 없음 | 은행 확인, 포인트 보상, 손실 정리, 되돌림 재설정 |
+| 되돌림 실패·은행분 있음 | 포인트 보상 또는 되돌림 재설정 |
+| 은행 확인 대기·진행 중 정산 | 손실 정리. 수동 은행 확인 정책이 허용할 때만 은행 확인 추가 |
+| 은행분 면제·취소되지 않은 정산 | 늦은 은행 수취 확인 정책을 통과할 때 은행 확인 |
+
+혼합 은행 확인 대기의 손실 정리는 **원래 포인트 거래의 남은 몫을 반환하고 은행분을 면제**한다. ‘먼저 낸 포인트는 언제나 유지’라는 설명을 적용하지 않는다. 이후 은행분을 늦게 확인할 때는 이미 반환한 포인트를 회수해야 할 수 있으며 잔액 등 현재 조건을 검사한다.
+
+포인트 보상도 항상 같은 결과가 아니다. 직접 반환 대기는 은행분 또는 해당 기록이 없는 총액을 무료 포인트로 보상한다. 되돌림 실패는 원 포인트 거래의 남은 금액을 반환하고, 은행분이 지갑에 적립되었는지 외부에서 받았는지에 따라 은행분 보상 후 종결하거나 직접 반환 대기를 남긴다. 이전 문서의 ‘가상계좌 적립 은행분은 재설정만 허용’은 현재 정책과 다르다.
+
+## 수입과 취소 뒤 확인
+
+지출과 수입은 실제 지급 방향이 반대이며 자기 몫에는 지급 의무가 없다. 정산 취소 뒤 외부 은행 송금이 뒤늦게 확인되어도 일반 진행 중 입금 확인을 그대로 실행하지 않는다. 운영자의 별도 취소 후 수취 확인은 취소 상태·현재 송금 상태·수동 수취 허용·사유·증빙을 검사하고 직접 반환 대기를 남긴다. 포인트 되돌림이 진행 중인 혼합 은행 확인은 바로 허용하지 않는다.
+
+취소 이후 돈의 반환·역분개·실패 복구는 [금액 검토·정산 요청·취소와 반환](F07-03_activate-cancel_prd.md)을, 수취인이 포인트로 돌려주는 행동은 [분담·송금 납부와 반환](F07-05_pay-share_prd.md)을 따른다. 입금 확인, 신고 표시, 반환 의무 종료를 하나의 완료 표시로 합치지 않는다.
+
+## 전체 정산의 완료
+
+미완료 송금 의무에서 제외하는 상태는 `COMPLETED`, `CANCELLED`, `SUPERSEDED`, `BANK_WAIVED`다. **EXPIRED는 남은 의무다.** 은행 확인 대기·직접 반환 대기·되돌림 실패 역시 해결이 필요하다. 상태 이름이 취소·면제라는 사실과 실제 은행 수취 완료는 구분한다.
+
+서버는 `ACTIVE` 정산에서 남은 송금 의무가 없는지 확인한다. 항목별 납부 방식이면 자기 몫을 제외한 분담도 모두 끝났는지 확인한다. 직접 송금 방식의 정보성 분담 행을 똑같이 실제 미납으로 세지 않는다. 조건을 모두 만족할 때 정산 완료·감사·생성자 알림을 기록한다. 단건 확인 성공이나 마지막으로 보이는 버튼 클릭만으로 전체 완료를 보장하지 않는다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인 내용 | 영향과 다음 확인 |
+| --- | --- | --- |
+| Gap | 목록의 ‘대기 금액’은 PENDING만 합산하며 혼합 은행 확인 대기는 제외한다. | 은행분 전체 미확인 금액으로 읽으면 부족하게 보일 수 있다. 별도 은행분 필드·표시 정의가 필요하다. |
+| Gap | 일괄 확인 응답의 실패 번호·이유를 앱 결과가 건수로만 줄인다. | 실패한 개별 건과 이유를 화면에서 바로 설명하지 못한다. |
+| Risk | 일부 혼합 확인·만료 행동·하단 행동은 정산 ACTIVE 여부나 수동 허용 여부를 화면에서 모두 걸러내지 않는다. | 완료·취소·가상계좌 상태에서 버튼이 보여도 서버가 거절할 수 있다. 화면 노출을 실행 권한의 증거로 쓰지 않는다. |
+| Risk | 만료 이의 표시는 있지만 재요청·포기에 대기 이의 검사·새 송금으로 이의 이전이 없다. | 이의가 있는 만료 송금의 후속 처리 정책과 실제 동작을 함께 판단해야 한다. |
+| Risk | 혼합 은행 대기의 첫 장기 대기 기준에 송금 생성 시각을 사용한다. | 늦은 혼합 결제의 첫 알림 시점을 별도 운영 확인한다. |
+| 미검증 | 소스와 선택한 기존 단언을 대조했다. | 새 은행 거래·알림 수신·스케줄 실행·관리자 화면·기기·이미지 시험은 하지 않았다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 목록과 역할:** 전체/본인 송금과 항목별 정보성 송금을 구분한다. 수취자·정산 생성자·현재 모임 호스트의 조회 및 실행 역할을 동일시하지 않는다.
+- **AC-02 일반 확인:** PENDING·ACTIVE·모임 일치·대기 이의 없음·수취자 또는 생성자를 확인하고 송금자 자신의 확인은 거절한다.
+- **AC-03 혼합 확인:** 은행 확인 대기와 실제 수취 당사자에 더해 수동 확인 정책을 검사한다. 총액을 은행분으로 단정하지 않는다.
+- **AC-04 확인 결과:** 송금 완료·완료 시각·감사·알림 의도를 기록하고 전체 완료를 다시 판단한다. 실제 은행 확인은 확인자의 책임이며 앱 경고를 유지한다.
+- **AC-05 일괄 대상:** 현재 표시 범위의 일반 대기·당사자·이의 조건으로 대상과 합계를 계산한다. 혼합 확인 대기는 포함하지 않으며 처리 중 중복 실행을 막는다.
+- **AC-06 건별 실패:** 별도 트랜잭션으로 각 송금을 확인하고 성공·실패를 구분한다. 실패 번호·이유 응답과 현재 앱의 건수 표시 제한을 명시한다.
+- **AC-07 신고와 알림:** 보냈다는 신고를 입금 확정으로 바꾸지 않는다. 다시 알림은 실제 서버 요청 결과를 표시하며 기기 수신 완료로 보장하지 않는다.
+- **AC-08 만료 경합:** 30일을 넘긴 미신고 PENDING을 선택하고 잠근 행의 상태·신고를 재검사한다. 신고가 확인되면 만료시키지 않는다.
+- **AC-09 해결 대기:** 혼합 은행 확인·직접 반환 대기는 자동 만료시키지 않는다. 장기 대기 알림·운영 경보와 신고된 장기 PENDING의 별도 경로를 구분한다.
+- **AC-10 재요청:** 진행 중 정산 생성자만 만료 행에서 최대 2회 새 송금을 만들며 닫힌 당사자 계정을 거절한다. 원본은 대체 상태와 연결 관계를 남긴다.
+- **AC-11 포기:** 진행 중 정산 생성자만 만료 행을 선택 사유 500자 이내로 취소 처리한다. 상태 변화·불확실 응답을 성공으로 꾸미지 않는다.
+- **AC-12 이의 중 만료:** 생성자 행에도 이의 표지를 보인다. 표지와 재요청·포기의 현재 허용 조건 및 이의 이전 부재를 구분한다.
+- **AC-13 운영자 해소:** 작업 식별자·예상 버전·현재 허용 방법·증빙·금액/계정 조건을 검사한다. 혼합 손실 정리는 남은 포인트 반환과 은행분 면제를 나눈다.
+- **AC-14 취소 뒤 수취:** 일반 확인과 별도 취소 후 수취 확인을 구분하고, 확인되었다는 이유로 반환 의무를 삭제하지 않는다.
+- **AC-15 전체 완료:** EXPIRED를 미완료 의무로 남긴다. ACTIVE와 방식별 실제 의무 충족 뒤에만 전체 정산을 완료한다.
+- **AC-16 오류와 계정:** 확인·재요청·포기·일괄 결과를 재조회하고 계정이 바뀐 결과는 적용하지 않는다. 화면의 남은 합계·권한 표시 제한을 숨기지 않는다.
+
+근거는 현재 서버·앱 구현, `MeetingSettlementExpirationWorkerTest`의 잠금 후 신고 감지 시 만료하지 않는 단언, `transfer_actions_provider_test.dart`의 은행분 확인 성공/실패 후 상태 및 일괄 성공2·실패1 매핑 단언이다. 기존 시험 코드를 읽은 범위이며 새 실행 통과 기록이 아니다.

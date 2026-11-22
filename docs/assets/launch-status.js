@@ -987,6 +987,29 @@ window.LAUNCH_STATUS = (function () {
 });
   readinessById['N-SETTLEMENT-PAY-20261122'] = ["화면 연결·금액 안내 정합성", "서버·명령 구현 있음, 화면 연결/안내 차이 확인", "기존 선택 단언 대조; 이번 제품 시험 실행 없음", "현재 소스로 차이 확인, 제공 범위와 표시 수정 필요"];
 
+  // F07-06 표시·행동 조건의 소스 대조 결과. 제품 변경·실행 결과 아님.
+  openItems.push({
+    "id": "N-SETTLEMENT-CONFIRM-20261122",
+    "impact": "wiring",
+    "kind": "기능 문서 대조에서 확인한 표시 차이",
+    "owner": "개발자",
+    "title": "정산 수취 확인의 대기 합계·실패 상세·행동 조건",
+    "features": [
+        "F07-06"
+    ],
+    "developmentFeatures": [
+        "F07-06"
+    ],
+    "docPath": "features/F07-06.html#current-limits",
+    "implementationReady": false,
+    "operationsReady": false,
+    "summary": "2026-11-22 소스 대조: 대기 금액은 PENDING만 합산해 혼합 은행 대기를 제외하고, 일괄 확인의 실패 번호·이유는 건수로만 표시한다. 일부 혼합 확인·만료·하단 행동은 정산 상태/수동 허용을 화면에서 모두 거르지 않는다.",
+    "actionLabel": "대기 금액·실패 이유·현재 허용 행동 표시 정리",
+    "nextAction": "대기 합계의 의미와 혼합 은행분 표시를 맞추고 일괄 확인 실패 건과 이유를 제공한다. 완료/취소 및 가상계좌 수동 확인 정책에 맞춰 행동을 노출한다. 만료 이의 건의 재요청·포기 정책도 함께 확인한다.",
+    "doneWhen": "일반 대기와 혼합 은행 대기가 구분되어 표시되고 일괄 부분 실패에서 해당 건과 이유를 확인한다. 실행 불가 상태의 행동을 성공 가능한 것으로 안내하지 않는다. 만료 이의 표지와 후속 처리 정책이 일치한다. 소스 대조와 실제 은행/기기 검증 결과를 구분한다."
+});
+  readinessById["N-SETTLEMENT-CONFIRM-20261122"] = ["표시·행동 조건 보완", "수취/만료/해소 서버 구현 있음, 앱 표시 제한", "선택한 기존 단언 대조, 새 실행 없음", "현행 표시와 정책의 차이 확인"];
+
   openItems.forEach(function (item) {
     var r = readinessById[item.id];
     if (!r) throw new Error('작업 상태 누락: ' + item.id);

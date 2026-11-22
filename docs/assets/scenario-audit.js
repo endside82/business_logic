@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,270개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,273개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1270,
+    "documentedScenarioItems": 1273,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4957,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 66,
+    "directlyLinkedAutomatedTests": 67,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 66,
+    "automatedScenarioReferences": 67,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -24,11 +24,11 @@ window.SCENARIO_AUDIT = {
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 42,
-    "partialEvidenceChain": 52,
+    "completeEvidenceChain": 43,
+    "partialEvidenceChain": 51,
     "definitionOnlyEvidence": 81,
-    "traceMarkers": 537,
-    "verifiedTraceRecords": 535,
+    "traceMarkers": 538,
+    "verifiedTraceRecords": 536,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -10004,19 +10004,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-06",
       "domain": "모임 정산",
-      "name": "이체 확인/일괄 확인/상각",
-      "scenarioCount": 13,
+      "name": "수취 확인·일괄 확인·만료·재요청·손실 정리",
+      "scenarioCount": 16,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 13
+        "documentScenarioCount": 16
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-06_host-confirm-transfers/backend.md",
-        "total": 6,
-        "verified": 6,
+        "total": 7,
+        "verified": 7,
         "retired": 0,
         "entries": [
           {
@@ -10038,7 +10038,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-06:2",
-            "label": "PATCH .../settlement/shares/{shareId}/confirm — Share 계좌이체 확인 (호스트)",
+            "label": "분담 은행 수취 확인 — 실제 수취자 또는 생성자",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -10055,7 +10055,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-06:3",
-            "label": "PATCH .../settlement/transfers/{transferId}/confirm — Transfer 확인 (호스트)",
+            "label": "송금 은행 수취 확인 — 수취자 또는 생성자",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -10072,7 +10072,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-06:4",
-            "label": "PATCH .../settlement/transfers/bulk-confirm — 일괄 확인",
+            "label": "일괄 수취 확인 — 창구 관리 자격과 건별 확인 자격",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -10089,7 +10089,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-06:5",
-            "label": "POST .../settlement/transfers/{transferId}/reissue — EXPIRED 재발행",
+            "label": "만료 송금 재요청 — 정산 생성자",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -10106,7 +10106,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-06:6",
-            "label": "POST .../settlement/transfers/{transferId}/writeoff — 상각",
+            "label": "만료 송금 포기 — 정산 생성자",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -10120,15 +10120,34 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 540
               }
             ]
+          },
+          {
+            "id": "F07-06:7",
+            "label": "혼합 은행분 확인 — 수취자 또는 정산 생성자",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "confirmTransferBankPortion",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm-bank-portion",
+                "targetLine": 509,
+                "methodLine": 510
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 3,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/meeting_settlement/transfer_actions_provider_test.dart"
+        ],
         "markerCandidateFiles": [
           "community_app/test/data/models/support/user_guide_purpose_test.dart",
           "community_app/test/presentation/meeting_settlement/settlement_items_guidance_card_test.dart",
@@ -10143,10 +10162,10 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "open",
       "proof": "local",
-      "knownIssues": 0,
+      "knownIssues": 1,
       "pendingReview": 0
     },
     {
