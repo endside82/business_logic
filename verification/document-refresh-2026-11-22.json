@@ -297,7 +297,8 @@
         "market_purchase_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -351,7 +352,8 @@
         "event_detail_complete_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -3490,9 +3492,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "29e3df802fdcb5176589e2ecc845a520f5ab10234925426cc1d582556d66ad9a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "block_editor_20261122"
+      ],
+      "reviewedSha256": "2ea32f72045d2019147209538fa2f065030b7fa30460052d84c59d054cb6cbd2"
     },
     {
       "path": "docs/features/F08-04.html",
@@ -5052,7 +5057,8 @@
         "market_purchase_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5144,7 +5150,8 @@
         "market_purchase_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5260,7 +5267,8 @@
         "market_purchase_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6640,10 +6648,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "fd9a28d0b047dfa0430c5a94cbf24dbd8a52c3c5a61ab9678a9c95d619689788",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "block_editor_20261122"
+      ],
+      "reviewedSha256": "718ab989540e92a724dfabd3ee48cc94d326b016caee20816bed4c8499a16a8b"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-04_block-reorder_prd.md",
@@ -8082,7 +8092,8 @@
         "market_purchase_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8326,7 +8337,8 @@
         "market_purchase_20261122",
         "creator_earning_20261122",
         "my_collection_20261122",
-        "plan_event_review_20261122"
+        "plan_event_review_20261122",
+        "block_editor_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12078,9 +12090,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "42c0d19dd2028389c88c1f2d05004a7452ebd3066169c1eb1d79999cebc74be3",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "block_editor_20261122"
+      ],
+      "reviewedSha256": "3b8ab18346cdef8f1ea75c463de4678df3b9557488baaccb903f6bf49e8f596a"
     },
     {
       "path": "units/08_plan_market/F08-03_block-editor/diagrams.md",
@@ -12088,9 +12103,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7aa588a9f9742f5cdb13f5a70769d57e35e3a2fe5f467091ae0017b55b41f015",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "block_editor_20261122"
+      ],
+      "reviewedSha256": "40101dd01afb1782732405decc6e3c350b65a6bf1b292adecdf16fbc9300219f"
     },
     {
       "path": "units/08_plan_market/F08-03_block-editor/frontend.md",
@@ -12098,9 +12116,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2b6ae0e06a8ebaa378aeb381ac6cfbea9bf340fe7279d100390e5a9a7d26dc72",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "block_editor_20261122"
+      ],
+      "reviewedSha256": "39555499d6216c1e629663353bcbdd89fb75b431ee0bcbdcb20e8b6ab54dee13"
     },
     {
       "path": "units/08_plan_market/F08-03_block-editor/scenarios.md",
@@ -12108,9 +12129,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8c5db350ad91bf33dad423c73b93d4b7961c233dee9c893ff130cdaa1adea082",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "block_editor_20261122"
+      ],
+      "reviewedSha256": "f88acc53f12083e41fa48c27394e9f791dbbc25c34de2521ee8f6ef5b7651748"
     },
     {
       "path": "units/08_plan_market/F08-04_block-reorder/backend.md",
@@ -33289,6 +33313,240 @@
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
         "community_app": "c098d030fb440d606114f5695c4238d83e3f31ac"
+      }
+    },
+    "block_editor_20261122": {
+      "kind": "source_review",
+      "scope": "F08-03 현재20/18타입·본인DRAFT·6API·기기보관/저장lane/결과불명/보류·paste원자성/틀부분반영·삭제복원·TABLE canonical-only/TODO·미디어·전환장벽/선택단언 대조. 제품실행/시각검수 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/PlanBlockAddParam.java",
+          "sha256": "e4736b868c978c264ba66cb9afea7e555655d918cce3de9fbdc7991222d66d22",
+          "reviewScope": "parentBlockId/blockType/content/properties/sortOrder/depth/revision 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/PlanBlockModParam.java",
+          "sha256": "d81b6d2b55c28b774c27ac274e98a8cf5b5f33d95c1f7131903bb51a46a89b40",
+          "reviewScope": "blockType/content/properties/depth/revision 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/PlanBlockPasteParam.java",
+          "sha256": "08f71679e402bed4a7c46f095d8eff598fca0c6503cc77e443ee75bdac076803",
+          "reviewScope": "parentBlockId/afterBlockId/blocks/revision 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/PlanBlockPasteItemParam.java",
+          "sha256": "fd33c199429e323e79674e517496f793514b62544e740263992c7e8beb7bf855",
+          "reviewScope": "sourceBlockId/blockType/content/properties/children 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/constants/PlanBlockType.java",
+          "sha256": "f72db75fd9bd809d7ac4fd667fcfe6a38f96ed671a78ab8aa96df286fb8f9be2",
+          "reviewScope": "서버 known 블록 타입 20종"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockTablePayloadNormalizer.java",
+          "sha256": "79959142fcc7175642bfd3ab8f0afa7a56380e766207e8cc493ac21426895567",
+          "reviewScope": "26–172: rows 필수·정규화 TSV·content 불일치 거절·columns 제거·기타 키 보존"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockTableRowsValidator.java",
+          "sha256": "465c85bd422916f29434dd75be2d08e43f6af0e994181abc64375e3a2afeabf9",
+          "reviewScope": "26–84: 비어 있지 않은 직사각형 문자열 rows·선택 boolean header·중복 JSON 키 거절"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockMediaService.java",
+          "sha256": "089405721a61e8e67a9df4b6a21cd5ad1afad038fd464e1f3d666572455528f9",
+          "reviewScope": "88,104–145,232–248,306–326,400–412: 30일 보존·미디어 등록/교체·삭제/복원 표지·URL 투영·파일 존재/소유/완료/용도 검사"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/block_editor/inline_text_block.dart",
+          "sha256": "e5d2c75c827745589de49ffd26ba23a168ffa44487ba091a92ea5ed5520a7c0a",
+          "reviewScope": "166,296,442: 300ms debounce 및 복원한 입력 저장 경로"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/draft_save_controller.dart",
+          "sha256": "8a76df4dc392da8f85bca739cc74148b918fb9046835e60cec831f6e1d9d405d",
+          "reviewScope": "184–273,380–426: 계정/플랜/세션 복원·체크포인트 저장 선행·디스크 실패 시 전송 중단·전송 번호/기준 본문"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/block_save_lane.dart",
+          "sha256": "d62ac3d3c7e529c7bd44d0b770ca072527b8b446e224e85d8a7e58ec2a9ee8a8",
+          "reviewScope": "786–913: 최신 전송 응답·성공 후 더 최신 입력 유지·결과 불명 재조회·충돌 보류"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/editing/block_draft_session.dart",
+          "sha256": "09179d99a6b871d6847036881edc8ac74574aba42f816734402c423c79053e4d",
+          "reviewScope": "187–249,307–387: 명시적 보류 해결·저장 장벽·최신 properties·재시도·고립 초안 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/editing/block_edit_command_flow.dart",
+          "sha256": "ec7df9f1dc98e759757a32aa256da4c4698948617d0256b4c56b1738f6fe6531",
+          "reviewScope": "958–1006: 작성 틀 순차 add·성공 응답 수·실패 후 트리 재조회·자동 나머지 재전송 금지"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/editing/block_clipboard_flow.dart",
+          "sha256": "37b8cd3359b7895316da87ca26d0b726d3dd0b7873f6efa77c326dbdcc3f61ca",
+          "reviewScope": "118–164,359–413: 관련 편집 flush·최신 대상·읽기 전용/표 검사·paste 하위 트리·OS 평문과 내부 클립보드 대조"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/editing/block_recovery_flow.dart",
+          "sha256": "7912085e59e9d128b7b2ab25d262b944c1de88238976d787ca72679bf54b999b",
+          "reviewScope": "101–149: 구조 변경 시작 기록 선행·미확정 기록 유지·명시적 확인"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/block_category.dart",
+          "sha256": "6c52b172106f5355e934e169dc7c40a19cd07b748807ed6ca2770a2c1c3ec29b",
+          "reviewScope": "1–100: 5분류와 새 블록 선택 18종"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/authoring_pattern.dart",
+          "sha256": "49e1e3b8c447c40848c297ca74f1c7343583f192e2a28d23809c90cc04d086d1",
+          "reviewScope": "패턴 id/제목 선언: 일반8·여행4의 12개; 인라인 목록 서식"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/widgets/markdown_shortcuts.dart",
+          "sha256": "d38674fa64e1d93b7d43ce24ddee0576b7bdce7c0fbeae2e6918ea0efc7a8cb4",
+          "reviewScope": "20–56: 제목/TODO/인용/구분선/CODE 전환·인라인 ul/ol"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/block_props.dart",
+          "sha256": "883ce4fad2c2a591ef70d3c8e53c4426d5cda458ca3b09bab89c3f5a4cbdb54d",
+          "reviewScope": "319–420: TABLE canonical/empty/invalid·문자열 직사각형 rows·선택 header·옛 형식 비지원"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/table_block_adapter.dart",
+          "sha256": "0e976587675803ad3390e162a6d0213849ea6222e7cb740711fc685a88bcec76",
+          "reviewScope": "25–81,104–181: 손상 표 거절·rows/TSV·columns 제거·미지 JSON 멤버/큰 정수 보존"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/media/media_refresh_guard.dart",
+          "sha256": "08213471e31e42556ada9927673547d9b132b461b44614b6626df18106c29608",
+          "reviewScope": "14–48: host/path 기준 60초 재갱신 간격"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/PlanBlockTablePayloadNormalizerTest.java",
+          "sha256": "ac9c245a9ff64ed44ebe0c1461be3aa6c0c566d70d0f72cde1a88bb4cb62bda7",
+          "reviewScope": "38–100: rows→TSV·columns 제거·미지 큰 정수 보존·명시 content 불일치/옛 형식 거절 단언 열람; 실행하지 않음"
+        },
+        {
+          "path": "community_app/test/presentation/plan/screens/block_editor_restart_recovery_test.dart",
+          "sha256": "5f0cb65e76c20238abbc9b5f3f89a10f3fb03711798b7c6d2b634c10ec8061ef",
+          "reviewScope": "171–183,425–498: 구조 기록 확인·늦은 응답/최신 입력 보존·디스크 실패 전송0·손상 원본 보존·삭제 블록 초안 보존 단언 열람; 실행하지 않음"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/widgets/block_edit_dialogs/todo_block_edit_dialog.dart",
+          "sha256": "564a72ac7c9187113cbdc7c6a836fcfe41be4514398160adce9dd9b37ca22f8c",
+          "reviewScope": "20–168,210–231: properties.items text/checked·복원·공백 제거·완료 요약·미지 키 보존"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanBlockController.java",
+          "sha256": "e74ec3e68c85f0c785f0a6dc130c8c4baaf0d6cd974042d3afc342771623d8bb",
+          "reviewScope": "41–114: 트리/추가/수정/삭제/복원/붙여넣기·revision 헤더와 응답 형식; 재정렬 조사와 동일 SHA"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockService.java",
+          "sha256": "9223e731c0c151c64868bfd13eb2e42d2ff59235b42f1b4756ef1565ffb421f9",
+          "reviewScope": "104–305,471–649,886–918,1014–1048: 권한·블록 추가/붙여넣기/수정/삭제/복원·개수/깊이/크기·읽기 전용 조상; 재정렬 조사와 동일 SHA 및 기존 revision 검사 근거 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanBlockOpaqueSubtreePolicy.java",
+          "sha256": "1f5b3f13be1f2a12f8c687376b85e1df8f55bf221c4aa89fa7c96c32da99a2a9",
+          "reviewScope": "재정렬 조사에서 확인한 known/schemaVersion/rawEnvelope 읽기 전용 문맥 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanService.java",
+          "sha256": "16616bfb18da0a9bbb7ff422b1f47a716581288a1a6c0b3640b9df5aa3c0c1c8",
+          "reviewScope": "플랜 상세 조사에서 읽은 104–174,184–310,329–410,450–517,550–579,646–686,715–721,774–915 중 공개 본문/견본/티저 근거 재사용"
+        },
+        {
+          "path": "community_app/lib/data/api/plan_api.dart",
+          "sha256": "d40dec6c4583634185f5bc7c18c25d920578aa9c4fabdf9fed6d89c5d305781a",
+          "reviewScope": "기존 동일 SHA 조사에서 확인한 typed 요청·응답·revision 계약 재사용"
+        },
+        {
+          "path": "community_app/lib/data/repositories/plan_repository.dart",
+          "sha256": "339fc30b3c78d85e5829cda8cc2f390ee2cb9b4ffe44a46724bc621ac44bc53a",
+          "reviewScope": "기존 동일 SHA 조사에서 확인한 결과 래핑·revision 헤더·트리 계약 재사용"
+        },
+        {
+          "path": "community_app/lib/domain/providers/plan/plan_block_provider.dart",
+          "sha256": "3dc4c9dcbe312cbc34a927c2eb8cf7b2a74a0eccc9f1cd250519536b9c4f4c16",
+          "reviewScope": "1163–1187: 기준 본문이 원격에서 변경됐을 때 보류; 동일 SHA 재정렬 조사 350–442,463–495,579–588,862–881,965–1130,1142–1187,1813–1887의 직렬화/재대조/의도 재시도 근거 재사용"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/screens/block_editor_screen.dart",
+          "sha256": "10e447a38d09853b78311796821c8683302855eb94ece0cb445ae6ac2c4363ef",
+          "reviewScope": "627–685,707,851,994–1122,2165–2204,2370–2468,2730–2745,2917–2973,3037–3081,3284–3317: 복원/작성자/DRAFT·전환 장벽·틀 부분 반영·시트 초안 범위·원격 변경·견본 최대5·하위 삭제/최근10·복원 오류"
+        },
+        {
+          "path": "community_app/lib/data/models/plan/plan_block_type.dart",
+          "sha256": "c4048eabfaa13c0a655e170f303f85e39c15af054ef64a5c7e8a43a3b40820b3",
+          "reviewScope": "기존 재정렬 조사에서 확인한 isLockedBlock 판단 재사용"
+        },
+        {
+          "path": "community_app/lib/core/utils/image_upload_helper.dart",
+          "sha256": "689c0f124d2d761415be01c844bb82327ca39c747fcdbc1fa2025550bc7ad407",
+          "reviewScope": "15,163–229: 10MiB·presign/업로드/complete·성공 fileId/key·실패 abort"
+        }
+      ],
+      "reuses": [
+        "club_album_20261122",
+        "plan_event_review_20261122",
+        "plan_publish_20261122",
+        "plan_reorder_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-03_block-editor_prd.md",
+          "sha256": "718ab989540e92a724dfabd3ee48cc94d326b016caee20816bed4c8499a16a8b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F08-03 실제CRUD/트리/paste 6개API 연결표 추가",
+        "세대워터마크만 설명하던 옛 저장구조를 현재 기기보관·상태기계·충돌보류로 교정",
+        "TABLE dual-read/content-only 호환을 현재 canonical-only 계약으로 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "복제는 paste API를 사용해 하위를 한 거래로 생성한다. 작성 틀은 여전히 순차POST로 부분 반영될 수 있다.",
+          "disposition": "두 경로의 원자성/응답불명 범위를 구분"
+        },
+        {
+          "kind": "document_contract_correction",
+          "finding": "현재 서버와 앱 TABLE은 rows문자열 형식만 정상처리한다. TODO항목은 자식블록이 아니라 properties.items다.",
+          "disposition": "옛형식저장호환·TODO구조 미정 설명 제거; 데이터이관 실행 없음"
+        }
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/08_plan_market/F08-03_block-editor/frontend.md",
+          "sha256": "56a0db10d59c80ed16e4f4c9b2d11c8b02c6ff6be7295a27426685ec4c39c57f",
+          "characters": 267,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "35 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "6 documents; shared batch verified 6 paths, 33 relative links/anchors and 4 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "c3ccc9cc48b5b627db538711f548739961c7ecca"
       }
     }
   },

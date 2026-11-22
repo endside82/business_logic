@@ -1,142 +1,129 @@
-# F08-03. 블록 에디터 (블록 CRUD) PRD
+# F08-03. 플랜 블록 편집·저장·복구 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 소스 대조. 편집 입구, 저장·충돌·재시작 복구, 블록 추가·삭제·복제·붙여넣기의 현재 계약이다. 새 실행 통과 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
->
-> 2026-07-29 현재 소스 갱신: 여행/플랜 에디터 후속이 반영됐다. 모바일 IME Enter는 블록 분할로 처리되고, URL 입력은 bookmark/link card 제안으로 이어지며, 체크리스트/시간표 업데이트와 controller 정리가 들어갔다. 앱은 course map 렌더링, system share, Kakao plan share를 지원하고, 서버는 공개 preview teaser(텍스트 3 + 이미지 1 + 시간표 1)와 작성자 선택 sample preview(최대 5개)를 내려준다. 발행 준비와 상세/공유 문서는 F08-05/F08-02/F08-10도 함께 확인한다.
+## 진입과 편집 가능 상태
 
-## 1. 결론
+[내 플랜 목록](F08-01_my-plan-list_prd.md)에서 새 플랜을 만든 뒤 또는 [플랜 상세](F08-02_plan-detail_prd.md)의 편집 입구에서 `/plan/{planId}/edit`로 이동한다. 앱은 기기에 보관한 편집을 먼저 복원하고 플랜 상세를 읽는다. 복원 실패에는 보관 데이터를 지우지 않고 오류·다시 시도를 표시한다. 작성자가 아니면 접근 권한 없음 화면을 보여 준다. 이 판정 전에 상세·복원 조회가 있으므로 ‘서버를 전혀 부르지 않는다’고 설명하지 않는다.
 
-플랜의 본문을 트리 구조의 PlanBlock으로 관리한다. 서버와 Flutter 렌더러는 known 블록 20종을 처리하지만, 현재 추가 picker는 목록 두 종류(`BULLETED_LIST`, `NUMBERED_LIST`)를 인라인 서식으로 단일화해 **18종만 직접 생성**한다. 레거시 목록 블록은 렌더·편집 호환을 유지한다. 모든 편집 작업은 `status == DRAFT`인 본인 플랜에서만 허용되며, soft delete + restore 패턴을 사용한다.
+본인 DRAFT만 수정할 수 있다. PUBLISHED/HIDDEN의 본인 플랜은 읽기 전용이며 추가·수정·발행용 편집 조작을 제공하지 않는다. 서버도 플랜을 잠근 뒤 작성자와 DRAFT를 확인한다. 단순히 발행 플랜을 HIDDEN으로 바꾸면 편집 가능하다는 안내는 틀리다. 수정용 사본과 재발행은 [플랜 상세](F08-02_plan-detail_prd.md)·[플랜 발행](F08-05_plan-publish_prd.md)의 경로를 따른다.
 
-AUTH-02(자동저장)·AUTH-03(블록 picker + 패턴) 구현이 완료되어 다음 capability가 추가되었다.
+본문 읽기는 별도 권한이다. DELETED는 없음, 비공개는 작성자 또는 허용된 HIDDEN 구매자, 유료 PUBLISHED 전체 본문은 작성자·유효 구매자에게만 제공한다. 무료 본문을 읽을 수 있어도 작성 권한이 생기지는 않는다.
 
-- **AUTH-02 자동저장 경합 제거**: `DraftSaveController`의 generation token 워터마크로 out-of-order save 완료가 최신 편집을 덮어쓰지 않음. 에디터 전역 dirty/saving/saved/failed/offline 상태가 앱바에 노출되며, 실패 시 retry 재시도 흐름 존재.
-- **AUTH-03 블록 picker 고도화**: 카테고리·검색·최근 사용 섹션을 갖춘 `BlockTypeSheet`가 직접 생성 가능한 18종을 노출한다. 검색은 블록과 패턴을 함께 찾고 exact/prefix/substring/keyword 순으로 정렬한다. **12개 predefined authoring pattern**(모임 8 + 여행 4)을 삽입할 수 있다.
+## 코드 위치
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+서버는 `PlanBlockController`, `PlanBlockService`, `PlanBlockOpaqueSubtreePolicy`, 블록 요청 모델·타입, `PlanBlockTablePayloadNormalizer`, `PlanBlockTableRowsValidator`, `PlanBlockMediaService`를 대조했다. revision·정렬의 같은 소스 근거는 [블록 재정렬](F08-04_block-reorder_prd.md)에서 재사용한다.
 
-- 플랜 상세(F08-02)에서 "편집" 버튼 ▶ `/plan/:planId/edit`
-- 플랜 목록에서 새 플랜 생성 직후 자동 push
+앱은 `block_editor_screen.dart`와 인라인 편집 부분, `plan_block_provider.dart`, `draft_save_controller.dart`, `block_save_lane.dart`, `block_draft_session.dart`, `block_recovery_flow.dart`, `block_edit_command_flow.dart`, `block_clipboard_flow.dart`, 블록 분류·패턴·단축키·표 모델·TODO 편집기·업로드/미디어 갱신을 대조했다.
 
-## 2. 코드 위치
+<!-- source-references:start -->
+서버 창구: `PlanBlockController#getBlockTree`, `PlanBlockController#addBlock`, `PlanBlockController#updateBlock`, `PlanBlockController#deleteBlock`, `PlanBlockController#restoreBlock`, `PlanBlockController#pasteBlocks`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-계약의 정본은 코드다. 서버: `PlanBlockController`, `PlanBlockType`, `PlanBlock`. 앱: `block_editor_screen.dart`, `block_reorder_screen.dart`, `block_type_sheet.dart`, `block_renderer.dart`, `draft_save_controller.dart`, `markdown_shortcuts.dart`, `authoring_pattern.dart`.
+## 지원 블록과 편집 방식
 
-## 3. 전체 동작 흐름
+서버 known 타입은 PARAGRAPH, HEADING_1/2/3, BULLETED_LIST, NUMBERED_LIST, TODO, TOGGLE, QUOTE, CALLOUT, DIVIDER, IMAGE, VIDEO, TIMETABLE, LOCATION, FILE, CODE, TABLE, EMBED, BOOKMARK의 **20종**이다. 추가 선택기는 레거시 목록 두 타입을 제외한 **18종**을 기본·구조·모임 운영·미디어/외부 콘텐츠·고급으로 나눈다. 목록은 문단의 inlineDelta 목록 서식으로 새로 작성하며 기존 목록 타입의 편집 지원과 구분한다.
 
-1. 화면 진입:
-   - `planDetailNotifierProvider(planId)`로 `isCreatorOwned` 체크 (가드)
-   - `planBlocksNotifierProvider(planId)` ▶ `PlanRepository.getBlockTree(planId)` ▶ `GET /api/v1/plans/{planId}/blocks`
-2. 블록 추가: `planBlocksNotifierProvider(planId).notifier.addBlock(PlanBlockAddParam)` ▶ `POST /blocks`
-3. 텍스트 자동 저장 (debounce 300ms): `notifier.updateBlock(id, PlanBlockModParam(content), silent: true)` ▶ `PATCH /blocks/{id}` — silent=토스트 없이 인디케이터만. 저장 호출 직전에 `_saveController.genOf(blockId)`로 generation을 캡처하고, 완료 시 `markSaved(blockId, gen)`으로 out-of-order 완료를 워터마크로 처리함.
-4. 타입별 다이얼로그 저장: `notifier.updateBlock(id, PlanBlockModParam(content, properties))`
-5. 타입 변환(마크다운): `notifier.updateBlock(id, PlanBlockModParam(blockType:newType, content:''))`
-6. 삭제: `notifier.deleteBlock(id)` ▶ `DELETE /blocks/{id}` → Undo 토스트. 삭제 시 `_saveController.forgetTree(subtreeIds)` 호출로 자손 블록의 dirty/failed 마킹을 일괄 해제.
-7. 복원: `notifier.restoreBlock(id)` ▶ `POST /blocks/{id}/restore`
-8. 복제: `notifier.addBlock(...same properties...)` ▶ `POST /blocks`
-9. 패턴 삽입(AUTH-03): `BlockTypeSheet`에서 패턴 선택 → `_saveController.beginOperation()` 후 pattern.blocks 순서대로 `POST /blocks` 순차 호출 → `_saveController.endOperation()`. 중간 실패 시 `endOperation(failed: true)`로 인디케이터에 실패 표시.
+빈 문서는 블록·틀 추가 입구를 제공한다. 텍스트는 인라인 편집, TODO·표·시간표·장소·미디어·링크·토글 등은 타입별 편집 시트를 사용한다. DIVIDER에는 내용 편집이 없다. 구조화된 편집 시트는 계정 세션과 플랜·블록·타입을 묶은 초안 복구 범위를 가진다. 취소를 새 블록 생성이나 다른 평문 편집기 열기로 해석하지 않는다.
 
-## 4. 제품 규칙
+현재 마크다운 종류 전환은 `# `·`## `·`### ` 제목, `[ ] ` TODO, `> ` 인용, `--- ` 구분선, 백틱 세 개와 공백의 CODE다. `[] `와 `[ ] `를 같은 문자열로 적지 않는다. `- `·`* `·`1. `는 글머리/번호 **인라인 서식**이며 레거시 목록 블록을 새로 만드는 동작이 아니다.
 
-- 최대 깊이는 3 이다. 깊이는 앱이 보낸 값을 믿지 않고 서버가 부모 깊이 + 1 로 계산한다.
-- 블록을 지우면 자손도 함께 지워진다. 지운 적 없는 블록을 복원하면 거절한다.
-- 마크다운 단축키: `# `, `## `, `### ` 제목, `- ` 글머리, `1. ` 번호, `> ` 인용, `[] ` 할 일. 맞으면 내용을 비우고 블록 종류를 바꾼다.
-- 작성자가 아니면 편집 화면은 서버를 부르지 않고 "접근 권한이 없습니다"를 보여 준다.
-- 오류의 뜻: PLAN_BLOCK_LIMIT_EXCEEDED 블록 200개 초과, PLAN_BLOCK_DEPTH_EXCEEDED 깊이 초과, PLAN_NOT_EDITABLE DRAFT 가 아니라 편집 불가, PLAN_BLOCK_NOT_DELETED 지운 블록이 아니라 복원 불가.
+## 서버 쓰기·트리·revision 계약
 
-## 6. 상태/권한/시나리오 매트릭스
+새 블록은 요청의 parentBlockId로 부모를 확인해 깊이를 계산한다. 루트는 0이고 자식은 부모+1, 최대 3이다. 클라이언트 depth를 신뢰하지 않는다. 추가의 sortOrder도 그대로 쓰지 않고 현재 정렬 최댓값 뒤에 배치한다. 특정 블록 뒤 삽입의 후속 위치 조정과 서버 한 번의 추가를 구분한다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 첫 텍스트 블록 추가 + 인라인 입력 + 자동 저장 (Happy Path) | 빈 DRAFT 플랜, 블록 0개 | 블록 1개, 자동 저장 완료 |
-| S2 | 마크다운 단축키로 블록 타입 변환 | 시나리오 본문 참조 | 블록 타입 변환 완료. 제목 텍스트 입력 모드 |
-| S3 | 이미지 블록 추가 (전용 다이얼로그) | 시나리오 본문 참조 | 이미지 블록 등록 |
-| S4 | Soft Delete + Undo | 시나리오 본문 참조 | 블록 + 자손 복원 |
-| S5 | 블록 한도 초과 (200개) | 시나리오 본문 참조 | 블록 추가 실패. 사용자가 "다시 시도" 탭하면 재요청 |
-| S6 | 발행된 플랜 편집 시도 | 자기 플랜이지만 `status == PUBLISHED` | 편집 차단. 작성자는 hide 후 다시 시도해야 함 (HIDDEN도 PlanService.publishPlan 허용 — 그러나 `validatePlanEditable`는 DRAFT만 허용) |
-| S7 | 비작성자 진입 차단 | 시나리오 본문 참조 | 진입 차단 |
-| S8 | 부모 블록에 자식 블록 추가 | 시나리오 본문 참조 | 자식 블록 생성은 F08-04 들여쓰기 액션으로 위임 |
-| S9 | 인라인 편집 중 네트워크 오류 → 재시도 (AUTH-02 이후) | 텍스트 블록 편집 후 save 중 네트워크 단절 | `DraftSaveController`가 failed 상태 기록. 앱바 "재시도" CTA 노출. 탭 시 `latestValueOf(blockId)` 기반 retry — 사용자 재타이핑 불필요 (AUTH-02 이후 개선) |
-| S10 | 빠른 연속 편집 중 느린 v1 save가 v2 이후 완료 | 연속 타이핑으로 v1 후 v2 생성 후 v1 PATCH 응답 먼저 도달 | v1 `markSaved(blockId, gen=1)` 호출 시 `_savedGen[blockId]=1 < currentGen=2` → 블록을 clean으로 전환하지 않음. v2 save 완료 후에야 saved 상태로 전환 |
-| S11 | 패턴 삽입 — 전체 성공 (AUTH-03) | DRAFT 플랜, `BlockTypeSheet`에서 패턴 선택 | pattern.blocks(2~4개) 순차 POST 성공 → 전체 블록 트리에 추가됨. `_saveController.endOperation()` |
-| S12 | 패턴 삽입 — 중간 실패 (AUTH-03) | 패턴 삽입 중 네트워크 오류 | 이미 생성된 블록은 트리에 남음. `endOperation(failed:true)` → 앱바 실패 인디케이터. 사용자가 직접 삭제하거나 체크리스트로 교정 필요 |
+추가·붙여넣기는 현재 살아 있는 블록과 새 하위 블록을 합쳐 200개 한도를 검사한다. properties는 JSON **문자열**이며 content와 합산한 UTF-8 크기 한도는 64KiB다. 미지 타입의 보존 envelope에는 위험 URL·JSON 깊이/키/노드·미디어 키 등의 별도 제한이 적용된다. 모든 known 타입에 envelope 전용 검사를 그대로 적용한다고 적지 않는다.
 
-## 8. Gap / Risk
+각 쓰기는 기대 revision을 사용하고 응답은 `X-Plan-Block-Tree-Revision`을 반환한다. 현재 기본은 revision 없는 쓰기를 거절하는 방식이며 누락은 428, 충돌은 409다. 추가·수정·붙여넣기는 body, 삭제·복원은 query의 revision을 사용한다. 서버 쓰기 실패는 해당 트랜잭션을 롤백하지만 통신 오류만으로 롤백을 단정할 수 없다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 확정됨(소스 대조) | `PlanBlockType.java`, `plan_block_type.dart`, `block_category.dart` | 서버·Flutter known 타입은 20종. picker는 `BULLETED_LIST`/`NUMBERED_LIST`를 인라인 목록으로 단일화해 18종만 신규 생성하고 레거시 2종은 렌더·편집만 유지 | 20종 처리와 18종 신규 노출을 구분해 회귀 검증 |
-| 확정됨(소스 대조) | `block_editor_screen.dart` 마크다운 단축키 | `[] ` → TODO — 실제 구현 존재 (`markdown_shortcuts.dart` 참조) | 완료 |
-| 확정됨(소스 대조) | `block_editor_screen.dart:_openTypedEditor` | TODO → `showTodoBlockEditDialog` 매핑 실제 존재 | 완료 |
-| Gap(미해소) | `authoring_pattern.dart:32` | **패턴 삽입 원자성 부재**: 복수 블록 순차 POST 중 중간 실패 시 부분 삽입 상태 발생. 서버에 bulk-insert 트랜잭션 endpoint 없음 | 선택: 부분 삽입된 블록 자동 롤백(삭제) 로직 추가 또는 사용자 안내 개선 |
-| Gap(미해소) | `authoring_pattern.dart:32` | **패턴은 클라이언트 전용 predefined 상수** — 사용자 정의 패턴 저장 서버 테이블 없음 | 후속 슬라이스에서 user-saved template 서버 설계 필요 시 신규 F 추가 |
-| Decision Needed | `block_editor_screen.dart` | TODO 블록 편집 다이얼로그에서 항목 추가(TODO 자체에 children 추가)는 별도 시퀀스 — 현재 `showTodoBlockEditDialog`의 children 추가 흐름이 어떤 방식으로 처리되는지 정확한 구현 확인 필요 | 다음 QA 착수 전에 `todo_block_edit_dialog.dart` 소스 재확인 |
+앱은 플랜별 변경을 직렬화하고 신뢰하는 revision을 이어 보낸다. 충돌 시 최신 트리를 대조하고 허용된 의도를 한 번 재시도한다. 본문 저장은 보았던 서버 본문과 현재 대상이 다르고 자신의 직전 쓰기도 아니면 PLAN_BLOCK_REMOTE_CHANGED로 보류한다. revision만 새것으로 바꿔 다른 기기의 본문을 자동 덮어쓰는 계약이 아니다. 이동·재정렬의 세부 범위는 재정렬 문서를 따른다.
 
-## 9. 수용 기준
+## 본문 자동 저장과 기기 보관
 
-- **AC-01. 첫 텍스트 블록 추가 + 인라인 입력 + 자동 저장 (Happy Path)**: Given 빈 DRAFT 플랜, 블록 0개 When 사용자가 해당 흐름을 실행하면 Then 블록 1개, 자동 저장 완료
-- **AC-02. 마크다운 단축키로 블록 타입 변환**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 블록 타입 변환 완료. 제목 텍스트 입력 모드
-- **AC-03. 이미지 블록 추가 (전용 다이얼로그)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 이미지 블록 등록
-- **AC-04. Soft Delete + Undo**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 블록 + 자손 복원
-- **AC-05. 블록 한도 초과 (200개)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 블록 추가 실패. 사용자가 "다시 시도" 탭하면 재요청
-- **AC-06. 발행된 플랜 편집 시도**: Given 자기 플랜이지만 `status == PUBLISHED` When 사용자가 해당 흐름을 실행하면 Then 편집 차단. 작성자는 hide 후 다시 시도해야 함 (HIDDEN도 PlanService.publishPlan 허용 — 그러나 `validatePlanEditable`는 DRAFT만 허용)
-- **AC-07. 비작성자 진입 차단**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 진입 차단
-- **AC-08. 부모 블록에 자식 블록 추가**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 자식 블록 생성은 F08-04 들여쓰기 액션으로 위임
-- **AC-09. 인라인 편집 중 네트워크 오류 → 재시도 (AUTH-02)**: Given 텍스트 블록 편집 후 네트워크 오류 발생 When 앱바 "재시도" 탭 Then `DraftSaveController.latestValueOf(blockId)` 기반으로 retry 호출 → 성공 시 saved 상태
-- **AC-10. 빠른 연속 편집 시 generation 경합 방지 (AUTH-02)**: Given 연속 타이핑으로 v1·v2 생성 후 v1 save 완료가 v2 이후 도달 When v1 `markSaved(blockId, gen=1)` 호출 Then `_savedGen < currentGen` 조건으로 블록이 clean 전환되지 않음 — v2 save 완료 후에야 saved 상태로 전환
-- **AC-11. 패턴 삽입 전체 성공 (AUTH-03)**: Given DRAFT 플랜 When `BlockTypeSheet`에서 predefined 패턴 선택 Then pattern.blocks 순차 POST 성공 후 전체 블록 트리에 삽입됨
-- **AC-12. 패턴 삽입 후 leave guard 해제 (AUTH-03)**: Given 패턴 삽입 성공 후 `_saveController.endOperation()` 호출 Then `kPatternOpKey` 마킹이 제거되어 route leave guard가 해제됨
+인라인 입력은 plain content와 inlineDelta를 함께 관리하고 300ms debounce로 저장한다. 현재 저장 제어기는 블록별 서버 기준·로컬 입력·전송 번호·결과 불명·보류 상태를 함께 가진다. 옛 genOf/markSaved 호출만으로 현재 구조를 설명하지 않는다.
 
-## 11. 2026-07-29 편집·미디어·전환 계약
+계정·플랜의 기기 보관 내용을 먼저 복원하고, 서버 전송 전에 최신 편집 체크포인트를 저장한다. 기기 저장 실패 시 PATCH를 보내지 않고 보관 다시 시도 안내를 남긴다. 손상된 보관 데이터를 빈 문서로 간주해 버리지 않는다. 계정·세션이 끝난 뒤의 늦은 응답은 새 세션의 상태를 갱신하지 않는다.
 
-### 11.1 mutation 직렬화와 revision
+늦은 응답은 현재 전송 번호와 맞을 때만 반영한다. 성공 뒤에도 더 최신 입력이 있으면 저장할 내용이 남는다. 응답 유실은 결과 불명으로 기록하고 서버를 다시 읽는다. 다른 기기 변경으로 보류된 본문은 일반 재시도에서 조용히 덮어쓰지 않고 내용을 확인한 명시적 저장으로 해결한다. 서버에서 삭제되거나 텍스트 편집 대상이 아니게 된 블록의 로컬 초안도 복구 가능한 고립 초안으로 유지하며 복사·새 블록 저장 입구를 제공한다.
 
-- `PlanRepository`는 GET/POST/PATCH/DELETE/restore/reorder/move 응답의 `X-Plan-Block-Tree-Revision`을 읽는다.
-- `PlanBlocksNotifier`는 mutation을 하나의 직렬 queue로 실행해 같은 앱 안의 self-409를 막는다.
-- 요청은 신뢰 중인 revision을 보내고, 409 `CONCURRENT_MODIFICATION`이면 최신 트리/revision을 reconcile한 뒤 부작용이 rollback된 mutation을 한 번만 재시도한다.
-- revision이 건너뛴 경우 expected/server 값을 로그하고 burst당 제한된 경고를 낸다. queue가 idle이 되면 화면 트리를 다시 불러온다.
-- silent autosave 충돌 reconcile은 편집 중인 로컬 텍스트를 provider 값으로 덮지 않는다.
+저장 중·실패·보류·미전송·기기 보관 문제를 구분한다. ‘저장된 것처럼 표시’와 ‘서버 영속화’는 같지 않다. 구조화된 시트·메타 변경도 본문 저장과 충돌하지 않도록 저장 장벽과 최신 기준을 사용한다.
 
-### 11.2 읽기 모드·발행으로 나가기 전 barrier
+## 복제·복사·붙여넣기와 틀 추가
 
-에디터의 후속 화면 전환은 다음을 모두 통과해야 한다.
+복제는 기존 설명처럼 단일 addBlock으로 바꾸지 않는다. 현재 앱은 먼저 관련 편집을 저장하고 최신 블록을 읽은 뒤 **paste API**로 같은 부모·원블록 다음에 하위 트리까지 복제한다. 붙여넣기도 확인 후 paste를 사용한다. 앱 내부 블록 클립보드와 OS 평문이 달라지면 내부 내용을 그대로 붙이지 않고 변경을 알린다. 잠긴 블록이나 손실 없이 변환할 수 없는 표는 복제 대상이 아니다.
 
-1. 전환 잠금 획득
-2. 활성 편집 세션 즉시 flush
-3. 호출 시점까지의 mutation queue 완료 대기
-4. failed block, operation failure, pending save가 없는지 검사
-5. 트리가 준비됐는지 검사
-6. 성공 후에만 읽기 모드/발행 화면 present
+paste는 parentBlockId·같은 부모의 afterBlockId·재귀 blocks·revision을 받는다. 노드의 ID·깊이·정렬은 목적지 서버가 정하고 전체 내용·미디어 참조·깊이·개수를 검증한다. **한 paste 요청은 한 트랜잭션**으로 하위 일부만 커밋하지 않는다. 이것이 요청 키를 이용한 영구 중복 방지까지 의미하지는 않는다.
 
-실패 유형은 `flushFailed`, `saveFailed`, `operationFailed`, `savePending`, `treeNotReady` 등으로 나뉘며 전환을 중단하고 복구 동선을 유지한다. route leave도 dirty/failed 상태를 경고한다.
+작성 틀은 클라이언트에 정의된 **12개(일반 8·여행 4)**다. 선택기에서 분류·검색·최근 사용과 함께 고른다. 틀 추가는 여전히 개별 addBlock의 순차 요청이며 paste와 다르다. 중간 실패는 성공 응답을 받은 수/전체 수를 안내하고 트리를 새로 읽는다. 응답 유실로 이미 생성됐을 수 있으므로 남은 추가를 무조건 자동 재전송하지 않는다.
 
-### 11.3 파일 업로드와 미디어 수명
+구조 변경의 미확정 기록은 기기에 남겨 재시작 후에도 확인하도록 한다. 확인 후 기록 정리는 서버의 부분 추가를 자동 롤백하거나 전부 성공으로 바꾸는 행위가 아니다. 전체 성공·부분 반영·결과 불명을 구분해야 한다.
 
-- 최대 10MiB를 앱과 서버가 모두 검사한다.
-- `PLAN_BLOCK` MIME: JPEG/PNG/WebP, MP4/WebM/QuickTime, PDF.
-- 앱은 presign → S3 PUT → complete 순서로 처리하고 PUT/complete 실패 시 abort한다.
-- IMAGE/VIDEO/FILE properties는 `fileId`와 `fileKey`를 보존하고, 서버는 `fileId`를 4단 검증해 관계를 등록한다.
-- 블록 조회는 전체 본문 권한을 먼저 확인한 뒤 `media[].presignedUrl`을 붙인다.
-- 삭제된 블록 미디어는 Undo/복원을 위해 30일 보존하고, 복사된 플랜의 미디어 참조도 새 블록에 등록한다.
-- 표시 URL 만료/실패 시 Flutter `MediaRefreshGuard`가 provider를 한 번 invalidate해 새 URL을 요청한다.
+## 삭제·복원과 읽기 전용 블록
 
-### 11.4 preview sample authoring
+단일 삭제는 해당 블록과 자손을 소프트 삭제하고 실행 취소를 제공한다. 앱은 삭제한 하위 전체의 저장 상태를 정리하며 현재 화면의 최근 삭제 목록은 최대 10개다. 복원은 삭제된 행인지 확인하고 하위를 함께 되살린다. 이미 복원된 행이면 목록을 새로 읽고 최근 삭제 기록에서 제거하며, 없는 행이면 복구 불가를 알린다.
 
-블록의 `properties.previewSample=true` 토글은 작성자가 판매 preview에 노출할 블록을 지정한다. 서버가 known/non-envelope 블록만 문서 순서대로 최대 5개로 제한하며, 지정이 없으면 자동 티저로 폴백한다.
+서버 복원은 되살린 행을 뒤쪽 정렬로 배치하고 부모가 더 이상 없으면 복원 루트를 최상위로 옮긴다. 언제나 원래 위치·원래 부모로 돌아온다고 보장하지 않는다. 미디어 보존 표지도 함께 처리한다. 복원은 표 정규화 등에서 실패할 수 있으므로 실행 취소 단추가 성공 보장은 아니다.
 
-### 11.5 조판과 블록 고르기
+미지 타입·미래 schemaVersion·rawEnvelope 등은 읽기 전용 문맥으로 취급한다. 앱은 잠긴 블록의 편집·삭제·복제·이동을 차단한다. 서버도 수정·이동 및 읽기 전용 조상 아래의 변경을 제한한다. 다만 **미지 블록 자체를 루트로 삭제·복원하는 서버 경로는 허용**하므로 모든 금지가 서버와 앱에서 동일하다고 적지 않는다.
 
-`planBlockTextStyle` 의 본문은 16px, 줄간 1.65 이고 제목 위 여백이 넓다. 편집기와 뷰어가 같은 값을 쓴다. 읽기 표면은 최대 폭 680과 `reading` 범위를 쓴다. 콘텐츠 역할별 색조, 블록 고르기의 분류·패턴 아이콘과 접근성, 상태 배지 공통화가 들어가 있다. 블록 고르기 검색은 블록 종류와 작성 패턴을 각각 점수로 매겨 정렬한다.
+## TODO와 표의 현재 데이터 형식
 
-### 11.6 TABLE 호환·쓰기 계약
+TODO의 항목은 별도 PlanBlock 자식이 아니다. `properties.items`의 text·checked 배열이다. 편집기는 공백 항목을 제거하고 완료 개수 요약 content를 만들며 자신이 관리하지 않는 properties를 병합 보존한다. 전부 비우면 items 키를 제거한다. 항목 추가·재정렬을 블록 트리의 자식 생성으로 설명하지 않는다.
 
-TABLE 은 다음 경계를 지킨다.
+TABLE은 서버와 현재 앱 모두 **properties.rows의 직사각형 문자열 배열**을 기준으로 한다. 행·열은 비어 있지 않아야 하고 header는 선택 boolean이다. content는 rows에서 만든 TSV이며 명시적으로 다른 content를 보내면 거절한다. 정규화는 columns를 제거하고 다른 키를 보존한다. 앱은 미지 키의 큰 정수 등을 손실시키지 않도록 원본 JSON 멤버를 보존한다.
 
-- 서버 신규/구조 변경 쓰기의 canonical 형식은 `properties.rows: List<List<String>>`다. rows와 각 row는 비어 있지 않고 직사각형이어야 하며 모든 셀은 문자열이다. `header`는 생략하거나 boolean이어야 한다. 미지 sibling key는 허용하고 전체 known payload 64KB 상한을 공유한다.
-- add는 TABLE이면 항상 검증한다. update는 요청이 properties를 공급하거나 blockType이 TABLE로 바뀔 때 effective properties를 검증한다. 기존 legacy TABLE의 content-only 수정은 저장된 비정규 properties 때문에 막지 않는다.
-- Flutter는 canonical rows와 제한된 legacy `properties.columns + content JSON object list`를 dual-read한다. 안전한 legacy는 편집 저장 때 rows로 정규화하고 `columns`를 제거하면서 미지 sibling key를 보존한다.
-- legacy row에 선언되지 않은 key가 있거나 중첩 값·깨진 JSON이면 데이터 유실을 막기 위해 저장을 차단한다. renderer도 raw JSON을 본문으로 재생하지 않고 “표시할 수 없음” 카드를 보여 준다.
-- 작은 표는 가용 폭을 채우고, 열당 최소 96px보다 넓어지면 표 내부만 가로 스크롤한다.
-- `docs/sql/test_queries.sql`에는 canonical/legacy/broken TABLE 재고를 raw content 노출 없이 집계하는 읽기 전용 쿼리가 추가돼 있다. 자동 데이터 migration은 없다.
+현재 앱은 rows 없는 옛 columns/content 객체 배열을 표로 읽는 dual-read 경로가 없다. 서버도 이전 TABLE을 갱신·복원할 때 저장된 표를 정규화하므로 ‘레거시 표는 content-only PATCH로 통과한다’는 예전 설명은 적용하지 않는다. 깨진 표는 손실 없이 저장할 수 있는 데이터로 간주하지 않는다. 자동 이관을 수행했다는 기록도 추가하지 않는다.
+
+## 파일 첨부와 미디어 갱신
+
+앱 업로드는 파일 크기 10MiB를 먼저 검사하고 presign → 업로드 → complete를 수행한다. complete까지 성공해야 fileId·fileKey를 사용하고, 업로드/complete 실패에는 abort를 요청한다. 업로드 성공과 블록 등록 성공은 서로 다른 단계다.
+
+서버 미디어 연결은 fileId 존재·본인 소유·COMPLETED·PLAN_BLOCK 용도를 확인한다. 미디어를 교체하거나 삭제하면 이전 연결에 보존 기한을 주고, 블록 삭제 시 기본 30일 보존 후 정리 대상으로 만든다. 복원은 보존 연결을 되돌리는 경로다. 이것만으로 삭제된 실제 파일까지 항상 복원된다고 보장하지 않는다.
+
+블록 조회는 본문 권한 검사 후 미디어 URL을 붙인다. `X-Plan-Editor-Capability` 없는 구앱에는 content에 URL을 보충하는 호환 경로가 있고 신앱은 media 투영을 사용한다. 실패 URL 갱신 가드는 같은 host/path에 60초 간격을 적용하므로 ‘앱 생애에 딱 한 번’이라고 적지 않는다. 실제 S3 업로드·파일 재생·만료 URL의 재발급 성공은 이번 소스 대조와 구분한다.
+
+## 미리보기 선택과 읽기·발행으로 이동
+
+작성자는 previewSample을 토글하고 앱은 트리 전체의 선택을 최대 5개로 제한한다. 서버 미리보기도 최대 5개로 제한하며 견본이 없으면 자동 티저 규칙을 따른다. 본문 편집이 이 플래그를 무심코 지우지 않도록 최신 properties와 병합한다. 실제 공개 범위는 플랜 상세·발행 문서와 함께 판정한다.
+
+읽기 모드·발행 이동은 전환 잠금 → 활성 입력 flush → 진행 중 변경 대기 → 실패/보류/저장 대기 확인 → 트리 준비 확인을 통과해야 한다. 실패하면 편집 화면에 남아 저장 재시도·충돌 확인·구조 변경 확인을 제공한다. 성공해야 읽기 화면 또는 발행 화면을 연다. 백그라운드 이동과 화면 이탈도 미저장 입력 처리에 포함된다. 발행 단추를 눌렀다는 사실만으로 서버 발행 완료를 기록하지 않는다.
+
+## 요청과 응답
+
+| 요청 | 현재 계약 |
+| --- | --- |
+| GET /api/v1/plans/{planId}/blocks | 선택 X-Plan-Editor-Capability. List<PlanBlockVo>, revision 응답 헤더 |
+| POST /api/v1/plans/{planId}/blocks | parentBlockId·blockType·content·properties·sortOrder·depth·revision 모델. 깊이·실제 순서는 서버 결정. 201 PlanBlockVo |
+| PATCH /api/v1/plans/{planId}/blocks/{blockId} | 선택 blockType·content·properties·depth와 revision. depth로 구조를 옮기지 않음. 200 PlanBlockVo |
+| DELETE /api/v1/plans/{planId}/blocks/{blockId} | query revision. 204, revision 헤더 |
+| POST /api/v1/plans/{planId}/blocks/{blockId}/restore | query revision. 200 PlanBlockVo, revision 헤더 |
+| POST /api/v1/plans/{planId}/blocks/paste | parentBlockId·afterBlockId·blocks·revision. 201 붙여넣은 트리 List<PlanBlockVo> |
+
+paste 노드는 sourceBlockId·blockType·content·properties·children을 받는다. sourceBlockId는 레거시 미디어 참조 복제용이며 원본 블록 번호를 새 블록의 ID로 사용하지 않는다. 이동·정렬 API는 별도 재정렬 문서에서 다룬다.
+
+## 현재 제한과 확인 범위
+
+| 구분 | 경계와 후속 확인 |
+| --- | --- |
+| Gap | 작성 틀은 개별 추가 요청이므로 부분 반영될 수 있다. 하위 트리 paste의 원자성과 다르며 사용자 정의 서버 템플릿 기능으로 확대하지 않는다 |
+| Risk | 오래된 TABLE 형식은 현재 쓰기/읽기의 정상 형식이 아니다. 보관 데이터가 실제로 있으면 별도 이관 판단이 필요하며 문서 갱신으로 데이터를 변환하지 않았다 |
+| 미검증 | 이번에는 소스와 선택된 기존 단언을 읽었다. 20개 타입 전수 실행·실기기 IME·S3 왕복·미디어 복원·다중 기기 경합을 새로 실행하지 않았다 |
+| 기준 | 저장 완료, 기기 보관, 서버 결과 불명, 다른 기기와의 충돌 보류를 따로 판정한다. 스크린샷은 이 상태들의 성공 증거를 대신하지 않는다 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 작성자·상태:** 기기 복원과 상세 확인 뒤 본인 DRAFT만 편집한다. HIDDEN을 편집 가능 상태로 안내하지 않는다. 서버 가드·화면을 대조했다.
+- **AC-02 블록 종류:** known 20종과 신규 선택 18종, 목록 인라인 서식과 기존 목록 타입을 구분한다. enum·분류·단축키를 대조했다.
+- **AC-03 쓰기 계약:** 추가/붙여넣기 200개·깊이 0~3·서버 순서·revision 누락/충돌을 구분한다. 서비스와 재정렬의 같은 소스 근거를 사용했다.
+- **AC-04 자동 저장:** 최신 편집을 기기에 먼저 저장하고 늦은 응답이 새 입력을 지우지 않는다. 재시작 복구 시험의 최신 입력·디스크 보존 단언을 읽었다.
+- **AC-05 보관 실패:** 기기 쓰기 실패에는 PATCH 0회, 손상된 체크포인트에는 편집 차단·원본 보존이다. 기존 복구 시험의 해당 단언을 읽었다.
+- **AC-06 충돌·고립 초안:** 다른 기기 본문을 자동 덮어쓰지 않고 보류하며, 삭제된 블록의 로컬 초안을 유지한다. 저장 상태기계·기준 본문 비교 및 고립 초안 단언을 대조했다.
+- **AC-07 복제·붙여넣기:** 하위 트리는 paste로 한 번에 검증·커밋하며 목적지 ID·깊이·정렬을 새로 정한다. 서버 paste와 앱 클립보드 흐름이 근거다.
+- **AC-08 틀 부분 반영:** 순차 추가 중 실패는 실제 트리 재조회와 미확정 구조 기록으로 복구하고 무조건 재전송하지 않는다. 현재 흐름과 재시작 후 명시적 확인 단언을 읽었다.
+- **AC-09 삭제·복원:** 하위 삭제·실행 취소·최근 10개·원래 위치와 다른 복원 가능성·미디어 보존을 구분한다. 앱과 서버 삭제/복원 경로가 근거다.
+- **AC-10 TODO·표:** TODO items는 properties이며 TABLE은 문자열 rows/TSV를 사용한다. 표의 columns 제거·큰 정수 보존·content 불일치/옛 형식 거절 시험 단언을 읽었다.
+- **AC-11 미디어:** 업로드 완료와 블록 저장을 구분하고 파일 소유·완료·용도 검사 뒤 연결한다. URL 갱신 제한과 30일 보존은 코드 근거이며 실제 실행 확인은 별도다.
+- **AC-12 전환:** 읽기·발행 전에 입력·변경·실패/보류·트리 준비를 확인하고 실패 시 현재 화면에서 복구한다. 전환 장벽과 미리보기 선택 코드를 대조했다.
+
+위 12개는 문서 수용 항목 수다. 선택된 기존 시험 단언 열람과 새 실행 결과를 구분하며 이번 갱신에서 제품 시험은 실행하지 않았다.
