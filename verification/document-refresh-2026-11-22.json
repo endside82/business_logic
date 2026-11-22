@@ -267,7 +267,8 @@
         "club_members_20261122",
         "club_invitation_20261122",
         "club_stats_20261122",
-        "club_announcements_20261122"
+        "club_announcements_20261122",
+        "club_comments_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2954,9 +2955,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "50644cacd3a757a7764dd477d1759c89a92b3f75e1b4832a9980d71ef047018b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_comments_20261122"
+      ],
+      "reviewedSha256": "7d6afc3a5f198a44a6c39f7e4145665705171d9c37aad171985923c7ba564834"
     },
     {
       "path": "docs/features/F04-10.html",
@@ -4873,7 +4877,8 @@
         "club_members_20261122",
         "club_invitation_20261122",
         "club_stats_20261122",
-        "club_announcements_20261122"
+        "club_announcements_20261122",
+        "club_comments_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4936,7 +4941,8 @@
         "club_members_20261122",
         "club_invitation_20261122",
         "club_stats_20261122",
-        "club_announcements_20261122"
+        "club_announcements_20261122",
+        "club_comments_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5022,7 +5028,8 @@
         "club_members_20261122",
         "club_invitation_20261122",
         "club_stats_20261122",
-        "club_announcements_20261122"
+        "club_announcements_20261122",
+        "club_comments_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5909,10 +5916,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "a4d285fd8fee2a255bc3e761501b9420daa93839e640626ee458028f2fc45200",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_comments_20261122"
+      ],
+      "reviewedSha256": "0a2a97f5074af808d753209af5235ca5ff79362fc076aa46990a0e2b687ffae5"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-10_announcements_prd.md",
@@ -7738,7 +7747,8 @@
         "club_members_20261122",
         "club_invitation_20261122",
         "club_stats_20261122",
-        "club_announcements_20261122"
+        "club_announcements_20261122",
+        "club_comments_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7949,7 +7959,8 @@
         "club_members_20261122",
         "club_invitation_20261122",
         "club_stats_20261122",
-        "club_announcements_20261122"
+        "club_announcements_20261122",
+        "club_comments_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9793,9 +9804,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d5fdec6c3e071b959e5d2043ed854ce00670166625c48f2f141fc1b3497dafa1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_comments_20261122"
+      ],
+      "reviewedSha256": "5eb7b990aa0f6882ceb7ca8f6bdff943b6c3806aad87475ecd4580c8eede980b"
     },
     {
       "path": "units/04_club/F04-09_post-comments/diagrams.md",
@@ -9803,9 +9817,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "494ea5223665f6afa1fef05352f28013388d961a3610b4141a997d0b4bafd87e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_comments_20261122"
+      ],
+      "reviewedSha256": "55b1730c54bb08ab9ed7ce75652bfbf1ff1a23b5f455227195e99ed96657b814"
     },
     {
       "path": "units/04_club/F04-09_post-comments/frontend.md",
@@ -9813,9 +9830,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "09bf10eb6be16131b0af666216175966e1e2663dcc5df07860d2d7b513d09a9c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_comments_20261122"
+      ],
+      "reviewedSha256": "9ffb37c6c383291c04774d65c784548ae365395277fedd918fc69959482942a6"
     },
     {
       "path": "units/04_club/F04-09_post-comments/scenarios.md",
@@ -9823,9 +9843,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0a25e6a3f33fb8f14719bd6993322a6cc32e0ac6ceb0eca42dd552f1cabd137f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_comments_20261122"
+      ],
+      "reviewedSha256": "aab524038b6e2abf85788b08643af15f23292e1a3fdb6a91ae7e78e5d88b5b48"
     },
     {
       "path": "units/04_club/F04-10_announcements/backend.md",
@@ -15184,6 +15207,11 @@
       "command": "F04-10 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
       "result": "코드 위치110개 일치; 파서11/11 통과; 상대경로2165개·파생 정본 해시255개 오류0; 현재 그룹 소스/정본31개 해시 일치; 기존 HTML ID4개 유지·과거 원문1개 인용 보존; scenario-audit 최신; diff 오류0",
       "scope": "공지 읽기/수정/예약/초안 문서 검사. 새 제품·이미지·알림수신·예약실행 시험 없음. ignored units4개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-09 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·diff 검사",
+      "result": "코드 위치111개 일치; 파서11/11 통과; 상대경로2181개·파생 정본 해시259개 오류0; 현재 그룹 소스/정본29개 해시 일치; 기존 HTML ID4개 유지; scenario-audit 최신; diff 오류0",
+      "scope": "댓글/답글/멘션/운영진삭제/페이지/알림착지 문서 검사. 새 제품·이미지·푸시수신 시험 없음. ignored units4개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -24870,6 +24898,175 @@
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]
+    },
+    "club_comments_20261122": {
+      "kind": "source_review",
+      "scope": "F04-09 댓글 페이지/정렬/차단 가림·작성/답글/수정 입력·멘션·본인/운영진 삭제·알림 수신자와 대상 찾기. 소스와 선택한 시험 단언 대조; 새 제품 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+          "sha256": "937f26e4883a123985fcf67d1af95063f0db6b061729e7b10a6f86a5c8b72fbd",
+          "reviewScope": "23–103 기존List·현재Page·작성/답글201·수정200·선택적삭제사유/204의6개계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubPostCommentService.java",
+          "sha256": "0a35a13c1fefd5d2dae70fed80ee5b4b89677562817c95533c690fec146d2997",
+          "reviewScope": "61–542 읽기/트리/행동/차단·작성/답글/수정/삭제;578–636 운영자복구;715–948 멘션/답글/게시글알림 우선순위·본문·소속검사. 새 실행 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubPostCommentQueryRepository.java",
+          "sha256": "1e12333e398e4ffe3de50019598256ca17db8b5669b49308caf75841465c3138",
+          "reviewScope": "53–204 부모가시성·정렬·오프셋/커서·차단필터·전체부모총계·hasNext."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPostCommentSearchParam.java",
+          "sha256": "93fd7d2812c4b4bd8c0f7405b8149b178634b38be18a04473fd49b5a9d3c8287",
+          "reviewScope": "20–35 기본50·afterCommentId·oldestFirst 및 PagingParam 상속."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubPostCommentPageVo.java",
+          "sha256": "c04b89ceb348122b45406a24926b2a32365906d676a9c0a6f5ba30492f52c0c3",
+          "reviewScope": "21–49 content와부모Page메타데이터."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubPostCommentVo.java",
+          "sha256": "18304351fc7889486937b4877b6b5202408aff044d20c071ef6b32895c022cb6",
+          "reviewScope": "10–30 부모/작성자/본문/상태/시각·답글/멘션·actions.delete."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubCommentAddParam.java",
+          "sha256": "13d0d2cdb47dba6285e92b26e594334d73e23ccc02e72195471b962c7cd448dd",
+          "reviewScope": "content와선택적mentionedUserIds 요청 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubCommentModParam.java",
+          "sha256": "5f3dcc9078f451041df9afa3ed854defb2d6a5505a0272c4008a856ecee2fcc0",
+          "reviewScope": "content와선택적mentionedUserIds 수정 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMentionResolver.java",
+          "sha256": "fe99826671124b3df3e779d76d24c7bf1b52a66cc3487ec1caaf2933b29f320d",
+          "reviewScope": "36–299 10명/20시작점·신규회원/기존snapshot별칭·본문최장일치·중복닉네임소유와공백경계."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/param/EventMessageDeleteParam.java",
+          "sha256": "f6039222a73303cc942f43bd457531431a84e7865857b4d096b3f1d36d719f58",
+          "reviewScope": "21–43 타인삭제사유코드필수·선택설명500자."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/EventMessageDeleteReasonCode.java",
+          "sha256": "efcbbde25713211813d9dbb57bcb3918bd22b7a2d4043c24224a703b7fe63d17",
+          "reviewScope": "22–28 여섯개사유enum실제값."
+        },
+        {
+          "path": "community_app/lib/data/api/club_comment_api.dart",
+          "sha256": "b55c4a63b87e458698e76bf0934c2497ae4f7cfc3fea2b308f73044272d101fc",
+          "reviewScope": "22–60 페이지조회·작성/답글/수정·삭제본문 직렬화 창구."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_comment_repository.dart",
+          "sha256": "ea8af7203de49263a290c325d20914079e2c22d2d613f668bb8dccd2515ca66b",
+          "reviewScope": "16–96 PageResponse<Comment> 및 typed작성/수정·선택MessageHideParam 삭제."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/comment.dart",
+          "sha256": "132e62f675c5287c87bdd5696ba2aaac9c35a4d55caa9844cf36fe78fb547173",
+          "reviewScope": "11–41 nullable본문/닉네임·답글/멘션·서버벽시계·actions.delete 기본닫힘."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/comment_provider.dart",
+          "sha256": "e0fea55b1c7de28d5459a2ce588283fa483d13fbea1a368c4ff228e858fcc8f0",
+          "reviewScope": "69–610 50페이지·정렬·커서실패·세대/읽기직렬화·명령뒤변경신호·읽은장재조회·최대20추가페이지대상찾기와결과."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/post_detail_screen.dart",
+          "sha256": "e88d3da8c379935244901cf1a34246922534408c2bc8aa9f0bf199ec5aa3057d",
+          "reviewScope": "254–390 대상찾기결과/한도/중단/재시도;468–565 댓글Thread연결·actions.delete·답글3개·PersonSheet;665–708 정렬/신고;741–749 삭제뒤거절갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/widgets/club_comment_thread.dart",
+          "sha256": "43b5cbb403f3279f28b76f84ebf7d99d858e870bbf01483d5c8e0654a8a6ba58",
+          "reviewScope": "68–626 입력/답글전환·전송잠금·현재입력일치시에만clear·행메뉴·본인/운영진삭제·수정창;648–735 수정성공후닫기/실패유지;772–930 삭제부모의남은답글·더보기·수정됨·PersonLink."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/widgets/comment_action_menu.dart",
+          "sha256": "9dcfafad99b178cac23e7ee4651d597115b61afa182464d32390a59ede0f96ca",
+          "reviewScope": "6–77 본인수정·허용삭제·타인신고 메뉴와시트닫힌뒤실행."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/widgets/mention_field.dart",
+          "sha256": "87a25f0a36b736a6cbd95f4a9fd000e00dea93f469bff52a4da4c90606eb7764",
+          "reviewScope": "24–284 선택멘션seed/resolve·250ms후후보조회·삽입·본인제외·입력/후보오류표시."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/mention_candidate_provider.dart",
+          "sha256": "bb893b8bdeb7a40f439f193f39bfbd24520a4704b7d3c7b7452f7272909e9a33",
+          "reviewScope": "12–27 회원첫10개검색·실패빈목록."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/widgets/mention_text.dart",
+          "sha256": "faeb9f5f7b12b2333cbf323c30b6179da4bb73a43a85fe8f004d76b2d67df049",
+          "reviewScope": "14–130 서버확정멘션만최장일치링크·클릭콜백."
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/widgets/message_hide_dialog.dart",
+          "sha256": "6c2c515273749619d98e5b412f00bc2e8620f498873b4d76238a9d13dc32c657",
+          "reviewScope": "76–144 성공닫기/실패안내;305–322 클럽댓글target사유창 연결."
+        },
+        {
+          "path": "community_app/lib/domain/providers/dispute/message_hide_form_provider.dart",
+          "sha256": "206cbec2191ae706449d5fe95666a564d5464a4cfad2046c080821ff8cc5f5f3",
+          "reviewScope": "16–115 클럽댓글target·사유/500자/전송잠금·댓글provider reason전달·결과상태."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubPostCommentPageServiceTest.java",
+          "sha256": "36653e5a63b13f4ee63e136179fb3fc23aea2caf45cab6772d0c0d44b2e3b320",
+          "reviewScope": "134–241 기본50·정렬·커서차단목록·삭제부모/답글/행행동·차단가림후총계유지 단언을읽음. 새시험실행아님."
+        },
+        {
+          "path": "community_app/test/domain/providers/club/comment_paging_test.dart",
+          "sha256": "06109c7fa0794af1aa2cf81807315f419aa48f4ff48b78177157ad87e319aba6",
+          "reviewScope": "311–343 추가20페이지한도와끝까지없으면읽은페이지재조회 단언을읽음. 새시험실행아님."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "409–427 활성게시글/댓글·삭제부모아래답글의목록표시·본인현재회원/타인유효운영진삭제판정."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "454–461 댓글세종류라우팅;1277–1301 club/post/board/comment누락폴백·알림ID기반landing."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubNotificationDispatcher.java",
+          "sha256": "e1dc2688f2399687c06ddc9d5791439d042326fdbd2be86b0ee8de3758fd9701",
+          "reviewScope": "동일 SHA 재사용: club_announcements_20261122의38–52 개별outbox/회원fanout 요청과실제기기수신구분."
+        }
+      ],
+      "reuses": [
+        "club_announcements_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
+          "sha256": "0a2a97f5074af808d753209af5235ca5ff79362fc076aa46990a0e2b687ffae5"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-09.html": [
+          "sidebar",
+          "launch-strip",
+          "profile-navigation",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-09 기존 전체목록과 페이지·작성·답글·수정·삭제 연결6개 추가"
+      ],
+      "retainedHistoricalQuotes": []
     }
   },
   "currentSourceVersions": {

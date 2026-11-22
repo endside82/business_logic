@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,202개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,207개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1202,
+    "documentedScenarioItems": 1207,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,18 +17,18 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 60,
-    "directlyLinkedJourneys": 27,
+    "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 27,
+    "journeyScenarioReferences": 26,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 39,
-    "partialEvidenceChain": 53,
+    "completeEvidenceChain": 38,
+    "partialEvidenceChain": 54,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 495,
-    "verifiedTraceRecords": 493,
+    "traceMarkers": 501,
+    "verifiedTraceRecords": 499,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -5723,51 +5723,150 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-09",
       "domain": "클럽",
-      "name": "게시글 댓글 & 대댓글",
-      "scenarioCount": 11,
+      "name": "게시글 댓글·답글·멘션과 대상 댓글 찾기",
+      "scenarioCount": 16,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-09_post-comments/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 16
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-09_post-comments/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F04-09:1",
+            "label": "GET /api/v1/clubs/{clubId}/posts/{postId}/comments — 기존 전체 댓글 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+                "controller": "ClubPostCommentController",
+                "method": "getComments",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/posts/{postId}/comments",
+                "targetLine": 33,
+                "methodLine": 34
+              }
+            ]
+          },
+          {
+            "id": "F04-09:2",
+            "label": "GET /api/v1/clubs/{clubId}/posts/{postId}/comments/page — 댓글 페이지",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+                "controller": "ClubPostCommentController",
+                "method": "getCommentPage",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/posts/{postId}/comments/page",
+                "targetLine": 51,
+                "methodLine": 52
+              }
+            ]
+          },
+          {
+            "id": "F04-09:3",
+            "label": "POST /api/v1/clubs/{clubId}/posts/{postId}/comments — 댓글 작성",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+                "controller": "ClubPostCommentController",
+                "method": "createComment",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/posts/{postId}/comments",
+                "targetLine": 60,
+                "methodLine": 61
+              }
+            ]
+          },
+          {
+            "id": "F04-09:4",
+            "label": "POST /api/v1/clubs/{clubId}/posts/{postId}/comments/{commentId}/replies — 답글 작성",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+                "controller": "ClubPostCommentController",
+                "method": "createReply",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/posts/{postId}/comments/{commentId}/replies",
+                "targetLine": 70,
+                "methodLine": 71
+              }
+            ]
+          },
+          {
+            "id": "F04-09:5",
+            "label": "PUT /api/v1/clubs/{clubId}/comments/{commentId} — 댓글 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+                "controller": "ClubPostCommentController",
+                "method": "updateComment",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/clubs/{clubId}/comments/{commentId}",
+                "targetLine": 81,
+                "methodLine": 82
+              }
+            ]
+          },
+          {
+            "id": "F04-09:6",
+            "label": "DELETE /api/v1/clubs/{clubId}/comments/{commentId} — 댓글 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostCommentController.java",
+                "controller": "ClubPostCommentController",
+                "method": "deleteComment",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/clubs/{clubId}/comments/{commentId}",
+                "targetLine": 95,
+                "methodLine": 96
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 1,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 1,
         "files": [
-          "community_app/integration_test/seed_club_mutation_test.dart",
-          "community_app/test/core/utils/notification_router_club_post_comment_test.dart",
-          "community_app/test/widget/club/comment_mention_test.dart"
+          "community_app/test/domain/providers/club/comment_paging_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 3,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_club_mutation_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart",
           "community_app/scripts/e2e/SCENARIO_MATRIX_INDEX.md",
           "community_app/scripts/e2e/run_p73_club_mutation_matrix.sh"
         ]
       },
-      "evidenceStage": 3,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,

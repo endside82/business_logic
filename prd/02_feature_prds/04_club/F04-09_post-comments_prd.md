@@ -1,163 +1,120 @@
-# F04-09. 게시글 댓글·대댓글·멘션 PRD
+# F04-09. 게시글 댓글·답글·멘션과 대상 댓글 찾기
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **기능 참고 문서.** 2026-11-22 현재 서버와 앱 소스를 대조했다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 아래 수용 기준은 이번에 앱이나 서버를 실행해 통과한 결과가 아니다.
 
-<!-- source-measured: 2026-07-29 -->
+<!-- source-measured: 2026-11-22 -->
 
-> 이 문서는 2026-07-29 현재 `community_api`와 `community_app`의 실제 소스를 다시 대조한 계약이다. 과거 unit 문서의 “댓글/답글 알림 미구현”, “답글 선택 시 `@닉네임` 자동 삽입”, “댓글 좋아요”, “정렬 토글이 실제 정렬을 바꿈” 서술은 현행 구현과 다르므로 이 문서가 우선한다.
+## 실제 입구와 댓글 표시
 
-## 1. 결론
+게시글 상세 아래에 댓글 수·최신순/등록순 전환·댓글 목록·입력란이 있다. 댓글 행을 길게 누르면 본인에게 수정, 서버 `actions.delete.allowed`가 허용한 행에 삭제, 타인에게 신고가 열린다. 게시글 상단 더보기와 댓글의 행동 메뉴는 대상이 다르다. 삭제된 부모 행에는 행동 메뉴와 새 답글 입구가 없다.
 
-클럽 멤버는 게시글에 최상위 댓글과 1단계 답글을 작성하고, 댓글 본문에서 최대 10명의 현재 클럽 멤버를 `@닉네임`으로 멘션할 수 있다. 서버는 클라이언트가 보낸 사용자 ID를 그대로 믿지 않고 실제 본문 토큰과 클럽 멤버십을 다시 확인한다.
+본문 아래 답글은 처음 3개를 표시하고 나머지는 더보기로 펼친다. 답글의 답글 버튼도 최상위 부모 ID를 사용해 같은 깊이의 답글을 만든다. 작성자나 확정 멘션을 누르면 `PersonSheet`를 연다. 신고는 `COMMUNITY_COMMENT`, 댓글 ID, 게시글 ID와 클럽 ID를 신고 화면에 전달한다.
 
-댓글·답글 작성 시 알림은 이미 구현되어 있다. 같은 수신자가 여러 조건에 해당하면 **멘션 > 답글 > 게시글 댓글** 우선순위로 한 번만 알리고, 자기 자신과 현재 클럽 멤버가 아닌 사용자는 제외한다. 앱은 알림을 게시글 상세의 대상 댓글까지 딥링크하고 3초 동안 강조한다.
+댓글 없음과 목록 조회 오류를 구분하며 오류에는 다시 불러오기를 제공한다. 추가 페이지 오류에서는 기존 목록을 유지하고 아래쪽 재시도 버튼을 제공한다.
 
-## 2. 실사 기준
+## 서버 요청과 응답
 
-| 계층 | 확인한 실제 소스 | 확인한 계약 |
-|---|---|---|
-| Controller | `club/controller/ClubPostCommentController.java` | 5개 endpoint, body/response |
-| Param / VO | `ClubCommentAddParam`, `ClubCommentModParam`, `ClubPostCommentVo`, `ClubPostCommentMentionVo` | `content`, `mentionedUserIds`, `mentions` |
-| Service | `club/service/ClubPostCommentService.java` | 권한, 깊이, 멘션 검증·diff, 알림 우선순위 |
-| DB | `V1__init.sql`, `ClubPostCommentMention` | 댓글-멘션 고유 관계와 cascade |
-| Notification | `NotificationType`, `NotificationService`, `ClubPostNotificationData` | 타입, 차단/설정, payload |
-| Flutter data | `club_comment_api.dart`, `comment*.dart`, `comment_provider.dart` | Retrofit/Freezed/Provider 전달 |
-| Flutter UI | `mention_field.dart`, `mention_text.dart`, `post_detail_screen.dart` | 후보 검색, 확정 멘션 렌더링, 댓글 강조 |
-| Flutter routing | `notification_router.dart`, `app_router.dart` | 알림 → 게시글/댓글 딥링크 |
+기본 경로는 `/api/v1/clubs/{clubId}`다. 인증을 요구하며 서비스가 실제 회원 관계와 게시글·댓글의 클럽 소속을 검사한다.
 
-## 3. 서버 API 계약
-
-기본 경로는 `/api/v1/clubs/{clubId}`이며 전부 인증과 해당 클럽 멤버십이 필요하다.
-
-| Method | Path | Body | 응답 |
+| 동작 | 메서드와 하위 경로 | 요청 | 응답 |
 |---|---|---|---|
-| GET | `/posts/{postId}/comments` | 없음 | `List<ClubPostCommentVo>` |
-| POST | `/posts/{postId}/comments` | `ClubCommentAddParam` | 201 `ClubPostCommentVo` |
-| POST | `/posts/{postId}/comments/{commentId}/replies` | `ClubCommentAddParam` | 201 `ClubPostCommentVo` |
-| PUT | `/comments/{commentId}` | `ClubCommentModParam` | 200 `ClubPostCommentVo` |
-| DELETE | `/comments/{commentId}` | 없음 | 204 |
+| 기존 전체 목록 | `GET /posts/{postId}/comments` | 없음 | `List<ClubPostCommentVo>` |
+| 현재 앱의 페이지 조회 | `GET /posts/{postId}/comments/page` | `page`, `size`, `oldestFirst`, `afterCommentId` | `ClubPostCommentPageVo` |
+| 댓글 작성 | `POST /posts/{postId}/comments` | `ClubCommentAddParam` | 201 댓글 VO |
+| 답글 작성 | `POST /posts/{postId}/comments/{commentId}/replies` | `ClubCommentAddParam` | 201 댓글 VO |
+| 수정 | `PUT /comments/{commentId}` | `ClubCommentModParam` | 200 댓글 VO |
+| 삭제 | `DELETE /comments/{commentId}` | 선택적 `EventMessageDeleteParam`; 타인 삭제는 필수 | 204 |
 
-### 3.1 요청·응답 필드
+작성·수정 요청은 `content: String`, 선택적 `mentionedUserIds: List<Long>`이다. 본문은 공백만으로 작성할 수 없다. 댓글 VO는 `id`, nullable `parentCommentId`, `authorId`, `authorNickname`, `content`, `status`, 생성·수정 시각, `replies`, `mentions`, `actions.delete`를 제공한다. 멘션은 `userId`와 저장된 `nickname`이다. 앱은 nullable 본문·닉네임과 삭제 자리 표시의 `authorId=0`을 수용한다.
 
-- `ClubCommentAddParam` / `ClubCommentModParam`
-  - `content: String`
-  - `mentionedUserIds: List<Long>` — 누락 가능. 서버가 빈 목록처럼 처리한다.
-- `ClubPostCommentVo`
-  - `id`, `parentCommentId`, `authorId`, `authorNickname`, `content`
-  - `status: ACTIVE | DELETED`
-  - `createdAt`, `updatedAt`
-  - `replies: List<ClubPostCommentVo>`
-  - `mentions: List<ClubPostCommentMentionVo>`
-- `ClubPostCommentMentionVo`
-  - `userId`
-  - `nickname` — 멘션 생성 시점의 표시용 닉네임 snapshot
+페이지 응답은 `content`, `totalElements`, `totalPages`, `number`, `size`, `first`, `last`다. `content`는 부모 댓글과 그 아래 활성 답글의 트리다. 기존 전체 목록 API가 남아 있으나 현재 앱의 페이지 응답과 혼용하지 않는다.
 
-목록 응답은 `Page`가 아니라 완성된 1단계 트리의 `List`다. 서버 저장/조회 순서는 `createdAt ASC`이며 현재 페이지네이션은 없다.
+## 정렬·이어 읽기·차단 가림
 
-## 4. 권한·무결성
+페이지 기본 크기와 앱 요청 크기는 50이다. 부모는 최신순이면 `createdAt DESC, id DESC`, 등록순이면 `createdAt ASC, id ASC`다. 자식 답글은 생성 시각·ID 오름차순이다. 앱은 첫 장을 `page=0`, 이후에는 마지막으로 받은 부모 ID를 `afterCommentId`로 보낸다. 서버는 같은 게시글의 최상위 댓글인지 확인하고 생성 시각·ID 뒤를 읽는다. 잘못된 커서의 `INVALID_INPUT` 응답을 받으면 앱은 첫 장부터 다시 읽는다. 정렬 전환도 첫 장부터 재조회한다.
 
-- 읽기·댓글 작성·답글·수정은 현재 클럽 멤버만 가능하다.
-- 수정은 댓글 작성자만 가능하다.
-- 삭제는 댓글 작성자 또는 `OWNER`/`ADMIN`만 가능하다.
-- `clubId`, `postId`, `commentId`의 실제 소속 관계를 서버가 확인한다. 다른 클럽 ID를 섞은 직접 호출은 존재를 숨기는 `NOT_FOUND` 계열로 차단한다.
-- 답글 생성 시 부모 댓글을 잠그고, 같은 게시글의 `ACTIVE` 최상위 댓글인지 확인한다.
-- 답글의 답글은 허용하지 않는다. 깊이는 정확히 1단계다.
-- 삭제된 부모에는 새 답글을 달 수 없다.
-- 부모 삭제 후 답글이 남아 있으면 부모는 `DELETED` placeholder로 조회되고, 멘션 정보는 노출하지 않는다.
+부모가 `ACTIVE`이거나, `DELETED`이면서 활성 답글이 남아 있으면 조회 대상이다. 삭제된 부모는 원문·멘션 대신 “삭제된 댓글입니다” 자리 표시와 남은 답글을 반환하며 앱도 답글을 유지한다. 마지막 활성 답글까지 삭제되면 삭제 부모는 목록에서 빠진다.
 
-## 5. 멘션 계약
+차단 상대의 댓글·답글은 가린다. 차단된 부모 아래 보이는 답글이 남으면 부모의 본문·닉네임·멘션을 비우고 작성자 ID를 0으로 마스킹한다. 보이는 답글도 없으면 부모를 제거한다. 페이지의 총계는 차단 가림 전의 부모 수로, 화면에 보이는 모든 댓글·답글 수가 아니다. 이어 읽기 질의는 차단으로 사라질 부모를 제외하지만 첫 페이지는 조회 뒤 가림을 적용하므로 50개보다 적게 반환될 수 있다.
 
-### 5.1 클라이언트가 보내는 값과 서버가 인정하는 값
+## 작성·답글·수정과 입력 보존
 
-앱은 사용자가 후보 목록에서 고른 사용자 ID를 `mentionedUserIds`로 보내지만, 서버는 다음 조건을 모두 만족하는 대상만 실제 멘션으로 저장한다.
+작성과 답글은 현재 회원과 `ACTIVE` 게시글을 요구한다. 서버는 게시글을 잠그고 댓글을 저장하며 게시글 댓글 수를 증가시킨다. 답글 부모는 같은 게시글의 활성 최상위 댓글이어야 한다. 이미 답글인 댓글을 부모로 지정하면 `COMMENT_DEPTH_EXCEEDED`, 삭제 부모에는 새 답글을 만들 수 없다.
 
-1. 자기 자신이 아니다.
-2. 현재 클럽 멤버다.
-3. 본문에 그 사용자의 실제 `@닉네임` 토큰이 있다.
-4. 중복 제거 후 최대 10명이다.
+수정은 현재 회원인 원작성자만 가능하고 게시글·댓글이 활성 상태여야 한다. 수정 요청은 최종 본문과 전체 멘션 ID 목록을 보낸다. 운영진에게 타인 댓글 수정 권한을 주지 않는다.
 
-본문의 `@` 시작 위치는 최대 20개까지만 스캔한다. 이를 넘기거나 요청 후보가 10명을 넘으면 `INVALID_INPUT`으로 거절한다.
+앱은 전송 중 중복 탭을 막고, 성공 응답과 현재 입력이 일치할 때만 보낸 입력을 지운다. 그 사이 새로 쓴 내용이나 바꾼 답글 대상을 지우지 않는다. 다른 답글 대상으로 전환할 때 입력이 있으면 폐기를 확인한다. 답글 취소 버튼은 대상을 해제하며 본문은 남긴다. 답글을 시작할 때 부모 작성자 멘션을 자동 삽입하지 않는다.
 
-### 5.2 토큰 판정
+수정 창은 기존 본문·멘션을 채우고 전송 중 저장 버튼을 잠근다. 성공 때 해당 창을 닫고, 실패하면 입력을 유지해 다시 시도할 수 있다. 프로필 탐색의 작성 중 여부를 등록하지만 댓글 입력의 기기 저장·앱 재시작 복구 기능은 이 흐름에서 제공하지 않는다.
 
-- `@` 앞이 문자열 시작 또는 공백 계열 문자일 때만 후보로 본다. 이메일 중간의 `@`는 멘션으로 보지 않는다.
-- 공백을 포함한 닉네임도 전체 닉네임으로 매칭한다.
-- 같은 접두어가 겹치면 가장 긴 닉네임을 우선한다.
-- 클럽 안에 같은 닉네임 사용자가 둘 이상이면 누구인지 안전하게 확정할 수 없으므로 해당 토큰을 멘션으로 저장하지 않는다.
-- 저장된 `nickname`은 표시 안정성을 위한 snapshot이다. 이후 사용자가 닉네임을 바꿔도 기존 댓글의 표시 문자열은 유지된다.
+작성·답글·삭제 성공 또는 서버 반영 가능성이 있는 통신 실패는 게시글 변경 신호와 댓글·게시판 목록 갱신을 일으킨다. 수정 성공은 현재까지 읽은 페이지들을 다시 읽는다. 수정 성공 뒤 재조회 실패는 저장 실패와 구분해 안내한다.
 
-### 5.3 수정·삭제
+## 멘션 후보·확정·수정
 
-- 수정 요청은 최종 본문과 전체 `mentionedUserIds`를 다시 보낸다.
-- 서버는 기존 관계와 새 관계를 diff하여 추가·유지·삭제한다.
-- 수정으로 **새로 추가된** 멘션 수신자에게만 알림을 보낸다. 유지된 대상에게는 중복 알림을 보내지 않는다.
-- 댓글 삭제 시 연결된 멘션 관계도 삭제된다.
-- DB는 `(comment_id, mentioned_user_id)`를 유일하게 유지한다.
+앱은 `@` 입력 후 250ms 대기해 회원 목록 첫 10명을 검색하고 본인·닉네임 없는 후보를 제외한다. 후보 조회 실패는 빈 후보 목록으로 처리한다. 선택한 닉네임을 공백과 함께 삽입하고, 전송 때 본문에 남아 있는 선택 대상 ID만 보낸다. 임의로 쓴 `@문자열`만으로 알림 대상이 만들어지지 않는다.
 
-## 6. 댓글·답글 알림
+서버는 ID 중복을 제거하고 본인을 제외한다. null ID, 남은 후보 10명 초과, 검사 경로에서 유효한 `@` 시작점 20개 초과는 `INVALID_INPUT`이다. 요청 ID가 없으면 멘션 해석을 건너뛰므로 모든 일반 본문의 `@` 개수에 무조건 이 제한을 적용하는 것은 아니다.
 
-### 6.1 알림 타입과 수신자
+신규 대상은 현재 회원이어야 하며 실제 본문과 닉네임이 맞아야 한다. 토큰은 문자열 시작 또는 공백 계열 뒤에서 시작하고 최장 닉네임을 우선한다. 동일 닉네임으로 소유자가 모호하면 확정하지 않는다. 수정은 기존 멘션의 닉네임 스냅샷과 현재 닉네임을 함께 고려하며 기존 스냅샷 소유를 우선한다. 기존 관계에는 신규 대상과 동일한 현재 회원 필터를 일괄 적용하지 않는다. 다만 알림 수신자는 현재 회원으로 다시 거른다.
 
-| 우선순위 | `NotificationType` | 수신 조건 |
-|---:|---|---|
-| 1 | `CLUB_POST_COMMENT_MENTION` (101) | 댓글/답글 본문에서 실제 멘션된 현재 멤버 |
-| 2 | `CLUB_POST_COMMENT_REPLY` (103) | 답글의 부모 댓글 작성자 |
-| 3 | `CLUB_POST_COMMENT` (102) | 최상위 댓글이 달린 게시글 작성자 |
+수정 시 관계를 추가·유지·삭제하고 새로 추가한 멘션만 알린다. 유지 관계의 표시 별칭은 해석 결과에 따라 갱신될 수 있다. 삭제하면 멘션 관계도 삭제된다. 앱은 서버가 확정한 `mentions`만 링크로 표시한다.
 
-한 사용자가 멘션 대상이면서 부모/게시글 작성자이기도 하면 가장 높은 한 종류만 발송한다. 행위자는 언제나 제외한다.
+## 본인 삭제와 운영진 조치
 
-알림 본문 발췌는 줄바꿈을 평탄화하고 최대 50자로 제한한다. payload는 `ClubPostNotificationData`이며 `clubId`, `boardId`, `postId`, `commentId`, `actorUserId`를 담는다. reference는 `CLUB` / `clubId`다.
+삭제 가능 여부는 댓글이 활성 게시글의 목록에 보이는지와 현재 회원·유효 운영진 권한으로 판정한다. 탈퇴한 작성자나 숨겨진 게시글의 댓글을 무조건 지울 수 있다는 과거 설명은 적용하지 않는다. 본인 삭제에는 조치 사유가 필요 없고, 타인 삭제는 서버의 운영진 판정과 사유 본문을 모두 통과해야 한다.
 
-`NotificationService`의 공통 정책도 그대로 적용된다.
+사유 코드는 `HARASSMENT`, `SPAM`, `OFF_TOPIC`, `INAPPROPRIATE`, `AUTHOR_REQUEST`, `OTHER`다. `reasonText`는 선택 입력이며 500자 이하다. 앱 조치 창도 사유 선택과 길이를 확인하고 전송 중 중복 제출을 막는다. 자기 댓글 삭제는 행 메뉴에서 바로 요청하고, 타인 댓글 삭제는 이 사유 창을 거친다.
 
-- 행위자와 수신자 사이에 어느 방향이든 사용자 차단이 있으면 인앱·푸시 모두 억제한다.
-- 사용자의 알림 설정에 따라 인앱/푸시 채널을 각각 결정한다.
-- 알림 시점에 클럽에서 탈퇴한 사용자는 수신 대상에서 제외한다.
+삭제는 상태를 `DELETED`로 바꾸고 멘션 관계를 제거하며 게시글 댓글 수를 감소시킨다. 타인 삭제는 분쟁 원천 `COMMENT`, 대상 작성자·조치자, `COMMENT_DELETE` 기록과 사유를 남기고 조치 안내를 요청한다. 서비스에는 운영자 복구 경로가 있으나 회원용 복구 API나 화면은 아니다. 복구는 예상 삭제 시점이 맞을 때만 수행하며 이미 활성·다시 숨김을 구분한다. 복구 코드가 삭제 때 지워진 멘션 관계를 재생성하지 않는 점도 구분한다.
 
-### 6.2 Flutter 딥링크
+## 알림과 대상 댓글 찾기
 
-세 알림 타입은 모두 다음 경로로 해석된다.
+신규 댓글·답글의 수신자는 **멘션 → 부모 댓글 작성자 → 게시글 작성자** 순서로 중복을 제거하고 행위자를 제외한다. 게시글 작성자 알림은 최상위 댓글뿐 아니라 답글에도 해당한다. 수신 시점의 현재 회원으로 걸러 각각 `CLUB_POST_COMMENT_MENTION`, `CLUB_POST_COMMENT_REPLY`, `CLUB_POST_COMMENT` 알림을 요청한다. 알림 저장·채널 전달의 공통 정책은 별도 계층이며 이 기능 문서가 실제 푸시 도착을 보증하지 않는다.
 
-`/clubs/{clubId}/posts/{postId}?boardId={boardId}&commentId={commentId}`
+멘션 알림 중복 키는 멘션 관계 ID, 일반 댓글·답글 알림 키는 알림 종류와 댓글 ID를 사용한다. 발췌는 공백을 평탄화한 뒤 50자를 넘으면 생략 부호를 붙인다. 전달 데이터는 `clubId`, `boardId`, `postId`, `commentId`, `actorUserId`다.
 
-- `boardId` 또는 `postId`가 없으면 클럽 홈으로 안전하게 폴백한다.
-- 라우터가 `commentId`를 `highlightCommentId`로 넘긴다.
-- 게시글 상세가 댓글 목록 로드 후 대상 댓글로 한 번 스크롤하고 약 3초 강조한다.
-- 댓글이 이미 삭제되었거나 목록에 없으면 화면 진입은 유지하고 상단에 머문다.
+앱 알림 경로는 `/clubs/{clubId}/posts/{postId}?boardId={boardId}&commentId={commentId}`이며 가능한 경우 알림 ID 기반 `landing`도 붙인다. 게시글·게시판 ID가 없으면 클럽 홈으로, 클럽 ID도 없으면 경로 없음으로 처리한다. 알림 착지의 새 요청은 이전 목록을 그대로 신뢰하지 않고 다시 읽는다.
 
-## 7. Flutter 입력·표시 계약
+알림 또는 방금 작성한 댓글 찾기는 현재 목록에서 시작해 최대 20개 추가 페이지를 읽는다. 찾으면 접힌 답글을 펼치고 해당 행으로 스크롤해 약 3초 강조한다. 끝까지 없으면 읽었던 페이지들을 한 번 재조회한 뒤 찾을 수 없음을 알린다. 자동 탐색 한도 도달은 삭제로 단정하지 않고 직접 내려 확인하라고 안내한다. 통신 중단에는 댓글 다시 찾기를 제공한다. 정렬·새 요청·화면 생명주기 변경으로 오래된 탐색 결과가 덮어쓰지 않도록 구분한다.
 
-- `MentionField`는 `@` 입력 뒤 250ms debounce로 클럽 멤버를 검색한다.
-- 자기 자신을 후보에서 제외하고, 후보를 고르면 공백 포함 전체 닉네임을 본문에 삽입한다.
-- 전송 직전에도 본문에 남아 있는 선택 멘션만 ID 목록으로 보낸다.
-- 답글 모드는 부모 댓글을 지정하는 배너/힌트로 표시한다. **부모 작성자의 `@닉네임`을 자동 삽입하지 않는다.** 멘션이 필요하면 사용자가 `@` 후보에서 별도로 선택한다.
-- 수정 다이얼로그는 서버가 내려준 기존 `mentions`를 seed하고 전체 교체 요청을 보낸다.
-- `MentionText`는 본문의 임의 `@단어`가 아니라 서버가 확정해 내려준 `mentions`만 `linkBlue`로 강조한다.
-- 확정 멘션을 탭하면 `/profile/users/{userId}`로 이동한다.
+## 현재 제한과 확인 범위
 
-## 8. 현재 확인된 Gap / Risk
-
-| 분류 | 실측 결과 | 영향 |
+| 분류 | 현재 경계 | 문서·검수 판정 |
 |---|---|---|
-| Gap | Flutter API는 `sort` query를 보내고 Provider는 `latest/oldest`를 토글하지만 서버 Controller에는 해당 파라미터가 없고, 클라이언트도 별도 정렬하지 않는다. | UI 정렬 라벨을 바꿔도 실제 순서는 서버의 `createdAt ASC` 그대로일 수 있다. 서버 정렬 계약을 추가하거나 앱에서 정렬해야 한다. |
-| 범위 확인 | 목록은 `List` 전체 조회이고 `loadMore`는 실질 페이지를 추가하지 않는다. | 댓글이 매우 많은 게시글의 비용 정책은 별도 결정이 필요하다. |
-| 문서 교정 | 과거 문서의 댓글 좋아요/신고·성공 토스트·자동 멘션 prefix 묘사는 현재 댓글 화면의 보장 계약이 아니다. | QA는 실제 노출 위젯과 API만 기준으로 한다. |
+| Risk | 댓글 생성에 별도 멱등 키 계약이 없고 불명확 실패 시 입력이 남는다. | 앱의 전송 잠금은 한 요청 동안의 중복 탭만 막는다. 결과 확인 없이 수동 재전송하면 중복 가능성이 있다. |
+| Risk | 페이지 총계는 차단 가림 전 부모 수이며 앱의 게시글 댓글 수와 집계 단위가 다르다. | 총계·보이는 행·답글을 같은 수로 단정하지 않는다. |
+| 범위 | 부모 페이지에 포함되는 활성 답글은 별도 페이지로 나누지 않는다. | 부모 50개 제한이 답글 포함 50개 제한은 아니다. |
+| 범위 | 자동 찾기는 추가 20페이지 한도가 있고 입력의 기기 영속 저장은 없다. | 모든 깊은 댓글 자동 도착이나 재시작 후 초안 복구를 보장하지 않는다. |
+| 미검증 | 이번 작업은 소스와 기존 시험 단언의 문서 대조다. | 실제 앱 조작, 새 테스트 실행, 알림 기기 수신, 동시성 부하 결과로 표현하지 않는다. |
 
-## 9. 수용 기준
+## 수용 기준과 검증 근거
 
-- **AC-01**: 멤버가 유효한 본문으로 댓글을 작성하면 201과 `ACTIVE` VO를 받고 목록에 반영된다.
-- **AC-02**: 최상위 `ACTIVE` 댓글에만 답글을 만들 수 있고, 답글의 답글은 서버가 거절한다.
-- **AC-03**: 요청 ID가 있어도 본문에 정확한 `@닉네임`이 없거나 대상이 현 멤버가 아니면 멘션으로 저장·알림되지 않는다.
-- **AC-04**: 한 수신자가 멘션과 답글/게시글 작성자 조건을 동시에 만족하면 우선순위가 가장 높은 알림 한 건만 받는다.
-- **AC-05**: 댓글 수정에서 기존 멘션은 재알림하지 않고 새로 추가된 대상만 알린다.
-- **AC-06**: 작성자는 자기 댓글을 수정·삭제하고, `OWNER`/`ADMIN`은 타인의 댓글을 삭제만 할 수 있다.
-- **AC-07**: 알림 탭 시 게시글 상세에 진입하고 대상 댓글이 존재하면 스크롤·강조한다.
-- **AC-08**: 사용자 차단 또는 알림 설정 비활성 상태에서는 공통 알림 정책대로 전달을 억제한다.
-- **AC-09**: 정렬 토글은 현재 실제 순서 변경 수용 기준으로 간주하지 않는다. Gap 해소 후 별도 검증한다.
+- **AC-01 실제 입구:** 게시글 상세에서 댓글을 읽고, 행 길게 누르기의 수정·삭제·신고가 대상과 권한에 맞게 분리되는지 확인한다.
+- **AC-02 페이지 계약:** 기존 List API와 현재 앱 Page API를 구분하고 기본 50개·응답 메타데이터·부모 트리 구조를 확인한다.
+- **AC-03 실제 정렬:** 최신순·등록순이 서버 질의에 전달되고 다음 장에서도 유지되며 정렬 변경 시 첫 장부터 읽는지 확인한다.
+- **AC-04 이어 읽기 실패:** 마지막 부모 ID 커서로 이어 읽고 일반 실패는 기존 목록과 재시도를, 잘못된 커서는 첫 장 재조회를 제공하는지 확인한다.
+- **AC-05 회원과 소속:** 읽기·작성·수정·삭제의 현재 회원·활성 게시글·클럽 소속 검사를 우회하지 않는지 확인한다.
+- **AC-06 답글 깊이:** 활성 최상위 부모만 허용하며 앱의 답글 행에서 답글을 눌러도 같은 부모 아래 1단계 답글을 만드는지 확인한다.
+- **AC-07 삭제와 차단 표시:** 삭제 부모의 활성 답글을 유지하고 차단 상대의 본문을 가리며 총계와 노출 행 수의 차이를 설명하는지 확인한다.
+- **AC-08 작성 입력 보존:** 전송 잠금·성공한 입력만 비우기·답글 대상 전환 확인·실패 시 입력 유지를 확인한다.
+- **AC-09 수정 결과:** 본인만 수정하며 창은 성공 때 닫고 실패 때 유지하고 읽은 페이지 재조회 오류를 저장 결과와 구분하는지 확인한다.
+- **AC-10 멘션 확정:** 선택 ID와 본문·신규 회원·최장 일치·중복 닉네임·10명/20시작점 조건을 함께 판정하는지 확인한다.
+- **AC-11 멘션 변경:** 기존 스냅샷 처리, 신규 관계만 알림, 제거 관계 삭제, 확정 멘션만 링크로 표시하는지 확인한다.
+- **AC-12 삭제 권한과 사유:** 본인 삭제와 타인 운영진 삭제를 구분하고 후자의 사유·500자·조치 기록·분쟁 원천을 확인한다.
+- **AC-13 알림 수신자:** 답글에도 게시글 작성자가 수신 후보가 되며 멘션·부모·게시글 순서의 중복 제거와 현재 회원 필터를 확인한다.
+- **AC-14 알림 착지:** ID 누락 폴백과 새 착지 재조회, 접힌 답글 펼침·스크롤·3초 강조를 확인한다.
+- **AC-15 찾기 결과:** 추가 20페이지 한도·재조회 후 없음·통신 중단·재시도·오래된 탐색 취소를 서로 구분하는지 확인한다.
+- **AC-16 갱신과 한계:** 작성·삭제의 변경 신호와 불명확 결과 재조회, 수정 후 읽은 페이지 갱신을 확인하고 멱등성·기기 초안 저장을 과장하지 않는다.
 
-## 10. 후속
+`ClubPostCommentPageServiceTest`의 기본 50개·정렬·커서·삭제 부모·차단 가림 단언과 `comment_paging_test.dart`의 추가 20페이지 한도·끝까지 없을 때 재조회 단언을 읽어 대조했다. 시험을 새로 실행한 결과가 아니며 과거 시험 이름을 현재 통과 수로 합산하지 않는다.
 
-- 댓글 정렬을 서버 query로 공식 지원할지, 현재 전체 `List`를 앱에서 정렬할지 결정한다.
-- 페이지네이션이 필요하면 서버 반환 타입부터 변경해야 하며, 현재 `List` 계약을 `PageResponse`로 임의 해석하지 않는다.
-- 알림 딥링크의 삭제 댓글 폴백과 긴 댓글 목록 스크롤을 통합/E2E로 지속 검증한다.
+## 코드 위치
+
+- 서버: `ClubPostCommentController`, `ClubPostCommentService`, `ClubPostCommentQueryRepository`, `ClubPostCommentSearchParam`, `ClubPostCommentPageVo`, `ClubPostCommentVo`, `ClubMentionResolver`, `ClubAbilityPolicy`, `EventMessageDeleteParam`, `EventMessageDeleteReasonCode`.
+- 앱 데이터: `club_comment_api.dart`, `club_comment_repository.dart`, `comment.dart`, `comment_provider.dart`, `mention_candidate_provider.dart`.
+- 앱 입구·행동: `post_detail_screen.dart`, `club_comment_thread.dart`, `comment_action_menu.dart`, `mention_field.dart`, `mention_text.dart`, `message_hide_dialog.dart`, `message_hide_form_provider.dart`, `notification_router.dart`.
+
+<!-- source-references:start -->
+서버 창구: `ClubPostCommentController#getComments`, `ClubPostCommentController#getCommentPage`, `ClubPostCommentController#createComment`, `ClubPostCommentController#createReply`, `ClubPostCommentController#updateComment`, `ClubPostCommentController#deleteComment`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
