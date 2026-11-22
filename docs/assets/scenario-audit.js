@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,320개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,318개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1320,
+    "documentedScenarioItems": 1318,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4967,
     "journeyFilesScanned": 336,
@@ -12132,14 +12132,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-13",
       "domain": "플랜 마켓",
-      "name": "구매 플랜 -> 이벤트 생성/리뷰",
-      "scenarioCount": 12,
+      "name": "구매 플랜으로 모임 만들기·후기 작성",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-13_plan-event-and-review/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-13_plan-event-and-review_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 12
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-13_plan-event-and-review/backend.md",
