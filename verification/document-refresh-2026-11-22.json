@@ -270,7 +270,8 @@
         "club_announcements_20261122",
         "club_comments_20261122",
         "club_posts_20261122",
-        "club_calendar_20261122"
+        "club_calendar_20261122",
+        "club_album_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2986,9 +2987,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "e0dbe0f67321e179b829446bc8271692fde9ece9b24d86a590e75ab62520fb0b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_album_20261122"
+      ],
+      "reviewedSha256": "4b9a15e6d6b4893855116f6cc2d8ddabbc4cf36b14f2a8654259ee89b2ee1620"
     },
     {
       "path": "docs/features/F04-12.html",
@@ -4888,7 +4892,8 @@
         "club_announcements_20261122",
         "club_comments_20261122",
         "club_posts_20261122",
-        "club_calendar_20261122"
+        "club_calendar_20261122",
+        "club_album_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4954,7 +4959,8 @@
         "club_announcements_20261122",
         "club_comments_20261122",
         "club_posts_20261122",
-        "club_calendar_20261122"
+        "club_calendar_20261122",
+        "club_album_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5043,7 +5049,8 @@
         "club_announcements_20261122",
         "club_comments_20261122",
         "club_posts_20261122",
-        "club_calendar_20261122"
+        "club_calendar_20261122",
+        "club_album_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5958,10 +5965,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bc622aeb40c01c20b14454541c3e39e92c3ed5d35d56c5317ae623a1b845e9e2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_album_20261122"
+      ],
+      "reviewedSha256": "7a03b64fd05d672f223caafb86768efb53399463390d58795df219c42ad6ee78"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
@@ -7768,7 +7777,8 @@
         "club_announcements_20261122",
         "club_comments_20261122",
         "club_posts_20261122",
-        "club_calendar_20261122"
+        "club_calendar_20261122",
+        "club_album_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7982,7 +7992,8 @@
         "club_announcements_20261122",
         "club_comments_20261122",
         "club_posts_20261122",
-        "club_calendar_20261122"
+        "club_calendar_20261122",
+        "club_album_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9942,9 +9953,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a82913058b66581eb996be334ee65397fb62f0a5cbea7e55023a9a9f67efcebf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_album_20261122"
+      ],
+      "reviewedSha256": "9e6a07d1d1e2e946f0c3f5d756aa4003697a2f5913a3bcaba2891ad7e775ef2b"
     },
     {
       "path": "units/04_club/F04-11_photo-album/diagrams.md",
@@ -9952,9 +9966,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cb0a1b2ef7364939bc225dac1a731202580425401991aee5d7fb4dfe4c4864ee",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_album_20261122"
+      ],
+      "reviewedSha256": "4dff8d2527f80c6aa247487798cd099ed8929d607eaa0bab967c920c5506915a"
     },
     {
       "path": "units/04_club/F04-11_photo-album/frontend.md",
@@ -9962,9 +9979,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7820a4530dbbcfe0fb1efcca118b5b4feb9805e47d0024d84ff6ef6f0a533f13",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_album_20261122"
+      ],
+      "reviewedSha256": "8d0efc29133a6a153bc501d6935b407f085d67798983f158bfa9a945786e5242"
     },
     {
       "path": "units/04_club/F04-11_photo-album/scenarios.md",
@@ -9972,9 +9992,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2630e689a4ba524e7818fcf689078747fa099d804bb73ba6377f1babb151531c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_album_20261122"
+      ],
+      "reviewedSha256": "818149ff102663a8d71b8e1ba8b781cc1ee99dbcec71678b25b4d7cc6bc4924b"
     },
     {
       "path": "units/04_club/F04-12_club-events-calendar/backend.md",
@@ -15268,6 +15291,11 @@
       "command": "F04-12 문서 묶음: 소스 참조·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
       "result": "코드 위치112개 일치; 상대경로2242개·파생 정본 해시267개 오류0; 현재 그룹 소스/정본40개 해시 일치; 기존 HTML ID4개·과거 인용1개 보존; scenario-audit 최신; diff 오류0; API/app HEAD 유지",
       "scope": "클럽 모임/캘린더/통계/반복 문서 검사. 서버 참조 파서 변경 없음으로 기존11/11 결과 재사용; 새 제품·이미지·자동참가·환불·푸시·재전송 실행 없음. ignored units4개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-11 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
+      "result": "코드 위치112개 일치; 파서11/11 통과; 상대경로2265개·파생 정본 해시271개 오류0; 현재 그룹 소스/정본60개 해시 일치; 기존 HTML ID4개·과거 인용1개 보존; scenario-audit 최신; diff 오류0",
+      "scope": "사진첩/사진등록/공개범위/댓글/알림착지 문서 검사. 선택한 기존 시험의 단언 확인만 했으며 새 제품·사진 시각검수·S3·기기복원·푸시 시험 없음. ignored units4개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -25616,6 +25644,343 @@
           "path": "units/04_club/F04-12_club-events-calendar/scenarios.md",
           "sha256": "1fd55e698cff01866f3097f5ccc9feebf9b76aa4a4acc89503f0bc52f26d1938",
           "characters": 2208,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
+    },
+    "club_album_20261122": {
+      "kind": "source_review",
+      "scope": "F04-11 앨범/사진 입구·공개 열람/권한·파일완료/기기보관/같은키등록·삭제/대표/정리예약·댓글ACTIVE/부모페이지/언급/알림착지·생성/수정 계약차이. 소스와 선택 시험 단언 대조; 제품 실행·사진 시각검수 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+          "sha256": "fab0afec8db383a8d3cff26d5dd037fff1ee1907f6e810dad9b0ebd9c554a856",
+          "reviewScope": "24–125: P0 앨범목록/단건/생성/수정/삭제·사진목록/등록/삭제/일괄; 등록필수키 verified transaction·페이지/단건/void 반환."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumCommentController.java",
+          "sha256": "2c547b741407cf83f78df61595f3fa995d44ce36da769f7fe02b108c872053ad",
+          "reviewScope": "31–88: CLUB_ALBUM_SOCIAL 댓글페이지/생성(부모포함)/수정/삭제, 키/운영사유 요청 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubPhotoAlbumService.java",
+          "sha256": "de0461d4da5e894b461015c6a19cc5b287726e59f604fefe2577728349fa5082",
+          "reviewScope": "55,71–730: 열람scope·회원/구독생성·작성자/운영진관리·공개변경회원/봉인·50장잠금/파일완료소유용도·대표복구·일괄권한·길이·파일참조정리."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubAlbumViewerResolver.java",
+          "sha256": "5cc3346146e7e4207ca2a6868dc0ee7c64845559f9bcef5083362d4000f23e43",
+          "reviewScope": "44–84: 회원/유효운영진·비회원 BAN·공개봉인·ACTIVE 문맥 조립."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/util/ClubAlbumScope.java",
+          "sha256": "a0d2dd38cf59d810f2fd22f49bcdf3d932b4e5499df88437f8860d56b827b7c6",
+          "reviewScope": "Viewer와 visibleTo/isVisibleTo/assertVisible: 회원모두,비회원공개/봉인/ACTIVE/BAN·404·content/count 동일 범위."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubPhotoAlbumVisibility.java",
+          "sha256": "290bfa75c14e66ecc66ba443bb7ab28cc2590bd477d25df6a96a91f9261e8ef1",
+          "reviewScope": "CLUB_ONLY/PUBLIC 두값·사진은앨범범위·PUBLIC도로그인필수."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubPhotoAlbumQueryRepository.java",
+          "sha256": "0e2e2599c7b62040616dffc896a22fb817a2eccb1ae0421a09d6d74dd6c08f4d",
+          "reviewScope": "36–129: 열람동일content/count·생성시각/ID역순·댓글수증감·사진페이지."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubPhotoAlbumCommentService.java",
+          "sha256": "1c6aa39d79d71a8b8b14d959e1fa11d9d32297955ff9ac3fde867f2e96ba4163",
+          "reviewScope": "65–254,258–358,417–517,520–584: 1000자·회원/본인/운영진·ACTIVE쓰기·부모한단계·카운트/언급·숨김/삭제자리표시·차단·중복제외알림."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubPhotoAlbumCommentQueryRepository.java",
+          "sha256": "5e5e02c4182368359b11f78a069c9daa0ce2feef0084a1aff078c3c5934cbe5a",
+          "reviewScope": "45–186: 활성또는활성답글부모·오래된순·cursor동일앨범부모검사·차단후살아남는행·size+1·차단전전체부모수."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPhotoAlbumAddParam.java",
+          "sha256": "924b4bd294bba86bc47597dc3a46811ec3513d7dc0cfad413e9d9a2780e5c3e3",
+          "reviewScope": "6–15: 제목/설명/visibility 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPhotoAlbumModParam.java",
+          "sha256": "e453b50c5d90a0b7662294c5434d15d85fff7e3d3dec5f2e2b5865d5dc19bfd6",
+          "reviewScope": "6–15: 제목/설명/visibility nullable부분수정 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPhotoAddParam.java",
+          "sha256": "b63992e6a5c28da2e475255f5ea02ed740f50efec7ca4b8f70b2bcdcc583fcac",
+          "reviewScope": "5–13: fileKey/originalFileName/caption."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/PhotoBatchDeleteParam.java",
+          "sha256": "b05510b2e73673d196f5efb7dc507a8ceb44077b9d14ff507d4d3a05d2c9a8ba",
+          "reviewScope": "8–13: List<Long> photoIds."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubAlbumCommentSearchParam.java",
+          "sha256": "70e14b87cd8b2a0d06a22858913d3ae57f8cb9ad9b1e819d5a99084c0202f947",
+          "reviewScope": "19–31: 부모페이지기본50·afterCommentId."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubAlbumCommentAddParam.java",
+          "sha256": "0ccb487bac22f7ec2aba3697f9d1249de16205d779e0a5e5246aeb688c13e666",
+          "reviewScope": "7–22: content/nullableparent/mentionedUserIds."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubAlbumCommentModParam.java",
+          "sha256": "29a64f33c8baeb8cad449bcc9a7fc68f8820522240bd9507f278b6f6e0d49f3f",
+          "reviewScope": "7–18: content/mentionedUserIds."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubPhotoAlbumVo.java",
+          "sha256": "efefadf6dcf221b7aa1a16de1f6ccf671fcf19922d45eb848e825bdefec77f60",
+          "reviewScope": "8–42: 공개범위/댓글수·canManage/canComment/canChangeVisibility·coverURL·기본정수와nullable문자열."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubPhotoVo.java",
+          "sha256": "7902b722d8af46dca5dc60b2c8d2182a4b66be024c1391e9fe6cf400d1e1bc40",
+          "reviewScope": "7–20: 앨범/업로더/파일키·nullable표시URL/설명/이름/시각."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubAlbumCommentVo.java",
+          "sha256": "b17d0589e17700621407d6345ef5436bacc10a0a207be42e3b421366bc3ddfff",
+          "reviewScope": "18–32: 부모nullable/작성자/본문/상태/답글/언급."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubAlbumCommentPageVo.java",
+          "sha256": "926f635443aec1fc8a6a3ca98d37e89e57cd89a00cf51c841b732bb214e123a4",
+          "reviewScope": "30–63: 부모page메타·canModerate·여과후content."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/util/ClubMapper.java",
+          "sha256": "899c974e6515ce94d43a39a1a692b320f1d61507b5cf0836ed3883651204b6d6",
+          "reviewScope": "259–281: 앨범/사진 응답·앨범수정 null IGNORE와 보호필드 매핑; 설명null유지 계약."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubAccessService.java",
+          "sha256": "6aa6a020c768d36ef4bb1a6214f99084bb4c5fde7817fadccae1465b8d01a258",
+          "reviewScope": "36–51: 회원행존재·유효운영진 검사. 소유자의 관리와 공개변경 조건 해석."
+        },
+        {
+          "path": "community_app/lib/data/api/club_photo_album_api.dart",
+          "sha256": "1e46cb087b3b9f30a4c5b53f1c85f6ee6021c9681022fd1fb00620a0fe6ba4a6",
+          "reviewScope": "18–78: 앨범단건포함API·사진등록필수키·목록Page/단건/void매핑."
+        },
+        {
+          "path": "community_app/lib/data/api/club_album_comment_api.dart",
+          "sha256": "791f0f8b0d02a2e76977c44f388ca34b548395a60e41b5adc3799e18a4c0342c",
+          "reviewScope": "22–52: 댓글page/aftercursor·동일POST에parent·수정/삭제·키없음."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_photo_repository.dart",
+          "sha256": "f7f8dc3b75e2e42943c6560ce9738b8b91b6f069ad0c1260c9a653eb746e2736",
+          "reviewScope": "22–145: Album/Photo 결과guard·typedparams·등록키전달/기본신규키."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_album_comment_repository.dart",
+          "sha256": "c38072f2439cb6b8006216708da95550ec297a0b723829cd25f81ab007fdee66",
+          "reviewScope": "15–82: 페이지/커서·typed부모/언급 요청·수정/삭제 Result."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/photo_album.dart",
+          "sha256": "29e55a0d0ba1cc30cf025aa8b7fe47ac2f4f68701a4ca704e1c44f5d186c0cbc",
+          "reviewScope": "9–53: 권한false기본·visibility unknown·URL/키분리·시각nullable."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/album_visibility.dart",
+          "sha256": "cfb75261b02bcbb7c76d211d61d60c3c29ce0fe5479d15c5060629e80d82932d",
+          "reviewScope": "7–29: 두서버값/unknown과사용자표시."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/photo.dart",
+          "sha256": "e3700b72d55234053fec723897bfe8c76674a695be4e1e800a0d97d5382e6a62",
+          "reviewScope": "Photo 필수ID/앨범/업로더/키와nullableURL/설명/시간."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/photo_add_param.dart",
+          "sha256": "29bfef859aa643e60897a971ff8a7dad2645057444d94fd22ea95f008d862e10",
+          "reviewScope": "fileKey필수·원본명/설명nullable."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/photo_album_add_param.dart",
+          "sha256": "135eefdd397ef233d49deacba857ec32d99d29619efe048e7b2eddbb286dc610",
+          "reviewScope": "제목/설명/공개범위·unknown요청null접기."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/photo_album_mod_param.dart",
+          "sha256": "c3db7186517366e1f6668d009cd078b7ef26a0fbfeaef29ce9483be15fac11eb",
+          "reviewScope": "nullable부분수정과공유visibility직렬화."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/album_comment_add_param.dart",
+          "sha256": "2c7a3472d89ba84da57a3efce9ab698c0484c85630860d7dbc25e3cac376f538",
+          "reviewScope": "부모nullable·content·mentionedUserIdsdefaultempty."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/album_comment_page.dart",
+          "sha256": "4ae802bd9230ef3754294cf3021693e6b6b1fb0f868a8b6d32bb3605104f37f7",
+          "reviewScope": "13–35: 부모page메타·canModeratefalse기본."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/photo_album_provider.dart",
+          "sha256": "d60dadbb28f2631dac327cdf0d3a73292f3d97f5567e5570a1c7b02d2bd3deec",
+          "reviewScope": "20–119: 20개목록·성공시갱신·단건조회 별도provider."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/photo_provider.dart",
+          "sha256": "72b1bbdc16cc1f6cb4b5a301d0c5c31789b5b7c5472f9e87b40a4126c13f28d1",
+          "reviewScope": "14–73: 사진30개·선택집합/읽은사진전체선택·일괄성공선택초기화/사진갱신."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/photo_upload_provider.dart",
+          "sha256": "01b386b2cdee1e2a5e61e3d4f85976873d53bd599707d4a6beac72ced4cb43de",
+          "reviewScope": "12–157: 세션초기화·최대10선택·파일키/요청키/시각·전송진행/등록결과."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/album_comment_provider.dart",
+          "sha256": "cc74ecc8d2153081c535de3f6ffff9744b4edb79346ea7a8b5644ec25d576936",
+          "reviewScope": "71–114,174–253,274–377,410–647,677–751: 계정/페이지50·커서/재시도·읽은페이지갱신·추가20탐색/최종재조회·명령성공후앨범/댓글갱신·세대차단."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/photo_album_list_screen.dart",
+          "sha256": "29bb49fae82fee77cb7da4863e31570020bb64fc284f24b2e4c264259eb9269d",
+          "reviewScope": "71–148,248–416: 공개설정따른댓글수·페이지오류footer·생성입력잠금/이탈/성공닫기/실패보존·공개범위생략."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/public_photo_album_list_screen.dart",
+          "sha256": "17770a1678e6fa31b6817cfce9cf1bbf1db85378815226c2402e5b3e620506a9",
+          "reviewScope": "14–29: 공개목록은 공통목록에 공개앨범경로 전달."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/photo_album_detail_screen.dart",
+          "sha256": "c9238730aa220a228214ca52294f5f87b8b31547a8603f3932f336c100a89d9f",
+          "reviewScope": "106–240,280–499,525–710,757–785: 서버권한·선택/업로드/관리/신고·부분페이지수·댓글회원별경로·삭제확인/복귀·수정빈설명null·공개범위조건."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/photo_upload_screen.dart",
+          "sha256": "fac0d01d1bd520b5a943b89b8a99015b8f0031498893492a88b48f32b62eadd7",
+          "reviewScope": "85–158,388–485,501–743: 계정별초안복원/저장·10선택·완료후등록·요청전checkpoint·23h검사·확정실패파일정리/불명확보관·부분성공/복귀."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/photo_upload_draft.dart",
+          "sha256": "5da87509efdabd953bf8c769714fdae7139d487ecabf5d92bdbcee6e4904173a",
+          "reviewScope": "6–84: 계정/클럽/앨범기기초안·파일/키짝/최초시각직렬화·23시간재전송경계."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/album_comments_screen.dart",
+          "sha256": "e20fb87078603d1bd3f0a795aea486658ae9d68e6e7876cb822fff6bbc83aa16",
+          "reviewScope": "229–284,341–391,479–615: 탐색결과/중단·작성성공후조회실패분리·계정착지초기화·공통thread·현재회원쓰기/운영진삭제/언급PersonSheet."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/widgets/album_visibility_selector.dart",
+          "sha256": "b45675430c0681c6e08bf1329bc6312e514cd8eb394e3b9ab550c7be1df0ce7e",
+          "reviewScope": "26–85: 회원/전체공개 두선택·로그인필수설명."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubPhotoAlbumCommentServiceTest.java",
+          "sha256": "bd324c42cc81f556d3914db76e40aadbc574771e2d16538d8b401ed59f4737ad",
+          "reviewScope": "283–298 숨긴부모답글거절/부수효과0;629–644 숨긴본인수정거절;831–850 숨긴부모자리표시/활성답글유지 단언. 실행안함."
+        },
+        {
+          "path": "community_app/test/widget/club/photo_album_paging_test.dart",
+          "sha256": "7658ded9ba4655c32e40491d049b1553ca12a23104c6526872bf397d39ebc2bb",
+          "reviewScope": "145–174:21번째앨범과실패한페이지명시재시도 단언 확인. 실행안함."
+        },
+        {
+          "path": "community_app/test/widget/club/photo_album_cover_recovery_test.dart",
+          "sha256": "bdaf8af51293cbca0984d3ff7a6709c3c5ed83f0e21d3f3abcbc98cb20ed4180",
+          "reviewScope": "53–110:표시URL사용/키직접이미지사용금지·URL없음자리표시 단언 확인. 실행안함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubImageReferences.java",
+          "sha256": "5a262ab75d1c4f8d18f3e7bbbd064755d441cd5ae0b8366a4c425ab0094026e8",
+          "reviewScope": "39–64: 사진참조연결·해제후 schedulePurge; 외부파일즉시삭제아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "185–192: 앨범생성회원과구독 Ability 결합."
+        },
+        {
+          "path": "community_api/api-app/src/main/resources/application-prod.yaml",
+          "sha256": "8cb1351b9f4d0664d91da564ff054fe7f5d05dfbe6dcd0055d0ed024a4a2b187",
+          "reviewScope": "232–245: 운영기본enabled-domains에는 CLUB_ALBUM_SOCIAL 없음·환경변수 전체대체. 실제운영설정열람아님."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/club_community_screen.dart",
+          "sha256": "68e55d0ddd6117a3db6bdbd59b0237547cbe725499cc6202d30e7772dbe20842",
+          "reviewScope": "144–151: 커뮤니티photos의createAlbum능력·settled·생성대화상자실제입구."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_detail_screen.dart",
+          "sha256": "7fb6b94389c130295ede88a9ad591da4cdae43a960a2ff0083d23295daf773cc",
+          "reviewScope": "552–582: 로그인/공개설정/비어있지않은목록일때공개사진첩입구."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "793–923: 회원사진첩/상세/업로드/댓글·공개목록/상세/댓글·commentId/landing전달."
+        },
+        {
+          "path": "community_app/lib/core/router/release_scope_routes.dart",
+          "sha256": "2372295713ae7df0b4c59a9a3551c6a1c8ffe3c5896fa3567b0707eeb89c28af",
+          "reviewScope": "259–265: 공개앨범목록과두댓글경로봉인."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "1311–1335: 앨범댓글알림의club/album/comment/landing·클럽fallback."
+        },
+        {
+          "path": "community_app/lib/core/utils/image_upload_helper.dart",
+          "sha256": "689c0f124d2d761415be01c844bb82327ca39c747fcdbc1fa2025550bc7ad407",
+          "reviewScope": "65–140: 주소발급/원본PUT/completeUpload성공때만fileKey반환·실패abort. 동일 SHA의 기존 모임사진/인증 대조 소스."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMentionResolver.java",
+          "sha256": "fe99826671124b3df3e779d76d24c7bf1b52a66cc3487ec1caaf2933b29f320d",
+          "reviewScope": "동일 SHA의 club_comments_20261122:36–299 10명/20시작점·신규회원/기존별칭·본문최장일치·별칭소유/공백경계 재사용."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/widgets/club_comment_thread.dart",
+          "sha256": "43b5cbb403f3279f28b76f84ebf7d99d858e870bbf01483d5c8e0654a8a6ba58",
+          "reviewScope": "동일 SHA의 club_comments_20261122:68–626 입력전송잠금/현재입력일치clear·본인/운영진행메뉴;648–735 수정실패유지;772–930 삭제부모/답글/사람링크 재사용."
+        }
+      ],
+      "reuses": [
+        "club_calendar_20261122",
+        "club_comments_20261122",
+        "club_invitation_20261122",
+        "club_lifecycle_20261122",
+        "club_posts_20261122",
+        "event_photos_20261122",
+        "transport_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-11_photo-album_prd.md",
+          "sha256": "7a03b64fd05d672f223caafb86768efb53399463390d58795df219c42ad6ee78"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-11.html": [
+          "sidebar",
+          "launch-strip",
+          "state-current",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-11 기존9개 참조 유지·단건앨범1개/앨범댓글4개 연결 추가"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-11_photo-album/scenarios.md",
+          "sha256": "b2189c56367f33017254528af47ddb1165cd4685d908073e14a778950dd1330e",
+          "characters": 1703,
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]

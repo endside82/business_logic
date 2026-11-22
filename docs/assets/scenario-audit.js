@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,214개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,224개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1214,
+    "documentedScenarioItems": 1224,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 38,
     "partialEvidenceChain": 54,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 514,
-    "verifiedTraceRecords": 512,
+    "traceMarkers": 519,
+    "verifiedTraceRecords": 517,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -6219,19 +6219,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-11",
       "domain": "클럽",
-      "name": "사진첩",
-      "scenarioCount": 10,
+      "name": "클럽 사진첩·등록 복구·공개 범위·댓글",
+      "scenarioCount": 20,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-11_photo-album/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-11_photo-album_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 10
+        "documentScenarioCount": 20
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-11_photo-album/backend.md",
-        "total": 9,
-        "verified": 9,
+        "total": 14,
+        "verified": 14,
         "retired": 0,
         "entries": [
           {
@@ -6386,17 +6386,104 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 118
               }
             ]
+          },
+          {
+            "id": "F04-11:10",
+            "label": "GET /api/v1/clubs/{clubId}/photo-albums/{albumId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumController.java",
+                "controller": "ClubPhotoAlbumController",
+                "method": "getAlbum",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}",
+                "targetLine": 43,
+                "methodLine": 44
+              }
+            ]
+          },
+          {
+            "id": "F04-11:11",
+            "label": "GET /api/v1/clubs/{clubId}/photo-albums/{albumId}/comments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumCommentController.java",
+                "controller": "ClubPhotoAlbumCommentController",
+                "method": "getComments",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/comments",
+                "targetLine": 50,
+                "methodLine": 51
+              }
+            ]
+          },
+          {
+            "id": "F04-11:12",
+            "label": "POST /api/v1/clubs/{clubId}/photo-albums/{albumId}/comments",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumCommentController.java",
+                "controller": "ClubPhotoAlbumCommentController",
+                "method": "createComment",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/comments",
+                "targetLine": 60,
+                "methodLine": 61
+              }
+            ]
+          },
+          {
+            "id": "F04-11:13",
+            "label": "PUT /api/v1/clubs/{clubId}/photo-albums/{albumId}/comments/{commentId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumCommentController.java",
+                "controller": "ClubPhotoAlbumCommentController",
+                "method": "updateComment",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/comments/{commentId}",
+                "targetLine": 70,
+                "methodLine": 71
+              }
+            ]
+          },
+          {
+            "id": "F04-11:14",
+            "label": "DELETE /api/v1/clubs/{clubId}/photo-albums/{albumId}/comments/{commentId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPhotoAlbumCommentController.java",
+                "controller": "ClubPhotoAlbumCommentController",
+                "method": "deleteComment",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/clubs/{clubId}/photo-albums/{albumId}/comments/{commentId}",
+                "targetLine": 81,
+                "methodLine": 82
+              }
+            ]
           }
         ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 2,
+        "count": 4,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 2,
+        "scenarioReferenceCount": 4,
         "files": [
           "community_app/integration_test/seed_club_authoring_gap_test.dart",
-          "community_app/integration_test/seed_club_community_moderation_test.dart"
+          "community_app/integration_test/seed_club_community_moderation_test.dart",
+          "community_app/test/widget/club/photo_album_cover_recovery_test.dart",
+          "community_app/test/widget/club/photo_album_paging_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
