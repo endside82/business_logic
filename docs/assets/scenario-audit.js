@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,207개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,206개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1207,
+    "documentedScenarioItems": 1206,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 38,
     "partialEvidenceChain": 54,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 501,
-    "verifiedTraceRecords": 499,
+    "traceMarkers": 514,
+    "verifiedTraceRecords": 512,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -5667,31 +5667,254 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-08",
       "domain": "클럽",
-      "name": "게시판 & 게시글 생성/수정/삭제",
-      "scenarioCount": 17,
+      "name": "게시판·게시글·예약·초안과 작성 글 모아 보기",
+      "scenarioCount": 16,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-08_board-post-crud/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 17
+        "documentScenarioCount": 16
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-08_board-post-crud/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 13,
+        "verified": 13,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F04-08:1",
+            "label": "GET /api/v1/clubs/{clubId}/boards — 게시판 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubBoardController.java",
+                "controller": "ClubBoardController",
+                "method": "getBoards",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/boards",
+                "targetLine": 31,
+                "methodLine": 32
+              }
+            ]
+          },
+          {
+            "id": "F04-08:2",
+            "label": "POST /api/v1/clubs/{clubId}/boards — 게시판 생성",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubBoardController.java",
+                "controller": "ClubBoardController",
+                "method": "createBoard",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/boards",
+                "targetLine": 38,
+                "methodLine": 39
+              }
+            ]
+          },
+          {
+            "id": "F04-08:3",
+            "label": "PUT /api/v1/clubs/{clubId}/boards/{boardId} — 게시판 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubBoardController.java",
+                "controller": "ClubBoardController",
+                "method": "updateBoard",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}",
+                "targetLine": 47,
+                "methodLine": 48
+              }
+            ]
+          },
+          {
+            "id": "F04-08:4",
+            "label": "DELETE /api/v1/clubs/{clubId}/boards/{boardId} — 게시판 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubBoardController.java",
+                "controller": "ClubBoardController",
+                "method": "deleteBoard",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}",
+                "targetLine": 57,
+                "methodLine": 58
+              }
+            ]
+          },
+          {
+            "id": "F04-08:5",
+            "label": "GET /api/v1/clubs/{clubId}/boards/{boardId}/posts — 글 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "getPosts",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts",
+                "targetLine": 38,
+                "methodLine": 39
+              }
+            ]
+          },
+          {
+            "id": "F04-08:6",
+            "label": "GET /api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId} — 글 상세",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "getPost",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}",
+                "targetLine": 47,
+                "methodLine": 48
+              }
+            ]
+          },
+          {
+            "id": "F04-08:7",
+            "label": "POST /api/v1/clubs/{clubId}/boards/{boardId}/posts — 글 작성",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "createPost",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts",
+                "targetLine": 56,
+                "methodLine": 57
+              }
+            ]
+          },
+          {
+            "id": "F04-08:8",
+            "label": "PUT /api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId} — 글 수정",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "updatePost",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}",
+                "targetLine": 78,
+                "methodLine": 79
+              }
+            ]
+          },
+          {
+            "id": "F04-08:9",
+            "label": "DELETE /api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId} — 글 삭제",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "deletePost",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}",
+                "targetLine": 89,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F04-08:10",
+            "label": "PATCH /api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}/pin — 고정 전환",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "togglePin",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}/pin",
+                "targetLine": 99,
+                "methodLine": 100
+              }
+            ]
+          },
+          {
+            "id": "F04-08:11",
+            "label": "POST /api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}/like — 좋아요",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "likePost",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}/like",
+                "targetLine": 109,
+                "methodLine": 110
+              }
+            ]
+          },
+          {
+            "id": "F04-08:12",
+            "label": "DELETE /api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}/like — 좋아요 취소",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+                "controller": "ClubPostController",
+                "method": "unlikePost",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/clubs/{clubId}/boards/{boardId}/posts/{postId}/like",
+                "targetLine": 119,
+                "methodLine": 120
+              }
+            ]
+          },
+          {
+            "id": "F04-08:13",
+            "label": "GET /api/v1/users/{targetUserId}/club-posts — 프로필 작성 글",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/UserClubPostController.java",
+                "controller": "UserClubPostController",
+                "method": "getUserClubPosts",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/{targetUserId}/club-posts",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": true,
-        "count": 3,
+        "count": 4,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 3,
+        "scenarioReferenceCount": 4,
         "files": [
           "community_app/integration_test/seed_club_authoring_gap_test.dart",
           "community_app/integration_test/seed_club_community_moderation_test.dart",
-          "community_app/integration_test/seed_club_mutation_test.dart"
+          "community_app/integration_test/seed_club_mutation_test.dart",
+          "community_app/test/widget/club/post_draft_lifecycle_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"

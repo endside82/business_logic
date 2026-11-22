@@ -268,7 +268,8 @@
         "club_invitation_20261122",
         "club_stats_20261122",
         "club_announcements_20261122",
-        "club_comments_20261122"
+        "club_comments_20261122",
+        "club_posts_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2945,9 +2946,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "deb3555ff189a23d49b148428004b2a15bbb73fcf6e23ede65b8a41066d75f9d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_posts_20261122"
+      ],
+      "reviewedSha256": "28e78080371857a94e7300d6d37166a1d03439991239ace0e814460bfbb075dc"
     },
     {
       "path": "docs/features/F04-09.html",
@@ -4878,7 +4882,8 @@
         "club_invitation_20261122",
         "club_stats_20261122",
         "club_announcements_20261122",
-        "club_comments_20261122"
+        "club_comments_20261122",
+        "club_posts_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4942,7 +4947,8 @@
         "club_invitation_20261122",
         "club_stats_20261122",
         "club_announcements_20261122",
-        "club_comments_20261122"
+        "club_comments_20261122",
+        "club_posts_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5029,7 +5035,8 @@
         "club_invitation_20261122",
         "club_stats_20261122",
         "club_announcements_20261122",
-        "club_comments_20261122"
+        "club_comments_20261122",
+        "club_posts_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5905,10 +5912,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "503477028465f5e6ef69d0d0c647e25640f131a003c98335e5f4fb866af0baa1",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_posts_20261122"
+      ],
+      "reviewedSha256": "ac77c14eda2ccd1c6a3bc9fee968f3ee5fca4c5cd7a87934838706cbf818a7f7"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-09_post-comments_prd.md",
@@ -7748,7 +7757,8 @@
         "club_invitation_20261122",
         "club_stats_20261122",
         "club_announcements_20261122",
-        "club_comments_20261122"
+        "club_comments_20261122",
+        "club_posts_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7960,7 +7970,8 @@
         "club_invitation_20261122",
         "club_stats_20261122",
         "club_announcements_20261122",
-        "club_comments_20261122"
+        "club_comments_20261122",
+        "club_posts_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9764,9 +9775,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4cd331ae1d13d7509552d75c5db8e904165290a0f3c485b08fd536b00f2d69b8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_posts_20261122"
+      ],
+      "reviewedSha256": "5d0924ce26e0969e3f537a87174c0a6fd25c0c7f30f44319ae23c4b746c9a630"
     },
     {
       "path": "units/04_club/F04-08_board-post-crud/diagrams.md",
@@ -9774,9 +9788,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "dcb59857391e3dfb13656359a9df78200a3bf9e545c8a6d876f62a0cae69d128",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_posts_20261122"
+      ],
+      "reviewedSha256": "1f98c216e70b99ce32de386fdcc91db4e3d4762f6a0573af32f088da181d7536"
     },
     {
       "path": "units/04_club/F04-08_board-post-crud/frontend.md",
@@ -9784,9 +9801,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "b2fdc25429f5fd13e579d7684eeac95baf6532059a71c9693e42e7e9cf73bea4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_posts_20261122"
+      ],
+      "reviewedSha256": "5861a3cc9603fe6943530c0300e2cd3379d04711610ff626b10d9d57d5756a58"
     },
     {
       "path": "units/04_club/F04-08_board-post-crud/scenarios.md",
@@ -9794,9 +9814,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3ee084fc7dbbacc42ed368a4f0f9a9e025b4a3a6c2c7f260e81f1116b0a5b955",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_posts_20261122"
+      ],
+      "reviewedSha256": "df8e7e48b9427f1dee426704c2166dd9b89657a22d4c13510cef7a16711659b4"
     },
     {
       "path": "units/04_club/F04-09_post-comments/backend.md",
@@ -15212,6 +15235,11 @@
       "command": "F04-09 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·diff 검사",
       "result": "코드 위치111개 일치; 파서11/11 통과; 상대경로2181개·파생 정본 해시259개 오류0; 현재 그룹 소스/정본29개 해시 일치; 기존 HTML ID4개 유지; scenario-audit 최신; diff 오류0",
       "scope": "댓글/답글/멘션/운영진삭제/페이지/알림착지 문서 검사. 새 제품·이미지·푸시수신 시험 없음. ignored units4개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-08 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
+      "result": "코드 위치112개 일치; 파서11/11 통과; 상대경로2206개·파생 정본 해시263개 오류0; 현재 그룹 소스/정본44개 해시 일치; 기존 HTML ID7개·과거 인용1개 보존; scenario-audit 최신; diff 오류0; API/app HEAD 유지",
+      "scope": "게시판/게시글/사진/초안/멱등결과/예약/좋아요/프로필글 문서 검사. 새 제품·이미지·업로드·예약실행·동시성 시험 없음. ignored units4개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -25067,6 +25095,265 @@
         "F04-09 기존 전체목록과 페이지·작성·답글·수정·삭제 연결6개 추가"
       ],
       "retainedHistoricalQuotes": []
+    },
+    "club_posts_20261122": {
+      "kind": "source_review",
+      "scope": "F04-08 게시판/글 현재입구·관리제공범위·권한/상태·검색·사진·초안/멱등결과확인·예약·좋아요·프로필작성글. 선택한 기존 시험 단언과소스 대조; 새 제품실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubBoardController.java",
+          "sha256": "f478c54d59e0d5940b8dbb58619b7559c59211801491a98eb52d64306c8da33e",
+          "reviewScope": "21–64 게시판 GET List/POST201/PUT200/DELETE204 계약."
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubPostController.java",
+          "sha256": "35cb56be9eb6af82532ec2e25846fab006bff3476bc2d2afffc15c7cf0da2bea",
+          "reviewScope": "24–127 글 Page/상세/작성/수정/삭제/고정/좋아요/취소8개·생성 선택멱등키·ID참조 재생."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubPostService.java",
+          "sha256": "9f8f7950d9e206f2c037897eeec73e80c2b9cfb6257028bd1c156a8b626be0ff",
+          "reviewScope": "69–71 10장/제목200;99–707 목록/차단/상세조회수·작성/수정/삭제/고정/좋아요·예약게시·멱등참조재조회·Param검증;798–914 사진최종목록·소유/완료/용도/이미연결·참조/순서 동기화."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubPostQueryRepository.java",
+          "sha256": "ad16652c76ea51a53ebb51744c6356fd4848b50c956b963c0170857d09e05193",
+          "reviewScope": "51–142 ACTIVE/차단·고정/생성/id정렬·오프셋·조회/댓글수·모든상태boardId이동;234–313 최근글/댓글의가시성·대표사진순서0."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubBoardParam.java",
+          "sha256": "698cca93f602fa34117df987857e67c8559526b215375940bf71f7344297ac07",
+          "reviewScope": "8–12 name/description."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubBoardUpdateParam.java",
+          "sha256": "7085ff75e402bdca5379b571e7ce0937edbe63f35c75e374bfc87c87868db35e",
+          "reviewScope": "8–14 선택name/description/sortOrder."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubBoardVo.java",
+          "sha256": "ebf9fb70a35c6b6a4d4e5718d1668016605b10d82b1f54b01d7890d35a8c070b",
+          "reviewScope": "9–24 기본필드/활성글수/최근글·댓글시각/actions.write."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPostAddParam.java",
+          "sha256": "516f89df29732f1fd617dba6d8a59d69dc97b912330e8002481c7b541bb69a0c",
+          "reviewScope": "11–38 제목/본문/서식/사진키/예약시각/투표/장소."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPostModParam.java",
+          "sha256": "a39638bbe7250e16b2c91886f0555a6304c1b1027064ee314e7eac1a2f97cd5d",
+          "reviewScope": "9–24 제목/본문/서식/사진키/장소·예약/투표정의없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubPostSearchParam.java",
+          "sha256": "325b0e9a8eb7a4552318eddb6733d27d0d85749e00fcd7d876a8a1c7f4cdc7a5",
+          "reviewScope": "9–10 PagingParam만상속·keyword없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubPostVo.java",
+          "sha256": "e8ea45f9c47a2cf0641206ee9a3a5b72b89ecedad925e28be035f33157119db0",
+          "reviewScope": "13–46 본문/사진/통계/상태/투표/장소·pin/delete행동."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubPostSimpleVo.java",
+          "sha256": "be9c678f0f0b3833e38371226244b01c877fceb98c44cb90ce47cfa00b284e05",
+          "reviewScope": "9–32 목록대표사진·좋아요·투표요약/장소수와본문차이."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/model/PostStatus.java",
+          "sha256": "88661ed40e1d2d41806245fcabd47344545cbf01d9ebd3c55df6fbf1cfb6884c",
+          "reviewScope": "3–19 SCHEDULED/ACTIVE/DELETED/HIDDEN 실제상태."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/board_list_screen.dart",
+          "sha256": "4bf359978aa79c0511f3d978ac3eb49e2cf86bb2e0c4cedcc5d5fcfde83ccf38",
+          "reviewScope": "38–78 회원/미리보기·목록갱신;178–209 최근글/댓글라벨;263–332 생성입력/전송잠금. 앱presentation updateBoard/deleteBoard 호출검색결과없음."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/post_list_screen.dart",
+          "sha256": "e6e764bd137676ce9d7895de84ef99caa41eb1acb37e9f87428e70ec93edb9c5",
+          "reviewScope": "84–248 권한/미리보기·검색상태/submit·행write·고정분리;294–331 추가오류재시도·작성입구."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/post_list_provider.dart",
+          "sha256": "00ae9199b60343c162bd0985fd541c6e1f7aba4c5bb0fcc4d8b2a089ea1812af",
+          "reviewScope": "18–132 page20·실제검색어미적용·좋아요행중복잠금/낙관값/서버값/되돌림."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/post_detail_provider.dart",
+          "sha256": "5f4675b5a6137c19649b402b88cb29b0c9c717f130357b5d033f2c0ffa865ca3",
+          "reviewScope": "27–146 회원/사람/글변경구독·상세/삭제/고정결과·좋아요단일요청/낙관/실패·변경신호."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/post_form_provider.dart",
+          "sha256": "bdcf0ab161f7bf45ab65e8a5f37ab7471347011bca55d0437f67a8753c4ed9f2",
+          "reviewScope": "107–440 장소공개/마스킹·변경판정·계정경계·수정프리필·10사진/5투표/5장소·입력복원·typed본문·생성요청키·수정장소부분반영."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/post_create_screen.dart",
+          "sha256": "e388948e21bb0e17e0d4e4b545f3e59354b234071b6af3ec0fedeb824441453f",
+          "reviewScope": "158–343 초안복원/500ms저장/이탈/정리·일반초안예약시각미보관;352–375 전송/편집차단;465–470 미확정결과안내;498–537 제목100/서식에디터;748–832 대기사진보관/소유/업로드;834–985 pending키/본문선저장·동일재확인·거절분류·성공정리·예약서울1분."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/post_edit_screen.dart",
+          "sha256": "8bbf603fc818c422adad471c8f9571c289a44fff96b41d306ec68aaad36f7d4c",
+          "reviewScope": "174–233 서버기준/초안복원·500ms저장;267–379 초안/미전송장소보존/이탈;1022–1075 변경/업로드게이트·PUT·성공정리/상세/목록갱신. 제목100은596행 확인."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/post_draft_session.dart",
+          "sha256": "cbd618ab534849413717a7bd2f17302b13fd58d1d9748f391a69c4fbed73018a",
+          "reviewScope": "11–97 계정/클럽/게시판/post별세션·계정세대·load/save/stage/owns/clear 위임."
+        },
+        {
+          "path": "community_app/lib/data/api/club_post_api.dart",
+          "sha256": "62a9d1145df6ffba727040bb5a493190a775ca274b8fb7d12d0c0694eb6163a5",
+          "reviewScope": "17–82 글8창구·프로필글·PageResponse·생성필수요청키·typed본문."
+        },
+        {
+          "path": "community_app/lib/data/api/club_board_api.dart",
+          "sha256": "69dd7039070fdd5e7b5470db5bf686dcf1d5cffec4e51b3dca4e491c6bcb17c1",
+          "reviewScope": "14–34 게시판List/typed작성·수정/삭제."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_board_repository.dart",
+          "sha256": "7f53a230706d4bd5497df75644cbd934826a29e1320625f148380c60a3a38484",
+          "reviewScope": "89–167 글상세·키있는작성·수정·삭제·고정·좋아요/취소 Result래핑."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/post.dart",
+          "sha256": "220e1061a143c42f4a15a8e56e3f2a0dc917803530b874ea9bd2aaa351281356",
+          "reviewScope": "14–77 목록/상세공유모델·본문기본빈값·pinned JSON·상태String·사진/투표/장소·기본닫힘행능력."
+        },
+        {
+          "path": "community_app/lib/data/models/club/community/post_status.dart",
+          "sha256": "eac93181ce8f0b60345e05ff20f252ca80f4fa52bf7bb50e961c20d9c39bc973",
+          "reviewScope": "4–30 scheduled지원·unknown폴백·HIDDEN별도enum없음."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubBoardServiceTest.java",
+          "sha256": "430668035ac3043a26180c33d6be5d2ba3ae88865c935f3a5ea4f9752f90b9f1",
+          "reviewScope": "80–136 예약글이동순서·전부삭제때이동생략·자유판없으면삭제/해제안함 단언읽음. 실행아님."
+        },
+        {
+          "path": "community_app/test/widget/club/post_draft_lifecycle_test.dart",
+          "sha256": "1de11cbed27e1322047d89adf52b4860ac12cc207ff2eafe3e9b2ba4968b3dce",
+          "reviewScope": "711–735 응답유실후런타임/디스크캐시재생성·같은키/본문복원·성공정리 단언읽음. 실행아님."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/UserClubPostController.java",
+          "sha256": "7e0c806d1e9f9d4a4f27092b7c8c6f606727a8dc51bcd5235c5cfb6bb21345cd",
+          "reviewScope": "20–36 타인프로필작성글Page와검색param."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubBoardService.java",
+          "sha256": "fc1eed73ca164274a7fa37c26aa72fb173a46ecc6e503c996bfa4b8776739d61",
+          "reviewScope": "47–272 기본3판·회원/차단최근활동·행write·운영진CUSTOM생성/수정·50/200길이·중복·기본삭제불가·예약/숨김보존판정과이동/참조해제."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/UserClubPostService.java",
+          "sha256": "ddbe5e88c2e480cf2d5b70115bbf73a8038e9fb7a43afdde2fc6b6604b726c7e",
+          "reviewScope": "35–65 page검증·타인계정/차단/상세접근/클럽비공개·고정정렬·Page."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/UserClubPostQueryRepository.java",
+          "sha256": "2548fc5205c149d841bdd255a062d5741fc933e799273bfa4f0f4cb8246dd8b0",
+          "reviewScope": "36–68 대상저자ACTIVE·조회자가회원인클럽·최신순·작성자현재회원추가조건없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "125–141 게시판생성/일반회원작성/NOTICE유효운영진;376–398 글고정·본인현재회원/타인유효운영진삭제와활성행."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "113–149 ID참조재생과404결과불가변환;254–288 같은키명령해시검사·거절/결과스키마·재생과충돌."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishService.java",
+          "sha256": "37ca1bbc12a79b0cf1a8ac0acbe6b0f5f9aaca3f4be4e053c107c990d37e4b88",
+          "reviewScope": "70–118 최소1분·글투표기한검증·중복진행예약·저장;281–293 글작성자소유/SCHEDULED. 공통PUBLISH검사는 club_announcements_20261122 동일 SHA 233–244 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishAuthority.java",
+          "sha256": "c39513dd7381611b79c0673b3628e91d74e6ab23ed9bdfafd0abe97b98bb8755",
+          "reviewScope": "45–51 CLUB_POST는현재게시판작성권한으로위임."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishItemWorker.java",
+          "sha256": "3d5dc4b1c957ede985baa09df2857915d422fc896142f395d32ef0f8176357e2",
+          "reviewScope": "234–258 CLUB_POST 정상게시/현재권한callback·유효차수예외실패·공통publishUnderClaim 연결. 공통결과는앞선공지범위재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishStateWriter.java",
+          "sha256": "32878a58ec52b6ad9c4ddec305ef0b5c77ba49f6e74569e0869b032916e14776",
+          "reviewScope": "동일 SHA 재사용: club_announcements_20261122 158–184 실행차수·PUBLISHED/대상소실/권한상실결과;220–261 유효차수FAILED와실패알림."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/club_community_screen.dart",
+          "sha256": "68e55d0ddd6117a3db6bdbd59b0237547cbe725499cc6202d30e7772dbe20842",
+          "reviewScope": "125–134 게시판구역FAB·createBoard능력·settled·실제생성창."
+        },
+        {
+          "path": "community_app/lib/presentation/club/community/screens/post_detail_screen.dart",
+          "sha256": "e88d3da8c379935244901cf1a34246922534408c2bc8aa9f0bf199ec5aa3057d",
+          "reviewScope": "824–926 본인수정·행pin/delete·삭제확인/성공복귀·목록갱신;983–999 타인신고. 댓글부분은 club_comments_20261122 동일 SHA 재사용."
+        },
+        {
+          "path": "community_app/lib/presentation/profile/widgets/profile_authored_posts.dart",
+          "sha256": "54398604ac051db45b3b2168ce942615b04fe8a9956a9726c1e85868f4ba0902",
+          "reviewScope": "21–205 펼칠때페이지조회·접힘/쪽/영역기억·총계/이전다음·뒤쪽빈페이지첫장;213–261 카드club/board/date·ProfileExploration상세boardId."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/user_club_posts_provider.dart",
+          "sha256": "3bdbb0c4fedf76eec44c8a34c793d6943a97caee472b0d7b5c302fcb4ff85afa",
+          "reviewScope": "11–29 20개페이지·대상사람접근구독·PageResult."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "600–715 게시판/글목록/작성/투표/상세/수정경로·회원상세·필수boardId·comment/landing전달."
+        }
+      ],
+      "reuses": [
+        "club_announcements_20261122",
+        "club_comments_20261122",
+        "club_lifecycle_20261122",
+        "event_capacity_waitlist_20261122",
+        "privacy_visibility_20261122",
+        "profile_hub_edit_addresses_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
+          "sha256": "ac77c14eda2ccd1c6a3bc9fee968f3ee5fca4c5cd7a87934838706cbf818a7f7"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-08.html": [
+          "sidebar",
+          "content-photos",
+          "launch-strip",
+          "state-current",
+          "profile-post-list",
+          "profile-navigation",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-08 게시판4·게시글8·프로필글1 연결13개 추가"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-08_board-post-crud/scenarios.md",
+          "sha256": "574e0aaddb3c693ef29399f925d5fefd5ea200ebe2fe7cf945c7f220f423d073",
+          "characters": 5942,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
     }
   },
   "currentSourceVersions": {

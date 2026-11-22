@@ -1,153 +1,137 @@
-# F04-08. 게시판 & 게시글 CRUD PRD
+# F04-08. 게시판·게시글·예약·초안과 작성 글 모아 보기
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **기능 참고 문서.** 2026-11-22 서버와 앱 소스를 대조했다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 소스 확인·기존 시험 단언과 새 실행 통과를 구분한다.
 
->
-> **2026-06-10 AUTH-04/06/08 + 이미지 수정 반영**: 클럽 포스트 컴포저 고도화(AUTH-04), 예약 게시(AUTH-06, `PostStatus.SCHEDULED`), 게시글 좋아요(AUTH-08, `club_post_like` 테이블), 이미지 업로드 완료 처리(presigned → completeUpload → IDOR 검증).
+<!-- source-measured: 2026-11-22 -->
 
-## 1. 결론
+## 실제 접근 경로와 행동 입구
 
-클럽 멤버는 게시판 단위로 글을 작성/조회/수정/삭제하며, OWNER/ADMIN은 추가 게시판을 만들고 게시글을 고정한다. 클럽 생성 시 기본 게시판 3개(NOTICE/FREE/INTRODUCTION)가 자동 생성된다. 게시글 수정은 작성자 본인만, 삭제는 작성자 또는 OWNER/ADMIN, 고정은 OWNER/ADMIN만 가능하다. NOTICE 게시판에는 OWNER/ADMIN만 글을 쓸 수 있다.
+클럽 커뮤니티의 게시판 구역은 게시판 목록을 보여 준다. 회원 권한을 읽는 동안 로딩·재시도를 제공하고 비회원은 미리보기로 보낸다. 게시판 카드에서 `/clubs/{clubId}/boards/{boardId}/posts`로 들어가며, 커뮤니티 게시판 구역의 추가 버튼은 서버 `createBoard` 능력을 기준으로 게시판 만들기 창을 연다. 이전 문서의 목록 내부 “게시판 추가 TextButton” 설명과 구분한다.
 
-**AUTH-06 (예약 게시)**: `PostStatus` enum에 `SCHEDULED` 값이 추가됐다(`community_api/.../club/model/PostStatus.java:5`). 작성 시 `scheduledAt` 파라미터를 넘기면 status=SCHEDULED로 생성되고 피드/목록/상세에 미노출된다. 예약 시각 도달 시 스케줄러가 ACTIVE로 전환하며, 전환 실패 시 `NotificationType.SCHEDULED_PUBLISH_FAILED`(97) 알림을 발송한다. 게시판 삭제 시 SCHEDULED 글은 DELETED 글과 달리 자유게시판으로 이동 보존된다(`ClubBoardService.java:169-180`).
+게시글 목록 작성 버튼은 해당 게시판 행의 `actions.write`를 사용한다. 작성 경로는 `/clubs/{clubId}/boards/{boardId}/posts/create`, 상세는 `/clubs/{clubId}/posts/{postId}?boardId={boardId}`, 수정은 상세 경로의 `/edit`다. 상세·수정에서 유효한 `boardId`가 없으면 게시판에서 열라는 잘못된 접근 안내를 표시한다. 댓글 알림은 [댓글과 대상 댓글 찾기](F04-09_post-comments_prd.md)의 경로로 연결된다.
 
-**AUTH-08 (게시글 좋아요)**: `club_post_like` 테이블이 신설됐다(UNIQUE(club_post_id, user_id)). 좋아요/취소는 각각 `POST`/`DELETE` `.../posts/{postId}/like`로 분리되며 멱등(insert-if-absent / delete-if-present)이다. 비관적 락(`findForUpdateById`)으로 동시 요청을 직렬화해 UNIQUE 충돌을 방지한다. 응답 VO는 `{postId, likeCount, likedByMe}`다. 목록 API는 `likeCount`/`likedByMe`를 배치로 채운다(N+1 방지).
+상세 상단 더보기는 본인 수정, 서버 `actions.pin` 고정/해제, `actions.delete` 삭제, 타인 신고를 구분한다. 삭제는 확인 뒤 요청하고 성공 시 목록을 갱신해 복귀한다. 고정은 서버가 반환한 최종 상태로 안내하고 목록을 다시 읽는다. 타인 신고에는 `COMMUNITY_POST`, 게시글 ID와 클럽 ID를 전달한다. 댓글 행 메뉴는 별도 대상이며 게시글 메뉴와 혼동하지 않는다.
 
-**이미지 수정**: 이미지 업로드는 presigned URL → S3 PUT → `completeUpload` 호출까지 완료해야 서버가 COMPLETED 상태로 인정한다. 미완료 PENDING 파일은 24h 후 소실된다. 게시글 이미지 표시는 서버 presigned downloadUrl로만 가능하며, 읽기 시 소유자(authorId) + COMPLETED + CLUB_BOARD 용도를 재검증해 IDOR를 차단한다(`ClubPostService.java:73-90`).
+## 게시판 계약과 삭제 시 보존
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+기본 경로 `/api/v1/clubs/{clubId}/boards`에서 GET은 `List<ClubBoardVo>`, POST는 201 VO, `PUT /{boardId}`는 200 VO, `DELETE /{boardId}`는 204다. 생성은 `name`, 선택 `description`; 수정은 선택 `name`, `description`, `sortOrder: Integer`다. 응답은 ID·유형·이름·설명·순서·활성 게시글 수·최근 글 시각·최근 댓글 시각·`actions.write`다.
 
-- 클럽 상세(F04-02) > "클럽 홈" CTA → 클럽 커뮤니티 화면 (`/clubs/:id/community`) > "게시판" 탭
-- 알림 → 댓글/멘션(F04-09)을 통해 게시글 상세로 직접 진입
-- 딥링크 `community://clubs/:id/posts/:postId`
+클럽 생성 시 `NOTICE` 공지사항, `FREE` 자유게시판, `INTRODUCTION` 가입인사를 순서 0·1·2로 만든다. 이는 [공지 기능](F04-10_announcements_prd.md)의 별도 공지 목록과 데이터가 다르다. 유효 운영진은 `CUSTOM` 게시판을 추가하고 수정·삭제할 수 있다. 이름은 생성 시 공백 불가·50자 이하, 설명은 200자 이하다. 같은 클럽의 동일 이름은 거절한다. 수정의 빈 이름은 이름 변경으로 적용하지 않고 null 설명은 기존 값을 유지한다. 수정 `sortOrder`에는 이 서비스의 별도 범위 검사가 없다.
 
-## 2. 코드 위치
+기본 게시판 삭제는 `BOARD_DEFAULT_NOT_DELETABLE`이다. 사용자 게시판 삭제는 게시판·게시글을 잠그고 `DELETED`가 아닌 보존 대상이 있는지 검사한다. 예약 `SCHEDULED`와 숨김 `HIDDEN`도 이 검사에 포함한다. 보존 대상이 있는데 자유게시판이 없으면 삭제를 중단한다.
 
-계약의 정본은 코드다. 서버: `ClubPostController`, `ClubBoardController`, `PostStatus`, `ClubPostLike`, `ClubPostLikeResultVo`, `ClubPostService`, `ClubBoardService`, `ScheduledPublishService`. 앱: `club_community_screen.dart`, `board_list_screen.dart`, `post_list_screen.dart`, `post_detail_screen.dart`, `post_create_screen.dart`, `post_edit_screen.dart`, `club_post_api.dart`, `post_list_provider.dart`, `post_status.dart`, `board_card.dart`.
+보존 대상이 하나라도 있으면 `updateBoardId`가 해당 게시판의 **모든 글**을 자유게시판으로 옮긴다. 이동 질의 자체에는 상태 필터가 없어 같은 게시판의 `DELETED` 글도 함께 옮겨질 수 있다. 전부 삭제 상태인 경우에는 이동을 생략하고 게시판 삭제와 남은 사진 참조 정리를 수행한다. “삭제 글은 항상 이동 제외”로 단정하지 않는다.
 
-## 3. 전체 동작 흐름
+앱은 생성 창·전송 잠금·성공/실패를 제공한다. 수정·삭제 API와 Repository·Provider는 있으나 현재 앱 presentation의 호출 입구는 없다. 이를 앱에서 모두 사용할 수 있는 관리 기능으로 표기하지 않는다.
 
-### 게시판 목록 (`board_list_screen.dart`)
+## 게시글 목록·검색·조회 계약
 
-- **사용자가 보는 것**:
-  - 상단 탭 바 [게시판/공지/사진첩/캘린더] (F04-08~12 공통)
-  - 게시판 카드 (List): 아이콘, 게시판명, 설명, "게시글 N개 · 최근 X시간"
-  - OWNER/ADMIN: "+ 게시판 추가" TextButton
-- **액션**:
-  - 카드 탭 ▶ `/clubs/:id/boards/:boardId/posts`
-  - "게시판 추가" ▶ `BoardCreateDialog` ▶ `boardListNotifier.createBoard(BoardAddParam(name, description?))` ▶ `POST .../boards`
-- **상태 분기**: 로딩/에러/빈상태
+게시글 기본 경로는 `/api/v1/clubs/{clubId}/boards/{boardId}/posts`다.
 
-### 게시글 목록 (`post_list_screen.dart`)
+| 동작 | 메서드·하위 경로 | 결과 |
+|---|---|---|
+| 목록 | GET 기본 경로 | `Page<ClubPostSimpleVo>` |
+| 상세 | `GET /{postId}` | `ClubPostVo` |
+| 작성 | POST 기본 경로 | 201 `ClubPostVo`; 선택적 `Idempotency-Key` |
+| 수정 | `PUT /{postId}` | 200 `ClubPostVo` |
+| 삭제 | `DELETE /{postId}` | 204 |
+| 고정 전환 | `PATCH /{postId}/pin` | 200 `ClubPostVo` |
+| 좋아요 | `POST /{postId}/like` | 200 `ClubPostLikeResultVo` |
+| 좋아요 취소 | `DELETE /{postId}/like` | 200 `ClubPostLikeResultVo` |
 
-- **사용자가 보는 것**:
-  - AppBar 게시판명 + 검색 아이콘 (서버 미지원, UI placeholder)
-  - 고정 섹션 (`PinnedPostSection`) — 고정된 게시글들 강조 표시 (필터링 또는 별도 정렬은 클라가 `pinned=true`로 분리)
-  - 게시글 카드 (`PostCard`): 제목, 작성자, "댓글 N · 시간 전", 이미지 프리뷰 (최대 3개 thumbnail)
-  - FAB(+) ▶ 작성 진입
-- **액션**:
-  - 카드 탭 ▶ 상세
-  - FAB ▶ `/clubs/:id/boards/:boardId/posts/create`
-  - 무한 스크롤 ▶ `loadMore()`
-  - 풀투리프레시 ▶ `refresh()`
+목록은 현재 회원만 읽고 `ACTIVE` 글과 차단 관계가 아닌 작성자를 대상으로 한다. 고정 먼저·생성 시각 내림차순·ID 내림차순이며 앱은 20개씩 읽는다. 서버 검색 파라미터에는 페이지 외 검색어가 없다. 앱 검색창은 검색어를 기억하지만 `setKeyword`가 첫 페이지 재조회만 하고 실제 필터나 검색어 전송을 하지 않는다.
 
-### 게시글 상세 (`post_detail_screen.dart`)
+목록 VO는 ID·작성자·제목·고정·조회/댓글/좋아요 수·내 좋아요 여부·대표 사진 키/URL·생성 시각·투표 요약·장소 수다. 대표 사진은 정렬 순서 0의 한 장이다. 목록은 읽은 글들을 고정/일반으로 분리하고 새로고침·추가 페이지 오류 재시도를 제공한다. “최대 3장 썸네일”은 현재 목록 계약이 아니다.
 
-- **사용자가 보는 것**:
-  - 제목 (H5 Bold), 작성자(아바타 + 이름 + 시간), 본문, 이미지 갤러리 (`ImageGrid` 2열, 탭 시 전체화면 뷰어)
-  - 댓글 섹션 (F04-09)
-  - 우상단 더보기 ⋮
-- **액션**:
-  - ⋮ → 작성자: 수정/삭제. OWNER/ADMIN: 삭제/고정 토글. 일반 멤버: 신고.
-  - 수정 ▶ `/posts/:postId/edit` (post_form 프리필)
-  - 삭제 ▶ 확인 다이얼로그 → `deletePost` ▶ `DELETE .../posts/:postId` ▶ pop + 토스트
-  - 고정 토글 ▶ `togglePin` ▶ `PATCH .../posts/:postId/pin` ▶ refresh
-  - 댓글 입력 ▶ F04-09
-- **상태 분기**: 로딩(스켈레톤), 에러, DELETED 게시글 (`POST_NOT_FOUND` 안내).
+상세는 게시판과 클럽 소속·활성 상태·현재 회원을 검사하고 차단 작성자는 `NOT_FOUND`로 가린다. 정상 상세 조회는 조회 수 증가 질의를 실행한다. 응답에는 본문·서식·사진 목록·수정 시각·상태·투표·장소·행 `actions.pin/delete`가 더해진다. 생성·수정·고정 응답과 생성 멱등 재생은 별도 경로이므로 모두 상세 조회 수 증가로 취급하지 않는다.
 
-### 게시글 작성/수정 (`post_create_screen.dart`, `post_edit_screen.dart`, `post_form.dart`)
+게시판 카드의 `postCount`는 모든 ACTIVE 글 수이고 최근 글·댓글 시각에는 차단 가림을 적용한다. 최근 댓글은 활성 글의 활성 댓글과 활성/삭제 부모 아래 답글을 포함한다. 카드 수와 차단 후 게시글 목록 총계가 항상 같다고 보장하지 않는다.
 
-- **구성**:
-  - 제목 TextField (1~100자)
-  - 본문 TextArea (1~3000자, 자동 확장)
-  - 이미지 첨부 (`PostImagePicker`, 최대 10장, 각 5MB)
-  - 글자 카운터 0/3000
-  - **[AUTH-06]** 예약 게시 시각 선택 UI (선택 시 `scheduledAt` 파라미터 포함)
-- **액션**:
-  - 제출 (등록/저장) ▶ 1) 새 이미지는 presigned-url 발급 → S3 PUT → `completeUpload` 호출(COMPLETED 전환 필수) → fileKey 확보 2) `createPost`/`updatePost` ▶ `POST` 또는 `PUT`
-  - 닫기 (✕) ▶ 작성 중 내용 있으면 이탈 확인 다이얼로그
-  - 이미지 추가/삭제 ▶ `addImage`/`removeImage` (state)
-- **상태 분기**:
-  - validation: title 비었으면 등록 비활성, content 비었으면 등록 비활성
-  - hasChanges: 수정 시 변경 없으면 저장 비활성
-  - **[AUTH-06]** `scheduledAt` 있으면 status=SCHEDULED 로 저장, 피드에 즉시 미노출
-- **서버 에러 매핑**:
-  - `POST_IMAGE_LIMIT_EXCEEDED`: "이미지는 최대 10장까지 첨부할 수 있습니다"
-  - `BOARD_NO_WRITE_PERMISSION`: "공지 게시판에는 관리자만 작성할 수 있습니다"
-  - `POST_NO_EDIT_PERMISSION`: "작성자만 수정할 수 있습니다"
+## 작성·수정·권한과 상태
 
-### 게시글 좋아요 (`post_list_screen.dart`, `post_detail_screen.dart`)
+생성 요청 `ClubPostAddParam`은 `title`, `content`, `contentRich`, `imageKeys`, `scheduledAt`, `polls`, `places`다. 수정 `ClubPostModParam`은 제목·본문·서식·사진키·장소를 받으며 예약 시각과 투표 정의 필드는 없다. 투표 변경은 별도 투표 명령이다. 장소·투표는 공개 범위 검사와 각 서비스 검증을 거친다.
 
-- **[AUTH-08]** 각 게시글 카드에 하트 버튼 표시
-- **액션**:
-  - 하트 탭 ▶ 낙관적 토글(`likedByMe` + `likeCount` 즉시 반영) ▶ `POST/DELETE .../posts/{postId}/like` ▶ 서버 VO로 reconcile, 실패 시 롤백
-  - 더블탭 방지: `_likeInFlight` Set으로 in-flight 요청 중 재진입 차단(`post_list_provider.dart:78`)
-- **응답**: `ClubPostLikeResultVo{postId, likeCount, likedByMe}`
-- **목록 배치**: `getPosts` 응답에 `likeCount`/`likedByMe` 배치 포함(N+1 방지, `ClubPostService.java:103-116`)
+서버는 제목·본문 공백을 거절하고 제목을 200자 이하로 제한한다. 앱 제목은 100자이며 본문은 `RichContentEditor`를 사용한다. 예전 단순 TextArea의 3000자 카운터를 현재 기준으로 두지 않는다. 서버는 평문과 `contentRich`의 일치·허용 서식을 검증한다. 앱 작성기에는 미리보기·사진 순서 변경·공개 범위가 열린 투표/장소 편집이 있다. 앱 작성기 한도는 사진 10장, 투표 5개, 장소 5개다. 세부 투표·장소 정책 전체를 이 문서에서 새로 검수한 것으로 간주하지 않는다.
 
-## 4. 제품 규칙
+일반 게시판 작성은 현재 회원, NOTICE 작성은 유효 운영진도 요구한다. 생성 기본값은 고정 false·조회/댓글 수 0이며 예약 시각이 있으면 `SCHEDULED`, 없으면 `ACTIVE`다. 수정은 현재 회원인 원작성자와 활성 글을 요구하며 운영진도 타인 글은 수정할 수 없다. 본인 삭제도 현재 회원을 요구하고, 타인 삭제는 유효 운영진만 가능하다. 이 게시글 삭제 API에는 댓글 조치와 같은 사유 본문이 없다. 삭제는 `DELETED`로 바꾸며 즉시 모든 첨부 파일의 물리 삭제를 보장하지 않는다.
 
-- 운영자가 숨긴 글(HIDDEN)은 어디에도 보이지 않고, 예약 발행도 공개하지 않으며, 되돌리는 명령이 없다.
-- 즉시 작성한 글은 알림을 보내지 않는다. 예약 게시에 실패하면 작성자에게 알린다.
+서버 상태는 `SCHEDULED`, `ACTIVE`, `DELETED`, `HIDDEN`이다. 일반 목록·상세·수정·삭제·고정·좋아요는 활성 상태를 대상으로 한다. 앱 enum은 예약을 지원하며 모르는 상태는 `unknown`이다. 모델은 원문 상태 문자열을 보관하므로 현재 서버 `HIDDEN`이 자동으로 `ACTIVE`로 해석되는 계약은 아니다.
 
-## 6. 상태/권한/시나리오 매트릭스
+## 사진 첨부와 읽기
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 일반 멤버 자유게시판 글 작성 (Happy Path) | MEMBER. 후기 글 작성. | 게시글 등록. viewCount=0, pinned=false, likeCount=0, likedByMe=false. |
-| S2 | NOTICE 게시판에 일반 멤버 작성 시도 (실패) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | ADMIN이 게시글 고정 토글 (Happy Path) | ADMIN. | 고정. 다시 ⋮ → "고정 해제"로 false. |
-| S4 | 작성자 게시글 수정 | 작성자 본인. | 수정 반영. |
-| S5 | ADMIN이 남의 글 수정 시도 (실패) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | ADMIN이 남의 글 삭제 (가능) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 게시글 상세 진입 = viewCount +1 | 시나리오 본문 참조 | 조회 카운터 정확하게 누적. |
-| S8 | 삭제된 게시글 진입 (에러) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | 이미지 11장 이상 첨부 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S10 | OWNER/ADMIN이 커스텀 게시판 생성 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S11 | 기본 게시판 삭제 시도 (실패) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S12 | 작성 중 이탈 (이탈 확인) | 시드 클럽(clubId=1201)의 community 진입. | role에 맞는 community hub surface가 노출된다. |
-| S13 | [AUTH-06] 멤버가 예약 게시글 작성 | MEMBER. scheduledAt=미래 시각. | status=SCHEDULED로 저장. 피드에 즉시 미노출. 예약 시각 도달 시 ACTIVE 전환 + 멤버 FCM 없음(댓글 시만 FCM). |
-| S14 | [AUTH-06] 예약 게시판 삭제 시 SCHEDULED 글 보존 | 커스텀 게시판에 SCHEDULED 글 존재. OWNER가 게시판 삭제. | SCHEDULED 글이 자유게시판으로 이동 보존됨. soft-delete된 DELETED 글은 카운트 제외(`ClubBoardService.java:175-180`). |
-| S15 | [AUTH-08] 멤버가 게시글 좋아요 토글 | MEMBER. ACTIVE 글. | POST /like → likeCount+1, likedByMe=true. 재호출 no-op(멱등). DELETE /like → likeCount-1, likedByMe=false. |
-| S16 | [AUTH-08] 동시 좋아요 중복 요청 | 두 클라이언트가 동시에 같은 postId POST /like | 비관적 락으로 직렬화 → club_post_like UNIQUE 충돌 없음. 최종 likeCount=1, likedByMe=true. |
-| S17 | [AUTH-08] SCHEDULED 글 좋아요 시도 | 예약 발행 대기 글(SCHEDULED). 멤버. | POST_NOT_FOUND 오류. ACTIVE 글만 좋아요 대상(`ClubPostService.java:412`). |
-| S18 | [이미지 수정] completeUpload 없이 게시글 저장 시도 | presigned URL 발급 후 S3 PUT만 수행, completeUpload 미호출. | 서버 saveImages에서 COMPLETED 상태 검증 실패 → 이미지 저장 거부. 파일은 PENDING 상태로 24h 후 소실. |
+앱은 선택한 사진을 해당 계정·클럽·게시판·초안의 대기 파일로 보관하고 업로드할 때 초안 소유를 확인한다. `ServerFilePurpose.clubPostImage`로 업로드하며 실패한 대기 사진은 다시 올리거나 버릴 수 있다. 업로드 중이거나 대기 파일이 남으면 게시 요청을 막는다. 성공한 사진은 파일 키와 표시 경로로 초안에 저장한다.
 
-## 8. Gap / Risk
+서버는 최대 10장·중복 키·빈 키를 검사한다. 신규 첨부는 실제 파일이 존재하고 작성자 소유이며 `COMPLETED`, `CLUB_POST_IMAGE`와 호환되는 용도여야 한다. 다른 게시글 사진으로 이미 연결된 키도 거절한다. 수정 `imageKeys`는 최종 목록이며 null도 빈 목록으로 처리한다. 제외된 참조 해제·새 참조 연결·유지 사진의 순서를 동기화한다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Gap (확정) | `community_app/lib/data/models/club/community/post_status.dart:3-14` / `post.dart:24` | Flutter `PostStatus` enum에 `SCHEDULED`가 없고 `PostStatus.fromString` 미매핑. 단, `post.dart`의 `Post` 모델은 `status`를 `String?`으로 직접 보관하므로(`post.dart:24`) 서버가 SCHEDULED를 반환해도 String 그대로 저장됨 — `PostStatus.fromString` 자체는 미사용. **실질 gap은 예약 상태 enum/표시/관리 UI 부재**: 목록·상세·수정 화면이 `SCHEDULED`를 인지·표시·취소할 수 없음. `active` 폴백은 `PostStatus.fromString` 호출처가 있는 경우에만 발생. | `post_status.dart`에 `scheduled('SCHEDULED')` 추가 + 목록/상세 예약 상태 표시 + 작성자 취소 CTA 추가 |
-| 해소됨 | 시험 보강 기록 | 게시글 작성·수정 화면 문구의 시험 보강 기록이다. 수정 화면은 기존 제목과 본문을 미리 채운다 | 없음 |
+목록 대표 사진과 상세 사진은 작성자·용도를 지정한 다운로드 URL 발급 경로로 읽는다. 파일 키를 그대로 공개 URL로 만들지 않는다. 이전 `CLUB_BOARD` 표기나 “각 5MB·24시간 후 반드시 소실”을 이 게시글 코드의 현재 보장으로 유지하지 않는다. 파일 서비스의 업로드·보존 정책과 구분한다.
 
-## 9. 수용 기준
+## 초안·불명확 결과·성공 후 정리
 
-- **AC-01. 일반 멤버 자유게시판 글 작성 (Happy Path)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 게시글 등록. viewCount=0, pinned=false, likeCount=0, likedByMe=false.
-- **AC-02. NOTICE 게시판에 일반 멤버 작성 시도 (실패)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. ADMIN이 게시글 고정 토글 (Happy Path)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 고정. 다시 ⋮ → "고정 해제"로 false.
-- **AC-04. 작성자 게시글 수정**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 수정 반영.
-- **AC-05. ADMIN이 남의 글 수정 시도 (실패)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. ADMIN이 남의 글 삭제 (가능)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 게시글 상세 진입 = viewCount +1**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 조회 카운터 정확하게 누적.
-- **AC-08. 삭제된 게시글 진입 (에러)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. 이미지 11장 이상 첨부 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-10. OWNER/ADMIN이 커스텀 게시판 생성**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-11. 기본 게시판 삭제 시도 (실패)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-12. 작성 중 이탈 (이탈 확인)**: Given 시드 클럽(clubId=1201)의 community 진입. When 사용자가 해당 흐름을 실행하면 Then role에 맞는 community hub surface가 노출된다.
-- **AC-13. [AUTH-06] 예약 게시글이 피드에 미노출**: Given MEMBER가 scheduledAt=미래 시각으로 게시글 작성. When 작성 완료. Then DB에 status=SCHEDULED 저장, 다른 멤버 목록 API에서 해당 글 미포함.
-- **AC-14. [AUTH-06] 게시판 삭제 시 SCHEDULED 글 보존**: Given 커스텀 게시판에 SCHEDULED 글 1건 이상 존재. When OWNER가 게시판 삭제. Then SCHEDULED 글이 자유게시판으로 이동. DELETED 글은 이동 대상 아님.
-- **AC-15. [AUTH-08] 게시글 좋아요/취소 멱등**: Given MEMBER, ACTIVE 글. When POST /like 2회 연속 호출. Then likeCount=1, likedByMe=true (중복 no-op). DELETE /like 후 재시도도 likeCount=0.
-- **AC-16. [AUTH-08] SCHEDULED 글 좋아요 시도 실패**: Given SCHEDULED 상태 글. When 멤버가 POST /like. Then POST_NOT_FOUND 반환. club_post_like 행 미생성.
-- **AC-17. [이미지] completeUpload 없이 이미지 포함 글 저장 실패**: Given presigned URL 발급 후 S3 PUT만 수행(completeUpload 미호출). When POST /posts. Then 서버가 COMPLETED 검증 실패 → 이미지 등록 거부.
-- **AC-18. [이미지] 타인 이미지 키 도용 시도 실패 (IDOR)**: Given 다른 사용자의 fileKey를 `imageKeys`에 포함. When POST /posts. Then 서버가 authorId 소유자 검증 실패 → 저장 거부.
+작성·수정 초안은 계정·클럽·게시판·선택 게시글 ID로 분리하고 세션/계정 세대를 확인한다. 제목·본문·서식·사진·대기 업로드·투표/장소 등의 입력을 500ms 뒤 저장하며 이탈 시 저장 후 나가기를 확인한다. 저장 실패를 감추고 이탈하지 않는다. 수정은 서버에서 읽은 글을 먼저 채운 후 해당 초안을 복원한다. 현재 수정 요청에는 기대 버전 필드가 없어 동시 수정 충돌 검출을 보장하지 않는다.
+
+신규 작성은 **요청 키와 전송 본문 전체**를 `PendingPostPublish`로 저장한 후 전송한다. 저장 실패면 전송하지 않는다. 불명확한 결과에서는 편집을 잠그고 “게시 결과 확인”으로 동일 키·본문을 다시 보낸다. 예약 시각이 이미 지났더라도 미확정 요청의 결과 확인은 원래 본문으로 진행한다. 명확한 입력/처리 거절 또는 명령 영수증 안에서 확정된 권한/없음 거절만 pending을 해제한다.
+
+서버의 키가 있는 작성은 계정·명령 종류·키로 결과 참조를 보관하고 같은 요청이면 게시글 ID로 현재 결과를 재구성한다. 같은 키에 다른 내용은 충돌이다. 재조회할 대상이 사라지거나 이동해 원래 게시판에서 읽을 수 없으면 결과 확인 불가 409이며 새 글을 다시 만들지 않는다. 키 없는 서버 호출은 기존 생성 경로이고 앱은 키를 보낸다.
+
+성공 뒤에는 초안 정리를 끝내고 목록/상세를 갱신해 복귀한다. 정리 실패는 “서버 저장 성공·기기 정리 실패”로 분리하며 현재 화면에서 재발행하지 않고 정리만 재시도한다. 수정 때 공개 범위 때문에 보내지 못한 장소 초안은 저장된 서버 본문과 함께 남길 수 있다. 수정 API에는 신규 작성과 같은 멱등 키 계약이 없다.
+
+일반 작성 초안의 캡처에는 예약 시각 필드가 없고 전송 준비가 끝난 pending 본문에만 `scheduledAt`이 포함된다. 따라서 전송 전 예약 선택까지 항상 재진입 복원된다고 설명하지 않는다.
+
+## 예약 게시와 좋아요
+
+앱은 서울 기준으로 지금보다 1분 뒤인 예약 시각을 요구하고 내 예약 목록 입구를 제공한다. 서버도 최소 1분·작성자 소유·`SCHEDULED` 상태와 동일 대상의 진행 중 예약 중복을 확인한다. 글과 예약 작업을 함께 생성하며 예약 글은 일반 목록·상세에서 제외한다. “앱에 예약 상태 enum과 관리 입구가 없다”는 과거 Gap은 더 이상 현재 설명이 아니다. 예약 작업 관리와 공개 글 수정은 다른 흐름이다.
+
+예약 실행 때 글이 속한 현재 게시판과 현재 작성 권한을 다시 검사한다. 글이 이미 활성 상태이면 게시 완료 결과, 없거나 삭제되었으면 대상 소실, 권한을 잃었으면 권한 상실로 구분한다. 정상 실행은 ACTIVE로 전환하고 대기 투표를 연다. 공통 예약 처리에서 게시 완료는 EXECUTED, 대상 소실·권한 상실은 CANCELLED, 유효 실행 중 예외는 FAILED와 작성자 실패 알림으로 처리한다. 실행 차수를 잃은 요청은 이전 결과를 덮어쓰지 않는다. 이는 소스 계약이며 실제 시각에 실행됐다는 기록이 아니다.
+
+고정은 유효 운영진이 ACTIVE 글을 잠근 뒤 현재 값을 반전하는 명령이다. 원하는 상태를 지정하는 멱등 명령과 다르며 이 서비스에 공지의 고정 3개 한도를 적용하지 않는다.
+
+좋아요는 현재 회원·게시판 소속·ACTIVE 글을 잠그고 존재하지 않으면 추가한다. 취소는 존재하면 지운다. 각각 반복해도 중복 관계를 만들지 않으며 `{postId, likeCount, likedByMe}`를 반환한다. 앱 목록/상세는 요청 중 같은 글의 반복 탭을 억제하고 먼저 표시한 값을 서버 결과로 확정하거나 실패 시 되돌린다. 목록과 상세는 갱신 방식이 같지 않으므로 모든 화면의 즉시 일치를 보장하지 않는다.
+
+## 프로필에서 내가 볼 수 있는 작성 글
+
+`GET /api/v1/users/{targetUserId}/club-posts`는 `Page<UserClubPostVo>`다. 타인을 조회하면 계정 사용 가능·양방향 차단·프로필 상세 접근을 검사하고 클럽 비공개 설정이면 빈 페이지를 반환한다. 실제 목록은 대상 작성자의 ACTIVE 글 중 **조회자가 현재 가입한 클럽**만 포함하며 생성 시각·ID 내림차순이다. 대상 작성자가 현재도 그 클럽 회원이어야 한다는 추가 조건은 이 질의에 없다.
+
+앱 프로필의 “내가 볼 수 있는 작성 글”을 펼칠 때 20개 단위로 조회한다. 보이는 총계·이전/다음 쪽을 제공하고 뒤쪽 페이지가 비면 첫 쪽으로 되돌린다. 카드에는 클럽·게시판·작성일을 표시하며 게시글 상세에 `boardId`를 함께 전달한다. 접힘·페이지·영역 크기 상태는 프로필 탐색 안에서 보관한다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서·검수 판정 |
+|---|---|---|
+| Gap | 게시글 검색창의 검색어가 서버나 로컬 필터에 적용되지 않는다. | 검색 기능 완료로 보지 않는다. |
+| Gap | 게시판 수정·삭제 API는 있지만 앱 호출 입구가 없다. | 서버 기능과 사용자 화면 제공을 분리한다. |
+| Risk | 게시판 총 글 수와 차단 후 목록 총계가 다르고, 게시판 이동은 보존 글이 있으면 삭제 글도 포함한다. | 숫자·이동 대상을 단정하지 않는다. |
+| Risk | 공개 글 수정에 기대 버전 계약이 없고 일반 초안은 예약 시각을 따로 보관하지 않는다. | 동시 편집 충돌 방지·전송 전 예약 복원을 보장하지 않는다. |
+| 범위 | 서버 HIDDEN은 앱 enum unknown이며 일반 글 API에 노출되지 않는다. | 예약 enum 미지원이라는 과거 설명을 제거하되 모든 상태의 관리 UI 완료로 확대하지 않는다. |
+| 미검증 | 소스와 선택한 기존 시험 단언의 대조다. | 실제 화면·업로드·예약 실행·동시성·기기 저장 시험의 새 통과로 기록하지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 접근과 행동:** 게시판·글 목록·작성·상세·수정·알림·프로필 입구가 필요한 club/board/post ID와 권한을 전달하는지 확인한다.
+- **AC-02 게시판 생성:** 기본 3종과 CUSTOM을 구분하고 유효 운영진·이름/설명 길이·중복 이름·전송 잠금을 확인한다.
+- **AC-03 게시판 수정 제공 범위:** 수정 API의 부분 적용과 앱 입구 부재를 구분하며 이름·설명·순서의 실제 조건을 확인한다.
+- **AC-04 게시판 삭제 보존:** 기본판 삭제 거절, 예약/숨김 보존 대상, 자유게시판 부재 시 중단, 보존 대상이 있으면 모든 글 이동을 확인한다.
+- **AC-05 목록과 검색:** 회원·ACTIVE·차단 필터·고정 우선·20개 페이지와 검색어 미적용을 구분한다.
+- **AC-06 상세와 숫자:** 클럽/게시판 소속·상태·차단·조회 수 증가 경로와 게시판 총계/최근 활동의 서로 다른 필터를 확인한다.
+- **AC-07 작성 권한과 본문:** 현재 회원·NOTICE 운영진·제목 서버200/앱100·본문/서식·예약 상태와 공개 범위 검사를 확인한다.
+- **AC-08 수정과 삭제:** 본인 현재 회원만 수정, 본인/유효 운영진 삭제, ACTIVE 조건과 게시글 삭제 사유 API 부재를 확인한다.
+- **AC-09 사진 계약:** 10장·중복/빈 키·파일 소유/완료/용도·기존 연결 검사와 최종 목록의 참조 해제/순서 반영을 확인한다.
+- **AC-10 업로드와 초안:** 계정/대상별 입력·대기 파일·이탈 저장·실패 재시도와 대기 업로드 중 게시 차단을 확인한다.
+- **AC-11 작성 결과 재확인:** 전송 전 키/본문 저장, 저장 실패 시 무전송, 불명확 결과 동일 요청 재생·충돌·결과 확인 불가를 확인한다.
+- **AC-12 성공 후 정리:** 서버 성공과 기기 정리 실패를 구분하고 정리 재시도가 재발행하지 않으며 보류 장소 초안을 보존하는지 확인한다.
+- **AC-13 예약 생성과 실행:** 최소 1분·소유/상태/중복·공개 목록 제외·실행 때 현재 권한·투표 활성·실제 작업 결과를 구분한다.
+- **AC-14 고정과 좋아요:** 고정 반전과 좋아요/취소 반복의 차이, 요청 중 중복 탭 억제·응답 확정·실패 되돌림을 확인한다.
+- **AC-15 프로필 작성 글:** 타인 접근/비공개·조회자 가입 클럽·ACTIVE 범위와 20개 페이지·ID를 포함한 상세 복귀를 확인한다.
+- **AC-16 남은 경계:** 검색·게시판 관리 입구·동시 수정·예약 초안·숨김 상태를 현재 구현된 기능과 분리해 기록한다.
+
+`ClubBoardServiceTest`의 예약 글 이동·보존 대상 없음·자유게시판 부재 단언과 `post_draft_lifecycle_test.dart`의 응답 유실 후 같은 키·본문 복원 단언을 읽었다. 새 제품 시험을 실행한 결과가 아니며 보존한 과거 시나리오의 시드·주소·실행 기록을 현재 통과 수로 합산하지 않는다.
+
+## 코드 위치
+
+서버: `ClubBoardController/Service`, `ClubPostController/Service`, `UserClubPostController/Service`, 각 Param/VO, `ClubPostQueryRepository`, `UserClubPostQueryRepository`, `ClubAbilityPolicy`, `MemberCommandReceiptExecutor`, `ScheduledPublishService/Authority/ItemWorker/StateWriter`.
+
+앱: `club_community_screen.dart`, `board_list_screen.dart`, `post_list_screen.dart`, `post_detail_screen.dart`, `post_create_screen.dart`, `post_edit_screen.dart`, `post_form_provider.dart`, `post_draft_session.dart`, `post_list_provider.dart`, `post_detail_provider.dart`, `club_board_repository.dart`, `club_board_api.dart`, `club_post_api.dart`, `profile_authored_posts.dart`, `user_club_posts_provider.dart`, `club_branch_routes.dart`.
+
+<!-- source-references:start -->
+서버 창구: `ClubBoardController#getBoards`, `ClubBoardController#createBoard`, `ClubBoardController#updateBoard`, `ClubBoardController#deleteBoard`, `ClubPostController#getPosts`, `ClubPostController#getPost`, `ClubPostController#createPost`, `ClubPostController#updatePost`, `ClubPostController#deletePost`, `ClubPostController#togglePin`, `ClubPostController#likePost`, `ClubPostController#unlikePost`, `UserClubPostController#getUserClubPosts`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
