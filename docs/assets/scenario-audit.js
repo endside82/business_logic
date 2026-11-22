@@ -11,7 +11,7 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 5011,
+    "automatedTestFilesScanned": 5014,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 75,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 56,
     "definitionOnlyEvidence": 75,
-    "traceMarkers": 797,
-    "verifiedTraceRecords": 795,
+    "traceMarkers": 801,
+    "verifiedTraceRecords": 799,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -21232,7 +21232,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F21-04",
       "domain": "제공자 배정·정산",
-      "name": "무료초대·호스트 대납",
+      "name": "무료 제외·되돌리기·호스트 대납",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/21_curated/F21-04_free-invite-host-subsidy_prd.md",
@@ -21243,10 +21243,79 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F21-04:1",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/free-exclude",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "freeExclude",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/free-exclude",
+                "targetLine": 352,
+                "methodLine": 353
+              }
+            ]
+          },
+          {
+            "id": "F21-04:2",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/free-exclude/cancel",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "cancelFreeExclude",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/free-exclude/cancel",
+                "targetLine": 370,
+                "methodLine": 371
+              }
+            ]
+          },
+          {
+            "id": "F21-04:3",
+            "label": "POST /api/v1/events/{eventId}/assignments/{assignmentId}/subsidize",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "subsidize",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/subsidize",
+                "targetLine": 397,
+                "methodLine": 398
+              }
+            ]
+          },
+          {
+            "id": "F21-04:4",
+            "label": "GET /api/v1/events/{eventId}/assignments/{assignmentId}/coverages",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/curated/controller/ServiceAssignmentController.java",
+                "controller": "ServiceAssignmentController",
+                "method": "listCoverages",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/assignments/{assignmentId}/coverages",
+                "targetLine": 184,
+                "methodLine": 185
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

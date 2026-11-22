@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F21-04 무료 초대·호스트 대납 — community PRD</title>
+  <title>F21-04 무료 제외·되돌리기·호스트 대납</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,261 +17,41 @@
           <a href="../domains/21-curated.html">21 서비스 제공자 배정·정산</a><span>›</span>
           F21-04 무료 초대·호스트 대납
         </div>
-        <h1>F21-04. 무료 초대 · 호스트 대납</h1>
-        <p class="lede">
-          호스트가 특정 출석자를 <strong>비용 없이 처리</strong>하거나 <strong>그 몫을 직접 대신 내는</strong> 두 가지 방법.
-          어느 쪽이든 정산 시스템에서는 "이 사람 몫은 해결됐다"로 인정되어 정산이 막히지 않는다.
-          단, 호스트가 제공자에게 지급할 총액을 미리 보장한 방식에서는 무료 처리 자체가 허용되지 않는다.
-        </p>
+        <h1>F21-04 무료 제외·되돌리기·호스트 대납</h1>
+        <p class="lede">참가자 자격, 무료 제외의 금전 조건과 단독 취소, 실제 대납자·요청키·수금 상한·이력 선택 한계를 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">처리 주체</div><div class="value">호스트</div><div class="hint">참가자 동의 불요, 호스트 단독 실행</div></div>
-          <div class="metric"><div class="label">무료 처리 시 돈 이동</div><div class="value">없음</div><div class="hint">기록만 남고 실제 금전 거래 없음</div></div>
-          <div class="metric"><div class="label">대납 시 지급 출처</div><div class="value">호스트 지갑</div><div class="hint">참가자 몫을 호스트가 직접 납부</div></div>
-          <div class="metric"><div class="label">총액 보장 방식에서 무료 처리</div><div class="value">불가</div><div class="hint">전원이 실제 분담해야 총액 일치</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 정산을 막지 않으면서 호스트에게 유연함을 준다</span>
-          <p>정산은 출석자 전원의 납부가 확인돼야 통과된다. 그런데 현실에서는 "이 사람은 내가 초청한 손님이라 돈을 받을 수 없다"거나
-            "연락이 안 되는 참가자 몫을 내가 내겠다"는 상황이 생긴다. 무료 초대와 호스트 대납은 이 두 경우를 정산
-            흐름 안에서 공식으로 해소하는 방법이다. 처리된 참가자는 정산 통과 조건의 "납부 완료" 명부에
-            올라가므로 나머지 참가자들의 일정이 지연되지 않는다.</p>
-        </div>
-        <div class="callout warn">
-          <span class="label">2026-09-04 현재 상태 — 코드 완료, 출시 전</span>
-          <p>카탈로그 상품으로 맺은 배정은 합의한 총액이 흐트러지지 않도록 돈이 오가지 않는 무료
-            초대를 언제나 금지한다. 아직 조건을 제안하지 않은 상품 배정도 마찬가지다. 카탈로그에서
-            참가자를 무료로 들이려면 호스트 대납을 써야 하고, 그 납부에는 수락된 5% 수수료와 원천징수가
-            그대로 적용된다. 무료 초대는 모임장이 직접 지정한 배정 가운데 총액을 보장하지 않는 방식에서만
-            쓸 수 있다. 앱은 서버가 내려 준 실행 가능한 조치만 보여 주므로, 카탈로그 계약에는 눌러도
-            실패할 무료 처리 버튼을 아예 띄우지 않는다. 서버는 무료 처리와 대납 모두에서 대상이 실제
-            참가자인지 다시 확인하고, 무료 처리는 정산 전에 취소해 다시 납부 대상으로 돌릴 수 있다.
-            남은 것은 플랫폼 결제 기반 개통과 실계정 지급 확인이다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>두 가지 처리 방법의 차이</h2>
-        <p class="subtitle">같은 목적이지만 돈이 움직이는 방식이 다르다.</p>
-
-        <div class="cards">
-          <div class="card">
-            <div class="eyebrow">방법 1 — 무료 초대</div>
-            <h3>기록만 남기고 돈은 오가지 않는다</h3>
-            <p>호스트가 특정 출석자를 무료 초대로 지정하면, 시스템은 "이 사람은 면제됐다"는 기록을
-              남긴다. 실제 금전 거래는 발생하지 않는다. 제공자의 수익도 이 참가자 몫만큼 처음부터
-              집계되지 않는다. 정산 통과 조건에서는 이 참가자가 "분담 완료"로 인정되어 정산을 막지 않는다.</p>
-            <p><strong>언제 쓰는가</strong> — 호스트가 별도로 초청한 게스트, 공식 사진사·운영 보조 등
-              서비스를 받는 참가자이지만 비용을 청구하기 어려운 경우.</p>
-          </div>
-          <div class="card">
-            <div class="eyebrow">방법 2 — 호스트 대납</div>
-            <h3>호스트 지갑에서 참가자 몫을 직접 결제한다</h3>
-            <p>호스트가 특정 참가자의 몫을 자신의 지갑에서 대신 납부한다.
-              제공자는 해당 몫에 대한 수익을 정상적으로 받는다. 나중에 이 참가자에 대해
-              환불이 발생하면, 원래 납부자인 호스트에게 금액이 돌아온다.</p>
-            <p><strong>언제 쓰는가</strong> — 제공자에게는 정상 수익을 보장하면서도 특정 참가자에게는
-              비용을 받지 않고 싶을 때. 호스트가 그 차이를 자신이 부담하기로 결정한 경우.</p>
-          </div>
-        </div>
-
-        <div class="callout">
-          <span class="label">무료 초대와 대납은 다른 것이다</span>
-          <p>무료 초대는 제공자 수익 계산에서 해당 참가자를 처음부터 제외하는 것이다.
-            반면 대납은 참가자 몫의 돈이 실제로 이동하되, 납부자가 참가자 대신 호스트라는 점이 다르다.
-            제공자 입장에서 무료 초대는 그 인원만큼 수익이 줄어들지만, 대납에서는 정상 수령이 보장된다.
-            호스트가 어느 쪽을 선택하느냐에 따라 제공자 최종 수령액이 달라질 수 있다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>총액 보장 방식에서는 무료 처리가 왜 안 되는가</h2>
-        <div class="callout warn">
-          <span class="label">총액 보장 방식 — 전원이 실제로 분담해야 검증이 통과된다</span>
-          <p>호스트가 "제공자에게 총 X원을 보장한다"는 방식으로 서비스비를 설정했다면,
-            정산 시 참가자들의 납부 합계가 정확히 X원과 일치해야 정산이 통과된다.
-            이 방식에서 누군가를 무료 처리하면 납부 합계가 X원에서 그만큼 줄어들기 때문에
-            검증을 통과할 수 없다. 총액 보장 방식을 쓰는 호스트는 출석자 전원에게 실제
-            분담금을 받아야 한다. 무료로 처리하고 싶다면 호스트가 그 몫을 대납해야
-            총액 일치 조건이 충족된다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>무료 초대·대납 처리 흐름</h2>
-        <p class="subtitle">호스트가 어떤 경로로 처리하고, 정산에 어떻게 반영되는지.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["호스트: 출석자 처리 방법 선택"] --> B{"총액 보장 방식인가?"}
-    B -->|"예"| C["무료 처리 불가\n호스트가 해당 몫 직접 대납해야 함"]
-    B -->|"아니오"| D{"어떤 방법으로?"}
-
-    D -->|"무료 초대"| E["기록 생성\n돈 이동 없음\n제공자 수익에 해당 인원분 미산입"]
-    D -->|"호스트 대납"| F["호스트 지갑에서 참가자 몫 결제\n제공자 수익 정상 적립"]
-
-    E --> G["해당 출석자 → 분담 완료로 인정"]
-    F --> G
-    C --> F
-
-    G --> H{"전원 완납 확인?"}
-    H -->|"완료"| I["정산 통과 가능"]
-    H -->|"미납자 남음"| J["나머지 참가자 조치 필요"]
-
-    F --> K["환불 발생 시 → 호스트에게 복원"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>4가지 분담 방식 비교</h2>
-        <p class="subtitle">같은 배정 안에서 출석자마다 다른 분담 방식이 적용될 수 있다.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:140px">분담 방식</th>
-                <th>납부자</th>
-                <th>제공자 수익</th>
-                <th style="width:30%">환불 발생 시</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>본인 결제</strong></td>
-                <td>참가자 본인</td>
-                <td>해당 인원분 정상 적립</td>
-                <td>참가자에게 복원</td>
-              </tr>
-              <tr>
-                <td><strong>호스트 대납</strong></td>
-                <td>호스트</td>
-                <td>해당 인원분 정상 적립</td>
-                <td>호스트에게 복원</td>
-              </tr>
-              <tr>
-                <td><strong>무료 초대</strong></td>
-                <td>없음 (돈 이동 없음)</td>
-                <td>해당 인원분 산입 안 됨</td>
-                <td>해당 없음 (금전 거래 없음)</td>
-              </tr>
-              <tr>
-                <td><strong>노쇼 귀속</strong></td>
-                <td>참가자 (선결제)</td>
-                <td>노쇼 참가자 선결제분 귀속</td>
-                <td>전환 순간 환불 없음. 정산 전 전액환불 경로는 가능</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 무료 초대</div>
-            <h3>호스트가 직접 초청한 게스트를 무료로 처리</h3>
-            <p>호스트가 모임에 특별히 초청한 사진작가 한 명이 출석했다. 호스트는 이 참가자에게
-              서비스비를 청구하지 않기로 하고 무료 초대로 처리한다.
-              돈은 오가지 않으며, 이 참가자는 제공자 수익 계산에 포함되지 않는다.
-              나머지 참가자들이 분담금을 모두 납부하면 정산은 정상적으로 통과된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 비공식적 "그냥 안 받겠다"가 아니라 시스템이
-              인식하는 공식 기록이 남는다. 나중에 누가 왜 면제됐는지 이력을 확인할 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 호스트 대납</div>
-            <h3>연락이 안 되는 참가자 몫을 호스트가 직접 결제</h3>
-            <p>모임이 끝난 뒤 참가자 한 명이 며칠째 연락이 없어 분담금 납부가 안 된 상태다.
-              정산이 막혀 있는 상황에서 호스트가 그 참가자 몫을 자신의 지갑에서 직접 납부한다.
-              제공자는 정상적으로 해당 인원분 수익을 받는다.
-              이후 그 참가자가 다시 연락돼 돈 문제를 해결하더라도 시스템에서는
-              추가 조작 없이 이미 정산이 완료된 상태다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 참가자 한 명의 미납이 제공자 정산 전체를
-              지연시키지 않도록 호스트가 직접 해소하는 공식 경로.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">총액 보장 방식</div>
-            <h3>총액을 보장했는데 한 명을 무료로 하고 싶다</h3>
-            <p>호스트가 제공자에게 총 12만 원을 보장하는 방식으로 설정했다.
-              참가자 4명이 각 3만 원씩 내야 하는데, 한 명을 무료로 처리하고 싶어 시도한다.
-              시스템이 "총액 보장 방식에서는 무료 처리가 허용되지 않습니다"라고 안내한다.
-              호스트가 그 1명의 3만 원을 자신의 지갑에서 대납하면 납부 합계가 12만 원이 되어
-              정산이 통과된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 총액 보장 방식의 약속이 무너지지 않는다.
-              제공자는 처음 약정한 금액을 반드시 받는다는 신뢰가 유지된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">대납 후 환불</div>
-            <h3>대납한 참가자에 대해 사후 환불이 발생</h3>
-            <p>호스트가 대납한 참가자가 이후 모임 귀책 사유로 환불을 받게 됐다.
-              환불 금액은 원래 납부자인 호스트에게 돌아간다.
-              참가자 본인에게 돌아가지 않는다 — 실제로 돈을 낸 사람에게 복원되는 원칙이 적용된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 대납 여부와 관계없이 환불은 언제나
-              실제 납부자에게 돌아간다. 호스트와 참가자 사이의 별도 정산은 시스템 밖의 일이다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">중복 처리 불가</div>
-            <h3>같은 참가자를 무료 초대이면서 동시에 대납 처리하려 한다</h3>
-            <p>호스트가 이미 무료 초대로 처리한 참가자에게 대납도 걸려고 시도한다.
-              시스템이 이를 거부한다. 한 참가자에게는 하나의 처리 방식만 적용된다.
-              무료 제외를 취소하면 감사 기록을 남긴 채 참가자가 다시 미처리 상태가 된다. 이후 참가자가
-              직접 납부하거나 모임장이 대납할 수 있다. 정산이 이미 잠긴 뒤에는 이 변경을 거부한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">제공자 본인 배정</div>
-            <h3>제공자 자신이 대납 주체나 대상이 될 수 없다</h3>
-            <p>배정된 제공자가 이 모임에서 참가자이기도 한 경우, 그 제공자는 자기 자신의
-              분담금을 "대납"하거나 다른 참가자를 대납할 수 없다.
-              대납은 호스트가 제공자에게 보낼 돈의 흐름에 관여하는 것이므로,
-              그 흐름 당사자인 제공자가 주체나 대상이 되면 이해 충돌이 발생한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">핵심 운영 원칙</span>
-          <ul>
-            <li><strong>무료 초대와 대납은 호스트가 단독으로 결정한다.</strong>
-              참가자의 동의를 받을 필요가 없다. 호스트가 실행하면 즉시 기록이 생성된다.</li>
-            <li><strong>무료 처리된 참가자는 정산 통과 조건을 충족한다.</strong>
-              무료 초대와 대납 모두 "이 인원의 분담은 해결됐다"로 서버가 인정한다.
-              사전점검은 미처리 참가자의 역할·표시 이름·관련 금액과 해결 사유를 보여 준다.</li>
-            <li><strong>총액 보장 방식을 쓰는 호스트는 사전에 안내가 필요하다.</strong>
-              이 방식에서 무료 처리를 하려면 호스트가 차액을 대납해야 한다는 점을
-              배정 설정 단계에서 미리 알려야 혼선을 막을 수 있다.</li>
-            <li><strong>대납 후 환불은 호스트에게 복원된다.</strong>
-              운영자나 제공자가 참가자에게 환불을 돌려줄 상황이 생기더라도,
-              시스템은 실제 납부자인 호스트의 지갑으로 돌려보낸다.
-              호스트와 참가자 사이의 별도 정산은 운영자가 개입할 영역이 아니다.</li>
-            <li><strong>무료 처리는 정산 전에만 취소할 수 있다.</strong> 서버가 실행한 사람·사유·시각을
-              남기고, 취소 뒤에는 같은 참가자를 납부 또는 대납 대상으로 다시 처리할 수 있다.</li>
-            <li><strong>실행 가능한 버튼은 서버가 정한다.</strong> 카탈로그 계약처럼 무료 처리가 금지된
-              배정에는 앱이 버튼을 띄우지 않고, 화면을 건너뛴 직접 요청도 서버가 같은 규칙으로
-              거부한다.</li>
-            <li><strong>대상은 실제 참가자로 제한한다.</strong> 화면 선택 목록뿐 아니라 서버가 이벤트
-              참가 자격을 다시 확인해 비참가자 명의의 처리 기록을 만들지 않는다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>무료 제외는 참가자에게 제공자 이용료를 받지 않았음을 금액 0의 FREE_EXCLUDED 행으로 남긴다. 호스트 대납은 호스트/공동 주최자 자신의 지갑에서 돈을 내고 참가자를 수혜자로 기록하는 HOST_SUBSIDIZED다. 두 행동은 참가자 수금 판정에 쓰이지만 돈·수익·취소 방식은 다르다. 이 무료 제외는 이벤트 전체 참가 신청·참가비 면제 기능을 대신하지 않는다.</p>
+<p>앱의 이벤트 배정 카드에서 서버 actions가 허용한 ‘무료 제외’, ‘무료 제외 취소’, ‘대신 내기’를 제공한다. offering/terms가 붙은 배정에서 serviceFeeGross=0만 보고 무료 제외 버튼을 여는 과거 가드는 폐기됐다. 서버가 참가자 자격을 검사하지 않는다는 과거 결함도 현재 코드와 다르다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>아래 경로의 공통 앞부분은 /api/v1/events/{eventId}/assignments/{assignmentId}다.</p>
+<div class="table-wrap"><table><thead><tr><th>요청</th><th>정확한 입력</th><th>반환·요청키</th></tr></thead><tbody><tr><td>POST …/free-exclude</td><td>beneficiaryUserId, 선택 reason</td><td>200, 본문 없음. 요청키 헤더 없음</td></tr><tr><td>POST …/free-exclude/cancel</td><td>targetUserId, 선택 reason</td><td>200, 본문 없음. Idempotency-Key 필수</td></tr><tr><td>POST …/subsidize</td><td>beneficiaryUserId, long amount</td><td>200, 본문 없음. Idempotency-Key 필수</td></tr><tr><td>GET …/coverages</td><td>URL의 eventId/assignmentId</td><td>List&lt;ServiceAssignmentCoverageVo&gt;</td></tr></tbody></table></div>
+<p>무료 제외 생성의 reason은 서비스에서 최대 500자, 취소 reason은 최대 200자를 검사한다. 취소 대상 필드명은 beneficiaryUserId가 아니라 targetUserId다. Controller에서 무료 제외 생성·취소·대납은 PROVIDER safetyExit로 선언되어 있지만, 대납 서비스는 별도로 봉인 중 잔여 거래 조건을 적용한다.</p></section>
+<section id="current-3"><h2>공통 권한과 참가자 자격</h2><p>무료 제외·취소·대납은 실제 배정 eventId가 URL과 같은지 검사하고 이벤트 호스트/공동 주최자 권한을 확인한다. 무료 제외 생성과 대납은 CONFIRMED 배정만 허용한다. 단독 무료 제외 취소의 상태 조건은 SETTLEMENT_LOCKED 금지로 별도 정의되어 있다.</p>
+<p>무료 제외 생성과 대납은 beneficiary의 ATTENDING 출석 행을 요구한다. 신청 행이 있으면 그 상태도 APPROVED여야 한다. 출석 행 없이 승인된 신청만 있거나, 출석 행은 있지만 신청이 다른 상태인 경우 허용하지 않는다. 신청 행이 없는 출석자는 이 함수의 추가 신청 상태 검사 대상이 아니다.</p>
+<p>제공자 자신을 beneficiary로 무료 제외하거나 대납할 수 없다. 대납은 호출자 자신이 제공자인 경우도 거절한다. 기존 취소되지 않은 coverage가 있으면 ASSIGNMENT_ALREADY_CHARGED다. 앱 참가자 선택은 APPROVED 신청만 필터링하고 이미 coverage가 있는 사람이나 제공자를 사전에 제외하지 않는다. 서버의 출석·중복·자기 거래 검사가 최종 판단이다.</p></section>
+<section id="current-4"><h2>돈 없는 무료 제외</h2><p>무료 제외 생성은 다음 연결이 모두 없어야 한다: currentTermsVersion, offeringId, engagementId, requiresDeposit, 양수 serviceFeeGross, 취소되지 않은 실제 금전 과금 행. 카탈로그 상품이 붙어 있지만 조건을 아직 제안하지 않았거나 총액이 0이어도 무료 제외를 허용하지 않는다.</p>
+<p>통과하면 FREE_EXCLUDED, amount=0, freeReason, freeExcludedBy/At, beneficiary와 다음 chargeOrder를 저장한다. payer와 거래·수익 연결을 만들지 않는다. 서버 actions도 위 조건을 사용하므로 앱은 단순히 보장수수료 유무만 보고 버튼을 열지 않는다.</p>
+<p>정산의 coveredBeneficiaries에는 포함되지만 moneyRows에서는 제외한다. 따라서 대상 사람이 실제 정산 대상 참가자이고 다른 게이트도 충족해야 정산이 된다. 무료 행 하나를 만들었다는 사실만으로 배정 전체 정산을 보장하지 않는다.</p></section>
+<section id="current-5"><h2>무료 제외만 되돌리기</h2><p>현재 무료 제외 전용 취소 API와 앱 버튼이 있다. 배정 전체를 취소해야만 복구할 수 있다는 옛 설명을 폐기한다. 서버는 SETTLEMENT_LOCKED를 거절하고 대상 사용자의 취소되지 않은 FREE_EXCLUDED 행을 찾는다. 없거나 다른 종류만 있으면 ASSIGNMENT_FREE_EXCLUSION_NOT_CANCELABLE이다.</p>
+<p>행을 삭제하지 않고 canceledAt, canceledBy, cancelReason을 남긴다. 이후 현재 coverage 조회·정산 계산은 취소 여부에 따라 다르므로 감사 이력과 활성 수금 판정을 구분한다. 무료 제외를 취소하면 현재 수금 판정에서 빠지며 다음 처리에서 새 chargeOrder로 납부/대납/무료 제외가 가능해진다. 취소가 곧 참가자 지갑 차감이라는 뜻은 아니다.</p>
+<p>서버 ASSIGNMENT_FREE_EXCLUDE_CANCEL 영구 명령 기록과 앱 계정별 보관함을 통해 같은 키·대상·본문의 결과를 재생한다. 무료 제외 생성은 요청키가 없고 활성 행 중복 검사로 보호한다. 두 요청의 응답 단절 복구 보장을 동일하다고 쓰지 않는다.</p></section>
+<section id="current-6"><h2>실제 돈을 내는 대납</h2><p>대납은 배정을 잠근 뒤 eventId·봉인 잔여 거래·권한·CONFIRMED·자기 거래·참가자·중복·제공자 지급 가능 상태·최신 조건 수락을 검사한다. 봉인 중에는 PAID 계약금 또는 취소되지 않은 실제 금전 과금의 증거가 있어야 한다. 무료 제외 기록만으로 새 대납을 허용하지 않는다.</p>
+<p>currentTermsVersion이 있으면 기존 취소되지 않은 금전 과금 합계에 새 amount를 더해 상한을 검사한다. engagement 계약의 상한은 수락 조건 X−D, 그 밖은 양수 serviceFeeGross다. 이는 참가자 한 명의 한도가 아니라 배정 전체 금전 수금 합계 상한이다. terms 없는 기존 직접 배정에는 이 함수가 같은 cap 검사를 호출하지 않는다. 최종 정산의 금액 일치 검사는 별도로 남는다.</p>
+<p>금전 활동 시각을 고정하고 실제 납부자를 잠근 뒤 HOST_SUBSIDIZED 행을 예약한다. payerUserId는 요청한 호스트/공동 주최자, beneficiaryUserId는 선택 참가자다. moneyLiveGate를 통과해야 실제 지출을 진행하며 유상 포인트 전용 SERVICE_ASSIGNMENT_CHARGE 정책을 사용한다. 이 문서는 운영 환경에서 해당 게이트가 켜져 있다고 확인한 기록이 아니다.</p>
+<p>지갑 지출과 원장을 기록하는 동안 저장된 배정 feeRateSnapshot으로 CreatorEarning을 PENDING 생성하고 charge에 transactionId/creatorEarningId를 연결한다. 현재 신규 수수료 정책과 건별 계산은 <a href="F21-06.html">계약금 정산 적용과 수수료</a>의 같은 계산 함수를 사용한다. 대납 완료가 제공자 실지급 완료는 아니다. amount는 양수 정수이며 앱 입력과 서버 SpendCommand가 각각 이를 검사한다.</p>
+<p>대납 취소·환불에서는 참가자 이름만 보고 반환 대상을 정하지 않는다. 현재 전액 환불 함수는 유효한 금전 행의 payerUserId로 원래 지출을 복원하고 행을 삭제한다. 따라서 대납자가 실제 호스트/공동 주최자였으면 그 납부자에게 반환된다. 부분 반환·정산 후 회수의 별도 조건은 <a href="F21-05.html">환불과 회수</a>를 따른다.</p></section>
+<section id="current-7"><h2>앱 선택·입력·결과 갱신</h2><p>무료 제외와 대납은 APPROVED 참가자 목록에서 대상을 고른다. 목록에 이미 처리한 사람을 제외하는 coverage 비교는 없다. 무료 제외는 선택 사유, 대납은 양수 정수 금액을 받는다. 입력 시트는 쓰기 성공 뒤 닫고 실패하면 입력을 남긴다. 현재 계정의 세션 범위에서 명령을 보내고 처리 중 상태와 성공/오류 토스트를 표시한다.</p>
+<p>무료 제외 생성은 키 없는 Repository 명령이 성공하면 현재 배정 목록을 refresh한다. 무료 제외 취소와 대납은 공통 sendMemberMoneyCommand로 계정별 영속 키·동일 의도 동시 요청 공유를 사용한다. 성공·커밋 가능 실패·저장 결과 불명에서는 배정 변경 신호를 보내며, 대납은 지갑 변경도 알린다. 생성의 단순 성공 refresh와 두 명령의 불명확 실패 갱신을 구분한다. 영속 키와 확정 거절 규칙은 <a href="F21-06.html">계약금 요청키와 앱 결과 처리</a>를 함께 따른다.</p>
+<p>무료 제외 취소는 coverage 목록에서 FREE_EXCLUDED 타입을 고르게 한다. 대상 이름·종류·금액을 표시하지만 현행 선택 행은 payerUserId를 표시하지 않는다. 앱 coverageType은 문자열이 아니라 SELF_PAID/FREE_EXCLUDED/HOST_SUBSIDIZED/NOSHOW_FORFEIT와 UNKNOWN fallback을 가진 enum이다.</p></section>
+<section id="current-8"><h2>이력 조회와 남은 선택 한계</h2><p>서버 coverages 조회는 배정 권한을 확인한 뒤 취소 행을 포함한 모든 charge 행을 반환한다. 서버 VO에는 무료 처리자/시각과 취소자/시각/사유가 있지만 앱 VO에는 이 감사 필드들이 없다. provider는 응답을 필터링하지 않고, picker는 coverageType만으로 선택 가능 여부를 결정한다.</p>
+<p>따라서 취소된 FREE_EXCLUDED 이력이 선택 가능한 행으로 다시 보일 수 있다. 요청은 chargeId가 아닌 targetUserId를 보내므로 서버는 그 사용자의 현재 활성 무료 행을 찾는다. 없으면 거절하고, 같은 사용자의 새 활성 무료 행이 있다면 그 현재 행을 처리한다. 과거 행과 현재 행을 앱에서 확실히 구분하는 기능은 아직 아니다. 이를 서버의 중복 취소 방어 부재로 확대하지 않는다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>참가자 picker가 이미 coverage 있는 사람·제공자를 제외하지 않는다.</td><td>승인 참가자 필터와 최종 서버 중복/자격 검사를 분리한다.</td></tr><tr><td>Gap</td><td>서버 취소 이력이 앱 VO에 없고 coverage picker가 타입만 검사한다.</td><td>취소 이력 재선택·같은 사용자의 현재 활성 행 처리를 명시한다.</td></tr><tr><td>Gap</td><td>coverage 행에 실제 납부자를 표시하지 않는다.</td><td>대납 환불은 beneficiary가 아닌 payer에게 돌아감을 설명한다.</td></tr><tr><td>Risk</td><td>무료 생성은 요청키가 없고 대납 cap 검사는 terms 관리 여부에 따라 다르다.</td><td>생성/취소/대납의 복구·한도 보장을 섞지 않는다.</td></tr><tr><td>미검증</td><td>실제 지갑 차감·동시 제출·취소 이력 선택·실기기 복귀를 이번에 실행하지 않았다.</td><td>소스 대조와 실행 통과를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 계약:</strong> 무료 생성 beneficiaryUserId와 취소 targetUserId, 필수 요청키의 차이를 보존한다.</li><li><strong>AC-02 자격:</strong> ATTENDING과 존재하는 신청의 APPROVED, 이벤트 범위·호스트/공동 주최자·자기 거래·중복을 검사한다.</li><li><strong>AC-03 무료 조건:</strong> offering/terms/engagement/보장수수료/실제 금전 과금이 없는 CONFIRMED 배정에서만 생성한다.</li><li><strong>AC-04 무료 취소:</strong> 정산 잠금을 거절하고 활성 무료 행에 취소 감사 이력을 남기며 자동 과금하지 않는다.</li><li><strong>AC-05 대납 돈:</strong> 실제 호출자를 payer로 저장하고 봉인·지급 자격·terms cap·양수 유상 지출·수익 PENDING을 연결한다.</li><li><strong>AC-06 정산과 반환:</strong> 무료는 수금 판정만, 대납은 금전 행으로 포함하며 반환은 실제 payer에게 한다.</li><li><strong>AC-07 앱 결과:</strong> 서버 actions, 성공 뒤 입력 닫기, 실패 입력 유지와 생성/취소/대납의 갱신 차이를 따른다.</li><li><strong>AC-08 이력 경계:</strong> 서버 전체 coverage와 앱 감사 필드 누락·타입별 picker·현재 활성 행 처리를 구분한다.</li></ul>
+<p>근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
