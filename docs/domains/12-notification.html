@@ -24,7 +24,7 @@
         <h2>실제 지갑 반환이 끝난 뒤 알립니다</h2>
         <p>정산 송금·분담 취소 알림과 지갑 반환 완료 알림을 구분합니다. 완료 알림은 자동 반환·복구가 성공했을 때 양쪽 당사자에게 보내며, 돌려받음·반환의 방향과 실제 지갑 이동 금액을 표시합니다.</p>
         <p>알림을 받으면 앱 지갑을 다시 읽고, 누르면 취소된 송금·분담 내역으로 이동합니다. 수동 은행 잔여분은 별도이며 재시도에 의한 중복 알림을 막습니다. 모임 참가비의 환불 완료 알림은 기존 동작을 유지합니다.</p>
-        <p>2026년 10월 26일 구현·자동 검사를 완료했습니다. 실제 기기의 수신·이동·지갑 갱신은 남아 있습니다. <a href="07-settlement.html#wallet-reversal-completed">정산 취소와 실제 지갑 반환 완료를 구분합니다</a>와 <a href="../qa/launch-status.html#validation-current">현재 검사 기록과 남은 실패</a>를 함께 확인합니다.</p>
+        <p>기존 문서에는 2026년 10월 26일 구현·자동 검사 완료 기록이 있습니다. 이번 갱신에서 그 검사를 다시 실행한 것은 아닙니다. 실제 기기의 수신·이동·지갑 갱신은 남아 있습니다. <a href="07-settlement.html#wallet-reversal-completed">정산 취소와 실제 지갑 반환 완료를 구분합니다</a>와 <a href="../qa/launch-status.html#validation-current">현재 검사 기록과 남은 실패</a>를 함께 확인합니다.</p>
       </section>
 
       <p class="subtitle"><a href="../qa/completion-criteria.html#domain-12">이 영역의 기능별 출시 완료 기준</a>에서 확인할 결과와 증거를 봅니다. 기능 포함 여부와 구현 완료·실환경 통과·공개 승인은 별도로 판정합니다.</p>
@@ -43,7 +43,7 @@
       <div class="launch-strip" id="launch-strip" data-domain="1"></div>
 
       <section id="delivery-recovery">
-        <h2>중단 뒤에도 발송 기록으로 복구합니다</h2>
+        <h2>중단 뒤에도 발송 기록으로 복구합니다</h2><p>주간 요약과 수신 동의 재확인 메일의 별도 비동기 경로는 이 복구 보장에 포함하지 않습니다. <a href="../policies/notification.html#marketing-current-2">주간 요약 메일의 대상과 발송 한계</a>를 함께 확인합니다.</p>
         <p>업무 알림의 발송 의도를 저장하고, 운영자는 대기·실패를 조회해 유효한 작업을 재시도합니다. 가입·복구·Google 연결 번호 메일은 요청 중 발송하며 옛 링크 메일 아웃박스와 다릅니다. 일정·투표·관심인·제재 등 업무 알림과 파일·마일리지 후속 처리도 저장된 작업을 기준으로 복구합니다.</p>
         <p><a href="../policies/notification.html#durable-delivery">알림 기록·발송 수락·실제 수신을 구분합니다</a>에서 재처리와 실제 수신의 경계를 확인합니다.</p>
       </section>
@@ -52,7 +52,7 @@
       <section>
         <div class="metrics">
           <div class="metric"><div class="label">기능</div><div class="value">6</div></div>
-          <div class="metric"><div class="label">시나리오</div><div class="value">38</div></div>
+          <div class="metric"><div class="label">확인 기준</div><div class="value">기능 PRD</div></div>
         </div>
       </section>
 
@@ -76,7 +76,7 @@
             <tbody>
               <tr><td>시간 형식</td><td><strong>자정 넘김 지원</strong> — 예: <code>22:00 ~ 07:00</code> (END &lt; START 처리)</td></tr>
               <tr><td>요일 형식</td><td>정수 리스트 <code>1=월요일 ~ 7=일요일</code></td></tr>
-              <tr><td>차단 범위</td><td><strong>푸시만 차단</strong> — 앱 안의 알림함에는 정상 보관되어 사용자가 나중에 인지 가능</td></tr>
+              <tr><td>차단 범위</td><td><strong>일반 푸시의 시간 제한</strong> — 알림함 기록은 카테고리·동의·대상자 조건을 별도로 통과해야 하며 방해금지 자체가 이를 허용하지는 않음</td></tr>
               <tr><td>카테고리 설정과 관계</td><td>독립적 — 카테고리 OFF + 방해금지 OFF여도 양쪽이 모두 통과해야 푸시 발송</td></tr>
               <tr><td>사용자당 설정 수</td><td><strong>1행</strong> — JPA <code>unique=true</code>와 V1의 <code>uk_quiet_hours_user</code> UNIQUE KEY가 함께 보장</td></tr>
               <tr><td>진입 위치</td><td>알림 설정 → 방해금지 시간</td></tr>
@@ -85,43 +85,19 @@
         </div>
       </section>
 
-      <section>
-        <h2>알림 발송 판단</h2>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart TD
-    A["상태 변화 발생"] --> B{"수신자 존재?"}
-    B -->|"없음"| C["종료"]
-    B -->|"있음"| D{"카테고리 수신 허용?"}
-    D -->|"아니오"| E["푸시 미발송"]
-    D -->|"예"| F{"방해금지 시간?"}
-    F -->|"예"| G["보류·무음 정책"]
-    F -->|"아니오"| H["푸시 발송"]
-    H --> I["알림함 적재"]
-    G --> I
-    E --> I
-          </div>
-        </div>
-        <div class="callout">
-          <span class="label">알림 기획 순서</span>
-          <p>알림 기획은 화면이 아니라 “어떤 사건이 발생했을 때 누구에게 어떤 문구로 알릴 것인가”로 시작한다.
-          알림 화면 디자인은 그 다음 단계다.</p>
-        </div>
-
-        <div class="callout">
-          <span class="label">2026-08-27 소스 반영 — 관리자가 보내는 알림도 같은 문을 통과한다</span>
-          <p>종전에는 운영자 화면이 알림함 행을 직접 만들어 이 판단을 건너뛰었다 — 사용자가 그 종류를 꺼도 관리자 알림은 계속 왔다.
-            지금은 운영자의 개별 통지·전체 방송 모두 발행 자체를 공개 서버에 맡긴다. 그 결과 관리자가 보낸 알림도 카테고리 설정·
-            방해금지 시간을 그대로 통과하고, 실제로 몇 명에게 도착했는지도 설정으로 걸러진 숫자로 운영자에게 보고된다.
-            계정 제재처럼 원래 설정과 무관하게 항상 전달되는 종류는 관리자가 보내도 똑같이 무조건 전달된다.
-            전체 방송은 알림함에는 남지만 단말 푸시는 울리지 않는다 — 방송이 전 사용자 단말을 깨우는 도구가 되지 않게 하려는 결정이다.
-            같은 큐가 예약 발송과 실패 재처리도 함께 맡는다 — 발송 실패는 자동으로 다시 시도되고, 운영자도 콘솔에서 실패 건을 확인하고
-            수동으로 다시 보낼 수 있다(아래 레드 플래그의 동시 처리 결함 참조).</p>
-        </div>
-      </section>
+      <section><h2>알림 발송 판단</h2><div class="diagram"><div class="mermaid">flowchart TD
+    A["상태 변화와 수신 대상"] --> B{"현재 수신 정책 허용?"}
+    B -->|"아니오"| C["기록·발송 제한 사유 구분"]
+    B -->|"예"| D["알림함 기록과 채널 작업"]
+    D --> E{"푸시 설정·시간·현재 대상 허용?"}
+    E -->|"아니오"| F["푸시 건너뜀"]
+    E -->|"예"| G["공급자 발송 시도"]
+    G --> H["수락·실패·재시도 상태 기록"]
+    H --> I["기기 실제 수신은 별도 확인"]
+</div></div><p>카테고리 스위치는 새 푸시와 알림함 기록을 함께 바꿉니다. 방해금지는 시간에 따른 푸시 제한이며 이미 생성된 알림함 기록을 취소하지 않습니다. 항상 전달하는 종류와 시간 예외는 별도 정책입니다.</p><p>관리자 재시도도 유효한 실패 작업과 현재 정책을 확인하고 처리자·사유를 남깁니다. 처리 소유권·임대 만료·다음 시도 시각을 구분하며, 생성·제출 수를 실제 도착 수로 표시하지 않습니다. 자세한 경계는 <a href="../policies/notification.html#durable-delivery">알림 기록·발송 수락·실제 수신을 구분합니다</a>를 따릅니다.</p></section>
 
       <section>
-        <h2>레드 플래그</h2>
+        <h2>검수할 조건과 현재 확인 범위</h2><p>아래 항목은 검수 질문입니다. 모든 항목이 현재 발생 중인 결함이라는 뜻은 아닙니다. 기능별 현재 공백은 각 기능 PRD를 따릅니다.</p>
         <div class="callout danger">
           <ul>
             <li><strong>OS 푸시 권한이 없는데 앱 내 알림함도 비어 있는 것처럼 보임</strong> — 인박스는 동작해야 한다.</li>

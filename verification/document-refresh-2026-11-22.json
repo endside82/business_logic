@@ -417,7 +417,8 @@
         "curated_charge_20261122",
         "curated_settlement_20261122",
         "curated_assignment_20261122",
-        "curated_domain_20261122"
+        "curated_domain_20261122",
+        "notification_marketing_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2442,8 +2443,10 @@
       "baselineSha256": "d973f74eb9c5aec52e47660ff0f6f0f96dc21442c4a44c5d9c91e7a6ee107017",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "evidence": [
+        "notification_marketing_20261122"
+      ],
+      "note": "광고 동의·재확인·메일 및 공통 발송 흐름 부분 수정. 투표·스탬프·사진 심사와 업무별 알림 원문 대조 후 페이지 전체 완료 판정."
     },
     {
       "path": "docs/domains/13-profile.html",
@@ -5015,8 +5018,10 @@
       "baselineSha256": "61e3a94ddfc6bbd21d2758ab77e347df03019ae70d4e574a11926f2049f755e4",
       "review": "pending",
       "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "evidence": [
+        "notification_marketing_20261122"
+      ],
+      "note": "광고 동의·재확인·메일 및 공통 발송 흐름 부분 수정. 투표·스탬프·사진 심사와 업무별 알림 원문 대조 후 페이지 전체 완료 판정."
     },
     {
       "path": "docs/policies/payment.html",
@@ -8329,11 +8334,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_domain_20261122",
-        "notification_delivery_20261122",
-        "data_export_20261122"
+        "notification_marketing_20261122"
       ],
-      "reviewedSha256": "342a08df4f0d35e14a356875f5fd726cc693f0d6e5cd36479a6fdf02bc570329"
+      "reviewedSha256": "8386e5dffca4f130a3b2c754b823bc6d037800c6df340567b6030a24e0934f39"
     },
     {
       "path": "prd/03_policy_prds/payment_settlement_policy_prd.md",
@@ -42024,6 +42027,180 @@
       "observedSourceVersions": {
         "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
         "community_api": "ce303fc5a0a4cef8ac97068fbdf0609a8767ea12",
+        "community_app": "b1627de77381f33a895e605367cc5f7ccca21458"
+      }
+    },
+    "notification_marketing_20261122": {
+      "kind": "source_review",
+      "scope": "광고 동의·결과 통지·주간 요약·수신 거부·2년 재확인의 실제 기록/전달/실패 경계. 알림 HTML은 해당 부분을 동기화하되 투표·스탬프·사진 등 추가 기능 근거 대조를 남겨 전체 완료로 세지 않음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/PolicyConsentService.java",
+          "sha256": "4eaeb295a952785d908cda22ddb02b0eab3b7b8b20269c11fac18d6ffad6bb86",
+          "reviewScope": "56–346 실제 본문: 가입/재동의/설정/메일철회 이력, MANDATORY 설정 변경, 상태 불변 no-op, 결과 통지 의도와 이력 키"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/MarketingConsentRecheckService.java",
+          "sha256": "248479da5ac8bd96f11198d7c19c770cf24c63e2844bbc04293d890eb61bcfb6",
+          "reviewScope": "41–121 전체 실제 본문: 30일 전후 창, 2년 회차, 최신 동의 재확인, outbox 중복 방지와 메일 주소"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/MarketingConsentRecheckScheduler.java",
+          "sha256": "dfef1c6daa748686cd131377e9f49d6e25b2b4765a525b9966a0b8a9e0d9e34b",
+          "reviewScope": "26–86 전체 실제 본문: 기본시간대 10시, 후보 커서, 의도 저장 뒤 메일 요청, 이력 누락 집계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/repository/query/MarketingConsentRecheckQueryRepository.java",
+          "sha256": "be544fb291c3802d93623fc836b76bd45fc98992f3d457f41dae22f28db84f53",
+          "reviewScope": "22–68 전체 실제 본문: 최신 동의/현재 agreement 후보 조건과 이력 없는 회원 집계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/WeeklyDigestScheduler.java",
+          "sha256": "2b04fe59b775610e6ef469b3edd16886e357f356cd5f0b8d21b69a449f5b7e6f",
+          "reviewScope": "36–136 전체 실제 본문: 월요일09시, 500명 페이지/5000명/10분 예산, 제출/누락 집계와 본문 수치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/WeeklyDigestRecipientReader.java",
+          "sha256": "39f095f54cd0bccfdda69737126de605e670046a3d0fb6d0e6ed363bbe0e4d03",
+          "reviewScope": "12–45 전체 실제 본문: 동의 AND 이메일 설정, 주소 누락"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/WeeklyDigestMailSender.java",
+          "sha256": "620d7f82b23f4571f8a569439a153138c38e58aed7c5ea1592a8da7f46ed0840",
+          "reviewScope": "13–33 전체 실제 본문: 비동기 실행 시 수신조건 재조회와 dispatch"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/MarketingConsentRecheckMailSender.java",
+          "sha256": "fa824bf58371ab1ced35b0ce1199751cb29b7c5c80c0137c5146eb74ddee97eb",
+          "reviewScope": "17–48 전체 실제 본문: 별도 비동기 메일 요청, 날짜/유지/철회 본문"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/MarketingUnsubscribeLink.java",
+          "sha256": "623a03c3edbc4f4693b694cf7fd8e4efb1610acca19d70ea7e4a11cd72dbb0bc",
+          "reviewScope": "28–102 전체 실제 본문: HMAC 서명/토큰 검증/URL 검사, 토큰에 만료시각 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/AdvertisingMailFormat.java",
+          "sha256": "92ccc8b99875250790e531aa4b4d1873649b5015ad7c64fc2dd9775a1838a70b",
+          "reviewScope": "19–87 전체 실제 본문: 광고 접두/식별정보/한영 안내와 개발 기본값·빈값 검사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/EmailDispatcher.java",
+          "sha256": "db2b26a8128019137ea118f8fb689fce76faf501a04e2a6fbe9afa3a8f2bd358",
+          "reviewScope": "16–50 전체 실제 본문: 억제/전송/성공실패 기록, 자동 재시도 예약 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/EmailMessageComposer.java",
+          "sha256": "25045a61777b54a7b5bfcbd377364eb757baa1712ea745c17d3e359e967617e6",
+          "reviewScope": "28–84 전체 실제 본문: 발송자, 본문, List-Unsubscribe와 One-Click 헤더"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/port/DigestRecipientAccountAdapter.java",
+          "sha256": "70230a9aecad8e2ae9c5da74773387eda2d0909d958831e26b6bfcd7d6acb61f",
+          "reviewScope": "22–42 전체 실제 본문: agreement 동의값과 회원 이메일 조회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/repository/query/NotificationQueryRepository.java",
+          "sha256": "ee0c1d991d055101755a3e5a1a8ae5858e1d4e3d3802fd18be17aa84d0055018",
+          "reviewScope": "48–61 최근 알림 생성 회원 distinct/cursor 후보 조회"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/account/controller/MarketingUnsubscribeController.java",
+          "sha256": "ee28b681f24c42e7773e9f67d0c2454787f036f2bc45766690c418faf1fcc829",
+          "reviewScope": "35–89 전체 실제 본문: 공개 GET 확인/POST 철회, 400·200/반복상태/no-store"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
+          "sha256": "1545eda9424b9eafd2af70b5e4282c825fb0e1cb0f8c93fec322c6d672682a2a",
+          "reviewScope": "313–353 동의·추천 묶음과 성공안내, 520–548 푸시/인앱 일괄 변경과 실패 분기"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/NotificationSettingService.java",
+          "sha256": "335f050d3405ec8c85a17e48fa81e09541104da7c8cce6476e3016f3d70daa7c",
+          "reviewScope": "32–228 조회/개별/일괄 변경 실제 본문: 무동의 유효값, 푸시/인앱 AND로 동의 반영, 이메일만 변경 예외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/constants/NotificationType.java",
+          "sha256": "ec20cc7ce5efdb9030696ea26d9795293e885c42b53d743b25cc990b15faffab",
+          "reviewScope": "1243–1257 항상 전달 반환조건, 1342–1344 광고 동의 대상 PROMOTION 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/NotificationService.java",
+          "sha256": "b6b0b785713c0a7b3fbc22bd99e2ec9daa8604728b8ff10f657b1214329f2112",
+          "reviewScope": "375–445 현재 알림함/푸시 허용, 광고 동의, 알림 저장 후 push outbox"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/service/PushDeliveryEligibility.java",
+          "sha256": "cad60a52da60411caa88d351019988161ea52cd2df6661d3464e483ec9125120",
+          "reviewScope": "32–65 현재 수신자/원본/차단/동의/설정 재판정과 한국시간 방해금지"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "176–187 공개 GET·POST marketing/unsubscribe 보안 매핑"
+        }
+      ],
+      "reuses": [
+        "data_export_20261122",
+        "notification_delivery_20261122",
+        "notification_domain_20261122",
+        "notification_groups_settings_20261122",
+        "profile_domain_rollup_20261122",
+        "support_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "8386e5dffca4f130a3b2c754b823bc6d037800c6df340567b6030a24e0934f39"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/12-notification.html": [
+          "sidebar",
+          "settlement-refund-notification",
+          "launch-strip",
+          "delivery-recovery"
+        ],
+        "docs/policies/notification.html": [
+          "sidebar",
+          "refresh-and-destination-current",
+          "durable-delivery",
+          "poll-notifications"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "재확인 창은 2주년 전후30일; 기한 내 실제 전달 보장과 분리",
+        "의도 저장 뒤 재확인 메일 실패의 자동 재시도 공백",
+        "주간 요약 예산초과 및 실행기 거절의 영속 후속 처리 없음",
+        "법정기한 검색본문과 별표6 원문 대조 범위를 구분",
+        "HTML의 투표·스탬프·사진 등 보충 기능은 후속 원문 조사 뒤 최종 완료 판정"
+      ],
+      "retainedHistoricalQuotes": [],
+      "externalSources": [
+        {
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?efYd=20261002&lsiSeq=290483",
+          "reviewScope": "국가법령정보센터 검색본문의 제62조의2 14일/제62조의3 매2년 해당일 전 기준 확인. 조문 페이지 전문은 추출되지 않아 전체법령 검토 완료로 취급하지 않음",
+          "observedOn": "2026-11-22"
+        },
+        {
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=169802551",
+          "reviewScope": "별표6 원문 중 공통·전자우편 표시/거부 안내와 구현 대조",
+          "observedOn": "2026-11-22"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "22 source/canonical digests; 8 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 3 paths, 36 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review and document checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
         "community_app": "b1627de77381f33a895e605367cc5f7ccca21458"
       }
     }
