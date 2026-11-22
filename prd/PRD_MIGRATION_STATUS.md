@@ -304,8 +304,8 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F08-05 | 플랜 마켓 | [F08-05_plan-publish_prd.md](02_feature_prds/08_plan_market/F08-05_plan-publish_prd.md) | `F08-05_plan-publish` | 실사 기반 전환본 | 6 | 5 |
 | F08-06 | 플랜 마켓 | [F08-06_market-item-management_prd.md](02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md) | `F08-06_market-item-management` | 실사 기반 전환본 | 9 | 4 |
 | F08-07 | 플랜 마켓 | [F08-07_creator-profile-stats_prd.md](02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md) | `F08-07_creator-profile-stats` | 실사 기반 전환본 | 2 | 4 |
-| F08-08 | 플랜 마켓 | [F08-08_market-main-browse_prd.md](02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | `F08-08_market-main-browse` | 실사 기반 전환본 | 3 | 2 |
-| F08-09 | 플랜 마켓 | [F08-09_market-search_prd.md](02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | `F08-09_market-search` | 실사 기반 전환본 | 1 | 4 |
+| F08-08 | 플랜 마켓 | [F08-08_market-main-browse_prd.md](02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md) | `F08-08_market-main-browse` | 실사 기반 전환본 | 4 | 4 |
+| F08-09 | 플랜 마켓 | [F08-09_market-search_prd.md](02_feature_prds/08_plan_market/F08-09_market-search_prd.md) | `F08-09_market-search` | 실사 기반 전환본 | 1 | 2 |
 | F08-10 | 플랜 마켓 | [F08-10_market-item-detail_prd.md](02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md) | `F08-10_market-item-detail` | 실사 기반 전환본 | 5 | 4 |
 | F08-11 | 플랜 마켓 | [F08-11_purchase_prd.md](02_feature_prds/08_plan_market/F08-11_purchase_prd.md) | `F08-11_purchase` | 실사 기반 전환본 | 3 | 4 |
 | F08-12 | 플랜 마켓 | [F08-12_my-collection_prd.md](02_feature_prds/08_plan_market/F08-12_my-collection_prd.md) | `F08-12_my-collection` | 실사 기반 전환본 | 4 | 4 |

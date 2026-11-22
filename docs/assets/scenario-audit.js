@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,306개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,315개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1306,
+    "documentedScenarioItems": 1315,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4965,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 73,
+    "directlyLinkedAutomatedTests": 74,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 73,
+    "automatedScenarioReferences": 74,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 54,
-    "definitionOnlyEvidence": 77,
-    "traceMarkers": 571,
-    "verifiedTraceRecords": 569,
+    "partialEvidenceChain": 55,
+    "definitionOnlyEvidence": 76,
+    "traceMarkers": 572,
+    "verifiedTraceRecords": 570,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -11650,18 +11650,18 @@ window.SCENARIO_AUDIT = {
       "id": "F08-08",
       "domain": "플랜 마켓",
       "name": "마켓 메인 탐색",
-      "scenarioCount": 5,
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-08_market-main-browse/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 5
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-08_market-main-browse/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
         "entries": [
           {
@@ -11714,15 +11714,35 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 34
               }
             ]
+          },
+          {
+            "id": "F08-08:4",
+            "label": "GET /api/v1/market/search — 분류 선택 시 본문 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
+                "controller": "MarketSearchController",
+                "method": "searchItems",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/market/search",
+                "targetLine": 27,
+                "methodLine": 28
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/market/market_category_filter_test.dart",
+          "community_app/test/presentation/market/market_subscription_filter_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -11733,7 +11753,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,
@@ -11742,14 +11762,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-09",
       "domain": "플랜 마켓",
-      "name": "마켓 검색",
-      "scenarioCount": 7,
+      "name": "마켓 키워드 검색",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-09_market-search/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-09_market-search/backend.md",
@@ -11778,11 +11798,12 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_market_discovery_funnel_test.dart"
+          "community_app/integration_test/seed_market_discovery_funnel_test.dart",
+          "community_app/test/presentation/market/market_search_and_refund_list_test.dart"
         ],
         "markerCandidateFiles": []
       },

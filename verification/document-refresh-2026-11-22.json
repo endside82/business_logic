@@ -290,7 +290,9 @@
         "plan_reorder_20261122",
         "plan_publish_20261122",
         "market_management_20261122",
-        "creator_stats_20261122"
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_search_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3542,9 +3544,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "9da1011cadca8bec6aa17a3586047326feaebaabc6e95dbd7d57a86953698028",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_browse_20261122"
+      ],
+      "reviewedSha256": "00412f272c235f2904776669e7bce4236b7571c0833060fdf39a78b084aca9e8"
     },
     {
       "path": "docs/features/F08-09.html",
@@ -3552,9 +3557,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "2854ff5c0c3bb43b215bf734fadcc741b9bc9b9d211376985762860f1d0a2182",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_search_20261122"
+      ],
+      "reviewedSha256": "5bf4adcac0b70b55239775d364bcd292be5b30041e3bfc90824923fc7c4f37bf"
     },
     {
       "path": "docs/features/F08-10.html",
@@ -5014,7 +5022,9 @@
         "plan_reorder_20261122",
         "plan_publish_20261122",
         "market_management_20261122",
-        "creator_stats_20261122"
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_search_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5099,7 +5109,9 @@
         "plan_reorder_20261122",
         "plan_publish_20261122",
         "market_management_20261122",
-        "creator_stats_20261122"
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_search_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5208,7 +5220,9 @@
         "plan_reorder_20261122",
         "plan_publish_20261122",
         "market_management_20261122",
-        "creator_stats_20261122"
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_search_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6651,10 +6665,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "3bc5b6a15c25f981affd4118b067678c87e2d731600a1a20dc1535dc16e8d247",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_browse_20261122"
+      ],
+      "reviewedSha256": "7bf30193ce3224646b49cabfcedefde453e40b35e95b2d4c87c2181b249a8a95"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
@@ -6662,10 +6678,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "5f0b7a1c20a66a01133f015626a9a5eb36d49f8b7a3ef1b6160bd0e91a59a850",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_search_20261122"
+      ],
+      "reviewedSha256": "d0f6aaf60f93dd7fa81706092151bbee900a18b3c4bb6d6a2c5631855a38bf81"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
@@ -8009,7 +8027,9 @@
         "plan_reorder_20261122",
         "plan_publish_20261122",
         "market_management_20261122",
-        "creator_stats_20261122"
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_search_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8246,7 +8266,9 @@
         "plan_reorder_20261122",
         "plan_publish_20261122",
         "market_management_20261122",
-        "creator_stats_20261122"
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_search_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12246,9 +12268,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6e212b32dfb0ff1210fffdfb02231d3faeac17d74be0690a777211f691a8637c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_browse_20261122"
+      ],
+      "reviewedSha256": "1846d3d901314a01e03fff0f87a3bcb422db6a8a58368ff373fa6dd10ca699da"
     },
     {
       "path": "units/08_plan_market/F08-08_market-main-browse/diagrams.md",
@@ -12256,9 +12281,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7cacae448684d90b0d77bceb983404c1c0081be3d038314a102194d9c64b6337",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_browse_20261122"
+      ],
+      "reviewedSha256": "e9e47b4ce1c6b3cdd713efbc6c1518870f5dd8cc94763d56760f4e0e58d9d297"
     },
     {
       "path": "units/08_plan_market/F08-08_market-main-browse/frontend.md",
@@ -12266,9 +12294,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f40dab5585b1c11ab1efec555c0ca7273b38955c42071e20c408895ba951125e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_browse_20261122"
+      ],
+      "reviewedSha256": "191d36618feb093b89c5e52e32acd954b19c1743f5e9d1bc2687e5eba7d3c079"
     },
     {
       "path": "units/08_plan_market/F08-08_market-main-browse/scenarios.md",
@@ -12276,9 +12307,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "805464a8a134bd3829a1a4fe574adc95bc24c025f64f9aeb82d83b77c9272cac",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_browse_20261122"
+      ],
+      "reviewedSha256": "ed2f0f8e66e3e4921a484ad56324b4d73056916c5aa8e096a000390cec9404cd"
     },
     {
       "path": "units/08_plan_market/F08-09_market-search/backend.md",
@@ -12286,9 +12320,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "19ddb491e02cb81c21b0203972c0e524ca1ba9fdcd941e9af3b23278a2ee3cdd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_search_20261122"
+      ],
+      "reviewedSha256": "1a6686f021d52cd858d51fcfe3ebda9cb540a122847fb075f97005dbbb159369"
     },
     {
       "path": "units/08_plan_market/F08-09_market-search/diagrams.md",
@@ -12296,9 +12333,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8c85ceb7bbf38719b8edeb18259dc8c999c3912ae26ae668e0e7e8c349635638",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_search_20261122"
+      ],
+      "reviewedSha256": "340996bb3d4139173d41800e2edd77feb8a1763bfcc6bbe77f9e1524d3e94436"
     },
     {
       "path": "units/08_plan_market/F08-09_market-search/frontend.md",
@@ -12306,9 +12346,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "55e50e2017cdc0df315746dfae7aac91a74b3004561003fccc647c0da001b1d4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_search_20261122"
+      ],
+      "reviewedSha256": "01e5f50133f78e63a713ae68a9105579d1ad1e59f8cd76aeabaad408a20e7c62"
     },
     {
       "path": "units/08_plan_market/F08-09_market-search/scenarios.md",
@@ -12316,9 +12359,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d70ceee4e028004c92329aa0b5ab0c43044963dd4b44427c1f653f29d8c746be",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_search_20261122"
+      ],
+      "reviewedSha256": "440cf06c116f0a272a6c28a40005c1e113bd5a51d0cae588934351d021cf4578"
     },
     {
       "path": "units/08_plan_market/F08-10_market-item-detail/backend.md",
@@ -31876,6 +31922,313 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; existing selected assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "dca0501de4909ca1849cf5cf3ee2352d03d718b3"
+      }
+    },
+    "market_browse_20261122": {
+      "kind": "source_review",
+      "scope": "실제 마켓 탐색/검색 입구·인증·판매유형 봉인·조회/필터 계약·페이지/늦은응답/오류·현재 시험의 선택 단언을 소스 대조. 제품 실행이나 시각 검수 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
+          "sha256": "fb5fba9f79bb2d91e69b5c4356899bbfd93f62a4721bd8b8107ad45958f874d0",
+          "reviewScope": "17–36: MARKET·search Page·popular List·기본10/상한50"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketCategoryService.java",
+          "sha256": "3660aaf7b452a5710707fd7950054ca67cccac61c814f4b6546c968f6a87eb48",
+          "reviewScope": "25–117: 활성 뿌리/직계자식 트리·가시 분류 술어·숨은 분류 빈결과"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/MarketItemQueryRepository.java",
+          "sha256": "00f6b654408a49b285f4e15e28df97f09c290f6efec9fd1bb1d74d77308d6d89",
+          "reviewScope": "41–110,158–238: ON_SALE/열린유형·키워드/분류/통화/가격·정렬/타이브레이크·난이도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/MarketSearchParam.java",
+          "sha256": "4dac0b0885db0b5a5a43c436f78382a9fcfc442193dde58e498cc3ff03d2e13c",
+          "reviewScope": "11–18: keyword/categoryId/currencyType/itemType/minPrice/maxPrice/sortBy·PagingParam"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/param/PagingParam.java",
+          "sha256": "7eeb664b58e5cf2a1d246dd538e77b3ae1b4e60937c008d3768238cf969c5c47",
+          "reviewScope": "10–32: 기본page0/size20·size상한100·PageRequest"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/market_main_provider.dart",
+          "sha256": "c3d14dacc5b077f697b8f7c572167cd7c142e59026a6f59da29b55aca1431131",
+          "reviewScope": "12–101: 카테고리/인기10·검색20개PagedList·조건변경 재요청"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketCategoryController.java",
+          "sha256": "8c017b4790c08e522c89bf82342fcc0dab74791587c559fa6c2c9de430866424",
+          "reviewScope": "17–27: MARKET·category tree List"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/MarketItemSearchParam.java",
+          "sha256": "56903c16b84824c10acdcd94802647d716b399512c26955f7332f3526933f400",
+          "reviewScope": "10–32: itemType/sort/minPrice/maxPrice/difficulty·검색Param과 구분"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_main_screen.dart",
+          "sha256": "95e66f8bdc1769be942e9399cf177818b16108df2f3dfdf5896baf6bf9cb5510",
+          "reviewScope": "45–62,95–259,264–359,362–428,476–555,611–614,684–724: 유형/분류·세대별첫장/추가장·가격끝값·독립 인기/최근·실패·현재입구"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/popular_plans_screen.dart",
+          "sha256": "59b8d2d5b058bcd35421da3032f99fd43d314ca52107f925f3c7f907861718d6",
+          "reviewScope": "20–65: 같은 인기10개provider·목록/빈/재조회/오류/상품상세"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/recently_viewed_provider.dart",
+          "sha256": "7644fb64f4358811fdbad47fdc11227406cdf06bb1f9f5bfe2870e4fd5c7ec19",
+          "reviewScope": "14–68: 계정별저장소·세션변경가드·최근ID10개 상세조회/실패건 제외"
+        },
+        {
+          "path": "community_app/test/presentation/market/market_category_filter_test.dart",
+          "sha256": "b622a1d8979bfaaeeea013567851d30d01e574fd67001b3842491da0c361e85b",
+          "reviewScope": "142–168: 빠른 분류 변경 뒤 옛응답이 최신결과를 덮지 않는 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_app/test/presentation/market/market_subscription_filter_test.dart",
+          "sha256": "ec0918bee315e7e58b01d8244bd602ffda59f1c60ac73f234bb406f8422cd61a",
+          "reviewScope": "69–114: 열린 SUBSCRIPTION 진입·닫힌 기간권 필터숨김/전체조회 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/MarketCategoryServiceTest.java",
+          "sha256": "4c01ba60cf5adb0703428271e575c8e248645db8346a65117df49a1c0a2276e9",
+          "reviewScope": "60–90: 보이는 뿌리/자식·숨은분류·뿌리검색 포함범위 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemService.java",
+          "sha256": "b82f8eef8ba6385595e9c5725bddd85f756585def1e0d1c69d17c849fa805320",
+          "reviewScope": "99–102,446–462: 목록/검색/인기·봉인유형·숨은분류 조기 빈페이지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketSaleScope.java",
+          "sha256": "ca82eff224ee04a42eb1d3c2233262d8c6a188c1ab58101e84270545caa494be",
+          "reviewScope": "36–59: SUBSCRIPTION의 MARKET_PERIOD_PASS·나머지P0·봉인유형 제외"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "creator_stats_20261122 동일 SHA 재사용: market 목록/검색/분류 익명허용 없음·popular 명시 인증·상세 익명허용과 구분"
+        },
+        {
+          "path": "community_app/lib/data/api/market_api.dart",
+          "sha256": "a47b666e2911b73bd12c9f1233d86693de667d38fb5d31b1a3b9f0ec3c7847a6",
+          "reviewScope": "28–36,112–130: 목록 sort와 검색 sortBy·typed Page/List·분류/인기"
+        },
+        {
+          "path": "community_app/lib/data/repositories/market_repository.dart",
+          "sha256": "6dad92f7865f0050ecebf5cb01d95d8dc33930092fc6dc1ba495d394499af052",
+          "reviewScope": "31–58,66–84,234–273: itemType 정규화/알수없는필터null·검색/목록 Result"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "55–72,99–110: 마켓itemType·검색keyword·상품itemId·인기별도라우트"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+          "sha256": "8725e2effea08426e202ee4ce2969ee2141fa7e88f2c40532d269ce1885e45f1",
+          "reviewScope": "28–36: MARKET·목록 Page GET"
+        },
+        {
+          "path": "community_app/lib/presentation/home/screens/home_feed_screen.dart",
+          "sha256": "6d0a3faf2f4a3f314bb4a493a0690c783a2087dbcdcaf108236c8a2d37c27c3a",
+          "reviewScope": "49–50,258–280: MARKET공개 홈 새플랜 더보기 → /market"
+        }
+      ],
+      "reuses": [
+        "creator_stats_20261122",
+        "event_discovery_20261122",
+        "market_management_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
+          "sha256": "7bf30193ce3224646b49cabfcedefde453e40b35e95b2d4c87c2181b249a8a95"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-08.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "마켓 목록 비로그인 허용 설명 교정·분류선택 시 검색API 연결 추가",
+        "필터 적용 본문과 인기10개 전체보기 분리·100000P 끝값 상한없음 반영"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "product_gap",
+          "finding": "본문 첫 조회·필터 재조회 실패는 toast 후 빈/기존 카드 상태이며 별도 오류영역 없음. 추가 페이지 실패도 별도 재시도 버튼 없음. 당겨서 갱신은 분류를 재조회하지 않음.",
+          "disposition": "현재 제한으로 명시; 기능 변경 없음"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "117 source-reference tables match",
+        "groupDigests": "23 source/canonical digests; 3 retained HTML IDs; 0 historical quotes",
+        "derivedDocuments": "6 document paths, 21 relative links and 4 derived-from digests checked",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "dca0501de4909ca1849cf5cf3ee2352d03d718b3"
+      }
+    },
+    "market_search_20261122": {
+      "kind": "source_review",
+      "scope": "실제 마켓 탐색/검색 입구·인증·판매유형 봉인·조회/필터 계약·페이지/늦은응답/오류·현재 시험의 선택 단언을 소스 대조. 제품 실행이나 시각 검수 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/util/EnumUtils.java",
+          "sha256": "9d378de0f0a0a62ffae7aed06b1d31e2630cccfc7b248b96d2fb68bd98115436",
+          "reviewScope": "21–37: 유효하지 않은 enum INVALID_INPUT·trim/대문자 변환"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_search_screen.dart",
+          "sha256": "01bd415380d7193800709097ad475f42415125891b8483078f0f10674aacd00c",
+          "reviewScope": "35–134,175: keywordprefill/trim·검색초기/빈/오류·전체건수·추가조회footer·itemId상세·태그 안내"
+        },
+        {
+          "path": "community_app/test/presentation/market/market_search_and_refund_list_test.dart",
+          "sha256": "5d423acb88b82f53f27dd273e4646ad04399510cd5fe424341de2c4ae3eeb337",
+          "reviewScope": "96–170: 특수문자 검색어 경로 전달·20개로딩시 서버총57개 표시 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketSearchController.java",
+          "sha256": "fb5fba9f79bb2d91e69b5c4356899bbfd93f62a4721bd8b8107ad45958f874d0",
+          "reviewScope": "17–36: MARKET·search Page·popular List·기본10/상한50"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketCategoryService.java",
+          "sha256": "3660aaf7b452a5710707fd7950054ca67cccac61c814f4b6546c968f6a87eb48",
+          "reviewScope": "25–117: 활성 뿌리/직계자식 트리·가시 분류 술어·숨은 분류 빈결과"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemService.java",
+          "sha256": "b82f8eef8ba6385595e9c5725bddd85f756585def1e0d1c69d17c849fa805320",
+          "reviewScope": "99–102,446–462: 목록/검색/인기·봉인유형·숨은분류 조기 빈페이지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/MarketItemQueryRepository.java",
+          "sha256": "00f6b654408a49b285f4e15e28df97f09c290f6efec9fd1bb1d74d77308d6d89",
+          "reviewScope": "41–110,158–238: ON_SALE/열린유형·키워드/분류/통화/가격·정렬/타이브레이크·난이도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketSaleScope.java",
+          "sha256": "ca82eff224ee04a42eb1d3c2233262d8c6a188c1ab58101e84270545caa494be",
+          "reviewScope": "36–59: SUBSCRIPTION의 MARKET_PERIOD_PASS·나머지P0·봉인유형 제외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/MarketSearchParam.java",
+          "sha256": "4dac0b0885db0b5a5a43c436f78382a9fcfc442193dde58e498cc3ff03d2e13c",
+          "reviewScope": "11–18: keyword/categoryId/currencyType/itemType/minPrice/maxPrice/sortBy·PagingParam"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/param/PagingParam.java",
+          "sha256": "7eeb664b58e5cf2a1d246dd538e77b3ae1b4e60937c008d3768238cf969c5c47",
+          "reviewScope": "10–32: 기본page0/size20·size상한100·PageRequest"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "creator_stats_20261122 동일 SHA 재사용: market 목록/검색/분류 익명허용 없음·popular 명시 인증·상세 익명허용과 구분"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/market_main_provider.dart",
+          "sha256": "c3d14dacc5b077f697b8f7c572167cd7c142e59026a6f59da29b55aca1431131",
+          "reviewScope": "12–101: 카테고리/인기10·검색20개PagedList·조건변경 재요청"
+        },
+        {
+          "path": "community_app/lib/data/api/market_api.dart",
+          "sha256": "a47b666e2911b73bd12c9f1233d86693de667d38fb5d31b1a3b9f0ec3c7847a6",
+          "reviewScope": "28–36,112–130: 목록 sort와 검색 sortBy·typed Page/List·분류/인기"
+        },
+        {
+          "path": "community_app/lib/data/repositories/market_repository.dart",
+          "sha256": "6dad92f7865f0050ecebf5cb01d95d8dc33930092fc6dc1ba495d394499af052",
+          "reviewScope": "31–58,66–84,234–273: itemType 정규화/알수없는필터null·검색/목록 Result"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "55–72,99–110: 마켓itemType·검색keyword·상품itemId·인기별도라우트"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_main_screen.dart",
+          "sha256": "95e66f8bdc1769be942e9399cf177818b16108df2f3dfdf5896baf6bf9cb5510",
+          "reviewScope": "313–325: Uri.queryParameters로 검색어 보존·공백만 제출 차단"
+        },
+        {
+          "path": "community_app/lib/domain/providers/common/paged_list.dart",
+          "sha256": "2d1127a27d97744281b6e892d84087a27d93f7637207f7a981b2207b396a4a5b",
+          "reviewScope": "458–541,614–634: 첫조회/추가조회잠금·세대검사·실패시기존목록유지·명시재시도·무효화"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/MarketCategoryServiceTest.java",
+          "sha256": "4c01ba60cf5adb0703428271e575c8e248645db8346a65117df49a1c0a2276e9",
+          "reviewScope": "60–90: 가시분류·숨은분류·뿌리직계 포함범위 단언 읽음; 미실행"
+        }
+      ],
+      "reuses": [
+        "club_discovery_20261122",
+        "market_browse_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-09_market-search_prd.md",
+          "sha256": "d0f6aaf60f93dd7fa81706092151bbee900a18b3c4bb6d6a2c5631855a38bf81"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-09.html": [
+          "sidebar",
+          "launch-strip",
+          "period-pass-visibility",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "누적 카드 수 설명을 서버 totalElements로 교정·URI 검색어 보존·추가페이지 오류 복구 반영",
+        "서버 다중필터와 검색화면 키워드전용 구분·태그 안내와 실제검색대상 차이 기록"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "product_gap",
+          "finding": "빈검색 안내는 제목·설명·태그를 언급하지만 현재 서버 조건은 제목/설명만 검색한다.",
+          "disposition": "실제지원범위와 안내불일치 문서화; 제품 변경 없음"
+        }
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/08_plan_market/F08-09_market-search/scenarios.md",
+          "sha256": "08c898d5b6fb1c2962ac38d207dc94a7fdf5c73e511c08ff68b1c2fd8768be8f",
+          "characters": 769,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "117 source-reference tables match",
+        "groupDigests": "19 source/canonical digests; 4 retained HTML IDs; 1 historical quotes",
+        "derivedDocuments": "6 document paths, 21 relative links and 4 derived-from digests checked",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
       },
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
