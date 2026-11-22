@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 762,
-    "verifiedTraceRecords": 760,
+    "traceMarkers": 773,
+    "verifiedTraceRecords": 771,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -19845,7 +19845,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F18-01",
       "domain": "분쟁 해결",
-      "name": "통합 분쟁 케이스 조회",
+      "name": "통합 분쟁 조회·당사자 대화·종결 경계",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md",
@@ -19856,10 +19856,164 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 9,
+        "verified": 9,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F18-01:1",
+            "label": "GET /api/v1/me/dispute-cases",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getMyCases",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/dispute-cases",
+                "targetLine": 53,
+                "methodLine": 54
+              }
+            ]
+          },
+          {
+            "id": "F18-01:2",
+            "label": "GET /api/v1/host/dispute-cases",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getHostCases",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/host/dispute-cases",
+                "targetLine": 82,
+                "methodLine": 83
+              }
+            ]
+          },
+          {
+            "id": "F18-01:3",
+            "label": "GET /api/v1/me/dispute-cases/{caseId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getMyCaseDetail",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}",
+                "targetLine": 75,
+                "methodLine": 76
+              }
+            ]
+          },
+          {
+            "id": "F18-01:4",
+            "label": "GET /api/v1/host/dispute-cases/{caseId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getHostCaseDetail",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/host/dispute-cases/{caseId}",
+                "targetLine": 89,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F18-01:5",
+            "label": "POST /api/v1/me/dispute-cases/{caseId}/consent-close",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+                "controller": "DisputeCasePartyController",
+                "method": "consentToClose",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/consent-close",
+                "targetLine": 61,
+                "methodLine": 62
+              }
+            ]
+          },
+          {
+            "id": "F18-01:6",
+            "label": "POST /api/v1/me/dispute-cases/{caseId}/acknowledge",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+                "controller": "DisputeCasePartyController",
+                "method": "acknowledgeOutcome",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/acknowledge",
+                "targetLine": 72,
+                "methodLine": 73
+              }
+            ]
+          },
+          {
+            "id": "F18-01:7",
+            "label": "POST /api/v1/me/dispute-cases/{caseId}/escalate",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+                "controller": "DisputeCasePartyController",
+                "method": "escalate",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/escalate",
+                "targetLine": 83,
+                "methodLine": 84
+              }
+            ]
+          },
+          {
+            "id": "F18-01:8",
+            "label": "GET /api/v1/me/dispute-cases/{caseId}/messages",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+                "controller": "DisputeCasePartyController",
+                "method": "listMessages",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/messages",
+                "targetLine": 95,
+                "methodLine": 96
+              }
+            ]
+          },
+          {
+            "id": "F18-01:9",
+            "label": "POST /api/v1/me/dispute-cases/{caseId}/messages",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCasePartyController.java",
+                "controller": "DisputeCasePartyController",
+                "method": "createMessage",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/messages",
+                "targetLine": 107,
+                "methodLine": 108
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -20079,7 +20233,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F18-05",
       "domain": "분쟁 해결",
-      "name": "호스트 운영 인박스",
+      "name": "호스트 처리함·아홉 출처·업무 이동",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md",
@@ -20090,10 +20244,45 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F18-05:1",
+            "label": "GET /api/v1/host/inbox",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/controller/HostInboxController.java",
+                "controller": "HostInboxController",
+                "method": "getInbox",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/host/inbox",
+                "targetLine": 29,
+                "methodLine": 30
+              }
+            ]
+          },
+          {
+            "id": "F18-05:2",
+            "label": "GET /api/v1/host/inbox/stats",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/controller/HostInboxController.java",
+                "controller": "HostInboxController",
+                "method": "getStats",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/host/inbox/stats",
+                "targetLine": 36,
+                "methodLine": 37
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

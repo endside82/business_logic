@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F18-01 통합 분쟁 케이스 조회 — community PRD</title>
+  <title>F18-01 통합 분쟁 조회·당사자 대화·종결 경계</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,157 +17,40 @@
           <a href="../domains/18-dispute.html">18 분쟁 해결</a><span>›</span>
           F18-01 통합 케이스 조회
         </div>
-        <h1>F18-01. 통합 분쟁 케이스 조회</h1>
-        <p class="lede">
-          다양한 원천에서 발생한 분쟁·신고·이의를 <strong>단일 목록</strong>으로 묶어 보여 주는 화면.
-          대부분의 분쟁은 신고한 사람과 직접 영향을 받은 당사자에게만 보이고, 사용자가 직접 접수한 분쟁만
-          신고한 쪽과 신고당한 쪽 양쪽 모두에게 보인다. 호스트는 정산 이의(개설자 시점)와 환불 분쟁(판매자 시점)
-          두 종류의 분쟁을 별도로 확인한다. 원천 도메인마다 상태를 부르는 이름이 다르더라도, 사용자에게는 항상
-          같은 5단계 중 하나로 통일되어 보인다. 7일 이상 미해결 케이스는 운영팀에 알림이 자동으로 발송된다.
-        </p>
+        <h1>F18-01 통합 분쟁 조회·당사자 대화·종결 경계</h1>
+        <p class="lede">목록별 출처와 권한, 표시 상태·진행 상태·명령별 재요청, 대화와 종결 조건을 현재 소스와 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">통합되는 분쟁 원천</div><div class="value">참가자 8종</div><div class="hint">호스트는 정산 이의·환불 분쟁 2종</div></div>
-          <div class="metric"><div class="label">통합 상태</div><div class="value">5단계</div><div class="hint">접수됨·검토 중·상위 이관·처리 완료·종결</div></div>
-          <div class="metric"><div class="label">처리 기한</div><div class="value">7일</div><div class="hint">초과 시 운영팀 알림</div></div>
-          <div class="metric"><div class="label">화면이 안내하는 가능 동작</div><div class="value">역할별 분기</div><div class="hint">이의·노트·환불 처리 등</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — "내 분쟁이 지금 어떻게 되고 있는지" 한 눈에</span>
-          <p>이전에는 노쇼 이의는 이벤트 화면, 정산 이의는 정산 화면, 경고 이의는 클럽 화면으로 각자 흩어져 있었다.
-            이 기능은 그 모든 케이스를 하나의 목록으로 모아 사용자가 현재 진행 중인 분쟁과 종결된 분쟁을
-            한 화면에서 추적하게 한다. 원천이 다르더라도 사용자가 보는 상태 표시는 항상 동일하다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>케이스 상태가 거치는 길</h2>
-        <div class="diagram">
-          <div class="mermaid">
-stateDiagram-v2
-    [*] --> 접수됨: 원천 분쟁 발생 또는 사용자 직접 접수
-    접수됨 --> 검토중: 운영팀 검토 시작
-    접수됨 --> 상위이관: 바로 상위 이관
-    접수됨 --> 처리완료: 바로 처리 완료
-    접수됨 --> 종결: 바로 종결
-    검토중 --> 상위이관: 상위 운영팀으로
-    검토중 --> 처리완료: 처리 완료
-    검토중 --> 종결: 종결(철회·기각)
-    상위이관 --> 처리완료: 처리 완료
-    상위이관 --> 종결: 종결
-    처리완료 --> [*]: 종결 + 1년 후 증빙 정리
-    종결 --> [*]: 종결 + 1년 후 증빙 정리
-
-    note right of 접수됨
-      증빙 보존(삭제 불가)
-      이의제기 가능
-    end note
-    note right of 처리완료
-      1년 보존 시계 시작
-      재접수 버튼 없음
-    end note
-          </div>
-        </div>
-        <div class="callout warn">
-          <span class="label">상태를 바꾸는 것은 대부분 운영팀만 가능</span>
-          <p>사용자는 대부분 앱에서 케이스 상태를 직접 바꿀 수 없다.
-            직접 접수한 분쟁은 "접수됨"으로 만들어진 뒤 운영팀이 처리할 때까지 상태가 그대로다.
-            유일한 예외는 돈이나 제재가 걸리지 않은 1:1 분쟁에서 당사자 양쪽이 모두 종결에 동의하는 경우로,
-            이때는 운영팀 개입 없이 시스템이 바로 종결 처리한다. 그 밖에는 현재 상태를 조회하고
-            이의를 제기하는 것만 가능하다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 참가자</div>
-            <h3>내가 관련된 분쟁 목록 확인</h3>
-            <p>이벤트 노쇼 기록, 클럽 강퇴 이의, 직접 접수한 분쟁이 모두 한 목록에 보인다.
-              "처리 중" 필터를 선택하면 접수됨·검토 중·상위 이관 케이스만 추려 볼 수 있다.
-              카드를 탭하면 상세 화면으로 진입해 진행 이력과 증빙을 확인한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 어느 도메인에서 발생했든 "내 분쟁 이력"이
-              한 화면으로 집약된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">기본 흐름 — 호스트</div>
-            <h3>내 이벤트·클럽에 걸린 분쟁 확인</h3>
-            <p>호스트가 확인하는 분쟁은 두 종류다. 정산 이의(개설자 기준)와 환불 분쟁(판매자 기준).
-              두 분쟁은 호스트에게 묶이는 기준이 다르며, 같은 목록·필터 구조를 공유한다.
-              상세 화면에서는 원천별로 가능한 동작과 원천 화면으로 가는 경로가 구분된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트 입장에서 처리해야 할 케이스를
-              놓치지 않게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">상세 조회</div>
-            <h3>진행 이력과 증빙으로 맥락 파악</h3>
-            <p>케이스 상세에는 진행 이력(누가 언제 어떤 조치를 했는지)과 증빙이 포함된다.
-              보이는 내용은 사건 접근 권한과 공개 범위를 따른다. 당사자 공개 증빙과 본인이 제출한 증빙은 확인할 수 있다. 운영팀 전용 진행 이력과 다른 사람이 제출한 운영 전용 증빙은 보이지 않는다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — "왜 이 결정이 났는지"를 사용자가 직접 추적할 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">상태 필터</div>
-            <h3>종결된 케이스만 이력으로 보기</h3>
-            <p>"종결" 필터를 선택하면 처리 완료·종결 케이스만 남는다.
-              분쟁 종류로도 목록을 좁힐 수 있으나, 일부 분쟁 유형은 유형 필터로 정확히 걸러지지 않을 수 있어
-              결과를 확인할 때 주의가 필요하다. 무한 스크롤로 이력 전체를 탐색한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">권한 분기</div>
-            <h3>내가 뭘 할 수 있는지 화면이 알려준다</h3>
-            <p>케이스 상세는 사용자의 역할에 따라 가능한 동작을 다르게 보여 준다.
-              이의제기 가능 여부, 보완 요청 노트 전송 가능 여부, 환불 분쟁 처리 가능 여부 등에 맞춰
-              버튼이 표시되거나 숨겨진다. 클럽 경고 이의와 모임 정산 이의의 승인·거절은 각각 경고 인박스와
-              정산 이의 전용 화면에서 실행한다. 모임 정산 이의는 운영자도 관리자 화면에서 판정할 수 있고(판정 글은 호스트 답과 따로 적힘), 통합 분쟁 이의의 최종 결정은 운영팀 권한이다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">증빙 보존</div>
-            <h3>케이스가 진행 중이면 증빙 보존 안내가 표시된다</h3>
-            <p>분쟁 화면에는 증빙 삭제 버튼이 없다. 진행 중(접수됨·검토 중·상위 이관) 케이스에서는
-              "증빙 보존 중" 안내가 표시된다. 사용자가 일반 파일 삭제 API를 직접 호출해도 증빙 참조 등록부가
-              해당 파일을 확인해 삭제를 거절한다. 종결 뒤에는 정해진 1년 보존기간을 채운 후 자동 파기한다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">운영 주의사항</span>
-          <ul>
-            <li><strong>처리 기한 7일 알림은 분쟁 원천마다 따로 점검한다.</strong> 한 원천의 점검이 실패해도 나머지 원천의 미해결 케이스 알림은 정상적으로 발송된다. 같은 케이스에 대한 알림은 한 번만 간다.</li>
-            <li><strong>운영팀 전용 진행 이력은 사용자에게 보이지 않는다.</strong> 운영 전용 진행 이력은 가린다. 증빙에는 제출자 본인 열람 예외가 있고, 나머지 세부 등급을 완전하게 구분하는 것은 별도 범위다. <a href="F18-04.html">분쟁 증빙의 공개 범위와 보존</a>을 따른다.</li>
-            <li><strong>유형 필터가 일부 분쟁 유형을 정확히 거르지 못할 수 있다.</strong> 분쟁 종류가 매우 다양해, 특정 유형으로 목록을 좁혔을 때 일부 케이스가 빠지거나 섞일 수 있다. 정밀한 분류가 필요한 운영 작업에서는 결과를 한 번 더 확인하는 것이 안전하다.</li>
-            <li><strong>“이의”라는 이름만 보고 처리 주체를 일반화하면 안 된다.</strong> 클럽 경고 이의는 권한 있는 클럽 운영진이, 모임 정산 이의는 정산 생성자·호스트가 각 전용 화면에서 처리한다. 모임 정산 이의는 운영자도 관리자 화면에서 판정하고, 통합 분쟁 이의는 운영팀이 최종 결정한다.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>레드 플래그</h2>
-        <div class="callout danger">
-          <span class="label">현재 알려진 미구현·주의 사항</span>
-          <ul>
-            <li><strong>자동 검사 존재와 실제 공개 확인을 구분한다.</strong> 현재 소스에는 원천별 조회·당사자 권한·공개 범위·본인 증빙·다운로드 자격을 확인하는 자동 검사가 있다. 이 문서 갱신에서 제품 검사를 재실행하지 않았으며 동일 출시후보의 실계정·실제 파일 확인은 별도로 남긴다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 입구</h2><p>내 분쟁 목록과 호스트 분쟁 목록은 여러 원천을 한 형식으로 읽는 조회 화면이다. 목록에 포함되는 조건과 사건 상세의 열람 권한은 별도다. 원천 행·등록부 사건·통합 이의를 하나의 테이블이나 동일한 상태 기계로 취급하지 않는다.</p>
+<p>사용자는 목록에서 caseId로 상세를 연다. 호스트 처리함의 분쟁 카드는 <a href="F18-05.html">호스트 처리함</a>의 disputeCaseId로 같은 호스트 상세를 연다. 신규 사용자 접수와 기존 사건 이의는 각각 <a href="F18-02.html">사용자 분쟁 접수</a>, <a href="F18-03.html">분쟁 이의 접수·철회</a>를 따른다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>입력·반환</th></tr></thead><tbody><tr><td>GET /api/v1/me/dispute-cases</td><td>page, size, status, caseType, sourceType → Page&lt;DisputeCaseVo&gt;</td></tr><tr><td>GET /api/v1/host/dispute-cases</td><td>같은 필터 → Page&lt;DisputeCaseVo&gt;</td></tr><tr><td>GET /api/v1/me/dispute-cases/{caseId}</td><td>DisputeCaseDetailVo</td></tr><tr><td>GET /api/v1/host/dispute-cases/{caseId}</td><td>같은 getDetail 서비스의 DisputeCaseDetailVo</td></tr><tr><td>POST /api/v1/me/dispute-cases/{caseId}/consent-close</td><td>ConsentVo</td></tr><tr><td>POST /api/v1/me/dispute-cases/{caseId}/acknowledge</td><td>AcknowledgeVo</td></tr><tr><td>POST /api/v1/me/dispute-cases/{caseId}/escalate</td><td>EscalationVo</td></tr><tr><td>GET /api/v1/me/dispute-cases/{caseId}/messages</td><td>List&lt;DisputeMessageVo&gt;</td></tr><tr><td>POST /api/v1/me/dispute-cases/{caseId}/messages</td><td>DisputeMessageCreateParam → 201 DisputeMessageVo</td></tr></tbody></table></div>
+<p>caseId는 등록된 prefix와 양수 원천 ID를 연결한 문자열이며 sourceType enum과 일대일로 같지 않다. prefix를 UI 라벨에서 조립하지 않는다. 목록의 page는 0 이상, size는 1~100으로 제한한다. 각 원천에서 수집한 뒤 status·caseType·sourceType의 단일 값으로 필터하고 updatedAt 내림차순, createdAt 내림차순, caseId 오름차순으로 정렬한 뒤 메모리에서 페이지를 나눈다.</p></section>
+<section id="current-3"><h2>내 목록과 호스트 목록의 범위</h2><div class="table-wrap"><table><thead><tr><th>목록</th><th>실제 수집 범위</th></tr></thead><tbody><tr><td>내 목록의 운영·신고</td><td>본인이 접수한 운영 이슈의 최근 200건, 클럽 경고 제보, 본인의 경고 이의, 일반 신고와 이동 신고, 본인의 차단에 연결된 신고</td></tr><tr><td>내 목록의 처분·사용자 사건</td><td>자신에게 적용된 KICK/BAN 클럽 조치, 접수자 또는 상대인 사용자 분쟁</td></tr><tr><td>내 목록의 배정</td><td>현재 배정 에피소드에 대해 접수자·상대·호스트·제공자이거나, 확정 거래가 있는 비용의 납부자/수혜자, 포인트 거래가 있는 선납자, 환불의 호스트 회수 대상인 사람</td></tr><tr><td>내 목록의 등록부</td><td>EVENT_NO_SHOW, SANCTION, PLATFORM_SANCTION, PHOTO, EVENT_MESSAGE, COMMENT 중 등록부 당사자로 연결된 사건</td></tr><tr><td>호스트 목록의 원천</td><td>본인이 만든 정산의 이의, 판매자에게 공개하는 상태 집합에 속한 환불 분쟁</td></tr><tr><td>호스트 목록의 확장</td><td>본인이 호스트인 배정의 현재 사건, 위 여섯 등록부 출처의 HOST 역할 사건, 본인을 대상으로 한 이벤트 호스트 처분 검토 사용자 사건</td></tr></tbody></table></div>
+<p>배정은 모든 과거 에피소드를 나열하지 않고 현재 에피소드를 고른다. 확정 비용 참여자는 transactionId 등 실제 거래 조건을 사용하며 단순한 관련자 전체와 다르다. 내 목록에 정산 이의의 제기자·환불 분쟁의 구매자를 별도 원천으로 전부 합치는 분기는 없다. 목록 포함 여부를 모든 상세 접근권의 완전한 색인으로 설명하지 않는다.</p>
+<p>최종 집계에는 모든 출처를 포괄하는 중복 제거 단계가 없다. 원천마다 수집 상한도 다르므로 totalElements를 모든 과거 사건의 무제한 개수라고 설명하지 않는다.</p></section>
+<section id="current-4"><h2>표시 상태와 실제 사건 상태</h2><p>UnifiedDisputeStatus는 OPEN, IN_REVIEW, RESOLVED, CLOSED, ESCALATED, CLOSED_WITH_MANUAL_RECOVERY 여섯 값이다. 원천 상태의 의미를 다음처럼 표시 상태로 변환한다.</p>
+<div class="table-wrap"><table><thead><tr><th>원천</th><th>주요 변환</th></tr></thead><tbody><tr><td>운영 이슈</td><td>OPEN → OPEN, IN_PROGRESS → IN_REVIEW, RESOLVED → RESOLVED, REJECTED → CLOSED</td></tr><tr><td>경고 제보</td><td>SUBMITTED → OPEN, IN_REVIEW/NEEDS_MORE_INFO → IN_REVIEW, APPROVED/REJECTED → RESOLVED, WITHDRAWN → CLOSED</td></tr><tr><td>경고 이의</td><td>SUBMITTED → OPEN, IN_REVIEW → IN_REVIEW, ACCEPTED/PARTIALLY_ACCEPTED/REJECTED → RESOLVED, WITHDRAWN → CLOSED</td></tr><tr><td>정산 이의</td><td>PENDING → OPEN, APPROVED/REJECTED → RESOLVED, RESOLVED → CLOSED</td></tr><tr><td>공개 신고</td><td>PENDING → OPEN, IN_REVIEW → IN_REVIEW, RESOLVED/DISMISSED → RESOLVED, ESCALATED → ESCALATED</td></tr><tr><td>환불 분쟁</td><td>OPEN → OPEN, UPHELD/OVERTURNED → RESOLVED, CLOSED/DECISION_REVERSED → CLOSED</td></tr><tr><td>통합 이의가 있는 등록부 카드</td><td>PENDING/DECIDED/COMPENSATION_APPLIED/RECOVERY_REQUIRED → IN_REVIEW, UPHELD/REJECTED → RESOLVED, CLOSED → CLOSED</td></tr><tr><td>본인 이의가 없는 등록부 카드</td><td>OPEN → OPEN, IN_REVIEW/ESCALATED → IN_REVIEW, RESOLVED → RESOLVED, CLOSED/CLOSED_WITH_MANUAL_RECOVERY → CLOSED</td></tr></tbody></table></div>
+<p>등록부 카드의 변환처럼 실제 ESCALATED 또는 수동 수습 종결이 별도 표시 값으로 그대로 나오지 않는 경로가 있다. 상태 enum의 존재만으로 각 원천이 그 값을 그대로 반환한다고 가정하지 않는다.</p>
+<p>별도의 DisputeWorkflowStatus는 같은 이름의 여섯 진행 상태를 가진다. RESOLVED, CLOSED, CLOSED_WITH_MANUAL_RECOVERY는 끝 상태다. 끝 상태에서 다른 상태로 다시 열지 않고, IN_REVIEW/ESCALATED에서 OPEN으로 되돌리지 않는다. 상세의 최종 명령 가능 여부는 상태 이름만으로 계산하지 않고 actorPermissions를 따른다.</p></section>
+<section id="current-5"><h2>상세 공개와 행동 권한</h2><p>상세는 원천·등록부의 접근 판정 후 timeline, evidence, actorPermissions, evidenceFrozen, myConsentedAt, appealDeadlineAt 등을 반환한다. 호스트 URL을 사용하는 것 자체가 호스트 권한을 부여하지 않는다. 타임라인의 CS_ONLY는 제외하고 HOST_ONLY는 호스트에게만 보이며 운영자 작성자의 사용자 ID는 숨긴다. 증빙에는 제출자 본인 예외가 있으므로 ‘CS_ONLY는 누구에게나 제외’라고 요약하지 않는다. 파일별 주소 발급과 보존은 <a href="F18-04.html">분쟁 증거 열람·보존</a>을 따른다.</p>
+<p>ActorPermissionFlags는 canResolveDispute, canEscalateToCs, canSendNote, canModerateMessages, canHandleRefundIssue, canManageAttendance, canConsentToClose, canAcknowledgeOutcome, canRequestSupplement, canSubmitAppeal의 열 가지 boolean이다. canApproveAppeal은 현재 필드가 아니다.</p>
+<p>공개 응답의 canResolveDispute는 최종 계산에서 false다. 이는 서버 내부의 기본 호스트 권한 판정이 없다는 뜻이 아니다. 호스트 앱의 ‘호스트 해결’은 canManageAttendance와 실제 eventId·본인이 아닌 targetUserId가 있어야 열리며 출결 관련 원천 조치 화면으로 연결된다. 이 버튼을 임의의 사건 종결 또는 통합 이의 승인 API라고 설명하지 않는다. 메시지 숨김도 대상 EVENT_MESSAGE와 callback이 특정되는 경우에만 노출한다.</p></section>
+<section id="current-6"><h2>당사자 명령과 대화</h2><div class="table-wrap"><table><thead><tr><th>행동</th><th>현재 조건·결과·재요청 경계</th></tr></thead><tbody><tr><td>종결 동의</td><td>USER_DISPUTE, 금전·제재 사건 아님, 서로 다른 두 당사자, 열린 이의 없음일 때 가능하다. 기존 본인 동의가 있으면 이를 읽고 현재 합의·종결 상태를 다시 계산하므로 최초 응답을 그대로 재생하는 계약이 아니다. 양쪽 동의 뒤 커널이 CLOSED로 전이한다.</td></tr><tr><td>결과 확인</td><td>스냅샷 당사자이며 결과 결정 조건을 만족해야 한다. 사건·사용자별 감사 키로 확인을 기록하고 상태나 이의 권리를 바꾸지 않는다.</td></tr><tr><td>운영팀 검토 요청</td><td>현재 당사자·미종결·플랫폼 개입 가드를 검사한다. ESCALATED로 전이하고 운영자 경보 및 절차 알림을 요청한다. 이미 ESCALATED이면 DISPUTE_ALREADY_ESCALATED로 거절한다.</td></tr><tr><td>메모</td><td>열린 등록부 사건의 당사자가 NOTE를 작성한다. 내부 운영 메모를 일반 당사자가 쓰거나 읽는 경로는 아니다.</td></tr><tr><td>추가 자료 요청</td><td>호스트 권한과 다른 지정 당사자가 필요하다. 서버가 OPEN 요청과 현재부터 14일 기한을 만든다. 호스트는 스냅샷 당사자가 아니더라도 이 명령의 별도 권한 조건으로 허용될 수 있다.</td></tr><tr><td>추가 자료 답변</td><td>같은 사건의 SUPPLEMENT_REQUEST를 잠그고 지정 수신자·OPEN 상태를 확인한다. 저장 뒤 원 요청을 RESPONDED로 표시한다. 이 함수 자체에는 dueAt와 현재 시각을 직접 비교하는 분기가 없다.</td></tr></tbody></table></div>
+<p>대화 본문은 trim 후 비어 있지 않아야 하며 최대 2000자, 첨부는 최대 5개다. NOTE는 해당 대화 열람자에게 보이고, 추가 자료 요청은 작성자와 지정 수신자, 답변은 답변자와 원 요청자에게 보인다. INTERNAL_NOTE는 당사자 목록에서 제외한다. 첨부 참조 저장·감사 기록·절차 알림 요청은 메시지 저장 흐름에 연결된다.</p>
+<p>이 API들에 요청키 헤더가 선언돼 있지 않다. 동의·확인 기록의 중복 방어, 재이관 오류, 새 메시지 저장을 같은 재전송 정책으로 합치지 않는다.</p></section>
+<section id="current-7"><h2>종결과 보상·알림</h2><p>커널은 종결 때 보상 원장과 열린 이의를 검사한다. 금전·제재 사건에 PENDING 또는 FAILED 원장이 남으면 종결을 막는다. CLOSED_WITH_MANUAL_RECOVERY는 이 차단 원장이 없어야 하고 MANUAL_RECOVERY 원장이 있어야 한다. MANUAL_RECOVERY가 있으면 다른 종결 상태로 닫을 수 없다. 열린 이의는 운영자가 아닌 전이 주체의 종결을 막는다. 이 조건을 ‘모든 사건의 모든 종결은 언제나 같은 보상 검사’로 확대하지 않는다.</p>
+<p>종결 전이는 원천 보류 해제, 열린 추가 자료 요청 취소, 사건 종결 알림 요청을 연결한다. 결정·보상 원장·수동 수습은 다른 결과이므로 바깥에서 처리한 기록만으로 자동 복구가 완료됐다고 쓰지 않는다. 구체적인 보상 실행 가능 여부는 해당 운영 명령과 원천 도메인에서 확인한다.</p>
+<p>현재 DisputeNotificationPublisher는 이의 접수·결정, 보완 요청·만료, 메모, 운영팀 이관, 종결, 호스트 조치를 DISPUTE outbox에 발행한다. 수신자 ID를 유효한 양수로 거르고 중복 제거하며 비어 있으면 건너뛴다. 따라서 ‘분쟁 사용자 알림 발행 경로가 전혀 없음’은 폐기한다. outbox 호출 근거만으로 기기 수신 완료까지 주장하지 않는다.</p>
+<p>SLA 스캐너는 매일 한국 시간 06:00에 7일이 지난 활성 원천을 검사한다. 운영 이슈·경고 제보·경고 이의·정산 이의·공개 신고·환불 분쟁·사용자 분쟁·통합 이의의 여덟 종류다. 추가 정보 요청 중인 경고 제보와 ESCALATED 공개 신고는 이 검사에서 제외한다. 종류별 조회 실패·항목별 발행 실패를 나누어 다른 검사를 계속하고, 운영자 경보에는 출처·ID 기반 중복 방지 키와 가능한 caseId를 보낸다. 모든 등록부 사건을 직접 전수 스캔하는 구현으로 설명하지 않는다.</p></section>
+<section id="current-8"><h2>앱 목록·상세·갱신</h2><p>앱 목록은 20건씩 가져온다. 상태 칩은 단일 값 필터이며 ‘진행 중’은 OPEN만 요청한다. 전체·OPEN·IN_REVIEW·RESOLVED·CLOSED·ESCALATED 칩이 있고 수동 수습 종결 전용 칩은 없다. 출처 칩과 상태를 서버 요청에 전달한다.</p>
+<p>내 목록·호스트 목록·상세·대화·본인 이의 provider는 disputes 데이터 변경 신호를 구독한다. 상세는 asHost에 따라 호스트/본인 API를 고른다. 조회 실패는 재시도할 수 있고, 성공 응답의 공개 타임라인·증빙과 행동 플래그로 영역을 만든다. 이 연결은 실제 알림 전달·기기 갱신까지 실행 검증한 결과와 구분한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>출처별 수집 상한·현재 에피소드·등록부 상태 변환이 다르다.</td><td>목록 전체 수와 표시 상태를 원천의 완전한 이력으로 단정하지 않는다.</td></tr><tr><td>Gap</td><td>수동 수습 종결 전용 상태 칩이 없고 등록부 카드에서는 CLOSED로 합쳐질 수 있다.</td><td>별도 상태의 존재와 화면 필터를 구분한다.</td></tr><tr><td>Risk</td><td>일부 명령의 반복 요청은 충돌이며 대화 API에 요청키가 없다.</td><td>전 명령의 동일 응답 재생을 약속하지 않는다.</td></tr><tr><td>미검증</td><td>실제 권한별 응답·대화 첨부·보상 실행·알림 수신·SLA 실행을 이번에 수행하지 않았다.</td><td>현재 코드 대조와 실행 결과를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 내 목록 범위:</strong> 기존 신고·조치·사용자 사건에 현재 배정과 여섯 등록부 출처를 포함하되 실제 당사자 조건을 따른다.</li><li><strong>AC-02 호스트 목록 범위:</strong> 정산·환불 외에 호스트 배정·등록부 HOST·이벤트 호스트 처분 검토를 구분한다.</li><li><strong>AC-03 필터와 순서:</strong> 단일 enum 필터, 정렬 키, 크기 제한과 메모리 페이지의 경계를 유지한다.</li><li><strong>AC-04 상태와 권한:</strong> 여섯 표시 상태·여섯 진행 상태·원천 변환·최종 열 가지 행동 플래그를 구분한다.</li><li><strong>AC-05 명령별 반복:</strong> 동의의 재계산·결과 확인 기록·재이관 오류·메시지 저장을 각각 설명한다.</li><li><strong>AC-06 대화 공개:</strong> 호스트 요청 권한·수신자·14일 기한·답변 OPEN 조건·내부 메모 제외를 연결한다.</li><li><strong>AC-07 종결 경계:</strong> 금전·제재 보상 차단, 수동 수습 원장, 열린 이의와 전이 주체를 함께 판단한다.</li><li><strong>AC-08 알림과 앱 갱신:</strong> outbox 발행·SLA 경보·앱 데이터 신호 구독·실제 수신 여부를 구분한다.</li></ul>
+<p>근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

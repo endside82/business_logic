@@ -1,121 +1,98 @@
-# F18-05. 호스트 운영 인박스 PRD
+# F18-05. 호스트 처리함·아홉 출처·업무 이동 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/ -->
+## 현재 범위와 입구
 
-## 1. 결론
+호스트 처리함 `/host/inbox`는 응답 필요·처리 중·완료 세 탭과 별도 통계 헤더로 구성한다. 카드에서 해당 업무로 이동해 처리하며 처리함 자체가 모든 원천 상태를 바꾸는 명령 API는 아니다. 이벤트 메시지와 INQUIRY 상담 대화는 서로 다른 출처다.
 
-호스트 운영 인박스는 주최자가 처리해야 할 문의·신청·정산 이의·신고·운영 이슈를 `HostInboxSourceType` 8종으로 통합하여 단일 화면에서 확인하는 기능이다. 서버는 `GET /api/v1/host/inbox`(페이지 목록)와 `GET /api/v1/host/inbox/stats`(집계) 두 endpoint를 제공한다.
+## 현재 서버 계약
 
-`EVENT_MESSAGE` source는 스레드 단위 미응답 판정을 사용하여 `unansweredCount`를 계산한다. `DISPUTE_CASE` source 카드는 `disputeCaseId` 필드를 통해 `/host/disputes/{disputeCaseId}` 케이스 상세 화면으로 이동하는 딥링크를 제공한다.
+| 요청 | 입력·반환 |
+|---|---|
+| GET /api/v1/host/inbox | page, size, status, sourceType → Page<HostInboxItemVo> |
+| GET /api/v1/host/inbox/stats | HostInboxStatsVo |
 
-`HostInboxService.collectAllItems`는 각 source를 최대 size=500으로 수집한 뒤 메모리 정렬 + `page()` 페이징을 수행한다(`HostInboxService.java:83,126,601`). 항목이 많을 경우 성능 위험이 있다.
+HostInboxSourceType은 EVENT_MESSAGE, APPLICATION, MEETING_SETTLEMENT_APPEAL, REPORT, PAYMENT_ISSUE, REFUND_ISSUE, OPERATIONAL_ISSUE, DISPUTE_CASE, INQUIRY 아홉 값이다. 상태는 NEEDS_RESPONSE, IN_PROGRESS, DONE 세 값이다. 앱은 출처와 상태에 unknown 역직렬화 fallback도 둔다.
 
-`REPORT` source는 `ReportType.EVENT`(targetType=1) 타입만 조회한다(`HostInboxService.java:365-390`). EVENT_PHOTO 매칭은 소스 주석상 후속 wave 대상으로 현재 미구현이다.
+카드 id는 처리함 식별자이고 sourceId는 원천 행 번호다. eventId, clubId, settlementId, regularMeetingId, eventPaymentId, transactionId, deepLinkType, unansweredCount, disputeCaseId 등은 선택값이다. 이들이 없을 때 일반 카드 ID를 원천 ID로 대신 해석하지 않는다.
 
-실시간 업데이트(WebSocket/polling)는 미배선이다. Flutter `HostInboxScreen`의 `RefreshIndicator`는 `hostInboxNotifierProvider.refresh()`를 호출하며(`host_inbox_screen.dart:217`), pull-to-refresh만 지원한다. 화면 재진입 시 자동 invalidate 서술은 부정확하다.
+## 출처별 수집·상태·권한
 
-## 2. 코드 위치
+| 출처 | 실제 수집과 상태 |
+|---|---|
+| EVENT_MESSAGE | 본인 주최 이벤트 최근 200개와 정지되지 않은 공동 주최 배정을 합친다. 각 이벤트 최근 50개 메시지에서 주최자·유효 공동 주최자의 마지막 답변 뒤에 남은 다른 작성자의 메시지를 센다. 있으면 NEEDS_RESPONSE, 없으면 DONE이다. |
+| APPLICATION | 위 이벤트의 신청을 수집한다. PENDING, CANCEL_PENDING_REFUND 또는 확인 대기 무통장 입금 신고가 있으면 NEEDS_RESPONSE다. APPROVED_PENDING_PAYMENT뿐 아니라 APPROVED 신청의 PENDING BANK_TRANSFER도 확인한다. 나머지는 DONE이다. |
+| MEETING_SETTLEMENT_APPEAL | 본인이 만든 정산의 이의를 수집한다. PENDING은 NEEDS_RESPONSE, 나머지는 DONE이다. |
+| REPORT | 이벤트 호스트 또는 분쟁 처리 권한이 있고 위임이 정지되지 않은 공동 주최자의 이벤트에 대해 EVENT_HOST 관할 신고를 수집한다. 신고 대상이 조회자 본인이면 제외한다. PENDING은 NEEDS_RESPONSE, IN_REVIEW/ESCALATED는 IN_PROGRESS, RESOLVED/DISMISSED는 DONE이다. |
+| PAYMENT_ISSUE | PAYMENT, WALLET_TRANSACTION, REGULAR_MEETING_PAYMENT 출처의 운영 이슈다. |
+| REFUND_ISSUE | REFUND 운영 이슈와 이벤트별 PENDING/FAILED 환불 실패 항목을 모은다. 후자는 NEEDS_RESPONSE다. |
+| OPERATIONAL_ISSUE | SETTLEMENT, REGULAR_MEETING_SETTLEMENT 출처의 운영 이슈다. 운영 이슈의 OPEN은 NEEDS_RESPONSE, IN_PROGRESS는 IN_PROGRESS, RESOLVED/REJECTED는 DONE이다. |
+| DISPUTE_CASE | 호스트 통합 분쟁 목록의 첫 100건을 가져온다. OPEN은 NEEDS_RESPONSE, IN_REVIEW/ESCALATED는 IN_PROGRESS, RESOLVED/CLOSED/CLOSED_WITH_MANUAL_RECOVERY는 DONE이다. |
+| INQUIRY | OPEN/ANSWERED 상담만 수집한다. 이벤트 담당 큐에서 위임 정지를 제외하고, 클럽 OWNER/ADMIN은 현재 관리자 권한도 검사한다. 클럽 운영진 큐와 이관된 클럽 상담을 포함한다. OPEN은 NEEDS_RESPONSE, ANSWERED는 DONE이다. |
 
-계약의 정본은 코드다. 서버: `HostInboxController`, `HostInboxService`, `HostInboxSourceType`, `HostInboxStatus`, `HostInboxSearchParam`, `HostInboxItemVo`, `HostInboxStatsVo`. 앱: `host_inbox_screen.dart`, `host_inbox_item.dart`, `host_inbox_stats.dart`, `host_inbox_provider.dart`.
+REPORT는 sourceEventId와 관할 기준이므로 EVENT targetType만 조회한다는 옛 설명은 틀리다. 신고 카드에는 신고자의 actorUserId·nickname을 채우지 않는다. 비밀 이벤트 메시지의 미리보기는 일반 안내로 바꾸지만 작성자 식별 필드까지 모두 숨긴다고 확대 해석하지 않는다.
 
-## 3. 전체 동작 흐름
+INQUIRY는 ID 순 대화에서 USER 메시지 수를 누적하다가 비사용자 답변마다 0으로 초기화한다. OPEN 카드에 그 미응답 수를 표시한다. 이벤트 메시지의 최근 50개 창과 상담 대화의 계산을 같은 전체 이력 규칙으로 설명하지 않는다.
 
-1. 호스트가 `/host/inbox` 라우트로 진입한다.
-2. `HostInboxScreen`이 `hostInboxProvider`를 구독하여 `GET /api/v1/host/inbox`를 호출한다.
-3. 서버 `HostInboxService.getInbox(userId, param)`가 8개 source를 통합한 `Page<HostInboxItemVo>`를 반환한다. `EVENT_MESSAGE` source는 스레드 단위 미응답 수(`unansweredCount`)를 계산한다.
-4. Flutter가 `HostInboxStatus` 3탭(NEEDS_RESPONSE/IN_PROGRESS/DONE)으로 항목을 분류하여 표시한다.
-5. 각 카드에는 `sourceType.label`, `sourceType.icon`, `sourceType.accentColor`가 적용된다.
-6. `EVENT_MESSAGE` 카드: `unansweredCount > 0`이면 "미응답 N" 배지를 표시한다.
-7. `DISPUTE_CASE` 카드: 탭 시 `Routes.hostDisputeDetailFor(item.disputeCaseId ?? item.id)` → `/host/disputes/{caseId}` 상세 화면으로 이동.
-8. 상단 헤더에서 `hostInboxStatsProvider` → `GET /api/v1/host/inbox/stats` 호출. `needsResponseCount`, `responseRatePercent`, `sourceTypeCounts` 등 표시.
-9. 화면에서 pull-to-refresh 시 `refresh()`를 호출하여 최신 데이터를 재조회한다. 화면 재진입 시 자동 invalidate는 없다 (실시간 업데이트 미배선).
+## 집계·페이지·통계
 
-## 4. 제품 규칙
+선택한 출처를 수집하고 상태를 거른 뒤 updatedAt, 없으면 createdAt, 둘 다 없으면 최소 시각을 사용해 내림차순 정렬한다. 동률은 id 오름차순이다. page는 0 이상, size는 1~100으로 제한한다. 현재 페이지의 업무 링크 문맥과 표시 이름을 보완한다.
 
-- 인박스는 다음을 한 곳에 모은다. 이벤트 문의(스레드 단위로 미응답을 센다), 참가 신청(승인 대기와 취소 환불 대기), 모임 정산 이의, 내 이벤트를 대상으로 한 신고, 결제 문제, 환불 문제(환불 실패 포함), 정산 운영 문제, 분쟁 케이스.
-- 항목은 응답 필요, 처리 중, 완료 세 탭으로 나뉜다.
+모든 출처가 각각 최대 500개라는 설명은 사실이 아니다. stats가 size=500인 검색 객체를 만들더라도 수집 함수 전체에 같은 상한을 적용하는 구조가 아니다. 이벤트 200개·이벤트 메시지 50개·호스트 분쟁 100건처럼 서로 다른 창을 사용하며 다른 조회는 이 제한과 같지 않다. 특히 분쟁 100건을 먼저 가져온 뒤 처리함 상태를 거르므로 이전의 응답 필요 사건이 잘릴 수 있다.
 
-## 6. 상태/권한 매트릭스
+통계는 별도로 다시 모은 항목에서 응답 필요·처리 중·완료·전체·출처별 개수를 계산한다. responseRatePercent는 응답 시간 준수율이 아니라 DONE/전체의 반올림 백분율이며 항목이 없으면 100이다. 평균은 DONE 항목의 createdAt~updatedAt 중 음수가 아닌 간격의 분 단위 평균이며 없으면 null이다. 실제 첫 답변 시각을 별도로 측정한 지표로 설명하지 않는다.
 
-| 시나리오 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 호스트 인박스 진입 | `getInbox(userId)` | `hostInboxProvider` | 8-source 통합 항목 목록 표시 | 일치 |
-| EVENT_MESSAGE 미응답 존재 | `unansweredCount > 0` | "미응답 N" 배지 | 미응답 건수 배지 표시 | 일치 |
-| DISPUTE_CASE 카드 탭 | `disputeCaseId` 있음 | `hostDisputeDetailFor(disputeCaseId)` | 케이스 상세 화면으로 이동 | 일치 |
-| DISPUTE_CASE 카드 탭 (disputeCaseId null) | `disputeCaseId=null` | `hostDisputeDetailFor(item.id)` | item.id로 폴백 이동 | 일치(fallback) |
-| NEEDS_RESPONSE 필터 탭 | 서버 `status=NEEDS_RESPONSE` | 탭별 필터링 | NEEDS_RESPONSE 항목만 표시 | 일치 |
-| 통계 헤더 | `getStats(userId)` | `hostInboxStatsProvider` | 응답률, source별 카운트 | 일치 |
-| 실시간 업데이트 | 미배선 | pull-to-refresh만 지원. 화면 재진입 자동 갱신 없음 | stale 가능 | Gap |
+sourceTypeCounts의 서버 enum map은 JSON 문자열 키로 전달되며 앱 Map<String,int>와 그 자체로 wire 불일치가 아니다. 출처별 초기 카운트는 0으로 채운다.
 
-## 7. 정합성 판단
+## 카드의 실제 이동
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `HostInboxSourceType` 8값 | Java enum `SCREAMING_SNAKE_CASE` | Dart `@JsonEnum(valueField: 'value')` | 일치 |
-| `HostInboxStatus` 3값 | Java enum | Dart `@JsonEnum(valueField: 'value')` | 일치 |
-| `unansweredCount` | `Integer?` VO | `int? unansweredCount` Dart | 일치 |
-| `disputeCaseId` | `String?` VO | `String? disputeCaseId` Dart | 일치 |
-| `sensitive` | `boolean` | `@Default(false) bool sensitive` | 일치 |
-| `sourceTypeCounts` | `Map<HostInboxSourceType, Long>` | `Map<String, int>` | 부분 불일치 (String key) |
-| `Page<HostInboxItemVo>` | Spring Page | `PageResponse<HostInboxItem>` | 일치 |
+| 출처 | 앱 이동 조건과 목적지 |
+|---|---|
+| EVENT_MESSAGE | eventId가 있으면 이벤트 메시지 |
+| APPLICATION | eventId가 있으면 deepLinkType이 EVENT_PAYMENT_QUEUE일 때 결제 관리, 나머지는 신청 목록 |
+| MEETING_SETTLEMENT_APPEAL | eventId가 있으면 해당 이벤트 정산 이의 |
+| REPORT | eventId와 sourceId로 해당 이벤트 신고 상세 |
+| DISPUTE_CASE | disputeCaseId가 있으면 호스트 분쟁 상세. 앱의 item.id fallback은 존재하지만 DISPUTE_CASE: 접두사가 붙은 처리함 ID를 유효한 사건 ID로 보장하지 않는다. |
+| INQUIRY | sourceId로 호스트 상담 상세 |
+| PAYMENT_ISSUE | eventId가 있으면 이벤트 결제 관리, 아니면 regularMeetingId가 있을 때 정기 모임 회원 관리 |
+| OPERATIONAL_ISSUE | eventId가 있으면 이벤트 정산, 아니면 regularMeetingId가 있을 때 정기 모임 정산 |
+| REFUND_ISSUE | eventId가 있으면 이벤트 상세 |
 
-## 8. Gap / Risk
+앱은 모든 deepLinkType을 그대로 목적지로 사용하지 않는다. 필요한 문맥이 없거나 unknown 출처이면 이동 경로가 없고 카드 탭도 연결하지 않는다. 결제·환불·운영 이슈의 운영팀 처리 표시가 앱의 직접 처리 권한이나 완료를 의미하지 않는다. 분쟁에서 후속 조치를 하려면 [통합 분쟁 상세](F18-01_unified-dispute-case_prd.md)의 조건을 다시 만족해야 한다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 — 부분 해소(2026-06-06) | **dispute 딥링크**: `REFUND_DISPUTE_CREATED`(92)/`UPHELD`(93)/`OVERTURNED`(94)는 **배선 완료** — `REFUND_DISPUTE:{id}`→`/me/disputes/:caseId`. **사실 정정**: 그 외 분쟁 계열은 caseId prefix로만 존재하고 사용자 알림 NotificationType(분쟁은 92~94뿐)·발송 경로가 서버에 없다(`DomainOutboxEventMapper` `case DISPUTE -> unsupported()`, SLA 스캐너는 `OperatorAlertService` 운영자 경보) — 호스트 인박스용 분쟁 알림 자체가 발화되지 않으므로 "라우팅 미배선 잔존"이 아니라 서버 알림 신설 선행 영역 | `notification_router.dart`(refund 3종 배선됨) / `DomainOutboxEventMapper`(DISPUTE unsupported) | 해당 분쟁은 사용자 알림 미발화라 라우팅만으로는 인박스/케이스 상세 진입 불가 | (선행) 서버 분쟁 사용자 알림 타입·발송 경로 신설 → 이후 `NotificationRouter` 라우팅 추가 |
-| P2 | **HostInboxService 성능**: 각 source를 size=500까지 수집 후 메모리 정렬/page() 페이징. 인박스 항목 많을 시 N+1 + 메모리 부하. | `HostInboxService.java:83,126,601` | 응답 지연, OOM 가능 | DB 집계 쿼리로 전환 또는 cursor-based pagination |
-| P2 | **실시간 업데이트 미배선**: WebSocket/polling 없음. pull-to-refresh만 지원. | `host_inbox_screen.dart:217` — refresh()만 | 미응답 건수가 stale 가능. 새 문의 수신을 즉각 알 수 없음 | 주기적 polling 또는 FCM push → invalidate 연결 |
-| P2 | **sourceTypeCounts 타입 안전성**: `Map<String, int>`로 역직렬화. 잘못된 key 무시됨. | `host_inbox_stats.dart` | 새 source type 추가 시 통계 카운트 누락 가능 | `Map<HostInboxSourceType, int>` 또는 extension parser 추가 |
-| P3 | **NoShowRefundScreen 진입점**: `hostNoShowRefund` 라우트(`/host/disputes/:caseId/no-show-refund/:applicationId`)는 `app_router.dart:989-997`에서 `asHost:true` 케이스 상세에서만 연결됨. 인박스에서 직접 진입하는 경로 별도 없음. | `app_router.dart` | 노쇼 환불 화면으로의 경로가 한정적 | UX 검토 후 인박스 → 노쇼 환불 직접 진입 경로 추가 검토 |
+## 앱 새로고침과 복귀
 
-## 9. 수용 기준
+탭별 provider는 20건씩 페이지를 가져온다. 아래로 당기면 현재 상태 목록의 첫 페이지를 다시 가져오며 기존 데이터가 있으면 재조회 동안 유지한다. 통계는 별도 provider다. 이 새로고침 경로는 통계 provider를 invalidate하지 않는다.
 
-### AC-01. 호스트 인박스 목록 조회
+처리함 provider에는 disputes 데이터 변경 신호 구독이 없고 화면의 명시적 업무 복귀 재조회도 없다. provider 수명에 따른 재생성과 ‘돌아오면 항상 최신 목록·통계’라는 보장은 다르다. 빈 화면 문구가 새 요청을 자동 표시한다고 하더라도 이 provider의 실시간 구독 근거로 사용하지 않는다.
 
-Given 로그인 호스트가 `/host/inbox`에 진입한다.
-When `GET /api/v1/host/inbox?page=0&size=20`을 호출한다.
-Then 자신이 호스트인 이벤트/클럽 관련 8개 source 항목이 `HostInboxStatus` 탭별로 표시된다.
+## 코드 위치
 
-### AC-02. EVENT_MESSAGE 미응답 배지
+<!-- source-references:start -->
+서버 창구: `HostInboxController#getInbox`, `HostInboxController#getStats`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-Given 이벤트 문의 스레드에 호스트가 답변하지 않은 메시지가 2건 있다.
-When 인박스 목록에서 해당 EVENT_MESSAGE 카드를 표시한다.
-Then 카드에 "미응답 2" 배지가 표시된다.
+## 현재 제한과 확인 범위
 
-### AC-03. DISPUTE_CASE 카드 이동
-
-Given 인박스에 `sourceType=DISPUTE_CASE` 카드가 있고 `disputeCaseId="APPLICATION:12345"`다.
-When 카드를 탭한다.
-Then `Routes.hostDisputeDetailFor("APPLICATION:12345")` → `/host/disputes/APPLICATION:12345` 케이스 상세 화면으로 이동한다.
-
-### AC-04. 통계 조회
-
-Given 호스트가 `/host/inbox`에 진입한다.
-When `GET /api/v1/host/inbox/stats`를 호출한다.
-Then `HostInboxStats`에 `needsResponseCount`, `responseRatePercent`, `sourceTypeCounts` 등이 반환되고 헤더에 표시된다.
-
-### AC-05. NEEDS_RESPONSE 탭 필터
-
-Given 인박스에 NEEDS_RESPONSE 3건, IN_PROGRESS 2건, DONE 5건이 있다.
-When NEEDS_RESPONSE 탭을 선택한다.
-Then 3건의 NEEDS_RESPONSE 항목만 표시된다.
-
-### AC-06. pull-to-refresh 재조회
-
-Given 호스트가 인박스 화면에서 목록을 아래로 당긴다.
-When pull-to-refresh 동작이 실행된다.
-Then `hostInboxNotifierProvider.refresh()`가 호출되어 `GET /api/v1/host/inbox`를 재호출하고 최신 데이터를 표시한다. 화면 재진입 자동 invalidate는 없다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | dispute 딥링크 | refund 3종(92/93/94)은 배선 완료. 그 외 분쟁 계열은 서버 사용자 알림 타입·발송 경로 부재(`DomainOutboxEventMapper` DISPUTE unsupported) — 라우팅에 앞서 서버 알림 신설 선행 필요 |
-| 구현 | HostInboxService 성능 | DB 집계 쿼리로 전환. size=500 전량 조회 제거 |
-| 구현 | 실시간 업데이트 | FCM push → provider invalidate 연결 또는 polling 주기 설정 |
-| 정책 | 인박스 항목 보존 기간 | DONE 항목을 언제까지 인박스에 유지할지 정책 결정 |
-| 테스트 | 8-source 통합 정합성 | 각 source 항목이 올바른 탭·카드로 표시되는지 시나리오 테스트 없음 |
+| Risk | 여러 원천을 모아 메모리에서 정렬하고 수집 창도 서로 다르다. | 모든 이력의 완전한 개수·균일한 500건 상한을 약속하지 않는다. |
+| Gap | 목록 당기기 갱신과 별도 통계 갱신이 연결되지 않았다. | 헤더까지 함께 최신화됐다고 설명하지 않는다. |
+| Gap | 업무 복귀·새 요청의 실시간 갱신을 이 provider가 직접 보장하지 않는다. | 현재 동작과 빈 화면의 자동 표시 문구를 구분한다. |
+| Risk | 필요한 이동 문맥이 없으면 카드가 열리지 않고 사건 ID fallback도 유효성을 보장하지 않는다. | 실제 route 조건과 서버 disputeCaseId를 우선한다. |
+| 미검증 | 실제 역할별 목록·대량 항목 성능·업무 처리 후 복귀·통계 시각차를 실행하지 않았다. | 소스 검토를 제품 실행 통과로 계산하지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 출처와 역할:** 아홉 출처·세 상태, 공동 주최 위임 정지와 상담의 현재 클럽 관리자 권한을 구분한다.
+- **AC-02 미응답:** 이벤트의 최근 메시지 창과 상담의 사용자/비사용자 메시지 누적 규칙을 나눈다.
+- **AC-03 입금 확인:** 승인 대기 외에 실제 PENDING BANK_TRANSFER 신고가 있는 신청을 응답 필요로 분류한다.
+- **AC-04 신고 공개:** EVENT_HOST 관할·이벤트 범위·조회자 본인 대상 제외·신고자 표시 생략을 따른다.
+- **AC-05 페이지 경계:** 출처별 상한과 분쟁 선행 100건 제한 뒤 상태 필터를 설명한다.
+- **AC-06 통계 의미:** DONE 비율·빈 목록 100·완료 항목 수정까지의 평균과 실제 답변 시간을 구분한다.
+- **AC-07 업무 이동:** 원천별 eventId/regularMeetingId/disputeCaseId 조건과 이동 불가를 확인한다.
+- **AC-08 갱신 범위:** 현재 탭의 목록 새로고침·별도 통계·명시적 복귀 갱신 부재를 구분한다.
+
+근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.
