@@ -316,7 +316,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -394,7 +395,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4595,9 +4597,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "26a1014472dd4888aeeac2f27b3f37f6ac61ca24bead83d7e59d4039810f0c6c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_intake_20261122"
+      ],
+      "reviewedSha256": "c5f22aa49debe485403981cf4424b0559b950796c63330b6e5db6110c29511bc"
     },
     {
       "path": "docs/features/F18-03.html",
@@ -4605,9 +4610,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "45a833a9343d46ca2954d37302925b2abf869ed345881b7cb75a0e76f9fb0fc1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_intake_20261122"
+      ],
+      "reviewedSha256": "0807fc39293a7ab0667809eb6787bb6595f91c5aeab090e339121f8bb8a7ea2b"
     },
     {
       "path": "docs/features/F18-04.html",
@@ -5303,7 +5311,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5414,7 +5423,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5549,7 +5559,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -7985,10 +7996,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "33a5d610cfa5439e7a34277f456e6118b5007b4b604c8bf3068c62f43cba2372",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_intake_20261122"
+      ],
+      "reviewedSha256": "a1e081811e550998fe55c4c6f273ba523ae51e9b02f436dbaf82245d86dc0454"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
@@ -7996,10 +8009,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "0685ac6b34d5fd23e5bd441dd870b2faa3fafcf6b3607045cd83515253cd8ec7",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "dispute_intake_20261122"
+      ],
+      "reviewedSha256": "e0a4f8bca0142f5d1e62526e2696e3c7b8135c17106be089f9d92ebaf42ea8c7"
     },
     {
       "path": "prd/02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md",
@@ -8516,7 +8531,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8779,7 +8795,8 @@
         "mileage_commands_20261122",
         "regular_meeting_reads_20261122",
         "regular_meeting_commands_20261122",
-        "regular_meeting_participation_20261122"
+        "regular_meeting_participation_20261122",
+        "dispute_intake_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -39103,6 +39120,236 @@
       },
       "observedSourceVersions": {
         "community_api": "4e781f7a9f5d18f381c680539a9a95a348ba5295",
+        "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
+      }
+    },
+    "dispute_intake_20261122": {
+      "kind": "source_review",
+      "scope": "F18-02/03 새 사용자 사건·통합 이의 접수/철회와 실제 앱 문맥 전달/초안/복귀 대조. F18-01/04/05는 미완료이며 공유 읽기 근거를 후속에서 재사용.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+          "sha256": "a0b7269842a0bf5076bf4111bf93db00fa19add6b14b7d8137f0303e9c41c9db",
+          "reviewScope": "전체 현재회원목록/상세·생성·증빙다운로드·본인이의조회/접수/철회HTTP계약. 접수/철회요청키없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeAppealAllowGraph.java",
+          "sha256": "0ed43ed23d36650a6098d57413c345d430bd4d08a5956770a0c69dc0a53ae7b4",
+          "reviewScope": "전체9허용prefix·두번째이의금지3prefix"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseAccessAdapter.java",
+          "sha256": "6e7ea58d4f19efd526fb5d972a56d9b1a57ad47b59a9c4936200906d3ead4fa0",
+          "reviewScope": "80–230조회자/명령맥락·등록부스냅샷또는직접resolver권한·비당사자NOT_FOUND;fromRegistry후반본문미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseCapabilityService.java",
+          "sha256": "eda6e5975a468076287cb289deb085468be894f159e25f8c93310dda16d1aea0",
+          "reviewScope": "103–360최종canResolvefalse·당사자행동/동의·플랫폼개입가드·출처/기한/기존이의·결과확인·열린이의판정;당사자추출후반미검토"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/util/DisputeCasePolicy.java",
+          "sha256": "71e0ce05935163a7d915a41693d77fc234f8d9246c9cd098c217f4d283cb6897",
+          "reviewScope": "전체길이/보완기한·상호동의범위·새이의차단 CLOSED/CLOSED_WITH_MANUAL_RECOVERY"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/constants/DisputeAppealStatus.java",
+          "sha256": "de8bc35738bc9c29e99892ad190d43d8e11a9d8d93f89c727db27745e36d1f2d",
+          "reviewScope": "전체7상태·isClosed/isDecided/blocksCaseClosure 서로다른집합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/util/DisputeCaseIds.java",
+          "sha256": "d6e73df8b8b8d286b2a2154027db862bb822b68c31ecc647b8c4cb59af2c68d3",
+          "reviewScope": "전체등록prefix+long양수·canonicalize/lenient·추가prefix"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/constants/DisputeCaseType.java",
+          "sha256": "4df48103b9af90ea90e8705b6b093e1ec58f60485667b41adb40a8a944b94b75",
+          "reviewScope": "전체9개접수유형"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/param/DisputeCaseCreateParam.java",
+          "sha256": "e4fc9d6266044563717a57645e16050f331052eef69a9751535187c4da502b3c",
+          "reviewScope": "전체정확한요청필드/Long/String/enum/List"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/param/AppealCreateParam.java",
+          "sha256": "611336740ac0c33ce2d99b3797b98e61461a1f7e0a32dad3e1989ee07368bad3",
+          "reviewScope": "전체reasonCode/reasonText/evidenceFileIds"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubPlatformOversightGuard.java",
+          "sha256": "756dcd6a5b17bf4c6bef9b9d3fa4b625964620f856281fbb6e06d86d36dfd7bd",
+          "reviewScope": "47–117기본false·SANCTION/CLUB_MEMBERSHIP_ACTION차단과오류"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/ContentModerationPlatformDecisionGuard.java",
+          "sha256": "277efa1f0095802046303b3e781dcbc0ade1902cd4e12819fba13b08ad9c5594",
+          "reviewScope": "46–107기본false·PHOTO/EVENT_MESSAGE/COMMENT차단과오류"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeAppealSourceSyncService.java",
+          "sha256": "e776c5c3ab67bff976f9de91898e80d0cb087540872d62e7984b50cd84ab2480",
+          "reviewScope": "전체노쇼만REQUIRES_NEW원천소명·caller예외삼킴과구분"
+        },
+        {
+          "path": "community_app/lib/data/repositories/dispute_case_repository.dart",
+          "sha256": "47760a61319bacc011c65eb195e3350a2bcba84c6ab8a3a169c9968feacdb095",
+          "reviewScope": "35–120생성/이의조회접수철회·guardRepositoryCall결과전달/조회enumwire"
+        },
+        {
+          "path": "community_app/lib/data/models/dispute/dispute_case_create_param.dart",
+          "sha256": "68ef02716428045d3c77682aeb8acd4ceb268a6851b1282f41b3ce49b3783a47",
+          "reviewScope": "전체타입·sourceId와eventId분리·증빙기본빈배열"
+        },
+        {
+          "path": "community_app/lib/data/models/dispute/appeal_create_param.dart",
+          "sha256": "c354ae369f5434fd40bcd31a06889fb2cd22bc7a89a5ea144c9c42da4147a4ff",
+          "reviewScope": "전체앱사유enum·본문·증빙·책임동의필드없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/dispute/dispute_case_create_provider.dart",
+          "sha256": "b6fcec330dad113accbd35debad2a7501531cdd61fb841f3bd204a43dc711239",
+          "reviewScope": "전체입력·trim10..2000·증빙5·setContext·계정세션종료/불명확응답갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/dispute_case_create_screen.dart",
+          "sha256": "9410ef7e7668ebbaa5117e6b7dfbaf0f4e738f44b644f9c9f4a41c5a2e68853d",
+          "reviewScope": "45–340문맥인자/계정별초안키·복원setContext·업로드잠금·전송전pending·결과분기·반환caseId상세이동"
+        },
+        {
+          "path": "community_app/lib/domain/providers/dispute/appeal_create_provider.dart",
+          "sha256": "d582bc51fd7f84b8b696b17ba04bfd1bde0145b391e016d061fd97f88098263c",
+          "reviewScope": "20–17620..1000/사유/책임동의/증빙5·접수/철회·계정세션/갱신신호"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/appeal_form_screen.dart",
+          "sha256": "4e71aa1c197b9cfee04ec44ab980d8f36463b8ac446a45daa050713e1d286dcd",
+          "reviewScope": "50–306caseId초안·입력/동의복원·pending/명확거절/불명확유지·성공복귀·금지/기한/클럽/증빙오류"
+        },
+        {
+          "path": "community_app/lib/core/router/route_guards.dart",
+          "sha256": "f29f53587a7650e60f9abc67a4b337ec0597425b11262039875b7497c0005d6a",
+          "reviewScope": "122–138이의prefix검사→서버canSubmitAppeal·상세/목록복귀"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_bank_payment_screen.dart",
+          "sha256": "d29be603d292d590b5ff85e7aec7ab94556d1c126a6d4fbf818bbe79f3d1c908",
+          "reviewScope": "425–439현재결제id/EVENT_PAYMENT/eventId접수입구"
+        },
+        {
+          "path": "community_app/lib/presentation/common/inputs/submission_draft.dart",
+          "sha256": "f753894bbfbf0def943302101228edaedfbcee1d4c22eb79c974e870e33fa8d1",
+          "reviewScope": "전체계정별저장·pending/complete/충돌·전송전기록·명확거절·완료정리·계정종료"
+        },
+        {
+          "path": "community_app/lib/data/models/dispute/dispute_enums.dart",
+          "sha256": "e8480375132302bacc28dd945cc5a495784921b21f2414c5c7b72bbd460f9630",
+          "reviewScope": "419–486현재7AppealStatus·표시/철회PENDING·5사유enum"
+        },
+        {
+          "path": "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "sha256": "057175598e12183c58acb630ee1fcce01f8fe88a7ea4c90653abe4f8f5a5c11a",
+          "reviewScope": "563–690본인이의조회/응답선택·철회영향확인/에러/목록상세갱신·PENDING버튼;전체상세body미검토"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeCaseService.java",
+          "sha256": "ca4449bf66645c822e14b68ceb641f46983a03e989176ebae790bf849d47072a",
+          "reviewScope": "102–184정수제한/참조출처3종·목록이름/신고자마스킹;208–352상세dispatch/증빙제출자예외/권한계산;381–707입력·원천권한/문맥·접수수/중복·배정잠금·저장·등록부발행/반환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/DisputeAppealService.java",
+          "sha256": "1fd9e6cb0e2910297c0d53305641030de5b272197979f1153f3a41060c9c657c",
+          "reviewScope": "174–559통합접수허용/설정/접근/상태/노쇼기한사전검사·저장/보류/알림·후속별도트랜잭션·철회/본인조회·현재에피소드·유효성"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/NoShowPlatformDecisionGuard.java",
+          "sha256": "a23747c1214c9413b9db28a8db579b44f53ed60b0b2b88a4a61c6c1d2b17416a",
+          "reviewScope": "동일 SHA no_show그룹52–133기본false·통합이의차단 재사용;현재52–112재확인"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/service/EventNoShowService.java",
+          "sha256": "15c8d5eb741721ed9da152a9520b21d09050e885865d21ea8c4c5a2c4b4b9ef5",
+          "reviewScope": "동일 SHA no_show그룹681–976본인/상태/확정+7일기한·원천소명검증 재사용. 신규원천전체감사아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/EvidenceFileValidator.java",
+          "sha256": "720eae0e72db85717e755e11f9dc65d9a65c72c824acf9a4b83455077e5cefcb",
+          "reviewScope": "동일 SHA report_intake그룹본인소유/완료/용도/양수ID/중복정규화 계약 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/resources/db/migration/V1__init.sql",
+          "sha256": "65cd46eb4295dc2bede2b38643ee2339a9d044c8a1bdfa78a52d7f3eea7fb289",
+          "reviewScope": "7361–7372이의필드/7상태 및uk_dispute_appeal_per_user·7412이후활성상대/배정/결제생성열·세unique제약만검토.전체DDL감사아님"
+        },
+        {
+          "path": "community_app/lib/data/api/dispute_case_api.dart",
+          "sha256": "906237e55807cfc631d0dcfbc55765befd836efc798c91c7a7da9eea2a65964c",
+          "reviewScope": "35–150생성/이의조회접수철회·요청키없음·목록/상세/당사자/증빙경로선언"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/dispute_routes.dart",
+          "sha256": "90af41cc27d928aa619826b54486a7e6d21de61ca124a3364c94476de502148a",
+          "reviewScope": "23–110생성route전달필드·상세증빙가드·이의가드/화면·호스트목록"
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92",
+          "reviewScope": "485–523사건ID인코딩·privateMeeting/assignment/reschedule문맥도우미"
+        }
+      ],
+      "reuses": [
+        "date_chat_meeting_20261122",
+        "no_show_20261122",
+        "report_intake_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
+          "sha256": "a1e081811e550998fe55c4c6f273ba523ae51e9b02f436dbaf82245d86dc0454"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
+          "sha256": "e0a4f8bca0142f5d1e62526e2696e3c7b8135c17106be089f9d92ebaf42ea8c7"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F18-02.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F18-03.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "실제 접수·본인이의조회·이의접수·철회 Controller4개 연결",
+        "units/18_dispute_resolution은 없어 생성하지 않음"
+      ],
+      "followUpFindings": [
+        "24시간10건 검사는 실제 구현",
+        "참조3출처와 배정의 SERVICE_ASSIGNMENT 응답",
+        "현재 전출처 접근검사/기본false 플랫폼가드/두번째이의금지",
+        "기존4상태에서7상태로 정정",
+        "요청키 없는 API와 계정별pending초안 분리",
+        "targetUserId/clubId 라우트 미전달·원천후속동기화 실패 경계"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 152개가 실제 소스와 일치합니다.",
+        "groupDigests": "36 source/canonical digests; 6 retained HTML IDs",
+        "derivedDocuments": "4 documents; shared batch verified 4 paths, 25 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "e7b434388dd95e96fa6c2cba24782cf4f04e49a5",
         "community_app": "f717f2e714c1fc6c3be246cd4be17958dfc1f120"
       }
     }

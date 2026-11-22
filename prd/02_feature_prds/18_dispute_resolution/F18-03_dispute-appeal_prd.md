@@ -1,148 +1,103 @@
-# F18-03. 분쟁 이의제기 (DisputeAppeal) PRD
+# F18-03. 분쟁 이의 접수·공개 조건·철회 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
-<!-- 갱신: 2026-06-06 (`07bdb38`): EVENT_NO_SHOW source 사전검증 추가 — createAppeal이 save 전 기한(confirmedAt+7일)·본인·canonical caseId를 검증하고 실패를 전파(과거 검증 실패를 삼키고 201 반환하던 BLOCKER 해소) -->
+## 현재 범위와 입구
 
-## 1. 결론
+기존 사건의 당사자가 상세 또는 증거 화면에서 canSubmitAppeal에 따라 이의 작성 화면으로 이동한다. 별도 클럽 경고 이의, 모임 정산 이의, 구매 환불 분쟁과 통합 DisputeAppeal은 다른 계약이다. 기존 이의 사건에 통합 이의를 다시 만드는 것을 무조건 허용하지 않는다.
 
-`DisputeAppeal`은 `dispute_appeal` 테이블에 저장되는 통합 이의제기 side-table이다. 사용자는 `POST /api/v1/me/dispute-cases/{caseId}/appeals`로 이의를 제기하고, `UNIQUE(case_id, appellant_user_id)` 제약으로 케이스당 본인 이의 1건이 보장된다. 이의 상태는 `PENDING` → `UPHELD`/`REJECTED` 전이는 admin API가 소유하며, 공개 API에서는 `POST .../withdraw`로 PENDING→CLOSED(철회) 전이만 가능하다.
+앱 라우트는 허용된 caseId인지 확인하고 서버 상세의 canSubmitAppeal을 조회한다. 권한이 없으면 사건 상세, 조회 실패면 내 분쟁 목록으로 보낸다. 따라서 직접 링크로 작성 화면을 열었다고 접수 가능 조건을 통과한 것은 아니다.
 
-이의제기 시 `DisputeAppealService.createAppeal`(:104-152)은 **대부분의 prefix에 대해 케이스 존재/가시성 검증 없이 `dispute_appeal` insert**를 수행한다. 사전 가시성 검증은 `CLUB_MEMBERSHIP_ACTION` prefix(`DisputeAppealService.java:119-127` — 영향받은 멤버 본인 여부 확인)와 `EVENT_NO_SHOW` prefix(추가)에 한해서만 수행되며, 나머지 prefix는 audit-only로 검증 없음이다. **`EVENT_NO_SHOW` source는 2026-06-06부터 `dispute_appeal` insert(save) 이전에 사전검증을 수행한다** — `EventNoShowService.validateAppealable`을 공유해 ① noShowId 존재, ② 본인(row.userId), ③ 소명 기한(`confirmedAt + 7일`) 이내, ④ canonical caseId(`EVENT_NO_SHOW:{noShowId}`) 일치를 확인하고, 실패하면 그대로 전파해 appeal을 만들지 않는다(과거에는 검증 실패를 삼키고 201을 반환했다). 검증 통과 후 `EventNoShowService#appeal` sync로 노쇼 status를 APPEALED로 전이한다. `EVENT_NO_SHOW` 외 prefix는 **audit-only**다(`dispute_appeal` insert만 발생하고 원본 도메인 status는 변경되지 않음).
+## 현재 서버 계약
 
-`DisputeAppealStatus.isClosed()` 판단은 `this != PENDING`으로 정의된다(`DisputeAppealStatus.java:17`). UPHELD/REJECTED/CLOSED 모두 종결이며, PENDING 상태에서만 철회가 가능하다.
+| 요청 | 입력·결과 |
+|---|---|
+| GET /api/v1/me/dispute-cases/{caseId}/appeals | 본인이 낸 이의의 List<AppealVo> |
+| POST /api/v1/me/dispute-cases/{caseId}/appeals | AppealCreateParam, 201 AppealVo |
+| POST /api/v1/me/dispute-cases/{caseId}/appeals/{appealId}/withdraw | 본인의 PENDING 이의, 200 AppealVo |
 
-**도메인 경계**: `WarningAppeal` (F15-03, `POST /api/v1/clubs/{clubId}/warnings/appeals`)와 본 기능은 완전히 별개다. 서버 enum, endpoint, 엔티티, 상태값 모두 다르다. `WarningAppealStatus`(SUBMITTED/IN_REVIEW/ACCEPTED/PARTIALLY_ACCEPTED/REJECTED/WITHDRAWN) vs `DisputeAppealStatus`(PENDING/UPHELD/REJECTED/CLOSED)는 이름이 유사해 혼동 위험이 높다.
+AppealCreateParam은 reasonCode, reasonText, evidenceFileIds다. reasonCode는 공백 불가·최대 40자, reasonText는 공백 불가·20~1000자이며 증빙은 최대 5개다. reasonCode는 서버의 문자열 계약이고 앱은 선택 enum을 보낸다. 앱은 본문을 trim하고 책임 동의 체크를 추가로 요구하지만 그 동의 boolean을 서버 요청에 보내지는 않는다.
 
-## 2. 코드 위치
+위 세 API에는 Idempotency-Key 헤더가 없다. 이의 저장의 `(case_id, appellant_user_id)` UNIQUE는 중복 행을 거절하는 조건이며 이전 성공 응답을 재생해 주는 계약이 아니다.
 
-계약의 정본은 코드다. 서버: `DisputeCaseController`, `DisputeAppealService`, `DisputeAppeal`, `DisputeAppealStatus`, `AppealCreateParam`, `AppealVo`, `EventNoShowService`. 앱: `appeal_form_screen.dart`, `appeal_create_provider.dart`, `appeal_vo.dart`, `appeal_create_param.dart`, `dispute_enums.dart`.
+## 허용 출처와 플랫폼 개입 설정
 
-## 3. 전체 동작 흐름
+| 출처 | 현재 판정 |
+|---|---|
+| USER_DISPUTE, SERVICE_ASSIGNMENT, PLATFORM_SANCTION | 허용 그래프에 포함하되 접근·기존 이의·사건 상태를 따로 검사 |
+| EVENT_NO_SHOW | 허용 그래프에 있지만 노쇼 플랫폼 판단 기능이 켜져야 통합 접수 가능 |
+| SANCTION, CLUB_MEMBERSHIP_ACTION | 클럽 플랫폼 감독 기능이 켜져야 통합 접수 가능 |
+| PHOTO, EVENT_MESSAGE, COMMENT | 콘텐츠 처분 플랫폼 판단 기능이 켜져야 통합 접수 가능 |
+| WARNING_APPEAL, SETTLEMENT_APPEAL, REFUND_DISPUTE | 두 번째 통합 이의를 금지하고 DISPUTE_APPEAL_NOT_ALLOWED_FOR_SOURCE 반환 |
+| 그 밖의 prefix | INVALID_REQUEST |
 
-### 이의제기 생성 흐름
+세 플랫폼 기능의 기본값은 모두 false다. `community.no-show.platform-decision-enabled`, `community.club.platform-oversight-enabled`, `community.dispute.content-moderation-platform-decision-enabled`의 현재 배포값은 이번에 읽지 않았다. 허용 그래프에 이름이 있는 것과 지금 운영에서 접수 가능한 것은 다르다. 공개 권한 플래그 계산과 실제 POST 양쪽에 이 가드가 있다.
 
-1. 사용자가 케이스 상세 화면(`DisputeCaseDetailScreen`)에서 "이의제기" 버튼을 탭한다.
-2. `/me/disputes/{caseId}/appeal` 라우트 → `AppealFormScreen`으로 진입.
-3. `AppealReasonCode` 5값(드롭다운) 선택 + reasonText(20~1000자) 입력.
-4. 제출 → `appealCreateProvider(caseId).submit(AppealCreateParam)` → `DisputeCaseApi.createAppeal(caseId, param)` → `POST /api/v1/me/dispute-cases/{caseId}/appeals`.
-5. 서버 `DisputeAppealService.createAppeal(caseId, userId, param)`:
-   - sourceType dispatcher: caseId prefix 파싱.
-     - `CLUB_MEMBERSHIP_ACTION` prefix → 사전 가시성 검증(영향받은 멤버 본인 여부, 비본인 403).
-     - `EVENT_NO_SHOW` prefix → **insert 이전 사전검증**: `validateAppealable`로 noShowId 존재·본인·기한(`confirmedAt+7일`)·canonical caseId 일치 확인. 실패 시 전파(appeal 미생성). 통과 시 `EventNoShowService#appeal`로 노쇼 status를 APPEALED로 전이.
-     - 나머지 prefix → audit-only (검증 없이 insert만).
-   - `UNIQUE(case_id, appellant_user_id)` 위반 → 409.
-   - `DisputeAppeal` insert, status=PENDING.
-   - `AppealVo` HTTP 201 반환.
-6. Flutter가 케이스 상세 `disputeCaseDetailProvider` invalidate 후 화면 갱신 또는 이전 화면 pop.
+## 사건 접근·기한·저장
 
-### 이의 목록 조회 흐름
+caseId는 등록된 prefix와 양수 long ID로 정규화한다. 대부분 출처에 접근 검사가 없다는 옛 설명과 달리 현재 requireCaseAccess는 DisputeCaseAccessAdapter의 등록부 당사자 또는 원천 resolver 열람 권한을 확인하고 실패를 NOT_FOUND로 처리한다.
 
-1. 케이스 상세 화면이 `GET /api/v1/me/dispute-cases/{caseId}/appeals` 호출.
-2. `DisputeAppealService.listMyAppealsForCase(caseId, userId)` → 본인 appeal 0~1건 반환.
-3. Flutter가 이의 상태 배지(PENDING/UPHELD/REJECTED/CLOSED) + reasonText 표시.
+등록부가 없는 과거 EVENT_NO_SHOW만 일반 접근 분기에서 예외로 넘기며, 곧바로 원천의 존재·본인·상태·소명 기한 검사를 저장 전에 수행한다. 노쇼의 canonical caseId가 원 요청과 다르면 INVALID_INPUT이다. 노쇼 기한은 원천의 확정 시각부터 7일 정책을 재사용하며 통합 플랫폼 기능이 비활성인 경우 기한 검사에 이르기 전 접수를 차단한다.
 
-### 이의 철회 흐름
+등록부 상태 CLOSED 또는 CLOSED_WITH_MANUAL_RECOVERY는 새 이의를 막는다. RESOLVED까지 일괄 차단하는 조건은 아니므로 단순한 ‘종결 표시=모든 이의 불가’로 해석하지 않는다. SERVICE_ASSIGNMENT는 현재 에피소드의 UserDisputeCase ID를 caseRowId에 결박한다. 증빙 검증 후 PENDING 행을 저장하며 중복 제약 충돌은 CONFLICT다.
 
-1. 사용자가 케이스 상세에서 PENDING 이의의 "철회" 버튼을 탭한다.
-2. `appealCreateProvider(caseId).withdraw(appealId)` → `POST /api/v1/me/dispute-cases/{caseId}/appeals/{appealId}/withdraw`.
-3. 서버: appealId 미존재 → 404, caseId 불일치 → 404, 비본인 → 403, 비PENDING → 409.
-4. 성공 시 `AppealVo(status=CLOSED)` 반환.
+등록부가 있으면 원천 보류를 설정하고 사건 당사자와 이의 제기자에게 절차 알림을 요청한다. 사용자 분쟁 알림이 전혀 없다는 과거 설명을 이 호출에 적용하지 않는다. 실제 알림 수신은 별도 검증 사항이다.
 
-## 6. 상태/권한 매트릭스
+## 원천 상태 동기화의 경계
 
-| 시나리오 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 최초 이의제기 | `dispute_appeal` insert, status=PENDING | `AppealStatus.PENDING` 배지 | 이의 제출됨 | 일치 |
-| 중복 이의제기 (PENDING 상태) | UNIQUE(case_id, appellantUserId) → 409 | AppToast 409 | "이미 이의가 접수되어 있습니다" | 일치 |
-| PENDING 이의 철회 | status=CLOSED 반환 | `canWithdraw=true` → 철회 버튼 표시 | CLOSED 배지로 전환 | 일치 |
-| UPHELD/REJECTED 이의 철회 시도 | `isClosed()=true` → 409 | `canWithdraw=false` → 버튼 숨김 | 철회 불가 | 일치 |
-| 비본인 철회 시도 | 403 | — | 에러 toast | 일치 |
-| 비PENDING 철회 시도 | 409 CONFLICT | `canWithdraw=false` | 차단됨 | 일치 |
-| `EVENT_NO_SHOW` 이의 (기한 내·본인) | 사전검증 통과 → `EventNoShowVo.status=APPEALED` | `NoShowStatus.APPEALED` 반영 | 노쇼 화면에서 APPEALED 표시 | 일치(사전검증) |
-| `EVENT_NO_SHOW` 이의 (기한 초과/타인/없는 noShowId) | `validateAppealable` 실패 전파 → appeal 미생성 (409/403/404) | 에러 toast | 소명 불가 | 일치(— 과거 201로 삼키던 BLOCKER 해소) |
-| EVENT_NO_SHOW 외 prefix 이의 | audit-only — 원본 도메인 status 불변 | appeal 배지 표시만 | 원본 케이스 변화 없음 | Gap(의도적) |
-| admin 인용/기각 | UPHELD/REJECTED — admin API | `AppealStatus.UPHELD/REJECTED` 배지 | 결과 표시 | 일치(read-only) |
+접수 직후의 원천 동기화 dispatcher는 EVENT_NO_SHOW만 처리한다. 별도 새 트랜잭션으로 원천 소명을 호출하고 여기서 발생한 RuntimeException은 기록 후 삼킨다. 따라서 저장 전 권한·기한 검사 실패는 이의를 만들지 않지만, 저장 후 원천 동기화 실패는 이의 응답만으로 원천 변경 완료를 보장하지 못한다.
 
-## 7. 정합성 판단
+다른 허용 prefix는 이 시점에 원천 상태를 같은 방식으로 직접 바꾸지 않는다. 그렇다고 아무 효과 없는 감사 기록만 남는 것은 아니다. 이의 행·증빙 참조·등록부 보류·알림은 별도 효과다. 운영자 결정·보상 단계의 원천 반영은 해당 운영 경로에서 판정한다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `AppealCreateParam.reasonCode` | String, max 40, 서버 whitelist 없음 | `AppealReasonCode.wireValue` (5값 enum name). 서버는 임의 40자 이내 문자열 허용 | 클라 드롭다운 제약이 서버보다 강함 (의도적) |
-| `AppealCreateParam.reasonText` | min 20, max 1000 | UI 20~1000자 제한 | 일치 |
-| `AppealVo.status` | `DisputeAppealStatus` | Dart `AppealStatus` (클래스명 불일치, wire 일치) | 일치 |
-| UNIQUE 제약 | `(case_id, appellant_user_id)` 서버 강제 | 클라이언트 중복 검사 없음 (서버 409 수신) | 정합 |
-| `isClosed()` 판단 | `this != PENDING` 서버 정의 | `AppealStatus.isClosed = this != PENDING` Dart 미러 | 일치 |
-| `canWithdraw` | 서버 비PENDING → 409 | Dart `canWithdraw = this == PENDING` | 일치 |
+## 상태·철회·본인 조회
 
-## 8. Gap / Risk
+| 이의 상태 | 해석 경계 |
+|---|---|
+| PENDING | 접수 대기, 본인 철회 가능 |
+| DECIDED | 결정 기록 단계 |
+| COMPENSATION_APPLIED | 보상 적용 단계 |
+| UPHELD | 인용 결과 |
+| RECOVERY_REQUIRED | 수동 수습 필요 |
+| REJECTED | 기각 결과 |
+| CLOSED | 철회 등 닫힘 |
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | **appeal 승인/거절 공개 API 부재**: `canApproveAppeal=true` flag 있으나 `DisputeAppealService`에 `approve/reject` 메서드 없음. admin API 소유. | `DisputeAppealService.java`: `withdrawAppeal`만 구현 | 호스트 앱에서 이의 결과 처리 불가. UI flag만 존재 | 호스트용 공개 전이 endpoint 추가 또는 admin API 접근 UX 설계 |
-| P1 | **audit-only prefix 가시성 검증 없음**: `createAppeal`은 `CLUB_MEMBERSHIP_ACTION`·`EVENT_NO_SHOW` 외 prefix에 대해 케이스 존재/본인 가시성 검증 없이 `dispute_appeal` insert. 제3자가 임의 caseId로 appeal row를 만들 수 있음. | `DisputeAppealService.java` — CLUB_MEMBERSHIP_ACTION·EVENT_NO_SHOW만 가시성/사전검증, 나머지 audit-only | 비관련 당사자의 이의 insert 가능. 현재 UNIQUE(case_id, appellant_user_id) 제약이 1차 방어이나 case 가시성 보장은 없음(EVENT_NO_SHOW는 해소) | audit-only prefix에 대해서도 case 조회 가능 여부 선검증 추가 검토 |
-| P2 | **audit-only dispatcher**: EVENT_NO_SHOW 제외 모든 prefix는 이의제기 시 원본 도메인 status가 변경되지 않음. UPHELD/REJECTED 후에도 원본 케이스 status 변경은 admin이 별도로 처리해야 함. | `DisputeAppealService.java:162-164` | appeal 결과가 원본 도메인(예: 정산 이의, 차단 이의)에 자동 반영되지 않음 | 향후 도메인별 sync dispatcher 추가 wave 필요 |
-| ~~P2~~ **EVENT_NO_SHOW 해소** | ~~appeal 기한 미구현~~: EVENT_NO_SHOW source는 `confirmedAt + 7일`(D-2 확정) 기한을 `createAppeal` 사전검증에서 적용(초과 시 `EVENT_NO_SHOW_APPEAL_DEADLINE_PASSED` 409). 다른 source는 여전히 source별 기한 정책 미결. | `DisputeAppealService.java`, `EventNoShowService.validateAppealable` | EVENT_NO_SHOW 무기한 소명 차단. 그 외 source 기한은 후속. | EVENT_NO_SHOW 완료. 그 외 source별 기한 정책 결정 |
-| P2 | **TRANSPORT(RS-002 P3-B) id-space**: `DisputeLegalHoldService`가 TRANSPORT prefix를 `reportRepository.findById(id)`로 조회. source row가 report를 전제. `DisputeSourceType.TRANSPORT`와 id-space 충돌 잠재. | `DisputeLegalHoldService.java:148-151` | TRANSPORT caseId로 이의제기 시 legal hold 조회 오류 가능 | TRANSPORT source id 정책 명확화 필요 |
+isClosed()는 PENDING 이외를 true로 반환하지만 보상 완료·사건 종료를 의미하는 하나의 판정으로 사용하지 않는다. blocksCaseClosure()는 PENDING·DECIDED·COMPENSATION_APPLIED를 별도로 막고, 운영 결정 여부 판정도 따로 있다. 기존 4개 상태만으로 모델링하면 중간 결정·수습 상태를 잃는다. 현재 Dart AppealStatus도 7개 값을 가지며 ‘결정 확정 중’·‘보상 처리 중’·‘처리 지연(운영 확인 중)’으로 나눠 표시한다. 철회 버튼은 PENDING에만 나타난다.
 
-## 9. 수용 기준
+철회는 본인 ID와 appealId로 잠근 행을 읽고 정규화한 caseId까지 일치하는지 확인한다. PENDING만 CLOSED로 바꾸고 처리자·시각·철회 메모를 기록한다. 보류 해제 helper는 같은 사건에 PENDING 또는 DECIDED 이의가 없는지 확인한다. 같은 철회를 다시 보내면 성공 재생이 아니라 상태 충돌이 될 수 있다.
 
-### AC-01. 이의제기 정상 생성
+본인 목록은 사건 전체의 다른 사람 이의를 공개하지 않고 현재 사용자 행만 반환한다. 배정 이의는 결박된 caseRowId가 현재 에피소드와 일치하는지도 확인한다. 권한 플래그는 기존 이의 행의 존재도 고려하므로 철회가 자동 재접수 권리를 만든다고 안내하지 않는다. 공개 상세에서 canResolveDispute는 최종 계산 시 false로 내려가며 공개 호스트용 이의 승인·기각 API는 현재 Controller에 없다.
 
-Given 로그인 사용자가 본인 케이스(`OPEN` status)에서 이의제기를 선택한다.
-When `reasonCode=FACT_INCORRECT`, `reasonText="사실관계가 다릅니다. 현장에 없었습니다"`(26자)로 제출한다.
-Then 서버가 HTTP 201을 반환하고 `AppealVo(status=PENDING)`을 응답한다. 케이스 상세 화면이 PENDING 배지를 표시한다.
+## 앱 초안·동의·오류·복귀
 
-### AC-02. 중복 이의제기 차단
+앱은 사유 선택, 20~1000자 본문, 최대 5개 증빙, 책임 동의가 갖춰져야 제출한다. 파일 업로드 중에는 막는다. 초안은 계정·caseId별로 사유·본문·파일·동의를 보관한다. 전송 전 pending 저장, 명확한 거절 시 해제, 결과 불명확 시 기록 보존, 성공 뒤 완료 기록 정리를 적용한다. 이 초안은 서버 요청키 보장을 대신하지 않는다.
 
-Given 사용자가 동일 케이스에 PENDING 이의를 이미 보유한다.
-When 동일 케이스에 이의제기를 재시도한다.
-Then 서버가 409를 반환하고 Flutter가 에러 toast를 표시한다.
+성공 뒤 분쟁 조회를 갱신하고 이전 화면으로 돌아간다. 금지된 두 번째 이의는 원래 화면을 사용하라는 안내, 노쇼 기한 초과는 마감 안내, 클럽 플랫폼 접수 차단은 상세 갱신과 이전 화면 복귀로 처리한다. 첨부 소유권·잘못된 파일·개수 초과도 별도 안내한다. 일반 CONFLICT 문구는 ‘이미 검토 중’이므로 실제로 철회된 기존 행이나 다른 상태 충돌일 수 있다는 서버 결과 경계를 유지한다.
 
-### AC-03. PENDING 이의 철회
+## 코드 위치
 
-Given 사용자가 PENDING 이의를 보유한다.
-When `POST .../withdraw`를 호출한다.
-Then `AppealVo(status=CLOSED)`가 반환되고 케이스 상세 화면이 CLOSED 배지를 표시한다.
+<!-- source-references:start -->
+서버 창구: `DisputeCaseController#getMyAppeals`, `DisputeCaseController#createAppeal`, `DisputeCaseController#withdrawAppeal`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### AC-04. 비PENDING 이의 철회 차단
+## 현재 제한과 확인 범위
 
-Given 이의 status가 UPHELD 또는 REJECTED다.
-When 사용자가 철회를 시도한다.
-Then 서버가 409를 반환한다. Flutter는 `canWithdraw=false`이므로 철회 버튼을 표시하지 않는다.
-
-### AC-05. EVENT_NO_SHOW 사전검증 + sync **(갱신)**
-
-Given 케이스 caseId가 canonical `EVENT_NO_SHOW:{noShowId}` 형식이고, 소명자가 본인이며 `confirmedAt + 7일` 이내다.
-When 이의제기를 제출한다.
-Then 사전검증(존재·본인·기한·canonical) 통과 후 `dispute_appeal` insert가 성공하고 `EventNoShow.status`가 APPEALED로 전환된다.
-
-### AC-05-B. EVENT_NO_SHOW 사전검증 실패 차단 ****
-
-Given caseId의 noShowId가 존재하지 않거나, 소명자가 본인이 아니거나, `confirmedAt + 7일`이 경과했거나, caseId가 canonical 형식과 불일치한다.
-When 이의제기를 제출한다.
-Then 사전검증이 실패를 전파해 `dispute_appeal`이 생성되지 않고 404/403/409가 반환된다(과거: 검증 실패를 삼키고 201을 반환하던 BLOCKER — 해소).
-
-### AC-06. audit-only source 이의
-
-Given 케이스 caseId가 `WARNING_APPEAL:{id}` 형식이다.
-When 이의제기를 제출한다.
-Then `dispute_appeal` insert만 발생하고 원본 `WarningAppeal` status는 변경되지 않는다.
-
-### AC-07. WarningAppeal(F15-03)과의 경계
-
-Given 사용자가 클럽 경고(F15-03)에 대해 이의를 제기하려 한다.
-When F15-03 경로 `POST /api/v1/clubs/{clubId}/warnings/appeals`를 사용한다.
-Then `WarningAppeal` 엔티티에 저장되고 `WarningAppealStatus`(SUBMITTED 등)로 관리된다. 본 F18-03 `dispute_appeal` 테이블과 무관하다. 단, F18-01 union 조회 시 `WARNING_APPEAL:{id}` caseId로 통합 뷰에 나타난다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | appeal 승인/거절 공개 endpoint | 호스트용 전이 endpoint 설계 및 구현 |
-| 구현 | audit-only source sync dispatcher | 정산 이의, 경고 이의 등 원본 도메인 sync 추가 wave |
-| ~~정책~~ EVENT_NO_SHOW 완료(D-2=7일) / 그 외 후속 | 이의제기 기한 | EVENT_NO_SHOW=`confirmedAt+7일` 적용. 그 외 source별 이의 가능 기한 정의는 후속 |
-| 정책 | TRANSPORT source id-space | TRANSPORT caseId가 report.id를 가리키는지 명확화 |
-| 테스트 | best-effort sync 실패 시나리오 | sync 실패해도 appeal insert 유지되는지 검증 |
+| Risk | 저장 후 노쇼 원천 동기화 실패가 삼켜질 수 있다. | 접수 완료와 원천 상태 변경 완료를 나눈다. |
+| Risk | isClosed·blocksCaseClosure·운영 결정 판정의 상태 집합이 다르다. | 중간 보상·수습 단계를 일반 종결과 합치지 않는다. |
+| Gap | 앱 CONFLICT 안내가 이미 검토 중으로 고정돼 있다. | 실제 서버 충돌 사유를 그 문구로 단정하지 않는다. |
+| 미검증 | 플랫폼 기능의 배포 설정·실제 이의 접수·보상·알림 수신을 실행하지 않았다. | 코드 허용과 운영 활성화·실행 증거를 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 허용 출처:** 허용 그래프·두 번째 이의 금지·미지원 prefix를 나눈다.
+- **AC-02 플랫폼 설정:** 노쇼·클럽·콘텐츠의 기본 비활성 가드를 표시와 명령에서 적용한다.
+- **AC-03 사건 권한:** 등록부/원천 열람을 확인하고 과거 노쇼 예외에도 저장 전 본인·기한 검사를 적용한다.
+- **AC-04 입력과 중복:** 서버 문자열 길이·증빙·caseId/사용자 중복 제약과 앱 책임 동의를 구분한다.
+- **AC-05 원천 연결:** 저장 전 검사와 저장 후 새 트랜잭션 동기화 실패의 차이를 설명한다.
+- **AC-06 상태 범위:** 7개 상태와 철회 가능·사건 종결 차단 판정을 구분한다.
+- **AC-07 철회와 조회:** 본인 잠금·사건 일치·PENDING 조건·현재 배정 에피소드 조회를 적용한다.
+- **AC-08 앱 복귀:** 계정별 초안·결과 불명확 보관·오류 분기·상세 갱신을 연결한다.
+
+근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.

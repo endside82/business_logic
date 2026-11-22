@@ -379,7 +379,7 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F17-09 | 정기모임 | [F17-09_regular-meeting-attendance_prd.md](02_feature_prds/17_regular_meeting/F17-09_regular-meeting-attendance_prd.md) | `source-first` | source-first 구현 확인 | 2 | 4 |
 | F17-10 | 정기모임 | [F17-10_regular-meeting-settlement_prd.md](02_feature_prds/17_regular_meeting/F17-10_regular-meeting-settlement_prd.md) | `source-first` | source-first 구현 확인 | 1 | 4 |
 | F18-01 | 분쟁 해결 | [F18-01_unified-dispute-case_prd.md](02_feature_prds/18_dispute_resolution/F18-01_unified-dispute-case_prd.md) | `source-first` | source-first PRD | 4 | 5 |
-| F18-02 | 분쟁 해결 | [F18-02_dispute-create_prd.md](02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md) | `source-first` | source-first PRD | 3 | 4 |
+| F18-02 | 분쟁 해결 | [F18-02_dispute-create_prd.md](02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md) | `source-first` | source-first PRD | 1 | 4 |
 | F18-03 | 분쟁 해결 | [F18-03_dispute-appeal_prd.md](02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md) | `source-first` | source-first PRD | 3 | 4 |
 | F18-04 | 분쟁 해결 | [F18-04_evidence-visibility_prd.md](02_feature_prds/18_dispute_resolution/F18-04_evidence-visibility_prd.md) | `source-first` | source-first PRD | 3 | 5 |
 | F18-05 | 분쟁 해결 | [F18-05_host-inbox_prd.md](02_feature_prds/18_dispute_resolution/F18-05_host-inbox_prd.md) | `source-first` | source-first PRD | 3 | 5 |

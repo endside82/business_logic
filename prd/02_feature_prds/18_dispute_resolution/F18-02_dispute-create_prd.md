@@ -1,106 +1,84 @@
-# F18-02. 분쟁 직접 접수 (USER_DISPUTE) PRD
+# F18-02. 사용자 분쟁 접수·출처 연결·초안 복구 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+2026-11-22 현재 서버·앱 소스 대조다. 새 제품 시험·브라우저·실기기 통과 기록이 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-<!-- source-first; updated: 2026-06-05; source: community_api/src/main/java/com/endside/community/host/dispute/ -->
+## 현재 범위와 입구
 
-## 1. 결론
+내 분쟁 목록의 접수 버튼은 맥락 없는 사용자 사건을 작성한다. 이벤트 결제 화면은 EVENT_PAYMENT와 실제 payment.id를 넘기고, 라우트 도우미는 PRIVATE_MEETING·SERVICE_ASSIGNMENT의 출처 ID 및 일정 변경 이의의 eventId를 지원한다. 출처 ID와 이벤트 ID를 같은 숫자로 추정하지 않는다.
 
-`POST /api/v1/me/dispute-cases`는 사용자가 직접 분쟁을 생성하는 유일한 write endpoint다. 생성된 케이스는 `user_dispute_case` 테이블에 persistent하게 저장되며 `caseId="USER_DISPUTE:{id}"` 형태로 통합 케이스 뷰에 포함된다. 나머지 20가지 `DisputeSourceType`은 기존 도메인 테이블을 union-read만 하는 read-only source인 반면, `USER_DISPUTE`는 이 endpoint가 직접 생성하는 유일한 native source다.
+생성 화면은 caseType, summary, 선택 증빙을 입력한다. 일정 변경 이의는 HOST_ACTION_REVIEW로 고정하고 사유 선택도 요구한다. 서버의 sourceType은 원천 참조, caseType은 접수 유형이다. 유형에서 NO_SHOW_APPEAL이나 APPEAL을 골랐다는 이유로 기존 처분의 통합 이의 절차가 자동 실행되는 것은 아니다. 기존 사건 이의는 [분쟁 이의 접수·철회](F18-03_dispute-appeal_prd.md)를 따른다.
 
-status 전이(OPEN → IN_REVIEW / ESCALATED / RESOLVED / CLOSED)는 admin API가 소유하며 공개 API에는 전이 endpoint가 없다. rate-limit는 24시간 10건, 동일 상대 활성 케이스 중복은 `active_dedup_key` GENERATED STORED 컬럼의 UNIQUE 제약으로 409를 반환한다.
+## 현재 서버 계약
 
-앱 `DisputeCaseCreateScreen`은 분쟁 유형 picker + 상세 사유(10~2000자) + 증빙 첨부 + 제출 흐름을 제공한다. 제출 활성화 조건은 `caseType 선택 + summary.trim() 길이 10~2000 + evidenceFileIds.length <= 5`이며(`dispute_case_create_provider.dart:39-44`), 별도 책임 동의 체크박스는 없다. **증빙 첨부 UI는 2026-06-06에 배선 완료** — 통합 분쟁 접수 화면에 `EvidencePickerField`가 연결되어 최대 5개의 `evidenceFileIds`를 채워 전송한다.
-
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `DisputeCaseController`, `DisputeCaseService`, `DisputeCaseCreateParam`, `UserDisputeCase`, `DisputeCaseType`. 앱: `dispute_case_create_screen.dart`, `dispute_case_create_provider.dart`, `dispute_case_create_param.dart`, `dispute_enums.dart`, `dispute_case_api.dart`.
-
-## 3. 전체 동작 흐름
-
-1. 사용자가 `/me/disputes/create` 라우트로 진입한다 (`Routes.myDisputeCreate`).
-2. `DisputeCaseCreateScreen`이 `disputeCaseCreateProvider`를 구독한다. 호출 화면이 `targetUserId`, `eventId`, `clubId`, `sourceType`, `sourceId`를 생성자 인자로 넘기면 폼 초기값에 포함된다.
-3. 사용자가 `DisputeCaseType` 9종 중 하나를 picker에서 선택한다.
-4. 상세 사유를 10~2000자로 입력한다. 제출 버튼은 `caseType 선택 + summary 10~2000자 + evidenceFileIds <= 5` 조건을 만족할 때 활성화된다.
-5. 제출 버튼 탭 → `disputeCaseCreateProvider.submit()` → `DisputeCaseApi.createCase(param)` → `POST /api/v1/me/dispute-cases`.
-6. 서버 `DisputeCaseService.createUserDispute(userId, param)`:
-   - rate-limit 검증: 24시간 내 10건 초과 시 429.
-   - dedup 검증: `active_dedup_key` UNIQUE 위반(같은 상대에 활성 케이스 존재) 시 409.
-   - self-dispute 검증: `targetUserId == userId`이면 400.
-   - `UserDisputeCase` 저장 → `status=OPEN`.
-   - 생성된 케이스 상세 read-back → `DisputeCaseDetailVo` HTTP 201 반환.
-7. Flutter가 성공 응답 수신 후 `myDisputeCasesProvider` invalidate → 상세 화면(`/me/disputes/{caseId}`)으로 이동하거나 이전 화면으로 pop.
-8. 에러 시: 429 → `AppToast.show("요청이 너무 많습니다. 잠시 후 다시 시도해주세요")` (`dispute_case_create_screen.dart:158`), 409 → `AppToast.show("이미 동일한 상대로 진행 중인 분쟁이 있어요")` (`:148`), 400 → 필드별 에러 메시지.
-
-## 6. 상태/권한 매트릭스
-
-| 시나리오 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 정상 생성 (targetUserId 있음) | `active_dedup_key={reporter}:{target}` UNIQUE | 성공 201 | 케이스 상세로 이동 | 일치 |
-| 정상 생성 (targetUserId 없음) | `active_dedup_key=NULL` (UNIQUE 미적용) | 성공 201 | 케이스 상세로 이동 | 일치 |
-| 같은 상대 활성 케이스 중복 | `active_dedup_key` UNIQUE 위반 → 409 | AppToast 409 "이미 동일한 상대로 진행 중인 분쟁이 있어요" | 화면 유지 | 일치 |
-| 자기 신고 | CHECK 제약 위반 → 400 | AppToast 400 | 에러 처리 | 일치 |
-| rate-limit 초과 | 24h 10건 → 429 | AppToast 429 "요청이 너무 많습니다. 잠시 후 다시 시도해주세요" | 화면 유지 | 일치 |
-| evidence 첨부 | max 5 | `EvidencePickerField`로 최대 5개 첨부 | 증빙과 함께 접수됨 | 해소(2026-06-06) |
-
-## 7. 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `caseType` 9값 | `DisputeCaseType` enum | Dart `DisputeCaseType` enum 9값 일치 | 일치 |
-| `summary` 제약 | min 10, max 2000 | UI 10~2000자 제한 | 일치 |
-| `evidenceFileIds` | max 5 | `EvidencePickerField`로 최대 5개 첨부·전송 | 해소(2026-06-06) |
-| `eventId`, `clubId`, `reasonCode` | `DisputeCaseCreateParam` 지원 | `dispute_case_create_param.dart:15-25` 전부 선언됨. provider `setContext`로 주입 가능 | 일치(v1은 화면에서 채워 보내는 경로가 제한적) |
-| dedup key | `active_dedup_key` GENERATED STORED | 클라는 dedup 판단 없음 (서버 409 수신) | 정합 |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| ~~P1~~ 해소(2026-06-06) | **evidence 첨부**: `DisputeCaseCreateScreen`에 `EvidencePickerField` 배선 완료. 최대 5개 `evidenceFileIds` 첨부·전송. | `dispute_case_create_screen.dart` | 증빙과 함께 분쟁 접수 가능. 서버 `EvidenceFileValidator`가 소유권/용도/상태 검증 | 완료 |
-| P1 | **eventId/clubId/targetUserId 화면 주입 경로 확인 필요**: Dart 모델(`dispute_case_create_param.dart:15-25`)에 `eventId?`, `clubId?`, `reasonCode?` 필드는 모두 선언됨. provider `setContext`로 주입 가능하나, 실제 생성 화면 진입 시 어떤 호출 경로가 이 값들을 채워 보내는지 화면별로 확인 필요. | `dispute_case_create_provider.dart:113-123` 제출 param 구성 | 진입 경로에 따라 맥락 정보가 null로 전송되어 운영 추적이 어려울 수 있음 | 분쟁 접수 진입 경로별 setContext 호출 여부 확인 |
-| P2 | **rate-limit 서버 구현 확인 필요**: 컨트롤러 Javadoc에 "rate limit(24h 10건) 초과는 429"로 명시되어 있으나, `DisputeCaseService.createUserDispute` 내 실제 rate-limit 로직 구현 여부를 직접 확인하지 않음 | `DisputeCaseController.java:createMyDispute` Javadoc | rate-limit 비구현 시 무제한 접수 가능 | 서비스 레이어 rate-limit 구현 검증 |
-| P2 | **admin 전이 전용 구조 앱 미안내**: 생성 후 상태가 OPEN으로 고정되고 admin 처리 전까지 변화 없음. 사용자에게 "처리에 시간이 걸립니다" 안내 없음 | `DisputeCaseCreateScreen` UX | 사용자가 상태 변화 없다고 오해하고 중복 접수 가능 | 접수 완료 화면에 처리 기간 안내 추가 |
-
-## 9. 수용 기준
-
-### AC-01. 정상 분쟁 생성
-
-Given 로그인 사용자가 `caseType=SAFETY`, `summary="현장에서 부적절한 행동이 있었습니다"(15자)`를 입력한다 (책임 동의 체크박스 없음 — canSubmit 조건 자동 충족).
-When 제출 버튼을 탭한다.
-Then 서버가 HTTP 201을 반환하고 Flutter가 생성된 케이스 상세 화면으로 이동한다. 케이스의 `status=OPEN`이고 `caseId="USER_DISPUTE:{id}"` 형식이다.
-
-### AC-02. 중복 방지 (같은 상대 활성 케이스)
-
-Given 사용자가 targetUserId=100에 대한 OPEN 케이스를 이미 가지고 있다.
-When 동일 targetUserId=100으로 분쟁 생성을 시도한다.
-Then 서버가 409를 반환하고 Flutter가 "이미 동일한 상대로 진행 중인 분쟁이 있어요" toast를 표시한다.
-
-### AC-03. 자기 신고 방지
-
-Given 사용자가 `targetUserId=본인`으로 분쟁 생성을 시도한다.
-When `POST /api/v1/me/dispute-cases`를 호출한다.
-Then 서버가 400을 반환한다. (`target_user_id IS NULL OR target_user_id <> reporter_user_id` CHECK 위반)
-
-### AC-04. summary 유효성 검증
-
-Given 사용자가 summary를 9자(min 10 미만)로 입력한다.
-When 제출 버튼을 탭한다.
-Then 서버가 400을 반환하거나, Flutter가 제출 전 클라이언트 유효성 검사로 차단한다.
-
-### AC-05. admin 전이 전용
-
-Given 생성된 케이스가 OPEN 상태다.
-When 사용자가 앱에서 상태 변경을 시도한다.
-Then 공개 API에 전이 endpoint가 없으므로 상태 변경 불가. 상세 화면에 현재 OPEN 상태만 표시된다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
+| 요청 | 본문 | 결과 |
 |---|---|---|
-| ~~구현~~ 해소(2026-06-06) | evidence 첨부 | `DisputeCaseCreateScreen`에 `EvidencePickerField` 연결 완료(최대 5). `EvidenceFileValidator` 서버 검증 |
-| 구현 | 화면별 setContext 호출 확인 | 이벤트/클럽 등 각 진입 경로에서 setContext(eventId:, clubId:) 호출 여부 검증 |
-| 운영 | 처리 기간 안내 UX | 접수 완료 화면에 "운영팀이 {N}일 내 처리 예정" 등 안내 문구 추가 |
-| 검증 | rate-limit 구현 확인 | `DisputeCaseService.createUserDispute` 내 rate-limit 로직 소스 직접 검증 |
-| 테스트 | dedup/rate-limit/self-dispute 시나리오 테스트 | 현재 검증 없음 |
+| POST /api/v1/me/dispute-cases | DisputeCaseCreateParam | 201 DisputeCaseDetailVo |
+
+본문 필드는 caseType, sourceType, sourceId, eventId, clubId, targetUserId, reasonCode, summary, evidenceFileIds다. 요청키 헤더는 선언돼 있지 않다. 사건 생성 외에도 종결 동의·결과 확인·운영자 이관·대화 등의 별도 명령이 있으므로 이것을 분쟁 전체의 유일한 쓰기 API라고 설명하지 않는다.
+
+caseType 값은 REPORT, APPEAL, REFUND_ISSUE, NO_SHOW_APPEAL, CONTENT_MODERATION, SAFETY, SETTLEMENT, TRANSPORT, HOST_ACTION_REVIEW다. 모든 유형이 별도 원천 테이블을 새로 만드는 것은 아니다. 이 API는 UserDisputeCase를 저장하고 등록부의 당사자·사건에 연결한다.
+
+## 입력과 출처별 권한
+
+caseType과 공백이 아닌 summary가 필요하다. 서버 summary 길이는 요청 문자열 기준 10~2000자, reasonCode는 선택 최대 40자다. 앱은 summary를 trim한 뒤 길이를 검사하고 전송한다. 증빙은 최대 5개이며 공통 EvidenceFileValidator가 본인 소유·완료 상태·허용 용도와 양수 ID·중복을 검사/정규화한다. 별도 책임 동의 체크박스는 이 생성 요청의 필드가 아니다.
+
+sourceType을 보내지 않으면 sourceId도 없어야 한다. 참조 출처로 허용하는 값은 SERVICE_ASSIGNMENT, EVENT_PAYMENT, PRIVATE_MEETING 세 가지다. 노쇼·클럽·콘텐츠 처분의 플랫폼 접수 차단 가드도 검사하며 다른 sourceType을 임의로 참조하는 계약은 없다.
+
+| 출처 | 권한·상대·문맥 처리 |
+|---|---|
+| 일반 사용자 사건 | 자기 자신을 상대로 지정하면 INVALID_REQUEST, 없는 상대는 USER_NOT_FOUND. eventId/clubId가 있으면 접수자의 관련성을 확인한다. |
+| HOST_ACTION_REVIEW + eventId + sourceType 없음 | 요청 targetUserId 대신 해당 이벤트 호스트를 서버가 산출한다. 본인이 호스트이면 거절한다. |
+| SERVICE_ASSIGNMENT | sourceId 필수, resolver의 열람 권한 검사 후 상대·이벤트·클럽 문맥을 산출한다. 권한 없음은 FORBIDDEN이다. |
+| EVENT_PAYMENT | 실제 결제 sourceId 필수, resolver의 열람 권한 검사 후 상대와 문맥을 산출한다. 권한 없음은 NOT_FOUND다. |
+| PRIVATE_MEETING | sourceId 필수, private meeting 당사자 resolver가 권한과 상대·문맥을 산출한다. 권한 없음은 NOT_FOUND다. |
+
+참조 출처 분기에서는 클라이언트가 보낸 targetUserId·eventId·clubId를 그대로 신뢰하지 않고 서버가 구한 문맥을 저장한다. SERVICE_ASSIGNMENT/EVENT_PAYMENT의 상대가 접수자와 같으면 null로 정규화한다.
+
+## 접수 제한과 중복
+
+서비스가 접수자 기준 최근 24시간 생성 수를 세어 10건 이상이면 TOO_MANY_REQUESTS로 거절한다. ‘주석에만 있고 구현 여부 미확인’은 현재 사실이 아니다. 이 검사는 조회 기반이므로 이 문서가 동시 다중 요청의 엄밀한 10건 원자성까지 입증한 것은 아니다.
+
+활성 상태는 OPEN·IN_REVIEW·ESCALATED다. 일반 사건은 같은 접수자와 상대의 활성 사건을 막고, 이 중복 기준은 eventId별로 분리되지 않는다. SERVICE_ASSIGNMENT는 동일 배정의 활성 사건, EVENT_PAYMENT는 동일 결제의 활성 사건을 별도로 막는다. DB의 생성 열과 UNIQUE 제약도 같은 배정·결제의 중복을 방어하며 저장 충돌을 도메인 오류로 변환한다. 기존 사건이 없는 무상대 접수를 요청키 재생처럼 처리하지 않는다.
+
+## 저장 결과와 배정 사건
+
+일반 사건은 OPEN으로 저장하고 USER_DISPUTE:{userDisputeCaseId} 등록부에 접수자와 상대를 연결한다. 배정 사건은 서비스 배정을 분쟁 상태로 바꾸고 관련 당사자를 잠근 뒤 저장한다. 등록부에는 HOST·PROVIDER·REPORTER 역할을 연결하고 응답 caseId는 SERVICE_ASSIGNMENT:{assignmentId}다. 따라서 모든 생성 결과가 USER_DISPUTE prefix라는 기존 설명은 틀리다.
+
+증빙 파일 참조를 저장하고 actor visibility 필터를 적용한 상세 응답을 반환한다. 접수 성공은 운영자의 결정·보상·처분 변경까지 끝났다는 뜻이 아니다. 앱은 서버가 반환한 created.caseId로 내 분쟁 상세를 열며 로컬에서 접수 ID를 조립하지 않는다.
+
+## 앱 문맥 전달과 초안
+
+생성 라우트는 eventId, sourceType, sourceId, 일정 변경 purpose를 실제 화면에 전달한다. 화면은 복원 뒤 setContext를 호출하고 provider가 이 값을 요청에 넣는다. 반면 현재 라우트 builder는 targetUserId/clubId query를 화면에 전달하지 않는다. 모델과 위젯 인자가 존재한다는 사실만으로 해당 외부 진입이 제공된다고 설명하지 않는다.
+
+초안은 계정과 대상·이벤트·클럽·출처·일정 변경 목적을 구분하는 문서 키로 보관한다. 유형·본문·사유·증빙 ID를 복원하고 업로드 중에는 제출을 막는다. 전송 전에 pending을 저장하며 기록 저장 실패 시 전송하지 않는다. 명확한 서버 거절이면 pending을 해제하고 입력을 유지한다. 커밋됐을 수 있는 실패는 pending 기록을 유지해 자동 재제출을 막고 내 분쟁 목록에서 결과를 확인하도록 한다.
+
+성공 뒤 완료 기록을 저장·정리한 후 상세로 이동한다. 계정 세션이 종료되면 이전 화면의 제출 결과를 새 계정 화면에 반영하지 않는다. 이 로컬 초안은 서버 Idempotency-Key나 정확히 한 번 생성 보장과 다르다. 성공 또는 결과 불명확 시 분쟁 조회 갱신 신호를 보낸다.
+
+## 코드 위치
+
+<!-- source-references:start -->
+서버 창구: `DisputeCaseController#createMyDispute`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 라우트 builder는 targetUserId·clubId query를 전달하지 않는다. | 모델 필드·위젯 인자·실제 입구를 구분한다. |
+| Risk | 생성 API에 요청키 계약이 없다. | 초안의 미확정 보관과 서버 중복 방어를 구분한다. |
+| Risk | 24시간 제한은 조회 뒤 저장 경로다. | 동시성 시험 없이 엄밀한 원자 제한을 주장하지 않는다. |
+| 미검증 | 초안 복구·파일 업로드·동시 접수·운영 처리 결과를 실행하지 않았다. | 소스 대조와 실제 접수 성공을 나눈다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 요청 필드:** 유형·본문·선택 사유·증빙과 참조 출처 필드를 정확히 구분한다.
+- **AC-02 문맥 권한:** 일반 관련성, 이벤트 호스트 산출, 세 참조 출처 resolver의 권한과 문맥을 적용한다.
+- **AC-03 접수 제한:** 최근 24시간 10건의 실제 서비스 검사와 원자성 확인 범위를 구분한다.
+- **AC-04 중복 기준:** 접수자/상대 및 배정/결제별 활성 중복을 설명한다.
+- **AC-05 사건 식별자:** 일반 USER_DISPUTE와 배정 SERVICE_ASSIGNMENT 응답을 나눈다.
+- **AC-06 실제 입구:** 라우트가 전달하는 문맥과 전달하지 않는 인자를 구분한다.
+- **AC-07 미확정 보관:** 전송 전 pending 저장·명확한 거절·불명확 결과·완료 정리를 연결한다.
+- **AC-08 결과 복귀:** 반환 caseId로 상세 이동하고 계정 경계·분쟁 조회 갱신을 적용한다.
+
+근거는 현재 서버·앱 소스이며 새 제품 시험 통과 기록은 없다.

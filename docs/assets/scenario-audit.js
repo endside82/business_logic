@@ -4,14 +4,14 @@ window.SCENARIO_AUDIT = {
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "4e781f7a9f5d18f381c680539a9a95a348ba5295"
+    "sourceRevision": "e7b434388dd95e96fa6c2cba24782cf4f04e49a5"
   },
   "countingNote": "시나리오 1,276개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 5010,
+    "automatedTestFilesScanned": 5011,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 76,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 758,
-    "verifiedTraceRecords": 756,
+    "traceMarkers": 762,
+    "verifiedTraceRecords": 760,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -19886,7 +19886,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F18-02",
       "domain": "분쟁 해결",
-      "name": "분쟁 직접 접수",
+      "name": "사용자 분쟁 접수·출처 연결·초안 복구",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-02_dispute-create_prd.md",
@@ -19897,10 +19897,28 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 1,
+        "verified": 1,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F18-02:1",
+            "label": "POST /api/v1/me/dispute-cases",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "createMyDispute",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases",
+                "targetLine": 67,
+                "methodLine": 68
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -19927,7 +19945,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F18-03",
       "domain": "분쟁 해결",
-      "name": "분쟁 이의제기",
+      "name": "분쟁 이의 접수·공개 조건·철회",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/18_dispute_resolution/F18-03_dispute-appeal_prd.md",
@@ -19938,10 +19956,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F18-03:1",
+            "label": "GET /api/v1/me/dispute-cases/{caseId}/appeals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "getMyAppeals",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/appeals",
+                "targetLine": 129,
+                "methodLine": 130
+              }
+            ]
+          },
+          {
+            "id": "F18-03:2",
+            "label": "POST /api/v1/me/dispute-cases/{caseId}/appeals",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "createAppeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/appeals",
+                "targetLine": 144,
+                "methodLine": 145
+              }
+            ]
+          },
+          {
+            "id": "F18-03:3",
+            "label": "POST /api/v1/me/dispute-cases/{caseId}/appeals/{appealId}/withdraw",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/host/dispute/controller/DisputeCaseController.java",
+                "controller": "DisputeCaseController",
+                "method": "withdrawAppeal",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/me/dispute-cases/{caseId}/appeals/{appealId}/withdraw",
+                "targetLine": 159,
+                "methodLine": 160
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
