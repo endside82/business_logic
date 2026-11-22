@@ -156,9 +156,10 @@
       "review": "source_verified",
       "disposition": "historical_records_retained_with_current_navigation",
       "evidence": [
-        "tour_current_20261122"
+        "tour_current_20261122",
+        "private_meeting_current_20261122"
       ],
-      "reviewedSha256": "34baa5a9cf63a51bad736a566e8d832ca86b6bfd413d74b17cc9157aa01651d8",
+      "reviewedSha256": "7a1b19853e5bfe000303aa96b09481c2a2585817d5cd38686c63d7a8b5207709",
       "note": "현재 이름·정본 연결·렌더 로직 검토. 과거 촬영 데이터는 원문 동일성으로 보존; 이미지/제품 재검증 아님."
     },
     {
@@ -475,7 +476,8 @@
         "scenario_current_20261122",
         "tour_current_20261122",
         "audit_checklist_current_20261122",
-        "screen_review_current_20261122"
+        "screen_review_current_20261122",
+        "private_meeting_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4979,9 +4981,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "5b0415b3524f8d30c3669fc1bb25ee9952ac0560320ab9cbef0cd469763624c0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "private_meeting_current_20261122"
+      ],
+      "reviewedSha256": "49b0d6add369032c66e41a1ce10057cbbbbc4362fdb9cf7e5ba813c7f655986a"
     },
     {
       "path": "docs/index.html",
@@ -53143,6 +53148,202 @@
       "observedSourceVersions": {
         "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
         "community_app": "6020346db80c426e9bf62c63a9c380441ed46781"
+      }
+    },
+    "private_meeting_current_20261122": {
+      "kind": "source_review",
+      "scope": "사적 모임 HTML 전체 현재 계약으로 교정. 서버·앱·관리자 역할, 에스크로·보류·자동/수동 복구를 대조. 과거 촬영 데이터는 보존하고 현재 보조 기능 표시만 교정. 실행·브라우저·이미지 검수 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingAccessPolicy.java",
+          "sha256": "ee2f6a60e548900ffc670b7fb6a86fad70b06507ce319ac5ef96d6c659206d15",
+          "reviewScope": "1~75: 전용 상세 및 분쟁 당사자 접근 권한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingEscrowScheduler.java",
+          "sha256": "a30a5848e334974dd8992041cc3c622df72858a870b59a2cdd75f408c7a4f46a",
+          "reviewScope": "1~132: 시간별 후보·일시 장애 HELD 재시도·그 밖의 실패 복구 등록"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/vo/PrivateMeetingDetailVo.java",
+          "sha256": "2617ce7b28084b3817430a733e6bc02de486b7a63a22c5decabe0ebe5ffad842",
+          "reviewScope": "전체 응답 필드; applicantCount 없음"
+        },
+        {
+          "path": "community_app/lib/data/api/private_meeting_api.dart",
+          "sha256": "4b1ee7e3a4710a5cbaae84f197eda5f633b770b6a7712afb5b5eed7d9622e6f8",
+          "reviewScope": "1~45: 전용 API 계약·요청 키"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/private_meeting_provider.dart",
+          "sha256": "efe43f16ef6c7d209e6167a347102127989e66bdc78a34b91559c069727b5cdb",
+          "reviewScope": "1~199: 명령 결과·불명확 결과 재조회"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/private_meeting_section.dart",
+          "sha256": "3970ca0017218cf9742c2a238131477ad336ade84b97bd5f85ec15a7cc7a9bc0",
+          "reviewScope": "1~554 및 732~824: 공개조건·당사자·완료/취소/선정·실패 안내·신청목록; 상세 조회 오류 빈 처리. 555~731 표현 스타일은 검수 범위 아님"
+        },
+        {
+          "path": "community_app/lib/presentation/event/screens/event_detail_screen.dart",
+          "sha256": "d526b67c88d251e48ba7ecbed824dc72c35c4327d62eefc9d6a7437533faca7b",
+          "reviewScope": "935~945: PRIVATE 전용 영역 포함 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingEscrowManualRecoveryService.java",
+          "sha256": "5a08366f67226ea7c1f53cce1de8001f449d3ea551a68afa031d12c0d9d82c29",
+          "reviewScope": "113~294,372~445,447~550,561~634: 제안·승인·취소·처분·알림·원기록 및 수취인 제한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingEscrowManualRecoveryPolicy.java",
+          "sha256": "d5c3bd79e7e94b1f585d02f374865d7baaf3a6d839df7cc8b240898907757e81",
+          "reviewScope": "전체: 복구 필요·보류·자동 방향·열린 제안 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingEscrowDirectionResolver.java",
+          "sha256": "9d54a0bef23a5ede5e436dca750f77e1fc33fae33c3f34bbf0fea772b56826c2",
+          "reviewScope": "전체: 현재 모임 상태별 지급·환불 방향"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/PrivateMeetingEscrowRecoveryBlock.java",
+          "sha256": "cb7ccc7728fcb139cf223d0897b4ee6a88f511fc8d8b6a6849a6d1f3d865164d",
+          "reviewScope": "전체: 자동 재시도 거절 사유 여섯 가지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/PrivateMeetingEscrowStatus.java",
+          "sha256": "52a6b6186c450affda5d82ceb387b9f725bb514db1b7d8b0bc493deb93f37bf5",
+          "reviewScope": "전체: HELD/RECOVERY_REQUIRED와 네 종결 상태"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/host/dispute/service/PrivateMeetingEscrowDisputeHoldService.java",
+          "sha256": "e58d39cb8a9c167f42f0fb66c7fc31faad2b0e9a6611e104fda8e296d160cc65",
+          "reviewScope": "전체: PRIVATE_MEETING 원천 보류·신고차단 증거 보존·종결 재판정"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/controller/ManagePrivateMeetingEscrowController.java",
+          "sha256": "c126c1d1c583acbce6fabb7fdfb22bf381e775039a685b160236fb6ef299c31a",
+          "reviewScope": "47~181: 읽기·쓰기 권한, 재시도·수동 제안·승인·취소와 필수 요청 키"
+        },
+        {
+          "path": "community_admin_front/src/features/payments/ui/private-meeting-escrow-case-screen.tsx",
+          "sha256": "cef67709898a44d7d87c708c2629a921b0e6e06a5fe7e758824e2d8f632083ee",
+          "reviewScope": "425~520: 서버 판정별 승인·취소·제안 버튼 및 취소 모임의 지급 제한; 이름/라우트 참조는 소스 위치 검색"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/event/service/ManagePrivateMeetingEscrowService.java",
+          "sha256": "c8c6218be87988ed93db38c7ff35e1ba05745c3838fc3ee6d67fa2c84121a0e6",
+          "reviewScope": "88~122: 수동 제안·승인 전달과 감사 기록; 같은 운영자의 제안·승인 허용 명시 및 구현"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingService.java",
+          "sha256": "43370acf8c3aaca081bfa1579ece5cb40411cca2a28c5544c5f9732c26d20bb1",
+          "reviewScope": "1~795: 상세·선정·참가비 보관·완료시각·분쟁·자동 해제·복구 판정. 795~945,964~978 취소는 money_flowcharts 동일 SHA 범위 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/PrivateMeetingOpenEntryService.java",
+          "sha256": "d2ba20b3cd0ed2160a36a21a3fdef633f0bf443a393281be5c667d98b38623a6",
+          "reviewScope": "동일 SHA money_flowcharts 76~143: 소유자·DRAFT·PRIVATE·현재 발행조건·비용·티켓 개설"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/event/controller/EventController.java",
+          "sha256": "abb9bbc5dea33b6951cffa32f5af3cb66a9acb7a27267b2ea936fd0b0430971d",
+          "reviewScope": "550~632: private/detail,open,select,complete,cancel; 개설·취소 요청 키"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/constants/PrivateMeetingPhase.java",
+          "sha256": "88123935ede894d1547af8ac98bfab560add277e2dfe436c9b91cdce5005b3ed",
+          "reviewScope": "전체: 모임 상태와 matchedAt/completedAt의 단계 계산"
+        }
+      ],
+      "reuses": [
+        "event_lifecycle_20261122",
+        "money_flowcharts_20261122",
+        "state_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
+          "sha256": "db82859cb0cfccfd5a9a983614559edd5733424fdb62cc4d0919664d3581590a"
+        },
+        {
+          "path": "business_logic/docs/money-flow/flowcharts.html",
+          "sha256": "f7853465262d93e1718e0eb53854acbeaa9eacff2feff21c850c4452936f89ab"
+        },
+        {
+          "path": "business_logic/docs/features/F03-04.html",
+          "sha256": "e6a1fded630001313bc2c85f08e1f97edab2bfb780574d462597a329343426bd"
+        },
+        {
+          "path": "business_logic/docs/features/F06-07.html",
+          "sha256": "9563416221dcba00607e57685ff11c08ca0d8096edf0c6a48c1d237884966245"
+        },
+        {
+          "path": "business_logic/docs/features/F18-02.html",
+          "sha256": "c5f22aa49debe485403981cf4424b0559b950796c63330b6e5db6110c29511bc"
+        },
+        {
+          "path": "business_logic/docs/policies/payment.html",
+          "sha256": "aa73dc4b7b7abe8b0452a6988bb5025466fdbe7378e2f4cfdaa56f8d0b0c1e5a"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/private-meeting.html": [
+          "sidebar",
+          "1-이-모임이-일반-모임과-다른-점",
+          "2-다섯-단계",
+          "3-고객이-지나는-길",
+          "3-1-발견",
+          "3-2-신청",
+          "3-3-선정된-뒤",
+          "3-4-끝나는-방식-세-가지",
+          "4-호스트가-지나는-길",
+          "4-1-만들기",
+          "4-2-호스팅비를-내고-모집을-연다",
+          "4-3-한-명을-고른다",
+          "4-4-완료-확인과-취소",
+          "5-돈이-들어오고-나가는-자리",
+          "5-1-들어오는-자리는-둘",
+          "5-2-나가는-자리는-셋",
+          "5-3-확정하지-못하면-격리한다",
+          "6-분쟁이-열리고-닫히는-자리",
+          "6-1-돈을-멈추는-것은-신고를-동반한-차단이다",
+          "6-2-잠금은-양쪽을-다-막는다",
+          "6-3-닫히면-스스로-풀린다",
+          "7-운영자가-할-수-있는-것과-없는-것",
+          "7-1-전용-화면에서-할-수-있는-것",
+          "7-2-방향은-운영자가-고르지-않는다",
+          "7-3-막히는-다섯-가지-사유",
+          "7-4-운영자가-할-수-없는-것",
+          "8-첫-출시-봉인-오버레이",
+          "9-지금-비어-있는-자리",
+          "9-1-확인하지-못한-것",
+          "10-이어지는-문서",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "공통 폼 PRIVATE 생성 선택 입구 미확인",
+        "전용 상세 실패 빈 영역; 미선정 조회 권한과 applicantCount 계약 차이",
+        "선정 확인 대화상자 없음",
+        "앱 완료 안내에서 보류·복구 필요 조건 누락 가능",
+        "실제 운영 공개·실거래·알림 전달 미검증"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "26 source/canonical digests; 31 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 1 paths, 44 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source/canonical reconciliation and document/VM checks only"
+      },
+      "observedSourceVersions": {
+        "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
+        "community_api": "6df0646d9cb7d17365c8d5d081c70c2ea708e0c6",
+        "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
       }
     }
   },

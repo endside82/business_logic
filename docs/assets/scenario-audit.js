@@ -11,7 +11,7 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 5065,
+    "automatedTestFilesScanned": 5071,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 75,

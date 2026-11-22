@@ -16,6 +16,7 @@
       note: data.notes[feature.id] || (data.complete.includes(feature.id) ? '당시 소개 구상의 장면을 갖췄다고 기록했습니다. 현재 기능·실행 완료 판정이 아닙니다.' : shots.length ? '일부 촬영 기록만 연결되어 있습니다. 현재 화면 일치나 기능 전체 검증을 뜻하지 않습니다.' : '연결된 기록이 없다는 사실은 미구현이나 필수 재촬영 판정이 아닙니다.') };
   });
   const extras = data.supplemental.map(item => ({ ...item,
+    ...(item.id === 'private-meeting' ? { name: '한 명을 선정하는 사적 모임', actor: '호스트·선정된 참가자·결제 운영자', currentScope: '전용 상세 권한, 개설·선정과 참가비 보관, 종료 후 완료 확인, 분쟁 보류, 자동 재시도와 운영 수동 복구. 과거 초대 중심 촬영 구상은 현재 계약이 아닙니다.' } : {}),
     shots: item.group ? tour.shots.filter(shot => shot.group === item.group).map(shot => shot.id) : item.shots,
     supplemental: true,
   })).map(item => ({ ...item, state: item.shots.length ? 'partial' : 'missing', note: '기존 등재 번호와 별도로 추적하는 소개 여정입니다. 175개 등재 기능 수에 합산하지 않습니다.' }));
