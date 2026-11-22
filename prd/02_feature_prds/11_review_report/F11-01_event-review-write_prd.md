@@ -1,78 +1,74 @@
-# F11-01. 이벤트 리뷰 작성 PRD
+# F11-01. 이벤트 후기 작성과 선택형 피드백 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 소스를 기준으로 갱신했다. 구현 계약의 대조이며 새 앱 실행·운영 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 서로 다른 두 작성 흐름
 
-참석이 확정되고 종료된 이벤트에 대해 사용자가 별점(1~5)과 텍스트 후기를 남기는 단일 엔드포인트다. 사전 조건(참석 확정 / 종료 시각 경과 / 7일 이내 / 자기-자신 아님 / 중복 없음)을 모두 통과해야 INSERT가 일어나고, 성공 시 호스트 신뢰점수 재계산과 호스트에게 NEW_REVIEW 푸시 알림, `UserInteraction`(EVENT/REVIEW) 누적이 부수적으로 실행된다.
+별점·본문을 호스트에게 남기는 `Review`와, 다시 함께하고 싶은 참석자를 고르는 `EventFeedback`은 별도 원본이다. 자격·기간·중복 처리·응답과 후속 효과도 다르므로 하나의 후기 제출로 묶지 않는다.
 
-### 2026-07-29 소스 재실측 — 선택형 이벤트 피드백과 분위기 태그
+현재 이벤트 참여 허브에는 「후기 작성」과 「함께한 사람 고르기」가 각각 연결돼 있다. 후기 작성은 `eventId` 경로와 URL의 `title` 질의 값으로 작성 화면을 연다. 제목을 `extra`로만 전달한다고 한 과거 설명은 현재 라우터와 다르다. 선택형 피드백 입구는 종료된 `CLOSED` 이벤트와 앱 참석 조건으로 표시하고, 서버가 다시 상세 접근·응답자·기간을 검사한다.
 
-별점/텍스트 `Review`와 별도로, 현재 앱에는 `EventFeedbackController`의 **또 함께하고 싶은 사람 선택** 흐름이 있다. 이 흐름의 제출 계약은 다음과 같다.
+## 별점 후기의 자격과 저장
 
-- `GET /api/v1/events/{eventId}/feedback/candidates`로 서버가 확정한 후보와 제출 가능 상태를 받고, `POST /api/v1/events/{eventId}/feedback`에 `{ clientRequestId, displayedUserIds, choices, vibeTags }`를 보낸다.
-- 이벤트 종료 후 7일 이내이며 호출자가 증거등급 참석자여야 한다. 체크인이 하나라도 있는 이벤트는 체크인 사용자만, 체크인이 전혀 없으면 `ATTENDING` 중 확정/이의중 노쇼가 아닌 사용자만 인정한다.
-- 차단·본인·게스트를 제외한 후보가 2명 이상이어야 한다. 제출 때 `displayedUserIds`는 직전 후보 응답의 집합과 순서까지 정확히 같아야 한다. 선택은 0명도 가능하고 최대 `min(5, ceil(candidateCount / 2))`명이다.
-- `vibeTags`는 선택 사항이며 최대 3개다. 허용 Enum은 `LIVELY`, `CALM`, `TALKATIVE`, `FOCUSED`, `WELCOMING`, `ORGANIZED`, `FREE_FLOWING`, `DRINKS_CENTERED` 8종이다. null/빈 목록은 허용하고 중복·null 원소·카탈로그 밖 값·4개 이상은 `INVALID_INPUT`이다.
-- `EventFeedbackVo`에는 **내가 제출한** `vibeTags`만 포함된다. 받은 선택, 상대 제출 여부, 상호 선택 여부, 선택받은 횟수는 어떤 조회에도 노출하지 않는다.
-- Flutter `event_feedback_screen.dart`는 8개 한국어 chip을 최대 3개까지 선택하게 하고, 네 번째 선택에서는 현재 상한을 토스트로 알린다.
+`POST /api/v1/events/{eventId}/reviews`는 `{rating, content}`를 받아 201 `ReviewVo`를 반환한다. 별점은 필수 1~5, 글은 선택·1000자 이하다. 일반 이벤트는 `ATTENDING` 참석 행이 필요하고, 고정 정기모임 회차는 실제 체크인 여부를 사용한다. 이 차이를 전부 「참석 확정」 한 조건으로 줄이지 않는다.
 
-현재 구현은 분위기 태그를 수집·본인 이력 반환까지만 한다. 집계나 이벤트 상세의 분위기 표시 API는 없다. 또한 `DataExportAsyncWorker.toEventFeedbackMap`은 `impressionTags`까지 내보내지만 `vibeTags`를 누락하므로 사용자 작성 원본의 export 범위 Gap이다.
+서버는 이벤트 `endTime`이 지났고 7일 경계 이내인지, 현재 호스트 본인이 아닌지, 같은 이벤트·작성자의 후기 이력이 없는지 확인한다. 정확히 종료 시각과 종료+7일 경계는 허용되는 비교다. 여기의 기간 기준은 선택형 피드백의 `closedAt`과 다르다. 삭제한 후기도 중복 이력으로 센다.
 
-실측 근거: `EventFeedbackController/Service`, `EventFeedbackSubmitParam`, `EventFeedbackVo`, `VibeTag`, Flutter `event_feedback_api.dart`, `event_feedback_screen.dart` 및 focused tests.
+저장 후 호스트 신뢰점수 재계산, 새 후기 알림 outbox 등록, 작성자의 EVENT/REVIEW 상호작용 기록을 수행한다. 연결 클럽의 마일리지 활성 상태에 따라 적립 신호를 발행하며 판정 불가 상태도 별도로 다룬다. 신호 발행·알림 예약은 실제 적립 또는 알림 수신 완료를 뜻하지 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+## 별점 후기의 앱 입력과 오류
 
-- 이벤트 상세 화면(F03 도메인)에서 "리뷰 작성" 액션 → `context.push('/review-write/$eventId', extra: {'eventTitle': ...})`
-- 이벤트 종료 푸시 알림(`EVENT_ENDED` 등) 탭 → 딥링크 라우팅으로 `Routes.reviewWrite` 진입
-- 알림 센터(F-알림 도메인)에서 "리뷰 작성" CTA 탭
+작성 화면은 별점 선택으로 제출을 허용하고 `SubmissionDraft`의 `review_{eventId}_new` 키로 입력 복원·제출 준비·완료를 연결한다. 과거의 「나가면 입력이 항상 사라진다」는 설명은 현재 구현에 맞지 않는다. 제출 성공은 초안 완료 처리 뒤 `true`로 복귀하고 후기 목록·관련 이벤트 집계를 갱신한다. 적용 여부가 불확실한 오류도 관련 조회를 갱신 대상으로 표시한다.
 
-진입 시 `eventId`는 path parameter로, `eventTitle`은 `extra`로 전달되어 헤더 카드 폴백에 쓰인다.
+권한 없음·대상 없음·중복 작성 오류는 안내 후 화면을 닫는다. 기간 만료 등 잘못된 요청과 통신 오류는 원인을 안내한다. 서버에는 이 작성 API의 멱등 키가 없고, 작성 중복 제약과 로컬 초안은 서로 다른 보호다. 수정·삭제는 [후기 수정과 삭제](F11-03_review-edit-delete_prd.md)를 따른다.
 
-## 2. 코드 위치
+## 선택형 피드백의 후보와 기간
 
-계약의 정본은 코드다. 서버: `ReviewController`, `Review`, `NotificationService`, `TrustScoreService`, `ScoreHistoryService`. 앱: `review_write_screen.dart`, `routes.dart`.
+`GET /api/v1/events/{eventId}/feedback/candidates`는 `candidates`, `maxSelect`, `deadline`, `eligible`을 반환한다. 기간은 이벤트 `closedAt`부터 7일 뒤까지며, 닫힌 시각이 없거나 현재가 그 범위 밖이면 `FEEDBACK_WINDOW_CLOSED`다. 상세 접근이 허용돼야 하고 호출자도 적격 참석 풀 안에 있어야 한다.
 
-## 3. 전체 동작 흐름
+체크인 기록이 하나라도 있으면 체크인 기록을, 없으면 `ATTENDING` 목록을 원천으로 삼는다. 계정 식별자가 없는 게스트, 확정·이의중 노쇼, 정상/로그아웃 상태가 아닌 계정을 제외한다. 그중 본인·차단 사용자를 제외한 후보가 2명 이상이어야 제출할 수 있다. 순서는 체크인 또는 참석 생성 시각과 사용자 식별자로 정한다. 최대 선택은 `min(5, ceil(후보 수/2))`다.
 
-1. 화면 진입 시: `_EventSummaryCard`가 `eventDetailNotifierProvider(eventId)`를 watch → 캐시된 이벤트 상세를 그대로 사용 (네트워크 요청 없음 또는 1회). 폴백은 `eventTitle`.
-2. "제출" 탭 시: `reviewWriteNotifierProvider(eventId).notifier.submitReview(rating, content)` (`presentation/review/screens/review_write_screen.dart:50-58`)
-   → `ReviewRepository.createReview(eventId, ReviewParam(rating, content))`
-   → Retrofit `ReviewApi.createReview` (`POST /api/v1/events/{eventId}/reviews`, body `ReviewParam`)
-   → 성공: `Result.success(ReviewVo)` → state = `AsyncData(reviewVo)` 후 화면이 `context.pop(true)`로 종료, 호출자(이벤트 상세/리뷰 목록)는 `ref.invalidate`로 새로고침 가능.
-   → 실패: `Result.failure(ApiError)` → 화면이 `_handleError(error)`에서 case별 토스트/다이얼로그 + 필요 시 `pop`.
+## 선택형 피드백의 제출과 재시도
 
-## 4. 제품 규칙
+`POST /api/v1/events/{eventId}/feedback`의 요청은 `{clientRequestId, displayedUserIds, choices, vibeTags}`이고 200 `EventFeedbackVo`를 반환한다. 키는 공백 불가·64자 이하, 표시 후보와 선택 목록은 null 불가다. 선택 0명은 허용하며 앱은 제출 전 확인한다. 선택한 사람은 서버 후보에 있고 중복되지 않아야 하며 선택 상한을 지킨다. 후보 식별자 집합뿐 아니라 순서까지 서버와 같아야 한다. 계정 상태·차단·후보가 달라지면 `FEEDBACK_CANDIDATES_CHANGED`다.
 
-- 작성 자격: 참석이 확정된 사람만, 모임이 끝난 뒤 7일 안에, 모임당 한 번, 호스트 본인은 제외한다. 삭제한 후기도 한 번 쓴 것으로 센다.
-- 입력: 별점 1~5는 필수, 글은 선택이며 1000자까지다. 제출 버튼은 별점을 고르면 켜진다.
-- 작성하면 호스트의 신뢰점수가 다시 계산되고, 호스트에게 새 후기 알림이 가며, 작성자의 활동 기록(추천 입력)이 쌓인다.
-- 참석자가 아니거나, 이미 썼거나, 모임을 찾을 수 없으면 안내 후 화면을 닫는다. 그 밖의 오류는 화면에 남아 다시 시도할 수 있다.
-- 쓰다가 나가려 하면 확인 창이 뜨고, 나가면 입력은 사라진다.
+인상 태그는 긍정 10종인 `FUNNY`, `PUNCTUAL`, `GOOD_LISTENER`, `ENERGETIC`, `THOUGHTFUL`, `CREATIVE`, `RELIABLE`, `WARM`, `INTELLIGENT`, `EASYGOING`을 허용한다. null 원소·부정 태그는 거절한다. 분위기 태그는 선택이며 최대 3개, 중복·null 원소·알 수 없는 값은 거절한다. 카탈로그는 `LIVELY`, `CALM`, `TALKATIVE`, `FOCUSED`, `WELCOMING`, `ORGANIZED`, `FREE_FLOWING`, `DRINKS_CENTERED`다.
 
-## 6. 상태/권한/시나리오 매트릭스
+기본 요청 검증과 상세 접근 확인 뒤 이미 같은 이벤트·응답자의 응답이 있으면 같은 `clientRequestId`는 기존 결과를 반환하고 다른 키는 `DUPLICATE_RESOURCE`다. 같은 키는 본문 변경을 새 수정으로 적용하지 않는다. 새 저장 때만 응답·후보 순서·선택을 저장하고 응답자 취향 프로필을 재구축한다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | Happy Path — 참석자가 종료된 이벤트에 리뷰 작성 | - 로그인됨 (JWT 유효) | `Review` 1건 생성, 호스트 신뢰점수 갱신, `score_snapshot` 1건 추가(점수 변동 ≥ 1.0인 경우), 호스트 알림 1건. |
-| S2 | 중복 작성 시도 — 같은 이벤트에 이미 리뷰가 있는 경우 | 같은 사용자/이벤트 조합의 리뷰가 있음(삭제한 리뷰도 포함). | 변화 없음. 사용자는 이전 화면으로 자동 복귀. |
-| S3 | 미참석자 시도 — 이벤트에 참석하지 않은 사용자 | `EventAttendance` 없음 또는 status가 `ATTENDING` 아님. | INSERT 없음. |
-| S4 | 7일 경과 — 작성 기간 만료 | `event.endTime + 7일 < now()`. | INSERT 없음. 사용자는 화면에 머무르며 다시 시도해도 같은 에러. |
-| S5 | 호스트 본인이 자신의 이벤트에 리뷰 시도 | `event.hostUserId == loginUser.userId`. 참석 기록은 호스트 본인 참석 옵션에 따라 다양. | INSERT 없음. |
-| S6 | 미저장 이탈 — 입력 후 뒤로가기 | 별점 또는 텍스트 변경됨 → `_hasChanges = true`. | INSERT 없음, 입력 내용은 휘발. |
+앱 키는 화면 초기화 때 한 번 생성해 같은 화면 내 재시도에 사용한다. 화면 재생성까지 키가 보존되는 계약은 아니다. 후보 변경 오류는 사람 선택·인상 태그를 비우고 후보를 다시 읽으며 분위기 선택은 유지한다. 중복·자격 없음·기간 종료는 안내 후 나가고 나머지 오류는 입력 화면에 머문다.
 
-## 8. Gap / Risk
+## 본인 기록과 내보내기
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Gap | `DataExportAsyncWorker#toEventFeedbackMap` | 본인이 EventFeedback에 작성한 `vibeTags`는 조회 응답에 보존되지만 데이터 export map에서 누락된다. | event feedback export schema에 `vibeTags`를 추가하고 내보내기 회귀 테스트 보강 |
+`GET /api/v1/feedback/me`는 본인 제출 이력의 페이지, `/feedback/me/stats`는 본인이 한 선택의 통계를 반환한다. 차단된 선택 대상은 이력의 선택 목록과 통계에서 제외한다. 받은 선택 수·상대 응답 여부·상호 선택을 노출하는 필드는 이 응답에 없다.
 
-## 9. 수용 기준
+`ReviewDataExportAssembler`는 현재 본인이 작성한 `vibeTags`를 내보내기에 포함한다. 과거 `DataExportAsyncWorker`의 누락을 현재 미구현으로 남기지 않는다. 이력·통계·취향의 차이는 [취향 프로필](F11-06_taste-profile_prd.md)을 따른다.
 
-- **AC-01. Happy Path — 참석자가 종료된 이벤트에 리뷰 작성**: Given - 로그인됨 (JWT 유효) When 사용자가 해당 흐름을 실행하면 Then `Review` 1건 생성, 호스트 신뢰점수 갱신, `score_snapshot` 1건 추가(점수 변동 ≥ 1.0인 경우), 호스트 알림 1건.
-- **AC-02. 중복 작성 시도 — 같은 이벤트에 이미 리뷰가 있는 경우**: Given 같은 사용자/이벤트 조합의 리뷰가 있음(삭제한 리뷰도 포함). When 사용자가 해당 흐름을 실행하면 Then 변화 없음. 사용자는 이전 화면으로 자동 복귀.
-- **AC-03. 미참석자 시도 — 이벤트에 참석하지 않은 사용자**: Given `EventAttendance` 없음 또는 status가 `ATTENDING` 아님. When 사용자가 해당 흐름을 실행하면 Then INSERT 없음.
-- **AC-04. 7일 경과 — 작성 기간 만료**: Given `event.endTime + 7일 < now()`. When 사용자가 해당 흐름을 실행하면 Then INSERT 없음. 사용자는 화면에 머무르며 다시 시도해도 같은 에러.
-- **AC-05. 호스트 본인이 자신의 이벤트에 리뷰 시도**: Given `event.hostUserId == loginUser.userId`. 참석 기록은 호스트 본인 참석 옵션에 따라 다양. When 사용자가 해당 흐름을 실행하면 Then INSERT 없음.
-- **AC-06. 미저장 이탈 — 입력 후 뒤로가기**: Given 별점 또는 텍스트 변경됨 → `_hasChanges = true`. When 사용자가 해당 흐름을 실행하면 Then INSERT 없음, 입력 내용은 휘발.
+## 코드 위치
+
+서버: `ReviewController/Service`, `EventActionPolicy`, `ReviewPeriodPolicy`, `EventFeedbackController/Service`, `EventFeedbackSubmitParam`, 피드백 VO·태그 Enum, `ReviewDataExportAssembler`. 앱: `event_participation_hub.dart`, `member_tools_routes.dart`, `review_write_screen.dart`, `review_write_provider.dart`, `event_feedback_api.dart`, `event_feedback_provider.dart`, `event_feedback_screen.dart`.
+
+<!-- source-references:start -->
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Risk | 별점 후기는 endTime, 선택형 피드백은 closedAt을 기간 기준으로 사용한다. | 두 마감을 동일한 시각으로 가정하지 않는다. |
+| Risk | 선택형 피드백 키는 화면 내 재시도에 유지되고 별점 후기에는 같은 계약이 없다. | 두 제출의 중복·재시도 보장을 구분한다. |
+| 미검증 | 실제 앱 제출·알림 수신·마일리지 적립·내보내기를 이번에 실행하지 않았다. | 소스 연결과 실행 성공을 분리한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 별점 후기 자격:** 일반 참석 행과 고정 회차 실제 체크인을 구분하고 종료 시각·7일·자기 평가·삭제 포함 중복을 서버에서 검사한다.
+- **AC-02 별점 후기 입력:** 별점 1~5·선택 본문 1000자 이하를 저장하고 호스트 점수·알림 outbox·상호작용·클럽 조건부 적립 신호를 처리한다.
+- **AC-03 작성 입력과 복귀:** 초안 복원·제출 준비·완료를 거쳐 성공 복귀와 목록 갱신을 연결하고 오류 종류에 따라 안내·머무르기·나가기를 나눈다.
+- **AC-04 선택형 후보:** closedAt 기준 7일과 상세 접근·적격 풀·본인/차단 제외·2명 이상·선택 상한을 적용한다.
+- **AC-05 후보 변경:** 저장 직전 후보 순서·계정 자격이 바뀌면 저장하지 않고 재선택을 요구한다. 앱은 사람과 인상 태그 선택을 초기화한다.
+- **AC-06 태그 검증:** 긍정 인상 태그만 허용하고 분위기 태그는 유효한 서로 다른 값 3개까지 받는다. 사람 0명 선택은 확인 후 제출할 수 있다.
+- **AC-07 선택형 중복:** 같은 키면 기존 응답, 다른 키면 중복 오류다. 재응답으로 취향을 다시 누적하지 않는다.
+- **AC-08 본인 기록과 내보내기:** 본인이 한 선택만 조회하고 차단 대상을 이력·통계에서 제외한다. 내보내기에는 현재 분위기 태그가 포함된다.
+
+근거는 현재 서버 자격·저장·내보내기와 앱 입구·요청·오류 분기다. 이번에 제품 시험을 새로 실행하지 않았다.

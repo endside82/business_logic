@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F11-06 취향 평가·취향 프로필 — community PRD</title>
+  <title>F11-06 본인 취향 프로필과 선언 선호 관리</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,173 +17,28 @@
           <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
           F11-06 취향 평가·취향 프로필
         </div>
-        <h1>F11-06. 취향 평가 · 취향 프로필</h1>
-        <p class="lede">
-          종료 이벤트에서 또 함께하고 싶은 사람·긍정 인상·모임 분위기를 비공개로 남기고,
-          본인이 남긴 선택을 취향 프로필로 재구축한다. 선호 카테고리·시간대·그룹 크기도 직접 저장한다.
-          현재 사람 추천과 관계 공통점은 카테고리·시간대만 소비하고 그룹 크기는 저장·조회·내보내기에 머문다.
-          <strong>받은 선택과 상대 응답은 누구에게도 노출하지 않는다.</strong>
-        </p>
+        <h1>F11-06 본인 취향 프로필과 선언 선호 관리</h1>
+        <p class="lede">선호 전체 해제·저장 실패 유지·본인 선택 누적과 행동 근사·내보내기·태그 표시 한계를 현재화한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="callout">
-          <span class="label">2026-07-29 소스 재실측 — 행동 근사 스타일</span>
-          <p><code>UserTasteProfile.behaviorStyleEstimate</code>는 최근 12개월 증거등급 참석 이벤트로
-            ACTIVITY_LEVEL과 GROUP_SIZE_PREFERENCE를 산출한다. 3건 미만이면 축 없이
-            <code>INSUFFICIENT_EVIDENCE</code>를 저장하고, 재계산은 이벤트 피드백 제출 성공 때 일어난다.</p>
-          <p>현재 <code>TasteProfileVo</code>와 Flutter 화면에는 행동 근사가 없지만 export taste 섹션에는
-            포함된다. 이벤트·클럽 fit은 이 값이 아니라 최신 제출 trait 점수만 사용한다. 데이트 만남
-            피드백도 현재 TasteProfile 재구축 원천이 아니다.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">조회 경계</div><div class="value">본인 작성분만</div><div class="hint">받은 선택·상호 결과 비노출</div></div>
-          <div class="metric"><div class="label">제출</div><div class="value">이벤트당 1회</div><div class="hint">같은 clientRequestId만 멱등</div></div>
-          <div class="metric"><div class="label">레이더 차트</div><div class="value">태그 3개 이상</div><div class="hint">데이터 부족 시 비표시</div></div>
-          <div class="metric"><div class="label">피드백 이력</div><div class="value">20건씩</div><div class="hint">더 보기로 누적 로딩</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 받은 평판이 아니라 내가 남긴 선택의 기록</span>
-          <p>공개 리뷰(F11-01)는 다른 사용자의 의사결정을 위한 평판이다. EventFeedback은 반대 방향으로,
-            응답자가 고른 사람과 긍정 인상만 본인 이력·취향 프로필에 남긴다. 받은 선택 횟수나 상호 선택은
-            조회할 수 없다. 데이터가 적을 때는 차트를 억지로 만들지 않고 안내를 보여 준다.</p>
-        </div>
-
-        <div class="callout warn">
-          <span class="label">2026-07-29 현재 소스 갱신</span>
-          <p>legacy PreferenceRating·TasteNeighbor·GraphQL 추천은 현재 계약이 아니다.
-            TasteProfile 재구축 원천은 이벤트 선택형 피드백이며 데이트 만남 피드백은 별도 privatedate 원본이다.
-            회원이 직접 적은 분위기 태그가 데이터 내려받기에서 빠지던 문제는 2026-08-07에 고쳐져 지금은 함께 나간다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>두 종류의 데이터가 같은 화면에 모인다</h2>
-        <p class="subtitle">본인 선택에서 재구축되는 값, 직접 선언한 값, 내부 행동 근사를 구분한다.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:170px">데이터 종류</th><th>어떻게 만들어지는가</th><th style="width:30%">화면에서 어디에 보이는가</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>자동 누적 — 태그 가중치</strong></td>
-                <td>이벤트 선택형 피드백에서 내가 고른 사람에게 붙인 긍정 ImpressionTag 10종을 집계한다.
-                  제출 성공 때마다 본인의 <code>positiveTagWeights</code>를 다시 계산한다.</td>
-                <td>"취향 요약" 레이더 차트, "상위 관심사" 칩, "긍정적 인상" 막대 그래프.</td>
-              </tr>
-              <tr>
-                <td><strong>수동 입력 — 선호도</strong></td>
-                <td>화면의 "선호도 설정" 시트에서 카테고리(8개) · 시간대(4개) · 그룹 크기(3개)를 직접 선택해 저장.</td>
-                <td>세 값 모두 저장·조회된다. 현재 사람 추천/관계 공통점은 카테고리·시간대만 사용하며 그룹 크기는 소비하지 않는다.</td>
-              </tr>
-              <tr>
-                <td><strong>내 피드백 이력</strong></td>
-                <td>본인이 제출한 EventFeedback만 조회한다. 차단된 상대가 뒤에 생기면 해당 choice는 이력에서 소급 제외한다.</td>
-                <td>20건 단위로 노출되고 "더 보기"로 누적 로딩한다.</td>
-              </tr>
-              <tr>
-                <td><strong>내부 행동 근사</strong></td>
-                <td>최근 12개월 증거등급 참석 이벤트 3건 이상으로 활동성·그룹 크기 선호 축을 계산한다.</td>
-                <td>현재 profile API/UI에는 없고 본인 export에만 포함된다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름</div>
-            <h3>내가 남긴 선택이 취향 프로필로 보인다</h3>
-            <p>이벤트 선택형 피드백을 여러 번 남긴 사용자가 마이페이지에서 "취향 프로필"로 진입한다.
-              긍정 태그가 3개 이상이면 레이더 차트와 상위 태그·긍정 인상 막대가 보이고,
-              아래에는 내가 제출한 피드백 통계와 이력이 표시된다.</p>
-            <p><strong>경계</strong> — 상대가 나를 선택했는지, 몇 번 선택받았는지, 상호 선택인지에 대한 값은 없다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">데이터 부족</div>
-            <h3>가입 직후라 이벤트 피드백이 없다</h3>
-            <p>새로 가입한 사용자가 화면에 들어온다. 태그 데이터가 3개 미만이라 레이더 차트는 그려지지 않고
-              "아직 취향 데이터가 부족합니다" 안내만 뜬다. 이력 영역은 "아직 고른 사람이 없습니다"를 표시하고,
-              선호도 설정은 계속 사용할 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">선호도 설정</div>
-            <h3>선호 카테고리·시간대·그룹 크기 저장</h3>
-            <p>"선호도 설정" 시트가 열린다. 카테고리에서 "음식/맛집", "문화/예술"을 토글하고, 시간대에서 "저녁(18-21)", 그룹 크기에서 "중규모(6-15명)"를 선택한 뒤 "저장"을 누른다.
-              토스트가 뜨고 시트가 닫힌다. 카테고리·시간대는 다음 사람 추천/관계 공통점 조회부터 사용되고,
-              그룹 크기는 현재 저장·조회·export만 된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">피드백 제출</div>
-            <h3>종료 이벤트의 증거등급 참석자가 사람·인상·분위기를 고른다</h3>
-            <p>종료 후 7일 이내이고 차단·본인을 제외한 후보가 2명 이상이면, 서버 후보 snapshot을 그대로 echo해
-              사람은 0명부터 <code>min(5, ceil(후보/2))</code>명까지 고른다. 분위기 태그는 8종 중 최대 3개다.
-              성공하면 응답·표시 후보·선택을 저장하고 본인의 태그 가중치와 행동 근사를 재구축한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">후보 변경</div>
-            <h3>조회 뒤 차단·자격 변화로 snapshot이 달라진다</h3>
-            <p>제출 시 서버가 후보 집합과 순서를 다시 계산한다. 요청의 <code>displayedUserIds</code>와 하나라도 다르면
-              <code>FEEDBACK_CANDIDATES_CHANGED</code>로 거절하고 응답·선택·취향을 변경하지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">멱등·중복</div>
-            <h3>같은 제출을 네트워크 재시도로 다시 보낸다</h3>
-            <p>같은 이벤트·응답자의 기존 응답과 <code>clientRequestId</code>가 같으면 기존 응답을 그대로 반환한다.
-              다른 key면 <code>DUPLICATE_RESOURCE</code>다. 두 경로 모두 추가 저장이나 취향 재구축을 하지 않는다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">행동 근사</div>
-            <h3>최근 12개월 증거 이벤트가 3건 미만이다</h3>
-            <p>재구축은 <code>provenance=BEHAVIOR_V1</code>, 빈 axes,
-              <code>reason=INSUFFICIENT_EVIDENCE</code>를 저장한다. 충분해져도 현재 profile API/UI에는 노출하지 않고
-              본인 export에서만 확인할 수 있다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">취향 데이터가 다른 도메인에 닿는 자리</span>
-          <ul>
-            <li><strong>받은 선택은 어떤 조회에도 노출하지 않는다.</strong>
-              공개 리뷰(F11-01)는 평판이고 본 단위는 내가 작성한 선택의 기록이다. 상대 응답 여부·상호 선택·선택받은 횟수를
-              통계나 추천 이유로 우회 노출해서도 안 된다.</li>
-            <li><strong>EventFeedback 제출 성공 때 본인의 태그 가중치와 행동 근사를 재구축한다.</strong>
-              참석 이력 변화만으로는 즉시 재계산되지 않고 다음 피드백 제출까지 오래된 값일 수 있다.</li>
-            <li><strong>레이더 차트는 태그 3개 미만이면 비표시한다.</strong>
-              데이터가 적을 때 부정확한 차트로 사용자를 오해시키지 않으려는 결정 — "더 모일 때까지" 안내가 빈 차트보다 정직하다.</li>
-            <li><strong>선호도(카테고리·시간대·그룹 크기)는 빈 리스트로 저장할 수 없다.</strong>
-              시트에서 아무 것도 고르지 않고 "저장"을 누르면 그 항목은 갱신되지 않는다 — 사용자가 의도적으로 "초기화"하고 싶다면 별도 경로가 필요하다(현재는 미지원).</li>
-            <li><strong>본인 피드백 이력은 20건 단위다.</strong>
-              누적이 많은 사용자는 "더 보기"로 size를 늘려 다시 조회한다.</li>
-            <li><strong>행동 성향 추정과 분위기 태그는 상태가 다르다.</strong>
-              회원이 적은 분위기 태그가 데이터 내려받기에서 빠지던 문제는 2026-08-07에 고쳐졌다.
-              반면 활동으로 추정한 성향 값은 저장되고 내려받기에도 들어가지만 프로필 화면에는 아직 나오지 않는다. 두 항목을 같은 "완료"로 묶지 않는다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 역할과 입구</h2><p>취향 프로필은 본인이 선언한 카테고리·시간대·그룹 크기와, 본인이 다른 참석자에게 붙인 긍정 인상 태그의 누적을 보여 준다. 타인이 나를 평가한 결과나 성격 검사 결과를 뜻하지 않는다. 등록된 취향 프로필 화면에서 현재 프로필과 본인 선택형 피드백 통계·이력을 각각 읽고, 설정 시트로 선언 선호를 바꾼다.</p></section>
+<section id="current-2"><h2>본인 조회와 선언 선호 저장</h2><p><code>GET /api/v1/taste/profile</code>과 <code>PUT /api/v1/taste/preferences</code>는 로그인한 본인만 다룬다. 프로필 행이 없어도 조회는 빈 프로필 VO를 만든다. 응답은 <code>preferredCategories</code>, <code>preferredTimeSlots</code>, <code>preferredGroupSize</code>, <code>positiveTagWeights</code>, <code>updatedAt</code>이며 행동 근사 필드는 없다.</p>
+<p>PUT의 세 선언 선호 필드는 문자열 목록이다. 서버는 받은 세 값을 모두 JSON 컬럼에 덮어쓴다. null은 이전 값 유지가 아니라 해당 선호를 비우는 값이다. 앱은 현재 프로필로 시트를 채우고 아무 칩도 선택하지 않은 항목을 null로 보내므로 전체 해제로 기존 선호를 지울 수 있다. 서버의 이 서비스에는 문자열 카탈로그·목록 길이를 별도 제한하는 검사가 없다.</p>
+<p>앱은 프로필이 로딩·오류·빈 데이터 상태이면 설정 시트를 열지 않는다. 저장 성공 때 응답 프로필을 반영하고 시트를 닫으며 성공 안내를 보여 준다. 실패는 기존 프로필과 시트 선택을 유지하고 실패 안내를 표시한다. 과거 「저장 실패여도 성공으로 닫힌다」는 시나리오는 현재 <code>Result</code> 분기와 맞지 않는다. 계정 변경 후 오래된 요청 결과를 다음 계정 상태에 반영하지 않도록 계정 표식을 확인한다.</p></section>
+<section id="current-3"><h2>태그 가중치의 원천과 행동 근사</h2><p><code>TasteProfileService.rebuildProfile</code>은 본인이 제출한 이벤트 피드백 응답과 그 선택의 인상 태그를 읽어 태그마다 1.0씩 더한다. 받았거나 상호 선택한 횟수가 아니다. 선언 선호는 이 재구축에서 덮어쓰지 않는다. 현재 운영 소스의 재구축 호출은 새 <code>EventFeedbackService.submit</code> 저장 경로다. 같은 키 재시도는 재구축하지 않는다. 데이트 만남 피드백 원본은 이 집계 쿼리에 포함되지 않는다.</p>
+<p>행동 근사는 최근 12개월 증거가 있는 참석 이력으로 계산해 별도 저장한다. 3개 미만이면 빈 축과 <code>INSUFFICIENT_EVIDENCE</code>를 남긴다. 충분하면 카테고리 기반 활동 정도와 평균 그룹 크기 선호를 만들고 입력 분포·표본 수·계산 시각을 함께 기록한다. 이는 현재 본인 profile API에 실리지 않으며 앱 레이더의 데이터도 아니다. 참석 변경마다 자동 갱신된다고 설명하지 않는다.</p></section>
+<section id="current-4"><h2>화면 표시와 본인 선택 이력</h2><p>앱 레이더는 긍정 태그 상위 5개를 사용하고 값은 0~1로 제한한다. 태그 종류가 부족한 경우 데이터 부족 안내를 표시한다. 상위 관심사에는 상위 4개를 쓴다. 별도의 태그 막대는 최대 가중치에 대한 상대 길이를 사용하지만 글자는 <code>weight * 100</code>에 <code>%</code>를 붙이므로 누적 2.0은 200%로 표시될 수 있다. 확률이나 정규화한 비율로 해석하지 않는다.</p>
+<p><code>GET /api/v1/feedback/me</code>의 본인 이력은 처음 20개를 요청하고 더 보기마다 size를 20씩 늘려 첫 페이지를 다시 읽는다. 다음 페이지를 덧붙이는 구현으로 쓰지 않는다. 통계는 <code>totalResponses</code>, <code>totalChoicesGiven</code>, <code>tagCounts</code>이며 받은 선택 수가 아니다. 이력과 통계는 차단 대상을 제외하지만 취향 태그 캐시 재구축에는 같은 차단 필터가 없어 서로 다른 값을 가질 수 있다.</p>
+<p>선택형 피드백 제출 성공 경로는 현재 취향·통계·이력 provider를 명시적으로 무효화하지 않는다. 서버의 재구축이 이미 열려 있는 모든 관련 화면의 즉시 갱신을 보장한다고 기록하지 않는다. <a href="F11-01.html">이벤트 선택형 피드백</a>의 제출·재시도·후보 변경 계약을 따른다.</p></section>
+<section id="current-5"><h2>내보내기와 데이터 구분</h2><p>현재 <code>ReviewDataExportAssembler</code>는 선언 선호와 <code>behaviorStyleEstimate</code>를 내보낸다. <code>positiveTagWeights</code>는 본인의 원본 선택 기록에서 다시 만들 수 있는 파생 캐시여서 의도적으로 제외한다. 이벤트 피드백 내보내기에는 <code>vibeTags</code>도 포함되므로 이를 현재 누락 문제로 남기지 않는다.</p>
+<p>이 문서의 태그 누적·행동 근사와 다른 추천·성향검사 기능의 점수를 동일하게 취급하지 않는다. 특정 추천에 어떤 값이 사용되는지는 해당 추천 계약에서 판단한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Gap</td><td>태그 누적 값을 퍼센트 글자로 보여 100%를 넘을 수 있다.</td><td>현재 수치 의미와 표시 한계를 명시한다.</td></tr><tr><td>Gap</td><td>행동 근사는 저장·내보내기만 하고 본인 profile API·앱에는 없다.</td><td>화면 표시 완료로 쓰지 않는다.</td></tr><tr><td>Risk</td><td>재구축은 새 이벤트 피드백 제출에 연결되고 제출 성공의 관련 provider 즉시 무효화는 없다.</td><td>참석 변경·화면 즉시 갱신 보장을 추가하지 않는다.</td></tr><tr><td>미검증</td><td>실제 계정 전환·선호 저장·피드백 이력·내보내기를 이번에 실행하지 않았다.</td><td>소스 대조와 실행 결과를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 본인 조회:</strong> 본인만 profile API를 사용하고 행이 없어도 빈 프로필을 반환한다. 행동 근사 축은 응답에 포함되지 않는다.</li><li><strong>AC-02 선언 선호 삭제:</strong> 현재 선택으로 시트를 채우고 모두 해제한 항목의 null을 서버에 저장해 이전 선호를 비운다.</li><li><strong>AC-03 저장 성공과 실패:</strong> 성공에만 응답 반영·닫기·성공 안내를 하고 실패는 기존 프로필과 선택을 유지한다. 다른 계정에 이전 요청 결과를 반영하지 않는다.</li><li><strong>AC-04 태그 원천:</strong> 본인이 이벤트 피드백에서 준 인상 태그를 건수로 누적한다. 받은 선택·데이트 만남 피드백을 합산하지 않는다.</li><li><strong>AC-05 행동 근사 표본:</strong> 최근 12개월 표본 3개 미만이면 부족 근거와 빈 축을 저장하고 화면 축을 만들어내지 않는다.</li><li><strong>AC-06 표시 의미:</strong> 누적 가중치와 비율을 구분하고 100% 초과 글자·레이더 제한을 현재 표시 경계로 남긴다.</li><li><strong>AC-07 본인 이력:</strong> size 20부터 더 보기마다 20을 늘리고 차단 대상 제외와 본인이 한 선택 통계를 적용한다. 취향 캐시와 같은 집계라고 가정하지 않는다.</li><li><strong>AC-08 내보내기:</strong> 선언 선호·행동 근사와 본인 분위기 태그를 포함하고 파생 태그 캐시는 의도적으로 제외한다.</li></ul>
+<p>근거는 현재 프로필 저장·재구축·내보내기와 앱 설정·표시·이력 요청 분기다. 이번에 제품 시험을 새로 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

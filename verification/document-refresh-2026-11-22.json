@@ -301,7 +301,8 @@
         "block_editor_20261122",
         "purchase_refund_20261122",
         "calendar_features_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -361,7 +362,8 @@
         "plan_market_domain_20261122",
         "calendar_features_20261122",
         "calendar_domain_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -3820,9 +3822,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "41a6cc7ea4640a32b9af700d84083a7bcb3d3f7b72b0b469300f97b691d344bd",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "78ce9c0315b4c75e88cc6bddf55cbe1fcd81cc58b90f3ab261f800327fa268e6"
     },
     {
       "path": "docs/features/F11-02.html",
@@ -3876,9 +3881,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "35b6fa90671aa6a3aa767fd3d6f08f83a09c7fa0cc5d322c7258428bc823726c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "2122c74d3e447e6e00580052d5551fe520f1ed4b9af27d9cf7661e9d265335b6"
     },
     {
       "path": "docs/features/F11-07.html",
@@ -5102,7 +5110,8 @@
         "block_editor_20261122",
         "purchase_refund_20261122",
         "calendar_features_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5198,7 +5207,8 @@
         "block_editor_20261122",
         "purchase_refund_20261122",
         "calendar_features_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5318,7 +5328,8 @@
         "block_editor_20261122",
         "purchase_refund_20261122",
         "calendar_features_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -7024,10 +7035,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "1e6b6191e6dc761f39c411ac31fcf7151a25e7d7fea1d1a2b3752517beb50027",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "b7f4bd6bf94c85ba059b3ebd7b795998cc734f497595b490fb2d66184ea94867"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-02_review-list_prd.md",
@@ -7083,10 +7096,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "7e9519fe0d532252ba414066ddd22e626cf9fa7f25160c1a2a7166912f8308b2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "e987d750cf88b0c9084ddcc8ad6a61f7e58b00a7508834dc71fc26c66a1c4383"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-07_review-moderation_prd.md",
@@ -8168,7 +8183,8 @@
         "block_editor_20261122",
         "purchase_refund_20261122",
         "calendar_features_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8416,7 +8432,8 @@
         "block_editor_20261122",
         "purchase_refund_20261122",
         "calendar_features_20261122",
-        "review_core_20261122"
+        "review_core_20261122",
+        "feedback_taste_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -13357,9 +13374,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5ba4e23a35dc72ea2fd2a2d3ef292764986043418671f842105a0335703e8b5b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "32b2718ae308232d901e654e595061b13f798ef0581e619e12ebae30e8626769"
     },
     {
       "path": "units/11_review_report/F11-01_event-review-write/diagrams.md",
@@ -13367,9 +13387,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "dd4b6fdb32fb0f299dd7218f6e440c9d9a2c3bcd0050b3c0851f501cb08959fa",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "b7d314c0bb29e1d32f3f89726d56c557e80cae200abd7e85e3b93004dd9a11e8"
     },
     {
       "path": "units/11_review_report/F11-01_event-review-write/frontend.md",
@@ -13377,9 +13400,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5619b14a44116a2151567a1bcfe1ca7d79a52011ff46332568438a6a3969334e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "5f566b42823c5301408995e068b4d21d45646ceb328cb9199adba059299a6b94"
     },
     {
       "path": "units/11_review_report/F11-01_event-review-write/scenarios.md",
@@ -13387,9 +13413,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d6f56df63c5969294949adef2a060b46b11ad2dd90056529502ede770936e44d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "2a5f8585ba755878d3f2c2e95b5ebb1b842e9928c35e94bdb4efaa4a4567ec42"
     },
     {
       "path": "units/11_review_report/F11-02_review-list/backend.md",
@@ -13581,9 +13610,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "da90cd347937f39f616c4b1afdbe4e2feac4e1af49f0cd260facd4e2472efc19",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "e65fba9024e11d1b999271f78a42a8e2dc04fe5e93700010104e3dfc7c135ff6"
     },
     {
       "path": "units/11_review_report/F11-06_taste-profile/diagrams.md",
@@ -13591,9 +13623,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8cb1d1dfc01e0830480aa689b6f1c73af4d5ff68782e64f9fbe98f50bfa8e220",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "3c3173a8d8a8ca8c78a2a8a5050ac486ebdeae9f5725d9649adf3bb22aaf5ea0"
     },
     {
       "path": "units/11_review_report/F11-06_taste-profile/frontend.md",
@@ -13601,9 +13636,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "dec2e5ce24d4a7e32313bba886da8db700a9453ee596368219f79e29a366ddf2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "5b9578aa9984d528e587259acee9eed14b3b8c63df07887129c8bf187538395e"
     },
     {
       "path": "units/11_review_report/F11-06_taste-profile/scenarios.md",
@@ -13611,9 +13649,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c57b07b7e4f3eafd1f3d57cc118f1f65f4c37a26d6ee7b87607e506c72fd1fb8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "feedback_taste_20261122"
+      ],
+      "reviewedSha256": "ecbed2bc63eab6d61392cf0ae1558728089b4cfa872c4fc9f9d33aefe873fd31"
     },
     {
       "path": "units/12_notification/00_overview.md",
@@ -34522,6 +34563,204 @@
         "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
         "groupDigests": "23 source/canonical digests; 12 retained HTML IDs",
         "derivedDocuments": "14 documents; shared batch verified 14 paths, 49 relative links/anchors and 8 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "feedback_taste_20261122": {
+      "kind": "source_review",
+      "scope": "F11-01/06의 별점 후기와 선택형 피드백을 구분하고 후보·재시도·취향 선호/누적·행동 근사·내보내기·앱 입력/복귀를 공통 소스로 대조. 제품 실행과 시험은 하지 않음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/policy/ReviewPeriodPolicy.java",
+          "sha256": "94db15a784c2a916a6a6c7af9e96ed14545e16f2b516535f46af12cc5e0ff00b",
+          "reviewScope": "후기 작성 창7일"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/review/controller/EventFeedbackController.java",
+          "sha256": "4f1661adb0001a9a9aeb441d5d069aa3cbc6494a1f1dbf20835cc382a0d1ba20",
+          "reviewScope": "후보·제출·내 이력 페이지·통계 공개 API"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/EventFeedbackService.java",
+          "sha256": "e8432ba2cabdb61b352e69533c559ba970741ec7a466bf074a515137e19f4fa3",
+          "reviewScope": "closedAt 7일·체크인우선/참석fallback·노쇼/계정/차단 제외·후보순서·같은키 반환·태그검증·취향재구축·본인이력/통계 필터"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/param/EventFeedbackSubmitParam.java",
+          "sha256": "1fc681c0240e9257df89e8ba38f79e64bf6c1bf31d9c2b946ddf7294a274dcde",
+          "reviewScope": "클라이언트 키·후보목록·선택·분위기 태그 요청"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/vo/EventFeedbackVo.java",
+          "sha256": "0b577b0b3570e14f809cefb88b6e9597ed56df6e1f77ea0a5e9c01b7f78b8995",
+          "reviewScope": "본인 chosenPeople/vibeTags; 받은 선택 필드 부재"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/vo/EventFeedbackCandidatesVo.java",
+          "sha256": "4d94aa649116587ee7fb623b651b780b3c7344227298f67e9687fdcec3fe7358",
+          "reviewScope": "후보·상한·기한·eligible"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/vo/EventFeedbackStatsVo.java",
+          "sha256": "6114c96a5dfef0db5d8ff485828e0b69e19de5a26b1631c1baf0d93a4d141498",
+          "reviewScope": "totalResponses/totalChoicesGiven/tagCounts"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/constants/VibeTag.java",
+          "sha256": "356ab00450337ebdb67d97011cf2ba127d069237cd478bff796b3c8a90ff2c74",
+          "reviewScope": "분위기 태그8종"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/constants/ImpressionTag.java",
+          "sha256": "2a187f7e476fbc7c11010e31b36d878f11cb7b41150a116807849c53d861719f",
+          "reviewScope": "긍정10종과 금지되는 부정 태그"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/review/controller/TasteProfileController.java",
+          "sha256": "88d6de8e7bba38e17fce71669e747ec955071f1959029934768a3689578db6c7",
+          "reviewScope": "본인 profile GET/preferences PUT"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/TasteProfileService.java",
+          "sha256": "f533e3d1486843109c3d91414b875da71cd34ccbd2b89ba966a56c193f937dd6",
+          "reviewScope": "세 선호 null포함 덮어쓰기·준 태그 누적·최근12개월3회 행동근사·VO 미노출·재구축 호출원"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/vo/TasteProfileVo.java",
+          "sha256": "dd69130a0f571ff889c2ffc2f8095130f1638af052b115273018f64de02adb83",
+          "reviewScope": "선호3종·태그누적·갱신시각과 행동근사 미포함"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/param/TastePreferenceParam.java",
+          "sha256": "08f0d940d54880ebd76b97c9b428ef4016f5087ddb9518c1bbb16ef885e407d9",
+          "reviewScope": "선호3종 문자열목록"
+        },
+        {
+          "path": "community_app/lib/data/api/event_feedback_api.dart",
+          "sha256": "bd38aae14d26de2daf472386859632e66fe0f41cafac8dde174582639fdb33a6",
+          "reviewScope": "후보/제출/이력 페이지/통계 API와 응답 모델"
+        },
+        {
+          "path": "community_app/lib/domain/providers/review/event_feedback_provider.dart",
+          "sha256": "484147905922114f30c50437145fa2cf31dbfe26874733313b36c067b74d5c47",
+          "reviewScope": "후보조회·제출 결과·page0 size20 기본·취향/이력 명시적 invalidate 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/review/screens/event_feedback_screen.dart",
+          "sha256": "f98ee30debabd56a89c566fd5f4e63ebd1da97674e4212bd4f25a52af3cd0985",
+          "reviewScope": "화면별 키·후보순서 요청·선택0명 확인·태그선택·후보변경 초기화·오류복귀"
+        },
+        {
+          "path": "community_app/lib/data/api/taste_profile_api.dart",
+          "sha256": "68f6325fb435eea35a9ed42765e06605adbf8ef74c254ed69f010217e3d5c4ea",
+          "reviewScope": "본인프로필조회/선호변경"
+        },
+        {
+          "path": "community_app/lib/domain/providers/review/taste_profile_provider.dart",
+          "sha256": "7b56857c67afd36a5bce685135ad0d64e1b45b18be90d2a3102254b3f7d6db85",
+          "reviewScope": "계정별 결과 반영·성공때만 state교체·실패Result 전달"
+        },
+        {
+          "path": "community_app/lib/presentation/review/screens/taste_profile_screen.dart",
+          "sha256": "b1155c42d4096880bab6deea278e649a9481abd42bd5a99883b0741f68251dc8",
+          "reviewScope": "초기선호prefill·null해제·실패시트유지·계정표식·레이더/누적퍼센트·size증가 이력"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
+          "sha256": "72a4fe9159dbd8526c9e64283b532ae3cae0eb7e8fcc0b9de3334cfa39a56b4a",
+          "reviewScope": "동일 SHA; 별점 후기 POST 경로와 201 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ReviewService.java",
+          "sha256": "f7f665f5f51d31092132c29317a23898bfba07ad3f2db4897a65bad67a41718f",
+          "reviewScope": "동일 SHA; 최초 작성 참석/기한/삭제 포함 중복, 점수·outbox·상호작용·마일리지 신호"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/policy/EventActionPolicy.java",
+          "sha256": "216b0d266ac89316feb25ff0d8d8453bab039618b5d62d7697ddfaa053b8d433",
+          "reviewScope": "일반 참석/고정회차 체크인·endTime 7일과 사람 선택 후보2명/응답 자격/중복 구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ReviewDataExportAssembler.java",
+          "sha256": "8282cc6b40979b807a909545267f143a7621da722f3a466b8dbba50e7bf7e99f",
+          "reviewScope": "동일 SHA; 현재 분위기 태그 포함과 선언선호/행동근사 내보내기, 태그캐시 의도적 제외"
+        },
+        {
+          "path": "community_app/lib/presentation/review/screens/review_write_screen.dart",
+          "sha256": "912804f13ced6959268fa54cbccd31c62df4a29e1510623c7e7764f3cd31c08a",
+          "reviewScope": "동일 SHA; 후기 작성 초안 준비/복원/완료와 오류별 안내·복귀"
+        },
+        {
+          "path": "community_app/lib/domain/providers/review/review_write_provider.dart",
+          "sha256": "79a30dafa0c2111dc5892069936d64fe3de486312f6a9012b0d8f5005bf02dda",
+          "reviewScope": "동일 SHA; 후기 작성 성공/결과불명 목록·이벤트 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/event/widgets/event_participation_hub.dart",
+          "sha256": "96cf97df18a7ffb734d81275fd454b8e1ee72c4ea9016778fa09516b0affc321",
+          "reviewScope": "참여허브 후기 작성 URL title 질의와 별도 사람선택 입구"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/member_tools_routes.dart",
+          "sha256": "bfd2511d54fb75cd0c45c4ad07ed9a99471ce5d83b4b509ba3341ffdb096bdcf",
+          "reviewScope": "후기 title query 해석과 eventId별 후기/피드백 화면"
+        }
+      ],
+      "reuses": [
+        "data_export_20261122",
+        "review_core_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_create_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-01_event-review-write_prd.md",
+          "sha256": "b7f4bd6bf94c85ba059b3ebd7b795998cc734f497595b490fb2d66184ea94867"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-06_taste-profile_prd.md",
+          "sha256": "e987d750cf88b0c9084ddcc8ad6a61f7e58b00a7508834dc71fc26c66a1c4383"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F11-01.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ],
+        "docs/features/F11-06.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "선택형 피드백 마감은 closedAt+7일. 내보내기 분위기 태그 포함. 선호 null은 초기화이고 앱은 저장 실패 시 기존 값과 입력을 유지한다.",
+          "disposition": "현재 계약으로 파생 문서 함께 갱신"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "누적 태그의 퍼센트 표현, 행동 근사의 본인 API 미노출, 피드백 후 관련 provider 명시적 무효화 부재, 이력/통계와 취향 캐시 차단 필터 차이.",
+          "disposition": "현재 범위 명시; 제품 코드 변경이나 실행 통과로 계산하지 않음"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "29 source/canonical digests; 6 retained HTML IDs",
+        "derivedDocuments": "12 documents; shared batch verified 12 paths, 39 relative links/anchors and 8 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"

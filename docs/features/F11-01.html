@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F11-01 이벤트 리뷰 작성 — community PRD</title>
+  <title>F11-01 이벤트 후기 작성과 선택형 피드백</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,187 +17,32 @@
           <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
           F11-01 이벤트 리뷰 작성
         </div>
-        <h1>F11-01. 이벤트 리뷰 작성</h1>
-        <p class="lede">
-          모임에 실제로 참석한 사용자가 별점(1~5)과 후기를 남기는 면이다.
-          후기는 공개로 노출되어 다른 사용자의 신청 판단에 직접 영향을 주기 때문에,
-          "누가 작성할 자격이 있는가"와 "언제까지 받을 것인가"가 화면의 모든 정책을 결정한다.
-          후기 한 건이 등록되면 호스트의 신뢰점수가 다시 계산되고, 호스트에게 알림이 간다.
-        </p>
+        <h1>F11-01 이벤트 후기 작성과 선택형 피드백</h1>
+        <p class="lede">별점 후기와 사람 선택 피드백의 서로 다른 기간·자격·초안·중복 키·태그·본인 기록을 구분한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="callout">
-          <span class="label">2026-07-29 소스 재실측 — 선택형 피드백 분위기 태그</span>
-          <p>별점·텍스트 Review와 별도로 EventFeedback 제출은
-            <code>clientRequestId, displayedUserIds, choices, vibeTags</code>를 받는다. 분위기 태그는
-            LIVELY, CALM, TALKATIVE, FOCUSED, WELCOMING, ORGANIZED, FREE_FLOWING,
-            DRINKS_CENTERED 중 선택 최대 3개다. 본인 제출만 반환하고 받은 선택·상대 응답·상호 결과는
-            노출하지 않는다. 현재 집계 표시 API는 없다(수집만 하는 단계). 사용자 작성 vibeTags가 데이터
-            export에서 빠졌던 문제는 2026-08-07 수정되어 현재는 정상 포함된다.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">자격</div><div class="value">참석 확정자</div><div class="hint">신청·결제만으로는 안 됨</div></div>
-          <div class="metric"><div class="label">작성 가능 기간</div><div class="value">종료 후 7일</div><div class="hint">지나면 더는 받지 않는다</div></div>
-          <div class="metric"><div class="label">1인 1리뷰</div><div class="value">한 모임당 1건</div><div class="hint">삭제 후 재작성도 불가</div></div>
-          <div class="metric"><div class="label">본문 길이</div><div class="value">최대 1000자</div><div class="hint">별점만으로도 등록 가능</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 평판 데이터는 자격이 만들어야 한다</span>
-          <p>리뷰는 다음 참가자가 모임을 신청할지 말지 결정할 때 가장 먼저 보는 정보다.
-            그 자리에 들어갈 자격을 가진 사람을 좁히는 것이 본 단위의 첫 번째 책임이다 —
-            <strong>신청 취소·노쇼·호스트 본인</strong>은 모두 배제하고, 종료된 모임에 정상 참석한 사람만 글을 남길 수 있다.
-            "이 모임에 다녀온 사람의 말"이라는 신뢰가 한 번이라도 흔들리면 리뷰 자체의 가치가 사라진다.
-            동시에 너무 늦은 후기는 다른 신청자에게 도움이 되지 않으므로, 종료 후 7일이 지난 작성은 받지 않는다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>제출 한 번이 통과해야 하는 다섯 조건</h2>
-        <p class="subtitle">사용자가 "제출"을 누르는 순간 서버에서 다섯 가지 자격이 차례로 확인된다.
-          하나라도 어긋나면 등록되지 않는다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["사용자: 제출 탭"] --> B{"이 모임에 참석했는가"}
-    B -->|"아니오"| 안내1["참석자만 작성할 수 있다는 안내"]
-    B -->|"예"| C{"모임이 이미 끝났는가"}
-    C -->|"아직 진행 전"| 안내2["종료 후에 작성 가능 안내"]
-    C -->|"끝남"| D{"종료 후 7일 이내인가"}
-    D -->|"지났음"| 안내3["작성 기간이 끝났다는 안내"]
-    D -->|"이내"| E{"내가 호스트가 아닌가"}
-    E -->|"호스트 본인"| 안내4["호스트는 자기 모임에 작성 불가"]
-    E -->|"참가자"| F{"같은 모임에 이미 작성한 적이 있는가"}
-    F -->|"있음"| 안내5["이미 작성됨 — 수정으로 이동"]
-    F -->|"없음"| G["리뷰 등록 + 호스트 신뢰점수 재계산 + 호스트 알림"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">기본 흐름</div>
-            <h3>토요일 모임 다녀와서 별점 4, 후기 한 줄</h3>
-            <p>모임 종료 다음 날 알림을 받은 사용자가 "리뷰 작성"으로 들어온다.
-              상단에 이벤트 요약 카드가 보이고, 별점 4를 탭하면 "좋아요" 라벨이 뜬다.
-              짧은 후기를 적고 "제출"을 누르면 "리뷰가 등록되었습니다" 토스트와 함께 이전 화면으로 돌아온다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트는 새 리뷰 알림을 받고, 호스트의 신뢰점수가 재계산되어 다음 모임의 노출에 반영된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">중복 차단</div>
-            <h3>어제 이미 쓴 모임에 또 작성 시도</h3>
-            <p>같은 모임에 어제 후기를 남긴 사용자가 푸시를 다시 눌러 작성 화면에 들어왔다.
-              "제출" 시점에 중복이 감지되어 "이미 리뷰를 작성하셨습니다" 토스트가 뜨고 이전 화면으로 자동 복귀한다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 한 사람이 같은 모임에서 평점을 여러 번 올리지 못하게 막아, 평균 별점이 인위적으로 부풀어 오르지 않게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">자격 차단</div>
-            <h3>신청만 하고 안 갔던 사람이 후기 시도</h3>
-            <p>신청은 했지만 노쇼였거나 신청을 취소한 사용자가 어떤 경로로든 작성 화면에 들어와 제출한다.
-              참석 기록이 없어 "참석한 사용자만 작성할 수 있습니다" 안내가 뜨고 화면이 닫힌다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 가지 않은 모임에 후기가 쌓이면 다음 참가자가 그 후기를 믿고 결정한 뒤 배신감을 느낀다. 자격 가드는 한 번도 풀리면 안 된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">기간 마감</div>
-            <h3>한 달 전 모임에 뒤늦게 적으려 함</h3>
-            <p>한참 지난 후 생각나서 후기를 남기려 한다. 종료 후 7일이 지났으므로 제출이 거절되고 안내가 노출된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 너무 오래된 후기는 다음 참가자의 결정에 도움이 되지 않는다. 작성 기간을 좁히면 그 자리에 남는 후기는 모두 "최근에 다녀온 사람의 말"이 된다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">호스트 차단</div>
-            <h3>호스트가 자기 모임에 후기 시도</h3>
-            <p>본인이 주최한 모임에 자기 평점을 남기려 한다. 호스트 본인은 자기 모임을 평가할 수 없다는 안내가 떠오른다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 호스트가 자기 별점을 직접 끌어올리는 행위를 막아, 평균 별점이 "다른 참가자의 평가"만 반영하게 한다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">의도 이탈</div>
-            <h3>별점만 누르다가 뒤로가기</h3>
-            <p>별점을 골랐다가 마음이 바뀐 사용자가 뒤로가기를 누른다. 작성 중인 내용이 있다는 확인 다이얼로그가 뜨고,
-              "나가기"를 선택하면 입력은 휘발되고 이전 화면으로 돌아간다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 실수로 별점만 누른 채 화면을 떠나 의도하지 않은 후기가 등록되는 사고를 막는다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <p class="subtitle">실제로 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:130px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>상단 모임 요약 카드</strong></td>
-                <td>썸네일, 모임 제목, 시작일, 호스트 닉네임이 한 카드에.</td>
-                <td>"내가 어느 모임에 후기를 남기고 있는지" 화면 상단에서 의심 없이 확인 — 모임 식별이 어긋난 채 제출되는 사고를 막는다.</td>
-              </tr>
-              <tr>
-                <td><strong>"이 모임은 어떠셨나요?" 헤딩 + 별 5개</strong></td>
-                <td>크게 뜬 별 5개를 탭하면 1: 별로예요 / 2: 그저 그래요 / 3: 보통이에요 / 4: 좋아요 / 5: 최고예요 라벨이 뜬다.</td>
-                <td>숫자만으로는 사용자가 자기 마음을 정확히 짚기 어렵다. 라벨이 별점 의미를 매번 같은 기준으로 잡아준다.</td>
-              </tr>
-              <tr>
-                <td><strong>후기 입력 칸</strong></td>
-                <td>"이벤트에 대한 솔직한 후기를 남겨주세요" 안내, 우하단에 글자수 카운터, 최대 1000자.</td>
-                <td>별점은 필수, 본문은 선택이다 — 텍스트를 강제하면 별점만으로 의사를 표현하고 싶은 사용자가 작성을 포기한다.</td>
-              </tr>
-              <tr>
-                <td><strong>하단 고정 "제출" 버튼</strong></td>
-                <td>화면 최하단에 항상 보이는 단일 버튼. 별점이 없으면 비활성.</td>
-                <td>긴 후기를 적은 사용자가 마지막에 스크롤로 버튼을 찾는 번거로움을 없앤다. 한 번에 누를 수 있는 자리에 둔다.</td>
-              </tr>
-              <tr>
-                <td><strong>미저장 이탈 확인</strong></td>
-                <td>뒤로가기 시 "작성 중인 리뷰가 있습니다" 다이얼로그 + "계속 작성" / "나가기".</td>
-                <td>실수로 화면을 떠나서 입력이 사라지는 일을 막는다. 동시에 명시적 "나가기"를 누른 경우에는 즉시 닫는다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">리뷰 한 건이 일으키는 후속 동작</span>
-          <ul>
-            <li><strong>리뷰가 등록되는 순간 호스트의 신뢰점수가 다시 계산된다.</strong>
-              점수 변동이 1점 이상이면 변동 이력에 한 줄이 남는다(F11-05).
-              운영 측이 호스트 점수에 잡음이 생긴다고 느끼면 가장 먼저 들여다볼 곳이 이 호출 경로다.</li>
-            <li><strong>호스트에게 새 리뷰 알림이 즉시 발송된다.</strong>
-              호스트는 다음 모임을 준비하는 동안 자신이 받은 평가를 실시간으로 본다 — 부정적 후기에 호스트가 즉각 반응하지 않도록 한 박자 쉬는 안내 카피를 알림 측에서 고려할 필요가 있다.</li>
-            <li><strong>1인 1리뷰 정책은 삭제 후에도 유지된다.</strong>
-              본인이 리뷰를 지웠다고 같은 모임에 새 리뷰를 다시 쓸 수 없다 — 삭제 행은 그대로 남고 중복 검사 대상이다.
-              "삭제하면 다시 쓸 수 있다"고 오해하는 사용자가 나오면 안내 카피 보강이 필요하다.</li>
-            <li><strong>UI 스펙에는 "본문 10자 이상" 같은 표기가 있으나 현재 구현은 별점만 검증한다.</strong>
-              본문 강제 정책으로 전환할 경우 이 화면의 "제출" 활성 조건을 함께 손봐야 사용자 혼란이 없다.</li>
-            <li><strong>호스트 본인 차단은 "모임에 참석한 호스트"도 막는다.</strong>
-              호스트가 자기 모임에 참가자로 등록되어 있어도 본인 모임에는 후기를 남길 수 없다 — 평균 별점이 호스트 자신에 의해 끌어올려지지 않게 하는 것이 목적.</li>
-            <li><strong>선택형 EventFeedback의 <code>vibeTags</code> export 누락은 해소됐다.</strong>
-              본인 피드백 조회와 데이터 export 모두 사용자가 작성한 분위기 태그를 포함한다
-              (<code>DataExportExecutionWorker#toEventFeedbackMap</code>, 2026-08-07 수정).</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>서로 다른 두 작성 흐름</h2><p>별점·본문을 호스트에게 남기는 <code>Review</code>와, 다시 함께하고 싶은 참석자를 고르는 <code>EventFeedback</code>은 별도 원본이다. 자격·기간·중복 처리·응답과 후속 효과도 다르므로 하나의 후기 제출로 묶지 않는다.</p>
+<p>현재 이벤트 참여 허브에는 「후기 작성」과 「함께한 사람 고르기」가 각각 연결돼 있다. 후기 작성은 <code>eventId</code> 경로와 URL의 <code>title</code> 질의 값으로 작성 화면을 연다. 제목을 <code>extra</code>로만 전달한다고 한 과거 설명은 현재 라우터와 다르다. 선택형 피드백 입구는 종료된 <code>CLOSED</code> 이벤트와 앱 참석 조건으로 표시하고, 서버가 다시 상세 접근·응답자·기간을 검사한다.</p></section>
+<section id="current-2"><h2>별점 후기의 자격과 저장</h2><p><code>POST /api/v1/events/{eventId}/reviews</code>는 <code>{rating, content}</code>를 받아 201 <code>ReviewVo</code>를 반환한다. 별점은 필수 1~5, 글은 선택·1000자 이하다. 일반 이벤트는 <code>ATTENDING</code> 참석 행이 필요하고, 고정 정기모임 회차는 실제 체크인 여부를 사용한다. 이 차이를 전부 「참석 확정」 한 조건으로 줄이지 않는다.</p>
+<p>서버는 이벤트 <code>endTime</code>이 지났고 7일 경계 이내인지, 현재 호스트 본인이 아닌지, 같은 이벤트·작성자의 후기 이력이 없는지 확인한다. 정확히 종료 시각과 종료+7일 경계는 허용되는 비교다. 여기의 기간 기준은 선택형 피드백의 <code>closedAt</code>과 다르다. 삭제한 후기도 중복 이력으로 센다.</p>
+<p>저장 후 호스트 신뢰점수 재계산, 새 후기 알림 outbox 등록, 작성자의 EVENT/REVIEW 상호작용 기록을 수행한다. 연결 클럽의 마일리지 활성 상태에 따라 적립 신호를 발행하며 판정 불가 상태도 별도로 다룬다. 신호 발행·알림 예약은 실제 적립 또는 알림 수신 완료를 뜻하지 않는다.</p></section>
+<section id="current-3"><h2>별점 후기의 앱 입력과 오류</h2><p>작성 화면은 별점 선택으로 제출을 허용하고 <code>SubmissionDraft</code>의 <code>review_{eventId}_new</code> 키로 입력 복원·제출 준비·완료를 연결한다. 과거의 「나가면 입력이 항상 사라진다」는 설명은 현재 구현에 맞지 않는다. 제출 성공은 초안 완료 처리 뒤 <code>true</code>로 복귀하고 후기 목록·관련 이벤트 집계를 갱신한다. 적용 여부가 불확실한 오류도 관련 조회를 갱신 대상으로 표시한다.</p>
+<p>권한 없음·대상 없음·중복 작성 오류는 안내 후 화면을 닫는다. 기간 만료 등 잘못된 요청과 통신 오류는 원인을 안내한다. 서버에는 이 작성 API의 멱등 키가 없고, 작성 중복 제약과 로컬 초안은 서로 다른 보호다. 수정·삭제는 <a href="F11-03.html">후기 수정과 삭제</a>를 따른다.</p></section>
+<section id="current-4"><h2>선택형 피드백의 후보와 기간</h2><p><code>GET /api/v1/events/{eventId}/feedback/candidates</code>는 <code>candidates</code>, <code>maxSelect</code>, <code>deadline</code>, <code>eligible</code>을 반환한다. 기간은 이벤트 <code>closedAt</code>부터 7일 뒤까지며, 닫힌 시각이 없거나 현재가 그 범위 밖이면 <code>FEEDBACK_WINDOW_CLOSED</code>다. 상세 접근이 허용돼야 하고 호출자도 적격 참석 풀 안에 있어야 한다.</p>
+<p>체크인 기록이 하나라도 있으면 체크인 기록을, 없으면 <code>ATTENDING</code> 목록을 원천으로 삼는다. 계정 식별자가 없는 게스트, 확정·이의중 노쇼, 정상/로그아웃 상태가 아닌 계정을 제외한다. 그중 본인·차단 사용자를 제외한 후보가 2명 이상이어야 제출할 수 있다. 순서는 체크인 또는 참석 생성 시각과 사용자 식별자로 정한다. 최대 선택은 <code>min(5, ceil(후보 수/2))</code>다.</p></section>
+<section id="current-5"><h2>선택형 피드백의 제출과 재시도</h2><p><code>POST /api/v1/events/{eventId}/feedback</code>의 요청은 <code>{clientRequestId, displayedUserIds, choices, vibeTags}</code>이고 200 <code>EventFeedbackVo</code>를 반환한다. 키는 공백 불가·64자 이하, 표시 후보와 선택 목록은 null 불가다. 선택 0명은 허용하며 앱은 제출 전 확인한다. 선택한 사람은 서버 후보에 있고 중복되지 않아야 하며 선택 상한을 지킨다. 후보 식별자 집합뿐 아니라 순서까지 서버와 같아야 한다. 계정 상태·차단·후보가 달라지면 <code>FEEDBACK_CANDIDATES_CHANGED</code>다.</p>
+<p>인상 태그는 긍정 10종인 <code>FUNNY</code>, <code>PUNCTUAL</code>, <code>GOOD_LISTENER</code>, <code>ENERGETIC</code>, <code>THOUGHTFUL</code>, <code>CREATIVE</code>, <code>RELIABLE</code>, <code>WARM</code>, <code>INTELLIGENT</code>, <code>EASYGOING</code>을 허용한다. null 원소·부정 태그는 거절한다. 분위기 태그는 선택이며 최대 3개, 중복·null 원소·알 수 없는 값은 거절한다. 카탈로그는 <code>LIVELY</code>, <code>CALM</code>, <code>TALKATIVE</code>, <code>FOCUSED</code>, <code>WELCOMING</code>, <code>ORGANIZED</code>, <code>FREE_FLOWING</code>, <code>DRINKS_CENTERED</code>다.</p>
+<p>기본 요청 검증과 상세 접근 확인 뒤 이미 같은 이벤트·응답자의 응답이 있으면 같은 <code>clientRequestId</code>는 기존 결과를 반환하고 다른 키는 <code>DUPLICATE_RESOURCE</code>다. 같은 키는 본문 변경을 새 수정으로 적용하지 않는다. 새 저장 때만 응답·후보 순서·선택을 저장하고 응답자 취향 프로필을 재구축한다.</p>
+<p>앱 키는 화면 초기화 때 한 번 생성해 같은 화면 내 재시도에 사용한다. 화면 재생성까지 키가 보존되는 계약은 아니다. 후보 변경 오류는 사람 선택·인상 태그를 비우고 후보를 다시 읽으며 분위기 선택은 유지한다. 중복·자격 없음·기간 종료는 안내 후 나가고 나머지 오류는 입력 화면에 머문다.</p></section>
+<section id="current-6"><h2>본인 기록과 내보내기</h2><p><code>GET /api/v1/feedback/me</code>는 본인 제출 이력의 페이지, <code>/feedback/me/stats</code>는 본인이 한 선택의 통계를 반환한다. 차단된 선택 대상은 이력의 선택 목록과 통계에서 제외한다. 받은 선택 수·상대 응답 여부·상호 선택을 노출하는 필드는 이 응답에 없다.</p>
+<p><code>ReviewDataExportAssembler</code>는 현재 본인이 작성한 <code>vibeTags</code>를 내보내기에 포함한다. 과거 <code>DataExportAsyncWorker</code>의 누락을 현재 미구현으로 남기지 않는다. 이력·통계·취향의 차이는 <a href="F11-06.html">취향 프로필</a>을 따른다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>별점 후기는 endTime, 선택형 피드백은 closedAt을 기간 기준으로 사용한다.</td><td>두 마감을 동일한 시각으로 가정하지 않는다.</td></tr><tr><td>Risk</td><td>선택형 피드백 키는 화면 내 재시도에 유지되고 별점 후기에는 같은 계약이 없다.</td><td>두 제출의 중복·재시도 보장을 구분한다.</td></tr><tr><td>미검증</td><td>실제 앱 제출·알림 수신·마일리지 적립·내보내기를 이번에 실행하지 않았다.</td><td>소스 연결과 실행 성공을 분리한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 별점 후기 자격:</strong> 일반 참석 행과 고정 회차 실제 체크인을 구분하고 종료 시각·7일·자기 평가·삭제 포함 중복을 서버에서 검사한다.</li><li><strong>AC-02 별점 후기 입력:</strong> 별점 1~5·선택 본문 1000자 이하를 저장하고 호스트 점수·알림 outbox·상호작용·클럽 조건부 적립 신호를 처리한다.</li><li><strong>AC-03 작성 입력과 복귀:</strong> 초안 복원·제출 준비·완료를 거쳐 성공 복귀와 목록 갱신을 연결하고 오류 종류에 따라 안내·머무르기·나가기를 나눈다.</li><li><strong>AC-04 선택형 후보:</strong> closedAt 기준 7일과 상세 접근·적격 풀·본인/차단 제외·2명 이상·선택 상한을 적용한다.</li><li><strong>AC-05 후보 변경:</strong> 저장 직전 후보 순서·계정 자격이 바뀌면 저장하지 않고 재선택을 요구한다. 앱은 사람과 인상 태그 선택을 초기화한다.</li><li><strong>AC-06 태그 검증:</strong> 긍정 인상 태그만 허용하고 분위기 태그는 유효한 서로 다른 값 3개까지 받는다. 사람 0명 선택은 확인 후 제출할 수 있다.</li><li><strong>AC-07 선택형 중복:</strong> 같은 키면 기존 응답, 다른 키면 중복 오류다. 재응답으로 취향을 다시 누적하지 않는다.</li><li><strong>AC-08 본인 기록과 내보내기:</strong> 본인이 한 선택만 조회하고 차단 대상을 이력·통계에서 제외한다. 내보내기에는 현재 분위기 태그가 포함된다.</li></ul>
+<p>근거는 현재 서버 자격·저장·내보내기와 앱 입구·요청·오류 분기다. 이번에 제품 시험을 새로 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

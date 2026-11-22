@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,317개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,311개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1317,
+    "documentedScenarioItems": 1311,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -13472,14 +13472,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-01",
       "domain": "리뷰 & 신고",
-      "name": "이벤트 리뷰 작성",
-      "scenarioCount": 11,
+      "name": "이벤트 후기 작성과 선택형 피드백",
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-01_event-review-write/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-01_event-review-write_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-01_event-review-write/backend.md",
@@ -13806,14 +13806,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-06",
       "domain": "리뷰 & 신고",
-      "name": "취향 평가 & 취향 프로필",
-      "scenarioCount": 11,
+      "name": "본인 취향 프로필과 선언 선호 관리",
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-06_taste-profile/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-06_taste-profile_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-06_taste-profile/backend.md",

@@ -1,100 +1,65 @@
-# F11-06. 취향 평가 & 취향 프로필 PRD
+# F11-06. 본인 취향 프로필과 선언 선호 관리 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 소스를 기준으로 갱신했다. 구현 계약의 대조이며 새 앱 실행·운영 검수 통과 기록이 아니다.
 
->
-> 2026-07-29 현재 소스 갱신: legacy GraphQL 추천, `PreferenceRating`, `TasteNeighbor` 중심 흐름은 현재 기준이 아니다. 현재 `TasteProfileService`의 자동 재구축 원천은 이벤트 선택형 피드백이며, 데이트 만남 피드백은 이 프로필에 합산되지 않는다. InterestTag 카탈로그는 서버 단일 출처이고, 데이터 내보내기·삭제도 현재 취향 데이터를 포함한다. 아래 기존 trace는 역사적 전환본으로 남기되, 구현 판단은 `EventFeedbackController`, `TasteProfileService`, 현재 Flutter 피드백 화면을 우선한다.
+## 현재 역할과 입구
 
-## 1. 결론
+취향 프로필은 본인이 선언한 카테고리·시간대·그룹 크기와, 본인이 다른 참석자에게 붙인 긍정 인상 태그의 누적을 보여 준다. 타인이 나를 평가한 결과나 성격 검사 결과를 뜻하지 않는다. 등록된 취향 프로필 화면에서 현재 프로필과 본인 선택형 피드백 통계·이력을 각각 읽고, 설정 시트로 선언 선호를 바꾼다.
 
-취향 프로필은 이벤트 선택형 피드백으로 쌓인 본인 관점의 라벨 데이터이며, 피드백이 쌓일수록 `UserTasteProfile.positiveTagWeights`가 자동 재구축된다. 별도로 사용자가 선호 카테고리/시간대/그룹 크기를 설정한다. 현재 사람 추천과 관계 공통점은 카테고리·시간대만 소비하고 그룹 크기는 저장·조회·export에 머문다. 데이트 만남 피드백은 취향 프로필 재구축 원천이 아니다.
+## 본인 조회와 선언 선호 저장
 
-### 2026-07-29 소스 재실측 — 선언 선호와 행동 근사 스타일의 분리
+`GET /api/v1/taste/profile`과 `PUT /api/v1/taste/preferences`는 로그인한 본인만 다룬다. 프로필 행이 없어도 조회는 빈 프로필 VO를 만든다. 응답은 `preferredCategories`, `preferredTimeSlots`, `preferredGroupSize`, `positiveTagWeights`, `updatedAt`이며 행동 근사 필드는 없다.
 
-`UserTasteProfile`에는 기존 선언 선호/피드백 집계 외에 JSON `behaviorStyleEstimate`가 저장된다.
+PUT의 세 선언 선호 필드는 문자열 목록이다. 서버는 받은 세 값을 모두 JSON 컬럼에 덮어쓴다. null은 이전 값 유지가 아니라 해당 선호를 비우는 값이다. 앱은 현재 프로필로 시트를 채우고 아무 칩도 선택하지 않은 항목을 null로 보내므로 전체 해제로 기존 선호를 지울 수 있다. 서버의 이 서비스에는 문자열 카탈로그·목록 길이를 별도 제한하는 검사가 없다.
 
-| 항목 | 현재 계약 |
-|---|---|
-| 축 | `ACTIVITY_LEVEL`, `GROUP_SIZE_PREFERENCE` |
-| 입력 기간 | 최근 12개월 증거등급 참석 이벤트 |
-| 최소 표본 | 3개. 미만이면 `axes={}`, `provenance=BEHAVIOR_V1`, `reason=INSUFFICIENT_EVIDENCE` |
-| 활동성 | 이벤트 Category를 active=0, neutral=50, calm=100으로 매핑한 평균 |
-| 그룹 크기 | `currentCapacity > 0 ? currentCapacity : baseCapacity` 평균을 4명 이하=0, 20명 이상=100, 사이 선형으로 변환 |
-| 메타데이터 | eventCount, horizonMonths, categoryDist, timeOfDayDist, avgGroupSize, reason, computedAt |
-| 재계산 시점 | `EventFeedbackService.submit` 성공 후 `TasteProfileService.rebuildProfile(responderUserId)` |
+앱은 프로필이 로딩·오류·빈 데이터 상태이면 설정 시트를 열지 않는다. 저장 성공 때 응답 프로필을 반영하고 시트를 닫으며 성공 안내를 보여 준다. 실패는 기존 프로필과 시트 선택을 유지하고 실패 안내를 표시한다. 과거 「저장 실패여도 성공으로 닫힌다」는 시나리오는 현재 `Result` 분기와 맞지 않는다. 계정 변경 후 오래된 요청 결과를 다음 계정 상태에 반영하지 않도록 계정 표식을 확인한다.
 
-중요한 노출 경계:
+## 태그 가중치의 원천과 행동 근사
 
-- `GET /api/v1/taste/profile`의 `TasteProfileVo`에는 `preferredCategories`, `preferredTimeSlots`, `preferredGroupSize`, `positiveTagWeights`, `updatedAt`만 있고 `behaviorStyleEstimate`는 없다. 현재 Flutter 취향 프로필 화면은 행동 근사 축을 볼 수 없다.
-- behavior estimate는 trait 검사의 최신 제출 점수와 다른 데이터다. 이벤트/클럽 fit preview는 **trait 점수만** 사용하며 행동 근사를 섞지 않는다.
-- 사람 추천과 `RelationshipSummary.commonGround`는 사용자가 선언한 카테고리·시간대와 관심사 태그만 사용한다. 행동 근사는 사용하지 않는다.
-- 데이터 내보내기 `taste` 섹션에는 선언 선호와 `behaviorStyleEstimate`가 포함된다. `positiveTagWeights`는 본인 선택 피드백에서 재생성 가능한 중복 파생 캐시라 의도적으로 제외한다.
+`TasteProfileService.rebuildProfile`은 본인이 제출한 이벤트 피드백 응답과 그 선택의 인상 태그를 읽어 태그마다 1.0씩 더한다. 받았거나 상호 선택한 횟수가 아니다. 선언 선호는 이 재구축에서 덮어쓰지 않는다. 현재 운영 소스의 재구축 호출은 새 `EventFeedbackService.submit` 저장 경로다. 같은 키 재시도는 재구축하지 않는다. 데이트 만남 피드백 원본은 이 집계 쿼리에 포함되지 않는다.
 
-현재 Gap은 행동 근사가 저장/export되지만 API·UI로 본인에게 노출되지 않는 점, 그리고 참석 이력 변화 자체가 아니라 다음 이벤트 피드백 제출 때에만 재계산되는 점이다.
+행동 근사는 최근 12개월 증거가 있는 참석 이력으로 계산해 별도 저장한다. 3개 미만이면 빈 축과 `INSUFFICIENT_EVIDENCE`를 남긴다. 충분하면 카테고리 기반 활동 정도와 평균 그룹 크기 선호를 만들고 입력 분포·표본 수·계산 시각을 함께 기록한다. 이는 현재 본인 profile API에 실리지 않으며 앱 레이더의 데이터도 아니다. 참석 변경마다 자동 갱신된다고 설명하지 않는다.
 
-실측 근거: `TasteProfileService`, `BehaviorStyleEstimate`, `BehaviorAxis`, `CategoryActivityIntensity`, `TimeOfDayBucket`, `TasteProfileVo`, `DataExportAsyncWorker`, Flutter `taste_profile_vo.dart`와 `taste_profile_screen.dart`.
+## 화면 표시와 본인 선택 이력
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+앱 레이더는 긍정 태그 상위 5개를 사용하고 값은 0~1로 제한한다. 태그 종류가 부족한 경우 데이터 부족 안내를 표시한다. 상위 관심사에는 상위 4개를 쓴다. 별도의 태그 막대는 최대 가중치에 대한 상대 길이를 사용하지만 글자는 `weight * 100`에 `%`를 붙이므로 누적 2.0은 200%로 표시될 수 있다. 확률이나 정규화한 비율로 해석하지 않는다.
 
-- 마이페이지 → "취향 프로필" → `Routes.profileTasteProfile` → `TasteProfileScreen()`
-- 이벤트 선택형 피드백 작성은 종료 이벤트의 별도 `EventFeedbackScreen`에서 진행한다. 본 화면은 누적 결과 조회와 선언 선호 설정 중심이며 legacy `PreferenceRatingWriteNotifier` 흐름은 현재 기준이 아니다.
+`GET /api/v1/feedback/me`의 본인 이력은 처음 20개를 요청하고 더 보기마다 size를 20씩 늘려 첫 페이지를 다시 읽는다. 다음 페이지를 덧붙이는 구현으로 쓰지 않는다. 통계는 `totalResponses`, `totalChoicesGiven`, `tagCounts`이며 받은 선택 수가 아니다. 이력과 통계는 차단 대상을 제외하지만 취향 태그 캐시 재구축에는 같은 차단 필터가 없어 서로 다른 값을 가질 수 있다.
 
-## 2. 코드 위치
+선택형 피드백 제출 성공 경로는 현재 취향·통계·이력 provider를 명시적으로 무효화하지 않는다. 서버의 재구축이 이미 열려 있는 모든 관련 화면의 즉시 갱신을 보장한다고 기록하지 않는다. [이벤트 선택형 피드백](F11-01_event-review-write_prd.md)의 제출·재시도·후보 변경 계약을 따른다.
 
-계약의 정본은 코드다. 서버: `EventFeedbackController`, `DateMeetingFeedbackController`, `TasteProfileController`, `TasteProfileService`, `UserTasteProfile`, `ImpressionTag`. 앱: `taste_profile_screen.dart`, `routes.dart`.
+## 내보내기와 데이터 구분
 
-## 3. 전체 동작 흐름
+현재 `ReviewDataExportAssembler`는 선언 선호와 `behaviorStyleEstimate`를 내보낸다. `positiveTagWeights`는 본인의 원본 선택 기록에서 다시 만들 수 있는 파생 캐시여서 의도적으로 제외한다. 이벤트 피드백 내보내기에는 `vibeTags`도 포함되므로 이를 현재 누락 문제로 남기지 않는다.
 
-1. 화면 진입: `tasteProfileNotifierProvider` build
-   → `TasteProfileRepository.getProfile()` → `GET /api/v1/taste/profile`
-2. 이벤트 피드백 후보 조회: `GET /api/v1/events/{eventId}/feedback/candidates`
-   → 같은 이벤트에 함께한 사용자 후보만 반환. 게스트, 차단 사용자, 부적격 대상은 제외.
-3. 이벤트 피드백 제출: `POST /api/v1/events/{eventId}/feedback`
-   → 본인이 다시 함께하고 싶은 사람/인상 태그를 제출. 받은 선택 조회 endpoint는 없다.
-4. 내 피드백 이력/통계: `GET /api/v1/feedback/me`, `GET /api/v1/feedback/me/stats`
-5. 데이트 만남 피드백은 인접한 privatedate 원본이다: `POST /api/v1/date/meetings/{meetingId}/feedback`, `GET /api/v1/date/meetings/{meetingId}/feedback/me`
-   → 완료된 만남에서 본인 응답 여부, meetAgain, satisfaction만 노출하며 TasteProfile을 재구축하지 않는다.
-6. "저장": `tasteProfileNotifier.updatePreferences(param)`
-   → `TasteProfileRepository.updatePreferences(param)` → `PUT /api/v1/taste/preferences`
-   → 응답 `TasteProfileVo`로 state replace, 토스트 노출
+이 문서의 태그 누적·행동 근사와 다른 추천·성향검사 기능의 점수를 동일하게 취급하지 않는다. 특정 추천에 어떤 값이 사용되는지는 해당 추천 계약에서 판단한다.
 
-## 4. 제품 규칙
+## 코드 위치
 
-- 인상 태그는 긍정 10종(FUNNY, PUNCTUAL, GOOD_LISTENER, ENERGETIC, THOUGHTFUL, CREATIVE, RELIABLE, WARM, INTELLIGENT, EASYGOING)만 이벤트 피드백에서 고를 수 있다. 부정 태그(NEGATIVE_*)는 제출할 수 없다.
-- 취향 프로필의 태그 가중치는 본인이 이벤트 피드백으로 고른 긍정 태그를 쌓은 것이다. 데이트 만남 피드백은 합산하지 않으며, 만남 피드백은 완료된 만남에서만 낼 수 있고 본인 응답 상태만 조회된다.
-- 선호도 설정: 카테고리 8개(음식/맛집, 문화/예술, 스포츠/운동, 여행/아웃도어, 게임/취미, 교육/스터디, 네트워킹, 기타), 시간대 4개(오전 9-12, 오후 12-18, 저녁 18-21, 야간 21-24), 그룹 크기 3개(소규모 2-5명, 중규모 6-15명, 대규모 16명 이상). 아무것도 고르지 않은 항목은 바뀌지 않고 이전 값이 유지된다.
-- 화면: 태그가 3개 미만이면 레이더 대신 「아직 취향 데이터가 부족합니다」, 레이더와 상위 관심사는 상위 5개와 4개를 쓴다. 내가 고른 사람 기록은 20건씩 「더 보기」로 늘린다. 태그 가중치는 단순 누적이라 퍼센트로 보이는 값이 100을 넘을 수 있다(Gap에 있음).
+서버: `TasteProfileController/Service`, `TastePreferenceParam`, `TasteProfileVo`, `EventFeedbackController/Service`, `ReviewDataExportAssembler`. 앱: `taste_profile_api.dart`, `taste_profile_provider.dart`, `taste_profile_screen.dart`, `event_feedback_provider.dart`, `event_feedback_screen.dart`.
 
-## 6. 상태/권한/시나리오 매트릭스
+<!-- source-references:start -->
+<!-- source-references:end -->
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 취향 프로필 첫 진입 (Happy Path) | `user_taste_profile` 행 존재, `positiveTagWeights` 5개 이상, `preferredCategories` null. | 화면 데이터로 채워짐, 추가 액션 가능. |
-| S2 | 선호도 설정 시트 — 카테고리/시간대/그룹 저장 | 프로필에 선언 선호가 없거나 변경됨. | `user_taste_profile`의 세 JSON 선언 선호가 갱신되고 이후 사람 추천/관계 공통점 입력에 사용된다. |
-| S3 | 자격 있는 종료 이벤트 피드백 제출 | 증거등급 참석, 종료 후 7일 이내, 후보 2명 이상, 서버 후보 snapshot과 요청이 일치함. | 응답/표시 후보/선택이 저장되고 응답자 `positiveTagWeights`와 `behaviorStyleEstimate`가 재구축된다. |
-| S4 | 후보 snapshot 변경 | 후보 조회 후 차단·자격 변화로 서버 재계산 순서/집합이 `displayedUserIds`와 다름. | `FEEDBACK_CANDIDATES_CHANGED`, 신규 응답/선택/취향 재구축 없음. |
-| S5 | 이벤트 피드백 재시도/중복 | 같은 이벤트·응답자에 기존 응답이 있음. | 같은 `clientRequestId`면 기존 응답을 멱등 반환하고, 다른 key면 `DUPLICATE_RESOURCE`; 둘 다 재구축하지 않는다. |
-| S6 | 내가 고른 사람 더 보기 (페이지네이션) | 첫 페이지 20건 노출 + `page.last=false`. | 다음 20건 크기로 다시 조회해 이력을 확장한다. |
-| S7 | 행동 근사 표본 부족 | 최근 12개월 증거등급 이벤트가 3건 미만. | `behaviorStyleEstimate.axes={}`, `reason=INSUFFICIENT_EVIDENCE`; 현재 API/UI에는 축을 노출하지 않는다. |
-| S8 | 분위기 태그 검증 | `vibeTags`에 중복/null/미등록 값이 있거나 3개를 초과함. | `INVALID_INPUT`, 저장과 취향 재구축 없음. null/빈 목록은 허용된다. |
+## 현재 제한과 확인 범위
 
-## 8. Gap / Risk
+| 분류 | 현재 경계 | 문서 처리 |
+|---|---|---|
+| Gap | 태그 누적 값을 퍼센트 글자로 보여 100%를 넘을 수 있다. | 현재 수치 의미와 표시 한계를 명시한다. |
+| Gap | 행동 근사는 저장·내보내기만 하고 본인 profile API·앱에는 없다. | 화면 표시 완료로 쓰지 않는다. |
+| Risk | 재구축은 새 이벤트 피드백 제출에 연결되고 제출 성공의 관련 provider 즉시 무효화는 없다. | 참석 변경·화면 즉시 갱신 보장을 추가하지 않는다. |
+| 미검증 | 실제 계정 전환·선호 저장·피드백 이력·내보내기를 이번에 실행하지 않았다. | 소스 대조와 실행 결과를 구분한다. |
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Gap | `UserTasteProfile` / `TasteProfileVo` / Flutter model | `behaviorStyleEstimate`는 저장·export되지만 본인 profile API와 화면에는 없다. | 본인 설명형 UI로 노출할지 제품 결정 후 VO/model 동기화 |
-| Risk | `EventFeedbackService.submit` 단일 rebuild hook | 참석 이력이 바뀌어도 다음 이벤트 피드백 제출 전까지 행동 근사가 갱신되지 않는다. | 참석 변경 훅 또는 정기 재계산 필요성 결정 |
-| Gap | `DataExportAsyncWorker.toEventFeedbackMap` | 본인이 작성한 `vibeTags`가 export에서 빠진다. | feedback export schema에 추가하고 회귀 테스트 |
-| Gap | `taste_profile_screen.dart` | 단순 count weight를 `%`로 표시해 1.0 초과 값이 100%를 넘을 수 있다. | count/비율 의미를 구분하거나 정규화 |
+## 수용 기준과 검증 근거
 
-## 9. 수용 기준
+- **AC-01 본인 조회:** 본인만 profile API를 사용하고 행이 없어도 빈 프로필을 반환한다. 행동 근사 축은 응답에 포함되지 않는다.
+- **AC-02 선언 선호 삭제:** 현재 선택으로 시트를 채우고 모두 해제한 항목의 null을 서버에 저장해 이전 선호를 비운다.
+- **AC-03 저장 성공과 실패:** 성공에만 응답 반영·닫기·성공 안내를 하고 실패는 기존 프로필과 선택을 유지한다. 다른 계정에 이전 요청 결과를 반영하지 않는다.
+- **AC-04 태그 원천:** 본인이 이벤트 피드백에서 준 인상 태그를 건수로 누적한다. 받은 선택·데이트 만남 피드백을 합산하지 않는다.
+- **AC-05 행동 근사 표본:** 최근 12개월 표본 3개 미만이면 부족 근거와 빈 축을 저장하고 화면 축을 만들어내지 않는다.
+- **AC-06 표시 의미:** 누적 가중치와 비율을 구분하고 100% 초과 글자·레이더 제한을 현재 표시 경계로 남긴다.
+- **AC-07 본인 이력:** size 20부터 더 보기마다 20을 늘리고 차단 대상 제외와 본인이 한 선택 통계를 적용한다. 취향 캐시와 같은 집계라고 가정하지 않는다.
+- **AC-08 내보내기:** 선언 선호·행동 근사와 본인 분위기 태그를 포함하고 파생 태그 캐시는 의도적으로 제외한다.
 
-- **AC-01. 취향 프로필 첫 진입 (Happy Path)**: Given `user_taste_profile` 행 존재, `positiveTagWeights` 5개 이상, `preferredCategories` null. When 사용자가 해당 흐름을 실행하면 Then 화면 데이터로 채워짐, 추가 액션 가능.
-- **AC-02. 선호도 설정 시트 — 카테고리/시간대/그룹 저장**: Given 선언 선호를 변경한 사용자 When 저장하면 Then 세 JSON 선호가 갱신되고 사람 추천/관계 공통점은 다음 조회부터 새 값을 사용한다.
-- **AC-03. 자격 있는 종료 이벤트 피드백 제출**: Given 증거등급 참석·7일 창·후보 2명 이상·정확한 snapshot When 유효한 선택을 제출하면 Then 응답/선택을 저장하고 본인 태그 가중치와 행동 근사를 재구축한다.
-- **AC-04. 후보 snapshot 변경**: Given 조회 후 후보 집합 또는 순서 변화 When 예전 `displayedUserIds`로 제출하면 Then `FEEDBACK_CANDIDATES_CHANGED`이고 어떤 피드백/취향 변경도 없다.
-- **AC-05. 이벤트 피드백 재시도/중복**: Given 기존 응답 When 같은 `clientRequestId`로 재시도하면 Then 기존 응답을 반환한다. 다른 key면 `DUPLICATE_RESOURCE`이며 재구축하지 않는다.
-- **AC-06. 내가 고른 사람 더 보기 (페이지네이션)**: Given 첫 페이지 20건 노출 + `page.last=false` When 더 보기를 탭하면 Then size를 20 늘려 본인 이벤트 피드백을 다시 조회한다.
-- **AC-07. 행동 근사 표본 부족**: Given 최근 12개월 증거등급 이벤트 3건 미만 When rebuild하면 Then 빈 axes와 `INSUFFICIENT_EVIDENCE`를 저장하고 추정 축을 만들지 않는다.
-- **AC-08. 분위기 태그 검증**: Given 중복/null/미등록/4개 이상 `vibeTags` When 제출하면 Then `INVALID_INPUT`; null/빈 목록은 정상 처리한다.
+근거는 현재 프로필 저장·재구축·내보내기와 앱 설정·표시·이력 요청 분기다. 이번에 제품 시험을 새로 실행하지 않았다.
