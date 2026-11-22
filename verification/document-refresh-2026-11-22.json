@@ -5274,7 +5274,7 @@
       "evidence": [
         "numbers_reference_20261122"
       ],
-      "reviewedSha256": "e5427ad0c996894a319c72f336d02526b91fcff11856bc874bf8ae2c6f4af6a7"
+      "reviewedSha256": "e34d2fa520e6f25ad68d83fdaf5fbe0a4331865442b81f3a4b12ec50392f6581"
     },
     {
       "path": "docs/tour/coverage.html",
@@ -48375,6 +48375,11 @@
           "path": "community_api/admin-app/src/main/java/com/endside/community/payment/service/ManageWalletService.java",
           "sha256": "870efe437c9a1f838bb519cd9ecff809d8f2963d380e08cf5ea6609ccddf20b6",
           "reviewScope": "grantFreePoints와validateFreePointParam 본문: 무료보상전용/원결제미지정·운영작업예약·위임·대상/금액1~1000만/필수사유185자 대조. 운영실행증거아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/constants/ReportStatus.java",
+          "sha256": "4743534dfaa0881636d67b82532574b9d9f5f077834679de93e8c62d5142b346",
+          "reviewScope": "전체 enum 및 fromValue 본문 대조. 신고 기각의 실제 값 DISMISSED를 확인하고 수치표의 REJECTED 오기를 수정."
         }
       ],
       "reusedSources": [
@@ -48593,7 +48598,8 @@
         "개요의 기금전액구독·모든차감봉인·환불의무전면예외 일반화 수정",
         "유료/무료 분류·판매원천·지급시점·상계·은행증거 단계 분리",
         "운영자 원문은 종결행90일/계정파기로 수정,무료지급 상한과사유길이 확인",
-        "마일리지 과거실행통과 원문분리보존"
+        "마일리지 과거실행통과 원문분리보존",
+        "최종 enum 직접 대조로 신고 기각 DISMISSED 확인·수정"
       ],
       "retainedHistoricalQuotes": [],
       "retainedHistoricalHtml": [
@@ -48606,7 +48612,7 @@
       ],
       "checks": {
         "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
-        "groupDigests": "37 source/canonical digests; 27 retained HTML IDs",
+        "groupDigests": "38 source/canonical digests; 27 retained HTML IDs",
         "derivedDocuments": "2 documents; shared batch verified 2 paths, 59 relative links/anchors and 0 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
