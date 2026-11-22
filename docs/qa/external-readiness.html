@@ -12,19 +12,19 @@
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <main>
-      <header class="page-head">
-        <div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>출시 준비<span>›</span>외부 서비스 준비</div>
-        <h1>외부 서비스 가입·계약과 출시 준비</h1>
-        <p class="lede">운영자가 가입·계약부터 키 발급, 설정 전달, 실제 이용 확인까지 진행하는 체크리스트다.
-          첫 출시 필수 서비스와 기능을 추가 공개할 때 필요한 서비스를 구분한다.</p>
-        <p class="release-note">현재 상태 대조: 2026-11-06. 서버 묶음 prd-20261106c와 Android 내부 테스트 빌드 13 배포 기록을 확인했다. 관리자 목록 거르기·경보·정산 생성 수정도 배포됐고 실제 기기 확인은 남아 있다. iOS는 기존 서명 IPA와 외부 설정을 재사용하며 TestFlight·APNs·실제 설치 확인이 남아 있다. 이번 문서 작업에서 운영·스토어를 다시 조회하지 않았다.</p>
-        <nav class="release-nav" aria-label="외부 준비 바로가기">
-          <a href="#progress-2026-11-06">11월 6일 운영 준비 현황</a><a href="#progress-2026-10-12">10월 12일 시험 기록</a><a href="#next-checks">다음 확인 순서</a>
-          <a href="#order">진행 순서와 완료 상태</a><a href="#required">첫 출시 필수 서비스</a>
-          <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a><a href="#later">후속 기능의 외부 계약</a>
-          <a href="#store-submission">스토어 제출 자료와 공개 확인</a><a href="#evidence">운영자가 남길 완료 기록</a>
-        </nav>
-      </header>
+      <header class="page-head"><div class="breadcrumb"><a href="../index.html">문서 허브</a><span>›</span>출시 준비<span>›</span>외부 서비스 준비</div><h1>외부 서비스 준비와 실제 확인의 경계</h1><p class="lede">이미 준비한 계정·키·서명·서비스를 재사용하고, 현재 공개 범위에 필요한 실제 결과를 확인합니다. 가입·설정·기동·배포·설치·수신·공개를 각각 기록합니다.</p></header>
+<section><span id="external-current"></span><h2>현재 인계와 기록의 범위</h2><p><strong>2026-11-23 문서 대조.</strong> <a href="launch-status.html#release-record-current">현재 정본에서 확인한 마지막 출시 기록</a>과 <a href="../../../docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md#다른-세션이-이어받을-출시-상태">출시 인계 원문</a>을 따릅니다. 이 문서는 운영 접속·계정 로그인·키 발급·배포·실수신을 새로 실행한 결과가 아닙니다.</p><p>Android는 11월 12일 내부 테스트 빌드 16 기록, iOS는 10월 27일 서명 IPA 1과 미업로드 기록이 있습니다. 현재 작업 목록과 11월 15일 배포 증거에는 공개·관리자 API 및 관리자 웹의 prd-20261115a 반영이 기록돼 있습니다. 더 이전 인계 요약과 구분합니다. 기존 설정을 재사용하고, 운영 상태가 현재 소스와 같다는 가정은 하지 않습니다.</p></section>
+<section><span id="order"></span><span id="required"></span><span id="next-checks"></span><h2>준비·확인·공개 판단의 순서</h2><ol><li><a href="../../../docs/plan/NEXT_WORK.md#첫-출시에서-확인할-것">현재 출시 준비와 보류 결정</a>에서 이번 공개 범위와 선행 조건을 확인합니다. 후보 고정·운영 서버 확정 뒤 복구 규약·실기기 연결의 기존 보류를 임의로 해제하지 않습니다.</li><li>가입·계약·키·권한·도메인·서명·산출물 중 이미 준비된 것을 찾습니다. 등록부터 다시 시작하지 않고 현재 후보에 필요한 변경만 정합니다.</li><li>앱·공개 API·관리자 API·관리자 웹·실시간·소개 웹의 버전과 환경을 연결합니다. 새 API 선행 배포 등 의존 순서를 지킵니다.</li><li>키 설정, 서비스 기동, 실제 공급자 요청, 사용자 수신·설치·복귀, 실패·회수·복구를 구분해 남은 질문을 확인합니다.</li><li><a href="completion-criteria.html#evidence">버전·환경·결과·승인 기록</a>으로 공개 범위와 미실행·실행 차단·남은 의무를 남깁니다. 내부 테스트를 정식 공개로 처리하지 않습니다.</li></ol><p>현재 공개 대상이 아닌 외부 계약을 모든 기능의 선행 조건으로 추가하지 않습니다. 예를 들어 주최자 직접 송금과 실제 PG·출금·소액 확인 계약은 서로 다른 경로입니다.</p></section>
+<section><span id="android-distribution"></span><span id="ios-distribution"></span><span id="ios-login-review"></span><h2>Android와 iOS 배포</h2><div class="table-wrap"><table><thead><tr><th>대상</th><th>재사용할 근거</th><th>확인할 결과</th></tr></thead><tbody><tr><td>Android</td><td><a href="../../../community_app/docs/ANDROID_RELEASE.md#현재-내부-테스트와-자동-배포-설정">현재 내부 테스트와 자동 배포 설정</a>의 앱·패키지·업로드 키·Play 서명·원격 트랙 기록.</td><td>실제 업로드 전 트랙과 버전 번호를 확인하고 해당 후보의 빌드·서명·업로드·설치·기기 이용을 각각 기록. 내부 트랙의 completed를 프로덕션 공개로 읽지 않음.</td></tr><tr><td>iOS</td><td><a href="../../../community_app/docs/IOS_RELEASE.md">iOS 빌드·TestFlight 가이드</a>의 사이숲 앱 식별자·팀·API 인증·서명·프로파일과 기존 IPA 검증.</td><td>설정 검증·새 IPA·업로드·처리·내부 그룹·iPhone 설치·APNs·심사·공개를 구분. 공용 버전과 이전 IPA 버전의 차이를 확인하며 다른 앱의 업로드를 합산하지 않음.</td></tr></tbody></table></div><p>최신 플랫폼 가이드와 실제 산출물·현재 설정이 과거 체크리스트보다 우선합니다. 로그인 제공 방식과 스토어 심사 입력은 해당 후보의 제공 기능을 기준으로 확인합니다. 로컬 빌드 성공만으로 iOS 로그인·푸시·앱 링크를 완료 처리하지 않습니다.</p></section>
+<section><span id="brand-ready"></span><span id="public-pages-2026-10-13"></span><span id="store-submission"></span><h2>선택한 로고·홈페이지·스토어 안내</h2><p>사용자가 선택한 logo-bilingual-v2의 앱·웹 반영 기록을 재사용합니다. 최종 로고를 다시 묻거나 기본 아이콘 교체를 미완료로 되돌리지 않습니다. 스토어 이미지 등록과 해당 설치본의 표시는 별도 결과입니다.</p><p>한·영 약관·개인정보·계정 삭제 안내·스토어 링크는 실제 제공 범위와 운영자 정보·시행일을 맞춥니다. 운영자 실제 정보와 법무 판단이 확정되지 않은 부분을 문서 게시만으로 확정했다고 표시하지 않습니다. <a href="../../../saisoop-web/VERIFICATION.md">소개 웹 검증 기록</a>과 <a href="../../../saisoop-web/README.md">소개 웹의 현재 설정</a>을 확인합니다.</p><p>Android App Links의 Play 서명과 iOS AASA의 앱·팀 식별자, 설치 여부별 도착과 복귀는 각 플랫폼에서 구분합니다. 공개 파일의 HTTP 성공만으로 설치 앱 복귀를 확인했다고 쓰지 않습니다. 분석 설정은 실제 측정 ID와 수집 허용 상태를 확인하며 단순 코드 포함을 수집 성공으로 세지 않습니다.</p></section>
+<section><span id="google-login"></span><span id="extra-login"></span><span id="auth-code-current"></span><span id="email"></span><span id="admin-session-security"></span><h2>로그인·메일·관리자 세션</h2><ul><li>Google은 앱 패키지·서명·OAuth·Firebase의 기존 설정과 운영 환경을 대조합니다. <a href="../features/F01-02.html">소셜 로그인</a>의 기존 이메일 계정 연결·취소·세션 설치와 실제 제공자 결과를 구분합니다. 추가 로그인 공급자는 현재 공개 범위에 맞춰 준비합니다.</li><li><a href="../features/F01-03.html">가입 전 이메일 번호 확인</a>과 <a href="../features/F01-04.html">번호 기반 비밀번호 재설정</a>이 현재 계약입니다. 예전 인증 링크 메일을 정상 경로로 설명하지 않습니다. 발신 설정·도메인 인증·서명·실제 수신·번호 검증·가입 또는 재설정 완료를 각각 확인합니다.</li><li>기존 운영 SMTP 설정을 재사용하되 DNS 레코드 존재와 실제 발신 서명·받은편지함 수신은 별도입니다. 비밀키·SMTP 암호·검증 번호를 공개 문서에 남기지 않습니다.</li><li>관리자 로그인·재인증·권한 회수는 현재 배포와 계정 설정을 확인합니다. 11월 10일 관리자 접근 복구의 2단계 인증 중지 기록을 모든 관리자 또는 영구 정책으로 일반화하지 않습니다. 메뉴 접근·실제 명령 권한·감사 기록과 실패 복귀를 구분합니다.</li></ul></section>
+<section><span id="firebase-push"></span><span id="google-maps"></span><span id="kakao-local"></span><h2>알림·지도·주소 변환</h2><p>Firebase와 iOS APNs는 서비스 설정·기기 등록·전송 요청·기기 수신·알림 탭 이동을 각각 확인합니다. <a href="../domains/12-notification.html">알림 계약</a>의 카테고리·방해금지·OS 권한·계정 변경·키 폐기와 대상 권한을 적용합니다. 서버 전송 성공만으로 사용자 수신을 완료 처리하지 않습니다.</p><p>Google Maps는 Android 패키지·서명과 iOS 식별자별 키 제한, 실제 지도 표시와 위치 권한을 확인합니다. Kakao Local 서버 주소 변환은 허용 서버·요청 결과와 앱의 위치 선택·검색 결과 반영을 구분합니다. <a href="../domains/14-location.html">위치·길찾기 계약</a>의 동의·철회·만료·공개 범위를 따라, 지도 키가 있다는 이유로 GPS·공유·길찾기 전체 통과로 쓰지 않습니다.</p></section>
+<section><span id="file-storage"></span><h2>파일 저장소·사진·보존·삭제</h2><p>기존 S3·역할 권한·공개 차단·암호화 설정을 재사용합니다. 업로드 접수, 파일 검사, 사용할 수 있는 상태, 사용처 연결, 열람 권한, 제거와 실제 저장소 삭제를 분리합니다. 악성 파일 검사 엔진과 정상·거절·결과 불명의 처리는 해당 환경의 근거가 필요합니다.</p><p><a href="../features/content-photos.html">본문 사진 첨부와 용도별 관리</a>, <a href="../policies/privacy.html">공개·내보내기·탈퇴·보존</a>를 따릅니다. 대표 사진·본문 사진·판매 다운로드 원본·분쟁 증거는 같은 공개 권한이 아닙니다. 참조 제거만으로 원본 삭제를 약속하지 않고 활성 사용처·보존·후속 정리를 구분합니다.</p></section>
+<section><span id="deployment-inputs-current"></span><span id="infrastructure"></span><h2>배포 입력·운영 관측·복구</h2><p><a href="../../../docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md">현재 서버 설정과 배포 기록</a>에서 실제 주소·서비스·인스턴스 역할·허용망·인증서·설정 위치를 확인합니다. 비밀값은 지정된 비밀 저장 위치에서 관리하며 이 문서에 복사하지 않습니다. 공개 API와 관리자 API·실시간·소개 웹의 설정을 서로 바꾸어 쓰지 않습니다.</p><p>운영 경보·스냅샷·백업 타이머는 구축 여부, 실제 생성, 외부 보관, 복원 가능성, 격리 복구·이전 버전 복귀를 각각 확인합니다. 10월 26일의 경보·스냅샷 0개 기록은 현재 상태가 아닙니다. 11월 15일 서비스·경보 조회 기록이나 11월 6일 백업 수정 배포도 실제 복구 완료를 뜻하지 않습니다. 운영 서버 확정 뒤 복구 규약을 정한다는 보류 결정을 따릅니다.</p><p>기존 유효 근거를 재사용하고 바뀐 소스·설정·권한과 미해결 질문에 필요한 검사만 정합니다. 문서 수정만으로 운영 재배포·전체 회귀·전수 화면 촬영을 요구하지 않습니다.</p></section>
+<section><span id="later"></span><span id="payment-contract"></span><span id="payout-contract"></span><span id="identity-contract"></span><span id="bank-verification"></span><span id="virtual-account"></span><span id="digital-billing"></span><h2>후속 기능의 외부 계약과 기존 의무</h2><div class="table-wrap"><table><thead><tr><th>업무</th><th>확인할 계약과 경계</th></tr></thead><tbody><tr><td>플랫폼 결제·가상계좌</td><td><a href="../policies/payment.html">승인·취소·환불·결과 불명 계약</a>과 현재 기능 허용 설정. 임시 결제·모사 응답은 실제 현금 이동 증거가 아님. 기존 금전 의무 처리와 신규 이용을 별도로 판단.</td></tr><tr><td>외부 출금·제공자 정산</td><td>수취 계좌·공급자 심사·시작 전 대기·지급 시도·결과 조회·보상·대사. 출금 신청이나 지급 0건의 차이 0을 성공 송금으로 읽지 않음.</td></tr><tr><td>본인 확인</td><td><a href="../features/F09-01.html">본인 확인의 신청·자료·운영 판단</a>과 실제 공급자의 확인 범위를 구분. 소스나 관리자 승인만으로 외부 실명 확인 성공을 주장하지 않음.</td></tr><tr><td>계좌 소액 확인</td><td><a href="../features/F07-10.html">정산 계좌와 확인 상태</a>의 현재 입력·횟수·만료·명령 계약. 계좌 제어 확인과 예금주 실명 대조를 분리하고 현재 직접 송금의 선행 조건으로 임의 추가하지 않음.</td></tr><tr><td>디지털 상품·구독</td><td><a href="../domains/08-plan-market.html">판매·구매·보유·환불 계약</a>과 플랫폼별 실제 판매 대상을 정한 뒤 제출 시점의 결제·심사 조건을 확인. 소유 중인 콘텐츠 접근과 신규 판매·구독 공개를 구분.</td></tr></tbody></table></div></section>
+<section><span id="google-calendar-contract"></span><span id="google-calendar"></span><h2>Google Calendar의 연결과 공개 조건</h2><p><a href="../domains/10-calendar.html#google-sync">Google Calendar의 선택 전송·자동 전송·해제 계약</a>과 현재 OAuth 설정을 따릅니다. 기존 연결·토큰·전송 기록을 신규 연동 미구현으로 되돌리지 않습니다. 연결 성공, 선택 전송, 자동 전송, 외부 일정 변경, 앱 연결 해제와 Google 계정에서의 권한 철회는 다른 결과입니다.</p><p>과거 Android 에뮬레이터·실계정 기록을 iOS·물리 기기·운영 OAuth 공개 검증으로 합산하지 않습니다. 공개하려는 범위의 실패·취소·권한 철회·재연결 근거를 확인합니다. 내부 일정과 일회성 내보내기는 외부 동기화의 성공과 별도로 판정합니다.</p></section>
+<section><span id="evidence"></span><span id="source-basis"></span><h2>완료 기록과 정본</h2><p>서비스별로 대상·후보 버전·환경·계정 역할·기기·설정의 확인 시각·실행 행동·기대/관측 결과·근거·남은 범위·공개 판단을 연결합니다. 비밀값과 개인정보 원문 대신 필요한 식별·상태·가려진 증거를 남깁니다.</p><p><a href="../../../community_app/docs/DEPLOYMENT_CHECKLIST.md">앱 배포 준비와 남은 확인</a> · <a href="release.html">릴리즈 증거 확인</a> · <a href="completion-criteria.html">완료 기준</a> · <a href="../../../docs/plan/NEXT_WORK.md">현재 할 일과 보류 결정</a></p></section>
+<details id="historical-external-preparation"><summary>이전 날짜별 구축·시험·준비 절차 기록</summary><p>아래는 작성 당시의 설정·검사·후속 절차입니다. 옛 빌드·서비스 개수·미완료·명령·외부 화면 안내를 현재 실행 지시로 쓰지 않습니다. 현재 작업은 위 정본과 실제 플랫폼 가이드·설정·산출물을 우선합니다.</p><div id="historical-external-body">
 
 
 
@@ -40,7 +40,7 @@
         </tbody></table></div>
         <p>근거는 11월 3일과 6일 서버/Android 배포 기록이며 최신 묶음은 prd-20261106c다. 이전 체크리스트·배포 가이드의 빌드 11·12보다 새 배포 증거를 우선했다. 서비스 정상 기동·내부 테스트 배포는 실기기 이용이나 정식 공개를 뜻하지 않는다.</p>
       </section>
-      <section id="brand-ready"><h2>선택·반영된 브랜드 로고</h2><p>사용자 선택 logo-bilingual-v2로 앱 아이콘·시작·로그인·홈·온보딩과 웹을 갱신했다. 최종 로고를 다시 묻거나 기본 아이콘 교체를 미완료로 등록하지 않는다. 스토어별 이미지 등록과 실제 설치 화면 확인은 별도다.</p></section>
+      <section id="historical-brand-ready"><h2>선택·반영된 브랜드 로고</h2><p>사용자 선택 logo-bilingual-v2로 앱 아이콘·시작·로그인·홈·온보딩과 웹을 갱신했다. 최종 로고를 다시 묻거나 기본 아이콘 교체를 미완료로 등록하지 않는다. 스토어별 이미지 등록과 실제 설치 화면 확인은 별도다.</p></section>
 
       <details><summary>10월 26일 구축 당시 기록 펼치기</summary><section id="progress-2026-10-26">
         <h2>10월 26일 운영 준비 기록 — 현재 상태는 위의 11월 6일 인계를 따릅니다</h2>
@@ -55,16 +55,16 @@
             <tr><td>운영 복구</td><td>관리자 허용 IP·분리 DB 계정 구성. 인증서 갱신 dry-run·서비스 재시작 기록 있음</td><td>CloudWatch 경보 0개, 루트 볼륨 스냅샷 0개, 운영 버킷 backups/ 객체 0개. 백업 생성·외부 보관·격리 복구·이전 버전 복귀 확인</td></tr>
           </tbody>
         </table></div>
-        <p>구축 여부와 실제 이용 통과를 나눠 기록한다. <a href="#infrastructure">서버·도메인·경보·복구 준비</a>에서 배포 버전을, <a href="#next-checks">다음 확인 순서</a>에서 남은 실행 순서를 확인한다. <a href="launch-status.html#code-completeness">첫 공개 보류</a>는 유지한다.</p>
+        <p>구축 여부와 실제 이용 통과를 나눠 기록한다. <a href="#historical-infrastructure">서버·도메인·경보·복구 준비</a>에서 배포 버전을, <a href="#historical-next-checks">다음 확인 순서</a>에서 남은 실행 순서를 확인한다. <a href="launch-status.html#code-completeness">첫 공개 보류</a>는 유지한다.</p>
       </section></details>
 
-      <section id="admin-session-security">
+      <section id="historical-admin-session-security">
         <h2>관리자 로그인·재인증의 배포 환경 확인</h2>
         <p>관리자 웹과 API에 2단계 로그인, 일회성 복구 코드, 돈 정정·권한 변경·개인정보 내보내기의 5분 재인증이 반영됐습니다. 현재 운영 구성은 Nginx가 관리자 API 경로를 직접 전달하며 허용 IP를 제한합니다. 관리자 웹의 중계 경로와는 신뢰 프록시 조건이 다르므로 실제 배치에 맞춰 확인합니다. 보안 세션 쿠키·CSRF, 모든 관리자의 인증 앱 등록·복구 코드 보관과 역할별 접근 결과는 별도 실행 기록이 필요합니다.</p><p>두 창에서 동시에 수정한 충돌과 인증 만료를 구분하고, 실패 때 입력·사유가 남는지, 재조회 뒤 원천 기록 연결·해제를 다시 할 수 있는지 확인합니다. 이번 문서 갱신에서 실제 두 창 검사나 배포 리허설을 수행하지 않았으며 H-531에 남깁니다.</p><p><a href="../policies/permission.html#admin-security">관리자 로그인과 민감 작업의 재인증</a></p>
       </section>
 
 
-      <section id="public-pages-2026-10-13">
+      <section id="historical-public-pages-2026-10-13">
         <h2>홈페이지 고객 안내와 앱 링크 준비</h2>
         <p><strong>10월 13일 반영 기록:</strong> 홈페이지에 <a href="https://saisoop.co.kr/terms">이용약관</a>,
           <a href="https://saisoop.co.kr/privacy">개인정보처리방침 초안</a>,
@@ -88,7 +88,7 @@
           <li><strong>메일:</strong> SMTP 시험 메일은 Gmail에서, 가입 인증·비밀번호 재설정 메일은 자체 도메인 시험 수신함에서 받았다.
             앱 링크 인증·복구와 이전 비밀번호·기존 토큰·재사용 링크 거절을 확인했다. 관련 앱 자동 테스트 28개가 통과했다.</li>
           <li><strong>푸시:</strong> 실제 FCM의 전경·백그라운드·프로세스 종료 수신, 알림 클릭 후 문의 목록 이동과 권한 거절·재허용을 Android 에뮬레이터에서 확인했다.
-            QA 발송 행을 이용한 시험이며 개별 업무 이벤트의 발행 검증은 별도다. <a href="#firebase-push">Firebase·APNs 푸시 연결</a>에 근거와 남은 조건을 기록한다.</li>
+            QA 발송 행을 이용한 시험이며 개별 업무 이벤트의 발행 검증은 별도다. <a href="#historical-firebase-push">Firebase·APNs 푸시 연결</a>에 근거와 남은 조건을 기록한다.</li>
           <li><strong>외부 접속:</strong> 공개 HTTPS 반복 요청 20/20, 채팅 소켓 두 종류의 연결·재연결 3회와 무인증 거절을 확인했다.
             실제 채팅 메시지 왕복·두 휴대전화·장시간 안정성은 이 결과에 포함하지 않는다.</li>
         </ul>
@@ -96,7 +96,7 @@
           <a href="launch-status.html#code-completeness">현재 출시 결론</a>의 외부 고객 공개 보류는 유지한다.</p>
       </section>
 
-      <section id="order">
+      <section id="historical-order">
         <h2>진행 순서와 완료 상태</h2>
         <p>기능 범위와 공개 판단은 <a href="launch-status.html#scope">첫 출시 범위</a>와
           <a href="launch-status.html#blocking">공개 전에 할 일</a>을 함께 따른다. 문서 작성이나 키 발급만으로 출시 완료가 되지는 않는다.</p>
@@ -123,26 +123,26 @@
           콘솔을 조회하지 않은 항목의 <strong>미확인</strong>은 계정이나 계약이 없다는 뜻이 아니다. 이전 자동 검사와 이번 외부 검증은 각각의 범위로 기록한다.</p>
       </section>
 
-      <section id="required">
+      <section id="historical-required">
         <h2>첫 출시 필수 서비스</h2>
         <p>이메일·Google 로그인과 모임·클럽·직접 송금·이동·투표·알림·파일을 같은 출시 후보로 확인한다. <strong>iOS 로그인 구성 판단은 첫 공개 전 조건</strong>이다.</p>
         <div class="table-wrap"><table>
           <thead><tr><th>준비 항목</th><th>확인한 범위</th><th>아직 필요한 확인</th></tr></thead>
           <tbody>
-            <tr><td><a href="#ios-distribution">iOS 빌드·TestFlight</a></td><td>fastlane 절차·격리 검사 있음. 로컬 prod.json의 iOS Google ID·Firebase App ID·Bundle ID는 빈 값</td><td>Apple 권한·서명·배포 인증, iOS 입력·APNs·실제 IPA·TestFlight 설치</td></tr>
-            <tr><td><a href="#android-distribution">Android·Google Play</a></td><td>앱 등록·업로드 키·staging APK 시험 기록. 운영 주소 설정 반영</td><td>최신 AAB·Play App Signing·내부 테스트·물리 기기와 계정별 공개 요건</td></tr>
-            <tr><td><a href="#google-login">Google 로그인</a></td><td>Android·Web 설정과 시험 계정 가입·세션 유지 기록. 운영 서버에 Google 설정 반영</td><td>운영 앱의 재로그인·연결/해제·iOS·Play 지문·브랜딩</td></tr>
-            <tr><td><a href="#firebase-push">Firebase·APNs</a></td><td>운영 서버 발송 자격정보 배치. 10월 12일 Android 에뮬레이터 수신·문의 이동·권한 거절/재허용 기록</td><td>업무 이벤트 발행·실기기·계정 전환·실패 재시도·iOS/APNs, H-526 알림 뒤 지갑 갱신</td></tr>
-            <tr><td><a href="#google-maps">Google Maps</a></td><td>Android 제한 키와 시험 앱 지도 표시 기록</td><td>Play 지문·iOS 키·실기기·위치 권한·비용 경보</td></tr>
-            <tr><td><a href="#kakao-local">Kakao Local</a></td><td>운영 서버 IP 허용과 컨테이너 주소 검색 200 기록</td><td>native 플랫폼 등록·실제 앱 주소 변환·시간/한도 초과·길찾기 복귀</td></tr>
-            <tr><td><a href="#email">메일</a></td><td>Oracle SMTP를 운영 서버에 적용. 기존 Gmail 시험 메일·자체 도메인 인증/복구 수신 기록</td><td>현재 운영 주소의 외부 수신함·iOS·실제 만료/실패·OCI 반송·신고 이벤트. SES 전환은 후속</td></tr>
-            <tr><td><a href="#file-storage">파일 저장소</a></td><td>S3 버킷·역할·공개 차단·암호화 구축 및 실조회</td><td>검사 엔진 연결과 실제 파일 생명주기·권한·덮어쓰기 거부·삭제 재시도</td></tr>
-            <tr><td><a href="#infrastructure">서버·경보·복구</a></td><td>AWS 배포·고정 HTTPS·관리자 허용망·서비스 7개 정상</td><td>최신 후보 배포 확인 뒤 기기 채팅 왕복·허용망 밖 거부·경보·백업 복구·롤백</td></tr>
+            <tr><td><a href="#historical-ios-distribution">iOS 빌드·TestFlight</a></td><td>fastlane 절차·격리 검사 있음. 로컬 prod.json의 iOS Google ID·Firebase App ID·Bundle ID는 빈 값</td><td>Apple 권한·서명·배포 인증, iOS 입력·APNs·실제 IPA·TestFlight 설치</td></tr>
+            <tr><td><a href="#historical-android-distribution">Android·Google Play</a></td><td>앱 등록·업로드 키·staging APK 시험 기록. 운영 주소 설정 반영</td><td>최신 AAB·Play App Signing·내부 테스트·물리 기기와 계정별 공개 요건</td></tr>
+            <tr><td><a href="#historical-google-login">Google 로그인</a></td><td>Android·Web 설정과 시험 계정 가입·세션 유지 기록. 운영 서버에 Google 설정 반영</td><td>운영 앱의 재로그인·연결/해제·iOS·Play 지문·브랜딩</td></tr>
+            <tr><td><a href="#historical-firebase-push">Firebase·APNs</a></td><td>운영 서버 발송 자격정보 배치. 10월 12일 Android 에뮬레이터 수신·문의 이동·권한 거절/재허용 기록</td><td>업무 이벤트 발행·실기기·계정 전환·실패 재시도·iOS/APNs, H-526 알림 뒤 지갑 갱신</td></tr>
+            <tr><td><a href="#historical-google-maps">Google Maps</a></td><td>Android 제한 키와 시험 앱 지도 표시 기록</td><td>Play 지문·iOS 키·실기기·위치 권한·비용 경보</td></tr>
+            <tr><td><a href="#historical-kakao-local">Kakao Local</a></td><td>운영 서버 IP 허용과 컨테이너 주소 검색 200 기록</td><td>native 플랫폼 등록·실제 앱 주소 변환·시간/한도 초과·길찾기 복귀</td></tr>
+            <tr><td><a href="#historical-email">메일</a></td><td>Oracle SMTP를 운영 서버에 적용. 기존 Gmail 시험 메일·자체 도메인 인증/복구 수신 기록</td><td>현재 운영 주소의 외부 수신함·iOS·실제 만료/실패·OCI 반송·신고 이벤트. SES 전환은 후속</td></tr>
+            <tr><td><a href="#historical-file-storage">파일 저장소</a></td><td>S3 버킷·역할·공개 차단·암호화 구축 및 실조회</td><td>검사 엔진 연결과 실제 파일 생명주기·권한·덮어쓰기 거부·삭제 재시도</td></tr>
+            <tr><td><a href="#historical-infrastructure">서버·경보·복구</a></td><td>AWS 배포·고정 HTTPS·관리자 허용망·서비스 7개 정상</td><td>최신 후보 배포 확인 뒤 기기 채팅 왕복·허용망 밖 거부·경보·백업 복구·롤백</td></tr>
           </tbody>
         </table></div>
       </section>
 
-      <section id="next-checks">
+      <section id="historical-next-checks">
         <h2>다음 확인 순서</h2>
         <p><strong>현재 진행 조건 — 2026-11-06:</strong> 서명·스토어 초기 설정과 Android 내부 테스트는 준비됐다. 남은 APNs·TestFlight·정식 스토어 입력을 확인한다. 최종 후보·운영 복구 규약은 아직 진행하지 않으며 Android 실기기는 추후 연결한다. 다음 서버·앱 배포와 남은 확인 순서는 현재 작업 목록을 따른다.</p>
         <ol>
@@ -154,7 +154,7 @@
         </ol>
       </section>
 
-      <section id="ios-distribution">
+      <section id="historical-ios-distribution">
         <h2>iOS 빌드·TestFlight 내부 테스트 절차</h2>
         <p><strong>서명 IPA 확인 — 2026-10-31 대조:</strong> 앱 6827137270·Bundle ID com.endside.saisoop.app·Team X8ACG93N8U, API 인증·Google/Maps/Firebase 입력과 수동 배포 서명 완료. 10월 27일 1.0.0 (1) IPA 서명 검증을 통과했다. TestFlight 업로드·설치·APNs 실제 연결·iPhone 검증은 아직 완료하지 않았다.</p>
         <ol>
@@ -204,7 +204,7 @@ bundle exec fastlane ios deploy</code></pre>
           다른 보관소의 가입·계약 상태는 확인하지 않았다.</p>
       </section>
 
-      <section id="android-distribution">
+      <section id="historical-android-distribution">
         <h2>Android 빌드·Google Play 테스트 절차</h2>
         <p><strong>내부 테스트 배포 — 2026-11-06 기록:</strong> 패키지 com.endside.saisoop.app의 1.0.0 (13)을 내부 트랙에 배포한 기록과 AAB 해시가 있다. 기존 서명·서비스 계정을 재사용한다. 배포 근거에서 내부 트랙 버전 13과 원격 AAB 해시를 확인한 기록을 따른다. 정식 공개와 실제 기기 여정은 별도다.</p>
         <p>Google 로그인은 10월 29일 사용자 성공 확인. 지도 수정 후 표시와 현재 번호 인증·사진·푸시·채팅은 실기기 검증을 남긴다. 10월 31일 운영 assetlinks.json의 패키지는 현재 값이지만 Play 앱 서명 SHA-256이 빠져 있다. 새 빌드는 원격 트랙 확인 후 5 이상의 번호를 사용한다. 아래 10월 10~12일 임시 환경 기록을 현재 미준비 목록으로 사용하지 않는다.</p>
@@ -254,7 +254,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
         <p><strong>완료 조건:</strong> Play에서 받은 앱의 첫 설치·업데이트·로그인·푸시가 성공하고, 공개에 필요한 계정별 테스트·접근 심사 상태를 기록한다.</p>
       </section>
 
-      <section id="ios-login-review">
+      <section id="historical-ios-login-review">
         <h2>iOS 로그인 구성과 심사 준비</h2>
         <p><strong>현재 코드:</strong> 앱과 서버의 활성 제공자는 이메일·Google이며 Apple은 비활성이다.
           이는 구현 설정의 설명이고, 그 조합으로 App Store 심사 요건을 충족했다는 뜻은 아니다.</p>
@@ -278,7 +278,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           기능 설명은 <a href="../features/F01-02.html#ios-launch-policy">현재 로그인 활성 상태와 iOS 공개 전 결정</a>에서 연결한다.</p>
       </section>
 
-      <section id="google-login">
+      <section id="historical-google-login">
         <h2>Google 로그인 등록과 실제 계정 확인</h2>
         <p><strong>진행 기록 — 2026-10-12:</strong> 운영자의 사용자 데이터 정책 동의 후
           <a href="https://console.cloud.google.com/auth/clients?project=endside-saisoop-prod">Saisoop Google 인증 플랫폼</a>에
@@ -316,7 +316,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           잘못된 audience·만료 토큰이 거부되고 서버와 앱의 계정 결과가 일치해야 한다.</p>
       </section>
 
-      <section id="firebase-push">
+      <section id="historical-firebase-push">
         <h2>Firebase·APNs 푸시 연결</h2>
         <p><strong>운영 적용 — 2026-10-26:</strong> AWS 배포 묶음에 Firebase 발송용 서비스 계정 파일을 배치했다. 현재 물리 기기나 업무 이벤트의 새 수신 결과는 확인하지 않았으며, iOS 설정·APNs와 최신 반환 완료 알림(H-526)은 실제 출시 후보에서 확인한다.</p>
         <p><strong>진행 기록 — 2026-10-10:</strong>
@@ -363,7 +363,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           서버 발송 수락·실제 휴대전화 표시·화면 이동은 따로 기록한다.</p>
       </section>
 
-      <section id="google-maps">
+      <section id="historical-google-maps">
         <h2>Google Maps 앱 지도 설정</h2>
         <p><strong>진행 기록 — 2026-10-12:</strong> 운영자의 승인 후 <code>endside-saisoop-prod</code>에 활성 결제 계정
           <code>내 결제 계정 1</code>을 연결하고 <code>Maps SDK for Android</code>를 활성화했다.
@@ -392,7 +392,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           사용량·쿼터·비용 경보 수신처를 정하고 키 제한 오류와 한도 초과 시 안내를 확인한다.</p>
       </section>
 
-      <section id="kakao-local">
+      <section id="historical-kakao-local">
         <h2>Kakao Local 주소 변환 설정</h2>
         <p><strong>운영 적용 — 2026-10-26:</strong> 운영 구성 기록에 AWS 서버 고정 IP의 Kakao REST 허용과 서버 컨테이너 주소 검색 200이 기록돼 있다. 이번 문서 대조에서 해당 공급자 호출을 새로 실행하지는 않았다. REST 허용과 별도로 Kakao native Android 패키지·키 해시 및 iOS Bundle ID의 콘솔 등록은 미확인이다.</p>
         <p><strong>진행 기록 — 2026-10-12:</strong> 운영자의 무료 쿼터 배정 승인 후
@@ -416,9 +416,9 @@ bundle exec fastlane android deploy track:internal</code></pre>
           별도 유료 경로 탐색 API 계약을 이미 사용 중인 것으로 적지 않는다.</p>
       </section>
 
-      <section id="auth-code-current"><h2>현재 메일은 링크 대신 6자리 번호를 보냅니다</h2><p>10월 29일 서버·앱은 가입 전 번호 확인, 비밀번호 찾기 번호 확인, Google 기존 이메일 계정 연결 번호 확인으로 바뀌었다. 번호는 10분·5회 오입력 제한, 재발송 60초·목적과 이메일별 24시간 10회다. 가입 표 60분·재설정 표 15분·Google 연결 표 30분을 별도로 검사한다. 운영 번호 인증 우회는 반드시 꺼져 있어야 한다.</p><p>현재 메일 제목은 <code>[사이숲] 회원가입 인증번호</code>, <code>[사이숲] 비밀번호 재설정 인증번호</code>, <code>[사이숲] 계정 연결 인증번호</code>다. Google 전용 계정의 비밀번호 찾기는 로그인 안내 메일을 보낸다. 10월 12일 링크 시험은 이 번호 방식의 실수신 증명이 아니다.</p></section>
+      <section id="historical-auth-code-current"><h2>현재 메일은 링크 대신 6자리 번호를 보냅니다</h2><p>10월 29일 서버·앱은 가입 전 번호 확인, 비밀번호 찾기 번호 확인, Google 기존 이메일 계정 연결 번호 확인으로 바뀌었다. 번호는 10분·5회 오입력 제한, 재발송 60초·목적과 이메일별 24시간 10회다. 가입 표 60분·재설정 표 15분·Google 연결 표 30분을 별도로 검사한다. 운영 번호 인증 우회는 반드시 꺼져 있어야 한다.</p><p>현재 메일 제목은 <code>[사이숲] 회원가입 인증번호</code>, <code>[사이숲] 비밀번호 재설정 인증번호</code>, <code>[사이숲] 계정 연결 인증번호</code>다. Google 전용 계정의 비밀번호 찾기는 로그인 안내 메일을 보낸다. 10월 12일 링크 시험은 이 번호 방식의 실수신 증명이 아니다.</p></section>
 
-      <section id="email">
+      <section id="historical-email">
         <h2>메일 발송 계약·도메인 인증·실수신</h2>
         <p><strong>운영 적용 — 2026-10-26:</strong> AWS API도 기존 Oracle의 mail.saisoop.co.kr:587 SMTP 중계와 STARTTLS를 사용한다. 메일 서버는 Oracle에 유지하며 SES 전환은 후속이다. 운영 자격정보 배치와 실제 고객 인증 메일 수신은 별개이므로, 현재 운영 도메인에서 번호 메일 수신·만료·반송·신고를 확인한다.</p>
         <p><strong>진행 기록 — 2026-10-12:</strong> 운영자가 안내한 기존 Oracle Cloud 메일 구성 문서를 확인했다.
@@ -473,7 +473,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           발송 API 성공만으로 수신 성공을 기록하지 않는다.</p>
       </section>
 
-      <section id="file-storage">
+      <section id="historical-file-storage">
         <h2>파일 저장소·검사·삭제 확인</h2>
         <p><strong>구축·실조회 — 2026-10-26:</strong> 업로드용·운영 자료용 S3 버킷 2개를 생성했고 서버는 인스턴스 역할로 접근한다. 두 버킷 모두 퍼블릭 접근 차단 4개 항목과 SSE-S3 암호화가 적용돼 있다. 가입·버킷 개설을 기다리는 상태는 끝났으며 실제 앱 파일 검증은 남아 있다.</p>
         <div class="table-wrap"><table>
@@ -492,9 +492,9 @@ bundle exec fastlane android deploy track:internal</code></pre>
         <p><strong>완료 조건:</strong> 실제 사진·영수증의 생성부터 검사·조회·권한 회수·삭제까지 앱·API·S3 결과가 일치한다. 버킷 구축이나 암호화 설정만으로 이 이용 검사를 통과 처리하지 않는다.</p>
       </section>
 
-      <section id="deployment-inputs-current"><h2>이번 배포에서 함께 관리할 입력과 확인</h2><p>차수 11에서 DB 시각 열 27개를 DATETIME으로 정리하고 JDBC 세션 시간대를 +09:00으로 고정했다. 마케팅 발신자 이름·연락 이메일·전화·주소 네 입력을 배포 검사와 API 기동에서 요구한다(H-546). 오늘 정상 기동만으로 입력 내용의 정확성이나 광고 메일 실수신을 승인하지 않는다. 처리 결과 통지·2년마다 동의 확인·주간 요약의 수신 거부까지 운영 내용으로 확인한다.</p><p>출시 전 광고 푸시·인앱 광고 입구를 새로 만들지는 않는다. 법적 문안 확인(H-544), 지급 증빙과 중복 지급 처리 결정(H-543), H-531의 실제 이용·배포 리허설은 별도 작업으로 남아 있다.</p></section>
+      <section id="historical-deployment-inputs-current"><h2>이번 배포에서 함께 관리할 입력과 확인</h2><p>차수 11에서 DB 시각 열 27개를 DATETIME으로 정리하고 JDBC 세션 시간대를 +09:00으로 고정했다. 마케팅 발신자 이름·연락 이메일·전화·주소 네 입력을 배포 검사와 API 기동에서 요구한다(H-546). 오늘 정상 기동만으로 입력 내용의 정확성이나 광고 메일 실수신을 승인하지 않는다. 처리 결과 통지·2년마다 동의 확인·주간 요약의 수신 거부까지 운영 내용으로 확인한다.</p><p>출시 전 광고 푸시·인앱 광고 입구를 새로 만들지는 않는다. 법적 문안 확인(H-544), 지급 증빙과 중복 지급 처리 결정(H-543), H-531의 실제 이용·배포 리허설은 별도 작업으로 남아 있다.</p></section>
 
-      <section id="infrastructure"><h2>서버·도메인·경보·복구 준비</h2>
+      <section id="historical-infrastructure"><h2>서버·도메인·경보·복구 준비</h2>
         <p>11월 6일 서버 네 프로그램을 배포하고 컨테이너 7개 정상·공개 확인 14건을 기록했다. 현재 대조한 배포 묶음은 <code>bundle-20261106T234042</code>다. 운영 API·관리자·채팅 주소와 기존 접근 제한을 사용한다. 이번 문서 갱신에서는 원격 상태를 재조회하지 않았다.</p>
         <div class="table-wrap"><table><thead><tr><th scope="col">프로그램</th><th scope="col">배포 근거</th><th scope="col">대조한 로컬 main</th><th scope="col">다음 확인</th></tr></thead><tbody><tr><td>공개 API</td><td>11월 6일 서버 배포 기록</td><td>1e699d4da</td><td>후속 목록·경보·정산 생성 수정 반영과 실제 이용</td></tr><tr><td>관리자 API</td><td>11월 6일 서버 배포 기록</td><td>1e699d4da</td><td>공개 저장소의 관리자 모듈. 역할별 실제 이용·관리자 웹 대조</td></tr><tr><td>관리자 웹</td><td>11월 6일 서버 배포 기록</td><td>fcd915ad6</td><td>후속 목록·거르기 변경의 배포와 실제 두 창 확인</td></tr><tr><td>실시간</td><td>11월 6일 서버 배포 기록</td><td>4faf491b2</td><td>앱과 두 기기 메시지·재접속 확인</td></tr><tr><td>고객 앱</td><td>Android 내부 테스트 1.0.0 (13)</td><td>de3ca3ba1</td><td>빌드 13 배포 뒤 실제 기기·푸시 확인</td></tr></tbody></table></div>
         <p>11월 6일 이력 재정리로 과거 배포 증거에 적힌 커밋과 현재 main의 번호가 다를 수 있다. 배포 시점의 이미지·파일 해시는 당시 증거를 사용하고, 로컬 main과 동일하게 배포됐다고 단정하지 않는다.</p>
@@ -502,20 +502,20 @@ bundle exec fastlane android deploy track:internal</code></pre>
         <p><strong>완료 조건:</strong> 같은 후보의 실제 로그인·관리자 권한·두 기기 메시지·파일 이용과 격리 복구를 확인한다. 서버 기동·내부 테스트 배포·단순 재시작은 이용 검사나 복원 완료의 근거가 아니다.</p>
       </section>
 
-      <section id="later">
+      <section id="historical-later">
         <h2>후속 기능의 외부 계약</h2>
         <p>아래 서비스는 해당 기능을 공개하기로 결정했을 때 준비한다. 현재 주최자 계좌 직접 송금은 플랫폼 수납·자동 지급·계좌 인증과 다르다.
           다만 직접 송금 자체의 계좌 안내·송금 신고·입금 확인·취소·환불은 서명 앱과 은행 내역으로 확인해야 한다.</p>
         <div class="table-wrap"><table>
           <thead><tr><th>공개할 기능</th><th>가입·계약·키와 설정 위치</th><th>실제 연동 완료 조건</th></tr></thead>
           <tbody>
-            <tr id="payment-contract"><td>플랫폼 결제·충전·저장 카드</td><td>TossPayments 가맹 계약·심사와 결제수단·빌링 이용 범위를 확인한다. 서버 <code>TOSS_SECRET_KEY</code>·<code>TOSS_CLIENT_KEY</code>·<code>TOSS_WEBHOOK_SECRET</code>, 앱 <code>TOSS_CLIENT_KEY</code>, 빌링 공급자 <code>PAYMENT_BILLING_AUTH_PROVIDER</code>를 연결한다.</td><td>소액 승인·취소·부분 환불·응답 유실·중복 요청·웹훅 재전송·장부 대조. 테스트 키 결과를 실결제로 세지 않는다.</td></tr>
-            <tr id="payout-contract"><td>출금·자동 지급</td><td>지급대행 계약·이용 권한·수취인 등록을 확인한다. 서버 <code>WITHDRAWAL_PAYOUT_PROVIDER</code>, <code>TOSS_PAYOUT_SECURITY_KEY</code>와 PG 인증을 연결한다.</td><td>실계좌 지급·실패·재시도·상태 조회·장부 대조. 키 발급만으로 남은 계좌 연결·출금 보완 개발이 완료되지는 않는다.</td></tr>
-            <tr id="identity-contract"><td>데이트 본인확인</td><td>Toss 또는 NICE를 선택해 계약·상품 권한·복귀 주소를 준비한다. 서버 <code>TOSS_CERT_CLIENT_ID</code>·<code>TOSS_CERT_CLIENT_SECRET</code> 또는 <code>NICE_CLIENT_ID</code>·<code>NICE_CLIENT_SECRET</code>·<code>NICE_PRODUCT_ID</code>·<code>NICE_RETURN_URL</code>.</td><td>실제 인증 성공·취소·실패·만료·변조 거부, 비공개 증빙 저장·관리자 확인·채팅·신고. 두 공급자를 모두 계약할 필요는 없다.</td></tr>
-            <tr id="bank-verification"><td>계좌 소액 인증</td><td>공급자와 확인 범위를 결정한 뒤 계약·연결을 개발한다. 현재 <code>BANK_ACCOUNT_VERIFICATION_PROVIDER</code> 기본값은 <code>FAKE</code>다.</td><td>실계좌 인증과 불일치·만료·중복 확인. 미인증 등록 계좌는 계속 인증 전으로 안내하며 첫 출시 직접 송금은 이 계약을 기다리지 않는다.</td></tr>
-            <tr id="extra-login"><td>카카오·네이버 추가 로그인</td><td>제공자 콘솔의 앱 등록·사용 설정·필요한 심사·클라이언트 키·native 설정을 준비한다. 카카오는 앱 <code>KAKAO_NATIVE_KEY</code>와 서버 <code>KAKAO_APP_ID</code>, 플랫폼 서명·복귀 경로를 맞춘다. 네이버는 SDK의 플랫폼별 Client ID·Client Secret·URL scheme 설정을 준비한다. 서버·앱 허용 목록도 함께 반영한다.</td><td>신규·기존·연결·해제·실패 및 카카오 기존 계정 이전·복구. Apple은 <a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a>에서 먼저 판단한다.</td></tr>
-            <tr id="google-calendar-contract"><td>Google Calendar 선택·프리미엄 자동 동기화</td><td>Calendar API, OAuth scope·필요한 검증·redirect를 준비한다. 서버 <code>GOOGLE_CALENDAR_CLIENT_ID</code>·<code>GOOGLE_CALENDAR_CLIENT_SECRET</code>·<code>GOOGLE_CALENDAR_REDIRECT_URI</code>, <code>CALENDAR_SYNC_CLIENT</code>.</td><td>선택·자동 전송은 10월 13일 반영했다. 같은 계정 재연결 보호와 Google 권한의 직접 철회 안내를 반영했다. 운영 OAuth·물리 기기·iOS의 실계정 확인은 남았다. <a href="#google-calendar">기존 연결 확인과 후속 공개 조건</a>을 따른다. 내부 일정과 파일 내보내기는 이 준비를 기다리지 않는다.</td></tr>
-            <tr id="virtual-account"><td>플랫폼 가상계좌 수납</td><td>별도 제품 결정 후 가상계좌 이용 계약·발급·환불·웹훅 설정을 준비한다. 서버 <code>VIRTUAL_ACCOUNT_PROVIDER</code>와 해당 PG 설정.</td><td>실제 발급·입금·기한 만료·환불·중복 통지·장부 대조. 현재 주최자 계좌 직접 송금과 함께 켜지 않는다.</td></tr>
+            <tr id="historical-payment-contract"><td>플랫폼 결제·충전·저장 카드</td><td>TossPayments 가맹 계약·심사와 결제수단·빌링 이용 범위를 확인한다. 서버 <code>TOSS_SECRET_KEY</code>·<code>TOSS_CLIENT_KEY</code>·<code>TOSS_WEBHOOK_SECRET</code>, 앱 <code>TOSS_CLIENT_KEY</code>, 빌링 공급자 <code>PAYMENT_BILLING_AUTH_PROVIDER</code>를 연결한다.</td><td>소액 승인·취소·부분 환불·응답 유실·중복 요청·웹훅 재전송·장부 대조. 테스트 키 결과를 실결제로 세지 않는다.</td></tr>
+            <tr id="historical-payout-contract"><td>출금·자동 지급</td><td>지급대행 계약·이용 권한·수취인 등록을 확인한다. 서버 <code>WITHDRAWAL_PAYOUT_PROVIDER</code>, <code>TOSS_PAYOUT_SECURITY_KEY</code>와 PG 인증을 연결한다.</td><td>실계좌 지급·실패·재시도·상태 조회·장부 대조. 키 발급만으로 남은 계좌 연결·출금 보완 개발이 완료되지는 않는다.</td></tr>
+            <tr id="historical-identity-contract"><td>데이트 본인확인</td><td>Toss 또는 NICE를 선택해 계약·상품 권한·복귀 주소를 준비한다. 서버 <code>TOSS_CERT_CLIENT_ID</code>·<code>TOSS_CERT_CLIENT_SECRET</code> 또는 <code>NICE_CLIENT_ID</code>·<code>NICE_CLIENT_SECRET</code>·<code>NICE_PRODUCT_ID</code>·<code>NICE_RETURN_URL</code>.</td><td>실제 인증 성공·취소·실패·만료·변조 거부, 비공개 증빙 저장·관리자 확인·채팅·신고. 두 공급자를 모두 계약할 필요는 없다.</td></tr>
+            <tr id="historical-bank-verification"><td>계좌 소액 인증</td><td>공급자와 확인 범위를 결정한 뒤 계약·연결을 개발한다. 현재 <code>BANK_ACCOUNT_VERIFICATION_PROVIDER</code> 기본값은 <code>FAKE</code>다.</td><td>실계좌 인증과 불일치·만료·중복 확인. 미인증 등록 계좌는 계속 인증 전으로 안내하며 첫 출시 직접 송금은 이 계약을 기다리지 않는다.</td></tr>
+            <tr id="historical-extra-login"><td>카카오·네이버 추가 로그인</td><td>제공자 콘솔의 앱 등록·사용 설정·필요한 심사·클라이언트 키·native 설정을 준비한다. 카카오는 앱 <code>KAKAO_NATIVE_KEY</code>와 서버 <code>KAKAO_APP_ID</code>, 플랫폼 서명·복귀 경로를 맞춘다. 네이버는 SDK의 플랫폼별 Client ID·Client Secret·URL scheme 설정을 준비한다. 서버·앱 허용 목록도 함께 반영한다.</td><td>신규·기존·연결·해제·실패 및 카카오 기존 계정 이전·복구. Apple은 <a href="#historical-ios-login-review">iOS 로그인 구성과 심사 준비</a>에서 먼저 판단한다.</td></tr>
+            <tr id="historical-google-calendar-contract"><td>Google Calendar 선택·프리미엄 자동 동기화</td><td>Calendar API, OAuth scope·필요한 검증·redirect를 준비한다. 서버 <code>GOOGLE_CALENDAR_CLIENT_ID</code>·<code>GOOGLE_CALENDAR_CLIENT_SECRET</code>·<code>GOOGLE_CALENDAR_REDIRECT_URI</code>, <code>CALENDAR_SYNC_CLIENT</code>.</td><td>선택·자동 전송은 10월 13일 반영했다. 같은 계정 재연결 보호와 Google 권한의 직접 철회 안내를 반영했다. 운영 OAuth·물리 기기·iOS의 실계정 확인은 남았다. <a href="#historical-google-calendar">기존 연결 확인과 후속 공개 조건</a>을 따른다. 내부 일정과 파일 내보내기는 이 준비를 기다리지 않는다.</td></tr>
+            <tr id="historical-virtual-account"><td>플랫폼 가상계좌 수납</td><td>별도 제품 결정 후 가상계좌 이용 계약·발급·환불·웹훅 설정을 준비한다. 서버 <code>VIRTUAL_ACCOUNT_PROVIDER</code>와 해당 PG 설정.</td><td>실제 발급·입금·기한 만료·환불·중복 통지·장부 대조. 현재 주최자 계좌 직접 송금과 함께 켜지 않는다.</td></tr>
           </tbody>
         </table></div>
         <p>계약·키의 공식 기준은 <a href="https://docs.tosspayments.com/reference/using-api/api-keys">TossPayments API 키 안내</a>와
@@ -525,7 +525,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           후속 기능별 남은 구현은 <a href="launch-status.html#next">후속 기능 준비</a>와 함께 확인한다.</p>
       </section>
 
-      <section id="digital-billing">
+      <section id="historical-digital-billing">
         <h2>디지털 상품·구독의 결제 방식 결정</h2>
         <p>마켓 디지털 콘텐츠·앱 기능 구독·기간권은 판매할 상품과 국가별 배포 방식을 기준으로 스토어 결제 적용 여부를 먼저 결정한다.
           <strong>PG 계약만으로 모든 앱 내 디지털 판매가 가능한 것으로 가정하지 않는다.</strong>
@@ -537,22 +537,22 @@ bundle exec fastlane android deploy track:internal</code></pre>
           오프라인 모임 비용의 주최자 직접 수납과 디지털 상품을 한 결제 유형으로 묶지 않는다.</p>
       </section>
 
-      <section id="store-submission">
+      <section id="historical-store-submission">
         <h2>스토어 제출 자료와 공개 확인</h2>
         <ul>
           <li>운영 도메인의 개인정보처리방침·이용약관·고객지원·탈퇴 안내를 준비하고 앱과 스토어의 링크를 실제로 연다.</li>
           <li>로그인·위치·사진·알림 등 실제 수집·이용·삭제 동작에 맞춰 개인정보 및 데이터 안전성 응답, 권한 설명, 연령 등급과 스크린샷을 작성한다.</li>
           <li>심사 계정과 필요한 역할·사용 방법을 제공하고 심사 중 서버에 접속할 수 있게 한다.</li>
-          <li><a href="#ios-login-review">iOS 로그인 구성과 심사 준비</a>,
-            <a href="#android-distribution">Android 빌드·Google Play 테스트 절차</a>,
-            유료 기능이 있다면 <a href="#digital-billing">디지털 상품·구독의 결제 방식 결정</a>을 완료한다.</li>
+          <li><a href="#historical-ios-login-review">iOS 로그인 구성과 심사 준비</a>,
+            <a href="#historical-android-distribution">Android 빌드·Google Play 테스트 절차</a>,
+            유료 기능이 있다면 <a href="#historical-digital-billing">디지털 상품·구독의 결제 방식 결정</a>을 완료한다.</li>
           <li>검사한 설치 파일과 제출할 앱의 버전·빌드 번호를 맞추고 공개 대상·시점·중단 기준을 기록한다.</li>
         </ul>
         <p>업로드 성공·TestFlight 설치·Google Play 내부 테스트·스토어 공개 승인은 각각 다른 상태다.
           <a href="launch-status.html#gates">공개 승인 기준</a>을 충족하고 실제 승인 결과가 있을 때만 공개 완료로 기록한다.</p>
       </section>
 
-      <section id="evidence">
+      <section id="historical-evidence">
         <h2>운영자가 남길 완료 기록</h2>
         <p>운영자 한 사람이 서비스별로 아래 양식을 채운다. 인증·DNS·권한·복구 같은 검증 결과와 비밀 보관 위치를 남기되,
           비밀번호·키 본문·토큰·OTP·원문 계좌번호·신분증은 문서에 저장하지 않는다.</p>
@@ -568,7 +568,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
           <a href="launch-status.html">첫 출시 현황과 남은 준비</a>와 해당 서비스의 상태를 함께 갱신한다.</p>
       </section>
 
-      <section id="source-basis">
+      <section id="historical-source-basis">
         <p><strong>2026-10-26 현재 상태의 근거:</strong> 루트 저장소의 docs/release-gate/infrastructure/PRODUCTION_SERVER_CONFIG.md(운영 구성 기록), deploy/production/.runtime/aws/images.prd.json(배포 소스·이미지), 앱의 비공개 prod.json에서 비밀을 제외한 주소·입력 유무를 대조했다. AWS 읽기 전용 조회로 스택·EC2·SSM·S3 설정·백업 객체·스냅샷·경보를 확인하고, SSM에서 실행 컨테이너의 이미지 ID·상태만 읽었다. 실제 조회 범위는 작업 공간의 <code>business_logic/verification/document-sync-2026-10-26.json</code>에 남긴다. 공급자 콘솔이나 물리 기기에서 실행하지 않은 항목은 미확인으로 유지한다.</p>
         <h2>설정 이름과 문서의 확인 근거</h2>
         <p>설정·절차는 2026년 10월 7일 소스를 기준으로 작성하고, 10월 12일 진행 기록·검증 산출물과 인증·Firebase 변경 소스를 추가 대조했다.
@@ -593,7 +593,7 @@ bundle exec fastlane android deploy track:internal</code></pre>
         <p>이전 참고 문서에 남은 Firebase 파일 복사 방식·시뮬레이션 상태·전체 PG 키 필수 안내를 현재 소스의 동작으로 그대로 옮기지 않았다.
           공급자 요건은 각 섹션의 공식 안내를 사용하며 실제 가입·제출 시 다시 확인한다.</p>
       </section>
-<section id="google-calendar">
+<section id="historical-google-calendar">
         <h2>Google Calendar의 기존 연결 확인과 후속 공개 조건</h2>
         <p><strong>확인한 범위:</strong> 선택·프리미엄 자동 동기화 구현과 자동 검사 기록이 있습니다. Android 에뮬레이터의 실제 Google 계정으로 생성·변경·삭제·토큰 갱신·연결 해제도 확인했습니다. 운영 배포·물리 기기·iOS 통과를 뜻하지는 않습니다.</p>
         <ol>
@@ -605,7 +605,8 @@ bundle exec fastlane android deploy track:internal</code></pre>
         <p>첫 출시 내부 캘린더와 일정 파일 내보내기는 이 후속 기능을 기다리지 않습니다.
           <a href="../domains/10-calendar.html#google-sync">선택·프리미엄 자동 동기화의 상세 범위와 완료 기준</a> · <a href="launch-status.html#item-N-12-CALENDAR">Google Calendar의 남은 작업</a></p>
       </section>
-    </main>
+    </div></details>
+</main>
   </div>
   <script src="../assets/sidebar.js"></script>
   <script src="../assets/app.js"></script>

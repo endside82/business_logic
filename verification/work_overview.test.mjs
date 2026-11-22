@@ -57,14 +57,14 @@ test('the site can open shared task and view URLs directly', () => {
 test('scopes, dependency paths and resources work in the published script', () => {
   const page = open();
   page.click({ scope: 'conditional' });
-  assert.ok(page.ids().includes('H-511'));
-  assert.ok(page.ids().includes('H-528'));
+  assert.deepEqual(page.ids(), ['H-578']);
+  assert.ok(!data.tasks.some(task => ['H-511', 'H-528'].includes(task.id)), '정본에서 빠진 옛 조건부 작업을 되살리지 않음');
   assert.ok(!page.ids().includes('H-248'));
   page.click({ scope: 'now' });
   assert.ok(page.ids().includes('H-568'));
   assert.ok(!data.tasks.some(task => task.id === 'H-542'), '완료한 구조 재정비를 남은 작업으로 되돌리지 않음');
   assert.ok(!data.tasks.some(task => task.id === 'H-505'), '완료된 푸시 갱신 작업을 다음 개발로 되돌리지 않음');
-  assert.ok(!page.ids().includes('H-528'));
+  assert.ok(!page.ids().includes('H-578'));
   page.click({ scope: 'launch' });
   assert.ok(page.ids().includes('H-531'));
   assert.ok(!data.tasks.some(task => ['H-497', 'H-525', 'H-526', 'H-527'].includes(task.id)));

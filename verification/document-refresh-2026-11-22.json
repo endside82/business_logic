@@ -477,7 +477,9 @@
         "completion_criteria_current_20261122",
         "feature_status_current_20261122",
         "changelog_current_20261122",
-        "launch_current_20261122"
+        "launch_current_20261122",
+        "external_current_20261122",
+        "work_overview_current_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2328,8 +2330,10 @@
       "document": false,
       "baselineSha256": "3e287860b1f4183334112c47d50ccb49a99e598e90ba0f599f3925e0ae177855",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "work_overview_current_20261122"
+      ]
     },
     {
       "path": "docs/assets/work-overview.js",
@@ -2338,8 +2342,10 @@
       "document": false,
       "baselineSha256": "269403aa5990a3bec7ba0951621c0eda93bac79673707023d441d35b5042bcb5",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "work_overview_current_20261122"
+      ]
     },
     {
       "path": "docs/assets/work-overview.snapshot.json",
@@ -2347,9 +2353,12 @@
       "kind": "site_asset_or_data",
       "document": false,
       "baselineSha256": "e98984122bd5b4ea77b3e3afd8b9d481af9e5a2121696571be046e9b8497d73c",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "work_overview_current_20261122"
+      ],
+      "reviewedSha256": "cd489203726475d0312de8891459a0b8b9f074515f9406ff7a04ea94093bdd90"
     },
     {
       "path": "docs/domains/01-auth.html",
@@ -4994,9 +5003,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "88856ced8063016b4b3621ba4a8c6592920e6d8d4f136eeac6011c53d537eb61",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "work_overview_current_20261122"
+      ],
+      "reviewedSha256": "bbcf6581a6789d6910229c2a3189b4637184ef45093ad6367e57f3b70ea3a3be"
     },
     {
       "path": "docs/money-flow/flowcharts.html",
@@ -5261,9 +5273,13 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d9babda9a0f6ea7d6452f136b35f204f7b896044cf4e2753f20a8929a1aedbc4",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "external_current_20261122",
+        "work_overview_current_20261122"
+      ],
+      "reviewedSha256": "f3ee3b3334a535d164df7b721e116ce965dbf5951fa18039aa82be88bf3ed783"
     },
     {
       "path": "docs/qa/feature-status.html",
@@ -5288,9 +5304,10 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "launch_current_20261122"
+        "launch_current_20261122",
+        "work_overview_current_20261122"
       ],
-      "reviewedSha256": "3fb3c3dd50cbfb65e4b923f1de33b28476a93788d4eb54b4aaaf6ec64ba4bc57"
+      "reviewedSha256": "b3f8d9905692c96a2b7f30480482f3cef7774bf501931105971d959e384a3b1d"
     },
     {
       "path": "docs/qa/migration-status.html",
@@ -8932,9 +8949,12 @@
       "kind": "verification_reference",
       "document": false,
       "baselineSha256": "52297dafdcf5939d39fbcd89fa676c566b8cb23464178bd2d6fea07355dd31ef",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "work_overview_current_20261122"
+      ],
+      "reviewedSha256": "dba3b7f426b56756f4e8a2aaf7c485ad00fd0b82601ecc93f5f5b215fd61650a"
     },
     {
       "path": ".claude/settings.local.json",
@@ -53798,6 +53818,305 @@
       "observedSourceVersions": {
         "community_api": "199b34a05aa4a06ea578b03bafe21d6eb1635cd7",
         "community_app": "e2f2e16574cf68ea7c2be179f726a1c392bf49a1"
+      }
+    },
+    "external_current_20261122": {
+      "kind": "source_review",
+      "scope": "외부 준비 현재 안내를 배포 인계/Android/iOS 가이드 및 검증된 기능 정본으로 재구성. 의미별 기존 앵커는 현재 안내로 이동, 날짜별 과거 내용은 id/href만 historical 접두어로 바꿔 전부 보존. 예전 외부 화면·명령을 새 검증했다고 하지 않음.",
+      "sources": [
+        {
+          "path": "community_app/docs/ANDROID_RELEASE.md",
+          "sha256": "50d434aaaeda42d7405b363ef4ae2e5ffbbde02f34f8fa3256f06a1ba0f91d53",
+          "reviewScope": "현재 내부 테스트와 자동 배포 설정에서 빌드16 전체 및 다음 빌드 관계 1700문자"
+        },
+        {
+          "path": "community_app/docs/IOS_RELEASE.md",
+          "sha256": "f634696c1226fe050d7acb0088ef45adb98f6556bf69b7821b55acd6c703e561",
+          "reviewScope": "첫 1800문자: 현재 등록·IPA1·미업로드·남은 실기기·가이드 진입·설정 위치"
+        },
+        {
+          "path": "docs/plan/WORKLIST.md",
+          "sha256": "d5560320324efe4f5273783a9af51a107795da0aba09b8af7780ccca4c293698",
+          "reviewScope": "현재 작업 62행·세부·착수·연결 무결성 및 다섯 버전 파서 대조; 버전표는 source/deployed 구분"
+        },
+        {
+          "path": "docs/release-gate/evidence/API-RELEASE-20261113a.json",
+          "sha256": "56010a32d8dc29168322479ea5e99b5e48cf64449f0837c781f2041bcc192ae1",
+          "reviewScope": "선택 범위: 11/13·11/15 배포의 날짜·범위·소스·사후 확인·미확인; 새 운영 실행 아님"
+        },
+        {
+          "path": "docs/release-gate/evidence/API-RELEASE-20261115a.json",
+          "sha256": "3577220a651c1d65997d57067f6d668894ba1b489fac9ceb688b1099624e551d",
+          "reviewScope": "선택 범위: 11/13·11/15 배포의 날짜·범위·소스·사후 확인·미확인; 새 운영 실행 아님"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md",
+          "sha256": "b6af68643938b94cbc7d82f6233399709d030ee9136db518f7c9d117df1d74c0",
+          "reviewScope": "동일 SHA launch_current의 현재 배포·iOS·브랜드·웹·운영·보류 범위 재사용"
+        },
+        {
+          "path": "community_app/docs/DEPLOYMENT_CHECKLIST.md",
+          "sha256": "824216565ab27803e40bdbf6b7a13f86b2f429755727ebb086c42e19bd798ad3",
+          "reviewScope": "기존 전체 4532문자 대조와 동일 SHA 재사용"
+        }
+      ],
+      "reuses": [
+        "date_identity_profile_20261122",
+        "email_code_auth_20261122",
+        "launch_current_20261122",
+        "settlement_account_20261122",
+        "signup_social_onboarding_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/qa/launch-status.html",
+          "sha256": "b3f8d9905692c96a2b7f30480482f3cef7774bf501931105971d959e384a3b1d"
+        },
+        {
+          "path": "business_logic/docs/qa/completion-criteria.html",
+          "sha256": "e3fff22d97f7038fa425b06e530bfb217eadd150200190c1246b146c1cd01921"
+        },
+        {
+          "path": "business_logic/prd/04_qa_acceptance/release_readiness_checklist.md",
+          "sha256": "db29c0ba5c9ea780850953b5ccc9e370c447047274be2b7741d743afdd7c91fe"
+        },
+        {
+          "path": "business_logic/docs/policies/payment.html",
+          "sha256": "aa73dc4b7b7abe8b0452a6988bb5025466fdbe7378e2f4cfdaa56f8d0b0c1e5a"
+        },
+        {
+          "path": "business_logic/docs/policies/privacy.html",
+          "sha256": "edbb92832d776d06f72ae5f2e59c9fc8016b25fbf2eb7c6152ac8f6c15aaaa8e"
+        },
+        {
+          "path": "business_logic/docs/features/content-photos.html",
+          "sha256": "fa149f3834e41ce5022189b801be6f1fea60cfe4aba843740205851e8fcb8e22"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/qa/external-readiness.html": [
+          "sidebar",
+          "progress-2026-10-29",
+          "progress-2026-10-31",
+          "progress-2026-11-02",
+          "progress-2026-11-06",
+          "brand-ready",
+          "progress-2026-10-26",
+          "admin-session-security",
+          "public-pages-2026-10-13",
+          "progress-2026-10-12",
+          "order",
+          "required",
+          "next-checks",
+          "ios-distribution",
+          "android-distribution",
+          "ios-login-review",
+          "google-login",
+          "firebase-push",
+          "google-maps",
+          "kakao-local",
+          "auth-code-current",
+          "email",
+          "file-storage",
+          "deployment-inputs-current",
+          "infrastructure",
+          "later",
+          "payment-contract",
+          "payout-contract",
+          "identity-contract",
+          "bank-verification",
+          "extra-login",
+          "google-calendar-contract",
+          "virtual-account",
+          "digital-billing",
+          "store-submission",
+          "evidence",
+          "source-basis",
+          "google-calendar"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "11/12 Android16과 10/27 iOS IPA1의 실제 남은 범위 분리",
+        "로고·서명·외부 설정 재사용; 공급자 연결과 실제 수신·설치·공개 구분",
+        "옛 경보0개/빌드13/미업로드를 현재 운영 상태로 확대하지 않음",
+        "제품 시험·외부조회·법무 판단 미수행"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/qa/external-readiness.html",
+          "pattern": "<div id=\"historical-external-body\">([\\s\\S]*?)</div></details>",
+          "sha256": "d47ac3d9c62bb6882d5b690739e045780ac79c55c0d824cf8938acd4fcd0f276"
+        }
+      ],
+      "reviewedAt": "2026-11-23",
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "13 source/canonical digests; 38 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 3 paths, 133 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; canonical reconciliation, historical text preservation and local links only"
+      },
+      "observedSourceVersions": {
+        "community_api": "199b34a05aa4a06ea578b03bafe21d6eb1635cd7",
+        "community_app": "0f822349485ff63e7d69d1d23d7b2d7011387f69"
+      }
+    },
+    "work_overview_current_20261122": {
+      "kind": "source_review",
+      "scope": "현재 NEXT_WORK 62행·세부·착수 조건과 WORKLIST 분류를 기존 정본 파서로 전수 대조. 버전 셀 로컬 접두어만 메모리 파서 보정. 수동 요약·자원·단계를 현재 날짜별 증거에 맞춰 갱신; 기존 실행 요약은 역사 기록 보존. 참조 페이지는 생성기로 덮어쓰지 않음.",
+      "sources": [
+        {
+          "path": "scripts/build-work-overview.py",
+          "sha256": "537b43662960bb357fb5e663d7726d46c5d5ae854d38eac44fbd264c5a4ad892",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        },
+        {
+          "path": "scripts/work_overview_site.py",
+          "sha256": "50feea38b7ddfdf6b3f58a394ae83d4d58ee650d2324cd926bcdf627d1d1a5ed",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        },
+        {
+          "path": "scripts/next_work_table.py",
+          "sha256": "bdd7190599955d9d43b44aaf2e6df98bcbfedf94e551f7adae68eae1671295a0",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        },
+        {
+          "path": "scripts/templates/work-overview.html",
+          "sha256": "448a57ca63430ca4118bec129cc4d414597097a6a743d2cdfacaa9844ac2ee9c",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "docs/plan/NEXT_WORK.md",
+          "sha256": "63d5c9fe56f8514e3c13eda10d5c17092037af4d0021262dff5f4a1c2a1fa997",
+          "reviewScope": "현재 작업 62행·세부·착수·연결 무결성 및 다섯 버전 파서 대조; 버전표는 source/deployed 구분"
+        },
+        {
+          "path": "docs/plan/WORKLIST.md",
+          "sha256": "d5560320324efe4f5273783a9af51a107795da0aba09b8af7780ccca4c293698",
+          "reviewScope": "현재 작업 62행·세부·착수·연결 무결성 및 다섯 버전 파서 대조; 버전표는 source/deployed 구분"
+        },
+        {
+          "path": "docs/release-gate/LAUNCH_COMPLETION_OVERVIEW.md",
+          "sha256": "b6af68643938b94cbc7d82f6233399709d030ee9136db518f7c9d117df1d74c0",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        },
+        {
+          "path": "docs/release-gate/evidence/API-RELEASE-20261113a.json",
+          "sha256": "56010a32d8dc29168322479ea5e99b5e48cf64449f0837c781f2041bcc192ae1",
+          "reviewScope": "선택 범위: 11/13·11/15 배포의 날짜·범위·소스·사후 확인·미확인; 새 운영 실행 아님"
+        },
+        {
+          "path": "docs/release-gate/evidence/API-RELEASE-20261115a.json",
+          "sha256": "3577220a651c1d65997d57067f6d668894ba1b489fac9ceb688b1099624e551d",
+          "reviewScope": "선택 범위: 11/13·11/15 배포의 날짜·범위·소스·사후 확인·미확인; 새 운영 실행 아님"
+        },
+        {
+          "path": "community_app/docs/ANDROID_RELEASE.md",
+          "sha256": "50d434aaaeda42d7405b363ef4ae2e5ffbbde02f34f8fa3256f06a1ba0f91d53",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        },
+        {
+          "path": "community_app/docs/IOS_RELEASE.md",
+          "sha256": "f634696c1226fe050d7acb0088ef45adb98f6556bf69b7821b55acd6c703e561",
+          "reviewScope": "기존 대조와 동일 SHA의 범위 재사용; 현황판 생성/공개 링크 변환·검사 경로는 문서 도구 코드 읽기"
+        }
+      ],
+      "reuses": [
+        "external_current_20261122",
+        "release_sharing_current_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/docs/qa/launch-status.html",
+          "sha256": "b3f8d9905692c96a2b7f30480482f3cef7774bf501931105971d959e384a3b1d"
+        },
+        {
+          "path": "business_logic/docs/qa/external-readiness.html",
+          "sha256": "f3ee3b3334a535d164df7b721e116ce965dbf5951fa18039aa82be88bf3ed783"
+        },
+        {
+          "path": "business_logic/docs/qa/completion-criteria.html",
+          "sha256": "e3fff22d97f7038fa425b06e530bfb217eadd150200190c1246b146c1cd01921"
+        },
+        {
+          "path": "business_logic/docs/qa/sharing-plan.html",
+          "sha256": "73fa1bf8ba50ad119a34304b8639900a5ea2f28ecb3a0dbc0491f1867b4a6e14"
+        },
+        {
+          "path": "business_logic/docs/features/catalog.html",
+          "sha256": "ce9642c1c564f209575be27af76a439deede99fd331045f435f58791bc6bffad"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/index.html": [
+          "sidebar",
+          "work-dashboard",
+          "tab-overview",
+          "tab-resources",
+          "tab-work",
+          "view-overview",
+          "next-actions",
+          "resource-summary",
+          "development-status",
+          "scope-map",
+          "plan-overview",
+          "flow",
+          "parallel-work",
+          "stage-detail",
+          "dependency-map",
+          "view-resources",
+          "resource-grid",
+          "view-work",
+          "plan-work",
+          "scope-choices",
+          "query",
+          "resource-filter",
+          "kind-filter",
+          "reset-filters",
+          "result-count",
+          "stage-filter",
+          "work-list",
+          "versions",
+          "print-page",
+          "task-dialog",
+          "dialog-content",
+          "work-data"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "H-590 조건 변경과 WORKLIST 다섯 버전 반영; 다른 61개 작업의 핵심 텍스트·조건은 공개본과 일치",
+        "옛 빌드13/14·11월7일 다음 행동을 현재 근거와 조건으로 교정",
+        "원본 생성기의 버전셀 파서가 로컬 접두어에서 실패함; 원본 저장소는 수정하지 않고 대조용 읽기 파서만 보정",
+        "현재 정본과 후속 소스 변화의 최종 경계 감사는 별도"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/index.html",
+          "pattern": "(<details class=\"panel status-summary\" id=\"historical-dashboard-summary\">[\\s\\S]*?</details>)",
+          "sha256": "7b6de12c4469210418c71afeea320ff09cbeda84b325eee954808199f2312820"
+        }
+      ],
+      "reviewedAt": "2026-11-23",
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "16 source/canonical digests; 32 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 3 paths, 133 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; published document VM and canonical parser checks only"
+      },
+      "observedSourceVersions": {
+        "community_api": "199b34a05aa4a06ea578b03bafe21d6eb1635cd7",
+        "community_app": "0f822349485ff63e7d69d1d23d7b2d7011387f69"
       }
     }
   },
