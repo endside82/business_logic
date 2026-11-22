@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,304개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,306개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1304,
+    "documentedScenarioItems": 1306,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4965,
     "journeyFilesScanned": 336,
@@ -11568,14 +11568,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-07",
       "domain": "플랜 마켓",
-      "name": "크리에이터 프로필/통계",
-      "scenarioCount": 9,
+      "name": "크리에이터 프로필·판매 현황",
+      "scenarioCount": 11,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-07_creator-profile-stats/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 11
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-07_creator-profile-stats/backend.md",
@@ -11621,11 +11621,12 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_market_discovery_funnel_test.dart"
+          "community_app/integration_test/seed_market_discovery_funnel_test.dart",
+          "community_app/test/presentation/profile/creator_stats_screen_test.dart"
         ],
         "markerCandidateFiles": []
       },

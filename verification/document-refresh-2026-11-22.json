@@ -289,7 +289,8 @@
         "plan_detail_20261122",
         "plan_reorder_20261122",
         "plan_publish_20261122",
-        "market_management_20261122"
+        "market_management_20261122",
+        "creator_stats_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3528,9 +3529,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "f1aa29fd710055f82e45efc615bf7450ee5659a613f13b8bd8feceb4aaca1501",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "creator_stats_20261122"
+      ],
+      "reviewedSha256": "0bf37ae6e4e07a35c3b1fce222c136fc14e3dd8ebc47cd31b76ef46436ec8654"
     },
     {
       "path": "docs/features/F08-08.html",
@@ -5009,7 +5013,8 @@
         "plan_detail_20261122",
         "plan_reorder_20261122",
         "plan_publish_20261122",
-        "market_management_20261122"
+        "market_management_20261122",
+        "creator_stats_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5093,7 +5098,8 @@
         "plan_detail_20261122",
         "plan_reorder_20261122",
         "plan_publish_20261122",
-        "market_management_20261122"
+        "market_management_20261122",
+        "creator_stats_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5201,7 +5207,8 @@
         "plan_detail_20261122",
         "plan_reorder_20261122",
         "plan_publish_20261122",
-        "market_management_20261122"
+        "market_management_20261122",
+        "creator_stats_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6631,10 +6638,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "0cab9d9ba36559c8fe38d4c6e1d7b512dc13bd92b6e8faad2bfca703aa294bae",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "creator_stats_20261122"
+      ],
+      "reviewedSha256": "619393746c996dc2b5405c9ce2466f3955290177372c0f1187669ea040d06c76"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-08_market-main-browse_prd.md",
@@ -7999,7 +8008,8 @@
         "plan_detail_20261122",
         "plan_reorder_20261122",
         "plan_publish_20261122",
-        "market_management_20261122"
+        "market_management_20261122",
+        "creator_stats_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8235,7 +8245,8 @@
         "plan_detail_20261122",
         "plan_reorder_20261122",
         "plan_publish_20261122",
-        "market_management_20261122"
+        "market_management_20261122",
+        "creator_stats_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12183,9 +12194,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3c05fdc867f36061bbb2e5acfe195d06a99e3a563de9dd96ca6422c03cec56a9",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "creator_stats_20261122"
+      ],
+      "reviewedSha256": "598d51b42e1671d4820563d398b6b6db5464718a6e0940df65d69b7cb851cc6a"
     },
     {
       "path": "units/08_plan_market/F08-07_creator-profile-stats/diagrams.md",
@@ -12193,9 +12207,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "946a226407e5ecb212fc54b637d38fdec84d7408396e029d3ea3d97c54873ff6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "creator_stats_20261122"
+      ],
+      "reviewedSha256": "9e663e57247d36a11429fa06bac9069b790246057295c04dabe4212295dadfc4"
     },
     {
       "path": "units/08_plan_market/F08-07_creator-profile-stats/frontend.md",
@@ -12203,9 +12220,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "eb287294dee09275a35fead49c49f2bfea46651c3739c116afb6663896ace542",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "creator_stats_20261122"
+      ],
+      "reviewedSha256": "eb216aeb69e7fcb8cd4a4a744d636d684f7d74ba141e3e3b692e8e857bcd205e"
     },
     {
       "path": "units/08_plan_market/F08-07_creator-profile-stats/scenarios.md",
@@ -12213,9 +12233,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f8082b0ecef76eede71c689ef15f89befe710e63209379b7ca4e5be7207dac64",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "creator_stats_20261122"
+      ],
+      "reviewedSha256": "1638c57e02bb16ddd0140144b5a2b6b64a369d60552cced473e8a85eaa4f0b3e"
     },
     {
       "path": "units/08_plan_market/F08-08_market-main-browse/backend.md",
@@ -31636,6 +31659,227 @@
         "relativeLinksAndDerivedDigests": "2949 relative paths and 349 derived digests checked; global checker still fails only recorded my_profile source drift",
         "productTests": "not executed; selected existing assertions read only",
         "releaseScope": "known global date discrepancy remains; unchanged checker not rerun"
+      }
+    },
+    "creator_stats_20261122": {
+      "kind": "source_review",
+      "scope": "프로필/본인통계 인증·상호차단·실제 메뉴/카드 라우트·17개 통계의 원천과 상태 필터·대표플랜 실패 처리·갱신·선택 시험 단언 대조. 제품 실행이나 신규 시험 통과 기록 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/CreatorController.java",
+          "sha256": "44fc1e5840af68890643831091045eda186422bf2e41484deb304318f3503866",
+          "reviewScope": "16–38: MARKET·프로필과 본인통계 required principal·GET 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/CreatorService.java",
+          "sha256": "52602faf6ddd2c0ecc0dac13dde97766985eab1de9ad4b23ded9c598df412f73",
+          "reviewScope": "43–139: 상호차단/본인예외·프로필7필드·통계17필드 집계/0분모"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/CreatorProfileVo.java",
+          "sha256": "421c5703196ecd7007e49c6a6a73eebaaeaafa30e82964302d395b6d8e8aa274",
+          "reviewScope": "8–18: 프로필 반환 필드·nullable 평균별점"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/CreatorStatsVo.java",
+          "sha256": "7d4c6e85e48a8a679bf25a4ebbea9fd3b36405988e034cc113551e1269dc77e3",
+          "reviewScope": "8–69: 17개 통계 필드와 금액/횟수 타입"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/port/CreatorProfileAccountAdapter.java",
+          "sha256": "b2d5326fc96f5972315ae133b2582fa1c006f0f1d7d8e83328a0b43114d53c79",
+          "reviewScope": "18–35: 계정/닉네임/가입일·회원 프로필 이미지키"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/port/CreatorStatsPaymentAdapter.java",
+          "sha256": "bb5657866eaa594cca1c68dd0ea3a6e3edbfda763b19e41f13ccb1db3b900b71",
+          "reviewScope": "20–51: 환불·분쟁·보류액 조회 위임"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/model/PlanPurchase.java",
+          "sha256": "b9ff8a738a0f7b3512f01123a3a9617dabbe8cf5fec9d07318b3d5904b93f6cb",
+          "reviewScope": "엔티티 선언 검색: 환불/상태를 자동 제외하는 SQLRestriction/Where 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/model/EventPlanMap.java",
+          "sha256": "e20c686e5801620be8eabe32a33a54dcce7125b29772f5ac49f0de3ccd98f042",
+          "reviewScope": "엔티티 선언 검색: SQLRestriction/Where 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/model/MarketItem.java",
+          "sha256": "8452370718d9eb06fdbebee71f7db6f863e8a1ef5b3692050e95e1be88ad1f64",
+          "reviewScope": "엔티티 선언 검색: SQLRestriction/Where 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/CreatorStatsQueryRepository.java",
+          "sha256": "bd1d7bab236a44d2c0f6239fa1b35ea99a7d496b0242dd880dd6de4f6d39f0f5",
+          "reviewScope": "34–148: 전체 구매분모·distinct 구매 전환·ACTIVE 글·작성자/소유자 조회수 합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/CreatorRefundStatsQueryRepository.java",
+          "sha256": "bbf88076fd5d8f788de9fdae957b1b8b33aa4f9c28cbdda3bf83770f94eee841",
+          "reviewScope": "44–227: FULL earning 귀속·PARTIAL_ITEM ownerUserId 귀속·확정환불액·분쟁/OVERTURNED"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/CreatorEarningQueryRepository.java",
+          "sha256": "116ac1143200b3bef744578b5a981b929bd3ee55bd19352d65546bf17d6177b6",
+          "reviewScope": "130–139: ownerUserId·REFUND_HELD grossAmount 합계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/ItemReviewQueryRepository.java",
+          "sha256": "ce63555c8a307f13c517ca893b4b0cfc23d0ccbfe25bb751eca372afcd1eb270",
+          "reviewScope": "39–52: 소유 상품의 미삭제 후기 평균"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/creator_profile_screen.dart",
+          "sha256": "2b279e9800a40af19fe38dcbc435d3c81e97ed10b942ab274c262bcb69c2923e",
+          "reviewScope": "28–134,176–237: 고정소개·두 수치·프로필 재시도·대표20개/실패빈목록·planId 상세 이동"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/creator_stats_screen.dart",
+          "sha256": "3be9cba04740d521027966b1514e5540cdd2b547d915dd61994fdd7363cc9a54",
+          "reviewScope": "20–82,108–162,180–198,214–295: 판매현황 제목·갱신/재시도·17필드 섹션·P/0.#% 표시"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/creator_provider.dart",
+          "sha256": "16cb3a97686425c35a12e932d15619d58245a149be0d607a84eaba6f5e37963b",
+          "reviewScope": "8–31: 프로필/본인통계 Result 오류전파·변경신호 구독 없음"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/CreatorServiceTest.java",
+          "sha256": "5a854d8fd854c780254bdd50e3667250e2e8adaedf241daea65748a8e94b8534",
+          "reviewScope": "89–240: 차단/본인예외·집계값 매핑·0분모 선택 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_app/test/presentation/profile/creator_stats_screen_test.dart",
+          "sha256": "4f8751217a8bd68a24712e12e1d872a08eb4210b8b85c553307a079be988ae00",
+          "reviewScope": "63–169: P·환불/활동/전환·0%·오류 재시도 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "99–120,169–205: creators 익명 허용 없음·기본 인증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/PlanRepository.java",
+          "sha256": "a45b5e64d23af922884f53e755a3b0182ca5f3a1314a066468276af0c06912e1",
+          "reviewScope": "27–49: 전체 countByCreatorId와 PUBLISHED 목록 차이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/model/Plan.java",
+          "sha256": "20fa382a48a3b81bee99c4cd59139c7a727dd01e117a10f2bbe8b3f842f9552c",
+          "reviewScope": "엔티티 선언 검색: 상태를 자동 제외하는 SQLRestriction/Where 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/PlanPurchaseQueryRepository.java",
+          "sha256": "ec52e2c126a98d92a976f54539d096d28a1ecb9cb0c3d02158bac08c667b8ae3",
+          "reviewScope": "42–70: creator 플랜의 구매행 count와 pricePaid 합계·별도 상태 조건 없음"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/PlanController.java",
+          "sha256": "ae66890928117bcbffb4bc88fb1f0a78ffa7595e637e8b812bf6e5610e60cb94",
+          "reviewScope": "54–59: creatorId/category 목록 조회 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanService.java",
+          "sha256": "16616bfb18da0a9bbb7ff422b1f47a716581288a1a6c0b3640b9df5aa3c0c1c8",
+          "reviewScope": "413–427: 대표목록 PUBLISHED·creatorId 조건"
+        },
+        {
+          "path": "community_app/lib/data/api/market_api.dart",
+          "sha256": "a47b666e2911b73bd12c9f1233d86693de667d38fb5d31b1a3b9f0ec3c7847a6",
+          "reviewScope": "169–173: 두 GET typed 반환"
+        },
+        {
+          "path": "community_app/lib/data/repositories/market_repository.dart",
+          "sha256": "6dad92f7865f0050ecebf5cb01d95d8dc33930092fc6dc1ba495d394499af052",
+          "reviewScope": "346–357: 조회 Result 래핑"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "sha256": "0157bb02a191d0a396f4c0786986301e2a533122725ff68e3f9f46ea6edbf0e1",
+          "reviewScope": "162–170: creatorId 존재 시 실제 프로필 push"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "604–615: 전체메뉴 hosting.creatorStats·MARKET/marketItems·판매 현황"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "87–98: 본인통계·creatorId 프로필 별도 화면"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/home_branch_routes.dart",
+          "sha256": "785c87c040934960f58ead009a2c288e8c23b40f9a56f816217873cb92360bae",
+          "reviewScope": "77–86: marketDetail planId → MarketPlanDetailScreen"
+        },
+        {
+          "path": "community_app/lib/core/router/routes.dart",
+          "sha256": "e17b9d164a2b1fd80778610c0d9c5b49438fc60bcf9a758e852768c04f76fd92",
+          "reviewScope": "91–92,367–376: market/:planId·/market/creators 라우트 상수"
+        }
+      ],
+      "reuses": [
+        "event_discovery_20261122",
+        "market_management_20261122",
+        "plan_detail_20261122",
+        "plan_list_20261122",
+        "plan_publish_20261122",
+        "plan_reorder_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
+          "sha256": "619393746c996dc2b5405c9ce2466f3955290177372c0f1187669ea040d06c76"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-07.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "optional principal·비로그인 공개 확대 권고를 현재 required principal 계약으로 교정",
+        "차트 아이콘 입구·성과/통계 제목·0.0%·creator_user_id 설명을 실제 메뉴/표현/ownerUserId 기준으로 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "product_gap",
+          "finding": "대표 플랜 첫 20개 조회 실패가 빈 목록으로 표시되고 별도 재시도·추가 페이지가 없음",
+          "disposition": "현재 제한으로 문서화; 제품 코드 변경 없음"
+        },
+        {
+          "kind": "document_contract_correction",
+          "finding": "판매 플랜 라벨은 전체 플랜 수, 누적 판매 금액은 PlanPurchase 합계이며 순수익/환불 차감 후 매출이 아님",
+          "disposition": "집계 원천·제외 조건·필드 의미 명시"
+        }
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/08_plan_market/F08-07_creator-profile-stats/scenarios.md",
+          "sha256": "d88cc974b921473a05d1914ef1dbd703441e2c9a3d60cd7130c728b9d1e1b94a",
+          "characters": 970,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "117 current source-reference tables match",
+        "groupDigests": "32 source/canonical digests; 3 retained HTML IDs; 1 historical quote",
+        "derivedDocuments": "6 document relative-link targets and 4 derived-from digests checked",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; existing selected assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "dca0501de4909ca1849cf5cf3ee2352d03d718b3"
       }
     }
   },
