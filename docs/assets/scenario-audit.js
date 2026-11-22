@@ -11,12 +11,12 @@ window.SCENARIO_AUDIT = {
     "features": 175,
     "documentedScenarioItems": 1227,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4947,
+    "automatedTestFilesScanned": 4951,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 60,
+    "directlyLinkedAutomatedTests": 61,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 60,
+    "automatedScenarioReferences": 61,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 38,
-    "partialEvidenceChain": 54,
-    "definitionOnlyEvidence": 83,
-    "traceMarkers": 523,
-    "verifiedTraceRecords": 521,
+    "partialEvidenceChain": 55,
+    "definitionOnlyEvidence": 82,
+    "traceMarkers": 525,
+    "verifiedTraceRecords": 523,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -7594,7 +7594,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-18",
       "domain": "클럽",
-      "name": "클럽 레퓨테이션",
+      "name": "클럽 회원 신뢰도 점수와 공개 범위",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
@@ -7605,17 +7605,54 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 2,
+        "verified": 2,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F04-18:1",
+            "label": "GET /api/v1/clubs/{clubId}/reputation/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/reputation/controller/ReputationScoreController.java",
+                "controller": "ReputationScoreController",
+                "method": "getMyReputation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/reputation/me",
+                "targetLine": 39,
+                "methodLine": 41
+              }
+            ]
+          },
+          {
+            "id": "F04-18:2",
+            "label": "GET /api/v1/clubs/{clubId}/reputation/members/{memberId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/reputation/controller/ReputationScoreController.java",
+                "controller": "ReputationScoreController",
+                "method": "getMemberReputation",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/reputation/members/{memberId}",
+                "targetLine": 49,
+                "methodLine": 53
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/data/models/reputation/reputation_level_server_values_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -7626,7 +7663,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "open",
       "proof": "auto",
       "knownIssues": 0,

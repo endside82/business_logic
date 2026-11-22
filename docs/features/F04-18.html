@@ -18,124 +18,29 @@
           F04-18 클럽 레퓨테이션 점수
         </div>
         <h1>F04-18. 클럽 레퓨테이션 점수</h1>
-        <p class="lede">
-          같은 클럽 안에서 그 사람이 얼마나 신뢰할 수 있는 멤버인지를 0~100 점수로 보여 주는 단위.
-          기본 50점에서 출발해 활동 마일리지·등급으로 점수가 오르고, 경고·심각 제재로 점수가 깎인다.
-          최종 점수는 레벨(낮음/보통/높음/최상)로 요약된다.
-          본인과 운영진은 점수가 어떻게 구성됐는지 세부 내역을 볼 수 있다.
-        </p>
+        <p class="lede">내 마일리지/운영진 회원 상세의 실제 입구, 본인/타인 계산 항목 공개, 인정 누적·등급·경고·심각 제재 계산과 재조회 범위를 구분한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">점수 범위</div><div class="value">0~100</div><div class="hint">기본 50에서 가감</div></div>
-          <div class="metric"><div class="label">레벨 단계</div><div class="value">4</div><div class="hint">낮음·보통·높음·최상</div></div>
-          <div class="metric"><div class="label">세부 내역 공개</div><div class="value">운영진·본인</div><div class="hint">일반 멤버는 점수+레벨만</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 클럽 내 신뢰는 클럽 안에서만 의미 있다</span>
-          <p>이 점수는 클럽 안에서의 행동(이벤트 참석 마일리지, 등급, 경고 누적)을 반영한다.
-            같은 사용자라도 클럽마다 다른 점수를 가질 수 있다.
-            운영자는 운영 의사결정(역할 변경, 추방 검토 등)에서 이 점수를 참고 지표로 활용할 수 있다.
-            낮은 점수 자체가 제재를 자동으로 유발하지는 않는다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>점수 구조</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:120px">원천</th><th>점수에 반영되는 방식</th><th style="width:120px">기여 한도</th></tr></thead>
-            <tbody>
-              <tr><td><strong>기본</strong></td><td>모든 멤버가 동일하게 50점에서 시작한다</td><td>+50 (고정)</td></tr>
-              <tr><td><strong>마일리지</strong></td><td>클럽 활동으로 쌓인 마일리지가 많을수록 가점</td><td>최대 +40</td></tr>
-              <tr><td><strong>등급</strong></td><td>마일리지 등급이 높을수록 가점</td><td>최대 +10</td></tr>
-              <tr><td><strong>경고</strong></td><td>유효한 경고가 누적될수록 감점</td><td>최대 -30</td></tr>
-              <tr><td><strong>심각 제재</strong></td><td>현재 유지 중인 심각 제재가 있으면 감점</td><td>-20 (있을 때만)</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>가점과 감점을 모두 합쳐도 점수는 0~100 범위를 벗어나지 않는다 — 0 아래로 내려가거나 100을 넘지 않는다. 마일리지나 경고 이력이 아직 없는 새 멤버는 기본 50점에서 시작한다.</p>
-      </section>
-
-      <section>
-        <h2>레벨 기준</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>레벨</th><th>점수 구간</th><th>색상</th></tr></thead>
-            <tbody>
-              <tr><td><strong>낮음</strong></td><td>0 ~ 30</td><td>빨강</td></tr>
-              <tr><td><strong>보통</strong></td><td>31 ~ 60</td><td>주황</td></tr>
-              <tr><td><strong>높음</strong></td><td>61 ~ 85</td><td>초록</td></tr>
-              <tr><td><strong>최상</strong></td><td>86 ~ 100</td><td>파랑</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>누가 무엇을 보는가</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>조회자</th><th>보이는 것</th><th>세부 내역</th></tr></thead>
-            <tbody>
-              <tr><td><strong>본인</strong></td><td>점수 + 레벨</td><td>원천별 세부 내역 항상 공개</td></tr>
-              <tr><td><strong>소유자·관리자</strong></td><td>점수 + 레벨</td><td>원천별 세부 내역 공개 (운영 판단용)</td></tr>
-              <tr><td><strong>일반 멤버</strong></td><td>점수 + 레벨</td><td>세부 내역 비공개</td></tr>
-              <tr><td><strong>비멤버</strong></td><td>접근 불가</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>세부 내역이 공개되면 "마일리지 +32, 경고 -9 …" 식으로 각 원천의 기여를 확인할 수 있다.
-          일반 멤버에게는 숫자와 레벨만 보여서 "이 사람이 이 클럽에서 얼마나 활동적인가" 수준의 정보만 노출된다.</p>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">본인 확인</div>
-            <h3>내 신뢰도 점수를 확인한다</h3>
-            <p>멤버 프로필 화면에서 신뢰도 카드를 펼치면 현재 점수와 레벨, 그리고 각 원천의 기여 내역이 보인다.
-              "경고 -9점"을 확인한 사용자가 이의제기 경로를 통해 경고 적절성을 따질 수 있다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">운영 판단</div>
-            <h3>관리자가 민원이 접수된 멤버의 점수를 확인한다</h3>
-            <p>멤버 카드에서 해당 사용자의 신뢰도 점수를 조회하면 세부 내역까지 볼 수 있다.
-              "경고 -18점, 심각 제재 -20점"이라면 관리자는 이 정보를 추방·차단 검토 시 참고 지표로 활용한다.</p>
-            <p><strong>주의</strong> — 점수 자체가 자동 제재를 유발하지는 않는다. 최종 결정은 운영자 판단이다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">정산 신뢰도와의 구분</div>
-            <h3>이 점수는 호스트 정산 신뢰도(F07-10)와 다르다</h3>
-            <p>F07-10은 "호스트가 정산을 제때 처리하는지"를 측정하는 별도 지표다. 이 클럽 레퓨테이션 점수는
-              클럽 멤버 활동(마일리지, 경고)을 기반으로 계산된다. 두 점수는 서로 영향을 주지 않는다.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것</h2>
-        <div class="callout warn">
-          <span class="label">점수의 한계</span>
-          <ul>
-            <li><strong>점수는 스냅샷이다.</strong> 현시점 상태만 반영하며, 점수가 언제 어떻게 변했는지를 조회하는 이력 화면은 아직 없다.</li>
-            <li><strong>점수가 낮아도 자동 처리는 없다.</strong> 낮은 점수는 주의 표시일 뿐, 추방·차단은 운영자가 직접 실행해야 한다.</li>
-            <li><strong>클럽별로 독립 계산된다.</strong> A 클럽에서 경고가 많더라도 B 클럽의 점수에는 영향이 없다.</li>
-          </ul>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 실제 입구</h2><p>클럽 회원의 신뢰도는 마일리지·등급·경고·심각 제재를 조합한 현재 점수다. 앱의 실제 카드 사용처는 <strong>내 마일리지 화면</strong>과 <strong>운영진의 회원 마일리지 상세</strong> 두 곳이다. 일반 회원 목록이나 모든 프로필에 기본으로 노출한다고 설명하지 않는다.</p>
+<p>내 마일리지 화면은 회원 경로로 들어가며 마일리지 자료를 읽은 뒤 프로그램이 아직 시작되지 않은 경우 시작 전 안내를 보여 준다. 이때는 신뢰도 카드를 만들지 않는다. 시작된 프로그램에서는 카드가 표시되고, 일시정지 상태에서도 안내와 함께 카드를 유지한다. 운영진 회원 상세는 관리 경로와 <code>reviewQueue</code> 범위의 화면 권한을 확인한 뒤 상세 자료와 대상 회원의 카드를 표시한다.</p>
+<p>점수 계산은 가입 승인·출금 가능액·정산 이행 판정 자체가 아니다. <a href="F07-10.html">계좌 이력과 정산 신뢰도</a>와 이름을 혼용하지 않는다. 이 문서는 클럽의 <code>/reputation</code> API와 그 카드만 다룬다.</p></section>
+<section id="current-2"><h2>조회 계약과 공개 범위</h2><div class="table-wrap"><table><thead><tr><th>요청</th><th>조건과 반환</th></tr></thead><tbody><tr><td><code>GET /api/v1/clubs/{clubId}/reputation/me</code></td><td>요청자가 해당 클럽 회원이어야 한다. 본인 점수와 계산 항목을 반환한다.</td></tr><tr><td><code>GET /api/v1/clubs/{clubId}/reputation/members/{memberId}</code></td><td>요청자와 대상 모두 현재 클럽 회원이어야 한다. 대상 <code>memberId</code>는 클럽 회원 행 ID가 아니라 사용자 ID다. 본인이거나 유효 운영진이면 계산 항목을 포함하고 다른 일반 회원에게는 숨긴다.</td></tr></tbody></table></div>
+<p>유효 운영진 판정은 단순 역할 문자열 비교가 아니다. 정본 소유자 조건을 충족하는 클럽장 또는 권한 정지되지 않은 ADMIN이어야 한다. 회원 경로로 자기 ID를 명시해 조회해도 본인 계산 항목은 포함한다. 회원이 없으면 <code>CLUB_MEMBER_NOT_FOUND</code>로 거절한다. 신뢰도 컨트롤러에서 ACTIVE 클럽·마일리지 시작 여부를 추가로 요구하지는 않으므로 앱의 카드 노출 조건과 API 조회 조건을 구분한다.</p>
+<p>응답은 <code>clubId</code>, <code>memberId</code>(사용자 ID), 정수 <code>score</code>, <code>level</code>, nullable <code>Map&lt;String, Integer&gt; breakdown</code>이다. 목록·페이지 응답이나 점수 변화 이력이 아니다. 앱은 정수와 nullable <code>Map&lt;String, int&gt;</code>로 받고, 대상 ID가 없으면 본인 API를, 있으면 회원 API를 사용한다.</p></section>
+<section id="current-3"><h2>점수 계산과 레벨</h2><div class="table-wrap"><table><thead><tr><th>계산 항목</th><th>현재 계산</th></tr></thead><tbody><tr><td><code>base</code></td><td>기본 50</td></tr><tr><td><code>mileage</code></td><td><code>qualifiedLifetimeEarned / 100</code>의 정수 몫, 최대 +40. 현재 사용 가능한 마일리지 잔액이 아니다.</td></tr><tr><td><code>grade</code></td><td>현재 등급의 <code>displayOrder × 2</code>, 최대 +10</td></tr><tr><td><code>warning</code></td><td>경고 요약의 <code>effectiveScore × -3</code>, 최저 -30</td></tr><tr><td><code>severe</code></td><td>경고 요약이 존재하고 유효한 심각 제재 부여가 있으면 -20</td></tr></tbody></table></div>
+<p>마일리지 요약이 없으면 마일리지·등급 기여는 0이다. 현재 등급 ID가 있어도 등급 행을 찾지 못하면 등급 기여는 0이다. 경고 요약이 없으면 경고·심각 제재 기여는 0이며 심각 제재 조회도 그 분기에서는 호출하지 않는다. 심각 제재는 경고 원장에서 취소·만료 대상으로 표시된 부여를 제외하고, 남은 GRANT의 제재 카탈로그 심각도가 SEVERE인지 확인한다.</p>
+<p>다섯 항목을 더한 뒤 최종 점수를 0~100으로 제한한다. LOW는 0~30(낮음), MEDIUM은 31~60(보통), HIGH는 61~85(높음), EXCELLENT는 86~100(최상)이다. 원천 자료가 모두 없으면 50·MEDIUM이다. 계산 항목은 최종 점수 제한 전 기여값이므로 각 값을 따로 점수 비율처럼 표시하지 않는다.</p></section>
+<section id="current-4"><h2>카드 행동과 실패와 갱신</h2><p>카드는 점수 <code>/ 100</code>과 레벨 이름을 표시한다. 계산 항목이 null이 아니며 비어 있지 않을 때만 펼치기 버튼을 제공하고, 처음에는 접힌 상태다. 펼치면 기본·마일리지·등급·경고·심각 제재 다섯 행을 보여 준다. 숨겨진 계산 항목을 앱에서 추정해 복원하지 않는다.</p>
+<p>레벨 표시는 현재 <code>StateTone</code>의 danger·warning·success·info를 테마 밝기에 맞춰 사용한다. 과거 문서의 고정 <code>AppColors</code> 대응표는 현재 구현이 아니다. 알 수 없는 서버 레벨은 임의의 보통 등급으로 바꾸지 않고 FormatException으로 처리한다.</p>
+<p>점수 조회 중에는 로딩, 실패하면 오류 안내와 해당 점수 provider의 다시 시도를 제공한다. 갱신 중 이전 값 유지 정책을 사용한다. 내 마일리지의 당겨서 새로고침은 마일리지 메인 provider를, 운영진 상세의 재조회는 회원 상세 provider를 갱신한다. 점수 provider는 별도 조회이므로 활동 수정 직후나 부모 화면 재조회 뒤 점수까지 갱신되는지는 실제 상태 전환으로 확인해야 한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>근거</th><th>내용</th><th>다음 확인</th></tr></thead><tbody><tr><td>미검증</td><td>별도 점수 provider와 부모 화면 재조회</td><td>마일리지·경고 정정 후 같은 카드의 최신 점수 반영을 이번에 실행하지 않았다.</td><td>원천 값 변경→재조회→점수 반영의 실제 전환 확인.</td></tr><tr><td>미검증</td><td>소스와 선택 단언 확인</td><td>운영진 권한 상실·대상 탈퇴·계산 항목 토글의 실제 화면 흐름을 이번에 실행하지 않았다.</td><td>필요 시 실제 경로에서 확인하고 소스 확인과 별도 기록.</td></tr></tbody></table></div>
+<p>현재 응답에는 점수 변화 이력·시간축이 없다. 이를 필수 미구현 결함으로 단정하거나 이력 API가 있는 것처럼 안내하지 않는다. 별도 이력 제공은 제품 결정이 필요한 확장 후보다.</p></section>
+<section id="current-7"><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 실제 입구:</strong> 내 마일리지와 운영진 회원 마일리지 상세에서 카드를 사용하며 시작 전 마일리지 화면에는 노출하지 않는다.</li><li><strong>AC-02 조회 대상:</strong> 요청자·대상 회원 존재와 사용자 ID 의미를 지키고 탈퇴한 대상에게 기본 점수를 만들어 반환하지 않는다.</li><li><strong>AC-03 본인 공개:</strong> 본인 API와 본인 ID를 지정한 회원 API 모두 계산 항목을 포함한다.</li><li><strong>AC-04 타인 공개:</strong> 타인 계산 항목은 유효 운영진만 읽고 다른 현재 회원에게는 null을 반환한다.</li><li><strong>AC-05 기본값과 누락:</strong> 요약이 없으면 기본 50이며 등급 행이 없어도 해당 기여를 0으로 계산한다.</li><li><strong>AC-06 계산 경계:</strong> 인정 누적 마일리지·등급 순서·경고 점수·유효 심각 제재를 사용하고 항목별 한도와 최종 0~100 제한을 적용한다.</li><li><strong>AC-07 레벨 계약:</strong> 30/31·60/61·85/86 경계를 구별하고 앱은 모르는 레벨을 정상 등급으로 대체하지 않는다.</li><li><strong>AC-08 카드 공개:</strong> 계산 항목이 없으면 토글을 숨기고 있으면 접기·펼치기로 다섯 항목을 표시한다.</li><li><strong>AC-09 실패 재시도:</strong> 조회 실패는 오류와 개별 점수 재시도로 처리하며 제공되지 않은 이력을 있다고 표시하지 않는다.</li><li><strong>AC-10 검증 범위:</strong> 소스·기존 시험 단언·새 실행 결과를 구분하고 현재 코드만으로 프로덕션 사용 가능을 선언하지 않는다.</li></ul>
+<p><code>ReputationScoreServiceTest</code>의 기본 50·마일리지 상한·계산 항목 숨김·등급 누락 단언과 앱 <code>reputation_level_server_values_test.dart</code>의 서버 레벨 대응·미지 값 오류 단언을 읽었다. 이번에는 제품 시험을 새로 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

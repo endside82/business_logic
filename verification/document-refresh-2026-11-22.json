@@ -272,7 +272,8 @@
         "club_posts_20261122",
         "club_calendar_20261122",
         "club_album_20261122",
-        "club_finance_20261122"
+        "club_finance_20261122",
+        "club_reputation_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3076,9 +3077,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "0032e699fcd6e17cfad9f0af8281da93ff095ad0592810b9b525e86cb1462807",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_reputation_20261122"
+      ],
+      "reviewedSha256": "19401823ca055b5059748473e32e2a3f9c589a4a1c89cf0305958832e895a0e3"
     },
     {
       "path": "docs/features/F05-01.html",
@@ -5063,7 +5067,8 @@
         "club_posts_20261122",
         "club_calendar_20261122",
         "club_album_20261122",
-        "club_finance_20261122"
+        "club_finance_20261122",
+        "club_reputation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6067,10 +6072,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "694fb0c6f5478dfab4e9cd1fe71b03b12fb7f5b90ca908b2307dbb19aa7f2f03",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_reputation_20261122"
+      ],
+      "reviewedSha256": "07a949b94883a4bc0115d35e74300f98aebe053351053f94526a7603e4521832"
     },
     {
       "path": "prd/02_feature_prds/05_search/F05-01_keyword-search_prd.md",
@@ -7798,7 +7805,8 @@
         "club_posts_20261122",
         "club_calendar_20261122",
         "club_album_20261122",
-        "club_finance_20261122"
+        "club_finance_20261122",
+        "club_reputation_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8014,7 +8022,8 @@
         "club_posts_20261122",
         "club_calendar_20261122",
         "club_album_20261122",
-        "club_finance_20261122"
+        "club_finance_20261122",
+        "club_reputation_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -15358,6 +15367,11 @@
       "command": "F04-13/14/15 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID/섹션 링크·과거 인용·diff 검사",
       "result": "코드 위치112개 일치; 파서11/11 통과; 상대경로2330개·파생 정본 해시283개 오류0; 현재 그룹 소스/정본66개 해시 일치; 기존 HTML ID12개·과거 인용3개 보존; 세 HTML 섹션 링크 확인; scenario-audit 최신; diff 오류0; API/app HEAD 유지",
       "scope": "기금/월별/원장/미납상환·기부/취소/폐쇄반환·출금신청/승인예약/상태 문서 검사. 선택 시험 단언만 읽었으며 새 제품·은행·PG·알림수신·브라우저·이미지 실행 없음. ignored units12개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-18 문서 묶음: 소스 참조·파서 시험·경로/해시·HTML ID/섹션 링크·units 미생성·diff 검사",
+      "result": "코드 위치113개 일치; 파서11/11 통과; 상대경로2345개·파생 정본 해시283개 오류0; 현재 그룹 소스/정본21개 해시 일치; 기존 HTML ID3개 유지·섹션 링크 확인; scenario-audit 최신; diff 오류0",
+      "scope": "클럽 신뢰도 실제 카드입구·공개권한·점수계산·모르는 레벨·재조회 범위 문서 검사. 선택한 기존 시험의 단언만 읽었으며 새 제품·브라우저·이미지·프로덕션 검증 없음. source-first 관리로 units 생성하지 않음."
     }
   ],
   "evidenceGroups": {
@@ -26435,6 +26449,136 @@
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]
+    },
+    "club_reputation_20261122": {
+      "kind": "source_review",
+      "scope": "F04-18 실제 카드입구·본인/대상회원/유효운영진·점수5항목/레벨·카드공개/오류/재조회. 소스와 선택시험 단언 대조. 제품실행·이미지검수·프로덕션판정 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/reputation/controller/ReputationScoreController.java",
+          "sha256": "890c704cb9669b886f74239e1fa5f4fcb6c6e91d109fb5c8588bac9a1c81b542",
+          "reviewScope": "27–64: P0 본인/회원 GET·요청자와 대상 회원 존재·자기ID 또는 유효운영진만 breakdown·단건VO. memberId는 userId로 사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/reputation/service/ReputationScoreService.java",
+          "sha256": "d6848e30e2407b3c9f74c2f1f248f3ff5322ac833803a456d483b9d4d5023dd8",
+          "reviewScope": "38–107: 다섯 항목·인정누적/등급/경고요약/심각제재·요약없음/등급없음·최종clamp·선택breakdown."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/reputation/constants/ReputationLevel.java",
+          "sha256": "8ba613b2263d18f550cb1eff66bdba39ea978c34857507ce1ed4a71400942e35",
+          "reviewScope": "16–46: LOW0~30/MEDIUM31~60/HIGH61~85/EXCELLENT86~100."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/reputation/vo/ReputationScoreVo.java",
+          "sha256": "2fffd856f31611f5a4588609908390e1fac832ed63c1133cb1deedea7563921d",
+          "reviewScope": "21–29: clubId/memberId long·score int·level enum·nullable Map<String,Integer>."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ReputationScoreMileageAdapter.java",
+          "sha256": "4e190db4faf3e39f231bad00d90ea7de4f91a45abdc07a54240bf1ce37741541",
+          "reviewScope": "28–36: 클럽/사용자 요약의 qualifiedLifetimeEarned/currentGradeId·등급 displayOrder."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ReputationScoreWarningAdapter.java",
+          "sha256": "404bb35b7becb43ea44c72b0c77df279bcaf084832c0918b89991da026b9aa9c",
+          "reviewScope": "26–29: 클럽/사용자 경고요약 effectiveScore."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningMemberSummaryService.java",
+          "sha256": "83f9731acb4104e8b95a031c9367e35f0dbef7ca43c3d4e781327019772e574e",
+          "reviewScope": "429–450: 경고원장 REVERSE/EXPIRE 대상제외·GRANT 카탈로그 severity SEVERE 여부."
+        },
+        {
+          "path": "community_app/lib/data/api/reputation/reputation_score_api.dart",
+          "sha256": "c53782b39b0c8dd7338db4e8be42a10870f5fb0312fe9dfe140fcc967ff0bfd7",
+          "reviewScope": "11–24: 본인/회원 경로·단건VO."
+        },
+        {
+          "path": "community_app/lib/data/repositories/reputation/reputation_score_repository.dart",
+          "sha256": "e97802d5e1687f4892591ea48d0febc128c5cb03f1e98e6f346ccf5a46e1a38c",
+          "reviewScope": "12–26: 두 단건 API의 Result 변환."
+        },
+        {
+          "path": "community_app/lib/domain/providers/reputation/reputation_providers.dart",
+          "sha256": "56ce6e8863d2f892de27499bbcfa59c12df3484c0a58f9d366b82af58a66b86c",
+          "reviewScope": "27–40: memberId null/nonnull 호출 분기·성공VO/실패throw."
+        },
+        {
+          "path": "community_app/lib/data/models/reputation/reputation_score_vo.dart",
+          "sha256": "f9876d7bc246ca77d22f5f7f6ee0dddc1e515cce8846729bb1c3078becd846e0",
+          "reviewScope": "15–29: 정수 응답·level 파싱·nullable breakdown."
+        },
+        {
+          "path": "community_app/lib/data/models/reputation/reputation_level.dart",
+          "sha256": "70f6246ea1b8968a84612f961007643b73fb27c99447dcd539b3e5a201fe91cd",
+          "reviewScope": "10–36: 서버4값→앱레벨/한국어설명·미지값 FormatException."
+        },
+        {
+          "path": "community_app/lib/presentation/reputation/widgets/reputation_score_card.dart",
+          "sha256": "51c8e53b2d2b7bb74a7fd352d66b8434c6fe0dbe097afcf01ac143bdaf535a1d",
+          "reviewScope": "31–173,209–227: 별도점수provider·keepPrevious·로딩/오류재시도·null/empty 토글숨김·처음접힘·다섯항목·StateTone."
+        },
+        {
+          "path": "community_app/lib/presentation/mileage/screens/mileage_main_screen.dart",
+          "sha256": "32bd8b8e8c6cb5b9bd87c56f5e177665001b4026053298aaac55b6df37d58e0c",
+          "reviewScope": "58–105: 회원마일리지 main조회·NOT_STARTED 카드없음·PAUSED 카드유지·부모새로고침 별도provider."
+        },
+        {
+          "path": "community_app/lib/presentation/mileage/admin/screens/mileage_member_detail_screen.dart",
+          "sha256": "e37211e704ab511a2cf09ede3fd52cedfed091ed93e0869805adf75dad40eff9",
+          "reviewScope": "72–133: 상세재조회·reviewQueue 화면가드·대상사용자 점수카드와 활동명령 onChanged."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/reputation/service/ReputationScoreServiceTest.java",
+          "sha256": "135f3a1b7b05e3023cde16ebb8f0a9c7a8d80bb0ef78b5ae9a18e303bd00a31d",
+          "reviewScope": "64–97,183–214: 자료없음50·누적상한40·breakdown숨김·등급행없음0 단언을 읽음. 새 시험 실행 없음."
+        },
+        {
+          "path": "community_app/test/data/models/reputation/reputation_level_server_values_test.dart",
+          "sha256": "bcfd5f2eb626736c4a4c13c0093f9fca46e9b75def3af35be7e4c4ef805fe3ab",
+          "reviewScope": "전체: 서버등급 모두 설명있는 앱값·미지값 FormatException 단언을 읽음. 새 시험 실행 없음."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionChecker.java",
+          "sha256": "86c807bf78390e1a44e19962e9f963cac3fe3c6d5dba0faff62b3114fe3f436d",
+          "reviewScope": "229–248,302–307: 현재 회원 조회·정본소유자/권한정지아닌 ADMIN·비회원 CLUB_MEMBER_NOT_FOUND."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "263–280: 내 마일리지 회원경로·화면 진입."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_admin_routes.dart",
+          "sha256": "e7aca559ef5fee5430540e0c4446afd47f9cf2081cfa9939f222a1c2e13a7507",
+          "reviewScope": "210–223: 운영진 대상회원 마일리지 상세경로."
+        }
+      ],
+      "reuses": [
+        "club_finance_20261122",
+        "club_invitation_20261122",
+        "club_stats_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-18_club-reputation_prd.md",
+          "sha256": "07a949b94883a4bc0115d35e74300f98aebe053351053f94526a7603e4521832"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-18.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-18 본인/회원 조회2개 연결 추가; source-first이므로 units 생성하지 않음"
+      ],
+      "retainedHistoricalQuotes": []
     }
   },
   "currentSourceVersions": {

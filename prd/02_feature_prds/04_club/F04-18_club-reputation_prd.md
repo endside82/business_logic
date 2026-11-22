@@ -1,110 +1,77 @@
-# F04-18. 클럽 레퓨테이션 점수 PRD
+# F04-18. 클럽 회원 신뢰도 점수와 공개 범위 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 실제 서버·앱과 선택 시험 단언을 대조했다. 새 제품 실행이나 프로덕션 적합성 판정은 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 이 기능은 소스 기준으로 관리하며 별도 units 문서를 만들지 않는다.
 
-<!-- source-first; updated: 2026-06-05 -->
+## 현재 범위와 실제 입구
 
-## 1. 결론
+클럽 회원의 신뢰도는 마일리지·등급·경고·심각 제재를 조합한 현재 점수다. 앱의 실제 카드 사용처는 **내 마일리지 화면**과 **운영진의 회원 마일리지 상세** 두 곳이다. 일반 회원 목록이나 모든 프로필에 기본으로 노출한다고 설명하지 않는다.
 
-클럽 멤버의 레퓨테이션 점수는 **마일리지·마일리지 등급·경고·심각 제재** 4개 원천을 합산해 0~100으로 계산하고, 4단계 레벨(LOW/MEDIUM/HIGH/EXCELLENT)로 변환해 표시한다. 서버 `GET /api/v1/clubs/{clubId}/reputation/me`와 `/members/{memberId}` 두 endpoint가 모두 구현돼 있고, Flutter `ReputationScoreCard` 위젯 + `reputationScoreProvider`가 이를 완전히 소비한다.
+내 마일리지 화면은 회원 경로로 들어가며 마일리지 자료를 읽은 뒤 프로그램이 아직 시작되지 않은 경우 시작 전 안내를 보여 준다. 이때는 신뢰도 카드를 만들지 않는다. 시작된 프로그램에서는 카드가 표시되고, 일시정지 상태에서도 안내와 함께 카드를 유지한다. 운영진 회원 상세는 관리 경로와 `reviewQueue` 범위의 화면 권한을 확인한 뒤 상세 자료와 대상 회원의 카드를 표시한다.
 
-접근 권한: 본인 점수는 항상 breakdown 포함. 타 멤버는 운영진(OWNER/ADMIN)만 breakdown을 볼 수 있고, 일반 멤버는 score+level만 받는다. 비멤버는 접근 불가.
+점수 계산은 가입 승인·출금 가능액·정산 이행 판정 자체가 아니다. [계좌 이력과 정산 신뢰도](../07_meeting_settlement/F07-10_account-history-reputation_prd.md)와 이름을 혼용하지 않는다. 이 문서는 클럽의 `/reputation` API와 그 카드만 다룬다.
 
-이 기능은 **F07-10 정산 신뢰도(HostSettlementReputation)**와 완전히 별개다. F07-10은 `payment/meeting` 패키지의 호스트 정산 이행 지표이고, F04-18은 `club/reputation` 패키지의 클럽 내 멤버 행동 종합 점수다. 두 점수는 서버·클라이언트 양쪽 모두 서로를 참조하지 않는다.
+## 조회 계약과 공개 범위
 
-현재 판정: **프로덕션 사용 가능. 서버·클라이언트 정합. 단, breakdown 조회 API 미노출 Gap(이력/시간축) 한 건 존재.**
+| 요청 | 조건과 반환 |
+| --- | --- |
+| `GET /api/v1/clubs/{clubId}/reputation/me` | 요청자가 해당 클럽 회원이어야 한다. 본인 점수와 계산 항목을 반환한다. |
+| `GET /api/v1/clubs/{clubId}/reputation/members/{memberId}` | 요청자와 대상 모두 현재 클럽 회원이어야 한다. 대상 `memberId`는 클럽 회원 행 ID가 아니라 사용자 ID다. 본인이거나 유효 운영진이면 계산 항목을 포함하고 다른 일반 회원에게는 숨긴다. |
 
-## 2. 코드 위치
+유효 운영진 판정은 단순 역할 문자열 비교가 아니다. 정본 소유자 조건을 충족하는 클럽장 또는 권한 정지되지 않은 ADMIN이어야 한다. 회원 경로로 자기 ID를 명시해 조회해도 본인 계산 항목은 포함한다. 회원이 없으면 `CLUB_MEMBER_NOT_FOUND`로 거절한다. 신뢰도 컨트롤러에서 ACTIVE 클럽·마일리지 시작 여부를 추가로 요구하지는 않으므로 앱의 카드 노출 조건과 API 조회 조건을 구분한다.
 
-계약의 정본은 코드다. 서버: `ReputationScoreController`, `HostSettlementReputationController`, `ReputationScoreService`, `ReputationScoreVo`, `ReputationLevel`, `ReputationScoreServiceTest`. 앱: `reputation_score_api.dart`, `reputation_score_vo.dart`, `reputation_level.dart`, `reputation_score_repository.dart`, `reputation_providers.dart`, `reputation_score_card.dart`.
+응답은 `clubId`, `memberId`(사용자 ID), 정수 `score`, `level`, nullable `Map<String, Integer> breakdown`이다. 목록·페이지 응답이나 점수 변화 이력이 아니다. 앱은 정수와 nullable `Map<String, int>`로 받고, 대상 ID가 없으면 본인 API를, 있으면 회원 API를 사용한다.
 
-## 3. 전체 동작 흐름
+## 점수 계산과 레벨
 
-1. 멤버 목록·멤버 카드·상세 프로필 등에서 `ReputationScoreCard(clubId: X, memberId: Y?)` 위젯이 삽입된다.
-2. `memberId`가 null이면 본인(`/me`) 호출, 아니면 `/members/{memberId}` 호출.
-3. `reputationScoreProvider(clubId, memberId: memberId)`가 `ReputationScoreRepository`를 통해 서버에 GET 요청을 보낸다.
-4. 서버 `ReputationScoreController`가 클럽 멤버 여부를 검증하고, `ReputationScoreService.buildScoreVo(clubId, userId, includeBreakdown)`를 호출한다.
-5. 서비스는 `MileageMemberSummary`, `WarningMemberSummary`, `MileageGrade`를 조회해 점수를 계산하고 `ReputationScoreVo`를 반환한다.
-6. Flutter는 `asyncScore.when(data: _buildContent)`로 `ReputationScoreCard`를 렌더한다.
-7. breakdown이 있으면 우상단 토글 아이콘이 나타나고, 탭 시 5개 항목 breakdown 행을 펼친다.
+| 계산 항목 | 현재 계산 |
+| --- | --- |
+| `base` | 기본 50 |
+| `mileage` | `qualifiedLifetimeEarned / 100`의 정수 몫, 최대 +40. 현재 사용 가능한 마일리지 잔액이 아니다. |
+| `grade` | 현재 등급의 `displayOrder × 2`, 최대 +10 |
+| `warning` | 경고 요약의 `effectiveScore × -3`, 최저 -30 |
+| `severe` | 경고 요약이 존재하고 유효한 심각 제재 부여가 있으면 -20 |
 
-## 4. 제품 규칙
+마일리지 요약이 없으면 마일리지·등급 기여는 0이다. 현재 등급 ID가 있어도 등급 행을 찾지 못하면 등급 기여는 0이다. 경고 요약이 없으면 경고·심각 제재 기여는 0이며 심각 제재 조회도 그 분기에서는 호출하지 않는다. 심각 제재는 경고 원장에서 취소·만료 대상으로 표시된 부여를 제외하고, 남은 GRANT의 제재 카탈로그 심각도가 SEVERE인지 확인한다.
 
-- 점수 = 합산 뒤 0~100 으로 자른다. 기본 50, 마일리지 누적/100(최대 +40), 등급 순서×2(최대 +10), 경고 점수×-3(최대 -30), 활성 중대 제재 있으면 -20.
-- 마일리지 요약이 없으면 마일리지·등급 0, 경고 요약이 없으면 경고·중대 0 이다.
-- 등급: 낮음 0~30, 보통 31~60, 높음 61~85, 최상 86~100.
+다섯 항목을 더한 뒤 최종 점수를 0~100으로 제한한다. LOW는 0~30(낮음), MEDIUM은 31~60(보통), HIGH는 61~85(높음), EXCELLENT는 86~100(최상)이다. 원천 자료가 모두 없으면 50·MEDIUM이다. 계산 항목은 최종 점수 제한 전 기여값이므로 각 값을 따로 점수 비율처럼 표시하지 않는다.
 
-## 6. 상태/권한 매트릭스
+## 카드 행동과 실패와 갱신
 
-| 조회자 / 대상 | 서버 근거 | breakdown | 프론트 분기 | 사용자 결과 |
-|---|---|---|---|---|
-| 본인 (/me) | `requireClubMember`, `includeBreakdown=true` | 항상 포함 | `memberId == null` → `/me` | score + level + breakdown 토글 |
-| 운영진(OWNER/ADMIN) → 일반 멤버 | `isAdmin(clubId, userId)=true` → `includeBreakdown=true` | 포함 | breakdown != null → 토글 노출 | score + level + breakdown 토글 |
-| 일반 멤버 → 타 멤버 | `isAdmin=false` → `includeBreakdown=false` | null | breakdown == null → 토글 미표시 | score + level만 |
-| 비멤버 접근 시도 | `requireClubMember` 실패 | — | `ApiError.forbidden` | 에러 카드 ("다시 시도") |
+카드는 점수 `/ 100`과 레벨 이름을 표시한다. 계산 항목이 null이 아니며 비어 있지 않을 때만 펼치기 버튼을 제공하고, 처음에는 접힌 상태다. 펼치면 기본·마일리지·등급·경고·심각 제재 다섯 행을 보여 준다. 숨겨진 계산 항목을 앱에서 추정해 복원하지 않는다.
 
-## 7. 정합성 판단
+레벨 표시는 현재 `StateTone`의 danger·warning·success·info를 테마 밝기에 맞춰 사용한다. 과거 문서의 고정 `AppColors` 대응표는 현재 구현이 아니다. 알 수 없는 서버 레벨은 임의의 보통 등급으로 바꾸지 않고 FormatException으로 처리한다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| endpoint path | `/api/v1/clubs/{clubId}/reputation/me`, `/members/{memberId}` | `reputation_score_api.dart` 동일 | 일치 |
-| ReputationLevel 값 | LOW/MEDIUM/HIGH/EXCELLENT | `fromName()` 4개 case + FormatException | 일치 |
-| breakdown key 목록 | base/mileage/grade/warning/severe | `_BreakdownRows`에 동일 5개 key | 일치 |
-| `breakdown` nullable | 서버 null (일반 멤버 조회 시) | `Map<String, int>?` | 일치 |
-| `clubId`/`memberId` 타입 | `long` | `int` | 일치 (Dart `int` = 64bit) |
-| F07-10 경계 | 다른 패키지(`payment/meeting`), 다른 Controller | 다른 모델(`HostSettlementReputationVo`) | 분리됨 — 혼용 없음 |
+점수 조회 중에는 로딩, 실패하면 오류 안내와 해당 점수 provider의 다시 시도를 제공한다. 갱신 중 이전 값 유지 정책을 사용한다. 내 마일리지의 당겨서 새로고침은 마일리지 메인 provider를, 운영진 상세의 재조회는 회원 상세 provider를 갱신한다. 점수 provider는 별도 조회이므로 활동 수정 직후나 부모 화면 재조회 뒤 점수까지 갱신되는지는 실제 상태 전환으로 확인해야 한다.
 
-## 8. Gap / Risk
+## 코드 위치
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P2 | breakdown 이력/시간축 미제공 | 현재 점수는 현시점 snapshot만 반환. "점수가 왜 낮아졌는지" 이력이 없음 | 운영 분쟁 시 점수 변화 추적 불가 | 점수 이력 endpoint 추가 검토 (현 v1에서는 필요성 결정 대기) |
-| 정보 | 비멤버 접근 시 `requireClubMember` 에러 | `ClubMemberPermissionChecker.requireClubMember` 예외 | Flutter `ApiError.forbidden` → 에러 카드 표시 | 현재 동작 정상 — 문서화만 |
+서버: `ReputationScoreController`, `ReputationScoreService`, `ReputationScoreMileageAdapter`, `ReputationScoreWarningAdapter`, `ClubMemberPermissionChecker`, `WarningMemberSummaryService`, `ReputationScoreVo`, `ReputationLevel`. 앱: `reputation_score_api.dart`, `reputation_score_repository.dart`, `reputation_providers.dart`, `reputation_score_vo.dart`, `reputation_level.dart`, `reputation_score_card.dart`, `mileage_main_screen.dart`, `mileage_member_detail_screen.dart`, `club_branch_routes.dart`, `club_admin_routes.dart`.
 
-## 9. 수용 기준
+<!-- source-references:start -->
+서버 창구: `ReputationScoreController#getMyReputation`, `ReputationScoreController#getMemberReputation`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-### AC-01. 본인 점수 조회
+## 현재 제한과 확인 범위
 
-Given 클럽 멤버인 사용자가 `/api/v1/clubs/{clubId}/reputation/me`를 호출한다.  
-When 서버가 응답한다.  
-Then `score` 0~100, `level` 유효값, `breakdown` 비null(base/mileage/grade/warning/severe 5개 key 포함).
+| 분류 | 근거 | 내용 | 다음 확인 |
+| --- | --- | --- | --- |
+| 미검증 | 별도 점수 provider와 부모 화면 재조회 | 마일리지·경고 정정 후 같은 카드의 최신 점수 반영을 이번에 실행하지 않았다. | 원천 값 변경→재조회→점수 반영의 실제 전환 확인. |
+| 미검증 | 소스와 선택 단언 확인 | 운영진 권한 상실·대상 탈퇴·계산 항목 토글의 실제 화면 흐름을 이번에 실행하지 않았다. | 필요 시 실제 경로에서 확인하고 소스 확인과 별도 기록. |
 
-### AC-02. 일반 멤버가 타 멤버 조회
+현재 응답에는 점수 변화 이력·시간축이 없다. 이를 필수 미구현 결함으로 단정하거나 이력 API가 있는 것처럼 안내하지 않는다. 별도 이력 제공은 제품 결정이 필요한 확장 후보다.
 
-Given 일반 MEMBER가 `/api/v1/clubs/{clubId}/reputation/members/{memberId}`를 호출한다.  
-When 서버가 응답한다.  
-Then `score`와 `level`은 정상 반환, `breakdown`은 null. Flutter 위젯에 breakdown 토글 아이콘 미표시.
+## 수용 기준과 검증 근거
 
-### AC-03. 운영진이 멤버 조회
+- **AC-01 실제 입구:** 내 마일리지와 운영진 회원 마일리지 상세에서 카드를 사용하며 시작 전 마일리지 화면에는 노출하지 않는다.
+- **AC-02 조회 대상:** 요청자·대상 회원 존재와 사용자 ID 의미를 지키고 탈퇴한 대상에게 기본 점수를 만들어 반환하지 않는다.
+- **AC-03 본인 공개:** 본인 API와 본인 ID를 지정한 회원 API 모두 계산 항목을 포함한다.
+- **AC-04 타인 공개:** 타인 계산 항목은 유효 운영진만 읽고 다른 현재 회원에게는 null을 반환한다.
+- **AC-05 기본값과 누락:** 요약이 없으면 기본 50이며 등급 행이 없어도 해당 기여를 0으로 계산한다.
+- **AC-06 계산 경계:** 인정 누적 마일리지·등급 순서·경고 점수·유효 심각 제재를 사용하고 항목별 한도와 최종 0~100 제한을 적용한다.
+- **AC-07 레벨 계약:** 30/31·60/61·85/86 경계를 구별하고 앱은 모르는 레벨을 정상 등급으로 대체하지 않는다.
+- **AC-08 카드 공개:** 계산 항목이 없으면 토글을 숨기고 있으면 접기·펼치기로 다섯 항목을 표시한다.
+- **AC-09 실패 재시도:** 조회 실패는 오류와 개별 점수 재시도로 처리하며 제공되지 않은 이력을 있다고 표시하지 않는다.
+- **AC-10 검증 범위:** 소스·기존 시험 단언·새 실행 결과를 구분하고 현재 코드만으로 프로덕션 사용 가능을 선언하지 않는다.
 
-Given OWNER 또는 ADMIN이 `/api/v1/clubs/{clubId}/reputation/members/{memberId}`를 호출한다.  
-When 서버가 응답한다.  
-Then `breakdown` 비null. Flutter 위젯에 breakdown 토글 아이콘 표시, 탭 시 5개 breakdown 행 펼침.
-
-### AC-04. 레벨 색상 분기
-
-Given `score = 20` → `ReputationLevel.LOW`, `score = 50` → `MEDIUM`, `score = 75` → `HIGH`, `score = 90` → `EXCELLENT`.  
-When Flutter `_levelColor()` 호출.  
-Then LOW → `AppColors.error500`, MEDIUM → `AppColors.warning500`, HIGH → `AppColors.primary500`, EXCELLENT → `AppColors.linkBlue`.
-
-### AC-05. 비멤버 접근 차단
-
-Given 비멤버가 해당 클럽의 reputation endpoint를 호출한다.  
-When 서버가 `requireClubMember` 검증 실패를 반환한다.  
-Then Flutter는 에러 카드("신뢰도 점수를 불러올 수 없습니다.")를 표시하고 "다시 시도" 버튼을 제공한다.
-
-### AC-06. F07-10 혼용 없음
-
-Given 동일 사용자가 클럽 레퓨테이션 카드와 정산 신뢰도 화면을 각각 진입한다.  
-When 두 API를 각각 호출한다.  
-Then 클럽 레퓨테이션은 `/api/v1/clubs/{clubId}/reputation/*`을 호출하고, 정산 신뢰도는 `payment/meeting` 패키지의 별도 endpoint를 호출한다. 두 점수는 서로에게 영향을 미치지 않는다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 |
-|---|---|
-| 구현 검토 | 점수 이력(시간축) endpoint 추가 여부 — 운영 분쟁 대응용 |
-| UX 결정 | 레퓨테이션 점수를 어떤 화면(멤버 상세/카드/목록)에서 기본 노출할지 |
-| 정책 결정 | `qualifiedLifetimeEarned` mileage 점수 가중치 조정 및 레벨 구간 재조정 시점 |
-| 테스트 보강 | E2E: 운영진/멤버 분기 breakdown 포함 여부, 레벨 색상 렌더링 확인 |
+`ReputationScoreServiceTest`의 기본 50·마일리지 상한·계산 항목 숨김·등급 누락 단언과 앱 `reputation_level_server_values_test.dart`의 서버 레벨 대응·미지 값 오류 단언을 읽었다. 이번에는 제품 시험을 새로 실행하지 않았다.
