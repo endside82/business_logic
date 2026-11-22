@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,224개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,227개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1224,
+    "documentedScenarioItems": 1227,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 38,
     "partialEvidenceChain": 54,
     "definitionOnlyEvidence": 83,
-    "traceMarkers": 519,
-    "verifiedTraceRecords": 517,
+    "traceMarkers": 523,
+    "verifiedTraceRecords": 521,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -7056,19 +7056,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-13",
       "domain": "클럽",
-      "name": "기금 현황",
-      "scenarioCount": 9,
+      "name": "클럽 기금 잔액·월별 기부 차트·거래 내역",
+      "scenarioCount": 10,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-13_fund-overview/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 10
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-13_fund-overview/backend.md",
-        "total": 1,
-        "verified": 1,
+        "total": 5,
+        "verified": 5,
         "retired": 0,
         "entries": [
           {
@@ -7085,6 +7085,74 @@ window.SCENARIO_AUDIT = {
                 "httpPath": "/api/v1/clubs/{id}/fund",
                 "targetLine": 565,
                 "methodLine": 566
+              }
+            ]
+          },
+          {
+            "id": "F04-13:2",
+            "label": "GET /api/v1/clubs/{id}/fund/monthly-summary",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getFundMonthlySummary",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}/fund/monthly-summary",
+                "targetLine": 577,
+                "methodLine": 578
+              }
+            ]
+          },
+          {
+            "id": "F04-13:3",
+            "label": "GET /api/v1/clubs/{id}/fund/transactions",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getFundTransactions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}/fund/transactions",
+                "targetLine": 589,
+                "methodLine": 590
+              }
+            ]
+          },
+          {
+            "id": "F04-13:4",
+            "label": "GET /api/v1/clubs/{id}/fund/debt",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "getFundDebt",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{id}/fund/debt",
+                "targetLine": 598,
+                "methodLine": 599
+              }
+            ]
+          },
+          {
+            "id": "F04-13:5",
+            "label": "POST /api/v1/clubs/{id}/fund/debt-repayment",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+                "controller": "ClubController",
+                "method": "repayFundDebt",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{id}/fund/debt-repayment",
+                "targetLine": 612,
+                "methodLine": 613
               }
             ]
           }
@@ -7124,14 +7192,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-14",
       "domain": "클럽",
-      "name": "기부하기 & 기부 내역",
-      "scenarioCount": 15,
+      "name": "클럽 기부·내역·취소·폐쇄 반환",
+      "scenarioCount": 14,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-14_donation/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 15
+        "documentScenarioCount": 14
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-14_donation/backend.md",
@@ -7245,14 +7313,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F04-15",
       "domain": "클럽",
-      "name": "기금 인출 요청",
-      "scenarioCount": 9,
+      "name": "클럽 기금 출금 신청·예약·지급 상태",
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-15_fund-withdrawal/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-15_fund-withdrawal/backend.md",
@@ -7298,11 +7366,12 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 2,
         "featureMarkerCount": 2,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 2,
         "files": [
-          "community_app/integration_test/seed_club_finance_route_test.dart"
+          "community_app/integration_test/seed_club_finance_route_test.dart",
+          "community_app/test/data/models/club/finance/withdrawal_fee_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart",

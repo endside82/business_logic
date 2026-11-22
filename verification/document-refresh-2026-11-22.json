@@ -271,7 +271,8 @@
         "club_comments_20261122",
         "club_posts_20261122",
         "club_calendar_20261122",
-        "club_album_20261122"
+        "club_album_20261122",
+        "club_finance_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3013,9 +3014,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "52729bdb67841a05bd1c4b37ed981f86b6b02e16f4fc617dbdcbfcae713e0837",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "6403805d5aa9ca22694af3597555b7224938e4985a64317f13e3088c83dcd08d"
     },
     {
       "path": "docs/features/F04-14.html",
@@ -3023,9 +3027,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "cda1880a51215557137fc34d9ee960475d07dd792a1f6a2940593606e0e0e765",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "b838462f0b9a57d84605b7eb0ce6aad4ff3f395308489f7df8e509aac2ebc1b0"
     },
     {
       "path": "docs/features/F04-15.html",
@@ -3033,9 +3040,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "504465965e94cff9759d72c05fa601da6055b73122fb8ef41dc1f1f99f325e43",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "4212c289a5295c292340c1339222b7edbaffeab4eac81cf7a167eaba1a7ee35e"
     },
     {
       "path": "docs/features/F04-16.html",
@@ -4893,7 +4903,8 @@
         "club_comments_20261122",
         "club_posts_20261122",
         "club_calendar_20261122",
-        "club_album_20261122"
+        "club_album_20261122",
+        "club_finance_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4960,7 +4971,8 @@
         "club_comments_20261122",
         "club_posts_20261122",
         "club_calendar_20261122",
-        "club_album_20261122"
+        "club_album_20261122",
+        "club_finance_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5050,7 +5062,8 @@
         "club_comments_20261122",
         "club_posts_20261122",
         "club_calendar_20261122",
-        "club_album_20261122"
+        "club_album_20261122",
+        "club_finance_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5991,10 +6004,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "c6ec06a8a89acb08d06ad95f718e0e473fe7387ad836b22f01da4b71b6c18b31",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "d5474c1a3155bcd8177bfa05f34af73d6e144fb1f1a8fc7903bbf7984acf790d"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-14_donation_prd.md",
@@ -6002,10 +6017,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "283ea22068ddbafcee7391a20a65f2cbdb9a4c76eaf4fa57f9ae2a22e0210cb9",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "fbe3bb0283be6b292fef33a1b0ca6939469e97f5c8068752aeb4b79759c4d7e1"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
@@ -6013,10 +6030,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "bba3508f54ae88cad0fa8ed21c43f71d5817d79b3cd89e2fe526471a8367a5b2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-16_subscription_prd.md",
@@ -7778,7 +7797,8 @@
         "club_comments_20261122",
         "club_posts_20261122",
         "club_calendar_20261122",
-        "club_album_20261122"
+        "club_album_20261122",
+        "club_finance_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7993,7 +8013,8 @@
         "club_comments_20261122",
         "club_posts_20261122",
         "club_calendar_20261122",
-        "club_album_20261122"
+        "club_album_20261122",
+        "club_finance_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -10057,9 +10078,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "2bdca641e349048eb290c579c117fe8265d1292f823570e428f440423da45498",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "fc0ad7240e995c7aeb639258f8844e9792f2835210b0d0ba6d79292a25fd5e2c"
     },
     {
       "path": "units/04_club/F04-13_fund-overview/diagrams.md",
@@ -10067,9 +10091,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "a7b9096e411584b4623affc83ca8ee671ff97a211e18ed79d09e55078b935ed1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "0c3f406f785b318664af817fd66c88b63f923f13867507ccc59e33edc5ac864e"
     },
     {
       "path": "units/04_club/F04-13_fund-overview/frontend.md",
@@ -10077,9 +10104,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "93973b6de79bcc755ede6ff8f1ada3c95ec4f6e074c454c5260ad14c3375b13a",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "258ccff19cb5203758cd69c9d10d0fd4715d96b8355ffadf15db0e1be645ab32"
     },
     {
       "path": "units/04_club/F04-13_fund-overview/scenarios.md",
@@ -10087,9 +10117,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0f0c2598ba7cba808c10edc2705ac26db07f5be4185bec4f026b424703ed5496",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "ece57835d12c6edcd15eed071de2caee7f1cd07a9ff1650346505ed22c065599"
     },
     {
       "path": "units/04_club/F04-14_donation/backend.md",
@@ -10097,9 +10130,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "368729cb4e836863282698a0ef5b42a811b047799ae7e9c9cd25399d23dedccc",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "dd1929a246bc507104b45a661668f22dc3f411c4c5aac7c86d7dc109a406d9d8"
     },
     {
       "path": "units/04_club/F04-14_donation/diagrams.md",
@@ -10107,9 +10143,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0b083e0df608704b438d93cf93114c7270fd536a4001822aeda0275ea7bc25a5",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "45defb1bae41940cfabd6f5edf834fa5184d0b956fdd4bac77f5ee9d0690a317"
     },
     {
       "path": "units/04_club/F04-14_donation/frontend.md",
@@ -10117,9 +10156,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "377518efb75994622c559dd39e086e6c35a1baba79d3e97a4c490ea10165b8f8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "0e5346a96a51527ced1b3aa8dd49e07b73742590ec985b6853dfae89994d16f5"
     },
     {
       "path": "units/04_club/F04-14_donation/scenarios.md",
@@ -10127,9 +10169,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cc2c5e3180fef9f132740aaa8892306b2b3f57256c69775c3af97fb56db7f515",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "8d9b2a5e37552cbac89d3921886076d7b87bfa571bd315fd258bbd7a6174447e"
     },
     {
       "path": "units/04_club/F04-15_fund-withdrawal/backend.md",
@@ -10137,9 +10182,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8a87b18547545d859f2d428842ed1e21848e9eefc2eebe3321fb30719bff899e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "7a38e4c3710b50920cb4948625455b1230908005a309bdbadb313a0f13b7ba1c"
     },
     {
       "path": "units/04_club/F04-15_fund-withdrawal/diagrams.md",
@@ -10147,9 +10195,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "f3007e0a99ea6c64fea5323e8cb3888f0b4e0d1826d2266a1c143a4f725f6ccb",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "ce825169910afaa06fbcb857f1fd353ba95a2727471efb81f9b5fbfdc9ca9453"
     },
     {
       "path": "units/04_club/F04-15_fund-withdrawal/frontend.md",
@@ -10157,9 +10208,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "d8f89bdaf260ec1e49d06b79a439b4ec3775573fa73fc6acb6f27ce7085566e6",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "d6afdcae90a9621de4e3b882892b9ad02e1293f562e199f0c4b04008248315e7"
     },
     {
       "path": "units/04_club/F04-15_fund-withdrawal/scenarios.md",
@@ -10167,9 +10221,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6707ebce5078c8e53ea96856413021f6eb192c048b9fed328eb2f1d64d357221",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_finance_20261122"
+      ],
+      "reviewedSha256": "e43f5f6c84e4981ad310d9a352f1ec86faa75a3cb9756a1afc8fde7bf9977c54"
     },
     {
       "path": "units/04_club/F04-16_subscription/backend.md",
@@ -15296,6 +15353,11 @@
       "command": "F04-11 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
       "result": "코드 위치112개 일치; 파서11/11 통과; 상대경로2265개·파생 정본 해시271개 오류0; 현재 그룹 소스/정본60개 해시 일치; 기존 HTML ID4개·과거 인용1개 보존; scenario-audit 최신; diff 오류0",
       "scope": "사진첩/사진등록/공개범위/댓글/알림착지 문서 검사. 선택한 기존 시험의 단언 확인만 했으며 새 제품·사진 시각검수·S3·기기복원·푸시 시험 없음. ignored units4개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-13/14/15 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID/섹션 링크·과거 인용·diff 검사",
+      "result": "코드 위치112개 일치; 파서11/11 통과; 상대경로2330개·파생 정본 해시283개 오류0; 현재 그룹 소스/정본66개 해시 일치; 기존 HTML ID12개·과거 인용3개 보존; 세 HTML 섹션 링크 확인; scenario-audit 최신; diff 오류0; API/app HEAD 유지",
+      "scope": "기금/월별/원장/미납상환·기부/취소/폐쇄반환·출금신청/승인예약/상태 문서 검사. 선택 시험 단언만 읽었으며 새 제품·은행·PG·알림수신·브라우저·이미지 실행 없음. ignored units12개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -25981,6 +26043,395 @@
           "path": "units/04_club/F04-11_photo-album/scenarios.md",
           "sha256": "b2189c56367f33017254528af47ddb1165cd4685d908073e14a778950dd1330e",
           "characters": 1703,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
+    },
+    "club_finance_20261122": {
+      "kind": "source_review",
+      "scope": "F04-13/14/15 잔액·월별기부/원장·미납금상환·기부/취소/알림/폐쇄반환·출금신청/승인예약/상태·계좌비공개. 소스와 선택 시험 단언 대조; 새 제품 실행·실송금·시각검수 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubDonationService.java",
+          "sha256": "f14d9d54d99acf60f87a43ebe59e1ed8e26eb08600d908169486b7e1586a6829",
+          "reviewScope": "47–218,232–418,428–503: 1000~1000000·100 codepoints·FREE ACTIVE 회원·금전명령·전체/본인 내역·7일 취소·알림·폐쇄 후보와 상태·운영자 환불."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubDonationQueryRepository.java",
+          "sha256": "1dd6d8607e83a5c4a2712d7a2703ac7e171613c22102c953fd79f2190a6366f6",
+          "reviewScope": "39–104,140–199: 전체/본인 페이지·상태 필터 없는 전체 요약·기부 생성월 원금/환불월 실제 환불액."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/AccountingLedgerService.java",
+          "sha256": "021ab3fad4aa752c1cb9a3da6d51ec3e587ae0bb8c278f7269fb643cbe018329",
+          "reviewScope": "41–43: 클럽 기금 원장 조회를 query repository에 위임."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/repository/query/AccountingLedgerQueryRepository.java",
+          "sha256": "23494eb892b57bb4d73c744dcfea8b3ddec23aac2bdc3a7553710c8947e78298",
+          "reviewScope": "51–82: CLUB_FUND/클럽 journal 범위·거래별 debit-credit·기록시각/ID 역순·거래 distinct count."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubFundTransactionType.java",
+          "sha256": "38372dae1a691e29c1002ead7cf6161eaa99144ac51fc6d19beb0bbe31469f1d",
+          "reviewScope": "14–65: 거래 종류10개와 journal/transaction 매핑·미지 값 오류."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubFundVo.java",
+          "sha256": "0c606cb5eb167ffe05402fc33c2313737866619377594f01fed25d5cf4551d0d",
+          "reviewScope": "응답 clubId·balance·paidBalance·freeBalance·totalDonated/Spent/Refunded long 필드."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubFundMonthlySummaryVo.java",
+          "sha256": "36ec6de576ac2f55eaac9a2e010610b296b491a49207faf377540ded6daac62e",
+          "reviewScope": "yearMonth YYYYMM와 income/expense long 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubFundTransactionVo.java",
+          "sha256": "520a3184156b2904d255f86fcac18848f0691cdc0b8a24bc7081806c4d4c5c7d",
+          "reviewScope": "id/type/amount/userId/createdAt·nullable 거래자 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubDonateParam.java",
+          "sha256": "905c237b94814af0856dcca5307f211f3e79ab25e735f0c7538a0da5642b65dc",
+          "reviewScope": "Long amount·String message 요청."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubDonationVo.java",
+          "sha256": "6c64623d9eb56d70ba8ca0fd426f42611c0714fe652399d5fe978099196e9fac",
+          "reviewScope": "id/club/user·donorNickname·amount/status/refundAmount/message/createdAt/actions 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubDonationStatus.java",
+          "sha256": "ca093abef7594f5229078f6aef1f54857b614802667501dc0e432364d0e3f98a",
+          "reviewScope": "ACTIVE/REFUNDED/FORFEITED 상태."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubDebtRepaymentService.java",
+          "sha256": "d848fb237f5f02e0a0134de1705e783f74dde89db1b19381197e0e4bfe2a01a9",
+          "reviewScope": "37–101: 소유자/ACTIVE·통화·금액·버전·기금 먼저 상계·선택 통화 부족액 전액·지갑 상환."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubDebtCurrency.java",
+          "sha256": "d02912747714c767b68a86f1ff75da8cc9469525ba6c66add635b2cf54487199",
+          "reviewScope": "7–17: PAID/FREE·유료로 양쪽/무료로 무료만 상환 가능."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubSettlementService.java",
+          "sha256": "86384ad45e8edb8110d15e3c1f1d498c53ffaed3b9a81a9a081249d6b3be477c",
+          "reviewScope": "63–69,99–258,279–465: 최소1만·사유500·정본소유자·신청가용·당월반려제외·수수료·연결요청·승인예약/반려·계좌마스킹/새소유자숨김·연결결손."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/port/ClubFundWithdrawalAdapter.java",
+          "sha256": "c05087a96a3285b1acb4fa7534dd162c9daa80de1b135c80d1300ac993078722",
+          "reviewScope": "22–68: 연결 출금 조회/거절·완료 상태 전달과 총액/실수령/공제/예약 거래 View."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/param/ClubFundWithdrawParam.java",
+          "sha256": "ae85eebaa3a3533d289981b1c1b4457bcd97344a1d2e1fa59303daca1babfff9",
+          "reviewScope": "amount/reason/bankAccountId와 남은 raw 표시 필드 요청. 실제 앱은 계좌ID 사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubFundWithdrawalVo.java",
+          "sha256": "de53b99b048cf375c543e110164e8d7e4f9f4c9a63010012b390c5f697ed1dd4",
+          "reviewScope": "BigDecimal 공제·총액·실수령/기존상태/연결상태·실패사유/계좌표시·생성시각."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/FeePolicyType.java",
+          "sha256": "cc254fe0d2098dbfa5a9c2bd2227b7c20f25293bc66b43fd6798642aae6080c8",
+          "reviewScope": "35–44: 원천징수0.033·클럽 출금0.05 기본 상수와 해당 DB override 미연결 설명."
+        },
+        {
+          "path": "community_app/lib/data/api/club_fund_api.dart",
+          "sha256": "05a900dfa5624acf615148204ef32bffc315fecb81b7af4d33f9368f50628547",
+          "reviewScope": "30–73: 잔액/월별 List/거래 Page/출금/이력/미납금/키 필수 상환 Retrofit 계약."
+        },
+        {
+          "path": "community_app/lib/data/api/club_donation_api.dart",
+          "sha256": "2e76401d7c3466dfefd0ec5d9885853ba3171e157dbc19e83259b3941f615542",
+          "reviewScope": "15–40: Page 목록·키 필수 생성/취소·요약 계약."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_fund_repository.dart",
+          "sha256": "744c5452775666e4893e8c0a63b59a5069191a41a61ca3998224f3bbec4f0b0b",
+          "reviewScope": "18–86: 모든 기금 API 호출 Result 변환·월기본6·페이지기본20·상환키 전달."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_donation_repository.dart",
+          "sha256": "11663790108ca25239032114a6905c8e201bd1cec3518e53c3552ddbe45eef34",
+          "reviewScope": "14–63: Page/요약·생성/취소키 전달·Result 변환."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/club_fund.dart",
+          "sha256": "575713d8ba473f481d28cf399351f7b96fb30d6e2bdb9d86ce6f8261fd011c09",
+          "reviewScope": "15–31: 기금 정수 필드 및 기본0."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/club_donation.dart",
+          "sha256": "cd229ea1be96d9f46501d26662a1f0840d36e4f3e2daabf1978ad78a83b94a9f",
+          "reviewScope": "11–44: nullable 상태/닉네임/메시지/환불/시각·actions.cancel 기본닫힘."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/club_fund_withdrawal_vo.dart",
+          "sha256": "5fa14999f6298120c51b3d0df70a66c7312c0009eb51f9894d4ee7cb24c72b77",
+          "reviewScope": "16–37: double 금액·nullable 연결상태/실패사유·마스킹 계좌 문자열."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/withdrawal_param.dart",
+          "sha256": "fe0cde9800ec3d93833999f26b8fa9effdc73f04717cb4152676b94a2854b266",
+          "reviewScope": "13–24: amount/reason/bankAccountId와 nullable legacy 필드·null 미전송."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_fund_provider.dart",
+          "sha256": "6a56f65efe7563bd7af1d481ceb2aebf202043de171a3df2cbc88886cab0e553",
+          "reviewScope": "13–55: 출금 자료 구독·잔액과 별도6개월 월별 조회."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_fund_transaction_provider.dart",
+          "sha256": "963abcdef9c93d730712fd02320ac8a3d5c85574f5fbb4f0f5154b283fb7964c",
+          "reviewScope": "17–54: 최근5·전체20페이지·출금 자료 구독."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_fund_refresh.dart",
+          "sha256": "743a1be457401104437880f4c754603f8a706a66546577531fd63bd0b1cad948",
+          "reviewScope": "31–55: 잔액/최근/전체 무효화·balanceOnly 제외 시 월별도 갱신."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_debt_provider.dart",
+          "sha256": "4c6642b970efb5d898936c47d91f38d01605e10434d23232268d55a2a77696c8",
+          "reviewScope": "22–93: 미납금 조회/키 필수 상환·성공과 불명확 결과의 기금/지갑/넘기기 갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_fund_screen.dart",
+          "sha256": "6754474debf65a13d40552b7dfb981c2f87d388f8f819ded01082ebd79f7afa1",
+          "reviewScope": "58–420: resume/TickerMode 재활성화·권한조회/비회원·재정 버튼·잔액/월별차트/최근거래 독립상태."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/widgets/fund_balance_card.dart",
+          "sha256": "b21f93d3fb52476b8f641186d8b08c45f9257a6757b6fbbf55d87ba1f2ed5bd5",
+          "reviewScope": "9–100: 총액/누적·무료가 있을 때 paidBalance를 출금 가능으로 표시하는 차이."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_fund_policy_screen.dart",
+          "sha256": "7e07170ff2813753e1cb54d1db943bca51af72c09e67e6225a017a75a62e1721",
+          "reviewScope": "14–56: 가입비/기부7일 전액/월1회/공제/승인 후 입금 안내·실제 조건 대비 제한."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/club_fund_transaction_list_screen.dart",
+          "sha256": "8f77b780f24d20e96d2056387c5cf20759f6f0ad0b547dd7a9ca7ecf04dfbf8a",
+          "reviewScope": "55–113: 거래 빈상태·새로읽기·추가쪽 오류재시도·첫 오류재시도."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/club_debt_repayment_section.dart",
+          "sha256": "27f73144c1a561b765b0b5537a98eb5ffa5c909423117430c1baee7221c3dee8",
+          "reviewScope": "49–170,229–279: 부족액 표시·유료/무료 선택·version/잔액·전송중 차단·결과 메시지."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/donation_form_provider.dart",
+          "sha256": "42872554c4095357d72bea6cc14e9cef1d48e3c2fb6d508ff68e271a6d5c6e76",
+          "reviewScope": "19–103: 중복전송 차단·키 기반 기부·성공/불명확결과 자료갱신."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/donation_form_state.dart",
+          "sha256": "df35d6d075c68f6ff962e818719666228dea0d98fe74085ffa7ada3939ee5c0f",
+          "reviewScope": "최소1000 최대1000000·금액0은 제출불가."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/donation_list_provider.dart",
+          "sha256": "c6763ba886930994d551a731d6a9374e04723be72f43d8096aca84e4b386650d",
+          "reviewScope": "31–118: 20페이지·기부취소키·성공/불명확/이미취소 자료갱신."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/donation_summary_provider.dart",
+          "sha256": "8919742a711f25b061a87cc05555be386df2ebc0680a7aa85b132c20ce7661c0",
+          "reviewScope": "8–17: 별도 서버 요약 조회."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/donation_screen.dart",
+          "sha256": "7e56dcf1783d55d41fad89c87eed951340b7bb72984de80bea4de555bdcf2f61",
+          "reviewScope": "61–88,122–255,337–385: 동작권한·무료전용 P/원·잔액·빠른금액·100자입력·확인·성공초기화/복귀·권한갱신."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/donation_list_screen.dart",
+          "sha256": "9e5a04f624d8b0028eee0545a786616b74abb2926fea9b7702aec17a81c1b76b",
+          "reviewScope": "68–121,145–248,251–407: 서버요약/부분목록대체·월그룹·상태/이름/메시지·원단위·취소actions·취소확인·기부입구."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/withdrawal_screen.dart",
+          "sha256": "2fa6a4b684b5bb34d6c0ed0b0ebdbd7bbfee8b74e24fafe6683b332627a20773",
+          "reviewScope": "55–219,272–386: 금전gate·paid잔액/상세대체·보호액안내·계좌선택·200자사유·확인/전송·성공/월중복 재조회·계좌/잔액오류."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/withdrawal_history_provider.dart",
+          "sha256": "b0ebd042e4c7d25ba18757c63d5e1a81b21f6b84ab04244e494d47dd2c736de4",
+          "reviewScope": "19–42: 20페이지·출금 자료 구독과 재조회."
+        },
+        {
+          "path": "community_app/lib/presentation/club/finance/screens/withdrawal_history_screen.dart",
+          "sha256": "8e94adf8e5fa7729fbb3ee7f4c7ea48776be0cc8ff75dbd689a6e224ceb93369",
+          "reviewScope": "137–212: 연결상태 우선/기존상태/알수없음·실패사유·빈계좌 숨김·공제/총액/실수령 표시."
+        },
+        {
+          "path": "community_app/lib/data/models/club/finance/withdrawal_fee.dart",
+          "sha256": "a29fb084f40b2bfdfc8e96b5e6568d48e86abcea441d502c5a0c5be6c1589d12",
+          "reviewScope": "17–26: 5% 수수료·차감뒤3.3%·정수HALF_UP."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubDonationServiceTest.java",
+          "sha256": "77cb9cadf965b566e2d320b729893a6dcde23fbaebeb80e6d92f8f6b8e6dce9e",
+          "reviewScope": "576–618,710–728: 1000/1000000 허용·999/1000001 거절·100 codepoints 메시지/101거절 단언을 읽음. 실행하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/money/ClubFundPlanTest.java",
+          "sha256": "9318bc3e121cf2f6b80c3a020a3950463d9c74ad3d8aa2d03f145a0bc94bb410",
+          "reviewScope": "187–205,332–354: 통화별환불가능액·신청/승인 계산차이·폐쇄 최신기부우선 한도 단언을 읽음. 실행하지 않음."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubSettlementServiceTest.java",
+          "sha256": "d951c50de9825165e1ee345d0be077521b7b17f4e4aedd5e77c3e98f87594188",
+          "reviewScope": "574–603: 새 클럽장에게 이전 신청자의 예금주/계좌 숨기고 금액/연결상태 유지 단언을 읽음. 실행하지 않음."
+        },
+        {
+          "path": "community_app/test/data/models/club/finance/withdrawal_fee_test.dart",
+          "sha256": "b1b27fd4e8f56e826ef5ea7cfba46e93f4596ed0615bc95590c7aad305ad3b59",
+          "reviewScope": "전체 35행: 100000→5000/3135/91865,10000→500/314/9186 단언을 읽음. 실행하지 않음."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/withdrawal_form_provider.dart",
+          "sha256": "4c613f2505ebd9fe637920e2bf90ba1a2c86aaf077361dc1b11dbff7f3949dca",
+          "reviewScope": "12–77: 최소1만·잔액상한·사유/계좌·amount/reason/accountId 요청·제출상태."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+          "sha256": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+          "reviewScope": "510–646: 기부 생성/목록/요약/취소, 기금/월별/원장/미납금/상환/출금/이력의 메서드·주소·요청·반환. 기부·취소·상환 필수 키와 출금 키 부재."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubFundService.java",
+          "sha256": "11805df67ed7aa8a39f0767395d2ab82a42cf39a8f815aca2ab0480d7159dba7",
+          "reviewScope": "99–136,316–443,449–456: 기금 잠금/0 조회·회원·월별1~24/없는월0·원장 페이지·소유자만 userId·미승인 예약 SQL·통화별 계획 값."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "198–202,433–447,556–562: 기부·본인취소·출금/이력 권한. 전체 정책 재검수 아님."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundMoneyCommand.java",
+          "sha256": "e989afad9f6706e2fc132f9aefaea853647dc2bb8025057fd87543f4de38f3a7",
+          "reviewScope": "291–326,338–349,435–471,483–498,533–552: 원거래 몫 환불·기금가용/폐쇄 반환·미납 상계/지갑상환·기부 실제 통화 적립·출금 총액 예약/복원."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundPlan.java",
+          "sha256": "78c445e7d641f5c5ea2d668234510a92a2b3c5971f56d4eaff4d02cf8ac39b3a",
+          "reviewScope": "222–262,359–379: 환불 잔여몫·통화별 최근 기부 우선 배정·신청/승인 가용액. 폐쇄 전체 계획은 앞선 club_lifecycle 동일 SHA 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/ClubFundPolicy.java",
+          "sha256": "eb2847bbde5cb1cdd46894b2b3d31d51a5ba98526e39cb06c0a75d59196d767e",
+          "reviewScope": "REFUND_WINDOW_DAYS=7."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletSpendService.java",
+          "sha256": "8055356dba4bbf6bb233978b417e97f26b8542578ba75b43794e309b15f9ce89",
+          "reviewScope": "80–123: 기부 등 FREE_ONLY_WHILE_GATED 목록과 gate 닫힘 시 FREE_ONLY 우선 적용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubFundObligationService.java",
+          "sha256": "b58657a8edeceba95a49d60a67085a17ec457a19f304ec66342fcfe67ddece12",
+          "reviewScope": "245–275 미납금 응답의 통화별 상계/넘기기 부족액/폐쇄 계산/버전. 62–76/161–165 소유자 조회·폐쇄 계획은 club_lifecycle 동일 SHA 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/service/WithdrawalService.java",
+          "sha256": "87d7ac9b8d2bd2b5eb7d1ef944dc703d14996e84b78de1fe9ea1d4ff51635e59",
+          "reviewScope": "76–81,196–242,266–295,678–709,982–987,1171–1204: 클럽 금전 gate/소유 계좌 복사·실수령액 한도·승인outbox·반려예약복원·등록계좌/기본계좌·24시간3회/금액·30일금액."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_ownership_transfer_detail_screen.dart",
+          "sha256": "741135f65987db4ae579f48102b579a318a3f1aa4e3312d9625a82f5fee99dde",
+          "reviewScope": "151–175: 보내는 클럽장·미납금 보류 사유일 때 상환 영역 입구."
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "121–181,217–277 추가 확인: 계정/세션/명령/대상/본문 동일 진행중 공유·키준비실패/계정변경 미전송·결과 정리. 저장소 구현 전체 재검수 아님."
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "416–420: 기부 완료/수령/취소 알림의 클럽 기부 내역 착지."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "943–1026: 재정 회원가드·출금/이력 동작권한·기부/전체내역/정책 경로."
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "club_album_20261122",
+        "club_announcements_20261122",
+        "club_detail_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122",
+        "event_payment_cancel_refund_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-13_fund-overview_prd.md",
+          "sha256": "d5474c1a3155bcd8177bfa05f34af73d6e144fb1f1a8fc7903bbf7984acf790d"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-14_donation_prd.md",
+          "sha256": "fbe3bb0283be6b292fef33a1b0ca6939469e97f5c8068752aeb4b79759c4d7e1"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-15_fund-withdrawal_prd.md",
+          "sha256": "dd9253664cb218411be25b9d32fa249e46c397d8c933a8b216aa83a37d29fc9b"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-13.html": [
+          "sidebar",
+          "launch-strip",
+          "debt-repayment",
+          "release-completion"
+        ],
+        "docs/features/F04-14.html": [
+          "sidebar",
+          "launch-strip",
+          "closure-donation-return",
+          "release-completion"
+        ],
+        "docs/features/F04-15.html": [
+          "sidebar",
+          "launch-strip",
+          "withdrawal-account",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-13 기존 기금조회 유지·월별/거래/미납조회/상환4개 추가; F04-14/15 기존6개 연결 유지"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-13_fund-overview/scenarios.md",
+          "sha256": "349d554322589a1fbf70b8b0a80eb2812c030b45a3f5f323572ba9c6e29b1f0a",
+          "characters": 927,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/04_club/F04-14_donation/scenarios.md",
+          "sha256": "82167ad5f3ee521deaf23fe7fc5faffd5bc44838073be41babc502a2bf996f12",
+          "characters": 4375,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        },
+        {
+          "path": "units/04_club/F04-15_fund-withdrawal/scenarios.md",
+          "sha256": "215f8c8528e3828a6f05e41f9a645d6fb5d671aa7966cd7bf4b42b2ff5828787",
+          "characters": 1318,
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]
