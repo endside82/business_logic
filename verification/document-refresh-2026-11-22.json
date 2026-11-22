@@ -302,7 +302,8 @@
         "purchase_refund_20261122",
         "calendar_features_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -363,7 +364,8 @@
         "calendar_features_20261122",
         "calendar_domain_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -3871,9 +3873,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "04f12cf2713d37cabd6ea8ed0cd7e1c392c41f99144e06258e71af2e24f44cca",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "trust_score_20261122"
+      ],
+      "reviewedSha256": "54d190e63bb8062b72a88ea8ff3e046b37f19ac50cd51044740a2e3c6dfa9ac6"
     },
     {
       "path": "docs/features/F11-06.html",
@@ -5111,7 +5116,8 @@
         "purchase_refund_20261122",
         "calendar_features_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5208,7 +5214,8 @@
         "purchase_refund_20261122",
         "calendar_features_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5329,7 +5336,8 @@
         "purchase_refund_20261122",
         "calendar_features_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -7085,10 +7093,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "4154cb8b351858448b9f26ed70898d1a0cf407a7a50b0760e749e21f3a63b401",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "trust_score_20261122"
+      ],
+      "reviewedSha256": "5a9dfa9c2ce3cabe8d8a4c336f2bd1858b3ecdda7190676327de9c27aa7ccd34"
     },
     {
       "path": "prd/02_feature_prds/11_review_report/F11-06_taste-profile_prd.md",
@@ -8184,7 +8194,8 @@
         "purchase_refund_20261122",
         "calendar_features_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8433,7 +8444,8 @@
         "purchase_refund_20261122",
         "calendar_features_20261122",
         "review_core_20261122",
-        "feedback_taste_20261122"
+        "feedback_taste_20261122",
+        "trust_score_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -13570,9 +13582,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7a82f89cb404950aa52a3a9ff1233c45a1a18392f6cf93cb68ea69a058caa1b1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "trust_score_20261122"
+      ],
+      "reviewedSha256": "c322d44858822b69b99f49a26b916cb9b512fb7b2adacfeb5676ee3f152d034c"
     },
     {
       "path": "units/11_review_report/F11-05_trust-score/diagrams.md",
@@ -13580,9 +13595,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "8e76b304ea7ce7f288a83b48b1296cdbb7eb748ee73250b5becf17102555b9ed",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "trust_score_20261122"
+      ],
+      "reviewedSha256": "6459fb5c316e28581682939e99397c59c9358b660ba5eba705aa84fffe4b26ec"
     },
     {
       "path": "units/11_review_report/F11-05_trust-score/frontend.md",
@@ -13590,9 +13608,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "58e6286ace29b76e1c296f27bfb6fbb298aadd1f4eeb24991ab38f9b205180ff",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "trust_score_20261122"
+      ],
+      "reviewedSha256": "9d22520a2e28b4d7d2c41f7e19dee80bac3f84108350b71618f2f4a8b4026962"
     },
     {
       "path": "units/11_review_report/F11-05_trust-score/scenarios.md",
@@ -13600,9 +13621,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "301c6edd5f38f554da4940c12d45de13d425e5d8f54adc0418277a81c0959d2f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "trust_score_20261122"
+      ],
+      "reviewedSha256": "d9e92b9930ef131f304a26ebbe5610a15889136531eb32e6befe146e3b6e1f10"
     },
     {
       "path": "units/11_review_report/F11-06_taste-profile/backend.md",
@@ -34761,6 +34785,129 @@
         "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
         "groupDigests": "29 source/canonical digests; 6 retained HTML IDs",
         "derivedDocuments": "12 documents; shared batch verified 12 paths, 39 relative links/anchors and 8 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "trust_score_20261122": {
+      "kind": "source_review",
+      "scope": "F11-05 현재 live 조회/영속 재계산 분리, 실제 계산식과 등급, 플랫폼 범위 신고감점·본인이력·앱 표시·데이팅 양측 동의를 대조. 제품 시험 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/TrustScoreService.java",
+          "sha256": "52e14433a6f9136e89419606143375b5e93792cc059aa616c195e6763381d946",
+          "reviewScope": "현재 조회와 영속 재계산·manualAdjustment 유지, 가중치/반올림/등급·배지·breakdown, 프로필 접근"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ActivityScoreCalculator.java",
+          "sha256": "8aa8a2618bf571eca5bcdce80d74a7cedd367058523f0f7ccdd1cd55d57e0adc",
+          "reviewScope": "ATTENDING50/주최20 상한·40/30%와 고정15"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/VerificationScoreCalculator.java",
+          "sha256": "7b747018b63998de1b579416a9004b8b292a88c44b1315d52a584afba5e73a2f",
+          "reviewScope": "이메일/전화존재/프로필사진·이름·소개/소셜개수 가점"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/PenaltyScoreCalculator.java",
+          "sha256": "16ec83130117bf062d2fac2536ea7c9b0c2660cfee8d650addf311ef4fab5f99",
+          "reviewScope": "사용자대상 RESOLVED/ESCALATED·플랫폼정책/사적이익 범위·건당20 상한100"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/review/controller/ScoreHistoryController.java",
+          "sha256": "4c79ebccdd06af34837d8b8cb6aee04085e083c2b086b695dcd8b28c2d35c7bd",
+          "reviewScope": "본인이력 GET days기본90·상한365"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/service/ScoreHistoryService.java",
+          "sha256": "606052e1f33d5083a5315ca4b21e6ecc880f0e0f04a73fa65eb36d94c708e724",
+          "reviewScope": "최초/마지막스냅샷1점변화·본인만조회·날짜경계·조회내최근30일 추세"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/review/vo/TrustScoreVo.java",
+          "sha256": "1f132eb86a04379db146bd6e59a6334c3081166ee3a70bd1985469c25dbb801c",
+          "reviewScope": "점수/후기평균·개수/참석·주최/등급/다음등급/배지/breakdown 필드"
+        },
+        {
+          "path": "community_app/lib/data/models/review/trust_score_vo.dart",
+          "sha256": "c64238216417ac4a6ecd7d4698acc435335c213dcd17b56ca24b6fe31ce1722b",
+          "reviewScope": "서버수치/nextGradeScore/breakdown 모델"
+        },
+        {
+          "path": "community_app/lib/domain/providers/review/trust_score_provider.dart",
+          "sha256": "7b8984d31f6f03ef28d4280aad5aa55b8e9cdb41b275178577b0c0a480434232",
+          "reviewScope": "본인·타인·기간별 이력 조회 및 변경 구독"
+        },
+        {
+          "path": "community_app/lib/presentation/review/screens/trust_score_screen.dart",
+          "sha256": "ca63be8606e56c89f1d916cca51886333ffde7c3e63634fdcb5cf30b73547e23",
+          "reviewScope": "본인/타인분기·7/30/90일·구성키매핑/비중·manualAdjustment 기본라벨/음수절댓값 표시"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/review/controller/ReviewController.java",
+          "sha256": "72a4fe9159dbd8526c9e64283b532ae3cae0eb7e8fcc0b9de3334cfa39a56b4a",
+          "reviewScope": "동일 SHA; 본인/타인 신뢰점수 GET에서 viewer/target 전달"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/MatchScoringService.java",
+          "sha256": "db4902c2ec4610580699670092de64a22d4d401cdaa392377dcc65110f1322ca",
+          "reviewScope": "양측communityDataOptIn일때만 신뢰/태그 사용·가중치재정규화"
+        },
+        {
+          "path": "community_app/lib/data/api/review_api.dart",
+          "sha256": "c7f182fe4e095b5246b0912e49b88058f46b36261ec59acb841d66f6cf38d23c",
+          "reviewScope": "동일 SHA; 본인/타인점수와 days이력 호출"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/profile_branch_routes.dart",
+          "sha256": "e660757f46314ea1d0cc767f3997ab4b70150407585a6de6ac0f597558593745",
+          "reviewScope": "신뢰점수 화면 생성 호출은 본인모드"
+        }
+      ],
+      "reuses": [
+        "calendar_features_20261122",
+        "feedback_taste_20261122",
+        "preference_tags_20261122",
+        "review_core_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/11_review_report/F11-05_trust-score_prd.md",
+          "sha256": "5a9dfa9c2ce3cabe8d8a4c336f2bd1858b3ecdda7190676327de9c27aa7ccd34"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F11-05.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "타인 점수는 차단뿐 아니라 프로필 상세 접근 검사. 실제 점수식에서 평균 별점은 별도 응답값이며 구성 키 대부분은 앱에 현재 매핑됨.",
+          "disposition": "현재 계약·계산 예시·파생 문서 갱신"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "live와 저장 점수 차이 가능, 수동조정 없이 최대67.5, 타인 화면caller 부재, manualAdjustment 원문/음수 표시 한계.",
+          "disposition": "현재 소스의 범위로 명시; 새로운 정책 또는 제품 수정으로 계산하지 않음"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 120개가 실제 소스와 일치합니다.",
+        "groupDigests": "15 source/canonical digests; 3 retained HTML IDs",
+        "derivedDocuments": "6 documents; shared batch verified 6 paths, 11 relative links/anchors and 4 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"

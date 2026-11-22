@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,311개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,310개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1311,
+    "documentedScenarioItems": 1310,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4978,
     "journeyFilesScanned": 336,
@@ -13763,14 +13763,14 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F11-05",
       "domain": "리뷰 & 신고",
-      "name": "신뢰점수 & 변동 이력",
-      "scenarioCount": 9,
+      "name": "신뢰점수 계산과 본인 변동 이력",
+      "scenarioCount": 8,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/11_review_report/F11-05_trust-score/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/11_review_report/F11-05_trust-score_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 8
       },
       "trace": {
         "backendPath": "business_logic/units/11_review_report/F11-05_trust-score/backend.md",

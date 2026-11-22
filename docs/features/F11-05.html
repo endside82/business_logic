@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F11-05 신뢰점수·변동 이력 — community PRD</title>
+  <title>F11-05 신뢰점수 계산과 본인 변동 이력</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,309 +17,33 @@
           <a href="../domains/11-review.html">11 리뷰·신고</a><span>›</span>
           F11-05 신뢰점수·변동 이력
         </div>
-        <h1>F11-05. 신뢰점수 · 변동 이력</h1>
-        <p class="lede">
-          사용자가 그동안 한 활동(참석·주최·인증·확정된 신고)을 0~100점 신뢰점수와 다섯 등급(DIAMOND·PLATINUM·GOLD·SILVER·BRONZE)으로 환산해 보여 주는 면이다.
-          현재 Flutter 진입은 본인 화면뿐이고 변동 이력도 본인 모드에서만 그린다.
-          다른 회원의 현재 점수는 로그인한 사람이 서로 차단하지 않은 사이라면 볼 수 있지만,
-          점수가 오르내린 이력과 그 사유는 2026-08-07부터 본인만 볼 수 있다.
-        </p>
+        <h1>F11-05 신뢰점수 계산과 본인 변동 이력</h1>
+        <p class="lede">현재 조회와 저장 이력·정확한 점수식·신고 감점 범위·본인 접근·동의 경계를 현재화한다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="callout">
-          <span class="label">2026-07-29 소스 재실측 — 데이팅 동의 경계</span>
-          <p>신뢰점수 유사도는 데이팅 후보 점수의 0.15 성분이지만 양쪽 프로필이 모두
-            <code>communityDataOptIn=true</code>일 때만 내부에서 사용한다. 한쪽 미동의 시 태그와
-            신뢰점수 성분을 함께 제외하고 남은 가중치를 재정규화한다. 원 신뢰점수·유사도·성분별 값은
-            데이팅 카드에 노출하지 않으며 커뮤니티의 직접 타인 점수 조회 차단 게이트와는 별도 계약이다.</p>
-          <p>Flutter의 타인 모드 화면 분기는 presentation caller가 없고 이벤트 호스트 카드는 별도 인라인 응답을 쓴다.
-            점수 변동 이력은 2026-08-07부터 본인만 조회할 수 있어 다른 회원의 변동 사유는 더 이상 나가지 않는다.
-            다만 현재 점수 자체를 돌려주는 조회는 서로 차단하지 않은 사이인지만 확인한다.</p>
-        </div>
-      </section>
-
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">점수 범위</div><div class="value">0~100</div><div class="hint">신규 사용자는 50에서 시작</div></div>
-          <div class="metric"><div class="label">등급</div><div class="value">5단계</div><div class="hint">서버 단일출처: 40·60·75·90 도달선, 다음 등급까지 남은 점수 제공</div></div>
-          <div class="metric"><div class="label">변동 이력 적재</div><div class="value">1점 이상</div><div class="hint">미세 변동은 이력에서 제외</div></div>
-          <div class="metric"><div class="label">기간 셀렉터</div><div class="value">7·30·90일</div><div class="hint">서버는 1~365일 받지만 화면은 3개만 노출</div></div>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 점수는 한 줄 식이고, 영향은 사방으로 흩어진다</span>
-          <p>신뢰점수는 본인에게는 "내 활동의 결과"이고 이벤트 호스트 카드에는 신뢰 단서로 일부 노출된다.
-            현재 검색·홈 이벤트 추천이 신뢰점수를 정렬에 쓰는 호출은 없고, 데이팅은 양쪽 옵트인일 때만 영속 점수의 유사도를 내부 성분으로 쓴다.
-            그래서 산정식은 단순해야 한다("활동 절반, 인증 1/4, 패널티 -1/4").
-            동시에 사용자가 "내 점수가 왜 이렇게 됐는지" 추적할 수 있어야 한다 — 현재 앱의 본인 화면에 보이는 변동 이력이 그 자리다.
-            현재 앱 화면은 남에게 변동 과정을 그리지 않지만 서버 API도 같은 경계를 강제하지는 않는다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>이 단위가 다른 도메인의 결정을 움직인다</h2>
-        <div class="callout">
-          <span class="label">신뢰점수가 바뀌면 그 사용자에 관한 여러 면이 같이 흔들린다</span>
-          <ul>
-            <li><strong>데이팅 내부 정렬 성분.</strong>
-              양쪽 커뮤니티 데이터 옵트인일 때만 영속 신뢰점수 유사도가 후보 점수에 반영된다. 검색·홈 이벤트 추천 사용은 현재 소스에서 확인되지 않는다.</li>
-            <li><strong>호스트의 다음 모임 신청 결정.</strong>
-              다른 사용자가 모임을 신청할 때 호스트의 점수·등급이 신뢰의 첫 단서. 평균 별점과는 다른 차원의 누적 평가다.</li>
-            <li><strong>데이팅 도메인의 카드 노출.</strong>
-              인증·활동·패널티가 모두 반영된 점수가 매칭 후보 순서에 영향을 준다 — 인증이 약한 사용자는 노출에서 자연스럽게 내려간다.</li>
-            <li><strong>운영 측의 다음 결정.</strong>
-              패널티가 빠르게 누적되는 사용자는 운영 모니터링 대상에 올라간다 — 신고 한 건 한 건이 아니라 점수의 변동 패턴이 관찰 신호.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>점수가 만들어지는 세 갈래</h2>
-        <p class="subtitle">점수는 활동·인증·패널티 세 갈래의 가중합이고, 0~100 범위로 잘린다.
-          식 자체는 한 줄이지만 각 갈래에 들어가는 입력 신호는 여러 도메인에서 모인다.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:130px">갈래</th><th>가중치</th><th>들어가는 신호</th><th style="width:30%">어디서 오는가</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>활동</strong></td>
-                <td><span class="pill brand">+50%</span></td>
-                <td>참석한 모임 수, 주최한 모임 수 (클럽·연속 활동은 현재 기본값 고정).</td>
-                <td>이벤트·참석 도메인. 모임에 정상 참석하면 자동으로 누적된다.</td>
-              </tr>
-              <tr>
-                <td><strong>인증</strong></td>
-                <td><span class="pill info">+25%</span></td>
-                <td>이메일(30) · 전화(30) · 프로필 사진(10) · 자기소개(5) · 실명(5) · 소셜 연동(10~20).</td>
-                <td>인증·프로필 도메인. 인증 한 단계가 더해질 때마다 점수가 즉시 오른다.</td>
-              </tr>
-              <tr>
-                <td><strong>패널티</strong></td>
-                <td><span class="pill danger">−25%</span></td>
-                <td>운영자가 승인·이관 처리한 신고 1건당 20점, 최대 100.</td>
-                <td>신고 도메인(F11-04). 접수만으로는 안 깎이고, 운영자 결론이 난 뒤에 잡힌다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p class="subtitle" style="margin-top:1rem">최종 점수는 활동·인증·패널티를 가중합한 뒤 0~100으로 잘라 소수 첫째까지 반올림한다.
-          신규 사용자는 활동이 0이라 인증·기본값으로 결정되며, 보통 50점 근처에서 시작한다.</p>
-      </section>
-
-      <section>
-        <h2>등급 임계 — 점수가 어디서 갈리는가</h2>
-        <p class="subtitle">점수는 다섯 등급으로 나뉘어 카드·프로필에 배지로 노출된다.
-          임계는 서버 정책이 기준이며, 클라이언트 화면이 다음 등급까지 남은 점수를 계산할 때 같은 임계를 써야 정확하다.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:140px">등급</th><th>도달 점수</th><th>의미</th></tr></thead>
-            <tbody>
-              <tr><td><strong>DIAMOND</strong></td><td>90점 이상</td><td>활동·인증 점수가 누적된 서버상 최고 등급.</td></tr>
-              <tr><td><strong>PLATINUM</strong></td><td>75점 이상</td><td>꾸준한 활동과 인증을 모두 갖춘 사용자.</td></tr>
-              <tr><td><strong>GOLD</strong></td><td>60점 이상</td><td>서버 신뢰점수가 60점 이상 75점 미만인 등급.</td></tr>
-              <tr><td><strong>SILVER</strong></td><td>40점 이상</td><td>인증을 마치고 첫 활동을 시작한 단계.</td></tr>
-              <tr><td><strong>BRONZE</strong></td><td>40점 미만</td><td>신규 사용자 또는 패널티가 누적된 사용자.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="callout" style="margin-top:1rem">
-          <span class="label">2026-06-04 해소 — 클라이언트 임계 서버 단일출처로 전환</span>
-          <p>이전에는 화면이 "다음 등급까지 N점"을 표시할 때 PLATINUM 도달선을 80점으로 잘못 잡고 DIAMOND를 표시하지 않았다.
-            2026-06-04에 서버가 내려주는 "다음 등급까지 남은 점수" 값을 그대로 쓰도록 전환했다.
-            이제 서버 도달선(BRONZE 40 미만 / SILVER 40+ / GOLD 60+ / PLATINUM 75+ / DIAMOND 90+)이 화면 표기에도 그대로 반영된다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>변동 이력은 본인만 볼 수 있고, 현재 점수는 서로 차단하지 않은 사이면 볼 수 있다</h2>
-        <p class="subtitle">앱은 본인 점수 화면에서만 이력을 보여 준다. 서버도 2026-08-07부터 변동 이력과 그 사유는 본인 요청에만 답한다. 현재 점수 자체는 서로 차단하지 않은 사이라면 다른 회원의 것도 볼 수 있다.</p>
-        <div class="diagram">
-          <div class="mermaid">
-flowchart LR
-    A["다른 도메인이 점수 재계산을 요청<br/>(리뷰 추가·신고 처리·인증 추가 등)"] --> B["새 점수 산정"]
-    B --> C{"직전 스냅샷과의 차이가 1점 이상?"}
-    C -->|"예"| D["변동 이력에 한 줄 추가"]
-    C -->|"아니오"| E["점수만 갱신, 이력은 생략"]
-    D --> F["본인 화면의 변동 이력 리스트에 노출"]
-    D --> H["본인 요청에만 이력 제공(2026-08-07부터)"]
-    E --> G["사용자에게는 점수만 갱신되어 보임"]
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>사용자 시나리오</h2>
-
-        <div class="cards">
-          <article class="card">
-            <div class="eyebrow">본인 첫 조회</div>
-            <h3>마이페이지에서 "신뢰점수"로 진입</h3>
-            <p>가입 두어 달 된 사용자가 본인 신뢰점수를 본다. 화면 중앙에 원형 게이지로 점수가 그려지고,
-              등급 배지("BRONZE")와 "다음 등급까지 N점" 안내가 따라 붙는다.
-              아래에 활동·인증·패널티 세 갈래의 구성이 카드로 깔리고, 그 아래에 7일 기준 변동 이력 리스트가 뜬다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자에게 "내 활동이 어떻게 점수로 환산됐는지"가 한 화면에서 보인다. 추가 인증이나 활동의 동기 부여로 이어진다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">기간 전환</div>
-            <h3>7일 → 1개월 → 3개월</h3>
-            <p>변동 이력 위의 기간 셀렉터에서 "1개월"을 누르면 30일치 스냅샷이 다시 들어와 채워진다.
-              한 번 더 "3개월"을 누르면 90일치까지 펼쳐진다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 사용자가 자신의 활동 누적 추세를 본인이 정한 기간으로 본다. 추세선을 따라가다 보면 "최근 활동이 줄었구나"를 스스로 인지하는 동기 회복의 자리.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">타인 조회 — 점수는 열람 가능, 이력은 본인 전용</div>
-            <h3>타인 화면 진입은 없다 — API도 이력만큼은 본인 전용으로 닫혔다</h3>
-            <p>현재 사용자 프로필에서 <code>TrustScoreScreen(isMyScore:false)</code>를 여는 CTA는 없다.
-              이벤트 상세는 별도 호스트 카드로 점수 일부만 인라인 표시한다. 인증된 비차단 사용자는 직접 API로 타인의
-              현재 점수는 조회할 수 있지만, 점수가 오르내린 이력과 그 사유는 2026-08-07부터 본인 요청에만 답한다.</p>
-            <p><strong>남은 범위</strong> — 점수 자체의 타인 조회는 여전히 열려 있다. UI가 타인 모드를 노출하지 않을 뿐 서버가 막고 있지는 않다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">간접 변동</div>
-            <h3>방금 새 리뷰를 받은 호스트가 점수 화면을 열었을 때</h3>
-            <p>다른 사용자가 후기를 남기면 호스트의 점수가 다시 계산되고, 변동이 1점 이상이면 그날의 변동 이력에 한 줄이 추가된다.
-              호스트가 점수 화면을 열어 보면 새 스냅샷이 리스트 끝에 보인다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 외부 도메인의 행동(리뷰)이 본 단위의 화면에 즉시 반영된다는 일관성. 점수가 사용자 활동과 함께 살아 있다는 인지.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">미세 변동</div>
-            <h3>작은 활동이라 이력에는 잡히지 않음</h3>
-            <p>신청 취소 같은 작은 변동이 일어나 점수가 0.4점만 움직였다. 점수 자체는 갱신되지만 변동 이력 리스트는 그대로다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 잦은 미세 변동이 이력 그래프를 어지럽혀 "큰 변화"가 묻히는 것을 막는다. 1점이라는 임계가 노이즈와 신호를 가른다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">패널티 누적</div>
-            <h3>승인된 신고가 한 건 추가됐을 때</h3>
-            <p>다른 사용자의 신고가 운영자에 의해 승인 처리됐다. 그 시점에 대상자의 패널티가 20점 누적되고,
-              본인의 다음 화면 진입에서 점수가 떨어진 모습이 보인다. 변동 이력에 한 줄이 추가된다.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 접수 시점이 아닌 운영자 결론 시점에 점수가 움직인다는 정책이 사용자에게 화면으로 일관되게 보인다.</p>
-          </article>
-
-          <article class="card">
-            <div class="eyebrow">빈 상태</div>
-            <h3>가입 직후라 변동 이력이 비어 있다</h3>
-            <p>신규 사용자가 본인 점수를 본다. 점수는 50점 근처(인증·기본값) 등급은 BRONZE, 변동 이력은 "변동 이력이 없습니다" 안내만.</p>
-            <p><strong>이 흐름이 남기는 것</strong> — 신규 사용자에게 "이 자리가 앞으로 채워질 곳"이라는 인지를 만든다. 빈 상태가 오류로 인지되지 않게.</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>화면에서 사용자가 인지하는 것</h2>
-        <p class="subtitle">실제로 화면을 열었을 때 보이는 정보와, 그 정보가 그 자리에 있는 이유.</p>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th style="width:160px">화면 요소</th><th>사용자가 보는 것</th><th style="width:32%">그 자리에 둔 이유</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>원형 게이지</strong></td>
-                <td>화면 상단 중앙에 큰 원형 그래프. 중앙에 숫자(소수 첫째), 그 아래 "/100" 보조 글자.</td>
-                <td>점수의 "절대 위치"보다 "100점 중에서 어디쯤"이 사용자의 직관에 가깝다 — 원형이 좌우의 여유를 시각화한다.</td>
-              </tr>
-              <tr>
-                <td><strong>등급 배지</strong></td>
-                <td>게이지 아래에 캡슐 모양 배지. 등급별 다른 색상과 아이콘(다이아·왕관·메달).</td>
-                <td>점수 숫자만으로 의미를 짐작하기 어렵다 — 등급 라벨이 의미를 한 단어로 잡아 준다.</td>
-              </tr>
-              <tr>
-                <td><strong>"다음 등급까지 N점"</strong></td>
-                <td>배지 아래 한 줄 안내. DIAMOND(최고 등급)에서는 노출되지 않는다.</td>
-                <td>다음 단계로 갈 동기를 만든다 — "조금만 더 활동하면" 신호. 2026-06-04 기준 서버가 내려주는 "다음 등급까지 남은 점수"를 그대로 사용하여 도달선 불일치가 해소됐다.</td>
-              </tr>
-              <tr>
-                <td><strong>점수 구성 카드 리스트</strong></td>
-                <td>활동·인증·패널티 갈래의 점수와 가중치가 카드 형태로 깔린다. 양수는 파란 계열, 음수는 빨간 계열.</td>
-                <td>"내 점수가 어디서 만들어졌는가"를 사용자가 추적할 수 있게 한다. 패널티가 빨간색으로 표시되는 자리에 사용자의 시선이 가장 먼저 간다.</td>
-              </tr>
-              <tr>
-                <td><strong>기간 셀렉터(본인 모드)</strong></td>
-                <td>"7일 / 1개월 / 3개월" 세 탭. 현재 선택된 탭만 강조.</td>
-                <td>사용자가 자기 활동 호흡에 맞춰 기간을 선택. 3개월보다 긴 기간은 화면에서 직접 노출하지 않는다 — 사용자의 일상에서 의미 있는 호흡 범위.</td>
-              </tr>
-              <tr>
-                <td><strong>변동 이력 리스트(본인 모드)</strong></td>
-                <td>날짜(MM-DD) + 변동 사유 + 그날의 총점.</td>
-                <td>점수가 어느 날, 왜 움직였는지를 한 줄로 보여 줘 사용자가 자기 활동을 추적할 수 있게 한다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>측정해야 하는 것</h2>
-        <div class="callout">
-          <span class="label">본 단위가 정상이라고 부르려면 이 다섯 가지가 추적되어야 한다</span>
-          <ul>
-            <li><strong>등급별 사용자 분포.</strong>
-              한 등급에 사용자가 쏠리면 등급의 변별력이 사라진다. 임계 조정 여부의 첫 신호.</li>
-            <li><strong>인증 단계별 점수 기여도.</strong>
-              어떤 인증이 점수에 가장 크게 기여하는지 추적해 사용자에게 어떤 인증부터 권하는 것이 효율적인지 결정.</li>
-            <li><strong>패널티 평균과 최댓값.</strong>
-              누적 패널티가 한 사용자에게 빠르게 쌓이는 패턴이 관찰되면 그 사용자의 다음 활동(이벤트 호스팅·매칭 노출)을 운영 측이 미리 통제할 결정 시점.</li>
-            <li><strong>변동 이력 적재 비율.</strong>
-              점수 재계산 대비 이력으로 남는 비율이 너무 낮으면 1점 기준이 너무 높다는 신호, 너무 높으면 기준을 더 올릴 수 있다.</li>
-            <li><strong>본인 화면 진입과 추가 활동 사이의 상관.</strong>
-              점수 화면이 사용자의 추가 인증·참석을 유도하는지 측정 — 화면이 정말 동기 부여로 작동하는지의 핵심 신호.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영자가 알아야 할 것 — 비즈니스 리스크</h2>
-        <div class="callout warn">
-          <span class="label">본 단위에서 무너지면 도메인 전체가 같이 흔들린다</span>
-          <ul>
-            <li><strong>점수는 본인 화면·호스트 카드·옵트인 데이팅 정렬에서 서로 다른 방식으로 소비된다.</strong>
-              검색·홈 이벤트 추천이 이 점수를 직접 쓰는 호출은 현재 없으며 소비처별 live/영속 값 차이를 구분해야 한다.</li>
-            <li><strong>등급 도달선은 서버 단일출처로 전환됐다(2026-06-04 해소).</strong>
-              화면이 서버가 내려주는 "다음 등급까지 남은 점수"를 그대로 쓰므로 도달선 불일치가 해소됐다.
-              서버 도달선(40·60·75·90)과 화면 표기가 이제 일치한다.</li>
-            <li><strong>변동 이력은 2026-08-07부터 서버에서도 본인 한정이다.</strong>
-              점수 변동 사유 같은 민감 정보가 섞인 history 조회는 이제 본인 요청만 허용한다.
-              다만 점수 자체의 일반 조회는 여전히 양방향 비차단이면 타인도 열람할 수 있다 — owner-only가
-              점수 자체에도 필요한 제품 정책이라면 그 조회도 서버 가드로 별도 집행해야 한다.</li>
-            <li><strong>"승인된 신고만 패널티에 반영" 정책이 무너지면 평판이 무기가 된다.</strong>
-              접수 시점에 점수가 깎이는 회귀가 들어가면 사용자 간 보복 신고가 발생, 무고한 사용자가 즉시 노출에서 밀린다.</li>
-            <li><strong>노쇼 카운트는 점수 안에 자리는 있지만 현재 패널티 식에 들어가지 않는다(보강 후보).</strong>
-              "노쇼한 사용자가 평판에서 손해 본다"는 운영 기대와 어긋난다 — 노쇼 카운트를 패널티에 포함시킬지 정책 결정이 필요.</li>
-            <li><strong>1점 미만 변동을 이력에서 제외하는 정책은 노이즈를 막지만, 누적된 미세 변동이 이력에서 사라진다.</strong>
-              사용자가 "내 점수가 어느 날 슬그머니 변했다"고 느끼는 시점이 오면 임계를 0.5 같은 더 작은 값으로 조정할지 검토.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section>
-        <h2>이어지는 단위 · 관련 정책</h2>
-        <div class="hub-grid">
-          <a class="card" href="../domains/11-review.html"><div class="eyebrow">상위 도메인</div><h3>11 리뷰·신고</h3></a>
-          <a class="card" href="F11-01.html"><div class="eyebrow">입력</div><h3>F11-01 리뷰 작성</h3><p>호스트 점수의 활동 갈래에 영향.</p></a>
-          <a class="card" href="F11-04.html"><div class="eyebrow">입력</div><h3>F11-04 신고</h3><p>운영자 결론이 패널티에 누적되는 경로.</p></a>
-          <a class="card" href="../domains/01-auth.html"><div class="eyebrow">입력</div><h3>01 인증</h3><p>인증 단계가 인증 갈래에 직접 반영.</p></a>
-          <a class="card" href="../domains/13-profile.html"><div class="eyebrow">관련</div><h3>13 프로필</h3><p>프로필 충실도가 인증 점수에 영향.</p></a>
-        </div>
-      </section>
-
-<!--
-  원천 자료 (개발 참고용 — 비즈니스 독자에게는 노출되지 않음)
-  - business_logic/units/11_review_report/F11-05_trust-score/{scenarios,backend,frontend,diagrams}.md
--->
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>조회 입구와 권한</h2><p>본인 라우터는 로그인 사용자의 식별자로 <code>TrustScoreScreen(isMyScore: true)</code>를 연다. 앱은 본인 점수 단축 주소를 쓰고 이력 구간을 표시한다. 타인 모드 분기는 있지만 현재 앱 소스에서 이 화면을 타인 모드로 생성하는 호출자는 없다. 분기 존재를 실제 타인 화면 입구로 세지 않는다.</p>
+<div class="table-wrap"><table><thead><tr><th>호출</th><th>반환과 접근</th></tr></thead><tbody><tr><td><code>GET /api/v1/users/me/trust-score</code></td><td>본인 <code>TrustScoreVo</code></td></tr><tr><td><code>GET /api/v1/users/{userId}/trust-score</code></td><td>대상이 다른 사람이면 양방향 차단과 이용 가능 계정을 확인하고, 프로필 상세 접근 권한도 검사한다. 거절 시 <code>USER_NOT_FOUND</code></td></tr><tr><td><code>GET /api/v1/users/{userId}/trust-score/history?days=N</code></td><td>본인만 허용, 타인 요청은 <code>FORBIDDEN</code>. <code>ScoreHistoryVo</code> 반환</td></tr></tbody></table></div>
+<p>「차단만 없으면 다른 사람의 점수를 항상 볼 수 있다」는 과거 설명은 현재 상세 접근 검사를 빠뜨린다. 화면 모드와 서버의 소유자 검증은 별도로 적용된다.</p></section>
+<section id="current-2"><h2>현재 조회값과 저장 이력</h2><p>점수 GET은 활동·인증·감점을 현재 자료로 계산하고 저장된 <code>manualAdjustment</code>를 더해 응답한다. 조회 자체가 <code>TrustScore</code>나 스냅샷을 갱신하는 메서드는 아니다. <code>recalculate</code>가 호출될 때 행을 확보·잠금 후 구성 점수·총점·등급·개수를 저장하고 이력 저장을 요청한다. 따라서 현재 조회값과 마지막 저장·이력이 항상 같다고 보장하지 않는다.</p>
+<p>후기 작성·수정·삭제는 재계산을 부른다. 하지만 아래 총점 공식에 받은 후기 평균 별점이 직접 들어가는 것은 아니다. 후기 평균과 받은 후기 개수는 응답의 별도 정보다. 임시 숨김은 후기를 삭제하거나 별점을 총점에서 별도로 차감하는 처리도 아니다.</p></section>
+<section id="current-3"><h2>실제 점수 계산식</h2><p>총점은 <code>0.5 × activityScore + 0.25 × verificationScore − 0.25 × penaltyScore + manualAdjustment</code>를 소수 한 자리로 반올림한 뒤 0~100으로 제한한다. 원래 구성 점수와 총점에 반영된 기여도를 구분한다.</p>
+<div class="table-wrap"><table><thead><tr><th>구성</th><th>현재 계산</th></tr></thead><tbody><tr><td>활동</td><td><code>ATTENDING</code> 참석 수를 50회에서 상한 100, 주최 수를 20회에서 상한 100으로 환산한다. 참석 환산값 ×0.4 + 주최 환산값 ×0.3 + 고정값 50×0.15 + 50×0.15</td></tr><tr><td>인증</td><td>이메일 인증 30, 비어 있지 않은 휴대전화 30, 프로필 사진 10, 자기소개 5, 이름 5, 소셜 로그인 1개면 10·2개 이상이면 20</td></tr><tr><td>감점</td><td>사용자 대상 신고 중 <code>RESOLVED</code> 또는 <code>ESCALATED</code>이며 범위가 <code>PLATFORM_POLICY</code> 또는 <code>PRIVATE_INTEREST</code>인 건수 ×20, 최대 100</td></tr><tr><td>수동 조정</td><td>저장된 누적 조정값을 가중치 없이 더하며 일반 재계산에서도 유지</td></tr></tbody></table></div>
+<p>휴대전화 항목은 현재 계산기의 문자열 존재 조건이지 별도 전화 인증 성공 검사를 뜻하지 않는다. 참석 수도 이 계산기에서는 <code>ATTENDING</code> 집계이며 실제 체크인 횟수라고 바꾸어 쓰지 않는다. 모든 신고나 지역 모임 내부 신고가 감점 원천인 것은 아니다. 해당 신고 한 건의 원시 감점 20은 가중치 반영 후 총점 5 감소에 해당한다.</p>
+<p>현재 상수대로 계산하면 활동은 이력이 없어도 15, 최대 85다. 인증 최대 100·감점 0·수동 조정 0인 경우 총점 상한은 67.5다. 이는 현재 코드에서 계산한 범위이며 등급 정책을 새로 결정한 것이 아니다.</p></section>
+<section id="current-4"><h2>등급과 구성 응답</h2><p>등급은 40 미만 BRONZE, 40 이상 SILVER, 60 이상 GOLD, 75 이상 PLATINUM, 90 이상 DIAMOND다. 서버는 다음 등급 기준을 <code>nextGradeScore</code>로 주고 최고 등급이면 null이다. 앱은 이 값을 사용해 다음 등급까지 필요한 점수를 표시한다.</p>
+<p>응답에는 사용자 식별자, 후기 평균·개수, 참석·주최 개수, 총점·등급·다음 기준·배지·breakdown이 있다. breakdown은 <code>activityScore</code>, <code>verificationScore</code>, <code>penaltyScore</code>, <code>manualAdjustment</code>, 세 <code>*Weight</code>, <code>activityContribution</code>, <code>verificationContribution</code>, <code>penaltyDeduction</code>을 제공한다. 현재 앱은 활동·인증·감점과 비중·기여도 이름을 한국어로 매핑하고 비중은 퍼센트로 표현한다. 과거의 구성 키 전체 불일치를 현재 미해결로 남기지 않는다.</p>
+<p>배지는 후기 수 10/50, 참석 수 5/20/50, 주최 수 1/5/20, 총점 60/75/90의 구간에서 각 계열의 가장 높은 항목을 고른다. 받은 후기 개수는 삭제되지 않은 행을 기준으로 센다.</p></section>
+<section id="current-5"><h2>스냅샷과 기간 선택</h2><p>첫 재계산에는 스냅샷을 남기고 이후에는 마지막 저장 스냅샷의 총점과 절댓값 차이가 1.0 이상일 때만 추가한다. 직전 API 조회나 매번의 재계산값과 비교하는 것이 아니다. 이력은 날짜·총점·등급·구성 점수·변경 사유를 저장하며 매일 한 건의 연속 기록이라고 보장하지 않는다.</p>
+<p>이력 API의 days 기본값은 90이고 최대 365만 적용한다. 현재 컨트롤러에는 양수 최소값 검증이 없다. 조회는 오늘에서 days를 뺀 날짜보다 뒤의 행을 날짜 오름차순으로 받는다. 추세는 그 조회 결과 중 최근 30일에 속하는 행이 2개 이상일 때 처음과 마지막 총점 차이로 판단한다. +5 이상은 UP, -5 이하는 DOWN, 나머지와 표본 부족은 STABLE이다. 7일 조회의 추세가 조회하지 않은 30일 전체를 다시 읽어 계산하는 것은 아니다.</p>
+<p>앱 초기 선택은 7일이며 7·30·90일로 바꾸면 해당 provider 키로 다시 조회한다. 본인 식별자가 없는 경우 이력을 표시하지 않는다. 빈 이력은 안내 카드, 조회 오류는 재시도를 제공한다. 본인 점수는 사람 탐색 변경, 타인 점수·이력은 대상 접근 변경 신호를 구독한다.</p></section>
+<section id="current-6"><h2>데이팅 내부 활용의 동의 경계</h2><p><code>MatchScoringService.calculateMatchScore</code>는 양쪽 <code>communityDataOptIn</code>이 모두 true일 때만 관심사 태그와 신뢰점수 유사도 성분을 사용한다. 신뢰점수의 기본 가중치는 0.15다. 한쪽이라도 동의하지 않으면 해당 두 성분을 빼고 남은 가중치 합으로 나눈다. 미동의를 0점 벌점으로 처리한다고 설명하지 않는다. 이 내부 계산 조건과 커뮤니티 점수 조회의 상세 접근 권한은 서로 다른 검사다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>조회 재계산과 영속 재계산이 분리돼 현재 점수와 마지막 스냅샷이 다를 수 있다.</td><td>모든 조회를 새 이력 적재로 쓰지 않는다.</td></tr><tr><td>Gap</td><td>타인 화면 생성 호출자가 없고 수동 조정 없이 현재 기본 공식의 최대값은 67.5다.</td><td>모든 등급·화면 경로가 일반 활동만으로 도달 가능하다고 설명하지 않는다.</td></tr><tr><td>Gap</td><td>manualAdjustment의 한국어 이름 매핑이 없고 음수 일반 항목은 값 표시 함수에서 절댓값으로 보일 수 있다.</td><td>구성 이름 전체 불일치와 구분해 남은 표시 한계를 기록한다.</td></tr><tr><td>미검증</td><td>실제 계정 조회·재계산·운영 조정·데이팅 계산을 이번에 실행하지 않았다.</td><td>소스 계약 대조만 완료한 것으로 기록한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 조회 권한:</strong> 본인·대상 이용 가능 상태·양방향 차단·프로필 상세 접근을 검사하고 타인의 이력은 거절한다.</li><li><strong>AC-02 조회와 저장 구분:</strong> 현재 GET은 계산해 반환하고 스냅샷을 적재하지 않는다. 영속 재계산만 구성값 저장과 스냅샷 판정을 수행한다.</li><li><strong>AC-03 계산식:</strong> 활동·인증·감점의 현재 원천과 0.5/0.25/0.25 비중, 누적 수동 조정·반올림·0~100 제한을 적용한다.</li><li><strong>AC-04 감점 범위:</strong> 해당 상태·범위의 사용자 신고만 원시 감점에 포함하고 건당 원시20과 총점 반영5를 구분한다.</li><li><strong>AC-05 등급과 구성:</strong> 서버의 등급·nextGradeScore와 구성 키를 사용하며 앱의 현재 매핑 및 수동 조정 표시 경계를 기록한다.</li><li><strong>AC-06 스냅샷:</strong> 최초 또는 마지막 스냅샷 대비 1점 이상 변동일 때 기록하고 매 조회·매일 기록을 보장하지 않는다.</li><li><strong>AC-07 기간과 추세:</strong> 본인 7·30·90일 화면 선택을 해당 조회로 연결하고 반환된 이력 안의 최근30일 표본으로 추세를 계산한다.</li><li><strong>AC-08 데이팅 동의:</strong> 양쪽 동의가 있을 때만 신뢰점수·태그 성분을 사용하고 미동의 때 남은 가중치로 정규화한다.</li></ul>
+<p>근거는 현재 서버 계산·권한·이력과 앱 호출·기간 선택·값 표시다. 이번에 제품 시험을 새로 실행하지 않았다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>
