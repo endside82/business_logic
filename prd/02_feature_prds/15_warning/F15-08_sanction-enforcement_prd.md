@@ -1,265 +1,72 @@
-# F15-08. 제재 집행 PRD
+# F15-08. 클럽·플랫폼 제재와 계정 제한 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 실행·운영 검수 통과 기록이 아니다.
 
-> 최종 갱신: 2026-06-06 (EVENT_HOST_RESTRICT 가드 6경로 확장·DATE_PROFILE_BLOCK 실집행·`GET /api/v1/users/me/sanctions` 신설·PlatformSanction admin grant/revoke 배선 확인(R-8)·D-6 강퇴 구독 정리는 무코드 처분(통념 정정)). 이전: 2026-06-05 (FORCED_REMOVE 실효 해소, 만료 스케줄러 활성, read-time 필터, PlatformSanction 신규, EventApplyRestrictionGuard 신규)
+## 현재 제재와 실행 권한
 
-## 1. 결론
+클럽 제재는 NOTICE·EVENT_APPLY_RESTRICT·ROLE_RESTRICT·FORCED_REMOVE·MANUAL_LOCK·MANUAL_UNLOCK이다. 메서드의 SANCTION_PROPOSER가 컨트롤러 기본 WARNING_REVIEWER를 대체하므로 검토 권한만으로 집행할 수 없다. 강제 탈퇴와 재시도·철회는 서비스에서 OWNER를 다시 요구한다. 역할 제한과 강제 탈퇴의 대상이 소유자면 거절한다.
 
-제재 집행은 **클럽-스코프 제재**(`WarningSanction`, 6유형)와 **플랫폼 전역 제재**(`PlatformSanction`, 3유형) 두 축으로 구성된다. 클럽-스코프 제재는 `WARNING_REVIEWER` 권한으로 `WarningAdminActionController`가 `POST /sanctions/notice|event-apply-restrict|role-restrict|forced-remove`와 `POST /members/{memberId}/manual-lock|manual-unlock`으로 제공한다. 모두 `WarningSanctionService.apply`를 호출하며 reason 필수, `WarningSanction` row를 `ACTIVE`로 생성한다. `FORCED_REMOVE`는 서비스에서 actorRole==OWNER를 재검증하고, **`WarningForcedRemoveEventListener`(AFTER_COMMIT)가 `ClubMembershipService.kickMember`를 호출해 멤버십 제거+유료 가입비 환불+강퇴 알림까지 일괄 처리한다(P0 Gap 해소).** 제재 철회는 `POST /sanctions/{sanctionId}/revoke`. 만료 스케줄러는 매일 04:00 KST(`WarningSanctionExpiryScheduler`)에 활성 동작하며, `listActive`/`listActiveByMember`에 read-time 만료 필터가 추가되어 스케줄러 실행 전 ~24h 갭도 해소됐다(P1 Gap 해소). 이벤트 신청 차단은 클럽-스코프와 플랫폼 전역 제재 2축 동시 검사가 17개 진입점에 적용된다 — 16곳은 공통 `EventApplyRestrictionGuard` 경유, `ApplicationService.apply` 1곳은 동일 검사를 직접 호출. Flutter `warning_sanction_screen.dart`/`warning_forced_remove_dialog.dart`/`warning_sanction_action_row.dart`가 구현했다.
+회원 상세 읽기는 WARNING_REVIEWER 또는 SANCTION_PROPOSER를 허용한다. 화면은 서버 abilities와 개별 actions를 기준으로 최신 권한·현재 행을 확인한다. 권한이 아직 확정되지 않았거나 읽기 오류가 있으면 명령을 진행하지 않는다.
 
-판정: **클럽-스코프 제재 생성·철회·잠금 토글·이벤트 신청 차단 연동의 정합은 닫혀 있다**. 2026-06-06에 플랫폼 전역 제재의 집행 사각 3건이 추가로 닫혔다: (1) `EVENT_HOST_RESTRICT`가 일반 이벤트 생성에만 적용되던 것을 이벤트 생성 전 경로 6곳(클럽 이벤트·클럽 레거시 반복·정기모임 생성·정기모임 세션 3경로 단일관문·플랜 기반·일반 반복 자식)으로 확장, (2) `DATE_PROFILE_BLOCK`을 데이팅 프로필 생성·활성 전환에서 실집행(`DATE_PROFILE_BLOCKED_BY_SANCTION` 403, 1600028 — 비활성화는 허용), (3) `GET /api/v1/users/me/sanctions`(`UserSanctionController`) 신설로 사용자가 본인 활성 전역 제재를 확인할 수 있다(축약 VO `UserPlatformSanctionVo` — 내부 처리자/철회 필드 미노출). 잔여 Risk는 (a) NOTICE/ROLE_RESTRICT의 실효(역할 변경/공지 발송)가 outbox consumer 위임이고, (b) **기활성 데이팅 프로필의 매칭 노출** — DATE_PROFILE_BLOCK 부여 시 프로필 신규 생성·활성 전환은 막지만 이미 활성인 프로필의 즉시 비활성화는 수행하지 않는다(신규 후속 — 후속 결정 대상). **(과거 Risk였던 "강퇴 후 유료 클럽 구독 정리 미확인"은 D-6 조사에서 허구로 정정됐다 — ClubSubscription은 오너 전용이라 멤버가 구독을 보유하는 구조 자체가 없고, 멤버 금전 결속(가입비)은 기존 전액 환불로 이미 완결. §8·§10 참조.)**
+## 부과·수동 잠금·철회의 계약
 
-## 2. 코드 위치
+POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/notice·event-apply-restrict·role-restrict는 필수 Idempotency-Key와 경로에 맞는 type을 요구한다. manual-lock·manual-unlock은 /members/{memberId} 아래에 있으며 URL의 대상과 명령 type을 강제하고 필수 키로 처리한다. forced-remove와 forced-remove/retry의 키는 선택이다. 부과 성공은 제재 행 생성과 실제 강제 탈퇴 실행 완료를 구분해야 한다.
 
-계약의 정본은 코드다. 서버: `WarningAdminActionController`, `UserSanctionController`, `WarningSanctionService`, `WarningSanctionVo`, `ErrorCode`, `WarningSanctionExpiryScheduler`, `PlatformSanctionExpiryScheduler`, `WarningForcedRemoveEventListener`, `EventApplyRestrictionGuard`, `PlatformSanctionService`. 앱: `warning_sanction_screen.dart`, `warning_admin_action_api.dart`, `warning_forced_remove_dialog.dart`, `warning_sanction_action_row.dart`.
+사유는 공백 불가·최대 4000자다. 일반 제재의 종료는 적용 시작보다 뒤여야 한다. 강제 탈퇴에는 startAt·endAt을 지정하지 않으며 재가입 제한은 NONE·DAYS(1~365일)·PERMANENT다. 다른 제재에는 재가입 제한을 넘기지 않는다. 진행 중 강퇴가 있으면 직접 부과 경로는 기존 행을 반환하고 제보 연결 경로는 중복을 거절한다.
 
-## 3. 전체 동작 흐름
+수동 잠금은 경고 요약의 등급 재평가를 잠그는 기능이다. MANUAL_UNLOCK은 이를 해제한다. 이벤트 신청·역할 권한의 직접 차단과 같은 기능으로 설명하지 않는다. 철회는 ACTIVE이며 종료되지 않은 제재가 대상이다. 성공한 강제 탈퇴는 제재 철회로 멤버십을 복원하지 않는다. 처리 전 강퇴 철회는 CANCELLED로 바꾸고 실행 임대를 지운다.
 
-1. WARNING_REVIEWER가 `sanction`(`Routes.adminWarningSanction`) → `WarningSanctionScreen` 또는 멤버 상세에서 제재 액션 행(`warning_sanction_action_row`) 진입.
-2. 유형별 호출:
-   - 공지: `POST /sanctions/notice`(`WarningSanctionAddParam`) → `apply` → NOTICE ACTIVE row.
-   - 이벤트 신청 제한: `POST /sanctions/event-apply-restrict` → EVENT_APPLY_RESTRICT row(start/end).
-   - 역할 제한: `POST /sanctions/role-restrict` → ROLE_RESTRICT row.
-   - 강제 탈퇴: `POST /sanctions/forced-remove`(Idempotency-Key) → 서비스가 actorRole==OWNER 검증(`WARNING_SANCTION_OWNER_ONLY`) 후 FORCED_REMOVE row. **이후 `WarningForcedRemoveEvent` 발행 → AFTER_COMMIT 단계에서 `WarningForcedRemoveEventListener.on`이 `ClubMembershipService.kickMember(clubId, actorUserId, memberId, MEMBER_COMPLAINTS)`를 호출해 멤버 삭제+카운트 감소+유료 가입비 환불(RefundReason.KICKED)+강퇴 알림을 일괄 처리. 실패 시 audit `SANCTION_FORCED_REMOVE_FAILED` + WARN 로그 + OperatorAlert(LOG 채널).**
-   - 수동 잠금: `POST /members/{memberId}/manual-lock` → 서버가 `sanctionType=MANUAL_LOCK` 강제 + `setManualLock(true)`.
-   - 수동 해제: `POST /members/{memberId}/manual-unlock` → `sanctionType=MANUAL_UNLOCK` + `setManualLock(false)`.
-3. `apply`: reason 필수(`WARNING_REASON_REQUIRED`), `startAt` 미지정 시 now, `relatedGrantLedgerIds` JSON 직렬화, ACTIVE 저장 → audit `SANCTION_APPLIED_{type}` + outbox `WarningSanctionApplied`.
-4. 철회: `POST /sanctions/{sanctionId}/revoke`(`WarningSanctionRevokeParam`) → ACTIVE만(`WARNING_SANCTION_NOT_FOUND`), FORCED_REMOVE는 OWNER만 → `status=REVOKED`, MANUAL_LOCK 철회 시 unlock + outbox `WarningSanctionRevoked`.
-5. **이벤트 신청 차단**: 클럽-스코프(`WarningSanctionService.isApplyRestricted`) + 플랫폼 전역(`PlatformSanctionService.isRestricted(EVENT_APPLY_RESTRICT)`) 2축 동시 검사가 17개 진입점에 적용 — 16곳은 `EventApplyRestrictionGuard` 경유, `ApplicationService.apply`는 직접 호출(상세는 §4-B 참조).
-6. **만료 자동 종료**: `WarningSanctionExpiryScheduler` 매일 04:00 KST가 `closeExpiredSanctions(now)`를 호출해 `end_at ≤ now`인 ACTIVE 제재를 ENDED로 전이. `listActive`/`listActiveByMember`에도 read-time 필터 적용(스케줄러 실행 전 ~24h 갭 해소).
+## 강제 탈퇴 실행과 재시도
 
-## 4-A. PlatformSanction — 플랫폼 전역 제재 (신규)
+강퇴는 ACTIVE/PENDING으로 등록한 뒤 별도 집행기가 처리한다. 행 잠금과 실행 토큰·120초 임대를 사용하며 최대 시도는 5회다. 분쟁 보류 여부를 시도 증가 전에 검사한다. 실행은 기존 클럽 탈퇴 명령에 연결하고 원천 제보를 마무리하며 결과를 SUCCEEDED와 REMOVED 또는 ALREADY_ABSENT로 남긴다. 유료 참여·멤버십 정리는 [클럽 회원 관리](../04_club/F04-04_member-management_prd.md)의 공통 탈퇴 계약을 따른다.
 
-### 개요
-`WarningSanction`이 클럽-스코프(`club_id NOT NULL`)인 것과 달리, `PlatformSanction`은 `user_id` 단위의 플랫폼 전역 제재다. 클럽이 없는 개인 호스트 이벤트·데이팅 프로필 차단 등 클럽 외부에서도 작동한다.
+실패 결과는 별도 트랜잭션으로 기록하며 재시도 가능한 경우 지연 후 RETRYABLE, 한도에 도달하면 FAILED다. OWNER의 명시적 재시도는 ACTIVE/FAILED를 PENDING·시도 0으로 되돌린다. 이미 PENDING·PROCESSING·RETRYABLE이면 같은 행을 돌려준다. DAYS 재가입 제한은 실제 집행 시점부터 계산한다. 경고 알림을 발행한 것과 운영자의 실제 수신 확인은 별개다.
 
-| 항목 | WarningSanction | PlatformSanction |
+## 발효 시각과 실제 제한
+
+ACTIVE 목록은 종료 시각을 검사하지만 시작 시각이 미래인 행도 포함한다. 실제 EVENT_APPLY_RESTRICT 가드는 시작과 종료 시각을 적용한다. 이벤트 신청에는 클럽 제한과 플랫폼 전역 신청 제한을 함께 검사한다. ROLE_RESTRICT는 운영진의 유효 권한 계산에 직접 연결돼 제한된 ADMIN의 권한을 0으로 만든다. 과거의 모든 효력이 outbox consumer에만 의존한다는 설명은 현재 코드와 다르다.
+
+클럽 만료 스케줄러는 매일 04:00 Asia/Seoul에 종료 대상 ACTIVE 행을 개별 처리한다. 정리 작업이 아직 돌지 않았더라도 조회·집행 시각 검사를 별도로 적용한다. NOTICE 등 알림 outbox 기록은 실제 푸시 수신까지 보장하지 않는다.
+
+## 플랫폼 전역 제재와 본인 조회
+
+PlatformSanctionType은 EVENT_APPLY_RESTRICT·EVENT_HOST_RESTRICT·DATE_PROFILE_BLOCK·ACCOUNT_SUSPENSION·ACCOUNT_BAN의 5종이다. 전역 제한은 클럽 밖의 개인 이벤트와 데이트에도 쓰인다. 일반 부여와 계정 정지·차단 명령은 별도 서비스이며 계정 유형을 일반 부여에 넘기면 ACCOUNT_SANCTION_COMMAND_REQUIRED로 거절한다. 내부 관리 명령을 일반 회원의 공개 쓰기 API로 소개하지 않는다.
+
+GET /api/v1/users/me/sanctions는 List<UserPlatformSanctionVo>를 반환한다. 본인 목록은 위임된 DATE_PROFILE_BLOCK을 걸러낼 수 있으며 종료 전 ACTIVE 행에는 예약 시작 행도 포함될 수 있다. 앱에는 본인 목록·새로고침·빈 목록·오류 표시가 연결돼 있다.
+
+데이트 프로필 생성과 활성 전환에는 DATE_PROFILE_BLOCK 검사, 이벤트 주최 경로에는 EVENT_HOST_RESTRICT 검사가 있다. 전역 제재 부여 서비스에서 이미 활성인 데이트 프로필을 즉시 끄는 호출은 확인되지 않았다. 매칭 전체의 노출 차단 여부는 별도 데이트 기능 대조 범위이며 이 문서만으로 전부 차단됐다고 단정하지 않는다.
+
+## 계정 정지·차단과 제한 세션의 권리 경로
+
+AccountSanctionService는 사용자 잠금 아래 STOP/BAN 상태와 계정 제재 원장을 함께 변경한다. 해제 시 계정 제재를 철회하고 해당 상태를 NORMAL로 복원하며 정지 사유·기한을 비운다. 제재 시 에이전트 권한 회수와 커밋 뒤 토큰 차단 연계가 있지만 외부 반영 실패까지 모든 기기의 즉시 로그아웃을 보장하는 것은 아니다.
+
+로그인은 비밀번호 확인 뒤 정지·차단 상태에 제한 토큰을 발급하며 갱신도 현재 상태를 따른다. 서버 AccountLockInterceptor는 AccountLockPolicy의 HTTP method·경로 허용 목록을 적용한다. 본인 정보·제재, 기존 본인 분쟁의 조회·이의·메시지·증빙·동의/확인 등 허용된 절차, 고객지원 접수와 후속 메시지, 기존 문의, 개인정보 삭제 요청·상태·취소·사전 확인, 내보내기 요청·상태, 로그아웃·갱신이 포함된다. 첨부 업로드는 EVIDENCE 목적만 허용한다. 허용 경로여도 각 서비스의 본인·사건 자격 검사는 유지된다.
+
+앱은 제한 안내·내 제재·개인정보·본인 분쟁·고객지원·기존 문의·가이드 경로를 허용하고 새 분쟁과 새 일반 문의 입구는 막는다. 개인정보 삭제 요청을 금지하거나 즉시 탈퇴를 허용한다고 일괄 설명하지 않는다. 자세한 구분은 [계정 탈퇴와 개인정보 삭제](../13_profile_settings/F13-06_account-deletion_prd.md)를 따른다.
+
+## 코드 위치
+
+서버: WarningAdminActionController, WarningAdminQueueController, RequiresClubPermissionAspect, ClubMemberPermissionChecker, ClubMemberPermissionFlag, WarningSanctionService, WarningForcedRemoveExecutionService, WarningForcedRemoveCoordinator, WarningForcedRemoveRetryScheduler, WarningSanctionExpiryScheduler, EventApplyRestrictionGuard, PlatformSanctionType, PlatformSanctionService, AccountSanctionService, UserSanctionController, AuthService, JwtAuthorizationFilter, AccountLockPolicy, AccountLockInterceptor. 앱: warning_sanction_screen.dart, warning_forced_remove_dialog.dart, warning_sanction_action_row.dart, warning_admin_access.dart, my_sanctions_screen.dart, account_lock_routes.dart.
+
+<!-- source-references:start -->
+서버 창구: `WarningAdminActionController#applyNotice`, `WarningAdminActionController#applyEventRestrict`, `WarningAdminActionController#applyRoleRestrict`, `WarningAdminActionController#applyForcedRemove`, `WarningAdminActionController#retryForcedRemove`, `WarningAdminActionController#revokeSanction`, `WarningAdminActionController#manualLock`, `WarningAdminActionController#manualUnlock`, `UserSanctionController#getMySanctions`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 스코프 | 클럽-스코프 (`club_id NOT NULL`) | 플랫폼 전역 (`user_id`만) |
-| 유형 수 | 6종 | 3종 |
-| 상태명 | ACTIVE / ENDED / REVOKED | ACTIVE / EXPIRED / REVOKED |
-| 부과 주체 | OWNER/ADMIN/WARNING_REVIEWER | CS_ADMIN / SYSTEM |
-| 만료 스케줄러 | `WarningSanctionExpiryScheduler` 04:00 KST | `PlatformSanctionExpiryScheduler` 04:10 KST |
+| Risk | ACTIVE 목록에는 예약 제재가 있고 강퇴 등록과 집행도 분리돼 있다. | 목록·현재 효력·집행 결과를 나눠 표시한다. |
+| Risk | 기활성 데이트 프로필의 즉시 비활성화 호출은 전역 부여 경로에 없다. | 매칭 노출 전부가 검증됐다고 단정하지 않는다. |
+| 미검증 | 실제 강퇴·재가입·유료 정리·분쟁 보류·제한 계정·기기 토큰 반영은 실행하지 않았다. | 소스 계약을 실운영·기기 통과로 기록하지 않는다. |
 
-### `platform_sanction` 테이블 (`V1__init.sql:4387-4408`)
-| 컬럼 | 타입 | 비고 |
-|---|---|---|
-| `id` | bigint PK AI | |
-| `user_id` | bigint NOT NULL | FK→users |
-| `sanction_type` | varchar(40) NOT NULL | PlatformSanctionType |
-| `status` | varchar(20) NOT NULL | PlatformSanctionStatus |
-| `granted_by_actor_id` | bigint NOT NULL | CS_ADMIN userId 또는 SYSTEM=0 |
-| `granted_by_role` | varchar(20) NOT NULL | CS_ADMIN / SYSTEM |
-| `reason_code` | varchar(40) NULL | |
-| `reason` | text | 서비스에서 blank check |
-| `effective_from` | datetime NOT NULL | 미래 예약 가능 |
-| `expires_at` | datetime NULL | NULL = 영구 |
-| `revoked_at` | datetime NULL | |
-| `revoked_by_actor_id` | bigint NULL | |
-| `revoked_reason` | text NULL | |
-| `created_at`, `updated_at` | datetime NOT NULL | |
+## 수용 기준과 검증 근거
 
-인덱스: `idx_platform_sanction_user_status(user_id, status, sanction_type)`, `idx_platform_sanction_expires(expires_at)`.
-
-### Enum 전체값
-
-**PlatformSanctionType** (`constants/PlatformSanctionType.java:20-23`)
-| 값 | 설명 |
-|---|---|
-| `EVENT_APPLY_RESTRICT` | 모든 이벤트(클럽/비-클럽) 신청·참석 차단 (`EventApplyRestrictionGuard` 17 진입점) |
-| `EVENT_HOST_RESTRICT` | 이벤트 생성(호스트 권한) 차단 — 일반 생성 + 클럽 이벤트·클럽 레거시 반복·정기모임 생성·정기모임 세션 3경로·플랜 기반·일반 반복 자식 6경로 집행 |
-| `DATE_PROFILE_BLOCK` | 데이팅 프로필 게이팅 — 프로필 생성·활성 전환 차단(1600028). 기활성 프로필 매칭 노출 비활성화는 후속 |
-
-**PlatformSanctionStatus** (`constants/PlatformSanctionStatus.java:12-14`)
-`ACTIVE` / `REVOKED` / `EXPIRED`
-
-**PlatformSanctionActorRole** (`constants/PlatformSanctionActorRole.java:15-16`)
-`CS_ADMIN` / `SYSTEM`
-
-### `PlatformSanctionService` 주요 메서드 (`service/PlatformSanctionService.java:51-174`)
-| 메서드 | 호출처 | 동작 |
-|---|---|---|
-| `isRestricted(userId, type, when)` | `EventApplyRestrictionGuard` (EVENT_APPLY) + `ClubEventService`/`ClubRecurringEventService`/`RecurringEventCreateService`/`PlanService`/`RegularMeetingService` (EVENT_HOST_RESTRICT) + `DateProfileService` (DATE_PROFILE_BLOCK) | ACTIVE & effectiveFrom ≤ when & (expiresAt IS NULL OR > when) → true |
-| `listActiveByUser(userId)` | (full VO) | read-time 만료 필터 적용 (expiresAt IS NULL OR > now), 예약 제재 포함 |
-| `listActiveSelfByUser(userId)` (신규) | `UserSanctionController` → `GET /api/v1/users/me/sanctions` | 본인 활성 전역 제재를 축약 VO(`UserPlatformSanctionVo`)로 반환 |
-| `grant(actorUserId, actorRole, param)` | CS_ADMIN — **community_admin_api `PlatformSanctionAdminController` 배선됨(R-8): `POST /admin/v1/platform-sanctions`** | reason 필수, effectiveFrom 기본=now, ACTIVE 생성 |
-| `revoke(sanctionId, actorUserId, param)` | CS_ADMIN — **community_admin_api `PlatformSanctionAdminController` 배선됨(R-8): `DELETE /admin/v1/platform-sanctions`** | ACTIVE만 REVOKED 전이. 비-ACTIVE → `PLATFORM_SANCTION_ALREADY_REVOKED` |
-| `closeExpiredSanctions(cutoff)` | `PlatformSanctionExpiryScheduler` 04:10 KST | expiresAt ≤ cutoff ACTIVE → EXPIRED 일괄 전이 |
-
-**listActiveByUser read-time 만료 필터 (`PlatformSanctionService.java:73-79`)**
-```
-.filter(s -> s.getExpiresAt() == null || s.getExpiresAt().isAfter(now))
-```
-- 경계: `expiresAt == now`는 만료 (가드 `isRestricted`와 동일)
-- 예약 제재(`effectiveFrom > now`)는 필터하지 않음
-
-`PlatformSanctionVo` 필드: `id, userId, sanctionType, status, grantedByActorId, grantedByRole, reasonCode, reason, effectiveFrom, expiresAt, revokedAt, revokedByActorId, revokedReason, createdAt, updatedAt`
-
----
-
-## 4-C. 계정 정지·차단 중의 제한 세션
-
-계정이 정지되거나 차단돼도 로그인을 거절하지 않는다. 제재에 다툴 길이 없으면 되돌릴 수 없는 제재가 되기 때문이다.
-
-- 비밀번호(또는 소셜 로그인)를 먼저 확인한 뒤 계정 상태를 본다. 비밀번호가 틀리면 정지 여부를 알려 주지 않는다. 탈퇴 계정은 종전처럼 거절한다.
-- 정지·차단 계정에는 제한 세션 토큰을 낸다. 로그인 응답에 계정 상태, 제한 여부, 제재 사유와 끝나는 때가 실린다. 앱은 이 값으로 「이용 제한 안내」 화면을 연다.
-- 제한 세션이 열 수 있는 것은 정해진 목록뿐이고 그 밖은 모두 닫힌다. 새 창구는 아무것도 하지 않아도 닫힌 채로 생긴다.
-  - 앱 시작에 필요한 것: 내 정보 조회(수정·탈퇴는 닫음), 출시 범위, 앱 판 확인, 오류 보고.
-  - 내 제재 내역 조회.
-  - 내 분쟁 사건의 목록·상세, 이의 제기·철회, 소명 대화, 증빙과 대화 첨부 열람, 운영자 이관, 결과 확인과 종결 동의. 새 분쟁 개설은 닫는다.
-  - 증빙 올리기(용도는 증빙으로만), 올린 파일 다시 보기, 실패한 올리기 거두기.
-  - 운영 문의 접수·조회·대화와 도움말 추천, 제재 전에 넣은 1:1 문의의 조회와 덧붙이기(새 1:1 문의는 닫음).
-  - 로그아웃과 토큰 갱신.
-  - 계정 삭제 요청·취소·상태와 탈퇴 전 점검, 내 정보 내보내기 요청·상태(2026-11-08 결정 73-1). 즉시 탈퇴는 닫는다.
-- 앱도 같은 목록을 화면별로 둔다. 이용 제한 안내, 내 제재, 내 분쟁(새 분쟁 만들기 제외), 운영 문의, 1:1 문의 화면만 열리고 나머지는 안내 화면으로 돌아간다. 안내 화면에는 제재 내용 확인·이의 제기, 내역별 문의, 1:1 문의, 제재 해제 확인, 로그아웃이 있다.
-- 권한은 토큰이 아니라 요청 때 읽은 계정 상태가 정한다. 정상 토큰을 쓰는 중에 제재되면 바로 막히고 다시 로그인해 제한 세션을 받는다. 제재가 풀리면 다음 토큰 갱신이 정상 토큰을 내어 다시 로그인하지 않고 돌아온다.
-- 제한 세션에서는 계정 삭제 요청과 내 정보 내보내기를 열지 않는다.
-
----
-
-## 4-B. EventApplyRestrictionGuard — 통합 제재 가드 (신규)
-
-### 개요
-`service/EventApplyRestrictionGuard.java`는 "신청·참석 전이가 일어나는 모든 진입점"에서 클럽-스코프 제재와 플랫폼 전역 제재를 동시에 검사하는 단일 컴포넌트다. **단, 이 가드는 `EVENT_APPLY_RESTRICT` 전용이다** — `EVENT_HOST_RESTRICT`(이벤트 생성 6경로)와 `DATE_PROFILE_BLOCK`(데이팅 프로필 생성·활성)은 이 가드가 아니라 각 생성 서비스에서 `PlatformSanctionService.isRestricted`를 직접 호출해 집행한다(§4-A 메서드표 참조).
-
-```java
-public void assertNotRestricted(Long clubId, long userId)  // throw 경로
-public boolean isRestricted(Long clubId, long userId)      // boolean 경로(자동 skip 등)
-```
-
-**가드 로직** (`EventApplyRestrictionGuard.java:56-62`):
-1. `clubId != null` → `WarningSanctionService.isApplyRestricted(clubId, userId, ref)` (클럽-스코프)
-2. 항상 → `PlatformSanctionService.isRestricted(userId, EVENT_APPLY_RESTRICT, ref)` (플랫폼 전역)
-3. 둘 중 하나라도 true → `assertNotRestricted`는 `USER_RESTRICTED_FROM_EVENT_APPLY`(403, 2900001) throw
-
-### 진입점 17곳 전수 목록 (`dossier 02 §2-M`)
-
-> 17곳 중 16곳은 `EventApplyRestrictionGuard`를 경유하고, `ApplicationService.apply` 1곳은 동일한 2축 검사를 두 서비스 직접 호출로 수행한다(검사 경계는 동일).
-| 호출 위치 | 메서드 | 방식 | 소스:라인 |
-|---|---|---|---|
-| `ApplicationService.apply` | (Guard 미경유) `warningSanctionService.isApplyRestricted` + `platformSanctionService.isRestricted` 직접 인라인 호출 — 가드와 동일 2축·동일 경계 | throw | `ApplicationService.java:85-93` |
-| `CapacityService.attend` | `assertNotRestricted` | throw | `CapacityService.java:93` |
-| `CapacityService.createAttendanceFromApplication` | `assertNotRestricted` | throw | `CapacityService.java:380` |
-| `CapacityService.confirmAttendanceFromPayment` | `assertNotRestricted` | throw | `CapacityService.java:479` |
-| `WaitlistService.promoteToAttending` | `assertNotRestricted` | throw | `WaitlistService.java:101` |
-| `WaitlistService.autoPromoteNextWaiting` | `isRestricted` | skip | `WaitlistService.java:161` |
-| `WaitlistService.autoPromoteAll` | `isRestricted` | skip | `WaitlistService.java:230` |
-| `ClubEventService.joinMember` | `assertNotRestricted` | throw | `ClubEventService.java:285` |
-| `ClubEventService.autoEnrollAllMembers` | `isRestricted` | skip | `ClubEventService.java:572` |
-| `ClubEventService.promoteWaitlist` | `isRestricted` | skip | `ClubEventService.java:662` |
-| `EventPrepaymentService.pay` | `assertNotRestricted` | throw | `EventPrepaymentService.java:89` |
-| `EventPrepaymentService.confirmFromExternalPay` | `isRestricted` | 분기 | `EventPrepaymentService.java:193` |
-| `RegularMeetingEnrollmentService.enroll` | `assertNotRestricted` | throw | `RegularMeetingEnrollmentService.java:69` |
-| `RegularMeetingEnrollmentService.approveEnrollment` | `assertNotRestricted` | throw | `RegularMeetingEnrollmentService.java:161` |
-| `RegularMeetingEnrollmentService.autoPromoteNext` | `isRestricted` | skip | `RegularMeetingEnrollmentService.java:395` |
-| `RegularMeetingPaymentService.pay` | `assertNotRestricted` | throw | `RegularMeetingPaymentService.java:65` |
-| `RegularMeetingPaymentService.confirmFromExternal` | `isRestricted` | 분기 | `RegularMeetingPaymentService.java:122` |
-
-※ `ApplicationService.approveApplication`은 Guard 미사용 — 호스트가 승인하는 경로. 참가자 제재 재검사는 `createAttendanceFromApplication`에서 수행.
-
----
-
-## 6. 상태/권한 매트릭스
-
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| WARNING_REVIEWER notice/restrict | `apply` | 제재 액션 | ACTIVE row | 일치 |
-| ADMIN forced-remove | `WARNING_SANCTION_OWNER_ONLY` | 차단 | 권한 없음 | 일치 |
-| OWNER forced-remove | actorRole==OWNER 통과 → AFTER_COMMIT kickMember | 다이얼로그 확정 | **FORCED_REMOVE row + 멤버십 제거 + 환불 (해소됨)** | **일치** |
-| manual-lock | `setManualLock(true)` | 잠금 액션 | summary lock=true | 일치 |
-| manual-unlock | `setManualLock(false)` | 해제 | lock=false | 일치 |
-| ACTIVE 제재 철회 | `revoke` | 철회 | REVOKED | 일치 |
-| ENDED/REVOKED 재철회 | `WARNING_SANCTION_NOT_FOUND` | 에러 | 차단 | 일치 |
-| 이벤트 신청 시 클럽 EVENT_APPLY_RESTRICT | `isApplyRestricted=true` | (이벤트 도메인) | 신청 차단 | 일치 |
-| 이벤트 신청 시 플랫폼 전역 EVENT_APPLY_RESTRICT | `PlatformSanctionService.isRestricted=true` | (EventApplyRestrictionGuard) | 신청 차단 | 일치 |
-| 만료(end_at 지남) 제재 | `closeExpiredSanctions` + read-time 필터 | 양쪽 모두 만료 처리 | **만료 즉시 신청 차단 해제 (해소됨)** | **일치** |
-
-## 7. 정합성 판단
-
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `WarningSanctionType` | 6값 | enum 동일 | 일치 |
-| `WarningSanctionStatus` | ACTIVE/ENDED/REVOKED | enum 동일 | 일치 |
-| 제재 응답 형태 | `WarningSanctionVo` | VO | 일치 |
-| forced-remove 권한 | 서비스 OWNER 재검증 | 다이얼로그는 UI 가드 | 일치(서버가 최종 가드) |
-| manual-lock sanctionType | 컨트롤러 강제 설정 | Flutter param 전송 | 일치(서버가 덮어씀) |
-| ~~forced-remove 실효 불일치~~ | **AFTER_COMMIT 리스너로 해소됨** | 화면은 성공 처리 | **일치** |
-| ~~PlatformSanction 본인 조회 public controller~~ | **`UserSanctionController` 신설** | endpoint 제공·앱 화면 후속 | **해소(endpoint)** |
-| ~~PlatformSanction admin grant/revoke~~ | **community_admin_api `PlatformSanctionAdminController` 배선됨**(R-8) | admin SPA | **일치** |
-| EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 집행 | 6경로 + 데이팅 생성·활성 집행 | (서버 가드) | **일치** |
-
-## 8. Gap / Risk
-
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | NOTICE/ROLE_RESTRICT 실효가 outbox consumer 위임 | `apply`는 row만, 실제 공지 발송/역할 변경은 이 도메인 밖 | outbox consumer 미동작 시 제재가 "기록만 되고 효력 없음" | consumer 동작 보장 + ROLE_RESTRICT 권한 flag 반영 검증 |
-| P2 (신규) | **기활성 데이팅 프로필의 매칭 노출** | `DATE_PROFILE_BLOCK` 부여 시 `DateProfileService`는 프로필 신규 생성·활성 전환만 차단하고, 이미 활성인 프로필의 즉시 비활성화는 수행하지 않는다. | 제재 부여 시점에 이미 활성이던 프로필이 계속 매칭에 노출될 수 있음. | 후속 결정 — 제재 부여 시 활성 프로필 비활성화 여부·매칭 필터 지점 결정. |
-| P2 | `autoCloseStaleReports` 더미 쿼리 잔존 | `autoCloseStaleReports()` 내 `findByClubIdAndStatus(0L, pending)` — clubId=0L 더미. 주석 "실제 QueryRepository 확장 필요" | 14일 미응답 자동 종료 스케줄러 실질 미작동 | 전체 클럽 순회 QueryRepository 구현 |
-| ~~P2~~ **허구로 정정(D-6)** | ~~`FORCED_REMOVE` 강퇴 후 유료 클럽 구독 정리 미확인~~ | D-6 조사: `ClubSubscription`은 **오너 전용**(전 writer가 ownerId 기준, 오너는 강퇴 원천 차단)이라 멤버가 구독을 보유하는 구조 자체가 없다. 멤버 금전 결속(가입비)은 `kickMember`의 기존 전액 환불(`RefundReason.KICKED`)로 이미 완결. "강퇴 시 구독 정리" 통념은 대상 부재. | 정리할 멤버 구독이 존재하지 않음. | 무코드 처분 — 통념 폐기 |
-| P2 | `relatedGrantLedgerIds` 수동 직렬화 | `serializeIdList`가 문자열 JSON 빌드 | 잘못된 입력 시 깨진 JSON 가능성 | Jackson 직렬화로 통일 검토 |
-| P3 | `listActive`/`listActiveByMember`가 예약 제재 포함 | read-time 필터에서 `endAt` 만료는 걸러내지만 `startAt > now`인 예약 제재는 의도적으로 유지 | 앱에서 예약 제재를 "활성"으로 표시할 수 있음 | 운영진 화면에서 예약/현재 구분 UI 필요 |
-
-## 9. 수용 기준
-
-### AC-01. 이벤트 신청 제한 적용 + 차단 연동
-Given WARNING_REVIEWER가 멤버에게 EVENT_APPLY_RESTRICT를 적용한다.
-When 그 멤버가 이벤트 신청을 시도한다.
-Then `isApplyRestricted`가 true를 반환해 신청이 차단된다.
-
-### AC-02. 강제 탈퇴 OWNER 전용
-Given ADMIN(비OWNER)이 `forced-remove`를 호출한다.
-When 요청이 도착한다.
-Then 서버는 `WARNING_SANCTION_OWNER_ONLY`로 거절한다.
-
-### AC-03. 강제 탈퇴 멤버십 제거 **(해소됨)**
-Given OWNER가 멤버를 강제 탈퇴시킨다.
-When `forced-remove`가 성공(FORCED_REMOVE row 커밋 완료)한다.
-Then `WarningForcedRemoveEventListener`(AFTER_COMMIT)가 `ClubMembershipService.kickMember`를 호출해 멤버십 제거+유료 가입비 환불(`RefundReason.KICKED`)+강퇴 알림이 일어난다.
-실패 시 audit `SANCTION_FORCED_REMOVE_FAILED` + WARN 로그 + OperatorAlert(LOG 채널)가 발화되며 제재 row는 유지된다.
-
-### AC-03-B. 플랫폼 전역 EVENT_APPLY_RESTRICT 차단
-Given CS_ADMIN이 특정 사용자에게 PlatformSanction EVENT_APPLY_RESTRICT를 부과한다.
-When 그 사용자가 클럽/비-클럽 이벤트를 신청한다.
-Then `EventApplyRestrictionGuard.assertNotRestricted`가 `USER_RESTRICTED_FROM_EVENT_APPLY`(403)를 throw해 신청이 차단된다.
-
-### AC-03-C. EVENT_HOST_RESTRICT 6경로 차단 ****
-Given 사용자에게 `EVENT_HOST_RESTRICT`가 부과돼 있다.
-When 그 사용자가 클럽 이벤트·클럽 레거시 반복·정기모임 생성/세션·플랜 기반·일반 반복 자식 중 어느 경로로든 이벤트를 생성하려 한다.
-Then 각 생성 서비스가 `PlatformSanctionService.isRestricted(...EVENT_HOST_RESTRICT...)`로 차단한다(일반 생성 가드와 동일 동작).
-
-### AC-03-D. DATE_PROFILE_BLOCK 생성·활성 차단 ****
-Given 사용자에게 `DATE_PROFILE_BLOCK`이 부과돼 있다.
-When 그 사용자가 데이팅 프로필을 생성하거나 비활성 프로필을 활성으로 전환하려 한다.
-Then `DateProfileService`가 `DATE_PROFILE_BLOCKED_BY_SANCTION`(403, 1600028)으로 거부한다. (단, 프로필 비활성화는 허용. 이미 활성인 프로필의 즉시 비활성화는 미수행 — §8 P2 후속.)
-
-### AC-03-E. 본인 전역 제재 조회 ****
-Given 사용자에게 활성 PlatformSanction이 1건 이상 있다.
-When `GET /api/v1/users/me/sanctions`를 호출한다.
-Then 본인 활성 전역 제재가 축약 VO(`UserPlatformSanctionVo` — 내부 처리자/철회 필드 미노출)로 반환된다.
-
-### AC-04. 수동 잠금 토글
-Given WARNING_REVIEWER가 멤버를 manual-lock한다.
-When `POST /members/{memberId}/manual-lock`이 호출된다.
-Then `warning_member_summary.manual_lock=true`가 되고 자동 등급 재평가가 잠긴다.
-
-### AC-05. 제재 철회
-Given ACTIVE 제재를 철회한다.
-When `POST /sanctions/{sanctionId}/revoke`가 호출된다.
-Then `status=REVOKED`가 되고 MANUAL_LOCK이면 잠금이 해제된다.
-
-### AC-06. 만료 제재 자동 종료 **(해소됨)**
-Given 기한부 제재의 `end_at`이 지났다.
-When `WarningSanctionExpiryScheduler`(04:00 KST)가 실행되거나 `listActive`가 호출된다.
-Then read-time 필터(`endAt.isAfter(now)` 실패)로 만료 제재가 목록에서 제외되고, 스케줄러 실행 후 ENDED 상태로 전이된다.
-
-## 10. 미결정 / 후속
-
-| 분류 | 항목 | 결정/작업 |
-|---|---|---|
-| ~~구현~~ **무코드 처분(D-6)** | ~~FORCED_REMOVE 구독 정리~~ | ClubSubscription 오너 전용 → 멤버 구독 부재. 가입비는 기존 전액 환불로 완결. 통념 폐기. |
-| 후속(P2 신규) | 기활성 데이팅 프로필 매칭 노출 | DATE_PROFILE_BLOCK 부여 시 이미 활성인 프로필 비활성화 여부·매칭 필터 지점 결정. |
-| 후속(P2) | 내 이용 제한 내역 앱 화면 | `me/sanctions` endpoint 소비 화면 구현(`15-warning.html` 조회 경로 문구 갱신 대상). |
-| 구현 | NOTICE/ROLE_RESTRICT 실효 | outbox consumer 동작 + 권한 flag 반영 검증 |
-| 테스트 | 제재 | EVENT_APPLY_RESTRICT 클럽/전역 신청 차단 / EVENT_HOST_RESTRICT 6경로 / DATE_PROFILE_BLOCK 생성·활성 / forced-remove OWNER 가드 + AFTER_COMMIT kickMember / 만료 read-time 필터 / 철회 E2E |
+- **AC-01 직무 분리:** 검토·제재·소유자 권한과 서버 개별 actions를 구분한다.
+- **AC-02 부과 계약:** 경로별 type·키·시각·재가입 제한을 검증한다.
+- **AC-03 집행 상태:** 강퇴 등록·임대·분쟁 보류·실행 결과·재시도 한도를 구분한다.
+- **AC-04 철회 경계:** 성공한 강퇴는 철회로 되돌리지 않고 수동 잠금은 등급 재평가에 적용한다.
+- **AC-05 현재 효력:** 예약 목록과 실제 시각 가드, 역할 제한의 권한 반영을 구분한다.
+- **AC-06 전역 계약:** 5종과 계정 전용 명령·본인 조회·데이트/주최 가드를 구분한다.
+- **AC-07 제한 세션:** 정지·차단 계정의 허용 권리 경로와 증빙 목적을 서버·앱에 맞춘다.

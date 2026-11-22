@@ -354,12 +354,12 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F15-01 | 경고 & 징계 | [F15-01_warning-overview-ledger_prd.md](02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | `source-first` | source-first 구현 확인 | 2 | 3 |
 | F15-02 | 경고 & 징계 | [F15-02_report-submit-manage_prd.md](02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | `source-first` | source-first 구현 확인 | 5 | 4 |
 | F15-03 | 경고 & 징계 | [F15-03_appeal_prd.md](02_feature_prds/15_warning/F15-03_appeal_prd.md) | `source-first` | source-first 구현 확인 | 3 | 3 |
-| F15-04 | 경고 & 징계 | [F15-04_policy-penalty-types_prd.md](02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
+| F15-04 | 경고 & 징계 | [F15-04_policy-penalty-types_prd.md](02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | `source-first` | source-first 구현 확인 | 6 | 4 |
 | F15-05 | 경고 & 징계 | [F15-05_report-review_prd.md](02_feature_prds/15_warning/F15-05_report-review_prd.md) | `source-first` | source-first 구현 확인 | 6 | 4 |
-| F15-06 | 경고 & 징계 | [F15-06_grant-ledger-adjust_prd.md](02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
+| F15-06 | 경고 & 징계 | [F15-06_grant-ledger-adjust_prd.md](02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | `source-first` | source-first 구현 확인 | 6 | 3 |
 | F15-07 | 경고 & 징계 | [F15-07_appeal-resolve_prd.md](02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | `source-first` | source-first 구현 확인 | 3 | 4 |
-| F15-08 | 경고 & 징계 | [F15-08_sanction-enforcement_prd.md](02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | `source-first` | source-first 구현 확인 | 0 | 5 |
-| F15-09 | 경고 & 징계 | [F15-09_queue-dashboard-audit_prd.md](02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | `source-first` | source-first 구현 확인 | 0 | 5 |
+| F15-08 | 경고 & 징계 | [F15-08_sanction-enforcement_prd.md](02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | `source-first` | source-first 구현 확인 | 9 | 3 |
+| F15-09 | 경고 & 징계 | [F15-09_queue-dashboard-audit_prd.md](02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | `source-first` | source-first 구현 확인 | 8 | 3 |
 | F16-01 | 마일리지 | [F16-01_my-mileage-main_prd.md](02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
 | F16-02 | 마일리지 | [F16-02_grade-badge-ranking_prd.md](02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
 | F16-03 | 마일리지 | [F16-03_season_prd.md](02_feature_prds/16_mileage/F16-03_season_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |

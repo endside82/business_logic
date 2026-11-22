@@ -1,188 +1,72 @@
-<!-- domain-source-first; updated: 2026-06-05; unit: warning -->
-
-# 15. 경고 & 징계 PRD
+# 15. 경고·이의·원장과 제재의 현재 계약
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 검토한 기능 문서 9개의 소스 근거를 통합했다. 문서 대조와 실제 제품·기기·운영 실행을 구분한다.
 
+## 기능별 기준 문서
 
-> 문서 상태: **소스 우선 신규 작성본**. 이 문서는 `community_api/src/main/java/com/endside/community/warning/` 의 실제 컨트롤러 5개·서비스 11개·VO/Param·enum과 `community_app/lib/.../warning/` 의 API/Repository/Provider/Screen을 직접 대조해, 경고 도메인의 9개 기능 PRD를 어떤 순서로 확인해야 하는지 보여준다.
+이 영역은 클럽 경고 정책, 회원의 제보·이의, 운영진의 심사와 원장 조정, 실제 제재 집행 및 관측을 다룬다. 경고 점수·검토 등급·큐 처리·실제 제재는 각각 다른 상태와 명령이다. 플랫폼 일반 신고 및 고객지원과도 접수·권한 계약이 다르다.
 
-## 1. 결론
-
-경고 & 징계는 **클럽 단위로 동작하는 자율 운영 신뢰 점수 시스템**이다. 멤버가 다른 멤버를 제보하거나(또는 이벤트 호스트가 출결 기반으로 제보), 운영진이 직접 점수를 부여하면 **append-only 원장(`warning_ledger`)** 에 GRANT row가 쌓이고, `warning_member_summary` 캐시가 `effective_score`/`review_level`을 재계산한다. 점수가 임계치를 넘으면 멤버는 검토 대상(`ATTENTION → MONITOR → RESTRICTION_CANDIDATE → SEVERE_SANCTION_CANDIDATE`)으로 분류되고, 운영진은 공지·이벤트 신청 제한·역할 제한·강제 탈퇴·수동 잠금의 6가지 제재를 집행한다. 멤버는 부여된 경고에 이의(`warning_appeal`)를 제기하고, 운영진은 인용(REVERSE)/부분 인용(MITIGATE)/기각으로 판정한다.
-
-서버는 권한을 **클럽 permission flag** 로 격리한다. 멤버 화면은 `requireClubMember`, 정책 설정은 `POLICY_OWNER`, 검토/액션/큐는 `WARNING_REVIEWER`(OWNER 자동 통과), `FORCED_REMOVE`는 서비스 레이어에서 OWNER 단독으로 다시 검증한다. 모든 쓰기는 `warning_audit_log`(5년 보존)와 `domain_outbox`(WARNING 도메인 이벤트)를 같은 트랜잭션에 묶어 감사·알림 일관성을 보장한다. 원장은 `UNIQUE(club_id, member_id, source_type, source_id)`로 멱등이고, grant/forced-remove/bulk-expire는 `Idempotency-Key` 헤더를 추가 지원한다.
-
-Flutter는 멤버용 7화면(메인/원장/제보 제출/내 제보/이의 제출/내 이의/호스트 출결 제보)과 운영진용 10화면(콘솔/정책/제보 검토함/제보 상세/이의 검토함/멤버 상세/제재/검토 대상/큐/감사 로그)을 모두 구현했고, enum 미러(`warning_enums.dart`)가 서버 enum과 1:1로 일치한다. 따라서 **조회·제출·운영진 워크플로의 화면-API 정합은 대체로 닫혀 있다**. 다만 **(a) 정책 임계치 기본값은 Java 코드와 DDL 이 모두 3/6/10/15 로 같음(2026-11-08 확인)**, **(b) `FORCED_REMOVE` 제재의 실제 클럽 멤버십 제거 연결이 `WarningForcedRemoveEventListener` AFTER_COMMIT `kickMember`로 해소됨(2026-05-29)**, **(c) 만료 스케줄러 및 read-time 만료 필터가 활성화되어 해소됨(2026-06-04)**, (d) 통계 화면이 서버의 `period` 파라미터를 전달하지 않음 등 **운영 신뢰성·정산성 Gap 일부가 남아 있다**. 추가로 플랫폼 전역 제재(`PlatformSanction`, 3종)가 신규 도입되어 클럽-스코프 제재를 보완한다.
-
-이 도메인은 기능 PRD 9개로 구성된다. 현재 기능별 trace source는 총 0개이고, risk 후보는 총 27개다. 도메인 수준 판단은 아래 기능 PRD와 source trace를 따라가며 확정한다.
-
-## 2. 실사 근거 맵
-
-| ID | 기능 | PRD | 상태 | Trace | Risk 후보 |
-|---|---|---|---|---:|---:|
-| F15-01 | F15-01. 내 경고 현황 & 원장 | [F15-01_warning-overview-ledger_prd.md](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 소스 대조 완료 | 0 | 2 |
-| F15-02 | F15-02. 신고 제출 & 내 신고 관리 | [F15-02_report-submit-manage_prd.md](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 소스 대조 완료 | 0 | 3 |
-| F15-03 | F15-03. 이의제기 (Appeal) | [F15-03_appeal_prd.md](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 소스 대조 완료 | 0 | 2 |
-| F15-04 | F15-04. 경고 정책 & 패널티 유형 설정 | [F15-04_policy-penalty-types_prd.md](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 소스 대조 완료 | 0 | 3 |
-| F15-05 | F15-05. 신고 심사 | [F15-05_report-review_prd.md](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 소스 대조 완료 | 0 | 2 |
-| F15-06 | F15-06. 경고 부여 & 원장 조정 | [F15-06_grant-ledger-adjust_prd.md](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 소스 대조 완료 | 0 | 3 |
-| F15-07 | F15-07. 이의제기 처리 | [F15-07_appeal-resolve_prd.md](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 소스 대조 완료 | 0 | 2 |
-| F15-08 | F15-08. 제재 집행 | [F15-08_sanction-enforcement_prd.md](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 소스 대조 완료 | 0 | 5 |
-| F15-09 | F15-09. 검토 큐 & 대시보드/통계/감사로그 | [F15-09_queue-dashboard-audit_prd.md](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 소스 대조 완료 | 0 | 5 |
-
-## 3. 먼저 볼 기능
-
-| 먼저 볼 기능 | 기능 | 이유 |
+| 현재 기능 기준 | 이용자 | 핵심 범위 |
 |---|---|---|
-| [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | F15-08. 제재 집행 | ~~`FORCED_REMOVE`가 실제 멤버십 제거로 닫히지 않음~~ **해소됨**. ~~만료 스케줄러 미활성~~ **해소됨**. ~~PlatformSanction listActiveByUser 미배선~~ **해소(`GET /api/v1/users/me/sanctions`)**. ~~EVENT_HOST_RESTRICT/DATE_PROFILE_BLOCK 가드 미배선~~ **해소(6경로+데이팅 집행)**. ~~구독 정리 미확인~~ **D-6 무코드 처분(ClubSubscription 오너 전용 — 멤버 구독 부재)**. 잔여: 기활성 데이팅 프로필 매칭 노출(신규 후속) / 내 제재 앱 화면 후속 |
-| [F15-09](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | F15-09. 검토 큐 & 대시보드/통계 | 스케줄러 placeholder, 통계 period 미전달, 전체 ledger 메모리 집계 |
-| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | F15-02. 신고 제출 & 내 신고 관리 | ~~익명 제보 차단 로직이 익명 reporter_user_id NULL 설계와 부분 충돌~~ **해소됨**. 잔여: 자가 제보 에러코드 모호 |
-| [F15-06](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | F15-06. 경고 부여 & 원장 조정 | grant 일괄 처리 부분 성공 의미, 멱등 키와 원장 멱등 키 이중 구조 |
-| [F15-04](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | F15-04. 경고 정책 & 패널티 유형 설정 | 임계치 기본값 Java/DDL 불일치, 대규모 클럽 분포 스킵 |
-| [F15-01](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | F15-01. 내 경고 현황 & 원장 | 정책 비활성 클럽의 본인 화면 진입 시 자동 row 생성 |
-| [F15-03](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | F15-03. 이의제기 | 진행 중 1건 제한, 재제기 허용 추적 |
-| [F15-05](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | F15-05. 신고 심사 | claim → approve 2단계 호출, NEEDS_MORE_INFO 재검토 흐름 |
-| [F15-07](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | F15-07. 이의제기 처리 | 인용=REVERSE/부분=MITIGATE 원장 연동, allow-resubmit 추적 |
+| [F15-01 내 경고 현황과 원장](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 클럽 회원 | 본인 요약·원장 필터와 운영자 정보 가림, 예약 제재 표시, 회원 변경·이의 후 갱신을 정리한다. |
+| [F15-02 클럽 경고 제보와 본인 관리](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 클럽 회원·이벤트 호스트 | 익명 포함 본인 조회·철회, 제출 한도·중복·추가 검토와 회원/호스트 경로 및 세션별 복구를 맞춘다. |
+| [F15-03 회원의 경고 이의제기](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 클럽 회원 | 필수 멱등 키·회원 잠금·본인 목록과 철회, 재제출의 앱/서버 차이 및 결과 불명 복구를 정리한다. |
+| [F15-04 경고 정책과 패널티 유형 설정](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 클럽 소유자 | 정책 소유자 권한, 임계치·비동기 재계산, 미리보기 한계와 유형별 점수·null 유지 및 앱 복구를 정리한다. |
+| [F15-05 클럽 경고 제보 심사](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 경고 검토 권한자 | 자기 대상 제보·첨부 가림, 서버 actions, 승인 원장·반려·추가 요청과 분리된 선점·오류 복구를 맞춘다. |
+| [F15-06 경고 부여와 원장 조정](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 경고 검토 권한자 | 타입화된 일괄 결과, 부여/감경 재전송 식별, 원장 보존과 점수·심각도 판정, 부분 실패 및 앱 복구를 맞춘다. |
+| [F15-07 경고 이의제기 처리와 재제출 허용](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 경고 검토 권한자·클럽 소유자 | 이의 처리의 심각도 권한·원장 결과·단일 거래와 검토 중/재제출 조건 차이 및 앱 복구를 정리한다. |
+| [F15-08 클럽·플랫폼 제재와 계정 제한](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 제재 담당 운영진·클럽 소유자·제한 계정 회원 | 제재 직무 분리, 강퇴 집행·보류·재시도, 실제 제한과 전역 5종 및 제한 계정의 개인정보·분쟁 경로를 정리한다. |
+| [F15-09 검토 큐·대시보드·통계와 감사 로그](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 경고 검토 권한자·제재 담당 운영진 | 실제 큐 발생·14/28일 이의 처리, 서버 정렬·기간 집계와 지표 범위, 회원 상세 권한 및 앱 처리 복구를 맞춘다. |
 
-## 4. 도메인 기능 목록
+## 권한과 정보 가림
 
-### 멤버 (본인 화면 / 제보 / 이의)
+클럽 회원은 본인 요약·원장·제보·이의를 읽는다. 익명 제보도 저장된 내부 소유자를 확인해 본인 목록·철회에 포함한다. 본인 응답은 운영자 식별자와 내부 메모 등을 가리며 공개 VO에 익명 제보자의 내부 소유자 필드를 싣지 않는다. 운영진에게도 자기 자신을 대상으로 한 제보·증빙은 별도 접근 제한을 적용한다.
 
-#### F15-01. 내 경고 현황 & 원장
-> 멤버가 본인의 경고 점수·검토 등급·활성 제재·최근 원장을 보고, 원장 페이지로 전체 이력을 본다.
-- **사용자**: 클럽 멤버 (본인)
-- **API**: `GET /api/v1/clubs/{clubId}/warnings/me` → `WarningMemberOverviewVo`, `GET /api/v1/clubs/{clubId}/warnings/me/ledger` → `Page<WarningLedgerVo>`
-- **권한**: `permissionChecker.requireClubMember`
-- **프론트**: `warning/screens/warning_main_screen.dart`, `warning_ledger_screen.dart`, `warningMemberOverviewProvider`, `warningMyLedgerProvider`
+정책은 POLICY_OWNER, 제보·이의 심사와 원장 조정·큐는 WARNING_REVIEWER, 제재는 SANCTION_PROPOSER를 사용한다. 메서드 권한이 컨트롤러 권한을 대체하므로 검토 권한과 제재 권한을 함께 요구하는 누적 조건이 아니다. 회원 상세는 검토 또는 제재 권한을 허용한다. 현재 POLICY_OWNER는 위임 대상이 아니며 OWNER는 전체 권한을 갖는다. SEVERE 부여·심사와 강제 탈퇴의 소유자 조건은 각 기능 문서를 따른다.
 
-#### F15-02. 신고 제출 & 내 신고 관리
-> 멤버가 다른 멤버를 제보하고, 이벤트 호스트가 출결 연계 제보를 하며, 본인 제보 목록을 보고 미처리 제보를 철회한다.
-- **사용자**: 클럽 멤버, 이벤트 호스트
-- **API (멤버)**: `POST /warnings/reports`, `GET /warnings/me/reports`(List), `POST /warnings/reports/{reportId}/withdraw`
-- **API (호스트)**: `POST /api/v1/clubs/{clubId}/events/{eventId}/warning-reports`, `GET .../warning-reports`(List) — `attendance_linkable=true` 유형만
-- **권한**: 멤버=`requireClubMember`, 호스트=`isEventHost`
-- **프론트**: `report_submit_screen.dart`, `host_report_submit_screen.dart`, `my_reports_screen.dart`
+역할 제한을 받은 ADMIN은 유효 권한이 0이 된다. 앱은 최신 서버 abilities와 행별 actions를 재확인하고 읽기 오류·미확정 권한 상태에서는 명령을 막는다. 화면에 입구가 있다는 사실을 실제 명령 허용의 증거로 삼지 않는다.
 
-#### F15-03. 이의제기 (Appeal)
-> 멤버가 본인에게 부여된 활성 GRANT에 대해 이의를 제기하고, 내 이의 목록을 보며, 진행 중 이의를 철회한다.
-- **사용자**: 클럽 멤버 (본인 GRANT만)
-- **API**: `POST /warnings/appeals`, `GET /warnings/me/appeals`(List), `POST /warnings/appeals/{appealId}/withdraw`
-- **권한**: `requireClubMember` + 대상 GRANT 본인 소유 검증
-- **프론트**: `appeal_submit_screen.dart`, `my_appeals_screen.dart`, `warning_appeal_dialog.dart`
+## 회원 접수와 운영진 심사의 경계
 
-### 운영진 (정책 / 심사 / 부여 / 이의 처리 / 제재 / 큐)
+제보는 정책 활성·대상 회원·유형·이벤트 소속·자기 제보 금지를 검사한다. 회원과 이벤트 호스트 경로의 24시간 제출 한도 및 출결 연결 조건은 다르다. 5분 중복 방어와 같은 익명 대상에 대한 반복 제보 큐, 높은 반려율의 추가 검토 표식을 구분한다. 서버의 선택 설명과 앱의 필수 입력, 도움말 연결 차이는 기능 문서에 남겼다.
 
-#### F15-04. 경고 정책 & 패널티 유형 설정
-> POLICY_OWNER가 경고 제도 활성화, 익명 제보 허용, 검토 임계치 4단계, 패널티 유형 ON/OFF·점수를 설정하고 변경 영향을 미리 본다.
-- **사용자**: `POLICY_OWNER` (OWNER 자동 통과)
-- **API**: `GET/PUT /admin/clubs/{clubId}/warnings/config`, `GET /config/preview`, `GET/PUT /penalty-types`, `GET /penalty-type-catalog`
-- **프론트**: `admin/warning_policy_screen.dart`
+운영 제보의 선점과 최종 처리는 분리된 거래다. 승인 원장 생성, 반려, 추가 정보 요청을 한 종류의 처리로 설명하지 않는다. 처리 전 최신 상태·서버 actions와 현재 계정을 확인한다.
 
-#### F15-05. 신고 심사
-> WARNING_REVIEWER가 제보 검토함을 검색하고 승인(GRANT 부여)/반려/추가정보 요청을 한다.
-- **사용자**: `WARNING_REVIEWER`
-- **API**: `GET /reports`(Page), `POST /reports/{reportId}/approve|reject|request-more-info`
-- **프론트**: `admin/warning_report_inbox_screen.dart`, `warning_report_detail_screen.dart`
+회원 이의는 대상 원장·진행 중 이의·첨부 자격과 필수 멱등 키를 검사한다. 회원 잠금과 커밋된 중복 조회를 사용한다. 운영 이의 처리는 단일 거래에서 인용·부분 인용·기각을 기록하며 원장 정정 또는 감경과 연결된다. 앱과 서버의 IN_REVIEW 처리 표시·재제출 허용 조건 차이는 아직 문서에 남아 있는 제품 차이다. 문서 최신화로 그 차이가 구현에서 해소된 것은 아니다.
 
-#### F15-06. 경고 부여 & 원장 조정
-> WARNING_REVIEWER가 점수를 직접 부여(단일/일괄)하고, 원장 항목을 경감/취소/만료하며, 일괄 만료(AMNESTY)를 집행한다.
-- **사용자**: `WARNING_REVIEWER`
-- **API**: `POST /grants`(Idempotency-Key, Map 응답), `POST /ledger/{ledgerId}/mitigate|reverse|expire`, `POST /ledger/bulk-expire`(Idempotency-Key, Map 응답)
-- **프론트**: `admin/warning_member_detail_screen.dart`, `widgets/warning_reason_dialog.dart`
+## 정책과 원장 계산
 
-#### F15-07. 이의제기 처리
-> WARNING_REVIEWER가 이의를 검색하고 인용(REVERSE)/부분 인용(MITIGATE)/기각으로 판정하며, 종결 이의의 재제기를 허용한다.
-- **사용자**: `WARNING_REVIEWER`
-- **API**: `GET /appeals`(Page), `POST /appeals/{appealId}/resolve`, `POST /appeals/{appealId}/allow-resubmit`
-- **프론트**: `admin/warning_appeal_inbox_screen.dart`
+정책 초기값은 비활성·익명 비허용·임계치 3/6/10/15다. 임계치 0은 해당 등급의 점수 판정을 끄며 순서 역전은 저장에서 막지 않는다. 정책 활성/임계치 변경 후 요약 재계산은 커밋 뒤 작업이므로 저장 성공과 전 회원 반영 완료를 구분한다. 미리보기의 요약 행 수·100000행 상한과 SEVERE/수동 잠금 근사를 실제 최종 분포로 보장하지 않는다.
 
-#### F15-08. 제재 집행
-> SANCTION_PROPOSER(비-FORCED 제재)·OWNER(FORCED_REMOVE)가 공지·이벤트 신청 제한·역할 제한·강제 탈퇴·수동 잠금/해제를 집행하고 제재를 철회한다. WARNING_REVIEWER 권한만으로는 제재를 집행할 수 없다(직무 분리).
-- **사용자**: `SANCTION_PROPOSER`(비-FORCED 제재 부과·해제), OWNER(FORCED_REMOVE 전용)
-- **API**: `POST /sanctions/notice|event-apply-restrict|role-restrict|forced-remove(Idempotency-Key)`, `POST /sanctions/{sanctionId}/revoke`, `POST /members/{memberId}/manual-lock|manual-unlock`
-- **프론트**: `admin/warning_sanction_screen.dart`, `widgets/warning_forced_remove_dialog.dart`, `warning_sanction_action_row.dart`
+패널티는 카탈로그와 클럽 설정을 합쳐 읽는다. 명시 점수·클럽 점수·기본점수 순서이며 기존 점수에 null을 보내도 초기화되지 않는다. 미설정 일반 유형과 활성 설정을 요구하는 호스트 출결 연결 유형의 자격은 서로 다르다. 수동 부여에는 정책 활성 검사가 없지만 출결 자동 부여에는 있다.
 
-#### F15-09. 검토 큐 & 대시보드/통계/감사로그
-> WARNING_REVIEWER가 검토 큐를 처리하고, 대시보드/통계/검토 대상/멤버 상세/감사 로그를 본다.
-- **사용자**: `WARNING_REVIEWER`
-- **API**: `GET /queue`(Page), `GET /queue/{queueId}`, `POST /queue/{queueId}/process`, `GET /dashboard`, `GET /members/{memberId}`, `GET /review-targets`(Page), `GET /audit-logs`(Page), `GET /statistics`
-- **프론트**: `admin/warning_console_screen.dart`, `warning_queue_screen.dart`, `warning_review_targets_screen.dart`, `warning_audit_log_screen.dart`
+원장은 GRANT·MITIGATE·REVERSE·EXPIRE 행을 보존한다. rawScore는 전체 GRANT 합, qualifiedScore는 정정·만료 제외 합, effectiveScore는 각 활성 GRANT에서 감경한 값을 0 이상으로 제한한 합이다. effectiveCount는 점수가 아니라 활성 행 수다. 활성 SEVERE는 완전히 감경돼도 정책 활성·점수 임계치보다 먼저 심각 제재 후보를 결정한다. manualLock은 등급 재평가를 유지시키며 점수 계산 자체를 막지 않는다.
 
-## 5. 상태/권한/의존성
+일괄 결과의 success·ledgerIds·failed·batchId는 전용 타입이다. 직접 부여의 실패 ID는 회원, 일괄 만료의 실패 ID는 원장이다. 부여 키와 감경 batchId의 재전송 식별을 구분하고 같은 batchId만으로 수동 부여 중복을 막는다고 쓰지 않는다.
 
-### 권한 모델 (서버 확인됨)
+## 제재 등록과 실제 집행
 
-- **멤버 (본인)**: `requireClubMember(clubId, userId)` — 본인 경고/원장 조회, 제보 제출/철회, 이의 제출/철회.
-- **이벤트 호스트**: `isEventHost(eventId, userId)` — 출결 연계 제보만. `attendance_linkable=true` 패널티 유형으로 제한.
-- **POLICY_OWNER**: `@RequiresClubPermission(POLICY_OWNER)` — 정책/패널티 유형 설정 (`WarningAdminPolicyController`). OWNER 자동 통과.
-- **WARNING_REVIEWER**: `@RequiresClubPermission(WARNING_REVIEWER)` — 제보 심사/원장 조정/이의 처리/큐 (`WarningAdminActionController`, `WarningAdminQueueController`). OWNER 자동 통과. 단, 제재 부과·해제 엔드포인트는 메서드 레벨에서 SANCTION_PROPOSER로 게이트가 대체되므로 WARNING_REVIEWER만으로는 제재를 집행할 수 없다(스택이 아니라 독립 게이트).
-- **SANCTION_PROPOSER** (`‖OWNER`): 비-`FORCED_REMOVE` 제재 부과(`apply`)·해제(`revoke`) 전용. 신고 심사 권한(WARNING_REVIEWER)과 제재 집행 권한(SANCTION_PROPOSER)은 직무가 분리된다. 한 운영자가 둘 다 담당하려면 두 권한을 동시 보유해야 한다.
-- **OWNER 단독**: `FORCED_REMOVE` 적용·철회는 `WarningSanctionService`가 actorRole==OWNER를 다시 검증 (`WARNING_SANCTION_OWNER_ONLY`).
-- **SYSTEM**: 출결 자동 GRANT, 자동 종료/만료 (actor_id=0, actorRole=SYSTEM).
+클럽 제재 6종은 공지·이벤트 신청 제한·역할 제한·강퇴·수동 잠금·수동 해제다. 제재 목록에는 미래 시작 행도 포함될 수 있으며 실제 신청 가드는 발효 시각을 검사한다. 점수 등급 상승과 큐 승인만으로 이 제재를 자동 부과하지 않는다.
 
-### 핵심 enum (서버 인용)
+강퇴는 등록 후 집행기가 분쟁 보류·실행 임대·최대 5회 시도를 관리한다. 기존 클럽 탈퇴 명령을 사용하고 REMOVED 또는 ALREADY_ABSENT를 실행 결과로 남긴다. OWNER가 실패 건을 재시도할 수 있지만 성공한 강퇴를 철회해 멤버십을 되살리지는 않는다. 재가입 제한 기간은 실제 집행부터 계산한다. 실제 유료 참여 정리나 푸시 도착은 이번 문서 대조의 실행 결과가 아니다.
 
-| enum | 값 |
-|---|---|
-| `WarningLedgerType` | `GRANT`, `MITIGATE`, `REVERSE`, `EXPIRE` |
-| `WarningReportStatus` | `SUBMITTED`, `IN_REVIEW`, `NEEDS_MORE_INFO`, `APPROVED`, `REJECTED`, `WITHDRAWN` |
-| `WarningAppealStatus` | `SUBMITTED`, `IN_REVIEW`, `ACCEPTED`, `PARTIALLY_ACCEPTED`, `REJECTED`, `WITHDRAWN` |
-| `WarningSanctionType` | `NOTICE`, `EVENT_APPLY_RESTRICT`, `ROLE_RESTRICT`, `FORCED_REMOVE`, `MANUAL_LOCK`, `MANUAL_UNLOCK` |
-| `WarningSanctionStatus` | `ACTIVE`, `ENDED`, `REVOKED` |
-| `WarningReviewLevel` | `NONE`, `ATTENTION`, `MONITOR`, `RESTRICTION_CANDIDATE`, `SEVERE_SANCTION_CANDIDATE` |
-| `WarningReviewQueueType` | `REPEATED_REPORT`, `APPEAL_OVERDUE` |
-| `WarningReviewQueueStatus` | `OPEN`, `PROCESSED`, `IGNORED` |
-| `WarningActorRole` | `OWNER`, `ADMIN`, `EVENT_HOST`, `MEMBER`, `SYSTEM`, `PLATFORM_ADMIN` |
-| `PenaltySeverity` | `LIGHT`, `MODERATE`, `SEVERE` |
-| `PenaltyApprover` | `ADMIN`, `OWNER` |
+플랫폼 제재는 신청 제한·주최 제한·데이트 프로필 차단·계정 정지·계정 차단의 5종이다. 계정 유형은 전용 명령을 통해 사용자 상태와 원장을 변경한다. 본인 조회와 일반 부여·계정 내부 관리 명령을 분리한다. 데이트 생성/활성 가드가 있다는 사실만으로 기활성 프로필의 모든 매칭 노출 차단을 확인했다고 쓰지 않는다.
 
-### 점수 산정 (서버 `WarningMemberSummaryService` 확인)
+## 제한 계정의 권리 경로
 
-- `raw_score` = 모든 GRANT points 합.
-- `qualified_score` = REVERSE/EXPIRE 제외한 GRANT points 합.
-- `effective_score` = qualified − 활성 MITIGATE 합 (음수면 0).
-- `effective_count` = REVERSE/EXPIRE 제외 GRANT 개수.
-- 무력화 우선순위: REVERSE/EXPIRE는 GRANT를 완전 제외, MITIGATE는 effective에서만 차감.
-- `review_level` 평가: 활성 SEVERE GRANT가 있으면 무조건 `SEVERE_SANCTION_CANDIDATE`. 아니면 정책 임계치(`severe_min ≥ restriction_min ≥ monitor_min ≥ attention_min`) 기준 effective_score로 단계 결정. `manual_lock`이면 자동 등급 재평가를 건너뛴다(잠금 유지).
+정지·차단 계정은 인증 후 제한 세션을 사용한다. 서버는 method·경로 허용 목록과 서비스별 본인·사건 권한을 적용한다. 내 제재, 기존 분쟁의 허용 절차, 고객지원, 기존 문의, 개인정보 삭제 요청·상태·취소·사전 확인 및 내보내기 요청·상태를 이용할 수 있다. 증빙 업로드의 목적 제한은 유지된다.
 
-### 횡단 의존
+앱도 제한 안내·내 제재·개인정보·기존 분쟁/문의·지원·가이드로 경로를 좁힌다. 새 분쟁과 새 일반 문의 입구는 허용하지 않는다. 개인정보 요청을 금지한다고 쓰거나 요청 가능을 즉시 탈퇴 가능으로 확대하지 않는다.
 
-- **클럽 권한**: `ClubMemberPermissionChecker` (`isOwner`/`isAdmin`/`isEventHost`/`getPermissionFlags`/`requireClubMember`).
-- **이벤트 도메인**: 이벤트 신청 시 `EventApplyRestrictionGuard`(클럽-스코프 `WarningSanctionService.isApplyRestricted` + 플랫폼 전역 `PlatformSanctionService.isRestricted(EVENT_APPLY_RESTRICT)`) 2축 동시 검사. 17개 진입점에 적용. 출결 이벤트(`LATE`/`SAME_DAY_CANCEL`/`NO_SHOW`/`REPEATED_CANCEL`)가 `autoGrantFromAttendance` 자동 GRANT 트리거.
-- **플랫폼 전역 제재**: `PlatformSanction`(3종: `EVENT_APPLY_RESTRICT`/`EVENT_HOST_RESTRICT`/`DATE_PROFILE_BLOCK`) — 클럽 외부(개인 호스트 이벤트, 데이팅) 포함 플랫폼 전체에 적용. CS_ADMIN/SYSTEM 부과, 04:10 KST 만료 스케줄러(`PlatformSanctionExpiryScheduler`).
-- **알림/통합**: 모든 쓰기가 `domain_outbox`(DomainType.WARNING)로 이벤트 발행 — 실제 FCM/알림 전환은 outbox consumer 책임(이 도메인 밖).
-- **감사**: 모든 쓰기가 `warning_audit_log`(5년 보존, before/after JSON)에 기록.
-- **멱등**: 원장 `UNIQUE(club_id, member_id, source_type, source_id)`; grant/forced-remove/bulk-expire는 `Idempotency-Key` 헤더(`ApiIdempotencyKeyService`).
+## 큐와 관측 지표
 
-## 6. Gap / Risk Rollup
+반복 제보·반복 취소·오래된 이의는 실제 큐 생성 경로가 있다. 14일 경과 이의의 큐 등록과 28일 경과 이의의 상향은 자동 최종 판정이 아니다. 큐 APPROVE/REJECT는 PROCESSED, IGNORE는 IGNORED이며 상태·감사·outbox를 기록한다. 별도 원장 부여·제재 명령을 자동 실행하지 않는다.
 
-| 기능 | 후보 수 | 대표 항목 |
-|---|---:|---|
-| [F15-08](../02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md) | 5 (P0·P1 다수 해소, 잔여 P1×1+P2×3+P3×1) | ~~`FORCED_REMOVE` 멤버십 미연결~~ **해소**. ~~만료 스케줄러 미활성~~ **해소**. ~~`listActiveByUser` 공개 API 미배선~~ **해소**. ~~EVENT_HOST_RESTRICT 가드 미배선~~ **해소(6경로+데이팅)**. ~~PlatformSanction admin API 미확인~~ **배선 확인(R-8)**. 잔여: 기활성 데이팅 프로필 매칭 노출(신규 후속), NOTICE/ROLE_RESTRICT outbox 위임 |
-| [F15-09](../02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | 5 | 통계 `period` 미전달, 대시보드/통계 `findAll()` 전체 메모리 집계, 큐 enqueue 호출처 부재 가능성 |
-| [F15-02](../02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md) | 3 | ~~익명 누적 반려율 익명 row 미탐지~~ **해소**. 잔여: 자가 제보/중복 에러코드 모호 |
-| [F15-04](../02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md) | 3 | ~~임계치 기본값 Java·DDL 불일치~~ **해소**(둘 다 3/6/10/15). 잔여: 단조성 강제 안 함 |
-| [F15-06](../02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md) | 3 | grant 일괄 부분 성공이 단일 트랜잭션 안 — 부분 성공 의미 모호 |
-| [F15-01](../02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md) | 2 | 정책 비활성 클럽도 본인 화면 진입 시 summary row 생성 |
-| [F15-03](../02_feature_prds/15_warning/F15-03_appeal_prd.md) | 2 | reason blank가 APPEAL_NOT_FOUND로 매핑 (오해 소지) |
-| [F15-05](../02_feature_prds/15_warning/F15-05_report-review_prd.md) | 2 | claim/approve 2회 호출 사이 동시성, reason blank가 REPORT_NOT_FOUND로 매핑 |
-| [F15-07](../02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md) | 2 | allow-resubmit가 DB 컬럼만 기록, 재제기 강제 가드 없음 |
+월 신규와 최근 30일 심각 위반은 GRANT 건수이며 현재 심각 후보 인원과 다르다. 서버 통계는 기간 조건 집계를 사용하고 앱 API/provider도 period를 전달하지만 현재 통계 화면 소비는 확인되지 않았다. reviewTargetTotal은 현재 요약, outbox는 WARNING 전역, 자기 행동은 기간 인자 없는 조회이므로 지표들을 동일한 클럽·기간 표본이라고 가정하지 않는다.
 
-### 접근권한 감사 교정 (2026-07-02)
+## 남은 제품 차이와 문서 검증 범위
 
-접근권한 감사(2026-06-30~07-01)에서 확정·교정된 사항이다. 서버 코드에만 적용됐다.
+임계치 역전·미리보기 근사/화면 연결·맞춤 점수 초기화, 이의 상태·재제출 조건의 앱/서버 차이, 예약 제재와 집행 상태 표시, 기활성 데이트 노출, 통계 화면 제공과 지표 의미는 각 기능 문서의 현재 제한을 따른다. 이전 문서의 dynamic 응답·전체 findAll 집계·period 미전달·전역 제재 3종 설명은 현재 구현으로 교정했다.
 
-**제재 직무 분리 (D-F15-2).** 신고 심사 권한(WARNING_REVIEWER)과 제재 집행 권한(SANCTION_PROPOSER)이 서버에서 실제로 분리됐다. 이전에 SANCTION_PROPOSER 플래그는 코드에만 정의되어 있고 강제되지 않았으나, 현재 비-FORCED 제재 부과·해제에 이 플래그가 실제 게이트로 연결된다. FORCED_REMOVE 및 그 해제는 기존과 동일하게 OWNER 단독 유지.
-
-**멤버 self-view 스태프 신원 은닉 (D-F15-1).** 경고를 받은 멤버가 자신의 경고 현황·원장·제보·이의 이력을 조회할 때 제재를 부과하거나 처리한 운영자 신원이 제거된다(보복 방지, 플랫폼 제재 정책 미러). 운영자 전용 큐·대시보드에서는 운영자 신원이 유지된다.
-
-**경고 신고/이의 분쟁 상세 접근 제한 (G-DISP-2).** 경고 신고 및 이의 분쟁 상세는 WARNING_REVIEWER(또는 OWNER) 또는 해당 사건의 당사자(신고자·이의제기자·대상자)만 열람 가능하다. 이전에는 같은 클럽 멤버라면 caseId만 알면 신고 본문·당사자 식별 정보를 열람할 수 있었으나, 현재 접근이 제한됐다.
-
-## 7. 운영 방법
-
-1. 새 구현/QA 착수 전 해당 기능 PRD의 `실사 근거`, `서버 계약`, `프론트 계약`, `상태/권한 매트릭스`, `Gap / Risk`를 먼저 읽는다.
-2. PRD가 인용한 서버 source(controller/service/vo/enum/V1__init.sql)와 Flutter source(api/repository/provider/screen)를 열어 현재 코드와 일치하는지 확인한다.
-3. `FORCED_REMOVE`의 멤버십 제거 연결, 스케줄러 전체 클럽 순회, 통계 period 전달은 도메인 차원의 결정 항목이므로, 구현 전 `05_planning_artifacts/decision_register.md`에 올린다.
-4. 경고 점수는 돈이 아니지만 강제 탈퇴(유료 클럽 환불 연계 가능)·이벤트 신청 차단으로 사용자 피해가 크다. F15-08을 가장 먼저 닫는다.
+도메인 PRD와 HTML은 기능 PRD 9개의 검토된 해시·소스 근거를 재사용한다. 이 영역에는 기존 로컬 units 폴더가 없으므로 새 복제 문서를 만들지 않았다. 이번 작업에서 제품 시험·브라우저·화면 이미지를 실행하지 않았다. 전체 완료 상태는 [문서 최신화 추적 자료](../../verification/document-refresh-2026-11-22.json)를 따른다.

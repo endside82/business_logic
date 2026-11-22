@@ -1,91 +1,67 @@
-# F15-06. 경고 부여 & 원장 조정 PRD
+# F15-06. 경고 부여와 원장 조정 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 실행·운영 검수 통과 기록이 아니다.
 
-## 1. 결론
+## 역할과 공개 계약
 
-운영진(`WARNING_REVIEWER`)은 제보 없이도 점수를 직접 부여하고 부여된 원장 항목을 조정한다. `POST /grants`는 `targetMemberIds` 배열을 받아 멤버별로 `WarningLedgerService.insertGrant`를 호출하고 `{success, ledgerIds, failed, batchId}` Map을 반환한다(Idempotency-Key 헤더 지원). 조정은 `POST /ledger/{ledgerId}/mitigate`(점수 일부 경감, effective 초과 불가), `/reverse`(전체 정정, GRANT당 1회), `/expire`(만료)이며, `POST /ledger/bulk-expire`는 batchId로 여러 GRANT를 일괄 만료한다(AMNESTY, Idempotency-Key 지원). 원장은 append-only이고 `UNIQUE(club_id, member_id, source_type, source_id)`로 멱등하다. 모든 조정은 `WarningMemberSummaryService.recalculateForUpdate`로 점수를 재산정하고 audit + outbox(`WarningGranted/Mitigated/Reversed/Expired`)를 발행한다. Flutter `warning_member_detail_screen.dart`/`warning_reason_dialog.dart`가 이를 구현했다.
+WarningAdminActionController의 원장 명령은 WARNING_REVIEWER를 요구한다. 부여 가능한 유형 목록을 읽고 회원 상세에서 부여·감경·정정·만료·일괄 만료를 수행한다. SEVERE 유형에는 추가로 OWNER 권한이 필요하다. 부여 가능한 목록은 유형별 actions.grant를 반영한다.
 
-판정: **부여·경감·정정·만료·일괄만료의 정합과 멱등은 닫혀 있다**. Gap은 (a) `grant`의 일괄 처리가 단일 컨트롤러 트랜잭션이 아니라 멤버별 try-catch 부분 성공이라 "성공 N건/실패 M건"의 의미와 트랜잭션 경계가 모호, (b) Idempotency-Key 캐시(`ApiIdempotencyKeyService`)와 원장 source UNIQUE의 이중 멱등 구조, (c) mitigate/reverse/expire의 reason blank가 `WARNING_MITIGATE_EXCEEDS_EFFECTIVE`로 매핑되어 의미 불일치인 점이다.
+POST /api/v1/admin/clubs/{clubId}/warnings/grants와 POST /ledger/bulk-expire는 WarningLedgerBatchResultVo를 반환한다. 감경·정정·만료는 각각 POST /ledger/{ledgerId}/mitigate·reverse·expire이며 WarningLedgerVo를 반환한다. 과거 dynamic Map 설명을 현재 응답으로 사용하지 않는다.
 
-## 2. 코드 위치
+## 직접 부여와 부분 결과
 
-계약의 정본은 코드다. 서버: `WarningAdminActionController`, `WarningLedgerService`, `WarningMemberSummaryService`, `WarningLedgerVo`, `WarningLedgerType`, `ErrorCode`, `WarningPenaltyTypeConfigService`, `ApiIdempotencyKeyService`. 앱: `warning_member_detail_screen.dart`, `warning_admin_action_api.dart`, `warning_reason_dialog.dart`.
+직접 부여 입력은 대상 회원 목록·패널티 코드·사유·선택 이벤트·선택 점수 override·batchId다. 사유는 공백 불가·최대 4000자, 코드 최대 40자, batchId 최대 36자이며 점수는 0 이상이다. 중복 대상은 LinkedHashSet으로 제거한다. 현재 클럽 회원이 아닌 대상은 실패 목록에 넣고 선택 이벤트가 있으면 클럽 일치를 검사한다.
 
-## 3. 전체 동작 흐름
+결과는 success·ledgerIds·failed·batchId다. 직접 부여의 failed는 회원 ID이며 반환한 원장 ID는 성공한 부여다. 대상별 RestException을 실패로 모으지만 하나의 외부 트랜잭션에서 실행하므로 모든 DB 오류가 안전한 부분 성공으로 바뀐다고 보장하지 않는다. 빈 대상 목록도 서버에서 받을 수 있다.
 
-1. WARNING_REVIEWER가 `members/:memberId`(`Routes.adminWarningMemberDetail`) → `WarningMemberDetailScreen` → 멤버 원장/제재 확인.
-2. **직접 부여**: `POST /grants`(`WarningGrantAddParam{targetMemberIds, penaltyTypeCode, pointsOverride?, reasonCode?, reason, eventId?, batchId?}`, Idempotency-Key 헤더). 컨트롤러 `idempotent(...)` 래퍼가 캐시 확인 후, 멤버별로 `resolvePoints` + `insertGrant(sourceType="MANUAL_GRANT", sourceId="M{memberId}-{nanoTime}")`. 개별 실패는 `failed`에 누적, `{success, ledgerIds, failed, batchId}` 반환.
-3. **경감**: `POST /ledger/{ledgerId}/mitigate`(`WarningMitigateParam{points, reasonCode, reason, batchId}`) → 대상이 GRANT이고 REVERSE/EXPIRE 안 됨, `points ≤ (target.points − mitigateSum)`이어야 함. MITIGATE row(sourceType="MITIGATE") 생성 + 요약 재계산.
-4. **정정**: `POST /ledger/{ledgerId}/reverse` → GRANT당 1회, 기존 REVERSE/EXPIRE 있으면 거절. REVERSE row(points=0) 생성 → 요약에서 해당 GRANT 완전 제외.
-5. **만료**: `POST /ledger/{ledgerId}/expire` → 기존 EXPIRE/REVERSE 있으면 거절. EXPIRE row(points=0) 생성.
-6. **일괄 만료**: `POST /ledger/bulk-expire`(`WarningBulkExpireParam{grantLedgerIds, reasonCode, reason, batchId?}`, Idempotency-Key) → batchId 발급 후 각 GRANT를 `insertExpire`, 실패는 `failed` 누적, `{batchId, success, failed}` 반환.
-7. 모든 조정 후 `recalculateForUpdate`가 effective/qualified/raw/count와 review_level을 갱신하고, 등급 변화 시 outbox `MemberReviewLevelChanged` 발행.
+수동 부여 자체에는 정책 active 검사가 없다. 출결 자동 부여는 정책 활성과 출결 연결 유형을 요구한다. 자동 유형은 LATE·SAME_DAY_CANCEL/CANCELLED_SAME_DAY·NO_SHOW·REPEATED_CANCEL이며 ATTENDANCE_AUTO와 출결 ID로 중복을 막는다. 이 규칙을 수동 부여의 사전 조건과 섞지 않는다.
 
-## 6. 상태/권한 매트릭스
+## 중복 재전송과 원장 보존
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| WARNING_REVIEWER 단일 부여 | `insertGrant` | 부여 액션 | GRANT 1건 + 점수 갱신 | 일치 |
-| 일괄 부여(일부 실패) | 멤버별 try-catch | 결과 Map 표시 | success/failed 분리 | 부분 성공 의미 Gap |
-| 같은 Idempotency-Key 재호출 | 캐시 응답 | 재시도 안전 | 중복 부여 없음 | 일치 |
-| effective 초과 경감 | `WARNING_MITIGATE_EXCEEDS_EFFECTIVE` | 에러 | 차단 | 일치 |
-| 이미 REVERSE된 GRANT 정정 | `WARNING_LEDGER_ALREADY_REVERSED` | 에러 | 차단 | 일치 |
-| reason blank 조정 | `WARNING_MITIGATE_EXCEEDS_EFFECTIVE` | 에러 | 차단(의미 모호) | Risk(아래) |
-| 출결 자동 GRANT(SYSTEM) | `autoGrantFromAttendance` | (이벤트 도메인 트리거) | 자동 부여 | 일치 |
+직접 부여와 일괄 만료의 컨트롤러는 선택 Idempotency-Key를 받아 요청을 검증·재생하는 서비스를 사용한다. 앱은 같은 본문의 키를 유지해 재전송한다. 수동 부여의 sourceId에는 매번 달라지는 값이 들어가므로 batchId만 같다고 중복 부여가 차단되는 것은 아니다.
 
-## 7. 정합성 판단
+감경은 같은 클럽의 GRANT를 대상으로 양수 점수·공백 아닌 사유를 요구한다. 회원 잠금과 커밋된 조정 행을 확인해 정정·만료된 대상이나 남은 유효 점수보다 큰 감경을 거절한다. 수동 감경은 batchId가 있으면 대상 원장과 batchId로 sourceId를 정하고 없으면 새 값을 만든다. 앱은 본문이 같을 때 batchId를 유지한다.
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| grant 응답 형태 | `Map` | `dynamic` | 일치(타입 안전성 낮음) |
-| mitigate/reverse/expire 응답 | `WarningLedgerVo` | VO | 일치 |
-| `WarningLedgerType` | 4값 | enum 동일 | 일치 |
-| 멱등 키 헤더 | grant/bulkExpire 지원 | `@Header` 전달 | 일치 |
-| 점수 재계산 | `recalculateForUpdate` | 화면은 재조회로 반영 | 일치 |
+정정(REVERSE)과 만료(EXPIRE)는 원본을 삭제하지 않고 points=0의 연결 행을 추가한다. 이미 정정·만료된 원장을 다시 무효화할 수 없다. 모든 조정 뒤 요약을 재계산하고 감사·outbox를 기록한다.
 
-## 8. Gap / Risk
+## 일괄 만료 응답의 구분
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P2 | 일괄 부여 부분 성공 의미·트랜잭션 경계 모호 | `grant`가 멤버별 try-catch, `insertGrant`는 `@Transactional` 개별 | 일부 멤버만 부여된 채 "성공 N"으로 보고됨 — 운영진이 실패 멤버 재처리 필요 | failed 목록의 UX 처리 명시 + 재시도 가이드 |
-| P2 | grant 응답이 `dynamic` Map | 컨트롤러가 `Map<String,Object>` 반환, Flutter `dynamic` | 타입 안전성 없음, 필드 오타 런타임 노출 | 응답 전용 VO(`WarningGrantResultVo`) 도입 검토 |
-| P2 | 조정 reason blank가 `WARNING_MITIGATE_EXCEEDS_EFFECTIVE`로 매핑 | `insertMitigate/Reverse/Expire`가 reason 없으면 해당 코드 throw | "초과" 에러로 오해 | `WARNING_REASON_REQUIRED`로 통일 |
-| P3 | Idempotency 캐시 저장 실패를 무시 | `idempotent`가 store 실패를 swallow | 동일 키 재호출이 재실행될 수 있음(원장 UNIQUE가 2차 방어) | 원장 UNIQUE 의존을 명시, 캐시 실패 로깅 강화 |
+일괄 만료는 grantLedgerIds·사유·선택 batchId를 받으며 빈 목록은 성공 0건을 반환한다. 각 대상의 RestException을 모으고 원래 입력 목록을 순회한다. 직접 부여와 달리 실패 목록은 GRANT 원장 ID이며 ledgerIds는 빈 목록이다. success만으로 응답의 ID 의미를 추측하지 않는다. 같은 ID가 입력에 반복되면 두 번째 처리에서 이미 무효화된 상태로 실패할 수 있다.
 
-## 9. 수용 기준
+## 점수와 검토 등급
 
-### AC-01. 단일 직접 부여
-Given WARNING_REVIEWER가 한 멤버에게 점수를 부여한다(reason 포함).
-When `POST /grants`가 `targetMemberIds=[m]`로 호출된다.
-Then 원장 GRANT 1건 생성, `{success:1, ledgerIds:[id]}` 반환, 멤버 요약 effective_score가 증가한다.
+rawScore는 모든 GRANT 점수 합, qualifiedScore는 정정·만료되지 않은 GRANT 점수 합이다. effectiveScore는 각 활성 GRANT에서 연결된 감경을 빼고 0 미만을 막아 합산한다. effectiveCount는 활성 GRANT 행 수이므로 완전히 감경된 행도 포함할 수 있다.
 
-### AC-02. 멱등 재부여
-Given 같은 `Idempotency-Key`로 grant를 재호출한다.
-When 두 번째 호출이 도착한다.
-Then 캐시된 응답을 반환하고 새 원장 row를 만들지 않는다.
+활성 SEVERE GRANT가 있으면 점수 임계치와 정책 활성 여부보다 먼저 SEVERE_SANCTION_CANDIDATE로 판정한다. 점수를 전부 감경해도 원장을 정정·만료하지 않았다면 이 우선 판정이 남는다. manualLock은 등급·검토 상태를 유지하지만 점수 재계산 자체를 막지 않는다. 등급 상승·운영자 알림과 실제 제재 집행은 별도다.
 
-### AC-03. effective 초과 경감 차단
-Given GRANT points=3에 이미 MITIGATE 2가 있다.
-When `mitigate`를 points=2로 호출한다.
-Then 서버는 `WARNING_MITIGATE_EXCEEDS_EFFECTIVE`로 거절한다(remaining=1).
+## 앱의 명령과 복구
 
-### AC-04. 정정 1회 제한
-Given GRANT가 이미 REVERSE되었다.
-When 다시 `reverse`를 호출한다.
-Then 서버는 `WARNING_LEDGER_ALREADY_REVERSED`로 거절한다.
+회원 상세는 서버가 준 유형과 현재 권한·세션을 확인한다. 현재 UI의 사유는 최소 5자다. 성공 0건과 일부 실패를 전체 성공과 구분하며, 키 만료 오류는 목록 확인과 새 작업을 안내한다. 원장이 이미 정정·만료됐으면 다시 읽고 조정창을 닫는다. 다른 실패·결과 불명은 입력을 유지하고 안전한 재전송 여부를 구분한다.
 
-### AC-05. 일괄 만료 부분 성공
-Given `bulk-expire`에 GRANT 3건 중 1건이 이미 EXPIRE이다.
-When 일괄 만료가 호출된다.
-Then 나머지 2건만 EXPIRE되고 `{success:2, failed:[id]}`가 반환된다.
+명령이 성공했거나 현재 세션에서 반영됐을 가능성이 있으면 관련 회원과 클럽 콘솔 변경 신호를 발행한다. 이 신호를 새로운 서버 실행 성공의 증거로 삼지 않는다.
 
-## 10. 미결정 / 후속
+## 코드 위치
 
-| 분류 | 항목 | 결정/작업 |
+서버: WarningAdminActionController, WarningLedgerService, WarningLedgerBatchResultVo, WarningMemberSummaryService, WarningPenaltyTypeConfigService, WarningAbilityPolicy. 앱: warning_admin_action_api.dart, warning_ledger_batch_result_vo.dart, warning_member_detail_screen.dart, warning_admin_commands.dart.
+
+<!-- source-references:start -->
+서버 창구: `WarningAdminActionController#getGrantablePenaltyTypes`, `WarningAdminActionController#grant`, `WarningAdminActionController#mitigate`, `WarningAdminActionController#reverse`, `WarningAdminActionController#expire`, `WarningAdminActionController#bulkExpire`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | grant 응답 VO | `dynamic` Map → 전용 결과 VO 도입 |
-| UX | 일괄 부분 성공 | failed 멤버 재처리 흐름 명시 |
-| UX | 에러 매핑 | 조정 reason 누락을 `WARNING_REASON_REQUIRED`로 통일 |
-| 테스트 | 원장 조정 | 단일/일괄 부여·멱등·경감 초과·정정 1회·일괄 부분성공 E2E |
+| Risk | 부분 결과는 대상별 RestException 처리이며 전체 트랜잭션 오류까지 보장하지 않는다. | 실패 ID 종류와 재조회·재전송을 구분한다. |
+| Risk | 수동 부여는 정책 active를 요구하지 않고 완전 감경된 SEVERE도 등급을 유지할 수 있다. | 부여 가능·유효 점수·심각 유형·제재를 나눠 설명한다. |
+| 미검증 | 실제 동시 조정·재전송·부분 DB 실패를 새로 실행하지 않았다. | 현재 구조를 제품 시험 통과로 기록하지 않는다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 부여 권한:** 현재 회원·유형·심각도 권한과 이벤트 소속을 확인한다.
+- **AC-02 응답 타입:** 직접 부여의 실패 회원 ID와 일괄 만료의 실패 원장 ID를 구분한다.
+- **AC-03 재전송 식별:** 부여/일괄 만료의 키와 감경의 batchId를 유지하고 batchId만으로 부여 멱등을 보장하지 않는다.
+- **AC-04 조정 상한:** 잠금과 기존 조정 행을 바탕으로 유효 점수 초과 및 중복 무효화를 거절한다.
+- **AC-05 원장 산식:** 원시·대상·실효 점수와 건수, SEVERE 우선 판정·수동 잠금을 구분한다.
+- **AC-06 실패 복구:** 0건·부분 실패·이미 무효화·결과 불명에 맞춰 입력 유지와 재조회를 수행한다.

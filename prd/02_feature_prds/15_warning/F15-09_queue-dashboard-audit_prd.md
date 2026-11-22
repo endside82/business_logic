@@ -1,104 +1,71 @@
-# F15-09. 검토 큐 & 대시보드/통계/감사로그 PRD
+# F15-09. 검토 큐·대시보드·통계와 감사 로그 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 현재 서버·앱 소스를 대조했다. 문서 최신화이며 새 제품 실행·운영 검수 통과 기록이 아니다.
 
-## 2026-10-29 현재 계약 대조
+## 입구와 실행 권한
 
-### 신고 검토 목록의 정렬을 서버에서 적용합니다
+경고 콘솔에서 검토 큐·제보·이의·검토 대상·회원 상세·감사 로그로 이동한다. WarningAdminQueueController는 기본 WARNING_REVIEWER를 요구한다. 회원 상세만 WARNING_REVIEWER 또는 SANCTION_PROPOSER를 허용한다. 제재 담당이 회원 상세를 읽는 권한을 콘솔 통계·큐 전체 접근으로 넓히지 않는다.
 
-최신순·오래된순을 서버 정렬로 처리한다. 오래된순과 중복되던 오래 대기한 순 선택은 제거했다. 목록에 나타난 단건이 삭제되거나 사라지면 상세는 없음으로 처리하며, 빈 성공 응답을 정상 사건으로 보이지 않는다.
+공개 기반 경로는 /api/v1/admin/clubs/{clubId}/warnings다. GET /queue·review-targets·audit-logs는 페이지 응답, GET /queue/{queueId}는 단일 행, GET /dashboard·statistics·members/{memberId}는 각 전용 응답이다. 큐 처리는 POST /queue/{queueId}/process다.
 
-기존 설계 중 이 규칙과 다른 서술은 아래 현재 계약을 기준으로 정정한다. 운영·실기기 완료 판정은 [현재 출시 상태표](../../../docs/qa/launch-status.html)를 따른다.
+## 제보 목록과 검토 큐의 구분
 
-## 1. 결론
+제보 검색은 WarningAdminActionController의 별도 /reports 경로다. 앱의 최신순·오래된순을 sortType으로 전달하고 서버가 정렬한다. 경고 제보 심사, 검토 큐 처리, 실제 원장 부여·제재 집행은 서로 다른 명령이다. 제보 심사의 상태·자기 대상 가림·입력 복구는 [클럽 경고 제보 심사](F15-05_report-review_prd.md)를 따른다.
 
-운영진 콘솔의 모니터링·검토 레이어는 `WARNING_REVIEWER` 권한으로 `WarningAdminQueueController`가 제공한다. `GET /queue`(`Page<WarningReviewQueueVo>`)·`GET /queue/{queueId}`·`POST /queue/{queueId}/process`(OPEN→PROCESSED/IGNORED)로 검토 큐 inbox를 처리하고, `GET /dashboard`(`WarningDashboardVo`)로 등급별 인원·이번달 신규·대기 제보/이의·큐 OPEN·outbox 헬스를, `GET /statistics`(`WarningStatisticsVo`)로 부여/감경/정정/만료 수·코드별 분포·이의 평균 처리시간을, `GET /members/{memberId}`(`WarningAdminMemberDetailVo`)로 멤버 상세를, `GET /review-targets`(`Page<WarningReviewTargetVo>`)로 검토 대상(`is_under_review=true`)을, `GET /audit-logs`(`Page<WarningAuditLogVo>`)로 감사 로그를 본다. Flutter `warning_console_screen.dart`/`warning_queue_screen.dart`/`warning_review_targets_screen.dart`/`warning_audit_log_screen.dart`가 구현했다.
+검토 큐·감사 로그는 생성 시각 내림차순 뒤 ID 내림차순으로 읽는다. 검토 대상은 effectiveScore 내림차순 뒤 회원 ID 내림차순이다. 동점 순서를 유지하는 서버 페이지 계약과 사용자가 선택하는 제보 정렬을 혼동하지 않는다.
 
-판정: **조회·큐 처리의 화면-API 정합은 닫혀 있다**. 그러나 운영 신뢰성 Risk가 크다: (a) 통계 화면(`getStatistics`)이 서버가 지원하는 `period` 쿼리 파라미터를 **전달하지 않아** 항상 전체 기간만 본다, (b) 대시보드 `newThisMonthCount`/통계가 `warningLedgerRepository.findAll()` 전체를 메모리로 가져와 클럽 필터링 — 대규모 데이터에서 성능/메모리 위험, (c) `severe30dCount`가 "최근 30일"이 아니라 현재 SEVERE 등급 인원으로 근사(주석도 인정), (d) 큐 enqueue 호출처가 도메인 내부 서비스에 한정되어 실제로 어떤 흐름이 큐를 채우는지 검증 필요, (e) `processQueueItem`의 APPROVE/REJECT가 상태만 바꾸고 별도 액션을 트리거하지 않는 점이다.
+## 큐 생성과 처리의 범위
 
-## 2. 코드 위치
+같은 대상 유형·대상 ID의 OPEN 큐가 있으면 재사용하고 새 행 경합도 저장소에서 막는다. 실제 연결에는 반복 익명 제보, 반복 취소 작업, 오래된 이의 작업이 있다. 과거 enqueue 호출처가 전혀 확인되지 않았다는 설명을 현재 상태로 유지하지 않는다.
 
-계약의 정본은 코드다. 서버: `WarningAdminQueueController`, `WarningReviewQueueService`, `WarningQueryService`, `ErrorCode`. 앱: `warning_console_screen.dart`, `warning_queue_screen.dart`, `warning_review_targets_screen.dart`, `warning_audit_log_screen.dart`, `warning_member_detail_screen.dart`, `warning_admin_queue_api.dart`.
+이의 지연 작업은 매일 05:00 Asia/Seoul에 SUBMITTED·IN_REVIEW 중 생성 후 14일을 넘긴 대상을 개별 트랜잭션으로 다시 확인하고 APPEAL_OVERDUE 큐를 만든다. 28일을 넘긴 미상향 건에는 escalatedAt과 상향 outbox를 남긴다. 이 처리는 이의를 자동 인용·기각하거나 자동 종결하는 작업이 아니다.
 
-## 3. 전체 동작 흐름
+큐 처리는 같은 클럽의 행을 잠그고 OPEN인지 확인한다. 이미 닫혔으면 현재 행을 반환한다. IGNORE는 IGNORED, APPROVE와 REJECT는 모두 PROCESSED이며 선택 메모·감사·outbox를 기록한다. 이 명령만으로 GRANT나 제재를 자동 생성하지 않는다.
 
-1. WARNING_REVIEWER가 운영 콘솔 진입 → `WarningConsoleScreen(clubId, role)` → `GET /dashboard`로 요약 카드(등급별 인원/대기/큐/outbox 헬스).
-2. **큐**: `queue`(`Routes.adminWarningQueue`) → `WarningQueueScreen` → `GET /queue`(`Page<WarningReviewQueueVo>`). 항목 처리 → `POST /queue/{queueId}/process`(`{decision: APPROVE|REJECT|IGNORE, note?}`) → OPEN이 아니면 멱등 무시, IGNORE면 IGNORED, 그 외 PROCESSED. audit `REVIEW_QUEUE_PROCESSED` + outbox `WarningReviewQueueProcessed`.
-3. **검토 대상**: `review-targets`(`Routes.adminWarningReviewTargets`) → `GET /review-targets` → `Page<WarningReviewTargetVo>`(is_under_review=true 멤버).
-4. **멤버 상세**: `GET /members/{memberId}` → `WarningAdminMemberDetailVo`(summary + 최근 20건 원장 + 활성 제재). F15-06 조정 진입점.
-5. **통계**: `GET /statistics?period=...`(서버 지원) → `WarningStatisticsVo`. **현재 Flutter는 period 미전달 → 항상 "ALL"**.
-6. **감사 로그**: `audit-logs`(`Routes.adminWarningAuditLogs`) → `GET /audit-logs` → `Page<WarningAuditLogVo>`(before/after JSON, actor/role/flags).
-7. 큐는 다른 경고 서비스(`enqueue`)가 채우거나, `markProcessed`로 비즈니스 트랜잭션 안에서 자동 처리된다.
+## 대시보드 지표의 정확한 의미
 
-## 6. 상태/권한 매트릭스
+newThisMonthCount는 이번 달 생성된 GRANT 행 수, severe30dCount는 최근 30일 SEVERE 유형으로 부여된 GRANT 행 수다. 현재 심각 제재 후보 회원 수가 아니며 뒤에 감경·정정된 부여를 자동 제외한 수치도 아니다. 대시보드는 현재 등급별 요약 수와 미처리 제보·이의·OPEN 큐 수도 포함한다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| WARNING_REVIEWER | 클래스 권한 | 콘솔 진입 | 모니터링/큐 처리 | 일치 |
-| 권한 없는 멤버 | 403 | 차단 | 접근 불가 | 일치 |
-| OPEN 큐 처리 | OPEN→PROCESSED/IGNORED | 처리 액션 | 상태 변경 | 일치 |
-| 이미 처리된 큐 재처리 | 멱등 반환(OPEN 아니면 무시) | 변경 없음 | 멱등 | 일치 |
-| 다른 클럽 queueId | `WARNING_QUEUE_ITEM_NOT_FOUND` | 차단 | cross-club 격리 | 일치 |
-| 통계 기간 선택 | 서버 period 지원 | Flutter 미전달 | 항상 전체 기간 | Gap(아래) |
-| 검토 대상 조회 | is_under_review 필터 | 목록 | 등급별 대상 | 일치 |
+제보 대기는 SUBMITTED·IN_REVIEW·NEEDS_MORE_INFO, 이의 대기는 SUBMITTED·IN_REVIEW다. outbox 관측값은 WARNING 도메인 전체 수치이며 해당 클럽만의 전송 상태로 제한되지 않는다.
 
-## 7. 정합성 판단
+## 통계 기간과 앱 제공 범위
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| 큐 응답 형태 | `Page<WarningReviewQueueVo>` | `PageResponse` | 일치 |
-| `WarningReviewQueueType` | 7값 | enum 동일 | 일치 |
-| `WarningReviewQueueStatus` | OPEN/PROCESSED/IGNORED | enum 동일 | 일치 |
-| Decision | APPROVE/REJECT/IGNORE | `WarningReviewQueueDecision` 동일 | 일치 |
-| 대시보드/통계 형태 | VO + Map | VO + Map(JSON) | 일치 |
-| 통계 period | 서버 `@RequestParam period` | Flutter 미전달 | **불일치** |
-| 감사 로그 형태 | `Page<WarningAuditLogVo>` | `PageResponse` | 일치 |
+원장 통계는 클럽·기간 조건을 사용한 저장소 집계다. 과거 findAll 뒤 메모리 필터 설명은 현재 구현과 다르다. period는 ALL·7D·30D·90D·MONTH·YEAR를 지원하며 빈 값이나 인식하지 못한 값은 전체 범위로 집계한다. 응답의 period 문자열과 실제 적용 범위를 동일시하지 않는다.
 
-## 8. Gap / Risk
+원장 유형별·패널티 코드별 GRANT 집계와 처리된 이의의 평균 소요시간 등이 있다. reviewTargetTotal은 현재 요약 상태에 대한 수치이며 기간 당시의 이력 스냅샷이 아니다. API와 provider에 period 전달이 존재한다. 다만 현재 presentation에서 warningStatisticsProvider 사용은 확인되지 않아 통계 기간 선택 화면의 완성을 주장하지 않는다. 콘솔의 현재 대시보드 표시와 구분한다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | 통계 `period` 미전달 | `WarningAdminQueueApi.getStatistics(clubId)`에 period 파라미터 없음, 서버는 지원 | 운영진이 7D/30D/MONTH 등 기간별 통계를 못 봄(항상 ALL) | Flutter API에 `@Query('period')` 추가 + 화면 기간 선택 UI |
-| P1 | 대시보드/통계 `findAll()` 전체 메모리 집계 | `buildDashboard`/`buildStatistics`가 `warningLedgerRepository.findAll()` 후 클럽 필터 | 원장 누적 시 메모리/성능 급격 악화 | clubId+기간 QueryRepository 집계로 전환 |
-| P2 | `severe30dCount` 근사 | "최근 30일"이 아니라 현재 SEVERE 등급 인원(주석 인정) | 대시보드 지표 의미 오해 | review_triggered_at 기준 30일 집계로 정확화 |
-| P2 | 큐 enqueue 호출처 검증 필요 | `enqueue`는 도메인 내부 서비스용, 실제 어떤 흐름이 채우는지 본 PRD 미확정 | 큐가 비어 있어 검토 대상이 inbox에 안 뜰 수 있음 | enqueue 호출 흐름(HOST_PROPOSAL/AUTO_REVERT 등) 전수 확인 |
-| P2 | `processQueueItem` APPROVE/REJECT가 상태만 변경 | process는 status 전이 + outbox만, 별도 후속 액션 트리거 없음 | "검토 처리"가 실제 제재/부여로 자동 연결되지 않음 | 큐 처리 후속 액션 정책 결정 |
+## 이상 패턴과 감사의 범위
 
-## 9. 수용 기준
+이상 패턴에는 반복 수동 마일리지·교환, 반복 큐, 추가 검토가 필요한 제보, 강퇴 재시도, 오래된 이의·상향 등이 쓰인다. 모든 항목이 같은 기간으로 집계되는 것은 아니다. 자기 자신에 대한 행동 집계는 기간 인자가 없는 감사 조회를 사용한다.
 
-### AC-01. 큐 처리 멱등
-Given OPEN 큐 항목을 IGNORE로 처리한다.
-When `POST /queue/{queueId}/process`가 두 번 호출된다.
-Then 첫 호출에 IGNORED가 되고, 두 번째는 멱등하게 현재 상태를 반환한다.
+6개월 강퇴 추이는 실행 SUCCEEDED이며 결과가 REMOVED인 건을 실행 시각으로 묶는다. 이미 없던 회원에 대한 ALREADY_ABSENT 성공을 실제 제거 건수에 더하지 않는다. 감사 로그는 별도 페이지 API로 읽으며 목록을 열었다는 사실만으로 모든 알림 전송과 외부 효과가 완료됐다고 판정하지 않는다.
 
-### AC-02. 대시보드 집계
-Given WARNING_REVIEWER가 콘솔에 진입한다.
-When `GET /dashboard`가 호출된다.
-Then `reviewTargetsByLevel`/`pendingReports`/`pendingAppeals`/`queueOpenCount`/`outboxMetric`이 반환된다.
+## 앱의 처리 확인과 복구
 
-### AC-03. 기간별 통계 (목표)
-Given 운영진이 "최근 30일" 통계를 선택한다.
-When 통계 조회가 `period=30D`로 호출된다.
-Then 서버는 30일 범위로 grant/mitigate/reverse/expire를 집계해야 한다.
-현재 Flutter가 period를 전달하지 않으므로 이 기준을 충족하지 못한다.
+큐 처리창은 최신 동일 클럽 행·OPEN 상태·확정된 검토 권한·현재 세션을 확인한다. 권한이나 현재 행을 읽는 중이거나 오류면 실행하지 않는다. 처리 안내는 큐를 닫는 동작이며 제재 자체가 아니라는 점을 알린다. 실패하면 창을 유지하고 오류를 알린다. 실제 원장 조정과 제재는 각각의 입구·권한·결과를 별도로 확인한다.
 
-### AC-04. 검토 대상 목록
-Given 멤버 다수가 검토 등급에 진입했다.
-When `GET /review-targets`가 호출된다.
-Then `is_under_review=true` 멤버가 등급/점수와 함께 페이지네이션된다.
+## 코드 위치
 
-### AC-05. 감사 로그 추적
-Given 경고 도메인에서 어떤 쓰기가 일어났다.
-When `GET /audit-logs`가 호출된다.
-Then 해당 action_type/before/after/actorRole이 시간 역순으로 조회된다.
+서버: WarningAdminQueueController, WarningReviewQueueService, WarningLedgerQueryRepository, WarningReviewQueueQueryRepository, WarningMemberSummaryQueryRepository, WarningAuditLogQueryRepository, WarningReportQueryRepository, WarningAppealOverdueScheduler, WarningAppealOverdueWorker, WarningRepeatedCancelWorker, WarningAbusePatternService. 앱: warning_admin_queue_api.dart, warning_admin_providers.dart, warning_queue_screen.dart, warning_console_screen.dart, warning_admin_access.dart.
 
-## 10. 미결정 / 후속
+<!-- source-references:start -->
+서버 창구: `WarningAdminQueueController#searchQueue`, `WarningAdminQueueController#getQueueItem`, `WarningAdminQueueController#processQueueItem`, `WarningAdminQueueController#getDashboard`, `WarningAdminQueueController#getAdminMemberDetail`, `WarningAdminQueueController#getReviewTargets`, `WarningAdminQueueController#searchAuditLogs`, `WarningAdminQueueController#getStatistics`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-| 분류 | 항목 | 결정/작업 |
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현(P1) | 통계 period | Flutter `getStatistics`에 `@Query('period')` 추가 + 기간 선택 UI |
-| 구현(P1) | 집계 성능 | 대시보드/통계 `findAll()` → QueryRepository 집계 전환 |
-| 구현 | severe30d 정확화 | review_triggered_at 30일 집계 |
-| 구현 | 큐 enqueue 흐름 | 어떤 서비스가 큐를 채우는지 전수 확인 + 검토 처리 후속 액션 정책 |
-| 테스트 | 콘솔/큐 | 큐 멱등 처리/대시보드 집계/검토 대상/감사 로그 E2E |
+| Gap | 통계 period 전달은 있지만 현재 presentation의 통계 provider 소비가 확인되지 않았다. | API 지원과 기간 선택 UI를 구분한다. |
+| Risk | 큐 승인은 큐 종결이고 일부 대시보드·패턴 수치는 클럽/기간 범위가 다르다. | 자동 제재나 모두 같은 범위의 지표로 설명하지 않는다. |
+| 미검증 | 실제 대량 자료·예약 작업·큐 경합·운영자 접근을 새로 실행하지 않았다. | 소스 대조를 운영 실행 결과와 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 접근 분리:** 회원 상세의 OR 권한과 검토 콘솔·큐 권한을 구분한다.
+- **AC-02 목록 정렬:** 제보 선택 정렬과 큐·감사·검토 대상의 서버 동점 순서를 유지한다.
+- **AC-03 큐 계약:** OPEN 재사용·잠금·닫힌 행 재조회와 APPROVE/REJECT/IGNORE의 상태만 변경한다.
+- **AC-04 지연 이의:** 14일 큐·28일 상향을 자동 최종 판정으로 설명하지 않는다.
+- **AC-05 지표 의미:** GRANT 건수·현재 요약·기간 통계·전역 outbox 수치를 구분한다.
+- **AC-06 화면 범위:** period 전달과 통계 화면 연결의 차이, 최신 권한 확인과 실패 시 창 유지를 명시한다.

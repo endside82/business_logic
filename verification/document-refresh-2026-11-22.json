@@ -306,7 +306,8 @@
         "trust_score_20261122",
         "report_intake_20261122",
         "location_features_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -373,7 +374,9 @@
         "review_domain_20261122",
         "location_features_20261122",
         "location_domain_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122",
+        "warning_domain_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2430,9 +2433,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "4c7b6d555c31c2f417a1f826a9e0c3ece9c4af3ee8a938e017d3e0aa7ce75bba",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_domain_20261122"
+      ],
+      "reviewedSha256": "e6a93a5f2d6067aeafebfb89cc6c435719503d044d0c3b3602476e530cbaf74c"
     },
     {
       "path": "docs/domains/16-mileage.html",
@@ -4216,9 +4222,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "3654afa2523794e0a3bd73fe8922052352dd46388f91dee14249ab1a994b70ac",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "275890b8d704d91287780811d12c29f66629c8353a1e18c1fb111190da8ac5bb"
     },
     {
       "path": "docs/features/F15-05.html",
@@ -4239,9 +4248,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "040e36b04678a374bd9cbaafd7087da5166a04d6a103ae3babeaeb419b1ed631",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "0cada3ec7be9c270d1d18878856e00ab7cc2d1c5ff39b44b5d29a09a73d49dc3"
     },
     {
       "path": "docs/features/F15-07.html",
@@ -4262,9 +4274,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "87da6d5306f2131771d346b53f1e7848772165e26e301576c07719b7e688d1e1",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "3e7d6157a3cfb0089ced1255d8339bde5de6de5e6310e124ea82349d9d0c1f8a"
     },
     {
       "path": "docs/features/F15-09.html",
@@ -4272,9 +4287,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "facf1188df76ffde89da91dcd28987550e7bd22bc4a54ed655f5042ea968eb39",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "0ae9141c21a82243317da3b0b7248649e67b1044c4e789d5c07bee1335791674"
     },
     {
       "path": "docs/features/F16-01.html",
@@ -5170,7 +5188,8 @@
         "trust_score_20261122",
         "report_intake_20261122",
         "location_features_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5271,7 +5290,8 @@
         "trust_score_20261122",
         "report_intake_20261122",
         "location_features_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5396,7 +5416,8 @@
         "trust_score_20261122",
         "report_intake_20261122",
         "location_features_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5685,10 +5706,12 @@
       "kind": "domain_prd",
       "document": true,
       "baselineSha256": "4d9e17582aeeab602b1760bc92e15340f2d8fe793bab7fd17312f380fe2ed4d6",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_domain_20261122"
+      ],
+      "reviewedSha256": "49ca45b26dd59329c4cc63a6065bc81f97c73bd5793ec7b0cec3a8d0a10b6d04"
     },
     {
       "path": "prd/01_domain_prds/16_마일리지_prd.md",
@@ -7485,10 +7508,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "1d5c82d547932f44b2b2bc70208ff486b2e6e55ef417d48cf31d034d82b85b7d",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "1f8db035aba724ee13fd9cbf8a6de2bb8c7f8cb3784d276e636dce48f6d86d3b"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
@@ -7509,10 +7534,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "9f639a96d6b392dae8322131b4aa95057f52aaf9272b9ba437dc40832e1cec02",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "2e8286557d521c537ee0bb3b556fb38efe620e684ab434e3460b6f0d406ab829"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
@@ -7533,10 +7560,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "de5ef3526cb4319cf830284225588ac290fadade20155208133798c1a78dd796",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "7fc11205ab7127279f1a3cfc71ac686ed9f4295e6bb1946980fbe414b50b32a7"
     },
     {
       "path": "prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
@@ -7544,10 +7573,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "ce3931f95001d81cfa53f1df62ad4dc14608de4995201d66d366c2d22d118ea2",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "warning_operations_20261122"
+      ],
+      "reviewedSha256": "2d01632669a8e6b03ba4c5150595ae12b2e55aaf76e4e2962c6c19d2bbbf1388"
     },
     {
       "path": "prd/02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md",
@@ -8285,7 +8316,8 @@
         "trust_score_20261122",
         "report_intake_20261122",
         "location_features_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8538,7 +8570,8 @@
         "trust_score_20261122",
         "report_intake_20261122",
         "location_features_20261122",
-        "warning_intake_20261122"
+        "warning_intake_20261122",
+        "warning_operations_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -35963,6 +35996,421 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "warning_operations_20261122": {
+      "kind": "source_review",
+      "scope": "경고 정책·원장 조정·클럽/전역 제재·큐/통계 4개 기능의 현재 서버 계약과 앱 입구/실패 복구 대조. 기존 경고 공통 소스의 동일 해시를 재사용하되 이번에 읽은 집행/집계 범위를 명시. 새 제품 시험·브라우저 검수 없음.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+          "sha256": "3eedc8e236d2e53cf4e3063a7774c9804c1dc92fb4d98789226fcacd66eeee55",
+          "reviewScope": "정책·미리보기·유형/카탈로그 6개 경로·반환 및 POLICY_OWNER"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+          "sha256": "b416485844a043000e9e220faad9fbfc628d471b75fc01267dafabf3b03bad09",
+          "reviewScope": "큐·대시보드·통계·감사·검토 대상과 회원 상세 OR 권한"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/UserSanctionController.java",
+          "sha256": "c2dcddf1bbf5084af9d9afb073f0b1d584b0aa5d34ab7e6a408d1f8cb80e334a",
+          "reviewScope": "본인 전역 제재 GET List 공개 계약"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningProgramConfigService.java",
+          "sha256": "824324b000906315dbe628bfb602e8fd389b9b857cd231a714e67cb48aa0163f",
+          "reviewScope": "초기값·저장/null·입력 검증·재계산 인계와 미리보기 100000행 상한/근사"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningPenaltyTypeConfigService.java",
+          "sha256": "b6bcff207b07adf275faa2837d406737cfb140d60cefc5924476fcfa0da86fc4",
+          "reviewScope": "카탈로그/설정 병합·points 선택·출결 연결·활성/미설정의 차이"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/converter/WarningMapper.java",
+          "sha256": "161ca15edab28c491619c43302a9ee69a60db75b60fbcd47f2dc829f5026ca24",
+          "reviewScope": "정책/유형 업데이트의 null IGNORE"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningLedgerService.java",
+          "sha256": "f53a5d182c33c5eab93311493cb15515b80c8a63eb07fd2bd2048c1abdd1e3e3",
+          "reviewScope": "직접/자동 부여·잠금·중복 식별·감경/정정/만료·일괄 결과 및 트랜잭션 경계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/vo/WarningLedgerBatchResultVo.java",
+          "sha256": "a81217195610785632e82311bfc781249a72f980bd449c65d370a0df26eba0ee",
+          "reviewScope": "success/ledgerIds/failed/batchId 전용 응답 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningForcedRemoveExecutionService.java",
+          "sha256": "42f6340e2861f1b75fbde8f06cb4583f65dbc7e2efaa9aea40d2ca2b888996d6",
+          "reviewScope": "임대 120초·최대 5회·보류 선검사·클럽 탈퇴 호출·실행 결과/별도 실패 거래"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningForcedRemoveCoordinator.java",
+          "sha256": "83cbf2527e87d7c9020fe72a04db5956934448e9bab068e0316cd3c597fe7f3a",
+          "reviewScope": "claim/execute와 실패 저장·운영 알림 연결"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/scheduler/WarningForcedRemoveRetryScheduler.java",
+          "sha256": "e4316e3fdb29be4aad2d9a6f59ece7a2ad53ab91b7185d3c33fa85d89f007f8a",
+          "reviewScope": "실행 가능한 강퇴 재시도 순회 연결; 주기 수치는 문서화하지 않음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/scheduler/WarningSanctionExpiryScheduler.java",
+          "sha256": "53fdf876110eeb01e67b678bc1f79e1ce34896267ca0a75db4bc949178ec7d6f",
+          "reviewScope": "클럽 제재 일일 04:00 만료 대상 순회와 개별 작업"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/EventApplyRestrictionGuard.java",
+          "sha256": "7322a4c3b3de17dd502fea5558cc8fafc42daa28ccf76266c67cf1bc15b431c8",
+          "reviewScope": "클럽 및 플랫폼 EVENT_APPLY_RESTRICT의 단일/일괄 신청 차단 결합"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/constants/PlatformSanctionType.java",
+          "sha256": "5c715e7ecf184e831d5bea15440bcdedef1b7e7b47b4e5cdfc4ff16479799408",
+          "reviewScope": "전역 제재 5종 enum"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/PlatformSanctionService.java",
+          "sha256": "84318b3fa885757b1c960b5bd67af9fbf806732ad21eeaed445eb4f8d9420255",
+          "reviewScope": "전역 부여/조회·시각 가드·계정 유형 전용 명령 요구·본인 위임 데이트 제재 가림"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/AccountSanctionService.java",
+          "sha256": "fd7b3db00cfd56b045b35db381a76a80ebfc51e35983db92fe01ba2a53f1abe9",
+          "reviewScope": "계정 상태/제재 원장 동시 변경·supersede/lift·에이전트 회수/커밋 뒤 토큰 차단"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/privatedate/service/DateProfileService.java",
+          "sha256": "0fc2681f2db52deb06217bc21fcd0063238fafdc08037d2e05c9d98ab64d3a69",
+          "reviewScope": "create 및 활성 전환의 전역 프로필 제한과 노출 자격 검사; 매칭 전체 감사 아님"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/AccountLockInterceptor.java",
+          "sha256": "e64f2427084d12fb170ca8feecdec74e0daf75cb5e7c9fb497bcc70d40dc36a2",
+          "reviewScope": "잠긴 계정 principal에 경로 허용 목록을 적용하고 STOP/BAN 오류 반환"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/RequiresClubPermissionAspect.java",
+          "sha256": "572f74c7aaf46ec1384e215f1b63767bd93ce02270a086797ef637d5b247fbab",
+          "reviewScope": "메서드 우선 어노테이션과 any 권한 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningReviewQueueService.java",
+          "sha256": "f046def6b376eb86b3af3a583e01ccb10d0257e2bdd04c4dee57777f8ed1dc58",
+          "reviewScope": "큐 재사용/잠금 처리·대시보드 GRANT/현재 요약 및 전역 outbox·통계 기간"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/repository/query/WarningReportQueryRepository.java",
+          "sha256": "a7c87af00d11221599fd495b17881c333f01e41134d3a4e3f0aa1fa2cae75ec2",
+          "reviewScope": "제보 LATEST/OLDEST와 생성 시각·ID 같은 방향 정렬"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/repository/query/WarningReviewQueueQueryRepository.java",
+          "sha256": "0ecd308982585d7b26da90681aa68b5028d280b4b6f1d7c6c1ca8e862be706fe",
+          "reviewScope": "큐 페이지의 생성 시각/ID 역순"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/repository/query/WarningAuditLogQueryRepository.java",
+          "sha256": "86060ed5639b560ce0787d47f89fd34c77c6ce2a6bdd06bb5666bcc3ce89fb12",
+          "reviewScope": "감사 페이지 생성 시각/ID 역순과 자기 행동 집계의 기간 인자 부재"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/repository/query/WarningMemberSummaryQueryRepository.java",
+          "sha256": "f2194fdd3929dedbfd86d677202e46ab07ed839eceb8902811f757e8c5a85669",
+          "reviewScope": "검토 대상 effectiveScore/memberId 역순 페이지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/scheduler/WarningAppealOverdueScheduler.java",
+          "sha256": "30dfe9a35bc3eca91bfbc7ee3fc9d87d09e2a8fe77128504cc3ea12986d27117",
+          "reviewScope": "매일 05:00·14일 경과 미종결 이의 순회"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/scheduler/WarningAppealOverdueWorker.java",
+          "sha256": "aab7acfad31745aa74fc05f2e9f27d8d9e3efac02e2c4aafd0c52017b7ff78a8",
+          "reviewScope": "개별 거래/잠금 재확인·APPEAL_OVERDUE 큐와 28일 상향"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningRepeatedCancelWorker.java",
+          "sha256": "4b1a63a75110484967ad71bdadbc97e868c8f801b585365e9570e65ecee1991c",
+          "reviewScope": "반복 취소의 큐 enqueue 연결 확인; 임계치 수치는 문서화하지 않음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningAbusePatternService.java",
+          "sha256": "7a9dc9ee432d9978a61a65ead34b10cde114d4d5f1a93340ce323e3f21b6c236",
+          "reviewScope": "이상 패턴 입력·자기 행동 기간 차이·SUCCEEDED/REMOVED 6개월 실행 추이"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/admin/warning_policy_screen.dart",
+          "sha256": "3b30ed3675a9bd302cfa2039879615974f0b2e22571c49c7f45f9e7f5d57119b",
+          "reviewScope": "입력 검증·최신 권한/세션·저장/결과 불명·유형 points 빈 값"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/admin/warning_member_detail_screen.dart",
+          "sha256": "4121de5c29f6dfabc903db826cb9db8d0cf1c10fed36db863ed1bbafe244e767",
+          "reviewScope": "부여/조정의 입력·키/batchId·0건/부분 실패·원장 무효화/결과 불명 복구"
+        },
+        {
+          "path": "community_app/lib/data/models/warning/warning_ledger_batch_result_vo.dart",
+          "sha256": "de7418c590522a17727b821fd311916358133e4eb138dee1fab3542a6eb2c4de",
+          "reviewScope": "success/ledgerIds/failed/batchId 타입 응답"
+        },
+        {
+          "path": "community_app/lib/domain/providers/warning/warning_admin_providers.dart",
+          "sha256": "bbcfc606101c2a6122f9329f3bce52c8c28d4f14f953f68782522fdba14634c4",
+          "reviewScope": "정책 preview·통계 period 전달 provider; presentation 소비 여부 별도 검색"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/admin/warning_queue_screen.dart",
+          "sha256": "2341333559618e436180a4abb3e7da9ef5405afe038a268821a21df34f76aebf",
+          "reviewScope": "최신 OPEN 행/권한·처리 안내·실패 시 창 유지"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/admin/widgets/warning_admin_access.dart",
+          "sha256": "e4779c4d3356e703854299daf298ad690c6b440c7b447341c0616f492b3ec71d",
+          "reviewScope": "확정된 abilities와 서버 개별 actions 기반 실행 차단"
+        },
+        {
+          "path": "community_app/lib/presentation/warning/screens/my_sanctions_screen.dart",
+          "sha256": "7afd579b3b54216411087cb8d287a374b308ed5c8b513e3fd98225bd0e4f9a9a",
+          "reviewScope": "본인 제재 목록·새로고침·빈 목록·오류 표시"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+          "sha256": "4913b411833de708501b502e5bd88f4ac35c4dc880668ea3137b196f2840abf0",
+          "reviewScope": "원장 부여/조정과 제재의 경로·전용 응답·필수/선택 키·메서드 권한 대체"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/policy/WarningAbilityPolicy.java",
+          "sha256": "e7f24035c0f88327488125e7e9c1cbae552e13b7e53db3a5cf82338f2e86ae98",
+          "reviewScope": "미설정 유형·SEVERE 및 서버 actions의 권한/상태 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningMemberSummaryService.java",
+          "sha256": "83f9731acb4104e8b95a031c9367e35f0dbef7ca43c3d4e781327019772e574e",
+          "reviewScope": "268 이후 점수/건수 재계산과 SEVERE 우선 판정·manualLock 유지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/service/WarningSanctionService.java",
+          "sha256": "84b36701ef5e315cc706698e8e35eac7455d03f57d5093fc99f73d5fc7297eba",
+          "reviewScope": "클럽 제재 부과/철회/재시도·시각/재가입 입력·수동 잠금·목록과 실제 발효"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/account/service/AuthService.java",
+          "sha256": "989c146e2ab0a7d0e7189e464667469204ff1418f0689546142456fdff45c46b",
+          "reviewScope": "166–244 비밀번호 확인 뒤 제한 토큰 발급과 현재 계정 상태에 따른 갱신"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/JwtAuthorizationFilter.java",
+          "sha256": "5ed05ae2b1d2a133def2175045f9f7e02543709d9f17ec2139b6b8006ac790a5",
+          "reviewScope": "175,210–258 제한 토큰과 정지/차단·세션/인증 버전 검사"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/AccountLockPolicy.java",
+          "sha256": "8594e360d2639332af9cb4c58b7b551315598dd80e891f9e71a630fd55a62178",
+          "reviewScope": "HTTP method/경로 허용 목록·개인정보 삭제/내보내기·기존 분쟁/지원 및 EVIDENCE 업로드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionChecker.java",
+          "sha256": "86c807bf78390e1a44e19962e9f963cac3fe3c6d5dba0faff62b3114fe3f436d",
+          "reviewScope": "실제 소유자·역할·역할 제한에 따른 유효 권한"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionFlag.java",
+          "sha256": "6002b6dd0542fc1be497c41ffb47ed820a8c2370bc57b4719109a34dc8818362",
+          "reviewScope": "OWNER 전체·제한 ADMIN 0·POLICY_OWNER 위임 제외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/warning/repository/query/WarningLedgerQueryRepository.java",
+          "sha256": "30008ddcf94346e81107ae36d66acc86da7acd28afa04f9e6002f59998d8f5ea",
+          "reviewScope": "원장 점수/유형/기간 SQL 집계·월 GRANT·30일 SEVERE GRANT 수"
+        },
+        {
+          "path": "community_app/lib/domain/providers/warning/warning_admin_commands.dart",
+          "sha256": "2f15de2989d09f97417be60ce3539d7eb0befa539d9a3fcafe71145dceb1a7c9",
+          "reviewScope": "156–250 부여/조정/일괄 만료 뒤 회원/콘솔 변경 신호"
+        },
+        {
+          "path": "community_app/lib/core/router/account_lock_routes.dart",
+          "sha256": "55388cf994113432264a46eff65b35a535040a6f25d49b9261d960cb9d2db8bc",
+          "reviewScope": "개인정보·제재·기존 분쟁/문의·지원·가이드 허용과 새 분쟁/일반 문의 차단"
+        }
+      ],
+      "reuses": [
+        "account_closure_20261122",
+        "club_members_20261122",
+        "club_reputation_20261122",
+        "session_and_social_unlink_20261122",
+        "signup_social_onboarding_20261122",
+        "warning_intake_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
+          "sha256": "1f8db035aba724ee13fd9cbf8a6de2bb8c7f8cb3784d276e636dce48f6d86d3b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
+          "sha256": "2e8286557d521c537ee0bb3b556fb38efe620e684ab434e3460b6f0d406ab829"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
+          "sha256": "7fc11205ab7127279f1a3cfc71ac686ed9f4295e6bb1946980fbe414b50b32a7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
+          "sha256": "2d01632669a8e6b03ba4c5150595ae12b2e55aaf76e4e2962c6c19d2bbbf1388"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F15-04.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F15-06.html": [
+          "sidebar",
+          "launch-strip",
+          "current-1",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F15-08.html": [
+          "sidebar",
+          "launch-strip",
+          "sanction-current",
+          "current-2",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-limits",
+          "release-completion"
+        ],
+        "docs/features/F15-09.html": [
+          "sidebar",
+          "launch-strip",
+          "action-permission-current",
+          "report-order",
+          "current-3",
+          "current-4",
+          "current-5",
+          "current-6",
+          "current-7",
+          "current-limits",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F15-04/06/08/09 공개 컨트롤러 29개 경로를 참조 표에 등록"
+      ],
+      "followUpFindings": [
+        "정책 preview 근사와 실제 SEVERE/manualLock 판정 차이",
+        "유형 points null 초기화 불가·미설정 유형 사용 가능 경계",
+        "일괄 응답 success/failed의 실제 타입과 직접/일괄 실패 ID 의미",
+        "강퇴 등록/집행·분쟁 보류·임대/재시도와 역할 제한 실제 권한 반영",
+        "전역 5종 및 제한 계정 개인정보 삭제 요청/내보내기 허용",
+        "SQL 집계와 period 전달은 구현; 통계 화면 소비 미확인",
+        "큐 14/28일 작업과 지표별 클럽/기간 범위"
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 129개가 실제 소스와 일치합니다.",
+        "groupDigests": "51 source/canonical digests; 40 retained HTML IDs",
+        "derivedDocuments": "8 documents; shared batch verified 10 paths, 70 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review only"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "3aa21da1e1c60194f0d1352e2718dc452f69862a"
+      }
+    },
+    "warning_domain_20261122": {
+      "kind": "canonical_rollup",
+      "scope": "경고 기능 PRD 9개의 검토된 계약을 재사용한 도메인 PRD/HTML 통합. 기존 units 없음·새 복제본 없음. 새 제품 실행 없음.",
+      "sources": [],
+      "reusedSources": [],
+      "reuses": [
+        "warning_intake_20261122",
+        "warning_operations_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-01_warning-overview-ledger_prd.md",
+          "sha256": "f5192f53d0f66addf35b146f2a2119b38d3a6c93e878aa9a9772e092d854a668"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-02_report-submit-manage_prd.md",
+          "sha256": "99a2f46e7bf2ee30e11512ddb026d2efe8878c6992f865010fa45dbc72dbb6e8"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-03_appeal_prd.md",
+          "sha256": "80647479db7e31d0392ea130ba7a1498461c15f71f6f64eeadb3d739910b7bf2"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
+          "sha256": "1f8db035aba724ee13fd9cbf8a6de2bb8c7f8cb3784d276e636dce48f6d86d3b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-05_report-review_prd.md",
+          "sha256": "8fc3304d6cc030996ba82a495606f95ce86788eb9214ff65b44a416f69056213"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
+          "sha256": "2e8286557d521c537ee0bb3b556fb38efe620e684ab434e3460b6f0d406ab829"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-07_appeal-resolve_prd.md",
+          "sha256": "cb25e842f2a21fdbe63456f7187a679a8e988b7f87ab96c72d84a036340755ba"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
+          "sha256": "7fc11205ab7127279f1a3cfc71ac686ed9f4295e6bb1946980fbe414b50b32a7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
+          "sha256": "2d01632669a8e6b03ba4c5150595ae12b2e55aaf76e4e2962c6c19d2bbbf1388"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/15_경고_징계_prd.md",
+          "sha256": "49ca45b26dd59329c4cc63a6065bc81f97c73bd5793ec7b0cec3a8d0a10b6d04"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/15-warning.html": [
+          "sidebar",
+          "launch-strip"
+        ]
+      },
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "코드 위치 표 129개가 실제 소스와 일치합니다.",
+        "groupDigests": "10 source/canonical digests; 2 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 10 paths, 70 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; verified feature document rollup"
       },
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",

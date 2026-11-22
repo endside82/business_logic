@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 605,
-    "verifiedTraceRecords": 603,
+    "traceMarkers": 634,
+    "verifiedTraceRecords": 632,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -16080,7 +16080,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-04",
       "domain": "경고 & 징계",
-      "name": "경고 정책 & 패널티 유형 설정",
+      "name": "경고 정책과 패널티 유형 설정",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-04_policy-penalty-types_prd.md",
@@ -16091,10 +16091,113 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-04:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/config",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+                "controller": "WarningAdminPolicyController",
+                "method": "getConfig",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/config",
+                "targetLine": 53,
+                "methodLine": 55
+              }
+            ]
+          },
+          {
+            "id": "F15-04:2",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/warnings/config",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+                "controller": "WarningAdminPolicyController",
+                "method": "updateConfig",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/config",
+                "targetLine": 61,
+                "methodLine": 63
+              }
+            ]
+          },
+          {
+            "id": "F15-04:3",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/config/preview",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+                "controller": "WarningAdminPolicyController",
+                "method": "previewConfig",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/config/preview",
+                "targetLine": 73,
+                "methodLine": 75
+              }
+            ]
+          },
+          {
+            "id": "F15-04:4",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/penalty-types",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+                "controller": "WarningAdminPolicyController",
+                "method": "getPenaltyTypes",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/penalty-types",
+                "targetLine": 82,
+                "methodLine": 84
+              }
+            ]
+          },
+          {
+            "id": "F15-04:5",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/warnings/penalty-types",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+                "controller": "WarningAdminPolicyController",
+                "method": "updatePenaltyType",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/penalty-types",
+                "targetLine": 91,
+                "methodLine": 93
+              }
+            ]
+          },
+          {
+            "id": "F15-04:6",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/penalty-type-catalog",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminPolicyController.java",
+                "controller": "WarningAdminPolicyController",
+                "method": "getPenaltyTypeCatalog",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/penalty-type-catalog",
+                "targetLine": 103,
+                "methodLine": 105
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -16265,7 +16368,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-06",
       "domain": "경고 & 징계",
-      "name": "경고 부여 & 원장 조정",
+      "name": "경고 부여와 원장 조정",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-06_grant-ledger-adjust_prd.md",
@@ -16276,10 +16379,113 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 6,
+        "verified": 6,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-06:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/grantable-penalty-types",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "getGrantablePenaltyTypes",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/grantable-penalty-types",
+                "targetLine": 169,
+                "methodLine": 171
+              }
+            ]
+          },
+          {
+            "id": "F15-06:2",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/grants",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "grant",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/grants",
+                "targetLine": 178,
+                "methodLine": 180
+              }
+            ]
+          },
+          {
+            "id": "F15-06:3",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/ledger/{ledgerId}/mitigate",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "mitigate",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/ledger/{ledgerId}/mitigate",
+                "targetLine": 196,
+                "methodLine": 198
+              }
+            ]
+          },
+          {
+            "id": "F15-06:4",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/ledger/{ledgerId}/reverse",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "reverse",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/ledger/{ledgerId}/reverse",
+                "targetLine": 207,
+                "methodLine": 209
+              }
+            ]
+          },
+          {
+            "id": "F15-06:5",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/ledger/{ledgerId}/expire",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "expire",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/ledger/{ledgerId}/expire",
+                "targetLine": 218,
+                "methodLine": 220
+              }
+            ]
+          },
+          {
+            "id": "F15-06:6",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/ledger/bulk-expire",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "bulkExpire",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/ledger/bulk-expire",
+                "targetLine": 229,
+                "methodLine": 231
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -16399,7 +16605,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-08",
       "domain": "경고 & 징계",
-      "name": "제재 집행",
+      "name": "클럽·플랫폼 제재와 계정 제한",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-08_sanction-enforcement_prd.md",
@@ -16410,10 +16616,164 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 9,
+        "verified": 9,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-08:1",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/notice",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "applyNotice",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/sanctions/notice",
+                "targetLine": 289,
+                "methodLine": 291
+              }
+            ]
+          },
+          {
+            "id": "F15-08:2",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/event-apply-restrict",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "applyEventRestrict",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/sanctions/event-apply-restrict",
+                "targetLine": 301,
+                "methodLine": 303
+              }
+            ]
+          },
+          {
+            "id": "F15-08:3",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/role-restrict",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "applyRoleRestrict",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/sanctions/role-restrict",
+                "targetLine": 313,
+                "methodLine": 315
+              }
+            ]
+          },
+          {
+            "id": "F15-08:4",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/forced-remove",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "applyForcedRemove",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/sanctions/forced-remove",
+                "targetLine": 326,
+                "methodLine": 328
+              }
+            ]
+          },
+          {
+            "id": "F15-08:5",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/{sanctionId}/forced-remove/retry",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "retryForcedRemove",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/sanctions/{sanctionId}/forced-remove/retry",
+                "targetLine": 343,
+                "methodLine": 345
+              }
+            ]
+          },
+          {
+            "id": "F15-08:6",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/sanctions/{sanctionId}/revoke",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "revokeSanction",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/sanctions/{sanctionId}/revoke",
+                "targetLine": 359,
+                "methodLine": 361
+              }
+            ]
+          },
+          {
+            "id": "F15-08:7",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/members/{memberId}/manual-lock",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "manualLock",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/members/{memberId}/manual-lock",
+                "targetLine": 371,
+                "methodLine": 373
+              }
+            ]
+          },
+          {
+            "id": "F15-08:8",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/members/{memberId}/manual-unlock",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminActionController.java",
+                "controller": "WarningAdminActionController",
+                "method": "manualUnlock",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/members/{memberId}/manual-unlock",
+                "targetLine": 385,
+                "methodLine": 387
+              }
+            ]
+          },
+          {
+            "id": "F15-08:9",
+            "label": "GET /api/v1/users/me/sanctions",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/UserSanctionController.java",
+                "controller": "UserSanctionController",
+                "method": "getMySanctions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/users/me/sanctions",
+                "targetLine": 42,
+                "methodLine": 44
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -16440,7 +16800,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F15-09",
       "domain": "경고 & 징계",
-      "name": "검토 큐 & 대시보드/통계/감사로그",
+      "name": "검토 큐·대시보드·통계와 감사 로그",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md",
@@ -16451,10 +16811,147 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 8,
+        "verified": 8,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F15-09:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/queue",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "searchQueue",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/queue",
+                "targetLine": 57,
+                "methodLine": 59
+              }
+            ]
+          },
+          {
+            "id": "F15-09:2",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/queue/{queueId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "getQueueItem",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/queue/{queueId}",
+                "targetLine": 66,
+                "methodLine": 68
+              }
+            ]
+          },
+          {
+            "id": "F15-09:3",
+            "label": "POST /api/v1/admin/clubs/{clubId}/warnings/queue/{queueId}/process",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "processQueueItem",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/queue/{queueId}/process",
+                "targetLine": 75,
+                "methodLine": 77
+              }
+            ]
+          },
+          {
+            "id": "F15-09:4",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/dashboard",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "getDashboard",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/dashboard",
+                "targetLine": 87,
+                "methodLine": 89
+              }
+            ]
+          },
+          {
+            "id": "F15-09:5",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/members/{memberId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "getAdminMemberDetail",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/members/{memberId}",
+                "targetLine": 98,
+                "methodLine": 100
+              }
+            ]
+          },
+          {
+            "id": "F15-09:6",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/review-targets",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "getReviewTargets",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/review-targets",
+                "targetLine": 107,
+                "methodLine": 109
+              }
+            ]
+          },
+          {
+            "id": "F15-09:7",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/audit-logs",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "searchAuditLogs",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/audit-logs",
+                "targetLine": 116,
+                "methodLine": 118
+              }
+            ]
+          },
+          {
+            "id": "F15-09:8",
+            "label": "GET /api/v1/admin/clubs/{clubId}/warnings/statistics",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/warning/controller/WarningAdminQueueController.java",
+                "controller": "WarningAdminQueueController",
+                "method": "getStatistics",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/warnings/statistics",
+                "targetLine": 125,
+                "methodLine": 127
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
