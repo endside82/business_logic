@@ -471,6 +471,22 @@ limbo 상태(BANK_AWAITING_CONFIRM, PENDING_MANUAL_REFUND): 실제 돈이 움직
 | `BLOCKED` | 차단 활성 | `isBlockedBetween()` 체크 대상 |
 | `UNBLOCKED` | 차단 해제 (이력 보존) | hard delete → soft transition. UNBLOCKED history row는 차단 체크에서 제외 |
 
+차단 행에는 건 곳(`DateBlockSource`)이 있다. `DATING` 은 데이트에서 건 차단, `COMMUNITY` 는 커뮤니티 차단이 데이트 쪽에 함께 만든 차단이다. 차단은 건 곳에서 풀므로 명령마다 상태와 출처가 이렇게 바뀐다.
+
+| 지금 | 명령 | 다음 |
+|---|---|---|
+| 없음·`UNBLOCKED` | 데이트 차단 | `BLOCKED`·`DATING` |
+| 없음·`UNBLOCKED` | 커뮤니티 차단 | `BLOCKED`·`COMMUNITY` |
+| `BLOCKED`·`COMMUNITY` | 데이트 차단 | `BLOCKED`·`DATING` (성공) |
+| `BLOCKED`·`DATING` | 데이트 차단, 안전신고 없음 | 그대로 (409 `CONFLICT`) |
+| `BLOCKED`·`DATING` | 데이트 차단, 안전신고와 함께 | 상태·출처는 그대로. 신고와 증빙이 이 차단에 붙어 접수되고 차단 사유는 이번 요청의 것으로 바뀐다(201, 차단 시각은 그대로). 그 상대를 데이트 안전신고로 이미 신고한 적이 있으면 요청 전체를 되돌린다(409 `REPORT_ALREADY_EXISTS`, 차단은 그대로 살아 있고 이번 신고·증빙은 접수되지 않는다) |
+| `BLOCKED`·`DATING` | 커뮤니티 차단 | 그대로 (커뮤니티 차단만 더해진다) |
+| `BLOCKED`·`DATING` | 데이트 해제, 같은 방향 커뮤니티 차단이 살아 있음 | `BLOCKED`·`COMMUNITY` (204) |
+| `BLOCKED`·`DATING` | 데이트 해제, 커뮤니티 차단 없음 | `UNBLOCKED` (204) |
+| `BLOCKED`·`DATING` | 커뮤니티 해제 | 그대로 (커뮤니티 차단만 풀린다) |
+| `BLOCKED`·`COMMUNITY` | 데이트 해제 | 그대로 (404 `NOT_FOUND`) |
+| `BLOCKED`·`COMMUNITY` | 커뮤니티 해제 | `UNBLOCKED` |
+
 안전신고 연동: 차단 시 `DateBlockParam.fileReport=true`이면 `ReportType.DATE_USER` 안전신고 동시 생성 + `DateBlock.reportId` 백필. evidence_file_ids 첨부 시 dispute(SAFETY) evidence로 처리. legal hold: 연결 report가 IN_REVIEW/OPEN/ESCALATED이면 DATE_BLOCK source에 legal hold 적용, RESOLVED/CLOSED 후 1년 evidence 정리.
 
 ## 17. 돈 흐름 무결성 운영 상태 (2026-06-06 추가)

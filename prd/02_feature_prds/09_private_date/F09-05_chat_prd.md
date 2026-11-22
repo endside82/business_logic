@@ -28,7 +28,7 @@
 
 - **사용자가 보는 것**:
   - `CommunityAppBar('채팅')`
-  - 방 카드 — 아바타(`otherUserPhotoUrl` or 핑크 fallback), 이름(`otherUserDisplayName` or `User{id}`), 마지막 메시지(없으면 CLOSED일 때 "대화 종료"), 시각, unread 배지
+  - 방 카드 — 아바타(`otherUserPhotoUrl` or 핑크 fallback), 이름(`otherUserDisplayName`, 없으면 「상대방」 — 회원 번호를 보이지 않는다), 마지막 메시지(없으면 CLOSED일 때 "대화 종료"), 시각, unread 배지
   - 빈 상태: `AppErrorState(title: '채팅방이 없습니다')`
 - **사용자가 할 수 있는 액션**:
   - 카드 탭 → `/dating/chat/{roomId}?matchId=...&partnerName=...`
