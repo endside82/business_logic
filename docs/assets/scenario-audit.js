@@ -6,10 +6,10 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,162개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,167개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1162,
+    "documentedScenarioItems": 1167,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4947,
     "journeyFilesScanned": 336,
@@ -17,9 +17,9 @@ window.SCENARIO_AUDIT = {
     "directlyLinkedAutomatedTests": 60,
     "automatedFeatureMarkers": 68,
     "automatedScenarioReferences": 60,
-    "directlyLinkedJourneys": 30,
+    "directlyLinkedJourneys": 29,
     "journeyFeatureMarkers": 34,
-    "journeyScenarioReferences": 30,
+    "journeyScenarioReferences": 29,
     "featureLevelAutomatedProof": 126,
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
@@ -4633,13 +4633,13 @@ window.SCENARIO_AUDIT = {
       "id": "F04-01",
       "domain": "클럽",
       "name": "클럽 발견 & 탐색",
-      "scenarioCount": 7,
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/04_club/F04-01_club-discovery/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/04_club/F04-01_club-discovery_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 7
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/04_club/F04-01_club-discovery/backend.md",
@@ -4668,24 +4668,24 @@ window.SCENARIO_AUDIT = {
       },
       "automated": {
         "directlyLinked": true,
-        "count": 1,
+        "count": 3,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
+        "scenarioReferenceCount": 3,
         "files": [
-          "community_app/integration_test/seed_club_list_settings_surface_test.dart"
+          "community_app/test/core/utils/club_category_mapper_test.dart",
+          "community_app/test/widget/paged/club_list_load_more_failure_footer_test.dart",
+          "community_app/test/widget/paged/load_more_failure_footer_test.dart"
         ],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
         ]
       },
       "journey": {
-        "directlyLinked": true,
-        "count": 1,
+        "directlyLinked": false,
+        "count": 0,
         "featureMarkerCount": 1,
-        "scenarioReferenceCount": 1,
-        "files": [
-          "community_app/integration_test/seed_club_list_settings_surface_test.dart"
-        ],
+        "scenarioReferenceCount": 0,
+        "files": [],
         "markerCandidateFiles": [
           "community_app/integration_test/seed_club_mutation_test.dart"
         ]
