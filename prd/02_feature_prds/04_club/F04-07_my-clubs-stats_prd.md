@@ -1,89 +1,97 @@
-# F04-07. 내 클럽 / 멤버 통계 PRD
+# F04-07. 내 클럽 목록과 회원 활동 통계 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다. 2026-11-22 서버·앱 소스와 선택한 기존 시험 단언을 대조했다. 새 앱·이미지·실데이터 성능 시험 결과가 아니다.
 
-## 1. 결론
+## 결론
 
-사용자는 본인이 운영(OWNER)/관리(ADMIN)/가입(MEMBER) 중인 모든 클럽을 한 번에 조회한다. OWNER/ADMIN은 클럽별 활동 통계(전체/월간 활성 멤버 수, 멤버별 참석 횟수·기부액·최근 참석일)를 페이지로 받아 차트로 시각화한다.
+내 클럽은 현재 사용자의 회원 행과 연결된 클럽을 페이지로 읽는다. 기본 조회는 ACTIVE 클럽이며, 앱의 운영 중/가입한 구분은 소유자 번호를 기준으로 한다. ADMIN도 본인 소유가 아니면 가입한 클럽에 나타날 수 있다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+회원 통계는 현재 유효한 운영진용이다. 서버는 전체 회원의 체크인 수로 순서를 정하고 페이지를 반환하지만, 현재 앱은 첫 20명만 읽어 그중 상위 5명을 표시한다. 월간 활동은 달력상 이번 달이 아니라 현재부터 한 달 전 이후의 체크인 여부이며 활동 멤버 비율은 이벤트 참석률과 다르다.
 
-- 마이페이지 > "내 클럽" 메뉴 → `/my/clubs`
-- 클럽 상세(F04-02) > 헤더의 통계 진입 (OWNER/ADMIN) → `/clubs/:id/stats`
-- 멤버 목록(F04-04) > "통계" 탭 (스펙상 클럽 상세 > 통계 탭)
+## 코드 위치
 
-## 2. 코드 위치
+서버: ClubController#getMyClubs·getMemberStats, ClubService#getMyClubs·applyMembershipContext, ClubQueryRepository#findMyClubs, ClubMemberStatsService, ClubMemberStatsEventAdapter·ClubMemberStatsCheckInAdapter/Port, EventRepository·EventCheckInRepository·EventCheckIn, ClubDonationRepository·ClubDonation, ClubActivityStatsVo·MemberActivityVo, ClubAbilityPolicy·ClubMemberPermissionChecker.
 
-계약의 정본은 코드다. 서버: `ClubController`. 앱: `my_clubs_screen.dart`, `club_member_stats_screen.dart`, `my_club_card.dart`, `member_stats_overview.dart`, `member_top_list.dart`, `member_trend_chart.dart`, `role_distribution_chart.dart`.
+앱: my_clubs_screen.dart·my_club_card.dart·my_clubs_provider.dart·club_api.dart·club_repository.dart, club_member_stats_screen.dart·club_stats_provider.dart·club_stats_api.dart·club_member_repository.dart·club_member_stats.dart, member_stats_overview.dart·role_distribution_chart.dart·member_top_list.dart. 입구는 app_menu.dart·gathering_tab_sections.dart·member_tools_routes.dart·club_management_screen.dart·club_branch_routes.dart다.
 
 <!-- source-references:start -->
 서버 창구: `ClubController#getMyClubs`, `ClubController#getMemberStats`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 내 클럽 입구와 조회 조건
 
-### 내 클럽 목록 (`my_clubs_screen.dart`)
+현재 모임 탭과 메뉴의 내 클럽은 /my/clubs로 연결한다. 카드에서 /clubs/{id} 상세로 이동하고, 빈 상태의 클럽 둘러보기는 /clubs로 이동한다. 이전 마이페이지 중심 설명만을 유일한 입구로 쓰지 않는다.
 
-- **사용자가 보는 것**:
-  - AppBar "내 클럽"
-  - 섹션 헤더: "운영 중인 클럽 (N)" — myRole이 OWNER/ADMIN인 클럽
-  - 섹션 헤더: "가입한 클럽 (N)" — myRole이 MEMBER
-  - 카드: 이미지, 클럽명, 멤버수, 역할 배지(Owner/Admin/Member), 다음 이벤트 날짜
-  - 빈 상태: "아직 가입한 클럽이 없어요" + "클럽 둘러보기" 버튼
-- **사용자가 할 수 있는 액션**:
-  - 카드 탭 ▶ `/clubs/:id` 클럽 상세 (F04-02)
-  - 풀투리프레시 ▶ `myClubsNotifier.refresh()`
-  - 빈 상태 버튼 ▶ `/clubs` 목록으로
-- **상태 분기**: 로딩/에러/빈상태
-- **모달**: 없음
+GET /api/v1/clubs/my는 인증 principal과 ClubSearchParam을 받고 Page<ClubSimpleVo>를 반환한다. 현재 사용자의 클럽 회원 행으로 연결하고 status 미지정 시 ACTIVE, category와 이름/설명 keyword 조건을 적용할 수 있다. 회원 가입 시각·회원 행 번호 내림차순이며 현재 역할·회원 상태와 표시용 썸네일 URL을 보완한다.
 
-### 멤버 통계 (`club_member_stats_screen.dart`)
+현재 앱 API는 page/size를 전달하고 상태·카테고리·검색 입력은 제공하지 않는다. 따라서 앱의 내 클럽을 운영 중지·폐쇄까지 포함한 모든 과거 소속 이력이라고 설명하지 않는다. 가입 대기만 있는 클럽도 현재 회원 목록에 자동 포함되지 않는다.
 
-- **사용자가 보는 것**:
-  - 4개 StatCard 2x2 그리드: 전체 멤버 / 활성 멤버(monthlyActive) / 신규(이번달, 클라 가공) / 평균 참석률(클라 가공 또는 placeholder)
-  - 멤버 증감 차트 (3개월 등) — 서버 미제공 시 빈 상태 또는 클라 누적 계산
-  - 활동 TOP 5 — `MemberActivityVo`를 attendedEvents desc 정렬 후 상위 5
-  - 역할별 분포 파이 차트 — 별도 멤버 목록 호출(F04-04) 결합 또는 단순 카운트
-  - 기간 SegmentedControl (1개월/3개월/6개월/1년) — 서버 미지원이라 UI placeholder
-- **사용자가 할 수 있는 액션**:
-  - 페이지 변경 (멤버별 활동 페이지) ▶ `clubStatsNotifier.setPage(p)` ▶ `GET .../members/stats?page=p&size=20`
-  - TOP 멤버 카드 탭 ▶ 사용자 프로필
-  - 풀투리프레시 ▶ `refresh`
-- **상태 분기**:
-  - 비OWNER/ADMIN 진입: UI 가드로 차단 ("권한이 없습니다")
-  - 로딩: 스켈레톤 차트
-  - 에러: 표준
-- **모달**: 없음
+## 내 클럽 표시와 페이지 복구
 
-## 6. 상태/권한/시나리오 매트릭스
+앱은 20개씩 읽고 ownerId가 현재 사용자이면 운영 중인 클럽, 아니면 가입한 클럽으로 나눈다. 카드의 역할 배지는 myRole을 사용하고 값이 없을 때 소유자 여부로 OWNER/MEMBER를 보완한다. 구역 분류와 역할 배지는 서로 다른 판단이다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 내 클럽 한눈에 보기 (Happy Path) | OWNER 1개, ADMIN 1개, MEMBER 3개를 가진 사용자. | 본인이 속한 모든 클럽을 빠르게 조회. |
-| S2 | 빈 상태 (가입 클럽 없음) | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | 멤버 통계 진입 (OWNER) | OWNER, 멤버 24명, 클럽 이벤트 12개. | 통계 화면 완성. |
-| S4 | 페이지 이동 (큰 클럽) | 멤버 100명 클럽. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | 비OWNER/ADMIN 진입 시도 (가드) | MEMBER. | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 비멤버 진입 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 큰 데이터 / 캐시 없음 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | 다음 이벤트 미리보기 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+카드는 썸네일·이름·역할·회원 수와 상세 이동을 제공한다. 현재 MyClubCard에는 다음 이벤트 날짜가 없다. 다음 이벤트 미리보기를 완료된 카드 기능으로 문서에 남기지 않는다.
 
-## 8. Gap / Risk
+페이지가 더 있으면 구역 제목에 현재 받은 수를 총수처럼 붙이지 않고, 끝까지 읽으면 구역별 개수를 표시한다. 첫 실패는 본문 재시도, 추가 실패는 기존 목록과 재시도 줄을 유지하며 같은 다음 페이지를 다시 요청한다. 자료가 있는 목록은 당겨 새로고침을 지원한다. 계정/사람·클럽 카드 변경 신호를 구독해 목록을 다시 읽는다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 참석률 이름 | 회원 통계의 비율은 모임 참석률이 아니라 활동 중인 멤버를 전체 멤버로 나눈 값이라 앱 이름을 「활동 멤버 비율」 로 바로잡았다(2026-11-08 앱). 이 기능 문서는 모임 참석률을 정의하지 않으므로 서버 계산은 더하지 않는다(조정자 판정) | 없음 |
-| Risk | 기간·증감 필터 | 신규 멤버·증감·기간(1·3·6·12개월) 필터는 서버와 앱 모두 없다 | 통계를 넓힐 때 둘지 정한다 |
-| 해소됨 | 시험 보강 기록 | 화면 문구·입구를 적은 시험 보강 기록이다. 결함이 아니다 | 없음 |
+## 통계 입구·권한·응답
 
-## 9. 수용 기준
+모임 관리의 회원·가입 구역에서 회원 통계를 누르면 /clubs/{clubId}/members/stats로 이동한다. viewMemberStats와 운영 권한 라우트 검사가 적용된다. 예전 /clubs/{id}/stats 경로나 회원 목록 안 통계 탭을 현재 입구로 설명하지 않는다.
 
-- **AC-01. 내 클럽 한눈에 보기 (Happy Path)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 본인이 속한 모든 클럽을 빠르게 조회.
-- **AC-02. 빈 상태 (가입 클럽 없음)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. 멤버 통계 진입 (OWNER)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 통계 화면 완성.
-- **AC-04. 페이지 이동 (큰 클럽)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. 비OWNER/ADMIN 진입 시도 (가드)**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 비멤버 진입 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 큰 데이터 / 캐시 없음**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. 다음 이벤트 미리보기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+GET /api/v1/clubs/{id}/members/stats는 PagingParam을 받고 **ClubActivityStatsVo 단건**을 반환한다. 전체 응답 자체가 Page인 것은 아니며 그 안의 memberStats가 Page<MemberActivityVo>다. 현재 소유자/실효 운영진 권한을 서버에서 검사하므로 역할 제한된 ADMIN을 정상 권한으로 간주하지 않는다.
+
+| 필드 | 의미 |
+| --- | --- |
+| totalMembers | 현재 클럽 회원 행 전체 수 |
+| monthlyActiveMembers | 현재 회원 중 최근 한 달 경계보다 뒤에 체크인이 하나라도 있는 사람 수 |
+| memberStats.content | 정렬 후 요청한 페이지의 회원 활동 행 |
+| userId·nickname·joinedAt | 현재 회원 식별·이름·가입 시각 |
+| attendedEvents | 해당 클럽 이벤트의 해당 사용자 체크인 행 수 |
+| lastAttendedAt | 그 체크인 시각 중 최대값, 없으면 null |
+| donationAmount | 해당 회원의 기부 행 amount 합계. 아래의 현재 집계 제한 참고 |
+
+## 통계 집계 범위와 순서
+
+서버는 현재 회원 전체와 클럽 이벤트 번호를 읽고 이벤트의 체크인을 현재 회원 번호 집합으로 제한한다. 등록·신청만 하고 체크인이 없는 사람을 참석자로 더하지 않는다. 탈퇴한 사람과 회원 번호 없는 외부 동행 체크인은 현재 회원 활동 집계 대상이 아니다.
+
+전체 회원을 체크인 수 내림차순, 동률이면 가입 시각 오름차순·회원 행 번호 오름차순으로 정렬한 뒤 페이지를 자른다. 월간 활동 수와 전체 회원 수는 요청한 페이지와 상관없이 클럽 전체를 기준으로 한다. 월간 경계는 LocalDateTime.now().minusMonths(1)이며 정확히 경계와 같은 체크인은 isAfter 조건에 들지 않는다.
+
+페이지에 들어간 회원의 닉네임·기부액을 보완하고, 참석 이력이 없으면 참석 수0·최근 참석일 null이다. 기부액은 현재 조회/합계 코드에서 상태 필터나 refundAmount 차감을 적용하지 않는다. 따라서 취소·반환을 뺀 순기부액 또는 현재 기금 잔액으로 해석하지 않는다.
+
+## 앱이 제공하는 통계
+
+현재 공급자는 page=0, size=20만 요청한다. 모델은 memberStats.content를 활동 List로 읽고 페이지 메타데이터를 보관하지 않는다. 화면에는 다음 페이지 버튼이나 setPage 동작이 없다. 서버의 페이지 계약과 앱의 전체 명단 탐색 기능을 구분한다.
+
+요약은 전체 멤버·활동 중인 멤버·활동 멤버 비율의 세 항목이다. 비율은 monthlyActiveMembers / totalMembers × 100을 반올림하고 전체가0이면0%다. 이벤트별 참석률, 등록 대비 체크인 비율, 신규 회원 수를 표시하는 지표가 아니다.
+
+RoleDistributionChart라는 파일 이름과 달리 실제 화면은 전체/월간 활동 수를 보여 주는 멤버 현황이다. 역할별 OWNER/ADMIN/MEMBER 파이 차트가 아니고 이를 위해 별도 회원 목록을 읽지도 않는다. 활동 TOP 5는 서버 순서의 첫5명을 사용하며 닉네임은 PersonLink, 참석 횟수를 함께 표시한다.
+
+현재 화면은 증감 추세 차트·기간 선택·신규 회원 지표를 배치하지 않는다. 파일이 존재한다는 이유만으로 member_trend_chart.dart를 이 화면의 실행 기능으로 계산하지 않는다. 로딩·본문 오류 재시도·당겨 새로고침을 제공하고, 활동 목록이 비어 있으면 활동 데이터 없음 상태를 보여 준다.
+
+## 현재 제한과 확인 범위
+
+| 판정 | 항목 | 근거·사용자 영향 | 남은 확인 |
+| --- | --- | --- | --- |
+| Risk | 기본 목록 범위와 구역 이름 | ACTIVE 기본·소유자 기준 운영 구역이므로 모든 상태/ADMIN 운영 클럽 목록과 다름 | 사용자 안내와 과거 소속 조회 수요 구분 |
+| Risk | 기부 지표의 순액 해석 | 상태/반환액을 빼지 않은 amount 합계 | 취소 기부의 지표 포함 정책 정렬. 현재 앱 TOP5에는 기부액을 표시하지 않음 |
+| Risk | 통계의 데이터 규모 | 결과는 페이지여도 서버가 현재 회원·해당 이벤트 체크인을 먼저 모두 읽고 정렬 | 실제 규모에서 조회량·응답 시간 확인 |
+| 제한 | 화면 범위와 갱신 | 첫20명 중TOP5·전체요약만 제공. 통계 공급자는 계정 범위를 구독하며 회원 변경 신호의 자동 재조회는 별도 연결돼 있지 않음 | 전체 활동 명단/실시간 갱신이 필요하면 별도 범위 결정 |
+| 미검증 | 실제 앱·성능 | 소스와 기존 시험 단언만 대조 | 이미지·대량 데이터 실행 성공으로 간주하지 않음 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 실제 입구:** 모임 탭/메뉴의 내 클럽과 모임 관리의 회원 통계 경로를 구분한다.
+- **AC-02 내 목록 조건:** 현재 회원 연결·기본ACTIVE·가입시각/번호 내림차순을 따른다.
+- **AC-03 구역과 배지:** 소유자 기준 구역·myRole 배지·없을 때 보완값을 구분한다.
+- **AC-04 목록 개수:** 20개 페이지의 중간 개수를 전체 수처럼 표시하지 않고 마지막 뒤 구역 수를 표시한다.
+- **AC-05 목록 복구:** 추가 실패에 기존 카드·같은 페이지 재시도를 남기고 빈 목록은 클럽 탐색으로 연결한다.
+- **AC-06 통계 권한:** 현재 유효 운영진·라우트 조건을 검사하고 비회원/제한된 역할을 통계 권한으로 오인하지 않는다.
+- **AC-07 응답 구조:** 단건 통계와 그 안의 Page 회원 활동을 구분한다.
+- **AC-08 실출석 범위:** 현재 회원의 클럽 이벤트 체크인만 집계하고 미체크인 등록을 출석으로 더하지 않는다.
+- **AC-09 정렬과 페이지:** 전체 참석순/가입시각/회원번호 정렬 뒤 페이지를 자르고 전체 지표는 페이지와 독립적이다.
+- **AC-10 최근 한 달:** 달력상 이번 달과 최근 한 달의 엄격한 시각 경계·최근 참석일 null을 구분한다.
+- **AC-11 지표 의미:** 활동 멤버 비율·기부 행 합계와 이벤트 참석률·순기부액을 혼동하지 않는다.
+- **AC-12 현재 화면:** 요약3개·멤버 현황·서버순서TOP5·PersonLink를 제공하고 없는 기간/추세/역할차트/페이지 동작을 완료 기능으로 적지 않는다.
+
+검증 근거: my_clubs_and_bans_paging_test.dart의 21개 목록·끝까지 읽은 뒤 구역 수·추가 실패 같은 페이지 재시도, ClubMemberStatsServiceTest의 체크인 기반 집계·전체 참석 순서로 페이지 분할·페이지와 무관한 활동 수 단언을 읽었다. 새 시험을 실행하지 않았다. 과거 E2E 표면 확인 원문은 로컬 시나리오 문서에 인용 보존하며 현재 계약이나 새 실행 통과로 합산하지 않는다.

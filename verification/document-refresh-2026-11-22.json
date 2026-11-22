@@ -265,7 +265,8 @@
         "club_detail_20261122",
         "club_lifecycle_20261122",
         "club_members_20261122",
-        "club_invitation_20261122"
+        "club_invitation_20261122",
+        "club_stats_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -2929,9 +2930,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "0b88f118b5866b1828cfbbdd423263cc94689bf5d6fd6705859115bc1407d77e",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_stats_20261122"
+      ],
+      "reviewedSha256": "bb8bb5cd56e68b7f0538a1cacc94dfd5c750e37cb6ab8b78874f39a9ea3306cd"
     },
     {
       "path": "docs/features/F04-08.html",
@@ -4863,7 +4867,8 @@
         "club_detail_20261122",
         "club_lifecycle_20261122",
         "club_members_20261122",
-        "club_invitation_20261122"
+        "club_invitation_20261122",
+        "club_stats_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -4924,7 +4929,8 @@
         "club_detail_20261122",
         "club_lifecycle_20261122",
         "club_members_20261122",
-        "club_invitation_20261122"
+        "club_invitation_20261122",
+        "club_stats_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5008,7 +5014,8 @@
         "club_detail_20261122",
         "club_lifecycle_20261122",
         "club_members_20261122",
-        "club_invitation_20261122"
+        "club_invitation_20261122",
+        "club_stats_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5871,10 +5878,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "9b3ff059d0b320a7c62c9d50efeca86337eb5199d714606891c7a5344e859d6c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_stats_20261122"
+      ],
+      "reviewedSha256": "0e629cace459596ad2c564c9ed2346995c4cf01cdd6ba6d8489d4eb0a9b607b5"
     },
     {
       "path": "prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
@@ -7718,7 +7727,8 @@
         "club_detail_20261122",
         "club_lifecycle_20261122",
         "club_members_20261122",
-        "club_invitation_20261122"
+        "club_invitation_20261122",
+        "club_stats_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -7927,7 +7937,8 @@
         "club_detail_20261122",
         "club_lifecycle_20261122",
         "club_members_20261122",
-        "club_invitation_20261122"
+        "club_invitation_20261122",
+        "club_stats_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -9679,9 +9690,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "c639bcbfbd921bd5849e7d0430bff594f3e52b4b3fd28c519b454d06c064596b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_stats_20261122"
+      ],
+      "reviewedSha256": "e2eba3ad547145dd41b04838d29a6ff124adfbc6885c44e2bb361e7aa64eb405"
     },
     {
       "path": "units/04_club/F04-07_my-clubs-stats/diagrams.md",
@@ -9689,9 +9703,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "0add34a212aec2c8ed3f9068998b95562f9bfd77bfda1dd6bc3bb368d25ddbae",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_stats_20261122"
+      ],
+      "reviewedSha256": "8c5fd809d0654a4846cbe139770a1ab2d8f31b7ac06231ce4822a62cdf364533"
     },
     {
       "path": "units/04_club/F04-07_my-clubs-stats/frontend.md",
@@ -9699,9 +9716,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "6fada4eac8dbcc24cad1fca6ebeb795e0dba5766ddb22ae04a8189d68037751f",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_stats_20261122"
+      ],
+      "reviewedSha256": "1a520cd855c7339641f8ee6472058fd12fa1036037cb77782045811980d5bd7c"
     },
     {
       "path": "units/04_club/F04-07_my-clubs-stats/scenarios.md",
@@ -9709,9 +9729,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "003c767db0a78151749f3f577ffde984d4ff7aedf533a9a09120dc4c7f66ce91",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "club_stats_20261122"
+      ],
+      "reviewedSha256": "1eb7efef6bf5648da901de51af1eb3a30aa096371b7610be7dcdd82fa281ad52"
     },
     {
       "path": "units/04_club/F04-08_board-post-crud/backend.md",
@@ -15128,6 +15151,11 @@
       "command": "F04-05 문서 묶음: 소스 참조·파서 시험·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
       "result": "코드 위치110개 일치; 파서11/11 통과; 상대경로2130개·파생 정본 해시247개 오류0; 현재 그룹 소스/정본47개 해시 일치; 기존 HTML ID3개 유지·과거 원문1개 인용 보존; scenario-audit 최신; diff 오류0; 서버/앱 기준 HEAD 유지",
       "scope": "가입 신청·초대 문서 검사. 새 제품·가입비·기기·알림·만료 스케줄 실행 없음. ignored units4개 최종 원본 반영 대상."
+    },
+    {
+      "command": "F04-07 문서 묶음: 소스 참조·파생자료·경로/해시·HTML ID·과거 인용·diff 검사",
+      "result": "코드 위치110개 일치; 상대경로2148개·파생 정본 해시251개 오류0; 현재 그룹 소스/정본38개 해시 일치; 기존 HTML ID3개 유지·과거 원문1개 인용 보존; scenario-audit 최신; diff 오류0",
+      "scope": "내클럽·회원통계 문서 검사. 파서/연결 변경이 없어 앞서 통과한 파서11개 시험 반복하지 않음. 새 제품·이미지·대량데이터 시험 없음. ignored units4개 최종 원본 반영 대상."
     }
   ],
   "evidenceGroups": {
@@ -24401,6 +24429,229 @@
           "path": "units/04_club/F04-05_waitlist-invitation/scenarios.md",
           "sha256": "8ef4fdae61ec5618edd298eaef6afb22432eed27bfd2029fdb4baa3187154da4",
           "characters": 1647,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
+        }
+      ]
+    },
+    "club_stats_20261122": {
+      "kind": "source_review",
+      "scope": "F04-07 기본ACTIVE 내클럽·소유자별구역·페이지복구·현재회원 체크인/최근한달·전체정렬후페이지·실제TOP5화면·기부집계/규모 제한. 소스와 선택한 시험 단언만 대조; 새 제품 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubMemberStatsService.java",
+          "sha256": "254b901b14ad08502d32dea058dba59d986f1bdc96106a4b7e7b18949f06bbdb",
+          "reviewScope": "44–135 현재 운영권한·현재회원/클럽이벤트 체크인·전체정렬후페이지·페이지독립최근한달·기부amount합계·최근일자/응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ClubMemberStatsEventAdapter.java",
+          "sha256": "356cb6bd36924d40245ff6720895f210ef97d986cadedda894273f8f9ccb1a3b",
+          "reviewScope": "26–29 클럽 이벤트 번호 조회."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ClubMemberStatsCheckInAdapter.java",
+          "sha256": "9bc90767f980207d7a680f300418f7a39a1fc9dc87f78de197114bb75f5d6c06",
+          "reviewScope": "25–29 이벤트 체크인 사용자/시각 변환."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/port/ClubMemberStatsCheckInPort.java",
+          "sha256": "37ed8b22e6bad1a7bf8d6542717dd50f00c5ea9448c3e1a17d886fc935288512",
+          "reviewScope": "13–17 nullable Long userId와 체크인 시각 행."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/repository/EventRepository.java",
+          "sha256": "d2249fe03755657efc0e4d98241f758a16b6218381d7161c3f210a373332353d",
+          "reviewScope": "79 클럽번호로 이벤트 조회 선언."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/repository/EventCheckInRepository.java",
+          "sha256": "14fab6600353247faf1590fec31ddb833978594bc855c6fde3e67838bb76e961",
+          "reviewScope": "18 이벤트번호 집합 체크인 조회 선언."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/capacity/model/EventCheckIn.java",
+          "sha256": "edaeddc57ff1065317891515e616cb6c2df83c4a8a5520b92f8a21ce93d9ff44",
+          "reviewScope": "12–74 이벤트/사용자 유일제약·nullable 사용자·체크인 시각·외부 동행 식별."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/ClubDonationRepository.java",
+          "sha256": "534d0550a2fd1d1a71715c7a57ffcf22bb482dd79ae5dfb1fb19426866a33d03",
+          "reviewScope": "11–26 회원별기부 조회가 상태필터 없이 선언됨;상태별 다른 조회와 구분."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/model/ClubDonation.java",
+          "sha256": "c339faf68dfea835e7e762823d1b770a04eab4b3b6d6b0f184b5ee3605b93b37",
+          "reviewScope": "14–69 상태/amount/refundAmount/환불시각 필드·현재 모델 별도 상태제한 annotation 없음."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubActivityStatsVo.java",
+          "sha256": "0aa6474153532d715fef19793e991ad2ac5642cd029f22341e315f52e4c639c6",
+          "reviewScope": "9–12 totalMembers/monthlyActiveMembers·Page<MemberActivityVo> 단건 응답."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/MemberActivityVo.java",
+          "sha256": "4c5d597cd0e09ab5c8a17f16929817bd0255d5ca7f629931c92226aa03899d1b",
+          "reviewScope": "10–16 회원/이름·참석수·최근일자/가입일·기부합계."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/my_clubs_screen.dart",
+          "sha256": "8298f3a913c0cbe489db4f0a1438763ebaf80e7afbb9411b9b87364661346e3f",
+          "reviewScope": "29–145 20개 목록 추가조회/재시도·빈상태/상세이동·ownerId구역/myRole배지·끝까지읽은뒤구역수·첫실패/갱신."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/my_clubs_provider.dart",
+          "sha256": "1b199c51f09499f9e8664168a30ff2a1db7e25a58d624b65f7242733b9581855",
+          "reviewScope": "18–38 사람/클럽카드 신호·페이지20·무효화."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/my_club_card.dart",
+          "sha256": "5b66d3b80045ef0bd3ba9b3310c2cf0285a9b16c47c92ff7ef7e693071356223",
+          "reviewScope": "13–62 이름/역할/회원수·상세탭·다음이벤트 표시 없음;65–90 썸네일/fallback 소스만 확인."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_member_stats_screen.dart",
+          "sha256": "89180f4586fb723e2156b1c9299788e1843312502ad344b4509332c3f3c2e24b",
+          "reviewScope": "23–60 통계요약/현황/TOP5만배치·기간/추세/페이지 없음·오류재시도/당겨갱신."
+        },
+        {
+          "path": "community_app/lib/domain/providers/club/club_stats_provider.dart",
+          "sha256": "d533523c5fc2ee3a81fb1f3fd30b6b7f8e5abc35e0a126acc4bbbf4461a8dda3",
+          "reviewScope": "13–32 계정범위 구독·첫페이지20 고정·전체명단 추가페이지 없음."
+        },
+        {
+          "path": "community_app/lib/data/api/club_stats_api.dart",
+          "sha256": "e0cb246931ad619ec8deddbd5d6f20d10e920a3ae7abf32e34e5c7e68073514d",
+          "reviewScope": "13–18 통계 GET·page/size·단건모델."
+        },
+        {
+          "path": "community_app/lib/data/models/club/club_member_stats.dart",
+          "sha256": "cd881817e316398956cc5ec5dc8524e5e7e2af70aadffd8bde41e95a9d843717",
+          "reviewScope": "9–37 내부Page content를List로변환·페이지메타 보관없음·요약기본값."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/member_stats_overview.dart",
+          "sha256": "292d5c663ab82f6c5cdcde0e6f60a9a01d8801dba506f64490e68cac00a78e84",
+          "reviewScope": "36–67 요약3항목·활동비율 반올림·전체0처리. 이미지/글자크기 검사 안 함."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/role_distribution_chart.dart",
+          "sha256": "0d920a9616ff4ed2a612aecaf1de11b461bf81c7d9c6751a9f52f3c625a3b863",
+          "reviewScope": "16–61 이름과 달리 전체/월간활동수 현황·역할파이차트 없음."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/member_top_list.dart",
+          "sha256": "772c8a9ffeadb1eb86a2dd9870c30449483efc03f06b32f0ef3ea5102e834d4e",
+          "reviewScope": "16–48 빈상태/첫5명·81–84 PersonLink와 참석수."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/member_tools_routes.dart",
+          "sha256": "bfd2511d54fb75cd0c45c4ad07ed9a99471ce5d83b4b509ba3341ffdb096bdcf",
+          "reviewScope": "154–157 내클럽 라우트."
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/club/service/ClubMemberStatsServiceTest.java",
+          "sha256": "7104beeda2937bf82adb66330f417d4f564acce6d1b1fbd222e5923bdfddc3a3",
+          "reviewScope": "71–149 체크인만 참석·전체참석순/가입/번호 정렬후페이지·전체/활동수 페이지독립 단언을 읽음. 실행 안 함."
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/club/controller/ClubController.java",
+          "sha256": "693ed53eb39f4c6ab35e29090389edbe4a444a31df6db2176c81a387044c9455",
+          "reviewScope": "139–144 내클럽 Page/ClubSearchParam;461–467 통계 단건/내부페이지·PagingParam."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/service/ClubService.java",
+          "sha256": "2041dde801e93a569af0aea45c933816b1a8169b882731fe47d339c822722f34",
+          "reviewScope": "307–320 내클럽 조회/회원 문맥/표시URL;435–459 myRole/ACTIVE 보완. 썸네일/공개탐색 공통은 club_discovery_20261122 동일 SHA 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/repository/query/ClubQueryRepository.java",
+          "sha256": "9c59e7a0d57a7a03ee04b19d3ed5d6fb7746cafe42469d090da771dbbf7d4665",
+          "reviewScope": "138–175 현재회원연결·상태/카테고리/keyword·가입시각/번호 역순·총수;294–324 기본ACTIVE·카테고리/키워드 검증."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/vo/ClubSimpleVo.java",
+          "sha256": "88394ca63b04ac073a145c5080f0eba23c25f524bba9bed8112ec51b8502f0e2",
+          "reviewScope": "club_discovery_20261122 동일 SHA의 내클럽 카드·역할/상태 응답 필드 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/policy/ClubAbilityPolicy.java",
+          "sha256": "c511277e077fdc16091e01351d974b4bbe8a8b195b6a854cd0a39f24b7ae0192",
+          "reviewScope": "119–120 viewMemberStats의 staff 조건;현재 유효운영진 근거는 club_members_20261122 동일 SHA 범위 재사용."
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/security/ClubMemberPermissionChecker.java",
+          "sha256": "86c807bf78390e1a44e19962e9f963cac3fe3c6d5dba0faff62b3114fe3f436d",
+          "reviewScope": "club_members_20261122 동일 SHA의 실제 소유자·역할제한 운영진 효과 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/data/api/club_api.dart",
+          "sha256": "275b166be696f16e97d22953cf2cd6606ad0c5718b7fb64c5136dc0c06b6d9e9",
+          "reviewScope": "62–66 내클럽 GET page/size만 전달·PageResponse."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_repository.dart",
+          "sha256": "c124023fe3f496a01d0b4c43d1e13796d17c215be69d7d94db44374398f72d90",
+          "reviewScope": "95–102 내클럽 PageResponse Result 래핑."
+        },
+        {
+          "path": "community_app/lib/data/repositories/club_member_repository.dart",
+          "sha256": "2ce3ee0a85e746af6a61277cfc22b8078ed47ce36786c727ca7238132fe5e059",
+          "reviewScope": "279–291 통계쿼리 전달/Result."
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "318–325 모임 내클럽·회원조건·탭/메뉴 placement·/my/clubs."
+        },
+        {
+          "path": "community_app/lib/presentation/club/widgets/gathering_tab_sections.dart",
+          "sha256": "9ead89bd023b0440fe54b920b3df54ab87c4e7494beacdcd80f20d923043ee4b",
+          "reviewScope": "club_discovery_20261122 동일 SHA의 모임탭 내클럽·목록 연결 범위 재사용."
+        },
+        {
+          "path": "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "sha256": "45c7fe4ea6154d00a90603e4fb6c0ea1c6954eb1bcdc35d2d83720a27e43deef",
+          "reviewScope": "120–125 회원통계 입구·viewMemberStats·/members/stats."
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/club_branch_routes.dart",
+          "sha256": "648c40ee84823118fae9e22f7a7ee83dae3bbabe822944683817b895947bc363",
+          "reviewScope": "219–231 회원하위 stats·운영권한 라우트."
+        },
+        {
+          "path": "community_app/test/widget/club/my_clubs_and_bans_paging_test.dart",
+          "sha256": "876b117291b9e45819ed3396e5d0dd268e99f8c6f1df05839bb6dbc954193fa6",
+          "reviewScope": "154–190 내클럽21개·마지막뒤구역수·추가실패/동일페이지 재시도 단언을 읽음. 실행 안 함."
+        }
+      ],
+      "reuses": [
+        "club_discovery_20261122",
+        "club_invitation_20261122",
+        "club_lifecycle_20261122",
+        "club_members_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-07_my-clubs-stats_prd.md",
+          "sha256": "0e629cace459596ad2c564c9ed2346995c4cf01cdd6ba6d8489d4eb0a9b607b5"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F04-07.html": [
+          "sidebar",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F04-07 내클럽/회원통계 기존2개 연결 유지"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "units/04_club/F04-07_my-clubs-stats/scenarios.md",
+          "sha256": "ed80e1e628d6cdeef163f5a0806298a28fa837bb1a401c115c8545113b7f5d39",
+          "characters": 1462,
           "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음"
         }
       ]
