@@ -421,7 +421,8 @@
         "notification_marketing_20261122",
         "poll_supplement_20261122",
         "stamp_supplement_20261122",
-        "content_photos_20261122"
+        "content_photos_20261122",
+        "notification_results_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -2444,13 +2445,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d973f74eb9c5aec52e47660ff0f6f0f96dc21442c4a44c5d9c91e7a6ee107017",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "notification_marketing_20261122",
-        "poll_supplement_20261122"
+        "notification_results_20261122"
       ],
-      "note": "광고 동의·재확인·메일·공통흐름·투표 부분 대조 완료. 스탬프·사진 심사·본인확인·반환 등 업무별 추가 설명 대조 후 페이지 전체 완료 판정."
+      "reviewedSha256": "5775544031d31e0a80a28599bd887385792b47a2e8bc1d20a06e528e81ed9aac"
     },
     {
       "path": "docs/domains/13-profile.html",
@@ -5029,14 +5029,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "61e3a94ddfc6bbd21d2758ab77e347df03019ae70d4e574a11926f2049f755e4",
-      "review": "pending",
-      "disposition": "partially_updated",
+      "review": "source_verified",
+      "disposition": "updated",
       "evidence": [
-        "notification_marketing_20261122",
-        "poll_supplement_20261122",
-        "stamp_supplement_20261122"
+        "notification_results_20261122"
       ],
-      "note": "광고 동의·재확인·메일·공통흐름·투표·스탬프 부분 대조 완료. 사진 심사·본인확인·반환 등 추가 설명 대조 후 페이지 전체 완료 판정."
+      "reviewedSha256": "a7a8793f34194aa01d11af8657a59db2910389402d2072cfc1245e73436f5e10"
     },
     {
       "path": "docs/policies/payment.html",
@@ -8349,9 +8347,9 @@
       "review": "source_verified",
       "disposition": "updated",
       "evidence": [
-        "notification_marketing_20261122"
+        "notification_results_20261122"
       ],
-      "reviewedSha256": "8386e5dffca4f130a3b2c754b823bc6d037800c6df340567b6030a24e0934f39"
+      "reviewedSha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
     },
     {
       "path": "prd/03_policy_prds/payment_settlement_policy_prd.md",
@@ -43059,6 +43057,215 @@
       },
       "observedSourceVersions": {
         "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
+        "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "notification_results_20261122": {
+      "kind": "source_review",
+      "scope": "알림 도메인/정책 HTML의 누적 검토 완료: 기존 공통·광고·투표·스탬프 근거 재사용, 지갑실제반환·수동인증결과·마일리지사진/반복판정 알림 생산과 목적지 소스 보충 및 정책정본 동기화. 제품실행·실단말·운영환경 검증 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileagePhotoReviewService.java",
+          "sha256": "89aed1995f0c74976e30598bc7cb07abc99f125eff7a15aed2fa6356c6b68b54",
+          "reviewScope": "67–229 조회/승인/반려/재심/취소·자기판정금지·사유·상태경합·회수실패 사건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileagePhotoReviewWorker.java",
+          "sha256": "ea9eae582f933f3008805bb33092e4d02dcc7b7741568f4d8db33d802238b27a",
+          "reviewScope": "78–326 전체 핵심본문: 상태/감사/반려/재심의도·승인 실제원장/생략사유·취소 기존정정재연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileagePhotoEarnApplier.java",
+          "sha256": "4f23605c0389c7ecd86bc69672ab17edd9ede8f5be3be2206466c355a713e7bc",
+          "reviewScope": "68–127 제도/규칙/회원/상한·실제적립 또는생략"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/constants/MileagePhotoReviewStatus.java",
+          "sha256": "70d53d9b12d741860c09c8534edcdaab9fcc6706d0ca4a0c7c12cd76e52ab6da",
+          "reviewScope": "전체 실제본문: 최초반려후1회재심·최종반려/취소종결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementReversalNotices.java",
+          "sha256": "bca43f1b2b1ec6e449381d52f79f13be8185081efd4702f8d2d3f1c3ebdabaa1",
+          "reviewScope": "전체 실제본문: 양수실제반환·양쪽방향·수신자별요청중복·송금/분담payload·늦은은행재수금별도통지"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileagePhotoReviewController.java",
+          "sha256": "995ec9a1a92088ef9fa6ecf56447ee58fa8ee618384d4e01b7dbbcb8b2585f3e",
+          "reviewScope": "전체 실제본문: 회원본인상태와재심·MILEAGE_PHOTO"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPhotoReviewController.java",
+          "sha256": "d9fa37d644ed7a70ab85dc67ad648ec44aac899274aaf15d056d9a9b4ed7da32",
+          "reviewScope": "전체 실제본문: 목록/반려MILEAGE_MANAGER·승인/취소REWARD_MANAGER"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/privatedate/service/ManageDateVerificationService.java",
+          "sha256": "054a627c591b285dbc9cd9b6787c910c119348c4a6a7c8a11f5771bde1ae7180",
+          "reviewScope": "190–220 거래/동일명령재생;280–420 승인통지·MANUAL취소/세대대조/EXPIRED·해제통지;451–455 본인식별자만payload"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/notification/service/AdminNotificationOutbox.java",
+          "sha256": "a8d1af5e39b60ca31016c03ee26428ef91fcd554cd267e0b291eaa8c861adaa1",
+          "reviewScope": "전체 실제본문: 부모거래필수·현재탈퇴대상제외·PENDING작업저장"
+        },
+        {
+          "path": "community_app/lib/domain/providers/notification/push_refresh_branches.dart",
+          "sha256": "3876b32397df21df35bf8883eb75d4083777751bf6ad3a5810dfdfe6a4984cce",
+          "reviewScope": "38–129 실제환불완료wallet/meetingSettlements;281–318 변경신호;전체검색 수동인증 두종류 부재"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/settlement_entry_detail_provider.dart",
+          "sha256": "f1968ae2630f0401e3202f4b890d2e19023eb6131674c4a313c9a44cf3ba7399",
+          "reviewScope": "17–30 정산상세meetingSettlements변경신호구독"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageLedgerService.java",
+          "sha256": "eeeea81b505a995b05e321ad845ecf760eb82cb55858742daecda47014ab109e",
+          "reviewScope": "195–210 실제적립 의도;490–507 실제정정 의도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/mileage/service/MileageRepeatedManualReviewWorker.java",
+          "sha256": "3a2c5ed0fbc1449c4cd6bf1e3159184af42c97b05ef43790fc278135f3bf00d9",
+          "reviewScope": "196–292 같은키/내용재생·선택근거·기존정정건너뜀·잔액부족별도큐·원장/감사/종결/의도"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/outbox/DomainOutboxEventMapper.java",
+          "sha256": "9409205f0540b157946fdfbdd142eedb7c014311b4abf33c48651b05388f34a1",
+          "reviewScope": "278–300 실제원장알림;361–380 사진반려회원/재심현재소유자/검토종결 매핑"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/outbox/DomainOutboxItemWorker.java",
+          "sha256": "86bd9a77b78ea16c44411c61f8157d82d75186b9cc28693305e7b69baa192d13",
+          "reviewScope": "321–333 수신자 종류;411–441 payload회원 또는현재Club.ownerId 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementTransferReversalWriter.java",
+          "sha256": "ca1da6ae5dbcdf40ef43053bb7c0a26c881317609aa36b594e8aeed6e7a3abce",
+          "reviewScope": "104–177 가상계좌장부분·원거래잔여실제환불합계·수동은행잔여와완료의도분리;기존전체반환근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementShareReversalWriter.java",
+          "sha256": "47d44fb26f9c8325c1c6c16022bf814b99d3b457eec40a3e006bad9daeaf4e5e",
+          "reviewScope": "110–145 실제지갑반환/차감·원장·상태/감사·양쪽완료의도;기존전체반환근거재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/notification/constants/NotificationType.java",
+          "sha256": "ec20cc7ce5efdb9030696ea26d9795293e885c42b53d743b25cc990b15faffab",
+          "reviewScope": "1242–1257 항상전달종류;1279–1288 관리자결과에 수동인증승인/해제포함"
+        },
+        {
+          "path": "community_app/lib/core/utils/notification_router.dart",
+          "sha256": "b855b662852561c0229007c825d4f5d261eb0f20252ae2ae1316a51362bccc67",
+          "reviewScope": "557–569 반환share/transfer/지갑목록;626–628 수동인증결과→일반인증;1410–1470 원장/사진반려/재심/검토큐 목적지"
+        },
+        {
+          "path": "community_app/lib/domain/providers/notification/push_notification_provider.dart",
+          "sha256": "b91af1d73d025c5d293b0dd2a54e3bf8a07cae8de24061116907573c3b68dafa",
+          "reviewScope": "154–198 공개범위/경로와현재계정전경푸시의 갱신신호 호출"
+        },
+        {
+          "path": "community_app/lib/presentation/notification/screens/notification_settings_screen.dart",
+          "sha256": "1545eda9424b9eafd2af70b5e4282c825fb0e1cb0f8c93fec322c6d672682a2a",
+          "reviewScope": "263–278 모임정산환불 묶음;379–391 본인확인결과 고정종류"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/wallet_provider.dart",
+          "sha256": "984499f9ee2c4b66d21734ff0f6e97d55144b975227abc79c3a02b80a92876ce",
+          "reviewScope": "14–48 지갑/최근거래의 wallet변경신호구독"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/transaction_list_provider.dart",
+          "sha256": "8f60cc6e543e178705a5db94e3a91954dacd951d151a3f5043ddff9cfd4a4707",
+          "reviewScope": "34–45 거래목록wallet변경신호구독"
+        }
+      ],
+      "reuses": [
+        "date_identity_profile_20261122",
+        "mileage_commands_20261122",
+        "mileage_queries_20261122",
+        "notification_domain_20261122",
+        "notification_groups_settings_20261122",
+        "notification_marketing_20261122",
+        "poll_supplement_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_domain_rollup_20261122",
+        "stamp_supplement_20261122",
+        "wallet_history_earnings_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/03_policy_prds/notification_policy_prd.md",
+          "sha256": "33b47a7240b350980237f9421cf1e99c0d98a5ed853df422879317e09fc732c4"
+        },
+        {
+          "path": "business_logic/prd/01_domain_prds/12_알림_prd.md",
+          "sha256": "4c2ffc503d3761148d0bdbfbe9e376b5913e9b900de4a2c774934eb6ad0fe81f"
+        },
+        {
+          "path": "business_logic/docs/domains/07-settlement.html",
+          "sha256": "ff196b76f249cf8acda19f01d4aa50d31346c2cbcaedab2a39e885a1cac5a10b"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/09_private_date/F09-01_verification_prd.md",
+          "sha256": "b23553fe1606ec404362cea808a5f91e0aa4ca91a8fe26f4df95bde40a3b44fa"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md",
+          "sha256": "5e3b0daf6bc0250da6f88ab9a8c4cfa3659e8a960affb7ec2a51a01254efef0e"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/domains/12-notification.html": [
+          "sidebar",
+          "settlement-refund-notification",
+          "launch-strip",
+          "delivery-recovery"
+        ],
+        "docs/policies/notification.html": [
+          "sidebar",
+          "refresh-and-destination-current",
+          "durable-delivery",
+          "stamp-result-notification",
+          "poll-notifications",
+          "marketing-current-1",
+          "marketing-current-2",
+          "marketing-current-3",
+          "marketing-current-4",
+          "marketing-current-5",
+          "marketing-current-6"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "사진승인/취소와실제적립/정정통지 조건 구분;적립없음이면전용결과통지없음",
+        "재심요청 수신자는현재클럽장;모든보상담당자아님",
+        "반복수동판정종결≠전액회수;잔액부족별도큐",
+        "수동인증REJECTED는현재관리경로의승인자격해제·EXPIRED",
+        "현재계정전경반환푸시갱신신호와조회성공/배경즉시갱신 구분",
+        "실제양수반환에만양쪽통지;수동은행잔여/의도중복억제/기기중복은별도"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/policies/notification.html",
+          "pattern": "<details id=\"mileage-result-history\">[\\s\\S]*?</details>",
+          "sha256": "70e2653cd714753cc72391483f054dba5954f47c0eb0ca85f8d88bf3b77db422",
+          "note": "기존 마일리지검사 주장 원문; 이번실행통과로 합산하지않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "28 source/canonical digests; 15 retained HTML IDs",
+        "derivedDocuments": "3 documents; shared batch verified 3 paths, 46 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source review and existing canonical evidence reuse only"
+      },
+      "observedSourceVersions": {
         "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
         "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
       }
