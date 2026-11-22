@@ -278,7 +278,8 @@
         "settlement_create_20261122",
         "settlement_items_20261122",
         "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122"
+        "settlement_status_summary_20261122",
+        "settlement_pay_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -289,8 +290,10 @@
       "document": false,
       "baselineSha256": "edc5152bb807a7efc45c7321a7186a357ceb97a479e2a0dc42a70426def05aa8",
       "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "disposition": "partially_updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ]
     },
     {
       "path": "docs/assets/mileage-feature-status.js",
@@ -3348,9 +3351,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "d1576a5b0c92a80351020a6b3d89fb640f1c651b5a4feb2270d9d47e3cfafada",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ],
+      "reviewedSha256": "8a5c47f0bb05f0958e7c205e50feaf97eaf2d40aec619963c9ae5ab6b6e46a6c"
     },
     {
       "path": "docs/features/F07-06.html",
@@ -4936,7 +4942,8 @@
         "settlement_create_20261122",
         "settlement_items_20261122",
         "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122"
+        "settlement_status_summary_20261122",
+        "settlement_pay_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5009,7 +5016,8 @@
         "settlement_create_20261122",
         "settlement_items_20261122",
         "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122"
+        "settlement_status_summary_20261122",
+        "settlement_pay_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5106,7 +5114,8 @@
         "settlement_create_20261122",
         "settlement_items_20261122",
         "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122"
+        "settlement_status_summary_20261122",
+        "settlement_pay_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6374,10 +6383,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "9470998b4806c7efd5eaa5b5a616c88ba1afe7e00b16cabbc11cba90c859ac0c",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ],
+      "reviewedSha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4"
     },
     {
       "path": "prd/02_feature_prds/07_meeting_settlement/F07-06_host-confirm-transfers_prd.md",
@@ -7861,7 +7872,8 @@
         "settlement_create_20261122",
         "settlement_items_20261122",
         "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122"
+        "settlement_status_summary_20261122",
+        "settlement_pay_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8083,7 +8095,8 @@
         "settlement_create_20261122",
         "settlement_items_20261122",
         "settlement_activate_cancel_20261122",
-        "settlement_status_summary_20261122"
+        "settlement_status_summary_20261122",
+        "settlement_pay_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -11382,9 +11395,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "92d6fce7434ca43b77a12e59babab535eab61db12605800225c4e2643e36b427",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ],
+      "reviewedSha256": "16fda4474b372b22761ad840b300bd3c90fd8e49fc9d8d038ebf9eda920a3d25"
     },
     {
       "path": "units/07_meeting_settlement/F07-05_pay-share/diagrams.md",
@@ -11392,9 +11408,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "cec9ba7c050fccc2fa49be55e06f5102f121e8f302fd1e5244ee6a78597362d0",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ],
+      "reviewedSha256": "75ff95f0579d6e1b7971bba083663f7554147d4b9d5639ad2ed29f6ca2b329b8"
     },
     {
       "path": "units/07_meeting_settlement/F07-05_pay-share/frontend.md",
@@ -11402,9 +11421,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5d352d07a392e6e218bec43377ffc0cbef8b303007c99584a799eb97830b306d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ],
+      "reviewedSha256": "01e8ff9f6ea265d65248910c46c3b75e818636c5beae616fd5899a153d14866a"
     },
     {
       "path": "units/07_meeting_settlement/F07-05_pay-share/scenarios.md",
@@ -11412,9 +11434,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "62ba05755daca6a71bd3a0ed946358e3266681d59d9268290aa84345cdc98e2b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "settlement_pay_20261122"
+      ],
+      "reviewedSha256": "97a66a6d283e54f0c867b5f8d1d1432aa3bc3d51937c3a0217a1416e35f66819"
     },
     {
       "path": "units/07_meeting_settlement/F07-06_host-confirm-transfers/backend.md",
@@ -15540,6 +15565,21 @@
       "command": "python3 /tmp/check_reviewed_doc_artifacts.py; python3 /tmp/check_document_evidence_group.py settlement_status_summary_20261122",
       "result": "상대 경로2573개·파생 지문304개 오류0. 해당 묶음 소스/정본 지문34개·기존 HTML ID4개 일치",
       "scope": "내용 대조 완료 문서 경로·파생 관계와 해당 묶음 근거 검사; 제품 실행 결과 아님"
+    },
+    {
+      "command": "node verification/sync_source_reference_docs.mjs --check; node --test verification/source_references.test.mjs; node verification/build_scenario_audit_data.mjs --check",
+      "result": "코드 위치 표113개 일치·참조 검사11개 통과·시나리오 생성 자료 일치",
+      "scope": "F07-05 참조7개 추가·기존 역할 설명5개 교정 후 문서 정합 검사; 제품 실행 아님"
+    },
+    {
+      "command": "python3 /tmp/check_reviewed_doc_artifacts.py; python3 /tmp/check_document_evidence_group.py settlement_pay_20261122",
+      "result": "상대 경로2611개·파생 지문308개 오류0. 해당 묶음 소스/정본 지문41개·기존 HTML ID5개 일치",
+      "scope": "내용 대조 완료 문서 경로·파생 관계와 F07-05 근거 검사; 다른 그룹의 최신 source advance 전체 재검수는 아님"
+    },
+    {
+      "command": "Node vm: LAUNCH_STATUS.forFeature(F07-05); historical note normalized hash comparison; git diff --check",
+      "result": "출시 범위 partial 유지·신규 보완 항목 연결·개발 필요 표시 확인. 10월12일 과거 확인 문구 지문 일치, 공백 검사 통과",
+      "scope": "기능 등록부 실행과 과거 기록 보존; 브라우저/기기/은행 시험 없음"
     }
   ],
   "evidenceGroups": {
@@ -28048,6 +28088,271 @@
         }
       ],
       "retainedHistoricalQuotes": []
+    },
+    "settlement_pay_20261122": {
+      "kind": "source_review",
+      "scope": "F07-05 실제 화면 납부 입구·지급 방향·포인트/혼합·계좌 조회와 외부 앱·송금 신고/철회·수취 확인·취소 뒤 포인트 반환·멱등 명령/계정 경계. 선택한 기존 단언 대조이며 새 제품/은행/기기 실행 없음.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementTransferService.java",
+          "sha256": "e5ff66b3797f879b6b8d02dc7d743d2917db7f3e73a7666dba5ca726e166a9e1",
+          "reviewScope": "106–234,238–279,292–306,464–529,545–580,591–636,1262–1269: 포인트·혼합·은행분 확인·자체 반환의 잠금/권한/상태/금액·실제 지갑 목적·완료 재평가"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingVaIssuanceService.java",
+          "sha256": "77f429a362c9dd623b3007f34920e0b5a03e397aa7fbe72c4112f5fef4f04f89",
+          "reviewScope": "87–116: 제공자 지원 없으면 false, 은행분/요청키/기한/ISSUING 저장과 커밋 후 발급 요청"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingTransferBankAllowancePolicy.java",
+          "sha256": "4a0e3091f81ff829e911a9de03e65c23194595c57da9308aa3faba43481cee75",
+          "reviewScope": "38–53,101–114: 수동 확인 허용·기존 미발급·실패/해제/폐기 근거"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/policy/MeetingTransferResolutionPolicy.java",
+          "sha256": "b49b07398f789fe649712d9790881f28be172c284808349dab4b86c59fb590d2",
+          "reviewScope": "102–104: bankPortionAmount 우선, 없으면 총액인 반환액"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/param/MeetingSettlementMixedPayParam.java",
+          "sha256": "a86581b852fc6d92f7b9e2d9fdd521aacb89fcc3edcaaaf2e127d4ebcc6804e6",
+          "reviewScope": "전체 짧은 요청 모델: nullable Long pointAmount/bankTransferAmount; 서비스 필수/음수/합계 검사와 대조"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/vo/MySettlementShareVo.java",
+          "sha256": "b5246230d922dc88722f9e7fadab9003913edb6ef2c495cf076395ed8dbd18f3",
+          "reviewScope": "19–52: 방향·납부 금액/완료·영수증·신고/행동 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/vo/MeetingSettlementTransferVo.java",
+          "sha256": "a167d4567e53d5637d2e3130b8bdf9f060637fe6e1c45352fea4ae957c8eee07",
+          "reviewScope": "8–47: 송금 상태·금액·명령/신고 응답에 은행분 금액/수동 허용 상태가 없는 점"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/screens/my_settlement_shares_screen.dart",
+          "sha256": "f40ba8da5e51743abcd7f9589ff0ab02c19d7f6654ae4e98c9f02a270f5c24f0",
+          "reviewScope": "34–181: 방식·현재 상태·본인 분담 목록·초안 안내·직접 송금 입구·계좌/신고 전달"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/my_share_row_card.dart",
+          "sha256": "56effbc7db3e4eec4a24cb6c1b31d9af87986c488faa1ddda65533417fa41435",
+          "reviewScope": "124–166: PAY 미완료 진행 중 항목별 계좌/신고 구획, 영수증 문구·서버 행동 권한"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/my_shares_provider.dart",
+          "sha256": "247080adede59b654ac4057b548c16aecb8c669c10692f766ad952b43ae9c419",
+          "reviewScope": "12–21: 현재 정산 변화 구독·본인 분담 조회/실패 전달"
+        },
+        {
+          "path": "community_app/lib/data/models/meeting_settlement/my_settlement_share_vo.dart",
+          "sha256": "5738523663443b792c49248c465bc869d1f7cbd6c0e9063a8c08cbcb95da1727",
+          "reviewScope": "14–58: completed JSON·nullable direction/행동 권한·필수 금액"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/screens/settlement_item_payments_screen.dart",
+          "sha256": "9af431a0aaee1b2777b99a699f2cbf0d9e9867b13a787520f1d92fc22882b34c",
+          "reviewScope": "230–244,366–377: 실제 납부자 계좌/신고·수취 확인 Provider 호출. presentation 검색에서 payShare 호출부 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/settlement_share_provider.dart",
+          "sha256": "870a2770df8f446f669a0a9e495e2092fb13af0635b57db8620cb9147119dc63",
+          "reviewScope": "29–90: 분담 포인트 명령 키·계정/중복 잠금·성공 및 결과 불확실 갱신"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/transfer_list_provider.dart",
+          "sha256": "1ecf1e2564b797f5a34b845d2314e24f554c7fc6eb5c3ae33a9aa4005b5cab04",
+          "reviewScope": "21–197: 전체/내 목록·세대/계정 경계·진행 중 명령 공유·포인트/자체 반환 키·불확실 오류 재조회"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/transfer_payment_command_provider.dart",
+          "sha256": "88c9e59720bc178691afb8ddba5dac006403f3520973e709f7862ccafa53df7f",
+          "reviewScope": "27–117: 혼합 결제 진행 중 Future 공유·세션·키/본문·성공과 불확실 실패 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/screens/transfer_list_screen.dart",
+          "sha256": "2e9e98cd2a3d0463c07782e82b8f079e3c8a622c2394deb25fad539c98e07466",
+          "reviewScope": "258–304,307–348,643–651,811–919,1009–1039: 은행분 확인 안내·자체 반환 총액 표시·포인트 권한/명령·수취인 반환 버튼. 0504cfb→e808058 diff에서 만료 송금 이의 표지 변경을 별도 확인; 납부/환불 계약 변화 없음"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/mixed_pay_sheet.dart",
+          "sha256": "b0a97f14ff95617cd2d1bea2a76f8554a39c80c1737029ff4f30a9a0951db986",
+          "reviewScope": "64–81: 0..총액 입력 검사와 포인트/은행분 반환"
+        },
+        {
+          "path": "community_app/lib/domain/providers/meeting_settlement/recipient_account_provider.dart",
+          "sha256": "f881bbf17feae630418f05f4c8e4b3ac176792fbea4f2f164fdf3f6c63dff3fe",
+          "reviewScope": "19–89: 계정별 계좌 조회·네 신고/철회·세션 경계·성공 갱신"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/recipient_account_section.dart",
+          "sha256": "7637e57245571754e95e7811a6532c0ec41f42f003ed77a3e7517da6e01084d8",
+          "reviewScope": "61–167,235–274: 계좌/미등록/비공개·실패 숨김·서버 허용·신고/철회 결과/거절 재조회"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/widgets/settlement_remit_sheet.dart",
+          "sha256": "e2591007bfa7d64ef0bae98451f6a307947e0ff8c36224836c335e6a6228c39c",
+          "reviewScope": "18–127: 금액·계좌·토스/카카오 외부 안내·실패 표시; 완료/입금 변경 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/scope/release_scope_provider.dart",
+          "sha256": "a9ef47daf8930892a786fa97888cb921bd0011d8adcb6c7dfc27924494a16f91",
+          "reviewScope": "146–151: 금전 기능 Provider 초기 닫힘 및 공개 범위 갱신 경계"
+        },
+        {
+          "path": "community_app/lib/data/models/scope/payment_capabilities.dart",
+          "sha256": "97eb4d38216d650d20b707f5552c9c7c0de0a2e4c5267bc9f50f42ca5ad68785",
+          "reviewScope": "18–66: 초기 platformMoneyEnabled=false·응답 필드 소비"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/payment/meeting/service/MeetingSettlementTransferServiceTest.java",
+          "sha256": "875598d986889fdefb42b2909c9074e0a5caf5f67bf0100c2559f8e0c8d3c51c",
+          "reviewScope": "956–997: 포인트3000/은행2000·부분 지갑 이동·혼합 확인 대기와 미완료 시각 기존 단언; 실행 없음"
+        },
+        {
+          "path": "community_app/test/presentation/meeting_settlement/settlement_mixed_payment_navigation_test.dart",
+          "sha256": "90b7d5dbc6ef7f41b001e9a543db662ea87a3caa9f712f402910da396830fd30",
+          "reviewScope": "31–97: 지연 응답 중 요청1회·성공 후 은행분 안내 이동 기존 단언; 실행 없음"
+        },
+        {
+          "path": "community_app/test/meeting_settlement/transfer_actions_provider_test.dart",
+          "sha256": "0dc80e2882de92b89d0c39a5b5a2bc441033633380b62173436c1f70828783da",
+          "reviewScope": "345–434: 결과 유실 뒤 같은 키·성공 정리 뒤 새 키를 네 명령에 적용하는 기존 단언; 실행 없음"
+        },
+        {
+          "path": "community_app/test/presentation/meeting_settlement/settlement_share_direction_display_test.dart",
+          "sha256": "7d1b406537134733e86e4124a8cb47b12505b0efc1043527f4907d5ff9fa1cc5",
+          "reviewScope": "192–230: PAY/RECEIVE/OWN·미확인 방향의 표시/계좌 구획 기존 단언; 실행 없음"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+          "sha256": "3a88dc200e94ab8b3018d94d846f6581d8663c83b84ee756427b4b25d9cea261",
+          "reviewScope": "177–181 기존 읽기 근거 재사용; 258–279,296–338,365–372,388–402,487–536: 분담/송금 명령·멱등 키·모임/대상·계좌/신고 경로와 void 응답"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/transfer/MeetingSettlementTransferTransitions.java",
+          "sha256": "3387a297f64d542f7775479d57344df00feca8988f7b1ad26d569019fd24eb53",
+          "reviewScope": "162–221,413–424: 포인트/혼합 상태·완료 시각·은행분·발급 여부와 자체 반환 취소/알림"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/WalletSpendService.java",
+          "sha256": "8055356dba4bbf6bb233978b417e97f26b8542578ba75b43794e309b15f9ce89",
+          "reviewScope": "53–63,80–125: 자체 반환/역분개 목적의 신규 금전 제한 예외, 유료 포인트 목적·활성 검사 경계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementBankSentService.java",
+          "sha256": "3872a6004428c2b5d1836ca61eeecb0656fee0b72ccdf95987f11fa44a425cae",
+          "reviewScope": "77–109,138–171,177–212,233–255,280–335: 신고/철회·행 잠금·대기 이의·행별 enqueueOnce·당사자 기본 계좌/닫힌 계정; 취소 후 철회 내부 처리 전체 재검수 아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/policy/SettlementAccountAbilityPolicy.java",
+          "sha256": "e0e429cc738490d316113ec72d2578ba60d1e55b4b788bc456515946450cacac",
+          "reviewScope": "138–162,170–201,212–260: 실제 납부자·진행/취소 상태·신규 신고/기존 철회·미반환 조건"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/repository/query/MeetingSettlementQueryRepository.java",
+          "sha256": "827e787e4f28622548f5b3dbc9651f125eb1acdc3f16b76158a9e5a3911486f4",
+          "reviewScope": "416–449: 취소 제외 본인 분담 행 조회·실제 지급 direction 및 응답 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementService.java",
+          "sha256": "a3de5d85028bf15316de0c943184516f09800e643489d93fd4ae8afa301cb1bd",
+          "reviewScope": "동일 SHA F07-04의1047–1058: 내 분담금·초안/영수증·행동 보충 근거 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/service/MeetingSettlementCompletionService.java",
+          "sha256": "6468c89c89b50f1b2542f3a3ac1f36802ed7df9a763ba7514ed4acbe525b94c0",
+          "reviewScope": "동일 SHA F07-03의 완료 재평가 근거 재사용; 신규 납부 성공과 전체 의무 완료를 구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/meeting/policy/MeetingSettlementObligationPolicy.java",
+          "sha256": "0ff61d98a6467b1f1daba127a34a95f022f88df7842d07628248f190e3190ab1",
+          "reviewScope": "동일 SHA F07-03의 미완료 지급·반환 의무 판정 근거 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/common/idempotency/MemberCommandReceiptExecutor.java",
+          "sha256": "8ef6e6e975e54953e25df5150d171971420423c6d1989ea81f3ada91d3bf3ac2",
+          "reviewScope": "동일 SHA 기존 명령 영수증 근거113–149,254–288 재사용: 회원/명령/대상/본문 결박·재생·결과 없음/불일치"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/member_money_command.dart",
+          "sha256": "2692e606ee316e147747691e4b3f92bea4b9e0c02a63babd5a81f1859c4c5c03",
+          "reviewScope": "동일 SHA 기존121–181,217–277: 회원/명령/대상/본문 의도 키·진행 중 공유·계정 변경 보호 근거 재사용"
+        },
+        {
+          "path": "community_app/lib/presentation/meeting_settlement/screens/settlement_status_screen.dart",
+          "sha256": "cef3112ca01bbd7836b9da0c345c56386371938f23112c5777861853aff78f46",
+          "reviewScope": "829–958: 본인 대기 송금·금전 표지·혼합 확정 전후 검사·성공 후 은행분 안내 이동"
+        },
+        {
+          "path": "community_app/lib/data/api/meeting_settlement_api.dart",
+          "sha256": "4f1f7e72e5357cb12a9621acc30b55f92d15cb890c5d396c7725711e1974f8b6",
+          "reviewScope": "164–228,249–304: 실제 typed 요청·상대 계좌/신고·포인트/혼합/자체 반환 키와 응답"
+        },
+        {
+          "path": "community_app/lib/data/repositories/meeting_settlement_repository.dart",
+          "sha256": "d441d3cd3d10cada0c05bb7f4a23e9a5cb3670c57421afb377046069172fc0d1",
+          "reviewScope": "252–271,314–394,486–517: typed 모델·필수 키 전달·void Result와 계좌 조회"
+        }
+      ],
+      "reuses": [
+        "club_posts_20261122",
+        "club_subscription_20261122",
+        "settlement_activate_cancel_20261122",
+        "settlement_items_20261122",
+        "settlement_status_summary_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
+          "sha256": "dadd08a219cc995978c53128297d73cee677b1cd15d77f038962395ba201c1e4"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F07-05.html": [
+          "sidebar",
+          "launch-strip",
+          "income-and-cancelled-transfer",
+          "recipient-account-and-bank-sent",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "기존 7개 참조의 당사자 설명 교정, 은행분 확인·계좌 조회2·송금 신고/철회4 참조 추가"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "share_point_ui_unwired",
+          "finding": "항목별 포인트 납부 API/Provider에 대응하는 presentation 호출부 없음",
+          "disposition": "현재 화면 지원과 API 지원을 분리하고 기능 문서·출시 등록부에 기록"
+        },
+        {
+          "kind": "refund_confirmation_amount",
+          "finding": "자체 반환 확인창은 송금 총액, 서버는 bankPortionAmount가 있으면 해당 은행분만 반환",
+          "disposition": "제품 코드 변경 없이 기능 문서·출시 등록부에 안내 불일치 기록"
+        },
+        {
+          "kind": "bank_confirmation_contract",
+          "finding": "일반 송금 VO에 혼합 은행분·수동 허용 상태 없음; 안내창은 총액 차이를 고지하지만 일부 버튼은 서버 정책에 의해 거절 가능",
+          "disposition": "수동 확인 역할·실제 은행분 대조·서버 최종 판정을 명시"
+        },
+        {
+          "kind": "report_is_not_receipt",
+          "finding": "송금 신고/철회는 실제 은행 이체·완료·반환이 아니며 알림 키는 행별 1회",
+          "disposition": "실제 돈 이동과 신고/알림 의도 저장을 분리"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalNotes": [
+        {
+          "source": "docs/features/F07-05.html",
+          "heading": "받는 사람 계좌 보기·복사와 ‘보냈어요’ — 2026년 10월 12일",
+          "sourceCommit": "ef826fd",
+          "text": "확인 범위: 서버·앱 구현과 자동 검사 기록을 대조했다. 신고·권한·경합 서버 12개와 앱 정산·알림 등 863개 통과 기록이 있다. 이번 계좌·신고 화면의 실제 이용·실기기·은행 내역 검증은 별도다. 오늘의 Google·메일·푸시 연동 성공을 이 기능의 완료 근거로 사용하지 않는다.",
+          "sha256": "69722eb121bd03743cc3c3ca6c859e8c60ffc4dd8cbaa269ba82fff0c8b12465"
+        }
+      ]
     }
   },
   "currentSourceVersions": {
@@ -28117,5 +28422,284 @@
       "to": "a5b6e6e3938f66cd17d2ccffd99348b839b4ac48",
       "impact": "main의 현황판 공개 사본 변경1건(docs/assets/work-overview.snapshot.json·docs/index.html·docs/qa/launch-status.html)을 작업 브랜치에 충돌 없이 병합. 이 세 자료는 본문 대조가 끝나지 않아 pending 유지. 제품 소스6개 기준은 직전 기록과 동일."
     }
-  ]
+  ],
+  "pendingSourceAdvances": {
+    "community_app_0504cfb_to_e808058": {
+      "repository": "community_app",
+      "fromCommit": "0504cfb36f006cd40e209f59c546f51dd384150d",
+      "toCommit": "e8080585bde129801c5ad1ce6ce1753be2796017",
+      "affectedEvidenceGroups": {
+        "notification_groups_settings_20261122": [
+          "community_app/lib/presentation/notification/screens/notification_list_screen.dart"
+        ],
+        "event_detail_complete_20261122": [
+          "community_app/lib/presentation/event/widgets/event_fit_preview_section.dart"
+        ],
+        "profile_hub_edit_addresses_20261122": [
+          "community_app/lib/domain/providers/connectivity/met_people_provider.dart",
+          "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart"
+        ],
+        "privacy_visibility_20261122": [
+          "community_app/lib/domain/providers/profile/people_data_refresh_provider.dart"
+        ],
+        "search_workflows_20261122": [
+          "community_app/lib/domain/providers/search/search_typed_provider.dart"
+        ],
+        "home_feed_core_20261122": [
+          "community_app/lib/domain/providers/connectivity/people_recommendation_provider.dart",
+          "community_app/lib/presentation/home/widgets/people_recommend_section.dart"
+        ],
+        "hosting_ticket_personal_subscription_20261122": [
+          "community_app/lib/data/models/common/api_error.dart"
+        ],
+        "event_payment_cancel_refund_20261122": [
+          "community_app/test/widget/event/refund_policy_form_test.dart"
+        ],
+        "event_capacity_waitlist_20261122": [
+          "community_app/lib/domain/providers/attendance/attendee_list_provider.dart"
+        ],
+        "event_plan_link_20261122": [
+          "community_app/lib/presentation/event/widgets/event_plan_card.dart",
+          "community_app/lib/presentation/event/widgets/event_plan_override_sheet.dart"
+        ],
+        "reschedule_20261122": [
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart"
+        ],
+        "no_show_20261122": [
+          "community_app/lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+          "community_app/lib/presentation/dispute/screens/no_show_refund_screen.dart"
+        ],
+        "event_creation_20261122": [
+          "community_app/lib/presentation/event/widgets/event_create_step2.dart"
+        ],
+        "event_lifecycle_20261122": [
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart"
+        ],
+        "event_prepayment_20261122": [
+          "community_app/lib/presentation/event/screens/event_edit_screen.dart"
+        ],
+        "club_detail_20261122": [
+          "community_app/lib/presentation/club/widgets/club_fit_preview_section.dart"
+        ],
+        "club_lifecycle_20261122": [
+          "community_app/lib/presentation/club/screens/club_management_screen.dart",
+          "community_app/test/audit/entry_paths_club_edit_test.dart",
+          "community_app/test/widget/club/club_form_restart_test.dart"
+        ],
+        "club_members_20261122": [
+          "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "club_invitation_20261122": [
+          "community_app/lib/domain/providers/club/club_member_provider.dart",
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "club_stats_20261122": [
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "club_announcements_20261122": [
+          "community_app/lib/presentation/club/community/screens/announcement_create_screen.dart",
+          "community_app/test/widget/club/announcement_recovery_test.dart"
+        ],
+        "club_calendar_20261122": [
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "club_subscription_20261122": [
+          "community_app/lib/presentation/club/screens/club_management_screen.dart"
+        ],
+        "settlement_status_summary_20261122": [
+          "community_app/lib/presentation/meeting_settlement/widgets/settlement_status_guidance_card.dart"
+        ]
+      },
+      "changedPaths": [
+        "CLAUDE.md",
+        "assets/guides/09_private_date/F09-01_verification.html",
+        "assets/guides/11_review_report/F11-05_trust-score.html",
+        "assets/guides/13_profile_settings/F13-06_account-deletion.html",
+        "docs/design/COMPONENTS.md",
+        "integration_test/mileage_followup_journey_test.dart",
+        "integration_test/seed_regular_meeting_matrix_test.dart",
+        "lib/data/models/common/api_error.dart",
+        "lib/data/models/mileage/mileage_enums.dart",
+        "lib/data/models/plan/block_category.dart",
+        "lib/data/models/provider/provider_profile_vo.dart",
+        "lib/domain/providers/attendance/attendee_list_provider.dart",
+        "lib/domain/providers/attendance/attendee_list_provider.g.dart",
+        "lib/domain/providers/club/club_member_provider.dart",
+        "lib/domain/providers/club/club_member_provider.g.dart",
+        "lib/domain/providers/community_chat/community_chat_provider.dart",
+        "lib/domain/providers/community_chat/community_chat_provider.g.dart",
+        "lib/domain/providers/connectivity/community_block_provider.dart",
+        "lib/domain/providers/connectivity/community_block_provider.g.dart",
+        "lib/domain/providers/connectivity/met_people_provider.dart",
+        "lib/domain/providers/connectivity/met_people_provider.g.dart",
+        "lib/domain/providers/connectivity/people_recommendation_provider.dart",
+        "lib/domain/providers/connectivity/people_recommendation_provider.g.dart",
+        "lib/domain/providers/market/collection_provider.dart",
+        "lib/domain/providers/market/collection_provider.g.dart",
+        "lib/domain/providers/profile/people_data_refresh_provider.dart",
+        "lib/domain/providers/profile/people_data_refresh_provider.g.dart",
+        "lib/domain/providers/search/search_typed_provider.dart",
+        "lib/domain/providers/search/search_typed_provider.g.dart",
+        "lib/presentation/club/admin/club_outbox_monitoring_screen.dart",
+        "lib/presentation/club/community/screens/announcement_create_screen.dart",
+        "lib/presentation/club/community/widgets/calendar_week_agenda.dart",
+        "lib/presentation/club/finance/widgets/quick_amount_chips.dart",
+        "lib/presentation/club/screens/club_management_screen.dart",
+        "lib/presentation/club/widgets/club_fit_preview_section.dart",
+        "lib/presentation/club/widgets/club_form.dart",
+        "lib/presentation/common/inputs/app_text_input.dart",
+        "lib/presentation/common/layout/app_surface_card.dart",
+        "lib/presentation/community_chat/widgets/shared_event_message.dart",
+        "lib/presentation/curated/widgets/terms_widgets.dart",
+        "lib/presentation/dispute/screens/dispute_case_detail_screen.dart",
+        "lib/presentation/dispute/screens/dispute_evidence_screen.dart",
+        "lib/presentation/dispute/screens/my_dispute_cases_screen.dart",
+        "lib/presentation/dispute/screens/no_show_refund_screen.dart",
+        "lib/presentation/dispute/widgets/dispute_conversation_section.dart",
+        "lib/presentation/dispute/widgets/dispute_design.dart",
+        "lib/presentation/dispute/widgets/dispute_timeline_tile.dart",
+        "lib/presentation/dispute/widgets/host_action_bar.dart",
+        "lib/presentation/dispute/widgets/host_action_summary_card.dart",
+        "lib/presentation/dispute/widgets/party_action_panel.dart",
+        "lib/presentation/event/screens/event_edit_screen.dart",
+        "lib/presentation/event/screens/event_party_bank_add_screen.dart",
+        "lib/presentation/event/widgets/custom_refund_rule_editor.dart",
+        "lib/presentation/event/widgets/event_create_step1.dart",
+        "lib/presentation/event/widgets/event_create_step2.dart",
+        "lib/presentation/event/widgets/event_fit_preview_section.dart",
+        "lib/presentation/event/widgets/event_plan_card.dart",
+        "lib/presentation/event/widgets/event_plan_override_sheet.dart",
+        "lib/presentation/home/widgets/people_recommend_section.dart",
+        "lib/presentation/host/screens/host_inbox_screen.dart",
+        "lib/presentation/market/screens/bundle_curator_screen.dart",
+        "lib/presentation/market/screens/my_collection_screen.dart",
+        "lib/presentation/market/screens/my_refunds_screen.dart",
+        "lib/presentation/market/screens/refund_detail_screen.dart",
+        "lib/presentation/market/screens/refund_request_screen.dart",
+        "lib/presentation/market/widgets/refund_design.dart",
+        "lib/presentation/meeting_settlement/screens/transfer_list_screen.dart",
+        "lib/presentation/meeting_settlement/widgets/settlement_notice_message.dart",
+        "lib/presentation/meeting_settlement/widgets/settlement_status_guidance_card.dart",
+        "lib/presentation/mileage/admin/screens/mileage_audit_log_screen.dart",
+        "lib/presentation/mileage/admin/screens/mileage_queue_screen.dart",
+        "lib/presentation/mileage/admin/widgets/mileage_config_preview_dialog.dart",
+        "lib/presentation/mileage/screens/mileage_grade_list_screen.dart",
+        "lib/presentation/mileage/screens/mileage_monthly_receipt_screen.dart",
+        "lib/presentation/mileage/screens/mileage_season_ranking_screen.dart",
+        "lib/presentation/notification/screens/notification_list_screen.dart",
+        "lib/presentation/payment/widgets/transaction_history_guidance_card.dart",
+        "lib/presentation/plan/editing/block_draft_session.dart",
+        "lib/presentation/plan/widgets/block_edit_dialogs/table_block_edit_dialog.dart",
+        "lib/presentation/profile/widgets/data_privacy_guidance_card.dart",
+        "lib/presentation/provider/screens/offering_edit_screen.dart",
+        "lib/presentation/provider/screens/provider_documents_screen.dart",
+        "lib/presentation/provider/screens/provider_profile_edit_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_content_edit_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_create_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_detail_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_edit_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_enroll_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_list_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_members_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_payment_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_preparation_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_session_add_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_session_finalize_screen.dart",
+        "lib/presentation/regular_meeting/screens/regular_meeting_settlement_screen.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_content.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_design.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_host.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_next_session.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_participation.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_payment_queue.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_preferences.dart",
+        "lib/presentation/regular_meeting/widgets/regular_meeting_reviews.dart",
+        "lib/presentation/review/screens/trust_score_screen.dart",
+        "lib/presentation/warning/admin/warning_abuse_pattern_cards.dart",
+        "lib/presentation/warning/admin/warning_member_detail_screen.dart",
+        "lib/presentation/warning/admin/warning_policy_screen.dart",
+        "lib/presentation/warning/admin/warning_queue_screen.dart",
+        "lib/presentation/warning/admin/warning_report_detail_screen.dart",
+        "lib/presentation/warning/admin/widgets/warning_forced_remove_dialog.dart",
+        "lib/presentation/warning/admin/widgets/warning_report_attachment_viewer.dart",
+        "lib/presentation/warning/widgets/warning_severity_chip.dart",
+        "scripts/e2e/MILEAGE_FOLLOWUP_JOURNEY.md",
+        "test/audit/entry_paths_club_creation_test.dart",
+        "test/audit/entry_paths_club_edit_test.dart",
+        "test/audit/entry_paths_club_test.dart",
+        "test/audit/entry_paths_mileage_detail_audit_contrast_test.dart",
+        "test/audit/entry_paths_mileage_ledger_audit_test.dart",
+        "test/audit/entry_paths_mileage_preview_test.dart",
+        "test/audit/entry_paths_mileage_queue_commands_test.dart",
+        "test/audit/entry_paths_mileage_receipt_reverse_test.dart",
+        "test/audit/entry_paths_regular_meeting_test.dart",
+        "test/audit/entry_paths_stamp_conditional_test.dart",
+        "test/audit/entry_paths_stamp_permissions_test.dart",
+        "test/catalog/catalog_registry.dart",
+        "test/catalog/goldens/basic-app-text-input-dark.png",
+        "test/catalog/goldens/basic-app-text-input-large.png",
+        "test/catalog/goldens/basic-app-text-input-light.png",
+        "test/catalog/goldens/basic-surface-card-dark.png",
+        "test/catalog/goldens/basic-surface-card-large.png",
+        "test/catalog/goldens/basic-surface-card-light.png",
+        "test/catalog/pages/component_surface_card.dart",
+        "test/catalog/pages/component_text_input.dart",
+        "test/domain/providers/profile/block_hides_rows_test.dart",
+        "test/presentation/club/admin/club_outbox_section_error_test.dart",
+        "test/presentation/club/calendar_week_view_layout_test.dart",
+        "test/presentation/club/club_debt_closure_widgets_test.dart",
+        "test/presentation/club/goldens/calendar-week-empty-dark.png",
+        "test/presentation/club/goldens/calendar-week-empty-light.png",
+        "test/presentation/club/goldens/club-edit-initial-dark.png",
+        "test/presentation/club/goldens/club-edit-initial-light.png",
+        "test/presentation/club/goldens/club-edit-initial-small-dark.png",
+        "test/presentation/club/goldens/club-edit-initial-small-light.png",
+        "test/presentation/common/layout/app_surface_card_test.dart",
+        "test/presentation/market/bundle_curator_screen_test.dart",
+        "test/presentation/market/my_collection_command_lock_test.dart",
+        "test/presentation/market/refund_detail_screen_test.dart",
+        "test/presentation/meeting_settlement/settlement_amount_screens_test.dart",
+        "test/presentation/plan/widgets/table_block_edit_dialog_test.dart",
+        "test/presentation/profile/data_privacy_guidance_card_test.dart",
+        "test/presentation/review/local_report_screens_test.dart",
+        "test/presentation/theme/goldens/forms-event-create-dark.png",
+        "test/presentation/theme/goldens/forms-event-create-light.png",
+        "test/presentation/theme/goldens/forms-provider-profile-dark.png",
+        "test/presentation/theme/goldens/forms-provider-profile-light.png",
+        "test/presentation/theme/goldens/forms-provider-profile-small-dark.png",
+        "test/presentation/theme/screen_fixed_light_colors_test.dart",
+        "test/presentation/warning/warning_abuse_pattern_cards_test.dart",
+        "test/regular_meeting/regular_meeting_payment_bank_disabled_test.dart",
+        "test/regular_meeting/regular_meeting_payment_method_rejection_test.dart",
+        "test/tool/design_tokens_guard_test.dart",
+        "test/unit/blocked_people_rows_test.dart",
+        "test/widget/assignment_terms_badge_test.dart",
+        "test/widget/club/announcement_recovery_test.dart",
+        "test/widget/club/club_ability_refreshing_send_test.dart",
+        "test/widget/club/club_ability_screens_test.dart",
+        "test/widget/club/club_create_leave_guard_test.dart",
+        "test/widget/club/club_detail_navigation_split_test.dart",
+        "test/widget/club/club_form_restart_test.dart",
+        "test/widget/club/club_form_server_length_test.dart",
+        "test/widget/club/club_management_destinations_test.dart",
+        "test/widget/event/event_plan_override_clear_wire_test.dart",
+        "test/widget/event/event_plan_override_sheet_test.dart",
+        "test/widget/event/refund_policy_form_test.dart",
+        "test/widget/event/thumbnail_upload_abort_test.dart",
+        "test/widget/mileage/mileage_audit_log_batch_link_test.dart",
+        "test/widget/mileage/mileage_policy_screen_test.dart",
+        "test/widget/mileage/mileage_queue_auto_revert_test.dart",
+        "test/widget/mileage/mileage_season_ranking_screen_test.dart",
+        "tool/README.md",
+        "tool/check_design_tokens.dart",
+        "tool/copy_words_baseline.txt",
+        "tool/design_tokens_baseline.txt",
+        "tool/test_text_finders_baseline.txt"
+      ],
+      "status": "pending_affected_scope_review",
+      "reviewedCurrentGroup": "settlement_pay_20261122",
+      "reviewedScope": "F07-05 소스 목록 중 변경 파일은 transfer_list_screen.dart. 만료 이의 표지 diff 확인; 납부·혼합·자체 반환 계약 변화 없음. 나머지 기존 그룹은 영향 범위 재대조 대기."
+    }
+  }
 }

@@ -964,6 +964,29 @@ window.LAUNCH_STATUS = (function () {
     'L-06': '기존 지도·주소 변환 통과. 운영 Kakao REST 허용 기록·S3 구축 실조회. 파일 생명주기·native 등록·실기기·iOS·길찾기·위치 권한 미확인',
     'L-09': '운영 허용 IP·분리 DB 계정 적용. 서울 리전 CloudWatch 경보·루트 EBS 스냅샷·S3 backups/ 객체 0개. 허용망 밖 거부·권한 회수·경보 수신·백업 복구·롤백 미확인'
   };
+  // 2026-11-22 F07-05 소스 대조. 새 실행 통과나 출시 범위 변경이 아니다.
+  openItems.push({
+    "id": "N-SETTLEMENT-PAY-20261122",
+    "impact": "wiring",
+    "kind": "기능 문서 대조에서 확인한 화면 차이",
+    "owner": "개발자",
+    "title": "정산 항목별 포인트 입구와 반환액 안내",
+    "features": [
+        "F07-05"
+    ],
+    "developmentFeatures": [
+        "F07-05"
+    ],
+    "docPath": "features/F07-05.html#current-limits",
+    "implementationReady": false,
+    "operationsReady": false,
+    "summary": "2026-11-22 소스 대조: 항목별 포인트 API·Provider에는 화면 납부 호출부가 없다. 송금 자체 반환 확인창은 총액을 차감액으로 표시하지만 혼합 결제의 서버 반환액은 남은 은행분일 수 있다. 현재 운영 결제 공개 범위를 변경하는 기록이 아니다.",
+    "actionLabel": "제공 입구와 반환액 안내 정합성 수정",
+    "nextAction": "항목별 포인트 납부의 제품 제공 범위를 확정하고 화면 연결 또는 명시적 제외 설명을 맞춘다. 자체 반환 안내는 서버가 실제 반환할 금액을 표시하도록 수정한다.",
+    "doneWhen": "항목별 납부의 약속된 입구와 실제 화면이 일치한다. 혼합 납부 취소 뒤 포인트가 먼저 반환된 경우 확인창·지갑 차감·원래 송금자 적립이 남은 은행분과 일치한다. 전액 은행 납부는 전체 반환액과 일치하며 응답 유실로 중복 반환하지 않는다."
+});
+  readinessById['N-SETTLEMENT-PAY-20261122'] = ["화면 연결·금액 안내 정합성", "서버·명령 구현 있음, 화면 연결/안내 차이 확인", "기존 선택 단언 대조; 이번 제품 시험 실행 없음", "현재 소스로 차이 확인, 제공 범위와 표시 수정 필요"];
+
   openItems.forEach(function (item) {
     var r = readinessById[item.id];
     if (!r) throw new Error('작업 상태 누락: ' + item.id);
@@ -975,7 +998,7 @@ window.LAUNCH_STATUS = (function () {
     };
     // 같은 업무에 연결된 기능 전체를 미구현으로 칠하지 않는다.
     // 기간권 판매 개발은 기존 검색·보유함·환불 코드의 부재를 뜻하지 않는다.
-    item.developmentFeatures = item.id === 'N-03' ? ['F08-06'] : [];
+    item.developmentFeatures = item.developmentFeatures || (item.id === 'N-03' ? ['F08-06'] : []);
     var preparation = preparationById[item.id];
     if (preparation) {
       item.preparationPath = 'qa/external-readiness.html#' + preparation[0];

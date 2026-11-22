@@ -1,102 +1,145 @@
-# F07-05. 분담금 납부 (Pay Share / Transfer) PRD
+# F07-05. 항목별 분담·송금 납부·송금 신고·포인트 반환 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **2026-11-22 소스 대조.** 납부 방식·실제 당사자·화면 입구·명령 재처리·반환 경계를 설명한다. 새 제품·은행·기기 시험 결과가 아니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 결론
 
-참가자가 본인에게 할당된 분담금(Share) 또는 이체(Transfer)를 **POINT(지갑)**, **계좌이체**, 또는 **POINT+계좌이체 혼합**으로 납부한다. POINT는 즉시 완료되지만 혼합 결제에 은행분이 있으면 transfer가 `BANK_AWAITING_CONFIRM`에 머물고, 수취자 또는 정산 생성자가 실제 입금 내역을 수기로 확인해야 `COMPLETED`가 된다. 또한 `PENDING_MANUAL_REFUND` 상태의 transfer에 대해 수취자가 본인 POINT로 자체 환불(self-refund)할 수 있고, EXPIRED transfer는 정산 생성자가 재발행(reissue)할 수 있다.
+정산은 **항목별 납부와 직접 송금**을 구분한다. 항목별 납부는 각 비용·수입의 실제 지급 방향을 따르고, 직접 송금은 이미 낸 비용을 반영한 차액만 송금한다. 직접 송금의 항목별 내 몫을 다시 각각 납부하지 않는다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+현재 앱은 받는 사람 계좌 보기·복사, 외부 송금 앱 열기, ‘보냈어요’ 신고를 제공한다. 포인트 송금과 혼합 결제도 화면에 연결되어 있지만 서버가 내려준 금전 기능 허용 여부에 따라 열린다. 항목별 포인트 납부는 API·Repository·Provider가 있으나 현재 화면의 납부 버튼으로 연결되어 있지 않다. **외부 앱을 열거나 보냈다고 신고하는 것은 입금 확인·납부 완료가 아니다.**
 
-- 정산 활성화 푸시 알림 탭 → 정산 현황 화면 → "내 분담금 보기" → `MySettlementSharesScreen`
-- 정산 현황 → 이체 내역 화면(`TransferListScreen`) "내 이체" 탭
-- 환불 필요 알림(`MEETING_SETTLEMENT_REFUND_REQUIRED`) 탭 → transfer list로 이동
+## 코드 위치
 
-## 2. 코드 위치
-
-계약의 정본은 코드다. 서버: `MeetingSettlementController`, `MeetingSettlementTransferService`, `WithdrawalService`, `WalletSpendService`, `WalletService`, `AccountingLedgerService`. 앱: `transfer_list_screen.dart`, `my_settlement_shares_screen.dart`, `meeting_settlement_api.dart`, `meeting_settlement_repository.dart`, `transfer_list_provider.dart`, `transfer_card_widget.dart`, `transfer_actions_provider_test.dart`, `transfer_card_widget_test.dart`, `my_share_row_card.dart`, `transfer_status_badge_widget.dart`.
+서버는 `MeetingSettlementController`, `MeetingSettlementTransferService`, 송금 상태 전이, 지급 방향·계좌 행동 정책, 송금 신고·계좌 조회, 가상계좌 발급 접수·수동 확인 정책과 반환 금액 정책을 확인했다. 앱은 내 분담금·정산 현황·송금 목록, 혼합 입력·계좌·외부 송금 시트, 각 명령 Provider와 회원 금전 명령의 기존 근거를 대조했다.
 
 <!-- source-references:start -->
-서버 창구: `MeetingSettlementController#getMyShares`, `MeetingSettlementController#getMyTransfers`, `MeetingSettlementController#payShare`, `MeetingSettlementController#confirmBankTransfer`, `MeetingSettlementController#payTransferByPoint`, `MeetingSettlementController#payTransferMixed`, `MeetingSettlementController#selfRefundTransfer`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+서버 창구: `MeetingSettlementController#getMyShares`, `MeetingSettlementController#getMyTransfers`, `MeetingSettlementController#payShare`, `MeetingSettlementController#confirmBankTransfer`, `MeetingSettlementController#payTransferByPoint`, `MeetingSettlementController#payTransferMixed`, `MeetingSettlementController#selfRefundTransfer`, `MeetingSettlementController#confirmTransferBankPortion`, `MeetingSettlementController#getShareRecipientAccount`, `MeetingSettlementController#getTransferRecipientAccount`, `MeetingSettlementController#reportShareBankSent`, `MeetingSettlementController#withdrawShareBankSent`, `MeetingSettlementController#reportTransferBankSent`, `MeetingSettlementController#withdrawTransferBankSent`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
 <!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 실제 화면 입구와 제공 범위
 
-내 분담금 화면 진입 시:
-1. `mySharesProvider(eventId)` ▶ `MeetingSettlementRepository.getMyShares` ▶ `GET .../my-shares`
-2. `settlementDetailProvider(eventId)` ▶ host vs 일반사용자 분기
+| 입구 | 사용자가 할 수 있는 일과 조건 |
+| --- | --- |
+| 정산 현황 → 내 분담금 보기 | 항목별 본인 몫·납부/수취 방향·완료 여부를 읽는다. 초안은 아직 확정되지 않았다는 안내, 직접 송금은 차액만 내라는 안내와 송금 목록 입구를 표시한다. |
+| 내 분담금의 항목별 납부 행 | 정산 상태가 확인된 진행 중이고 본인이 내는 미완료 몫이면 받는 계좌·송금 신고를 제공한다. 받을 몫·자기 몫·직접 송금의 정보성 몫에는 이 납부 구획을 붙이지 않는다. |
+| 항목별 납부 현황 | 실제 낼 사람이 본인인 진행 중 미완료 행에 계좌·신고를 제공한다. 수입 보유자가 배분금을 내는 방향도 같은 규칙을 따른다. |
+| 송금 목록 | 전체/내 송금을 구분해 조회한다. ‘내 송금’은 본인이 보내는 것과 받는 것을 모두 포함한다. 본인이 보내는 `PENDING`·진행 중·대기 이의 없음·금전 기능 허용 조건에서 포인트 결제를 시작한다. |
+| 정산 현황의 본인 대기 송금 | 금전 기능이 허용되면 **포인트 + 계좌 혼합 결제**를 제공한다. 입력 후에도 허용 여부를 다시 확인하며, 은행분이 있으면 성공 후 가상계좌 납부 안내로 이동한다. 전액 포인트면 현황을 갱신한다. |
+| 직접 반환 대기 송금의 받는 사람 | **포인트로 환불하기**를 확인한 뒤 본인 지갑에서 원래 보낸 사람 지갑으로 반환을 요청한다. 은행 계좌로 출금하는 기능과 다르다. |
 
-이체 내역 화면 진입 시:
-1. `transferListProvider(eventId)` 초기 로드 — 탭 0 시 `getTransfers`, 탭 1 시 `getMyTransfers`
-2. `appealsProvider(eventId)` ▶ PENDING appeal 표시
+앱의 금전 기능 표지는 초기에는 닫혀 있고 공개 범위 응답으로 갱신된다. 따라서 버튼 구현이 있다는 사실을 현재 운영 환경에서 모두 이용 가능하다는 증거로 쓰지 않는다. 신규 포인트 지출은 서버의 금전 기능 검사도 거친다. 이미 받은 돈의 자체 반환은 서버의 신규 지출 제한 예외 목적에 포함되지만, 상태·수취인·잔액 등 반환 조건은 별도로 검사한다.
 
-POINT 결제 액션:
-1. `AppDialog.confirm` 확인
-2. `transferListProvider.payTransfer(transferId)` ▶ `POST .../transfers/{id}/pay`
-3. 현재 탭 목록 재조회 + `settlementDetailProvider` invalidate
+조회 자격·초안 공개·현재 정산과 원본 이력 경로는 [정산 현황·금액 요약·영수증 열람](F07-04_status-summary-receipt_prd.md)을 따른다. 분담금 읽기 권한이 있다는 이유로 누구의 돈이든 납부하거나 입금을 확인할 수 있는 것은 아니다.
 
-혼합 결제 서버/data/provider 흐름:
-1. `MeetingSettlementMixedPayParam(pointAmount, bankTransferAmount)`의 합은 transfer 총액과 정확히 같아야 한다.
-2. `transferListProvider.payTransferMixed(...)` ▶ `POST .../transfers/{id}/pay-mixed`
-3. `bankTransferAmount == 0`이면 전액 POINT로 즉시 `COMPLETED`; `> 0`이면 POINT 부분만 차감·수취 반영하고 transfer는 `BANK_AWAITING_CONFIRM`
-4. 수취자 또는 정산 생성자가 `받았어요` ▶ `POST .../confirm-bank-portion`
-5. 서버가 transfer를 `COMPLETED`로 바꾸고 정산 완료 조건을 다시 계산
+## 분담 방향과 현재 조회
 
-> **현재 Flutter 도달성:** API/Repository/Provider에는 `payTransferMixed`가 있으나 `community_app/lib/presentation/meeting_settlement`에는 이를 호출하는 결제 CTA/다이얼로그가 없다. 반대로 이미 `BANK_AWAITING_CONFIRM`인 transfer를 확정하는 `받았어요` CTA와 caller는 구현돼 있다.
+서버의 내 분담금 목록은 취소된 정산을 제외하고 **분담 행의 사용자 번호가 본인인 행**을 조회한다. 실제 지급 방향은 별도 `direction`으로 전달한다. 보유자의 모든 지급 의무를 내 분담금 목록 하나에서 읽는 구조가 아니며, 항목별 납부 현황과 구분한다.
 
-self-refund 액션:
-1. `AppDialog.confirm` ("환불 후 되돌릴 수 없습니다")
-2. `transferListProvider.selfRefundTransfer(transferId)` ▶ `POST .../transfers/{id}/self-refund`
+- `PAY`: 본인이 내는 몫이다. 지출에서는 분담자가 비용 보유자에게 낸다.
+- `RECEIVE`: 본인이 받는 몫이다. 수입에서는 보유자가 배분받는 사람에게 준다.
+- `OWN`: 보유자 본인의 몫이며 실제 송금이 없다.
+- 방향을 알 수 없으면 앱은 임의로 ‘낼 돈’으로 판단해 계좌·신고를 열지 않는다.
 
-share 결제 액션 (my_shares에서):
-1. `mySharesProvider.payShare(shareId)` ▶ `POST .../shares/{id}/pay`
+직접 송금의 항목별 완료 표시는 배분 설명을 위한 정보성 값일 수 있다. 실제 송금 상태와 분리해서 읽는다. 이의제기 버튼도 단순한 호스트/초안 추정 대신 서버가 해당 행에 내려준 허용 여부를 따른다. 이의 작성·처리의 상세는 [이의제기와 감사 기록](F07-08_appeal-audit_prd.md)을 따른다.
 
-## 4. 제품 규칙
+## 포인트 납부의 서버 조건과 결과
 
-- 포인트 납부는 유료 포인트만 쓴다(무료 포인트 불가).
-- 출금 자격은 실제로 받은 사람에게만 생긴다. 분담금을 낸 사람은 낸 것으로 출금 자격을 얻지 않고, 자체 환불·선입금 환불로 받은 돈도 출금 권리가 아니다.
-- 정산 취소 되돌림은 원결제의 유료·무료 몫을 되살려, 무료가 유료로 바뀌지 않는다.
-- 참석을 취소해도 내 돈이 걸려 있으면 내 분담금을 볼 수 있다. 결제는 그대로 막아, DRAFT 에서는 결제·확정·재발행·상각을 거절한다.
-- DRAFT 분담금에는 「준비 중」 표시와 금액이 바뀔 수 있다는 안내가 붙는다.
-- 이의 버튼은 정산 상태를 확인한 뒤 DRAFT 가 아니고 호스트가 아닐 때만 보인다. 호스트는 자기 분담에 이의할 수 없다(자기 이의로 완료를 막지 않게). 이의 사유는 2000자까지다.
+| 구분 | 필요한 조건 | 성공 결과 |
+| --- | --- | --- |
+| 항목 분담 포인트 납부 | 요청 모임에 속하는 실제 분담, 실제 낼 사람 본인, 미완료, 정산 `ACTIVE`, 방식 `HOST_COLLECT`, 자기 몫 아님, 분담·항목에 대기 이의 없음 | 실제 낼 사람의 유료 포인트 전용 지출과 실제 받을 사람의 지갑 적립, 원장·감사 기록. 분담 `POINT`, 포인트 금액·완료·완료 시각 저장. |
+| 송금 전액 포인트 납부 | 요청 모임에 속하는 송금, `PENDING`, 보내는 사람 본인, 정산 `ACTIVE`, 송금에 대기 이의 없음 | 송금 총액을 유료 포인트 전용 명령으로 차감·수취 적립하고 송금을 `POINT/COMPLETED`로 전환한다. 감사와 수취 알림을 발송 대기 등록한다. |
 
-## 6. 상태/권한/시나리오 매트릭스
+두 경로 모두 부모 정산과 대상 자료를 잠그고 조건을 검사한다. 다른 모임의 분담·송금 번호, 다른 납부자, 초안·취소·완료 상태, 이미 처리된 행을 새 납부로 허용하지 않는다. 처리 후 전체 정산의 남은 의무를 다시 확인한다. ‘마지막으로 버튼을 눌렀다’는 이유만으로 정산 완료를 보장하지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | (Happy Path · 참가자 · POINT 결제) 분담금 16,000원을 포인트로 즉시 결제 | settlement ACTIVE, 본인 transfer 1건 PENDING (16,000원 → 호스트) | 사용자 지갑 -16,000, 호스트 지갑 +16,000, transfer COMPLETED, 호스트 푸시 1건. |
-| S2 | (참가자 · 외부 송금 앱) 토스로 16,000원을 호스트에게 송금 | 토스 앱 사용자 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S3 | (참가자 · 혼합 결제 mixed) POINT 10,000 + 계좌이체 6,000 | ACTIVE, 본인 PENDING transfer 16,000원 | POINT 10,000은 즉시 이동하고 transfer는 `MIXED/BANK_AWAITING_CONFIRM`; `completedAt`은 아직 기록되지 않으며 수취자/정산 생성자 확인 전 정산 완료 불가 |
-| S3-A | (수취자/정산 생성자 · 은행분 확인) `받았어요` | 위 S3 transfer, PENDING appeal 없음, 확인자는 송금자가 아님 | transfer `COMPLETED` + `completedAt`, 송금자 알림·감사로그, 모든 유효 transfer/share 완료 시 settlement `COMPLETED` |
-| S3-B | (차단 · 송금자/제3자/상태 불일치) 은행분 확인 우회 호출 | 송금자 또는 무관 사용자, 혹은 상태가 `BANK_AWAITING_CONFIRM`이 아님 | 각각 403 SELF_CONFIRM / 403 NOT_AUTHORIZED / 400 NOT_AWAITING_CONFIRM, 상태 불변 |
-| S4 | (참가자 · share 직접 결제) my-shares에서 항목 단위로 결제 | HOST_COLLECT 모드가 아니라 항목 단위 share 결제 흐름 (현재는 transfer 단위 결제가 주류) | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S5 | (수취자 · self-refund) 정산 취소로 PENDING_MANUAL_REFUND 된 BANK 입금분 환불 | 호스트가 정산 취소 → 자기 transfer가 BANK_TRANSFER COMPLETED였음 → PENDING_MANUAL_REFUND로 전이 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | (엣지 · 잔액 부족) 결제 시도 시 지갑 잔액 부족 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | (엣지 · 이미 완료된 transfer) 중복 결제 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S8 | (엣지 · PENDING appeal 차단) 본인 transfer에 이의가 걸린 상태에서 결제 시도 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S9 | (엣지 · settlement 완료 트리거) 마지막 transfer 결제 시 정산 자동 COMPLETED | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
+현재 앱의 항목별 포인트 납부 Provider는 지갑·관련 현황 갱신과 실패 처리를 갖고 있지만 화면 호출부가 없다. 내 분담금 화면에서 포인트 결제를 바로 할 수 있다고 설명하지 않는다. 송금 전액 포인트는 실제 확인창을 거쳐 실행하며 실패를 성공 토스트로 바꾸지 않는다.
 
-## 8. Gap / Risk
+## 혼합 결제와 은행분 확인
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| 해소됨 | 송금 조회 권한 | 송금 조회는 로그인 회원 본인 것만 돌려준다 | 없음 |
-| 해소됨 | 내 몫 화면 | 내 몫 화면은 항목별 몫을 보이고 「실제로 주고받을 돈 보기」 로 송금 목록에 간다. 내는 일은 송금 목록에서 한다 | 없음 |
-| Gap (2026-07-29 실측) | `transfer_list_provider.dart:111`, presentation 전체 caller 검색 | `pay-mixed` API/Repository/Provider는 있으나 현재 Flutter presentation에서 호출하는 CTA/다이얼로그가 없어 사용자가 혼합 결제를 시작할 수 없음 | 혼합 결제 입력 CTA를 배선하거나 미지원 기능으로 명시 |
-| Risk (2026-07-29 실측) | `MeetingSettlementTransferVo`, `transfer_list_screen.dart:_confirmBankPortion` | transfer 응답에는 혼합 결제의 point/bank 분할 금액이 없고 총액 `amount`만 있다. 확인 다이얼로그는 총액을 “계좌이체 부분” 확인 금액으로 표시해 실제 은행분보다 크게 보일 수 있음 | 서버 VO에 분할 금액을 보존·노출하거나 다이얼로그에서 금액 단정을 제거 |
-| Fact (2026-07-29 실측) | `confirmBankPortion`, `canConfirmBankPortion` | 서버와 Flutter 모두 송금자 self-confirm을 막고 수취자/정산 생성자만 은행분 확인 가능. 실제 입금 자동 검증은 없음 | 현 신뢰 경계와 경고 문구 유지 |
+혼합 입력은 포인트 금액을 0부터 송금 총액 사이에서 정하고, 나머지를 은행분으로 계산한다. 서버도 두 금액이 빠지지 않았는지, 음수가 아닌지, 합계가 송금 총액과 정확히 같은지 검사한다. 보내는 사람 본인·대기 송금·진행 중 정산·대기 이의 없음 조건이 필요하다.
 
-## 9. 수용 기준
+| 은행분 | 현재 처리 |
+| --- | --- |
+| 0원 | 포인트만 이동하고 송금은 즉시 `COMPLETED`가 된다. 결제 방식 기록은 혼합 API의 `MIXED`이며 완료 시각과 정산 완료 조건을 갱신한다. |
+| 0원 초과 | 포인트분이 있으면 그 부분만 먼저 차감·적립한다. 은행분을 보존하고 `MIXED/BANK_AWAITING_CONFIRM`으로 바꾸며 아직 완료 시각을 기록하지 않는다. |
+| 가상계좌 발급 제공자가 지원됨 | 발급 요청 식별자와 은행분·기한·`ISSUING` 상태를 기록하고 커밋 뒤 발급 작업을 요청한다. 결제 접수 성공은 계좌 발급·은행 입금 완료와 다르다. |
+| 가상계좌 발급을 사용하지 않는 기존 경로 | 은행분은 수동 입금 확인 경로를 따른다. 발급된 계좌가 살아 있거나 상태가 불확실한 경우 개인 계좌 송금·수동 확인을 임의로 허용하지 않는다. |
 
-- **AC-01. (Happy Path · 참가자 · POINT 결제) 분담금 16,000원을 포인트로 즉시 결제**: Given settlement ACTIVE, 본인 transfer 1건 PENDING (16,000원 → 호스트) When 사용자가 해당 흐름을 실행하면 Then 사용자 지갑 -16,000, 호스트 지갑 +16,000, transfer COMPLETED, 호스트 푸시 1건.
-- **AC-02. (참가자 · 외부 송금 앱) 토스로 16,000원을 호스트에게 송금**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-03. (참가자 · 혼합 결제 mixed) POINT 일부 + 계좌이체 일부**: Given ACTIVE 정산의 본인 PENDING transfer이고 두 금액 합이 총액과 같을 때 When `pay-mixed`를 호출하면 Then POINT 부분만 즉시 이동하고 은행분이 있으면 transfer는 `BANK_AWAITING_CONFIRM`에 머물며 `completedAt`은 아직 기록되지 않는다.
-- **AC-03-A. (수취자/정산 생성자 · 혼합 은행분 확인)**: Given `BANK_AWAITING_CONFIRM`이고 PENDING appeal이 없을 때 When 송금자가 아닌 수취자 또는 정산 생성자가 `받았어요`를 확정하면 Then transfer가 `COMPLETED`가 되고 송금자 알림·감사로그·정산 완료 재평가가 실행된다.
-- **AC-03-B. (차단 · 은행분 self-confirm/제3자/잘못된 상태)**: Given 혼합 은행분 확인 요청 When 송금자, 무관 사용자, 또는 잘못된 상태로 호출하면 Then 각각 서버의 SELF_CONFIRM, NOT_AUTHORIZED, NOT_AWAITING_CONFIRM 오류로 거절되고 transfer 상태는 바뀌지 않는다.
-- **AC-04. (참가자 · share 직접 결제) my-shares에서 항목 단위로 결제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-05. (수취자 · self-refund) 정산 취소로 PENDING_MANUAL_REFUND 된 BANK 입금분 환불**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. (엣지 · 잔액 부족) 결제 시도 시 지갑 잔액 부족**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. (엣지 · 이미 완료된 transfer) 중복 결제 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-08. (엣지 · PENDING appeal 차단) 본인 transfer에 이의가 걸린 상태에서 결제 시도**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-09. (엣지 · settlement 완료 트리거) 마지막 transfer 결제 시 정산 자동 COMPLETED**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
+수동 은행분 확인은 송금자가 아닌 수취자 또는 정산 생성자가 실제 입금을 확인한 뒤 실행한다. 서버는 진행 중·`BANK_AWAITING_CONFIRM`·대기 이의 없음과 수동 확인 허용 정책을 다시 검사한다. 가상계좌 미발급, 발급 실패, 수동 허용 기록 또는 폐기 완료 근거 등 해당 정책을 만족해야 한다. 송금자 자신의 확인은 거절한다.
+
+일반 송금 응답에는 혼합 은행분 금액이 별도 필드로 없으므로 현재 확인창은 **전체 송금액이며 은행분과 다를 수 있음**을 표시하고 은행 내역과 대조하도록 안내한다. 예전처럼 송금 총액을 은행분으로 단정하는 설명은 사용하지 않는다. 가상계좌 납부 안내·실제 수취 확인·재발행·상각의 후속 조건은 [송금 확인](F07-06_host-confirm-transfers_prd.md)에서 이어진다.
+
+## 받는 사람 계좌와 외부 송금
+
+계좌 조회는 모임 번호와 분담 또는 송금 번호를 함께 사용한다. 서버는 실제 낼 사람 본인, 모임 소속, 진행 중과 미완료 의무를 검사한다. 항목별 분담은 자기 몫이 아닌 `HOST_COLLECT`여야 하며, 송금은 `PENDING` 또는 `BANK_AWAITING_CONFIRM`이고 수동 은행 처리 정책이 허용되어야 한다.
+
+허용되면 실제 받는 사람의 기본 정산 계좌를 반환한다. 등록된 계좌는 은행·번호·예금주와 번호 복사를 제공한다. 기본 계좌가 없으면 미등록, 받는 계정이 닫혔으면 비공개 상태를 반환한다. 주최자·다른 참석자라는 이유만으로 다른 사람의 계좌를 읽는 기능이 아니다.
+
+외부 송금 시트는 금액·받는 사람과 서버 계좌 정보를 확인하게 한다. 토스에는 금액을 전달하며 실행 실패 시 웹 대체 경로를 시도한다. 카카오페이는 송금 화면에서 금액·받는 사람을 입력하도록 안내한다. 열기 실패는 오류로 표시한다. 시트를 닫거나 외부 앱을 열었다고 서버에서 돈을 이동시키거나 입금을 확정하지 않는다.
+
+## 보냈다는 신고와 실제 입금의 구분
+
+- 낼 사람은 서버가 허용한 행에서 **보냈어요**를 실행한다. 신고는 `bankSentAt`과 감사 기록을 남기고 실제 받는 사람에게 알림을 등록한다. 포인트 차감·은행 송금·납부 완료를 만들지 않는다.
+- 이미 신고한 같은 행은 다시 기록하지 않는다. 알림은 분담/송금 종류와 번호를 기준으로 한 번 등록하므로 신고를 철회했다가 다시 해도 반복 발송을 요청하지 않는다. 발송 대기 등록을 기기 알림 수신 완료로 쓰지 않는다.
+- 신고 철회는 본인이 잘못 누른 표시를 되돌리는 행동이다. 실제 송금을 취소하거나 이미 받은 돈을 자동으로 반환하지 않는다. 진행 중에는 미완료·의무·대기 이의 조건을, 취소 후에는 미확인·미반환 등 별도 허용 조건을 검사한다.
+- 혼합 송금의 은행분 대기는 새로운 ‘보냈어요’ 신고 대상이 아니다. 이미 있던 신고의 철회는 현재 서버 허용 여부를 따른다. 계좌 조회 허용과 신고 허용이 항상 같은 것은 아니다.
+- 앱의 계좌·신고 행동은 서버의 `reportSent`, `withdrawSent`를 사용하며 누락된 권한은 닫는다. 성공 후 관련 조회를 갱신하고, 거절되면 권한 자료를 다시 읽어 안내한다. 받는 계좌 조회 실패는 현재 구획에서 숨겨질 수 있지만 기존 신고의 철회 안내는 유지할 수 있다.
+- 신고자의 재촉 제외·자동 알림 시점은 [리마인드와 마감 연장](F07-07_remind-extend_prd.md)의 정책이며 신고 자체가 모든 알림을 영구히 차단하는 것은 아니다.
+
+## 수입과 취소 뒤 포인트 반환
+
+지출은 분담자에서 보유자로, 수입은 보유자에서 배분받는 사람으로 향한다. 자기 몫에는 지급 의무가 없다. 따라서 ‘모든 납부는 호스트에게’, ‘내 분담 행이면 반드시 내가 내는 돈’이라는 설명을 사용하지 않는다.
+
+취소 후 외부 계좌로 받은 돈이 직접 반환 대기가 되면, 송금의 **받는 사람 본인**이 포인트로 돌려줄 수 있다. 서버는 모임 소속과 `PENDING_MANUAL_REFUND` 상태를 확인하고, 가상계좌 은행분이 이미 지갑 장부에 적립된 표지가 있으면 이 자체 반환을 거절한다.
+
+반환 금액은 은행분 기록이 있으면 그 금액, 없으면 송금 총액이다. 받은 사람의 유료 포인트 전용 지출로 차감하고 원래 보낸 사람 지갑에 적립하며 역분개·감사·알림을 기록하고 송금을 `CANCELLED`로 바꾼다. 혼합 결제에서 이미 반환된 포인트까지 총액으로 한 번 더 돌려주는 기능이 아니다. 서버의 취소·역분개 전체 흐름은 [금액 검토·정산 요청·취소와 반환](F07-03_activate-cancel_prd.md)을 따른다.
+
+현재 자체 반환 확인창은 송금 총액을 차감액으로 표시한다. 혼합 결제의 은행분만 남아 있으면 실제 서버 반환액과 안내가 다를 수 있으므로 아래 제한으로 남긴다. 이 기능의 입금·포인트 반환을 출금 가능 금액 판정과 동일하게 설명하지 않는다.
+
+## 중복 요청·응답 유실·계정 경계
+
+분담 포인트·송금 포인트·혼합·자체 반환 API는 `Idempotency-Key`를 필수로 받는다. 서버의 명령 영수증은 회원·명령 종류·모임과 대상 번호·혼합 금액 본문을 결합해 처리한다. 이 결제 명령들의 성공 응답 본문은 `void`이며 최신 행·정산·지갑은 별도 조회로 갱신한다.
+
+앱은 회원 금전 명령 처리기를 사용한다. 같은 계정·대상·입력의 결과를 모르는 동안 다음 시도는 기존 식별자를 재사용하고, 성공이 정리된 뒤의 새 의도는 새 식별자를 받는다. 같은 진행 중 명령은 공유하거나 추가 실행을 막는다. 혼합 결제는 해당 모임의 진행 중 결제 Future를 공유한다. 응답 유실을 즉시 새 결제 의도로 바꾸지 않는다.
+
+성공하면 관련 목록·상세·요약과 지갑을 갱신한다. 처리됐을 가능성이 있는 실패도 현황을 다시 읽고 오류를 전달하며, 결과를 확보하지 못한 명령을 성공으로 꾸미지 않는다. 늦은 목록 조회는 탭 세대가 바뀌면 적용하지 않고, 계정이 바뀐 명령 결과는 현재 계정 자료에 반영하지 않는다.
+
+계좌 조회·‘보냈어요’·철회·수동 입금 확인은 같은 포인트 명령 영수증 계약이 아니다. 송금 신고는 부모·행 잠금과 이미 기록된 표시, 한 번만 보내는 알림 키로 중복 효과를 제한한다. 모든 정산 버튼에 동일한 멱등 키가 있다고 쓰지 않는다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 확인 내용 | 영향과 다음 확인 |
+| --- | --- | --- |
+| Gap | 항목별 포인트 납부 API·Provider는 있으나 presentation의 납부 호출부가 없다. | 항목별 화면의 현재 납부 수단을 계좌·신고 중심으로 설명한다. API 지원을 화면 지원으로 표시하지 않는다. |
+| Gap | 자체 반환 확인창은 총액을 표시하지만 서버는 남은 은행분을 반환할 수 있다. | 혼합 결제에서 차감 안내가 실제 금액보다 클 수 있다. 반환 금액 필드·표시를 맞추는 제품 수정이 필요하다. |
+| Risk | 송금 일반 응답에는 혼합 은행분과 가상계좌 수동 허용 상태가 모두 담기지 않는다. 일부 수동 확인 버튼은 서버에서 거절될 수 있다. | 전체 송금액을 은행분으로 단정하지 않고, 서버의 상태·허용 정책을 최종 기준으로 삼는다. |
+| Risk | 계좌 조회 실패 구획이 숨겨질 수 있고, 금전 기능·발급 제공자 설정에 따라 실제 이용 가능한 경로가 달라진다. | 코드 연결만으로 현행 운영 계좌 발급·은행 수취·모든 결제 수단 제공을 완료 처리하지 않는다. |
+| 미검증 | 현재 소스와 선택한 기존 단언을 대조했다. | 새 포인트 지출·은행 송금·가상계좌 발급·외부 앱 열기·기기/이미지 시험은 하지 않았다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 방식별 입구:** 내 분담금의 항목별 몫과 직접 송금 차액을 구분하고, 직접 송금에서는 각 항목을 다시 납부하도록 유도하지 않는다.
+- **AC-02 실제 지급 방향:** PAY·RECEIVE·OWN을 구분하며 방향이 없으면 내는 사람으로 추정하지 않는다. 수입 보유자의 지급 의무는 항목별 현황과 함께 확인한다.
+- **AC-03 현재 제공 범위:** 금전 기능 표지에 따라 송금 포인트·혼합 입구를 열고 입력 확정 뒤에도 허용 여부를 확인한다. 항목별 포인트 납부의 화면 미연결을 숨기지 않는다.
+- **AC-04 분담 포인트:** 실제 낼 사람·진행 중·항목별 납부·미완료·자기 몫 아님·대기 이의 없음·모임 소속을 확인하고 유료 포인트 지출·수취 적립·분담 완료를 기록한다.
+- **AC-05 송금 포인트:** 본인 PENDING·진행 중·대기 이의 없음·모임 소속을 확인한다. 성공 시 송금 완료·원장·감사·알림 등록과 전체 완료 재평가를 처리한다.
+- **AC-06 혼합 입력:** 두 금액은 필수·0 이상·총액과 일치해야 한다. 은행분 0이면 완료, 은행분이 있으면 포인트분만 이동하고 확인 대기를 유지한다.
+- **AC-07 혼합 후 이동:** 응답 대기 중 결제를 중복 보내지 않고, 성공 후 은행분이 있으면 가상계좌 안내로 이동한다. 접수를 실제 계좌 발급·은행 입금 완료로 표시하지 않는다.
+- **AC-08 은행분 확인:** 송금자는 본인 입금을 확정하지 못한다. 수취자·생성자의 확인도 현재 상태·대기 이의·수동 확인 정책을 통과해야 한다. 총액과 실제 은행분을 구분한다.
+- **AC-09 계좌 공개:** 실제 낼 사람의 현재 의무·모임·상태를 확인하고 기본 계좌만 제공한다. 미등록과 비공개를 구분하며 다른 사람 계좌 번호로 우회하지 못한다.
+- **AC-10 외부 송금:** 금액·받는 사람·계좌를 확인하고 앱을 열 수 없으면 실패를 안내한다. 앱 열기·복사·시트 닫기를 납부 완료로 처리하지 않는다.
+- **AC-11 송금 신고:** 신고는 표시·감사·수취인 알림만 만든다. 반복 신고 및 철회 후 재신고로 알림을 반복 등록하지 않는다.
+- **AC-12 신고 철회:** 실제 보내는 사람과 현재 허용 조건을 확인한다. 혼합 은행 대기의 신규 신고와 기존 신고 철회, 취소 후 미확인 신고를 구분한다.
+- **AC-13 자체 반환:** 직접 반환 대기의 수취인만 실행하고 이미 장부에 적립된 가상계좌 은행분은 거절한다. 남은 은행분 또는 그 기록이 없는 총액을 포인트로 반환한다.
+- **AC-14 반환 안내 제한:** 혼합 결제의 실제 반환액과 현재 확인창 총액의 불일치를 명시하며, 동일한 금액이라고 보장하지 않는다.
+- **AC-15 명령 식별자:** 네 포인트 금전 명령에 대상·본문과 멱등 키를 전달한다. 응답 불확실 중 같은 의도는 기존 키, 성공 정리 뒤 새 의도는 새 키를 사용한다.
+- **AC-16 실패와 계정:** 오류를 성공으로 표시하지 않고 필요한 현황·지갑을 재조회한다. 이전 탭의 늦은 조회와 이전 계정의 명령 결과를 현재 상태에 덮지 않는다.
+- **AC-17 완료와 후속:** 납부 성공 후 남은 전체 의무를 서버가 판단하며 완료·취소·은행분 확인·반환 상태를 혼동하지 않는다. 재발행·상각·이의 처리는 해당 후속 문서의 조건을 따른다.
+
+근거는 현재 서버·앱 구현과 `MeetingSettlementTransferServiceTest`의 혼합 포인트 이동·은행 대기 단언, `settlement_mixed_payment_navigation_test.dart`의 지연 응답 중 요청 1회·성공 뒤 안내 이동 단언, `transfer_actions_provider_test.dart`의 네 금전 명령 식별자 재사용 단언, `settlement_share_direction_display_test.dart`의 PAY·RECEIVE·OWN·알 수 없는 방향 표시 단언이다. 기존 시험 코드를 읽은 범위이며 새 실행 통과 수가 아니다.
+
+## 과거 확인 기록
+
+아래는 2026년 10월 12일 계좌·송금 신고 문서의 당시 확인 기록이다. 현재 소스의 새 실행 결과로 합산하지 않는다.
+
+> 확인 범위: 서버·앱 구현과 자동 검사 기록을 대조했다. 신고·권한·경합 서버 12개와 앱 정산·알림 등 863개 통과 기록이 있다. 이번 계좌·신고 화면의 실제 이용·실기기·은행 내역 검증은 별도다. 오늘의 Google·메일·푸시 연동 성공을 이 기능의 완료 근거로 사용하지 않는다.

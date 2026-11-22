@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,262개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,270개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1262,
+    "documentedScenarioItems": 1270,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4951,
+    "automatedTestFilesScanned": 4957,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 65,
+    "directlyLinkedAutomatedTests": 66,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 65,
+    "automatedScenarioReferences": 66,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 42,
-    "partialEvidenceChain": 51,
-    "definitionOnlyEvidence": 82,
-    "traceMarkers": 530,
-    "verifiedTraceRecords": 528,
+    "partialEvidenceChain": 52,
+    "definitionOnlyEvidence": 81,
+    "traceMarkers": 537,
+    "verifiedTraceRecords": 535,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -9720,19 +9720,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-05",
       "domain": "모임 정산",
-      "name": "분담금 납부",
-      "scenarioCount": 9,
+      "name": "항목별 분담·송금 납부·송금 신고·포인트 반환",
+      "scenarioCount": 17,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-05_pay-share/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-05_pay-share_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 17
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-05_pay-share/backend.md",
-        "total": 7,
-        "verified": 7,
+        "total": 14,
+        "verified": 14,
         "retired": 0,
         "entries": [
           {
@@ -9771,7 +9771,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-05:3",
-            "label": "POST .../settlement/shares/{shareId}/pay — Share를 POINT로 결제 (참가자)",
+            "label": "분담 포인트 납부 — 실제 낼 사람",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -9788,7 +9788,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-05:4",
-            "label": "PATCH .../settlement/shares/{shareId}/confirm — Share 계좌이체 확인 (호스트)",
+            "label": "분담 계좌 입금 확인 — 수취자 또는 정산 생성자",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -9805,7 +9805,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-05:5",
-            "label": "POST .../settlement/transfers/{transferId}/pay — Transfer POINT 결제 (참가자)",
+            "label": "송금 전액 포인트 납부 — 보내는 사람",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -9822,7 +9822,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-05:6",
-            "label": "POST .../settlement/transfers/{transferId}/pay-mixed — Transfer 혼합 결제 (참가자)",
+            "label": "송금 혼합 납부 — 보내는 사람",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -9839,7 +9839,7 @@ window.SCENARIO_AUDIT = {
           },
           {
             "id": "F07-05:7",
-            "label": "POST .../settlement/transfers/{transferId}/self-refund — 수취자 self-refund (참가자)",
+            "label": "직접 반환 대기 포인트 반환 — 받는 사람",
             "status": "verified",
             "note": "",
             "endpoints": [
@@ -9853,15 +9853,138 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 523
               }
             ]
+          },
+          {
+            "id": "F07-05:8",
+            "label": "혼합 은행분 수취 확인",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "confirmTransferBankPortion",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/confirm-bank-portion",
+                "targetLine": 509,
+                "methodLine": 510
+              }
+            ]
+          },
+          {
+            "id": "F07-05:9",
+            "label": "분담 실제 수취인 계좌",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "getShareRecipientAccount",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/recipient-account",
+                "targetLine": 296,
+                "methodLine": 297
+              }
+            ]
+          },
+          {
+            "id": "F07-05:10",
+            "label": "송금 수취인 계좌",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "getTransferRecipientAccount",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/recipient-account",
+                "targetLine": 303,
+                "methodLine": 304
+              }
+            ]
+          },
+          {
+            "id": "F07-05:11",
+            "label": "분담 송금 신고",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "reportShareBankSent",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/bank-sent",
+                "targetLine": 310,
+                "methodLine": 311
+              }
+            ]
+          },
+          {
+            "id": "F07-05:12",
+            "label": "분담 신고 철회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "withdrawShareBankSent",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}/settlement/shares/{shareId}/bank-sent",
+                "targetLine": 318,
+                "methodLine": 319
+              }
+            ]
+          },
+          {
+            "id": "F07-05:13",
+            "label": "송금 신고",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "reportTransferBankSent",
+                "httpMethod": "PATCH",
+                "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/bank-sent",
+                "targetLine": 326,
+                "methodLine": 327
+              }
+            ]
+          },
+          {
+            "id": "F07-05:14",
+            "label": "송금 신고 철회",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "withdrawTransferBankSent",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/events/{eventId}/settlement/transfers/{transferId}/bank-sent",
+                "targetLine": 334,
+                "methodLine": 335
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 3,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 3,
+        "files": [
+          "community_app/test/meeting_settlement/transfer_actions_provider_test.dart",
+          "community_app/test/presentation/meeting_settlement/settlement_mixed_payment_navigation_test.dart",
+          "community_app/test/presentation/meeting_settlement/settlement_share_direction_display_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -9872,10 +9995,10 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "partial",
       "proof": "auto",
-      "knownIssues": 0,
+      "knownIssues": 1,
       "pendingReview": 0
     },
     {
