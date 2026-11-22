@@ -8367,7 +8367,7 @@
       "evidence": [
         "payment_policy_20261122"
       ],
-      "reviewedSha256": "7b97e810ea2b1652dd492cc2cc864ddd56ea8a3dde2df1acb8c5f947bea164f4"
+      "reviewedSha256": "6b55f5ea91670db934714d3f1b0f95748657b3c806600b1c85f27a935ffa0aec"
     },
     {
       "path": "prd/03_policy_prds/permission_policy_prd.md",
@@ -43280,7 +43280,7 @@
     },
     "payment_policy_20261122": {
       "kind": "source_review",
-      "scope": "결제·정산 정책 정본 전체 갱신: 기능 정본13개 재사용 및 공통 차감 분류/제한·무료 지급/만료/복원 직접 대조. HTML 정책 본문과 3개 결제영역 연결문서 부분 동기화; HTML 외부지급 복구·운영보정 보충은 미완료. 제품실행 아님.",
+      "scope": "결제·정산 정책 정본 전체 갱신: 기능 정본13개 재사용 및 공통 차감 분류/제한·무료 지급/만료/복원 직접 대조. HTML 정책 본문과 3개 결제영역 연결문서 부분 동기화; HTML 외부지급 복구·운영보정 보충은 미완료. 제품실행 아님. 보충 직접대조:주최자회수금상환 금전기능관문,추가입금집행/예약누계의정산총액상한·실거래완료복구.",
       "sources": [
         {
           "path": "community_api/domain/src/main/java/com/endside/community/payment/policy/SpendPolicy.java",
@@ -43301,6 +43301,31 @@
           "path": "community_api/domain/src/main/java/com/endside/community/payment/service/ChargeLotConsumptionService.java",
           "sha256": "f5dee498f9258301e1c4db36a012edcea299c5b98cb71dd36d7ed71d6a2f5f07",
           "reviewScope": "43 상수30일;441–518 환불유료/무료몫복원·단기무료분별도단위/원기한유지"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/money/EventRefundReceivableRepaymentCommand.java",
+          "sha256": "e856a654d86602aac30aa40e3647137b9035cfe2ffcc87568681cf3b82cdb0ea",
+          "reviewScope": "41–184 본인조회/현재ID전체와총액대조·금전허용필수·유료전액상환/원장"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementCorrectionCommands.java",
+          "sha256": "ae7c84fc44135db2e96abbbfe73b38288e6b8280c3cdf693cceacc85de12e4e7",
+          "reviewScope": "250–325 추가입금집행/예약누계총액상한·동일대기거절;339–441 실행/취소/강제실패와기존실거래대조복구"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/service/SettlementRecoveryPolicy.java",
+          "sha256": "ce54d56fab4bc7202428e9115555e9945eb9cd12e9a5a469814564bba8213fca",
+          "reviewScope": "전체본문:지급기준/회수잔여·추가입금집행/예약합계·실거래근거·잠금순서"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/payment/controller/WalletController.java",
+          "sha256": "9d3ead0cc566f10853c081c56babf9f3435c84d8efe53f6d58e89dda7e892144",
+          "reviewScope": "112–139 본인회수금조회/필수Idempotency-Key상환영수증"
+        },
+        {
+          "path": "community_app/lib/domain/providers/payment/event_refund_receivable_provider.dart",
+          "sha256": "08983d99dd74da3d22dfcc3ae8e3e85a099403ee637b708056b9ac74d3b1d42a",
+          "reviewScope": "20–120 현재목록/전체ID·금액/계정티켓·보관명령·불일치/결과불명갱신"
         }
       ],
       "reusedSources": [
@@ -43334,7 +43359,7 @@
       "canonicalSources": [
         {
           "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
-          "sha256": "7b97e810ea2b1652dd492cc2cc864ddd56ea8a3dde2df1acb8c5f947bea164f4"
+          "sha256": "6b55f5ea91670db934714d3f1b0f95748657b3c806600b1c85f27a935ffa0aec"
         },
         {
           "path": "business_logic/prd/01_domain_prds/06_결제_and_지갑_prd.md",
@@ -43409,7 +43434,9 @@
         "이전참가비알림/만료/환불재알림/취소누락 Gap 현행정본으로교체",
         "무료환불단기원본은반환몫만30일분리",
         "응답유실≠미차감;경로별키/앱보관차이",
-        "payment.html 외부지급복구·운영자보정·주최자회수금 보충 대조 남음"
+        "payment.html 외부지급복구·운영자보정·주최자회수금 보충 대조 남음",
+        "주최자환불회수금신규상환도moneyLiveGate.requireLive필수",
+        "추가입금무상한이라는옛설명정정:집행/대기누계+신규액<=정산gross"
       ],
       "retainedHistoricalQuotes": [],
       "retainedHistoricalHtml": [
@@ -43422,7 +43449,7 @@
       ],
       "checks": {
         "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
-        "groupDigests": "20 source/canonical digests; 9 retained HTML IDs",
+        "groupDigests": "25 source/canonical digests; 9 retained HTML IDs",
         "derivedDocuments": "1 documents; shared batch verified 5 paths, 76 relative links/anchors and 2 derived-from digests",
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
