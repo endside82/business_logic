@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,298개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,304개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1298,
+    "documentedScenarioItems": 1304,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4965,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 72,
+    "directlyLinkedAutomatedTests": 73,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 72,
+    "automatedScenarioReferences": 73,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 53,
-    "definitionOnlyEvidence": 78,
-    "traceMarkers": 568,
-    "verifiedTraceRecords": 566,
+    "partialEvidenceChain": 54,
+    "definitionOnlyEvidence": 77,
+    "traceMarkers": 571,
+    "verifiedTraceRecords": 569,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -11371,19 +11371,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-06",
       "domain": "플랜 마켓",
-      "name": "마켓 아이템 관리",
-      "scenarioCount": 9,
+      "name": "내 상품 등록·심사·판매 관리",
+      "scenarioCount": 15,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-06_market-item-management/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 9
+        "documentScenarioCount": 15
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-06_market-item-management/backend.md",
-        "total": 6,
-        "verified": 6,
+        "total": 9,
+        "verified": 9,
         "retired": 0,
         "entries": [
           {
@@ -11487,15 +11487,68 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 58
               }
             ]
+          },
+          {
+            "id": "F08-06:7",
+            "label": "POST /api/v1/market/items/{itemId}/on-sale",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "controller": "MarketItemController",
+                "method": "activateSale",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/market/items/{itemId}/on-sale",
+                "targetLine": 87,
+                "methodLine": 88
+              }
+            ]
+          },
+          {
+            "id": "F08-06:8",
+            "label": "GET /api/v1/market/items/{itemId}/review-history",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "controller": "MarketItemController",
+                "method": "getReviewHistory",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/market/items/{itemId}/review-history",
+                "targetLine": 107,
+                "methodLine": 108
+              }
+            ]
+          },
+          {
+            "id": "F08-06:9",
+            "label": "POST /api/v1/market/items/{itemId}/submit",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemModerationController.java",
+                "controller": "MarketItemModerationController",
+                "method": "submitForReview",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/market/items/{itemId}/submit",
+                "targetLine": 43,
+                "methodLine": 44
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 1,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 1,
+        "files": [
+          "community_app/test/presentation/market/market_item_edit_screen_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -11506,7 +11559,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "partial",
       "proof": "auto",
       "knownIssues": 0,

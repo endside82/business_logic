@@ -288,7 +288,8 @@
         "plan_list_20261122",
         "plan_detail_20261122",
         "plan_reorder_20261122",
-        "plan_publish_20261122"
+        "plan_publish_20261122",
+        "market_management_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3514,9 +3515,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "654119e8a28b05548753d7125ff71116a254f8ffff1aa97baafe16dfcad4dc8d",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_management_20261122"
+      ],
+      "reviewedSha256": "4088cafb668ff91255b7f4adb36f7269781f4a4aeed86677f158c8524ba69988"
     },
     {
       "path": "docs/features/F08-07.html",
@@ -5004,7 +5008,8 @@
         "plan_list_20261122",
         "plan_detail_20261122",
         "plan_reorder_20261122",
-        "plan_publish_20261122"
+        "plan_publish_20261122",
+        "market_management_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5087,7 +5092,8 @@
         "plan_list_20261122",
         "plan_detail_20261122",
         "plan_reorder_20261122",
-        "plan_publish_20261122"
+        "plan_publish_20261122",
+        "market_management_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5194,7 +5200,8 @@
         "plan_list_20261122",
         "plan_detail_20261122",
         "plan_reorder_20261122",
-        "plan_publish_20261122"
+        "plan_publish_20261122",
+        "market_management_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6611,10 +6618,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "f30a889ab9e8f74af5a1bd3c0a3eb603d65875659d3c0e216c479ae0cd4bcfcf",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_management_20261122"
+      ],
+      "reviewedSha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-07_creator-profile-stats_prd.md",
@@ -7989,7 +7998,8 @@
         "plan_list_20261122",
         "plan_detail_20261122",
         "plan_reorder_20261122",
-        "plan_publish_20261122"
+        "plan_publish_20261122",
+        "market_management_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8224,7 +8234,8 @@
         "plan_list_20261122",
         "plan_detail_20261122",
         "plan_reorder_20261122",
-        "plan_publish_20261122"
+        "plan_publish_20261122",
+        "market_management_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12120,10 +12131,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "dc1596c71355d0431a567bb7179d6e088acd6d5f479669af1dc610386325ad72",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_management_20261122"
+      ],
+      "reviewedSha256": "3bb8da2e9a993e8d07d5d33c5aa5a1636fcf60b434c56283f5189125eedef249"
     },
     {
       "path": "units/08_plan_market/F08-06_market-item-management/diagrams.md",
@@ -12131,9 +12144,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "3d46379a2ca95e85cd0a4de03843d5d3bbcf2bf24f956d976f3a889bfd38d025",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_management_20261122"
+      ],
+      "reviewedSha256": "04ebd701e1d0a24870bb3831dfdee8d1fea4bdb13af255f48a7940a4060bdc2e"
     },
     {
       "path": "units/08_plan_market/F08-06_market-item-management/frontend.md",
@@ -12141,9 +12157,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "5ad9c25058bad7e88eded63d402fb51d2fa4e9f489d2ea339b4355bde0c9c4d8",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_management_20261122"
+      ],
+      "reviewedSha256": "41651378628ac2be93696fcd5b99dfb393dca11a0c8185ca08694d27097532ac"
     },
     {
       "path": "units/08_plan_market/F08-06_market-item-management/scenarios.md",
@@ -12151,9 +12170,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7c001f8574a0d333cc5aa02c9df88ec5a8d6e252caa6235917b570390c5e01ff",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_management_20261122"
+      ],
+      "reviewedSha256": "1fa4a2d49856e94b24c80071e9401d418a167cd384478ce143c1733bb75fe445"
     },
     {
       "path": "units/08_plan_market/F08-07_creator-profile-stats/backend.md",
@@ -31374,6 +31396,244 @@
         "groupDigestsAndAnchors": "33 source/canonical hashes and 4 retained HTML IDs match",
         "scenarioAudit": "--write and --check pass",
         "relativeLinksAndDerivedDigests": "2915 relative paths and 345 derived digests checked; global checker still fails only recorded my_profile source drift",
+        "productTests": "not executed; selected existing assertions read only",
+        "releaseScope": "known global date discrepancy remains; unchanged checker not rerun"
+      }
+    },
+    "market_management_20261122": {
+      "kind": "source_review",
+      "scope": "실제 내 상품/편집·판매 관리 입구·회원 콘텐츠 생성/연결·READY/후보/승인/판매 구분·변경 필드/새 값 병합·빈 값 의미·재심사/사진·판매/삭제/예약·admin-app 심사 권한과 상태를 소스로 대조. 기존 선택 단언 읽기; 제품 실행·이미지/업로드·운영자 심사·알림/예약 실행 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+          "sha256": "8725e2effea08426e202ee4ce2969ee2141fa7e88f2c40532d269ce1885e45f1",
+          "reviewScope": "26–119: MARKET/safetyExit·전체명령/본인목록/심사이력·Page/List/201/204"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemModerationController.java",
+          "sha256": "f4eae9709ed794f4c3438012f6fcc7da2ac3a6517221a0463e8a6cf4e1b8113c",
+          "reviewScope": "30–48: 실제 앱 /submit 204; 옛 /publish와 구분"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemService.java",
+          "sha256": "b82f8eef8ba6385595e9c5725bddd85f756585def1e0d1c69d17c849fa805320",
+          "reviewScope": "149–337,347–443,560–618,631–681: 생성/자원중복/부분수정·재심사/candidate·판매/삭제/번들·가격검증·권한·응답 행동"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemModerationService.java",
+          "sha256": "2801124e0b4203a424e20dbaafd09c71d504b1f35bfc1293c52af512c087ba30",
+          "reviewScope": "58–154,185–253: 제출·후보/승인·반려/비공개·이력·알림의도·소유/행잠금"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/MarketItemAddParam.java",
+          "sha256": "03c7f68ec2ecf683632bdd4a5013ed843771d2ae7c67ef72f449d3e33c16b29a",
+          "reviewScope": "7–29 전체 요청 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/param/MarketItemModParam.java",
+          "sha256": "8082a7f1fdcd1f954b1cd43aa7ae004d82a5a69e0a3065b69b4a6868868b6fbe",
+          "reviewScope": "7–27 전체 요청 필드; 유형/결제수단/표시순서 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/MarketItemVo.java",
+          "sha256": "ba34d7e8c69d5db446821ad480b179c9bbaae23d5cba2bc21bb550f7fb5dd2ed",
+          "reviewScope": "12–61: 소유/버전/가격/사진/행동 응답 필드"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/constants/ItemStatus.java",
+          "sha256": "6a024c2d09612231042e7403a523697f766e2c916baad87b1f4254e864ace134",
+          "reviewScope": "8–32: 9상태 및 ON_SALE 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketProductVersionService.java",
+          "sha256": "eb22bad97c707cef476d47df23d9596a519bdc018e26ef00aaf75464f784f4c7",
+          "reviewScope": "34–68,79–92: 실자원 검증·후보계약 스냅샷·활성버전 일치"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/ProductResourceService.java",
+          "sha256": "5c93417e604fc0ad2a1dbff1e6e7ef23bf2b7933bad2e39de2df815d31c87141",
+          "reviewScope": "45–99: 패키지수/일수/본인공개플랜·디지털원본 준비·회원유형별자원목록·SUBSCRIPTION 빈 목록"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PlanProductResourceAdapter.java",
+          "sha256": "c234f2d65f31b888988ea7433c8de6242a7af005039a8eb1a03c1ab5aa7ff794",
+          "reviewScope": "30–46: 소유/PUBLISHED/개정스냅샷"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/EventPackageProductResourceAdapter.java",
+          "sha256": "e63eee7504c771ce671a9b057a0092e35645c1895962c984972c66677a331715",
+          "reviewScope": "40–64: 소유/상태/양수·원본플랜/개정·패키지스냅샷"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/VirtualItemProductResourceAdapter.java",
+          "sha256": "9f4d8acc37a0445c1d6fc0a6bea62c2ba342853461e927e3cb06da5d1e28e28a",
+          "reviewScope": "37–53: 본인공개자원/전달파일 검증 연결"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/SubscriptionProductResourceAdapter.java",
+          "sha256": "b9a35f262648b72dc0c460f0da61e2837fe34335bdea43ec5f08d04e10fa2288",
+          "reviewScope": "33–48: 소유일치·공개 PREMIUM 1/3/6개월 계약"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketSaleScope.java",
+          "sha256": "ca82eff224ee04a42eb1d3c2233262d8c6a188c1ab58101e84270545caa494be",
+          "reviewScope": "36–58: MARKET_PERIOD_PASS 별도 판매유형 제어"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/ContentPhotoService.java",
+          "sha256": "997f5b38e45d5d0b5e23612e34c8c7eb8d6c638ab3c47b9f9fc9193cf03c3d5c",
+          "reviewScope": "32–49,70–150: 최대10/중복·용도·파일상태/이미지/소유·기존권한·순서/제거·상품트랜잭션"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/constants/ContentPhotoTarget.java",
+          "sha256": "31109f86cff4d5e711246b98946a9ba7ced27107a3c3db806fa0372b8ab9315c",
+          "reviewScope": "12: MARKET_ITEM 사진용도 MARKET_DESCRIPTION_IMAGE"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/plan/controller/ManageMarketItemModerationController.java",
+          "sha256": "127d8fc0d3ca8b6912cd84a325b51aca9269abcb941e5a5b1b26f89abd5c18b3",
+          "reviewScope": "28–73: 현재관리자주소·MANAGE_MARKETPLACE·필수멱등키·승인/반려/비공개"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/plan/service/ManageMarketItemModerationService.java",
+          "sha256": "eb817641293ddd0158ff0b39baae749536a3eabbff389af4832446e4a4b17ba7",
+          "reviewScope": "66–202: 관리자상태조건·활성후보승인·비공개/번들·이력/관리기록/알림의도·행잠금"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/creator_market_items_screen.dart",
+          "sha256": "c3a5d4cc143ae3596af33ef1c9de2d235b3a2164d5f9ab53db72d72e69439bfc",
+          "reviewScope": "33–132,174–232: 100개provider목록·빈/재조회·실제 편집판매관리·미리보기"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_item_create_screen.dart",
+          "sha256": "d3f30106f5c9a683ae865136b9796aa316f31d7b17093440d3e809e7adeeefb0",
+          "reviewScope": "38–140,290–424: 회원3유형·선택자원/중복표시·PAID_POINT/NONE 생성·콘텐츠생성 분리·성공편집전환"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_item_edit_screen.dart",
+          "sha256": "7f929dbd9621e274cdceb8bf3a0dfcc2a39abdd9ee289198e01e71d621009077",
+          "reviewScope": "82–320,322–610,611–690,710–763,799–878,892–1070: 변경필드·서버갱신/입력유지·저장/제출/판매/삭제/예약·봉인결과뷰·재고공백·사진·권한/상태 버튼"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "sha256": "0157bb02a191d0a396f4c0786986301e2a533122725ff68e3f9f46ea6edbf0e1",
+          "reviewScope": "수정/편집 경로 문자열 검색 및 746–764: 현재 수정 메뉴는 후기수정이며 상품관리 입구로 기록하지 않음"
+        },
+        {
+          "path": "community_app/lib/presentation/market/state/market_item_moderation_status.dart",
+          "sha256": "5181dcb968f3f7618f0061de0e0786e33015fa2cf030695193cadcc4c15c70fc",
+          "reviewScope": "74–160: 상태라벨·주요행동·정책비공개/심사중/알수없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "sha256": "114ccab8634f5f576d59b99fae1147d8ba0b8fae02b2ad17a9464d20071f21b5",
+          "reviewScope": "178–280: 세션명령·성공/결과불명시 내상품갱신·오류전달"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/creator_catalog_provider.dart",
+          "sha256": "c29111a9958bba93de97bf04a615e7f1123ec3cd094677e2d46965ed0626d4e1",
+          "reviewScope": "20–37: 본인목록100개·marketItems갱신구독"
+        },
+        {
+          "path": "community_app/lib/data/api/market_api.dart",
+          "sha256": "a47b666e2911b73bd12c9f1233d86693de667d38fb5d31b1a3b9f0ec3c7847a6",
+          "reviewScope": "39–82: typed body·현재 /submit void·호환publish·상태/심사List"
+        },
+        {
+          "path": "community_app/lib/data/repositories/market_repository.dart",
+          "sha256": "6dad92f7865f0050ecebf5cb01d95d8dc33930092fc6dc1ba495d394499af052",
+          "reviewScope": "94–174: typed 명령·조회/생성/수정/상태/이력 Result"
+        },
+        {
+          "path": "community_app/test/presentation/market/market_item_edit_screen_test.dart",
+          "sha256": "926f545c31262e638a8cef328b060f0a5c706f5e61cc81eea8f7fcd9adde1240",
+          "reviewScope": "692–738,910–939,967–987 선택단언: 재고만수정·선저장/제출순서·설명/가격지우기·재고공백불가; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/policy/MarketAbilityPolicy.java",
+          "sha256": "7941077ab3596e9d4feff3b6e4345b872abbda654e4288c47f06271ed0f7ff95",
+          "reviewScope": "84–125: 판매 상태/자원/활성버전·삭제이력 최종판정"
+        },
+        {
+          "path": "community_app/lib/core/navigation/app_menu.dart",
+          "sha256": "38aa523eb2122d9ec02656fc332af294790d129420023e4137abdb6e5ba000cc",
+          "reviewScope": "617–626: 내 상품은 MARKET열림+상품기록 조건·전체메뉴"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "55–73,112–118: 새상품/상세/수정 실제라우트"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishService.java",
+          "sha256": "37ca1bbc12a79b0cf1a8ac0acbe6b0f5f9aaca3f4be4e053c107c990d37e4b88",
+          "reviewScope": "269–279: MARKET_ITEM 생성은본인 APPROVED/STOP_SELLING; 공통시각·중복·취소는 plan_publish_20261122 동일 SHA 재사용"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishItemWorker.java",
+          "sha256": "3d5dc4b1c957ede985baa09df2857915d422fc896142f395d32ef0f8176357e2",
+          "reviewScope": "180–222: MARKET_ITEM 실제현재상태/activateSale·차수/실패알림 처리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/authoring/service/ScheduledPublishScheduler.java",
+          "sha256": "c9bf967ee15e11ea8c7229fb8df7332af6838041151726472eb61ee696b120da",
+          "reviewScope": "155–157: MARKET봉인 중 MARKET_ITEM 건너뛰기; plan_publish_20261122 동일 SHA"
+        },
+        {
+          "path": "community_app/lib/presentation/plan/widgets/schedule_publish_sheet.dart",
+          "sha256": "c87a128646548c24d96a7e4c942824931826389ace4f0ec536cbbbe6e2bb11cb",
+          "reviewScope": "plan_publish_20261122 동일 SHA: 서울시각·공통예약요청·성공시트닫기"
+        }
+      ],
+      "reuses": [
+        "plan_detail_20261122",
+        "plan_list_20261122",
+        "plan_publish_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
+          "sha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-06.html": [
+          "sidebar",
+          "content-photos",
+          "launch-strip",
+          "publication-and-ownership-current",
+          "platform-period-pass",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "기존 /publish 호환 연결은 유지하고 실제 앱 /submit 및 /on-sale·review-history 추가",
+        "오래된 관리자 저장소 경로·상태 전이·재고 비우기·항상 상세수정 입구 설명을 현재 코드로 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "document_contract_correction",
+          "finding": "실제 /submit 204·후보버전/재심사·편집 중 충돌/변경필드·재고공백유지·내상품관리입구 반영",
+          "disposition": "문서 교정; 제품 기능을 새로 구현하거나 시험 실행했다고 기록하지 않음"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "현재 확인한 운영자 approve는 SUBMITTED 전용; SUSPENDED 직접 승인/회원재제출을 허용하는 계약이 아님",
+          "disposition": "해제 경로를 추정하지 않고 현재 제한으로 기록"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "observedSourceVersions": {
+        "community_app": "dca0501de4909ca1849cf5cf3ee2352d03d718b3",
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
+      },
+      "checks": {
+        "sourceReferences": "117 tables match; 3 new handlers added to existing F08-06 table",
+        "groupDigestsAndAnchors": "37 source/canonical hashes and 6 retained HTML IDs match; two cross-feature section anchors verified",
+        "scenarioAudit": "--write and --check pass",
+        "relativeLinksAndDerivedDigests": "2949 relative paths and 349 derived digests checked; global checker still fails only recorded my_profile source drift",
         "productTests": "not executed; selected existing assertions read only",
         "releaseScope": "known global date discrepancy remains; unchanged checker not rerun"
       }
