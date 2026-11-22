@@ -1,94 +1,121 @@
-# F08-10. 마켓 아이템 상세 PRD
+# F08-10. 마켓 상품 상세·구매 입구 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> 2026-11-22 소스 대조. 현재 계약과 검증 공백을 설명하며 새 제품 시험 통과 기록이 아니다. 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 실제 입구와 상세 화면
 
-마켓 아이템 한 건의 상세 정보, 리뷰 목록, 연계 번들 옵션을 한 번에 노출하기 위한 다중 GET 엔드포인트 묶음. 사용자는 아이템 정보·리뷰·번들 할인까지 모두 비교한 뒤 구매 결정을 내린다 (구매 자체는 F08-11에서 처리).
+[마켓 메인 탐색](F08-08_market-main-browse_prd.md)과 [마켓 키워드 검색](F08-09_market-search_prd.md)의 상품 카드는 `/market/items/{itemId}`로 이동한다. 라우터는 이 ID를 `MarketItemDetailScreen`에 전달한다. 크리에이터 프로필의 대표 플랜 카드는 `/home/market/{planId}`의 별도 플랜 상세로 가므로 이 상품 상세 입구로 합산하지 않는다.
 
-**AUTH-08(2026-06-09)**: 마켓 아이템 상세 조회 시 **인증된 비소유자(non-owner)** 조회에 한해 `market_item.view_count` 원자 증가. 소유자(크리에이터) 본인 조회와 익명 조회는 카운트 제외. 집계 합산은 크리에이터 대시보드(F08-07 `marketItemViewTotal`)로 환류.
+상세는 제목·대표 이미지·기본 가격·창작자·소개·설명 사진·번들 옵션·후기와 구매 입구를 제공한다. 창작자 ID가 있을 때 프로필 정보에서 [크리에이터 프로필·판매 현황](F08-07_creator-profile-stats_prd.md)으로 이동한다. 설명용 사진·대표 이미지·구매 후 전달되는 콘텐츠는 구분한다.
 
-프론트 진입과 사용자 조작은 다음 원천 흐름을 기준으로 판단한다.
+상품 편집은 [내 상품 등록·심사·판매 관리](F08-06_market-item-management_prd.md)의 경로다. 이 화면의 본인 후기 점 메뉴에 있는 **수정**을 상품 수정 입구로 설명하지 않는다.
 
-- F08-08 마켓 메인의 인기 카드 / 최신 grid 카드 탭 → `context.push('/market/items/${itemId}')`
-- F08-09 마켓 검색 결과 카드 탭
-- F08-12 내 컬렉션 카드 탭 (구매한 아이템 다시 보기)
-- F08-07 크리에이터 프로필의 판매 아이템 카드 탭
-- 푸시 알림 / 딥링크 (`/market/items/:itemId`)
-- 라우터 경로: `Routes.planMarketItems = 'items/:itemId'` (planMarket prefix `/market` 하위)
+## 코드 위치
 
-## 2. 코드 위치
+서버는 `MarketItemController`, `MarketItemService`, `MarketAbilityPolicy`, `PurchaseAccessService`, `MarketItemVo`, `BundleController`, `BundleService`, `MarketItemReviewController`, `MarketItemReviewService`, `ViewCountIncrementService`를 대조했다. 앱은 `market_item_detail_screen.dart`, `market_item_provider.dart`, `bundle_provider.dart`, 마켓 API·Repository와 라우트/공개 범위 판정이 근거다.
 
-계약의 정본은 코드다. 서버: `BundleController`, `MarketItemController`, `MarketItemReviewController`, `MarketItem`, `MarketItemService`, `ViewCountIncrementService`, `MarketItemQueryRepository`, `SecurityConfiguration`, `MarketItemVo`, `BundleVo`. 앱: `market_item_detail_screen.dart`.
+<!-- source-references:start -->
+서버 창구: `MarketItemController#getMarketItem`, `BundleController#listBundlesForItem`, `MarketItemReviewController#getReviews`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-## 3. 전체 동작 흐름
+## 공개 범위와 상세 접근
 
-1. 화면 진입 시:
-   - `marketItemDetailNotifierProvider(itemId)` ▶ `MarketRepository.getMarketItem(itemId)` ▶ `GET /api/v1/market/items/{itemId}`
-   - `bundlesForItemNotifierProvider(itemId)` ▶ `MarketRepository.listBundlesForItem(itemId)` ▶ `GET /api/v1/market/items/{itemId}/bundles`
-   - `marketItemReviewsNotifierProvider(itemId)` ▶ `MarketRepository.getItemReviews(itemId, page:0, size:20)` ▶ `GET /api/v1/market/items/{itemId}/reviews?page=0&size=20`
-   - `recentlyViewedIdsProvider.notifier.record(itemId)` (로컬 저장)
-2. 구매하기 액션 시: F08-11 참조 (`POST /api/v1/market/items/{itemId}/purchase`)
-3. 번들 구매 시: F08-11 참조 (`POST /api/v1/market/bundles/{bundleId}/purchase`)
-4. 리뷰 작성/수정/삭제 시: F08-13 참조
+상품 기본 상세 GET과 앱의 `/market/items/{id}` 단일 상세 경로는 익명 접근을 허용한다. MARKET 전체 봉인 판정은 별도로 적용하며 이 상세는 보관함·환불·관리 경로와 같은 봉인 예외가 아니다. **후기 GET과 포함 번들 GET은 전역 인증이 필요하다.** 컨트롤러가 nullable principal을 받는다는 이유만으로 모두 익명 공개라고 해석하지 않는다.
 
-### 플랜 직접 상세/미리보기의 결제 수단 선택(인접 구현 실측)
+상품 행이 없으면 NOT_FOUND다. 행이 있을 때 `MarketAbilityPolicy.itemVisible`은 다음 순서로 판정한다.
 
-F08-10의 마켓 아이템 화면과 별개로, 플랜 직접 구매 화면에는 무료 포인트 선택 UX가 구현되어 있다.
+| 조건 | 현재 상세 열람 판정 |
+| --- | --- |
+| 상품의 판매 유형이 열렸고 ON_SALE | 익명 포함 허용 |
+| 판매 유형이 열렸고 본인 소유 | 소유자 허용. 현재 코드는 REMOVED 여부보다 이 분기를 먼저 적용 |
+| 판매 유형이 열렸고 위 조건이 아님 | REMOVED가 아니며 구매 접근이 있으면 허용; 그 외 REMOVED는 NOT_FOUND, 나머지는 FORBIDDEN |
+| 판매 유형이 닫힘 | REMOVED가 아니며 구매 접근이 있을 때만 허용; REMOVED는 NOT_FOUND, 나머지는 RELEASE_SCOPE_DISABLED |
 
-- `home/screens/market_plan_detail_screen.dart`는 `PlanVo.allowFreePoints/freePointPrice`를 사용한다.
-- `plan/screens/plan_preview_screen.dart`는 별도 상세 조회 없이 `PlanPreviewVo`의 같은 필드를 사용한다.
-- `freePointPrice`가 `null`이면 플랜 기본가로 폴백한다.
-- `allowFreePoints && price > 0 && (freePointPrice ?? price) >= 1`일 때 `PlanFundingChoiceSheet`를 연다.
-- 시트는 `PAID` “일반 결제”와 `FREE` “무료 포인트로 구매”를 반환한다.
-- 무료 잔액은 `walletNotifierProvider.freeBalance`로 표시하며, 부족해도 옵션을 비활성화하지 않는다. 최종 잔액 판정은 서버다.
+구매 접근은 보관함 회수·만료 여부와 연결 구매의 ACTIVE·잠금 여부를 확인한다. 구매 ID나 연결 구매 행이 없는 옛 보관함을 허용하는 예외도 있다. 따라서 구매 이력이 있다는 사실만으로 모든 상태에서 접근 가능하다고 쓰지 않는다. 이 유형별 규칙도 MARKET 전체가 닫힌 요청을 열어 주는 것은 아니다.
 
-반면 **현재 마켓 아이템/번들 Flutter 경로는 결제 수단 선택이 없다**. `market_api.dart`, repository, provider의 `purchaseItem/purchaseBundle`은 `fundingMode`를 받지 않아 서버의 기본값 `PAID`로만 호출한다. 응답의 `currencyType/freePointPrice`도 구매 CTA에서 소비하지 않는다.
+로그인 상세 응답에는 `actions.review`, `actions.startSale`, `actions.delete`가 붙으며 익명 응답에는 이 권한 표지가 없다. startSale/delete는 관리 화면의 판정용이고 상세 화면에 해당 관리 버튼이 생긴다는 뜻은 아니다.
 
-## 4. 제품 규칙
+## 상품 설명 아래 사진
 
-- 구매 통화는 만든 사람이 정한다: PAID_POINT 유료만, FREE_POINT 무료만, ANY_POINT 둘 다.
-- ANY_POINT 에 무료 가격이 없으면 유료 우선 혼합(PAID_FIRST)이고 무료 결제 요청은 거절한다. 무료 가격이 있으면 무료는 그 값, 유료는 기본 가격이다.
-- 번들 목록은 ON_SALE 번들만 보여 준다. 번들이 없으면 섹션 자체가 없다.
-- 아이템을 열면 최근 본 플랜에 기록한다. 기록이 실패해도 무시한다.
-- 조회수는 작성자가 아닌 로그인 사용자의 상세 조회만 센다. 세는 일이 실패해도 상세는 정상으로 보인다.
+소개는 `description`과 `contentRich`를 `RichContentView`에 전달하고 설명 다음에 `ContentPhotoGallery`로 `contentImages`를 표시한다. 현재 소개 영역은 일반 설명이 비어 있지 않거나 설명 사진이 있을 때 표시한다. 대표 이미지 실패는 해당 이미지 자리에서 처리하고 본문 조회 실패와 구분한다.
 
-## 6. 상태/권한/시나리오 매트릭스
+설명 사진은 대표 썸네일이나 구매자용 다운로드 파일이 아니다. 저장·정렬·파일 용도 및 권한은 [설명 사진과 파일 용도](F08-06_market-item-management_prd.md#설명-사진과-파일-용도)와 [본문 아래 사진 첨부와 용도별 관리](../../../docs/features/content-photos.html)를 따른다. 상품 상세의 열람 가능성을 구매한 콘텐츠 전달 완료로 확대하지 않는다.
 
-| ID | 시나리오 | 시작/조건 | 관찰 가능한 종료 상태 |
-|---|---|---|---|
-| S1 | 일반 사용자의 아이템 상세 → 구매 결정 (Happy Path 진입) | 마켓 메인에서 인기 카드를 탭한 직후. | 사용자가 충분한 정보를 본 뒤 구매 흐름으로 넘어감 (또는 뒤로 나감). |
-| S2 | 번들 옵션 보기 | 묶음 할인을 노리는 사용자. | 번들 단위 구매 흐름 진입. |
-| S3 | 리뷰 보기 + 작성 | F08-12 컬렉션에서 본 아이템 카드 탭하여 진입. | 사용자 리뷰가 추가되어 다른 사용자에게도 보임. |
-| S4 | 본인 리뷰 수정/삭제 | 시나리오 본문 참조 | 본인 리뷰가 수정 또는 삭제되고 즉시 갱신됨. |
-| S5 | status != ON_SALE / 비로그인 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S6 | 404 / 네트워크 에러 | 시나리오 본문 참조 | 종료 상태는 시나리오 본문/QA 기준으로 확인 |
-| S7 | 크리에이터 프로필 이동 | 홈 추천/딥링크 등으로 `/home/market/1001` 진입 | 크리에이터의 다른 판매 아이템 탐색 가능. |
-| S8 (AUTH-08) | 인증된 비소유자 상세 조회 → view_count 증가 | 타 사용자가 GET /api/v1/market/items/{itemId} 호출 | view_count +1 원자 증가. 조회 응답 정상 반환(증가 실패 시에도 warn 로그만, 응답 무중단) |
-| S9 (AUTH-08) | 크리에이터 본인 상세 조회 → view_count 불변 | 아이템 소유 크리에이터가 자기 아이템 조회 | view_count 변화 없음. 통계 부풀리기 방지 |
+## 번들 옵션의 노출 조건
 
-## 8. Gap / Risk
+현재 상품을 포함하는 번들 중 ON_SALE만 후보로 삼고, 다음 구성 조건을 모두 확인한다. 구성 항목이 비어 있지 않고 모든 상품이 존재하며 ON_SALE·활성 상품 버전 보유·열린 판매 유형이어야 목록에 남는다. 기간권 판매 봉인으로 구성 상품 하나가 제한되면 해당 번들도 제외된다. 번들 상태만 ON_SALE이라고 표시되는 계약이 아니다.
 
-| 분류 | 근거 | 내용 | 다음 조치 |
-|---|---|---|---|
-| Gap (설계 vs 배선) | `SecurityConfiguration.java:97` | **비로그인 열람 가능 여부**: 컨트롤러 시그니처는 `optional`이나 전역 `anyRequest().authenticated()` 하에 `/api/v1/market/**` 가 permitAll 목록에 없어 비인증 접근이 필터에서 차단됨. 상세·리뷰·번들 GET 모두 실질 인증 필수. 비로그인 조회가 의도면 SecurityConfiguration 정비 필요. | SecurityConfiguration에 market 조회 GET 경로 permitAll 추가 여부 결정 |
-| Gap(Flutter) | `market_api.dart:82`, `market_repository.dart:213`, `market_item_detail_screen.dart:647` | 서버는 아이템/번들 구매의 `fundingMode`와 VO의 `currencyType/freePointPrice`를 제공하지만 앱은 query를 전송하지 않아 항상 기본 `PAID`로 구매한다. 플랜 직접 구매만 선택 시트가 구현됐다. | 아이템/번들의 FREE/ANY_POINT 노출·선택 UX 및 API 배선 필요 |
-| 구현됨 (AUTH-08) | `MarketItemService.java:67`, `ViewCountIncrementService.java:43` | view_count 비소유자 조회 시 원자 증가. REQUIRES_NEW 격리. 실패 무중단. | QA: 소유자/비소유자/증가실패 시나리오 E2E 확인 |
-| 주의 (AUTH-08) | `MarketItemVo.java` | view_count는 MarketItemVo 응답 필드에 노출되지 않음. 상세 화면에서 직접 조회수 표시 불가 — 크리에이터 대시보드(F08-07)에서만 집계 확인. | 현재 정책 유지: 상세 화면 미표시, 대시보드 집계만 제공. |
+화면에는 번들 제목·가격·원가 대비 할인·포함 상품과 수량을 보여 준다. 원가가 실제 번들 금액보다 클 때 할인율을 계산한다. 빈 목록·로딩·조회 오류는 이 영역을 숨긴다. 익명 상세에서 번들 영역까지 성공한다고 보장하지 않는다.
 
-## 9. 수용 기준
+현재 보고 있는 상품의 소유자는 이 번들의 구매 버튼을 보지 않는다. 대표 큐레이터 표지가 있으면 **큐레이터 관리** 입구가 별도로 표시된다. 타인 상품의 번들은 금액·결제 공개·로그인 조건에 따라 아래 구매 입구를 적용한다. UI에 버튼이 있다고 서버의 전체 번들 구매 조건을 통과한 것은 아니다.
 
-- **AC-01. 일반 사용자의 아이템 상세 → 구매 결정 (Happy Path 진입)**: Given 마켓 메인에서 인기 카드를 탭한 직후. When 사용자가 해당 흐름을 실행하면 Then 사용자가 충분한 정보를 본 뒤 구매 흐름으로 넘어감 (또는 뒤로 나감).
-- **AC-02. 번들 옵션 보기**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 번들 단위 구매 흐름 진입.
-- **AC-03. 리뷰 보기 + 작성**: Given F08-12 컬렉션에서 본 아이템 카드 탭하여 진입. When 사용자가 해당 흐름을 실행하면 Then 사용자 리뷰가 추가되어 다른 사용자에게도 보임.
-- **AC-04. 본인 리뷰 수정/삭제**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 본인 리뷰가 수정 또는 삭제되고 즉시 갱신됨.
-- **AC-05. status != ON_SALE / 비로그인**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-06. 404 / 네트워크 에러**: Given 원천 시나리오의 시작 조건 When 사용자가 해당 흐름을 실행하면 Then 원천 시나리오의 종료 상태와 화면/API 결과
-- **AC-07. 크리에이터 프로필 이동**: Given 홈 추천/딥링크 등으로 `/home/market/1001` 진입 When 사용자가 해당 흐름을 실행하면 Then 크리에이터의 다른 판매 아이템 탐색 가능.
-- **AC-08 (AUTH-08). 인증된 비소유자 상세 조회 → view_count 증가**: Given 타 사용자가 GET /api/v1/market/items/{itemId} 호출 When 조회 완료 Then view_count +1 원자 증가. 조회 응답 정상 반환. 증가 실패 시에도 응답 무중단.
-- **AC-09 (AUTH-08). 크리에이터 본인 조회 → view_count 불변**: Given 아이템 소유 크리에이터가 자기 아이템 조회 When 조회 완료 Then view_count 변화 없음.
+## 구매 입구와 성공 뒤 이동
 
-## 10. 미결정 / 후속
+단건 하단 버튼은 ON_SALE인 타인 상품에만 표시한다. 본인 상품이거나 다른 상태면 숨긴다. 이 조건은 상품 구매 이력만으로 버튼을 잠그는 조건과 다르다.
 
-- 플랜 직접 상세/미리보기의 유료/무료 선택은 구현됐다. 남은 결정은 마켓 아이템/번들 화면에서 `currencyType`/`freePointPrice`를 어떻게 표시하고 `fundingMode`를 전송할지다. **번들 차등가 설정은 admin(`community_admin_api`) 배선 followup**이므로 번들 `freePointPrice`는 당분간 조회 노출 위주로 본다. 정책 자체는 `03_policy_prds/payment_settlement_policy_prd.md` §2.5를 따른다.
+| 우선 조건 | 화면 행동 |
+| --- | --- |
+| 금액이 0보다 크고 플랫폼 결제가 닫힘 | 결제 준비 중 안내로 이동. 비로그인이라도 로그인보다 이 안내가 먼저 |
+| 위 제한이 없고 비로그인 | 로그인 후 구매하기. 현재 상세 경로를 returnUrl로 전달 |
+| 로그인했고 위 제한이 없음 | 구매 확인 시트. 취소하면 요청하지 않음 |
+
+금액 0은 결제 준비 안내 조건에서 제외되지만 로그인 조건은 적용한다. 번들 버튼도 같은 금액·로그인 우선순서를 사용한다. 상품·번들 구매는 화면의 구매 진행 잠금과 세션 범위를 사용한다. 성공 응답 뒤 완료 안내를 표시하고 보관함으로 이동한다. 실제 차감·구매 영수증·중복 요청·전달 조건은 [구매](F08-11_purchase_prd.md)의 계약으로 확인한다.
+
+현재 앱의 아이템·번들 구매 함수에는 `fundingMode` 인자가 없고 API는 Idempotency-Key를 보낸다. 서버의 fundingMode 기본값은 PAID다. 상세 CTA는 `currencyType`·`freePointPrice` 선택 UI를 제공하지 않는다. 별도 플랜 직접 구매의 무료 포인트 선택이 이 화면에도 구현됐다고 설명하지 않는다.
+
+## 후기 목록과 작성·수정 입구
+
+후기는 20개 페이지로 읽고 현재 서버는 삭제되지 않은 후기를 createdAt·id 내림차순으로 조회한다. 로그인 사용자의 차단 대상 작성자는 페이지 조회 후 걸러 내며, Page를 만들 때 원래 전체 건수를 전달한다. 보이는 후기 수와 원래 전체 건수가 같다고 가정하지 않는다.
+
+현재 후기 조회 서비스는 상품 상세의 itemVisible 판정을 따로 호출하지 않는다. 상세 UI의 접근 제한을 후기 API에도 그대로 적용한다고 추정하지 않는다. HTTP 인증과 실제 후기 목록 조건을 분리해 기록한다.
+
+**후기 작성**은 상세 응답의 `actions.review.allowed == true`일 때만 보인다. 서버 판정은 상품 열람 가능·구매 접근·기존 미삭제 후기 없음의 순서다. 표지가 없으면 숨긴다. 로그인만 했다고 작성 가능한 흐름이 아니다. 본인 후기에는 수정·삭제 점 메뉴가 있고 서버의 쓰기 권한·입력 검증은 [플랜의 이벤트 전환과 후기](F08-13_plan-event-and-review_prd.md)에서 다룬다.
+
+작성·수정 성공 시 후기 첫 페이지를 다시 읽는다. 작성과 삭제 성공은 상품 상세도 무효화해 권한을 갱신한다. 실패한 작성·수정은 오류 안내 후 입력 창을 유지할 수 있도록 실패 결과를 반환한다. 삭제는 확인 후 실행하며 실패를 성공으로 처리하지 않는다.
+
+후기 첫 조회 오류는 현재 영역을 숨긴다. 성공한 빈 목록은 **아직 후기가 없습니다**, 로딩은 별도 안내다. 추가 페이지 오류는 기존 후기를 유지하고 하단 재시도를 제공한다. 새 요청 중 동시 추가 조회와 이전 세대의 늦은 응답 처리는 공통 PagedList를 따른다.
+
+## 조회수와 최근 본 기록
+
+컨트롤러는 상세 조회가 끝난 뒤 `recordMarketItemView`를 호출한다. 로그인했고 creatorId와 다른 사용자만 원자적으로 조회수를 1 늘린다. 익명·소유자는 제외한다. 증가는 REQUIRES_NEW 별도 트랜잭션이며 예외는 로그로 남기고 상세 응답을 막지 않는다. 비동기 작업이라고 기록하지 않는다.
+
+고유 방문자 수나 화면 최초 진입만 세는 지표가 아니다. 같은 GET을 재호출하거나 최근 본 목록이 상세를 재조회해도 해당 조건이면 증가할 수 있다. `MarketItemVo`에 viewCount는 없으며 [크리에이터 프로필·판매 현황](F08-07_creator-profile-stats_prd.md)의 합계와 구분한다.
+
+앱은 첫 프레임 뒤 로컬 최근 본 ID 기록을 시도하며 실패를 무시한다. 상품 조회 성공 이후에만 기록하는 구조는 아니다. 상세 provider는 marketItems 변경 신호를 구독하고, 상세 본체 실패는 오류·재시도를 제공한다. 후기·번들 오류를 상세 전체 실패와 합쳐 판정하지 않는다.
+
+## 요청과 응답
+
+| 요청 | 응답·주요 경계 |
+| --- | --- |
+| `GET /api/v1/market/items/{itemId}` | `MarketItemVo`; 익명 가능, MARKET·상품 열람 판정 |
+| `GET /api/v1/market/items/{itemId}/bundles` | `List<BundleVo>`; 인증·MARKET·판매 가능한 전체 구성 |
+| `GET /api/v1/market/items/{itemId}/reviews` | `Page<ItemReviewVo>`; 인증·MARKET·미삭제·차단 후필터 |
+
+후기 쓰기와 구매는 별도 명령이다. 이 세 GET에 성공한 것만으로 구매·후기 작성·콘텐츠 이용 완료를 판정하지 않는다.
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 관찰 | 처리 |
+| --- | --- | --- |
+| Gap | 후기 첫 요청·번들 요청 오류가 숨김으로 보임 | 빈 데이터·익명 인증 거절·네트워크 실패를 같은 성공 상태로 보지 않음 |
+| Gap | 아이템·번들 앱 구매에 FREE/PAID 선택 연결 없음 | 서버 기본 PAID 요청과 별도 플랜 구매 선택을 구분 |
+| 범위 | 상세 소유자/구매 접근 분기와 후기 목록의 접근 판정은 다름 | 현재 코드의 예외를 명시하고 정책 의도나 수정 완료를 추정하지 않음 |
+| 미검증 | 실제 계정의 구매·권한 회수·차단·사진·조회수 결과 | 코드·선택 시험 단언 대조. 제품 실행·외부 계정·이미지 검수 아님 |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 올바른 ID와 입구:** 마켓 목록·검색의 itemId 상세와 프로필 대표 플랜의 planId 상세를 구분한다. 창작자 정보와 본인 후기 수정 메뉴를 상품 편집 입구로 혼동하지 않는다.
+- **AC-02 공개 범위:** MARKET가 열렸을 때 상품 기본 상세는 익명 접근 가능하다. 후기·번들 GET의 인증 필요와 MARKET 전체 봉인을 별도로 적용한다.
+- **AC-03 상품 접근:** 판매 유형·상태·소유자·구매 접근 순서를 따른다. 열린 유형의 소유자 예외와 닫힌 유형의 구매 접근 예외, REMOVED 처리 순서를 구분한다.
+- **AC-04 설명 사진:** 일반/리치 소개와 설명 사진을 표시하고 대표 이미지·구매용 원본 파일과 용도를 섞지 않는다. 본문 자체 조회 실패에는 재시도를 제공한다.
+- **AC-05 번들 구성:** 번들과 구성 전체가 판매 가능한 조건을 충족해야 옵션에 남는다. 빈 구성·누락 상품·미승인 버전·봉인 유형을 단순 번들 ON_SALE로 통과시키지 않는다.
+- **AC-06 구매 버튼 우선순위:** 타인 ON_SALE 상품의 유료 결제 봉인은 로그인보다 먼저 안내한다. 금액0은 결제 봉인 안내에서 제외하되 로그인은 필요하다.
+- **AC-07 확인과 복귀:** 구매 확인 취소는 요청하지 않으며 성공 뒤 완료 안내·보관함 이동으로 이어진다. 버튼 노출이나 상세 조회만으로 서버 구매 성공을 주장하지 않는다.
+- **AC-08 결제 수단 경계:** 아이템·번들 앱은 Idempotency-Key를 보내고 fundingMode 없이 기본 PAID를 사용한다. 무료 포인트 선택 UI가 완료됐다고 기록하지 않는다.
+- **AC-09 후기 권한:** 서버 review.allowed가 true일 때 작성 입구를 표시하고 권한 누락은 숨긴다. 본인 후기 수정·삭제와 다른 사용자 후기를 구분한다.
+- **AC-10 후기 상태와 갱신:** 빈 목록·첫 오류 숨김·추가 오류 재시도를 구분한다. 쓰기 성공 후 목록 재조회 및 작성/삭제 후 상세 권한 갱신을 적용한다.
+- **AC-11 조회수:** 인증된 비소유자 상세 조회에서 별도 증가하고 실패해도 응답은 유지한다. 화면 고유 방문 수·비동기 증가·상세 응답의 viewCount라고 설명하지 않는다.
+- **AC-12 최근 기록과 영역 실패:** 최근 본 기록 실패는 상세 흐름을 막지 않는다. 상세 본체 오류와 후기/번들 영역 실패를 나눠 판정하고 새 실제 실행 기록 없이 완료로 확대하지 않는다.
+
+`MarketItemServiceTest`의 소유자 제외·비소유자 증가·조회/증가 분리·증가 실패 무중단 단언과 `market_bundle_purchase_gate_test.dart`, `market_purchase_money_gate_test.dart`의 금액·로그인·결제 공개별 버튼 단언을 읽었다. mock 기반 단언은 실결제·실제 권한/차단·운영 DB 검수의 대체가 아니다. 이번에는 제품 시험을 새로 실행하지 않았다.

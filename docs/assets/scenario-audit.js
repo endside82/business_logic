@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
   },
-  "countingNote": "시나리오 1,315개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,316개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1315,
+    "documentedScenarioItems": 1316,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 4965,
+    "automatedTestFilesScanned": 4967,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 74,
+    "directlyLinkedAutomatedTests": 75,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 74,
+    "automatedScenarioReferences": 75,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -25,10 +25,10 @@ window.SCENARIO_AUDIT = {
     "localRealAccountProof": 34,
     "featureLevelChecked": 174,
     "completeEvidenceChain": 44,
-    "partialEvidenceChain": 55,
-    "definitionOnlyEvidence": 76,
-    "traceMarkers": 572,
-    "verifiedTraceRecords": 570,
+    "partialEvidenceChain": 56,
+    "definitionOnlyEvidence": 75,
+    "traceMarkers": 575,
+    "verifiedTraceRecords": 573,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -11826,28 +11826,83 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F08-10",
       "domain": "플랜 마켓",
-      "name": "마켓 아이템 상세",
-      "scenarioCount": 11,
+      "name": "마켓 상품 상세·구매 입구",
+      "scenarioCount": 12,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/08_plan_market/F08-10_market-item-detail/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 11
+        "documentScenarioCount": 12
       },
       "trace": {
         "backendPath": "business_logic/units/08_plan_market/F08-10_market-item-detail/backend.md",
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F08-10:1",
+            "label": "GET /api/v1/market/items/{itemId} — 상품 기본 정보",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+                "controller": "MarketItemController",
+                "method": "getMarketItem",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/market/items/{itemId}",
+                "targetLine": 39,
+                "methodLine": 40
+              }
+            ]
+          },
+          {
+            "id": "F08-10:2",
+            "label": "GET /api/v1/market/items/{itemId}/bundles — 포함 번들 목록",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/BundleController.java",
+                "controller": "BundleController",
+                "method": "listBundlesForItem",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/market/items/{itemId}/bundles",
+                "targetLine": 48,
+                "methodLine": 49
+              }
+            ]
+          },
+          {
+            "id": "F08-10:3",
+            "label": "GET /api/v1/market/items/{itemId}/reviews — 상품 후기 페이지",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
+                "controller": "MarketItemReviewController",
+                "method": "getReviews",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/market/items/{itemId}/reviews",
+                "targetLine": 38,
+                "methodLine": 39
+              }
+            ]
+          }
+        ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 2,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 2,
+        "files": [
+          "community_app/test/presentation/market/market_bundle_purchase_gate_test.dart",
+          "community_app/test/widget/scope/market_purchase_money_gate_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -11858,7 +11913,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 1,
+      "evidenceStage": 2,
       "launchScope": "sealed",
       "proof": "auto",
       "knownIssues": 0,

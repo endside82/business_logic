@@ -292,7 +292,8 @@
         "market_management_20261122",
         "creator_stats_20261122",
         "market_browse_20261122",
-        "market_search_20261122"
+        "market_search_20261122",
+        "market_detail_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -3570,9 +3571,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "4ef6323802dabae29e3af69513938b8863c1c56fb298b0fb3612c3c5941671b2",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_detail_20261122"
+      ],
+      "reviewedSha256": "7fe25f35a77076c20b944c3fb174fa545b1e096756d10de9d22e5d25d1bf00ca"
     },
     {
       "path": "docs/features/F08-11.html",
@@ -5024,7 +5028,8 @@
         "market_management_20261122",
         "creator_stats_20261122",
         "market_browse_20261122",
-        "market_search_20261122"
+        "market_search_20261122",
+        "market_detail_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5111,7 +5116,8 @@
         "market_management_20261122",
         "creator_stats_20261122",
         "market_browse_20261122",
-        "market_search_20261122"
+        "market_search_20261122",
+        "market_detail_20261122"
       ],
       "note": "인증 영역의 관련 행만 동기화. 전체 문서 대조는 미완료"
     },
@@ -5222,7 +5228,8 @@
         "market_management_20261122",
         "creator_stats_20261122",
         "market_browse_20261122",
-        "market_search_20261122"
+        "market_search_20261122",
+        "market_detail_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -6691,10 +6698,12 @@
       "kind": "feature_prd",
       "document": true,
       "baselineSha256": "b1a09ba6fb7ba805c80d5f05cf43aae74e7a1060b699965e2c8d98ac6bddc286",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_detail_20261122"
+      ],
+      "reviewedSha256": "a8bd6671fd09fa507ce6b4a30980c1d24a8dad28a1c8ca45961bb94fcf8f2e80"
     },
     {
       "path": "prd/02_feature_prds/08_plan_market/F08-11_purchase_prd.md",
@@ -8029,7 +8038,8 @@
         "market_management_20261122",
         "creator_stats_20261122",
         "market_browse_20261122",
-        "market_search_20261122"
+        "market_search_20261122",
+        "market_detail_20261122"
       ],
       "note": "인증·온보딩 8개 행의 참조/확인 수와 11월 8일 연결 수 판단의 후속 차이를 반영했다. 다른 기능과 총계는 전체 대조 후 갱신한다."
     },
@@ -8268,7 +8278,8 @@
         "market_management_20261122",
         "creator_stats_20261122",
         "market_browse_20261122",
-        "market_search_20261122"
+        "market_search_20261122",
+        "market_detail_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -12372,9 +12383,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "7a8ddcf8a4aac2c83e202110951dee58c08f725a31213fe252a2aefd96bb99cf",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_detail_20261122"
+      ],
+      "reviewedSha256": "5c751a96a8d6e0bc152647d7d425436837f5b9b4b1f142fe3448280743db3284"
     },
     {
       "path": "units/08_plan_market/F08-10_market-item-detail/diagrams.md",
@@ -12382,9 +12396,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "660eec57aab64f386d69ba5b7f2b37f0a543931145b5ba9b15d0c2530b5e6dff",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_detail_20261122"
+      ],
+      "reviewedSha256": "d165bf7699bc99321f74ab9a026f4d7d4e04179155759d580f4f61d035e6412e"
     },
     {
       "path": "units/08_plan_market/F08-10_market-item-detail/frontend.md",
@@ -12392,9 +12409,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "ef54a2b3a0c06d4c60d32260412db73c063f27f815b49258412742b5e41b0375",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_detail_20261122"
+      ],
+      "reviewedSha256": "cc6dcfddfb64c4fb6a81d279f2d45913b52cab442661defdfe54d19bc155fca9"
     },
     {
       "path": "units/08_plan_market/F08-10_market-item-detail/scenarios.md",
@@ -12402,9 +12422,12 @@
       "kind": "local_feature_reference",
       "document": true,
       "baselineSha256": "4d05db8691e273fb42662b77563354e0bb16974dbf9a176010b36307e3458901",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "market_detail_20261122"
+      ],
+      "reviewedSha256": "206e4a8f56ee5dc105c13a438923b598b4ba6e9209a23a7e0ad313388e1df5bf"
     },
     {
       "path": "units/08_plan_market/F08-11_purchase/backend.md",
@@ -32233,6 +32256,205 @@
       "observedSourceVersions": {
         "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
         "community_app": "dca0501de4909ca1849cf5cf3ee2352d03d718b3"
+      }
+    },
+    "market_detail_20261122": {
+      "kind": "source_review",
+      "scope": "상품 상세 실제 itemId 경로·익명/인증/공개범위·정책의 소유/구매/삭제 예외·번들 구성 필터·후기 작성 권한/목록 실패·금액/로그인별 구매 입구·사진·조회수 별도트랜잭션·선택 단언 대조. 구매 원장/전달 완료와 실제 제품 실행은 이 검토 범위 아님.",
+      "sources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/BundleController.java",
+          "sha256": "583b3a25e8d3b44c20878952e91645c6fcd6b8c9c9c44c334db77385e976a293",
+          "reviewScope": "22–53: MARKET·optional viewer·포함번들 List"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/BundleService.java",
+          "sha256": "346bbf042b5d91a3eb6e97d8c63318ff61dca209b407f36b43b9eb4564d8468f",
+          "reviewScope": "75–99,128–140,176–209: ON_SALE bundle와 비어있지 않은 전구성 존재/판매/활성버전/열린유형·viewer역할"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemReviewController.java",
+          "sha256": "51d74b1631589820d00776a131961f9b3abdb4f4ebbfcdc37cecd79c30d066b5",
+          "reviewScope": "21–62: MARKET·GET Page·create/update/delete typed API"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemReviewService.java",
+          "sha256": "98af8a5ce9fdf1851d3bfa434082129a0b27a93fa2e56fbbcaf7d9720fc9a5dd",
+          "reviewScope": "93–117: 미삭제 최신후기·상호차단 IDs 후필터·기존 전체건수·별도상품열람검사없음"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketPurchaseController.java",
+          "sha256": "8207d928f3a967e7fcd1b871f7962c2aab7e59c71a26bd6915379d0f79c87928",
+          "reviewScope": "33–64: 아이템/번들 명령 Idempotency-Key 필수·fundingMode 기본 PAID"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/bundle_provider.dart",
+          "sha256": "2d505d2c43bd1d141448d217fdcebe4f7cac019f9182d80fc3bae3e061e2e741",
+          "reviewScope": "9–17: 상품별 번들 Result 오류전파"
+        },
+        {
+          "path": "community_api/domain/src/test/java/com/endside/community/plan/service/MarketItemServiceTest.java",
+          "sha256": "8ce85eb7cf52ce9bcb794e08c28501407c16e02f80c9a4c96b6b32c7519cc2a2",
+          "reviewScope": "180–249: 소유자조회제외·조회/증가분리·비소유자증가·증가실패무중단 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_app/test/presentation/market/market_bundle_purchase_gate_test.dart",
+          "sha256": "679bb96ee4ba4cfaef018b049593da27ecd0a817702c7440c250314f33876ef8",
+          "reviewScope": "118–161: 소유자/금액0/로그인/결제봉인 우선순위 단언 읽음; 미실행"
+        },
+        {
+          "path": "community_app/test/widget/scope/market_purchase_money_gate_test.dart",
+          "sha256": "efdb67d7fec8c5137d8c18c72ffa652f02b30b1631727e1cc0cbd0898e873482",
+          "reviewScope": "85–104: 유료결제봉인·0원상품·공개상태 구매입구 단언 읽음; 미실행"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/plan/controller/MarketItemController.java",
+          "sha256": "8725e2effea08426e202ee4ce2969ee2141fa7e88f2c40532d269ce1885e45f1",
+          "reviewScope": "39–47: optional principal·상세 조회 뒤 별도 조회수 기록"
+        },
+        {
+          "path": "community_api/api-app/src/main/java/com/endside/community/config/security/SecurityConfiguration.java",
+          "sha256": "d362569fd14db7fb9f36381fb7e0301e3ba5332b777e9a296de69a0f1c7de95a",
+          "reviewScope": "creator_stats_20261122 동일 SHA: /market/items/* 상세 GET 익명 허용·reviews/bundles 하위는 기본 인증"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketItemService.java",
+          "sha256": "b82f8eef8ba6385595e9c5725bddd85f756585def1e0d1c69d17c849fa805320",
+          "reviewScope": "119–146,631–657,746–748: 실제 상세 판정/actions·조회수실패무중단·조회행존재"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/vo/MarketItemVo.java",
+          "sha256": "ba34d7e8c69d5db446821ad480b179c9bbaae23d5cba2bc21bb550f7fb5dd2ed",
+          "reviewScope": "13–60: 본문/사진/가격/버전·review/startSale/delete actions·조회수응답 없음"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/policy/MarketAbilityPolicy.java",
+          "sha256": "7941077ab3596e9d4feff3b6e4345b872abbda654e4288c47f06271ed0f7ff95",
+          "reviewScope": "32–74: 판매유형/소유자/구매접근·REMOVED 우선순위·review 단일판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/PurchaseAccessService.java",
+          "sha256": "53d6f35b586d2f3c06da68eb904f524e704d961f3d9253aa3228b8fee17fcd73",
+          "reviewScope": "104–132: 회수/만료·ACTIVE/잠금·옛보관함 구매번호/구매행없음 예외"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/MarketSaleScope.java",
+          "sha256": "ca82eff224ee04a42eb1d3c2233262d8c6a188c1ab58101e84270545caa494be",
+          "reviewScope": "market_browse_20261122 동일 SHA: 유형 판매공개 판정"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/service/ViewCountIncrementService.java",
+          "sha256": "e0962efd9886fe7f2d436bd5682c23d2af1c6f8e87b5578339adc47230ebb89e",
+          "reviewScope": "43–46: REQUIRES_NEW 조회수 증가"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/plan/repository/query/MarketItemQueryRepository.java",
+          "sha256": "00f6b654408a49b285f4e15e28df97f09c290f6efec9fd1bb1d74d77308d6d89",
+          "reviewScope": "117–122: 상세조회 카운터 원자+1"
+        },
+        {
+          "path": "community_app/lib/presentation/market/screens/market_item_detail_screen.dart",
+          "sha256": "0157bb02a191d0a396f4c0786986301e2a533122725ff68e3f9f46ea6edbf0e1",
+          "reviewScope": "71–135,148–170,222–356,358–366,367–411,473–618,619–705,706–707,747–763,783–938: 최근기록·기본/설명사진·구매/번들/권한/후기/실패·세션명령·성공보관함"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/market_item_provider.dart",
+          "sha256": "114ccab8634f5f576d59b99fae1147d8ba0b8fae02b2ad17a9464d20071f21b5",
+          "reviewScope": "23–101,118–134: 상품변경구독·후기20개/성공재조회·두구매명령 수단인자없음"
+        },
+        {
+          "path": "community_app/lib/data/api/market_api.dart",
+          "sha256": "a47b666e2911b73bd12c9f1233d86693de667d38fb5d31b1a3b9f0ec3c7847a6",
+          "reviewScope": "38–39,85–95,108–109,182–187: 상세/후기/번들 반환·Idempotency-Key·fundingMode 없음"
+        },
+        {
+          "path": "community_app/lib/data/repositories/market_repository.dart",
+          "sha256": "6dad92f7865f0050ecebf5cb01d95d8dc33930092fc6dc1ba495d394499af052",
+          "reviewScope": "87–90,212–216,371–382: 상세/번들/후기 Result 래핑"
+        },
+        {
+          "path": "community_app/lib/core/router/app_redirect.dart",
+          "sha256": "80d467060c4e89aa31e5b0a83b75bdb9c9645e9564f48a6a4b50437823727ba9",
+          "reviewScope": "94–127,200–208,242–246: MARKET봉인 우선·상품 단일경로 공개·하위관리와구분"
+        },
+        {
+          "path": "community_app/lib/core/router/release_scope_routes.dart",
+          "sha256": "2372295713ae7df0b4c59a9a3551c6a1c8ffe3c5896fa3567b0707eeb89c28af",
+          "reviewScope": "27–46: MARKET봉인경로·보관함/환불/관리예외·상세는예외아님"
+        },
+        {
+          "path": "community_app/lib/core/router/feature_routes/plan_market_routes.dart",
+          "sha256": "96c441331aa2d2ca654ffe72e29a50dcdae6440f3816a1a711ba0b43fb6dc6ae",
+          "reviewScope": "market_browse_20261122 동일 SHA: itemId 상세 연결"
+        },
+        {
+          "path": "community_app/lib/domain/providers/market/recently_viewed_provider.dart",
+          "sha256": "7644fb64f4358811fdbad47fdc11227406cdf06bb1f9f5bfe2870e4fd5c7ec19",
+          "reviewScope": "market_browse_20261122 동일 SHA: 로컬계정범위·앞10개 상세 재조회"
+        },
+        {
+          "path": "community_app/lib/domain/providers/common/paged_list.dart",
+          "sha256": "2d1127a27d97744281b6e892d84087a27d93f7637207f7a981b2207b396a4a5b",
+          "reviewScope": "market_search_20261122 동일 SHA: 후기 공통추가조회 잠금/세대/실패유지·재시도"
+        }
+      ],
+      "reuses": [
+        "creator_stats_20261122",
+        "market_browse_20261122",
+        "market_management_20261122",
+        "market_search_20261122",
+        "plan_detail_20261122",
+        "settlement_prepayment_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-10_market-item-detail_prd.md",
+          "sha256": "a8bd6671fd09fa507ce6b4a30980c1d24a8dad28a1c8ca45961bb94fcf8f2e80"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/F08-10.html": [
+          "sidebar",
+          "content-photos",
+          "launch-strip",
+          "release-completion"
+        ]
+      },
+      "referenceChanges": [
+        "F08-10에 실제 상세/번들/후기 GET 연결표 추가",
+        "모두 인증 필요·프로필 planId를 itemId로 혼용·로그인만으로 후기 작성 설명 교정"
+      ],
+      "followUpFindings": [
+        {
+          "kind": "product_gap",
+          "finding": "후기 첫 조회·번들 조회 오류를 해당 영역 숨김으로 처리한다. 익명 기본 상세가 보여도 인증 필요한 두 영역은 조회 성공으로 보장하지 못한다.",
+          "disposition": "실제 접근/오류 경계를 명시; 공개 권한 변경하지 않음"
+        },
+        {
+          "kind": "product_gap",
+          "finding": "아이템·번들 앱 요청에는 fundingMode가 없고 서버 기본 PAID 사용. currencyType/freePointPrice 선택 UI 없음.",
+          "disposition": "플랜 직접 구매의 결제수단 선택과 구분해 제한 유지"
+        },
+        {
+          "kind": "document_contract_correction",
+          "finding": "상세 정책에서 열린 판매 유형의 소유자는 REMOVED 여부보다 먼저 허용. 후기 조회 서비스는 별도 상품 열람 판정을 호출하지 않음.",
+          "disposition": "현재 분기를 기록; 의도/결함 여부나 정책 변경을 추정하지 않음"
+        }
+      ],
+      "retainedHistoricalQuotes": [],
+      "checks": {
+        "sourceReferences": "118 source-reference tables match",
+        "groupDigests": "28 source/canonical digests; 4 retained HTML IDs",
+        "derivedDocuments": "6 document paths, 45 relative links and 4 derived-from digests checked",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; selected existing assertions read"
+      },
+      "observedSourceVersions": {
+        "community_api": "4dda5fe12b9d7db74510aa219034ed716f86adeb",
+        "community_app": "589721b1c68efd479ccf45254259419b092492ef"
       }
     }
   },
