@@ -6,17 +6,17 @@ window.SCENARIO_AUDIT = {
     "endpointIdentityChecked": true,
     "sourceRevision": "b9ee63f619eba6501f952fa663a243ac87d3573b"
   },
-  "countingNote": "시나리오 1,233개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
+  "countingNote": "시나리오 1,242개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
-    "documentedScenarioItems": 1233,
+    "documentedScenarioItems": 1242,
     "definedFeatures": 117,
     "automatedTestFilesScanned": 4951,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
-    "directlyLinkedAutomatedTests": 61,
+    "directlyLinkedAutomatedTests": 62,
     "automatedFeatureMarkers": 68,
-    "automatedScenarioReferences": 61,
+    "automatedScenarioReferences": 62,
     "directlyLinkedJourneys": 26,
     "journeyFeatureMarkers": 34,
     "journeyScenarioReferences": 26,
@@ -24,11 +24,11 @@ window.SCENARIO_AUDIT = {
     "localServerE2eProof": 13,
     "localRealAccountProof": 35,
     "featureLevelChecked": 174,
-    "completeEvidenceChain": 38,
-    "partialEvidenceChain": 55,
+    "completeEvidenceChain": 39,
+    "partialEvidenceChain": 54,
     "definitionOnlyEvidence": 82,
-    "traceMarkers": 525,
-    "verifiedTraceRecords": 523,
+    "traceMarkers": 526,
+    "verifiedTraceRecords": 524,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -9246,19 +9246,19 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F07-01",
       "domain": "모임 정산",
-      "name": "모임 정산 생성",
-      "scenarioCount": 6,
+      "name": "정산 초안·첫 비용 저장·복사·계산 결과 가져오기",
+      "scenarioCount": 15,
       "scenarioSource": "상세 시나리오 문서",
       "scenarioPath": "business_logic/units/07_meeting_settlement/F07-01_create-settlement/scenarios.md",
       "publishedDocumentPath": "business_logic/prd/02_feature_prds/07_meeting_settlement/F07-01_create-settlement_prd.md",
       "scenarioDefinition": {
         "formal": true,
-        "documentScenarioCount": 6
+        "documentScenarioCount": 15
       },
       "trace": {
         "backendPath": "business_logic/units/07_meeting_settlement/F07-01_create-settlement/backend.md",
-        "total": 3,
-        "verified": 3,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
         "entries": [
           {
@@ -9311,15 +9311,37 @@ window.SCENARIO_AUDIT = {
                 "methodLine": 170
               }
             ]
+          },
+          {
+            "id": "F07-01:4",
+            "label": "POST /api/v1/events/{eventId}/settlement/import-calculation — 계산 결과를 초안으로 가져오기",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/payment/meeting/controller/MeetingSettlementController.java",
+                "controller": "MeetingSettlementController",
+                "method": "importCalculation",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/events/{eventId}/settlement/import-calculation",
+                "targetLine": 114,
+                "methodLine": 115
+              }
+            ]
           }
         ]
       },
       "automated": {
-        "directlyLinked": false,
-        "count": 0,
+        "directlyLinked": true,
+        "count": 4,
         "featureMarkerCount": 0,
-        "scenarioReferenceCount": 0,
-        "files": [],
+        "scenarioReferenceCount": 4,
+        "files": [
+          "community_api/domain/src/test/java/com/endside/community/payment/meeting/service/MeetingSettlementServiceTest.java",
+          "community_api/domain/src/test/java/com/endside/community/payment/service/SettlementServiceTest.java",
+          "community_app/test/meeting_settlement/settlement_first_expense_provider_test.dart",
+          "community_app/test/presentation/meeting_settlement/clone_settlement_sheet_test.dart"
+        ],
         "markerCandidateFiles": []
       },
       "journey": {
@@ -9330,7 +9352,7 @@ window.SCENARIO_AUDIT = {
         "files": [],
         "markerCandidateFiles": []
       },
-      "evidenceStage": 2,
+      "evidenceStage": 3,
       "launchScope": "open",
       "proof": "local",
       "knownIssues": 0,
