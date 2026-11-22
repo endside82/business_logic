@@ -420,7 +420,8 @@
         "curated_domain_20261122",
         "notification_marketing_20261122",
         "poll_supplement_20261122",
-        "stamp_supplement_20261122"
+        "stamp_supplement_20261122",
+        "content_photos_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -4895,9 +4896,12 @@
       "kind": "public_document",
       "document": true,
       "baselineSha256": "8305924c3f1748b76c649011fa2ee864cacb44e9e92d71a97ced14a98b28997b",
-      "review": "pending",
-      "disposition": null,
-      "evidence": []
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "content_photos_20261122"
+      ],
+      "reviewedSha256": "fa149f3834e41ce5022189b801be6f1fea60cfe4aba843740205851e8fcb8e22"
     },
     {
       "path": "docs/features/impact.html",
@@ -42890,6 +42894,171 @@
         "productTests": "not run; source review and document checks only; existing images retained without rendering"
       },
       "observedSourceVersions": {
+        "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
+        "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
+      }
+    },
+    "content_photos_20261122": {
+      "kind": "source_review",
+      "scope": "공통 본문사진 HTML 전체의 기존 기능정본 재사용 및 첨부계약/용도/앱공통편집/모임부분저장/관리자추적/삭제/미등록정리 소스 보충. 실행·사진·배포 검증 아님.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/constants/FilePurpose.java",
+          "sha256": "8730a704da2543167beedc43a8b124151879ad5e1f7c6c5c45cb258d2e1a093f",
+          "reviewScope": "전체 실제본문: 전체 용도와 기존 코드 호환"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/FileCleanupScheduler.java",
+          "sha256": "0317935d76e7977df83ae7e56d82bedd1989869ae17124748200c22051e7c016",
+          "reviewScope": "전체 실제본문: 24시간 PENDING정리와 지정용도 COMPLETED미등록 후보·하루1회·200×50한도·실패격리"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/IncompleteUploadCleanupWorker.java",
+          "sha256": "08c6dfd49f19acf4ffd98d5bfdc75ad58df47bfbc6aa60ee73a86bc638395070",
+          "reviewScope": "전체 실제본문: 현재PENDING·보존유예·S3실패 ABANDONED와 파기표시"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/UnregisteredUploadSweepWorker.java",
+          "sha256": "2205c1ae8901aaf66084eaab57cad2458437fe4d06c8f8526f586b7d052e2b02",
+          "reviewScope": "전체 실제본문: 6개용도·현재완료/파기예정없음·참조검사·파기예약"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/file/controller/ManageFileController.java",
+          "sha256": "0cc74e32ba3d03d738946f9887733a991fbbc5684dee83d96eb895568a682aaf",
+          "reviewScope": "전체 실제본문: MANAGE_FILE 읽기/쓰기·목록/상세/trace·보존제한후metadata삭제"
+        },
+        {
+          "path": "community_api/admin-app/src/main/java/com/endside/community/file/service/ManageFileTraceService.java",
+          "sha256": "7a1d239d59cb179b7396fb82e0b98eaa0b23890834be781781e2e9b8bea90e84",
+          "reviewScope": "전체 실제본문: 참조등록부/모임/데이트/신고 문자열포함·기본50최대200·한도경고"
+        },
+        {
+          "path": "community_app/lib/presentation/common/media/content_photo_editor.dart",
+          "sha256": "1d1793f2716e3bd92211d54528877e1879e1d98ceda019e2d657b27c4de95a03",
+          "reviewScope": "전체 실제본문: 최대10·순차업로드·실패대기/재시도/제외·순서·바쁨·세션종료·표시주소 없음"
+        },
+        {
+          "path": "community_app/lib/domain/providers/file/content_photo_provider.dart",
+          "sha256": "319f8698c552317997124887564e5ba5c8723c195ad700fd68a6fc9855f317fa",
+          "reviewScope": "전체 실제본문: 다운로드주소발급 실패시null"
+        },
+        {
+          "path": "community_app/lib/domain/providers/event/event_edit_provider.dart",
+          "sha256": "acdef1d5ce4db03e128f4a2991d24dbd89146a3d76a3292c15f9a77fbe080320",
+          "reviewScope": "1008–1048 공개모임 사진변경필드만전송;1330–1405 기본저장성공시변경표시제거·중간초안실패정지·다음저장/정리"
+        },
+        {
+          "path": "community_admin_front/src/features/operations/ui/file-usage-panel.tsx",
+          "sha256": "f3ece8bae2d3fa1db7ebe6b9357d6af0969abf516cbad2512eb0ae26a4585959",
+          "reviewScope": "전체 실제본문: 사용처종류/대상/순서/시간·조회실패·50건과 문자열오탐 안내"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/repository/query/FileMetadataQueryRepository.java",
+          "sha256": "a25e395d7c60e5ff0ff982d7ca97b1d4cff0653d37b802de414ebd05830a650c",
+          "reviewScope": "90–106 미등록 완료사진 후보: createdAt24시간이상·용도/상태/미참조/파기예정없음·id커서"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/ContentPhotoService.java",
+          "sha256": "997f5b38e45d5d0b5e23612e34c8c7eb8d6c638ab3c47b9f9fc9193cf03c3d5c",
+          "reviewScope": "전체 실제본문: null유지/빈목록제거·부모거래·파일잠금·10장/중복/용도/소유·완료/CLEAN/이미지/파기표시·권한있는원본복사·정렬읽기"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/constants/ContentPhotoTarget.java",
+          "sha256": "31109f86cff4d5e711246b98946a9ba7ced27107a3c3db806fa0372b8ab9315c",
+          "reviewScope": "전체 실제본문: 공지/이벤트/상품의 전용 용도와 참조종류"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/file/service/FileStorageService.java",
+          "sha256": "c6016f8b1db74d6011a2f0cc016bff9d82f3b1c24367a61f3c6e0378639783d3",
+          "reviewScope": "774–823 소유자 삭제·현재참조/보존제한·metadata flush·커밋후 저장소파기 인계"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/event/service/RecurringEventUpdateService.java",
+          "sha256": "6a575b21b37adb1e61d6fdc27a13c590c1f1be03a26d1d218abd1dfee93b459d",
+          "reviewScope": "106–185 부모호스트·일괄대상잠금·허용회차 사진잠금·sync·제외회차 건너뜀"
+        },
+        {
+          "path": "community_admin_front/src/features/operations/model/operation-resource-configs.tsx",
+          "sha256": "c105c3d811d0548a26f6f609cae8ad4927dbf6d083a5b08f4eaab509d53f2d11",
+          "reviewScope": "375–425 파일메타/용도/상태·상세/삭제확인 사용처패널·ID확인"
+        }
+      ],
+      "reuses": [
+        "club_announcements_20261122",
+        "club_calendar_20261122",
+        "club_posts_20261122",
+        "dispute_evidence_20261122",
+        "event_creation_20261122",
+        "event_detail_complete_20261122",
+        "event_lifecycle_20261122",
+        "market_management_20261122",
+        "profile_domain_rollup_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-03_event-creation_prd.md",
+          "sha256": "db82859cb0cfccfd5a9a983614559edd5733424fdb62cc4d0919664d3581590a"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/03_event/F03-02_event-detail_prd.md",
+          "sha256": "1d6ab9ac555188045fb69f313258bb664b0bbf5da0f42e1b55267a8fd04f50a9"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-08_board-post-crud_prd.md",
+          "sha256": "ac77c14eda2ccd1c6a3bc9fee968f3ee5fca4c5cd7a87934838706cbf818a7f7"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-10_announcements_prd.md",
+          "sha256": "cdd08cc1460f4eceecc4bc271d3fa18ac9c28d3120dbc3c9461de11f106f23ee"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/04_club/F04-12_club-events-calendar_prd.md",
+          "sha256": "b3d97463e60f92b39332613dc875f00f1a00da13ba2e69e809d19486e9e09ebd"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/08_plan_market/F08-06_market-item-management_prd.md",
+          "sha256": "0c83e0865dfbf278ec4f6430dca7af8beb2ba6e0033631884a64f1d0793efae8"
+        }
+      ],
+      "retainedHtmlIds": {
+        "docs/features/content-photos.html": [
+          "sidebar",
+          "where",
+          "editing",
+          "purposes",
+          "trace",
+          "verification"
+        ]
+      },
+      "referenceChanges": [],
+      "followUpFindings": [
+        "공통첨부 null유지와 게시글 null삭제 계약 구분",
+        "사용처종류별 한도50/최대200 및 신고증빙 문자열검색 오탐 명시",
+        "업로드완료와부모게시저장·실제파기 구분;초안키만으로무참조사진영구보존보장없음",
+        "관리자metadata삭제응답과저장소물리삭제완료 분리",
+        "공개모임 사진저장후 일정/장소 후속실패·중간초안저장실패 구분"
+      ],
+      "retainedHistoricalQuotes": [],
+      "retainedHistoricalHtml": [
+        {
+          "path": "docs/features/content-photos.html",
+          "pattern": "<details id=\"photo-previous-execution\">[\\s\\S]*?</details>",
+          "sha256": "5037aa3b84cca523a657d9c8a92f1ada4a5bd71e0010105a866aad4360737af5",
+          "note": "2026-11-06 기존 문서의 실행·배포 주장 원문; 현재 실행으로 합산하지 않음"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "22 source/canonical digests; 6 retained HTML IDs",
+        "derivedDocuments": "1 documents; shared batch verified 1 paths, 18 relative links/anchors and 0 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; source and existing canonical document review only; no images rendered"
+      },
+      "observedSourceVersions": {
+        "community_admin_front": "8af79d5b491505e97b386da1175d00884ac89ed1",
         "community_api": "719cdaa2d5edd5b3ae31e27e50435950c8b777d5",
         "community_app": "c453d6d2d991e00b921a699cafd5365b5cd251c6"
       }
