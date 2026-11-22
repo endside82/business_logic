@@ -4,14 +4,14 @@ window.SCENARIO_AUDIT = {
   "sourceReferenceCheck": {
     "method": "exact-controller-method-and-http-route",
     "endpointIdentityChecked": true,
-    "sourceRevision": "4dda5fe12b9d7db74510aa219034ed716f86adeb"
+    "sourceRevision": "4e781f7a9f5d18f381c680539a9a95a348ba5295"
   },
   "countingNote": "시나리오 1,276개는 상세 시나리오 문서 117개에서 식별한 제목 수이고, 상세 시나리오 문서가 없는 기능 58개는 0으로 센다. 어느 숫자도 테스트 통과율의 분모로 쓰지 않는다.",
   "totals": {
     "features": 175,
     "documentedScenarioItems": 1276,
     "definedFeatures": 117,
-    "automatedTestFilesScanned": 5007,
+    "automatedTestFilesScanned": 5008,
     "journeyFilesScanned": 336,
     "unitScenarioDocuments": 117,
     "directlyLinkedAutomatedTests": 76,
@@ -27,8 +27,8 @@ window.SCENARIO_AUDIT = {
     "completeEvidenceChain": 44,
     "partialEvidenceChain": 57,
     "definitionOnlyEvidence": 74,
-    "traceMarkers": 673,
-    "verifiedTraceRecords": 671,
+    "traceMarkers": 700,
+    "verifiedTraceRecords": 698,
     "unresolvedTraceRecords": 0,
     "retiredTraceMarkers": 2
   },
@@ -17541,7 +17541,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F16-03",
       "domain": "마일리지",
-      "name": "시즌 (목록·과거 랭킹·내 스냅샷)",
+      "name": "시즌 조회·순위 확정·재시도",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-03_season_prd.md",
@@ -17552,10 +17552,79 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 4,
+        "verified": 4,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F16-03:1",
+            "label": "GET /api/v1/clubs/{clubId}/mileage/seasons",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageSeasonController.java",
+                "controller": "MileageSeasonController",
+                "method": "listSeasons",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/mileage/seasons",
+                "targetLine": 59,
+                "methodLine": 61
+              }
+            ]
+          },
+          {
+            "id": "F16-03:2",
+            "label": "GET /api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/ranking",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageSeasonController.java",
+                "controller": "MileageSeasonController",
+                "method": "getSeasonRanking",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/ranking",
+                "targetLine": 73,
+                "methodLine": 75
+              }
+            ]
+          },
+          {
+            "id": "F16-03:3",
+            "label": "GET /api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/me",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageSeasonController.java",
+                "controller": "MileageSeasonController",
+                "method": "getMySeasonSnapshot",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/me",
+                "targetLine": 88,
+                "methodLine": 90
+              }
+            ]
+          },
+          {
+            "id": "F16-03:4",
+            "label": "POST /api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/close-retry",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageSeasonController.java",
+                "controller": "MileageSeasonController",
+                "method": "retryClose",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/clubs/{clubId}/mileage/seasons/{seasonId}/close-retry",
+                "targetLine": 100,
+                "methodLine": 103
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -17582,7 +17651,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F16-04",
       "domain": "마일리지",
-      "name": "마일리지 정책 설정",
+      "name": "마일리지 제도 설정·변경 미리보기",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-04_policy-config_prd.md",
@@ -17593,10 +17662,62 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 3,
+        "verified": 3,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F16-04:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/config",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "getConfig",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/config",
+                "targetLine": 97,
+                "methodLine": 99
+              }
+            ]
+          },
+          {
+            "id": "F16-04:2",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/mileage/config",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "updateConfig",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/config",
+                "targetLine": 113,
+                "methodLine": 118
+              }
+            ]
+          },
+          {
+            "id": "F16-04:3",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/config/preview",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "getConfigPreview",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/config/preview",
+                "targetLine": 131,
+                "methodLine": 133
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,
@@ -17623,7 +17744,7 @@ window.SCENARIO_AUDIT = {
     {
       "id": "F16-05",
       "domain": "마일리지",
-      "name": "적립규칙·등급·배지·교환 프리셋 관리",
+      "name": "적립 규칙·등급·배지·차감 사유·시즌 관리",
       "scenarioCount": 0,
       "scenarioSource": "상세 시나리오 문서 없음",
       "scenarioPath": "business_logic/prd/02_feature_prds/16_mileage/F16-05_policy-presets_prd.md",
@@ -17634,10 +17755,351 @@ window.SCENARIO_AUDIT = {
       },
       "trace": {
         "backendPath": null,
-        "total": 0,
-        "verified": 0,
+        "total": 20,
+        "verified": 20,
         "retired": 0,
-        "entries": []
+        "entries": [
+          {
+            "id": "F16-05:1",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/earning-rules",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "listEarningRules",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/earning-rules",
+                "targetLine": 143,
+                "methodLine": 145
+              }
+            ]
+          },
+          {
+            "id": "F16-05:2",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/earning-rules",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "createEarningRule",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/earning-rules",
+                "targetLine": 151,
+                "methodLine": 153
+              }
+            ]
+          },
+          {
+            "id": "F16-05:3",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/mileage/earning-rules/{ruleId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "updateEarningRule",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/earning-rules/{ruleId}",
+                "targetLine": 162,
+                "methodLine": 164
+              }
+            ]
+          },
+          {
+            "id": "F16-05:4",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/grades",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "listGrades",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grades",
+                "targetLine": 175,
+                "methodLine": 177
+              }
+            ]
+          },
+          {
+            "id": "F16-05:5",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/grades",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "createGrade",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grades",
+                "targetLine": 183,
+                "methodLine": 185
+              }
+            ]
+          },
+          {
+            "id": "F16-05:6",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/mileage/grades/{gradeId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "updateGrade",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grades/{gradeId}",
+                "targetLine": 194,
+                "methodLine": 196
+              }
+            ]
+          },
+          {
+            "id": "F16-05:7",
+            "label": "DELETE /api/v1/admin/clubs/{clubId}/mileage/grades/{gradeId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "deleteGrade",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grades/{gradeId}",
+                "targetLine": 229,
+                "methodLine": 231
+              }
+            ]
+          },
+          {
+            "id": "F16-05:8",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/grades/recalculate",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "recalculateGrades",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/grades/recalculate",
+                "targetLine": 215,
+                "methodLine": 219
+              }
+            ]
+          },
+          {
+            "id": "F16-05:9",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/badges",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "listBadgeDefinitions",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/badges",
+                "targetLine": 248,
+                "methodLine": 250
+              }
+            ]
+          },
+          {
+            "id": "F16-05:10",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/badges",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "createBadgeDefinition",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/badges",
+                "targetLine": 256,
+                "methodLine": 259
+              }
+            ]
+          },
+          {
+            "id": "F16-05:11",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/mileage/badges/{badgeDefId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "updateBadgeDefinition",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/badges/{badgeDefId}",
+                "targetLine": 273,
+                "methodLine": 275
+              }
+            ]
+          },
+          {
+            "id": "F16-05:12",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/redemption-presets",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "listRedemptionPresets",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemption-presets",
+                "targetLine": 287,
+                "methodLine": 289
+              }
+            ]
+          },
+          {
+            "id": "F16-05:13",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/redemption-presets/active",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "listActiveRedemptionPresets",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemption-presets/active",
+                "targetLine": 303,
+                "methodLine": 305
+              }
+            ]
+          },
+          {
+            "id": "F16-05:14",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/redemption-presets",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "createRedemptionPreset",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemption-presets",
+                "targetLine": 311,
+                "methodLine": 314
+              }
+            ]
+          },
+          {
+            "id": "F16-05:15",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/mileage/redemption-presets/{presetId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "updateRedemptionPreset",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemption-presets/{presetId}",
+                "targetLine": 328,
+                "methodLine": 330
+              }
+            ]
+          },
+          {
+            "id": "F16-05:16",
+            "label": "DELETE /api/v1/admin/clubs/{clubId}/mileage/redemption-presets/{presetId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "deactivateRedemptionPreset",
+                "httpMethod": "DELETE",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/redemption-presets/{presetId}",
+                "targetLine": 340,
+                "methodLine": 342
+              }
+            ]
+          },
+          {
+            "id": "F16-05:17",
+            "label": "GET /api/v1/admin/clubs/{clubId}/mileage/seasons",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "listSeasons",
+                "httpMethod": "GET",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/seasons",
+                "targetLine": 355,
+                "methodLine": 358
+              }
+            ]
+          },
+          {
+            "id": "F16-05:18",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/seasons",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "createSeason",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/seasons",
+                "targetLine": 364,
+                "methodLine": 368
+              }
+            ]
+          },
+          {
+            "id": "F16-05:19",
+            "label": "PUT /api/v1/admin/clubs/{clubId}/mileage/seasons/{seasonId}",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "updateSeason",
+                "httpMethod": "PUT",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/seasons/{seasonId}",
+                "targetLine": 378,
+                "methodLine": 381
+              }
+            ]
+          },
+          {
+            "id": "F16-05:20",
+            "label": "POST /api/v1/admin/clubs/{clubId}/mileage/seasons/{seasonId}/close",
+            "status": "verified",
+            "note": "",
+            "endpoints": [
+              {
+                "targetPath": "community_api/api-app/src/main/java/com/endside/community/mileage/controller/MileageAdminPolicyController.java",
+                "controller": "MileageAdminPolicyController",
+                "method": "closeSeason",
+                "httpMethod": "POST",
+                "httpPath": "/api/v1/admin/clubs/{clubId}/mileage/seasons/{seasonId}/close",
+                "targetLine": 391,
+                "methodLine": 394
+              }
+            ]
+          }
+        ]
       },
       "automated": {
         "directlyLinked": false,

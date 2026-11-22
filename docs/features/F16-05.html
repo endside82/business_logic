@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>F16-05 보상 기준 관리 — community PRD</title>
+  <title>F16-05 적립 규칙·등급·배지·차감 사유·시즌 관리</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -17,91 +17,32 @@
           <a href="../domains/16-mileage.html">16 마일리지</a><span>›</span>
           F16-05 보상 기준 관리
         </div>
-        <h1>F16-05. 적립 규칙·등급·배지·사용 사유 관리</h1>
-        <p class="lede">
-          클럽 정책 담당자가 기본 적립 규칙, 등급, 배지와 점수 사용 사유를 관리한다.
-          사진 승인 규칙과 모임별 점수도 <strong>첫 출시 범위</strong>에 포함한다.
-          운영 배포 전이며 사진 심사의 회원·운영진 실제 앱 연결과 휴대전화 검사는 남아 있다.
-        </p>
+        <h1>F16-05 적립 규칙·등급·배지·차감 사유·시즌 관리</h1>
+        <p class="lede">규칙 중복 거절, 등급 오류 분리와 재계산 예약, 배지/프리셋/시즌 생성 키, 시즌 기간 잠금 및 실패 후 입력 유지의 현재 계약을 대조했다. 2026-11-22 소스 대조이며 새 제품 실행과 구분합니다.</p>
       </header>
 
       <div class="launch-strip" id="launch-strip"></div>
 
-      <section>
-        <div class="metrics">
-          <div class="metric"><div class="label">첫 출시 관리 대상</div><div class="value">4종</div><div class="hint">규칙·등급·배지·사용 사유</div></div>
-          <div class="metric"><div class="label">등급 한도</div><div class="value">10개</div><div class="hint">클럽당</div></div>
-          <div class="metric"><div class="label">배지 한도</div><div class="value">50개</div><div class="hint">클럽당</div></div>
-          <div class="metric"><div class="label">사진 승인 규칙</div><div class="value">첫 출시 포함</div><div class="hint">클럽별로 사용할 때 활성화</div></div>
-        </div>
-
-        <div class="callout info">
-          <span class="label">현재 상태 — 핵심 정의 관리 완료</span>
-          <p>클럽 공통 적립 규칙과 등급·배지·사용 사유는 실제 서버와 이어지는 화면 왕복을 마쳤다.
-            등급 기준을 바꾸면 기존 회원 등급을 자동으로 다시 계산하고, 사용 중인 등급은 이유와 함께 삭제를 막는다.
-            이 네 가지를 만들고 고치는 권한은 클럽 소유자에게 고정되어 있어 운영진에게 위임되지 않는다.</p>
-          <p><strong>사진 승인 규칙</strong>도 첫 출시 기본 목록에 포함했다. 클럽 정책 담당자가 규칙을 켠 경우에만 적립한다.
-            승인·재심·취소·적립 상한의 서버 검사와 앱 자동 검사는 통과했다. 품질 확인 담당자는 서비스 공개 전에 회원·운영진의 실제 앱 연결을 검사한다.</p>
-        </div>
-
-        <div class="callout">
-          <span class="label">설계 의도 — 마일리지가 "돈처럼 보이지 않게"</span>
-          <p>등급 이름에 "원·캐시·포인트" 같은 금전성 단어를 막는 것은 의도된 안전장치다. 마일리지가 현금처럼 보이면
-            법적·세무적 문제와 사용자 오해를 부른다. 사용 사유를 삭제하지 않고 사용 중지만 하는 것도 과거 거래의 사유 기록을 보존하기 위해서다.</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>관리 대상과 규칙</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>대상</th><th>핵심 규칙</th></tr></thead>
-            <tbody>
-              <tr><td><strong>적립 규칙</strong></td><td>체크인·후기·사진 승인의 점수와 사용 여부를 설정한다. 후기는 모임 종료 후 며칠 안에 쓰면 적립할지를 1일부터 현재 후기 작성 상한까지 정한다(현재 최대 7일). 같은 활동 규칙을 다시 저장하면 기존 규칙을 갱신한다. 사진 적립은 규칙을 켠 클럽에만 적용한다.</td></tr>
-              <tr><td><strong>이벤트별 점수와 상한</strong></td><td>호스트가 공개 전 체크인·후기 점수를 정한다. 기본 상한은 클럽 점수의 3배이며 정책 담당자가 별도 상한을 지정하거나 기본값으로 되돌린다. 공개할 때 점수·사용 여부·후기 인정 기간을 고정한다.</td></tr>
-              <tr><td><strong>등급</strong></td><td>클럽당 최대 10개. 기준 점수는 등급이 높아질수록 커져야 하며 중복할 수 없음. 이름에 금전성 단어 금지</td></tr>
-              <tr><td><strong>배지 정의</strong></td><td>클럽당 최대 50개. 사용 시작·중지 가능. 회원 화면에는 사용 중인 배지만 노출</td></tr>
-              <tr><td><strong>사용 사유</strong></td><td>점수를 사용할 때 고르는 사유와 기본값. 과거 기록을 보존하기 위해 삭제하지 않고 사용 중지만 한다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>운영진이 할 수 있는 동작</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>동작</th><th>누가</th><th>무엇이 일어나는가</th></tr></thead>
-            <tbody>
-              <tr><td><strong>적립 규칙 관리</strong></td><td>정책 담당</td><td>체크인·후기의 자동 적립 규칙을 만들고 본다. 같은 활동 규칙을 다시 저장하면 기존 규칙을 갱신한다.</td></tr>
-              <tr><td><strong>이벤트별 점수 설정</strong></td><td>이벤트 호스트</td><td>공개 전에는 상한 안에서 점수를 바꾸거나 클럽 기본값을 선택한다. 공개 뒤에는 고정한 기준을 조회하며 회원도 신청 전에 같은 점수와 후기 인정 기간을 확인한다.</td></tr>
-              <tr><td><strong>등급 관리</strong></td><td>정책 담당</td><td>등급을 만들고 고치고 지운다. 개수·금전성 단어·기준 점수 제약을 어기면 거절된다.</td></tr>
-              <tr><td><strong>배지 관리</strong></td><td>정책 담당</td><td>배지를 만들고 고친다. 클럽당 50개 한도를 넘을 수 없다.</td></tr>
-              <tr><td><strong>사용 사유 관리</strong></td><td>정책 담당</td><td>사용 사유와 기본값을 만들고 고친다. 더 쓰지 않는 항목은 과거 기록을 남긴 채 사용 중지한다.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <h2>첫 출시 범위와 공개 전 확인</h2>
-        <div class="callout warn">
-          <ul>
-            <li><strong>사진 승인 적립</strong> — 첫 출시 기본 목록에 포함했으며 클럽 정책 담당자가 규칙을 켠 경우에만 적립한다. 품질 확인 담당자는 회원·운영진의 실제 앱에서 제출·재심·승인·취소와 적립·회수·알림을 검사한다.</li>
-            <li><strong>시즌</strong> — 자동 시작·마감·공동 순위·종료 기록·실패 복구를 검사하고 첫 출시 기본 목록에 포함했다. 서버 운영 담당자는 기존 클럽의 시즌 배정을 준비하고 품질 확인 담당자는 배포 환경의 전환·순위·복구를 검사한다.</li>
-            <li><strong>이벤트별 적립 규칙</strong> — 공개 시 고정한 점수를 사용하며 이후 클럽 규칙의 점수 변경을 소급하지 않는다. 현재 클럽 규칙을 끄면 긴급 중지로 적용한다. 이벤트 취소 시 체크인·후기 적립을 회수하고 실패한 처리는 이어서 재시도한다. 사진·수동 적립·호스트 제안은 이 취소 회수에 포함하지 않는다.</li>
-            <li><strong>클럽별 후기 작성 기간</strong> — 지금 클럽이 정할 수 있는 것은 후기에 점수를 줄 인정 기간이다. 후기 자체를 쓸 수 있는 기간은 모든 클럽에 공통으로 7일이며, 클럽별로 바꾸는 기능은 2026-09-05 만들지 않기로 결정했다(요구가 확인되면 재검토).</li>
-          </ul>
-          <p><strong>이벤트별 규칙에는 별도 출시 스위치가 없다.</strong> 기존 공개 모임의 확정 점수를 준비한 뒤
-            핵심 마일리지가 열린 환경에 코드를 배포하면 함께 적용된다. 확정 기록이 누락된 모임은 현재 클럽 점수로
-            임의 대체하지 않고 적립을 막아 운영 확인 대상으로 남긴다. 제도 도입 전 모임은 소급 적립하지 않는다.</p>
-          <p>검사 범위는 <a href="../qa/launch-status.html#evidence">확인한 것과 아직 확인하지 못한 것</a>을 따른다.</p>
-        </div>
-      </section>
-
-
-      <section id="release-completion">
-        <h2>이 기능의 출시 완료 기준</h2>
+      <section id="current-1"><h2>현재 범위와 정정</h2><p>정책 운영진이 자동 적립 규칙, 등급, 배지 정의, 미리 정한 차감 사유, 시즌을 관리한다. 배지 담당자는 정의 목록 조회와 배지 부여 입구를 사용할 수 있지만 정의 편집 권한과는 다르다. 과거 문서의 ‘규칙 POST는 upsert’, ‘등급 검증 오류는 모두 개수 초과’, ‘시즌 close는 상태 변경만 수행’은 현재 계약과 다르다.</p></section>
+<section id="current-2"><h2>현재 서버 계약</h2><p>공통 접두사는 <code>/api/v1/admin/clubs/{clubId}/mileage</code>다. 기본 권한은 POLICY_OWNER이며 MILEAGE 공개 범위를 적용한다. 아래의 <code>{id}</code>는 각 실제 요청의 ruleId/gradeId/badgeDefId/presetId/seasonId다.</p>
+<div class="table-wrap"><table><thead><tr><th>대상</th><th>현재 요청·결과</th></tr></thead><tbody><tr><td>적립 규칙</td><td>GET /earning-rules 목록, POST 생성 201, PUT /earning-rules/{ruleId} 수정 VO</td></tr><tr><td>등급</td><td>GET /grades 목록, POST 생성 201, PUT /grades/{gradeId} 수정, DELETE 삭제 204</td></tr><tr><td>등급 재계산</td><td>POST /grades/recalculate, 선택 body.afterMemberId 기본 0, 처리/변경/실패/마지막 회원 ID 결과</td></tr><tr><td>배지 정의</td><td>GET /badges 목록은 POLICY_OWNER 또는 BADGE_AWARD_MANAGER. POST 생성 201, PUT /badges/{badgeDefId} 수정은 POLICY_OWNER</td></tr><tr><td>차감 사유</td><td>GET /redemption-presets 전체, GET /redemption-presets/active 활성 목록은 POLICY_OWNER 또는 REWARD_MANAGER. POST 생성, PUT 수정, DELETE 비활성화</td></tr><tr><td>시즌</td><td>GET /seasons 목록, POST 생성 201, PUT /seasons/{seasonId} 수정, POST /seasons/{seasonId}/close 마감. 별도 MILEAGE_SEASON 공개 범위</td></tr></tbody></table></div>
+<p>배지 정의·차감 사유·시즌의 <strong>생성</strong>은 필수 Idempotency-Key와 명령 영수증 실행기를 사용한다. 규칙/등급 생성, 수정/삭제, 시즌 마감을 모두 같은 필수 키 API로 설명하지 않는다. 회원 배지 부여/해제는 <a href="F16-06.html">적립·차감·정정</a>의 별도 명령이다.</p></section>
+<section id="current-3"><h2>적립 규칙의 생성과 변경</h2><p>트리거는 EVENT_CHECKIN, EVENT_REVIEW, EVENT_PHOTO_APPROVED다. 같은 클럽/트리거가 이미 있으면 POST는 DUPLICATE_RESOURCE로 거절하며 기존 규칙을 덮어쓰지 않는다. 수정은 ruleId를 사용한다. points는 0 이상, eventPointsCap도 지정했다면 0 이상이다. 후기 기한은 1~7일이며 미지정 생성은 7일을 사용한다.</p>
+<p>사진 규칙을 켤 때 MILEAGE_PHOTO 공개 범위를 확인한다. 수정은 버전을 증가시키며 경쟁 갱신은 CONCURRENT_MODIFICATION이다. resetEventPointsCap=true는 별도 상한을 없애고, 동시에 새 eventPointsCap도 보내면 거절한다. 기본 세 규칙을 보충하는 시점과 값은 <a href="F16-04.html">마일리지 제도 설정·변경 미리보기</a>를 따른다.</p></section>
+<section id="current-4"><h2>등급·배지·차감 사유의 규칙</h2><div class="table-wrap"><table><thead><tr><th>대상</th><th>현재 제약·효과</th></tr></thead><tbody><tr><td>등급</td><td>최대 10개. 생성 이름 필수/20자, threshold 0 이상, 색/아이콘 필수/각 50자, 표시 순서 0 이상</td></tr><tr><td>등급 중복/금지어</td><td>이름 중복은 MILEAGE_GRADE_NAME_DUPLICATE, 금전성 금지어는 MILEAGE_GRADE_NAME_FORBIDDEN_WORD, threshold 중복은 MILEAGE_GRADE_THRESHOLD_DUPLICATE</td></tr><tr><td>등급 삭제</td><td>현재 등급으로 참조한 요약 행이 있으면 MILEAGE_GRADE_IN_USE</td></tr><tr><td>배지 정의</td><td>최대 50개. 이름 필수/30자, 설명 200자, 색/아이콘 50자. 금지어는 별도 MILEAGE_BADGE_NAME_FORBIDDEN_WORD. 생성은 active=true</td></tr><tr><td>차감 사유</td><td>생성 label 필수/50자, 기본 차감량 양수, 표시 순서 0 이상. 목록은 표시 순서대로 반환</td></tr><tr><td>차감 사유 삭제</td><td>행 삭제 대신 active=false. 이미 비활성이면 그대로 종료하며 이후 사용은 MILEAGE_PRESET_INACTIVE</td></tr></tbody></table></div>
+<p>등급의 ‘단조 검사’ 구현은 다른 등급과 threshold가 같은지를 검사한다. 저장된 displayOrder에 따라 점수가 반드시 증가하도록 검사한다고 확대하지 않는다. 일부 수정 필드는 길이만 검사하므로 생성의 공백 필수 검사와 완전히 같다고 설명하지 않는다.</p>
+<p>등급 생성·삭제와 threshold 변경은 재계산 작업을 예약한다. 정의 저장 성공이 전체 회원 등급 재계산 완료를 뜻하지 않는다. 수동 재계산은 200명씩 읽으면서 회원별 오류를 세고 계속 진행한다. 실패한 회원 뒤까지 cursor가 이동할 수 있으므로 실패 복구를 마지막 ID 이후부터만 수행하면 누락된다. 앱의 재계산은 별도 cursor 없이 처음부터 요청하고 결과 및 관련 조회를 갱신한다.</p></section>
+<section id="current-5"><h2>시즌 생성·수정·마감</h2><p>시즌 생성은 시작/종료 필수, 시작 &lt; 종료, 종료가 현재 이후, 기존 시즌과 기간 비중첩을 요구한다. 이름 최대 50자다. 처음에는 SCHEDULED이며 시작 시각과 다른 시즌 조건이 맞으면 ACTIVE로 전환하고 집계 준비를 수행한다.</p>
+<p>기간 수정은 아직 시작 전 SCHEDULED이고 해당 시즌 delta가 없어야 한다. 진행 중인 시즌은 이름만 바꿀 수 있다. CLOSING은 MILEAGE_SEASON_CLOSE_IN_PROGRESS, CLOSED 수정은 여전히 MILEAGE_SEASON_NOT_FOUND로 거절한다. 타 클럽 시즌도 찾을 수 없음으로 처리한다.</p>
+<p>마감은 준비된 ACTIVE이면서 종료 시간이 지난 경우만 시작한다. CLOSING에서 회원별 기록·순위 확정과 남은 작업 재시도를 거친다. 전체 상태·동점 규칙·다음 시즌은 <a href="F16-03.html">시즌 조회·순위 확정·재시도</a>를 따른다. 시즌을 단순 CRUD 결과만으로 완료라고 표시하지 않는다.</p></section>
+<section id="current-6"><h2>앱 행동·실패·복귀</h2><p>등급/차감 사유/시즌 화면은 정책 권한으로 보호한다. 배지 화면은 정책 또는 배지 부여 권한으로 들어가되 정의 추가·수정과 실제 부여를 나눈다. 각 목록은 로딩·빈 상태·오류 재시도를 제공한다.</p>
+<p>편집은 현재 세션과 제출 직전 권한을 확인하고 보내는 동안 중복 실행을 막는다. 성공하면 편집 창을 닫고 실패하면 오류를 표시하며 입력을 유지한다. 배지/차감 사유/시즌 생성 창은 같은 본문의 재시도에 같은 키를 사용하고 성공 때 완료 처리한다. 이름이나 기간 등 본문이 달라지면 같은 명령으로 취급하지 않는다.</p>
+<p>등급 편집은 이름 빈 값은 막지만 threshold/표시 순서를 정수로 해석하지 못하면 0으로 대체한다. 모든 숫자 오류를 입력 단계에서 명확히 거절한다고 설명하지 않는다. 시즌 수정은 바뀌지 않은 시작/종료를 null로 전송해 이름만 수정할 때 기간 잠금에 걸리지 않도록 한다. 마감·준비 재시도는 완료/진행 중 결과를 구분한다.</p></section>
+<section id="current-limits"><h2>현재 제한과 확인 범위</h2><div class="table-wrap"><table><thead><tr><th>분류</th><th>현재 경계</th><th>문서 처리</th></tr></thead><tbody><tr><td>Risk</td><td>등급 정의 저장과 회원별 재계산 완료는 분리돼 있다.</td><td>실패 수와 후속 처리를 별도로 확인한다.</td></tr><tr><td>Gap</td><td>일부 수정 입력의 공백 검사와 등급 숫자 파싱이 생성/입력 기대와 다르다.</td><td>서버·앱의 실제 검사 범위만 약속한다.</td></tr><tr><td>Gap</td><td>CLOSED 시즌 수정은 상태 오류 대신 NOT_FOUND다.</td><td>존재하지 않음과 종료 상태를 문서에서 구분한다.</td></tr><tr><td>미검증</td><td>중복 생성 경합·키 재시도·실제 재계산/마감·입력 복귀를 실행하지 않았다.</td><td>소스 대조와 실행 통과를 구분한다.</td></tr></tbody></table></div></section>
+<section><h2>수용 기준과 검증 근거</h2><ul><li><strong>AC-01 권한별 관리:</strong> 정책 편집과 배지 부여/활성 차감 사유 조회 권한을 구분한다.</li><li><strong>AC-02 규칙 중복:</strong> 같은 트리거 생성은 거절하고 수정은 기존 ID·버전으로 수행한다.</li><li><strong>AC-03 규칙 입력:</strong> 점수/상한/후기 기한·상한 초기화·사진 공개 범위를 확인한다.</li><li><strong>AC-04 등급 제약:</strong> 개수·이름·threshold 중복·금지어·사용 중 삭제의 서로 다른 오류를 설명한다.</li><li><strong>AC-05 재계산:</strong> 정의 저장의 예약과 회원별 처리 결과/실패 복구를 구분한다.</li><li><strong>AC-06 배지와 사유:</strong> 정의 입력 제한, 활성 목록, 비활성화와 실제 행 삭제를 구분한다.</li><li><strong>AC-07 생성 키:</strong> 배지/차감 사유/시즌 생성의 필수 키를 다른 명령에 확대하지 않는다.</li><li><strong>AC-08 시즌 기간:</strong> 비중첩·시작 전 예약 수정·진행 중 이름 변경·마감/종료 제한을 설명한다.</li><li><strong>AC-09 입력 보존:</strong> 성공 후 닫기와 실패 후 유지, 생성 키의 같은 본문 재사용을 대조한다.</li><li><strong>AC-10 결과 구분:</strong> 저장·재계산·시즌 준비·마감 완료를 각각의 응답 상태로 판정한다.</li></ul>
+<p>현재 소스 계약과 후속 확인 시나리오다. 이번 작업에서 새 제품 시험·실기기·시각 검수 통과 기록을 추가하지 않는다.</p></section>
+<section id="release-completion">
+        <h2>이 기능의 출시 완료 기준</h2><p><a href="#current-limits">현재 제한과 확인 범위</a>를 함께 판정한다.</p>
         <p>2026년 10월 13일 정리한 <strong>판정 조건</strong>입니다. 아래 목록 자체는 검사 통과 기록이 아닙니다.
           첫 출시 포함 여부와 구현·검사 현황은 위 상태표를 따릅니다. 후속 기능은 첫 출시에서 신규 이용 제한을 확인하고, 기능을 열 때 아래 결과를 검증합니다.</p>
         <ul>

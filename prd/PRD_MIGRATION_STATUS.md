@@ -362,9 +362,9 @@ DB 스키마 정의는 `community_api/domain/src/main/resources/db/migration/V1_
 | F15-09 | 경고 & 징계 | [F15-09_queue-dashboard-audit_prd.md](02_feature_prds/15_warning/F15-09_queue-dashboard-audit_prd.md) | `source-first` | source-first 구현 확인 | 8 | 3 |
 | F16-01 | 마일리지 | [F16-01_my-mileage-main_prd.md](02_feature_prds/16_mileage/F16-01_my-mileage-main_prd.md) | `source-first` | source-first 구현 확인 | 3 | 5 |
 | F16-02 | 마일리지 | [F16-02_grade-badge-ranking_prd.md](02_feature_prds/16_mileage/F16-02_grade-badge-ranking_prd.md) | `source-first` | source-first 구현 확인 | 5 | 6 |
-| F16-03 | 마일리지 | [F16-03_season_prd.md](02_feature_prds/16_mileage/F16-03_season_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
-| F16-04 | 마일리지 | [F16-04_policy-config_prd.md](02_feature_prds/16_mileage/F16-04_policy-config_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
-| F16-05 | 마일리지 | [F16-05_policy-presets_prd.md](02_feature_prds/16_mileage/F16-05_policy-presets_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
+| F16-03 | 마일리지 | [F16-03_season_prd.md](02_feature_prds/16_mileage/F16-03_season_prd.md) | `source-first` | source-first 구현 확인 | 4 | 4 |
+| F16-04 | 마일리지 | [F16-04_policy-config_prd.md](02_feature_prds/16_mileage/F16-04_policy-config_prd.md) | `source-first` | source-first 구현 확인 | 3 | 5 |
+| F16-05 | 마일리지 | [F16-05_policy-presets_prd.md](02_feature_prds/16_mileage/F16-05_policy-presets_prd.md) | `source-first` | source-first 구현 확인 | 20 | 4 |
 | F16-06 | 마일리지 | [F16-06_grant-redeem-reverse_prd.md](02_feature_prds/16_mileage/F16-06_grant-redeem-reverse_prd.md) | `source-first` | source-first 구현 확인 | 0 | 5 |
 | F16-07 | 마일리지 | [F16-07_host-proposal_prd.md](02_feature_prds/16_mileage/F16-07_host-proposal_prd.md) | `source-first` | source-first 구현 확인 | 0 | 3 |
 | F16-08 | 마일리지 | [F16-08_review-queue-dashboard_prd.md](02_feature_prds/16_mileage/F16-08_review-queue-dashboard_prd.md) | `source-first` | source-first 구현 확인 | 11 | 5 |

@@ -1,81 +1,75 @@
-# F16-03. 시즌 (목록·과거 랭킹·내 스냅샷) PRD
+# F16-03. 시즌 조회·순위 확정·재시도 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 소스 계약을 대조했다. 새 제품 실행·외부 인증·실기기 확인 기록은 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 진입
 
-시즌 조회는 멤버가 시즌 목록(`GET /mileage/seasons`, 상태 필터), 종료 시즌의 스냅샷 기반 랭킹(`GET /seasons/{seasonId}/ranking`), 본인 시즌 스냅샷(`GET /seasons/{seasonId}/me`, 없으면 204)을 보는 흐름이다. 서버 `MileageSeasonController`와 Flutter `mileage_seasons_screen.dart` / `mileage_season_ranking_screen.dart`가 연결되어 있다.
+회원은 마일리지 메인의 시즌 입구에서 진행·마감 중·종료 시즌을 본다. 시즌 공개 범위가 닫혀 있으면 안내 화면으로 연결된다. 회원 목록은 서버 전체 목록을 받은 뒤 ACTIVE/CLOSING/CLOSED만 표시하고 SCHEDULED는 숨긴다. 진행 중, 마감 중, 종료 순서와 종료 시각 역순으로 정렬한다. CLOSED 항목만 과거 순위 화면을 연다.
 
-시즌 상태는 `SCHEDULED → ACTIVE → CLOSED`이고, 시즌 마감(운영진 `/close`, F16-05) 시 멤버별 시즌 합계가 `mileage_season_snapshot`에 기록되며 다음 SCHEDULED 시즌이 자동 ACTIVE로 전환된다.
+시즌 생성·수정·마감은 정책 운영 화면에서 수행한다. 상태는 **SCHEDULED → ACTIVE → CLOSING → CLOSED**이며 ACTIVE라도 projectionReady=false면 아직 회원별 시즌 집계를 준비하는 중이다. 예전 문서의 ‘상태만 마감하고 스냅샷 생성은 호출자 책임’ 설명은 현재 전이 runner/worker와 다르다.
 
-**가장 큰 Gap은 과거 시즌 랭킹의 `basis` 파라미터다.** 컨트롤러 시그니처는 `MileageSeasonRankingSearchParam.basis : RankingBasis`(enum 값 `BALANCE`/`LIFETIME_EARNED`/`SEASON_EARNED`)인데, 컨트롤러 주석·Flutter API·QueryRepository 설명은 모두 `BY_EARNED`/`BY_BALANCE`를 가정한다. Spring이 query string `basis`를 `RankingBasis` enum으로 바인딩하므로 `BY_EARNED`/`BY_BALANCE`를 보내면 enum 변환에 실패해 400이 날 수 있다. 즉 **문서·클라이언트가 기대하는 basis 값이 실제 enum과 불일치**한다.
+## 현재 서버 계약
 
-판정: **목록·내 스냅샷·기본 랭킹은 사용 가능, basis 지정 랭킹은 Gap**.
+공통 접두사는 `/api/v1/clubs/{clubId}/mileage/seasons`다. MILEAGE_SEASON 공개 범위를 적용한다. 조회는 클럽 회원 확인, 재시도는 POLICY_OWNER 권한을 적용한다.
 
-## 2. 코드 위치
+| 요청 | 현재 응답·조건 |
+|---|---|
+| GET / | `List<MileageSeasonVo>`, 선택적 status 필터. 필터가 없으면 시작일 역순 |
+| GET /{seasonId}/ranking | `Page<MileageSeasonSnapshotVo>`, 해당 클럽의 CLOSED 시즌만 조회 |
+| GET /{seasonId}/me | CLOSED 시즌의 본인 스냅샷, 없으면 204 |
+| POST /{seasonId}/close-retry | `MileageSeasonVo`, 마감 또는 집계 준비를 이어 시도 |
 
-계약의 정본은 코드다. 서버: `MileageSeasonController`, `MileageSeasonService`, `MileageSeasonSnapshotQueryRepository`, `MileageSeasonRankingSearchParam`, `MileageSeasonVo`, `MileageSeasonSnapshotVo`, `SeasonStatus`, `RankingBasis`. 앱: `mileage_seasons_screen.dart`, `mileage_season_ranking_screen.dart`, `mileage_season_api.dart`, `mileage_season_repository.dart`, `mileage_season_providers.dart`.
+과거 시즌 순위의 basis는 **미지정 또는 SEASON_EARNED만 허용**한다. BALANCE/LIFETIME_EARNED는 MILEAGE_SEASON_RANKING_BASIS_NOT_ALLOWED로 거절한다. 앱은 현재 basis를 전송하지 않는다. 과거 BY_EARNED/BY_BALANCE 불일치나 잔액 기준 전환을 현재 앱 결함으로 설명하지 않는다.
 
-## 3. 전체 동작 흐름
+## 마감 대상과 순위 확정
 
-1. 멤버가 시즌 목록 화면(`seasons`)에 진입 → `listSeasons(clubId, status?)` → `GET /mileage/seasons?status=`. status 미지정이면 전체(startAt desc), 지정 시 해당 상태만.
-2. 멤버가 특정 시즌을 선택 → `getSeasonRanking(clubId, seasonId, basis?, page, size)` → `GET /seasons/{seasonId}/ranking`. 서버는 시즌 존재 검증(소속 클럽 포함) 후 `MileageSeasonSnapshotQueryRepository.searchByClubAndSeason`로 스냅샷 정렬.
-3. basis가 `BALANCE`면 `rankByBalance asc nullsLast → seasonBalance desc`, 그 외(null 포함)면 `rankByEarned asc nullsLast → seasonEarned desc`로 정렬.
-4. 본인 시즌 기록은 `getMySeasonSnapshot(clubId, seasonId, memberId)` → `GET /seasons/{seasonId}/me`. 스냅샷이 있으면 `MileageSeasonSnapshotVo`, 없으면 204 → Flutter는 null로 받아 빈 상태 표시.
-5. 스냅샷 자체는 운영진 시즌 마감(`MileageSeasonService.close`, F16-05) 시 생성된다. `close`는 상태를 CLOSED로 바꾸고 `closedAt`을 찍은 뒤 다음 SCHEDULED(시작시각 도래) 시즌을 ACTIVE로 전환한다.
+운영 마감은 ACTIVE, projectionReady=true, 종료 시각 경과를 요구한다. CLOSING이면 진행 중 오류, 종료 전이면 MILEAGE_SEASON_NOT_ENDED다. 시즌 시간 판정은 Asia/Seoul을 사용한다.
 
-## 6. 상태/권한 매트릭스
+마감 runner는 요약 행의 회원과 클럽 회원 ID의 합집합을 대상으로 회원별 별도 트랜잭션에서 스냅샷을 만든다. 해당 시즌 요약이 없는 회원은 0점 기록을 만들 수 있다. 이미 만든 기록은 다시 만들지 않는다. 실패한 회원은 기록하고 계속 진행하며, 마지막에 모든 대상의 스냅샷 존재를 검사한다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| 멤버 + status 미지정 | 전체 시즌(startAt desc) | 전체 목록 | 모든 시즌 표시 | 일치 |
-| 멤버 + status=CLOSED | 종료 시즌만 | 필터 적용 | 과거 시즌만 | 일치 |
-| 멤버 + CLOSED 시즌 랭킹 (basis 미지정) | rankByEarned 정렬 | basis null | 적립 기준 랭킹 | 일치 |
-| 멤버 + basis=BY_EARNED 전달 | enum 바인딩 실패 가능 | BY_EARNED 전송 | 400 또는 기본 정렬 | **불일치 (Gap)** |
-| 멤버 + 본인 스냅샷 없음 | 204 | null 수신 | 빈 상태 | 일치 |
-| 비멤버 | requireClubMember 차단 | 에러 | 접근 차단 | 일치 |
+완료 검사에서 seasonEarned 내림차순·memberId 오름차순으로 정렬한다. 양수 적립만 순위에 포함하고 동점은 같은 순위, 다음 순위는 건너뛰는 방식이다(예: 1, 1, 3). 0 이하 적립의 rankByEarned와 모든 rankByBalance는 null이다. 필요한 기록과 순위가 준비된 뒤에만 CLOSED·closedAt을 저장한다. HTTP 성공 응답이 반드시 CLOSED 완료를 뜻하지는 않는다.
 
-## 7. 정합성 판단
+## 다음 시즌과 복구
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `SeasonStatus` | SCHEDULED/ACTIVE/CLOSED | 동일 enum | 일치 |
-| basis 값 | `RankingBasis`(BALANCE/LIFETIME_EARNED/SEASON_EARNED) 바인딩 | doc/전달값 `BY_EARNED/BY_BALANCE` | **불일치** |
-| basis null 동작 | rankByEarned 정렬(default) | basis 미전달 시 동일 | 일치 (미지정일 때만) |
-| 내 스냅샷 없음 | 204 | `MileageSeasonSnapshotVo?` null | 일치 |
-| 스냅샷 필드 | seasonEarned/seasonBalance/rankByEarned/rankByBalance | 동일 필드 | 일치 |
-| 시즌 자동 전환 | close 시 다음 SCHEDULED→ACTIVE | 조회만 | 일치 (조회 기능 영향 없음) |
+다음 시즌은 시작 시각이 됐고 다른 ACTIVE/CLOSING이 없으며 직전 경계에 맞닿은 시즌이 CLOSED인 경우 활성화할 수 있다. 무조건 목록의 다음 항목을 즉시 시작하지 않는다. 새 활성화는 세대를 증가시키고 projectionReady=false로 시작한다. 회원별 delta를 재집계하고 준비할 회원이 남지 않았을 때 true가 된다.
 
-## 8. Gap / Risk
+재시도는 CLOSING의 남은 마감, 또는 ACTIVE이면서 준비가 끝나지 않은 시즌의 집계를 이어 간다. SCHEDULED는 거절한다. 이미 준비됐거나 CLOSED인 시즌에 대한 재시도는 현재 상태를 반환할 수 있다. 자동 tick도 공개 범위를 확인하고 준비·기한 경과 마감·미완료 마감·다음 활성화를 이어 간다. 미완료는 무결성 사건으로 기록하며 완료 상태로 덮지 않는다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | 시즌 랭킹 `basis` 값 불일치 | 컨트롤러 param 타입은 `RankingBasis`(BALANCE/LIFETIME_EARNED/SEASON_EARNED)인데 주석/Flutter/QueryRepo는 `BY_EARNED/BY_BALANCE` 사용 | `BY_EARNED`/`BY_BALANCE` 전송 시 enum 변환 실패로 400 또는 무시. 잔액 기준 랭킹(BY_BALANCE)에 도달 불가 | 서버가 `BY_EARNED/BY_BALANCE`를 받는 별도 enum/param을 쓰거나, Flutter가 `BALANCE`를 보내도록 통일 |
-| P2 | close 스냅샷 생성 범위 | `MileageSeasonService.close`는 상태만 바꾸고, 멤버별 `recordMemberSnapshot`은 "배치 처리는 호출자 책임"으로 남겨둠 | close만 호출하면 스냅샷이 비어 과거 랭킹이 빈 상태가 될 수 있음 | close 시 전체 멤버 스냅샷 일괄 생성 보장 경로 확인/추가 |
-| P2 | rank 컬럼이 nullable | `rankByEarned/rankByBalance`가 Integer nullable, 정렬은 nullsLast | 순위 미산정 멤버가 목록 끝에 무순위로 노출 | 스냅샷 생성 시 rank 채움 보장 여부 결정 |
+## 회원 결과와 앱 제한
 
-## 9. 수용 기준
+공개 순위는 양수 적립과 확정 순위가 있는 스냅샷만 반환하고 rankByEarned/memberId 순서로 페이지를 나눈다. 본인 조회는 순위 밖의 0점 스냅샷도 받을 수 있다. lateEarned는 별도 delta 조회로 보강하며 고정된 스냅샷 순위와 분리한다.
 
-### AC-01. 시즌 목록 필터
-Given 멤버가 status=CLOSED로 시즌 목록을 연다. When `GET /seasons?status=CLOSED`를 호출한다. Then CLOSED 시즌만 반환된다.
+앱은 순위 **첫 20건**과 별도 본인 기록을 조회한다. 순위 화면에 추가 페이지 입구는 없으므로 전체 순위 탐색으로 설명하지 않는다. 본인 기록이 없으면 카드를 숨기고 조회 실패면 독립 재시도를 제공한다. 목록/순위 새로고침과 준비·마감 상태의 오류 안내를 제공한다.
 
-### AC-02. 과거 시즌 랭킹 (기본)
-Given 멤버가 basis 없이 CLOSED 시즌 랭킹을 연다. When `GET /seasons/{seasonId}/ranking`을 호출한다. Then rankByEarned 기준 정렬된 스냅샷 페이지가 반환된다.
+운영 목록은 ACTIVE 미준비에 ‘준비 다시 시도’, CLOSING에 ‘마감 다시 시도’를 보여 준다. 응답이 CLOSED인지 준비 완료인지 아직 처리 중인지에 따라 안내를 나눈다. 일반 마감 입구는 준비된 ACTIVE이면 종료 전에도 나타날 수 있으며 서버가 종료 시각을 최종 검사한다. 재시도 후 시즌·본인 기록·메인·시즌 순위 관련 조회를 무효화한다.
 
-### AC-03. 내 스냅샷 없음
-Given 멤버가 해당 시즌에 스냅샷이 없다. When `GET /seasons/{seasonId}/me`를 호출한다. Then 204가 반환되고 Flutter는 null로 받아 빈 상태를 표시한다.
+## 코드 위치
 
-### AC-04. basis 지정 랭킹 (현재 미충족)
-Given 멤버가 잔액 기준(BY_BALANCE) 랭킹을 요청한다. When 클라이언트가 `basis=BY_BALANCE`를 전송한다. Then 서버는 잔액 기준 정렬을 반환해야 한다. 현재 enum이 `BALANCE`만 받으므로 이 기준을 충족하지 못한다.
+서버: MileageSeasonController, MileageSeasonService, MileageSeasonRankingSearchParam, MileageSeasonTransitionRunner/Worker, MileageSeasonMemberWorker, MileageSeasonSnapshotQueryRepository. 앱: mileage_season_api.dart, mileage_season_providers.dart, mileage_seasons_screen.dart, mileage_season_ranking_screen.dart, mileage_season_crud_screen.dart. 생성·수정의 정책 계약은 [적립 규칙·등급·배지·차감 사유·시즌 관리](F16-05_policy-presets_prd.md)를 따른다.
 
-### AC-05. 존재하지 않는 시즌
-Given 멤버가 다른 클럽의 seasonId로 랭킹을 요청한다. When 서버가 소속 클럽을 검증한다. Then `MILEAGE_SEASON_NOT_FOUND`가 반환된다.
+<!-- source-references:start -->
+서버 창구: `MileageSeasonController#listSeasons`, `MileageSeasonController#getSeasonRanking`, `MileageSeasonController#getMySeasonSnapshot`, `MileageSeasonController#retryClose`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
 
-## 10. 미결정 / 후속
+## 현재 제한과 확인 범위
 
-| 분류 | 항목 | 결정/작업 |
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | basis 값 통일 | `BY_EARNED/BY_BALANCE` 전용 enum 도입 또는 `RankingBasis` 값으로 클라이언트 통일 |
-| 구현 | close 스냅샷 일괄 생성 | close 시 전체 멤버 snapshot 생성 보장 경로 확정 |
-| 테스트 | 시즌 조회 3종 | status 필터, basis 정렬, 204 빈 스냅샷, 클럽 격리 E2E 추가 |
+| Gap | 앱 과거 순위는 첫 20건만 표시한다. | 서버 페이지 지원과 앱 전체 탐색을 구분한다. |
+| Risk | 일부 회원 처리 실패 시 ACTIVE 미준비 또는 CLOSING이 남을 수 있다. | 요청 성공·작업 진행·확정 완료를 나눈다. |
+| Gap | 마감 단추 표시와 종료 시각 검사는 분리돼 있다. | 종료 전 선택은 서버 오류가 날 수 있음을 남긴다. |
+| 미검증 | 대규모 회원 마감·장애 재시도·실제 순위·앱 복귀를 실행하지 않았다. | 현재 구현 경로 대조이며 실행 통과 기록이 아니다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 실제 목록:** 회원 화면의 진행/마감 중/종료 표시와 예약 시즌 숨김을 구분한다.
+- **AC-02 순위 조회 조건:** CLOSED와 현재 클럽을 확인하고 과거 순위는 적립 기준만 허용한다.
+- **AC-03 본인 결과:** 별도 본인 스냅샷과 204, 순위 밖 0점 기록을 구분한다.
+- **AC-04 마감 단계:** 준비 완료·종료 시각 확인 후 CLOSING에서 회원별 스냅샷을 생성한다.
+- **AC-05 순위 확정:** 모든 대상 확인과 동점 순위/양수 조건을 마친 뒤 CLOSED로 전환한다.
+- **AC-06 준비와 다음 시즌:** 활성화 조건·세대·재집계 완료를 확인하고 무조건 즉시 전환으로 설명하지 않는다.
+- **AC-07 복구 결과:** 마감/준비 재시도와 아직 처리 중인 응답을 완료와 구분한다.
+- **AC-08 화면 범위:** 첫 20건·본인 기록·오류 재시도·새로고침을 실제 제공 범위로 기록한다.
+
+소스 계약 및 후속 실행 기준이다. 이번 작업에서 제품 시험·실기기·시각 검수를 새로 실행하지 않았다.

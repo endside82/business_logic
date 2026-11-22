@@ -1,82 +1,92 @@
-# F16-05. 적립규칙·등급·배지·교환 프리셋 관리 PRD
+# F16-05. 적립 규칙·등급·배지·차감 사유·시즌 관리 PRD
 
 <!-- release-document: reference -->
-> **문서 구분: 기능·설계·절차 참고 문서.** 본문의 요구사항·과거 확인은 현재 미구현 목록이 아닙니다. 현재 작업 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따릅니다.
+> **문서 구분: 기능·설계·절차 참고 문서.** 2026-11-22 현재 소스 계약을 대조했다. 새 제품 실행·외부 인증·실기기 확인 기록은 아니다. 실행 순서는 [앞으로 할 일](../../../../docs/plan/NEXT_WORK.md)을 따른다.
 
-## 1. 결론
+## 현재 범위와 정정
 
-`POLICY_OWNER` 운영진이 마일리지 메타 정의 4종을 CRUD 한다 — 자동 적립 규칙(트리거별), 등급(최대 10), 배지 정의(최대 50), 차감 프리셋, 그리고 시즌 CRUD. 서버 `MileageAdminPolicyController`의 각 섹션이 `MileageEarningRuleService`/`MileageGradeService`/`MileageBadgeService`/`MileageRedemptionPresetService`/`MileageSeasonService`로 연결되고, Flutter `mileage_grade_crud_screen.dart`·`mileage_badge_crud_screen.dart`·`mileage_redemption_preset_crud_screen.dart`·`mileage_season_crud_screen.dart`가 표시한다.
+정책 운영진이 자동 적립 규칙, 등급, 배지 정의, 미리 정한 차감 사유, 시즌을 관리한다. 배지 담당자는 정의 목록 조회와 배지 부여 입구를 사용할 수 있지만 정의 편집 권한과는 다르다. 과거 문서의 ‘규칙 POST는 upsert’, ‘등급 검증 오류는 모두 개수 초과’, ‘시즌 close는 상태 변경만 수행’은 현재 계약과 다르다.
 
-핵심 비즈니스 규칙: 등급은 클럽당 ≤10, threshold는 단조·중복 금지, 이름에 금전성 단어("원/캐시/포인트/won/cash/point") 금지 — 그러나 **이 세 위반이 전부 `MILEAGE_GRADE_LIMIT_EXCEEDED` 단일 코드**로 던져진다. 배지 정의는 ≤50. 적립 규칙은 트리거별 upsert(`POST`)이고, 차감 프리셋은 삭제 불가·비활성화만(`DELETE`=deactivate).
+## 현재 서버 계약
 
-판정: **CRUD는 사용 가능**. 등급 검증 에러 코드가 사유별로 구분되지 않아 사용자 메시지가 모호한 것이 주요 Gap이다.
+공통 접두사는 `/api/v1/admin/clubs/{clubId}/mileage`다. 기본 권한은 POLICY_OWNER이며 MILEAGE 공개 범위를 적용한다. 아래의 `{id}`는 각 실제 요청의 ruleId/gradeId/badgeDefId/presetId/seasonId다.
 
-## 2. 코드 위치
+| 대상 | 현재 요청·결과 |
+|---|---|
+| 적립 규칙 | GET /earning-rules 목록, POST 생성 201, PUT /earning-rules/{ruleId} 수정 VO |
+| 등급 | GET /grades 목록, POST 생성 201, PUT /grades/{gradeId} 수정, DELETE 삭제 204 |
+| 등급 재계산 | POST /grades/recalculate, 선택 body.afterMemberId 기본 0, 처리/변경/실패/마지막 회원 ID 결과 |
+| 배지 정의 | GET /badges 목록은 POLICY_OWNER 또는 BADGE_AWARD_MANAGER. POST 생성 201, PUT /badges/{badgeDefId} 수정은 POLICY_OWNER |
+| 차감 사유 | GET /redemption-presets 전체, GET /redemption-presets/active 활성 목록은 POLICY_OWNER 또는 REWARD_MANAGER. POST 생성, PUT 수정, DELETE 비활성화 |
+| 시즌 | GET /seasons 목록, POST 생성 201, PUT /seasons/{seasonId} 수정, POST /seasons/{seasonId}/close 마감. 별도 MILEAGE_SEASON 공개 범위 |
 
-계약의 정본은 코드다. 서버: `MileageAdminPolicyController`, `MileageEarningRuleService`, `MileageGradeService`, `MileageBadgeService`, `MileageRedemptionPresetService`, `MileageSeasonService`, `EarningTriggerType`. 앱: `mileage_grade_crud_screen.dart`, `mileage_badge_crud_screen.dart`, `mileage_redemption_preset_crud_screen.dart`, `mileage_season_crud_screen.dart`, `mileage_admin_policy_api.dart`, `mileage_admin_policy_repository.dart`, `mileage_admin_policy_providers.dart`.
+배지 정의·차감 사유·시즌의 **생성**은 필수 Idempotency-Key와 명령 영수증 실행기를 사용한다. 규칙/등급 생성, 수정/삭제, 시즌 마감을 모두 같은 필수 키 API로 설명하지 않는다. 회원 배지 부여/해제는 [적립·차감·정정](F16-06_grant-redeem-reverse_prd.md)의 별도 명령이다.
 
-## 3. 전체 동작 흐름
+## 적립 규칙의 생성과 변경
 
-1. POLICY_OWNER가 각 메타 화면에 진입 → list 조회(`GET /earning-rules` 등).
-2. **적립 규칙**: `POST /earning-rules`는 트리거별 upsert — 같은 `triggerType`이 있으면 갱신, 없으면 생성. `MileageEarningRuleAddParam`(triggerType 필수, active 기본 false, points≥0 필수, reviewDeadlineDays/photoAutoApprove 선택).
-3. **등급**: `POST /grades`는 ① 클럽 등급 수 ≥10 검증 ② 이름 금전성 단어 검증 ③ threshold 중복 검증 ④ 이름 중복 검증 — 모든 위반이 `MILEAGE_GRADE_LIMIT_EXCEEDED`. `PUT`/`DELETE`도 동일 서비스.
-4. **배지 정의**: `POST /badges`는 ≥50 검증 후 생성(active=true). `PUT`로 수정(active 토글 포함).
-5. **차감 프리셋**: `POST /redemption-presets` 생성(active=true), `PUT` 수정, `DELETE`는 실제 삭제가 아니라 `deactivate`(active=false). 차감(F16-06) 시 `requireActivePreset`이 비활성 프리셋을 `MILEAGE_PRESET_INACTIVE`로 차단.
-6. **시즌**: `POST /seasons` 생성 시 startAt<endAt·기간 중복(CLOSED 제외) 검증, 현재 시각 기준 SCHEDULED/ACTIVE 자동 결정. `PUT`로 수정(CLOSED 시즌은 수정 불가), `POST /seasons/{seasonId}/close`로 마감(상태 CLOSED + 다음 SCHEDULED→ACTIVE).
-7. 모든 쓰기는 actorRole 결정 후 audit log(`MILEAGE_*_CREATED/UPDATED/DELETED/DEACTIVATED/SEASON_CLOSED`) + outbox 발행.
+트리거는 EVENT_CHECKIN, EVENT_REVIEW, EVENT_PHOTO_APPROVED다. 같은 클럽/트리거가 이미 있으면 POST는 DUPLICATE_RESOURCE로 거절하며 기존 규칙을 덮어쓰지 않는다. 수정은 ruleId를 사용한다. points는 0 이상, eventPointsCap도 지정했다면 0 이상이다. 후기 기한은 1~7일이며 미지정 생성은 7일을 사용한다.
 
-## 6. 상태/권한 매트릭스
+사진 규칙을 켤 때 MILEAGE_PHOTO 공개 범위를 확인한다. 수정은 버전을 증가시키며 경쟁 갱신은 CONCURRENT_MODIFICATION이다. resetEventPointsCap=true는 별도 상한을 없애고, 동시에 새 eventPointsCap도 보내면 거절한다. 기본 세 규칙을 보충하는 시점과 값은 [마일리지 제도 설정·변경 미리보기](F16-04_policy-config_prd.md)를 따른다.
 
-| 사용자/상태 | 서버 근거 | 프론트 분기 | 사용자 결과 | 판단 |
-|---|---|---|---|---|
-| POLICY_OWNER + 등급 10개 초과 생성 | `MILEAGE_GRADE_LIMIT_EXCEEDED` | 에러 표시 | 생성 차단 | 일치 (메시지 모호) |
-| POLICY_OWNER + 금전성 단어 등급명 | 동일 코드로 차단 | 동일 에러 | 생성 차단 | 일치 (사유 구분 안 됨) |
-| POLICY_OWNER + 적립 규칙 재생성 | 같은 trigger upsert(갱신) | 폼 저장 | 기존 규칙 갱신 | 일치 |
-| POLICY_OWNER + 프리셋 삭제 | deactivate(active=false) | 삭제 버튼 | 비활성화(이력 보존) | 일치 |
-| POLICY_OWNER + 시즌 기간 중복 | `MILEAGE_SEASON_OVERLAP` | 에러 | 생성 차단 | 일치 |
-| POLICY_OWNER + CLOSED 시즌 수정 | `MILEAGE_SEASON_NOT_FOUND` | 에러 | 수정 차단 | 일치 (코드 의미 모호) |
+## 등급·배지·차감 사유의 규칙
 
-## 7. 정합성 판단
+| 대상 | 현재 제약·효과 |
+|---|---|
+| 등급 | 최대 10개. 생성 이름 필수/20자, threshold 0 이상, 색/아이콘 필수/각 50자, 표시 순서 0 이상 |
+| 등급 중복/금지어 | 이름 중복은 MILEAGE_GRADE_NAME_DUPLICATE, 금전성 금지어는 MILEAGE_GRADE_NAME_FORBIDDEN_WORD, threshold 중복은 MILEAGE_GRADE_THRESHOLD_DUPLICATE |
+| 등급 삭제 | 현재 등급으로 참조한 요약 행이 있으면 MILEAGE_GRADE_IN_USE |
+| 배지 정의 | 최대 50개. 이름 필수/30자, 설명 200자, 색/아이콘 50자. 금지어는 별도 MILEAGE_BADGE_NAME_FORBIDDEN_WORD. 생성은 active=true |
+| 차감 사유 | 생성 label 필수/50자, 기본 차감량 양수, 표시 순서 0 이상. 목록은 표시 순서대로 반환 |
+| 차감 사유 삭제 | 행 삭제 대신 active=false. 이미 비활성이면 그대로 종료하며 이후 사용은 MILEAGE_PRESET_INACTIVE |
 
-| 항목 | Backend | Frontend | 판단 |
-|---|---|---|---|
-| `EarningTriggerType` | EVENT_CHECKIN/EVENT_REVIEW/EVENT_PHOTO_APPROVED | 동일 enum | 일치 |
-| 적립 규칙 생성 의미 | upsert(트리거 unique) | POST = create로 인식 | 의미 차이 가능(중복 생성 시 갱신) |
-| 프리셋 DELETE | deactivate(soft) | 삭제 UI | 동작 일치(이력 보존) |
-| 등급 검증 에러 | 4가지 위반 모두 `MILEAGE_GRADE_LIMIT_EXCEEDED` | 단일 에러 메시지 | 일치하나 사유 구분 불가 |
-| 배지 active 노출 | 운영 `GET /badges`는 전체 | 운영 화면 전체 표시 | 일치 (멤버는 active만 — F16-02) |
-| CLOSED 시즌 수정 거부 | `MILEAGE_SEASON_NOT_FOUND` 재사용 | not-found로 해석 | 의미 모호(Gap) |
+등급의 ‘단조 검사’ 구현은 다른 등급과 threshold가 같은지를 검사한다. 저장된 displayOrder에 따라 점수가 반드시 증가하도록 검사한다고 확대하지 않는다. 일부 수정 필드는 길이만 검사하므로 생성의 공백 필수 검사와 완전히 같다고 설명하지 않는다.
 
-## 8. Gap / Risk
+등급 생성·삭제와 threshold 변경은 재계산 작업을 예약한다. 정의 저장 성공이 전체 회원 등급 재계산 완료를 뜻하지 않는다. 수동 재계산은 200명씩 읽으면서 회원별 오류를 세고 계속 진행한다. 실패한 회원 뒤까지 cursor가 이동할 수 있으므로 실패 복구를 마지막 ID 이후부터만 수행하면 누락된다. 앱의 재계산은 별도 cursor 없이 처음부터 요청하고 결과 및 관련 조회를 갱신한다.
 
-| 등급 | 항목 | 근거 | 영향 | 다음 조치 |
-|---|---|---|---|---|
-| P1 | 등급 검증 에러가 단일 코드로 묶임 | `MileageGradeService`가 ≥10/금전성 단어/threshold 중복/이름 중복을 모두 `MILEAGE_GRADE_LIMIT_EXCEEDED`로 던짐 | 사용자가 "왜 안 되는지"(개수 초과인지 단어 금지인지) 알 수 없음 | 위반 사유별 ErrorCode 분리 |
-| P2 | CLOSED 시즌 수정 거부에 NOT_FOUND 재사용 | `modify`/`close`가 상태 위반에 `MILEAGE_SEASON_NOT_FOUND` 던짐 | "없음"과 "수정 불가 상태"가 구분 안 됨 | 상태 위반 전용 에러 코드 도입 |
-| P2 | 적립 규칙 POST가 upsert | 같은 trigger 재생성 시 기존 갱신 | UI에서 "생성"으로 보이나 실제 덮어쓰기 | UI에서 기존 규칙 존재 시 "수정"으로 표기 |
+## 시즌 생성·수정·마감
 
-## 9. 수용 기준
+시즌 생성은 시작/종료 필수, 시작 < 종료, 종료가 현재 이후, 기존 시즌과 기간 비중첩을 요구한다. 이름 최대 50자다. 처음에는 SCHEDULED이며 시작 시각과 다른 시즌 조건이 맞으면 ACTIVE로 전환하고 집계 준비를 수행한다.
 
-### AC-01. 등급 개수 제한
-Given 클럽에 등급이 10개 있다. When POLICY_OWNER가 11번째 등급을 생성한다. Then `MILEAGE_GRADE_LIMIT_EXCEEDED`가 반환되고 생성이 차단된다.
+기간 수정은 아직 시작 전 SCHEDULED이고 해당 시즌 delta가 없어야 한다. 진행 중인 시즌은 이름만 바꿀 수 있다. CLOSING은 MILEAGE_SEASON_CLOSE_IN_PROGRESS, CLOSED 수정은 여전히 MILEAGE_SEASON_NOT_FOUND로 거절한다. 타 클럽 시즌도 찾을 수 없음으로 처리한다.
 
-### AC-02. 금전성 단어 차단
-Given POLICY_OWNER가 "1000포인트" 등급명을 입력한다. When `POST /grades`를 호출한다. Then 금전성 단어로 차단된다(현재 동일 코드 `MILEAGE_GRADE_LIMIT_EXCEEDED`).
+마감은 준비된 ACTIVE이면서 종료 시간이 지난 경우만 시작한다. CLOSING에서 회원별 기록·순위 확정과 남은 작업 재시도를 거친다. 전체 상태·동점 규칙·다음 시즌은 [시즌 조회·순위 확정·재시도](F16-03_season_prd.md)를 따른다. 시즌을 단순 CRUD 결과만으로 완료라고 표시하지 않는다.
 
-### AC-03. 적립 규칙 upsert
-Given EVENT_CHECKIN 규칙이 이미 있다. When POLICY_OWNER가 같은 트리거로 다시 저장한다. Then 새 row가 아니라 기존 규칙의 points/active가 갱신된다.
+## 앱 행동·실패·복귀
 
-### AC-04. 프리셋 비활성화
-Given 사용 중인 차감 프리셋이 있다. When POLICY_OWNER가 삭제(DELETE)한다. Then row는 보존되고 active=false가 되며 이후 차감에서 `MILEAGE_PRESET_INACTIVE`로 선택 불가가 된다.
+등급/차감 사유/시즌 화면은 정책 권한으로 보호한다. 배지 화면은 정책 또는 배지 부여 권한으로 들어가되 정의 추가·수정과 실제 부여를 나눈다. 각 목록은 로딩·빈 상태·오류 재시도를 제공한다.
 
-### AC-05. 시즌 기간 중복
-Given ACTIVE 시즌이 있다. When POLICY_OWNER가 기간이 겹치는 시즌을 생성한다. Then `MILEAGE_SEASON_OVERLAP`이 반환된다.
+편집은 현재 세션과 제출 직전 권한을 확인하고 보내는 동안 중복 실행을 막는다. 성공하면 편집 창을 닫고 실패하면 오류를 표시하며 입력을 유지한다. 배지/차감 사유/시즌 생성 창은 같은 본문의 재시도에 같은 키를 사용하고 성공 때 완료 처리한다. 이름이나 기간 등 본문이 달라지면 같은 명령으로 취급하지 않는다.
 
-## 10. 미결정 / 후속
+등급 편집은 이름 빈 값은 막지만 threshold/표시 순서를 정수로 해석하지 못하면 0으로 대체한다. 모든 숫자 오류를 입력 단계에서 명확히 거절한다고 설명하지 않는다. 시즌 수정은 바뀌지 않은 시작/종료를 null로 전송해 이름만 수정할 때 기간 잠금에 걸리지 않도록 한다. 마감·준비 재시도는 완료/진행 중 결과를 구분한다.
 
-| 분류 | 항목 | 결정/작업 |
+## 코드 위치
+
+서버: MileageAdminPolicyController, MileageEarningRuleService, MileageGradeService, MileageGradeRecalcService, MileageBadgeService, MileageRedemptionPresetService, MileageSeasonService/TransitionRunner/TransitionWorker. 앱: mileage_admin_policy_api.dart, mileage_admin_policy_providers.dart, mileage_policy_screen.dart, mileage_grade_crud_screen.dart, mileage_badge_crud_screen.dart, mileage_redemption_preset_crud_screen.dart, mileage_season_crud_screen.dart.
+
+<!-- source-references:start -->
+서버 창구: `MileageAdminPolicyController#listEarningRules`, `MileageAdminPolicyController#createEarningRule`, `MileageAdminPolicyController#updateEarningRule`, `MileageAdminPolicyController#listGrades`, `MileageAdminPolicyController#createGrade`, `MileageAdminPolicyController#updateGrade`, `MileageAdminPolicyController#deleteGrade`, `MileageAdminPolicyController#recalculateGrades`, `MileageAdminPolicyController#listBadgeDefinitions`, `MileageAdminPolicyController#createBadgeDefinition`, `MileageAdminPolicyController#updateBadgeDefinition`, `MileageAdminPolicyController#listRedemptionPresets`, `MileageAdminPolicyController#listActiveRedemptionPresets`, `MileageAdminPolicyController#createRedemptionPreset`, `MileageAdminPolicyController#updateRedemptionPreset`, `MileageAdminPolicyController#deactivateRedemptionPreset`, `MileageAdminPolicyController#listSeasons`, `MileageAdminPolicyController#createSeason`, `MileageAdminPolicyController#updateSeason`, `MileageAdminPolicyController#closeSeason`. 함수·주소 대조는 `verification/source_reference_targets.json` 이 한다.
+<!-- source-references:end -->
+
+## 현재 제한과 확인 범위
+
+| 분류 | 현재 경계 | 문서 처리 |
 |---|---|---|
-| 구현 | 등급 검증 에러 분리 | 개수/단어/중복별 ErrorCode 분리 |
-| 구현 | 시즌 상태 위반 에러 | CLOSED 수정 거부 전용 코드 |
-| 정책 | 금전성 단어 목록 | FORBIDDEN_KEYWORDS 확장/관리 정책 결정 |
-| 테스트 | 메타 CRUD | 등급 제한/단어, 프리셋 deactivate, 시즌 중복 E2E 추가 |
+| Risk | 등급 정의 저장과 회원별 재계산 완료는 분리돼 있다. | 실패 수와 후속 처리를 별도로 확인한다. |
+| Gap | 일부 수정 입력의 공백 검사와 등급 숫자 파싱이 생성/입력 기대와 다르다. | 서버·앱의 실제 검사 범위만 약속한다. |
+| Gap | CLOSED 시즌 수정은 상태 오류 대신 NOT_FOUND다. | 존재하지 않음과 종료 상태를 문서에서 구분한다. |
+| 미검증 | 중복 생성 경합·키 재시도·실제 재계산/마감·입력 복귀를 실행하지 않았다. | 소스 대조와 실행 통과를 구분한다. |
+
+## 수용 기준과 검증 근거
+
+- **AC-01 권한별 관리:** 정책 편집과 배지 부여/활성 차감 사유 조회 권한을 구분한다.
+- **AC-02 규칙 중복:** 같은 트리거 생성은 거절하고 수정은 기존 ID·버전으로 수행한다.
+- **AC-03 규칙 입력:** 점수/상한/후기 기한·상한 초기화·사진 공개 범위를 확인한다.
+- **AC-04 등급 제약:** 개수·이름·threshold 중복·금지어·사용 중 삭제의 서로 다른 오류를 설명한다.
+- **AC-05 재계산:** 정의 저장의 예약과 회원별 처리 결과/실패 복구를 구분한다.
+- **AC-06 배지와 사유:** 정의 입력 제한, 활성 목록, 비활성화와 실제 행 삭제를 구분한다.
+- **AC-07 생성 키:** 배지/차감 사유/시즌 생성의 필수 키를 다른 명령에 확대하지 않는다.
+- **AC-08 시즌 기간:** 비중첩·시작 전 예약 수정·진행 중 이름 변경·마감/종료 제한을 설명한다.
+- **AC-09 입력 보존:** 성공 후 닫기와 실패 후 유지, 생성 키의 같은 본문 재사용을 대조한다.
+- **AC-10 결과 구분:** 저장·재계산·시즌 준비·마감 완료를 각각의 응답 상태로 판정한다.
+
+현재 소스 계약과 후속 확인 시나리오다. 이번 작업에서 새 제품 시험·실기기·시각 검수 통과 기록을 추가하지 않는다.
