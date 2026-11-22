@@ -428,7 +428,8 @@
         "privacy_policy_20261122",
         "planning_qa_20261122",
         "permission_policy_20261122",
-        "state_policy_20261122"
+        "state_policy_20261122",
+        "state_guides_20261122"
       ],
       "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
     },
@@ -5318,10 +5319,12 @@
       "kind": "onboarding",
       "document": true,
       "baselineSha256": "0d55ca6f9c023893e3fbfb6820072b474a0a6178ad96235a34bf4b577257bda4",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "state_guides_20261122"
+      ],
+      "reviewedSha256": "05e0ba74661f76878eb69680419ac82d09557e3fd14505277967b360f8543bbc"
     },
     {
       "path": "planner_onboarding/05_terms_glossary.md",
@@ -5732,10 +5735,12 @@
       "kind": "supporting_document_or_tool",
       "document": true,
       "baselineSha256": "b443d23da720e98be79a0323b59d7b82fc1179c9b56b8590d103adcffc5b784a",
-      "review": "pending",
-      "disposition": "partially_updated",
-      "evidence": [],
-      "note": "작성 기준·작업 정본 링크 또는 일부 내용만 갱신; 전체 내용 대조는 미완료"
+      "review": "source_verified",
+      "disposition": "updated",
+      "evidence": [
+        "state_guides_20261122"
+      ],
+      "reviewedSha256": "d5b5ca75855fd62f018ae0d0fd7c6b61ee69197717cc18f357bd8e8f30a89808"
     },
     {
       "path": "prd/00_prd_items/09_exceptions_edge_cases.md",
@@ -44532,6 +44537,99 @@
         "scenarioAudit": "write and check passed",
         "gitDiffCheck": "passed",
         "productTests": "not run; enum/selected command code plus unchanged reviewed canonical evidence reused"
+      },
+      "observedSourceVersions": {
+        "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
+        "community_app": "a412d4489de36c985715480d0936740121c94609"
+      }
+    },
+    "state_guides_20261122": {
+      "kind": "source_review",
+      "scope": "온보딩 상태 가이드252줄 중247줄·제품 상태전이520줄 중326줄은 직전 대조한 옛 상태정책과 정확히 같은 줄을 재사용하고 나머지 차이와 날짜별 조사 전부 읽음. 최신 상태정본 재사용과 개인/클럽구독·환불큐·출금운영 enum 추가 대조.",
+      "sources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/club/constants/ClubSubscriptionStatus.java",
+          "sha256": "7c7f993539f566527b2a14a9851a95137ed80fac41543078fe09c48cb56fc3f1",
+          "reviewScope": "전체 enum 본문과 predicate 대조: 현재 값과 과거 운영 예약 상태 설명 차이 확인; 서비스의 전체 재처리 전이 검증은 아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/FailedRefundStatus.java",
+          "sha256": "990f9e0ef7aef91d551acf897084965202e73ae3dbe190fae4847bd20c88bce6",
+          "reviewScope": "전체 enum 본문과 predicate 대조: 현재 값과 과거 운영 예약 상태 설명 차이 확인; 서비스의 전체 재처리 전이 검증은 아님"
+        },
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/withdrawal/constants/WithdrawalDeadLetterAction.java",
+          "sha256": "dcc5ff6406640ec2e34de242950c632a0ef7d85d99e6c2b2054260e3532c8727",
+          "reviewScope": "전체 enum 본문과 predicate 대조: 현재 값과 과거 운영 예약 상태 설명 차이 확인; 서비스의 전체 재처리 전이 검증은 아님"
+        }
+      ],
+      "reusedSources": [
+        {
+          "path": "community_api/domain/src/main/java/com/endside/community/payment/constants/SubscriptionStatus.java",
+          "sha256": "8bbbdf3f57a2d892a898f5bf66d5aadd89b4f59ec17f7ee25661d3a2ced93fad",
+          "reviewScope": "전체 enum 본문과 predicate 대조: 현재 값과 과거 운영 예약 상태 설명 차이 확인; 서비스의 전체 재처리 전이 검증은 아님"
+        }
+      ],
+      "reuses": [
+        "hosting_ticket_personal_subscription_20261122",
+        "payment_supplement_20261122",
+        "permission_policy_20261122",
+        "planning_qa_20261122",
+        "state_policy_20261122"
+      ],
+      "canonicalSources": [
+        {
+          "path": "business_logic/prd/00_prd_items/08_state_transitions.md",
+          "sha256": "d5b5ca75855fd62f018ae0d0fd7c6b61ee69197717cc18f357bd8e8f30a89808"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/state_policy_prd.md",
+          "sha256": "a152a81cde350dd31ef599ceb41ef7d2d1ce7c254e4479ad6bed5f493f5ade90"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/payment_settlement_policy_prd.md",
+          "sha256": "453c34121d0364f951b45e0c2960b19bb21fa37bbd58f0f729e0f1cb680577af"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/permission_policy_prd.md",
+          "sha256": "00bfa2fb180e8406a83d29f19b10fb4e3fff91ecb5d1fa32ffc635ba878651b7"
+        },
+        {
+          "path": "business_logic/prd/03_policy_prds/planning_qa_policy.md",
+          "sha256": "9ba20ccf929f12c64c6a1f0228bcdd2c21bb3af9b62e1b4907ef83ec9f83edbe"
+        },
+        {
+          "path": "business_logic/prd/02_feature_prds/06_payment/F06-08_personal-subscription_prd.md",
+          "sha256": "e369daee8ee66f3de1e05c4648e94c80c8b7b3f12e8982d2af2e73afc1fa1abf"
+        },
+        {
+          "path": "business_logic/planner_onboarding/10_planning_qa_checklist.md",
+          "sha256": "2a92b44427e9c443c6e4cd3615dc400f9516f1a1f436b96d9fe1730394ccb5e7"
+        }
+      ],
+      "retainedHtmlIds": {},
+      "referenceChanges": [],
+      "followUpFindings": [
+        "과거 결제 대기 enum 부재·무기한 노쇼 소명 설명 수정",
+        "클럽 구독 REFUNDING과 환불큐 PROCESSING은 현재 enum에 없음",
+        "상태 요약 정본 연결과 기획 실제 경로·후속 결과·복구 가이드 동기화"
+      ],
+      "retainedHistoricalQuotes": [
+        {
+          "path": "prd/00_prd_items/08_state_transitions.md",
+          "sha256": "eacfde7151caa6b2e520a564989fa888f535a9657758c105f8032626073ab95a",
+          "characters": 10230,
+          "note": "과거 시나리오 원문 인용; 현재 계약/현재 통과 수에 합산하지 않음",
+          "heading": "## 과거 상태 전이 조사 원문 보존"
+        }
+      ],
+      "checks": {
+        "sourceReferences": "코드 위치 표 165개가 실제 소스와 일치합니다.",
+        "groupDigests": "11 source/canonical digests; 0 retained HTML IDs",
+        "derivedDocuments": "2 documents; shared batch verified 2 paths, 38 relative links/anchors and 2 derived-from digests",
+        "scenarioAudit": "write and check passed",
+        "gitDiffCheck": "passed",
+        "productTests": "not run; reviewed canonical policy reused and four financial enum sources inspected"
       },
       "observedSourceVersions": {
         "community_api": "2c014362fb90f15a7b2c22d474edfb98d1d45aaa",
